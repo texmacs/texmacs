@@ -26,6 +26,7 @@ extern bool textm_unicode;
 extern bool textm_natbib;
 
 tree kill_space_invaders (tree t);
+tree set_cyrillic_font (tree t);
 tree filter_preamble (tree t);
 tree latex_fallback_on_pictures (string s, tree t);
 tree parsed_latex_to_tree (tree t);
@@ -2064,6 +2065,10 @@ latex_to_tree (tree t0) {
   if (is_compound (t1, "!language", 2)) {
     lan= t1[1]->label;
     t1 = t1[0];
+  }
+  if (!is_document ||
+      !(lan == "bulgarian" || lan == "russian" || lan == "ukrainian")) {
+    t1= set_cyrillic_font (t1);
   }
   textm_appendices= false;
   textm_unicode   = false;

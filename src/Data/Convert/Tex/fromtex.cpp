@@ -305,6 +305,61 @@ kill_space_invaders (tree t) {
 }
 
 /******************************************************************************
+* Set extra fonts
+******************************************************************************/
+
+// Cyrrilic
+
+tree set_cyrillic_font (tree t);
+
+static bool
+is_cyrillic_codepoint_entity (tree t) {
+  if (!is_atomic (t)) return false;
+  string s= as_string (t);
+  if (!starts (s, "<#") || !ends (s, ">")) return false;
+  s= s (2, N(s)-1);
+  int code= from_hexadecimal (s);
+  return (code >= 0x400  && code <= 0x4FF ) ||
+         (code >= 0x2DE0 && code <= 0x2DFF) ||
+         (code >= 0xA640 && code <= 0xA69F);
+}
+
+tree
+set_cyrillic_font (tree t, bool &in) {
+  if (is_atomic (t) && !in && is_cyrillic_codepoint_entity (t))
+    return concat (tree (SET, "font", "cyrillic"), t, tree (RESET, "font"));
+  if (is_atomic (t))
+    return t;
+  int i, n= N(t);
+  tree r (L(t));
+  if (is_concat (t)) {
+    for (i=0; i<n; i++) {
+      if ((t[i] == " "))
+        r << t[i];
+      else if (!in && is_cyrillic_codepoint_entity (t[i])) {
+        in= true;
+        r << tree (SET, "font", "cyrillic");
+      }
+      else if (in && !is_cyrillic_codepoint_entity (t[i])) {
+        in= false;
+        r << tree (RESET, "font");
+      }
+      r << set_cyrillic_font (t[i], in);
+    }
+  }
+  else
+    for (i=0; i<n; i++)
+      r << set_cyrillic_font (t[i]);
+  return r;
+}
+
+tree
+set_cyrillic_font (tree t) {
+  bool in= false;
+  return set_cyrillic_font (t, in);
+}
+
+/******************************************************************************
 * Preprocess preamble
 ******************************************************************************/
 
@@ -2146,6 +2201,7 @@ latex_command_to_tree (tree t) {
                  l2e (t[1]), l2e (t[2]));
 
   // Start TeXmacs specific markup
+  if (is_func (t, SET) || is_func (t, RESET)) return t;
   if (is_tuple (t, "\\tmmathbf", 1))
     return tree (CONCAT,
 		 tree (SET, MATH_FONT_SERIES, "bold"),
