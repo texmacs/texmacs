@@ -2129,7 +2129,7 @@ pdf_hummus_renderer_rep::set_metadata (string kind, string val) {
 
 static PDFTextString
 as_hummus_string (string s) {
-  c_string u (cork_to_utf8 (s));
+  c_string u (s);
   PDFTextString r;
   std::string stds ((char*) u);
   return r.FromUTF8 (stds);
