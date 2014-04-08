@@ -103,7 +103,7 @@ public:
   }
   
 protected:
-  static blackbox get_load (qt_widget qtw, types check_type = none);
+  static blackbox get_payload (qt_widget qtw, types check_type = none);
 };
 
 

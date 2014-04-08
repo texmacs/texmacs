@@ -279,9 +279,9 @@ qt_ui_element_rep::~qt_ui_element_rep() {
 }
 
 blackbox
-qt_ui_element_rep::get_load (qt_widget qtw, types check_type) {
+qt_ui_element_rep::get_payload (qt_widget qtw, types check_type) {
   ASSERT (check_type == none || qtw->type == check_type,
-          c_string ("get_load: widget " * qtw->type_as_string() *
+          c_string ("get_payload: widget " * qtw->type_as_string() *
                     " was not of the expected type."));
   switch (qtw->type) {
     case horizontal_menu:   case vertical_menu:    case horizontal_list:
@@ -537,7 +537,7 @@ qt_ui_element_rep::as_qaction () {
       cachedAction = qtw->as_qaction();
       {
         typedef quartet<string, int, color, bool> T1;
-        T1 y = open_box<T1> (get_load (help, text_widget));
+        T1 y = open_box<T1> (get_payload (help, text_widget));
         cachedAction->setToolTip (to_qstring (y.x1));
         // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
         QObject::connect (cachedAction, SIGNAL(hovered()),
@@ -846,11 +846,11 @@ qt_ui_element_rep::as_qwidget () {
       b->setMenu (lm);
       b->setAutoDefault (false);
       if (qtw->type == xpm_widget) {
-        url image = open_box<url> (get_load (qtw));
+        url image = open_box<url> (get_payload (qtw));
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
       } else if (qtw->type == text_widget) {
         typedef quartet<string, int, color, bool> T1;
-        T1 y = open_box<T1> (get_load (qtw));
+        T1 y = open_box<T1> (get_payload (qtw));
         b->setText (to_qstring (y.x1));
       }
       qwid = b;
@@ -881,7 +881,7 @@ qt_ui_element_rep::as_qwidget () {
         QObject::connect (b, SIGNAL (clicked ()), qtmcmd, SLOT (apply ()));
         if (qtw->type == text_widget) {
           typedef quartet<string, int, color, bool> T1;
-          b->setText (to_qstring (open_box<T1> (get_load (qtw)).x1));
+          b->setText (to_qstring (open_box<T1> (get_payload (qtw)).x1));
           qt_apply_tm_style (b, style);
         }
         b->setFlat (! (style & WIDGET_STYLE_BUTTON));
@@ -901,7 +901,7 @@ qt_ui_element_rep::as_qwidget () {
       qt_widget help = concrete (x.x2);
       
       typedef quartet<string, int, color, bool> T1;
-      T1 y = open_box<T1>(get_load (help, text_widget));
+      T1 y = open_box<T1>(get_payload (help, text_widget));
       QWidget* w = qtw->as_qwidget();
       w->setToolTip (to_qstring (y.x1));
       qwid = w;
@@ -954,7 +954,7 @@ qt_ui_element_rep::as_qwidget () {
       
       QCheckBox* w  = new QCheckBox (NULL);  
       w->setCheckState (check ? Qt::Checked : Qt::Unchecked);
-      qt_apply_tm_style(w, style);
+      qt_apply_tm_style (w, style);
       
       command tcmd = tm_new<qt_toggle_command_rep> (w, cmd);
       QTMCommand* c = new QTMCommand (w, tcmd);
