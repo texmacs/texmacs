@@ -313,17 +313,42 @@ tree set_special_fonts (tree t, string lan);
 
 static bool
 is_cjk_code (int code) {
-  // Unfortunatelly there is now way to distinguish if it is Chinese, Japanese
-  // or Taiwanese.
-  return (code >= 0x4E00 && code <= 0x62FF ) ||
-         (code >= 0x6300 && code <= 0x77FF ) ||
-         (code >= 0x7800 && code <= 0x8CFF ) ||
-         (code >= 0x8D00 && code <= 0x9FFF );
+  return (code >= 0x4E00  && code <= 0x9FFF ) ||
+         (code >= 0x3400  && code <= 0x4DBF ) ||
+         (code >= 0x20000 && code <= 0x2A6DF) ||
+         (code >= 0x2A700 && code <= 0x2B73F) ||
+         (code >= 0x2B740 && code <= 0x2B81F) ||
+         (code >= 0xF900  && code <= 0xFAFF ) ||
+         (code >= 0x2F800 && code <= 0x2FA1F) ||
+         (code >= 0x2F00  && code <= 0x2FDF ) ||
+         (code >= 0x2E80  && code <= 0x2EFF ) ||
+         (code >= 0x31C0  && code <= 0x31EF );
+}
+
+static bool
+is_katakana_code (int code) {
+  return (code >= 0x30A0  && code <= 0x30FF) ||
+         (code >= 0x31F0  && code <= 0x31FF) ||
+         (code >= 0x3200  && code <= 0x32FF) ||
+         (code >= 0xFF00  && code <= 0xFFEF) ||
+         (code >= 0x1B000 && code <= 0x1B0FF);
+}
+
+static bool
+is_hiragana_code (int code) {
+  return (code >= 0x3040  && code <= 0x309F ) ||
+         (code >= 0x1B000 && code <= 0x1B0FF);
 }
 
 static bool
 is_hangul_code (int code) {
-  return code >= 0xAC00 && code <= 0xD7AF;
+  return (code >= 0xAC00 && code <= 0xD7AF) ||
+         (code >= 0x1100 && code <= 0x11FF) ||
+         (code >= 0x3130 && code <= 0x318F) ||
+         (code >= 0x3200 && code <= 0x32FF) ||
+         (code >= 0xA960 && code <= 0xA97F) ||
+         (code >= 0xD7B0 && code <= 0xD7FF) ||
+         (code >= 0xFF00 && code <= 0xFFEF);
 }
 
 static bool
@@ -337,6 +362,8 @@ static string
 lang_of_code (int code) {
   if (is_cyrillic_code (code)) return "cyrillic";
   if (is_cjk_code      (code)) return "cjk";
+  if (is_hiragana_code (code)) return "japanese";
+  if (is_katakana_code (code)) return "japanese";
   if (is_hangul_code   (code)) return "korean";
   return "";
 }
@@ -364,10 +391,10 @@ font_of_tree (tree t) {
   string lang= lang_of_code (code);
   if (lang == "cyrillic")
     return "cyrillic";
-  // Unfortunatelly there is now way to distinguish if it is Chinese, Japanese
-  // or Taiwanese.
   if (lang == "cjk")
     return default_chinese_font_name ();
+  if (lang == "japanese")
+    return default_japanese_font_name ();
   if (lang == "korean")
     return default_korean_font_name ();
   return "roman";
