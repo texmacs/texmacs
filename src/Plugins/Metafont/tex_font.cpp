@@ -138,6 +138,11 @@ special_initialize () {
   while (it->busy ()) {
     string s= it->next ();
     special_translate (s)= string ((char) (unsigned char) trl->dict[s]);
+    if (N(s) > 2 && s(0,2) == "<#") {
+      string sl= locase_all (s), su= upcase_all (s);
+      special_translate (sl)= string ((char) (unsigned char) trl->dict[s]);
+      special_translate (su)= string ((char) (unsigned char) trl->dict[s]);
+    }
   }
   special_initialized= true;
 }
