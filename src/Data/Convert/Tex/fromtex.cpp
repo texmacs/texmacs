@@ -417,6 +417,8 @@ set_special_fonts (tree t, string lan, string &current_lang) {
       else {
         string charlang= lang_of_code (codepoint_of_tree (t[i]));
         if (current_lang != charlang && charlang != lan) {
+          if (current_lang != lan)
+            r << tree (RESET, "font");
           current_lang= charlang;
           r << tree (SET, "font", font_of_tree (t[i]));
         }

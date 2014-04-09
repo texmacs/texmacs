@@ -75,8 +75,11 @@ bibtex_update_encoding (string s) {
   string r;
   array<string> a= tokenize (s, "\\bibitem");
   for (int i=0; i<N(a); i++) {
+    array<string> b= tokenize (a[i], "\n");
+    for (int j=0; j<N(b); j++)
+      b[j]= cork_to_utf8 (western_to_cork (b[j]));
     if (i != 0) r << "\\bibitem";
-    r << western_to_cork (a[i]);
+    r << recompose (b, "\n");
   }
   return r;
 }
