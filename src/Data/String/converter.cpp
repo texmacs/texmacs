@@ -181,7 +181,7 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
-    hashtree_from_dictionary (dic,"cork-to-real-ascii", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"cork-to-real-ascii", BIT2BIT, BIT2BIT, false);
     ht = dic;
   }
   else if (from=="SourceCode" && to=="Cork") {
