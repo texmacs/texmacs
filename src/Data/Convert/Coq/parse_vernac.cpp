@@ -22,7 +22,7 @@
 /* importing verbatim strings ************************************************/
 
 static tree
-from_verbatim (string s) {
+from_verbatim (string s, bool wrap= true) {
   string r;
   int i, n=N(s);
   for (i=0; i<n; i++) {
@@ -33,7 +33,7 @@ from_verbatim (string s) {
   }
   if (i == n) return as_tree (r);
 
-  tree t= verbatim_to_tree (s, true, "utf-8");
+  tree t= verbatim_to_tree (s, wrap, "utf-8");
   if (is_document (t) && N(t) == 1)
     return t[0];
   return t;
@@ -451,11 +451,53 @@ parse_coqdoc (string s, int& i) {
 * Parse raw coq
 ******************************************************************************/
 
+/* Parse comments ************************************************************/
+
 static tree
 parse_comment (string s, int& i) {
   string coqdoc= parse_delimited (s, i, "(*", "*)");
   return compound ("coq-comment", from_verbatim (coqdoc));
 }
+
+/* Parse enunciations ********************************************************/
+
+static bool
+is_enunciation (string s) {
+  string r= parse_command_name (s);
+  return r == "Lemma" || r == "Remark" || r == "Fact" || r == "Corollary" ||
+    r == "Proposition" || r == "Theorem";
+}
+
+static bool
+is_proof (tree t) {
+  if (!is_compound (t, "coq-command", 3)) return false;
+  string s= parse_command_name (as_string (t[2]));
+  return s == "Proof";
+}
+
+static bool
+is_end_proof (tree t) {
+  if (!is_compound (t, "coq-command", 3)) return false;
+  string s= parse_command_name (as_string (t[2]));
+  return s == "Qed" || s == "Admitted" || s == "Defined";
+}
+
+static tree
+parse_enunciation (string s) {
+  int i= 0, n= N(s);
+  string kind= parse_command_name (s, i);
+  while (i<n && is_blank (s[i])) i++;
+  string name= parse_identifier (s, i);
+  while (i<n && is_blank (s[i])) i++;
+  if (s[i] == ':') i++;
+  while (i<n && is_blank (s[i])) i++;
+  tree body= from_verbatim (s (i, n), false);
+  tree r= compound ("coq-enunciation", "", "dark grey");
+  r << kind << name << body;
+  return r;
+}
+
+/* Parse vernac commands *****************************************************/
 
 static bool
 end_vernac_command (string s, int i) {
@@ -466,6 +508,39 @@ end_vernac_command (string s, int i) {
   return i == n || s[i] == '\n';
 }
 
+static array<string>
+split_command (string s) {
+  int start= 0, i=0, n= N(s);
+  array<string> r;
+  while (i<n) {
+    if (s[i] == '.' && i+1<n && (s[i+1] == ' ' || s[i+1] == '\t')) {
+      r << s(start, ++i);
+      while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+      start= i;
+    }
+    else
+      i++;
+  }
+  if (start < n)
+    r << s(start, n);
+  return r;
+}
+
+static tree
+parse_vernac_command (string s) {
+  tree r (CONCAT);
+  array<string> a= split_command (s);
+  if (N(a) == 1)
+    return compound ("coq-command", "", "dark grey", from_verbatim (a[0], false));
+  else if (N(a) > 0) {
+    for (int i=0; i<N(a); i++)
+      r << compound ("coq-command", "", "dark grey", from_verbatim (a[i], false));
+  }
+  return r;
+}
+
+/* Parse indentation *********************************************************/
+
 static int
 parse_indent (string s, int i) {
   int indent= 0, n= N(s);
@@ -473,6 +548,8 @@ parse_indent (string s, int i) {
   if (i<n && s[i] != '\n') return indent;
   else return -1;
 }
+
+/* Main parse routine ********************************************************/
 
 static tree
 parse_coqdoc_hide_show (string str, int &i) {
@@ -501,48 +578,44 @@ is_hide_or_show (string s, int i) {
   return parse_coqdoc_hide_show (s, i) != tree (UNINIT);
 }
 
-static array<string>
-split_command (string s) {
-  int start= 0, i=0, n= N(s);
-  array<string> r;
-  while (i<n) {
-    if (s[i] == '.' && i+1<n && (s[i+1] == ' ' || s[i+1] == '\t')) {
-      r << s(start, ++i);
-      while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
-      start= i;
-    }
-    else
-      i++;
-  }
-  if (start < n)
-    r << s(start, n);
-  return r;
-}
+/* Main parse routine ********************************************************/
 
 static tree
 parse_raw_coq (string s) {
-  tree r (DOCUMENT);
+  tree doc (DOCUMENT), proof (DOCUMENT), enun;
+  tree *r= &doc;
   int i= 0, startcmd= 0, n= N(s), indent_level=0;
   bool in_cmd= false;
   while (i<n) {
     if (start_coqdoc (s, i))
-      r << parse_coqdoc (s, i);
+      doc << parse_coqdoc (s, i);
     else if (start_comment (s, i)) {
       if (is_hide_or_show (s, i))
-        r << parse_coqdoc_hide_show (s, i);
+        doc << parse_coqdoc_hide_show (s, i);
       else
-        r << parse_comment (s, i);
+        doc << parse_comment (s, i);
     }
     else if (end_vernac_command (s, i)) {
-      i++;
-      array<string> a= split_command (s (startcmd, i));
-      if (N(a) == 1)
-        r << compound ("coq-command", "", "dark grey", from_verbatim (a[0]));
-      else if (N(a) > 0) {
-        tree u (CONCAT);
-        for (int j=0; j<N(a); j++)
-          u << compound ("coq-command", "", "dark grey", from_verbatim (a[j]));
-        r << u;
+      string body= s (startcmd, ++i);
+      if (is_enunciation (body)) {
+        enun= parse_enunciation (body);
+        r= &proof;
+      }
+      else {
+        tree tmp= parse_vernac_command (body);
+        if (r == &proof) {
+          if (is_end_proof (tmp)) {
+            proof << tmp;
+            enun << proof;
+            doc << enun;
+            proof= tree (DOCUMENT);
+            r= &doc;
+          }
+          else if (!is_proof (tmp))
+            *r << tmp;
+        }
+        else
+          *r << tmp;
       }
       in_cmd= false;
     }
@@ -550,7 +623,7 @@ parse_raw_coq (string s) {
       i++;
       int tmp= parse_indent (s, i);
       if (tmp >= 0 && tmp != indent_level) {
-        r << compound ("coq-indent", as_string (tmp));
+        *r << compound ("coq-indent", as_string (tmp));
         indent_level= tmp;
       }
     }
@@ -562,7 +635,7 @@ parse_raw_coq (string s) {
       i++;
     }
   }
-  return r;
+  return doc;
 }
 
 /******************************************************************************
@@ -659,70 +732,8 @@ section_parsed_coq (tree t) {
 }
 
 /******************************************************************************
-* Enonciate parsed coq
+* Show / hide parsed coq
 ******************************************************************************/
-
-static bool
-is_enunciation (tree t) {
-  if (!is_compound (t, "coq-command", 3)) return false;
-  string s= parse_command_name (as_string (t[2]));
-  return s == "Lemma" || s == "Remark" || s == "Fact" || s == "Corollary" ||
-    s == "Proposition" || s == "Theorem";
-}
-
-static bool
-is_proof (tree t) {
-  if (!is_compound (t, "coq-command", 3)) return false;
-  string s= parse_command_name (as_string (t[2]));
-  return s == "Proof";
-}
-
-static bool
-is_end_proof (tree t) {
-  if (!is_compound (t, "coq-command", 3)) return false;
-  string s= parse_command_name (as_string (t[2]));
-  return s == "Qed" || s == "Admitted" || s == "Defined";
-}
-
-static tree
-parse_enunciation (string s) {
-  int i= 0, n= N(s);
-  string kind= parse_command_name (s, i);
-  while (i<n && is_blank (s[i])) i++;
-  string name= parse_identifier (s, i);
-  while (i<n && is_blank (s[i])) i++;
-  if (s[i] == ':') i++;
-  while (i<n && is_blank (s[i])) i++;
-  string body= s (i, n);
-  tree r= compound ("coq-enunciation", "", "dark grey");
-  r << kind << name << body;
-  return r;
-}
-
-static tree
-enunciate_parsed_coq (tree t) {
-  if (is_atomic (t) || is_compound (t, "coq-indent")
-                    || is_compound (t, "coq-command")
-                    || is_compound (t, "coq-comment")) return t;
-  tree r (L(t));
-  int i, n= N(t);
-  for (i=0; i<n; i++) {
-    if (is_enunciation (t[i])) {
-      tree enun= parse_enunciation (as_string (t[i++][2]));
-      tree proof (DOCUMENT);
-      while (i<n && !is_end_proof (t[i])) {
-        if (!is_proof (t[i]))
-          proof << t[i];
-        i++;
-      }
-      enun << proof;
-      r << enun;
-    }
-    else
-      r << enunciate_parsed_coq (t[i]);
-  }
-  return r;
-}
 
 static tree
 show_hide_parsed_coq (tree t) {
@@ -761,7 +772,7 @@ show_hide_parsed_coq (tree t) {
   return r;
 }
 
- /******************************************************************************
+/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -771,7 +782,6 @@ vernac_to_tree (string s) {
   r= parse_raw_coq (s);
   r= show_hide_parsed_coq (r);
   r= section_parsed_coq (r);
-  r= enunciate_parsed_coq (r);
   r= indent_parsed_coq (r);
   if (N(r) == 0) r << "";
   return r;

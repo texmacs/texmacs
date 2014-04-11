@@ -69,10 +69,9 @@
   </macro>>
 
   <assign|coq-enunciation|<\macro|id|status|type|name|thm-body|proof-body>
-    <\render-theorem|<arg|type> <with|font-shape|italic|<arg|name>>>
-      \;
-
-      <with|color|<arg|status>|<arg|thm-body>>
+    <\render-theorem|<arg|type>>
+      <surround| <with|font-shape|italic|<arg|name>>
+      ||<with|color|<arg|status>|<arg|thm-body>>>
     </render-theorem>
 
     <\proof>
