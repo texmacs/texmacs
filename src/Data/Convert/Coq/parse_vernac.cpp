@@ -580,6 +580,7 @@ static tree
 indent_parsed_coq (tree t, int base_indent=0) {
   if (is_atomic (t) || is_compound (t, "coq-indent")
                     || is_compound (t, "coq-command")
+                    || is_compound (t, "coq-coqdoc")
                     || is_compound (t, "coq-comment")) return t;
   tree r (L(t));
   int i, n= N(t);
@@ -590,7 +591,7 @@ indent_parsed_coq (tree t, int base_indent=0) {
       bool stop= false;
       while (i<n && !stop) {
         int curr_ind= get_indent (t[i]);
-        if (curr_ind > -1 && (curr_ind <= indent || curr_ind < base_indent)) {
+        if (curr_ind > -1 && (curr_ind < indent || curr_ind < base_indent)) {
           i--;
           stop= true;
         }
@@ -724,27 +725,6 @@ enunciate_parsed_coq (tree t) {
 }
 
 static tree
-clean_indent (tree t) {
-  if (is_atomic (t)) return t;
-  int i, n= N(t);
-  for (i=0; i<n; i++) {
-    if (is_compound (t[i], "coq-enunciation", 6)) {
-      if (is_document (t[i][5]) && N(t[i][5]) == 1) {
-        if (is_compound (t[i][5][0], "indent", 1)) {
-          t[i][5]= t[i][5][0][0];
-        }
-      }
-      else if (is_compound (t[i][5], "indent", 1)) {
-        t[i][5]= t[i][5][0];
-      }
-    }
-    else
-      t[i]= clean_indent (t[i]);
-  }
-  return t;
-}
-
-static tree
 show_hide_parsed_coq (tree t) {
   if (is_atomic (t)) return t;
   tree r (L(t)), tmp (DOCUMENT);
@@ -793,7 +773,6 @@ vernac_to_tree (string s) {
   r= section_parsed_coq (r);
   r= enunciate_parsed_coq (r);
   r= indent_parsed_coq (r);
-  r= clean_indent (r);
   if (N(r) == 0) r << "";
   return r;
 }

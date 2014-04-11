@@ -56,21 +56,29 @@
 
   <assign|coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|font-family|tt|<arg|body>>>>
 
-  <assign|coq-enunciation|<\macro|id|status|type|name|thm-body|proof-body>
+  <assign|coq-enunciation*|<\macro|id|status|type|name|thm-body|proof-body>
     <\render-theorem|<arg|type> <with|font-shape|italic|<arg|name>>>
-      \;
-
-      <\indent>
-        <with|color|<arg|status>|<arg|thm-body>>
-      </indent>
+      <with|color|<arg|status>|<arg|thm-body>>
     </render-theorem>
 
     <\proof>
       \;
 
-      <\indent>
-        <arg|proof-body>
-      </indent>
+      <arg|proof-body>
+    </proof>
+  </macro>>
+
+  <assign|coq-enunciation|<\macro|id|status|type|name|thm-body|proof-body>
+    <\render-theorem|<arg|type> <with|font-shape|italic|<arg|name>>>
+      \;
+
+      <with|color|<arg|status>|<arg|thm-body>>
+    </render-theorem>
+
+    <\proof>
+      \;
+
+      <arg|proof-body>
     </proof>
   </macro>>
 
