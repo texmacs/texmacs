@@ -112,9 +112,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (remove-annotations t)
-  (if (tm-func? t 'doc-note-ref 4)
-      (remove-annotations (tm-ref t 3))
-      t))
+  (cond ((tm-func? t 'doc-note-ref 4) (remove-annotations (tm-ref t 3)))
+        ((tm-func? t 'concat) `(concat ,@(map remove-annotations (cdr t))))
+        (else t)))
 
 (tm-define (title->running-title t)
   `(doc-running-title ,(remove-annotations (tm-ref t 0))))
