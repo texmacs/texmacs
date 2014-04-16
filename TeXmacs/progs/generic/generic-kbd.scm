@@ -382,6 +382,7 @@
   ("std f" (search-start #t))
   ("std i" (toggle-italic))
   ("std n" (new-buffer))
+  ("std N" (open-window))
   ("std o" (open-buffer))
   ("std p" (preview-buffer))
   ("std q" (safely-quit-TeXmacs))
@@ -567,7 +568,6 @@
   ("macos S-up" (kbd-select go-start))
   ("macos S-down" (kbd-select go-end))
 
-  ("macos N" (open-window))
   ("search macos g" (search-next))
   ("search macos G" (search-previous))
 
