@@ -91,9 +91,7 @@ bibtex_load_bbl (string bib, url bbl_file) {
   if (load_string (bbl_file, result, false))
     return "Error: bibtex failed to create bibliography";
 
-  cout << result << LF << LF;
   result= bibtex_update_encoding (result);
-  cout << result << LF << LF;
   int count=1;
   tree t= generic_to_tree (result, "latex-snippet");
   tree with= tree (WITH);
