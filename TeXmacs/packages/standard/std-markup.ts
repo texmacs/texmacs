@@ -327,6 +327,8 @@
 
   <assign|smash-bottom|<macro|body|<vresize|<arg|body>|0ex|1t>>>
 
+  <assign|smash-by|<macro|body|by|<vresize|<arg|body>|<plus|1b|<arg|by>>|<minus|1t|<arg|by>>>>>
+
   \;
 
   <assign|extend|<macro|body|left|bottom|right|top|<style-with|src-compact|none|<resize|<arg|body>|<if|<equal|<arg|left>|>|1l|<minimum|1l|<arg|left>>>|<if|<equal|<arg|bottom>|>|1b|<minimum|1b|<arg|bottom>>>|<if|<equal|<arg|right>|>|1r|<maximum|1r|<arg|right>>>|<if|<equal|<arg|top>|>|1t|<maximum|1t|<arg|top>>>>>>>

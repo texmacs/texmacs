@@ -232,6 +232,7 @@
     (:penalty 30)
     (:spacing default default)
     "-" "<pm>" "<mp>" "<minus>" "<longminus>"
+    "<dotminus>" "<dotpm>" "<dotmp>"
     "<ominus>" "<boxminus>" "<circleddash>")
 
   (define Minus-prefix-symbol
