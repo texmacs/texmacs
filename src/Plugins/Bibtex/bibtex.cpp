@@ -13,6 +13,7 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "convert.hpp"
+#include "converter.hpp"
 #include "wencoding.hpp"
 
 #ifdef OS_WIN32
@@ -77,7 +78,7 @@ bibtex_update_encoding (string s) {
   for (int i=0; i<N(a); i++) {
     array<string> b= tokenize (a[i], "\n");
     for (int j=0; j<N(b); j++)
-      b[j]= cork_to_utf8 (western_to_cork (b[j]));
+      b[j]= cork_to_sourcecode (western_to_cork (b[j]));
     if (i != 0) r << "\\bibitem";
     r << recompose (b, "\n");
   }
@@ -90,7 +91,9 @@ bibtex_load_bbl (string bib, url bbl_file) {
   if (load_string (bbl_file, result, false))
     return "Error: bibtex failed to create bibliography";
 
+  cout << result << LF << LF;
   result= bibtex_update_encoding (result);
+  cout << result << LF << LF;
   int count=1;
   tree t= generic_to_tree (result, "latex-snippet");
   tree with= tree (WITH);
