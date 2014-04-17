@@ -1586,6 +1586,7 @@
   (acronym (h:acronym))
   (verbatim ,tmhtml-verbatim)
   (code ,tmhtml-verbatim)
+  (nbsp ,(lambda x '("&nbsp;")))
   ;; Presentation
   (tt (h:tt))
   (hrule (h:hr))
