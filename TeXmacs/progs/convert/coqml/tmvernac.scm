@@ -30,9 +30,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmvernac-string x)
-  ;; should take care of charset.
   ;; should take care of escaping ($, #, %).
-  x)
+  (cork->sourcecode x))
 
 (define (tmvernac-document s l)
   `(!document ,@(map tmvernac l)))
