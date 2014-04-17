@@ -34,7 +34,7 @@
   (cork->sourcecode x))
 
 (define (tmvernac-document s l)
-  `(!document ,@(map tmvernac l)))
+  `(!paragraph ,@(map tmvernac l)))
 
 (define (tmvernac-concat s l)
   `(!concat ,@(map tmvernac l)))
@@ -73,9 +73,9 @@
     (let ((name (tmvernac (car l)))
           (body (tmvernac (cadr l))))
       `(!paragraph
-         (!concat "Section" ,name ".")
+         (!concat "Section " ,name ".")
          ,body
-         (!concat "End"     ,name ".")))))
+         (!concat "End "     ,name ".")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CoqDoc macros
@@ -138,10 +138,10 @@
 (define (tmvernac-item s l) '(!item "- "))
 
 (define (tmvernac-itemize s l)
-  `(!paragraph ,(tmvernac (car l))))
+  `(!indent (!paragraph ,(tmvernac (car l)))))
 
 (define (tmvernac-indent s l)
-  `(!paragraph (!indent ,(tmvernac (car l)))))
+  `(!indent (!paragraph ,(tmvernac (car l)))))
 
 (define (tmvernac-emphasis s l)
   (with coq (tmvernac (car l))
@@ -207,9 +207,7 @@
 (tm-define (texmacs->vernac x)
   (initialize-converter)
   (if (tree? x) (set! x (tree->stree x)))
-  (display* x "\n\n")
   (let ((y (tmvernac x)))
-    (display* "\n\nresult: " y "\n\n")
     (serialize-vernac y)))
 
 (tm-define (texmacs->vernac-document x)

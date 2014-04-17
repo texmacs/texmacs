@@ -48,36 +48,20 @@
 
 (define (empty-line? x)
   (or (== x "")
-      (func? x '!marker)
       (and (func? x '!concat)
            (list-and (map empty-line? (cdr x))))))
 
-(define (vernacout-document l)
-  (if (nnull? l)
-      (begin
-        (vernacout (car l))
-        (if (empty-line? (car l))
-            (output-vernac "\\"))
-	(if (nnull? (cdr l))
-	    (begin
-	      (output-lf)
-              (output-lf)))
-	(vernacout-document (cdr l)))))
-
 (define (vernacout-paragraph l)
   (if (nnull? l)
-      (begin
-	(vernacout (car l))
-	(if (nnull? (cdr l)) (output-lf))
-	(vernacout-paragraph (cdr l)))))
-
-(define (vernacout-want-space x1 x2) ;; remove double spaces
-  (not (or (== x1 " ") (== x2 " "))))
+    (begin
+      (vernacout (car l))
+      (if (nnull? (cdr l)) (output-lf))
+      (vernacout-paragraph (cdr l)))))
 
 (define (vernacout-concat-sub prev l)
   (when (nnull? l)
-    (if (and prev (vernacout-want-space prev (car l))) (vernacout " "))
-    (vernacout (car l))
+    (if (not (and (== prev " ") (== (car l) " "))) ;; remove double spaces
+      (vernacout (car l)))
     (vernacout-concat-sub (car l) (cdr l))))
 
 (define (vernacout-concat l)
@@ -85,6 +69,7 @@
 
 (define (vernacout-indent x)
   (output-indent 2)
+  (output-verb "  ")
   (vernacout x)
   (output-indent -2))
 
@@ -108,7 +93,6 @@
 	((== (car x) '!comment)   (vernacout-comment (cadr x)))
 	((== (car x) '!coqdoc)    (vernacout-coqdoc (cadr x)))
 	((== (car x) '!item)      (vernacout-item (cadr x)))
-	((== (car x) '!document)  (vernacout-document (cdr x)))
 	((== (car x) '!paragraph) (vernacout-paragraph (cdr x)))
 	((== (car x) '!concat)    (vernacout-concat (cdr x)))
 	((== (car x) '!append)    (for-each vernacout (cdr x)))
