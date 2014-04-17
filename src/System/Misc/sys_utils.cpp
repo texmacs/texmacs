@@ -28,7 +28,7 @@ int script_status = 1;
 * System functions
 ******************************************************************************/
 
-static int
+int
 system (string s, string& result) {
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
   int r= qt_system (s, result);
