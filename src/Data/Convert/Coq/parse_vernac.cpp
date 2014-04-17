@@ -586,7 +586,7 @@ static tree
 parse_raw_coq (string s) {
   tree doc (DOCUMENT), proof (DOCUMENT), enun;
   tree *r= &doc;
-  int i= 0, startcmd= 0, n= N(s), indent_level=0;
+  int i= 0, startcmd= 0, n= N(s), indent_level=-1;
   bool in_cmd= false;
   while (i<n) {
     if (start_coqdoc (s, i))
@@ -627,6 +627,10 @@ parse_raw_coq (string s) {
       if (tmp >= 0 && tmp != indent_level) {
         *r << compound ("coq-indent", as_string (tmp));
         indent_level= tmp;
+      }
+      else if (i < n && s[i] == '\n') {
+        *r << "";
+        while (i+1 < n && s[i+1] == '\n') i++;
       }
     }
     else {
