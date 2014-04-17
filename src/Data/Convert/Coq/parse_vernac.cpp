@@ -488,10 +488,7 @@ parse_enunciation (string s) {
   string kind= parse_command_name (s, i);
   while (i<n && is_blank (s[i])) i++;
   string name= parse_identifier (s, i);
-  while (i<n && is_blank (s[i])) i++;
-  if (s[i] == ':') i++;
-  while (i<n && is_blank (s[i])) i++;
-  tree body= from_verbatim (s (i, n), false);
+  tree body= from_verbatim (s (++i, n), false);
   tree r= compound ("coq-enunciation", "", "dark grey");
   r << kind << name << body;
   return r;
@@ -531,10 +528,15 @@ parse_vernac_command (string s) {
   tree r (CONCAT);
   array<string> a= split_command (s);
   if (N(a) == 1)
-    return compound ("coq-command", "", "dark grey", from_verbatim (a[0], false));
+    return compound ("coq-command", "", "dark grey",
+                     from_verbatim (a[0], false));
   else if (N(a) > 0) {
-    for (int i=0; i<N(a); i++)
-      r << compound ("coq-command", "", "dark grey", from_verbatim (a[i], false));
+    for (int i=0; i<N(a)-1; i++)
+      r << compound ("coq-command", "", "dark grey",
+                     from_verbatim (a[i], false))
+        << " ";
+    r << compound ("coq-command", "", "dark grey",
+                   from_verbatim (a[N(a)-1], false));
   }
   return r;
 }

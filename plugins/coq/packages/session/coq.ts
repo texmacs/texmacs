@@ -51,8 +51,7 @@
     <arg|body>
   </macro>>
 
-  <assign|coq-command|<macro|id|status|body|<with|color|<arg|status>|<arg|body>
-  >>>
+  <assign|coq-command|<macro|id|status|body|<with|color|<arg|status>|<arg|body>>>>
 
   <assign|coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|font-family|tt|<arg|body>>>>
 

@@ -64,10 +64,9 @@
           (body  (tmvernac (fifth l)))
           (proof (tmvernac (sixth l))))
       `(!paragraph
-         (!concat ,kind " " ,name " : " ,body)
+         (!concat ,kind " " ,name " " ,body)
          "Proof."
-         ,proof
-         "Qed."))))
+         ,proof))))
 
 (define (tmvernac-coq-section s l)
   (with-mode "code"
