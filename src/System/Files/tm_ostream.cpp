@@ -370,6 +370,7 @@ tm_ostream widkit_error    = debug_ostream ("widkit-error");
 tm_ostream aqua_error      = debug_ostream ("aqua-error");
 tm_ostream font_error      = debug_ostream ("font-error");
 tm_ostream convert_error   = debug_ostream ("convert-error");
+tm_ostream biblio_error    = debug_ostream ("biblio-error");
 tm_ostream io_error        = debug_ostream ("io-error");
 
 tm_ostream std_warning     = debug_ostream ("std-warning");

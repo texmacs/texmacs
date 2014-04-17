@@ -90,6 +90,7 @@ extern tm_ostream qt_error;
 extern tm_ostream font_error;
 extern tm_ostream convert_error;
 extern tm_ostream io_error;
+extern tm_ostream biblio_error;
 
 extern tm_ostream std_warning;
 extern tm_ostream convert_warning;

@@ -164,11 +164,17 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   string cmdln= "cd $TEXMACS_HOME_PATH/system/bib; ";
   cmdln << "BIBINPUTS=\"" << dir << "\":$BIBINPUTS "
 	<< "BSTINPUTS=\"" << dir << "\":$BSTINPUTS "
-	<< bibtex_command << " temp";
-  if (DEBUG_AUTO)
+	<< bibtex_command
+        << " temp > $TEXMACS_HOME_PATH/system/bib/temp.log";
+  if (DEBUG_AUTO) {
     if (!(DEBUG_STD))
       debug_shell << cmdln << "\n";
-  system (cmdln);
+  }
+  string log;
+  if (system (cmdln, log)) {
+    biblio_error.clear ();
+    biblio_error << log << "\n";
+  }
 #endif
 
   return bibtex_load_bbl (bib, "$TEXMACS_HOME_PATH/system/bib/temp.bbl");
