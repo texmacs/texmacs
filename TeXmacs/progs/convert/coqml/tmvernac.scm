@@ -68,6 +68,14 @@
          "Proof."
          ,proof))))
 
+(define (tmvernac-coq-definition s l)
+  (with-mode "code"
+    (let ((kind  (tmvernac (caddr l)))
+          (name  (tmvernac (cadddr l)))
+          (body  (tmvernac (fifth l))))
+      `(!paragraph
+         (!concat ,kind " " ,name " " ,body)))))
+
 (define (tmvernac-coq-section s l)
   (with-mode "code"
     (let ((name (tmvernac (car l)))
@@ -168,6 +176,7 @@
   (coq-comment     tmvernac-coq-comment)
   (coq-coqdoc      tmvernac-coq-coqdoc)
   (coq-enunciation tmvernac-coq-enunciation)
+  (coq-definition  tmvernac-coq-definition)
   (coq-section     tmvernac-coq-section)
   ; CoqDoc
   (coqdoc-coq      tmcoqdoc-coq)

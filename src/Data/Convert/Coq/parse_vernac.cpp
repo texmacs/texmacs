@@ -470,8 +470,17 @@ parse_comment (string s, int& i) {
 static bool
 is_enunciation (string s) {
   string r= parse_command_name (s);
-  return r == "Lemma" || r == "Remark" || r == "Fact" || r == "Corollary" ||
-    r == "Proposition" || r == "Theorem";
+  return r == "Corollary"   || r == "Fact"   || r == "Lemma"   ||
+         r == "Proposition" || r == "Remark" || r == "Theorem";
+}
+
+static bool
+is_definition (string s) {
+  string r= parse_command_name (s);
+  return r == "Axiom"        || r == "CoFixpoint" || r == "CoInductive" ||
+         r == "Conjecture"   || r == "Definition" || r == "Example"     ||
+         r == "Fixpoint"     || r == "Hypothesis" || r == "Inductive"   ||
+         r == "Let"          || r == "Parameter"  || r == "Variable";
 }
 
 static bool
@@ -489,13 +498,13 @@ is_end_proof (tree t) {
 }
 
 static tree
-parse_enunciation (string s) {
+parse_enunciation (string s, string lbl= "coq-enunciation") {
   int i= 0, n= N(s);
   string kind= parse_command_name (s, i);
   while (i<n && is_blank (s[i])) i++;
   string name= parse_identifier (s, i);
   tree body= from_verbatim (s (++i, n), false);
-  tree r= compound ("coq-enunciation", "", "dark grey");
+  tree r= compound (lbl, "", "dark grey");
   r << kind << name << body;
   return r;
 }
@@ -608,6 +617,9 @@ parse_raw_coq (string s) {
       if (is_enunciation (body)) {
         enun= parse_enunciation (body);
         r= &proof;
+      }
+      else if (is_definition (body)) {
+        *r << parse_enunciation (body, "coq-definition");
       }
       else {
         tree tmp= parse_vernac_command (body);

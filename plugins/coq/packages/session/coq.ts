@@ -55,6 +55,13 @@
 
   <assign|coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|font-family|tt|<arg|body>>>>
 
+  <assign|coq-definition|<\macro|id|status|type|name|def-body>
+    <\render-theorem|<arg|type>>
+      <surround| <with|font-shape|italic|<arg|name>>
+      ||<with|color|<arg|status>|<arg|def-body>>>
+    </render-theorem>
+  </macro>>
+
   <assign|coq-enunciation|<\macro|id|status|type|name|thm-body|proof-body>
     <\render-theorem|<arg|type>>
       <surround| <with|font-shape|italic|<arg|name>>
