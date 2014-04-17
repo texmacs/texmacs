@@ -163,6 +163,17 @@ get_debug_messages (string kind, int max_number) {
 }
 
 void
+clear_debug_messages (string channel) {
+  tree r= tree (TUPLE);
+  for (int i=0; i<N(debug_messages); i++)
+    if (is_func (debug_messages[i], TUPLE, 3) &&
+        debug_messages[i][0] != channel)
+      r << debug_messages[i];
+  debug_messages= r;
+  debug_lf_flag = false;
+}
+
+void
 clear_debug_messages () {
   debug_messages= tree (TUPLE);
   debug_lf_flag = false;

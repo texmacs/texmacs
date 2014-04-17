@@ -112,6 +112,7 @@ void debug_message (string channel, string msg);
 void debug_formatted (string channel, tree msg);
 tree get_debug_messages (string kind, int max_number);
 void clear_debug_messages ();
+void clear_debug_messages (string channel);
 
 /******************************************************************************
 * miscellaneous routines

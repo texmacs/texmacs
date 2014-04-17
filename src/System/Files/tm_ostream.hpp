@@ -30,6 +30,7 @@ public:
   virtual void write (const char*);
   virtual void write (tree);
   virtual void flush ();
+  virtual void clear ();
 
   friend class tm_ostream;
 };
@@ -55,6 +56,7 @@ public:
   tm_ostream& operator = (tm_ostream x);
   bool operator == (tm_ostream&);
 
+  void clear ();
   void flush ();
   void buffer ();
   string unbuffer ();

@@ -19,6 +19,7 @@
 tm_ostream_rep::tm_ostream_rep (): ref_count (0) {}
 tm_ostream_rep::~tm_ostream_rep () {}
 void tm_ostream_rep::flush () {}
+void tm_ostream_rep::clear () {}
 bool tm_ostream_rep::is_writable () const { return false; }
 void tm_ostream_rep::write (const char*) {}
 void tm_ostream_rep::write (tree t) {}
@@ -146,6 +147,7 @@ public:
   bool is_writable () const;
   void write (const char*);
   void write (tree t);
+  void clear ();
 };
 
 debug_ostream_rep::debug_ostream_rep (string channel2): channel (channel2) {}
@@ -154,6 +156,11 @@ debug_ostream_rep::~debug_ostream_rep () {}
 bool
 debug_ostream_rep::is_writable () const {
   return true;
+}
+
+void
+debug_ostream_rep::clear () {
+  clear_debug_messages (channel);
 }
 
 void
@@ -194,6 +201,11 @@ tm_ostream& tm_ostream::operator = (tm_ostream x) {
   this->rep=x.rep; return *this; }
 bool tm_ostream::operator == (tm_ostream& out) {
   return (&out == this); }
+
+void
+tm_ostream::clear () {
+  rep->clear ();
+}
 
 void
 tm_ostream::flush () {
