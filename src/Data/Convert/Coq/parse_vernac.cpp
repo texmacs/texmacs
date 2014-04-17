@@ -192,6 +192,10 @@ coqdoc_parse_emphasis (string s, int &i) {
 
 /* Parse lists ***************************************************************/
 
+/* FIXME:
+ * Coqdoc lists are quite ugly. It is difficult to know when does an item ends.
+ */
+
 static bool
 is_list_begining (string s, int i) {
   int n= N(s);
@@ -204,36 +208,38 @@ is_list_begining (string s, int i) {
 
 static int
 get_list_depth (string s, int i) {
-  int iitem= 0, n= N(s);
+  int item_indent= 0, n= N(s);
   if (i<n && s[i] == '\n') i++;
   while (i<n && s[i] == ' ') {
-    iitem++;
+    item_indent++;
     i++;
   }
   if (i<n && s[i] == '-' && !test(s, i, "----"))
-    return iitem;
+    return item_indent;
   else
-    return -iitem;
+    return -item_indent;
 }
 
 static bool
-can_parse_item (string s, int i, int iitem) {
-  return get_list_depth (s, i) >= iitem;
+can_parse_item (string s, int i, int item_indent) {
+  if (i<N(s) && s[i] == '\n') i++;
+  return get_list_depth (s, i) >= item_indent && (get_list_depth (s, i) > 0 || (i<N(s) && s[i] == '-'));
 }
 
 static bool
-can_parse_line (string s, int i, int itext) {
-  if (get_list_depth (s, i) <= -itext || get_list_depth (s, i) >= itext)
+can_parse_line (string s, int i, int text_indent) {
+  if (get_list_depth (s, i) > 0
+      && (get_list_depth (s, i) <= -text_indent || get_list_depth (s, i) >= text_indent))
     return true;
   int n= N(s);
   i++;
   while (i<n && (s[i] == ' ' || s[i] == '\t'))
     i++;
-  return s[i] == '\n';
+  return i < n && s[i] == '\n';
 }
 
 static tree
-parse_line (string s, int &i, int itext) {
+parse_line (string s, int &i, int text_indent) {
   int n= N(s);
   int start= i;
   if (i<n && s[i] == '\n') i++;
@@ -244,7 +250,7 @@ parse_line (string s, int &i, int itext) {
   }
   else {
     while (i<n && s[i] != '\n') i++;
-    while (can_parse_line (s, i, itext+1)) {
+    while (can_parse_line (s, i, text_indent+1)) {
       i++;
       while (i<n && s[i] != '\n') i++;
     }
@@ -253,27 +259,27 @@ parse_line (string s, int &i, int itext) {
 }
 
 static tree
-parse_item (string s, int &i, int iitem) {
-  int itext= iitem, n= N(s);
+parse_item (string s, int &i, int item_indent) {
+  int text_indent= item_indent, n= N(s);
   if (i<n && s[i] == '\n') i++;
-  i += iitem;
+  i += item_indent;
   if (i<n && s[i] == '-' && !test(s, i, "----")) {
-    itext++;
+    text_indent++;
     i++;
   }
   while (i<n && s[i] == ' ') {
-    itext++;
+    text_indent++;
     i++;
   }
   tree r (CONCAT);
   r << compound ("item");
-  tree tmp= parse_line (s, i, itext);
+  tree tmp= parse_line (s, i, text_indent);
   if (tmp != "")
     r << tmp;
-  if (can_parse_line (s, i, itext)) {
+  if (can_parse_line (s, i, text_indent)) {
     tree rr (DOCUMENT, r);
-    while (can_parse_line (s, i, itext)) {
-      tmp= parse_line (s, i, itext);
+    while (can_parse_line (s, i, text_indent)) {
+      tmp= parse_line (s, i, text_indent);
       if (tmp != "")
         rr << tmp;
     }
@@ -285,10 +291,10 @@ parse_item (string s, int &i, int iitem) {
 
 static tree
 parse_list (string s, int &i) {
-  int iitem= get_list_depth (s, i);
+  int item_indent= get_list_depth (s, i);
   tree r (DOCUMENT);
-  while (can_parse_item (s, i, iitem))
-    r << parse_item (s, i, iitem);
+  while (can_parse_item (s, i, item_indent))
+    r << parse_item (s, i, item_indent);
   return compound ("itemize", r);
 }
 
