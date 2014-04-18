@@ -19,6 +19,9 @@
 #include "new_document.hpp"
 #include "drd_std.hpp"
 
+#if defined(OS_WIN32)  || defined(__MINGW32__)
+#define WINPATHS
+#endif
 /******************************************************************************
 * Associating URLs to views
 ******************************************************************************/
@@ -46,8 +49,18 @@ static url
 decode_url (string s) {
   int i= search_forwards ("/", 0, s);
   if (i < 0) return url_none ();
-  if (s (0, i) == "here") return url (s (i+1, N(s)));
+#ifdef WINPATHS
+  int j= 0;
+  if (s (0, i) == "here") j= i+1;
+  if (s (0, i) == "default") j= i;
+  if (j) {
+     if(  s[j+1] == ':') return url (s (j, N(s)));
+     else return "\\" * url (s (j, N(s)));
+  }
+#else
+  if (s (0, i) == "here") {return url (s (i+1, N(s)));
   if (s (0, i) == "default") return url (s (i, N(s)));
+#endif
   return url_root (s (0, i)) * url (s (i+1, N(s)));
 }
 

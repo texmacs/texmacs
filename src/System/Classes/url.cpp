@@ -499,14 +499,17 @@ as_string (url u, int type) {
         else return s1 * sep * s2 (0, N(s2) - 1);
       }
       else {
-        if (type == URL_SYSTEM) return s2;
+        if (type == URL_SYSTEM) return "\\\\" * s2;
         else return s1 * sep * s2;
       }
     }
     if (is_root (u[1]) && type != URL_SYSTEM && N(s2) >= 2 && is_alpha (s2[0]) && s2[1] == ':')
       return s1 * sep * s2 (0, 1) * s2 (2, N(s2));
-    if (is_root (u[1]) && stype == URL_SYSTEM)
-      return s2;
+    if (is_root (u[1]) && stype == URL_SYSTEM) {
+      if (N(s2) >= 2 && is_alpha (s2[0]) && s2[1] == ':') return s2; 
+      else return "\\\\" * s2; 
+    }
+
 #endif
     return s1 * sep * s2;
   }
