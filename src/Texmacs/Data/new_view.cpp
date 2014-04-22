@@ -58,7 +58,7 @@ decode_url (string s) {
      else return "\\" * url (s (j, N(s)));
   }
 #else
-  if (s (0, i) == "here") {return url (s (i+1, N(s)));
+  if (s (0, i) == "here") return url (s (i+1, N(s)));
   if (s (0, i) == "default") return url (s (i, N(s)));
 #endif
   return url_root (s (0, i)) * url (s (i+1, N(s)));
