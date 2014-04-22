@@ -209,7 +209,9 @@
     ---
     ("Floating object" (make-insertion "float"))
     ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
-    ("Floating table" (begin (make-insertion "float") (make 'big-table)))
+    ("Floating table" (begin (make-insertion "float")
+                             (insert-go-to '(big-table "" "") '(0 0))
+                             (make 'tabular)))
     ("Floating algorithm" (begin (make-insertion "float") (make 'algorithm)))))
 
 (menu-bind position-marginal-note-menu

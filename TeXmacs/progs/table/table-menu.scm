@@ -21,8 +21,12 @@
 
 (menu-bind insert-table-menu
   (if (and (style-has? "std-dtd") (in-text?) (style-has? "env-float-dtd"))
-      ("Small table" (make 'small-table))
-      ("Big table" (make 'big-table))
+      ("Small table" (begin
+                       (insert-go-to '(small-table "" "") '(0 0))
+                       (make 'tabular)))
+      ("Big table"   (begin
+                       (insert-go-to '(big-table "" "") '(0 0))
+                       (make 'tabular)))
       ---)
   (if (and (style-has? "calc-dtd") (calc-ready?))
       (link calc-table-menu)
