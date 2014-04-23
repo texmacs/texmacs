@@ -38,16 +38,17 @@ bib_error () {
     convert_error << "BibTeX parse error in " << bib_current_tag << "\n";
 }
 
-void
+int
 bib_char (string s, int& pos, char c) {
-  if (!bib_ok (s, pos)) return;
+  if (!bib_ok (s, pos)) return -1;
   if (s[pos] == c) pos++;
   else {
     bib_error ();
     if (c) convert_error << "Invalid char: \'" << s[pos]
                          << "\', expected \'" << c << "\'\n";
-    pos= -1;
+    return -1;
   }
+  return 0;
 }
 
 bool
@@ -60,7 +61,6 @@ bib_open (string s, int& pos, char& cend) {
     convert_error << "Expected '{' or '(' instead of '" << s[pos] << "'\n";
     while (pos < N(s) && s[pos] != '{' && s[pos] != '(') pos++;
     if (pos < N(s)) return bib_open (s, pos, cend);
-    pos= -1;
     return true;
   }
 }
@@ -83,7 +83,8 @@ void
 bib_within (string s, int& pos, char cbegin, char cend, string& content) {
   if (!bib_ok (s, pos)) return;
   int depth= 0;
-  bib_char (s, pos, cbegin);
+  if (bib_char (s, pos, cbegin))
+    return;
   while (bib_ok (s, pos) && (s[pos] != cend || depth > 0)) {
     if (cbegin != cend) {
       if (s[pos] == cbegin) depth++;
@@ -192,7 +193,8 @@ bib_fields (string s, int& pos, string ce, string tag, tree& fields) {
       return;
     }
     bib_blank (s, pos);
-    bib_char (s, pos, '=');
+    if (bib_char (s, pos, '='))
+      return;
     bib_blank (s, pos);
     bib_arg (s, pos, ce, arg);
     if (tag == "bib-field") param= locase_all (param);
