@@ -33,7 +33,7 @@ from_verbatim (string s, bool wrap= true) {
   }
   if (i == n) return as_tree (r);
 
-  tree t= verbatim_to_tree (s, wrap, "utf-8");
+  tree t= verbatim_to_tree (s, wrap, "SourceCode");
   if (is_document (t) && N(t) == 1)
     return t[0];
   return t;
@@ -150,10 +150,14 @@ static tree coqdoc_to_tree (string s);
 static string
 parse_delimited (string s, int& i, char c) {
   int start= i + 1, n= N(s);
+  string esc (c);
+  esc= esc*esc;
   i++;
   while (i < n) {
-    if (s[i] == c && !(i+1 == n || s[i+1] == c))
+    if (s[i] == c && !test (s, i, esc))
       break;
+    if (test (s, i, esc))
+      i++;
     i++;
   }
   if (s[i] == c) i++;
@@ -179,6 +183,14 @@ add_line(tree &c, tree &d) {
   if (!is_blank (c))
     d << simplify_concat (c);
   c= tree (CONCAT);
+}
+
+static string
+unescape_coqdoc (string s) {
+  string r= replace (s, "##", "#");
+  r= replace (r, "%%", "%");
+  r= replace (r, "$$", "$");
+  return r;
 }
 
 /* Parse emphasis ************************************************************/
@@ -328,6 +340,10 @@ coqdoc_to_tree (string s) {
   bool newline= true;
   int i=0, n= N(s);
   tree coqdoc (DOCUMENT), line (CONCAT);
+  if (starts (s, "(**")) {
+    line << "(**";
+    i+= 3;
+  }
   while (i < n) {
     if (test (s, i, "[[\n")) {
       add_line (line, coqdoc);
@@ -337,10 +353,10 @@ coqdoc_to_tree (string s) {
       newline= true;
     }
     else if (s[i] == '[')
-      line << compound ("coqdoc-coq", parse_delimited (s, i, "[", "]", false));
+      line << compound ("coqdoc-coq",
+          from_verbatim (parse_delimited (s, i, "[", "]", false)));
     else if (newline && (test (s, i, "**** ") || test (s, i, "*** ") ||
                          test (s, i, "** ")   || test (s, i, "* "))) {
-      line= tree (CONCAT);
       string header= "section";
       if (test (s, i, "** "))    header= "subsection";
       if (test (s, i, "*** "))   header= "subsubsection";
@@ -348,9 +364,8 @@ coqdoc_to_tree (string s) {
       while (i<n && (s[i] == '*')) i++;
       while (i<n && (s[i] == ' ')) i++;
       int start= i;
-      while (i<n && (s[i] != '\n')) i++;
-      coqdoc << compound (header, coqdoc_to_tree (s (start, i)));
-      newline= true;
+      while (i<n && (s[i] != '\n' && !test (s, i, "*)"))) i++;
+      line << compound (header, coqdoc_to_tree (s (start, i)));
     }
     else if (newline && is_defining_pretty_printing (s, i)) {
       string str= parse_delimited (s, i, "(*", "*)", false);
@@ -363,19 +378,22 @@ coqdoc_to_tree (string s) {
     else if (test (s, i, "%%")) {
       line << "%";
       newline= false;
+      i+= 2;
     }
     else if (test (s, i, "$$")) {
       line << "$";
       newline= false;
+      i+= 2;
     }
     else if (test (s, i, "##")) {
       line << "#";
       newline= false;
+      i+= 2;
     }
     else if (s[i] == '#' || s[i] == '%' || s[i] == '$') {
       newline= false;
       char delim= s[i];
-      string ext= parse_delimited (s, i, delim);
+      string ext= unescape_coqdoc (parse_delimited (s, i, delim));
       tree tm;
       if (delim == '#')
         tm= compound ("coqdoc-html", generic_to_tree (ext, "html-snippet"));
@@ -397,10 +415,10 @@ coqdoc_to_tree (string s) {
       coqdoc << list;
       newline= true;
     }
-    else if (test (s, i, "<<\n")) {
+    else if (test (s, i, "\n<<")) {
       add_line (line, coqdoc);
       tree verb=
-        verbatim_to_tree (parse_delimited (s, i, "<<\n", "\n>>", false));
+        verbatim_to_tree (parse_delimited (s, i, "\n<<", "\n>>", false));
       coqdoc << compound ("coqdoc-verbatim", verb);
       newline= true;
     }
@@ -433,8 +451,9 @@ coqdoc_to_tree (string s) {
     else {
       if (s[i] != ' ')
         newline= false;
-      line << s(i, 1+i);
-      i++;
+      int start= i;
+      decode_from_utf8 (s, i);
+      line << from_verbatim (s(start, i));
     }
   }
   if (N(line) > 0)
@@ -747,7 +766,7 @@ section_parsed_coq (tree t) {
       string name= get_section_name (t[i++]);
       tree body (DOCUMENT);
       while (i<n && !is_end_section (t[i], name)) body << t[i++];
-      r << compound ("coq-section", name, body);
+      r << compound ("coq-section", name, section_parsed_coq (body));
     }
     else
       r << t[i];
