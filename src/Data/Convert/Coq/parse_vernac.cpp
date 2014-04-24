@@ -209,63 +209,77 @@ coqdoc_parse_emphasis (string s, int &i) {
  */
 
 static bool
+is_new_item (string s, int i) {
+  return i<N(s) && s[i] == '-' && !test(s, i, "----");
+}
+
+static bool
 is_list_begining (string s, int i) {
   int n= N(s);
   if (!(i<n && s[i] == '\n')) return false;
   i++;
-  while (i<n && s[i] == ' ' && !test(s, i, "----")) i++;
-  if (!(i<n && s[i] == '-' && !test(s, i, "----"))) return false;
-  return true;
+  while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+  return is_new_item (s, i);
 }
 
 static int
 get_list_depth (string s, int i) {
-  int item_indent= 0, n= N(s);
-  if (i<n && s[i] == '\n') i++;
-  while (i<n && s[i] == ' ') {
-    item_indent++;
-    i++;
+  int item_indent= 0, n= N(s), j;
+  while (i<n && is_blank (s[i])) i++;
+  if (i == n) return 0;
+  j= i-1;
+  while (j>=0 && s[j] != '\n') {
+    if (s[j] == ' ')
+      item_indent++;
+    if (s[j] == '\t')
+      item_indent+= 8;
+    j--;
   }
-  if (i<n && s[i] == '-' && !test(s, i, "----"))
-    return item_indent;
+  if (is_new_item (s, i))
+    return item_indent + 1;
+  else if (item_indent == 0)
+    return 0;
   else
-    return -item_indent;
+    return -item_indent - 1;
 }
 
 static bool
 can_parse_item (string s, int i, int item_indent) {
-  if (i<N(s) && s[i] == '\n') i++;
-  return get_list_depth (s, i) >= item_indent && (get_list_depth (s, i) > 0 || (i<N(s) && s[i] == '-'));
+  return get_list_depth (s, i) == item_indent;
 }
 
 static bool
 can_parse_line (string s, int i, int text_indent) {
-  if (get_list_depth (s, i) > 0
-      && (get_list_depth (s, i) <= -text_indent || get_list_depth (s, i) >= text_indent))
+  int d= get_list_depth (s, i);
+  if (d != 0 && (d <= -text_indent || d >=  text_indent))
     return true;
-  int n= N(s);
-  i++;
-  while (i<n && (s[i] == ' ' || s[i] == '\t'))
-    i++;
-  return i < n && s[i] == '\n';
+  else
+    return test (s, i, "\n<<") || test (s, i, "\n\n<<") ||
+           test (s, i, "[[\n") || test (s, i, "\n[[\n");
 }
 
 static tree
 parse_line (string s, int &i, int text_indent) {
   int n= N(s);
   int start= i;
-  if (i<n && s[i] == '\n') i++;
-  while (i<n && s[i] == ' ') i++;
-  if (i<n && s[i] != '-' && !test(s, i, "----")) {
+  while (i<n && is_blank (s[i])) i++;
+  if (!is_new_item (s, i)) {
     start= i;
-    while (i<n && s[i] != '\n') i++;
+    if (test (s, i, "<<")) {
+      while (i<n && !test (s, i, "\n>>")) i++;
+      i+= 3;
+    }
+    else if (test (s, i, "[[")) {
+      while (i<n && !test (s, i, "\n]]")) i++;
+      i+= 3;
+    }
+    else
+      while (i<n && s[i] != '\n') i++;
   }
   else {
     while (i<n && s[i] != '\n') i++;
-    while (can_parse_line (s, i, text_indent+1)) {
-      i++;
-      while (i<n && s[i] != '\n') i++;
-    }
+    while (can_parse_line (s, i, text_indent+1))
+      parse_line (s, i, text_indent+1);
   }
   return coqdoc_to_tree (s(start, i));
 }
@@ -273,11 +287,10 @@ parse_line (string s, int &i, int text_indent) {
 static tree
 parse_item (string s, int &i, int item_indent) {
   int text_indent= item_indent, n= N(s);
-  if (i<n && s[i] == '\n') i++;
-  i += item_indent;
-  if (i<n && s[i] == '-' && !test(s, i, "----")) {
+  while (i<n && is_blank (s[i])) i++;
+  if (is_new_item (s, i)) {
     text_indent++;
-    i++;
+    while (s[i] == '-') i++;
   }
   while (i<n && s[i] == ' ') {
     text_indent++;
@@ -295,10 +308,9 @@ parse_item (string s, int &i, int item_indent) {
       if (tmp != "")
         rr << tmp;
     }
-    return rr;
+    r= rr;
   }
-  else
-    return r;
+  return r;
 }
 
 static tree
@@ -415,10 +427,15 @@ coqdoc_to_tree (string s) {
       coqdoc << list;
       newline= true;
     }
-    else if (test (s, i, "\n<<")) {
+    else if (test (s, i, "\n<<") || (i == 0 && starts (s, "<<"))) {
+      if (i == 0 && starts (s, "<<")) s= "\n" * s;
       add_line (line, coqdoc);
-      tree verb=
-        verbatim_to_tree (parse_delimited (s, i, "\n<<", "\n>>", false));
+      string parsed= parse_delimited (s, i, "\n<<", "\n>>", false);
+      if (N(s) > 0 && s[0] == '\n') {
+        s= s(1, N(s));
+        n= N(s);
+      }
+      tree verb= verbatim_to_tree (parsed, "SourceCode");
       coqdoc << compound ("coqdoc-verbatim", verb);
       newline= true;
     }
