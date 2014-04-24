@@ -533,13 +533,59 @@ is_end_proof (tree t) {
   return s == "Qed" || s == "Admitted" || s == "Defined";
 }
 
+static void
+append_commands (tree &t, tree u) {
+  if (t == "")
+    t= u;
+  else if (is_atomic (t))
+    t= concat (t, u);
+  else if (is_document (u)) {
+    if (N(u) > 0) {
+      append_commands (t, u[0]);
+      u[0]= t;
+      t= u;
+    }
+  }
+  else if (is_document (t)) {
+    int last= N(t)-1;
+    append_commands (t[last], u);
+  }
+  else if (is_concat (t) && is_concat (u))
+    t << A(u);
+  else if (is_concat (t))
+    t << u;
+}
+
+static tree
+parse_subcommand (string s) {
+  int start= 0, i=0, n= N(s);
+  tree r= "";
+  while (i<n) {
+    if (start_comment (s, i)) {
+      append_commands (r, from_verbatim (s(start, i), false));
+      if (start_coqdoc (s, i))
+        append_commands (r, parse_coqdoc (s, i));
+      else
+        append_commands (r, parse_comment (s, i));
+      start= i;
+    }
+    else
+      i++;
+  }
+  if (start < n)
+    append_commands (r, from_verbatim (s(start, i), false));
+  if ((is_concat (r) || is_document (r)) && N(r) == 1)
+    r= r[0];
+  return r;
+}
+
 static tree
 parse_enunciation (string s, string lbl= "coq-enunciation") {
   int i= 0, n= N(s);
   string kind= parse_command_name (s, i);
   while (i<n && is_blank (s[i])) i++;
   string name= parse_identifier (s, i);
-  tree body= from_verbatim (s (++i, n), false);
+  tree body= parse_subcommand (s (++i, n));
   tree r= compound (lbl, "", "dark grey");
   r << kind << name << body;
   return r;
@@ -580,14 +626,14 @@ parse_vernac_command (string s) {
   array<string> a= split_command (s);
   if (N(a) == 1)
     return compound ("coq-command", "", "dark grey",
-                     from_verbatim (a[0], false));
+                     parse_subcommand (a[0]));
   else if (N(a) > 0) {
     for (int i=0; i<N(a)-1; i++)
       r << compound ("coq-command", "", "dark grey",
-                     from_verbatim (a[i], false))
+                     parse_subcommand (a[i]))
         << " ";
     r << compound ("coq-command", "", "dark grey",
-                   from_verbatim (a[N(a)-1], false));
+                   parse_subcommand (a[N(a)-1]));
   }
   return r;
 }
@@ -640,13 +686,13 @@ parse_raw_coq (string s) {
   int i= 0, startcmd= 0, n= N(s), indent_level=-1;
   bool in_cmd= false;
   while (i<n) {
-    if (start_coqdoc (s, i))
-      doc << parse_coqdoc (s, i);
-    else if (start_comment (s, i)) {
+    if (!in_cmd && start_coqdoc (s, i))
+      *r << parse_coqdoc (s, i);
+    else if (!in_cmd && start_comment (s, i)) {
       if (is_hide_or_show (s, i))
-        doc << parse_coqdoc_hide_show (s, i);
+        *r << parse_coqdoc_hide_show (s, i);
       else
-        doc << parse_comment (s, i);
+        *r << parse_comment (s, i);
     }
     else if (end_vernac_command (s, i)) {
       string body= s (startcmd, ++i);
