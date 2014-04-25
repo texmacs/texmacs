@@ -788,11 +788,13 @@ indent_parsed_coq (tree t, int base_indent=0) {
   for (i=0; i<n; i++) {
     if (get_indent (t[i]) > base_indent) {
       tree body (DOCUMENT);
-      int indent= get_indent (t[i++]);
+      int indent= get_indent (t[i]);
       bool stop= false;
       while (i<n && !stop) {
         int curr_ind= get_indent (t[i]);
-        if (curr_ind > -1 && (curr_ind < indent || curr_ind < base_indent)) {
+        if (curr_ind > -1 && curr_ind > base_indent && curr_ind < indent)
+          indent= curr_ind;
+        if (curr_ind > -1 && curr_ind <= base_indent) {
           i--;
           stop= true;
         }
