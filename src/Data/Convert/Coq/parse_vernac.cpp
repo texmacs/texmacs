@@ -74,7 +74,7 @@ is_blank (tree t) {
 
 bool
 start_coqdoc (string s, int i) {
-  return test (s, i, "(** ");
+  return test (s, i, "(**");
 }
 
 bool
