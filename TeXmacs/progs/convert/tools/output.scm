@@ -50,6 +50,9 @@
 ;;    (display* "OUTPUT\n" r "\n")
     r))
 
+(tm-define (get-output-start-flag)
+  output-start-flag)
+
 (tm-define (get-output-comment)
   output-comment)
 

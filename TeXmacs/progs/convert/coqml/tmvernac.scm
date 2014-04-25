@@ -45,17 +45,20 @@
 
 (define (tmvernac-coq-coqdoc s l)
   (with-mode "coqdoc"
-    (tmvernac (car l))))
-;    `(!document (!coqdoc ,(tmvernac (car l))))))
+    `(!coqdoc ,(tmvernac (car l)))))
 
 (define (tmvernac-coq-comment s l)
   (with-mode "code"
-    (tmvernac (car l))))
-;    `(!document (!comment ,(tmvernac (car l))))))
+    `(!comment ,(tmvernac (car l)))))
 
 (define (tmvernac-coq-command s l)
   (with-mode "code"
-    (tmvernac (caddr l))))
+    `(!verbatim ,(tmvernac (caddr l)))))
+
+(define (get-head-and-tail t)
+  (if (and (func? t '!paragraph) (list>1? t))
+    (list (cadr t) `(!paragraph ,@(cddr t)))
+    (list t '())))
 
 (define (tmvernac-coq-enunciation s l)
   (with-mode "code"
@@ -63,18 +66,22 @@
           (name  (tmvernac (cadddr l)))
           (body  (tmvernac (fifth l)))
           (proof (tmvernac (sixth l))))
-      `(!paragraph
-         (!concat ,kind " " ,name " " ,body)
-         "Proof."
-         ,proof))))
+      (with (start end) (get-head-and-tail body)
+        `(!paragraph
+           (!concat ,kind " " ,name " " ,start)
+           (!verbatim ,end)
+           "Proof."
+           (!verbatim ,proof))))))
 
 (define (tmvernac-coq-definition s l)
   (with-mode "code"
     (let ((kind  (tmvernac (caddr l)))
           (name  (tmvernac (cadddr l)))
           (body  (tmvernac (fifth l))))
-      `(!paragraph
-         (!concat ,kind " " ,name " " ,body)))))
+      (with (start end) (get-head-and-tail body)
+        `(!paragraph
+           (!concat ,kind " " ,name " " ,start)
+           (!verbatim ,end))))))
 
 (define (tmvernac-coq-section s l)
   (with-mode "code"
@@ -98,7 +105,7 @@
                     ((== s 'subsection)    "** ")
                     ((== s 'section)       "* ")
                     (else ""))))
-    `(!concat ,mark ,body)))
+    `(!concat ,mark ,body " ")))
 
 (define (tmcoqdoc-folds s l)
   (let ((body (tmvernac (cadr l)))
@@ -110,14 +117,11 @@
        ,body
        (!concat "(* end " ,mark " *)"))))
 
-;; NOTA: could be merged in a "tmcoqdoc-delimited" function
+;; NOTA: could be merged in a "tmcoqdoc-delimited" function wich take care of
+;; not concatenating !documents ...
 (define (tmcoqdoc-coq s l)
   (with coq (tmvernac (car l))
     `(!concat "[" ,coq "]")))
-
-(define (tmcoqdoc-vernac s l)
-  (with vernac (tmvernac (car l))
-    `(!concat "[[\n" ,vernac "\n]]")))
 
 (define (tmcoqdoc-latex s l)
   (with tex (tmvernac-string
@@ -131,9 +135,13 @@
                (texmacs->generic (stree->tree (car l)) "html-snippet"))
     `(!concat "#" ,html "#")))
 
+(define (tmcoqdoc-vernac s l)
+  (with vern (tmvernac (car l))
+    `(!unindent (!verbatim (!paragraph "[[" ,vern "]]")))))
+
 (define (tmcoqdoc-verbatim s l)
   (with verb (tmvernac (car l))
-    `(!concat "<<\n" ,verb "\n>>")))
+    `(!unindent (!verbatim (!paragraph "<<" ,verb ">>")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style macros

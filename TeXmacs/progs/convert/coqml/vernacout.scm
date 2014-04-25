@@ -15,45 +15,70 @@
           (:use (convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interface for board effects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define verb-output-mode #f)
+(define com-output-mode #f)
+(define doc-output-mode #f)
+
+(define (vernacout-initialize)
+  (set! verb-output-mode #f)
+  (set! com-output-mode #f)
+  (set! doc-output-mode #f))
+
+(define (vernacout-update-indent)
+  (output-remove-indentation)
+  (output-verb (make-string (get-output-indent) #\space)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface for string output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (output-vernac s)
-  (output-text s))
+  (if verb-output-mode
+    (output-verb s)
+    (output-text s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (vernacout-verbatim l)
+  (set! verb-output-mode #t)
+  (vernacout l)
+  (set! verb-output-mode #f))
+
 (define (vernacout-item i)
   (output-indent -2)
-  (output-lf)
+  (vernacout-update-indent)
   (vernacout i)
   (output-indent 2))
 
-(define (vernacout-coqdoc l)
-    (output-vernac "(** ")
-    (vernacout `(!indent ,l))
-    (output-vernac " *)")
-    (output-lf))
-
 (define (vernacout-comment l)
-    (output-vernac "(* ")
-    (vernacout `(!indent ,l))
-    (output-vernac " *)")
-    (output-lf))
+  (set! com-output-mode #t)
+  (output-indent 3)
+  (vernacout l)
+  (output-indent -3)
+  (set! com-output-mode #f))
 
-(define (vernacout-preamble l)
-  (output-verbatim l))
-
-(define (empty-line? x)
-  (or (== x "")
-      (and (func? x '!concat)
-           (list-and (map empty-line? (cdr x))))))
+(define (vernacout-coqdoc l)
+  (set! doc-output-mode #t)
+  (output-indent 4)
+  (vernacout l)
+  (output-indent -4)
+  (set! doc-output-mode #f))
 
 (define (vernacout-paragraph l)
   (if (nnull? l)
     (begin
+      (cond ((== (car l) "")   (output-remove-indentation))
+            ((and (== (car l) "*)")
+                  (or com-output-mode doc-output-mode))
+             (begin
+               (output-indent (if com-output-mode -3 -4))
+               (vernacout-update-indent)
+               (output-indent (if com-output-mode 3 4)))))
       (vernacout (car l))
       (if (nnull? (cdr l)) (output-lf))
       (vernacout-paragraph (cdr l)))))
@@ -69,13 +94,14 @@
 
 (define (vernacout-indent x)
   (output-indent 2)
-  (output-verb "  ")
+  (vernacout-update-indent)
   (vernacout x)
   (output-indent -2))
 
 (define (vernacout-unindent x)
   (with old-indent (get-output-indent)
     (set-output-indent 0)
+    (vernacout-update-indent)
     (vernacout x)
     (set-output-indent old-indent)))
 
@@ -92,6 +118,7 @@
         ((nlist>0? x) (display* "TeXmacs] bad formated stree:\n" x "\n"))
 	((== (car x) '!comment)   (vernacout-comment (cadr x)))
 	((== (car x) '!coqdoc)    (vernacout-coqdoc (cadr x)))
+	((== (car x) '!verbatim)  (vernacout-verbatim (cadr x)))
 	((== (car x) '!item)      (vernacout-item (cadr x)))
 	((== (car x) '!paragraph) (vernacout-paragraph (cdr x)))
 	((== (car x) '!concat)    (vernacout-concat (cdr x)))
@@ -102,5 +129,7 @@
 	(else (display* "TeXmacs] bad formated stree:\n" x "\n"))))
 
 (tm-define (serialize-vernac x)
+  ;;(write x)(newline)(newline)
+  (vernacout-initialize)
   (vernacout x)
   (output-produce))

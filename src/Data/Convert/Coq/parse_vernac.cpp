@@ -41,12 +41,17 @@ from_verbatim (string s, bool wrap= true) {
 
 /* Parsing blanks ************************************************************/
 
-bool
+static bool
+is_spacing (char c) {
+  return c == ' ' || c == '\t';
+}
+
+static bool
 is_blank (char c) {
   return c == ' ' || c == '\n' || c == '\t';
 }
 
-bool
+static bool
 is_blank (string s) {
   int i= 0, n= N(s);
   while (i<n)
@@ -55,7 +60,7 @@ is_blank (string s) {
   return true;
 }
 
-bool
+static bool
 is_blank (tree t) {
   if (is_atomic (t))
     return is_blank (as_string (t));
@@ -72,29 +77,24 @@ is_blank (tree t) {
     return false;
 }
 
-bool
+static bool
 start_coqdoc (string s, int i) {
   return test (s, i, "(**");
 }
 
-bool
+static bool
 start_comment (string s, int i) {
   return test (s, i, "(*");
 }
 
-bool
-end_comment (string s, int i) {
-  return test (s, i, "*)");
-}
-
 /* Parsing idents ************************************************************/
 
-bool
+static bool
 start_utf8_seq (char c) {
   return ((0xE0 & c) == 0xC0) || ((0xF0 & c) == 0xE0) || ((0xF8 & c) == 0xF0);
 }
 
-bool
+static bool
 start_ident (char c) {
   // Note: unlike Coq, we don't discriminate utf8 letters from symbols. See
   // http://coq.inria.fr/distrib/current/refman/Reference-Manual003.html#sec17
@@ -102,12 +102,12 @@ start_ident (char c) {
   return is_alpha (c) || c == '_' || start_utf8_seq (c);
 }
 
-bool
+static bool
 continue_ident (char c) {
   return start_ident (c) || is_digit (c) || c == '\'';
 }
 
-string
+static string
 parse_identifier (string s, int &i) {
   int n= N(s), start= i;
   if (i<n && start_ident (s[i])) {
@@ -117,15 +117,9 @@ parse_identifier (string s, int &i) {
   return as_string (from_verbatim (s (start, i)));
 }
 
-string
-parse_identifier (string s) {
-  int i= 0;
-  return parse_identifier (s, i);
-}
-
 /* Parsing command names *****************************************************/
 
-string
+static string
 parse_command_name (string s, int &i) {
   int n= N(s), start= i;
   if (i<n && s[i] >= 'A' && s[i] <= 'Z') {
@@ -135,7 +129,7 @@ parse_command_name (string s, int &i) {
   return s (start, i);
 }
 
-string
+static string
 parse_command_name (string s) {
   int i= 0;
   return parse_command_name (s, i);
@@ -179,9 +173,9 @@ parse_delimited (string s, int& i, string beg, string end, bool keep= true) {
 
 static void
 add_line(tree &c, tree &d) {
-  tree tmp= simplify_concat (c);
-  if (!is_blank (c))
-    d << simplify_concat (c);
+  tree tmp= trim_spaces (simplify_concat (c));
+  if (!is_blank (tmp))
+    d << copy (tmp);
   c= tree (CONCAT);
 }
 
@@ -191,6 +185,20 @@ unescape_coqdoc (string s) {
   r= replace (r, "%%", "%");
   r= replace (r, "$$", "$");
   return r;
+}
+
+static bool
+is_whiteline (string s, int i) {
+  int n= N(s);
+  while (i<n && is_spacing (s[i])) i++;
+  return s[i] == '\n';
+}
+
+static void
+skip_whiteline (string s, int &i) {
+  int n= N(s);
+  while (i<n && is_spacing (s[i])) i++;
+  i++;
 }
 
 /* Parse emphasis ************************************************************/
@@ -218,7 +226,7 @@ is_list_begining (string s, int i) {
   int n= N(s);
   if (!(i<n && s[i] == '\n')) return false;
   i++;
-  while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+  while (i<n && is_spacing (s[i])) i++;
   return is_new_item (s, i);
 }
 
@@ -292,8 +300,11 @@ parse_item (string s, int &i, int item_indent) {
     text_indent++;
     while (s[i] == '-') i++;
   }
-  while (i<n && s[i] == ' ') {
-    text_indent++;
+  while (i<n && is_spacing (s[i])) {
+    if (s[i] == ' ')
+      text_indent++;
+    if (s[i] == '\t')
+      text_indent += 8;
     i++;
   }
   tree r (CONCAT);
@@ -373,8 +384,8 @@ coqdoc_to_tree (string s) {
       if (test (s, i, "** "))    header= "subsection";
       if (test (s, i, "*** "))   header= "subsubsection";
       if (test (s, i, "**** "))  header= "paragraph";
-      while (i<n && (s[i] == '*')) i++;
-      while (i<n && (s[i] == ' ')) i++;
+      while (i<n && s[i] == '*') i++;
+      while (i<n && is_spacing (s[i])) i++;
       int start= i;
       while (i<n && (s[i] != '\n' && !test (s, i, "*)"))) i++;
       line << compound (header, coqdoc_to_tree (s (start, i)));
@@ -428,14 +439,15 @@ coqdoc_to_tree (string s) {
       newline= true;
     }
     else if (test (s, i, "\n<<") || (i == 0 && starts (s, "<<"))) {
-      if (i == 0 && starts (s, "<<")) s= "\n" * s;
-      add_line (line, coqdoc);
-      string parsed= parse_delimited (s, i, "\n<<", "\n>>", false);
-      if (N(s) > 0 && s[0] == '\n') {
-        s= s(1, N(s));
+      if (i == 0 && starts (s, "<<")) {
+        s= "\n" * s;
         n= N(s);
       }
-      tree verb= verbatim_to_tree (parsed, "SourceCode");
+      add_line (line, coqdoc);
+      string parsed= parse_delimited (s, i, "\n<<", "\n>>", false);
+      if (N(parsed) > 0 && parsed[0] == '\n')
+        parsed= parsed(1, N(parsed));
+      tree verb= verbatim_to_tree (parsed, false, "SourceCode");
       coqdoc << compound ("coqdoc-verbatim", verb);
       newline= true;
     }
@@ -453,6 +465,13 @@ coqdoc_to_tree (string s) {
     else if (s[i] == '\n') {
       add_line (line, coqdoc);
       i++;
+      if (is_whiteline (s, i)) {
+        coqdoc << "";
+        do
+          skip_whiteline (s, i);
+        while (is_whiteline (s, i));
+        i--;
+      }
       newline= true;
     }
     else if (s[i] == '<') {
@@ -466,7 +485,7 @@ coqdoc_to_tree (string s) {
       newline= false;
     }
     else {
-      if (s[i] != ' ')
+      if (!is_spacing (s[i]))
         newline= false;
       int start= i;
       decode_from_utf8 (s, i);
@@ -498,7 +517,7 @@ parse_coqdoc (string s, int& i) {
 static tree
 parse_comment (string s, int& i) {
   string coqdoc= parse_delimited (s, i, "(*", "*)");
-  return compound ("coq-comment", from_verbatim (coqdoc));
+  return compound ("coq-comment", from_verbatim (coqdoc, false));
 }
 
 /* Parse enunciations ********************************************************/
@@ -557,12 +576,12 @@ append_commands (tree &t, tree u) {
 }
 
 static tree
-parse_subcommand (string s) {
+parse_subcommand (string s, bool wrap= false) {
   int start= 0, i=0, n= N(s);
   tree r= "";
   while (i<n) {
     if (start_comment (s, i)) {
-      append_commands (r, from_verbatim (s(start, i), false));
+      append_commands (r, from_verbatim (s(start, i), wrap));
       if (start_coqdoc (s, i))
         append_commands (r, parse_coqdoc (s, i));
       else
@@ -573,7 +592,7 @@ parse_subcommand (string s) {
       i++;
   }
   if (start < n)
-    append_commands (r, from_verbatim (s(start, i), false));
+    append_commands (r, from_verbatim (s(start, i), wrap));
   if ((is_concat (r) || is_document (r)) && N(r) == 1)
     r= r[0];
   return r;
@@ -598,7 +617,7 @@ end_vernac_command (string s, int i) {
   int n= N(s);
   if (!(i<n && s[i] == '.')) return false;
   i++;
-  while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+  while (i<n && is_spacing (s[i])) i++;
   return i == n || s[i] == '\n';
 }
 
@@ -607,9 +626,9 @@ split_command (string s) {
   int start= 0, i=0, n= N(s);
   array<string> r;
   while (i<n) {
-    if (s[i] == '.' && i+1<n && (s[i+1] == ' ' || s[i+1] == '\t')) {
+    if (s[i] == '.' && i+1<n && is_spacing (s[i+1])) {
       r << s(start, ++i);
-      while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+      while (i<n && is_spacing (s[i])) i++;
       start= i;
     }
     else
@@ -621,19 +640,19 @@ split_command (string s) {
 }
 
 static tree
-parse_vernac_command (string s) {
+parse_vernac_command (string s, bool wrap= false) {
   tree r (CONCAT);
   array<string> a= split_command (s);
   if (N(a) == 1)
     return compound ("coq-command", "", "dark grey",
-                     parse_subcommand (a[0]));
+                     parse_subcommand (a[0], wrap));
   else if (N(a) > 0) {
     for (int i=0; i<N(a)-1; i++)
       r << compound ("coq-command", "", "dark grey",
-                     parse_subcommand (a[i]))
+                     parse_subcommand (a[i], wrap))
         << " ";
     r << compound ("coq-command", "", "dark grey",
-                   parse_subcommand (a[N(a)-1]));
+                   parse_subcommand (a[N(a)-1], wrap));
   }
   return r;
 }
@@ -643,7 +662,7 @@ parse_vernac_command (string s) {
 static int
 parse_indent (string s, int i) {
   int indent= 0, n= N(s);
-  while (i<n && (s[i] == ' ' || s[i] == '\t')) i++, indent++;
+  while (i<n && is_spacing (s[i])) i++, indent++;
   if (i<n && s[i] != '\n') return indent;
   else return -1;
 }
@@ -681,15 +700,15 @@ is_hide_or_show (string s, int i) {
 
 static tree
 parse_raw_coq (string s) {
-  tree doc (DOCUMENT), proof (DOCUMENT), enun;
+  tree doc (DOCUMENT), proof (DOCUMENT), enun (CONCAT);
   tree *r= &doc;
   int i= 0, startcmd= 0, n= N(s), indent_level=-1;
   bool in_cmd= false;
   while (i<n) {
-    if (!in_cmd && start_coqdoc (s, i))
-      *r << parse_coqdoc (s, i);
-    else if (!in_cmd && start_comment (s, i)) {
-      if (is_hide_or_show (s, i))
+    if (!in_cmd && start_comment (s, i)) {
+      if (start_coqdoc (s, i))
+        *r << parse_coqdoc (s, i);
+      else if (is_hide_or_show (s, i))
         *r << parse_coqdoc_hide_show (s, i);
       else
         *r << parse_comment (s, i);
@@ -704,20 +723,21 @@ parse_raw_coq (string s) {
         *r << parse_enunciation (body, "coq-definition");
       }
       else {
-        tree tmp= parse_vernac_command (body);
         if (r == &proof) {
+          tree tmp= parse_vernac_command (body, true);
           if (is_end_proof (tmp)) {
             proof << tmp;
             enun << proof;
             doc << enun;
             proof= tree (DOCUMENT);
+            enun= tree (CONCAT);
             r= &doc;
           }
           else if (!is_proof (tmp))
             *r << tmp;
         }
         else
-          *r << tmp;
+          *r << parse_vernac_command (body);;
       }
       in_cmd= false;
     }
@@ -741,6 +761,8 @@ parse_raw_coq (string s) {
       i++;
     }
   }
+  if (N(proof) > 0) enun << proof;
+  if (N(enun) > 0)  doc  << enun;
   return doc;
 }
 
