@@ -1416,34 +1416,38 @@ tree
 trim_spaces_right (tree t) {
   if (is_atomic (t)) return trim_spaces_right (as_string (t));
   else if (is_concat (t)) {
-    int end;
-    for (end=N(t)-1; end >= 0 && t[end] == " "; end--);
-    tree r= tree (L(t));
-    for (int i=0; i<=end; i++) {
-      if (i == end)
-        r << trim_spaces_right (t[i]);
-      else
-        r << t[i];
+    int i, n= N(t);
+    tree r= tree (L(t), n);
+    bool stop= false;
+    for (i=n-1; i>=0 && !stop; i--) {
+      r[i]= trim_spaces_right (t[i]);
+      if (is_concat (r[i]))
+        r[i]= simplify_concat (r[i]);
+      stop= (r[i] != "");
     }
-    return r;
+    for (; i>=0; i--)
+      r[i]= t[i];
+    return simplify_concat (r);
   }
   else return t;
 }
 
 tree
 trim_spaces_left (tree t) {
-  if (is_atomic (t)) return trim_spaces (as_string (t));
+  if (is_atomic (t)) return trim_spaces_left (as_string (t));
   else if (is_concat (t)) {
-    int start;
-    for (start=0; start < N(t) && t[start] == " "; start++);
-    tree r= tree (L(t));
-    for (int i=start; i<N(t); i++) {
-      if (i == start)
-        r << trim_spaces_left (t[i]);
-      else
-        r << t[i];
+    int i, n= N(t);
+    tree r= tree (L(t), n);
+    bool stop= false;
+    for (i=0; i<n && !stop; i++) {
+      r[i]= trim_spaces_left (t[i]);
+      if (is_concat (r[i]))
+        r[i]= simplify_concat (r[i]);
+      stop= (r[i] != "");
     }
-    return r;
+    for (; i<n; i++)
+      r[i]= t[i];
+    return simplify_concat (r);
   }
   else return t;
 }
