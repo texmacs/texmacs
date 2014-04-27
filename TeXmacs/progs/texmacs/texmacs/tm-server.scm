@@ -25,8 +25,6 @@
   (if (qt-gui?) "on" "off"))
 
 (define (notify-look-and-feel var val)
-  (with b (or (== val "macos") (== val "gnome"))
-    (set-preference "gui:line-input:autocommit" b))
   (set-message "Restart in order to let the new look and feel take effect"
                "configure look and feel"))
 
