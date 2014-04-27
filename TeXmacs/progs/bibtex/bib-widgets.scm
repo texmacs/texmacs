@@ -16,11 +16,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (bibtex bib-widgets)
-  (:use (bibtex bib-complete)))
+  (:use (bibtex bib-complete) (generic document-edit)))
 
 (define bib-widget-url (string->url ""))
 (define bib-widget-style "tm-plain")
-(define bib-widget-use-relative #t)
+(define bib-widget-use-relative? #t)
+(define bib-widget-update-buffer? #t)
 
 (define (bib-widget-url-chosen answer)
   (set! bib-widget-url answer)
@@ -49,13 +50,14 @@
 
 (define (bib-widget-insert doit?)
   (if doit?
-      (with file (if bib-widget-use-relative 
+      (with file (if bib-widget-use-relative? 
                      (url-delta (current-buffer) bib-widget-url)
                      bib-widget-url)
         (if (not (make-return-after))
             (insert 
              (list 'bibliography "bib" bib-widget-style (url->string file)
-                   '(document "")))))))
+                   '(document ""))))
+        (if bib-widget-update-buffer? (update-document "bibliography")))))
 
 (define (bib-widget-modify doit?)
   (if doit?
@@ -64,6 +66,7 @@
             (with t (car l)
               (tree-set! t 1 bib-widget-style)
               (tree-set! t 2 (url->string bib-widget-url))
+              (if bib-widget-update-buffer? (update-document "bibliography"))
               #t)
             #f))))
 
@@ -97,9 +100,13 @@
     ===
     (hlist
       ;(balloon "Use relative path:" "Select this to use a path relative to the current document. You can use this to be able to move around the folder containing your document and the bibliography.")
-      (text "Use relative path:") // //
-      (toggle (set! bib-widget-use-relative answer)
-              bib-widget-use-relative) 
+      (text "Use relative path:") //
+      (toggle (set! bib-widget-use-relative? answer)
+              bib-widget-use-relative?)
+      // //
+      (text "Update buffer:") // 
+      (toggle (set! bib-widget-update-buffer? answer)
+              bib-widget-update-buffer?)
       ///
       (text "Style:") // //
       (enum (bib-widget-style-chosen answer)
