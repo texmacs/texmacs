@@ -435,6 +435,44 @@
     (for (x l) (set-preference-name "scripting language" x (scripts-name x)))
     (cons "None" (map scripts-name l))))
 
+(tm-widget (experimental-preferences-widget cmd)
+  (padded
+    (hlist >>> 
+      (bold (text "Warning: These features are work in progress.")) >>>)
+    ======
+    (hlist
+      (aligned
+        (item (text "Fast environments:")
+          (toggle (set-boolean-preference "fast environments" answer)
+                  (get-boolean-preference "fast environments")))
+        (item (text "Alpha transparency:")
+          (toggle (set-boolean-preference "experimental alpha" answer)
+                  (get-boolean-preference "experimental alpha")))
+        (item (text "New style fonts:")
+          (toggle (set-boolean-preference "new style fonts" answer)
+                  (get-boolean-preference "new style fonts")))
+        (item (text "New bibliography dialogue:")
+          (toggle (set-boolean-preference "gui:new bibliography dialogue" answer)
+                  (get-boolean-preference "gui:new bibliography dialogue"))))
+      /// ///
+      (aligned
+        (item (text "Program bracket matching:")
+          (toggle (set-boolean-preference "prog:highlight brackets" answer)
+                  (get-boolean-preference "prog:highlight brackets")))
+        (item (text "Automatic program brackets:")
+          (toggle (set-boolean-preference "prog:automatic brackets" answer)
+                  (get-boolean-preference "prog:automatic brackets")))
+        (item (text "Program bracket selections:")
+          (toggle (set-boolean-preference "prog:select brackets" answer)
+                  (get-boolean-preference "prog:select brackets")))
+        (item (text "") (text "")))))
+    (bottom-buttons >>> ("Ok" (cmd))))
+
+(tm-define (open-experimental-preferences)
+  (:interactive #t)
+  (dialogue-window experimental-preferences-widget 
+                   noop "Experimental preferences"))
+
 (tm-widget (other-preferences-widget)
   (aligned
     (item (text "Automatically save:")
@@ -459,13 +497,16 @@
               (get-pretty-preference "document update times") 
               "15em")))
     (assuming (updater-supported?)
-        (item (text "Check for automatic updates:")
-          (enum (set-pretty-preference "updater:interval" answer)
-                (automatic-checks-choices)
-                (get-pretty-preference "updater:interval")
-                "15em")))
+      (item (text "Check for automatic updates:")
+        (enum (set-pretty-preference "updater:interval" answer)
+              (automatic-checks-choices)
+              (get-pretty-preference "updater:interval")
+              "15em")))
     (assuming (updater-supported?)
-      (item (text "Last check:") (text (last-check-string))))))
+      (item (text "Last check:") (text (last-check-string))))
+    (item (text "Experimental features:")
+      (explicit-buttons 
+        ("Configure" (interactive open-experimental-preferences))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
