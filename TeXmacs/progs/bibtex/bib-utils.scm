@@ -45,9 +45,11 @@
 (define (bib-compare x y)
   (string<? (car x) (car y)))
 
-(define (bib-sorted-entries t)
-  (bib-without-sort-key (stable-sort (bib-with-sort-key t) bib-compare)))
-
+(define (bib-sorted-entries l)
+  (with is-entry? (lambda (x) (func? x 'bib-entry))
+    (with l1 (list-filter l is-entry?)
+      (with l2 (stable-sort (bib-with-sort-key l1) bib-compare)
+        (bib-without-sort-key l2)))))
 
 (tm-define (bibstyle style t)
   (set! bib-style style)
