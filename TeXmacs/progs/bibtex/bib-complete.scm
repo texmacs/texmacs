@@ -21,7 +21,8 @@
 
 (define parse-times (make-ahash-table))
 (define parse-results (make-ahash-table))
-(define bib-files (make-ahash-table))
+(define bib-files-cache (make-ahash-table))
+(define bib-styles-cache (make-ahash-table))
 
 (define (get-citekeys-list l)
   (list-fold
@@ -42,16 +43,24 @@
     (ahash-ref parse-results u)))
 
 ; FIXME: if the user changes the bibliography file we still retrieve from cache
-(tm-define (current-bib-file)
+(tm-define (current-bib-file usecache?)
   (:synopsis "Returns the (cached) name of the bibliography file")
   (with u (current-buffer-url)
-    (or (ahash-ref bib-files u)
+    (or (and usecache? (ahash-ref bib-files-cache u))
         (with l (select (buffer-tree) '(bibliography))
           (if (nnull? l)
-              (ahash-set! bib-files u
-               (url-append (url-head u)
-                           (tree->string (tree-ref (car l) 2))))
+              (ahash-set! bib-files-cache u
+               (url-append (url-head u) (tm->string (tree-ref (car l) 2))))
               (url-none))))))
+
+(tm-define (current-bib-style usecache?)
+  (:synopsis "Returns the (cached) style of the bibliography")
+  (with u (current-buffer-url)
+    (or (and usecache? (ahash-ref bib-styles-cache u))
+        (with l (select (buffer-tree) '(bibliography))
+          (if (nnull? l)
+              (ahash-set! bib-styles-cache u (tm->string (tree-ref (car l) 1)))
+              "tm-plain")))))
 
 (tm-define (citekey-list u s)
   (:synopsis "Completions for @s in the bibtex file @u as a list")

@@ -123,6 +123,7 @@
 ;(display "Booting BibTeX style modules\n")
 (use-modules (bibtex bib-utils))
 (lazy-define (bibtex bib-complete) current-bib-file citekey-completions)
+(lazy-menu (bibtex bib-widgets) open-bibliography-inserter)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;;(display "Booting main TeXmacs functionality\n")

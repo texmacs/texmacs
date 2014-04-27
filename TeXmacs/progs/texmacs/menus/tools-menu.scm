@@ -72,7 +72,9 @@
       ("Fast environments" (toggle-preference "fast environments"))
       ("Alpha transparency" (toggle-preference "experimental alpha"))
       ("New style fonts" (toggle-preference "new style fonts"))
-      ("Program bracket matching" (toggle-preference "prog:highlight brackets")))
+      ("Program bracket matching" (toggle-preference "prog:highlight brackets"))
+      ("New bibliography dialogue"
+       (toggle-preference "gui:new bibliography dialogue")))
   ---
   (-> "Server"
       (link server-menu))

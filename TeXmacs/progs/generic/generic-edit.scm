@@ -127,7 +127,7 @@
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (tree-in? t '(cite nocite cite-detail)) (cursor-inside? t)))
-  (with u (current-bib-file)
+  (with u (current-bib-file #t)
     (with ttxt (tree-ref t (cADr (cursor-path)))
       (if (or (url-none? u) (not ttxt))
           (set-message "No completions" "You must add a bibliography file")
