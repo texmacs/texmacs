@@ -101,8 +101,10 @@
          (bibwid-output)
          '(style "generic"))))))
 
-(tm-widget ((bibliography-widget modify?) cmd)
+(tm-widget ((bibliography-widget modify? msg) cmd)
   (padded
+    (hlist >>> (text msg) >>>)
+    ===
     (hlist 
       (text "File:") // //
       (refreshable "bibwid-file-input"
@@ -141,17 +143,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (open-bibliography-inserter)
-  (set! bibwid-url (string->url ""))
-  (set! bibwid-style "tm-plain")
   (set! bibwid-cwd (url-head (current-buffer)))
-
   (let ((u (current-bib-file #f))
-        (style (current-bib-style #f)))
-  (if (and (not (url-none? u)) (!= style ""))
-      (begin
-        (bibwid-set-url u)
-        (set! bibwid-style style)
-        (dialogue-window (bibliography-widget #t) 
-                         bibwid-modify "Modify bibliography"))
-      (dialogue-window (bibliography-widget #f)
-                       bibwid-insert "Insert bibliography"))))
+        (s (current-bib-style #f))
+        (name (url-tail (current-buffer))))
+    (if (and (not (url-none? u)) (!= s ""))
+        (with msg (replace "Modifying bibliography for %1" name)
+          (bibwid-set-url u)
+          (set! bibwid-style s)
+          (dialogue-window (bibliography-widget #t msg)
+                           bibwid-modify "Modify bibliography"))
+        (with msg (replace "Inserting bibliography in %1" name)
+          (bibwid-set-url (string->url ""))
+          (set! bibwid-style "tm-plain")
+          (dialogue-window (bibliography-widget #f msg)
+                           bibwid-insert "Insert bibliography")))))
