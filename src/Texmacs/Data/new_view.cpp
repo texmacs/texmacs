@@ -55,7 +55,7 @@ decode_url (string s) {
   if (s (0, i) == "default") j= i;
   if (j) {
      if(  s[j+1] == ':') return url (s (j, N(s)));
-     else return "\\" * url (s (j, N(s)));
+     else return url_root("default") * url (s (j, N(s)));
   }
 #else
   if (s (0, i) == "here") return url (s (i+1, N(s)));
@@ -85,10 +85,11 @@ concrete_view (url u) {
   url name= decode_url (s (i+1, N(s)));
   //cout << s (i+1, N(s)) << " -> " << name << "\n";
   tm_buffer buf= concrete_buffer (name);
-  if (is_nil (buf)) return NULL;
+  if (!is_nil (buf)) { //return NULL; This old form made a compilation bug, redoing previous code instead leaving
   for (i=0; i<N(buf->vws); i++)
     if (buf->vws[i]->nr == nr)
       return buf->vws[i];
+  }
   return NULL;
 }
 
