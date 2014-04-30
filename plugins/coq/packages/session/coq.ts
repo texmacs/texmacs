@@ -81,7 +81,14 @@
     </src-comment>
   </active*>
 
-  <assign|coq-coqdoc|<macro|body|<coq-comment|<arg|body>>>>
+  <assign|coq-coqdoc|<\macro|body>
+    <\coq-comment>
+      <\indent>
+        <surround|<with|par-first|<minus|2em>|<yes-indent>><resize|(**
+        |1l||<plus|1l|2em>|>| *)|<arg|body>>
+      </indent>
+    </coq-comment>
+  </macro>>
 
   <assign|coqdoc-coq|<macro|body|<with|color|<value|coq-input-color>|font-size|0.841|font-family|tt|<arg|body>>>>
 

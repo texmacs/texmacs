@@ -510,6 +510,7 @@ coqdoc_to_tree (string s) {
 static tree
 parse_coqdoc (string s, int& i) {
   string coqdoc= parse_delimited (s, i, "(*", "*)");
+  coqdoc= trim_spaces (coqdoc (3, N(coqdoc)-2));
   return compound ("coq-coqdoc", coqdoc_to_tree (coqdoc));
 }
 

@@ -64,8 +64,10 @@
 
 (define (vernacout-coqdoc l)
   (set! doc-output-mode #t)
+  (vernacout "(** ")
   (output-indent 4)
   (vernacout l)
+  (vernacout " *)")
   (output-indent -4)
   (set! doc-output-mode #f))
 

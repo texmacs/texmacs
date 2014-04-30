@@ -105,7 +105,7 @@
                     ((== s 'subsection)    "** ")
                     ((== s 'section)       "* ")
                     (else ""))))
-    `(!concat ,mark ,body " ")))
+    `(!concat ,mark ,body)))
 
 (define (tmcoqdoc-folds s l)
   (let ((body (tmvernac (cadr l)))
