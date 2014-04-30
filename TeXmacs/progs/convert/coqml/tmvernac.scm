@@ -141,7 +141,10 @@
 
 (define (tmcoqdoc-verbatim s l)
   (with verb (tmvernac (car l))
-    `(!unindent (!verbatim (!paragraph "<<" ,verb ">>")))))
+    (display* verb "\n\n")
+    (if (func? verb '!paragraph)
+      `(!unindent (!verbatim (!paragraph "<<" ,verb ">>")))
+      `(!concat "<<" ,verb ">>"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TeXmacs style macros

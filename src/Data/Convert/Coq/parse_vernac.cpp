@@ -279,10 +279,10 @@ parse_line (string s, int &i, int text_indent) {
   if (!is_new_item (s, i)) {
     start= i;
     if (test (s, i, "<<")) {
-      while (i<n && !test (s, i, "\n>>")) i++;
+      while (i<n && !test (s, i, ">>")) i++;
       i+= 3;
     }
-    else if (test (s, i, "[[")) {
+    else if (test (s, i, "[[\n")) {
       while (i<n && !test (s, i, "\n]]")) i++;
       i+= 3;
     }
@@ -455,6 +455,11 @@ coqdoc_to_tree (string s) {
       tree verb= verbatim_to_tree (parsed, false, "SourceCode");
       coqdoc << compound ("coqdoc-verbatim", verb);
       newline= true;
+    }
+    else if (test (s, i, "<<")) {
+      string parsed= parse_delimited (s, i, "<<", ">>", false);
+      tree verb= verbatim_to_tree (parsed, true, "SourceCode");
+      line << compound ("coqdoc-verbatim", verb);
     }
     else if (s[i] == '_' && (i == 0 || !start_ident(s[i-1]))) {
       line << coqdoc_parse_emphasis (s, i);
