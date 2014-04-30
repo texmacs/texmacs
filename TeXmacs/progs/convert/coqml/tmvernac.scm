@@ -141,7 +141,6 @@
 
 (define (tmcoqdoc-verbatim s l)
   (with verb (tmvernac (car l))
-    (display* verb "\n\n")
     (if (func? verb '!paragraph)
       `(!unindent (!verbatim (!paragraph "<<" ,verb ">>")))
       `(!concat "<<" ,verb ">>"))))
