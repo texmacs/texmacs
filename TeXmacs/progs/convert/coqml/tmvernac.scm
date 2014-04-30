@@ -57,7 +57,7 @@
 
 (define (get-head-and-tail t)
   (if (and (func? t '!paragraph) (list>1? t))
-    (list (cadr t) `(!paragraph ,@(cddr t)))
+    (list (cadr t) `((!verbatim (!paragraph ,@(cddr t)))))
     (list t '())))
 
 (define (tmvernac-coq-enunciation s l)
@@ -69,7 +69,7 @@
       (with (start end) (get-head-and-tail body)
         `(!paragraph
            (!concat ,kind " " ,name " " ,start)
-           (!verbatim ,end)
+           ,@end
            "Proof."
            (!verbatim ,proof))))))
 
@@ -81,7 +81,7 @@
       (with (start end) (get-head-and-tail body)
         `(!paragraph
            (!concat ,kind " " ,name " " ,start)
-           (!verbatim ,end))))))
+           ,@end)))))
 
 (define (tmvernac-coq-section s l)
   (with-mode "code"
