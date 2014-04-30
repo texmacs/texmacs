@@ -165,14 +165,20 @@ parse_delimited (string s, int& i, char c) {
 
 static string
 parse_delimited (string s, int& i, string beg, string end, bool keep= true) {
-  int start= i + (!keep)*N(beg), cnt= 1;
+  int start= i + (!keep)*N(beg), cnt= 1, n= N(s);
   i++;
-  while (i < N(s) && cnt > 0) {
+  while (i < n && cnt > 0) {
     if (test (s, i, beg)) cnt++;
     if (test (s, i, end)) cnt--;
     i++;
   }
-  if (test (s, i-1, end)) i+=N(end)-1;
+  if (cnt != 0) {
+    convert_error << "Vernac import: unbalanced delimited string "
+      << "started by \"" << beg << "\"" << LF;
+    return s (start, n);
+  }
+  else if (test (s, i-1, end))
+    i+=N(end)-1;
   return s (start, i - (!keep)*N(end));
 }
 
@@ -275,12 +281,22 @@ static tree
 parse_line (string s, int &i, int text_indent) {
   int n= N(s);
   int start= i;
+  string r= "";
   while (i<n && is_blank (s[i])) i++;
   if (!is_new_item (s, i)) {
     start= i;
     if (test (s, i, "<<")) {
-      while (i<n && !test (s, i, ">>")) i++;
-      i+= 3;
+      while (i<n && !test (s, i, "\n>>")) i++;
+      if (i >= n) {
+        i= start;
+        while (i<n && s[i] != '\n') i++;
+        while (can_parse_line (s, i, text_indent+1))
+          parse_line (s, i, text_indent+1);
+      }
+      else {
+        i+= 3;
+        r= "\n" * s (start, i);
+      }
     }
     else if (test (s, i, "[[\n")) {
       while (i<n && !test (s, i, "\n]]")) i++;
@@ -294,7 +310,9 @@ parse_line (string s, int &i, int text_indent) {
     while (can_parse_line (s, i, text_indent+1))
       parse_line (s, i, text_indent+1);
   }
-  return coqdoc_to_tree (s(start, i));
+  if (r == "")
+    r= s(start, i);
+  return coqdoc_to_tree (r);
 }
 
 static tree
@@ -443,16 +461,14 @@ coqdoc_to_tree (string s) {
       coqdoc << list;
       newline= true;
     }
-    else if (test (s, i, "\n<<") || (i == 0 && starts (s, "<<"))) {
-      if (i == 0 && starts (s, "<<")) {
-        s= "\n" * s;
-        n= N(s);
-      }
+    else if (test (s, i, "\n<<")) {
       add_line (line, coqdoc);
       string parsed= parse_delimited (s, i, "\n<<", "\n>>", false);
       if (N(parsed) > 0 && parsed[0] == '\n')
         parsed= parsed(1, N(parsed));
       tree verb= verbatim_to_tree (parsed, false, "SourceCode");
+      if (is_atomic (verb))
+        verb= document (verb);
       coqdoc << compound ("coqdoc-verbatim", verb);
       newline= true;
     }
@@ -514,8 +530,8 @@ coqdoc_to_tree (string s) {
 
 static tree
 parse_coqdoc (string s, int& i) {
-  string coqdoc= parse_delimited (s, i, "(*", "*)");
-  coqdoc= trim_spaces (coqdoc (3, N(coqdoc)-2));
+  string coqdoc= parse_delimited (s, i, "(*", "*)", false);
+  coqdoc= trim_spaces (coqdoc (1, N(coqdoc)));
   return compound ("coq-coqdoc", coqdoc_to_tree (coqdoc));
 }
 
@@ -527,8 +543,7 @@ parse_coqdoc (string s, int& i) {
 
 static tree
 parse_comment (string s, int& i) {
-  string comment= parse_delimited (s, i, "(*", "*)");
-  comment= comment (2, N(comment)-2);
+  string comment= parse_delimited (s, i, "(*", "*)", false);
   return compound ("coq-comment", from_verbatim (comment, false));
 }
 
@@ -643,11 +658,31 @@ split_command (string s) {
       while (i<n && is_spacing (s[i])) i++;
       start= i;
     }
+    else if (start_comment (s, i))
+      parse_comment (s, i);
     else
       i++;
   }
   if (start < n)
     r << s(start, n);
+  return r;
+}
+
+static tree
+ensure_inline (tree t) {
+  if (is_atomic (t)) return t;
+  int n= N(t);
+  tree r (L(t));
+  bool sep= false;
+  if (L(t) == DOCUMENT) {
+    r= tree (CONCAT);
+    sep= true;
+  }
+  for (int i= 0; i<n; i++) {
+    r << ensure_inline (t[i]);
+    if (sep && i < n-1)
+      r << " ";
+  }
   return r;
 }
 
@@ -661,10 +696,10 @@ parse_vernac_command (string s, bool wrap= false) {
   else if (N(a) > 0) {
     for (int i=0; i<N(a)-1; i++)
       r << compound ("coq-command", "", "dark grey",
-                     parse_subcommand (a[i], wrap))
+                     ensure_inline (parse_subcommand (a[i], wrap)))
         << " ";
     r << compound ("coq-command", "", "dark grey",
-                   parse_subcommand (a[N(a)-1], wrap));
+                   ensure_inline (parse_subcommand (a[N(a)-1], wrap)));
   }
   return r;
 }
@@ -725,6 +760,8 @@ parse_raw_coq (string s) {
       else
         *r << parse_comment (s, i);
     }
+    else if (start_comment (s, i))
+      parse_comment (s, i);
     else if (end_vernac_command (s, i)) {
       string body= s (startcmd, ++i);
       if (is_enunciation (body)) {
