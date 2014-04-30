@@ -84,7 +84,7 @@ start_coqdoc (string s, int i) {
   i++;
   int n= N(s);
   while (i<n && s[i] == '*') i++;
-  return i == n || s[i] != ')';
+  return i >= n || s[i] != ')';
 }
 
 static bool
@@ -211,7 +211,7 @@ skip_whiteline (string s, int &i) {
 static tree
 coqdoc_parse_emphasis (string s, int &i) {
   int n= N(s), start= ++i;
-  while (i<n && !(s[i] == '_' && (i+1 == n || !start_ident (s[i+1])))) i++;
+  while (i<n && !(s[i] == '_' && (i+1 >= n || !start_ident (s[i+1])))) i++;
   return compound ("em", coqdoc_to_tree (s (start, i++)));
 }
 
@@ -239,7 +239,7 @@ static int
 get_list_depth (string s, int i) {
   int item_indent= 0, n= N(s), j;
   while (i<n && is_blank (s[i])) i++;
-  if (i == n) return 0;
+  if (i >= n) return 0;
   j= i-1;
   while (j>=0 && s[j] != '\n') {
     if (s[j] == ' ')
@@ -630,7 +630,7 @@ end_vernac_command (string s, int i) {
   if (!(i<n && s[i] == '.')) return false;
   i++;
   while (i<n && is_spacing (s[i])) i++;
-  return i == n || s[i] == '\n';
+  return i >= n || s[i] == '\n';
 }
 
 static array<string>
