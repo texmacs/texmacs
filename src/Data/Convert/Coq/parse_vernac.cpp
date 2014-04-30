@@ -522,8 +522,9 @@ parse_coqdoc (string s, int& i) {
 
 static tree
 parse_comment (string s, int& i) {
-  string coqdoc= parse_delimited (s, i, "(*", "*)");
-  return compound ("coq-comment", from_verbatim (coqdoc, false));
+  string comment= parse_delimited (s, i, "(*", "*)");
+  comment= comment (2, N(comment)-2);
+  return compound ("coq-comment", from_verbatim (comment, false));
 }
 
 /* Parse enunciations ********************************************************/

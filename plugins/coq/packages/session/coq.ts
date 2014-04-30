@@ -53,7 +53,7 @@
 
   <assign|coq-command|<macro|id|status|body|<with|color|<arg|status>|<arg|body>>>>
 
-  <assign|coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|font-family|tt|<arg|body>>>>
+  <assign|render-coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|font-family|tt|<arg|body>>>>
 
   <assign|coq-definition|<\macro|id|status|type|name|def-body>
     <\render-theorem|<arg|type>>
@@ -81,13 +81,21 @@
     </src-comment>
   </active*>
 
+  <assign|coq-comment|<\macro|body>
+    <\render-coq-comment>
+      <\indent>
+        <surround|(*|*)|<arg|body>>
+      </indent>
+    </render-coq-comment>
+  </macro>>
+
   <assign|coq-coqdoc|<\macro|body>
-    <\coq-comment>
+    <\render-coq-comment>
       <\indent>
         <surround|<with|par-first|<minus|2em>|<yes-indent>><resize|(**
         |1l||<plus|1l|2em>|>| *)|<arg|body>>
       </indent>
-    </coq-comment>
+    </render-coq-comment>
   </macro>>
 
   <assign|coqdoc-coq|<macro|body|<with|color|<value|coq-input-color>|font-size|0.841|font-family|tt|<arg|body>>>>
