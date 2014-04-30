@@ -79,7 +79,12 @@ is_blank (tree t) {
 
 static bool
 start_coqdoc (string s, int i) {
-  return test (s, i, "(**");
+  if (!test (s, i, "(**"))
+    return false;
+  i++;
+  int n= N(s);
+  while (i<n && s[i] == '*') i++;
+  return i == n || s[i] != ')';
 }
 
 static bool
