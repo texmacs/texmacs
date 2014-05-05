@@ -29,9 +29,15 @@
 ;; TeXmacs primitives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (vernac-escape-string x)
+  (if (!= mode "coqdoc")
+    x
+    (string-replace
+      (string-replace
+        (string-replace x "$" "$$") "%" "%%") "#" "##")))
+
 (define (tmvernac-string x)
-  ;; should take care of escaping ($, #, %).
-  (cork->sourcecode x))
+  (cork->sourcecode (vernac-escape-string x)))
 
 (define (tmvernac-document s l)
   `(!paragraph ,@(map tmvernac l)))
@@ -96,7 +102,7 @@
 ;; CoqDoc macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; TODO: require mode= doc
+;; TODO: require mode= coqdoc
 
 (define (tmcoqdoc-sectionning s l)
   (let ((body (tmvernac (car l)))
@@ -136,12 +142,14 @@
     `(!concat "#" ,html "#")))
 
 (define (tmcoqdoc-vernac s l)
-  (with vern (tmvernac (car l))
+  (with vern
+    (with-mode "code"
+      (tmvernac (car l)))
     `(!unindent (!verbatim (!paragraph "[[" ,vern "]]")))))
 
 (define (tmcoqdoc-verbatim s l)
-  (with verb (tmvernac (car l))
-    (if (func? verb '!paragraph)
+  (with verb (texmacs->generic (stree->tree (car l)) "verbatim-snippet")
+    (if (func? (car l) 'document)
       `(!unindent (!verbatim (!paragraph "<<" ,verb ">>")))
       `(!concat "<<" ,verb ">>"))))
 
@@ -149,7 +157,7 @@
 ;; TeXmacs style macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; TODO: require mode= doc
+;; TODO: require mode= coqdoc
 
 (define (tmvernac-hrule s l) "----")
 
