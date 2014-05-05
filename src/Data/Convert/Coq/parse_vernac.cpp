@@ -161,8 +161,9 @@ parse_delimited (string s, int& i, char c) {
       i++;
     i++;
   }
-  if (s[i] == c) i++;
-  return s (start, i-1);
+  if (i<n && s[i] == c)
+    return s (start, i++ - 1);
+  return s (start, n);
 }
 
 static string
@@ -279,7 +280,7 @@ can_parse_line (string s, int i, int text_indent) {
            test (s, i, "[[\n") || test (s, i, "\n[[\n");
 }
 
-static tree
+static string
 parse_line (string s, int &i, int text_indent) {
   int n= N(s);
   int start= i;
@@ -314,7 +315,7 @@ parse_line (string s, int &i, int text_indent) {
   }
   if (r == "")
     r= s(start, i);
-  return coqdoc_to_tree (r);
+  return r;
 }
 
 static tree
@@ -334,18 +335,16 @@ parse_item (string s, int &i, int item_indent) {
   }
   tree r (CONCAT);
   r << compound ("item");
-  tree tmp= parse_line (s, i, text_indent);
+  string line= "";
+  string tmp= parse_line (s, i, text_indent);
   if (tmp != "")
-    r << tmp;
-  if (can_parse_line (s, i, text_indent)) {
-    tree rr (DOCUMENT, r);
-    while (can_parse_line (s, i, text_indent)) {
-      tmp= parse_line (s, i, text_indent);
-      if (tmp != "")
-        rr << tmp;
-    }
-    r= rr;
+    line << tmp;
+  while (can_parse_line (s, i, text_indent)) {
+    tmp= parse_line (s, i, text_indent);
+    if (tmp != "")
+      line << "\n" <<  tmp;
   }
+  r << coqdoc_to_tree (line);
   return r;
 }
 

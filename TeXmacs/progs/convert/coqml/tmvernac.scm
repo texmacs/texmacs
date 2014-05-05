@@ -130,14 +130,14 @@
     `(!concat "[" ,coq "]")))
 
 (define (tmcoqdoc-latex s l)
-  (with tex (tmvernac-string
+  (with tex (vernac-escape-string
               (texmacs->generic (stree->tree (car l)) "latex-snippet"))
     (if (func? (car l) 'math 1)
       `(!concat ,tex)
       `(!concat "%" ,tex "%"))))
 
 (define (tmcoqdoc-html s l)
-  (with html (tmvernac-string
+  (with html (vernac-escape-string
                (texmacs->generic (stree->tree (car l)) "html-snippet"))
     `(!concat "#" ,html "#")))
 
