@@ -16,7 +16,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-   
+   ****************************************************************************
+   This file has been modified by François Poulain <fpoulain@metrodore.fr>.
+   See Rev 8505 for details.
+   ****************************************************************************
+
 */
 #include "FreeTypeWrapper.h"
 #include "Trace.h"
@@ -51,18 +55,9 @@ FreeTypeWrapper::FreeTypeWrapper(void)
 
 FreeTypeWrapper::~FreeTypeWrapper(void)
 {
+        mOpenStreams.clear();
 	if(mFreeType)
 		FT_Done_FreeType(mFreeType);
-
-	FTFaceToFTStreamListMap::iterator it = mOpenStreams.begin();
-	for(;it != mOpenStreams.end();++it)
-	{
-		FTStreamList::iterator itStreams = it->second.begin();
-		for(; itStreams != it->second.end();++itStreams)
-		{
-			delete *itStreams;
-		}
-	}
 }
 
 // using my own streams, to implement UTF8 paths
