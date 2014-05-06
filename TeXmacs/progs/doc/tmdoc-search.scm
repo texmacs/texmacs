@@ -39,7 +39,7 @@
   (with lan (string-take (language-to-locale (get-output-language)) 2)
     (or (tmdoc-search-local queries lan)
         (and (!= lan "en")
-             (tmdoc-search-local grep-string searcher "en")))))
+             (tmdoc-search-local queries "en")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other useful subroutines
