@@ -55,24 +55,21 @@
 
   <assign|render-coq-comment|<macro|body|<with|color|#c08040|font-size|0.841|font-family|tt|<arg|body>>>>
 
-  <assign|coq-definition|<\macro|id|status|type|name|def-body>
+  <assign|coq-enunciation|<\macro|id|status|type|name|body>
     <\render-theorem|<arg|type>>
       <surround| <with|font-shape|italic|<arg|name>>
-      ||<with|color|<arg|status>|<arg|def-body>>>
+      ||<with|color|<arg|status>|<arg|body>>>
     </render-theorem>
   </macro>>
 
-  <assign|coq-enunciation|<\macro|id|status|type|name|thm-body|proof-body>
-    <\render-theorem|<arg|type>>
-      <surround| <with|font-shape|italic|<arg|name>>
-      ||<with|color|<arg|status>|<arg|thm-body>>>
-    </render-theorem>
+  <assign|coq-proof|<\macro|id|status|header|body>
+    <\with|color|<arg|status>|remark-sep|>
+      <\render-proof|<arg|header>>
+        \;
 
-    <\proof>
-      \;
-
-      <arg|proof-body>
-    </proof>
+        <arg|body>
+      </render-proof>
+    </with>
   </macro>>
 
   <\active*>

@@ -627,13 +627,13 @@ parse_subcommand (string s, bool wrap= false) {
 }
 
 static tree
-parse_enunciation (string s, string lbl= "coq-enunciation") {
+parse_enunciation (string s) {
   int i= 0, n= N(s);
   string kind= parse_command_name (s, i);
   while (i<n && is_blank (s[i])) i++;
   string name= parse_identifier (s, i);
   tree body= parse_subcommand (s (++i, n));
-  tree r= compound (lbl, "", "dark grey");
+  tree r= compound ("coq-enunciation", "", "dark grey");
   r << kind << name << body;
   return r;
 }
@@ -705,6 +705,22 @@ parse_vernac_command (string s, bool wrap= false) {
   return r;
 }
 
+static tree
+format_proof (tree t) {
+  tree r= compound ("coq-proof", "", "dark grey");
+  if (!is_document (t) || N(t) == 0)
+    r << "" << "";
+  else if (N(t) > 0 && is_proof(t[0])) {
+    r << t[0];
+    if (N(t) > 1)
+      r << t(1,N(t));
+    else
+      r << "";
+  }
+  else
+    r << "Proof." << t;
+    return r;
+}
 /* Parse indentation *********************************************************/
 
 static int
@@ -715,7 +731,7 @@ parse_indent (string s, int i) {
   else return -1;
 }
 
-/* Main parse routine ********************************************************/
+/* Parse hide/show blocks ****************************************************/
 
 static tree
 parse_coqdoc_hide_show_comment (string str, int &i) {
@@ -787,7 +803,7 @@ parse_coqdoc_hide_show (string s, int &i) {
 
 static tree
 parse_raw_coq (string s) {
-  tree doc (DOCUMENT), proof (DOCUMENT), enun (CONCAT);
+  tree doc (DOCUMENT), proof (DOCUMENT);
   tree *r= &doc;
   int i= 0, startcmd= 0, n= N(s), indent_level=-1;
   bool in_cmd= false;
@@ -809,28 +825,30 @@ parse_raw_coq (string s) {
     else if (end_vernac_command (s, i)) {
       string body= s (startcmd, ++i);
       if (is_enunciation (body)) {
-        enun= parse_enunciation (body);
+        *r << parse_enunciation (body);
         r= &proof;
       }
       else if (is_definition (body)) {
-        *r << parse_enunciation (body, "coq-definition");
+        *r << parse_enunciation (body);
       }
       else {
         if (r == &proof) {
           tree tmp= parse_vernac_command (body, true);
           if (is_end_proof (tmp)) {
             proof << tmp;
-            enun << proof;
-            doc << enun;
+            doc << format_proof (proof);
             proof= tree (DOCUMENT);
-            enun= tree (CONCAT);
             r= &doc;
           }
-          else if (!is_proof (tmp))
+          else
             *r << tmp;
         }
-        else
-          *r << parse_vernac_command (body);;
+        else {
+          tree tmp= parse_vernac_command (body);
+          if (is_proof (tmp))
+            r= &proof;
+          *r << tmp;
+        }
       }
       in_cmd= false;
     }
@@ -854,8 +872,7 @@ parse_raw_coq (string s) {
       i++;
     }
   }
-  if (N(proof) > 0) enun << proof;
-  if (N(enun) > 0)  doc  << enun;
+  if (N(proof) > 0) doc << format_proof (proof);
   return doc;
 }
 

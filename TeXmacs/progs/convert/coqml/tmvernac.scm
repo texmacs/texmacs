@@ -66,20 +66,15 @@
     (list (cadr t) `((!verbatim (!paragraph ,@(cddr t)))))
     (list t '())))
 
-(define (tmvernac-coq-enunciation s l)
+(define (tmvernac-coq-proof s l)
   (with-mode "code"
-    (let ((kind  (tmvernac (caddr l)))
-          (name  (tmvernac (cadddr l)))
-          (body  (tmvernac (fifth l)))
-          (proof (tmvernac (sixth l))))
-      (with (start end) (get-head-and-tail body)
-        `(!paragraph
-           (!concat ,kind " " ,name " " ,start)
-           ,@end
-           "Proof."
-           (!verbatim ,proof))))))
+    (let ((header (tmvernac (caddr l)))
+          (body   (tmvernac (cadddr l))))
+      `(!paragraph
+         ,header
+         (!verbatim ,body)))))
 
-(define (tmvernac-coq-definition s l)
+(define (tmvernac-coq-enunciation s l)
   (with-mode "code"
     (let ((kind  (tmvernac (caddr l)))
           (name  (tmvernac (cadddr l)))
@@ -193,8 +188,8 @@
   (coq-command     tmvernac-coq-command)
   (coq-comment     tmvernac-coq-comment)
   (coq-coqdoc      tmvernac-coq-coqdoc)
+  (coq-proof       tmvernac-coq-proof)
   (coq-enunciation tmvernac-coq-enunciation)
-  (coq-definition  tmvernac-coq-definition)
   (coq-section     tmvernac-coq-section)
   ; CoqDoc
   (coqdoc-coq      tmcoqdoc-coq)
