@@ -271,6 +271,7 @@
   (define Over-condensed-symbol
     (:type infix)
     (:penalty 40)
+    (:spacing half half)
     "/")
 
   (define Over-symbol
