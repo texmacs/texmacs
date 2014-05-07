@@ -14,7 +14,9 @@
 #include "array.hpp"
 #include "convert.hpp"
 #include "converter.hpp"
+#include "analyze.hpp"
 
+static int  parse_indent   (string s, int i);
 static tree parse_raw_coq  (string s);
 static tree coqdoc_to_tree (string s);
 
@@ -82,13 +84,18 @@ is_blank (tree t) {
 }
 
 static bool
+is_star_rule (string s, int i) {
+  int n= N(s);
+  i++;
+  while (i<n && (s[i] == '*' || is_spacing (s[i]))) i++;
+  return i >= n || s[i] == ')';
+}
+
+static bool
 start_coqdoc (string s, int i) {
   if (!test (s, i, "(**"))
     return false;
-  i++;
-  int n= N(s);
-  while (i<n && s[i] == '*') i++;
-  return i >= n || s[i] != ')';
+  return !is_star_rule (s, i);
 }
 
 static bool
@@ -545,6 +552,8 @@ parse_coqdoc (string s, int& i) {
 static tree
 parse_comment (string s, int& i) {
   string comment= parse_delimited (s, i, "(*", "*)", false);
+  if (is_star_rule (comment, 0))
+    return compound ("hrule");
   return compound ("coq-comment", from_verbatim (comment, false));
 }
 
@@ -585,7 +594,7 @@ append_commands (tree &t, tree u) {
   if (t == "")
     t= u;
   else if (is_atomic (t))
-    t= concat (t, u);
+    t= concat (trim_spaces_right (t), u);
   else if (is_document (u)) {
     if (N(u) > 0) {
       append_commands (t, u[0]);
@@ -604,12 +613,37 @@ append_commands (tree &t, tree u) {
 }
 
 static tree
+indent_subcommand (tree t) {
+  if (is_document (t)) {
+    tree r (DOCUMENT);
+    for (int i=0; i<N(t); i++) {
+      tree tmp= indent_subcommand (t[i]);
+      if (is_atomic (tmp))
+        r << tmp;
+      else
+        r << A(tmp);
+    }
+    return r;
+  }
+  else if (is_atomic (t)) {
+    string s= as_string (t);
+    int i= parse_indent (s, 0);
+    if (i <= 0)
+      return t;
+    return tree (DOCUMENT, compound ("coq-indent", as_string (i)), s(i, N(s)));
+  }
+  else
+    return t;
+}
+
+static tree
 parse_subcommand (string s, bool wrap= false) {
-  int start= 0, i=0, n= N(s);
+  int start= 0, i= 0, n= N(s);
   tree r= "";
   while (i<n) {
     if (start_comment (s, i)) {
-      append_commands (r, from_verbatim (s(start, i), wrap));
+      append_commands (r,
+          indent_subcommand (from_verbatim (s(start, i), wrap)));
       if (start_coqdoc (s, i))
         append_commands (r, parse_coqdoc (s, i));
       else
@@ -620,7 +654,7 @@ parse_subcommand (string s, bool wrap= false) {
       i++;
   }
   if (start < n)
-    append_commands (r, from_verbatim (s(start, i), wrap));
+    append_commands (r, indent_subcommand (from_verbatim (s(start, i), wrap)));
   if ((is_concat (r) || is_document (r)) && N(r) == 1)
     r= r[0];
   return r;
@@ -717,9 +751,19 @@ format_proof (tree t) {
     else
       r << "";
   }
+  else if (N(t) > 1 && is_compound (t[0], "coq-indent", 1) && is_proof(t[1])) {
+    r << t[1];
+    if (N(t) > 2) {
+      tree tmp= tree (DOCUMENT, t[0]);
+      tmp << A(t(2,N(t)));
+      r << tmp;
+    }
+    else
+      r << "";
+  }
   else
     r << "Proof." << t;
-    return r;
+  return r;
 }
 /* Parse indentation *********************************************************/
 
@@ -890,8 +934,6 @@ get_indent (tree t) {
 static tree
 indent_parsed_coq (tree t, int base_indent=0) {
   if (is_atomic (t) || is_compound (t, "coq-indent")
-                    || is_compound (t, "coq-command")
-                    || is_compound (t, "coq-coqdoc")
                     || is_compound (t, "coq-comment")) return t;
   tree r (L(t));
   int i, n= N(t);

@@ -62,8 +62,8 @@
     `(!verbatim ,(tmvernac (caddr l)))))
 
 (define (get-head-and-tail t)
-  (if (and (func? t '!paragraph) (list>1? t))
-    (list (cadr t) `((!verbatim (!paragraph ,@(cddr t)))))
+  (if (and (func? t '!paragraph) (list>1? t) (list>1? (cdr t)))
+    (list (cadr t) `((!paragraph ,@(cddr t))))
     (list t '())))
 
 (define (tmvernac-coq-proof s l)
@@ -154,7 +154,10 @@
 
 ;; TODO: require mode= coqdoc
 
-(define (tmvernac-hrule s l) "----")
+(define (tmvernac-hrule s l)
+  (if (== mode "coqdoc")
+    "----"
+    (string-append "(*" (make-string 68 #\*) "*)" )))
 
 (define (tmvernac-item s l) '(!item "- "))
 

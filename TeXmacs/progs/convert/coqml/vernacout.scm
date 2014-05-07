@@ -57,11 +57,12 @@
 
 (define (vernacout-comment l)
   (set! com-output-mode #t)
-  (vernacout "(*")
-  (output-indent 3)
-  (vernacout l)
-  (vernacout "*)")
-  (output-indent -3)
+  (with old-indent (get-output-indent)
+    (set-output-indent 0)
+    (vernacout "(*")
+    (vernacout l)
+    (vernacout "*)")
+    (set-output-indent old-indent))
   (set! com-output-mode #f))
 
 (define (vernacout-coqdoc l)
