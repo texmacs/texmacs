@@ -1217,6 +1217,26 @@ skip_symbol (string s, int& i) {
   }
 }
 
+string
+convert_tabs_to_spaces (string s, int tw) {
+  int i= 0, ts= 0, n= N(s);
+  string r= "";
+  while (i<n) {
+    if (s[i] == '\t') {
+      r << string (' ', tw - ((i - ts) % tw));
+      ts= i+1;
+    }
+    else if (s[i] == '\n') {
+      ts= i+1;
+      r << s[i];
+    }
+    else
+      r << s[i];
+    i++;
+  }
+  return r;
+}
+
 /******************************************************************************
 * Parsing binary data
 ******************************************************************************/
