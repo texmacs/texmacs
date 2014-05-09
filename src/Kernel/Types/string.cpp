@@ -53,6 +53,12 @@ string::string (char c) {
   rep->a[0]=c;
 }
 
+string::string (char c, int n) {
+  rep= tm_new<string_rep> (n);
+  for (int i=0; i<n; i++)
+    rep->a[i]=c;
+}
+
 string::string (const char* a) {
   int i, n=strlen(a);
   rep= tm_new<string_rep> (n);
