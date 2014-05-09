@@ -29,7 +29,9 @@
 
 (define (vernacout-update-indent)
   (output-remove-indentation)
-  (output-verb (make-string (get-output-indent) #\space)))
+  (with indent (get-output-indent)
+    (if (> indent 0)
+      (output-verb (make-string (get-output-indent) #\space)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface for string output
@@ -43,6 +45,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (vernacout-file l)
+  (vernacout l)
+  (output-lf))
 
 (define (vernacout-verbatim l)
   (set! verb-output-mode #t)
@@ -121,6 +127,7 @@
   ;; (display* "vernacout " x "\n")
   (cond ((string? x) (output-vernac x))
         ((nlist>0? x) (display* "TeXmacs] bad formated stree:\n" x "\n"))
+	((== (car x) '!file)      (vernacout-file (cadr x)))
 	((== (car x) '!comment)   (vernacout-comment (cadr x)))
 	((== (car x) '!coqdoc)    (vernacout-coqdoc (cadr x)))
 	((== (car x) '!verbatim)  (vernacout-verbatim (cadr x)))

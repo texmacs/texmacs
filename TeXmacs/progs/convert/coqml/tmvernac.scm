@@ -45,6 +45,9 @@
 (define (tmvernac-concat s l)
   `(!concat ,@(map tmvernac l)))
 
+(define (tmvernac-body s l)
+  `(!file ,(tmvernac (car l))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DoCoq macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -121,15 +124,16 @@
 ;; NOTA: could be merged in a "tmcoqdoc-delimited" function wich take care of
 ;; not concatenating !documents ...
 (define (tmcoqdoc-coq s l)
-  (with coq (tmvernac (car l))
-    `(!concat "[" ,coq "]")))
+  (with-mode "code"
+    (with coq (tmvernac (car l))
+      `(!concat "[" ,coq "]"))))
 
 (define (tmcoqdoc-latex s l)
   (with tex (vernac-escape-string
               (texmacs->generic (stree->tree (car l)) "latex-snippet"))
     (if (func? (car l) 'math 1)
-      `(!concat ,tex)
-      `(!concat "%" ,tex "%"))))
+      `(!concat ,(list->string (cdr (cDr (string->list tex)))))
+      `(!concat "%" ,(vernac-escape-string tex) "%"))))
 
 (define (tmcoqdoc-html s l)
   (with html (vernac-escape-string
@@ -137,13 +141,15 @@
     `(!concat "#" ,html "#")))
 
 (define (tmcoqdoc-vernac s l)
-  (with vern
-    (with-mode "code"
+  (with-mode "code"
+    (with vern
       (tmvernac (car l)))
-    `(!unindent (!verbatim (!paragraph "[[" ,vern "]]")))))
+      `(!unindent (!verbatim (!paragraph "[[" ,vern "]]")))))
 
 (define (tmcoqdoc-verbatim s l)
-  (with verb (texmacs->generic (stree->tree (car l)) "verbatim-snippet")
+  (with verb (texmacs->verbatim-snippet
+               (stree->tree (car l))
+               (acons "texmacs->verbatim:encoding" "SourceCode" '()))
     (if (func? (car l) 'document)
       `(!unindent (!verbatim (!paragraph "<<" ,verb ">>")))
       `(!concat "<<" ,verb ">>"))))
@@ -186,6 +192,7 @@
   ; TeXmacs primitives
   (document        tmvernac-document)
   (concat          tmvernac-concat)
+  (body            tmvernac-body)
 
   ; DoCoq macros
   (coq-command     tmvernac-coq-command)
@@ -214,7 +221,9 @@
   (let ((n (length args))
         (r (logic-ref tmvernac-methods% key)))
     (if (not r )
-      (begin (map write (list "tmvernac-apply: " key ", " args "\nr: " r))
+      (begin (display* (cork->utf8 (buffer-get-title (current-buffer-url))) "\n")
+             (map write (list "tmvernac-apply: " key ", " args "\nr: " r))
+             (newline)
              (newline)))
     (if r (r key args))))
 
@@ -238,6 +247,6 @@
 (tm-define (texmacs->vernac-document x)
   (if (tree? x) (set! x (tree->stree x)))
   (if (tmfile? x)
-    (with body (tmfile-extract x 'body)
+    (with body `(body ,(tmfile-extract x 'body))
       (texmacs->vernac body))
     (texmacs->vernac x)))

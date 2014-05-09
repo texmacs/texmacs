@@ -49,12 +49,12 @@ from_verbatim (string s, bool wrap= true) {
 
 static bool
 is_spacing (char c) {
-  return c == ' ' || c == '\t';
+  return c == ' ';
 }
 
 static bool
 is_blank (char c) {
-  return c == ' ' || c == '\n' || c == '\t';
+  return c == ' ' || c == '\n';
 }
 
 static bool
@@ -85,10 +85,15 @@ is_blank (tree t) {
 
 static bool
 is_star_rule (string s, int i) {
-  int n= N(s);
+  int n= N(s), stars=0, blanks= 0;
   i++;
-  while (i<n && (s[i] == '*' || is_spacing (s[i]))) i++;
-  return i >= n || s[i] == ')';
+  while (i<n) {
+    if (s[i] == '*') stars++;
+    else if (is_spacing (s[i])) blanks++;
+    else break;
+    i++;
+  }
+  return (i >= n || (i>0 && test (s, i-1, "*)"))) && stars > blanks;
 }
 
 static bool
@@ -164,12 +169,12 @@ parse_delimited (string s, int& i, char c) {
   while (i < n) {
     if (s[i] == c && !test (s, i, esc))
       break;
-    if (test (s, i, esc))
+    else if (s[i] == c && test (s, i, esc))
       i++;
     i++;
   }
   if (i<n && s[i] == c)
-    return s (start, i++ - 1);
+    return s (start, i++);
   return s (start, n);
 }
 
@@ -260,8 +265,6 @@ get_list_depth (string s, int i) {
   while (j>=0 && s[j] != '\n') {
     if (s[j] == ' ')
       item_indent++;
-    if (s[j] == '\t')
-      item_indent+= 8;
     j--;
   }
   if (is_new_item (s, i))
@@ -336,8 +339,6 @@ parse_item (string s, int &i, int item_indent) {
   while (i<n && is_spacing (s[i])) {
     if (s[i] == ' ')
       text_indent++;
-    if (s[i] == '\t')
-      text_indent += 8;
     i++;
   }
   tree r (CONCAT);
@@ -932,8 +933,29 @@ get_indent (tree t) {
 }
 
 static tree
+remove_all_indent (tree t) {
+  if (is_atomic (t)                      ||
+      is_compound (t, "coqdoc-verbatim") ||
+      is_compound (t, "coq-comment"))
+    return t;
+  if (is_compound (t, "coq-indent"))
+    return "";
+  int i, n= N(t);
+  tree r (L(t));
+  for (i=0; i<n; i++)
+    if (!is_compound (t[i], "coq-indent", 1))
+      r << t[i];
+  if (N(r) == 0 && (is_document (r) || is_concat (r)))
+    r= "";
+  else if (N(r) == 1 && (is_document (r) || is_concat (r)))
+    r= r[0];
+  return r;
+}
+
+static tree
 indent_parsed_coq (tree t, int base_indent=0) {
   if (is_atomic (t) || is_compound (t, "coq-indent")
+                    || is_compound (t, "coqdoc-verbatim")
                     || is_compound (t, "coq-comment")) return t;
   tree r (L(t));
   int i, n= N(t);
@@ -958,7 +980,7 @@ indent_parsed_coq (tree t, int base_indent=0) {
     else
       r << indent_parsed_coq (t[i], base_indent);
   }
-  return r;
+  return remove_all_indent (r);
 }
 
 /******************************************************************************
@@ -1020,6 +1042,7 @@ section_parsed_coq (tree t) {
 tree
 vernac_to_tree (string s) {
   tree r (DOCUMENT);
+  s= convert_tabs_to_spaces (s, 8);
   r= parse_raw_coq (s);
   r= section_parsed_coq (r);
   r= indent_parsed_coq (r);
