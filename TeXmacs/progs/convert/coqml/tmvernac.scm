@@ -143,8 +143,8 @@
 (define (tmcoqdoc-vernac s l)
   (with-mode "code"
     (with vern
-      (tmvernac (car l)))
-      `(!unindent (!verbatim (!paragraph "[[" ,vern "]]")))))
+      (tmvernac (car l))
+      `(!unindent (!verbatim (!paragraph "[[" ,vern "]]"))))))
 
 (define (tmcoqdoc-verbatim s l)
   (with verb (texmacs->verbatim-snippet
@@ -230,6 +230,7 @@
 (tm-define (tmvernac x)
   ;; TODO: catching errors and save/restore state in order to maximize the
   ;; robustness of the converter
+  ;; (write x) (newline) (newline)
   (cond ((string? x) (tmvernac-string x))
         ((list>0? x) (tmvernac-apply (car x) (cdr x)))
         (else "")))

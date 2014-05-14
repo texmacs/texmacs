@@ -132,8 +132,9 @@ static string
 parse_identifier (string s, int &i) {
   int n= N(s), start= i;
   if (i<n && start_ident (s[i])) {
-    i++;
-    while (i<n && continue_ident (s[i])) i++;
+    decode_from_utf8 (s, i);
+    while (i<n && continue_ident (s[i]))
+      decode_from_utf8 (s, i);
   }
   return as_string (from_verbatim (s (start, i)));
 }
@@ -577,10 +578,17 @@ is_definition (string s) {
 }
 
 static bool
-is_proof (tree t) {
+is_begin_proof (tree t) {
   if (!is_compound (t, "coq-command", 3)) return false;
   string s= parse_command_name (as_string (t[2]));
   return s == "Proof";
+}
+
+static bool
+begin_proof (tree t) {
+  if (is_concat (t) && N(t) > 0)
+    return begin_proof (t[0]);
+  return is_begin_proof (t);
 }
 
 static bool
@@ -588,6 +596,13 @@ is_end_proof (tree t) {
   if (!is_compound (t, "coq-command", 3)) return false;
   string s= parse_command_name (as_string (t[2]));
   return s == "Qed" || s == "Admitted" || s == "Defined";
+}
+
+static bool
+end_proof (tree t) {
+  if (is_concat (t) && N(t) > 0)
+    return end_proof (t[N(t)-1]);
+  return is_end_proof (t);
 }
 
 static void
@@ -667,7 +682,8 @@ parse_enunciation (string s) {
   string kind= parse_command_name (s, i);
   while (i<n && is_blank (s[i])) i++;
   string name= parse_identifier (s, i);
-  tree body= parse_subcommand (s (++i, n));
+  while (i<n && is_blank (s[i])) i++;
+  tree body= parse_subcommand (s (i, n));
   tree r= compound ("coq-enunciation", "", "dark grey");
   r << kind << name << body;
   return r;
@@ -680,7 +696,14 @@ end_vernac_command (string s, int i) {
   int n= N(s);
   if (!(i<n && s[i] == '.')) return false;
   i++;
-  while (i<n && is_spacing (s[i])) i++;
+  while (i<n) {
+   if (is_spacing (s[i]))
+     i++;
+   else if (start_comment (s, i))
+     parse_comment (s, i);
+   else
+     break;
+  }
   return i >= n || s[i] == '\n';
 }
 
@@ -715,9 +738,11 @@ ensure_inline (tree t) {
     sep= true;
   }
   for (int i= 0; i<n; i++) {
-    r << ensure_inline (t[i]);
-    if (sep && i < n-1)
-      r << " ";
+    if (!is_compound (t[i], "coq-indent", 1)) {
+      r << ensure_inline (t[i]);
+      if (sep && i < n-1)
+        r << " ";
+    }
   }
   return r;
 }
@@ -740,19 +765,33 @@ parse_vernac_command (string s, bool wrap= false) {
   return r;
 }
 
+static array<tree>
+parse_vernac_proof (string s) {
+  array<tree> r;
+  array<string> a= split_command (s);
+  if (N(a) == 0) return r;
+  r << compound ("coq-command", "", "dark grey", parse_subcommand (a[0]));
+  if (N(a) > 1) {
+    string pf= recompose (range (a, 1, N(a)), " ");
+    r << parse_vernac_command (pf);
+  }
+  return r;
+}
+
 static tree
 format_proof (tree t) {
   tree r= compound ("coq-proof", "", "dark grey");
   if (!is_document (t) || N(t) == 0)
     r << "" << "";
-  else if (N(t) > 0 && is_proof(t[0])) {
+  else if (N(t) > 0 && is_begin_proof (t[0])) {
     r << t[0];
     if (N(t) > 1)
       r << t(1,N(t));
     else
       r << "";
   }
-  else if (N(t) > 1 && is_compound (t[0], "coq-indent", 1) && is_proof(t[1])) {
+  else if (N(t) > 1 && is_compound (t[0], "coq-indent", 1)
+                    && is_begin_proof (t[1])) {
     r << t[1];
     if (N(t) > 2) {
       tree tmp= tree (DOCUMENT, t[0]);
@@ -829,7 +868,7 @@ parse_coqdoc_hide_show (string s, int &i) {
   }
   tree body;
   if (cnt == 0)
-    body= parse_raw_coq (s(start, stop+1));
+    body= parse_raw_coq (s(start, stop));
   else
     body= parse_raw_coq (s(start, n));
   string lbl, msg;
@@ -877,23 +916,33 @@ parse_raw_coq (string s) {
         *r << parse_enunciation (body);
       }
       else {
-        if (r == &proof) {
-          tree tmp= parse_vernac_command (body, true);
-          if (is_end_proof (tmp)) {
+        tree tmp= parse_vernac_command (body);
+        if (begin_proof (tmp) && end_proof (tmp)) {
+          proof << parse_vernac_proof (body);
+          doc << format_proof (proof);
+          proof= tree (DOCUMENT);
+          r= &doc;
+        }
+        else if (r == &proof) {
+          if (end_proof (tmp)) {
             proof << tmp;
             doc << format_proof (proof);
             proof= tree (DOCUMENT);
             r= &doc;
           }
+          else if (begin_proof (tmp)) {
+            r= &proof;
+            *r << parse_vernac_proof (body);
+          }
           else
             *r << tmp;
         }
-        else {
-          tree tmp= parse_vernac_command (body);
-          if (is_proof (tmp))
-            r= &proof;
-          *r << tmp;
+        else if (begin_proof (tmp)) {
+          r= &proof;
+          *r << parse_vernac_proof (body);
         }
+        else
+          *r << tmp;
       }
       in_cmd= false;
     }
@@ -917,7 +966,10 @@ parse_raw_coq (string s) {
       i++;
     }
   }
-  if (N(proof) > 0) doc << format_proof (proof);
+  if (N(proof) > 0)
+    doc << format_proof (proof);
+  if (in_cmd)
+    doc << parse_vernac_command (s (startcmd, n));
   return doc;
 }
 
@@ -974,7 +1026,11 @@ indent_parsed_coq (tree t, int base_indent=0) {
         }
         else body << t[i++];
       }
-      r << compound ("indent", indent_parsed_coq (body, indent));
+      tree tmp= indent_parsed_coq (body, indent);
+      if (is_compound (tmp, "indent", 1))
+        r << tmp;
+      else
+        r << compound ("indent", tmp);
     }
     else if (get_indent (t[i]) == base_indent);
     else
