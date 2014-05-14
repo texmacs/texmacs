@@ -171,9 +171,18 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
       debug_shell << cmdln << "\n";
   }
   string log;
-  if (system (cmdln, log)) {
-    biblio_error.clear ();
-    biblio_error << log << "\n";
+  if (system (cmdln, log))
+    bib_error << log << "\n";
+  else {
+    int pos=0;
+    while (true) {
+      pos= search_forwards ("Warning--", pos, log);
+      if (pos < 0) break;
+      pos += 9;
+      int end= pos;
+      while (end < N(log) && log[end] != '\n') end++;
+      bib_warning << log (pos, end) << "\n";
+    }
   }
 #endif
 
