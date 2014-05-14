@@ -160,8 +160,7 @@ edit_cursor_rep::notify_cursor_moved (int status) {
   mv_status= status;
   cu= eb->find_check_cursor (tp);
   notify_change (THE_CURSOR);
-  if (cu->valid) // Necessary / enough?
-    call ("notify-cursor-moved", object (status));
+  if (cu->valid) call ("notify-cursor-moved", object (status));
 }
 
 void
@@ -364,8 +363,7 @@ edit_cursor_rep::go_to_here () {
   if (cu->valid) adjust_cursor ();
   if (mv_status == DIRECT) mv= copy (cu);
   notify_change (THE_CURSOR);
-  if (cu->valid) // Necessary / enough?
-    call ("notify-cursor-moved", object (DIRECT));
+  if (cu->valid) call ("notify-cursor-moved", object (DIRECT));
 }
 
 void
@@ -380,8 +378,7 @@ edit_cursor_rep::go_to (path p) {
       mv= copy (cu);
     }
     notify_change (THE_CURSOR);
-  if (cu->valid) // Necessary / enough?
-      call ("notify-cursor-moved", object (DIRECT));
+    if (cu->valid) call ("notify-cursor-moved", object (DIRECT));
   }
 }
 
