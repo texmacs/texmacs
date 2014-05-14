@@ -1032,6 +1032,7 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
   int i1, j1, i2, j2;
   path fp= search_format ();
   if (is_nil (fp)) return;
+  typeset_invalidate_env (); // FIXME: dirty hack for getting correct limits
   table_get_limits (fp, i1, j1, i2, j2);
   if ((nr_rows<i1) || (nr_cols<j1)) {
     T= empty_table (max (nr_rows, i1), max (nr_cols, j1));

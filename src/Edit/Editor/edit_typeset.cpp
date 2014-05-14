@@ -228,6 +228,7 @@ edit_typeset_rep::typeset_exec_until (path p) {
     p = tp;
   }
 
+  //cout << "Exec until " << p << LF;
   if (N(cur[p])!=0) return;
   if (N(cur)>=25) // avoids out of memory in weird cases
     typeset_invalidate_env ();
