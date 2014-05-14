@@ -99,7 +99,7 @@
     paragraph.
   </explain>
 
-  <scm|make-with>, <scm|make-return>, etc.
+  <scm|make-with>, <scm|insert-return>, etc.
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
 
@@ -110,6 +110,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<initial|<\collection>
-</collection>>
