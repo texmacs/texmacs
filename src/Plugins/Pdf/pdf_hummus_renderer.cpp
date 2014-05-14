@@ -283,16 +283,9 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     label_count(0),
     outlineId(0)
 {
-  if (landscape) { // consistent with printer
-    width = default_dpi * paper_h / 2.54;
-    height= default_dpi * paper_w / 2.54;
-  }
-  else {
-    width = default_dpi * paper_w / 2.54;
-    height= default_dpi * paper_h / 2.54;
-  }
-  
-  
+  width = default_dpi * paper_w / 2.54;
+  height= default_dpi * paper_h / 2.54;
+
   // setup library
 
   EStatusCode status;

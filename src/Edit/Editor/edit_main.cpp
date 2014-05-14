@@ -260,8 +260,7 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   renderer ren;
 #ifdef PDF_RENDERER
   if (use_pdf () && (pdf || !use_ps ()))
-      // Don't set (again) landscape mode: sizes are already interchanged if set
-    ren= pdf_hummus_renderer (name, dpi, pages, page_type, false, w/cm, h/cm);
+    ren= pdf_hummus_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   else
     ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
 #else
