@@ -68,7 +68,17 @@
       ("Count lines" (show-line-count)))
   (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history)))
-  ("Experimental" (interactive open-experimental-preferences))
+  (if (use-menus?)
+      (-> "Experimental"
+          ("Fast environments" (toggle-preference "fast environments"))
+          ("Alpha transparency" (toggle-preference "experimental alpha"))
+          ("New style fonts" (toggle-preference "new style fonts"))
+          ("Program bracket matching"
+           (toggle-preference "prog:highlight brackets"))
+          ("New bibliography dialogue"
+           (toggle-preference "gui:new bibliography dialogue"))))
+  (if (use-popups?)
+      ("Experimental" (interactive open-experimental-preferences)))
   ---
   (-> "Server"
       (link server-menu))
