@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.1>
 
 <style|source>
 
@@ -150,11 +150,11 @@
   >>>>
 
   <assign|render-proof|<\macro|which|body>
-    <\render-remark|<arg|which>>
-      <\surround||<htab|0.5fn><qed>>
+    <\surround||<htab|0.5fn|0><qed>>
+      <\render-remark|<arg|which>>
         <arg|body>
-      </surround>
-    </render-remark>
+      </render-remark>
+    </surround>
   </macro>>
 
   <assign|proof|<\macro|body>
