@@ -113,10 +113,8 @@
 
 (tm-define (remove-annotations t)
   (cond ((tm-func? t 'doc-note-ref 4) (remove-annotations (tm-ref t 3)))
-        ((and (tree? t) (tm-func? t 'concat))
-         `(concat ,@(map remove-annotations (tree-children t))))
         ((tm-func? t 'concat)
-         `(concat ,@(map remove-annotations (cdr t))))
+         `(concat ,@(map remove-annotations (tm-children t))))
         (else t)))
 
 (tm-define (title->running-title t)
