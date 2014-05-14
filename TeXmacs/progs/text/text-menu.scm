@@ -762,8 +762,9 @@
 
 (tm-menu (focus-extra-icons t)
   (:require (section-context? t))
-  (=> (eval (tm/section-get-title-string t))
-      (link focus-section-menu)))
+  (mini #t
+    (=> (eval (tm/section-get-title-string t))
+        (link focus-section-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menu for lists
