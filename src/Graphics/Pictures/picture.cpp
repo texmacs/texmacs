@@ -124,7 +124,7 @@ error_picture (int w, int h) {
 static hashmap<tree,int> picture_count (0);
 static hashmap<tree,int> picture_blacklist (0);
 static hashmap<tree,picture> picture_cache;
-static hashmap<tree,int> picture_cache_modified (- (int) (((unsigned int) (-1)) >> 1));
+static hashmap<tree,int> picture_stamp (- (int) (((unsigned int) (-1)) >> 1));
 
 void
 picture_cache_reserve (url file_name, int w, int h) {
@@ -153,7 +153,7 @@ picture_cache_clean () {
     if (picture_count [key] <= 0) {
       picture_count -> reset (key);
       picture_cache -> reset (key);
-      picture_cache_modified -> reset (key);
+      picture_stamp -> reset (key);
       //cout << "Removed " << key << "\n";
     }
   }
@@ -161,23 +161,25 @@ picture_cache_clean () {
 }
 
 static bool
-is_cache_valid (tree key) {
-  int loaded= last_modified (as_url (key[0]), false);
-  int cached= picture_cache_modified [key];
-  return cached > loaded;
+picture_is_cached (url file_name, int w, int h) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h));
+  if (!picture_cache->contains (key)) return false;
+  int loaded= last_modified (file_name, false);
+  int cached= picture_stamp [key];
+  return cached >= loaded;
 }
 
 picture
 cached_load_picture (url file_name, int w, int h, bool permanent) {
   tree key= tuple (file_name->t, as_string (w), as_string (h));
-  if (picture_cache->contains (key) && is_cache_valid (key))
+  if (picture_is_cached (file_name, w, h))
     return picture_cache [key];
   //cout << "Loading " << key << "\n";
   picture pic= load_picture (file_name, w, h);
   if (permanent || picture_count[key] > 0) {
     int pic_modif= last_modified (file_name, false);
     picture_cache (key)= pic;
-    picture_cache_modified (key)= pic_modif;
+    picture_stamp (key)= pic_modif;
   }
   return pic;
 }
