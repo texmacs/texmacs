@@ -83,7 +83,7 @@
 (define (vernacout-paragraph l)
   (if (nnull? l)
     (begin
-      (cond ((== (car l) "")   (output-remove-indentation))
+      (cond ((== (car l) "") (output-remove-indentation))
             ((and (== (car l) "*)")
                   (or com-output-mode doc-output-mode))
              (begin
@@ -124,7 +124,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (vernacout x)
-  ;; (display* "vernacout " x "\n")
   (cond ((string? x) (output-vernac x))
         ((nlist>0? x) (display* "TeXmacs] bad formated stree:\n" x "\n"))
 	((== (car x) '!file)      (vernacout-file (cadr x)))
@@ -141,7 +140,6 @@
 	(else (display* "TeXmacs] bad formated stree:\n" x "\n"))))
 
 (tm-define (serialize-vernac x)
-  ;;(write x)(newline)(newline)
   (vernacout-initialize)
   (vernacout x)
   (output-produce))

@@ -595,7 +595,7 @@ static bool
 is_end_proof (tree t) {
   if (!is_compound (t, "coq-command", 3)) return false;
   string s= parse_command_name (as_string (t[2]));
-  return s == "Qed" || s == "Admitted" || s == "Defined";
+  return s == "Qed" || s == "Admitted" || s == "Defined" || s == "Abort";
 }
 
 static bool
@@ -1029,6 +1029,8 @@ indent_parsed_coq (tree t, int base_indent=0) {
       tree tmp= indent_parsed_coq (body, indent);
       if (is_compound (tmp, "indent", 1))
         r << tmp;
+      else if (is_atomic (tmp))
+        r << compound ("indent", document (tmp));
       else
         r << compound ("indent", tmp);
     }
