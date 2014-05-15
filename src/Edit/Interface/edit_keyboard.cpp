@@ -114,7 +114,8 @@ edit_interface_rep::try_shortcut (string comb) {
       if (is_func (t, WITH)) t= t[N(t)-1];
       string r= as_string (t);
       if (starts (r, "<") && !starts (r, "<#"))
-        rhs= tree (CONCAT, rhs, " (" * r(1, N(r)-1) * ")");
+        if (cork_to_utf8 (r) != r)
+          rhs= tree (CONCAT, rhs, " (" * r(1, N(r)-1) * ")");
       call ("set-temporary-message",
 	    tree (CONCAT, "keyboard shortcut: ", rew), rhs,
 	    shorth == ""? 1: 3000);
