@@ -108,10 +108,17 @@ edit_interface_rep::try_shortcut (string comb) {
     tree rhs= (shorth == rew_s? tree (""): sv->kbd_system_rewrite (shorth));
     //cout << "Shortcut: " << sh_s << " -> " << rew << "\n";
     if ((search_forwards (" ", comb) >= 0 && comb != " ") ||
-	(search_forwards ("-", comb) >= 0 && comb != "-"))
+	(search_forwards ("-", comb) >= 0 && comb != "-")) {
+      tree t= rhs;
+      if (is_compound (t, "render-key", 1)) t= t[0];
+      if (is_func (t, WITH)) t= t[N(t)-1];
+      string r= as_string (t);
+      if (starts (r, "<") && !starts (r, "<#"))
+        rhs= tree (CONCAT, rhs, " (" * r(1, N(r)-1) * ")");
       call ("set-temporary-message",
 	    tree (CONCAT, "keyboard shortcut: ", rew), rhs,
 	    shorth == ""? 1: 3000);
+    }
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) insert_tree (shorth);
     //cout << "Mark= " << sh_mark << "\n";

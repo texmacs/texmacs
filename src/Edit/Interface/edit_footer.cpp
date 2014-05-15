@@ -113,6 +113,9 @@ edit_interface_rep::compute_text_footer (tree st) {
   if (r == "") r= "start";
   if (r == " ") r= "space";
   if (r == "space" && get_env_string (MODE) == "math") r= "apply";
+  if (starts (r, "<") && !starts (r, "<#"))
+    if (cork_to_utf8 (r) != r)
+      r= r * " (" * r(1, N(r)-1) * ")";
   return r;
 }
 
