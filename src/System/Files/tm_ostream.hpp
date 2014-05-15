@@ -90,14 +90,14 @@ extern tm_ostream qt_error;
 extern tm_ostream font_error;
 extern tm_ostream convert_error;
 extern tm_ostream io_error;
-extern tm_ostream bib_error;
+extern tm_ostream bibtex_error;
 
 extern tm_ostream std_warning;
 extern tm_ostream convert_warning;
 extern tm_ostream typeset_warning;
 extern tm_ostream io_warning;
 extern tm_ostream widkit_warning;
-extern tm_ostream bib_warning;
+extern tm_ostream bibtex_warning;
 
 extern tm_ostream debug_std;
 extern tm_ostream debug_qt;

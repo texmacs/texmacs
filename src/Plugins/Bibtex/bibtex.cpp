@@ -172,7 +172,7 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   }
   string log;
   if (system (cmdln, log))
-    bib_error << log << "\n";
+    bibtex_error << log << "\n";
   else {
     int pos=0;
     while (true) {
@@ -181,7 +181,7 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
       pos += 9;
       int end= pos;
       while (end < N(log) && log[end] != '\n') end++;
-      bib_warning << log (pos, end) << "\n";
+      bibtex_warning << log (pos, end) << "\n";
     }
   }
 #endif

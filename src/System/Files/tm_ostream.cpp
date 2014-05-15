@@ -370,7 +370,7 @@ tm_ostream widkit_error    = debug_ostream ("widkit-error");
 tm_ostream aqua_error      = debug_ostream ("aqua-error");
 tm_ostream font_error      = debug_ostream ("font-error");
 tm_ostream convert_error   = debug_ostream ("convert-error");
-tm_ostream bib_error       = debug_ostream ("bib-error");
+tm_ostream bibtex_error    = debug_ostream ("bibtex-error");
 tm_ostream io_error        = debug_ostream ("io-error");
 
 tm_ostream std_warning     = debug_ostream ("std-warning");
@@ -378,7 +378,7 @@ tm_ostream convert_warning = debug_ostream ("convert-warning");
 tm_ostream typeset_warning = debug_ostream ("typeset-warning");
 tm_ostream io_warning      = debug_ostream ("io-warning");
 tm_ostream widkit_warning  = debug_ostream ("widkit-warning");
-tm_ostream bib_warning     = debug_ostream ("bib-warning");
+tm_ostream bibtex_warning  = debug_ostream ("bibtex-warning");
 
 tm_ostream debug_std       = debug_ostream ("debug-std");
 tm_ostream debug_qt        = debug_ostream ("debug-qt");

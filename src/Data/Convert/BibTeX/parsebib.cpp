@@ -395,4 +395,3 @@ parse_bib (string s) {
   }
   return r;
 }
-
