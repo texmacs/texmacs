@@ -402,6 +402,10 @@
 
   <assign|marked|<macro|body|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<value|marked-color>>|<cwith|1|1|1|1|cell-lsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-rsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|<value|marked-padding>>|<plus|1b|<value|marked-padding>>|<minus|1r|<value|marked-padding>>|<minus|1t|<value|marked-padding>>>>|<arg|body>>>>>
 
+  <assign|todo|<macro|body|<with|color|dark
+  red|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|pastel
+  red>|<cwith|1|1|1|1|cell-lsep|0fn>|<cwith|1|1|1|1|cell-rsep|0fn>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|0fn>|<plus|1b|<value|marked-padding>>|<minus|1r|0fn>|<minus|1t|<value|marked-padding>>>>|[<arg|body>]>>>>>
+
   <\active*>
     <\src-comment>
       Marginal notes.
