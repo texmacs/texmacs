@@ -3823,6 +3823,40 @@ tmg_hexadecimal_2integer (tmscm arg1) {
 }
 
 tmscm
+tmg_find_left_bracket (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "find-left-bracket");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "find-left-bracket");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "find-left-bracket");
+
+  path in1= tmscm_to_path (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  path out= find_left_bracket (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
+tmg_find_right_bracket (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "find-right-bracket");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "find-right-bracket");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "find-right-bracket");
+
+  path in1= tmscm_to_path (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  path out= find_right_bracket (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
 tmg_string_2tmstring (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string->tmstring");
 
@@ -7848,6 +7882,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("integer->hexadecimal",  tmg_integer_2hexadecimal, 1, 0, 0);
   tmscm_install_procedure ("integer->padded-hexadecimal",  tmg_integer_2padded_hexadecimal, 2, 0, 0);
   tmscm_install_procedure ("hexadecimal->integer",  tmg_hexadecimal_2integer, 1, 0, 0);
+  tmscm_install_procedure ("find-left-bracket",  tmg_find_left_bracket, 3, 0, 0);
+  tmscm_install_procedure ("find-right-bracket",  tmg_find_right_bracket, 3, 0, 0);
   tmscm_install_procedure ("string->tmstring",  tmg_string_2tmstring, 1, 0, 0);
   tmscm_install_procedure ("tmstring->string",  tmg_tmstring_2string, 1, 0, 0);
   tmscm_install_procedure ("tmstring-length",  tmg_tmstring_length, 1, 0, 0);

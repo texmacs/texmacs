@@ -1477,7 +1477,89 @@ trim_spaces (tree t) {
   return trim_spaces_left (trim_spaces_right (t));
 }
 
- /******************************************************************************
+/******************************************************************************
+ * Program bracket matching
+ ******************************************************************************/
+
+extern tree the_et;
+enum dir_t { BACKWARD = -1, FORWARD = 1 }; // don't change the values
+
+  // FIXME: UGLY and won't handle some things
+static bool
+find_bracket_valid (tree t, int pos) {
+  if (pos < 0 || pos >= N(t))
+    return false;
+  if (L(t) == STRING || L(t) == DOCUMENT)
+    return true;
+  if (L(t) == CONCAT)
+    return L(t[pos]) == STRING || L(t[pos]) == CONCAT ||
+           L(t[pos]) == WITH || L(t) == DOCUMENT;
+  if (L(t) == WITH)
+    return pos == N(t)-1 &&
+           (L(t[pos]) == STRING || L(t[pos]) == CONCAT ||
+            L(t[pos]) == WITH || L(t) == DOCUMENT);
+  else
+    return false;
+}
+
+static path
+find_bracket_sub (tree t, dir_t dir, const string& lbr, const string& rbr,
+                  int cnt, int pos) {
+  if (pos >= 0 && pos < N(t)) {
+    if (is_atomic (t)) {
+      void (*next) (string, int&) = (dir == FORWARD) ? tm_char_forwards
+                                                      : tm_char_backwards;
+      while (true) {
+        if (test (t->label, pos, lbr))
+          --cnt;
+        else if (test (t->label, pos, rbr))
+          ++cnt;
+        if (cnt == 0)
+          return reverse (path (min (N(t), pos), obtain_ip (t)));
+        int prev = pos;
+        next (t->label, pos);
+        if (prev == pos)
+          break;
+      }
+    } else if (find_bracket_valid (t, pos)) { // traverse child: t[pos]
+      int npos = (dir == FORWARD) ? 0 : N(t[pos])-1;
+      return find_bracket_sub (t[pos], dir, lbr, rbr, cnt, npos);
+    } else {  // traverse siblings
+      int npos = pos + (int)dir;
+      if (npos >= 0 && npos < N(t))
+        return find_bracket_sub (t, dir, lbr, rbr, cnt, npos);
+    }
+  }
+  path ip = obtain_ip (t);
+  if (is_nil (ip) || last_item (ip) < 0) return path();
+  const tree& pt = subtree (the_et, reverse (ip->next));
+  int npos = ip->item + (int)dir;
+  return find_bracket_sub (pt, dir, lbr, rbr, cnt, npos);
+}
+
+path
+find_left_bracket (path p, const string& lbr, const string& rbr) {
+  if (N(lbr) == 0 || N(rbr) == 0 || is_nil (p)) return path();
+  const tree& pt = subtree (the_et, path_up (p));
+  int pos = reverse(p)->item;
+  string s = as_string (pt);
+  if (pos < 0 || pos > N(s)) return path();
+  int cnt = test (s, pos, rbr) ? 0 : 1;
+  return find_bracket_sub (pt, BACKWARD, lbr, rbr, cnt, pos);
+}
+
+path
+find_right_bracket (path p, const string& lbr, const string& rbr) {
+  if (N(lbr) == 0 || N(rbr) == 0 || is_nil (p)) return path();
+  const tree& pt = subtree (the_et, path_up (p));
+  int pos = reverse(p)->item;
+  string s = as_string (pt);
+  if (pos < 0 || pos > N(s)) return path();
+  int cnt = test (s, pos, lbr) ? 0 : -1;
+  return find_bracket_sub (pt, FORWARD, lbr, rbr, cnt, pos);
+}
+
+/******************************************************************************
 * Computations with completions
 ******************************************************************************/
 

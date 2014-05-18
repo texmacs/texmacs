@@ -332,6 +332,10 @@
   (integer->hexadecimal as_hexadecimal (string int))
   (integer->padded-hexadecimal as_hexadecimal (string int int))
   (hexadecimal->integer from_hexadecimal (int string))
+  
+  ; Program bracket matching
+  (find-left-bracket find_left_bracket (path path string string))
+  (find-right-bracket find_right_bracket (path path string string))
 
   ;; routines for strings in the TeXmacs encoding
   (string->tmstring tm_encode (string string))

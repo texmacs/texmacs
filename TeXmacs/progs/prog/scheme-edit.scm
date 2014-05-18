@@ -182,34 +182,22 @@
 ;; Automatic insertion, highlighting and selection of brackets and quotes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (scheme-bracket-open br ibr)
-  (bracket-open br ibr #\\))
-(tm-define (scheme-bracket-close br ibr)
-  (bracket-close br ibr #\\))
+(tm-define (scheme-bracket-open lbr rbr)
+  (bracket-open lbr rbr "\\"))
 
-(define (scheme-select-enlarge br ibr)
-  (let* ((start (selection-get-start))
-         (end (selection-get-end))
-         (start-row (cADr start))
-         (start-col (max 0 (- (cAr start) 1)))
-         (end-row (cADr end))
-         (end-col (cAr end))
-         (prev (car (program-bracket-backward start-row start-col br ibr)))
-         (next (cadr (program-bracket-forward end-row end-col br ibr))))
-  (if (and (== start prev) (== end next))
-      (selection-cancel)
-      (selection-set prev next))))
+(tm-define (scheme-bracket-close lbr rbr)
+  (bracket-close lbr rbr "\\"))
 
 ; TODO: select strings first
 (tm-define (kbd-select-enlarge)
   (:require prog-select-brackets?)
   (:mode in-prog-scheme?)
-  (scheme-select-enlarge #\( #\)))
+  (program-select-enlarge "(" ")"))
 
 (tm-define (notify-cursor-moved status)
   (:require prog-highlight-brackets?)
   (:mode in-prog-scheme?)
-  (select-brackets-after-movement #\( #\) #\\ ))
+  (select-brackets-after-movement "(" ")" "\\"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for syntax highlighting

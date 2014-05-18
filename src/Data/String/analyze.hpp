@@ -148,6 +148,9 @@ string trim_spaces (string s);
 tree   trim_spaces (tree t);
 array<string> trim_spaces (array<string> a);
 
+path find_left_bracket (path p, const string& lbr, const string& rbr);
+path find_right_bracket (path p, const string& lbr, const string& rbr);
+
 array<string> as_completions (hashset<string> h);
 array<string> close_completions (array<string> a);
 array<string> strip_completions (array<string> a, string prefix);
