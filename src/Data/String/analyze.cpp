@@ -1495,7 +1495,8 @@ find_bracket_valid (tree t, int pos) {
     return L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH;
   if (L(t) == WITH)
     return pos == N(t)-1 &&
-           (L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH);
+           (L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH ||
+            L(t[pos]) == DOCUMENT);
   else
     return false;
 }
