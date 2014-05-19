@@ -1492,12 +1492,10 @@ find_bracket_valid (tree t, int pos) {
   if (L(t) == STRING || L(t) == DOCUMENT)
     return true;
   if (L(t) == CONCAT)
-    return L(t[pos]) == STRING || L(t[pos]) == CONCAT ||
-           L(t[pos]) == WITH || L(t) == DOCUMENT;
+    return L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH;
   if (L(t) == WITH)
     return pos == N(t)-1 &&
-           (L(t[pos]) == STRING || L(t[pos]) == CONCAT ||
-            L(t[pos]) == WITH || L(t) == DOCUMENT);
+           (L(t[pos]) == STRING || L(t[pos]) == CONCAT || L(t[pos]) == WITH);
   else
     return false;
 }
