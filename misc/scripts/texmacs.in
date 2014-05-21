@@ -26,6 +26,11 @@ if [ -f "/usr/bin/cygwin1.dll" ] ; then
   export TEMP=/tmp
 fi
 
+DISTRIBUTOR_ID=`lsb_release -a 2>/dev/null |grep "Distributor ID"`
+if [ ! "${DISTRIBUTOR_ID#*Ubuntu}" = "$DISTRIBUTOR_ID" ] ; then
+  export QT_X11_NO_NATIVE_MENUBAR=1
+fi
+
 PATH="$TEXMACS_BIN_PATH/bin:$PATH"
 @CONFIG_LIB_PATH@="$TEXMACS_BIN_PATH/lib${@CONFIG_LIB_PATH@+":$@CONFIG_LIB_PATH@"}"
 export PATH @CONFIG_LIB_PATH@
