@@ -94,20 +94,6 @@ QTMInteractiveInputHelper::commit (int result) {
 * qt_tm_widget_rep
 ******************************************************************************/
 
-static void
-tweak_iconbar_size (QSize& sz) {
-  if (sz.height () >= 24) {
-    sz.setWidth (sz.width () + 2);
-    sz.setHeight (sz.height () + 6);
-  }
-  else if (sz.height () >= 20) {
-    sz.setHeight (sz.height () + 2);
-  }
-  else if (sz.height () >= 16) {
-    sz.setHeight (sz.height () + 2);
-  }
-}
-
 qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
  : qt_window_widget_rep (new QTMWindow (0), "popup", _quit), helper (this),
    prompt (NULL), full_screen (false)
@@ -313,6 +299,21 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
     // clear any residual waiting menu installation
   waiting_widgets = remove(waiting_widgets, this);
 }
+
+void
+qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
+  if (sz.height () >= 24) {
+    sz.setWidth (sz.width () + 2);
+    sz.setHeight (sz.height () + 6);
+  }
+  else if (sz.height () >= 20) {
+    sz.setHeight (sz.height () + 2);
+  }
+  else if (sz.height () >= 16) {
+    sz.setHeight (sz.height () + 2);
+  }
+}
+
 
 /*! Return ourselves as a window widget.
  \param name A unique identifier for the window (e.g. "TeXmacs:3")

@@ -14,9 +14,9 @@
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
 #include "qt_window_widget.hpp"
-#include "qt_ui_element.hpp"  // qt_choice_command_rep
-#include "qt_picture.hpp"  // xpm_image
-
+#include "qt_ui_element.hpp"    // qt_choice_command_rep
+#include "qt_picture.hpp"       // xpm_image
+#include "qt_tm_widget.hpp"     // tweak_iconbar_size
 #include "QTMMenuHelper.hpp"
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
@@ -205,7 +205,8 @@ QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
 QWidget*
 QTMMinibarAction::createWidget (QWidget* parent) {
   static QImage* pxm = xpm_image ("tm_add.xpm"); // See qt_tm_widget.cpp 
-  static QSize sz = (pxm ? pxm->size() : QSize (16, 16));
+  QSize sz = pxm ? pxm->size() : QSize (16, 16);
+  qt_tm_widget_rep::tweak_iconbar_size (sz);
   
   if (DEBUG_QT_WIDGETS) debug_widgets << "QTMMinibarAction::createWidget\n";
   QWidget* wid= new QWidget (parent);

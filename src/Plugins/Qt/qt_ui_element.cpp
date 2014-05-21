@@ -852,6 +852,7 @@ qt_ui_element_rep::as_qwidget () {
         typedef quartet<string, int, color, bool> T1;
         T1 y = open_box<T1> (get_payload (qtw));
         b->setText (to_qstring (y.x1));
+        qt_apply_tm_style (b, y.x2, y.x3);
       }
       qwid = b;
     }
