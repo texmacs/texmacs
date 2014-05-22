@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.1>
 
 <style|<tuple|source|std>>
 
@@ -56,12 +56,16 @@
 
   <assign|coq-render-type|<macro|x| : <arg|x>>>
 
+  <drd-props|coq-typed|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|coq-apply|arity|<tuple|repeat|1|1>|accessible|all>
+
   <assign|coq-typed|<\xmacro|args>
-    <with|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<lesseq|<value|arity>|2>|<arg|args|0><coq-render-type|<arg|args|1>>|<map-args|coq-render-values|concat|args|0|<minus|<value|arity>|3>><arg|args|<minus|<value|arity>|2>><coq-render-type|<arg|args|<minus|<value|arity>|1>>>>>
+    <with|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<lesseq|<value|arity>|2>|<arg|args|0><coq-render-type|<arg|args|1>>|<map-args|coq-render-values|concat|args|0|<minus|<value|arity>|2>><arg|args|<minus|<value|arity>|2>><coq-render-type|<arg|args|<minus|<value|arity>|1>>>>>
   </xmacro>>
 
-  <assign|coq-apply|<xmacro|args|<with|begin|<arg|args|0>|end|<arg|args|1>|operator|<arg|args|2>|arity|<get-arity|<unquote|<quote-arg|args>>>|<with|color|dark
-  cyan|<value|operator> ><around*|(|<map-args|coq-render-values|concat|args|3|<minus|<value|arity>|1>><arg|args|<minus|<value|arity>|1>>|)>>>>
+  <assign|coq-apply|<xmacro|args|<with|begin|<arg|args|0>|end|<arg|args|1>|operator|<arg|args|2>|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<provides|<value|operator>>|<with|op|<value|<eval|<quote-arg|args|2>>>|<map-args|identity|op|args|3>>|<with|color|dark
+  cyan|<value|operator> ><around*|(|<map-args|coq-render-values|concat|args|3|<minus|<value|arity>|1>><arg|args|<minus|<value|arity>|1>>|)>>>>>
 
   <\active*>
     <\src-comment>

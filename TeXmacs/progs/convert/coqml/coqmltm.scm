@@ -21,6 +21,9 @@
 (define (coqtm-error message)
   `((with "color" "red" ,message)))
 
+(define (coqtm-string s)
+  (utf8->cork s))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -30,7 +33,9 @@
     (filter nnull?
             (map (lambda (x)
                    (if (!= (car x) att) '()
-                     (coqtm-as-serial (environment) (cadr x)))) att-l))))
+                     (coqtm-as-serial
+                       (environment)
+                       (coqtm-string (cadr x))))) att-l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tactics expressions
