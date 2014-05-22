@@ -325,39 +325,32 @@ qt_simple_widget_rep::read (slot s, blackbox index) {
   // Prints the current contents of the canvas onto a QPixmap
 QPixmap
 impress (qt_simple_widget_rep* wid) {
-  if (wid) {
-    int width, height;
-    wid->handle_get_size_hint (width, height);
-    QSize s = to_qsize (width, height);
-    QPixmap pxm (s);
-    if (DEBUG_QT)
-      debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
-    pxm.fill (Qt::transparent);
+  int width, height;
+  wid->handle_get_size_hint (width, height);
+  QSize s = to_qsize (width, height);
+  QPixmap pxm (s);
+  if (DEBUG_QT)
+    debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
+  pxm.fill (Qt::transparent);
+  {
+    qt_renderer_rep *ren = the_qt_renderer();
+    ren->begin (static_cast<QPaintDevice*>(&pxm));
+    rectangle r = rectangle (0, 0, s.width(), s.height());
+    ren->set_origin (0,0);
+    ren->encode (r->x1, r->y1);
+    ren->encode (r->x2, r->y2);
+    ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
     {
-      qt_renderer_rep *ren = the_qt_renderer();
-      ren->begin (static_cast<QPaintDevice*>(&pxm));
-      rectangle r = rectangle (0, 0, s.width(), s.height());
-      ren->set_origin (0,0);
-      ren->encode (r->x1, r->y1);
-      ren->encode (r->x2, r->y2);
-      ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-      {
-          // we do not want to be interrupted here...
-        extern bool disable_check_event;
-        bool cache = disable_check_event;
-        disable_check_event = true;
-        wid->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
-        disable_check_event = cache;
-      }
-      ren->end();
+        // we do not want to be interrupted here...
+      extern bool disable_check_event;
+      bool cache = disable_check_event;
+      disable_check_event = true;
+      wid->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
+      disable_check_event = cache;
     }
-    return pxm;
+    ren->end();
   }
-  else {
-      // return arbitrary image...
-    QPixmap pxm (10, 10);
-    return pxm;
-  }
+  return pxm;
 }
 
 QAction*
