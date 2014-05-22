@@ -67,7 +67,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
   if (!fake) nr_windows--;
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
-  delete qwid;
+  qwid->deleteLater();
 }
 
 widget
