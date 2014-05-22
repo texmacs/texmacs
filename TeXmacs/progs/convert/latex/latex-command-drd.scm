@@ -89,7 +89,7 @@
   binom tbinom dbinom cfrac tfrac equal href
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
-  scalebox texorpdfstring raisebox
+  scalebox texorpdfstring raisebox foreignlanguage
   Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut)
 
 (logic-group latex-command-3%
@@ -167,6 +167,7 @@
   begin-algorithmic begin-algorithm begin-algorithm2e)
 
 (logic-group latex-environment-1%
+  begin-otherlanguage begin-otherlanguage*
   begin-tabbing begin-thebibliography begin-multicols)
 
 (logic-group latex-environment-1*%

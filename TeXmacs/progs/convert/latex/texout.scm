@@ -231,7 +231,7 @@
 (define (texout-concat l)
   (texout-concat-sub #f l))
 
-(define (texout-multiline? x)
+(tm-define (texout-multiline? x)
   (cond ((nlist? x) #f)
         ((in? (car x) '(!begin !nextline !newline !linefeed !eqn !table)) #t)
         ((and (in? (car x) '(!document !paragraph)) (> (length (cdr x)) 1)) #t)

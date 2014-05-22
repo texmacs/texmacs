@@ -33,6 +33,7 @@ tree parsed_latex_to_tree (tree t);
 tree latex_command_to_tree (tree t);
 bool is_var_compound (tree t, string s);
 bool is_var_compound (tree t, string s, int n);
+string latex_to_texmacs_languages (string s);
 
 /******************************************************************************
 * Final modifications to the converted tree
@@ -586,6 +587,19 @@ finalize_layout (tree t) {
 
       if (is_func (v, END) && v[0] == "tmindent") {
 	r << tree (END, "indent");
+	continue;
+      }
+
+      if (is_func (v, BEGIN, 2) && (v[0] == "otherlanguage" ||
+                                    v[0] == "otherlanguage*")) {
+        string lang= latex_to_texmacs_languages (string_arg (v[1]));
+	r << tree (SET, "language", lang);
+	continue;
+      }
+
+      if (is_func (v, END, 1) && (v[0] == "otherlanguage" ||
+                                  v[0] == "otherlanguage*")) {
+	r << tree (RESET, "language");
 	continue;
       }
 

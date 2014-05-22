@@ -1167,6 +1167,13 @@
   (set! x (tmlength->texlength x))
   (list (list '!begin "tmparsep" x) arg))
 
+(define (tmtex-make-lang val arg)
+  (if (nin? val tmtex-languages)
+    (set! tmtex-languages (append (list val) tmtex-languages)))
+  (if (texout-multiline? arg)
+    `((!begin "otherlanguage" ,val) ,arg)
+    `(foreignlanguage ,val ,arg)))
+
 (define (tmtex-with-one var val arg)
   (if (== var "mode")
       (let ((old (tmtex-env-get-previous "mode")))
@@ -1186,14 +1193,11 @@
 	    (a (tmtex-get-assign-cmd var val)))
 	(cond (w (list w arg))
 	      (a (list '!group (tex-concat (list (list a) " " arg))))
-	      ((== "par-left" var) (tmtex-make-parmod val "0pt" "0pt" arg))
-	      ((== "par-right" var) (tmtex-make-parmod "0pt" val "0pt" arg))
-	      ((== "par-first" var) (tmtex-make-parmod "0pt" "0pt" val arg))
+	      ((== "par-left" var)    (tmtex-make-parmod val "0pt" "0pt" arg))
+	      ((== "par-right" var)   (tmtex-make-parmod "0pt" val "0pt" arg))
+	      ((== "par-first" var)   (tmtex-make-parmod "0pt" "0pt" val arg))
 	      ((== "par-par-sep" var) (tmtex-make-parsep val arg))
-              ((== var "language")
-                (begin
-                  (set! tmtex-languages (append (list val) tmtex-languages))
-                  `(!group (!concat (selectlanguage ,val) " " ,arg))))
+              ((== var "language")    (tmtex-make-lang   val arg))
 	      ((== var "color")
                ;; TODO: define color when necessary
 	        (if (and (= (string-length val) 7) (char=? (string-ref val 0) #\#))

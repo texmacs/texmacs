@@ -15,6 +15,18 @@
 #include "file.hpp"
 
 /******************************************************************************
+* Language translation
+******************************************************************************/
+
+string
+latex_to_texmacs_languages (string s) {
+  if (s == "frenchb")  return "french";
+  if (s == "ngermanb") return "german";
+  if (s == "magyar")   return "hungarian";
+  return s;
+}
+
+/******************************************************************************
 * TeXmacs preamble management
 ******************************************************************************/
 

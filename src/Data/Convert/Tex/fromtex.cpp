@@ -652,6 +652,7 @@ latex_fallback_on_pictures (string s, tree t) {
 #define v2e latex_verbarg_to_string
 tree l2e (tree);
 tree latex_command_to_tree (tree t);
+string latex_to_texmacs_languages (string s);
 
 tree
 latex_symbol_to_tree (string s) {
@@ -1738,10 +1739,15 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\uppercase", 1) || is_tuple (t, "\\MakeUppercase", 1))
     return tree (CHANGE_CASE, l2e (t[1]), "UPCASE");
   if (is_tuple (t, "\\selectlanguage", 1)) {
-    tree lang= l2e (t[1]);
-    if (lang == "ngermanb") lang= "german";
-    if (lang == "magyar") lang= "hungarian";
-    return tree (SET, "language", lang);
+    string lang= string_arg (t[1]);
+    return tree (SET, "language", latex_to_texmacs_languages (lang));
+  }
+  if (is_tuple (t, "\\foreignlanguage", 2)) {
+    string lang= string_arg (t[1]);
+    return tree (CONCAT,
+                  tree (SET, "language", latex_to_texmacs_languages (lang)),
+                  l2e (t[2]),
+                  tree (RESET, "language"));
   }
   if (is_tuple (t, "\\texorpdfstring", 2)) return l2e (t[1]);
   if (is_tuple (t, "\\tmtextrm", 1)) return m2e (t, FONT_FAMILY, "rm");
