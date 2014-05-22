@@ -256,16 +256,25 @@
 
 (define-public (converters-from-special fm suf tm?)
   (let* ((l1 (converters-from fm))
+         (l5 (list-filter l1 (lambda (s) (not (ahash-ref format-hidden s)))))
 	 (l2 (list-filter l1 (lambda (s) (string-ends? s suf))))
 	 (l3 (map (lambda (s) (string-drop-right s (string-length suf))) l2))
-	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (!= s "texmacs"))))))
+	 (l4 (if tm? l3 (list-filter l3
+                                     (lambda (s)
+                                       (and
+                                         (not (ahash-ref format-hidden s))
+                                         (!= s "texmacs")))))))
     (list-sort l4 format<=?)))
 
 (define-public (converters-to-special fm suf tm?)
   (let* ((l1 (converters-to fm))
 	 (l2 (list-filter l1 (lambda (s) (string-ends? s suf))))
 	 (l3 (map (lambda (s) (string-drop-right s (string-length suf))) l2))
-	 (l4 (if tm? l3 (list-filter l3 (lambda (s) (!= s "texmacs"))))))
+	 (l4 (if tm? l3 (list-filter l3
+                                     (lambda (s)
+                                       (and
+                                         (not (ahash-ref format-hidden s))
+                                         (!= s "texmacs")))))))
     (list-sort l4 format<=?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -319,6 +328,7 @@
 
 (define format-name (make-ahash-table))
 (define format-suffixes (make-ahash-table))
+(define format-hidden (make-ahash-table))
 (define format-mime (make-ahash-table))
 (define format-recognize (make-ahash-table))
 (define format-must-recognize (make-ahash-table))
@@ -330,6 +340,8 @@
 	((func? cmd :suffix)
 	 (ahash-set! format-suffixes name (cdr cmd))
 	 (for-each (lambda (s) (ahash-set! format-mime s name)) (cdr cmd)))
+	((func? cmd :hidden)
+         (ahash-set! format-hidden name #t))
 	((func? cmd :recognize 1)
 	 (ahash-set! format-recognize name (second cmd)))
 	((func? cmd :must-recognize 1)
