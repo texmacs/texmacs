@@ -9,12 +9,6 @@
 ;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; TODO:
-;;  - Maybe we should use persistent storage for the parsed files?
-;;  - This is pretty ad-hoc. We could provide a better interface and use it
-;;    for a simple bibliography browser widget, for instance.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (bibtex bib-complete)
   (:use (utils library ptrees)))
