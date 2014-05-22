@@ -2080,7 +2080,8 @@ latex_to_tree (tree t0) {
     lan= t1[1]->label;
     t1 = t1[0];
   }
-  t1= set_special_fonts (t1, lan);
+  if (!is_document)
+    t1= set_special_fonts (t1, lan);
   textm_appendices= false;
   textm_unicode   = false;
   textm_natbib    = false;
