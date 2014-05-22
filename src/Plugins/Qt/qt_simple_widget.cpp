@@ -20,11 +20,11 @@
 #include <QLayout>
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
- : qt_widget_rep (simple_widget), sequencer (0) { }
+ : qt_widget_rep (simple_widget), self (this), sequencer (0) { }
 
 QWidget*
 qt_simple_widget_rep::as_qwidget () {
-  qwid = new QTMWidget (0, this);
+  qwid = new QTMWidget (0, self);
   reapply_sent_slots();
   SI width, height;
   handle_get_size_hint (width, height);

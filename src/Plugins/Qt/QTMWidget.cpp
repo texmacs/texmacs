@@ -161,7 +161,7 @@ static long int QTMWcounter = 0; // debugging hack
   \param _parent The parent QWidget.
   \param _tmwid the TeXmacs widget who owns this object.
  */
-QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid) 
+QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
 : QTMScrollView (_parent), tmwid (_tmwid), backingPixmap (1,1), imwidget (NULL),
   id (QTMWcounter++)
 {
@@ -179,7 +179,7 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_simple_widget_rep* _tmwid)
 }
 
 QTMWidget::~QTMWidget () {
-  if (DEBUG_QT) 
+  if (DEBUG_QT)
     debug_qt << "Destroying QTMWidget " << as_string (id) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
   

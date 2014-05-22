@@ -31,7 +31,7 @@ class basic_renderer_rep;
 class QTMWidget: public QTMScrollView {
   Q_OBJECT
 
-  mutable widget       tmwid;
+  mutable qt_widget    tmwid;
   rectangles invalid_regions;
   QPixmap      backingPixmap;
   QLabel*           imwidget;
@@ -43,7 +43,7 @@ public:
   static QSet<QTMWidget*> all_widgets;  // needed by qt_gui_rep::update()
   QPoint                  backing_pos;
 
-  QTMWidget (QWidget* _parent=0, qt_simple_widget_rep* _tmwid=0);
+  QTMWidget (QWidget* _parent=0, qt_widget _tmwid=0);
   virtual ~QTMWidget ();
   
   void invalidate_rect (int x1, int y1, int x2, int y2);

@@ -29,6 +29,11 @@
   */
 class qt_simple_widget_rep: public qt_widget_rep {
 
+    // We keep a pointer to ourselves to avoid accidental deletion by our own
+    // QTMWidget, who keeps a smart pointer to us.
+    // (not sure whether this works/is necessary, though)
+  qt_widget self;
+  
   typedef struct t_slot_entry {
     int seq;
     slot_id id;
@@ -45,7 +50,7 @@ class qt_simple_widget_rep: public qt_widget_rep {
   
 public:
   qt_simple_widget_rep ();
-
+  
   virtual bool is_editor_widget ();
   virtual void handle_get_size_hint (SI& w, SI& h);
   virtual void handle_notify_resize (SI w, SI h);
@@ -73,8 +78,12 @@ public:
   QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
 };
 
-inline qt_simple_widget_rep* concrete_simple_widget (widget w) { 
+inline qt_simple_widget_rep* concrete_simple_widget (qt_widget w) {
   return static_cast<qt_simple_widget_rep*>(w.rep); 
+}
+
+inline qt_simple_widget_rep* concrete_simple_widget (widget w) {
+  return static_cast<qt_simple_widget_rep*>(w.rep);
 }
 
 // Export for TeXmacs' use
