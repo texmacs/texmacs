@@ -54,8 +54,8 @@
 (tm-define (program-character path)
   (let ((s (tree->string (path->tree (cDr path))))
         (pos (cAr path)))
-    (if (or (string-null? s) (>= pos (string-length s)) (< pos 0)) ""
-        (char->string (string-ref s pos)))))
+    (if (or (string-null? s) (>= pos (string-length s)) (< pos 0)) #\nul
+        (string-ref s pos))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for bracket handling
@@ -87,32 +87,33 @@
 (define (path-- p)
   (rcons (cDr p) (- (cAr p) 1)))
 
-(define (set-brackets-selection prev next)
-  (if (or (null? prev) (null? next))
+(tm-define (select-brackets path lb rb)
+  (:synopsis "Highlights innermost matching brackets around given @path")
+  (let ((prev (find-left-bracket path lb rb))
+        (next (find-right-bracket path lb rb)))
+    (if (or (null? prev) (null? next))
       (if (nnull? (get-alt-selection "alternate"))
           (cancel-alt-selection "alternate"))
       (set-alt-selection "alternate" 
-                         (list prev (path++ prev) next (path++ next)))))
+                         (list prev (path++ prev) next (path++ next))))))
 
-(tm-define (select-brackets path lb rb)
-  (:synopsis "Highlights innermost matching brackets around given @path")
-  (set-brackets-selection (find-left-bracket path lb rb)
-                          (find-right-bracket path lb rb)))
+(define (string-ref* s i)
+  (char->string (string-ref s i)))
 
-(tm-define (select-brackets-after-movement lb rb esc)
-  (:synopsis "Highlight brackets after a cursor movement")
+(tm-define (select-brackets-after-movement lbs rbs esc)
+  (:synopsis "Highlight any of @lbs (matching @rbs) after a cursor movement")
   (let* ((p (cursor-path))
          (p* (path-- p))
          (ch (program-character p))
-         (lch (program-character p*)))
-    (if (and (== lch rb) (!= ch lb))
-        (set-brackets-selection (find-left-bracket p* lb rb)
-                                (find-right-bracket p* lb rb))
-        (if (or (== ch esc) (and (!= ch lb) (!= ch rb)))
-            (if (nnull? (get-alt-selection "alternate"))
-                (cancel-alt-selection "alternate"))
-            (set-brackets-selection (find-left-bracket p lb rb)
-                                    (find-right-bracket p lb rb))))))
+         (lch (program-character p*))
+         (i1 (string-index lbs ch))
+         (i2 (string-index rbs ch))
+         (i3 (string-index rbs lch)))
+    (cond (i1 (select-brackets p (string-ref* lbs i1) (string-ref* rbs i1)))
+          (i2 (select-brackets p* (string-ref* lbs i2) (string-ref* rbs i2)))
+          (i3 (select-brackets p* (string-ref* lbs i3) (string-ref* rbs i3)))
+          ((nnull? (get-alt-selection "alternate"))
+           (cancel-alt-selection "alternate")))))
 
 (tm-define (bracket-open lb rb esc)
   (if prog-auto-close-brackets?
