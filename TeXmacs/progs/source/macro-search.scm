@@ -45,16 +45,21 @@
                             (tree-children def))))
             (list-remove-duplicates (apply append (cons head tail)))))))
 
+(define (append-options l1 l2)
+  (cond ((not l1) l2)
+	((and (pair? l1) (== (car l1) :recurse)) (append (cdr l1) l2))
+	(else l1)))
+
 (define (collect-options l t)
   (when (not (ahash-ref t l))
     ;;(display* "Collect " l "\n")
     (ahash-set! t l
       (with std (standard-options (string->symbol l))
-        (or std
-            (with def (get-init-tree l)
-              (if (tree-in? def '(macro xmacro))
-                  (collect-options-sub def t)
-                  (list)))))))
+	(append-options std
+			(with def (get-init-tree l)
+			  (if (tree-in? def '(macro xmacro))
+			      (collect-options-sub def t)
+			      (list)))))))
   (ahash-ref t l))
 
 (tm-define (search-options l)

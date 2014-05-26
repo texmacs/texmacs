@@ -1234,7 +1234,11 @@
 
 (tm-define (standard-options l)
   (:require (in? l '(math equation equation* eqnarray eqnarray*)))
-  (list "math-check"))
+  (list :recurse "math-check"))
+
+(tm-define (standard-options l)
+  (:require (== l 'math-colored))
+  (list "math-ss"))
 
 (tm-define (focus-tag-name l)
   (:require (== l 'math))

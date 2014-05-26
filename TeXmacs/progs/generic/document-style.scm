@@ -136,6 +136,7 @@
 (define-table style-menu-name
   ("framed-title"         "Framed titles")
   ("title-bar"            "Title bars")
+  ("math-ss"              "Sans serif formulas")
 
   ("framed-session"       "Framed input fields")
   ("ring-session"         "Ring binder notebook style")
@@ -215,6 +216,7 @@
   ("ridged-paper"       "Ridged paper beamer theme")
   ("framed-title"       "Put titles of slides in wide frames")
   ("title-bar"          "Put titles of slides in bar at extreme top of screen")
+  ("math-ss"            "Use sans serif font for mathematical formulas")
 
   ("framed-session"     "Render session inputs in frames")
   ("ring-session"       "Ring binder notebook style")

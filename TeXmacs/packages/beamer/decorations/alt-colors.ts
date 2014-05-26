@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.1>
 
 <style|source>
 
@@ -28,28 +28,26 @@
 
   <assign|math-color|dark red>
 
+  <assign|math-colored|<macro|x|<with|color|<value|math-color>|font-family|rm|<arg|x>>>>
+
   <assign|uncolored-math|<value|math>>
 
   <assign|uncolored-equation*|<value|equation*>>
 
   <assign|uncolored-equations-base|<value|equations-base>>
 
-  <assign|math|<macro|x|<with|color|<value|math-color>|<uncolored-math|<arg|x>>>>>
+  <assign|math|<macro|x|<math-colored|<uncolored-math|<arg|x>>>>>
 
   <assign|equation*|<\macro|x>
-    <\with|color|<value|math-color>>
-      <\uncolored-equation*>
-        <arg|x>
-      </uncolored-equation*>
-    </with>
+    <math-colored|<\uncolored-equation*>
+      <arg|x>
+    </uncolored-equation*>>
   </macro>>
 
   <assign|equations-base|<\macro|x>
-    <\with|color|<value|math-color>>
-      <\uncolored-equations-base>
-        <arg|x>
-      </uncolored-equations-base>
-    </with>
+    <math-colored|<\uncolored-equations-base>
+      <arg|x>
+    </uncolored-equations-base>>
   </macro>>
 
   <\active*>
