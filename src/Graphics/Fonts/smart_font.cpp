@@ -1006,6 +1006,13 @@ smart_font (string family, string variant, string series, string shape,
     series * "-" * shape * "-" *
     as_string (sz) * "-" * as_string (dpi) * "-smart";
   if (font::instances->contains (name)) return font (name);
+  if (starts (shape, "math")) {
+    array<string> a= trimmed_tokenize (family, ","), b;
+    for (int i=0; i<N(a); i++)
+      if (starts (a[i], "math=")) b << a[i] (5, N(a[i]));
+      else b << a[i];
+    family= recompose (b, ",");
+  }
   string sh= shape;
   if (shape == "mathitalic" || shape == "mathshape") sh= "right";
   string mfam= main_family (family);
