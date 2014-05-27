@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.1>
 
 <style|<tuple|source|std>>
 
@@ -68,11 +68,17 @@
   <assign|nocite|<xmacro|keys|<style-with|src-compact|none|<flag|<localize|bibliography>|dark
   green|keys><map-args|nocite-arg|concat|keys>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Bibliographies.
+    </src-comment>
+  </active*>
+
+  <assign|bibitem-width|3em>
 
   <assign|transform-bibitem|<macro|body|<strong|[<arg|body>] \ >>>
 
-  <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|text>|||<maximum|1r|<item-hsep>>|>>>>
+  <assign|render-bibitem|<macro|text|<style-with|src-compact|none|<with|par-first|<minus|1tmpt|<value|bibitem-width>>|<yes-indent>><resize|<arg|text>|||<maximum|1r|<value|bibitem-width>>|>>>>
 
   <assign|bibitem|<macro|text|<style-with|src-compact|none|<bibitem*|<arg|text>><label|<merge|<value|cite-bib>|-|<arg|text>>>>>>
 
@@ -89,7 +95,8 @@
   <assign|bibitem-hsep|<macro|<value|bibitem-width>>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|bibitem-width|<box-info|<transform-bibitem|<arg|largest>>|w.>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0|par-flexibility|2.0>
+    <\with|bibitem-width|<minimum|<box-info|<transform-bibitem|<arg|largest>
+    \ >|w.>|3em>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0|par-flexibility|2.0>
       <\description>
         <arg|body>
       </description>
