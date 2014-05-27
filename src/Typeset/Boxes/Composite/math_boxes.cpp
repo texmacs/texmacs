@@ -373,11 +373,13 @@ struct wide_box_rep: public composite_box_rep {
   SI left_correction () {
     return ref->left_correction (); }
   SI right_correction () {
+    /*
     if (above) {
       SI rc= ref->right_correction () + dw;
       if (sx4 (1) >= (sx2 (1) - (dd>>1))) // corrects buggy extents wide chars
 	rc= max (rc, sx2(1)- x2+ dd);
       return rc; }
+    */
     return ref->right_correction (); }
   SI lsub_correction () {
     return ref->lsub_correction (); }
@@ -386,12 +388,14 @@ struct wide_box_rep: public composite_box_rep {
   SI rsub_correction () {
     return ref->rsub_correction (); }
   SI rsup_correction () {
+    /*
     if (above) {
       SI rc= ref->rsup_correction () + dw;
       if (sx4 (1) >= (sx2 (1) - (dd>>1))) // corrects buggy extents wide chars
 	rc= max (rc, sx2(1)- x2+ dd);
       return rc; }
-    return ref->rsub_correction (); }
+    */
+    return ref->rsup_correction (); }
   SI sub_lo_base (int level) {
     return ref->sub_lo_base (level); }
   SI sub_hi_lim  (int level) {
@@ -422,12 +426,14 @@ wide_box_rep::wide_box_rep (
   insert (ref, 0, 0);
   if (above) {
     Y= ref->y2;
-    X= ((SI) (ref->right_slope () * Y)) + m;
+    X= m + ref->rsup_correction () + ((SI) (ref->right_slope () * fn->yx * 0.5));
+    //X= ((SI) (ref->right_slope () * (Y - fn->yx))) + m;
     insert (hi, X- ((hi->x1 + hi->x2)>>1), Y+ sep);
   }
   else {
     Y= ref->y1 - hi->y2;
-    X= ((SI) (ref->right_slope () * (Y - sep))) + m;
+    X= m - ((SI) (ref->right_slope () * sep));
+    //X= ((SI) (ref->right_slope () * (Y - sep))) + m;
     insert (hi, X- ((hi->x1 + hi->x2)>>1), Y- sep);
   }
   position ();
