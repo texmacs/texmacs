@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : session-menu.scm
-;; DESCRIPTION : menus for sessions
+;; MODULE      : program-menu.scm
+;; DESCRIPTION : menus for programs
 ;; COPYRIGHT   : (C) 1999  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,81 +11,80 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (dynamic session-menu)
-  (:use (dynamic session-edit)
-        (dynamic program-edit)
+(texmacs-module (dynamic program-menu)
+  (:use (dynamic program-edit)
         (generic generic-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting sessions
+;; Inserting programs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (supported-sessions-menu)
+(tm-menu (supported-programs-menu)
   (for (name (session-list))
     (let* ((menu-name (session-name name))
            (l (connection-variants name)))
       (assuming (== l (list "default"))
-        ((eval menu-name) (make-session name "default")))
+        ((eval menu-name) (make-program name "default")))
       (assuming (!= l (list "default"))
         (-> (eval menu-name)
             (for (variant l)
-              ((eval variant) (make-session name variant))))))))
+              ((eval variant) (make-program name variant))))))))
 
-(menu-bind insert-session-menu
+(menu-bind insert-program-menu
   (when (and (style-has? "std-dtd") (in-text?))
-    ("Scheme" (make-session "scheme" "default"))
+    ("Scheme" (make-program "scheme" "default"))
     ---
-    (link supported-sessions-menu)
+    (link supported-programs-menu)
     ---
-    ("Other" (interactive make-session))))
+    ("Other" (interactive make-program))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Submenus of the Sessions menu
+;; Submenus of the Programs menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind session-input-menu
+(menu-bind program-input-menu
   (when (in-plugin-with-converters?)
-    ("Mathematical input" (toggle-session-math-input)))
-  ("Multiline input" (toggle-session-multiline-input)))
+    ("Mathematical input" (toggle-program-math-input)))
+  ("Multiline input" (toggle-program-multiline-input)))
 
-(menu-bind session-output-menu
+(menu-bind program-output-menu
   (if (in-scheme?)
-      ("Pretty tree output" (toggle-session-scheme-trees))
-      ("Mathematical output" (toggle-session-scheme-math))
+      ("Pretty tree output" (toggle-program-scheme-trees))
+      ("Mathematical output" (toggle-program-scheme-math))
       ---)
-  ("Show timings" (toggle-session-output-timings)))
+  ("Show timings" (toggle-program-output-timings)))
 
-(menu-bind session-session-menu
-  ("Clear all fields" (session-clear-all))
-  ("Fold all fields" (session-fold-all))
-  ("Unfold all fields" (session-unfold-all))
+(menu-bind program-program-menu
+  ("Clear all fields" (program-clear-all))
+  ("Fold all fields" (program-fold-all))
+  ("Unfold all fields" (program-unfold-all))
   ---
   ("Evaluate fields in order" (toggle-session-program))
   ---
-  ("Create subsession" (field-insert-fold (focus-tree)))
-  ("Split session" (session-split)))
+  ("Create subprogram" (prog-field-insert-fold (focus-tree)))
+  ("Split program" (program-split)))
 
-(menu-bind session-evaluate-menu
-  ("Evaluate" (session-evaluate))
-  ("Evaluate all" (session-evaluate-all))
-  ("Evaluate above" (session-evaluate-above))
-  ("Evaluate below" (session-evaluate-below)))
+(menu-bind program-evaluate-menu
+  ("Evaluate" (program-evaluate))
+  ("Evaluate all" (program-evaluate-all))
+  ("Evaluate above" (program-evaluate-above))
+  ("Evaluate below" (program-evaluate-below)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Session menu
+;; The Program menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (focus-session-language)
+(tm-define (focus-program-language)
   (with lan (get-env "prog-language")
     (or (session-name lan) "Scheme")))
 
 (tm-define (standard-options l)
-  (:require (in? l field-tags))
-  (list "framed-session" "ring-session"))
+  (:require (in? l prog-field-tags))
+  (list "framed-program" "ring-program"))
 
 (tm-menu (focus-tag-menu t)
-  (:require (field-context? t))
-  (inert ((eval (focus-session-language)) (noop) (noop)))
+  (:require (prog-field-context? t))
+  (inert ((eval (focus-program-language)) (noop) (noop)))
   (when (alternate-context? t)
     ((check "Unfolded" "v" (alternate-second? (focus-tree)))
      (alternate-toggle (focus-tree))))
@@ -95,58 +94,58 @@
   ("Describe" (set-message "Not yet implemented" "")))
 
 (tm-menu (focus-move-menu t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   ("Previous field" (traverse-previous))
   ("Next field" (traverse-next))
   ("First field" (traverse-first))
   ("Last field" (traverse-last)))
 
 (tm-define (focus-can-insert-remove? t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   #t)
 
 (tm-menu (focus-insert-menu t)
-  (:require (field-context? t))
-  ("Insert field above" (field-insert (focus-tree) #f))
-  ("Insert field below" (field-insert (focus-tree) #t))
-  ("Insert text field above" (field-insert-text (focus-tree) #f))
-  ("Insert text field below" (field-insert-text (focus-tree) #t))
+  (:require (prog-field-context? t))
+  ("Insert field above" (prog-field-insert (focus-tree) #f))
+  ("Insert field below" (prog-field-insert (focus-tree) #t))
+  ("Insert text field above" (prog-field-insert-text (focus-tree) #f))
+  ("Insert text field below" (prog-field-insert-text (focus-tree) #t))
   ---
-  ("Remove previous field" (field-remove (focus-tree) #f))
-  ("Remove next field" (field-remove (focus-tree) #t))
-  ("Remove banner" (field-remove-banner (focus-tree)))
-  ("Remove last field" (field-remove-extreme (focus-tree) #t)))
+  ("Remove previous field" (prog-field-remove (focus-tree) #f))
+  ("Remove next field" (prog-field-remove (focus-tree) #t))
+  ("Remove banner" (prog-field-remove-banner (focus-tree)))
+  ("Remove last field" (prog-field-remove-extreme (focus-tree) #t)))
 
 (tm-menu (focus-hidden-menu t)
-  (:require (field-context? t)))
+  (:require (prog-field-context? t)))
 
 (tm-menu (focus-extra-menu t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   ---
-  (-> "Input options" (link session-input-menu))
-  (-> "Output options" (link session-output-menu))
-  (-> "Session" (link session-session-menu))
+  (-> "Input options" (link program-input-menu))
+  (-> "Output options" (link program-output-menu))
+  (-> "Program" (link program-program-menu))
   ---
-  (-> "Evaluate" (link session-evaluate-menu))
+  (-> "Evaluate" (link program-evaluate-menu))
   ("Interrupt execution" (plugin-interrupt))
-  ("Close session" (plugin-stop)))
+  ("Close program" (plugin-stop)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Sessions icons
+;; Programs icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (alternate-second-name t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   "Unfold")
 
 (tm-define (alternate-second-icon t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   "tm_alternate_both.xpm")
 
 (tm-menu (focus-tag-icons t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   (dynamic (focus-toggle-icons t))
-  (mini #t (inert ((eval (focus-session-language)) (noop))))
+  (mini #t (inert ((eval (focus-program-language)) (noop))))
   (assuming (focus-has-preferences? t)
     (=> (balloon (icon "tm_focus_prefs.xpm") "Preferences for tag")
 	(dynamic (focus-preferences-menu t))))
@@ -154,7 +153,7 @@
    (focus-help)))
 
 (tm-menu (focus-move-icons t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   ((balloon (icon "tm_similar_first.xpm") "Go to first similar tag")
    (traverse-first))
   ((balloon (icon "tm_similar_previous.xpm") "Go to previous similar tag")
@@ -165,41 +164,41 @@
    (traverse-last)))
 
 (tm-menu (focus-insert-icons t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   ((balloon (icon "tm_insert_up.xpm") "Insert field above")
    (structured-insert-up))
   ((balloon (icon "tm_insert_down.xpm") "Insert field below")
    (structured-insert-down))
   ((balloon (icon "tm_delete_up.xpm") "Remove field above")
-   (field-remove (focus-tree) #f))
+   (prog-field-remove (focus-tree) #f))
   ((balloon (icon "tm_delete_down.xpm") "Remove field below")
-   (field-remove (focus-tree) #t)))
+   (prog-field-remove (focus-tree) #t)))
 
 (tm-menu (focus-hidden-icons t)
-  (:require (field-context? t)))
+  (:require (prog-field-context? t)))
 
 (tm-menu (focus-extra-icons t)
-  (:require (field-context? t))
+  (:require (prog-field-context? t))
   (glue #f #f 8 0)
   (=> (balloon (icon "tm_plugin_input.xpm") "Input options")
-      (link session-input-menu))
+      (link program-input-menu))
   (=> (balloon (icon "tm_plugin_output.xpm") "Output options")
-      (link session-output-menu))
-  (=> (balloon (icon "tm_session_session.xpm") "Session commands")
-      (link session-session-menu))
+      (link program-output-menu))
+  (=> (balloon (icon "tm_session_session.xpm") "Program commands")
+      (link program-program-menu))
   (glue #f #f 10 0)
   (=> (balloon (icon "tm_go.xpm") "Evaluate fields")
-      (link session-evaluate-menu))
+      (link program-evaluate-menu))
   (if (!= (get-env "prog-language") "scheme")
       ((balloon (icon "tm_stop.xpm") "Interrupt execution")
        (plugin-interrupt))
-      ((balloon (icon "tm_clsession.xpm") "Close session")
+      ((balloon (icon "tm_clsession.xpm") "Close program")
        (plugin-stop))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Help icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind session-help-icons
+(menu-bind program-help-icons
   ;; Each plugin appends its own entry
   )
