@@ -90,9 +90,10 @@ math_font_rep::init_font (int fn_nr, font& fn) {
 void
 math_font_rep::search_font (string& s, font& fn) {
   // FIXME: the commented code is not efficient enough
-  //if (s == "<noplus>" || s == "<nocomma>" || s == "<nospace>" ||
-  //    s == "<nobracket>" || s == "<nosymbol>")
-  //  s = "";
+  //if (N(s) >= 4 && s[0] == '<' && s[1] == 'n' && s[2] == 'o')
+  //  if (s == "<noplus>" || s == "<nocomma>" || s == "<nospace>" ||
+  //      s == "<nobracket>" || s == "<nosymbol>")
+  //    s = "";
   if ((N(s)>=9) && (s[N(s)-2]>='0') && (s[N(s)-2]<='9')) {
     int i;
     for (i=N(s)-1; i>0; i--)
