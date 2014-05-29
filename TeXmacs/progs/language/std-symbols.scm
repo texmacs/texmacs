@@ -576,13 +576,18 @@
     "<Re>" "<Im>" "<complement>"
     "<sum>" "<prod>" "<int>" "<oint>")
 
-  (define Unary-operator-textual-symbol
-    (:type unary)
-    (:penalty invalid)
-    (:spacing none default)
-    "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
-    "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
-    "lg" "ln" "log" "sec" "sin" "sinh" "tan" "tanh")
+  ;; FIXME: spacing behind $\sin$ is currently incorrect,
+  ;; because the transition OP_UNARY -> OP_TEXT is not detected
+  ;; in concater_rep::typeset_math_string.  The unary operators
+  ;; can be uncommented as soon as this problem will be corrected.
+  ;;
+  ;;(define Unary-operator-textual-symbol
+  ;;  (:type unary)
+  ;;  (:penalty invalid)
+  ;;  (:spacing none default)
+  ;;  "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
+  ;;  "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
+  ;;  "lg" "ln" "log" "sec" "sin" "sinh" "tan" "tanh")
 
   (define Unary-operator-symbol
     Unary-operator-glyph-symbol
