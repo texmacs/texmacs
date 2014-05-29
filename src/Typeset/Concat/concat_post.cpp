@@ -12,6 +12,7 @@
 ******************************************************************************/
 
 #include "concater.hpp"
+#include "analyze.hpp"
 SI italic_correction (box, box);
 
 /******************************************************************************
@@ -206,6 +207,10 @@ concater_rep::handle_matching (int start, int end) {
 	tp == MIDDLE_BRACKET_ITEM ||
 	tp == RIGHT_BRACKET_ITEM)
       {
+        string ls= a[i]->b->get_leaf_string ();
+        pencil lp= a[i]->b->get_leaf_pencil ();
+        font lf= a[i]->b->get_leaf_font ();
+
 	// make symmetric and prevent from too large delimiters if possible
 	font fn = a[i]->b->get_leaf_font ();
 	SI Y1   = y1 + (fn->sep >> 1);
@@ -217,14 +222,15 @@ concater_rep::handle_matching (int start, int end) {
 	else Y1 -= min (drift, tol) << 1;
 
         // further adjustments when the enclosed expression is not very heigh
+        // and for empty brackets
         SI h= y2 - y1 - fn->sep;
         SI d= 5 * fn->yx - h;
         if (d > 0) { Y1 += d/12; Y2 -= d/12; }
+        if (N(ls) >= 8 && (ls[6] == '.' || ls[7] == '.'))
+          if (starts (ls, "<left-.") || starts (ls, "<right-.")) {
+            Y1 += d/6; Y2 -= d/12; }
 
         // replace item by large or small delimiter
-        string ls= a[i]->b->get_leaf_string ();
-        pencil lp= a[i]->b->get_leaf_pencil ();
-        font lf= a[i]->b->get_leaf_font ();
         if (Y1 < fn->y1 || Y2 > fn->y2)
           a[i]->b= delimiter_box (a[i]->b->ip, ls, fn, lp, Y1, Y2);
         else {
