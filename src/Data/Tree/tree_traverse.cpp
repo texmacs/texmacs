@@ -346,7 +346,11 @@ move_node (tree t, path p, bool forward) {
     if (forward) p= path_up (p) * N (st->label);
     else p= path_up (p) * 0;
   }
-  return move_valid (t, p, forward);
+  p= move_valid (t, p, forward);
+  st= subtree (t, path_up (p));
+  if (is_atomic (st) && last_item (p) > 0)
+    p= path_up (p) * N (st->label);
+  return p;
 }
 
 path next_node (tree t, path p) {
@@ -371,11 +375,13 @@ static bool
 distinct_tag_or_argument (tree t, path p, path q, hashset<int> labs) {
   path c= common (p, q);
   path r= path_up (q);
-  if (labs->contains ((int) L (subtree (t, r))) && tag_border (t, q) != 0)
+  if (labs->contains ((int) L (subtree (t, r))) && tag_border (t, q) > 0)
     return true;
   while (!is_nil (r) && (r != c)) {
     r= path_up (r);
-    if (labs->contains ((int) L (subtree (t, r)))) return true;
+    if (labs->contains ((int) L (subtree (t, r))) &&
+	!none_accessible (subtree (t, r)))
+      return true;
   }
   return false;
 }
@@ -385,7 +391,7 @@ acceptable_border (tree t, path p, path q, hashset<int> labs) {
   if (tag_border (t, q) == 0) return true;
   if (!labs->contains ((int) L (subtree (t, path_up (q))))) return true;
   if (tag_border (t, q) < 0) return false;
-  return tag_border (t, p) != 0;
+  return tag_border (t, p) > 0;
 }
 
 static int
