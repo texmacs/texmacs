@@ -57,13 +57,30 @@
         ,@(map (cut coqtm-as-serial env <>) c)))
     (coqtm-error "bad apply")))
 
+(define (make-tex-args s)
+  (cond ((< (string-length s) 2) "")
+        ((string-starts? s "#") (string-append
+                                  (string-take s 2)
+                                  (make-tex-args (string-tail s 2))))
+        ((string-starts? s "\\")  (make-tex-args (string-tail s 2)))
+        (else (make-tex-args (string-tail s 1)))))
+
 (define (coqtm-operator env a c)
   (if (== (length c) 0)
-    `((coq-operator
-        ,@(coqtm-get-attributes 'name a)
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)))
-    (coqtm-error "bad operator")))
+    (let ((names  (coqtm-get-attributes 'name a))
+          (texes  (coqtm-get-attributes 'format-tex a))
+          (begins (coqtm-get-attributes 'begin a))
+          (ends   (coqtm-get-attributes 'end a)))
+      (if (and (list>0? names) (list>0? texes))
+        (let* ((val  (car texes))
+               (args (make-tex-args val))
+               (m    (tree->stree
+                       (generic->texmacs
+                         (string-append "\\def\\dummy" args "{" val "}")
+                         "latex-snippet"))))
+          (if (func? m 'assign 2) (set! names (cddr m)))))
+      `((coq-operator ,@names ,@begins ,@ends)))
+      (coqtm-error "bad operator")))
 
 (define (coqtm-constant env a c)
   (if (== (length c) 0)

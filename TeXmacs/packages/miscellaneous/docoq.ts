@@ -64,8 +64,8 @@
     <with|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<lesseq|<value|arity>|2>|<arg|args|0><coq-render-type|<arg|args|1>>|<map-args|coq-render-values|concat|args|0|<minus|<value|arity>|2>><arg|args|<minus|<value|arity>|2>><coq-render-type|<arg|args|<minus|<value|arity>|1>>>>>
   </xmacro>>
 
-  <assign|coq-apply|<xmacro|args|<with|begin|<arg|args|0>|end|<arg|args|1>|operator|<arg|args|2>|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<provides|<value|operator>>|<with|op|<value|<eval|<quote-arg|args|2>>>|<map-args|identity|op|args|3>>|<with|color|dark
-  cyan|<value|operator> ><around*|(|<map-args|coq-render-values|concat|args|3|<minus|<value|arity>|1>><arg|args|<minus|<value|arity>|1>>|)>>>>>
+  <assign|coq-apply|<xmacro|args|<with|begin|<arg|args|0>|end|<arg|args|1>|operator|<arg|args|2>|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<equal|<get-label|<value|operator>>|macro>|<map-args|identity|operator|args|3>|<if|<provides|<value|operator>>|<with|op|<value|<eval|<quote-arg|args|2>>>|<map-args|identity|op|args|3>>|<with|color|dark
+  cyan|<value|operator> ><around*|(|<map-args|coq-render-values|concat|args|3|<minus|<value|arity>|1>><arg|args|<minus|<value|arity>|1>>|)>>>>>>
 
   <\active*>
     <\src-comment>
