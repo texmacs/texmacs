@@ -30,6 +30,7 @@
 
 ; TODO: select strings first
 (tm-define (kbd-select-enlarge)
+  (:require prog-select-brackets?)           
   (:mode in-prog-cpp?)
   (program-select-enlarge "{" "}"))
 

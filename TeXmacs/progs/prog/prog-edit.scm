@@ -136,15 +136,29 @@
     (insert rb)
     (if prog-highlight-brackets? (select-brackets p lb rb))))
 
+; HACK! I'd like to use selection-active-enlarging? But current C++ code
+; doesn't mix well with this selection mechanism. Also: if mouse selections
+; ever use program-select-enlarge, this has to be disabled.
+(define kbd-select-enlarging 0) ; 0=no, 1=started, 2=selecting
+
 (tm-define (program-select-enlarge lb rb)
-  (let* ((start (selection-get-start))
-         (end (selection-get-end))
-         (start* (if (== start end) start (path-- start)))
-         (prev (find-left-bracket start* lb rb))
-         (next (find-right-bracket end lb rb)))
-    (if (or (and (== start prev) (== end next)) (null? prev) (null? next))
-        (selection-cancel)
-        (selection-set prev (path++ next)))))
+  (if (== 0 kbd-select-enlarging)
+      (set! kbd-select-enlarging 1)
+      (if (and (not (selection-active-any?)) (== 2 kbd-select-enlarging))
+          (set! kbd-select-enlarging 1)
+          (let* ((start (selection-get-start))
+                 (end (selection-get-end))
+                 (start* (if (== start end) start (path-- start)))
+                 (prev (find-left-bracket start* lb rb))
+                 (next (find-right-bracket end lb rb)))
+            (if (or (and (== start prev) (== end next))
+                    (null? prev) (null? next))
+                (begin
+                  (set! kbd-select-enlarging 0)
+                  (selection-cancel))
+                (begin
+                  (set! kbd-select-enlarging 2)
+                  (selection-set prev (path++ next))))))))
 
 ; Cancel any active selection when we leave a code fragment
 (tm-define (notify-cursor-moved status)
