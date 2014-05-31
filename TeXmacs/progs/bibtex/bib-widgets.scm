@@ -21,25 +21,13 @@
 (define bibwid-style "tm-plain")
 (define bibwid-use-relative? #t)
 (define bibwid-update-buffer? #t)
-(define bibwid-cwd (string->url ""))
-
-(define url-sep (if (os-win32?) "\\" "/"))
-(define (url-delta* u1 u2)
-  (with u (url-delta (url->string (url-glue u1 url-sep)) u2)
-    (if (or (url-rooted? u) (equal? (url-tail u) u))
-        u
-        (url-append (url-parent) u))))
-
-;;;;; HACK!!! url-delta seems bogus
-(with u "/some/test/here.blah"
-  (if (== (url-delta (url-head u) u) (url-tail u))
-      (set! url-delta* url-delta)))
+(define bibwid-buffer (string->url ""))
 
 (define (bibwid-set-url u)
   (cond ((and (== bibwid-use-relative? #t) (url-rooted? u))
-         (set! bibwid-url (url-delta* bibwid-cwd u)))
+         (set! bibwid-url (url-delta bibwid-buffer u)))
         ((and (== bibwid-use-relative? #f) (not (url-rooted? u)))
-         (set! bibwid-url (url-append bibwid-cwd u)))
+         (set! bibwid-url (url-append (url-head bibwid-buffer) u)))
         (else (set! bibwid-url u))))
 
 (define (bibwid-set-style answer)
@@ -60,7 +48,7 @@
                   bibwid-style)
     (eval `(use-modules (bibtex ,(string->symbol style))))
     (with u (if (and bibwid-use-relative? (not (url-rooted? bibwid-url)))
-                (url-append bibwid-cwd bibwid-url)
+                (url-append (url-head bibwid-buffer) bibwid-url)
                 bibwid-url)
       (with t (if (url-exists? u) 
                   (parse-bib (string-load u)) 
@@ -143,10 +131,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (open-bibliography-inserter)
-  (set! bibwid-cwd (url-head (current-buffer)))
+  (set! bibwid-buffer (current-buffer))
   (let ((u (current-bib-file #f))
         (s (current-bib-style #f))
-        (name (url-tail (current-buffer))))
+        (name (url-tail bibwid-buffer)))
     (if (and (not (url-none? u)) (!= s ""))
         (with msg (replace "Modifying bibliography for %1" name)
           (bibwid-set-url u)
