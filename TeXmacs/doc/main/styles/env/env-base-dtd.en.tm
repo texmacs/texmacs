@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.21>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Defining new environments>
@@ -56,14 +56,17 @@
   defined using the <markup|new-env> macro. These environments may be based
   on arbitrary counter-groups:
 
-  <\explain|<explain-macro|new-env|group|env|env-name|display-name>>
-    The first argument is the name of the counter <src-arg|group> to which
-    the new environment belongs. The second argument <src-arg|env> is the
-    name of a binary macro for rendering the environment. The arguments of
-    the rendering macro are a name (like ``Theorem 3.14'') and its body. The
-    remaining arguments are similar as for <markup|new-theorem>. For
-    instance, in the standard style-sheets, <markup|new-theorem> is defined
-    by
+  <\explain|<explain-macro|new-env|env-name|display-name|group|render>>
+    The first argument <src-arg|env-name> specifies the name for the
+    environment (like ``experiment'') and the second, <src-arg|display-name>,
+    the corresponding text (like ``Experiment''). The third argument is the
+    name of the counter <src-arg|group> to which the new environment belongs.
+    The last argument <src-arg|render> is the name of a binary macro for
+    rendering the environment. The arguments of the rendering macro are a
+    name (like ``Theorem 3.14'') and its body. You may use this macro to
+    define new environments based on counter-groups other than the standard
+    five <verbatim|theorem-env>, <verbatim|exercise-env>, etc. For instance,
+    in the standard style-sheets, <markup|new-theorem> is defined by
 
     <\tm-fragment>
       <\inactive*>
@@ -87,8 +90,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
