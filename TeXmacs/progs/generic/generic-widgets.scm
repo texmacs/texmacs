@@ -298,17 +298,23 @@
 
 (tm-widget ((search-widget u style init aux) quit)
   (padded
-    (resize "600px" "60px"
+    (resize "600px" "100px"
       (texmacs-input `(with ,@init (document ""))
                      `(style (tuple ,@style)) aux))
-    ======
+    ===
     (explicit-buttons
       (hlist
-        ("First" (search-extreme-match #f)) // //
-        ("Previous" (search-next-match #f)) // //
-        ("Next" (search-next-match #t)) // //
-        ("Last" (search-extreme-match #t)) >>>
-        ("Done" (quit))))))
+        ((balloon (icon "tm_search_first.xpm") "First occurrence")
+         (search-extreme-match #f))
+        ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+         (search-next-match #f))
+        ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+         (search-next-match #t))
+        ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+         (search-extreme-match #t))
+        >>>
+        ((balloon (icon "tm_close_tool.xpm") "Close search tool")
+         (quit))))))
 
 (tm-define (open-search)
   (:interactive #t)
@@ -329,21 +335,32 @@
 
 (tm-widget ((replace-widget u style init saux raux) quit)
   (padded
-    (resize "600px" "60px"
+    (resize "600px" "100px"
       (texmacs-input `(with ,@init (document ""))
                      `(style (tuple ,@style)) saux))
-    ===
-    (resize "600px" "60px"
+    === ===
+    (resize "600px" "100px"
       (texmacs-input `(with ,@init (document ""))
                      `(style (tuple ,@style)) raux))
-    ======
+    === ===
     (explicit-buttons
       (hlist
-        ("Previous" (search-next-match #f)) // //
-        ("Next" (search-next-match #t)) // //
-        ("Replace" (replace-one)) // //
-        ("Replace all" (replace-all)) >>>
-        ("Done" (quit))))))
+        ((balloon (icon "tm_search_first.xpm") "First occurrence")
+         (search-extreme-match #f))
+        ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+         (search-next-match #f))
+        ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+         (search-next-match #t))
+        ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+         (search-extreme-match #t))
+        // // //
+        ((balloon (icon "tm_replace_one.xpm") "Replace one occurrence")
+         (replace-one))
+        ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
+         (replace-all))
+        >>>
+        ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
+         (quit))))))
 
 (tm-define (open-replace)
   (:interactive #t)
