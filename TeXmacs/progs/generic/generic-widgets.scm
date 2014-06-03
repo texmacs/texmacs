@@ -438,6 +438,7 @@
   (text "by: ")
   (input (replace-toolbar-set answer) "string" (list "") "15em")
   //
+  ;;(if (nnull? (get-alt-selection "alternate"))
   ((balloon (icon "tm_search_first.xpm") "First occurrence")
    (search-extreme-match #f))
   ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
@@ -446,7 +447,12 @@
    (search-next-match #t))
   ((balloon (icon "tm_search_last.xpm") "Last occurrence")
    (search-extreme-match #t))
-  // // // // // // // // // // // // // // // // >>>
+  //
+  ((balloon (icon "tm_replace_one.xpm") "Replace one occurrence")
+   (replace-one))
+  ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
+   (replace-all))
+  // // // // // // // // // >>>
   ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
    (toolbar-search-end)
    (open-replace))
