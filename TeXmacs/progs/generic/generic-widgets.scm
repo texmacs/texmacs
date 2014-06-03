@@ -364,48 +364,97 @@
 ;; Search toolbar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define toolbar-search-active? #f)
-
 (tm-define (search-toolbar-set what)
-  (let* ((u (current-buffer))
-         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
-         (init (get-main-attrs get-env))
-         (aux (search-buffer)))
-    (set-search-reference (cursor-path))
-    (set-search-filter)
-    (buffer-set-body aux `(document ,what))
-    (buffer-set-master aux u)
-    (perform-search)))
+  (if (string? what)
+      (let* ((u (current-buffer))
+             (aux (search-buffer)))
+        (set-search-reference (cursor-path))
+        (set-search-filter)
+        (buffer-set-body aux `(document ,what))
+        (buffer-set-master aux u)
+        (perform-search))
+      (toolbar-search-end)))
 
 (tm-widget (search-toolbar)
-  (if toolbar-search-active?
-      (text "Search: ")
-      ;;(resize "0.5w" "24px"
-      ;;  (texmacs-input `(document "")
-      ;;                 `(style (tuple "generic"))
-      ;;                 (search-buffer)))
-      (input (search-toolbar-set answer) "string" (list "") "25em")
-      //
-      ((balloon (icon "tm_search_first.xpm") "First occurrence")
-       (search-extreme-match #f))
-      ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
-       (search-next-match #f))
-      ((balloon (icon "tm_search_next.xpm") "Next occurrence")
-       (search-next-match #t))
-      ((balloon (icon "tm_search_last.xpm") "Last occurrence")
-       (search-extreme-match #t))
-      // // // // // // // // // // // // // // // // >>>
-      ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
-       (toolbar-search-end)
-       (open-search))
-      ((balloon (icon "tm_close_tool.xpm") "Close search tool")
-       (toolbar-search-end))))
+  (text "Search: ")
+  ;;(resize "0.5w" "24px"
+  ;;  (texmacs-input `(document "")
+  ;;                 `(style (tuple "generic"))
+  ;;                 (search-buffer)))
+  (input (search-toolbar-set answer) "string" (list "") "25em")
+  //
+  ((balloon (icon "tm_search_first.xpm") "First occurrence")
+   (search-extreme-match #f))
+  ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+   (search-next-match #f))
+  ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+   (search-next-match #t))
+  ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+   (search-extreme-match #t))
+  // // // // // // // // // // // // // // // // >>>
+  ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
+   (toolbar-search-end)
+   (open-search))
+  ((balloon (icon "tm_close_tool.xpm") "Close search tool")
+   (toolbar-search-end)))
 
 (tm-define (toolbar-search-start)
   (:interactive #t)
   (set! toolbar-search-active? #t)
+  (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #t))
 
 (tm-define (toolbar-search-end)
   (set! toolbar-search-active? #f)
+  (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #f))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Replace toolbar
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define replace-toolbar-by #f)
+
+(tm-define (replace-toolbar-set by)
+  (if (string? by)
+      (let* ((u (current-buffer))
+             (aux (replace-buffer)))
+        (buffer-set-body aux `(document ,by))
+        (buffer-set-master aux u)
+        (if (== replace-toolbar-by by)
+            (replace-one)
+            (perform-search))
+        (set! replace-toolbar-by by))
+      (toolbar-search-end)))
+
+(tm-widget (replace-toolbar)
+  (text "Replace: ")
+  ;;(resize "0.5w" "24px"
+  ;;  (texmacs-input `(document "")
+  ;;                 `(style (tuple "generic"))
+  ;;                 (replace-buffer)))
+  (input (search-toolbar-set answer) "string" (list "") "15em")
+  //
+  (text "by: ")
+  (input (replace-toolbar-set answer) "string" (list "") "15em")
+  //
+  ((balloon (icon "tm_search_first.xpm") "First occurrence")
+   (search-extreme-match #f))
+  ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+   (search-next-match #f))
+  ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+   (search-next-match #t))
+  ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+   (search-extreme-match #t))
+  // // // // // // // // // // // // // // // // >>>
+  ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
+   (toolbar-search-end)
+   (open-replace))
+  ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
+   (toolbar-search-end)))
+
+(tm-define (toolbar-replace-start)
+  (:interactive #t)
+  (set! toolbar-search-active? #f)
+  (set! toolbar-replace-active? #t)
+  (show-bottom-tools 0 #t))

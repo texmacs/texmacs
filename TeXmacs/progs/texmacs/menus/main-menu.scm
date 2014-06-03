@@ -198,8 +198,14 @@
 ;; The TeXmacs bottom tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define toolbar-search-active? #f)
+(tm-define toolbar-replace-active? #f)
+
 (tm-widget (texmacs-bottom-tools-switch)
-  (link search-toolbar))
+  (if toolbar-search-active?
+      (link search-toolbar))
+  (if toolbar-replace-active?
+      (link replace-toolbar)))
 
 (tm-widget (texmacs-bottom-tools)
   (if (qt-gui?)
