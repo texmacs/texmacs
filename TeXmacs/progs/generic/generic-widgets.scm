@@ -384,7 +384,7 @@
       ;;  (texmacs-input `(document "")
       ;;                 `(style (tuple "generic"))
       ;;                 (search-buffer)))
-      (input (search-toolbar-set answer) "string" (list "") "15em")
+      (input (search-toolbar-set answer) "string" (list "") "25em")
       //
       ((balloon (icon "tm_search_first.xpm") "First occurrence")
        (search-extreme-match #f))
