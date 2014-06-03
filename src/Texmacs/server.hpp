@@ -54,13 +54,16 @@ public:
   virtual void show_header (bool flag) = 0;
   virtual void show_icon_bar (int which, bool flag) = 0;
   virtual void show_side_tools (int which, bool flag) = 0;
+  virtual void show_bottom_tools (int which, bool flag) = 0;
   virtual bool visible_header () = 0;
   virtual bool visible_icon_bar (int which) = 0;
   virtual bool visible_side_tools (int which) = 0;
+  virtual bool visible_bottom_tools (int which) = 0;
   virtual void menu_widget (string menu, widget& w) = 0;
   virtual void menu_main (string menu) = 0;
   virtual void menu_icons (int which, string menu) = 0;
   virtual void side_tools (int which, string menu) = 0;
+  virtual void bottom_tools (int which, string menu) = 0;
 
   virtual void set_window_zoom_factor (double zoom) = 0;
   virtual double get_window_zoom_factor () = 0;

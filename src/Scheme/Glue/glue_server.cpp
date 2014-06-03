@@ -182,6 +182,21 @@ tmg_show_side_tools (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_show_bottom_tools (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "show-bottom-tools");
+  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "show-bottom-tools");
+
+  int in1= tmscm_to_int (arg1);
+  bool in2= tmscm_to_bool (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_server()->show_bottom_tools (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_show_footer (tmscm arg1) {
   TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "show-footer");
 
@@ -224,6 +239,19 @@ tmg_visible_side_toolsP (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   bool out= get_server()->visible_side_tools (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_visible_bottom_toolsP (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "visible-bottom-tools?");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= get_server()->visible_bottom_tools (in1);
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
@@ -547,10 +575,12 @@ initialize_glue_server () {
   tmscm_install_procedure ("show-header",  tmg_show_header, 1, 0, 0);
   tmscm_install_procedure ("show-icon-bar",  tmg_show_icon_bar, 2, 0, 0);
   tmscm_install_procedure ("show-side-tools",  tmg_show_side_tools, 2, 0, 0);
+  tmscm_install_procedure ("show-bottom-tools",  tmg_show_bottom_tools, 2, 0, 0);
   tmscm_install_procedure ("show-footer",  tmg_show_footer, 1, 0, 0);
   tmscm_install_procedure ("visible-header?",  tmg_visible_headerP, 0, 0, 0);
   tmscm_install_procedure ("visible-icon-bar?",  tmg_visible_icon_barP, 1, 0, 0);
   tmscm_install_procedure ("visible-side-tools?",  tmg_visible_side_toolsP, 1, 0, 0);
+  tmscm_install_procedure ("visible-bottom-tools?",  tmg_visible_bottom_toolsP, 1, 0, 0);
   tmscm_install_procedure ("visible-footer?",  tmg_visible_footerP, 0, 0, 0);
   tmscm_install_procedure ("full-screen-mode",  tmg_full_screen_mode, 2, 0, 0);
   tmscm_install_procedure ("full-screen?",  tmg_full_screenP, 0, 0, 0);

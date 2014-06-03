@@ -51,12 +51,15 @@ public:
   void menu_main (string menu);
   void menu_icons (int which, string menu);
   void side_tools (int which, string tools);
+  void bottom_tools (int which, string tools);
   void set_header_flag (bool flag);
   void set_icon_bar_flag (int which, bool flag);
   void set_side_tools_flag (int which, bool flag);
+  void set_bottom_tools_flag (int which, bool flag);
   bool get_header_flag ();
   bool get_icon_bar_flag (int which);
   bool get_side_tools_flag (int which);
+  bool get_bottom_tools_flag (int which);
 
   double get_window_zoom_factor ();
   void set_window_zoom_factor (double zoom);

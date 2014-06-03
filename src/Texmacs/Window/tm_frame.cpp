@@ -123,6 +123,12 @@ tm_frame_rep::side_tools (int which, string tools) {
 }
 
 void
+tm_frame_rep::bottom_tools (int which, string tools) {
+  if ((which<0) || (which>0)|| (!has_current_view())) return;
+  concrete_window () -> bottom_tools (which, tools);
+}
+
+void
 tm_frame_rep::show_header (bool flag) {
   if (!has_current_view ()) return;
   concrete_window () -> set_header_flag (flag);
@@ -138,6 +144,12 @@ void
 tm_frame_rep::show_side_tools (int which, bool flag) {
   if ((which<0) || (which>0) || (!has_current_view())) return;
   concrete_window () -> set_side_tools_flag (which, flag);
+}
+
+void
+tm_frame_rep::show_bottom_tools (int which, bool flag) {
+  if ((which<0) || (which>0) || (!has_current_view())) return;
+  concrete_window () -> set_bottom_tools_flag (which, flag);
 }
 
 void
@@ -161,6 +173,12 @@ bool
 tm_frame_rep::visible_side_tools (int which) {
   if ((which<0) || (which>0)) return false;
   return concrete_window () -> get_side_tools_flag (which);
+}
+
+bool
+tm_frame_rep::visible_bottom_tools (int which) {
+  if ((which<0) || (which>0)) return false;
+  return concrete_window () -> get_bottom_tools_flag (which);
 }
 
 bool

@@ -97,6 +97,7 @@ edit_interface_rep::resume () {
   SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
   if (use_side_tools)
     { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
+  SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
   cur_sb= 2;
   notify_change (THE_FOCUS + THE_EXTENTS);
   path new_tp= make_cursor_accessible (tp, true);
@@ -453,6 +454,7 @@ edit_interface_rep::apply_changes () {
       SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
       if (use_side_tools)
         { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
+      SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
       set_footer ();
       if (has_current_window ()) concrete_window()->set_modified (need_save());
       if (!gui_interrupted ()) drd_update ();

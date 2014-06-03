@@ -46,16 +46,18 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    focus_toolbar_visibility =  8,
    user_toolbar_visibility  = 16,
    footer_visibility        = 32,
-   side_tools_0_visibility  = 64
+   side_tools_0_visibility  = 64,
+   bottom_tools_visibility  = 128
    } visibility_t;
    */
-  QLabel*     rightLabel;
-  QLabel*      leftLabel;
-  QToolBar*  mainToolBar;
-  QToolBar*  modeToolBar;
-  QToolBar* focusToolBar;
-  QToolBar*  userToolBar;
-  QDockWidget*  sideDock;
+  QLabel*       rightLabel;
+  QLabel*        leftLabel;
+  QToolBar*    mainToolBar;
+  QToolBar*    modeToolBar;
+  QToolBar*   focusToolBar;
+  QToolBar*    userToolBar;
+  QDockWidget*    sideDock;
+  QToolBar*  bottomToolBar;
 
 #ifdef Q_WS_MAC
   QToolBar*      dumbToolBar;
@@ -69,7 +71,7 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
   qt_widget int_prompt;
   qt_widget int_input;
   
-  bool visibility[7];
+  bool visibility[8];
   bool full_screen;
   
   qt_widget main_widget;
@@ -80,6 +82,7 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
   qt_widget focus_icons_widget;
   qt_widget user_icons_widget;
   qt_widget side_tools_widget;
+  qt_widget bottom_tools_widget;
   qt_widget dock_window_widget;   // trick to return correct widget position
 
   

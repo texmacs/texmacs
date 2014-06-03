@@ -139,7 +139,7 @@
       ;;(link global-language-menu))
       )
   (=> (balloon (icon "tm_cancel.xpm") "Close") (link close-menu))
-  |
+  /
   ((balloon (icon "tm_cut.xpm") "Cut text")
    (clipboard-cut "primary"))
   ((balloon (icon "tm_copy.xpm") "Copy text")
@@ -161,7 +161,7 @@
           (link math-correct-menu)))
   ((balloon (icon "tm_undo.xpm") "Undo last changes") (undo 0))
   ((balloon (icon "tm_redo.xpm") "Redo undone changes") (redo 0))
-  |
+  /
   ((balloon (icon "tm_back.xpm") "Browse back")
    (cursor-history-backward))
   ((balloon (icon "tm_reload.xpm") "Reload")
@@ -169,7 +169,7 @@
   ((balloon (icon "tm_forward.xpm") "Browse forward")
    (cursor-history-forward))
   (if (in-presentation?)
-    |
+    /
     (link dynamic-icons)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -193,6 +193,13 @@
     (dynamic (texmacs-side-tool t))
     ===)
   (glue #t #t 100 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The TeXmacs bottom tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (texmacs-bottom-tools)
+  (link search-toolbar))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar

@@ -51,4 +51,5 @@
 	("Focus dependent icons" (toggle-visible-icon-bar 2))
 	("User provided icons" (toggle-visible-icon-bar 3)))
   ("Side tools" (toggle-visible-side-tools 0))
+  ("Bottom tools" (toggle-visible-bottom-tools 0))
   ("Status bar" (toggle-visible-footer)))

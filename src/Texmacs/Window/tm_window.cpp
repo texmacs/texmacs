@@ -358,6 +358,15 @@ tm_window_rep::side_tools (int which, string tools) {
 }
 
 void
+tm_window_rep::bottom_tools (int which, string tools) {
+  eval ("(lazy-initialize-force)");
+  widget w;
+  if (get_menu_widget (20 + which, tools, w)) {
+    if (which == 0) set_bottom_tools (wid, w);
+  }
+}
+
+void
 tm_window_rep::set_header_flag (bool flag) {
   set_header_visibility (wid, flag);
 }
@@ -373,6 +382,11 @@ tm_window_rep::set_icon_bar_flag (int which, bool flag) {
 void
 tm_window_rep::set_side_tools_flag (int which, bool flag) {
   if (which == 0) set_side_tools_visibility (wid, flag);
+}
+
+void
+tm_window_rep::set_bottom_tools_flag (int which, bool flag) {
+  if (which == 0) set_bottom_tools_visibility (wid, flag);
 }
 
 bool
@@ -392,6 +406,12 @@ tm_window_rep::get_icon_bar_flag (int which) {
 bool
 tm_window_rep::get_side_tools_flag (int which) {
   if (which == 0) return get_side_tools_visibility (wid);
+  else return false;
+}
+
+bool
+tm_window_rep::get_bottom_tools_flag (int which) {
+  if (which == 0) return get_bottom_tools_visibility (wid);
   else return false;
 }
 

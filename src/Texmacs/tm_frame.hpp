@@ -39,13 +39,16 @@ public:
   void show_header (bool flag);
   void show_icon_bar (int which, bool flag);
   void show_side_tools (int which, bool flag);
+  void show_bottom_tools (int which, bool flag);
   bool visible_header ();
   bool visible_icon_bar (int which);
   bool visible_side_tools (int which);
+  bool visible_bottom_tools (int which);
   void menu_widget (string menu, widget& w);
   void menu_main (string menu);
   void menu_icons (int which, string menu);
   void side_tools (int which, string menu);
+  void bottom_tools (int which, string menu);
 
   /* canvas */
   void set_window_zoom_factor (double zoom);

@@ -293,7 +293,7 @@
   ("std 3" (insert '(wildcard "z"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Search widget
+;; Search widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget ((search-widget u style init aux) quit)
@@ -359,3 +359,51 @@
     (dialogue-window (replace-widget u st init saux raux)
                      (search-cancel u)
                      "Search and replace")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Search toolbar
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define toolbar-search-active? #f)
+(define toolbar-search-init '())
+(define toolbar-search-style '("generic"))
+
+(tm-widget (search-toolbar)
+  (if toolbar-search-active?
+      ===
+      (horizontal
+        (text "Search: ")
+        (resize "0.5w" "24px"
+          (texmacs-input `(with ,@toolbar-search-init (document ""))
+                         `(style (tuple ,@toolbar-search-style))
+                         (search-buffer)))
+        // //
+        ((balloon (icon "tm_similar_first.xpm") "First occurrence")
+         (search-extreme-match #f))
+        ((balloon (icon "tm_similar_previous.xpm") "Previous occurrence")
+         (search-next-match #f))
+        ((balloon (icon "tm_similar_next.xpm") "Next occurrence")
+         (search-next-match #t))
+        ((balloon (icon "tm_similar_last.xpm") "Last occurrence")
+         (search-extreme-match #t))
+        >>>)
+      ===
+      ---))
+
+(tm-define (toolbar-search-start)
+  (:interactive #t)
+  (let* ((u (current-buffer))
+         (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
+         (init (get-main-attrs get-env))
+         (aux (search-buffer)))
+    (buffer-set-master aux u)
+    (set-search-reference (cursor-path))
+    (set-search-filter)
+    (set! toolbar-search-active? #t)
+    (set! toolbar-search-init init)
+    (set! toolbar-search-style st)
+    (show-bottom-tools 0 #t)))
+
+(tm-define (toolbar-search-end)
+  (set! toolbar-search-active? #f)
+  (show-bottom-tools 0 #f))
