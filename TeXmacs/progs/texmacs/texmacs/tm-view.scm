@@ -40,10 +40,6 @@
   (cond ((== var "side tools")
          (show-side-tools 0 (== val "on")))))
 
-(define (notify-bottom-tools var val)
-  (cond ((== var "bottom tools")
-         (show-bottom-tools 0 (== val "on")))))
-
 (define (notify-zoom-factor var val)
   (with z (string->number val)
     (set! z (max (min z 10.0) 0.1))
@@ -61,7 +57,6 @@
   ("user provided icons" "off" notify-icon-bar)
   ("status bar" "on" notify-status-bar)
   ("side tools" "off" notify-side-tools)
-  ("bottom tools" "off" notify-bottom-tools)
   ("zoom factor" "1" notify-zoom-factor)
   ("ir-up" "home" notify-remote-control)
   ("ir-down" "end" notify-remote-control)
@@ -99,14 +94,6 @@
     (if (and (== (windows-number) 1) (== n 0))
         (set-boolean-preference "side tools" val)
         (show-side-tools n val))))
-
-(tm-define (toggle-visible-bottom-tools n)
-  (:synopsis "Toggle the visibility of the @n-th bottom tools.")
-  (:check-mark "v" visible-bottom-tools?)
-  (with val (not (visible-bottom-tools? n))
-    (if (and (== (windows-number) 1) (== n 0))
-        (set-boolean-preference "bottom tools" val)
-        (show-bottom-tools n val))))
 
 (tm-define (toggle-visible-icon-bar n)
   (:synopsis "Toggle the visibility of the @n-th icon bar.")

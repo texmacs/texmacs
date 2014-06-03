@@ -198,8 +198,18 @@
 ;; The TeXmacs bottom tools
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (texmacs-bottom-tools)
+(tm-widget (texmacs-bottom-tools-switch)
   (link search-toolbar))
+
+(tm-widget (texmacs-bottom-tools)
+  (if (qt-gui?)
+      (link texmacs-bottom-tools-switch))
+  (if (not (qt-gui?))
+      ===
+      (horizontal
+        (link texmacs-bottom-tools-switch))
+      ===
+      ---))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The mode dependent icon bar

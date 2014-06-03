@@ -293,7 +293,7 @@
   ("std 3" (insert '(wildcard "z"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Search widgets
+;; Search widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget ((search-widget u style init aux) quit)
@@ -365,44 +365,46 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define toolbar-search-active? #f)
-(define toolbar-search-init '())
-(define toolbar-search-style '("generic"))
 
-(tm-widget (search-toolbar)
-  (if toolbar-search-active?
-      ===
-      (horizontal
-        (text "Search: ")
-        (resize "0.5w" "24px"
-          (texmacs-input `(with ,@toolbar-search-init (document ""))
-                         `(style (tuple ,@toolbar-search-style))
-                         (search-buffer)))
-        // //
-        ((balloon (icon "tm_similar_first.xpm") "First occurrence")
-         (search-extreme-match #f))
-        ((balloon (icon "tm_similar_previous.xpm") "Previous occurrence")
-         (search-next-match #f))
-        ((balloon (icon "tm_similar_next.xpm") "Next occurrence")
-         (search-next-match #t))
-        ((balloon (icon "tm_similar_last.xpm") "Last occurrence")
-         (search-extreme-match #t))
-        >>>)
-      ===
-      ---))
-
-(tm-define (toolbar-search-start)
-  (:interactive #t)
+(tm-define (search-toolbar-set what)
   (let* ((u (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
          (init (get-main-attrs get-env))
          (aux (search-buffer)))
-    (buffer-set-master aux u)
     (set-search-reference (cursor-path))
     (set-search-filter)
-    (set! toolbar-search-active? #t)
-    (set! toolbar-search-init init)
-    (set! toolbar-search-style st)
-    (show-bottom-tools 0 #t)))
+    (buffer-set-body aux `(document ,what))
+    (buffer-set-master aux u)
+    (perform-search)))
+
+(tm-widget (search-toolbar)
+  (if toolbar-search-active?
+      (text "Search: ")
+      ;;(resize "0.5w" "24px"
+      ;;  (texmacs-input `(document "")
+      ;;                 `(style (tuple "generic"))
+      ;;                 (search-buffer)))
+      (input (search-toolbar-set answer) "string" (list "") "15em")
+      //
+      ((balloon (icon "tm_search_first.xpm") "First occurrence")
+       (search-extreme-match #f))
+      ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+       (search-next-match #f))
+      ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+       (search-next-match #t))
+      ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+       (search-extreme-match #t))
+      // // // // // // // // // // // // // // // // >>>
+      ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
+       (toolbar-search-end)
+       (open-search))
+      ((balloon (icon "tm_close_tool.xpm") "Close search tool")
+       (toolbar-search-end))))
+
+(tm-define (toolbar-search-start)
+  (:interactive #t)
+  (set! toolbar-search-active? #t)
+  (show-bottom-tools 0 #t))
 
 (tm-define (toolbar-search-end)
   (set! toolbar-search-active? #f)

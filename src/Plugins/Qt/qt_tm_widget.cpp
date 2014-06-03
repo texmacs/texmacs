@@ -250,7 +250,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->insertWidget(1, rulerWidget);
   bl->insertWidget(2, focusToolBar);
   bl->insertWidget(3, userToolBar);
-  bl->insertWidget(4, r2);
+  bl->insertWidget(4, bottomToolBar);
+  bl->insertWidget(5, r2);
   
     //mw->setContentsMargins (-2, -2, -2, -2);  // Why this?
   bar->setContentsMargins (0, 1, 0, 1);
@@ -263,6 +264,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->addToolBar (focusToolBar);
   mw->addToolBarBreak ();
   mw->addToolBar (userToolBar);
+  mw->addToolBarBreak ();
+  mw->addToolBar (bottomToolBar);
  // mw->addToolBarBreak ();
 #endif
 
