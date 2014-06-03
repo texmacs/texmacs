@@ -305,13 +305,12 @@ CupsQTMPrinterSettings::availablePrinters() {
   stat.start("lpstat -a");
   if(! stat.waitForFinished(2000)) // 2 sec.
     return _ret;
-  QRegExp rx("^(\\w+) +.*$");
+  QRegExp rx("^(\\S+) +.*$");
   rx.setMinimal(true);
   QList<QByteArray> _lines = stat.readAllStandardOutput().split('\n');
   foreach (QString _line, _lines) {
     if(rx.indexIn(_line) == -1)      // No matches?
       continue;
-    
     _ret << QPair<QString,QString>(rx.cap(1),rx.cap(1));
   }
   return _ret;
