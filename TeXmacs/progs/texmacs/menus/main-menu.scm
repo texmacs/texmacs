@@ -205,10 +205,10 @@
   (if (qt-gui?)
       (link texmacs-bottom-tools-switch))
   (if (not (qt-gui?))
-      ===
+      (glue #f #f 0 2)
       (horizontal
         (link texmacs-bottom-tools-switch))
-      ===
+      (glue #f #f 0 1)
       ---))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
