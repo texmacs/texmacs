@@ -102,6 +102,7 @@
   
   (color     "xcolor")
   (fcolorbox "xcolor")
+  (textcolor "xcolor")
 
   (euro "eurosym")
 

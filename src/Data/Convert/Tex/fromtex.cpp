@@ -1717,7 +1717,10 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\v", 1)) return latex_accent (t[1], "<check>"); // caron
   if (is_tuple (t, "\\=", 1)) return latex_accent (t[1], "<bar>");   // macron
 
-  if (is_tuple (t, "\\color", 1)) return tree (SET, "color", l2e (t[1]));
+  if (is_tuple (t, "\\color", 1)) return tree (SET, COLOR, string_arg (t[1]));
+  if (is_tuple (t, "\\textcolor", 2))
+    return concat (tree (SET, COLOR, l2e (t[1])), l2e (t[2]),
+        tree (RESET, COLOR));
 
   if (is_tuple (t, "\\textnormalfont", 1)) return m2e (m2e (m2e (t,
           FONT_FAMILY, "rm"), FONT_SERIES, "medium"), FONT_SHAPE, "right");

@@ -220,17 +220,22 @@
   centering raggedleft raggedright flushleft flushright)
 
 (logic-group latex-modifier-1%
-  textnormalfont
+  textnormalfont color
   textrm texttt textsf textmd textbf textup textit textsl textsc emph
   mathrm mathtt mathsf mathmd mathbf mathup mathit mathsl mathnormal
   mathcal mathfrak mathbb mathbbm mathscr operatorname boldsymbol
   lowercase MakeLowercase uppercase MakeUppercase selectlanguage)
 
+(logic-group latex-modifier-2%
+  textcolor)
+
 (logic-rules
   ((latex-modifier% 'x) (latex-modifier-0% 'x))
   ((latex-arity% 'x 0) (latex-modifier-0% 'x))
   ((latex-modifier% 'x) (latex-modifier-1% 'x))
-  ((latex-arity% 'x 1) (latex-modifier-1% 'x)))
+  ((latex-arity% 'x 1) (latex-modifier-1% 'x))
+  ((latex-modifier% 'x) (latex-modifier-2% 'x))
+  ((latex-arity% 'x 2) (latex-modifier-2% 'x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special types of LaTeX primitives
