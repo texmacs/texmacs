@@ -130,6 +130,7 @@
   (func? t 'text))
 
 (define (latex-is-verb? t)
+  ;; TODO: consider also macros which expect verbatim args
   (or (func? t '!verb)      (func? t '!verbatim)
       (func? t '!verbatim*) (func? t 'tmverbatim)))
 

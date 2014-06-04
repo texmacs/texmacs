@@ -214,10 +214,10 @@
   (tmieeeemail (!append (textit (!translate "Email:")) " " 1))
   (tmnote (thanks (!append (textit (!translate "Note:")) " " 1)))
   (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1)))
-  (key (fcolorbox "black" "gray!25!white"
-                  (!append (raisebox "0pt" (!option "5pt") (!option "0pt")
-                                     (texttt 1))
-                           (hspace "0.5pt"))))
+  (key (!append
+         (fcolorbox "black" "gray!25!white"
+                    (raisebox "0pt" (!option "5pt") (!option "0pt") (texttt 1)))
+         (hspace "0.5pt")))
 
   ;; With options
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2))))
