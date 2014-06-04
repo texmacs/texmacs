@@ -159,9 +159,9 @@
 (lazy-define (generic document-edit) update-document)
 (lazy-define (generic generic-edit) notify-activated notify-disactivated)
 (lazy-define (generic generic-doc) focus-help)
-(lazy-define (generic generic-widgets)
-             open-search search-toolbar toolbar-search-start
-             open-replace replace-toolbar toolbar-replace-start)
+(lazy-define (generic generic-widgets) search-toolbar replace-toolbar
+             open-search toolbar-search-start interactive-search
+             open-replace toolbar-replace-start interactive-replace)
 (lazy-define (generic format-widgets) open-paragraph-format open-page-format)
 (lazy-define (generic document-widgets) open-source-tree-preferences
              open-document-paragraph-format open-document-page-format

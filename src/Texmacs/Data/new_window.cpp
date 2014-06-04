@@ -161,8 +161,10 @@ get_current_window () {
 array<url>
 buffer_to_windows (url name) {
   array<url> r, vs= buffer_to_views (name);
-  for (int i=0; i<N(vs); i++)
-    r << view_to_window (vs[i]);
+  for (int i=0; i<N(vs); i++) {
+    url win= view_to_window (vs[i]);
+    if (!is_none (win)) r << win;
+  }
   return r;
 }
 

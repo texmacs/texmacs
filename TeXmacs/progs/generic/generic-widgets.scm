@@ -19,6 +19,8 @@
 ;; Basic search and replace buffers management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define search-window #f)
+
 (tm-define (search-buffer)
   (string->url "tmfs://aux/search"))
 
@@ -27,7 +29,20 @@
 
 (tm-define (master-buffer)
   (and (buffer-exists? (search-buffer))
-       (buffer-get-master (search-buffer))))
+       (with mas (buffer-get-master (search-buffer))
+         (cond ((nnull? (buffer->windows mas))
+                mas)
+               ((in? search-window (window-list))
+                (buffer-set-master (search-buffer)
+                                   (window->buffer search-window))
+                (with-buffer (buffer-get-master (search-buffer))
+                  (set-search-reference (cursor-path))
+                  (set-search-filter))
+                (master-buffer))
+               ((nnull? (window-list))
+                (set! search-window (car (window-list)))
+                (master-buffer))
+               (else #f)))))
 
 (tm-define (inside-search-buffer?)
   (== (current-buffer) (search-buffer)))
@@ -199,7 +214,7 @@
     (extreme-search-result last?)))
 
 (tm-define ((search-cancel u) . args)
-  (with-buffer u
+  (with-buffer (master-buffer)
     (cancel-alt-selection "alternate")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -313,6 +328,10 @@
         ((balloon (icon "tm_search_last.xpm") "Last occurrence")
          (search-extreme-match #t))
         >>>
+        ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
+         (set-boolean-preference "toolbar search" #t)
+         (quit)
+         (toolbar-search-start))
         ((balloon (icon "tm_close_tool.xpm") "Close search tool")
          (quit))))))
 
@@ -323,6 +342,7 @@
          (init (get-main-attrs get-env))
          (aux (search-buffer)))
     (buffer-set-master aux u)
+    (set! search-window (current-window))
     (set-search-reference (cursor-path))
     (set-search-filter)
     (dialogue-window (search-widget u st init aux)
@@ -359,6 +379,10 @@
         ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
          (replace-all))
         >>>
+        ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
+         (set-boolean-preference "toolbar replace" #t)
+         (quit)
+         (toolbar-replace-start))
         ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
          (quit))))))
 
@@ -371,6 +395,7 @@
          (raux (replace-buffer)))
     (buffer-set-master saux u)
     (buffer-set-master raux u)
+    (set! search-window (current-window))
     (set-search-reference (cursor-path))
     (set-search-filter)
     (dialogue-window (replace-widget u st init saux raux)
@@ -389,6 +414,7 @@
         (set-search-filter)
         (buffer-set-body aux `(document ,what))
         (buffer-set-master aux u)
+        (set! search-window (current-window))
         (perform-search))
       (toolbar-search-end)))
 
@@ -410,6 +436,7 @@
    (search-extreme-match #t))
   // // // // // // // // // // // // // // // // >>>
   ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
+   (set-boolean-preference "toolbar search" #f)
    (toolbar-search-end)
    (open-search))
   ((balloon (icon "tm_close_tool.xpm") "Close search tool")
@@ -422,6 +449,7 @@
   (show-bottom-tools 0 #t))
 
 (tm-define (toolbar-search-end)
+  (cancel-alt-selection "alternate")
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #f))
@@ -438,6 +466,7 @@
              (aux (replace-buffer)))
         (buffer-set-body aux `(document ,by))
         (buffer-set-master aux u)
+        (set! search-window (current-window))
         (if (== replace-toolbar-by by)
             (replace-one)
             (perform-search))
@@ -471,6 +500,7 @@
    (replace-all))
   // // // // // // // // // >>>
   ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
+   (set-boolean-preference "toolbar replace" #f)
    (toolbar-search-end)
    (open-replace))
   ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
@@ -481,3 +511,23 @@
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #t)
   (show-bottom-tools 0 #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Master routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-preferences
+  ("toolbar search" "on" noop)
+  ("toolbar replace" "on" noop))
+
+(tm-define (interactive-search)
+  (:interactive #t)
+  (if (get-boolean-preference "toolbar search")
+      (toolbar-search-start)
+      (open-search)))
+
+(tm-define (interactive-replace)
+  (:interactive #t)
+  (if (get-boolean-preference "toolbar replace")
+      (toolbar-replace-start)
+      (open-replace)))

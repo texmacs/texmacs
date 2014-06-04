@@ -200,7 +200,13 @@ public:
 void
 close_embedded_command_rep::apply () {
   //cout << "Destroy " << vw->buf->buf->name << "\n";
-  window_focus (abstract_window (vw->ed->mvw->win));
+  url foc= abstract_window (vw->ed->mvw->win);
+  if (is_none (foc)) {
+    array<url> a= windows_list ();
+    ASSERT (N(a) != 0, "no remaining windows");
+    foc= a[0];
+  }
+  window_focus (foc);
   //cout << "Changed focus\n";
   tm_window win= vw->win;
   ASSERT (N (buffer_to_views (vw->buf->buf->name)) == 1,
