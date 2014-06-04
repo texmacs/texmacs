@@ -376,8 +376,10 @@ QTMFieldWidgetHelper::commit (const QString& qst) {
  * QTMLineEdit
  ******************************************************************************/
 
-QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
-: QLineEdit (parent), completing (false), ww (_ww), last_key (0) {
+QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
+                          int style, command _cmd)
+  : QLineEdit (parent), completing (false),
+    type (_type), ww (_ww), cmd (_cmd), last_key (0) {
   if (style & WIDGET_STYLE_MINI) {
     setStyle (qtmstyle());
       // FIXME: we should remove this and let the scheme code decide.
@@ -393,6 +395,11 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _ww, int style)
   qt_apply_tm_style (this, style);
 }
 
+bool
+QTMLineEdit::continuous () {
+  return type == "search";
+}
+
 /*
  We need to reimplement the main event handler because we need the tab key for
  completions. (See Qt docs for QWidget::event())
@@ -406,6 +413,8 @@ QTMLineEdit::event (QEvent* ev) {
   return true;
 }
 
+extern hashmap<int,string> qtkeymap;
+
 /*
  FIXME: This is a hideous mess...
  */
@@ -417,8 +426,21 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
   last_key = (ev->key() == Qt::Key_Tab && ev->modifiers() & Qt::ShiftModifier)
             ? Qt::Key_Backtab
             : ev->key();
-  
-  if (c) {
+
+  if (continuous ()) {
+    if (last_key != Qt::Key_Down &&
+        last_key != Qt::Key_Up &&
+        last_key != Qt::Key_Tab &&
+        last_key != Qt::Key_Enter &&
+        last_key != Qt::Key_Return)
+      QLineEdit::keyPressEvent (ev);
+    string key= "none";
+    string s  = from_qstring (text());
+    if (qtkeymap->contains (last_key)) key= qtkeymap[last_key];
+    cmd (list_object (list_object (object (s), object (key))));
+    return;
+  }
+  else if (c) {
     int row = 0;
     switch (last_key) {
       case Qt::Key_Down:

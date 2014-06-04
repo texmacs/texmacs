@@ -191,10 +191,14 @@ class QTMLineEdit : public QLineEdit {
   Q_OBJECT
 
   bool completing;
+  string     type; // type of input field
   string       ww; // width of the parsed widget
+  command     cmd;
   int    last_key;
 public:
-  QTMLineEdit (QWidget *parent, string _ww, int style=0);
+  QTMLineEdit (QWidget *parent, string _type, string _ww,
+               int style=0, command _cmd= command ());
+  bool continuous ();
   virtual QSize	sizeHint () const ;
   virtual bool event (QEvent* ev);
 

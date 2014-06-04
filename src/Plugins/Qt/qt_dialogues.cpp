@@ -118,7 +118,7 @@ qt_field_widget_rep::as_qwidget () {
     cb->addItems (to_qstringlist (proposals));
     cb->setEditText (to_qstring (scm_unquote (input)));
     cb->setEditable (true);
-    cb->setLineEdit (new QTMLineEdit (cb, "1w", WIDGET_STYLE_MINI));
+    cb->setLineEdit (new QTMLineEdit (cb, type, "1w", WIDGET_STYLE_MINI));
     cb->setSizeAdjustPolicy (QComboBox::AdjustToContents);
     cb->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
     cb->setDuplicatesEnabled (true); 
@@ -370,8 +370,10 @@ qt_input_text_widget_rep::as_qaction () {
  */
 QWidget*
 qt_input_text_widget_rep::as_qwidget () {
-  QTMLineEdit* le                  = new QTMLineEdit (NULL, width, style);
-  QTMInputTextWidgetHelper* helper = new QTMInputTextWidgetHelper (this, le);
+  QTMLineEdit* le=
+    new QTMLineEdit (NULL, type, width, style, cmd);
+  QTMInputTextWidgetHelper* helper =
+    new QTMInputTextWidgetHelper (this, le);
   (void) helper;
   le->setText (to_qstring (input));
   

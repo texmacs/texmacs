@@ -264,16 +264,16 @@ input_widget_rep::handle_keypress (keypress_event ev) {
     if (pos>0) tm_char_backwards (s, pos); }
   else if ((key == "right") || (key == "C-f")) {
     if (pos<N(s)) tm_char_forwards (s, pos); }
-  else if ((key == "home") || (key == "C-a")) pos=0;
-  else if ((key == "end") || (key == "C-e")) pos=N(s);
-  else if ((key == "up") || (key == "C-p")) {
+  else if ((key == "home" && !continuous ()) || (key == "C-a")) pos=0;
+  else if ((key == "end" && !continuous ()) || (key == "C-e")) pos=N(s);
+  else if ((key == "up" && !continuous ()) || (key == "C-p")) {
     if (N(def) > 0) {
       def_cur= (def_cur+1) % N(def);
       s      = copy (def[def_cur]);
       pos    = N(s);
     }
   }
-  else if ((key == "down") || (key == "C-n")) {
+  else if ((key == "down" && !continuous ()) || (key == "C-n")) {
     if (N(def) > 0) {
       def_cur= (def_cur+N(def)-1) % N(def);
       s      = copy (def[def_cur]);

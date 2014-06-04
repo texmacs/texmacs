@@ -213,6 +213,11 @@
   (with-buffer (master-buffer)
     (extreme-search-result last?)))
 
+(tm-define (search-rotate-match)
+  (with ok? (search-next-match #t)
+    (when (not ok?)
+      (search-extreme-match #f))))
+
 (tm-define ((search-cancel u) . args)
   (with-buffer (master-buffer)
     (cancel-alt-selection "alternate")))
@@ -275,9 +280,7 @@
       (former t shift?)
       (begin
         (set! search-kbd-intercepted? #t)
-        (with ok? (search-next-match #t)
-          (when (not ok?)
-            (search-extreme-match #f))))))
+        (search-rotate-match))))
 
 (tm-define (kbd-enter t shift?)
   (:require (inside-replace-buffer?))
@@ -409,9 +412,13 @@
 (tm-define (search-toolbar-keypress what)
   (with key (and (pair? what) (cadr what))
     (if (pair? what) (set! what (car what)))
-    (cond ((== key "pageup") (search-next-match #f))
+    (cond ((== key "home") (search-extreme-match #f))
+          ((== key "end") (search-extreme-match #t))
+          ((== key "up") (search-next-match #f))
+          ((== key "down") (search-next-match #t))
+          ((== key "pageup") (search-next-match #f))
           ((== key "pagedown") (search-next-match #t))
-          ((== key "return") (search-next-match #t))
+          ((== key "return") (search-rotate-match))
           ((string? what)
            (let* ((u (current-buffer))
                   (aux (search-buffer)))
@@ -421,7 +428,7 @@
              (buffer-set-master aux u)
              (set! search-window (current-window))
              (perform-search)))
-          (else (toolbar-search-end)))))
+          (else (cancel-alt-selection "alternate")))))
 
 (tm-widget (search-toolbar)
   (text "Search: ")

@@ -1017,7 +1017,7 @@ qt_ui_element_rep::as_qwidget () {
                                                    QStringList (to_qstring (x.x3)),
                                                    false, true, true);
 
-      QTMLineEdit* lineEdit = new QTMLineEdit (0, "1w");
+      QTMLineEdit* lineEdit = new QTMLineEdit (0, "string", "1w");
       QObject::connect (lineEdit, SIGNAL (textChanged (const QString&)),
                         choiceWidget->filter(), SLOT (setFilterRegExp (const QString&)));
       lineEdit->setText (to_qstring (filter));
