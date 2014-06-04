@@ -320,23 +320,22 @@
       (texmacs-input `(with ,@init (document ""))
                      `(style (tuple ,@style)) aux))
     ===
-    (explicit-buttons
-      (hlist
-        ((balloon (icon "tm_search_first.xpm") "First occurrence")
-         (search-extreme-match #f))
-        ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
-         (search-next-match #f))
-        ((balloon (icon "tm_search_next.xpm") "Next occurrence")
-         (search-next-match #t))
-        ((balloon (icon "tm_search_last.xpm") "Last occurrence")
-         (search-extreme-match #t))
-        >>>
-        ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
-         (set-boolean-preference "toolbar search" #t)
-         (quit)
-         (toolbar-search-start))
-        ((balloon (icon "tm_close_tool.xpm") "Close search tool")
-         (quit))))))
+    (hlist
+      ((balloon (icon "tm_search_first.xpm") "First occurrence")
+       (search-extreme-match #f))
+      ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+       (search-next-match #f))
+      ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+       (search-next-match #t))
+      ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+       (search-extreme-match #t))
+      >>>
+      ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
+       (set-boolean-preference "toolbar search" #t)
+       (quit)
+       (toolbar-search-start))
+      ((balloon (icon "tm_close_tool.xpm") "Close search tool")
+       (quit)))))
 
 (tm-define (open-search)
   (:interactive #t)
@@ -366,28 +365,27 @@
       (texmacs-input `(with ,@init (document ""))
                      `(style (tuple ,@style)) raux))
     === ===
-    (explicit-buttons
-      (hlist
-        ((balloon (icon "tm_search_first.xpm") "First occurrence")
-         (search-extreme-match #f))
-        ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
-         (search-next-match #f))
-        ((balloon (icon "tm_search_next.xpm") "Next occurrence")
-         (search-next-match #t))
-        ((balloon (icon "tm_search_last.xpm") "Last occurrence")
-         (search-extreme-match #t))
-        // // //
-        ((balloon (icon "tm_replace_one.xpm") "Replace one occurrence")
-         (replace-one))
-        ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
-         (replace-all))
-        >>>
-        ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
-         (set-boolean-preference "toolbar replace" #t)
-         (quit)
-         (toolbar-replace-start))
-        ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
-         (quit))))))
+    (hlist
+      ((balloon (icon "tm_search_first.xpm") "First occurrence")
+       (search-extreme-match #f))
+      ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+       (search-next-match #f))
+      ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+       (search-next-match #t))
+      ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+       (search-extreme-match #t))
+      // // //
+      ((balloon (icon "tm_replace_one.xpm") "Replace one occurrence")
+       (replace-one))
+      ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
+       (replace-all))
+      >>>
+      ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
+       (set-boolean-preference "toolbar replace" #t)
+       (quit)
+       (toolbar-replace-start))
+      ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
+       (quit)))))
 
 (tm-define (open-replace)
   (:interactive #t)
@@ -409,6 +407,16 @@
 ;; Search toolbar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (search-toolbar-search what)
+  (let* ((u (current-buffer))
+         (aux (search-buffer)))
+    (set-search-reference (cursor-path))
+    (set-search-filter)
+    (buffer-set-body aux `(document ,what))
+    (buffer-set-master aux u)
+    (set! search-window (current-window))
+    (perform-search)))
+
 (tm-define (search-toolbar-keypress what)
   (with key (and (pair? what) (cadr what))
     (if (pair? what) (set! what (car what)))
@@ -419,15 +427,8 @@
           ((== key "pageup") (search-next-match #f))
           ((== key "pagedown") (search-next-match #t))
           ((== key "return") (search-rotate-match))
-          ((string? what)
-           (let* ((u (current-buffer))
-                  (aux (search-buffer)))
-             (set-search-reference (cursor-path))
-             (set-search-filter)
-             (buffer-set-body aux `(document ,what))
-             (buffer-set-master aux u)
-             (set! search-window (current-window))
-             (perform-search)))
+          ((== key "escape") (toolbar-search-end))
+          ((string? what) (search-toolbar-search what))
           (else (cancel-alt-selection "alternate")))))
 
 (tm-widget (search-toolbar)
@@ -459,6 +460,7 @@
   (set! toolbar-search-active? #t)
   (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #t)
+  (search-toolbar-search "")
   (delayed
     (:idle 250)
     (keyboard-focus-on "search")
@@ -483,6 +485,7 @@
           ((== key "down") (search-next-match #t))
           ((== key "pageup") (search-next-match #f))
           ((== key "pagedown") (search-next-match #t))
+          ((== key "escape") (toolbar-search-end))
           ((and (== key "return") (string? by))
            (let* ((u (current-buffer))
                   (aux (replace-buffer)))
@@ -527,6 +530,7 @@
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #t)
   (show-bottom-tools 0 #t)
+  (search-toolbar-search "")
   (delayed
     (:idle 250)
     (keyboard-focus-on "replace-what")

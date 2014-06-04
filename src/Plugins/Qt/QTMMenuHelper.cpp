@@ -433,7 +433,8 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
         last_key != Qt::Key_Down &&
         last_key != Qt::Key_Up &&        
         last_key != Qt::Key_Enter &&
-        last_key != Qt::Key_Return)
+        last_key != Qt::Key_Return &&
+        last_key != Qt::Ket_Escape)
       QLineEdit::keyPressEvent (ev);
     string key= "none";
     string s  = from_qstring (text());

@@ -266,7 +266,8 @@ input_widget_rep::handle_keypress (keypress_event ev) {
        key == "up" ||
        key == "down" ||
        key == "pageup" ||
-       key == "pagedown"));
+       key == "pagedown" ||
+       key == "escape"));
   else if (key == "return") commit ();
   else if ((key == "escape") || (key == "C-c") ||
 	   (key == "C-g")) cancel ();
