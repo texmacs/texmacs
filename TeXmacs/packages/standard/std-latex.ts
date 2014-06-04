@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.1>
 
 <style|<tuple|source|std>>
 
@@ -159,6 +159,10 @@
   </src-comment>>
 
   <assign|minipage|<macro|pos|width|body|<tabular|<tformat|<cwith|1|1|1|1|cell-width|<arg|width>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|<arg|pos>>|<table|<row|<cell|<arg|body>>>>>>>>
+
+  <assign|fcolorbox|<\macro|border|background|body>
+    <with|text-color|<value|color>|<with|color|<arg|border>|<colored-frame|<arg|background>|<with|color|<value|text-color>|<arg|body>>>>>
+  </macro>>
 
   <active*|<\src-comment>
     <LaTeX> preview

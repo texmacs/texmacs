@@ -1789,6 +1789,12 @@
     ((== (cadr l) "locase") (tex-apply 'MakeLowercase (tmtex (car l))))
     (else (tmtex (car l)))))
 
+(define (tmtex-frame s l)
+  `(fbox ,(car l)))
+
+(define (tmtex-fcolorbox s l)
+  `(fcolorbox ,@(map tmtex-decode-color (cDr l)) ,(tmtex (cAr l))))
+
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
@@ -2455,6 +2461,8 @@
    (,tmtex-code-block 1))
   ((:or mmx cpp scm shell scilab) (,tmtex-code-inline 1))
 
+  (frame    (,tmtex-frame 1))
+  (fcolorbox (,tmtex-fcolorbox 3))
   (minipage (,tmtex-minipage 3))
   (latex_preview (,tmtex-mixed 2))
   (picture-mixed (,tmtex-mixed 2))
