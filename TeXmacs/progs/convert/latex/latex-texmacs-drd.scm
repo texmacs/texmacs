@@ -63,7 +63,7 @@
   scheme tmsep tmSep pari qed)
 
 (logic-group latex-texmacs-1%
-  tmrsub tmrsup
+  key tmrsub tmrsup
   tmtextrm tmtextsf tmtexttt tmtextmd tmtextbf
   tmtextup tmtextsl tmtextit tmtextsc tmmathbf
   tmverbatim tmop tmstrong tmem tmtt tmname tmsamp tmabbr
@@ -249,4 +249,4 @@
   labeleqnum eqnumber leqnumber reqnumber)
 
 (logic-group latex-texmacs-1%
-  key skey ckey akey mkey hkey)
+  skey ckey akey mkey hkey)

@@ -17,6 +17,7 @@
 	(convert tools tmlength)
 	(convert rewrite tmtm-brackets)
 	(convert latex texout)
+        (doc tmdoc-markup)
 	(convert latex latex-tools)))
 
 (use-modules (ice-9 format))
@@ -1805,6 +1806,18 @@
   (with lan (if (list>0? tmtex-languages) (cAr tmtex-languages) "english")
     (tmtex `(translate ,(car l) "english" ,lan))))
 
+(define (tmtex-render-key s l)
+  (with body (tmtex (car l))
+    (if (func? body '!concat)
+      (set! body `(!append ,@(cdr body))))
+  `(key ,body)))
+
+(define (tmtex-key s l)
+  (tmtex (tm->stree (tmdoc-key (car l)))))
+
+(define (tmtex-key* s l)
+  (tmtex (tm->stree (tmdoc-key* (car l)))))
+
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
@@ -2475,6 +2488,9 @@
   (fcolorbox (,tmtex-fcolorbox 3))
   (translate (,tmtex-translate 3))
   (localize (,tmtex-localize 1))
+  (render-key (,tmtex-render-key 1))
+  (key  (,tmtex-key 1))
+  (key* (,tmtex-key* 1))
   (minipage (,tmtex-minipage 3))
   (latex_preview (,tmtex-mixed 2))
   (picture-mixed (,tmtex-mixed 2))

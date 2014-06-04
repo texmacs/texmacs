@@ -214,6 +214,10 @@
   (tmieeeemail (!append (textit (!translate "Email:")) " " 1))
   (tmnote (thanks (!append (textit (!translate "Note:")) " " 1)))
   (tmmisc (thanks (!append (textit (!translate "Misc:")) " " 1)))
+  (key (fcolorbox "black" "gray!25!white"
+                  (!append (raisebox "0pt" (!option "5pt") (!option "0pt")
+                                     (texttt 1))
+                           (hspace "0.5pt"))))
 
   ;; With options
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2))))
@@ -330,8 +334,6 @@
   (eqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
   (leqnumber (!append "(\\theequation" (!recurse (labeleqnum)) ")\\hfill"))
   (reqnumber (!append "\\hfill(\\theequation" (!recurse (labeleqnum)) ")"))
-
-  (key (!append "\\fbox{\\rule[-2pt]{0pt}{9pt}" (texttt 1) "}"))
   (skey (!recurse (key (!append "shift-" 1))))
   (ckey (!recurse (key (!append "ctrl-" 1))))
   (akey (!recurse (key (!append "alt-" 1))))

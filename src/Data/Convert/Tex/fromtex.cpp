@@ -1038,6 +1038,46 @@ string_arg (tree t, bool url) {
 }
 
 tree
+latex_key_arg (tree t) {
+  string s= string_arg (l2e(t));
+  if (s == "") {
+    t= l2e(t);
+    if (is_concat (t) && N(t) == 3 && is_apply (t[1], "op", 1)) {
+      if (t[1][1] == "<leftarrow>")
+        return "left";
+      else if (t[1][1] == "<rightarrow>")
+        return "right";
+      else if (t[1][1] == "<uparrow>")
+        return "up";
+      else if (t[1][1] == "<downarrow>")
+        return "down";
+      else
+        return t;
+    }
+    else
+      return t;
+  }
+  string r= "";
+  int i, n= N(s);
+  for (i=0; i<n; i++) {
+    if (test (s, i, "Shift+"))
+      r << "S-", i+=5;
+    else if (test (s, i, "Ctrl+"))
+      r << "C-", i+=4;
+    else if (test (s, i, "Alt+"))
+      r << "A-", i+=3;
+    else if (test (s, i, "Meta+"))
+      r << "M-", i+=4;
+    else if (test (s, i, "Hyper+"))
+      r << "H-", i+=5;
+    else if (is_alpha (s[i]))
+      r << locase (s[i]);
+    else r << s[i];
+  }
+  return r;
+}
+
+tree
 latex_concat_to_tree (tree t, bool& new_flag) {
   int i, n=N(t);
   tree r (CONCAT), env (CONCAT);
@@ -1722,6 +1762,7 @@ latex_command_to_tree (tree t) {
     return concat (tree (SET, COLOR, l2e (t[1])), l2e (t[2]),
         tree (RESET, COLOR));
 
+  if (is_tuple (t, "\\key", 1)) return compound ("key", latex_key_arg (t[1]));
   if (is_tuple (t, "\\textnormalfont", 1)) return m2e (m2e (m2e (t,
           FONT_FAMILY, "rm"), FONT_SERIES, "medium"), FONT_SHAPE, "right");
   if (is_tuple (t, "\\textrm", 1)) return m2e (t, FONT_FAMILY, "rm");
