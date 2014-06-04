@@ -122,7 +122,7 @@ input_widget_rep::cancel () {
 
 bool
 input_widget_rep::continuous () {
-  return type == "search" || type == "replace";
+  return type == "search" || starts (type, "replace-");
 }
 
 void

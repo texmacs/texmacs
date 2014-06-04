@@ -491,10 +491,10 @@
 
 (tm-widget (replace-toolbar)
   (text "Replace: ")
-  (input (search-toolbar-keypress answer) "search" (list "") "15em")
+  (input (search-toolbar-keypress answer) "replace-what" (list "") "15em")
   //
   (text "by: ")
-  (input (replace-toolbar-keypress answer) "replace" (list "") "15em")
+  (input (replace-toolbar-keypress answer) "replace-by" (list "") "15em")
   //
   ;;(if (nnull? (get-alt-selection "alternate"))
   ((balloon (icon "tm_search_first.xpm") "First occurrence")

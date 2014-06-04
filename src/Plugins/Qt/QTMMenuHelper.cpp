@@ -397,7 +397,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
 
 bool
 QTMLineEdit::continuous () {
-  return type == "search" || type == "replace";
+  return type == "search" || starts (type, "replace-");
 }
 
 /*
@@ -428,9 +428,10 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
             : ev->key();
 
   if (continuous ()) {
-    if (last_key != Qt::Key_Down &&
-        last_key != Qt::Key_Up &&
-        last_key != Qt::Key_Tab &&
+    if ((last_key != Qt::Key_Tab || type == "replace-what") &&
+        (last_key != Qt::Key_Backtab || type == "replace-by") &&
+        last_key != Qt::Key_Down &&
+        last_key != Qt::Key_Up &&        
         last_key != Qt::Key_Enter &&
         last_key != Qt::Key_Return)
       QLineEdit::keyPressEvent (ev);
