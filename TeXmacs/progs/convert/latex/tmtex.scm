@@ -1795,6 +1795,16 @@
 (define (tmtex-fcolorbox s l)
   `(fcolorbox ,@(map tmtex-decode-color (cDr l)) ,(tmtex (cAr l))))
 
+(define (tmtex-translate s l)
+  (let ((from (cadr l))
+        (to   (caddr l))
+        (body (car l)))
+    (tmtex (translate-from-to body from to))))
+
+(define (tmtex-localize s l)
+  (with lan (if (list>0? tmtex-languages) (cAr tmtex-languages) "english")
+    (tmtex `(translate ,(car l) "english" ,lan))))
+
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
@@ -2314,7 +2324,7 @@
   (syntax tmtex-syntax)
 
   ((:or or xor and not plus minus times over div mod
-	merge length range translate find-file
+	merge length range find-file
 	is-tuple look-up
 	equal unequal less lesseq greater greatereq) tmtex-noop)
 
@@ -2463,6 +2473,8 @@
 
   (frame    (,tmtex-frame 1))
   (fcolorbox (,tmtex-fcolorbox 3))
+  (translate (,tmtex-translate 3))
+  (localize (,tmtex-localize 1))
   (minipage (,tmtex-minipage 3))
   (latex_preview (,tmtex-mixed 2))
   (picture-mixed (,tmtex-mixed 2))
