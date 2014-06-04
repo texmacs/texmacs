@@ -1168,11 +1168,14 @@
   (list (list '!begin "tmparsep" x) arg))
 
 (define (tmtex-make-lang val arg)
-  (if (nin? val tmtex-languages)
-    (set! tmtex-languages (append (list val) tmtex-languages)))
-  (if (texout-multiline? arg)
-    `((!begin "otherlanguage" ,val) ,arg)
-    `(foreignlanguage ,val ,arg)))
+  (if (== val "verbatim")
+    `(tt ,arg)
+    (begin
+      (if (nin? val tmtex-languages)
+        (set! tmtex-languages (append (list val) tmtex-languages)))
+      (if (texout-multiline? arg)
+        `((!begin "otherlanguage" ,val) ,arg)
+        `(foreignlanguage ,val ,arg)))))
 
 (define (tmtex-with-one var val arg)
   (if (== var "mode")
