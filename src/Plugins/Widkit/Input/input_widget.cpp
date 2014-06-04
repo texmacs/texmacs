@@ -56,6 +56,7 @@ public:
   void update_draw_s ();
   void commit ();
   void cancel ();
+  bool continuous ();
 
   void handle_get_size (get_size_event ev);
   void handle_repaint (repaint_event ev);
@@ -106,6 +107,7 @@ input_widget_rep::update_draw_s () {
 
 void
 input_widget_rep::commit () {
+  if (continuous ()) return;
   ok= true;
   done= true;
   call_back (list_object (object (s)));
@@ -116,6 +118,11 @@ input_widget_rep::cancel () {
   ok= false;
   done= true;
   call_back (list_object (object (false)));
+}
+
+bool
+input_widget_rep::continuous () {
+  return type == "search";
 }
 
 void
@@ -292,6 +299,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
     s= "";
     pos= 0;
   }
+  else if (key == "pageup" || key == "pagedown");
   else {
     if (starts (key, "<#"));
     else if (key == "<less>" || key == "<gtr>");
@@ -304,6 +312,8 @@ input_widget_rep::handle_keypress (keypress_event ev) {
     pos += N(key);
   }
   this << emit_invalidate_all ();
+  if (continuous ())
+    call_back (list_object (list_object (object (s), object (key))));
 }
 
 void
