@@ -397,7 +397,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
 
 bool
 QTMLineEdit::continuous () {
-  return type == "search";
+  return type == "search" || type == "replace";
 }
 
 /*
@@ -616,9 +616,11 @@ QTMLineEdit::focusInEvent (QFocusEvent* ev)
 void
 QTMLineEdit::focusOutEvent (QFocusEvent* ev)
 {
-  Qt::FocusReason reason = (last_key != Qt::Key_Escape)
-                           ? ev->reason() : Qt::OtherFocusReason;
-  emit focusOut (reason);
+  if (!continuous ()) {
+    Qt::FocusReason reason =
+      (last_key != Qt::Key_Escape) ? ev->reason() : Qt::OtherFocusReason;
+    emit focusOut (reason);
+  }
   QLineEdit::focusOutEvent (ev);
 }
 
