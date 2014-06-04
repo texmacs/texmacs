@@ -89,7 +89,7 @@
   binom tbinom dbinom cfrac tfrac equal href
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
-  scalebox texorpdfstring raisebox foreignlanguage
+  colorbox scalebox texorpdfstring raisebox foreignlanguage
   Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut)
 
 (logic-group latex-command-3%

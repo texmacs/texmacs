@@ -1793,6 +1793,9 @@
 (define (tmtex-frame s l)
   `(fbox ,(car l)))
 
+(define (tmtex-colored-frame s l)
+  `(colorbox ,(tmtex-decode-color (car l)) ,(tmtex (cadr l))))
+
 (define (tmtex-fcolorbox s l)
   `(fcolorbox ,@(map tmtex-decode-color (cDr l)) ,(tmtex (cAr l))))
 
@@ -2485,6 +2488,7 @@
   ((:or mmx cpp scm shell scilab) (,tmtex-code-inline 1))
 
   (frame    (,tmtex-frame 1))
+  (colored-frame (,tmtex-colored-frame 2))
   (fcolorbox (,tmtex-fcolorbox 3))
   (translate (,tmtex-translate 3))
   (localize (,tmtex-localize 1))
