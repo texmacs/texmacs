@@ -67,7 +67,10 @@ qt_field_widget_rep::send (slot s, blackbox val) {
     proposals << open_box<string> (val);
     break;
   case SLOT_KEYBOARD_FOCUS:
-    parent->send(s,val);
+    parent->send (s, val);
+    break;
+  case SLOT_KEYBOARD_FOCUS_ON:
+    parent->send (s, val);
     break;
   default:
     qt_widget_rep::send (s, val);
@@ -212,6 +215,10 @@ qt_inputs_list_widget_rep::send (slot s, blackbox val) {
   case SLOT_KEYBOARD_FOCUS:
     check_type<bool>(val, s);
     perform_dialog ();
+    break;
+  case SLOT_KEYBOARD_FOCUS_ON:
+    check_type<string>(val, s);
+    NOT_IMPLEMENTED("qt_inputs_list_widget::SLOT_KEYBOARD_FOCUS_ON");
     break;
   default:
     qt_widget_rep::send (s, val);

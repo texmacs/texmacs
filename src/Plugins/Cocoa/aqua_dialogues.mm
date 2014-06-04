@@ -96,11 +96,14 @@ aqua_chooser_widget_rep::send (slot s, blackbox val) {
       perform_dialog();
     }
     break;
+  case SLOT_KEYBOARD_FOCUS_ON:
+    NOT_IMPLEMENTED 
+    break;
     
   case SLOT_STRING_INPUT:
     //		send_string (THIS, "input", val);
     NOT_IMPLEMENTED 
-      break;
+    break;
   case SLOT_INPUT_TYPE:
     TYPE_CHECK (type_box (val) == type_helper<string>::id);
     type = open_box<string> (val);        

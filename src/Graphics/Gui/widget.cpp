@@ -34,6 +34,7 @@ slot_name (const slot s) {
     "SLOT_REFRESH",
     "SLOT_KEYBOARD",
     "SLOT_KEYBOARD_FOCUS",
+    "SLOT_KEYBOARD_FOCUS_ON",
     "SLOT_MOUSE",
     "SLOT_MOUSE_GRAB",
     "SLOT_MOUSE_POINTER",

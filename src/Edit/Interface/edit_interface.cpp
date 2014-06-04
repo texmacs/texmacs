@@ -107,6 +107,15 @@ edit_interface_rep::resume () {
   }
 }
 
+void
+edit_interface_rep::keyboard_focus_on (string field) {
+  array<url> a= buffer_to_windows (buf->buf->name);
+  if (N(a) >= 1) {
+    tm_window win= concrete_window (a[0]);
+    send_keyboard_focus_on (win->wid, field);
+  }
+}
+
 /******************************************************************************
 * Routines for dealing with shrinked coordinates
 ******************************************************************************/

@@ -34,6 +34,7 @@ enum slot_id {
   SLOT_REFRESH,
   SLOT_KEYBOARD,
   SLOT_KEYBOARD_FOCUS,
+  SLOT_KEYBOARD_FOCUS_ON,
   SLOT_MOUSE,
   SLOT_MOUSE_GRAB,
   SLOT_MOUSE_POINTER,
@@ -351,6 +352,12 @@ inline bool
 query_keyboard_focus (widget w) {
   // does this widget have the keyboard focus?
   return query<bool> (w, SLOT_KEYBOARD_FOCUS);
+}
+
+inline void
+send_keyboard_focus_on (widget w, string field) {
+  // request the keyboard focus for field inside a widget
+  send<string> (w, SLOT_KEYBOARD_FOCUS_ON, field);
 }
 
 inline void

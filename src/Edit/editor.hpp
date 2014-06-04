@@ -136,6 +136,7 @@ public:
   /* public routines from edit_interface */
   virtual void suspend () = 0;
   virtual void resume () = 0;
+  virtual void keyboard_focus_on (string field) = 0;
   virtual int  get_pixel_size () = 0;
   virtual SI   get_visible_width () = 0;
   virtual SI   get_visible_height () = 0;

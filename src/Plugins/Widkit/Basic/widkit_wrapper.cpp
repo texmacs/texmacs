@@ -550,6 +550,14 @@ send_keyboard_focus (wk_widget w, blackbox val) {
 }
 
 void
+send_keyboard_focus_on (wk_widget w, blackbox val) {
+  ASSERT (type_box (val) == type_helper<string>::id, "type mismatch");
+  bool done= false;
+  //w->win->set_keyboard_focus (abstract (w), true);
+  w << emit_keyboard_focus_on (open_box<string> (val), done);
+}
+
+void
 send_mouse (wk_widget w, blackbox val) {
   typedef quintuple<string,SI,SI,int,time_t> mouse;
   ASSERT (type_box (val) == type_helper<mouse>::id, "type mismatch");
@@ -650,6 +658,9 @@ wk_widget_rep::send (slot s, blackbox val) {
     break;
   case SLOT_KEYBOARD_FOCUS:
     send_keyboard_focus (THIS, val);
+    break;
+  case SLOT_KEYBOARD_FOCUS_ON:
+    send_keyboard_focus_on (THIS, val);
     break;
   case SLOT_MOUSE:
     send_mouse (THIS, val);

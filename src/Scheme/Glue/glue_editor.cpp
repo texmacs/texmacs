@@ -2546,6 +2546,19 @@ tmg_custom_complete (tmscm arg1) {
 }
 
 tmscm
+tmg_keyboard_focus_on (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "keyboard-focus-on");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->keyboard_focus_on (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_view_set_property (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "view-set-property");
   TMSCM_ASSERT_SCHEME_TREE (arg2, TMSCM_ARG2, "view-set-property");
@@ -3224,6 +3237,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("spell-replace",  tmg_spell_replace, 1, 0, 0);
   tmscm_install_procedure ("session-complete-command",  tmg_session_complete_command, 1, 0, 0);
   tmscm_install_procedure ("custom-complete",  tmg_custom_complete, 1, 0, 0);
+  tmscm_install_procedure ("keyboard-focus-on",  tmg_keyboard_focus_on, 1, 0, 0);
   tmscm_install_procedure ("view-set-property",  tmg_view_set_property, 2, 0, 0);
   tmscm_install_procedure ("view-get-property",  tmg_view_get_property, 1, 0, 0);
   tmscm_install_procedure ("get-window-width",  tmg_get_window_width, 0, 0, 0);

@@ -73,6 +73,12 @@ qt_widget_rep::send (slot s, blackbox val) {
         qwid->setFocus (Qt::OtherFocusReason);
     }
       break;
+    case SLOT_KEYBOARD_FOCUS_ON:
+    {
+      check_type<string> (val, s);
+      NOT_IMPLEMENTED ("qt_widget_rep::SLOT_KEYBOARD_FOCUS_ON");
+    }
+      break;
     case SLOT_NAME:
     {
         // CHECK ME!

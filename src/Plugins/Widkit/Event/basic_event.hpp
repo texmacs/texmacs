@@ -98,6 +98,13 @@ struct keyboard_focus_event_rep: public event_rep {
 };
 EVENT(keyboard_focus_event);
 
+struct keyboard_focus_on_event_rep: public event_rep {
+  string field; bool& done;
+  keyboard_focus_on_event_rep (string field, bool& done);
+  operator tree ();
+};
+EVENT(keyboard_focus_on_event);
+
 struct mouse_event_rep: public event_rep {
   string type; SI x, y; int mods; time_t t;
   mouse_event_rep (string type, SI x, SI y, int mods, time_t t);

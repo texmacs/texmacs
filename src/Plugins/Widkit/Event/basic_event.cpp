@@ -103,6 +103,13 @@ keyboard_focus_event_rep::operator tree () {
 event emit_keyboard_focus (bool in_out_flag, time_t t) {
   return tm_new<keyboard_focus_event_rep> (in_out_flag, t); }
 
+keyboard_focus_on_event_rep::keyboard_focus_on_event_rep (string f, bool& d):
+  event_rep (KEYBOARD_FOCUS_ON_EVENT), field (f), done (d) {}
+keyboard_focus_on_event_rep::operator tree () {
+  return tree (TUPLE, "keyboard_focus_on_event", field); }
+event emit_keyboard_focus_on (string field, bool& done) {
+  return tm_new<keyboard_focus_on_event_rep> (field, done); }
+
 mouse_event_rep::mouse_event_rep (string type2, SI x2, SI y2,
   int mods2, time_t t2): event_rep (MOUSE_EVENT),
     type (type2), x (x2), y (y2), mods (mods2), t (t2) {}

@@ -82,6 +82,7 @@ public:
   operator tree ();
   void suspend ();
   void resume ();
+  void keyboard_focus_on (string field);
   void get_size (SI& wx, SI& wy);
 
   /* routines for dealing with shrinked coordinates */

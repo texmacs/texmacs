@@ -16,6 +16,7 @@
 #include "Widkit/attribute_widget.hpp"
 #include "Widkit/layout.hpp"
 #include "scheme.hpp"
+#include "message.hpp"
 
 #ifdef OS_WIN32
 #define URL_CONCATER  '\\'
@@ -63,6 +64,7 @@ public:
   void handle_keypress (keypress_event ev);
   void handle_mouse (mouse_event ev);
   void handle_keyboard_focus (keyboard_focus_event ev);
+  void handle_keyboard_focus_on (keyboard_focus_on_event ev);
 
   void handle_set_string (set_string_event ev);
   void handle_get_string (get_string_event ev);
@@ -257,23 +259,31 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   }
 
   /* other actions */
-  if (key == "return") commit ();
+  if (continuous () &&
+      (key == "return" ||
+       key == "home" ||
+       key == "end" ||
+       key == "up" ||
+       key == "down" ||
+       key == "pageup" ||
+       key == "pagedown"));
+  else if (key == "return") commit ();
   else if ((key == "escape") || (key == "C-c") ||
 	   (key == "C-g")) cancel ();
   else if ((key == "left") || (key == "C-b")) {
     if (pos>0) tm_char_backwards (s, pos); }
   else if ((key == "right") || (key == "C-f")) {
     if (pos<N(s)) tm_char_forwards (s, pos); }
-  else if ((key == "home" && !continuous ()) || (key == "C-a")) pos=0;
-  else if ((key == "end" && !continuous ()) || (key == "C-e")) pos=N(s);
-  else if ((key == "up" && !continuous ()) || (key == "C-p")) {
+  else if ((key == "home") || (key == "C-a")) pos=0;
+  else if ((key == "end") || (key == "C-e")) pos=N(s);
+  else if ((key == "up") || (key == "C-p")) {
     if (N(def) > 0) {
       def_cur= (def_cur+1) % N(def);
       s      = copy (def[def_cur]);
       pos    = N(s);
     }
   }
-  else if ((key == "down" && !continuous ()) || (key == "C-n")) {
+  else if ((key == "down") || (key == "C-n")) {
     if (N(def) > 0) {
       def_cur= (def_cur+N(def)-1) % N(def);
       s      = copy (def[def_cur]);
@@ -299,7 +309,6 @@ input_widget_rep::handle_keypress (keypress_event ev) {
     s= "";
     pos= 0;
   }
-  else if (key == "pageup" || key == "pagedown");
   else {
     if (starts (key, "<#"));
     else if (key == "<less>" || key == "<gtr>");
@@ -365,6 +374,14 @@ input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
   got_focus= ev->flag;
   if (attached ())
     this << emit_invalidate_all ();
+}
+
+void
+input_widget_rep::handle_keyboard_focus_on (keyboard_focus_on_event ev) {
+  if (ev->field == type) {
+    ev->done= true;
+    send_keyboard_focus (abstract (this));
+  }
 }
 
 void

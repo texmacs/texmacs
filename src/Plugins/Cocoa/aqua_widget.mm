@@ -131,6 +131,9 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
       if (open_box<bool>(val)) the_keyboard_focus = this;
     }
     break;
+  case SLOT_KEYBOARD_FOCUS_ON:
+    NOT_IMPLEMENTED;
+    break;
 	
   default:
     debug_failed << "slot type= " << slot_name (s) << "\n";

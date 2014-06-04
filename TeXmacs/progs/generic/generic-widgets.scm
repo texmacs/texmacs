@@ -458,7 +458,11 @@
   (:interactive #t)
   (set! toolbar-search-active? #t)
   (set! toolbar-replace-active? #f)
-  (show-bottom-tools 0 #t))
+  (show-bottom-tools 0 #t)
+  (delayed
+    (:idle 250)
+    (keyboard-focus-on "search")
+    (perform-search)))
 
 (tm-define (toolbar-search-end)
   (cancel-alt-selection "alternate")
@@ -522,7 +526,11 @@
   (:interactive #t)
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #t)
-  (show-bottom-tools 0 #t))
+  (show-bottom-tools 0 #t)
+  (delayed
+    (:idle 250)
+    (keyboard-focus-on "replace-what")
+    (perform-search)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routines

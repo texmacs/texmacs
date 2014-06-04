@@ -159,6 +159,14 @@ void
 basic_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {(void) ev;}
 
 void
+basic_widget_rep::handle_keyboard_focus_on (keyboard_focus_on_event ev) {
+  int i;
+  for (i=0; i<N(a); i++)
+    if (!ev->done)
+      a[i] << emit_keyboard_focus_on (ev->field, ev->done);
+}
+
+void
 basic_widget_rep::handle_mouse (mouse_event ev) {
   string type= ev->type;
   SI     x= ev->x, y= ev->y;
@@ -305,6 +313,10 @@ basic_widget_rep::handle (event ev) {
   case KEYBOARD_FOCUS_EVENT:
     test_window_attached (ev, this);
     handle_keyboard_focus (ev);
+    return true;
+  case KEYBOARD_FOCUS_ON_EVENT:
+    test_window_attached (ev, this);
+    handle_keyboard_focus_on (ev);
     return true;
   case MOUSE_EVENT: {
     test_window_attached (ev, this);

@@ -69,6 +69,10 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       check_type<bool>(val, s);
       perform_dialog ();
       break;              
+    case SLOT_KEYBOARD_FOCUS_ON:
+      check_type<string>(val, s);
+      NOT_IMPLEMENTED("qt_chooser_widget::SLOT_KEYBOARD_FOCUS_ON");
+      break;
     case SLOT_STRING_INPUT:
       check_type<string>(val, s);
       if (DEBUG_QT_WIDGETS)
