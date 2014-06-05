@@ -112,9 +112,13 @@
 ;; Highlighting the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (perform-search)
+(define search-serial 0)
+
+(define (perform-search-sub limit)
   (let* ((what (buffer-get-body (search-buffer)))
-         (ok? #t))
+         (ok? #t)
+	 (too-many-matches? #f)
+	 (serial search-serial))
     (when (tm-func? what 'document 1)
       (set! what (tm-ref what 0)))
     (when (tm-func? what 'inactive 1)
@@ -128,23 +132,35 @@
             (cancel-alt-selection "alternate")
             (go-to (get-search-reference #t)))
           (let* ((t (buffer-tree))
-                 (sels* (tree-search-tree t what (tree->path t)))
+                 (sels* (tree-search-tree t what (tree->path t) limit))
                  (sels (filter-search-results sels*)))
-            (if (null? sels)
-                (begin
-                  (selection-cancel)
-                  (cancel-alt-selection "alternate")
-                  (go-to (get-search-reference #t))
-                  (set! ok? #f))
-                (begin
-                  (set-alt-selection "alternate" sels)
-                  (with after? (next-search-result #t #f)
-                    (when (not after?)
-                      (selection-cancel))))))))
+	    (cond ((>= (length sels*) limit)
+		   (set-alt-selection "alternate" sels)
+		   (set! too-many-matches? #t))
+		  ((null? sels)
+		   (selection-cancel)
+		   (cancel-alt-selection "alternate")
+		   (go-to (get-search-reference #t))
+		   (set! ok? #f))
+		  (else
+		   (set-alt-selection "alternate" sels)
+		   (with after? (next-search-result #t #f)
+		     (when (not after?)
+		       (selection-cancel))))))))
     (with-buffer (search-buffer)
       (if ok?
           (init-default "bg-color")
-          (init-env "bg-color" "#fff0f0")))))
+          (init-env "bg-color" "#fff0f0")))
+    (when too-many-matches?
+      ;;(display* "Extend limit to " (* 2 limit) "\n")
+      (delayed
+	(:pause limit)
+	(when (== serial search-serial)
+	  (perform-search-sub (* 2 limit)))))))
+
+(define (perform-search)
+  (set! search-serial (+ search-serial 1))
+  (perform-search-sub 100))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting a particular next or previous search result
@@ -219,6 +235,7 @@
       (search-extreme-match #f))))
 
 (tm-define ((search-cancel u) . args)
+  (set! search-serial (+ search-serial 1))
   (with-buffer (master-buffer)
     (cancel-alt-selection "alternate")))
 
@@ -474,7 +491,8 @@
   (cancel-alt-selection "alternate")
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #f)
-  (show-bottom-tools 0 #f))
+  (show-bottom-tools 0 #f)
+  (set! search-serial (+ search-serial 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Replace toolbar

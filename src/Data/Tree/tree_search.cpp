@@ -13,6 +13,7 @@
 #include "analyze.hpp"
 #include "boot.hpp"
 
+int  search_max_hits= 1000000;
 bool blank_match_flag= false;
 bool initial_match_flag= false;
 bool partial_match_flag= false;
@@ -321,6 +322,7 @@ search_document (range_set& sel, tree t, tree what, path p) {
 
 void
 search (range_set& sel, tree t, tree what, path p) {
+  if (N(sel) > search_max_hits) return;
   if (is_atomic (t))
     search_string (sel, t->label, what, p);
   else if (is_func (t, CONCAT) && is_func (what, CONCAT))
@@ -398,12 +400,14 @@ select (range_set& sel, tree t, tree what, path p) {
 ******************************************************************************/
 
 range_set
-search (tree t, tree what, path p) {
+search (tree t, tree what, path p, int limit) {
+  search_max_hits= limit;
   initialize_search ();
   range_set sel;
   //cout << "Search " << what << ", " << contains_select_region (what) << "\n";
   if (contains_select_region (what)) select (sel, t, what, p);
   else search (sel, t, what, p);
   //cout << "Selected " << sel << "\n";
+  search_max_hits= 1000000;
   return sel;
 }

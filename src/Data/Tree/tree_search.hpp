@@ -13,6 +13,6 @@
 #define TREE_SEARCH_H
 #include "tree_select.hpp"
 
-range_set search (tree t, tree what, path p);
+range_set search (tree t, tree what, path p, int limit= 1000000);
 
 #endif // defined TREE_SEARCH_H
