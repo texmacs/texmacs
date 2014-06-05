@@ -439,6 +439,8 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
     string key= "none";
     string s  = from_qstring (text());
     if (qtkeymap->contains (last_key)) key= qtkeymap[last_key];
+    if ((ev->modifiers() & Qt::ShiftModifier) && key == "return")
+      key= "S-return";
     cmd (list_object (list_object (object (s), object (key))));
     return;
   }

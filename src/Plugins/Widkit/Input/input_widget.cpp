@@ -262,6 +262,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   /* other actions */
   if (continuous () &&
       (key == "return" ||
+       key == "S-return" ||
        key == "home" ||
        key == "end" ||
        key == "up" ||

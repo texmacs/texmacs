@@ -426,8 +426,9 @@
           ((== key "down") (search-next-match #t))
           ((== key "pageup") (search-next-match #f))
           ((== key "pagedown") (search-next-match #t))
-          ((and (== key "tab") r?) (keyboard-focus-on "replace-by"))
-          ((and (== key "return") r?) (keyboard-focus-on "replace-by"))
+          ((and r? (in? key (list "tab" "S-tab" "return")))
+           (search-toolbar-search what)
+           (keyboard-focus-on "replace-by"))
           ((== key "return") (search-rotate-match))
           ((== key "escape") (toolbar-search-end))
           ((string? what) (search-toolbar-search what))
@@ -466,7 +467,8 @@
   (delayed
     (:idle 250)
     (keyboard-focus-on "search")
-    (perform-search)))
+    (perform-search)
+    (notify-change 68)))
 
 (tm-define (toolbar-search-end)
   (cancel-alt-selection "alternate")
@@ -489,17 +491,19 @@
 (tm-define (replace-toolbar-keypress by)
   (with key (and (pair? by) (cadr by))
     (if (pair? by) (set! by (car by)))
-    (cond ((== key "home") (search-extreme-match #f))
+    (cond ((not (string? by)) (cancel-alt-selection "alternate"))
+          ((== key "home") (search-extreme-match #f))
           ((== key "end") (search-extreme-match #t))
           ((== key "up") (search-next-match #f))
           ((== key "down") (search-next-match #t))
           ((== key "pageup") (search-next-match #f))
           ((== key "pagedown") (search-next-match #t))
+          ((== key "tab") (keyboard-focus-on "replace-what"))
           ((== key "S-tab") (keyboard-focus-on "replace-what"))
-          ((and (== key "return") (string? by)) (replace-toolbar-replace by))
+          ((== key "return") (replace-toolbar-replace by))
+          ((== key "S-return") (undo 0) (perform-search))
           ((== key "escape") (toolbar-search-end))
-          ((string? by) (perform-search))
-          (else (cancel-alt-selection "alternate")))))
+          (else (perform-search)))))
 
 (tm-widget (replace-toolbar)
   (text "Replace: ")
@@ -539,7 +543,8 @@
   (delayed
     (:idle 250)
     (keyboard-focus-on "replace-what")
-    (perform-search)))
+    (perform-search)
+    (notify-change 68)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routines
