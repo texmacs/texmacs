@@ -96,7 +96,7 @@
   ("source tool" "off" notify-tool)
   ("versioning tool" "off" notify-tool)
   ("experimental alpha" "on" notify-tool)
-  ("new style fonts" "off" notify-new-fonts))
+  ("new style fonts" "on" notify-new-fonts))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
