@@ -417,7 +417,7 @@
     (set! search-window (current-window))
     (perform-search)))
 
-(tm-define (search-toolbar-keypress what)
+(tm-define (search-toolbar-keypress what r?)
   (with key (and (pair? what) (cadr what))
     (if (pair? what) (set! what (car what)))
     (cond ((== key "home") (search-extreme-match #f))
@@ -426,6 +426,8 @@
           ((== key "down") (search-next-match #t))
           ((== key "pageup") (search-next-match #f))
           ((== key "pagedown") (search-next-match #t))
+          ((and (== key "tab") r?) (keyboard-focus-on "replace-by"))
+          ((and (== key "return") r?) (keyboard-focus-on "replace-by"))
           ((== key "return") (search-rotate-match))
           ((== key "escape") (toolbar-search-end))
           ((string? what) (search-toolbar-search what))
@@ -437,7 +439,7 @@
   ;;  (texmacs-input `(document "")
   ;;                 `(style (tuple "generic"))
   ;;                 (search-buffer)))
-  (input (search-toolbar-keypress answer) "search" (list "") "25em")
+  (input (search-toolbar-keypress answer #f) "search" (list "") "25em")
   //
   ((balloon (icon "tm_search_first.xpm") "First occurrence")
    (search-extreme-match #f))
@@ -476,6 +478,14 @@
 ;; Replace toolbar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (replace-toolbar-replace by)
+  (let* ((u (current-buffer))
+         (aux (replace-buffer)))
+    (buffer-set-body aux `(document ,by))
+    (buffer-set-master aux u)
+    (set! search-window (current-window))
+    (replace-one)))
+
 (tm-define (replace-toolbar-keypress by)
   (with key (and (pair? by) (cadr by))
     (if (pair? by) (set! by (car by)))
@@ -485,20 +495,15 @@
           ((== key "down") (search-next-match #t))
           ((== key "pageup") (search-next-match #f))
           ((== key "pagedown") (search-next-match #t))
+          ((== key "S-tab") (keyboard-focus-on "replace-what"))
+          ((and (== key "return") (string? by)) (replace-toolbar-replace by))
           ((== key "escape") (toolbar-search-end))
-          ((and (== key "return") (string? by))
-           (let* ((u (current-buffer))
-                  (aux (replace-buffer)))
-             (buffer-set-body aux `(document ,by))
-             (buffer-set-master aux u)
-             (set! search-window (current-window))
-             (replace-one)))
           ((string? by) (perform-search))
           (else (cancel-alt-selection "alternate")))))
 
 (tm-widget (replace-toolbar)
   (text "Replace: ")
-  (input (search-toolbar-keypress answer) "replace-what" (list "") "15em")
+  (input (search-toolbar-keypress answer #t) "replace-what" (list "") "15em")
   //
   (text "by: ")
   (input (replace-toolbar-keypress answer) "replace-by" (list "") "15em")

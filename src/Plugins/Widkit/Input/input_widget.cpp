@@ -215,7 +215,8 @@ input_widget_rep::handle_keypress (keypress_event ev) {
   if (key == ">") key= "<gtr>";
 
   /* tab-completion */
-  if ((key == "tab" || key == "S-tab") && N(tabs) != 0) {
+  if (continuous ());
+  else if ((key == "tab" || key == "S-tab") && N(tabs) != 0) {
     int d = (key == "tab"? 1: N(tabs)-1);
     tab_nr= (tab_nr + d) % N(tabs);
     s     = s (0, tab_pos) * tabs[tab_nr];
@@ -267,6 +268,8 @@ input_widget_rep::handle_keypress (keypress_event ev) {
        key == "down" ||
        key == "pageup" ||
        key == "pagedown" ||
+       key == "tab" ||
+       key == "S-tab" ||
        key == "escape"));
   else if (key == "return") commit ();
   else if ((key == "escape") || (key == "C-c") ||
