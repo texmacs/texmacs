@@ -421,7 +421,7 @@ edit_select_rep::compute_selection (path p1, path p2) {
   }
   else {
     path p_start, p_end;
-    //cout << "Find " << cur_sel << "\n";
+    //cout << "Find " << p1 << " -- " << p2 << "\n";
     selection_correct (p1, p2, p_start, p_end);
     //cout << "Find " << p_start << " -- " << p_end << "\n";
     selection sel= eb->find_check_selection (p_start, p_end);
