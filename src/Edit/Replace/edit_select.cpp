@@ -433,11 +433,20 @@ edit_select_rep::compute_selection (path p1, path p2) {
 selection
 edit_select_rep::compute_selection (range_set sel) {
   if (is_empty (sel)) return selection ();
+  int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
+  // FIXME: instead of changing the access mode,
+  // we should already start with setting the correct DRD.
+  // For instance, when searching text using a popup window,
+  // the DRD is incorrect.  Consequently, matching text inside
+  // certain macros can become inaccessible, after which
+  // the entire macro is erroneously highlighted.
+  // Similar remark for the main routine for computing selections
   rectangles rs;
   for (int i=0; i+1<N(sel); i+=2) {
     selection ssel= compute_selection (sel[i], sel[i+1]);
     if (ssel->valid) rs << ssel->rs;
   }
+  set_access_mode (old_mode);
   return selection (rs, start (sel), end (sel));
 }
 
