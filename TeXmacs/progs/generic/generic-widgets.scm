@@ -195,7 +195,7 @@
               (nnull? (cdr sels))
               (not (path-less-eq? (cadr sels) cur)))
     (set! sels (cddr sels)))
-  (if (and strict? (>= (length sels) 2))
+  (if (and strict? (>= (length sels) 2) (not (path-less? (car sels) cur)))
       (set! sels (cddr sels)))
   (and (>= (length sels) 2)
        (list (cadr sels) (car sels))))
