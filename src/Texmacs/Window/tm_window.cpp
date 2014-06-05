@@ -262,7 +262,9 @@ texmacs_input_widget (tree doc, tree style, url wname) {
   doc= enrich_embedded_document (doc, style);
   url       base = get_master_buffer (get_current_buffer ());
   tm_view   curvw= concrete_view (get_current_view ());
-  url       name = embedded_name (wname); create_buffer (name, doc);
+  url       name = embedded_name (wname);
+  if (contains (name, get_all_buffers ())) set_buffer_tree (name, doc);
+  else create_buffer (name, doc);
   tm_view   vw   = concrete_view (get_passive_view (name));
   tm_window win  = tm_new<tm_window_rep> (doc, command ());
   set_master_buffer (name, base);
