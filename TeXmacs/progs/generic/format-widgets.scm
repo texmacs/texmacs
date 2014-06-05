@@ -138,7 +138,8 @@
     (item (text "Intercharacter stretching:")
       (enum (ahash-set! new "par-kerning-stretch" answer)
             (cons-new (ahash-ref new "par-kerning-stretch")
-                      '("auto" "0" "0.02" "0.05" "0.1" "0.2" "0.5" "1" ""))
+                      '("auto" "tolerant"
+                        "0" "0.02" "0.05" "0.1" "0.2" "0.5" "1" ""))
             (ahash-ref new "par-kerning-stretch") "10em"))
     (item (text "CJK spacing:")
       (enum (ahash-set! new "par-spacing" answer)

@@ -426,6 +426,7 @@
       (-> "Intercharacter stretching"
           ("Default" (init-default "par-kerning-stretch"))
           ("Automatic" (init-env "par-kerning-stretch" "auto"))
+          ("Tolerant" (init-env "par-kerning-stretch" "tolerant"))
           ---
           ("Off" (init-env "par-kerning-stretch" "0"))
           ("Tiny (0.02)" (init-env "par-kerning-stretch" "0.02"))

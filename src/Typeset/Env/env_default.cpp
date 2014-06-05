@@ -99,7 +99,7 @@ initialize_default_env () {
   env (PAR_FLEXIBILITY)  = "1000";      // threshold for switching to ragged
   env (PAR_HYPHEN)       = "professional"; // quality of hyphenation
   env (PAR_SPACING)      = "plain";     // spacing mode (for CJK)
-  env (PAR_KERNING_STRETCH)= "0";       // extra kerning around characters
+  env (PAR_KERNING_STRETCH)= "auto";    // extra kerning around characters
   env (PAR_KERNING_MARGIN) = "false";   // use marginal kerning (protrusion)
   env (PAR_WIDTH)        = "auto";      // width of paragraph
   env (PAR_LEFT)         = "0cm";       // left indentation
