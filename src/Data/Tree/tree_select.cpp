@@ -161,6 +161,7 @@ void
 selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
   o1= i1; o2= i2;
   while (true) {
+    path p1= o1, p2= o2;
     i1= o1; i2= o2;
     selection_adjust_border (t, i1, i2, o1, o2);
     i1= o1; i2= o2;
@@ -168,6 +169,7 @@ selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
     i1= o1; i2= o2;
     selection_make_accessible (t, i1, i2, o1, o2);
     if (o1 == i1 && o2 == i2) break;
+    if (o1 == p1 && o2 == p2) break;
   }
 }
 
