@@ -625,7 +625,8 @@ report_missing (hashmap<string,tree> missing) {
   for (iterator<string> it= iterate (missing); it->busy(); a << it->next ());
   merge_sort (a);
   for (int i=0; i<N(a); i++)
-    typeset_warning << "Undefined reference " << a[i] << LF;
+    if (!starts (a[i], "bib-"))
+      typeset_warning << "Undefined reference " << a[i] << LF;
 }
 
 static void

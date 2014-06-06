@@ -1042,11 +1042,16 @@ bib_select_entries (tree t, tree bib_t) {
   tree entries (DOCUMENT);
   tree bt= copy (bib_t);
   for (int i= 0; i<N(t); i++)
-    if (bib_is_entry (t[i]))
-      h(t[i][1]->label)= t[i];
+    if (bib_is_entry (t[i])) {
+      if (h->contains (t[i][1]->label))
+        bibtex_warning << "Duplicate entry '" << t[i][1]->label << "'\n";
+      else h(t[i][1]->label)= t[i];
+    }
   for (int i= 0; i < arity (bt); i++) {
     string b= as_string (bt[i]);
-    if (h->contains (b) && !r->contains (b)) {
+    if (!h->contains (b))
+      bibtex_warning << "Missing reference '" << b << "'\n";
+    else if (!r->contains (b)) {
       r->insert (b);
       entries << h[b];
       tree cr= bib_assoc (h[b], string ("crossref"));
