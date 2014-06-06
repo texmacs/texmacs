@@ -235,7 +235,7 @@ x_drawable_rep::polygon (array<SI> x, array<SI> y, bool convex) {
 ******************************************************************************
 
 color
-xpm_to_color (string s) {
+xpm_color (string s) {
   if (s == "none") return rgb_color (100, 100, 100, 0);
   c_string _def (s);
   XColor exact, closest;

@@ -511,7 +511,7 @@ xpm_init (url file_name) {
       def= locase_all (s (j, i));
     }
     
-    pmcs(name)= xpm_to_color(def);
+    pmcs(name)= xpm_color(def);
   }
   CGContextRef ic = MyCreateBitmapContext(w,h);
   CGContextSetBlendMode(ic,kCGBlendModeCopy);

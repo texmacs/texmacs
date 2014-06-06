@@ -40,7 +40,7 @@ color  rgb_color (int r, int g, int b, int a= 255);
 void   get_rgb_color (color col, int& r, int& g, int& b, int& a);
   // get the RGB components of a color
 
-color  xpm_to_color (string s);
+color  xpm_color (string s);
   // get a color by its xpm description
 
 void   get_xpm_color (color col, string &s);

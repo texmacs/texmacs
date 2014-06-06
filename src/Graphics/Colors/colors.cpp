@@ -223,9 +223,8 @@ cmyk_color (int c, int m, int y, int k, int a) {
 * XPM interface
 ******************************************************************************/
 
-// TODO: rename it
 color
-xpm_to_color (string s) {
+xpm_color (string s) {
   if (s == "none") return rgb_color (100, 100, 100, 0);
   if ((N(s) == 4) && (s[0]=='#')) {
     int r= 17 * from_hexadecimal (s (1, 2));

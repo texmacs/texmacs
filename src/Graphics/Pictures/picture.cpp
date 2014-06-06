@@ -14,6 +14,7 @@
 #include "gui.hpp"
 #include "image_files.hpp"
 #include "true_color.hpp"
+#include "colors.hpp"
 #include "iterator.hpp"
 #include "file.hpp"
 
@@ -188,7 +189,6 @@ cached_load_picture (url file_name, int w, int h, bool permanent) {
 * xpm pictures
 ******************************************************************************/
 
-color xpm_to_color (string s);
 picture qt_load_xpm (url file_name);
 
 picture
@@ -246,7 +246,7 @@ load_xpm (url file_name) {
       while ((i<N(s)) && (s[i]!=' ') && (s[i]!='\t')) i++;
       def= locase_all (s (j, i));
     }
-    pmcs(name)= xpm_to_color (def);
+    pmcs(name)= xpm_color (def);
   }
 
   // setup pixmap
