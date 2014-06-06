@@ -26,7 +26,8 @@
 #include <QPrinter>
 #include <QPrintDialog>
 
-#include "rgb_colors.hpp"
+#include "colors.hpp"
+
 #include "dictionary.hpp"
 #include "converter.hpp"
 #include "language.hpp"
@@ -328,37 +329,28 @@ from_qstring (const QString &s) {
   return utf8_to_cork (from_qstring_utf8 (s));
 }
 
-// Although slow to build, this should provide better lookup times than
-// linearly traversing the array of colors.
+// This should provide better lookup times
 static QHash<QString, QColor> _NamedColors;
 
 /*!
-  This needn't be called more than once. Takes RGBColors, defined in
-  rgb_colors.hpp and initializes our QHash
- */
-void initNamedColors(void) {
-  for(int i = 0; i < RGBColorsSize; ++i)
-    _NamedColors.insert(QString(RGBColors[i].name), 
-                        QColor(RGBColors[i].r, RGBColors[i].g, RGBColors[i].b));
-}
-
-/*!
   Takes either an hexadecimal RGB color, as in #e3a1ff, or a named color
-  as those defined in src/Graphics/Renderer/rgb_colors.hpp and returns a QColor
+  as those defined in src/Graphics/Renderer/ * _colors.hpp and returns a QColor
  */
 QColor
 to_qcolor (const string& col) {
   QString _col = to_qstring(col);
-  if(_col.startsWith("#"))
-    return QColor(_col);
-  if(_NamedColors.isEmpty())
-    initNamedColors();
-  if(_NamedColors.contains(_col))
+  if (_NamedColors.contains (_col))
     return _NamedColors[_col];
-  if(DEBUG_QT_WIDGETS)
-    debug_widgets << "to_qcolor(" << col << "): "
-                  << "name is not defined in RGBColors.\n";
-  return QColor(100,100,100);  // FIXME? 
+  color c= named_color (col);
+  if (c == 0 && locase_all (col) != "black") {
+    if(DEBUG_QT_WIDGETS)
+      debug_widgets << "to_qcolor(" << col << "): "
+        << "name is not defined.\n";
+    return QColor(100,100,100);  // FIXME? 
+  }
+  QColor _c= to_qcolor (c);
+  _NamedColors.insert(_col, _c);
+  return _c;
 }
 
 /*! Returns a color encoded as a string with hexadecimal RGB values, 
@@ -369,12 +361,11 @@ from_qcolor (const QColor& col) {
   return from_qstring(col.name());
 }
 
-// FIXME: Unnecessary? QColor::setRgba() does this.
 QColor
 to_qcolor(color c) {
   int r, g, b, a;
   get_rgb_color (c, r, g, b, a);
-  if (reverse_colors) reverse (r, g, b);
+  if (get_reverse_colors ()) reverse (r, g, b);
   return QColor (r, g, b, a);
 }
 
@@ -382,7 +373,7 @@ color
 to_color (const QColor& c) {
   int r, g, b, a;
   c.getRgb (&r, &g, &b, &a);
-  if (reverse_colors) reverse (r, g, b);
+  if (get_reverse_colors ()) reverse (r, g, b);
   return rgb_color (r, g, b, a);
 }
 

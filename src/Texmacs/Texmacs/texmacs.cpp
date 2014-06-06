@@ -41,7 +41,6 @@ void mac_fix_paths ();
 #endif
 
 extern bool   char_clip;
-extern bool   reverse_colors;
 
 extern url    tm_init_file;
 extern url    tm_init_buffer_file;
@@ -259,7 +258,7 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-q") || (s == "-quit"))
 	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
       else if ((s == "-r") || (s == "-reverse"))
-	reverse_colors= true;
+	set_reverse_colors(true);
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;
 	if (i<argc) {

@@ -17,6 +17,7 @@
 #include "iterator.hpp"
 #include "message.hpp"
 #include "sys_utils.hpp"
+#include "colors.hpp"
 #include <locale.h>
 
 x_gui_rep* the_gui= NULL;
@@ -26,21 +27,9 @@ extern hashmap<Window,pointer> Window_to_window;
 * Set up colors
 ******************************************************************************/
 
-bool true_color= false;
-bool reverse_colors= false;
-
-color black, white, red, green, blue;
-color yellow, magenta, orange, brown, pink;
-color light_grey, grey, dark_grey;
-
-static int CSCALES= 4;
-static int CFACTOR= 5;
-static int GREYS  = 16;
-static int CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
-
 int
 x_alloc_color (int r, int g, int b) {
-  if (true_color)
+  if (true_colors)
     return ((r >> 8) << 16) + ((g >> 8) << 8) + (b >> 8);
 
   if (reverse_colors) {
@@ -73,9 +62,11 @@ x_alloc_color (int r, int g, int b) {
 
 void
 x_init_color_map () {
-  if (true_color) return;
+  if (true_colors) return;
 
   int i, r, g, b;
+  int CSCALES, CFACTOR, GREYS, CTOTAL;
+  get_color_attrs (CSCALES, CFACTOR, GREYS, CTOTAL);
   the_gui->cmap= tm_new_array<color> (CTOTAL);
 
   for (i=0; i<=GREYS; i++)
@@ -85,187 +76,19 @@ x_init_color_map () {
   for (r=0; r<=CSCALES; r++)
     for (g=0; g<=CSCALES; g++)
       for (b=0; b<=CSCALES; b++) {
-	i= r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
-	the_gui->cmap[i]= x_alloc_color ((r*65535)/CSCALES,
-					 (g*65535)/CSCALES,
-					 (b*65535)/CSCALES);
+       i= r*CFACTOR*CFACTOR+ g*CFACTOR+ b+ GREYS+ 1;
+       the_gui->cmap[i]= x_alloc_color ((r*65535)/CSCALES,
+                                        (g*65535)/CSCALES,
+                                        (b*65535)/CSCALES);
       }
-}
-
-color
-rgb_color (int r, int g, int b, int a) {
-  if (true_color) {
-    if (reverse_colors) reverse (r, g, b);
-    return (a << 24) + (r << 16) + (g << 8) + b;
-  }
-  else if ((r==g) && (g==b))
-    return (a << 24) + ((r*GREYS+ 128)/255);
-  else {
-    r= (r*CSCALES+ 128)/255;
-    g= (g*CSCALES+ 128)/255;
-    b= (b*CSCALES+ 128)/255;
-    return (a << 24) + r*CFACTOR*CFACTOR + g*CFACTOR + b + GREYS + 1;
-  }
-}
-
-void
-get_rgb_color (color col, int& r, int& g, int& b, int& a) {
-  if (true_color) {
-    a= (col >> 24) & 255;
-    r= (col >> 16) & 255;
-    g= (col >> 8 ) & 255;
-    b=  col        & 255;
-    if (reverse_colors) reverse (r, g, b);
-  }
-  else {
-    a= (col >> 24) & 255;
-    col= col & 0xffffff;
-    if (col <= ((color) GREYS)) {
-      r= (col*255)/GREYS;
-      g= (col*255)/GREYS;
-      b= (col*255)/GREYS;
-    }
-    else {
-      int rr, gg, bb;
-      col-= (GREYS+1);
-      bb  = col % CFACTOR;
-      gg  = (col/CFACTOR) % CFACTOR;
-      rr  = (col/(CFACTOR*CFACTOR)) % CFACTOR;
-      r   = (rr*255)/CSCALES;
-      g   = (gg*255)/CSCALES;
-      b   = (bb*255)/CSCALES;
-    }
-  }
-}
-
-static color
-named_color_bis (string s) {
-  if (N(s) > 0 && s[0] == '#') {
-    if (N(s) == 4) {
-      int r= 17 * from_hexadecimal (s (1, 2));
-      int g= 17 * from_hexadecimal (s (2, 3));
-      int b= 17 * from_hexadecimal (s (3, 4));
-      return rgb_color (r, g, b);
-    }
-    else if (N(s) == 5) {
-      int r= 17 * from_hexadecimal (s (1, 2));
-      int g= 17 * from_hexadecimal (s (2, 3));
-      int b= 17 * from_hexadecimal (s (3, 4));
-      int a= 17 * from_hexadecimal (s (4, 5));
-      return rgb_color (r, g, b, a);
-    }
-    else if (N(s) == 7) {
-      int r= from_hexadecimal (s (1, 3));
-      int g= from_hexadecimal (s (3, 5));
-      int b= from_hexadecimal (s (5, 7));
-      return rgb_color (r, g, b);
-    }
-    else if (N(s) == 9) {
-      int r= from_hexadecimal (s (1, 3));
-      int g= from_hexadecimal (s (3, 5));
-      int b= from_hexadecimal (s (5, 7));
-      int a= from_hexadecimal (s (7, 9));
-      return rgb_color (r, g, b, a);
-    }
-  }
-  int pastel= (the_gui->depth>=16? 223: 191);
-  if (s == "black")          return black;
-  if (s == "white")          return white;
-  if (s == "grey")           return grey;
-  if (s == "red")            return red;
-  if (s == "blue")           return blue;
-  if (s == "yellow")         return yellow;
-  if (s == "green")          return green;
-  if (s == "magenta")        return magenta;
-  if (s == "cyan")           return rgb_color (0, 255, 255);
-  if (s == "orange")         return orange;
-  if (s == "brown")          return brown;
-  if (s == "pink")           return pink;
-  if (s == "broken white")   return rgb_color (255, 255, pastel);
-  if (s == "light grey")     return light_grey;
-  if (s == "darker grey")    return rgb_color (64, 64, 64);
-  if (s == "dark grey")      return dark_grey;
-  if (s == "dark red")       return rgb_color (128, 0, 0);
-  if (s == "dark blue")      return rgb_color (0, 0, 128);
-  if (s == "dark yellow")    return rgb_color (128, 128, 0);
-  if (s == "dark green")     return rgb_color (0, 128, 0);
-  if (s == "dark magenta")   return rgb_color (128, 0, 128);
-  if (s == "dark cyan")      return rgb_color (0, 128, 128);
-  if (s == "dark orange")    return rgb_color (128, 64, 0);
-  if (s == "dark brown")     return rgb_color (64, 16, 0);
-  if (s == "pastel grey")    return rgb_color (pastel, pastel, pastel);
-  if (s == "pastel red")     return rgb_color (255, pastel, pastel);
-  if (s == "pastel blue")    return rgb_color (pastel, pastel, 255);
-  if (s == "pastel yellow")  return rgb_color (255, 255, pastel);
-  if (s == "pastel green")   return rgb_color (pastel, 255, pastel);
-  if (s == "pastel magenta") return rgb_color (255, pastel, 255);
-  if (s == "pastel cyan")    return rgb_color (pastel, 255, 255);
-  if (s == "pastel orange")  return rgb_color (255, pastel, 2*pastel-255);
-  if (s == "pastel brown")   return rgb_color (pastel, 2*pastel-255, 2*pastel-255);
-  return black;
-}
-
-color
-named_color (string s, int a) {
-  color c= named_color_bis (s);
-  a= (a * (c >> 24)) / 255;
-  return (a << 24) + (c & 0xffffff);
-}
-
-string
-get_named_color (color c) {
-  int r, g, b, a;
-  get_rgb_color (c, r, g, b, a);
-  if (a == 255)
-    return "#" *
-      as_hexadecimal (r, 2) *
-      as_hexadecimal (g, 2) *
-      as_hexadecimal (b, 2);
-  else
-    return "#" *
-      as_hexadecimal (r, 2) *
-      as_hexadecimal (g, 2) *
-      as_hexadecimal (b, 2) *
-      as_hexadecimal (a, 2);
-}
-
-color
-blend (color fg, color bg) {
-  if (((fg >> 24) & 255) == 255) return fg;
-  int fR, fG, fB, fA, bR, bG, bB, bA;
-  get_rgb_color (fg, fR, fG, fB, fA);
-  get_rgb_color (bg, bR, bG, bB, bA);
-  fR= (bR * (255 - fA) + fR * fA) / 255;
-  fG= (bG * (255 - fA) + fG * fA) / 255;
-  fB= (bB * (255 - fA) + fB * fA) / 255;
-  return rgb_color (fR, fG, fB);
 }
 
 void
 x_initialize_colors () {
-  if (the_gui->depth >= 16) {
-    CSCALES= 8;
-    CFACTOR= 9;
-    GREYS  = 256;
-    CTOTAL = (CFACTOR*CFACTOR*CFACTOR+GREYS+1);
-  }
-
+  if (the_gui->depth >= 16)
+    set_color_attrs (8, 9, 256);
   x_init_color_map ();
-
-  black   = rgb_color (0, 0, 0);
-  white   = rgb_color (255, 255, 255);
-  red     = rgb_color (255, 0, 0);
-  blue    = rgb_color (0, 0, 255);
-  yellow  = rgb_color (255, 255, 0);
-  green   = rgb_color (0, 255, 0);
-  magenta = rgb_color (255, 0, 255);
-  orange  = rgb_color (255, 128, 0);
-  brown   = rgb_color (128, 32, 0);
-  pink    = rgb_color (255, 128, 128);
-
-  light_grey = rgb_color (208, 208, 208);
-  grey       = rgb_color (184, 184, 184);
-  dark_grey  = rgb_color (112, 112, 112);
+  initialize_colors ();
 }
 
 /******************************************************************************
@@ -866,11 +689,12 @@ x_gui_rep::x_gui_rep (int& argc2, char** argv2):
   XA_CLIPBOARD = XInternAtom (dpy, "CLIPBOARD", false);
   XA_TARGETS = XInternAtom (dpy, "TARGETS", false);
 
+  set_true_colors (false);
   if (XMatchVisualInfo (dpy, scr, depth, TrueColor, &visual) != 0) {
     if (visual.red_mask   == (255 << 16) &&
 	visual.green_mask == (255 << 8) &&
 	visual.blue_mask  == 255)
-      true_color= true;
+      set_true_colors (true);
   }
 
   XSetGraphicsExposures (dpy, gc, true);
@@ -919,7 +743,7 @@ x_gui_rep::~x_gui_rep () {
   clear_selection ("primary");
   XFreeGC (dpy, gc);
   XCloseDisplay (dpy);
-  if (!true_color) tm_delete_array (cmap);
+  if (!true_colors) tm_delete_array (cmap);
 }
 
 void

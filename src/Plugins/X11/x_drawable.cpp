@@ -227,9 +227,12 @@ x_drawable_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   STACK_DELETE_ARRAY (pnt);
 }
 
-/******************************************************************************
+/*
+ * TODO: is this needed?
+ *
+ ******************************************************************************
 * Setting up and displaying xpm pixmaps
-******************************************************************************/
+******************************************************************************
 
 color
 xpm_to_color (string s) {
@@ -243,3 +246,4 @@ xpm_to_color (string s) {
     return rgb_color (closest.red/256, closest.green/256, closest.blue/256);
   return rgb_color (exact.red/256, exact.green/256, exact.blue/256);
 }
+*/

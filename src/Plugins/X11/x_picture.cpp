@@ -23,7 +23,7 @@
 extern hashmap<tree,string> ps_bbox;
 extern int nr_windows;
 
-#define VCONVERT(c) (true_color? (c & 0xffffff): the_gui->cmap [c & 0xffffff])
+#define VCONVERT(c) (true_colors? (c & 0xffffff): the_gui->cmap [c & 0xffffff])
 
 /******************************************************************************
 * Abstract X pictures
