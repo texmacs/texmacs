@@ -177,9 +177,6 @@
 		491BB5AA1731186A00A755DF /* scalable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5A41731186A00A755DF /* scalable.cpp */; };
 		491BB5AB1731186A00A755DF /* scalable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5A41731186A00A755DF /* scalable.cpp */; };
 		491BB5AC1731186A00A755DF /* scalable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5A41731186A00A755DF /* scalable.cpp */; };
-		491BB5AD1731186A00A755DF /* true_color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5A61731186A00A755DF /* true_color.cpp */; };
-		491BB5AE1731186A00A755DF /* true_color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5A61731186A00A755DF /* true_color.cpp */; };
-		491BB5AF1731186A00A755DF /* true_color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5A61731186A00A755DF /* true_color.cpp */; };
 		491BB5B2173118C700A755DF /* metadata-ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5B1173118C700A755DF /* metadata-ieee.cpp */; };
 		491BB5B3173118C700A755DF /* metadata-ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5B1173118C700A755DF /* metadata-ieee.cpp */; };
 		491BB5B4173118C700A755DF /* metadata-ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 491BB5B1173118C700A755DF /* metadata-ieee.cpp */; };
@@ -286,6 +283,12 @@
 		49896901152B981400DB1E9E /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C61B42A141A1B780035D78F /* TeXmacs.icns */; };
 		498BA6B6184C966F00608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		498BA6B7184C968000608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
+		49A513F119426DD70017E373 /* colors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513E719426DD70017E373 /* colors.cpp */; };
+		49A513F219426DD70017E373 /* colors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513E719426DD70017E373 /* colors.cpp */; };
+		49A513F319426DD70017E373 /* colors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513E719426DD70017E373 /* colors.cpp */; };
+		49A513F419426DD70017E373 /* true_color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513ED19426DD70017E373 /* true_color.cpp */; };
+		49A513F519426DD70017E373 /* true_color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513ED19426DD70017E373 /* true_color.cpp */; };
+		49A513F619426DD70017E373 /* true_color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513ED19426DD70017E373 /* true_color.cpp */; };
 		49AA0887181166140090FD84 /* font_protrusion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AA0884181166140090FD84 /* font_protrusion.cpp */; };
 		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
@@ -1581,7 +1584,6 @@
 		491BB5A31731186A00A755DF /* effect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = effect.hpp; sourceTree = "<group>"; };
 		491BB5A41731186A00A755DF /* scalable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scalable.cpp; sourceTree = "<group>"; };
 		491BB5A51731186A00A755DF /* scalable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = scalable.hpp; sourceTree = "<group>"; };
-		491BB5A61731186A00A755DF /* true_color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = true_color.cpp; sourceTree = "<group>"; };
 		491BB5B01731189A00A755DF /* unary_function.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unary_function.hpp; sourceTree = "<group>"; };
 		491BB5B1173118C700A755DF /* metadata-ieee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-ieee.cpp"; sourceTree = "<group>"; };
 		491BB5B5173118F700A755DF /* rewrite_equation_number.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rewrite_equation_number.cpp; sourceTree = "<group>"; };
@@ -1636,6 +1638,16 @@
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
 		4973E9A018BC945F001F74F0 /* r_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = r_language.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
+		49A513E719426DD70017E373 /* colors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = colors.cpp; sourceTree = "<group>"; };
+		49A513E819426DD70017E373 /* colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = colors.hpp; sourceTree = "<group>"; };
+		49A513E919426DD70017E373 /* dvips_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dvips_colors.hpp; sourceTree = "<group>"; };
+		49A513EA19426DD70017E373 /* named_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = named_colors.hpp; sourceTree = "<group>"; };
+		49A513EB19426DD70017E373 /* svg_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = svg_colors.hpp; sourceTree = "<group>"; };
+		49A513EC19426DD70017E373 /* tm_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tm_colors.hpp; sourceTree = "<group>"; };
+		49A513ED19426DD70017E373 /* true_color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = true_color.cpp; sourceTree = "<group>"; };
+		49A513EE19426DD70017E373 /* true_color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = true_color.hpp; sourceTree = "<group>"; };
+		49A513EF19426DD70017E373 /* x11_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = x11_colors.hpp; sourceTree = "<group>"; };
+		49A513F019426DD70017E373 /* xc_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = xc_colors.hpp; sourceTree = "<group>"; };
 		49AA0884181166140090FD84 /* font_protrusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_protrusion.cpp; sourceTree = "<group>"; };
 		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
 		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
@@ -1653,7 +1665,6 @@
 		49DEED1F170ACFB800332D9F /* raster_operators.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raster_operators.hpp; sourceTree = "<group>"; };
 		49DEED20170ACFB800332D9F /* raster_picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raster_picture.cpp; sourceTree = "<group>"; };
 		49DEED21170ACFB800332D9F /* raster_picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = raster_picture.hpp; sourceTree = "<group>"; };
-		49DEED22170ACFB800332D9F /* true_color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = true_color.hpp; sourceTree = "<group>"; };
 		49DEED29170ACFDB00332D9F /* qt_picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_picture.cpp; sourceTree = "<group>"; };
 		49DEED2A170ACFDB00332D9F /* qt_picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_picture.hpp; sourceTree = "<group>"; };
 		49DEED32170B110900332D9F /* x_picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = x_picture.cpp; sourceTree = "<group>"; };
@@ -2758,6 +2769,23 @@
 			path = LaTeX_Preview;
 			sourceTree = "<group>";
 		};
+		49A513E619426DD70017E373 /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				49A513E719426DD70017E373 /* colors.cpp */,
+				49A513E819426DD70017E373 /* colors.hpp */,
+				49A513E919426DD70017E373 /* dvips_colors.hpp */,
+				49A513EA19426DD70017E373 /* named_colors.hpp */,
+				49A513EB19426DD70017E373 /* svg_colors.hpp */,
+				49A513EC19426DD70017E373 /* tm_colors.hpp */,
+				49A513ED19426DD70017E373 /* true_color.cpp */,
+				49A513EE19426DD70017E373 /* true_color.hpp */,
+				49A513EF19426DD70017E373 /* x11_colors.hpp */,
+				49A513F019426DD70017E373 /* xc_colors.hpp */,
+			);
+			path = Colors;
+			sourceTree = "<group>";
+		};
 		49DD8FA616DB75C100647CA2 /* Sqlite3 */ = {
 			isa = PBXGroup;
 			children = (
@@ -2780,8 +2808,6 @@
 				49DEED21170ACFB800332D9F /* raster_picture.hpp */,
 				491BB5A41731186A00A755DF /* scalable.cpp */,
 				491BB5A51731186A00A755DF /* scalable.hpp */,
-				491BB5A61731186A00A755DF /* true_color.cpp */,
-				49DEED22170ACFB800332D9F /* true_color.hpp */,
 			);
 			path = Pictures;
 			sourceTree = "<group>";
@@ -3090,6 +3116,7 @@
 			isa = PBXGroup;
 			children = (
 				9C0B47D310A8CC100097A335 /* Bitmap_fonts */,
+				49A513E619426DD70017E373 /* Colors */,
 				9C0B47D910A8CC100097A335 /* Fonts */,
 				9C0B47E410A8CC100097A335 /* Gui */,
 				9C0B09A514FF0A1C004ABDCE /* Handwriting */,
@@ -4961,6 +4988,7 @@
 				9CEDAA361264FF88009630CC /* unicode_math_font.cpp in Sources */,
 				9CDA725E126CC926006E8028 /* tree_modify.cpp in Sources */,
 				9C646EBE12842B7A000ABCDF /* mac_utilities.mm in Sources */,
+				49A513F419426DD70017E373 /* true_color.cpp in Sources */,
 				9C066E6612849FD900DE2F84 /* QTMInteractivePrompt.cpp in Sources */,
 				9CF5BC73128A13CB00F691BF /* qt_tm_widget.cpp in Sources */,
 				9CF5BC75128A13CB00F691BF /* qt_window_widget.cpp in Sources */,
@@ -5028,11 +5056,11 @@
 				491BB5A71731186A00A755DF /* effect.cpp in Sources */,
 				4934A46D18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */,
 				491BB5AA1731186A00A755DF /* scalable.cpp in Sources */,
-				491BB5AD1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B2173118C700A755DF /* metadata-ieee.cpp in Sources */,
 				491BB5B6173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
 				490DBDA9176EEEBD001F362A /* scilab_language.cpp in Sources */,
 				491BF36E178BFF4C00C69EEF /* tm_sparkle.mm in Sources */,
+				49A513F119426DD70017E373 /* colors.cpp in Sources */,
 				491BF371178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF374178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
 				493F45F9179EC49F00E2972D /* latex_preview.cpp in Sources */,
@@ -5196,6 +5224,7 @@
 				9CCC749B10D303D900E88D90 /* web_files.cpp in Sources */,
 				9CCC749C10D303D900E88D90 /* cpp_language.cpp in Sources */,
 				9CCC749D10D303D900E88D90 /* dictionary.cpp in Sources */,
+				49A513F319426DD70017E373 /* colors.cpp in Sources */,
 				9CCC749F10D303D900E88D90 /* hyphenate.cpp in Sources */,
 				9CCC74A010D303D900E88D90 /* language.cpp in Sources */,
 				9CCC74A110D303D900E88D90 /* math_language.cpp in Sources */,
@@ -5356,6 +5385,7 @@
 				49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */,
 				4929A88C170207440028991F /* curve.cpp in Sources */,
 				4929A88F170207440028991F /* equations.cpp in Sources */,
+				49A513F619426DD70017E373 /* true_color.cpp in Sources */,
 				4929A892170207440028991F /* frame.cpp in Sources */,
 				4929A895170207440028991F /* grid.cpp in Sources */,
 				4929A898170207440028991F /* point.cpp in Sources */,
@@ -5370,7 +5400,6 @@
 				491BB5A11731183800A755DF /* pencil.cpp in Sources */,
 				491BB5A91731186A00A755DF /* effect.cpp in Sources */,
 				491BB5AC1731186A00A755DF /* scalable.cpp in Sources */,
-				491BB5AF1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B4173118C700A755DF /* metadata-ieee.cpp in Sources */,
 				491BB5B8173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
 				490DBDAB176EEEBD001F362A /* scilab_language.cpp in Sources */,
@@ -5500,6 +5529,7 @@
 				9CD4E66910B14AB300E0DD5C /* load_tfm.cpp in Sources */,
 				9CD4E66A10B14AB300E0DD5C /* tex_files.cpp in Sources */,
 				9CD4E66B10B14AB300E0DD5C /* tex_font.cpp in Sources */,
+				49A513F519426DD70017E373 /* true_color.cpp in Sources */,
 				9CD4E66C10B14AB300E0DD5C /* tex_init.cpp in Sources */,
 				9CD4E66D10B14AB300E0DD5C /* tex_rubber_font.cpp in Sources */,
 				9CD4E66E10B14AB300E0DD5C /* openssl.cpp in Sources */,
@@ -5563,6 +5593,7 @@
 				9CD4E6C410B14AB300E0DD5C /* bridge_auto.cpp in Sources */,
 				4934A47118C5D00000BF1E6A /* tracked_totex.cpp in Sources */,
 				9CD4E6C510B14AB300E0DD5C /* bridge_compound.cpp in Sources */,
+				49A513F219426DD70017E373 /* colors.cpp in Sources */,
 				9CD4E6C610B14AB300E0DD5C /* bridge_default.cpp in Sources */,
 				9CD4E6C710B14AB300E0DD5C /* bridge_docrange.cpp in Sources */,
 				9CD4E6C810B14AB300E0DD5C /* bridge_document.cpp in Sources */,
@@ -5733,7 +5764,6 @@
 				491BB5A81731186A00A755DF /* effect.cpp in Sources */,
 				495DB2D718CCB02300FE485A /* fakedlopen.c in Sources */,
 				491BB5AB1731186A00A755DF /* scalable.cpp in Sources */,
-				491BB5AE1731186A00A755DF /* true_color.cpp in Sources */,
 				491BB5B3173118C700A755DF /* metadata-ieee.cpp in Sources */,
 				491BB5B7173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
 				490DBDAA176EEEBD001F362A /* scilab_language.cpp in Sources */,
