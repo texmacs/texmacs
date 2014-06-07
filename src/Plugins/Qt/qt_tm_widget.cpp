@@ -272,7 +272,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setFloating (false);
   mw->addDockWidget (Qt::RightDockWidgetArea, sideTools);
 
-  bottomTools->setAllowedAreas (Qt::AllDockWidgetAreas);
+  bottomTools->setAllowedAreas (Qt::BottomDockWidgetArea);
   bottomTools->setFeatures (QDockWidget::NoDockWidgetFeatures);
   bottomTools->setFloating (false);
   bottomTools->setTitleBarWidget (new QWidget()); // Disables title bar
