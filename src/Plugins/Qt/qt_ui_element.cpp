@@ -99,21 +99,6 @@ QTMMenuWidget::paintEvent(QPaintEvent* event) {
   QWidget::paintEvent(event);
 }
 
-
-/*! A QToolButton which draws itself using its defaultAction()'s icon. */
-class QTMUIButton: public QToolButton {
-public:
-  QTMUIButton (QWidget* parent = NULL): QToolButton(parent) {}
-  void paintEvent(QPaintEvent *event);
-};
-
-void
-QTMUIButton::paintEvent(QPaintEvent* event) {
-  (void) event;
-  QPainter p (this);
-  defaultAction()->icon().paint (&p, rect ());
-}
-
 /******************************************************************************
  * Ad-hoc command_rep derivates for different UI elements in qt_ui_element_rep
  ******************************************************************************/
