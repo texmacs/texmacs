@@ -453,28 +453,29 @@
           (else (cancel-alt-selection "alternate")))))
 
 (tm-widget (search-toolbar)
-  (text "Search: ")
-  ;;(resize "0.5w" "24px"
-  ;;  (texmacs-input `(document "")
-  ;;                 `(style (tuple "generic"))
-  ;;                 (search-buffer)))
-  (input (search-toolbar-keypress answer #f) "search" (list "") "25em")
-  //
-  ((balloon (icon "tm_search_first.xpm") "First occurrence")
-   (search-extreme-match #f))
-  ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
-   (search-next-match #f))
-  ((balloon (icon "tm_search_next.xpm") "Next occurrence")
-   (search-next-match #t))
-  ((balloon (icon "tm_search_last.xpm") "Last occurrence")
-   (search-extreme-match #t))
-  // // // // // // // // // // // // // // // // >>>
-  ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
-   (set-boolean-preference "toolbar search" #f)
-   (toolbar-search-end)
-   (open-search))
-  ((balloon (icon "tm_close_tool.xpm") "Close search tool")
-   (toolbar-search-end)))
+  (hlist
+    (text "Search: ")
+    ;;(resize "0.5w" "24px"
+    ;;  (texmacs-input `(document "")
+    ;;                 `(style (tuple "generic"))
+    ;;                 (search-buffer)))
+    (input (search-toolbar-keypress answer #f) "search" (list "") "25em")
+    //
+    ((balloon (icon "tm_search_first.xpm") "First occurrence")
+     (search-extreme-match #f))
+    ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+     (search-next-match #f))
+    ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+     (search-next-match #t))
+    ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+     (search-extreme-match #t))
+      >>>
+    ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
+     (set-boolean-preference "toolbar search" #f)
+     (toolbar-search-end)
+     (open-search))
+    ((balloon (icon "tm_close_tool.xpm") "Close search tool")
+      (toolbar-search-end))))
 
 (tm-define (toolbar-search-start)
   (:interactive #t)
@@ -525,33 +526,34 @@
           (else (perform-search)))))
 
 (tm-widget (replace-toolbar)
-  (text "Replace: ")
-  (input (search-toolbar-keypress answer #t) "replace-what" (list "") "15em")
-  //
-  (text "by: ")
-  (input (replace-toolbar-keypress answer) "replace-by" (list "") "15em")
-  //
-  ;;(if (nnull? (get-alt-selection "alternate"))
-  ((balloon (icon "tm_search_first.xpm") "First occurrence")
-   (search-extreme-match #f))
-  ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
-   (search-next-match #f))
-  ((balloon (icon "tm_search_next.xpm") "Next occurrence")
-   (search-next-match #t))
-  ((balloon (icon "tm_search_last.xpm") "Last occurrence")
-   (search-extreme-match #t))
-  //
-  ((balloon (icon "tm_replace_one.xpm") "Replace one occurrence")
-   (replace-one))
-  ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
-   (replace-all))
-  // // // // // // // // // >>>
-  ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
-   (set-boolean-preference "toolbar replace" #f)
-   (toolbar-search-end)
-   (open-replace))
-  ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
-   (toolbar-search-end)))
+  (hlist
+    (text "Replace: ")
+    (input (search-toolbar-keypress answer #t) "replace-what" (list "") "15em")
+    //
+    (text "by: ")
+    (input (replace-toolbar-keypress answer) "replace-by" (list "") "15em")
+    //
+    ;;(if (nnull? (get-alt-selection "alternate"))
+    ((balloon (icon "tm_search_first.xpm") "First occurrence")
+     (search-extreme-match #f))
+    ((balloon (icon "tm_search_previous.xpm") "Previous occurrence")
+     (search-next-match #f))
+    ((balloon (icon "tm_search_next.xpm") "Next occurrence")
+     (search-next-match #t))
+    ((balloon (icon "tm_search_last.xpm") "Last occurrence")
+     (search-extreme-match #t))
+    //
+    ((balloon (icon "tm_replace_one.xpm") "Replace one occurrence")
+     (replace-one))
+    ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
+     (replace-all))
+    >>>
+    ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
+     (set-boolean-preference "toolbar replace" #f)
+     (toolbar-search-end)
+     (open-replace))
+    ((balloon (icon "tm_close_tool.xpm") "Close replace tool")
+      (toolbar-search-end))))
 
 (tm-define (toolbar-replace-start)
   (:interactive #t)
