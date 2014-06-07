@@ -1,17 +1,22 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.1>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Function definition and contextual overloading>
 
-  Conventional programming languages often provide mechanism to overload
+  Conventional programming languages often provide some means to overload
   certain functions depending on the types of the arguments. <TeXmacs>
   provides additional context-based overloading mechanisms, which require the
-  use of the <scm|tm-define> construct for function declarations (and
-  <scm|tm-define-macro> for macro declarations). Furthermore, one may use
-  <scm|tm-define> for associating additional properties to a function, such
-  as documentation or default values for the arguments.
+  use of the <scm|tm-define> construct for function definitions (and
+  <scm|tm-define-macro> for macro definitions). Definition with
+  <scm|tm-define> also allows the specification of properties of the
+  function/macro: arguments, synopsis, etc.
+
+  Furthermore, one may use <scm|tm-property> for associating additional
+  properties, such as interactivity or default values for the arguments, of a
+  function <em|which is already defined>, specifically functions exported
+  from <c++> code through the glue.
 
   <\explain>
     <scm|(tm-define <scm-arg|head> <scm-args|options>
@@ -26,7 +31,22 @@
     macros defined using <scm|tm-define> and <scm|tm-define-macro> are
     public. Each option is of the form <scm|(:<scm-arg|kind>
     <scm-args|arguments>)> and the <scm-arg|body> starts at the first element
-    of the list following <scm-arg|head> which is not of this form.
+    of the list following <scm-arg|head> which is not of this form. Available
+    options are <scm|:type>, <scm|:synopsis>, <scm|:returns>, <scm|:note>,
+    <scm|:argument>, <scm|:default>, <scm|:proposals>, <scm|:secure>,
+    <scm|:check-mark>, <scm|:interactive> and <scm|:balloon>.
+  </explain>
+
+  <\explain>
+    <scm|(tm-property <scm-arg|head> <scm-args|options>)><explain-synopsis|<TeXmacs>
+    properties definition>
+  <|explain>
+    <scm|tm-property> allows the declaration of <TeXmacs> properties for
+    functions which have already been defined, specifically for functions
+    exported through the glue. Available options are <scm|:type>,
+    <scm|:synopsis>, <scm|:returns>, <scm|:note>, <scm|:argument>,
+    <scm|:default>, <scm|:proposals>, <scm|:secure>, <scm|:check-mark>,
+    <scm|:interactive> and <scm|:balloon>.
   </explain>
 
   <paragraph*|Contextual overloading>
@@ -155,12 +175,19 @@
   </explain>
 
   <\explain>
-    <scm|(:argument <scm-arg|var> <scm-arg|description>)><explain-synopsis|argument
-    description>
+    <scm|(:argument <scm-arg|var> <scm-arg|description>)>
+
+    <scm|(:argument <scm-arg|var> <scm-arg|type>
+    <scm-arg|description>)><explain-synopsis|argument description>
   <|explain>
     This option gives a short <scm-arg|description> of one of the arguments
     <scm-arg|var> to the function or macro. Such a description is used for
-    instance for the prompts, when calling the function interactively.
+    instance for the prompts, when calling the function interactively. For
+    these uses, the second format allows for the specification of a
+    <scm-arg|type> which changes how the widgets/prompts work. Some allowed
+    values are <scm|"string">, the default, and <scm|"file"> and
+    <scm|"directory">. If any of the last two is specified, tab completion in
+    the interactive prompt will traverse the file system.
   </explain>
 
   <\explain>
@@ -169,6 +196,14 @@
   <|explain>
     This option gives a short <scm-arg|description> of the return value of
     the function or macro.
+  </explain>
+
+  <\explain>
+    <scm|(:type (-\<gtr\> <scm-arg|from> <scm-arg|to>))><explain-synopsis|type
+    conversion description>
+  <|explain>
+    This option specifies that a function or macro performs a conversion from
+    the data type <scm-arg|from> to the data type <scm-arg|to>.
   </explain>
 
   <tmdoc-copyright|2007--2010|Joris van der Hoeven>
@@ -181,8 +216,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
