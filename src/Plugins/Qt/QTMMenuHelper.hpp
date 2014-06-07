@@ -87,11 +87,13 @@ class QTMLazyMenu: public QMenu {
   Q_OBJECT
   
   promise<widget> promise_widget;
+  bool show_right;
 
 public:
-  QTMLazyMenu (promise<widget> _pm, QWidget* p = NULL);
+  QTMLazyMenu (promise<widget> _pm, QWidget* p = NULL, bool right = false);
   void attachTo (QAction* a);
-  
+  virtual void showEvent (QShowEvent* event);
+
 public slots:
   void force ();
 

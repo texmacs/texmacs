@@ -249,9 +249,21 @@ QTMMinibarAction::createWidget (QWidget* parent) {
  * QTMLazyMenu
  ******************************************************************************/
 
-QTMLazyMenu::QTMLazyMenu (promise<widget> _pm, QWidget* p)
-: QMenu (p), promise_widget (_pm) {
+QTMLazyMenu::QTMLazyMenu (promise<widget> _pm, QWidget* p, bool right)
+: QMenu (p), promise_widget (_pm), show_right (right) {
   QObject::connect (this, SIGNAL (aboutToShow ()), this, SLOT (force ()));
+}
+
+void
+QTMLazyMenu::showEvent (QShowEvent* ev)
+{
+  if (show_right && parentWidget()) {
+    QPoint p = pos();
+    p.rx() += parentWidget()->width();
+    p.ry() -= parentWidget()->height();
+    move (p);
+  }
+  QMenu::showEvent (ev);
 }
 
 /*! Sets the QTMLazyMenu as the menu for the QAction and makes its destruction
@@ -627,7 +639,6 @@ QTMLineEdit::focusOutEvent (QFocusEvent* ev)
   }
   QLineEdit::focusOutEvent (ev);
 }
-
 
 
 /******************************************************************************

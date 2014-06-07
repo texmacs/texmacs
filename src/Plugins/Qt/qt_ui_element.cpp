@@ -825,21 +825,31 @@ qt_ui_element_rep::as_qwidget () {
       T                x = open_box<T> (load);
       qt_widget      qtw = concrete (x.x1);
       promise<widget> pw = x.x2;
-    
-      QPushButton* b  = new QPushButton();
-      QTMLazyMenu* lm = new QTMLazyMenu (pw, b);
-      b->setMenu (lm);
-      b->setAutoDefault (false);
+      
       if (qtw->type == xpm_widget) {
         url image = open_box<url> (get_payload (qtw));
+        QToolButton* b = new QToolButton();
+        
+        QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
+        b->setPopupMode (QToolButton::InstantPopup);
+        b->setAutoRaise (true);
+        b->setMenu (lm);
+        qwid = b;
       } else if (qtw->type == text_widget) {
         typedef quartet<string, int, color, bool> T1;
         T1 y = open_box<T1> (get_payload (qtw));
+        QPushButton* b  = new QPushButton();
+        QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
+        b->setMenu (lm);
+        b->setAutoDefault (false);
         b->setText (to_qstring (y.x1));
+        b->setEnabled (! (y.x2 & WIDGET_STYLE_INERT));
         qt_apply_tm_style (b, y.x2, y.x3);
+        qwid = b;
       }
-      qwid = b;
+      qwid->setStyle (qtmstyle());
+
     }
       break;
       
