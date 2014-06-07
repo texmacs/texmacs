@@ -241,18 +241,21 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     // Some slots are too noisy
   if (DEBUG_QT_WIDGETS && (s != SLOT_IDENTIFIER))
     debug_widgets << "qt_simple_widget_rep: queried " << slot_name(s)
-    << "\t\tto widget\t" << type_as_string() << LF;
+                  << "\t\tto widget\t" << type_as_string() << LF;
   
   switch (s) {
     case SLOT_IDENTIFIER:
-      if (qwid)
-        return qt_window_widget_rep::widget_from_qwidget(qwid)->query(s, type_id);
-      else
-        return close_box<int>(0);
-      
+    {
+      if (qwid) {
+        widget_rep* wid = qt_window_widget_rep::widget_from_qwidget(qwid);
+        if (wid)
+          return wid->query(s, type_id);
+      }
+      return close_box<int>(0);
+    }
     case SLOT_INVALID:
     {
-      return close_box<bool>(canvas() ? canvas()->is_invalid() : false);
+      return close_box<bool> (canvas() ? canvas()->is_invalid() : false);
     }
       
     case SLOT_POSITION:

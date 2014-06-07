@@ -996,8 +996,13 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
   
   switch (s) {
     case SLOT_IDENTIFIER:
-      if (qwid)
-        return qt_window_widget_rep::widget_from_qwidget(qwid)->query(s, type_id);
+    {
+      if (qwid) {
+        widget_rep* wid = qt_window_widget_rep::widget_from_qwidget(qwid);
+        if (wid) return wid->query (s, type_id);
+      }
+      return close_box<int>(0);
+    }
 
     case SLOT_SCROLL_POSITION:
     case SLOT_EXTENTS:
