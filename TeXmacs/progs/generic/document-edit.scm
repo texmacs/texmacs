@@ -23,7 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-property (project-attach master)
-  (:argument master "Master file"))
+  (:argument master "file" "Master file"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preamble mode
@@ -46,7 +46,7 @@
   (if (null? vals)
       #t
       (and (not (init-has? (car vals)))
-	   (apply test-default? (cdr vals)))))
+           (apply test-default? (cdr vals)))))
 
 (tm-define (init-default . args)
   (:check-mark "*" test-default?)
@@ -109,12 +109,12 @@
 
 (tm-define (initial-get-tree u var)
   (or (with-buffer u
-	(get-init-tree var))
+        (get-init-tree var))
       (tree "")))
 
 (tm-define (initial-get u var)
   (or (with-buffer u
-	(get-init var))
+        (get-init var))
       ""))
 
 (tm-define (initial-defined? u var)
@@ -132,7 +132,7 @@
 
 (tm-define (buffer-get-metadata u kind)
   (or (with-buffer u
-	(get-metadata kind))
+        (get-metadata kind))
       ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -166,10 +166,10 @@
 
 (define (search-env-var t which)
   (cond ((nlist? t) #f)
-	((null? t) #f)
-	((match? t '(associate "language" :%1)) (caddr t))
-	(else (let ((val (search-env-var (car t) which)))
-		(if val val (search-env-var (cdr t) which))))))
+        ((null? t) #f)
+        ((match? t '(associate "language" :%1)) (caddr t))
+        (else (let ((val (search-env-var (car t) which)))
+                (if val val (search-env-var (cdr t) which))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main page layout
@@ -224,7 +224,7 @@
   (:synopsis "Toggle visibility of headers and footers in 'page' paper mode.")
   (:check-mark "v" visible-header-and-footer?)
   (init-env "page-show-hf"
-	    (if (== (get-env "page-show-hf") "true") "false" "true")))
+            (if (== (get-env "page-show-hf") "true") "false" "true")))
 
 (define (page-width-margin?)
   (== (get-env "page-width-margin") "true"))
@@ -241,7 +241,7 @@
   (:synopsis "Toggle mode for using special margins for screen editing.")
   (:check-mark "v" not-page-screen-margin?)
   (init-env "page-screen-margin"
-	    (if (not-page-screen-margin?) "true" "false")))
+            (if (not-page-screen-margin?) "true" "false")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document updates
