@@ -58,7 +58,7 @@ color  named_color (string s, int a= 255);
 string get_named_color (color c);
   // get a standard name for the color if it exists
 
-color  blend (color fg, color bg);
+color  blend_colors (color fg, color bg);
   // blend two colors
 
 /******************************************************************************

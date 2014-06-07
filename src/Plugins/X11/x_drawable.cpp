@@ -116,7 +116,7 @@ x_drawable_rep::get_background () {
 void
 x_drawable_rep::set_pencil (pencil p) {
   pen= p;
-  color col= blend (pen->get_color (), bg_brush->get_color ());
+  color col= blend_colors (pen->get_color (), bg_brush->get_color ());
   XSetForeground (dpy, gc, CONVERT (col));
   if (pen->get_width () <= pixel)
     XSetLineAttributes (dpy, (GC) gc,
@@ -169,7 +169,7 @@ x_drawable_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   if ((x1>=x2) || (y1<=y2)) return;
   XSetForeground (dpy, gc, CONVERT (bg_brush->get_color ()));
   XFillRectangle (dpy, win, gc, x1, y2, x2-x1, y1-y2);
-  color col= blend (pen->get_color (), bg_brush->get_color ());
+  color col= blend_colors (pen->get_color (), bg_brush->get_color ());
   XSetForeground (dpy, gc, CONVERT (col));
 }
 

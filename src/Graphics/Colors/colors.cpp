@@ -137,7 +137,7 @@ reverse (int& r, int& g, int& b) {
 ******************************************************************************/
 
 color
-blend (color fg, color bg) {
+blend_colors (color fg, color bg) {
   if (((fg >> 24) & 255) == 255) return fg;
   int fR, fG, fB, fA, bR, bG, bB, bA;
   get_rgb_color (fg, fR, fG, fB, fA);
