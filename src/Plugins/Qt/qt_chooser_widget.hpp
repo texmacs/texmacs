@@ -15,9 +15,9 @@
 #include "qt_utilities.hpp"
 
 /*!
- * A file/directory chooser dialog, using native dialogs where available.
- * See @link widget.cpp @endlink for an explanation of send(), query(), 
- * read(), etc.
+  A file/directory chooser dialog, using native dialogs where available.
+  See @link widget.cpp @endlink for an explanation of send(), query(),
+  read(), etc.
  */
 class qt_chooser_widget_rep: public qt_widget_rep {
 protected:      
@@ -37,7 +37,6 @@ protected:
 
 public:
   qt_chooser_widget_rep (command, string, bool);
-  ~qt_chooser_widget_rep ();
   
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);

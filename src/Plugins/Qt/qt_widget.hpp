@@ -81,6 +81,7 @@ class qt_widget;
 class qt_widget;
 
 class qt_widget_rep : public widget_rep {
+protected:
   array<widget> children;
 public:
   long                id;

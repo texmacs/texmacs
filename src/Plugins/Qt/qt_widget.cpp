@@ -45,7 +45,7 @@ qt_widget_rep::qt_widget_rep(types _type, QWidget* _qwid)
 qt_widget_rep::~qt_widget_rep() { 
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "~qt_widget_rep: deleted a " << type_as_string() << LF;
-  
+
   // DON'T DO THIS! (several qt_widget_rep may have the same underlying QWidget)
   // UPD: really? when? The problem is rather order of destruction. If we
   // completely bypassed QObject's hierarchy deleting should be ok.
@@ -75,8 +75,22 @@ qt_widget_rep::send (slot s, blackbox val) {
       break;
     case SLOT_KEYBOARD_FOCUS_ON:
     {
-      check_type<string> (val, s);
-      NOT_IMPLEMENTED ("qt_widget_rep::SLOT_KEYBOARD_FOCUS_ON");
+      string field = open_box<string>(val);
+      if (qwid) {
+        QWidget* target = qwid->findChild<QWidget*> (to_qstring (field));
+        if (target == NULL)
+          target = qwid->findChild<QWidget*> ("default focus target");
+        if (target) target->setFocus(Qt::OtherFocusReason);
+      }
+      /* FIXME: This would be better than using QObject::findChild but it won't
+       work because the array of children is only sloppily used at best
+       (meaning some objects are not assigned as children of others...)
+       If this is ever made to work, we'll want to handle SLOT_KEYBOARD_FOCUS_ON
+       inside qt_input_text_widget_rep and possibly others
+
+      for (int i = 0; i < N(children); ++i)
+        if (!is_nil(children[i])) children[i]->send (s, val);
+       */
     }
       break;
     case SLOT_NAME:

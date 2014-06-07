@@ -872,7 +872,10 @@ qt_ui_element_rep::as_qwidget () {
       
       if (qtw->type == xpm_widget) {  // Toolbar button
         QAction*     a = as_qaction();        // Create key shortcuts and actions
-        QTMUIButton* b = new QTMUIButton();
+        QToolButton* b = new QToolButton ();
+        b->setIcon (a->icon());
+        b->setPopupMode (QToolButton::InstantPopup);
+        b->setAutoRaise (true);
         b->setDefaultAction (a);
         a->setParent (b);
         qwid = b;
@@ -883,11 +886,12 @@ qt_ui_element_rep::as_qwidget () {
         if (qtw->type == text_widget) {
           typedef quartet<string, int, color, bool> T1;
           b->setText (to_qstring (open_box<T1> (get_payload (qtw)).x1));
-          qt_apply_tm_style (b, style);
         }
         b->setFlat (! (style & WIDGET_STYLE_BUTTON));
         qwid = b;
       }
+      qwid->setStyle (qtmstyle());
+      qt_apply_tm_style (qwid, style);
       qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
     }
       break;

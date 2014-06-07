@@ -27,10 +27,10 @@
 #include <QByteArray>
 
 /*!
- * @param _cmd  Scheme closure to execute after the dialog is closed.
- * @param _type What kind of dialog to show. Can be one of "image", "directory",
- *              or any of the supported file formats: "texmacs", "tmml",
-                "postscript", etc. See perform_dialog()
+  \param _cmd  Scheme closure to execute after the dialog is closed.
+  \param _type What kind of dialog to show. Can be one of "image", "directory",
+               or any of the supported file formats: "texmacs", "tmml",
+               "postscript", etc. See perform_dialog()
  */
 qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _save)
  : qt_widget_rep (file_chooser), cmd (_cmd), save (_save),
@@ -43,11 +43,8 @@ qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _
     set_type ("generic");
 }
 
-qt_chooser_widget_rep::~qt_chooser_widget_rep() {}
-
 void
 qt_chooser_widget_rep::send (slot s, blackbox val) {
-
   switch (s) {
     case SLOT_VISIBILITY:
     {   
@@ -69,10 +66,6 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       check_type<bool>(val, s);
       perform_dialog ();
       break;              
-    case SLOT_KEYBOARD_FOCUS_ON:
-      check_type<string>(val, s);
-      NOT_IMPLEMENTED("qt_chooser_widget::SLOT_KEYBOARD_FOCUS_ON");
-      break;
     case SLOT_STRING_INPUT:
       check_type<string>(val, s);
       if (DEBUG_QT_WIDGETS)
@@ -83,12 +76,6 @@ qt_chooser_widget_rep::send (slot s, blackbox val) {
       check_type<string>(val, s);
       set_type (open_box<string> (val));
       break;
-#if 0
-    case SLOT_INPUT_PROPOSAL:
-        //send_string (THIS, "default", val);
-      NOT_IMPLEMENTED("qt_chooser_widget::SLOT_INPUT_PROPOSAL")
-      break;
-#endif
     case SLOT_FILE:
         //send_string (THIS, "file", val);
       check_type<string>(val, s);

@@ -34,6 +34,7 @@ protected:
 public:
   qt_input_text_widget_rep (command _cmd, string _type, array<string> _proposals,
                             int _style, string _width);
+
   virtual QAction*  as_qaction ();
   virtual QWidget*  as_qwidget ();
   
@@ -59,14 +60,13 @@ class qt_field_widget_rep;
 class qt_inputs_list_widget_rep: public qt_widget_rep {
 protected:
   command cmd;
-  array<qt_widget> fields;
   coord2 size, position;
   string win_title;
   int style;
 
 public:
   qt_inputs_list_widget_rep (command, array<string>);
-  
+
   virtual void      send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);
   virtual widget    read (slot s, blackbox index);
@@ -83,10 +83,10 @@ protected:
  Each field is composed of a prompt (a label) and an input (a QTMComboBox).
  */
 class qt_field_widget_rep: public qt_widget_rep {
-  string                     prompt;
-  string                      input;
-  string                       type;
-  array<string>           proposals;
+  string           prompt;
+  string            input;
+  string             type;
+  array<string> proposals;
   qt_inputs_list_widget_rep* parent;
 
 public:

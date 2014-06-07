@@ -111,7 +111,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   visibility[5] = (mask & 32)  == 32;  // footer
   visibility[6] = (mask & 64)  == 64;  // side tools #0
   visibility[7] = (mask & 128) == 128; // bottom tools
-  
+
   // general setup for main window
   
   QMainWindow* mw= mainwindow ();
@@ -161,22 +161,22 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar   = new QToolBar ("mode toolbar", mw);
   focusToolBar  = new QToolBar ("focus toolbar", mw);
   userToolBar   = new QToolBar ("user toolbar", mw);
-  bottomToolBar = new QToolBar ("bottom toolbar", mw);
   
-  sideDock      = new QDockWidget ("Side tools", 0);
+  bottomTools   = new QDockWidget ("bottom tools", mw);
+  sideTools     = new QDockWidget ("side tools", 0);
     // HACK: Wrap the dock in a "fake" window widget (last parameter = true) to
     // have clicks report the right position.
   static int cnt=0;
   string dock_name = "dock:" * as_string(cnt++);
-  dock_window_widget = tm_new<qt_window_widget_rep> (sideDock, dock_name,
+  dock_window_widget = tm_new<qt_window_widget_rep> (sideTools, dock_name,
                                                      command(), true);
   
   mainToolBar->setStyle (qtmstyle ());
   modeToolBar->setStyle (qtmstyle ());
   focusToolBar->setStyle (qtmstyle ());
   userToolBar->setStyle (qtmstyle ());
-  sideDock->setStyle (qtmstyle ());
-  bottomToolBar->setStyle (qtmstyle ());
+  sideTools->setStyle (qtmstyle ());
+  bottomTools->setStyle (qtmstyle ());
   
   {
     // set proper sizes for icons
@@ -250,9 +250,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->insertWidget(1, rulerWidget);
   bl->insertWidget(2, focusToolBar);
   bl->insertWidget(3, userToolBar);
-  bl->insertWidget(4, bottomToolBar);
   bl->insertWidget(5, r2);
-  
+
     //mw->setContentsMargins (-2, -2, -2, -2);  // Why this?
   bar->setContentsMargins (0, 1, 0, 1);
 
@@ -265,15 +264,22 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->addToolBarBreak ();
   mw->addToolBar (userToolBar);
   mw->addToolBarBreak ();
-  mw->addToolBar (bottomToolBar);
- // mw->addToolBarBreak ();
 #endif
 
-  sideDock->setAllowedAreas(Qt::AllDockWidgetAreas);
-  sideDock->setFeatures(QDockWidget::DockWidgetMovable |
-                        QDockWidget::DockWidgetFloatable);
-  sideDock->setFloating(false);
-  mw->addDockWidget(Qt::RightDockWidgetArea, sideDock);
+  sideTools->setAllowedAreas (Qt::AllDockWidgetAreas);
+  sideTools->setFeatures (QDockWidget::DockWidgetMovable |
+                         QDockWidget::DockWidgetFloatable);
+  sideTools->setFloating (false);
+  mw->addDockWidget (Qt::RightDockWidgetArea, sideTools);
+
+  bottomTools->setAllowedAreas (Qt::AllDockWidgetAreas);
+  bottomTools->setFeatures (QDockWidget::NoDockWidgetFeatures);
+  bottomTools->setFloating (false);
+  bottomTools->setTitleBarWidget (new QWidget()); // Disables title bar
+  bottomTools->setMinimumHeight (10);             // Avoids warning
+  bottomTools->setContentsMargins (3, 6, 3, -2);  // Hacks hacks hacks... :(
+  mw->addDockWidget (Qt::BottomDockWidgetArea, bottomTools);
+
   
     // FIXME? add DockWidgetClosable and connect the close signal
     // to the scheme code
@@ -290,8 +296,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   modeToolBar->setVisible (false);
   focusToolBar->setVisible (false);
   userToolBar->setVisible (false);
-  sideDock->setVisible (false);
-  bottomToolBar->setVisible (false);
+  sideTools->setVisible (false);
+  bottomTools->setVisible (false);
   mainwindow()->statusBar()->setVisible (true);
 #ifndef Q_WS_MAC
   mainwindow()->menuBar()->setVisible (false);
@@ -340,8 +346,8 @@ qt_tm_widget_rep::update_visibility () {
   bool old_modeVisibility = modeToolBar->isVisible();
   bool old_focusVisibility = focusToolBar->isVisible();
   bool old_userVisibility = userToolBar->isVisible();
-  bool old_sideVisibility = sideDock->isVisible();
-  bool old_bottomVisibility = bottomToolBar->isVisible();
+  bool old_sideVisibility = sideTools->isVisible();
+  bool old_bottomVisibility = bottomTools->isVisible();
   bool old_statusVisibility = mainwindow()->statusBar()->isVisible();
 
   bool new_mainVisibility = visibility[1] && visibility[0];
@@ -361,9 +367,9 @@ qt_tm_widget_rep::update_visibility () {
   if ( XOR(old_userVisibility,  new_userVisibility) )
     userToolBar->setVisible (new_userVisibility);
   if ( XOR(old_sideVisibility,  new_sideVisibility) )
-    sideDock->setVisible (new_sideVisibility);
+    sideTools->setVisible (new_sideVisibility);
   if ( XOR(old_bottomVisibility,  new_bottomVisibility) )
-    bottomToolBar->setVisible (new_bottomVisibility);
+    bottomTools->setVisible (new_bottomVisibility);
   if ( XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
 
@@ -474,12 +480,6 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       bool focus = open_box<bool> (val);
       if (focus && canvas() && !canvas()->hasFocus())
         canvas()->setFocus (Qt::OtherFocusReason);
-    }
-      break;
-    case SLOT_KEYBOARD_FOCUS_ON:
-    {
-      check_type<string> (val, s);
-      NOT_IMPLEMENTED ("qt_tm_widget_rep::SLOT_KEYBOARD_FOCUS_ON");
     }
       break;
     case SLOT_HEADER_VISIBILITY:
@@ -773,8 +773,10 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       
       q = concrete(w)->as_qwidget();   // force creation of the new QWidget
       l->addWidget(q);
-        // The layout will automatically reparent the widgets so
-        // that they are children of the widget on which the layout is installed.
+      /* " When you use a layout, you do not need to pass a parent when
+       constructing the child widgets. The layout will automatically reparent
+       the widgets (using QWidget::setParent()) so that they are children of 
+       the widget on which the layout is installed " */
       main_widget = concrete (w);
         // canvas() now returns the new QTMWidget (or 0)
       
@@ -850,12 +852,12 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget();
-      QWidget* old_qwidget = sideDock->widget();
+      QWidget* old_qwidget = sideTools->widget();
       if (old_qwidget) {
         old_qwidget->setParent (0);
         old_qwidget->deleteLater();
       }
-      sideDock->setWidget (new_qwidget);
+      sideTools->setWidget (new_qwidget);
       update_visibility();
       new_qwidget->show();
     }
@@ -865,11 +867,15 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {   
       bottom_tools_widget = concrete (w);
-      QMenu* m = bottom_tools_widget->get_qmenu();
-      if (m) {
-        replaceButtons (bottomToolBar, m);
-        update_visibility();
+      QWidget* new_qwidget = bottom_tools_widget->as_qwidget();
+      QWidget* old_qwidget = bottomTools->widget();
+      if (old_qwidget) {
+        old_qwidget->setParent (0);
+//        old_qwidget->deleteLater();
       }
+      bottomTools->setWidget (new_qwidget);
+      update_visibility();
+      new_qwidget->show();
     }
       break;
       
@@ -999,8 +1005,10 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
     case SLOT_ZOOM_FACTOR:
     case SLOT_POSITION:
     case SLOT_SIZE:
-      return main_widget->query(s, type_id);
-      
+      if (!is_nil (main_widget))
+        return main_widget->query (s, type_id);
+      else
+        return qt_widget_rep::query (s, type_id);
         /// FIXME: decide what to do with these for embedded widgets
     case SLOT_HEADER_VISIBILITY:
     case SLOT_MAIN_ICONS_VISIBILITY:
@@ -1019,7 +1027,7 @@ qt_tm_embedded_widget_rep::query (slot s, int type_id) {
 }
 
 widget
-qt_tm_embedded_widget_rep::read(slot s, blackbox index) {
+qt_tm_embedded_widget_rep::read (slot s, blackbox index) {
   widget ret;
   
   switch (s) {
