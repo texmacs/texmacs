@@ -244,6 +244,70 @@ QTMMinibarAction::createWidget (QWidget* parent) {
   return wid;
 }
 
+/******************************************************************************
+ * QTMMenuButton
+ ******************************************************************************/
+
+QTMMenuButton::QTMMenuButton (QWidget* parent) : QToolButton (parent) {
+  QTMAuxMenu m;
+  m.myInitStyleOption (&option);
+  setAttribute (Qt::WA_Hover);
+}
+
+void
+QTMMenuButton::mousePressEvent (QMouseEvent* e) {
+    // this one triggers the action and toggles the button
+  QToolButton::mousePressEvent (e);
+    // this one forwards the event to the parent
+    // (which eventually is the menu)
+  QWidget::mousePressEvent (e);
+}
+
+void
+QTMMenuButton::mouseReleaseEvent (QMouseEvent* e) {
+    // this one triggers the action and untoggles the button
+  QToolButton::mouseReleaseEvent (e);
+    // this one forwards the event to the parent
+    // (which eventually is the menu which then closes itself)
+  QWidget::mouseReleaseEvent (e);
+}
+
+void
+QTMMenuButton::paintEvent (QPaintEvent* e) {
+  (void) e;
+  QPainter p (this);
+  
+    // initialize the options
+  QStyleOptionToolButton opt;
+  initStyleOption (&opt);
+  QRect r = rect();
+  option.rect = r;
+  option.state = QStyle::State_Enabled | (opt.state & QStyle::State_MouseOver
+                                          ? QStyle::State_Selected
+                                          : QStyle::State_None);
+    // draw the control background as a menu item
+  style()->drawControl (QStyle::CE_MenuItem, &option, &p, this);
+    // draw the icon with a bit of inset.
+  r.adjust (2, 2, -2, -2);
+  defaultAction()->icon().paint (&p, r);
+}
+
+/******************************************************************************
+ * QTMMenuWidget
+ ******************************************************************************/
+
+QTMMenuWidget::QTMMenuWidget (QWidget* parent) : QWidget (parent) {
+  QTMAuxMenu m;
+  m.myInitStyleOption (&option);
+}
+
+void
+QTMMenuWidget::paintEvent(QPaintEvent* e) {
+  QPainter p (this);
+  option.rect = rect ();
+  style()->drawControl (QStyle::CE_MenuEmptyArea, &option, &p, this);
+  QWidget::paintEvent (e);
+}
 
 /******************************************************************************
  * QTMLazyMenu
@@ -255,7 +319,7 @@ QTMLazyMenu::QTMLazyMenu (promise<widget> _pm, QWidget* p, bool right)
 }
 
 void
-QTMLazyMenu::showEvent (QShowEvent* ev)
+QTMLazyMenu::showEvent (QShowEvent* e)
 {
   if (show_right && parentWidget()) {
     QPoint p = pos();
@@ -263,7 +327,7 @@ QTMLazyMenu::showEvent (QShowEvent* ev)
     p.ry() -= parentWidget()->height();
     move (p);
   }
-  QMenu::showEvent (ev);
+  QMenu::showEvent (e);
 }
 
 /*! Sets the QTMLazyMenu as the menu for the QAction and makes its destruction

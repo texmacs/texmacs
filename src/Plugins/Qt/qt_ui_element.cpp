@@ -36,68 +36,6 @@
 #include <QSplitter>
 #include <QTreeView>
 
-/******************************************************************************
- * Auxiliary classes
- ******************************************************************************/
-
-QTMMenuButton::QTMMenuButton (QWidget* parent) : QToolButton(parent) {
-  QTMAuxMenu m;
-  m.myInitStyleOption (&option);
-  setAttribute (Qt::WA_Hover);
-}
-
-void
-QTMMenuButton::mousePressEvent (QMouseEvent* event) {
-  // this one triggers the action and toggles the button
-  QToolButton::mousePressEvent (event);
-  // this one forwards the event to the parent
-  // (which eventually is the menu)
-  QWidget::mousePressEvent (event);
-}
-
-void
-QTMMenuButton::mouseReleaseEvent (QMouseEvent* event) {
-  // this one triggers the action and untoggles the button
-  QToolButton::mouseReleaseEvent (event);
-  // this one forwards the event to the parent
-  // (which eventually is the menu which then closes itself)
-  QWidget::mouseReleaseEvent (event);
-}
-
-void
-QTMMenuButton::paintEvent (QPaintEvent* event) {
-  (void) event;
-  QPainter p (this);
-  
-  // initialize the options
-  QStyleOptionToolButton buttonOpt;
-  initStyleOption (&buttonOpt);
-  QRect r = rect ();
-  option.rect = r;
-  option.state = QStyle::State_Enabled |
-  ( buttonOpt.state & QStyle::State_MouseOver ? 
-   QStyle::State_Selected : QStyle::State_None ); 
-  // draw the control background as a menu item
-  style () -> drawControl (QStyle::CE_MenuItem, &option, &p, this); 
-  // draw the icon with a bit of inset.
-  r.adjust (2,2,-2,-2);
-  defaultAction ()-> icon ().paint (&p, r);
-}
-
-QTMMenuWidget::QTMMenuWidget (QWidget* parent): QWidget(parent) {
-  QTMAuxMenu m;
-  m.myInitStyleOption (&option);
-}
-
-void
-QTMMenuWidget::paintEvent(QPaintEvent* event) {
-  (void) event;
-  QPainter p (this);
-  option.rect = rect ();
-  //QRect r = rect ();
-  style()->drawControl (QStyle::CE_MenuEmptyArea, &option, &p, this);
-  QWidget::paintEvent(event);
-}
 
 /******************************************************************************
  * Ad-hoc command_rep derivates for different UI elements in qt_ui_element_rep

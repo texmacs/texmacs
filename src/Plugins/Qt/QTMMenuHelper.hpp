@@ -32,6 +32,7 @@
 #include <QTreeView>
 #include <QScrollArea>
 #include <QTabWidget>
+#include <QToolButton>
 
 /*! Handles TeXmacs commands in the QT way.
 
@@ -168,8 +169,6 @@ class QTMTileAction: public QWidgetAction {
 public:
   QTMTileAction (QWidget* parent, array<widget>& arr, int _cols);
   virtual QWidget* createWidget(QWidget* parent);
-    // virtual void activate (ActionEvent event) {
-    //   cout << "TRIG\n"; QWidgetAction::activate (event); }
 };
 
 
@@ -183,8 +182,56 @@ class QTMMinibarAction : public QWidgetAction {
 public:
   QTMMinibarAction (QWidget* parent, array<widget>& arr);
   virtual QWidget* createWidget(QWidget* parent);
-    // virtual void activate (ActionEvent event) {
-    //   cout << "TRIG\n"; QWidgetAction::activate (event); }
+};
+
+/*!
+ We use this class to properly initialize style options for our QWidgets
+ which have to blend into QMenus. See #QTBUG-1993 and #QTBUG-7707.
+ */
+class QTMAuxMenu : public QMenu {
+  Q_OBJECT
+
+public:
+  QTMAuxMenu() : QMenu() { }
+  
+  void myInitStyleOption (QStyleOptionMenuItem* option) const {
+    QAction action (NULL);
+    initStyleOption (option, &action);
+  }
+};
+
+
+/*! QTMMenuButton is a custom button appropriate for menus.
+ 
+ We need to subclass QToolButton for two reasons:
+    1) Custom appearance
+    2) If used in QWidgetAction the menu does not disappear upon triggering the
+       button. See QTBUG-10427 and TeXmacs bug #37719.
+ */
+class QTMMenuButton: public QToolButton {
+  Q_OBJECT
+
+  QStyleOptionMenuItem option;
+  
+public:
+  QTMMenuButton (QWidget* parent = NULL);
+ 
+  void mouseReleaseEvent (QMouseEvent* e);
+  void mousePressEvent (QMouseEvent* e);
+  void paintEvent (QPaintEvent* e);
+};
+
+
+/*!
+ */
+class QTMMenuWidget: public QWidget {
+  Q_OBJECT
+
+  QStyleOptionMenuItem option;
+  
+public:
+  QTMMenuWidget (QWidget* parent = NULL);
+  void paintEvent(QPaintEvent *event);
 };
 
 
