@@ -132,9 +132,8 @@ QTMWidgetAction::createWidget (QWidget * parent) {
  * QTMTileAction
  ******************************************************************************/
 
-QTMTileAction::QTMTileAction (QWidget* parent, array<widget>& arr, int _cols)
-: QWidgetAction (parent), cols (_cols)
-{
+QTMTileAction::QTMTileAction (array<widget>& arr, int _cols, QObject* parent)
+: QWidgetAction (parent), cols (_cols) {
   actions.reserve (N (arr));
   for (int i = 0; i < N (arr); i++) {
     if (is_nil (arr[i])) break;
@@ -165,9 +164,9 @@ QTMTileAction::createWidget (QWidget* parent)
   l->setHorizontalSpacing (2);
   l->setVerticalSpacing (2);
   l->setContentsMargins (4, 0, 4, 0);
-  int row= 0, col= 0;
-  for (int i=0; i < actions.count(); i++) {
-    QAction* sa= actions[i];
+  int row = 0, col = 0;
+  for (int    i = 0; i < actions.count(); i++) {
+    QAction* sa = actions[i];
     QToolButton* tb= new QTMMenuButton (wid);
     tb->setDefaultAction (sa);
     QObject::connect (tb, SIGNAL (released()), this, SLOT (trigger()));
@@ -184,7 +183,7 @@ QTMTileAction::createWidget (QWidget* parent)
  * QTMMinibarAction
  ******************************************************************************/
 
-QTMMinibarAction::QTMMinibarAction (QWidget* parent, array<widget>& arr)
+QTMMinibarAction::QTMMinibarAction (array<widget>& arr, QObject* parent)
 : QWidgetAction (parent)
 {
   actions.reserve (N (arr));

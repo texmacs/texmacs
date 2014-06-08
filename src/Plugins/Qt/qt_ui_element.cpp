@@ -307,7 +307,7 @@ qt_ui_element_rep::as_qaction () {
     {
       typedef array<widget> T;
       array<widget> arr = open_box<T> (load);
-      cachedAction = new QTMMinibarAction (NULL, arr);
+      cachedAction = new QTMMinibarAction (arr);
     }
       break;
       
@@ -328,7 +328,7 @@ qt_ui_element_rep::as_qaction () {
         wids[3*i+2] = ::glue_widget(false, true, 1, 1);
       }
 
-      cachedAction = new QTMMinibarAction (NULL, wids);
+      cachedAction = new QTMMinibarAction (wids);
     }
       break;
 
@@ -341,7 +341,7 @@ qt_ui_element_rep::as_qaction () {
       array<widget> a = x.x1;
       int        cols = x.x2;
 
-      cachedAction = new QTMTileAction (NULL, a, cols);
+      cachedAction = new QTMTileAction (a, cols);
     }
       break;
       
@@ -350,7 +350,7 @@ qt_ui_element_rep::as_qaction () {
       typedef array<widget> T;
       array<widget> arr = open_box<T> (load);
 
-      cachedAction = new QTMMinibarAction (NULL, arr);
+      cachedAction = new QTMMinibarAction (arr);
     }
       break;
       

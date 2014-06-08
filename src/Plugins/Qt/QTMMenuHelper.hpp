@@ -147,18 +147,21 @@ class QTMWidgetAction : public QWidgetAction {
   widget wid;
   
 public:
-  QTMWidgetAction (widget _wid, QObject *parent = NULL);
+  QTMWidgetAction (widget _wid, QObject* parent=NULL);
   
 public slots:
   void doRefresh() { };
   
 protected:
-  virtual QWidget* createWidget (QWidget * parent);
+  virtual QWidget* createWidget (QWidget* parent);
 };
 
 
-/*!
+/*! QTMTileAction is used to build a popup menu with a grid of buttons.
  
+ In particular this is used to build the matrix of buttons in the color palette
+ available at the toolbar. The corresponding texmacs widget using this class
+ is a tile_menu (see qt_ui_element.cpp)
  */
 class QTMTileAction: public QWidgetAction {
   Q_OBJECT
@@ -167,8 +170,8 @@ class QTMTileAction: public QWidgetAction {
   int                   cols;
   
 public:
-  QTMTileAction (QWidget* parent, array<widget>& arr, int _cols);
-  virtual QWidget* createWidget(QWidget* parent);
+  QTMTileAction (array<widget>& arr, int _cols, QObject* parent=NULL);
+  virtual QWidget* createWidget (QWidget* parent);
 };
 
 
@@ -180,9 +183,10 @@ class QTMMinibarAction : public QWidgetAction {
   QVector <QAction*> actions;
 
 public:
-  QTMMinibarAction (QWidget* parent, array<widget>& arr);
-  virtual QWidget* createWidget(QWidget* parent);
+  QTMMinibarAction (array<widget>& arr, QObject* parent=NULL);
+  virtual QWidget* createWidget (QWidget* parent);
 };
+
 
 /*!
  We use this class to properly initialize style options for our QWidgets
