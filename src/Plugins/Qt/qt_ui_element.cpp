@@ -187,18 +187,16 @@ qt_glue_widget_rep::as_qwidget() {
  ******************************************************************************/
 
 qt_ui_element_rep::qt_ui_element_rep (types _type, blackbox _load)
-: qt_widget_rep (_type), load (_load), cachedAction (NULL), cachedMenu (NULL) {}
+: qt_widget_rep (_type), load (_load), cachedAction (NULL) {}
 
 /*!
- WARNING: Deleting here the cachedAction would contradict our memory policy
- in qt_menu_rep and lead to crashes
- 
- HOWEVER: if we have a cachedMenu, it means somebody promoted us to managers
+ NOTE: if we have a cachedAction, it means somebody promoted us to managers
  of a root menu which we have to delete. But we MUST ensure nobody calls
  get_qmenu() when they shouldn't.
  */
 qt_ui_element_rep::~qt_ui_element_rep() {
-  delete cachedMenu;
+  if (cachedAction) delete cachedAction->menu();
+  delete cachedAction;
 }
 
 blackbox
@@ -246,9 +244,8 @@ qt_ui_element_rep::make_popup_widget () {
  */
 QMenu*
 qt_ui_element_rep::get_qmenu() {
-  delete cachedMenu;
-  cachedMenu = as_qaction()->menu();
-  return cachedMenu;
+  if (!cachedAction) cachedAction = as_qaction();
+  return cachedAction->menu();
 }
 
 /*! For the refresh_widget
@@ -275,9 +272,8 @@ qt_ui_element_rep::as_qaction () {
   //if (DEBUG_QT_WIDGETS)
   //debug_widgets << "as_qaction: " << type_as_string() << LF;
 
-    // DON'T: this breaks dynamic menus! cachedMenu seems to duplicate what
-    // cachedAction did before, and now cachedAction makes no sense... :(
-    //  if (cachedAction) return cachedAction;
+    // DON'T try to always cache the action returned: this breaks dynamic menus!
+  QAction* act = NULL;
   
   switch (type) {
     case vertical_menu:
@@ -288,17 +284,16 @@ qt_ui_element_rep::as_qaction () {
       typedef array<widget> T;
       array<widget> arr = open_box<T> (load);
       
-      QAction* act = new QTMAction (NULL);
+      act = new QTMAction (NULL);
       act->setText (qt_translate ("Menu"));
       QMenu* m = new QMenu ();
       for (int i = 0; i < N(arr); i++) {
         if (is_nil (arr[i])) break;
         QAction* a = concrete (arr[i])->as_qaction ();
         m->addAction (a);
-        a->setParent (m);
+        a->setParent (act);
       }
-      act->setMenu (m);
-      cachedAction = act;
+      act->setMenu (m); // The QTMAction takes ownership of the QMenu
     }
       break;
     
@@ -307,7 +302,7 @@ qt_ui_element_rep::as_qaction () {
     {
       typedef array<widget> T;
       array<widget> arr = open_box<T> (load);
-      cachedAction = new QTMMinibarAction (arr);
+      act = new QTMMinibarAction (arr);
     }
       break;
       
@@ -328,7 +323,7 @@ qt_ui_element_rep::as_qaction () {
         wids[3*i+2] = ::glue_widget(false, true, 1, 1);
       }
 
-      cachedAction = new QTMMinibarAction (wids);
+      act = new QTMMinibarAction (wids);
     }
       break;
 
@@ -341,7 +336,7 @@ qt_ui_element_rep::as_qaction () {
       array<widget> a = x.x1;
       int        cols = x.x2;
 
-      cachedAction = new QTMTileAction (a, cols);
+      act = new QTMTileAction (a, cols);
     }
       break;
       
@@ -350,22 +345,22 @@ qt_ui_element_rep::as_qaction () {
       typedef array<widget> T;
       array<widget> arr = open_box<T> (load);
 
-      cachedAction = new QTMMinibarAction (arr);
+      act = new QTMMinibarAction (arr);
     }
       break;
       
     case menu_separator:
         // a horizontal or vertical menu separator
     {
-      cachedAction = new QTMAction (NULL);
-      cachedAction->setSeparator (true);
+      act = new QTMAction (NULL);
+      act->setSeparator (true);
     }
       break;
 
     case glue_widget:
     {
-      cachedAction = new QTMAction();
-      cachedAction->setEnabled(false);
+      act = new QTMAction();
+      act->setEnabled(false);
     }
       break;
 
@@ -377,10 +372,10 @@ qt_ui_element_rep::as_qaction () {
       string name = x.x1;
       int   style = x.x2;  //FIXME: ignored. Use a QWidgeAction to use it?
       
-      cachedAction = new QTMAction (NULL);
-      cachedAction->setText (to_qstring (name));
-      cachedAction->setEnabled (false);
-      cachedAction->setFont (to_qfont (style, cachedAction->font())); 
+      act = new QTMAction (NULL);
+      act->setText (to_qstring (name));
+      act->setEnabled (false);
+      act->setFont (to_qfont (style, act->font())); 
     }
       break;
       
@@ -393,10 +388,10 @@ qt_ui_element_rep::as_qaction () {
       qt_widget      qtw = concrete (x.x1);
       promise<widget> pw = x.x2;
 
-      cachedAction    = qtw->as_qaction ();
+      act    = qtw->as_qaction ();
       QTMLazyMenu* lm = new QTMLazyMenu (pw);
-      lm->attachTo (cachedAction);  // lm deletes itself after cachedAction dies
-      cachedAction->setEnabled (true);
+      lm->attachTo (act);  // lm deletes itself after cachedAction dies
+      act->setEnabled (true);
     }
       break;
       
@@ -414,7 +409,7 @@ qt_ui_element_rep::as_qaction () {
       int   style   = x.x5;
       
       QTMCommand* c;
-      cachedAction = qtw->as_qaction();
+      act = qtw->as_qaction();
         /* NOTE: we install shortcuts but in QTMWidget::event() we also handle
          QEvent::ShortcutOverride, effectively disabling the shortcuts. This
          allows us to keep the shortcut text in the menus while relaying all
@@ -422,24 +417,24 @@ qt_ui_element_rep::as_qaction () {
          */
       const QKeySequence& qks = to_qkeysequence (ks);
       if (!qks.isEmpty()) {
-        cachedAction->setShortcut (qks);
+        act->setShortcut (qks);
         command key_cmd = tm_new<qt_key_command_rep> (ks);
-        c= new QTMCommand (cachedAction, key_cmd);
+        c= new QTMCommand (act, key_cmd);
       } else {
-        c= new QTMCommand (cachedAction, cmd);
+        c= new QTMCommand (act, cmd);
       }
         
       // NOTE: this used to be a Qt::QueuedConnection, but the slot would not
       // be called if in a contextual menu
-      QObject::connect (cachedAction, SIGNAL (triggered()), c, SLOT (apply()));    
+      QObject::connect (act, SIGNAL (triggered()), c, SLOT (apply()));    
   
       bool ok = (style & WIDGET_STYLE_INERT) == 0;
-      cachedAction->setEnabled (ok? true: false);
+      act->setEnabled (ok? true: false);
       
         // FIXME: implement complete prefix handling
       bool check = (pre != "") || (style & WIDGET_STYLE_PRESSED);
-      cachedAction->setCheckable (check? true: false);
-      cachedAction->setChecked (check? true: false);
+      act->setCheckable (check? true: false);
+      act->setChecked (check? true: false);
       if (pre == "v") {}
       else if (pre == "*") {}
       // [mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
@@ -457,14 +452,14 @@ qt_ui_element_rep::as_qaction () {
       qt_widget  qtw = concrete (x.x1);
       qt_widget help = concrete (x.x2);
 
-      cachedAction = qtw->as_qaction();
+      act = qtw->as_qaction();
       {
         typedef quartet<string, int, color, bool> T1;
         T1 y = open_box<T1> (get_payload (help, text_widget));
-        cachedAction->setToolTip (to_qstring (y.x1));
+        act->setToolTip (to_qstring (y.x1));
         // HACK: force displaying of the tooltip (needed for items in the QMenuBar)
-        QObject::connect (cachedAction, SIGNAL(hovered()),
-                          cachedAction, SLOT(showToolTip()));
+        QObject::connect (act, SIGNAL(hovered()),
+                          act, SLOT(showToolTip()));
       }
     }
       break;
@@ -482,7 +477,7 @@ qt_ui_element_rep::as_qaction () {
       QTMAction* a = new QTMAction (NULL);
       a->set_text (str);
       a->setFont (to_qfont (style, a->font()));
-      cachedAction = a;
+      act = a;
     }
       break;
       
@@ -490,8 +485,8 @@ qt_ui_element_rep::as_qaction () {
         // a widget with an X pixmap icon
     {
       url    image = open_box<url>(load);
-      cachedAction = new QTMAction (NULL);
-      cachedAction->setIcon (QIcon (as_pixmap (*xpm_image (image))));
+      act = new QTMAction (NULL);
+      act->setIcon (QIcon (as_pixmap (*xpm_image (image))));
     }
       break;
 
@@ -499,7 +494,8 @@ qt_ui_element_rep::as_qaction () {
       FAILED (c_string ("qt_ui_element: unknown type for as_qaction, "
                         * type_as_string()));
   }
-  return cachedAction;
+
+  return act;
 }
 
 

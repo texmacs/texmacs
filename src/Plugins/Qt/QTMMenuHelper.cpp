@@ -189,7 +189,7 @@ QTMMinibarAction::QTMMinibarAction (array<widget>& arr, QObject* parent)
   actions.reserve (N (arr));
   for (int i = 0; i < N (arr); i++) {
     if (is_nil (arr[i])) break;
-    QAction *act = concrete (arr[i])->as_qaction();
+    QAction* act = concrete (arr[i])->as_qaction();
     act->setParent (this);
     actions.append (act);
   };
@@ -359,9 +359,8 @@ QTMLazyMenu::transferActions (QWidget* from) {
 
 void
 QTMLazyMenu::force () {
-  QAction* a = concrete (promise_widget())->as_qaction();
-  transferActions (a->menu());
-  delete a;
+  QMenu* m = concrete (promise_widget())->get_qmenu();
+  transferActions (m);
 }
 
 void
