@@ -47,9 +47,9 @@ qt_widget_rep::~qt_widget_rep() {
     debug_widgets << "~qt_widget_rep: deleted a " << type_as_string() << LF;
 
   // DON'T DO THIS! (several qt_widget_rep may have the same underlying QWidget)
-  // UPD: really? when? The problem is rather order of destruction. If we
-  // completely bypassed QObject's hierarchy deleting should be ok.
-  //delete qwid;
+  // UPD: really? when? And it wouldn't matter since we are using a guarded
+  // pointer
+//  delete qwid;
 }
 
 void

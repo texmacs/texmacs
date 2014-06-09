@@ -42,12 +42,29 @@
 
 #define SCREEN_PIXEL (PIXEL)
 
-/*! some debugging infrastucture */
+/******************************************************************************
+ * Debugging
+ ******************************************************************************/
+
+void
+qt_dump (QObject* obj, int indent) {
+  if (obj == NULL) { cout << "NULL\n"; return; }
+  for (int j = 0;j < indent; ++j) cout << "  ";
+  cout << from_qstring (obj->metaObject()->className()) << ":\n";
+  foreach (QObject* child , obj->children()) {
+    qt_dump (child, indent+1);
+  }
+}
+
 tm_ostream&
 operator << (tm_ostream& out, QRect rect) {
   return out << "(" << rect.x() << "," << rect.y() << ","
   << rect.width() << "," << rect.height() << ")";
 }
+
+/******************************************************************************
+ * Conversion of data types
+ ******************************************************************************/
 
 QFont
 to_qfont (int style, QFont font) {
@@ -69,52 +86,6 @@ to_qfont (int style, QFont font) {
     font.setBold(true);
   return font;
 
-}
-
-QString
-parse_tm_style (int style) {
-  QString sheet;
-  if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
-    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-    sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
-    sheet += QString("padding: 1px;");
-  }
-  if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
-    sheet += "font-family: \"monospace\";";
-  if (style & WIDGET_STYLE_GREY)      // Use grey text font
-    sheet += "color: #414141;";
-  if (style & WIDGET_STYLE_PRESSED)   // Button is currently pressed
-    sheet += "";
-  if (style & WIDGET_STYLE_INERT)     // Only render, don't associate any action
-    sheet += "color: #414141;";
-  if (style & WIDGET_STYLE_BUTTON)    // Render button as standard button
-    sheet += "";
-  if (style & WIDGET_STYLE_CENTERED)  // Use centered text
-    sheet += "text-align: center;";
-  if (style & WIDGET_STYLE_BOLD)
-    sheet += "font-weight: bold;";
-  if (DEBUG_QT_WIDGETS)
-    sheet += "border:1px solid rgb(255, 0, 0);";
-  return sheet;
-}
-
-void
-qt_apply_tm_style (QWidget* qwid, int style) {
-  QString sheet = "* {" + parse_tm_style (style) + "}";
-  qwid->setStyleSheet (sheet);
-  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
-}
-
-void
-qt_apply_tm_style (QWidget* qwid, int style, color c) {
-  int r,g,b,a;
-  get_rgb_color (c, r, g, b, a);
-  a = a*100/255;
-  QString sheet = "* {" + parse_tm_style (style)
-    + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
-    + "}";
-  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
-  qwid->setStyleSheet (sheet);
 }
 
 /*! Try to convert a TeXmacs lenght (em, px, w, h) into a QSize.
@@ -377,14 +348,11 @@ to_color (const QColor& c) {
   return rgb_color (r, g, b, a);
 }
 
-QString
-qt_translate (const string& s) {
-  string in_lan= get_input_language ();
-  string out_lan= get_output_language ();
-  return to_qstring(tm_var_encode (translate (s, in_lan, out_lan)));
-}
+/******************************************************************************
+ * Image conversion
+ ******************************************************************************/
 
-//FIXME!?!?
+  //FIXME!?!?
 bool
 qt_supports (url u) {
   string s= suffix (u);
@@ -394,7 +362,7 @@ qt_supports (url u) {
 
 void
 qt_image_size (url image, int& w, int& h) {
-  //cout <<  concretize (image) << LF;
+    //cout <<  concretize (image) << LF;
   QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
     if (as_bool (call ("file-converter-exists?", image, "x.png"))) {
@@ -404,8 +372,8 @@ qt_image_size (url image, int& w, int& h) {
       remove (temp);
     }
     else {
-      convert_error << "Cannot read image file '" << image << "'" 
-                    << " in qt_image_size" << LF;
+      convert_error << "Cannot read image file '" << image << "'"
+      << " in qt_image_size" << LF;
       w= 35; h= 35;
     }
   }
@@ -419,10 +387,10 @@ void
 qt_convert_image (url image, url dest, int w, int h) {
   QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ())
-    convert_error << "Cannot read image file '" << image << "'" 
-                  << " in qt_convert_image" << LF;
+    convert_error << "Cannot read image file '" << image << "'"
+    << " in qt_convert_image" << LF;
   else {
-    if (w > 0 && h > 0) 
+    if (w > 0 && h > 0)
       im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     im.scaled (w, h).save (utf8_to_qstring (concretize (dest)));
   }
@@ -441,7 +409,7 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
   string r;
   if (im.isNull ())
     convert_error << "Cannot read image file '" << image << "'"
-                  << " in qt_image_to_eps" << LF;
+    << " in qt_image_to_eps" << LF;
   else {
     bool alpha= im.hasAlphaChannel ();
     if (dpi > 0 && w_pt > 0 && h_pt > 0) {
@@ -454,16 +422,16 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
     string sw= as_string (im.width ());
     string sh= as_string (im.height ());
     r << "%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: TeXmacs\n%%BoundingBox: 0 0 "
-      << sw << " " << sh
-      << "\n\n% Created by qt_image_to_eps ()\n\n%%BeginProlog\nsave\n"
-      << "countdictstack\nmark\nnewpath\n/showpage {} def\n/setpagedevice "
-      << "{pop} def\n%%EndProlog\n%%Page 1 1\n"
-      << "/max { 2 copy lt { exch } if pop } bind def\n"
-      << "/ImageWidth " << sw
-      << " def\n/ImageHeight " << sh << " def\nImageWidth ImageHeight max "
-      << "ImageWidth ImageHeight max scale\n\n/ImageDatas\n\tcurrentfile\n\t"
-      << "<< /Filter /ASCIIHexDecode >>\n\t/ReusableStreamDecode\n\tfilter\n";
-
+    << sw << " " << sh
+    << "\n\n% Created by qt_image_to_eps ()\n\n%%BeginProlog\nsave\n"
+    << "countdictstack\nmark\nnewpath\n/showpage {} def\n/setpagedevice "
+    << "{pop} def\n%%EndProlog\n%%Page 1 1\n"
+    << "/max { 2 copy lt { exch } if pop } bind def\n"
+    << "/ImageWidth " << sw
+    << " def\n/ImageHeight " << sh << " def\nImageWidth ImageHeight max "
+    << "ImageWidth ImageHeight max scale\n\n/ImageDatas\n\tcurrentfile\n\t"
+    << "<< /Filter /ASCIIHexDecode >>\n\t/ReusableStreamDecode\n\tfilter\n";
+    
     int v, i= 0, j= 0, k= 0, l= 0;
     string mask;
     for (j= 0; j < im.height (); j++) {
@@ -489,12 +457,12 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
             mask << d[v];
             v= 0;
             k++;
-            // Padding of the image data mask
+              // Padding of the image data mask
             if (i + 1 == im.width () && k % 2 == 1) {
               mask << d[0];
               k++;
             }
-            // Code layout
+              // Code layout
             if (k >= 78) {
               mask << "\n";
               k= 0;
@@ -504,31 +472,31 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
       }
     }
     r << ">\ndef\n\n";
-
+    
     if (alpha) {
       r << "/MaskDatas\n\tcurrentfile\n\t<< /Filter /ASCIIHexDecode >>\n"
-        << "\t/ReusableStreamDecode\n\tfilter\n"
-        << mask
-        << ">\ndef\n\n"
-        << "/TheMask\n<<\n\t/ImageType\t1\n\t/Width\t\tImageWidth\n\t/Height\t"
-        << "\tImageHeight\n\t/BitsPerComponent 1\n\t/Decode [ 0 1 ]\n\t"
-        << "/ImageMatrix [ ImageWidth 0 0 ImageWidth neg 0 ImageHeight ]\n\t"
-        << "/DataSource MaskDatas\n>> def\n\n";
+      << "\t/ReusableStreamDecode\n\tfilter\n"
+      << mask
+      << ">\ndef\n\n"
+      << "/TheMask\n<<\n\t/ImageType\t1\n\t/Width\t\tImageWidth\n\t/Height\t"
+      << "\tImageHeight\n\t/BitsPerComponent 1\n\t/Decode [ 0 1 ]\n\t"
+      << "/ImageMatrix [ ImageWidth 0 0 ImageWidth neg 0 ImageHeight ]\n\t"
+      << "/DataSource MaskDatas\n>> def\n\n";
     }
     r << "/TheImage\n<<\n\t/ImageType\t1\n\t/Width\t\tImageWidth\n\t/Height\t"
-      << "\tImageHeight\n\t/BitsPerComponent 8\n\t/Decode [ 0 1 0 1 0 1 ]\n\t"
-      << "/ImageMatrix [ ImageWidth 0 0 ImageWidth neg 0 ImageHeight ]\n\t"
-      << "/DataSource ImageDatas\n>> def\n\n"
-      << "/DeviceRGB setcolorspace\n";
+    << "\tImageHeight\n\t/BitsPerComponent 8\n\t/Decode [ 0 1 0 1 0 1 ]\n\t"
+    << "/ImageMatrix [ ImageWidth 0 0 ImageWidth neg 0 ImageHeight ]\n\t"
+    << "/DataSource ImageDatas\n>> def\n\n"
+    << "/DeviceRGB setcolorspace\n";
     if (alpha) {
       r << "<<\n\t/ImageType 3\n\t/InterleaveType 3\n\t/DataDict TheImage\n"
-        << "\t/MaskDict TheMask\n>>";
+      << "\t/MaskDict TheMask\n>>";
     }
     else {
       r << "\tTheImage";
     }
     r << "\nimage\nshowpage\n%%Trailer\ncleartomark\ncountdictstack\n"
-      << "exch sub { end } repeat\nrestore\n%%EOF\n";
+    << "exch sub { end } repeat\nrestore\n%%EOF\n";
   }
   return r;
 }
@@ -538,19 +506,19 @@ void
 qt_image_data (url image, int& w, int&h, string& data, string& palette, string& mask) {
   (void) palette;
   QImage im (utf8_to_qstring (concretize (image)));
-
+  
   
   
   if (im.isNull ())
     convert_error << "Cannot read image file '" << image << "'"
-                  << " in qt_image_data" << LF;
+    << " in qt_image_data" << LF;
   else {
     bool alpha= im.hasAlphaChannel ();
     w=  im.width ();
     h=  im.height ();
-
+    
     data = string ((w*h)*3);
-
+    
     int v, i= 0, j= 0, k= 0, l= 0;
     
     for (j= 0; j < im.height (); j++) {
@@ -564,7 +532,7 @@ qt_image_data (url image, int& w, int&h, string& data, string& palette, string& 
     
     if (alpha) {
       mask = string ((w*h+7)/8);
-
+      
       
       v= 0;
       for (i=0; i < im.width (); i++) {
@@ -572,7 +540,7 @@ qt_image_data (url image, int& w, int&h, string& data, string& palette, string& 
         if (i % 8 == 7 || i + 1 == im.width ()) {
           mask[k++] = v;
           v= 0;
-          // Padding of the image data mask
+            // Padding of the image data mask
           if (i + 1 == im.width () && k % 2 == 1) {
             mask[k++] = 0;
           }
@@ -582,8 +550,6 @@ qt_image_data (url image, int& w, int&h, string& data, string& palette, string& 
     
   }
 }
-
-
 
 QPixmap
 as_pixmap (const QImage& im) {
@@ -596,9 +562,68 @@ as_pixmap (const QImage& im) {
   return pm;
 }
 
-string 
+
+/******************************************************************************
+ * Stuff related to widgets
+ ******************************************************************************/
+
+QString
+parse_tm_style (int style) {
+  QString sheet;
+  if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
+    int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
+    sheet += QString("font-size: %1pt;").arg (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+    sheet += QString("padding: 1px;");
+  }
+  if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
+    sheet += "font-family: \"monospace\";";
+  if (style & WIDGET_STYLE_GREY)      // Use grey text font
+    sheet += "color: #414141;";
+  if (style & WIDGET_STYLE_PRESSED)   // Button is currently pressed
+    sheet += "";
+  if (style & WIDGET_STYLE_INERT)     // Only render, don't associate any action
+    sheet += "color: #414141;";
+  if (style & WIDGET_STYLE_BUTTON)    // Render button as standard button
+    sheet += "";
+  if (style & WIDGET_STYLE_CENTERED)  // Use centered text
+    sheet += "text-align: center;";
+  if (style & WIDGET_STYLE_BOLD)
+    sheet += "font-weight: bold;";
+  if (DEBUG_QT_WIDGETS)
+    sheet += "border:1px solid rgb(255, 0, 0);";
+  return sheet;
+}
+
+void
+qt_apply_tm_style (QWidget* qwid, int style) {
+  QString sheet = "* {" + parse_tm_style (style) + "}";
+  qwid->setStyleSheet (sheet);
+  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
+}
+
+void
+qt_apply_tm_style (QWidget* qwid, int style, color c) {
+  int r,g,b,a;
+  get_rgb_color (c, r, g, b, a);
+  a = a*100/255;
+  QString sheet = "* {" + parse_tm_style (style)
+  + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
+  + "}";
+  qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
+  qwid->setStyleSheet (sheet);
+}
+
+
+QString
+qt_translate (const string& s) {
+  string in_lan= get_input_language ();
+  string out_lan= get_output_language ();
+  return to_qstring(tm_var_encode (translate (s, in_lan, out_lan)));
+}
+
+string
 qt_application_directory () {
-  return  string (QCoreApplication::applicationDirPath().toAscii().constData());
+  return string (QCoreApplication::applicationDirPath().toAscii().constData());
   // return from_qstring (QCoreApplication::applicationDirPath ());
 }
 
@@ -692,4 +717,4 @@ qt_print (bool& to_file, bool& landscape, string& pname, url& filename,
   return false;
 }
 
-#endif //_MBD_EXPERIMENTAL_PRINTER_WIDGET
+#endif //(not defined) _MBD_EXPERIMENTAL_PRINTER_WIDGET

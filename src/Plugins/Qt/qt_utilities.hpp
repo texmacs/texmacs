@@ -26,6 +26,8 @@ class QKeySequence;
 typedef quartet<SI,SI,SI,SI> coord4;
 typedef pair<SI,SI> coord2;
 
+void qt_dump (QObject* obj, int indent=0);
+
 /******************************************************************************
  * Conversion of data types
  ******************************************************************************/
