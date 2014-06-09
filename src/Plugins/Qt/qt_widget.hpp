@@ -61,9 +61,10 @@ class qt_widget;
  * as_qwidget() returns a regular QWidget, for example to be embedded in a
    standalone window.
  
- * get_qmenu() wraps its as_qaction() in a QMenu and returns it. This method
-   also promotes the object where it was invoked to owner of the QMenu. Again:
-   calling wid->get_qmenu() creates the QMenu and leaves ownership of it to wid.
+ get_qmenu() returns the QMenu owned by the QAction returned by as_qaction().
+ This method also promotes the object upon which it was invoked to owner of the
+ QMenu. Again: calling wid->get_qmenu() creates the QMenu and leaves ownership
+ of it to wid.
  
  In the first three cases a new instance of the QObject is created if neede
  and ownership is transferred to the caller. One reason why the underlying
