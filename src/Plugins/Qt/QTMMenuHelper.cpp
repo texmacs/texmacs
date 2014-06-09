@@ -513,9 +513,23 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
       QLineEdit::keyPressEvent (ev);
     string key= "none";
     string s  = from_qstring (text());
+    if (last_key >= 32 && last_key <= 126) {
+      key= string ((char) last_key);
+      if (key[0] >= 'A' && key[0] <= 'Z')
+        if ((ev->modifiers() & Qt::ShiftModifier) == 0)
+          key[0]= (int) (key[0] + ((int) 'a') - ((int) 'A'));
+    }
     if (qtkeymap->contains (last_key)) key= qtkeymap[last_key];
-    if ((ev->modifiers() & Qt::ShiftModifier) && key == "return")
-      key= "S-return";
+    if ((ev->modifiers() & Qt::ShiftModifier) && N(key) > 1) key= "S-" * key;
+#ifdef Q_WS_MAC
+    if (ev->modifiers() & Qt::ControlModifier) key= "C-" * key;
+    if (ev->modifiers() & Qt::AltModifier) key= "none";
+    if (ev->modifiers() & Qt::MetaModifier) key= "M-" * key;
+#else
+    if (ev->modifiers() & Qt::ControlModifier) key= "M-" * key;
+    if (ev->modifiers() & Qt::AltModifier) key= "A-" * key;
+    if (ev->modifiers() & Qt::MetaModifier) key= "C-" * key;
+#endif
     cmd (list_object (list_object (object (s), object (key))));
     return;
   }
