@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.1>
 
 <style|tmdoc>
 
@@ -6,26 +6,23 @@
   <tmdoc-title|Specifying the current font>
 
   In this section, we describe the environment variables which control the
-  rendering of fonts. Several parameters may be defined independently for
-  each mode (the font name, variant, series and shape), whereas other
-  parameters are uniform for all modes. Font properties may be controlled
-  globally for the whole document in <menu|Document|Font> and locally for
-  document fragments in <menu|Format|Font>.
+  rendering of fonts. Font properties may be controlled globally for the
+  whole document in <menu|Document|Font> and locally for document fragments
+  in <menu|Format|Font>.
 
   From an abstract point of view, a <em|font> is defined to be a graphically
   consistent way of rendering strings. Fonts are usually made up from glyphs
-  like ``x'', ``ffi'', ``<with|mode|math|\<alpha\>>'',
-  ``<with|mode|math|<op|<big|sum>><big|.>>'', <abbr|etc.> When rendering a
-  string, the string is decomposed into glyphs so as to take into account
-  ligatures (like fi, fl, ff, ffi, ffl). Next, the individual glyphs are
-  positioned while taking into account kerning information (in ``xo'' the
-  ``o'' character is slightly shifted to the left so as to take profit out of
-  the hole in the ``x''). In the case of mathematical fonts, <TeXmacs> also
-  provides a coherent rendering for resizable characters, like the large
-  brackets in
+  like ``x'', ``ffi'', ``<math|\<alpha\>>'', ``<math|<op|<big|sum>>>'',
+  <abbr|etc.> When rendering a string, the string is decomposed into glyphs
+  so as to take into account ligatures (like fi, fl, ff, ffi, ffl). Next, the
+  individual glyphs are positioned while taking into account kerning
+  information (in ``xo'' the ``o'' character is slightly shifted to the left
+  so as to take profit out of the hole in the ``x''). In the case of
+  mathematical fonts, <TeXmacs> also provides a coherent rendering for
+  resizable characters, like the large brackets in
 
   <\equation*>
-    <left|(|0><left|(|1><left|(|2><right|)|2><right|)|1><right|)|0>.
+    <around*|(|<around*|(|<around*|(||)><rsup|<rsup|\<nosymbol\>>>|)><rsup|<rsup|<rsup|\<nosymbol\>>>>|)>.
   </equation*>
 
   Similarly, a <em|font family> is a family of fonts with different
@@ -37,20 +34,19 @@
   <with|font|avant-garde|Avant Garde> font do not.
 
   <\remark>
-    For the future, it is planned to replace the font variant and font shape
-    variables by a larger range of properties to individually control the
-    slant, serifs, small-caps, and so on. It is also planned to
-    systematically use Unicode fonts with possible additional glyphs for
-    mathematics. This should automatically enable the use of Cyrillic
-    characters inside Russian text and similarly for other languages.
+    In versions of <TeXmacs> prior to 1.99.1, the fonts for the mathematical
+    and programming modes could be controlled independently using the
+    environment variables <src-var|math-font>, <src-var|math-font-family>,
+    <src-var|math-font-series>, <src-var|math-font-shape>,
+    <src-var|prog-font>, <src-var|prog-font-family>,
+    <src-var|prog-font-series>, <src-var|prog-font-shape>. In more recent
+    versions of <TeXmacs>, the environment variables <src-var|font>,
+    <src-var|font-family>, <src-var|font-series> and <src-var|font-shape>
+    directly control the font for all modes.
   </remark>
 
   <\explain>
-    <var-val|font|roman>
-
-    <var-val|math-font|roman>
-
-    <var-val|prog-font|roman><explain-synopsis|font name>
+    <var-val|font|roman><explain-synopsis|font name>
   <|explain>
     These variables control the main name of the font, also called the
     <em|font family>. For instance:
@@ -63,22 +59,28 @@
     Similarly, <TeXmacs> supports various mathematical fonts:
 
     <\tm-fragment>
-      Roman: <with|mode|math|a<rsup|2>+b<rsup|2>=c<rsup|2>>
+      Roman: <math|a<rsup|2>+b<rsup|2>=c<rsup|2>>
 
-      Adobe: <with|mode|math|<with|math-font|adobe|a<rsup|2>+b<rsup|2>=c<rsup|2>>>
+      Adobe: <math|<with|math-font|adobe|a<rsup|2>+b<rsup|2>=c<rsup|2>>>
 
-      New roman: <with|mode|math|<with|math-font|ENR|a<rsup|2>+b<rsup|2>=c<rsup|2>>>
+      New roman: <math|<with|math-font|ENR|a<rsup|2>+b<rsup|2>=c<rsup|2>>>
 
-      Concrete: <with|mode|math|<with|math-font|concrete|a<rsup|2>+b<rsup|2>=c<rsup|2>>>
+      Concrete: <math|<with|math-font|concrete|a<rsup|2>+b<rsup|2>=c<rsup|2>>>
     </tm-fragment>
+
+    Most fonts only implement a subset of all Unicode glyphs. Sometimes, the
+    user might wish to combine several fonts to cover a larger subset. For
+    instance, when specifying <verbatim|roman,IPAMincho> or
+    <verbatim|cjk=IPAMincho,roman> as the <src-var|font> name, ordinary text
+    and mathematics will be typeset using the default <verbatim|roman> font,
+    whereas Chinese text will use the <verbatim|IPAMincho> font. Similarly,
+    when specifying <verbatim|math=Stix,roman> as the <src-var|font> name,
+    ordinary text will be typeset using the default <verbatim|roman> font,
+    but mathematical formulas using the <verbatim|Stix> font.
   </explain>
 
   <\explain>
-    <var-val|font-family|rm>
-
-    <var-val|math-font-family|mr>
-
-    <var-val|prog-font-family|tt><explain-synopsis|font variant>
+    <var-val|font-family|rm><explain-synopsis|font variant>
   <|explain>
     This variable selects a variant of the major font, like a sans serif
     font, a typewriter font, and so on. As explained above, variants of a
@@ -93,29 +95,14 @@
     <\tm-fragment>
       roman, <with|font-family|tt|typewriter> and <with|font-family|ss|sans
       serif>
-    </tm-fragment>
 
-    In maths mode, a distinction is made between the mathematical variants
-    <verbatim|mr> (roman), <verbatim|mt> (typewriter) and <verbatim|ms> (sans
-    serif) and textual variants <verbatim|rm> (roman), <verbatim|bf> (bold),
-    etc. In the first case, variables and operators are usually rendered in a
-    different slant, contrary to the second case:
-
-    <\tm-fragment>
-      <verbatim|ms>: <with|mode|math|<with|math-font-family|ms|sin (x+y)=sin
-      x*cos y+cos x*sin y>>
-
-      <verbatim|ss>: <with|mode|math|<with|math-font-family|ss|sin (x+y)=sin
-      x*cos y+cos x*sin y>>
+      Sans serif formula: <with|font-family|ss|<math|sin
+      <around*|(|x+y|)>=sin x*cos y+cos x*sin y>>
     </tm-fragment>
   </explain>
 
   <\explain>
-    <var-val|font-series|medium>
-
-    <var-val|math-font-series|medium>
-
-    <var-val|prog-font-series|medium><explain-synopsis|font weight>
+    <var-val|font-series|medium><explain-synopsis|font weight>
   <|explain>
     The font series determines the weight of the font. Most fonts only
     provide <verbatim|regular> and <verbatim|bold> font weights. Some fonts
@@ -127,11 +114,7 @@
   </explain>
 
   <\explain>
-    <var-val|font-shape|right>
-
-    <var-val|math-font-shape|normal>
-
-    <var-val|prog-font-shape|right><explain-synopsis|font shape>
+    <var-val|font-shape|right><explain-synopsis|font shape>
   <|explain>
     The font shape determines other characters of a font, like its slant,
     whether we use small capitals, whether it is condensed, and so on. For
@@ -152,12 +135,12 @@
     <label|font-base-size><var-val|font-base-size|10><explain-synopsis|font
     base size>
   <|explain>
-    The base font size is specified in <hyper-link|<verbatim|pt>
+    The base font size is specified in <hlink|<verbatim|pt>
     units|../basics/lengths.en.tm> and is usually invariant throughout the
     document. Usually, the base font size is <verbatim|9pt>, <verbatim|10pt>,
     <verbatim|11pt> or <verbatim|12pt>. Other font sizes are usually obtained
-    by changing the <hyper-link|<src-var|magnification>|env-general.en.tm#magnification>
-    or the relative <hyper-link|font-size|#font-size>.
+    by changing the <hlink|<src-var|magnification>|env-general.en.tm#magnification>
+    or the relative <hlink|font-size|#font-size>.
 
     <\tm-fragment>
       <with|font-base-size|9|9pt>, <with|font-base-size|10|10pt>,
@@ -178,8 +161,8 @@
     huge>>|<cell|2>>>>>|Standard font sizes.>
 
     From a mathematical point of view, the multipliers are in a geometric
-    progression with factor <no-break><with|mode|math|<sqrt|2|4>>. Notice
-    that the font size is also affected by the <hyper-link|index
+    progression with factor <no-break><math|<sqrt|2|4>>. Notice that the font
+    size is also affected by the <hlink|index
     level|env-math.en.tm#math-level>.
   </explain>
 
