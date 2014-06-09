@@ -73,14 +73,23 @@
   </description>
 
   Each of the above properties really constitutes a <em|hint> on how the kind
-  of font which <em|should> be used. If no suitable font can be found, then
-  setting these properties may have no effect. Whenever you apply one or more
-  filters, the font browser indicates which fonts match the selected
-  properties. It also indicates the closest match for the current font in
-  use. When pressing the <menu|Ok> button without selecting any particular
-  matching font, then the selected font properties will be inserted as
-  <TeXmacs> markup and used as rendering hints. In that case, the rendering
-  may change when selecting another global document font (for instance).
+  of font which <em|should> be used. If no suitable font can be found on your
+  particular system, then setting these properties may have no effect.
+  Whenever you apply one or more filters, the font browser indicates which
+  fonts match the selected properties. It also indicates the closest match
+  for the current font in use. When pressing the <menu|Ok> button without
+  selecting any particular matching font, then the selected font properties
+  will be inserted as <TeXmacs> markup and used as rendering hints. In that
+  case, the rendering may change when selecting another global document font
+  (for instance).
+
+  It should be noticed that <TeXmacs> comes with a limited number of
+  preinstalled fonts, such as the <with|font|Stix|Stix> fonts and several
+  fonts prefixed by ``TeXmacs''. Documents which only use these fonts will be
+  rendered the same on different systems (assuming the same version of
+  <TeXmacs>). When your documents contain other fonts as well, then these
+  fonts may be replaced by closest matches when opening your document under a
+  different operating system.
 
   <tmdoc-copyright|1998--2014|Joris van der Hoeven>
 
