@@ -188,9 +188,9 @@
   ("cut" (noop) (clipboard-cut "primary"))
   ("paste" (noop) (clipboard-paste "primary"))
   ("copy" (noop) (clipboard-copy "primary"))
-  ("find" (noop) (search-start #t))
-  ("search find" (search-next))
-  ("search again" (search-next))
+  ("find" (noop) (interactive-search))
+  ("search find" (search-next-match #t))
+  ("search again" (search-next-match #t))
 
   ("copyto 1" (noop) (clipboard-copy "primary"))
   ("copyto 2" (clipboard-copy "secondary"))
@@ -236,8 +236,8 @@
   ("emacs n" (kbd-down))
   ("emacs p" (kbd-up))
   ("emacs q" (make 'symbol))
-  ("emacs r" (search-start #f))
-  ("emacs s" (search-start #t))
+  ("emacs r" (interactive-search))
+  ("emacs s" (interactive-search))
   ("emacs v" (kbd-page-down))
   ("emacs w" (clipboard-cut "primary"))
   ("emacs y" (clipboard-paste "primary"))
@@ -252,7 +252,7 @@
   ("emacs:meta <" (go-start))
   ("emacs:meta >" (go-end))
   ("emacs:meta $" (spell-start))
-  ("emacs:meta %" (interactive replace-start-forward))
+  ("emacs:meta %" (interactive-replace))
 
   ("emacs:prefix tab" (make 'indent))
   ("emacs:prefix b" (interactive go-to-buffer))
@@ -263,8 +263,8 @@
   ("emacs:prefix C-s" (save-buffer))
   ("emacs:prefix C-w" (interactive save-buffer-as))
 
-  ("search emacs s" (search-next))
-  ("search emacs r" (search-previous))
+  ("search emacs s" (search-next-match #t))
+  ("search emacs r" (search-next-match #f))
 
   ;; not implemented
   ;;("emacs h ..." (help ...))
@@ -351,7 +351,7 @@
   ("M-F4" (interactive print-pages))
   ("M-S-F4" (interactive print-pages-to-file))
 
-  ("emacs =" (interactive replace-start-forward))
+  ("emacs =" (interactive-replace))
   ("emacs:meta g" (clipboard-clear "primary"))
   ("emacs:meta [" (undo 0))
   ("emacs:meta ]" (redo 0))
@@ -379,7 +379,7 @@
   ("std a" (select-all))
   ("std b" (toggle-bold))
   ("std c" (clipboard-copy "primary"))
-  ("std f" (search-start #t))
+  ("std f" (interactive-search))
   ("std i" (toggle-italic))
   ("std n" (new-buffer))
   ("std N" (open-window))
@@ -405,8 +405,8 @@
   ;;("std tab" (next-tab))
   ;;("std S-tab" (previous-tab))
 
-  ("search std f" (search-next))      ;; added for convenience
-  ("search std F" (search-previous)))  ;; added for convenience
+  ("search std f" (search-next-match #t))   ;; added for convenience
+  ("search std F" (search-next-match #f)))  ;; added for convenience
 
 (kbd-map
   (:profile emacs)
@@ -427,7 +427,7 @@
 
   ;; standard Gnome shortcuts
   ("gnome d" (remove-text #t))
-  ("gnome h" (interactive replace-start-forward))
+  ("gnome h" (interactive-replace))
   ("gnome k" (kill-paragraph))
   ("gnome left" (traverse-left))
   ("gnome right" (traverse-right))
@@ -451,10 +451,10 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ("search F3" (search-next))
-  ("search S-F3" (search-previous))
-  ("search gnome g" (search-next))
-  ("search gnome G" (search-previous))
+  ("search F3" (search-next-match #t))
+  ("search S-F3" (search-next-match #f))
+  ("search gnome g" (search-next-match #t))
+  ("search gnome G" (search-next-match #f))
 
   ;; not yet implemented
   ;;("gnome delete" (delete-end-word))
@@ -464,7 +464,7 @@
 
   ;; further shortcuts for Gnome look and feel
   ("gnome g" (selection-cancel))
-  ("gnome F" (search-start #f))
+  ("gnome F" (interactive-search))
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
@@ -494,7 +494,7 @@
   ;; standard KDE shortcuts
   ("kde d" (remove-text #t))
   ("kde k" (kill-paragraph))
-  ("kde r" (interactive replace-start-forward))
+  ("kde r" (interactive-replace))
   ("kde left" (traverse-left))
   ("kde right" (traverse-right))
   ("kde home" (go-start))
@@ -514,8 +514,8 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ("search F3" (search-next))
-  ("search S-F3" (search-previous))
+  ("search F3" (search-next-match #t))
+  ("search S-F3" (search-next-match #f))
 
   ;; not yet implemented
   ;;("kde N" (add-tab))
@@ -526,7 +526,7 @@
 
   ;; further shortcuts for KDE look and feel
   ("kde g" (selection-cancel))
-  ("kde F" (search-start #f))
+  ("kde F" (interactive-search))
 
   ("altcmd g" (clipboard-clear "primary"))
   ("altcmd q" (make 'symbol))
@@ -568,8 +568,8 @@
   ("macos S-up" (kbd-select go-start))
   ("macos S-down" (kbd-select go-end))
 
-  ("search macos g" (search-next))
-  ("search macos G" (search-previous))
+  ("search macos g" (search-next-match #t))
+  ("search macos G" (search-next-match #f))
 
   ;; not yet supported
   ;;("macos :" (display-spelling-window))
@@ -602,7 +602,7 @@
   ;;("macos A-x" (cut-formatting))  ;; TeXmacs addition
 
   ;; further shortcuts for MacOS look and feel
-  ("macos r" (interactive replace-start-forward))
+  ("macos r" (interactive-replace))
   ("macos F" (toggle-full-screen-mode))
   ("macos C-f" (toggle-full-screen-edit-mode))
 
@@ -650,14 +650,14 @@
   ("windows A-c" (make 'copyright))
   ("windows e" (make 'footnote))
   ("windows F" (make 'footnote))
-  ("windows h" (interactive replace-start-forward))
+  ("windows h" (interactive-replace))
   ("windows k" (make 'hlink))
   ("windows K" (toggle-small-caps))
   ("windows A-r" (make 'registered))
   ("windows A-t" (make 'trademark))
   ("windows y" (redo 0))
 
-  ("F2" (interactive replace-start-forward))
+  ("F2" (interactive-replace))
   ("S-delete" (clipboard-cut "primary"))
   ("S-insert" (clipboard-paste "primary"))
   ("C-insert" (clipboard-copy "primary"))
@@ -665,10 +665,10 @@
   ("A-left" (cursor-history-backward))
   ("A-right" (cursor-history-forward))
 
-  ("search windows g" (search-next))
-  ("search windows G" (search-previous))
-  ("search F3" (search-next))
-  ("search S-F3" (search-previous))
+  ("search windows g" (search-next-match #t))
+  ("search windows G" (search-next-match #f))
+  ("search F3" (search-next-match #t))
+  ("search S-F3" (search-next-match #f))
 
   ;; not yet implemented
   ;;("F4" (go-to-different-folder))

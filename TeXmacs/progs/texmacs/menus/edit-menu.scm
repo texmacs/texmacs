@@ -61,11 +61,8 @@
   (if (detailed-menus?)
       ("Clear" (clipboard-clear "primary")))
   ---
-  (if (not (in-search-mode?))
-      ("Search" (search-start #t)))
-  (if (in-search-mode?)
-      ("Next match" (search-button-next)))
-  ("Replace" (interactive replace-start-forward))
+  ("Search" (interactive-search))
+  ("Replace" (interactive-replace))
   (if (not (in-math?))
       ("Spell" (spell-start)))
   (if (in-math?)

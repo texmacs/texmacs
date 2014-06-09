@@ -161,7 +161,8 @@
 (lazy-define (generic generic-doc) focus-help)
 (lazy-define (generic generic-widgets) search-toolbar replace-toolbar
              open-search toolbar-search-start interactive-search
-             open-replace toolbar-replace-start interactive-replace)
+             open-replace toolbar-replace-start interactive-replace
+             search-next-match)
 (lazy-define (generic format-widgets) open-paragraph-format open-page-format)
 (lazy-define (generic document-widgets) open-source-tree-preferences
              open-document-paragraph-format open-document-page-format
