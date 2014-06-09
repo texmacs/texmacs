@@ -509,7 +509,9 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
         last_key != Qt::Key_Up &&        
         last_key != Qt::Key_Enter &&
         last_key != Qt::Key_Return &&
-        last_key != Qt::Key_Escape)
+        last_key != Qt::Key_Escape &&
+        (ev->modifiers() & Qt::ControlModifier) == 0 &&
+        (ev->modifiers() & Qt::MetaModifier) == 0)
       QLineEdit::keyPressEvent (ev);
     string key= "none";
     string s  = from_qstring (text());
