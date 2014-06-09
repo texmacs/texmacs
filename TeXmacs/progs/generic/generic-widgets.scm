@@ -528,6 +528,7 @@
           ((== key "S-tab") (keyboard-focus-on "replace-what"))
           ((== key "return") (replace-toolbar-replace by))
           ((== key "S-return") (undo 0) (perform-search))
+          ((== key "C-return") (replace-all))
           ((== key "escape") (toolbar-search-end))
           (else (perform-search)))))
 

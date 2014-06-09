@@ -134,8 +134,9 @@ upgrade_family_name (string f) {
     t ("unbatang")= "UnBatang";
     t ("wqy-microhei")= "WenQuanYi Micro Hei";
     t ("wqy-zenhei")= "WenQuanYi Zen Hei";
-    t ("stix")= "Stix";
     t ("dejavu")= "DejaVu";
+    t ("stix")= "Stix";
+    t ("chancery")= "TeX Gyre Chorus";
     t ("pagella")= "TeX Gyre Pagella";
     t ("termes")= "TeX Gyre Termes";
 
