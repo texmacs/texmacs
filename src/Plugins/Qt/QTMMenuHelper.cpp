@@ -345,7 +345,9 @@ QTMLazyMenu::transferActions (QWidget* from) {
   while (!list.isEmpty()) {
     QAction* a = list.takeFirst();
     removeAction (a);
-    a->deleteLater();
+      // For some reason, using deleteLater() leaks all the QActions
+    //a->deleteLater();
+    delete a;
   }
   list = from->actions();
   while (!list.isEmpty()) {

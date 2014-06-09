@@ -853,10 +853,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget();
       QWidget* old_qwidget = sideTools->widget();
-      if (old_qwidget) {
-        old_qwidget->setParent (0);
-        old_qwidget->deleteLater();
-      }
+      if (old_qwidget) old_qwidget->deleteLater();
       sideTools->setWidget (new_qwidget);
       update_visibility();
       new_qwidget->show();
@@ -869,10 +866,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       bottom_tools_widget = concrete (w);
       QWidget* new_qwidget = bottom_tools_widget->as_qwidget();
       QWidget* old_qwidget = bottomTools->widget();
-      if (old_qwidget) {
-        old_qwidget->setParent (0);
-//        old_qwidget->deleteLater();
-      }
+      if (old_qwidget) old_qwidget->deleteLater();
       bottomTools->setWidget (new_qwidget);
       update_visibility();
       new_qwidget->show();

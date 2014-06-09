@@ -67,7 +67,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
   if (!fake) nr_windows--;
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
-  qwid->deleteLater();
+  if (qwid) qwid->deleteLater();
 }
 
 widget
@@ -281,8 +281,8 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
 /*!
  WARNING! This should be the only place were QWidgets are destroyed!
  */
-qt_popup_widget_rep::~qt_popup_widget_rep () {  
-  qwid->deleteLater();
+qt_popup_widget_rep::~qt_popup_widget_rep () {
+  if (qwid) qwid->deleteLater();
 }
 
 widget
