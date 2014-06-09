@@ -14,6 +14,7 @@
 
 #include "widget.hpp"
 #include "message.hpp"
+#include <QPointer>
 
 class QWidget;
 class QLayoutItem;
@@ -85,7 +86,8 @@ protected:
   array<widget> children;
 public:
   long                id;
-  QWidget*          qwid;
+  QPointer<QWidget> qwid;
+
   /*! A list of all supported widget types.
    FIXME: This enum breaks the basic inheritance rules, since we have to 
    update the base class each time we implement a new subclass. It's also some

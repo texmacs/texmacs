@@ -51,9 +51,8 @@ class qt_ui_element_rep: public qt_widget_rep {
   
     // NOTE: automatic deletion of the blackbox upon destruction will trigger
     // deletion of all the nested widgets within.
-  blackbox         load;  
-  QAction* cachedAction;
-  QMenu*     cachedMenu;
+  blackbox                  load;
+  QPointer<QAction> cachedAction;
 
 public:  
   qt_ui_element_rep (types _type, blackbox _load);
