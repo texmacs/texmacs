@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.2>
 
 <style|<tuple|tmdoc|english>>
 
@@ -8,10 +8,20 @@
   <section|Changes from version 1.99.1 to 1.99.2>
 
   <\itemize>
+    <item>Enabled new style fonts as the default (1.99.2).
+
+    <item>Use small amount of intercharacter stretching by default (1.99.2).
+
+    <item>Nicer search and replace system (1.99.2).
+
     <item>Added support for the Croatian language (1.99.2).
 
     <item>Added experimental ``conservative'' converters for <LaTeX>
     (1.99.2).
+
+    <item>Various improvements for <LaTeX> converters (1.99.2).
+
+    <item>Various bug fixes (1.99.2).
   </itemize>
 
   <section|Changes from version 1.0.7 to 1.99.1>
