@@ -44,7 +44,7 @@
 
   <\active*>
     <\src-comment>
-      Tactic language.
+      Terms language.
     </src-comment>
   </active*>
 

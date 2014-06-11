@@ -527,20 +527,20 @@
 
 (tm-define (coqtm-handler model method)
   ;;  model:  content model category
-  ;;          :tactic -- text node are ignored
+  ;;          :terms -- text node are ignored
   ;;          :vernac -- text node are ignored
   ;;          :raw -- drop heading and trailing whitespaces, normalize and
   ;;            collapse internal whitespaces.
   ;;  method: <procedure> to convert the element content to a node-list.
-  (if (not (in? model '(:raw :tactic :vernac)))
+  (if (not (in? model '(:raw :terms :vernac)))
       (error "Bad model: " model))
   (if (not (procedure? method))
       (error "Bad method: " method))
   (let ((clean (cond ((eq? model :raw)    coqmltm-raw)
-                     ((eq? model :tactic) coqmltm-tactic)
+                     ((eq? model :terms)  coqmltm-tactic)
                      ((eq? model :vernac) coqmltm-vernac)))
         (para  (cond ((eq? model :raw)    coqtm-handler/inline)
-                     ((eq? model :tactic) coqtm-handler/inline)
+                     ((eq? model :terms)  coqtm-handler/inline)
                      ((eq? model :vernac) coqtm-handler/bloc))))
     (let ((proc method))
       (lambda (env a c)

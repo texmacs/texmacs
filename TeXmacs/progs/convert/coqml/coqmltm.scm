@@ -38,7 +38,7 @@
                        (coqtm-string (cadr x))))) att-l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Tactics expressions
+;; Terms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (coqtm-token env a c)
@@ -162,11 +162,12 @@
   ;; Raw
   (token      (handler :raw    coqtm-token))
 
-  ;; Tactics
-  (apply      (handler :tactic coqtm-apply))
-  (operator   (handler :tactic coqtm-operator))
-  (constant   (handler :tactic coqtm-constant))
-  (typed      (handler :tactic coqtm-typed))
+  ;; Terms
+  (apply      (handler :terms  coqtm-apply))
+  (operator   (handler :terms  coqtm-operator))
+  (constant   (handler :terms  coqtm-constant))
+  (recurse    (handler :terms  coqtm-recurse))
+  (typed      (handler :terms  coqtm-typed))
 
   ;; Vernacular
   (check      (handler :vernac coqtm-check))
