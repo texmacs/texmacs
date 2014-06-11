@@ -154,7 +154,7 @@
     `((coq-check
         ,@(coqtm-get-attributes 'begin a)
         ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env (first c))))
+        ,(coqtm-as-serial env `(math ,(first c)))))
     (coqtm-error "bad check")))
 
 (define (coqtm-definition env a c)
@@ -164,7 +164,7 @@
         ,@(coqtm-get-attributes 'name a)
         ,@(coqtm-get-attributes 'begin a)
         ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env (first c))))
+        ,(coqtm-as-serial env `(math ,(first c)))))
     (coqtm-error "bad definition")))
 
 (define (coqtm-theorem env a c)
@@ -174,7 +174,7 @@
         ,@(coqtm-get-attributes 'name a)
         ,@(coqtm-get-attributes 'begin a)
         ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env (first c))))
+        ,(coqtm-as-serial env `(math ,(first c)))))
     (coqtm-error "bad theorem")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
