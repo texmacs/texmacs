@@ -134,6 +134,7 @@ int    search_backwards (string what, int pos, string in);
 int    count_occurrences (string what, string in);
 int    count_occurrences (string what, string in);
 bool   occurs (string what, string in);
+int    overlapping (string s1, string s2);
 string replace (string s, string what, string by);
 bool   match_wildcard (string s, string w);
 array<string> tokenize (string s, string sep);

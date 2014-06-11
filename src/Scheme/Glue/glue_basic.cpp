@@ -3339,6 +3339,21 @@ tmg_string_search_backwards (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_string_overlapping (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-overlapping");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "string-overlapping");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= overlapping (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_string_replace (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-replace");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "string-replace");
@@ -7848,6 +7863,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("string-count-occurrences",  tmg_string_count_occurrences, 2, 0, 0);
   tmscm_install_procedure ("string-search-forwards",  tmg_string_search_forwards, 3, 0, 0);
   tmscm_install_procedure ("string-search-backwards",  tmg_string_search_backwards, 3, 0, 0);
+  tmscm_install_procedure ("string-overlapping",  tmg_string_overlapping, 2, 0, 0);
   tmscm_install_procedure ("string-replace",  tmg_string_replace, 3, 0, 0);
   tmscm_install_procedure ("string-alpha?",  tmg_string_alphaP, 1, 0, 0);
   tmscm_install_procedure ("string-locase-alpha?",  tmg_string_locase_alphaP, 1, 0, 0);

@@ -1345,6 +1345,18 @@ count_occurrences (string s, string in) {
   return count;
 }
 
+int
+overlapping (string s1, string s2) {
+  // return the longuest string being suffix of s1 and prefix of s2
+  int i= min (N(s1), N(s2)), n= N(s1);
+  while (i>0) {
+    if (s1(n-i, n) == s2(0, i))
+      return i;
+    i--;
+  }
+  return 0;
+}
+
 string
 replace (string s, string what, string by) {
   int i, n= N(s);

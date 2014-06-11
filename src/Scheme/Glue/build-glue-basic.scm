@@ -296,6 +296,7 @@
   (string-count-occurrences count_occurrences (int string string))
   (string-search-forwards search_forwards (int string int string))
   (string-search-backwards search_backwards (int string int string))
+  (string-overlapping overlapping (int string string))
   (string-replace replace (string string string string))
   (string-alpha? is_alpha (bool string))
   (string-locase-alpha? is_locase_alpha (bool string))
