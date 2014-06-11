@@ -1551,10 +1551,14 @@ latex_command_to_tree (tree t) {
   }
 
   if (is_tuple (t, "\\latex_preview", 2))
-      return tree (APPLY, "latex_preview", l2e (t[1]), t[2]);
+    return tree (APPLY, "latex_preview", l2e (t[1]), t[2]);
 
   if (is_tuple (t, "\\picture-mixed", 2)) {
-      return tree (APPLY, "picture-mixed", l2e (t[1]), t[2]);
+    return tree (APPLY, "picture-mixed", l2e (t[1]), t[2]);
+  }
+
+  if (is_tuple (t, "\\TMDoCoqRecNotationSep", 2)) {
+    return tree (WITH, "coq-rec-notation-sep", l2e (t[1]), l2e (t[2]));
   }
 
   if (is_tuple (t, "\\part*", 2)          ||

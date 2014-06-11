@@ -60,6 +60,12 @@
 
   <drd-props|coq-apply|arity|<tuple|repeat|1|1>|accessible|all>
 
+  <drd-props|coq-intersperse-recurse-args|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <assign|coq-rec-notation-sep|<macro|; >>
+
+  <assign|coq-intersperse-recurse-args|<xmacro|x|<concat-tuple|<quote-arg|x>|<coq-rec-notation-sep>>>>
+
   <assign|coq-typed|<\xmacro|args>
     <with|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<lesseq|<value|arity>|2>|<arg|args|0><coq-render-type|<arg|args|1>>|<map-args|coq-render-values|concat|args|0|<minus|<value|arity>|2>><arg|args|<minus|<value|arity>|2>><coq-render-type|<arg|args|<minus|<value|arity>|1>>>>>
   </xmacro>>

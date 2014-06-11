@@ -65,6 +65,50 @@
         ((string-starts? s "\\")  (make-tex-args (string-tail s 2)))
         (else (make-tex-args (string-tail s 1)))))
 
+(define (downgrade-args arg s)
+  (cond ((string? arg) (downgrade-args (string->number (string-tail arg 1)) s))
+        ((< (string-length s) 2) s)
+        ((string-starts? s "#")
+         (string-append "#"
+           (number->string
+             (with n (string->number (substring s 1 2))
+               (if (> n arg) (- n 1) n)))
+           (downgrade-args arg (string-tail s 2))))
+        ((string-starts? s "\\")
+         (string-append
+           (string-take s 2)
+           (downgrade-args arg (string-tail s 2))))
+        (else (string-append
+                (string-take s 1)
+                (downgrade-args arg (string-tail s 1))))))
+
+(define (make-notation-sep l)
+  (if (nlist>1? l) l
+    (let* ((fst  (car l))
+           (snd  (cadr l))
+           (tl   (cddr l))
+           (idx  (string-overlapping fst snd))
+           (fst* (string-drop-right fst idx))
+           (snd* (string-tail snd idx))
+           (sep  (string-take snd idx))
+           (arg  (string-tail fst* (- (string-length fst*) 2)))
+           (chck (string-append
+                  (substring fst* (- (string-length fst*) 2)
+                                  (- (string-length fst*) 1))
+                  (string-take snd* 1)))
+           (snd* (string-tail snd* 2))
+           (fst* (string-drop-right fst* 2))
+           (sep* (string-append  "\\TMDoCoqRecNotationSep{" sep "}{" arg  "}")))
+      (if (!= chck "##")
+        (list (string-append "\\text{\\color{red}Recursive TeX notation: "
+                             "unable to identify the separation pattern.}"))
+        `(,fst* ,sep* ,@(make-notation-sep
+                          (map (cut downgrade-args arg <>) `(,snd* ,@tl))))))))
+
+(define (prepare-notation-recursive-pattern s)
+  (if (not (string-occurs? " .. " s)) s
+    (apply string-append (make-notation-sep (string-decompose s " .. ")))))
+
 (define (coqtm-operator env a c)
   (if (== (length c) 0)
     (let ((names  (coqtm-get-attributes 'name a))
@@ -73,11 +117,10 @@
           (ends   (coqtm-get-attributes 'end a)))
       (if (and (list>0? names) (list>0? texes))
         (let* ((val  (car texes))
+               (val  (prepare-notation-recursive-pattern val))
                (args (make-tex-args val))
-               (m    (tree->stree
-                       (generic->texmacs
-                         (string-append "\\def\\dummy" args "{" val "}")
-                         "latex-snippet"))))
+               (ltxd (string-append "\\def\\dummy" args "{$" val "$}"))
+               (m    (tree->stree (generic->texmacs ltxd "latex-snippet"))))
           (if (func? m 'assign 2) (set! names (cddr m)))))
       `((coq-operator ,@names ,@begins ,@ends)))
       (coqtm-error "bad operator")))
@@ -89,6 +132,12 @@
         ,@(coqtm-get-attributes 'begin a)
         ,@(coqtm-get-attributes 'end a)))
     (coqtm-error "bad constant")))
+
+(define (coqtm-recurse env a c)
+  (if (> (length c) 0)
+    `((coq-intersperse-recurse-args
+        ,@(map (cut coqtm-as-serial env <>) c)))
+    (coqtm-error "bad recurse")))
 
 (define (coqtm-typed env a c)
   (if (> (length c) 1)
