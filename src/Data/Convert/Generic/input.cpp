@@ -113,8 +113,8 @@ texmacs_input_rep::put (char c) { // returns true when expecting input
       flush (true);
       status= STATUS_BEGIN;
     }
-    else if (c == DATA_ABORT) {
-      buf   = "";
+    else if (c == DATA_ABORT && format == "verbatim" && buf == "") {
+      // Aborting sessions allows completion with a naive read-eval loop
       ignore_verb= true;
     }
     else if (c == DATA_END) {
@@ -232,7 +232,7 @@ texmacs_input_rep::verbatim_flush (bool force) {
     if (!ignore_verb)
       write (verbatim_to_tree (buf, false, "auto"));
     else if (DEBUG_IO)
-      debug_convert << "ignore verbatim (aborted input): "  << buf << LF;
+      debug_io << "ignore verbatim (aborted input)" << LF;
     buf= "";
   }
 }
