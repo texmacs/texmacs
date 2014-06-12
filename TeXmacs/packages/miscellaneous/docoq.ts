@@ -27,6 +27,8 @@
     </src-comment>
   </active*>
 
+  <assign|coq-gallina|<macro|begin|end|body|<arg|body>>>
+
   <assign|coq-theorem|<macro|type|name|begin|end|body|<\surround|<with|font-series|bold|<with|color|red|<arg|type>>>:
   <with|color|blue|<arg|name>> |<with|font-series|bold|.>>
     <arg|body>
@@ -39,6 +41,16 @@
 
   <assign|coq-check|<macro|begin|end|body|<\surround|<with|font-series|bold|<with|color|dark
   magenta|Check>:> |<with|font-series|bold|.>>
+    <arg|body>
+  </surround>>>
+
+  <assign|coq-notation|<macro|name|body|begin|end|<\surround|<with|font-series|bold|<with|color|dark
+  magenta|Notation> <arg|name>:> |<with|font-series|bold|.>>
+    <arg|body>
+  </surround>>>
+
+  <assign|coq-require|<macro|begin|end|body|<\surround|<with|font-series|bold|<with|color|dark
+  magenta|Require>:> |<with|font-series|bold|.>>
     <arg|body>
   </surround>>>
 
@@ -56,6 +68,8 @@
 
   <assign|coq-render-type|<macro|x| : <arg|x>>>
 
+  <drd-props|coq-untyped|arity|<tuple|repeat|1|1>|accessible|all>
+
   <drd-props|coq-typed|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|coq-apply|arity|<tuple|repeat|1|1>|accessible|all>
@@ -65,6 +79,10 @@
   <assign|coq-rec-notation-sep|<macro|; >>
 
   <assign|coq-intersperse-recurse-args|<xmacro|x|<concat-tuple|<quote-arg|x>|<coq-rec-notation-sep>>>>
+
+  <assign|coq-untyped|<\xmacro|args>
+    <concat-tuple|<quote-arg|args>|, >
+  </xmacro>>
 
   <assign|coq-typed|<\xmacro|args>
     <with|arity|<get-arity|<unquote|<quote-arg|args>>>|<if|<lesseq|<value|arity>|2>|<arg|args|0><coq-render-type|<arg|args|1>>|<map-args|coq-render-values|concat|args|0|<minus|<value|arity>|2>><arg|args|<minus|<value|arity>|2>><coq-render-type|<arg|args|<minus|<value|arity>|1>>>>>
@@ -79,7 +97,21 @@
     </src-comment>
   </active*>
 
+  <assign|coq-reference|<macro|body|<arg|body>>>
+
   <assign|coq-token|<macro|begin|end|body|<arg|body>>>
+
+  <assign|coq-ltac|<macro|body|begin|end|<with|font-family|ss|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Hard coded operators
+    </src-comment>
+  </active*>
+
+  <assign|forall|<macro|1|2|\<forall\><arg|1>, <arg|2>>>
+
+  <assign|:|<macro|1|2|<arg|1><coq-render-type|<arg|2>>>>
 </body>
 
 <initial|<\collection>

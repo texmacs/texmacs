@@ -49,6 +49,22 @@
         ,(coqtm-as-serial env (first c))))
     (coqtm-error "bad token")))
 
+(define (coqtm-reference env a c)
+  (if (== (length c) 0)
+    `((coq-reference
+        ,@(coqtm-get-attributes 'name a)
+        ,@(coqtm-get-attributes 'begin a)
+        ,@(coqtm-get-attributes 'end a)))
+    (coqtm-error "bad reference")))
+
+(define (coqtm-require env a c)
+  (if (== (length c) 1)
+    `((coq-require
+        ,@(coqtm-get-attributes 'begin a)
+        ,@(coqtm-get-attributes 'end a)
+        ,(coqtm-as-serial env (first c))))
+    (coqtm-error "bad require")))
+
 (define (coqtm-apply env a c)
   (if (> (length c) 0)
     `((coq-apply
@@ -125,6 +141,15 @@
       `((coq-operator ,@names ,@begins ,@ends)))
       (coqtm-error "bad operator")))
 
+(define (coqtm-notation env a c)
+  (if (== (length c) 1)
+    `((coq-notation
+        ,@(coqtm-get-attributes 'name a)
+        ,(coqtm-as-serial env `(math ,(first c)))
+        ,@(coqtm-get-attributes 'begin a)
+        ,@(coqtm-get-attributes 'end a)))
+    (coqtm-error "bad notation")))
+
 (define (coqtm-constant env a c)
   (if (== (length c) 0)
     `((coq-constant
@@ -141,8 +166,10 @@
 
 (define (coqtm-typed env a c)
   (if (> (length c) 1)
-    `((coq-typed
-        ,@(map (cut coqtm-as-serial env <>) c)))
+    (with args (map (cut coqtm-as-serial env <>) c)
+      (if (and (func? (cAr args) 'coq-constant 3) (== (cadr (cAr args)) "_"))
+        `((coq-untyped ,@(cDr args)))
+        `((coq-typed ,@args))))
     (coqtm-error "bad typed")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,6 +203,29 @@
         ,@(coqtm-get-attributes 'end a)
         ,(coqtm-as-serial env `(math ,(first c)))))
     (coqtm-error "bad theorem")))
+
+(define (coqtm-gallina env a c)
+  (if (== (length c) 1)
+    `((coq-gallina
+        ,@(coqtm-get-attributes 'begin a)
+        ,@(coqtm-get-attributes 'end a)
+        ,(coqtm-as-serial env (first c))))
+    (coqtm-error "bad gallina")))
+
+(define (coqtm-body env a c)
+    `((document ,@(map (cut coqtm-as-serial env <>) c))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ltac commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (coqtm-ltac env a c)
+  (if (== (length c) 1)
+    `((coq-ltac
+        ,@(map (cut coqtm-as-serial env <>) c)
+        ,@(coqtm-get-attributes 'begin a)
+        ,@(coqtm-get-attributes 'end a)))
+    (coqtm-error "bad ltac")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
@@ -214,6 +264,9 @@
   ;; Terms
   (apply      (handler :terms  coqtm-apply))
   (operator   (handler :terms  coqtm-operator))
+  (notation   (handler :terms  coqtm-notation))
+  (reference  (handler :terms  coqtm-reference))
+  (require    (handler :terms  coqtm-require))
   (constant   (handler :terms  coqtm-constant))
   (recurse    (handler :terms  coqtm-recurse))
   (typed      (handler :terms  coqtm-typed))
@@ -221,7 +274,14 @@
   ;; Vernacular
   (check      (handler :vernac coqtm-check))
   (definition (handler :vernac coqtm-definition))
-  (theorem    (handler :vernac coqtm-theorem)))
+  (theorem    (handler :vernac coqtm-theorem))
+
+  ;; Tactics
+  (ltac       (handler :raw    coqtm-ltac))
+
+  ;; Toplevel
+  (body       (handler :toplvl coqtm-body))
+  (gallina    (handler :toplvl coqtm-gallina)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
@@ -231,7 +291,7 @@
   (coqmltm-parse s))
 
 (tm-define (parse-coqml-document s)
-  `(!file ,(coqmltm-parse s)))
+  `(!file ,(coqmltm-parse (string-append "<body>" s "</body>"))))
 
 (tm-define (coqml->texmacs coqml)
   (:type (-> stree stree))

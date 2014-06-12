@@ -516,8 +516,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define coqmltm-raw    htmltm-space-preformatted)
-(define coqmltm-tactic htmltm-space-element)
+(define coqmltm-terms  htmltm-space-element)
 (define coqmltm-vernac htmltm-space-element)
+(define coqmltm-toplvl htmltm-space-element)
+(define coqmltm-ltac   htmltm-space-element)
 
 (define (coqtm-handler/inline env a c proc)
   (proc env a c))
@@ -527,20 +529,26 @@
 
 (tm-define (coqtm-handler model method)
   ;;  model:  content model category
-  ;;          :terms -- text node are ignored
+  ;;          :toplvl -- text node are ignored
+  ;;          :terms  -- text node are ignored
   ;;          :vernac -- text node are ignored
+  ;;          :ltac   -- text node are ignored
   ;;          :raw -- drop heading and trailing whitespaces, normalize and
   ;;            collapse internal whitespaces.
   ;;  method: <procedure> to convert the element content to a node-list.
-  (if (not (in? model '(:raw :terms :vernac)))
+  (if (not (in? model '(:raw :terms :vernac :toplvl :ltac)))
       (error "Bad model: " model))
   (if (not (procedure? method))
       (error "Bad method: " method))
   (let ((clean (cond ((eq? model :raw)    coqmltm-raw)
-                     ((eq? model :terms)  coqmltm-tactic)
-                     ((eq? model :vernac) coqmltm-vernac)))
+                     ((eq? model :terms)  coqmltm-terms)
+                     ((eq? model :toplvl) coqmltm-toplvl)
+                     ((eq? model :vernac) coqmltm-vernac)
+                     ((eq? model :ltac)   coqmltm-ltac)))
         (para  (cond ((eq? model :raw)    coqtm-handler/inline)
                      ((eq? model :terms)  coqtm-handler/inline)
+                     ((eq? model :ltac)   coqtm-handler/inline)
+                     ((eq? model :toplvl) coqtm-handler/bloc)
                      ((eq? model :vernac) coqtm-handler/bloc))))
     (let ((proc method))
       (lambda (env a c)
