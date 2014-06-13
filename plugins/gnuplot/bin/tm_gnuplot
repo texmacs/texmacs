@@ -34,19 +34,19 @@ PIPE_GNUPLOT=gnuplot
 # PIPE_GNUPLOT=pgnuplot.exe
 
 # defining temporary postscript file directory
-TEMPDIR=.
-if [ -d $TEMPDIR ]
+TEMP_DIR=/tmp
+if [ -d $TEMP_DIR ]
 then
 	:
 else	
-	mkdir $TEMPDIR
+	mkdir $TEMP_DIR
 fi
 
 # defining temporary postscript file name
 TEMP_PS_NAME=temp.eps
 
 # standard initialization of GNUplot
-init='reset~set terminal postscript eps enhanced ~set output "'$TEMP_DIR$TEMP_PS_NAME'"~set size 1,1~set autoscale~'
+init='reset~set terminal postscript eps enhanced ~set output "'$TEMP_DIR/$TEMP_PS_NAME'"~set size 1,1~set autoscale~'
 	
 # startup banner
 $ECHO -n $DATA_BEGIN
@@ -77,10 +77,10 @@ while [ 1 ]; do
 	
 	$ECHO -n $DATA_BEGIN
 	$ECHO -n ps:
-	cat $TEMP_DIR$TEMP_PS_NAME
+	cat $TEMP_DIR/$TEMP_PS_NAME
 	$ECHO -n $DATA_END
 	#$ECHO -ne "\n"	
 	$ECHO ""
 	
-	rm $TEMP_DIR$TEMP_PS_NAME
+	rm $TEMP_DIR/$TEMP_PS_NAME
 done
