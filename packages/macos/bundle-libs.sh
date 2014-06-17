@@ -28,31 +28,35 @@ function bundle_install_lib
   local target=$1
   local libpath=$2
   local libdest="$BUNDLE_RESOURCES/lib/$(basename $2)"
-  local newidname="@executable_path/$libdest"
+  #local newidname="@executable_path/$libdest"
+  local newidname=@rpath/$(basename $2)
 
   echo "Bundling [$libpath] in [$libdest] for [$target]"
+  
+  [ -f "$libdest" ] && return 0;
 
-  [ ! -f "$libdest" ] && cp "$libpath" "$BUNDLE_RESOURCES/lib";
-
-  install_name_tool -id "$newidname" "$libdest"
-  install_name_tool -change "$libpath" "$newidname" "$target"
+  cp "$libpath" "$BUNDLE_RESOURCES/lib" &&\
+  install_name_tool -id "$newidname" "$libdest" && install_name_tool -change "$libpath" "$newidname" "$target" &&\
   bundle_all_libs "$libdest"
+  return $?
 }
 
 function bundle_all_libs
 {
   local target=$1
+  local btarget=$1
+  local rpath="@executable_path/$BUNDLE_RESOURCES/lib/"
   echo "Bundling all libraries for [$target]"
   for lib in $( otool -L "$target"  | \
-                grep -o '/\(opt\|sw\|Users\|usr/local\)/.*/lib[^/]*dylib' )
+                egrep -o '/(opt/local|sw|Users|usr/local)/.*/lib[^/]*dylib' )
   do 
-    bundle_install_lib "$target" "$lib"
+    [[ $(basename $target) != $(basename $lib) ]] && { bundle_install_lib "$target" "$lib" || exit 55; }
   done
-
   # Force bundling of (system) libltdl (changed in OSX 10.8)
-  for lib in $( otool -L $target | grep -o '/usr/lib/libltdl[^/]*dylib' ); do 
+  for lib in $( otool -L $target | egrep -o '/usr/lib/libltdl[^/]*dylib' ); do 
     bundle_install_lib "$target" "$lib"
   done
+  install_name_tool -add_rpath $rpath $target
 }
 
 function bundle_install_plugin
@@ -144,7 +148,6 @@ function bundle_other_frameworks
 {
   local target=$1
   local fbasename=$2
-
   for f in $(otool -L $target  | \
              grep -o ".*${fbasename}.framework/Versions/[^: ]* ") ; do
     local fpath=${f%%/Versions/*}
@@ -157,11 +160,9 @@ function bundle_other_frameworks
 }
 
 ###############################################################################
-
 echo -n "Qt Frameworks path: "
-for d in "$QT_FRAMEWORKS_PATH \
-          /Library/Frameworks \
-          /Developer/QtSDK/Desktop/Qt/4.8.1/gcc"; do
+for d in $QT_FRAMEWORKS_PATH /Library/Frameworks /Developer/QtSDK/Desktop/Qt/4.8.1/gcci
+do
   if [ -r "$d" ]; then QT_FRAMEWORKS_PATH="$d"; break; fi
 done
 
@@ -172,10 +173,8 @@ else
 fi
 
 echo -n "Qt Plugins path: "
-for d in "$QT_PLUGINS_PATH \
-          $QT_FRAMEWORKS_PATH/plugins \
-          /Developer/Applications/Qt/plugins \
-          /Developer/QtSDK/Desktop/Qt/4.8.1/gcc/plugins"; do
+for d in $QT_PLUGINS_PATH $QT_FRAMEWORKS_PATH/plugins /Developer/Applications/Qt/plugins /Developer/QtSDK/Desktop/Qt/4.8.1/gcc/plugins
+do
  if [ -r "$d" ]; then QT_PLUGINS_PATH="$d"; break; fi
 done
 
@@ -187,7 +186,7 @@ fi
 
 cd "$BASEDIR"
 mkdir -p "$BUNDLE_FRAMEWORKS"
-
+echo "ALL:$@ QT:$QT_FRAMWORK_PATH"
 bundle_all_libs "$EXECUTABLE"
 bundle_qt_frameworks "$EXECUTABLE"
 bundle_qt_plugins "$EXECUTABLE" "imageformats accessible"
