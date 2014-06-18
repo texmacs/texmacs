@@ -7448,7 +7448,21 @@ $as_echo "final adjustments for cygwin host" >&6; }
     CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
-  ;;
+    GUILE_LDFLAGS=""
+    GuileLink=$(guile-config link)
+    while [[ "$GuileLink" =~ -L[[:space:]]*([^[:space:]]+)[[:space:]]*(.*) ]]
+    do  GuileLibPath=${BASH_REMATCH[1]}; GuileLink="${BASH_REMATCH[2]}"
+        while [[ "$GuileLink" =~ -l[[:space:]]*([^[:space:]]+)[[:space:]]*(.*) ]]
+        do  lib="$GuileLibPath/lib${BASH_REMATCH[1]}.a"
+            [[ -f $lib ]] && GUILE_LDFLAGS+="$lib " || GUILE_LDFLAGS+="-l${BASH_REMATCH[1]} "
+            GuileLink="${BASH_REMATCH[2]}"
+        done
+# guile-config doesn't return the need of libnintl
+        [[ -z $LibIntl ]] && LibIntl="$GuileLibPath/libintl.a" && [[ -f $LibIntl ]] && GUILE_LDFLAGS+="$LibIntl "
+# We must also modify the iconv library, that should be in same place than guile's lib
+        [[ -z $LibIconv ]] && LibIconv="$GuileLibPath/libiconv.a" && [[ -f $LibIconv ]] && ICONV_LDFLAGS="$LibIconv "
+   done
+;;
   *darwin*)
     echo "$ac_t""final adjustments for a generic Darwin host" 1>&6
     CONFIG_CXXFLAGS="-I${prefix}/include"
