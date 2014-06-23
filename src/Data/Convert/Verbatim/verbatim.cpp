@@ -299,7 +299,7 @@ verbatim_to_tree (string s, string enc) {
       t << un_special (s (j, i));
       return t;
     }
-  return un_special (s), enc;
+  return un_special (s);
 }
 
 string
