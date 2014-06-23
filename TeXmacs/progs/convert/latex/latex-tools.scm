@@ -32,6 +32,7 @@
 (define latex-texmacs-packages '())
 (define latex-dependencies '("generic"))
 
+(define latex-packages-option (make-ahash-table))
 (define latex-uses-table (make-ahash-table))
 (define latex-catcode-table (make-ahash-table))
 (define latex-macro-table (make-ahash-table))
@@ -423,16 +424,28 @@
   (filter (lambda (x) (nin? (cAr x) tmtex-provided-packages)) l))
 
 (define (make-use-package l)
-  (let ((opt (apply string-append (list-intersperse (cDr l) ",")))
-        (sty (cAr l)))
-    (with opts (if (== opt "") "" (string-append "["  opt "]"))
-      (string-append "\\usepackage" opts "{" sty "}\n"))))
+  (with po (ahash-ref latex-packages-option (cAr l))
+    (let* ((optl (if (not po) (cDr l) (append (cDr l) po)))
+           (opt  (apply string-append (list-intersperse optl ",")))
+           (sty  (cAr l)))
+      (with opts (if (== opt "") "" (string-append "["  opt "]"))
+        (string-append "\\usepackage" opts "{" sty "}\n")))))
 
 (define (latex-as-use-package l1)
   (let* ((l2  (sort l1 latex-use-package-compare))
-	 (l3  (filter string? l2))
+	 (l3  (filter
+                (lambda (x)
+                  (and (string? x)
+                       (not (ahash-ref latex-packages-option x))))
+                l2))
          (l3* (map (lambda (x)
-                     (map force-string x)) (filter list>0? l2)))
+                     (map force-string x))
+                   (filter
+                     list>0?
+                     (map
+                       (lambda (x)
+                         (if (ahash-ref latex-packages-option x) (list x) x))
+                       l2))))
          (l4  (filter-packages  l3))
          (l4* (filter-packages* l3*))
 	 (l5  (list-intersperse l4 ","))
@@ -473,19 +486,52 @@
       `(!append (geometry (!concat ,@page-opts)) "\n") "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Color definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (html-color->latex-xcolor s)
+  "Take an hexa html color string and return an hex triplet string"
+  (cond ((string-starts? s "#") (html-color->latex-xcolor (string-tail s 1)))
+        ((== 3 (string-length s))
+         (let ((r (substring s 0 1))
+               (g (substring s 1 2))
+               (b (substring s 2 3)))
+           (string-append r r g g b b)))
+        ((== 4 (string-length s)) (html-color->latex-xcolor (string-take s 3)))
+        ((== 6 (string-length s)) s)
+        ((== 8 (string-length s)) (string-take s 6))
+        (else s)))
+
+(define (latex-colors-defs colors)
+  (apply string-append
+         (map (lambda (x)
+                (string-append
+                  "\\definecolor{" x "}{HTML}{"
+                  (html-color->latex-xcolor (get-hex-color x)) "}\n"))
+              colors)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building the preamble
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-make-option l)
   (string-append "[" (apply string-append (list-intersperse l ",")) "]"))
 
-(tm-define (latex-preamble text style lan init)
+(define (set-packages-option pack opts)
+  (if (nnull? opts)
+    (ahash-set! latex-packages-option pack opts)))
+
+(tm-define (latex-preamble text style lan init colors colormaps)
   (:synopsis "Compute preamble for @text")
+  (set! latex-packages-option (make-ahash-table))
+  (set-packages-option "xcolor" colormaps)
   (let* ((Page         (latex-preamble-page-type init))
 	 (Macro        (latex-macro-defs text))
-	 (Text         (list '!tuple Page Macro text))
+	 (Colors       (latex-colors-defs colors))
+	 (Text         (list '!tuple Page Macro Colors text))
 	 (pre-page     (latex-serialize-preamble Page))
 	 (pre-macro    (latex-serialize-preamble Macro))
+	 (pre-colors   (latex-serialize-preamble Colors))
 	 (pre-catcode  (latex-catcode-defs Text))
 	 (pre-uses     (latex-use-package-command Text)))
     (values
@@ -495,4 +541,4 @@
             (else ""))
       (string-append pre-uses)
       (string-append pre-page)
-      (string-append pre-catcode pre-macro))))
+      (string-append pre-catcode pre-macro pre-colors))))
