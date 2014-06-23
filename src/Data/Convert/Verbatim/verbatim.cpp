@@ -286,19 +286,20 @@ encode (string s, string enc) {
 
 tree
 verbatim_to_tree (string s, string enc) {
+  s= encode (s, enc);
   int i, j;
   for (i=0; i<N(s); i++)
     if (s[i]=='\n') {
       tree t (DOCUMENT);
       for (i=0, j=0; i<N(s); i++)
 	if (s[i]=='\n') {
-	  t << encode (un_special (s (j, i)), enc);
+	  t << un_special (s (j, i));
 	  j= i+1;
 	}
-      t << encode (un_special (s (j, i)), enc);
+      t << un_special (s (j, i));
       return t;
     }
-  return encode (un_special (s), enc);
+  return un_special (s), enc;
 }
 
 string
