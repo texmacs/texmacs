@@ -829,6 +829,32 @@ tmg_color (tmscm arg1) {
 }
 
 tmscm
+tmg_get_hex_color (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-hex-color");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_hex_color (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_named_color_2xcolormap (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "named-color->xcolormap");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= named_color_to_xcolormap (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_new_author () {
   // TMSCM_DEFER_INTS;
   double out= new_author ();
@@ -7679,6 +7705,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-translate-from-to",  tmg_tree_translate_from_to, 3, 0, 0);
   tmscm_install_procedure ("force-load-translations",  tmg_force_load_translations, 2, 0, 0);
   tmscm_install_procedure ("color",  tmg_color, 1, 0, 0);
+  tmscm_install_procedure ("get-hex-color",  tmg_get_hex_color, 1, 0, 0);
+  tmscm_install_procedure ("named-color->xcolormap",  tmg_named_color_2xcolormap, 1, 0, 0);
   tmscm_install_procedure ("new-author",  tmg_new_author, 0, 0, 0);
   tmscm_install_procedure ("set-author",  tmg_set_author, 1, 0, 0);
   tmscm_install_procedure ("get-author",  tmg_get_author, 0, 0, 0);

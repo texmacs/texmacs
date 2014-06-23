@@ -88,6 +88,8 @@
   (tree-translate-from-to tree_translate (tree content string string))
   (force-load-translations force_load_dictionary (void string string))
   (color named_color (int string))
+  (get-hex-color get_hex_color (string string))
+  (named-color->xcolormap named_color_to_xcolormap (string string))
   (new-author new_author (double))
   (set-author set_author (void double))
   (get-author get_author (double))

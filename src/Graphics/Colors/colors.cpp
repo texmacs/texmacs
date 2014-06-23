@@ -26,6 +26,7 @@
 
 int  pastel= 223;
 bool true_colors= true;
+bool init_colors= true;
 bool reverse_colors= false;
 
 void
@@ -266,8 +267,8 @@ populates_colorhash_from_rgb_record (rgb_record *rec, colorhash ch) {
 
     if (DEBUG_STD && ch->contains (name) && ch [name] != col) {
       debug_std << "Redefined color " << name << LF
-                << get_named_color (ch [name]) << " replaced by "
-                << get_named_color (col) << LF;
+                << get_hex_color (ch [name]) << " replaced by "
+                << get_hex_color (col) << LF;
     }
     ch (name)= col;
     rec++;
@@ -282,8 +283,8 @@ populates_colorhash_from_cmyk_record (cmyk_record *rec, colorhash ch) {
 
     if (DEBUG_STD && ch->contains (name) && ch [name] != col) {
       debug_std << "Redefined color " << name << LF
-                << get_named_color (ch [name]) << " replaced by "
-                << get_named_color (col) << LF;
+                << get_hex_color (ch [name]) << " replaced by "
+                << get_hex_color (col) << LF;
     }
     ch (name)= col;
     rec++;
@@ -329,16 +330,14 @@ color_from_name (string s) {
     }
   }
 	
-  if (N(xc_ch) == 0)
+  if (init_colors) {
     populates_colorhash_from_rgb_record  (XCColors, xc_ch);
-  if (N(x11_ch) == 0)
     populates_colorhash_from_rgb_record  (X11Colors, x11_ch);
-  if (N(dvips_ch) == 0)
     populates_colorhash_from_cmyk_record (DVIPSColors, dvips_ch);
-  if (N(svg_ch) == 0)
     populates_colorhash_from_rgb_record  (SVGColors, svg_ch);
-  if (N(tm_ch) == 0)
     populates_colorhash_from_rgb_record  (TMColors, tm_ch);
+    init_colors= false;
+  }
 
   if (tm_ch    ->contains (s)) return tm_color    (s);
   if (x11_ch   ->contains (s)) return x11_color   (s);
@@ -349,6 +348,26 @@ color_from_name (string s) {
   return black;
 }
 
+string named_color_to_xcolormap (string s) {
+  s= locase_all (s);
+
+  if (init_colors) {
+    populates_colorhash_from_rgb_record  (XCColors, xc_ch);
+    populates_colorhash_from_rgb_record  (X11Colors, x11_ch);
+    populates_colorhash_from_cmyk_record (DVIPSColors, dvips_ch);
+    populates_colorhash_from_rgb_record  (SVGColors, svg_ch);
+    populates_colorhash_from_rgb_record  (TMColors, tm_ch);
+    init_colors= false;
+  }
+
+  if (xc_ch    ->contains (s)) return "xcolor";
+  if (x11_ch   ->contains (s)) return "x11names";
+  if (svg_ch   ->contains (s)) return "svgnames";
+  if (dvips_ch ->contains (s)) return "dvipsnames";
+  if (tm_ch    ->contains (s)) return "texmacs";
+  return "none";
+}
+
 color
 named_color (string s, int a) {
   color c= color_from_name (locase_all (s));
@@ -357,12 +376,11 @@ named_color (string s, int a) {
 }
 
 /******************************************************************************
-* HTML colors
+* Hexadecimal colors
 ******************************************************************************/
 
-// TODO: rename it
 string
-get_named_color (color c) {
+get_hex_color (color c) {
   int r, g, b, a;
   get_rgb_color (c, r, g, b, a);
   if (a == 255)
@@ -378,3 +396,7 @@ get_named_color (color c) {
       as_hexadecimal (a, 2);
 }
 
+string
+get_hex_color (string s) {
+  return get_hex_color (named_color (s));
+}

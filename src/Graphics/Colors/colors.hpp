@@ -55,11 +55,15 @@ void   get_cmyk_color (color col, int& r, int& g, int& b, int& a);
 color  named_color (string s, int a= 255);
   // get a color by its name
 
-string get_named_color (color c);
-  // get a standard name for the color if it exists
+string get_hex_color (string s);
+string get_hex_color (color c);
+  // get an RGB hexadecimal description of the color
 
 color  blend_colors (color fg, color bg);
   // blend two colors
+
+string named_color_to_xcolormap (string s);
+  // get xcolor colorscheme
 
 /******************************************************************************
 * Color vectors
