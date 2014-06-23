@@ -1181,6 +1181,31 @@
         `((!begin "otherlanguage" ,val) ,arg)
         `(foreignlanguage ,val ,arg)))))
 
+(define (tmtex-decode-color s . force-html)
+  (with cm (if (string-starts? s "#") "HTML" (named-color->xcolormap s))
+    (cond ((and (== cm "none") (nnull? force-html))
+           (tmtex-decode-color (get-hex-color s) force-html))
+          ((and (== cm "HTML") (nnull? force-html))
+           `((!option "HTML") ,(html-color->latex-xcolor s)))
+          ((== cm "texmacs")
+            (begin
+              (if (nin? s tmtex-colors)
+                (set! tmtex-colors (append (list s) tmtex-colors)))
+              s))
+          (else
+            (begin
+              (if (and
+                    (nin? cm tmtex-colormaps)
+                    (!= cm "xcolor") (!= cm "none"))
+                (set! tmtex-colormaps (append (list cm) tmtex-colormaps)))
+              s)))))
+
+(define (tmtex-make-color val arg)
+  (with ltxcolor (tmtex-decode-color val #t)
+    (if (list? ltxcolor)
+      `(!group (!append (color ,@ltxcolor) ,arg))
+      `(tmcolor ,ltxcolor ,arg))))
+
 (define (tmtex-with-one var val arg)
   (if (== var "mode")
       (let ((old (tmtex-env-get-previous "mode")))
@@ -1205,15 +1230,7 @@
 	      ((== "par-first" var)   (tmtex-make-parmod "0pt" "0pt" val arg))
 	      ((== "par-par-sep" var) (tmtex-make-parsep val arg))
               ((== var "language")    (tmtex-make-lang   val arg))
-	      ((== var "color")
-               ;; TODO: define color when necessary
-	        (if (and (= (string-length val) 7) (char=? (string-ref val 0) #\#))
-		  (let* ((r (quotient (* (string->number (substring val 1 3) 16) 1000) 255))
-			 (g (quotient (* (string->number (substring val 3 5) 16) 1000) 255))
-			 (b (quotient (* (string->number (substring val 5 7) 16) 1000) 255))
-			 (rgb (format #f "~,,-3f,~,,-3f,~,,-3f" r g b)))
-		    (list '!group (tex-concat (list (list 'color (list '!option "rgb") rgb) " " arg))))
-		  (list '!group (tex-concat (list (list 'color val) " " arg)))))
+	      ((== var "color")       (tmtex-make-color  val arg))
 	      (else arg)))))
 
 (define (tmtex-with l)
@@ -2004,9 +2021,6 @@
 (define (tmtex-nbhyph s l)
   '(!nbhyph))
 
-;; to be done
-(define (tmtex-decode-color s) s)
-
 (define (tmtex-ornament-shape s)
   (if (== s "rounded") "1.7ex" "0pt"))
 
@@ -2018,7 +2032,9 @@
     (apply string-append
            (list-intersperse
              (map (lambda (key)
-                    (string-append key "=" (fun val))) keys) ","))))
+                    (with arg (fun val)
+                      (if (nstring? arg) ""
+                        (string-append key "=" arg)))) keys) ","))))
 
 (define (get-ornament-env)
   (let* ((l1  (ahash-set->list tmtex-env))

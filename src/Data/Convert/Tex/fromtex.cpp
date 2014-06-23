@@ -1764,7 +1764,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\colorbox", 2))
     return compound ("colored-frame", l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\color", 1)) return tree (SET, COLOR, string_arg (t[1]));
-  if (is_tuple (t, "\\textcolor", 2))
+  if (is_tuple (t, "\\textcolor", 2) || "\\tmcolor")
     return concat (tree (SET, COLOR, l2e (t[1])), l2e (t[2]),
         tree (RESET, COLOR));
 

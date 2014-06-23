@@ -223,6 +223,7 @@
   (tmcodeinline ((!option "") (!group (ttfamily) (!group 2))))
 
   ;; Binary macros
+  (tmcolor (!group (color 1) (!group 2)))
   (tmsummarizeddocumentation
    (trivlist (!append (item (!option "")) (mbox "") "\\large\\bf" 1)))
   (tmsummarizedgrouped (trivlist (!append (item (!option "[")) (mbox "") 1)))
