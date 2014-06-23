@@ -250,6 +250,9 @@
 		493D309A15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309B15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
 		493D309C15190AEA00A19C3D /* new_buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493D309915190AEA00A19C3D /* new_buffer.cpp */; };
+		493EAE301958CAE500F01CED /* python_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493EAE2F1958CAE500F01CED /* python_language.cpp */; };
+		493EAE311958CAE500F01CED /* python_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493EAE2F1958CAE500F01CED /* python_language.cpp */; };
+		493EAE321958CAE500F01CED /* python_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493EAE2F1958CAE500F01CED /* python_language.cpp */; };
 		493F45F9179EC49F00E2972D /* latex_preview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493F45F7179EC49F00E2972D /* latex_preview.cpp */; };
 		493F45FA179EC49F00E2972D /* latex_preview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493F45F7179EC49F00E2972D /* latex_preview.cpp */; };
 		493F45FB179EC49F00E2972D /* latex_preview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 493F45F7179EC49F00E2972D /* latex_preview.cpp */; };
@@ -1624,6 +1627,7 @@
 		4934A47418C5D01E00BF1E6A /* fast_search.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = fast_search.hpp; sourceTree = "<group>"; };
 		4937B89A1521C59E00D87F22 /* MOCs.xcconfig */ = {isa = PBXFileReference; comments = "This addtional .xcconfig is needed to have an empty OTHER_LDFLAGS for the target MOCs. Newer versions of the linker complain and fail when they find dylibs in the link line."; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MOCs.xcconfig; sourceTree = "<group>"; };
 		493D309915190AEA00A19C3D /* new_buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_buffer.cpp; sourceTree = "<group>"; };
+		493EAE2F1958CAE500F01CED /* python_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = python_language.cpp; sourceTree = "<group>"; };
 		493F45F7179EC49F00E2972D /* latex_preview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_preview.cpp; sourceTree = "<group>"; };
 		493F45F8179EC49F00E2972D /* latex_preview.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = latex_preview.hpp; sourceTree = "<group>"; };
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
@@ -3852,6 +3856,7 @@
 				9C74D95C123BF892008959D1 /* packrat_parser.cpp */,
 				9C74D95D123BF892008959D1 /* packrat_parser.hpp */,
 				9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */,
+				493EAE2F1958CAE500F01CED /* python_language.cpp */,
 				4973E9A018BC945F001F74F0 /* r_language.cpp */,
 				9C0B494210A8CC110097A335 /* scheme_language.cpp */,
 				490DBDA8176EEEBD001F362A /* scilab_language.cpp */,
@@ -4760,6 +4765,7 @@
 				9C0B4A0510A8CC110097A335 /* edit_observer.cpp in Sources */,
 				9C0B4A0610A8CC110097A335 /* ip_observer.cpp in Sources */,
 				9C0B4A0710A8CC110097A335 /* link.cpp in Sources */,
+				493EAE301958CAE500F01CED /* python_language.cpp in Sources */,
 				9C0B4A0810A8CC110097A335 /* list_observer.cpp in Sources */,
 				9C0B4A0910A8CC110097A335 /* tree_pointer.cpp in Sources */,
 				9C0B4A0A10A8CC110097A335 /* tree_position.cpp in Sources */,
@@ -5207,6 +5213,7 @@
 				9CCC746F10D303D900E88D90 /* mac_app.mm in Sources */,
 				9CCC747010D303D900E88D90 /* mac_images.mm in Sources */,
 				9CCC747110D303D900E88D90 /* mac_spellservice.mm in Sources */,
+				493EAE321958CAE500F01CED /* python_language.cpp in Sources */,
 				9CCC747210D303D900E88D90 /* load_pk.cpp in Sources */,
 				9CCC747310D303D900E88D90 /* load_tex.cpp in Sources */,
 				9CCC747410D303D900E88D90 /* load_tfm.cpp in Sources */,
@@ -5621,6 +5628,7 @@
 				9CD4E6DE10B14AB300E0DD5C /* env.cpp in Sources */,
 				9CD4E6DF10B14AB300E0DD5C /* env_default.cpp in Sources */,
 				9CD4E6E010B14AB300E0DD5C /* env_exec.cpp in Sources */,
+				493EAE311958CAE500F01CED /* python_language.cpp in Sources */,
 				9CD4E6E110B14AB300E0DD5C /* env_inactive.cpp in Sources */,
 				9CD4E6E210B14AB300E0DD5C /* env_length.cpp in Sources */,
 				9CD4E6E310B14AB300E0DD5C /* env_semantics.cpp in Sources */,
