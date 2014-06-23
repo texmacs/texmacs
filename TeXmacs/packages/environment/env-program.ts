@@ -144,11 +144,15 @@
 
   <assign|scilab|<macro|<name|Scilab>>>
 
+  <assign|python|<macro|<name|Python>>>
+
   <assign|shell|<macro|body|<with|mode|prog|prog-language|shell|font-family|rm|<arg|body>>>>
 
   <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|font-family|rm|<arg|body>>>>
 
   <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|font-family|rm|<arg|body>>>>
+
+  <assign|python|<macro|body|<with|mode|prog|prog-language|python|font-family|rm|<arg|body>>>>
 
   <assign|scilab|<macro|body|<with|mode|prog|prog-language|scilab|font-family|rm|<arg|body>>>>
 
@@ -193,6 +197,12 @@
   <assign|scilab-code|<\macro|body>
     <\pseudo-code>
       <scilab|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|python-code|<\macro|body>
+    <\pseudo-code>
+      <python|<arg|body>>
     </pseudo-code>
   </macro>>
 

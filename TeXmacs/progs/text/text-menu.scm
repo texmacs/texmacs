@@ -185,6 +185,7 @@
   (-> "Inline code"
       ("C++" (make 'cpp))
       ("Mathemagix" (make 'mmx))
+      ("Python" (make 'python))
       ("Scheme" (make 'scm))
       ("Shell" (make 'shell))
       ("Scilab" (make 'scilab))
@@ -192,6 +193,7 @@
   (-> "Block of code"
       ("C++" (make 'cpp-code))
       ("Mathemagix" (make 'mmx-code))
+      ("Python" (make 'python-code))
       ("Scheme" (make 'scm-code))
       ("Shell" (make 'shell-code))
       ("Scilab" (make 'scilab-code))

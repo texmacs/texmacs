@@ -79,4 +79,13 @@ struct scilab_language_rep: language_rep {
   string get_color (tree t, int start, int end);
 };
 
+struct python_language_rep: language_rep {
+  hashmap<string,string> colored;
+  python_language_rep (string name);
+  text_property advance (tree t, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+  string get_color (tree t, int start, int end);
+};
+
 #endif // defined IMPL_LANGUAGE_H
