@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
 <style|source>
 
@@ -39,11 +39,11 @@
   <assign|unframed-render-enunciation|<value|render-enunciation>>
 
   <assign|framed-render-enunciation|<\macro|which|body>
-    <\ornament>
+    <surround|<no-indent>||<\ornament>
       <\unframed-render-enunciation|<arg|which>>
         <arg|body>
       </unframed-render-enunciation>
-    </ornament>
+    </ornament>>
   </macro>>
 
   <assign|enunciation-title-color|<macro|<if|<equal|<value|ornament-extra-color>|white>|<value|color>|<value|bg-color>>>>
@@ -52,11 +52,11 @@
 
   <assign|framed-render-enunciation*|<\macro|which|body>
     <\with|enunciation-sep|>
-      <\ornament>
+      <surround|<no-indent>||<\ornament>
         <\surround||<right-flush>>
           <arg|body>
         </surround>
-      </ornament|<enunciation-title-name|<arg|which>>>
+      </ornament|<enunciation-title-name|<arg|which>>>>
     </with>
   </macro>>
 

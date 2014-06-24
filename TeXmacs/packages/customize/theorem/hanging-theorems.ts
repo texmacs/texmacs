@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
 <style|source>
 
@@ -43,10 +43,10 @@
   <assign|unframed-render-enunciation|<value|render-enunciation>>
 
   <assign|render-enunciation|<\macro|which|body>
-    <\ornament>
-      <surround|<resize|<with|ornament-color|<value|ornament-extra-color>|dummy|<value|hang-length>|<ornament|<resize|<arg|which>||<minus|0ex|0.5hang>||<plus|1t|1hang>>>>|<plus|1hang|<value|ornament-hpadding>|<value|ornament-border>>|<plus|1b|0.5hang>||<minus|<minus|1t|1hang>|<plus|<value|ornament-vpadding>|<value|ornament-border>>>>
+    <surround|<no-indent>||<\ornament>
+      <surround|<no-indent><resize|<with|ornament-color|<value|ornament-extra-color>|dummy|<value|hang-length>|<ornament|<resize|<arg|which>||<minus|0ex|0.5hang>||<plus|1t|1hang>>>>|<plus|1hang|<value|ornament-hpadding>|<value|ornament-border>>|<plus|1b|0.5hang>||<minus|<minus|1t|1hang>|<plus|<value|ornament-vpadding>|<value|ornament-border>>>>
       |<right-flush>|<arg|body>>
-    </ornament>
+    </ornament>>
   </macro>>
 </body>
 
