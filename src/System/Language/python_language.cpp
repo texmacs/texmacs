@@ -14,25 +14,45 @@
 #include "impl_language.hpp"
 #include "scheme.hpp"
 
+static void parse_escaped_char (string s, int& pos);
 static void parse_number (string s, int& pos);
+static void parse_various_number (string s, int& pos);
 static void parse_alpha (string s, int& pos);
 static inline bool belongs_to_identifier (char c);
 
 python_language_rep::python_language_rep (string name):
-  language_rep (name), colored ("")
-{}
+  language_rep (name), colored ("") {}
 
 text_property
 python_language_rep::advance (tree t, int& pos) {
   string s= t->label;
-  if (pos==N(s)) return &tp_normal_rep;
+  if (pos==N(s))
+    return &tp_normal_rep;
   char c= s[pos];
   if (c == ' ') {
-    pos++; return &tp_space_rep; }
-  if (c >= '0' && c <= '9') {
-    parse_number (s, pos); return &tp_normal_rep; }
+    pos++;
+    return &tp_space_rep;
+  }
+  if (c == '\\') {
+    parse_escaped_char (s, pos);
+    return &tp_normal_rep;
+  }
+  if (pos+2 < N(s) && s[pos] == '0' &&
+       (s[pos+1] == 'x' || s[pos+1] == 'X' ||
+        s[pos+1] == 'o' || s[pos+1] == 'O' ||
+        s[pos+1] == 'b' || s[pos+1] == 'B')) {
+    parse_various_number (s, pos);
+    return &tp_normal_rep;
+  }
+  if ((c >= '0' && c <= '9') ||
+      (c == '.' && pos+1 < N(s) && s[pos+1] >= '0' && s[pos+1] <= '9')) {
+    parse_number (s, pos);
+    return &tp_normal_rep;
+  }
   if (belongs_to_identifier (c)) {
-    parse_alpha (s, pos); return &tp_normal_rep; }
+    parse_alpha (s, pos);
+    return &tp_normal_rep;
+  }
   tm_char_forwards (s, pos);
   return &tp_normal_rep;
 }
@@ -281,9 +301,14 @@ python_color_setup_operator (hashmap<string, string>& t) {
   t ("-")= c;
   t ("/")= c;
   t ("*")= c;
-  t ("%")= c;
   t ("**")= c;
   t ("//")= c;
+  t ("%")= c;
+  t ("|")= c;
+  t ("&")= c;
+  t ("^")= c;
+  t ("<less><less>")= c;
+  t ("<gtr><gtr>")= c;
 
   t ("==")= c;
   t ("!=")= c;
@@ -294,20 +319,21 @@ python_color_setup_operator (hashmap<string, string>& t) {
   t ("<gtr>=")= c;
 
   t ("=")= c;
+
   t ("+=")= c;
   t ("-=")= c;
   t ("/=")= c;
   t ("*=")= c;
-  t ("%=")= c;
   t ("**=")= c;
   t ("//=")= c;
+  t ("%=")= c;
+  t ("|=")= c;
+  t ("&=")= c;
+  t ("^=")= c;
+  t ("<less><less>=")= c;
+  t ("<gtr><gtr>=")= c;
 
-  t ("^")= c;
-  t ("|")= c;
   t ("~")= c;
-  t ("&")= c;
-  t ("<less><less>")= c;
-  t ("<gtr><gtr>")= c;
 }
 
 static void
@@ -336,6 +362,11 @@ belongs_to_identifier (char c) {
 }
 
 static inline bool
+is_hex_number (char c) {
+  return (c>='0' && c<='9') || (c>='A' && c<='F') || (c>='a' && c<='f');
+}
+
+static inline bool
 is_number (char c) {
   return (c>='0' && c<='9');
 }
@@ -360,26 +391,54 @@ parse_blanks (string s, int& pos) {
   while (pos<N(s) && (s[pos] == ' ' || s[pos] == '\t')) pos++;
 }
 
+static void
+parse_escaped_char (string s, int& pos) {
+  int n= N(s), i= pos++;
+  if (i+2 >= n) return;
+  if (s[i] != '\\')
+    return;
+  i++;
+  if (test (s, i, "newline"))
+    pos+= 7;
+  else if (s[i] == '\\' || s[i] == '\'' || s[i] == '\"' ||
+           s[i] == 'a'  || s[i] == 'b'  || s[i] == 'f'  ||
+           s[i] == 'n'  || s[i] == 'r'  || s[i] == 't'  ||
+           s[i] == 'N'  || s[i] == 'v')
+    pos+= 1;
+  else if (s[i] == 'o'  || s[i] == 'x')
+    pos+= 3;
+  else if (s[i] == 'u')
+    pos+= 5;
+  else if (s[i] == 'U')
+    pos+= 9;
+  return;
+}
+
 static bool
-parse_string (string s, int& pos) {
+parse_string (string s, int& pos, bool force) {
   int n= N(s);
-  string delim= "";
+  static string delim;
   if (pos >= n) return false;
-  if (test (s, pos, "\"\"\"") || test (s, pos, "\'\'\'"))
+  if (test (s, pos, "\"\"\"") || test (s, pos, "\'\'\'")) {
     delim= s(pos, pos+3);
-  else if (s[pos] == '\"' || s[pos] == '\'')
+    pos+= N(delim);
+  }
+  else if (s[pos] == '\"' || s[pos] == '\'') {
     delim= s(pos, pos+1);
-  else return false;
-  pos+= N(delim);
+    pos+= N(delim);
+  }
+  else if (!force)
+    return false;
   while (pos<n && !test (s, pos, delim)) {
-    if (s[pos] == '\\')
-      pos+= 2;
+    if (s[pos] == '\\') {
+      return true;
+    }
     else
       pos++;
   }
   if (test (s, pos, delim))
     pos+= N(delim);
-  return true;
+  return false;
 }
  
 static string
@@ -429,21 +488,32 @@ parse_operators (hashmap<string,string>& t, string s, int& pos) {
 }
 
 static void
+parse_various_number (string s, int& pos) {
+  if (!(pos+2 < N(s) && s[pos] == '0' &&
+       (s[pos+1] == 'x' || s[pos+1] == 'X' ||
+        s[pos+1] == 'o' || s[pos+1] == 'O' ||
+        s[pos+1] == 'b' || s[pos+1] == 'B')))
+    return;
+  pos+= 2;
+  while (pos<N(s) && is_hex_number (s[pos])) pos++;
+  if (pos<N(s) && (s[pos] == 'l' || s[pos] == 'L')) pos++;
+}
+
+static void
 parse_number (string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
-  if (s[i] == '.') return;
-  while (i<N(s) &&
-	 (is_number (s[i]) ||
-	  (s[i] == '.' && (i+1<N(s)) &&
-	   (is_number (s[i+1]) ||
-	    s[i+1] == 'e' || s[i+1] == 'E')))) i++;
+  while (i<N(s) && (is_number (s[i]) || s[i] == '.'))
+    i++;
   if (i == pos) return;
   if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_number (s[i]))) i++;
+    while (i<N(s) && (is_number (s[i]) || s[i] == '.')) i++;
+    if (i<N(s) && (s[i] == 'j')) i++;
   }
+  else if (i<N(s) && (s[i] == 'l' || s[i] == 'L')) i++;
+  else if (i<N(s) && (s[i] == 'j')) i++;
   pos= i;
 }
 
@@ -490,41 +560,67 @@ python_language_rep::get_color (tree t, int start, int end) {
   int pos= 0;
   int opos=0;
   string type;
+  bool in_str= false;
+  bool in_esc= false;
   do {
     type= none;
     do {
       opos= pos;
-      parse_blanks (s, pos);
-      if (opos < pos){
-        break;
+      if (in_str) {
+        in_esc= parse_string (s, pos, true);
+        in_str= false;
+        if (opos < pos) {
+          type= "constant_string";
+          break;
+        }
       }
-      parse_comment_single_line (s, pos);
-      if (opos < pos) {
-	type= "comment";
-	break;
+      else if (in_esc) {
+        parse_escaped_char (s, pos);
+        in_esc= false;
+        in_str= true;
+        if (opos < pos) {
+          type= "constant_char";
+          break;
+        }
       }
-      parse_string (s, pos);
-      if (opos < pos) {
-	type= "constant_string";
-	break;
-      }
-      type= parse_keywords (colored, s, pos);
-      if (opos < pos) {
-        break;
-      }
-      type= parse_operators (colored, s, pos);
-      if (opos < pos) {
-        break;
-      }
-      parse_number (s, pos);
-      if (opos < pos) {
-        type= "constant_number";
-        break;
-      }
-      parse_identifier (colored, s, pos);
-      if (opos < pos) {
-        type= none;
-        break;
+      else {
+        parse_blanks (s, pos);
+        if (opos < pos){
+          break;
+        }
+        parse_comment_single_line (s, pos);
+        if (opos < pos) {
+          type= "comment";
+          break;
+        }
+        in_esc= parse_string (s, pos, false);
+        if (opos < pos) {
+          type= "constant_string";
+          break;
+        }
+        type= parse_keywords (colored, s, pos);
+        if (opos < pos) {
+          break;
+        }
+        parse_various_number (s, pos);
+        if (opos < pos) {
+          type= "constant_number";
+          break;
+        }
+        parse_number (s, pos);
+        if (opos < pos) {
+          type= "constant_number";
+          break;
+        }
+        type= parse_operators (colored, s, pos);
+        if (opos < pos) {
+          break;
+        }
+        parse_identifier (colored, s, pos);
+        if (opos < pos) {
+          type= none;
+          break;
+        }
       }
       pos= opos;
       pos++;
