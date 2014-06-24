@@ -204,6 +204,7 @@ initialize_color_encodings () {
   language_rep::color_encoding ("constant_module")= 15;
   language_rep::color_encoding ("constant_number")= 16;
   language_rep::color_encoding ("constant_string")= 17;
+  language_rep::color_encoding ("constant_char")= 18;
   language_rep::color_encoding ("variable")= 20;
   language_rep::color_encoding ("variable_identifier")= 21;
   language_rep::color_encoding ("variable_function")= 22;
@@ -241,8 +242,9 @@ initialize_color_decodings (string lan_name) {
   lan->color_decoding (13)= get_preference (pfx * "constant_type", "#4040c0");
   lan->color_decoding (14)= get_preference (pfx * "constant_category", "#4040c0");
   lan->color_decoding (15)= get_preference (pfx * "constant_module", "#4040c0");
-  lan->color_decoding (16)= get_preference (pfx * "constant_number", "#4040c0");
+  lan->color_decoding (16)= get_preference (pfx * "constant_number", "#3030b0");
   lan->color_decoding (17)= get_preference (pfx * "constant_string", "dark grey");
+  lan->color_decoding (18)= get_preference (pfx * "constant_char", "#333333");
   lan->color_decoding (20)= get_preference (pfx * "variable", "#606060");
   lan->color_decoding (21)= get_preference (pfx * "variable_identifier", "#204080");
   lan->color_decoding (22)= get_preference (pfx * "variable_function", "#606060");
