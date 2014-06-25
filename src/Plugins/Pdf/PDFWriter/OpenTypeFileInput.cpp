@@ -300,6 +300,7 @@ EStatusCode OpenTypeFileInput::ReadOpenTypeSFNTFromDfont()
         map_pos   = ( head[4] << 24 )  | ( head[5] << 16 )  | ( head[6] <<  8 )  | head[7] ;
         rdata_len = ( head[8] << 24 )  | ( head[9] << 16 )  | ( head[10] <<  8 ) | head[11] ;
         map_len   = ( head[12] << 24 ) | ( head[13] << 16 ) | ( head[14] <<  8 ) | head[15] ;
+        (void) map_len;
         
         if ( rdata_pos + rdata_len != map_pos || map_pos == 0 ) {
             return PDFHummus::eFailure;
