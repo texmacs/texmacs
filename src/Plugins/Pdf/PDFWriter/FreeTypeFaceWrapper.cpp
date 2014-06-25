@@ -65,9 +65,8 @@ void FreeTypeFaceWrapper::SetupNotDefGlyph()
     {
         char* aString = (char*)".notdef";
       if(FT_Get_Name_Index(mFace,aString) == 0) {
-        FT_ULong  charcode;
         FT_UInt   gindex;
-        charcode = FT_Get_First_Char( mFace, &gindex ); 
+        FT_Get_First_Char( mFace, &gindex );
         mNotDefGlyphName = GetGlyphName(gindex);
         // WARNING: it can happen that (mNotDefGlyphName == "")
       }
