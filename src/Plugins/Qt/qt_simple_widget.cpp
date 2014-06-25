@@ -210,10 +210,12 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
       typedef pair<string, string> T;
       check_type<T> (val, s);
       T contents = open_box<T> (val); // x1 = name, x2 = mask.
+      /*
       if (contents.x2 == "")   // mask == ""
         ;                      // set default pointer.
       else                     // set new pointer
         ;
+      */
       NOT_IMPLEMENTED("qt_simple_widget::SLOT_MOUSE_POINTER");
     }
       break;
