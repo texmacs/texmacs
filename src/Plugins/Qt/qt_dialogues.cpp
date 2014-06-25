@@ -45,8 +45,8 @@
 
 qt_field_widget_rep::qt_field_widget_rep (qt_inputs_list_widget_rep* _parent,
                                           string _prompt)
-  : qt_widget_rep (field_widget), parent (_parent), prompt (_prompt),
-    input (""), proposals ()
+  : qt_widget_rep (field_widget),
+    prompt (_prompt), input (""), proposals (), parent (_parent)
 { }
 
 void
