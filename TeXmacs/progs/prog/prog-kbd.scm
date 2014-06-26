@@ -14,7 +14,8 @@
 (texmacs-module (prog prog-kbd)
   (:use (kernel gui kbd-define)
         (utils edit selections)
-        (prog scheme-tools) (prog scheme-edit) (prog cpp-edit)))
+        (prog scheme-tools) 
+        (prog scheme-edit) (prog cpp-edit) (prog python-edit)))
 
 (kbd-map
   (:mode in-prog?)

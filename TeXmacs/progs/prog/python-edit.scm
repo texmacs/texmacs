@@ -1,0 +1,85 @@
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; MODULE      : python-edit.scm
+;; DESCRIPTION : Editing python programs
+;; COPYRIGHT   : (C) 2014
+;;
+;; This software falls under the GNU general public license version 3 or later.
+;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(texmacs-module (prog python-edit)
+  (:use (prog prog-edit)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface for autocompletion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;(tm-define (kbd-variant t forwards?)
+;  (:mode in-prog-python?)
+;  (if (not python-completions-built?) (python-completions-rebuild))
+;  (custom-complete (tm->tree (python-completions (cursor-word)))))
+
+;(tm-define (insert-return)
+;  (:mode in-prog-python?)
+;  (insert-raw-return)
+;  (python-indent))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Automatic insertion, highlighting and selection of brackets and quotes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (python-bracket-open lbr rbr)
+  (bracket-open lbr rbr "\\"))
+
+(tm-define (python-bracket-close lbr rbr)
+  (bracket-close lbr rbr "\\"))
+
+; TODO: select strings first
+;(tm-define (kbd-select-enlarge)
+;  (:require prog-select-brackets?)
+;  (:mode in-prog-python?)
+;  (program-select-enlarge "(" ")"))
+
+(tm-define (notify-cursor-moved status)
+  (:require prog-highlight-brackets?)
+  (:mode in-prog-python?)
+  (select-brackets-after-movement "([" ")]" "\\"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Preferences for syntax highlighting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (notify-python-syntax var val)
+  (syntax-read-preferences "python"))
+
+(define-preferences
+  ("syntax:python:none" "red" notify-python-syntax)
+  ("syntax:python:comment" "brown" notify-python-syntax)
+  ("syntax:python:keyword" "#309090" notify-python-syntax)
+  ("syntax:python:error" "dark red" notify-python-syntax)
+  ("syntax:python:constant" "#4040c0" notify-python-syntax)
+  ("syntax:python:constant_identifier" "#4040c0" notify-python-syntax)
+  ("syntax:python:constant_function" "#4040c0" notify-python-syntax)
+  ("syntax:python:constant_type" "#4040c0" notify-python-syntax)
+  ("syntax:python:constant_category" "#4040c0" notify-python-syntax)
+  ("syntax:python:constant_module" "#4040c0" notify-python-syntax)
+  ("syntax:python:constant_number" "#4040c0" notify-python-syntax)
+  ("syntax:python:constant_string" "dark grey" notify-python-syntax)
+  ("syntax:python:constant_char" "#333333" notify-python-syntax)
+  ("syntax:python:variable" "#606060" notify-python-syntax)
+  ("syntax:python:variable_identifier" "#204080" notify-python-syntax)
+  ("syntax:python:variable_function" "#606060" notify-python-syntax)
+  ("syntax:python:variable_type" "#00c000" notify-python-syntax)
+  ("syntax:python:variable_category" "#00c000" notify-python-syntax)
+  ("syntax:python:variable_module" "#00c000" notify-python-syntax)
+  ("syntax:python:declare" "#0000c0" notify-python-syntax)
+  ("syntax:python:declare_identifier" "#0000c0" notify-python-syntax)
+  ("syntax:python:declare_function" "#0000c0" notify-python-syntax)
+  ("syntax:python:declare_type" "#0000c0" notify-python-syntax)
+  ("syntax:python:declare_category" "#d030d0" notify-python-syntax)
+  ("syntax:python:declare_module" "#0000c0" notify-python-syntax))
+

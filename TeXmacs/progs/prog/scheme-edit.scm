@@ -219,6 +219,7 @@
   ("syntax:scheme:constant_module" "#4040c0" notify-scheme-syntax)
   ("syntax:scheme:constant_number" "#4040c0" notify-scheme-syntax)
   ("syntax:scheme:constant_string" "dark grey" notify-scheme-syntax)
+  ("syntax:scheme:constant_char" "#333333" notify-scheme-syntax)
   ("syntax:scheme:variable" "#606060" notify-scheme-syntax)
   ("syntax:scheme:variable_identifier" "#204080" notify-scheme-syntax)
   ("syntax:scheme:variable_function" "#606060" notify-scheme-syntax)

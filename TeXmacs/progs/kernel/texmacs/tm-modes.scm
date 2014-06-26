@@ -127,9 +127,11 @@
   (with-any-selection% (selection-active-any?))
   (with-active-selection% (selection-active-normal?))
   (in-cpp% (== (get-env "prog-language") "cpp"))
+  (in-prog-cpp% #t in-prog% in-cpp%)
   (in-scheme% (== (get-env "prog-language") "scheme"))
   (in-prog-scheme% #t in-prog% in-scheme%)
-  (in-prog-cpp% #t in-prog% in-cpp%)
+  (in-python% (== (get-env "prog-language") "python"))
+  (in-prog-python% #t in-prog% in-python%)
   (in-verbatim% (or (inside? 'verbatim) (inside? 'verbatim-code) 
                     (inside? 'code)) in-text%)
   (in-variants-disabled% 
