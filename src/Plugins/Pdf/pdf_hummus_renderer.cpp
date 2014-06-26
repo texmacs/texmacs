@@ -2026,7 +2026,7 @@ pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   if (kind == "toc-4") ls= 6;
   if (kind == "toc-5") ls= 7;
 
-  outlines << outline_data(title, page_num, to_x(x), to_y(y), ls);
+  outlines << outline_data(title, page_num, to_x(x), to_y(y+20*pixel), ls);
 }
 
 void pdf_hummus_renderer_rep::recurse (ObjectsContext& objectsContext, list<outline_data>& it, ObjectIDType parentId,

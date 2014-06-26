@@ -59,7 +59,7 @@ struct toc_box_rep: public box_rep {
   operator tree () {
     return tuple ("toc", kind, title); }
   void display (renderer ren) {
-    ren->toc_entry (kind, title, 0, 0); }
+    ren->toc_entry (kind, title, 0, y2); }
 };
 
 /******************************************************************************
