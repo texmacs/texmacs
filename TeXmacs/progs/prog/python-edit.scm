@@ -47,7 +47,7 @@
 (tm-define (notify-cursor-moved status)
   (:require prog-highlight-brackets?)
   (:mode in-prog-python?)
-  (select-brackets-after-movement "([" ")]" "\\"))
+  (select-brackets-after-movement "([{" ")]}" "\\"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for syntax highlighting
