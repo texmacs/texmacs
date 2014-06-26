@@ -44,7 +44,8 @@
   (if (null? opt) (set! opt (list "default")))
   (with l (or (ahash-ref connection-varlist name) (list))
     (ahash-set! connection-variant (list name (car opt)) val)
-    (ahash-set! connection-varlist name (rcons l (car opt)))))
+    (if (nin? (car opt) l)
+      (ahash-set! connection-varlist name (rcons l (car opt))))))
 
 (define-public (connection-list)
   (list-sort (list-union (map car (ahash-table->list connection-defined))
@@ -298,6 +299,26 @@
 (define (remote-scripts-ref name)
   (remote-initialize-data)
   (ahash-ref remote-scripts-table name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cache plugin reinit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (reinit-connection)
+  (set! connection-defined (make-ahash-table))
+  (set! connection-default (make-ahash-table))
+  (set! connection-variant (make-ahash-table))
+  (set! connection-varlist (make-ahash-table))
+  (set! connection-handler (make-ahash-table))
+  (set! connection-session (make-ahash-table))
+  (set! connection-scripts (make-ahash-table)))
+
+(define-public (reinit-plugin-cache)
+  (reinit-connection)
+  (set! reconfigure-flag? #t)
+  (with plugins (plugin-list)
+    (for-each (cut ahash-set! plugin-initialize-todo <> #t) plugins)
+    (for-each (cut plugin-initialize <>) plugins)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cache plugin settings

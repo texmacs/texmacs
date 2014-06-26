@@ -49,8 +49,9 @@
   (-> "Selections"
       (link tools-selections-menu))
   (-> "Update"
-      ("Styles" (style-clear-cache))
-      ("Inclusions" (inclusions-gc)))
+      ("Inclusions" (inclusions-gc))
+      ("Plugins" (reinit-plugin-cache))
+      ("Styles" (style-clear-cache)))
   (-> "Web"
       ("Create web site" (tmweb-interactive-build))
       ("Update web site" (tmweb-interactive-update)))
