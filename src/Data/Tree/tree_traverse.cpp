@@ -308,12 +308,12 @@ move_word (tree t, path p, bool forward) {
       int n= N(s);
       if (s == "") return q;
       if (forward && l>0 &&
-	  (is_iso_alphanum (s[l-1]) ||
+	  (is_iso_alphanum (s[l-1]) || (l<n && s[l] == ' ') ||
 	   (l==n && at_border (t, path_up (q), forward))) &&
 	  (l==n || !is_iso_alphanum (s[l])))
 	return q;
       if (!forward && l<n &&
-	  (is_iso_alphanum (s[l]) ||
+	  (is_iso_alphanum (s[l]) || (l>0 && s[l-1] == ' ') ||
 	   (l==0 && at_border (t, path_up (q), forward))) &&
 	  (l==0 || !is_iso_alphanum (s[l-1])))
 	return q;
