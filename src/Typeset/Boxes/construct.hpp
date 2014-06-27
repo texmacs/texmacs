@@ -154,7 +154,7 @@ box page_box (path ip, tree page, int page_nr, SI w, SI h,
 box locus_box (path ip, box b, list<string> ids, SI pixel);
 box locus_box (path ip, box b, list<string> ids, SI pixel, string ref, string anchor);
 box macro_box (path ip, box b, font big_fn= font ());
-box tag_box (path ip, path tip, box b, tree keys);
+box tag_box (path ip, box b, tree keys);
 box note_box (path ip, box b, box note, SI nx, SI ny);
 
 box anim_compose_box (path ip, array<box> b);

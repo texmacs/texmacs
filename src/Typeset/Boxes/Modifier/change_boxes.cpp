@@ -628,8 +628,7 @@ locus_box_rep::post_display (renderer &ren) {
 
 struct tag_box_rep: public change_box_rep {
   tree keys;
-  path tip;
-  tag_box_rep (path ip, path tip, box b, tree keys);
+  tag_box_rep (path ip, box b, tree keys);
   operator tree () { return tree (TUPLE, "tag", bs[0]); }
   box adjust_kerning (int mode, double factor);
   tree tag (tree t, SI x, SI y, SI delta);
@@ -637,7 +636,7 @@ struct tag_box_rep: public change_box_rep {
   path find_tag (string name);
 };
 
-tag_box_rep::tag_box_rep (path ip, path tip, box b, tree keys2):
+tag_box_rep::tag_box_rep (path ip, box b, tree keys2):
   change_box_rep (ip, false), keys (keys2)
 {
   insert (b, 0, 0);
@@ -649,7 +648,7 @@ tag_box_rep::tag_box_rep (path ip, path tip, box b, tree keys2):
 box
 tag_box_rep::adjust_kerning (int mode, double factor) {
   box body= bs[0]->adjust_kerning (mode, factor);
-  return tag_box (ip, tip, body, keys);
+  return tag_box (ip, body, keys);
 }
 
 void
@@ -663,7 +662,7 @@ path
 tag_box_rep::find_tag (string search) {
   for (int i=0; i<N(keys); i++)
     if (keys[i]->label == search)
-      return reverse (descend_decode (tip, 1));
+      return reverse (descend_decode (ip, 1));
   return path ();
 }
 
@@ -862,8 +861,8 @@ locus_box (path ip, box b, list<string> ids, SI pixel, string ref, string anchor
 }
 
 box
-tag_box (path ip, path tip, box b, tree keys) {
-  return tm_new<tag_box_rep> (ip, tip, b, keys);
+tag_box (path ip, box b, tree keys) {
+  return tm_new<tag_box_rep> (ip, b, keys);
 }
 
 box
