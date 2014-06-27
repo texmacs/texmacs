@@ -184,7 +184,8 @@ concater_rep::typeset_set_binding (tree t, path ip) {
 	tree body= env->expand (tree (ARG, t[2]), true);
 	sip= obtain_ip (body);
       }
-      box b= tag_box (sip, empty_box (sip, 0, 0, 0, env->fn->yx), keys);
+      path dip= decorate_middle (sip);
+      box b= tag_box (dip, sip, empty_box (dip, 0, 0, 0, env->fn->yx), keys);
       a << line_item (CONTROL_ITEM, OP_SKIP, b, HYPH_INVALID, "label");
     }
   }
