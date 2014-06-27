@@ -299,7 +299,7 @@ next_is_word (tree t, path p) {
 static path
 move_word (tree t, path p, bool forward) {
   while (true) {
-    path q= move_valid (t, p, forward);
+    path q= move_accessible (t, p, forward);
     int l= last_item (q);
     if (q == p) return p;
     tree st= subtree (t, path_up (q));
