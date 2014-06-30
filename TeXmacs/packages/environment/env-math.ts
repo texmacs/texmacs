@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.2>
 
 <style|source>
 
@@ -63,6 +63,8 @@
   <assign|req-number|<macro|<htab|5mm><next-number>>>
 
   <assign|eq-number|<value|req-number>>
+
+  <assign|eq-lab|<macro|lab|<htab|5mm><with|mode|text|font-shape|right|(<arg|lab>)>>>
 
   <assign|no-number|<macro|>>
 
