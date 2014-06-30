@@ -1234,7 +1234,7 @@
 
 (tm-define (standard-options l)
   (:require (in? l '(math equation equation* eqnarray eqnarray*)))
-  (list :recurse "math-check"))
+  (list :recurse "number-long-article" "math-check"))
 
 (tm-define (standard-options l)
   (:require (== l 'math-colored))
