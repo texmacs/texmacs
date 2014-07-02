@@ -251,8 +251,7 @@ x_window_rep::get_position (SI& x, SI& y) {
 #else
   int xx, yy;
   Window ww;
-  bool b;
-  b=  XTranslateCoordinates (dpy, win, gui->root, 0, 0, &xx, &yy, &ww);
+  XTranslateCoordinates (dpy, win, gui->root, 0, 0, &xx, &yy, &ww);
   x=  xx*PIXEL;
   y= -yy*PIXEL;
 #endif
