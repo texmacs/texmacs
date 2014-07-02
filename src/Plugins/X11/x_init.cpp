@@ -112,44 +112,12 @@ x_gui_rep::initialize_input_method () {
 }
 
 /******************************************************************************
-* Get xmodmap
+* Set up keyboard
 ******************************************************************************/
 
 #ifndef XK_ISO_Left_Tab
-#define	XK_ISO_Left_Tab 0xFE20
+#define XK_ISO_Left_Tab 0xFE20
 #endif
-
-static XModifierKeymap* xmodmap;
-static int        mod_n;
-static KeyCode*   mod_k;
-static array<int> mod_shift;
-static array<int> mod_ctrl;
-static array<int> mod_alt;
-
-void
-x_gui_rep::insert_keysym (array<int>& a, int i, int j) {
-  int ks= XKeycodeToKeysym (dpy, mod_k[i*mod_n+j], 0);
-  if (ks!=0) a << ks;
-}
-
-void
-x_gui_rep::get_xmodmap () {
-  int i;
-  xmodmap= XGetModifierMapping (dpy);
-  mod_n= xmodmap->max_keypermod;
-  mod_k= xmodmap->modifiermap;
-  for (i=0; i<mod_n; i++) {
-    insert_keysym (mod_shift, 0, i);
-    insert_keysym (mod_shift, 1, i);
-    insert_keysym (mod_ctrl, 2, i);
-    insert_keysym (mod_alt, 3, i);
-  }
-  XFreeModifiermap (xmodmap);
-}
-
-/******************************************************************************
-* Set up keyboard
-******************************************************************************/
 
 void
 x_gui_rep::map (int key, string s) {

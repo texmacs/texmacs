@@ -140,7 +140,6 @@ public:
   /****************************** Keyboard ***********************************/
   void initialize_input_method ();
   void insert_keysym (array<int>& a, int i, int j);
-  void get_xmodmap ();
   void map (int key, string s);
   void Map (int key, string s);
   void initialize_keyboard_pointer ();
