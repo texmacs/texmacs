@@ -46,8 +46,8 @@ glyph::glyph (int w2, int h2, int xoff2, int yoff2, int depth2, int status2) {
 
 int
 glyph_rep::get_x (int i, int j) {
-  if ((i<0) || (i>=width))  return 0;
-  if ((j<0) || (j>=height)) return 0;
+  if (i<0 ||  (i-width)>=0) return 0;
+  if (j<0 || (j-height)>=0) return 0;
   if (depth==1) {
     int bit= j*width+i;
     return (raster[bit>>3] >> (bit&7)) & 1;
