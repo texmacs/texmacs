@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include <climits>
 #include "edit_typeset.hpp"
 #include "tm_buffer.hpp"
 #include "convert.hpp"
@@ -643,8 +644,8 @@ report_redefined (array<tree> redefined) {
 
 void
 edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
-  int missing_nr= 1000000;
-  int redefined_nr= 1000000;
+  int missing_nr= INT_MAX;
+  int redefined_nr= INT_MAX;
   while (true) {
     typeset_sub (x1, y1, x2, y2);
     if (!env->complete) break;
