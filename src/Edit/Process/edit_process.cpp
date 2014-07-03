@@ -27,6 +27,27 @@ edit_process_rep::edit_process_rep () {}
 edit_process_rep::~edit_process_rep () {}
 
 /******************************************************************************
+* Removing labels
+******************************************************************************/
+
+/* Labels in TOC, index or glossaries (list-of-anything) leads to redefinition
+ * and impede typesetting. This generates errors reported via intrusive popups.
+ * So we remove them.
+ */
+
+static tree
+remove_labels (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (L(t));
+  for (i=0; i<n; i++) {
+    if (!is_func (t[i], LABEL))
+      r << t[i];
+  }
+  return r;
+}
+
+/******************************************************************************
 * Automatically generate a bibliography
 ******************************************************************************/
 
@@ -100,7 +121,7 @@ edit_process_rep::generate_table_of_contents (string toc) {
     debug_automatic << "Generating table of contents [" << toc << "]\n";
   tree toc_t= buf->data->aux[toc];
   if (buf->prj != NULL) toc_t= copy (buf->prj->data->aux[toc]);
-  if (N(toc_t)>0) insert_tree (toc_t);
+  if (N(toc_t)>0) insert_tree (remove_labels (toc_t));
 }
 
 /******************************************************************************
@@ -279,7 +300,7 @@ edit_process_rep::generate_index (string idx) {
     tree D (DOCUMENT);
     for (i=0; i<n; i++)
       make_entry (D, h (entry[i]));
-    insert_tree (D);
+    insert_tree (remove_labels (D));
   }
 }
 
@@ -325,7 +346,7 @@ edit_process_rep::generate_glossary (string gly) {
 	      D[j][N(D[j])-1]= C;
 	    }
       }
-    insert_tree (D);
+    insert_tree (remove_labels (D));
   }
 }
 
