@@ -117,6 +117,7 @@
   (dottimes "\\mathaccent95{\\times}")
   (dotoplus "\\mathaccent95{\\oplus}")
   (dototimes "\\mathaccent95{\\otimes}")
+  (dotast "\\mathaccent95{*}")
   (into "\\rightarrow")
   (longequal "{=\\!\\!=}")
   (longhookrightarrow "{\\lhook\\joinrel\\relbar\\joinrel\\rightarrow}")
