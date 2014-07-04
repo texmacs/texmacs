@@ -94,6 +94,9 @@ url_get_atom (string s, int type) {
     }
   }
   if (occurs ("*", s)) return url_wildcard (s);
+#ifdef WINPATHS
+  if(N(s)==2 && ends (s, ":")) s->resize(1);	// remove the ':' after unit letter
+#endif
   return as_url (tree (s));
 }
 
@@ -493,23 +496,23 @@ as_string (url u, int type) {
     if ((!is_concat (u[2])) && (!is_atomic (u[2])) && (!is_wildcard (u[2], 1)))
       s2= "{" * s2 * "}";
 #ifdef WINPATHS
-    if (is_semi_root (u)) {
-      if (ends (s2, ":")) {
-        if (type == URL_SYSTEM) return s2 * "\\";
-        else return s1 * sep * s2 (0, N(s2) - 1);
-      }
-      else {
-        if (type == URL_SYSTEM) return "\\\\" * s2;
-        else return s1 * sep * s2;
-      }
-    }
-    if (is_root (u[1]) && type != URL_SYSTEM && N(s2) >= 2 && is_alpha (s2[0]) && s2[1] == ':')
-      return s1 * sep * s2 (0, 1) * s2 (2, N(s2));
-    if (is_root (u[1]) && stype == URL_SYSTEM) {
-      if (N(s2) >= 2 && is_alpha (s2[0]) && s2[1] == ':') return s2; 
-      else return "\\\\" * s2; 
-    }
-
+		if (((is_root (u[1],"default") && type == URL_SYSTEM) || is_root (u[1],"file"))) { // have to return the windows format
+			string root,remain;
+			if (is_concat (u[2])) {		
+				root = as_string (u[2][1], type);   // root might be unit letter or hostname. It depends on the length
+				remain = as_string (u[2][2], type);
+			} else {
+				root = s2;
+				remain = "";
+			}
+			if (is_root (u[1],"default")) {
+				if (N(root) == 1) return root * ":\\" * remain;	//drive letter
+				else return "\\\\" * root * "\\" * remain;
+			} else {
+				if (N(root) == 1) return s1 * "/" * root * ":/" * remain;	//local file
+				else return s1 * root * "/" * remain; //remote
+			}
+		} 
 #endif
     return s1 * sep * s2;
   }
@@ -981,19 +984,10 @@ string
 concretize (url u) {
   // This routine transforms a resolved url into a system file name.
   // In the case of distant files from the web, a local copy is created.
-#ifdef WINPATHS
-  // FIXME: this fix seems strange;
-  // to start with, the if condition is not respected
-  string s = as_string (u);
-  if (starts (s, "file:///")) s= s (8, N(s));
-  if (heuristic_is_default (s, 0)) return s;
-  if (is_rooted (u, "blank")) return as_string (reroot (u, "default"));
-#else
   if (is_rooted (u, "default") ||
       is_rooted (u, "file") ||
       is_rooted (u, "blank"))
-    return as_string (reroot (u, "default"));
-#endif
+        return as_string (reroot (u, "default"));
   if (is_rooted_web (u)) return concretize (get_from_web (u));
   if (is_rooted_tmfs (u)) return concretize (get_from_server (u));
   if (is_ramdisc (u)) return concretize (get_from_ramdisc (u));
