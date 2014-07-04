@@ -466,7 +466,7 @@
           (toggle (set-boolean-preference "prog:select brackets" answer)
                   (get-boolean-preference "prog:select brackets")))
         (assuming (qt-gui?)  ; TODO: recode the dialogue in scheme
-          (item (text "Use print dialog:") 
+          (item (text "Use print dialogue:") 
             (toggle (set-boolean-preference "gui:print dialogue" answer)
                     (get-boolean-preference "gui:print dialogue")))))))
     (bottom-buttons >>> ("Ok" (cmd))))
