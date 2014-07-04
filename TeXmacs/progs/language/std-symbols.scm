@@ -249,7 +249,7 @@
     "<circ>" "<bullet>" "<odot>" "<boxdot>" "<boxtimes>"
     "<dottimes>" "<dototimes>" "<ltimes>" "<rtimes>" "<atimes>" "<btimes>"
     "<exterior>" "<join>"
-    "<ast>" "<star>" "<oast>" "<boxast>"
+    "<ast>" "<star>" "<oast>" "<boxast>" "<dotast>"
     "<circledast>" "<circledcirc>" "<varocircle>" "<boxbox>"
     "<leftthreetimes>" "<rightthreetimes>")
 
