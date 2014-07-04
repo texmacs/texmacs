@@ -465,7 +465,10 @@
         (item (text "Program bracket selections:")
           (toggle (set-boolean-preference "prog:select brackets" answer)
                   (get-boolean-preference "prog:select brackets")))
-        (item (text "") (text "")))))
+        (assuming (qt-gui?)  ; TODO: recode the dialogue in scheme
+          (item (text "Use print dialog:") 
+            (toggle (set-boolean-preference "gui:print dialogue" answer)
+                    (get-boolean-preference "gui:print dialogue")))))))
     (bottom-buttons >>> ("Ok" (cmd))))
 
 (tm-define (open-experimental-preferences)

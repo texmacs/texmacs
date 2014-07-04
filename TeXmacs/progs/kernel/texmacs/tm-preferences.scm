@@ -159,6 +159,9 @@
 (define-public (use-menus?)
   (== (get-preference "complex actions") "menus"))
 
+(define-public (use-print-dialog?)
+  (and (qt-gui?) (== (get-preference "gui:print dialogue") "on")))
+
 (set! has-look-and-feel? test-look-and-feel)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
