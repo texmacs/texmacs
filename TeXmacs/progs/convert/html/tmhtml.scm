@@ -87,9 +87,9 @@
 	((string-starts? s "<b-") `(h:b (h:var ,(tmhtml-sub-token s 3))))
 	((string-starts? s "<")
 	 (with encoded (cork->utf8 s)
-	   (utf8->html (if (== s encoded)
-			   (old-tm->xml-cdata s)
-			   encoded))))
+           (if (== s encoded)
+             (utf8->html (old-tm->xml-cdata s))
+             `(h:var ,(utf8->html encoded)))))
 	(else s)))
 
 (define (tmhtml-string s)
