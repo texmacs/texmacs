@@ -8,9 +8,10 @@ function tmrepl()
 		else
 			dispans=0;
 		endif
-		r=sprintf("%ctexmacs%c; %s;",39,39,r);
+                ans= "texmacs";
+		r=sprintf("%s;",r);
 		eval(r,"tmlasterr");
-		if dispans & isnewans(ans)
+		if dispans && isnewans(ans)
                        tmdisp(ans);
 		endif
 		r=input(prompt,'s');
