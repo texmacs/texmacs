@@ -632,7 +632,7 @@ xml_html_parser::build (tree& r) {
       if (build_must_close (name)) return;
       tree sub= copy (a[i]); sub[0]= "tag";
       i++;
-      if (html_empty_tag_table->contains (name))
+      if (html && html_empty_tag_table->contains (name))
 	r << sub;
       else {
 	stack= tuple (name, stack);
