@@ -543,7 +543,8 @@ edit_interface_rep::apply_changes () {
       rectangles visible (rectangle (vx1, vy1, vx2, vy2));
       for (int i=0; i<N(alt_selection_rects); i++)
         invalidate (alt_selection_rects[i] & visible);
-      range_set alt_sel= get_alt_selection ("alternate");
+      range_set alt_sel= append (get_alt_selection ("alternate"),
+                                 get_alt_selection ("brackets"));
       if (is_empty (alt_sel))
         alt_selection_rects= array<rectangles> ();
     }
@@ -718,7 +719,8 @@ edit_interface_rep::apply_changes () {
       selection_rects= rs;
       invalidate (selection_rects);
     }
-    range_set alt_sel= get_alt_selection ("alternate");
+    range_set alt_sel= append (get_alt_selection ("alternate"),
+                               get_alt_selection ("brackets"));
     if (!is_empty (alt_sel)) {
       alt_selection_rects= array<rectangles> ();
       for (int i=0; i+1<N(alt_sel); i+=2) {

@@ -92,9 +92,9 @@
   (let ((prev (find-left-bracket path lb rb))
         (next (find-right-bracket path lb rb)))
     (if (or (null? prev) (null? next))
-      (if (nnull? (get-alt-selection "alternate"))
-          (cancel-alt-selection "alternate"))
-      (set-alt-selection "alternate" 
+      (if (nnull? (get-alt-selection "brackets"))
+          (cancel-alt-selection "brackets"))
+      (set-alt-selection "brackets" 
                          (list prev (path++ prev) next (path++ next))))))
 
 (define (string-ref* s i)
@@ -112,8 +112,8 @@
     (cond (i1 (select-brackets p (string-ref* lbs i1) (string-ref* rbs i1)))
           (i2 (select-brackets p* (string-ref* lbs i2) (string-ref* rbs i2)))
           (i3 (select-brackets p* (string-ref* lbs i3) (string-ref* rbs i3)))
-          ((nnull? (get-alt-selection "alternate"))
-           (cancel-alt-selection "alternate")))))
+          ((nnull? (get-alt-selection "brackets"))
+           (cancel-alt-selection "brackets")))))
 
 (tm-define (bracket-open lb rb esc)
   (if prog-auto-close-brackets?
@@ -164,8 +164,8 @@
 (tm-define (notify-cursor-moved status)
   (:require prog-highlight-brackets?)
   (:require (not (in-prog?)))
-  (if (nnull? (get-alt-selection "alternate"))
-      (cancel-alt-selection "alternate")))
+  (if (nnull? (get-alt-selection "brackets"))
+      (cancel-alt-selection "brackets")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Whitespace handling
