@@ -508,9 +508,9 @@
           (set! erow (+ 1 (table-which-row)))
           (set! ecol (+ 1 (table-which-column))))
         (go-to (selection-get-start))
+        (selection-cancel)
         (let ((srow (table-which-row))
               (scol (table-which-column)))
-          (selection-cancel)
           (cell-set-row-span (number->string (- erow srow)))
           (cell-set-column-span (number->string (- ecol scol)))))))
 
