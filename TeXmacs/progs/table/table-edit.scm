@@ -15,7 +15,8 @@
   (:use (utils library tree)
 	(utils base environment)
 	(utils edit variants)
-        (utils edit selections)))
+        (utils edit selections)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some drd properties, which should go into table-drd.scm later on
@@ -497,6 +498,28 @@
 (tm-define (cell-set-column-span cs)
   (:argument cs "Column span")
   (cell-set-format "cell-col-span" cs))
+
+(tm-define (cell-set-span-selection)
+  (:synopsis "Sets the upper-left cell of a selection to span all of it")
+  (if (selection-active-table?)
+      (let ((erow 0)
+            (ecol 0))
+        (with-cursor (selection-get-end)
+          (set! erow (+ 1 (table-which-row)))
+          (set! ecol (+ 1 (table-which-column))))
+        (go-to (selection-get-start))
+        (let ((srow (table-which-row))
+              (scol (table-which-column)))
+          (selection-cancel)
+          (cell-set-row-span (number->string (- erow srow)))
+          (cell-set-column-span (number->string (- ecol scol)))))))
+
+(tm-define (cell-reset-span)
+  (cell-set-span "1" "1"))
+
+(tm-define (cell-spans-more?)
+  (or (!= (cell-get-format "cell-row-span") "1")
+      (!= (cell-get-format "cell-col-span") "1")))
 
 (define (cell-get-halign) (cell-get-format "cell-halign"))
 (define (cell-test-halign? s) (== (cell-get-halign) s))
