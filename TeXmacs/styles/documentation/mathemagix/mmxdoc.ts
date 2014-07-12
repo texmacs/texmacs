@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.99.2>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <\active*>
@@ -72,12 +72,12 @@
 
   <assign|todo|<macro|x|<with|color|red|To do: <arg|x>>>>
 
-  \;
+  <assign|mmx-link|<macro|name|<slink|<arg|name>>>><active*|<src-short-comment|TODO:
+  find correct path>>
 </body>
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|true>
   </collection>
 </initial>
