@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.2>
 
 <style|<tuple|tmdoc|english>>
 
@@ -6,38 +6,38 @@
   <tmdoc-title|Developers of <TeXmacs>>
 
   <\itemize>
-    <item>Massimiliano Gubinelli is responsable for the new Qt port and
-    several improvements for the MacOS X platform.
+    <item>Massimiliano Gubinelli is responsable for the <name|Qt> port and
+    several improvements for the <name|MacOS X> platform.
 
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
     to several computer algebra systems, support for Cyrillic, tools for the
     manipulation of dictionaries, etc.
 
     <item>François Poulain has made significant improvements in the <LaTeX>
-    import and export converters, and he has contributed various other
+    import and export converters, and he has contributed numerous other
     patches.
 
-    <item>David Allouche replaced the gencc preprocessor by the more standard
-    C++ template system. He also made many other patches, bug reports and he
-    did a lot of the administration of TeXmacs.
+    <item>David Allouche replaced the <name|gencc> preprocessor by the more
+    standard C++ template system. He also made many other patches, bug
+    reports and he did a lot of the administration of <TeXmacs>.
 
     <item>Miguel de Benito Delgado works on the <name|Qt> port, the usage of
-    <TeXmacs> to develop and browse its <name|Scheme> code and general minor
+    <TeXmacs> to develop and browse its <name|Scheme> code and general
     improvements to the user experience.
 
     <item>Denis Raux maintains the website, the mailing lists, and the
-    Windows version.
+    <name|Windows> version.
 
     <item>Henri Lesourd developed a native mode for drawing technical
     pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
 
     <item>Dan Martens made the <name|Windows> port.
 
-    <item>David Michel provided help concerning the Qt-based Windows port and
-    several portability issues.
+    <item>David Michel provided help concerning the <name|Qt>-based
+    <name|Windows> port and several portability issues.
 
-    <item>Andreas Seidl has been helping with documentation, a Cygwin package
-    and several other things.
+    <item>Andreas Seidl has been helping with documentation, a <name|Cygwin>
+    package and several other things.
 
     <item>Dan Grayson helped me to implement communications with computer
     algebra systems via pipes. He also provided some money support for
@@ -64,26 +64,27 @@
     <item>Sam Liddicott for several patches, including hyperlink support for
     Pdf files.
 
-    <item>Zou Hu for his help on CJK support and the Windows port.
+    <item>Zou Hu for his help on CJK support and the <name|Windows> port.
 
     <item>Stéphane Payrard made an important bugfix for destroying windows.
 
     <item>Bruno Rino has helperd us migrating from CVS to SVN.
 
-    <item>Fabien Chéreau has helped us with the Qt port of <TeXmacs>.
+    <item>Fabien Chéreau has helped us with the <name|Qt> port of <TeXmacs>.
 
     <item>Johann Dréo for the new <TeXmacs> icon and many other graphics.
 
     <item>Bill Page and David Mentré for the support of the free version of
     <name|Axiom>.
 
-    <item>Chu-Ching Huang for writing CAS documentation and making a Knoppix
-    CD for <TeXmacs>.
+    <item>Chu-Ching Huang for writing CAS documentation and making a
+    <name|Knoppix> CD for <TeXmacs>.
 
     <item>Nelson Beebe helped with manifacturing a more robust
     <verbatim|configure.in>.
 
-    <item>Kai Krüger fixed several details for the new Maple interface.
+    <item>Kai Krüger fixed several details for the new <name|Maple>
+    interface.
 
     <item>Mickael Floc'hlay and Arnaud Ébalard for their work on searching
     for help.
@@ -98,7 +99,7 @@
 
     <item>Immanuel Normann is working on an OpenMath converter.
 
-    <item>Jonas Lööf for a precise installation procedure on Cygwin.
+    <item>Jonas Lööf for a precise installation procedure on <name|Cygwin>.
 
     <item>Rob Clark made a patch which improves the system time support.
 
