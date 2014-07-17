@@ -53,6 +53,7 @@
 (define (collect-options l t)
   (when (not (ahash-ref t l))
     ;;(display* "Collect " l "\n")
+    (ahash-set! t l '())
     (ahash-set! t l
       (with std (standard-options (string->symbol l))
 	(append-options std
