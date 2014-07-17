@@ -1903,23 +1903,17 @@ pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
  * hyperlinks
  ******************************************************************************/
 
+static PDFTextString
+as_hummus_string (string s) {
+  c_string u (s);
+  PDFTextString r;
+  std::string stds ((char*) u);
+  return r.FromUTF8 (stds);
+}
+
 static string
 prepare_text (string s) {
-  int i;
-  string r;
-  for (i=0; i<N(s); i++) {
-    int c= ((unsigned char) s[i]);
-    if ((s[i]=='(') || (s[i]==')') || (s[i]=='\\'))
-      r << '\\' << s[i];
-    else if ((c <= 32) || (c >= 128)) {
-      r << '\\';
-      r << ('0' + (c >> 6));
-      r << ('0' + ((c >> 3) & 7));
-      r << ('0' + (c & 7));
-    }
-    else r << s[i];
-  }
-  return r;
+  return string (as_hummus_string(s).ToString().c_str());
 }
 
 PDFHummus::EStatusCode
@@ -2118,14 +2112,6 @@ pdf_hummus_renderer_rep::flush_outlines()
 void
 pdf_hummus_renderer_rep::set_metadata (string kind, string val) {
   metadata (kind)= val;
-}
-
-static PDFTextString
-as_hummus_string (string s) {
-  c_string u (s);
-  PDFTextString r;
-  std::string stds ((char*) u);
-  return r.FromUTF8 (stds);
 }
 
 void
