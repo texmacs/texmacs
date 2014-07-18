@@ -264,7 +264,7 @@ texmacs_input_rep::html_flush (bool force) {
 void
 texmacs_input_rep::ps_flush (bool force) {
   if (force) {
-    string w= "";
+    string w= "0.7par"; // TODO: make this configurable.
     string h= "";
     string b= copy (buf);
     while (true)
