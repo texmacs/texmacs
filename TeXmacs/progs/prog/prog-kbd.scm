@@ -60,3 +60,14 @@
   ("[" (cpp-bracket-open "[" "]" ))
   ("]" (cpp-bracket-close "[" "]" ))
   ("\"" (cpp-bracket-open "\"" "\"" )))
+
+(kbd-map
+  (:mode in-prog-python?)
+  ("{" (python-bracket-open "{" "}" ))
+  ("}" (python-bracket-close "{" "}" ))
+  ("(" (python-bracket-open "(" ")" ))
+  (")" (python-bracket-close "(" ")" ))
+  ("[" (python-bracket-open "[" "]" ))
+  ("]" (python-bracket-close "[" "]" ))
+  ("\"" (python-bracket-open "\"" "\"" ))
+  ("'" (python-bracket-open "'" "'" )))
