@@ -1,22 +1,27 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.2>
 
-<style|<tuple|tmdoc|maxima>>
+<style|<tuple|tmdoc|maxima|english>>
 
 <\body>
   <\tmdoc-title>
     Example <name|Gnuplot> session
   </tmdoc-title>
 
-  <name|Gnuplot> is a flexible and powerful application for drawing graphs of
-  functions, which can be downloaded from <href|http://gnuplot.sf.net>. Press
-  <menu|Insert|Session|Gnuplot> in order to invoke <name|Gnuplot>. Here
-  follows an example session.
+  Select <menu|Insert|Session|Gnuplot> in order to start a <name|Gnuplot>
+  session. After pressing <key|return> in a line, your input will be sent to
+  <name|Gnuplot>. If you need to enter more than one command then you may
+  separate them by <verbatim|~> or a newline, which you insert using
+  <key|S-return>. Alternatively you may select <menu|Focus|Input
+  options|Multiline input> to reverse the behaviour of the keys. Each input
+  must be a complete script ending with a plotting command, i.e. the result
+  must always be an image to embed into <TeXmacs>.
+
+  <name|Gnuplot> supports many features which allow the creation of high
+  quality graphs. Here are some examples:
 
   <\session|gnuplot|default>
     <\output>
       This is a TeXmacs interface for GNUplot.
-
-      \;
     </output>
 
     <\unfolded-io|GNUplot] >
@@ -72,18 +77,9 @@
 
       \;
     </unfolded-io>
-
-    <\input|GNUplot] >
-      \;
-    </input>
   </session>
 
-  Gnuplot supports many fancy features for users to make high-class graphs.
-  If the number of commands is more than one, then you may separate the
-  commands by <verbatim|~> or a newline. We recall that a newline is started
-  using <key|S-return>.
-
-  <tmdoc-copyright|2003|Chu-Ching Huang>
+  <tmdoc-copyright|2003, 2014|Chu-Ching Huang|Miguel de Benito Delgado>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -93,8 +89,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

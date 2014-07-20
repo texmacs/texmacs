@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.2>
 
 <style|tmdoc>
 
@@ -6,10 +6,17 @@
   <tmdoc-title|The <name|Gnuplot> plug-in>
 
   <\traverse>
-    <branch|Example session|gnuplot-demo.en.tm>
+    <branch|Introduction.|gnuplot-abstract.en.tm>
+
+    <branch|An example session.|gnuplot-demo.en.tm>
+
+    <branch|Simple dynamic plots.|gnuplot-plots.en.tm>
+
+    <branch|<name|Gnuplot> as a document scripting
+    language.|gnuplot-script.en.tm>
   </traverse>
 
-  <tmdoc-copyright|2011|Joris van der Hoeven>
+  <tmdoc-copyright|2011, 2014|Joris van der Hoeven, Miguel de Benito Delgado>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
