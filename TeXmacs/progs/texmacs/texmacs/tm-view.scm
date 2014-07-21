@@ -95,6 +95,14 @@
         (set-boolean-preference "side tools" val)
         (show-side-tools n val))))
 
+(tm-define (toggle-visible-bottom-tools n)
+  (:synopsis "Toggle the visibility of the bottom tools.")
+  (:check-mark "v" visible-bottom-tools?)
+  (with val (not (visible-bottom-tools? n))
+    (if (and (== (windows-number) 1) (== n 0))
+        (set-boolean-preference "bottom tools" val)
+        (show-bottom-tools n val))))
+
 (tm-define (toggle-visible-icon-bar n)
   (:synopsis "Toggle the visibility of the @n-th icon bar.")
   (:check-mark "v" visible-icon-bar?)
@@ -116,12 +124,12 @@
       (begin
         (init-env "info-flag" saved-informative-flags)
         (full-screen-mode #f #f)
-	(fit-to-screen))
+        (fit-to-screen))
       (begin
         (set! saved-informative-flags (get-init-env "info-flag"))
         (init-env "info-flag" "none")
         (full-screen-mode #t #f)
-	(fit-to-screen-width))))
+        (fit-to-screen-width))))
 
 (tm-define (toggle-full-screen-edit-mode)
   (:synopsis "Toggle full screen edit mode.")
