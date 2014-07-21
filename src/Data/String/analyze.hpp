@@ -14,6 +14,7 @@
 #include "string.hpp"
 #include "array.hpp"
 #include "hashset.hpp"
+#include <string>
 
 class object;
 
@@ -155,5 +156,7 @@ path find_right_bracket (path p, const string& lbr, const string& rbr);
 array<string> as_completions (hashset<string> h);
 array<string> close_completions (array<string> a);
 array<string> strip_completions (array<string> a, string prefix);
+
+string std_string_to_string (std::string str);
 
 #endif // defined ANALYZE_H
