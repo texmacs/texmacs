@@ -6,7 +6,7 @@
   <tmdoc-title|Developers of <TeXmacs>>
 
   <\itemize>
-    <item>Massimiliano Gubinelli is responsable for the <name|Qt> port and
+    <item>Massimiliano Gubinelli is responsible for the <name|Qt> port and
     several improvements for the <name|MacOS X> platform.
 
     <item>Andrey Grozin has constantly helped us with many issues: interfaces
@@ -14,18 +14,17 @@
     manipulation of dictionaries, etc.
 
     <item>François Poulain has made significant improvements in the <LaTeX>
-    import and export converters, and he has contributed numerous other
-    patches.
+    import and export converters and has contributed numerous other patches.
 
     <item>David Allouche replaced the <name|gencc> preprocessor by the more
-    standard C++ template system. He also made many other patches, bug
+    standard <c++> template system. He also made many other patches, bug
     reports and he did a lot of the administration of <TeXmacs>.
 
     <item>Miguel de Benito Delgado works on the <name|Qt> port, the usage of
     <TeXmacs> to develop and browse its <name|Scheme> code and general
     improvements to the user experience.
 
-    <item>Denis Raux maintains the website, the mailing lists, and the
+    <item>Denis Raux maintains the website, the mailing lists and the
     <name|Windows> version.
 
     <item>Henri Lesourd developed a native mode for drawing technical
@@ -44,7 +43,7 @@
     <TeXmacs>, and he made many useful comments and suggestions.
 
     <item>Fabrice Rouillier provided help on a simplified <TeXmacs> installer
-    based on Cygwin.
+    based on <name|Cygwin>.
 
     <item>Nobuki Takayama invited me to Japan in order to add CJK support to
     <TeXmacs>. He also provided a lot of help with this task.
@@ -62,7 +61,7 @@
     performance of <TeXmacs>.
 
     <item>Sam Liddicott for several patches, including hyperlink support for
-    Pdf files.
+    <name|Pdf> files.
 
     <item>Zou Hu for his help on CJK support and the <name|Windows> port.
 
