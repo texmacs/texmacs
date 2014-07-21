@@ -1913,7 +1913,8 @@ as_hummus_string (string s) {
 
 static string
 prepare_text (string s) {
-  return string (as_hummus_string(s).ToString().c_str());
+  std::string r= as_hummus_string(s).ToString();
+  return std_string_to_string (r);
 }
 
 PDFHummus::EStatusCode
