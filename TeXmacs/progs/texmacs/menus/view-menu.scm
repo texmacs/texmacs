@@ -46,10 +46,12 @@
   ---
   ("Header" (toggle-visible-header))
   (when (visible-header?)
-	("Main icon bar" (toggle-visible-icon-bar 0))
-	("Mode dependent icons" (toggle-visible-icon-bar 1))
-	("Focus dependent icons" (toggle-visible-icon-bar 2))
-	("User provided icons" (toggle-visible-icon-bar 3)))
-  ("Side tools" (toggle-visible-side-tools 0))
-  ("Bottom tools" (toggle-visible-bottom-tools 0))
-  ("Status bar" (toggle-visible-footer)))
+        ("Main icon bar" (toggle-visible-icon-bar 0))
+        ("Mode dependent icons" (toggle-visible-icon-bar 1))
+        ("Focus dependent icons" (toggle-visible-icon-bar 2))
+        ("User provided icons" (toggle-visible-icon-bar 3)))
+  ("Status bar" (toggle-visible-footer))
+  (when #f ; Side tools are for now (v1.99.2) disabled.
+    ("Side tools" (toggle-visible-side-tools 0)))
+  (when #f ; Search bar cannot be toggled from here, remove the menu item?
+      ("Bottom tools" (toggle-visible-bottom-tools 0))))
