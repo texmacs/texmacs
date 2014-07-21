@@ -608,7 +608,15 @@ qt_apply_tm_style (QWidget* qwid, int style, color c) {
   a = a*100/255;
   QString sheet = "* {" + parse_tm_style (style)
   + QString("color: rgba(%1, %2, %3, %4%);").arg(r).arg(g).arg(b).arg(a)
-  + "}";
+  + "} ";
+
+#ifdef Q_WS_MAC
+    /* Disabled QLabels are not greyed out (at least in MacOS, since Qt 4.7.2), 
+     see: https://bugreports.qt-project.org/browse/QTBUG-19008
+     For consistency we set the disabled color for all widgets.
+     */
+  sheet += " :disabled { color: #7F7F7F; }";
+#endif
   qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
   qwid->setStyleSheet (sheet);
 }
