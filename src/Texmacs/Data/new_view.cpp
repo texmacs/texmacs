@@ -157,10 +157,13 @@ view_to_window (url u) {
   return abstract_window (vw->win);
 }
 
+void notify_delete_view (url u);
+
 editor
 view_to_editor (url u) {
   tm_view vw= concrete_view (u);
   if (vw == NULL) {
+    notify_delete_view (u); // HACK: returns to valid (?) state.
     failed_error << "View is " << u << "\n";
     FAILED ("View admits no editor");
   }
