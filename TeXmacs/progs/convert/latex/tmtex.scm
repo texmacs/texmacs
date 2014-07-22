@@ -429,6 +429,8 @@
 	       (cons (list 'backslash) (tmtex-math-list (cdr l))))
 ;;	      ((== c #\*) (cons '(*) (tmtex-math-list (cdr l))))
 	      ((== c #\*) (tmtex-math-list (cdr l)))
+	      ((== c #\') (append (list '(prime)) (tmtex-math-list (cdr l))))
+	      ((== c #\`) (append (list '(backprime)) (tmtex-math-list (cdr l))))
 ;;	      ((== c #\space) (tmtex-math-list (cdr l)))
 	      ((and (char-alphabetic? c)
 		    (nnull? (cdr l))
@@ -919,26 +921,6 @@
         (list cmd (tmtex (cadr l)))
         (list cmd (list '!option (tmtex (caddr l))) (tmtex (cadr l))))))
 
-(define (tmtex-prime-list l)
-  (if (null? l) l
-      (cond ((== (car l) #\<)
-	     (receive (p q) (list-break (cdr l) (lambda (c) (== c #\>)))
-	       (let ((next (if (null? q) '() (cdr q))))
-		 (cons (list '!sup (list (string->symbol (list->string p))))
-		       (tmtex-prime-list next)))))
-	    ((== (car l) #\') (cons "'" (tmtex-prime-list (cdr l))))
-	    ((== (car l) #\`)
-	     (cons (list '!sup (list 'backprime))
-		   (tmtex-prime-list (cdr l))))
-	    (else (cons (list '!sup (char->string (car l)))
-			(tmtex-prime-list (cdr l)))))))
-
-(define (tmtex-lprime l)
-  (tmtex (list 'concat (list 'text "") (list 'rprime (car l)))))
-
-(define (tmtex-rprime l)
-  (tex-concat (tmtex-prime-list (string->list (car l)))))
-
 (define (tmtex-below l)
   (list 'underset (tmtex (cadr l)) (tmtex (car l))))
 
@@ -946,10 +928,12 @@
   (list 'overset (tmtex (cadr l)) (tmtex (car l))))
 
 (define (tmtex-lsub l)
-  (tmtex (list 'concat (list 'text "") (list 'rsub (car l)))))
+  (tmtex (list
+           'concat (if (tmtex-math-mode?) '(!group) "") (list 'rsub (car l)))))
 
 (define (tmtex-lsup l)
-  (tmtex (list 'concat (list 'text "") (list 'rsup (car l)))))
+  (tmtex (list
+           'concat (if (tmtex-math-mode?) '(!group) "") (list 'rsup (car l)))))
 
 (define (tmtex-contains-table? x)
   (cond ((nlist? x) #f)
@@ -2321,8 +2305,8 @@
   (right tmtex-right)
   (big tmtex-big)
   (long-arrow tmtex-long-arrow)
-  (lprime tmtex-lprime)
-  (rprime tmtex-rprime)
+  (lprime tmtex-lsup)
+  (rprime tmtex-rsup)
   (below tmtex-below)
   (above tmtex-above)
   (lsub tmtex-lsub)
