@@ -1373,7 +1373,7 @@
   (list `(h:div (@ (class "tmdoc-license")) ,@(tmhtml (car l)))))
 
 (define (tmhtml-key l)
-  `((h:u (h:tt ,@(tmhtml (car l))))))
+  `((h:u (h:tt ,@(tmhtml (tm->stree (tmdoc-key (car l))))))))
 
 (define (tmhtml-tmdoc-bar? y)
   (or (func? y 'h:h1)
