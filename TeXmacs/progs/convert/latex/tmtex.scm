@@ -350,7 +350,9 @@
       (cons (tmtex-token-sub s group?) r))))
 
 (define (tmtex-text-sub head l)
-  (append (string->list head) (tmtex-text-list (cdr l))))
+  (if (string? head)
+    (append (string->list head) (tmtex-text-list (cdr l)))
+    (append (list head) (tmtex-text-list (cdr l)))))
 
 (define (tmtex-special-char? c)
   (string-index "#$%&_{}" c))
@@ -374,7 +376,7 @@
 		     (tmtex-text-list (cdr l))))
 	      ((== c #\~)  (tmtex-text-sub "\\~{}" l))
 	      ((== c #\^)  (tmtex-text-sub "\\^{}" l))
-	      ((== c #\\)  (tmtex-text-sub "{\\textbackslash}" l))
+	      ((== c #\\)  (tmtex-text-sub '(textbackslash) l))
 	      ((== c #\`)  (tmtex-text-sub "`" l))
 	      ((== c #\00) (tmtex-text-sub "\\`{}" l))
 	      ((== c #\01) (tmtex-text-sub "\\'{}" l))
@@ -393,11 +395,11 @@
 	      ((== c #\26) (tmtex-text-sub "---" l))
 	      ((== c #\27) (tmtex-text-sub "{}" l))
 	      ((== c #\33) (tmtex-text-sub "ff" l))
-	      ((== c #\34) (tmtex-text-sub "{\\textbackslash}" l))
+	      ((== c #\34) (tmtex-text-sub '(textbackslash) l))
 	      ((== c #\35) (tmtex-text-sub "fl" l))
 	      ((== c #\36) (tmtex-text-sub "ffi" l))
 	      ((== c #\37) (tmtex-text-sub "ffl" l))
-	      ((== c #\174) (tmtex-text-sub "{\\textbar}" l))
+	      ((== c #\174) (tmtex-text-sub '(textbar) l))
 	      (else
 		(append
                   (if (or tmtex-use-unicode? tmtex-use-ascii?)
