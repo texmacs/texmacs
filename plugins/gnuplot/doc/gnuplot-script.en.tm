@@ -20,11 +20,11 @@
   unevaluated input and the evaluated output. For more complex scripts, you
   can use <shortcut|(kbd-shift-return)> to enable multi-line input.
 
-  You may also insert <em|executable input fields> using
-  <shortcut|(make-calc-input)> or <menu|Insert|Link|Executable input field>.
-  After pressing <key|return>, the contents are evaluated and you will see
-  the corresponding output. Pressing <key|return> \ again you switch back to
-  the input.
+  Additionally, after selecting <menu|Document|Scripts|Gnuplot> you may also
+  insert <em|executable input fields> using <shortcut|(make-calc-input)> or
+  <menu|Insert|Link|Executable input field>. After pressing <key|return>, the
+  contents are evaluated and you will see the corresponding output. Pressing
+  <key|return> \ again you switch back to the input.
 
   See the <TeXmacs> documentation for more on this topic.
 
