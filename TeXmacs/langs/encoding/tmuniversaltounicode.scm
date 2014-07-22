@@ -672,6 +672,7 @@
 ("<ntriangleright>"	"#22EB")
 ("<ntrianglelefteq>"	"#22EC")
 ("<ntrianglerighteq>"	"#22ED")
+("<ldots>"		"#2026")
 ("<vdots>"		"#22EE")
 ("<cdots>"		"#22EF")
 ("<udots>"		"#22F0")
