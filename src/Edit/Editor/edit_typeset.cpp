@@ -504,8 +504,12 @@ value_to_compound (tree t, hashmap<string,tree> h) {
 tree
 edit_typeset_rep::exec_latex (tree t, path p) {
   t= convert_OTS1_symbols_to_universal_encoding (t);
-  string pref= "texmacs->latex:expand-macros";
-  if (as_string (call ("get-preference", pref)) != "on") return t;
+  bool expand_unknown_macros= "on" == as_string (
+      call ("get-preference", "texmacs->latex:expand-macros"));
+  bool expand_user_macro= "on" == as_string (
+      call ("get-preference", "texmacs->latex:expand-user-macros"));
+  if (!expand_unknown_macros && !expand_user_macro)
+    return t;
   if (p == (rp * 0)) typeset_preamble ();
   typeset_exec_until (p);
   hashmap<string,tree> H= copy (cur[p]);
@@ -515,14 +519,19 @@ edit_typeset_rep::exec_latex (tree t, path p) {
   tree patch= as_tree (call ("stree->tree", call ("tmtex-env-patch", t, l)));
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
-  if (is_document (t) && is_compound (t[0], "hide-preamble")) {
+
+  if (!expand_user_macro &&
+      is_document (t) && is_compound (t[0], "hide-preamble")) {
     tree r= copy (t);
     r[0]= "";
     r= exec (value_to_compound (r, P), H, false);
     r[0]= exec (t[0], H, false);
     return r;
   }
-  else return exec (value_to_compound (t, P), H, false);
+  else {
+    tree r= exec (value_to_compound (t, P), H, false);
+    return r;
+  }
 }
 
 tree
