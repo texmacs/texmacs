@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.2>
 
 <style|<tuple|tmdoc|english>>
 
@@ -30,7 +30,7 @@
   <\description-long>
     <item*|<menu|Replace unrecognized styles>>This option (which is set by
     default) tells <TeXmacs> to replace style files with no <LaTeX>
-    equivalents by the <verbatim|letter> style. Furthermore, all additional
+    equivalents by the <verbatim|article> style. Furthermore, all additional
     style packages are ignored.
 
     In the case when you know how to <hlink|write your own style
@@ -154,6 +154,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<initial|<\collection>
-</collection>>
