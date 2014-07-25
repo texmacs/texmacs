@@ -8,18 +8,18 @@
   A <TeXmacs> document can be exported to <LaTeX> using
   <menu|File|Export|LaTeX>. \ In the case of certain journal styles like
   <verbatim|svjour> or <verbatim|elsart>, the user should also make sure that
-  the appropriate style files can be found by<nbsp><LaTeX>, when compiling
-  the result of the conversion. Please consult your<nbsp><LaTeX>
-  documentation for how to do this; one solution which usually works is to
-  put the style file in the same directory as your file.
+  the appropriate style files can be found by <LaTeX>, when compiling the
+  result of the conversion. Please consult your <LaTeX> documentation for how
+  to do this; one solution which usually works is to put the style file in
+  the same directory as your file.
 
   Notice that the exportation of a <TeXmacs> document with images may cause
   the creation of additional image files. If your destination file is called
   <verbatim|name.tex>, these files are named <verbatim|name-1.eps>,
   <rigid|<verbatim|name-2.eps>>, <abbr|etc.> and they are stored in the same
-  directory. In particular, all pictures drawn with the editor, and all
-  images which are not already in <name|Postscript> format, will be converted
-  to encapsulated <name|Postscript> files.
+  directory. In particular, all pictures drawn with the editor and all images
+  which are not already in <name|Postscript> format will be converted to
+  encapsulated <name|Postscript> files.
 
   In order to ensure that the generated <LaTeX> document compiles, style
   files and packages or macros with no <LaTeX> equivalents are either ignored
@@ -33,9 +33,9 @@
     equivalents by the <verbatim|article> style. Furthermore, all additional
     style packages are ignored.
 
-    In the case when you know how to <hlink|write your own style
-    files|../../../devel/style/style.en.tm>, then you might wish to create
-    <TeXmacs> equivalents of certain journal styles which you often use.
+    In case you know how to <hlink|write your own style
+    files|../../../devel/style/style.en.tm>, you might wish to create
+    <TeXmacs> equivalents of those journal styles which you use often.
     Similarly, you might wish to create a style package with your own macros
     together with its <LaTeX> counterpart. In both cases, you might want to
     disable the style replacement option.
@@ -87,31 +87,32 @@
 
     <item*|Dump <TeXmacs> document into <LaTeX> code>When this option is set,
     a copy of the <TeXmacs> document is appended to the <LaTeX> export in a
-    lossless kind. This allows to re-import the document with as less as
-    possible conversion artefacts.
+    lossless kind. This allows to re-import the document with as few
+    conversion artifacts as possible .
 
-    <item*|Character encoding>This define the behavior of the converter with
-    respect to characters encoding. There is three possible choices:
+    <item*|Character encoding>This option defines the behavior of the
+    converter with respect to character encoding. There are three possible
+    choices:
 
     <\description>
       <item*|Utf-8 with inputenc>This will generate <verbatim|utf-8> document
-      with the package <verbatim|inputenc> loaded. If, for any reason, you
-      don't want to rely on <verbatim|inputenc>, you should consider others
+      with the package <verbatim|inputenc> loaded. If for any reason you
+      don't want to rely on <verbatim|inputenc>, you should consider other
       options.
 
-      <item*|Cork with catcodes>This keep the accented characters ``as is''.
-      This can be achieved by allowing <TeXmacs> to put additional catcode
-      definitions into your preamble. This provides a good trade-off between
-      readability (accented characters are kept in a 8 bit charset) and
-      simplicity (you don't need the <verbatim|inputenc> package).
+      <item*|Cork with catcodes>Keeps accented characters ``as is''. This can
+      be achieved by allowing <TeXmacs> to put additional catcode definitions
+      into your preamble. This provides a good trade-off between readability
+      (accented characters are kept in an 8 bit charset) and simplicity (you
+      don't need the <verbatim|inputenc> package).
 
-      <item*|Ascii>This will generate pure ascii characters, using plain
-      <TeX> sequencies to compose non-ascii symbols.
+      <item*|Ascii>This will generate pure <name|ascii> characters, using
+      plain <TeX> sequencies to compose non-<name|ascii> symbols.
     </description>
   </description-long>
 
   Sometimes, the converter does not produce a satisfactory <LaTeX> file even
-  after some twiddling with the above preferences. The most frequent problem
+  after some tinkering with the above preferences. The most frequent problem
   concerns bad line breaks. Occasionally, certain document fragments are also
   better converted by hand. In order to minimize the need for corrections in
   the generated <LaTeX> file (which would be lost when re-exporting the
@@ -154,3 +155,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
