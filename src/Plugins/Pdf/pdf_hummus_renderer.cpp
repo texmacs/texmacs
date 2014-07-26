@@ -367,7 +367,6 @@ pdf_hummus_renderer_rep::next_page () {
 void
 pdf_hummus_renderer_rep::begin_page() {
   //EStatusCode status;
-  
 
   page = new PDFPage();
   page->SetMediaBox(PDFRectangle(0,0,width,height));
@@ -375,25 +374,25 @@ pdf_hummus_renderer_rep::begin_page() {
   if (NULL == contentContext) {
     //status = PDFHummus::eFailure;
     convert_error << "Failed to create content context for page\n";
+  } else {
+    alpha = 255;
+    fg  = -1;
+    bg  = -1;
+    lw  = -1;
+    current_width = -1.0;
+    cfn= "";
+    cfid = NULL;
+    inText = false;
+    clip_level = 0;
+    
+      // outmost save of the graphics state
+    contentContext->q();
+      // set scaling suitable for dpi (pdf default is 72)
+    contentContext->cm((double)default_dpi / dpi, 0, 0, (double)default_dpi / dpi, 0, 0);
+    
+    set_origin (0, paper_h*dpi*pixel/2.54);
+    set_clipping (0, (int) ((-dpi*pixel*paper_h)/2.54), (int) ((dpi*pixel*paper_w)/2.54), 0);
   }
-  
-  alpha = 255;
-  fg  = -1;
-  bg  = -1;
-  lw  = -1;
-  current_width = -1.0;
-  cfn= "";
-  cfid = NULL;
-  inText = false;
-  clip_level = 0;
-
-  // outmost save of the graphics state
-  contentContext->q();
-  // set scaling suitable for dpi (pdf default is 72)
-  contentContext->cm((double)default_dpi / dpi, 0, 0, (double)default_dpi / dpi, 0, 0);
-  
-  set_origin (0, paper_h*dpi*pixel/2.54);
-  set_clipping (0, (int) ((-dpi*pixel*paper_h)/2.54), (int) ((dpi*pixel*paper_w)/2.54), 0);
 }
 
 void
