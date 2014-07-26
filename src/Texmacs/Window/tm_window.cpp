@@ -200,6 +200,7 @@ public:
 void
 close_embedded_command_rep::apply () {
   //cout << "Destroy " << vw->buf->buf->name << "\n";
+  ASSERT (!is_nil(vw->ed), "embedded command acting on deleted editor");
   url foc= abstract_window (vw->ed->mvw->win);
   if (is_none (foc)) {
     array<url> a= windows_list ();
