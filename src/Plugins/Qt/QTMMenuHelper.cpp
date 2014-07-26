@@ -1079,12 +1079,18 @@ QTMListView::QTMListView (const command& cmd,
   setSelectionMode (multiple ? ExtendedSelection : SingleSelection);
   setEditTriggers (NoEditTriggers);
 
+    // NOTE: using selectionModel()->select(item, QItemSelection::SelectCurrent)
+    // doesn't update the selection but overwrites it, so we explicitly define
+    // our QItemSelection and use merge()
+  QItemSelection sel;
   for (int i = 0; i < model()->rowCount(); ++i) {
     QModelIndex item = model()->index (i, 0);
-    if (selections.contains (model()->data (item, Qt::DisplayRole).toString(), Qt::CaseSensitive))
-      selectionModel()->select (item, QItemSelectionModel::SelectCurrent);
+    if (selections.contains (model()->data (item, Qt::DisplayRole).toString(),
+                             Qt::CaseSensitive))
+      sel.merge (QItemSelection(item, item), QItemSelectionModel::Select);
   }
-
+  selectionModel()->select (sel, QItemSelectionModel::Select);
+  
   if (!scroll) {
     setMinimumWidth (sizeHintForColumn(0));
     setMinimumHeight (sizeHintForRow(0) * model()->rowCount());
