@@ -212,7 +212,7 @@ compound_font_rep::get_left_slope  (string s) {
 
 double
 compound_font_rep::get_right_slope (string s) {
-  int i=0, n= N(s), nr;
+  int i=0, n= N(s), nr=0;
   if (n == 0) return fn[0]->get_right_slope (s);
   string r= s;
   while (i<n) advance (s, i, r, nr);
@@ -232,7 +232,7 @@ compound_font_rep::get_left_correction  (string s) {
 
 SI
 compound_font_rep::get_right_correction (string s) {
-  int i=0, n= N(s), nr;
+  int i=0, n= N(s), nr=0;
   if (n == 0) return fn[0]->get_right_correction (s);
   string r= s;
   while (i<n) advance (s, i, r, nr);
