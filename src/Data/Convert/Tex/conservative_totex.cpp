@@ -219,9 +219,9 @@ texmacs_invarianted_merge (tree t, string src,
             is_compound (r[N(r)-1], "ilx", 1) &&
             is_compound (t[i], "ilx", 1)) {
           int b1, e1, b2, e2;
-          get_range (r[N(r)-1][0], b1, e1, src);
-          get_range (t[i][0], b2, e2, src);
-          if (e1 <= b2) {
+          bool ok = get_range (r[N(r)-1][0], b1, e1, src);
+          ok = get_range (t[i][0], b2, e2, src) || ok;
+          if (ok && e1 <= b2) {
             skip_latex_spaces (src, e1);
             if (e1 >= b2) {
               string id= as_string (b1) * ":" * as_string (e2);
