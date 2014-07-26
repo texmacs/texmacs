@@ -39,12 +39,12 @@ QTMPipeLink::readErrOut () {
 QTMPipeLink::QTMPipeLink (string cmd2) : cmd (cmd2), outbuf (""), errbuf ("") {}
 
 QTMPipeLink::~QTMPipeLink () {
-  killProcess ();
+  killProcess (1000);
 }
 
 bool
 QTMPipeLink::launchCmd () {
-  if (state () != QProcess::NotRunning) killProcess ();
+  if (state () != QProcess::NotRunning) killProcess (1000);
   //FIXME: is UTF8 the right encoding here?
   QProcess::start(utf8_to_qstring(cmd));
   bool r= waitForStarted ();
@@ -80,14 +80,15 @@ QTMPipeLink::listenChannel (ProcessChannel channel, int msecs) {
 }
 
 void
-QTMPipeLink::killProcess () {
+QTMPipeLink::killProcess (int msecs) {
   disconnect (SIGNAL(readyReadStandardOutput ()), this, SLOT(readErrOut ()));
   disconnect (SIGNAL(readyReadStandardError ()), this, SLOT(readErrOut ()));
 #if defined(__MINGW__) || defined(__MINGW32__)
+  (void) msec;
   close ();
 #else
   terminate ();
-  if (! waitForFinished ()) kill ();
+  if (! waitForFinished (msecs)) kill ();
 #endif
 }
 

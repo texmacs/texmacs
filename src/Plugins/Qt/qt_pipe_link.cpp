@@ -84,7 +84,7 @@ qt_pipe_link_rep::write (string s, int channel) {
   if ((!alive) || (channel != LINK_IN)) return;
   if (-1 == PipeLink.writeStdin (s)) {
     io_error << "Error: cannot write to '" << PipeLink.cmd << "'\n";
-    PipeLink.killProcess ();
+    stop();
   }
 }
 
@@ -151,7 +151,7 @@ qt_pipe_link_rep::interrupt () {
 
 void
 qt_pipe_link_rep::stop () {
-  PipeLink.killProcess ();
+  PipeLink.killProcess (0);
   alive= false;
 }
 

@@ -40,7 +40,7 @@ public:
   int  writeStdin (string s);
   void feedBuf (ProcessChannel);
   bool listenChannel (ProcessChannel, int msecs);
-  void killProcess ();
+  void killProcess (int msecs);
 };
 
 #endif // QTM_PIPE_LINK
