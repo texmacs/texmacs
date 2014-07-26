@@ -129,6 +129,7 @@ EStatusCode TrueTypeEmbeddedFontWriter::CreateTrueTypeSubset(	FreeTypeFaceWrappe
 
 		if(mTrueTypeInput.GetOpenTypeFontType() != EOpenTypeTrueType)
 		{
+			status = PDFHummus::eFailure;
 			TRACE_LOG("TrueTypeEmbeddedFontWriter::CreateTrueTypeSubset, font file is not true type, so there is an exceptions here. expecting true types only");
 			break;
 		}
