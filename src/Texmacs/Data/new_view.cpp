@@ -127,9 +127,20 @@ get_current_view_safe () {
   return abstract_view (the_view);
 }
 
+void notify_delete_view (url u);
+
 editor
 get_current_editor () {
-  tm_view vw= concrete_view (get_current_view ());
+  url u= get_current_view();
+  tm_view vw= concrete_view (u);
+  if (vw == NULL) { // HACK: shouldn't happen!
+    FAILED ("Current view is NULL");
+    notify_delete_view (u);
+    array<url> history = get_all_views();
+    if (history == NULL || N(history) == 0)
+      FAILED("View history is empty")
+    return view_to_editor (history[N(history)-1]);
+  }
   return vw->ed;
 }
 
@@ -156,8 +167,6 @@ view_to_window (url u) {
   if (vw == NULL) return url_none ();
   return abstract_window (vw->win);
 }
-
-void notify_delete_view (url u);
 
 editor
 view_to_editor (url u) {
