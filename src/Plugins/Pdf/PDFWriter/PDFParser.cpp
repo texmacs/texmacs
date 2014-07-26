@@ -1466,7 +1466,7 @@ EStatusCode PDFParser::ParseXrefFromXrefStream(XrefEntryInput* inXrefTable,
                 {
                     inXrefTable = ExtendXrefTableToSize(inXrefTable,inXrefSize,readXrefSize);
                     inXrefSize = readXrefSize;
-                    if(*outExtendedTable)
+                    if(outExtendedTable && *outExtendedTable)
                         delete[] *outExtendedTable;
                     *outExtendedTable = inXrefTable;
                     *outExtendedTableSize = readXrefSize;
