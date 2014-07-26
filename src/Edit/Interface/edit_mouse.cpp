@@ -456,7 +456,7 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     (type == "move" || type == "dragging-left" || type == "dragging-right");
   if ((!move_like) || (is_attached (this) && !check_event (MOTION_EVENT)))
     update_mouse_loci ();
-  if (type == "move")
+  if (!is_nil (mouse_ids) && type == "move")
     call ("link-follow-ids", object (mouse_ids), object ("mouse-over"));
 
   if (type == "leave")
