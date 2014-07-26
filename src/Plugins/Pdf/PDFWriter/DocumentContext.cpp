@@ -932,6 +932,8 @@ EStatusCode DocumentContext::WriteResourcesDictionary(ResourcesDictionary& inRes
 
 		// Color space
         status = WriteResourceDictionary(&inResourcesDictionary,resourcesContext,scColorSpaces,inResourcesDictionary.GetColorSpacesIterator());
+        if(status!=eSuccess)
+            break;
 	
 		// Patterns
         status = WriteResourceDictionary(&inResourcesDictionary,resourcesContext,scPatterns,inResourcesDictionary.GetPatternsIterator());
