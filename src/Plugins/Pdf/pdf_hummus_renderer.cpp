@@ -418,6 +418,10 @@ pdf_hummus_renderer_rep::end_page(){
   
   EStatusCodeAndObjectIDType res = pdfWriter.GetDocumentContext().WritePageAndRelease(page);
   status = res.first;
+  if (status != PDFHummus::eSuccess) {
+    convert_error << "Failed to write page and release\n";
+  }
+
   page_id (page_num) = res.second;
   page_num++;
 }
