@@ -982,6 +982,9 @@ escape_sh (string s) {
     case ' ':
       r << '\\' << s[i];
       break;
+    case '\n':
+      r << "\\n";
+      break;
     default:
       r << s[i];
     }
