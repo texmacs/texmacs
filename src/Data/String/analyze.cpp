@@ -13,7 +13,6 @@
 #include "merge_sort.hpp"
 #include "converter.hpp"
 #include "scheme.hpp"
-#include <string>
 
 /******************************************************************************
 * Tests for caracters
@@ -1637,17 +1636,4 @@ strip_completions (array<string> a, string prefix) {
     if (starts (a[i], prefix))
       b << a[i] (N(prefix), N(a[i]));
   return b;
-}
-
-/******************************************************************************
-* Conversions between strings and std::string
-******************************************************************************/
-
-string
-std_string_to_string (std::string str) {
-  string r;
-  for (std::string::iterator it=str.begin(); it!=str.end(); ++it) {
-    r << *it;
-  }
-  return r;
 }

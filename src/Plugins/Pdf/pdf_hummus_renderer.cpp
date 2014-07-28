@@ -1901,10 +1901,18 @@ pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
   }
 }
 
-
 /******************************************************************************
- * hyperlinks
- ******************************************************************************/
+* Conversions between strings and std::string
+******************************************************************************/
+
+string
+std_string_to_string (std::string str) {
+  string r;
+  for (std::string::iterator it=str.begin(); it!=str.end(); ++it) {
+    r << *it;
+  }
+  return r;
+}
 
 static PDFTextString
 as_hummus_string (string s) {
@@ -1919,6 +1927,10 @@ prepare_text (string s) {
   std::string r= as_hummus_string(s).ToString();
   return std_string_to_string (r);
 }
+
+/******************************************************************************
+ * hyperlinks
+ ******************************************************************************/
 
 PDFHummus::EStatusCode
 pdf_hummus_renderer_rep::on_catalog_write (CatalogInformation* inCatalogInformation,
