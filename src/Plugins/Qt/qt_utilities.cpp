@@ -72,10 +72,12 @@ to_qfont (int style, QFont font) {
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     font.setPointSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
   }
-  if (style & WIDGET_STYLE_MONOSPACED)  // Use monospaced font
-    font.setFixedPitch (true);     //FIXME?
-//if (style & WIDGET_STYLE_GREY)      // use grey text font
-//    font.set += "color: #414141";
+  if (style & WIDGET_STYLE_MONOSPACED) {  // Use monospaced font
+    font.setFixedPitch (true);        //FIXME: ignored for fonts in QActions
+    font.setStyleHint (QFont::Monospace);
+  }
+  if (style & WIDGET_STYLE_GREY)      // use grey text font
+    font.setWeight (QFont::Light);    // FIXME: this is only an approximation
   if (style & WIDGET_STYLE_PRESSED)   // Button is currently pressed
     {}
   if (style & WIDGET_STYLE_INERT)     // Only render, don't associate any action
@@ -85,7 +87,6 @@ to_qfont (int style, QFont font) {
   if (style & WIDGET_STYLE_BOLD)
     font.setBold(true);
   return font;
-
 }
 
 /*! Try to convert a TeXmacs lenght (em, px, w, h) into a QSize.
