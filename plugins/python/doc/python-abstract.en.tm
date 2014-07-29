@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.2>
 
 <style|tmdoc>
 
@@ -21,7 +21,8 @@
   and pointers to many free third party <name|Python> modules, programs and
   tools, and additional documentation.
 
-  <tmdoc-copyright|2004|Enro Carrera|Adrián Soto>
+  <tmdoc-copyright|2004, 2014|Enro Carrera|Adrián Soto, Miguel de Benito
+  Delgado>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

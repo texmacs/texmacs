@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.2>
 
 <style|tmdoc>
 
@@ -6,16 +6,17 @@
   <tmdoc-title|The Python plugin>
 
   <\traverse>
-    <branch|Abstract|python-abstract.en.tm>
+    <branch|Introduction|python-abstract.en.tm>
 
     <branch|How to use this plugin|python-instructions.en.tm>
 
-    <branch|Simple Example|python-demo.en.tm>
+    <branch|Some examples|python-demo.en.tm>
 
-    <branch|Limitations|python-limitations.en.tm>
+    <branch|Limitations and things to do|python-limitations.en.tm>
   </traverse>
 
-  <tmdoc-copyright|2004|Ero Carrera|Adrián Soto>\ 
+  <tmdoc-copyright|2004, 2014|Ero Carrera|Adrián Soto, Miguel de Benito
+  Delgado>\ 
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
