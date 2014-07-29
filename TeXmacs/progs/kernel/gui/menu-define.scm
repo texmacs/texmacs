@@ -215,6 +215,10 @@
   (require-format x '(grey :*))
   `($widget-style ,widget-style-grey ,@(map gui-make (cdr x))))
 
+(define (gui-make-monospaced x)
+  (require-format x '(mono :*))
+  `($widget-style ,widget-style-monospaced ,@(map gui-make (cdr x))))
+
 (define (gui-make-tile x)
   (require-format x '(tile :integer? :*))
   `($tile ,(cadr x) ,@(map gui-make (cddr x))))
@@ -376,6 +380,7 @@
   (explicit-buttons ,gui-make-explicit-buttons)
   (bold ,gui-make-bold)
   (grey ,gui-make-grey)
+  (mono ,gui-make-monospaced)
   (tile ,gui-make-tile)
   (scrollable ,gui-make-scrollable)
   (resize ,gui-make-resize)
