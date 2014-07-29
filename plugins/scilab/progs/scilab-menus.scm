@@ -69,17 +69,18 @@
 (menu-bind scilab-insert-menu
   (-> "Insert"))
 
-;(menu-bind scilab-demo-menu
-;  (-> "Demo"))
+(menu-bind scilab-demo-menu
+  (-> "Demo"))
 
 ;(menu-bind scilab-help-menu
 ;  (-> "Help"))
 
 (menu-bind scilab-menu
-      (if (defined? 'scilab-demo-menu)
+      (if (defined-menu? 'scilab-demo-menu)
         (link scilab-demo-menu))
       (if (defined-menu? 'scilab-insert-menu)
         (link scilab-insert-menu))
+      ---
       (if (defined? 'scilab-help-menu)
         (link scilab-help-menu)))
 
@@ -88,6 +89,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texmacs-extra-menu
+  (former)
   (if (in-scilab?)
       (=> "Scilab"
 	  (link scilab-menu))))

@@ -18,13 +18,12 @@
     (string-append "scilab_complete (\"" s "\", " (number->string n) ")\n")))
 
 (define (scilab-launcher)
-  (string-append
-    (if (os-mingw?)
-      "Scilex --texmacs -texmacs"
-      "scilab --texmacs")
-    " -f "
-    (url-concretize
-      (unix->url "$TEXMACS_PATH/plugins/scilab/bin/init-scilab.sce"))))
+  (with path "$TEXMACS_PATH/plugins/scilab/bin/init-scilab.sce"
+    (string-append
+     (if (os-mingw?)
+         "Scilex --texmacs -texmacs"
+         "scilab --texmacs")
+     " -f \"" (url-concretize (unix->url path)) "\"")))
 
 (plugin-configure scilab
   (:macpath "scilab*" "Contents/MacOS/bin")
@@ -48,6 +47,10 @@
 
 (when (supports-scilab?)
   (import-from (scilab-menus))
+  (with f (url-concretize 
+           "$TEXMACS_PATH/plugins/scilab/bin/scilab-demo.sce")
+    (if (url-exists? f)
+        (scilab-add-to-demo-menu `("Basics" ,f))))
   (kbd-map
     (:mode in-scilab?)
     ("$" "$")))
