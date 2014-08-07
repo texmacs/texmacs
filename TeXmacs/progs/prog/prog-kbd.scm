@@ -19,9 +19,11 @@
 
 (kbd-map
   (:mode in-prog?)
-  ("cmd i" (program-indent))
-  ("cmd tab" (program-indent))
-  ("cmd A-tab" (program-indent-all))
+  ("cmd i" (program-indent #f))
+  ("cmd I" (program-indent #t)) ; TODO
+  ("cmd tab" (program-indent #f))
+  ("cmd S-tab" (program-indent #t)) ; TODO
+  ("cmd A-tab" (program-indent-all #f))
   ; rewrite some text mode shortcuts
   ("space var" (insert-tabstop))
   ("space var var" (begin (insert-tabstop) (insert-tabstop)))
@@ -61,9 +63,16 @@
   ("]" (cpp-bracket-close "[" "]" ))
   ("\"" (cpp-bracket-open "\"" "\"" )))
 
+;HACK: should rewrite program-indent-line to accept unindent
+(define (remove-tabstop)
+  (with w (get-tabstop)
+    (with c (program-get-indent)
+      (if (>= c w) (program-set-indent (- c w))))))
+
 (kbd-map
   (:mode in-prog-python?)
   ("tab" (insert-tabstop))
+  ("S-tab" (remove-tabstop))
   ("{" (python-bracket-open "{" "}" ))
   ("}" (python-bracket-close "{" "}" ))
   ("(" (python-bracket-open "(" ")" ))

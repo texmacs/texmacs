@@ -225,26 +225,27 @@
 (tm-define (program-compute-indentation doc row col)
   0)
 
-(tm-define (program-indent-line doc row)
+(tm-define (program-indent-line doc row unindent?)
+  ; TODO: implement unindent for general languages
   (let* ((i (program-compute-indentation doc row -1))
          (t (tree-ref doc row)))
     ; HACK: I should change program-set-indent to accept line numbers
     (tree-set t (string-set-indent (tree->string t) i))
     i))
 
-(tm-define (program-indent-all)
+(tm-define (program-indent-all unindent?)
   (:synopsis "indent a whole program")
   (and-with doc (program-tree)
-    (for-each (lambda (r) (program-indent-line doc r))
+    (for-each (lambda (r) (program-indent-line doc r unindent?))
               (iota (tree-arity doc)))))
 
-(tm-define (program-indent)
+(tm-define (program-indent unindent?)
   (and-with doc (program-tree)
     (let* ((r (program-row-number))
-           (c (program-indent-line doc r)))
+           (c (program-indent-line doc r unindent?)))
       (program-go-to r c))))
 
 (tm-define (insert-return)
   (:mode in-prog?)
   (insert-raw-return)
-  (program-indent))
+  (program-indent #f))
