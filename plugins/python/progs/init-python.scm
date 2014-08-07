@@ -11,6 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-modules (dynamic session-edit) (dynamic program-edit))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plugin configuration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -41,6 +43,9 @@
   (:serializer ,python-serialize)
   (:session "Python")
   (:scripts "Python"))
+
+(set-session-multiline-input "python" "default" #t)
+(set-program-multiline-input "python" "default" #t)
 
 (when (supports-python?)
   (import-from (python-widgets) (python-menus)))

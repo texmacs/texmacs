@@ -58,6 +58,9 @@
 (tm-define (program-multiline-input?)
   (ahash-ref program-multiline-input (program-key)))
 
+(tm-define (set-program-multiline-input lan ses set?)
+  (ahash-set! program-multiline-input (cons lan ses) set?))
+
 (tm-define (toggle-program-multiline-input)
   (:synopsis "Toggle multi-line input in programs.")
   (:check-mark "v" program-multiline-input?)

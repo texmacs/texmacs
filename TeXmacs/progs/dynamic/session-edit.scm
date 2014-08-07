@@ -57,6 +57,9 @@
 (tm-define (session-multiline-input?)
   (ahash-ref session-multiline-input (session-key)))
 
+(tm-define (set-session-multiline-input lan ses set?)
+  (ahash-set! session-multiline-input (cons lan ses) set?))
+
 (tm-define (toggle-session-multiline-input)
   (:synopsis "Toggle multi-line input in sessions.")
   (:check-mark "v" session-multiline-input?)
