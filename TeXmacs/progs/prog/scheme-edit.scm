@@ -127,7 +127,8 @@
   (with s (tree->string (tree-ref doc (car a)))
     (tm-count (string->list (substring s 0 (cdr a))) 1)))
 
-(define (compute-indentation doc row col)
+(tm-define (program-compute-indentation doc row col)
+  (:require in-prog-scheme?)
   (let* ((l (previous-arguments doc row col 10))
          (t (reference-type doc l))
          (i (indent-get-arity t))
@@ -140,31 +141,6 @@
           (else (get-offset doc a)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User interface for automatic indentation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (scheme-line-indent doc line)
-  (:synopsis "indent @line of scheme program @doc")
-  (let* ((i (compute-indentation doc line -1))
-         (t (tree-ref doc line)))
-    ; HACK: I should change program-set-indent to accept line numbers
-    (tree-set t (string-set-indent (tree->string t) i))
-    i))
-
-(tm-define (scheme-program-indent)
-  (:synopsis "indent a scheme program")
-  (and-with doc (program-tree)
-    (for-each (lambda (i) (scheme-line-indent doc i))
-              (iota (tree-arity doc)))))
-
-(tm-define (scheme-indent)
-  (:synopsis "indent current line of a scheme program")
-  (and-with doc (program-tree)
-    (let* ((i (program-row-number))
-           (j (scheme-line-indent doc i)))
-      (program-go-to i j))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for autocompletion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -172,11 +148,6 @@
   (:mode in-prog-scheme?)
   (if (not scheme-completions-built?) (scheme-completions-rebuild))
   (custom-complete (tm->tree (scheme-completions (cursor-word)))))
-
-(tm-define (insert-return)
-  (:mode in-prog-scheme?)
-  (insert-raw-return)
-  (scheme-indent))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic insertion, highlighting and selection of brackets and quotes

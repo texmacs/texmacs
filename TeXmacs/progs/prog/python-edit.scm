@@ -15,18 +15,16 @@
   (:use (prog prog-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User interface for autocompletion
+;; Automatic indentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;(tm-define (kbd-variant t forwards?)
-;  (:mode in-prog-python?)
-;  (if (not python-completions-built?) (python-completions-rebuild))
-;  (custom-complete (tm->tree (python-completions (cursor-word)))))
-
-;(tm-define (insert-return)
-;  (:mode in-prog-python?)
-;  (insert-raw-return)
-;  (python-indent))
+(tm-define (program-compute-indentation doc row col)
+  (:mode in-prog-python?)
+  (if (<= row 0) 0
+      (let* ((s (program-row (- row 1)))
+             (i (string-get-indent s))
+             (c (if (== s "") "" (string-take-right s 1))))
+        (if (== c ":") (+ i (get-tabstop)) i))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic insertion, highlighting and selection of brackets and quotes

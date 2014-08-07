@@ -180,6 +180,24 @@
 (tm-define (string-whitespace? s)
   (:synopsis "does @s only contain whitespace?")
   (list-and (map char-whitespace? (string->list s))))
+      
+(tm-define (get-tabstop)
+  (with tabstop* (get-preference "editor:verbatim:tabstop")
+    (cond ((and (string? tabstop*) (string->number tabstop*))
+           (string->number tabstop*))
+          ((and (number? tabstop*) (> tabstop* 0)) tabstop*)
+          (else (set-message
+                 `(replace "Wrong tabstop: %1" ,tabstop*) "User preferences")
+                8))))
+
+(tm-define (insert-tabstop)
+  (with w (get-tabstop)
+    (with fill (- w (remainder (cAr (cursor-path)) w))
+      (if (> fill 0) (insert (make-string fill #\space))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Automatic indentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (string-get-indent s)
   (:synopsis "get the indentation of @s")
@@ -202,17 +220,31 @@
   (when (inside-program?)
     (with t (cursor-tree)
       (tree-set t (string-set-indent (tree->string t) i)))))
-      
-(tm-define (get-tabstop)
-  (with tabstop* (get-preference "editor:verbatim:tabstop")
-    (cond ((and (string? tabstop*) (string->number tabstop*))
-           (string->number tabstop*))
-          ((and (number? tabstop*) (> tabstop* 0)) tabstop*)
-          (else (set-message
-                 `(replace "Wrong tabstop: %1" ,tabstop*) "User preferences")
-                8))))
 
-(tm-define (insert-tabstop)
-  (with w (get-tabstop)
-    (with fill (- w (remainder (cAr (cursor-path)) w))
-      (if (> fill 0) (insert (make-string fill #\space))))))
+; Redefine this for specific languages
+(tm-define (program-compute-indentation doc row col)
+  0)
+
+(tm-define (program-indent-line doc row)
+  (let* ((i (program-compute-indentation doc row -1))
+         (t (tree-ref doc row)))
+    ; HACK: I should change program-set-indent to accept line numbers
+    (tree-set t (string-set-indent (tree->string t) i))
+    i))
+
+(tm-define (program-indent-all)
+  (:synopsis "indent a whole program")
+  (and-with doc (program-tree)
+    (for-each (lambda (r) (program-indent-line doc r))
+              (iota (tree-arity doc)))))
+
+(tm-define (program-indent)
+  (and-with doc (program-tree)
+    (let* ((r (program-row-number))
+           (c (program-indent-line doc r)))
+      (program-go-to r c))))
+
+(tm-define (insert-return)
+  (:mode in-prog?)
+  (insert-raw-return)
+  (program-indent))

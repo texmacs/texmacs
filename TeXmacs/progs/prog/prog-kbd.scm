@@ -19,6 +19,9 @@
 
 (kbd-map
   (:mode in-prog?)
+  ("cmd i" (program-indent))
+  ("cmd tab" (program-indent))
+  ("cmd A-tab" (program-indent-all))
   ; rewrite some text mode shortcuts
   ("space var" (insert-tabstop))
   ("space var var" (begin (insert-tabstop) (insert-tabstop)))
@@ -28,9 +31,6 @@
 
 (kbd-map
   (:mode in-prog-scheme?)
-  ("cmd i" (scheme-indent))
-  ("cmd tab" (scheme-indent))
-  ("cmd A-tab" (scheme-program-indent))
   ("std c" (clipboard-copy-export "scheme" "primary"))
   ("std v" (clipboard-paste-import "scheme" "primary"))
   ("std x" (clipboard-cut-export "scheme" "primary"))
@@ -63,6 +63,7 @@
 
 (kbd-map
   (:mode in-prog-python?)
+  ("tab" (insert-tabstop))
   ("{" (python-bracket-open "{" "}" ))
   ("}" (python-bracket-close "{" "}" ))
   ("(" (python-bracket-open "(" ")" ))
