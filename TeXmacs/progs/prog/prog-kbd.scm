@@ -71,8 +71,8 @@
 
 (kbd-map
   (:mode in-prog-python?)
-  ("tab" (insert-tabstop))
-  ("S-tab" (remove-tabstop))
+  ("A-tab" (insert-tabstop))
+  ("cmd S-tab" (remove-tabstop)) ; TEMP (see above)
   ("{" (python-bracket-open "{" "}" ))
   ("}" (python-bracket-close "{" "}" ))
   ("(" (python-bracket-open "(" ")" ))
