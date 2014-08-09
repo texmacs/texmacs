@@ -223,7 +223,7 @@ initialize_color_encodings () {
   language_rep::color_encoding ("operator_field")= 42;
   language_rep::color_encoding ("operator_special")= 43;
   language_rep::color_encoding ("keyword")= 50;
-  language_rep::color_encoding ("keyword_conditionnal")= 51;
+  language_rep::color_encoding ("keyword_conditional")= 51;
   language_rep::color_encoding ("keyword_control")= 52;
 }
 
@@ -263,7 +263,7 @@ initialize_color_decodings (string lan_name) {
   lan->color_decoding (42)= get_preference (pfx * "operator_field", "#888888");
   lan->color_decoding (43)= get_preference (pfx * "operator_special", "orange");
   lan->color_decoding (50)= get_preference (pfx * "keyword", "#309090");
-  lan->color_decoding (51)= get_preference (pfx * "keyword_conditionnal", "#309090");
+  lan->color_decoding (51)= get_preference (pfx * "keyword_conditional", "#309090");
   lan->color_decoding (52)= get_preference (pfx * "keyword_control", "#000080");
 }
 

@@ -142,8 +142,8 @@ scilab_color_setup_declare_function (hashmap<string, string> & t) {
 }
 
 static void
-scilab_color_setup_keywords_conditionnal (hashmap<string, string> & t) {
-  string c= "keyword_conditionnal"; 
+scilab_color_setup_keywords_conditional (hashmap<string, string> & t) {
+  string c= "keyword_conditional"; 
   t ("case")= c;
   t ("catch")= c;
   t ("do")= c;
@@ -298,9 +298,9 @@ parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r)) {
-    if (t(r) == "keyword_conditionnal") {
+    if (t(r) == "keyword_conditional") {
       pos=i;
-      return "keyword_conditionnal";
+      return "keyword_conditional";
     }
     else if (t(r) == "keyword_control") {
       pos=i;
@@ -394,7 +394,7 @@ scilab_language_rep::get_color (tree t, int start, int end) {
 
     scilab_color_setup_constants (colored);
     scilab_color_setup_declare_function (colored);
-    scilab_color_setup_keywords_conditionnal (colored);
+    scilab_color_setup_keywords_conditional (colored);
     scilab_color_setup_keywords_control (colored);
     scilab_color_setup_operator (colored);
     scilab_color_setup_operator_special (colored);

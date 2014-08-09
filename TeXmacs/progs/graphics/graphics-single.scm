@@ -21,7 +21,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic operations
 ;;
-;; NOTE: Imperative functions, which inconditionnaly perform a given
+;; NOTE: Imperative functions, which unconditionally perform a given
 ;;   operation on the sketch.
 ;;
 ;;   These functions depend on, and can change the current edit state (i.e.,

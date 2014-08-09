@@ -265,8 +265,8 @@ python_color_setup_keywords (hashmap<string, string> & t) {
 }
 
 static void
-python_color_setup_keywords_conditionnal (hashmap<string, string> & t) {
-  string c= "keyword_conditionnal";
+python_color_setup_keywords_conditional (hashmap<string, string> & t) {
+  string c= "keyword_conditional";
   t ("break")= c;
   t ("continue")= c;
   t ("elif")= c;
@@ -450,7 +450,7 @@ parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   string r= s (pos, i);
   if (t->contains (r)) {
     string tr= t(r);
-    if (tr == "keyword_conditionnal" ||
+    if (tr == "keyword_conditional" ||
         tr == "keyword_control"      ||
         tr == "keyword"              ||
         tr == "declare_type"         ||
@@ -544,7 +544,7 @@ python_language_rep::get_color (tree t, int start, int end) {
     python_color_setup_declare_class (colored);
     python_color_setup_declare_function (colored);
     python_color_setup_keywords (colored);
-    python_color_setup_keywords_conditionnal (colored);
+    python_color_setup_keywords_conditional (colored);
     python_color_setup_keywords_control (colored);
     python_color_setup_operator (colored);
     python_color_setup_operator_special (colored);
