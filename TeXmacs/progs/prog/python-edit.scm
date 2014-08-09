@@ -18,10 +18,22 @@
 ;; Automatic indentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (string-strip-right s)
+  (with n (string-length s)
+    (with r (or (string-rindex s char-set:not-whitespace) n)
+      (string-take s (min n (+ 1 r))))))
+
+; FIXME: '#' in a string is interpreted as a comment
+(define (strip-comment-buggy s)
+  "Removes comment from python line."
+  (with i (string-index s #\#)
+    (if i (string-take s i) s)))
+
 (tm-define (program-compute-indentation doc row col)
   (:mode in-prog-python?)
   (if (<= row 0) 0
-      (let* ((s (program-row (- row 1)))
+      (let* ((s (string-strip-right 
+                 (strip-comment-buggy (program-row (- row 1)))))
              (i (string-get-indent s))
              (c (if (== s "") "" (string-take-right s 1))))
         (if (== c ":") (+ i (get-tabstop)) i))))
