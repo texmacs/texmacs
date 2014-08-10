@@ -31,10 +31,13 @@ DATA_ESCAPE  = chr(27)
 DATA_COMMAND = chr(16)
 
 py_ver       = sys.version_info[0];
-__version__  = '1.4'
+__version__  = '1.13'
 __author__   = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
 
 my_globals   = {}
+
+if py_ver == 3: _input = input
+else:           _input = raw_input
 
 
 def texmacs_escape(data):
@@ -201,47 +204,28 @@ def name_char(c):
     else:
         return c
 
-def complete(cmd, my_globals):
-    """Parse autocomplete command.
-     
-    Parse the command and return a suitable answer to
-    give back to TeXmacs.
-    """
-
-    # Parse Texmacs command and extract string to
-    # complete and offset to complete from.
-    cmd = cmd.strip()[:-1]
-    cmd_re = re.compile(r'"(.*)"\s+(\d+)')
-    res = cmd_re.match(cmd)
+def complete (s, pos, my_globals):
+    """Process autocomplete command. """
     
-    # if we don't match anything we return
-    # no completion possibilities.
-    if res is None:
-        return 'scheme:(tuple "" "")'
-        
-    cmpl_str = res.group(1)
-    pos_str = int(res.group(2))
-    
-    cmpl_str = cmpl_str[:pos_str]
-    if len(cmpl_str)  ==  0:
+    try:
+        s = s[:pos]
+        if not s:
+            return 'scheme:(tuple "" "")'
+    except:
         return 'scheme:(tuple "" "")'
     
     # We get the string after the last space character.
-    # no completion is done for strings with spaces
-    # within
-    cmpl_str = str().join(map(name_char, cmpl_str))
-    cmpl_str = cmpl_str.split()[-1]
-    pos = len(cmpl_str)
-    
-    # no string after last space? return empty
-    # completion
-    if len(cmpl_str)  ==  0:
+    # No completion is done for strings containing spaces.
+    s = str().join (map (name_char, s))
+    s = s.split()[-1]
+    pos = len(s)
+    # no string after last space? return empty completion
+    if not s:
         return 'scheme:(tuple "" "")'
         
-    # Find completion candidates and form a suitable
-    # answer to Texmacs
-    offset, cand = find_completion_candidates(cmpl_str, my_globals)
-    if len(cand) == 0:
+    # Find completion candidates and form a suitable answer to Texmacs
+    offset, cand = find_completion_candidates (s, my_globals)
+    if not cand:
         res = '""'
     else:
         res = ''
@@ -249,7 +233,7 @@ def complete(cmd, my_globals):
         if offset is not None:
             pos = offset
         res += '"%s" ' % c[pos:]
-    return 'scheme:(tuple "' + cmpl_str + '" ' + res + ')'
+    return 'scheme:(tuple "' + s + '" ' + res + ')'
 
 class CaptureStdout:
     """Capture output to os.sys.stdout.
@@ -293,6 +277,10 @@ class CaptureStdout:
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
 
+def from_scm_string (text):
+    #FIXME: handle escape chars if needed, etc.
+    return text.strip('"')
+
 def compile_help (text):
     cmd = 'help(%s)' % text
     out = {"help" : "", "src": "", "file": ""}
@@ -311,6 +299,51 @@ def compile_help (text):
     except IOError:
         out["file"] = ('Unable to access the code for "%s".' % text)
     return dict (map (lambda (k, v): (k, as_scm_string (v)), out.iteritems()))
+
+class SchemeForm:
+    """Converts strings into lists"""
+
+    def __init__(self, s):
+        self.as_tree (s)
+
+    def __getitem__ (self, idx):
+        return self._t[idx]
+    
+    def __len__ (self):
+        return len(self._t)
+
+    def _tokenize (self):
+        #FIXME: will split strings containing whitespace too!
+        strip = lambda s:s.strip()
+        return [x for x in \
+                    map (strip,
+                         self._s.replace('(',' ( ').replace(')',' ) ').split())\
+                if x != '']
+
+    def _parse (self, l):
+        r = []
+        while True:
+            try:
+                x = l.pop(0)
+                if x == '':
+                    continue
+                elif x == '(':
+                    r.append (self._parse (l))
+                elif x == ')':
+                    return r
+                else:
+                    r.append (x)    
+            except IndexError: # No more items in the list
+                return r
+
+    def as_tree (self, s=''):
+        if s:
+            self._s = s
+            self._t = self._parse (self._tokenize())[0]
+        return self._t
+
+    def is_func (self, fun):
+        return self[0] == fun
 
 
 ###############################################################################
@@ -334,7 +367,7 @@ else:
 CaptureStdout.capture (text, my_globals)
 
 # Reopen stdout unbufferd (flush after each stdout.write() and print)
-sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 texmacs_out ("verbatim:Python " + sys.version + 
              "\nPython plugin for TeXmacs.\n" +
@@ -343,15 +376,12 @@ texmacs_out ("prompt#>>> ");
 
 # Main session loop.
 while 1:
-    if py_ver == 3: _input = input
-    else:           _input = raw_input
-
     line = _input()
     if line[0] == DATA_COMMAND:
-        if line[1:].find('(complete ')  ==  0:
-            #The replace is due to texmacs sending " as two characters
-            texmacs_out(complete(line[11:].replace("\\\"","\""),
-                        my_globals))
+        sf = SchemeForm (line[1:])
+        if sf.is_func ('complete') and len(sf) == 3:
+            texmacs_out (complete (from_scm_string (sf[1]),
+                                   int (sf[2]), my_globals))
         continue
     elif line.endswith('?'):
         if len (line) > 1:
@@ -370,7 +400,7 @@ while 1:
             lines.append(line)
         text='\n'.join(lines[:-1])
         try: # Is it an expression?
-            result = eval(text, my_globals)
+            result = eval (text, my_globals)
         except:
             result = CaptureStdout.capture (text, my_globals)
         texmacs_out (compose_output(result))
