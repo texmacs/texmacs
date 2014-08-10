@@ -338,7 +338,8 @@ class SchemeForm:
 
     def as_tree (self, s=''):
         if s:
-            self._s = s
+            # The replace is due to texmacs sending " as two characters
+            self._s = s.replace("\\\"","\"")
             self._t = self._parse (self._tokenize())[0]
         return self._t
 
