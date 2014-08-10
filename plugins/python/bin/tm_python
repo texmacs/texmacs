@@ -292,15 +292,15 @@ def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
 
 def compile_help (text):
-    cmd = 'help("%s")' % text
+    cmd = 'help(%s)' % text
     out = {"help" : "", "src": "", "file": ""}
     try:
         out["help"] = CaptureStdout.capture (cmd, my_globals);
         
-        out["src"] = eval ('getsource("%s")' % text,
+        out["src"] = eval ('getsource(%s)' % text,
                            my_globals, {'getsource' : getsource})
           # Todo: strip docstring from code
-        out["file"] = eval ('getsourcefile("%s")' % text,
+        out["file"] = eval ('getsourcefile(%s)' % text,
                             my_globals, {'getsourcefile' : getsourcefile})
     except NameError:
         out ["help"] = 'No help for undefined name "%s"' % text
