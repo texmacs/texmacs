@@ -18,6 +18,9 @@
 ;; Automatic indentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define char-set:not-whitespace
+  (char-set-complement char-set:whitespace))
+
 (define (string-strip-right s)
   (with n (string-length s)
     (with r (or (string-rindex s char-set:not-whitespace) n)
