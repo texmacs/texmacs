@@ -17,6 +17,7 @@ import keyword
 import re
 import string
 import sys
+import csv   # Used to parse scheme forms
 from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
 from io        import open
@@ -31,7 +32,7 @@ DATA_ESCAPE  = chr(27)
 DATA_COMMAND = chr(16)
 
 py_ver       = sys.version_info[0];
-__version__  = '1.13'
+__version__  = '1.14'
 __author__   = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
 
 my_globals   = {}
@@ -198,11 +199,8 @@ def find_completion_candidates(cmpl_str, my_globals):
        return offset, filter(lambda x:x.find(cmpl_str[dot+1:])  ==  0, haystack)
 
 def name_char(c):
-    """Check whether a character is a valid symbol."""
-    if c in '+-*/%<>&|^~ = !,:()[]{}':
-        return ' '
-    else:
-        return c
+    """Check whether a character is a valid identifier/keyword."""
+    return c not in '+-*/%<>&|^~=!,:()[]{} \n\t'
 
 def complete (s, pos, my_globals):
     """Process autocomplete command. """
@@ -211,13 +209,17 @@ def complete (s, pos, my_globals):
         s = s[:pos]
         if not s:
             return 'scheme:(tuple "" "")'
-    except:
+    except Exception as e:
         return 'scheme:(tuple "" "")'
-    
     # We get the string after the last space character.
     # No completion is done for strings containing spaces.
-    s = str().join (map (name_char, s))
-    s = s.split()[-1]
+    i = len(s) - 1
+    while i > 0:
+        if not name_char(s[i]):
+            i += 1
+            break
+        i -= 1
+    s = s[i:]
     pos = len(s)
     # no string after last space? return empty completion
     if not s:
@@ -234,6 +236,18 @@ def complete (s, pos, my_globals):
             pos = offset
         res += '"%s" ' % c[pos:]
     return 'scheme:(tuple "' + s + '" ' + res + ')'
+
+def from_scm_string(s):
+    if len(s) > 2 and s[0] == '"' and s[-1] == '"':
+        return s[1:-1]
+    return s
+
+def parse_complete_command(s):
+    """HACK"""
+    t1 = s.strip().strip('()').split(' ', 1)
+    t2 = t1[1].rsplit(' ', 1)
+    # Don't use strio('"') in case there are several double quotes
+    return [t1[0], from_scm_string(t2[0]), int(t2[1])]
 
 class CaptureStdout:
     """Capture output to os.sys.stdout.
@@ -277,10 +291,6 @@ class CaptureStdout:
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
 
-def from_scm_string (text):
-    #FIXME: handle escape chars if needed, etc.
-    return text.strip('"')
-
 def compile_help (text):
     cmd = 'help("%s")' % text
     out = {"help" : "", "src": "", "file": ""}
@@ -299,53 +309,6 @@ def compile_help (text):
     except IOError:
         out["file"] = ('Unable to access the code for "%s".' % text)
     return dict (map (lambda (k, v): (k, as_scm_string (v)), out.iteritems()))
-
-class SchemeForm:
-    """Converts strings into lists"""
-
-    def __init__(self, s):
-        self.as_tree (s)
-
-    def __getitem__ (self, idx):
-        return self._t[idx]
-    
-    def __len__ (self):
-        return len(self._t)
-
-    def _tokenize (self):
-        #FIXME: will split strings containing whitespace too!
-        strip = lambda s:s.strip()
-        return [x for x in \
-                    map (strip,
-                         self._s.replace('(',' ( ').replace(')',' ) ').split())\
-                if x != '']
-
-    def _parse (self, l):
-        r = []
-        while True:
-            try:
-                x = l.pop(0)
-                if x == '':
-                    continue
-                elif x == '(':
-                    r.append (self._parse (l))
-                elif x == ')':
-                    return r
-                else:
-                    r.append (x)    
-            except IndexError: # No more items in the list
-                return r
-
-    def as_tree (self, s=''):
-        if s:
-            # The replace is due to texmacs sending " as two characters
-            self._s = s.replace("\\\"","\"")
-            self._t = self._parse (self._tokenize())[0]
-        return self._t
-
-    def is_func (self, fun):
-        return self[0] == fun
-
 
 ###############################################################################
 ## Session start
@@ -375,14 +338,16 @@ texmacs_out ("verbatim:Python " + sys.version +
              "Please see the documentation in Help -> Plugins -> Python")
 texmacs_out ("prompt#>>> ");    
 
+
 # Main session loop.
 while 1:
     line = _input()
+    if not line:
+        continue
     if line[0] == DATA_COMMAND:
-        sf = SchemeForm (line[1:])
-        if sf.is_func ('complete') and len(sf) == 3:
-            texmacs_out (complete (from_scm_string (sf[1]),
-                                   int (sf[2]), my_globals))
+        sf = parse_complete_command (line[1:])
+        if sf[0] == 'complete':
+            texmacs_out (complete (sf[1], sf[2], my_globals))
         continue
     elif line.endswith('?'):
         if len (line) > 1:
@@ -404,5 +369,5 @@ while 1:
             result = eval (text, my_globals)
         except:
             result = CaptureStdout.capture (text, my_globals)
-        texmacs_out (compose_output(result))
+        texmacs_out (compose_output (result))
 
