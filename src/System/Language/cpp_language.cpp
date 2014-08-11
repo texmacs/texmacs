@@ -1,14 +1,14 @@
 
 /******************************************************************************
-* MODULE     : cpp_language.cpp
-* DESCRIPTION: the "cpp" language
-* COPYRIGHT  : (C) 2008  Francis Jamet
-*******************************************************************************
-* This software falls under the GNU general public license and comes WITHOUT
-* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
-* If you don't have this file, write to the Free Software Foundation, Inc.,
-* 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-******************************************************************************/
+ * MODULE     : cpp_language.cpp
+ * DESCRIPTION: the "cpp" language
+ * COPYRIGHT  : (C) 2008  Francis Jamet
+ *******************************************************************************
+ * This software falls under the GNU general public license and comes WITHOUT
+ * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+ * If you don't have this file, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ ******************************************************************************/
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
@@ -17,15 +17,15 @@
 extern tree the_et;
 
 /*
-static bool
-is_line (tree t) {
+ static bool
+ is_line (tree t) {
  path p= obtain_ip (t);
-  if (is_nil (p) || last_item (p) < 0) return false;
-  tree pt= subtree (the_et, reverse (p->next));
-  if (!is_func (pt, DOCUMENT)) return false;
-  return true;
-}
-*/
+ if (is_nil (p) || last_item (p) < 0) return false;
+ tree pt= subtree (the_et, reverse (p->next));
+ if (!is_func (pt, DOCUMENT)) return false;
+ return true;
+ }
+ */
 
 static int
 line_number (tree t) {
@@ -61,23 +61,28 @@ static void parse_string (string s, int& pos);
 static void parse_alpha (string s, int& pos);
 
 cpp_language_rep::cpp_language_rep (string name):
-  language_rep (name), colored ("")
-{ 
-
+language_rep (name), colored ("")
+{
+  
 }
 
 text_property
 cpp_language_rep::advance (tree t, int& pos) {
   string s= t->label;
-  if (pos==N(s)) return &tp_normal_rep;
+  if (pos == N(s)) return &tp_normal_rep;
   char c= s[pos];
   if (c == ' ') {
-    pos++; return &tp_space_rep; }
+    pos++;
+    return &tp_space_rep;
+  }
   if (c >= '0' && c <= '9') {
-    parse_number (s, pos); return &tp_normal_rep; }
-  if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
-      (c == '_')) {
-    parse_alpha (s, pos); return &tp_normal_rep; }
+    parse_number (s, pos);
+    return &tp_normal_rep;
+  }
+  if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_') {
+    parse_alpha (s, pos);
+    return &tp_normal_rep;
+  }
   tm_char_forwards (s, pos);
   return &tp_normal_rep;
 }
@@ -96,16 +101,14 @@ cpp_language_rep::get_hyphens (string s) {
 }
 
 void
-cpp_language_rep::hyphenate (
-  string s, int after, string& left, string& right)
-{ 
+cpp_language_rep::hyphenate (string s, int after, string& left, string& right) {
   left = s (0, after);
   right= s (after, N(s));
 }
 
 static void
 cpp_color_setup_constants (hashmap<string, string> & t) {
-  string c= "#2060c0";
+  string c= "constant";
   t ("true")= c;
   t ("false")= c;
   t ("cout")= c;
@@ -113,14 +116,16 @@ cpp_color_setup_constants (hashmap<string, string> & t) {
   t ("cerr")= c;
   t ("NULL")= c;
   t ("null")= c;
+  /*
   t ("Q_OBJECT")= c;
   t ("PIXEL")= c;
   t ("ASSERT")= c;
+   */
 }
 
 static void
 cpp_color_setup_keywords (hashmap<string, string> & t)  {
-  string c= "#8020c0"; 
+  string c= "keyword";
   t ("asm")= c;
   t ("auto")= c;
   t ("break")= c;
@@ -181,7 +186,7 @@ cpp_color_setup_keywords (hashmap<string, string> & t)  {
 
 static void
 cpp_color_setup_types (hashmap<string, string> & t) {
-  string c= "#b833a1";
+  string c= "constant_type";
   t ("bool")= c;
   t ("char")= c;
   t ("double")= c;
@@ -195,28 +200,28 @@ cpp_color_setup_types (hashmap<string, string> & t) {
   t ("wchar_t")= c;
     // Just a few common ones in TeXmacs
   /* Update: Don't color non-basic types to avoid confusion
-  t ("time_t")= c;
-  t ("array")= c;
-  t ("blackbox")= c;
-  t ("box")= c;
-  t ("command")= c;
-  t ("event")= c;
-  t ("hashmap")= c;
-  t ("iterator")= c;
-  t ("language")= c;
-  t ("list")= c;
-  t ("path")= c;
-  t ("object")= c;
-  t ("observer")= c;
-  t ("rectangle")= c;
-  t ("scheme_tree")= c;
-  t ("selection")= c;
-  t ("SI")= c;
-  t ("string")= c;
-  t ("tmscm")= c;
-  t ("tree")= c;
-  t ("url")= c;
-  t ("widget")= c;
+   t ("time_t")= c;
+   t ("array")= c;
+   t ("blackbox")= c;
+   t ("box")= c;
+   t ("command")= c;
+   t ("event")= c;
+   t ("hashmap")= c;
+   t ("iterator")= c;
+   t ("language")= c;
+   t ("list")= c;
+   t ("path")= c;
+   t ("object")= c;
+   t ("observer")= c;
+   t ("rectangle")= c;
+   t ("scheme_tree")= c;
+   t ("selection")= c;
+   t ("SI")= c;
+   t ("string")= c;
+   t ("tmscm")= c;
+   t ("tree")= c;
+   t ("url")= c;
+   t ("widget")= c;
    */
 }
 
@@ -235,7 +240,7 @@ cpp_color_setup_otherlexeme (hashmap<string, string>& t) {
   t ("...")= c;
   t (",")= c;
   t ("+=")= c;
-  t ("-=")= c; 
+  t ("-=")= c;
   t ("*=")= c;
   t ("/=")= c;
   t (",")= c;
@@ -260,8 +265,8 @@ cpp_color_setup_otherlexeme (hashmap<string, string>& t) {
 static inline bool
 belongs_to_identifier (char c) {
   return ((c<='9' && c>='0') ||
-         (c<='Z' && c>='A') ||
-	 (c<='z' && c>='a') ||
+          (c<='Z' && c>='A') ||
+          (c<='z' && c>='a') ||
           c=='_');
 }
 
@@ -272,11 +277,10 @@ is_number (char c) {
 
 static void
 parse_identifier (hashmap<string, string>& t, string s, int& pos) {
-  int i=pos;
-  if (pos >= N(s)) return;
-  if (is_number (s[i])) return;
-  while (i<N(s) && belongs_to_identifier (s[i])) i++;
-  if (!(t->contains (s (pos, i)))) pos= i;
+  int i= pos;
+  if (pos >= N(s) || is_number (s[i])) return;
+  while (i < N(s) && belongs_to_identifier (s[i])) i++;
+  if (!t->contains (s (pos, i))) pos= i;
 }
 
 static void
@@ -292,78 +296,74 @@ parse_blanks (string s, int& pos) {
 
 static void
 parse_string (string s, int& pos) {
-  if (pos>=N(s)) return;
+  if (pos >= N(s)) return;
   switch (s[pos])  {
-  case '\042':
-    do pos++;
-    while((pos<N(s)) &&
-	  ((s[pos-1]=='\\' && s[pos]=='\042') || s[pos]!='\042'));
-    if (s[pos]=='\042') pos++;
-    return;
-  case '/':
-    if (pos+1<N(s) && s[pos+1]=='\042') {
-      pos=pos+2;
-      do {
-	if (pos+1<N(s) && s[pos]=='\042' && s[pos+1]=='/') {
-	  pos=pos+2; return; }
-	pos++;
-      } while (pos<N(s));
-    }
+    case '\042':
+      do pos++;
+      while (pos < N(s) &&
+             ((s[pos-1]=='\\' && s[pos]=='\042') || s[pos]!='\042'));
+      if (s[pos] == '\042') pos++;
+      return;
+    case '/':
+      if (pos + 1 < N(s) && s[pos+1] == '\042') {
+        pos += 2;
+        do {
+          if (pos + 1 < N(s) && s[pos] == '\042' && s[pos + 1] == '/') {
+            pos += 2;
+            return;
+          }
+          pos++;
+        } while (pos < N(s));
+      }
   }
 }
-  
+
 static void
 parse_keyword (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
-  if (pos>=N(s)) return;
-  if (is_number (s[i])) return;
-  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
-  string r= s (pos, i);
-  if (t->contains (r) && t(r)=="#8020c0") { pos=i; return; }
+  if (pos >= N(s) || is_number (s[i])) return;
+  while (i < N(s) && belongs_to_identifier (s[i])) i++;
+  if (t->contains (s (pos, i)))
+    pos= i;
 }
 
 static void
 parse_type (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
-  if (pos>=N(s)) return;
-  if (is_number (s[i])) return;
-  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
-  string r= s (pos, i);
-  if (t->contains (r) && t(r) == "#b833a1") { pos=i; return; }
+  if (pos >= N(s) || is_number (s[i])) return;
+  while (i < N(s) && belongs_to_identifier (s[i])) i++;
+  if (t->contains (s (pos, i)))
+    pos= i;
 }
 
 static void
 parse_constant (hashmap<string,string>& t, string s, int& pos) {
-  int i=pos;
-  if (pos>=N(s)) return;
-  if (is_number (s[i])) return;
-  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
-  string r= s (pos, i);
-  if (t->contains (r) && t(r)=="#2060c0") { pos=i; return; }
+  int i= pos;
+  if (pos >= N(s) || is_number (s[i])) return;
+  while (i < N(s) && belongs_to_identifier (s[i])) i++;
+  if (t->contains (s (pos, i)))
+    pos= i;
 }
 
 static void
 parse_other_lexeme (hashmap<string,string>& t, string s, int& pos) {
   int i;
-  for (i=12; i>=1; i--) {
-    string r=s(pos,pos+i);
-    if (t->contains(r) && t(r)=="black") {
-      pos=pos+i; return; }
-  }
+  for (i=12; i>=1; i--)
+    if (t->contains (s (pos, pos+i)))
+      pos+= i;
 }
 
 static void
 parse_number (string s, int& pos) {
   int i= pos;
-  if (pos>=N(s)) return;
-  if (s[i] == '.') return;
-  while (i<N(s) && 
-	 (is_number (s[i]) ||
-	  (s[i] == '.' && (i+1<N(s)) &&
-	   (is_number (s[i+1]) ||
-	    s[i+1] == 'e' || s[i+1] == 'E')))) i++;
+  if (pos >= N(s) || s[i] == '.') return;
+  while (i < N(s) &&
+         (is_number (s[i]) ||
+          (s[i] == '.' && (i + 1 < N(s)) &&
+           (is_number (s[i+1]) ||
+            s[i+1] == 'e' || s[i+1] == 'E')))) i++;
   if (i == pos) return;
-  if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
+  if (i < N(s) && (s[i] == 'e' || s[i] == 'E')) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
     while (i<N(s) && (is_number (s[i]))) i++;
@@ -389,15 +389,16 @@ parse_end_comment (string s, int& pos) {
     pos += 2;
 }
 
-static void parse_diese (string s, int& pos) {
+static void
+parse_diese (string s, int& pos) {
   if (s[pos] == '#') pos++;
 }
 
-static void parse_preprocessing (string s, int & pos) {
+static void
+parse_preprocessing (string s, int & pos) {
   int i= pos;
-  if (pos>=N(s)) return;
-  if (is_number (s[i])) return;
-  while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
+  if (pos >= N(s) || is_number (s[i])) return;
+  while (i < N(s) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (r == "include" ||
       r == "if" ||
@@ -412,7 +413,8 @@ static void parse_preprocessing (string s, int & pos) {
       r == "error") { pos=i; return; }
 }
 
-static bool begin_comment (string s, int i) {
+static bool
+begin_comment (string s, int i) {
   bool comment= false;
   int opos, pos= 0;
   do {
@@ -431,7 +433,8 @@ static bool begin_comment (string s, int i) {
   return comment;
 }
 
-static bool end_comment (string s, int i) {
+static bool
+end_comment (string s, int i) {
   int opos, pos= 0;
   do {
     do {
@@ -455,7 +458,7 @@ after_begin_comment (int i, tree t) {
     if (begin_comment (s2, i)) return line;
     t2= line_inc (t2, -1);
     --line;
-    // line_inc returns tree(ERROR) upon error
+      // line_inc returns tree(ERROR) upon error
     if (!is_atomic (t2)) return -1; // FIXME
     s2= t2->label;
     i = N(s2) - 1;
@@ -473,7 +476,7 @@ before_end_comment (int i, tree t) {
     if (end_comment (s2, i)) return line;
     t2= line_inc (t2, 1);
     ++line;
-    // line_inc returns tree(ERROR) upon error
+      // line_inc returns tree(ERROR) upon error
     if (!is_atomic (t2)) return -1; // FIXME
     s2= t2->label;
     i = 0;
@@ -493,13 +496,13 @@ in_comment (int pos, tree t) {
 }
 
 static bool end_preprocessing(string s) {
-  int pos=N(s)-1;
-  if (N(s)==0) return false;
-  while (s[pos]==' ' && pos>0) {pos--;}
-  if (s[pos]=='/') return true;
+  int pos= N(s)-1;
+  if (N(s) == 0) return false;
+  while (s[pos] == ' ' && pos > 0) --pos;
+  if (s[pos] == '/') return true;
   return false;
-}  
-  
+}
+
 static bool begin_preprocessing(string s) {
   if (N(s)>0 && s[0]=='#') return true;
   return false;
@@ -511,12 +514,12 @@ static bool in_preprocessing (string s, tree t) {
   string s2= s;
   while (line_number(t2) > 0) {
     t2= line_inc(t2,-1);
-    // line_inc return tree(ERROR) upon error
+      // line_inc return tree(ERROR) upon error
     if (!is_atomic(t2)) return false;
     s2= t2->label;
     if (!end_preprocessing(s2)) return false;
     if (begin_preprocessing(s2)) return true;
-  } 
+  }
   return false;
 }
 
@@ -530,7 +533,7 @@ cpp_language_rep::get_color (tree t, int start, int end) {
     cpp_color_setup_otherlexeme (colored);
     setup_done= true;
   }
-
+  
   static string none= "";
   if (start >= end) return none;
   if (in_comment (start, t))
@@ -547,13 +550,18 @@ cpp_language_rep::get_color (tree t, int start, int end) {
         parse_blanks (s, pos);
         if (opos < pos) break;
         parse_diese (s, pos);
-        if (opos < pos) {type= "preprocessor_directive"; break;}
+        if (opos < pos) {
+          type= "preprocessor_directive";
+          break;
+        }
         parse_preprocessing (s, pos);
-        if (opos < pos) {type= "preprocessor_directive"; break; }
+        if (opos < pos) {
+          type= "preprocessor_directive";
+          break;
+        }
         pos++;
-      }
-      while (false);}
-    while (pos <= start);
+      } while (false);
+    } while (pos <= start);
     if (type == "preprocessor_directive")
       decode_color("cpp", encode_color (type));
     return decode_color("cpp", encode_color("preprocessor"));
@@ -564,53 +572,47 @@ cpp_language_rep::get_color (tree t, int start, int end) {
     do {
       opos= pos;
       parse_blanks (s, pos);
-      if (opos < pos) break;
+      if (opos < pos)
+        break;
       parse_string (s, pos);
       if (opos < pos) {
-	type= "constant_string";
-	break;
+        type= "constant_string";
+        break;
       }
       parse_comment_single_line (s, pos);
       if (opos < pos) {
-	type= "comment";
-	break;
+        type= "comment";
+        break;
       }
       parse_keyword (colored, s, pos);
       if (opos < pos) {
-	type= "keyword";
-	break;
+        type= "keyword";
+        break;
       }
       parse_type (colored, s, pos);
       if (opos < pos) {
-	type= "constant_type";
-	break;
+        type= "constant_type";
+        break;
       }
       parse_other_lexeme (colored, s, pos);  //not left parenthesis
-      if (opos < pos) {
-	type= none;
-	break;
-      }
+      if (opos < pos)
+        break;
       parse_constant (colored, s, pos);
       if (opos < pos) {
-	type= "constant";
-	break;
+        type= "constant";
+        break;
       }
       parse_number (s, pos);
       if (opos < pos) {
-	type= "constant_number";
-	break;
+        type= "constant_number";
+        break;
       }
       parse_identifier (colored, s, pos);
-      if (opos < pos) {
-	type= none;
-	break;
-      }
-      pos= opos;
-      pos++;
-    }
-    while (false);
-  }
-  while (pos <= start);
+      if (opos < pos)
+        break;
+      pos= opos + 1;
+    } while (false);
+  } while (pos <= start);
   if (type == none) return none;
   return decode_color ("cpp", encode_color (type));
 }
