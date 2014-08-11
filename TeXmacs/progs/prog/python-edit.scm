@@ -35,8 +35,8 @@
 (tm-define (program-compute-indentation doc row col)
   (:mode in-prog-python?)
   (if (<= row 0) 0
-      (let* ((s (string-strip-right 
-                 (strip-comment-buggy (program-row (- row 1)))))
+      (let* ((r (program-row (- row 1)))
+             (s (string-strip-right (strip-comment-buggy (if r r ""))))
              (i (string-get-indent s))
              (c (if (== s "") "" (string-take-right s 1))))
         (if (== c ":") (+ i (get-tabstop)) i))))
