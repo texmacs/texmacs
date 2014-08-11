@@ -37,7 +37,7 @@ line_number (tree t) {
 }
 
 static int
-number_of_line (tree t) {
+number_of_lines (tree t) {
   path p= obtain_ip (t);
   if (is_nil (p) || last_item (p) < 0) return -1;
   tree pt= subtree (the_et, reverse (p->next));
@@ -47,6 +47,7 @@ number_of_line (tree t) {
 
 static tree
 line_inc (tree t, int i) {
+  if (i == 0) return t;
   path p= obtain_ip (t);
   if (is_nil (p) || last_item (p) < 0) return tree (ERROR);
   tree pt= subtree (the_et, reverse (p->next));
@@ -372,30 +373,25 @@ parse_number (string s, int& pos) {
 
 static void
 parse_comment_multi_lines (string s, int& pos) {
-  if (pos>=N(s)) return;
-  if (s[pos]!='/') return;
-  if (pos+1<N(s) && s[pos+1]=='*') {
-    pos= pos+2;
-    while ((pos<N(s) && s[pos]!='*') || (pos+1<N(s) && s[pos+1]!='/')) pos++;
-    pos= min(pos+2,N(s));
-  }
+  if (pos+1 < N(s) && s[pos] == '/' && s[pos+1] == '*')
+    pos += 2;
 }
 
 static void
 parse_comment_single_line (string s, int& pos) {
-  if (pos>=N(s)) return;
-  if (s[pos]!='/') return;
-  if (pos+1<N(s) && s[pos+1]=='/') {pos=N(s);return;}
+  if (pos+1 < N(s) && s[pos] == '/' && s[pos+1] == '/')
+    pos = N(s);
 }
 
 static void
 parse_end_comment (string s, int& pos) {
-  if (pos+1<N(s) && s[pos]=='*' && s[pos+1]=='/') pos=pos+2; 
+  if (pos+1 < N(s) && s[pos] == '*' && s[pos+1] == '/')
+    pos += 2;
 }
 
 static void parse_diese (string s, int& pos) {
   if (s[pos] == '#') pos++;
-  }
+}
 
 static void parse_preprocessing (string s, int & pos) {
   int i= pos;
@@ -417,95 +413,86 @@ static void parse_preprocessing (string s, int & pos) {
 }
 
 static bool begin_comment (string s, int i) {
-  bool comment;
-  int pos= 0;
-  int opos; 
+  bool comment= false;
+  int opos, pos= 0;
   do {
     do {
-    opos= pos;
-    comment= false;
-    parse_string (s, pos);
-    if (opos < pos) break;
-    parse_comment_multi_lines (s, pos);
-    if (opos < pos) {comment= true; break;}
-    pos++;
-    }
-  while (false);
-  }
-  while (pos<=i);
-  return comment;  
+      opos= pos;
+      parse_string (s, pos);
+      if (opos < pos) break;
+      parse_comment_multi_lines (s, pos);
+      if (opos < pos) {
+        comment = true;
+        break;
+      }
+      pos++;
+    } while (false);
+  } while (pos <= i);
+  return comment;
 }
 
 static bool end_comment (string s, int i) {
-  int pos= 0; int opos;
+  int opos, pos= 0;
   do {
     do {
-    opos= pos;
-    parse_string (s, pos);
-	if (opos < pos) break;
-    parse_end_comment (s, pos);
-    if (opos < pos && pos>i) return true;
-    pos ++;
-    }
-  while (false);
-  }
-  while (pos<N(s));
+      opos= pos;
+      parse_string (s, pos);
+      if (opos < pos) break;
+      parse_end_comment (s, pos);
+      if (opos < pos && pos>i) return true;
+      pos++;
+    } while (false);
+  } while (pos < N(s));
   return false;
 }
 
-static bool after_begin_comment (string s, int i, tree t) {
-  if (begin_comment(s, i)) return true;
-  tree t2= t;
-  string s2= s;
-  if (N(s2)==0) return false;
-  int pos=0;
-  parse_blanks(s2,pos);
-  if (s2[pos]!='*') return false;
-  while (line_number(t2) > 0) {
-    t2= line_inc(t2,-1);
-    // line_inc return tree(ERROR) upon error
-    if (!is_atomic(t2)) return false;
+static int
+after_begin_comment (int i, tree t) {
+  tree   t2= t;
+  string s2= t->label;
+  int  line= line_number (t2);
+  do {
+    if (begin_comment (s2, i)) return line;
+    t2= line_inc (t2, -1);
+    --line;
+    // line_inc returns tree(ERROR) upon error
+    if (!is_atomic (t2)) return -1; // FIXME
     s2= t2->label;
-    if (N(s2)>0 && begin_comment (s2, N(s2)-1)) return true;
-    if (N(s2)==0) return false;
-    int pos=0;
-    parse_blanks(s2,pos);
-    if (s2[pos]!='*') return false;
-    } 
-  return false;
+    i = N(s2) - 1;
+  } while (line > -1);
+  return -1;
 }
 
-static bool before_end_comment (string s, int i, tree t) {
-  int number= number_of_line(t);
-  tree t2= t;
-  string s2=s;
-  if (N(s2)==0) return false;
-  int pos=0;
-  if (!begin_comment(s,i)) {
-    parse_blanks(s2,pos);
-    if (s2[pos]!='*') return false;
-  }
-  if (end_comment(s, i)) return true;
-  while (line_number(t2) < number-1) {
-    t2= line_inc(t2,1);
-    // line_inc return tree(ERROR) upon error
-    if (!is_atomic(t2)) return false;
+static int
+before_end_comment (int i, tree t) {
+  int   end= number_of_lines (t);
+  tree   t2= t;
+  string s2= t2->label;
+  int  line= line_number (t2);
+  do {
+    if (end_comment (s2, i)) return line;
+    t2= line_inc (t2, 1);
+    ++line;
+    // line_inc returns tree(ERROR) upon error
+    if (!is_atomic (t2)) return -1; // FIXME
     s2= t2->label;
-    if (N(s2)==0) return false;
-    pos=0;
-    parse_blanks(s2, pos);
-    if (s2[pos]!='*') return false;
-    if (N(s2)>0 && end_comment (s2, 0)) return true;
-  } 
+    i = 0;
+  } while (line <= end);
+  return -1;
+}
+
+static bool
+in_comment (int pos, tree t) {
+  int beg= after_begin_comment (pos, t);
+  if (beg >= 0) {
+    int cur= line_number (t);
+    int end= before_end_comment (pos, line_inc (t, beg - cur));
+    return end >= beg && cur <= end;
+  }
   return false;
 }
 
-static bool in_comment(string s, int pos, tree t) {
-  if (after_begin_comment(s, pos, t) && before_end_comment(s, pos, t)) return true;
-  return false;
-}  
-
-static bool end_preprocessing( string s) {
+static bool end_preprocessing(string s) {
   int pos=N(s)-1;
   if (N(s)==0) return false;
   while (s[pos]==' ' && pos>0) {pos--;}
@@ -513,7 +500,7 @@ static bool end_preprocessing( string s) {
   return false;
 }  
   
-static bool begin_preprocessing( string s) { 
+static bool begin_preprocessing(string s) {
   if (N(s)>0 && s[0]=='#') return true;
   return false;
 }
@@ -546,10 +533,11 @@ cpp_language_rep::get_color (tree t, int start, int end) {
 
   static string none= "";
   if (start >= end) return none;
+  if (in_comment (start, t))
+    return decode_color ("cpp", encode_color ("comment"));
   string s= t->label;
-  if (in_comment (s,start,t)) return decode_color("cpp", encode_color("comment"));
-  int pos= 0;
-  int opos=0;
+  int  pos= 0;
+  int opos= 0;
   string type;
   if (in_preprocessing(s, t)) {
     do {
