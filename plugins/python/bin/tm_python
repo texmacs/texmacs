@@ -167,7 +167,7 @@ def find_completion_candidates(cmpl_str, my_globals):
 
     dot = cmpl_str.rfind('.')
     offset = None
-    if dot > 0:
+    if dot >= 0:
         offset = len(cmpl_str[dot+1:])
         first_dot = cmpl_str[:dot].find('.')
         if first_dot < 0:
@@ -246,7 +246,7 @@ def parse_complete_command(s):
     """HACK"""
     t1 = s.strip().strip('()').split(' ', 1)
     t2 = t1[1].rsplit(' ', 1)
-    # Don't use strio('"') in case there are several double quotes
+    # Don't use strip('"') in case there are several double quotes
     return [t1[0], from_scm_string(t2[0]), int(t2[1])]
 
 class CaptureStdout:
@@ -294,20 +294,25 @@ def as_scm_string (text):
 def compile_help (text):
     cmd = 'help(%s)' % text
     out = {"help" : "", "src": "", "file": ""}
+
     try:
         out["help"] = CaptureStdout.capture (cmd, my_globals);
-        
+    except Exception as e:
+        out ["help"] = 'No help for "%s": %s' % (text, e)
+
+    try:
         out["src"] = eval ('getsource(%s)' % text,
                            my_globals, {'getsource' : getsource})
-          # Todo: strip docstring from code
+    except Exception as e:
+        out["src"] = 'No code available for "%s": %s' % (text, e)
+
+    try:
+        # Todo: strip docstring from code
         out["file"] = eval ('getsourcefile(%s)' % text,
                             my_globals, {'getsourcefile' : getsourcefile})
-    except NameError:
-        out ["help"] = 'No help for undefined name "%s"' % text
-    except TypeError:
-        out["src"] = ('No code available for "%s", wrong type.' % text)
-    except IOError:
-        out["file"] = ('Unable to access the code for "%s".' % text)
+    except Exception as e:
+        out["file"] = 'Unable to access the code for "%s": %s' % (text, e)
+
     return dict (map (lambda (k, v): (k, as_scm_string (v)), out.iteritems()))
 
 ###############################################################################
