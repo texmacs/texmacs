@@ -465,7 +465,15 @@ edit_interface_rep::apply_changes () {
         { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
       SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
       set_footer ();
-      if (has_current_window ()) concrete_window()->set_modified (need_save());
+      if (has_current_window ()) {
+        array<url> ws= buffer_to_windows (
+                         window_to_buffer (
+                           abstract_window (concrete_window ())));
+        int n= N(ws);
+        bool ns= need_save ();
+        for (int i=0; i<n; i++)
+          concrete_window (ws[i])->set_modified (ns);
+      }
       if (!gui_interrupted ()) drd_update ();
       cache_memorize ();
       last_update= last_change;
