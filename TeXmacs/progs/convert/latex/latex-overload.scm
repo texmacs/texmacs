@@ -51,7 +51,8 @@
   (qed #f))
 
 (smart-table latex-texmacs-environment
-  (:require (latex-depends? "amsthm"))
+  (:require (or (latex-depends? "amsthm")
+                (latex-has-texmacs-style? "amsart")))
   ("proof" #f))
 
 (define-macro (ams-texmacs-theorem abbr full)
