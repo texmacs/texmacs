@@ -245,7 +245,7 @@
             (cons (tm->tree `(,lab ,(car l) ,(caddr l)))
                   (cell-input-expand-ranges (cdddr l)))))
         ((and (tree-is? (car l) 'cell-ref)
-              (tm-equal? (cadr l) ":")
+              (or (tm-equal? (cadr l) ":") (tm-equal? (cadr l) ",<ldots>,"))
               (tree-is? (caddr l) 'cell-ref))
          (cons (tm->tree `(cell-range ,(car l) ,(caddr l)))
                (cell-input-expand-ranges (cdddr l))))
