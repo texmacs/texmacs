@@ -171,6 +171,9 @@
 ;; Whitespace handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preferences
+  ("editor:verbatim:tabstop" 4 (lambda (pref val) (noop))))
+
 (define (char-whitespace? c)
   (== c #\space))
 
