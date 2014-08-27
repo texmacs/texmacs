@@ -50,8 +50,7 @@
 
 (define-format vernac
   (:name "Coq Vernacular")
-  (:suffix "v")
-  (:hidden))
+  (:suffix "v"))
 
 (lazy-define (convert coq tmvernac) texmacs->vernac)
 (lazy-define (convert coq tmvernac) texmacs->vernac-document)

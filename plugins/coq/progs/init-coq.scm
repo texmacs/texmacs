@@ -13,12 +13,11 @@
 
 (plugin-configure coq
   (:require (url-exists-in-path? "coqtop"))
-  (:launch "tm_coq"))
+  (:launch "tm_coq")
+  (:session "Coq"))
 
 (when (url-exists-in-path? "coqtop")
-  (define-format coq-vernacular
-    (:name "Coq vernacular")
-    (:suffix "v")))
+  (lazy-format (convert coq init-coqml) vernac))
 
 (when (supports-coq?)
   (texmacs-modes

@@ -273,7 +273,6 @@
 (lazy-format (convert tmml init-tmml) tmml)
 (lazy-format (convert latex init-latex) latex)
 (lazy-format (convert html init-html) html)
-(lazy-format (convert coq init-coqml) coqml)
 (lazy-format (convert bibtex init-bibtex) bibtex)
 (lazy-format (convert images init-images)
              postscript pdf xfig xmgrace svg xpm jpeg ppm gif png pnm)
