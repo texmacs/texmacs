@@ -12,16 +12,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure coq
-  (:require (url-exists-in-path? "coq_texmacs"))
-  (:launch "coq_texmacs"))
+  (:require (url-exists-in-path? "coqtop"))
+  (:launch "tm_coq"))
 
-(when (url-exists-in-path? "coq_to_texmacs")
+(when (url-exists-in-path? "coqtop")
   (define-format coq-vernacular
     (:name "Coq vernacular")
-    (:suffix "v"))
-
-  (converter coq-vernacular-file stm-file
-    (:shell "coq_to_texmacs" from to)))
+    (:suffix "v")))
 
 (when (supports-coq?)
   (texmacs-modes
