@@ -1104,7 +1104,6 @@ vernac_to_tree (string s) {
   r= parse_raw_coq (s);
   r= section_parsed_coq (r);
   r= indent_parsed_coq (r);
-  if (N(r) == 0) r << "";
   return r;
 }
 
