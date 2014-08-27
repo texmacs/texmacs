@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : scmcoqtopml.scm
-;; DESCRIPTION : conversion of Coqtop Scheme commands to suitable XML trees.
+;; MODULE      : scmcoqml.scm
+;; DESCRIPTION : conversion of CoqML Scheme commands to suitable XML trees.
 ;; COPYRIGHT   : (C) 2013 François Poulain, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coq scmcoqtopml)
-  (:use (convert coq coqtopmlout)))
+(texmacs-module (convert coq scmcoqml)
+  (:use (convert coq coqmlout)))
 
 (define map map-in-order)
 
@@ -56,11 +56,11 @@
     `(bool (@ (val ,val)))))
 
 (define (pair->xml-stree p)
-  `(pair ,@(map stree->coqtopml-stree (cdr p))))
+  `(pair ,@(map stree->coqml-stree (cdr p))))
 
 (define (option->xml-stree t)
   (if (== (length t) 2)
-    (with child (stree->coqtopml-stree (cadr t))
+    (with child (stree->coqml-stree (cadr t))
       `(option (@ (val "some")) ,child))
     `(option (@ (val "none")))))
 
@@ -72,16 +72,16 @@
             ;; note: this behavior with int values will be changed in coq
             ((integer? o) "intvalue"))
       (if (integer? o) (set! o `(option ,o)))
-      `(option_value (@ (val ,val)) ,(stree->coqtopml-stree o)))))
+      `(option_value (@ (val ,val)) ,(stree->coqml-stree o)))))
 
 (define (union->xml-stree u)
   (let ((val (cadr u))
-        (child (stree->coqtopml-stree (caddr u))))
+        (child (stree->coqml-stree (caddr u))))
     `(union (@ (val ,val)) ,child)))
 
 (define (call->xml-stree u)
   (let ((val (cadr u))
-        (child (stree->coqtopml-stree (caddr u))))
+        (child (stree->coqml-stree (caddr u))))
     `(call (@ (val ,val)) ,child)))
 
 (define (state-id->xml-stree u)
@@ -94,7 +94,7 @@
 
 ;; This implementation is partial. 
 ;; Only intended for outputing values toward Coq.
-(define (stree->coqtopml-stree t)
+(define (stree->coqml-stree t)
   (with (node proc childs)
     (cond ((bool? t)         (list #f      bool->xml-stree         #f))
           ((pair? t)         (list #f      pair->xml-stree         #f))
@@ -106,20 +106,20 @@
           ((integer? t)      (list 'int    number->string          #f))
           ((string? t)       (list 'string identity                #f))
           ((unit? t)         (list 'unit   #f                      #f))
-          ((list? t)         (list 'list   stree->coqtopml-stree   #t))
+          ((list? t)         (list 'list   stree->coqml-stree      #t))
           (else '(#f #f #f)))
     (cond ((and (not node) proc)        (proc t))
           ((and node (not proc))        `(,node))
           ((and node proc (not childs)) `(,node ,(proc t)))
           ((and node proc childs)       `(,node ,@(map proc t)))
           (else
-            `(error ,(string-append "stree->coqtopml: cannot translate "
+            `(error ,(string-append "stree->coqml: cannot translate "
                                     (object->string t)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (stree->coqtopml t)
-  (serialize-coqtopml
-    `(*TOP* ,(stree->coqtopml-stree t))))
+(tm-define (stree->coqml t)
+  (serialize-coqml
+    `(*TOP* ,(stree->coqml-stree t))))

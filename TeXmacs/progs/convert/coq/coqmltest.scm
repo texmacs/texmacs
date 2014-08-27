@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : coqtopmltest
-;; DESCRIPTION : Test CoqTopMl converters
+;; MODULE      : coqmltest
+;; DESCRIPTION : Test CoqML converters
 ;; COPYRIGHT   : (C) 2013  François Poulain, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,9 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coq coqtopmltest)
-  (:use (convert coq coqtopmlscm)
-        (convert coq scmcoqtopml)))
+(texmacs-module (convert coq coqmltest)
+  (:use (convert coq coqmlscm)
+        (convert coq scmcoqml)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Idempotence
@@ -71,37 +71,37 @@
 
     (state-id 1)))
 
-(define (test-coqtopml-idempotence)
-  (letrec ((test (lambda (st) (== st (coqtopml->stree (stree->coqtopml st)))))
+(define (test-coqml-idempotence)
+  (letrec ((test (lambda (st) (== st (coqml->stree (stree->coqml st)))))
            (proc (lambda (st)
                    (let ((test_verb `(tt ,(object->string st)))
                          (msg   (if (test st) "test passed: " "test failed: "))
                          (color (if (test st) "dark green" "dark red")))
                      `(concat (with "color" ,color ,msg) ,test_verb)))))
     `(document
-       (strong "Idempotence testing: stree->coqtopml->stree")
+       (strong "Idempotence testing: stree->coqml->stree")
        ,@(map proc idempotence-test-suite))))
 
-(define (test-coqtopml-idempotence*)
+(define (test-coqml-idempotence*)
   (letrec ((test (lambda (st)
-                   (with xml (stree->coqtopml st)
-                     (== xml (stree->coqtopml (coqtopml->stree xml))))))
+                   (with xml (stree->coqml st)
+                     (== xml (stree->coqml (coqml->stree xml))))))
            (proc (lambda (st)
                    (let ((test_verb `(tt ,(object->string st)))
                          (msg   (if (test st) "test passed: " "test failed: "))
                          (color (if (test st) "dark green" "dark red")))
                      `(concat (with "color" ,color ,msg) ,test_verb)))))
     `(document
-       (strong "Idempotence testing: coqtopml->stree->coqtopml")
+       (strong "Idempotence testing: coqml->stree->coqml")
        ,@(map proc idempotence-test-suite))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (test-coqtopml)
+(tm-define (test-coqml)
   (stree->tree
     `(document
-       ,(test-coqtopml-idempotence)
+       ,(test-coqml-idempotence)
        ""
-       ,(test-coqtopml-idempotence*))))
+       ,(test-coqml-idempotence*))))

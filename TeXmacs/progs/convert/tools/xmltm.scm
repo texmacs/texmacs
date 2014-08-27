@@ -36,7 +36,7 @@
 ;;
 ;;Non-Normalized namespace prefixes are:
 ;;   g  --  Gallina language.
-;;   c  --  Coqtop XML format (CoqTopML).
+;;   c  --  Coq XML format (we named it CoqML).
 ;;
 ;; Since the parser is designed to be used for conversion to STM data format,
 ;; no provisions are made to preserve the namespace prefixes used in the
@@ -46,7 +46,7 @@
 (define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
 (define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
 (define xmlns-uri-gallina "Gallina")
-(define xmlns-uri-coqtopml "CoqTopML")
+(define xmlns-uri-coqml "CoqML")
 
 ;;; Building the namespace bindings environment
 
@@ -76,8 +76,8 @@
 
 ;;; Converting nodes
 
-(tm-define (coqtopml-parse s)
-  (xmltm-parse xmlns-uri-coqtopml parse-xml s))
+(tm-define (coqml-parse s)
+  (xmltm-parse xmlns-uri-coqml parse-xml s))
 
 (tm-define (gallinatm-parse s)
   (xmltm-parse xmlns-uri-gallina parse-xml s))
@@ -124,7 +124,7 @@
        (cond ((== ns-uri xmlns-uri-xhtml) "h:")
 	     ((== ns-uri xmlns-uri-mathml) "m:")
 	     ((== ns-uri xmlns-uri-gallina) "g:")
-	     ((== ns-uri xmlns-uri-coqtopml) "c:")
+	     ((== ns-uri xmlns-uri-coqml) "c:")
 	     ((== ns-uri xmlns-uri-xml) "x:")
 	     ((string-null? ns-uri) "")
 	     (else (string-append ns-uri ":")))
@@ -559,7 +559,7 @@
       (stm-serial l stm-document? htmltm-make-line htmltm-make-concat)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Producing coqtopml handlers for dispatch table
+;; Producing coqml handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (char-whitespace? c)
@@ -579,7 +579,7 @@
                            (trim-left  (cDr l)) l))))
   (list->string (trim-right (trim-left (string->list s))))))
 
-(define (coqtopml-space-cleaning env l)
+(define (coqml-space-cleaning env l)
   ;; Drop blank lines. Trim newlines at begin and end of strings.
   ;; Conserve spaces. Put text in string tags.
   (set! l (filter (lambda (x) (or (nstring? x)
@@ -588,10 +588,10 @@
     (list (trim-newlines (apply string-append l)))
     (map (lambda (x) (if (string? x) `(c:string ,(trim-newlines x)) x)) l)))
 
-(define coqtopml-pre    coqtopml-space-cleaning)
-(define coqtopml-elem   htmltm-space-element)
+(define coqml-pre    coqml-space-cleaning)
+(define coqml-elem   htmltm-space-element)
 
-(tm-define (coqtop-handler model method)
+(tm-define (coqml-handler model method)
   ;;  model:  content model category
   ;;          :element -- text nodes are ignored
   ;;          :pre -- Drop blank lines. Trim newlines at beginning and ending
@@ -601,13 +601,13 @@
       (error "Bad model: " model))
   (if (not (procedure? method))
       (error "Bad method: " method))
-  (let ((clean (cond ((eq? model :pre)  coqtopml-pre)
-                     ((eq? model :elem) coqtopml-elem))))
+  (let ((clean (cond ((eq? model :pre)  coqml-pre)
+                     ((eq? model :elem) coqml-elem))))
     (let ((proc method))
       (lambda (env a c)
         (proc env a (clean env c))))))
 
-(tm-define (coqtop-serial p? l)
+(tm-define (coqml-serial p? l)
   (if p? (stm-serial l stm-document?)
       (stm-serial l stm-document? htmltm-make-line htmltm-make-concat)))
 
@@ -619,7 +619,7 @@
   (cond ((== ns-id "h") (logic-ref htmltm-methods% ncname))
 	((== ns-id "m") (logic-ref mathtm-methods% ncname))
 	((== ns-id "g") (logic-ref gallinatm-methods% ncname))
-	((== ns-id "c") (logic-ref coqtop-methods% ncname))
+	((== ns-id "c") (logic-ref coqml-methods% ncname))
 	(else #f)))
 
 (tm-define (sxml-dispatch x-string x-pass env t)

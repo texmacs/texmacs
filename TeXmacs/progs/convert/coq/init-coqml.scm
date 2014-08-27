@@ -69,19 +69,20 @@
   (:function texmacs->vernac-document))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; CoqTopML
+;; CoqML
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-format coqtopml
   (:name "CoqTopML")
+  (:suffix "coqtopml")
   (:hidden))
 
-(lazy-define (convert coq coqtopmlout) serialize-coqtopml)
-(lazy-define (convert coq scmcoqtopml) stree->coqtopml)
-(lazy-define (convert coq coqtopmlscm) coqtopml->stree)
+(lazy-define (convert coqml coqtopmlout) serialize-coqtopml)
+(lazy-define (convert coqml scmcoqtopml) stree->coqtopml)
+(lazy-define (convert coqml coqtopmlscm) coqtopml->stree)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tests
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-define (convert coq coqtopmltest) test-coqtopml)
+(lazy-define (convert coq coqmltest) test-coqml)

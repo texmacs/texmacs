@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : coqtopmlout.scm
+;; MODULE      : coqmlout.scm
 ;; DESCRIPTION : generation of Xml from scheme expressions
 ;; COPYRIGHT   : (C) 2013  François Poulain, Joris van der Hoeven
 ;;
@@ -11,21 +11,21 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coq coqtopmlout)
+(texmacs-module (convert coq coqmlout)
   (:use (convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Determining output layout
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtopmlout-big? tag)
+(define (coqmlout-big? tag)
   (nin? tag '(int string)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Outputting main flow
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtopmlout-indent plus big?)
+(define (coqmlout-indent plus big?)
   (cond (big? (output-indent plus) (output-lf))
 	(else (noop))))
 
@@ -41,31 +41,31 @@
 (define (output-string s)
   (output-verbatim (escape-xml-string (cork->utf8 s))))
 
-(define (coqtopmlout-attr x)
-  ;(display-err* "[coqtopmlout-attr] " x "\n")
+(define (coqmlout-attr x)
+  ;(display-err* "[coqmlout-attr] " x "\n")
   (output-string (string-append " " (symbol->string (car x)) "="))
   (output-text "\"")
   (output-string (cadr x))
   (output-text "\""))
 
-(define (coqtopmlout-stacked-args l)
+(define (coqmlout-stacked-args l)
   (if (nnull? l)
       (begin
-	(coqtopmlout (car l))
+	(coqmlout (car l))
 	(if (nnull? (cdr l))
 	    (begin
 	      (output-lf)
 	      (output-lf)))
-	(coqtopmlout-stacked-args (cdr l)))))
+	(coqmlout-stacked-args (cdr l)))))
 
-(define (coqtopmlout-args l big?)
-  ;(display-err* "[coqtopmlout-args] " l ", " big? "\n")
+(define (coqmlout-args l big?)
+  ;(display-err* "[coqmlout-args] " l ", " big? "\n")
   (cond ((null? l) (noop))
 	((string? (car l))
 	 (output-string (car l))
-	 (coqtopmlout-args (cdr l) big?))
+	 (coqmlout-args (cdr l) big?))
 	(else
-	 (coqtopmlout (car l))
+	 (coqmlout (car l))
 	 (if (and big?
 		  (pair? (cdr l))
 		  (nstring? (car l))
@@ -73,21 +73,21 @@
 	     (begin
 	       (output-lf)
 	       (if (func? (cadr l) 'tm-par) (output-lf))))
-	 (coqtopmlout-args (cdr l) big?))))
+	 (coqmlout-args (cdr l) big?))))
 
-(define (coqtopmlout-tag tag attrs args)
-  ;(display-err* "[coqtopmlout-tag] " tag ", " attrs ", " args "\n")
-  (with big? (coqtopmlout-big? tag)
+(define (coqmlout-tag tag attrs args)
+  ;(display-err* "[coqmlout-tag] " tag ", " attrs ", " args "\n")
+  (with big? (coqmlout-big? tag)
     (output-text "<")
     (output-text (symbol->string tag))
-    (for-each coqtopmlout-attr attrs)
+    (for-each coqmlout-attr attrs)
     (if (null? args) (output-text "/"))
     (output-text ">")
     (if (nnull? args)
 	(begin
-	  (coqtopmlout-indent 2 big?)
-	  (coqtopmlout-args args big?)
-	  (coqtopmlout-indent -2 big?)
+	  (coqmlout-indent 2 big?)
+	  (coqmlout-args args big?)
+	  (coqmlout-indent -2 big?)
 	  (output-text "</" (symbol->string tag) ">")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -96,15 +96,15 @@
 
 ;; Note: escaping strings in text-elements and in attributes is not done.
 
-(define (coqtopmlout x)
-  ;(display-err* "[coqtopmlout] " x "\n")
+(define (coqmlout x)
+  ;(display-err* "[coqmlout] " x "\n")
   (cond ((string? x) (output-string (cork->utf8 x)))
 	((null? x) (noop))
 	((and (pair? (cdr x)) (func? (cadr x) '@))
-	 (coqtopmlout-tag (car x) (cdadr x) (cddr x)))
-	((func? x '*TOP*) (coqtopmlout-stacked-args (cdr x)))
-	(else (coqtopmlout-tag (car x) '() (cdr x)))))
+	 (coqmlout-tag (car x) (cdadr x) (cddr x)))
+	((func? x '*TOP*) (coqmlout-stacked-args (cdr x)))
+	(else (coqmlout-tag (car x) '() (cdr x)))))
 
-(tm-define (serialize-coqtopml x)
-  (coqtopmlout x)
+(tm-define (serialize-coqml x)
+  (coqmlout x)
   (output-produce))

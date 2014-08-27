@@ -1,24 +1,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : coqtopmlscm.scm
-;; DESCRIPTION : conversion of Coqtop XML commands to suitables strees.
+;; MODULE      : coqmlscm.scm
+;; DESCRIPTION : conversion of Coq XML commands to suitables strees.
 ;; COPYRIGHT   : (C) 2013 François Poulain, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
-;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.coqtopml>.
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coq coqtopmlscm)
+(texmacs-module (convert coq coqmlscm)
   (:use (convert tools tmtable)
 	(convert tools sxml)
 	(convert tools xmltm)))
 
 (define map map-in-order)
 
-(define (coqtop-error message . tree)
+(define (coqml-error message . tree)
   (if (nlist-1? tree)
     `((error ,message))
     `((error ,(string-append message (object->string (car tree)))))))
@@ -39,124 +39,124 @@
 (define (import-string s)
   (utf8->cork (unescape-xml-string s)))
 
-(define (coqtop-str env s)
+(define (coqml-str env s)
   (import-string s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtop-get-attributes att att-l)
+(define (coqml-get-attributes att att-l)
   (if (nsymbol? att) #f
     (filter
       nnull?
       (map (lambda (x)
              (if (!= (car x) att) '()
-               (coqtop-as-serial (environment) (cadr x)))) att-l))))
+               (coqml-as-serial (environment) (cadr x)))) att-l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtop-string env a c)
+(define (coqml-string env a c)
   (cond
     ((== (length c) 0) '(""))
     ((and (== (length c) 1) (string? (first c)))
      `(,(import-string (string-replace  (first c) "\n" ""))))
-    (else (coqtop-error "bad string: " c))))
+    (else (coqml-error "bad string: " c))))
 
-(define (coqtop-int env a c)
+(define (coqml-int env a c)
   (if (and (== (length c) 1)
            (string? (first c))
            (string->number (first c)))
     `(,(string->number (first c)))
-    (coqtop-error "bad int")))
+    (coqml-error "bad int")))
 
-(define (coqtop-bool env a c)
+(define (coqml-bool env a c)
   (if (and (== (length c) 0)
-           (or (== '("true")  (coqtop-get-attributes 'val a))
-               (== '("false") (coqtop-get-attributes 'val a))))
-    `(,(== (coqtop-get-attributes 'val a) '("true")))
-    (coqtop-error "bad bool")))
+           (or (== '("true")  (coqml-get-attributes 'val a))
+               (== '("false") (coqml-get-attributes 'val a))))
+    `(,(== (coqml-get-attributes 'val a) '("true")))
+    (coqml-error "bad bool")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Containers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtop-list env a c)
-  `(,(map (cut coqtop-as-serial env <>) c)))
+(define (coqml-list env a c)
+  `(,(map (cut coqml-as-serial env <>) c)))
 
-(define (coqtop-pair env a c)
+(define (coqml-pair env a c)
   (if (== (length c) 2)
-    `((pair ,@(map (cut coqtop-as-serial env <>) c)))
-    (coqtop-error "bad pair")))
+    `((pair ,@(map (cut coqml-as-serial env <>) c)))
+    (coqml-error "bad pair")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Compounds
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtop-unit env a c)
+(define (coqml-unit env a c)
   (if (== (length c) 0)
     `((unit))
-    (coqtop-error "bad unit")))
+    (coqml-error "bad unit")))
 
-(define (coqtop-value env a c)
-  (cond ((and (== (length c) 1) (== (coqtop-get-attributes 'val a) '("good")))
-         (with body (coqtop-as-serial env (first c))
+(define (coqml-value env a c)
+  (cond ((and (== (length c) 1) (== (coqml-get-attributes 'val a) '("good")))
+         (with body (coqml-as-serial env (first c))
            `((value "good" ,body))))
-        ((and (== (length c) 2) (== (coqtop-get-attributes 'val a) '("fail")))
-         (let ((loce (coqtop-get-attributes 'loc_e a))
-               (locs (coqtop-get-attributes 'loc_s a))
-               (stat (coqtop-as-serial env (first c)))
+        ((and (== (length c) 2) (== (coqml-get-attributes 'val a) '("fail")))
+         (let ((loce (coqml-get-attributes 'loc_e a))
+               (locs (coqml-get-attributes 'loc_s a))
+               (stat (coqml-as-serial env (first c)))
                (msg  `((document ,@(cdr (second c))))))
            (with loc
              (if (and (list-1? locs) (list-1? loce)) `((,locs ,loce)) '())
              `((value "fail" ,@loc ,stat ,msg)))))
         (else
-          (coqtop-error "bad value: "(list 'c:value a c)))))
+          (coqml-error "bad value: "(list 'c:value a c)))))
 
-(define (coqtop-call env a c)
+(define (coqml-call env a c)
   (if (and (== (length c) 1)
-           (with val (coqtop-get-attributes 'val a)
+           (with val (coqml-get-attributes 'val a)
              (and (list-1? val) (string? (first val)))))
-    (let* ((val  (first (coqtop-get-attributes 'val a)))
-           (body (coqtop-as-serial env (first c))))
+    (let* ((val  (first (coqml-get-attributes 'val a)))
+           (body (coqml-as-serial env (first c))))
       `((call ,val ,body)))
-    (coqtop-error "bad call")))
+    (coqml-error "bad call")))
 
-(define (coqtop-state-id env a c)
+(define (coqml-state-id env a c)
   (if (and (== (length c) 0)
-           (with val (coqtop-get-attributes 'val a)
+           (with val (coqml-get-attributes 'val a)
              (and (list-1? val) (string? (first val))
                   (string->number (first val)))))
-    (with val (string->number (first (coqtop-get-attributes 'val a)))
+    (with val (string->number (first (coqml-get-attributes 'val a)))
       `((state-id ,val)))
-    (coqtop-error "bad state-id")))
+    (coqml-error "bad state-id")))
 
-(define (coqtop-status env a c)
+(define (coqml-status env a c)
   (if (== (length c) 4)
-    (with bodies (map (cut coqtop-as-serial env <>) c)
+    (with bodies (map (cut coqml-as-serial env <>) c)
       `((status ,@bodies)))
-    (coqtop-error "bad status")))
+    (coqml-error "bad status")))
 
 (define (bool? b)
   (or (== b #t) (== b #f)))
 
-(define (coqtop-option env a c)
-  (with val (coqtop-get-attributes 'val a)
+(define (coqml-option env a c)
+  (with val (coqml-get-attributes 'val a)
     (if (and (list-1? val) (or (and (== val '("none")) (== (length c) 0))
                                (and (== val '("some")) (== (length c) 1))))
       (if (== val '("none")) `((option))
-        (with body (coqtop-as-serial env (first c))
+        (with body (coqml-as-serial env (first c))
           `((option ,body))))
-      (coqtop-error "bad option"))))
+      (coqml-error "bad option"))))
 
-(define (coqtop-option-value env a c)
+(define (coqml-option-value env a c)
   (if (and (== (length c) 1)
-           (with val (coqtop-get-attributes 'val a)
+           (with val (coqml-get-attributes 'val a)
              (and (list-1? val) (string? (first val)))))
-    (let* ((val  (first (coqtop-get-attributes 'val a)))
-           (body (coqtop-as-serial env (first c))))
+    (let* ((val  (first (coqml-get-attributes 'val a)))
+           (body (coqml-as-serial env (first c))))
               ;; note: this behavior with int values will be changed in coq
       (if (or (and (== val "intvalue")
                    (or (func? body 'option 0)
@@ -169,72 +169,72 @@
           (if (and (func? body 'option) (integer? (cAr body)))
             (set! body (cAr body)))
           `((option-value ,body)))
-      (coqtop-error "bad option-value type")))
-    (coqtop-error "bad option-value")))
+      (coqml-error "bad option-value type")))
+    (coqml-error "bad option-value")))
 
-(define (coqtop-union env a c)
+(define (coqml-union env a c)
   (if (and (== (length c) 1)
-           (or (== '("in_l") (coqtop-get-attributes 'val a))
-               (== '("in_r") (coqtop-get-attributes 'val a))))
-    (let* ((val  (first (coqtop-get-attributes 'val a)))
-           (body (coqtop-as-serial env (first c))))
+           (or (== '("in_l") (coqml-get-attributes 'val a))
+               (== '("in_r") (coqml-get-attributes 'val a))))
+    (let* ((val  (first (coqml-get-attributes 'val a)))
+           (body (coqml-as-serial env (first c))))
       `((union ,val ,body)))
-    (coqtop-error "bad union")))
+    (coqml-error "bad union")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtop-pass env a c)
-  (let ((l (coqtop-args env c)))
+(define (coqml-pass env a c)
+  (let ((l (coqml-args env c)))
     (if (and (null? l) (not (assoc 'id a))) '()
 	(list (xmltm-label-decorate
-                a 'id (coqtop-serial (htmltm-preserve-space? env) l))))))
+                a 'id (coqml-serial (htmltm-preserve-space? env) l))))))
 
-(define (coqtop-args env l)
-  (append-map (lambda (x) (coqtop env x)) l))
+(define (coqml-args env l)
+  (append-map (lambda (x) (coqml env x)) l))
 
-(define (coqtop-args-serial env l)
-  (coqtop-serial env (coqtop-args env l)))
+(define (coqml-args-serial env l)
+  (coqml-serial env (coqml-args env l)))
 
-(define (coqtop env t)
-  (sxml-dispatch (lambda (env t) (list (coqtop-str env t)))
-		 coqtop-pass env t))
+(define (coqml env t)
+  (sxml-dispatch (lambda (env t) (list (coqml-str env t)))
+		 coqml-pass env t))
 
-(tm-define coqtop-as-serial
+(tm-define coqml-as-serial
     (case-lambda
       ((t) (with env (environment)
               (ahash-set! env 'preserve-space? #t)
-              (coqtop-as-serial env t)))
-      ((env t) (coqtop-serial env (coqtop env t)))))
+              (coqml-as-serial env t)))
+      ((env t) (coqml-serial env (coqml env t)))))
 
-(define handler coqtop-handler)
+(define handler coqml-handler)
 
-(logic-dispatcher coqtop-methods%
+(logic-dispatcher coqml-methods%
   ;; basic type
-  (string       (handler :pre  coqtop-string))
-  (int          (handler :pre  coqtop-int))
-  (bool         (handler :elem coqtop-bool))
+  (string       (handler :pre  coqml-string))
+  (int          (handler :pre  coqml-int))
+  (bool         (handler :elem coqml-bool))
 
   ;; containers
-  (list         (handler :elem coqtop-list))
-  (pair         (handler :elem coqtop-pair))
+  (list         (handler :elem coqml-list))
+  (pair         (handler :elem coqml-pair))
 
   ;; compounds
-  (unit         (handler :elem coqtop-unit))
-  (union        (handler :elem coqtop-union))
-  (call         (handler :elem coqtop-call))
-  (state_id     (handler :elem coqtop-state-id))
-  (status       (handler :elem coqtop-status))
-  (value        (handler :elem coqtop-value))
-  (status       (handler :elem coqtop-status))
-  (value        (handler :pre  coqtop-value))
-  (option       (handler :elem coqtop-option))
-  (option_value (handler :elem coqtop-option-value)))
+  (unit         (handler :elem coqml-unit))
+  (union        (handler :elem coqml-union))
+  (call         (handler :elem coqml-call))
+  (state_id     (handler :elem coqml-state-id))
+  (status       (handler :elem coqml-status))
+  (value        (handler :elem coqml-value))
+  (status       (handler :elem coqml-status))
+  (value        (handler :pre  coqml-value))
+  (option       (handler :elem coqml-option))
+  (option_value (handler :elem coqml-option-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (coqtopml->stree s)
-  (coqtop-as-serial (coqtopml-parse s)))
+(tm-define (coqml->stree s)
+  (coqml-as-serial (coqml-parse s)))
