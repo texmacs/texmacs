@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coqml coqtopmlscm)
+(texmacs-module (convert coq coqtopmlscm)
   (:use (convert tools tmtable)
 	(convert tools sxml)
 	(convert tools xmltm)))

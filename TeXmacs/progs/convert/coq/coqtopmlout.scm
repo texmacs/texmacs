@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coqml coqtopmlout)
+(texmacs-module (convert coq coqtopmlout)
   (:use (convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -106,10 +106,5 @@
 	(else (coqtopmlout-tag (car x) '() (cdr x)))))
 
 (tm-define (serialize-coqtopml x)
-  (coqtopmlout x)
-  (output-produce))
-
-;; temp
-(tm-define (serialize-coqml x)
   (coqtopmlout x)
   (output-produce))

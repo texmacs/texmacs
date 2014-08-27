@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : init-coqml.scm
-;; DESCRIPTION : Setup CoqMl converters
+;; DESCRIPTION : Setup Coq ML converters
 ;; COPYRIGHT   : (C) 2013  François Poulain, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,40 +11,38 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coqml init-coqml))
+(texmacs-module (convert coq init-coqml))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; CoqMl
+;; Gallina
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-format coqml
-  (:name "CoqML")
-  (:suffix "coqml")
+(define-format gallina
+  (:name "Gallina")
   (:hidden))
 
-(lazy-define (convert coqml coqmltm)     parse-coqml-snippet)
-(lazy-define (convert coqml coqmltm)     parse-coqml-document)
-(lazy-define (convert coqml coqmltm)     coqml->texmacs)
-(lazy-define (convert coqml tmcoqml)     texmacs->coqml)
-(lazy-define (convert coqml coqtopmlout) serialize-coqml)
+(lazy-define (convert coq gallinatm)     parse-gallina-snippet)
+(lazy-define (convert coq gallinatm)     parse-gallina-document)
+(lazy-define (convert coq gallinatm)     gallina->texmacs)
+(lazy-define (convert coq tmgallina)     texmacs->gallina)
 
-(converter coqml-document coqml-stree
-  (:function parse-coqml-document))
+(converter gallina-document gallina-stree
+  (:function parse-gallina-document))
 
-(converter coqml-stree coqml-document
-  (:function serialize-coqml))
+;(converter gallina-stree gallina-document
+;  (:function serialize-gallina))
 
-(converter coqml-snippet coqml-stree
-  (:function parse-coqml-snippet))
+(converter gallina-snippet gallina-stree
+  (:function parse-gallina-snippet))
 
-(converter coqml-stree coqml-snippet
-  (:function serialize-coqml))
+;(converter gallina-stree gallina-snippet
+;  (:function serialize-gallina))
 
-(converter coqml-stree texmacs-stree
-  (:function coqml->texmacs))
+(converter gallina-stree texmacs-stree
+  (:function gallina->texmacs))
 
-(converter texmacs-stree coqml-stree
-  (:function texmacs->coqml))
+(converter texmacs-stree gallina-stree
+  (:function texmacs->gallina))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Vernacular
@@ -55,8 +53,8 @@
   (:suffix "v")
   (:hidden))
 
-(lazy-define (convert coqml tmvernac) texmacs->vernac)
-(lazy-define (convert coqml tmvernac) texmacs->vernac-document)
+(lazy-define (convert coq tmvernac) texmacs->vernac)
+(lazy-define (convert coq tmvernac) texmacs->vernac-document)
 
 (converter vernac-snippet texmacs-tree
   (:function vernac->texmacs))
@@ -74,12 +72,16 @@
 ;; CoqTopML
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-define (convert coqml coqtopmlout) serialize-coqtopml)
-(lazy-define (convert coqml scmcoqtopml) stree->coqtopml)
-(lazy-define (convert coqml coqtopmlscm) coqtopml->stree)
+(define-format coqtopml
+  (:name "CoqTopML")
+  (:hidden))
+
+(lazy-define (convert coq coqtopmlout) serialize-coqtopml)
+(lazy-define (convert coq scmcoqtopml) stree->coqtopml)
+(lazy-define (convert coq coqtopmlscm) coqtopml->stree)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tests
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(lazy-define (convert coqml coqtopmltest) test-coqtopml)
+(lazy-define (convert coq coqtopmltest) test-coqtopml)

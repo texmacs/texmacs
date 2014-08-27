@@ -11,9 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coqml coqtopmltest)
-  (:use (convert coqml coqtopmlscm)
-        (convert coqml scmcoqtopml)))
+(texmacs-module (convert coq coqtopmltest)
+  (:use (convert coq coqtopmlscm)
+        (convert coq scmcoqtopml)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Idempotence

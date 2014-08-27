@@ -35,7 +35,7 @@
 ;;   m  --  MathML - http://www.w3.org/1998/Math/MathML
 ;;
 ;;Non-Normalized namespace prefixes are:
-;;   v  --  Vernacular CoqML.
+;;   g  --  Gallina language.
 ;;   c  --  Coqtop XML format (CoqTopML).
 ;;
 ;; Since the parser is designed to be used for conversion to STM data format,
@@ -45,7 +45,7 @@
 (define xmlns-uri-xml "http://www.w3.org/XML/1998/namespace")
 (define xmlns-uri-xhtml "http://www.w3.org/1999/xhtml")
 (define xmlns-uri-mathml "http://www.w3.org/1998/Math/MathML")
-(define xmlns-uri-coqml "CoqML")
+(define xmlns-uri-gallina "Gallina")
 (define xmlns-uri-coqtopml "CoqTopML")
 
 ;;; Building the namespace bindings environment
@@ -79,8 +79,8 @@
 (tm-define (coqtopml-parse s)
   (xmltm-parse xmlns-uri-coqtopml parse-xml s))
 
-(tm-define (coqmltm-parse s)
-  (xmltm-parse xmlns-uri-coqml parse-xml s))
+(tm-define (gallinatm-parse s)
+  (xmltm-parse xmlns-uri-gallina parse-xml s))
 
 (tm-define (htmltm-parse s)
   (xmltm-parse xmlns-uri-xhtml parse-html s))
@@ -123,7 +123,7 @@
        ;; FIXME: user namespace prefix list should be extensible
        (cond ((== ns-uri xmlns-uri-xhtml) "h:")
 	     ((== ns-uri xmlns-uri-mathml) "m:")
-	     ((== ns-uri xmlns-uri-coqml) "v:")
+	     ((== ns-uri xmlns-uri-gallina) "g:")
 	     ((== ns-uri xmlns-uri-coqtopml) "c:")
 	     ((== ns-uri xmlns-uri-xml) "x:")
 	     ((string-null? ns-uri) "")
@@ -512,22 +512,22 @@
   (proc env a c))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Producing coqml handlers for dispatch table
+;; Producing gallina handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define coqmltm-raw    htmltm-space-preformatted)
-(define coqmltm-terms  htmltm-space-element)
-(define coqmltm-vernac htmltm-space-element)
-(define coqmltm-toplvl htmltm-space-element)
-(define coqmltm-ltac   htmltm-space-element)
+(define gallinatm-raw    htmltm-space-preformatted)
+(define gallinatm-terms  htmltm-space-element)
+(define gallinatm-vernac htmltm-space-element)
+(define gallinatm-toplvl htmltm-space-element)
+(define gallinatm-ltac   htmltm-space-element)
 
-(define (coqtm-handler/inline env a c proc)
+(define (gallinatm-handler/inline env a c proc)
   (proc env a c))
 
-(define (coqtm-handler/bloc env a c proc)
+(define (gallinatm-handler/bloc env a c proc)
   `((document ,@(proc env a c))))
 
-(tm-define (coqtm-handler model method)
+(tm-define (gallinatm-handler model method)
   ;;  model:  content model category
   ;;          :toplvl -- text node are ignored
   ;;          :terms  -- text node are ignored
@@ -540,21 +540,21 @@
       (error "Bad model: " model))
   (if (not (procedure? method))
       (error "Bad method: " method))
-  (let ((clean (cond ((eq? model :raw)    coqmltm-raw)
-                     ((eq? model :terms)  coqmltm-terms)
-                     ((eq? model :toplvl) coqmltm-toplvl)
-                     ((eq? model :vernac) coqmltm-vernac)
-                     ((eq? model :ltac)   coqmltm-ltac)))
-        (para  (cond ((eq? model :raw)    coqtm-handler/inline)
-                     ((eq? model :terms)  coqtm-handler/inline)
-                     ((eq? model :ltac)   coqtm-handler/inline)
-                     ((eq? model :toplvl) coqtm-handler/bloc)
-                     ((eq? model :vernac) coqtm-handler/bloc))))
+  (let ((clean (cond ((eq? model :raw)    gallinatm-raw)
+                     ((eq? model :terms)  gallinatm-terms)
+                     ((eq? model :toplvl) gallinatm-toplvl)
+                     ((eq? model :vernac) gallinatm-vernac)
+                     ((eq? model :ltac)   gallinatm-ltac)))
+        (para  (cond ((eq? model :raw)    gallinatm-handler/inline)
+                     ((eq? model :terms)  gallinatm-handler/inline)
+                     ((eq? model :ltac)   gallinatm-handler/inline)
+                     ((eq? model :toplvl) gallinatm-handler/bloc)
+                     ((eq? model :vernac) gallinatm-handler/bloc))))
     (let ((proc method))
       (lambda (env a c)
         (para env a (clean env c) proc)))))
 
-(tm-define (coqtm-serial p? l)
+(tm-define (gallinatm-serial p? l)
   (if p? (stm-serial l stm-document?)
       (stm-serial l stm-document? htmltm-make-line htmltm-make-concat)))
 
@@ -618,7 +618,7 @@
 (define (sxml-meta-logic-ref ns-id ncname)
   (cond ((== ns-id "h") (logic-ref htmltm-methods% ncname))
 	((== ns-id "m") (logic-ref mathtm-methods% ncname))
-	((== ns-id "v") (logic-ref coqtm-methods% ncname))
+	((== ns-id "g") (logic-ref gallinatm-methods% ncname))
 	((== ns-id "c") (logic-ref coqtop-methods% ncname))
 	(else #f)))
 

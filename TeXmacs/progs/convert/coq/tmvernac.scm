@@ -10,8 +10,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coqml tmvernac)
-          (:use (convert coqml vernacout)))
+(texmacs-module (convert coq tmvernac)
+          (:use (convert coq vernacout)))
 
 (define mode "text")
 

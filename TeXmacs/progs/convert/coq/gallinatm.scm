@@ -1,77 +1,77 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : coqtm.scm
-;; DESCRIPTION : conversion of CoqML trees to TeXmacs trees
+;; MODULE      : gallinatm.scm
+;; DESCRIPTION : conversion of Gallina trees to TeXmacs trees
 ;; COPYRIGHT   : (C) 2013 François Poulain and Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
-;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.coqml>.
+;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (convert coqml coqtm)
+(texmacs-module (convert coq gallinatm)
   (:use (convert tools tmtable)
 	(convert tools sxml)
 	(convert tools xmltm)))
 
 (define map map-in-order)
 
-(define (coqtm-error message)
+(define (gallinatm-error message)
   `((with "color" "red" ,message)))
 
-(define (coqtm-string s)
+(define (gallinatm-string s)
   (utf8->cork s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Accessors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtm-get-attributes att att-l)
+(define (gallinatm-get-attributes att att-l)
   (if (nsymbol? att) #f
     (filter nnull?
             (map (lambda (x)
                    (if (!= (car x) att) '()
-                     (coqtm-as-serial
+                     (gallinatm-as-serial
                        (environment)
-                       (coqtm-string (cadr x))))) att-l))))
+                       (gallinatm-string (cadr x))))) att-l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Terms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtm-token env a c)
+(define (gallinatm-token env a c)
   (if (== (length c) 1)
     `((coq-token
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env (first c))))
-    (coqtm-error "bad token")))
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)
+        ,(gallinatm-as-serial env (first c))))
+    (gallinatm-error "bad token")))
 
-(define (coqtm-reference env a c)
+(define (gallinatm-reference env a c)
   (if (== (length c) 0)
     `((coq-reference
-        ,@(coqtm-get-attributes 'name a)
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)))
-    (coqtm-error "bad reference")))
+        ,@(gallinatm-get-attributes 'name a)
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)))
+    (gallinatm-error "bad reference")))
 
-(define (coqtm-require env a c)
+(define (gallinatm-require env a c)
   (if (== (length c) 1)
     `((coq-require
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env (first c))))
-    (coqtm-error "bad require")))
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)
+        ,(gallinatm-as-serial env (first c))))
+    (gallinatm-error "bad require")))
 
-(define (coqtm-apply env a c)
+(define (gallinatm-apply env a c)
   (if (> (length c) 0)
     `((coq-apply
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)
-        ,@(map (cut coqtm-as-serial env <>) c)))
-    (coqtm-error "bad apply")))
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)
+        ,@(map (cut gallinatm-as-serial env <>) c)))
+    (gallinatm-error "bad apply")))
 
 (define (make-tex-args s)
   (cond ((< (string-length s) 2) "")
@@ -125,12 +125,12 @@
   (if (not (string-occurs? " .. " s)) s
     (apply string-append (make-notation-sep (string-decompose s " .. ")))))
 
-(define (coqtm-operator env a c)
+(define (gallinatm-operator env a c)
   (if (== (length c) 0)
-    (let ((names  (coqtm-get-attributes 'name a))
-          (texes  (coqtm-get-attributes 'format-tex a))
-          (begins (coqtm-get-attributes 'begin a))
-          (ends   (coqtm-get-attributes 'end a)))
+    (let ((names  (gallinatm-get-attributes 'name a))
+          (texes  (gallinatm-get-attributes 'format-tex a))
+          (begins (gallinatm-get-attributes 'begin a))
+          (ends   (gallinatm-get-attributes 'end a)))
       (if (and (list>0? names) (list>0? texes))
         (let* ((val  (car texes))
                (val  (prepare-notation-recursive-pattern val))
@@ -139,167 +139,167 @@
                (m    (tree->stree (generic->texmacs ltxd "latex-snippet"))))
           (if (func? m 'assign 2) (set! names (cddr m)))))
       `((coq-operator ,@names ,@begins ,@ends)))
-      (coqtm-error "bad operator")))
+      (gallinatm-error "bad operator")))
 
-(define (coqtm-notation env a c)
+(define (gallinatm-notation env a c)
   (if (== (length c) 1)
     `((coq-notation
-        ,@(coqtm-get-attributes 'name a)
-        ,(coqtm-as-serial env `(math ,(first c)))
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)))
-    (coqtm-error "bad notation")))
+        ,@(gallinatm-get-attributes 'name a)
+        ,(gallinatm-as-serial env `(math ,(first c)))
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)))
+    (gallinatm-error "bad notation")))
 
-(define (coqtm-constant env a c)
+(define (gallinatm-constant env a c)
   (if (== (length c) 0)
     `((coq-constant
-        ,@(coqtm-get-attributes 'name a)
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)))
-    (coqtm-error "bad constant")))
+        ,@(gallinatm-get-attributes 'name a)
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)))
+    (gallinatm-error "bad constant")))
 
-(define (coqtm-recurse env a c)
+(define (gallinatm-recurse env a c)
   (if (> (length c) 0)
     `((coq-intersperse-recurse-args
-        ,@(map (cut coqtm-as-serial env <>) c)))
-    (coqtm-error "bad recurse")))
+        ,@(map (cut gallinatm-as-serial env <>) c)))
+    (gallinatm-error "bad recurse")))
 
-(define (coqtm-typed env a c)
+(define (gallinatm-typed env a c)
   (if (> (length c) 1)
-    (with args (map (cut coqtm-as-serial env <>) c)
+    (with args (map (cut gallinatm-as-serial env <>) c)
       (if (and (func? (cAr args) 'coq-constant 3) (== (cadr (cAr args)) "_"))
         `((coq-untyped ,@(cDr args)))
         `((coq-typed ,@args))))
-    (coqtm-error "bad typed")))
+    (gallinatm-error "bad typed")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Vernacular commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtm-check env a c)
+(define (gallinatm-check env a c)
   (if (== (length c) 1)
     `((coq-check
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env `(math ,(first c)))))
-    (coqtm-error "bad check")))
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)
+        ,(gallinatm-as-serial env `(math ,(first c)))))
+    (gallinatm-error "bad check")))
 
-(define (coqtm-definition env a c)
+(define (gallinatm-definition env a c)
   (if (== (length c) 1)
     `((coq-definition
-        ,@(coqtm-get-attributes 'type a)
-        ,@(coqtm-get-attributes 'name a)
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env `(math ,(first c)))))
-    (coqtm-error "bad definition")))
+        ,@(gallinatm-get-attributes 'type a)
+        ,@(gallinatm-get-attributes 'name a)
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)
+        ,(gallinatm-as-serial env `(math ,(first c)))))
+    (gallinatm-error "bad definition")))
 
-(define (coqtm-theorem env a c)
+(define (gallinatm-theorem env a c)
   (if (== (length c) 1)
     `((coq-theorem
-        ,@(coqtm-get-attributes 'type a)
-        ,@(coqtm-get-attributes 'name a)
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env `(math ,(first c)))))
-    (coqtm-error "bad theorem")))
+        ,@(gallinatm-get-attributes 'type a)
+        ,@(gallinatm-get-attributes 'name a)
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)
+        ,(gallinatm-as-serial env `(math ,(first c)))))
+    (gallinatm-error "bad theorem")))
 
-(define (coqtm-gallina env a c)
+(define (gallinatm-gallina env a c)
   (if (== (length c) 1)
     `((coq-gallina
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)
-        ,(coqtm-as-serial env (first c))))
-    (coqtm-error "bad gallina")))
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)
+        ,(gallinatm-as-serial env (first c))))
+    (gallinatm-error "bad gallina")))
 
-(define (coqtm-body env a c)
-    `((document ,@(map (cut coqtm-as-serial env <>) c))))
+(define (gallinatm-body env a c)
+    `((document ,@(map (cut gallinatm-as-serial env <>) c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ltac commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtm-ltac env a c)
+(define (gallinatm-ltac env a c)
   (if (== (length c) 1)
     `((coq-ltac
-        ,@(map (cut coqtm-as-serial env <>) c)
-        ,@(coqtm-get-attributes 'begin a)
-        ,@(coqtm-get-attributes 'end a)))
-    (coqtm-error "bad ltac")))
+        ,@(map (cut gallinatm-as-serial env <>) c)
+        ,@(gallinatm-get-attributes 'begin a)
+        ,@(gallinatm-get-attributes 'end a)))
+    (gallinatm-error "bad ltac")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (coqtm-drop env a c) '())
+(define (gallinatm-drop env a c) '())
 
-(define (coqtm-pass env a c)
-  (let ((l (coqtm-args env c)))
+(define (gallinatm-pass env a c)
+  (let ((l (gallinatm-args env c)))
     (if (and (null? l) (not (assoc 'id a))) '()
 	(list (xmltm-label-decorate
-                a 'id (coqtm-serial (htmltm-preserve-space? env) l))))))
+                a 'id (gallinatm-serial (htmltm-preserve-space? env) l))))))
 
-(define (coqtm-args env l)
-  (append-map (lambda (x) (coqtm env x)) l))
+(define (gallinatm-args env l)
+  (append-map (lambda (x) (gallinatm env x)) l))
 
-(define (coqtm-args-serial env l)
-  (coqtm-serial env (coqtm-args env l)))
+(define (gallinatm-args-serial env l)
+  (gallinatm-serial env (gallinatm-args env l)))
 
-(define (coqtm env t)
-  (sxml-dispatch (lambda (env t) (list t)) coqtm-pass env t))
+(define (gallinatm env t)
+  (sxml-dispatch (lambda (env t) (list t)) gallinatm-pass env t))
 
-(tm-define coqtm-as-serial
+(tm-define gallinatm-as-serial
     (case-lambda
       ((t) (with env (environment)
               (ahash-set! env 'preserve-space? #f)
-              (coqtm-as-serial env t)))
-      ((env t) (coqtm-serial env (coqtm env t)))))
+              (gallinatm-as-serial env t)))
+      ((env t) (gallinatm-serial env (gallinatm env t)))))
 
-(define handler coqtm-handler)
+(define handler gallinatm-handler)
 
-(logic-dispatcher coqtm-methods%
+(logic-dispatcher gallinatm-methods%
   ;; Raw
-  (token      (handler :raw    coqtm-token))
+  (token      (handler :raw    gallinatm-token))
 
   ;; Terms
-  (apply      (handler :terms  coqtm-apply))
-  (operator   (handler :terms  coqtm-operator))
-  (notation   (handler :terms  coqtm-notation))
-  (reference  (handler :terms  coqtm-reference))
-  (require    (handler :terms  coqtm-require))
-  (constant   (handler :terms  coqtm-constant))
-  (recurse    (handler :terms  coqtm-recurse))
-  (typed      (handler :terms  coqtm-typed))
+  (apply      (handler :terms  gallinatm-apply))
+  (operator   (handler :terms  gallinatm-operator))
+  (notation   (handler :terms  gallinatm-notation))
+  (reference  (handler :terms  gallinatm-reference))
+  (require    (handler :terms  gallinatm-require))
+  (constant   (handler :terms  gallinatm-constant))
+  (recurse    (handler :terms  gallinatm-recurse))
+  (typed      (handler :terms  gallinatm-typed))
 
   ;; Vernacular
-  (check      (handler :vernac coqtm-check))
-  (definition (handler :vernac coqtm-definition))
-  (theorem    (handler :vernac coqtm-theorem))
+  (check      (handler :vernac gallinatm-check))
+  (definition (handler :vernac gallinatm-definition))
+  (theorem    (handler :vernac gallinatm-theorem))
 
   ;; Tactics
-  (ltac       (handler :raw    coqtm-ltac))
+  (ltac       (handler :raw    gallinatm-ltac))
 
   ;; Toplevel
-  (body       (handler :toplvl coqtm-body))
-  (gallina    (handler :toplvl coqtm-gallina)))
+  (body       (handler :toplvl gallinatm-body))
+  (gallina    (handler :toplvl gallinatm-gallina)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (parse-coqml-snippet s)
-  (coqmltm-parse s))
+(tm-define (parse-gallina-snippet s)
+  (gallinatm-parse s))
 
-(tm-define (parse-coqml-document s)
-  `(!file ,(coqmltm-parse (string-append "<body>" s "</body>"))))
+(tm-define (parse-gallina-document s)
+  `(!file ,(gallinatm-parse (string-append "<body>" s "</body>"))))
 
-(tm-define (coqml->texmacs coqml)
+(tm-define (gallina->texmacs gallina)
   (:type (-> stree stree))
-  (:synopsis "Convert a parsed CoqML stree @t into a TeXmacs stree.")
-  (let* ((snippet? (not (func? coqml '!file 1)))
-	 (body (if snippet? coqml (cadr coqml)))
-	 (tm (filter (lambda (x) (!= x "\n")) (coqtm-as-serial body))))
-    ;; (display* "coqml->texmacs: tm:    " tm "\n\n")
+  (:synopsis "Convert a parsed Gallina stree @t into a TeXmacs stree.")
+  (let* ((snippet? (not (func? gallina '!file 1)))
+	 (body (if snippet? gallina (cadr gallina)))
+	 (tm (filter (lambda (x) (!= x "\n")) (gallinatm-as-serial body))))
+    ;; (display* "gallina->texmacs: tm:    " tm "\n\n")
     (if snippet? tm
 	(let* ((aux (stm-unary-document tm))
 	       (doc (tree->stree (tree-simplify (stree->tree aux))))
