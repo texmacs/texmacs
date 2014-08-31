@@ -341,17 +341,15 @@ impress (qt_simple_widget_rep* wid) {
     qt_renderer_rep *ren = the_qt_renderer();
     ren->begin (static_cast<QPaintDevice*>(&pxm));
     rectangle r = rectangle (0, 0, s.width(), s.height());
-    ren->set_origin (0,0);
+    ren->set_origin (0, 0);
     ren->encode (r->x1, r->y1);
     ren->encode (r->x2, r->y2);
     ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
     {
         // we do not want to be interrupted here...
-      extern bool disable_check_event;
-      bool cache = disable_check_event;
-      disable_check_event = true;
+      the_gui->set_check_events (false);
       wid->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
-      disable_check_event = cache;
+      the_gui->set_check_events (true);
     }
     ren->end();
   }

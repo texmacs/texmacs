@@ -57,19 +57,6 @@
 qt_gui_rep* the_gui = NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 
-time_t time_credit = 100;  // interval to interrupt long redrawings
-time_t timeout_time; // new redraw interruption
-time_t lapse = 0; // optimization for delayed commands
-
-  // marshalling flags between update, needs_update and check_event.
-bool disable_check_event = false;
-bool updating = false;
-bool needing_update = false;
-bool wait_for_delayed_commands = true;
-  // this flag is used in update() to insert QP_DELAYED_COMMANDS events in TeXmacs
-  // event queue so to have delayed command handling properly interspersed with
-  // the other events
-
 /******************************************************************************
  * Constructor and geometry
  ******************************************************************************/
@@ -477,71 +464,6 @@ qt_gui_rep::enable_notifier (socket_notifier sn, bool flag)
 
 
 /******************************************************************************
- * Delayed commands
- ******************************************************************************/
-
-  //FIXME: the code below is almost a copy of the code in Guile/Scheme/object.cpp
-  //       maybe some refactoring would be necessary
-
-static array<object> delayed_queue;
-static array<time_t> start_queue;
-
-void
-exec_delayed (object cmd) {
-  delayed_queue << cmd;
-  start_queue << (((time_t) texmacs_time ()) - 1000000000);
-  lapse = texmacs_time();
-  needs_update();
-}
-
-void
-exec_delayed_pause (object cmd) {
-  delayed_queue << cmd;
-  start_queue << ((time_t) texmacs_time ());
-  lapse = texmacs_time();
-  needs_update();
-}
-
-void
-exec_pending_commands () {
-  array<object> a = delayed_queue;
-  array<time_t> b = start_queue;
-  delayed_queue = array<object> (0);
-  start_queue = array<time_t> (0);
-  int i, n = N(a);
-  for (i = 0; i<n; i++) {
-    time_t now =  texmacs_time ();
-    if ((now - b[i]) >= 0) {
-      object obj = call (a[i]);
-      if (is_int (obj) && (now - b[i] < 1000000000)) {
-        time_t pause = as_int (obj);
-          //cout << "pause = " << obj << "\n";
-        delayed_queue << a[i];
-        start_queue << (now + pause);
-      }
-    }
-    else {
-      delayed_queue << a[i];
-      start_queue << b[i];
-    }
-  }
-  if (N(delayed_queue)>0) {
-    lapse = start_queue[0];
-    int n = N(start_queue);
-    for (i = 1; i<n; i++) {
-      if (lapse > start_queue[i]) lapse = start_queue[i];
-    }
-  }
-}
-
-void
-clear_pending_commands () {
-  delayed_queue = array<object> (0);
-  start_queue = array<time_t> (0);
-}
-
-
-/******************************************************************************
  * Main routines
  ******************************************************************************/
 
@@ -596,152 +518,93 @@ gui_refresh () {
  * Queued processing
  ******************************************************************************/
 
-enum qp_type_id {
-  QP_NULL,
-  QP_KEYPRESS,
-  QP_KEYBOARD_FOCUS,
-  QP_MOUSE,
-  QP_RESIZE,
-  QP_SOCKET_NOTIFICATION,
-  QP_COMMAND,
-  QP_COMMAND_ARGS,
-  QP_DELAYED_COMMANDS
-};
-
-class qp_type {
-public:
-  qp_type_id sid;
-  inline qp_type (qp_type_id sid2 = QP_NULL): sid (sid2) {}
-  inline qp_type (const qp_type& s): sid (s.sid) {}
-  inline qp_type& operator = (qp_type s) { sid = s.sid; return *this; }
-  inline operator qp_type_id () { return sid; }
-  inline bool operator == (qp_type_id sid2) { return sid == sid2; }
-  inline bool operator != (qp_type_id sid2) { return sid != sid2; }
-  inline bool operator == (qp_type s) { return sid == s.sid; }
-  inline bool operator != (qp_type s) { return sid != s.sid; }
-  inline friend tm_ostream& operator << (tm_ostream& out, qp_type s)
-  { return out << s.sid; }
-};
-
-class queued_event : public pair<qp_type, blackbox>
-{
-public:
-  queued_event (qp_type _type = qp_type(), blackbox _bb = blackbox())
-  : pair<qp_type, blackbox>(_type, _bb) {};
-};
-
-
-static array<queued_event> waiting_events;
-
-void add_event (const queued_event &ev);
-
-void
-process_event (queued_event ev) {
-  switch (static_cast<qp_type_id> (ev.x1)) {
-    case QP_NULL :
-      break;
-    case QP_KEYPRESS :
-    {
-      typedef triple<widget, string, time_t > T;
-      T x = open_box <T> (ev.x2);
-      if (!is_nil (x.x1))
-        concrete_simple_widget (x.x1)->handle_keypress (x.x2, x.x3);
-    }
-      break;
-    case QP_KEYBOARD_FOCUS :
-    {
-      typedef triple<widget, bool, time_t > T;
-      T x = open_box <T> (ev.x2);
-      if (!is_nil (x.x1))
-        concrete_simple_widget (x.x1)->handle_keyboard_focus (x.x2, x.x3);
-    }
-      break;
-    case QP_MOUSE :
-    {
-      typedef quintuple<string, SI, SI, int, time_t > T1;
-      typedef pair<widget, T1> T;
-      T x = open_box <T> (ev.x2);
-      if (!is_nil (x.x1))
-        concrete_simple_widget (x.x1)->handle_mouse (x.x2.x1, x.x2.x2,
-                                                     x.x2.x3, x.x2.x4, x.x2.x5);
-    }
-      break;
-    case QP_RESIZE :
-    {
-      typedef triple<widget, SI, SI > T;
-      T x = open_box <T> (ev.x2);
-      if (!is_nil (x.x1))
-        concrete_simple_widget (x.x1)->handle_notify_resize (x.x2, x.x3) ;
-    }
-      break;
-    case QP_SOCKET_NOTIFICATION :
-    {
-      socket_notifier sn = open_box <socket_notifier> (ev.x2) ;
-      sn->notify ();
-      the_gui->enable_notifier (sn, true);
-    }
-      break;
-    case QP_COMMAND :
-    {
-      command cmd = open_box <command> (ev.x2) ;
-      cmd->apply();
-    }
-      break;
-    case QP_COMMAND_ARGS :
-    {
-      typedef pair<command, object> T;
-      T x = open_box <T> (ev.x2);
-      x.x1->apply (x.x2);
-    }
-      break;
-    case QP_DELAYED_COMMANDS :
-    {
-      exec_pending_commands();
-      wait_for_delayed_commands = true;
-    }
-      break;
-      
-    default:
-      FAILED ("Unexpected queued event");
-  }
-}
-
-queued_event
-next_event() {
-  queued_event ev;
-  if (N(waiting_events) > 0)
-    ev = waiting_events[0];
-  
-  array<queued_event> a;
-  
-  for (int i = 1; i < N(waiting_events); i++)
-    a << waiting_events[i];
-  waiting_events = a;
-  
-  return ev;
-}
-
+/*!
+ We process a maximum of max events. There are two kind of events: those
+ which need a pass on interpose_handler just after and the others. We count
+ only the first kind of events. In update() we call this function with
+ max = 1 so that only one of these "sensible" events is handled. Otherwise
+ updating the internal TeXmacs structure becomes very slow. This can be
+ considered a limitation of the current implementation of interpose_handler
+ Likewise this function is just a hack to get things working properly.
+ */
 void
 qt_gui_rep::process_queued_events (int max) {
-    // we process a maximum of max events. There are two kind of events: those
-    // which need a pass on interpose_handler just after and the others. We count
-    // only the first kind of events. In update() we call this function with
-    // max = 1 so that only one of these "sensible" events is handled. Otherwise
-    // updating of internal TeXmacs structure become very slow. This can be
-    // considerer a limitation of the current implementation of interpose_handler
-    // Likewise this function is just an hack to get things working properly.
-  
   int count = 0;
   while (max < 0 || count < max)  {
-    queued_event ev = next_event();
-    if (ev.x1 == QP_NULL) break;
-    process_event (ev);
+    const queued_event& ev = waiting_events.next();
+    if (ev.x1 == qp_type::QP_NULL) break;
     switch (ev.x1) {
-      case QP_COMMAND:
-      case QP_COMMAND_ARGS:
-      case QP_SOCKET_NOTIFICATION:
-      case QP_RESIZE:
-      case QP_DELAYED_COMMANDS:
+      case qp_type::QP_NULL :
+        break;
+      case qp_type::QP_KEYPRESS :
+      {
+        typedef triple<widget, string, time_t > T;
+        T x = open_box <T> (ev.x2);
+        if (!is_nil (x.x1))
+          concrete_simple_widget (x.x1)->handle_keypress (x.x2, x.x3);
+      }
+        break;
+      case qp_type::QP_KEYBOARD_FOCUS :
+      {
+        typedef triple<widget, bool, time_t > T;
+        T x = open_box <T> (ev.x2);
+        if (!is_nil (x.x1))
+          concrete_simple_widget (x.x1)->handle_keyboard_focus (x.x2, x.x3);
+      }
+        break;
+      case qp_type::QP_MOUSE :
+      {
+        typedef quintuple<string, SI, SI, int, time_t > T1;
+        typedef pair<widget, T1> T;
+        T x = open_box <T> (ev.x2);
+        if (!is_nil (x.x1))
+          concrete_simple_widget (x.x1)->handle_mouse (x.x2.x1, x.x2.x2,
+                                                       x.x2.x3, x.x2.x4, x.x2.x5);
+      }
+        break;
+      case qp_type::QP_RESIZE :
+      {
+        typedef triple<widget, SI, SI > T;
+        T x = open_box <T> (ev.x2);
+        if (!is_nil (x.x1))
+          concrete_simple_widget (x.x1)->handle_notify_resize (x.x2, x.x3) ;
+      }
+        break;
+      case qp_type::QP_SOCKET_NOTIFICATION :
+      {
+        socket_notifier sn = open_box <socket_notifier> (ev.x2) ;
+        sn->notify ();
+        enable_notifier (sn, true);
+      }
+        break;
+      case qp_type::QP_COMMAND :
+      {
+        command cmd = open_box <command> (ev.x2) ;
+        cmd->apply();
+      }
+        break;
+      case qp_type::QP_COMMAND_ARGS :
+      {
+        typedef pair<command, object> T;
+        T x = open_box <T> (ev.x2);
+        x.x1->apply (x.x2);
+      }
+        break;
+      case qp_type::QP_DELAYED_COMMANDS :
+      {
+        delayed_commands.exec_pending();
+      }
+        break;
+        
+      default:
+        FAILED ("Unexpected queued event");
+    }
+    switch (ev.x1) {
+      case qp_type::QP_COMMAND:
+      case qp_type::QP_COMMAND_ARGS:
+      case qp_type::QP_SOCKET_NOTIFICATION:
+      case qp_type::QP_RESIZE:
+      case qp_type::QP_DELAYED_COMMANDS:
         break;
       default:
         count++;
@@ -751,36 +614,17 @@ qt_gui_rep::process_queued_events (int max) {
 }
 
 void
-add_event (const queued_event &ev)
-{
-  if (updating) {
-    waiting_events << ev;
-    needing_update = true;
-      //needs_update();
-  } else {
-    waiting_events << ev;
-      //    process_event (ev);
-    needs_update();
-      // NOTE: we cannot update now since sometimes this seems to give problems
-      // to the update of the window size after a resize. In that situation
-      // sometimes when the window take again focus, update will be called for the
-      // focus_in event and interpose_handler is run which send a slot_extent
-      // message to the widget causing a wrong resize of the window.
-      // this seems to cure the problem.
-  }
-}
-
-void
 qt_gui_rep::process_keypress (qt_simple_widget_rep *wid, string key, time_t t) {
   typedef triple<widget, string, time_t > T;
-  add_event (queued_event (QP_KEYPRESS, close_box<T> (T (wid, key, t))));
+  add_event (queued_event (qp_type::QP_KEYPRESS,
+                           close_box<T> (T (wid, key, t))));
 }
 
 void
 qt_gui_rep::process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
                                     time_t t ) {
   typedef triple<widget, bool, time_t > T;
-  add_event (queued_event (QP_KEYBOARD_FOCUS,
+  add_event (queued_event (qp_type::QP_KEYBOARD_FOCUS,
                            close_box<T> (T (wid, has_focus, t))));
 }
 
@@ -789,45 +633,37 @@ qt_gui_rep::process_mouse (qt_simple_widget_rep *wid, string kind, SI x, SI y,
                            int mods, time_t t ) {
   typedef quintuple<string, SI, SI, int, time_t > T1;
   typedef pair<widget, T1> T;
-  add_event (queued_event (QP_MOUSE,
+  add_event (queued_event (qp_type::QP_MOUSE,
                            close_box<T> ( T (wid, T1 (kind, x, y, mods, t)))));
 }
 
 void
 qt_gui_rep::process_resize (qt_simple_widget_rep *wid, SI x, SI y ) {
   typedef triple<widget, SI, SI > T;
-  add_event (queued_event (QP_RESIZE, close_box<T> (T (wid, x, y))));
+  add_event (queued_event (qp_type::QP_RESIZE, close_box<T> (T (wid, x, y))));
 }
 
 void
 qt_gui_rep::process_socket_notification (socket_notifier sn) {
-  add_event (queued_event (QP_SOCKET_NOTIFICATION,
+  add_event (queued_event (qp_type::QP_SOCKET_NOTIFICATION,
                            close_box<socket_notifier> (sn)));
 }
 
 void
 qt_gui_rep::process_command (command _cmd) {
-  add_event (queued_event (QP_COMMAND, close_box<command> (_cmd)));
+  add_event (queued_event (qp_type::QP_COMMAND, close_box<command> (_cmd)));
 }
 
 void
 qt_gui_rep::process_command (command _cmd, object _args) {
   typedef pair<command, object > T;
-  add_event (queued_event (QP_COMMAND_ARGS, close_box<T> (T (_cmd,_args))));
+  add_event (queued_event (qp_type::QP_COMMAND_ARGS,
+                           close_box<T> (T (_cmd,_args))));
 }
 
 void
 qt_gui_rep::process_delayed_commands () {
-  add_event (queued_event (QP_DELAYED_COMMANDS, blackbox()));
-}
-
-
-void
-fill_event_queue() {
-  if (N(waiting_events) == 0) {
-    qApp->processEvents (QEventLoop::ExcludeSocketNotifiers, 0);
-      // if (N(waiting_events) > 0) cout << "addins some events" << LF;
-  }
+  add_event (queued_event (qp_type::QP_DELAYED_COMMANDS, blackbox()));
 }
 
 /*!
@@ -836,7 +672,7 @@ fill_event_queue() {
 bool
 qt_gui_rep::check_event (int type) {
     // do not interrupt if not updating (e.g. while painting the icons in menus)
-  if (!updating || disable_check_event) return false;
+  if (!updating || !do_check_events) return false;
   
   switch (type) {
     case INTERRUPT_EVENT:
@@ -845,7 +681,7 @@ qt_gui_rep::check_event (int type) {
         time_t now = texmacs_time ();
         if (now - timeout_time < 0) return false;
         timeout_time = now + time_credit;
-        interrupted = (N(waiting_events) > 0);
+        interrupted  = !waiting_events.is_empty();
         return interrupted;
       }
     case INTERRUPTED_EVENT:
@@ -854,6 +690,28 @@ qt_gui_rep::check_event (int type) {
       return false;
   }
 }
+
+void
+qt_gui_rep::set_check_events (bool enable_check) {
+  do_check_events = enable_check;
+}
+
+void
+qt_gui_rep::add_event (const queued_event& ev) {
+  waiting_events.append (ev);
+  if (updating) {
+    needing_update = true;
+  } else {
+    needs_update();
+      // NOTE: we cannot update now since sometimes this seems to give problems
+      // to the update of the window size after a resize. In that situation
+      // sometimes when the window receives focus again, update will be called
+      // for the focus_in event and interpose_handler is run which sends a
+      // slot_extent message to the widget causing a wrong resize of the window.
+      // This seems to cure the problem.
+  }
+}
+
 
 /*!
  This is called by doUpdate(), which in turn is fired by a timer activated in
@@ -878,7 +736,7 @@ qt_gui_rep::update () {
   
   time_t     now = texmacs_time();
   needing_update = false;
-  time_credit    = 100 / (N(waiting_events) + 1);
+  time_credit    = 100 / (waiting_events.size() + 1);
   
     // 1.
     // Check if a wait dialog is active and in that case remove it.
@@ -901,17 +759,18 @@ qt_gui_rep::update () {
     // 2.
     // Manage delayed commands
   
-  if (wait_for_delayed_commands && (lapse <= now)) process_delayed_commands();
+  if (delayed_commands.must_wait (now))
+    process_delayed_commands();
   
     // 3.
     // If there are pending events in the private queue process them until the
     // limit in processed events is reached.
     // If there are no events or the limit is reached then proceed to a redraw.
   
-  if (N(waiting_events) == 0) {
+  if (waiting_events.size() == 0) {
       // If there are no waiting events call the interpose handler at least once
     if (the_interpose_handler) the_interpose_handler();
-  } else while (N(waiting_events) > 0 && count_events < max_proc_events) {
+  } else while (waiting_events.size() > 0 && count_events < max_proc_events) {
     process_queued_events (1);
     count_events++;
     if (the_interpose_handler) the_interpose_handler();
@@ -928,14 +787,13 @@ qt_gui_rep::update () {
     if (w->isVisible()) w->repaint_invalid_regions();
   }
   
-  if (N(waiting_events) > 0) needing_update = true;
-  if (interrupted)           needing_update = true;
-  if (nr_windows == 0)       qApp->quit();
+  if (waiting_events.size() > 0) needing_update = true;
+  if (interrupted)               needing_update = true;
+  if (nr_windows == 0)           qApp->quit();
   
-  time_t delay = lapse - texmacs_time();
-  if (delay > 1000/6) delay = 1000/6;
-  if (delay < 0)      delay = 0;
+  time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
+  else                delay = max (0, min (1000/6, delay));
   
   updatetimer->start (delay);
   updating = false;
@@ -946,6 +804,23 @@ qt_gui_rep::update () {
     //        tm_editor::apply_changes (which is activated only after idle
     //        periods) at the level of delayed commands in the gui.
     //        The interval cannot be too small to keep CPU usage low in idle state
+}
+
+void
+qt_gui_rep::force_update() {
+  if (updating) needing_update = true;
+  else          update();
+}
+
+void
+qt_gui_rep::needs_update () {
+  if (updating) needing_update = true;
+  else          updatetimer->start (0);
+    // 0 ms - call immediately when all other events have been processed
+}
+
+void needs_update () {
+  the_gui->needs_update();
 }
 
 /*! Called upon change of output language.
@@ -1104,23 +979,6 @@ beep () {
   QApplication::beep();
 }
 
-void
-force_update() {
-  if (updating) {
-    needing_update = true;
-  }
-  else {
-    the_gui->update();
-  }
-}
-
-void
-needs_update () {
-    // 0 ms - call immediately when all other events have been processed
-  if (updating) needing_update = true;
-  else          the_gui->updatetimer->start (0);
-}
-
 bool
 check_event (int type) {
     // Check whether an event of one of the above types has occurred;
@@ -1153,3 +1011,124 @@ external_event (string type, time_t t) {
     if (wid) the_gui -> process_keypress (wid, type, t);
   }
 }
+
+
+/******************************************************************************
+ * Delayed commands
+ ******************************************************************************/
+
+command_queue::command_queue() : lapse (0), wait (true) { }
+command_queue::~command_queue() { clear_pending(); /* implicit */ }
+
+void
+command_queue::exec (object cmd) {
+  q << cmd;
+  start_times << (((time_t) texmacs_time ()) - 1000000000);
+  lapse = texmacs_time();
+  the_gui->needs_update();
+}
+
+void
+command_queue::exec_pause (object cmd) {
+  q << cmd;
+  start_times << ((time_t) texmacs_time ());
+  lapse = texmacs_time();
+  the_gui->needs_update();
+}
+
+void
+command_queue::exec_pending () {
+  array<object> a = q;
+  array<time_t> b = start_times;
+  q = array<object> (0);
+  start_times = array<time_t> (0);
+  int i, n = N(a);
+  for (i = 0; i<n; i++) {
+    time_t now =  texmacs_time ();
+    if ((now - b[i]) >= 0) {
+      object obj = call (a[i]);
+      if (is_int (obj) && (now - b[i] < 1000000000)) {
+        time_t pause = as_int (obj);
+          //cout << "pause = " << obj << "\n";
+        q << a[i];
+        start_times << (now + pause);
+      }
+    }
+    else {
+      q << a[i];
+      start_times << b[i];
+    }
+  }
+  if (N(q) > 0) {
+    wait = true;  // wait_for_delayed_commands
+    lapse = start_times[0];
+    int n = N(start_times);
+    for (i = 1; i<n; i++) {
+      if (lapse > start_times[i]) lapse = start_times[i];
+    }
+  } else
+    wait = false;
+}
+
+void
+command_queue::clear_pending () {
+  q = array<object> (0);
+  start_times = array<time_t> (0);
+  wait = false;
+}
+
+bool
+command_queue::must_wait (time_t now) const {
+  return wait && (lapse <= now);
+}
+
+
+/******************************************************************************
+ * Delayed commands interface
+ ******************************************************************************/
+
+void exec_delayed (object cmd) {
+  the_gui->delayed_commands.exec(cmd);
+}
+void exec_delayed_pause (object cmd) {
+  the_gui->delayed_commands.exec_pause(cmd);
+}
+void clear_pending_commands () {
+  the_gui->delayed_commands.clear_pending();
+}
+
+
+/******************************************************************************
+ * Queued events
+ ******************************************************************************/
+
+event_queue::event_queue() : n(0) { }
+
+void
+event_queue::append (const queued_event& ev) {
+  q << ev;
+  ++n;
+}
+
+queued_event
+event_queue::next () {
+  if (is_nil(q))
+    return queued_event();
+  queued_event ev = q->item;
+  q = q->next;
+  --n;
+  return ev;
+}
+
+bool
+event_queue::is_empty() const {
+  ASSERT (!(n!=0 && is_nil(q)), "WTF?");
+  return n == 0;
+}
+
+int
+event_queue::size() const {
+  return n;
+}
+
+

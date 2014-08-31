@@ -611,7 +611,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       ASSERT (is_nil (val), "type mismatch");
       if (!is_nil (quit))
         quit ();
-      needs_update ();
+      the_gui->needs_update ();
     }
       break;
     case SLOT_FULL_SCREEN:
@@ -970,7 +970,7 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
       ASSERT (is_nil (val), "type mismatch");
       if (!is_nil (quit))
         quit ();
-      needs_update ();
+      the_gui->needs_update ();
     }
       break;
       

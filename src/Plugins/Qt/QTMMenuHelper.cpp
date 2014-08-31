@@ -1132,12 +1132,21 @@ QTMTreeView::QTMTreeView (command cmd, tree data, const tree& roles, QWidget* p)
   setUniformRowHeights (true);  // assuming we display only text.
   setHeaderHidden (true);       // for now...
   QObject::connect (this, SIGNAL (pressed (const QModelIndex&)),
-                    this,   SLOT (callOnClick (const QModelIndex&)));
+                    this,   SLOT (callOnChange (const QModelIndex&)));
 }
 
 void
-QTMTreeView::callOnClick (const QModelIndex& index) {
-  object arguments = list_object ((int)QApplication::mouseButtons());
+QTMTreeView::currentChanged (const QModelIndex& curr, const QModelIndex& prev) {
+  (void) prev;
+  if (selectedIndexes().contains(curr))
+    callOnChange (curr, false);
+}
+
+void
+QTMTreeView::callOnChange (const QModelIndex& index, bool mouse) {
+  object arguments = mouse ? list_object ((int)QApplication::mouseButtons())
+                           : list_object (-1);
+    
     // docs state the index is valid, no need to check
   QVariant d = tmModel()->data (index, QTMTreeModel::CommandRole);
     // If there's no CommandRole, we return the subtree by default

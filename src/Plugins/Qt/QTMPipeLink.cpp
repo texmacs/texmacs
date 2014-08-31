@@ -84,7 +84,7 @@ QTMPipeLink::killProcess (int msecs) {
   disconnect (SIGNAL(readyReadStandardOutput ()), this, SLOT(readErrOut ()));
   disconnect (SIGNAL(readyReadStandardError ()), this, SLOT(readErrOut ()));
 #if defined(__MINGW__) || defined(__MINGW32__)
-  (void) msec;
+  (void) msecs;
   close ();
 #else
   terminate ();

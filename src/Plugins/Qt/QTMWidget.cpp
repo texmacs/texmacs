@@ -394,7 +394,7 @@ void
 QTMWidget::scrollContentsBy (int dx, int dy) {
   QTMScrollView::scrollContentsBy (dx,dy);
 
-  force_update();
+  the_gui->force_update();
   // we force an update of the internal state to be in sync with the moving
   // scrollbars
 }
@@ -406,7 +406,7 @@ QTMWidget::resizeEvent (QResizeEvent* event) {
   //coord2 s = from_qsize (event->size());
   //the_gui -> process_resize (tm_widget(), s.x1, s.x2);
 
-  // force_update();
+  // the_gui->force_update();
 
   //FIXME: I would like to have a force_update here but this causes a failed
   //assertion in TeXmacs since the at the boot not every internal structure is

@@ -447,9 +447,12 @@ class QTMTreeView : public QTreeView {
 public:
   QTMTreeView (command cmd, tree data, const tree& roles, QWidget* parent=0);
   QTMTreeModel* tmModel() const;
-
+  
+protected:
+  virtual void currentChanged (const QModelIndex& cur, const QModelIndex& pre);
+  
 private slots:
-  void callOnClick (const QModelIndex& index);
+  void callOnChange (const QModelIndex& index, bool mouse=true);
 };
 
 
