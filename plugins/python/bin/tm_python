@@ -354,7 +354,7 @@ while 1:
         if sf[0] == 'complete':
             texmacs_out (complete (sf[1], sf[2], my_globals))
         continue
-    elif line.endswith('?'):
+    elif line.endswith('?') and not line.strip().startswith('#'):
         if len (line) > 1:
             out = compile_help (line[:-1])
             texmacs_out ('command:(tmpy-open-help %s %s %s)' %
