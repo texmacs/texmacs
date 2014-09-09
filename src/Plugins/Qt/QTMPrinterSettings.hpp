@@ -18,8 +18,6 @@
 #include <QProcess>
 #include <QHash>
 
-class tm_ostream;
-
 /* Mock Interface of the Asynchronous command stuff
 class QTMAsynchronousCommand {
 public:
