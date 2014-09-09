@@ -62,7 +62,9 @@ int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
  ******************************************************************************/
 
 qt_gui_rep::qt_gui_rep (int &argc, char **argv):
-interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0)
+interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0),
+time_credit (100), do_check_events (false), updating (false), 
+needing_update (false)
 {
   (void) argc; (void) argv;
     // argc = argc2;
@@ -385,7 +387,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   wid->qwid->activateWindow ();
   send_keyboard_focus (wid);
     // next time we do update the dialog will disappear
-  needs_update();
+  need_update();
 }
 
 void (*the_interpose_handler) (void) = NULL;
@@ -396,7 +398,7 @@ void
 qt_gui_rep::event_loop () {
   QTMApplication* app = static_cast<QTMApplication*>(QApplication::instance());
   update();
-    //needs_update();
+    //need_update();
   app->exec();
 }
 
@@ -702,7 +704,7 @@ qt_gui_rep::add_event (const queued_event& ev) {
   if (updating) {
     needing_update = true;
   } else {
-    needs_update();
+    need_update();
       // NOTE: we cannot update now since sometimes this seems to give problems
       // to the update of the window size after a resize. In that situation
       // sometimes when the window receives focus again, update will be called
@@ -722,7 +724,7 @@ void
 qt_gui_rep::update () {
   if (updating) {
     cout << "NESTED UPDATING: This should not happen" << LF;
-    needs_update();
+    need_update();
     return;
   }
   
@@ -813,14 +815,14 @@ qt_gui_rep::force_update() {
 }
 
 void
-qt_gui_rep::needs_update () {
+qt_gui_rep::need_update () {
   if (updating) needing_update = true;
   else          updatetimer->start (0);
     // 0 ms - call immediately when all other events have been processed
 }
 
 void needs_update () {
-  the_gui->needs_update();
+  the_gui->need_update();
 }
 
 /*! Called upon change of output language.
@@ -1025,7 +1027,7 @@ command_queue::exec (object cmd) {
   q << cmd;
   start_times << (((time_t) texmacs_time ()) - 1000000000);
   lapse = texmacs_time();
-  the_gui->needs_update();
+  the_gui->need_update();
 }
 
 void
@@ -1033,7 +1035,7 @@ command_queue::exec_pause (object cmd) {
   q << cmd;
   start_times << ((time_t) texmacs_time ());
   lapse = texmacs_time();
-  the_gui->needs_update();
+  the_gui->need_update();
 }
 
 void

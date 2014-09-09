@@ -114,7 +114,6 @@ public:
 class QTMGuiHelper;
 
 class qt_gui_rep {
-
   friend class   QTMGuiHelper;
   friend void needs_update ();
 
@@ -134,13 +133,13 @@ class qt_gui_rep {
 
   QTranslator* q_translator;
   
-  time_t time_credit = 100;  // interval to interrupt long redrawings
+  time_t time_credit;        // interval to interrupt long redrawings
   time_t timeout_time;       // new redraw interruption
   
     // marshalling flags between update, needs_update and check_event.
-  bool do_check_events = false;
-  bool        updating = false;
-  bool  needing_update = false;
+  bool do_check_events;
+  bool        updating;
+  bool  needing_update;
 
   event_queue     waiting_events;
   command_queue delayed_commands;
@@ -178,7 +177,7 @@ public:
 
   void update();
   void force_update();
-  void needs_update();
+  void need_update();
   void refresh_language();
   
   /* socket notifications */
