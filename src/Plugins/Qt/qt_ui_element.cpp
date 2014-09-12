@@ -862,6 +862,7 @@ qt_ui_element_rep::as_qwidget () {
       w->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
       // Workaround too small sizeHint() when the text has letters with descent:
       w->setMinimumHeight (w->fontMetrics().height());
+      w->setFocusPolicy (Qt::NoFocus);
       
       qt_apply_tm_style (w, style, c);
       qwid = w;
