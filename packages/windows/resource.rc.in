@@ -1,3 +1,7 @@
+// Resource file for TeXmacs' main executable.
+// Compile with windres resource.rc -O coff -o resource.rc.o and link as any
+// other object file
+
 appicon ICON "TeXmacs.ico"
 
 #include <winver.h>
@@ -7,7 +11,7 @@ FeedURL   APPCAST   {"http://www.texmacs.org/Download/ftp/tmftp/appcast.xml"}
 
 // Version information; this, too, is used by WinSparkle
 1 VERSIONINFO
- FILEVERSION     @SVNREV@,0,0,0
+ FILEVERSION     @DEVEL_VERSION_MAJOR@,@DEVEL_VERSION_MINOR@,0,0
  PRODUCTVERSION  @DEVEL_VERSION_MAJOR@,@DEVEL_VERSION_MINOR@,0,0
  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
  FILEFLAGS       0
@@ -36,4 +40,3 @@ BEGIN
     VALUE "Translation", 0x0409, 0x04B0
   END
 END
-
