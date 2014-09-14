@@ -37,11 +37,9 @@ bool tm_winsparkle::setAppcast (url _appcast_url)
 bool tm_winsparkle::setAutomaticChecks (bool enable)
 {
   if (running) return false;
-  
-#if (WIN_SPARKLE_VERSION_MINOR >= 4)
+#if WIN_SPARKLE_CHECK_VERSION(0,4,0)
   win_sparkle_set_automatic_check_for_updates (enable ? 1 : 0);
 #endif
-
   return true;
 }
 
@@ -52,7 +50,7 @@ bool tm_winsparkle::setCheckInterval (int hours)
   
   interval = max (MinimumCheckInterval, min (MaximumCheckInterval, hours));
   
-#if (WIN_SPARKLE_VERSION_MINOR >= 4)
+#if WIN_SPARKLE_CHECK_VERSION(0,4,0)
   win_sparkle_set_update_check_interval (interval * 3600);
 #endif
   return true;
@@ -60,7 +58,11 @@ bool tm_winsparkle::setCheckInterval (int hours)
 
 time_t tm_winsparkle::lastCheck() const
 {
+#if WIN_SPARKLE_CHECK_VERSION(0,4,0)
+  return win_sparkle_get_last_check_time();
+#else
   return 0;
+#endif
 }
 
 bool tm_winsparkle::checkInBackground ()
@@ -70,6 +72,9 @@ bool tm_winsparkle::checkInBackground ()
   if (running) return false;
   running = true;
   win_sparkle_init();
+#if WIN_SPARKLE_CHECK_VERSION(0,4,0)
+  win_sparkle_check_update_without_ui();
+#endif
   return true;
 }
 
@@ -83,4 +88,3 @@ bool tm_winsparkle::checkInForeground ()
 }
 
 #endif  // (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
-
