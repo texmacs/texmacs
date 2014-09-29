@@ -115,14 +115,19 @@ CPPFLAGS="$ac_save_cppflags"
 m4_include([misc/autotroll/autotroll.m4])
 
 AC_DEFUN([HACKED_AT_WITH_QT],[
-if test -z $TMBUILDENV; then #QT has the install dir hard coded in library so we need to fix it manually for relocatable environment
-  if test "$QT_LDFLAGS" == ""; then
-      AT_WITH_QT
-      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
-      QT_FRAMEWORKS_PATH=`qmake -query | grep QT_INSTALL_LIBS | cut -f 2 -d:`
-      QT_PLUGINS_PATH=`qmake -query | grep QT_INSTALL_PLUGINS | cut -f 2 -d:`
-  fi
+#QT has the install dir hard coded in library so we need to fix it manually for relocatable environment
+if test -z $TMBUILDENV
+then AT_WITH_QT
+     # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
+     QT_FRAMEWORKS_PATH=`qmake -query QT_INSTALL_LIBS`
+     QT_PLUGINS_PATH=`qmake -query QT_INSTALL_PLUGINS`
+     if [[[ $QT_CFLAGS =~ mmacosx-version-min= ]]]
+     then MACOSX_DEPLOYMENT_TARGET="${QT_CFLAGS#*mmacosx-version-min=}" 
+        MACOSX_DEPLOYMENT_TARGET=-os${MACOSX_DEPLOYMENT_TARGET%% *}
+     fi
+     AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
 else
+    #windows part
     QT_FRAMEWORKS_PATH=/Qt
     QT_PATH=$QT_FRAMEWORKS_PATH/bin
     QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins
