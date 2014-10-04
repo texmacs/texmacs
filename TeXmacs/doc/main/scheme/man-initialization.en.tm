@@ -39,22 +39,20 @@
     <verbatim|$TEXMACS_HOME_PATH/progs/my-init-buffer.scm>:
 
     <\scm-code>
-      (when (url-scratch? (current-buffer))
+      (when (buffer-newly-created? (current-buffer))
 
       \ \ (set-style-list (append (get-style-list) '("CustomStyle")))
 
       \ \ (buffer-pretend-saved (current-buffer)))
     </scm-code>
 
-    First we check whether the <scm|current-buffer> is in the ``scratch''
-    directory <verbatim|$TEXMACS_HOME_PATH/texts/scratch>, meaning that it
-    has been newly created (of course this call also evaluates to <scm|#t> if
-    you open an already existing file in this directory, so the code is not
-    completely safe in the sense that it will add the style to those files as
-    well when you open them). Then we add the new style with
+    First we check whether the <scm|current-buffer> has been newly created in
+    order not to apply the style to existing files when we open them. Then we
+    add the new package (instead of changing it with <scm|init-style>) using
     <scm|set-style-list> and finally we call <scm|buffer-pretend-saved> to
-    prevent <TeXmacs> from thinking the newly created buffer has been
-    modified. Otherwise it'll prompt asking for confirmation before closing.
+    prevent <TeXmacs> from thinking the buffer has been modified by the
+    change of style, or it would always prompt asking for confirmation before
+    closing an empty buffer.
   </example>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
