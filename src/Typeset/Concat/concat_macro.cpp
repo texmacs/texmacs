@@ -148,7 +148,7 @@ concater_rep::typeset_auto (tree t, path ip, tree f) {
 void
 concater_rep::typeset_include (tree t, path ip) {
   if (N(t) != 1) { typeset_error (t, ip); return; }
-  url file_name= as_string (t[0]);
+  url file_name= url_unix (env->exec_string (t[0]));
   url incl_file= relative (env->base_file_name, file_name);
   tree incl= load_inclusion (incl_file);
   url save_name= env->cur_file_name;
