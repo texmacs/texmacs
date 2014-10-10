@@ -58,7 +58,7 @@ class t3font;
 class pdf_hummus_renderer_rep : public renderer_rep {
   
   static const int default_dpi= 72; // PDF initial coordinate system corresponds to 72 dpi
-  
+  bool			started;  // initialisation is OK
   url       pdf_file_name;
   int       dpi;
   int       nr_pages;
@@ -289,26 +289,24 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   // setup library
 
   EStatusCode status;
-  {
-    c_string _pdf_file_name (concretize (pdf_file_name));
+	status = pdfWriter.StartPDF(as_charp(concretize (pdf_file_name)), ePDFVersion14 ); // PDF 1.4 for alpha
+	//   , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
+	//   , PDFCreationSettings(false) ); // true = compression on
+	if (status != PDFHummus::eSuccess) {
+		convert_error << "failed to start PDF\n";
+		started=false;
+	} else {
+		started=true;
+		pdfWriter.GetDocumentContext().AddDocumentContextExtender (new DestinationsWriter(this));
 
-    status = pdfWriter.StartPDF((char*)_pdf_file_name, ePDFVersion14 ); // PDF 1.4 for alpha
-                               //   , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
-                               //   , PDFCreationSettings(false) ); // true = compression on
-    if (status != PDFHummus::eSuccess) {
-      convert_error << "failed to start PDF\n";
-    }
-  }
-  
-  pdfWriter.GetDocumentContext().AddDocumentContextExtender (new DestinationsWriter(this));
+		// start real work
 
-  // start real work
-  
-  begin_page();
+		begin_page();
+	}
 }
 
 pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
-  
+  if (!started) return; // no cleanup to do
   end_page();
   
   flush_images();
@@ -1318,82 +1316,76 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     name= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
   
   // do not use "convert" to convert from eps to pdf since it rasterizes the picture
-  // string filename = concretize (name);
   
-  url temp= url_temp (".pdf");
-  string tempname= sys_concretize (temp);
-  c_string fname (tempname);
+  url temp;
   string s= suffix (name);
   double scale_x  = 1, scale_y  = 1;
   // debug_convert << "flushing :" << fname << LF;
-  
-  if (s == "pdf") {
-    // * PDF
-    // FIXME: better avoid copying in this case
-    string cmd= "cp";
-    system (cmd, name, temp);
-  } else if ( s != "ps" && s != "eps") {
-    // * generic image format
-    
-    // try to work out inclusion using our own tools
-    // note that we have to return since flush_raster
-    // already build the appopriate Form XObject into the PDF
-    
-    
-    if ((s == "jpg") || (s == "jpeg"))
-      if (flush_jpg(pdfw, name)) return;
-    
-    if (flush_raster (pdfw, name)) return;
+ 
+	if (s == "pdf") {
+		temp=name;
+		name=url_none();
+	} else {
+		temp= url_temp (".pdf");
 
-    // if this fails try using convert from ImageMagik
-    // to convert to pdf
-    string cmd= "convert";
-    system (cmd, name, temp);
-  } else {
-    // * ps or eps
-    // use gs to convert eps to pdf and take care of properly handling the bounding box
-    // the resulting pdf image will always start at 0,0.
-    
-    int bx1, by1, bx2, by2; // bounding box
-    ps_bounding_box(u, bx1, by1, bx2, by2);
-    
-    string cmd= gs_prefix();
-    cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
-    cmd << " -sOutputFile=" << tempname << " ";
-    cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
-    << " ] >> setpagedevice gsave  "
-    << as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
-    cmd << " -f " << sys_concretize (name);
-    cmd << " -c \" grestore \"  ";
-    // debug_convert << cmd << LF;
-    system(cmd);
-    
-    scale_x = w/((double)(bx2-bx1));
-    scale_y = h/((double)(by2-by1));
-  }
-  EStatusCode status = PDFHummus::eSuccess;
+		if ( s != "ps" && s != "eps") {
+			// * generic image format
+
+			// try to work out inclusion using our own tools
+			// note that we have to return since flush_raster
+			// already build the appopriate Form XObject into the PDF
+
+
+			if ((s == "jpg") || (s == "jpeg"))
+				if (flush_jpg(pdfw, name)) return;
+
+			if (flush_raster (pdfw, name)) return;
+
+			// if this fails try using convert from ImageMagik
+			// to convert to pdf
+			string cmd= "convert";
+			system (cmd, sys_concretize (name), sys_concretize(temp));
+		} else {
+			// * ps or eps
+			// use gs to convert eps to pdf and take care of properly handling the bounding box
+			// the resulting pdf image will always start at 0,0.
+
+			int bx1, by1, bx2, by2; // bounding box
+			ps_bounding_box(u, bx1, by1, bx2, by2);
+
+			string cmd= gs_prefix();
+			cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+			cmd << " -sOutputFile=" << sys_concretize(temp) << " ";
+			cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
+				<< " ] >> setpagedevice gsave  "
+				<< as_string(-bx1) << " " << as_string(-by1) << " translate \" ";
+			cmd << " -f " << sys_concretize (name);
+			cmd << " -c \" grestore \"  ";
+			// debug_convert << cmd << LF;
+			system(cmd);
+
+			scale_x = w/((double)(bx2-bx1));
+			scale_y = h/((double)(by2-by1));
+		}
+	}
+  EStatusCode status = PDFHummus::eFailure;
   DocumentContext& dc = pdfw.GetDocumentContext();
   
   PDFRectangle cropBox (0, 0, w, h);
   double tMat[6] = { scale_x, 0, 0, scale_y, 0, 0};
   
-  PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext((char*)fname);
-  do {
-    if(!copyingContext) break;
+  PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(concretize(temp)));
+  if(copyingContext) {
     PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
     status = copyingContext->MergePDFPageToFormXObject(form,0);
-    if(status != eSuccess) break;
-    pdfw.EndFormXObjectAndRelease(form);
-  } while (false);
-  if (copyingContext) {
+    if(status == eSuccess) pdfw.EndFormXObjectAndRelease(form);
     delete copyingContext;
-    copyingContext = NULL;
   }
-  remove (temp);
+  if(!is_none(name)) remove (temp);
   
   if (status == PDFHummus::eFailure) {
     convert_error << "pdf_hummus, failed to include image file: "
-                  << fname << LF;
+                  << temp << LF;
   }
 }
 

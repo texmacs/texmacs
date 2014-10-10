@@ -279,8 +279,8 @@ as_string (int i) {
 string
 as_string (unsigned int i) {
   char buf[64];
-  sprintf (buf, "%i", i);
-  // sprintf (buf, "%i\0", i);
+	//printf (buf, "%u##\0", i);
+  sprintf (buf, "%u", i);
   return string (buf);
 }
 
@@ -295,7 +295,11 @@ as_string (long int i) {
 string
 as_string (long long int i) {
   char buf[64];
+#if defined (__MINGW__) || defined (__MINGW32__)
+  sprintf (buf, "%I64d", i);
+#else
   sprintf (buf, "%lli", i);
+#endif
   // sprintf (buf, "%i\0", i);
   return string (buf);
 }
@@ -303,7 +307,7 @@ as_string (long long int i) {
 string
 as_string (unsigned long int i) {
   char buf[64];
-  sprintf (buf, "%li", i);
+  sprintf (buf, "%lu", i);
   // sprintf (buf, "%i\0", i);
   return string (buf);
 }

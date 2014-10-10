@@ -369,14 +369,14 @@ is_newer (url which, url than) {
 url
 url_temp (string suffix) {
 #ifdef __MINGW32__
-  int rnd= raw_time ();
+  unsigned int rnd= raw_time ();
 #else
   static bool initialized= false;
   if (!initialized) {
     srandom ((int) raw_time ());
     initialized= true;
   }
-  int rnd= random ();
+  unsigned int rnd= random ();
 #endif
   string name= "tmp_" * as_string (rnd) * suffix;
   url u= url_temp_dir () * url (name);
