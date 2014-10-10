@@ -1,4 +1,4 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.99.2>
 
 <style|tmdoc>
 
@@ -26,7 +26,7 @@
     </explain>
 
     <\explain|<explain-macro|reset-<em|x>>>
-      Reset the counter to <with|mode|math|0>.
+      Reset the counter to <math|0>.
     </explain>
 
     <\explain|<explain-macro|inc-<em|x>>>
@@ -58,8 +58,8 @@
   As noticed in the introduction, <TeXmacs> uses <em|counter groups> in order
   to make it possible to treat similar counters in a uniform way. For
   instance the counter group <verbatim|theorem-env> regroups the counters
-  <verbatim|theorem>, <verbatim|proposition>, <verbatim|lemma>, <abbr|etc.>.
-  New counter groups and are defined using:
+  <verbatim|theorem>, <verbatim|proposition>, <verbatim|lemma>, <abbr|etc.>
+  New counter groups are defined using:
 
   <\explain|<explain-macro|new-counter-group|g>>
     Create a new counter group with name <src-arg|g>. This results in the
@@ -131,17 +131,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|par-width|150mm>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
