@@ -324,7 +324,7 @@
          (tex-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
         ((string-starts? s "b-up-") (tmtex-modified-token 'mathbf s 5))
         ((string-starts? s "b-") (tmtex-modified-token 'tmmathbf s 2))
-        ((logic-ref latex-text-symbols% s)
+        ((and (not (tmtex-math-mode?)) (logic-ref latex-text-symbols% s))
          (list '!group (list (logic-ref latex-text-symbols% s))))
         ((and (string-starts? s "#") (not tmtex-use-catcodes?))
          (let* ((qs (string-append "<" s ">"))
