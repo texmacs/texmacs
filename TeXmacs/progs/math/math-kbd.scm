@@ -13,10 +13,10 @@
 
 (texmacs-module (math math-kbd)
   (:use (generic generic-kbd)
-	(utils edit auto-close)
-	(generic format-edit)
-	(math math-edit)
-	(table table-edit)))
+        (utils edit auto-close)
+        (generic format-edit)
+        (math math-edit)
+        (table table-edit)))
 
 (kbd-map
   (:mode in-math?)
@@ -222,6 +222,7 @@
   ("math:symbol W" (math-big-operator "wedge"))
   ("math:symbol W var" (math-big-operator "curlywedge"))
   ("math:symbol U" (math-big-operator "cup"))
+  ("math:symbol U +" (math-big-operator "pluscup"))
   ("math:symbol U var" (math-big-operator "sqcup"))
   ("math:symbol V" (math-big-operator "vee"))
   ("math:symbol V var" (math-big-operator "curlyvee"))
