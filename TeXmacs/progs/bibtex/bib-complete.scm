@@ -41,7 +41,7 @@
   (:synopsis "Returns the (cached) name of the bibliography file")
   (with u (current-buffer-url)
     (or (and usecache? (ahash-ref bib-files-cache u))
-        (with l (select (buffer-tree) '(bibliography))
+        (with l (select (buffer-tree) '(:* bibliography))
           (if (nnull? l)
               (ahash-set! bib-files-cache u
                (url-append (url-head u) (tm->string (tree-ref (car l) 2))))
@@ -51,7 +51,7 @@
   (:synopsis "Returns the (cached) style of the bibliography")
   (with u (current-buffer-url)
     (or (and usecache? (ahash-ref bib-styles-cache u))
-        (with l (select (buffer-tree) '(bibliography))
+        (with l (select (buffer-tree) '(:* bibliography))
           (if (nnull? l)
               (ahash-set! bib-styles-cache u (tm->string (tree-ref (car l) 1)))
               "tm-plain")))))
