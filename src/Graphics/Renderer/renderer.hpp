@@ -53,6 +53,7 @@ public:
 public:
   renderer_rep (bool screen_flag);
   virtual ~renderer_rep ();
+  virtual bool is_started() {return true; }
   virtual void* get_handle ();
   virtual void* get_data_handle ();
 

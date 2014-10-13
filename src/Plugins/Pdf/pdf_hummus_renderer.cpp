@@ -58,7 +58,7 @@ class t3font;
 class pdf_hummus_renderer_rep : public renderer_rep {
   
   static const int default_dpi= 72; // PDF initial coordinate system corresponds to 72 dpi
-  bool			started;  // initialisation is OK
+  bool		started;  // initialisation is OK
   url       pdf_file_name;
   int       dpi;
   int       nr_pages;
@@ -204,6 +204,7 @@ public:
                            string ptype, bool landsc, double paper_w, double paper_h);
   ~pdf_hummus_renderer_rep ();
   bool is_printer ();
+  bool is_started () {return started;}
   void next_page ();
   
   void set_transformation (frame fr);
