@@ -35,9 +35,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (list-split lst what)
-  (:synopsis 
+  (:synopsis
    "Return a list of lists splitting @lst by items equal? to @what")
-  (letrec 
+  (letrec
     ((loop (lambda (lst what acc)
       (cond ((null? lst) (list acc))
             ((equal? what (car lst)) (cons acc (loop (cdr lst) what '())))
@@ -45,14 +45,19 @@
               (loop (cdr lst) what (append acc (list (car lst)))))))))
     (loop lst what '())))
 
+(define (prep-math t props)
+  (cond ((atomic-tree? t) t)
+        ((tree-in? t '(math equation equation*))
+         (string->tree (texmacs->latex-document t props)))
+        ((> (tree-arity t) 0) (tree-map-children (cut prep-math <> props) t))
+        (else t)))
+
 (define (sessions->verbatim t)
   (with tx (select t '(:* (:or input unfolded-io folded-io) 1))
-    (string-join 
-      (map-in-order 
-        (lambda (x) 
-          (texmacs->verbatim x 
-            (acons "texmacs->verbatim:encoding" "SourceCode" '())))
-        tx) "\n\n")))
+    (with props (acons "texmacs->verbatim:encoding" "SourceCode" '())
+      (string-join
+       (map-in-order (lambda (x) (texmacs->verbatim x props))
+                     (map-in-order (cut prep-math <> props) tx)) "\n\n"))))
 
 (tm-define (export-sessions url)
   (string-save (sessions->verbatim (buffer-tree)) url))
