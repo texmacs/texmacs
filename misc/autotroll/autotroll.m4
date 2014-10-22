@@ -265,9 +265,8 @@ m4_ifval([$3],
 
   additional_qmake_flags=""
   case $host_os in
-    darwin*)
-      additional_qmake_flags="-spec unsupported/macx-clang-libc++"
-      ;;
+    darwin13*) additional_qmake_flags="-spec unsupported/macx-clang-libc++" ;;
+    darwin*) additional_qmake_flags="-spec macx-g++" ;;
   esac
 
   if $QMAKE ${additional_qmake_flags} ; then :; else
