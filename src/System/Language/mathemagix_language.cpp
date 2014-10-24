@@ -119,6 +119,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("downto")= c;
   t ("downgrade")= c;
   t ("else")= c;
+  t ("enumeration")= c;
   t ("evolutive")= c;
   t ("exists")= d;
   t ("explicit")= c;
