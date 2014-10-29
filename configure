@@ -675,6 +675,7 @@ COCOA_LDFLAGS
 COCOA_CFLAGS
 X11_LDFLAGS
 X11_CFLAGS
+MACOSX_DEPLOYMENT_TARGET
 QT_LIBS
 QT_LFLAGS
 QT_LDFLAGS
@@ -8497,10 +8498,11 @@ $as_echo "$QT_LIBS" >&6; }
      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
      QT_FRAMEWORKS_PATH=`qmake -query QT_INSTALL_LIBS`
      QT_PLUGINS_PATH=`qmake -query QT_INSTALL_PLUGINS`
-     [[ $QT_CFLAGS =~ mmacosx-version-min=([^[:space:]]*) ]] && DEPLOYMENT_TARGET="-${BASH_REMATCH[1]}"
+     if [[ $QT_CFLAGS =~ mmacosx-version-min= ]]
+     then MACOSX_DEPLOYMENT_TARGET="${QT_CFLAGS#*mmacosx-version-min=}"
+        MACOSX_DEPLOYMENT_TARGET=-os${MACOSX_DEPLOYMENT_TARGET%% *}
+     fi
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: Denis : $DEPLOYMENT_TARGET" >&5
-$as_echo "$as_me: Denis : $DEPLOYMENT_TARGET" >&6;}
 else
     #windows part
     QT_FRAMEWORKS_PATH=/Qt
