@@ -13,9 +13,10 @@
 
 (texmacs-module (graphics graphics-kbd)
   (:use (generic generic-kbd)
+        (utils library cursor)
         (graphics graphics-env)
-	(graphics graphics-main)
-	(graphics graphics-edit)))
+        (graphics graphics-main)
+        (graphics graphics-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Various contexts
@@ -229,14 +230,14 @@
 (tm-define (graphics-toggle-draw-over/under)
   (with-innermost t (lambda (x) (tree-in? x '(draw-over draw-under)))
     (if (tree-is? t 'draw-over)
-	(begin
-	  (tree-assign-node! t 'draw-under)
-	  (tree-go-to t 0 :end))
-	(begin
-	  (tree-assign-node! t 'draw-over)
-	  (if (tree-is? (tree-ref t 1) 'with)
-	      (tree-go-to t 1 (- (tree-arity (tree-ref t 1)) 1) :end)
-	      (tree-go-to t 1 :end))))))
+        (begin
+          (tree-assign-node! t 'draw-under)
+          (tree-go-to t 0 :end))
+        (begin
+          (tree-assign-node! t 'draw-over)
+          (if (tree-is? (tree-ref t 1) 'with)
+              (tree-go-to t 1 (- (tree-arity (tree-ref t 1)) 1) :end)
+              (tree-go-to t 1 :end))))))
 
 (kbd-map
   (:mode inside-draw-over/under?)
