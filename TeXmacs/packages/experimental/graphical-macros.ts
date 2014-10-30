@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std>>
 
@@ -41,6 +41,10 @@
   <assign|condensator|<macro|p1|p2|p3|<extern|condensator|<arg|p1>|<arg|p2>|<arg|p3>>>>
 
   <assign|diode|<macro|p1|p2|p3|<extern|diode|<arg|p1>|<arg|p2>|<arg|p3>>>>
+
+  <assign|battery|<macro|p1|p2|p3|<extern|battery|<arg|p1>|<arg|p2>|<arg|p3>>>>
+
+  <assign|resistor|<macro|p1|p2|p3|<extern|resistor|<arg|p1>|<arg|p2>|<arg|p3>>>>
 
   <\active*>
     <\src-comment>

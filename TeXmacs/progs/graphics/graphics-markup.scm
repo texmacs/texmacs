@@ -115,6 +115,26 @@
 (define-graphics (diode p1 p2 p3)
   (electrical (std-diode) 0.5 p1 p2 p3))
 
+(define (std-battery)
+  `(superpose 
+    (line (point "0" "-2") (point "0" "2"))
+    (line (point "0.333" "-1") (point "0.333" "1"))
+    (line (point "0.666" "-2") (point "0.666" "2"))
+    (line (point "1" "-1") (point "1" "1"))))
+
+(define-graphics (battery p1 p2 p3)
+  (electrical (std-battery) 1.5 p1 p2 p3))
+
+(define (std-resistor)
+  `(line (point "0" "0.0") (point "0.10" "0.0") 
+         (point "0.17" "0.13") (point "0.302" "-0.13")
+         (point "0.434" "0.13") (point "0.566" "-0.13")
+         (point "0.698" "0.13") (point "0.83" "-0.13") 
+         (point "0.90" "0.0") (point "1" "0.0")))
+
+(define-graphics (resistor p1 p2 p3)
+  (electrical (std-resistor) 0.2 p1 p2 p3))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Triangle with text inside
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
