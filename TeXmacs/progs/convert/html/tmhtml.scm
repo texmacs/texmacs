@@ -207,7 +207,8 @@
 	       (script `(h:script (@ (language "javascript")) ,code)))
 	  (set! xhead (append xhead (list script)))))
     (if (or (in? "tmdoc" styles) (in? "tmweb" styles)
-            (in? "mmxdoc" styles) (in? "magix-web" styles))
+            (in? "mmxdoc" styles) (in? "magix-web" styles)
+            (in? "max-web" styles))
 	(set! body (tmhtml-tmdoc-post body)))
     `(h:html
       (h:head
