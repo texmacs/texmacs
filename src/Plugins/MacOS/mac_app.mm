@@ -22,7 +22,7 @@ from_nsstring (NSString *s) {
 }
 
 
-@interface TMAppDelegate : NSObject {
+@interface TMAppDelegate : NSObject <NSFileManagerDelegate> {
 }
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename ;
 @end
@@ -47,7 +47,7 @@ void init_mac_application ()
   delegate = [[TMAppDelegate alloc] init];
   [NSApp setDelegate: delegate];
   [NSApp finishLaunching];
-  
+
   mac_begin_remote ();
 }
 
@@ -77,5 +77,4 @@ void process_mac_events ()
     [NSApp sendEvent:event];
     [NSApp updateWindows];
   } while (true);
-  
 }
