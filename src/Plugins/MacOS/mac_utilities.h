@@ -20,4 +20,8 @@ void mac_end_remote();
 void mac_remote_button (string button, bool pressed); 
 double mac_screen_scale_factor();
 
+#if defined (MAC_OS_X_VERSION_10_10)
+void mac_fix_yosemite_bug();
+#endif
+
 #endif // MAC_UTILITIES_H

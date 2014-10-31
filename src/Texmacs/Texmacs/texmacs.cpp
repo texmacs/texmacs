@@ -419,6 +419,14 @@ boot_hacks () {
   //getrlimit (RLIMIT_NOFILE, &lims);
   //printf ("cur: %i\n", lims.rlim_cur);
   //printf ("max: %i\n", lims.rlim_max);
+#if defined(MAC_OS_X_VERSION_10_10)
+  mac_fix_yosemite_bug();
+#endif
+#if (defined(MAC_OS_X_VERSION_10_9) || defined(MAC_OS_X_VERSION_10_10)) && (QT_VERSION <= QT_VERSION_CHECK(4,8,5))
+    // Work around Qt bug: https://bugreports.qt-project.org/browse/QTBUG-32789
+  QFont::insertSubstitution (".Lucida Grande UI", "Lucida Grande");
+#endif
+
 #endif
 }
 
@@ -506,10 +514,6 @@ main (int argc, char** argv) {
 #endif
 #ifdef QTTEXMACS
   // initialize the Qt application infrastructure
-#if defined(MAC_OS_X_VERSION_10_9) && (QT_VERSION <= QT_VERSION_CHECK(4,8,5))
-    // Work around Qt bug: https://bugreports.qt-project.org/browse/QTBUG-32789
-  QFont::insertSubstitution (".Lucida Grande UI", "Lucida Grande");
-#endif
   new QTMApplication (argc, argv);
 #endif
   TeXmacs_init_paths (argc, argv);
