@@ -1,6 +1,6 @@
-<TeXmacs|1.0.4.6>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Utilities for writing style files>
@@ -31,12 +31,11 @@
     <markup|wide-normal> and centered in the case of <markup|wide-centered>.
     Making a body span over the entire paragraph width does not change the
     rendering on paper, but it facilitates the editing on the document.
-    Indeed, on the one hand side, the box which indicates that you are inside
-    the environment will span over the entire paragraph width. On the other
-    hand, when clicking sufficiently close to the text inside this box, it
-    becomes easier to position your cursor at the start or at the end inside
-    the environment. You may check this by clicking on one of the texts
-    below:
+    Indeed, on the one hand, the box which indicates that you are inside the
+    environment will span over the entire paragraph width. On the other hand,
+    when clicking sufficiently close to the text inside this box, it becomes
+    easier to position your cursor at the start or at the end inside the
+    environment. You may check this by clicking on one of the texts below:
 
     <with|color|red|\<gtr\>><wide-normal|Some text inside a
     <markup|wide-normal> environment.><with|color|red|\<less\>>
@@ -181,8 +180,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
