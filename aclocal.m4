@@ -123,7 +123,7 @@ then AT_WITH_QT
      QT_PLUGINS_PATH=`qmake -query QT_INSTALL_PLUGINS`
      if [[[ $QT_CFLAGS =~ mmacosx-version-min= ]]]
      then MACOSX_DEPLOYMENT_TARGET="${QT_CFLAGS#*mmacosx-version-min=}" 
-        MACOSX_DEPLOYMENT_TARGET=-os${MACOSX_DEPLOYMENT_TARGET%% *}
+        MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET%% *}
      fi
      AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
 else
