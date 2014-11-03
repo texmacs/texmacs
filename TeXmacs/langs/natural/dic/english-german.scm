@@ -476,6 +476,7 @@
 ("help us" "Helfen Sie uns")
 ("here" "hier")
 ("hidden" "verborgen")
+("hint" "Hinweis")
 ("home" "Heimverzeichnis")
 ("horizontal" "horizontal")
 ("horizontal cell alignment" "horizontale Zellenausrichtung")
