@@ -14,7 +14,6 @@
 #
 # NOTE that all paths are relative to BASEDIR=TeXmacs.app/Contents/MacOS
 ###############################################################################
-
 BASEDIR=$(dirname $1)
 EXECUTABLE=$(basename $1)
 BUNDLE_RESOURCES=../Resources
@@ -23,38 +22,27 @@ BUNDLE_PLUGINS=../plugins # Qt expects plugins in Whatever.app/Contents/plugins
 
 ###############################################################################
 
-function bundle_install_lib
-{
-  local target=$1
-  local libpath=$2
-  local libdest="$BUNDLE_RESOURCES/lib/$(basename $2)"
-  #local newidname="@executable_path/$libdest"
-  local newidname=@rpath/$(basename $2)
-
-  echo "Bundling [$libpath] in [$libdest] for [$target]"
-  
-  [ -f "$libdest" ] && return 0;
-
-  cp "$libpath" "$BUNDLE_RESOURCES/lib" &&\
-  install_name_tool -id "$newidname" "$libdest" && install_name_tool -change "$libpath" "$newidname" "$target" &&\
-  bundle_all_libs "$libdest"
-  return $?
-}
-
 function bundle_all_libs
 {
-  local target=$1
-  local btarget=$1
-  local rpath="@executable_path/$BUNDLE_RESOURCES/lib/"
+  local target=$1       # executable name (we are in the right directory) or librairy full path
+  local btarget=$(basename $1)
+  local rpath="@executable_path/$BUNDLE_RESOURCES/lib"
+  local libdest="$BUNDLE_RESOURCES/lib"
+  local lib
   echo "Bundling all libraries for [$target]"
-  for lib in $( otool -L "$target"  | \
-                egrep -o '/(opt/local|sw|Users|usr/local)/.*/lib[^/]*dylib' )
+
+  # Add local Libs and Force bundling of (system) libltdl (changed in OSX 10.8)
+  for lib in $( otool -L "$target" | \
+     egrep -o '/(opt/local|sw|Users|usr/local)/.*/lib[^/]*dylib |/usr/lib/libltdl[^/]*dylib' )
   do 
-    [[ $(basename $target) != $(basename $lib) ]] && { bundle_install_lib "$target" "$lib" || exit 55; }
-  done
-  # Force bundling of (system) libltdl (changed in OSX 10.8)
-  for lib in $( otool -L $target | egrep -o '/usr/lib/libltdl[^/]*dylib' ); do 
-    bundle_install_lib "$target" "$lib"
+     local blib="$(basename $lib)"
+  
+     [ -f "$libdest/$plib" ] || cp "$lib" "$libdest/." && \
+       install_name_tool -id "$rpath/$blib" "$libdest/$blib" && \
+       bundle_all_libs "$libdest/$blib" || return 55
+set -x
+     install_name_tool -change "$lib" "@rpath/$blib" "$target" || return 56
+set +x
   done
   install_name_tool -add_rpath $rpath $target
 }
@@ -70,7 +58,6 @@ function bundle_install_plugin
 
   install_name_tool -id "$newidname" "$pluginpath"
   install_name_tool -change "$pluginpath" "$newidname" "$target"
-
   bundle_all_libs "$pluginpath"
   bundle_qt_frameworks "$pluginpath"
 }
@@ -187,8 +174,7 @@ fi
 cd "$BASEDIR"
 mkdir -p "$BUNDLE_FRAMEWORKS"
 echo "ALL:$@ QT:$QT_FRAMWORK_PATH"
-bundle_all_libs "$EXECUTABLE"
+bundle_all_libs "$EXECUTABLE"  || return $?
 bundle_qt_frameworks "$EXECUTABLE"
 bundle_qt_plugins "$EXECUTABLE" "imageformats accessible"
 bundle_other_frameworks "$EXECUTABLE" "Sparkle"
-
