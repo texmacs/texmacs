@@ -40,9 +40,9 @@ function bundle_all_libs
      [ -f "$libdest/$plib" ] || cp "$lib" "$libdest/." && \
        install_name_tool -id "$rpath/$blib" "$libdest/$blib" && \
        bundle_all_libs "$libdest/$blib" || return 55
-set -x
+
      install_name_tool -change "$lib" "@rpath/$blib" "$target" || return 56
-set +x
+
   done
   install_name_tool -add_rpath $rpath $target
 }
