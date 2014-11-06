@@ -57,7 +57,7 @@
     <explain-macro|hspace|len|min|max><explain-synopsis|stretchable
     horizontal space>
   <|explain>
-    This primitive inserts inserts a stretchable horizontal space of nominal
+    This primitive inserts a stretchable horizontal space of nominal
     width <src-arg|len>, which must be a <hyper-link|length
     value|../language/lengths.en.tm>. The <src-arg|min> and <src-arg|max>
     arguments specify bounds to horizontal stretching for line breaking and

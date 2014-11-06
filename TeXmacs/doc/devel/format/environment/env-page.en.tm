@@ -300,7 +300,7 @@
   <\explain>
     <var-val|page-head-sep|8mm>
 
-    <var-val|page-foot-set|8mm><explain-synopsis|separation between
+    <var-val|page-foot-sep|8mm><explain-synopsis|separation between
     headers/fotters and text>
   <|explain>
     These parameters determine the space between the main text and page
