@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.0.7.17>
 
-<style|<tuple|tmdoc|chinese>>
+<style|tmdoc>
 
 <\body>
   <tmdoc-title|\<#64B0\>\<#5199\>\<#7B80\>\<#5355\>\<#7684\>\<#6587\>\<#6863\>>
@@ -16,7 +16,7 @@
 
     <branch|\<#73AF\>\<#5883\>|man-environments.zh.tm>
 
-    <branch|\<#5E03\>\<#5C40\>\<#95EE\>\<#9898\><em|>|man-layout.en.tm>
+    <branch|\<#5E03\>\<#5C40\>\<#95EE\>\<#9898\><em|>|man-layout.zh.tm>
 
     <branch|\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>|man-fonts.zh.tm>
 
@@ -32,3 +32,10 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<\initial>
+  <\collection>
+    <associate|font|sys-chinese>
+    <associate|language|chinese>
+  </collection>
+</initial>

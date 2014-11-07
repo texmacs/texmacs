@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.0.7.17>
 
-<style|<tuple|tmdoc|chinese>>
+<style|tmdoc>
 
 <\body>
   <tmdoc-title|\<#5176\>\<#5B83\>\<#503C\>\<#5F97\>\<#4E00\>\<#770B\>\<#7684\>\<#6587\>\<#4EF6\>>
@@ -34,5 +34,9 @@
   Documentation License".>
 </body>
 
-<initial|<\collection>
-</collection>>
+<\initial>
+  <\collection>
+    <associate|font|fireflysung>
+    <associate|language|english>
+  </collection>
+</initial>

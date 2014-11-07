@@ -1,14 +1,14 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|\<#914D\>\<#7F6E\><TeXmacs>>
 
   <\traverse>
-    <branch|\<#7528\>\<#6237\>\<#9996\>\<#9009\>\<#9879\>|man-preferences.zh.tm>
+    <branch|\<#7528\>\<#6237\>\<#9996\>\<#9009\>\<#9879\>|man-preferences.en.tm>
 
-    <branch|\<#952E\>\<#76D8\>\<#914D\>\<#7F6E\>|man-config-keyboard.zh.tm>
+    <branch|\<#952E\>\<#76D8\>\<#914D\>\<#7F6E\>|man-config-keyboard.en.tm>
 
     <branch|\<#897F\>\<#91CC\>\<#5C14\>\<#8BED\>\<#8A00\>\<#7528\>\<#6237\>\<#987B\>\<#77E5\>|man-russian.en.tm>
 
@@ -25,9 +25,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|font|sys-chinese>
-    <associate|language|chinese>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

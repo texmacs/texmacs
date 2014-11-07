@@ -13,7 +13,7 @@
 
   <with|font|roman|<verbatim| \ \ \ $TEXMACS_HOME_PATH/progs/my-init-texmacs.scm>>
 
-  \<#7F3A\>\<#7701\>\<#60C5\>\<#51B5\>\<#4E0B\>\<#FF0C\>$TEXMACS_HOME_PATH\<#7684\>\<#503C\>\<#5C31\>\<#662F\>.TeXmacs\<#3002\>\<#7C7B\>\<#4F3C\>\<#5730\>\<#FF0C\>\<#6BCF\>\<#6B21\>\<#4F60\>\<#65B0\>\<#5EFA\>\<#4E00\>\<#4E2A\>buffer\<#FF0C\>\<#7A0B\>\<#5E8F\>\<#5C06\>\<#6267\>\<#884C\>:
+  \<#7F3A\>\<#7701\>\<#60C5\>\<#51B5\>\<#4E0B\>\<#FF0C\>$TEXMACS_HOME_PATH\<#7684\>\<#503C\>\<#5C31\>\<#662F\>.TeXmacs.\<#7C7B\>\<#4F3C\>\<#5730\>\<#FF0C\>\<#6BCF\>\<#6B21\>\<#4F60\>\<#65B0\>\<#5EFA\>\<#4E00\>\<#4E2A\>buffer\<#FF0C\>\<#7A0B\>\<#5E8F\>\<#5C06\>\<#6267\>\<#884C\>:
 
   <with|font|roman|<verbatim| \ \ \ $TEXMACS_PATH/progs/init-buffer.scm>>
 
