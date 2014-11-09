@@ -167,7 +167,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
                int alpha);
   
   
-  void bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
+  void bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta, bool filled);
 
   // hooks for the Hummus library
 
@@ -1194,79 +1194,68 @@ pdf_hummus_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
-pdf_hummus_renderer_rep::bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta)
+pdf_hummus_renderer_rep::bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta, bool filled)
 {
   // PDF can describe only cubic bezier paths, so we have to make up the arc with them
+  // Since this is not mathematically exact, we minimize errors by drawing beziers sub-arcs of at most 90°
   
-  // Control points for an arc of radius 1, centered on the x-axis and spanning theta degrees
-  // are given by:
-  // bx0 = cos(theta/2.0); by0 = sin(theta/2.0);
-  // bx3 = bx0;            by3 = -by0;
-  // bx1 = (4.0-bx0)/3.0;  by1 = (1.0-bx0)*(3.0-bx0)/(3.0*by0);
-  // bx2 = bx1;            by2 = -by1;
-  // from: http://www.tinaja.com/glib/bezcirc2.pdf
-  
-  // we compose the arc using the above basic structure and user space transformations
-  
-
   contentContext->q(); // save graphics state
 
-  {
     double xx1 = to_x(x1), yy1 = to_y(y1), xx2 = to_x(x2), yy2 = to_y(y2);
     double cx = (xx1+xx2)/2, cy = (yy1+yy2)/2;
     double rx = (xx2-xx1)/2, ry = (yy2-yy1)/2;
-    contentContext->cm(rx, 0, 0, ry, cx, cy); // scaling and centering
-  }
-  
-  if (alpha != 0) {
-    double a = 2.0*M_PI*alpha/(360.0*64.0);
-    contentContext->cm(cos(a), sin(a), -sin(a), cos(a), 0, 0); // rotation
-  }
-  
-  if (delta == 360*64) {
-    // closed circle
-    contentContext->m(1.0,0.0);
-  } else {
-    // an open arc closed in the center
-    //FIXME: is this really what we want ?
-    contentContext->m(0.0,0.0);
-    contentContext->l(1.0,0.0);
-  }
-  
-  int prev_phi = 0;
-  while (delta > 0) {
-    int phi = min(delta,90*64); // draw arcs in portions of 90 degrees maximum
-    delta -= phi;
-    double sphi = sin(2*M_PI*(phi+prev_phi)/(2.0*360.0*64.0));
-    double cphi = cos(2*M_PI*(phi+prev_phi)/(2.0*360.0*64.0));
-    contentContext->cm(cphi, sphi, -sphi, cphi, 0, 0); // rotation of phi/2 degrees
-    sphi = sin(2*M_PI*(phi)/(2.0*360.0*64.0));
-    cphi = cos(2*M_PI*(phi)/(2.0*360.0*64.0));
-    double bx0 = cphi, by0 = sphi; // , bx3 = bx0, by3 = -by0;
-    double bx1 = (4.0-bx0)/3.0, by1 = (1.0-bx0)*(3.0-bx0)/(3.0*by0);
-    double bx2 = bx1, by2 = -by1;
-    contentContext->c(bx2, by2, bx1, by1, bx0, by0);
-    prev_phi = phi;
-  }
-  
-  contentContext->h(); // close the path
-  contentContext->Q(); // restore the graphics state
+    contentContext->cm(1, 0, 0, 1, cx, cy); // centering
+	//we can't apply scale here because in pdf the pen is scaled too
+
+	int i=1+abs(delta)/(90*64); //number of sub-arcs needed 
+	if ((abs(delta)%(90*64))==0) i-- ; //correction needed if exact multiple of 90°
+	double phi= 2.0*M_PI*(delta)/(i*360.0*64.0); //angular span of each sub-arc
+	double a = 2.0*M_PI*(alpha)/(360.0*64.0); //start angle in radians
+
+  // Control points for an arc of radius 1, centered on the x-axis and spanning phi degrees
+  // from: http://www.tinaja.com/glib/bezcirc2.pdf
+    double sphi = sin(phi/2),	cphi = cos(phi/2);
+    double bx0 = cphi,			by0 = -sphi;
+    double bx1 = (4.0-bx0)/3.0,	by1 = (1.0-bx0)*(3.0-bx0)/(3.0*by0);
+    double bx2 = bx1,			by2 = -by1;
+    double bx3 = bx0,			by3 = -by0;
+	
+	// repeatedly draw rotated and scaled sub-arc
+	// cannot use user-space transformations with cm util path is painted (otherwise path is lost)
+	// so we perform explicit rotation+scaling calculations
+	int k;
+	for (k=0; k<i;k++) {
+	sphi = sin(phi*(k+0.5)+a); 
+    cphi = cos(phi*(k+0.5)+a);
+	if (k==0) contentContext->m(rx*(bx0*cphi-by0*sphi),ry* (+bx0*sphi+by0*cphi)); //start point
+	contentContext->c(
+		rx*(bx1*cphi-by1*sphi), ry*(+bx1*sphi+by1*cphi),
+		rx*(bx2*cphi-by2*sphi), ry*(+bx2*sphi+by2*cphi),
+		rx*(bx3*cphi-by3*sphi), ry*(+bx3*sphi+by3*cphi));
+	}
+	
+	//paint
+    if (filled) {
+		// contentContext->l(0.0, 0.0); // for a filled "pie" with vertex at the center
+		contentContext->f();
+	}	
+	else  ( (abs(delta) == 360*64) ? contentContext->s() : contentContext->S()); 
+	// here we close the path if it's a full circle 
+  contentContext->Q(); // restore the graphics state (undoes centering only)
 }
 
 void
 pdf_hummus_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   // debug_convert << "arc\n";
   end_text ();
-  bezier_arc(x1, y1, x2, y2, alpha, delta);
-  contentContext->S();
+  bezier_arc(x1, y1, x2, y2, alpha, delta, false);
 }
 
 void
 pdf_hummus_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   // debug_convert << "fill_arc\n";
   end_text ();
-  bezier_arc(x1, y1, x2, y2, alpha, delta);
-  contentContext->f();
+  bezier_arc(x1, y1, x2, y2, alpha, delta, true);
 }
 
 void
@@ -1979,7 +1968,7 @@ pdf_hummus_renderer_rep::href (string label, SI x1, SI y1, SI x2, SI y2)
     dict << "\t/Dest /label" << as_string(get_label_id(prepare_text (label))) << "\r\n";
   }
   else {
-    dict << "/Action << /Subtype /URI /URI (" << prepare_text (label) << ") >>\r\n";
+    dict << "/A << /S /URI /URI (" << prepare_text (label) << ") >>\r\n";
   }
   dict << ">>\r\n";
   annot_list (annotId) = dict;
@@ -2202,5 +2191,6 @@ pdf_hummus_renderer (url pdf_file_name, int dpi, int nr_pages,
   return tm_new<pdf_hummus_renderer_rep> (pdf_file_name, dpi, nr_pages,
 			  page_type, landscape, paper_w, paper_h);
 }
+
 
 

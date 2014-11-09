@@ -959,8 +959,8 @@ printer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
     print ("(" * prepare_text (label) * ") cvn");
   }
   else {
-    print ("/Action");
-    print ("<< /Subtype /URI /URI (" * prepare_text (label) * ") >>");
+    print ("/A");
+    print ("<< /S /URI /URI (" * prepare_text (label) * ") >>");
   }
   print ("/Rect [");
   print (x1 - 5*PIXEL, y1 - 10*PIXEL);
