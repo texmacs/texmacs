@@ -10,9 +10,9 @@
   <\traverse>
     <branch|\<#5F00\>\<#59CB\>\<#4F5C\>\<#56FE\>|man-graphics-new.zh.tm>
 
-    <branch|\<#63D2\>\<#5165\>\<#56FE\>\<#50CF\>\<#5BF9\>\<#8C61\>|man-graphics-insert.zh.tm>
+    <branch|\<#63D2\>\<#5165\>\<#56FE\>\<#5F62\>\<#5BF9\>\<#8C61\>|man-graphics-insert.zh.tm>
 
-    <branch|\<#7F16\>\<#8F91\>\<#56FE\>\<#50CF\>\<#5BF9\>\<#8C61\>|man-graphics-edit.zh.tm>
+    <branch|\<#7F16\>\<#8F91\>\<#56FE\>\<#5F62\>\<#5BF9\>\<#8C61\>|man-graphics-edit.zh.tm>
 
     <branch|\<#6837\>\<#5F0F\>\<#5C5E\>\<#6027\>\<#8BE6\>\<#8FF0\>|man-graphics-style.zh.tm>
 

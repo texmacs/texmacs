@@ -1,44 +1,31 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
-  <tmdoc-title|Editing groups of objects>
+  <tmdoc-title|\<#7F16\>\<#8F91\>\<#5BF9\>\<#8C61\>\<#7684\>\<#7EC4\>\<#5408\>>
 
-  The rightmost series of icons on the second mode dependent toolbar is used
-  for editing groups of graphical objects. In group editing mode, you may
-  select or unselect objects using right mouse clicks. You may also select
-  all objects in a rectangle by dragging using the right mouse button. When
-  pressing the left mouse button, the current group operation is performed
-  jointly on all selected objects.
+  \<#7B2C\>\<#4E8C\>\<#680F\>\<#5DE5\>\<#5177\>\<#680F\>\<#6700\>\<#53F3\>\<#7AEF\>\<#7684\>\<#56FE\>\<#6807\>\<#53EF\>\<#7528\>\<#4E8E\>\<#7F16\>\<#8F91\>\<#56FE\>\<#5F62\>\<#5BF9\>\<#8C61\>\<#7684\>\<#7EC4\>\<#5408\>.\<#5728\>\<#7EC4\>\<#5408\>\<#7F16\>\<#8F91\>\<#6A21\>\<#5F0F\>\<#4E2D\>\<#FF0C\>\<#4F60\>\<#53EF\>\<#4EE5\>\<#53F3\>\<#51FB\>\<#9009\>\<#4E2D\>\<#6216\>\<#8005\>\<#53D6\>\<#6D88\>\<#9009\>\<#4E2D\>\<#5BF9\>\<#8C61\>.\<#4F60\>\<#4E5F\>\<#53EF\>\<#4EE5\>\<#62D6\>\<#62FD\>\<#9F20\>\<#6807\>\<#53F3\>\<#952E\>\<#901A\>\<#8FC7\>\<#77E9\>\<#5F62\>\<#9009\>\<#6846\>\<#9009\>\<#4E2D\>\<#5176\>\<#4E2D\>\<#7684\>\<#6240\>\<#6709\>\<#5BF9\>\<#8C61\>.\<#6B64\>\<#65F6\>\<#5DE6\>\<#51FB\>\<#FF0C\>\<#5219\>\<#5F53\>\<#524D\>\<#7684\>\<#64CD\>\<#4F5C\>\<#5C06\>\<#4F5C\>\<#7528\>\<#5728\>\<#6240\>\<#6709\>\<#9009\>\<#4E2D\>\<#7684\>\<#5BF9\>\<#8C61\>\<#4E0A\>.
 
-  The following kinds of group operations are supported:
+  \<#6240\>\<#652F\>\<#6301\>\<#7684\>\<#5BF9\>\<#7EC4\>\<#5408\>\<#7684\>\<#64CD\>\<#4F5C\>\<#5982\>\<#4E0B\>\<#6240\>\<#793A\>\<#FF1A\>
 
   <\description>
-    <item*|Changing properties>Selected using <icon|tm_edit_props.xpm> or
-    <menu|Insert|Set properties>. The current properties (as indicated in the
-    focus bar) are applied to the selected objects.
+    <item*|\<#6539\>\<#53D8\>\<#5C5E\>\<#6027\>><icon|tm_edit_props.xpm>\<#5373\><menu|Insert|Set
+    properties>.\<#5DE6\>\<#51FB\>\<#5BF9\>\<#8C61\>\<#540E\>\<#FF0C\>\<#7126\>\<#70B9\>\<#680F\>\<#4E2D\>\<#7684\>\<#5F53\>\<#524D\>\<#5C5E\>\<#6027\>\<#5C31\>\<#5E94\>\<#7528\>\<#5230\>\<#4E86\>\<#9009\>\<#4E2D\>\<#5BF9\>\<#8C61\>\<#4E0A\>.
 
-    <item*|Move objects>Selected using <icon|tm_group_move.xpm> or
-    <menu|Insert|Move objects>. The selected objects are moved until you
-    press the left mouse button a second time.
+    <item*|\<#79FB\>\<#52A8\>\<#5BF9\>\<#8C61\>><icon|tm_group_move.xpm>\<#5373\><menu|Insert|Move
+    objects>.\<#9009\>\<#4E2D\>\<#5BF9\>\<#8C61\>\<#4F1A\>\<#8DDF\>\<#7740\>\<#9F20\>\<#6807\>\<#79FB\>\<#52A8\>\<#76F4\>\<#5230\>\<#4F60\>\<#5DE6\>\<#51FB\>.
 
-    <item*|Resize objects>Selected using <icon|tm_group_zoom.xpm> or
-    <menu|Insert|Resize objects>. The selected objects are resized until you
-    press the left mouse button a second time.
+    <item*|\<#7F29\>\<#653E\>\<#5BF9\>\<#8C61\>><icon|tm_group_zoom.xpm>\<#5373\><menu|Insert|Resize
+    objects>.\<#9009\>\<#4E2D\>\<#5BF9\>\<#8C61\>\<#4F1A\>\<#8DDF\>\<#7740\>\<#9F20\>\<#6807\>\<#7F29\>\<#653E\>\<#76F4\>\<#5230\>\<#4F60\>\<#5DE6\>\<#51FB\>.
 
-    <item*|Rotate objects>Selected using <icon|tm_group_rotate.xpm> or
-    <menu|Insert|Rotate objects>. The selected objects are rotated until you
-    press the left mouse button a second time.
+    <item*|\<#65CB\>\<#8F6C\>\<#5BF9\>\<#8C61\>><icon|tm_group_rotate.xpm>\<#5373\><menu|Insert|Rotate
+    objects>.\<#9009\>\<#4E2D\>\<#5BF9\>\<#8C61\>\<#4F1A\>\<#8DDF\>\<#7740\>\<#9F20\>\<#6807\>\<#65CB\>\<#8F6C\>\<#76F4\>\<#5230\>\<#4F60\>\<#5DE6\>\<#51FB\>.
 
-    <item*|Group or ungroup objects>Selected using <icon|tm_group_group.xpm>
-    or <menu|Insert|Group/ungroup>. The selected objects are grouped together
-    into a single object. If you selected one grouped object, then this
-    object will be ungrouped.
+    <item*|\<#7EC4\>\<#5408\>\<#6216\>\<#8005\>\<#6253\>\<#6563\>><icon|tm_group_group.xpm>\<#5373\><menu|Insert|Group/ungroup>.\<#5DE6\>\<#51FB\>\<#4E4B\>\<#540E\>\<#FF0C\>\<#9009\>\<#4E2D\>\<#5BF9\>\<#8C61\>\<#5C06\>\<#88AB\>\<#7EC4\>\<#5408\>\<#5728\>\<#4E00\>\<#8D77\>.\<#82E5\>\<#662F\>\<#7EC4\>\<#5408\>\<#5BF9\>\<#8C61\>\<#FF0C\>\<#5219\>\<#5DE6\>\<#51FB\>\<#4E4B\>\<#540E\>\<#5C06\>\<#88AB\>\<#6253\>\<#6563\>.
   </description>
 
-  In the group editing mode, it is also possible to copy and paste groups of
-  objects.
+  \<#5728\>\<#7EC4\>\<#5408\>\<#7F16\>\<#8F91\>\<#6A21\>\<#5F0F\>\<#4E2D\>\<#FF0C\>\<#590D\>\<#5236\>\<#548C\>\<#7C98\>\<#8D34\>\<#64CD\>\<#4F5C\>\<#4ECD\>\<#7136\>\<#9002\>\<#7528\>.
 
   <tmdoc-copyright|2012|Joris van der Hoeven>
 
@@ -50,8 +37,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
