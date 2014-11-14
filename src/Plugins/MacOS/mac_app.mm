@@ -21,8 +21,11 @@ from_nsstring (NSString *s) {
   return string((char*)cstr); // don't convert filenames to cork!
 }
 
-
+#if defined (MAC_OS_X_VERSION_10_7)
 @interface TMAppDelegate : NSObject <NSFileManagerDelegate> {
+#else
+@interface TMAppDelegate : NSObject {
+#endif
 }
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename ;
 @end
