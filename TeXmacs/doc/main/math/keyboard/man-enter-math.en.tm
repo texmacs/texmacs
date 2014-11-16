@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Incorporating mathematical formulas into documents>
@@ -14,7 +14,7 @@
     This entry corresponds to small <em|inline formulas> like
     <math|a<rsup|2>+b<rsup|2>=c<rsup|2>> inside a textual paragraph. Note
     that formulas are typeset specially so they do not take too much vertical
-    space. For example, limits are always displayed on the left. Limits can
+    space. For example, limits are always displayed on the right. Limits can
     be displayed below in formulas with <menu|Format|Formula style|on>. In
     formulas, formula style is off by default.
 
@@ -70,8 +70,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
