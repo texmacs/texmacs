@@ -14,9 +14,9 @@
 
     <branch|\<#8868\>\<#683C\>\<#5904\>\<#7406\>|table/man-table.zh.tm>
 
-    <branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.en.tm>
+    <version-new|<branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.zh.tm>|<branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.zh.tm>>
 
-    <branch|\<#5185\>\<#7F6E\>\<#4F5C\>\<#56FE\>\<#5DE5\>\<#5177\>|graphics/man-graphics.en.tm>
+    <branch|\<#5185\>\<#7F6E\>\<#4F5C\>\<#56FE\>\<#5DE5\>\<#5177\>|graphics/man-graphics.zh.tm>
 
     <branch|\<#8FDB\>\<#9636\>\<#5E03\>\<#5C40\>\<#7279\>\<#6027\>|layout/man-layout.zh.tm>
 
@@ -26,7 +26,7 @@
 
     <branch|<TeXmacs> \<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
 
-    <branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.en.tm>
+    <version-both|<branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.zh.tm>|<branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.en.tm>>
 
     <branch|\<#5B9A\>\<#5236\> <TeXmacs>|scheme/man-scheme.zh.tm>
 
