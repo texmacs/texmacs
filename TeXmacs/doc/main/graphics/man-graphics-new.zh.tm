@@ -23,7 +23,7 @@
   <shortcut|(graphics-move-origin-up)>, <shortcut|(graphics-move-origin-down)>\<#53EF\>\<#4EE5\>\<#63A7\>\<#5236\>\<#56FE\>\<#7247\>\<#5728\>\<#7F51\>\<#683C\>\<#4E0A\>\<#7684\>\<#79FB\>\<#52A8\>\<#FF0C\>\<#4F7F\>\<#7528\><shortcut|(graphics-move-origin-left-fast)>,
   <shortcut|(graphics-move-origin-right-fast)>,
   <shortcut|(graphics-move-origin-up-fast)>,
-  <shortcut|(graphics-move-origin-down-fast)>\<#5219\>\<#53EF\>\<#4EE5\>\<#52A0\>\<#5927\>\<#79FB\>\<#52A8\>\<#7684\>\<#6B65\>\<#4F10\>.\<#901A\>\<#8FC7\><menu|Insert|Geometry|Unit>\<#53EF\>\<#4EE5\>\<#6539\>\<#53D8\>\<#7F51\>\<#683C\>\<#7684\>\<#5355\>\<#4F4D\>\<#957F\>\<#5EA6\>.\<#4F7F\>\<#7528\><shortcut|(graphics-zoom-in)>\<#548C\><shortcut|(graphics-zoom-out)>\<#53EF\>\<#4EE5\>\<#653E\>\<#7F29\>\<#56FE\>\<#7247\>\<#FF0C\>\<#5BF9\>\<#7528\>\<#7684\>\<#83DC\>\<#5355\>\<#9879\>\<#662F\><menu|Insert|Geometry|Zoom>.
+  <shortcut|(graphics-move-origin-down-fast)>\<#5219\>\<#53EF\>\<#4EE5\>\<#52A0\>\<#5927\>\<#79FB\>\<#52A8\>\<#7684\>\<#6B65\>\<#4F10\>.\<#901A\>\<#8FC7\><menu|Insert|Geometry|Unit>\<#53EF\>\<#4EE5\>\<#6539\>\<#53D8\>\<#7F51\>\<#683C\>\<#7684\>\<#5355\>\<#4F4D\>\<#957F\>\<#5EA6\>.\<#4F7F\>\<#7528\><shortcut|(graphics-zoom-in)>\<#548C\><shortcut|(graphics-zoom-out)>\<#53EF\>\<#4EE5\>\<#653E\>\<#7F29\>\<#56FE\>\<#7247\>\<#FF0C\>\<#5BF9\>\<#5E94\>\<#7684\>\<#83DC\>\<#5355\>\<#9879\>\<#662F\><menu|Insert|Geometry|Zoom>.
 
   <tmdoc-copyright|2012|Joris van der Hoeven>
 
