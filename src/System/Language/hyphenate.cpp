@@ -72,7 +72,7 @@ load_hyphen_tables (string file_name,
   int i=0, n= N(s);
   while (i<n) {
     string buffer;
-    while ((i<n) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n')) {
+    while ((i<n) && (s[i]!=' ') && (s[i]!='\t') && (s[i]!='\n') && (s[i]!='\r')) {
       if (s[i] != '%') buffer << s[i++];
       else while ((i<n) && (s[i]!='\n')) i++;
     }
@@ -81,7 +81,7 @@ load_hyphen_tables (string file_name,
       pattern_flag=false;
       hyphenation_flag=false;
     }
-    if (pattern_flag && i != 0) {
+    if (pattern_flag && i != 0 && N(buffer) != 0) {
       string norm= hyphen_normalize (buffer);
       patterns (unpattern (norm))= norm;
       //cout << unpattern (norm) << " ==> " << norm << "\n";
