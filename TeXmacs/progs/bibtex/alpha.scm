@@ -25,25 +25,25 @@
 (define (bib-format-label-names a)
   (if (or (bib-null? a) (nlist? a)) ""
     (let* ((n (length a))
-  	 (pre (cond
-  		((equal? n 2)
-  		 (with von (bib-purify (bib-abbreviate
-  					(list-ref (list-ref a 1) 2) "" ""))
-  		   (if (bib-null? von)
-  		       (bib-prefix (list-ref (list-ref a 1) 3) 3)
-  		       (string-append von (bib-prefix
-  					   (list-ref (list-ref a 1) 3) 1)))))
-  		(else
-  		  (with lab ""
-  		    (do
-  			((i 1 (+ 1 i)))
-  			((>= i (min n (if (= 5 n) 5 4))))
-  		      (with von (bib-purify (bib-abbreviate
-  					     (list-ref (list-ref a i) 2)
-  					     "" ""))
-  			(set! lab (string-append
-  				   lab von (bib-prefix
-  					    (list-ref (list-ref a i) 3) 1)))))
+         (pre (cond
+                ((equal? n 2)
+                 (with von (bib-purify (bib-abbreviate
+                                        (list-ref (list-ref a 1) 2) "" ""))
+                   (if (bib-null? von)
+                       (bib-prefix (list-ref (list-ref a 1) 3) 3)
+                       (string-append von (bib-prefix
+                                           (list-ref (list-ref a 1) 3) 1)))))
+                (else
+                  (with lab ""
+                    (do
+                        ((i 1 (+ 1 i)))
+                        ((>= i (min n (if (= 5 n) 5 4))))
+                      (with von (bib-purify (bib-abbreviate
+                                             (list-ref (list-ref a i) 2)
+                                             "" ""))
+                        (set! lab (string-append
+                                   lab von (bib-prefix
+                                            (list-ref (list-ref a i) 3) 1)))))
                      lab)))))
       (if (> n 5) (string-append pre "+") pre))))
 
@@ -54,25 +54,25 @@
         (if (bib-null? key)
           (number->string n)
         (bib-prefix key 3))
-	    (bib-format-label-names (bib-field x "editor")))
+            (bib-format-label-names (bib-field x "editor")))
     (bib-format-label-names (bib-field x "author")))))
     
 (define (bib-format-proceedings-misc-label ae n x)
   (with key (list-ref x 2)
     (if (bib-empty? x ae)
-	(if (bib-null? key)
-	    (number->string n)
-	    (bib-prefix key 3))
-	(bib-format-label-names (bib-field x ae)))))
+        (if (bib-null? key)
+            (number->string n)
+            (bib-prefix key 3))
+        (bib-format-label-names (bib-field x ae)))))
 
 (define (bib-format-label-prefix n x)
   (let* ((doctype (list-ref x 1))
-	 (pre (cond
-		((or (equal? doctype "book") (equal? doctype "inbook"))
-		 (bib-format-book-inbook-label n x))
-		((equal? doctype "proceedings")
-		 (bib-format-proceedings-misc-label "editor" n x))
-		(else (bib-format-proceedings-misc-label "author" n x)))))
+         (pre (cond
+                ((or (equal? doctype "book") (equal? doctype "inbook"))
+                 (bib-format-book-inbook-label n x))
+                ((equal? doctype "proceedings")
+                 (bib-format-proceedings-misc-label "editor" n x))
+                (else (bib-format-proceedings-misc-label "author" n x)))))
     (string-append pre (bib-format-label-year x))))
 
 (define bib-label-table `())
@@ -84,21 +84,23 @@
   (set! bib-key-table (make-hash-table 100))
   (do ((entry t (cdr entry)) (n 1 (+ n 1)))
       ((null? entry))
-    (let* ((label (bib-format-label-prefix 0 (car entry)))
-	   (num (hash-ref bib-label-table label)))
-      (hash-set! bib-key-table (list-ref (car entry) 2) label)
-      (if num
-	  (hash-set! bib-label-table label
-		     (if (equal? num `()) `(1 2) `(,@num ,(+ 1 (length num)))))
-	  (hash-set! bib-label-table label `())))))
+      (if (func? (car entry) 'bib-entry)
+          (let* ((label (bib-format-label-prefix 0 (car entry)))
+                 (num (hash-ref bib-label-table label)))
+            (hash-set! bib-key-table (list-ref (car entry) 2) label)
+            (if num
+                (hash-set! bib-label-table label
+                           (if (equal? num `()) `(1 2) 
+                               `(,@num ,(+ 1 (length num)))))
+                (hash-set! bib-label-table label `()))))))
 
 (define (bib-format-label n x)
   (let* ((pre (hash-ref bib-key-table (list-ref x 2)))
-	 (num (hash-ref bib-label-table pre)))
+         (num (hash-ref bib-label-table pre)))
     (if (null? num) pre
-	(with n (car num)
-	  (hash-set! bib-label-table pre (cdr num))
-	  (string-append pre (string (integer->char (+ 96 n))))))))
+        (with n (car num)
+          (hash-set! bib-label-table pre (cdr num))
+          (string-append pre (string (integer->char (+ 96 n))))))))
 
 (tm-define (bib-format-bibitem n x)
   (:mode bib-alpha?)
@@ -106,10 +108,10 @@
 
 (define (invert-label l)
   (with invert (lambda (c)
-		 (cond
-		   ((char-upper-case? c) (char-downcase c))
-		   ((char-lower-case? c) (char-upcase c))
-		   (else c)))
+                 (cond
+                   ((char-upper-case? c) (char-downcase c))
+                   ((char-lower-case? c) (char-upcase c))
+                   (else c)))
     (string-map invert l)))
 
 (tm-define (bib-sort-key x)
@@ -117,6 +119,6 @@
   (let* ((auths (bib-format-label-names (bib-field x "author")))
          (label (hash-ref bib-key-table (list-ref x 2)))
          (year (bib-field x "year"))
-	       (lplain (bib-with-style "plain" bib-sort-key x)))
+               (lplain (bib-with-style "plain" bib-sort-key x)))
     (string-append (string-upcase (if (bib-null? auths) label auths))
                    (if (bib-null? year) "" year) "    " lplain)))
