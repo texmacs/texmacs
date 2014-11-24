@@ -165,6 +165,16 @@
       ===
       (tree-view noop (buffer-tree) (stree->tree '(dummy))))))
 
+(tm-widget ((widget11 . l))
+  (padded
+    (aligned
+      (for (x l)
+	(item (toggle (display* x ": " answer "\n") #f)
+	  (text x))))))
+
+(tm-define (show-widget11)
+  (show (widget11 "hop" "hola" "plok")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some test forms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
