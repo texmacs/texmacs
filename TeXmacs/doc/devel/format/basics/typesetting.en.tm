@@ -1,11 +1,11 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|The typesetting process>
 
-  In order to unserstand the <TeXmacs> document format well, it is useful to
+  In order to understand the <TeXmacs> document format well, it is useful to
   have a basic understanding about how documents are typeset by the editor.
   The typesetter mainly rewrites logical <TeXmacs> trees into physical
   <em|boxes>, which can be displayed on the screen or on paper (notice that
@@ -18,40 +18,39 @@
   future): evaluation of the <TeXmacs> tree using the stylesheet language,
   and the actual typesetting.
 
-  The <hyper-link|typesetting primitives|../regular/regular.en.tm> are
-  designed to be very fast and they are built-in into the editor. For
-  instance, one has typesetting primitives for horizontal concatenations
-  (<markup|concat>), page breaks (<markup|page-break>), mathematical
-  fractions (<markup|frac>), hyperlinks (<markup|hlink>), and so on. The
-  precise rendering of many of the typesetting primitives may be customized
-  through the <hyper-link|built-in environment
-  variables|../environment/environment.en.tm>. For instance, the environment
-  variable <src-var|color> specifies the current color of objects,
-  <src-var|par-left> the current left margin of paragraphs, <abbr|etc.>
+  The <hlink|typesetting primitives|../regular/regular.en.tm> are designed to
+  be very fast and they are built-in into the editor. For instance, one has
+  typesetting primitives for horizontal concatenations (<markup|concat>),
+  page breaks (<markup|page-break>), mathematical fractions (<markup|frac>),
+  hyperlinks (<markup|hlink>), and so on. The precise rendering of many of
+  the typesetting primitives may be customized through the <hlink|built-in
+  environment variables|../environment/environment.en.tm>. For instance, the
+  environment variable <src-var|color> specifies the current color of
+  objects, <src-var|par-left> the current left margin of paragraphs,
+  <abbr|etc.>
 
-  The <hyper-link|stylesheet language|../stylesheet/stylesheet.en.tm> allows
-  the user to write new primitives (macros) on top of the built-in
-  primitives. It contains primitives for definining macros, conditional
-  statements, computations, delayed execution, <abbr|etc.> The stylesheet
-  language also provides a special <markup|extern> tag which offers you the
-  full power of the <value|scheme> extension language in order to write
-  macros.
+  The <hlink|stylesheet language|../stylesheet/stylesheet.en.tm> allows the
+  user to write new primitives (macros) on top of the built-in primitives. It
+  contains primitives for definining macros, conditional statements,
+  computations, delayed execution, <abbr|etc.> The stylesheet language also
+  provides a special <markup|extern> tag which offers you the full power of
+  the <scheme> extension language in order to write macros.
 
   It should be noticed that user-defined macros have two aspects. On the one
   hand they usually perform simple rewritings. For instance, the macro
 
   <\tm-fragment>
-    <inactive*|<assign|seq|<macro|var|from|to|<active*|<with|mode|math|<inactive*|<arg|var>><rsub|<inactive*|<arg|from>>>,\<ldots\>,<inactive*|<arg|var>><rsub|<inactive*|<arg|to>>>>>>>>
+    <inactive*|<assign|seq|<macro|var|from|to|<active*|<math|<inactive*|<arg|var>><rsub|<inactive*|<arg|from>>>,\<ldots\>,<inactive*|<arg|var>><rsub|<inactive*|<arg|to>>>>>>>>
   </tm-fragment>
 
   is a shortcut in order to produce sequences like
-  <with|mode|math|a<rsub|1>,\<ldots\>,a<rsub|n>>. When macros perform simple
-  rewritings like in this example, the children <src-arg|var>, <src-arg|from>
-  and <src-arg|to> of the <markup|seq> tag remain <em|accessible> from within
-  the editor. In other words, you can position the cursor inside them and
-  modify them. User defined macros also have a synthetic or computational
-  aspect. For instance, the dots of a <markup|seq> tag as above cannot be
-  edited by the user. Similarly, the macro
+  <math|a<rsub|1>,\<ldots\>,a<rsub|n>>. When macros perform simple rewritings
+  like in this example, the children <src-arg|var>, <src-arg|from> and
+  <src-arg|to> of the <markup|seq> tag remain <em|accessible> from within the
+  editor. In other words, you can position the cursor inside them and modify
+  them. User defined macros also have a synthetic or computational aspect.
+  For instance, the dots of a <markup|seq> tag as above cannot be edited by
+  the user. Similarly, the macro
 
   <\tm-fragment>
     <inactive*|<assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>>
@@ -81,9 +80,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
