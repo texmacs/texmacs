@@ -164,15 +164,14 @@ ps_load (url image) {
   if (suf == "ps" || suf == "eps") load_string (name, s, false);
   else {
 #ifdef QTTEXMACS
-    int w_pt, h_pt, dpi=72;
-    qt_image_size (name, w_pt, h_pt); // default to 72 dpi
-    s= qt_image_to_eps (name, w_pt, h_pt, dpi);
-    // fallback on external conversion
-    if (s == "")
-      s= as_string (call ("image->postscript", object (name)));
-#else
-    s= as_string (call ("image->postscript", object (name)));
+    if (qt_supports (image)) {
+      int w_pt, h_pt, dpi=72;
+      qt_image_size (name, w_pt, h_pt); // default to 72 dpi
+      s= qt_image_to_eps (name, w_pt, h_pt, dpi);
+      if (s != "") return s;
+    } // no qt support or failed conversion: fallback on external conversion	  
 #endif
+	s= as_string (call ("image->postscript", object (name)));
   }
 
 #ifdef OS_WIN32
@@ -241,27 +240,27 @@ image_size (url image, int& w, int& h) {
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
     qt_image_size (image, w, h); // default to 72 dpi
-    //cout << "qt " << image << ", " << w << ", " << h << "\n";
+    //cout << "image_size  qt " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
 #ifdef MACOSX_EXTENSIONS 
   if (mac_image_size (image, w, h) ) {
-    //cout << "mac " << image << ", " << w << ", " << h << "\n";
+    //cout << "image_size  mac " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
 #ifdef USE_IMLIB2
   if (imlib2_supports (image)) {
     imlib2_image_size (image, w, h);
-    //cout << "imlib2 " << image << ", " << w << ", " << h << "\n";
+    //cout << "image_size imlib2 " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
 #ifdef USE_GS
   if (gs_supports (image)) {
     gs_image_size (image, w, h);
-    //cout << "gs " << image << ", " << w << ", " << h << "\n";
+    //cout << "image_size gs " << image << ", " << w << ", " << h << "\n";
     return;
   }
 #endif
@@ -269,7 +268,7 @@ image_size (url image, int& w, int& h) {
   ps_bounding_box (image, x1, y1, x2, y2);
   w= x2 - x1;
   h= y2 - y1;
-  //cout << "default " << image << ", " << w << ", " << h << "\n";
+  //cout << "image_size default " << image << ", " << w << ", " << h << "\n";
 }
 
 /******************************************************************************
@@ -295,11 +294,11 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   }
 #endif
   string s= suffix (image);
-  string cmd= "convert";
+  string cmd= "convert"; //ImageMagick utility
   if (s != "pdf" && s != "ps" && s != "eps" && dpi > 0 && w_pt > 0 && h_pt > 0) {
     int ww= w_pt * dpi / 72;
     int hh= h_pt * dpi / 72;
-    string sz= eval_system ("identify -format \"%[fx:w] %[fx:h]\"", image);
+    string sz= eval_system ("identify -format \"%[fx:w] %[fx:h]\"", image); //other ImageMagick utility
     int w_px, h_px, ok= true, pos= 0;
     ok= read_int (sz, pos, w_px);
     skip_spaces (sz, pos);  

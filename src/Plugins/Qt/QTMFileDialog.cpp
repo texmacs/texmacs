@@ -128,19 +128,27 @@ QTMImagePreview::setImage (const QString& file) {
     int w_pt, h_pt;
     double w, h;
     image_size (image_url, w_pt, h_pt);
-    if (w_pt > h_pt) {
-      w= 98;
-      h= h_pt*98/w_pt;
-      if ((int)h < h) h= (int)h+1; else h= (int)h;
+    if (w_pt*h_pt !=0) { //necessary if gs returns h=v=0 (for instance 0-size pdf) 
+      if (w_pt > h_pt) {
+        w= 98;
+        h= h_pt*98/w_pt;
+        if ((int)h < h) h= (int)h+1;
+        else h= (int)h;
+      } 
+	  else {
+        w= w_pt*98/h_pt;
+        if ((int)w < w) w= (int)w+1;
+        else w= (int)w;
+        h= 98;
+	  }
+	  image_to_png (image_url, temp, w, h); 
+//	  cout << "loads in qt? " << 
+      img.load (utf8_to_qstring (cork_to_utf8 (as_string (temp))).toLocal8Bit ());
+	  //use here same hack as in qt_chooser_widget.cpp::perform_dialog
+	  // otherwise temp file in french windows is not recognized (path with spaces and accents)
+	  // probably worth generalizing as url_to_qtfilename() ?
+	  remove (temp);
     }
-    else {
-      w= w_pt*98/h_pt;
-      if ((int)w < w) w= (int)w+1; else w= (int)w;
-      h= 98;
-    }
-    image_to_png (image_url, temp, w, h);
-    img.load (utf8_to_qstring (as_string (temp)));
-    remove (temp);
   }
   else {
     img.load (file);

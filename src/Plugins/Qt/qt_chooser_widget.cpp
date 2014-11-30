@@ -207,7 +207,7 @@ qt_chooser_widget_rep::perform_dialog () {
   c_string tmp (directory * "/" * file);
   QString path = QString::fromLocal8Bit (tmp);
   
-#if (defined(Q_WS_MAC) || defined(Q_WS_WIN))
+#if (defined(Q_WS_MAC) )// || defined(Q_WS_WIN)) //at least windows Xp and 7 lack image preview, switch to custom dialog
   QFileDialog* dialog = new QFileDialog (NULL, caption, path);
 #else
   QTMFileDialog*  dialog;
@@ -266,20 +266,21 @@ qt_chooser_widget_rep::perform_dialog () {
       string localname = string ((char*) cstr);
       file = "(system->url " * scm_quote (localname) * ")";
       if (type == "image") {
-#if !defined(Q_WS_MAC) && !defined(Q_WS_WIN)
-        file = "(list " * file * imgdialog->getParamsAsString () * ")";
-#else
+#if !defined(Q_WS_MAC) // && !defined(Q_WS_WIN)   //at least windows Xp and 7 lack image preview, switch to custom dialog
+        file = "(list " * file * imgdialog->getParamsAsString () * ")"; //set image size from preview
+#else //MacOs only now
         QPixmap pic (fileNames.first());
         string params;
           // HACK: which value should we choose here?
+//Philippe: using	image_size (u,  w,  h); would make the behavior consistent across platforms.
         int ww = (get_current_editor()->get_page_width () / PIXEL) / 3;
-        int  w = min (ww, pic.width());
-        int  h = ((double) pic.height() / (double) pic.width()) * (double) w;
+        int  w = min (ww, pic.width()); // in windows Xp and 7 this does not give a valid size for eps or pdf images
+        int  h = ((double) pic.height() / (double) pic.width()) * (double) w;   // no risk of division by zero here on invalid file?
         params << "\"" << from_qstring (QString ("%1px").arg (w)) << "\" "
                << "\"" << from_qstring (QString ("%1px").arg (h)) << "\" "
                << "\"" << "" << "\" "  // xps ??
                << "\"" << "" << "\"";   // yps ??
-        file = "(list " * file * params * ")";
+        file = "(list " * file * params * ")"; 
 #endif
       }
     }
