@@ -74,7 +74,9 @@ to_qfont (int style, QFont font) {
   }
   if (style & WIDGET_STYLE_MONOSPACED) {  // Use monospaced font
     font.setFixedPitch (true);        //FIXME: ignored for fonts in QActions
+#if (QT_VERSION >= 0x040800)
     font.setStyleHint (QFont::Monospace);
+#endif
   }
   if (style & WIDGET_STYLE_GREY)      // use grey text font
     font.setWeight (QFont::Light);    // FIXME: this is only an approximation
