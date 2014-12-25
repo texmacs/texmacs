@@ -372,10 +372,10 @@
 
 (define (url->item u)
   (with (base qry) (process-url u)
-    (let* ((file (url->string u))
+    (let* ((file (url->system u))
            (help? (and (== "texmacs-file" (file-format u)) 
                        (url-exists-in-help? file)))
-           (text (if help? (help-file-title u) (basename (url->string base)))))
+           (text (if help? (help-file-title u) (basename (url->system base)))))
       ($link file text))))
 
 (define (url-list->document l)
@@ -402,13 +402,13 @@
 (define (default-root-disambiguator u)
  (with l (list-filter (url->list u) default-filter-url)
     (cond ((null? l) 
-           (set-message `(verbatim ,(url->string u)) "Not found"))
+           (set-message `(verbatim ,(url->system u)) "Not found"))
           ((== 1 (length l)) (load-browse-buffer (car l)))
           (else (build-disambiguation-page l)))))
 
 (define (process-url u)
   "Split a simple (not or'ed!!) url in base and query"
-  (let* ((s (url->string u))
+  (let* ((s (url->system u))
          (m (string-length s))
          (h (or (string-index s #\#) m))
          (a (or (string-index s #\?) m))
@@ -416,7 +416,7 @@
          (base (substring s 0 i))
          (qry (substring s (min m (+ 1 i)) m)))
     (if (< i m)  ; was there either a '?' or a '#' (with args)?
-        (list (string->url (string-drop-right s (+ 1 (string-length qry))))
+        (list (system->url (string-drop-right s (+ 1 (string-length qry))))
               (unescape-link-args qry))
         (list u ""))))
 
@@ -461,7 +461,7 @@
   (if (url-or? (url-expand u))
       (default-root-disambiguator (url-expand u))
       (with (base qry) (process-url u)
-        (if (!= "" (url->string base))
+        (if (!= "" (url->system base))
             (load-browse-buffer base)))))
 
 (define (tmfs-root-handler u)
@@ -501,7 +501,7 @@
   (:synopsis "Jump to the url @u")
   (:argument opt-from "Optional path for the cursor history")
   (if (nnull? opt-from) (cursor-history-add (car opt-from)))
-  (if (string? u) (set! u (string->url u)))
+  (if (string? u) (set! u (system->url u)))
   (with (action post) (url-handlers u) 
     (action u) (post u))
   (if (nnull? opt-from) (cursor-history-add (cursor-path))))
