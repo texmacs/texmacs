@@ -192,7 +192,7 @@
               ((== protocol "here") file)
               ((== protocol "file")
                (if (os-mingw?)
-                   (string->url (string-append "/" (tmfs-car s)))
+                   (string->url (string-append "/" (tmfs-cdr s)))
                    (url-append (root->url "default") file)))
               ((in? protocol '("http" "ftp"))
                (url-append (root->url protocol) file))
