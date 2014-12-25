@@ -26,7 +26,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-score-sub file keyword-list)
-  (with r (system-search-score (unix->url file) keyword-list)
+  (with r (system-search-score (system->url file) keyword-list)
     (cons file r)))
 
 (define (get-score-list keyword-list file-list)
@@ -66,10 +66,8 @@
     (tm->stree (build-doc-search-results keyword the-result))))
 
 (define (src-file-short-name s) 
-  (let ((p1 (string-append 
-             (url->string (unix->url "$TEXMACS_PATH")) "/"))
-        (p2 (string-append 
-             (url->string (unix->url "$TEXMACS_SOURCE_PATH")) "/")))
+  (let ((p1 (url->system (unix->url "$TEXMACS_PATH/")))
+        (p2 (url->system (unix->url "$TEXMACS_SOURCE_PATH/"))))
     (cond ((nstring? s) s)  ;; wtf?
           ((string-starts? s p1) (string-drop s (string-length p1)))
           ((string-starts? s p2) (string-drop s (string-length p2)))
@@ -112,14 +110,14 @@
 
 (define (docgrep what path . patterns)
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
-         (l2 (map url->unix l1))
+         (l2 (map url->system l1))
          (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
     (build-doc-link-page what l3)))
 
 ; TODO: include results from the code indexer when available
 (define (srcgrep what path . patterns)
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
-         (l2 (map url->unix l1))
+         (l2 (map url->system l1))
          (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
     (build-src-link-page what l3)))
 
