@@ -11,7 +11,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Given a page from the documentation, we parse it and all its children and
-;; store every "explain" tag into a cache in the users $HOME directory. 
+;; store every "explain" tag into a cache in the users $TEXMACS_HOMEPATH
+;; directory. 
 ;; We use this to provide documentation for scheme symbols and texmacs macros.
 ;; Multiple languages can be stored for each tag, allowing for localization
 ;; as well as a fallback language.
@@ -74,21 +75,23 @@
 (tm-define (doc-scm-cache)
   (:synopsis "Url of the cache with the collected scheme documentation.")
   (with pref (get-preference "doc:doc-scm-cache")
-    (if (and (!= pref "default") (url-exists? (string->url pref)))
-        (string->url pref)
+    (if (and (!= pref "default") (url-exists? (system->url pref)))
+        (system->url pref)
         (with new (persistent-file-name
-                   (string->url "$HOME/.TeXmacs/system/cache/") "api")
-          (set-preference "doc:doc-scm-cache" (url->string new))
+                   (unix->url "$TEXMACS_HOME_PATH/system/cache/")
+                   "api")
+          (set-preference "doc:doc-scm-cache" (url->system new))
           new))))
 
 (tm-define (doc-macro-cache)
   (:synopsis "Url of the cache with the collected macro documentation.")
   (with pref (get-preference "doc:doc-macro-cache")
-    (if (and (!= pref "default") (url-exists? (string->url pref)))
-        (string->url pref)
+    (if (and (!= pref "default") (url-exists? (system->url pref)))
+        (system->url pref)
         (with new (persistent-file-name 
-                   (string->url "$HOME/.TeXmacs/system/cache/") "api")
-          (set-preference "doc:doc-macro-cache" (url->string new))
+                   (unix->url "$TEXMACS_HOME_PATH/system/cache/")
+                   "api")
+          (set-preference "doc:doc-macro-cache" (url->system new))
           new))))
 
 (define (explain-scm? t)
@@ -116,7 +119,7 @@
   (with prev (string->object (persistent-get cache key))
     (if (eof-object? prev) (set! prev '()))
     (persistent-set cache key
-      (object->string (cons `(entry ,key ,lan ,(url->string url) ,t) prev)))))
+      (object->string (cons `(entry ,key ,lan ,(url->system url) ,t) prev)))))
 
 (define (process-explain t lan url)
   "Store an explain macro from a given URL into the cache."
@@ -212,11 +215,11 @@
   (doc-retrieve* cache key lan))
 
 (define (doc-delete-cache*)
-  (with s (url->string (doc-scm-cache))
+  (with s (url->system (doc-scm-cache))
     (display* "I WOULD HAVE deleted the cache at " s ".\n")
     (reset-preference "doc:doc-scm-cache")
     (set-message `(replace "The cache at %1 was deleted" (verbatim ,s)) ""))
-  (with s (url->string (doc-macro-cache))
+  (with s (url->system (doc-macro-cache))
     (display* "I WOULD HAVE deleted the cache at " s ".\n")
     (reset-preference "doc:doc-macro-cache")
     (set-message `(replace "The cache at %1 was deleted" (verbatim ,s)) ""))
@@ -231,6 +234,6 @@
       (lambda (go?) (if go? (doc-delete-cache*) (set-message "Cancelled" "")))
     (user-confirm 
         `(replace "All the files at %1 and %2 will be deleted. Are you sure?"
-                  (verbatim ,(url->string (doc-scm-cache))) 
-                  (verbatim ,(url->string (doc-macro-cache))))
+                  (verbatim ,(url->system (doc-scm-cache))) 
+                  (verbatim ,(url->system (doc-macro-cache))))
       #t run)))
