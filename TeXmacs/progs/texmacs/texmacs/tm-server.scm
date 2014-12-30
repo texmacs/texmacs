@@ -19,7 +19,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-default-interactive-questions)
-  (if (or (like-gnome?) (like-macos?) (like-windows?)) "popups" "footer"))
+  (if (or (like-gnome?) (like-macos?) (like-windows?)) "popup" "footer"))
 
 (define (get-default-show-table-cells)
   (if (qt-gui?) "on" "off"))
@@ -149,3 +149,4 @@
   (if (not (buffers-modified?)) (quit-TeXmacs)
       (user-confirm "There are unsaved files. Really quit?" #f  
         (lambda (answ) (when answ (quit-TeXmacs))))))
+
