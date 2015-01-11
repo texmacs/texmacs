@@ -818,10 +818,6 @@ latex_symbol_to_tree (string s) {
       if (s == "Arrowvert")     return "<||>";
       if (s == "lbrace")        return "{";
       if (s == "rbrace")        return "}";
-
-      if (starts (s, "up") || starts (s, "Up"))
-        cout << s << ", " << latex_type (s) << ", "
-             << latex_type ("\\" * s) << "\n";
       
       if (starts (s, "up")) {
         if (s == "upalpha") return "<up-alpha>";
