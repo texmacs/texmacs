@@ -201,10 +201,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-textcomp-symbol%
- textcent textcurrency textyen textbrokenbar textasciidieresis textlnot
- textasciimacron textdegree textpm texttwosuperior textthreesuperior
- textasciiacute textmu textonesuperior textonequarter textonehalf
- textthreequarters texttimes textdiv)
+  textcent textcurrency textyen textbrokenbar textasciidieresis textlnot
+  textasciimacron textdegree textpm texttwosuperior textthreesuperior
+  textasciiacute textmu textonesuperior textonequarter textonehalf
+  textthreequarters texttimes textdiv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols from upgreek package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(logic-group latex-upgreek-symbol%
+  upalpha upbeta upgamma updelta upepsilon
+  upvarepsilon upzeta upeta uptheta upvartheta
+  upiota upkappa uplambda upmu upnu upomicron
+  upxi uppi upvarpi uprho
+  upvarrho upsigma upvarsigma uptau upupsilon
+  upphi upvarphi upchi uppsi upomega
+
+  Upalpha Upbeta Upgamma Updelta Upepsilon
+  Upzeta Upeta Uptheta Upiota Upkappa Uplambda
+  Upmu Upnu Upomicron Upxi Uppi Uprho Upsigma
+  Uptau Upupsilon Upphi Upchi Uppsi Upomega)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rules
@@ -226,4 +243,6 @@
   ((latex-symbol% 'x) (latex-mathabx-symbol% 'x))
   ((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x))
   ((latex-symbol% 'x) (latex-textcomp-symbol% 'x))
-  ((latex-needs% 'x "textcomp") (latex-textcomp-symbol% 'x)))
+  ((latex-needs% 'x "textcomp") (latex-textcomp-symbol% 'x))
+  ((latex-symbol% 'x) (latex-upgreek-symbol% 'x))
+  ((latex-needs% 'x "upgreek") (latex-upgreek-symbol% 'x)))

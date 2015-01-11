@@ -818,7 +818,70 @@ latex_symbol_to_tree (string s) {
       if (s == "Arrowvert")     return "<||>";
       if (s == "lbrace")        return "{";
       if (s == "rbrace")        return "}";
-                                return "<" * s * ">";
+
+      if (starts (s, "up") || starts (s, "Up"))
+        cout << s << ", " << latex_type (s) << ", "
+             << latex_type ("\\" * s) << "\n";
+      
+      if (starts (s, "up")) {
+        if (s == "upalpha") return "<up-alpha>";
+        if (s == "upbeta") return "<up-beta>";
+        if (s == "upgamma") return "<up-gamma>";
+        if (s == "updelta") return "<up-delta>";
+        if (s == "upepsilon") return "<up-epsilon>";
+        if (s == "upvarepsilon") return "<up-varepsilon>";
+        if (s == "upzeta") return "<up-zeta>";
+        if (s == "upeta") return "<up-eta>";
+        if (s == "uptheta") return "<up-theta>";
+        if (s == "upvartheta") return "<up-vartheta>";
+        if (s == "upiota") return "<up-iota>";
+        if (s == "upkappa") return "<up-kappa>";
+        if (s == "uplambda") return "<up-lambda>";
+        if (s == "upmu") return "<up-mu>";
+        if (s == "upnu") return "<up-nu>";
+        if (s == "upomicron") return "<up-omicron>";
+        if (s == "uppi") return "<up-pi>";
+        if (s == "upvarpi") return "<up-varpi>";
+        if (s == "uprho") return "<up-rho>";
+        if (s == "upvarrho") return "<up-varrho>";
+        if (s == "upsigma") return "<up-sigma>";
+        if (s == "upvarsigma") return "<up-varsigma>";
+        if (s == "uptau") return "<up-tau>";
+        if (s == "upupsilon") return "<up-upsilon>";
+        if (s == "upphi") return "<up-phi>";
+        if (s == "upvarphi") return "<up-varphi>";
+        if (s == "upchi") return "<up-chi>";
+        if (s == "uppsi") return "<up-psi>";
+        if (s == "upomega") return "<up-omega>";
+      }
+
+      if (starts (s, "Up")) {
+        if (s == "Upalpha") return "<Alpha>";
+        if (s == "Upbeta") return "<Beta>";
+        if (s == "Upgamma") return "<Gamma>";
+        if (s == "Updelta") return "<Delta>";
+        if (s == "Upepsilon") return "<Epsilon>";
+        if (s == "Upzeta") return "<Zeta>";
+        if (s == "Upeta") return "<Eta>";
+        if (s == "Uptheta") return "<Theta>";
+        if (s == "Upiota") return "<Iota>";
+        if (s == "Upkappa") return "<Kappa>";
+        if (s == "Uplambda") return "<Lambda>";
+        if (s == "Upmu") return "<Mu>";
+        if (s == "Upnu") return "<Nu>";
+        if (s == "Upomicron") return "<Omicron>";
+        if (s == "Uppi") return "<Pi>";
+        if (s == "Uprho") return "<Rho>";
+        if (s == "Upsigma") return "<Sigma>";
+        if (s == "Uptau") return "<Tau>";
+        if (s == "Upupsilon") return "<Upsilon>";
+        if (s == "Upphi") return "<Phi>";
+        if (s == "Upchi") return "<Chi>";
+        if (s == "Uppsi") return "<Psi>";
+        if (s == "Upomega") return "<Omega>";
+      }
+
+      return "<" * s * ">";
     }
 
     if (latex_type (s) == "texmacs") {

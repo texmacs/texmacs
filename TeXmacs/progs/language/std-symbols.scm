@@ -446,6 +446,14 @@
     "<b-Phi>" "<b-Psi>" "<b-Chi>" "<b-Omega>"
     "<b-Backepsilon>" "<b-Mho>"
 
+    "<up-alpha>" "<up-beta>" "<up-gamma>" "<up-delta>" "<up-epsilon>"
+    "<up-varepsilon>" "<up-zeta>" "<up-eta>" "<up-theta>" "<up-vartheta>"
+    "<up-iota>" "<up-kappa>" "<up-varkappa>" "<up-lambda>" "<up-mu>"
+    "<up-nu>" "<up-xi>" "<up-omicron>" "<up-pi>" "<up-varpi>" "<up-rho>"
+    "<up-varrho>" "<up-sigma>" "<up-varsigma>" "<up-tau>" "<up-upsilon>"
+    "<up-phi>" "<up-varphi>" "<up-psi>" "<up-chi>" "<up-omega>"
+    "<up-backepsilon>" "<up-mho>"
+
     "<b-a>" "<b-b>" "<b-c>" "<b-d>" "<b-e>" "<b-f>" "<b-g>"
     "<b-h>" "<b-i>" "<b-j>" "<b-k>" "<b-l>" "<b-m>" "<b-n>"
     "<b-o>" "<b-p>" "<b-q>" "<b-r>" "<b-s>" "<b-t>" "<b-u>"
