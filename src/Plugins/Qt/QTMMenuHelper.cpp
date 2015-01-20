@@ -441,6 +441,12 @@ QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QComboBox* cb)
   QObject::connect (cb, SIGNAL (editTextChanged (const QString&)),
                     this, SLOT (commit (const QString&)));
 }
+QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QLineEdit* cb)
+: QObject (cb), wid (_wid), done (false) {
+  ASSERT (cb != NULL, "QTMFieldWidgetHelper: expecting valid QLineEdit");
+  QObject::connect (cb, SIGNAL (textChanged (const QString&)),
+                    this, SLOT (commit (const QString&)));
+}
 
 void
 QTMFieldWidgetHelper::commit (const QString& qst) {
@@ -456,6 +462,7 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
                           int style, command _cmd)
   : QLineEdit (parent), completing (false),
     type (_type), ww (_ww), cmd (_cmd), last_key (0) {
+  if (type == "password") setEchoMode(QLineEdit::Password);
   if (style & WIDGET_STYLE_MINI) {
     setStyle (qtmstyle());
       // FIXME: we should remove this and let the scheme code decide.

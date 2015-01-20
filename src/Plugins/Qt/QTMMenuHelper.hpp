@@ -318,6 +318,7 @@ class QTMFieldWidgetHelper : public QObject {
   
 public:
   QTMFieldWidgetHelper (qt_widget _wid, QComboBox* parent);
+  QTMFieldWidgetHelper (qt_widget _wid, QLineEdit* parent);
 
 public slots:
   void commit (const QString& qst);

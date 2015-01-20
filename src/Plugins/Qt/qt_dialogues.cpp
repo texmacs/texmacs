@@ -105,7 +105,16 @@ qt_field_widget_rep::as_qwidget () {
     le->setObjectName (to_qstring (type));
     lab->setBuddy (le);
     hl->addWidget (le);
-  } else {
+  } 
+  else if (type == "password") {
+    QTMLineEdit* le= new QTMLineEdit (qwid, "password", "20em", 0);
+    QTMFieldWidgetHelper* helper = new QTMFieldWidgetHelper (this, le);
+    (void) helper;
+    le->setCompleter (0);
+    lab->setBuddy (le);
+    hl->addWidget (le);
+  }
+  else {
     QTMComboBox* cb              = new QTMComboBox (qwid);
     QTMFieldWidgetHelper* helper = new QTMFieldWidgetHelper (this, cb);
     (void) helper;
@@ -356,6 +365,7 @@ qt_input_text_widget_rep::qt_input_text_widget_rep (command _cmd,
   proposals (_proposals), input (""), style (_style), width (_width),
   ok (false)
 {
+  if (type == "password") proposals = array<string> (0);
   if (N(proposals) > 0) input = proposals[0];
 }
 
@@ -381,11 +391,12 @@ qt_input_text_widget_rep::as_qwidget () {
     fsModel->setRootPath (QDir::homePath());// This is NOT the starting location
     completer->setModel (fsModel);
     le->setCompleter (completer);
-  } else if (N(proposals) > 0 && ! (N(proposals) == 1 && N(proposals[0]) == 0)){
+  }
+  else if (type != "password" && N(proposals) > 0 && ! (N(proposals) == 1 && N(proposals[0]) == 0)){
+    //else if (N(proposals) > 0 && ! (N(proposals) == 1 && N(proposals[0]) == 0)){
     QCompleter* completer = new QCompleter (to_qstringlist(proposals), le);
     completer->setCaseSensitivity (Qt::CaseSensitive);
     completer->setCompletionMode (QCompleter::InlineCompletion);
-
     le->setCompleter (completer);
   }
   qwid = le;
