@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std>>
 
@@ -62,9 +62,9 @@
 
   <assign|math-imply|<macro|x|<syntax|<arg|x>|\<Rightarrow\>>>>
 
-  <assign|math-or|<macro|x|<syntax|<arg|x>|\<cap\>>>>
+  <assign|math-or|<macro|x|<syntax|<arg|x>|\<vee\>>>>
 
-  <assign|math-and|<macro|x|<syntax|<arg|x>|\<cup\>>>>
+  <assign|math-and|<macro|x|<syntax|<arg|x>|\<wedge\>>>>
 
   <assign|math-not|<macro|x|<syntax|<arg|x>|\<neg\>>>>
 
