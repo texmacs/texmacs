@@ -702,6 +702,7 @@ CONFIG_HOST_VENDOR="$host_vendor"
 CONFIG_HOST_CPU="$host_cpu"
 CONFIG_USER="$USER"
 CONFIG_DATE="`date`"
+CONFIG_QTPIPES="no"
 # tweak for XCode project
 CONFIG_ARCHS='$(NATIVE_ARCH)'
 
@@ -754,6 +755,7 @@ case "${host}" in
   *apple*darwin*)
     echo "$ac_t""final adjustments for a MacOS host" 1>&6
     CONFIG_OS="MACOS"
+    CONFIG_QTPIPES="yes"
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
     CONFIG_BFLAGS="-framework Cocoa -framework IOKit"
@@ -1075,7 +1077,7 @@ esac
 
 AC_ARG_ENABLE(qtpipes,
 [  --enable-qtpipes        replace UNIX pipes by Qt pipes],
-    [], [enable_qtpipes="no"])
+    [], [enable_qtpipes=$CONFIG_QTPIPES])
 
 case "$enable_qtpipes" in
     yes)

@@ -7347,6 +7347,7 @@ CONFIG_HOST_VENDOR="$host_vendor"
 CONFIG_HOST_CPU="$host_cpu"
 CONFIG_USER="$USER"
 CONFIG_DATE="`date`"
+CONFIG_QTPIPES="no"
 # tweak for XCode project
 CONFIG_ARCHS='$(NATIVE_ARCH)'
 
@@ -7439,6 +7440,7 @@ $as_echo "final adjustments for cygwin host" >&6; }
   *apple*darwin*)
     echo "$ac_t""final adjustments for a MacOS host" 1>&6
     CONFIG_OS="MACOS"
+    CONFIG_QTPIPES="yes"
     CONFIG_CXXFLAGS="-I${prefix}/include"
     CONFIG_BSHARED=""
     CONFIG_BFLAGS="-framework Cocoa -framework IOKit"
@@ -8545,7 +8547,7 @@ esac
 if test "${enable_qtpipes+set}" = set; then :
   enableval=$enable_qtpipes;
 else
-  enable_qtpipes="no"
+  enable_qtpipes=$CONFIG_QTPIPES
 fi
 
 
