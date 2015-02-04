@@ -1,6 +1,5 @@
-
 /******************************************************************************
-* MODULE     : unix_sys_utils.hpp
+* MODULE     : mingw_sys_utils.hpp
 * DESCRIPTION: external command handling
 * COPYRIGHT  : (C) 2015 Denis RAUX
 *******************************************************************************
