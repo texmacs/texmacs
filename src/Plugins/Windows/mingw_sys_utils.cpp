@@ -101,11 +101,6 @@ mingw_system (array< ::string> arg,
 		// wait for process
 		int wret= process.wait();
 		debug_io << "unix_system, pid " << process.getpid() << " terminated with code" << wret << "\n"; 
-		for(int i= n_in; i < n_out; ++i) { 
-			int ret; 
-			ret= ch[i].wait();
-			if(wret == 0) wret= ret;
-		}
 		for(int i= 0; i < n_out; ++i) (*(str_out[i])) << ::string(str[i].data(), str[i].length()); 
 		return (wret);
 }

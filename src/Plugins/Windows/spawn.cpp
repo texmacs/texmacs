@@ -47,14 +47,19 @@ void Channel::read(std::string *_str) {
 	tid= _beginthreadex (NULL, 0, bkgread, this, 0, NULL);
 }
 
-int Channel::wait() {
-	int ret;
-	ret= WaitForSingleObject ((HANDLE)tid, 1000); 
-	CloseHandle((HANDLE)tid);
-	tid= -1;
-	return(ret);
+void Channel::wait() {
+	if(tid && WaitForSingleObject ((HANDLE)tid, 5000) == 0 &&
+		CloseHandle ((HANDLE)tid)) tid= 0;
 }
 
+Channel::~Channel() { 
+	closeUnused(); 
+	close(); 
+	if(tid) {
+		TerminateThread ((HANDLE)tid, -99); 
+		CloseHandle ((HANDLE)tid); 
+	}
+}
 
  unsigned bkgread(void *thatv) {
 	char buf[1024];int cnt;
@@ -66,18 +71,15 @@ int Channel::wait() {
 	} while(cnt > 0);
 	return (cnt);
 }
-spawn_system::spawn_system (Channel *channel[], char *name, const char *const *args) {
-	for(Channel **ch=channel; *ch; ++ch) (*channel)->redirect(); 
-	pid=_spawnvp (_P_NOWAIT,name, args);
-	for(Channel **ch=channel; *ch; ++ch) (*channel)->closeUnused(); 
-}
-spawn_system::spawn_system (array<Channel> channel, char *name, const char *const *args) {
+spawn_system::spawn_system (array<Channel> &ch, char *name, const char *const *args):channel(ch) {
 	for(int i=0; i < N(channel); ++i) channel[i].redirect();
 	pid=_spawnvp (_P_NOWAIT,name, args);
 	for(int i=0; i < N(channel); ++i) channel[i].closeUnused();
 }
 int spawn_system::wait() {
 	int ret;
-	if(pid > 0) return (_cwait(&ret, pid, 0)==-1?errno:ret);
-	else return (EINVAL);
+	if(pid > 0) ret= _cwait(&ret, pid, 0)==-1?errno:ret;
+	else ret= EINVAL;
+	for(int i=0; i < N(channel); ++i) channel[i].wait();
+	return(ret);
 }

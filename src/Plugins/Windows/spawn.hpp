@@ -31,8 +31,8 @@ public:
 	int write(void * data, int lenght) {return (_write(fd, data, lenght));}
 	void close() { if(fd>=0) { _close (fd); fd= -1;}}
 	void closeUnused() { if(toBeClosed>=0) {_close (toBeClosed); toBeClosed= -1;} restore ();} 
-	int wait();
-	~Channel() { closeUnused(); close(); }
+	void wait();
+	~Channel();
 	const int sz;
 private:
 	enum Direction otherDirection (Direction t) { return(t==CHOUT?CHIN:CHOUT); }
@@ -48,11 +48,11 @@ private:
 
 class spawn_system {
 public:
-	spawn_system(Channel *channel[], char *name, const char *const *args);
-	spawn_system(array<Channel> channel, char *name, const char *const *args);
+	spawn_system(array<Channel> &ch, char *name, const char *const *args);
 	int getpid() { return(pid); }
 	int wait();
 	bool isRunning() { return(pid?true:false); }
 private:
 	intptr_t pid;
+	array<Channel> &channel;
 };
