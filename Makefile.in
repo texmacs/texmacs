@@ -20,6 +20,7 @@ tmdir = @tmdir@
 tmbin = @tmbin@
 tmdata = @tmdata@
 svnrev = @SVNREV@
+verinfo = ${tmdir}/verinfo.txt
 tm_devel_version = @DEVEL_VERSION@
 tm_devel = @tm_devel@
 tm_devel_release = @tm_devel_release@
@@ -44,14 +45,15 @@ STRIP = @CONFIG_STRIP@
 TOUCH = touch
 SIGN = misc/admin/sign_update
 
+
 .NOTPARALLEL:
 
 ###############################################################################
 # Main makes
 ###############################################################################
 
-TEXMACS: EMPTY_DIRS
-	cd src; $(MAKE) -f makefile link=shared
+TEXMACS: EMPTY_DIRS VERINFO
+	cd src; $(MAKE) -r -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
 	$(MAKE) -f Makefile EX_PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
@@ -64,8 +66,8 @@ TEXMACS: EMPTY_DIRS
 	@echo ----------------------------------------------------
 	@echo dynamic TeXmacs has been successfully compiled
 
-STATIC_TEXMACS: EMPTY_DIRS
-	cd src; $(MAKE) -f makefile link=static CFLAGS=-D__TMSTATIC__
+STATIC_TEXMACS: EMPTY_DIRS VERINFO
+	cd src; $(MAKE) -r -f makefile link=static CFLAGS=-D__TMSTATIC__
 	$(MAKE) -f Makefile PLUGINS
 	$(MAKE) -f Makefile EX_PLUGINS
 	$(CP) misc/scripts/fig2ps $(tmdir)/bin
@@ -540,36 +542,22 @@ DLLS = $(foreach DLL,$(DLL_LIST),$(call DLLS_IN_PATH,$(DLL)))
 
 WINDOWS_BUNDLE: TEXMACS
 	$(MKDIR) ../distr
-	$(RM) -r $(WINDOWS_BUILD_DIR)
 	$(MKDIR) $(WINDOWS_BUILD_DIR)
-	$(CP) TeXmacs/* $(WINDOWS_BUILD_DIR)/.
-	$(MV) $(WINDOWS_BUILD_DIR)/bin/texmacs.bin \
-	$(WINDOWS_BUILD_DIR)/bin/texmacs.exe
+	$(CP)  -u TeXmacs/* $(WINDOWS_BUILD_DIR)/.
+	$(MV) $(WINDOWS_BUILD_DIR)/bin/texmacs.bin $(WINDOWS_BUILD_DIR)/bin/texmacs.exe
 	$(RM) -r $(WINDOWS_BUILD_DIR)/bin/texmacs
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
-	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
-	export GUILE_DATA_PATH; \
-	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
-	export GUILE_LOAD_PATH; \
-	for I in $$GUILE_LOAD_PATH ; \
-	do $(CP) $$I $(WINDOWS_BUILD_DIR)/progs/ ; done
-	$(CHMOD) -R go=rX $(WINDOWS_BUILD_DIR)/progs/ice-9
-	$(RM) -r $(WINDOWS_BUILD_DIR)/.svn
-	$(RM) -r $(WINDOWS_BUILD_DIR)/*/.svn
-	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/.svn
-	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/.svn
-	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/.svn
-	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/.svn
-	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/.svn
-	$(RM) -r $(WINDOWS_BUILD_DIR)/*/*/*/*/*/*/*/.svn
-	for DLL in $(DLLS) ; do $(CP) $$DLL $(WINDOWS_BUILD_BIN_DIR) ; done
-	$(CP) -r $(QT_PLUGINS_PATH)/* $(WINDOWS_BUILD_BIN_DIR)
+	find `guile-config info pkgdatadir` -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \; 
+	[ -d $(WINDOWS_BUILD_BIN_DIR) ] && cp -u  $(DLLS) $(WINDOWS_BUILD_BIN_DIR)
+	[ -d $(WINDOWS_BUILD_BIN_DIR) ] && $(CP) -u $(QT_PLUGINS_PATH)/* $(WINDOWS_BUILD_BIN_DIR)
 
-WINDOWS_PACKAGE: WINDOWS_BUNDLE
-	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
+$(WINDOWS_PACKAGE_DIR)/@tm_devel@.@SVNREV@-win-x86.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
 	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
-	$(MV) ../distr/*-installer* $(WINDOWS_PACKAGE_DIR)
-	$(RM) -r $(WINDOWS_BUILD_DIR)
+	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
+
+WINDOWS_PACKAGE: WINDOWS_BUNDLE $(WINDOWS_PACKAGE_DIR)/@tm_devel@.@SVNREV@-win-x86.exe
+#	$(MV) ../distr/*-installer* $(WINDOWS_PACKAGE_DIR)
+#	$(RM) -r $(WINDOWS_BUILD_DIR)
 
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
 
@@ -578,24 +566,11 @@ WINDOWS_PACKAGE: WINDOWS_BUNDLE
 ###############################################################################
 
 RDISTR:
-	$(RM) $(tmdir)/TEX_PATHS
-	$(RM) *~
-	$(RM) */*~
-	$(RM) */*/*~
-	$(RM) */*/*/*~
-	$(RM) */*/*/*/*~
-	$(RM) */*/*/*/*/*~
-	$(RM) core
-	$(RM) */core
-	$(RM) src/*/core
-	$(RM) src/*/*/core
-	$(RM) src/*/*/*/core
-	$(RM) misc/*/core
-	$(RM) plugins/*/core
-	$(RM) plugins/*/*/core
-	$(RM) $(tmdir)/lib/*.a
-	$(RM) $(tmdir)/fonts/error/* 2>/dev/null || :
-	$(RM) -r autom*.cache
+	-$(RM) $(tmdir)/TEX_PATHS
+	find . -name '*~' -o -name core -delete
+	-$(RM) $(tmdir)/lib/*.a
+	-$(RM) $(tmdir)/fonts/error/* 2>/dev/null
+	-$(RM) -r autom*.cache
 
 DISTR: RDISTR
 	cd src; $(MAKE) -f makefile DISTR
@@ -624,10 +599,9 @@ DISTCLEAN: CLEAN
 	$(RM) src/System/tm_configure.hpp
 	$(RM) src/makefile
 	$(RM) TeXmacs/examples/plugins/dynlink/Makefile
-	$(RM) config.cache
-	$(RM) config.log
-	$(RM) config.status
-	$(RM) Makefile
+	$(RM) config.cache config.log config.status
+	$(RM) Makefile  ${verinfo} misc/admin/appcast.xml
+	$(RM) -r $(WINDOWS_BUILD_DIR)
 
 SVN_CLEAN:
 	$(RM) -r .svn
@@ -668,5 +642,13 @@ ACCESS_FLAGS:
 	$(CHMOD) -R go+rX *
 	$(CHMOD) -R go+x $(tmdir)/bin
 	$(CHMOD) -R go+x $(tmdir)/lib
+
+VERINFO:
+	@{ date; uname -srvn ; printf "\nRevision  ${svnrev}  "; \
+	egrep '\$$.+configure' config.log; \
+	gcc --version; \
+	svn -v st | misc/admin/verinfo.sh; \
+	printf "\n**** DIFF ****\n\n"; \
+	svn diff;  }> ${verinfo}
 
 .PHONY: TOUCH STRIP ACCESS_FLAGS

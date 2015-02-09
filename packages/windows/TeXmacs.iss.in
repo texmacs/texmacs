@@ -5,19 +5,19 @@
 [Setup]
 AppName=@PACKAGE@
 AppVerName=Texmacs
-DefaultDirName={pf}\TeXmacs
+DefaultDirName={pf32}\TeXmacs
 DefaultGroupName=TeXmacs
 ;denis begin
-VersionInfoProductTextVersion=@DEVEL_VERSION@
-VersionInfoVersion=@DEVEL_VERSION@
+;VersionInfoProductTextVersion=@DEVEL_VERSION@
+VersionInfoTextVersion=@DEVEL_VERSION@.@SVNREV@
 AppPublisher=MAGIX
 AppPublisherURL=http://www.texmacs.org/
-AppVersion=@DEVEL_VERSION@-@SVNREV@
+AppVersion=@DEVEL_VERSION@.@SVNREV@
 ;denis end
 
 UninstallDisplayIcon={app}\TeXmacs.ico
-OutputDir=..\..\..\distr
-OutputBaseFilename=@tm_devel@.@SVNREV@-installer
+OutputDir=..\..\..\distr\windows
+OutputBaseFilename=@tm_devel@.@SVNREV@-win-x86
 ; SourceDir=../..
 ChangesAssociations=yes
 
