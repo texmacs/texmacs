@@ -267,23 +267,23 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
   ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
 #endif
   
-  if(ren->is_started()) {
-	  int i;
-	  ren->set_metadata ("title", get_metadata ("title"));
-	  ren->set_metadata ("author", get_metadata ("author"));
-	  ren->set_metadata ("subject", get_metadata ("subject"));
-	  for (i=start; i<end; i++) {
-		  tree bg= env->read (BG_COLOR);
-		  ren->set_background (bg);
-		  if (bg != "white")
-			  ren->clear_pattern (0, (SI) -h, (SI) w, 0);
+  if (ren->is_started ()) {
+    int i;
+    ren->set_metadata ("title", get_metadata ("title"));
+    ren->set_metadata ("author", get_metadata ("author"));
+    ren->set_metadata ("subject", get_metadata ("subject"));
+    for (i=start; i<end; i++) {
+      tree bg= env->read (BG_COLOR);
+      ren->set_background (bg);
+      if (bg != "white")
+        ren->clear_pattern (0, (SI) -h, (SI) w, 0);
 
-		  rectangles rs;
-		  the_box[0]->sx(i)= 0;
-		  the_box[0]->sy(i)= 0;
-		  the_box[0][i]->redraw (ren, path (0), rs);
-		  if (i<end-1) ren->next_page ();
-	  }
+      rectangles rs;
+      the_box[0]->sx(i)= 0;
+      the_box[0]->sy(i)= 0;
+      the_box[0][i]->redraw (ren, path (0), rs);
+      if (i<end-1) ren->next_page ();
+    }
   }
   tm_delete (ren);
 

@@ -29,6 +29,11 @@ renderer_rep::renderer_rep (bool screen_flag):
 
 renderer_rep::~renderer_rep () {}
 
+bool
+renderer_rep::is_started () {
+  return true;
+}
+
 void*
 renderer_rep::get_handle () {
   return NULL;
