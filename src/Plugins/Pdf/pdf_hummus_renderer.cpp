@@ -204,7 +204,7 @@ public:
                            string ptype, bool landsc, double paper_w, double paper_h);
   ~pdf_hummus_renderer_rep ();
   bool is_printer ();
-  bool is_started () {return started;}
+  bool is_started ();
   void next_page ();
   
   void set_transformation (frame fr);
@@ -355,6 +355,11 @@ bool
 pdf_hummus_renderer_rep::is_printer () {
   // debug_convert << "is_printer\n";
   return true;
+}
+
+bool
+pdf_hummus_renderer_rep::is_started () {
+  return started;
 }
 
 void
