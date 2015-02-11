@@ -30,20 +30,22 @@ edit_process_rep::~edit_process_rep () {}
 * Removing labels
 ******************************************************************************/
 
-/* Labels in TOC, index or glossaries (list-of-anything) leads to redefinition
- * and impede typesetting. This generates errors reported via intrusive popups.
- * So we remove them.
- */
+// Labels in TOC, index or glossaries (list-of-anything) leads to redefinition
+// and impede typesetting. This generates errors reported via intrusive popups.
+// So we remove them.
 
 static tree
 remove_labels (tree t) {
   if (is_atomic (t)) return t;
+  if (is_func (t, LABEL)) return "";
   int i, n= N(t);
   tree r (L(t));
   for (i=0; i<n; i++) {
-    if (!is_func (t[i], LABEL))
-      r << t[i];
+    tree u= remove_labels (t[i]);
+    if (!is_concat (t) || u != "") r << u;
   }
+  if (is_func (r, CONCAT, 0)) return "";
+  if (is_func (r, CONCAT, 1)) return r[0];
   return r;
 }
 
