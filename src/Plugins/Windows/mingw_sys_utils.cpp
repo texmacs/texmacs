@@ -37,11 +37,13 @@ mingw_system (array< ::string> arg,
 
   for (int i= 0; i < n_in; i++) {
     int fd= fd_in[i];
-    if (fd >= 0) ch[i].Init (fd,Channel::CHIN); else ch[i].Init(Channel::CHIN);
+    if (fd >= 0) ch[i].Init (fd,Channel::CHIN); 
+    else ch[i].Init(Channel::CHIN);
   }
   for (int i= 0; i < n_out; i++) {
     int fd= fd_out[i];
-    if (fd >= 0) ch[i + n_in].Init (fd,Channel::CHOUT); else ch[i + n_in].Init(Channel::CHOUT);
+    if (fd >= 0) ch[i + n_in].Init (fd,Channel::CHOUT); 
+    else ch[i + n_in].Init(Channel::CHOUT);
   }
 
   array< ::string> arg_= arg;
@@ -66,7 +68,8 @@ mingw_system (array< ::string> arg,
     debug_io << "unix_system, failed" << "\n";
     return -1;
   }
-  debug_io << "unix_system, succeeded to create pid " << process.getpid() << LF;
+  debug_io << "unix_system, succeeded to create pid " << \
+      process.getpid() <<  LF;
 
   // receive data from spawn process
   // class string is not thread safe, use std::string instead
@@ -87,7 +90,7 @@ mingw_system (array< ::string> arg,
     }
     for (int i= 0; i < n_in; i++) {
       if (N(str_in[i]) > pos_in[i]) {
-        int m= min (ch[i].sz, N(str_in[i]) - pos_in[i]); // do not fill the pipe
+        int m= min (ch[i].sz, N(str_in[i]) - pos_in[i]); //do not fill the pipe
         int o= ch[i].write (&(str_in[i][pos_in[i]]), m);
         if (o >= 0) { 
           pos_in[i] += o;

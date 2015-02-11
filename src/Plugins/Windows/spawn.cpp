@@ -14,6 +14,10 @@
 #include "spawn.hpp"
 #include <windows.h>
 
+Channel (int s= 2048):sz(s) {
+ origin= -1; saved= -1; fd= -1;toBeClosed= -1; str= NULL; tid= 0; 
+}
+
 void
 Channel::Init (Direction d) {
   int pp[2];
@@ -52,11 +56,28 @@ Channel::read (std::string *_str) {
   tid= _beginthreadex (NULL, 0, bkgread, this, 0, NULL);
 }
 
+void 
+close () { 
+  if(fd>=0) { _close (fd); fd= -1; }
+}
+
+void 
+closeUnused () {
+  if(toBeClosed>=0) { _close (toBeClosed); toBeClosed= -1;} 
+  restore (); 
+} 
+
 void
 Channel::wait () {
   if (tid && WaitForSingleObject ((HANDLE)tid, 5000) == 0 &&
     CloseHandle ((HANDLE)tid)) tid= 0;
 }
+  
+void
+restore() {
+ if(saved>=0) { _dup2 (saved, origin); _close (saved); saved= -1; }
+}
+
 
 Channel::~Channel () { 
   closeUnused(); 
@@ -79,7 +100,8 @@ bkgread (void *thatv) {
   return (cnt);
 }
 
-spawn_system::spawn_system (array<Channel> &ch, char *name, const char *const *args):channel(ch) {
+spawn_system::spawn_system (array<Channel> &ch, char *name, 
+      const char *const *args):channel(ch) {
   for (int i=0; i < N(channel); ++i) channel[i].redirect();
   pid=_spawnvp (_P_NOWAIT,name, args);
   for (int i=0; i < N(channel); ++i) channel[i].closeUnused();
