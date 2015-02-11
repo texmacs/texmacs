@@ -279,8 +279,8 @@ as_string (int i) {
 string
 as_string (unsigned int i) {
   char buf[64];
-	//printf (buf, "%u##\0", i);
   sprintf (buf, "%u", i);
+  // sprintf (buf, "%u\0", i);
   return string (buf);
 }
 
@@ -288,7 +288,7 @@ string
 as_string (long int i) {
   char buf[64];
   sprintf (buf, "%li", i);
-  // sprintf (buf, "%i\0", i);
+  // sprintf (buf, "%li\0", i);
   return string (buf);
 }
 
@@ -300,7 +300,7 @@ as_string (long long int i) {
 #else
   sprintf (buf, "%lli", i);
 #endif
-  // sprintf (buf, "%i\0", i);
+  // sprintf (buf, "%lli\0", i);
   return string (buf);
 }
 
@@ -308,7 +308,7 @@ string
 as_string (unsigned long int i) {
   char buf[64];
   sprintf (buf, "%lu", i);
-  // sprintf (buf, "%i\0", i);
+  // sprintf (buf, "%lu\0", i);
   return string (buf);
 }
 
