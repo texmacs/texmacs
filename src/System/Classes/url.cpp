@@ -95,7 +95,8 @@ url_get_atom (string s, int type) {
   }
   if (occurs ("*", s)) return url_wildcard (s);
 #ifdef WINPATHS
-  if(N(s)==2 && ends (s, ":")) s->resize(1);	// remove the ':' after unit letter
+  if (N(s)==2 && ends (s, ":"))
+    s->resize(1); // remove the ':' after unit letter
 #endif
   return as_url (tree (s));
 }
@@ -496,23 +497,27 @@ as_string (url u, int type) {
     if ((!is_concat (u[2])) && (!is_atomic (u[2])) && (!is_wildcard (u[2], 1)))
       s2= "{" * s2 * "}";
 #ifdef WINPATHS
-		if (((is_root (u[1],"default") && type == URL_SYSTEM) || is_root (u[1],"file"))) { // have to return the windows format
-			string root,remain;
-			if (is_concat (u[2])) {		
-				root = as_string (u[2][1], type);   // root might be unit letter or hostname. It depends on the length
-				remain = as_string (u[2][2], type);
-			} else {
-				root = s2;
-				remain = "";
-			}
-			if (is_root (u[1],"default")) {
-				if (N(root) == 1) return root * ":\\" * remain;	//drive letter
-				else return "\\\\" * root * "\\" * remain;
-			} else {
-				if (N(root) == 1) return s1 * "/" * root * ":/" * remain;	//local file
-				else return s1 * root * "/" * remain; //remote
-			}
-		} 
+    if (((is_root (u[1], "default") && type == URL_SYSTEM) ||
+         is_root (u[1], "file"))) { // have to return the windows format
+      string root, remain;
+      if (is_concat (u[2])) {		
+        root = as_string (u[2][1], type);
+        // root might be unit letter or hostname. It depends on the length
+        remain = as_string (u[2][2], type);
+      }
+      else {
+        root = s2;
+        remain = "";
+      }
+      if (is_root (u[1], "default")) {
+        if (N(root) == 1) return root * ":\\" * remain;	// drive letter
+        else return "\\\\" * root * "\\" * remain;
+      }
+      else {
+        if (N(root) == 1) return s1 * "/" * root * ":/" * remain; // local file
+        else return s1 * root * "/" * remain; // remote
+      }
+    }
 #endif
     return s1 * sep * s2;
   }
