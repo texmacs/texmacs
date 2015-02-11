@@ -14,9 +14,10 @@
 #include "string.hpp"
 #include "array.hpp"
 
-int mingw_system (array<string> arg,
-		 array<int> fd_in, array<string> str_in,
-		 array<int> fd_out, array<string*> str_out);
+int 
+mingw_system (array<string> arg,
+  array<int> fd_in, array<string> str_in,
+  array<int> fd_out, array<string*> str_out);
 
 #endif // defined MINGW_SYS_UTILS_H
 
