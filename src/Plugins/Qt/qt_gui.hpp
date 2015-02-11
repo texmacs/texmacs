@@ -114,9 +114,6 @@ public:
 class QTMGuiHelper;
 
 class qt_gui_rep {
-  friend class   QTMGuiHelper;
-  friend void needs_update ();
-
   bool           interrupted;
   time_t      interrupt_time;
   QTimer*        updatetimer;
@@ -199,10 +196,11 @@ public:
   void process_queued_events (int max = -1);
   
   /* befriended interface functions */
+  friend class QTMGuiHelper;
   friend void exec_delayed (object cmd);
   friend void exec_delayed_pause (object cmd);
   friend void clear_pending_commands ();
-  friend void ::needs_update();
+  friend void needs_update ();
 };
 
 /*! Force an immediate update of the internal texmacs state. */
