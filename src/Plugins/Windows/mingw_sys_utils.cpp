@@ -1,3 +1,4 @@
+
 /******************************************************************************
 * MODULE     : mingw_sys_utils.cpp
 * DESCRIPTION: external command handling
@@ -14,8 +15,8 @@
 #include "spawn.hpp"
 
 static void
-	_unix_system_warn (pid_t pid, ::string which, ::string msg) {
-		debug_io << "unix_system, pid " << pid << ", warning: " << msg << "\n";
+_unix_system_warn (pid_t pid, ::string which, ::string msg) {
+  debug_io << "unix_system, pid " << pid << ", warning: " << msg << "\n";
 }
 
 int
@@ -65,7 +66,7 @@ mingw_system (array< ::string> arg,
     debug_io << "unix_system, failed" << "\n";
     return -1;
   }
-  debug_io << "unix_system, succeeded to create pid " << process.getpid() << "\n";
+  debug_io << "unix_system, succeeded to create pid " << process.getpid() << LF;
 
   // receive data from spawn process
   // class string is not thread safe, use std::string instead
@@ -86,7 +87,7 @@ mingw_system (array< ::string> arg,
     }
     for (int i= 0; i < n_in; i++) {
       if (N(str_in[i]) > pos_in[i]) {
-        int m= min (ch[i].sz, N(str_in[i]) - pos_in[i]);  // do not fill the pipe
+        int m= min (ch[i].sz, N(str_in[i]) - pos_in[i]); // do not fill the pipe
         int o= ch[i].write (&(str_in[i][pos_in[i]]), m);
         if (o >= 0) { 
           pos_in[i] += o;
@@ -98,7 +99,9 @@ mingw_system (array< ::string> arg,
 
   // wait for process
   int wret= process.wait();
-  debug_io << "unix_system, pid " << process.getpid () << " terminated with code" << wret << "\n"; 
-  for(int i= 0; i < n_out; ++i) (*(str_out[i])) << ::string(str[i].data (), str[i].length ()); 
+  debug_io << "unix_system, pid " << process.getpid ()
+           << " terminated with code" << wret << "\n"; 
+  for (int i= 0; i < n_out; ++i)
+    (*(str_out[i])) << ::string(str[i].data (), str[i].length ()); 
   return (wret);
 }
