@@ -182,10 +182,10 @@
   ---
   (when (== (get-cell-mode) "cell")
     (-> "Cell span"
-        (if (selection-active-table?)
-            ("Join selected cells" (cell-set-span-selection)))
-        (if (cell-spans-more?)
-            ("Undo cell join" (cell-reset-span)))
+        (when (selection-active-table?)
+	  ("Join selected cells" (cell-set-span-selection)))
+        (when (cell-spans-more?)
+	  ("Undo cell join" (cell-reset-span)))
         ("Horizontal" (interactive cell-set-column-span))
         ("Vertical" (interactive cell-set-row-span))))
   (-> "Text height correction"
