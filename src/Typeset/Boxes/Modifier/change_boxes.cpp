@@ -637,8 +637,8 @@ struct tag_box_rep: public change_box_rep {
   path find_tag (string name);
 };
 
-tag_box_rep::tag_box_rep (path ip, path tip, box b, tree keys2):
-  change_box_rep (ip, false), keys (keys2), tip (tip)
+tag_box_rep::tag_box_rep (path ip, path tip2, box b, tree keys2):
+  change_box_rep (ip, false), keys (keys2), tip (tip2)
 {
   insert (b, 0, 0);
   position ();
