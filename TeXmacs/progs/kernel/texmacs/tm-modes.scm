@@ -111,7 +111,6 @@
   (in-table% (and (inside? 'table) (not (in-graphics?))))
   (in-session% (and (or (inside? 'session) (inside? 'program))
                     (not (in-graphics?))))
-  (in-session% (or (inside? 'session) (inside? 'program)))
   (not-in-session% (not (inside? 'session)))
   (in-math-in-session% #t in-math% in-session%)
   (in-math-not-in-session% #t in-math% not-in-session%)
