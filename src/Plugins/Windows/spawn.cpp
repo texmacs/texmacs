@@ -14,7 +14,7 @@
 #include "spawn.hpp"
 #include <windows.h>
 
-Channel (int s= 2048):sz(s) {
+Channel::Channel (int s):sz(s) {
  origin= -1; saved= -1; fd= -1;toBeClosed= -1; str= NULL; tid= 0; 
 }
 
@@ -57,12 +57,12 @@ Channel::read (std::string *_str) {
 }
 
 void 
-close () { 
+Channel::close () { 
   if(fd>=0) { _close (fd); fd= -1; }
 }
 
 void 
-closeUnused () {
+Channel::closeUnused () {
   if(toBeClosed>=0) { _close (toBeClosed); toBeClosed= -1;} 
   restore (); 
 } 
@@ -74,7 +74,7 @@ Channel::wait () {
 }
   
 void
-restore() {
+Channel::restore() {
  if(saved>=0) { _dup2 (saved, origin); _close (saved); saved= -1; }
 }
 
