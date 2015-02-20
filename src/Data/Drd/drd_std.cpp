@@ -511,6 +511,9 @@ init_std_drd () {
   init (PAGEREF, "pageref",
 	fixed (1) -> name ("page reference") ->
         identifier (0) -> name (0, "id") -> long_name (0, "identifier"));
+  init (GET_ATTACHMENT, "get-attachment",
+	fixed (1) -> name ("get attachment") ->
+        identifier (0) -> name (0, "name"));
   init (WRITE, "write",
 	fixed (1, 1, BIFORM) ->
 	string_type (0) -> name (0, "channel") ->

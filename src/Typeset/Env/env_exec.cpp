@@ -431,6 +431,8 @@ edit_env_rep::exec (tree t) {
     return exec_set_binding (t);
   case GET_BINDING:
     return exec_get_binding (t);
+  case GET_ATTACHMENT:
+    return exec_get_attachment (t);
 
   case PATTERN:
     return exec_pattern (t);
@@ -1666,6 +1668,14 @@ edit_env_rep::exec_get_binding (tree t) {
     //typeset_warning << "Undefined reference " << key << LF;
   }
   //cout << t << ": " << key << " -> " << value << "\n";
+  return value;
+}
+
+tree
+edit_env_rep::exec_get_attachment (tree t) {
+  if (N(t) != 1) return tree (ERROR, "bad get attachment");
+  string key= exec_string (t[0]);
+  tree value= local_att->contains (key)? local_att [key]: global_att [key];
   return value;
 }
 

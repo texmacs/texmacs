@@ -158,7 +158,9 @@ compute_env_and_drd (tree style) {
   hashmap<string,tree> gref;
   hashmap<string,tree> laux;
   hashmap<string,tree> gaux;
-  edit_env env (drd, none, lref, gref, laux, gaux);
+  hashmap<string,tree> latt;
+  hashmap<string,tree> gatt;
+  edit_env env (drd, none, lref, gref, laux, gaux, latt, gatt);
   if (!busy) {
     tree t;
     bool ok;
@@ -246,7 +248,9 @@ get_document_drd (tree doc) {
     hashmap<string,tree> gref;
     hashmap<string,tree> laux;
     hashmap<string,tree> gaux;
-    edit_env env (drd, none, lref, gref, laux, gaux);
+    hashmap<string,tree> latt;
+    hashmap<string,tree> gatt;
+    edit_env env (drd, none, lref, gref, laux, gaux, latt, gatt);
     hashmap<string,tree> H;
     env->exec (tree (USE_PACKAGE, A (style)));
     env->exec (p);

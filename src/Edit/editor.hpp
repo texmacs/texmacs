@@ -287,6 +287,10 @@ public:
   virtual tree     get_init_all () = 0;
   virtual void     init_env (string var, tree by) = 0;
   virtual void     init_default (string var) = 0;
+  virtual tree     get_att (string key) = 0;
+  virtual void     set_att (string key, tree im) = 0;
+  virtual void     reset_att (string key) = 0;
+  virtual array<string> list_atts () = 0;
   virtual void     typeset_invalidate (path p) = 0;
   virtual void     typeset_invalidate_all () = 0;
 

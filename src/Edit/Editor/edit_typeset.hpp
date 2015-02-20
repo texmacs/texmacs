@@ -91,6 +91,10 @@ public:
   void     init_default (string var);
   void     init_style ();
   void     init_style (string style);
+  tree     get_att (string key);
+  void     set_att (string key, tree im);
+  void     reset_att (string key);
+  array<string> list_atts ();
 
   void     typeset_style_use_cache (tree style);
   void     typeset_preamble ();

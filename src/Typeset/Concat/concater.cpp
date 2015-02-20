@@ -630,6 +630,9 @@ concater_rep::typeset (tree t, path ip) {
   case PAGEREF:
     typeset_compound (t, ip);
     break;
+  case GET_ATTACHMENT:
+    typeset_executable (t, ip);
+    break;
   case WRITE:
     typeset_write (t, ip);
     break;

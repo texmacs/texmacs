@@ -26,7 +26,9 @@ edit_env_rep::edit_env_rep (drd_info& drd2,
 			    hashmap<string,tree>& local_ref2,
 			    hashmap<string,tree>& global_ref2,
 			    hashmap<string,tree>& local_aux2,
-			    hashmap<string,tree>& global_aux2):
+			    hashmap<string,tree>& global_aux2,
+			    hashmap<string,tree>& local_att2,
+			    hashmap<string,tree>& global_att2):
   drd (drd2),
   env (UNINIT), back (UNINIT), src (path (DECORATION)),
   var_type (default_var_type),
@@ -35,6 +37,7 @@ edit_env_rep::edit_env_rep (drd_info& drd2,
   secure (is_secure (base_file_name2)),
   local_ref (local_ref2), global_ref (global_ref2),
   local_aux (local_aux2), global_aux (global_aux2),
+  local_att (local_att2), global_att (global_att2),
   missing (UNINIT), redefined ()
 {
   initialize_default_env ();
@@ -51,9 +54,13 @@ edit_env::edit_env (drd_info& drd,
 		    hashmap<string,tree>& local_ref,
 		    hashmap<string,tree>& global_ref,
 		    hashmap<string,tree>& local_aux,
-		    hashmap<string,tree>& global_aux):
+		    hashmap<string,tree>& global_aux,
+		    hashmap<string,tree>& local_att,
+		    hashmap<string,tree>& global_att):
   rep (tm_new<edit_env_rep> (drd, base_file_name,
-			 local_ref, global_ref, local_aux, global_aux)) {}
+                             local_ref, global_ref,
+                             local_aux, global_aux,
+                             local_att, global_att)) {}
 
 void
 edit_env_rep::style_init_env () {

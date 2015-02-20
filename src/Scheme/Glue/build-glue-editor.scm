@@ -84,6 +84,10 @@
   (init-has? defined_in_init (bool string))
   (get-page-width get_page_width (int))
   (get-page-height get_page_height (int))
+  (get-attachment get_att (tree string))
+  (set-attachment set_att (void string content))
+  (reset-attachment reset_att (void string))
+  (list-attachments list_atts (array_string))
 
   ;; modify text
   (make-htab make_htab (void string))

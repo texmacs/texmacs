@@ -710,6 +710,56 @@ tmg_get_page_height () {
 }
 
 tmscm
+tmg_get_attachment (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-attachment");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->get_att (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_set_attachment (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-attachment");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "set-attachment");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->set_att (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_reset_attachment (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "reset-attachment");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->reset_att (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_list_attachments () {
+  // TMSCM_DEFER_INTS;
+  array_string out= get_current_editor()->list_atts ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_make_htab (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-htab");
 
@@ -3077,6 +3127,10 @@ initialize_glue_editor () {
   tmscm_install_procedure ("init-has?",  tmg_init_hasP, 1, 0, 0);
   tmscm_install_procedure ("get-page-width",  tmg_get_page_width, 0, 0, 0);
   tmscm_install_procedure ("get-page-height",  tmg_get_page_height, 0, 0, 0);
+  tmscm_install_procedure ("get-attachment",  tmg_get_attachment, 1, 0, 0);
+  tmscm_install_procedure ("set-attachment",  tmg_set_attachment, 2, 0, 0);
+  tmscm_install_procedure ("reset-attachment",  tmg_reset_attachment, 1, 0, 0);
+  tmscm_install_procedure ("list-attachments",  tmg_list_attachments, 0, 0, 0);
   tmscm_install_procedure ("make-htab",  tmg_make_htab, 1, 0, 0);
   tmscm_install_procedure ("make-space",  tmg_make_space, 1, 0, 0);
   tmscm_install_procedure ("make-var-space",  tmg_make_var_space, 3, 0, 0);

@@ -134,6 +134,8 @@ public:
   hashmap<string,tree>&        global_ref;
   hashmap<string,tree>&        local_aux;
   hashmap<string,tree>&        global_aux;
+  hashmap<string,tree>&        local_att;
+  hashmap<string,tree>&        global_att;
   bool                         complete;    // typeset complete document ?
   bool                         read_only;   // write-protected ?
   hashmap<string,tree>         missing;     // missing refs
@@ -308,6 +310,7 @@ private:
   tree exec_find_accessible (tree t);
   tree exec_set_binding (tree t);
   tree exec_get_binding (tree t);
+  tree exec_get_attachment (tree t);
 
   tree exec_pattern (tree t);
 
@@ -347,7 +350,9 @@ public:
 		hashmap<string,tree>& local_ref,
 		hashmap<string,tree>& global_ref,
 		hashmap<string,tree>& local_aux,
-		hashmap<string,tree>& global_aux);
+		hashmap<string,tree>& global_aux,
+		hashmap<string,tree>& local_att,
+		hashmap<string,tree>& global_att);
   void   style_init_env ();
 
   /* execution of trees and setting environment variables */
@@ -477,7 +482,9 @@ class edit_env {
 	    hashmap<string,tree>& local_ref,
 	    hashmap<string,tree>& global_ref,
 	    hashmap<string,tree>& local_aux,
-	    hashmap<string,tree>& global_aux);
+	    hashmap<string,tree>& global_aux,
+	    hashmap<string,tree>& local_att,
+	    hashmap<string,tree>& global_att);
 };
 CONCRETE_NULL_CODE(edit_env);
 

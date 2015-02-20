@@ -189,6 +189,7 @@ packrat_parser_rep::serialize (tree t, path p) {
     case LABEL:
     case REFERENCE:
     case PAGEREF:
+    case GET_ATTACHMENT:
     case WRITE:
     case TOC_NOTIFY:
       break;

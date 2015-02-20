@@ -220,6 +220,15 @@ tm_new (const A1& a1, const A2& a2, const A3& a3,
 
 template<typename C, typename A1, typename A2, typename A3,
 	 typename A4, typename A5, typename A6,
+         typename A7, typename A8> inline C*
+tm_new (A1& a1, const A2& a2, A3& a3, A4& a4, A5& a5, A6& a6, A7& a7, A8& a8) {
+  void* ptr= fast_new (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8);
+  return (C*) ptr;
+}
+
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
 	 typename A7, typename A8, typename A9> inline C*
 tm_new (const A1& a1, const A2& a2, const A3& a3,
 	const A4& a4, const A5& a5, const A6& a6,

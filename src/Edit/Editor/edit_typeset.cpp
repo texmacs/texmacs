@@ -37,7 +37,8 @@ edit_typeset_rep::edit_typeset_rep ():
   stydef (UNINIT), pre (UNINIT), init (UNINIT), fin (UNINIT),
   env (drd, buf->buf->master,
        buf->data->ref, (buf->prj==NULL? buf->data->ref: buf->prj->data->ref),
-       buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux)),
+       buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux),
+       buf->data->att, (buf->prj==NULL? buf->data->att: buf->prj->data->att)),
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {}
 edit_typeset_rep::~edit_typeset_rep () { delete_typesetter (ttt); }
 
@@ -70,6 +71,32 @@ hashmap<string,tree> edit_typeset_rep::get_att () { return buf->data->att; }
 void edit_typeset_rep::set_fin (hashmap<string,tree> H) { fin= H; }
 void edit_typeset_rep::set_att (hashmap<string,tree> H) { buf->data->att= H; }
 
+tree
+edit_typeset_rep::get_att (string key) {
+  return buf->data->att[key];
+}
+
+void
+edit_typeset_rep::set_att (string key, tree im) {
+  buf->data->att (key)= im;
+}
+
+void
+edit_typeset_rep::reset_att (string key) {
+  buf->data->att->reset (key);
+}
+
+array<string>
+edit_typeset_rep::list_atts () {
+  tree a= (tree) buf->data->att;
+  array<string> v;
+  int i, n= N(a);
+  for (i=0; i<n; i++)
+    v << a[i][0]->label;
+  merge_sort (v);
+  return v;
+}
+
 void
 edit_typeset_rep::set_init (hashmap<string,tree> H) {
   init= hashmap<string,tree> (UNINIT);
@@ -87,7 +114,6 @@ void
 edit_typeset_rep::clear_local_info () {
   buf->data->ref= hashmap<string,tree> ();
   buf->data->aux= hashmap<string,tree> ();
-  buf->data->att= hashmap<string,tree> ();
 }
 
 /******************************************************************************

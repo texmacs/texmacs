@@ -229,6 +229,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= concat ("reference: ", as_string (st[0])); break;
     case PAGEREF:
       r= concat ("page reference: ", as_string (st[0])); break;
+    case GET_ATTACHMENT:
+      r= concat ("get attachment: ", as_string (st[0])); break;
     case WRITE:
       r= concat ("write to ", as_string (st[0])); break;
     case TOC_NOTIFY:

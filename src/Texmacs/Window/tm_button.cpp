@@ -71,8 +71,10 @@ initialize_environment (edit_env& env, tree doc, drd_info& drd) {
 tree
 tree_extents (tree doc) {
   drd_info drd ("none", std_drd);
-  hashmap<string,tree> h1 (UNINIT), h2 (UNINIT), h3 (UNINIT), h4 (UNINIT);
-  edit_env env (drd, "none", h1, h2, h3, h4);
+  hashmap<string,tree> h1 (UNINIT), h2 (UNINIT);
+  hashmap<string,tree> h3 (UNINIT), h4 (UNINIT);
+  hashmap<string,tree> h5 (UNINIT), h6 (UNINIT);
+  edit_env env (drd, "none", h1, h2, h3, h4, h5, h6);
   initialize_environment (env, doc, drd);
   tree t= extract (doc, "body");
   lazy lz= make_lazy (env, t, path ());
@@ -190,8 +192,10 @@ widget
 texmacs_output_widget (tree doc, tree style) {
   doc= enrich_embedded_document (doc, style);
   drd_info drd ("none", std_drd);
-  hashmap<string,tree> h1 (UNINIT), h2 (UNINIT), h3 (UNINIT), h4 (UNINIT);
-  edit_env env (drd, "none", h1, h2, h3, h4);
+  hashmap<string,tree> h1 (UNINIT), h2 (UNINIT);
+  hashmap<string,tree> h3 (UNINIT), h4 (UNINIT);
+  hashmap<string,tree> h5 (UNINIT), h6 (UNINIT);
+  edit_env env (drd, "none", h1, h2, h3, h4, h5, h6);
   initialize_environment (env, doc, drd);
   tree t= extract (doc, "body");
   lazy lz= make_lazy (env, t, path ());
