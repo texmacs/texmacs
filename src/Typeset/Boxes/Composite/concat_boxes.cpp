@@ -45,6 +45,7 @@ struct concat_box_rep: public composite_box_rep {
   SI        sup_lo_lim  (int level);
   SI        sup_lo_base (int level);
   SI        sup_hi_lim  (int level);
+  void      get_bracket_extents (SI& lo, SI& hi);
 
   int       find_any_child (SI x, SI y, SI delta, SI& delta_out);
   int       find_accessible_child (SI x, SI y, SI delta, SI& delta_out);
@@ -295,6 +296,19 @@ concat_box_rep::sup_hi_lim  (int level) {
   for (i=0; i<n; i++)
     y= max (y, bs[i]->sup_hi_lim (level));
   return y;
+}
+
+void
+concat_box_rep::get_bracket_extents (SI& lo, SI& hi) {
+  int i, n= N(bs);
+  if (n == 0) box_rep::get_bracket_extents (lo, hi);
+  else bs[0]->get_bracket_extents (lo, hi);
+  for (i=1; i<N(bs); i++) {
+    SI lo2, hi2;
+    bs[i]->get_bracket_extents (lo2, hi2);
+    lo= min (lo, lo2);
+    hi= max (hi, hi2);
+  }
 }
 
 /******************************************************************************

@@ -55,6 +55,7 @@ public:
   SI        sup_lo_lim  (int level);
   SI        sup_lo_base (int level);
   SI        sup_hi_lim  (int level);
+  void      get_bracket_extents (SI& lo, SI& hi);
 
   virtual int   anim_length ();
   virtual bool  anim_started ();

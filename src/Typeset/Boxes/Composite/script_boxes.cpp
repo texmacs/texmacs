@@ -308,6 +308,7 @@ struct side_box_rep: public composite_box_rep {
     return nr_right==0? bs[0]->rsub_correction (): right_correction (); }
   SI rsup_correction () {
     return nr_right==0? bs[0]->rsup_correction (): right_correction (); }
+  void get_bracket_extents (SI& lo, SI& hi);
 };
 
 side_box_rep::side_box_rep (
@@ -603,6 +604,20 @@ side_box_rep::find_selection (path lbp, path rbp) {
   if ((rbp == path (3)) && (!is_atom (lbp)) && (lbp->item == 0))
     rbp= path (0, bs[0]->find_right_box_path ());
   return composite_box_rep::find_selection (lbp, rbp);
+}
+
+
+void
+side_box_rep::get_bracket_extents (SI& lo, SI& hi) {
+  int i;
+  SI ex= fn->yx;
+  SI dd= ex / 4;
+  lo= sy1 (0);
+  hi= sy2 (0);
+  for (i=1; i<N(bs); i++) {
+    lo= min (lo, sy1 (i) + dd);
+    hi= max (hi, sy2 (i) - dd);
+  }
 }
 
 /******************************************************************************

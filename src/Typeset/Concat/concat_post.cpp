@@ -197,8 +197,10 @@ concater_rep::handle_matching (int start, int end) {
     // cout << "  " << a[i] << ": " << (a[i]->b->y2- a[i]->b->y1) << "\n";
     // y1= min (y1, a[i]->b->sub_base());
     // y2= max (y2, a[i]->b->sup_base());
-    y1= min (y1, a[i]->b->y1);
-    y2= max (y2, a[i]->b->y2);
+    SI lo, hi;
+    a[i]->b->get_bracket_extents (lo, hi);
+    y1= min (y1, lo);
+    y2= max (y2, hi);
     a[i]->penalty++;
   }
   for (i=start; i<=end; i++) {

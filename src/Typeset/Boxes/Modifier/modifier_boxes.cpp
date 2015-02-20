@@ -92,6 +92,8 @@ SI modifier_box_rep::sup_lo_base (int level) {
   return b->sup_lo_base (level); }
 SI modifier_box_rep::sup_hi_lim  (int level) {
   return b->sup_hi_lim (level); }
+void modifier_box_rep::get_bracket_extents (SI& lo, SI& hi) {
+  b->get_bracket_extents (lo, hi); }
 
 /******************************************************************************
 * New routines concerning the cursor

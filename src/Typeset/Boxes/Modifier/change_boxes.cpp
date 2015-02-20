@@ -72,6 +72,10 @@ SI change_box_rep::sup_lo_base (int l) {
 SI change_box_rep::sup_hi_lim  (int l) {
   return big_flag? bs[0]->sup_hi_lim (l): box_rep::sup_hi_lim (l); }
 
+void change_box_rep::get_bracket_extents (SI& lo, SI& hi) {
+  if (sx(0) == 0 && sy(0) == 0) bs[0]->get_bracket_extents (lo, hi);
+  else box_rep::get_bracket_extents (lo, hi); }
+
 SI change_box_rep::get_leaf_offset (string search) {
   return sx1(0) + bs[0]->get_leaf_offset (search); }
 

@@ -308,7 +308,7 @@ tree_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 * Computation of wide accent
 ******************************************************************************/
 
-void
+bool
 compute_wide_accent (path ip, box b, string s,
                      font fn, pencil pen, bool request_wide, bool above,
                      box& wideb, SI& sep) {
@@ -348,6 +348,7 @@ compute_wide_accent (path ip, box b, string s,
                         (SI) (-0.5 * b->right_slope () * fn->yx), 0);
     sep= above? -fn->yx: fn->sep;
   }
+  return wide;
 }
 
 /******************************************************************************
@@ -360,6 +361,7 @@ struct wide_box_rep: public composite_box_rep {
   font   fn;
   pencil pen;
   bool   request_wide;
+  bool   wide;
   bool   above;
   SI     sep;
   SI     dw, dh, dd;
@@ -410,6 +412,7 @@ struct wide_box_rep: public composite_box_rep {
     if (above)
       return min (ref->sup_hi_lim (level) + dh, box_rep::sup_hi_lim (level));
     return ref->sup_hi_lim (level); }
+  void get_bracket_extents (SI& lo, SI& hi);
 };
 
 wide_box_rep::wide_box_rep (
@@ -419,7 +422,7 @@ wide_box_rep::wide_box_rep (
     request_wide (request_wide2), above (above2)
 {
   box hi;
-  compute_wide_accent (ip, ref, s, fn, pen, request_wide, above, hi, sep);
+  wide= compute_wide_accent (ip, ref, s, fn, pen, request_wide, above, hi, sep);
   SI X, Y, dx;
   SI hw= max (ref->w(), hi->w()) >> 1;
   SI m = (ref->x1 + ref->x2) >> 1;
@@ -471,6 +474,15 @@ wide_box_rep::left_slope () {
 double
 wide_box_rep::right_slope () {
   return ref->right_slope ();
+}
+
+void
+wide_box_rep::get_bracket_extents (SI& lo, SI& hi) {
+  if (wide) box_rep::get_bracket_extents (lo, hi);
+  else {
+    lo= ref->y1;
+    hi= ref->y2;
+  }
 }
 
 /******************************************************************************
