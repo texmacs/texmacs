@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (server server-tmfs)
-  (:use (server server-resource)))
+  (:use (server server-base)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Repository
@@ -38,12 +38,12 @@
          (full (repository-add-into repo name))
          (tail (substring full (+ (string-length repo) 1)
                                (string-length full))))
-    (resource-set rid "location" (list tail))
+    (db-set rid "location" (list tail))
     name))
 
 (define (repository-get rid)
   (and rid
-       (with l (resource-get rid "location")
+       (with l (db-get rid "location")
          (and (pair? l) (string-append repo "/" (car l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -57,32 +57,32 @@
       (let* ((q (if (null? where)
                     (list "type" "dir")
                     (list "dir" (car where))))
-             (matches (resource-search (list (list "name" (car l)) q))))
+             (matches (db-search (list (list "name" (car l)) q))))
         (append-map (cut search-file (cdr l) <>) matches))))
 
 (define (dir-contents dir)
-  (resource-search (list (list "dir" dir))))
+  (db-search (list (list "dir" dir))))
 
 (define (file-name->resource name)
   (safe-car (search-file (tmfs->list name))))
 
 (define (resource->file-name rid)
-  (let* ((dir (resource-get-first rid "dir" #f))
-         (name (resource-get-first rid "name" "?")))
+  (let* ((dir (db-get-first rid "dir" #f))
+         (name (db-get-first rid "name" "?")))
     (if dir (string-append (resource->file-name dir) "/" name) name)))
 
 (define (inheritance-reserved-attributes)
-  (append (server-reserved-attributes)
+  (append (db-reserved-attributes)
           (list "name")))
 
 (define (inherit-property? x)
   (nin? (car x) (inheritance-reserved-attributes)))
 
 (define (inherit-properties derived-rid base-rid)
-  (let* ((props1 (resource-get-all base-rid))
+  (let* ((props1 (db-get-all base-rid))
          (props2 (list-filter props1 inherit-property?)))
     (for (prop props2)
-      (resource-set derived-rid (car prop) (cdr prop)))))
+      (db-set derived-rid (car prop) (cdr prop)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
@@ -100,16 +100,16 @@
            (server-error envelope "Error: file already exists"))
           ((not did)
            (server-error envelope "Error: directory does not exist"))
-          ((not (resource-allow? did uid "writable"))
+          ((not (db-allow? did uid "writable"))
            (server-error envelope "Error: write access required for directory"))
           (else
-            (let* ((rid (resource-create (cAr l) "file" uid))
+            (let* ((rid (db-create (cAr l) "file" uid))
                    (name (repository-add rid (url-suffix rname)))
                    (fname (repository-get rid)))
               (inherit-properties rid did)
-              (resource-set rid "dir" (list did))
+              (db-set rid "dir" (list did))
               (string-save doc fname)
-              (with props (resource-get-all-decoded rid)
+              (with props (db-get-all-decoded rid)
                 (server-return envelope (list doc props))))))))
 
 (tm-service (remote-file-load rname)
@@ -121,12 +121,12 @@
            (server-error envelope "Error: not logged in"))
           ((not rid)
            (server-error envelope "Error: file does not exist"))
-          ((not (resource-allow? rid uid "readable"))
+          ((not (db-allow? rid uid "readable"))
            (server-error envelope "Error: read access denied"))
           ((not (url-exists? fname))
            (server-error envelope "Error: file not found"))
           (else
-            (let* ((props (resource-get-all-decoded rid))
+            (let* ((props (db-get-all-decoded rid))
                    (doc (string-load fname)))
               (server-return envelope (list doc props)))))))
 
@@ -139,10 +139,10 @@
            (server-error envelope "Error: not logged in"))
           ((not rid)
            (server-error envelope "Error: file does not exist"))
-          ((not (resource-allow? rid uid "writable"))
+          ((not (db-allow? rid uid "writable"))
            (server-error envelope "Error: write access denied"))
           (else
-            (with props (resource-get-all-decoded rid)
+            (with props (db-get-all-decoded rid)
               (string-save doc fname)
               (server-return envelope (list doc props)))))))
 
@@ -154,11 +154,11 @@
            (server-error envelope "Error: not logged in"))
           ((not rid)
            (server-error envelope "Error: file does not exist"))
-          ((not (resource-allow? rid uid "owner"))
+          ((not (db-allow? rid uid "owner"))
            (server-error envelope "Error: administrative access denied"))
           (else
-            (resource-set-all-encoded rid props)
-            (with new-props (resource-get-all-decoded rid)
+            (db-set-all-encoded rid props)
+            (with new-props (db-get-all-decoded rid)
               (server-return envelope new-props))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -177,26 +177,26 @@
            (server-error envelope "Error: directory already exists"))
           ((not did)
            (server-error envelope "Error: directory does not exist"))
-          ((not (resource-allow? did uid "writable"))
+          ((not (db-allow? did uid "writable"))
            (server-error envelope "Error: write access required for directory"))
           (else
-            (let* ((rid (resource-create (cAr l) "dir" uid)))
+            (let* ((rid (db-create (cAr l) "dir" uid)))
               (inherit-properties rid did)
-              (resource-set rid "dir" (list did))
-              (with props (resource-get-all-decoded rid)
+              (db-set rid "dir" (list did))
+              (with props (db-get-all-decoded rid)
                 (server-return envelope (list (list) props))))))))
 
 (define (filter-read-access rids uid)
   (cond ((null? rids) rids)
-        ((resource-allow? (car rids) uid "readable")
+        ((db-allow? (car rids) uid "readable")
          (cons (car rids) (filter-read-access (cdr rids) uid)))
         (else (filter-read-access (cdr rids) uid))))
 
 (define (rewrite-dir-entry rid)
-  (let* ((short-name (resource-get-first rid "name" "?"))
+  (let* ((short-name (db-get-first rid "name" "?"))
          (full-name (resource->file-name rid))
-         (dir? (== (resource-get-first rid "type" #f) "dir"))
-         (props (resource-get-all-decoded rid)))
+         (dir? (== (db-get-first rid "type" #f) "dir"))
+         (props (db-get-all-decoded rid)))
     (list short-name full-name dir? props)))
 
 (tm-service (remote-dir-load rname)
@@ -208,11 +208,11 @@
                (rid (safe-car dirs)))
           (cond ((not rid)
                  (server-error envelope "Error: directory does not exist"))
-                ((not (resource-allow? rid uid "readable"))
+                ((not (db-allow? rid uid "readable"))
                  (server-error envelope "Error: read access required"))
                 (else
                   (let* ((matches (dir-contents rid))
                          (filtered (filter-read-access matches uid))
                          (rewr (map rewrite-dir-entry filtered))
-                         (props (resource-get-all-decoded rid)))
+                         (props (db-get-all-decoded rid)))
                     (server-return envelope (list rewr props)))))))))

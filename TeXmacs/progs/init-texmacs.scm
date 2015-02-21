@@ -288,7 +288,6 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
-(lazy-define (server server-resource) resource-create resource-set-user-info)
 (lazy-menu (server server-menu) server-menu)
 (lazy-menu (client client-menu) client-menu remote-menu)
 (lazy-tmfs-handler (client client-tmfs) remote-file)

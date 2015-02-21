@@ -11,11 +11,15 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (server server-base))
+(texmacs-module (server server-base)
+  (:use (database db-entries)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Declaration of services
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define server-database
+  (url-concretize "$TEXMACS_HOME_PATH/server/server.db"))
 
 (tm-define service-dispatch-table (make-ahash-table))
 
@@ -23,7 +27,8 @@
   (if (npair? proto) '(noop)
       (with (fun . args) proto
         `(begin
-           (tm-define (,fun envelope ,@args) ,@body)
+           (tm-define (,fun envelope ,@args)
+             (with-database server-database ,@body))
            (ahash-set! service-dispatch-table ',fun ,fun)))))
 
 (tm-define (server-eval envelope cmd)
@@ -119,7 +124,7 @@
 (tm-define (server-set-user-info uid id fullname passwd email admin)
   (server-load-users)
   (ahash-set! server-users uid (list id fullname passwd email admin))
-  (resource-set-user-info uid id fullname email)
+  (db-set-user-info uid id fullname email)
   (server-save-users))
 
 (tm-define (server-set-user-information id fullname passwd email admin)
@@ -142,7 +147,7 @@
 
 (tm-define (server-create-user id fullname passwd email admin)
   (or (server-find-user id)
-      (with uid (resource-create id "user" id)
+      (with uid (db-create id "user" id)
         (server-set-user-info uid id fullname passwd email admin))))
 
 (tm-service (new-account id fullname passwd email)
