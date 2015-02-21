@@ -113,6 +113,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define search-serial 0)
+(define search-filter-out? #f)
 
 (define (perform-search-sub limit)
   (let* ((what (buffer-get-body (search-buffer)))
@@ -159,9 +160,13 @@
 	(when (== serial search-serial)
 	  (perform-search-sub (* 2 limit)))))))
 
-(define (perform-search)
+(define (perform-search*)
   (set! search-serial (+ search-serial 1))
   (perform-search-sub 100))
+
+(define (perform-search)
+  (search-show-only)
+  (perform-search*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting a particular next or previous search result
@@ -236,6 +241,7 @@
       (search-extreme-match #f))))
 
 (tm-define ((search-cancel u) . args)
+  (search-show-all)
   (set! search-serial (+ search-serial 1))
   (with-buffer (master-buffer)
     (cancel-alt-selection "alternate")))
@@ -268,16 +274,16 @@
       (start-editing)
       (replace-next by)
       (end-editing))
-    (perform-search)))
+    (perform-search*)))
 
 (tm-define (replace-all)
   (and-with by (by-tree)
     (with-buffer (master-buffer)
       (start-editing)
       (while (replace-next by)
-        (perform-search))
+        (perform-search*))
       (end-editing))
-    (perform-search)))
+    (perform-search*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized keyboard shortcuts in search and replace modes
@@ -348,6 +354,9 @@
       ((balloon (icon "tm_search_last.xpm") "Last occurrence")
        (search-extreme-match #t))
       >>>
+      ((check (balloon (icon "tm_filter.xpm") "Only show paragraphs with hits")
+              "v" (search-filter-enabled?))
+       (search-toggle-filter))
       ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
        (set-boolean-preference "toolbar search" #t)
        (quit)
@@ -365,6 +374,7 @@
     (set! search-window (current-window))
     (set-search-reference (cursor-path))
     (set-search-filter)
+    (set! search-filter-out? #f)
     (dialogue-window (search-widget u st init aux)
                      (search-cancel u)
                      "Search")))
@@ -398,6 +408,9 @@
       ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
        (replace-all))
       >>>
+      ((check (balloon (icon "tm_filter.xpm") "Only show paragraphs with hits")
+              "v" (search-filter-enabled?))
+       (search-toggle-filter))
       ((balloon (icon "tm_compress_tool.xpm") "Compress into toolbar")
        (set-boolean-preference "toolbar replace" #t)
        (quit)
@@ -417,6 +430,7 @@
     (set! search-window (current-window))
     (set-search-reference (cursor-path))
     (set-search-filter)
+    (set! search-filter-out? #f)
     (dialogue-window (replace-widget u st init saux raux)
                      (search-cancel u)
                      "Search and replace")))
@@ -475,7 +489,10 @@
      (search-next-match #t))
     ((balloon (icon "tm_search_last.xpm") "Last occurrence")
      (search-extreme-match #t))
-      >>>
+    >>>
+    ((check (balloon (icon "tm_filter.xpm") "Only show paragraphs with hits")
+            "v" (search-filter-enabled?))
+     (search-toggle-filter))
     ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
      (set-boolean-preference "toolbar search" #f)
      (toolbar-search-end)
@@ -485,6 +502,8 @@
 
 (tm-define (toolbar-search-start)
   (:interactive #t)
+  (search-show-all)
+  (set! search-filter-out? #f)
   (set! toolbar-search-active? #t)
   (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #t)
@@ -497,6 +516,8 @@
 
 (tm-define (toolbar-search-end)
   (cancel-alt-selection "alternate")
+  (search-show-all)
+  (set! search-filter-out? #f)
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #f)
@@ -527,10 +548,10 @@
           ((== key "tab") (keyboard-focus-on "replace-what"))
           ((== key "S-tab") (keyboard-focus-on "replace-what"))
           ((== key "return") (replace-toolbar-replace by))
-          ((== key "S-return") (undo 0) (perform-search))
+          ((== key "S-return") (undo 0) (perform-search*))
           ((== key "C-return") (replace-all))
           ((== key "escape") (toolbar-search-end))
-          (else (perform-search)))))
+          (else (perform-search*)))))
 
 (tm-widget (replace-toolbar)
   (hlist
@@ -555,6 +576,9 @@
     ((balloon (icon "tm_replace_all.xpm") "Replace all further occurrences")
      (replace-all))
     >>>
+    ((check (balloon (icon "tm_filter.xpm") "Only show paragraphs with hits")
+            "v" (search-filter-enabled?))
+     (search-toggle-filter))
     ((balloon (icon "tm_expand_tool.xpm") "Open tool in separate window")
      (set-boolean-preference "toolbar replace" #f)
      (toolbar-search-end)
@@ -564,6 +588,8 @@
 
 (tm-define (toolbar-replace-start)
   (:interactive #t)
+  (search-show-all)
+  (set! search-filter-out? #f)
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #t)
   (show-bottom-tools 0 #t)
@@ -573,6 +599,72 @@
     (keyboard-focus-on "replace-what")
     (perform-search)
     (notify-change 68)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hiding paragraphs which do not match
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (show-only-sub u what)
+  (with t (if (tree-is? u 'hide-para) (tree-ref u 0) u)
+    (let* ((sels* (tree-search-tree t what (tree->path t) 100))
+           (sels (filter-search-results sels*)))
+      (if (null? sels)
+          (when (not (tree-is? u 'hide-para))
+            (tree-insert-node u 0 '(hide-para)))
+          (begin
+            (when (tree-is? u 'hide-para)
+              (tree-remove-node! u 0))
+            (show-only u what))))))
+
+(define (show-only-document t what)
+  (if (tree-is? t 'document) (show-only t what)))
+
+(define (show-only t what)
+  (cond ((== what (string->tree ""))
+         (show-all t))
+        ((tree-is? t 'document)
+         (for-each (cut show-only-sub <> what) (tree-children t)))
+        ((tree-is? t 'hide-para)
+         (show-only-sub t what))
+        ((tree-compound? t)
+         (for-each (cut show-only-document <> what)
+                   (tree-accessible-children t)))
+        (else (noop))))
+
+(define (show-all-document t)
+  (if (tree-is? t 'document) (show-all t)))
+
+(define (show-all t)
+  (cond ((tree-is? t 'document)
+         (for-each show-all (tree-children t)))
+        ((tree-is? t 'hide-para)
+         (tree-remove-node t 0))
+        ((tree-compound? t)
+         (for-each show-all-document (tree-accessible-children t)))
+        (else (noop))))
+
+(define (search-show-only)
+  (when search-filter-out?
+    (with-buffer (master-buffer)
+      (let* ((doc (buffer-get-body (master-buffer)))
+             (what (buffer-get-body (search-buffer))))
+        (when (tree-func? what 'document 1)
+          (set! what (tree-ref what 0)))
+        (show-only doc what)))))
+
+(define (search-show-all)
+  (when search-filter-out?
+    (with-buffer (master-buffer)
+      (with doc (buffer-get-body (master-buffer))
+        (show-all doc)))))
+
+(define (search-filter-enabled?)
+  search-filter-out?)
+
+(define (search-toggle-filter)
+  (search-show-all)
+  (set! search-filter-out? (not search-filter-out?))
+  (perform-search))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routines

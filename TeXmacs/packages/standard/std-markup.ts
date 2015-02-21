@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std>>
 
@@ -49,6 +49,8 @@
   <assign|pre-edit|<macro|body|<with|ornament-color|#ffffc0|ornament-sunny-color|#fff0e0|ornament-shadow-color|#ffc080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<smash|<ornament|<with|color|#4040c0|<arg|body>>>>>>>
 
   <drd-props|pre-edit|arity|1|border|no>
+
+  <assign|hide-para|<macro|body|<ignore|<arg|body>>>>
 
   <\active*>
     <\src-comment>
