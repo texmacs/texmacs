@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.5>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Mathematical environments>
@@ -11,11 +11,18 @@
   formulas or tables of mathematical formulas.
 
   <\explain|<explain-macro|equation|body>>
-    A numbered equation.
+    A numbered equation. Use a <markup|label> to be able to
+    <markup|reference> this equation elsewhere.
   </explain>
 
   <\explain|<explain-macro|equation*|body>>
     An unnumbered equation.
+  </explain>
+
+  <\explain|<explain-macro|equation-lab|body|lab>>
+    An equation with an arbitrary text label to be displayed in references
+    (e.g. <markup|reference> or <markup|eqref)>. Notice that the
+    <markup|label> tag is not created automatically.
   </explain>
 
   <\explain|<explain-macro|eqnarray|table>>
@@ -23,11 +30,9 @@
   </explain>
 
   <\explain|<explain-macro|eqnarray*|table>>
-    An array of unnumbered equations.
+    An array of unnumbered equations. You can use the <markup|eq-number> tag
+    in order to number the equation.\ 
   </explain>
-
-  Inside the <markup|eqnarray*> environment, you can use the
-  <markup|eq-number> tag in order to number the equation.\ 
 
   <\warning>
     The numbering of equations inside tables is not yet as it should be. In
@@ -65,20 +70,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
