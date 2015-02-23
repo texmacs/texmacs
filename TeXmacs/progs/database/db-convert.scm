@@ -59,6 +59,30 @@
 ;; Exporting databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (db-export-entry t)
+  (if (tm-func? t 'db-entry 2)
+      (list (tm-children t))
+      (list)))
+
+(tm-define (db-export-resource t)
+  (set! t (db-export-pre t))
+  (when (and (tm-func? t 'db-resource 4)
+             (tm-func? (tm-ref t 3) 'document))
+    (let* ((rid (tm-ref t 0))
+           (type (tm-ref t 1))
+           (name (tm-ref t 2))
+           (pairs (append-map db-export-entry (tm-children (tm-ref t 3))))
+           (all (cons* (list "type" type) (list "name" name) pairs)))
+      (display* rid " -> " all "\n"))))
+
+(tm-define (db-export t)
+  (cond ((tm-func? t 'document)
+         (for-each db-export (tm-children t)))
+        ((tm-func? t 'db-resource 4)
+         (db-export-resource (tm->stree t)))
+        ((and (tree? t) (tm-compound? t))
+         (for-each db-export (tree-accessible-children t)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions for database markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -95,8 +119,10 @@
                ((== prop "name")
                 `(db-resource ,(car l) ,(cadr l) ,val ,@(cdddr l)))
                (else
-                 (with r (tm-entry-replace (tm-children (cadddr l))
+                 (with r (db-entry-replace (tm-children (cadddr l))
                                            prop val)
+                   (if (not (db-entry-find r prop))
+                       (set! r (rcons r `(db-entry ,prop ,val))))
                    `(db-resource ,(car l) ,(cadr l) ,(caddr l)
                                  (document ,@r))))))))
 
