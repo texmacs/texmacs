@@ -18,8 +18,26 @@
 ;; Hook for additional conversions for specific formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-import-post t) t)
-(tm-define (db-export-pre t) t)
+(define (rename-entry t a)
+  (if (not (and (tm-func? t 'db-entry 2) (assoc-ref a (tm-ref t 0))))
+      t
+      `(db-entry ,(assoc-ref a (tm-ref t 0)) ,(tm-ref t 1))))
+
+(define (rename-resource t a)
+  (if (and (not (tm-func? t 'db-resource 4))
+           (tm-func? (tm-ref t 3) 'document))
+      t
+      `(db-resource ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
+                    (document ,@(map (cut rename-entry <> a)
+                                     (tm-children (tm-ref t 3)))))))
+
+(tm-define (db-import-post t)
+  (rename-resource t (list (cons "mtype" "type")
+                           (cons "mname" "name"))))
+
+(tm-define (db-export-pre t)
+  (rename-resource t (list (cons "type" "mtype")
+                           (cons "name" "mname"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing databases
