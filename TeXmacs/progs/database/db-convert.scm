@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database db-convert)
-  (:use (database db-resource)))
+  (:use (database db-resource)
+        (convert bibtex bibtexout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hook for additional conversions for specific formats
@@ -78,7 +79,7 @@
 (tm-define (db-export t)
   (cond ((tm-func? t 'document)
          (for-each db-export (tm-children t)))
-        ((tm-func? t 'db-resource 4)
+        ((or (tm-func? t 'db-resource 4) (tm-func? t 'bib-entry 3))
          (db-export-resource (tm->stree t)))
         ((and (tree? t) (tm-compound? t))
          (for-each db-export (tree-accessible-children t)))))
@@ -162,10 +163,23 @@
                   (db-resource-set (db-resource-remove t "bib-type")
                                    "type" type)))))))
 
+(tm-define (bib->db t)
+  (cond ((and (tm-func? t 'bib-entry 3)
+              (tm-func? (tm-ref t 2) 'document))
+         (with l (map bib->db (tm-children (tm-ref t 2)))
+           `(db-resource ,(create-unique-id) ,(tm-ref t 0) ,(tm-ref t 1)
+                         (document ,@l))))
+        ((tm-func? t 'bib-field 2)
+         `(db-entry ,(tm-ref t 0) ,(serialize-bibtex-arg (tm-ref t 1))))
+        (else t)))
+
 (tm-define (db-export-pre t)
   (set! t (former t))
-  (with x (db-resource-ref t "type")
-    (if x (set! x (tm->string x)))
-    (if (not (in? x (bib-types))) t
-        (db-resource-set (db-resource-set t "bib-type" x)
-                         "type" "bib-type"))))
+  (if (and (tm-func? t 'bib-entry 3)
+           (tm-func? (tm-ref t 2) 'document))
+      (db-export-pre (bib->db t))
+      (with x (db-resource-ref t "type")
+        (if x (set! x (tm->string x)))
+        (if (not (in? x (bib-types))) t
+            (db-resource-set (db-resource-set t "bib-type" x)
+                             "type" "bib-type")))))
