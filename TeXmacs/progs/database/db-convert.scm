@@ -68,6 +68,10 @@
          (i (map db-import-resource l)))
     `(document ,@i)))
 
+(tm-define (db-import-types types)
+  (with l (map cdr (map db-import-type types))
+    `(document ,@(apply append l))))
+
 (tm-define (db-import)
   (let* ((l (db-search (list)))
          (i (map db-import-resource l)))
@@ -82,10 +86,11 @@
       (list (tm-children t))
       (list)))
 
-(tm-define (db-export-resource t)
+(tm-define (db-export-selected-resource t pred?)
   (set! t (db-export-pre t))
   (when (and (tm-func? t 'db-resource 4)
-             (tm-func? (tm-ref t 3) 'document))
+             (tm-func? (tm-ref t 3) 'document)
+             (pred? (tm-ref t 1)))
     (let* ((rid (tm-ref t 0))
            (type (tm-ref t 1))
            (name (tm-ref t 2))
@@ -93,10 +98,17 @@
            (all (cons* (list "type" type) (list "name" name) pairs)))
       (display* rid " -> " all "\n"))))
 
-(tm-define (db-export t)
+(tm-define (db-export-selected t pred?)
   (cond ((tm-func? t 'document)
-         (for-each db-export (tm-children t)))
+         (for-each (cut db-export-selected <> pred?) (tm-children t)))
         ((or (tm-func? t 'db-resource 4) (tm-func? t 'bib-entry 3))
-         (db-export-resource (tm->stree t)))
+         (db-export-selected-resource (tm->stree t) pred?))
         ((and (tree? t) (tm-compound? t))
-         (for-each db-export (tree-accessible-children t)))))
+         (for-each (cut db-export-selected <> pred?)
+                   (tree-accessible-children t)))))
+
+(tm-define (db-export-types t types)
+  (db-export-selected t (lambda (x) (in? x types))))
+
+(tm-define (db-export t)
+  (db-export-selected t (lambda (x) #t)))

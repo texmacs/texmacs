@@ -150,7 +150,7 @@
         (optional "annote"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Conversion of native BibTeX documents
+;; Conversion of native BibTeX documents and hook when exporting databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (bib->db t)
@@ -163,8 +163,11 @@
          `(db-entry ,(tm-ref t 0) ,(serialize-bibtex-arg (tm-ref t 1))))
         (else t)))
 
+(tm-define (db-export-pre t)
+  (former (bib->db t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Bibliography hooks
+;; Import and export bibliographies
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define bib-types-list
@@ -172,23 +175,8 @@
         "inproceedings" "conference" "manual" "mastersthesis" "misc"
         "phdthesis" "proceedings" "techreport" "unpublished"))
 
-(tm-define (db-import-post t)
-  (set! t (former t))
-  (if (not (tm-equal? (db-resource-ref t "type") "bib-entry")) t
-      (with x (db-resource-ref t "bib-type")
-        (if (not x) t
-            (with type (locase-all (tm->string x))
-              (if (nin? type bib-types-list) t
-                  (db-resource-set (db-resource-remove t "bib-type")
-                                   "type" type)))))))
+(tm-define (bib-import)
+  (db-import-types bib-types-list))
 
-(tm-define (db-export-pre t)
-  (set! t (former t))
-  (if (and (tm-func? t 'bib-entry 3)
-           (tm-func? (tm-ref t 2) 'document))
-      (db-export-pre (bib->db t))
-      (with x (db-resource-ref t "type")
-        (if x (set! x (tm->string x)))
-        (if (not (in? x bib-types-list)) t
-            (db-resource-set (db-resource-set t "bib-type" x)
-                             "type" "bib-type")))))
+(tm-define (bib-export t)
+  (db-export-types t bib-types-list))
