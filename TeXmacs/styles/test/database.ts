@@ -77,7 +77,19 @@
     <db-entry-env|dark blue|black|<arg|type>|<arg|val>>
   </macro>>
 
+  <assign|db-entry-optional|<\macro|type|val>
+    <db-entry-env|#6060c0|#808080|<arg|type>|<arg|val>>
+  </macro>>
+
+  <assign|db-entry-alternative|<\macro|type|val>
+    <db-entry-env|dark green|black|<arg|type>|<arg|val>>
+  </macro>>
+
   <drd-props|db-entry|arity|2|unaccessible|0|accessible|1>
+
+  <drd-props|db-entry-optional|arity|2|unaccessible|0|accessible|1>
+
+  <drd-props|db-entry-alternative|arity|2|unaccessible|0|accessible|1>
 
   \;
 </body>

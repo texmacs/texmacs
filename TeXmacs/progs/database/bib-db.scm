@@ -20,7 +20,7 @@
 ;; Formats of bibliographic resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(smart-table db-format
+(smart-table db-format-table
   ("article"
    (and "author" "title" "journal" "year"
         (optional "key")
@@ -88,8 +88,6 @@
         (optional "organization")
         (optional "publisher")
         (optional "note") (optional "annote")))
-  ;;("conference"
-  ;; (and))
   ("manual"
    (and "title"
         (optional "key")
@@ -156,9 +154,12 @@
 (tm-define (bib->db t)
   (cond ((and (tm-func? t 'bib-entry 3)
               (tm-func? (tm-ref t 2) 'document))
-         (with l (map bib->db (tm-children (tm-ref t 2)))
-           `(db-resource ,(create-unique-id) ,(tm-ref t 0) ,(tm-ref t 1)
-                         (document ,@l))))
+         (let* ((id (create-unique-id))
+                (type (tm->string (tm-ref t 0)))
+                (type* (if (== type "conference") "inproceedings" type))
+                (name (tm-ref t 1))
+                (l (map bib->db (tm-children (tm-ref t 2)))))
+           `(db-resource ,id ,type* ,name (document ,@l))))
         ((tm-func? t 'bib-field 2)
          `(db-entry ,(tm-ref t 0) ,(serialize-bibtex-arg (tm-ref t 1))))
         (else t)))

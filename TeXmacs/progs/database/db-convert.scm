@@ -12,24 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database db-convert)
-  (:use (database db-resource)))
+  (:use (database db-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hook for additional conversions for specific formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (rename-entry t a)
-  (if (not (and (tm-func? t 'db-entry 2) (assoc-ref a (tm-ref t 0))))
-      t
-      `(db-entry ,(assoc-ref a (tm-ref t 0)) ,(tm-ref t 1))))
-
-(define (rename-resource t a)
-  (if (and (not (tm-func? t 'db-resource 4))
-           (tm-func? (tm-ref t 3) 'document))
-      t
-      `(db-resource ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
-                    (document ,@(map (cut rename-entry <> a)
-                                     (tm-children (tm-ref t 3)))))))
 
 (tm-define (db-import-post t)
   (rename-resource t (list (cons "mtype" "type")
@@ -88,9 +75,7 @@
 
 (tm-define (db-export-selected-resource t pred?)
   (set! t (db-export-pre t))
-  (when (and (tm-func? t 'db-resource 4)
-             (tm-func? (tm-ref t 3) 'document)
-             (pred? (tm-ref t 1)))
+  (when (and (db-resource? t) (pred? (tm-ref t 1)))
     (let* ((rid (tm-ref t 0))
            (type (tm-ref t 1))
            (name (tm-ref t 2))
