@@ -17,6 +17,139 @@
         (convert bibtex bibtexout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Formats of bibliographic resources
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table db-format
+  ("article"
+   (and "author" "title" "journal" "year"
+        (optional "key")
+        (optional "volume") (optional "number")
+        (optional "pages")
+        (optional "month")
+        (optional "note") (optional "annote")))
+  ("book"
+   (and (or "author" "editor") "title" "publisher" "year"
+        (optional "key")
+        (optional "volume") (optional "number")
+        (optional "series")
+        (optional "address")
+        (optional "edition")
+        (optional "month")
+        (optional "note") (optional "annote")))
+  ("booklet"
+   (and "title"
+        (optional "key")
+        (optional "author")
+        (optional "howpublished")
+        (optional "address")
+        (optional "month")
+        (optional "year")
+        (optional "note") (optional "annote")))
+  ("inbook"
+   (and (or "author" "editor") "title" "chapter" "publisher" "year"
+        (optional "key")
+        (optional "volume") (optional "number")
+        (optional "series")
+        (optional "type")
+        (optional "address")
+        (optional "edition")
+        (optional "month")
+        (optional "pages")
+        (optional "note") (optional "annote")))
+  ("incollection"
+   (and "author" "title" "booktitle"
+        (optional "crossref")
+        (optional "key")
+        (optional "pages")
+        (optional "publisher")
+        (optional "year")
+        (optional "editor")
+        (optional "volume") (optional "number")
+        (optional "series")
+        (optional "type")
+        (optional "chapter")
+        (optional "address")
+        (optional "edition")
+        (optional "month")
+        (optional "note") (optional "annote")))
+  ("inproceedings"
+   (and "author" "title"
+        (optional "crossref")
+        (optional "key")
+        (optional "booktitle")
+        (optional "pages")
+        (optional "year")
+        (optional "editor")
+        (optional "volume") (optional "number")
+        (optional "series")
+        (optional "address")
+        (optional "month")
+        (optional "organization")
+        (optional "publisher")
+        (optional "note") (optional "annote")))
+  ;;("conference"
+  ;; (and))
+  ("manual"
+   (and "title"
+        (optional "key")
+        (optional "author")
+        (optional "organization")
+        (optional "address")
+        (optional "edition")
+        (optional "month")
+        (optional "year")
+        (optional "note") (optional "annote")))
+  ("masterthesis"
+   (and "author" "title" "school" "year"
+        (optional "key")
+        (optional "type")
+        (optional "address")
+        (optional "month")
+        (optional "note") (optional "annote")))
+  ("misc"
+   (and (optional "key")
+        (optional "author")
+        (optional "title")
+        (optional "howpublished")
+        (optional "month")
+        (optional "year")
+        (optional "note") (optional "annote")))
+  ("phdthesis"
+   (and "author" "title" "school" "year"
+        (optional "key")
+        (optional "type")
+        (optional "address")
+        (optional "month")
+        (optional "note") (optional "annote")))
+  ("proceedings"
+   (and "title" "year"
+        (optional "key")
+        (optional "booktitle")
+        (optional "editor")
+        (optional "volume") (optional "number")        
+        (optional "series")
+        (optional "address")
+        (optional "month")
+        (optional "organization")
+        (optional "publisher")
+        (optional "note") (optional "annote")))
+  ("techreport"
+   (and "author" "title" "institution" "year"
+        (optional "key")
+        (optional "type")
+        (optional "number")
+        (optional "address")
+        (optional "month")
+        (optional "note") (optional "annote")))
+  ("unpublished"
+   (and "author" "title" "note"
+        (optional "key")
+        (optional "month")
+        (optional "year")
+        (optional "annote"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion of native BibTeX documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
