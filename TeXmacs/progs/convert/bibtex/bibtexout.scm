@@ -111,12 +111,12 @@
   (if (not (null? x))
     (let ((head (car x))
 	  (tail (cdr x)))
-      (cond
-	((bibtex-match head 'bib-name 4)
-	 (begin
-	   (bibtex-name head)
-	   (if (> (length tail) 0) (output-verbatim " and "))
-	   (bibtex-names tail)))))))
+      (if (bibtex-match head 'bib-name 4)
+          (begin
+            (bibtex-name head)
+            (if (> (length tail) 0) (output-verbatim " and "))
+            (bibtex-names tail))
+          (bibtex-names tail)))))
 
 (define (bibtex-arg x)
   ;; (display* "BIBTEX ARG: " x "\n")
@@ -262,7 +262,7 @@
     ((func? x 'bib-line) (bibtex-comment (cdr x)))
     ((func? x 'bib-var) (cdr x))
     ((func? x 'bib-names)
-     (bibtex-names x)
+     (bibtex-names (cdr x))
      (output-lf-verbatim))
     ((func? x 'bib-name) (bibtex-name x))
     ((func? x 'bib-latex)
@@ -273,3 +273,9 @@
   (bibtexout x)
   (output-produce))
 
+(tm-define (serialize-bibtex-arg x)
+  (bibtex-arg x)
+  (with r (output-produce)
+    (if (and (string-starts? r "{") (string-ends? r "}"))
+        (substring r 1 (- (string-length r) 1))
+        r)))
