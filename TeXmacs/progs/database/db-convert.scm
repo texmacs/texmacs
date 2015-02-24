@@ -12,8 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database db-convert)
-  (:use (database db-resource)
-        (convert bibtex bibtexout)))
+  (:use (database db-resource)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hook for additional conversions for specific formats
@@ -83,103 +82,3 @@
          (db-export-resource (tm->stree t)))
         ((and (tree? t) (tm-compound? t))
          (for-each db-export (tree-accessible-children t)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Utility functions for database markup
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (db-entry-find l prop)
-  (and (nnull? l)
-       (or (and (tm-func? (car l) 'db-entry 2)
-                (tm-equal? (tm-ref (car l) 0) prop)
-                (tm-ref (car l) 1))
-           (db-entry-find (cdr l) prop))))
-
-(tm-define (db-resource-ref t prop)
-  (and (tm-func? t 'db-resource 4)
-       (tm-func? (tm-ref t :last) 'document)
-       (cond ((== prop "rid") (tm-ref t 0))
-             ((== prop "type") (tm-ref t 1))
-             ((== prop "name") (tm-ref t 2))
-             (else (db-entry-find (tm-children (tm-ref t 3)) prop)))))
-
-(tm-define (db-entry-replace l prop val)
-  (if (null? l) l
-      (cons (if (and (tm-func? (car l) 'db-entry 2)
-                     (tm-equal? (tm-ref (car l) 0) prop))
-                `(db-entry ,prop ,val)
-                (car l))
-            (db-entry-replace (cdr l) prop val))))
-
-(tm-define (db-resource-set t prop val)
-  (and (tm-func? t 'db-resource 4)
-       (tm-func? (tm-ref t :last) 'document)
-       (with l (tm-children t)
-         (cond ((== prop "rid") `(db-resource ,val ,@(cdr l)))
-               ((== prop "type") `(db-resource ,(car l) ,val ,@(cddr l)))
-               ((== prop "name")
-                `(db-resource ,(car l) ,(cadr l) ,val ,@(cdddr l)))
-               (else
-                 (with r (db-entry-replace (tm-children (cadddr l))
-                                           prop val)
-                   (if (not (db-entry-find r prop))
-                       (set! r (rcons r `(db-entry ,prop ,val))))
-                   `(db-resource ,(car l) ,(cadr l) ,(caddr l)
-                                 (document ,@r))))))))
-
-(tm-define (db-entry-remove l prop)
-  (if (null? l) l
-      (with r (db-entry-remove (cdr l) prop)
-        (if (and (tm-func? (car l) 'db-entry 2)
-                 (tm-equal? (tm-ref (car l) 0) prop))
-            r
-            (cons (car l) r)))))
-
-(tm-define (db-resource-remove t prop)
-  (and (tm-func? t 'db-resource 4)
-       (tm-func? (tm-ref t :last) 'document)
-       (if (in? prop (list "rid" "type" "name"))
-           t
-           (with r (db-entry-remove (tm-children (tm-ref t 3)) prop)
-             `(db-resource ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
-                           (document ,@r))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Bibliography hooks
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (bib-types)
-  (list "article" "book" "booklet" "inbook" "incollection"
-        "inproceedings" "conference" "manual" "mastersthesis" "misc"
-        "phdthesis" "proceedings" "techreport" "unpublished"))
-
-(tm-define (db-import-post t)
-  (set! t (former t))
-  (if (not (tm-equal? (db-resource-ref t "type") "bib-entry")) t
-      (with x (db-resource-ref t "bib-type")
-        (if (not x) t
-            (with type (locase-all (tm->string x))
-              (if (nin? type (bib-types)) t
-                  (db-resource-set (db-resource-remove t "bib-type")
-                                   "type" type)))))))
-
-(tm-define (bib->db t)
-  (cond ((and (tm-func? t 'bib-entry 3)
-              (tm-func? (tm-ref t 2) 'document))
-         (with l (map bib->db (tm-children (tm-ref t 2)))
-           `(db-resource ,(create-unique-id) ,(tm-ref t 0) ,(tm-ref t 1)
-                         (document ,@l))))
-        ((tm-func? t 'bib-field 2)
-         `(db-entry ,(tm-ref t 0) ,(serialize-bibtex-arg (tm-ref t 1))))
-        (else t)))
-
-(tm-define (db-export-pre t)
-  (set! t (former t))
-  (if (and (tm-func? t 'bib-entry 3)
-           (tm-func? (tm-ref t 2) 'document))
-      (db-export-pre (bib->db t))
-      (with x (db-resource-ref t "type")
-        (if x (set! x (tm->string x)))
-        (if (not (in? x (bib-types))) t
-            (db-resource-set (db-resource-set t "bib-type" x)
-                             "type" "bib-type")))))
