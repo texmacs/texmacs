@@ -136,14 +136,97 @@
          (complete-entries-or l (cdr fm) (cdr fm)))
         (else (list))))
 
-(tm-define (db-complete-entries t)
-  (when (db-resource? t)
+(define (entry-not-among? e l)
+  (and (db-entry-any? e)
+       (or (null? l)
+           (and (entry-not-among? e (cdr l))
+                (or (not (db-entry-any? (car l)))
+                    (!= (tm-ref e 0) (tm-ref (car l) 0)))))))
+
+(tm-define (db-complete-entries t*)
+  (and-with t (tree-search-upwards t* db-resource?)
     (let* ((u (tm->stree t))
            (fm (smart-ref db-format-table (tm-ref u 1)))
            (c (tm-children (tm-ref u 3))))
       (when fm
-        (with l (complete-entries c fm)
-          (tree-set (tree-ref t 3) `(document ,@l)))))))
+        (let* ((l (complete-entries c fm))
+               (o (list-filter c (cut entry-not-among? <> l)))
+               (m (append l o)))
+          (tree-set (tree-ref t 3) `(document ,@m)))))))
+
+(define (db-complete-entry? t)
+  (and (db-entry-any? t)
+       (or (db-entry-optional? t)
+           (not (tree-empty? (tm->tree (tm-ref t 1)))))))
+
+(tm-define (db-complete-entries? t*)
+  (and-with t (tree-search-upwards t* db-resource?)
+       (let* ((u (tm->stree t))
+              (fm (smart-ref db-format-table (tm-ref u 1)))
+              (c (tm-children (tm-ref u 3))))
+         (and fm
+              (not (tree-empty? (tm->tree (tm-ref u 2))))
+              (list-and (map db-complete-entry? (complete-entries c fm)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Finding subsequent entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (db-next-entry t)
+  (with u (tm-ref t :next)
+    (and u (or (and (db-entry-any? u) u)
+               (db-next-entry u)))))
+
+(define (db-next-empty-entry t)
+  (with u (tm-ref t :next)
+    (and u (or (and (db-entry-any? u) (tree-empty? (tree-ref u 1)) u)
+               (db-next-empty-entry u)))))
+
+(define (db-previous-entry t)
+  (with u (tm-ref t :previous)
+    (and u (or (and (db-entry-any? u) u)
+               (db-previous-entry u)))))
+
+(define (db-previous-empty-entry t)
+  (with u (tm-ref t :previous)
+    (and u (or (and (db-entry-any? u) (tree-empty? (tree-ref u 1)) u)
+               (db-previous-empty-entry u)))))
+
+(define (db-first-empty-field t)
+  (and-with res (tree-search-upwards t db-resource?)
+    (cond ((tree-empty? (tree-ref res 2))
+           (tree-ref res 2))
+          ((> (tree-arity (tree-ref res 3)) 0)
+           (with e (tree-ref res 3 0)
+             (with f (if (and (db-entry-any? e)
+                              (tree-empty? (tree-ref e 1)))
+                         e (db-next-empty-entry e))
+               (and f (tree-ref f 1)))))
+          (else #f))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Handling of alternative fields
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (get-alternatives l prop)
+  (cond ((func? l 'and)
+         (list-or (map (cut get-alternatives <> prop) (cdr l))))
+        ((func? l 'or)
+         (and (in? prop (cdr l)) (cdr l)))
+        (else #f)))
+
+(tm-define (db-format-alternatives type prop)
+  (set! type (tm->string type))
+  (set! prop (tm->string prop))
+  (and-with l (smart-ref db-format-table type)
+    (get-alternatives l prop)))
+
+(tm-define (db-alternative-fields t)
+  (and (db-entry-alternative? t)
+       (and-with res (tree-search-upwards t db-resource?)
+         (and-with l (db-format-alternatives (tree-ref res 1) (tree-ref t 0))
+           (with r (map (cut db-resource-ref res <>) l)
+             (and (list-and r) (map tree-up r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Filling out entries
@@ -151,22 +234,30 @@
 
 (tm-define (kbd-enter t shift?)
   (:require (db-resource? t))
-  (db-complete-entries t))
-
-(define (db-next-entry t)
-  (with u (tm-ref t :next)
-    (and u (or (and (db-entry-any? u) u) (db-next-entry u)))))
-
-(define (db-previous-entry t)
-  (with u (tm-ref t :previous)
-    (and u (or (and (db-entry-any? u) u) (db-previous-entry u)))))
+  (with u (tree-ref t :down)
+    (if (and u (= (tree-index u) 2))
+        (if (tree-empty? u)
+            (set-message "Error: should fill out name for referencing"
+                         "db-resource")
+            (with d (tree-ref u :up 3)
+              (when (and (> (tm-arity d) 0) (db-entry-any? (tree-ref d 0)))
+                (tree-go-to d 0 1 :end))))
+        (db-complete-entries t))))
 
 (tm-define (kbd-enter t shift?)
   (:require (db-entry? t))
-  (if (tree-empty? (tree-ref t 1))
-      (set-message "Error: should fill out required field" "db-entry")
-      (with next (db-next-entry t)
-        (if next (tree-go-to next 1 :end)))))
+  (cond ((tree-empty? (tree-ref t 1))
+         (set-message "Error: should fill out required field" "db-entry"))
+        ((db-next-entry t)
+         (tree-go-to (db-next-entry t) 1 :end))
+        ((db-first-empty-field t)
+         (tree-go-to (db-first-empty-field t) :end))
+        ((not (db-complete-entries? t))
+         (and-with res (tree-search-upwards t db-resource?)
+           (db-complete-entries res)
+           (and-with e (db-first-empty-field res)
+             (tree-go-to e :end))))
+        (else (display* "Resource complete!\n"))))
 
 (tm-define (kbd-enter t shift?)
   (:require (db-entry-optional? t))
@@ -180,3 +271,24 @@
       (with next (db-next-entry t)
         (tree-assign-node t 'db-entry)
         (if next (tree-go-to next 1 :end)))))
+
+(tm-define (kbd-enter t shift?)
+  (:require (db-entry-alternative? t))
+  (let* ((alts (or (db-alternative-fields t) (list)))
+         (pred? (lambda (e) (not (tree-empty? (tree-ref e 1)))))
+         (ok (list-filter alts pred?)))
+    (cond ((null? ok)
+           (set-message "Error: one of the alternatives should be filled out"
+                        "db-entry-alternative"))
+          ((> (length ok) 1)
+           (set-message "Error: only one alternatives should be filled out"
+                        "db-entry-alternative"))
+          (else
+            (with a (car ok)
+              (tree-go-to a 1 :end)
+              (tree-assign-node! a 'db-entry)
+              (for (e alts)
+                (when (db-entry-alternative? e)
+                  (tree-remove (tree-ref e :up) (tree-index e) 1)))
+              (with next (db-next-entry a)
+                (if next (tree-go-to next 1 :end))))))))

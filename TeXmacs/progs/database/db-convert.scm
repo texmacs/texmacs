@@ -19,12 +19,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-import-post t)
-  (rename-resource t (list (cons "mtype" "type")
-                           (cons "mname" "name"))))
+  (db-resource-rename t (list (cons "mtype" "type")
+                              (cons "mname" "name"))))
 
 (tm-define (db-export-pre t)
-  (rename-resource t (list (cons "type" "mtype")
-                           (cons "name" "mname"))))
+  (db-resource-rename t (list (cons "type" "mtype")
+                              (cons "name" "mname"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing databases
@@ -45,8 +45,8 @@
          (name (assoc-ref l "name")))
     (set! type (if (pair? type) (car type) "?"))
     (set! name (if (pair? name) (car name) "?"))
-    (assoc-remove! l "type")
-    (assoc-remove! l "name")
+    (set! l (assoc-remove! l "type"))
+    (set! l (assoc-remove! l "name"))
     (set! l (db-import-entries l))
     (db-import-post `(db-resource ,rid ,type ,name (document ,@l)))))
 
