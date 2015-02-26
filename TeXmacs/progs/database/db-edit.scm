@@ -238,6 +238,23 @@
              (and (list-and r) (map tree-up r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Creating new entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (outer-document t)
+  (or (and (tree-up t) (outer-document (tree-up t)))
+      (and (tree-up t) (tm-func? t 'document) t)))
+
+(tm-define (db-create-entry type)
+  (with doc (outer-document (cursor-tree))
+    (when doc
+      (with i (tree-index (tree-down doc))
+        (with res `(db-resource ,(create-unique-id) ,type "" (document))
+          (tree-insert! doc (+ i 1) (list res))
+          (tree-go-to doc (+ i 1) 2 :start)
+          (db-complete-entries (tree-ref doc (+ i 1))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The enter key in databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -254,7 +271,9 @@
 (tm-define (kbd-enter t shift?)
   (:require (db-resource? t))
   (with u (tree-ref t :down)
-    (cond ((and u (= (tree-index u) 2))
+    (cond ((tree-search-upwards t 'inactive)
+           (former t shift?))
+          ((and u (= (tree-index u) 2))
            (if (tree-empty? u)
                (set-message "Error: should fill out name for referencing"
                             "db-resource")
