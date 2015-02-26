@@ -20,6 +20,11 @@
 ;; Formats of bibliographic resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(smart-table db-kind-table
+  ("bib" ("article" "book" "booklet" "inbook" "incollection"
+          "inproceedings" "conference" "manual" "mastersthesis" "misc"
+          "phdthesis" "proceedings" "techreport" "unpublished")))
+
 (smart-table db-format-table
   ("article"
    (and "author" "title" "journal" "year"
@@ -172,9 +177,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define bib-types-list
-  (list "article" "book" "booklet" "inbook" "incollection"
-        "inproceedings" "conference" "manual" "mastersthesis" "misc"
-        "phdthesis" "proceedings" "techreport" "unpublished"))
+  (smart-ref db-kind-table "bib"))
 
 (tm-define (bib-import)
   (db-import-types bib-types-list))

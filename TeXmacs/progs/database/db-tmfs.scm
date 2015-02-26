@@ -21,11 +21,12 @@
   (with kind name ;; (tmfs-car name)
     (string-append "Database - " kind)))
 
-(define (get-db-entries name)
-  (with pref (get-preference (string-append name "-db"))
+(define (get-db-entries kind)
+  (let* ((pref (get-preference (string-append kind "-db")))
+         (types (or (smart-ref db-kind-table kind) (list))))
     (if (not (string-ends? pref ".tmdb")) (list)
         (with-database (system->url pref)
-          (cdr (db-import))))))
+          (cdr (db-import-types types))))))
 
 (tmfs-load-handler (db name)
   (let* ((kind name) ;; (tmfs-car name)

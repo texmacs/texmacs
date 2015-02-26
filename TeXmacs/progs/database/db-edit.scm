@@ -101,11 +101,11 @@
                                      (tm-children (tm-ref t 3)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Format for each type of resource
+;; Database kinds and formats of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(smart-table db-format-table
-  ("user" (and "full-name" "email")))
+(smart-table db-kind-table)
+(smart-table db-format-table)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Completing the entries of a resource with empty fields
