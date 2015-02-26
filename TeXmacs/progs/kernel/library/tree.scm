@@ -157,7 +157,9 @@
          (p (cDr c))
          (q (tree->path t)))
     (and (list? q)
-         (> (length p) (length q))
+         (if (tree-atomic? (cursor-tree))
+             (>= (length p) (length q))
+             (> (length p) (length q)))
          (== (sublist p 0 (length q)) q)
          (sublist c (length q) (length c)))))
 
