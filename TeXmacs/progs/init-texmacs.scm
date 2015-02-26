@@ -287,6 +287,11 @@
              latex-has-texmacs-style? latex-has-texmacs-package?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
+;(display "Booting database facilities\n")
+(lazy-menu (database bib-menu) bib-menu)
+(lazy-tmfs-handler (database db-tmfs) db)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+
 ;(display "Booting remote facilities\n")
 (lazy-menu (server server-menu) server-menu)
 (lazy-menu (client client-menu) client-menu remote-menu)

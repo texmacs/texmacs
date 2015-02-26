@@ -210,6 +210,7 @@
         ---
         (link scripts-preferences-menu))
     (-> "Tools"
+        ;;(toggle ("Bibliography tool" "bibliography tool"))
         (toggle ("Debugging tool" "debugging tool"))
         (toggle ("Linking tool" "linking tool"))
         (toggle ("Source macros tool" "source tool"))

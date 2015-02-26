@@ -120,6 +120,8 @@
   (in-tmweb% (style-has? "tmweb-style") in-tmdoc%)
   (in-mmxdoc% (style-has? "mmxdoc-style") in-tmdoc%)
   (in-manual% (not (url-rooted-tmfs? (current-buffer))) in-tmdoc%)
+  (in-database% (style-has? "database-style"))
+  (in-bib% (== (get-env "db-kind") "bib") in-database%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (in-screens% (inside? 'screens))
@@ -203,6 +205,7 @@
   (like-std% (has-look-and-feel? "std"))
   (simple-menus% (== (get-preference "detailed menus") "simple"))
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
+  (with-bibliography-tool% (== (get-preference "bibliography tool") "on"))
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))
   (with-developer-tool% (== (get-preference "developer tool") "on"))
   (with-linking-tool% (== (get-preference "linking tool") "on"))
