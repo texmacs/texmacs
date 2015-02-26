@@ -161,12 +161,12 @@
 
 (tm-define (db-complete-entries? t*)
   (and-with t (tree-search-upwards t* db-resource?)
-       (let* ((u (tm->stree t))
-              (fm (smart-ref db-format-table (tm-ref u 1)))
-              (c (tm-children (tm-ref u 3))))
-         (and fm
-              (not (tree-empty? (tm->tree (tm-ref u 2))))
-              (list-and (map db-complete-entry? (complete-entries c fm)))))))
+    (let* ((u (tm->stree t))
+           (fm (smart-ref db-format-table (tm-ref u 1)))
+           (c (tm-children (tm-ref u 3))))
+      (and fm
+           (not (tree-empty? (tm->tree (tm-ref u 2))))
+           (list-and (map db-complete-entry? (complete-entries c fm)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Finding subsequent entries
@@ -192,9 +192,18 @@
     (and u (or (and (db-entry-any? u) (tree-empty? (tree-ref u 1)) u)
                (db-previous-empty-entry u)))))
 
-(define (db-first-empty-field t)
+(define (db-first-field t all?)
   (and-with res (tree-search-upwards t db-resource?)
-    (cond ((tree-empty? (tree-ref res 2))
+    (if all?
+        (tree-ref t 2)
+        (and (> (tree-arity (tree-ref res 3)) 0)
+             (with e (tree-ref res 3 0)
+               (with f (if (db-entry-any? e) e (db-next-entry e))
+                 (and f (tree-ref f 1))))))))
+
+(define (db-first-empty-field t all?)
+  (and-with res (tree-search-upwards t db-resource?)
+    (cond ((and all? (tree-empty? (tree-ref res 2)))
            (tree-ref res 2))
           ((> (tree-arity (tree-ref res 3)) 0)
            (with e (tree-ref res 3 0)
@@ -229,20 +238,30 @@
              (and (list-and r) (map tree-up r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Filling out entries
+;; The enter key in databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (keep-completing t)
+  (cond ((db-first-empty-field t #t)
+         (tree-go-to (db-first-empty-field t #t) :end))
+        ((not (db-complete-entries? t))
+         (and-with res (tree-search-upwards t db-resource?)
+           (db-complete-entries res)
+           (and-with e (db-first-empty-field res #t)
+             (tree-go-to e :end))))
+        (else (display* "Resource complete!\n"))))
 
 (tm-define (kbd-enter t shift?)
   (:require (db-resource? t))
   (with u (tree-ref t :down)
-    (if (and u (= (tree-index u) 2))
-        (if (tree-empty? u)
-            (set-message "Error: should fill out name for referencing"
-                         "db-resource")
-            (with d (tree-ref u :up 3)
-              (when (and (> (tm-arity d) 0) (db-entry-any? (tree-ref d 0)))
-                (tree-go-to d 0 1 :end))))
-        (db-complete-entries t))))
+    (cond ((and u (= (tree-index u) 2))
+           (if (tree-empty? u)
+               (set-message "Error: should fill out name for referencing"
+                            "db-resource")
+               (with d (tree-ref u :up 3)
+                 (when (and (> (tm-arity d) 0) (db-entry-any? (tree-ref d 0)))
+                   (tree-go-to d 0 1 :end)))))
+          (else (keep-completing t)))))
 
 (tm-define (kbd-enter t shift?)
   (:require (db-entry? t))
@@ -250,14 +269,7 @@
          (set-message "Error: should fill out required field" "db-entry"))
         ((db-next-entry t)
          (tree-go-to (db-next-entry t) 1 :end))
-        ((db-first-empty-field t)
-         (tree-go-to (db-first-empty-field t) :end))
-        ((not (db-complete-entries? t))
-         (and-with res (tree-search-upwards t db-resource?)
-           (db-complete-entries res)
-           (and-with e (db-first-empty-field res)
-             (tree-go-to e :end))))
-        (else (display* "Resource complete!\n"))))
+        (else (keep-completing t))))
 
 (tm-define (kbd-enter t shift?)
   (:require (db-entry-optional? t))
@@ -292,3 +304,45 @@
                   (tree-remove (tree-ref e :up) (tree-index e) 1)))
               (with next (db-next-entry a)
                 (if next (tree-go-to next 1 :end))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The delete keys in databases
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-remove t forwards?)
+  (:require (db-resource? t))
+  (cond ((and (cursor-inside? (tree-ref t 2))
+              (tree-empty? (tree-ref t 2))
+              (tree-empty? (tree-ref t 3)))
+         (tree-cut t))
+        ((and (tree-at-start? (tree-ref t 2)) (not forwards?))
+         (tree-go-to t :start))
+        ((and (tree-at-end? (tree-ref t 2)) forwards?)
+         (with f (db-first-field t #f)
+           (if f (tree-go-to f :start) (tree-go-to t :end))))
+        ((cursor-inside? (tree-ref t 2))
+         (former t forwards?))
+        ((and (not (db-entry-any? (cursor-tree)))
+              (with-innermost u db-entry-any? u))
+         (former t forwards?))
+        ((not forwards?) (kbd-left))
+        (forwards? (kbd-right))))
+
+(tm-define (kbd-remove t forwards?)
+  (:require (db-entry-any? t))
+  (cond ((and (cursor-inside? (tree-ref t 1)) (tree-empty? (tree-ref t 1)))
+         (let* ((next (if forwards? (db-next-entry t) (db-previous-entry t)))
+                (res (tree-search-upwards t 'db-resource)))
+           (cond (next
+                  (tree-go-to next 1 (if forwards? :start :end)))
+                 ((and (not forwards?) res)
+                  (tree-go-to res 2 :end))
+                 ((and forwards? res)
+                  (tree-go-to res 1)))
+           (tree-remove (tree-up t) (tree-index t) 1)))
+        ((and (tree-at-start? (tree-ref t 1)) (not forwards?))
+         (tree-go-to t :start))
+        ((and (tree-at-end? (tree-ref t 1)) forwards?)
+         (tree-go-to t :end))
+        (else (former t forwards?))))
+
