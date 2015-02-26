@@ -28,16 +28,18 @@
   (get-preference "bib-db"))
 
 (define (set-bib-db val)
-  (set-preference "bib-db" val)
-  (refresh-now "bib-db-preference"))
+  (when (string? val)
+    (set-preference "bib-db" val)
+    (refresh-now "bib-db-preference")))
 
 (define (get-bib-db-short)
   (with full (system->url (get-bib-db))
     (url->system (url-tail full))))
 
 (define (set-bib-db-short val)
-  (with full (system->url (get-bib-db))
-    (set-bib-db (url->system (url-relative full (system->url val))))))
+  (when (string? val)
+    (with full (system->url (get-bib-db))
+      (set-bib-db (url->system (url-relative full (system->url val)))))))
 
 (tm-define (url-bib-db)
   (system->url (get-bib-db)))
