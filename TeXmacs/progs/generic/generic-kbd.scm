@@ -226,7 +226,8 @@
   ;; standard Emacs shortcuts
   ("emacs a" (kbd-start-line))
   ("emacs b" (kbd-left))
-  ("emacs d" (remove-text #t))
+  ;;("emacs d" (remove-text #t))
+  ("emacs d" (kbd-delete))
   ("emacs e" (kbd-end-line))
   ("emacs f" (kbd-right))
   ("emacs g" (selection-cancel))
