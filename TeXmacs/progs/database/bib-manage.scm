@@ -18,6 +18,37 @@
 ;; Importing BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define bib-master
+  (string->url "$TEXMACS_HOME_PATH/system/bib-cache/bib-master.tmdb"))
+
+(define (bib-cache-rid f)
+  (with-database bib-master
+    (let* ((s (url->system f))
+           (l (db-search (list (list "source" s)))))
+      (and (== (length l) 1) (car l)))))
+
+(define (bib-cache-stamp f)
+  (and-with rid (bib-cache-rid f)
+    (with-database bib-master
+      (db-get rid "stamp"))))
+
+(define (bib-cache-db f)
+  (and-with rid (bib-cache-rid f)
+    (with-database bib-master
+      (db-get rid "target"))))
+
+(define (bib-cache-up-to-date? f)
+  (and-with stamp (bib-cache-stamp f)
+    (and (url-exists? f)
+         (== (number->string (url-last-modified f)) stamp))))
+
+(define (bib-cache-remove f)
+  (and-with rid (bib-cache-rid f)
+    (and-with db (bib-cache-db f)
+      (system-remove db)
+      (with-database bib-master
+        (db-reset-all rid)))))
+
 (tm-define (bib-import-bibtex f)
   (let* ((bib-doc (string-load f))
          (tm-doc (convert bib-doc "bibtex-document" "texmacs-document"))

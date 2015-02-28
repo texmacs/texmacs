@@ -57,6 +57,9 @@
 (tm-define (db-reset rid attr)
   (db-sql "DELETE FROM props WHERE rid='" rid "' AND attr='" attr "'"))
 
+(tm-define (db-reset-all rid)
+  (db-sql "DELETE FROM props WHERE rid='" rid "'"))
+
 (tm-define (db-attributes rid)
   (db-sql* "SELECT DISTINCT attr FROM props WHERE rid='" rid "'"))
 
