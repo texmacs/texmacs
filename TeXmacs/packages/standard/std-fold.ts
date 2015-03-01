@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std>>
 
@@ -557,6 +557,12 @@
     <hidden|<set-part|<arg|id>|<if|<sectional-short-style>|<arg|active>|<arg|inactive>>>>
   </macro>>
 
+  <assign|hide-para|<\macro|body>
+    <hidden|<arg|body>>
+  </macro>>
+
+  <assign|blank-line|<macro|>>
+
   <drd-props|show-preamble|border|no>
 
   <drd-props|hide-preamble|border|no>
@@ -564,6 +570,8 @@
   <drd-props|show-part|border|no>
 
   <drd-props|hide-part|border|no|arity|3|hidden|1>
+
+  <drd-props|hide-para|border|no>
 
   <\active*>
     <\src-comment>

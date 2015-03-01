@@ -50,8 +50,6 @@
 
   <drd-props|pre-edit|arity|1|border|no>
 
-  <assign|hide-para|<macro|body|<ignore|<arg|body>>>>
-
   <\active*>
     <\src-comment>
       Size tags (very-small: scriptsize, smaller: footnotesize, larger:
