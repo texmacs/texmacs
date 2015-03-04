@@ -66,6 +66,7 @@
 ("american" "amerikanisch")
 ("and" "und")
 ("angular" "spitze Klammern")
+("answer" "Antwort")
 ("appendix" "Anhang")
 ("apply" "anwenden")
 ("april" "April")

@@ -62,6 +62,7 @@
 ("alpha release" "versión alfa")
 ("alt key" "tecla alt")
 ("and" "y")
+("answer" "respuesta")
 ("appendix" "apéndice")
 ("apply" "aplicar")
 ("april" "abril")
