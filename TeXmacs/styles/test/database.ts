@@ -97,28 +97,14 @@
     </src-comment>
   </active*>
 
-  <assign|bib-name|<macro|f|v|l|j|<if|<unequal|<length|<arg|f>>|0>|<arg|f>
-  ><if|<unequal|<length|<arg|v>>|0>|<arg|><with|color|dark
-  grey|font-shape|small-caps|<arg|v>> ><with|font-shape|small-caps|<arg|l>><if|<unequal|<length|<arg|j>>|0>|,
-  <arg|><with|font-shape|italic|<arg|j>> >>>
+  <assign|name-sep|<macro|<with|color|dark green|font-series|bold|
+  <localize|and> >>>
 
-  <assign|bib-name-extra|<macro|x| <with|color|dark green|<strong|and>>
-  <arg|x>>>
+  <assign|name-von|<macro|von|<with|font-shape|small-caps|color|dark
+  grey|<arg|von>>>>
 
-  <assign|bib-names|<xmacro|args|<style-with|src-compact|none|<arg|args|0><map-args|bib-name-extra|concat|args|1>>>>
-
-  <assign|bib-pages-extra|<macro|x|<with|color|dark
-  green|<space|0.5spc><strong|--><space|0.5spc>><arg|x>>>
-
-  <assign|bib-pages|<xmacro|args|<style-with|src-compact|none|<arg|args|0><map-args|bib-pages-extra|concat|args|1>>>>
-
-  <assign|keepcase|<macro|x|<underline|<arg|x>>>>
-
-  <assign|first-last|<macro|x|<extern|ext-first-last|<arg|x>>>>
-
-  <drd-props|first-last|arity|1|accessible|0>
-
-  \;
+  <assign|name-jr|<macro|jr|<with|font-shape|small-caps|color|dark
+  grey|<arg|jr>>>>
 </body>
 
 <\initial>

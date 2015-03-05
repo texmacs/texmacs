@@ -357,4 +357,3 @@
         ((and (tree-at-end? (tree-ref t 1)) forwards?)
          (tree-go-to t :end))
         (else (former t forwards?))))
-
