@@ -156,6 +156,53 @@
 ;; Conversion of native BibTeX documents and hook when exporting databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (bib-db-unmacro t)
+  (cond ((tm-atomic? t) (tm->string t))
+        ((tm-func? t 'keepcase 1)
+         (bib-db-unmacro (tm-ref t 0)))
+        ((tm-func? t 'bib-names)
+         (let* ((l (map bib-db-unmacro (tm-children t)))
+                (r (list-intersperse l " and ")))
+           (apply tmconcat r)))
+        ((tm-func? t 'bib-pages)
+         (let* ((l (map bib-db-unmacro (tm-children t)))
+                (r (list-intersperse l "--")))
+           (apply tmconcat r)))
+        ((tm-func? t 'concat)
+         (with l (map bib-db-unmacro (tm-children t))
+           (apply tmconcat l)))
+        (else
+          (cons (tm-label t) (map bib-db-unmacro (tm-children t))))))
+
+(define (bib-db-locase t first?)
+  (cond ((tm-atomic? t)
+         (with r (locase-all (tm->string t))
+           (if first? (upcase-first r) r)))
+        ((tm-func? t 'keepcase 1) t)
+        (else
+          (with l (tm-children t)
+            (if (null? l) t
+                (cons* (tm-label t)
+                       (bib-db-locase (car l) first?)
+                       (map (cut bib-db-locase <> #f) (cdr l))))))))
+
+(define (bib-db-sub-sub type var val)
+  (cond ((and (== var "title")
+              (in? type '("article" "booklet" "incollection" "inproceedings"
+                          "masterthesis" "misc" "phd-thesis" "techreport"
+                          "unpublished")))
+         (bib-db-locase val #t))
+        ((or (== var "type") (== var "mtype"))
+         (bib-db-locase val #f))
+        (else val)))
+
+(define (bib-db-sub t type)
+  (cond ((tm-func? t 'bib-field 2)
+         (let* ((var (tm-ref t 0))
+                (val (tm-ref t 1)))
+           `(db-entry ,var ,(bib-db-unmacro (bib-db-sub-sub type var val)))))
+        (else t)))
+
 (tm-define (bib->db t)
   (cond ((and (tm-func? t 'bib-entry 3)
               (tm-func? (tm-ref t 2) 'document))
@@ -163,11 +210,9 @@
                 (type (tm->string (tm-ref t 0)))
                 (type* (if (== type "conference") "inproceedings" type))
                 (name (tm-ref t 1))
-                (l (map bib->db (tm-children (tm-ref t 2)))))
+                (l (map (cut bib-db-sub <> type*)
+                        (tm-children (tm-ref t 2)))))
            `(db-resource ,id ,type* ,name (document ,@l))))
-        ((tm-func? t 'bib-field 2)
-         ;;`(db-entry ,(tm-ref t 0) ,(serialize-bibtex-arg (tm-ref t 1))))
-         `(db-entry ,(tm-ref t 0) ,(tm-ref t 1)))
         (else t)))
 
 (tm-define (db-export-pre t)
