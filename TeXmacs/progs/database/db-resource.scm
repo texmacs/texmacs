@@ -236,6 +236,7 @@
 (smart-table db-format-table)
 
 (tm-define (db-encode-entry type var val)
+  ;;(display* "  Encode " val "\n")
   (cond ((in? var (db-reserved-attributes)) val)
         ((smart-ref db-format-table type)
          (convert val "texmacs-stree" "texmacs-snippet"))
@@ -243,6 +244,7 @@
         (else "")))
 
 (tm-define (db-decode-entry type var val)
+  ;;(display* "  Decode " val "\n")
   (cond ((in? var (db-reserved-attributes)) val)
         ((smart-ref db-format-table type)
          (with r (convert val "texmacs-snippet" "texmacs-stree")
@@ -250,16 +252,20 @@
         (else val)))
 
 (tm-define (db-encode-entries l)
+  ;;(display* "  Encoding entries " l "\n")
   (with type (assoc-ref l "type")
     (set! type (and (pair? type) (car type)))
+    ;;(display* "    type= " type "\n")
     (with cv (lambda (f)
                (cons (car f)
                      (map (cut db-encode-entry type (car f) <>) (cdr f))))
       (if type (map cv l) l))))
 
 (tm-define (db-decode-entries l)
+  ;;(display* "  Decoding entries " l "\n")
   (with type (assoc-ref l "type")
     (set! type (and (pair? type) (car type)))
+    ;;(display* "    type= " type "\n")
     (with cv (lambda (f)
                (cons (car f)
                      (map (cut db-decode-entry type (car f) <>) (cdr f))))
