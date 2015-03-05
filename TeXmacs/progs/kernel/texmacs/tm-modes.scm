@@ -121,7 +121,7 @@
   (in-mmxdoc% (style-has? "mmxdoc-style") in-tmdoc%)
   (in-manual% (not (url-rooted-tmfs? (current-buffer))) in-tmdoc%)
   (in-database% (style-has? "database-style"))
-  (in-bib% (== (get-env "db-kind") "bib") in-database%)
+  (in-bib% (style-has? "database-bib-style") in-database%)
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (in-screens% (inside? 'screens))

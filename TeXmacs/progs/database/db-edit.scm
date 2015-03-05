@@ -32,6 +32,11 @@
       (tm-func? t 'db-entry-optional 2)
       (tm-func? t 'db-entry-alternative 2)))
 
+(tm-define (inside-db-entry? which)
+  (and-with t (tree-search-upwards (cursor-tree) db-entry-any?)
+    (and (tm-equal? (tm-ref t 0) which)
+         (cursor-inside? (tm-ref t 1)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions for database markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

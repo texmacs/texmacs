@@ -34,6 +34,5 @@
          (l* (if (null? l) (list "") l)))
     `(document
        (TeXmacs ,(texmacs-version))
-       (style (tuple "database"))
-       (init (collection (associate "db-kind" ,kind)))
+       (style (tuple ,(string-append "database-" kind)))
        (body (document ,@l*)))))

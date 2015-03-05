@@ -90,21 +90,6 @@
   <drd-props|db-entry-optional|arity|2|unaccessible|0|accessible|1>
 
   <drd-props|db-entry-alternative|arity|2|unaccessible|0|accessible|1>
-
-  <\active*>
-    <\src-comment>
-      Markup for bibliography fields.
-    </src-comment>
-  </active*>
-
-  <assign|name-sep|<macro|<with|color|dark green|font-series|bold|
-  <localize|and> >>>
-
-  <assign|name-von|<macro|von|<with|font-shape|small-caps|color|dark
-  grey|<arg|von>>>>
-
-  <assign|name-jr|<macro|jr|<with|font-shape|small-caps|color|dark
-  grey|<arg|jr>>>>
 </body>
 
 <\initial>

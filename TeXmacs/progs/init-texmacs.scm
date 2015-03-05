@@ -290,6 +290,7 @@
 ;(display "Booting database facilities\n")
 (lazy-menu (database bib-menu) bib-menu)
 (lazy-tmfs-handler (database db-tmfs) db)
+(lazy-keyboard (database bib-kbd) in-bib?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
