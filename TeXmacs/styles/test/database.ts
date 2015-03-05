@@ -61,11 +61,11 @@
 
   <\active*>
     <\src-comment>
-      Individual entries for a resource.
+      Individual fields for a resource.
     </src-comment>
   </active*>
 
-  <assign|db-entry-env|<\macro|ctype|cval|type|val>
+  <assign|db-field-env|<\macro|ctype|cval|type|val>
     <\surround||<right-flush>>
       <tabular|<tformat|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|-1|2|2|cell-hyphen|t>|<cwith|1|-1|1|1|cell-width|10em>|<cwith|1|-1|1|1|cell-hmode|exact>|<cwith|1|-1|1|1|cell-lsep|1.5em>|<cwith|1|-1|2|2|cell-rsep|0em>|<cwith|1|-1|2|2|cell-hpart|1>|<table|<row|<cell|<with|color|<arg|ctype>|<strong|<copy|<change-case|<arg|type>|Upcase>>>>>|<\cell>
         <with|color|<arg|cval>|<arg|val>>
@@ -73,23 +73,23 @@
     </surround>
   </macro>>
 
-  <assign|db-entry|<\macro|type|val>
-    <db-entry-env|dark blue|black|<arg|type>|<arg|val>>
+  <assign|db-field|<\macro|type|val>
+    <db-field-env|dark blue|black|<arg|type>|<arg|val>>
   </macro>>
 
-  <assign|db-entry-optional|<\macro|type|val>
-    <db-entry-env|#6060c0|#808080|<arg|type>|<arg|val>>
+  <assign|db-field-optional|<\macro|type|val>
+    <db-field-env|#6060c0|#808080|<arg|type>|<arg|val>>
   </macro>>
 
-  <assign|db-entry-alternative|<\macro|type|val>
-    <db-entry-env|dark green|black|<arg|type>|<arg|val>>
+  <assign|db-field-alternative|<\macro|type|val>
+    <db-field-env|dark green|black|<arg|type>|<arg|val>>
   </macro>>
 
-  <drd-props|db-entry|arity|2|unaccessible|0|accessible|1>
+  <drd-props|db-field|arity|2|unaccessible|0|accessible|1>
 
-  <drd-props|db-entry-optional|arity|2|unaccessible|0|accessible|1>
+  <drd-props|db-field-optional|arity|2|unaccessible|0|accessible|1>
 
-  <drd-props|db-entry-alternative|arity|2|unaccessible|0|accessible|1>
+  <drd-props|db-field-alternative|arity|2|unaccessible|0|accessible|1>
 </body>
 
 <\initial>

@@ -16,7 +16,7 @@
         (database bib-db)))
 
 (texmacs-modes
-  (in-bib-names% (or (inside-db-entry? "author") (inside-db-entry? "editor"))
+  (in-bib-names% (or (inside-db-field? "author") (inside-db-field? "editor"))
                  in-bib%))
 
 (define (make-name-sep)

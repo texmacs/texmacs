@@ -30,14 +30,14 @@
 ;; Importing databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-import-entries l)
+(define (db-import-fields l)
   ;; TODO: take into account string encodings
   (cond ((null? l) l)
         ((or (nlist? (car l)) (<= (length (car l)) 1))
-         (db-import-entries (cdr l)))
-        (else (cons `(db-entry ,(caar l) ,(cadar l))
-                    (db-import-entries (cons (cons (caar l) (cddar l))
-                                             (cdr l)))))))
+         (db-import-fields (cdr l)))
+        (else (cons `(db-field ,(caar l) ,(cadar l))
+                    (db-import-fields (cons (cons (caar l) (cddar l))
+                                            (cdr l)))))))
 
 (tm-define (db-import-resource rid)
   (let* ((l (db-get-all-decoded rid))
@@ -48,7 +48,7 @@
     (set! name (if (pair? name) (car name) "?"))
     (set! l (assoc-remove! l "type"))
     (set! l (assoc-remove! l "name"))
-    (set! l (db-import-entries l))
+    (set! l (db-import-fields l))
     (db-import-post `(db-resource ,rid ,type ,name (document ,@l)))))
 
 (tm-define (db-import-type type)
@@ -69,8 +69,8 @@
 ;; Exporting databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-export-entry t)
-  (if (tm-func? t 'db-entry 2)
+(define (db-export-field t)
+  (if (tm-func? t 'db-field 2)
       (list (tm-children t))
       (list)))
 
@@ -80,7 +80,7 @@
     (let* ((rid (tm-ref t 0))
            (type (tm-ref t 1))
            (name (tm-ref t 2))
-           (pairs (append-map db-export-entry (tm-children (tm-ref t 3))))
+           (pairs (append-map db-export-field (tm-children (tm-ref t 3))))
            (all (cons* (list "type" type) (list "name" name) pairs)))
       ;;(display* "Export " rid " -> " all "\n")
       (db-set rid "type" (list type))
@@ -89,7 +89,7 @@
 (tm-define (db-export-selected t pred?)
   (cond ((tm-func? t 'document)
          (for-each (cut db-export-selected <> pred?) (tm-children t)))
-        ((or (tm-func? t 'db-resource 4) (tm-func? t 'bib-entry 3))
+        ((or (tm-func? t 'db-resource 4) (tm-func? t 'bib-field 3))
          (db-export-selected-resource (tm->stree t) pred?))
         ((and (tree? t) (tm-compound? t))
          (for-each (cut db-export-selected <> pred?)

@@ -209,11 +209,11 @@
   (cond ((tm-func? t 'bib-field 2)
          (let* ((var (tm-ref t 0))
                 (val (tm-ref t 1)))
-           `(db-entry ,var ,(bib-db-unmacro (bib-db-sub-sub type var val)))))
+           `(db-field ,var ,(bib-db-unmacro (bib-db-sub-sub type var val)))))
         (else t)))
 
 (tm-define (bib->db t)
-  (cond ((and (tm-func? t 'bib-entry 3)
+  (cond ((and (tm-func? t 'bib-field 3)
               (tm-func? (tm-ref t 2) 'document))
          (let* ((id (create-unique-id))
                 (type (tm->string (tm-ref t 0)))

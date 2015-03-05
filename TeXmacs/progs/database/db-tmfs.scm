@@ -21,7 +21,7 @@
   (with kind name ;; (tmfs-car name)
     (string-append "Database - " kind)))
 
-(define (get-db-entries kind)
+(define (get-db-fields kind)
   (let* ((pref (get-preference (string-append kind "-db")))
          (types (or (smart-ref db-kind-table kind) (list))))
     (if (not (string-ends? pref ".tmdb")) (list)
@@ -30,7 +30,7 @@
 
 (tmfs-load-handler (db name)
   (let* ((kind name) ;; (tmfs-car name)
-         (l (get-db-entries name))
+         (l (get-db-fields name))
          (l* (if (null? l) (list "") l)))
     `(document
        (TeXmacs ,(texmacs-version))
