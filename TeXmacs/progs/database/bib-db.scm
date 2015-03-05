@@ -166,7 +166,8 @@
                 (l (map bib->db (tm-children (tm-ref t 2)))))
            `(db-resource ,id ,type* ,name (document ,@l))))
         ((tm-func? t 'bib-field 2)
-         `(db-entry ,(tm-ref t 0) ,(serialize-bibtex-arg (tm-ref t 1))))
+         ;;`(db-entry ,(tm-ref t 0) ,(serialize-bibtex-arg (tm-ref t 1))))
+         `(db-entry ,(tm-ref t 0) ,(tm-ref t 1)))
         (else t)))
 
 (tm-define (db-export-pre t)

@@ -43,6 +43,7 @@
   (let* ((l (db-get-all-decoded rid))
          (type (assoc-ref l "type"))
          (name (assoc-ref l "name")))
+    ;;(display* "Import " rid " -> " l "\n")
     (set! type (if (pair? type) (car type) "?"))
     (set! name (if (pair? name) (car name) "?"))
     (set! l (assoc-remove! l "type"))
@@ -81,7 +82,8 @@
            (name (tm-ref t 2))
            (pairs (append-map db-export-entry (tm-children (tm-ref t 3))))
            (all (cons* (list "type" type) (list "name" name) pairs)))
-      ;;(display* rid " -> " all "\n")
+      ;;(display* "Export " rid " -> " all "\n")
+      (db-set rid "type" (list type))
       (db-set-all-encoded rid all))))
 
 (tm-define (db-export-selected t pred?)
