@@ -220,3 +220,13 @@
 (tm-define (db-set-all-encoded rid props)
   (with raw-props (db-properties-encode props)
     (db-set-all rid raw-props)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Database kinds and formats of resources
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table db-kind-table)
+(smart-table db-format-table)
+
+(tm-define (db-encode-entry type var val) val)
+(tm-define (db-decode-entry type var val) val)
