@@ -18,8 +18,10 @@
 ;; Importing BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define bib-dir "$TEXMACS_HOME_PATH/system/bib-cache")
-(define bib-master (string-append bib-dir "/bib-master.tmdb"))
+;;(define bib-dir "$TEXMACS_HOME_PATH/system/bib-cache")
+;;(define bib-master (string-append bib-dir "/bib-master.tmdb"))
+(define bib-dir "~/bibtest")
+(define bib-master (url->url (string-append bib-dir "/bib-master.tmdb")))
 
 (define (bib-cache-rid f)
   (with-database bib-master
@@ -35,7 +37,7 @@
 (define (bib-cache-db f)
   (and-with rid (bib-cache-rid f)
     (with-database bib-master
-      (db-get-first rid "target" #f))))
+      (system->url (db-get-first rid "target" #f)))))
 
 (define (bib-cache-up-to-date? f)
   (and-with stamp (bib-cache-stamp f)
@@ -51,16 +53,17 @@
 
 (define (bib-cache-create f)
   (let* ((bib-doc (string-load f))
-         (tm-doc (convert bib-doc "bibtex-document" "texmacs-document"))
+         (tm-doc (convert bib-doc "bibtex-document" "texmacs-stree"))
          (body (tmfile-extract tm-doc 'body))
          (rid (create-unique-id))
          (db (string-append bib-dir "/" rid ".tmdb")))
-    (with-database db
-      (bib-export body))
-    (with-database bib-master
-      (db-insert rid "source" f)
-      (db-insert rid "target" db)
-      (db-insert rid "stamp" (number->string (url-last-modified f))))))
+    (when body
+      (with-database db
+        (bib-export body))
+      (with-database bib-master
+        (db-insert rid "source" (url->system f))
+        (db-insert rid "target" (url->system db))
+        (db-insert rid "stamp" (number->string (url-last-modified f)))))))
 
 (tm-define (bib-import-bibtex f)
   (when (not (bib-cache-up-to-date? f))
@@ -68,6 +71,6 @@
   (when (not (bib-cache-rid f))
     (bib-cache-create f))
   (when (not (bib-cache-rid f))
-    (texmacs-error "failed to create bibliography database"
+    (texmacs-error "failed to create bibliographic database"
                    "bib-import-bibtex"))
   (bib-cache-rid f))

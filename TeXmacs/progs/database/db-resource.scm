@@ -26,12 +26,14 @@
   (when (url-none? current-database)
     (texmacs-error "db-init-database" "no database specified"))
   (when (not (url-exists? current-database))
+    (display* "Create " current-database "\n")
     (sql-exec current-database
               "CREATE TABLE props (rid text, attr text, val text)")))
 
 (tm-define (db-sql . l)
   (db-init-database)
   ;;(display* (apply string-append l) "\n")
+  (display* (url-tail current-database) "] " (apply string-append l) "\n")
   (sql-exec current-database (apply string-append l)))
 
 (tm-define (db-sql* . l)

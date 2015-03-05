@@ -81,7 +81,8 @@
            (name (tm-ref t 2))
            (pairs (append-map db-export-entry (tm-children (tm-ref t 3))))
            (all (cons* (list "type" type) (list "name" name) pairs)))
-      (display* rid " -> " all "\n"))))
+      ;;(display* rid " -> " all "\n")
+      (db-set-all-encoded rid all))))
 
 (tm-define (db-export-selected t pred?)
   (cond ((tm-func? t 'document)
