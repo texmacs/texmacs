@@ -2524,6 +2524,7 @@
   (hlink (,tmtex-hlink 2))
   (action (,tmtex-action -1))
   (href (,tmtex-href 1))
+  (slink (,tmtex-href 1))
   (choose (,tmtex-choose 2))
   ((:or strong em tt name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))
