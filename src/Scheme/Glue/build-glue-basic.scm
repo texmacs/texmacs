@@ -471,6 +471,7 @@
 
   ;; SQL interface
   (sql-exec sql_exec (scheme_tree url string))
+  (sql-quote sql_quote (string string))
 
   ;; TeXmacs servers and clients
   (server-start server_start (void))

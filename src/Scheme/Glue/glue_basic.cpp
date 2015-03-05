@@ -5528,6 +5528,19 @@ tmg_sql_exec (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_sql_quote (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "sql-quote");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= sql_quote (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_server_start () {
   // TMSCM_DEFER_INTS;
   server_start ();
@@ -8048,6 +8061,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("persistent-get",  tmg_persistent_get, 2, 0, 0);
   tmscm_install_procedure ("persistent-file-name",  tmg_persistent_file_name, 2, 0, 0);
   tmscm_install_procedure ("sql-exec",  tmg_sql_exec, 2, 0, 0);
+  tmscm_install_procedure ("sql-quote",  tmg_sql_quote, 1, 0, 0);
   tmscm_install_procedure ("server-start",  tmg_server_start, 0, 0, 0);
   tmscm_install_procedure ("server-stop",  tmg_server_stop, 0, 0, 0);
   tmscm_install_procedure ("server-read",  tmg_server_read, 1, 0, 0);
