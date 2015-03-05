@@ -98,6 +98,18 @@ sqlite3_present () {
 
 hashmap<tree,pointer> sqlite3_connections (NULL);
 
+string
+sql_escape (string s) {
+  //return cork_to_utf8 (s);
+  return s;
+}
+
+string
+sql_unescape (string s) {
+  //return utf_8_to_cork (s);
+  return s;
+}
+
 tree
 sql_exec (url db_name, string cmd) {
   if (!sqlite3_initialized)
@@ -121,7 +133,7 @@ sql_exec (url db_name, string cmd) {
   }
   tree ret (TUPLE);
   sqlite3* db= (sqlite3*) sqlite3_connections [name];
-  c_string _cmd (cork_to_utf8 (cmd));
+  c_string _cmd (sql_escape (cmd));
   char** tab;
   int rows, cols;
   char* err;
@@ -136,10 +148,14 @@ sql_exec (url db_name, string cmd) {
 
   for (int r=0; r<=rows; r++) {
     tree row (TUPLE);
+    //cout << "  Row " << r << LF;
     for (int c=0; c<cols; c++) {
       int i= r*cols + c;
       if (tab[i] == NULL) row << tree (TUPLE);
-      else row << tree (scm_quote (utf8_to_cork (string (tab[i]))));
+      else {
+        row << tree (scm_quote (sql_unescape (tab[i])));
+        //cout << "    Column " << c << ": " << tab[i] << LF;
+      }
     }
     ret << row;
   }
@@ -161,3 +177,19 @@ tree sql_exec (url db_name, string cmd) {
   (void) db_name; (void) cmd; return tree (TUPLE); }
 
 #endif // USE_SQLITE3
+
+/******************************************************************************
+* Other routines
+******************************************************************************/
+
+string
+sql_quote (string s) {
+  int i, n= N(s);
+  string r;
+  r << "'";
+  for (i=0; i<n; i++)
+    if (s[i] != '\'') r << s[i];
+    else r << "''";
+  r << "'";
+  return r;
+}

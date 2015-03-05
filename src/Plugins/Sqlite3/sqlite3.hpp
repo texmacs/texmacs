@@ -15,5 +15,6 @@
 
 bool sqlite3_present ();
 tree sql_exec (url db_name, string cmd);
+string sql_quote (string s);
 
 #endif // SQLITE3_H
