@@ -46,28 +46,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-insert rid attr val)
-  (db-sql "INSERT INTO props VALUES ('" rid "', '" attr "', '" val "')"))
+  (db-sql "INSERT INTO props VALUES (" (sql-quote rid)
+          ", " (sql-quote attr)
+          ", " (sql-quote val) ")"))
 
 (tm-define (db-remove rid attr val)
-  (db-sql "DELETE FROM props WHERE rid='" rid
-              "' AND attr='" attr "', AND val='" val "'"))
+  (db-sql "DELETE FROM props WHERE rid=" (sql-quote rid)
+          " AND attr=" (sql-quote attr)
+          ", AND val=" (sql-quote val)))
 
 (tm-define (db-set rid attr vals)
   (db-reset rid attr)
   (for-each (cut db-insert rid attr <>) vals))
 
 (tm-define (db-reset rid attr)
-  (db-sql "DELETE FROM props WHERE rid='" rid "' AND attr='" attr "'"))
+  (db-sql "DELETE FROM props WHERE rid=" (sql-quote rid)
+          " AND attr=" (sql-quote attr)))
 
 (tm-define (db-reset-all rid)
-  (db-sql "DELETE FROM props WHERE rid='" rid "'"))
+  (db-sql "DELETE FROM props WHERE rid=" (sql-quote rid)))
 
 (tm-define (db-attributes rid)
-  (db-sql* "SELECT DISTINCT attr FROM props WHERE rid='" rid "'"))
+  (db-sql* "SELECT DISTINCT attr FROM props WHERE rid=" (sql-quote rid)))
 
 (tm-define (db-get rid attr)
-  (db-sql* "SELECT DISTINCT val FROM props WHERE rid='" rid
-               "' AND attr='" attr "'"))
+  (db-sql* "SELECT DISTINCT val FROM props WHERE rid=" (sql-quote rid)
+           " AND attr=" (sql-quote attr)))
 
 (tm-define (db-get-first rid attr default)
   (with l (db-get rid attr)
@@ -96,8 +100,8 @@
   (with (attr val) (car l)
     (let* ((pi (string-append "p" (number->string i)))
            (srid (string-append pi ".rid=p1.rid"))
-           (sattr (string-append pi ".attr='" attr "'"))
-           (sval (string-append pi ".val='" val "'"))
+           (sattr (string-append pi ".attr=" (sql-quote attr)))
+           (sval (string-append pi ".val=" (sql-quote val)))
            (spair (string-append sattr " AND " sval))
            (q (if (= i 1) spair (string-append srid " AND " spair))))
       (if (null? (cdr l)) q
