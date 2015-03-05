@@ -215,11 +215,12 @@
 
 (tm-define (db-get-all-decoded rid)
   (with raw-props (sort (db-get-all rid) first-leq?)
-    (db-properties-decode raw-props)))
+    (db-decode-entries (db-properties-decode raw-props))))
 
-(tm-define (db-set-all-encoded rid props)
-  (with raw-props (db-properties-encode props)
-    (db-set-all rid raw-props)))
+(tm-define (db-set-all-encoded rid props*)
+  (with props (db-encode-entries props*)
+    (with raw-props (db-properties-encode props)
+      (db-set-all rid raw-props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Database kinds and formats of resources
@@ -228,5 +229,32 @@
 (smart-table db-kind-table)
 (smart-table db-format-table)
 
-(tm-define (db-encode-entry type var val) val)
-(tm-define (db-decode-entry type var val) val)
+(tm-define (db-encode-entry type var val)
+  (cond ((in? var (db-reserved-attributes)) val)
+        ((smart-ref db-format-table type)
+         (convert val "texmacs-stree" "texmacs-snippet"))
+        ((string? val) val)
+        (else "")))
+
+(tm-define (db-decode-entry type var val)
+  (cond ((in? var (db-reserved-attributes)) val)
+        ((smart-ref db-format-table type)
+         (with r (convert val "texmacs-snippet" "texmacs-stree")
+           (if (tm-func? r 'document 1) (tm-ref r 0) r)))
+        (else val)))
+
+(tm-define (db-encode-entries l)
+  (with type (assoc-ref l "type")
+    (set! type (and (pair? type) (car type)))
+    (with cv (lambda (f)
+               (cons (car f)
+                     (map (cut db-encode-entry type (car f) <>) (cdr f))))
+      (if type (map cv l) l))))
+
+(tm-define (db-decode-entries l)
+  (with type (assoc-ref l "type")
+    (set! type (and (pair? type) (car type)))
+    (with cv (lambda (f)
+               (cons (car f)
+                     (map (cut db-decode-entry type (car f) <>) (cdr f))))
+      (if type (map cv l) l))))
