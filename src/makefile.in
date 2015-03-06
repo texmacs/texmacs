@@ -328,7 +328,7 @@ $(plugins_obj): Objects/%.o: %.cpp
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(x11_incl) $(CXXX11))
+	$(call cxx_incl,$(x11_incl) $(CXXX11) $(CXXGUILE))
 $(os_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(os_incl))
 $(qt_obj): Objects/%.o: %.cpp
