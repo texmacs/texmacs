@@ -21,21 +21,21 @@
 (define bib-dir "$TEXMACS_HOME_PATH/system/database")
 (define bib-master (url->url (string-append bib-dir "/bib-master.tmdb")))
 
-(define (bib-cache-rid f)
+(define (bib-cache-id f)
   (with-database bib-master
     (let* ((s (url->system f))
            (l (db-search (list (list "source" s)))))
       (and (== (length l) 1) (car l)))))
 
 (define (bib-cache-stamp f)
-  (and-with rid (bib-cache-rid f)
+  (and-with id (bib-cache-id f)
     (with-database bib-master
-      (db-get-first rid "stamp" #f))))
+      (db-get-first id "stamp" #f))))
 
 (define (bib-cache-db f)
-  (and-with rid (bib-cache-rid f)
+  (and-with id (bib-cache-id f)
     (with-database bib-master
-      (system->url (db-get-first rid "target" #f)))))
+      (system->url (db-get-first id "target" #f)))))
 
 (define (bib-cache-up-to-date? f)
   (and-with stamp (bib-cache-stamp f)
@@ -43,32 +43,32 @@
          (== (number->string (url-last-modified f)) stamp))))
 
 (define (bib-cache-remove f)
-  (and-with rid (bib-cache-rid f)
+  (and-with id (bib-cache-id f)
     (and-with db (bib-cache-db f)
       (system-remove db)
       (with-database bib-master
-        (db-reset-all rid)))))
+        (db-reset-all id)))))
 
 (define (bib-cache-create f)
   (let* ((bib-doc (string-load f))
          (tm-doc (convert bib-doc "bibtex-document" "texmacs-stree"))
          (body (tmfile-extract tm-doc 'body))
-         (rid (create-unique-id))
-         (db (url->url (string-append bib-dir "/" rid ".tmdb"))))
+         (id (create-unique-id))
+         (db (url->url (string-append bib-dir "/" id ".tmdb"))))
     (when body
       (with-database db
         (bib-export body))
       (with-database bib-master
-        (db-insert rid "source" (url->system f))
-        (db-insert rid "target" (url->system db))
-        (db-insert rid "stamp" (number->string (url-last-modified f)))))))
+        (db-insert id "source" (url->system f))
+        (db-insert id "target" (url->system db))
+        (db-insert id "stamp" (number->string (url-last-modified f)))))))
 
 (tm-define (bib-import-bibtex f)
   (when (not (bib-cache-up-to-date? f))
     (bib-cache-remove f))
-  (when (not (bib-cache-rid f))
+  (when (not (bib-cache-id f))
     (bib-cache-create f))
-  (when (not (bib-cache-rid f))
+  (when (not (bib-cache-id f))
     (texmacs-error "failed to create bibliographic database"
                    "bib-import-bibtex"))
-  (bib-cache-rid f))
+  (bib-cache-id f))

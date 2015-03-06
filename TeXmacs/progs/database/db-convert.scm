@@ -19,11 +19,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-import-post t)
-  (db-resource-rename t (list (cons "mtype" "type")
+  (db-resource-rename t (list (cons "mid" "id")
+                              (cons "mtype" "type")
                               (cons "mname" "name"))))
 
 (tm-define (db-export-pre t)
-  (db-resource-rename t (list (cons "type" "mtype")
+  (db-resource-rename t (list (cons "id" "mid")
+                              (cons "type" "mtype")
                               (cons "name" "mname"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,17 +41,17 @@
                     (db-import-fields (cons (cons (caar l) (cddar l))
                                             (cdr l)))))))
 
-(tm-define (db-import-resource rid)
-  (let* ((l (db-get-all-decoded rid))
+(tm-define (db-import-resource id)
+  (let* ((l (db-get-all-decoded id))
          (type (assoc-ref l "type"))
          (name (assoc-ref l "name")))
-    ;;(display* "Import " rid " -> " l "\n")
+    ;;(display* "Import " id " -> " l "\n")
     (set! type (if (pair? type) (car type) "?"))
     (set! name (if (pair? name) (car name) "?"))
     (set! l (assoc-remove! l "type"))
     (set! l (assoc-remove! l "name"))
     (set! l (db-import-fields l))
-    (db-import-post `(db-resource ,rid ,type ,name (document ,@l)))))
+    (db-import-post `(db-resource ,id ,type ,name (document ,@l)))))
 
 (tm-define (db-import-type type)
   (let* ((l (db-search (list (list "type" type))))
@@ -77,14 +79,14 @@
 (tm-define (db-export-selected-resource t pred?)
   (set! t (db-export-pre t))
   (when (and (db-resource? t) (pred? (tm-ref t 1)))
-    (let* ((rid (tm-ref t 0))
+    (let* ((id (tm-ref t 0))
            (type (tm-ref t 1))
            (name (tm-ref t 2))
            (pairs (append-map db-export-field (tm-children (tm-ref t 3))))
            (all (cons* (list "type" type) (list "name" name) pairs)))
-      ;;(display* "Export " rid " -> " all "\n")
-      (db-set rid "type" (list type))
-      (db-set-all-encoded rid all))))
+      ;;(display* "Export " id " -> " all "\n")
+      (db-set id "type" (list type))
+      (db-set-all-encoded id all))))
 
 (tm-define (db-export-selected t pred?)
   (cond ((tm-func? t 'document)

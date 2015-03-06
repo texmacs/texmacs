@@ -50,7 +50,7 @@
 
 (tm-define (db-resource-ref t prop)
   (and (db-resource? t)
-       (cond ((== prop "rid") (tm-ref t 0))
+       (cond ((== prop "id") (tm-ref t 0))
              ((== prop "type") (tm-ref t 1))
              ((== prop "name") (tm-ref t 2))
              (else (db-field-find (tm-children (tm-ref t 3)) prop)))))
@@ -66,7 +66,7 @@
 (tm-define (db-resource-set t prop val)
   (and (db-resource? t)
        (with l (tm-children t)
-         (cond ((== prop "rid") `(db-resource ,val ,@(cdr l)))
+         (cond ((== prop "id") `(db-resource ,val ,@(cdr l)))
                ((== prop "type") `(db-resource ,(car l) ,val ,@(cddr l)))
                ((== prop "name")
                 `(db-resource ,(car l) ,(cadr l) ,val ,@(cdddr l)))
@@ -87,7 +87,7 @@
 
 (tm-define (db-resource-remove t prop)
   (and (db-resource? t)
-       (if (in? prop (list "rid" "type" "name"))
+       (if (in? prop (list "id" "type" "name"))
            t
            (with r (db-field-remove (tm-children (tm-ref t 3)) prop)
              `(db-resource ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
