@@ -18,9 +18,7 @@
 ;; Importing BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;(define bib-dir "$TEXMACS_HOME_PATH/system/bib-cache")
-;;(define bib-master (string-append bib-dir "/bib-master.tmdb"))
-(define bib-dir "~/bibtest")
+(define bib-dir "$TEXMACS_HOME_PATH/system/database")
 (define bib-master (url->url (string-append bib-dir "/bib-master.tmdb")))
 
 (define (bib-cache-rid f)
