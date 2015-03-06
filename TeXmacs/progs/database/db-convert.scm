@@ -89,7 +89,7 @@
 (tm-define (db-export-selected t pred?)
   (cond ((tm-func? t 'document)
          (for-each (cut db-export-selected <> pred?) (tm-children t)))
-        ((or (tm-func? t 'db-resource 4) (tm-func? t 'bib-field 3))
+        ((or (tm-func? t 'db-resource 4) (tm-func? t 'bib-entry 3))
          (db-export-selected-resource (tm->stree t) pred?))
         ((and (tree? t) (tm-compound? t))
          (for-each (cut db-export-selected <> pred?)
