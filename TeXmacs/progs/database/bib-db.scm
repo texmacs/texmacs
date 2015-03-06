@@ -153,7 +153,117 @@
         (optional "annote"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Conversion of native BibTeX documents and hook when exporting databases
+;; Conversion to native BibTeX documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (db-bib-keep-case s f?)
+  (if (or (== s (locase-all s))
+          (and f? (== s (upcase-first (locase-all s)))))
+      s `(keepcase ,s)))
+
+(define (db-bib-keep-case* s)
+  (db-bib-keep-case s #f))
+
+(define (db-bib-protect t f?)
+  (cond ((tm-atomic? t)
+         (let* ((l (string-decompose t " "))
+                (fl (list-filter l (lambda (s) (!= s ""))))
+                (nn? (nnull? fl))
+                (tail (map db-bib-keep-case* (if nn? (cdr fl) fl)))
+                (r (if f? (cons (db-bib-keep-case (car fl) f?) tail) tail)))
+           (apply tmconcat (list-intersperse r " "))))
+        (else
+          (with l (tm-children t)
+            (if (null? l) t
+                (cons* (tm-label t)
+                       (db-bib-protect (car l) f?)
+                       (map (cut db-bib-protect <> #f) (cdr l))))))))
+
+(define (db-bib-name t)
+  (let* ((c (if (tm-func? t 'concat) (tm-children t) (list t)))
+         (fi (list-find-index c (lambda (x)
+                                  (or (tm-func? x 'name 1)
+                                      (tm-func? x 'name-von 1)
+                                      (tm-func? x 'name-jr 1)))))
+         (f (if fi (sublist c 0 fi) c))
+         (l (list-find c (lambda (x) (tm-func? x 'name 1))))
+         (v (list-find c (lambda (x) (tm-func? x 'name-von 1))))
+         (j (list-find c (lambda (x) (tm-func? x 'name-jr 1)))))
+    (while (and (nnull? f) (string? (cAr f)) (string-ends? (cAr f) " "))
+      (set! f (rcons (cDr f) (string-drop-right (cAr f) 1))))
+    `(bib-name ,(apply tmconcat f)
+               ,(if v (tm-ref v 0) "")
+               ,(if l (tm-ref l 0) "")
+               ,(if j (tm-ref j 0) ""))))
+
+(define (db-bib-names t)
+  (if (not (tm-func? t 'concat))
+      `(bib-names ,(db-bib-name t))
+      (let* ((l (tm-children t))
+             (ls (list-scatter l (cut == <> '(name-sep)) #f))
+             (c (map (lambda (x) (apply tmconcat x)) ls))
+             (r (map db-bib-name c)))
+        (if (null? r) (set! r (list `(bib-name "" "" "" ""))))
+        `(bib-names ,@r))))
+
+(define (db-bib-pages t)
+  (if (not (tm-atomic? t)) t
+      (let* ((l (string-decompose t "-"))
+             (fl (list-filter l (lambda (s) (!= s "")))))
+        (if (<= (length l) 1) t `(bib-pages ,@fl)))))
+
+(define (db-bib-sub-sub type var val)
+  (cond ((and (== var "title")
+              (in? type '("article" "booklet" "incollection" "inproceedings"
+                          "masterthesis" "misc" "phd-thesis" "techreport"
+                          "unpublished")))
+         (db-bib-protect val #t))
+        ((or (== var "type") (== var "mtype"))
+         (db-bib-protect val #f))
+        ((or (== var "author") (== var "editor"))
+         (db-bib-names val))
+        ((== var "pages")
+         (db-bib-pages val))
+        (else val)))
+
+(define (db-bib-sub t type)
+  (cond ((tm-func? t 'db-field 2)
+         (let* ((var (tm-ref t 0))
+                (val (tm-ref t 1)))
+           `(bib-field ,var ,(db-bib-sub-sub type var val))))
+        (else t)))
+
+(tm-define (db->bib t)
+  (set! t (tm->stree t))
+  (cond ((and (tm-func? t 'db-entry 4)
+              (tm-atomic? (tm-ref t 1))
+              (in? (tm-ref t 1) bib-types-list)
+              (tm-func? (tm-ref t 3) 'document))
+         (let* ((type (tm-ref t 1))
+                (name (tm-ref t 2))
+                (l (map (cut db-bib-sub <> type)
+                        (tm-children (tm-ref t 3)))))
+           `(bib-entry ,type ,name (document ,@l))))
+        (else t)))
+
+(tm-define (bibify-buffer)
+  (display* "Determining bib\n\n")
+  (with t (buffer-tree)
+    (when (tm-func? t 'document)
+      (for-each (lambda (x)
+                  (display* "Transforming " (tm->stree x) "\n\n")
+                  (display* "Yields " (db->bib x) "\n\n"))
+                (tm-children t)))))
+
+(tm-define (as-bib)
+  (with t (buffer-tree)
+    (when (tm-func? t 'document)
+      (with r `(document ,@(map db->bib (tm-children t)))
+        (tree-assign! t r)
+        (set-style-tree (tm->tree `(tuple "bibliography")))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Conversion from native BibTeX documents and hook when exporting databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (bib-db-unmacro t)
