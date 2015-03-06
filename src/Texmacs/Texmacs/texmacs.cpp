@@ -422,9 +422,12 @@ boot_hacks () {
 #if defined(MAC_OS_X_VERSION_10_10)
   mac_fix_yosemite_bug();
 #endif
+
+#ifdef QTTEXMACS
 #if (defined(MAC_OS_X_VERSION_10_9) || defined(MAC_OS_X_VERSION_10_10)) && (QT_VERSION <= QT_VERSION_CHECK(4,8,5))
-    // Work around Qt bug: https://bugreports.qt-project.org/browse/QTBUG-32789
+  // Work around Qt bug: https://bugreports.qt-project.org/browse/QTBUG-32789
   QFont::insertSubstitution (".Lucida Grande UI", "Lucida Grande");
+#endif
 #endif
 
 #endif
