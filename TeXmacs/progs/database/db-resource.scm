@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : db-resources.scm
+;; MODULE      : db-resource.scm
 ;; DESCRIPTION : TeXmacs databases
 ;; COPYRIGHT   : (C) 2015  Joris van der Hoeven
 ;;

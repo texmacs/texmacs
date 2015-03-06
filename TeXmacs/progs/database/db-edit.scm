@@ -19,8 +19,8 @@
 ;; Useful predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-resource? t)
-  (and (tm-func? t 'db-resource 4)
+(tm-define (db-entry? t)
+  (and (tm-func? t 'db-entry 4)
        (tm-func? (tm-ref t 3) 'document)))
 
 (tm-define (db-field? t) (tm-func? t 'db-field 2))
@@ -48,8 +48,8 @@
                 (tm-ref (car l) 1))
            (db-field-find (cdr l) prop))))
 
-(tm-define (db-resource-ref t prop)
-  (and (db-resource? t)
+(tm-define (db-entry-ref t prop)
+  (and (db-entry? t)
        (cond ((== prop "id") (tm-ref t 0))
              ((== prop "type") (tm-ref t 1))
              ((== prop "name") (tm-ref t 2))
@@ -63,18 +63,18 @@
                 (car l))
             (db-field-set (cdr l) prop val))))
 
-(tm-define (db-resource-set t prop val)
-  (and (db-resource? t)
+(tm-define (db-entry-set t prop val)
+  (and (db-entry? t)
        (with l (tm-children t)
-         (cond ((== prop "id") `(db-resource ,val ,@(cdr l)))
-               ((== prop "type") `(db-resource ,(car l) ,val ,@(cddr l)))
+         (cond ((== prop "id") `(db-entry ,val ,@(cdr l)))
+               ((== prop "type") `(db-entry ,(car l) ,val ,@(cddr l)))
                ((== prop "name")
-                `(db-resource ,(car l) ,(cadr l) ,val ,@(cdddr l)))
+                `(db-entry ,(car l) ,(cadr l) ,val ,@(cdddr l)))
                (else
                  (with r (db-field-set (tm-children (cadddr l)) prop val)
                    (if (not (db-field-find r prop))
                        (set! r (rcons r `(db-field ,prop ,val))))
-                   `(db-resource ,(car l) ,(cadr l) ,(caddr l)
+                   `(db-entry ,(car l) ,(cadr l) ,(caddr l)
                                  (document ,@r))))))))
 
 (tm-define (db-field-remove l prop)
@@ -85,12 +85,12 @@
             r
             (cons (car l) r)))))
 
-(tm-define (db-resource-remove t prop)
-  (and (db-resource? t)
+(tm-define (db-entry-remove t prop)
+  (and (db-entry? t)
        (if (in? prop (list "id" "type" "name"))
            t
            (with r (db-field-remove (tm-children (tm-ref t 3)) prop)
-             `(db-resource ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
+             `(db-entry ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
                            (document ,@r))))))
 
 (tm-define (db-field-rename t a)
@@ -98,10 +98,10 @@
       t
       `(db-field ,(assoc-ref a (tm-ref t 0)) ,(tm-ref t 1))))
 
-(tm-define (db-resource-rename t a)
-  (if (not (db-resource? t))
+(tm-define (db-entry-rename t a)
+  (if (not (db-entry? t))
       t
-      `(db-resource ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
+      `(db-entry ,(tm-ref t 0) ,(tm-ref t 1) ,(tm-ref t 2)
                     (document ,@(map (cut db-field-rename <> a)
                                      (tm-children (tm-ref t 3)))))))
 
@@ -142,7 +142,7 @@
                     (!= (tm-ref f 0) (tm-ref (car l) 0)))))))
 
 (tm-define (db-complete-fields t*)
-  (and-with t (tree-search-upwards t* db-resource?)
+  (and-with t (tree-search-upwards t* db-entry?)
     (let* ((u (tm->stree t))
            (fm (smart-ref db-format-table (tm-ref u 1)))
            (c (tm-children (tm-ref u 3))))
@@ -158,7 +158,7 @@
            (not (tree-empty? (tm->tree (tm-ref t 1)))))))
 
 (tm-define (db-complete-fields? t*)
-  (and-with t (tree-search-upwards t* db-resource?)
+  (and-with t (tree-search-upwards t* db-entry?)
     (let* ((u (tm->stree t))
            (fm (smart-ref db-format-table (tm-ref u 1)))
            (c (tm-children (tm-ref u 3))))
@@ -191,7 +191,7 @@
                (db-previous-empty-field u)))))
 
 (define (db-first-field t all?)
-  (and-with res (tree-search-upwards t db-resource?)
+  (and-with res (tree-search-upwards t db-entry?)
     (if all?
         (tree-ref t 2)
         (and (> (tree-arity (tree-ref res 3)) 0)
@@ -200,7 +200,7 @@
                  (and f (tree-ref f 1))))))))
 
 (define (db-first-empty-field t all?)
-  (and-with res (tree-search-upwards t db-resource?)
+  (and-with res (tree-search-upwards t db-entry?)
     (cond ((and all? (tree-empty? (tree-ref res 2)))
            (tree-ref res 2))
           ((> (tree-arity (tree-ref res 3)) 0)
@@ -230,9 +230,9 @@
 
 (tm-define (db-alternative-fields t)
   (and (db-field-alternative? t)
-       (and-with res (tree-search-upwards t db-resource?)
+       (and-with res (tree-search-upwards t db-entry?)
          (and-with l (db-format-alternatives (tree-ref res 1) (tree-ref t 0))
-           (with r (map (cut db-resource-ref res <>) l)
+           (with r (map (cut db-entry-ref res <>) l)
              (and (list-and r) (map tree-up r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -247,7 +247,7 @@
   (with doc (outer-document (cursor-tree))
     (when doc
       (with i (tree-index (tree-down doc))
-        (with res `(db-resource ,(create-unique-id) ,type "" (document))
+        (with res `(db-entry ,(create-unique-id) ,type "" (document))
           (tree-insert! doc (+ i 1) (list res))
           (tree-go-to doc (+ i 1) 2 :start)
           (db-complete-fields (tree-ref doc (+ i 1))))))))
@@ -260,21 +260,21 @@
   (cond ((db-first-empty-field t #t)
          (tree-go-to (db-first-empty-field t #t) :end))
         ((not (db-complete-fields? t))
-         (and-with res (tree-search-upwards t db-resource?)
+         (and-with res (tree-search-upwards t db-entry?)
            (db-complete-fields res)
            (and-with f (db-first-empty-field res #t)
              (tree-go-to f :end))))
         (else (display* "Resource complete!\n"))))
 
 (tm-define (kbd-enter t shift?)
-  (:require (db-resource? t))
+  (:require (db-entry? t))
   (with u (tree-ref t :down)
     (cond ((tree-search-upwards t 'inactive)
            (former t shift?))
           ((and u (= (tree-index u) 2))
            (if (tree-empty? u)
                (set-message "Error: should fill out name for referencing"
-                            "db-resource")
+                            "db-entry")
                (with d (tree-ref u :up 3)
                  (when (and (> (tm-arity d) 0) (db-field-any? (tree-ref d 0)))
                    (tree-go-to d 0 1 :end)))))
@@ -327,7 +327,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-remove t forwards?)
-  (:require (db-resource? t))
+  (:require (db-entry? t))
   (cond ((and (cursor-inside? (tree-ref t 2))
               (tree-empty? (tree-ref t 2))
               (tree-empty? (tree-ref t 3)))
@@ -349,7 +349,7 @@
   (:require (db-field-any? t))
   (cond ((and (cursor-inside? (tree-ref t 1)) (tree-empty? (tree-ref t 1)))
          (let* ((next (if forwards? (db-next-field t) (db-previous-field t)))
-                (res (tree-search-upwards t 'db-resource)))
+                (res (tree-search-upwards t 'db-entry)))
            (cond (next
                   (tree-go-to next 1 (if forwards? :start :end)))
                  ((and (not forwards?) res)

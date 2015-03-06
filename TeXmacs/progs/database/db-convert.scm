@@ -19,12 +19,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-import-post t)
-  (db-resource-rename t (list (cons "mid" "id")
+  (db-entry-rename t (list (cons "mid" "id")
                               (cons "mtype" "type")
                               (cons "mname" "name"))))
 
 (tm-define (db-export-pre t)
-  (db-resource-rename t (list (cons "id" "mid")
+  (db-entry-rename t (list (cons "id" "mid")
                               (cons "type" "mtype")
                               (cons "name" "mname"))))
 
@@ -41,7 +41,7 @@
                     (db-import-fields (cons (cons (caar l) (cddar l))
                                             (cdr l)))))))
 
-(tm-define (db-import-resource id)
+(tm-define (db-import-entry id)
   (let* ((l (db-get-all-decoded id))
          (type (assoc-ref l "type"))
          (name (assoc-ref l "name")))
@@ -51,11 +51,11 @@
     (set! l (assoc-remove! l "type"))
     (set! l (assoc-remove! l "name"))
     (set! l (db-import-fields l))
-    (db-import-post `(db-resource ,id ,type ,name (document ,@l)))))
+    (db-import-post `(db-entry ,id ,type ,name (document ,@l)))))
 
 (tm-define (db-import-type type)
   (let* ((l (db-search (list (list "type" type))))
-         (i (map db-import-resource l)))
+         (i (map db-import-entry l)))
     `(document ,@i)))
 
 (tm-define (db-import-types types)
@@ -64,7 +64,7 @@
 
 (tm-define (db-import)
   (let* ((l (db-search (list)))
-         (i (map db-import-resource l)))
+         (i (map db-import-entry l)))
     `(document ,@i)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,9 +76,9 @@
       (list (tm-children t))
       (list)))
 
-(tm-define (db-export-selected-resource t pred?)
+(tm-define (db-export-selected-entry t pred?)
   (set! t (db-export-pre t))
-  (when (and (db-resource? t) (pred? (tm-ref t 1)))
+  (when (and (db-entry? t) (pred? (tm-ref t 1)))
     (let* ((id (tm-ref t 0))
            (type (tm-ref t 1))
            (name (tm-ref t 2))
@@ -91,8 +91,8 @@
 (tm-define (db-export-selected t pred?)
   (cond ((tm-func? t 'document)
          (for-each (cut db-export-selected <> pred?) (tm-children t)))
-        ((or (tm-func? t 'db-resource 4) (tm-func? t 'bib-entry 3))
-         (db-export-selected-resource (tm->stree t) pred?))
+        ((or (tm-func? t 'db-entry 4) (tm-func? t 'bib-entry 3))
+         (db-export-selected-entry (tm->stree t) pred?))
         ((and (tree? t) (tm-compound? t))
          (for-each (cut db-export-selected <> pred?)
                    (tree-accessible-children t)))))

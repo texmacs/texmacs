@@ -221,7 +221,7 @@
                 (name (tm-ref t 1))
                 (l (map (cut bib-db-sub <> type*)
                         (tm-children (tm-ref t 2)))))
-           `(db-resource ,id ,type* ,name (document ,@l))))
+           `(db-entry ,id ,type* ,name (document ,@l))))
         (else t)))
 
 (tm-define (db-export-pre t)

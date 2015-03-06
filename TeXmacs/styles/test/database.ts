@@ -38,7 +38,7 @@
     </src-comment>
   </active*>
 
-  <assign|db-resource-env|<\macro|cfg|cbg|cname|type|name|body>
+  <assign|db-entry-env|<\macro|cfg|cbg|cname|type|name|body>
     <\padded-normal|0.25em|1.5em>
       <\wide-std-framed-colored|<arg|cfg>|<arg|cbg>>
         <with|font-series|bold|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:
@@ -51,13 +51,13 @@
     </padded-normal>
   </macro>>
 
-  <assign|db-resource|<\macro|rid|type|name|body>
-    <\db-resource-env|dark blue|pastel blue|dark green|<arg|type>|<arg|name>>
+  <assign|db-entry|<\macro|rid|type|name|body>
+    <\db-entry-env|dark blue|pastel blue|dark green|<arg|type>|<arg|name>>
       <arg|body>
-    </db-resource-env>
+    </db-entry-env>
   </macro>>
 
-  <drd-props|db-resource|arity|4|unaccessible|0|unaccessible|1|accessible|2|accessible|3>
+  <drd-props|db-entry|arity|4|unaccessible|0|unaccessible|1|accessible|2|accessible|3>
 
   <\active*>
     <\src-comment>
