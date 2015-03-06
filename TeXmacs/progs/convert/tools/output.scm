@@ -26,6 +26,7 @@
 (define output-break-flag #t)
 (define output-tail "")
 (define output-exact #f)
+(define output-line-length 79)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The output machinery
@@ -34,6 +35,11 @@
 (tm-define (output-set-exact x)
   (with old output-exact
     (set! output-exact x)
+    old))
+
+(tm-define (output-set-line-length x)
+  (with old output-line-length
+    (set! output-line-length x)
     old))
 
 (tm-define (output-produce)
@@ -90,7 +96,7 @@
 	(if output-space-flag (set! output-count (+ output-count 1)))
 	(set! output-count (+ output-count (string-length s)))
 	(if output-space-flag (set! output-break-flag #t))
-	(if (or (< output-count 79) output-start-flag 
+	(if (or (< output-count output-line-length) output-start-flag
 		(not output-break-flag) output-exact)
 	    (begin
 	      (if (and output-space-flag (not output-start-flag))

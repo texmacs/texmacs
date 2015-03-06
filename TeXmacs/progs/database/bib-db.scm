@@ -262,6 +262,12 @@
         (tree-assign! t r)
         (set-style-tree (tm->tree `(tuple "bibliography")))))))
 
+(tm-define (buffer-as-bibtex)
+  (with t (buffer-tree)
+    (when (tm-func? t 'document)
+      (with r `(document ,@(map db->bib (tm-children t)))
+        (display* (convert r "texmacs-stree" "bibtex-document") "\n")))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion from native BibTeX documents and hook when exporting databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
