@@ -1068,9 +1068,11 @@ case "$enable_qt" in
         fi
         ;;
     no)
+	CONFIG_QTPIPES="no"
 	AC_MSG_RESULT([enabling X11 port])
 	;;
     *)
+	CONFIG_QTPIPES="no"
 	AC_MSG_ERROR([bad option --enable-qt=$enable_qt])
 	;;
 esac
