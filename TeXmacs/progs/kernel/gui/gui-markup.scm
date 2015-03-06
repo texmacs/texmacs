@@ -353,6 +353,7 @@
 (tm-define form-last (make-ahash-table))
 
 (tm-define (form-named-set name field val)
+  (if (and (pair? val) (cadr val)) (set! val (car val)))
   (ahash-set! form-last (list name field) val))
 
 (tm-define (form-named-ref name field)
@@ -390,7 +391,8 @@
   `($execute
      (set! form-entries (append form-entries (list ,field)))
      ($input (form-named-set form-name ,field answer)
-             ,type (form-proposals form-name ,field ,proposals) ,width)))
+             ,(string-append "form-" type)
+	     (form-proposals form-name ,field ,proposals) ,width)))
 
 (tm-define-macro ($form-enum field proposals selected width)
   (:synopsis "Make an enumeration field for the current form")

@@ -480,7 +480,8 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
 
 bool
 QTMLineEdit::continuous () {
-  return type == "search" || starts (type, "replace-");
+  return type == "search" || starts (type, "replace-") ||
+    starts (type, "form-");
 }
 
 /*

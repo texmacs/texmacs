@@ -124,7 +124,8 @@ input_widget_rep::cancel () {
 
 bool
 input_widget_rep::continuous () {
-  return type == "search" || starts (type, "replace-");
+  return type == "search" || starts (type, "replace-") ||
+    starts (type, "form-");
 }
 
 void
