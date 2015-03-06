@@ -374,8 +374,10 @@ input_widget_rep::handle_mouse (mouse_event ev) {
 
 void
 input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
-  if (got_focus && !ev->flag && !done && !persistent)
+  if (got_focus && !ev->flag && !done && !persistent) {
+    //if (type == "string") commit (); else cancel ();
     cancel ();
+  }
   got_focus= ev->flag;
   if (attached ())
     this << emit_invalidate_all ();
