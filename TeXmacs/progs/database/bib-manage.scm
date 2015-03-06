@@ -54,7 +54,7 @@
          (tm-doc (convert bib-doc "bibtex-document" "texmacs-stree"))
          (body (tmfile-extract tm-doc 'body))
          (rid (create-unique-id))
-         (db (string-append bib-dir "/" rid ".tmdb")))
+         (db (url->url (string-append bib-dir "/" rid ".tmdb"))))
     (when body
       (with-database db
         (bib-export body))
