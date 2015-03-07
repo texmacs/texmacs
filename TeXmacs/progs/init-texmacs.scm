@@ -11,13 +11,14 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;(debug-enable 'backtrace 'debug)
-
 (define boot-start (texmacs-time))
 (define remote-list (list))
 
 (define developer-mode?
   (equal? (cpp-get-preference "developer tool" "off") "on"))
+
+(if developer-mode?
+    (debug-enable 'backtrace 'debug))
 
 (define (%new-read-hook sym) (noop)) ; for autocompletion
 
