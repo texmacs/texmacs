@@ -363,6 +363,7 @@ edit_cursor_rep::go_to_here () {
   if (cu->valid) adjust_cursor ();
   if (mv_status == DIRECT) mv= copy (cu);
   notify_change (THE_CURSOR);
+    // FIXME: frequent crashes here
   if (cu->valid) call ("notify-cursor-moved", object (DIRECT));
 }
 
@@ -378,6 +379,7 @@ edit_cursor_rep::go_to (path p) {
       mv= copy (cu);
     }
     notify_change (THE_CURSOR);
+      // FIXME: frequent crashes here
     if (cu->valid) call ("notify-cursor-moved", object (DIRECT));
   }
 }

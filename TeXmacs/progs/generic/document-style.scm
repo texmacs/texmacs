@@ -50,7 +50,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (get-style-list)
-  (with t (tree->stree (get-style-tree))
+  (with t (tree->stree (buffer-get-style (current-buffer)))
     (cond ((string? t) (list t))
           ((and (pair? t) (== (car t) 'tuple)) (cdr t))
           (else (texmacs-error "get-style-list ""invalid style ~S" t)))))
@@ -78,7 +78,8 @@
                                       (list (car l)))))))
 
 (tm-define (set-style-list l)
-  (set-style-tree (tm->tree `(tuple ,@(normalize-style-list l)))))
+  (buffer-set-style (current-buffer) 
+                    (tm->tree `(tuple ,@(normalize-style-list l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level routines for style and style package management

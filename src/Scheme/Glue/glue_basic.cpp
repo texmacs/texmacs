@@ -6661,6 +6661,34 @@ tmg_buffer_get_body (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_get_style (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-get-style");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_buffer_style (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_buffer_set_style (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-style");
+  TMSCM_ASSERT_TREE (arg2, TMSCM_ARG2, "buffer-set-style");
+
+  url in1= tmscm_to_url (arg1);
+  tree in2= tmscm_to_tree (arg2);
+
+  // TMSCM_DEFER_INTS;
+  set_buffer_style (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_buffer_set_master (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-set-master");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-set-master");
@@ -8157,6 +8185,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-get",  tmg_buffer_get, 1, 0, 0);
   tmscm_install_procedure ("buffer-set-body",  tmg_buffer_set_body, 2, 0, 0);
   tmscm_install_procedure ("buffer-get-body",  tmg_buffer_get_body, 1, 0, 0);
+  tmscm_install_procedure ("buffer-get-style",  tmg_buffer_get_style, 1, 0, 0);
+  tmscm_install_procedure ("buffer-set-style",  tmg_buffer_set_style, 2, 0, 0);
   tmscm_install_procedure ("buffer-set-master",  tmg_buffer_set_master, 2, 0, 0);
   tmscm_install_procedure ("buffer-get-master",  tmg_buffer_get_master, 1, 0, 0);
   tmscm_install_procedure ("buffer-set-title",  tmg_buffer_set_title, 2, 0, 0);

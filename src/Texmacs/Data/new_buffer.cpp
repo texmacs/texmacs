@@ -296,6 +296,25 @@ get_buffer_body (url name) {
   return subtree (the_et, buf->rp);
 }
 
+tree
+get_buffer_style (url name) {
+  tm_buffer buf= concrete_buffer (name);
+  if (is_nil (buf)) return tuple();
+  return buf->data->style;
+}
+
+void
+set_buffer_style (url name, tree style) {
+  tm_buffer buf= concrete_buffer (name);
+  if (! is_nil (buf)) {
+    buf->data->style= copy (style);
+    array<url> vs= buffer_to_views (name);
+    for (int i=0; i<N(vs); i++)
+      view_to_editor (vs[i]) -> change_style (style);
+  }
+}
+
+
 /******************************************************************************
 * Further information attached to buffers
 ******************************************************************************/

@@ -6040,6 +6040,7 @@
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = macosx10.9;
 			};
 			name = Debug;
 		};
@@ -6053,6 +6054,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = macosx10.9;
 			};
 			name = Release;
 		};

@@ -260,7 +260,7 @@
     (when (tm-func? t 'document)
       (with r `(document ,@(map db->bib (tm-children t)))
         (tree-assign! t r)
-        (set-style-tree (tm->tree `(tuple "bibliography")))))))
+        (set-style-list `("bibliography"))))))
 
 (tm-define (buffer-as-bibtex)
   (with t (buffer-tree)
