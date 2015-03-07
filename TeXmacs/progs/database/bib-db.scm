@@ -269,7 +269,7 @@
         (display* (convert r "texmacs-stree" "bibtex-document") "\n")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Conversion from native BibTeX documents and hook when exporting databases
+;; Conversion from native BibTeX documents and hook when saving databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (bib-db-unmacro t)
@@ -340,18 +340,18 @@
            `(db-entry ,id ,type* ,name (document ,@l))))
         (else t)))
 
-(tm-define (db-export-pre t)
+(tm-define (db-save-pre t)
   (former (bib->db t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Import and export bibliographies
+;; Load and save bibliographies
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define bib-types-list
   (smart-ref db-kind-table "bib"))
 
-(tm-define (bib-import)
-  (db-import-types bib-types-list))
+(tm-define (bib-load)
+  (db-load-types bib-types-list))
 
-(tm-define (bib-export t)
-  (db-export-types t bib-types-list))
+(tm-define (bib-save t)
+  (db-save-types t bib-types-list))

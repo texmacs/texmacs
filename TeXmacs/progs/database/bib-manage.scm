@@ -15,6 +15,36 @@
   (:use (database bib-db)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Default bibliographic database
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (default-bib-db)
+  (url->system (string->url "$TEXMACS_HOME_PATH/database/bib.tmdb")))
+
+(define-preferences
+  ("bib-db" (default-bib-db) noop))
+
+(tm-define (get-bib-db)
+  (get-preference "bib-db"))
+
+(tm-define (set-bib-db val)
+  (when (string? val)
+    (set-preference "bib-db" val)
+    (refresh-now "bib-db-preference")))
+
+(tm-define (get-bib-db-short)
+  (with full (system->url (get-bib-db))
+    (url->system (url-tail full))))
+
+(tm-define (set-bib-db-short val)
+  (when (string? val)
+    (with full (system->url (get-bib-db))
+      (set-bib-db (url->system (url-relative full (system->url val)))))))
+
+(tm-define (url-bib-db)
+  (system->url (get-bib-db)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Caching existing BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -57,7 +87,7 @@
          (db (url->url (string-append bib-dir "/" id ".tmdb"))))
     (when body
       (with-database db
-        (bib-export body))
+        (bib-save body))
       (when (url-exists? db)
         (with-database bib-master
           (db-insert id "source" (url->system f))
@@ -79,48 +109,16 @@
 ;; Importing and exporting BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (bib-import-entries t)
-  (display* "t= " t "\n"))
-
 (tm-define (bib-import-bibtex f)
   (with db (bib-cache-bibtex f)
     (when (url-exists? db)
       (with-database db
-        (with all (bib-import)
-          (bib-import-entries all))))))
+        (with all (bib-load)
+          (with-database (url-bib-db)
+            (bib-save all)))))))
 
 (tm-define (bib-export-bibtex f)
   (set-message "Not yet implemented" "bib-export-bibtex"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Default bibliographic database
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (default-bib-db)
-  (url->system (string->url "$TEXMACS_HOME_PATH/database/bib.tmdb")))
-
-(define-preferences
-  ("bib-db" (default-bib-db) noop))
-
-(tm-define (get-bib-db)
-  (get-preference "bib-db"))
-
-(tm-define (set-bib-db val)
-  (when (string? val)
-    (set-preference "bib-db" val)
-    (refresh-now "bib-db-preference")))
-
-(tm-define (get-bib-db-short)
-  (with full (system->url (get-bib-db))
-    (url->system (url-tail full))))
-
-(tm-define (set-bib-db-short val)
-  (when (string? val)
-    (with full (system->url (get-bib-db))
-      (set-bib-db (url->system (url-relative full (system->url val)))))))
-
-(tm-define (url-bib-db)
-  (system->url (get-bib-db)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieving entries
@@ -129,7 +127,7 @@
 (define (bib-retrieve-one name)
   (and-with l (db-search (list (list "name" name)))
     (and (nnull? l)
-         (with e (db-import-entry (car l))
+         (with e (db-load-entry (car l))
            (cons name e)))))
 
 (define (bib-retrieve-several names)
