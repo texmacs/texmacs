@@ -288,6 +288,7 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting database facilities\n")
+(lazy-define (database bib-manage) url-db-bib bib-compile)
 (lazy-menu (database bib-menu) bib-menu)
 (lazy-tmfs-handler (database db-tmfs) db)
 (lazy-keyboard (database bib-kbd) in-bib?)

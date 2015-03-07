@@ -15,6 +15,7 @@
 #include "merge_sort.hpp"
 #include "Bibtex/bibtex.hpp"
 #include "Bibtex/bibtex_functions.hpp"
+#include "Sqlite3/sqlite3.hpp"
 #include "file.hpp"
 #include "convert.hpp"
 #include "scheme.hpp"
@@ -54,10 +55,11 @@ remove_labels (tree t) {
 ******************************************************************************/
 
 url
-find_bib_file (url base, string fname, string suffix= ".bib") {
+find_bib_file (url base, string fname,
+               string suffix= ".bib", bool rooted= false) {
   if (!ends (fname, suffix)) fname= fname * suffix;
   url bibf (fname);
-  if (exists (bibf))
+  if (exists (bibf) && (!rooted || is_rooted (bibf)))
     return bibf;
   if (exists (relative (base, bibf)))
     return relative (base, bibf);
@@ -78,6 +80,7 @@ edit_process_rep::generate_bibliography (
   if (buf->prj != NULL) bib_t= buf->prj->data->aux[bib];
   tree t;
   url bib_file= find_bib_file (buf->buf->name, fname);
+  //cout << fname << " -> " << concretize (bib_file) << "\n";
   if (is_none (bib_file)) {
     url bbl_file= find_bib_file (buf->buf->name, fname, ".bbl");
     if (is_none (bbl_file)) {
@@ -86,7 +89,6 @@ edit_process_rep::generate_bibliography (
     }
     t= bibtex_load_bbl (bib, bbl_file);
   }
-  //cout << fname << " -> " << concretize (bib_file) << "\n";
   else {
     if (!bibtex_present () && !starts (style, "tm-")) {
       if (style == "alpha") style= "tm-alpha";
@@ -95,7 +97,12 @@ edit_process_rep::generate_bibliography (
       else if (style == "siam") style= "tm-siam";
       else style= "tm-plain";
     }
-    if (starts (style, "tm-")) {
+    if (sqlite3_present () && exists (as_url (call (string ("url-bib-db"))))) {
+      if (!is_rooted (bib_file))
+        bib_file= find_bib_file (buf->buf->name, fname, ".bib", true);
+      t= as_tree (call (string ("bib-compile"), style, bib_t, bib_file));
+    }
+    else if (starts (style, "tm-")) {
       string sbib;
       load_string (bib_file, sbib, false);
       tree te= bib_entries (parse_bib (sbib), bib_t);
