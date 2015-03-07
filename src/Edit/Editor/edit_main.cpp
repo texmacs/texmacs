@@ -319,6 +319,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 void
 edit_main_rep::print_to_file (url name, string first, string last) {
   print (name, false, as_int (first), as_int (last));
+  set_message ("Print to file", "Done");
 }
 
 void
@@ -334,6 +335,7 @@ edit_main_rep::print_buffer (string first, string last) {
   target= url_temp (".ps"); 
   print (target, false, as_int (first), as_int (last));
   system (printing_cmd, target);  // Send the document to the printer
+  set_message ("Print buffer", "Done");
  #endif
   ::remove (target);
 }
