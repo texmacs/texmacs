@@ -7480,6 +7480,25 @@ tmg_alt_window_set_position (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_bibtex_run (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "bibtex-run");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "bibtex-run");
+  TMSCM_ASSERT_URL (arg3, TMSCM_ARG3, "bibtex-run");
+  TMSCM_ASSERT_ARRAY_STRING (arg4, TMSCM_ARG4, "bibtex-run");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+  url in3= tmscm_to_url (arg3);
+  array_string in4= tmscm_to_array_string (arg4);
+
+  // TMSCM_DEFER_INTS;
+  tree out= bibtex_run (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_bib_add_period (tmscm arg1) {
   TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "bib-add-period");
 
@@ -8201,6 +8220,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("alt-window-set-size",  tmg_alt_window_set_size, 3, 0, 0);
   tmscm_install_procedure ("alt-window-get-position",  tmg_alt_window_get_position, 1, 0, 0);
   tmscm_install_procedure ("alt-window-set-position",  tmg_alt_window_set_position, 3, 0, 0);
+  tmscm_install_procedure ("bibtex-run",  tmg_bibtex_run, 4, 0, 0);
   tmscm_install_procedure ("bib-add-period",  tmg_bib_add_period, 1, 0, 0);
   tmscm_install_procedure ("bib-upcase-first",  tmg_bib_upcase_first, 1, 0, 0);
   tmscm_install_procedure ("bib-locase",  tmg_bib_locase, 1, 0, 0);

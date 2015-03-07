@@ -222,3 +222,11 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   return compound ("bib-list", largest, u);
   */
 }
+
+tree
+bibtex_run (string bib, string style, url bib_file, array<string> names) {
+  tree t (DOCUMENT);
+  int i, n= N(names);
+  for (i=0; i<n; i++) t << names[i];
+  return bibtex_run (bib, style, bib_file, t);
+}

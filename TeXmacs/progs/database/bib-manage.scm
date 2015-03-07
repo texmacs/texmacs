@@ -132,11 +132,15 @@
              (remaining (list-difference names done)))
         (append r (bib-retrieve-entries-from remaining (cdr dbs))))))
 
+(define (bib-get-db bib-file)
+  (cond ((== bib-file :default) (url-bib-db))
+        ((== (url-suffix bib-file) "tmdb") (url->url bib-file))
+        (else (bib-cache-bibtex bib-file))))
+
 (tm-define (bib-retrieve-entries names . bib-files)
   (set! names (list-remove-duplicates names))
-  (let* ((bl (list-filter (map bib-cache-bibtex bib-files) (lambda (ok?) ok?)))
-         (al (rcons bl (url-bib-db))))
-    (bib-retrieve-entries-from names al)))
+  (with l (list-filter (map bib-get-db bib-files) (lambda (ok?) ok?))
+    (bib-retrieve-entries-from names l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Running bibtex or its internal replacement
@@ -147,8 +151,30 @@
     (module-provide m)
     (bibstyle style doc)))
 
+(define (bib-difference l1 l2)
+  (with t (list->ahash-set (map car l2))
+    (list-filter l1 (lambda (x) (not (ahash-ref t (car x)))))))
+
 (tm-define (bib-compile style names . bib-files)
-  (let* ((l (apply bib-retrieve-entries (cons names bib-files)))
+  (set! names (list-remove-duplicates names))
+  (let* ((all-files (rcons bib-files :default))
+         (l (apply bib-retrieve-entries (cons names all-files)))
          (bl (map db->bib (map cdr l)))
          (doc `(document ,@bl)))
-    (bib-generate style doc)))
+    (if (in? style (list "tm-abbrv" "tm-acm" "tm-alpha" "tm-elsartnum"
+                         "tm-ieeetr" "tm-plain" "tm-siam"))
+        (bib-generate (string-drop style 3) doc)
+        (let* ((bib-files*
+                (list-filter all-files
+                             (lambda (f) (and (url? f)
+                                              (== (url-suffix f) "bib")))))
+               (l* (apply bib-retrieve-entries (cons names bib-files*)))
+               (bl* (map db->bib (map cdr (bib-difference l l*))))
+               (doc* `(document ,@bl*))
+               (bib-docs (map string-load bib-files*))
+               (xdoc (convert doc* "texmacs-stree" "bibtex-document"))
+               (all-docs (append bib-docs (list "\n") (list xdoc)))
+               (full-doc (apply string-append all-docs))
+               (auto (url->url "$TEXMACS_HOME_PATH/system/bib/auto.bib")))
+          (string-save full-doc auto)
+          (bibtex-run "bib" style auto names)))))
