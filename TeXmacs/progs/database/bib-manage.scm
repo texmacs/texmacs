@@ -15,7 +15,7 @@
   (:use (database bib-db)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Importing and caching existing BibTeX files
+;; Caching existing BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define bib-dir "$TEXMACS_HOME_PATH/system/database")
@@ -71,9 +71,26 @@
     (bib-cache-create f))
   (when (not (bib-cache-id f))
     (texmacs-error "failed to create bibliographic database"
-                   "bib-import-bibtex"))
+                   "bib-cache-bibtex"))
   (and-with id (bib-cache-id f)
     (url->url (string-append bib-dir "/" id ".tmdb"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Importing and exporting BibTeX files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (bib-import-entries t)
+  (display* "t= " t "\n"))
+
+(tm-define (bib-import-bibtex f)
+  (with db (bib-cache-bibtex f)
+    (when (url-exists? db)
+      (with-database db
+        (with all (bib-import)
+          (bib-import-entries all))))))
+
+(tm-define (bib-export-bibtex f)
+  (set-message "Not yet implemented" "bib-export-bibtex"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Default bibliographic database

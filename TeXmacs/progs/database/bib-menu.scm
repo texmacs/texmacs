@@ -19,8 +19,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind bib-menu
-  ("Import" (noop))
-  ("Export" (noop))
+  ("Import" (choose-file bib-import-bibtex "Import from BibTeX file" "bibtex"))
+  ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex"))
   ---
   ("Search" (noop))
   ("Edit" (load-buffer "tmfs://db/bib"))
