@@ -129,15 +129,44 @@
           (when (not (bib-cache-imported? f (url-bib-db)))
             (with-database (url-bib-db)
               (bib-save all)
-              (bib-cache-notify-imported f (url-bib-db)))))))))
+              (bib-cache-notify-imported f (url-bib-db))
+              (set-message "Imported bibliographic entries"
+                           "import bibliography"))))))))
 
-(tm-define (bib-export-bibtex f)
+(tm-define (bib-export-global f)
   (with-database (url-bib-db)
     (with all (bib-load)
       (when (and all (tm-func? all 'document))
         (let* ((doc `(document ,@(map db->bib (cdr all))))
                (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
           (string-save bibtex-doc f))))))
+
+(define (bib-entry? t)
+  (or (tm-func? t 'bib-entry 3)
+      (and (tm-func? t 'db-entry 4)
+           (tm-atomic? (tm-ref t 1))
+           (in? (tm->string (tm-ref t 1)) bib-types-list))))
+
+(tm-define (bib-export-buffer f)
+  (when (tm-func? (buffer-tree) 'document)
+    (let* ((l1 (list-filter (tm-children (buffer-tree)) bib-entry?))
+           (l2 (map tm->stree l1))
+           (l3 (map (lambda (x)
+                      (if (tm-func? x 'bib-entry 3) x (db->bib x))) l2))
+           (doc `(document ,@l3))
+           (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
+      (string-save bibtex-doc f)
+      (set-message "Exported bibliographic entries" "export bibliography"))))
+
+(tm-define (bib-exportable?)
+  (or (nnull? (bib-attachments))
+      (and (tm-func? (buffer-tree) 'document)
+           (list-or (map bib-entry? (tm-children (buffer-tree)))))))
+
+(tm-define (bib-export-bibtex f)
+  (if (nnull? (bib-attachments))
+      (bib-export-attachments f)
+      (bib-export-buffer f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieving entries
@@ -238,3 +267,16 @@
            (l (apply bib-retrieve-entries (cons names all-files)))
            (doc `(document ,@(map cdr l))))
       (set-attachment (string-append bib "-bibliography") doc))))
+
+(define (bib-attachments)
+  (with l (list-attachments)
+    (list-filter l (cut string-ends? <> "-bibliography"))))
+
+(tm-define (bib-export-attachments f)
+  (let* ((l (bib-attachments))
+         (bibs (map tm->stree (map get-attachment l)))
+         (b (append-map tm-children bibs))
+         (doc `(document ,@(map db->bib b)))
+         (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
+    (string-save bibtex-doc f)
+    (set-message "Exported bibliographic references" "export bibliography")))

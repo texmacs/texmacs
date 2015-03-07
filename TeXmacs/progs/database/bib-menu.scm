@@ -20,7 +20,8 @@
 
 (menu-bind bib-menu
   ("Import" (choose-file bib-import-bibtex "Import from BibTeX file" "bibtex"))
-  ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex"))
+  (when (bib-exportable?)
+    ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex")))
   ---
   ("Active bibliography" (load-buffer "tmfs://db/bib"))
   ("Collected entries" (noop))
