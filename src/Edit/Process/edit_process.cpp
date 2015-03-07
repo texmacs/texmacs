@@ -97,9 +97,10 @@ edit_process_rep::generate_bibliography (
       else if (style == "siam") style= "tm-siam";
       else style= "tm-plain";
     }
-    if (sqlite3_present () && exists (as_url (call (string ("url-bib-db"))))) {
-      if (!is_rooted (bib_file))
-        bib_file= find_bib_file (buf->buf->name, fname, ".bib", true);
+    if (sqlite3_present () && !is_rooted (bib_file))
+      bib_file= find_bib_file (buf->buf->name, fname, ".bib", true);
+    if (sqlite3_present ()) {
+      (void) call (string ("bib-import-bibtex"), bib_file);
       t= as_tree (call (string ("bib-compile"), style, bib_t, bib_file));
     }
     else if (starts (style, "tm-")) {
@@ -110,10 +111,10 @@ edit_process_rep::generate_bibliography (
       eval ("(use-modules (bibtex " * style (3, N(style)) * "))");
       t= stree_to_tree (call (string ("bibstyle"), style (3, N(style)), ot));
     }
-    else {
-      string dir= concretize (head (buf->buf->name));
+    else
       t= bibtex_run (bib, style, bib_file, bib_t);
-    }
+    if (sqlite3_present ())
+      (void) call (string ("bib-attach"), bib, bib_t, bib_file);
   }
   if (is_atomic (t) && starts (t->label, "Error:"))
     set_message (t->label, "compile bibliography");

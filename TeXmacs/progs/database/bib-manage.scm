@@ -109,13 +109,27 @@
 ;; Importing and exporting BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (bib-cache-imported? f bdb)
+  (and-with id (bib-cache-id f)
+    (and-with db (bib-cache-db f)
+      (with-database db
+        (== (db-get-first id "imported" #f) (url->system bdb))))))
+
+(define (bib-cache-notify-imported f bdb)
+  (and-with id (bib-cache-id f)
+    (and-with db (bib-cache-db f)
+      (with-database db
+        (db-set id "imported" (list (url->system bdb)))))))
+
 (tm-define (bib-import-bibtex f)
   (with db (bib-cache-bibtex f)
     (when (url-exists? db)
       (with-database db
         (with all (bib-load)
-          (with-database (url-bib-db)
-            (bib-save all)))))))
+          (when (not (bib-cache-imported? f (url-bib-db)))
+            (with-database (url-bib-db)
+              (bib-save all)
+              (bib-cache-notify-imported f (url-bib-db)))))))))
 
 (tm-define (bib-export-bibtex f)
   (with-database (url-bib-db)
@@ -210,3 +224,17 @@
         (if (not (tm? t))
             (tree "Error: failed to produce bibliography")
             (tm->tree t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Attaching the bibliography to the current document
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (bib-attach bib names . bib-files)
+  (when (and (tm? names) (tm-func? names 'document))
+    (set! names (tm-children (tm->stree names))))
+  (when (and (list? names) (list-and (map string? names)))
+    (set! names (list-remove-duplicates names))
+    (let* ((all-files (rcons bib-files :default))
+           (l (apply bib-retrieve-entries (cons names all-files)))
+           (doc `(document ,@(map cdr l))))
+      (set-attachment (string-append bib "-bibliography") doc))))
