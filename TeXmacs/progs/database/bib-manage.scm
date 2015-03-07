@@ -118,7 +118,12 @@
             (bib-save all)))))))
 
 (tm-define (bib-export-bibtex f)
-  (set-message "Not yet implemented" "bib-export-bibtex"))
+  (with-database (url-bib-db)
+    (with all (bib-load)
+      (when (and all (tm-func? all 'document))
+        (let* ((doc `(document ,@(map db->bib (cdr all))))
+               (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
+          (string-save bibtex-doc f))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieving entries
