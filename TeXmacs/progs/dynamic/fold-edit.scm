@@ -242,7 +242,7 @@
 ;; Specific types of switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (alternative-context? t)
+(define (alternative-context? t)
   (alternative-tag? (tree-label t)))
 
 (tm-define (switch-select t i)
@@ -596,7 +596,7 @@
                ((== mode :last)
                 (dynamic-extremal t #t))))))
 
-(tm-define (dynamic-operate t mode)
+(define (dynamic-operate t mode)
   (when (tree-compound? t)
     (cond ((tree-is? t 'traversed)
            (when (!= mode :var-last)
@@ -623,19 +623,19 @@
 (define (dynamic-first-alternative-list l)
   (if (null? l) #f
       (with r (dynamic-first-alternative (car l))
-        (or r (dynamic-first-alternative-list (cdr l))))))
+	(or r (dynamic-first-alternative-list (cdr l))))))
 
 (define (dynamic-first-alternative t)
   (cond ((and (alternative-context? t) (> (tm-arity t) 1)) t)
-        ((overlays-context? t)
+	((overlays-context? t)
          (tree-set! t 0 "1")
          (tree-assign-node! t 'overlays-range)
          t)
         ((and (tree-is? t 'overlays-range)
               (< (tree->number (tree-ref t 0))
                  (tree->number (tree-ref t 1)))) t)
-        ((not (tm-compound? t)) #f)
-        (else (dynamic-first-alternative-list (tm-children t)))))
+	((not (tm-compound? t)) #f)
+	(else (dynamic-first-alternative-list (tm-children t)))))
 
 (define (dynamic-alternative-keep-first slide)
   (and-with t (dynamic-first-alternative slide)
@@ -658,14 +658,14 @@
     (tree-assign-node! t 'slide))
   (if (and (tm-func? t 'slide 1) (dynamic-first-alternative t))
       (let* ((p (tree-up t))
-             (i (tree-index t)))
-        (tree-insert p (+ i 1) (list (tree-copy t)))
-        (let* ((v  (tree-ref p i))
-               (w  (tree-ref p (+ i 1))))
-          (dynamic-alternative-keep-first v)
-          (dynamic-alternative-keep-other w)
-          (dynamic-make-slide v)
-          (dynamic-make-slide w)))
+	     (i (tree-index t)))
+	(tree-insert p (+ i 1) (list (tree-copy t)))
+	(let* ((v  (tree-ref p i))
+	       (w  (tree-ref p (+ i 1))))
+	  (dynamic-alternative-keep-first v)
+	  (dynamic-alternative-keep-other w)
+	  (dynamic-make-slide v)
+	  (dynamic-make-slide w)))
       (dynamic-operate (tree-ref t 0) :var-expand)))
 
 (tm-define (dynamic-make-slides)
@@ -798,7 +798,7 @@
        (or (dynamic-traverse (car l) mode)
            (dynamic-traverse-list (cdr l) mode))))
 
-(tm-define (dynamic-traverse t mode)
+(define (dynamic-traverse t mode)
   (cond ((tree-atomic? t) #f)
         ((tree-is? t 'traversed)
          (dynamic-traverse-traversed t mode))

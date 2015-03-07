@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.0.7.20>
 
 <style|source>
 
@@ -43,16 +43,6 @@
   </macro>>
 
   <assign|xtit|<macro|body|<section|<arg|body>>>>
-
-  <assign|screens-bar|<macro|body|>>
-
-  <assign|page-odd-footer|>
-
-  <assign|page-even-footer|>
-
-  <assign|page-odd-header|>
-
-  <assign|page-even-header|>
 </body>
 
 <\initial>

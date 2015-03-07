@@ -301,7 +301,6 @@ edit_main_rep::print_bis (url name, bool conform, int first, int last) {
 
 void
 edit_main_rep::print (url name, bool conform, int first, int last) {
-  /*
   if (inside ("screens")) {
     tree style= copy (get_style ());
     tree init = copy (get_init ());
@@ -314,7 +313,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
     assign (rp, t);
     apply_changes ();
   }
-  else*/ print_bis (name, conform, first, last);
+  else print_bis (name, conform, first, last);
 }
 
 void

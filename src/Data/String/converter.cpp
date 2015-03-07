@@ -12,8 +12,7 @@
 #include "converter.hpp"
 #include "convert.hpp"
 #ifdef USE_ICONV
-//#include <iconv.h>
-#include "/opt/local/include/iconv.h"
+#include <iconv.h>
 #endif
 #include <errno.h>
 
