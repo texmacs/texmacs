@@ -22,9 +22,11 @@
   ("Import" (choose-file bib-import-bibtex "Import from BibTeX file" "bibtex"))
   ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex"))
   ---
-  ("Search" (noop))
-  ("Edit" (load-buffer "tmfs://db/bib"))
-  ("Gathered" (noop))
-  ("Conflicts" (noop))
+  ("Active bibliography" (load-buffer "tmfs://db/bib"))
+  ("Collected entries" (noop))
+  ("Conflicting entries" (noop))
+  ---
+  ("Show search tool" (noop))
+  ("Show sorting tool" (noop))
   ---
   ("Preferences" (open-bib-preferences)))
