@@ -560,8 +560,6 @@
   (buffer-get get_buffer_tree (tree url))
   (buffer-set-body set_buffer_body (void url content))
   (buffer-get-body get_buffer_body (tree url))
-  (buffer-get-style get_buffer_style (tree url))
-  (buffer-set-style set_buffer_style (void url tree))
   (buffer-set-master set_master_buffer (void url url))
   (buffer-get-master get_master_buffer (url url))
   (buffer-set-title set_title_buffer (void url string))

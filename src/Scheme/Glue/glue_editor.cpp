@@ -564,6 +564,28 @@ tmg_init_style (tmscm arg1) {
 }
 
 tmscm
+tmg_get_style_tree () {
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->get_style ();
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_set_style_tree (tmscm arg1) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "set-style-tree");
+
+  tree in1= tmscm_to_tree (arg1);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->change_style (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_get_env (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-env");
 
@@ -3093,6 +3115,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("init-env",  tmg_init_env, 2, 0, 0);
   tmscm_install_procedure ("init-env-tree",  tmg_init_env_tree, 2, 0, 0);
   tmscm_install_procedure ("init-style",  tmg_init_style, 1, 0, 0);
+  tmscm_install_procedure ("get-style-tree",  tmg_get_style_tree, 0, 0, 0);
+  tmscm_install_procedure ("set-style-tree",  tmg_set_style_tree, 1, 0, 0);
   tmscm_install_procedure ("get-env",  tmg_get_env, 1, 0, 0);
   tmscm_install_procedure ("get-env-tree",  tmg_get_env_tree, 1, 0, 0);
   tmscm_install_procedure ("get-env-tree-at",  tmg_get_env_tree_at, 2, 0, 0);
