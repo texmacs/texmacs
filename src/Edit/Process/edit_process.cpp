@@ -84,10 +84,17 @@ edit_process_rep::generate_bibliography (
   if (is_none (bib_file)) {
     url bbl_file= find_bib_file (buf->buf->name, fname, ".bbl");
     if (is_none (bbl_file)) {
-      set_message ("Could not find bibliography file", "compile bibliography");
-      return;
+      if (sqlite3_present ()) {
+        t= as_tree (call (string ("bib-compile"), style, bib_t));
+        call (string ("bib-attach"), bib, bib_t);
+      }
+      else {
+        set_message ("Could not find bibliography file",
+                     "compile bibliography");
+        return;
+      }
     }
-    t= bibtex_load_bbl (bib, bbl_file);
+    else t= bibtex_load_bbl (bib, bbl_file);
   }
   else {
     if (!bibtex_present () && !starts (style, "tm-")) {
