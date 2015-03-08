@@ -203,6 +203,10 @@ edit_text_rep::insert_tree (tree t, path p_in_t) {
       is_atomic (subtree (et, path_up (tp))))
     insert (tp, t);
   else if (is_document (t)) {
+    if (subtree (et, path_up (tp)) == "" &&
+        accepts_return (path_up (tp)) &&
+        !is_func (subtree (et, path_up (tp, 2)), DOCUMENT))
+      insert_node (path_up (tp) * 0, DOCUMENT);
     if (insert_return ()) return;
     path p= search_parent_upwards (DOCUMENT);
     bool empty= (subtree (et, p) == "");
@@ -214,6 +218,10 @@ edit_text_rep::insert_tree (tree t, path p_in_t) {
     if (!empty) remove_return (path_add (p, N(t)-2));
   }
   else if (is_multi_paragraph (t)) {
+    if (subtree (et, path_up (tp)) == "" &&
+        accepts_return (path_up (tp)) &&
+        !is_func (subtree (et, path_up (tp, 2)), DOCUMENT))
+      insert_node (path_up (tp) * 0, DOCUMENT);
     if (make_return_after ()) return;
     path p= search_parent_upwards (DOCUMENT);
     if (subtree (et, p) == "") remove (p, 1);
