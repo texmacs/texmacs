@@ -405,10 +405,10 @@
     ("Bibliography" (interactive make-bib)))
   ("Index" (make-aux "the-index" "index-prefix" "idx"))
   ("Glossary" (make-aux "the-glossary" "glossary-prefix" "gly"))
-  ;;("List of figures" (make-aux* "the-glossary*" "lof-prefix" "figure" "List of figures"))
-  ;;("List of tables" (make-aux* "the-glossary*" "lot-prefix" "table" "List of tables"))
-  ("List of figures" (make-aux "list-of-figures" "lof-prefix" "figure"))
-  ("List of tables" (make-aux "list-of-tables" "lot-prefix" "table")))
+  ;;("List of figures" (make-aux* "the-glossary*" "figure-list-prefix" "figure" "List of figures"))
+  ;;("List of tables" (make-aux* "the-glossary*" "table-list-prefix" "table" "List of tables"))
+  ("List of figures" (make-aux "list-of-figures" "figure-list-prefix" "figure"))
+  ("List of tables" (make-aux "list-of-tables" "table-list-prefix" "table")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus

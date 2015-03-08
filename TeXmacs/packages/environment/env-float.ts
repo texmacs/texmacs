@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.2>
 
 <style|source>
 
@@ -70,7 +70,9 @@
 
   <drd-props|caption-summarized|arity|2|accessible|1|border|no>
 
-  <assign|list-caption|<macro|type|cap|<with|caption-detailed|<value|caption-summarized>|<style-with|src-compact|none|<auto-label><write|<arg|type>|<tuple|normal|<arg|cap>|<pageref|<the-auto>>>>>>>>
+  <assign|list-prefix|<macro|type|<if|<provides|<merge|<arg|type>|-list-prefix>>|<value|<merge|<arg|type>|-list-prefix>>|<arg|type>>>>
+
+  <assign|list-caption|<macro|type|cap|<with|caption-detailed|<value|caption-summarized>|<style-with|src-compact|none|<auto-label><write|<list-prefix|<arg|type>>|<tuple|normal|<arg|cap>|<pageref|<the-auto>>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -91,6 +93,14 @@
       </surround>>
     </cell>>>>>>
   </macro>>
+
+  <assign|figure-list-prefix|figure>
+
+  <assign|with-figure-list|<macro|lof|body|<with|figure-list-prefix|<arg|lof>|<arg|body>>>>
+
+  <assign|table-list-prefix|table>
+
+  <assign|with-table-list|<macro|lot|body|<with|table-list-prefix|<arg|lot>|<arg|body>>>>
 
   <new-figure|figure|Figure>
 

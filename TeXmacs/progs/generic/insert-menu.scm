@@ -77,7 +77,11 @@
           ("Index"
            (make-alternate "Name of index" "idx" 'with-index))
           ("Glossary"
-           (make-alternate "Name of glossary" "gly" 'with-glossary))))
+           (make-alternate "Name of glossary" "gly" 'with-glossary))
+          ("List of figures"
+           (make-alternate "Name of list of figures" "figure" 'with-figure-list))
+          ("List of tables"
+           (make-alternate "Name of list of tables" "table" 'with-table-list))))
   (if (and (style-has? "calc-dtd") (calc-ready?))
       ---
       (link calc-insert-menu)))
