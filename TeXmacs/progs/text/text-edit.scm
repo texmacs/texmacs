@@ -353,11 +353,15 @@
 ;; Routines for inserting miscellaneous content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make-aux env aux)
+(tm-define (make-aux env var aux)
+  (when (context-has? var)
+    (set! aux (get-env var)))
   (if (not (make-return-after))
       (insert (list (string->symbol env) aux '(document "")))))
 
-(tm-define (make-aux* env aux name)
+(tm-define (make-aux* env var aux name)
+  (when (context-has? var)
+    (set! aux (get-env var)))
   (if (not (make-return-after))
       (insert (list (string->symbol env) aux name '(document "")))))
 
@@ -365,8 +369,9 @@
   (:argument style "Bibliography style")
   (:proposals style '("tm-plain" "tm-alpha" "tm-acm" "tm-ieeetr" "tm-siam"))
   (:argument file-name "Bibliography file")
-  (if (not (make-return-after))
-      (insert (list 'bibliography "bib" style file-name '(document "")))))
+  (with aux (if (context-has? "bib-prefix") (get-env "bib-prefix") "bib")
+    (if (not (make-return-after))
+        (insert (list 'bibliography aux style file-name '(document ""))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing enunciations

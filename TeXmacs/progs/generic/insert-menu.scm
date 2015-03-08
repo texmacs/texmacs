@@ -68,7 +68,16 @@
 	  ("Explained" (make 'glossary-explain))
 	  ("Duplicate" (make 'glossary-dup))
 	  ---
-	  ("Interjection" (make 'glossary-line))))
+	  ("Interjection" (make 'glossary-line)))
+      (-> "Alternate"
+          ("Bibliography"
+           (make-alternate "Name of bibliography" "bib" 'with-bib))
+          ("Table of contents"
+           (make-alternate "Name of table of contents" "toc" 'with-toc))
+          ("Index"
+           (make-alternate "Name of index" "idx" 'with-index))
+          ("Glossary"
+           (make-alternate "Name of glossary" "gly" 'with-glossary))))
   (if (and (style-has? "calc-dtd") (calc-ready?))
       ---
       (link calc-insert-menu)))

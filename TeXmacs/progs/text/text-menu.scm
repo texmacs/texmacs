@@ -398,17 +398,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind automatic-menu
-  ("Table of contents" (make-aux "table-of-contents" "toc"))
+  ("Table of contents" (make-aux "table-of-contents" "toc-prefix" "toc"))
   (assuming (get-boolean-preference "gui:new bibliography dialogue")
     ("Bibliography" (interactive open-bibliography-inserter)))
   (assuming (not (get-boolean-preference "gui:new bibliography dialogue"))
     ("Bibliography" (interactive make-bib)))
-  ("Index" (make-aux "the-index" "idx"))
-  ("Glossary" (make-aux "the-glossary" "gly"))
-  ;;("List of figures" (make-aux* "the-glossary*" "figure" "List of figures"))
-  ;;("List of tables" (make-aux* "the-glossary*" "table" "List of tables"))
-  ("List of figures" (make-aux "list-of-figures" "figure"))
-  ("List of tables" (make-aux "list-of-tables" "table")))
+  ("Index" (make-aux "the-index" "index-prefix" "idx"))
+  ("Glossary" (make-aux "the-glossary" "glossary-prefix" "gly"))
+  ;;("List of figures" (make-aux* "the-glossary*" "lof-prefix" "figure" "List of figures"))
+  ;;("List of tables" (make-aux* "the-glossary*" "lot-prefix" "table" "List of tables"))
+  ("List of figures" (make-aux "list-of-figures" "lof-prefix" "figure"))
+  ("List of tables" (make-aux "list-of-tables" "lot-prefix" "table")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style dependent menus

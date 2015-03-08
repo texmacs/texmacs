@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.99.2>
 
 <style|source>
 
@@ -29,6 +29,12 @@
     </src-comment>
   </active*>
 
+  <assign|bib-prefix|bib>
+
+  <assign|with-bib|<macro|bib|body|<with|bib-prefix|<arg|bib>|<arg|body>>>>
+
+  \;
+
   <assign|natbib-author|<macro|text|<extern|natbib-get|<arg|text>|author>>>
 
   <assign|natbib-year|<macro|text|<extern|natbib-get|<arg|text>|year>>>
@@ -37,11 +43,11 @@
 
   \;
 
-  <assign|cite-add|<macro|key|<write|bib|<arg|key>>>>
+  <assign|cite-add|<macro|key|<write|<value|bib-prefix>|<arg|key>>>>
 
-  <assign|cite-data|<macro|key|<get-binding|<merge|bib-|<arg|key>>>>>
+  <assign|cite-data|<macro|key|<get-binding|<merge|<value|bib-prefix>|-|<arg|key>>>>>
 
-  <assign|cite-link|<macro|key|text|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|key>>>|<link|hyperlink|<id|<hard-id|<arg|key>>>|<url|<merge|#bib-|<arg|key>>>>|<arg|text>>>>>
+  <assign|cite-link|<macro|key|text|<style-with|src-compact|none|<locus|<id|<hard-id|<arg|key>>>|<link|hyperlink|<id|<hard-id|<arg|key>>>|<url|<merge|#|<value|bib-prefix>|-|<arg|key>>>>|<arg|text>>>>>
 
   <\active*>
     <\src-comment>

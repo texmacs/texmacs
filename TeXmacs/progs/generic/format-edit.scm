@@ -180,6 +180,11 @@
 (tm-define (toggle-underlined)
   (toggle-with-like '(underline "") #f))
 
+(tm-define (make-alternate prompt default-val tag)
+  (:interactive #t)
+  (interactive (lambda (x) (make-with-like `(,tag ,x "")))
+    (list prompt "string" default-val)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizable environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
