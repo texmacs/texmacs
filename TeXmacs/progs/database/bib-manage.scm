@@ -255,7 +255,7 @@
             (tm->tree t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Attaching the bibliography to the current document
+;; Attaching the bibliography to the current document and automatic importation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (bib-attach prefix names . bib-files)
@@ -280,3 +280,11 @@
          (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
     (string-save bibtex-doc f)
     (set-message "Exported bibliographic references" "export bibliography")))
+
+(tm-define (notify-set-attachment name key val)
+  (when (string-ends? key "-bibliography")
+    (with doc (tm->stree val)
+      (with-database (url-bib-db)
+        (with-global db-duplicate-warning? #f
+          (bib-save doc)))))
+  (former name key val))

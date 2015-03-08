@@ -52,6 +52,12 @@ edit_typeset_rep::set_data (new_data data) {
   add_init (data->init);
   notify_change (THE_DECORATIONS);
   typeset_invalidate_env ();
+  iterator<string> it = iterate (data->att);
+  while (it->busy()) {
+    string key= it->next ();
+    (void) call (string ("notify-set-attachment"),
+                 buf->buf->name, key, data->att [key]);
+  }
 }
 
 void

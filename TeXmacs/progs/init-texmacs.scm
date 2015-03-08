@@ -141,6 +141,7 @@
 (lazy-menu (texmacs menus preferences-menu) preferences-menu page-setup-menu)
 (lazy-menu (texmacs menus preferences-widgets) open-preferences)
 (use-modules (texmacs menus main-menu))
+(tm-define (notify-set-attachment name key val) (noop))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting generic mode\n")

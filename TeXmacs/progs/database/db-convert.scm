@@ -76,6 +76,8 @@
       (list (tm-children t))
       (list)))
 
+(tm-define db-duplicate-warning? #t)
+
 (tm-define (db-save-selected-entry t pred?)
   (set! t (db-save-pre t))
   (when (and (db-entry? t) (pred? (tm-ref t 1)))
@@ -87,7 +89,8 @@
            (prec (db-search (list (list "name" name)))))
       (if (and prec (nnull? prec))
           ;; TODO: entries might need to be updated
-          (display* "Existing entry " name "\n")
+          (when db-duplicate-warning?
+            (display* "Existing entry " name "\n"))
           (begin
             ;;(display* "Save " id " -> " all "\n")
             (db-set id "type" (list type))
