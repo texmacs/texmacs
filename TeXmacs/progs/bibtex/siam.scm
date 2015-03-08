@@ -96,7 +96,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -120,7 +120,7 @@
   (:mode bib-siam?)
   `(concat
     ,(bib-format-bibitem n x)
-    (label ,(string-append "bib-" (list-ref x 2)))
+    ,(bib-label (list-ref x 2))
     ,(bib-new-list-spc
       `(,(bib-new-block
 	  (bib-new-sentence
@@ -143,7 +143,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -160,7 +160,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -183,7 +183,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -207,7 +207,7 @@
   (:mode bib-siam?)
   `(concat
     ,(bib-format-bibitem n x)
-    (label ,(string-append "bib-" (list-ref x 2)))
+    ,(bib-label (list-ref x 2))
     ,(bib-new-list-spc
       `(,(bib-new-block
 	  (bib-new-sentence
@@ -231,7 +231,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -254,7 +254,7 @@
   (:mode bib-siam?)
   `(concat
     ,(bib-format-bibitem n x)
-    (label ,(string-append "bib-" (list-ref x 2)))
+    ,(bib-label (list-ref x 2))
     ,(bib-new-list-spc
       `(,(bib-new-block
 	  (bib-new-sentence
@@ -272,7 +272,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -288,7 +288,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -306,7 +306,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -326,7 +326,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -342,7 +342,7 @@
   (:mode bib-siam?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence

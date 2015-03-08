@@ -84,7 +84,7 @@
 (tm-define (bib-format-article n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(bib-format-author x)
@@ -99,7 +99,7 @@
 (tm-define (bib-format-book n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(if (bib-empty? x "author")
@@ -120,7 +120,7 @@
 (tm-define (bib-format-booklet n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-case-preserved-sentence
 	      `(,(bib-format-author x)
@@ -135,7 +135,7 @@
 (tm-define (bib-format-inbook n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(if (bib-empty? x "author")
@@ -158,7 +158,7 @@
 (tm-define (bib-format-incollection n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(bib-format-author x)
@@ -184,7 +184,7 @@
 (tm-define (bib-format-manual n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,@(if (bib-empty? x "author")
@@ -205,7 +205,7 @@
 (tm-define (bib-format-mastersthesis n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(bib-format-author x)
@@ -223,7 +223,7 @@
 (tm-define (bib-format-misc n x)
   (:mode bib-plain?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(bib-format-author x)
@@ -241,7 +241,7 @@
 (tm-define (bib-format-proceedings n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(if (bib-empty? x "editor")
@@ -260,7 +260,7 @@
 (tm-define (bib-format-techreport n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-block
 	     (bib-new-sentence
 	      `(,(bib-format-author x)
@@ -276,7 +276,7 @@
 (tm-define (bib-format-unpublished n x)
   (:mode bib-elsart-num?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   :promptrepl
            ,(bib-new-block
 	     (bib-new-sentence

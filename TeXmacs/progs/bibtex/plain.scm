@@ -181,7 +181,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -201,7 +201,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (if (bib-empty? x "author")
@@ -234,7 +234,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -249,7 +249,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (if (bib-empty? x "author") (bib-format-editor x)
 			 (bib-format-author x)))
@@ -279,7 +279,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -305,7 +305,7 @@
   ;; (:mode bib-plain?)
   `(concat
     ,(bib-format-bibitem n x)
-    (label ,(string-append "bib-" (list-ref x 2)))
+    ,(bib-label (list-ref x 2))
     ,(bib-new-list-spc
       `(,(bib-new-block (bib-format-author x))
 	,(bib-new-block (bib-format-field-Locase x "title"))
@@ -339,7 +339,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (if (bib-empty? x "author")
@@ -363,7 +363,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -381,7 +381,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -395,7 +395,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-emphasize (bib-format-field x "title")))
@@ -413,7 +413,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (if (bib-empty? x "editor")
@@ -445,7 +445,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -461,7 +461,7 @@
   ;; (:mode bib-plain?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block (bib-format-author x))
 	 ,(bib-new-block (bib-format-field-Locase x "title"))

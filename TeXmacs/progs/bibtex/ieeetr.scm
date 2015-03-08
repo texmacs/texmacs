@@ -93,7 +93,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-block
        (bib-new-sentence
 	`(,(bib-format-author x)
@@ -113,7 +113,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -137,7 +137,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -154,7 +154,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -178,7 +178,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -201,7 +201,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -225,7 +225,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -247,7 +247,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -265,7 +265,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-case-preserved-block
 	   (bib-new-case-preserved-sentence
@@ -279,7 +279,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -297,7 +297,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -317,7 +317,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence
@@ -333,7 +333,7 @@
   (:mode bib-ieeetr?)
   `(concat
      ,(bib-format-bibitem n x)
-     (label ,(string-append "bib-" (list-ref x 2)))
+     ,(bib-label (list-ref x 2))
      ,(bib-new-list-spc
        `(,(bib-new-block
 	   (bib-new-sentence

@@ -116,7 +116,7 @@
 (tm-define (bib-format-article n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-list-spc
 	     `(,(bib-new-block (bib-format-author x))
 	       ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -139,7 +139,7 @@
 (tm-define (bib-format-book n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-list-spc
 	     `(,(bib-new-block (if (bib-empty? x "author")
 			       (bib-format-editor x)
@@ -166,7 +166,7 @@
 (tm-define (bib-format-inbook n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-list-spc
 	     `(,(bib-new-block (if (bib-empty? x "author")
 			       (bib-format-editor x)
@@ -193,7 +193,7 @@
 (tm-define (bib-format-incollection n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-list-spc
 	     `(,(bib-new-block (bib-format-author x))
 	       ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -220,7 +220,7 @@
 (tm-define (bib-format-inproceedings n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-list-spc
 	     `(,(bib-new-block (bib-format-author x))
 	       ,(bib-new-block (bib-format-field-Locase x "title"))
@@ -243,7 +243,7 @@
 (tm-define (bib-format-manual n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-list-spc
 	     `(,(bib-new-block (bib-format-author x))
 	       ,(bib-new-block
@@ -258,7 +258,7 @@
 (tm-define (bib-format-proceedings n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
-	   (label ,(string-append "bib-" (list-ref x 2)))
+	   ,(bib-label (list-ref x 2))
 	   ,(bib-new-list-spc
 	     `(,(bib-new-block
 		 (if (bib-empty? x "editor")
