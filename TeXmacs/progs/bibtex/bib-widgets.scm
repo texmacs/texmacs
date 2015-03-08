@@ -40,7 +40,7 @@
          (paragraph-box "480px" 
            (document (concat "Please choose a valid " (BibTeX) " file"))))
       `(with "bg-color" "#ffffff"
-         (paragraph-box "480px" ,(bibstyle style (tree->stree t))))))
+         (paragraph-box "480px" ,(bib-process "bib" style (tree->stree t))))))
 
 (define (bibwid-output)
   (with style (if (== "tm-" (string-take bibwid-style 3))

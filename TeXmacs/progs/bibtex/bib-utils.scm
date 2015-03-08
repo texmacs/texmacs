@@ -17,6 +17,7 @@
 ;; Private administrative functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define bib-prefix "bib")
 (tm-define bib-style "plain")
 (tm-define bib-default-style "plain")
 
@@ -51,7 +52,8 @@
       (with l2 (stable-sort (bib-with-sort-key l1) bib-compare)
         (bib-without-sort-key l2)))))
 
-(tm-define (bibstyle style t)
+(tm-define (bib-process prefix style t)
+  (set! bib-prefix prefix)
   (set! bib-style style)
   (bib-preprocessing (cdr t))
   (if (and (list? t) (func? t 'document))

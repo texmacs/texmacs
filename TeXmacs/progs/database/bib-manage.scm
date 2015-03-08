@@ -209,16 +209,16 @@
 ;; Running bibtex or its internal replacement
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (bib-generate style doc)
+(tm-define (bib-generate prefix style doc)
   (with m `(bibtex ,(string->symbol style))
     (module-provide m)
-    (bibstyle style doc)))
+    (bib-process prefix style doc)))
 
 (define (bib-difference l1 l2)
   (with t (list->ahash-set (map car l2))
     (list-filter l1 (lambda (x) (not (ahash-ref t (car x)))))))
 
-(define (bib-compile-sub style names . bib-files)
+(define (bib-compile-sub prefix style names . bib-files)
   (set! names (list-remove-duplicates names))
   (let* ((all-files (rcons bib-files :default))
          (l (apply bib-retrieve-entries (cons names all-files)))
@@ -226,7 +226,7 @@
          (doc `(document ,@bl)))
     (if (in? style (list "tm-abbrv" "tm-acm" "tm-alpha" "tm-elsartnum"
                          "tm-ieeetr" "tm-plain" "tm-siam"))
-        (bib-generate (string-drop style 3) doc)
+        (bib-generate prefix (string-drop style 3) doc)
         (let* ((bib-files*
                 (list-filter all-files
                              (lambda (f) (and (url? f)
@@ -241,15 +241,15 @@
                (auto (url->url "$TEXMACS_HOME_PATH/system/bib/auto.bib")))
           ;;(display* auto "\n-----------------------------\n" full-doc "\n")
           (string-save full-doc auto)
-          (bibtex-run "bib" style auto names)))))
+          (bibtex-run prefix style auto names)))))
 
-(tm-define (bib-compile style names . bib-files)
+(tm-define (bib-compile prefix style names . bib-files)
   (when (and (tm? names) (tm-func? names 'document))
     (set! names (tm-children (tm->stree names))))
   ;;(display* "Compile " style ", " names ", " bib-files "\n")
   (if (not (and (list? names) (list-and (map string? names))))
       (tree "Error: invalid bibliographic key list")
-      (with t (apply bib-compile-sub (cons* style names bib-files))
+      (with t (apply bib-compile-sub (cons* prefix style names bib-files))
         (if (not (tm? t))
             (tree "Error: failed to produce bibliography")
             (tm->tree t)))))
@@ -258,7 +258,7 @@
 ;; Attaching the bibliography to the current document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (bib-attach bib names . bib-files)
+(tm-define (bib-attach prefix names . bib-files)
   (when (and (tm? names) (tm-func? names 'document))
     (set! names (tm-children (tm->stree names))))
   (when (and (list? names) (list-and (map string? names)))
@@ -266,7 +266,7 @@
     (let* ((all-files (rcons bib-files :default))
            (l (apply bib-retrieve-entries (cons names all-files)))
            (doc `(document ,@(map cdr l))))
-      (set-attachment (string-append bib "-bibliography") doc))))
+      (set-attachment (string-append prefix "-bibliography") doc))))
 
 (define (bib-attachments)
   (with l (list-attachments)

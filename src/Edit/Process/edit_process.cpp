@@ -85,7 +85,7 @@ edit_process_rep::generate_bibliography (
     url bbl_file= find_bib_file (buf->buf->name, fname, ".bbl");
     if (is_none (bbl_file)) {
       if (sqlite3_present ()) {
-        t= as_tree (call (string ("bib-compile"), style, bib_t));
+        t= as_tree (call (string ("bib-compile"), bib, style, bib_t));
         call (string ("bib-attach"), bib, bib_t);
       }
       else {
@@ -108,7 +108,7 @@ edit_process_rep::generate_bibliography (
       bib_file= find_bib_file (buf->buf->name, fname, ".bib", true);
     if (sqlite3_present ()) {
       (void) call (string ("bib-import-bibtex"), bib_file);
-      t= as_tree (call (string ("bib-compile"), style, bib_t, bib_file));
+      t= as_tree (call (string ("bib-compile"), bib, style, bib_t, bib_file));
     }
     else if (starts (style, "tm-")) {
       string sbib;
@@ -116,7 +116,8 @@ edit_process_rep::generate_bibliography (
       tree te= bib_entries (parse_bib (sbib), bib_t);
       object ot= tree_to_stree (te);
       eval ("(use-modules (bibtex " * style (3, N(style)) * "))");
-      t= stree_to_tree (call (string ("bibstyle"), style (3, N(style)), ot));
+      t= stree_to_tree (call (string ("bib-process"),
+                              bib, style (3, N(style)), ot));
     }
     else
       t= bibtex_run (bib, style, bib_file, bib_t);

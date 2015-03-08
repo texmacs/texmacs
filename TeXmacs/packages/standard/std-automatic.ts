@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std>>
 
@@ -50,6 +50,8 @@
   <arg|detail>>>>
 
   <assign|cite-bib|bib>
+
+  <assign|with-bib|<macro|bib|body|<with|cite-bib|<arg|bib>|<arg|body>>>>
 
   <assign|cite-sep|<macro|, >>
 
