@@ -49,15 +49,12 @@
 ;; Getting and setting the list of style packages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (buffer-get-style-list buf)
-  (with t (tree->stree (buffer-get-style buf))
+(tm-define (get-style-list)
+  (with t (tree->stree (get-style-tree))
     (cond ((string? t) (list t))
           ((and (pair? t) (== (car t) 'tuple)) (cdr t))
           (else (texmacs-error "get-style-list ""invalid style ~S" t)))))
 
-(tm-define (get-style-list)
-  (buffer-get-style-list (current-buffer)))
-  
 (define (normalize-style-list* l)
   (cond ((null? l) l)
         ((list-find (cdr l) (cut style-overrides? <> (car l)))
@@ -80,11 +77,8 @@
               (normalize-style-list** (normalize-style-list* (cdr l))
                                       (list (car l)))))))
 
-(tm-define (buffer-set-style-list buf l)
-  (buffer-set-style buf (tm->tree `(tuple ,@(normalize-style-list l)))))
-
 (tm-define (set-style-list l)
-  (buffer-set-style-list (current-buffer) l))
+  (set-style-tree (tm->tree `(tuple ,@(normalize-style-list l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level routines for style and style package management
