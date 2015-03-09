@@ -23,6 +23,8 @@ CONFIG_OS= @CONFIG_OS@
 
 CC = @CC@
 CXX = @CXX@
+OBJC = @OBJC@
+OBJCXX = @OBJCXX@
 CXXWARNING = @CONFIG_CXXWARNING@
 CXXTEMPLATE = @CONFIG_CXXTEMPLATE@
 CXXOPTIMIZE = @CONFIG_CXXOPTIMIZE@ @CONFIG_CXXDIALECT@
@@ -306,9 +308,15 @@ freetype_obj := $(call makeobj,$(freetype_src))
 cxx_flags    = $(strip $(CXX) $(1) -c $< -o $@)
 cxx_incl     = $(call cxx_flags,$(1) \
  $(CPPFLAGS) $(CXXFLAGS)) 
+objcxx_flags = $(strip $(OBJCXX) $(1) -c $< -o $@)
+objcxx_incl  = $(call objcxx_flags,$(1) \
+ $(CPPFLAGS) $(CXXFLAGS))
 cc_flags    = $(strip $(CC) $(1) -c $< -o $@)
 cc_incl     = $(call cc_flags,$(1) \
   $(CPPFLAGS) $(CXXFLAGS)) 
+objc_flags = $(strip $(OBJC) $(1) -c $< -o $@)
+objc_incl  = $(call objc_flags,$(1) \
+  $(CPPFLAGS) $(CXXFLAGS))
 
 $(system_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(system_incl) -I$(tmsrc)/include)
@@ -323,8 +331,7 @@ $(scheme_obj): Objects/%.o: %.cpp
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) \
-                  $(CXXSPARKLE) $(CXXX11) )
+	$(call cxx_incl,$(plugins_incl) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXICONV) $(CXXSPARKLE) $(CXXX11))
 $(plugins_c_obj): Objects/%.o: %.c
 	$(call cc_incl,$(plugins_incl))
 $(x11_obj): Objects/%.o: %.cpp
@@ -338,9 +345,9 @@ $(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
 $(gs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(gs_incl)  $(CXXX11))
 $(cocoa_m_obj): Objects/%.o: %.m
-	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA))
+	$(call objc_incl,$(cocoa_incl) $(CXXCOCOA))
 $(cocoa_mm_obj): Objects/%.o: %.mm
-	$(call cxx_incl,$(cocoa_incl) $(CXXCOCOA) $(CXXSPARKLE))
+	$(call objcxx_incl,$(cocoa_incl) $(CXXCOCOA) $(CXXSPARKLE))
 $(texmacs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(texmacs_incl))
 $(typeset_obj): Objects/%.o: %.cpp
