@@ -18,4 +18,4 @@
   (:mode in-manual?)
   ("S-F7" (make 'scm))
   ("C-F7" (make 'scm-arg))
-  ("M-F7" (make 'scm-fragment)))
+  ("M-F7" (make 'scm-code)))

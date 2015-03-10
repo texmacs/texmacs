@@ -193,10 +193,12 @@
   (inline-code-tag) (block-code-tag))
 
 (define-group inline-code-tag
-  verbatim scm mmx python cpp shell)
+  verbatim scm cpp mmx
+  python scilab shell)
 
 (define-group block-code-tag
-  verbatim-code scm-code mmx-code python-code cpp-code shell-code)
+  verbatim-code scm-code cpp-code mmx-code
+  python-code scilab-code shell-code)
 
 ;; ornaments
 
