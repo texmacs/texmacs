@@ -394,6 +394,19 @@ acceptable_border (tree t, path p, path q, hashset<int> labs) {
   return tag_border (t, p) > 0;
 }
 
+static bool
+acceptable_child (tree t, path p, hashset<int> labs) {
+  p= path_up (p);
+  while (!is_nil (p)) {
+    tree st= subtree (t, path_up (p));
+    if (labs->contains ((int) L(st)))
+      if (is_accessible_child (st, last_item (p)))
+        return true;
+    p= path_up (p);
+  }
+  return false;
+}
+
 static int
 tag_index (tree t, path p, hashset<int> labs) {
   p= path_up (p);
@@ -413,6 +426,7 @@ move_tag (tree t, path p, hashset<int> labs, bool forward, bool preserve) {
     if (r == q) return p;
     if (distinct_tag_or_argument (t, p, r, labs) &&
         acceptable_border (t, p, r, labs) &&
+        acceptable_child (t, r, labs) &&
 	(!preserve || tag_index (t, r, labs) == tag_index (t, p, labs)))
       return r;
     q= r;
