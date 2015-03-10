@@ -470,6 +470,7 @@
   (persistent-file-name persistent_file_name (url url string))
 
   ;; SQL interface
+  (supports-sql? sqlite3_present (bool))
   (sql-exec sql_exec (scheme_tree url string))
   (sql-quote sql_quote (string string))
 

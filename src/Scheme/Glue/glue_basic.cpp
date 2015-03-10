@@ -5513,6 +5513,15 @@ tmg_persistent_file_name (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_supports_sqlP () {
+  // TMSCM_DEFER_INTS;
+  bool out= sqlite3_present ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_sql_exec (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "sql-exec");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "sql-exec");
@@ -8079,6 +8088,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("persistent-has?",  tmg_persistent_hasP, 2, 0, 0);
   tmscm_install_procedure ("persistent-get",  tmg_persistent_get, 2, 0, 0);
   tmscm_install_procedure ("persistent-file-name",  tmg_persistent_file_name, 2, 0, 0);
+  tmscm_install_procedure ("supports-sql?",  tmg_supports_sqlP, 0, 0, 0);
   tmscm_install_procedure ("sql-exec",  tmg_sql_exec, 2, 0, 0);
   tmscm_install_procedure ("sql-quote",  tmg_sql_quote, 1, 0, 0);
   tmscm_install_procedure ("server-start",  tmg_server_start, 0, 0, 0);
