@@ -5,9 +5,11 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.2>
+  <section|Changes from version 1.99.1 to 1.99.3>
 
   <\itemize>
+    <item>Added style package for literate programming (1.99.3).
+
     <item>Enabled new style fonts as the default (1.99.2).
 
     <item>Use small amount of intercharacter stretching by default (1.99.2).
