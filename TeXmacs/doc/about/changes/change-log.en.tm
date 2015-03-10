@@ -10,6 +10,9 @@
   <\itemize>
     <item>Added style package for literate programming (1.99.3).
 
+    <item>Consistent support for multiple bibliographies, indexes,
+    glossaries, <abbr|etc.> (1.99.3).
+
     <item>Enabled new style fonts as the default (1.99.2).
 
     <item>Use small amount of intercharacter stretching by default (1.99.2).
