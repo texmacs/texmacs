@@ -39,6 +39,7 @@
 (define (tmstring->object s) (string->object s))
 
 (define-public (tmfs-handler class action handle)
+  ;;(display* "Define " class " :: " action "\n")
   (ahash-set! tmfs-handler-table (cons class action) handle))
 
 (define-public (tmfs-decompose-name name)
@@ -56,7 +57,11 @@
            (lambda (handler)
              (with r (handler name)
                (if (string? r) r (object->tmstring r)))))
-          (else ((ahash-ref tmfs-handler-table (cons #t 'load)) u)))))
+          ((ahash-ref tmfs-handler-table (cons #t 'load)) =>
+           (lambda (handler)
+             (with r (handler name)
+               (if (string? r) r (object->tmstring r)))))
+          (else ""))))
 
 (define-public (tmfs-save u what)
   "Save string @what to url @u on TeXmacs file system."
@@ -241,6 +246,32 @@
      (TeXmacs ,(texmacs-version))
      (style (tuple "generic"))
      (body (document ,what))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Default handlers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tmfs-handler #t 'load
+  (lambda (name)
+    `(document
+       (TeXmacs ,(texmacs-version))
+       (style (tuple "generic"))
+       (body (document "Invalid tmfs document.")))))
+
+(tmfs-handler #t 'save
+  (lambda (name doc) (noop)))
+
+(tmfs-handler #t 'title
+  (lambda (name doc) name))
+
+(tmfs-handler #t 'permission?
+  (lambda (name kind) (== kind "read")))
+
+(tmfs-handler #t 'master
+  (lambda (name) name))
+
+(tmfs-handler #t 'format
+  (lambda (name) "stm"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Auxiliary buffers
