@@ -270,6 +270,7 @@ private:
   tree exec_lesseq (tree t);
   tree exec_greater (tree t);
   tree exec_greatereq (tree t);
+  tree exec_blend (tree t);
 
   tree exec_cm_length ();
   tree exec_mm_length ();

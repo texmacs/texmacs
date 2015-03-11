@@ -242,6 +242,8 @@ evaluate_impl (tree t) {
     return evaluate_greater (t);
   case GREATEREQ:
     return evaluate_greatereq (t);
+  case BLEND:
+    return evaluate_blend (t);
 
   /* Length units */
   case CM_LENGTH:

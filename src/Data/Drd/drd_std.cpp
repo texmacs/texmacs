@@ -390,6 +390,7 @@ init_std_drd () {
   init (GREATEREQ, "greatereq",
 	fixed (2) -> returns_boolean () -> regular (0) ->
 	name ("greater or equal"));
+  init (BLEND, "blend", fixed (2) -> returns_color () -> color_type (0));
 
   init (CM_LENGTH, "cm-length", fixed (0) -> returns_length ());
   init (MM_LENGTH, "mm-length", fixed (0) -> returns_length ());

@@ -52,6 +52,7 @@ color  cmyk_color (int c, int m, int y, int k, int a= 255);
 void   get_cmyk_color (color col, int& r, int& g, int& b, int& a);
   // get the CMYK components of a color
 
+bool   is_color_name (string s);
 color  named_color (string s, int a= 255);
   // get a color by its name
 

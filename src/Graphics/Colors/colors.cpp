@@ -143,10 +143,11 @@ blend_colors (color fg, color bg) {
   int fR, fG, fB, fA, bR, bG, bB, bA;
   get_rgb_color (fg, fR, fG, fB, fA);
   get_rgb_color (bg, bR, bG, bB, bA);
-  fR= (bR * (255 - fA) + fR * fA) / 255;
-  fG= (bG * (255 - fA) + fG * fA) / 255;
-  fB= (bB * (255 - fA) + fB * fA) / 255;
-  return rgb_color (fR, fG, fB);
+  int rR= (bR * (255 - fA) + fR * fA) / 255;
+  int rG= (bG * (255 - fA) + fG * fA) / 255;
+  int rB= (bB * (255 - fA) + fB * fA) / 255;
+  int rA= (bA * (255 - fA) + fA * fA) / 255;
+  return rgb_color (rR, rG, rB, rA);
 }
 
 /******************************************************************************
@@ -366,6 +367,14 @@ string named_color_to_xcolormap (string s) {
   if (dvips_ch ->contains (s)) return "dvipsnames";
   if (tm_ch    ->contains (s)) return "texmacs";
   return "none";
+}
+
+bool
+is_color_name (string s) {
+  color c= named_color (s);
+  if ((c & 0xffffff) != 0) return true;
+  if (s == "black" || starts (s, "#000")) return true;
+  return false;
 }
 
 color

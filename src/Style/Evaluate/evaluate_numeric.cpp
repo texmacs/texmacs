@@ -197,3 +197,24 @@ evaluate_tan (tree t) {
     return as_tree (tan (as_double (t1)));
   return evaluate_error ("bad tan");
 }
+
+/******************************************************************************
+* Colors
+******************************************************************************/
+
+tree
+evaluate_blend (tree t) {
+  if (N(t)!=2) return evaluate_error ("bad blend");
+  tree t1= evaluate (t[0]);
+  tree t2= evaluate (t[1]);
+  if (is_compound (t1) || is_compound (t2))
+    return evaluate_error ("bad blend");
+  string s1= t1->label;
+  string s2= t2->label;
+  if (is_color_name (s1) && (is_color_name (s2))) {
+    color c1= named_color (s1);
+    color c2= named_color (s2);
+    return get_hex_color (blend_colors (c1, c2));
+  }
+  return evaluate_error ("bad blend");
+}

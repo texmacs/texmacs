@@ -541,6 +541,7 @@ concater_rep::typeset (tree t, path ip) {
   case LESSEQ:
   case GREATER:
   case GREATEREQ:
+  case BLEND:
   case BOX_INFO:
   case FRAME_DIRECT:
   case FRAME_INVERSE:

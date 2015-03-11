@@ -105,6 +105,7 @@ tree evaluate_less (tree t);
 tree evaluate_lesseq (tree t);
 tree evaluate_greater (tree t);
 tree evaluate_greatereq (tree t);
+tree evaluate_blend (tree t);
 
 /* Length units */
 tree evaluate_cm_length ();

@@ -335,6 +335,8 @@ edit_env_rep::exec (tree t) {
     return exec_greater (t);
   case GREATEREQ:
     return exec_greatereq (t);
+  case BLEND:
+    return exec_blend (t);
 
   case CM_LENGTH:
     return exec_cm_length ();
@@ -1554,6 +1556,23 @@ edit_env_rep::exec_greatereq (tree t) {
 }
 
 tree
+edit_env_rep::exec_blend (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad blend");
+  tree t1= exec (t[0]);
+  tree t2= exec (t[1]);
+  if (is_compound (t1) || is_compound (t2))
+    return tree (ERROR, "bad blend");
+  string s1= t1->label;
+  string s2= t2->label;
+  if (is_color_name (s1) && (is_color_name (s2))) {
+    color c1= named_color (s1);
+    color c2= named_color (s2);
+    return get_hex_color (blend_colors (c1, c2));
+  }
+  return tree (ERROR, "bad blend");
+}
+
+tree
 edit_env_rep::exec_hard_id (tree t) {
   pointer ptr= (pointer) this;
   if (N(t) == 0)
@@ -2099,6 +2118,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case LESSEQ:
   case GREATER:
   case GREATEREQ:
+  case BLEND:
     (void) exec (t);
     return false;
   case STYLE_WITH:
