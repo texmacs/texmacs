@@ -58,6 +58,7 @@ public:
   link_repository_rep ();
   ~link_repository_rep ();
   void insert_locus (string id, tree t);
+  void insert_locus (string id, tree t, string cb);
   void insert_link (soft_link ln);
 };
 

@@ -108,6 +108,7 @@ extern observer nil_observer;
 observer ip_observer (path ip);
 observer list_observer (observer o1, observer o2);
 observer tree_pointer (tree t, bool flag= false);
+observer scheme_observer (tree t, string cb);
 observer tree_position (tree t, int index);
 observer edit_observer (editor_rep* ed);
 observer undo_observer (archiver_rep* arch);

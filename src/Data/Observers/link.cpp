@@ -116,6 +116,15 @@ link_repository_rep::insert_locus (string id, tree t) {
 }
 
 void
+link_repository_rep::insert_locus (string id, tree t, string cb) {
+  observer obs= scheme_observer (t, cb);
+  register_pointer (id, obs);
+  attach_observer (t, obs);
+  ids= list<string> (id, ids);
+  loci= list<observer> (obs, loci);
+}
+
+void
 link_repository_rep::insert_link (soft_link ln) {
   register_link (ln);
   links= list<soft_link> (ln, links);

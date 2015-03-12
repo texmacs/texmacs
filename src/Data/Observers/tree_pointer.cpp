@@ -15,6 +15,7 @@
 #include "modification.hpp"
 #include "link.hpp"
 #include "list.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Definition of the tree_pointer_rep class
@@ -24,13 +25,19 @@ class tree_pointer_rep: public observer_rep {
 private:
   tree_rep* ptr;
   bool flag;
+  string cb;
 
 public:
-  tree_pointer_rep (tree ref, bool flag2): ptr (ref.rep), flag (flag2) {}
+  tree_pointer_rep (tree ref, bool flag2):
+    ptr (ref.rep), flag (flag2), cb ("") {}
+  tree_pointer_rep (tree ref, string cb2):
+    ptr (ref.rep), flag (true), cb (cb2) {}
   int get_type () { return OBSERVER_POINTER; }
   tm_ostream& print (tm_ostream& out) { return out << " pointer"; }
-  void announce (tree& ref, modification mod) {
-    (void) ref; link_announce (observer (this), mod); }
+
+  void announce (tree& ref, modification mod);
+  void done (tree& ref, modification mod);
+  void touched (tree& ref, path p);
 
   void notify_assign      (tree& ref, tree t);
   void notify_insert      (tree& ref, int pos, int nr);
@@ -48,6 +55,32 @@ public:
   bool set_tree (tree t);
   bool get_tree (tree& t);
 };
+
+/******************************************************************************
+* Call back routines for announcements
+******************************************************************************/
+
+void
+tree_pointer_rep::announce (tree& ref, modification mod) {
+  //cout << "Announce " << mod << "\n";
+  (void) ref; link_announce (observer (this), mod);
+  if (N(cb) != 0 && ip_attached (obtain_ip (ref)))
+    call (cb, symbol_object ("announce"), ref, mod);
+}
+
+void
+tree_pointer_rep::done (tree& ref, modification mod) {
+  //cout << "Done " << mod->p << "\n";
+  if (N(cb) != 0 && ip_attached (obtain_ip (ref)))
+    call (cb, symbol_object ("done"), ref, mod);
+}
+
+void
+tree_pointer_rep::touched (tree& ref, path p) {
+  //cout << "Touched " << p << "\n";
+  if (N(cb) != 0 && ip_attached (obtain_ip (ref)))
+    call (cb, symbol_object ("touched"), ref, p);
+}
 
 /******************************************************************************
 * Specific routines for tree_pointer observers
@@ -167,6 +200,11 @@ tree_pointer_rep::notify_detach (tree& ref, tree closest, bool right) {
 observer
 tree_pointer (tree ref, bool flag) {
   return tm_new<tree_pointer_rep> (ref, flag);
+}
+
+observer
+scheme_observer (tree ref, string cb) {
+  return tm_new<tree_pointer_rep> (ref, cb);
 }
 
 tree

@@ -485,6 +485,10 @@ init_std_drd () {
 	repeat (1, 1, BIFORM) -> returns_adhoc () ->
 	accessible (0) -> code (0) -> name (0, "function") ->
 	accessible (1) -> regular (1) -> name (0, "arguments"));
+  init (OBSERVER, "observer",
+	fixed (1, 1, BIFORM) -> returns_adhoc () ->
+	accessible (0) -> identifier (0) -> name (0, "identifier") ->
+	accessible (1) -> code (1) -> name (1, "call back"));
   init (FIND_ACCESSIBLE, "find-accessible",
 	fixed (1) -> regular (0));
   init (HLINK, "hlink",

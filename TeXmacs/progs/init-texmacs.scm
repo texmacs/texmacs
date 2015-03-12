@@ -357,4 +357,3 @@
     (use-modules (utils misc updater))
     (delayed (:idle 2000) (updater-initialize))))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
-

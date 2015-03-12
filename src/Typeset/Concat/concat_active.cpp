@@ -107,7 +107,7 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, 
 	ids= list<string> (id, ids);
 	visited= visited || has_been_visited ("id:" * id);
       }
-      if (is_compound (arg, "link") && N(arg) >= 2) {
+      else if (is_compound (arg, "link") && N(arg) >= 2) {
 	if (is_func (arg[1], ATTR)) arg= copy (arg);
 	else arg= arg (0, 1) * tree (LINK, tree (ATTR)) * arg (1, N(arg));
 	arg[1] << tree ("secure")
@@ -123,6 +123,13 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, 
 	    ref = arg[j][0]->label;
 	  }
 	}
+      }
+      else if (is_compound (arg, "observer", 2)) {
+	string id= as_string (arg[0]);
+	string cb= cork_to_utf8 (as_string (arg[1]));
+	if (accessible) env->link_env->insert_locus (id, body, cb);
+	ids= list<string> (id, ids);
+	visited= visited || has_been_visited ("id:" * id);
       }
     }
   }
