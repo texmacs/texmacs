@@ -97,7 +97,7 @@
       ($when (not (numbered-numbered? t))
         "For most style files, the " ($markup lab)
         " environment is unnumbered. "
-        "The environment admits an numbered variant " ($markup lab*) ". ")
+        "The environment admits a numbered variant " ($markup lab*) ". ")
       "You may toggle the numbering using the keyboard shortcut "
       ($shortcut (numbered-toggle (focus-tree))) ", the menu entry "
       ($menu "Focus" "Numbered") ", or by pressing the "
