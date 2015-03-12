@@ -3382,6 +3382,19 @@ tmg_modification_inplace_apply (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_patch_compound (tmscm arg1) {
+  TMSCM_ASSERT_ARRAY_PATCH (arg1, TMSCM_ARG1, "patch-compound");
+
+  array_patch in1= tmscm_to_array_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  patch out= patch (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_2ids (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree->ids");
 
@@ -8229,6 +8242,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("modification-applicable?",  tmg_modification_applicableP, 2, 0, 0);
   tmscm_install_procedure ("modification-apply",  tmg_modification_apply, 2, 0, 0);
   tmscm_install_procedure ("modification-inplace-apply",  tmg_modification_inplace_apply, 2, 0, 0);
+  tmscm_install_procedure ("patch-compound",  tmg_patch_compound, 1, 0, 0);
   tmscm_install_procedure ("tree->ids",  tmg_tree_2ids, 1, 0, 0);
   tmscm_install_procedure ("id->trees",  tmg_id_2trees, 1, 0, 0);
   tmscm_install_procedure ("vertex->links",  tmg_vertex_2links, 1, 0, 0);

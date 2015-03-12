@@ -295,6 +295,9 @@
   (modification-apply clean_apply (tree content modification))
   (modification-inplace-apply var_apply (tree tree modification))
 
+  ;; patches
+  (patch-compound patch (patch array_patch))
+
   ;; links
   (tree->ids get_ids (list_string tree))
   (id->trees get_trees (list_tree string))
