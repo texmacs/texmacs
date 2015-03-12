@@ -1381,8 +1381,7 @@ edit_env_rep::exec_translate (tree t) {
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
   tree t3= exec (t[2]);
-  if (is_compound (t1) || is_compound (t2) || is_compound (t3))
-    return tree (ERROR, "bad translate");
+  if (is_compound (t1) || is_compound (t2) || is_compound (t3)) return t1;
   return translate (t1->label, t2->label, t3->label);
 }
 
