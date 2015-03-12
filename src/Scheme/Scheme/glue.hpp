@@ -16,6 +16,7 @@
 #include "path.hpp"
 #include "url.hpp"
 #include "widget.hpp"
+#include "patch.hpp"
 //#include "promise.hpp"
 
 #include "object.hpp"
@@ -28,6 +29,7 @@ bool tmscm_is_list_tree (tmscm obj);
 bool tmscm_is_path (tmscm obj);
 bool tmscm_is_url (tmscm obj);
 bool tmscm_is_modification (tmscm obj);
+bool tmscm_is_patch (tmscm obj);
 bool tmscm_is_widget (tmscm obj);
 
 tmscm  bool_to_tmscm (bool b);
@@ -40,7 +42,8 @@ tmscm  list_string_to_tmscm (list<string> l);
 tmscm  list_tree_to_tmscm (list<tree> l);
 tmscm  path_to_tmscm (path p);
 tmscm  url_to_tmscm (url u);
-tmscm  modification_to_tmscm (modification u);
+tmscm  modification_to_tmscm (modification m);
+tmscm  patch_to_tmscm (patch p);
 tmscm  scheme_tree_to_tmscm (scheme_tree t);
 
 //int tmscm_to_bool (tmscm obj);
@@ -55,6 +58,7 @@ list<tree> tmscm_to_list_tree (tmscm obj);
 path tmscm_to_path (tmscm obj);
 url tmscm_to_url (tmscm obj);
 modification tmscm_to_modification (tmscm obj);
+patch tmscm_to_patch (tmscm obj);
 scheme_tree tmscm_to_scheme_tree (tmscm obj);
 widget tmscm_to_widget (tmscm  widget_smob);
 

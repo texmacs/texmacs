@@ -17,6 +17,8 @@
 #include "command.hpp"
 #include "url.hpp"
 
+class patch;
+
 void start_scheme (int argc, char** argv, void (*call_back) (int, char**));
 void initialize_scheme ();
 
@@ -43,6 +45,7 @@ public:
   object (path p);
   object (url u);
   object (modification m);
+  object (patch p);
 };
 CONCRETE_CODE(object);
 
@@ -78,6 +81,7 @@ bool is_tree (object obj);
 bool is_path (object obj);
 bool is_url (object obj);
 bool is_modification (object obj);
+bool is_patch (object obj);
 bool is_widget (object obj);
 
 bool as_bool (object obj);
@@ -93,6 +97,7 @@ path as_path (object obj);
 array<object> as_array_object (object obj);
 url as_url (object obj);
 modification as_modification (object obj);
+patch as_patch (object obj);
 command as_command (object obj);
 #ifdef WIDGET_H // FIXME: dirty hack
 widget as_widget (object obj);

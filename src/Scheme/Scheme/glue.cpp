@@ -15,6 +15,7 @@
 #include "tree.hpp"
 #include "tree_search.hpp"
 #include "modification.hpp"
+#include "patch.hpp"
 
 #include "boxes.hpp"
 #include "editor.hpp"
@@ -157,6 +158,8 @@ TMSCM_ASSERT (tmscm_is_int (i), i, arg, rout);
 TMSCM_ASSERT (tmscm_is_url (u) || tmscm_is_string (u), u, arg, rout)
 #define TMSCM_ASSERT_MODIFICATION(m,arg,rout) \
 TMSCM_ASSERT (tmscm_is_modification (m), m, arg, rout)
+#define TMSCM_ASSERT_PATCH(p,arg,rout) \
+TMSCM_ASSERT (tmscm_is_patch (p), p, arg, rout)
 #define TMSCM_ASSERT_BLACKBOX(t,arg,rout) \
 TMSCM_ASSERT (tmscm_is_blackbox (t), t, arg, rout)
 #define TMSCM_ASSERT_SYMBOL(s,arg,rout) \
@@ -671,6 +674,33 @@ var_apply (tree& t, modification m) {
 }
 
 /******************************************************************************
+* Patch
+******************************************************************************/
+
+bool
+tmscm_is_patch (tmscm p) {
+  return (tmscm_is_blackbox (p) &&
+	  (type_box (tmscm_to_blackbox(p)) == type_helper<patch>::id))
+    || (tmscm_is_string (p));
+}
+
+tmscm 
+patch_to_tmscm (patch p) {
+  return blackbox_to_tmscm (close_box<patch> (p));
+}
+
+patch
+tmscm_to_patch (tmscm obj) {
+  return open_box<patch> (tmscm_to_blackbox (obj));
+}
+
+tmscm 
+patchP (tmscm t) {
+  bool b= tmscm_is_patch (t);
+  return bool_to_tmscm (b);
+}
+
+/******************************************************************************
 * Table types
 ******************************************************************************/
 
@@ -1109,6 +1139,7 @@ initialize_glue () {
   tmscm_install_procedure ("observer?",  observerP, 1, 0, 0);
   tmscm_install_procedure ("url?",  urlP, 1, 0, 0);
   tmscm_install_procedure ("modification?",  modificationP, 1, 0, 0);
+  tmscm_install_procedure ("patch?",  patchP, 1, 0, 0);
   tmscm_install_procedure ("blackbox?",  blackboxP, 1, 0, 0);
   
   initialize_glue_basic ();

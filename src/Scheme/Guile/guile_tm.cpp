@@ -438,6 +438,9 @@ print_blackbox (SCM blackbox_smob, SCM port, scm_print_state *pstate) {
   else if (type_ == type_helper<modification>::id) {
     s= "<modification>";
   }
+  else if (type_ == type_helper<patch>::id) {
+    s= "<patch>";
+  }
   
   scm_display (string_to_tmscm (s), port);
   return 1;
