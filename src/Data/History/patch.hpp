@@ -83,8 +83,20 @@ path cursor_hint (patch p, tree t);
 
 inline int get_type (patch p) {
   return p->get_type (); }
+inline bool is_modification (patch p) {
+  return p->get_type () == PATCH_MODIFICATION; }
+inline bool is_compound (patch p) {
+  return p->get_type () == PATCH_COMPOUND; }
+inline bool is_branch (patch p) {
+  return p->get_type () == PATCH_BRANCH; }
+inline bool is_birth (patch p) {
+  return p->get_type () == PATCH_BIRTH; }
+inline bool is_author (patch p) {
+  return p->get_type () == PATCH_AUTHOR; }
 inline int N (patch p) {
   return p->get_arity (); }
+inline patch access (patch p, int i) {
+  return p[i]; }
 inline modification get_modification (patch p) {
   return p->get_modification (); }
 inline modification get_inverse (patch p) {

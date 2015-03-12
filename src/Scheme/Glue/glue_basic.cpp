@@ -3382,6 +3382,51 @@ tmg_modification_inplace_apply (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_modification_invert (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-invert");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "modification-invert");
+
+  modification in1= tmscm_to_modification (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  modification out= invert (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_commuteP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-commute?");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-commute?");
+
+  modification in1= tmscm_to_modification (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= commute (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_pair (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "patch-pair");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "patch-pair");
+
+  modification in1= tmscm_to_modification (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  patch out= patch (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
 tmg_patch_compound (tmscm arg1) {
   TMSCM_ASSERT_ARRAY_PATCH (arg1, TMSCM_ARG1, "patch-compound");
 
@@ -3392,6 +3437,323 @@ tmg_patch_compound (tmscm arg1) {
   // TMSCM_ALLOW_INTS;
 
   return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_branch (tmscm arg1) {
+  TMSCM_ASSERT_ARRAY_PATCH (arg1, TMSCM_ARG1, "patch-branch");
+
+  array_patch in1= tmscm_to_array_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  patch out= branch_patch (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_birth (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "patch-birth");
+  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "patch-birth");
+
+  double in1= tmscm_to_double (arg1);
+  bool in2= tmscm_to_bool (arg2);
+
+  // TMSCM_DEFER_INTS;
+  patch out= patch (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_author (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "patch-author");
+  TMSCM_ASSERT_PATCH (arg2, TMSCM_ARG2, "patch-author");
+
+  double in1= tmscm_to_double (arg1);
+  patch in2= tmscm_to_patch (arg2);
+
+  // TMSCM_DEFER_INTS;
+  patch out= patch (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_pairP (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-pair?");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_modification (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_compoundP (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-compound?");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_compound (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_branchP (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-branch?");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_branch (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_birthP (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-birth?");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_birth (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_authorP (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-author?");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_author (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_arity (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-arity");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= N (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_ref (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-ref");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "patch-ref");
+
+  patch in1= tmscm_to_patch (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  patch out= access (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_direct (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-direct");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  modification out= get_modification (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_inverse (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-inverse");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  modification out= get_inverse (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_get_birth (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-get-birth");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= get_birth (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_get_author (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-get-author");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  double out= get_author (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return double_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_applicableP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-applicable?");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "patch-applicable?");
+
+  patch in1= tmscm_to_patch (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_applicable (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_apply (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "patch-apply");
+  TMSCM_ASSERT_PATCH (arg2, TMSCM_ARG2, "patch-apply");
+
+  content in1= tmscm_to_content (arg1);
+  patch in2= tmscm_to_patch (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= clean_apply (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_inplace_apply (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "patch-inplace-apply");
+  TMSCM_ASSERT_PATCH (arg2, TMSCM_ARG2, "patch-inplace-apply");
+
+  tree in1= tmscm_to_tree (arg1);
+  patch in2= tmscm_to_patch (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= var_apply (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_compactify (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-compactify");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  patch out= compactify (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_cursor_hint (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-cursor-hint");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "patch-cursor-hint");
+
+  patch in1= tmscm_to_patch (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  path out= cursor_hint (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_invert (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-invert");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "patch-invert");
+
+  patch in1= tmscm_to_patch (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  patch out= invert (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_commuteP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-commute?");
+  TMSCM_ASSERT_PATCH (arg2, TMSCM_ARG2, "patch-commute?");
+
+  patch in1= tmscm_to_patch (arg1);
+  patch in2= tmscm_to_patch (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= commute (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_remove_set_cursor (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-remove-set-cursor");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  patch out= remove_set_cursor (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_modifiesP (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-modifies?");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= does_modify (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
 }
 
 tmscm
@@ -8242,7 +8604,33 @@ initialize_glue_basic () {
   tmscm_install_procedure ("modification-applicable?",  tmg_modification_applicableP, 2, 0, 0);
   tmscm_install_procedure ("modification-apply",  tmg_modification_apply, 2, 0, 0);
   tmscm_install_procedure ("modification-inplace-apply",  tmg_modification_inplace_apply, 2, 0, 0);
+  tmscm_install_procedure ("modification-invert",  tmg_modification_invert, 2, 0, 0);
+  tmscm_install_procedure ("modification-commute?",  tmg_modification_commuteP, 2, 0, 0);
+  tmscm_install_procedure ("patch-pair",  tmg_patch_pair, 2, 0, 0);
   tmscm_install_procedure ("patch-compound",  tmg_patch_compound, 1, 0, 0);
+  tmscm_install_procedure ("patch-branch",  tmg_patch_branch, 1, 0, 0);
+  tmscm_install_procedure ("patch-birth",  tmg_patch_birth, 2, 0, 0);
+  tmscm_install_procedure ("patch-author",  tmg_patch_author, 2, 0, 0);
+  tmscm_install_procedure ("patch-pair?",  tmg_patch_pairP, 1, 0, 0);
+  tmscm_install_procedure ("patch-compound?",  tmg_patch_compoundP, 1, 0, 0);
+  tmscm_install_procedure ("patch-branch?",  tmg_patch_branchP, 1, 0, 0);
+  tmscm_install_procedure ("patch-birth?",  tmg_patch_birthP, 1, 0, 0);
+  tmscm_install_procedure ("patch-author?",  tmg_patch_authorP, 1, 0, 0);
+  tmscm_install_procedure ("patch-arity",  tmg_patch_arity, 1, 0, 0);
+  tmscm_install_procedure ("patch-ref",  tmg_patch_ref, 2, 0, 0);
+  tmscm_install_procedure ("patch-direct",  tmg_patch_direct, 1, 0, 0);
+  tmscm_install_procedure ("patch-inverse",  tmg_patch_inverse, 1, 0, 0);
+  tmscm_install_procedure ("patch-get-birth",  tmg_patch_get_birth, 1, 0, 0);
+  tmscm_install_procedure ("patch-get-author",  tmg_patch_get_author, 1, 0, 0);
+  tmscm_install_procedure ("patch-applicable?",  tmg_patch_applicableP, 2, 0, 0);
+  tmscm_install_procedure ("patch-apply",  tmg_patch_apply, 2, 0, 0);
+  tmscm_install_procedure ("patch-inplace-apply",  tmg_patch_inplace_apply, 2, 0, 0);
+  tmscm_install_procedure ("patch-compactify",  tmg_patch_compactify, 1, 0, 0);
+  tmscm_install_procedure ("patch-cursor-hint",  tmg_patch_cursor_hint, 2, 0, 0);
+  tmscm_install_procedure ("patch-invert",  tmg_patch_invert, 2, 0, 0);
+  tmscm_install_procedure ("patch-commute?",  tmg_patch_commuteP, 2, 0, 0);
+  tmscm_install_procedure ("patch-remove-set-cursor",  tmg_patch_remove_set_cursor, 1, 0, 0);
+  tmscm_install_procedure ("patch-modifies?",  tmg_patch_modifiesP, 1, 0, 0);
   tmscm_install_procedure ("tree->ids",  tmg_tree_2ids, 1, 0, 0);
   tmscm_install_procedure ("id->trees",  tmg_id_2trees, 1, 0, 0);
   tmscm_install_procedure ("vertex->links",  tmg_vertex_2links, 1, 0, 0);

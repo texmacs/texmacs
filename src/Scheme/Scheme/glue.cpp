@@ -698,6 +698,22 @@ patchP (tmscm t) {
   return bool_to_tmscm (b);
 }
 
+patch
+branch_patch (array<patch> a) {
+  return patch (true, a);
+}
+
+tree
+clean_apply (tree t, patch p) {
+  return clean_apply (p, t);
+}
+
+tree
+var_apply (tree& t, patch p) {
+  apply (p, t);
+  return t;
+}
+
 /******************************************************************************
 * Table types
 ******************************************************************************/
