@@ -74,16 +74,20 @@
     </surround>
   </macro>>
 
-  <assign|render-folded-documentation|<\macro|button|body>
-    <\surround||<right-flush><vspace|0.5fn>>
-      <arg|body> <arg|button>
+  <assign|render-folded-documentation|<\macro|button|body1|body2>
+    <\surround||<right-flush><arg|button><vspace|0.5fn>>
+      <arg|body1>
     </surround>
+
+    <hidden|<arg|body2>>
   </macro>>
 
-  <assign|render-unfolded-documentation|<\macro|button|body>
+  <assign|render-unfolded-documentation|<\macro|button|body1|body2>
     <\surround||<right-flush><arg|button><vspace|0.5fn>>
-      <arg|body>
+      <arg|body1>
     </surround>
+
+    <arg|body2>
   </macro>>
 
   <assign|render-folded-grouped|<\macro|button|body>
@@ -164,17 +168,17 @@
   </macro>>
 
   <assign|folded-documentation|<\macro|x|y>
-    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<ldots\>>>>>>|mouse-unfold|<arg|x>>>
-      <strong|<large|<arg|x>>><hidden|<arg|y>>
+    <\render-folded-documentation|<action|<with|color|#336666|<strong|<large|<math|<op|\<Downarrow\>>>>>>|mouse-unfold|<arg|x>>>
+      <strong|<large|<arg|x>>>
+    <|render-folded-documentation>
+      <hidden|<arg|y>>
     </render-folded-documentation>
   </macro>>
 
   <assign|unfolded-documentation|<\macro|x|y>
-    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Leftarrow\>>>>>|mouse-fold|<arg|x>>>
+    <\render-unfolded-documentation|<action|<with|color|#336666|<strong|<math|<op|\<Uparrow\>>>>>|mouse-fold|<arg|x>>>
       <strong|<large|<arg|x>>>
-
-      <arg|y>
-    </render-unfolded-documentation>
+    </render-unfolded-documentation|<arg|y>>
   </macro>>
 
   <assign|picture-mixed|<\macro|x|y>
