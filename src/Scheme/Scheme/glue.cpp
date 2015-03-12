@@ -14,6 +14,7 @@
 #include "promise.hpp"
 #include "tree.hpp"
 #include "tree_search.hpp"
+#include "modification.hpp"
 
 #include "boxes.hpp"
 #include "editor.hpp"
@@ -154,6 +155,8 @@ TMSCM_ASSERT (tmscm_is_int (i), i, arg, rout);
 //TMSCM_ASSERT (SCM_REALP (i), i, arg, rout);
 #define TMSCM_ASSERT_URL(u,arg,rout) \
 TMSCM_ASSERT (tmscm_is_url (u) || tmscm_is_string (u), u, arg, rout)
+#define TMSCM_ASSERT_MODIFICATION(m,arg,rout) \
+TMSCM_ASSERT (tmscm_is_modification (m), m, arg, rout)
 #define TMSCM_ASSERT_BLACKBOX(t,arg,rout) \
 TMSCM_ASSERT (tmscm_is_blackbox (t), t, arg, rout)
 #define TMSCM_ASSERT_SYMBOL(s,arg,rout) \
@@ -634,6 +637,38 @@ string string_load (url u) {
   string s; (void) load_string (u, s, false); return s; }
 url url_ref (url u, int i) { return u[i]; }
 
+/******************************************************************************
+* Modification
+******************************************************************************/
+
+bool
+tmscm_is_modification (tmscm m) {
+  return (tmscm_is_blackbox (m) &&
+	  (type_box (tmscm_to_blackbox(m)) == type_helper<modification>::id))
+    || (tmscm_is_string (m));
+}
+
+tmscm 
+modification_to_tmscm (modification m) {
+  return blackbox_to_tmscm (close_box<modification> (m));
+}
+
+modification
+tmscm_to_modification (tmscm obj) {
+  return open_box<modification> (tmscm_to_blackbox (obj));
+}
+
+tmscm 
+modificationP (tmscm t) {
+  bool b= tmscm_is_modification (t);
+  return bool_to_tmscm (b);
+}
+
+tree
+var_apply (tree& t, modification m) {
+  apply (t, m);
+  return t;
+}
 
 /******************************************************************************
 * Table types
@@ -1073,6 +1108,7 @@ initialize_glue () {
   tmscm_install_procedure ("tm?",  contentP, 1, 0, 0);
   tmscm_install_procedure ("observer?",  observerP, 1, 0, 0);
   tmscm_install_procedure ("url?",  urlP, 1, 0, 0);
+  tmscm_install_procedure ("modification?",  modificationP, 1, 0, 0);
   tmscm_install_procedure ("blackbox?",  blackboxP, 1, 0, 0);
   
   initialize_glue_basic ();

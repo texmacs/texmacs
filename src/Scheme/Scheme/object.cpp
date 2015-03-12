@@ -19,7 +19,7 @@
 #include "widget.hpp"
 #include "boot.hpp"
 #include "editor.hpp"
-
+#include "modification.hpp"
 
 /******************************************************************************
 * The object representation class
@@ -128,6 +128,8 @@ bool is_tree (object obj) { return tmscm_is_tree (object_to_tmscm (obj)); }
 bool is_path (object obj) { return tmscm_is_path (object_to_tmscm (obj)); }
 bool is_url (object obj) { return tmscm_is_url (object_to_tmscm (obj)); }
 bool is_widget (object obj) { return tmscm_is_widget (object_to_tmscm (obj)); }
+bool is_modification (object obj) {
+  return tmscm_is_modification (object_to_tmscm (obj)); }
 
 /******************************************************************************
 * Basic conversions
@@ -137,17 +139,22 @@ object::object (tmscm_object_rep* o): rep (static_cast<object_rep*>(o)) {}
 object::object (): rep (tm_new<tmscm_object_rep> (tmscm_null ())) {}
 object::object (bool b): rep (tm_new<tmscm_object_rep> (bool_to_tmscm  (b))) {}
 object::object (int i): rep (tm_new<tmscm_object_rep> (int_to_tmscm  (i))) {}
-object::object (double x): rep (tm_new<tmscm_object_rep> (double_to_tmscm  (x))) {}
+object::object (double x):
+  rep (tm_new<tmscm_object_rep> (double_to_tmscm  (x))) {}
 object::object (const char* s):
-rep (tm_new<tmscm_object_rep> (string_to_tmscm  (string (s)))) {}
-object::object (string s): rep (tm_new<tmscm_object_rep> (string_to_tmscm  (s))) {}
-object::object (tree t): rep (tm_new<tmscm_object_rep> (tree_to_tmscm  (t))) {}
+  rep (tm_new<tmscm_object_rep> (string_to_tmscm  (string (s)))) {}
+object::object (string s):
+  rep (tm_new<tmscm_object_rep> (string_to_tmscm (s))) {}
+object::object (tree t):
+  rep (tm_new<tmscm_object_rep> (tree_to_tmscm  (t))) {}
 object::object (list<string> l):
-rep (tm_new<tmscm_object_rep> (list_string_to_tmscm (l))) {}
+  rep (tm_new<tmscm_object_rep> (list_string_to_tmscm (l))) {}
 object::object (list<tree> l):
-rep (tm_new<tmscm_object_rep> (list_tree_to_tmscm  (l))) {}
+  rep (tm_new<tmscm_object_rep> (list_tree_to_tmscm  (l))) {}
 object::object (path p): rep (tm_new<tmscm_object_rep> (path_to_tmscm  (p))) {}
 object::object (url u): rep (tm_new<tmscm_object_rep> (url_to_tmscm  (u))) {}
+object::object (modification m):
+  rep (tm_new<tmscm_object_rep> (modification_to_tmscm (m))) {}
 
 bool
 as_bool (object obj) {
@@ -234,6 +241,14 @@ as_url (object obj) {
   tmscm  t= object_to_tmscm (obj);
   if (!tmscm_is_url (t)) return url ("");
   return tmscm_to_url (t);
+}
+
+modification
+as_modification (object obj) {
+  tmscm  t= object_to_tmscm (obj);
+  if (!tmscm_is_modification (t))
+    return mod_assign (path (), "");
+  return tmscm_to_modification (t);
 }
 
 widget

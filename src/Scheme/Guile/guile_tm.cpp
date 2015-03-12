@@ -1,12 +1,13 @@
+
 /******************************************************************************
- * MODULE     : guile_tm.cpp
- * DESCRIPTION: Interface to Guile
- * COPYRIGHT  : (C) 1999-2011  Joris van der Hoeven and Massimiliano Gubinelli
- *******************************************************************************
- * This software falls under the GNU general public license version 3 or later.
- * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
- * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
- ******************************************************************************/
+* MODULE     : guile_tm.cpp
+* DESCRIPTION: Interface to Guile
+* COPYRIGHT  : (C) 1999-2011  Joris van der Hoeven and Massimiliano Gubinelli
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #ifdef __MINGW32__
   //FIXME: if this include is not here we have compilation problems on mingw32
@@ -414,26 +415,28 @@ print_blackbox (SCM blackbox_smob, SCM port, scm_print_state *pstate) {
   (void) pstate;
   string s = "<blackbox>";
   int type_ = type_box (tmscm_to_blackbox(blackbox_smob)) ;
-  if (type_ == type_helper<tree>::id)
-  {
-    tree   t= tmscm_to_tree (blackbox_smob);
+  if (type_ == type_helper<tree>::id) {
+    tree t= tmscm_to_tree (blackbox_smob);
     s= "<tree " * tree_to_texmacs (t) * ">";
-  } else if (type_ == type_helper<observer>::id)
-  {
+  }
+  else if (type_ == type_helper<observer>::id) {
     s= "<observer>";
-  } else if (type_ == type_helper<widget>::id)
-  {
+  }
+  else if (type_ == type_helper<widget>::id) {
     s= "<widget>";
-  } else if (type_ == type_helper<promise<widget> >::id)
-  {
+  }
+  else if (type_ == type_helper<promise<widget> >::id) {
     s= "<promise-widget>";
-  } else if (type_ == type_helper<command>::id)
-  {
+  }
+  else if (type_ == type_helper<command>::id) {
     s= "<command>";
-  } else if (type_ == type_helper<url>::id)
-  {
-    url    u= tmscm_to_url (blackbox_smob);
+  }
+  else if (type_ == type_helper<url>::id) {
+    url u= tmscm_to_url (blackbox_smob);
     s= "<url " * as_string (u) * ">";
+  }
+  else if (type_ == type_helper<modification>::id) {
+    s= "<modification>";
   }
   
   scm_display (string_to_tmscm (s), port);

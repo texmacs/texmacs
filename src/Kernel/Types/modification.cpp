@@ -110,6 +110,51 @@ L (modification mod) {
 }
 
 /******************************************************************************
+* Constructor and accessors for scheme interface
+******************************************************************************/
+
+modification
+make_modification (string s, path p, tree t) {
+  modification_type k= MOD_ASSIGN;
+  if (s == "assign") k= MOD_ASSIGN;
+  else if (s == "insert") k= MOD_INSERT;
+  else if (s == "remove") k= MOD_REMOVE;
+  else if (s == "split") k= MOD_SPLIT;
+  else if (s == "join") k= MOD_JOIN;
+  else if (s == "assign-node") k= MOD_ASSIGN_NODE;
+  else if (s == "insert-node") k= MOD_INSERT_NODE;
+  else if (s == "remove-node") k= MOD_REMOVE_NODE;
+  else if (s == "set-cursor") k= MOD_SET_CURSOR;
+  return modification (k, p, t);
+}
+
+string
+get_type (modification mod) {
+  switch (mod->k) {
+  case MOD_ASSIGN: return "assign";
+  case MOD_INSERT: return "insert";
+  case MOD_REMOVE: return "remove";
+  case MOD_SPLIT: return "split";
+  case MOD_JOIN: return "join";
+  case MOD_ASSIGN_NODE: return "assign-node";
+  case MOD_INSERT_NODE: return "insert-node";
+  case MOD_REMOVE_NODE: return "remove-node";
+  case MOD_SET_CURSOR: return "set-cursor";
+  default: FAILED ("invalid modification type");
+  }
+}
+
+path
+get_path (modification mod) {
+  return mod->p;
+}
+
+tree
+get_tree (modification mod) {
+  return mod->t;
+}
+
+/******************************************************************************
 * Test applicability of modifications
 ******************************************************************************/
 

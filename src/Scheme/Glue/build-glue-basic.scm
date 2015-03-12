@@ -273,6 +273,28 @@
   (path-previous-argument previous_argument (path content path))
   (path-previous-section previous_section (path content path))
 
+  ;; modifications on trees
+  (make-modification make_modification (modification string path content))
+  (modification-assign mod_assign (modification path content))
+  (modification-insert mod_insert (modification path int content))
+  (modification-remove mod_remove (modification path int int))
+  (modification-split mod_split (modification path int int))
+  (modification-join mod_join (modification path int))
+  (modification-assign-node mod_assign_node (modification path tree_label))
+  (modification-insert-node mod_insert_node (modification path int content))
+  (modification-remove-node mod_remove_node (modification path int))
+  (modification-set-cursor mod_set_cursor (modification path int content))
+  (modification-kind get_type (string modification))
+  (modification-path get_path (path modification))
+  (modification-tree get_tree (tree modification))
+  (modification-root root (path modification))
+  (modification-index index (int modification))
+  (modification-argument argument (int modification))
+  (modification-label L (tree_label modification))
+  (modification-applicable? is_applicable (bool content modification))
+  (modification-apply clean_apply (tree content modification))
+  (modification-inplace-apply var_apply (tree tree modification))
+
   ;; links
   (tree->ids get_ids (list_string tree))
   (id->trees get_trees (list_tree string))

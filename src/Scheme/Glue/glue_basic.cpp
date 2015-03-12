@@ -3084,6 +3084,304 @@ tmg_path_previous_section (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_make_modification (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-modification");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "make-modification");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "make-modification");
+
+  string in1= tmscm_to_string (arg1);
+  path in2= tmscm_to_path (arg2);
+  content in3= tmscm_to_content (arg3);
+
+  // TMSCM_DEFER_INTS;
+  modification out= make_modification (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_assign (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-assign");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "modification-assign");
+
+  path in1= tmscm_to_path (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_assign (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_insert (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-insert");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "modification-insert");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "modification-insert");
+
+  path in1= tmscm_to_path (arg1);
+  int in2= tmscm_to_int (arg2);
+  content in3= tmscm_to_content (arg3);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_insert (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_remove (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-remove");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "modification-remove");
+  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "modification-remove");
+
+  path in1= tmscm_to_path (arg1);
+  int in2= tmscm_to_int (arg2);
+  int in3= tmscm_to_int (arg3);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_remove (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_split (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-split");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "modification-split");
+  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "modification-split");
+
+  path in1= tmscm_to_path (arg1);
+  int in2= tmscm_to_int (arg2);
+  int in3= tmscm_to_int (arg3);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_split (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_join (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-join");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "modification-join");
+
+  path in1= tmscm_to_path (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_join (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_assign_node (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-assign-node");
+  TMSCM_ASSERT_TREE_LABEL (arg2, TMSCM_ARG2, "modification-assign-node");
+
+  path in1= tmscm_to_path (arg1);
+  tree_label in2= tmscm_to_tree_label (arg2);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_assign_node (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_insert_node (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-insert-node");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "modification-insert-node");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "modification-insert-node");
+
+  path in1= tmscm_to_path (arg1);
+  int in2= tmscm_to_int (arg2);
+  content in3= tmscm_to_content (arg3);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_insert_node (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_remove_node (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-remove-node");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "modification-remove-node");
+
+  path in1= tmscm_to_path (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_remove_node (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_set_cursor (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "modification-set-cursor");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "modification-set-cursor");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "modification-set-cursor");
+
+  path in1= tmscm_to_path (arg1);
+  int in2= tmscm_to_int (arg2);
+  content in3= tmscm_to_content (arg3);
+
+  // TMSCM_DEFER_INTS;
+  modification out= mod_set_cursor (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_kind (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-kind");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= get_type (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_path (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-path");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  path out= get_path (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_tree (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-tree");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_tree (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_root (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-root");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  path out= root (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_index (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-index");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= index (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_argument (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-argument");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= argument (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_label (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-label");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree_label out= L (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_label_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_applicableP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "modification-applicable?");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-applicable?");
+
+  content in1= tmscm_to_content (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_applicable (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_apply (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "modification-apply");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-apply");
+
+  content in1= tmscm_to_content (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= clean_apply (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_inplace_apply (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "modification-inplace-apply");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-inplace-apply");
+
+  tree in1= tmscm_to_tree (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= var_apply (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_2ids (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree->ids");
 
@@ -7911,6 +8209,26 @@ initialize_glue_basic () {
   tmscm_install_procedure ("path-next-argument",  tmg_path_next_argument, 2, 0, 0);
   tmscm_install_procedure ("path-previous-argument",  tmg_path_previous_argument, 2, 0, 0);
   tmscm_install_procedure ("path-previous-section",  tmg_path_previous_section, 2, 0, 0);
+  tmscm_install_procedure ("make-modification",  tmg_make_modification, 3, 0, 0);
+  tmscm_install_procedure ("modification-assign",  tmg_modification_assign, 2, 0, 0);
+  tmscm_install_procedure ("modification-insert",  tmg_modification_insert, 3, 0, 0);
+  tmscm_install_procedure ("modification-remove",  tmg_modification_remove, 3, 0, 0);
+  tmscm_install_procedure ("modification-split",  tmg_modification_split, 3, 0, 0);
+  tmscm_install_procedure ("modification-join",  tmg_modification_join, 2, 0, 0);
+  tmscm_install_procedure ("modification-assign-node",  tmg_modification_assign_node, 2, 0, 0);
+  tmscm_install_procedure ("modification-insert-node",  tmg_modification_insert_node, 3, 0, 0);
+  tmscm_install_procedure ("modification-remove-node",  tmg_modification_remove_node, 2, 0, 0);
+  tmscm_install_procedure ("modification-set-cursor",  tmg_modification_set_cursor, 3, 0, 0);
+  tmscm_install_procedure ("modification-kind",  tmg_modification_kind, 1, 0, 0);
+  tmscm_install_procedure ("modification-path",  tmg_modification_path, 1, 0, 0);
+  tmscm_install_procedure ("modification-tree",  tmg_modification_tree, 1, 0, 0);
+  tmscm_install_procedure ("modification-root",  tmg_modification_root, 1, 0, 0);
+  tmscm_install_procedure ("modification-index",  tmg_modification_index, 1, 0, 0);
+  tmscm_install_procedure ("modification-argument",  tmg_modification_argument, 1, 0, 0);
+  tmscm_install_procedure ("modification-label",  tmg_modification_label, 1, 0, 0);
+  tmscm_install_procedure ("modification-applicable?",  tmg_modification_applicableP, 2, 0, 0);
+  tmscm_install_procedure ("modification-apply",  tmg_modification_apply, 2, 0, 0);
+  tmscm_install_procedure ("modification-inplace-apply",  tmg_modification_inplace_apply, 2, 0, 0);
   tmscm_install_procedure ("tree->ids",  tmg_tree_2ids, 1, 0, 0);
   tmscm_install_procedure ("id->trees",  tmg_id_2trees, 1, 0, 0);
   tmscm_install_procedure ("vertex->links",  tmg_vertex_2links, 1, 0, 0);

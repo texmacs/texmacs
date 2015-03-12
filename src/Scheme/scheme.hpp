@@ -24,30 +24,27 @@ class object_rep : concrete_struct {
   friend class object;
 };
 
-
 class tmscm_object_rep;
 
 class object {
 public:
-	CONCRETE(object);
-	object ();
-    object (tmscm_object_rep* o);
-	object (void *); // left intentionally undefined to inhibith implicit conversion of pointers to bool
-	object (bool b); // implicit conversion to bool is dangerous!!! (all pointers match this conversion)
-	object (int i);
-	object (double x);
-	object (const char* s);
-	object (string s);
-	object (tree t);
-	object (list<string> l);
-	object (list<tree> l);
-	object (path p);
-	object (url u);
+  CONCRETE(object);
+  object ();
+  object (tmscm_object_rep* o);
+  object (void *); // left intentionally undefined to inhibith implicit conversion of pointers to bool
+  object (bool b); // implicit conversion to bool is dangerous!!! (all pointers match this conversion)
+  object (int i);
+  object (double x);
+  object (const char* s);
+  object (string s);
+  object (tree t);
+  object (list<string> l);
+  object (list<tree> l);
+  object (path p);
+  object (url u);
+  object (modification m);
 };
 CONCRETE_CODE(object);
-
-
-
 
 tm_ostream& operator << (tm_ostream& out, object obj);
 bool operator == (object obj1, object obj2);
@@ -80,6 +77,7 @@ bool is_symbol (object obj);
 bool is_tree (object obj);
 bool is_path (object obj);
 bool is_url (object obj);
+bool is_modification (object obj);
 bool is_widget (object obj);
 
 bool as_bool (object obj);
@@ -94,6 +92,7 @@ list<tree> as_list_tree (object obj);
 path as_path (object obj);
 array<object> as_array_object (object obj);
 url as_url (object obj);
+modification as_modification (object obj);
 command as_command (object obj);
 #ifdef WIDGET_H // FIXME: dirty hack
 widget as_widget (object obj);

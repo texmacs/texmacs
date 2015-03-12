@@ -155,3 +155,44 @@
       (and (tree-atomic? s) (tm-length-unit (tree->string s)))
       (and-with pos (tm-length-unit-search s 0)
 	(substring s pos (string-length s)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Content modifications
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (modification kind p . args)
+  (if (string? kind) (set! kind (string->symbol kind)))
+  (cond ((== kind 'assign)
+	 (with (t) args (modification-assign p t)))
+	((== kind 'insert)
+	 (with (pos t) args (modification-insert p pos t)))
+	((== kind 'remove)
+	 (with (pos nr) args (modification-remove p pos nr)))
+	((== kind 'split)
+	 (with (pos as) args (modification-split p pos as)))
+	((== kind 'join)
+	 (with (pos) args (modification-join p pos)))
+	((== kind 'assign-node)
+	 (with (lab) args (modification-assign-node p lab)))
+	((== kind 'insert-node)
+	 (with (pos t) args (modification-insert-node p pos t)))
+	((== kind 'remove-node)
+	 (with (pos) args (modification-remove-node p pos)))
+	((== kind 'set-cursor)
+	 (with (pos t) args (modification-set-cursor p pos t)))
+	(else (texmacs-error "modification" "invalid modification type"))))
+
+(define-public (modification-type m)
+  (string->symbol (modification-kind m)))
+
+(define-public (scheme->modification m)
+  (with (k p t) m
+    (make-modification (symbol->string k) p t)))
+
+(define-public (modification->scheme m)
+  (list (modification-type m)
+	(modification-path m)
+	(tm->stree (modification-tree m))))
+
+(define-public-macro (modification-apply! t m)
+  `(set! ,t (modification-inplace-apply ,t ,m)))

@@ -101,6 +101,11 @@ int index (modification mod);
 int argument (modification mod);
 tree_label L (modification mod);
 
+modification make_modification (string k, path p, tree t);
+string get_type (modification mod);
+path   get_path (modification mod);
+tree   get_tree (modification mod);
+
 /******************************************************************************
 * Further routines on modifications
 ******************************************************************************/
