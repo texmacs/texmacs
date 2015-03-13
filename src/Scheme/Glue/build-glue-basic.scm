@@ -294,7 +294,7 @@
   (modification-label L (tree_label modification))
 
   (modification-applicable? is_applicable (bool content modification))
-  (modification-apply clean_apply (tree content modification))
+  (modification-apply var_clean_apply (tree content modification))
   (modification-inplace-apply var_apply (tree tree modification))
   (modification-invert invert (modification modification content))
   (modification-commute? commute (bool modification modification))
@@ -318,7 +318,7 @@
   (patch-get-author get_author (double patch))
 
   (patch-applicable? is_applicable (bool patch content))
-  (patch-apply clean_apply (tree content patch))
+  (patch-apply var_clean_apply (tree content patch))
   (patch-inplace-apply var_apply (tree tree patch))
   (patch-compactify compactify (patch patch))
   (patch-cursor-hint cursor_hint (path patch content))

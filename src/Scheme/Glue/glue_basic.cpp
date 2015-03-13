@@ -3369,7 +3369,7 @@ tmg_modification_apply (tmscm arg1, tmscm arg2) {
   modification in2= tmscm_to_modification (arg2);
 
   // TMSCM_DEFER_INTS;
-  tree out= clean_apply (in1, in2);
+  tree out= var_clean_apply (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);
@@ -3660,7 +3660,7 @@ tmg_patch_apply (tmscm arg1, tmscm arg2) {
   patch in2= tmscm_to_patch (arg2);
 
   // TMSCM_DEFER_INTS;
-  tree out= clean_apply (in1, in2);
+  tree out= var_clean_apply (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);

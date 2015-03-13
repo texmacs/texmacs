@@ -672,8 +672,13 @@ modificationP (tmscm t) {
 
 tree
 var_apply (tree& t, modification m) {
-  apply (t, m);
+  apply (t, copy (m));
   return t;
+}
+
+tree
+var_clean_apply (tree& t, modification m) {
+  return clean_apply (t, copy (m));
 }
 
 /******************************************************************************
@@ -709,13 +714,13 @@ branch_patch (array<patch> a) {
 }
 
 tree
-clean_apply (tree t, patch p) {
-  return clean_apply (p, t);
+var_clean_apply (tree t, patch p) {
+  return clean_apply (copy (p), t);
 }
 
 tree
 var_apply (tree& t, patch p) {
-  apply (p, t);
+  apply (copy (p), t);
   return t;
 }
 
