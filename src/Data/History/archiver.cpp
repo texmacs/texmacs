@@ -185,9 +185,12 @@ archiver_rep::apply (patch p) {
   // cout << "Apply " << p << "\n";
   ASSERT (is_applicable (p, the_et), "invalid history");
   bool old= versioning;
+  bool global_old= busy_versioning;
   versioning= true;
+  busy_versioning= true;
   ::apply (p, the_et);
   versioning= old;
+  busy_versioning= global_old;
 }
 
 void

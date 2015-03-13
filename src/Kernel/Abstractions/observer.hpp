@@ -118,7 +118,8 @@ observer highlight_observer (int lan, array<int> cols);
 * Modification routines for trees and other observer-related facilities
 ******************************************************************************/
 
-extern bool versioning_busy;
+extern bool busy_modifying;
+extern bool busy_versioning;
 bool busy_tree (tree& ref);
 
 void assign      (tree& ref, tree t);

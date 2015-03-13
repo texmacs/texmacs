@@ -224,7 +224,7 @@ get_reference (tree& t) {
 list<tree>
 not_done (list<tree> l) {
   if (is_nil (l)) return l;
-  else if (versioning_busy || busy_tree (get_reference (l->item)))
+  else if (busy_modifying || busy_tree (get_reference (l->item)))
     return not_done (l->next);
   return list<tree> (l->item, not_done (l->next));
 }

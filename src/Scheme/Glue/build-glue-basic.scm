@@ -105,6 +105,7 @@
   (set-new-fonts set_new_fonts (void bool))
   (new-fonts? get_new_fonts (bool))
   (tmtm-eqnumber->nonumber eqnumber_to_nonumber (tree tree))
+  (busy-versioning? is_busy_versioning (bool))
 
   ;; routines for the font database
   (tt-exists? tt_font_exists (bool string))
