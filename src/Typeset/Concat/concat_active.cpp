@@ -127,7 +127,11 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, 
       else if (is_compound (arg, "observer", 2)) {
 	string id= as_string (arg[0]);
 	string cb= cork_to_utf8 (as_string (arg[1]));
-	if (accessible) env->link_env->insert_locus (id, body, cb);
+	if (accessible) {
+          if (env->secure ||
+              as_bool (eval ("(secure? '(" * cb * " #f #f #f))")))
+            env->link_env->insert_locus (id, body, cb);
+        }
 	ids= list<string> (id, ids);
 	visited= visited || has_been_visited ("id:" * id);
       }
