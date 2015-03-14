@@ -56,7 +56,7 @@
         (let* ((doc (tm->stree (car l)))
                (p (path-start doc '())))
           (insert-go-to `(mirror ,id ,name ,doc) (cons 2 p)))
-        (insert-go-to `(mirror ,id ,name (document "")) (list 2 0 0)))))
+        (insert-go-to `(mirror ,id ,name "") (list 2 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization and expensive synchronization
