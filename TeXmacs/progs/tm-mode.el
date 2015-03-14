@@ -52,7 +52,7 @@
     with-focus-after
     logic-group logic-table logic-dispatcher
     with-aux with-action with-module
-    with-cursor with-buffer with-server with-database
+    with-cursor with-buffer with-server with-database with-author
     user-ask
     tab icon-tab form item meti refreshable
     $when $let $let* $for $refreshable
