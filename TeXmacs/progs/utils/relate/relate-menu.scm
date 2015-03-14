@@ -14,6 +14,10 @@
 (texmacs-module (utils relate relate-menu)
   (:use (utils plugins plugin-eval)))
 
+;; TODO: better undo in case of several mirrors in one document
+;; TODO: nested mirror don't work appropriately (due to unique identifier
+;; separation, which should not be enforced in this case).
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
