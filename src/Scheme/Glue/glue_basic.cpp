@@ -3346,6 +3346,19 @@ tmg_modification_label (tmscm arg1) {
 }
 
 tmscm
+tmg_modification_copy (tmscm arg1) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-copy");
+
+  modification in1= tmscm_to_modification (arg1);
+
+  // TMSCM_DEFER_INTS;
+  modification out= copy (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
 tmg_modification_applicableP (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "modification-applicable?");
   TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-applicable?");
@@ -3634,6 +3647,19 @@ tmg_patch_get_author (tmscm arg1) {
   // TMSCM_ALLOW_INTS;
 
   return double_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_copy (tmscm arg1) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-copy");
+
+  patch in1= tmscm_to_patch (arg1);
+
+  // TMSCM_DEFER_INTS;
+  patch out= copy (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
 }
 
 tmscm
@@ -8611,6 +8637,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("modification-index",  tmg_modification_index, 1, 0, 0);
   tmscm_install_procedure ("modification-argument",  tmg_modification_argument, 1, 0, 0);
   tmscm_install_procedure ("modification-label",  tmg_modification_label, 1, 0, 0);
+  tmscm_install_procedure ("modification-copy",  tmg_modification_copy, 1, 0, 0);
   tmscm_install_procedure ("modification-applicable?",  tmg_modification_applicableP, 2, 0, 0);
   tmscm_install_procedure ("modification-apply",  tmg_modification_apply, 2, 0, 0);
   tmscm_install_procedure ("modification-inplace-apply",  tmg_modification_inplace_apply, 2, 0, 0);
@@ -8632,6 +8659,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("patch-inverse",  tmg_patch_inverse, 1, 0, 0);
   tmscm_install_procedure ("patch-get-birth",  tmg_patch_get_birth, 1, 0, 0);
   tmscm_install_procedure ("patch-get-author",  tmg_patch_get_author, 1, 0, 0);
+  tmscm_install_procedure ("patch-copy",  tmg_patch_copy, 1, 0, 0);
   tmscm_install_procedure ("patch-applicable?",  tmg_patch_applicableP, 2, 0, 0);
   tmscm_install_procedure ("patch-apply",  tmg_patch_apply, 2, 0, 0);
   tmscm_install_procedure ("patch-inplace-apply",  tmg_patch_inplace_apply, 2, 0, 0);

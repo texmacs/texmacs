@@ -293,6 +293,7 @@
   (modification-argument argument (int modification))
   (modification-label L (tree_label modification))
 
+  (modification-copy copy (modification modification))
   (modification-applicable? is_applicable (bool content modification))
   (modification-apply var_clean_apply (tree content modification))
   (modification-inplace-apply var_apply (tree tree modification))
@@ -317,6 +318,7 @@
   (patch-get-birth get_birth (bool patch))
   (patch-get-author get_author (double patch))
 
+  (patch-copy copy (patch patch))
   (patch-applicable? is_applicable (bool patch content))
   (patch-apply var_clean_apply (tree content patch))
   (patch-inplace-apply var_apply (tree tree patch))
