@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|User preferences>
@@ -19,21 +19,29 @@
   click on an item simply sets some preference to some value and it's up to
   the call-back to actually take the necessary actions.
 
-  \;
+  <\warning*>
+    One may not store the boolean values <scm|#t>, <scm|#f> directly into
+    preferences. Instead one should use the strings <scm|"on"> and
+    <scm|"off">. This is due to the internal storage of default values for
+    preferences using <scm|ahash-table>.
+  </warning*>
 
   <\explain>
     <scm|(define-preferences <scm-arg|list>)><explain-synopsis|define new
     preferences with defaults and call-backs>
   <|explain>
-    Each element of <scm-arg|list> is of the form <scm|("somename" value
-    notify-procedure)> where <scm|notify-procedure> is a procedure taking two
-    arguments like this:
+    Each element of <scm-arg|list> is of the form <scm|("somename"
+    default-value notify-procedure)> where <scm|notify-procedure> is a
+    procedure taking two arguments like this:
 
     <scm|(define (notify-procedure property-name value) (do-things))>
 
-    <\folded-documentation>
+    Remember to use the strings <scm|"on"> and <scm|"off"> instead of
+    booleans <scm|#t>, <scm|#f>.
+
+    <\unfolded-documentation>
       Example
-    <|folded-documentation>
+    <|unfolded-documentation>
       <\session|scheme|default>
         <\input|Scheme] >
           (define (notify-test pref value)
@@ -42,24 +50,30 @@
         </input>
 
         <\input|Scheme] >
-          (define-preferences ("test:pref" #f notify-test))
+          (define-preferences ("test:pref" "off" notify-test))
         </input>
 
         <\unfolded-io|Scheme] >
           (get-preference "test:pref")
         <|unfolded-io>
-          #f
+          "off"
         </unfolded-io>
 
         <\input|Scheme] >
-          (set-preference "test:pref" #t)
+          (set-preference "test:pref" "on")
         </input>
+
+        <\unfolded-io|Scheme] >
+          (preference-on? "test:pref")
+        <|unfolded-io>
+          #t
+        </unfolded-io>
 
         <\input|Scheme] >
           \;
         </input>
       </session>
-    </folded-documentation>
+    </unfolded-documentation>
   </explain>
 
   <\explain>
@@ -69,6 +83,9 @@
     Save preference <scm|name> with value <scm|value>. Then call the
     call-back associated to this preference, as defined in
     <scm|define-preferences>.
+
+    Remember to use the strings <scm|"on"> and <scm|"off"> instead of
+    booleans <scm|#t>, <scm|#f>.
   </explain>
 
   <\explain>
@@ -98,7 +115,22 @@
     defined the string <scm|"default"> is returned.
   </explain>
 
-  <tmdoc-copyright|2012|>
+  <\explain>
+    <scm|(preference-on? <scm-arg|name>)><explain-synopsis|test boolean user
+    preference>
+  <|explain>
+    Returns <scm|#t> if the value of preference <scm|name> is <scm|"on">.
+  </explain>
+
+  <\explain>
+    <scm|(toggle-preference <scm-arg|name>)><explain-synopsis|change value of
+    boolean user preference>
+  <|explain>
+    Toggles the value of preference <scm|name> between <scm|"on"> and
+    <scm|"off">.
+  </explain>
+
+  <tmdoc-copyright|2012|Miguel de Benito Delgado>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -108,8 +140,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
