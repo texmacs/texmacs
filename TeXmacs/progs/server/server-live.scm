@@ -136,7 +136,7 @@
 
 (tm-service (live-open lid)
   ;; Connect client to the live channel lid
-  ;;(display* "remote-connect-live " lid "\n")
+  ;;(display* "live-open " lid "\n")
   (when (not (live-current-document lid))
     (live-create lid))
   (with (client msg-id) envelope
@@ -148,7 +148,7 @@
 (tm-service (live-modify lid mods old-state)
   ;; States that the current state of the client is obtained
   ;; from 'old-state' by applying the list of modifications 'mods'
-  ;;(display* "remote-modify-live " lid ", " p ", " old-state "\n")
+  ;;(display* "live-modify " lid ", " p ", " old-state "\n")
   (with p (modlist->patch mods) ;; TODO: to be implemented
     (with (client msg-id) envelope
       (cond ((not (ahash-ref live-connections (list lid client)))
