@@ -54,6 +54,9 @@
 (define server-client-active? (make-ahash-table))
 (define server-serial 0)
 
+(tm-define (active-client? client)
+  (ahash-ref server-client-active? client))
+
 (tm-define (active-clients)
   (ahash-set->list server-client-active?))
 
