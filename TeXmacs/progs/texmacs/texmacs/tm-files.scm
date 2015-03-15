@@ -13,7 +13,8 @@
 
 (texmacs-module (texmacs texmacs tm-files)
   (:use (texmacs texmacs tm-server)
-        (texmacs texmacs tm-print)))
+        (texmacs texmacs tm-print)
+        (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous subroutines
@@ -22,8 +23,8 @@
 (tm-define (propose-name-buffer)
   (with name (url->unix (current-buffer))
     (cond ((not (url-scratch? name)) name)
-	  ((os-win32?) "")
-	  (else (string-append (var-eval-system "pwd") "/")))))
+          ((os-win32?) "")
+          (else (string-append (var-eval-system "pwd") "/")))))
 
 (tm-property (choose-file fun text type)
   (:interactive #t))
@@ -37,8 +38,8 @@
 
 (define-public-macro (with-aux u . prg)
   `(let* ((u ,u)
-	  (t (tree-import u "texmacs"))
-	  (name (current-buffer)))
+          (t (tree-import u "texmacs"))
+          (name (current-buffer)))
      (open-auxiliary "* Aux *" t u)
      (with r (begin ,@prg)
        (switch-to-buffer name)
@@ -51,6 +52,27 @@
        (or (not (buffer-has-name? name))
            (ahash-ref buffer-newly-created-table name))))
 
+(tm-define (buffer-copy buf)
+  (:synopsis "Creates a copy of @u and returns the new url.")
+  (with-buffer buf
+    (let* ((u (buffer-new))
+           (styles (get-style-list))
+           (init (get-all-inits))
+           (body (tree-copy (buffer-get-body buf))))
+      (view-new u) ; needed by buffer-focus, used in with-buffer
+      (buffer-set-body u body) 
+      (with-buffer u
+        (set-style-list styles)
+        (init-env "global-title" (buffer-get-metadata buf "title"))
+        (init-env "global-author" (buffer-get-metadata buf "author"))
+        (init-env "global-subject" (buffer-get-metadata buf "subject"))
+        (for-each
+         (lambda (t)
+           (if (tree-func? t 'associate)
+               (with (var val) (list (tree-ref t 0) (tree-ref t 1))
+                 (init-env-tree (tree->string var) val))))
+         (tree-children init)))
+      u)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -300,12 +322,12 @@
 
 (tm-define (autosave-delayed)
   (let* ((pref (get-preference "autosave"))
-	 (len (if (and (string? pref) (integer? (string->number pref)))
-		  (* (string->number pref) 1000) 120000)))
+         (len (if (and (string? pref) (integer? (string->number pref)))
+                  (* (string->number pref) 1000) 120000)))
     (if (> len 0)
-	(delayed
-	  (:pause len)
-	  (autosave-now)))))
+        (delayed
+          (:pause len)
+          (autosave-now)))))
 
 (define (notify-autosave var val)
   (if (current-view) ; delayed-autosave would crash at initialization time
@@ -338,14 +360,14 @@
                (set-message `(concat "Could not load " ,vname) "Load file")
                (load-buffer-open name opts)))
           (else
-	    (with uname (if (string? name) (string->url name) name)
-	      (buffer-set-body name '(document ""))
-	      (ahash-set! buffer-newly-created-table uname #t)
-	      (load-buffer-open name opts)
-	      (ahash-remove! buffer-newly-created-table uname)
-	      (set-message `(concat "Could not load " ,vname
-				    ". Created new document")
-			   "Load file"))))))
+            (with uname (if (string? name) (string->url name) name)
+              (buffer-set-body name '(document ""))
+              (ahash-set! buffer-newly-created-table uname #t)
+              (load-buffer-open name opts)
+              (ahash-remove! buffer-newly-created-table uname)
+              (set-message `(concat "Could not load " ,vname
+                                    ". Created new document")
+                           "Load file"))))))
 
 (define (load-buffer-check-permissions name opts)
   ;;(display* "load-buffer-check-permissions " name ", " opts "\n")

@@ -107,16 +107,20 @@
     `(let ((,old ,var))
        (set! ,var ,val)
        (let ((,new (begin ,@body)))
-	 (set! ,var ,old)
-	 ,new))))
+         (set! ,var ,old)
+         ,new))))
 
 (define-public-macro (and-with var val . body)
   `(with ,var ,val
      (and ,var (begin ,@body))))
 
+(define-public-macro (nnull-with var val . body)
+  `(with ,var ,val
+     (and (nnull? ,var) (begin ,@body))))
+
 (define-public-macro (with-result result . body)
   `(let* ((return ,result)
-	  (dummy (begin ,@body)))
+          (dummy (begin ,@body)))
      return))
 
 (define-public (.. start end)
@@ -127,29 +131,29 @@
 (define-public-macro (for what . body)
   (let ((n (length what)))
     (cond ((== n 2)
-	   ;; range over values of a list
-	   `(for-each (lambda (,(car what)) ,@body)
-		      ,(cadr what)))
-	  ((== n 3)
-	   ;; range over values from start to end with step 1
-	   `(do ((,(car what) ,(cadr what) (+ ,(car what) 1)))
-		((>= ,(car what) ,(caddr what)) (noop))
-	      ,@body))
-	  ((== n 4)
-	   ;; range over values from start to end with step
-	   `(if (> ,(cadddr what) 0)
-		(do ((,(car what) ,(cadr what) (+ ,(car what) ,(cadddr what))))
-		    ((>= ,(car what) ,(caddr what)) (noop))
-		  ,@body)
-		(do ((,(car what) ,(cadr what) (+ ,(car what) ,(cadddr what))))
-		    ((<= ,(car what) ,(caddr what)) (noop))
-		  ,@body)))
-	  ((== n 5)
-	   ;; range over values from start to end with step and comparison
-	   `(do ((,(car what) ,(cadr what) (+ ,(car what) ,(cadddr what))))
-		((not (,(car (cddddr what)) ,(car what) ,(caddr what))) (noop))
-	      ,@body))
-	  (else '(noop)))))
+           ;; range over values of a list
+           `(for-each (lambda (,(car what)) ,@body)
+                      ,(cadr what)))
+          ((== n 3)
+           ;; range over values from start to end with step 1
+           `(do ((,(car what) ,(cadr what) (+ ,(car what) 1)))
+                ((>= ,(car what) ,(caddr what)) (noop))
+              ,@body))
+          ((== n 4)
+           ;; range over values from start to end with step
+           `(if (> ,(cadddr what) 0)
+                (do ((,(car what) ,(cadr what) (+ ,(car what) ,(cadddr what))))
+                    ((>= ,(car what) ,(caddr what)) (noop))
+                  ,@body)
+                (do ((,(car what) ,(cadr what) (+ ,(car what) ,(cadddr what))))
+                    ((<= ,(car what) ,(caddr what)) (noop))
+                  ,@body)))
+          ((== n 5)
+           ;; range over values from start to end with step and comparison
+           `(do ((,(car what) ,(cadr what) (+ ,(car what) ,(cadddr what))))
+                ((not (,(car (cddddr what)) ,(car what) ,(caddr what))) (noop))
+              ,@body))
+          (else '(noop)))))
 
 (define-public-macro (repeat n . body)
   (let ((x (gensym)))
@@ -164,9 +168,9 @@
 
 (define-public (go-to p)
   (let* ((r (buffer-path))
-	 (lp (length p))
-	 (lr (length r)))
+         (lp (length p))
+         (lr (length r)))
     (and (or (and (<= lr lp) (== (sublist p 0 lr) r))
              (and-with buf (path->buffer p)
                (switch-to-buffer buf) #t))
-	 (go-to-path p))))
+         (go-to-path p))))

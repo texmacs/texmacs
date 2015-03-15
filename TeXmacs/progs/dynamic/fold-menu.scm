@@ -21,15 +21,15 @@
 
 (menu-bind fold-menu
   (when (with t (tree-innermost dynamic-context?)
-	  (and t (toggle-second-context? t)))
+          (and t (toggle-second-context? t)))
     ("Fold" (dynamic-previous)))
   (when (with t (tree-innermost dynamic-context?)
-	  (and t (toggle-first-context? t)))
+          (and t (toggle-first-context? t)))
     ("Unfold" (dynamic-next))))
 
 (menu-bind switch-menu
   (when (with t (tree-innermost dynamic-context?)
-	  (and t (switch-context? t)))
+          (and t (switch-context? t)))
     ("Add branch before" (switch-insert-at (focus-tree) :current))
     ("Add branch after" (switch-insert-at (focus-tree) :var-next))
     ("Remove this branch" (switch-remove-at (focus-tree) :current))
@@ -135,8 +135,8 @@
       ("Fold back" (make 'fold-back))
       ("Keep unfolded" (make 'keep-unfolded))
       (if #f
-	  ("Animate folding" (noop))
-	  ("Animate unfolding" (noop)))))
+          ("Animate folding" (noop))
+          ("Animate unfolding" (noop)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operate on buffers with dynamic markup
@@ -179,13 +179,15 @@
       ("Change tags" (dynamic-operate-on-buffer :var-compress)))
   (-> "Expand"
       ("Preserve tags" (dynamic-operate-on-buffer :expand))
-      ("Change tags" (dynamic-operate-on-buffer :var-expand))
-      ("Make slides" (dynamic-make-slides)))
+      ("Change tags" (dynamic-operate-on-buffer :var-expand)))
   (-> "Filter"
       ("Remove folded" (dynamic-filter-buffer :remove-folded))
       ("Remove unfolded" (dynamic-filter-buffer :remove-unfolded))
       ("Only keep folded" (dynamic-filter-buffer :keep-folded))
-      ("Only keep unfolded" (dynamic-filter-buffer :keep-unfolded))))
+      ("Only keep unfolded" (dynamic-filter-buffer :keep-unfolded)))
+  (-> "Make slides"
+      ("Flattened" (dynamic-make-slides #t))
+      ("Unmodified" (dynamic-make-slides #f))))
 
 (tm-define (alternate-second-name t)
   (:require (fold-context? t))
@@ -239,11 +241,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Propose insertion of 'screens' tag in beamer style
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (screens-buffer?)
-  (with t (buffer-tree)
-    (and (tree-is? t 'document)
-         (tree-is? t :last 'screens))))
 
 (tm-define (make-screens)
   (let* ((t (buffer-tree))

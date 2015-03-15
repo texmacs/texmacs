@@ -55,6 +55,11 @@
                  (in? y (list "framed-title" "ridged-paper" "framed-session"))))
   #t)
 
+(tm-define (screens-buffer?)
+  (with t (buffer-tree)
+    (and (tree-is? t 'document)
+         (tree-is? t :last 'screens))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic movements for fold tags and switches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -620,6 +625,9 @@
 ;; Transform presentation into slides
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preferences 
+  ("texmacs->pdf:expand slides" "off" noop))
+
 (define (dynamic-first-alternative-list l)
   (if (null? l) #f
       (with r (dynamic-first-alternative (car l))
@@ -668,19 +676,65 @@
           (dynamic-make-slide w)))
       (dynamic-operate (tree-ref t 0) :var-expand)))
 
-(tm-define (dynamic-make-slides)
-  (add-style-package "slides")
-  (init-default "page-medium" "page-type" "page-width" "page-height"
-                "page-width-margin" "page-height-margin"
-                "page-odd" "page-even" "page-right"
-                "par-width" "page-odd-shift" "page-even-shift"
-                "page-top" "page-bot" "page-height-margin")
-  (let* ((t (buffer-tree))
-         (c (tree-children t)))
-    (when (and (tm-func? t 'document) (switch-context? (cAr c)))
-      (tree-assign-node (cAr c) 'document)
-      (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
-      (for-each dynamic-make-slide (tree-children t)))))
+(define (keep-shown! t)
+  (if (alternative-context? t)
+      (map ; Prune hidden children
+       (lambda (i) (if (tm-func? (tree-ref t i) 'hidden)
+                       (tree-remove! t i 1)))
+       (reverse (.. 0 (tm-arity t)))))
+  (if (and (tm-compound? t) (> (tm-arity t) 0))
+      (for-each keep-shown! (tree-children t))))
+
+(define (create-slide scr)
+  (if (not (tree? scr)) (tree 'slide '(document "")) ; just in case
+      (with t (tree-copy scr)
+        (keep-shown! t)
+        (tree-assign-node! t 'slide)
+        t)))
+
+(define (process-screen scr)
+  (cons (create-slide scr)
+        (begin
+          (dynamic-traverse-buffer :next)
+          (if (tm-func? scr 'hidden) '()
+              (process-screen scr)))))
+
+(define (list->tree label l)
+  (tree-insert (tree label) 0 l))
+
+(define (screens->slides t)
+  (if (not (tm-func? t 'screens)) (tree 'document "")
+      (with f (lambda (scr) (list->tree 'document (process-screen scr)))
+        ;(system-wait "Generating slides" "please wait") ;crashes if printing
+        ; Insert fake screen at the end
+        (tree-insert! t (tree-arity t) 
+                      (list (tree 'hidden '(document ""))))
+        (dynamic-operate-on-buffer :first)
+        ; Notice that we don't process the last (fake) screen
+        (list->tree 'screens (map f (cDr (tree-children t)))))))
+
+(tm-define (dynamic-make-slides flattened?)
+  (with new-buf (buffer-copy (current-buffer))
+    (switch-to-buffer new-buf)
+    (init-default "page-medium" "page-type" "page-width" "page-height"
+                  "page-width-margin" "page-height-margin"
+                  "page-odd" "page-even" "page-right"
+                  "par-width" "page-odd-shift" "page-even-shift"
+                  "page-top" "page-bot" "page-height-margin")
+    (add-style-package "slides")
+    (if flattened?
+        (let* ((t (buffer-tree))
+               (c (tree-children t)))
+          (when (and (tm-func? t 'document) (switch-context? (cAr c)))
+            (tree-assign-node (cAr c) 'document)
+            (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
+            ;(system-wait "Generating slides" "please wait") ;crashes if printing
+            (for-each dynamic-make-slide (tree-children t))))
+        (nnull-with l (select (buffer-tree) '(screens))
+          (let* ((scrns (car l))
+                 (slides (screens->slides scrns)))
+            (tree-set! scrns slides))))
+    new-buf))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global filtering of switches
