@@ -113,7 +113,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (print-to-file* fname)
-  (if (and (screens-buffer?) (not (style-has? "slides")))
+  (if (screens-buffer?)
       (let* ((expand? (preference-on? "texmacs->pdf:expand slides"))
              (cur (current-buffer))
              (buf (dynamic-make-slides expand?)))
