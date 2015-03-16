@@ -12,82 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (server server-live)
-  (:use (server server-tmfs)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Manage live documents
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define live-documents (make-ahash-table))
-(define live-states (make-ahash-table))
-(define live-changes (make-ahash-table))
-
-(define (live-create lid)
-  (ahash-set! live-documents (tm->tree '(document "")))
-  (ahash-set! live-states (list (create-unique-id))))
-
-(define (live-current-document lid)
-  (ahash-ref live-documents lid))
-
-(define (live-current-state lid)
-  (and (pair? (ahash-ref live-states lid))
-       (car (ahash-ref live-states lid))))
-
-(define (live-apply-patch lid p)
-  (let* ((doc (live-current-document lid))
-         (states (ahash-ref live-states id))
-         (changes (or (ahash-ref live-changes id) (list)))
-         (new-state (create-unique-id)))
-    (and doc states changes (patch-applicable? p doc)
-         (with inv (patch-invert p doc)
-           (ahash-set! live-documents lid (patch-apply doc p))
-           (ahash-set! live-states lid (cons new-state states))
-           (ahash-set! live-changes lid (cons inv changes))
-           new-state))))
-
-(define (live-patch-list state states changes)
-  (if (== state (car states)) (list)
-      (cons (car changes)
-            (live-patch-list state (cdr states) (cdr changes)))))
-
-(define (live-get-patch lid state)
-  (let* ((states (ahash-ref live-states lid))
-         (changes (ahash-ref live-changes lid)))
-    (and states changes (in? state states)
-         (with l (live-patch-list state states changes)
-           (patch-compound l)))))
-
-(define (live-get-document lid state)
-  (let* ((doc (live-current-document lid))
-         (p (live-get-patch lid state)))
-    (and doc p (patch-apply doc p))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Manage live connections
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define live-connections (make-ahash-table))
-
-(define (live-connect lid client)
-  (live-set lid client (live-current-state lid)))
-
-(define (live-hang-up lid client)
-  (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections (make-ahash-table)))
-  (with t (ahash-ref live-connections lid)
-    (ahash-remove! t client)))
-
-(define (live-set lid client state)
-  (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections (make-ahash-table)))
-  (with t (ahash-ref live-connections lid)
-    (ahash-set! t client state)))
-
-(define (live-ref lid client)
-  (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections (make-ahash-table)))
-  (with t (ahash-ref live-connections lid)
-    (ahash-ref t client)))
+  (:use (utils relate live)
+        (server server-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Applying modifications
@@ -103,7 +29,7 @@
 (define (live-apply lid client p old-state)
   (and (== old-state (live-current-state lid))
        (and-with new-state (live-apply-patch lid p)
-         (live-set lid client new-state)
+         (live-set-remote-state lid client new-state)
          (live-broadcast lid)
          new-state)))
 
@@ -118,7 +44,7 @@
         (server-remote-eval client `(live-modify ,lid ,mods ,state ,new-state)
           (lambda (ok?)
             (ahash-remove! live-waiting key)
-            (when ok? (live-set lid client new-state))
+            (when ok? (live-set-remote-state lid client new-state))
             (live-broadcast lid)))))))
 
 (define (live-broadcast lid)
@@ -138,7 +64,7 @@
   ;; Connect client to the live channel lid
   ;;(display* "live-open " lid "\n")
   (when (not (live-current-document lid))
-    (live-create lid))
+    (live-create lid '(document "")))
   (with (client msg-id) envelope
     (live-connect lid client))
   (let* ((doc (live-current-document lid))
