@@ -702,12 +702,12 @@
 (define (screens->slides t)
   (if (not (tm-func? t 'screens)) (tree 'document "")
       (with f (lambda (scr) (list->tree 'document (process-screen scr)))
-        ;(system-wait "Generating slides" "please wait") ;crashes if printing
-        ; Insert fake screen at the end
+        ;; (system-wait "Generating slides" "please wait") ;crashes if printing
+        ;; Insert fake screen at the end
         (tree-insert! t (tree-arity t) 
                       (list (tree 'hidden '(document ""))))
         (dynamic-operate-on-buffer :first)
-        ; Notice that we don't process the last (fake) screen
+        ;; Notice that we don't process the last (fake) screen
         (list->tree 'screens (map f (cDr (tree-children t)))))))
 
 (tm-define (dynamic-make-slides flattened?)
@@ -728,7 +728,7 @@
           (when (and (tm-func? t 'document) (switch-context? (cAr c)))
             (tree-assign-node (cAr c) 'document)
             (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
-            ;(system-wait "Generating slides" "please wait") ;crashes if printing
+            ;; (system-wait "Generating slides" "please wait") ;crashes if printing
             (for-each dynamic-make-slide (tree-children t))))
         (nnull-with l (select (buffer-tree) '(screens))
           (let* ((scrns (car l))

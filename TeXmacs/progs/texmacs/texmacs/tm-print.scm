@@ -78,11 +78,25 @@
 (define-preferences
   ("native pdf" "on" noop)
   ("native postscript" "on" noop)
-  ("texmacs->pdf:expand slides" "on" noop)
+  ("texmacs->pdf:expand slides" "off" noop)
   ("preview command" "default" notify-preview-command)
   ("printing command" "lpr" notify-printing-command)
   ("paper type" (get-default-paper-size) notify-paper-type)
   ("printer dpi" "600" notify-printer-dpi))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Printing wrapper for slides
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (wrapped-print-to-file fname)
+  (if (screens-buffer?)
+      (let* ((expand? (preference-on? "texmacs->pdf:expand slides"))
+             (cur (current-buffer))
+             (buf (dynamic-make-slides expand?)))
+        (print-to-file fname)
+        (switch-to-buffer cur)
+        (buffer-close buf))
+      (print-to-file fname)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing commands

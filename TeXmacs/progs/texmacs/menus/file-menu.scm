@@ -112,16 +112,6 @@
 ;; Submenus of the File menu and for the icon bar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (print-to-file* fname)
-  (if (screens-buffer?)
-      (let* ((expand? (preference-on? "texmacs->pdf:expand slides"))
-             (cur (current-buffer))
-             (buf (dynamic-make-slides expand?)))
-        (print-to-file fname)
-        (switch-to-buffer cur)
-        (buffer-close buf))
-      (print-to-file fname)))
-
 (menu-bind new-file-menu
   ("New document" (new-buffer))
   ("Open new window" (open-window))
@@ -144,9 +134,9 @@
   (link export-top-menu)
   ---
   ((eval '(concat "Export as " "Pdf"))
-   (choose-file print-to-file* "Save pdf file" "pdf"))
+   (choose-file wrapped-print-to-file "Save pdf file" "pdf"))
   ((eval '(concat "Export as " "PostScript"))
-   (choose-file print-to-file* "Save postscript file" "postscript"))
+   (choose-file wrapped-print-to-file "Save postscript file" "postscript"))
   (when (selection-active-any?)
     ("Export selection as image" ;; FIXME: no warning on overwrite!
      (choose-file export-selection-as-graphics
@@ -197,9 +187,9 @@
   (-> "Export"
       (link export-export-menu)
       ---
-      ("Pdf" (choose-file print-to-file* "Save pdf file" "pdf"))
+      ("Pdf" (choose-file wrapped-print-to-file "Save pdf file" "pdf"))
       ("Postscript"
-       (choose-file print-to-file* "Save postscript file" "postscript"))
+       (choose-file wrapped-print-to-file "Save postscript file" "postscript"))
       (when (selection-active-any?)
         ("Export selection as image"
          (choose-file ;; no warning on overwrite!
