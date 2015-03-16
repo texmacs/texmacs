@@ -2008,6 +2008,9 @@
 (define (tmtex-nbhyph s l)
   '(!nbhyph))
 
+(define (tmtex-frac* s l)
+  (tex-concat (list (tmtex (car l)) "/" (tmtex (cadr l)))))
+
 (define (tmtex-ornament-shape s)
   (if (== s "rounded") "1.7ex" "0pt"))
 
@@ -2521,6 +2524,7 @@
   (render-proof (,tmtex-render-proof 2))
   (nbsp (,tmtex-nbsp 0))
   (nbhyph (,tmtex-nbhyph 0))
+  (frac* (,tmtex-frac* 2))
   (hlink (,tmtex-hlink 2))
   (action (,tmtex-action -1))
   (href (,tmtex-href 1))
