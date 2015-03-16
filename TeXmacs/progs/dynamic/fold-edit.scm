@@ -675,7 +675,7 @@
 
 (define (keep-shown! t)
   (if (alternative-context? t)
-      (map ; Prune hidden children
+      (map ;; Prune hidden children
        (lambda (i) (if (tm-func? (tree-ref t i) 'hidden)
                        (tree-remove! t i 1)))
        (reverse (.. 0 (tm-arity t)))))
@@ -683,7 +683,7 @@
       (for-each keep-shown! (tree-children t))))
 
 (define (create-slide scr)
-  (if (not (tree? scr)) (tree 'slide '(document "")) ; just in case
+  (if (not (tree? scr)) (tree 'slide '(document "")) ;; just in case
       (with t (tree-copy scr)
         (keep-shown! t)
         (tree-assign-node! t 'slide)

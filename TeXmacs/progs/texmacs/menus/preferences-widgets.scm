@@ -334,7 +334,7 @@
     (meti (text "Produce Postscript using native export filter")
       (toggle (set-boolean-preference "native postscript" answer)
               (get-boolean-preference "native postscript")))
-    (meti (text "Expand (flatten) beamer slides")
+    (meti (text "Expand beamer slides")
       (toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
               (get-boolean-preference "texmacs->pdf:expand slides")))))
 
