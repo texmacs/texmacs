@@ -625,9 +625,6 @@
 ;; Transform presentation into slides
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-preferences 
-  ("texmacs->pdf:expand slides" "off" noop))
-
 (define (dynamic-first-alternative-list l)
   (if (null? l) #f
       (with r (dynamic-first-alternative (car l))
@@ -714,7 +711,10 @@
         (list->tree 'screens (map f (cDr (tree-children t)))))))
 
 (tm-define (dynamic-make-slides flattened?)
-  (with new-buf (buffer-copy (current-buffer))
+  (let* ((buf (current-buffer))
+         (new-buf (buffer-new)))
+    (buffer-copy buf new-buf)
+    (buffer-set-master new-buf buf)
     (switch-to-buffer new-buf)
     (init-default "page-medium" "page-type" "page-width" "page-height"
                   "page-width-margin" "page-height-margin"

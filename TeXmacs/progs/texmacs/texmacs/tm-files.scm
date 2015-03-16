@@ -52,11 +52,10 @@
        (or (not (buffer-has-name? name))
            (ahash-ref buffer-newly-created-table name))))
 
-(tm-define (buffer-copy buf)
-  (:synopsis "Creates a copy of @u and returns the new url.")
+(tm-define (buffer-copy buf u)
+  (:synopsis "Creates a copy of @buf in @u and return @u.")
   (with-buffer buf
-    (let* ((u (buffer-new))
-           (styles (get-style-list))
+    (let* ((styles (get-style-list))
            (init (get-all-inits))
            (body (tree-copy (buffer-get-body buf))))
       (view-new u) ; needed by buffer-focus, used in with-buffer
@@ -73,6 +72,7 @@
                  (init-env-tree (tree->string var) val))))
          (tree-children init)))
       u)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
