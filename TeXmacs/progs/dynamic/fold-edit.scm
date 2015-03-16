@@ -710,31 +710,25 @@
         ;; Notice that we don't process the last (fake) screen
         (list->tree 'screens (map f (cDr (tree-children t)))))))
 
-(tm-define (dynamic-make-slides flattened?)
-  (let* ((buf (current-buffer))
-         (new-buf (buffer-new)))
-    (buffer-copy buf new-buf)
-    (buffer-set-master new-buf buf)
-    (switch-to-buffer new-buf)
-    (init-default "page-medium" "page-type" "page-width" "page-height"
-                  "page-width-margin" "page-height-margin"
-                  "page-odd" "page-even" "page-right"
-                  "par-width" "page-odd-shift" "page-even-shift"
-                  "page-top" "page-bot" "page-height-margin")
-    (add-style-package "slides")
-    (if flattened?
-        (let* ((t (buffer-tree))
-               (c (tree-children t)))
-          (when (and (tm-func? t 'document) (switch-context? (cAr c)))
-            (tree-assign-node (cAr c) 'document)
-            (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
-            ;; (system-wait "Generating slides" "please wait") ;crashes if printing
-            (for-each dynamic-make-slide (tree-children t))))
-        (nnull-with l (select (buffer-tree) '(screens))
-          (let* ((scrns (car l))
-                 (slides (screens->slides scrns)))
-            (tree-set! scrns slides))))
-    new-buf))
+(tm-define (dynamic-make-slides)
+  (init-default "page-medium" "page-type" "page-width" "page-height"
+                "page-width-margin" "page-height-margin"
+                "page-odd" "page-even" "page-right"
+                "par-width" "page-odd-shift" "page-even-shift"
+                "page-top" "page-bot" "page-height-margin")
+  (add-style-package "slides")
+  (if (preference-on? "texmacs->pdf:expand slides")
+      (let* ((t (buffer-tree))
+             (c (tree-children t)))
+        (when (and (tm-func? t 'document) (switch-context? (cAr c)))
+          (tree-assign-node (cAr c) 'document)
+          (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
+          ;; (system-wait "Generating slides" "please wait") ;crashes if printing
+          (for-each dynamic-make-slide (tree-children t))))
+      (nnull-with l (select (buffer-tree) '(screens))
+        (let* ((scrns (car l))
+               (slides (screens->slides scrns)))
+          (tree-set! scrns slides)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global filtering of switches

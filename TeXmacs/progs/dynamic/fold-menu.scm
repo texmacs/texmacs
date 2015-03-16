@@ -184,10 +184,7 @@
       ("Remove folded" (dynamic-filter-buffer :remove-folded))
       ("Remove unfolded" (dynamic-filter-buffer :remove-unfolded))
       ("Only keep folded" (dynamic-filter-buffer :keep-folded))
-      ("Only keep unfolded" (dynamic-filter-buffer :keep-unfolded)))
-  (-> "Make slides"
-      ("Flattened" (dynamic-make-slides #t))
-      ("Unmodified" (dynamic-make-slides #f))))
+      ("Only keep unfolded" (dynamic-filter-buffer :keep-unfolded))))
 
 (tm-define (alternate-second-name t)
   (:require (fold-context? t))

@@ -14,7 +14,6 @@
 (texmacs-module (texmacs menus file-menu)
   (:use
     (utils library cursor)
-    (dynamic fold-edit)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-files)
     (texmacs texmacs tm-print)))
