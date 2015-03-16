@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : server-live.scm
-;; DESCRIPTION : Live shared documents
+;; DESCRIPTION : Live shared documents (server side)
 ;; COPYRIGHT   : (C) 2015  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
