@@ -367,6 +367,9 @@
 ;; Set operations on lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (list-remove l x)
+  (list-filter l (lambda (y) (!= x y))))
+
 (define (list-remove-duplicates-sub t l)
   (cond ((null? l) l)
 	((ahash-ref t (car l)) (list-remove-duplicates-sub t (cdr l)))

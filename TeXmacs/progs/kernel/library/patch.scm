@@ -91,3 +91,6 @@
         ((func? p 'author)
          (patch-birth (cadr p) (scheme->patch (caddr p))))
         (else #f)))
+
+(define-public-macro (patch-apply! t m)
+  `(set! ,t (patch-inplace-apply ,t ,m)))
