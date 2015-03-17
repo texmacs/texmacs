@@ -178,7 +178,7 @@
       (for (m l)
         (with uid (mirror-unique-id m)
           (when uid
-            (when (== (ahash-size mirror-pending))
+            (when (== (ahash-size mirror-pending) 0)
               (delayed (:idle 1) (mirror-treat-pending)))
             (with old (or (ahash-ref mirror-pending uid) (list))
               (ahash-set! mirror-pending uid
