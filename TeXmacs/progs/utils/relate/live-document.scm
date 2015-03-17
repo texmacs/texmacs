@@ -22,9 +22,11 @@
 (define live-changes (make-ahash-table))
 
 (tm-define (live-create lid doc)
-  (ahash-set! live-documents lid (tm->tree doc))
-  (ahash-set! live-states lid (list (create-unique-id)))
-  (ahash-set! live-changes lid (list)))
+  (with initial (create-unique-id)
+    (ahash-set! live-documents lid (tm->tree doc))
+    (ahash-set! live-states lid (list initial))
+    (ahash-set! live-changes lid (list))
+    initial))
 
 (tm-define (live-current-document lid)
   (ahash-ref live-documents lid))
@@ -32,6 +34,10 @@
 (tm-define (live-current-state lid)
   (and (pair? (ahash-ref live-states lid))
        (car (ahash-ref live-states lid))))
+
+(tm-define (live-get-history lid)
+  (and (pair? (ahash-ref live-states lid))
+       (ahash-ref live-states lid)))
 
 (tm-define (live-apply-patch lid p)
   (let* ((doc (live-current-document lid))
@@ -82,6 +88,21 @@
       (set! new-states (cons state new-states))
       (ahash-set! live-states lid (reverse new-states))
       (ahash-set! live-changes lid (reverse new-changes)))))
+
+(tm-define (live-states-in-use lid)
+  ;; for subsequent overloading
+  (list))
+
+(define (live-get-oldest l among)
+  (with r (list-remove l (car among))
+    (if (or (null? r) (null? (cdr among)))
+        (car among)
+        (live-get-oldest r (cdr among)))))
+
+(tm-define (live-oldest-state lid)
+  (let* ((used (live-states-in-use lid))
+         (all (live-get-history lid)))
+    (live-get-oldest used all)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Manage live connections
