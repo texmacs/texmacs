@@ -73,6 +73,25 @@
          (p (live-get-patch lid state)))
     (and doc p (patch-apply doc p))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Forgetting states which are no longer in use
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (live-states-in-use lid)
+  ;; for subsequent overloading
+  (list))
+
+(define (live-get-oldest l among)
+  (with r (list-remove l (car among))
+    (if (or (null? r) (null? (cdr among)))
+        (car among)
+        (live-get-oldest r (cdr among)))))
+
+(tm-define (live-oldest-state lid)
+  (let* ((used (live-states-in-use lid))
+         (all (live-get-history lid)))
+    (live-get-oldest used all)))
+
 (tm-define (live-forget-prior lid state)
   ;; Forget all states which are strictly prior to @state.
   (when (in? state (ahash-ref live-states lid))
@@ -89,20 +108,9 @@
       (ahash-set! live-states lid (reverse new-states))
       (ahash-set! live-changes lid (reverse new-changes)))))
 
-(tm-define (live-states-in-use lid)
-  ;; for subsequent overloading
-  (list))
-
-(define (live-get-oldest l among)
-  (with r (list-remove l (car among))
-    (if (or (null? r) (null? (cdr among)))
-        (car among)
-        (live-get-oldest r (cdr among)))))
-
-(tm-define (live-oldest-state lid)
-  (let* ((used (live-states-in-use lid))
-         (all (live-get-history lid)))
-    (live-get-oldest used all)))
+(tm-define (live-forget-obsolete lid)
+  (with oldest (live-oldest-state lid)
+    (live-forget-prior lid oldest)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Manage live connections
