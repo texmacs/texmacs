@@ -79,7 +79,7 @@
 
 (tm-define (live-states-in-use lid)
   ;; for subsequent overloading
-  (list))
+  (live-connection-states lid))
 
 (define (live-get-oldest l among)
   (with r (list-remove l (car among))
@@ -89,7 +89,8 @@
 
 (tm-define (live-oldest-state lid)
   (let* ((used (live-states-in-use lid))
-         (all (live-get-history lid)))
+         (hist (live-get-history lid))
+         (all (list-remove-duplicates hist)))
     (live-get-oldest used all)))
 
 (tm-define (live-forget-prior lid state)
@@ -138,6 +139,12 @@
     (ahash-set! live-connections lid (make-ahash-table)))
   (with t (ahash-ref live-connections lid)
     (ahash-ref t remote)))
+
+(tm-define (live-connection-states lid)
+  (when (not (ahash-ref live-connections lid))
+    (ahash-set! live-connections lid (make-ahash-table)))
+  (with t (ahash-ref live-connections lid)
+    (map cdr (ahash-table->list t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversions between patches and lists of modifications

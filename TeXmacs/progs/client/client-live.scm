@@ -53,6 +53,7 @@
             (lambda (msg)
               (with (state doc) msg
                 (live-create lid doc state)
+                (live-connect lid server)
                 (live-terminate-retrieval lid)))
             (lambda (err)
               (display* "TeXmacs] " err "\n")

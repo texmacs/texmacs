@@ -73,12 +73,11 @@
         (live-view-remove lid vid)))))
 
 (tm-define (live-states-in-use lid)
-  (append (former lid)
-          (begin
-            (live-view-clean lid)
-            (if (live-exists? lid)
-                (map cdr (ahash-table->list (live-view-table lid)))
-                (list)))))
+  (live-view-clean lid)
+  (let* ((t (live-view-table lid))
+         (l1 (former lid))
+         (l2 (if (live-exists? lid) (map cdr (ahash-table->list t)) (list))))
+    (append l1 l2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Updating views to match the current live document
@@ -122,7 +121,7 @@
              (vts (id->trees vid)))
         (for (vt vts)
           (tree-set! vt cur))
-        (live-view-set-state lid vid new-state)
+        (live-view-set-state lid vid (live-current-state lid))
         (when (null? vts)
           (live-view-remove lid vid))))))
 
