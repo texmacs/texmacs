@@ -57,6 +57,11 @@
          (with l (live-patch-list state states changes)
            (patch-compound l)))))
 
+(tm-define (live-get-inverse-patch lid state)
+  (and-with doc (live-current-document lid)
+    (and-with p (live-get-patch lid state)
+      (patch-invert p doc))))
+
 (tm-define (live-get-document lid state)
   (let* ((doc (live-current-document lid))
          (p (live-get-patch lid state)))
