@@ -21,8 +21,8 @@
 (define live-states (make-ahash-table))
 (define live-changes (make-ahash-table))
 
-(tm-define (live-create lid doc)
-  (with initial (create-unique-id)
+(tm-define (live-create lid doc . opt-state)
+  (with initial (if (null? opt-state) (create-unique-id) (car opt-state))
     (ahash-set! live-documents lid (tm->tree doc))
     (ahash-set! live-states lid (list initial))
     (ahash-set! live-changes lid (list))
@@ -129,13 +129,13 @@
 
 (tm-define (live-set-remote-state lid remote state)
   (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections (make-ahash-table)))
+    (ahash-set! live-connections lid (make-ahash-table)))
   (with t (ahash-ref live-connections lid)
     (ahash-set! t remote state)))
 
 (tm-define (live-get-remote-state lid remote)
   (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections (make-ahash-table)))
+    (ahash-set! live-connections lid (make-ahash-table)))
   (with t (ahash-ref live-connections lid)
     (ahash-ref t remote)))
 

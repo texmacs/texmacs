@@ -125,10 +125,11 @@
     (save-object f (ahash-table->list server-users))))
 
 (tm-define (server-set-user-info uid id fullname passwd email admin)
-  (server-load-users)
-  (ahash-set! server-users uid (list id fullname passwd email admin))
-  (db-set-user-info uid id fullname email)
-  (server-save-users))
+  (with-database server-database
+    (server-load-users)
+    (ahash-set! server-users uid (list id fullname passwd email admin))
+    (db-set-user-info uid id fullname email)
+    (server-save-users)))
 
 (tm-define (server-set-user-information id fullname passwd email admin)
   (:argument id "User ID")
@@ -149,9 +150,10 @@
 	(car (list-ref l i))))))
 
 (tm-define (server-create-user id fullname passwd email admin)
-  (or (server-find-user id)
-      (with uid (db-create id "user" id)
-        (server-set-user-info uid id fullname passwd email admin))))
+  (with-database server-database
+    (or (server-find-user id)
+        (with uid (db-create id "user" id)
+          (server-set-user-info uid id fullname passwd email admin)))))
 
 (tm-service (new-account id fullname passwd email)
   (if (server-find-user id)

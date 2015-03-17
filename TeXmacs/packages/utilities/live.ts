@@ -22,6 +22,8 @@
 
   <use-module|(utils relate live-menu)>
 
+  <use-module|(client client-live)>
+
   <\active*>
     <\src-comment>
       Mirrors

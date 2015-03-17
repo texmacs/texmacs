@@ -29,11 +29,11 @@
        (live-context? (tree-up t))
        (== (tree-index t) 2)))  
 
-(define (live-view-id t)
+(tm-define (live-view-id t)
   (or (and (live-context? t) (tree->string (tree-ref t 0)))
       (and (live-view-context? t) (live-view-id (tree-up t)))))
 
-(define (live-id t)
+(tm-define (live-id t)
   (or (and (live-context? t) (tree->string (tree-ref t 1)))
       (and (live-view-context? t) (live-id (tree-up t)))))
 
@@ -137,6 +137,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (live-retrieve t)
+  ;; to be redefined for particular tags
   (let* ((lid (live-id t))
          (vid (live-view-id t))
          (vt (tree-ref t :last))
@@ -203,8 +204,11 @@
              (== event 'announce)
              (!= (modification-type mod) 'set-cursor)
              (live-view-context? t))
-    ;;(display* event ", " (tree->path t) ", "
-    ;;(modification->scheme mod) "\n")
-    (set! mod (modification-copy mod))
-    (with p (patch-pair mod (modification-invert mod t))
-      (live-notify-patch (live-id t) (live-view-id t) p))))
+    (let* ((lid (live-id t))
+           (vid (live-view-id t)))
+      (when (live-view-get-state lid vid)
+        ;;(display* event ", " (tree->path t) ", "
+        ;;(modification->scheme mod) "\n")
+        (set! mod (modification-copy mod))
+        (with p (patch-pair mod (modification-invert mod t))
+          (live-notify-patch (live-id t) (live-view-id t) p))))))

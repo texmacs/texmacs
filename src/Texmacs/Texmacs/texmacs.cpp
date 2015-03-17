@@ -53,6 +53,8 @@ extern tree the_et;
 extern bool texmacs_started;
 
 bool disable_error_recovery= false;
+bool start_server_flag= false;
+void server_start ();
 
 tm_ostream& cout= tm_ostream::cout;
 tm_ostream& cerr= tm_ostream::cerr;
@@ -273,6 +275,7 @@ TeXmacs_main (int argc, char** argv) {
 	i++;
 	if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
       }
+      else if (s == "-server") start_server_flag= true;
       else if (s == "-log-file") i++;
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
       else if ((s == "+Oc") || (s == "-char-clipping")) char_clip= true;
@@ -381,6 +384,7 @@ TeXmacs_main (int argc, char** argv) {
   if (DEBUG_STD) debug_boot << "Starting event loop...\n";
   texmacs_started= true;
   if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
+  if (start_server_flag) server_start ();
   gui_start_loop ();
 
   if (DEBUG_STD) debug_boot << "Stopping server...\n";

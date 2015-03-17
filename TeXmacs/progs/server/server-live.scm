@@ -66,10 +66,10 @@
   (when (not (live-current-document lid))
     (live-create lid '(document "")))
   (with (client msg-id) envelope
-    (live-connect lid client))
-  (let* ((doc (live-current-document lid))
-         (state (ahash-ref live-connections (list lid client))))
-    (server-return envelope (list state (tm->stree doc)))))
+    (live-connect lid client)
+    (let* ((doc (live-current-document lid))
+           (state (live-get-remote-state lid client)))
+      (server-return envelope (list state (tm->stree doc))))))
 
 (tm-service (live-modify lid mods old-state)
   ;; States that the current state of the client is obtained

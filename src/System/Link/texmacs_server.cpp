@@ -24,6 +24,9 @@ void
 server_start () {
   if (the_server == NULL) {
     (void) eval ("(use-modules (server server-base))");
+    (void) eval ("(use-modules (server server-tmfs))");
+    (void) eval ("(use-modules (server server-menu))");
+    (void) eval ("(use-modules (server server-live))");
     the_server= tm_new<socket_server_rep> (6561);
   }
   if (!the_server->alive)
