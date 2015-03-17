@@ -22,15 +22,21 @@
 (define live-waiting (make-ahash-table))
 
 (define (live-applicable? lid client p old-state)
-  (and (== old-state (live-current-state lid))
+  (when (and (list? p) (== (live-current-state lid) old-state))
+    (set! p (modlist->patch p (live-current-document lid))))
+  (and (== (live-get-remote-state lid client) old-state)
+       (== (live-current-state lid) old-state)
        (with doc (live-current-document lid)
          (patch-applicable? p doc))))
 
-(define (live-apply lid client p old-state)
-  (and (== old-state (live-current-state lid))
-       (and-with new-state (live-apply-patch lid p)
+(define (live-apply lid client p old-state new-state)
+  (when (and (list? p) (== (live-current-state lid) old-state))
+    (set! p (modlist->patch p (live-current-document lid))))
+  (and (== (live-current-state lid) old-state)
+       (live-apply-patch lid p new-state)
+       (begin
          (live-set-remote-state lid client new-state)
-         (live-broadcast lid)
+         ;;(live-broadcast lid)
          new-state)))
 
 (define (live-update lid client state)
@@ -71,16 +77,12 @@
            (state (live-get-remote-state lid client)))
       (server-return envelope (list state (tm->stree doc))))))
 
-(tm-service (live-modify lid mods old-state)
-  ;; States that the current state of the client is obtained
+(tm-service (live-modify lid mods old-state new-state)
+  ;; States that the 'new-state' of the client is obtained
   ;; from 'old-state' by applying the list of modifications 'mods'
   ;;(display* "live-modify " lid ", " p ", " old-state "\n")
-  (with p (modlist->patch mods) ;; TODO: to be implemented
-    (with (client msg-id) envelope
-      (cond ((not (ahash-ref live-connections (list lid client)))
-             (server-error envelope "Error: non existent live document"))
-            ((not (live-applicable? lid client p old-state))
-             (server-return envelope #f))
-            (else
-              (with new-state (live-apply lid client p old-state)
-                (server-return envelope new-state)))))))
+  (with (client msg-id) envelope
+    (with ok? (live-applicable? lid client mods old-state)
+      (when ok?
+        (live-apply lid client mods old-state new-state))
+      (server-return envelope ok?))))

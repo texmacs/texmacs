@@ -39,11 +39,11 @@
   (and (pair? (ahash-ref live-states lid))
        (ahash-ref live-states lid)))
 
-(tm-define (live-apply-patch lid p)
+(tm-define (live-apply-patch lid p . opt-state)
   (let* ((doc (live-current-document lid))
          (states (ahash-ref live-states lid))
          (changes (or (ahash-ref live-changes lid) (list)))
-         (new-state (create-unique-id)))
+         (new-state (if (null? opt-state) (create-unique-id) (car opt-state))))
     (and doc states changes (patch-applicable? p doc)
          (with inv (patch-invert p doc)
            (ahash-set! live-documents lid (patch-apply doc p))

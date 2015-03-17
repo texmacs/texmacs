@@ -25,6 +25,18 @@
        (live-context? t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Useful subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (live-find-server lid)
+  (with sname (tmfs-car (url->string (url-unroot lid)))
+    (client-find-server sname)))
+
+(tm-define (live-get-name lid)
+  (with rname (tmfs-cdr (url->string (url-unroot lid)))
+    (if (== (tmfs-car rname) "live") (tmfs-cdr rname) rname)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieving the initial document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -44,11 +56,9 @@
   (when (not (ahash-ref live-remote-initializing lid))
     (ahash-set! live-remote-initializing lid (make-ahash-table))
     (ahash-set! (ahash-ref live-remote-initializing lid) vid #t)
-    (let* ((fname (url->string (url-unroot lid)))
-           (sname (tmfs-car fname))
-           (server (client-find-server sname))
-           (rname (tmfs-cdr fname))
-           (lname (if (== (tmfs-car rname) "live") (tmfs-cdr rname) rname)))
+    (let* ((sname (tmfs-car (url->string (url-unroot lid))))
+           (server (live-find-server lid))
+           (lname (live-get-name lid)))
       (if server
           (client-remote-eval server `(live-open ,lname)
             (lambda (msg)
@@ -71,3 +81,31 @@
     (if (url-rooted-tmfs? lid)
         (live-remote-retrieve lid vid)
         (former t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Treating local modifications in live documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (live-remote-modify lid p old-state new-state)
+  (let* ((server (live-find-server lid))
+         (lname (live-get-name lid))
+         (mods (patch->modlist p))
+         (cmd `(live-modify ,lname ,mods ,old-state ,new-state)))
+    (client-remote-eval server cmd
+      (lambda (ok?)
+        (when ok?
+          (live-set-remote-state lid server new-state)
+          (live-forget-obsolete lid)))
+      (lambda (err)
+        (display* "TeXmacs] " err "\n")
+        (set-message err "modify remote live document")))))
+
+(tm-define (live-apply-patch lid p . opt-state)
+  (let* ((old-state (live-current-state lid))
+         (new-state (apply former (cons* lid p opt-state)))
+         (server (live-find-server lid)))
+    (if (not server) new-state
+        (and old-state new-state
+             (begin
+               (live-remote-modify lid p old-state new-state)
+               new-state)))))
