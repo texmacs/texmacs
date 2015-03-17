@@ -53,7 +53,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (make-mirror name)
-  (:argument "Channel" name)
+  (:argument name "Channel")
   (let* ((l (id->trees name))
          (id (create-unique-id)))
     (if (and (nnull? l) (mirror-body? (car l)))
