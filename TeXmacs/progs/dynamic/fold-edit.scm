@@ -725,10 +725,11 @@
           (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
           ;; (system-wait "Generating slides" "please wait") ;crashes if printing
           (for-each dynamic-make-slide (tree-children t))))
-      (nnull-with l (select (buffer-tree) '(screens))
-        (let* ((scrns (car l))
-               (slides (screens->slides scrns)))
-          (tree-set! scrns slides)))))
+      (with l (select (buffer-tree) '(screens))
+        (and (nnull? l)
+             (let* ((scrns (car l))
+                    (slides (screens->slides scrns)))
+               (tree-set! scrns slides))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global filtering of switches

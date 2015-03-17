@@ -114,10 +114,6 @@
   `(with ,var ,val
      (and ,var (begin ,@body))))
 
-(define-public-macro (nnull-with var val . body)
-  `(with ,var ,val
-     (and (nnull? ,var) (begin ,@body))))
-
 (define-public-macro (with-result result . body)
   `(let* ((return ,result)
           (dummy (begin ,@body)))
