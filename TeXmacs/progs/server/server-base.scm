@@ -85,26 +85,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define server-continuations (make-ahash-table))
+(define server-error-handlers (make-ahash-table))
 
-(tm-define (server-remote-eval client cmd cont)
-  (ahash-set! server-continuations server-serial (list client cont))
-  (server-send client cmd))
+(define (std-server-error msg)
+  (texmacs-error "server-remote-error" "remote error ~S" msg))
+
+(tm-define (server-remote-eval client cmd cont . opt-err-handler)
+  (with err-handler std-server-error
+    (if (nnull? opt-err-handler) (set! err-handler (car opt-err-handler)))
+    (ahash-set! server-continuations server-serial (list client cont))
+    (ahash-set! server-error-handlers server-serial (list client err-handler))
+    (server-send client cmd)))
+
+(tm-define (server-remote-eval* client cmd cont)
+  (server-remote-eval client cmd cont cont))
 
 (tm-service (server-remote-result msg-id ret)
   (with client (car envelope)
     (and-with val (ahash-ref server-continuations msg-id)
       (ahash-remove! server-continuations msg-id)
+      (ahash-remove! server-error-handlers msg-id)
       (with (orig-client cont) val
         (when (== client orig-client)
           (cont ret))))))
 
 (tm-service (server-remote-error msg-id err-msg)
   (with client (car envelope)
-    (and-with val (ahash-ref server-continuations msg-id)
+    (and-with val (ahash-ref server-error-handlers msg-id)
       (ahash-remove! server-continuations msg-id)
-      (with (orig-client cont) val
+      (ahash-remove! server-error-handlers msg-id)
+      (with (orig-client err-handler) val
         (when (== client orig-client)
-          (texmacs-error "server-remote-error" "remote error ~S" err-msg))))))
+          (err-handler err-msg))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Users
