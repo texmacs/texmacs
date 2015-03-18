@@ -109,3 +109,17 @@
              (begin
                (live-remote-modify lid p old-state new-state)
                new-state)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Handling modifications send by the server
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-call-back (live-modify lid mods old-state new-state)
+  ;;(display* "live-modify " lid ", " p ", " old-state ", " new-state "\n")
+  (with (server msg-id) envelope
+    (client-error envelope "not yet implemented")))
+
+;;(with ok? (live-applicable? lid client mods old-state)
+;;(when ok?
+;;(live-apply lid client mods old-state new-state))
+;;(server-return envelope ok?))))

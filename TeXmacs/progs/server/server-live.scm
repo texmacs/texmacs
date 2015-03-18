@@ -36,31 +36,32 @@
        (live-apply-patch lid p new-state)
        (begin
          (live-set-remote-state lid client new-state)
-         ;;(live-broadcast lid)
+         (live-broadcast lid)
          new-state)))
 
 (define (live-update lid client state)
   (with key (list lid client)
     (when (not (ahash-ref live-waiting key))
       (ahash-set! live-waiting key #t)
-      (let* ((p (live-get-patch lid state))
-             (inv (patch-invert p (get-current-document lid)))
-             (mods (patch->modlist inv))
+      (let* ((p (live-get-inverse-patch lid state))
+             (mods (patch->modlist p))
              (new-state (live-current-state lid)))
         (server-remote-eval client `(live-modify ,lid ,mods ,state ,new-state)
           (lambda (ok?)
             (ahash-remove! live-waiting key)
             (when ok? (live-set-remote-state lid client new-state))
-            (live-broadcast lid)))))))
+            (live-broadcast-one lid client)))))))
+
+(define (live-broadcast-one lid client)
+  (with state (live-get-remote-state lid client)
+    (if (active-client? client)
+        (when (!= state (live-current-state lid))
+          (live-update lid client state))
+        (live-hang-up lid client))))
 
 (define (live-broadcast lid)
-  (and-with t (ahash-ref live-connections lid)
-    (for (key-im (ahash-table->list t))
-      (with (client state) key-im
-        (if (client-active? client)
-            (when (!= state (live-current-state lid))
-              (live-update lid client state))
-            (live-hang-up lid client))))))
+  (for (client (live-get-connections lid))
+    (live-broadcast-one lid client)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public services
@@ -80,7 +81,7 @@
 (tm-service (live-modify lid mods old-state new-state)
   ;; States that the 'new-state' of the client is obtained
   ;; from 'old-state' by applying the list of modifications 'mods'
-  ;;(display* "live-modify " lid ", " p ", " old-state "\n")
+  ;;(display* "live-modify " lid ", " p ", " old-state ", " new-state "\n")
   (with (client msg-id) envelope
     (with ok? (live-applicable? lid client mods old-state)
       (when ok?
