@@ -294,7 +294,7 @@ clean_remove (tree t, path p, int nr) {
   if (is_nil (p->next) && is_atomic (t)) {
     string s= t->label;
     if (N(s) < p->item+nr)
-      FAILED("clean_remove(): Invalid remove from atomic tree.");
+      FAILED ("clean_remove: Invalid remove from atomic tree");
     return s (0, p->item) * s (p->item+nr, N(s));
   }
   else if (is_nil (p->next)) {
@@ -306,7 +306,7 @@ clean_remove (tree t, path p, int nr) {
   }
   else {
     int i, j= p->item, n= N(t);
-    if (j >= n) FAILED("clean_remove(): Invalid path."); //return t;  // FIXME? check whether this is the right return value.
+    if (j >= n) FAILED ("clean_remove: Invalid path"); //return t;  // FIXME? check whether this is the right return value.
     tree r (t, n);
     for (i=0; i<j; i++) r[i]= t[i];
     r[j]= clean_remove (t[j], p->next, nr);
