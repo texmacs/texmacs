@@ -34,11 +34,11 @@
           (apply fun (cons envelope args))))
       (client-error envelope "invalid command")))
 
-(define (client-return envelope ret-val)
+(tm-define (client-return envelope ret-val)
   (with (server msg-id) envelope
     (client-send server `(server-remote-result ,msg-id ,ret-val))))
 
-(define (client-error envelope error-msg)
+(tm-define (client-error envelope error-msg)
   (with (server msg-id) envelope
     (client-send server `(server-remote-error ,msg-id ,error-msg))))
 
