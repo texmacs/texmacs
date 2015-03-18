@@ -30,7 +30,7 @@
     </src-comment>
   </active*>
 
-  <assign|live-io|<macro|view-id|live-id|body|<with|old-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|live-id>>|<observer|<arg|view-id>|live-notify>|<surround|<hidden|<extern|live-initialize|<quote-arg|body>>>|<if|<equal|<get-label|<arg|body>>|document>|<right-flush>>|<with|locus-color|<value|old-color>|<arg|body>>>>>>>
+  <assign|live-io|<macro|view-id|live-id|body|<with|old-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|live-id>>|<observer|<arg|view-id>|live-notify>|<surround|<hidden|<extern|live-initialize|<quote-arg|body>>>|<if|<equal|<get-label|<quote-arg|body>>|document>|<right-flush>>|<with|locus-color|<value|old-color>|<arg|body>>>>>>>
 </body>
 
 <\initial>
