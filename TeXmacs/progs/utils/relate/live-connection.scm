@@ -45,7 +45,7 @@
 
 (define (live-connections-table lid)
   (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections (make-ahash-table)))
+    (ahash-set! live-connections lid (make-ahash-table)))
   (ahash-ref live-connections lid))
 
 (tm-define (live-connect lid remote)
