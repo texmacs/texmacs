@@ -299,6 +299,8 @@
   (modification-inplace-apply var_apply (tree tree modification))
   (modification-invert invert (modification modification content))
   (modification-commute? commute (bool modification modification))
+  (modification-can-pull? can_pull (bool modification modification))
+  (modification-pull pull (modification modification modification))
 
   ;; patches
   (patch-pair patch (patch modification modification))
@@ -326,6 +328,8 @@
   (patch-cursor-hint cursor_hint (path patch content))
   (patch-invert invert (patch patch content))
   (patch-commute? commute (bool patch patch))
+  (patch-can-pull? can_pull (bool patch patch))
+  (patch-pull pull (patch patch patch))
   (patch-remove-set-cursor remove_set_cursor (patch patch))
   (patch-modifies? does_modify (bool patch))
 

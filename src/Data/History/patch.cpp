@@ -468,14 +468,37 @@ swap (patch& p1, patch& p2, double a1, double a2) {
 
 bool
 swap (patch& p1, patch& p2) {
+  // Assuming that p1;p2 (the patch p1 followed by p2) is well-defined,
+  // determine patches p1* and p2* such that p2*;p1* is equivalent
+  // to p1;p2.  If such patches exist, then set p1 := p2* and
+  // p2 := p1* and return true.  Otherwise, return false
   return swap (p1, p2, 0, 0);
 }
 
 bool
 commute (patch p1, patch p2) {
+  // Assuming that p1;p2 (the patch p1 followed by p2) is well-defined,
+  // determine whether there exist patches p1* and p2* such that
+  // p2*;p1* is equivalent to p1;p2
   patch s1= p1;
   patch s2= p2;
   return swap (s1, s2);
+}
+
+bool
+can_pull (patch p1, patch p2) {
+  return commute (p2, p1);
+}
+
+patch
+pull (patch p1, patch p2) {
+  // Assuming that p2;p1 (the patch p2 followed by p1) is well-defined,
+  // return the patch p1* such that p1;p2 is equivalent to p2*;p1*
+  // for a suitable patch p1* (assuming that p1* and p2* exist).
+  patch s1= p2;
+  patch s2= p1;
+  ASSERT (swap (s1, s2), "patch cannot be pulled");
+  return s1;
 }
 
 /******************************************************************************

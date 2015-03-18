@@ -149,6 +149,10 @@ swap_basic (modification& m1, modification& m2) {
 
 bool
 swap (modification& m1, modification& m2) {
+  // Assuming that m1;m2 (the patch m1 followed by m2) is well-defined,
+  // determine modifications m1* and m2* such that m2*;m1* is equivalent
+  // to m1;m2.  If such modifications exist, then set m1 := m2* and
+  // m2 := m1* and return true.  Otherwise, return false
   path rp1= root (m1);
   path rp2= root (m2);
   if (is_nil (rp1))
@@ -307,9 +311,28 @@ swap (modification& m1, modification& m2) {
 
 bool
 commute (modification m1, modification m2) {
+  // Assuming that m1;m2 (the patch m1 followed by m2) is well-defined,
+  // determine whether there exist modifications m1* and m2* such that
+  // m2*;m1* is equivalent to m1;m2
   modification s1= m1;
   modification s2= m2;
   return swap (s1, s2);
+}
+
+bool
+can_pull (modification m1, modification m2) {
+  return commute (m2, m1);
+}
+
+modification
+pull (modification m1, modification m2) {
+  // Assuming that m2;m1 (the patch m2 followed by m1) is well-defined,
+  // return the modification m1* such that m1;m2 is equivalent to m2*;m1*
+  // for a suitable modification m1* (assuming that m1* and m2* exist).
+  modification s1= m2;
+  modification s2= m1;
+  ASSERT (swap (s1, s2), "modification cannot be pulled");
+  return s1;
 }
 
 /******************************************************************************

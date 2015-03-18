@@ -3434,6 +3434,36 @@ tmg_modification_commuteP (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_modification_can_pullP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-can-pull?");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-can-pull?");
+
+  modification in1= tmscm_to_modification (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= can_pull (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_modification_pull (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-pull");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-pull");
+
+  modification in1= tmscm_to_modification (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  modification out= pull (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
 tmg_patch_pair (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "patch-pair");
   TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "patch-pair");
@@ -3763,6 +3793,36 @@ tmg_patch_commuteP (tmscm arg1, tmscm arg2) {
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_can_pullP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-can-pull?");
+  TMSCM_ASSERT_PATCH (arg2, TMSCM_ARG2, "patch-can-pull?");
+
+  patch in1= tmscm_to_patch (arg1);
+  patch in2= tmscm_to_patch (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= can_pull (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_pull (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-pull");
+  TMSCM_ASSERT_PATCH (arg2, TMSCM_ARG2, "patch-pull");
+
+  patch in1= tmscm_to_patch (arg1);
+  patch in2= tmscm_to_patch (arg2);
+
+  // TMSCM_DEFER_INTS;
+  patch out= pull (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
 }
 
 tmscm
@@ -8643,6 +8703,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("modification-inplace-apply",  tmg_modification_inplace_apply, 2, 0, 0);
   tmscm_install_procedure ("modification-invert",  tmg_modification_invert, 2, 0, 0);
   tmscm_install_procedure ("modification-commute?",  tmg_modification_commuteP, 2, 0, 0);
+  tmscm_install_procedure ("modification-can-pull?",  tmg_modification_can_pullP, 2, 0, 0);
+  tmscm_install_procedure ("modification-pull",  tmg_modification_pull, 2, 0, 0);
   tmscm_install_procedure ("patch-pair",  tmg_patch_pair, 2, 0, 0);
   tmscm_install_procedure ("patch-compound",  tmg_patch_compound, 1, 0, 0);
   tmscm_install_procedure ("patch-branch",  tmg_patch_branch, 1, 0, 0);
@@ -8667,6 +8729,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("patch-cursor-hint",  tmg_patch_cursor_hint, 2, 0, 0);
   tmscm_install_procedure ("patch-invert",  tmg_patch_invert, 2, 0, 0);
   tmscm_install_procedure ("patch-commute?",  tmg_patch_commuteP, 2, 0, 0);
+  tmscm_install_procedure ("patch-can-pull?",  tmg_patch_can_pullP, 2, 0, 0);
+  tmscm_install_procedure ("patch-pull",  tmg_patch_pull, 2, 0, 0);
   tmscm_install_procedure ("patch-remove-set-cursor",  tmg_patch_remove_set_cursor, 1, 0, 0);
   tmscm_install_procedure ("patch-modifies?",  tmg_patch_modifiesP, 1, 0, 0);
   tmscm_install_procedure ("tree->ids",  tmg_tree_2ids, 1, 0, 0);

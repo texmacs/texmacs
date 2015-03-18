@@ -54,6 +54,20 @@
 (define-public-macro (modification-apply! t m)
   `(set! ,t (modification-inplace-apply ,t ,m)))
 
+(define-public (modification-can-push? m1 m2 t)
+  ;; Assuming that both m1 and m2 can be applied to the document t,
+  ;; determine whether they can be applied jointly to t.
+  (with i2 (modification-invert m2 t)
+    (modification-can-pull? m1 i2)))
+
+(define-public (modification-push m1 m2 t)
+  ;; Assuming that both m1 and m2 can be applied to the document t,
+  ;; and that both modifications can also be applied jointly,
+  ;; return the modification m1* such that there exists a modification m2*
+  ;; for which m2*;m1 is equivalent to m1*;m2
+  (with i2 (modification-invert m2 t)
+    (modification-pull m1 i2)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Content patches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -94,3 +108,17 @@
 
 (define-public-macro (patch-apply! t m)
   `(set! ,t (patch-inplace-apply ,t ,m)))
+
+(define-public (patch-can-push? p1 p2 t)
+  ;; Assuming that both p1 and p2 can be applied to the document t,
+  ;; determine whether they can be applied jointly to t.
+  (with i2 (patch-invert p2 t)
+    (patch-can-pull? p1 i2)))
+
+(define-public (patch-push p1 p2 t)
+  ;; Assuming that both p1 and p2 can be applied to the document t,
+  ;; and that both patches can also be applied jointly,
+  ;; return the patch p1* such that there exists a patch p2*
+  ;; for which p2*;p1 is equivalent to p1*;p2
+  (with i2 (patch-invert p2 t)
+    (patch-pull p1 i2)))
