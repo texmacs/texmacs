@@ -3464,6 +3464,21 @@ tmg_modification_pull (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_modification_co_pull (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "modification-co-pull");
+  TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "modification-co-pull");
+
+  modification in1= tmscm_to_modification (arg1);
+  modification in2= tmscm_to_modification (arg2);
+
+  // TMSCM_DEFER_INTS;
+  modification out= co_pull (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return modification_to_tmscm (out);
+}
+
+tmscm
 tmg_patch_pair (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_MODIFICATION (arg1, TMSCM_ARG1, "patch-pair");
   TMSCM_ASSERT_MODIFICATION (arg2, TMSCM_ARG2, "patch-pair");
@@ -3820,6 +3835,21 @@ tmg_patch_pull (tmscm arg1, tmscm arg2) {
 
   // TMSCM_DEFER_INTS;
   patch out= pull (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return patch_to_tmscm (out);
+}
+
+tmscm
+tmg_patch_co_pull (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_PATCH (arg1, TMSCM_ARG1, "patch-co-pull");
+  TMSCM_ASSERT_PATCH (arg2, TMSCM_ARG2, "patch-co-pull");
+
+  patch in1= tmscm_to_patch (arg1);
+  patch in2= tmscm_to_patch (arg2);
+
+  // TMSCM_DEFER_INTS;
+  patch out= co_pull (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return patch_to_tmscm (out);
@@ -8705,6 +8735,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("modification-commute?",  tmg_modification_commuteP, 2, 0, 0);
   tmscm_install_procedure ("modification-can-pull?",  tmg_modification_can_pullP, 2, 0, 0);
   tmscm_install_procedure ("modification-pull",  tmg_modification_pull, 2, 0, 0);
+  tmscm_install_procedure ("modification-co-pull",  tmg_modification_co_pull, 2, 0, 0);
   tmscm_install_procedure ("patch-pair",  tmg_patch_pair, 2, 0, 0);
   tmscm_install_procedure ("patch-compound",  tmg_patch_compound, 1, 0, 0);
   tmscm_install_procedure ("patch-branch",  tmg_patch_branch, 1, 0, 0);
@@ -8731,6 +8762,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("patch-commute?",  tmg_patch_commuteP, 2, 0, 0);
   tmscm_install_procedure ("patch-can-pull?",  tmg_patch_can_pullP, 2, 0, 0);
   tmscm_install_procedure ("patch-pull",  tmg_patch_pull, 2, 0, 0);
+  tmscm_install_procedure ("patch-co-pull",  tmg_patch_co_pull, 2, 0, 0);
   tmscm_install_procedure ("patch-remove-set-cursor",  tmg_patch_remove_set_cursor, 1, 0, 0);
   tmscm_install_procedure ("patch-modifies?",  tmg_patch_modifiesP, 1, 0, 0);
   tmscm_install_procedure ("tree->ids",  tmg_tree_2ids, 1, 0, 0);

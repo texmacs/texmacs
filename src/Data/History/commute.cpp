@@ -335,6 +335,15 @@ pull (modification m1, modification m2) {
   return s1;
 }
 
+modification
+co_pull (modification m1, modification m2) {
+  // Same as pull, but return m2* instead of m1*
+  modification s1= m2;
+  modification s2= m1;
+  ASSERT (swap (s1, s2), "modification cannot be pulled");
+  return s2;
+}
+
 /******************************************************************************
 * Joining simple modifications when possible
 ******************************************************************************/

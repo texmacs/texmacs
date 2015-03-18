@@ -501,6 +501,15 @@ pull (patch p1, patch p2) {
   return s1;
 }
 
+patch
+co_pull (patch p1, patch p2) {
+  // Same as pull, but return p2* instead of p1*
+  patch s1= p2;
+  patch s2= p1;
+  ASSERT (swap (s1, s2), "patch cannot be pulled");
+  return s2;
+}
+
 /******************************************************************************
 * Joining simple patches if possible
 ******************************************************************************/

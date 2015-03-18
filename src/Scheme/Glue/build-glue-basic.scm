@@ -301,6 +301,7 @@
   (modification-commute? commute (bool modification modification))
   (modification-can-pull? can_pull (bool modification modification))
   (modification-pull pull (modification modification modification))
+  (modification-co-pull co_pull (modification modification modification))
 
   ;; patches
   (patch-pair patch (patch modification modification))
@@ -330,6 +331,7 @@
   (patch-commute? commute (bool patch patch))
   (patch-can-pull? can_pull (bool patch patch))
   (patch-pull pull (patch patch patch))
+  (patch-co-pull co_pull (patch patch patch))
   (patch-remove-set-cursor remove_set_cursor (patch patch))
   (patch-modifies? does_modify (bool patch))
 

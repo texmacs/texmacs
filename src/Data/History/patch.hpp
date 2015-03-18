@@ -115,6 +115,7 @@ bool commute (modification m1, modification m2);
 bool swap (modification& m1, modification& m2);
 bool can_pull (modification m1, modification m2);
 modification pull (modification m1, modification m2);
+modification co_pull (modification m1, modification m2);
 bool join (modification& m1, modification m2, tree t);
 
 patch invert (patch p, tree t);
@@ -122,6 +123,7 @@ bool commute (patch p1, patch p2);
 bool swap (patch& p1, patch& p2);
 bool can_pull (patch p1, patch p2);
 patch pull (patch p1, patch p2);
+patch co_pull (patch p1, patch p2);
 bool join (patch& p1, patch p2, tree t);
 patch remove_set_cursor (patch p);
 bool does_modify (patch p);

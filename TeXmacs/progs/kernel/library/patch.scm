@@ -68,6 +68,13 @@
   (with i2 (modification-invert m2 t)
     (modification-pull m1 i2)))
 
+(define-public (modification-co-push m1 m2 t)
+  ;; Same as modification-push, but return m2* instead of m1*
+  (let* ((p1 (patch-pair m1 (modification-invert m1 t)))
+         (p2 (patch-pair m2 (modification-invert m2 t)))
+         (r (patch-co-push p1 p2 t)))
+    (patch-direct r)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Content patches
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -122,3 +129,10 @@
   ;; for which p2*;p1 is equivalent to p1*;p2
   (with i2 (patch-invert p2 t)
     (patch-pull p1 i2)))
+
+(define-public (patch-co-push p1 p2 t)
+  ;; Same as patch-push, but return p2* instead of p1*
+  (let* ((i2 (patch-invert p2 t))
+         (i2* (patch-co-pull p1 i2))
+         (u (patch-apply t p1)))
+    (patch-invert i2* u)))
