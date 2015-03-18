@@ -43,25 +43,30 @@
 
 (define live-connections (make-ahash-table))
 
+(define (live-connections-table lid)
+  (when (not (ahash-ref live-connections lid))
+    (ahash-set! live-connections (make-ahash-table)))
+  (ahash-ref live-connections lid))
+
 (tm-define (live-connect lid remote)
   (live-set-remote-state lid remote (live-current-state lid)))
 
 (tm-define (live-hang-up lid remote)
-  (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections (make-ahash-table)))
-  (with t (ahash-ref live-connections lid)
-    (ahash-remove! t remote)))
+  (with t (live-connections-table lid)
+    (ahash-remove! t remote)
+    (when (== (ahash-size t) 0)
+      (ahash-remove! live-connections lid))))
+
+(tm-define (live-get-connections lid)
+  (with t (live-connections-table lid)
+    (map car (ahash-table->list t))))
 
 (tm-define (live-set-remote-state lid remote state)
-  (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections lid (make-ahash-table)))
-  (with t (ahash-ref live-connections lid)
+  (with t (live-connections-table lid)
     (ahash-set! t remote state)))
 
 (tm-define (live-get-remote-state lid remote)
-  (when (not (ahash-ref live-connections lid))
-    (ahash-set! live-connections lid (make-ahash-table)))
-  (with t (ahash-ref live-connections lid)
+  (with t (live-connections-table lid)
     (ahash-ref t remote)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
