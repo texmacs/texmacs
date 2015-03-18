@@ -136,3 +136,18 @@
          (i2* (patch-co-pull p1 i2))
          (u (patch-apply t p1)))
     (patch-invert i2* u)))
+
+(define-public (patch-equivalent? p1 p2 t)
+  ;; For sanity checking
+  (and (patch-applicable? p1 t)
+       (patch-applicable? p2 t)
+       (== (patch-apply t p1) (patch-apply t p2))))
+
+(define-public (patch-strong-equivalent? p1 p2 t)
+  ;; Strong sanity checking
+  (and (patch-equivalent? p1 p2 t)
+       (let* ((u (patch-apply t p1))
+              (i1 (patch-invert p1 t))
+              (i2 (patch-invert p2 t)))
+         (and (patch-equivalent? i1 i2 u)
+              (== (patch-apply u i1) t)))))
