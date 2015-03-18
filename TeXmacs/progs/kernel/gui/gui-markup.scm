@@ -350,10 +350,14 @@
 
 (tm-define form-name "empty")
 (tm-define form-entries (list))
+(tm-define form-text-entries (list))
 (tm-define form-last (make-ahash-table))
 
 (tm-define (form-named-set name field val)
-  (if (and (pair? val) (cadr val)) (set! val (car val)))
+  (if (and (pair? val) (pair? (cdr val)) (cadr val)) (set! val (car val)))
+  (ahash-set! form-last (list name field) val))
+
+(tm-define (form-named-set-multiple name field val)
   (ahash-set! form-last (list name field) val))
 
 (tm-define (form-named-ref name field)
@@ -374,7 +378,8 @@
 (tm-define-macro ($form name . l)
   (:synopsis "Make form")
   `($let* ((form-name ,name)
-           (form-entries (list)))
+           (form-entries (list))
+           (form-text-entries (list)))
      ,@l))
 
 (tm-define (form-proposals name field l)
@@ -389,9 +394,12 @@
 (tm-define-macro ($form-input field type proposals width)
   (:synopsis "Make a textual input field for the current form")
   `($execute
-     (set! form-entries (append form-entries (list ,field)))
+     (begin
+       (set! form-entries (append form-entries (list ,field)))
+       (set! form-text-entries (append form-text-entries (list ,field))))
      ($input (form-named-set form-name ,field answer)
-             ,(string-append "form-" type)
+             (with nr (number->string (length form-text-entries))
+               (string-append ,field "#form-" form-name "-" nr ":" ,type))
 	     (form-proposals form-name ,field ,proposals) ,width)))
 
 (tm-define-macro ($form-enum field proposals selected width)
@@ -404,7 +412,7 @@
 
 (tm-define-macro ($form-choice field proposals selected) 
   (:synopsis "Make a single choice field for the current form") 
-  `($execute 
+  `($execute
      (set! form-entries (append form-entries (list ,field))) 
      ($choice (form-named-set form-name ,field answer)
               (form-proposals-sel form-name ,field ,proposals ,selected)
@@ -412,11 +420,19 @@
 
 (tm-define-macro ($form-choices field proposals selected) 
   (:synopsis "Make a multiple choice field for the current form") 
-  `($execute 
+  `($execute
      (set! form-entries (append form-entries (list ,field))) 
-     ($choices (form-named-set form-name ,field answer)
-               (form-proposals-sel form-name ,field ,proposals ,selected)
+     ($choices (form-named-set-multiple form-name ,field answer)
+               (begin
+                 (form-named-set-multiple form-name ,field ,selected)
+                 ,proposals)
                ,selected)))
+
+(tm-define-macro ($form-toggle field on?)
+  (:synopsis "Make a toggle field for the current form") 
+  `($execute
+     (set! form-entries (append form-entries (list ,field))) 
+     ($toggle (form-named-set form-name ,field answer) ,on?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic text markup

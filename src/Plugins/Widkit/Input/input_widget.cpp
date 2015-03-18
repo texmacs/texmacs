@@ -33,6 +33,8 @@ class input_widget_rep: public attribute_widget_rep {
   string  draw_s;      // the string being displayed
   SI      text_h;      // text height
   string  type;        // expected type of string
+  string  name;        // optional name of the input field
+  string  serial;      // optional serial number of the input field
   array<string> def;   // default possible input values
   command call_back;   // routine called on <return> or <escape>
   int     style;       // style of widget
@@ -57,6 +59,7 @@ public:
   void update_draw_s ();
   void commit ();
   void cancel ();
+  void set_type (string type);
   bool continuous ();
 
   void handle_get_size (get_size_event ev);
@@ -78,7 +81,8 @@ public:
 
 input_widget_rep::input_widget_rep (command cb2, int st2, string w2, bool p2):
   attribute_widget_rep (south_west),
-  s (""), draw_s (""), type ("default"), def (),
+  s (""), draw_s (""),
+  type ("default"), name ("default"), serial ("default"), def (),
   call_back (cb2), style (st2),
   greyed ((style & WIDGET_STYLE_INERT) != 0),
   width (w2), persistent (p2),
@@ -122,10 +126,25 @@ input_widget_rep::cancel () {
   call_back (list_object (object (false)));
 }
 
+void
+input_widget_rep::set_type (string t) {
+  int i= search_forwards (":", 0, t);
+  if (i >= 0) {
+    type= t (i+1, N(t));
+    name= t (0, i);
+    int j= search_forwards ("#", 0, name);
+    if (j >= 0) {
+      serial= name (j+1, N(name));
+      name  = name (0, j);
+    }
+  }
+  else type= t;
+}
+
 bool
 input_widget_rep::continuous () {
   return type == "search" || starts (type, "replace-") ||
-    starts (type, "form-");
+    starts (serial, "form-");
 }
 
 void
@@ -386,7 +405,7 @@ input_widget_rep::handle_keyboard_focus (keyboard_focus_event ev) {
 
 void
 input_widget_rep::handle_keyboard_focus_on (keyboard_focus_on_event ev) {
-  if (ev->field == type) {
+  if (ev->field == serial || ev->field == name || ev->field == type) {
     ev->done= true;
     send_keyboard_focus (abstract (this));
   }
@@ -400,7 +419,7 @@ input_widget_rep::handle_set_string (set_string_event ev) {
     ok= (ev->s != "#f");
     if (attached ()) this << emit_invalidate_all ();
   }
-  else if (ev->which == "type") type= copy (ev->s);
+  else if (ev->which == "type") set_type (copy (ev->s));
   else if (ev->which == "default") def << copy (ev->s);
   else attribute_widget_rep::handle_set_string (ev);
 }

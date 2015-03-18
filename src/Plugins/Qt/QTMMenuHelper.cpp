@@ -461,7 +461,9 @@ QTMFieldWidgetHelper::commit (const QString& qst) {
 QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
                           int style, command _cmd)
   : QLineEdit (parent), completing (false),
-    type (_type), ww (_ww), cmd (_cmd), last_key (0) {
+    type ("default"), name ("default"), serial ("default"),
+    ww (_ww), cmd (_cmd), last_key (0) {
+  set_type (_type);
   if (type == "password") setEchoMode(QLineEdit::Password);
   if (style & WIDGET_STYLE_MINI) {
     setStyle (qtmstyle());
@@ -478,10 +480,25 @@ QTMLineEdit::QTMLineEdit (QWidget* parent, string _type, string _ww,
   qt_apply_tm_style (this, style);
 }
 
+void
+QTMLineEdit::set_type (string t) {
+  int i= search_forwards (":", 0, t);
+  if (i >= 0) {
+    type= t (i+1, N(t));
+    name= t (0, i);
+    int j= search_forwards ("#", 0, name);
+    if (j >= 0) {
+      serial= name (j+1, N(name));
+      name  = name (0, j);
+    }
+  }
+  else type= t;
+}
+
 bool
 QTMLineEdit::continuous () {
   return type == "search" || starts (type, "replace-") ||
-    starts (type, "form-");
+    starts (serial, "form-");
 }
 
 /*

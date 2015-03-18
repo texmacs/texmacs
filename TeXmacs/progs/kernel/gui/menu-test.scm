@@ -239,7 +239,13 @@
           (item (text "Choices:")
             (form-choices "fieldname4" 
                           '("one" "two" "three") 
-                          '("one" "two"))))
+                          '("one" "two")))
+          (item === ===)
+          (item (text "Password:")
+            (form-input "fieldname5" "password" '() "1w"))
+          (item === ===)
+          (item (text "Toggle:")
+            (form-toggle "fieldname6" #f)))
         (bottom-buttons
           ("Cancel" (cmd "cancel")) >>
           ("Ok"
