@@ -57,10 +57,9 @@
     (ahash-set! live-remote-initializing lid (make-ahash-table))
     (ahash-set! (ahash-ref live-remote-initializing lid) vid #t)
     (let* ((sname (tmfs-car (url->string (url-unroot lid))))
-           (server (live-find-server lid))
-           (lname (live-get-name lid)))
+           (server (live-find-server lid)))
       (if server
-          (client-remote-eval server `(live-open ,lname)
+          (client-remote-eval server `(live-open ,lid)
             (lambda (msg)
               (with (state doc) msg
                 (live-create lid doc state)
@@ -88,9 +87,8 @@
 
 (define (live-remote-modify lid p old-state new-state)
   (let* ((server (live-find-server lid))
-         (lname (live-get-name lid))
          (mods (patch->modlist p))
-         (cmd `(live-modify ,lname ,mods ,old-state ,new-state)))
+         (cmd `(live-modify ,lid ,mods ,old-state ,new-state)))
     (client-remote-eval server cmd
       (lambda (ok?)
         (when ok?
@@ -114,12 +112,37 @@
 ;; Handling modifications send by the server
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-call-back (live-modify lid mods old-state new-state)
-  ;;(display* "live-modify " lid ", " p ", " old-state ", " new-state "\n")
-  (with (server msg-id) envelope
-    (client-error envelope "not yet implemented")))
+(define (patch-pull-list p l)
+  (if (null? l) (list p l)
+      (with (p* l*) (patch-pull-list p (cdr l))
+        (list (patch-pull p* (car l))
+              (cons (patch-co-pull p* (car l)) l*)))))
 
-;;(with ok? (live-applicable? lid client mods old-state)
-;;(when ok?
-;;(live-apply lid client mods old-state new-state))
-;;(server-return envelope ok?))))
+(define (live-resend-local-changes lid old-state)
+  (let* ((cur-state (live-current-state lid))
+         (p (live-get-inverse-patch lid old-state)))
+    (when (!= cur-state old-state)
+      (live-remote-modify lid p old-state cur-state))))
+
+(tm-call-back (live-modify lid mods old-state new-state)
+  ;;(display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
+  (with (server msg-id) envelope
+    (let* ((old-t (live-get-document lid old-state)) ;; TODO: check old-t != #f
+           (p (modlist->patch mods old-t))
+           (inv-p (patch-invert p old-t))
+           (ok-state (live-latest-compatible lid old-state p)))
+      (live-retract lid ok-state)
+      (live-update-views lid)
+      (let* ((rev (live-get-patch-list lid old-state))
+             (p* (patch-pull p (patch-compound rev)))
+             (rev* (cadr (patch-pull-list p rev)))
+             (states (live-get-state-list lid old-state))
+             (states* (map (lambda (x) (create-unique-id)) states))
+             (new-states (rcons states* new-state))
+             (new-changes (rcons rev* inv-p)))
+        (live-apply-patch lid p* (car new-states))
+        (live-update-views lid)
+        (live-rewrite-history lid old-state new-states new-changes)
+        (live-set-remote-state lid server new-state)
+        (live-resend-local-changes lid new-state)
+        (client-return envelope #t)))))

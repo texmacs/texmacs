@@ -17,7 +17,7 @@
 ;; Declaration of call backs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public call-back-dispatch-table (make-ahash-table))
+(tm-define call-back-dispatch-table (make-ahash-table))
 
 (tm-define-macro (tm-call-back proto . body)
   (if (npair? proto) '(noop)

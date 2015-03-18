@@ -81,7 +81,7 @@
 (tm-service (live-modify lid mods old-state new-state)
   ;; States that the 'new-state' of the client is obtained
   ;; from 'old-state' by applying the list of modifications 'mods'
-  ;;(display* "live-modify " lid ", " p ", " old-state ", " new-state "\n")
+  ;;(display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
   (with (client msg-id) envelope
     (with ok? (live-applicable? lid client mods old-state)
       (when ok?
