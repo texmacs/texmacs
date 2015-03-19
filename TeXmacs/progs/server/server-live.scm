@@ -47,6 +47,8 @@
       (let* ((p (live-get-inverse-patch lid state))
              (mods (patch->modlist p))
              (new-state (live-current-state lid)))
+	(display* "Send " client ": "
+		  `(live-modify ,lid ,mods ,state ,new-state) "\n")
         (server-remote-eval client `(live-modify ,lid ,mods ,state ,new-state)
           (lambda (ok?)
             (ahash-remove! live-waiting key)
@@ -84,9 +86,11 @@
 (tm-service (live-modify lid mods old-state new-state)
   ;; States that the 'new-state' of the client is obtained
   ;; from 'old-state' by applying the list of modifications 'mods'
-  ;;(display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
   (with (client msg-id) envelope
+    (display* "Receive " client ": " mods ", " old-state ", " new-state "\n")
     (with ok? (live-applicable? lid client mods old-state)
+      (when (not ok?)
+	(display* ">> refuse " client ", " mods "\n"))
       (when ok?
         (live-apply lid client mods old-state new-state))
       (server-return envelope ok?))))

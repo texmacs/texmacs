@@ -119,10 +119,14 @@
               (cons (patch-co-pull p* (car l)) l*)))))
 
 (define (live-resend-local-changes lid old-state)
-  (let* ((cur-state (live-current-state lid))
+  (let* ((new-state (live-current-state lid))
          (p (live-get-inverse-patch lid old-state)))
-    (when (!= cur-state old-state)
-      (live-remote-modify lid p old-state cur-state))))
+    (when (!= new-state old-state)
+      (let* ((server (live-find-server lid))
+	     (mods (patch->modlist p))
+	     (cmd `(live-modify ,lid ,mods ,old-state ,new-state)))
+	(display* "Resend " cmd "\n"))
+      (live-remote-modify lid p old-state new-state))))
 
 (tm-call-back (live-modify lid mods old-state new-state)
   ;;(display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
