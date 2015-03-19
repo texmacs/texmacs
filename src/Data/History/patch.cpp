@@ -189,6 +189,35 @@ get_author () {
 * Common routines
 ******************************************************************************/
 
+bool
+operator == (patch p1, patch p2) {
+  if (get_type (p1) != get_type (p2)) return false;
+  switch (get_type (p1)) {
+  case PATCH_MODIFICATION:
+    return get_modification (p1) == get_modification (p2) &&
+           get_inverse (p1) == get_inverse (p2);
+  case PATCH_COMPOUND:
+  case PATCH_BRANCH:
+    if (N(p1) != N(p2)) return false;
+    for (int i=0; i<N(p1); i++)
+      if (p1[i] != p2[i]) return false;
+    return true;
+  case PATCH_BIRTH:
+    return get_birth (p1) == get_birth (p2) &&
+           get_author (p1) == get_author (p2);
+  case PATCH_AUTHOR:
+    return get_author (p1) == get_author (p2) && p1[0] == p2[0];
+  default:
+    FAILED ("unsupported patch type");
+  }
+  return false;
+}
+
+bool
+operator != (patch p1, patch p2) {
+  return !(p1 == p2);
+}
+
 tm_ostream&
 operator << (tm_ostream& out, patch p) {
   switch (get_type (p)) {

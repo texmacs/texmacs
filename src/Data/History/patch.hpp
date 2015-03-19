@@ -76,6 +76,8 @@ double new_marker ();
 void set_author (double author);
 double get_author ();
 
+bool operator == (patch p1, patch p2);
+bool operator != (patch p1, patch p2);
 tm_ostream& operator << (tm_ostream& out, patch p);
 patch copy (patch p);
 patch compactify (patch p);
