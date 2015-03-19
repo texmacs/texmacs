@@ -137,6 +137,13 @@
            (p (modlist->patch mods old-t))
            (inv-p (patch-invert p old-t))
            (ok-state (live-latest-compatible lid old-state p)))
+      (when (!= ok-state (live-current-state lid))
+	(display* "-- history= " (live-get-state-list lid old-state) "\n")
+	(display* "-- ok-state= " ok-state "\n")
+	(display* "-- mods= " mods "\n")
+	(display* "-- oldp= "
+		  (patch->modlist
+		   (live-get-inverse-patch lid old-state) "\n")))
       (live-retract lid ok-state)
       (live-update-views lid)
       (let* ((rev (live-get-patch-list lid old-state))
