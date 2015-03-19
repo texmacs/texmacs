@@ -73,13 +73,18 @@
     (if (active-client? client)
         (when (!= state (live-current-state lid))
           (live-update lid client state))
-        (begin
-          (live-hang-up lid client)
-          (ahash-remove! live-waiting (list lid client))))))
+        (live-hang-up lid client))))
 
 (define (live-broadcast lid)
   (for (client (live-get-connections lid))
     (live-broadcast-one lid client)))
+
+(tm-define (server-remove client)
+  (display* ">>>>> Hanging up " client "\n")
+  (former client)
+  (for (key (map car (ahash-table->list live-waiting)))
+    (when (== (cadr key) client)
+      (ahash-remove! live-waiting key))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public services

@@ -131,7 +131,7 @@
       (live-remote-modify lid p old-state new-state))))
 
 (tm-call-back (live-modify lid mods old-state new-state)
-  ;;(display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
+  (display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
   (with (server msg-id) envelope
     (let* ((old-t (live-get-document lid old-state)) ;; TODO: check old-t != #f
            (p (modlist->patch mods old-t))
