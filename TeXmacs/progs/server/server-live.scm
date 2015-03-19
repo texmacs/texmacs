@@ -36,6 +36,7 @@
        (live-apply-patch lid p new-state)
        (begin
          (live-set-remote-state lid client new-state)
+	 (live-forget-obsolete lid)
          (live-broadcast lid)
          new-state)))
 
@@ -49,7 +50,9 @@
         (server-remote-eval client `(live-modify ,lid ,mods ,state ,new-state)
           (lambda (ok?)
             (ahash-remove! live-waiting key)
-            (when ok? (live-set-remote-state lid client new-state))
+            (when ok?
+	      (live-set-remote-state lid client new-state)
+	      (live-forget-obsolete lid))
             (live-broadcast-one lid client)))))))
 
 (define (live-broadcast-one lid client)
