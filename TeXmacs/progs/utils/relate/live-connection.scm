@@ -69,6 +69,10 @@
   (with t (live-connections-table lid)
     (ahash-ref t remote)))
 
+(tm-define (live-remote-connections remote)
+  (with lids (map car (ahash-table->list live-connections))
+    (list-filter lids (lambda (lid) (in? remote (live-get-connections lid))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Manage states in use
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
