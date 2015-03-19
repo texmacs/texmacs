@@ -132,6 +132,32 @@
   (live-forget-obsolete lid))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Retracting recent changes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (live-view-retract lid vid new-state p t)
+  (with-author live-author
+    (with-global live-updating? #t
+      (let* ((old-state (live-view-get-state lid vid))
+             (vts (id->trees vid)))
+        (when (!= new-state old-state)
+          (for (vt vts)
+            (if (and p (patch-applicable? p vt))
+                (patch-apply! vt p)
+                (tree-set! vt t)))
+          (live-view-set-state lid vid new-state))
+        (when (null? vts)
+          (live-view-remove lid vid))))))
+
+(tm-define (live-retract lid state)
+  (let* ((vids (map car (ahash-table->list (live-view-table lid))))
+         (p (live-get-patch lid state))
+         (t (patch-apply (live-current-document lid) p)))
+    (for (vid vids)
+      (live-view-retract lid vid state p t)))
+  (former lid state))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initializing views
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
