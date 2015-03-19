@@ -29,7 +29,7 @@
                    " instead of " old-state "\n"))
 	((!= (live-current-state lid) old-state)
 	 (display* "  ** Bad state " (live-current-state lid)
-                   " instead of " old-state))
+                   " instead of " old-state "\n"))
 	((not (with doc (live-current-document lid)
 		(patch-applicable? p doc)))
 	 (display* "  ** Non applicable patch " (patch->scheme p) "\n")))
