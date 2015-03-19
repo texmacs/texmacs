@@ -159,5 +159,6 @@
         (live-update-views lid)
         (live-rewrite-history lid old-state new-states new-changes)
         (live-set-remote-state lid server new-state)
-        (client-return envelope #t)
-        (live-resend-local-changes lid new-state)))))
+        (with result (client-return envelope #t)
+          (live-resend-local-changes lid new-state)
+          result)))))
