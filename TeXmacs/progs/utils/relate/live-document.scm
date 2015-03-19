@@ -164,7 +164,7 @@
          (let* ((doc (live-current-document lid))
                 (states (ahash-ref live-states lid))
                 (changes (ahash-ref live-changes lid)))
-	   (display* "Retract " (patch->scheme (car live-changes)) "\n")
+	   (display* "Retract " (patch->scheme (car changes)) "\n")
            (ahash-set! live-documents lid (patch-apply doc (car changes)))
            (ahash-set! live-states lid (cdr states))
            (ahash-set! live-changes lid (cdr changes))))))
