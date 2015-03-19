@@ -159,7 +159,8 @@
 	      (display* "-- states= " states "\n")
 	      (display* "-- can-pull? "
 			(patch-can-pull? p* (car changes)) "\n"))
-            (if ok? (list state (patch-pull p* (car changes))) r))))))
+	    ;;(if ok? (list state (patch-pull p* (car changes))) r))))))
+            (if ok? (list (car states) (patch-pull p* (car changes))) r))))))
 
 (tm-define (live-latest-compatible lid state p)
   (let* ((doc (live-current-document lid))
