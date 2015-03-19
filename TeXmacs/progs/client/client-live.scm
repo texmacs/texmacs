@@ -85,6 +85,8 @@
 ;; Treating local modifications in live documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define following-server-instruction? #f)
+
 (define (live-remote-modify lid p old-state new-state)
   (let* ((server (live-find-server lid))
          (mods (patch->modlist p))
@@ -102,7 +104,7 @@
   (let* ((old-state (live-current-state lid))
          (new-state (apply former (cons* lid p opt-state)))
          (server (live-find-server lid)))
-    (if (not server) new-state
+    (if (or (not server) following-server-instruction?) new-state
         (and old-state new-state
              (begin
                (live-remote-modify lid p old-state new-state)
@@ -144,7 +146,8 @@
              (states* (map (lambda (x) (create-unique-id)) states))
              (new-states (rcons states* new-state))
              (new-changes (rcons rev* inv-p)))
-        (live-apply-patch lid p* (car new-states))
+	(with-global following-server-instruction? #t
+	  (live-apply-patch lid p* (car new-states)))
         (live-update-views lid)
         (live-rewrite-history lid old-state new-states new-changes)
         (live-set-remote-state lid server new-state)
