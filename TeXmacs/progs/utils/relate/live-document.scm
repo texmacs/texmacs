@@ -150,6 +150,15 @@
                                 (u* (patch-apply u p*))
 				(t* (patch-apply t p**)))
                            (== (patch-apply t* q*) u*)))
+	    (when (not ok?)
+	      (display* "-- Conflicting patches for " (tm->stree u) "\n")
+	      (display* "-- Patch 1: " (patch->scheme p*) "\n")
+	      (with iq (patch-invert (car changes) t)
+		(display* "-- Patch 2: " (patch->scheme iq) "\n"))
+	      (display* "-- best  = " best "\n")
+	      (display* "-- states= " states "\n")
+	      (display* "-- can-pull? "
+			(patch-can-pull? p* (car changes)) "\n"))
             (if ok? (list state (patch-pull p* (car changes))) r))))))
 
 (tm-define (live-latest-compatible lid state p)

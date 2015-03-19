@@ -103,8 +103,11 @@ void
 tree_position_rep::notify_remove (tree& ref, int pos, int nr) {
   // cout << "Notify remove " << ref << ", " << pos << ", " << nr << "\n";
   if (is_atomic (ref)) {
+    cout << "Remove " << ref << ", " << pos << ", " << nr << LF;
+    cout << "  Index old: " << index << LF;
     if (index >= pos)
       index= max (pos, index - nr);
+    cout << "  Index new: " << index << LF;
   }
   // cout << "position -> " << obtain_position (observer (this)) << "\n";
 }

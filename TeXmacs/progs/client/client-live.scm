@@ -138,6 +138,7 @@
            (inv-p (patch-invert p old-t))
            (ok-state (live-latest-compatible lid old-state p)))
       (when (!= ok-state (live-current-state lid))
+	(display* "-- full-history= " (live-get-history lid) "\n")
 	(display* "-- history= " (live-get-state-list lid old-state) "\n")
 	(display* "-- ok-state= " ok-state "\n")
 	(display* "-- mods= " mods "\n")
