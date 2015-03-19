@@ -402,7 +402,7 @@
   (add-to-path (url-append (system->url "/Applications") u) after?))
 
 (define-public (plugin-add-windows-path rad rel after?)
-  (when (os-macos?)
+  (when (os-mingw?)
     (add-windows-program-path (url-append rad rel) after?)))
 
 (define-public (plugin-add-macos-path rad rel after?)
