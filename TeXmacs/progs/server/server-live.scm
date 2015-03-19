@@ -58,6 +58,7 @@
 		  `(live-modify ,lid ,mods ,state ,new-state) "\n")
         (server-remote-eval client `(live-modify ,lid ,mods ,state ,new-state)
           (lambda (ok?)
+	    (display* "Confirm " client ": " new-state ", " ok? "\n")
             (ahash-remove! live-waiting key)
             (when ok?
 	      (live-set-remote-state lid client new-state)
