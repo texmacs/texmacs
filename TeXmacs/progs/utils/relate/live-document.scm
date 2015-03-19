@@ -166,8 +166,8 @@
                 (states (ahash-ref live-states lid))
                 (changes (ahash-ref live-changes lid)))
            (ahash-set! live-documents lid (patch-apply doc (car changes)))
-           (ahash-set! live-states (cdr states))
-           (ahash-set! live-changes (cdr changes))))))
+           (ahash-set! live-states lid (cdr states))
+           (ahash-set! live-changes lid (cdr changes))))))
 
 (tm-define (live-rewrite-history lid until new-states new-changes)
   (set! new-changes (map patch-copy new-changes))
