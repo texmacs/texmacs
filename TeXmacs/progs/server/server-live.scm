@@ -73,7 +73,9 @@
     (if (active-client? client)
         (when (!= state (live-current-state lid))
           (live-update lid client state))
-        (live-hang-up lid client))))
+        (begin
+          (live-hang-up lid client)
+          (ahash-remove! live-waiting (list lid client))))))
 
 (define (live-broadcast lid)
   (for (client (live-get-connections lid))
