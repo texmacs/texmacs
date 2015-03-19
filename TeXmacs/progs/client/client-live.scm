@@ -143,7 +143,7 @@
 	(display* "-- mods= " mods "\n")
 	(display* "-- oldp= "
 		  (patch->modlist
-		   (live-get-inverse-patch lid old-state) "\n")))
+		   (live-get-inverse-patch lid old-state)) "\n"))
       (live-retract lid ok-state)
       (live-update-views lid)
       (let* ((rev (live-get-patch-list lid old-state))
