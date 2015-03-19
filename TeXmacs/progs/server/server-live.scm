@@ -24,6 +24,13 @@
 (define (live-applicable? lid client p old-state)
   (when (and (list? p) (== (live-current-state lid) old-state))
     (set! p (modlist->patch p (live-current-document lid))))
+  (cond ((!= (live-get-remote-state lid client) old-state)
+	 (display* "    ** Invalid remote state\n"))
+	((!= (live-current-state lid) old-state)
+	 (display* "    ** Bad state\n"))
+	((not (with doc (live-current-document lid)
+		(patch-applicable? p doc)))
+	 (display* "    ** Non applicable\n")))
   (and (== (live-get-remote-state lid client) old-state)
        (== (live-current-state lid) old-state)
        (with doc (live-current-document lid)
@@ -90,7 +97,8 @@
     (display* "Receive " client ": " mods ", " old-state ", " new-state "\n")
     (with ok? (live-applicable? lid client mods old-state)
       (when (not ok?)
-	(display* ">> refuse " client ", " mods "\n"))
+	(display* ">> refuse " client ", " mods
+		  ", state= " (live-current-state lid) "\n"))
       (when ok?
         (live-apply lid client mods old-state new-state))
       (server-return envelope ok?))))
