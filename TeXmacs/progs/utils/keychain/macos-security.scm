@@ -17,37 +17,8 @@
 ;; Error handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define system-security-error-widget-cmd "")
-(define system-security-error-widget-out "")
-(define system-security-error-widget-err "")
-
-(tm-widget (system-security-error-widget cmd)
-  (padded
-    (resize ("400px" "800px" "800px") ("275px" "400px" "600px")
-      (centered (bold (text "Input command")))  
-      (scrollable
-	(for (x (string-decompose system-security-error-widget-cmd "\n"))
-	  (hlist // (text x) >>)))
-      ===
-      (centered (bold (text "Standard Output")))
-      (scrollable
-	(for (x (string-decompose system-security-error-widget-out "\n"))
-	  (hlist // (text x) >>)))
-      ===
-      (centered (bold (text "Error output")))
-      (scrollable
-	(for (x (string-decompose system-security-error-widget-err "\n"))
-	  (hlist // (text x) >>)))
-      ===
-      (bottom-buttons >> ("Ok" (cmd))))))
-
 (tm-define (system-security-error cmd out err)
-  (set! system-security-error-widget-cmd (string-recompose cmd " "))
-  (set! system-security-error-widget-out (utf8->cork out))
-  (set! system-security-error-widget-err (utf8->cork err))
-  (dialogue-window system-security-error-widget noop
-		   "Mac OS security command failed")
-  #f)
+  (report-system-error "Mac OS security command failed" cmd out err))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Add generic password
@@ -75,43 +46,38 @@
 ;; Find generic password
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (system-security-find-generic-password-command
-	 account service)
+(define (system-security-find-generic-password-command account service)
   (string-append "find-generic-password"
 		 " -a " (string-quote account)
 		 " -s " (string-quote service)
 		 " -w " "\n"))
 
 (tm-define (system-security-find-generic-password account service)
-  (with cmd (system-security-find-generic-password-command
-	     account service)
-  (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
-    (if (string<> (car ret) "0")
-      (system-security-error (list cmd) (cadr ret) (caddr ret))
-      (car (string-decompose (cadr ret) "\n"))))))
+  (with cmd (system-security-find-generic-password-command account service)
+    (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
+      (if (string<> (car ret) "0")
+	  (system-security-error (list cmd) (cadr ret) (caddr ret))
+	  (car (string-decompose (cadr ret) "\n"))))))
 
 (tm-define (system-security-quiet-find-generic-password account service)
-  (with cmd (system-security-find-generic-password-command
-	     account service)
-  (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
-    (if (string<> (car ret) "0")
-      #f
-      (car (string-decompose (cadr ret) "\n"))))))
+  (with cmd (system-security-find-generic-password-command account service)
+    (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
+      (if (string<> (car ret) "0")
+	  #f
+	  (car (string-decompose (cadr ret) "\n"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delete generic password
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (system-security-delete-generic-password-command
-	 account service)
+(define (system-security-delete-generic-password-command account service)
   (string-append "delete-generic-password"
 		 " -a " (string-quote account)
 		 " -s " (string-quote service) "\n"))
 
 (tm-define (system-security-delete-generic-password account service)
-  (with cmd (system-security-delete-generic-password-command
-	     account service)
-  (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
-    (if (string<> (car ret) "0")
-      (system-security-error (list cmd) (cadr ret) (caddr ret))
-      #t))))
+  (with cmd (system-security-delete-generic-password-command account service)
+    (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
+      (if (string<> (car ret) "0")
+	  (system-security-error (list cmd) (cadr ret) (caddr ret))
+	  #t))))

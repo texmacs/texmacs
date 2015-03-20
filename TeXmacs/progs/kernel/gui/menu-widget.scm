@@ -962,3 +962,34 @@
       (with p (lambda (com) (widget-color-picker com #f proposals))
         (with cmd* (lambda (t) (when t (cmd (tm->stree t))))
           (interactive-window p cmd* "Choose background")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Reporting errors of system commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((system-error-widget cmd out err) done)
+  (padded
+    (resize ("300px" "600px" "1200px") ("275px" "400px" "600px")
+      (centered (bold (text "Input command")))  
+      (scrollable
+	(for (x (string-decompose cmd "\n"))
+	  (hlist // (text x) >>)))
+      ===
+      (centered (bold (text "Standard Output")))
+      (scrollable
+	(for (x (string-decompose out "\n"))
+	  (hlist // (text x) >>)))
+      ===
+      (centered (bold (text "Error output")))
+      (scrollable
+	(for (x (string-decompose err "\n"))
+	  (hlist // (text x) >>)))
+      ===
+      (bottom-buttons >> ("Ok" (done))))))
+
+(tm-define (report-system-error win-name cmd out err)
+  (when (list? cmd) (set! cmd (string-recompose cmd " ")))
+  (set! out (utf8->cork out))
+  (set! err (utf8->cork err))
+  (dialogue-window (system-error-widget cmd out err) noop win-name)
+  #f)
