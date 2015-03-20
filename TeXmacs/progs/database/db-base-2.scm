@@ -26,16 +26,15 @@
   (when (url-none? current-database)
     (texmacs-error "db-init-database" "no database specified"))
   (when (not (url-exists? current-database))
-    ;;(display* "Create " current-database "\n")
+    (display* "Create " current-database "\n")
     (sql-exec current-database
-              (string-append "CREATE TABLE props (id text, "
-			     "attr text, val text, "
-			     "created integer default (strftime('%s','now')), "
-			     "expires integer default 10675199166)"))))
+              (string-append "CREATE TABLE props ("
+                             "id text, attr text, val text, "
+			     "created integer, expires integer)"))))
 
 (tm-define (db-sql . l)
   (db-init-database)
-  ;;(display* (url-tail current-database) "] " (apply string-append l) "\n")
+  (display* (url-tail current-database) "] " (apply string-append l) "\n")
   (sql-exec current-database (apply string-append l)))
 
 (tm-define (db-sql* . l)
@@ -50,7 +49,9 @@
 (tm-define (db-insert id attr val)
   (db-sql "INSERT INTO props VALUES (" (sql-quote id)
           ", " (sql-quote attr)
-          ", " (sql-quote val) ")"))
+          ", " (sql-quote val)
+          ", strftime('%s','now')"
+          ", 10675199166)"))
 
 (tm-define (db-remove id attr val)
   (db-sql "UPDATE props SET expires=strftime('%s','now')"

@@ -26,13 +26,15 @@
   (when (url-none? current-database)
     (texmacs-error "db-init-database" "no database specified"))
   (when (not (url-exists? current-database))
-    ;;(display* "Create " current-database "\n")
+    (display* "Create " current-database "\n")
     (sql-exec current-database
-              "CREATE TABLE props (id text, attr text, val text)")))
+              (string-append "CREATE TABLE props ("
+                             "id text, attr text, val text, "
+			     "created integer, expires integer)"))))
 
 (tm-define (db-sql . l)
   (db-init-database)
-  ;;(display* (url-tail current-database) "] " (apply string-append l) "\n")
+  (display* (url-tail current-database) "] " (apply string-append l) "\n")
   (sql-exec current-database (apply string-append l)))
 
 (tm-define (db-sql* . l)
@@ -41,36 +43,81 @@
       (map f (if (null? r) r (cdr r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Time constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define db-time "strftime('%s','now')")
+
+(tm-define (db-decode-time t)
+  (cond ((== t :now)
+         "strftime('%s','now')")
+        ((integer? t)
+         (number->string t))
+        ((string? t)
+         (string-append "strftime('%s'," (sql-quote t) ")"))
+        ((and (func? t :relative 1) (string? (cadr t)))
+         (string-append "strftime('%s','now'," (sql-quote (cadr t)) ")"))
+        ((and (func? t :sql 1) (string? (cadr t)))
+         (cadr t))
+        (else (texmacs-error "sql-time" "invalid time"))))
+
+(tm-define-macro (with-time t . body)
+  `(with-global db-time (db-decode-time ,t) ,@body))
+
+(define (db-time-constraint)
+  (string-append "created <= (" db-time ") AND "
+                 "expires >  (" db-time ")"))
+
+(define (db-time-constraint-on x)
+  (string-append x ".created <= (" db-time ") AND "
+                 x ".expires >  (" db-time ")"))
+
+(tm-define (db-sql-now . l)
+  (if (== db-time "strftime('%s','now')")
+      (apply db-sql l)
+      (texmacs-error "db-sql-now" "cannot rewrite history")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic ressources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-insert id attr val)
-  (db-sql "INSERT INTO props VALUES (" (sql-quote id)
-          ", " (sql-quote attr)
-          ", " (sql-quote val) ")"))
+  (db-sql-now "INSERT INTO props VALUES (" (sql-quote id)
+              ", " (sql-quote attr)
+              ", " (sql-quote val)
+              ", strftime('%s','now')"
+              ", 10675199166)"))
 
 (tm-define (db-remove id attr val)
-  (db-sql "DELETE FROM props WHERE id=" (sql-quote id)
-          " AND attr=" (sql-quote attr)
-          ", AND val=" (sql-quote val)))
+  (db-sql-now "UPDATE props SET expires=strftime('%s','now')"
+              " WHERE id=" (sql-quote id)
+              " AND attr=" (sql-quote attr)
+              " AND val=" (sql-quote val)
+              " AND " (db-time-constraint)))
 
 (tm-define (db-set id attr vals)
   (db-reset id attr)
   (for-each (cut db-insert id attr <>) vals))
 
 (tm-define (db-reset id attr)
-  (db-sql "DELETE FROM props WHERE id=" (sql-quote id)
-          " AND attr=" (sql-quote attr)))
+  (db-sql-now "UPDATE props SET expires=strftime('%s','now')"
+              " WHERE id=" (sql-quote id)
+              " AND attr=" (sql-quote attr)
+              " AND " (db-time-constraint)))
 
 (tm-define (db-reset-all id)
-  (db-sql "DELETE FROM props WHERE id=" (sql-quote id)))
+  (db-sql-now "UPDATE props SET expires=strftime('%s','now')"
+              " WHERE id=" (sql-quote id)
+              " AND " (db-time-constraint)))
 
 (tm-define (db-attributes id)
-  (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)))
+  (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
+           " AND " (db-time-constraint)))
 
 (tm-define (db-get id attr)
   (db-sql* "SELECT DISTINCT val FROM props WHERE id=" (sql-quote id)
-           " AND attr=" (sql-quote attr)))
+           " AND attr=" (sql-quote attr)
+           " AND " (db-time-constraint)))
 
 (tm-define (db-get-first id attr default)
   (with l (db-get id attr)
@@ -102,13 +149,15 @@
            (sattr (string-append pi ".attr=" (sql-quote attr)))
            (sval (string-append pi ".val=" (sql-quote val)))
            (spair (string-append sattr " AND " sval))
-           (q (if (= i 1) spair (string-append sid " AND " spair))))
+           (sall (string-append spair " AND " (db-time-constraint-on pi)))
+           (q (if (= i 1) sall (string-append sid " AND " sall))))
       (if (null? (cdr l)) q
           (string-append q " AND " (db-search-on (cdr l) (+ i 1)))))))
 
 (tm-define (db-search l)
   (if (null? l)
-      (db-sql* "SELECT DISTINCT id FROM props")
+      (db-sql* "SELECT DISTINCT id FROM props"
+               " WHERE " (db-time-constraint))
       (let* ((join (db-search-join l 1))
              (on (db-search-on l 1))
              (sep (if (null? (cdr l)) " WHERE " " ON ")))
