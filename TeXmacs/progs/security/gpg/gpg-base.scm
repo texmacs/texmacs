@@ -25,24 +25,25 @@
 (define gpg-executable-version-table (make-ahash-table))
 
 (define (gpg-valid-executable? exe)
-  (with x (ahash-ref gpg-executable-version-table exe)
-  (with tmp ""
-  (if x (string<> x "no")
-    (with b (and
-        (string<> exe "")
-        (url-exists-in-path? exe)
-        (with ret (evaluate-system (list exe "--version") '() '() '(1 2))
-          (set! tmp (cadr ret))
-          (and (string= (car ret) "0")
-	       (string-contains tmp "GnuPG"))))
-      (if b
-        (with aux (string-decompose (car (string-decompose tmp "\n")) " ")
-        (with ver (if (>= (length aux) 3) (third aux) "no")
-        (ahash-set! gpg-executable-version-table exe ver)
-        (string<> ver "no")))
-	(begin
-	  (ahash-set! gpg-executable-version-table exe "no")
-          #f)))))))
+  (let* ((x (ahash-ref gpg-executable-version-table exe))
+         (tmp ""))
+    (if x (string<> x "no")
+        (with b (and
+                 (string<> exe "")
+                 (url-exists-in-path? exe)
+                 (with ret (evaluate-system (list exe "--version")
+                                            '() '() '(1 2))
+                   (set! tmp (cadr ret))
+                   (and (string= (car ret) "0")
+                        (string-contains? tmp "GnuPG"))))
+          (if b
+              (with aux (string-decompose (car (string-decompose tmp "\n")) " ")
+                (with ver (if (>= (length aux) 3) (third aux) "no")
+                  (ahash-set! gpg-executable-version-table exe ver)
+                  (string<> ver "no")))
+              (begin
+                (ahash-set! gpg-executable-version-table exe "no")
+                #f))))))
 
 (define (notify-gpg-executable var val)
   (set! gpg-executable val))
