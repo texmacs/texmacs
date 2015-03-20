@@ -22,25 +22,26 @@
 (define system-security-error-widget-err "")
 
 (tm-widget (system-security-error-widget cmd)
-  (resize ("400px" "800px" "800px") ("400px" "400px" "400px")
-  (centered (bold (text "Input command")))  
-  (scrollable
-    (for (x (string-decompose system-security-error-widget-cmd "\n"))
-	 (text x)))
-  ===
-  (centered (bold (text "Standard Output")))
-  (scrollable
-    (for (x (string-decompose system-security-error-widget-out "\n"))
-	 (text x)))
-  ===
-  (centered (bold (text "Error output")))
-  (scrollable
-    (for (x (string-decompose system-security-error-widget-err "\n"))
-	 (text x)))
-  ===
-  (bottom-buttons >> ("Ok" (cmd)))))
+  (padded
+    (resize ("400px" "800px" "800px") ("275px" "400px" "600px")
+      (centered (bold (text "Input command")))  
+      (scrollable
+	(for (x (string-decompose system-security-error-widget-cmd "\n"))
+	  (hlist // (text x) >>)))
+      ===
+      (centered (bold (text "Standard Output")))
+      (scrollable
+	(for (x (string-decompose system-security-error-widget-out "\n"))
+	  (hlist // (text x) >>)))
+      ===
+      (centered (bold (text "Error output")))
+      (scrollable
+	(for (x (string-decompose system-security-error-widget-err "\n"))
+	  (hlist // (text x) >>)))
+      ===
+      (bottom-buttons >> ("Ok" (cmd))))))
 
-(define (system-security-error cmd out err)
+(tm-define (system-security-error cmd out err)
   (set! system-security-error-widget-cmd (string-recompose cmd " "))
   (set! system-security-error-widget-out (utf8->cork out))
   (set! system-security-error-widget-err (utf8->cork err))
