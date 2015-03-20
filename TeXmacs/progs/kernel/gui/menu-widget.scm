@@ -988,6 +988,7 @@
       (bottom-buttons >> ("Ok" (done))))))
 
 (tm-define (report-system-error win-name cmd out err)
+  (:synopsis "Display command @cmd with its standard outputs @out and @err")
   (when (list? cmd) (set! cmd (string-recompose cmd " ")))
   (set! out (utf8->cork out))
   (set! err (utf8->cork err))

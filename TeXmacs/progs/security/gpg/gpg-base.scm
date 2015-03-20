@@ -84,8 +84,8 @@
   (:synopsis "Set GnuPG executable")
   (:argument exe "GnuPG executable")
   (when (gpg-valid-executable? exe)
-     (gpg-make-homedir)
-     (set-preference "gpg executable" exe)))
+    (gpg-make-homedir)
+    (set-preference "gpg executable" exe)))
 
 (tm-define (supports-gpg?)
   (:synopsis "Tells if GnuPG is available")
@@ -104,30 +104,8 @@
 ;; Error handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define gpg-widget-error-cmd "")
-(define gpg-widget-error-out "")
-(define gpg-widget-error-err "")
-
-(tm-widget (gpg-widget-error cmd)
-  (resize ("400px" "800px" "800px") ("400px" "400px" "400px")
-  (centered (bold (text "Input command")))  
-  (scrollable (for (x (string-decompose gpg-widget-error-cmd "\n")) (text x)))
-  ===
-  (centered (bold (text "Standard Output")))
-  (scrollable (for (x (string-decompose gpg-widget-error-out "\n")) (text x)))
-  ===
-  (centered (bold (text "Error output")))
-  (scrollable (for (x (string-decompose gpg-widget-error-err "\n")) (text x)))
-  ===
-  (bottom-buttons >> ("Ok" (cmd)))))
-
 (tm-define (gpg-error cmd out err)
-  (:synopsis "Display command @cmd with its standard outputs @out and @err")
-  (set! gpg-widget-error-cmd (string-recompose cmd " "))
-  (set! gpg-widget-error-out (utf8->cork out))
-  (set! gpg-widget-error-err (utf8->cork err))
-  (dialogue-window gpg-widget-error noop "GnuPG command failed")
-  #f)
+  (report-system-error "GnuPG command failed" cmd out err))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common arguments for batch mode
@@ -135,10 +113,10 @@
 
 (define (gpg-executable-default homedir)
   (if (url-none? homedir)
-    (list gpg-executable "--homedir" (url->system gpg-homedir)
-	  "--batch" "--no-tty" "--no-use-agent")
-    (list gpg-executable "--homedir" (url->system homedir)
-	  "--batch" "--no-tty" "--no-use-agent")))
+      (list gpg-executable "--homedir" (url->system gpg-homedir)
+            "--batch" "--no-tty" "--no-use-agent")
+      (list gpg-executable "--homedir" (url->system homedir)
+            "--batch" "--no-tty" "--no-use-agent")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Create new public secret key pair
