@@ -37,9 +37,8 @@
 	       account service "********"))
          (ret (evaluate-system (list "security" "-i")
                                '(0) (list cmd) '(1 2))))
-    (if (string<> (car ret) "0")
-	(system-security-error (list pcm) (cadr ret) (caddr ret))
-	#t)))
+    (or (== (car ret) "0")
+	(system-security-error (list pcm) (cadr ret) (caddr ret)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find generic password
@@ -52,18 +51,17 @@
 		 " -w " "\n"))
 
 (tm-define (system-security-find-generic-password account service)
-  (with cmd (system-security-find-generic-password-command account service)
-    (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
-      (if (string<> (car ret) "0")
-	  (system-security-error (list cmd) (cadr ret) (caddr ret))
-	  (car (string-decompose (cadr ret) "\n"))))))
+  (let* ((cmd (system-security-find-generic-password-command account service))
+         (ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))))
+    (if (!= (car ret) "0")
+        (system-security-error (list cmd) (cadr ret) (caddr ret))
+        (car (string-decompose (cadr ret) "\n")))))
 
 (tm-define (system-security-quiet-find-generic-password account service)
-  (with cmd (system-security-find-generic-password-command account service)
-    (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
-      (if (string<> (car ret) "0")
-	  #f
-	  (car (string-decompose (cadr ret) "\n"))))))
+  (let* ((cmd (system-security-find-generic-password-command account service))
+         (ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))))
+    (and (== (car ret) "0")
+         (car (string-decompose (cadr ret) "\n")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delete generic password
@@ -75,8 +73,7 @@
 		 " -s " (string-quote service) "\n"))
 
 (tm-define (system-security-delete-generic-password account service)
-  (with cmd (system-security-delete-generic-password-command account service)
-    (with ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))
-      (if (string<> (car ret) "0")
-	  (system-security-error (list cmd) (cadr ret) (caddr ret))
-	  #t))))
+  (let* ((cmd (system-security-delete-generic-password-command account service))
+         (ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))))
+    (or (== (car ret) "0")
+        (system-security-error (list cmd) (cadr ret) (caddr ret)))))
