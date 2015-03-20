@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <spawn.h>
+#include <sys/wait.h>
 
 int
 unix_system (string s) {
