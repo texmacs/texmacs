@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils gpg gpg-wallet)
-  (:use (utils gpg gpg-base)))
+(texmacs-module (security gpg gpg-wallet)
+  (:use (security gpg gpg-base)))
 
 ;(display "TeXmacs] Loading GnuPG wallet\n")
 

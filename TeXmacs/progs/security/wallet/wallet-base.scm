@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (wallet wallet-base)
-  (:use (utils gpg gpg-wallet)))
+(texmacs-module (security wallet wallet-base)
+  (:use (security gpg gpg-wallet)))
 
 ;; So far portable implementation is based on GnuPG
 (tm-define (supports-wallet?)

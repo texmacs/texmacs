@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils gpg gpg-base)
+(texmacs-module (security gpg gpg-base)
   (:use (utils base environment)))
 
 ;(display "TeXmacs] Loading GnuPG base support (http://www.gnupg.org)\n")
