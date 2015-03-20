@@ -368,6 +368,25 @@ tmg_var_eval_system (tmscm arg1) {
 }
 
 tmscm
+tmg_evaluate_system (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_ARRAY_STRING (arg1, TMSCM_ARG1, "evaluate-system");
+  TMSCM_ASSERT_ARRAY_INT (arg2, TMSCM_ARG2, "evaluate-system");
+  TMSCM_ASSERT_ARRAY_STRING (arg3, TMSCM_ARG3, "evaluate-system");
+  TMSCM_ASSERT_ARRAY_INT (arg4, TMSCM_ARG4, "evaluate-system");
+
+  array_string in1= tmscm_to_array_string (arg1);
+  array_int in2= tmscm_to_array_int (arg2);
+  array_string in3= tmscm_to_array_string (arg3);
+  array_int in4= tmscm_to_array_int (arg4);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= evaluate_system (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_get_locale_language () {
   // TMSCM_DEFER_INTS;
   string out= get_locale_language ();
@@ -8507,6 +8526,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("font-exists-in-tt?",  tmg_font_exists_in_ttP, 1, 0, 0);
   tmscm_install_procedure ("eval-system",  tmg_eval_system, 1, 0, 0);
   tmscm_install_procedure ("var-eval-system",  tmg_var_eval_system, 1, 0, 0);
+  tmscm_install_procedure ("evaluate-system",  tmg_evaluate_system, 4, 0, 0);
   tmscm_install_procedure ("get-locale-language",  tmg_get_locale_language, 0, 0, 0);
   tmscm_install_procedure ("get-locale-charset",  tmg_get_locale_charset, 0, 0, 0);
   tmscm_install_procedure ("locale-to-language",  tmg_locale_to_language, 1, 0, 0);

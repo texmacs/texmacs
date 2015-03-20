@@ -114,3 +114,18 @@ get_texmacs_home_path () {
     path= url_system ("$HOME/.TeXmacs");
   return path;
 }
+
+array<string>
+evaluate_system (array<string> arg,
+		 array<int> fd_in, array<string> in,
+		 array<int> fd_out) {
+  array<string> out (N(fd_out));
+  array<string*> ptr (N(fd_out));
+  for (int i= 0; i < N(fd_out); i++) ptr[i]= &(out[i]);
+#if (defined (__MINGW__) || defined (__MINGW32__))
+  int ret= mingw_system (arg, fd_in, in, fd_out, ptr);
+#else
+  int ret= unix_system (arg, fd_in, in, fd_out, ptr);
+#endif
+  return append (as_string (ret), out);
+}

@@ -13,9 +13,14 @@
 #define UNIX_SYS_UTILS_H
 
 #include "string.hpp"
+#include "array.hpp"
 
 int unix_system (string);
 int unix_system (string, string&);
+
+int unix_system (array<string> arg,
+		 array<int> fd_in, array<string> str_in,
+		 array<int> fd_out, array<string*> str_out);
 
 #endif // defined UNIX_SYS_UTILS_H
 

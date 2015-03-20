@@ -51,6 +51,8 @@
   (font-exists-in-tt? tt_font_exists (bool string))
   (eval-system eval_system (string string))
   (var-eval-system var_eval_system (string string))
+  (evaluate-system evaluate_system
+    (array_string array_string array_int array_string array_int))
   (get-locale-language get_locale_language (string))
   (get-locale-charset get_locale_charset (string))
   (locale-to-language locale_to_language (string string))
