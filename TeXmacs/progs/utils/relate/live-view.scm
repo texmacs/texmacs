@@ -97,8 +97,12 @@
         (when (!= new-state old-state)
           (for (vt vts)
             (if (and p (patch-applicable? p vt))
-                (patch-apply! vt p)
-                (tree-set! vt cur)))
+		(begin
+		  (display* "]] Apply " (patch->scheme p) "\n")
+		  (patch-apply! vt p))
+                (begin
+		  (display* "]] Reset view " (tm->stree cur) "\n")
+		  (tree-set! vt cur))))
           (live-view-set-state lid vid new-state))
         (when (null? vts)
           (live-view-remove lid vid))))))
@@ -120,6 +124,7 @@
       (let* ((cur (live-current-document lid))
              (vts (id->trees vid)))
         (for (vt vts)
+	  (display* "]] Restore view " (tm->stree cur) "\n")
           (tree-set! vt cur))
         (live-view-set-state lid vid (live-current-state lid))
         (when (null? vts)
@@ -143,8 +148,12 @@
         (when (!= new-state old-state)
           (for (vt vts)
             (if (and p (patch-applicable? p vt))
-                (patch-apply! vt p)
-                (tree-set! vt t)))
+		(begin
+		  (display* "]] Apply " (patch->scheme p) "\n")
+		  (patch-apply! vt p))
+		(begin
+		  (display* "]] Reset view " (tm->stree t) "\n")
+		  (tree-set! vt t))))
           (live-view-set-state lid vid new-state))
         (when (null? vts)
           (live-view-remove lid vid))))))

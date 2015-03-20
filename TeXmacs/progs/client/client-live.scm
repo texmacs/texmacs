@@ -107,6 +107,8 @@
     (if (or (not server) following-server-instruction?) new-state
         (and old-state new-state
              (begin
+	       (display* "Send " (patch->modlist p)
+			 ", " old-state ", " new-state "\n")
                (live-remote-modify lid p old-state new-state)
                new-state)))))
 
@@ -124,14 +126,13 @@
   (let* ((new-state (live-current-state lid))
          (p (live-get-inverse-patch lid old-state)))
     (when (!= new-state old-state)
-      (let* ((server (live-find-server lid))
-	     (mods (patch->modlist p))
-	     (cmd `(live-modify ,lid ,mods ,old-state ,new-state)))
-	(display* "Resend " cmd "\n"))
+      (display* "Resend " (patch->modlist p)
+		", " old-state ", " new-state "\n")
       (live-remote-modify lid p old-state new-state))))
 
 (tm-call-back (live-modify lid mods old-state new-state)
-  (display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
+  (display* "Receive " mods ", " old-state ", " new-state "\n")
+  ;;(display* "live-modify " lid ", " mods ", " old-state ", " new-state "\n")
   (with (server msg-id) envelope
     (let* ((old-t (live-get-document lid old-state)) ;; TODO: check old-t != #f
            (p (modlist->patch mods old-t))
