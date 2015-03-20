@@ -27,20 +27,20 @@
 (define (gpg-valid-executable? exe)
   (let* ((x (ahash-ref gpg-executable-version-table exe))
          (tmp ""))
-    (if x (string<> x "no")
+    (if x (!= x "no")
         (with b (and
-                 (string<> exe "")
+                 (!= exe "")
                  (url-exists-in-path? exe)
                  (with ret (evaluate-system (list exe "--version")
                                             '() '() '(1 2))
                    (set! tmp (cadr ret))
-                   (and (string= (car ret) "0")
+                   (and (== (car ret) "0")
                         (string-contains? tmp "GnuPG"))))
           (if b
               (with aux (string-decompose (car (string-decompose tmp "\n")) " ")
                 (with ver (if (>= (length aux) 3) (third aux) "no")
                   (ahash-set! gpg-executable-version-table exe ver)
-                  (string<> ver "no")))
+                  (!= ver "no")))
               (begin
                 (ahash-set! gpg-executable-version-table exe "no")
                 #f))))))
@@ -124,40 +124,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (gpg-gen-key-make-formatted-input name email comment passphrase)
-  (with opt-comment (if (string<> comment "")
+  (with opt-comment (if (!= comment "")
 			(string-append "Name-Comment: " comment "\n") "")
-	(string-append "Key-Type: RSA\n"
-		       "Key-Length: 4096\n"
-		       "Name-Real: " name "\n"
-		       opt-comment
-		       "Name-email: " email "\n"
-		       "Passphrase: " passphrase "\n"
-		       "%commit" "\n"
-		       "%echo ok" "\n")))
+    (string-append "Key-Type: RSA\n"
+                   "Key-Length: 4096\n"
+                   "Name-Real: " name "\n"
+                   opt-comment
+                   "Name-email: " email "\n"
+                   "Passphrase: " passphrase "\n"
+                   "%commit" "\n"
+                   "%echo ok" "\n")))
 
 (define (gpg-executable-gen-key homedir)
   (append (gpg-executable-default homedir) (list "--gen-key" "-")))
 
 (tm-define (gpg-gen-key name email comment passphrase . homedir)
   (:synopsis "Create a new GnuGP identity")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with cmd (gpg-executable-gen-key dir)
-  (with ret (evaluate-system cmd
-	      '(0) (list (gpg-gen-key-make-formatted-input
-			   name email comment passphrase)) '(2 3))
-	(if (string<> (car ret) "0")
-	    (gpg-error cmd (cadr ret) (caddr ret)) #t)))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-gen-key dir))
+         (ret (evaluate-system
+               cmd '(0)
+               (list (gpg-gen-key-make-formatted-input
+                      name email comment passphrase)) '(2 3))))
+    (if (!= (car ret) "0")
+        (gpg-error cmd (cadr ret) (caddr ret)) #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; List public keys
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (gpg-decompose-key-string s) (string-decompose s ":"))
-(define (gpg-public-key-row? row) (string= (car row) "pub"))
-(define (gpg-secret-key-row? row) (string= (car row) "sec"))
-(define (gpg-fingerprint-row? row) (string= (car row) "fpr"))
-(define (gpg-user-id-row? row) (string= (car row) "uid"))
-(define (gpg-data-row? row) (string= (car row) "pkd"))
+(define (gpg-public-key-row? row) (== (car row) "pub"))
+(define (gpg-secret-key-row? row) (== (car row) "sec"))
+(define (gpg-fingerprint-row? row) (== (car row) "fpr"))
+(define (gpg-user-id-row? row) (== (car row) "uid"))
+(define (gpg-data-row? row) (== (car row) "pkd"))
 
 (define (gpg-get-first-public-key-tail l)
   (cond ((null? l) l)
@@ -182,15 +183,15 @@
 
 (tm-define (gpg-public-keys . homedir)
   (:synopsis "GnuPG public keys")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with cmd (gpg-executable-list-public-keys dir)
-  (with ret (evaluate-system cmd '() '() '(1 2))
-  (if (string<> (car ret) "0")
-      (gpg-error cmd (cadr ret) (caddr ret))
-      (let* ((srows (string-decompose (utf8->cork (cadr ret)) "\n"))
-	     (crows (filter (lambda (x) (string<> x "")) srows))
-	     (rows (map gpg-decompose-key-string crows)))
-	(gpg-split-public-key-list rows)))))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-list-public-keys dir))
+         (ret (evaluate-system cmd '() '() '(1 2))))
+    (if (!= (car ret) "0")
+        (gpg-error cmd (cadr ret) (caddr ret))
+        (let* ((srows (string-decompose (utf8->cork (cadr ret)) "\n"))
+               (crows (filter (lambda (x) (!= x "")) srows))
+               (rows (map gpg-decompose-key-string crows)))
+          (gpg-split-public-key-list rows)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; List secret keys
@@ -214,20 +215,20 @@
 
 (define (gpg-executable-list-secret-keys homedir)
   (append (gpg-executable-default homedir)
-    (list "--list-secret-keys" "--with-fingerprint"
-	  "--with-colons" "--fixed-list-mode")))
+          (list "--list-secret-keys" "--with-fingerprint"
+                "--with-colons" "--fixed-list-mode")))
 
 (tm-define (gpg-secret-keys . homedir)
   (:synopsis "GnuPG secret keys")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with cmd (gpg-executable-list-secret-keys dir)
-  (with ret (evaluate-system cmd '() '() '(1 2))
-  (if (string<> (car ret) "0")
-      (gpg-error cmd (cadr ret) (caddr ret))
-      (let* ((srows (string-decompose (utf8->cork (cadr ret)) "\n"))
-	     (crows (filter (lambda (x) (string<> x "")) srows))
-	     (rows (map gpg-decompose-key-string crows)))
-        (gpg-split-secret-key-list rows)))))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-list-secret-keys dir))
+         (ret (evaluate-system cmd '() '() '(1 2))))
+    (if (!= (car ret) "0")
+        (gpg-error cmd (cadr ret) (caddr ret))
+        (let* ((srows (string-decompose (utf8->cork (cadr ret)) "\n"))
+               (crows (filter (lambda (x) (!= x "")) srows))
+               (rows (map gpg-decompose-key-string crows)))
+          (gpg-split-secret-key-list rows)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Key properties
@@ -235,25 +236,25 @@
 
 (tm-define (gpg-public-key-fingerprints . homedir)
   (:synopsis "List the fingerprints of the public keyring")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with keys (gpg-public-keys dir)
-    (map (lambda (x) (tenth (car (filter gpg-fingerprint-row? x)))) keys))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (keys (gpg-public-keys dir)))
+    (map (lambda (x) (tenth (car (filter gpg-fingerprint-row? x)))) keys)))
 
 (tm-define (gpg-public-key-fingerprint? fpr . homedir)
   (:synopsis "Tells if @fpr actually belongs to the public keyring")
-  (with dir (if (null? homedir) (url-none) (car homedir)) 
-  (member fpr (gpg-public-key-fingerprints dir))))
+  (with dir (if (null? homedir) (url-none) (car homedir))
+    (member fpr (gpg-public-key-fingerprints dir))))
 
 (tm-define (gpg-secret-key-fingerprints . homedir)
   (:synopsis "List the fingerprints of the secret keyring")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with keys (gpg-secret-keys dir)
-    (map (lambda (x) (tenth (car (filter gpg-fingerprint-row? x)))) keys))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (keys (gpg-secret-keys dir)))
+    (map (lambda (x) (tenth (car (filter gpg-fingerprint-row? x)))) keys)))
 
 (tm-define (gpg-secret-key-fingerprint? fpr . homedir)
   (:synopsis "Tells if @fpr actually belongs to the secret keyring")
   (with dir (if (null? homedir) (url-none) (car homedir)) 
-  (member fpr (gpg-secret-key-fingerprints dir))))
+    (member fpr (gpg-secret-key-fingerprints dir))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Access to key infomations
@@ -273,8 +274,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (gpg-key-search-by-fingerprint fpr keys)
-  (with f (filter (lambda (x) (string= (gpg-get-key-fingerprint x) fpr)) keys)
-    (if (null? f) #f (car f))))
+  (with f (filter (lambda (x) (== (gpg-get-key-fingerprint x) fpr)) keys)
+    (and (nnull? f) (car f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delete public key
@@ -282,15 +283,15 @@
 
 (define (gpg-executable-delete-public-key fingerprint homedir)
   (append (gpg-executable-default homedir)
-    (list "--quiet" "--yes" "--delete-public-key" fingerprint)))
+          (list "--quiet" "--yes" "--delete-public-key" fingerprint)))
 
 (tm-define (gpg-delete-public-key fingerprint . homedir)
   (:synopsis "Delete GnuPG public key of fingerprint @fingerprint")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with cmd (gpg-executable-delete-secret-and-public-key fingerprint dir)
-    (with ret (evaluate-system cmd '() '() '(1 2))
-      (if (string= (car ret) "0") #t
-        (gpg-error cmd (cadr ret) (caddr ret)))))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-delete-secret-and-public-key fingerprint dir))
+         (ret (evaluate-system cmd '() '() '(1 2))))
+    (or (== (car ret) "0")
+        (gpg-error cmd (cadr ret) (caddr ret)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delete secret and public keys
@@ -298,15 +299,16 @@
 
 (define (gpg-executable-delete-secret-and-public-key fingerprint homedir)
   (append (gpg-executable-default homedir)
-    (list "--quiet" "--yes" "--delete-secret-and-public-key" fingerprint)))
+          (list "--quiet" "--yes" "--delete-secret-and-public-key"
+                fingerprint)))
 
 (tm-define (gpg-delete-secret-and-public-key fingerprint . homedir)
   (:synopsis "Delete GnuPG secret and public keys of fingerprint @fingerprint")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with cmd (gpg-executable-delete-secret-and-public-key fingerprint dir)
-    (with ret (evaluate-system cmd '() '() '(1 2))
-      (if (string= (car ret) "0") #t
-        (gpg-error cmd (cadr ret) (caddr ret)))))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-delete-secret-and-public-key fingerprint dir))
+         (ret (evaluate-system cmd '() '() '(1 2))))
+    (or (== (car ret) "0")
+        (gpg-error cmd (cadr ret) (caddr ret)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encryption
@@ -314,19 +316,19 @@
 
 (define (gpg-executable-encrypt rcps homedir)
   (append (gpg-executable-default homedir)
-    (list "--encrypt") rcps
-    (list "--trust-model" "always")
-    (list "--armor" "--batch" "--no-tty" "-")))
+          (list "--encrypt") rcps
+          (list "--trust-model" "always")
+          (list "--armor" "--batch" "--no-tty" "-")))
 
 (tm-define (gpg-encrypt data rcps . homedir)
   (:synopsis "GnuPG encrypt string @data for recipient fingerprint list @rcps") 
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with rcps-args (map (lambda (x) (string-append "-r " x)) rcps)
-  (with cmd (gpg-executable-encrypt rcps-args dir)
-  (with ret (evaluate-system cmd '(0) (list data) '(1 2))
-    (if (string<> (car ret) "0")
-	(gpg-error cmd (cadr ret) (caddr ret))
-	(cadr ret)))))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (rcps-args (map (lambda (x) (string-append "-r " x)) rcps))
+         (cmd (gpg-executable-encrypt rcps-args dir))
+         (ret (evaluate-system cmd '(0) (list data) '(1 2))))
+    (if (!= (car ret) "0")
+        (gpg-error cmd (cadr ret) (caddr ret))
+        (cadr ret))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Decryption
@@ -334,18 +336,18 @@
 
 (define (gpg-executable-decrypt homedir)
   (append (gpg-executable-default homedir)
-    (if (or (os-mingw?) (os-win32?))
-      (list "--decrypt" "--passphrase-fd" "$%1" "--armor")
-      (list "--decrypt" "--passphrase-fd" "$$1" "--armor"))))
+          (if (or (os-mingw?) (os-win32?))
+              (list "--decrypt" "--passphrase-fd" "$%1" "--armor")
+              (list "--decrypt" "--passphrase-fd" "$$1" "--armor"))))
 
 (tm-define (gpg-decrypt data passphrase . homedir)
-  (:synopsis "GnuPG decrypt armored string @data with passphrase @passphrase") 
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with cmd (gpg-executable-decrypt dir)
-    (with ret (evaluate-system cmd '(0 -1) (list data passphrase) '(1 2))
-      (if (string<> (car ret) "0")
+  (:synopsis "GnuPG decrypt armored string @data with passphrase @passphrase")
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-decrypt dir))
+         (ret (evaluate-system cmd '(0 -1) (list data passphrase) '(1 2))))
+    (if (!= (car ret) "0")
         (gpg-error cmd (cadr ret) (caddr ret))
-        (cadr ret))))))
+        (cadr ret))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check passphrase
@@ -353,16 +355,16 @@
 
 (tm-define (gpg-decryptable? data passphrase . homedir)
   (:synopsis "Tells if @data can be decrypted with passphrase @passphrase")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with cmd (gpg-executable-decrypt dir)
-    (with ret (evaluate-system cmd '(0 -1) (list data passphrase) '(1 2))
-      (string= (car ret) "0")))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-decrypt dir))
+         (ret (evaluate-system cmd '(0 -1) (list data passphrase) '(1 2))))
+    (== (car ret) "0")))
 
 (tm-define (gpg-correct-passphrase? fingerprint passphrase . homedir)
   (:synopsis "Tells if passphrase @passphrase is correct for @fingerprint")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with enc (gpg-encrypt "test" (list fingerprint) dir)
-  (and enc (gpg-decryptable? enc passphrase dir)))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (enc (gpg-encrypt "test" (list fingerprint) dir)))
+    (and enc (gpg-decryptable? enc passphrase dir))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Export public keys
@@ -370,18 +372,18 @@
 
 (define (gpg-executable-export-public-keys fingerprints homedir)
   (append (gpg-executable-default homedir)
-    (list  "--armor" "--export") fingerprints))
+          (list  "--armor" "--export") fingerprints))
 
 (tm-define (gpg-export-public-keys fingerprints . homedir)
   (:synopsis "Export GnuPG public keys of fingerprint in the given list")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with fingerprints-args
-    (map (lambda (x) (string-append " " x)) fingerprints)
-  (with cmd (gpg-executable-export-public-keys fingerprints-args dir)
-    (with ret (evaluate-system cmd '() '() '(1 2))
-      (if (string<> (car ret) "0")
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (fingerprints-args
+          (map (lambda (x) (string-append " " x)) fingerprints))
+         (cmd (gpg-executable-export-public-keys fingerprints-args dir))
+         (ret (evaluate-system cmd '() '() '(1 2))))
+    (if (!= (car ret) "0")
         (gpg-error cmd (cadr ret) (caddr ret))
-        (cadr ret)))))))
+        (cadr ret))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Export secret keys
@@ -389,18 +391,18 @@
 
 (define (gpg-executable-export-secret-keys fingerprints homedir)
   (append (gpg-executable-default homedir)
-    (list  "--armor" "--export-secret-keys") fingerprints))
+          (list  "--armor" "--export-secret-keys") fingerprints))
 
 (tm-define (gpg-export-secret-keys fingerprints . homedir)
   (:synopsis "Export GnuPG secret keys of fingerprint in the given list")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with fingerprints-args
-    (map (lambda (x) (string-append " " x)) fingerprints)
-  (with cmd (gpg-executable-export-secret-keys fingerprints-args dir)
-    (with ret (evaluate-system cmd '() '() '(1 2))
-      (if (string<> (car ret) "0")
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (fingerprints-args
+          (map (lambda (x) (string-append " " x)) fingerprints))
+         (cmd (gpg-executable-export-secret-keys fingerprints-args dir))
+         (ret (evaluate-system cmd '() '() '(1 2))))
+    (if (!= (car ret) "0")
         (gpg-error cmd (cadr ret) (caddr ret))
-        (cadr ret)))))))
+        (cadr ret))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Import keys
@@ -408,24 +410,24 @@
 
 (define (gpg-executable-import homedir)
   (append (gpg-executable-default homedir)
-    (list  "--armor" "--import" "-")))
+          (list  "--armor" "--import" "-")))
 
 (define (gpg-import s homedir)
-  (with cmd (gpg-executable-import homedir)
-  (with ret (evaluate-system cmd '(0) (list s) '(1 2))
-    (if (string<> (car ret) "0")
+  (let* ((cmd (gpg-executable-import homedir))
+         (ret (evaluate-system cmd '(0) (list s) '(1 2))))
+    (if (!= (car ret) "0")
         (gpg-error cmd (cadr ret) (caddr ret))
-        #t))))
+        #t)))
 
 (tm-define (gpg-import-public-keys s . homedir)
   (:synopsis "Import GnuPG public keys")
   (with dir (if (null? homedir) (url-none) (car homedir))
-  (gpg-import s dir)))
+    (gpg-import s dir)))
 
 (tm-define (gpg-import-secret-keys s . homedir)
   (:synopsis "Import GnuPG secret keys")
   (with dir (if (null? homedir) (url-none) (car homedir))
-  (gpg-import s dir)))
+    (gpg-import s dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File save and load encrypted for a single key
@@ -433,30 +435,30 @@
 
 (tm-define (gpg-string-encrypt-save s url fingerprint . homedir)
   (:synopsis "Encrypt and save string @s to @url for @fingerprint")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with e (gpg-encrypt s (list fingerprint) dir)
-    (if e (string-save e url) #f))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (e (gpg-encrypt s (list fingerprint) dir)))
+    (and e (string-save e url))))
 
 (tm-define (gpg-string-load-decrypt url passphrase . homedir)
   (:synopsis "Load and decrypt string from @url with @passphrase")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with s (string-load url)
-    (if s (gpg-decrypt s passphrase dir) #f))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (s (string-load url)))
+    (and s (gpg-decrypt s passphrase dir))))
 
 (tm-define (gpg-encrypt-save-object url o fingerprint . homedir)
   (:synopsis "Encrypt and save object @o to @url for @fingerprint")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with port (open-output-string)
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (port (open-output-string)))
     (pretty-print o port)
-    (with ret
-      (gpg-string-encrypt-save (get-output-string port) url fingerprint dir)
+    (with ret (gpg-string-encrypt-save (get-output-string port)
+                                       url fingerprint dir)
       (close-output-port port)
-      ret))))
+      ret)))
 
 (tm-define (gpg-load-decrypt-object url passphrase . homedir)
   (:synopsis "Load and decrypt object from @url with @passphrase")
-  (with dir (if (null? homedir) (url-none) (car homedir))
-  (with d (gpg-string-load-decrypt url passphrase dir)
-    (if d (with p (open-input-string d)
-	  (with e (read p)
-	  (if (eof-object? e) '() e))) #f))))
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (d (gpg-string-load-decrypt url passphrase dir)))
+    (and d (let* ((p (open-input-string d))
+                  (e (read p)))
+             (if (eof-object? e) '() e)))))
