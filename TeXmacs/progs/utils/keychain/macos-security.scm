@@ -24,8 +24,7 @@
 ;; Add generic password
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (system-security-add-generic-password-command
-	 account service password)
+(define (system-security-add-generic-password-command account service password)
   (string-append "add-generic-password"
 		 " -a " (string-quote account)
 		 " -s " (string-quote service)
@@ -39,8 +38,8 @@
          (ret (evaluate-system (list "security" "-i")
                                '(0) (list cmd) '(1 2))))
     (if (string<> (car ret) "0")
-      (system-security-error (list pcm) (cadr ret) (caddr ret))
-      #t)))
+	(system-security-error (list pcm) (cadr ret) (caddr ret))
+	#t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find generic password
