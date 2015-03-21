@@ -445,6 +445,9 @@
     ======
     (hlist
       (aligned
+        (item (text "Encryption:")
+          (toggle (set-boolean-preference "experimental encryption" answer)
+                  (get-boolean-preference "experimental encryption")))
         (item (text "Fast environments:")
           (toggle (set-boolean-preference "fast environments" answer)
                   (get-boolean-preference "fast environments")))
@@ -478,6 +481,12 @@
   (:interactive #t)
   (dialogue-window experimental-preferences-widget 
                    noop "Experimental preferences"))
+
+(tm-widget (security-preferences-widget)
+  (refreshable "security-preferences-refresher"
+    (dynamic (wallet-preferences-widget))
+    === ===
+    (dynamic (gpg-preferences-widget))))
 
 (tm-widget (other-preferences-widget)
   (aligned
@@ -528,6 +537,10 @@
         (dynamic (keyboard-preferences-widget))))
     (icon-tab "tm_prefs_convert.xpm" (text "Convert")
       (dynamic (conversion-preferences-widget)))
+    (assuming (== (get-preference "experimental encryption") "on")
+      (icon-tab "tm_prefs_other.xpm" (text "Security") ;; FIXME: new icon
+        (centered
+          (dynamic (security-preferences-widget)))))
     (icon-tab "tm_prefs_other.xpm" (text "Other")
       (centered
         (dynamic (other-preferences-widget))))))
