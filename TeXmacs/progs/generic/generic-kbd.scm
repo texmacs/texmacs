@@ -607,6 +607,7 @@
   ("macos F" (toggle-full-screen-mode))
   ("macos C-f" (toggle-full-screen-edit-mode))
 
+  ("macos A-u" (toggle-preamble))
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
 
