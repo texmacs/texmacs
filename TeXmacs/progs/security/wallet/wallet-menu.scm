@@ -69,7 +69,7 @@
               (form-input "passphrase" "password" '() "10w")))
           (when (wallet-can-remember-passphrase?)
             (aligned (item (text "Retrieve wallet passphrase automatically at login? ")
-                       (form-enum "remember?" '("yes" "no") "no" "2w"))))
+                       (form-enum "remember?" '("yes" "no") "no" "4em"))))
           (refreshable "wallet-widget-reask-passphrase"
             (if wallet-widget-weak-passphrase?
                 (centered
@@ -77,8 +77,8 @@
                   (text "Passphrase should have at least 8 characters, 1 upper case")
                   (text "1 lower case, 1 digit, and 1 symbol."))))
           (bottom-buttons
-            ("Cancel" (cmd "Cancel"))
             >>
+            ("Cancel" (cmd "Cancel")) // //
             ("Ok"
              (with n (length (form-values))
                (when (and (> n 0) (string? (first (form-values)))
@@ -110,7 +110,7 @@
               (form-input "passphrase" "password" '() "10w")))
           (when (wallet-can-remember-passphrase?)
             (aligned (item (text "Retrieve wallet passphrase automatically at login? ")
-                       (form-enum "remember?" '("yes" "no") "no" "2w"))))
+                       (form-enum "remember?" '("yes" "no") "no" "4em"))))
           (refreshable "wallet-widget-reask-new-passphrase"
             (if wallet-widget-weak-passphrase?
                 (centered
@@ -118,8 +118,8 @@
                   (text "Passphrase should have at least 8 characters, 1 upper case")
                   (text "1 lower case, 1 digit, and 1 symbol."))))
           (bottom-buttons
-            ("Cancel" (cmd "Cancel"))
             >>
+            ("Cancel" (cmd "Cancel")) // //
             ("Ok"
              (with n (length (form-values))
                (when (and (> n 0) (string? (first (form-values)))
@@ -147,7 +147,7 @@
 
 (tm-widget (wallet-widget-turn-on cmd)
   (with wallet-widget-wrong-passphrase? #f
-    (resize "500px" "200px"
+    (resize "500px" "150px"
       (padded
         (refreshable "wallet-widget-reask-passphrase"
           (if wallet-widget-wrong-passphrase?
@@ -155,13 +155,15 @@
         (form "Ask passphrase"
           (aligned
             (item (text "Wallet passphrase:")
-              (form-input "passphrase" "password" '() "10w")))
+              (form-input "passphrase" "password" '() "2w")))
+          ===
           (when (wallet-can-remember-passphrase?)
             (aligned (item (text "Retrieve wallet passphrase automatically at login? ")
-                       (form-enum "remember?" '("yes" "no") "no" "2w"))))
+                       (form-enum "remember?" '("yes" "no") "no" "4em"))))
+          === ===
           (bottom-buttons
-            ("Turn off wallet" (wallet-turn-off) (cmd "Cancel"))
             >>
+            ("Cancel" (wallet-turn-off) (cmd "Cancel")) // //
             ("Ok"
              (with n (length (form-values))
                (when (and (> n 0) (string? (first (form-values))))
@@ -190,8 +192,8 @@
     (bold (text "Are you sure you want to destroy the wallet?"))
     (bold (text "All saved passphrases will be definitely lost!")))
   (bottom-buttons
-    ("Cancel" (cmd "Cancel"))
     >>
+    ("Cancel" (cmd "Cancel")) // //
     ("Destroy wallet" (wallet-destroy) (cmd "Ok"))))
 
 (tm-define (wallet-dialogue-destroy . callback)
@@ -214,25 +216,26 @@
 
 (tm-widget (wallet-widget-delete cmd)
   (with tbl (make-ahash-table)
-    (resize ("550px" "550px" "9999px") ("250px" "250px" "9999px")
-      (refreshable "wallet-widget-delete"
-        (scrollable
-          (padded
-            (aligned
-              (for (x (wallet-entries))
-                (item (toggle
-                       (if answer
-                           (ahash-set! tbl (car x) #t)
-                           (ahash-remove! tbl (car x)))
-                       #f)
-                  (text (wallet-entry->string x))))))))
-      ===
-      (bottom-buttons
-        ("Cancel" (cmd "Cancel"))
-        >>
-        ("Delete"
-         (map wallet-delete (ahash-entries tbl))
-         (cmd "Delete"))))))
+    (padded
+      (resize ("550px" "550px" "9999px") ("250px" "250px" "9999px")
+        (refreshable "wallet-widget-delete"
+          (scrollable
+            (padded
+              (aligned
+                (for (x (wallet-entries))
+                  (item (toggle
+                         (if answer
+                             (ahash-set! tbl (car x) #t)
+                             (ahash-remove! tbl (car x)))
+                         #f)
+                    (text (wallet-entry->string x))))))))
+        ===
+        (bottom-buttons
+          >>
+          ("Cancel" (cmd "Cancel")) // //
+          ("Delete"
+           (map wallet-delete (ahash-entries tbl))
+           (cmd "Delete")))))))
 
 (tm-define (wallet-dialogue-delete)
   (dialogue-window wallet-widget-delete noop
@@ -288,32 +291,32 @@
   (with cb (lambda (x) (refresh-now "security-preferences-refresher"))
     (if (wallet-off?)
         (hlist
-          (text "Wallet:") //
+          (text "Wallet:") // //
           (explicit-buttons
             ("Turn on" (wallet-dialogue-turn-on cb)) // //
             ("Destroy" (wallet-dialogue-destroy cb)) >>)))
     (if (wallet-on?)
         (hlist
-          (text "Wallet:") //
+          (text "Wallet:") // //
           (explicit-buttons
             ("Turn off" (begin (wallet-turn-off) (cb "Ok"))) // //
             ("Delete entries" (wallet-dialogue-delete)) // //
             ("Change passphrase"
              (wallet-dialogue-reinitialize cb)) >>)))
-    === ===
+    ===
     (hlist
-      (text "Automatically remember all passphrases in the wallet?") //
+      (text "Automatically remember all passphrases in the wallet?") // //
       (enum (if (== answer "yes")
                 (wallet-turn-always-remember-on)
                 (wallet-turn-always-remember-off))
             (list "yes" "no")
             (if (wallet-always-remember-on?) "yes" "no")
-            "3em") >>)))
+            "4em") >>)))
 
 (tm-widget (wallet-uninitialized-preferences-widget)
   (with cb (lambda (x) (refresh-now "security-preferences-refresher"))
     (hlist
-      (text "Wallet:") //
+      (text "Wallet:") // //
       (explicit-buttons
         ("Initialize" (wallet-dialogue-initialize cb))) >>)))
 

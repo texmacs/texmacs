@@ -20,7 +20,7 @@
 
 (tm-widget (gpg-preferences-widget)
   (hlist
-    (text "GnuPG command:") //
+    (text "GnuPG command:") // //
     (enum (gpg-set-executable answer)
           (list (gpg-get-executable) "gpg" "gpg2" "")
           (gpg-get-executable) "15em") // //
