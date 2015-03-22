@@ -64,18 +64,20 @@
     (resize "500px" "200px"
       (padded
         (form "Ask passphrase"
-          (aligned
-            (item (text "Wallet passphrase:")
-              (form-input "passphrase" "password" '() "10w")))
+          (hlist
+            (text "Wallet passphrase:") // //
+            (form-input "passphrase" "password" '() "10w") >>)
           (when (wallet-can-remember-passphrase?)
-            (aligned (item (text "Retrieve wallet passphrase automatically at login? ")
-                       (form-enum "remember?" '("yes" "no") "no" "4em"))))
+            ===
+            (hlist
+              (text "Retrieve wallet passphrase automatically at login?") // //
+              (form-enum "remember?" '("yes" "no") "no" "4em") >>))
           (refreshable "wallet-widget-reask-passphrase"
             (if wallet-widget-weak-passphrase?
                 (centered
-                  (text "Warning: weak passphrase, click [Ok] button twice to discard.")
-                  (text "Passphrase should have at least 8 characters, 1 upper case")
-                  (text "1 lower case, 1 digit, and 1 symbol."))))
+                  (text "Warning: weak passphrase, click Ok again to confirm.")
+                  (text "Passphrase should have at least 8 characters:")
+                  (text "1 upper case, 1 lower case, 1 digit, and 1 symbol."))))
           (bottom-buttons
             >>
             ("Cancel" (cmd "Cancel")) // //
@@ -83,11 +85,12 @@
              (with n (length (form-values))
                (when (and (> n 0) (string? (first (form-values)))
                           (or wallet-widget-weak-passphrase?
-                              (wallet-strong-passphrase? (first (form-values)))))
+                              (wallet-strong-passphrase?
+                               (first (form-values)))))
                  (system-wait "Initializing wallet" "please wait")
-                 (when (wallet-initialize (first (form-values)))
-                   (when (== (second (form-values)) "yes")
-                     (wallet-save-passphrase (first (form-values)))))
+                 (when (and (wallet-initialize (first (form-values)))
+                            (== (second (form-values)) "yes"))
+                   (wallet-save-passphrase (first (form-values))))
                  (cmd "Ok")))
              (set! wallet-widget-weak-passphrase? #t)
              (refresh-now "wallet-widget-reask-passphrase"))))))))
@@ -105,18 +108,20 @@
     (resize "500px" "200px"
       (padded
         (form "Ask new passphrase"
-          (aligned
-            (item (text "New wallet passphrase:")
-              (form-input "passphrase" "password" '() "10w")))
+          (hlist
+            (text "New wallet passphrase:") // //
+            (form-input "passphrase" "password" '() "10w") >>)
           (when (wallet-can-remember-passphrase?)
-            (aligned (item (text "Retrieve wallet passphrase automatically at login? ")
-                       (form-enum "remember?" '("yes" "no") "no" "4em"))))
+            ===
+            (hlist
+              (text "Retrieve wallet passphrase automatically at login?") // //
+              (form-enum "remember?" '("yes" "no") "no" "4em") >>))
           (refreshable "wallet-widget-reask-new-passphrase"
             (if wallet-widget-weak-passphrase?
                 (centered
-                  (text "Warning: weak passphrase, click [Ok] button twice to discard.")
-                  (text "Passphrase should have at least 8 characters, 1 upper case")
-                  (text "1 lower case, 1 digit, and 1 symbol."))))
+                  (text "Warning: weak passphrase, click Ok again to confirm.")
+                  (text "Passphrase should have at least 8 characters:")
+                  (text "1 upper case, 1 lower case, 1 digit, and 1 symbol."))))
           (bottom-buttons
             >>
             ("Cancel" (cmd "Cancel")) // //
@@ -124,7 +129,8 @@
              (with n (length (form-values))
                (when (and (> n 0) (string? (first (form-values)))
                           (or wallet-widget-weak-passphrase?
-                              (wallet-strong-passphrase? (first (form-values)))))
+                              (wallet-strong-passphrase?
+                               (first (form-values)))))
                  (system-wait "Reinitializing wallet" "please wait")
                  (when (wallet-reinitialize "" (first (form-values)))
                    (when (== (second (form-values)) "yes")
@@ -153,13 +159,14 @@
           (if wallet-widget-wrong-passphrase?
               (centered (bold (text "Wrong passphrase")))))
         (form "Ask passphrase"
-          (aligned
-            (item (text "Wallet passphrase:")
-              (form-input "passphrase" "password" '() "2w")))
+          (hlist
+            (text "Wallet passphrase:") // //
+            (form-input "passphrase" "password" '() "2w") >>)
           ===
           (when (wallet-can-remember-passphrase?)
-            (aligned (item (text "Retrieve wallet passphrase automatically at login? ")
-                       (form-enum "remember?" '("yes" "no") "no" "4em"))))
+            (hlist
+              (text "Retrieve wallet passphrase automatically at login?") // //
+              (form-enum "remember?" '("yes" "no") "no" "4em") >>))
           === ===
           (bottom-buttons
             >>
@@ -168,9 +175,9 @@
              (with n (length (form-values))
                (when (and (> n 0) (string? (first (form-values))))
                  (when (and (wallet-correct-passphrase? (first (form-values)))
-                            (when (wallet-turn-on (first (form-values)))
-                              (when (== (second (form-values)) "yes")
-                                (wallet-save-passphrase (first (form-values)))))
+                            (when (and (wallet-turn-on (first (form-values)))
+                                       (== (second (form-values)) "yes"))
+                              (wallet-save-passphrase (first (form-values))))
                             (cmd "Ok")))))
              (set! wallet-widget-wrong-passphrase? #t)
              (refresh-now "wallet-widget-reask-passphrase"))))))))
@@ -190,11 +197,12 @@
 (tm-widget (wallet-widget-destroy cmd)
   (padded
     (bold (text "Are you sure you want to destroy the wallet?"))
-    (bold (text "All saved passphrases will be definitely lost!")))
-  (bottom-buttons
-    >>
-    ("Cancel" (cmd "Cancel")) // //
-    ("Destroy wallet" (wallet-destroy) (cmd "Ok"))))
+    (bold (text "All saved passphrases will be definitely lost!"))
+    ===
+    (bottom-buttons
+      >>
+      ("Cancel" (cmd "Cancel")) // //
+      ("Destroy wallet" (wallet-destroy) (cmd "Ok")))))
 
 (tm-define (wallet-dialogue-destroy . callback)
   (with cb (if (null? callback) noop (car callback))
