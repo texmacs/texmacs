@@ -197,7 +197,7 @@
 (tm-widget (wallet-widget-destroy cmd)
   (padded
     (bold (text "Are you sure you want to destroy the wallet?"))
-    (bold (text "All saved passphrases will be definitely lost!"))
+    (bold (text "All saved passphrases will be lost forever!"))
     ===
     (bottom-buttons
       >>
