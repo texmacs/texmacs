@@ -235,14 +235,14 @@
 
 (tm-define (db->bib t)
   (set! t (tm->stree t))
-  (cond ((and (tm-func? t 'db-entry 4)
+  (cond ((and (tm-func? t 'db-entry 5)
               (tm-atomic? (tm-ref t 1))
               (in? (tm-ref t 1) bib-types-list)
-              (tm-func? (tm-ref t 3) 'document))
+              (tm-func? (tm-ref t :last) 'document))
          (let* ((type (tm-ref t 1))
                 (name (tm-ref t 2))
                 (l (map (cut db-bib-sub <> type)
-                        (tm-children (tm-ref t 3)))))
+                        (tm-children (tm-ref t :last)))))
            `(bib-entry ,type ,name (document ,@l))))
         (else t)))
 
@@ -337,7 +337,7 @@
                 (name (tm-ref t 1))
                 (l (map (cut bib-db-sub <> type*)
                         (tm-children (tm-ref t 2)))))
-           `(db-entry ,id ,type* ,name (document ,@l))))
+           `(db-entry ,id ,type* ,name (document) (document ,@l))))
         (else t)))
 
 (tm-define (db-save-pre t)

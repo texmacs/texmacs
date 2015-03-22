@@ -143,7 +143,7 @@
 
 (define (bib-entry? t)
   (or (tm-func? t 'bib-entry 3)
-      (and (tm-func? t 'db-entry 4)
+      (and (tm-func? t 'db-entry 5)
            (tm-atomic? (tm-ref t 1))
            (in? (tm->string (tm-ref t 1)) bib-types-list))))
 

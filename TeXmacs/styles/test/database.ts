@@ -51,13 +51,13 @@
     </padded-normal>
   </macro>>
 
-  <assign|db-entry|<\macro|rid|type|name|body>
+  <assign|db-entry|<\macro|rid|type|name|meta|body>
     <\db-entry-env|dark blue|pastel blue|dark green|<arg|type>|<arg|name>>
       <arg|body>
     </db-entry-env>
   </macro>>
 
-  <drd-props|db-entry|arity|4|unaccessible|0|unaccessible|1|accessible|2|accessible|3>
+  <drd-props|db-entry|arity|5|unaccessible|0|unaccessible|1|accessible|2|unaccessible|3|accessible|4>
 
   <\active*>
     <\src-comment>
