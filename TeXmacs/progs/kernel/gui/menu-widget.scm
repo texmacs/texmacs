@@ -80,6 +80,7 @@
     (refreshable :%1 :menu-item-list)
     (if :%1 :menu-item-list)
     (when :%1 :menu-item-list)
+    (for :%1 :%1)
     (mini :%1 :menu-item-list)
     (link :%1)
     (promise :%1)
@@ -571,6 +572,13 @@
                                   (+ widget-style-inert widget-style-grey)))))
       (make-menu-items-list items new-style bar?))))
 
+(define (make-menu-for p style bar?)
+  "Make @(for :%1 :%1) menu items."
+  (with (tag gen-func vals-promise) p
+    (let* ((vals (vals-promise))
+           (items (append-map gen-func vals)))
+      (make-menu-items-list items style bar?))))
+
 (define (make-menu-mini p style bar?)
   "Make @(mini :%1 :menu-item-list) menu items."
   (with (tag pred? . items) p
@@ -715,6 +723,8 @@
       ,(lambda (p style bar?) (make-menu-if p style bar?)))
   (when (:%1 :*)
         ,(lambda (p style bar?) (make-menu-when p style bar?)))
+  (for (:%1 :%1)
+        ,(lambda (p style bar?) (make-menu-for p style bar?)))
   (mini (:%1 :*)
         ,(lambda (p style bar?) (make-menu-mini p style bar?)))
   (promise (:%1)
@@ -744,6 +754,13 @@
     (if (pred?)
         (cons* 'when #t (menu-expand-list items))
         (cons* 'when #f (replace-procedures items)))))
+
+(define (menu-expand-for p)
+  "Expand menu @p generated using for loop."
+  (with (tag gen-func vals-promise) p
+    (let* ((vals (vals-promise))
+           (items (append-map gen-func vals)))
+      (menu-expand-list items))))
 
 (define (menu-expand-mini p)
   "Expand mini menu @p."
@@ -878,6 +895,7 @@
   (ink ,replace-procedures)
   (if ,menu-expand-if)
   (when ,menu-expand-when)
+  (for ,menu-expand-for)
   (mini ,menu-expand-mini)
   (promise ,menu-expand-promise)
   (refresh ,replace-procedures)

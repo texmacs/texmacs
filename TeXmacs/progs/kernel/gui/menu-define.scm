@@ -46,11 +46,6 @@
   (require-format x '(:%1 :%2 :*))
   `(,(car x) ,(cadr x) ,(caddr x) (menu-dynamic ,@(cdddr x))))
 
-(define (gui-make-for x)
-  (require-format x '(for (:%1 :%1) :*))
-  (with fun `(lambda (,(caadr x)) (menu-dynamic ,@(cddr x)))
-    `($dynamic (append-map ,fun ,(cadadr x)))))
-
 (define (gui-make-cond x)
   (require-format x '(cond :*))
   (with fun (lambda (x)
@@ -291,6 +286,15 @@
   (require-format x '(when :%1 :*))
   `($assuming ,(cadr x) ,@(map gui-make (cddr x))))
 
+;;(define (gui-make-for x)
+;;  (require-format x '(for (:%1 :%1) :*))
+;;  (with fun `(lambda (,(caadr x)) (menu-dynamic ,@(cddr x)))
+;;    `($dynamic (append-map ,fun ,(cadadr x)))))
+
+(define (gui-make-for x)
+  (require-format x '(for (:%1 :%1) :*))
+  `($for* ,(cadr x) ,@(map gui-make (cddr x))))
+
 (define (gui-make-mini x)
   (require-format x '(mini :%1 :*))
   `($mini ,(cadr x) ,@(map gui-make (cddr x))))
@@ -344,7 +348,6 @@
   (let* ,gui-make-let)
   (with ,gui-make-with)
   (receive ,gui-make-with)
-  (for ,gui-make-for)
   (cond ,gui-make-cond)
   (refresh ,gui-make-refresh)
   (refreshable ,gui-make-refreshable)
@@ -398,6 +401,7 @@
   (assuming ,gui-make-assuming)
   (if ,gui-make-if)
   (when ,gui-make-when)
+  (for ,gui-make-for)
   (mini ,gui-make-mini)
   (symbol ,gui-make-symbol)
   (promise ,gui-make-promise)

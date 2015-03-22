@@ -58,6 +58,12 @@
   (:synopsis "When primitive for content generation")
   `(cons* 'list (if ,pred? ($list ,@l) '())))
 
+(tm-define-macro ($for* var-vals . l)
+  (:synopsis "For primitive for content generation")
+  `(list 'for
+         (lambda (,(car var-vals)) ($list ,@l))
+         (lambda () ,(cadr var-vals))))
+
 (tm-define (cond$sub l)
   (cond ((null? l)
          (list `(else '())))
