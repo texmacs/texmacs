@@ -192,7 +192,7 @@
 (tm-widget (symbol-browser-widget)
   (vertical
    (bold (text "Symbol"))
-   (resize ("200px" "350üpx" "4000px") ("300px" "600px" "4000px")
+   (resize ("200px" "350px" "4000px") ("300px" "600px" "4000px")
      (filtered-choice (begin (set! clw-string answer)
                              (set! clw-string-filter filter))
                       (list-sort (scheme-completions-dump) string<?)
