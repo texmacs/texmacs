@@ -150,7 +150,8 @@ sql_exec (url db_name, string cmd) {
     tree row (TUPLE);
     //cout << "  Row " << r << LF;
     for (int c=0; c<cols; c++) {
-      int i= r*cols + c;
+      int r2= (r == 0? 0: (rows+1-r)); // NOTE: undo reversal by sqlite3
+      int i= r2*cols + c;
       if (tab[i] == NULL) row << tree (TUPLE);
       else {
         row << tree (scm_quote (sql_unescape (tab[i])));
