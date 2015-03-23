@@ -173,7 +173,7 @@
           (client-remote-eval server `(remote-dir-load ,name)
             (lambda (msg)
               (with (entries props) msg
-                  (resource-cache-set-all fname props)
+                (resource-cache-set-all fname props)
                 (remote-dir-set name (dir-page sname entries))))
             (lambda (err)
               (set-message err "remote directory")))
