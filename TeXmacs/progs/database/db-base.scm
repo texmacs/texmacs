@@ -132,6 +132,35 @@
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
            " AND " (db-time-constraint)))
 
+(tm-define (db-get-entry id)
+  (with r (db-sql "SELECT DISTINCT attr, val FROM props"
+                  " WHERE id=" (sql-quote id)
+                  " AND " (db-time-constraint))
+    (if (nnull? r) (set! r (cdr r)))
+    (let* ((t (make-ahash-table))
+           (attrs (list-remove-duplicates (map car r))))
+      (for (line r)
+        (with (attr val) line
+          (with old (or (ahash-ref t attr) (list))
+            (ahash-set! t attr (cons val old)))))
+      (map (lambda (attr) (cons attr (reverse (ahash-ref t attr)))) attrs))))
+
+(tm-define (db-set-entry id l)
+  (let* ((old-attrs (db-get-attributes id))
+         (new-attrs (map car l))
+         (rem-attrs (list-difference old-attrs new-attrs)))
+    (for (attr rem-attrs)
+      (db-reset id attr))
+    (for (attr new-attrs)
+      (db-set-field id attr (assoc-ref l attr)))))
+
+(tm-define (db-create-entry l)
+  (with id (create-unique-id)
+    (while (nnull? (db-get-attributes id))
+      (set! id (create-unique-id)))
+    (db-set-entry id l)
+    id))
+
 (tm-define (db-create name type uid)
   (with id (create-unique-id)
     (if (nnull? (db-get-field id "type"))
