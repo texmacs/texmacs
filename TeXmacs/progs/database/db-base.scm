@@ -118,17 +118,19 @@
            " AND attr=" (sql-quote attr)
            " AND " (db-time-constraint)))
 
+(tm-define (db-get-field-first id attr default)
+  (with l (db-get-field id attr)
+    (if (null? l) default (car l))))
+
 (tm-define (db-set-field id attr vals)
-  (db-reset id attr)
-  (for-each (cut db-insert id attr <>) vals))
+  (with old-vals (db-get-field id attr)
+    (when (!= vals old-vals)
+      (db-reset id attr)
+      (for-each (cut db-insert id attr <>) vals))))
 
 (tm-define (db-attributes id)
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
            " AND " (db-time-constraint)))
-
-(tm-define (db-get-field-first id attr default)
-  (with l (db-get-field id attr)
-    (if (null? l) default (car l))))
 
 (tm-define (db-create name type uid)
   (with id (create-unique-id)
