@@ -60,12 +60,12 @@
 (define (bib-cache-stamp f)
   (and-with id (bib-cache-id f)
     (with-database bib-master
-      (db-get-first id "stamp" #f))))
+      (db-field-get-first id "stamp" #f))))
 
 (define (bib-cache-db f)
   (and-with id (bib-cache-id f)
     (with-database bib-master
-      (system->url (db-get-first id "target" #f)))))
+      (system->url (db-field-get-first id "target" #f)))))
 
 (define (bib-cache-up-to-date? f)
   (and-with stamp (bib-cache-stamp f)
@@ -113,7 +113,7 @@
   (and-with id (bib-cache-id f)
     (and-with db (bib-cache-db f)
       (with-database db
-        (== (db-get-first id "imported" #f) (url->system bdb))))))
+        (== (db-field-get-first id "imported" #f) (url->system bdb))))))
 
 (define (bib-cache-notify-imported f bdb)
   (and-with id (bib-cache-id f)

@@ -72,60 +72,67 @@
   (string-append x ".created <= (" db-time ") AND "
                  x ".expires >  (" db-time ")"))
 
-(tm-define (db-sql-now . l)
-  (if (== db-time "strftime('%s','now')")
-      (apply db-sql l)
-      (texmacs-error "db-sql-now" "cannot rewrite history")))
+(tm-define (db-check-now)
+  (when (!= db-time "strftime('%s','now')")
+    (texmacs-error "db-check-now" "cannot rewrite history")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic private interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-insert id attr val)
+  (db-check-now)
+  (db-sql "INSERT INTO props VALUES (" (sql-quote id)
+          ", " (sql-quote attr)
+          ", " (sql-quote val)
+          ", strftime('%s','now')"
+          ", 10675199166)"))
+
+(define (db-remove id attr val)
+  (db-check-now)
+  (db-sql "UPDATE props SET expires=strftime('%s','now')"
+          " WHERE id=" (sql-quote id)
+          " AND attr=" (sql-quote attr)
+          " AND val=" (sql-quote val)
+          " AND " (db-time-constraint)))
+
+(define (db-reset id attr)
+  (db-check-now)
+  (db-sql "UPDATE props SET expires=strftime('%s','now')"
+          " WHERE id=" (sql-quote id)
+          " AND attr=" (sql-quote attr)
+          " AND " (db-time-constraint)))
+
+(tm-define (db-reset-all id)
+  (db-check-now)
+  (db-sql "UPDATE props SET expires=strftime('%s','now')"
+          " WHERE id=" (sql-quote id)
+          " AND " (db-time-constraint)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic ressources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-insert id attr val)
-  (db-sql-now "INSERT INTO props VALUES (" (sql-quote id)
-              ", " (sql-quote attr)
-              ", " (sql-quote val)
-              ", strftime('%s','now')"
-              ", 10675199166)"))
-
-(tm-define (db-remove id attr val)
-  (db-sql-now "UPDATE props SET expires=strftime('%s','now')"
-              " WHERE id=" (sql-quote id)
-              " AND attr=" (sql-quote attr)
-              " AND val=" (sql-quote val)
-              " AND " (db-time-constraint)))
-
 (tm-define (db-set id attr vals)
   (db-reset id attr)
   (for-each (cut db-insert id attr <>) vals))
-
-(tm-define (db-reset id attr)
-  (db-sql-now "UPDATE props SET expires=strftime('%s','now')"
-              " WHERE id=" (sql-quote id)
-              " AND attr=" (sql-quote attr)
-              " AND " (db-time-constraint)))
-
-(tm-define (db-reset-all id)
-  (db-sql-now "UPDATE props SET expires=strftime('%s','now')"
-              " WHERE id=" (sql-quote id)
-              " AND " (db-time-constraint)))
 
 (tm-define (db-attributes id)
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
            " AND " (db-time-constraint)))
 
-(tm-define (db-get id attr)
+(tm-define (db-field-get id attr)
   (db-sql* "SELECT DISTINCT val FROM props WHERE id=" (sql-quote id)
            " AND attr=" (sql-quote attr)
            " AND " (db-time-constraint)))
 
-(tm-define (db-get-first id attr default)
-  (with l (db-get id attr)
+(tm-define (db-field-get-first id attr default)
+  (with l (db-field-get id attr)
     (if (null? l) default (car l))))
 
 (tm-define (db-create name type uid)
   (with id (create-unique-id)
-    (if (nnull? (db-get id "type"))
+    (if (nnull? (db-field-get id "type"))
         (db-create name type uid)
         (begin
           (db-insert id "name" name)
@@ -200,12 +207,12 @@
        (not (in? uid udone))
        (or (== id uid)
            (== id "all")
-           (with ids (append (db-get id attr)
-                             (db-get id "owner"))
+           (with ids (append (db-field-get id attr)
+                             (db-field-get id "owner"))
              (set! ids (list-remove-duplicates ids))
              (set! ids (list-difference ids (cons id rdone)))
              (db-allow-many? ids (cons id rdone) uid udone attr))
-           (with grs (db-get uid "member")
+           (with grs (db-field-get uid "member")
              (db-allow-groups? id rdone grs (cons uid udone) attr)))))
 
 (tm-define (db-allow? id uid attr)
@@ -222,7 +229,7 @@
 (tm-define (db-get-all id)
   (with t (make-ahash-table)
     (for (attr (db-attributes id))
-      (ahash-set! t attr (db-get id attr)))
+      (ahash-set! t attr (db-field-get id attr)))
     (ahash-table->list t)))
 
 (tm-define (db-set-all id props)
@@ -239,7 +246,7 @@
 
 (define (user-decode id)
   (if (== id "all") id
-      (db-get-first id "id" #f)))
+      (db-field-get-first id "id" #f)))
 
 (define (user-encode user)
   (if (== user "all") user

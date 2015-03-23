@@ -43,7 +43,7 @@
 
 (define (repository-get rid)
   (and rid
-       (with l (db-get rid "location")
+       (with l (db-field-get rid "location")
          (and (pair? l) (string-append repo "/" (car l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,8 +67,8 @@
   (safe-car (search-file (tmfs->list name))))
 
 (define (resource->file-name rid)
-  (let* ((dir (db-get-first rid "dir" #f))
-         (name (db-get-first rid "name" "?")))
+  (let* ((dir (db-field-get-first rid "dir" #f))
+         (name (db-field-get-first rid "name" "?")))
     (if dir (string-append (resource->file-name dir) "/" name) name)))
 
 (define (inheritance-reserved-attributes)
@@ -193,9 +193,9 @@
         (else (filter-read-access (cdr rids) uid))))
 
 (define (rewrite-dir-entry rid)
-  (let* ((short-name (db-get-first rid "name" "?"))
+  (let* ((short-name (db-field-get-first rid "name" "?"))
          (full-name (resource->file-name rid))
-         (dir? (== (db-get-first rid "type" #f) "dir"))
+         (dir? (== (db-field-get-first rid "type" #f) "dir"))
          (props (db-get-all-decoded rid)))
     (list short-name full-name dir? props)))
 
