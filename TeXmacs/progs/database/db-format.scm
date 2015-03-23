@@ -148,12 +148,6 @@
 ;; User interface for changing properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-get-all id)
-  (with t (make-ahash-table)
-    (for (attr (db-get-attributes id))
-      (ahash-set! t attr (db-get-field id attr)))
-    (ahash-table->list t)))
-
 (tm-define (db-set-all id props)
   (let* ((old (db-get-attributes id))
          (new (map car props))
@@ -166,13 +160,10 @@
                (or (!= (car prop) "owner") (nnull? (cdr prop))))
       (db-set-field id (car prop) (cdr prop)))))
 
-(define (first-leq? p1 p2)
-  (string<=? (car p1) (car p2)))
-
 (tm-define (db-get-all-decoded id)
-  (with raw-props (sort (db-get-all id) first-leq?)
+  (with raw-props (db-get-entry id)
     (db-decode-entry raw-props)))
 
-(tm-define (db-set-all-encoded id props*)
-  (with raw-props (db-encode-entry props*)
+(tm-define (db-set-all-encoded id props)
+  (with raw-props (db-encode-entry props)
     (db-set-all id raw-props)))
