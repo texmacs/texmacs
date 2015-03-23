@@ -124,42 +124,44 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (client-properties-list)
-  (aligned
-    (item (text "name:")
-      (input (if answer (assoc-set! current-properties "name" (list answer)))
-             "string" (assoc-ref current-properties "name") "30em"))
-    (for (attr (list-difference (map car current-properties)
-                                (client-reserved-attributes)))
-      (item (text (string-append attr ":"))
-        (horizontal
-          (for (val (assoc-ref current-properties attr))
-            ;;(=> (eval val)
-            ;;("Remove" (remove-value (car kv) val)))
-            (text val)
-            //))))))
+  (hlist
+    (text "name:") //
+    (input (if answer (assoc-set! current-properties "name" (list answer)))
+           "string" (assoc-ref current-properties "name") "30em") >>)
+  (for (attr (list-difference (map car current-properties)
+                              (client-reserved-attributes)))
+    ===
+    (hlist
+      (text (string-append attr ":")) //
+      (for (val (assoc-ref current-properties attr))
+        ;;(=> (eval val)
+        ;;("Remove" (remove-value (car kv) val)))
+        (text val)
+        //) >>)))
 
 (tm-widget (client-properties-editor quit)
   (padded
     (refresh client-properties-list auto)
     === --- ===
     (form "modify-props"
-      (aligned
-        (item (text "Attribute:")
-          (hlist
-            (form-input "attr" "string" (default-attributes) "1w")
-            ///
-            ("Add" ;((balloon (icon "tm_add.xpm") "Add attribute")
-             (add-attribute (form-ref "attr")))
-            ("Remove" ;(balloon (icon "tm_focus_delete.xpm") "Remove attribute")
-             (remove-attribute (form-ref "attr")))))
-        (item (text "Value:")
-          (hlist
-            (form-input "val" "string" '() "1w")
-            ///
-            ("Add" ;(balloon (icon "tm_add.xpm") "Add value")
-             (add-value (form-ref "attr") (form-ref "val")))
-            ("Remove" ;(balloon (icon "tm_focus_delete.xpm") "Remove value")
-             (remove-value (form-ref "attr") (form-ref "val")))))))
+      (explicit-buttons
+        (aligned
+          (item (text "Attribute:")
+            (hlist
+              (form-input "attr" "string" (default-attributes) "1w")
+              ///
+              ("Add" ;((balloon (icon "tm_add.xpm") "Add attribute")
+               (add-attribute (form-ref "attr"))) //
+               ("Remove" ;(balloon (icon "tm_focus_delete.xpm") "Remove attribute")
+                (remove-attribute (form-ref "attr"))) >>))
+          (item (text "Value:")
+            (hlist
+              (form-input "val" "string" '() "1w")
+              ///
+              ("Add" ;(balloon (icon "tm_add.xpm") "Add value")
+               (add-value (form-ref "attr") (form-ref "val"))) //
+               ("Remove" ;(balloon (icon "tm_focus_delete.xpm") "Remove value")
+                (remove-value (form-ref "attr") (form-ref "val"))) >>)))))
     === ===
     (bottom-buttons
       ("Cancel" (begin
