@@ -38,12 +38,12 @@
          (full (repository-add-into repo name))
          (tail (substring full (+ (string-length repo) 1)
                                (string-length full))))
-    (db-set rid "location" (list tail))
+    (db-set-field rid "location" (list tail))
     name))
 
 (define (repository-get rid)
   (and rid
-       (with l (db-field-get rid "location")
+       (with l (db-get-field rid "location")
          (and (pair? l) (string-append repo "/" (car l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,8 +67,8 @@
   (safe-car (search-file (tmfs->list name))))
 
 (define (resource->file-name rid)
-  (let* ((dir (db-field-get-first rid "dir" #f))
-         (name (db-field-get-first rid "name" "?")))
+  (let* ((dir (db-get-field-first rid "dir" #f))
+         (name (db-get-field-first rid "name" "?")))
     (if dir (string-append (resource->file-name dir) "/" name) name)))
 
 (define (inheritance-reserved-attributes)
@@ -82,7 +82,7 @@
   (let* ((props1 (db-get-all base-rid))
          (props2 (list-filter props1 inherit-property?)))
     (for (prop props2)
-      (db-set derived-rid (car prop) (cdr prop)))))
+      (db-set-field derived-rid (car prop) (cdr prop)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
@@ -107,7 +107,7 @@
                    (name (repository-add rid (url-suffix rname)))
                    (fname (repository-get rid)))
               (inherit-properties rid did)
-              (db-set rid "dir" (list did))
+              (db-set-field rid "dir" (list did))
               (string-save doc fname)
               (with props (db-get-all-decoded rid)
                 (server-return envelope (list doc props))))))))
@@ -182,7 +182,7 @@
           (else
             (let* ((rid (db-create (cAr l) "dir" uid)))
               (inherit-properties rid did)
-              (db-set rid "dir" (list did))
+              (db-set-field rid "dir" (list did))
               (with props (db-get-all-decoded rid)
                 (server-return envelope (list (list) props))))))))
 
@@ -193,9 +193,9 @@
         (else (filter-read-access (cdr rids) uid))))
 
 (define (rewrite-dir-entry rid)
-  (let* ((short-name (db-field-get-first rid "name" "?"))
+  (let* ((short-name (db-get-field-first rid "name" "?"))
          (full-name (resource->file-name rid))
-         (dir? (== (db-field-get-first rid "type" #f) "dir"))
+         (dir? (== (db-get-field-first rid "type" #f) "dir"))
          (props (db-get-all-decoded rid)))
     (list short-name full-name dir? props)))
 

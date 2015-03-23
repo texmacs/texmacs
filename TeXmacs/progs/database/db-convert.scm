@@ -93,7 +93,7 @@
             (display* "Existing entry " name "\n"))
           (begin
             ;;(display* "Save " id " -> " all "\n")
-            (db-set id "type" (list type))
+            (db-set-field id "type" (list type))
             (db-set-all-encoded id all))))))
 
 (tm-define (db-save-selected t pred?)

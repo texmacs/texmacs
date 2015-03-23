@@ -113,7 +113,12 @@
 ;; Basic ressources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-set id attr vals)
+(tm-define (db-get-field id attr)
+  (db-sql* "SELECT DISTINCT val FROM props WHERE id=" (sql-quote id)
+           " AND attr=" (sql-quote attr)
+           " AND " (db-time-constraint)))
+
+(tm-define (db-set-field id attr vals)
   (db-reset id attr)
   (for-each (cut db-insert id attr <>) vals))
 
@@ -121,18 +126,13 @@
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
            " AND " (db-time-constraint)))
 
-(tm-define (db-field-get id attr)
-  (db-sql* "SELECT DISTINCT val FROM props WHERE id=" (sql-quote id)
-           " AND attr=" (sql-quote attr)
-           " AND " (db-time-constraint)))
-
-(tm-define (db-field-get-first id attr default)
-  (with l (db-field-get id attr)
+(tm-define (db-get-field-first id attr default)
+  (with l (db-get-field id attr)
     (if (null? l) default (car l))))
 
 (tm-define (db-create name type uid)
   (with id (create-unique-id)
-    (if (nnull? (db-field-get id "type"))
+    (if (nnull? (db-get-field id "type"))
         (db-create name type uid)
         (begin
           (db-insert id "name" name)
@@ -181,11 +181,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-set-user-info uid id fullname email)
-  (db-set uid "id" (list id))
-  (db-set uid "full-name" (list fullname))
-  (db-set uid "type" (list "user"))
-  (db-set uid "owner" (list uid))
-  (db-set uid "email" (list email))
+  (db-set-field uid "id" (list id))
+  (db-set-field uid "full-name" (list fullname))
+  (db-set-field uid "type" (list "user"))
+  (db-set-field uid "owner" (list uid))
+  (db-set-field uid "email" (list email))
   (with home (string-append "~" id)
     (when (null? (db-search (list (list "name" home)
                                         (list "type" "dir"))))
@@ -207,12 +207,12 @@
        (not (in? uid udone))
        (or (== id uid)
            (== id "all")
-           (with ids (append (db-field-get id attr)
-                             (db-field-get id "owner"))
+           (with ids (append (db-get-field id attr)
+                             (db-get-field id "owner"))
              (set! ids (list-remove-duplicates ids))
              (set! ids (list-difference ids (cons id rdone)))
              (db-allow-many? ids (cons id rdone) uid udone attr))
-           (with grs (db-field-get uid "member")
+           (with grs (db-get-field uid "member")
              (db-allow-groups? id rdone grs (cons uid udone) attr)))))
 
 (tm-define (db-allow? id uid attr)
@@ -229,7 +229,7 @@
 (tm-define (db-get-all id)
   (with t (make-ahash-table)
     (for (attr (db-attributes id))
-      (ahash-set! t attr (db-field-get id attr)))
+      (ahash-set! t attr (db-get-field id attr)))
     (ahash-table->list t)))
 
 (tm-define (db-set-all id props)
@@ -242,11 +242,11 @@
     (when (and (pair? prop) (list? (cdr prop))
                (nin? (car prop) (db-reserved-attributes))
                (or (!= (car prop) "owner") (nnull? (cdr prop))))
-      (db-set id (car prop) (cdr prop)))))
+      (db-set-field id (car prop) (cdr prop)))))
 
 (define (user-decode id)
   (if (== id "all") id
-      (db-field-get-first id "id" #f)))
+      (db-get-field-first id "id" #f)))
 
 (define (user-encode user)
   (if (== user "all") user
