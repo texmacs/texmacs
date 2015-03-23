@@ -77,7 +77,7 @@
     (and-with db (bib-cache-db f)
       (system-remove db)
       (with-database bib-master
-        (db-reset-all id)))))
+        (db-set-entry id (list))))))
 
 (define (bib-cache-create f)
   (let* ((bib-doc (string-load f))
@@ -90,9 +90,10 @@
         (bib-save body))
       (when (url-exists? db)
         (with-database bib-master
-          (db-insert id "source" (url->system f))
-          (db-insert id "target" (url->system db))
-          (db-insert id "stamp" (number->string (url-last-modified f))))))))
+          (with stamp (number->string (url-last-modified f))
+            (db-set-field id "source" (list (url->system f)))
+            (db-set-field id "target" (list (url->system db)))
+            (db-set-field id "stamp" (list stamp))))))))
 
 (tm-define (bib-cache-bibtex f)
   (when (not (bib-cache-up-to-date? f))

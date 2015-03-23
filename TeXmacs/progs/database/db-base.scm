@@ -80,7 +80,7 @@
 ;; Basic private interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-insert id attr val)
+(define (db-insert-value id attr val)
   (db-check-now)
   (db-sql "INSERT INTO props VALUES (" (sql-quote id)
           ", " (sql-quote attr)
@@ -88,7 +88,7 @@
           ", strftime('%s','now')"
           ", 10675199166)"))
 
-(define (db-remove id attr val)
+(define (db-remove-value id attr val)
   (db-check-now)
   (db-sql "UPDATE props SET expires=strftime('%s','now')"
           " WHERE id=" (sql-quote id)
@@ -96,14 +96,14 @@
           " AND val=" (sql-quote val)
           " AND " (db-time-constraint)))
 
-(define (db-reset id attr)
+(define (db-remove-field id attr)
   (db-check-now)
   (db-sql "UPDATE props SET expires=strftime('%s','now')"
           " WHERE id=" (sql-quote id)
           " AND attr=" (sql-quote attr)
           " AND " (db-time-constraint)))
 
-(tm-define (db-reset-all id)
+(define (db-remove-entry id)
   (db-check-now)
   (db-sql "UPDATE props SET expires=strftime('%s','now')"
           " WHERE id=" (sql-quote id)
@@ -125,8 +125,8 @@
 (tm-define (db-set-field id attr vals)
   (with old-vals (db-get-field id attr)
     (when (!= vals old-vals)
-      (db-reset id attr)
-      (for-each (cut db-insert id attr <>) vals))))
+      (db-remove-field id attr)
+      (for-each (cut db-insert-value id attr <>) vals))))
 
 (tm-define (db-get-attributes id)
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
@@ -150,7 +150,7 @@
          (new-attrs (map car l))
          (rem-attrs (list-difference old-attrs new-attrs)))
     (for (attr rem-attrs)
-      (db-reset id attr))
+      (db-remove-field id attr))
     (for (attr new-attrs)
       (db-set-field id attr (assoc-ref l attr)))))
 
@@ -166,9 +166,9 @@
     (if (nnull? (db-get-field id "type"))
         (db-create name type uid)
         (begin
-          (db-insert id "name" name)
-          (db-insert id "type" type)
-          (db-insert id "owner" uid)
+          (db-insert-value id "name" name)
+          (db-insert-value id "type" type)
+          (db-insert-value id "owner" uid)
           id))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -268,7 +268,7 @@
          (new (map car props))
          (del (list-difference old (append new (db-reserved-attributes)))))
     (for (attr del)
-      (db-reset id attr)))
+      (db-remove-field id attr)))
   (for (prop props)
     (when (and (pair? prop) (list? (cdr prop))
                (nin? (car prop) (db-reserved-attributes))
