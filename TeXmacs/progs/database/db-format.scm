@@ -16,11 +16,122 @@
   (:use (database db-base)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User interface for changing properties
+;; Important tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table db-kind-table
+  ;; For various kinds of databases (bibliographies, address books, etc.),
+  ;; specify the list of admissible entry types.
+  )
+
+(smart-table db-format-table
+  ;; For each entry type, specify the mandatory, alternative and
+  ;; optional fields.
+  )
 
 (tm-define (db-reserved-attributes)
   (list "type" "location" "dir" "date" "id"))
+
+(smart-table db-encoding-table
+  ;; For each entry+field type, specify the encoding being used for
+  ;; the field value.  This allows for instance to use TeXmacs snippets
+  ;; instead of plain string values.
+  ((* "owner") :users)
+  ((* "readable") :users)
+  ((* "writable") :users))
+
+(smart-table db-encoder-table
+  ;; The routine being used for encoding a field value as a string
+  )
+
+(smart-table db-decoder-table
+  ;; The routine being used for decoding a field value from a string
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Encoding and decoding of lists of users
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table db-encoder-table
+  (:users ,db-encode-users))
+
+(smart-table db-decoder-table
+  (:users ,db-decode-users))
+
+(define (db-encode-user user)
+  (if (== user "all") user
+      (with l (db-search (list (list "type" "user") (list "id" user)))
+        (and (pair? l) (car l)))))
+
+(define (db-encode-users users)
+  (list-filter (map db-encode-user users) identity))
+
+(define (db-decode-user id)
+  (if (== id "all") id
+      (db-get-field-first id "id" #f)))
+
+(define (db-decode-users ids)
+  (list-filter (map db-decode-user ids) identity))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Encoding and decoding of TeXmacs snippets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table db-encoder-table
+  (:texmacs ,db-encode-texmacs))
+
+(smart-table db-decoder-table
+  (:texmacs ,db-decode-texmacs))
+
+(define (db-encode-texmacs vals)
+  (map (cut convert <> "texmacs-stree" "texmacs-snippet") vals))
+
+(define (db-decode-texmacs-one val)
+  (with r (convert val "texmacs-snippet" "texmacs-stree")
+    (if (tm-func? r 'document 1) (tm-ref r 0) r)))
+
+(define (db-decode-texmacs vals)
+  (map db-decode-texmacs-one vals))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generic encoding and decoding of field values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (db-encode-value type attr val)
+  ;; NOTE: patterns (* attr) always take precedence over (type *)
+  (cond ((smart-ref db-encoding-table (list type attr)) =>
+         (lambda (enc) ((smart-ref db-encoder-table enc) val)))
+        ((smart-ref db-encoding-table (list '* attr)) =>
+         (lambda (enc) ((smart-ref db-encoder-table enc) val)))
+        ((smart-ref db-encoding-table (list type '*)) =>
+         (lambda (enc) ((smart-ref db-encoder-table enc) val)))
+        (else val)))
+
+(define (db-decode-value type attr val)
+  ;; NOTE: patterns (* attr) always take precedence over (type *)
+  (cond ((smart-ref db-encoding-table (list type attr)) =>
+         (lambda (enc) ((smart-ref db-decoder-table enc) val)))
+        ((smart-ref db-encoding-table (list '* attr)) =>
+         (lambda (enc) ((smart-ref db-decoder-table enc) val)))
+        ((smart-ref db-encoding-table (list type '*)) =>
+         (lambda (enc) ((smart-ref db-decoder-table enc) val)))
+        (else val)))
+
+(define (db-encode-entry l)
+  (with type (assoc-ref l "type")
+    (set! type (and (pair? type) (car type)))
+    (map (lambda (f) (cons (car f) (db-encode-value type (car f) (cdr f))))
+         l)))
+
+(define (db-decode-entry l)
+  (with type (assoc-ref l "type")
+    (set! type (and (pair? type) (car type)))
+    (map (lambda (f) (cons (car f) (db-decode-value type (car f) (cdr f))))
+         l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface for changing properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-get-all id)
   (with t (make-ahash-table)
@@ -82,9 +193,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encoding and decoding of fields as a function of type and property
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(smart-table db-kind-table)
-(smart-table db-format-table)
 
 (tm-define (db-encode-field type var val)
   ;;(display* "  Encode " val "\n")
