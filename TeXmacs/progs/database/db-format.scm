@@ -52,12 +52,6 @@
 ;; Encoding and decoding of lists of users
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(smart-table db-encoder-table
-  (:users ,db-encode-users))
-
-(smart-table db-decoder-table
-  (:users ,db-decode-users))
-
 (define (db-encode-user user)
   (if (== user "all") user
       (with l (db-search (list (list "type" "user") (list "id" user)))
@@ -73,15 +67,15 @@
 (define (db-decode-users ids)
   (list-filter (map db-decode-user ids) identity))
 
+(smart-table db-encoder-table
+  (,:users ,db-encode-users))
+
+(smart-table db-decoder-table
+  (,:users ,db-decode-users))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encoding and decoding of TeXmacs snippets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(smart-table db-encoder-table
-  (:texmacs ,db-encode-texmacs))
-
-(smart-table db-decoder-table
-  (:texmacs ,db-decode-texmacs))
 
 (define (db-encode-texmacs vals)
   (map (cut convert <> "texmacs-stree" "texmacs-snippet") vals))
@@ -93,37 +87,49 @@
 (define (db-decode-texmacs vals)
   (map db-decode-texmacs-one vals))
 
+(smart-table db-encoder-table
+  (,:texmacs ,db-encode-texmacs))
+
+(smart-table db-decoder-table
+  (,:texmacs ,db-decode-texmacs))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generic encoding and decoding of field values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (get-encoder enc)
+  (or (smart-ref db-encoder-table enc) identity))
+
+(define (get-decoder enc)
+  (or (smart-ref db-decoder-table enc) identity))
+
 (define (db-encode-value type attr val)
   ;; NOTE: patterns (* attr) always take precedence over (type *)
   (cond ((smart-ref db-encoding-table (list type attr)) =>
-         (lambda (enc) ((smart-ref db-encoder-table enc) val)))
+         (lambda (enc) ((get-encoder enc) val)))
         ((smart-ref db-encoding-table (list '* attr)) =>
-         (lambda (enc) ((smart-ref db-encoder-table enc) val)))
+         (lambda (enc) ((get-encoder enc) val)))
         ((smart-ref db-encoding-table (list type '*)) =>
-         (lambda (enc) ((smart-ref db-encoder-table enc) val)))
+         (lambda (enc) ((get-encoder enc) val)))
         (else val)))
 
 (define (db-decode-value type attr val)
   ;; NOTE: patterns (* attr) always take precedence over (type *)
   (cond ((smart-ref db-encoding-table (list type attr)) =>
-         (lambda (enc) ((smart-ref db-decoder-table enc) val)))
+         (lambda (enc) ((get-decoder enc) val)))
         ((smart-ref db-encoding-table (list '* attr)) =>
-         (lambda (enc) ((smart-ref db-decoder-table enc) val)))
+         (lambda (enc) ((get-decoder enc) val)))
         ((smart-ref db-encoding-table (list type '*)) =>
-         (lambda (enc) ((smart-ref db-decoder-table enc) val)))
+         (lambda (enc) ((get-decoder enc) val)))
         (else val)))
 
-(define (db-encode-entry l)
+(tm-define (db-encode-entry l)
   (with type (assoc-ref l "type")
     (set! type (and (pair? type) (car type)))
     (map (lambda (f) (cons (car f) (db-encode-value type (car f) (cdr f))))
          l)))
 
-(define (db-decode-entry l)
+(tm-define (db-decode-entry l)
   (with type (assoc-ref l "type")
     (set! type (and (pair? type) (car type)))
     (map (lambda (f) (cons (car f) (db-decode-value type (car f) (cdr f))))
