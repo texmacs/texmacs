@@ -148,22 +148,20 @@
 ;; User interface for changing properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-set-all id props)
-  (let* ((old (db-get-attributes id))
-         (new (map car props))
-         (del (list-difference old (append new (db-reserved-attributes)))))
-    (for (attr del)
-      (db-remove-field id attr)))
-  (for (prop props)
-    (when (and (pair? prop) (list? (cdr prop))
-               (nin? (car prop) (db-reserved-attributes))
-               (or (!= (car prop) "owner") (nnull? (cdr prop))))
-      (db-set-field id (car prop) (cdr prop)))))
+(define (db-preserve-reserved id props)
+  (with old-props (db-get-all-decoded id)
+    (for (attr (db-reserved-attributes))
+      (with old-val (assoc-ref old-props attr)
+        (if old-val
+            (set! props (assoc-set! props attr old-val))
+            (set! props (assoc-remove! props attr))))))
+  props)
 
 (tm-define (db-get-all-decoded id)
   (with raw-props (db-get-entry id)
     (db-decode-entry raw-props)))
 
 (tm-define (db-set-all-encoded id props)
+  (set! props (db-preserve-reserved id props))
   (with raw-props (db-encode-entry props)
-    (db-set-all id raw-props)))
+    (db-set-entry id raw-props)))
