@@ -40,7 +40,8 @@
 (tm-define (db-sql* . l)
   (with r (apply db-sql l)
     (with f (lambda (x) (and (pair? x) (car x)))
-      (map f (if (null? r) r (cdr r))))))
+      ;; NOTE: sqlite3 delivers results in reverse ordering
+      (reverse (map f (if (null? r) r (cdr r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time constraints
@@ -137,6 +138,7 @@
                   " WHERE id=" (sql-quote id)
                   " AND " (db-time-constraint))
     (if (nnull? r) (set! r (cdr r)))
+    (set! r (reverse r)) ;; NOTE: sqlite3 delivers results in reverse ordering
     (let* ((t (make-ahash-table))
            (attrs (list-remove-duplicates (map car r))))
       (for (line r)
