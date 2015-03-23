@@ -128,7 +128,7 @@
       (db-reset id attr)
       (for-each (cut db-insert id attr <>) vals))))
 
-(tm-define (db-attributes id)
+(tm-define (db-get-attributes id)
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
            " AND " (db-time-constraint)))
 
@@ -230,12 +230,12 @@
 
 (tm-define (db-get-all id)
   (with t (make-ahash-table)
-    (for (attr (db-attributes id))
+    (for (attr (db-get-attributes id))
       (ahash-set! t attr (db-get-field id attr)))
     (ahash-table->list t)))
 
 (tm-define (db-set-all id props)
-  (let* ((old (db-attributes id))
+  (let* ((old (db-get-attributes id))
          (new (map car props))
          (del (list-difference old (append new (db-reserved-attributes)))))
     (for (attr del)
