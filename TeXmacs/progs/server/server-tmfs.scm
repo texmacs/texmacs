@@ -79,10 +79,11 @@
   (nin? (car x) (inheritance-reserved-attributes)))
 
 (define (inherit-properties derived-rid base-rid)
-  (let* ((props1 (db-get-entry base-rid))
-         (props2 (list-filter props1 inherit-property?)))
-    (for (prop props2)
-      (db-set-field derived-rid (car prop) (cdr prop)))))
+  (with-transcode #f
+    (let* ((props1 (db-get-entry base-rid))
+           (props2 (list-filter props1 inherit-property?)))
+      (for (prop props2)
+        (db-set-field derived-rid (car prop) (cdr prop))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations

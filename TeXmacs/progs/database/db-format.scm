@@ -132,23 +132,27 @@
          (lambda (enc) ((get-decoder enc) val)))
         (else val)))
 
+(tm-define (db-encode-field type f)
+  (cons (car f) (db-encode-value type (car f) (cdr f))))
+
+(tm-define (db-decode-field type f)
+  (cons (car f) (db-decode-value type (car f) (cdr f))))
+
 (tm-define (db-encode-entry l)
   (with type (assoc-ref l "type")
     (set! type (and (pair? type) (car type)))
-    (map (lambda (f) (cons (car f) (db-encode-value type (car f) (cdr f))))
-         l)))
+    (map (cut db-encode-field type <>) l)))
 
 (tm-define (db-decode-entry l)
   (with type (assoc-ref l "type")
     (set! type (and (pair? type) (car type)))
-    (map (lambda (f) (cons (car f) (db-decode-value type (car f) (cdr f))))
-         l)))
+    (map (cut db-decode-field type <>) l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrap basic interface to databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define db-preserve? #t)
+(tm-define db-preserve? #f)
 
 (tm-define-macro (with-transcode on? . body)
   `(with-global db-preserve? (not ,on?) ,@body))
@@ -158,14 +162,14 @@
       (former id attr)
       (with-transcode #f
         (let* ((val (former id attr))
-               (type (get-field id "type")))
+               (type (db-get-field id "type")))
           (db-decode-value type attr val)))))
 
 (tm-define (db-set-field id attr val)
   (if db-preserve?
       (former id attr val)
       (with-transcode #f
-        (with type (get-field id "type")
+        (with type (db-get-field id "type")
           (former id attr (db-encode-value type attr val))))))
 
 (tm-define (db-get-entry id)
@@ -196,7 +200,7 @@
       (with-transcode #f
         (let* ((types (assoc-ref l "type"))
                (type (and (pair? types) (car types)))
-               (enc (lambda (p) (db-encode-value type (car p) (cdr p)))))
+               (enc (cut db-encode-field type <>)))
           (former (map enc l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -204,10 +208,57 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-get-all-decoded id)
-  (with raw-props (db-get-entry id)
-    (db-decode-entry raw-props)))
+  (with-transcode #f
+    (with raw-props (db-get-entry id)
+      (db-decode-entry raw-props))))
 
 (tm-define (db-set-all-encoded id props)
-  (set! props (db-preserve-reserved id props))
-  (with raw-props (db-encode-entry props)
-    (db-set-entry id raw-props)))
+  (with-transcode #f
+    (set! props (db-preserve-reserved id props))
+    (with raw-props (db-encode-entry props)
+      (db-set-entry id raw-props))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Access rights
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-set-user-info uid id fullname email)
+  (with-transcode #f
+    (db-set-field uid "id" (list id))
+    (db-set-field uid "full-name" (list fullname))
+    (db-set-field uid "type" (list "user"))
+    (db-set-field uid "owner" (list uid))
+    (db-set-field uid "email" (list email))
+    (with home (string-append "~" id)
+      (when (null? (db-search (list (list "name" home)
+                                    (list "type" "dir"))))
+        (db-create home "dir" uid)))))
+
+(define (db-allow-many? ids rdone uid udone attr)
+  (and (nnull? ids)
+       (or (db-allow-one? (car ids) rdone uid udone attr)
+           (db-allow-many? (cdr ids) rdone uid udone attr))))
+
+(define (db-allow-groups? id rdone uids udone attr)
+  (and (nnull? uids)
+       (or (db-allow-one? id rdone (car uids) udone attr)
+           (db-allow-groups? id rdone (cdr uids) udone attr))))
+
+(define (db-allow-one? id rdone uid udone attr)
+  ;;(display* "Allow one " id ", " uid ", " attr "\n")
+  (and (not (in? id rdone))
+       (not (in? uid udone))
+       (or (== id uid)
+           (== id "all")
+           (with ids (append (db-get-field id attr)
+                             (db-get-field id "owner"))
+             (set! ids (list-remove-duplicates ids))
+             (set! ids (list-difference ids (cons id rdone)))
+             (db-allow-many? ids (cons id rdone) uid udone attr))
+           (with grs (db-get-field uid "member")
+             (db-allow-groups? id rdone grs (cons uid udone) attr)))))
+
+(tm-define (db-allow? id uid attr)
+  (with-transcode #f
+    ;;(display* "Allow " id ", " uid ", " attr "\n")
+    (db-allow-one? id (list) uid (list) attr)))
