@@ -112,31 +112,31 @@
 (define (get-decoder enc)
   (or (smart-ref db-decoder-table enc) identity))
 
-(define (db-encode-value type attr val)
+(define (db-encode-values type attr vals)
   ;; NOTE: patterns (* attr) always take precedence over (type *)
   (cond ((smart-ref db-encoding-table (list type attr)) =>
-         (lambda (enc) ((get-encoder enc) val)))
+         (lambda (enc) ((get-encoder enc) vals)))
         ((smart-ref db-encoding-table (list '* attr)) =>
-         (lambda (enc) ((get-encoder enc) val)))
+         (lambda (enc) ((get-encoder enc) vals)))
         ((smart-ref db-encoding-table (list type '*)) =>
-         (lambda (enc) ((get-encoder enc) val)))
-        (else val)))
+         (lambda (enc) ((get-encoder enc) vals)))
+        (else vals)))
 
-(define (db-decode-value type attr val)
+(define (db-decode-values type attr vals)
   ;; NOTE: patterns (* attr) always take precedence over (type *)
   (cond ((smart-ref db-encoding-table (list type attr)) =>
-         (lambda (enc) ((get-decoder enc) val)))
+         (lambda (enc) ((get-decoder enc) vals)))
         ((smart-ref db-encoding-table (list '* attr)) =>
-         (lambda (enc) ((get-decoder enc) val)))
+         (lambda (enc) ((get-decoder enc) vals)))
         ((smart-ref db-encoding-table (list type '*)) =>
-         (lambda (enc) ((get-decoder enc) val)))
-        (else val)))
+         (lambda (enc) ((get-decoder enc) vals)))
+        (else vals)))
 
 (tm-define (db-encode-field type f)
-  (cons (car f) (db-encode-value type (car f) (cdr f))))
+  (cons (car f) (db-encode-values type (car f) (cdr f))))
 
 (tm-define (db-decode-field type f)
-  (cons (car f) (db-decode-value type (car f) (cdr f))))
+  (cons (car f) (db-decode-values type (car f) (cdr f))))
 
 (tm-define (db-encode-entry l)
   (with type (assoc-ref l "type")
@@ -161,16 +161,16 @@
   (if db-preserve?
       (former id attr)
       (with-transcode #f
-        (let* ((val (former id attr))
+        (let* ((vals (former id attr))
                (type (db-get-field id "type")))
-          (db-decode-value type attr val)))))
+          (db-decode-values type attr vals)))))
 
-(tm-define (db-set-field id attr val)
+(tm-define (db-set-field id attr vals)
   (if db-preserve?
-      (former id attr val)
+      (former id attr vals)
       (with-transcode #f
         (with type (db-get-field id "type")
-          (former id attr (db-encode-value type attr val))))))
+          (former id attr (db-encode-values type attr vals))))))
 
 (tm-define (db-get-entry id)
   (if db-preserve?
@@ -181,9 +181,9 @@
 (define (db-preserve-reserved id props)
   (with old-props (db-get-entry id)
     (for (attr (db-reserved-attributes))
-      (with old-val (assoc-ref old-props attr)
-        (if old-val
-            (set! props (assoc-set! props attr old-val))
+      (with old-vals (assoc-ref old-props attr)
+        (if old-vals
+            (set! props (assoc-set! props attr old-vals))
             (set! props (assoc-remove! props attr))))))
   props)
 
@@ -195,13 +195,18 @@
         (with-transcode #f
           (former id (db-encode-entry l))))))
 
+(define (db-encode-constraint type c)
+  (with (attr . vals) c
+    (with enc (lambda (val) (car (db-encode-values type attr (list val))))
+      (cons attr (map enc vals)))))
+
 (tm-define (db-search l)
   (if db-preserve?
       (former l)
       (with-transcode #f
         (let* ((types (assoc-ref l "type"))
                (type (and (pair? types) (car types)))
-               (enc (cut db-encode-field type <>)))
+               (enc (cut db-encode-constraint type <>)))
           (former (map enc l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
