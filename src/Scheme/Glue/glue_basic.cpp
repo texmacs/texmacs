@@ -5332,6 +5332,49 @@ tmg_vernac_document_2texmacs (tmscm arg1) {
 }
 
 tmscm
+tmg_compute_index_string (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "compute-index-string");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "compute-index-string");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= compute_index (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
+tmg_compute_index_tree (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compute-index-tree");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "compute-index-tree");
+
+  content in1= tmscm_to_content (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= compute_index (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
+tmg_compute_index_url (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "compute-index-url");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= compute_index (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
 tmg_url_2url (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url->url");
 
@@ -8888,6 +8931,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);
   tmscm_install_procedure ("vernac->texmacs",  tmg_vernac_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("vernac-document->texmacs",  tmg_vernac_document_2texmacs, 1, 0, 0);
+  tmscm_install_procedure ("compute-index-string",  tmg_compute_index_string, 2, 0, 0);
+  tmscm_install_procedure ("compute-index-tree",  tmg_compute_index_tree, 2, 0, 0);
+  tmscm_install_procedure ("compute-index-url",  tmg_compute_index_url, 1, 0, 0);
   tmscm_install_procedure ("url->url",  tmg_url_2url, 1, 0, 0);
   tmscm_install_procedure ("root->url",  tmg_root_2url, 1, 0, 0);
   tmscm_install_procedure ("string->url",  tmg_string_2url, 1, 0, 0);

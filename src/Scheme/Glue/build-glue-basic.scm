@@ -453,6 +453,9 @@
   (upgrade-mathml upgrade_mathml (tree content))
   (vernac->texmacs vernac_to_tree (tree string))
   (vernac-document->texmacs vernac_document_to_tree (tree string))
+  (compute-index-string compute_index (scheme_tree string string))
+  (compute-index-tree compute_index (scheme_tree content string))
+  (compute-index-url compute_index (scheme_tree url))
 
   ;; routines for urls
   (url->url url (url url))

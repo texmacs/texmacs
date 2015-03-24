@@ -28,6 +28,9 @@ string format_to_suffix (string format);
 string get_format (string s, string suffix);
 tree   generic_to_tree (string s, string format);
 string tree_to_generic (tree doc, string format);
+scheme_tree compute_index (string s, string fm);
+scheme_tree compute_index (tree t, string fm);
+scheme_tree compute_index (url u);
 
 /*** Texmacs ***/
 tree   texmacs_to_tree (string s);
