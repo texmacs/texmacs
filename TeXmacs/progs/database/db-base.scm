@@ -182,13 +182,15 @@
     (if (null? (cdr l)) s
         (string-append s " JOIN " (db-search-join (cdr l) (+ i 1))))))
 
+(define (db-search-value pi val)
+  (string-append pi ".val=" (sql-quote val)))
+
 (define (db-search-on l i)
   (with (attr val) (car l)
     (let* ((pi (string-append "p" (number->string i)))
            (sid (string-append pi ".id=p1.id"))
            (sattr (string-append pi ".attr=" (sql-quote attr)))
-           (sval (string-append pi ".val=" (sql-quote val)))
-           (spair (string-append sattr " AND " sval))
+           (spair (string-append sattr " AND " (db-search-value pi val)))
            (sall (string-append spair " AND " (db-time-constraint-on pi)))
            (q (if (= i 1) sall (string-append sid " AND " sall))))
       (if (null? (cdr l)) q

@@ -145,8 +145,34 @@
          l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User interface for changing properties
+;; Wrap basic interface to databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define db-preserve? #t)
+
+(tm-define-macro (with-transcode on? . body)
+  `(with-global db-preserve? (not ,on?) ,@body))
+
+(tm-define (db-get-field id attr)
+  (if db-preserve?
+      (former id attr)
+      (with-transcode #f
+        (let* ((val (former id attr))
+               (type (get-field id "type")))
+          (db-decode-value type attr val)))))
+
+(tm-define (db-set-field id attr val)
+  (if db-preserve?
+      (former id attr val)
+      (with-transcode #f
+        (with type (get-field id "type")
+          (former id attr (db-encode-value type attr val))))))
+
+(tm-define (db-get-entry id)
+  (if db-preserve?
+      (former id)
+      (with-transcode #f
+        (db-decode-entry (former id)))))
 
 (define (db-preserve-reserved id props)
   (with old-props (db-get-all-decoded id)
@@ -156,6 +182,26 @@
             (set! props (assoc-set! props attr old-val))
             (set! props (assoc-remove! props attr))))))
   props)
+
+(tm-define (db-set-entry id l)
+  (if db-preserve?
+      (former id l)
+      (with-transcode #f
+        (set! l (db-preserve-reserved id l))
+        (former id (db-encode-entry l)))))
+
+(tm-define (db-search l)
+  (if db-preserve?
+      (former l)
+      (with-transcode #f
+        (let* ((types (assoc-ref l "type"))
+               (type (and (pair? types) (car types)))
+               (enc (lambda (p) (db-encode-value type (car p) (cdr p)))))
+          (former (map enc l))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-get-all-decoded id)
   (with raw-props (db-get-entry id)
