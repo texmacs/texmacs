@@ -38,11 +38,33 @@
   values. Strictly speaking, the creation and expiration dates apply to
   individual values in the lists of values.
 
+  <paragraph|Macros for context specification>
+
+  <\explain>
+    <scm|(with-database db . body)><explain-synopsis|specify a database>
+  <|explain>
+    Execute <scm|body> with <scm|db> as the current database. Here <scm|db>
+    should be an URL with extension <verbatim|.tmdb>. The database <scm|db>
+    will be used by all routines of the database API called from within
+    <scm|body>.
+  </explain>
+
+  <\explain>
+    <scm|(with-time t . body)><explain-synopsis|specify a time>
+  <|explain>
+    Execute <scm|body> with <scm|t> as the current time. All database queries
+    inside <scm|body> become relative to the time<nbsp><scm|t>, which allows
+    for the inspection of past states of the database. The parameter <scm|t>
+    is an integer representing a UNIX time stamp, or <scm|:now>. Any
+    modifications of the database require <scm|:now> to be specified as the
+    current time.
+  </explain>
+
   <paragraph|Main routines of the database API>
 
   <\explain>
-    <scm|(db-set-field id attr vals)><explain-synopsis|specify values for a
-    given field>
+    <scm|(db-set-field id attr vals)><explain-synopsis|set values for a given
+    field>
   <|explain>
     For the field with atrribute <scm|attr> in the entry with identifier
     <scm|id>, set the values to <scm|vals>.
@@ -63,7 +85,7 @@
   </explain>
 
   <\explain>
-    <scm|(db-set-entry id l)><explain-synopsis|specify a complete entry>
+    <scm|(db-set-entry id l)><explain-synopsis|fill out a complete entry>
   <|explain>
     For the entry with identifier <scm|id>, set the list of fields to
     <scm|l>.
@@ -80,6 +102,22 @@
   <|explain>
     For a list of fields <scm|l>, return the list of identifiers of entries
     which contain each of the fields in <math|<scm|l>>.
+  </explain>
+
+  <paragraph|Other useful routines>
+
+  <\explain>
+    <scm|(db-get-field-first id attr)><explain-synopsis|get first value for a
+    given field>
+  <|explain>
+    Get the first value in <scm|(db-get-field id attr)> or <scm|#f>.
+  </explain>
+
+  <\explain>
+    <scm|(db-create l)><explain-synopsis|create a new entry>
+  <|explain>
+    Create a new entry in the current database with fields <scm|l>, and
+    return the identifier of the newly created entry.
   </explain>
 
   <tmdoc-copyright|2015|Joris van der Hoeven>
