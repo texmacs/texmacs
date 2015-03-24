@@ -41,10 +41,7 @@
   ((* "dir") :identity)
   ((* "date") :identity)
   ((* "pseudo") :identity)
-  ((* "id") :identity)
-  ((* "owner") :users)
-  ((* "readable") :users)
-  ((* "writable") :users))
+  ((* "id") :identity))
 
 (smart-table db-encoder-table
   ;; The routine being used for encoding a field value as a string
@@ -53,33 +50,6 @@
 (smart-table db-decoder-table
   ;; The routine being used for decoding a field value from a string
   (,:identity ,identity))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Encoding and decoding of lists of users
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (db-encode-user user)
-  (if (== user "all") user
-      (with l (db-search (list (list "type" "user") (list "pseudo" user)))
-        (and (pair? l) (car l)))))
-
-(define (db-encode-users users)
-  ;;(display* "Encode users " users "\n")
-  (list-filter (map db-encode-user users) identity))
-
-(define (db-decode-user id)
-  (if (== id "all") id
-      (db-get-field-first id "pseudo" #f)))
-
-(define (db-decode-users ids)
-  ;;(display* "Decode users " ids "\n")
-  (list-filter (map db-decode-user ids) identity))
-
-(smart-table db-encoder-table
-  (,:users ,db-encode-users))
-
-(smart-table db-decoder-table
-  (,:users ,db-decode-users))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encoding and decoding of TeXmacs snippets
@@ -209,48 +179,3 @@
                (type (and (pair? types) (car types)))
                (enc (cut db-encode-constraint type <>)))
           (former (map enc l))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Access rights
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (db-set-user-info uid pseudo name email)
-  (with-transcode #f
-    (db-set-field uid "pseudo" (list pseudo))
-    (db-set-field uid "name" (list name))
-    (db-set-field uid "type" (list "user"))
-    (db-set-field uid "owner" (list uid))
-    (db-set-field uid "email" (list email))
-    (with home (string-append "~" pseudo)
-      (when (null? (db-search (list (list "name" home)
-                                    (list "type" "dir"))))
-        (db-create home "dir" uid)))))
-
-(define (db-allow-many? ids rdone uid udone attr)
-  (and (nnull? ids)
-       (or (db-allow-one? (car ids) rdone uid udone attr)
-           (db-allow-many? (cdr ids) rdone uid udone attr))))
-
-(define (db-allow-groups? id rdone uids udone attr)
-  (and (nnull? uids)
-       (or (db-allow-one? id rdone (car uids) udone attr)
-           (db-allow-groups? id rdone (cdr uids) udone attr))))
-
-(define (db-allow-one? id rdone uid udone attr)
-  ;;(display* "Allow one " id ", " uid ", " attr "\n")
-  (and (not (in? id rdone))
-       (not (in? uid udone))
-       (or (== id uid)
-           (== id "all")
-           (with ids (append (db-get-field id attr)
-                             (db-get-field id "owner"))
-             (set! ids (list-remove-duplicates ids))
-             (set! ids (list-difference ids (cons id rdone)))
-             (db-allow-many? ids (cons id rdone) uid udone attr))
-           (with grs (db-get-field uid "member")
-             (db-allow-groups? id rdone grs (cons uid udone) attr)))))
-
-(tm-define (db-allow? id uid attr)
-  (with-transcode #f
-    ;;(display* "Allow " id ", " uid ", " attr "\n")
-    (db-allow-one? id (list) uid (list) attr)))
