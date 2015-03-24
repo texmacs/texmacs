@@ -42,7 +42,7 @@
 (define (db-encode-user user)
   (if (== user "all") user
       (with l (db-search (list (list "type" "user") (list "pseudo" user)))
-        (and (pair? l) (car l)))))
+        (if (pair? l) (car l) "all"))))
 
 (define (db-encode-users users)
   ;;(display* "Encode users " users "\n")
@@ -50,7 +50,7 @@
 
 (define (db-decode-user id)
   (if (== id "all") id
-      (db-get-field-first id "pseudo" #f)))
+      (db-get-field-first id "pseudo" "nobody")))
 
 (define (db-decode-users ids)
   ;;(display* "Decode users " ids "\n")
@@ -121,3 +121,45 @@
       (or (nnull? (list-intersection ids exp))
           (and (!= attr "owner")
                (db-allow? id uid "owner"))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrap basic interface to databases
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-get-field id attr)
+  (if (or (== db-current-user #t)
+          (db-allow? id db-current-user "owner")
+          (db-allow? id db-current-user "readable"))
+      (with-user #t
+        (former id attr))
+      (list)))
+
+(tm-define (db-set-field id attr vals)
+  (when (or (== db-current-user #t)
+            (db-allow? id db-current-user "owner"))
+    (with-user #t
+      (former id attr vals))))
+
+(tm-define (db-get-entry id)
+  (if (or (== db-current-user #t)
+          (db-allow? id db-current-user "owner")
+          (db-allow? id db-current-user "readable"))
+      (with-user #t
+        (former id))
+      (list)))
+
+(tm-define (db-set-entry id l)
+  (when (or (== db-current-user #t)
+            (db-allow? id db-current-user "owner"))
+    (with-user #t
+      (former id l))))
+
+(tm-define (db-search l)
+  (if (== db-current-user #t)
+      (former l)
+      (let* ((users (db-expand-user db-current-user "readable"))
+             (lo (rcons l (cons "owner" users)))
+             (lr (rcons l (cons "readable" users))))
+        (with-user #t
+          (list-union (former lo)
+                      (former lr))))))
