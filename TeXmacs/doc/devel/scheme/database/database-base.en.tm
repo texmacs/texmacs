@@ -98,10 +98,13 @@
   </explain>
 
   <\explain>
-    <scm|(db-search l)><explain-synopsis|search for a list of fields>
+    <scm|(db-search q)><explain-synopsis|search for a list of fields>
   <|explain>
-    For a list of fields <scm|l>, return the list of identifiers of entries
-    which contain each of the fields in <math|<scm|l>>.
+    Return the list of identifiers of entries which match a given query
+    <scm|q>. The query <scm|q> is a list of constraints of the form
+    <scm|(attr val1 ... valn)>. Each constraint is interpreted as ``the
+    attribute <scm|attr> of the entry is one of the values <scm|val1>,
+    <math|\<ldots\>>, <scm|valn>''.
   </explain>
 
   <paragraph|Other useful routines>
