@@ -79,7 +79,7 @@ score_computer::compute (string s, int m) {
       int start= i;
       while (i<N(s) && char_list[(int) (unsigned char) s[i]]) i++;
       if (start_list[(int) (unsigned char) s[start]]) {
-        string ss= s (start, i);
+        string ss= locase_all (s (start, i));
         score (ss)= min (score[ss] + m, 10000);
         m= multiplier[ss];
       }
