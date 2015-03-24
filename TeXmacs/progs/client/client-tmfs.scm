@@ -47,8 +47,8 @@
 
 (tm-define (remote-home-directory server)
   (let* ((sname (client-find-server-name server))
-         (sid (client-find-server-user-id server)))
-    (string-append "tmfs://remote-dir/" sname "/~" sid)))
+         (spseudo (client-find-server-pseudo server)))
+    (string-append "tmfs://remote-dir/" sname "/~" spseudo)))
 
 (define (prepend-dir server name type)
   (with dir (url->string (current-buffer))

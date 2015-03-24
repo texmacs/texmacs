@@ -19,14 +19,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-load-post t)
-  (db-entry-rename t (list (cons "mid" "id")
-                           (cons "mtype" "type")
-                           (cons "mname" "name"))))
+  (db-entry-rename t (list (cons "id*" "id")
+                           (cons "type*" "type")
+                           (cons "name*" "name"))))
 
 (tm-define (db-save-pre t)
-  (db-entry-rename t (list (cons "id" "mid")
-                           (cons "type" "mtype")
-                           (cons "name" "mname"))))
+  (db-entry-rename t (list (cons "id" "id*")
+                           (cons "type" "type*")
+                           (cons "name" "name*"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading databases

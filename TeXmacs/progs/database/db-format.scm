@@ -30,7 +30,7 @@
   )
 
 (tm-define (db-reserved-attributes)
-  (list "type" "location" "dir" "date" "id"))
+  (list "type" "location" "dir" "date" "pseudo" "id"))
 
 (smart-table db-encoding-table
   ;; For each entry+field type, specify the encoding being used for
@@ -40,6 +40,7 @@
   ((* "location") :identity)
   ((* "dir") :identity)
   ((* "date") :identity)
+  ((* "pseudo") :identity)
   ((* "id") :identity)
   ((* "owner") :users)
   ((* "readable") :users)
@@ -59,7 +60,7 @@
 
 (define (db-encode-user user)
   (if (== user "all") user
-      (with l (db-search (list (list "type" "user") (list "id" user)))
+      (with l (db-search (list (list "type" "user") (list "pseudo" user)))
         (and (pair? l) (car l)))))
 
 (define (db-encode-users users)
@@ -68,7 +69,7 @@
 
 (define (db-decode-user id)
   (if (== id "all") id
-      (db-get-field-first id "id" #f)))
+      (db-get-field-first id "pseudo" #f)))
 
 (define (db-decode-users ids)
   ;;(display* "Decode users " ids "\n")
@@ -213,14 +214,14 @@
 ;; Access rights
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-set-user-info uid id fullname email)
+(tm-define (db-set-user-info uid pseudo name email)
   (with-transcode #f
-    (db-set-field uid "id" (list id))
-    (db-set-field uid "full-name" (list fullname))
+    (db-set-field uid "pseudo" (list pseudo))
+    (db-set-field uid "name" (list name))
     (db-set-field uid "type" (list "user"))
     (db-set-field uid "owner" (list uid))
     (db-set-field uid "email" (list email))
-    (with home (string-append "~" id)
+    (with home (string-append "~" pseudo)
       (when (null? (db-search (list (list "name" home)
                                     (list "type" "dir"))))
         (db-create home "dir" uid)))))
