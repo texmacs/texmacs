@@ -208,15 +208,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-get-all-decoded id)
-  (with-transcode #f
-    (with raw-props (db-get-entry id)
-      (db-decode-entry raw-props))))
+  (with-transcode #t
+    (db-get-entry id)))
+;;(with-transcode #f
+;;(with raw-props (db-get-entry id)
+;;(db-decode-entry raw-props))))
 
 (tm-define (db-set-all-encoded id props)
-  (with-transcode #f
-    (set! props (db-preserve-reserved id props))
-    (with raw-props (db-encode-entry props)
-      (db-set-entry id raw-props))))
+  (with-transcode #t
+    (db-set-entry id props)))
+;;(with-transcode #f
+;;(set! props (db-preserve-reserved id props))
+;;(with raw-props (db-encode-entry props)
+;;(db-set-entry id raw-props))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Access rights
