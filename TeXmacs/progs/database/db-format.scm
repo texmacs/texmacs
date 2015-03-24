@@ -179,7 +179,7 @@
         (db-decode-entry (former id)))))
 
 (define (db-preserve-reserved id props)
-  (with old-props (db-get-all-decoded id)
+  (with old-props (db-get-entry id)
     (for (attr (db-reserved-attributes))
       (with old-val (assoc-ref old-props attr)
         (if old-val
@@ -190,9 +190,10 @@
 (tm-define (db-set-entry id l)
   (if db-preserve?
       (former id l)
-      (with-transcode #f
+      (begin
         (set! l (db-preserve-reserved id l))
-        (former id (db-encode-entry l)))))
+        (with-transcode #f
+          (former id (db-encode-entry l))))))
 
 (tm-define (db-search l)
   (if db-preserve?
@@ -202,16 +203,6 @@
                (type (and (pair? types) (car types)))
                (enc (cut db-encode-field type <>)))
           (former (map enc l))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User interface
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (db-get-all-decoded id)
-  (db-get-entry id))
-
-(tm-define (db-set-all-encoded id props)
-  (db-set-entry id props))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Access rights

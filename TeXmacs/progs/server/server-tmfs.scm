@@ -110,7 +110,7 @@
               (inherit-properties rid did)
               (db-set-field rid "dir" (list did))
               (string-save doc fname)
-              (with props (db-get-all-decoded rid)
+              (with props (db-get-entry rid)
                 (server-return envelope (list doc props))))))))
 
 (tm-service (remote-file-load rname)
@@ -127,7 +127,7 @@
           ((not (url-exists? fname))
            (server-error envelope "Error: file not found"))
           (else
-            (let* ((props (db-get-all-decoded rid))
+            (let* ((props (db-get-entry rid))
                    (doc (string-load fname)))
               (server-return envelope (list doc props)))))))
 
@@ -143,7 +143,7 @@
           ((not (db-allow? rid uid "writable"))
            (server-error envelope "Error: write access denied"))
           (else
-            (with props (db-get-all-decoded rid)
+            (with props (db-get-entry rid)
               (string-save doc fname)
               (server-return envelope (list doc props)))))))
 
@@ -158,8 +158,8 @@
           ((not (db-allow? rid uid "owner"))
            (server-error envelope "Error: administrative access denied"))
           (else
-            (db-set-all-encoded rid props)
-            (with new-props (db-get-all-decoded rid)
+            (db-set-entry rid props)
+            (with new-props (db-get-entry rid)
               (server-return envelope new-props))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -184,7 +184,7 @@
             (let* ((rid (db-create (cAr l) "dir" uid)))
               (inherit-properties rid did)
               (db-set-field rid "dir" (list did))
-              (with props (db-get-all-decoded rid)
+              (with props (db-get-entry rid)
                 (server-return envelope (list (list) props))))))))
 
 (define (filter-read-access rids uid)
@@ -197,7 +197,7 @@
   (let* ((short-name (db-get-field-first rid "name" "?"))
          (full-name (resource->file-name rid))
          (dir? (== (db-get-field-first rid "type" #f) "dir"))
-         (props (db-get-all-decoded rid)))
+         (props (db-get-entry rid)))
     (list short-name full-name dir? props)))
 
 (tm-service (remote-dir-load rname)
@@ -215,5 +215,5 @@
                   (let* ((matches (dir-contents rid))
                          (filtered (filter-read-access matches uid))
                          (rewr (map rewrite-dir-entry filtered))
-                         (props (db-get-all-decoded rid)))
+                         (props (db-get-entry rid)))
                     (server-return envelope (list rewr props)))))))))

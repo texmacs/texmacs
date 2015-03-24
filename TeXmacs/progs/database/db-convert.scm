@@ -42,7 +42,7 @@
                                           (cdr l)))))))
 
 (tm-define (db-load-entry id)
-  (let* ((l (db-get-all-decoded id))
+  (let* ((l (db-get-entry id))
          (type (assoc-ref l "type"))
          (name (assoc-ref l "name")))
     ;;(display* "Load " id " -> " l "\n")
@@ -94,7 +94,7 @@
           (begin
             ;;(display* "Save " id " -> " all "\n")
             (db-set-field id "type" (list type))
-            (db-set-all-encoded id all))))))
+            (db-set-entry id all))))))
 
 (tm-define (db-save-selected t pred?)
   (cond ((tm-func? t 'document)
