@@ -21,7 +21,7 @@
 (tm-define db-current-user #t)
 
 (tm-define-macro (with-user uid . body)
-  `(with-global db-current-user uid ,@body))
+  `(with-global db-current-user ,uid ,@body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables
@@ -30,7 +30,10 @@
 (smart-table db-encoding-table
   ((* "owner") :users)
   ((* "readable") :users)
-  ((* "writable") :users))
+  ((* "writable") :users)
+  ((* "delegate-owner") :users)
+  ((* "delegate-readable") :users)
+  ((* "delegate-writable") :users))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encoding and decoding of lists of users
@@ -76,34 +79,45 @@
         (db-create home "dir" uid)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Access rights
+;; Expand user list according to group membership
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-allow-many? ids rdone uid udone attr)
-  (and (nnull? ids)
-       (or (db-allow-one? (car ids) rdone uid udone attr)
-           (db-allow-many? (cdr ids) rdone uid udone attr))))
+(define (db-expand accu todo attr)
+  (with-user #t
+    (with-transcode #f
+      (with added (make-ahash-table)
+        (for (uid (ahash-set->list todo))
+          (with q (list (list "type" "group")
+                        (list (string-append "delegate-" attr) uid))
+            (for (x (db-search q))
+              (when (not (ahash-ref accu x))
+                (ahash-set! accu x #t)
+                (ahash-set! added x #t)))))
+        (if (== (ahash-size added) 0)
+            accu
+            (db-expand accu added attr))))))
 
-(define (db-allow-groups? id rdone uids udone attr)
-  (and (nnull? uids)
-       (or (db-allow-one? id rdone (car uids) udone attr)
-           (db-allow-groups? id rdone (cdr uids) udone attr))))
+(tm-define (db-expand-user uid attr)
+  (cond ((== uid #t) #t)
+        ((string? uid) (db-expand-user (list uid) attr))
+        ((list? uid)
+         (let* ((accu (list->ahash-set uid))
+                (todo accu)
+                (done (db-expand accu todo attr)))
+           (rcons (sort (ahash-set->list done) string<=?) "all")))
+        (else "all")))
 
-(define (db-allow-one? id rdone uid udone attr)
-  ;;(display* "Allow one " id ", " uid ", " attr "\n")
-  (and (not (in? id rdone))
-       (not (in? uid udone))
-       (or (== id uid)
-           (== id "all")
-           (with ids (append (db-get-field id attr)
-                             (db-get-field id "owner"))
-             (set! ids (list-remove-duplicates ids))
-             (set! ids (list-difference ids (cons id rdone)))
-             (db-allow-many? ids (cons id rdone) uid udone attr))
-           (with grs (db-get-field uid "member")
-             (db-allow-groups? id rdone grs (cons uid udone) attr)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Access rights
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-allow? id uid attr)
   (with-transcode #f
     ;;(display* "Allow " id ", " uid ", " attr "\n")
-    (db-allow-one? id (list) uid (list) attr)))
+    (let* ((ids (db-get-field id attr))
+           (exp (db-expand-user uid attr)))
+      ;;(display* "Expanded " uid " -> " exp "\n")
+      ;;(display* "Test " ids " -> " (nnull? (list-intersection ids exp)) "\n")
+      (or (nnull? (list-intersection ids exp))
+          (and (!= attr "owner")
+               (db-allow? id uid "owner"))))))
