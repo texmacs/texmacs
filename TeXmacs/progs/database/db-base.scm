@@ -182,15 +182,23 @@
     (if (null? (cdr l)) s
         (string-append s " JOIN " (db-search-join (cdr l) (+ i 1))))))
 
-(define (db-search-value pi val)
-  (string-append pi ".val=" (sql-quote val)))
+(define (db-search-value pi vals)
+  (cond ((null? vals)
+         (texmacs-error "db-search-value" "invalid search value"))
+        ((null? (cdr vals))
+         (string-append pi ".val=" (sql-quote (car vals))))
+        (else
+          (let* ((qvals (map sql-quote vals))
+                 (iqvals (list-intersperse qvals ", "))
+                 (a (apply string-append iqvals)))
+            (string-append pi ".val IN (" a ")")))))
 
 (define (db-search-on l i)
-  (with (attr val) (car l)
+  (with (attr . vals) (car l)
     (let* ((pi (string-append "p" (number->string i)))
            (sid (string-append pi ".id=p1.id"))
            (sattr (string-append pi ".attr=" (sql-quote attr)))
-           (spair (string-append sattr " AND " (db-search-value pi val)))
+           (spair (string-append sattr " AND " (db-search-value pi vals)))
            (sall (string-append spair " AND " (db-time-constraint-on pi)))
            (q (if (= i 1) sall (string-append sid " AND " sall))))
       (if (null? (cdr l)) q

@@ -53,14 +53,10 @@
     (set! l (db-load-fields l))
     (db-load-post `(db-entry ,id ,type ,name (document) (document ,@l)))))
 
-(tm-define (db-load-type type)
-  (let* ((l (db-search (list (list "type" type))))
+(tm-define (db-load-types types)
+  (let* ((l (db-search (list (cons "type" types))))
          (i (map db-load-entry l)))
     `(document ,@i)))
-
-(tm-define (db-load-types types)
-  (with l (map cdr (map db-load-type types))
-    `(document ,@(apply append l))))
 
 (tm-define (db-load)
   (let* ((l (db-search (list)))
