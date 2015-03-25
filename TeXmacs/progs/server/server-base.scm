@@ -28,7 +28,12 @@
       (with (fun . args) proto
         `(begin
            (tm-define (,fun envelope ,@args)
-             (with-database server-database ,@body))
+             (with-database server-database
+               (catch #t
+                      (lambda () ,@body)
+                      (lambda err
+                        (display* "Server error: " err "\n")
+                        (server-error envelope err)))))
            (ahash-set! service-dispatch-table ',fun ,fun)))))
 
 (tm-define (server-eval envelope cmd)

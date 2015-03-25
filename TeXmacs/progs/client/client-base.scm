@@ -86,7 +86,8 @@
 (define client-error-handlers (make-ahash-table))
 
 (define (std-client-error msg)
-  (texmacs-error "client-remote-error" "remote error ~S" msg))
+  ;;(texmacs-error "client-remote-error" "remote error ~S" msg)
+  (display-err* "Remote error: " msg "\n"))
 
 (tm-define (client-remote-eval server cmd cont . opt-err-handler)
   (with err-handler std-client-error
