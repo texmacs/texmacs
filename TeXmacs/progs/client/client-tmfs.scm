@@ -42,6 +42,27 @@
     (buffer-set-stm fname doc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Names and identifiers of remote files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (remote-file-name fname)
+  (set! fname (url->string fname))
+  (cond ((string-starts? fname "tmfs://remote-file/")
+         (substring fname 19 (string-length fname)))
+        ((string-starts? fname "tmfs://remote-dir/")
+         (substring fname 18 (string-length fname)))
+        (else #f)))
+
+(tm-define (remote-get-file-identifier server u cont)
+  ;;(display* "remote-get-file-identifier " server ", " u "\n")
+  (set! u (or (remote-file-name u) (url->string u)))
+  (client-remote-eval server `(remote-get-file-identifier ,u) cont))
+
+(tm-define-macro (with-remote-get-file-identifier r server u . body)
+  `(remote-get-file-identifier ,server ,u
+                               (lambda (msg) (with ,r msg ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

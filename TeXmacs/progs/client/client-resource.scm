@@ -36,15 +36,3 @@
 (tm-define (resource-cache-get-first u attr default)
   (with vals (resource-cache-get u attr)
     (if (null? vals) default (car vals))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Properties on the server side
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (strip-remote-file fname)
-  (set! fname (url->string fname))
-  (cond ((string-starts? fname "tmfs://remote-file/")
-         (substring fname 19 (string-length fname)))
-        ((string-starts? fname "tmfs://remote-dir/")
-         (substring fname 18 (string-length fname)))
-        (else #f)))

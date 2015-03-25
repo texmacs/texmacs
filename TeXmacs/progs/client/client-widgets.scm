@@ -87,6 +87,8 @@
 
 (tm-define (open-file-permissions-editor server u)
   (:interactive #t)
+  ;;(with-remote-get-file-identifier r server u
+  ;;  (display* u " -> " r "\n"))
   (with name (resource-cache-get (url->string u) "name")
     (with-remote-search ids server (list (cons "name" name))
       (when (pair? ids)

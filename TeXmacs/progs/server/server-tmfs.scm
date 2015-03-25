@@ -84,6 +84,18 @@
     (for (prop props2)
       (db-set-field derived-rid (car prop) (cdr prop)))))
 
+(tm-service (remote-get-file-identifier rname)
+  ;;(display* "remote-file-get-identifier " rname ", " props "\n")
+  (let* ((uid (server-get-user envelope))
+         (rid (file-name->resource (tmfs-cdr rname))))
+    (cond ((not uid)
+           (server-error envelope "Error: not logged in"))
+          ((not rid)
+           (server-error envelope "Error: file does not exist"))
+          ((not (db-allow? rid uid "readable"))
+           (server-error envelope "Error: read access denied"))
+          (else (server-return envelope rid)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
