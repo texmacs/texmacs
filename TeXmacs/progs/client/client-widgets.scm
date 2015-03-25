@@ -87,10 +87,7 @@
 
 (tm-define (open-file-permissions-editor server u)
   (:interactive #t)
-  ;;(with-remote-get-file-identifier r server u
-  ;;  (display* u " -> " r "\n"))
-  (with name (resource-cache-get (url->string u) "name")
-    (with-remote-search ids server (list (cons "name" name))
-      (when (pair? ids)
-        (with attrs (list "readable" "writable" "owner")
-          (open-entry-permissions-editor server (car ids) attrs))))))
+  (with-remote-get-file-identifier rid server u
+    (when rid
+      (with attrs (list "readable" "writable" "owner")
+        (open-entry-permissions-editor server rid attrs)))))
