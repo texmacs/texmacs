@@ -87,8 +87,11 @@
     resize
     $with))
 
+(setq binary-no-highlight
+  '(client-remote-eval server-remote-eval))
+
 (setq binary-indent
-  binary-keywords)
+  (append binary-keywords binary-no-highlight))
 
 (setq ternary-keywords
   '(ahash-with canvas-input))
