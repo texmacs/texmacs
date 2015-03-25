@@ -21,11 +21,7 @@
 (define resource-cache (make-ahash-table))
 
 (tm-define (resource-cache-set-all u props)
-  (ahash-set! resource-cache u props)
-  (when (buffer-exists? u)
-    (let* ((name (url->string (url-tail u)))
-           (title (resource-cache-get-first u "title" name)))
-      (buffer-set-title u title))))
+  (ahash-set! resource-cache u props))
 
 (tm-define (resource-cache-get-all u)
   (ahash-ref resource-cache u))

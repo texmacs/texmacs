@@ -13,7 +13,8 @@
 
 (texmacs-module (client client-tmfs)
   (:use (client client-base)
-        (client client-resource)))
+        (client client-resource)
+        (client client-db)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -106,11 +107,22 @@
 ;;  ;; FIXME: support for other file formats
 ;;  "texmacs-file")
 
+(define remote-title-table (make-ahash-table))
+
 (tmfs-title-handler (remote-file name doc)
   (let* ((sname (tmfs-car name))
+         (server (client-find-server sname))
          (fname (string-append "tmfs://remote-file/" name))
-         (dname (url->string (url-tail name))))
-    (resource-cache-get-first fname "title" dname)))
+         (def-title (url->string (url-tail fname))))
+    (with old-title (or (ahash-ref remote-title-table fname) def-title)
+      (when server
+        (with-remote-get-file-identifier rid server fname
+          (with-remote-get-field new-title server rid "title"
+            (set! new-title (if (pair? new-title) (car new-title) old-title))
+            (when (and (buffer-exists? fname) (!= new-title old-title))
+              (buffer-set-title fname new-title))
+            (ahash-set! remote-title-table fname new-title))))
+      old-title)))
 
 (tmfs-load-handler (remote-file name)
   (let* ((sname (tmfs-car name))
