@@ -151,6 +151,21 @@
     (with-user #t
       (former id l))))
 
+(tm-define (db-create-entry l)
+  (if (== db-current-user #t)
+      (former l)
+      (let* ((old-owners (or (assoc-ref l "owner") (list)))
+             (new-owners (cond ((string? db-current-user)
+                                (list db-current-user))
+                               ((list? db-current-user)
+                                db-current-user)
+                               (else (list))))
+             (all-owners (list-union old-owners new-owners)))
+        (and (nnull? all-owners)
+             (with-user #t
+               (set! l (assoc-set! (list-copy l) "owner" all-owners))
+               (former l))))))
+
 (tm-define (db-search l)
   (if (== db-current-user #t)
       (former l)
