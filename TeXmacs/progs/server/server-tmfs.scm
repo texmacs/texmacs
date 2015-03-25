@@ -79,11 +79,10 @@
   (nin? (car x) (inheritance-reserved-attributes)))
 
 (define (inherit-properties derived-rid base-rid)
-  (with-encoding #f
-    (let* ((props1 (db-get-entry base-rid))
-           (props2 (list-filter props1 inherit-property?)))
-      (for (prop props2)
-        (db-set-field derived-rid (car prop) (cdr prop))))))
+  (let* ((props1 (db-get-entry base-rid))
+         (props2 (list-filter props1 inherit-property?)))
+    (for (prop props2)
+      (db-set-field derived-rid (car prop) (cdr prop)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
@@ -110,7 +109,7 @@
               (inherit-properties rid did)
               (db-set-field rid "dir" (list did))
               (string-save doc fname)
-              (with props (db-get-entry rid)
+              (with props (with-encoding :pseudos (db-get-entry rid))
                 (server-return envelope (list doc props))))))))
 
 (tm-service (remote-file-load rname)
@@ -127,7 +126,7 @@
           ((not (url-exists? fname))
            (server-error envelope "Error: file not found"))
           (else
-            (let* ((props (db-get-entry rid))
+            (let* ((props (with-encoding :pseudos (db-get-entry rid)))
                    (doc (string-load fname)))
               (server-return envelope (list doc props)))))))
 
@@ -143,7 +142,7 @@
           ((not (db-allow? rid uid "writable"))
            (server-error envelope "Error: write access denied"))
           (else
-            (with props (db-get-entry rid)
+            (with props (with-encoding :pseudos (db-get-entry rid))
               (string-save doc fname)
               (server-return envelope (list doc props)))))))
 
@@ -158,8 +157,8 @@
           ((not (db-allow? rid uid "owner"))
            (server-error envelope "Error: administrative access denied"))
           (else
-            (db-set-entry rid props)
-            (with new-props (db-get-entry rid)
+            (with-encoding :pseudos (db-set-entry rid props))
+            (with new-props (with-encoding :pseudos (db-get-entry rid))
               (server-return envelope new-props))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -184,7 +183,7 @@
             (let* ((rid (db-create (cAr l) "dir" uid)))
               (inherit-properties rid did)
               (db-set-field rid "dir" (list did))
-              (with props (db-get-entry rid)
+              (with props (with-encoding :pseudos (db-get-entry rid))
                 (server-return envelope (list (list) props))))))))
 
 (define (filter-read-access rids uid)
@@ -197,7 +196,7 @@
   (let* ((short-name (db-get-field-first rid "name" "?"))
          (full-name (resource->file-name rid))
          (dir? (== (db-get-field-first rid "type" #f) "dir"))
-         (props (db-get-entry rid)))
+         (props (with-encoding :pseudos (db-get-entry rid))))
     (list short-name full-name dir? props)))
 
 (tm-service (remote-dir-load rname)
@@ -215,5 +214,5 @@
                   (let* ((matches (dir-contents rid))
                          (filtered (filter-read-access matches uid))
                          (rewr (map rewrite-dir-entry filtered))
-                         (props (db-get-entry rid)))
+                         (props (with-encoding :pseudos (db-get-entry rid))))
                     (server-return envelope (list rewr props)))))))))

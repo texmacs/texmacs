@@ -67,16 +67,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-set-user-info uid pseudo name email)
-  (with-encoding #f
-    (db-set-field uid "pseudo" (list pseudo))
-    (db-set-field uid "name" (list name))
-    (db-set-field uid "type" (list "user"))
-    (db-set-field uid "owner" (list uid))
-    (db-set-field uid "email" (list email))
-    (with home (string-append "~" pseudo)
-      (when (null? (db-search (list (list "name" home)
-                                    (list "type" "dir"))))
-        (db-create home "dir" uid)))))
+  (db-set-field uid "pseudo" (list pseudo))
+  (db-set-field uid "name" (list name))
+  (db-set-field uid "type" (list "user"))
+  (db-set-field uid "owner" (list uid))
+  (db-set-field uid "email" (list email))
+  (with home (string-append "~" pseudo)
+    (when (null? (db-search (list (list "name" home)
+                                  (list "type" "dir"))))
+      (db-create home "dir" uid))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Expand user list according to group membership
@@ -84,18 +83,17 @@
 
 (define (db-expand accu todo attr)
   (with-user #t
-    (with-encoding #f
-      (with added (make-ahash-table)
-        (for (uid (ahash-set->list todo))
-          (with q (list (list "type" "group")
-                        (list (string-append "delegate-" attr) uid))
-            (for (x (db-search q))
-              (when (not (ahash-ref accu x))
-                (ahash-set! accu x #t)
-                (ahash-set! added x #t)))))
-        (if (== (ahash-size added) 0)
-            accu
-            (db-expand accu added attr))))))
+    (with added (make-ahash-table)
+      (for (uid (ahash-set->list todo))
+        (with q (list (list "type" "group")
+                      (list (string-append "delegate-" attr) uid))
+          (for (x (db-search q))
+            (when (not (ahash-ref accu x))
+              (ahash-set! accu x #t)
+              (ahash-set! added x #t)))))
+      (if (== (ahash-size added) 0)
+          accu
+          (db-expand accu added attr)))))
 
 (tm-define (db-expand-user uid attr)
   (cond ((== uid #t) #t)
@@ -112,15 +110,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-allow? id uid attr)
-  (with-encoding #f
-    ;;(display* "Allow " id ", " uid ", " attr "\n")
-    (let* ((ids (db-get-field id attr))
-           (exp (db-expand-user uid attr)))
-      ;;(display* "Expanded " uid " -> " exp "\n")
-      ;;(display* "Test " ids " -> " (nnull? (list-intersection ids exp)) "\n")
-      (or (nnull? (list-intersection ids exp))
-          (and (!= attr "owner")
-               (db-allow? id uid "owner"))))))
+  ;;(display* "Allow " id ", " uid ", " attr "\n")
+  (let* ((ids (db-get-field id attr))
+         (exp (db-expand-user uid attr)))
+    ;;(display* "Expanded " uid " -> " exp "\n")
+    ;;(display* "Test " ids " -> " (nnull? (list-intersection ids exp)) "\n")
+    (or (nnull? (list-intersection ids exp))
+        (and (!= attr "owner")
+             (db-allow? id uid "owner")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrap basic interface to databases

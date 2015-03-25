@@ -19,8 +19,7 @@
 ;; The current encoding scheme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define db-encoding :pseudos)
-;;(tm-define db-encoding :default)
+(tm-define db-encoding :default)
 
 (tm-define-macro (with-encoding enc . body)
   `(with-global db-encoding ,enc ,@body))
