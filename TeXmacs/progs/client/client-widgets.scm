@@ -47,30 +47,26 @@
 
 (tm-define (open-entry-permissions-editor server id attrs)
   (:interactive #t)
-  (with-remote-search-user r server (list)
-    (set! current-user-ids r)
+  (with-remote-search-user users server (list)
     (set! current-permissions (make-ahash-table))
-    (open-entry-permissions-editor* server id attrs attrs current-user-ids)))
-
-(define (open-entry-permissions-editor* server id attrs la lu)
-  (cond ((nnull? la)
-         (with-remote-get-field r server id (car la)
-           (ahash-set! current-permissions (car la) r)
-           (set! current-user-ids (list-union current-user-ids r))
-           (open-entry-permissions-editor* server id attrs (cdr la) lu)))
-        ((nnull? lu)
-         (with-remote-get-user-pseudo pseudo server (car lu)
-           (with-remote-get-user-name name server (car lu)
-             (with full (string-append pseudo " (" name ")")
-               (ahash-set! current-user-decode (car lu) full)
-               (ahash-set! current-user-encode full (car lu)))
-             (open-entry-permissions-editor* server id attrs la (cdr lu)))))
-        (else
-          (set! current-user-ids
-                (list-difference current-user-ids (list "all")))
+    (with-remote-get-entry entry server id
+      (for (attr attrs)
+        (with vals (or (assoc-ref entry attr) (list))
+          (ahash-set! current-permissions attr vals)
+          (set! users (list-union users vals))))
+      (with-remote-get-user-pseudo pseudos server users
+        (with-remote-get-user-name names server users
+          (for-each (lambda (user pseudo name)
+                      (when (and (string? pseudo) (string? name))
+                        (with full (string-append pseudo " (" name ")")
+                          (ahash-set! current-user-decode user full)
+                          (ahash-set! current-user-encode full user))))
+                    users pseudos names)
+          (set! users (list-difference users (list "all")))
+          (set! current-user-ids users)
           (dialogue-window (entry-permissions-editor server id attrs)
                            noop
-                           "Change permissions"))))
+                           "Change permissions"))))))
 
 (tm-define (open-file-permissions-editor server u)
   (:interactive #t)
