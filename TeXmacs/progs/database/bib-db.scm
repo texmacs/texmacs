@@ -153,19 +153,19 @@
         (optional "annote"))))
 
 (smart-table db-encoding-table
-  (("article" *) :texmacs)
-  (("book" *) :texmacs)
-  (("booklet" *) :texmacs)
-  (("inbook" *) :texmacs)
-  (("incollection" *) :texmacs)
-  (("inproceedings" *) :texmacs)
-  (("manual" *) :texmacs)
-  (("masterthesis" *) :texmacs)
-  (("misc" *) :texmacs)
-  (("phdthesis" *) :texmacs)
-  (("proceedings" *) :texmacs)
-  (("techreport" *) :texmacs)
-  (("unpublished" *) :texmacs))
+  ((* "article" *) :texmacs)
+  ((* "book" *) :texmacs)
+  ((* "booklet" *) :texmacs)
+  ((* "inbook" *) :texmacs)
+  ((* "incollection" *) :texmacs)
+  ((* "inproceedings" *) :texmacs)
+  ((* "manual" *) :texmacs)
+  ((* "masterthesis" *) :texmacs)
+  ((* "misc" *) :texmacs)
+  ((* "phdthesis" *) :texmacs)
+  ((* "proceedings" *) :texmacs)
+  ((* "techreport" *) :texmacs)
+  ((* "unpublished" *) :texmacs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion to native BibTeX documents

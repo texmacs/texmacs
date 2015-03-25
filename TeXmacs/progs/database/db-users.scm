@@ -28,12 +28,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (smart-table db-encoding-table
-  ((* "owner") :users)
-  ((* "readable") :users)
-  ((* "writable") :users)
-  ((* "delegate-owner") :users)
-  ((* "delegate-readable") :users)
-  ((* "delegate-writable") :users))
+  (("owner" * :pseudos) :users)
+  (("readable" * :pseudos) :users)
+  (("writable" * :pseudos) :users)
+  (("delegate-owner" * :pseudos) :users)
+  (("delegate-readable" * :pseudos) :users)
+  (("delegate-writable" * :pseudos) :users))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encoding and decoding of lists of users

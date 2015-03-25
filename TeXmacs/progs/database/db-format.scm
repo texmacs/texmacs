@@ -19,7 +19,8 @@
 ;; The current encoding scheme
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define db-encoding #t)
+(tm-define db-encoding :pseudos)
+;;(tm-define db-encoding :default)
 
 (tm-define-macro (with-encoding enc . body)
   `(with-global db-encoding ,enc ,@body))
@@ -45,12 +46,12 @@
   ;; For each entry+field type, specify the encoding being used for
   ;; the field value.  This allows for instance to use TeXmacs snippets
   ;; instead of plain string values.
-  ((* "type") :identity)
-  ((* "location") :identity)
-  ((* "dir") :identity)
-  ((* "date") :identity)
-  ((* "pseudo") :identity)
-  ((* "id") :identity))
+  (("type" * *) :identity)
+  (("location" * *) :identity)
+  (("dir" * *) :identity)
+  (("date" * *) :identity)
+  (("pseudo" * *) :identity)
+  (("id" * *) :identity))
 
 (smart-table db-encoder-table
   ;; The routine being used for encoding a field value as a string
@@ -86,31 +87,26 @@
 ;; Generic encoding and decoding of field values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-encoder enc)
-  (or (smart-ref db-encoder-table enc) identity))
-
-(define (get-decoder enc)
-  (or (smart-ref db-decoder-table enc) identity))
+(define (db-get-encoding type attr)
+  (or (smart-ref db-encoding-table (list attr type db-encoding))
+      (smart-ref db-encoding-table (list attr type '*))
+      (smart-ref db-encoding-table (list attr '* db-encoding))
+      (smart-ref db-encoding-table (list attr '* '*))
+      (smart-ref db-encoding-table (list '* type db-encoding))
+      (smart-ref db-encoding-table (list '* type '*))
+      (smart-ref db-encoding-table (list '* '* db-encoding))
+      (smart-ref db-encoding-table (list '* '* '*))
+      :identity))
 
 (define (db-encode-values type attr vals)
-  ;; NOTE: patterns (* attr) always take precedence over (type *)
-  (cond ((smart-ref db-encoding-table (list type attr)) =>
-         (lambda (enc) ((get-encoder enc) vals)))
-        ((smart-ref db-encoding-table (list '* attr)) =>
-         (lambda (enc) ((get-encoder enc) vals)))
-        ((smart-ref db-encoding-table (list type '*)) =>
-         (lambda (enc) ((get-encoder enc) vals)))
-        (else vals)))
+  (let* ((enc (db-get-encoding type attr))
+         (cv (or (smart-ref db-encoder-table enc) identity)))
+    (cv vals)))
 
 (define (db-decode-values type attr vals)
-  ;; NOTE: patterns (* attr) always take precedence over (type *)
-  (cond ((smart-ref db-encoding-table (list type attr)) =>
-         (lambda (enc) ((get-decoder enc) vals)))
-        ((smart-ref db-encoding-table (list '* attr)) =>
-         (lambda (enc) ((get-decoder enc) vals)))
-        ((smart-ref db-encoding-table (list type '*)) =>
-         (lambda (enc) ((get-decoder enc) vals)))
-        (else vals)))
+  (let* ((enc (db-get-encoding type attr))
+         (cv (or (smart-ref db-decoder-table enc) identity)))
+    (cv vals)))
 
 (tm-define (db-encode-field type f)
   (cons (car f) (db-encode-values type (car f) (cdr f))))
