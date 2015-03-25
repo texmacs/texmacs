@@ -23,7 +23,12 @@
   (if (npair? proto) '(noop)
       (with (fun . args) proto
         `(begin
-           (tm-define (,fun envelope ,@args) ,@body)
+           (tm-define (,fun envelope ,@args)
+             (catch #t
+                    (lambda () ,@body)
+                    (lambda err
+                      (display* "Client error: " err "\n")
+                      (client-error envelope err))))
            (ahash-set! call-back-dispatch-table ',fun ,fun)))))
 
 (tm-define (client-eval envelope cmd)
