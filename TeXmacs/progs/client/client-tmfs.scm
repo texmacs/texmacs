@@ -13,7 +13,6 @@
 
 (texmacs-module (client client-tmfs)
   (:use (client client-base)
-        (client client-resource)
         (client client-db)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -137,7 +136,6 @@
               (with (tm props) msg
                 (with doc (convert tm "texmacs-document" "texmacs-stree")
                   ;;(display* "LOAD ") (write doc) (display* "\n")
-                  (resource-cache-set-all fname props)
                   (remote-file-set name doc))))
             (lambda (err)
               (set-message err "load remote file")))
@@ -155,7 +153,6 @@
           (client-remote-eval server `(remote-file-save ,name ,tm)
             (lambda (msg)
               (with (saved props) msg
-                (resource-cache-set-all fname props)
                 (set-message "file saved" "save remote file")))
             (lambda (err)
               (set-message err "save remote file")))))))
@@ -171,7 +168,6 @@
     (client-remote-eval server `(remote-dir-create ,name)
       (lambda (msg)
         (with (entries props) msg
-          (resource-cache-set-all fname props)
           (load-buffer fname)))
       (lambda (err)
         (set-message err "create remote directory")))))
@@ -206,7 +202,6 @@
           (client-remote-eval server `(remote-dir-load ,name)
             (lambda (msg)
               (with (entries props) msg
-                (resource-cache-set-all fname props)
                 (remote-dir-set name (dir-page sname entries))))
             (lambda (err)
               (set-message err "remote directory")))
