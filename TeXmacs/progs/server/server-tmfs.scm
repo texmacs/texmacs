@@ -121,8 +121,7 @@
               (inherit-properties rid did)
               (db-set-field rid "dir" (list did))
               (string-save doc fname)
-              (with props (with-encoding :pseudos (db-get-entry rid))
-                (server-return envelope (list doc props))))))))
+              (server-return envelope doc))))))
 
 (tm-service (remote-file-load rname)
   ;;(display* "remote-file-load " rname "\n")
@@ -138,9 +137,8 @@
           ((not (url-exists? fname))
            (server-error envelope "Error: file not found"))
           (else
-            (let* ((props (with-encoding :pseudos (db-get-entry rid)))
-                   (doc (string-load fname)))
-              (server-return envelope (list doc props)))))))
+            (with doc (string-load fname)
+              (server-return envelope doc))))))
 
 (tm-service (remote-file-save rname doc)
   ;;(display* "remote-file-save " rname ", " doc "\n")
@@ -154,9 +152,8 @@
           ((not (db-allow? rid uid "writable"))
            (server-error envelope "Error: write access denied"))
           (else
-            (with props (with-encoding :pseudos (db-get-entry rid))
-              (string-save doc fname)
-              (server-return envelope (list doc props)))))))
+            (string-save doc fname)
+            (server-return envelope doc)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
@@ -180,8 +177,7 @@
             (let* ((rid (db-create (cAr l) "dir" uid)))
               (inherit-properties rid did)
               (db-set-field rid "dir" (list did))
-              (with props (with-encoding :pseudos (db-get-entry rid))
-                (server-return envelope (list (list) props))))))))
+              (server-return envelope (list)))))))
 
 (define (filter-read-access rids uid)
   (cond ((null? rids) rids)
@@ -210,6 +206,5 @@
                 (else
                   (let* ((matches (dir-contents rid))
                          (filtered (filter-read-access matches uid))
-                         (rewr (map rewrite-dir-entry filtered))
-                         (props (with-encoding :pseudos (db-get-entry rid))))
-                    (server-return envelope (list rewr props)))))))))
+                         (rewr (map rewrite-dir-entry filtered)))
+                    (server-return envelope rewr))))))))

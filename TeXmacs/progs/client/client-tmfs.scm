@@ -132,11 +132,10 @@
         (texmacs-error "remote-file" "invalid server")
         (begin
           (client-remote-eval server `(remote-file-load ,name)
-            (lambda (msg)
-              (with (tm props) msg
-                (with doc (convert tm "texmacs-document" "texmacs-stree")
-                  ;;(display* "LOAD ") (write doc) (display* "\n")
-                  (remote-file-set name doc))))
+            (lambda (tm)
+              (with doc (convert tm "texmacs-document" "texmacs-stree")
+                ;;(display* "LOAD ") (write doc) (display* "\n")
+                (remote-file-set name doc)))
             (lambda (err)
               (set-message err "load remote file")))
           (set-message "loading..." "load remote file")
@@ -151,9 +150,8 @@
         (texmacs-error "remote-file" "invalid server")
         (with tm (convert doc "texmacs-stree" "texmacs-document")
           (client-remote-eval server `(remote-file-save ,name ,tm)
-            (lambda (msg)
-              (with (saved props) msg
-                (set-message "file saved" "save remote file")))
+            (lambda (saved)
+              (set-message "file saved" "save remote file"))
             (lambda (err)
               (set-message err "save remote file")))))))
 
@@ -166,9 +164,8 @@
   (let* ((sname (client-find-server-name server))
          (name (substring fname 18 (string-length fname))))
     (client-remote-eval server `(remote-dir-create ,name)
-      (lambda (msg)
-        (with (entries props) msg
-          (load-buffer fname)))
+      (lambda (entries)
+        (load-buffer fname))
       (lambda (err)
         (set-message err "create remote directory")))))
 
@@ -200,9 +197,8 @@
         (texmacs-error "remote-file" "invalid server")
         (begin
           (client-remote-eval server `(remote-dir-load ,name)
-            (lambda (msg)
-              (with (entries props) msg
-                (remote-dir-set name (dir-page sname entries))))
+            (lambda (entries)
+              (remote-dir-set name (dir-page sname entries)))
             (lambda (err)
               (set-message err "remote directory")))
           (set-message "loading..." "remote directory")
