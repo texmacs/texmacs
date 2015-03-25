@@ -54,7 +54,7 @@
     with-aux with-action with-module
     with-cursor with-buffer with-author
     with-server with-database
-    with-time with-user with-transcode
+    with-time with-user with-encoding
     user-ask
     tab icon-tab form item meti refreshable
     $when $let $let* $for $refreshable

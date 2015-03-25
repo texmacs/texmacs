@@ -16,6 +16,15 @@
   (:use (database db-base)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The current encoding scheme
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define db-encoding #t)
+
+(tm-define-macro (with-encoding enc . body)
+  `(with-global db-encoding ,enc ,@body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -123,30 +132,25 @@
 ;; Wrap basic interface to databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define db-preserve? #f)
-
-(tm-define-macro (with-transcode on? . body)
-  `(with-global db-preserve? (not ,on?) ,@body))
-
 (tm-define (db-get-field id attr)
-  (if db-preserve?
+  (if (not db-encoding)
       (former id attr)
-      (with-transcode #f
+      (with-encoding #f
         (let* ((vals (former id attr))
                (type (db-get-field id "type")))
           (db-decode-values type attr vals)))))
 
 (tm-define (db-set-field id attr vals)
-  (if db-preserve?
+  (if (not db-encoding)
       (former id attr vals)
-      (with-transcode #f
+      (with-encoding #f
         (with type (db-get-field id "type")
           (former id attr (db-encode-values type attr vals))))))
 
 (tm-define (db-get-entry id)
-  (if db-preserve?
+  (if (not db-encoding)
       (former id)
-      (with-transcode #f
+      (with-encoding #f
         (db-decode-entry (former id)))))
 
 (define (db-preserve-reserved id props)
@@ -159,11 +163,11 @@
   props)
 
 (tm-define (db-set-entry id l)
-  (if db-preserve?
+  (if (not db-encoding)
       (former id l)
       (begin
         (set! l (db-preserve-reserved id l))
-        (with-transcode #f
+        (with-encoding #f
           (former id (db-encode-entry l))))))
 
 (define (db-encode-constraint type c)
@@ -172,9 +176,9 @@
       (cons attr (map enc vals)))))
 
 (tm-define (db-search l)
-  (if db-preserve?
+  (if (not db-encoding)
       (former l)
-      (with-transcode #f
+      (with-encoding #f
         (let* ((types (assoc-ref l "type"))
                (type (and (pair? types) (car types)))
                (enc (cut db-encode-constraint type <>)))

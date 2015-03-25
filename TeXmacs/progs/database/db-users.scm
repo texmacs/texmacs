@@ -67,7 +67,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-set-user-info uid pseudo name email)
-  (with-transcode #f
+  (with-encoding #f
     (db-set-field uid "pseudo" (list pseudo))
     (db-set-field uid "name" (list name))
     (db-set-field uid "type" (list "user"))
@@ -84,7 +84,7 @@
 
 (define (db-expand accu todo attr)
   (with-user #t
-    (with-transcode #f
+    (with-encoding #f
       (with added (make-ahash-table)
         (for (uid (ahash-set->list todo))
           (with q (list (list "type" "group")
@@ -112,7 +112,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-allow? id uid attr)
-  (with-transcode #f
+  (with-encoding #f
     ;;(display* "Allow " id ", " uid ", " attr "\n")
     (let* ((ids (db-get-field id attr))
            (exp (db-expand-user uid attr)))

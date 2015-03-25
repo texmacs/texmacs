@@ -79,7 +79,7 @@
   (nin? (car x) (inheritance-reserved-attributes)))
 
 (define (inherit-properties derived-rid base-rid)
-  (with-transcode #f
+  (with-encoding #f
     (let* ((props1 (db-get-entry base-rid))
            (props2 (list-filter props1 inherit-property?)))
       (for (prop props2)
