@@ -300,10 +300,12 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting security tools\n")
-(lazy-define (security wallet wallet-base) supports-wallet? wallet-initialized?
-             wallet-on? wallet-off?)
-(lazy-menu (security wallet wallet-menu) wallet-preferences-widget)
-(lazy-menu (security gpg gpg-widgets) gpg-preferences-widget)
+(when (== (get-preference "experimental encryption") "on")
+  (lazy-define (security wallet wallet-base)
+               supports-wallet? wallet-initialized?
+               wallet-on? wallet-off?)
+  (lazy-menu (security wallet wallet-menu) wallet-preferences-widget)
+  (lazy-menu (security gpg gpg-widgets) gpg-preferences-widget))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
