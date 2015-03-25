@@ -13,6 +13,7 @@
 
 (texmacs-module (client client-menu)
   (:use (client client-base)
+        (client client-db)
         (client client-tmfs)))
 
 ;;(menu-bind account-menu
