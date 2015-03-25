@@ -130,23 +130,22 @@
 (tm-define (db-get-field id attr)
   (if (not db-encoding)
       (former id attr)
-      (with-encoding #f
-        (let* ((vals (former id attr))
-               (type (db-get-field id "type")))
-          (db-decode-values type attr vals)))))
+      (let* ((vals (with-encoding #f (former id attr)))
+             (type (with-encoding #f (db-get-field id "type"))))
+        (db-decode-values type attr vals))))
 
 (tm-define (db-set-field id attr vals)
   (if (not db-encoding)
       (former id attr vals)
       (with-encoding #f
-        (with type (db-get-field id "type")
-          (former id attr (db-encode-values type attr vals))))))
+        (let* ((type (with-encoding #f (db-get-field id "type")))
+               (vals (db-encode-values type attr vals)))
+          (with-encoding #f (former id attr vals))))))
 
 (tm-define (db-get-entry id)
   (if (not db-encoding)
       (former id)
-      (with-encoding #f
-        (db-decode-entry (former id)))))
+      (db-decode-entry (with-encoding #f (former id)))))
 
 (define (db-preserve-reserved id props)
   (with old-props (db-get-entry id)
@@ -160,10 +159,9 @@
 (tm-define (db-set-entry id l)
   (if (not db-encoding)
       (former id l)
-      (begin
-        (set! l (db-preserve-reserved id l))
-        (with-encoding #f
-          (former id (db-encode-entry l))))))
+      (let* ((l* (db-preserve-reserved id l))
+             (el (db-encode-entry l*)))
+        (with-encoding #f (former id el)))))
 
 (define (db-encode-constraint type c)
   (with (attr . vals) c
@@ -173,8 +171,8 @@
 (tm-define (db-search l)
   (if (not db-encoding)
       (former l)
-      (with-encoding #f
-        (let* ((types (assoc-ref l "type"))
-               (type (and (pair? types) (car types)))
-               (enc (cut db-encode-constraint type <>)))
-          (former (map enc l))))))
+      (let* ((types (assoc-ref l "type"))
+             (type (and (pair? types) (car types)))
+             (enc (cut db-encode-constraint type <>))
+             (el (map enc l)))
+        (with-encoding #f (former el)))))
