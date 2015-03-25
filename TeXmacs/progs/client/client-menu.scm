@@ -33,7 +33,8 @@
   ("New remote directory" (remote-create-dir-interactive server))
   (when (and (has-client-properties? (current-buffer))
              (nnot (strip-remote-file (current-buffer))))
-    ("Properties" (open-client-properties-editor))))
+    ("Properties" (open-client-properties-editor))
+    ("Permissions" (open-permissions-editor))))
 
 (menu-bind remote-menu
   (for (server (client-active-servers))
