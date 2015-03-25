@@ -20,12 +20,7 @@
 
 (tm-widget (bib-preferences-widget)
   ===
-  (padded
-    (hlist
-      (text "Bibliographic database: ") //
-      (refreshable "bib-db-preference"
-        (input (set-bib-db-short answer)
-               "bib-db" (list (get-bib-db-short)) "15em"))))
+  (text "Not yet implemented")
   ===)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -157,7 +157,6 @@ static void
 init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH");
   make_dir ("$TEXMACS_HOME_PATH/bin");
-  make_dir ("$TEXMACS_HOME_PATH/database");
   make_dir ("$TEXMACS_HOME_PATH/doc");
   make_dir ("$TEXMACS_HOME_PATH/doc/about");
   make_dir ("$TEXMACS_HOME_PATH/doc/about/changes");
@@ -189,6 +188,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/system/bib");
   make_dir ("$TEXMACS_HOME_PATH/system/cache");
   make_dir ("$TEXMACS_HOME_PATH/system/database");
+  make_dir ("$TEXMACS_HOME_PATH/system/database/bib");
   make_dir ("$TEXMACS_HOME_PATH/system/tmp");
   make_dir ("$TEXMACS_HOME_PATH/texts");
   change_mode ("$TEXMACS_HOME_PATH/server", 7 << 6);

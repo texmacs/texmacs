@@ -18,8 +18,7 @@
 ;; Declaration of services
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define server-database
-  (url-concretize "$TEXMACS_HOME_PATH/server/server.db"))
+(tm-define server-database global-database)
 
 (tm-define service-dispatch-table (make-ahash-table))
 

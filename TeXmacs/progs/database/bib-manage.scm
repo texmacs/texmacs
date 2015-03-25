@@ -14,41 +14,14 @@
 (texmacs-module (database bib-manage)
   (:use (database bib-db)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Default bibliographic database
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (default-bib-db)
-  (url->system (string->url "$TEXMACS_HOME_PATH/database/bib.tmdb")))
-
-(define-preferences
-  ("bib-db" (default-bib-db) noop))
-
-(tm-define (get-bib-db)
-  (get-preference "bib-db"))
-
-(tm-define (set-bib-db val)
-  (when (string? val)
-    (set-preference "bib-db" val)
-    (refresh-now "bib-db-preference")))
-
-(tm-define (get-bib-db-short)
-  (with full (system->url (get-bib-db))
-    (url->system (url-tail full))))
-
-(tm-define (set-bib-db-short val)
-  (when (string? val)
-    (with full (system->url (get-bib-db))
-      (set-bib-db (url->system (url-relative full (system->url val)))))))
-
-(tm-define (url-bib-db)
-  (system->url (get-bib-db)))
+(tm-define bib-database global-database)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Caching existing BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define bib-dir "$TEXMACS_HOME_PATH/system/database")
+(define bib-cache-dir (string-append bib-dir "/bib"))
 (define bib-master (url->url (string-append bib-dir "/bib-master.tmdb")))
 
 (define (bib-cache-id f)
@@ -84,7 +57,7 @@
          (tm-doc (convert bib-doc "bibtex-document" "texmacs-stree"))
          (body (tmfile-extract tm-doc 'body))
          (id (create-unique-id))
-         (db (url->url (string-append bib-dir "/" id ".tmdb"))))
+         (db (url->url (string-append bib-cache-dir "/" id ".tmdb"))))
     (when body
       (with-database db
         (bib-save body))
@@ -104,7 +77,7 @@
     (texmacs-error "failed to create bibliographic database"
                    "bib-cache-bibtex"))
   (and-with id (bib-cache-id f)
-    (url->url (string-append bib-dir "/" id ".tmdb"))))
+    (url->url (string-append bib-cache-dir "/" id ".tmdb"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing and exporting BibTeX files
@@ -127,15 +100,15 @@
     (when (url-exists? db)
       (with-database db
         (with all (bib-load)
-          (when (not (bib-cache-imported? f (url-bib-db)))
-            (with-database (url-bib-db)
+          (when (not (bib-cache-imported? f bib-database))
+            (with-database bib-database
               (bib-save all)
-              (bib-cache-notify-imported f (url-bib-db))
+              (bib-cache-notify-imported f bib-database)
               (set-message "Imported bibliographic entries"
                            "import bibliography"))))))))
 
 (tm-define (bib-export-global f)
-  (with-database (url-bib-db)
+  (with-database bib-database
     (with all (bib-load)
       (when (and all (tm-func? all 'document))
         (let* ((doc `(document ,@(map db->bib (cdr all))))
@@ -197,7 +170,7 @@
         (append r (bib-retrieve-entries-from remaining (cdr dbs))))))
 
 (define (bib-get-db bib-file)
-  (cond ((== bib-file :default) (url-bib-db))
+  (cond ((== bib-file :default) bib-database)
         ((== (url-suffix bib-file) "tmdb") (url->url bib-file))
         (else (bib-cache-bibtex bib-file))))
 
@@ -285,7 +258,7 @@
 (tm-define (notify-set-attachment name key val)
   (when (string-ends? key "-bibliography")
     (with doc (tm->stree val)
-      (with-database (url-bib-db)
+      (with-database bib-database
         (with-global db-duplicate-warning? #f
           (bib-save doc)))))
   (former name key val))
