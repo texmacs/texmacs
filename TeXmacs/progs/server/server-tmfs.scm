@@ -158,21 +158,6 @@
               (string-save doc fname)
               (server-return envelope (list doc props)))))))
 
-(tm-service (remote-file-set-properties rname props)
-  ;;(display* "remote-file-set-properties " rname ", " props "\n")
-  (let* ((uid (server-get-user envelope))
-         (rid (file-name->resource (tmfs-cdr rname))))
-    (cond ((not uid)
-           (server-error envelope "Error: not logged in"))
-          ((not rid)
-           (server-error envelope "Error: file does not exist"))
-          ((not (db-allow? rid uid "owner"))
-           (server-error envelope "Error: administrative access denied"))
-          (else
-            (with-encoding :pseudos (db-set-entry rid props))
-            (with new-props (with-encoding :pseudos (db-get-entry rid))
-              (server-return envelope new-props))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
