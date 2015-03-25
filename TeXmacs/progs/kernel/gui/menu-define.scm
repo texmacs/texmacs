@@ -53,6 +53,11 @@
                 (list pred? (cons* 'menu-dynamic body))))
     `(cond ,@(map fun (cdr x)))))
 
+(define (gui-make-loop x)
+  (require-format x '(loop (:%1 :%1) :*))
+  (with fun `(lambda (,(caadr x)) (menu-dynamic ,@(cddr x)))
+    `($dynamic (append-map ,fun ,(cadadr x)))))
+
 (define (gui-make-refresh x)
   (require-format x '(refresh :%1 :*))
   (with opts (cddr x)
@@ -286,11 +291,6 @@
   (require-format x '(when :%1 :*))
   `($assuming ,(cadr x) ,@(map gui-make (cddr x))))
 
-;;(define (gui-make-for x)
-;;  (require-format x '(for (:%1 :%1) :*))
-;;  (with fun `(lambda (,(caadr x)) (menu-dynamic ,@(cddr x)))
-;;    `($dynamic (append-map ,fun ,(cadadr x)))))
-
 (define (gui-make-for x)
   (require-format x '(for (:%1 :%1) :*))
   `($for* ,(cadr x) ,@(map gui-make (cddr x))))
@@ -349,6 +349,7 @@
   (with ,gui-make-with)
   (receive ,gui-make-with)
   (cond ,gui-make-cond)
+  (loop ,gui-make-loop)
   (refresh ,gui-make-refresh)
   (refreshable ,gui-make-refreshable)
   (group ,gui-make-group)

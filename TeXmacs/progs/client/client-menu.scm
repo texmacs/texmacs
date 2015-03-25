@@ -36,7 +36,7 @@
   (when (and (has-client-properties? (current-buffer))
              (nnot (strip-remote-file (current-buffer))))
     ("Properties" (open-client-properties-editor))
-    ("Permissions" (open-permissions-editor))))
+    ("Permissions" (open-file-permissions-editor server (current-buffer)))))
 
 (menu-bind remote-menu
   (for (server (client-active-servers))

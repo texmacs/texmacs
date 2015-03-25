@@ -18,40 +18,64 @@
 ;; Permissions editor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-permissions u attr)
-  (with props (resource-cache-get-all u)
-    (list-union (or (assoc-ref props attr) (list))
-                (or (assoc-ref props "owner") (list)))))
+(define current-user-ids (list))
+(define current-user-encode (make-ahash-table))
+(define current-user-decode (make-ahash-table))
+(define current-permissions (make-ahash-table))
 
-(define (set-permissions u attr vals)
-  (with props (resource-cache-get-all u)
-    (set! props (assoc-set! props attr vals))
-    (client-set-file-properties u props)))
+(define (set-permissions* server id attr vals*)
+  (with vals (map (cut ahash-ref current-user-encode <>) vals*)
+    (ahash-set! current-permissions attr vals)
+    (remote-set-field server id attr vals)))
 
-(tm-widget ((permissions-editor u) quit)
+(define (get-permissions* server id attr)
+  (with vals (list-union (ahash-ref current-permissions "owner")
+                         (ahash-ref current-permissions attr))
+    (with vals* (map (cut ahash-ref current-user-decode <>) vals)
+      (sort vals* string<=?))))
+
+(tm-widget ((entry-permissions-editor server id attrs) quit)
   (padded
-    (with connections (sort (list-union (get-permissions u "readable")
-                                        (get-permissions u "writable")
-                                        (get-permissions u "owner"))
-                            string<=?)
-      (tabs
-        (tab (text "Read")
+    (tabs
+      (loop (attr attrs)
+        (tab (text (upcase-first attr))
           (padded
-            (choices (set-permissions u "readable" answer)
-                     connections
-                     (get-permissions u "readable"))))
-        (tab (text "Write")
-          (padded
-            (choices (set-permissions u "writable" answer)
-                     connections
-                     (get-permissions u "writable"))))
-        (tab (text "Owner")
-          (padded
-            (choices (set-permissions u "owner" answer)
-                     connections
-                     (get-permissions u "owner"))))))))
+            (choices (set-permissions* server id attr answer)
+                     (map (cut ahash-ref current-user-decode <>)
+                          current-user-ids)
+                     (get-permissions* server id attr))))))))
 
-(tm-define (open-permissions-editor)
+(tm-define (open-entry-permissions-editor server id attrs)
   (:interactive #t)
-  (with u (url->string (current-buffer))
-    (dialogue-window (permissions-editor u) noop "Change permissions")))
+  (with-remote-search-user r server (list)
+    (set! current-user-ids r)
+    (set! current-permissions (make-ahash-table))
+    (open-entry-permissions-editor* server id attrs attrs current-user-ids)))
+
+(define (open-entry-permissions-editor* server id attrs la lu)
+  (cond ((nnull? la)
+         (with-remote-get-field r server id (car la)
+           (ahash-set! current-permissions (car la) r)
+           (set! current-user-ids (list-union current-user-ids r))
+           (open-entry-permissions-editor* server id attrs (cdr la) lu)))
+        ((nnull? lu)
+         (with-remote-get-user-pseudo pseudo server (car lu)
+           (with-remote-get-user-name name server (car lu)
+             (with full (string-append pseudo " (" name ")")
+               (ahash-set! current-user-decode (car lu) full)
+               (ahash-set! current-user-encode full (car lu)))
+             (open-entry-permissions-editor* server id attrs la (cdr lu)))))
+        (else
+          (set! current-user-ids
+                (list-difference current-user-ids (list "all")))
+          (dialogue-window (entry-permissions-editor server id attrs)
+                           noop
+                           "Change permissions"))))
+
+(tm-define (open-file-permissions-editor server u)
+  (:interactive #t)
+  (with name (resource-cache-get (url->string u) "name")
+    (with-remote-search ids server (list (cons "name" name))
+      (when (pair? ids)
+        (with attrs (list "readable" "writable" "owner")
+          (open-entry-permissions-editor server (car ids) attrs))))))
