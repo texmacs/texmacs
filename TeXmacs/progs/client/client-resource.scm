@@ -150,18 +150,18 @@
             (hlist
               (form-input "attr" "string" (default-attributes) "1w")
               ///
-              ("Add" ;((balloon (icon "tm_add.xpm") "Add attribute")
+              ((balloon (icon "tm_add.xpm") "Add attribute")
                (add-attribute (form-ref "attr"))) //
-               ("Remove" ;(balloon (icon "tm_focus_delete.xpm") "Remove attribute")
-                (remove-attribute (form-ref "attr"))) >>))
+              ((balloon (icon "tm_focus_delete.xpm") "Remove attribute")
+               (remove-attribute (form-ref "attr"))) >>))
           (item (text "Value:")
             (hlist
               (form-input "val" "string" '() "1w")
               ///
-              ("Add" ;(balloon (icon "tm_add.xpm") "Add value")
+              ((balloon (icon "tm_add.xpm") "Add value")
                (add-value (form-ref "attr") (form-ref "val"))) //
-               ("Remove" ;(balloon (icon "tm_focus_delete.xpm") "Remove value")
-                (remove-value (form-ref "attr") (form-ref "val"))) >>)))))
+              ((balloon (icon "tm_focus_delete.xpm") "Remove value")
+               (remove-value (form-ref "attr") (form-ref "val"))) >>)))))
     === ===
     (bottom-buttons
       ("Cancel" (begin
