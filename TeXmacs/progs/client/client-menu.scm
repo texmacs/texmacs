@@ -33,9 +33,6 @@
   ("Home directory" (load-buffer (remote-home-directory server)))
   ("New remote file" (remote-create-file-interactive server))
   ("New remote directory" (remote-create-dir-interactive server))
-  ;;(when (and (has-client-properties? (current-buffer))
-  ;;           (nnot (strip-remote-file (current-buffer))))
-  ;;  ("Properties" (open-client-properties-editor)))
   (when (strip-remote-file (current-buffer))
     ("Permissions" (open-file-permissions-editor server (current-buffer)))))
 
