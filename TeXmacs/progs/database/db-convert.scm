@@ -33,13 +33,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (db-load-fields l)
-  ;; TODO: take into account string encodings
   (cond ((null? l) l)
         ((or (nlist? (car l)) (<= (length (car l)) 1))
          (db-load-fields (cdr l)))
         (else (cons `(db-field ,(caar l) ,(cadar l))
                     (db-load-fields (cons (cons (caar l) (cddar l))
                                           (cdr l)))))))
+
+(define (db-meta-field? f)
+  (and (func? f 'db-field 2)
+       (in? (cadr f) (db-meta-attributes))))
 
 (tm-define (db-load-entry id)
   (let* ((l (db-get-entry id))
@@ -51,7 +54,9 @@
     (set! l (assoc-remove! l "type"))
     (set! l (assoc-remove! l "name"))
     (set! l (db-load-fields l))
-    (db-load-post `(db-entry ,id ,type ,name (document) (document ,@l)))))
+    (receive (l1 l2) (list-partition l db-meta-field?)
+      (db-load-post `(db-entry ,id ,type ,name
+			       (document ,@l1) (document ,@l2))))))
 
 (tm-define (db-load-types types)
   (let* ((l (db-search (list (cons "type" types))))

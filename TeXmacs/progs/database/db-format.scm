@@ -41,6 +41,10 @@
 (tm-define (db-reserved-attributes)
   (list "type" "location" "dir" "date" "pseudo" "id"))
 
+(tm-define (db-meta-attributes)
+  (list "contributor" "origin" "modus" "date"
+	"master-id" "previous" "message" "supersede"))
+
 (smart-table db-encoding-table
   ;; For each entry+field type, specify the encoding being used for
   ;; the field value.  This allows for instance to use TeXmacs snippets
