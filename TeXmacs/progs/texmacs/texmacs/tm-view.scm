@@ -65,7 +65,8 @@
   ("ir-center" "S-return" notify-remote-control)
   ("ir-play" "F5" notify-remote-control)
   ("ir-pause" "escape" notify-remote-control)
-  ("ir-menu" "." notify-remote-control))
+  ("ir-menu" "." notify-remote-control)
+  ("draw cursor" "on" noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Changing the view properties
