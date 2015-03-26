@@ -53,7 +53,7 @@
             (refreshable "permission-checklist"
               (if (nin? "all" (get-permissions perms dec server id attr))
                   (choices (set-permissions perms enc server id attr answer)
-                           (map (cut ahash-ref dec <>) users)
+                           (sort (map (cut ahash-ref dec <>) users) string<=?)
                            (get-permissions perms dec server id attr)))
               (if (in? "all" (get-permissions perms dec server id attr))
                   (resize "250px" "100px"

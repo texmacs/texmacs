@@ -115,7 +115,9 @@
           ((not (db-allow? did uid "writable"))
            (server-error envelope "Error: write access required for directory"))
           (else
-            (let* ((rid (db-create (cAr l) "file" uid))
+            (let* ((rid (db-create-entry (list (list "type" "file")
+                                               (list "name" (cAr l))
+                                               (list "owner" uid))))
                    (name (repository-add rid (url-suffix rname)))
                    (fname (repository-get rid)))
               (inherit-properties rid did)
@@ -174,7 +176,9 @@
           ((not (db-allow? did uid "writable"))
            (server-error envelope "Error: write access required for directory"))
           (else
-            (let* ((rid (db-create (cAr l) "dir" uid)))
+            (with rid (db-create-entry (list (list "type" "dir")
+                                             (list "name" (cAr l))
+                                             (list "owner" uid)))
               (inherit-properties rid did)
               (db-set-field rid "dir" (list did))
               (server-return envelope (list)))))))

@@ -193,16 +193,6 @@
     (db-set-entry id l)
     id))
 
-(tm-define (db-create name type uid)
-  (with id (create-unique-id)
-    (if (nnull? (db-get-field id "type"))
-        (db-create name type uid)
-        (begin
-          (db-insert-value id "name" name)
-          (db-insert-value id "type" type)
-          (db-insert-value id "owner" uid)
-          id))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching database entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
