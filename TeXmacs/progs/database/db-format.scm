@@ -151,20 +151,10 @@
       (former id)
       (db-decode-entry (with-encoding #f (former id)))))
 
-(define (db-preserve-reserved id props)
-  (with old-props (db-get-entry id)
-    (for (attr (db-reserved-attributes))
-      (with old-vals (assoc-ref old-props attr)
-        (if old-vals
-            (set! props (assoc-set! props attr old-vals))
-            (set! props (assoc-remove! props attr))))))
-  props)
-
 (tm-define (db-set-entry id l)
   (if (not db-encoding)
       (former id l)
-      (let* ((l* (db-preserve-reserved id l))
-             (el (db-encode-entry l*)))
+      (with el (db-encode-entry l)
         (with-encoding #f (former id el)))))
 
 (define (db-encode-constraint type c)

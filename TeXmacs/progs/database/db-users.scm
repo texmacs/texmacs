@@ -24,6 +24,33 @@
   `(with-global db-current-user ,uid ,@body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The default user
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define db-the-default-user #f)
+
+(tm-define (db-default-user)
+  (when (and (not db-the-default-user)
+             (supports-sql?)
+             (url-exists-in-path? "whoami")
+             (url-exists-in-path? "finger")
+             (url-exists-in-path? "sed"))
+    (with-database global-database
+      (let* ((pseudo (var-eval-system "whoami"))
+             (cmd "finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'")
+             (name (var-eval-system cmd))
+             (me (db-search (list (list "type" "user")
+                                  (list "pseudo" pseudo)))))
+        (set! me (and (nnull? me) (car me)))
+        (when (and (not me) (!= pseudo "") (!= name ""))
+          (set! me (db-create-entry (list (list "type" "user")
+                                          (list "pseudo" pseudo)
+                                          (list "name" name)))))
+        (set! db-the-default-user me))))
+  (set! db-the-default-user (or db-the-default-user "default"))
+  db-the-default-user)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
