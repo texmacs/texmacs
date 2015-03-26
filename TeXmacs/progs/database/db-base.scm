@@ -170,8 +170,11 @@
             (ahash-set! t attr (cons val old)))))
       (map (lambda (attr) (cons attr (reverse (ahash-ref t attr)))) attrs))))
 
+(define (assoc-add l1 l2)
+  (append l1 (list-filter l2 (lambda (x) (not (assoc-ref l1 (car x)))))))
+
 (tm-define (db-set-entry id l*)
-  (let* ((l (append l* db-extra-fields))
+  (let* ((l (assoc-add l* db-extra-fields))
 	 (old-attrs (db-get-attributes id))
          (new-attrs (map car l))
          (rem-attrs (list-difference old-attrs new-attrs)))
@@ -179,7 +182,7 @@
       (db-remove-field id attr))
     (for (attr new-attrs)
       (db-set-field id attr (assoc-ref l attr)))
-    (when db-time-stamp?
+    (when (and db-time-stamp? (nin? "date" new-attrs))
       (db-remove-field id "date")
       (db-insert-time-stamp id))))
 
