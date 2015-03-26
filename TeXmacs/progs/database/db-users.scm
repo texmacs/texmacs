@@ -90,21 +90,6 @@
   (,:users ,db-decode-users))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Creating new users
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (db-set-user-info uid pseudo name email)
-  (db-set-field uid "pseudo" (list pseudo))
-  (db-set-field uid "name" (list name))
-  (db-set-field uid "type" (list "user"))
-  (db-set-field uid "owner" (list uid))
-  (db-set-field uid "email" (list email))
-  (with home (string-append "~" pseudo)
-    (when (null? (db-search (list (list "name" home)
-                                  (list "type" "dir"))))
-      (db-create home "dir" uid))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Expand user list according to group membership
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
