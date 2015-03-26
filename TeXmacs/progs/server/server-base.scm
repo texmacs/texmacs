@@ -141,12 +141,35 @@
   (with f "$TEXMACS_HOME_PATH/server/users.scm"
     (save-object f (ahash-table->list server-users))))
 
-(tm-define (server-set-user-info uid pseudo name passwd email admin)
+(define (server-find-user pseudo)
+  (server-load-users)
+  (with l (ahash-table->list server-users)
+    (with ok? (lambda (x) (== (cadr x) pseudo))
+      (and-with i (list-find-index l ok?)
+        (car (list-ref l i))))))
+
+(define (server-lookup-user pseudo)
   (with-database server-database
-    (server-load-users)
-    (ahash-set! server-users uid (list pseudo name passwd email admin))
-    (db-set-user-info uid pseudo name email)
-    (server-save-users)))
+    (with uids (db-search (list (list "type" "user")
+                                (list "pseudo" pseudo)))
+      (and (nnull? uids) (car uids)))))
+
+(define (server-set-user-info uid pseudo name passwd email admin)
+  (with-database server-database
+    (with-user #t
+      (when (not uid) (set! uid (db-create-entry (list))))
+      (db-set-entry uid (list (list "type" "user")
+                              (list "pseudo" pseudo)
+                              (list "name" name)
+                              (list "email" email)
+                              (list "owner" uid)))
+      (server-load-users)
+      (ahash-set! server-users uid (list pseudo name passwd email admin))
+      (server-save-users)
+      (with home (string-append "~" pseudo)
+        (when (null? (db-search (list (list "name" home)
+                                      (list "type" "dir"))))
+          (db-create home "dir" uid))))))
 
 (tm-define (server-set-user-information pseudo name passwd email admin)
   (:argument pseudo "User pseudo")
@@ -155,22 +178,14 @@
   (:argument email "Email address")
   (:argument admin "Administrive rights?")
   (:proposals admin '("no" "yes"))
-  (with uid (server-find-user pseudo)
-    (if (not uid) (set! uid (create-unique-id)))
+  (with uid (or (server-find-user pseudo)
+                (server-lookup-user pseudo))
     (server-set-user-info uid pseudo name passwd email (== admin "yes"))))
 
-(tm-define (server-find-user pseudo)
-  (server-load-users)
-  (with l (ahash-table->list server-users)
-    (with ok? (lambda (x) (== (cadr x) pseudo))
-      (and-with i (list-find-index l ok?)
-	(car (list-ref l i))))))
-
-(tm-define (server-create-user pseudo name passwd email admin)
-  (with-database server-database
-    (or (server-find-user pseudo)
-        (with uid (db-create pseudo "user" pseudo)
-          (server-set-user-info uid pseudo name passwd email admin)))))
+(define (server-create-user pseudo name passwd email admin)
+  (with uid (or (server-find-user pseudo)
+                (server-lookup-user pseudo))
+    (server-set-user-info uid pseudo name passwd email admin)))
 
 (tm-service (new-account pseudo name passwd email)
   (if (server-find-user pseudo)
