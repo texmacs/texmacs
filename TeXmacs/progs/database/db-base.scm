@@ -47,12 +47,27 @@
       (reverse (map f (if (null? r) r (cdr r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Time constraints
+;; Extra context
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define db-time "strftime('%s','now')")
+(tm-define db-time-stamp? #f)
+(tm-define db-extra-fields (list))
 
-(tm-define (db-decode-time t)
+(tm-define-macro (with-time t . body)
+  `(with-global db-time (db-decode-time ,t) ,@body))
+
+(tm-define-macro (with-time-stamp on? . body)
+  `(with-global db-time-stamp? on? ,@body))
+
+(tm-define-macro (with-extra-fields l . body)
+  `(with-global db-extra-fields (append db-extra-fields l) ,@body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Time constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (db-decode-time t)
   (cond ((== t :now)
          "strftime('%s','now')")
         ((integer? t)
@@ -65,9 +80,6 @@
          (cadr t))
         (else (texmacs-error "sql-time" "invalid time"))))
 
-(tm-define-macro (with-time t . body)
-  `(with-global db-time (db-decode-time ,t) ,@body))
-
 (define (db-time-constraint)
   (string-append "created <= (" db-time ") AND "
                  "expires >  (" db-time ")"))
@@ -76,7 +88,7 @@
   (string-append x ".created <= (" db-time ") AND "
                  x ".expires >  (" db-time ")"))
 
-(tm-define (db-check-now)
+(define (db-check-now)
   (when (!= db-time "strftime('%s','now')")
     (texmacs-error "db-check-now" "cannot rewrite history")))
 
@@ -89,6 +101,14 @@
   (db-sql "INSERT INTO props VALUES (" (sql-quote id)
           ", " (sql-quote attr)
           ", " (sql-quote val)
+          ", strftime('%s','now')"
+          ", 10675199166)"))
+
+(define (db-insert-time-stamp id)
+  (db-check-now)
+  (db-sql "INSERT INTO props VALUES (" (sql-quote id)
+          ", 'date'"
+          ", strftime('%s','now')"
           ", strftime('%s','now')"
           ", 10675199166)"))
 
@@ -150,14 +170,18 @@
             (ahash-set! t attr (cons val old)))))
       (map (lambda (attr) (cons attr (reverse (ahash-ref t attr)))) attrs))))
 
-(tm-define (db-set-entry id l)
-  (let* ((old-attrs (db-get-attributes id))
+(tm-define (db-set-entry id l*)
+  (let* ((l (append l* db-extra-fields))
+	 (old-attrs (db-get-attributes id))
          (new-attrs (map car l))
          (rem-attrs (list-difference old-attrs new-attrs)))
     (for (attr rem-attrs)
       (db-remove-field id attr))
     (for (attr new-attrs)
-      (db-set-field id attr (assoc-ref l attr)))))
+      (db-set-field id attr (assoc-ref l attr)))
+    (when db-time-stamp?
+      (db-remove-field id "date")
+      (db-insert-time-stamp id))))
 
 (tm-define (db-create-entry l)
   (with id (create-unique-id)
