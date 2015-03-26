@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.2>
 
 <style|tmdoc>
 
@@ -47,7 +47,18 @@
   Please refer to <hlink|Notification and download of
   updates|../../devel/scheme/api/automatic-updates.en.tm>.
 
-  <tmdoc-copyright|2013|the <TeXmacs> team>
+  <subsection|Plugins>
+
+  <\explain>
+    <scm|("plugins:embedded postscript width"
+    <scm-arg|length>)><explain-synopsis|preference>
+  <|explain>
+    Specifies the width that embedded <name|PostScript> images will have in
+    sessions by default. This defaults to 0.7par and has to be a
+    <hlink|<TeXmacs> length|../../devel/format/basics/lengths.en.tm>.
+  </explain>
+
+  <tmdoc-copyright|2013, 2015|Miguel de Benito Delgado>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
