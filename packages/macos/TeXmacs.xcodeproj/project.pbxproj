@@ -262,6 +262,9 @@
 		4950FA5317E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
 		4950FA5417E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
 		4950FA5517E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
+		4952408C1AC402A800A611AD /* indexation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4952408B1AC402A800A611AD /* indexation.cpp */; };
+		4952408D1AC402A800A611AD /* indexation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4952408B1AC402A800A611AD /* indexation.cpp */; };
+		4952408E1AC402A800A611AD /* indexation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4952408B1AC402A800A611AD /* indexation.cpp */; };
 		495712F916E90E5900934EA3 /* metadata-acm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F716E90E5900934EA3 /* metadata-acm.cpp */; };
 		495712FA16E90E5900934EA3 /* metadata-acm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F716E90E5900934EA3 /* metadata-acm.cpp */; };
 		495712FB16E90E5900934EA3 /* metadata-acm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 495712F716E90E5900934EA3 /* metadata-acm.cpp */; };
@@ -1633,6 +1636,7 @@
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
 		4950FA5117E8347600425005 /* change.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = change.hpp; sourceTree = "<group>"; };
 		4950FA5217E8349800425005 /* highlight_boxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = highlight_boxes.cpp; sourceTree = "<group>"; };
+		4952408B1AC402A800A611AD /* indexation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = indexation.cpp; sourceTree = "<group>"; };
 		495712F716E90E5900934EA3 /* metadata-acm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-acm.cpp"; sourceTree = "<group>"; };
 		495712F816E90E5900934EA3 /* metadata-elsevier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-elsevier.cpp"; sourceTree = "<group>"; };
 		495DB2D518CCB02300FE485A /* fakedlopen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakedlopen.c; sourceTree = "<group>"; };
@@ -2877,10 +2881,11 @@
 		9C0B476010A8CC0F0097A335 /* Generic */ = {
 			isa = PBXGroup;
 			children = (
-				4910FA7216EB3E2F0088B175 /* post_convert.cpp */,
 				9C0B476110A8CC0F0097A335 /* generic.cpp */,
+				4952408B1AC402A800A611AD /* indexation.cpp */,
 				9C0B476210A8CC0F0097A335 /* input.cpp */,
 				9C0B476310A8CC0F0097A335 /* input.hpp */,
+				4910FA7216EB3E2F0088B175 /* post_convert.cpp */,
 			);
 			path = Generic;
 			sourceTree = "<group>";
@@ -4862,6 +4867,7 @@
 				9C0B4A8910A8CC110097A335 /* openssl.cpp in Sources */,
 				9C0B4A9110A8CC110097A335 /* qt_dialogues.cpp in Sources */,
 				9C0B4A9210A8CC110097A335 /* qt_gui.cpp in Sources */,
+				4952408C1AC402A800A611AD /* indexation.cpp in Sources */,
 				9C0B4A9310A8CC110097A335 /* qt_menu.cpp in Sources */,
 				9C0B4A9410A8CC110097A335 /* qt_renderer.cpp in Sources */,
 				9C0B4A9510A8CC110097A335 /* qt_utilities.cpp in Sources */,
@@ -5255,6 +5261,7 @@
 				9CCC74B510D303D900E88D90 /* tm_server.cpp in Sources */,
 				9CCC74B610D303D900E88D90 /* texmacs.cpp in Sources */,
 				9CCC74B710D303D900E88D90 /* tm_button.cpp in Sources */,
+				4952408E1AC402A800A611AD /* indexation.cpp in Sources */,
 				9CCC74B810D303D900E88D90 /* tm_dialogue.cpp in Sources */,
 				9CCC74B910D303D900E88D90 /* tm_frame.cpp in Sources */,
 				9CCC74BA10D303D900E88D90 /* tm_window.cpp in Sources */,
@@ -5490,6 +5497,7 @@
 				9CD4E63910B14AB300E0DD5C /* find_font.cpp in Sources */,
 				9CD4E63A10B14AB300E0DD5C /* font.cpp in Sources */,
 				9CD4E63B10B14AB300E0DD5C /* math_font.cpp in Sources */,
+				4952408D1AC402A800A611AD /* indexation.cpp in Sources */,
 				9CD4E63C10B14AB300E0DD5C /* translator.cpp in Sources */,
 				9CD4E63D10B14AB300E0DD5C /* virtual_font.cpp in Sources */,
 				9CD4E63E10B14AB300E0DD5C /* widget.cpp in Sources */,
