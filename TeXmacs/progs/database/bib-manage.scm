@@ -96,16 +96,21 @@
         (db-set-field id "imported" (list (url->system bdb)))))))
 
 (tm-define (bib-import-bibtex f)
-  (with db (bib-cache-bibtex f)
+  (let* ((db (bib-cache-bibtex f))
+         (origin (url->string (url-tail f))))
     (when (url-exists? db)
       (with-database db
         (with all (bib-load)
           (when (not (bib-cache-imported? f bib-database))
             (with-database bib-database
-              (bib-save all)
-              (bib-cache-notify-imported f bib-database)
-              (set-message "Imported bibliographic entries"
-                           "import bibliography"))))))))
+              (with-extra-fields (list (list "contributor" (db-default-user))
+                                       (list "modus" "imported")
+                                       (list "origin" origin))
+                (with-time-stamp #t
+                  (bib-save all))))
+            (bib-cache-notify-imported f bib-database)
+            (set-message "Imported bibliographic entries"
+                         "import bibliography")))))))
 
 (tm-define (bib-export-global f)
   (with-database bib-database

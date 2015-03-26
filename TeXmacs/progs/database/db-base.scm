@@ -58,10 +58,10 @@
   `(with-global db-time (db-decode-time ,t) ,@body))
 
 (tm-define-macro (with-time-stamp on? . body)
-  `(with-global db-time-stamp? on? ,@body))
+  `(with-global db-time-stamp? ,on? ,@body))
 
 (tm-define-macro (with-extra-fields l . body)
-  `(with-global db-extra-fields (append db-extra-fields l) ,@body))
+  `(with-global db-extra-fields (append db-extra-fields ,l) ,@body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time constraints

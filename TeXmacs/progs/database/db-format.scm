@@ -42,7 +42,7 @@
   (list "type" "location" "dir" "date" "pseudo" "id"))
 
 (tm-define (db-meta-attributes)
-  (list "contributor" "origin" "modus" "date"
+  (list "date" "contributor" "modus" "origin"
 	"master-id" "previous" "message" "supersede"))
 
 (smart-table db-encoding-table
