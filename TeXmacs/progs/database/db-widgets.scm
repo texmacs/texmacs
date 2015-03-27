@@ -74,7 +74,7 @@
 ;; Exported routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (open-database-search db kind name)
+(tm-define (open-db-chooser db kind name call-back)
   (:interactive #t)
   (ahash-set! db-search-cache (url->string db)
 	      (with-database db
@@ -82,5 +82,5 @@
   (dialogue-window (db-search-widget db kind)
 		   (lambda args
 		     (set! db-quit-search ignore)
-		     (apply display* (rcons args "\n")))
+		     (apply call-back args))
 		   name))

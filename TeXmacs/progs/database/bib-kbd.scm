@@ -13,7 +13,8 @@
 
 (texmacs-module (database bib-edit)
   (:use (database db-edit)
-        (database bib-db)))
+        (database bib-db)
+        (database bib-widgets)))
 
 (texmacs-modes
   (in-bib-names% (or (inside-db-field? "author") (inside-db-field? "editor"))
@@ -33,3 +34,13 @@
   ("," (make-name-sep))
   (", var" ",")
   ("space a n d space" (make-name-sep)))
+
+(tm-define (kbd-alternate-variant t forwards?)
+  (:require (and (supports-sql?)
+		 (tree-in? t '(cite nocite cite-detail))))
+  (and-with u (tree-down t)
+    (open-bib-chooser
+     (lambda (key)
+       (when (and (tree->path u)
+		  (tree-in? (tree-up u) '(cite nocite cite-detail)))
+	 (tree-set! u key))))))

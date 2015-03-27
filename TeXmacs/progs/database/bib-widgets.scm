@@ -33,5 +33,5 @@
   (top-window bib-preferences-widget "Bibliographic preferences"))
 
 
-(tm-define (open-bibliography-search)
-  (open-database-search bib-database "bib" "Search bibliographic reference"))
+(tm-define (open-bib-chooser cb)
+  (open-db-chooser bib-database "bib" "Search bibliographic reference" cb))

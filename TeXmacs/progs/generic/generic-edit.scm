@@ -116,7 +116,7 @@
 (tm-define (kbd-variant t forwards?)
   (:require (tree-is-buffer? t))
   (if (and (not (complete-try?)) forwards?)
-      (with sh (kbd-system-rewrite (kbd-find-inv-binding '(make-htab "5mm")))
+      (with sh (kbd-system-rewrite (kbd-find-inv-binding '(kbd-alternate-tab)))
         (set-message `(concat "Use " ,sh " in order to insert a tab")
                      "tab"))))
 
@@ -126,11 +126,20 @@
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (tree-in? t '(cite nocite cite-detail)) (cursor-inside? t)))
-  (with u (current-bib-file #t)
-    (with ttxt (tree-ref t (cADr (cursor-path)))
-      (if (or (url-none? u) (not ttxt))
-          (set-message "No completions" "You must add a bibliography file")
-          (custom-complete (tm->tree (citekey-completions u ttxt)))))))
+  (when (not (supports-sql?))
+    (with u (current-bib-file #t)
+      (with ttxt (tree-ref t (cADr (cursor-path)))
+	(if (or (url-none? u) (not ttxt))
+	    (set-message "No completions" "You must add a bibliography file")
+	    (custom-complete (tm->tree (citekey-completions u ttxt))))))))
+
+(tm-define (kbd-alternate-variant t forwards?)
+  (and-with p (tree-outer t)
+    (kbd-alternate-variant p forwards?)))
+
+(tm-define (kbd-alternate-variant t forwards?)
+  (:require (tree-is-buffer? t))
+  (make-htab "5mm"))
 
 (tm-define (kbd-return)
   (kbd-enter (focus-tree) #f))
@@ -144,6 +153,10 @@
   (kbd-variant (focus-tree) #t))
 (tm-define (kbd-shift-tab)
   (kbd-variant (focus-tree) #f))
+(tm-define (kbd-alternate-tab)
+  (kbd-alternate-variant (focus-tree) #t))
+(tm-define (kbd-shift-alternate-tab)
+  (kbd-alternate-variant (focus-tree) #f))
 
 (tm-define (notify-activated t) (noop))
 (tm-define (notify-disactivated t) (noop))

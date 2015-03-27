@@ -412,12 +412,14 @@
 (kbd-map
   (:profile emacs)
   (:require (and (not (in-prog?)) (not (in-verbatim?))))
-  ("A-tab" (make-htab "5mm"))
+  ("A-tab" (kbd-alternate-tab))
+  ("A-S-tab" (kbd-shift-alternate-tab))
   ("A-space" (make-space "0.2spc"))
   ("A-S-space" (make-space "-0.2spc"))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc"))
-  ("M-tab" (make-htab "5mm")))
+  ("M-tab" (kbd-alternate-tab))
+  ("M-S-tab" (kbd-shift-alternate-tab)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Gnome keymap
@@ -481,7 +483,8 @@
 (kbd-map
   (:profile gnome)
   (:require (and (not (in-prog?)) (not (in-verbatim?))))
-  ("M-tab" (make-htab "5mm"))
+  ("M-tab" (kbd-alternate-tab))
+  ("M-S-tab" (kbd-shift-alternate-tab))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
 
@@ -543,7 +546,8 @@
 (kbd-map
   (:profile kde)
   (:require (and (not (in-prog?)) (not (in-verbatim?))))
-  ("M-tab" (make-htab "5mm"))
+  ("M-tab" (kbd-alternate-tab))
+  ("M-S-tab" (kbd-shift-alternate-tab))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
 
@@ -623,7 +627,8 @@
 (kbd-map
   (:profile macos)
   (:require (and (not (in-prog?)) (not (in-verbatim?))))
-  ("C-tab" (make-htab "5mm"))
+  ("C-tab" (kbd-alternate-tab))
+  ("C-S-tab" (kbd-shift-alternate-tab))
   ("C-space" (make-space "0.2spc"))
   ("C-S-space" (make-space "-0.2spc")))
 
@@ -753,6 +758,7 @@
 (kbd-map
   (:profile windows)
   (:require (and (not (in-prog?)) (not (in-verbatim?))))
-  ("M-tab" (make-htab "5mm"))
+  ("M-tab" (kbd-alternate-tab))
+  ("M-S-tab" (kbd-shift-alternate-tab))
   ("M-space" (make-space "0.2spc"))
   ("M-S-space" (make-space "-0.2spc")))
