@@ -97,7 +97,7 @@
     (let* ((dummy (set! db-quit-search quit))
 	   (query ""))
       (hlist
-	(text "Search") // //
+	(text "Search:") // //
 	(input (set! query (db-search-keypress db kind answer query))
 	       "search-database" (list "") "650px"))
       === ===
