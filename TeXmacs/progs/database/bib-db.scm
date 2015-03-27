@@ -160,7 +160,7 @@
   ((* "incollection" *) :texmacs)
   ((* "inproceedings" *) :texmacs)
   ((* "manual" *) :texmacs)
-  ((* "masterthesis" *) :texmacs)
+  ((* "mastersthesis" *) :texmacs)
   ((* "misc" *) :texmacs)
   ((* "phdthesis" *) :texmacs)
   ((* "proceedings" *) :texmacs)
