@@ -17,6 +17,40 @@
         (database db-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pretty printing with cache
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define db-pretty-cache (make-ahash-table))
+
+(define (db-pretty-cached l kind fm)
+  (when (not (ahash-ref db-pretty-cache (list kind fm)))
+    (ahash-set! db-pretty-cache (list kind fm) (make-ahash-table)))
+  (with cache (ahash-ref db-pretty-cache (list kind fm))
+    (let* ((todo (list-filter l (negate (cut ahash-ref cache <>))))
+           (pretty (db-pretty todo kind fm))
+           (srcs (make-ahash-table))
+           (objs (make-ahash-table)))
+      (for-each (lambda (entry)
+                  (and-with name (db-entry-ref entry "name")
+                    (ahash-set! srcs name entry))) todo)
+      (for-each (lambda (p)
+                  (and-with name (and (tm-func? p 'bib-result 2) (tm-ref p 0))
+                    (ahash-set! objs name p))) pretty)
+      (for (name (map car (ahash-table->list srcs)))
+        (let* ((src (ahash-ref srcs name))
+               (obj (ahash-ref objs name)))
+          (when (and src obj)
+            (ahash-set! cache src obj)))))
+    (let* ((r (map (cut ahash-ref cache <>) l))
+           (fr (list-filter r identity)))
+      (sort fr (lambda (p1 p2)
+                 (and (tm-func? p1 'bib-result 2)
+                      (tm-func? p2 'bib-result 2)
+                      (string? (tm-ref p1 0))
+                      (string? (tm-ref p2 0))
+                      (string<=? (tm-ref p1 0) (tm-ref p2 0))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Producing the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -30,11 +64,15 @@
 (define (db-search-results db kind query)
   (let* ((l (ahash-ref db-search-cache (url->string db)))
 	 (f (list-filter l (db-search-match? query)))
-	 (h (if (< (length f) 25) f (sublist f 0 25)))
-	 (r (db-pretty h kind :compact)))
+	 (h (if (< (length f) 20) f (sublist f 0 20)))
+	 (r (db-pretty-cached h kind :compact)))
     (cond ((null? r) (list "No matching items"))
-	  ((>= (length r) 25) (rcons r "More items follow"))
+	  ((>= (length r) 20) (rcons r "More items follow"))
 	  (else r))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Producing the search results
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search the database
