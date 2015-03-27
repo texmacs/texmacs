@@ -44,6 +44,9 @@
 ;; Memory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind provoke-error-menu
+  (xxx))
+
 (menu-bind debug-menu
   (-> "Guile"
       ("Backtrace errors" (debug-toggle-backtrace-errors)))
@@ -70,9 +73,11 @@
         ("Error status report" (math-status-print))
         ("Reset error counters" (math-status-reset))))
   (-> "Miscellaneous"
+      ("Test routine" (edit-test))
       ("Provoke scheme error" (oops))
       ("Provoke C++ error" (cpp-error))
-      ("Test routine" (edit-test)))
+      (-> "Provoke menu error"
+          (link provoke-error-menu)))
   ---
   ("auto" (debug-toggle "auto"))
   ("verbose" (debug-toggle "verbose"))
