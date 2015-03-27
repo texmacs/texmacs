@@ -497,7 +497,9 @@ QTMLineEdit::set_type (string t) {
 
 bool
 QTMLineEdit::continuous () {
-  return type == "search" || starts (type, "replace-") ||
+  return
+    starts (type, "search") ||
+    starts (type, "replace-") ||
     starts (serial, "form-");
 }
 

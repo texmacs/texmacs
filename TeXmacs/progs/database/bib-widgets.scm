@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database bib-widgets)
-  (:use (database bib-manage)))
+  (:use (database bib-manage)
+	(database db-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences
@@ -30,3 +31,7 @@
 (tm-define (open-bib-preferences)
   (:interactive #t)
   (top-window bib-preferences-widget "Bibliographic preferences"))
+
+
+(tm-define (open-bibliography-search)
+  (open-database-search bib-database "bib" "Search bibliographic reference"))

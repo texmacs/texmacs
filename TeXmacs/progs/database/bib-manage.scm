@@ -234,6 +234,39 @@
             (tm->tree t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pretty printing of bibliography entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (extract-label t)
+  (cond ((tm-func? t 'label 1) (tm-ref t 0))
+	((pair? t) (or (extract-label (car t)) (extract-label (cdr t))))
+	(else #f)))
+
+(define (remove-label t)
+  (cond ((tm-func? t 'bibitem*) "")
+	((tm-func? t 'label 1) "")
+	((tm-func? t 'concat)
+	 (apply tmconcat (map remove-label (tm-children t))))
+	(else t)))
+
+(define (rewrite-bibitem t)
+  (let* ((lab (extract-label t))
+	 (t* (remove-label t))
+	 (lab* (if (and (string? lab) (string-starts? lab "bib-"))
+		   (string-drop lab 4) "?")))
+    `(bib-result ,lab* ,t*)))
+
+(tm-define (db-pretty l kind fm)
+  (:require (and (== kind "bib") (== fm :compact)))
+  (let* ((bib (map db->bib l))
+	 (doc `(document ,@bib))
+	 (gen (bib-generate "bib" "siam" doc)))
+    (when (tm-func? gen 'bib-list)
+      (set! gen (tm-ref gen :last)))
+    (with r (if (tm-func? gen 'document) (tm-children gen) (list gen))
+      (map rewrite-bibitem r))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Attaching the bibliography to the current document and automatic importation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

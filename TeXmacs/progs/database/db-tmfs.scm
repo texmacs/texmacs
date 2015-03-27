@@ -17,6 +17,9 @@
 ;; Showing the database
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (db-get-style kind)
+  (string-append "database-" kind))
+
 (tmfs-title-handler (db name doc)
   (with kind name ;; (tmfs-car name)
     (string-append "Database - " kind)))
@@ -32,5 +35,5 @@
          (l* (if (null? l) (list "") l)))
     `(document
        (TeXmacs ,(texmacs-version))
-       (style (tuple ,(string-append "database-" kind)))
+       (style (tuple ,(db-get-style kind)))
        (body (document ,@l*)))))

@@ -40,6 +40,14 @@
 
   <assign|name-jr|<macro|jr|<with|font-shape|small-caps|color|dark
   grey|<arg|jr>>>>
+
+  <\active*>
+    <\src-comment>
+      Markup for bibliography search results.
+    </src-comment>
+  </active*>
+
+  <assign|bib-result|<macro|key|val|<with|par-left|1tab|par-first|-1tab|<strong|<arg|key>.><space|1em><arg|val>>>>
 </body>
 
 <\initial>
