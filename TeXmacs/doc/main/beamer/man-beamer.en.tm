@@ -34,7 +34,7 @@
       Animations
     </branch|man-animations.en.tm>
 
-    <branch|Exporting to <abbr|PDF>|man-beamer2pdf.en.tm>
+    <branch|Exporting presentations|man-beamer-export.en.tm>
   </traverse>
 
   <tmdoc-copyright|2010|Joris van der Hoeven>
