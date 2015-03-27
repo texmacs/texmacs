@@ -178,7 +178,7 @@ bool
 bib_is_bad (tree t) {
   if (is_atomic(t)) {
     string s= t->label;
-    for (int i= N(s); i >= 0; i--)
+    for (int i= N(s)-1; i >= 0; i--)
       if (!is_space (s[i])) return false;
     return true;
   }
