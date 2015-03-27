@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Laptop presentations>
@@ -30,7 +30,11 @@
 
     <branch|Decorations|man-decorations.en.tm>
 
-    <branch|Animations|man-animations.en.tm>
+    <\branch>
+      Animations
+    </branch|man-animations.en.tm>
+
+    <branch|Exporting to <abbr|PDF>|man-beamer2pdf.en.tm>
   </traverse>
 
   <tmdoc-copyright|2010|Joris van der Hoeven>
@@ -45,6 +49,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
+    <associate|info-flag|none>
   </collection>
 </initial>
