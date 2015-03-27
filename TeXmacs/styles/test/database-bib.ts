@@ -47,7 +47,8 @@
     </src-comment>
   </active*>
 
-  <assign|bib-result|<macro|key|val|<with|par-left|1tab|par-first|-1tab|<strong|<arg|key>.><space|1em><arg|val>>>>
+  <assign|bib-result|<macro|key|val|<with|par-left|1tab|par-first|-1tab|<action|<with|color|dark
+  blue|<strong|<arg|key>. >>|db-confirm-result|<arg|key>><arg|val>>>>
 </body>
 
 <\initial>

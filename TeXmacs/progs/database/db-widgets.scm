@@ -40,6 +40,8 @@
 ;; Search the database
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define db-quit-search ignore)
+
 (define (db-search-keypress db kind event old-query)
   (when (pair? event)
     (with (new-query key) event
@@ -47,9 +49,15 @@
 		       `(document ,@(db-search-results db kind new-query)))
       new-query)))
 
+(tm-define (db-confirm-result t)
+  (:secure #t)
+  (when (tm-atomic? t)
+    (db-quit-search (tm->string t))))
+
 (tm-widget ((db-search-widget db kind) quit)
   (padded
-    (with query ""
+    (let* ((dummy (set! db-quit-search quit))
+	   (query ""))
       (hlist
 	(text "Search") // //
 	(input (set! query (db-search-keypress db kind answer query))
@@ -71,4 +79,8 @@
   (ahash-set! db-search-cache (url->string db)
 	      (with-database db
 		(db-load-types (smart-ref db-kind-table kind))))
-  (dialogue-window (db-search-widget db kind) noop name))
+  (dialogue-window (db-search-widget db kind)
+		   (lambda args
+		     (set! db-quit-search ignore)
+		     (apply display* (rcons args "\n")))
+		   name))
