@@ -23,6 +23,10 @@
 (tm-define-macro (with-user uid . body)
   `(with-global db-current-user ,uid ,@body))
 
+(tm-define (db-reset)
+  (former)
+  (set! db-current-user #t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The default user
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

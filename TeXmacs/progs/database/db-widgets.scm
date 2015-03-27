@@ -114,6 +114,7 @@
 
 (tm-define (open-db-chooser db kind name call-back)
   (:interactive #t)
+  (db-reset)
   (ahash-set! db-search-cache (url->string db)
 	      (with-database db
 		(db-load-types (smart-ref db-kind-table kind))))

@@ -24,6 +24,10 @@
 (tm-define-macro (with-encoding enc . body)
   `(with-global db-encoding ,enc ,@body))
 
+(tm-define (db-reset)
+  (former)
+  (set! db-encoding :default))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

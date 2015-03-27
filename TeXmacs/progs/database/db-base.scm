@@ -25,6 +25,9 @@
 (tm-define-macro (with-database db . body)
   `(with-global current-database ,db ,@body))
 
+(tm-define (db-reset)
+  (set! current-database (url-none)))
+
 (tm-define (db-init-database)
   (when (url-none? current-database)
     (texmacs-error "db-init-database" "no database specified"))
@@ -62,6 +65,12 @@
 
 (tm-define-macro (with-extra-fields l . body)
   `(with-global db-extra-fields (append db-extra-fields ,l) ,@body))
+
+(tm-define (db-reset)
+  (former)
+  (set! db-time "strftime('%s','now')")
+  (set! db-time-stamp? #f)
+  (set! db-extra-fields (list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time constraints
