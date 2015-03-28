@@ -36,7 +36,16 @@
     (sql-exec current-database
               (string-append "CREATE TABLE props ("
                              "id text, attr text, val text, "
-			     "created integer, expires integer)"))))
+			     "created integer, expires integer)"))
+    (sql-exec current-database
+              (string-append "CREATE TABLE matches ("
+                             "id text, attr text, key text)"))
+    (sql-exec current-database
+              (string-append "CREATE TABLE scores ("
+                             "id text, key text, score integer)"))
+    (sql-exec current-database
+              (string-append "CREATE TABLE prefixes ("
+                             "prefix text, key text)"))))
 
 (tm-define (db-sql . l)
   (db-init-database)
@@ -206,10 +215,12 @@
 ;; Searching database entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-search-join l i)
-  (with s (string-append "props AS p" (number->string i))
-    (if (null? (cdr l)) s
-        (string-append s " JOIN " (db-search-join (cdr l) (+ i 1))))))
+(tm-define (db-search-table query i)
+  (string-append "props AS p" (number->string i)))
+
+(define (db-search-join l)
+  (with ss (map db-search-table l (... 1 (length l)))
+    (apply string-append (list-intersperse ss " JOIN "))))
 
 (define (db-search-value pi vals)
   (cond ((null? vals)
@@ -222,23 +233,25 @@
                  (a (apply string-append iqvals)))
             (string-append pi ".val IN (" a ")")))))
 
-(define (db-search-on l i)
-  (with (attr . vals) (car l)
+(tm-define (db-search-constraint query i)
+  (with (attr . vals) query
     (let* ((pi (string-append "p" (number->string i)))
            (sid (string-append pi ".id=p1.id"))
            (sattr (string-append pi ".attr=" (sql-quote attr)))
            (spair (string-append sattr " AND " (db-search-value pi vals)))
-           (sall (string-append spair " AND " (db-time-constraint-on pi)))
-           (q (if (= i 1) sall (string-append sid " AND " sall))))
-      (if (null? (cdr l)) q
-          (string-append q " AND " (db-search-on (cdr l) (+ i 1)))))))
+           (sall (string-append spair " AND " (db-time-constraint-on pi))))
+      (if (= i 1) sall (string-append sid " AND " sall)))))
+
+(define (db-search-on l)
+  (with ss (map db-search-constraint l (... 1 (length l)))
+    (apply string-append (list-intersperse ss " AND "))))
 
 (tm-define (db-search l)
   (if (null? l)
       (db-sql* "SELECT DISTINCT id FROM props"
                " WHERE " (db-time-constraint))
-      (let* ((join (db-search-join l 1))
-             (on (db-search-on l 1))
+      (let* ((join (db-search-join l))
+             (on (db-search-on l))
              (sep (if (null? (cdr l)) " WHERE " " ON ")))
         (db-sql* "SELECT DISTINCT p1.id FROM " join sep on))))
 
