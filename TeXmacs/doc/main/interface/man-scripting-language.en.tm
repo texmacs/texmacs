@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Plug-ins as scripting languages>
@@ -27,8 +27,9 @@
   language> using <menu|Document|Scripts|Maxima>. When doing so, a special
   <menu|Maxima> menu will appear, which allows for many useful operations
   directly on formulas. For instance, when putting the cursor inside the
-  formula <math|1+1> and pressing <shortcut|(kbd-return)> or <menu|Evaluate>,
-  the formula gets evaluated automatically to yield <math|2>.
+  formula <math|1+1> and pressing <shortcut|(script-eval)> or
+  <menu|Evaluate>, the formula gets evaluated automatically to yield
+  <math|2>.
 
   If a plug-in can be used as a scripting language, then it is possible to
   create executable switches with links between them. More precisely,
@@ -90,8 +91,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
