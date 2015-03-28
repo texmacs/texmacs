@@ -54,7 +54,7 @@
     with-aux with-action with-module
     with-cursor with-buffer with-author
     with-server with-database
-    with-time with-time-stamp with-encoding
+    with-time with-time-stamp with-encoding with-indexing
     with-user with-extra-fields
     user-ask
     tab icon-tab form item meti refreshable
