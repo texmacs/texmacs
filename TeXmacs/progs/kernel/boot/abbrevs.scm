@@ -124,6 +124,11 @@
       (cons start (.. (1+ start) end))
       '()))
 
+(define-public (... start end)
+  (if (<= start end)
+      (cons start (... (1+ start) end))
+      '()))
+
 (define-public-macro (for what . body)
   (let ((n (length what)))
     (cond ((== n 2)

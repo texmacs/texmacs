@@ -68,7 +68,7 @@
 (define (email-best-alternative id)
   (let* ((n (email-arity id))
 	 (ids (map (lambda (x) (string-append id "-" (number->string x)))
-		   (.. 1 (+ n 1))))
+		   (... 1 n)))
 	 (mts (map email-mime-type ids))
 	 (l (list "text/x-texmacs" "application/x-texmacs"
                   "text/x-tex" "application/x-tex"
@@ -78,7 +78,7 @@
 (define (email-mixed-body id)
   (let* ((n (email-arity id))
 	 (ids (map (lambda (x) (string-append id "-" (number->string x)))
-		   (.. 1 (+ n 1))))
+		   (... 1 n)))
 	 (oks (list-filter ids email-inline?))
 	 (docs (map email-body oks))
 	 (l (append-map paragraphs docs)))

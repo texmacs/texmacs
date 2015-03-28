@@ -87,7 +87,7 @@
 (define (make-subparts l)
   (if (short-style?) l
       (with r (tm/section-split l short-principal-section-tag?)
-	(map list->subpart r (.. 1 (+ 1 (length r)))))))
+	(map list->subpart r (... 1 (length r))))))
 
 (define (list->document-part l nr)
   (with sec? (tm/section-detect? (car l) (principal-section-predicate))
@@ -97,7 +97,7 @@
 
 (tm-define (principal-sections-to-document-parts l)
   (with r (tm/section-split l (principal-section-predicate))
-    (map list->document-part r (.. 1 (+ 1 (length r))))))
+    (map list->document-part r (... 1 (length r)))))
 
 (define (principal-section-title-sub l)
   (cond ((null? l) "no title")

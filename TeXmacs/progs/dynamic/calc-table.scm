@@ -62,12 +62,12 @@
 
 (define ((cell-ref-range-sub c1 c2) r)
   (map (lambda (c) (cell-ref-encode (list r c)))
-       (.. c1 (+ c2 1))))
+       (... c1 c2)))
 
 (tm-define (cell-ref-range x1 x2)
   (with (r1 c1) (cell-ref-decode x1)
     (with (r2 c2) (cell-ref-decode x2)
-      (with rows (map (cell-ref-range-sub c1 c2) (.. r1 (+ r2 1)))
+      (with rows (map (cell-ref-range-sub c1 c2) (... r1 r2))
 	(apply append rows)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
