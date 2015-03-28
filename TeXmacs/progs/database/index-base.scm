@@ -118,8 +118,8 @@
          (q2 (if (>= pos 0) (substring q (+ pos 1) (string-length q)) q))
          (l1 (compute-queries q1))
          (l2 (compute-queries q2)))
-    (append (map (lambda (s) (list :match s)) l1)
-            (map (lambda (s) (list :prefix s)) l2))))
+    (append (map (lambda (s) (list :prefix s)) l2)
+            (map (lambda (s) (list :match s)) l1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapping the basic database API
@@ -145,8 +145,8 @@
 
 (tm-define (db-search-table query i)
   (:require (and db-indexing (func? query :prefix 1)))
-  (string-append "matches AS p" (number->string i) " JOIN "
-                 "prefixes AS pre" (number->string i)))
+  (string-append "prefixes AS pre" (number->string i) " JOIN "
+                 "matches AS p" (number->string i)))
 
 (tm-define (db-search-constraint query i)
   (:require (and db-indexing (func? query :match 1)))
@@ -159,5 +159,5 @@
   (let* ((prefix (cadr query))
          (pi (string-append "p" (number->string i)))
          (prei (string-append "pre" (number->string i))))
-    (string-append pi ".key=" prei ".key AND "
-                   prei ".prefix=" (sql-quote prefix))))
+    (string-append prei ".prefix=" (sql-quote prefix) " AND "
+                   pi ".key=" prei ".key")))

@@ -58,21 +58,20 @@
 ;; Producing the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define db-search-cache (make-ahash-table))
-
-(define ((db-search-match? query) entry)
-  (and-with name (db-entry-ref entry "name")
-    (and (tm-atomic? name)
-	 (string-starts? (tm->string name) query))))
-
 (define (db-search-results db kind query)
-  (let* ((l (ahash-ref db-search-cache (url->string db)))
-	 (f (list-filter l (db-search-match? query)))
-	 (h (if (< (length f) 20) f (sublist f 0 20)))
-	 (r (db-pretty-cached h kind :compact)))
-    (cond ((null? r) (list "No matching items"))
-	  ((>= (length r) 20) (rcons r "More items follow"))
-	  (else r))))
+  (with-database db
+    (with-indexing #t
+      ;; TODO: filter on user permissions
+      (let* ((types (smart-ref db-kind-table kind))
+             (q (append (string->queries query)
+                        (list (cons "type" types))))
+             (ids (db-search q))
+             (ids* (if (< (length ids) 20) ids (sublist ids 0 20)))
+             (l (map db-load-entry ids*))
+             (r (db-pretty-cached l kind :compact)))
+        (cond ((null? r) (list "No matching items"))
+              ((>= (length r) 20) (rcons r "More items follow"))
+              (else r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search the database
@@ -115,9 +114,6 @@
 (tm-define (open-db-chooser db kind name call-back)
   (:interactive #t)
   (db-reset)
-  (ahash-set! db-search-cache (url->string db)
-	      (with-database db
-		(db-load-types (smart-ref db-kind-table kind))))
   (dialogue-window (db-search-widget db kind)
 		   (lambda args
 		     (set! db-quit-search ignore)
