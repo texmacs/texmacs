@@ -61,17 +61,17 @@
 (define (db-search-results db kind query)
   (with-database db
     (with-indexing #t
-      ;; TODO: filter on user permissions
-      (let* ((types (smart-ref db-kind-table kind))
-             (q (append (string->queries query)
-                        (list (cons "type" types))))
-             (ids (db-search q))
-             (ids* (if (< (length ids) 20) ids (sublist ids 0 20)))
-             (l (map db-load-entry ids*))
-             (r (db-pretty-cached l kind :compact)))
-        (cond ((null? r) (list "No matching items"))
-              ((>= (length r) 20) (rcons r "More items follow"))
-              (else r))))))
+      (with-limit 20
+        ;; TODO: filter on user permissions
+        (let* ((types (smart-ref db-kind-table kind))
+               (q (append (string->queries query)
+                          (list (cons "type" types))))
+               (ids (db-search q))
+               (l (map db-load-entry ids))
+               (r (db-pretty-cached l kind :compact)))
+          (cond ((null? r) (list "No matching items"))
+                ((>= (length r) 20) (rcons r "More items follow"))
+                (else r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search the database

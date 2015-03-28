@@ -65,6 +65,7 @@
 (tm-define db-time "strftime('%s','now')")
 (tm-define db-time-stamp? #f)
 (tm-define db-extra-fields (list))
+(tm-define db-limit #f)
 
 (tm-define-macro (with-time t . body)
   `(with-global db-time (db-decode-time ,t) ,@body))
@@ -75,14 +76,18 @@
 (tm-define-macro (with-extra-fields l . body)
   `(with-global db-extra-fields (append db-extra-fields ,l) ,@body))
 
+(tm-define-macro (with-limit limit . body)
+  `(with-global db-limit ,limit ,@body))
+
 (tm-define (db-reset)
   (former)
   (set! db-time "strftime('%s','now')")
   (set! db-time-stamp? #f)
-  (set! db-extra-fields (list)))
+  (set! db-extra-fields (list))
+  (set! db-limit #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Time constraints
+;; Time and limit constraints
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (db-decode-time t)
@@ -109,6 +114,9 @@
 (define (db-check-now)
   (when (!= db-time "strftime('%s','now')")
     (texmacs-error "db-check-now" "cannot rewrite history")))
+
+(define (db-limit-constraint)
+  (if db-limit (string-append " LIMIT " (number->string db-limit)) ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic private interface
@@ -256,11 +264,12 @@
 (tm-define (db-search l)
   (if (null? l)
       (db-sql* "SELECT DISTINCT id FROM props"
-               " WHERE " (db-time-constraint))
+               " WHERE " (db-time-constraint) (db-limit-constraint))
       (let* ((join (db-search-join l))
              (on (db-search-on l))
              (sep (if (null? (cdr l)) " WHERE " " ON ")))
-        (db-sql* "SELECT DISTINCT p1.id FROM " join sep on))))
+        (db-sql* "SELECT DISTINCT p1.id FROM " join sep on
+                 (db-limit-constraint)))))
 
 (tm-define (db-search-name name)
   (db-search (list (list "name" name))))
