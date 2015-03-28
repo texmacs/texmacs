@@ -298,6 +298,7 @@
   (when (string-ends? key "-bibliography")
     (with doc (tm->stree val)
       (with-database bib-database
-        (with-global db-duplicate-warning? #f
-          (bib-save doc)))))
+        (with-indexing #t
+          (with-global db-duplicate-warning? #f
+            (bib-save doc))))))
   (former name key val))
