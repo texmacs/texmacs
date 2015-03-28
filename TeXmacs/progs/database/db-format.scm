@@ -145,10 +145,9 @@
 (tm-define (db-set-field id attr vals)
   (if (not db-encoding)
       (former id attr vals)
-      (with-encoding #f
-        (let* ((type (with-encoding #f (db-get-field id "type")))
-               (vals (db-encode-values type attr vals)))
-          (with-encoding #f (former id attr vals))))))
+      (let* ((type (with-encoding #f (db-get-field id "type")))
+             (vals (db-encode-values type attr vals)))
+        (with-encoding #f (former id attr vals)))))
 
 (tm-define (db-get-entry id)
   (if (not db-encoding)
