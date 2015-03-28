@@ -234,20 +234,20 @@
             (string-append pi ".val IN (" a ")")))))
 
 (tm-define (db-search-constraint query i)
-  (with (attr . vals) query
-    (let* ((pi (string-append "p" (number->string i)))
-           (sattr (string-append pi ".attr=" (sql-quote attr)))
-           (spair (string-append sattr " AND " (db-search-value pi vals)))
-           (sall (string-append spair " AND " (db-time-constraint-on pi))))
-      sall)))
+  (if (and (list? query) (pair? query) (list-and (map string? query)))
+      (with (attr . vals) query
+        (let* ((pi (string-append "p" (number->string i)))
+               (sattr (string-append pi ".attr=" (sql-quote attr)))
+               (spair (string-append sattr " AND " (db-search-value pi vals)))
+               (sall (string-append spair " AND " (db-time-constraint-on pi))))
+          sall))
+      "1"))
 
 (define (db-search-constraint* query i)
-  (if (and (list? query) (pair? query) (list-and (map string? query)))
-      (let* ((pi (string-append "p" (number->string i)))
-             (sid (string-append pi ".id=p1.id"))
-             (c (db-search-constraint query i)))
-        (if (= i 1) c (string-append sid " AND " c)))
-      "1"))
+  (let* ((pi (string-append "p" (number->string i)))
+         (sid (string-append pi ".id=p1.id"))
+         (c (db-search-constraint query i)))
+    (if (= i 1) c (string-append sid " AND " c))))
 
 (define (db-search-on l)
   (with ss (map db-search-constraint* l (... 1 (length l)))

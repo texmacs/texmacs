@@ -107,7 +107,8 @@
                                        (list "modus" "imported")
                                        (list "origin" origin))
                 (with-time-stamp #t
-                  (bib-save all))))
+                  (with-indexing #t
+                    (bib-save all)))))
             (bib-cache-notify-imported f bib-database)
             (set-message "Imported bibliographic entries"
                          "import bibliography")))))))
