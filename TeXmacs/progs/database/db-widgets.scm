@@ -58,6 +58,23 @@
 ;; Producing the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define db-search-cache (make-ahash-table))
+(define db-result-cache (make-ahash-table))
+
+(define (db-search-cached q)
+  (with cached (ahash-ref db-search-cache q)
+    (or cached
+        (with r (db-search q)
+          (ahash-set! db-search-cache q r)
+          r))))
+
+(define (db-get-result-cached id)
+  (with cached (ahash-ref db-result-cache id)
+    (or cached
+        (with r (db-load-entry id)
+          (ahash-set! db-result-cache id r)
+          r))))
+
 (define (db-search-results db kind query)
   (with-database db
     (with-indexing #t
@@ -66,8 +83,8 @@
         (let* ((types (smart-ref db-kind-table kind))
                (q (append (prefix->queries query)
                           (list (cons "type" types))))
-               (ids (db-search q))
-               (l (map db-load-entry ids))
+               (ids (db-search-cached q))
+               (l (map db-get-result-cached ids))
                (r (db-pretty-cached l kind :compact)))
           (cond ((null? r) (list "No matching items"))
                 ((>= (length r) 20) (rcons r "More items follow"))
@@ -78,12 +95,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define db-quit-search ignore)
+(define db-search-keypress-serial 0)
 
 (define (db-search-keypress db kind event old-query)
   (when (pair? event)
     (with (new-query key) event
-      (buffer-set-body "tmfs://aux/db-search-results"
-		       `(document ,@(db-search-results db kind new-query)))
+      (when (!= (prefix->queries new-query) (prefix->queries old-query))
+        (with serial (+ db-search-keypress-serial 1)
+          (set! db-search-keypress-serial serial)
+          (delayed
+            (:pause 250)
+            (when (== db-search-keypress-serial serial)
+              (with doc `(document ,@(db-search-results db kind new-query))
+                (buffer-set-body "tmfs://aux/db-search-results" doc))))))
       new-query)))
 
 (tm-define (db-confirm-result t)
@@ -114,6 +138,8 @@
 (tm-define (open-db-chooser db kind name call-back)
   (:interactive #t)
   (db-reset)
+  (set! db-search-cache (make-ahash-table))
+  (set! db-result-cache (make-ahash-table))
   (dialogue-window (db-search-widget db kind)
 		   (lambda args
 		     (set! db-quit-search ignore)
