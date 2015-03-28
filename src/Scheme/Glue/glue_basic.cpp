@@ -5332,6 +5332,49 @@ tmg_vernac_document_2texmacs (tmscm arg1) {
 }
 
 tmscm
+tmg_compute_keys_string (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "compute-keys-string");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "compute-keys-string");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= compute_keys (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_compute_keys_tree (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compute-keys-tree");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "compute-keys-tree");
+
+  content in1= tmscm_to_content (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= compute_keys (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_compute_keys_url (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "compute-keys-url");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= compute_keys (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_compute_index_string (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "compute-index-string");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "compute-index-string");
@@ -8931,6 +8974,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);
   tmscm_install_procedure ("vernac->texmacs",  tmg_vernac_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("vernac-document->texmacs",  tmg_vernac_document_2texmacs, 1, 0, 0);
+  tmscm_install_procedure ("compute-keys-string",  tmg_compute_keys_string, 2, 0, 0);
+  tmscm_install_procedure ("compute-keys-tree",  tmg_compute_keys_tree, 2, 0, 0);
+  tmscm_install_procedure ("compute-keys-url",  tmg_compute_keys_url, 1, 0, 0);
   tmscm_install_procedure ("compute-index-string",  tmg_compute_index_string, 2, 0, 0);
   tmscm_install_procedure ("compute-index-tree",  tmg_compute_index_tree, 2, 0, 0);
   tmscm_install_procedure ("compute-index-url",  tmg_compute_index_url, 1, 0, 0);

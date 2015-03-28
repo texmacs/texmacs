@@ -83,7 +83,7 @@
   ;; TODO: take into account encodings of field values
   (let* ((l (list-intersperse vals "\n"))
          (s (apply string-append l)))
-    (map symbol->string (map car (compute-index-string s "verbatim")))))
+    (compute-keys-string s "verbatim")))
 
 (tm-define (index-indexate-field id attr vals)
   (with keys (index-get-keys vals)
@@ -106,21 +106,22 @@
 ;; Transforming a search string into a list of queries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (compute-queries q)
-  (let* ((scores (compute-index-string q "verbatim"))
-         (keys (map symbol->string (map car scores)))
+(tm-define (string->queries q)
+  (let* ((keys (compute-keys-string q "verbatim"))
+         (keys* (list-filter keys (lambda (s) (>= (string-length s) 2))))
+         (longer? (lambda (s1 s2) (>= (string-length s1) (string-length s2))))
+         (l (sort keys* longer?)))
+    (map (lambda (s) (list :match s)) l)))
+
+(tm-define (prefix->queries q)
+  (let* ((keys (compute-keys-string q "verbatim"))
          (keys* (list-filter keys (lambda (s) (>= (string-length s) 2))))
          (longer? (lambda (s1 s2) (>= (string-length s1) (string-length s2)))))
-    (sort keys* longer?)))
-
-(tm-define (string->queries q)
-  (let* ((pos (string-search-backwards " " (string-length q) q))
-         (q1 (if (>= pos 0) (substring q 0 pos) ""))
-         (q2 (if (>= pos 0) (substring q (+ pos 1) (string-length q)) q))
-         (l1 (compute-queries q1))
-         (l2 (compute-queries q2)))
-    (append (map (lambda (s) (list :prefix s)) l2)
-            (map (lambda (s) (list :match s)) l1))))
+    (if (null? keys*) (list)
+        (let* ((l1 (sort (cDr keys*) longer?))
+               (l2 (list (cAr keys*))))
+          (append (map (lambda (s) (list :prefix s)) l2)
+                  (map (lambda (s) (list :match s)) l1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapping the basic database API

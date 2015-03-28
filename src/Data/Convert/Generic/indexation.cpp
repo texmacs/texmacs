@@ -11,7 +11,6 @@
 
 #include "convert.hpp"
 #include "analyze.hpp"
-#include "merge_sort.hpp"
 #include "hashmap.hpp"
 #include "iterator.hpp"
 #include "file.hpp"
@@ -24,6 +23,7 @@ typedef bool char_selection[256];
 
 struct score_computer {
   hashmap<string,int> score;
+  array<string> keys;
 
   string fm;
   char_selection start_list;
@@ -34,12 +34,12 @@ struct score_computer {
   void initialize_acceptable (char_selection& sel, string accepted);
   void compute (string s, int m= 1);
   void compute (tree t, int m= 1);
-  array<string> retrieve_strings ();
+  array<string> retrieve_keys ();
   scheme_tree retrieve_scores ();
 };
 
 score_computer::score_computer (string fm2):
-  score (0), fm (fm2), multiplier (1)
+  score (0), keys (0), fm (fm2), multiplier (1)
 {
   string first= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   string all= first * string ("0123456789_");
@@ -80,6 +80,7 @@ score_computer::compute (string s, int m) {
       while (i<N(s) && char_list[(int) (unsigned char) s[i]]) i++;
       if (start_list[(int) (unsigned char) s[start]]) {
         string ss= locase_all (s (start, i));
+        if (!score->contains (ss)) keys << ss;
         score (ss)= min (score[ss] + m, 10000);
         m= multiplier[ss];
       }
@@ -105,17 +106,13 @@ score_computer::compute (tree t, int m) {
 }
 
 array<string>
-score_computer::retrieve_strings () {
-  array<string> r;
-  iterator<string> it= iterate (score);
-  while (it->busy ()) r << it->next ();
-  merge_sort (r);
-  return r;
+score_computer::retrieve_keys () {
+  return keys;
 }
 
 scheme_tree
 score_computer::retrieve_scores () {
-  array<string> r= retrieve_strings ();
+  array<string> r= retrieve_keys ();
   scheme_tree t (TUPLE);
   for (int i=0; i<N(r); i++)
     t << tree (TUPLE, r[i], as_string (score[r[i]]));
@@ -123,8 +120,15 @@ score_computer::retrieve_scores () {
 }
 
 /******************************************************************************
-* Indexation scores
+* Public interface
 ******************************************************************************/
+
+array<string>
+compute_keys (string s, string fm) {
+  score_computer comp (fm);
+  comp.compute (s);
+  return comp.retrieve_keys ();
+}
 
 scheme_tree
 compute_index (string s, string fm) {
@@ -133,11 +137,28 @@ compute_index (string s, string fm) {
   return comp.retrieve_scores ();
 }
 
+array<string>
+compute_keys (tree t, string fm) {
+  score_computer comp (fm);
+  comp.compute (t);
+  return comp.retrieve_keys ();
+}
+
 scheme_tree
 compute_index (tree t, string fm) {
   score_computer comp (fm);
   comp.compute (t);
   return comp.retrieve_scores ();
+}
+
+array<string>
+compute_keys (url u) {
+  string s;
+  load_string (u, s, false);
+  string fm= get_format (s, suffix (u));
+  if (fm != "texmacs") return compute_keys (s, fm);
+  tree t= texmacs_document_to_tree (s);
+  return compute_keys (t, fm);
 }
 
 scheme_tree

@@ -64,7 +64,7 @@
       (with-limit 20
         ;; TODO: filter on user permissions
         (let* ((types (smart-ref db-kind-table kind))
-               (q (append (string->queries query)
+               (q (append (prefix->queries query)
                           (list (cons "type" types))))
                (ids (db-search q))
                (l (map db-load-entry ids))
