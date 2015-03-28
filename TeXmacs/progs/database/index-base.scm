@@ -109,8 +109,9 @@
 (define (compute-queries q)
   (let* ((scores (compute-index-string q "verbatim"))
          (keys (map symbol->string (map car scores)))
+         (keys* (list-filter keys (lambda (s) (>= (string-length s) 2))))
          (longer? (lambda (s1 s2) (>= (string-length s1) (string-length s2)))))
-    (sort keys longer?)))
+    (sort keys* longer?)))
 
 (tm-define (string->queries q)
   (let* ((pos (string-search-backwards " " (string-length q) q))
