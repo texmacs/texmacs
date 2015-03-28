@@ -103,6 +103,25 @@
     (index-set-scores id scores)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Transforming a search string into a list of queries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (compute-queries q)
+  (let* ((scores (compute-index-string q "verbatim"))
+         (keys (map symbol->string (map car scores)))
+         (longer? (lambda (s1 s2) (>= (string-length s1) (string-length s2)))))
+    (sort keys longer?)))
+
+(tm-define (string->queries q)
+  (let* ((pos (string-search-backwards " " (string-length q) q))
+         (q1 (if (>= pos 0) (substring q 0 pos) ""))
+         (q2 (if (>= pos 0) (substring q (+ pos 1) (string-length q)) q))
+         (l1 (compute-queries q1))
+         (l2 (compute-queries q2)))
+    (append (map (lambda (s) (list :match s)) l1)
+            (map (lambda (s) (list :prefix s)) l2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapping the basic database API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
