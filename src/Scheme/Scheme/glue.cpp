@@ -398,6 +398,7 @@ scheme_tree_to_tmscm (scheme_tree t) {
       return string_to_tmscm (scm_unquote (s));
     //if ((N(s)>=2) && (s[0]=='\42') && (s[N(s)-1]=='\42'))
     //return string_to_tmscm (s (1, N(s)-1));
+    if (N(s) >= 1 && s[0] == '\'') return symbol_to_tmscm (s (1, N(s)));
     return symbol_to_tmscm (s);
   }
   else {

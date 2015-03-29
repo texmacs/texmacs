@@ -115,7 +115,11 @@ tree_to_scheme_tree (tree t) {
   else {
     int i, n= N(t);
     tree u (TUPLE, n+1);
-    u[0]= copy (as_string (L(t)));
+    string s= as_string (L(t));
+    if (N(s) > 0 && s[0] < 'A')
+      if (s == "#t" || s == "#f" || is_int (s) || is_quoted (s))
+        s= "'" * s;
+    u[0]= copy (s);
     for (i=0; i<n; i++)
       u[i+1]= tree_to_scheme_tree (t[i]);
     return u;
