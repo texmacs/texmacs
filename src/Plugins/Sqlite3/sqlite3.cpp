@@ -19,6 +19,7 @@
 #include <sqlite3.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 /******************************************************************************
 * Routines used from Sqlite3
@@ -139,6 +140,15 @@ sql_exec (url db_name, string cmd) {
   char* err;
   //cout << "Executing " << _cmd << "\n";
   int status= SQLITE3_get_table (db, _cmd, &tab, &rows, &cols, &err);
+
+  int attempt= 0;
+  while (status != SQLITE_OK &&
+         string (err) == string ("database is locked") &&
+         attempt < 100) {
+    usleep (100000);
+    attempt++;
+    status= SQLITE3_get_table (db, _cmd, &tab, &rows, &cols, &err);
+  }
 
   if (status != SQLITE_OK) {
     // TODO: improve error handling
