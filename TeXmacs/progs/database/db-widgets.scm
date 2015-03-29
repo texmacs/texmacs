@@ -55,6 +55,33 @@
                 (and n1 n2 (string<=? n1 n2))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Optimizing searches for speed
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (db-faster? q1 q2)
+  (cond ((not (func? q2 :match)) #t)
+        ((not (func? q1 :match)) #f)
+        (else (<= (index-number-matches (cadr q1))
+                  (index-number-matches (cadr q2))))))
+
+(define (db-optimized-search* q)
+  (with r (sort q db-faster?)
+    (db-search r)))
+
+(define (db-optimized-search q)
+  (if (not (func? (car q) :prefix))
+      (db-optimized-search* q)
+      (let* ((l (index-get-completions (cadar q)))
+             (t (make-ahash-table)))
+        (for (key l)
+          (when (< (ahash-size t) db-limit)
+            (with r (db-optimized-search* (cons (list :match key) (cdr q)))
+              (for (id r)
+                (ahash-set! t id #t)))))
+        (with r (ahash-set->list t)
+          (if (<= (length r) db-limit) r (sublist r 0 db-limit))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Producing the search results
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -64,7 +91,7 @@
 (define (db-search-cached q)
   (with cached (ahash-ref db-search-cache q)
     (or cached
-        (with r (db-search q)
+        (with r (db-optimized-search q)
           (ahash-set! db-search-cache q r)
           r))))
 
