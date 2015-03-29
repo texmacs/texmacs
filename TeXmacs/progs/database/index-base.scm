@@ -28,29 +28,66 @@
   (set! db-indexing #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Building prefix table
+;; Counter management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (index-get-counter table var val)
+  (with l (db-sql* "SELECT count FROM " table " WHERE"
+                   " " var "=" (sql-quote val))
+    (if (null? l) 0 (string->number (car l)))))
+
+(define (index-increase-counter table var val)
+  (with nr (index-get-counter table var val)
+    (if (== nr 0)
+        (db-sql "INSERT INTO " table " VALUES (" (sql-quote val) ", 1)")
+        (db-sql "UPDATE " table
+                " SET count=" (number->string (+ nr 1)) " WHERE"
+                " " var "=" (sql-quote val)))))
+
+(tm-define (index-number-completions prefix)
+  (index-get-counter "prefixes_count" "prefix" prefix))
+
+(tm-define (index-number-name-completions prefix)
+  (index-get-counter "completions_count" "prefix" prefix))
+
+(tm-define (index-number-matches key)
+  (index-get-counter "matches_count" "key" key))
+
+(tm-define (index-number-hits key)
+  (index-get-counter "scores_count" "key" key))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Building prefix tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define index-prefixes-done (make-ahash-table))
 
-(define (index-get-prefixes key)
-  (db-sql* "SELECT DISTINCT prefix FROM prefixes WHERE"
+(define (index-get-prefixes table key)
+  (db-sql* "SELECT DISTINCT prefix FROM " table " WHERE"
            " key=" (sql-quote key)))
 
-(define (index-get-completions prefix)
-  (with l (if db-limit (string-append " LIMIT " (number->string db-limit)) "")
-    (db-sql* "SELECT DISTINCT key FROM prefixes WHERE"
-             " prefix=" (sql-quote prefix) l)))
+(define (index-get-completions* table prefix)
+  (db-sql* "SELECT DISTINCT key FROM " table " WHERE"
+           " prefix=" (sql-quote prefix)))
 
-(define (index-insert-prefixes key)
-  (when (not (ahash-ref index-prefixes-done key))
-    (with r (index-get-prefixes key)
-      (when (null? r)
-        (for (i (... 1 (string-length key)))
-          (with prefix (substring key 0 i)
-            (db-sql "INSERT INTO prefixes VALUES (" (sql-quote prefix)
-                    ", " (sql-quote key) ")"))))
-      (ahash-set! index-prefixes-done key #t))))
+(define (index-insert-prefixes table key)
+  (let* ((key* (list table key))
+         (cnt (string-append table "_count")))
+    (when (not (ahash-ref index-prefixes-done key*))
+      (with r (index-get-prefixes table key)
+        (when (null? r)
+          (for (i (... 1 (string-length key)))
+            (with prefix (substring key 0 i)
+              (db-sql "INSERT INTO " table " VALUES (" (sql-quote prefix)
+                      ", " (sql-quote key) ")")
+              (index-increase-counter cnt "prefix" prefix))))
+        (ahash-set! index-prefixes-done key* #t)))))
+
+(tm-define (index-get-completions prefix)
+  (index-get-completions* "prefixes" prefix))
+
+(tm-define (index-get-name-completions prefix)
+  (index-get-completions* "completions" prefix))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building matches and scores tables
@@ -61,20 +98,22 @@
           " id=" (sql-quote id) " AND"
           " attr=" (sql-quote attr))
   (for (key keys)
-    (index-insert-prefixes key)
+    (index-insert-prefixes "prefixes" key)
     (db-sql "INSERT INTO matches VALUES (" (sql-quote id)
             ", " (sql-quote attr)
-            ", " (sql-quote key) ")")))
+            ", " (sql-quote key) ")")
+    (index-increase-counter "matches_count" "key" key)))
 
 (define (index-set-scores id scores)
   (db-sql "DELETE FROM scores WHERE"
           " id=" (sql-quote id))
   (for (key-score scores)
     (with (key score) key-score
-      (index-insert-prefixes key)
+      (index-insert-prefixes "prefixes" key)
       (db-sql "INSERT INTO scores VALUES (" (sql-quote id)
               ", " (sql-quote key)
-              ", " score ")"))))
+              ", " score ")")
+      (index-increase-counter "scores_count" "key" key))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main routines for indexation
@@ -88,7 +127,10 @@
 
 (tm-define (index-indexate-field id attr vals)
   (with keys (index-get-keys vals)
-    (index-set-matches id attr keys)))
+    (index-set-matches id attr keys)
+    (when (== attr "name")
+      (for (name vals)
+        (index-insert-prefixes "completions" name)))))
 
 (tm-define (index-indexate-entry id l)
   (for (f l)
@@ -115,8 +157,7 @@
     (map (lambda (s) (list :match s)) l)))
 
 (define (admissible-prefix? p)
-  (or (not (integer? db-limit))
-      (< (length (index-get-completions p)) db-limit)))
+  (<= (index-number-completions p) 20))
 
 (tm-define (prefix->queries q)
   (let* ((keys (compute-keys-string q "verbatim"))

@@ -41,11 +41,26 @@
               (string-append "CREATE TABLE matches ("
                              "id text, attr text, key text)"))
     (sql-exec current-database
+              (string-append "CREATE TABLE matches_count ("
+                             "key text, count integer)"))
+    (sql-exec current-database
               (string-append "CREATE TABLE scores ("
                              "id text, key text, score integer)"))
     (sql-exec current-database
+              (string-append "CREATE TABLE scores_count ("
+                             "key text, count integer)"))
+    (sql-exec current-database
               (string-append "CREATE TABLE prefixes ("
-                             "prefix text, key text)"))))
+                             "prefix text, key text)"))
+    (sql-exec current-database
+              (string-append "CREATE TABLE prefixes_count ("
+                             "prefix text, count integer)"))
+    (sql-exec current-database
+              (string-append "CREATE TABLE completions ("
+                             "prefix text, key text)"))
+    (sql-exec current-database
+              (string-append "CREATE TABLE completions_count ("
+                             "prefix text, count integer)"))))
 
 (tm-define (db-sql . l)
   (db-init-database)
