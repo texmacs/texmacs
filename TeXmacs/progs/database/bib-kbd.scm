@@ -35,9 +35,20 @@
   (", var" ",")
   ("space a n d space" (make-name-sep)))
 
+(tm-define (kbd-variant t forwards?)
+  (:require (and (supports-sql?) (bib-cite-context? t)))
+  (with u (tree-down t)
+    (and-with key (and (tree-atomic? u) (tree->string u))
+      (with-database bib-database
+        (with completions (sort (index-get-name-completions key) string<=?)
+          (if (null? completions)
+              (set-message "No completions" "complete bibliographic reference")
+              (with cs (cons key (map (cut string-drop <> (string-length key))
+                                      completions))
+                (custom-complete (tm->tree `(tuple ,@cs))))))))))
+
 (tm-define (kbd-alternate-variant t forwards?)
-  (:require (and (supports-sql?)
-		 (tree-in? t '(cite nocite cite-detail))))
+  (:require (and (supports-sql?) (bib-cite-context? t)))
   (and-with u (tree-down t)
     (open-bib-chooser
      (lambda (key)
