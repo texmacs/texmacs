@@ -38,8 +38,9 @@
            " key=" (sql-quote key)))
 
 (define (index-get-completions prefix)
-  (db-sql* "SELECT DISTINCT key FROM prefixes WHERE"
-           " prefix=" (sql-quote prefix)))
+  (with l (if db-limit (string-append " LIMIT " (number->string db-limit)) "")
+    (db-sql* "SELECT DISTINCT key FROM prefixes WHERE"
+             " prefix=" (sql-quote prefix) l)))
 
 (define (index-insert-prefixes key)
   (when (not (ahash-ref index-prefixes-done key))
@@ -113,13 +114,17 @@
          (l (sort keys* longer?)))
     (map (lambda (s) (list :match s)) l)))
 
+(define (admissible-prefix? p)
+  (or (not (integer? db-limit))
+      (< (length (index-get-completions p)) db-limit)))
+
 (tm-define (prefix->queries q)
   (let* ((keys (compute-keys-string q "verbatim"))
          (keys* (list-filter keys (lambda (s) (>= (string-length s) 2))))
          (longer? (lambda (s1 s2) (>= (string-length s1) (string-length s2)))))
     (if (null? keys*) (list)
         (let* ((l1 (sort (cDr keys*) longer?))
-               (l2 (list (cAr keys*))))
+               (l2 (list-filter (list (cAr keys*)) admissible-prefix?)))
           (append (map (lambda (s) (list :prefix s)) l2)
                   (map (lambda (s) (list :match s)) l1))))))
 

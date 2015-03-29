@@ -81,7 +81,7 @@
       (with-limit 20
         ;; TODO: filter on user permissions
         (let* ((types (smart-ref db-kind-table kind))
-               (q (append (prefix->queries query)
+               (q (append (with-limit 20 (prefix->queries query))
                           (list (cons "type" types))))
                (ids (db-search-cached q))
                (l (map db-get-result-cached ids))
@@ -100,14 +100,19 @@
 (define (db-search-keypress db kind event old-query)
   (when (pair? event)
     (with (new-query key) event
-      (when (!= (prefix->queries new-query) (prefix->queries old-query))
+      (when (with-database db
+              (with-limit 20
+                (!= (prefix->queries new-query)
+                    (prefix->queries old-query))))
         (with serial (+ db-search-keypress-serial 1)
           (set! db-search-keypress-serial serial)
           (delayed
-            (:pause 250)
+            (:pause 333)
             (when (== db-search-keypress-serial serial)
               (with doc `(document ,@(db-search-results db kind new-query))
-                (buffer-set-body "tmfs://aux/db-search-results" doc))))))
+                (buffer-set-body "tmfs://aux/db-search-results" doc))
+              ;;(refresh-now "db-search-results")
+              ))))
       new-query)))
 
 (tm-define (db-confirm-result t)
