@@ -17,7 +17,7 @@
 ;; Execution of SQL commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define global-database
+(tm-define (global-database)
   (url-concretize "$TEXMACS_HOME_PATH/server/global.tmdb"))
 
 (tm-define current-database (url-none))

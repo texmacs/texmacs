@@ -31,7 +31,18 @@
 ;; The default user
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define users-manage-dir "$TEXMACS_HOME_PATH/system/database")
+(define users-dir (string-append users-manage-dir "/users"))
+(define users-master
+  (url->url (string-append users-manage-dir "/users-master.tmdb")))
+
 (define db-the-default-user #f)
+
+(tm-define (pseudo->user pseudo)
+  (with-database users-master
+    (with ids (db-search (list (list "type" "user")
+                               (list "pseudo" pseudo)))
+      (and (nnull? ids) (car ids)))))
 
 (tm-define (db-default-user)
   (when (and (not db-the-default-user)
@@ -39,20 +50,21 @@
              (url-exists-in-path? "whoami")
              (url-exists-in-path? "finger")
              (url-exists-in-path? "sed"))
-    (with-database global-database
-      (let* ((pseudo (var-eval-system "whoami"))
-             (cmd "finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'")
-             (name (var-eval-system cmd))
-             (me (db-search (list (list "type" "user")
-                                  (list "pseudo" pseudo)))))
-        (set! me (and (nnull? me) (car me)))
-        (when (and (not me) (!= pseudo "") (!= name ""))
+    (let* ((pseudo (var-eval-system "whoami"))
+           (cmd "finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'")
+           (name (var-eval-system cmd))
+           (me (pseudo->user pseudo)))
+      (when (and (not me) (!= pseudo "") (!= name ""))
+        (with-database users-master
           (set! me (db-create-entry (list (list "type" "user")
                                           (list "pseudo" pseudo)
-                                          (list "name" name)))))
-        (set! db-the-default-user me))))
+                                          (list "name" name))))))
+      (set! db-the-default-user me)))
   (set! db-the-default-user (or db-the-default-user "default"))
   db-the-default-user)
+
+(tm-define (user-database)
+  (url->url (string-append users-dir "/" (db-default-user) ".tmdb")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables

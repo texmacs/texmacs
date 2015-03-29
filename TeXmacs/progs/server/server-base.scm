@@ -18,7 +18,7 @@
 ;; Declaration of services
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define server-database global-database)
+(tm-define (server-database) (global-database))
 
 (tm-define service-dispatch-table (make-ahash-table))
 
@@ -27,7 +27,7 @@
       (with (fun . args) proto
         `(begin
            (tm-define (,fun envelope ,@args)
-             (with-database server-database
+             (with-database (server-database)
                (catch #t
                       (lambda () ,@body)
                       (lambda err
@@ -149,13 +149,13 @@
         (car (list-ref l i))))))
 
 (define (server-lookup-user pseudo)
-  (with-database server-database
+  (with-database (server-database)
     (with uids (db-search (list (list "type" "user")
                                 (list "pseudo" pseudo)))
       (and (nnull? uids) (car uids)))))
 
 (define (server-set-user-info uid pseudo name passwd email admin)
-  (with-database server-database
+  (with-database (server-database)
     (with-user #t
       (when (not uid) (set! uid (db-create-entry (list))))
       (db-set-entry uid (list (list "type" "user")
@@ -180,12 +180,12 @@
   (:argument admin "Administrive rights?")
   (:proposals admin '("no" "yes"))
   (with uid (or (server-find-user pseudo)
-                (server-lookup-user pseudo))
+                (pseudo->user pseudo))
     (server-set-user-info uid pseudo name passwd email (== admin "yes"))))
 
 (define (server-create-user pseudo name passwd email admin)
   (with uid (or (server-find-user pseudo)
-                (server-lookup-user pseudo))
+                (pseudo->user pseudo))
     (server-set-user-info uid pseudo name passwd email admin)))
 
 (tm-service (new-account pseudo name passwd email)

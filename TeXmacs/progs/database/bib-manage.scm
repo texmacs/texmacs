@@ -14,7 +14,7 @@
 (texmacs-module (database bib-manage)
   (:use (database bib-db)))
 
-(tm-define bib-database global-database)
+(tm-define (bib-database) (user-database))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Caching existing BibTeX files
@@ -101,20 +101,20 @@
     (when (url-exists? db)
       (with-database db
         (with all (bib-load)
-          (when (not (bib-cache-imported? f bib-database))
-            (with-database bib-database
+          (when (not (bib-cache-imported? f (bib-database)))
+            (with-database (bib-database)
               (with-extra-fields (list (list "contributor" (db-default-user))
                                        (list "modus" "imported")
                                        (list "origin" origin))
                 (with-time-stamp #t
                   (with-indexing #t
                     (bib-save all)))))
-            (bib-cache-notify-imported f bib-database)
+            (bib-cache-notify-imported f (bib-database))
             (set-message "Imported bibliographic entries"
                          "import bibliography")))))))
 
 (tm-define (bib-export-global f)
-  (with-database bib-database
+  (with-database (bib-database)
     (with all (bib-load)
       (when (and all (tm-func? all 'document))
         (let* ((doc `(document ,@(map db->bib (cdr all))))
@@ -176,7 +176,7 @@
         (append r (bib-retrieve-entries-from remaining (cdr dbs))))))
 
 (define (bib-get-db bib-file)
-  (cond ((== bib-file :default) bib-database)
+  (cond ((== bib-file :default) (bib-database))
         ((== (url-suffix bib-file) "tmdb") (url->url bib-file))
         (else (bib-cache-bibtex bib-file))))
 
@@ -297,7 +297,7 @@
 (tm-define (notify-set-attachment name key val)
   (when (string-ends? key "-bibliography")
     (with doc (tm->stree val)
-      (with-database bib-database
+      (with-database (bib-database)
         (with-indexing #t
           (with-global db-duplicate-warning? #f
             (bib-save doc))))))

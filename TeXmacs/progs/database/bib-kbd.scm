@@ -39,7 +39,7 @@
   (:require (and (supports-sql?) (bib-cite-context? t)))
   (with u (tree-down t)
     (and-with key (and (tree-atomic? u) (tree->string u))
-      (with-database bib-database
+      (with-database (bib-database)
         (with completions (sort (index-get-name-completions key) string<=?)
           (if (null? completions)
               (set-message "No completions" "complete bibliographic reference")

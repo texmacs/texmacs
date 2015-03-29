@@ -34,4 +34,4 @@
 
 
 (tm-define (open-bib-chooser cb)
-  (open-db-chooser bib-database "bib" "Search bibliographic reference" cb))
+  (open-db-chooser (bib-database) "bib" "Search bibliographic reference" cb))

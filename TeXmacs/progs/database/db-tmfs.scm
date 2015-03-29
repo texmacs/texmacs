@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (database db-tmfs))
+(texmacs-module (database db-tmfs)
+  (:use (database db-users)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Showing the database
@@ -26,7 +27,7 @@
 
 (define (get-db-fields kind)
   (with types (or (smart-ref db-kind-table kind) (list))
-    (with-database global-database
+    (with-database (user-database)
       (cdr (db-load-types types)))))
 
 (tmfs-load-handler (db name)
