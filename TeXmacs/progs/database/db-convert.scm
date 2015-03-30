@@ -47,9 +47,8 @@
   (and (func? f 'db-field 2)
        (in? (cadr f) (db-meta-attributes))))
 
-(tm-define (db-load-entry id)
-  (let* ((l (db-get-entry id))
-         (type (assoc-ref l "type"))
+(tm-define (assoc-list->entry id l)
+  (let* ((type (assoc-ref l "type"))
          (name (assoc-ref l "name")))
     ;;(display* "Load " id " -> " l "\n")
     (set! type (if (pair? type) (car type) "?"))
@@ -60,6 +59,10 @@
     (receive (l1 l2) (list-partition l db-meta-field?)
       (db-load-post `(db-entry ,id ,type ,name
 			       (document ,@l1) (document ,@l2))))))
+
+(tm-define (db-load-entry id)
+  (with l (db-get-entry id)
+    (assoc-list->entry id l)))
 
 (tm-define (db-load-types types)
   (let* ((l (db-search (list (cons "type" types))))
@@ -82,16 +85,22 @@
 
 (tm-define db-duplicate-warning? #t)
 
+(tm-define (entry->assoc-list t . opt-skip-pre?)
+  (when (null? opt-skip-pre?)
+    (set! t (db-save-pre t)))
+  (let* ((id (tm-ref t 0))
+         (type (tm-ref t 1))
+         (name (tm-ref t 2))
+         (meta (if (tm-func? t 'db-entry 5) (tm-children (tm-ref t 3)) '()))
+         (last (tm-children (tm-ref t :last)))
+         (pairs (append-map db-save-field (append meta last))))
+    (cons* (list "type" type) (list "name" name) pairs)))
+
 (tm-define (db-save-selected-entry t pred?)
   (set! t (db-save-pre t))
   (when (and (db-entry? t) (pred? (tm-ref t 1)))
-    (let* ((id (tm-ref t 0))
-           (type (tm-ref t 1))
+    (let* ((all (entry->assoc-list t #t))
            (name (tm-ref t 2))
-           (meta (if (tm-func? t 'db-entry 5) (tm-children (tm-ref t 3)) '()))
-           (last (tm-children (tm-ref t :last)))
-           (pairs (append-map db-save-field (append meta last)))
-           (all (cons* (list "type" type) (list "name" name) pairs))
            (prec (db-search (list (list "name" name)))))
       (if (and prec (nnull? prec))
           ;; TODO: entries might need to be updated
