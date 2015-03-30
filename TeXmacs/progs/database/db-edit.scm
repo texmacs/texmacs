@@ -256,8 +256,26 @@
           (db-complete-fields (tree-ref doc (+ i 1)) #t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The enter key in databases
+;; Keep on completing and confirm changes when done
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (essentially-different? e1 e2)
+  (or (not (db-entry? e1))
+      (not (db-entry? e2))
+      (!= (db-entry-ref e1 "id") (db-entry-ref e2 "id"))
+      (!= (db-entry-ref e1 "type") (db-entry-ref e2 "type"))
+      (!= (db-entry-ref e1 "name") (db-entry-ref e2 "name"))
+      (not (list-permutation? (tm-children (tm-ref e1 :last))
+                              (tm-children (tm-ref e2 :last))))))
+
+(define (confirm-entry t)
+  (when (and (db-entry? t) (db-complete-fields? t))
+    (with-database (user-database)
+      (let* ((old (db-load-entry (tm->string (db-entry-ref t "id"))))
+             (new (tm->stree t)))
+        (when (essentially-different? new old)
+          (display* "<<< " old "\n")
+          (display* ">>> " new "\n"))))))
 
 (define (keep-completing t opt?)
   (cond ((db-first-empty-field t #t)
@@ -267,7 +285,12 @@
            (db-complete-fields res opt?)
            (and-with f (db-first-empty-field res #t)
              (tree-go-to f :end))))
-        (else (display* "Resource complete!\n"))))
+        (else (and-with res (tree-search-upwards t db-entry?)
+                (confirm-entry res)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The enter key in databases
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-enter t shift?)
   (:require (db-entry? t))
