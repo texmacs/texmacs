@@ -13,7 +13,6 @@
 
 (texmacs-module (database db-widgets)
   (:use (database db-convert)
-        (database db-edit)
         (database db-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

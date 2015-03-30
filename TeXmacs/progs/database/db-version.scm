@@ -15,6 +15,16 @@
   (:use (database db-users)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Checking whether new versions are really different
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-different-entries? e1 e2)
+  (let* ((ok? (lambda (f) (and (pair? f) (nin? (car f) (db-meta-attributes)))))
+         (l1 (list-filter e1 ok?))
+         (l2 (list-filter e2 ok?)))
+    (not (list-permutation? l1 l2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creating a new version for an entry
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -25,5 +35,6 @@
 	 (app-h (list-union new-h old-h))
 	 (new-l (assoc-set! l "newer" app-h))
 	 (new-id (db-create-entry new-l)))
-    (db-set-entry id (list))
+    (with-extra-fields (list)
+      (db-set-entry id (list)))
     new-id))

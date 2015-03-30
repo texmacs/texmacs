@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database db-edit)
-  (:use (database db-users)
+  (:use (database db-version)
         (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -259,21 +259,12 @@
 ;; Keep on completing and confirm changes when done
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (essentially-different? e1 e2)
-  (or (not (db-entry? e1))
-      (not (db-entry? e2))
-      (!= (db-entry-ref e1 "id") (db-entry-ref e2 "id"))
-      (!= (db-entry-ref e1 "type") (db-entry-ref e2 "type"))
-      (!= (db-entry-ref e1 "name") (db-entry-ref e2 "name"))
-      (not (list-permutation? (tm-children (tm-ref e1 :last))
-                              (tm-children (tm-ref e2 :last))))))
-
 (define (confirm-entry t)
   (when (and (db-entry? t) (db-complete-fields? t))
     (with-database (user-database)
-      (let* ((old (db-load-entry (tm->string (db-entry-ref t "id"))))
-             (new (tm->stree t)))
-        (when (essentially-different? new old)
+      (let* ((old (db-get-entry (tm->string (db-entry-ref t "id"))))
+             (new (entry->assoc-list (tm->stree t))))
+        (when (db-different-entries? new old)
           (display* "<<< " old "\n")
           (display* ">>> " new "\n"))))))
 
