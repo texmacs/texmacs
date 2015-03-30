@@ -100,6 +100,8 @@
   (set! t (db-save-pre t))
   (when (and (db-entry? t) (pred? (tm-ref t 1)))
     (let* ((all (entry->assoc-list t #t))
+           (id (tm-ref t 0))
+           (type (tm-ref t 1))
            (name (tm-ref t 2))
            (prec (db-search (list (list "name" name)))))
       (if (and prec (nnull? prec))

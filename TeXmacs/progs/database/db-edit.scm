@@ -262,11 +262,22 @@
 (define (confirm-entry t)
   (when (and (db-entry? t) (db-complete-fields? t))
     (with-database (user-database)
-      (let* ((old (db-get-entry (tm->string (db-entry-ref t "id"))))
+      (let* ((old-id (tm->string (db-entry-ref t "id")))
+             (old (db-get-entry old-id))
              (new (entry->assoc-list (tm->stree t))))
-        (when (db-different-entries? new old)
-          (display* "<<< " old "\n")
-          (display* ">>> " new "\n"))))))
+        (with-extra-fields (list (list "contributor" (db-default-user))
+                                 (list "modus" "manual")
+                                 (list "origin"))
+          (with-time-stamp #t
+            (with-indexing #t
+              (with new-id (db-update-entry old-id new)
+                (if (== new-id old-id)
+                    (set-message "Entry up to date in database"
+                                 "save entry")
+                    (begin
+                      (tree-set (tree-ref t 0) new-id)
+                      (set-message "Saved modifications in database"
+                                   "save entry")))))))))))
 
 (define (keep-completing t opt?)
   (cond ((db-first-empty-field t #t)

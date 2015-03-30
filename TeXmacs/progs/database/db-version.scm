@@ -15,26 +15,23 @@
   (:use (database db-users)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Checking whether new versions are really different
+;; Creating a new version of an entry
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-different-entries? e1 e2)
+(define (db-same-entries? e1 e2)
   (let* ((ok? (lambda (f) (and (pair? f) (nin? (car f) (db-meta-attributes)))))
          (l1 (list-filter e1 ok?))
          (l2 (list-filter e2 ok?)))
-    (not (list-permutation? l1 l2))))
+    (list-permutation? l1 l2)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Creating a new version for an entry
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (db-update-entry id l)
-  (let* ((old-l (db-get-entry id))
-	 (new-h (cons id (or (assoc-ref l "newer") (list))))
-	 (old-h (or (assoc-ref old-l "newer") (list)))
-	 (app-h (list-union new-h old-h))
-	 (new-l (assoc-set! l "newer" app-h))
-	 (new-id (db-create-entry new-l)))
-    (with-extra-fields (list)
-      (db-set-entry id (list)))
-    new-id))
+(tm-define (db-update-entry id new-l)
+  (with old-l (db-get-entry id)
+    (if (db-same-entries? new-l old-l) id
+        (let* ((new-h (cons id (or (assoc-ref new-l "newer") (list))))
+               (old-h (or (assoc-ref old-l "newer") (list)))
+               (app-h (list-union new-h old-h)))
+          (set! new-l (assoc-set! new-l "newer" app-h))
+          (with new-id (db-create-entry new-l)
+            (with-extra-fields (list)
+              (db-set-entry id (list)))
+            new-id)))))
