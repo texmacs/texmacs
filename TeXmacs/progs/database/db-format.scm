@@ -47,7 +47,7 @@
 
 (tm-define (db-meta-attributes)
   (list "date" "contributor" "modus" "origin"
-	"master-id" "previous" "message" "supersede"))
+	"master-id" "previous" "message" "newer"))
 
 (smart-table db-encoding-table
   ;; For each entry+field type, specify the encoding being used for
