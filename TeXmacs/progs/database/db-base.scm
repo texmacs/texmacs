@@ -71,8 +71,7 @@
 (tm-define (db-sql* . l)
   (with r (apply db-sql l)
     (with f (lambda (x) (and (pair? x) (car x)))
-      ;; NOTE: sqlite3 delivers results in reverse ordering
-      (reverse (map f (if (null? r) r (cdr r)))))))
+      (map f (if (null? r) r (cdr r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra context
