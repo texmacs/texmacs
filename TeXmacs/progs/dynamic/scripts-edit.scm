@@ -357,6 +357,10 @@
     (clipboard-cut "primary")
     (insert (convert in format "texmacs-tree"))))
 
+(tm-define (kbd-control-enter t shift?)
+  (:require (tree-is-buffer? t))
+  (script-eval))
+
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'converter-input))
   (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))

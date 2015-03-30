@@ -55,6 +55,8 @@
   ("S-space" " ")
   ("S-tab" (kbd-shift-tab))
   ("S-return" (kbd-shift-return))
+  ("C-return" (kbd-control-return))
+  ("C-S-return" (kbd-shift-control-return))
 
   ("delete" (kbd-delete))
   ("backspace" (kbd-backspace))

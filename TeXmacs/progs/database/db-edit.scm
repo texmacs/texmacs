@@ -119,9 +119,9 @@
            (list `(db-field ,(car alt) ,val))))
         (else (complete-fields-or l (cdr alt) all))))
 
-(define (complete-fields l fm)
+(define (complete-fields l fm opt?)
   (cond ((func? fm 'and)
-         (with r (map (cut complete-fields l <>) (cdr fm))
+         (with r (map (cut complete-fields l <> opt?) (cdr fm))
            (apply append r)))
         ((string? fm)
          (with val (or (db-field-find l fm) "")
@@ -129,7 +129,9 @@
         ((and (func? fm 'optional 1) (string? (cadr fm)))
          (let* ((val (or (db-field-find l (cadr fm)) ""))
                 (tag (if (== val "") 'db-field-optional 'db-field)))
-           (list `(,tag ,(cadr fm) ,val))))
+           (if (or opt? (!= val ""))
+               (list `(,tag ,(cadr fm) ,val))
+               (list))))
         ((and (func? fm 'or) (nnull? (cdr fm))
               (list-and (map string? (cdr fm))))
          (complete-fields-or l (cdr fm) (cdr fm)))
@@ -142,13 +144,13 @@
                 (or (not (db-field-any? (car l)))
                     (!= (tm-ref f 0) (tm-ref (car l) 0)))))))
 
-(tm-define (db-complete-fields t*)
+(tm-define (db-complete-fields t* opt?)
   (and-with t (tree-search-upwards t* db-entry?)
     (let* ((u (tm->stree t))
            (fm (smart-ref db-format-table (tm-ref u 1)))
            (c (tm-children (tm-ref u :last))))
       (when fm
-        (let* ((l (complete-fields c fm))
+        (let* ((l (complete-fields c fm opt?))
                (o (list-filter c (cut field-not-among? <> l)))
                (m (append l o)))
           (tree-set (tree-ref t :last) `(document ,@m)))))))
@@ -165,7 +167,7 @@
            (c (tm-children (tm-ref u :last))))
       (and fm
            (not (tree-empty? (tm->tree (tm-ref u 2))))
-           (list-and (map db-complete-field? (complete-fields c fm)))))))
+           (list-and (map db-complete-field? (complete-fields c fm #f)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Finding subsequent fields
@@ -251,18 +253,18 @@
         (with res `(db-entry ,(create-unique-id) ,type "" (document))
           (tree-insert! doc (+ i 1) (list res))
           (tree-go-to doc (+ i 1) 2 :start)
-          (db-complete-fields (tree-ref doc (+ i 1))))))))
+          (db-complete-fields (tree-ref doc (+ i 1)) #t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The enter key in databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (keep-completing t)
+(define (keep-completing t opt?)
   (cond ((db-first-empty-field t #t)
          (tree-go-to (db-first-empty-field t #t) :end))
         ((not (db-complete-fields? t))
          (and-with res (tree-search-upwards t db-entry?)
-           (db-complete-fields res)
+           (db-complete-fields res opt?)
            (and-with f (db-first-empty-field res #t)
              (tree-go-to f :end))))
         (else (display* "Resource complete!\n"))))
@@ -279,7 +281,7 @@
                (with d (tree-ref u :up :last)
                  (when (and (> (tm-arity d) 0) (db-field-any? (tree-ref d 0)))
                    (tree-go-to d 0 1 :end)))))
-          (else (keep-completing t)))))
+          (else (keep-completing t #t)))))
 
 (tm-define (kbd-enter t shift?)
   (:require (db-field? t))
@@ -287,7 +289,7 @@
          (set-message "Error: should fill out required field" "db-field"))
         ((db-next-field t)
          (tree-go-to (db-next-field t) 1 :end))
-        (else (keep-completing t))))
+        (else (keep-completing t #t))))
 
 (tm-define (kbd-enter t shift?)
   (:require (db-field-optional? t))
@@ -323,12 +325,21 @@
               (with next (db-next-field a)
                 (if next (tree-go-to next 1 :end))))))))
 
+(tm-define (kbd-control-enter t shift?)
+  (:require (db-entry? t))
+  (tree-go-to t 2 :end)
+  (with u (tree-ref t :last)
+    (for (i (reverse (.. 0 (tm-arity u))))
+      (when (db-field-optional? (tree-ref u i))
+        (tree-remove! u i 1))))
+  (keep-completing t #f))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The delete keys in databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-remove t forwards?)
-  (:require (db-entry? t))
+  (:require (and (db-entry? t) (not (selection-active-any?))))
   (cond ((and (cursor-inside? (tree-ref t 2))
               (tree-empty? (tree-ref t 2))
               (tree-empty? (tree-ref t :last)))
@@ -349,7 +360,7 @@
         (forwards? (kbd-right))))
 
 (tm-define (kbd-remove t forwards?)
-  (:require (db-field-any? t))
+  (:require (and (db-field-any? t) (not (selection-active-any?))))
   (cond ((and (cursor-inside? (tree-ref t 1)) (tree-empty? (tree-ref t 1)))
          (let* ((next (if forwards? (db-next-field t) (db-previous-field t)))
                 (res (tree-search-upwards t 'db-entry)))

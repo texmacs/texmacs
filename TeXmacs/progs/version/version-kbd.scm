@@ -37,6 +37,9 @@
   ("C-|" (version-show 'version-both))
   ("C-left" (version-show 'version-old))
   ("C-right" (version-show 'version-new))
-  ("C-return" (version-retain 'current))
   ("C-1" (version-retain 0))
   ("C-2" (version-retain 1)))
+
+(tm-define (kbd-control-enter t shift?)
+  (:require (and (tree-is-buffer? t) (in-versioning?)))
+  (version-retain 'current))

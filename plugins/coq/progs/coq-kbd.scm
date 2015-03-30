@@ -18,10 +18,13 @@
 ;; Keyboard shortcuts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (kbd-control-enter t shift?)
+  (:require (and (tree-is-buffer? t) (in-coq-style?)))
+  (coq-check))
+
 (kbd-map
   (:mode in-coq-style?)
   ("$" (insert-coq-command))
-  ("C-return" (coq-check))
   ("L e m m a" (insert-coq-enunciation "Lemma"))
   ("T h e o r e m" (insert-coq-enunciation "Theorem"))
   ("C-F12" (coq-remove-comments (buffer-tree))))
