@@ -202,7 +202,6 @@
                   " WHERE id=" (sql-quote id)
                   " AND " (db-time-constraint))
     (if (nnull? r) (set! r (cdr r)))
-    (set! r (reverse r)) ;; NOTE: sqlite3 delivers results in reverse ordering
     (let* ((t (make-ahash-table))
            (attrs (list-remove-duplicates (map car r))))
       (for (line r)
@@ -215,7 +214,7 @@
   (append l1 (list-filter l2 (lambda (x) (not (assoc-ref l1 (car x)))))))
 
 (tm-define (db-set-entry id l*)
-  (let* ((l (assoc-add l* db-extra-fields))
+  (let* ((l (assoc-add db-extra-fields l*))
 	 (old-attrs (db-get-attributes id))
          (new-attrs (map car l))
          (rem-attrs (list-difference old-attrs new-attrs)))
