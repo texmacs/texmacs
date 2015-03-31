@@ -81,6 +81,12 @@
       ;;(display* "Transaction: " (apply string-append a) "\n")
       (apply db-sql-raw a))))
 
+(tm-define-macro (db-transaction . body)
+  `(begin
+     (db-sql-start-transaction)
+     ,@body
+     (db-sql-end-transaction)))
+
 (define (db-sql-raw . l)
   (db-init-database)
   ;;(display* (url->string (url-tail current-database)) "] "
@@ -214,8 +220,9 @@
 (tm-define (db-set-field id attr vals)
   (with old-vals (db-get-field id attr)
     (when (!= vals old-vals)
-      (db-remove-field id attr)
-      (for-each (cut db-insert-value id attr <>) vals))))
+      (db-transaction
+        (db-remove-field id attr)
+        (for-each (cut db-insert-value id attr <>) vals)))))
 
 (tm-define (db-get-attributes id)
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
@@ -237,18 +244,22 @@
 (define (assoc-add l1 l2)
   (append l1 (list-filter l2 (lambda (x) (not (assoc-ref l1 (car x)))))))
 
-(tm-define (db-set-entry id l*)
-  (let* ((l (assoc-add db-extra-fields l*))
-	 (old-attrs (db-get-attributes id))
-         (new-attrs (map car l))
+(tm-define (db-set-entry id l)
+  (let* ((old-l (db-get-entry id))
+	 (new-l (assoc-add db-extra-fields l))
+         (old-attrs (map car old-l))
+         (new-attrs (map car new-l))
          (rem-attrs (list-difference old-attrs new-attrs)))
-    (for (attr rem-attrs)
-      (db-remove-field id attr))
-    (for (attr new-attrs)
-      (db-set-field id attr (assoc-ref l attr)))
-    (when (and db-time-stamp? (nin? "date" new-attrs))
-      (db-remove-field id "date")
-      (db-insert-time-stamp id))))
+    (db-transaction
+      (for (attr rem-attrs)
+        (db-remove-field id attr))
+      (for (attr new-attrs)
+        (when (!= (assoc-ref new-l attr) (assoc-ref old-l attr))
+          (db-remove-field id attr)
+          (for-each (cut db-insert-value id attr <>) (assoc-ref new-l attr))))
+      (when (and db-time-stamp? (nin? "date" new-attrs))
+        (db-remove-field id "date")
+        (db-insert-time-stamp id)))))
 
 (tm-define (db-create-entry l)
   (with id (create-unique-id)
