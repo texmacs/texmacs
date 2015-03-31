@@ -44,10 +44,17 @@
                 " SET count=" (number->string (+ nr 1)) " WHERE"
                 " " var "=" (sql-quote val)))))
 
+(define index-max-prefix-length 6)
+
+(define (truncate-prefix s)
+  (substring s 0 (min (string-length s) index-max-prefix-length)))
+
 (tm-define (index-number-completions prefix)
+  (set! prefix (truncate-prefix prefix))
   (index-get-counter "prefixes_count" "prefix" prefix))
 
 (tm-define (index-number-name-completions prefix)
+  (set! prefix (truncate-prefix prefix))
   (index-get-counter "completions_count" "prefix" prefix))
 
 (tm-define (index-number-matches key)
@@ -77,7 +84,7 @@
       (with r (index-get-prefixes table key)
         (when (null? r)
           (db-sql-start-transaction)
-          (for (i (... 1 (string-length key)))
+          (for (i (... 1 (min (string-length (truncate-prefix key)))))
             (with prefix (substring key 0 i)
               (db-sql "INSERT INTO " table " VALUES (" (sql-quote prefix)
                       ", " (sql-quote key) ")")
@@ -86,10 +93,12 @@
         (ahash-set! index-prefixes-done key* #t)))))
 
 (tm-define (index-get-completions prefix)
-  (index-get-completions* "prefixes" prefix))
+  (list-filter (index-get-completions* "prefixes" (truncate-prefix prefix))
+               (cut string-starts? <> prefix)))
 
 (tm-define (index-get-name-completions prefix)
-  (index-get-completions* "completions" prefix))
+  (list-filter (index-get-completions* "completions" (truncate-prefix prefix))
+               (cut string-starts? <> prefix)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building matches and scores tables
@@ -206,7 +215,9 @@
 
 (tm-define (db-search-constraint query i)
   (:require (and db-indexing (func? query :prefix 1)))
-  (let* ((prefix (cadr query))
+  (let* ((prefix (truncate-prefix (cadr query)))
+         ;; FIXME: the returned results form a superset of
+         ;; the actual results, due to truncation
          (pi (string-append "p" (number->string i)))
          (prei (string-append "pre" (number->string i))))
     (string-append prei ".prefix=" (sql-quote prefix) " AND "
