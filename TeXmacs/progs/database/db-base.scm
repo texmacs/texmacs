@@ -28,48 +28,72 @@
 (tm-define (db-reset)
   (set! current-database (url-none)))
 
-(tm-define (db-init-database)
-  (when (url-none? current-database)
-    (texmacs-error "db-init-database" "no database specified"))
-  (when (not (url-exists? current-database))
-    (display* "Create " (url->string current-database) "\n")
-    (sql-exec current-database
-              (string-append "CREATE TABLE props ("
-                             "id text, attr text, val text, "
-			     "created integer, expires integer)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE matches ("
-                             "id text, attr text, key text)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE matches_count ("
-                             "key text, count integer)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE scores ("
-                             "id text, key text, score integer)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE scores_count ("
-                             "key text, count integer)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE prefixes ("
-                             "prefix text, key text)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE prefixes_count ("
-                             "prefix text, count integer)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE completions ("
-                             "prefix text, key text)"))
-    (sql-exec current-database
-              (string-append "CREATE TABLE completions_count ("
-                             "prefix text, count integer)"))))
+(define db-previous-db #f)
 
-(tm-define (db-sql . l)
+(tm-define (db-init-database)
+  (when (!= current-database db-previous-db)
+    (when (url-none? current-database)
+      (texmacs-error "db-init-database" "no database specified"))
+    (when (not (url-exists? current-database))
+      ;;(display* "Create " (url->string current-database) "\n")
+      (sql-exec current-database
+                (string-append "CREATE TABLE props ("
+                               "id text, attr text, val text, "
+                               "created integer, expires integer)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE matches ("
+                               "id text, attr text, key text)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE matches_count ("
+                               "key text, count integer)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE scores ("
+                               "id text, key text, score integer)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE scores_count ("
+                               "key text, count integer)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE prefixes ("
+                               "prefix text, key text)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE prefixes_count ("
+                               "prefix text, count integer)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE completions ("
+                               "prefix text, key text)"))
+      (sql-exec current-database
+                (string-append "CREATE TABLE completions_count ("
+                               "prefix text, count integer)")))
+    (set! db-previous-db current-database)))        
+
+(define db-pending #f)
+
+(tm-define (db-sql-start-transaction)
+  (when db-pending (sql-end-transaction))
+  (set! db-pending (list)))
+
+(tm-define (db-sql-end-transaction)
+  (when db-pending
+    (let* ((p (reverse db-pending))
+           (i (list-intersperse p (list "; ")))
+           (a (apply append i)))
+      (set! db-pending #f)
+      ;;(display* "Transaction: " (apply string-append a) "\n")
+      (apply db-sql-raw a))))
+
+(define (db-sql-raw . l)
   (db-init-database)
-  (display* (url->string (url-tail current-database)) "] "
-            (apply string-append l) "\n")
+  ;;(display* (url->string (url-tail current-database)) "] "
+  ;;(apply string-append l) "\n")
   (sql-exec current-database (apply string-append l)))
 
+(tm-define (db-sql . l)
+  (if db-pending
+      (set! db-pending (cons l db-pending))
+      (apply db-sql-raw l)))
+
 (tm-define (db-sql* . l)
-  (with r (apply db-sql l)
+  (with r (apply db-sql-raw l)
     (with f (lambda (x) (and (pair? x) (car x)))
       (map f (if (null? r) r (cdr r))))))
 
