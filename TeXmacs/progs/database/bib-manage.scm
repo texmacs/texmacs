@@ -60,7 +60,8 @@
          (db (url->url (string-append bib-cache-dir "/" id ".tmdb"))))
     (when body
       (with-database db
-        (bib-save body))
+        (with-time-stamp #t
+          (bib-save body)))
       (when (url-exists? db)
         (with-database bib-master
           (with stamp (number->string (url-last-modified f))
@@ -106,9 +107,8 @@
               (with-extra-fields (list (list "contributor" (db-default-user))
                                        (list "modus" "imported")
                                        (list "origin" origin))
-                (with-time-stamp #t
-                  (with-indexing #t
-                    (bib-save all)))))
+                (with-indexing #t
+                  (bib-save all))))
             (bib-cache-notify-imported f (bib-database))
             (set-message "Imported bibliographic entries"
                          "import bibliography")))))))
@@ -154,6 +154,10 @@
 
 (define (bib-retrieve-one name)
   (and-with l (db-search (list (list "name" name)))
+    (when (> (length l) 1)
+      (with l* (db-search (list (list "name" name)
+                                (list "contributor" (db-default-user))))
+        (when (pair? l*) (set! l l*))))
     (and (nnull? l)
          (with e (db-load-entry (car l))
            (cons name e)))))
@@ -299,6 +303,5 @@
     (with doc (tm->stree val)
       (with-database (bib-database)
         (with-indexing #t
-          (with-global db-duplicate-warning? #f
-            (bib-save doc))))))
+          (bib-save doc)))))
   (former name key val))

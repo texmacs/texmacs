@@ -102,17 +102,10 @@
     (let* ((all (entry->assoc-list t #t))
            (id (tm-ref t 0))
            (type (tm-ref t 1))
-           (name (tm-ref t 2))
-           (prec (db-search (list (list "name" name)))))
-      (if (and prec (nnull? prec))
-          ;; TODO: entries might need to be updated
-          (when db-duplicate-warning?
-            (display* "Existing entry " name "\n"))
-          (begin
-            ;;(display* "Save " id " -> " all "\n")
-            (system-wait (string-append "Processing database entry " name ", ")
-                         "please wait")
-            (db-set-entry id all))))))
+           (name (tm-ref t 2)))
+      (system-wait (string-append "Processing database entry " name ", ")
+                   "please wait")
+      (db-import-entry id all))))
 
 (tm-define (db-save-selected t pred?)
   (cond ((tm-func? t 'document)

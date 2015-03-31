@@ -35,3 +35,91 @@
             (with-extra-fields (list)
               (db-set-entry id (list)))
             new-id)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Importing entries.  In the case that the new entry clashes with
+;; an existing one, reject the new entry if needed or consider
+;; one of the two entries as an update of the other one.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (assoc-ref-first l x)
+  (with r (assoc-ref l x)
+    (and (pair? r) (car r))))
+
+(define (db-find-entry l)
+  (let* ((ids (db-search (list (cons "name" (assoc-ref l "name")))))
+         (ok? (lambda (id) (db-same-entries? (db-get-entry id) l))))
+    (list-filter ids ok?)))
+
+(define (db-declare-supersedes nid ids)
+  ;;(display* "  Supersedes " nid " >> " ids "\n")
+  (with h (db-get-field nid "newer")
+    (set! ids (list-difference ids h))
+    (when (nnull? ids)
+      (db-set-field nid "newer" (append ids h)))))
+
+(define (db-declare-superseded id)
+  (when (nnull? (db-get-entry id))
+    ;;(display* "  Superseded " id "\n")
+    (with-extra-fields (list)
+      (db-set-entry id (list)))))
+
+(tm-define (db-import-entry id l)
+  (let* ((name (assoc-ref-first l "name"))
+         (contributor (or (assoc-ref-first l "contributor")
+                          (assoc-ref-first db-extra-fields "contributor")))
+         (sim (if (and name contributor)
+                  (db-search (list (list "name" name)
+                                   (list "contributor" contributor)))
+                  (list)))
+         (his (with h (assoc-ref l "newer") (or h (list)))))
+    ;;(display* "Processing " name ", " contributor ", " id ", " sim "\n")
+    (cond ((nnull? (db-get-entry id)) ;; new entries must have new identifiers
+           (when (and db-duplicate-warning?
+                      (not (db-same-entries? l (db-get-entry id))))
+             (display* "Ignored entry " name " with existing identifier\n")))
+          ((nnull? (db-find-entry l)) ;; find exact matches
+           (for (xid (db-find-entry l))
+             (db-declare-supersedes xid (list id)))
+           (when db-duplicate-warning?
+             (display* "Existing entry " name "\n")))
+          ((nnull? (db-search (list (list "newer" id))))
+           (when db-duplicate-warning?
+             (display* "Newer version of " name " already available\n")))
+          ((begin
+             (for (oid his)
+               (db-declare-superseded oid))
+             #f)
+           (noop))
+          ((nnull? sim)
+           (let* ((xid (car sim))
+                  (xl (db-get-entry xid))
+                  (date (assoc-ref-first l "date"))
+                  (xdate (assoc-ref-first xl "date"))
+                  (modus (or (assoc-ref-first l "modus")
+                             (assoc-ref-first db-extra-fields "modus")))
+                  (xmodus (assoc-ref-first xl "modus")))
+             ;;(display* "Modus " xmodus ", " modus "\n")
+             ;;(display* "Date  " xdate ", " date "\n")
+             (cond ((and (== xmodus "manual") (!= modus "manual"))
+                    (db-declare-supersedes xid (cons id his))
+                    (when db-duplicate-warning?
+                      (display* "Kept existing version of entry " name "\n")))
+                   ((and (== modus "manual") (!= xmodus "manual"))
+                    (set! l (assoc-set! l "newer" (cons xid his)))
+                    (db-set-entry id l)
+                    (db-declare-superseded xid)
+                    (when db-duplicate-warning?
+                      (display* "Updated the entry " name "\n")))
+                   ((and xdate (or (not date) (>= (string->number xdate)
+                                                  (string->number date))))
+                    (db-declare-supersedes xid (cons id his))
+                    (when db-duplicate-warning?
+                      (display* "Kept existing version of entry " name "\n")))
+                   (else
+                     (set! l (assoc-set! l "newer" (cons xid his)))
+                     (db-set-entry id l)
+                     (db-declare-superseded xid)
+                     (when db-duplicate-warning?
+                       (display* "Updated the entry " name "\n"))))))
+          (else (db-set-entry id l)))))
