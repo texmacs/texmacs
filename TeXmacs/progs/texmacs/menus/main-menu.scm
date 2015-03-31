@@ -205,7 +205,9 @@
   (if toolbar-search-active?
       (link search-toolbar))
   (if toolbar-replace-active?
-      (link replace-toolbar)))
+      (link replace-toolbar))
+  (if (in-database?)
+      (link db-toolbar)))
 
 (tm-widget (texmacs-bottom-tools)
   (if (qt-gui?)

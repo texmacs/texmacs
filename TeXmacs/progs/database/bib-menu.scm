@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database bib-menu)
-  (:use (database bib-widgets)))
+  (:use (database bib-widgets)
+        (database db-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu for maintaining bibliographic databases
@@ -23,8 +24,10 @@
   (when (bib-exportable?)
     ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex")))
   ---
-  ("Active bibliography" (load-buffer "tmfs://db/bib/global"))
-  ("Active bibliography" (load-buffer "tmfs://db/limit=3/search=hoeven,lecerf/bib/global"))
+  ("Active bibliography"
+   (begin
+     (load-buffer "tmfs://db/bib/global")
+     (show-bottom-tools 0 #t)))
   ("Collected entries" (noop))
   ("Conflicting entries" (noop))
   ---
