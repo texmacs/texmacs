@@ -25,6 +25,7 @@
     define-grammar define-regexp-grammar
     drd-rule logic-rules assume texmacs-modes
     user-delayed delayed on-entry on-exit widget-delayed
+    db-transaction
     association-tile bar concat dense-bar dense-tile document
     header-bar sequence short-bar short-tile minibar
     wrap-selection-any wrap-selection-small
