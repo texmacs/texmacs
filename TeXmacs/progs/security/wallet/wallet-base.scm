@@ -31,7 +31,7 @@
   (:synopsis "Initialize a new wallet") 
   (:interactive #t)
   (:argument passphrase "password" "Wallet passphrase")
-  (gpg-wallet-initialize passphrase))
+  (and (supports-wallet?) (gpg-wallet-initialize passphrase)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reinitialize

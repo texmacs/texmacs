@@ -229,14 +229,13 @@
         (refreshable "wallet-widget-delete"
           (scrollable
             (padded
-              (aligned
-                (for (x (wallet-entries))
-                  (item (toggle
-                         (if answer
-                             (ahash-set! tbl (car x) #t)
-                             (ahash-remove! tbl (car x)))
-                         #f)
-                    (text (wallet-entry->string x))))))))
+              (for (x (wallet-entries))
+                (aligned (item (toggle
+                   (if answer
+		       (ahash-set! tbl (car x) #t)
+		       (ahash-remove! tbl (car x)))
+		   #f)
+		   (text (wallet-entry->string x))))))))
         ===
         (bottom-buttons
           >>
@@ -295,6 +294,12 @@
 ;; Wallet preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-widget (wallet-not-supported-preferences-widget)
+  (centered
+    (text "Passphrase wallet facilities are not currently available.")
+    (text "Please install GnuPG software from https://www.gnupg.org/,")
+    (text "and perform casual settings from the \"Encryption\" tab.")))
+
 (tm-widget (wallet-initialized-preferences-widget)
   (with cb (lambda (x) (refresh-now "security-preferences-refresher"))
     (if (wallet-off?)
@@ -331,5 +336,7 @@
 (tm-widget (wallet-preferences-widget)
   (if (and (supports-wallet?) (wallet-initialized?))
       (dynamic (wallet-initialized-preferences-widget)))
-  (if (not (wallet-initialized?))
-      (dynamic (wallet-uninitialized-preferences-widget))))
+  (if (and (supports-wallet?) (not (wallet-initialized?)))
+      (dynamic (wallet-uninitialized-preferences-widget)))
+  (if (not (supports-wallet?))
+    (dynamic (wallet-not-supported-preferences-widget))))

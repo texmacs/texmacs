@@ -482,11 +482,28 @@
   (dialogue-window experimental-preferences-widget 
                    noop "Experimental preferences"))
 
+(tm-widget (script-preferences-widget)
+  (aligned
+    (item (text "Execution of scripts:")
+      (enum (set-pretty-preference "security" answer)
+            '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
+            (get-pretty-preference "security")
+            "15em"))))
+
 (tm-widget (security-preferences-widget)
   (refreshable "security-preferences-refresher"
-    (dynamic (wallet-preferences-widget))
-    === ===
-    (dynamic (gpg-preferences-widget))))
+    (padded
+      (tabs
+        (tab (text "Wallet")
+          (centered
+            (dynamic (wallet-preferences-widget))))
+        (tab (text "Encryption")
+          (centered
+            (dynamic (gpg-preferences-widget))))
+	;;(tab (text "Scripts")
+        ;;  (centered
+        ;;    (dynamic (script-preferences-widget))))
+        ))))
 
 (tm-widget (other-preferences-widget)
   (aligned

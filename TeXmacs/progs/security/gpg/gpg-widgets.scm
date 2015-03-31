@@ -18,7 +18,25 @@
 ;; GPG preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (gpg-preferences-widget)
+(tm-widget (gpg-not-supported-preferences-widget)
+  (centered
+    (text "Encryption facilities are not currently available.")
+    (text "Please install GnuPG software from https://www.gnupg.org/")
+    (text "or give the complete path to the \"gpg\" or \"gpg2\" command."))
+  ===
+  (hlist
+    (text "GnuPG command:") // //
+    (enum (gpg-set-executable answer)
+          (list "" "gpg" "gpg2" "")
+          "" "15em") // //
+          (explicit-buttons
+            ("Browse"
+             (choose-file (lambda (x)
+                            (gpg-set-executable (url->system x))
+                            (refresh-now "security-preferences-refresher"))
+                          "Select GnuPG command" ""))) >>))
+
+(tm-widget (gpg-supported-preferences-widget)
   (hlist
     (text "GnuPG command:") // //
     (enum (gpg-set-executable answer)
@@ -30,3 +48,10 @@
                             (gpg-set-executable (url->system x))
                             (refresh-now "security-preferences-refresher"))
                           "Select GnuPG command" ""))) >>))
+
+(tm-widget (gpg-preferences-widget)
+  (if (supports-gpg?)
+      (dynamic (gpg-supported-preferences-widget)))
+  (if (not (supports-gpg?))
+      (dynamic (gpg-not-supported-preferences-widget))))
+
