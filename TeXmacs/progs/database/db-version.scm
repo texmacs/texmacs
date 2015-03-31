@@ -79,10 +79,10 @@
                       (not (db-same-entries? l (db-get-entry id))))
              (display* "Ignored entry " name " with existing identifier\n")))
           ((nnull? (db-find-entry l)) ;; find exact matches
+           ;;(when (and db-duplicate-warning? (not exact?))
+           ;;(display* "Existing entry " name "\n"))
            (for (xid (db-find-entry l))
-             (db-declare-supersedes xid (list id)))
-           (when db-duplicate-warning?
-             (display* "Existing entry " name "\n")))
+             (db-declare-supersedes xid (list id))))
           ((nnull? (db-search (list (list "newer" id))))
            (when db-duplicate-warning?
              (display* "Newer version of " name " already available\n")))
