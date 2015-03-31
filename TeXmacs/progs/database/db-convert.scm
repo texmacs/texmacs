@@ -110,6 +110,8 @@
             (display* "Existing entry " name "\n"))
           (begin
             ;;(display* "Save " id " -> " all "\n")
+            (system-wait (string-append "Processing database entry " name ", ")
+                         "please wait")
             (db-set-entry id all))))))
 
 (tm-define (db-save-selected t pred?)
