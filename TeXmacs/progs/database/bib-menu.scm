@@ -23,7 +23,8 @@
   (when (bib-exportable?)
     ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex")))
   ---
-  ("Active bibliography" (load-buffer "tmfs://db/bib"))
+  ("Active bibliography" (load-buffer "tmfs://db/bib/global"))
+  ("Active bibliography" (load-buffer "tmfs://db/limit=3/search=hoeven,lecerf/bib/global"))
   ("Collected entries" (noop))
   ("Conflicting entries" (noop))
   ---
