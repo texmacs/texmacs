@@ -286,9 +286,18 @@
       (set-preference "wallet persistent status" "on")
       (set-preference "wallet persistent status" "off")))
 
-(when (and (supports-wallet?) (wallet-initialized?)
-	   (== (get-preference "wallet persistent status") "on"))
-  (wallet-dialogue-turn-on))
+(tm-define (wallet-persistent-status-on?)
+  (== (get-preference "wallet persistent status") "on"))
+
+(tm-define (wallet-persistent-status-off?)
+  (not (wallet-persistent-status-on?)))
+
+(tm-define-macro (with-wallet . body)
+  `(if (and (wallet-initialized?)
+            (wallet-persistent-status-on?)
+            (wallet-off?))
+       (wallet-dialogue-turn-on (lambda (x) ,@body))
+       (begin ,@body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wallet preferences
