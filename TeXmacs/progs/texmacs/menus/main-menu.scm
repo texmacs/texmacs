@@ -200,13 +200,17 @@
 
 (tm-define toolbar-search-active? #f)
 (tm-define toolbar-replace-active? #f)
+(tm-define toolbar-db-active? #f)
 
 (tm-widget (texmacs-bottom-tools-switch)
   (if toolbar-search-active?
       (link search-toolbar))
-  (if toolbar-replace-active?
+  (if (and toolbar-replace-active?
+           (not toolbar-search-active?))
       (link replace-toolbar))
-  (if (in-database?)
+  (if (and toolbar-db-active?
+           (not toolbar-search-active?)
+           (not toolbar-replace-active?))
       (link db-toolbar)))
 
 (tm-widget (texmacs-bottom-tools)

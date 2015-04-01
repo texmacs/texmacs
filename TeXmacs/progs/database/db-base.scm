@@ -241,7 +241,7 @@
             (ahash-set! t attr (cons val old)))))
       (map (lambda (attr) (cons attr (reverse (ahash-ref t attr)))) attrs))))
 
-(define (assoc-add l1 l2)
+(tm-define (assoc-add l1 l2)
   (append l1 (list-filter l2 (lambda (x) (not (assoc-ref l1 (car x)))))))
 
 (tm-define (db-set-entry id l)
@@ -291,24 +291,49 @@
             (string-append pi ".val IN (" a ")")))))
 
 (tm-define (db-search-constraint query i)
-  (if (and (list? query) (pair? query) (list-and (map string? query)))
-      (with (attr . vals) query
-        (let* ((pi (string-append "p" (number->string i)))
-               (sattr (string-append pi ".attr=" (sql-quote attr)))
-               (spair (string-append sattr " AND " (db-search-value pi vals)))
-               (sall (string-append spair " AND " (db-time-constraint-on pi))))
-          sall))
-      "1"))
+  (cond ((and (list? query) (pair? query) (list-and (map string? query)))
+         (with (attr . vals) query
+           (let* ((pi (string-append "p" (number->string i)))
+                  (sattr (string-append pi ".attr=" (sql-quote attr))))
+             (string-append sattr " AND "
+                            (db-search-value pi vals) " AND "
+                            (db-time-constraint-on pi)))))
+        ((func? query :order 2)
+         (with (tag attr dir) query
+           (with pi (string-append "p" (number->string i))
+             (string-append pi ".attr=" (sql-quote attr)))))
+        (else "1")))
 
 (define (db-search-constraint* query i)
   (let* ((pi (string-append "p" (number->string i)))
          (sid (string-append pi ".id=p1.id"))
          (c (db-search-constraint query i)))
-    (if (= i 1) c (string-append sid " AND " c))))
+    (cond ((= i 1) c)
+          ((== c "1") sid)
+          (else (string-append sid " AND " c)))))
 
 (define (db-search-on l)
   (with ss (map db-search-constraint* l (... 1 (length l)))
     (apply string-append (list-intersperse ss " AND "))))
+
+(define (db-search-col query i)
+  (if (not (func? query :order 2)) ""
+      (string-append "p" (number->string i) ".val")))
+
+(define (db-search-cols pre l)
+  (let* ((cols* (map db-search-col l (... 1 (length l))))
+         (cols (list-filter cols* (cut != <> "")))
+         (ss (list-intersperse (append pre cols) ", ")))
+    (apply string-append ss)))
+
+(define (db-search-order l)
+  (with cols (db-search-cols (list) l)
+    (if (== cols "") ""
+        (let* ((i (list-find-index l (cut func? <> :order)))
+               (asc (caddr (list-ref l i)))
+               (asc? (if (string? asc) (== asc "#t") asc))
+               (dir (if asc? "ASC" "DESC")))
+          (string-append " ORDER BY " cols " " dir)))))
 
 (tm-define (db-search l)
   (if (null? l)
@@ -316,8 +341,11 @@
                " WHERE " (db-time-constraint) (db-limit-constraint))
       (let* ((join (db-search-join l))
              (on (db-search-on l))
+             (cols (db-search-cols (list "p1.id") l))
+             (order (db-search-order l))
              (sep (if (null? (cdr l)) " WHERE " " ON ")))
-        (db-sql* "SELECT DISTINCT p1.id FROM " join sep on
+        (db-sql* "SELECT DISTINCT " cols
+                 " FROM " join sep on order
                  (db-limit-constraint)))))
 
 (tm-define (db-search-name name)

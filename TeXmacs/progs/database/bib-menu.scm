@@ -24,10 +24,7 @@
   (when (bib-exportable?)
     ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex")))
   ---
-  ("Active bibliography"
-   (begin
-     (load-buffer "tmfs://db/bib/global")
-     (show-bottom-tools 0 #t)))
+  ("Active bibliography" (load-db-buffer "tmfs://db/bib/global"))
   ("Collected entries" (noop))
   ("Conflicting entries" (noop))
   ---

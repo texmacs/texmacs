@@ -521,7 +521,9 @@
   (set! toolbar-search-active? #f)
   (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #f)
-  (set! search-serial (+ search-serial 1)))
+  (set! search-serial (+ search-serial 1))
+  (when toolbar-db-active?
+    (db-show-toolbar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Replace toolbar

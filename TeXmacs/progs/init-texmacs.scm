@@ -293,6 +293,7 @@
 
 ;(display "Booting database facilities\n")
 (lazy-define (database bib-manage) bib-import-bibtex bib-compile bib-attach)
+(lazy-define (database db-menu) db-show-toolbar)
 (lazy-menu (database db-menu) db-toolbar)
 (lazy-menu (database bib-menu) bib-menu)
 (lazy-tmfs-handler (database db-tmfs) db)
