@@ -555,7 +555,7 @@
     (icon-tab "tm_prefs_convert.xpm" (text "Convert")
       (dynamic (conversion-preferences-widget)))
     (assuming (== (get-preference "experimental encryption") "on")
-      (icon-tab "tm_prefs_other.xpm" (text "Security") ;; FIXME: new icon
+      (icon-tab "tm_prefs_security.xpm" (text "Security")
         (centered
           (dynamic (security-preferences-widget)))))
     (icon-tab "tm_prefs_other.xpm" (text "Other")

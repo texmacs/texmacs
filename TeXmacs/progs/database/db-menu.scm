@@ -130,3 +130,28 @@
     ("Export" (db-export-file)))
   ---
   ("Preferences" (open-db-preferences)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Icon menu when editing databases
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind insert-entry-menu
+  ("Hello" (display* "Hello\n")))
+
+(menu-bind texmacs-mode-icons
+  (:mode in-database?)
+  (=> (balloon (icon "tm_entry_add.xpm") "Insert a new entry")
+      (link insert-entry-menu))
+  (=> (balloon (icon "tm_entry_confirm.xpm") "Confirm database entry")
+      (link insert-entry-menu))
+  (=> (balloon (icon "tm_entry_remove.xpm") "Remove database entry")
+      (link insert-entry-menu))
+  /
+  ((balloon (icon "tm_von.xpm") "Insert particle")
+   (noop))
+  ((balloon (icon "tm_junior.xpm") "Insert junior")
+   (noop))
+  ((balloon (icon "tm_name_bis.xpm") "Insert last name")
+   (noop))
+  ((balloon (icon "tm_and.xpm") "Insert more names")
+   (noop)))
