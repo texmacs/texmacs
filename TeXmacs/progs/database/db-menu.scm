@@ -108,8 +108,8 @@
         // // //
         (text "Limit: ")
         (enum (when answer (db-toolbar-limit answer))
-              (list "1" "2" "5" "10" "20" "50" "100" "200" "500" "1000" "")
-              (db-toolbar-current-limit) "3em")
+              (list "1" "2" "5" "10" "20" "50" "100" "1000" "10000" "")
+              (db-toolbar-current-limit) "4em")
         >> >> >> >> >> >> >> >>
         (glue #t #f 0 24))))
 
