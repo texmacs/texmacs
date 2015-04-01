@@ -11,10 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (database bib-edit)
+(texmacs-module (database bib-kbd)
   (:use (database db-edit)
-        (database bib-db)
-        (database bib-widgets)))
+        (database bib-manage)))
 
 (texmacs-modes
   (in-bib-names% (or (inside-db-field? "author") (inside-db-field? "editor"))

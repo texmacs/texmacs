@@ -121,3 +121,18 @@
 
 (tm-define (db-save t)
   (db-save-selected t (lambda (x) #t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Importing and exporting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-importable?) #f)
+(tm-define (db-exportable?) #f)
+
+(tm-define (db-import-file)
+  (:interactive #t)
+  (noop))
+
+(tm-define (db-export-file)
+  (:interactive #t)
+  (noop))

@@ -110,6 +110,8 @@
                 (with-indexing #t
                   (bib-save all))))
             (bib-cache-notify-imported f (bib-database))
+            (when (buffer-exists? "tmfs://db/bib/global")
+              (revert-buffer "tmfs://db/bib/global"))
             (set-message "Imported bibliographic entries"
                          "import bibliography")))))))
 
@@ -305,3 +307,26 @@
         (with-indexing #t
           (bib-save doc)))))
   (former name key val))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Using the bibliographic database for the GUI
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-importable?)
+  (:require (in-bib?))
+  #t)
+
+(tm-define (db-exportable?)
+  (:require (bib-exportable?))
+  #t)
+
+(tm-define (db-import-file)
+  (:require (in-bib?))
+  (choose-file bib-import-bibtex "Import from BibTeX file" "bibtex"))
+
+(tm-define (db-export-file)
+  (:interactive #t)
+  (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex"))
+
+(tm-define (open-bib-chooser cb)
+  (open-db-chooser (bib-database) "bib" "Search bibliographic reference" cb))

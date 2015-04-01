@@ -14,21 +14,3 @@
 (texmacs-module (database bib-menu)
   (:use (database bib-widgets)
         (database db-menu)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menu for maintaining bibliographic databases
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind bib-menu
-  ("Import" (choose-file bib-import-bibtex "Import from BibTeX file" "bibtex"))
-  (when (bib-exportable?)
-    ("Export" (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex")))
-  ---
-  ("Active bibliography" (load-db-buffer "tmfs://db/bib/global"))
-  ("Collected entries" (noop))
-  ("Conflicting entries" (noop))
-  ---
-  ("Show search tool" (noop))
-  ("Show sorting tool" (noop))
-  ---
-  ("Preferences" (open-bib-preferences)))

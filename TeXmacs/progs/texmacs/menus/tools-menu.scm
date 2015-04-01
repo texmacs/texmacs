@@ -90,7 +90,8 @@
       ("Update remote ssh connection" (interactive update-remote-plugins))
       ("Remove remote ssh connection" (interactive remove-remote-plugins)))
   ---
-  ;;("Bibliography tool" (toggle-preference "bibliography tool"))
+  (if (supports-sql?)
+      ("Database tool" (toggle-preference "database tool")))
   ("Debugging tool" (toggle-preference "debugging tool"))
   ("Developer tool" (toggle-preference "developer tool"))
   ("Linking tool" (toggle-preference "linking tool"))

@@ -116,3 +116,17 @@
 (tm-define (load-db-buffer u)
   (load-buffer u)
   (db-show-toolbar))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main database menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind db-menu
+  ("Open bibliography" (load-db-buffer "tmfs://db/bib/global"))
+  ---
+  (when (db-importable?)
+    ("Import" (db-import-file)))
+  (when (bib-exportable?)
+    ("Export" (db-export-file)))
+  ---
+  ("Preferences" (open-db-preferences)))

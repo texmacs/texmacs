@@ -205,7 +205,7 @@
   (like-std% (has-look-and-feel? "std"))
   (simple-menus% (== (get-preference "detailed menus") "simple"))
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
-  (with-bibliography-tool% (== (get-preference "bibliography tool") "on"))
+  (with-database-tool% (== (get-preference "database tool") "on"))
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))
   (with-developer-tool% (== (get-preference "developer tool") "on"))
   (with-linking-tool% (== (get-preference "linking tool") "on"))
