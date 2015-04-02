@@ -51,6 +51,21 @@
         (optional "month")
         (optional "year")
         (optional "note") (optional "annote")))
+  ("conference"
+   (and "author" "title"
+        (optional "crossref")
+        (optional "key")
+        (optional "booktitle")
+        (optional "pages")
+        (optional "year")
+        (optional "editor")
+        (optional "volume") (optional "number")
+        (optional "series")
+        (optional "address")
+        (optional "month")
+        (optional "organization")
+        (optional "publisher")
+        (optional "note") (optional "annote")))
   ("inbook"
    (and (or "author" "editor") "title" "chapter" "publisher" "year"
         (optional "key")
@@ -103,7 +118,7 @@
         (optional "month")
         (optional "year")
         (optional "note") (optional "annote")))
-  ("masterthesis"
+  ("mastersthesis"
    (and "author" "title" "school" "year"
         (optional "key")
         (optional "type")
@@ -156,6 +171,7 @@
   ((* "article" *) :texmacs)
   ((* "book" *) :texmacs)
   ((* "booklet" *) :texmacs)
+  ((* "conference" *) :texmacs)
   ((* "inbook" *) :texmacs)
   ((* "incollection" *) :texmacs)
   ((* "inproceedings" *) :texmacs)

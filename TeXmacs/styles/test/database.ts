@@ -39,7 +39,7 @@
   </active*>
 
   <assign|db-entry-env|<\macro|cfg|cbg|cname|type|name|body>
-    <\padded-normal|0.25em|0.25em>
+    <\padded-normal|0.25em|0.75em>
       <\wide-std-framed-colored|<arg|cfg>|<arg|cbg>>
         <with|font-series|bold|<action|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:>|mouse-fold|<arg|type>>
         <with|color|<arg|cname>|<arg|name>>>
