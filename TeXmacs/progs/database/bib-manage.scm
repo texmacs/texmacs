@@ -264,7 +264,7 @@
     `(db-result ,lab* ,t*)))
 
 (tm-define (db-pretty l kind fm)
-  (:require (and (== kind "bib") (== fm :compact)))
+  (:require (and (== kind "bib") (== fm :pretty)))
   (let* ((bib (map db->bib l))
 	 (doc `(document ,@bib))
 	 (gen (bib-generate "bib" "siam" doc)))

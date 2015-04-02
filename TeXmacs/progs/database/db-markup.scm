@@ -35,7 +35,7 @@
 (tm-define (ext-db-pretty-entry kind rid type name meta body)
   (:secure #t)
   (with t `(db-entry ,rid ,type ,name ,meta ,body)
-    (db-pretty-cached t (tm->string kind) :compact)))
+    (db-pretty-cached t (tm->string kind) :pretty)))
 
 (tm-define (db-pretty-notify t)
   (:secure #t)

@@ -93,7 +93,7 @@
                           (list (cons "type" types))))
                (ids (db-search-cached q))
                (l (map db-get-result-cached ids))
-               (r (db-pretty-cached l kind :compact)))
+               (r (db-pretty-cached l kind :pretty)))
           (cond ((null? r) (list "No matching items"))
                 ((>= (length r) 20) (rcons r "More items follow"))
                 (else r)))))))
