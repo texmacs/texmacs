@@ -12,27 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database bib-kbd)
-  (:use (database db-edit)
-        (database bib-manage)))
+  (:use (database bib-menu)))
 
-(texmacs-modes
-  (in-bib-names% (or (inside-db-field? "author") (inside-db-field? "editor"))
-                 in-bib%))
-
-(define (make-name-sep)
-  (when (inside? 'name)
-    (go-end-of 'name))
-  (when (inside? 'name-von)
-    (go-end-of 'name-von))
-  (when (inside? 'name-jr)
-    (go-end-of 'name-jr))
-  (make 'name-sep))
-
-(kbd-map
-  (:mode in-bib-names?)
-  ("," (make-name-sep))
-  (", var" ",")
-  ("space a n d space" (make-name-sep)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Completing bibliographic references
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (supports-sql?) (bib-cite-context? t)))
@@ -54,3 +38,15 @@
        (when (and (tree->path u)
 		  (tree-in? (tree-up u) '(cite nocite cite-detail)))
 	 (tree-set! u key))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Entering names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(kbd-map
+  (:mode in-bib-names?)
+  ("space a n d space" (make-name-sep))
+  ("," (make-name-sep))
+  (", var" ",")
+  ("S-F5" (make-name-von))
+  ("S-F7" (make-name-jr)))

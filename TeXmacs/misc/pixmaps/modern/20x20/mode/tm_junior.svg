@@ -37,7 +37,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="22.197802"
-     inkscape:cx="2.005529"
+     inkscape:cx="3.4097595"
      inkscape:cy="7.4653757"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -173,10 +173,10 @@
        y="12.043999"
        id="text3221"
        sodipodi:linespacing="25%"
-       transform="matrix(0.74287555,0,0,0.90604866,5.6842075,0.82568082)"><tspan
+       transform="matrix(0.6331069,0,0,0.90762578,5.3908049,1.0399634)"><tspan
          sodipodi:role="line"
          id="tspan3223"
          x="6.890769"
-         y="12.043999">jr</tspan></text>
+         y="12.043999">Jr.</tspan></text>
   </g>
 </svg>
