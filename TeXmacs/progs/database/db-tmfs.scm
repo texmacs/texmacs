@@ -89,6 +89,12 @@
         (string-append "My " type)
         (string-append (upcase-first type) " - " file))))
 
+(define (entry-present e p)
+  (cond ((not (tm-func? e 'db-entry)) e)
+        ((== p "folded") `(db-folded-entry ,@(tm-children e)))
+        ((== p "pretty") `(db-pretty-entry ,@(tm-children e)))
+        (else e)))
+
 (define (get-db-fields a)
   (let* ((file (or (assoc-ref a "file") "unknown"))
          (a* (db-get-current-query file)))
@@ -110,8 +116,9 @@
                  (types (or (smart-ref db-kind-table kind) (list)))
                  (q (append sq (list (cons "type" types)) oq))
                  (ids (db-optimized-search q))
-                 (r (map db-load-entry ids)))
-            r))))))
+                 (r (map db-load-entry ids))
+                 (presentation (or (assoc-ref a "presentation") "detailed")))
+            (map (cut entry-present <> presentation) r)))))))
 
 (tmfs-load-handler (db name)
   (let* ((a (name->query name))

@@ -63,6 +63,16 @@
     (db-set-current-query (current-buffer) a)
     (revert-buffer)))
 
+(define (db-toolbar-current-presentation)
+  (with a (db-get-current-query (current-buffer))
+    (upcase-first (or (assoc-ref a "presentation") "detailed"))))
+
+(define (db-toolbar-presentation presentation)
+  (with a (db-get-current-query (current-buffer))
+    (set! a (assoc-set! a "presentation" (locase-all presentation)))
+    (db-set-current-query (current-buffer) a)
+    (revert-buffer)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Visibility of the database toolbar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -111,7 +121,10 @@
               (list "1" "2" "5" "10" "20" "50" "100" "1000" "10000" "")
               (db-toolbar-current-limit) "4em")
         >> >> >> >> >> >> >> >>
-        (glue #t #f 0 24))))
+        (glue #t #f 0 24)
+        (enum (when answer (db-toolbar-presentation answer))
+              (list "Detailed" "Folded" "Pretty")
+              (db-toolbar-current-limit) "6em"))))
 
 (tm-define (load-db-buffer u)
   (load-buffer u)
