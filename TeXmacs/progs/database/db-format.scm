@@ -160,6 +160,11 @@
       (with el (db-encode-entry l)
         (with-encoding #f (former id el)))))
 
+(tm-define (db-remove-entry id)
+  (if (not db-encoding)
+      (former id)
+      (with-encoding #f (former id))))
+
 (define (db-encode-constraint type c)
   (with (attr . vals) c
     (with enc (lambda (val) (car (db-encode-values type attr (list val))))

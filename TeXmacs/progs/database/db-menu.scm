@@ -129,9 +129,9 @@
 (tm-menu (insert-entry-menu)
   (with types (sort (db-get-types) string<=?)
     (for (type types)
-      ((eval (upcase-first type)) (db-create-entry type)))
+      ((eval (upcase-first type)) (make-db-entry type)))
     ---
-    ("Other" (interactive db-create-entry))))
+    ("Other" (interactive make-db-entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizing the Insert menu
@@ -144,7 +144,7 @@
   (if (db-get-types)
       (=> "Database entry" (link insert-entry-menu)))
   (if (not (db-get-types))
-      ("Database entry" (interactive db-create-entry)))
+      ("Database entry" (interactive make-db-entry)))
   (link db-extra-menu)
   (if (or (in-text?) (in-math?))
       ---)
@@ -167,7 +167,7 @@
           (link insert-entry-menu)))
   (if (not (db-get-types))
       ((balloon (icon "tm_entry_add.xpm") "Insert a new entry")
-       (interactive db-create-entry)))
+       (interactive make-db-entry)))
   ((balloon (icon "tm_entry_confirm.xpm") "Confirm database entry")
    (kbd-alternate-return))
   ((balloon (icon "tm_entry_remove.xpm") "Remove database entry")
@@ -195,7 +195,7 @@
   (if (db-get-types)
       (=> "New entry" (link insert-entry-menu)))
   (if (not (db-get-types))
-      ("New entry" (interactive db-create-entry)))
+      ("New entry" (interactive make-db-entry)))
   ("Confirm entry" (kbd-alternate-return))
   ("Remove entry" (structured-remove-left)))
 

@@ -50,7 +50,7 @@
     (and-with db (bib-cache-db f)
       (system-remove db)
       (with-database bib-master
-        (db-set-entry id (list))))))
+        (db-remove-entry id)))))
 
 (define (bib-cache-create f)
   (let* ((bib-doc (string-load f))

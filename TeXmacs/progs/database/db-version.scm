@@ -31,9 +31,10 @@
                (old-h (or (assoc-ref old-l "newer") (list)))
                (app-h (list-union new-h old-h)))
           (set! new-l (assoc-set! new-l "newer" app-h))
+          (when db-time-stamp?
+            (set! new-l (assoc-remove! new-l "date")))
           (with new-id (db-create-entry new-l)
-            (with-extra-fields (list)
-              (db-set-entry id (list)))
+            (db-remove-entry id)
             new-id)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -61,8 +62,7 @@
 (define (db-declare-superseded id)
   (when (nnull? (db-get-entry id))
     ;;(display* "  Superseded " id "\n")
-    (with-extra-fields (list)
-      (db-set-entry id (list)))))
+    (db-remove-entry id)))
 
 (tm-define (db-import-entry id l)
   (let* ((name (assoc-ref-first l "name"))

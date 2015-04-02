@@ -194,6 +194,12 @@
                (set! l (assoc-set! (list-copy l) "owner" all-owners))
                (former l))))))
 
+(tm-define (db-remove-entry id)
+  (when (or (== db-current-user #t)
+            (db-allow? id db-current-user "owner"))
+    (with-user #t
+      (former id))))
+
 (tm-define (db-search l)
   (if (== db-current-user #t)
       (former l)

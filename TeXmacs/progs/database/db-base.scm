@@ -204,12 +204,6 @@
           " AND attr=" (sql-quote attr)
           " AND " (db-time-constraint)))
 
-(define (db-remove-entry id)
-  (db-check-now)
-  (db-sql "UPDATE props SET expires=strftime('%s','now')"
-          " WHERE id=" (sql-quote id)
-          " AND " (db-time-constraint)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic public interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -273,6 +267,12 @@
       (set! id (create-unique-id)))
     (db-set-entry id l)
     id))
+
+(tm-define (db-remove-entry id)
+  (db-check-now)
+  (db-sql "UPDATE props SET expires=strftime('%s','now')"
+          " WHERE id=" (sql-quote id)
+          " AND " (db-time-constraint)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Searching database entries

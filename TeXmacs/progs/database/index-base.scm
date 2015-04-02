@@ -106,7 +106,7 @@
 (define (index-set-matches id attr keys)
   (db-sql "DELETE FROM matches WHERE"
           " id=" (sql-quote id) " AND"
-          " attr=" (sql-quote attr))
+          " attr=" (sql-quote attr)) ;; FIXME: update counters
   (for (key keys)
     (index-insert-prefixes "prefixes" key)
     (db-sql "INSERT INTO matches VALUES (" (sql-quote id)
@@ -114,9 +114,14 @@
             ", " (sql-quote key) ")")
     (index-increase-counter "matches_count" "key" key)))
 
+(define (index-remove-all-matches id)
+  (db-sql "DELETE FROM matches WHERE"
+          " id=" (sql-quote id)) ;; FIXME: update counters
+  )
+
 (define (index-set-scores id scores)
   (db-sql "DELETE FROM scores WHERE"
-          " id=" (sql-quote id))
+          " id=" (sql-quote id)) ;; FIXME: update counters
   (for (key-score scores)
     (with (key score) key-score
       (index-insert-prefixes "prefixes" key)
@@ -194,8 +199,16 @@
   (if (not db-indexing)
       (former id l)
       (with-indexing #f
+        (index-remove-all-matches id)
         (former id l)
         (index-indexate-entry id l))))
+
+(tm-define (db-remove-entry id)
+  (if (not db-indexing)
+      (former id)
+      (with-indexing #f
+        (index-remove-all-matches id)
+        (former id))))
 
 (tm-define (db-search-table query i)
   (:require (and db-indexing (func? query :match 1)))

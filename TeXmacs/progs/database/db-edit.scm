@@ -240,6 +240,40 @@
              (and (list-and r) (map tree-up r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines for dealing with collections of entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (get-selection-trees t p1 p2)
+  (cond ((== p1 p2) (list))
+        ((or (<= (length p1) 1) (<= (length p2) 1)) (list t))
+        ((and (== (car p1) (car p2)) (tm-ref t (car p1)))
+         (get-selection-trees (tm-ref t (car p1)) (cdr p1) (cdr p2)))
+        ((< (car p1) (car p2))
+         (let* ((i1 (car p1))
+                (i2 (car p2))
+                (q2 (path-end   (tm-ref t i1) (list)))
+                (q1 (path-start (tm-ref t i2) (list)))
+                (l1 (get-selection-trees (tm-ref t i1) (cdr p1) q2))
+                (l2 (get-selection-trees (tm-ref t i2) q1 (cdr p2)))
+                (lm (map (cut tm-ref t <>) (.. (+ i1 1) i2))))
+           (append l1 lm l2)))
+        (else (list))))
+
+(tm-define (selection-trees)
+  (get-selection-trees (path->tree (list))
+                       (selection-get-start)
+                       (selection-get-end)))
+
+(define (find-db-entries t)
+  (cond ((tm-atomic? t) (list))
+        ((db-entry? t) (list t))
+        (else (append-map find-db-entries (tm-children t)))))
+
+(define (selected-entries)
+  (and (selection-active-any?)
+       (append-map find-db-entries (selection-trees))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creating new entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -247,7 +281,7 @@
   (or (and (tree-up t) (outer-document (tree-up t)))
       (and (tree-up t) (tm-func? t 'document) t)))
 
-(tm-define (db-create-entry type)
+(tm-define (make-db-entry type)
   (:argument type "Entry type")
   (with doc (outer-document (cursor-tree))
     (when doc
@@ -268,26 +302,36 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (confirm-entry t)
-  (when (and (db-entry? t) (db-complete-fields? t))
-    (with-database (user-database)
-      (let* ((old-id (tm->string (db-entry-ref t "id")))
-             (old (db-get-entry old-id))
-             (new (entry->assoc-list (tm->stree t))))
-        (with-extra-fields (list (list "contributor" (db-default-user))
-                                 (list "modus" "manual")
-                                 (list "origin"))
-          (with-time-stamp #t
-            (with-indexing #t
-              (with new-id (db-update-entry old-id new)
-                (if (== new-id old-id)
-                    (set-message "Entry up to date in database"
-                                 "save entry")
-                    (begin
-                      (tree-set (tree-ref t 0) new-id)
-                      (set-message "Saved modifications in database"
-                                   "save entry")))))))))))
+  (and (db-entry? t) (db-complete-fields? t)
+       (with-database (user-database)
+         (let* ((old-id (tm->string (db-entry-ref t "id")))
+                (old (db-get-entry old-id))
+                (new (entry->assoc-list (tm->stree t))))
+           (with-extra-fields (list (list "contributor" (db-default-user))
+                                    (list "modus" "manual")
+                                    (list "origin"))
+             (with-time-stamp #t
+               (with-indexing #t
+                 (with new-id (db-update-entry old-id new)
+                   (if (== new-id old-id)
+                       (begin
+                         (set-message "Entry up to date in database"
+                                      "save entry")
+                         :up-to-date)
+                       (with new-t (db-load-entry new-id)
+                         (tree-set (tree-ref t 0) new-id)
+                         (tree-set (tree-ref t 3) (tm-ref new-t 3))
+                         (set-message "Saved modifications in database"
+                                      "save entry")
+                         :saved))))))))))
 
 (define (keep-completing t opt?)
+  (when (and (not opt?) (db-entry? t))
+    (tree-go-to t 2 :end)
+    (with u (tree-ref t :last)
+      (for (i (reverse (.. 0 (tm-arity u))))
+        (when (db-field-optional? (tree-ref u i))
+          (tree-remove! u i 1)))))
   (cond ((db-first-empty-field t #t)
          (tree-go-to (db-first-empty-field t #t) :end))
         ((not (db-complete-fields? t))
@@ -297,6 +341,46 @@
              (tree-go-to f :end))))
         (else (and-with res (tree-search-upwards t db-entry?)
                 (confirm-entry res)))))
+
+(define (confirm-entries l)
+  (receive (l1 l2) (list-partition l db-complete-fields?)
+    (with r (map-in-order confirm-entry l1)
+      (set-message (if (in? :saved r)
+                       "Saved modifications in database"
+                       "Entries up to date in database")
+                   "save entries"))
+    (when (nnull? l2)
+      (keep-completing (car l) #f)
+      (set-message "Incomplete entries found to be filled out"
+                   "save entries"))
+    (null? l2)))
+
+(tm-define (db-confirm-entries-in t)
+  (and-with l (find-db-entries t)
+    (confirm-entries l)))
+
+(tm-define (save-buffer)
+  (:mode in-database?)
+  (when (db-confirm-entries-in (buffer-tree))
+    (buffer-pretend-saved (current-buffer))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Removing one or more entries from the database
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remove-entry t)
+  (when (db-entry? t)
+    (with-database (user-database)
+      (with id (tm->string (db-entry-ref t "id"))
+        (when (nnull? (db-get-entry id))
+          (db-remove-entry id)
+          (set-message "Removed entry from database" "remove entry"))))))
+
+(define (remove-entries l)
+  (for (t l)
+    (remove-entry t))
+  (when (nnull? l)
+    (set-message "Removed entries from database" "remove entries")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The enter key in databases
@@ -360,12 +444,11 @@
 
 (tm-define (kbd-alternate-enter t shift?)
   (:require (db-entry? t))
-  (tree-go-to t 2 :end)
-  (with u (tree-ref t :last)
-    (for (i (reverse (.. 0 (tm-arity u))))
-      (when (db-field-optional? (tree-ref u i))
-        (tree-remove! u i 1))))
   (keep-completing t #f))
+
+(tm-define (kbd-alternate-enter t shift?)
+  (:require (and (in-database?) (pair? (selected-entries))))
+  (confirm-entries (selected-entries)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The delete keys in databases
@@ -410,9 +493,33 @@
          (tree-go-to t :end))
         (else (former t forwards?))))
 
+(define (adjust-cursor forwards?)
+  (and-with t (cursor-tree)
+    (and-with p (tree-up t)
+      (with n (tree-arity p)
+        (when (and (tm-equal? t "") (tree-is? p 'document) (> n 1))
+          (let* ((i (tree-index t))
+                 (j (cond ((and forwards? (< i (- n 1))) (+ i 1))
+                          (forwards? (- i 1))
+                          ((and (not forwards?) (> i 0)) (- i 1))
+                          ((not forwards?) (+ i 1)))))
+            (if (db-entry? (tree-ref p j))
+                (tree-go-to p j 2 :end)
+                (tree-go-to p j (if (> j i) :start :end)))
+            (tree-remove! p i 1)))))))
+
 (tm-define (structured-remove-horizontal t forwards?)
   (:require (db-entry? t))
-  (display* "Remove entry from database not yet implemented\n"))
+  (remove-entry t)
+  (tree-select t)
+  (clipboard-cut "nowhere")
+  (adjust-cursor forwards?))
+
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (and (in-database?) (pair? (selected-entries))))
+  (remove-entries (selected-entries))
+  (clipboard-cut "nowhere")
+  (adjust-cursor forwards?))
 
 (kbd-map
   (:mode in-database?)
