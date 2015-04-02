@@ -136,15 +136,28 @@
 ;; Icon menu when editing databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind insert-entry-menu
-  ("Hello" (display* "Hello\n")))
+(tm-define (db-get-kind) "unknown")
+
+(tm-define (db-get-types)
+  (smart-ref db-kind-table (db-get-kind)))
+
+(tm-menu (insert-entry-menu)
+  (with types (sort (db-get-types) string<=?)
+    (for (type types)
+      ((eval (upcase-first type)) (db-create-entry type)))
+    ---
+    ("Other" (interactive db-create-entry))))
 
 (menu-bind db-extra-mode-icons)
 
 (menu-bind texmacs-mode-icons
   (:mode in-database?)
-  (=> (balloon (icon "tm_entry_add.xpm") "Insert a new entry")
-      (link insert-entry-menu))
+  (if (db-get-types)
+      (=> (balloon (icon "tm_entry_add.xpm") "Insert a new entry")
+          (link insert-entry-menu)))
+  (if (not (db-get-types))
+      ((balloon (icon "tm_entry_add.xpm") "Insert a new entry")
+       (interactive db-create-entry)))
   ((balloon (icon "tm_entry_confirm.xpm") "Confirm database entry")
    (kbd-alternate-return))
   ((balloon (icon "tm_entry_remove.xpm") "Remove database entry")

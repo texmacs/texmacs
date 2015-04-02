@@ -240,21 +240,28 @@
              (and (list-and r) (map tree-up r)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Creating new fields
+;; Creating new entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (outer-document t)
   (or (and (tree-up t) (outer-document (tree-up t)))
       (and (tree-up t) (tm-func? t 'document) t)))
 
-(tm-define (db-create-field type)
+(tm-define (db-create-entry type)
+  (:argument type "Entry type")
   (with doc (outer-document (cursor-tree))
     (when doc
-      (with i (tree-index (tree-down doc))
-        (with res `(db-entry ,(create-unique-id) ,type "" (document))
-          (tree-insert! doc (+ i 1) (list res))
-          (tree-go-to doc (+ i 1) 2 :start)
-          (db-complete-fields (tree-ref doc (+ i 1)) #t))))))
+      (let* ((i (tree-index (tree-down doc)))
+             (date (with-database (user-database) (db-sql-date)))
+             (res `(db-entry ,(create-unique-id) ,type ""
+                             (document
+                               (db-field "contributor" ,(db-default-user))
+                               (db-field "modus" "manual")
+                               (db-field "date" ,date))
+                             (document))))
+        (tree-insert! doc (+ i 1) (list res))
+        (tree-go-to doc (+ i 1) 2 :start)
+        (db-complete-fields (tree-ref doc (+ i 1)) #t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keep on completing and confirm changes when done

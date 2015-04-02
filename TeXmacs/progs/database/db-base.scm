@@ -103,6 +103,12 @@
     (with f (lambda (x) (and (pair? x) (car x)))
       (map f (if (null? r) r (cdr r))))))
 
+(tm-define (db-sql-date)
+  (with r (db-sql-raw "SELECT strftime('%s','now')")
+    (if (and (list-2? r) (list-1? (cadr r)) (string? (caadr r)))
+        (caadr r)
+        (texmacs-error "db-sql-date" "could not retrieve date"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra context
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
