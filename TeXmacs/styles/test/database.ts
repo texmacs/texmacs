@@ -30,7 +30,7 @@
 
   <assign|par-first|0fn>
 
-  <assign|par-par-sep|0.6666fn>
+  <assign|par-par-sep|0.25fn>
 
   <\active*>
     <\src-comment>
@@ -39,10 +39,10 @@
   </active*>
 
   <assign|db-entry-env|<\macro|cfg|cbg|cname|type|name|body>
-    <\padded-normal|0.25em|1.5em>
+    <\padded-normal|0.25em|0.25em>
       <\wide-std-framed-colored|<arg|cfg>|<arg|cbg>>
-        <with|font-series|bold|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:
-        ><with|color|<arg|cname>|<arg|name>>>
+        <with|font-series|bold|<action|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:>|mouse-fold|<arg|type>>
+        <with|color|<arg|cname>|<arg|name>>>
       </wide-std-framed-colored>
 
       <\with|par-par-sep|0fn>
@@ -58,6 +58,30 @@
   </macro>>
 
   <drd-props|db-entry|arity|5|unaccessible|0|unaccessible|1|accessible|2|unaccessible|3|accessible|4>
+
+  <\active*>
+    <\src-comment>
+      Folded presentation.
+    </src-comment>
+  </active*>
+
+  <assign|db-folded-entry-env|<\macro|cfg|cbg|cname|type|name|body>
+    <\padded-normal|0.25em|0.25em>
+      <\wide-std-framed-colored|<arg|cfg>|<arg|cbg>>
+        <with|font-series|bold|<action|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:>|mouse-unfold|<arg|type>>
+        <with|color|<arg|cname>|<arg|name>>>
+      </wide-std-framed-colored>
+    </padded-normal>
+  </macro>>
+
+  <assign|db-folded-entry|<\macro|rid|type|name|meta|body>
+    <\db-folded-entry-env|dark blue|pastel blue|dark
+    green|<arg|type>|<arg|name>>
+      <arg|body>
+    </db-folded-entry-env>
+  </macro>>
+
+  <drd-props|db-folded-entry|arity|5|unaccessible|0|unaccessible|1|accessible|2|unaccessible|3|unaccessible|4>
 
   <\active*>
     <\src-comment>

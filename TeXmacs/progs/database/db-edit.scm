@@ -14,11 +14,14 @@
 (texmacs-module (database db-edit)
   (:use (database db-version)
         (generic generic-edit)
-        (generic generic-kbd)))
+        (generic generic-kbd)
+        (dynamic dynamic-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Useful predicates
+;; DRD properties and useful predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-toggle db-folded-entry db-entry)
 
 (tm-define (db-entry? t)
   (and (tm-func? t 'db-entry 5)

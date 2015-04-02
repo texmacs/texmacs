@@ -156,7 +156,7 @@
   (link texmacs-insert-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Customizing the context-dependent icons
+;; Customizing the icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind db-extra-icons)
@@ -194,6 +194,10 @@
   (if (in-prog?)
       (link prog-format-icons))
   (link texmacs-insert-icons))
+
+(tm-define (alternate-second-icon t)
+  (:require (tree-is? t 'db-entry))
+  "tm_alternate_both.xpm")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main database menu
