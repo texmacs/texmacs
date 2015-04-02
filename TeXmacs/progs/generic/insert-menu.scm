@@ -135,21 +135,25 @@
 ;; The main Insert menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(menu-bind texmacs-insert-menu
+  (if (not (in-text?))
+      ("Text" (make 'text)))
+  (if (not (in-math?))
+      (-> "Mathematics" (link insert-math-menu)))
+  (-> "Table" (link insert-table-menu))
+  (-> "Image" (link insert-image-menu))
+  (-> "Link" (link insert-link-menu))
+  (if (detailed-menus?)
+      (if (style-has? "std-fold-dtd")
+          (-> "Fold" (link insert-fold-menu)))
+      (-> "Animation" (link insert-animation-menu)))
+  (if (and (style-has? "session-dtd") (detailed-menus?) (not (in-math?)))
+      (-> "Session" (link insert-session-menu))))
+
 (menu-bind insert-menu
   (if (in-text?) (link text-menu))
   (if (in-math?) (link math-menu))
-  (if (not (or (in-text?) (in-math?)))
-      ("Text" (make 'text))
-      (-> "Mathematics" (link insert-math-menu))
-      (-> "Table" (link insert-table-menu))
-      (-> "Image" (link insert-image-menu))
-      (-> "Link" (link insert-link-menu))
-      (if (detailed-menus?)
-	  (if (style-has? "std-fold-dtd")
-	      (-> "Fold" (link insert-fold-menu)))
-	  (-> "Animation" (link insert-animation-menu)))
-      (if (and (style-has? "session-dtd") (detailed-menus?) (in-text?))
-	  (-> "Session" (link insert-session-menu)))))
+  (if (not (or (in-text?) (in-math?))) (link texmacs-insert-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Insert icons

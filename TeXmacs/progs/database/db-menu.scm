@@ -12,8 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database db-menu)
-  (:use (database db-widgets)
-        (text text-menu)))
+  (:use (database db-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Getting and modifying the current database query
@@ -119,21 +118,7 @@
   (db-show-toolbar))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Main database menu
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind db-menu
-  ("Open bibliography" (load-db-buffer "tmfs://db/bib/global"))
-  ---
-  (when (db-importable?)
-    ("Import" (db-import-file)))
-  (when (bib-exportable?)
-    ("Export" (db-export-file)))
-  ---
-  ("Preferences" (open-db-preferences)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Icon menu when editing databases
+;; Automatically generated menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-get-kind) "unknown")
@@ -148,10 +133,35 @@
     ---
     ("Other" (interactive db-create-entry))))
 
-(menu-bind db-extra-mode-icons)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customizing the Insert menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind texmacs-mode-icons
+(menu-bind db-extra-menu)
+
+(menu-bind insert-menu
   (:mode in-database?)
+  (if (db-get-types)
+      (=> "Database entry" (link insert-entry-menu)))
+  (if (not (db-get-types))
+      ("Database entry" (interactive db-create-entry)))
+  (link db-extra-menu)
+  (if (or (in-text?) (in-math?))
+      ---)
+  (if (in-text?)
+      (link text-inline-menu))
+  (if (in-math?)
+      (link math-insert-menu))
+  ---
+  (link texmacs-insert-menu))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customizing the context-dependent icons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind db-extra-icons)
+
+(menu-bind db-insert-icons
   (if (db-get-types)
       (=> (balloon (icon "tm_entry_add.xpm") "Insert a new entry")
           (link insert-entry-menu)))
@@ -162,8 +172,42 @@
    (kbd-alternate-return))
   ((balloon (icon "tm_entry_remove.xpm") "Remove database entry")
    (structured-remove-left))
-  (link db-extra-mode-icons)
-  (if (style-has? "std-markup-dtd")
+  (link db-extra-icons))
+
+(menu-bind texmacs-mode-icons
+  (:mode in-database?)
+  (link db-insert-icons)
+  (if (or (in-text?) (in-math?) (in-prog?))
       /)
-  (link text-format-icons)
+  (if (in-text?)
+      (link text-inline-icons))
+  (if (in-math?)
+      (link math-insert-icons))
+  (if (in-prog?)
+      (link prog-format-icons))
   (link texmacs-insert-icons))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main database menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind db-entry-menu
+  (if (db-get-types)
+      (=> "New entry" (link insert-entry-menu)))
+  (if (not (db-get-types))
+      ("New entry" (interactive db-create-entry)))
+  ("Confirm entry" (kbd-alternate-return))
+  ("Remove entry" (structured-remove-left)))
+
+(menu-bind db-menu
+  ("Open bibliography" (load-db-buffer "tmfs://db/bib/global"))
+  ---
+  (when (in-database?)
+    (link db-entry-menu))
+  ---
+  (when (db-importable?)
+    ("Import" (db-import-file)))
+  (when (bib-exportable?)
+    ("Export" (db-export-file)))
+  ---
+  ("Preferences" (open-db-preferences)))

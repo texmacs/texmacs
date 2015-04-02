@@ -157,7 +157,8 @@
 (lazy-menu (generic document-menu) document-menu
            project-menu document-style-menu global-language-menu)
 (lazy-menu (generic document-part) document-part-menu project-manage-menu)
-(lazy-menu (generic insert-menu) insert-menu texmacs-insert-icons
+(lazy-menu (generic insert-menu) insert-menu texmacs-insert-menu
+           texmacs-insert-icons
            insert-link-menu insert-image-menu insert-animation-menu)
 (lazy-define (generic document-edit) update-document)
 (lazy-define (generic generic-edit) notify-activated notify-disactivated)
@@ -184,15 +185,17 @@
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
 (lazy-menu (text text-menu) text-format-menu text-format-icons
-	   text-menu text-icons)
+	   text-menu text-block-menu text-inline-menu
+           text-icons text-block-icons text-inline-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
 (lazy-menu (math math-menu) math-format-menu math-format-icons
-	   math-menu math-icons insert-math-menu
+	   math-menu math-insert-menu
+           math-icons math-insert-icons
            math-correct-menu semantic-math-preferences-menu
-           context-preferences-menu)
+           context-preferences-menu insert-math-menu)
 (lazy-initialize (math math-menu) (in-math?))
 (lazy-define (math math-edit) brackets-refresh)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

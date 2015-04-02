@@ -411,10 +411,10 @@
   ("List of tables" (make-aux "list-of-tables" "table-list-prefix" "table")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Style dependent menus
+;; Text menus for inserting block content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind text-menu
+(menu-bind text-block-menu
   (if (and (style-has? "header-title-dtd")
            (not (style-has? "header-letter-dtd"))
            (not (style-has? "header-exam-dtd")))
@@ -443,26 +443,74 @@
       ---
       (-> "Itemize" (link itemize-menu))
       (-> "Enumerate" (link enumerate-menu))
-      (-> "Description" (link description-menu)))
-  ---
+      (-> "Description" (link description-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Text menus for inserting inline content
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind text-inline-menu
   (if (style-has? "std-markup-dtd")
       (-> "Content tag" (link content-tag-menu))
       (-> "Size tag" (link size-tag-menu)))
   (-> "Presentation tag" (link presentation-tag-menu))
   (if (style-has? "std-markup-dtd")
       (-> "Language" (link text-language-menu)))
-  (-> "Scripts" (link local-supported-scripts-menu))
+  (-> "Scripts" (link local-supported-scripts-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Style dependent menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind text-menu
+  (link text-block-menu)
   ---
-  (-> "Mathematics" (link insert-math-menu))
-  (-> "Table" (link insert-table-menu))
-  (-> "Image" (link insert-image-menu))
-  (-> "Link" (link insert-link-menu))
-  (if (detailed-menus?)
-      (if (style-has? "std-fold-dtd")
-          (-> "Fold" (link insert-fold-menu)))
-      (-> "Animation" (link insert-animation-menu)))
-  (if (and (style-has? "session-dtd") (detailed-menus?))
-      (-> "Session" (link insert-session-menu))))
+  (link text-inline-menu)
+  ---
+  (link texmacs-insert-menu))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Icons for inserting block markup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind text-block-icons
+  (if (style-has? "header-letter-dtd")
+      (=> (balloon (icon "tm_title.xpm") "Make a letter environment")
+          (link letter-header-menu)))
+  (if (style-has? "header-exam-dtd")
+      (=> (balloon (icon "tm_title.xpm") "Enter title information")
+          (link exam-header-menu)))
+  (if (style-has? "book-style")
+      (=> (balloon (icon "tm_chapter.xpm") "Start a new chapter")
+          (link chapter-menu)))
+  (if (and (style-has? "section-base-dtd")
+           (not (style-has? "header-exam-dtd")))
+      (=> (balloon (icon "tm_section.xpm") "Start a new section")
+          (link section-menu)))
+  (if (or (style-has? "env-theorem-dtd")
+          (style-has? "header-exam-dtd"))
+      (=> (balloon (icon "tm_theorem.xpm") "Insert an enunciation")
+          (link enunciation-menu)))
+  (if (style-has? "std-markup-dtd")
+      (=> (balloon (icon "tm_prominent.xpm") "Insert a prominent piece of text")
+          (link prominent-menu)))
+  (if (style-has? "std-markup-dtd")
+      (=> (balloon (icon "tm_program.xpm") "Insert a computer program")
+          (link code-menu)))
+  (if (style-has? "std-list-dtd")
+      (=> (balloon (icon "tm_list.xpm") "Insert a list")
+          (link list-menu)))
+  (if (and (style-has? "env-float-dtd") (detailed-menus?))
+      ;;((balloon (icon "tm_footnote.xpm") "Insert a footnote") ())
+      ;;((balloon (icon "tm_margin.xpm") "Insert a marginal note") ())
+      ;;((balloon (icon "tm_floating.xpm") "Insert a floating object") ())
+      ;;((balloon (icon "tm_multicol.xpm") "Start multicolumn context") ())
+      (=> (balloon (icon "tm_pageins.xpm") "Insert a note or a floating object")
+          (link note-menu)))
+  (if (style-has? "section-base-dtd")
+      (=> (balloon (icon "tm_index.xpm")
+                   "Insert automatically generated content")
+          (link automatic-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties
@@ -513,6 +561,11 @@
   (=> (balloon (icon "tm_color.xpm") "Select a foreground color")
       (link color-menu)))
 
+(menu-bind text-inline-icons
+  (if (style-has? "std-markup-dtd")
+      /)
+  (link text-format-icons))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for text mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -520,46 +573,8 @@
 (menu-bind text-icons
   ;;("Goedenmiddag" (display* "Hi there\n"))
   ;;(mini #t (input (display* answer "\n") "string" '("Hello" "Bonjour") "0.5w"))
-  (if (style-has? "header-letter-dtd")
-      (=> (balloon (icon "tm_title.xpm") "Make a letter environment")
-          (link letter-header-menu)))
-  (if (style-has? "header-exam-dtd")
-      (=> (balloon (icon "tm_title.xpm") "Enter title information")
-          (link exam-header-menu)))
-  (if (style-has? "book-style")
-      (=> (balloon (icon "tm_chapter.xpm") "Start a new chapter")
-          (link chapter-menu)))
-  (if (and (style-has? "section-base-dtd")
-           (not (style-has? "header-exam-dtd")))
-      (=> (balloon (icon "tm_section.xpm") "Start a new section")
-          (link section-menu)))
-  (if (or (style-has? "env-theorem-dtd")
-          (style-has? "header-exam-dtd"))
-      (=> (balloon (icon "tm_theorem.xpm") "Insert an enunciation")
-          (link enunciation-menu)))
-  (if (style-has? "std-markup-dtd")
-      (=> (balloon (icon "tm_prominent.xpm") "Insert a prominent piece of text")
-          (link prominent-menu)))
-  (if (style-has? "std-markup-dtd")
-      (=> (balloon (icon "tm_program.xpm") "Insert a computer program")
-          (link code-menu)))
-  (if (style-has? "std-list-dtd")
-      (=> (balloon (icon "tm_list.xpm") "Insert a list")
-          (link list-menu)))
-  (if (and (style-has? "env-float-dtd") (detailed-menus?))
-      ;;((balloon (icon "tm_footnote.xpm") "Insert a footnote") ())
-      ;;((balloon (icon "tm_margin.xpm") "Insert a marginal note") ())
-      ;;((balloon (icon "tm_floating.xpm") "Insert a floating object") ())
-      ;;((balloon (icon "tm_multicol.xpm") "Start multicolumn context") ())
-      (=> (balloon (icon "tm_pageins.xpm") "Insert a note or a floating object")
-          (link note-menu)))
-  (if (style-has? "section-base-dtd")
-      (=> (balloon (icon "tm_index.xpm")
-                   "Insert automatically generated content")
-          (link automatic-menu)))
-  (if (style-has? "std-markup-dtd")
-      /)
-  (link text-format-icons)
+  (link text-block-icons)
+  (link text-inline-icons)
   (if (in-manual?) (link tmdoc-icons))
   (link texmacs-insert-icons))
 

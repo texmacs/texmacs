@@ -80,22 +80,36 @@
 ;; Extra menu items for entering names
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind db-extra-mode-icons
+(menu-bind bib-von-menu
+  ("de" (insert-name-von "de"))
+  ("van" (insert-name-von "van"))
+  ("von" (insert-name-von "von"))
+  ("zu" (insert-name-von "zu"))
+  ---
+  ("Other" (make-name-von)))
+
+(menu-bind bib-jr-menu
+  ("Junior" (insert-name-jr "Jr."))
+  ("Senior" (insert-name-jr "Sr."))
+  ---
+  ("Other" (make-name-jr)))
+
+(menu-bind db-extra-menu
+  (:mode in-bib-names?)
+  ---
+  (-> "Particle" (link bib-von-menu))
+  ("Last name" (make 'name))
+  (-> "Title suffix" (link bib-jr-menu))
+  ("Extra name" (make 'name-sep)))
+
+(menu-bind db-extra-icons
   (:mode in-bib-names?)
   /
   (=> (balloon (icon "tm_von.xpm") "Insert particle")
-      ("de" (insert-name-von "de"))
-      ("van" (insert-name-von "van"))
-      ("von" (insert-name-von "von"))
-      ("zu" (insert-name-von "zu"))
-      ---
-      ("Other" (make-name-von)))
+      (link bib-von-menu))
   ((balloon (icon "tm_name_bis.xpm") "Insert last name")
    (make 'name))
   (=> (balloon (icon "tm_junior.xpm") "Insert title after name")
-      ("Junior" (insert-name-jr "Jr."))
-      ("Senior" (insert-name-jr "Sr."))
-      ---
-      ("Other" (make-name-jr)))
+      (link bib-jr-menu))
   ((balloon (icon "tm_and.xpm") "Insert more names")
    (make-name-sep)))

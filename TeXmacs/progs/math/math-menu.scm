@@ -1021,10 +1021,10 @@
   ("Other" (make 'syntax)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The Mathematics menu
+;; Menu for inserting mathematical markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind math-menu
+(menu-bind math-insert-menu
   ("Fraction" (make-fraction))
   ("Square root" (make-sqrt))
   ("N-th root" (make-var-sqrt))
@@ -1086,16 +1086,16 @@
   (-> "Symbol" (link symbol-menu))
   (-> "Textual operator" (link textual-operator-menu))
   (if (== (get-preference "semantic editing") "on")
-      (-> "Semantics" (link semantic-annotation-menu)))
+      (-> "Semantics" (link semantic-annotation-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Mathematics menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind math-menu
+  (link math-insert-menu)
   ---
-  ("Text" (make 'text))
-  (-> "Table" (link insert-table-menu))
-  (-> "Image" (link insert-image-menu))
-  (-> "Link" (link insert-link-menu))
-  (if (detailed-menus?)
-      (if (style-has? "std-fold-dtd")
-          (-> "Fold" (link insert-fold-menu)))
-      (-> "Animation" (link insert-animation-menu))))
+  (link texmacs-insert-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying mathematical text properties
@@ -1121,10 +1121,10 @@
       ("Script script size" (make-with "math-level" "2"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Icons for math mode
+;; Icons for inserting mathematical markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(menu-bind math-icons
+(menu-bind math-insert-icons
   (=> (balloon (icon "tm_fraction.xpm") "Insert a fraction")
       ("Standard fraction" (make-fraction))
       ("Small inline fraction" (make 'tfrac))
@@ -1225,7 +1225,14 @@
   (if (== (get-preference "semantic editing") "on")
       (=> (balloon (icon "tm_math_syntax.xpm")
                    "Specify semantics of a symbol or formula")
-          (link semantic-annotation-menu)))
+          (link semantic-annotation-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Icons for math mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind math-icons
+  (link math-insert-icons)
   (link texmacs-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
