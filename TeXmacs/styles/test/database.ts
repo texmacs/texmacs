@@ -26,6 +26,8 @@
 
   <use-package|std|env>
 
+  <use-module|(database db-markup)>
+
   \;
 
   <assign|par-first|0fn>
@@ -82,6 +84,18 @@
   </macro>>
 
   <drd-props|db-folded-entry|arity|5|unaccessible|0|unaccessible|1|accessible|2|unaccessible|3|unaccessible|4>
+
+  <\active*>
+    <\src-comment>
+      Pretty presentation.
+    </src-comment>
+  </active*>
+
+  <assign|db-pretty-entry|<\macro|rid|type|name|meta|body>
+    <extern|ext-db-pretty-entry|<quote-arg|rid>|<quote-arg|type>|<quote-arg|name>|<quote-arg|meta>|<quote-arg|body>>
+  </macro>>
+
+  <drd-props|db-pretty-entry|arity|5|unaccessible|0|unaccessible|1|unaccessible|2|unaccessible|3|unaccessible|4>
 
   <\active*>
     <\src-comment>
