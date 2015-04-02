@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (database db-menu)
-  (:use (database db-widgets)))
+  (:use (database db-widgets)
+        (text text-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Getting and modifying the current database query
@@ -144,8 +145,12 @@
   (:mode in-database?)
   (=> (balloon (icon "tm_entry_add.xpm") "Insert a new entry")
       (link insert-entry-menu))
-  (=> (balloon (icon "tm_entry_confirm.xpm") "Confirm database entry")
-      (link insert-entry-menu))
+  ((balloon (icon "tm_entry_confirm.xpm") "Confirm database entry")
+   (kbd-control-return))
   (=> (balloon (icon "tm_entry_remove.xpm") "Remove database entry")
       (link insert-entry-menu))
-  (link db-extra-mode-icons))
+  (link db-extra-mode-icons)
+  (if (style-has? "std-markup-dtd")
+      /)
+  (link text-format-icons)
+  (link texmacs-insert-icons))

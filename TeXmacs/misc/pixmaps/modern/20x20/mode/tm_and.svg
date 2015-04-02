@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -168,12 +168,12 @@
          y="13.020233" /></text>
     <text
        xml:space="preserve"
-       style="font-size:20.14958000000000027px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:25%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#404040;fill-opacity:1;stroke:#404040;stroke-width:0.50000000000000000;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter19728);font-family:Arial;-inkscape-font-specification:Arial Bold;stroke-opacity:1"
+       style="font-size:20.14958px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:25%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#404040;fill-opacity:1;stroke:#404040;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter19728);font-family:Arial;-inkscape-font-specification:Arial Bold"
        x="6.890769"
        y="12.043999"
        id="text3221"
        sodipodi:linespacing="25%"
-       transform="matrix(0.74287555,0,0,0.90604866,4.5129204,0.87073033)"><tspan
+       transform="matrix(0.74287555,0,0,0.90604866,4.5129204,1.7266709)"><tspan
          sodipodi:role="line"
          id="tspan3223"
          x="6.890769"
