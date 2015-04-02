@@ -15,7 +15,7 @@
   (:use (database db-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Pretty printing with cache
+;; Pretty typesetting with cache
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define db-pretty-cache (make-ahash-table))
@@ -26,11 +26,19 @@
   (with cache (ahash-ref db-pretty-cache (list kind fm))
     (with st (tm->stree t)
       (or (ahash-ref cache st)
-          (with r (db-pretty (list st) kind fm)
-            (ahash-set! cache st (car r))
-            (car r))))))
+          (with r (car (db-pretty (list st) kind fm))
+            (when (tm-func? r 'db-result 2)
+              (set! r `(db-pretty ,(tm-ref t 2) ,(tm-ref r 1))))
+            (ahash-set! cache st r)
+            r)))))
 
-(tm-define (ext-db-pretty-entry rid type name meta body)
+(tm-define (ext-db-pretty-entry kind rid type name meta body)
   (:secure #t)
   (with t `(db-entry ,rid ,type ,name ,meta ,body)
-    (db-pretty-cached t "bib" :compact)))
+    (db-pretty-cached t (tm->string kind) :compact)))
+
+(tm-define (db-pretty-notify t)
+  (:secure #t)
+  (when (and (tree-up t) (tree-is? (tree-up t) 'db-pretty-entry))
+    (tree-go-to t :start)
+    (tree-assign-node (tree-up t) 'db-entry)))

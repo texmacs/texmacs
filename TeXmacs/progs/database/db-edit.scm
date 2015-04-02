@@ -15,7 +15,7 @@
   (:use (database db-version)
         (generic generic-edit)
         (generic generic-kbd)
-        (dynamic dynamic-drd)))
+        (utils edit variants)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DRD properties and useful predicates
@@ -23,7 +23,7 @@
 
 (define-group db-entry-tag db-entry db-folded-entry db-pretty-entry)
 
-(define-toggle db-folded-entry db-entry)
+(define-alternate db-folded-entry db-entry)
 
 (define-group variant-tag (db-entry-tag))
 (define-group similar-tag (db-entry-tag))

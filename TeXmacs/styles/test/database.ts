@@ -43,7 +43,7 @@
   <assign|db-entry-env|<\macro|cfg|cbg|cname|type|name|body>
     <\padded-normal|0.25em|0.75em>
       <\wide-std-framed-colored|<arg|cfg>|<arg|cbg>>
-        <with|font-series|bold|<action|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:>|mouse-fold|<arg|type>>
+        <with|font-series|bold|<action|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:>|mouse-fold|<arg|name>>
         <with|color|<arg|cname>|<arg|name>>>
       </wide-std-framed-colored>
 
@@ -70,7 +70,7 @@
   <assign|db-folded-entry-env|<\macro|cfg|cbg|cname|type|name|body>
     <\padded-normal|0.25em|0.25em>
       <\wide-std-framed-colored|<arg|cfg>|<arg|cbg>>
-        <with|font-series|bold|<action|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:>|mouse-unfold|<arg|type>>
+        <with|font-series|bold|<action|<with|color|<arg|cfg>|<copy|<change-case|<arg|type>|Upcase>>:>|mouse-unfold|<arg|name>>
         <with|color|<arg|cname>|<arg|name>>>
       </wide-std-framed-colored>
     </padded-normal>
@@ -91,11 +91,19 @@
     </src-comment>
   </active*>
 
+  <assign|db-kind|unknown>
+
   <assign|db-pretty-entry|<\macro|rid|type|name|meta|body>
-    <extern|ext-db-pretty-entry|<quote-arg|rid>|<quote-arg|type>|<quote-arg|name>|<quote-arg|meta>|<quote-arg|body>>
+    <extern|ext-db-pretty-entry|<value|db-kind>|<quote-arg|rid>|<quote-arg|type>|<quote-arg|name>|<quote-arg|meta>|<quote-arg|body>>
   </macro>>
 
-  <drd-props|db-pretty-entry|arity|5|unaccessible|0|unaccessible|1|unaccessible|2|unaccessible|3|unaccessible|4>
+  <drd-props|db-pretty-entry|arity|5|unaccessible|0|unaccessible|1|accessible|2|unaccessible|3|unaccessible|4>
+
+  <assign|db-pretty|<macro|key|val|<surround||<right-flush>|<with|par-left|1tab|par-first|-1tab|<action|<with|color|dark
+  blue|<strong|<arg|key>. >>|db-pretty-notify|<arg|key>><arg|val>>>>>
+
+  <assign|db-result|<macro|key|val|<surround||<right-flush>|<with|par-left|1tab|par-first|-1tab|<action|<with|color|dark
+  blue|<strong|<arg|key>. >>|db-confirm-result|<arg|key>><arg|val>>>>>
 
   <\active*>
     <\src-comment>

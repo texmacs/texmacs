@@ -26,6 +26,8 @@
 
   <use-package|database>
 
+  <assign|db-kind|bib>
+
   <\active*>
     <\src-comment>
       Markup for bibliography fields.
@@ -40,15 +42,6 @@
 
   <assign|name-jr|<macro|jr|<with|font-shape|small-caps|color|dark
   grey|<arg|jr>>>>
-
-  <\active*>
-    <\src-comment>
-      Markup for bibliography search results.
-    </src-comment>
-  </active*>
-
-  <assign|bib-result|<macro|key|val|<with|par-left|1tab|par-first|-1tab|<action|<with|color|dark
-  blue|<strong|<arg|key>. >>|db-confirm-result|<arg|key>><arg|val>>>>
 </body>
 
 <\initial>

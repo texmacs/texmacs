@@ -261,7 +261,7 @@
 	 (t* (remove-label t))
 	 (lab* (if (and (string? lab) (string-starts? lab "bib-"))
 		   (string-drop lab 4) "?")))
-    `(bib-result ,lab* ,t*)))
+    `(db-result ,lab* ,t*)))
 
 (tm-define (db-pretty l kind fm)
   (:require (and (== kind "bib") (== fm :compact)))
