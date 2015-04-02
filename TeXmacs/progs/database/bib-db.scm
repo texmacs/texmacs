@@ -266,7 +266,7 @@
 
 (tm-define (db->bib t)
   (set! t (tm->stree t))
-  (cond ((and (tm-func? t 'db-entry 5)
+  (cond ((and (db-entry-any? t)
               (tm-atomic? (tm-ref t 1))
               (in? (tm-ref t 1) bib-types-list)
               (tm-func? (tm-ref t :last) 'document))
