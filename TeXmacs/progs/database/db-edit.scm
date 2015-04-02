@@ -13,7 +13,8 @@
 
 (texmacs-module (database db-edit)
   (:use (database db-version)
-        (generic generic-edit)))
+        (generic generic-edit)
+        (generic generic-kbd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful predicates
@@ -401,3 +402,12 @@
         ((and (tree-at-end? (tree-ref t 1)) forwards?)
          (tree-go-to t :end))
         (else (former t forwards?))))
+
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (db-entry? t))
+  (display* "Remove entry from database not yet implemented\n"))
+
+(kbd-map
+  (:mode in-database?)
+  ("A-delete" (structured-remove-right))
+  ("A-backspace" (structured-remove-left)))
