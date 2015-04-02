@@ -146,7 +146,7 @@
   (=> (balloon (icon "tm_entry_add.xpm") "Insert a new entry")
       (link insert-entry-menu))
   ((balloon (icon "tm_entry_confirm.xpm") "Confirm database entry")
-   (kbd-control-return))
+   (kbd-alternate-return))
   (=> (balloon (icon "tm_entry_remove.xpm") "Remove database entry")
       (link insert-entry-menu))
   (link db-extra-mode-icons)

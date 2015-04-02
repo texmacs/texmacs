@@ -350,7 +350,7 @@
               (with next (db-next-field a)
                 (if next (tree-go-to next 1 :end))))))))
 
-(tm-define (kbd-control-enter t shift?)
+(tm-define (kbd-alternate-enter t shift?)
   (:require (db-entry? t))
   (tree-go-to t 2 :end)
   (with u (tree-ref t :last)

@@ -96,6 +96,10 @@
   (and-with p (tree-outer t)
     (kbd-control-enter p shift?)))
 
+(tm-define (kbd-alternate-enter t shift?)
+  (and-with p (tree-outer t)
+    (kbd-alternate-enter p shift?)))
+
 (tm-define (kbd-remove t forwards?)
   (and-with p (tree-outer t)
     (kbd-remove p forwards?)))
@@ -109,6 +113,10 @@
   (insert-return))
 
 (tm-define (kbd-control-enter t shift?)
+  (:require (tree-is-buffer? t))
+  (noop))
+
+(tm-define (kbd-alternate-enter t shift?)
   (:require (tree-is-buffer? t))
   (noop))
 
@@ -162,6 +170,10 @@
   (kbd-control-enter (focus-tree) #f))
 (tm-define (kbd-shift-control-return)
   (kbd-control-enter (focus-tree) #t))
+(tm-define (kbd-alternate-return)
+  (kbd-alternate-enter (focus-tree) #f))
+(tm-define (kbd-shift-alternate-return)
+  (kbd-alternate-enter (focus-tree) #t))
 (tm-define (kbd-backspace)
   (kbd-remove (focus-tree) #f))
 (tm-define (kbd-delete)

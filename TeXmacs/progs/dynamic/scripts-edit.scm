@@ -361,6 +361,10 @@
   (:require (tree-is-buffer? t))
   (script-eval))
 
+(tm-define (kbd-alternate-enter t shift?)
+  (:require (tree-is-buffer? t))
+  (script-approx))
+
 (tm-define (alternate-toggle t)
   (:require (tree-is? t 'converter-input))
   (let* ((format (string-append (tree->string (tree-ref t 0)) "-snippet"))

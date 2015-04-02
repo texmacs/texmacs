@@ -57,6 +57,8 @@
   ("S-return" (kbd-shift-return))
   ("C-return" (kbd-control-return))
   ("C-S-return" (kbd-shift-control-return))
+  ("A-return" (kbd-alternate-return))
+  ("A-S-return" (kbd-shift-alternate-return))
 
   ("delete" (kbd-delete))
   ("backspace" (kbd-backspace))
