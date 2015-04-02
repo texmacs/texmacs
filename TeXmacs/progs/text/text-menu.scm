@@ -562,8 +562,6 @@
       (link color-menu)))
 
 (menu-bind text-inline-icons
-  (if (style-has? "std-markup-dtd")
-      /)
   (link text-format-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -574,6 +572,8 @@
   ;;("Goedenmiddag" (display* "Hi there\n"))
   ;;(mini #t (input (display* answer "\n") "string" '("Hello" "Bonjour") "0.5w"))
   (link text-block-icons)
+  (if (style-has? "std-markup-dtd")
+      /)
   (link text-inline-icons)
   (if (in-manual?) (link tmdoc-icons))
   (link texmacs-insert-icons))
