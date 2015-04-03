@@ -150,6 +150,86 @@
               (get-preference "ir-menu") "8em")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mathematics preferences widget
+;; FIXME: - "assuming" has no effect in refreshable widgets
+;;        - Too much alignment tweaking      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (math-preferences-widget)
+  (padded
+  (hlist
+    (glue #t #f 5 0)
+    (vlist
+      (vlist (hlist (glue #t #f 5 0) (bold (text "Keyboard"))) ---
+        (hlist
+          (glue #t #f 5 0)
+          (aligned
+            (item (text "Use extensible brackets")
+              (toggle (set-boolean-preference "use large brackets"
+                                              answer)
+                      (get-boolean-preference "use large brackets")))))
+        (glue #f #t 0 5))
+      === ===
+      (vlist (hlist (glue #t #f 5 0) (bold (text "Contextual hints"))) ---
+        (hlist 
+          (glue #t #f 5 0)
+          (refreshable "math-pref-context"
+            (aligned
+              (item (text "Show full context")
+                (toggle (set-boolean-preference "show full context" answer)
+                        (get-boolean-preference "show full context")))
+              (item (text "Show table cells")
+                (toggle (set-boolean-preference "show table cells" answer)
+                        (get-boolean-preference "show table cells")))
+              (item (text "Show current focus")
+                (toggle (set-boolean-preference "show focus" answer)
+                        (get-boolean-preference "show focus")))
+              (assuming (get-boolean-preference "semantic editing")
+                (item (text "Only show semantic focus")
+                  (toggle (set-boolean-preference
+                           "show only semantic focus" answer)
+                          (get-boolean-preference
+                           "show only semantic focus")))))))))
+    /// ///
+    (vlist
+      (vlist (bold (text "Semantics")) ---
+        (refreshable "math-pref-semantic-selections"
+          (aligned
+            (meti (text "Semantic editing")
+              (toggle (and (set-boolean-preference "semantic editing"
+                                                   answer)
+                           (refresh-now "math-pref-semantic-selections")
+                           (refresh-now "math-pref-context"))
+                      (get-boolean-preference "semantic editing")))
+            (assuming (get-boolean-preference "semantic editing")
+              (meti (text "Semantic selections")
+                (toggle (set-boolean-preference "semantic selections"
+                                                answer)
+                        (get-boolean-preference
+                         "semantic selections"))))))
+          (glue #f #t 0 5))
+      === ===
+      (vlist (bold (text "Correction")) ---
+        (aligned
+          (meti (text "Remove superfluous invisible operators")
+            (toggle (set-boolean-preference
+                     "manual remove superfluous invisible" answer)
+                    (get-boolean-preference
+                     "manual remove superfluous invisible")))
+          (meti (text "Insert missing invisible operators")
+            (toggle (set-boolean-preference
+                     "manual insert missing invisible" answer)
+                    (get-boolean-preference
+                     "manual insert missing invisible")))
+          (meti (text "Homoglyph substitutions")
+            (toggle (set-boolean-preference
+                     "manual homoglyph correct" answer)
+                    (get-boolean-preference
+                     "manual homoglyph correct"))))
+        (glue #f #t 0 5)))
+    (glue #t #f 5 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion preferences widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -500,7 +580,7 @@
         (tab (text "Encryption")
           (centered
             (dynamic (gpg-preferences-widget))))
-	;;(tab (text "Scripts")
+        ;;(tab (text "Scripts")
         ;;  (centered
         ;;    (dynamic (script-preferences-widget))))
         ))))
@@ -552,6 +632,9 @@
     (icon-tab "tm_prefs_keyboard.xpm" (text "Keyboard")
       (centered
         (dynamic (keyboard-preferences-widget))))
+    (icon-tab "tm_prefs_other.xpm" (text "Mathematics") ; TODO: icon
+      (centered
+        (dynamic (math-preferences-widget))))
     (icon-tab "tm_prefs_convert.xpm" (text "Convert")
       (dynamic (conversion-preferences-widget)))
     (assuming (== (get-preference "experimental encryption") "on")
