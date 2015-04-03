@@ -376,8 +376,9 @@
   (and-with l (find-db-entries t)
     (confirm-entries l)))
 
-(tm-define (save-buffer)
+(tm-define (save-buffer . l)
   (:mode in-database?)
+  (:require (null? l))
   (when (db-confirm-entries-in (buffer-tree))
     (buffer-pretend-saved (current-buffer))))
 
