@@ -84,36 +84,22 @@
 ;; Importing and exporting BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (bib-cache-imported? f bdb)
-  (and-with id (bib-cache-id f)
-    (and-with db (bib-cache-db f)
-      (with-database db
-        (== (db-get-field-first id "imported" #f) (url->system bdb))))))
-
-(define (bib-cache-notify-imported f bdb)
-  (and-with id (bib-cache-id f)
-    (and-with db (bib-cache-db f)
-      (with-database db
-        (db-set-field id "imported" (list (url->system bdb)))))))
-
 (tm-define (bib-import-bibtex f)
   (let* ((db (bib-cache-bibtex f))
          (origin (url->string (url-tail f))))
     (when (url-exists? db)
       (with-database db
         (with all (bib-load)
-          (when (not (bib-cache-imported? f (bib-database)))
-            (with-database (bib-database)
-              (with-extra-fields (list (list "contributor" (db-default-user))
-                                       (list "modus" "imported")
-                                       (list "origin" origin))
-                (with-indexing #t
-                  (bib-save all))))
-            (bib-cache-notify-imported f (bib-database))
-            (when (buffer-exists? "tmfs://db/bib/global")
-              (revert-buffer "tmfs://db/bib/global"))
-            (set-message "Imported bibliographic entries"
-                         "import bibliography")))))))
+          (with-database (bib-database)
+            (with-extra-fields (list (list "contributor" (db-default-user))
+                                     (list "modus" "imported")
+                                     (list "origin" origin))
+              (with-indexing #t
+                (bib-save all))))
+          (when (buffer-exists? "tmfs://db/bib/global")
+            (revert-buffer "tmfs://db/bib/global"))
+          (set-message "Imported bibliographic entries"
+                       "import bibliography"))))))
 
 (tm-define (bib-export-global f)
   (with-database (bib-database)
