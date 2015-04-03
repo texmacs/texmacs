@@ -301,8 +301,9 @@
   (with doc (outer-document (cursor-tree))
     (when doc
       (let* ((i (tree-index (tree-down doc)))
+             (id (with-database (user-database) (db-create-id)))
              (date (with-database (user-database) (db-sql-date)))
-             (res `(db-entry ,(create-unique-id) ,type ""
+             (res `(db-entry ,id ,type ""
                              (document
                                (db-field "contributor" ,(db-default-user))
                                (db-field "modus" "manual")

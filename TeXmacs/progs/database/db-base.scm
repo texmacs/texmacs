@@ -261,10 +261,14 @@
         (db-remove-field id "date")
         (db-insert-time-stamp id)))))
 
-(tm-define (db-create-entry l)
+(tm-define (db-create-id)
   (with id (create-unique-id)
     (while (nnull? (db-get-attributes id))
       (set! id (create-unique-id)))
+    id))
+
+(tm-define (db-create-entry l)
+  (with id (db-create-id)
     (db-set-entry id l)
     id))
 
