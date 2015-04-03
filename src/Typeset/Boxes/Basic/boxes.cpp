@@ -251,6 +251,18 @@ find_scrolled_box_path (box b, path sp, SI x, SI y, SI delta) {
   }
 }
 
+/*
+void
+debug (box b, path bp) {
+  tree t= (tree) b;
+  if (is_tuple (t) && N(t) > 0) cout << t[0];
+  else cout << t;
+  cout << ", " << bp << "\n";
+  if (!is_nil (bp))
+    debug (b[bp->item], bp->next);
+}
+*/
+
 path
 find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta) {
   path bp= find_scrolled_box_path (b, sp, x, y, delta);

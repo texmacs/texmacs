@@ -230,6 +230,11 @@ obtain_ip (tree& ref) {
   path ip;
   if (is_nil (ref->obs)) return DETACHED;
   if (!ref->obs->get_ip (ip)) return DETACHED;
+  path p= ip;
+  while (!is_nil (p)) {
+    if (p->item == DETACHED) return DETACHED;
+    p= p->next;
+  }
   return ip;
 }
 
