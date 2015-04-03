@@ -127,7 +127,7 @@ static bool
 bib_is_char (string s, char c) {
   return (N(s) == 1) && (s[0] == c);
 }
-
+ 
 static string
 bib_to_latex (string s) {
   string r= "{";
@@ -617,7 +617,6 @@ bib_purify_tree (tree t, string& res) {
   else if (L(t) == CONCAT || L(t) == DOCUMENT) {
     for (int i= 0; i<N(t); i++) bib_purify_tree (t[i], res);
   }
-  cout << UNINDENT;
 }
 
 string
@@ -900,13 +899,22 @@ bib_latex_array (tree latex) {
   return res;
 }
 
+static bool
+is_hyper_link (string s) {
+  if (occurs (" ", s)) return false;
+  return starts (s, "http://") || starts (s, "ftp://");
+}
+
 void
 bib_parse_fields (tree& t) {
   string fields;
-  int i= 0;
   int nb= bib_get_fields (t, fields);
   array<tree> latex= bib_latex_array (
       latex_to_tree (parse_latex (cork_to_sourcecode (fields), false, false)));
+  for (int k=0; k<N(latex); k++)
+    if (is_atomic (latex[k]) && is_hyper_link (latex[k]->label))
+      latex[k]= compound ("slink", latex[k]);
+  int i= 0;
   if (nb == N(latex)) bib_set_fields (t, latex, i);
 }
 

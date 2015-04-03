@@ -786,6 +786,7 @@ upgrade_set_begin_document_once (tree doc_t) {
 	matching (doc_t[doc_1][con_1], doc_t[doc_2][con_2]))
       {
 	tree ins= document_replace (doc_t, doc_1, con_1, doc_2, con_2);
+        // cout << "ins: " << ins << "\n";
 	if (is_func (ins, EXPAND, 2)) {
           if ((ins[0] == "verbatim") || (ins[0] == "code") ||
               (upgrade_tex_flag && is_verbatim (compound (as_string(ins[0])))))
@@ -794,6 +795,11 @@ upgrade_set_begin_document_once (tree doc_t) {
 	    upgrade_abstract_expand (doc, con, ins);
 	  else con << ins;
 	}
+        else if (is_func (ins, WITH) &&
+                 is_func (ins[N(ins)-1], DOCUMENT, 1)) {
+          ins[N(ins)-1]= ins[N(ins)-1][0];
+          con << ins;
+        }
 	else con << ins;
 	document_inc (doc, con, doc_t, doc_i, con_i);
       }
