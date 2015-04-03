@@ -305,7 +305,7 @@
              (date (with-database (user-database) (db-sql-date)))
              (res `(db-entry ,id ,type ""
                              (document
-                               (db-field "contributor" ,(db-default-user))
+                               (db-field "contributor" ,(get-default-user))
                                (db-field "modus" "manual")
                                (db-field "date" ,date))
                              (document))))
@@ -323,7 +323,7 @@
          (let* ((old-id (tm->string (db-entry-ref t "id")))
                 (old (db-get-entry old-id))
                 (new (entry->assoc-list (tm->stree t))))
-           (with-extra-fields (list (list "contributor" (db-default-user))
+           (with-extra-fields (list (list "contributor" (get-default-user))
                                     (list "modus" "manual")
                                     (list "origin"))
              (with-time-stamp #t

@@ -147,7 +147,7 @@
            (== (tree-index (tree-down t)) 0))))
 
 (tm-define (kbd-variant t forwards?)
-  (:require (and (not (supports-sql?)) (bib-cite-context? t)))
+  (:require (and (not (supports-db?)) (bib-cite-context? t)))
   (with u (current-bib-file #t)
     (with ttxt (tree-ref t (cADr (cursor-path)))
       (if (or (url-none? u) (not ttxt))

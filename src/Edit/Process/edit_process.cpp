@@ -68,6 +68,11 @@ find_bib_file (url base, string fname,
   return url_none ();
 }
 
+bool
+supports_db () {
+  return sqlite3_present () && get_preference ("database tool") == "on";
+}
+
 void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
@@ -84,7 +89,7 @@ edit_process_rep::generate_bibliography (
   if (is_none (bib_file)) {
     url bbl_file= find_bib_file (buf->buf->name, fname, ".bbl");
     if (is_none (bbl_file)) {
-      if (sqlite3_present ()) {
+      if (supports_db ()) {
         t= as_tree (call (string ("bib-compile"), bib, style, bib_t));
         call (string ("bib-attach"), bib, bib_t);
       }
@@ -104,9 +109,9 @@ edit_process_rep::generate_bibliography (
       else if (style == "siam") style= "tm-siam";
       else style= "tm-plain";
     }
-    if (sqlite3_present () && !is_rooted (bib_file))
+    if (supports_db () && !is_rooted (bib_file))
       bib_file= find_bib_file (buf->buf->name, fname, ".bib", true);
-    if (sqlite3_present ()) {
+    if (supports_db ()) {
       (void) call (string ("bib-import-bibtex"), bib_file);
       t= as_tree (call (string ("bib-compile"), bib, style, bib_t, bib_file));
     }
@@ -121,7 +126,7 @@ edit_process_rep::generate_bibliography (
     }
     else
       t= bibtex_run (bib, style, bib_file, bib_t);
-    if (sqlite3_present ())
+    if (supports_db ())
       (void) call (string ("bib-attach"), bib, bib_t, bib_file);
   }
   if (is_atomic (t) && starts (t->label, "Error:"))

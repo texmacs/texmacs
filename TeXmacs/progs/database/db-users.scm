@@ -28,7 +28,7 @@
   (set! db-current-user #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; The default user
+;; The database for user management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define users-manage-dir "$TEXMACS_HOME_PATH/system/database")
@@ -36,7 +36,11 @@
 (define users-master
   (url->url (string-append users-manage-dir "/users-master.tmdb")))
 
-(define db-the-default-user #f)
+(tm-define (add-user pseudo name)
+  (with-database users-master
+    (db-create-entry (list (list "type" "user")
+                           (list "pseudo" pseudo)
+                           (list "name" name)))))
 
 (tm-define (pseudo->user pseudo)
   (with-database users-master
@@ -44,27 +48,50 @@
                                (list "pseudo" pseudo)))
       (and (nnull? ids) (car ids)))))
 
-(tm-define (db-default-user)
-  (when (and (not db-the-default-user)
-             (supports-sql?)
-             (url-exists-in-path? "whoami")
-             (url-exists-in-path? "finger")
-             (url-exists-in-path? "sed"))
-    (let* ((pseudo (var-eval-system "whoami"))
-           (cmd "finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'")
-           (name (var-eval-system cmd))
-           (me (pseudo->user pseudo)))
-      (when (and (not me) (!= pseudo "") (!= name ""))
-        (with-database users-master
-          (set! me (db-create-entry (list (list "type" "user")
-                                          (list "pseudo" pseudo)
-                                          (list "name" name))))))
-      (set! db-the-default-user me)))
-  (set! db-the-default-user (or db-the-default-user "default"))
+(tm-define (set-default-user uid)
+  (with-database users-master
+    (db-set-field "root" "default-user" (list uid))))
+
+(define (find-default-user)
+  (with-database users-master
+    (with l (db-get-field "root" "default-user")
+      (and (pair? l) (car l)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The default user
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define db-the-default-user #f)
+
+(define (create-default-user)
+  (if (and (url-exists-in-path? "whoami")
+           (url-exists-in-path? "finger")
+           (url-exists-in-path? "sed"))
+      (let* ((pseudo (var-eval-system "whoami"))
+             (cmd "finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'")
+             (name (var-eval-system cmd)))
+        (when (== pseudo "") (set! pseudo "default"))
+        (when (== name "") (set! pseudo "Default User"))
+        (list pseudo name))
+      (list "default" "Default User")))
+
+(tm-define (get-default-user)
+  (when (and (not db-the-default-user) (supports-sql?))
+    (and-with uid (find-default-user)
+      (set! db-the-default-user uid)))
+  (when (and (not db-the-default-user) (supports-sql?))
+    (with info (create-default-user)
+      (with (pseudo name) info
+        (when (and (!= pseudo "default") (!= name "Default User"))
+          (with me (add-user pseudo name)
+            (set-default-user me)
+            (set! db-the-default-user me))))))
+  (when (not db-the-default-user)
+    (set! db-the-default-user "default"))
   db-the-default-user)
 
 (tm-define (user-database)
-  (url->url (string-append users-dir "/" (db-default-user) ".tmdb")))
+  (url->url (string-append users-dir "/" (get-default-user) ".tmdb")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables

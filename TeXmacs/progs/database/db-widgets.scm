@@ -31,7 +31,7 @@
 (define db-pretty-cache (make-ahash-table))
 
 (define (get-name entry)
-  (or (and (tm-func? entry 'bib-result 2)
+  (or (and (tm-func? entry 'db-result 2)
            (string? (tm-ref entry 0))
            (tm-ref entry 0))
       (db-entry-ref entry "name")))

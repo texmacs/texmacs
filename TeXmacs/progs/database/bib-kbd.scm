@@ -19,7 +19,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-variant t forwards?)
-  (:require (and (supports-sql?) (bib-cite-context? t)))
+  (:require (and (supports-db?) (bib-cite-context? t)))
   (with u (tree-down t)
     (and-with key (and (tree-atomic? u) (tree->string u))
       (with-database (bib-database)
@@ -31,7 +31,7 @@
                 (custom-complete (tm->tree `(tuple ,@cs))))))))))
 
 (tm-define (kbd-alternate-variant t forwards?)
-  (:require (and (supports-sql?) (bib-cite-context? t)))
+  (:require (and (supports-db?) (bib-cite-context? t)))
   (and-with u (tree-down t)
     (open-bib-chooser
      (lambda (key)

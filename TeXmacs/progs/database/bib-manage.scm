@@ -91,7 +91,7 @@
       (with-database db
         (with all (bib-load)
           (with-database (bib-database)
-            (with-extra-fields (list (list "contributor" (db-default-user))
+            (with-extra-fields (list (list "contributor" (get-default-user))
                                      (list "modus" "imported")
                                      (list "origin" origin))
               (with-indexing #t
@@ -144,7 +144,7 @@
   (and-with l (db-search (list (list "name" name)))
     (when (> (length l) 1)
       (with l* (db-search (list (list "name" name)
-                                (list "contributor" (db-default-user))))
+                                (list "contributor" (get-default-user))))
         (when (pair? l*) (set! l l*))))
     (and (nnull? l)
          (with e (db-load-entry (car l))
@@ -219,12 +219,15 @@
   (when (and (tm? names) (tm-func? names 'document))
     (set! names (tm-children (tm->stree names))))
   ;;(display* "Compile " style ", " names ", " bib-files "\n")
-  (if (not (and (list? names) (list-and (map string? names))))
-      (tree "Error: invalid bibliographic key list")
-      (with t (apply bib-compile-sub (cons* prefix style names bib-files))
-        (if (not (tm? t))
-            (tree "Error: failed to produce bibliography")
-            (tm->tree t)))))
+  (cond ((not (supports-sql?)) (tree "Error: SQL not supported"))
+        ((not (supports-db?)) (tree "Error: database tool not activated"))
+        ((not (and (list? names) (list-and (map string? names))))
+         (tree "Error: invalid bibliographic key list"))
+        (else
+          (with t (apply bib-compile-sub (cons* prefix style names bib-files))
+            (if (not (tm? t))
+                (tree "Error: failed to produce bibliography")
+                (tm->tree t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pretty printing of bibliography entries
@@ -264,14 +267,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (bib-attach prefix names . bib-files)
-  (when (and (tm? names) (tm-func? names 'document))
-    (set! names (tm-children (tm->stree names))))
-  (when (and (list? names) (list-and (map string? names)))
-    (set! names (list-remove-duplicates names))
-    (let* ((all-files (rcons bib-files :default))
-           (l (apply bib-retrieve-entries (cons names all-files)))
-           (doc `(document ,@(map cdr l))))
-      (set-attachment (string-append prefix "-bibliography") doc))))
+  (when (supports-db?)
+    (when (and (tm? names) (tm-func? names 'document))
+      (set! names (tm-children (tm->stree names))))
+    (when (and (list? names) (list-and (map string? names)))
+      (set! names (list-remove-duplicates names))
+      (let* ((all-files (rcons bib-files :default))
+             (l (apply bib-retrieve-entries (cons names all-files)))
+             (doc `(document ,@(map cdr l))))
+        (set-attachment (string-append prefix "-bibliography") doc)))))
 
 (define (bib-attachments)
   (with l (list-attachments)
@@ -287,11 +291,12 @@
     (set-message "Exported bibliographic references" "export bibliography")))
 
 (tm-define (notify-set-attachment name key val)
-  (when (string-ends? key "-bibliography")
-    (with doc (tm->stree val)
-      (with-database (bib-database)
-        (with-indexing #t
-          (bib-save doc)))))
+  (when (supports-db?)
+    (when (string-ends? key "-bibliography")
+      (with doc (tm->stree val)
+        (with-database (bib-database)
+          (with-indexing #t
+            (bib-save doc))))))
   (former name key val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
