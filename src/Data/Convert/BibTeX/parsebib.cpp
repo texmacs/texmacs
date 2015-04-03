@@ -174,6 +174,28 @@ bib_arg (string s, int& pos, string ce, tree& arg) {
   }
 }
 
+tree
+normalize_newlines (tree t) {
+  if (is_atomic (t)) {
+    string s= t->label, r;
+    for (int i=0; i<N(s); )
+      if (s[i] == '\n') {
+        r << " ";
+        i++;
+        while (i<N(s) && s[i] == ' ') i++;
+      }
+      else r << s[i++];
+    return r;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= normalize_newlines (t[i]);
+    return r;
+  }
+}
+
 void
 bib_fields (string s, int& pos, string ce, string tag, tree& fields) {
   if (!bib_ok (s, pos)) return;
@@ -199,6 +221,7 @@ bib_fields (string s, int& pos, string ce, string tag, tree& fields) {
     bib_arg (s, pos, ce, arg);
     if (tag == "bib-field") param= locase_all (param);
     arg= simplify_correct (arg);
+    arg= normalize_newlines (arg);
     fields << compound (tag, param, arg);
     bib_blank (s, pos);
     string cend= ce;
