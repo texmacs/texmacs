@@ -111,6 +111,11 @@ bib_is_space (string s) {
   return (N(s) == 1) && is_space (s[0]);
 }
 
+static bool
+bib_keepcase_sep (string s) {
+  return (N(s) == 1) && (is_space (s[0]) || s[0] == '[' || s[0] == ']');
+}
+
 /*
 static bool
 bib_is_iso_alpha (string s) {
@@ -143,12 +148,13 @@ bib_to_latex (string s) {
     // convert_warning << ch << " " << as_string (keepcase) << " " << as_string (depth) << "\n";
     if (ch == "$$") r << "$";
     else if (special || math) r << ch;
-    else if (bib_is_space (ch)) {
+    else if (bib_keepcase_sep (ch)) {
+      if (bib_is_space (ch)) ch= " ";
       if (keepcase == depth+1) {
-        r << "} ";
+        r << "}" << ch;
         keepcase= -1;
       }
-      else r << " ";
+      else r << ch;
     }
     else if (ch == "%") r << "\\%";
     else if (bib_is_char (ch, '{') && depth > 0 &&
@@ -162,10 +168,12 @@ bib_to_latex (string s) {
     else if (bib_is_char (ch, '}')) {
       if (keepcase <= depth || specialsav) r << ch;
     }
-    else  r << ch;
+    else r << ch;
   }
   for (int i= keepcase; i>0; i--) r << "}";
   r << "}";
+  // cout << "<<< " << s << "\n";
+  // cout << ">>> " << r << "\n";
   // convert_warning << r << "\n";
   return r;
 }
