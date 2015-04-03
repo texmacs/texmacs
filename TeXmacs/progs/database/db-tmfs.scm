@@ -39,26 +39,31 @@
           (if (<= (length r) db-limit) r (sublist r 0 db-limit))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Retrieving the database queries
+;; Allow query preferences to be set on a pro-file basis
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define db-query-current (make-ahash-table))
+(tm-define (db-get-query-preference file attr . opt-default)
+  (when (url? file) (set! file (url->string file)))
+  (let* ((key (string-append attr "," file))
+         (r (get-preference key))
+         (default (and (pair? opt-default) (car opt-default))))
+    (if (!= r "default") r default)))
 
-(define (db-get-file file)
-  (when (and (nstring? file) (url? file))
-    (set! file (url->string file)))
-  (if (string-starts? file "tmfs://db/")
-      (with a (name->query (string-drop file (string-length "tmfs://db/")))
-        (or (assoc-ref a "file") "unknown"))
-      file))
+(tm-define (db-set-query-preference file attr val)
+  (when (url? file) (set! file (url->string file)))
+  (let* ((key (string-append attr "," file)))
+    (set-preference key val)))
 
 (tm-define (db-get-current-query file)
-  (set! file (db-get-file file))
-  (or (ahash-ref db-query-current file) (list)))
+  (list (cons "search" (db-get-query-preference file "search" ""))
+        (cons "order" (db-get-query-preference file "order" "name"))
+        (cons "direction" (db-get-query-preference file "direction" "ascend"))
+        (cons "limit" (db-get-query-preference file "limit" "10"))
+        (cons "present" (db-get-query-preference file "present" "detailed"))))
 
-(tm-define (db-set-current-query file q)
-  (set! file (db-get-file file))
-  (ahash-set! db-query-current file q))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Retrieving the database queries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (name->query name)
   (let* ((h (tmfs-car name))
@@ -70,7 +75,8 @@
                (val (substring h (+ i 1) (string-length h))))
           (assoc-set! l var val))
         (list (cons "kind" h)
-              (cons "file" t)))))
+              (cons "file" t)
+              (cons "tmfs" (string-append "tmfs://db/" name))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Showing the database
@@ -96,7 +102,7 @@
         (else e)))
 
 (define (get-db-fields a)
-  (let* ((file (or (assoc-ref a "file") "unknown"))
+  (let* ((file (or (assoc-ref a "tmfs") "unknown"))
          (a* (db-get-current-query file)))
     (set! a (assoc-add a a*))
     (with-database (user-database)
@@ -117,8 +123,8 @@
                  (q (append sq (list (cons "type" types)) oq))
                  (ids (db-optimized-search q))
                  (r (map db-load-entry ids))
-                 (presentation (or (assoc-ref a "presentation") "detailed")))
-            (map (cut entry-present <> presentation) r)))))))
+                 (present (or (assoc-ref a "present") "detailed")))
+            (map (cut entry-present <> present) r)))))))
 
 (tmfs-load-handler (db name)
   (let* ((a (name->query name))
