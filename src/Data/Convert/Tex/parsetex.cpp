@@ -460,6 +460,14 @@ latex_parser::parse_backslash (string s, int& i, int change) {
     i+=6;
     return parse_verbatim (s, i, s(i-1,i), "\\verbatim");
   }
+  if (((i+6)<n) && (s(i,i+4)=="\\url") && s[i+4] != '{' && s[i+4] != ' ') {
+    i+=5;
+    return parse_verbatim (s, i, s(i-1,i), "\\url");
+  }
+  if (((i+7)<n) && (s(i,i+5)=="\\path") && s[i+5] != '{' && s[i+5] != ' ') {
+    i+=6;
+    return parse_verbatim (s, i, s(i-1,i), "\\verbatim");
+  }
   if (((i+29)<n) && (s(i,i+16)=="\\begin{verbatim}")) {
     i+=16;
     return parse_verbatim (s, i, "\\end{verbatim}", "verbatim");

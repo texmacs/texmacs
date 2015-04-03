@@ -235,6 +235,8 @@ bib_first_char (tree t) {
   }
   else if (is_compound (t, "verbatim"))
     return 0;
+  else if (is_compound (t, "slink"))
+    return 0;
   else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt")
     return 0;
   else {
@@ -292,6 +294,8 @@ bib_change_case (tree& t, string (*change_case) (string)) {
   //cout << "Change case " << t << "\n";
   if (is_atomic (t) && change_case) t->label= change_case (t->label);
   else if (is_compound (t, "verbatim"));
+  else if (is_compound (t, "slink"));
+  else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt");
   else if (L(t) == WITH) bib_change_case (t[N(t)-1], change_case);
   else if (L(t) == as_tree_label ("keepcase")) t= t[0];
   else if (L(t) == CONCAT || L(t) == DOCUMENT)

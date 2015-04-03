@@ -2371,6 +2371,8 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\penalty", 1)) return "";
   if (is_tuple (t, "\\url", 1))
     return tree (APPLY, "slink", url_arg_to_string (t[1]));
+  if (is_tuple (t, "\\path", 1))
+    return tree (APPLY, "verbatim", url_arg_to_string (t[1]));
   if (is_tuple (t, "\\href", 2))
     return tree (APPLY, "hlink", l2e (t[2]), url_arg_to_string (t[1]));
 
