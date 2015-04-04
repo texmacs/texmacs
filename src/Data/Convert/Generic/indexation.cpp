@@ -41,8 +41,8 @@ struct score_computer {
 score_computer::score_computer (string fm2):
   score (0), keys (0), fm (fm2), multiplier (1)
 {
-  string first= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  string all= first * string ("0123456789_");
+  string first= "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  string all= first * string ("_");
   if (fm == "texmacs") {
     multiplier ("explain") = 10;
   }

@@ -313,11 +313,11 @@
 
 (tm-define (db-import-file)
   (:require (in-bib?))
-  (choose-file bib-import-bibtex "Import from BibTeX file" "bibtex"))
+  (choose-file bib-import-bibtex "Import from BibTeX file" "tmbib"))
 
 (tm-define (db-export-file)
   (:interactive #t)
-  (choose-file bib-export-bibtex "Export to BibTeX file" "bibtex"))
+  (choose-file bib-export-bibtex "Export to BibTeX file" "tmbib"))
 
 (tm-define (open-bib-chooser cb)
   (open-db-chooser (bib-database) "bib" "Search bibliographic reference" cb))

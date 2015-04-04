@@ -103,7 +103,7 @@
                  "file" (list (url->string bibwid-url)) "40em")
           // //
           (explicit-buttons 
-            ("" (choose-file bibwid-set-filename "Choose" "bibtex"))))))
+            ("" (choose-file bibwid-set-filename "Choose" "tmbib"))))))
     ===
     (hlist
       ;(balloon "Use relative path:" "Select this to use a path relative to the current document. You can use this to be able to move around the folder containing your document and the bibliography.")
