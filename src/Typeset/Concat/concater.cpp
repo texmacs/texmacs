@@ -162,6 +162,7 @@ concater_rep::typeset (tree t, path ip) {
 
   if (!is_accessible (ip)) {
     path ip2= obtain_ip (t);
+    //if (ip2 != ip) cout << t << ", " << ip << " -> " << ip2 << "\n";
     if (ip2 != path (DETACHED))
       ip= ip2;
   }

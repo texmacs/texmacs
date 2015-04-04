@@ -363,6 +363,13 @@ right_correct (tree t, path p) {
   return path (i, right_correct (t[i], p->next));
 }
 
+static path
+keep_positive (path p) {
+  if (is_nil (p)) return p;
+  if (p->item < 0) return path ();
+  return path (p->item, keep_positive (p->next));
+}
+
 /******************************************************************************
 * Exported routines for cursor paths in trees
 ******************************************************************************/
@@ -370,6 +377,7 @@ right_correct (tree t, path p) {
 path
 correct_cursor (tree t, path p, bool forwards) {
   //cout << "Correct cursor " << p << " in " << t << "\n";
+  p= keep_positive (p);
   path pp= pre_correct (t, p);
   if (forwards) return right_correct (t, pp);
   else return left_correct (t, pp);

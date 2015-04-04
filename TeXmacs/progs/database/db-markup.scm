@@ -28,6 +28,7 @@
       (or (ahash-ref cache st)
           (with r (car (db-pretty (list st) kind fm))
             (when (tm-func? r 'db-result 2)
+              ;;(display* (tm-ref t 2) ", " (tree->path (tm-ref t 2)) "\n")
               (set! r `(db-pretty ,(tm-ref t 2) ,(tm-ref r 1))))
             (ahash-set! cache st r)
             r)))))
