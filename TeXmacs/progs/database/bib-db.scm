@@ -414,8 +414,12 @@
     (bib->db* t)))
 
 (tm-define (tmbib-document->texmacs s)
-  (with t (bibtex->texmacs (parse-bibtex-document s))
-    (bib->db* t)))
+  (let* ((t (bibtex->texmacs (parse-bibtex-document s)))
+         (doc (bib->db* t))
+         (body (tmfile-extract doc 'body))
+         (att `(collection (associate "bibtex-source" ,s)
+                           (associate "bibtex-target" ,body))))
+    `(,(tm-label doc) ,@(tm-children doc) (attachments ,att))))
 
 (define (db->bib* t)
   (cond ((tm-atomic? t) t)
@@ -423,6 +427,27 @@
         ((tm-func? t 'style) (tm-replace t "database-bib" "bibliography"))
         (else (cons (tm-label t) (map db->bib* (tm-children t))))))
 
-(tm-define (texmacs->tmbib t)
+(tm-define (texmacs->tmbib-snippet t)
   (with u (db->bib* t)
     (serialize-bibtex (texmacs->bibtex u))))
+
+(define (associate->binding t)
+  (and (tm-func? t 'associate 2)
+       (cons (cadr t) (caddr t))))
+
+(define (collection-ref col key)
+  (and (tm-func? col 'collection)
+       (let* ((c (tm-children (tm->stree col)))
+              (l (list-filter (map associate->binding c) identity)))
+         (assoc-ref l key))))
+
+(tm-define (texmacs->tmbib-document doc)
+  (let* ((u (db->bib* doc))
+         (s (serialize-bibtex (texmacs->bibtex u)))
+         (body (tmfile-extract doc 'body))
+         (att (tmfile-extract doc 'attachments))
+         (src (collection-ref att "bibtex-source"))
+         (obj (collection-ref att "bibtex-target")))
+    (if (and body src obj)
+        (conservative-bib-export src obj s body)
+        s)))

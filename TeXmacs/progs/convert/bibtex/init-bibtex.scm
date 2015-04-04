@@ -56,7 +56,8 @@
 
 (lazy-define (database bib-db) tmbib-snippet->texmacs)
 (lazy-define (database bib-db) tmbib-document->texmacs)
-(lazy-define (database bib-db) texmacs->tmbib)
+(lazy-define (database bib-db) texmacs->tmbib-snippet)
+(lazy-define (database bib-db) texmacs->tmbib-document)
 
 (converter tmbib-snippet texmacs-stree
   (:function tmbib-snippet->texmacs))
@@ -65,7 +66,10 @@
   (:function tmbib-document->texmacs))
 
 (converter texmacs-stree tmbib-snippet
-  (:function texmacs->tmbib))
+  (:function texmacs->tmbib-snippet))
 
 (converter texmacs-stree tmbib-document
-  (:function texmacs->tmbib))
+  (:function texmacs->tmbib-document))
+
+(define-preferences
+  ("texmacs->bibtex:conservative" "on" noop))

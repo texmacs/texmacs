@@ -346,6 +346,12 @@
 
 ;; BibTeX ----------
 
+(define (get-bibtex-conservative)
+  (get-boolean-preference "texmacs->bibtex:conservative"))
+
+(define (set-bibtex-conservative on?)
+  (set-boolean-preference "texmacs->bibtex:conservative" on?))
+
 (tm-widget (bibtex-preferences-widget)
   ===
   (bold (text "BibTeX -> TeXmacs"))
@@ -355,7 +361,14 @@
       (enum (set-pretty-preference "bibtex command" answer)
             '("bibtex" "rubibtex" "")
             (get-pretty-preference "bibtex command")
-            "15em"))))
+            "15em")))
+  ======
+  (bold (text "TeXmacs -> BibTeX"))
+  ===
+  (aligned
+    (meti (text "Only convert changes with respect imported version")
+      (toggle (set-bibtex-conservative answer)
+              (get-bibtex-conservative)))))
 
 ;; Verbatim ----------
 
