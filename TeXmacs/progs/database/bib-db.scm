@@ -14,6 +14,7 @@
 (texmacs-module (database bib-db)
   (:use (database db-convert)
         (database db-edit)
+        (convert bibtex init-bibtex)
         (convert bibtex bibtexout)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -369,13 +370,17 @@
 (tm-define (bib->db t)
   (cond ((and (tm-func? t 'bib-entry 3)
               (tm-func? (tm-ref t 2) 'document))
-         (let* ((id (create-unique-id))
+         (let* ((id (with-database (user-database) (db-create-id)))
+                (date (with-database (user-database) (db-sql-date)))
                 (type (tm->string (tm-ref t 0)))
                 (type* (if (== type "conference") "inproceedings" type))
                 (name (tm-ref t 1))
+                (h `((db-field "contributor" ,(get-default-user))
+                     (db-field "modus" "imported")
+                     (db-field "date" ,date)))
                 (l (map (cut bib-db-sub <> type*)
                         (tm-children (tm-ref t 2)))))
-           `(db-entry ,id ,type* ,name (document) (document ,@l))))
+           `(db-entry ,id ,type* ,name (document ,@h) (document ,@l))))
         (else t)))
 
 (tm-define (db-save-pre t)
@@ -393,3 +398,31 @@
 
 (tm-define (bib-save t)
   (db-save-types t bib-types-list))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Standard converters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (bib->db* t)
+  (cond ((tm-atomic? t) t)
+        ((tm-func? t 'bib-entry 3) (bib->db t))
+        ((tm-func? t 'style) (tm-replace t "bibliography" "database-bib"))
+        (else (cons (tm-label t) (map bib->db* (tm-children t))))))
+
+(tm-define (tmbib-snippet->texmacs s)
+  (with t (bibtex->texmacs (parse-bibtex-snippet s))
+    (bib->db* t)))
+
+(tm-define (tmbib-document->texmacs s)
+  (with t (bibtex->texmacs (parse-bibtex-document s))
+    (bib->db* t)))
+
+(define (db->bib* t)
+  (cond ((tm-atomic? t) t)
+        ((db-entry-any? t) (db->bib t))
+        ((tm-func? t 'style) (tm-replace t "database-bib" "bibliography"))
+        (else (cons (tm-label t) (map db->bib* (tm-children t))))))
+
+(tm-define (texmacs->tmbib t)
+  (with u (db->bib* t)
+    (serialize-bibtex (texmacs->bibtex u))))

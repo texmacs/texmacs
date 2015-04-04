@@ -305,11 +305,11 @@
 
 (tm-define (db-importable?)
   (:require (in-bib?))
-  #t)
+  (db-url? (current-buffer)))
 
 (tm-define (db-exportable?)
   (:require (bib-exportable?))
-  #t)
+  (db-url? (current-buffer)))
 
 (tm-define (db-import-file)
   (:require (in-bib?))

@@ -126,6 +126,11 @@
 ;; Importing and exporting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (db-url? u)
+  (with s (url->string u)
+    (or (string-starts? s "tmfs://db/")
+        (string-ends? s ".tmdb"))))
+
 (tm-define (db-importable?) #f)
 (tm-define (db-exportable?) #f)
 

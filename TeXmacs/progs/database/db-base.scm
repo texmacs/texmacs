@@ -104,10 +104,12 @@
       (map f (if (null? r) r (cdr r))))))
 
 (tm-define (db-sql-date)
-  (with r (db-sql-raw "SELECT strftime('%s','now')")
-    (if (and (list-2? r) (list-1? (cadr r)) (string? (caadr r)))
-        (caadr r)
-        (texmacs-error "db-sql-date" "could not retrieve date"))))
+  (if (url-none? current-database)
+      (current-time)
+      (with r (db-sql-raw "SELECT strftime('%s','now')")
+        (if (and (list-2? r) (list-1? (cadr r)) (string? (caadr r)))
+            (caadr r)
+            (texmacs-error "db-sql-date" "could not retrieve date")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra context
@@ -262,10 +264,12 @@
         (db-insert-time-stamp id)))))
 
 (tm-define (db-create-id)
-  (with id (create-unique-id)
-    (while (nnull? (db-get-attributes id))
-      (set! id (create-unique-id)))
-    id))
+  (if (url-none? current-database)
+      (create-unique-id)
+      (with id (create-unique-id)
+        (while (nnull? (db-get-attributes id))
+          (set! id (create-unique-id)))
+        id)))
 
 (tm-define (db-create-entry l)
   (with id (db-create-id)
