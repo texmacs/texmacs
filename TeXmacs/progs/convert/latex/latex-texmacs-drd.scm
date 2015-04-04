@@ -63,7 +63,7 @@
   scheme tmsep tmSep pari qed)
 
 (logic-group latex-texmacs-1%
-  key tmrsub tmrsup
+  key tmrsub tmrsup keepcase
   tmtextrm tmtextsf tmtexttt tmtextmd tmtextbf
   tmtextup tmtextsl tmtextit tmtextsc tmmathbf
   tmverbatim tmop tmstrong tmem tmtt tmname tmsamp tmabbr
