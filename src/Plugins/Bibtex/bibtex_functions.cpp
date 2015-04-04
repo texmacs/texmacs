@@ -150,7 +150,7 @@ bib_to_latex (string s) {
     else if (special || math) r << ch;
     else if (bib_keepcase_sep (ch)) {
       if (bib_is_space (ch)) ch= " ";
-      if (ch == "[" || ch == "]") ch= "{" * ch * "}";
+      if (ch == "[") ch= "{" * ch * "}";
       if (keepcase == depth+1) {
         r << "}" << ch;
         keepcase= -1;
