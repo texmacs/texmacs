@@ -314,6 +314,36 @@
         (db-complete-fields (tree-ref doc (+ i 1)) #t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Assigning new identifiers to copied entries before commiting to database
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (db-matches-entry? t as)
+  (db-same-entries? (entry->assoc-list (tm->stree t)) as))
+
+(define (detach-entries ts)
+  (with h (make-ahash-table)
+    (for (t ts)
+      (let* ((key (db-entry-ref (tm->stree t) "id"))
+             (old (or (ahash-ref h key) (list)))
+             (new (rcons old t)))
+        (ahash-set! h key new)))
+    (for (id (map car (ahash-table->list h)))
+      (with l (ahash-ref h id)
+        (when (> (length l) 1)
+          (with-database (user-database)
+            (let* ((old (db-get-entry id))
+                   (pred? (cut db-matches-entry? <> old)))
+              (receive (l1 l2) (list-partition l pred?)
+                (with r (cdr (append l1 l2))
+                  (for (t r)
+                    (with id (db-create-id)
+                      (tree-set (tree-ref t 0) id))))))))))))
+
+(tm-define (detach-buffer-entries)
+  (with ts (find-db-entries (buffer-tree))
+    (detach-entries ts)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keep on completing and confirm changes when done
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -357,9 +387,11 @@
            (and-with f (db-first-empty-field res #t)
              (tree-go-to f :end))))
         (else (and-with res (tree-search-upwards t db-entry-any?)
+                (detach-buffer-entries)
                 (confirm-entry res)))))
 
 (define (confirm-entries l)
+  (detach-buffer-entries)
   (receive (l1 l2) (list-partition l db-complete-fields?)
     (with r (map-in-order confirm-entry l1)
       (set-message (if (in? :saved r)

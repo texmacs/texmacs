@@ -18,7 +18,7 @@
 ;; Creating a new version of an entry
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-same-entries? e1 e2)
+(tm-define (db-same-entries? e1 e2)
   (let* ((ok? (lambda (f) (and (pair? f) (nin? (car f) (db-meta-attributes)))))
          (l1 (list-filter e1 ok?))
          (l2 (list-filter e2 ok?)))
