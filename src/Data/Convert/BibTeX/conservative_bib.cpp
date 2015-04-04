@@ -141,8 +141,25 @@ bib_collect_entries (tree t) {
 }
 
 static bool
+children_included (tree t1, tree t2) {
+  for (int i=0; i<N(t1); i++) {
+    bool found= false;
+    for (int j=0; j<N(t2); j++)
+      found= found || t1[i] == t2[j];
+    if (!found) return false;
+  }
+  return true;
+}
+
+static bool
 bib_equivalent (tree t1, tree t2) {
-  return t1 == t2;
+  if (t1 == t2) return true;
+  if (is_atomic (t1) || is_atomic (t2)) return false;
+  if (N(t1) != 5 || N(t2) != 5) return false;
+  if (t1[1] != t2[1] || t1[2] != t2[2]) return false;
+  if (!is_document (t1[4]) || !is_document (t2[4])) return false;
+  if (N(t1[4]) != N(t2[4])) return false;
+  return children_included (t1[4], t2[4]) && children_included (t2[4], t1[4]);
 }
 
 string
