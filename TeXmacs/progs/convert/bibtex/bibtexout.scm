@@ -178,10 +178,15 @@
 	     (output-lf-verbatim)))
 	  ((func? x 'bib-comment) (for-each (bibtex-strings "") (cdr x)))))))
 
+(define (bibtex-padded s)
+  (cond ((nstring? s) s)
+        ((>= (string-length s) 12) s)
+        (else (bibtex-padded (string-append s " ")))))
+
 (define (bibtex-field x)
   (if (and (list? x) (= 2 (length x)))
       (begin
-	(output-verbatim "  " (car x) " = ")
+	(output-verbatim "  " (bibtex-padded (car x)) " = ")
 	(bibtex-arg (cadr x)))))
 
 (define (bibtex-fields x)
@@ -201,7 +206,7 @@
 	(id (caddr x))
 	(fields (cdddr x)))
     (begin
-      (output-verbatim pre type "{" id)
+      (output-verbatim pre (upcase-first type) "{" id)
       (if (not (null? fields))
 	  (begin
 	    (output-verbatim ",")
