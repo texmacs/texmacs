@@ -27,6 +27,14 @@
   (former)
   (set! db-indexing #f))
 
+(smart-table index-attribute-table
+  ("name" #t))
+
+(tm-define (index-do-indexate? attr)
+  (cond ((== db-indexing #t) #t)
+        ((== db-indexing :basic) (smart-ref index-attribute-table attr))
+        (else #f)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Counter management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -141,11 +149,12 @@
     (compute-keys-string s "verbatim")))
 
 (tm-define (index-indexate-field id attr vals)
-  (with keys (index-get-keys vals)
-    (index-set-matches id attr keys)
-    (when (== attr "name")
-      (for (name vals)
-        (index-insert-prefixes "completions" name)))))
+  (when (index-do-indexate? attr)
+    (with keys (index-get-keys vals)
+      (index-set-matches id attr keys)
+      (when (== attr "name")
+        (for (name vals)
+          (index-insert-prefixes "completions" name))))))
 
 (tm-define (index-indexate-entry id l)
   (for (f l)
@@ -191,24 +200,27 @@
 (tm-define (db-set-field id attr vals)
   (if (not db-indexing)
       (former id attr vals)
-      (with-indexing #f
-        (former id attr vals)
+      (begin
+        (with-indexing #f
+          (former id attr vals))
         (index-indexate-field id attr vals))))
 
 (tm-define (db-set-entry id l)
   (if (not db-indexing)
       (former id l)
-      (with-indexing #f
+      (begin
         (index-remove-all-matches id)
-        (former id l)
+        (with-indexing #f
+          (former id l))
         (index-indexate-entry id l))))
 
 (tm-define (db-remove-entry id)
   (if (not db-indexing)
       (former id)
-      (with-indexing #f
+      (begin
         (index-remove-all-matches id)
-        (former id))))
+        (with-indexing #f
+          (former id)))))
 
 (tm-define (db-search-table query i)
   (:require (and db-indexing (func? query :match 1)))

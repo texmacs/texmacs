@@ -94,7 +94,7 @@
             (with-extra-fields (list (list "contributor" (get-default-user))
                                      (list "modus" "imported")
                                      (list "origin" origin))
-              (with-indexing #t
+              (with-indexing :basic
                 (bib-save all))))
           (when (buffer-exists? "tmfs://db/bib/global")
             (revert-buffer "tmfs://db/bib/global"))
@@ -295,7 +295,7 @@
     (when (string-ends? key "-bibliography")
       (with doc (tm->stree val)
         (with-database (bib-database)
-          (with-indexing #t
+          (with-indexing :basic
             (bib-save doc))))))
   (former name key val))
 

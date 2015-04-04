@@ -85,7 +85,7 @@
 
 (define (db-search-results db kind query)
   (with-database db
-    (with-indexing #t
+    (with-indexing :basic
       (with-limit 20
         ;; TODO: filter on user permissions
         (let* ((types (smart-ref db-kind-table kind))

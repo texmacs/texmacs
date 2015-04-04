@@ -357,7 +357,7 @@
                                     (list "modus" "manual")
                                     (list "origin"))
              (with-time-stamp #t
-               (with-indexing #t
+               (with-indexing :basic
                  (with new-id (db-update-entry old-id new)
                    (if (== new-id old-id)
                        (begin

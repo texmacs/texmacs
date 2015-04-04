@@ -183,6 +183,13 @@
   ((* "techreport" *) :texmacs)
   ((* "unpublished" *) :texmacs))
 
+(smart-table index-attribute-table
+  ("author" #t)
+  ("title" #t)
+  ("chapter" #t)
+  ("journal" #t)
+  ("year" #t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Conversion to native BibTeX documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

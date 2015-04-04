@@ -106,7 +106,7 @@
          (a* (db-get-current-query file)))
     (set! a (assoc-add a a*))
     (with-database (user-database)
-      (with-indexing #t
+      (with-indexing :basic
         (with-limit (with limit (assoc-ref a "limit")
                       (or (and limit (string->number limit)) 10))
           (let* ((search (or (assoc-ref a "search") ""))
