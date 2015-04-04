@@ -77,16 +77,72 @@ bib_break (string s) {
     }
     if (i >= n) break;
     a << s (start, i);
+    //cout << "---------------------------------------------------------\n";
+    //cout << s (start, i);
     start= i;
     (void) bib_skip (s, i);
     bib_rewind (s, i);
     ASSERT (i > start, "strange entry in bib_break");
     a << s (start, i);
-    cout << "---------------------------------------------------------\n";
-    cout << s (start, i);
+    //cout << "---------------------------------------------------------\n";
+    //cout << s (start, i);
+    start= i;
   }
   a << s (start, n);
+  //cout << "---------------------------------------------------------\n";
+  //cout << s (start, n);
+  //cout << "---------------------------------------------------------\n";
   return a;
+}
+
+static string
+bib_get_key (string s) {
+  int i=0, n=N(s);
+  while (i<n && s[i] != '{') i++;
+  if (i<n) i++;
+  while (i<n && is_space (s[i])) i++;
+  int start= i;
+  while (i<n && s[i] != ',' && !is_space (s[i])) i++;
+  return s (start, i);
+}
+
+static hashmap<string,int>
+bib_indices (array<string> a) {
+  int i, n= N(a);
+  hashmap<string,int> h (-1);
+  for (i=1; i<n; i+=2) {
+    string key= bib_get_key (a[i]);
+    h (key)= i;
+  }
+  return h;
+}
+
+static void
+bib_collect_entries (hashmap<string,tree>& h, tree t) {
+  if (is_atomic (t)) return;
+  else if (is_compound (t, "db-entry") ||
+           is_compound (t, "db-folded-entry") ||
+           is_compound (t, "db-pretty-entry")) {
+    if (N(t) == 5 && is_atomic (t[2]))
+      h (t[2]->label)= t;
+  }
+  else {
+    int i, n=N(t);
+    for (i=0; i<n; i++)
+      bib_collect_entries (h, t[i]);
+  }
+}
+
+static hashmap<string,tree>
+bib_collect_entries (tree t) {
+  hashmap<string,tree> h (UNINIT);
+  bib_collect_entries (h, t);
+  return h;
+}
+
+static bool
+bib_equivalent (tree t1, tree t2) {
+  return t1 == t2;
 }
 
 string
@@ -94,7 +150,37 @@ conservative_bib_export (string src_s, tree src_t, string obj_s, tree obj_t) {
   if (get_preference ("texmacs->bibtex:conservative", "off") != "on")
     return obj_s;
   //cout << "Conservative export\n";
-  //(void) bib_break (src_s);
   if (src_t == obj_t) return src_s;
-  return obj_s;
+  array<string> src_a= bib_break (src_s);
+  array<string> obj_a= bib_break (obj_s);
+  hashmap<string,int> src_i= bib_indices (src_a);
+  hashmap<string,tree> src_e= bib_collect_entries (src_t);
+  hashmap<string,tree> obj_e= bib_collect_entries (obj_t);
+  int i, n= N (obj_a);
+  string r= copy (src_a[0]);
+  int prev_match= -3;
+  for (i=1; i<n; i+=2) {
+    string key= bib_get_key (obj_a[i]);
+    if (src_e->contains (key) &&
+        obj_e->contains (key) &&
+        bib_equivalent (src_e[key], obj_e[key])) {
+      int this_match= src_i[key];
+      if (i == 1);
+      else if (this_match == prev_match + 2) r << copy (src_a[this_match-1]);
+      else r << "\n";
+      if (this_match >= 0) r << copy (src_a[this_match]);
+      else r << copy (obj_a[i]);
+      prev_match= this_match;
+      //cout << "Matched " << i << ", " << this_match << "\n";
+    }
+    else {
+      if (i != 1) r << "\n";
+      r << copy (obj_a[i]);
+      prev_match= -1;
+    }
+  }
+  //cout << "Lengths " << N(src_a) << ", " << N(obj_a) << "\n";
+  if (N(src_a) > 1) r << copy (src_a[N(src_a)-1]);
+  //if (r == src_s) cout << "Unaltered\n";
+  return r;
 }
