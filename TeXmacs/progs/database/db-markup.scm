@@ -30,6 +30,7 @@
             (when (tm-func? r 'db-result 2)
               ;;(display* (tm-ref t 2) ", " (tree->path (tm-ref t 2)) "\n")
               (set! r `(db-pretty ,(tm-ref t 2) ,(tm-ref r 1))))
+            ;;(display* "r= " (tm->stree r) "\n")
             (ahash-set! cache st r)
             r)))))
 

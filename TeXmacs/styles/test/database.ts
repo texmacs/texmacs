@@ -47,7 +47,7 @@
         <with|color|<arg|cname>|<arg|name>>>
       </wide-std-framed-colored>
 
-      <\with|par-par-sep|0fn>
+      <\with|par-par-sep|0fn|par-flexibility|2.0>
         <arg|body>
       </with>
     </padded-normal>
@@ -99,10 +99,10 @@
 
   <drd-props|db-pretty-entry|arity|5|unaccessible|0|unaccessible|1|accessible|2|unaccessible|3|unaccessible|4>
 
-  <assign|db-pretty|<macro|key|val|<surround||<right-flush>|<with|par-left|1tab|par-first|-1tab|<action|<with|color|dark
+  <assign|db-pretty|<macro|key|val|<surround||<right-flush>|<with|par-left|1tab|par-first|-1tab|par-flexibility|2.0|<action|<with|color|dark
   blue|<strong|<arg|key>. >>|db-pretty-notify|<arg|key>><arg|val>>>>>
 
-  <assign|db-result|<macro|key|val|<surround||<right-flush>|<with|par-left|1tab|par-first|-1tab|<action|<with|color|dark
+  <assign|db-result|<macro|key|val|<surround||<right-flush>|<with|par-left|1tab|par-first|-1tab|par-flexibility|2.0|<action|<with|color|dark
   blue|<strong|<arg|key>. >>|db-confirm-result|<arg|key>><arg|val>>>>>
 
   <\active*>
