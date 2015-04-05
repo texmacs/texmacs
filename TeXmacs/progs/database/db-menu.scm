@@ -230,3 +230,42 @@
     ("Export" (db-export-file)))
   ---
   ("Preferences" (open-db-preferences)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-insert-field-menu t make-field)
+  (with l (db-field-possible-attributes t)
+    (for (attr l)
+      ((eval (upcase-first attr)) (make-field attr)))
+    ---
+    ("Other" (interactive make-field))))
+
+(tm-define (focus-can-insert-remove? t)
+  (:require (or (db-entry? t) (db-field? t)))
+  #t)
+
+(tm-menu (focus-insert-menu t)
+  (:require (or (db-entry? t) (db-field? t)))
+  (when (db-field? t)
+    (-> "Insert above"
+        (dynamic (focus-insert-field-menu t make-db-field-before))))
+  (-> "Insert below"
+      (dynamic (focus-insert-field-menu t make-db-field-after)))
+  (when (db-field? t)
+    ("Remove upwards" (remove-db-field #f))
+    ("Remove downwards" (remove-db-field #t))))
+
+(tm-menu (focus-insert-icons t)
+  (:require (or (db-entry? t) (db-field? t)))
+  (when (db-field? t)
+    (=> (balloon (icon "tm_insert_up.xpm") "Structured insert above")
+        (dynamic (focus-insert-field-menu t make-db-field-before))))
+  (=> (balloon (icon "tm_insert_down.xpm") "Structured insert below")
+      (dynamic (focus-insert-field-menu t make-db-field-after)))
+  (when (db-field? t)
+    ((balloon (icon "tm_delete_up.xpm") "Structured remove upwards")
+     (remove-db-field #f))
+    ((balloon (icon "tm_delete_down.xpm") "Structured remove downwards")
+     (remove-db-field #t))))

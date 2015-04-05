@@ -314,6 +314,73 @@
         (db-complete-fields (tree-ref doc (+ i 1)) #t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Adding new fields to existing entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-db-field attr plus)
+  (with-innermost t db-entry?
+    (let* ((ins `(db-field ,(locase-all attr) ""))
+           (pos 0))
+      (when (cursor-inside? (tree-ref t :last))
+        (set! pos (+ (tree-index (tree-ref t :down :down)) plus)))
+      (tree-insert (tree-ref t :last) pos (list ins))
+      (tree-go-to t :last pos 1 :start))))
+
+(define (format->attributes fm)
+  (cond ((string? fm) (list fm))
+        ((or (func? fm 'and) (func? fm 'or) (func? fm 'optional))
+         (append-map format->attributes (cdr fm)))
+        (else (list))))
+
+(tm-define (db-field-possible-attributes u)
+  (with t (tree-search-upwards u db-entry?)
+    (if (not t) (list)
+        (let* ((type (db-entry-ref (tm->stree t) "type"))
+               (fm (smart-ref db-format-table type)))
+          (format->attributes fm)))))
+
+(define (db-this-field-possible-attributes)
+  (with-innermost t db-entry?
+    (cons "" (db-field-possible-attributes t))))
+
+(tm-define (make-db-field-before attr)
+  (:argument attr "Field attribute")
+  (:proposals attr (db-field-possible-attributes))
+  (make-db-field attr 0))
+          
+(tm-define (make-db-field-after attr)
+  (:argument attr "Field attribute")
+  (:proposals attr (db-field-possible-attributes))
+  (make-db-field attr 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Removing fields from existing entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (remove-db-field forwards?)
+  (with-innermost t db-field?
+    (when (and t (tree-ref t :up :up)
+               (tree-is? t :up 'document)
+               (db-entry? (tree-ref t :up :up)))
+      (let* ((doc (tree-ref t :up))
+             (i (tree-index t))
+             (n (tree-arity doc))
+             (j (if (< (+ i 1) n) (+ i 1) (- i 1))))
+        (cond ((and (not forwards?) (> i 0))
+               (tree-remove doc (- i 1) 1))
+              ((not forwards?)
+               (tree-go-to doc :up 2 :end))
+              ((and (>= j 0) (db-field? (tree-ref doc j)))
+               (tree-go-to doc j 1 :start)
+               (tree-remove doc i 1))
+              ((>= j 0)
+               (tree-go-to doc j :start)
+               (tree-remove doc i 1))
+              (else
+                (tree-go-to doc :up 2 :end)
+                (tree-remove doc i 1)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Assigning new identifiers to copied entries before commiting to database
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
