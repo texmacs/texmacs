@@ -477,7 +477,7 @@
 
 (tm-define (save-buffer . l)
   (:mode in-database?)
-  (:require (null? l))
+  (:require (and (null? l) (db-url? (current-buffer))))
   (when (db-confirm-entries-in (buffer-tree))
     (buffer-pretend-saved (current-buffer))))
 
