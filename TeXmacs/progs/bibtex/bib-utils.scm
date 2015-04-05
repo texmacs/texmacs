@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : bib-utils.scm
 ;; DESCRIPTION : helper functions for BibTeX styles
-;; COPYRIGHT   : (C) 2010  David MICHEL
+;; COPYRIGHT   : (C) 2010, 2015  David MICHEL, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

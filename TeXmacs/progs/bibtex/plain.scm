@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : plain.scm
 ;; DESCRIPTION : plain style for BibTeX files
-;; COPYRIGHT   : (C) 2010  David MICHEL
+;; COPYRIGHT   : (C) 2010, 2015  David MICHEL, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -122,9 +122,9 @@
       ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2)
-       `(concat ,(bib-translate "page ") ,(list-ref p 1)))
+       `(concat ,(bib-translate "page") (nbsp) ,(list-ref p 1)))
       (else
-	`(concat ,(bib-translate "pages ")
+	`(concat ,(bib-translate "pages") (nbsp)
 		 ,(list-ref p 1) "--" ,(list-ref p 2))))))
 
 (tm-define (bib-format-chapter-pages x)

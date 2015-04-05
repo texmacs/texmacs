@@ -249,7 +249,7 @@
   (if (not (tm-atomic? t)) t
       (let* ((l (string-decompose t "-"))
              (fl (list-filter l (lambda (s) (!= s "")))))
-        (if (<= (length l) 1) t `(bib-pages ,@fl)))))
+        (if (<= (length l) 1) `(bib-pages ,t) `(bib-pages ,@fl)))))
 
 (define (db-bib-sub-sub type var val)
   (cond ((and (== var "title")

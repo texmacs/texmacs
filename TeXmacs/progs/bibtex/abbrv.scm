@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : abbrv.scm
 ;; DESCRIPTION : abbrv style for BibTeX files
-;; COPYRIGHT   : (C) 2010  David MICHEL
+;; COPYRIGHT   : (C) 2010, 2015  David MICHEL, Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -33,6 +33,5 @@
     (cond
       ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
-      ((== (length p) 2) `(concat "pp. " ,(list-ref p 1)))
-      (else `(concat "pp. " ,(list-ref p 1) "--" ,(list-ref p 2))))))
-
+      ((== (length p) 2) `(concat "pp." (nbsp) ,(list-ref p 1)))
+      (else `(concat "pp." (nbsp) ,(list-ref p 1) "--" ,(list-ref p 2))))))
