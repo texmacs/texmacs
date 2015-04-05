@@ -111,8 +111,12 @@
                     (db-declare-superseded xid)
                     (when db-duplicate-warning?
                       (display* "Updated the entry " name "\n")))
-                   ((and xdate (or (not date) (>= (string->number xdate)
-                                                  (string->number date))))
+                   ((and (string? xdate)
+                         (string->number xdate)
+                         (or (not (string? date))
+                             (not (string->number date))
+                             (>= (string->number xdate)
+                                 (string->number date))))
                     (db-declare-supersedes xid (cons id his))
                     (when db-duplicate-warning?
                       (display* "Kept existing version of entry " name "\n")))
