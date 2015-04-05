@@ -26,21 +26,9 @@
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,f ,vv ,ll ,jj)))
 
-(tm-define (bib-format-names a)
+(tm-define (bib-last-name-sep a)
   (:mode bib-elsart-num?)
-  (if (or (bib-null? a) (nlist? a))
-      ""
-      (let* ((n (length a)))
-	(if (equal? n 2)
-	    (bib-format-name (list-ref a 1))
-	    (let* ((b (bib-format-name (list-ref a 1)))
-		   (m (bib-format-names-rec 2 (- n 1) a))
-		   (e (if (or (== (list-ref (list-ref a (- n 1)) 3) "others")
-                              (== (list-ref (list-ref a (- n 1)) 4) "others"))
-			  `(concat " et" (nbsp) "al")
-			  `(concat ", "
-                                   ,(bib-format-name (list-ref a (- n 1)))))))
-	      `(concat ,b ,m ,e))))))
+  ", ")
 
 (tm-define (bib-format-editor x)
   (:mode bib-elsart-num?)

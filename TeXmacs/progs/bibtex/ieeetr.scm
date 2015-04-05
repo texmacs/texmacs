@@ -25,6 +25,12 @@
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,f ,vv ,ll ,jj)))
 
+(tm-define (bib-last-name-sep a)
+  (:mode bib-ieeetr?)
+  (if (<= (length a) 3)
+      (bib-translate " and ")
+      (bib-translate ", and ")))
+
 (tm-define (bib-format-editor x)
   (:mode bib-ieeetr?)
   (with a (bib-field x "editor")
@@ -86,8 +92,7 @@
     (cond
       ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
-      ((== (length p) 2)
-       `(concat "pp." (nbsp) ,(list-ref p 1) "--" ,(list-ref p 1)))
+      ((== (length p) 2) `(concat "p." (nbsp) ,(list-ref p 1)))
       (else
        `(concat "pp." (nbsp) ,(list-ref p 1) "--" ,(list-ref p 2))))))
 
@@ -96,20 +101,23 @@
   `(concat
      ,(bib-format-bibitem n x)
      ,(bib-label (list-ref x 2))
-     ,(bib-new-block
-       (bib-new-sentence
-	`(,(bib-format-author x)
-	  (concat "``" ,(bib-format-field-Locase x "title") "''")
-	  ,@(if (bib-empty? x "crossref")
-		`(,(bib-emphasize (bib-format-field x "journal"))
-		  ,(if (bib-empty? x "volume") ""
-		       `(concat "vol." (nbsp) ,(bib-field x "volume")))
-		  ,(bib-format-pages x)
-		  ,(bib-format-date x))
-		`((concat ,(bib-translate "in ")
-			  (cite ,(bib-field x "crossref")))
-		  ,(bib-format-pages x))))))
-     ,(bib-new-block (bib-format-field x "note"))))
+     ,(bib-new-list-spc
+       `(,(bib-new-block
+           (bib-new-sentence
+            `(,(bib-format-author x)
+              (concat "``" ,(bib-format-field-Locase x "title") "''")
+              ,@(if (bib-empty? x "crossref")
+                    `(,(bib-emphasize (bib-format-field x "journal"))
+                      ,(if (bib-empty? x "volume") ""
+                           `(concat "vol." (nbsp) ,(bib-field x "volume")))
+                      ,(if (bib-empty? x "number") ""
+                           `(concat "no." (nbsp) ,(bib-field x "number")))
+                      ,(bib-format-pages x)
+                      ,(bib-format-date x))
+                    `((concat ,(bib-translate "in ")
+                              (cite ,(bib-field x "crossref")))
+                      ,(bib-format-pages x))))))
+         ,(bib-new-block (bib-format-field x "note"))))))
 
 (tm-define (bib-format-book n x)
   (:mode bib-ieeetr?)

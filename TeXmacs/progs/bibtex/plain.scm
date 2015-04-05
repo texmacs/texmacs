@@ -39,12 +39,16 @@
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,ff ,vv ,ll ,jj)))
 
-(tm-define (bib-format-names-rec n lim a)
+(define (bib-format-names-rec n lim a)
   (if (equal? n lim)
       ""
       `(concat ", "
 	       ,(bib-format-name (list-ref a n))
 	       ,(bib-format-names-rec (+ n 1) lim a))))
+
+(tm-define (bib-last-name-sep a)
+  ;; (:mode bib-plain?)
+  (bib-translate " and "))
 
 (tm-define (bib-format-names a)
   ;; (:mode bib-plain?)
@@ -58,7 +62,7 @@
 		   (e (if (or (== (list-ref (list-ref a (- n 1)) 3) "others")
                               (== (list-ref (list-ref a (- n 1)) 4) "others"))
 			  `(concat " et" (nbsp) "al")
-			  `(concat ,(bib-translate " and ")
+			  `(concat ,(bib-last-name-sep a)
 				   ,(bib-format-name (list-ref a (- n 1)))))))
 	      `(concat ,b ,m ,e))))))
 
