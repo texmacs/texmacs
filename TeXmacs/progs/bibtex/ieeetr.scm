@@ -16,6 +16,15 @@
 
 (bib-define-style "ieeetr" "plain")
 
+(tm-define (new-list-rec s x)
+  (:mode bib-ieeetr?)
+  (cond ((bib-null? x) "")
+        ((bib-null? (car x)) (new-list-rec s (cdr x)))
+        ((null? (cdr x)) (car x))
+        ((and (func? (car x) 'concat) (== (cAr (car x)) "''") (== s ", "))
+         `(concat ,@(cdr (cDr (car x))) ",'' " ,(new-list-rec s (cdr x))))
+        (else `(concat ,(car x) ,s ,(new-list-rec s (cdr x))))))
+
 (tm-define (bib-format-name x)
   (:mode bib-ieeetr?)
   (let* ((f (if (bib-null? (list-ref x 1)) ""

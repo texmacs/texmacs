@@ -121,7 +121,8 @@
       (if (bib-null? (car x)) (elim-empty (cdr x))
 	  `(,(car x) ,@(elim-empty (cdr x))))))
 
-(define (new-list-rec s x)
+(tm-define (new-list-rec s x)
+  ;; redefined in ieeetr.scm
   (if (bib-null? x) ""
       (if (bib-null? (car x))
 	  (new-list-rec s (cdr x))
