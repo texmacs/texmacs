@@ -30,6 +30,7 @@ scheme_tree bib_field (scheme_tree st, string field);
 list<string> bib_field_pages (scheme_tree st);
 void   bib_parse_fields (tree& t);
 scheme_tree bib_add_period (scheme_tree st);
+scheme_tree bib_locase_first (scheme_tree st);
 scheme_tree bib_upcase_first (scheme_tree st);
 
 hashmap<string,string> bib_strings_dict (tree t);

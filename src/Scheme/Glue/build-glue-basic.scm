@@ -706,6 +706,7 @@
   ;; routines for BibTeX
   (bibtex-run bibtex_run (tree string string url array_string))
   (bib-add-period bib_add_period (scheme_tree scheme_tree))
+  (bib-locase-first bib_locase_first (scheme_tree scheme_tree))
   (bib-upcase-first bib_upcase_first (scheme_tree scheme_tree))
   (bib-locase bib_locase (scheme_tree scheme_tree))
   (bib-upcase bib_upcase (scheme_tree scheme_tree))

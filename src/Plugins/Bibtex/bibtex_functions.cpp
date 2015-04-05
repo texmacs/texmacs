@@ -258,6 +258,14 @@ bib_first_char (tree t) {
 }
 
 scheme_tree
+bib_locase_first (scheme_tree st) {
+  tree t= simplify_correct (scheme_tree_to_tree (st));
+  char* ch= bib_first_char (t);
+  if (ch != 0) *ch= locase (*ch);
+  return tree_to_scheme_tree (t); 
+}
+
+scheme_tree
 bib_upcase_first (scheme_tree st) {
   tree t= simplify_correct (scheme_tree_to_tree (st));
   char* ch= bib_first_char (t);

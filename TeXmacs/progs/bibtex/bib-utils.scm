@@ -152,6 +152,10 @@
   (with e (bib-field x s)
     (if (bib-null? e) "" (bib-default-preserve-case e))))
 
+(tm-define (bib-format-field-locase-first x s)
+  (with e (bib-field x s)
+    (if (bib-null? e) "" (bib-locase-first e))))
+
 (tm-define (bib-format-field-Locase x s)
   (with e (bib-field x s)
     (if (bib-null? e) "" (bib-upcase-first (bib-locase e)))))

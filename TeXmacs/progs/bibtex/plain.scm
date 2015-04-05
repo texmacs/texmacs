@@ -39,7 +39,7 @@
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,ff ,vv ,ll ,jj)))
 
-(define (bib-format-names-rec n lim a)
+(tm-define (bib-format-names-rec n lim a)
   (if (equal? n lim)
       ""
       `(concat ", "

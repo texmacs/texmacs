@@ -8443,6 +8443,19 @@ tmg_bib_add_period (tmscm arg1) {
 }
 
 tmscm
+tmg_bib_locase_first (tmscm arg1) {
+  TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "bib-locase-first");
+
+  scheme_tree in1= tmscm_to_scheme_tree (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= bib_locase_first (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
 tmg_bib_upcase_first (tmscm arg1) {
   TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "bib-upcase-first");
 
@@ -9218,6 +9231,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("alt-window-set-position",  tmg_alt_window_set_position, 3, 0, 0);
   tmscm_install_procedure ("bibtex-run",  tmg_bibtex_run, 4, 0, 0);
   tmscm_install_procedure ("bib-add-period",  tmg_bib_add_period, 1, 0, 0);
+  tmscm_install_procedure ("bib-locase-first",  tmg_bib_locase_first, 1, 0, 0);
   tmscm_install_procedure ("bib-upcase-first",  tmg_bib_upcase_first, 1, 0, 0);
   tmscm_install_procedure ("bib-locase",  tmg_bib_locase, 1, 0, 0);
   tmscm_install_procedure ("bib-upcase",  tmg_bib_upcase, 1, 0, 0);
