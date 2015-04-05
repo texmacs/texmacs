@@ -112,6 +112,25 @@
   (:mode bib-acm?)
   `(bibitem* ,(number->string n)))
 
+(define (bib-format-journal-volume-date x)
+  (bib-new-sentence
+   `((concat ,(bib-emphasize
+               `(concat ,(bib-format-field x "journal")
+                        ,(if (bib-null? (bib-field x "volume")) "" " ")
+                        ,(bib-format-field x "volume")))
+             " (" ,(bib-format-date x) ")")
+     ,(bib-format-pages x))))
+
+(define (bib-format-journal-volume-number-date x)
+  (bib-new-sentence
+   `(,(bib-emphasize
+       `(concat ,(bib-format-field x "journal")
+                ,(if (bib-null? (bib-field x "volume")) "" " ")
+                ,(bib-format-field x "volume")))
+     (concat ,(bib-format-field x "number")
+             " (" ,(bib-format-date x) ")")
+     ,(bib-format-pages x))))
+
 (tm-define (bib-format-article n x)
   (:mode bib-acm?)
   `(concat ,(bib-format-bibitem n x)
@@ -121,14 +140,9 @@
 	       ,(bib-new-block (bib-format-field-Locase x "title"))
 	       ,(bib-new-block
 		 (if (bib-empty? x "crossref")
-		     (bib-new-sentence
-		      `(,(bib-emphasize `(concat ,(bib-format-field x "journal")
-					     " "
-					     ,(bib-format-field x "volume")))
-			(concat ,(bib-format-field x "number")
-				" ("
-				,(bib-format-date x) ")") 
-			,(bib-format-pages x)))
+                     (if (bib-null? (bib-field x "number"))
+                         (bib-format-journal-volume-date x)
+                         (bib-format-journal-volume-number-date x))
 		     (bib-new-sentence
 		      `((concat ,(bib-translate "in ")
 				(cite ,(bib-field x "crossref")))

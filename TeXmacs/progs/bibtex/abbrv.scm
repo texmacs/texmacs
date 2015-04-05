@@ -26,12 +26,3 @@
 	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
 	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
     `(concat ,f ,vv ,ll ,jj)))
-
-(tm-define (bib-format-pages x)
-  (:mode bib-abbrv?)
-  (let* ((p (bib-field x "pages")))
-    (cond
-      ((or (bib-null? p) (nlist? p)) "")
-      ((== (length p) 1) "")
-      ((== (length p) 2) `(concat "pp." (nbsp) ,(list-ref p 1)))
-      (else `(concat "pp." (nbsp) ,(list-ref p 1) "--" ,(list-ref p 2))))))

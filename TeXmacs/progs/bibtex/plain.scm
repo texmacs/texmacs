@@ -122,9 +122,9 @@
       ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2)
-       `(concat ,(bib-translate "page") (nbsp) ,(list-ref p 1)))
+       `(concat ,(bib-translate "page ") ,(list-ref p 1)))
       (else
-	`(concat ,(bib-translate "pages") (nbsp)
+	`(concat ,(bib-translate "pages ")
 		 ,(list-ref p 1) "--" ,(list-ref p 2))))))
 
 (tm-define (bib-format-chapter-pages x)
@@ -153,7 +153,9 @@
 		    ((equal? 2 (length p)) `(concat ":" ,(list-ref p 1)))
 		    (else
 		      `(concat ":" ,(list-ref p 1) "--" ,(list-ref p 2)))))))
-    `(concat ,vol ,num ,pag)))
+    (if (and (== vol "") (== num ""))
+        (bib-format-pages x)
+        `(concat ,vol ,num ,pag))))
 
 (tm-define (bib-format-date x)
   ;; (:mode bib-plain?)
