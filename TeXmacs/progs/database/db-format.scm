@@ -69,6 +69,16 @@
   (,:identity ,identity))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Useful subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (format->attributes fm)
+  (cond ((string? fm) (list fm))
+        ((or (func? fm 'and) (func? fm 'or) (func? fm 'optional))
+         (append-map format->attributes (cdr fm)))
+        (else (list))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encoding and decoding of TeXmacs snippets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -152,7 +162,16 @@
 (tm-define (db-get-entry id)
   (if (not db-encoding)
       (former id)
-      (db-decode-entry (with-encoding #f (former id)))))
+      (let* ((l (db-decode-entry (with-encoding #f (former id))))
+             (attrs (map car l))
+             (types (assoc-ref l "type"))
+             (type (and (pair? types) (car types)))
+             (fm (smart-ref db-format-table type))
+             (std-attrs (format->attributes fm))
+             (a1 (list-filter std-attrs (cut in? <> attrs)))
+             (a2 (list-filter attrs (cut nin? <> std-attrs)))
+             (get (lambda (a) (cons a (assoc-ref l a)))))
+        (append (map get a1) (map get a2)))))
 
 (tm-define (db-set-entry id l)
   (if (not db-encoding)

@@ -326,12 +326,6 @@
       (tree-insert (tree-ref t :last) pos (list ins))
       (tree-go-to t :last pos 1 :start))))
 
-(define (format->attributes fm)
-  (cond ((string? fm) (list fm))
-        ((or (func? fm 'and) (func? fm 'or) (func? fm 'optional))
-         (append-map format->attributes (cdr fm)))
-        (else (list))))
-
 (tm-define (db-field-possible-attributes u)
   (with t (tree-search-upwards u db-entry?)
     (if (not t) (list)

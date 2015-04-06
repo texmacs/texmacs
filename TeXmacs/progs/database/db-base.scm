@@ -233,7 +233,8 @@
 (tm-define (db-get-entry id)
   (with r (db-sql "SELECT DISTINCT attr, val FROM props"
                   " WHERE id=" (sql-quote id)
-                  " AND " (db-time-constraint))
+                  " AND " (db-time-constraint)
+                  " ORDER BY attr ASC")
     (if (nnull? r) (set! r (cdr r)))
     (let* ((t (make-ahash-table))
            (attrs (list-remove-duplicates (map car r))))
