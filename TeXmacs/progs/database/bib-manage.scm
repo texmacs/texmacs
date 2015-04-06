@@ -35,7 +35,7 @@
     (with-database bib-master
       (db-get-field-first id "stamp" #f))))
 
-(define (bib-cache-db f)
+(define (bib-cache-imported f)
   (and-with id (bib-cache-id f)
     (with-database bib-master
       (system->url (db-get-field-first id "target" #f)))))
@@ -47,26 +47,24 @@
 
 (define (bib-cache-remove f)
   (and-with id (bib-cache-id f)
-    (and-with db (bib-cache-db f)
-      (system-remove db)
+    (and-with imported (bib-cache-imported f)
+      (system-remove imported)
       (with-database bib-master
         (db-remove-entry id)))))
 
 (define (bib-cache-create f)
-  (let* ((bib-doc (string-load f))
-         (tm-doc (convert bib-doc "bibtex-document" "texmacs-stree"))
-         (body (tmfile-extract tm-doc 'body))
-         (id (create-unique-id))
-         (db (url->url (string-append bib-cache-dir "/" id ".tmdb"))))
-    (when body
-      (with-database db
-        (with-time-stamp #t
-          (bib-save body)))
-      (when (url-exists? db)
+  (with-global db-bib-origin (url->string (url-tail f))
+    (let* ((bib-doc (string-load f))
+           (t (tmbib-document->texmacs* bib-doc))
+           (tm-doc (convert t "texmacs-stree" "texmacs-document"))
+           (id (with-database bib-master (db-create-id)))
+           (imported (url->url (string-append bib-cache-dir "/" id ".tm"))))
+      (string-save tm-doc imported)
+      (when (url-exists? imported)
         (with-database bib-master
           (with stamp (number->string (url-last-modified f))
             (db-set-field id "source" (list (url->system f)))
-            (db-set-field id "target" (list (url->system db)))
+            (db-set-field id "target" (list (url->system imported)))
             (db-set-field id "stamp" (list stamp))))))))
 
 (tm-define (bib-cache-bibtex f)
@@ -78,28 +76,25 @@
     (texmacs-error "failed to create bibliographic database"
                    "bib-cache-bibtex"))
   (and-with id (bib-cache-id f)
-    (url->url (string-append bib-cache-dir "/" id ".tmdb"))))
+    (url->url (string-append bib-cache-dir "/" id ".tm"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing and exporting BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (bib-import-bibtex f)
-  (let* ((db (bib-cache-bibtex f))
-         (origin (url->string (url-tail f))))
-    (when (url-exists? db)
-      (with-database db
-        (with all (bib-load)
-          (with-database (bib-database)
-            (with-extra-fields (list (list "contributor" (get-default-user))
-                                     (list "modus" "imported")
-                                     (list "origin" origin))
-              (with-indexing :basic
-                (bib-save all))))
-          (when (buffer-exists? "tmfs://db/bib/global")
-            (revert-buffer "tmfs://db/bib/global"))
-          (set-message "Imported bibliographic entries"
-                       "import bibliography"))))))
+  (with imported (bib-cache-bibtex f)
+    (when (url-exists? imported)
+      (let* ((tm-doc (string-load imported))
+             (t (convert tm-doc "texmacs-document" "texmacs-stree"))
+             (body (tmfile-extract t 'body)))
+        (with-database (bib-database)
+          (with-indexing :basic
+            (bib-save body)))
+        (when (buffer-exists? "tmfs://db/bib/global")
+          (revert-buffer "tmfs://db/bib/global"))
+        (set-message "Imported bibliographic entries"
+                     "import bibliography")))))
 
 (tm-define (bib-export-global f)
   (with-database (bib-database)

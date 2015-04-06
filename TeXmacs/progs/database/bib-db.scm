@@ -311,6 +311,8 @@
 ;; Conversion from native BibTeX documents and hook when saving databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define db-bib-origin #f)
+
 (define (bib-db-unmacro t)
   (cond ((tm-atomic? t) (tm->string t))
         ((tm-func? t 'keepcase 1)
@@ -367,6 +369,11 @@
            `(db-field ,var ,(bib-db-unmacro (bib-db-sub-sub type var val)))))
         (else t)))
 
+(define (db-get-origin)
+  (if db-bib-origin
+      (list `(fb-field "origin" ,db-bib-origin))
+      (list)))
+
 (tm-define (bib->db t)
   (cond ((and (tm-func? t 'bib-entry 3)
               (tm-func? (tm-ref t 2) 'document))
@@ -377,6 +384,7 @@
                 (name (tm-ref t 1))
                 (h `((db-field "contributor" ,(get-default-user))
                      (db-field "modus" "imported")
+                     ,@(db-get-origin)
                      (db-field "date" ,date)))
                 (l (map (cut bib-db-sub <> type*)
                         (tm-children (tm-ref t 2)))))
@@ -413,13 +421,23 @@
   (with t (bibtex->texmacs (parse-bibtex-snippet s))
     (bib->db* t)))
 
-(tm-define (tmbib-document->texmacs s)
+(define (tmbib-import s att?)
   (let* ((t (bibtex->texmacs (parse-bibtex-document s)))
          (doc (bib->db* t))
+         (tm (if (tmfile-extract doc 'TeXmacs) (list)
+                 (list `(TeXmacs ,(texmacs-version)))))
          (body (tmfile-extract doc 'body))
          (att `(collection (associate "bibtex-source" ,s)
                            (associate "bibtex-target" ,body))))
-    `(,(tm-label doc) ,@(tm-children doc) (attachments ,att))))
+    (if att?
+        `(,(tm-label doc) ,@tm ,@(tm-children doc) (attachments ,att))
+        `(,(tm-label doc) ,@tm ,@(tm-children doc)))))
+
+(tm-define (tmbib-document->texmacs s)
+  (tmbib-import s #t))
+
+(tm-define (tmbib-document->texmacs* s)
+  (tmbib-import s #f))
 
 (define (db->bib* t)
   (cond ((tm-atomic? t) t)
