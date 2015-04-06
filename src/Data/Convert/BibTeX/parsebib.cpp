@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : parsebib.cpp
 * DESCRIPTION: conversion of bibtex strings into logical bibtex trees
-* COPYRIGHT  : (C) 2010  David MICHEL
+* COPYRIGHT  : (C) 2010, 2015  David MICHEL, Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -378,9 +378,16 @@ bib_list (string s, int& pos, tree& t) {
             /* dirty hack to get comments between entries */
             int start= pos;
             while (pos+1 < N(s) && s[pos+1] != '@') pos++;
-            if (bibtex_non_empty_comment (s(start, pos+1)))
-              tentry << compound ("bib-comment",
-                  tree (DOCUMENT, western_to_cork (s(start, pos+1))));
+            if (bibtex_non_empty_comment (s(start, pos+1))) {
+              string ss= western_to_cork (s(start, pos+1));
+              array<string> lines= tokenize (ss, "\n");
+              tree doc (DOCUMENT);
+              for (int l=0; l<N(lines); l++)
+                if (trim_spaces (lines[l]) != "")
+                  doc << tree (lines[l]);
+              if (N(doc) != 0)
+                tentry << compound ("bib-comment", doc);
+            }
             /* end */
             if (comment) {
               if (N(te) == 1) tentry << compound ("bib-comment", te[0]);
