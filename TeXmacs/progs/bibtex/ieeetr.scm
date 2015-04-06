@@ -16,6 +16,10 @@
 
 (bib-define-style "ieeetr" "plain")
 
+(tm-define (bib-sorted-entries l)
+  (:mode bib-ieeetr?)
+  l)
+
 (tm-define (new-list-rec s x)
   (:mode bib-ieeetr?)
   (cond ((bib-null? x) "")
@@ -362,4 +366,3 @@
 	   (bib-new-sentence
 	    `(,(bib-format-field x "note")
 	      ,(bib-format-date x))))))))
-

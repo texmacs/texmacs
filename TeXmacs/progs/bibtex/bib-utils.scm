@@ -49,7 +49,8 @@
 (define (bib-compare x y)
   (string<? (car x) (car y)))
 
-(define (bib-sorted-entries l)
+(tm-define (bib-sorted-entries l)
+  ;; redefine when (e.g.) sorting should be disabled
   (with is-entry? (lambda (x) (func? x 'bib-entry))
     (with l1 (list-filter l is-entry?)
       (with l2 (stable-sort (bib-with-sort-key l1) bib-compare)

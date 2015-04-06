@@ -16,6 +16,10 @@
 
 (bib-define-style "elsart-num" "plain")
 
+(tm-define (bib-sorted-entries l)
+  (:mode bib-elsart-num?)
+  l)
+
 (tm-define (bib-format-name x)
   (:mode bib-elsart-num?)
   (let* ((f (if (bib-null? (list-ref x 1))
