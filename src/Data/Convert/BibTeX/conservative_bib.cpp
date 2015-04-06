@@ -14,6 +14,10 @@
 #include "analyze.hpp"
 #include "scheme.hpp"
 
+/******************************************************************************
+* Break bibtex files into individual chunks, alternating comments and entries
+******************************************************************************/
+
 static bool
 bib_skip (string s, int& i) {
   int n= N(s);
@@ -96,6 +100,17 @@ bib_break (string s) {
 }
 
 static string
+bib_get_type (string s) {
+  int i=0, n=N(s);
+  while (i<n && s[i] != '@') i++;
+  if (i<n) i++;
+  while (i<n && is_space (s[i])) i++;
+  int start= i;
+  while (i<n && is_alpha (s[i])) i++;
+  return locase_all (s (start, i));
+}
+
+static string
 bib_get_key (string s) {
   int i=0, n=N(s);
   while (i<n && s[i] != '{') i++;
@@ -117,12 +132,42 @@ bib_indices (array<string> a) {
   return h;
 }
 
+/******************************************************************************
+* Managing special bib primitives and preambles
+******************************************************************************/
+
+static bool
+bib_is_special (string s) {
+  string type= bib_get_type (s);
+  return type == "" || type == "string" || type == "preamble";
+}
+
+static bool
+bib_check_standard_preamble (array<string> a) {
+  int i;
+  for (i=1; i<N(a); i+=2)
+    if (!bib_is_special (a[i]) && bib_get_type (a[i]) != "comment") break;
+  for (; i<N(a); i+=2)
+    if (bib_is_special (a[i])) return false;
+  return true;
+}
+
+/******************************************************************************
+* Find bibliographic entries in a TeXmacs file
+******************************************************************************/
+
+static bool
+is_db_entry (tree t) {
+  return
+    is_compound (t, "db-entry") ||
+    is_compound (t, "db-folded-entry") ||
+    is_compound (t, "db-pretty-entry");
+}
+
 static void
 bib_collect_entries (hashmap<string,tree>& h, tree t) {
   if (is_atomic (t)) return;
-  else if (is_compound (t, "db-entry") ||
-           is_compound (t, "db-folded-entry") ||
-           is_compound (t, "db-pretty-entry")) {
+  else if (is_db_entry (t)) {
     if (N(t) == 5 && is_atomic (t[2]))
       h (t[2]->label)= t;
   }
@@ -139,6 +184,10 @@ bib_collect_entries (tree t) {
   bib_collect_entries (h, t);
   return h;
 }
+
+/******************************************************************************
+* Equivalence of bibliographic entries
+******************************************************************************/
 
 static bool
 children_included (tree t1, tree t2) {
@@ -161,6 +210,71 @@ bib_equivalent (tree t1, tree t2) {
   if (N(t1[4]) != N(t2[4])) return false;
   return children_included (t1[4], t2[4]) && children_included (t2[4], t1[4]);
 }
+
+/******************************************************************************
+* Conservative BibTeX -> TeXmacs importation
+******************************************************************************/
+
+static tree
+bib_import (string s) {
+  return as_tree (call ("zealous-bib-import", s));
+}
+
+tree
+conservative_bib_import (string old_s, tree old_t, string new_s) {
+  array<string> old_a= bib_break (old_s);
+  array<string> new_a= bib_break (new_s);
+  hashmap<string,int> old_i= bib_indices (old_a);
+  hashmap<string,int> new_i= bib_indices (new_a);
+  hashmap<string,tree> old_e= bib_collect_entries (old_t);
+
+  if (!is_func (old_t, DOCUMENT) ||
+      !bib_check_standard_preamble (old_a) ||
+      !bib_check_standard_preamble (new_a))
+    return bib_import (new_s);
+  int d;
+  for (d=1; d<N(old_a) && d<N(new_a); d+=2)
+    if (new_a[d] != old_a[d]) break;
+  if (d < N(old_a) && d < N(new_a))
+    if (bib_is_special (old_a[d]) || bib_is_special (new_a[d]))
+      return bib_import (new_s);
+
+  string delta_s;
+  for (int i=1; i<N(new_a); i+=2) {
+    delta_s << new_a[i-1];
+    if (bib_is_special (new_a[i]))
+      delta_s << new_a[i];
+    else {
+      string key= bib_get_key (new_a[i]);
+      int j= old_i[key];
+      if (j < 0 || new_a[i] != old_a[j])
+        delta_s << new_a[i];
+    }
+  }
+  tree delta_t= bib_import (delta_s);
+  hashmap<string,tree> delta_e= bib_collect_entries (delta_t);
+  //cout << "================================\n";
+  //cout << "delta_t= " << delta_t << "\n";
+  //cout << "================================\n";
+
+  tree doc (DOCUMENT);
+  for (int i=0; i<N(old_t); i++)
+    if (is_db_entry (old_t[i])) break;
+    else doc << old_t[i];
+  for (int i=1; i<N(new_a); i+=2)
+    if (!bib_is_special (new_a[i]) && bib_get_type (new_a[i]) != "comment") {
+      string key= bib_get_key (new_a[i]);
+      tree val;
+      if (delta_e->contains (key)) val= delta_e[key];
+      else val= old_e[key];
+      doc << val;
+    }
+  return doc;
+}
+
+/******************************************************************************
+* Conservative TeXmacs -> BibTeX exportation
+******************************************************************************/
 
 string
 conservative_bib_export (string src_s, tree src_t, string obj_s, tree obj_t) {

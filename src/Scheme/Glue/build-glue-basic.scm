@@ -449,6 +449,8 @@
   (parse-xml parse_xml (scheme_tree string))
   (parse-html parse_html (scheme_tree string))
   (parse-bib parse_bib (tree string))
+  (conservative-bib-import conservative_bib_import
+                           (tree string content string))
   (conservative-bib-export conservative_bib_export
                            (string string content string content))
   (upgrade-tmml tmml_upgrade (tree scheme_tree))

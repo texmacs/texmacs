@@ -5280,6 +5280,23 @@ tmg_parse_bib (tmscm arg1) {
 }
 
 tmscm
+tmg_conservative_bib_import (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "conservative-bib-import");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "conservative-bib-import");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "conservative-bib-import");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  tree out= conservative_bib_import (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_conservative_bib_export (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "conservative-bib-export");
   TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "conservative-bib-export");
@@ -9002,6 +9019,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("parse-xml",  tmg_parse_xml, 1, 0, 0);
   tmscm_install_procedure ("parse-html",  tmg_parse_html, 1, 0, 0);
   tmscm_install_procedure ("parse-bib",  tmg_parse_bib, 1, 0, 0);
+  tmscm_install_procedure ("conservative-bib-import",  tmg_conservative_bib_import, 3, 0, 0);
   tmscm_install_procedure ("conservative-bib-export",  tmg_conservative_bib_export, 4, 0, 0);
   tmscm_install_procedure ("upgrade-tmml",  tmg_upgrade_tmml, 1, 0, 0);
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);

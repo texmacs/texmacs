@@ -411,7 +411,7 @@
 ;; Standard converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (bib->db* t)
+(tm-define (bib->db* t)
   (cond ((tm-atomic? t) t)
         ((tm-func? t 'bib-entry 3) (bib->db t))
         ((tm-func? t 'style) (tm-replace t "bibliography" "database-bib"))
