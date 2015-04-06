@@ -367,7 +367,8 @@
 
 (tm-define (make-bib style file-name)
   (:argument style "Bibliography style")
-  (:proposals style '("tm-plain" "tm-alpha" "tm-acm" "tm-ieeetr" "tm-siam"))
+  (:proposals style '("tm-plain" "tm-alpha" "tm-acm" "tm-elsart-num"
+                      "tm-ieeetr" "tm-siam" "tm-unsrt"))
   (:argument file-name "Bibliography file")
   (with aux (if (context-has? "bib-prefix") (get-env "bib-prefix") "bib")
     (if (not (make-return-after))

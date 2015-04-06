@@ -197,7 +197,7 @@
          (bl (map db->bib (map cdr l)))
          (doc `(document ,@bl)))
     (if (in? style (list "tm-abbrv" "tm-acm" "tm-alpha" "tm-elsart-num"
-                         "tm-ieeetr" "tm-plain" "tm-siam"))
+                         "tm-ieeetr" "tm-plain" "tm-siam" "tm-unsrt"))
         (bib-generate prefix (string-drop style 3) doc)
         (let* ((bib-files*
                 (list-filter all-files

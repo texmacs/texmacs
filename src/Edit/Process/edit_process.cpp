@@ -103,10 +103,13 @@ edit_process_rep::generate_bibliography (
   }
   else {
     if (!bibtex_present () && !starts (style, "tm-")) {
-      if (style == "alpha") style= "tm-alpha";
+      if (style == "abbrv") style= "tm-abbrv";
       else if (style == "acm") style= "tm-acm";
+      else if (style == "alpha") style= "tm-alpha";
+      else if (style == "elsart-num") style= "tm-elsart-num";
       else if (style == "ieeetr") style= "tm-ieeetr";
       else if (style == "siam") style= "tm-siam";
+      else if (style == "unsrt") style= "tm-unsrt";
       else style= "tm-plain";
     }
     if (supports_db () && !is_rooted (bib_file))
