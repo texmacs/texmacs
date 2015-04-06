@@ -230,6 +230,9 @@
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
            " AND " (db-time-constraint)))
 
+(tm-define (db-entry-exists? id)
+  (nnull? (db-get-field id "name")))
+
 (tm-define (db-get-entry id)
   (with r (db-sql "SELECT DISTINCT attr, val FROM props"
                   " WHERE id=" (sql-quote id)

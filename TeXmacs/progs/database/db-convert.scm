@@ -107,11 +107,17 @@
                    "please wait")
       (db-import-entry id all))))
 
+(define (db-duplicate? t)
+  (and (db-entry-any? t)
+       (with id (tm->string (tm-ref t 0))
+         (db-entry-exists? id))))
+
 (tm-define (db-save-selected t pred?)
   (cond ((tm-func? t 'document)
          (for-each (cut db-save-selected <> pred?) (tm-children t)))
         ((or (db-entry-any? t) (tm-func? t 'bib-entry 3))
-         (db-save-selected-entry (tm->stree t) pred?))
+         (when (not (db-duplicate? t))
+           (db-save-selected-entry (tm->stree t) pred?)))
         ((and (tree? t) (tm-compound? t))
          (for-each (cut db-save-selected <> pred?)
                    (tree-accessible-children t)))))
