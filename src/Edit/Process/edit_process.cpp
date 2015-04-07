@@ -115,7 +115,7 @@ edit_process_rep::generate_bibliography (
     if (supports_db () && !is_rooted (bib_file))
       bib_file= find_bib_file (buf->buf->name, fname, ".bib", true);
     if (supports_db ()) {
-      (void) call (string ("bib-import-bibtex"), bib_file);
+      //(void) call (string ("bib-import-bibtex"), bib_file);
       t= as_tree (call (string ("bib-compile"), bib, style, bib_t, bib_file));
     }
     else if (starts (style, "tm-")) {

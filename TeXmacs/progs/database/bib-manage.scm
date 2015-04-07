@@ -105,6 +105,21 @@
   (and-with id (bib-cache-id f)
     (url->url (string-append bib-cache-dir "/" id ".tm"))))
 
+(tm-define (bib-cache-database f names)
+  (and-with imported (bib-cache-bibtex f)
+    (and-with id (bib-cache-id f)
+      (let* ((doc (string-load imported))
+             (t (convert doc "texmacs-document" "texmacs-stree"))
+             (body (tmfile-extract t 'body))
+             (db (url->url (string-append bib-cache-dir "/" id ".tmdb")))
+             (h (list->ahash-set names))
+             (ok? (lambda (e) (and (db-entry? e) (ahash-ref h (tm-ref e 2)))))
+             (l (list-filter (tm-children body) ok?)))
+        (with-database db
+          (with-indexing #f
+            (bib-save `(document ,@l))))
+        db))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Importing and exporting BibTeX files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -189,14 +204,14 @@
              (remaining (list-difference names done)))
         (append r (bib-retrieve-entries-from remaining (cdr dbs))))))
 
-(define (bib-get-db bib-file)
+(define (bib-get-db bib-file names)
   (cond ((== bib-file :default) (bib-database))
         ((== (url-suffix bib-file) "tmdb") (url->url bib-file))
-        (else (bib-cache-bibtex bib-file))))
+        (else (bib-cache-database bib-file names))))
 
 (tm-define (bib-retrieve-entries names . bib-files)
   (set! names (list-remove-duplicates names))
-  (with l (list-filter (map bib-get-db bib-files) (lambda (ok?) ok?))
+  (with l (list-filter (map (cut bib-get-db <> names) bib-files) identity)
     (bib-retrieve-entries-from names l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
