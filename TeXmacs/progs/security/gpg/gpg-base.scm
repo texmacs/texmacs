@@ -102,6 +102,47 @@
     (if (not (null? ver)) (car ver) "?")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cypher algorithm used for passphrase encryption
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define gpg-cipher-algorithm "")
+
+(define (notify-gpg-cipher-algorithm var val)
+  (set! gpg-cipher-algorithm val))
+
+(define-preferences
+  ("gpg cipher algorithm" "AES256" notify-gpg-cipher-algorithm))
+
+(tm-define (gpg-get-cipher-algorithm)
+  (:synopsis "GnuPG cipher algorithm for passphrase encryption")
+  gpg-cipher-algorithm)
+
+(tm-define (gpg-set-cipher-algorithm val)
+  (:interactive #t)
+  (:synopsis "Set GnuPG cipher algorithm for passphrase encryption")
+  (:argument val "GnuPG cipher algorithm")
+  (when (member val (list "AES192" "AES256"))
+    (set-preference "gpg cipher algorithm" val)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collected keys
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define gpg-collected-public-keys-url
+  (url-concretize "$TEXMACS_HOME_PATH/system/gnupg/collected-public-keys.scm"))
+
+(tm-define gpg-collected-public-keys-table (make-ahash-table))
+
+(when (url-exists? gpg-collected-public-keys-url)
+  (set! gpg-collected-public-keys-table
+	(list->ahash-table (load-object gpg-collected-public-keys-url))))
+
+(on-exit
+  (when (supports-gpg?)
+	(save-object gpg-collected-public-keys-url
+		     (ahash-table->list gpg-collected-public-keys-table))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Error handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -273,9 +314,15 @@
 ;; Utils
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (gpg-key-search-by-fingerprint fpr keys)
+(tm-define (gpg-search-key-by-fingerprint fpr keys)
   (with f (filter (lambda (x) (== (gpg-get-key-fingerprint x) fpr)) keys)
     (and (nnull? f) (car f))))
+
+(tm-define (gpg-search-secret-key-by-fingerprint fpr)
+  (gpg-search-key-by-fingerprint fpr (gpg-secret-keys)))
+
+(tm-define (gpg-search-public-key-by-fingerprint fpr)
+  (gpg-search-key-by-fingerprint fpr (gpg-public-keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delete public key
@@ -462,3 +509,33 @@
     (and d (let* ((p (open-input-string d))
                   (e (read p)))
              (if (eof-object? e) '() e)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Passphrase encryption
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (gpg-executable-passphrase-encrypt homedir)
+  (append (gpg-executable-default homedir)
+	  (list "--cipher-algo" gpg-cipher-algorithm "--symmetric" "-c")
+          (if (or (os-mingw?) (os-win32?))
+              (list "--passphrase-fd" "$%1")
+              (list "--passphrase-fd" "$$1"))
+          (list "--armor" "--batch" "--no-tty" "-")))
+
+(tm-define (gpg-passphrase-encrypt data passphrase . homedir)
+  (:synopsis "GnuPG encrypt string @data with @passphrase") 
+  (let* ((dir (if (null? homedir) (url-none) (car homedir)))
+         (cmd (gpg-executable-passphrase-encrypt dir))
+         (ret (evaluate-system cmd '(0 -1) (list data passphrase) '(1 2))))
+    (if (!= (car ret) "0")
+        (gpg-error cmd (cadr ret) (caddr ret))
+        (cadr ret))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Passphrase decryption
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (gpg-passphrase-decrypt data passphrase . homedir)
+  (:synopsis "GnuPG decrypt armored string @data with passphrase @passphrase")
+  (let* ((dir (if (null? homedir) (url-none) (car homedir))))
+    (gpg-decrypt data passphrase dir)))
