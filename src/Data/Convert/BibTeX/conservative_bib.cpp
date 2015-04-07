@@ -241,14 +241,13 @@ conservative_bib_import (string old_s, tree old_t, string new_s) {
 
   string delta_s;
   for (int i=1; i<N(new_a); i+=2) {
-    delta_s << new_a[i-1];
     if (bib_is_special (new_a[i]))
-      delta_s << new_a[i];
+      delta_s << new_a[i-1] << new_a[i];
     else {
       string key= bib_get_key (new_a[i]);
       int j= old_i[key];
       if (j < 0 || new_a[i] != old_a[j])
-        delta_s << new_a[i];
+        delta_s << new_a[i-1] << new_a[i];
     }
   }
   tree delta_t= bib_import (delta_s);
