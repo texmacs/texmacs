@@ -113,7 +113,7 @@
              (body (tmfile-extract t 'body))
              (db (url->url (string-append bib-cache-dir "/" id ".tmdb")))
              (h (list->ahash-set names))
-             (ok? (lambda (e) (and (db-entry? e) (ahash-ref h (tm-ref e 2)))))
+             (ok? (lambda (e) (and (ahash-ref h (tm-ref e 2)) (db-entry? e))))
              (l (list-filter (tm-children body) ok?)))
         (with-database db
           (with-indexing #f
@@ -211,8 +211,9 @@
 
 (tm-define (bib-retrieve-entries names . bib-files)
   (set! names (list-remove-duplicates names))
-  (with l (list-filter (map (cut bib-get-db <> names) bib-files) identity)
-    (bib-retrieve-entries-from names l)))
+  (if (null? names) names
+      (with l (list-filter (map (cut bib-get-db <> names) bib-files) identity)
+        (bib-retrieve-entries-from names l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Running bibtex or its internal replacement
@@ -227,24 +228,26 @@
   (with t (list->ahash-set (map car l2))
     (list-filter l1 (lambda (x) (not (ahash-ref t (car x)))))))
 
+(define (bib-file? f)
+  (and (url? f) (== (url-suffix f) "bib")))
+
 (define (bib-compile-sub prefix style names . bib-files)
   (set! names (list-remove-duplicates names))
-  (let* ((all-files (rcons bib-files :default))
-         (l (apply bib-retrieve-entries (cons names all-files)))
-         (bl (map db->bib (map cdr l)))
-         (doc `(document ,@bl)))
-    (if (in? style (list "tm-abbrv" "tm-acm" "tm-alpha" "tm-elsart-num"
-                         "tm-ieeetr" "tm-plain" "tm-siam" "tm-unsrt"))
-        (bib-generate prefix (string-drop style 3) doc)
-        (let* ((bib-files*
-                (list-filter all-files
-                             (lambda (f) (and (url? f)
-                                              (== (url-suffix f) "bib")))))
-               (l* (apply bib-retrieve-entries (cons names bib-files*)))
-               (bl* (map db->bib (map cdr (bib-difference l l*))))
-               (doc* `(document ,@bl*))
-               (bib-docs (map string-load bib-files*))
-               (xdoc (convert doc* "texmacs-stree" "bibtex-document"))
+  (if (in? style (list "tm-abbrv" "tm-acm" "tm-alpha" "tm-elsart-num"
+                       "tm-ieeetr" "tm-plain" "tm-siam" "tm-unsrt"))
+      (let* ((all-files (rcons bib-files :default))
+             (l (apply bib-retrieve-entries (cons names all-files)))
+             (bl (map db->bib (map cdr l)))
+             (doc `(document ,@bl)))
+        (bib-generate prefix (string-drop style 3) doc))
+      (receive (b1 b2) (list-partition (rcons bib-files :default) bib-file?)
+        (let* ((l1 (apply bib-retrieve-entries (cons names b1)))
+               (names2 (list-difference names (map car l1)))
+               (l2 (apply bib-retrieve-entries (cons names2 b2)))
+               (bl2 (map db->bib (map cdr l2)))
+               (doc2 `(document ,@bl2))
+               (bib-docs (map string-load b1))
+               (xdoc (convert doc2 "texmacs-stree" "bibtex-document"))
                (all-docs (append bib-docs (list "\n") (list xdoc)))
                (full-doc (apply string-append all-docs))
                (auto (url->url "$TEXMACS_HOME_PATH/system/bib/auto.bib")))

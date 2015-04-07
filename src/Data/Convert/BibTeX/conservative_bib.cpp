@@ -233,6 +233,7 @@ conservative_bib_import (string old_s, tree old_t, string new_s) {
   if (get_preference ("bibtex->texmacs:conservative", "off") != "on" ||
       !is_func (old_t, DOCUMENT))
     return bib_import (new_s);
+  if (new_s == old_s) return old_t;
 
   array<string> old_a= bib_break (old_s);
   array<string> new_a= bib_break (new_s);
@@ -337,6 +338,7 @@ conservative_bib_export (tree old_t, string old_s, tree new_t) {
       !is_func (old_t, DOCUMENT) ||
       !is_func (new_t, DOCUMENT))
     return bib_export (new_t);
+  if (new_t == old_t) return old_s;
 
   array<string> old_a= bib_break (old_s);
   hashmap<string,int> old_i= bib_indices (old_a);
