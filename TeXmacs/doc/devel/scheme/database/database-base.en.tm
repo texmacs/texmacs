@@ -60,6 +60,34 @@
     current time.
   </explain>
 
+  <\explain>
+    <scm|(with-time-stamp on? . body)><explain-synopsis|add date field to new
+    entries>
+  <|explain>
+    Whenever <scm|on?> holds, a <scm|date> attribute will automatically be
+    added to all newly created entries which do not already contain a
+    <scm|date> field. For entries which circulate among several users, this
+    allows you to determine when they were created for the first time.
+  </explain>
+
+  <\explain>
+    <scm|(with-extra-fields l . body)><explain-synopsis|add fields to
+    entries>
+  <|explain>
+    Whenever a new entry with fields <scm|new-l> is created inside
+    <scm|body>, the list of fields <scm|l> is automatically added to
+    <scm|new-l>, but only for attributes which were not already present in
+    <scm|new-l>.
+  </explain>
+
+  <\explain>
+    <scm|(with-limit limit . body)><explain-synopsis|limit number of return
+    values>
+  <|explain>
+    For queries of the database inside <scm|body>, limit the number of
+    returned values to <scm|limit>.
+  </explain>
+
   <paragraph|Main routines of the database API>
 
   <\explain>
@@ -98,13 +126,35 @@
   </explain>
 
   <\explain>
+    <scm|(db-remove-entry id)><explain-synopsis|remove a complete entry>
+  <|explain>
+    Remove the entry with identifier <scm|id>.
+  </explain>
+
+  <\explain>
+    <scm|(db-create-id)><explain-synopsis|create a unique identifier>
+  <|explain>
+    Create an identifier which does not yet exist in the database.
+  </explain>
+
+  <\explain>
     <scm|(db-search q)><explain-synopsis|search for a list of fields>
   <|explain>
     Return the list of identifiers of entries which match a given query
     <scm|q>. The query <scm|q> is a list of constraints of the form
     <scm|(attr val1 ... valn)>. Each constraint is interpreted as ``the
     attribute <scm|attr> of the entry is one of the values <scm|val1>,
-    <math|\<ldots\>>, <scm|valn>''.
+    <math|\<ldots\>>, <scm|valn>''. In addition to these <em|basic>
+    constraints, extensions of the database API may implement additional
+    kinds of constraints. Such <em|supplementary> constraints are always
+    formed by taking a special keyword for <scm|attr>.
+
+    The basic API already implements one type of supplementary constraint of
+    the form <scm|(:order attr asc?)>, where <scm|attr> is an attribute and
+    <scm|asc?> a boolean value. This kind of supplementary constraint is
+    always satisfied and has the effect of ordering the output of the query
+    on the attribute <scm|attr> in ascending or descending order, depending
+    on <scm|asc?>.
   </explain>
 
   <paragraph|Other useful routines>
@@ -117,10 +167,16 @@
   </explain>
 
   <\explain>
-    <scm|(db-create l)><explain-synopsis|create a new entry>
+    <scm|(db-create-entry l)><explain-synopsis|create a new entry>
   <|explain>
     Create a new entry in the current database with fields <scm|l>, and
     return the identifier of the newly created entry.
+  </explain>
+
+  <\explain>
+    <scm|(db-entry-exists? id)><explain-synopsis|test existence of entry>
+  <|explain>
+    Test whether there exists an entry with identifier <scm|id>.
   </explain>
 
   <tmdoc-copyright|2015|Joris van der Hoeven>
