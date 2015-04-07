@@ -135,3 +135,9 @@
        (TeXmacs ,(texmacs-version))
        (style (tuple ,(db-get-style kind)))
        (body (document ,@l*)))))
+
+(tmfs-permission-handler (db name type)
+  (in? type (list "read" "write")))
+
+(tmfs-save-handler (db name doc)
+  (db-confirm-entries-in (tm->tree doc)))

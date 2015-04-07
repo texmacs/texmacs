@@ -469,12 +469,6 @@
   (and-with l (find-db-entries t)
     (confirm-entries l)))
 
-(tm-define (save-buffer . l)
-  (:mode in-database?)
-  (:require (and (null? l) (db-url? (current-buffer))))
-  (when (db-confirm-entries-in (buffer-tree))
-    (buffer-pretend-saved (current-buffer))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Removing one or more entries from the database
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
