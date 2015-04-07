@@ -31,12 +31,37 @@
 
 (tm-define (bib-preprocessing t) (:mode bib-plain?) `())
 
+(define (bib-non-breaking x)
+  (cond ((tm-func? x 'concat)
+         (with l (map bib-non-breaking (tm-children x))
+           (apply tmconcat l)))
+        ((string? x)
+         (let* ((l (string-tokenize-by-char x #\space))
+                (r (list-intersperse l '(nbsp))))
+           (apply tmconcat r)))
+        (else x)))
+
+(tm-define (bib-name-ends? x s)
+  (cond ((tm-func? x 'concat) (bib-name-ends? (cAr x) s))
+        ((string? x) (string-ends? x s))
+        (else #f)))
+
+(tm-define (bib-format-first-name x)
+  (if (bib-null? (list-ref x 1)) ""
+      (with f (bib-non-breaking (list-ref x 1))
+        (if (bib-name-ends? f ".")
+            (tmconcat f '(nbsp))
+            (tmconcat f " ")))))
+
 (tm-define (bib-format-name x)
   ;; (:mode bib-plain?)
-  (let* ((ff (if (bib-null? (list-ref x 1)) "" `(concat ,(list-ref x 1) (nbsp))))
-	 (vv (if (bib-null? (list-ref x 2)) "" `(concat ,(list-ref x 2) (nbsp))))
-	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
-	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
+  (let* ((ff (bib-format-first-name x))
+	 (vv (if (bib-null? (list-ref x 2)) ""
+                 `(concat ,(list-ref x 2) (nbsp))))
+	 (ll (if (bib-null? (list-ref x 3)) ""
+                 (bib-purify (list-ref x 3))))
+	 (jj (if (bib-null? (list-ref x 4)) ""
+                 `(concat ", " ,(list-ref x 4)))))
     `(concat ,ff ,vv ,ll ,jj)))
 
 (define (bib-format-names-rec n lim a)

@@ -22,12 +22,14 @@
 
 (tm-define (bib-format-name x)
   (:mode bib-elsart-num?)
-  (let* ((f (if (bib-null? (list-ref x 1))
-		""
+  (let* ((f (if (bib-null? (list-ref x 1)) ""
 		`(concat ,(bib-abbreviate (list-ref x 1) "." `(nbsp)) (nbsp))))
-	 (vv (if (bib-null? (list-ref x 2)) "" `(concat ,(list-ref x 2) (nbsp))))
-	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
-	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
+	 (vv (if (bib-null? (list-ref x 2)) ""
+                 `(concat ,(list-ref x 2) (nbsp))))
+	 (ll (if (bib-null? (list-ref x 3)) ""
+                 (bib-purify (list-ref x 3))))
+	 (jj (if (bib-null? (list-ref x 4)) ""
+                 `(concat ", " ,(list-ref x 4)))))
     `(concat ,f ,vv ,ll ,jj)))
 
 (tm-define (bib-last-name-sep a)

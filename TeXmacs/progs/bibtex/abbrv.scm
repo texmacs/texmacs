@@ -16,13 +16,10 @@
 
 (bib-define-style "abbrv" "plain")
 
-(tm-define (bib-format-name x)
+(tm-define (bib-format-first-name x)
   (:mode bib-abbrv?)
-  (let* ((f (if (bib-null? (list-ref x 1))
-		""
-		`(concat ,(bib-abbreviate (list-ref x 1) "." `(nbsp))
-			 (nbsp))))
-	 (vv (if (bib-null? (list-ref x 2)) "" `(concat ,(list-ref x 2) (nbsp))))
-	 (ll (if (bib-null? (list-ref x 3)) "" (bib-purify (list-ref x 3))))
-	 (jj (if (bib-null? (list-ref x 4)) "" `(concat ", " ,(list-ref x 4)))))
-    `(concat ,f ,vv ,ll ,jj)))
+  (if (bib-null? (list-ref x 1)) ""
+      (with f (bib-abbreviate (list-ref x 1) "." `(nbsp))
+        (if (bib-name-ends? f ".")
+            (tmconcat f '(nbsp))
+            (tmconcat f " ")))))
