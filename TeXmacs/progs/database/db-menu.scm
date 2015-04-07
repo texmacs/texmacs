@@ -227,7 +227,10 @@
   (when (db-importable?)
     ("Import" (db-import-file)))
   (when (db-exportable?)
-    ("Export" (db-export-file)))
+    (if (not (selection-active-any?))
+        ("Export" (db-export-file)))
+    (if (selection-active-any?)
+        ("Export selected entries" (db-export-file))))
   ---
   ("Preferences" (open-db-preferences)))
 
