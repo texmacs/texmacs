@@ -137,13 +137,37 @@
     (or (string-starts? s "tmfs://db/")
         (string-ends? s ".tmdb"))))
 
+(tm-define (db-confirm-imported name)
+  (with key (string-append "recent-import," (url->system (current-buffer)))
+    (learn-interactive key (list (cons "name" (url->system name))))))
+
+(tm-define (db-confirm-exported name)
+  (with key (string-append "recent-export," (url->system (current-buffer)))
+    (learn-interactive key (list (cons "name" (url->system name))))))
+
+(tm-define (db-recent-imports)
+  (let* ((key (string-append "recent-import," (url->system (current-buffer))))
+         (learned (learned-interactive key))
+         (l (map (cut assoc-ref <> "name") learned))
+         (r (list-remove-duplicates (map system->url l))))
+    (if (<= (length l) 10) l (sublist l 0 10))))
+
+(tm-define (db-recent-exports)
+  (let* ((key (string-append "recent-export," (url->system (current-buffer))))
+         (learned (learned-interactive key))
+         (l (map (cut assoc-ref <> "name") learned))
+         (r (list-remove-duplicates (map system->url l))))
+    (if (<= (length l) 10) l (sublist l 0 10))))
+
 (tm-define (db-importable?) #f)
 (tm-define (db-exportable?) #f)
+(tm-define (db-import-file name) (noop))
+(tm-define (db-export-file name) (noop))
 
-(tm-define (db-import-file)
+(tm-define (db-import-select)
   (:interactive #t)
   (noop))
 
-(tm-define (db-export-file)
+(tm-define (db-export-select)
   (:interactive #t)
   (noop))

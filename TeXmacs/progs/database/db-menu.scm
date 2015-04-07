@@ -225,12 +225,31 @@
     (link db-entry-menu))
   ---
   (when (db-importable?)
-    ("Import" (db-import-file)))
+    (if (null? (db-recent-imports))
+        ("Import" (db-import-select)))
+    (if (nnull? (db-recent-imports))
+        (=> "Import"
+            (for (name (db-recent-imports))
+              (let* ((short-name `(verbatim ,(url->system (url-tail name))))
+                     (long-name `(verbatim ,(url->system name))))
+                ((balloon (eval short-name) (eval long-name))
+                 (db-import-file name))))
+            ---
+            ("Other" (db-import-select)))))
   (when (db-exportable?)
-    (if (not (selection-active-any?))
-        ("Export" (db-export-file)))
+    (if (and (not (selection-active-any?)) (null? (db-recent-exports)))
+        ("Export" (db-export-select)))
+    (if (and (not (selection-active-any?)) (nnull? (db-recent-exports)))
+        (=> "Export"
+            (for (name (db-recent-exports))
+              (let* ((short-name `(verbatim ,(url->system (url-tail name))))
+                     (long-name `(verbatim ,(url->system name))))
+                ((balloon (eval short-name) (eval long-name))
+                 (db-import-file name))))
+            ---
+            ("Other" (db-export-select))))
     (if (selection-active-any?)
-        ("Export selected entries" (db-export-file))))
+        ("Export selected entries" (db-export-select))))
   ---
   ("Preferences" (open-db-preferences)))
 

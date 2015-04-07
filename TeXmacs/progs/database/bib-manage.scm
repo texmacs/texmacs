@@ -135,8 +135,8 @@
             (bib-save body)))
         (when (buffer-exists? "tmfs://db/bib/global")
           (revert-buffer "tmfs://db/bib/global"))
-        (set-message "Imported bibliographic entries"
-                     "import bibliography")))))
+        (set-message "Imported bibliographic entries" "import bibliography")
+        (db-confirm-imported f)))))
 
 (tm-define (bib-export-global f)
   (with-database (bib-database)
@@ -179,7 +179,8 @@
                                (list :order "name" #t))))
            (i (map db-load-entry l))
            (doc `(document ,@i)))
-      (bib-export-save doc f))))
+      (bib-export-save doc f)
+      (db-confirm-exported f))))
 
 (tm-define (bib-exportable?)
   (or (nnull? (bib-attachments))
@@ -371,12 +372,20 @@
   (:require (bib-exportable?))
   (db-url? (current-buffer)))
 
-(tm-define (db-import-file)
+(tm-define (db-import-file name)
+  (:require (in-bib?))
+  (bib-import-bibtex name))
+
+(tm-define (db-export-file name)
+  (:require (in-bib?))
+  (bib-export-bibtex name))
+
+(tm-define (db-import-select)
   (:require (in-bib?))
   (choose-file bib-import-bibtex "Import from BibTeX file" "tmbib"))
 
-(tm-define (db-export-file)
-  (:interactive #t)
+(tm-define (db-export-select)
+  (:require (in-bib?))
   (choose-file bib-export-bibtex "Export to BibTeX file" "tmbib"))
 
 (tm-define (open-bib-chooser cb)
