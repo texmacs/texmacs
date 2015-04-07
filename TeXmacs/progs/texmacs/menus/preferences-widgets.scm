@@ -346,10 +346,16 @@
 
 ;; BibTeX ----------
 
-(define (get-bibtex-conservative)
+(define (get-bibtm-conservative)
+  (get-boolean-preference "bibtex->texmacs:conservative"))
+
+(define (set-bibtm-conservative on?)
+  (set-boolean-preference "bibtex->texmacs:conservative" on?))
+
+(define (get-tmbib-conservative)
   (get-boolean-preference "texmacs->bibtex:conservative"))
 
-(define (set-bibtex-conservative on?)
+(define (set-tmbib-conservative on?)
   (set-boolean-preference "texmacs->bibtex:conservative" on?))
 
 (tm-widget (bibtex-preferences-widget)
@@ -362,13 +368,18 @@
             '("bibtex" "rubibtex" "")
             (get-pretty-preference "bibtex command")
             "15em")))
+  ===
+  (aligned
+    (meti (text "Only convert changes when re-importing")
+      (toggle (set-bibtm-conservative answer)
+              (get-bibtm-conservative))))
   ======
   (bold (text "TeXmacs -> BibTeX"))
   ===
   (aligned
-    (meti (text "Only convert changes with respect imported version")
-      (toggle (set-bibtex-conservative answer)
-              (get-bibtex-conservative)))))
+    (meti (text "Only convert changes with respect to imported version")
+      (toggle (set-tmbib-conservative answer)
+              (get-tmbib-conservative)))))
 
 ;; Verbatim ----------
 
