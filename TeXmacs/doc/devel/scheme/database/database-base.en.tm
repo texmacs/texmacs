@@ -88,6 +88,16 @@
     returned values to <scm|limit>.
   </explain>
 
+  <paragraph|Special attributes>
+
+  <\description>
+    <item*|<scm|name>>A name (or key) for the entry, by which it can referred
+    to.
+
+    <item*|<scm|date>>Creation date stamp for the entry, as determined by
+    <scm|with-time-stamp>.
+  </description>
+
   <paragraph|Main routines of the database API>
 
   <\explain>

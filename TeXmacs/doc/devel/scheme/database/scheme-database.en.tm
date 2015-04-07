@@ -8,6 +8,8 @@
   <\traverse>
     <branch|The <TeXmacs> database model|database-base.en.tm>
 
+    <branch|Indexation|database-index.en.tm>
+
     <branch|Formats of database entries|database-format.en.tm>
 
     <branch|Users, groups, and permissions|database-permissions.en.tm>

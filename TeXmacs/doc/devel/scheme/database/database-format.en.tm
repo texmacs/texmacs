@@ -45,6 +45,12 @@
     <scm|#f> (no encoding/decoding) and <scm|:default>.
   </explain>
 
+  <paragraph|Special attributes>
+
+  <\description>
+    <item*|<scm|type>>Specifies the entry type.
+  </description>
+
   <paragraph|Affected routines of the database API>
 
   <\explain>
