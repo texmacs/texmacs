@@ -297,7 +297,8 @@
 ;(display "Booting database facilities\n")
 (lazy-define (database db-widget) open-db-chooser)
 (lazy-define (database db-menu) db-show-toolbar)
-(lazy-define (database bib-manage) zealous-bib-import
+(lazy-define (database bib-db) zealous-bib-import zealous-bib-export)
+(lazy-define (database bib-manage)
              bib-import-bibtex bib-compile bib-attach open-bib-chooser)
 (lazy-menu (database db-menu) db-menu db-toolbar)
 (lazy-tmfs-handler (database db-tmfs) db)

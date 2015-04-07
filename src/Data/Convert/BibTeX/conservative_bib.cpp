@@ -13,6 +13,7 @@
 #include "wencoding.hpp"
 #include "analyze.hpp"
 #include "scheme.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * Break bibtex files into individual chunks, alternating comments and entries
@@ -69,17 +70,26 @@ bib_rewind (string s, int& i) {
   }
 }
 
+static bool
+immediate_start (string s) {
+  int i=0, n=N(s);
+  while (i<n && (s[i] == ' ' || s[i] == '\t')) i++;
+  return i<n && s[i] == '@';
+}
+
 static array<string>
 bib_break (string s) {
   int i=0, n=N(s), start=0;
   array<string> a;
   while (i<n) {
     start= i;
-    while (true) {
-      bool ok= bib_skip (s, i);
-      if (ok || i >= n) break;
+    if (i>0 || !immediate_start (s)) {
+      while (true) {
+        bool ok= bib_skip (s, i);
+        if (ok || i >= n) break;
+      }
+      if (i >= n) break;
     }
-    if (i >= n) break;
     a << s (start, i);
     //cout << "---------------------------------------------------------\n";
     //cout << s (start, i);
@@ -158,6 +168,7 @@ bib_check_standard_preamble (array<string> a) {
 
 static bool
 is_db_entry (tree t) {
+  if (N(t) != 5 || !is_atomic (t[2])) return false;
   return
     is_compound (t, "db-entry") ||
     is_compound (t, "db-folded-entry") ||
@@ -166,11 +177,8 @@ is_db_entry (tree t) {
 
 static void
 bib_collect_entries (hashmap<string,tree>& h, tree t) {
-  if (is_atomic (t)) return;
-  else if (is_db_entry (t)) {
-    if (N(t) == 5 && is_atomic (t[2]))
-      h (t[2]->label)= t;
-  }
+  if (is_atomic (t));
+  else if (is_db_entry (t)) h (t[2]->label)= t;
   else {
     int i, n=N(t);
     for (i=0; i<n; i++)
@@ -222,14 +230,17 @@ bib_import (string s) {
 
 tree
 conservative_bib_import (string old_s, tree old_t, string new_s) {
+  if (get_preference ("bibtex->texmacs:conservative", "off") != "on" ||
+      !is_func (old_t, DOCUMENT))
+    return bib_import (new_s);
+
   array<string> old_a= bib_break (old_s);
   array<string> new_a= bib_break (new_s);
   hashmap<string,int> old_i= bib_indices (old_a);
   hashmap<string,int> new_i= bib_indices (new_a);
   hashmap<string,tree> old_e= bib_collect_entries (old_t);
 
-  if (!is_func (old_t, DOCUMENT) ||
-      !bib_check_standard_preamble (old_a) ||
+  if (!bib_check_standard_preamble (old_a) ||
       !bib_check_standard_preamble (new_a))
     return bib_import (new_s);
   int d;
@@ -313,4 +324,50 @@ conservative_bib_export (string src_s, tree src_t, string obj_s, tree obj_t) {
   if (N(src_a) > 1) r << copy (src_a[N(src_a)-1]);
   //if (r == src_s) cout << "Unaltered\n";
   return r;
+}
+
+static string
+bib_export (tree t) {
+  return as_string (call ("zealous-bib-export", t));
+}
+
+string
+conservative_bib_export (tree old_t, string old_s, tree new_t) {
+  if (get_preference ("texmacs->bibtex:conservative", "off") != "on" ||
+      !is_func (old_t, DOCUMENT) ||
+      !is_func (new_t, DOCUMENT))
+    return bib_export (new_t);
+
+  array<string> old_a= bib_break (old_s);
+  hashmap<string,int> old_i= bib_indices (old_a);
+  hashmap<string,tree> old_e= bib_collect_entries (old_t);
+  hashmap<string,tree> new_e= bib_collect_entries (new_t);
+  if (!bib_check_standard_preamble (old_a))
+    return bib_export (new_t);
+
+  tree delta_t (DOCUMENT);
+  iterator<string> it= iterate (new_e);
+  while (it->busy ()) {
+    string key= it->next ();
+    tree val= new_e[key];
+    if (!old_e->contains (key) || old_e[key] != val || !old_i->contains (key))
+      delta_t << val;
+  }
+  string delta_s= bib_export (delta_t);
+  array<string> delta_a= bib_break (delta_s);
+  hashmap<string,int> delta_i= bib_indices (delta_a);
+  //cout << "============== delta_s ================\n";
+  //cout << delta_s;
+  //cout << "=======================================\n";
+
+  string new_s;
+  for (int i=0; i<N(new_t); i++)
+    if (is_db_entry (new_t[i])) {
+      string key= new_t[i][2]->label;
+      if (delta_i->contains (key))
+        new_s << "\n" << delta_a [delta_i [key]];
+      else if (old_i->contains (key))
+        new_s << "\n" << old_a [old_i [key]];
+    }
+  return conservative_bib_export (old_s, old_t, new_s, new_t);
 }

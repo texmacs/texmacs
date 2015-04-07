@@ -72,4 +72,5 @@
   (:function texmacs->tmbib-document))
 
 (define-preferences
+  ("bibtex->texmacs:conservative" "on" noop)
   ("texmacs->bibtex:conservative" "on" noop))

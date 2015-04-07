@@ -97,7 +97,7 @@ tree   upgrade_mathml (tree t);
 /*** BibTeX ***/
 tree   parse_bib (string s);
 tree   conservative_bib_import (string olds, tree oldt, string news);
-string conservative_bib_export (string ss, tree st, string os, tree ot);
+string conservative_bib_export (tree oldt, string olds, tree newt);
 
 /*** Post corrections ***/
 bool   seems_buggy_html_paste (string s);

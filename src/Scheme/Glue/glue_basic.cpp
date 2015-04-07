@@ -5297,19 +5297,17 @@ tmg_conservative_bib_import (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
-tmg_conservative_bib_export (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "conservative-bib-export");
-  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "conservative-bib-export");
-  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "conservative-bib-export");
-  TMSCM_ASSERT_CONTENT (arg4, TMSCM_ARG4, "conservative-bib-export");
+tmg_conservative_bib_export (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "conservative-bib-export");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "conservative-bib-export");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "conservative-bib-export");
 
-  string in1= tmscm_to_string (arg1);
-  content in2= tmscm_to_content (arg2);
-  string in3= tmscm_to_string (arg3);
-  content in4= tmscm_to_content (arg4);
+  content in1= tmscm_to_content (arg1);
+  string in2= tmscm_to_string (arg2);
+  content in3= tmscm_to_content (arg3);
 
   // TMSCM_DEFER_INTS;
-  string out= conservative_bib_export (in1, in2, in3, in4);
+  string out= conservative_bib_export (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
@@ -9020,7 +9018,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("parse-html",  tmg_parse_html, 1, 0, 0);
   tmscm_install_procedure ("parse-bib",  tmg_parse_bib, 1, 0, 0);
   tmscm_install_procedure ("conservative-bib-import",  tmg_conservative_bib_import, 3, 0, 0);
-  tmscm_install_procedure ("conservative-bib-export",  tmg_conservative_bib_export, 4, 0, 0);
+  tmscm_install_procedure ("conservative-bib-export",  tmg_conservative_bib_export, 3, 0, 0);
   tmscm_install_procedure ("upgrade-tmml",  tmg_upgrade_tmml, 1, 0, 0);
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);
   tmscm_install_procedure ("vernac->texmacs",  tmg_vernac_2texmacs, 1, 0, 0);

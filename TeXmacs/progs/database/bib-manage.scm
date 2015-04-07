@@ -65,12 +65,6 @@
       (string-save tm-doc imported)
       (bib-cache-acknowledge id f imported))))
 
-(tm-define (zealous-bib-import s)
-  ;; NOTE: used in conservative_bib.cpp
-  (let* ((t (bibtex->texmacs (parse-bibtex-document s)))
-         (body (tmfile-extract (bib->db* t) 'body)))
-    (tm->tree body)))
-
 (define (bib-cache-update f)
   (with-global db-bib-origin (url->string (url-tail f))
     (let* ((id (bib-cache-id f))

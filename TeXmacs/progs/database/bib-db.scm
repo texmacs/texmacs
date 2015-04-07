@@ -417,6 +417,12 @@
         ((tm-func? t 'style) (tm-replace t "bibliography" "database-bib"))
         (else (cons (tm-label t) (map bib->db* (tm-children t))))))
 
+(tm-define (zealous-bib-import s)
+  ;; NOTE: used in conservative_bib.cpp
+  (let* ((t (bibtex->texmacs (parse-bibtex-document s)))
+         (body (tmfile-extract (bib->db* t) 'body)))
+    (tm->tree body)))
+
 (tm-define (tmbib-snippet->texmacs s)
   (with t (bibtex->texmacs (parse-bibtex-snippet s))
     (bib->db* t)))
@@ -445,6 +451,10 @@
         ((tm-func? t 'style) (tm-replace t "database-bib" "bibliography"))
         (else (cons (tm-label t) (map db->bib* (tm-children t))))))
 
+(tm-define (zealous-bib-export t)
+  ;; NOTE: used in conservative_bib.cpp
+  (texmacs->tmbib-snippet (tm->stree t)))
+
 (tm-define (texmacs->tmbib-snippet t)
   (with u (db->bib* t)
     (serialize-bibtex (texmacs->bibtex u))))
@@ -459,13 +469,22 @@
               (l (list-filter (map associate->binding c) identity)))
          (assoc-ref l key))))
 
+;; (tm-define (texmacs->tmbib-document doc)
+;;   (let* ((u (db->bib* doc))
+;;          (s (serialize-bibtex (texmacs->bibtex u)))
+;;          (body (tmfile-extract doc 'body))
+;;          (att (tmfile-extract doc 'attachments))
+;;          (src (collection-ref att "bibtex-source"))
+;;          (obj (collection-ref att "bibtex-target")))
+;;     (if (and body src obj)
+;;         (conservative-bib-export src obj s body)
+;;         s)))
+
 (tm-define (texmacs->tmbib-document doc)
-  (let* ((u (db->bib* doc))
-         (s (serialize-bibtex (texmacs->bibtex u)))
-         (body (tmfile-extract doc 'body))
+  (let* ((body (tmfile-extract doc 'body))
          (att (tmfile-extract doc 'attachments))
          (src (collection-ref att "bibtex-source"))
          (obj (collection-ref att "bibtex-target")))
     (if (and body src obj)
-        (conservative-bib-export src obj s body)
-        s)))
+        (conservative-bib-export obj src body)
+        (texmacs->tmbib-snippet body))))
