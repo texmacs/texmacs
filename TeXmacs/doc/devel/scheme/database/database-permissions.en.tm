@@ -60,6 +60,16 @@
     permissions.
   </explain>
 
+  <paragraph|Other useful routines>
+
+  <\explain>
+    <scm|(db-allow? id uid permission-attr)><explain-synopsis|check
+    permissions>
+  <|explain>
+    Check whether a user with identifier <scm|uid> has a given permission
+    <scm|permission-attr> for the entry with identifier <scm|id>.
+  </explain>
+
   <tmdoc-copyright|2015|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
