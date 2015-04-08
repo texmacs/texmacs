@@ -154,18 +154,21 @@
                              (set-message msg "creating new account")
                              (client-stop server))))))
 
-(tm-define (client-login server-name pseudo passwd)
-  (:argument server-name "Server")
-  (:argument pseudo "User pseudo")
-  (:argument passwd "password" "Password")
+(tm-define (client-login-then server-name pseudo passwd cb)
   (with server (client-start server-name)
     (when (!= server -1)
       (ahash-set! client-active-connections server (list server-name pseudo))
       (ahash-set! client-active-connections server-name server)
       (set! remote-list (client-active-servers))
       (enter-secure-mode server)
-      (client-remote-eval* server `(remote-login ,pseudo ,passwd)
-                           (lambda (ret) (set-message ret "logging in"))))))
+      (client-remote-eval* server `(remote-login ,pseudo ,passwd) cb))))
+
+(tm-define (client-login server-name pseudo passwd)
+  (:argument server-name "Server")
+  (:argument pseudo "User pseudo")
+  (:argument passwd "password" "Password")
+  (client-login-then server-name pseudo passwd
+                     (lambda (ret) (set-message ret "logging in"))))
 
 (tm-define (client-logout server)
   (and-with server-con (ahash-ref client-active-connections server)
