@@ -33,6 +33,7 @@
   ("Home directory" (load-buffer (remote-home-directory server)))
   ("New remote file" (remote-create-file-interactive server))
   ("New remote directory" (remote-create-dir-interactive server))
+  ("Browse files" (remote-browse server))
   (when (remote-file-name (current-buffer))
     ("Permissions" (open-file-permissions-editor server (current-buffer)))))
 

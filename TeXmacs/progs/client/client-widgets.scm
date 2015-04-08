@@ -15,6 +15,86 @@
   (:use (client client-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File browser
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (more-parents? dir)
+  (with parent (url-head dir)
+    (!= (url-head parent) parent)))
+
+(define (get-ancestors dir)
+  (let* ((parent (url-head dir))
+         (this (url->string (url-tail dir)))
+         (last (cons this dir)))
+    (if (more-parents? parent)
+        (rcons (get-ancestors parent) last)
+        (list last))))
+
+(define (string-strip s prefix)
+  (if (string-starts? s prefix) (string-drop s (string-length prefix)) s))
+
+(define (remote-relative dir name)
+  (if (and (more-parents? dir) (more-parents? (url-head dir)))
+      (remote-relative (url-head dir) name)
+      (url-append dir name)))
+
+(tm-widget ((remote-file-browser server orig-dir type) quit)
+  (let* ((dir orig-dir)
+         (entries (list))
+         (select-dir
+          (lambda (d)
+            (with name (string-strip (url->string d) "tmfs://remote-dir/")
+              ;;(display* "old dir= " dir "\n")
+              ;;(display* `(remote-dir-load ,name) "\n")
+              (client-remote-eval server `(remote-dir-load ,name)
+                (lambda (new-entries)
+                  ;;(display* "Got " new-entries "\n")
+                  (set! dir d)
+                  (set! entries new-entries)
+                  ;;(display* "new dir= " dir "\n")
+                  (refresh-now "remote-file-browser"))
+                (lambda (err)
+                  ;;(display* "Got " err "\n")
+                  ;;(display* "new dir= " dir "\n")
+                  (set-message err "remote directory"))))))
+         (select-entry
+          (lambda (e)
+            (with (full-name dir? props) (assoc-ref entries e)
+              (with name (remote-relative dir full-name)
+                (cond (dir? (select-dir name))
+                      (else (quit name)))))))
+         (list-entry?
+          (lambda (e)
+            (with (short-name full-name dir? props) e
+              (if (== type :directory) dir? #t))))
+         (dummy (select-dir orig-dir)))
+    (padded
+      (refreshable "remote-file-browser"
+        (hlist
+          (explicit-buttons
+            (for (a (get-ancestors dir))
+              ((eval (car a)) (select-dir (cdr a))) //)
+            >>))
+        ===
+        (resize "600px" "400px"
+          (choice (select-entry answer)
+                  (map car (list-filter entries list-entry?))
+                  ""))
+        (assuming (== type :directory)
+          (bottom-buttons
+            >>
+            ("Ok" (quit dir))))))))
+
+(tm-define (open-remote-file-browser server dir type name cmd)
+  (:interactive #t)
+  (dialogue-window (remote-file-browser server dir type) cmd name))
+
+(tm-define (remote-browse server)
+  (:interactive #t)
+  (open-remote-file-browser server (current-buffer) :file
+                            "File browser" ignore))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Permissions editor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
