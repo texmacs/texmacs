@@ -44,6 +44,8 @@
     ("New remote file" (remote-create-file-interactive server))
     ("New remote directory" (remote-create-dir-interactive server))
     ;;("Browse files" (remote-browse server))
+    (when (not (remote-home-directory? (current-buffer)))
+      ("Rename" (remote-rename-interactive server)))
     ("Permissions" (open-file-permissions-editor server (current-buffer)))))
 
 (menu-bind remote-menu

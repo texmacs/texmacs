@@ -53,6 +53,30 @@
          (substring fname 18 (string-length fname)))
         (else #f)))
 
+(tm-define (remote-file? fname)
+  (set! fname (url->string fname))
+  (string-starts? fname "tmfs://remote-file/"))
+
+(tm-define (remote-directory? fname)
+  (set! fname (url->string fname))
+  (string-starts? fname "tmfs://remote-dir/"))
+
+(tm-define (remote-parent fname)
+  (with name (remote-file-name fname)
+    (or (with h (url->string (url-head name))
+          (if (== h ".") fname
+              (string->url (string-append "tmfs://remote-dir/" h))))
+        fname)))
+
+(tm-define (remote-root-directory? fname)
+  (and (remote-directory? fname)
+       (== (remote-parent fname) fname)))
+
+(tm-define (remote-home-directory? fname)
+  (and (remote-directory? fname)
+       (not (remote-root-directory? fname))
+       (remote-root-directory? (remote-parent fname))))
+
 (tm-define (remote-get-file-identifier server u cont)
   ;;(display* "remote-get-file-identifier " server ", " u "\n")
   (set! u (or (remote-file-name u) (url->string u)))

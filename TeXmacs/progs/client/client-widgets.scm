@@ -18,32 +18,33 @@
 ;; File browser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (more-parents? dir)
-  (with parent (url-head dir)
-    (!= (url-head parent) parent)))
-
 (define (get-ancestors dir)
-  (let* ((parent (url-head dir))
+  (let* ((parent (remote-parent dir))
          (this (url->string (url-tail dir)))
          (last (cons this dir)))
-    (if (more-parents? parent)
+    (if (not (remote-home-directory? dir))
         (rcons (get-ancestors parent) last)
         (list last))))
 
-(define (string-strip s prefix)
-  (if (string-starts? s prefix) (string-drop s (string-length prefix)) s))
+(define (remote-relative dir name dir?)
+  (if (remote-root-directory? dir)
+      (let* ((root (remote-file-name dir))
+             (protocol (if dir? "tmfs://remote-dir/" "tmfs://remote-file/"))
+             (full (string-append protocol root)))
+        (url-append full name))
+      (remote-relative (remote-parent dir) name dir?)))
 
-(define (remote-relative dir name)
-  (if (and (more-parents? dir) (more-parents? (url-head dir)))
-      (remote-relative (url-head dir) name)
-      (url-append dir name)))
-
-(tm-widget ((remote-file-browser server orig-dir type) quit)
-  (let* ((dir orig-dir)
+(tm-widget ((remote-file-browser server orig type) quit)
+  (let* ((save-flag? (or (func? type :save-file 1)
+                         (func? type :save-directory 1)))
+         (dir-flag? (or (== type :directory)
+                        (func? type :save-directory 1)))
+         (dir (if save-flag? (remote-parent orig) orig))
+         (file (and save-flag? (url->string (url-tail orig))))
          (entries (list))
          (select-dir
           (lambda (d)
-            (with name (string-strip (url->string d) "tmfs://remote-dir/")
+            (and-with name (remote-file-name d)
               ;;(display* "old dir= " dir "\n")
               ;;(display* `(remote-dir-load ,name) "\n")
               (client-remote-eval server `(remote-dir-load ,name)
@@ -60,14 +61,17 @@
          (select-entry
           (lambda (e)
             (with (full-name dir? props) (assoc-ref entries e)
-              (with name (remote-relative dir full-name)
+              (with name (remote-relative dir full-name dir?)
                 (cond (dir? (select-dir name))
+                      (save-flag?
+                       (set! file (url->string (url-tail name)))
+                       (refresh-now "remote-save-as"))
                       (else (quit name)))))))
          (list-entry?
           (lambda (e)
             (with (short-name full-name dir? props) e
-              (if (== type :directory) dir? #t))))
-         (dummy (select-dir orig-dir)))
+              (if dir-flag? dir? #t))))
+         (dummy (select-dir dir)))
     (padded
       (refreshable "remote-file-browser"
         (hlist
@@ -80,7 +84,17 @@
           (choice (select-entry answer)
                   (map car (list-filter entries list-entry?))
                   ""))
-        (assuming (== type :directory)
+        (assuming save-flag?
+          ===
+          (hlist
+            (text (cadr type)) //
+            (refreshable "remote-save-as"
+              (input (when answer (quit (url-append dir answer)))
+                     "string" (list file) "1w"))
+            // // //
+            (explicit-buttons
+              ("Ok" (quit (url-append dir file)))))    )
+        (assuming (and dir-flag? (not save-flag?))
           (bottom-buttons
             >>
             ("Ok" (quit dir))))))))
@@ -89,10 +103,19 @@
   (:interactive #t)
   (dialogue-window (remote-file-browser server dir type) cmd name))
 
-(tm-define (remote-browse server)
+(define (remote-rename src dest)
+  (display* "Rename " src " -> " dest "\n"))
+
+(tm-define (remote-rename-interactive server)
   (:interactive #t)
-  (open-remote-file-browser server (current-buffer) :file
-                            "File browser" ignore))
+  (with dir? (remote-directory? (current-buffer))
+    (open-remote-file-browser
+     server (current-buffer)
+     (list (if dir? :save-directory :save-file) "Rename as:")
+     (if dir? "Rename directory" "Rename file")
+     (lambda (new-name)
+       (when (url? new-name)
+         (remote-rename (current-buffer) new-name))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Permissions editor
