@@ -73,7 +73,8 @@
 
 (define (inheritance-reserved-attributes)
   (append (db-reserved-attributes)
-          (list "name")))
+          (db-meta-attributes)
+          (list "name" "version-list" "version-nr")))
 
 (define (inherit-property? x)
   (nin? (car x) (inheritance-reserved-attributes)))
@@ -97,8 +98,59 @@
           (else (server-return envelope rid)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Version control
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (version-first uid name)
+  (with vname (string-append name "-versions")
+    (db-create-entry (list (list "type" "version-list")
+                           (list "name" vname)
+                           (list "owner" uid)
+                           (list "version-current" "1")))))
+
+(define (version-next vid)
+  (let* ((cur (db-get-field-first vid "version-current" "0"))
+         (next (number->string (+ (string->number cur) 1))))
+    (with-user #t
+      (db-set-field vid "version-current" (list next))
+      next)))
+
+(define (version-get-list rid)
+  (with-user #t
+    (db-get-field-first rid "version-list" #f)))
+
+(define (version-get-number rid)
+  (with-user #t
+    (db-get-field-first rid "version-nr" "0")))
+
+(define (version-get-current vid)
+  (with-user #t
+    (db-get-field-first vid "version-current" "0")))
+
+(define (version-get-versions vid)
+  (with-user #t
+    (with-time :always
+      (db-search (list (list "version-list" vid)
+                       (list :order "version-nr" #t))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remote-create uid rname vid nr doc)
+  (let* ((l (tmfs->list rname))
+         (did (safe-car (search-file (cDr (cdr l)))))
+         (rid (with-time-stamp #t
+                (db-create-entry (list (list "type" "file")
+                                       (list "name" (cAr l))
+                                       (list "owner" uid)
+                                       (list "version-list" vid)
+                                       (list "version-nr" nr)))))
+         (name (repository-add rid (url-suffix rname)))
+         (fname (repository-get rid)))
+    (inherit-properties rid did)
+    (db-set-field rid "dir" (list did))
+    (string-save doc fname)))
 
 (tm-service (remote-file-create rname doc)
   ;;(display* "remote-file-create " rname ", " doc "\n")
@@ -115,14 +167,9 @@
           ((not (db-allow? did uid "writable"))
            (server-error envelope "Error: write access required for directory"))
           (else
-            (let* ((rid (db-create-entry (list (list "type" "file")
-                                               (list "name" (cAr l))
-                                               (list "owner" uid))))
-                   (name (repository-add rid (url-suffix rname)))
-                   (fname (repository-get rid)))
-              (inherit-properties rid did)
-              (db-set-field rid "dir" (list did))
-              (string-save doc fname)
+            (with vid (version-first uid (cAr l))
+              (remote-create uid rname vid "1" doc)
+              ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
               (server-return envelope doc))))))
 
 (tm-service (remote-file-load rname)
@@ -146,6 +193,7 @@
   ;;(display* "remote-file-save " rname ", " doc "\n")
   (let* ((uid (server-get-user envelope))
          (rid (file-name->resource (tmfs-cdr rname)))
+         (vid (version-get-list rid))
          (fname (repository-get rid)))
     (cond ((not uid)
            (server-error envelope "Error: not logged in"))
@@ -153,16 +201,23 @@
            (server-error envelope "Error: file does not exist"))
           ((not (db-allow? rid uid "writable"))
            (server-error envelope "Error: write access denied"))
+          ((!= (version-get-number rid) (version-get-current vid))
+           (server-error envelope "Error: version number mismatch"))
+          ((== (string-load fname) doc) ;; no changes need to be saved
+           (server-return envelope doc))
           (else
-            (string-save doc fname)
-            (server-return envelope doc)))))
+            (with nr (version-next vid)
+              (remote-create uid rname vid nr doc)
+              (db-remove-entry rid)
+              ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
+              (server-return envelope doc))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-service (remote-dir-create rname)
-  (display* "remote-dir-create " rname "\n")
+  ;;(display* "remote-dir-create " rname "\n")
   (let* ((uid (server-get-user envelope))
          (fid (file-name->resource (tmfs-cdr rname)))
          (l (tmfs->list rname))

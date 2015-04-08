@@ -143,9 +143,11 @@
 ;; Time and limit constraints
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-decode-time t)
+(tm-define (db-decode-time t)
   (cond ((== t :now)
          "strftime('%s','now')")
+        ((== t :always)
+         "always")
         ((integer? t)
          (number->string t))
         ((string? t)
@@ -157,16 +159,19 @@
         (else (texmacs-error "sql-time" "invalid time"))))
 
 (define (db-time-constraint)
-  (string-append "created <= (" db-time ") AND "
-                 "expires >  (" db-time ")"))
+  (if (== db-time "always") "1"
+      (string-append "created <= (" db-time ") AND "
+                     "expires >  (" db-time ")")))
 
 (define (db-time-constraint-on x)
-  (string-append x ".created <= (" db-time ") AND "
-                 x ".expires >  (" db-time ")"))
+  (if (== db-time "always") "1"
+      (string-append x ".created <= (" db-time ") AND "
+                     x ".expires >  (" db-time ")")))
 
 (define (db-check-now)
   (when (!= db-time "strftime('%s','now')")
-    (texmacs-error "db-check-now" "cannot rewrite history")))
+    (when (!= db-time "always")
+      (texmacs-error "db-check-now" "cannot rewrite history"))))
 
 (define (db-limit-constraint)
   (if db-limit (string-append " LIMIT " (number->string db-limit)) ""))
