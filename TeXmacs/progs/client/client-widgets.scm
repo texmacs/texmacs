@@ -97,14 +97,11 @@
         (assuming (and dir-flag? (not save-flag?))
           (bottom-buttons
             >>
-            ("Ok" (quit dir))))))))
+            ("Ok" (quit (url->url dir)))))))))
 
 (tm-define (open-remote-file-browser server dir type name cmd)
   (:interactive #t)
   (dialogue-window (remote-file-browser server dir type) cmd name))
-
-(define (remote-rename src dest)
-  (display* "Rename " src " -> " dest "\n"))
 
 (tm-define (remote-rename-interactive server)
   (:interactive #t)
@@ -190,7 +187,7 @@
 
 (tm-define (open-file-permissions-editor server u)
   (:interactive #t)
-  (with-remote-get-file-identifier rid server u
+  (with-remote-identifier rid server u
     (when rid
       (with attrs (list "readable" "writable" "owner")
         (open-entry-permissions-editor server rid attrs)))))

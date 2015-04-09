@@ -85,16 +85,27 @@
     (for (prop props2)
       (db-set-field derived-rid (car prop) (cdr prop)))))
 
-(tm-service (remote-get-file-identifier rname)
-  ;;(display* "remote-file-get-identifier " rname ", " props "\n")
+(tm-service (remote-exists? rname)
+  ;;(display* "remote-identifier " rname ", " props "\n")
+  (let* ((uid (server-get-user envelope))
+         (rid (file-name->resource (tmfs-cdr rname))))
+    (if (not uid)
+        (server-error envelope "Error: not logged in")
+        (server-return envelope
+                       (and rid (db-allow rid uid "readable") rid)))))
+
+(tm-service (remote-identifier rname)
+  ;;(display* "remote-identifier " rname ", " props "\n")
   (let* ((uid (server-get-user envelope))
          (rid (file-name->resource (tmfs-cdr rname))))
     (cond ((not uid)
            (server-error envelope "Error: not logged in"))
           ((not rid)
-           (server-error envelope "Error: file does not exist"))
+           ;;(server-error envelope "Error: file does not exist")
+           (server-return envelope #f))
           ((not (db-allow? rid uid "readable"))
-           (server-error envelope "Error: read access denied"))
+           ;;(server-error envelope "Error: read access denied")
+           (server-return envelope #f))
           (else (server-return envelope rid)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

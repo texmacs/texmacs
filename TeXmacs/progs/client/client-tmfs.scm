@@ -77,14 +77,14 @@
        (not (remote-root-directory? fname))
        (remote-root-directory? (remote-parent fname))))
 
-(tm-define (remote-get-file-identifier server u cont)
-  ;;(display* "remote-get-file-identifier " server ", " u "\n")
+(tm-define (remote-identifier server u cont)
+  ;;(display* "remote-identifier " server ", " u "\n")
   (set! u (or (remote-file-name u) (url->string u)))
-  (client-remote-eval server `(remote-get-file-identifier ,u) cont))
+  (client-remote-eval server `(remote-identifier ,u) cont))
 
-(tm-define-macro (with-remote-get-file-identifier r server u . body)
-  `(remote-get-file-identifier ,server ,u
-                               (lambda (msg) (with ,r msg ,@body))))
+(tm-define-macro (with-remote-identifier r server u . body)
+  `(remote-identifier ,server ,u
+                      (lambda (msg) (with ,r msg ,@body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote files
@@ -139,12 +139,13 @@
          (def-title (url->string (url-tail fname))))
     (with old-title (or (ahash-ref remote-title-table fname) def-title)
       (when server
-        (with-remote-get-file-identifier rid server fname
-          (with-remote-get-field new-title server rid "title"
-            (set! new-title (if (pair? new-title) (car new-title) old-title))
-            (when (and (buffer-exists? fname) (!= new-title old-title))
-              (buffer-set-title fname new-title))
-            (ahash-set! remote-title-table fname new-title))))
+        (with-remote-identifier rid server fname
+          (when rid
+            (with-remote-get-field new-title server rid "title"
+              (set! new-title (if (pair? new-title) (car new-title) old-title))
+              (when (and (buffer-exists? fname) (!= new-title old-title))
+                (buffer-set-title fname new-title))
+              (ahash-set! remote-title-table fname new-title)))))
       old-title)))
 
 (tmfs-load-handler (remote-file name)
@@ -227,3 +228,45 @@
               (set-message err "remote directory")))
           (set-message "loading..." "remote directory")
           (empty-document)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Other operations on files and directories
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (ancestor? d f)
+  (or (== d f)
+      (and (!= (remote-parent f) f)
+           (ancestor? d (remote-parent f)))))
+
+(tm-define (remote-rename src dest)
+  (let* ((src* (remote-file-name src))
+         (dest* (remote-file-name dest))
+         (src-sv (car (tmfs->list src*)))
+         (dest-sv (car (tmfs->list dest*)))
+         (server (client-find-server src-sv))
+         (action (if (remote-file? src) "rename file" "rename directory"))
+         (dir (remote-parent dest))
+         (name (url->string (url-tail dest))))
+    (with-remote-identifier rid server src
+      (with-remote-identifier did server dir
+        (with-remote-identifier oid server dest
+          (cond ((== dest src)
+                 (set-message "same names" action))
+                ((!= dest-sv src-sv)
+                 (set-message "cannot rename across different servers" action))
+                ((not server)
+                 (set-message "not connected to server" action))
+                ((ancestor? src dest)
+                 (set-message "invalid renaming" action))
+                ((not rid)
+                 "source file not found" action)
+                ((not rid)
+                 "destination directory not found" action)
+                (oid
+                 "destination already exists" action)
+                (else
+                  (remote-set-field server rid "dir" (list did))
+                  (remote-set-field server rid "name" (list name))
+                  (buffer-rename src dest)
+                  (set-message (string-append "renamed as " (url->string dest))
+                               action))))))))

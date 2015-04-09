@@ -97,10 +97,21 @@
   (append binary-keywords binary-no-highlight))
 
 (setq ternary-keywords
-  '(ahash-with canvas-input))
+  '(ahash-with canvas-input
+    with-remote-get-attributes
+    with-remote-get-entry with-remote-create-entry
+    with-remote-search with-remote-search-user
+    with-remote-get-user-pseudo with-remote-get-user-name
+    with-remote-identifier))
 
 (setq ternary-indent
   ternary-keywords)
+
+(setq quaternary-keywords
+  '(with-remote-get-field))
+
+(setq quaternary-indent
+  quaternary-keywords)
 
 (setq other-keywords
   '(for if inherit former
@@ -115,7 +126,8 @@
 
 (setq highlight-keywords
   (append nullary-keywords unary-keywords unary-definitions
-	  binary-keywords ternary-keywords other-keywords))
+	  binary-keywords ternary-keywords quaternary-keywords
+          other-keywords))
 
 (setq highlight-any
   (append highlight-definitions highlight-keywords))
@@ -148,6 +160,8 @@
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+ \\sw+\\)\\>")
      '(3 font-lock-function-name-face))
     '("\\<\\(\\sw+%\\)\\>" . font-lock-type-face)))
+  (dolist (s quaternary-indent)
+    (put s 'scheme-indent-function 4))
   (dolist (s ternary-indent)
     (put s 'scheme-indent-function 3))
   (dolist (s binary-indent)

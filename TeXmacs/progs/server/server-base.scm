@@ -37,11 +37,14 @@
 
 (tm-define (server-eval envelope cmd)
   ;; (display* "server-eval " envelope ", " cmd "\n")
-  (if (and (pair? cmd) (ahash-ref service-dispatch-table (car cmd)))
-      (with (name . args) cmd
-        (with fun (ahash-ref service-dispatch-table name)
-          (apply fun (cons envelope args))))
-      (server-error envelope "invalid command")))
+  (cond ((and (pair? cmd) (ahash-ref service-dispatch-table (car cmd)))
+         (with (name . args) cmd
+           (with fun (ahash-ref service-dispatch-table name)
+             (apply fun (cons envelope args)))))
+        ((symbol? (car cmd))
+         (with s (symbol->string (car cmd))
+           (server-error envelope (string-append "invalid command '" s "'"))))
+        (else (server-error envelope "invalid command"))))
 
 (tm-define (server-return envelope ret-val)
   (with (client msg-id) envelope
