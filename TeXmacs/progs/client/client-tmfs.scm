@@ -61,22 +61,6 @@
   (set! fname (url->string fname))
   (string-starts? fname "tmfs://remote-dir/"))
 
-(tm-define (remote-parent fname)
-  (with name (remote-file-name fname)
-    (or (with h (url->string (url-head name))
-          (if (== h ".") fname
-              (string->url (string-append "tmfs://remote-dir/" h))))
-        fname)))
-
-(tm-define (remote-root-directory? fname)
-  (and (remote-directory? fname)
-       (== (remote-parent fname) fname)))
-
-(tm-define (remote-home-directory? fname)
-  (and (remote-directory? fname)
-       (not (remote-root-directory? fname))
-       (remote-root-directory? (remote-parent fname))))
-
 (tm-define (remote-identifier server u cont)
   ;;(display* "remote-identifier " server ", " u "\n")
   (set! u (or (remote-file-name u) (url->string u)))
@@ -85,6 +69,30 @@
 (tm-define-macro (with-remote-identifier r server u . body)
   `(remote-identifier ,server ,u
                       (lambda (msg) (with ,r msg ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Navigation in remote file systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (remote-root-directory? fname)
+  (and (remote-directory? fname)
+       (or (== (url->string (url-tail fname)) "remote-dir")
+           (== (url->string (url-tail (url-head fname))) "remote-dir")
+           (and (string-starts? (url->string (url-tail fname)) "time=")
+                (remote-root-directory? (url-head fname))))))
+
+(tm-define (remote-parent fname)
+  (with name (remote-file-name fname)
+    (cond ((not name) (url-head fname))
+          ((remote-root-directory? fname) fname)
+          (else
+            (with h (url->string (url-head name))
+              (string->url (string-append "tmfs://remote-dir/" h)))))))
+
+(tm-define (remote-home-directory? fname)
+  (and (remote-directory? fname)
+       (not (remote-root-directory? fname))
+       (remote-root-directory? (remote-parent fname))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote files
