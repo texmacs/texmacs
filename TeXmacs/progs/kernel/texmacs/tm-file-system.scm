@@ -166,6 +166,9 @@
   (if (not (tmfs-pair? s)) (list s)
       (cons (tmfs-car s) (tmfs->list (tmfs-cdr s)))))
 
+(define-public (list->tmfs l)
+  (apply string-append (list-intersperse l "/")))
+
 (define-public (strip-colon s)
   (if (and (>= (string-length s) 3)
            (string-alpha? (substring s 0 1))

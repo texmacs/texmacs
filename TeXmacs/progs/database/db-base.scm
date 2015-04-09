@@ -100,6 +100,7 @@
 
 (tm-define (db-sql* . l)
   (with r (apply db-sql-raw l)
+    ;;(display* "---> " r "\n")
     (with f (lambda (x) (and (pair? x) (car x)))
       (map f (if (null? r) r (cdr r))))))
 

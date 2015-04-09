@@ -85,28 +85,20 @@
     (for (prop props2)
       (db-set-field derived-rid (car prop) (cdr prop)))))
 
-(tm-service (remote-exists? rname)
-  ;;(display* "remote-identifier " rname ", " props "\n")
-  (let* ((uid (server-get-user envelope))
-         (rid (file-name->resource (tmfs-cdr rname))))
-    (if (not uid)
-        (server-error envelope "Error: not logged in")
-        (server-return envelope
-                       (and rid (db-allow rid uid "readable") rid)))))
-
 (tm-service (remote-identifier rname)
   ;;(display* "remote-identifier " rname ", " props "\n")
-  (let* ((uid (server-get-user envelope))
-         (rid (file-name->resource (tmfs-cdr rname))))
-    (cond ((not uid)
-           (server-error envelope "Error: not logged in"))
-          ((not rid)
-           ;;(server-error envelope "Error: file does not exist")
-           (server-return envelope #f))
-          ((not (db-allow? rid uid "readable"))
-           ;;(server-error envelope "Error: read access denied")
-           (server-return envelope #f))
-          (else (server-return envelope rid)))))
+  (with-remote-context rname
+    (let* ((uid (server-get-user envelope))
+           (rid (file-name->resource (tmfs-cdr rname))))
+      (cond ((not uid)
+             (server-error envelope "Error: not logged in"))
+            ((not rid)
+             ;;(server-error envelope "Error: file does not exist")
+             (server-return envelope #f))
+            ((not (db-allow? rid uid "readable"))
+             ;;(server-error envelope "Error: read access denied")
+             (server-return envelope #f))
+            (else (server-return envelope rid))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Version control
@@ -145,6 +137,25 @@
                        (list :order "version-nr" #t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Unpack the context from the file name
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmfs-car* f) (or (tmfs-car f) f))
+(define (tmfs-cdr* f) (or (tmfs-cdr f) ""))
+
+(tm-define-macro (with-remote-context rname . body)
+  `(let* ((path (tmfs->list ,rname))
+          (host (car path))
+          (head (if (pair? (cdr path)) (cadr path) ""))
+          (past? (string-starts? head "time="))
+          (tail (if past? (cddr path) (cdr path)))
+          (next (list->tmfs (cons host tail)))
+          (time (if past? (string-drop head 5) db-time)))
+     (with-global db-time time
+       (with-global ,rname next
+         ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote file manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -165,63 +176,70 @@
 
 (tm-service (remote-file-create rname doc)
   ;;(display* "remote-file-create " rname ", " doc "\n")
-  (let* ((uid (server-get-user envelope))
-         (fid (file-name->resource (tmfs-cdr rname)))
-         (l (tmfs->list rname))
-         (did (safe-car (search-file (cDr (cdr l))))))
-    (cond ((not uid)
-           (server-error envelope "Error: not logged in"))
-          (fid
-           (server-error envelope "Error: file already exists"))
-          ((not did)
-           (server-error envelope "Error: directory does not exist"))
-          ((not (db-allow? did uid "writable"))
-           (server-error envelope "Error: write access required for directory"))
-          (else
-            (with vid (version-first uid (cAr l))
-              (remote-create uid rname vid "1" doc)
-              ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
-              (server-return envelope doc))))))
+  (with-remote-context rname
+    (let* ((uid (server-get-user envelope))
+           (fid (file-name->resource (tmfs-cdr rname)))
+           (l (tmfs->list rname))
+           (did (safe-car (search-file (cDr (cdr l))))))
+      (cond ((not uid)
+             (server-error envelope "Error: not logged in"))
+            (fid
+             (server-error envelope "Error: file already exists"))
+            ((not did)
+             (server-error envelope "Error: directory does not exist"))
+            ((not (db-allow? did uid "writable"))
+             (server-error envelope "Error: directory write access required"))
+            (past?
+             (server-error envelope "Error: cannot modify past"))
+            (else
+              (with vid (version-first uid (cAr l))
+                (remote-create uid rname vid "1" doc)
+                ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
+                (server-return envelope doc)))))))
 
 (tm-service (remote-file-load rname)
   ;;(display* "remote-file-load " rname "\n")
-  (let* ((uid (server-get-user envelope))
-         (rid (file-name->resource (tmfs-cdr rname)))
-         (fname (repository-get rid)))
-    (cond ((not uid) ;; FIXME: anonymous access
-           (server-error envelope "Error: not logged in"))
-          ((not rid)
-           (server-error envelope "Error: file does not exist"))
-          ((not (db-allow? rid uid "readable"))
-           (server-error envelope "Error: read access denied"))
-          ((not (url-exists? fname))
-           (server-error envelope "Error: file not found"))
-          (else
-            (with doc (string-load fname)
-              (server-return envelope doc))))))
+  (with-remote-context rname
+    (let* ((uid (server-get-user envelope))
+           (rid (file-name->resource (tmfs-cdr rname)))
+           (fname (repository-get rid)))
+      (cond ((not uid) ;; FIXME: anonymous access
+             (server-error envelope "Error: not logged in"))
+            ((not rid)
+             (server-error envelope "Error: file does not exist"))
+            ((not (db-allow? rid uid "readable"))
+             (server-error envelope "Error: read access denied"))
+            ((not (url-exists? fname))
+             (server-error envelope "Error: file not found"))
+            (else
+              (with doc (string-load fname)
+                (server-return envelope doc)))))))
 
 (tm-service (remote-file-save rname doc)
   ;;(display* "remote-file-save " rname ", " doc "\n")
-  (let* ((uid (server-get-user envelope))
-         (rid (file-name->resource (tmfs-cdr rname)))
-         (vid (version-get-list rid))
-         (fname (repository-get rid)))
-    (cond ((not uid)
-           (server-error envelope "Error: not logged in"))
-          ((not rid)
-           (server-error envelope "Error: file does not exist"))
-          ((not (db-allow? rid uid "writable"))
-           (server-error envelope "Error: write access denied"))
-          ((!= (version-get-number rid) (version-get-current vid))
-           (server-error envelope "Error: version number mismatch"))
-          ((== (string-load fname) doc) ;; no changes need to be saved
-           (server-return envelope doc))
-          (else
-            (with nr (version-next vid)
-              (remote-create uid rname vid nr doc)
-              (db-remove-entry rid)
-              ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
-              (server-return envelope doc))))))
+  (with-remote-context rname
+    (let* ((uid (server-get-user envelope))
+           (rid (file-name->resource (tmfs-cdr rname)))
+           (vid (version-get-list rid))
+           (fname (repository-get rid)))
+      (cond ((not uid)
+             (server-error envelope "Error: not logged in"))
+            ((not rid)
+             (server-error envelope "Error: file does not exist"))
+            ((not (db-allow? rid uid "writable"))
+             (server-error envelope "Error: write access denied"))
+            ((!= (version-get-number rid) (version-get-current vid))
+             (server-error envelope "Error: version number mismatch"))
+            ((== (string-load fname) doc) ;; no changes need to be saved
+             (server-return envelope doc))
+            (past?
+             (server-error envelope "Error: cannot modify past"))
+            (else
+              (with nr (version-next vid)
+                (remote-create uid rname vid nr doc)
+                (db-remove-entry rid)
+                ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
+                (server-return envelope doc)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
@@ -229,25 +247,28 @@
 
 (tm-service (remote-dir-create rname)
   ;;(display* "remote-dir-create " rname "\n")
-  (let* ((uid (server-get-user envelope))
-         (fid (file-name->resource (tmfs-cdr rname)))
-         (l (tmfs->list rname))
-         (did (safe-car (search-file (cDr (cdr l))))))
-    (cond ((not uid)
-           (server-error envelope "Error: not logged in"))
-          (fid
-           (server-error envelope "Error: directory already exists"))
-          ((not did)
-           (server-error envelope "Error: directory does not exist"))
-          ((not (db-allow? did uid "writable"))
-           (server-error envelope "Error: write access required for directory"))
-          (else
-            (with rid (db-create-entry (list (list "type" "dir")
-                                             (list "name" (cAr l))
-                                             (list "owner" uid)))
-              (inherit-properties rid did)
-              (db-set-field rid "dir" (list did))
-              (server-return envelope (list)))))))
+  (with-remote-context rname
+    (let* ((uid (server-get-user envelope))
+           (fid (file-name->resource (tmfs-cdr rname)))
+           (l (tmfs->list rname))
+           (did (safe-car (search-file (cDr (cdr l))))))
+      (cond ((not uid)
+             (server-error envelope "Error: not logged in"))
+            (fid
+             (server-error envelope "Error: directory already exists"))
+            ((not did)
+             (server-error envelope "Error: directory does not exist"))
+            ((not (db-allow? did uid "writable"))
+             (server-error envelope "Error: directory write access required"))
+            (past?
+             (server-error envelope "Error: cannot modify past"))
+            (else
+              (with rid (db-create-entry (list (list "type" "dir")
+                                               (list "name" (cAr l))
+                                               (list "owner" uid)))
+                (inherit-properties rid did)
+                (db-set-field rid "dir" (list did))
+                (server-return envelope (list))))))))
 
 (define (filter-read-access rids uid)
   (cond ((null? rids) rids)
@@ -264,17 +285,18 @@
 
 (tm-service (remote-dir-load rname)
   ;;(display* "remote-dir-load " rname "\n")
-  (with uid (server-get-user envelope)
-    (if (not uid) (server-error envelope "Error: not logged in")
-        (let* ((server (car (tmfs->list rname)))
-               (dirs (search-file (cdr (tmfs->list rname))))
-               (rid (safe-car dirs)))
-          (cond ((not rid)
-                 (server-error envelope "Error: directory does not exist"))
-                ((not (db-allow? rid uid "readable"))
-                 (server-error envelope "Error: read access required"))
-                (else
-                  (let* ((matches (dir-contents rid))
-                         (filtered (filter-read-access matches uid))
-                         (rewr (map rewrite-dir-entry filtered)))
-                    (server-return envelope rewr))))))))
+  (with-remote-context rname
+    (with uid (server-get-user envelope)
+      (if (not uid) (server-error envelope "Error: not logged in")
+          (let* ((server (car (tmfs->list rname)))
+                 (dirs (search-file (cdr (tmfs->list rname))))
+                 (rid (safe-car dirs)))
+            (cond ((not rid)
+                   (server-error envelope "Error: directory does not exist"))
+                  ((not (db-allow? rid uid "readable"))
+                   (server-error envelope "Error: read access required"))
+                  (else
+                    (let* ((matches (dir-contents rid))
+                           (filtered (filter-read-access matches uid))
+                           (rewr (map rewrite-dir-entry filtered)))
+                      (server-return envelope rewr)))))))))
