@@ -29,10 +29,6 @@
 (tm-define (clipboard-export-preference-menu)
   (clipboard-preference-menu converters-from-special clipboard-set-export))
 
-(tm-menu (tools-selections-menu)
-  (-> "Import" (link clipboard-import-preference-menu))
-  (-> "Export" (link clipboard-export-preference-menu)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,14 +36,6 @@
 (menu-bind tools-menu
   (-> "Macros"
       (link source-macros-menu))
-  (-> "Execute"
-      ("Execute system command" (interactive system))
-      ("Evaluate scheme expression" (interactive footer-eval)))
-  (-> "Consoles"
-      ("Debugging console" (open-debug-console))
-      ("Error messages" (open-error-messages)))
-  (-> "Selections"
-      (link tools-selections-menu))
   (-> "Update"
       ("Inclusions" (inclusions-gc))
       ("Plugins" (reinit-plugin-cache))
@@ -68,18 +56,12 @@
       ("Count words" (show-word-count))
       ("Count lines" (show-line-count)))
   (-> "Miscellaneous"
-      ("Clear undo history" (clear-undo-history)))
-  (if (use-menus?)
-      (-> "Experimental"
-          ("Fast environments" (toggle-preference "fast environments"))
-          ("Alpha transparency" (toggle-preference "experimental alpha"))
-          ("New style fonts" (toggle-preference "new style fonts"))
-          ("Program bracket matching"
-           (toggle-preference "prog:highlight brackets"))
-          ("New bibliography dialogue"
-           (toggle-preference "gui:new bibliography dialogue"))))
-  (if (use-popups?)
-      ("Experimental" (interactive open-experimental-preferences)))
+      ("Clear undo history" (clear-undo-history))
+      ---
+      (-> "Import selections as"
+          (link clipboard-import-preference-menu))
+      (-> "Export selections as"
+          (link clipboard-export-preference-menu)))
   ---
   (-> "Server"
       (link server-menu))

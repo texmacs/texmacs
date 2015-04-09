@@ -1,6 +1,6 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Compatibility with other formats>
@@ -9,7 +9,7 @@
   formats: the native <TeXmacs> format, <name|Xml> and as a <name|Scheme>
   expression. <TeXmacs> documents can be converted in a <em|wysiwyg>
   (what-you-see-is-what-you-get) way to either <name|Postscript> or
-  <name|Pdf>, which are used as the primary formats for <hyper-link|printing
+  <name|Pdf>, which are used as the primary formats for <hlink|printing
   documents|../start/man-print.en.tm>. <TeXmacs> finally provides converters
   for <LaTeX>, <name|Html> and <name|MathML>.
 
@@ -19,7 +19,8 @@
   exporting or importing entire documents, it is also possible to copy and
   paste document fragments using <menu|Edit|Copy to> and <menu|Edit|Paste
   from>. The default formats for copy and pasting can be specified in
-  <menu|Tools|Selections|Export> and <menu|Tools|Selections|Import>.
+  <menu|Tools|Miscellaneous|Export selections as> and
+  <menu|Tools|Miscellaneous|Import selections as>.
 
   <\traverse>
     <branch|<LaTeX>|latex/man-latex.en.tm>
@@ -38,9 +39,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
