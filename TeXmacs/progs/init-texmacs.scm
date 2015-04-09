@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define boot-start (texmacs-time))
-(define remote-list (list))
+(define remote-client-list (list))
 
 (define developer-mode?
   (equal? (cpp-get-preference "developer tool" "off") "on"))
@@ -315,8 +315,8 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")
-(lazy-menu (server server-menu) server-menu)
-(lazy-menu (client client-menu) client-menu remote-menu)
+(lazy-menu (server server-menu) start-server-menu server-menu)
+(lazy-menu (client client-menu) start-client-menu client-menu)
 (lazy-tmfs-handler (client client-tmfs) remote-file)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 

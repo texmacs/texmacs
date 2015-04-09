@@ -17,6 +17,7 @@ void   server_start ();
 void   server_stop ();
 string server_read (int fd);
 void   server_write (int fd, string s);
+bool   server_started ();
 
 int    client_start (string host);
 void   client_stop (int fd);

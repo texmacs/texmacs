@@ -41,6 +41,11 @@ server_stop () {
   }
 }
 
+bool
+server_started () {
+  return the_server != NULL;
+}
+
 string
 server_read (int fd) {
   tm_link ln= find_socket_link (fd);

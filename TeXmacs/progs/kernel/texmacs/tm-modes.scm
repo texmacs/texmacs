@@ -213,6 +213,7 @@
   (with-developer-tool% (== (get-preference "developer tool") "on"))
   (with-linking-tool% (== (get-preference "linking tool") "on"))
   (with-presentation-tool% (== (get-preference "presentation tool") "on"))
+  (with-remote-tool% (== (get-preference "remote tool") "on"))
   (with-source-tool% (== (get-preference "source tool") "on"))
   (with-versioning-tool% (== (get-preference "versioning tool") "on"))
   (in-presentation% (or (style-has? "beamer-style")

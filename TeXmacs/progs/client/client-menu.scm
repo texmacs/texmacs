@@ -32,7 +32,7 @@
                        (with server (client-find-server server-name)
                          (load-buffer (remote-home-directory server))))))
 
-(menu-bind client-menu
+(menu-bind start-client-menu
   ("New account" (interactive client-new-account))
   ("Login" (interactive client-login-home)))
 
@@ -48,7 +48,7 @@
       ("Rename" (remote-rename-interactive server)))
     ("Permissions" (open-file-permissions-editor server (current-buffer)))))
 
-(menu-bind remote-menu
+(menu-bind client-menu
   (with l (client-active-servers)
     (assuming (null? l)
       (link client-menu))

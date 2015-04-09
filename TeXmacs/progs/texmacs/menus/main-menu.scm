@@ -31,6 +31,20 @@
 (menu-bind help-icons (if (in-session?) (link session-help-icons)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The Remote menu
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind remote-menu
+  (if (and (null? remote-client-list) (not (server-started?)))
+      (link start-client-menu)
+      ---
+      (link start-server-menu))
+  (if (and (null? remote-client-list) (server-started?))
+      (link server-menu))
+  (if (nnull? remote-client-list)
+      (link client-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The TeXmacs main menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -67,7 +81,7 @@
   (if (detailed-menus?) (=> "Tools" (link tools-menu)))
   (if (with-database-tool?)
       (=> "Data" (link db-menu)))
-  (if (nnull? remote-list)
+  (if (with-remote-tool?)
       (=> "Remote" (link remote-menu)))
   (if (with-debugging-tool?)
       (=> "Debug" (link debug-menu)))
@@ -110,7 +124,7 @@
   (-> "Go" (link go-menu))
   (if (detailed-menus?) (-> "Tools" (link tools-menu)))
   (if (with-database-tool?) (-> "Data" (link db-menu)))
-  (if (nnull? remote-list) (-> "Remote" (link remote-menu)))
+  (if (with-remote-tool?) (-> "Remote" (link remote-menu)))
   (if (with-debugging-tool?) (-> "Debug" (link debug-menu)))
   (if (nnull? (test-menu)) (-> "Test" (link test-menu)))
   ---

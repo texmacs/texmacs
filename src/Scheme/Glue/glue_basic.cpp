@@ -6533,6 +6533,15 @@ tmg_server_write (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_server_startedP () {
+  // TMSCM_DEFER_INTS;
+  bool out= server_started ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_client_start (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "client-start");
 
@@ -9110,6 +9119,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("server-stop",  tmg_server_stop, 0, 0, 0);
   tmscm_install_procedure ("server-read",  tmg_server_read, 1, 0, 0);
   tmscm_install_procedure ("server-write",  tmg_server_write, 2, 0, 0);
+  tmscm_install_procedure ("server-started?",  tmg_server_startedP, 0, 0, 0);
   tmscm_install_procedure ("client-start",  tmg_client_start, 1, 0, 0);
   tmscm_install_procedure ("client-stop",  tmg_client_stop, 1, 0, 0);
   tmscm_install_procedure ("client-read",  tmg_client_read, 1, 0, 0);

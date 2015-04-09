@@ -16,6 +16,9 @@
         (server server-db)
         (server server-tmfs)))
 
+(menu-bind start-server-menu
+  ("Start server" (server-start)))
+
 (menu-bind server-menu
-  ("Start server" (server-start))
+  ("Stop server" (server-stop))
   ("Set user information" (interactive server-set-user-information)))

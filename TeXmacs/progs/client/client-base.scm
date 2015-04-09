@@ -159,7 +159,7 @@
     (when (!= server -1)
       (ahash-set! client-active-connections server (list server-name pseudo))
       (ahash-set! client-active-connections server-name server)
-      (set! remote-list (client-active-servers))
+      (set! remote-client-list (client-active-servers))
       (enter-secure-mode server)
       (client-remote-eval* server `(remote-login ,pseudo ,passwd) cb))))
 
@@ -180,4 +180,4 @@
         (and-with sv-conn (ahash-ref client-active-connections sv)
           (with (sv-name sv-pseudo) sv-conn
             (ahash-set! client-active-connections sv-name sv))))
-      (set! remote-list (client-active-servers)))))
+      (set! remote-client-list (client-active-servers)))))
