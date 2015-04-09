@@ -52,9 +52,12 @@
                          (remote-connection-list))
              string<=?))
 
-(define-public (connection-variants name)
+(define-public (local-connection-variants name)
   (lazy-plugin-force)
-  (append (or (ahash-ref connection-varlist name) (list))
+  (or (ahash-ref connection-varlist name) (list)))
+
+(define-public (connection-variants name)
+  (append (local-connection-variants name)
           (remote-connection-variants name)))
 
 (define-public (connection-defined? name)

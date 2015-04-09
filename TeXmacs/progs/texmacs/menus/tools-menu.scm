@@ -85,10 +85,6 @@
       (link server-menu))
   (-> "Client"
       (link client-menu))
-  (-> "Remote plug-ins"
-      ("Add remote ssh connection" (interactive detect-remote-plugins))
-      ("Update remote ssh connection" (interactive update-remote-plugins))
-      ("Remove remote ssh connection" (interactive remove-remote-plugins)))
   ---
   (if (supports-sql?)
       ("Database tool" (toggle-preference "database tool")))

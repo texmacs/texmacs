@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Using GNU <TeXmacs> as an interface>
@@ -25,6 +25,8 @@
     <branch|Scripting languages|man-scripting-language.en.tm>
 
     <branch|Spreadsheets|man-spreadsheet.en.tm>
+
+    <branch|Remote plug-ins|man-remote-plugins.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -36,9 +38,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>

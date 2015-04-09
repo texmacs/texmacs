@@ -17,13 +17,86 @@
         (generic generic-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remote plugins
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (select-remote-plugin-widget quit)
+  (let* ((where "")
+         (set-where
+          (lambda (new-where)
+            (when new-where
+              (set! where new-where)
+              (refresh-now "supported-plugins")
+              (refresh-now "enter-server"))))
+         (key-press
+          (lambda (what)
+            (when what
+              (set! where (car what))
+              (when (== (cadr what) "return")
+                (set-where where)))))
+         (encode
+          (lambda (triple)
+            (with (p v cmd) triple
+              (with s (upcase-first p)
+                (if (== v "default") s
+                    (string-append s " (" v ")"))))))
+         (decode
+          (lambda (name)
+            (and-with l (list-remote-plugins where)
+              (with t (list-find (cadr l) (lambda (u) (== (encode u) name)))
+                (list (car t) (string-append where "/" (cadr t)))))))
+         (plugin-list
+          (lambda ()
+            (with l (list-remote-plugins where)
+              (if (not l) (list)
+                  (map encode (cadr l)))))))
+    (padded
+      (hlist
+        (resize "300px" "400px"
+          (vlist
+            (bold (text "Remote servers"))
+            ===
+            (refreshable "remote-servers"
+              (choice (set-where answer) (remote-connection-servers) where))))
+        // // //
+        (resize "300px" "400px"
+          (vlist
+            (bold (text "Supported plug-ins"))
+            ===
+            (refreshable "supported-plugins"
+              (scrollable
+                (choice (quit (decode answer)) (plugin-list) ""))))))
+      === ===
+      (hlist
+        (text "Server:") //
+        (refreshable "enter-server"
+          (input (key-press answer) "search-server" (list where) "1w"))
+        // // //
+        (explicit-buttons
+          ("Add"
+           (detect-remote-plugins where)
+           (refresh-now "remote-servers")
+           (refresh-now "supported-plugins")) //
+           ("Update"
+            (update-remote-plugins where)
+            (refresh-now "supported-plugins")) //
+            ("Remove"
+             (remove-remote-plugins where)
+             (refresh-now "remote-servers")
+             (refresh-now "supported-plugins")))))))
+
+(tm-define (open-remote-plugin-selector name call-back)
+  (:interactive #t)
+  (dialogue-window select-remote-plugin-widget call-back name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting sessions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (supported-sessions-menu)
   (for (name (session-list))
     (let* ((menu-name (session-name name))
-           (l (connection-variants name)))
+           (l (local-connection-variants name)))
       (assuming (== l (list "default"))
         ((eval menu-name) (make-session name "default")))
       (assuming (!= l (list "default"))
@@ -37,6 +110,9 @@
     ---
     (link supported-sessions-menu)
     ---
+    ("Remote" (open-remote-plugin-selector
+               "Start remote session"
+               (lambda (x) (apply make-session x))))
     ("Other" (interactive make-session))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
