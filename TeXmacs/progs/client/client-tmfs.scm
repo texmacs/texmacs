@@ -278,3 +278,21 @@
                   (buffer-rename src dest)
                   (set-message (string-append "renamed as " (url->string dest))
                                action))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Versions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (remote-versions src)
+  (let* ((name (remote-file-name src))
+         (sname (tmfs-car name))
+         (server (client-find-server sname))
+         (fname (string-append "tmfs://remote-file/" name))
+         (prefix (string-append "tmfs://remote-file/" sname "/")))
+    (and server
+         (client-remote-eval server `(remote-get-versions ,name)
+           (lambda (l)
+             (with r (map (cut string-append prefix <>) l)
+               (display* "versions: " r "\n")))
+           (lambda (err)
+             (set-message err "get list with remote versions"))))))

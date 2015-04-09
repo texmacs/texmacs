@@ -126,6 +126,14 @@
   (with-user #t
     (db-get-field-first rid "version-nr" "0")))
 
+(define (version->file-name rid)
+  (with-user #t
+    (with-time :always
+      (let* ((date (db-get-field-first rid "date" #f))
+             (name (resource->file-name rid)))
+        (if (not date) name
+            (string-append "time=" date "/" name))))))
+
 (define (version-get-current vid)
   (with-user #t
     (db-get-field-first vid "version-current" "0")))
@@ -135,6 +143,24 @@
     (with-time :always
       (db-search (list (list "version-list" vid)
                        (list :order "version-nr" #t))))))
+
+(tm-service (remote-get-versions rname)
+  ;;(display* "remote-get-versions " rname "\n")
+  (with-remote-context rname
+    (let* ((uid (server-get-user envelope))
+           (rid (file-name->resource (tmfs-cdr rname)))
+           (vid (and rid (version-get-list rid)))
+           (vl  (and vid (version-get-versions vid))))
+      (cond ((not uid) ;; FIXME: anonymous access
+             (server-error envelope "Error: not logged in"))
+            ((npair? vl)
+             (server-error envelope "Error: file does not exist"))
+            (else
+              ;; TODO: make sure that we have the right names
+              ;; at past times; also filter by read permissions
+              (let* ((head (map version->file-name (cDr vl)))
+                     (last (resource->file-name (cAr vl))))
+                (server-return envelope (rcons head last))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unpack the context from the file name
