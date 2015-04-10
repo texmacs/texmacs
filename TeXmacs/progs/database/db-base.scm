@@ -64,7 +64,7 @@
       (sql-exec current-database
                 (string-append "CREATE TABLE completions_count ("
                                "prefix text, count integer)")))
-    (set! db-previous-db current-database)))        
+    (set! db-previous-db current-database)))
 
 (define db-pending #f)
 
@@ -79,7 +79,13 @@
            (a (apply append i)))
       (set! db-pending #f)
       ;;(display* "Transaction: " (apply string-append a) "\n")
-      (apply db-sql-raw a))))
+      ;;(apply db-sql-raw a))))
+      ;;(sql-exec current-database "PRAGMA synchronous=OFF")
+      (sql-exec current-database "BEGIN TRANSACTION")
+      ;;(display* (apply string-append a) "\n")
+      (with r (apply db-sql-raw a)
+	(sql-exec current-database "END TRANSACTION")
+	r))))
 
 (tm-define-macro (db-transaction . body)
   `(begin
@@ -87,11 +93,16 @@
      ,@body
      (db-sql-end-transaction)))
 
+(tm-define sql-cumul 0)
+
 (define (db-sql-raw . l)
   (db-init-database)
   ;;(display* (url->string (url-tail current-database)) "] "
   ;;(apply string-append l) "\n")
-  (sql-exec current-database (apply string-append l)))
+  (with t (texmacs-time)
+    (with r (sql-exec current-database (apply string-append l))
+      (set! sql-cumul (+ sql-cumul (- (texmacs-time) t)))
+      r)))
 
 (tm-define (db-sql . l)
   (if db-pending
