@@ -292,7 +292,6 @@
     (and server
          (client-remote-eval server `(remote-get-versions ,name)
            (lambda (l)
-             (with r (map (cut string-append prefix <>) l)
-               (display* "versions: " r "\n")))
+             (display* "versions: " prefix ", " l "\n"))
            (lambda (err)
              (set-message err "get list with remote versions"))))))

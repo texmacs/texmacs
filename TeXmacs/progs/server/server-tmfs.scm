@@ -126,13 +126,17 @@
   (with-user #t
     (db-get-field-first rid "version-nr" "0")))
 
-(define (version->file-name rid)
+(define (version-get-info rid)
   (with-user #t
     (with-time :always
       (let* ((date (db-get-field-first rid "date" #f))
-             (name (resource->file-name rid)))
-        (if (not date) name
-            (string-append "time=" date "/" name))))))
+             (name (resource->file-name rid))
+             (mesg (db-get-field-first rid "version-msg" #f)))
+        (list rid date name mesg)))))
+
+(define (version->file-name rid)
+  (with (rid* date name mesg) (version-get-info rid)
+    (if (not date) name (string-append "time=" date "/" name))))
 
 (define (version-get-current vid)
   (with-user #t
@@ -143,6 +147,11 @@
     (with-time :always
       (db-search (list (list "version-list" vid)
                        (list :order "version-nr" #t))))))
+
+(define ((readable-by? uid) info)
+  (with (rid date name mesg) info
+    (with-time (+ (string->number date) 5)
+      (db-allow? rid uid "readable"))))
 
 (tm-service (remote-get-versions rname)
   ;;(display* "remote-get-versions " rname "\n")
@@ -158,9 +167,9 @@
             (else
               ;; TODO: make sure that we have the right names
               ;; at past times; also filter by read permissions
-              (let* ((head (map version->file-name (cDr vl)))
-                     (last (resource->file-name (cAr vl))))
-                (server-return envelope (rcons head last))))))))
+              (let* ((info (map version-get-info vl))
+                     (filt (list-filter info (readable-by? uid))))
+                (server-return envelope filt)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unpack the context from the file name
