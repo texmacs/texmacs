@@ -240,8 +240,8 @@ concater_rep::typeset_write (tree t, path ip) {
 void
 concater_rep::typeset_toc_notify (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
-  string kind = tree_to_verbatim (env->exec (t[0]));
-  string title= tree_to_verbatim (env->exec (t[1]));
+  string kind = tree_to_verbatim (env->exec (t[0]), false, "cork");
+  string title= tree_to_verbatim (env->exec (t[1]), false, "cork");
   title= replace (title, "T_EX_MACS", "TeXmacs");
   title= replace (title, "L^AT_EX", "LaTeX");
   title= replace (title, "T_EX", "TeX");

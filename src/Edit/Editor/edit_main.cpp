@@ -171,7 +171,7 @@ edit_main_rep::get_metadata (string kind) {
       !is_none (resolve_in_path ("finger")) &&
       !is_none (resolve_in_path ("sed"))) {
     string val= var_eval_system ("finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'");
-    if (N(val) > 1) return val;
+    if (N(val) > 1) return utf8_to_cork (val);
   }
 #endif
   return "";

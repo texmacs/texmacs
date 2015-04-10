@@ -1903,6 +1903,7 @@ std_string_to_string (std::string str) {
 
 static PDFTextString
 as_hummus_string (string s) {
+  s= cork_to_utf8 (s);
   c_string u (s);
   PDFTextString r;
   std::string stds ((char*) u);

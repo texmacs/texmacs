@@ -554,7 +554,7 @@ search_metadata_tag (tree doc, string tag) {
   tree t= search_tag (doc, tag);
   for (int i=0; i<N(t); i++) {
     if (N(r) != 0) r << ", ";
-    r << tree_to_verbatim (t[i]);
+    r << tree_to_verbatim (t[i], false, "cork");
   }
   return r;
 }
@@ -570,7 +570,7 @@ search_metadata (tree doc, string kind) {
   }
   if (kind == "title") {
     tree t= search_tag_quick (doc, "tmdoc-title");
-    if (t != "") return tree_to_verbatim (t[0]);
+    if (t != "") return tree_to_verbatim (t[0], false, "cork");
   }
   return "";
 }
