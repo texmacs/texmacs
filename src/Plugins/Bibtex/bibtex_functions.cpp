@@ -774,12 +774,21 @@ get_first_letters (tree t, tree s1, tree s2, tree& l) {
       while (beg < N(s) && is_space (s[beg])) beg++;
       if (beg < N(s)) {
         if (N(l) > 0) l << s2;
-        l << s(beg, beg+1) << s1;
+	int start= beg;
+	tm_char_forwards (s, beg);
+        l << s(start, beg) << s1;
         while (beg < N(s) && !is_space (s[beg])) {
-          beg++;
+	  tm_char_forwards (s, beg);
           if (beg < N(s) && s[beg] == '-') {
-            beg++;
-            l << "-" << s(beg, beg+1) << s1;
+	    while (beg < N(s) && s[beg] == '-') {
+	      beg++;
+	      l << "-";
+	    }
+	    if (beg < N(s)) {
+	      int start= beg;
+	      tm_char_forwards (s, beg);
+	      l << s (start, beg) << s1;
+	    }
           }
         }
       }
