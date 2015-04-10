@@ -165,8 +165,6 @@
             ((npair? vl)
              (server-error envelope "Error: file does not exist"))
             (else
-              ;; TODO: make sure that we have the right names
-              ;; at past times; also filter by read permissions
               (let* ((info (map version-get-info vl))
                      (filt (list-filter info (readable-by? uid))))
                 (server-return envelope filt)))))))
