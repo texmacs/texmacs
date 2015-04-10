@@ -217,9 +217,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-get-field id attr)
-  (db-sql* "SELECT DISTINCT val FROM props WHERE id=" (sql-quote id)
+  (db-sql* "SELECT val FROM props WHERE id=" (sql-quote id)
            " AND attr=" (sql-quote attr)
-           " AND " (db-time-constraint)))
+           " AND " (db-time-constraint)
+           " ORDER BY created ASC"))
 
 (tm-define (db-get-field-first id attr default)
   (with l (db-get-field id attr)
@@ -234,16 +235,17 @@
 
 (tm-define (db-get-attributes id)
   (db-sql* "SELECT DISTINCT attr FROM props WHERE id=" (sql-quote id)
-           " AND " (db-time-constraint)))
+           " AND " (db-time-constraint)
+           " ORDER BY attr ASC"))
 
 (tm-define (db-entry-exists? id)
   (nnull? (db-get-field id "name")))
 
 (tm-define (db-get-entry id)
-  (with r (db-sql "SELECT DISTINCT attr, val FROM props"
+  (with r (db-sql "SELECT attr, val FROM props"
                   " WHERE id=" (sql-quote id)
                   " AND " (db-time-constraint)
-                  " ORDER BY attr ASC")
+                  " ORDER BY attr, created ASC")
     (if (nnull? r) (set! r (cdr r)))
     (let* ((t (make-ahash-table))
            (attrs (list-remove-duplicates (map car r))))
@@ -341,23 +343,24 @@
     (apply string-append (list-intersperse ss " AND "))))
 
 (define (db-search-col query i)
-  (if (not (func? query :order 2)) ""
-      (string-append "p" (number->string i) ".val")))
+  (cond ((func? query :order 2)
+         (string-append "p" (number->string i) ".val"))
+        (else "")))
 
 (define (db-search-cols pre l)
   (let* ((cols* (map db-search-col l (... 1 (length l))))
          (cols (list-filter cols* (cut != <> "")))
-         (ss (list-intersperse (append pre cols) ", ")))
+         (cols+ (rcons cols "p1.created"))
+         (ss (list-intersperse (append pre cols+) ", ")))
     (apply string-append ss)))
 
 (define (db-search-order l)
   (with cols (db-search-cols (list) l)
-    (if (== cols "") ""
-        (let* ((i (list-find-index l (cut func? <> :order)))
-               (asc (caddr (list-ref l i)))
-               (asc? (if (string? asc) (== asc "#t") asc))
-               (dir (if asc? "ASC" "DESC")))
-          (string-append " ORDER BY " cols " " dir)))))
+    (let* ((i (list-find-index l (cut func? <> :order)))
+           (asc (or (not i) (caddr (list-ref l i))))
+           (asc? (if (string? asc) (== asc "#t") asc))
+           (dir (if asc? "ASC" "DESC")))
+      (string-append " ORDER BY " cols " " dir))))
 
 (tm-define (db-search l)
   (if (null? l)
