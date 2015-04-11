@@ -26,7 +26,7 @@
 
     <branch|<TeXmacs> \<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
 
-    <version-both|<branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.zh.tm>|<branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.en.tm>>
+    <branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.en.tm>
 
     <branch|\<#5B9A\>\<#5236\> <TeXmacs>|scheme/man-scheme.zh.tm>
 
