@@ -6579,6 +6579,25 @@ tmg_tmdb_remove_entry (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_tmdb_query (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-query");
+  TMSCM_ASSERT_SCHEME_TREE (arg2, TMSCM_ARG2, "tmdb-query");
+  TMSCM_ASSERT_DOUBLE (arg3, TMSCM_ARG3, "tmdb-query");
+  TMSCM_ASSERT_INT (arg4, TMSCM_ARG4, "tmdb-query");
+
+  url in1= tmscm_to_url (arg1);
+  scheme_tree in2= tmscm_to_scheme_tree (arg2);
+  double in3= tmscm_to_double (arg3);
+  int in4= tmscm_to_int (arg4);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= query (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_supports_sqlP () {
   // TMSCM_DEFER_INTS;
   bool out= sqlite3_present ();
@@ -9248,6 +9267,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tmdb-set-entry",  tmg_tmdb_set_entry, 4, 0, 0);
   tmscm_install_procedure ("tmdb-get-entry",  tmg_tmdb_get_entry, 3, 0, 0);
   tmscm_install_procedure ("tmdb-remove-entry",  tmg_tmdb_remove_entry, 3, 0, 0);
+  tmscm_install_procedure ("tmdb-query",  tmg_tmdb_query, 4, 0, 0);
   tmscm_install_procedure ("supports-sql?",  tmg_supports_sqlP, 0, 0, 0);
   tmscm_install_procedure ("sql-exec",  tmg_sql_exec, 2, 0, 0);
   tmscm_install_procedure ("sql-quote",  tmg_sql_quote, 1, 0, 0);

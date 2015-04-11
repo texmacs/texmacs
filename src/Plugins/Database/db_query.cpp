@@ -10,16 +10,17 @@
 ******************************************************************************/
 
 #include "Database/database.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Fast checking whether a line satisfies a query
 ******************************************************************************/
 
-/*
 bool
 database_rep::line_satisfies (db_line_nr nr, db_query q, db_time t) {
   db_line& l= db[nr];
-  if (t < l->created || t >= t->expires) return false;
+  //cout << "  Testing " << l->id << ", " << l->attr << ", " << l->val << LF;
+  if (t < l->created || t >= l->expires) return false;
   int pos= 0;
   while (pos < N(q)) {
     int n= q[pos++];
@@ -28,6 +29,7 @@ database_rep::line_satisfies (db_line_nr nr, db_query q, db_time t) {
     bool ok= false;
     for (int i=0; i<n; i++)
       ok= ok || l->val == q[pos+i];
+    if (!ok) return false;
     pos += n;
   }
   return true;
@@ -36,6 +38,7 @@ database_rep::line_satisfies (db_line_nr nr, db_query q, db_time t) {
 bool
 database_rep::id_satisfies (db_atom id, db_query q, db_time t) {
   db_line_nrs nrs= id_lines[id];
+  //cout << "Test " << id << ", " << nrs << LF;
   for (int i=0; i<N(nrs); i++)
     if (line_satisfies (nrs[i], q, t)) return true;
   return false;
@@ -49,23 +52,31 @@ query_failed () {
 }
 
 db_query
-database_rep::encode_query (tree q) {
+database_rep::encode_query (tree ql) {
   db_query r;
-  if (!is_tuple (q)) query_failed ();
-  for (int i=0; i<N(q); i++)
-    if (is_tuple (q, "attr-vals")) {
-      if (N(q) <= 2 || !is_atomic (q[1])) return query_failed ();
-      if (!atom_encode->contains (q[1]->label)) return query_failed ();
-      db_atoms ats= as_atoms (q, 1);
+  if (!is_tuple (ql)) query_failed ();
+  for (int i=0; i<N(ql); i++) {
+    tree q= ql[i];
+    if (is_tuple (q)) {
+      if (N(q) <= 1 || !is_atomic (q[0])) return query_failed ();
+      if (!atom_encode->contains (scm_unquote (q[0]->label)))
+        return query_failed ();
+      db_atoms ats;
+      for (int j=0; j<N(q); j++)
+        if (atom_encode->contains (scm_unquote (q[j]->label)))
+          ats << atom_encode [scm_unquote (q[j]->label)];
       if (N(ats) == 1) return query_failed ();
       r << (N(ats)-1) << ats;
     }
+  }
   return r;
 }
 
 db_atoms
 database_rep::filter (db_atoms ids, tree qt, db_time t, int limit) {
+  //cout << "Query " << qt << "\n";
   db_query q= encode_query (qt);
+  //cout << "Encoded as " << q << "\n";
   if (N(q) == 1 && q[0] < 0) return db_atoms ();
   db_atoms r;
   for (int i=0; i<N(ids); i++)
@@ -75,7 +86,11 @@ database_rep::filter (db_atoms ids, tree qt, db_time t, int limit) {
     }
   return r;
 }
-*/
+
+db_atoms
+database_rep::query (tree qt, db_time t, int limit) {
+  return filter (ids_list, qt, t, limit);
+}
 
 /******************************************************************************
 * Fast checking whether a line satisfies a query

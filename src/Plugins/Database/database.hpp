@@ -13,6 +13,7 @@
 #define DATABASE_H
 #include "url.hpp"
 #include "hashmap.hpp"
+#include "hashset.hpp"
 
 /******************************************************************************
 * Individual lines in databases
@@ -52,6 +53,7 @@ CONCRETE_CODE(db_line);
 typedef int db_line_nr;
 typedef array<db_line_nr> db_line_nrs;
 typedef array<string> strings;
+typedef db_atoms db_query;
 
 class database_rep: public concrete_struct {
 private:
@@ -63,6 +65,8 @@ private:
 
   array<db_line_nrs> id_lines;
   array<db_line_nrs> val_lines;
+  db_atoms ids_list;
+  hashset<db_atom> ids_set;
 
   bool error_flag;
   string loaded;
@@ -73,13 +77,16 @@ public:
   string as_string (db_atom a);
   db_atoms as_atoms (strings s);
   strings as_strings (db_atoms a);
-  db_atoms as_atoms (tree t, int start= 0);
   tree as_tuple (db_atoms a);
   db_atoms entry_as_atoms (tree t);
   tree entry_from_atoms (db_atoms pairs);
 
 private:
   db_line_nr extend_field (db_atom id, db_atom attr, db_atom vals, db_time t);
+  bool line_satisfies (db_line_nr nr, db_query q, db_time t);
+  bool id_satisfies (db_atom id, db_query q, db_time t);
+  db_query encode_query (tree q);
+  db_atoms filter (db_atoms ids, tree qt, db_time t, int limit);
 
 private:
   void notify_created_atom (string s);
@@ -99,6 +106,7 @@ public:
   void set_entry (db_atom id, db_atoms pairs, db_time t);
   db_atoms get_entry (db_atom id, db_time t);
   void remove_entry (db_atom id, db_time t);
+  db_atoms query (tree qt, db_time t, int limit);
 
   friend class database;
   friend void sync_databases ();
@@ -118,6 +126,7 @@ strings get_attributes (url u, string id, db_time t);
 void set_entry (url u, string id, tree e, db_time t);
 tree get_entry (url u, string id, db_time t);
 void remove_entry (url u, string id, db_time t);
+strings query (url u, tree q, db_time t, int limit);
 
 void sync_databases ();
 

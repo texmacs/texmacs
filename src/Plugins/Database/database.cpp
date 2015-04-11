@@ -31,7 +31,7 @@ db_line::db_line (db_atom id, db_atom attr, db_atom val,
 database_rep::database_rep (url u):
   db_name (u), db (),
   atom_encode (0), atom_decode (),
-  id_lines (), val_lines (),
+  id_lines (), val_lines (), ids_list (), ids_set (),
   error_flag (false), loaded (""), pending ("")
 {
   if (is_none (db_name)) error_flag= false;
@@ -80,15 +80,6 @@ database_rep::as_strings (db_atoms a) {
   strings r;
   for (int i=0; i<N(a); i++)
     r << as_string (a[i]);
-  return r;
-}
-
-db_atoms
-database_rep::as_atoms (tree t, int start) {
-  db_atoms r;
-  for (int i=start; i<N(t); i++)
-    if (is_atomic (t[i]) && atom_encode->contains (t[i]->label))
-      r << atom_encode [t[i]->label];
   return r;
 }
 
@@ -147,6 +138,10 @@ database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
   db << l;
   id_lines[id] << nr;
   val_lines[val] << val;
+  if (!ids_set->contains (id)) {
+    ids_set->insert (id);
+    ids_list << id;
+  }
   return nr;
 }
 
@@ -309,4 +304,11 @@ remove_entry (url u, string id, db_time t) {
   database db= get_database (u);
   db_atom _id= db->as_atom (id);
   db->remove_entry (_id, t);
+}
+
+strings
+query (url u, tree q, db_time t, int limit) {
+  database db= get_database (u);
+  db_atoms _ids= db->query (q, t, limit);
+  return db->as_strings (_ids);
 }

@@ -551,6 +551,7 @@
   (tmdb-set-entry set_entry (void url string scheme_tree double))
   (tmdb-get-entry get_entry (scheme_tree url string double))
   (tmdb-remove-entry remove_entry (void url string double))
+  (tmdb-query query (array_string url scheme_tree double int))
 
   ;; SQL interface
   (supports-sql? sqlite3_present (bool))
