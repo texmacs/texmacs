@@ -109,7 +109,7 @@ data_src     := $(call findsrc,Data)
 graphics_src := $(call findsrc,Graphics)
 plugins_src  := $(call findsrc_in,Plugins,Bibtex Cairo Imlib2 Sqlite3 \
                                           Ispell Metafont Openssl Updater \
-                                          LaTeX_Preview)
+                                          LaTeX_Preview Database)
 x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
 cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@ @CONFIG_SPARKLE@)

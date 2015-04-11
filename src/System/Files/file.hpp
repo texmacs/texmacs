@@ -53,6 +53,7 @@ inline string eval_system (string which, url u1, url u2) {
 void move (url from, url to);
 void copy (url from, url to);
 void remove (url what);
+void append_to (url what, url to);
 void mkdir (url dir);
 void rmdir (url what);
 void change_mode (url u, int mode);

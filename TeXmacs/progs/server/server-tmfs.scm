@@ -104,6 +104,9 @@
 ;; Version control
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(smart-table db-encoding-table
+  (("version-by" * :pseudos) :users))
+
 (define (version-first uid name)
   (with vname (string-append name "-versions")
     (db-create-entry (list (list "type" "version-list")
@@ -131,11 +134,13 @@
     (with-time :always
       (let* ((date (db-get-field-first rid "date" #f))
              (name (resource->file-name rid))
-             (mesg (db-get-field-first rid "version-msg" #f)))
-        (list rid date name mesg)))))
+             (msg  (db-get-field-first rid "version-msg" #f))
+             (by   (with-encoding :pseudos 
+                     (db-get-field-first rid "version-by" #f))))
+        (list rid date name by msg)))))
 
 (define (version->file-name rid)
-  (with (rid* date name mesg) (version-get-info rid)
+  (with (rid* date name by msg) (version-get-info rid)
     (if (not date) name (string-append "time=" date "/" name))))
 
 (define (version-get-current vid)
@@ -149,7 +154,7 @@
                        (list :order "version-nr" #t))))))
 
 (define ((readable-by? uid) info)
-  (with (rid date name mesg) info
+  (with (rid date name by msg) info
     (with-time (+ (string->number date) 5)
       (db-allow? rid uid "readable"))))
 
@@ -200,7 +205,8 @@
                                        (list "name" (cAr l))
                                        (list "owner" uid)
                                        (list "version-list" vid)
-                                       (list "version-nr" nr)))))
+                                       (list "version-nr" nr)
+                                       (list "version-by" uid)))))
          (name (repository-add rid (url-suffix rname)))
          (fname (repository-get rid)))
     (inherit-properties rid did)

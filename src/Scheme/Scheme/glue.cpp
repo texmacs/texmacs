@@ -24,6 +24,7 @@
 #include "file.hpp"
 #include "iterator.hpp"
 #include "Freetype/tt_tools.hpp"
+#include "Database/database.hpp"
 #include "Sqlite3/sqlite3.hpp"
 #include "Updater/tm_updater.hpp"
 

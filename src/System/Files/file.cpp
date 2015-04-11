@@ -170,6 +170,49 @@ save_string (url u, string s, bool fatal) {
   return err;
 }
 
+bool
+append_string (url u, string s, bool fatal) {
+  if (is_rooted_tmfs (u)) FAILED ("file not appendable");
+
+  // cout << "Save " << u << LF;
+  url r= u;
+  if (!is_rooted_name (r)) r= resolve (r, "");
+  bool err= !is_rooted_name (r);
+  if (!err) {
+    string name= concretize (r);
+    {
+      c_string _name (name);
+#if defined (OS_WIN32)
+      FILE* fout= _fopen (_name, "ab");
+#elif defined (__MINGW__) || defined (__MINGW32__)
+      FILE* fout= fopen (_name, "ab");
+#else
+      FILE* fout= fopen (_name, "a");
+#endif
+      if (fout == NULL) {
+        err= true;
+        std_warning << "Append error for " << name << ", "
+                    << strerror(errno) << "\n";
+      }
+      if (!err) {
+        int i, n= N(s);
+        for (i=0; i<n; i++)
+          fputc (s[i], fout);
+        fclose (fout);
+      }
+    }
+    // Cache file contents
+    declare_out_of_date (url_parent (r));
+    // End caching
+  }
+
+  if (err && fatal) {
+    failed_error << "File name= " << as_string (u) << "\n";
+    FAILED ("file not appendable");
+  }
+  return err;
+}
+
 /******************************************************************************
 * Getting attributes of a file
 ******************************************************************************/
@@ -506,6 +549,14 @@ remove_sub (url u) {
 void
 remove (url u) {
   remove_sub (expand (complete (u)));
+}
+
+void
+append_to (url what, url to) {
+  string what_s;
+  if (load_string (what, what_s, false) ||
+      append_string (to, what_s, false))
+    std_warning << "Append failed for " << to << LF;
 }
 
 void

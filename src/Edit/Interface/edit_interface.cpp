@@ -20,6 +20,7 @@
 #include "message.hpp"
 #include "tree_traverse.hpp"
 #include "boot.hpp"
+#include "Database/database.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Evaluate/evaluate_main.hpp"
 #endif
@@ -478,6 +479,7 @@ edit_interface_rep::apply_changes () {
       cache_memorize ();
       last_update= last_change;
       save_user_preferences ();
+      sync_databases ();
     }
     return;
   }

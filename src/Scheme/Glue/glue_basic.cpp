@@ -6450,6 +6450,135 @@ tmg_persistent_file_name (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_tmdb_set_field (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-set-field");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-set-field");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "tmdb-set-field");
+  TMSCM_ASSERT_ARRAY_STRING (arg4, TMSCM_ARG4, "tmdb-set-field");
+  TMSCM_ASSERT_DOUBLE (arg5, TMSCM_ARG5, "tmdb-set-field");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+  array_string in4= tmscm_to_array_string (arg4);
+  double in5= tmscm_to_double (arg5);
+
+  // TMSCM_DEFER_INTS;
+  set_field (in1, in2, in3, in4, in5);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tmdb_get_field (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-get-field");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-get-field");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "tmdb-get-field");
+  TMSCM_ASSERT_DOUBLE (arg4, TMSCM_ARG4, "tmdb-get-field");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+  double in4= tmscm_to_double (arg4);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= get_field (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_tmdb_remove_field (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-remove-field");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-remove-field");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "tmdb-remove-field");
+  TMSCM_ASSERT_DOUBLE (arg4, TMSCM_ARG4, "tmdb-remove-field");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
+  double in4= tmscm_to_double (arg4);
+
+  // TMSCM_DEFER_INTS;
+  remove_field (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tmdb_get_attributes (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-get-attributes");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-get-attributes");
+  TMSCM_ASSERT_DOUBLE (arg3, TMSCM_ARG3, "tmdb-get-attributes");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  double in3= tmscm_to_double (arg3);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= get_attributes (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_tmdb_set_entry (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-set-entry");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-set-entry");
+  TMSCM_ASSERT_SCHEME_TREE (arg3, TMSCM_ARG3, "tmdb-set-entry");
+  TMSCM_ASSERT_DOUBLE (arg4, TMSCM_ARG4, "tmdb-set-entry");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  scheme_tree in3= tmscm_to_scheme_tree (arg3);
+  double in4= tmscm_to_double (arg4);
+
+  // TMSCM_DEFER_INTS;
+  set_entry (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tmdb_get_entry (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-get-entry");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-get-entry");
+  TMSCM_ASSERT_DOUBLE (arg3, TMSCM_ARG3, "tmdb-get-entry");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  double in3= tmscm_to_double (arg3);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= get_entry (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
+tmg_tmdb_remove_entry (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-remove-entry");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-remove-entry");
+  TMSCM_ASSERT_DOUBLE (arg3, TMSCM_ARG3, "tmdb-remove-entry");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+  double in3= tmscm_to_double (arg3);
+
+  // TMSCM_DEFER_INTS;
+  remove_entry (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_supports_sqlP () {
   // TMSCM_DEFER_INTS;
   bool out= sqlite3_present ();
@@ -9112,6 +9241,13 @@ initialize_glue_basic () {
   tmscm_install_procedure ("persistent-has?",  tmg_persistent_hasP, 2, 0, 0);
   tmscm_install_procedure ("persistent-get",  tmg_persistent_get, 2, 0, 0);
   tmscm_install_procedure ("persistent-file-name",  tmg_persistent_file_name, 2, 0, 0);
+  tmscm_install_procedure ("tmdb-set-field",  tmg_tmdb_set_field, 5, 0, 0);
+  tmscm_install_procedure ("tmdb-get-field",  tmg_tmdb_get_field, 4, 0, 0);
+  tmscm_install_procedure ("tmdb-remove-field",  tmg_tmdb_remove_field, 4, 0, 0);
+  tmscm_install_procedure ("tmdb-get-attributes",  tmg_tmdb_get_attributes, 3, 0, 0);
+  tmscm_install_procedure ("tmdb-set-entry",  tmg_tmdb_set_entry, 4, 0, 0);
+  tmscm_install_procedure ("tmdb-get-entry",  tmg_tmdb_get_entry, 3, 0, 0);
+  tmscm_install_procedure ("tmdb-remove-entry",  tmg_tmdb_remove_entry, 3, 0, 0);
   tmscm_install_procedure ("supports-sql?",  tmg_supports_sqlP, 0, 0, 0);
   tmscm_install_procedure ("sql-exec",  tmg_sql_exec, 2, 0, 0);
   tmscm_install_procedure ("sql-quote",  tmg_sql_quote, 1, 0, 0);
