@@ -87,6 +87,9 @@ private:
   bool id_satisfies (db_atom id, db_query q, db_time t);
   db_query encode_query (tree q);
   db_atoms filter (db_atoms ids, tree qt, db_time t, int limit);
+  int compute_complexity (tree q);
+  int ansatz_index (tree q);
+  db_atoms ansatz (tree ql, db_time t);
 
 private:
   void notify_created_atom (string s);

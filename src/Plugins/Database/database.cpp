@@ -137,11 +137,13 @@ database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
   db_line l (id, attr, val, t, DB_MAX_TIME);
   db << l;
   id_lines[id] << nr;
-  val_lines[val] << val;
+  val_lines[val] << nr;
   if (!ids_set->contains (id)) {
     ids_set->insert (id);
     ids_list << id;
   }
+  //cout << "l. " << nr << ":\t" << id << ", " << attr << ", " << val << LF;
+  //cout << "l. " << nr << ":\t" << as_string (id) << ", " << as_string (attr) << ", " << as_string (val) << LF;
   return nr;
 }
 

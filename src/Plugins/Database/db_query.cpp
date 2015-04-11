@@ -13,7 +13,7 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Fast checking whether a line satisfies a query
+* Fast filtering of lines which satisfy a complex query
 ******************************************************************************/
 
 bool
@@ -87,155 +87,78 @@ database_rep::filter (db_atoms ids, tree qt, db_time t, int limit) {
   return r;
 }
 
-db_atoms
-database_rep::query (tree qt, db_time t, int limit) {
-  return filter (ids_list, qt, t, limit);
-}
-
-/******************************************************************************
-* Fast checking whether a line satisfies a query
-******************************************************************************/
-
-/*
-db_line_nrs
-database_rep::filter_id (db_line_nrs nrs, db_atoms ids) {
-  db_line_nrs r;
-  for (int i=0; i<N(nrs); i++) {
-    db_atom id= db[nrs[i]]->id;
-    if (contains (id, ids)) r << nrs[i];
-  }
-  return r;
-}
-
-db_line_nrs
-database_rep::filter_attrs (db_line_nrs nrs, db_atoms attrs) {
-  db_line_nrs r;
-  for (int i=0; i<N(nrs); i++) {
-    db_atom attr= db[nrs[i]]->attr;
-    if (contains (attr, attrs)) r << nrs[i];
-  }
-  return r;
-}
-
-db_line_nrs
-database_rep::filter_val (db_line_nrs nrs, db_atoms vals) {
-  db_line_nrs r;
-  for (int i=0; i<N(nrs); i++) {
-    db_atom val= db[nrs[i]]->val;
-    if (contains (val, vals)) r << nrs[i];
-  }
-  return r;
-}
-
-db_line_nrs
-database_rep::filter_time (db_line_nrs nrs, db_time t) {
-  db_line_nrs r;
-  for (int i=0; i<N(nrs); i++) {
-    db_line& l= db[nrs[i]];
-    if (l->created <= t && t < l->expires) r << nrs[i];
-  }
-  return r;
-}
-
-db_line_nrs
-database_rep::filter_query (db_line_nrs nrs, tree q) {
-  if (is_tuple (q, "id")) {
-    db_atoms ids= query_args_as_atoms (q);
-    if (N(ids) == 0) return db_line_nrs ();
-    else return filter_id (nrs, ids);
-  }
-  else if (is_tuple (q, "attr")) {
-    db_atoms attrs= query_args_as_atoms (q);
-    if (N(attrs) == 0) return db_line_nrs ();
-    else return filter_attr (nrs, attrs);
-  }
-  else if (is_tuple (q, "val")) {
-    db_atoms vals= query_args_as_atoms (q);
-    if (N(vals) == 0) return db_line_brs ();
-    else return filter_val (nrs, vals);
-  }
-  else if (is_tuple (q, "time", 1) && is_int (q[1]))
-    return filter_time (nrs, as_double (q[1]));
-  else
-    return db_line_nrs ();
-}
-*/
-
 /******************************************************************************
 * Estimating the complexity of a query
 ******************************************************************************/
 
-/*
 int
-database_rep::complexity_id (db_atoms ids) {
+database_rep::compute_complexity (tree q) {
+  //cout << "Computing complexity of " << q << LF;
+  if (!is_tuple (q)) return 0;
+  if (N(q) <= 1 || !is_atomic (q[0])) return 0;
+  if (!atom_encode->contains (scm_unquote (q[0]->label))) return 0;
+  //db_atom attr= atom_encode [scm_unquote (q[0]->label)];
   int r=0;
-  for (int i=0; i<N(ids); i++)
-    r += N (id_lines[ids[i]]);
+  for (int i=1; i<N(q); i++)
+    if (atom_encode->contains (scm_unquote (q[i]->label))) {
+      db_atom val= atom_encode [scm_unquote (q[i]->label)];
+      r += N (val_lines[val]);
+    }
+  //cout << "Return " << r << LF;
   return r;
 }
 
 int
-database_rep::complexity_attr (db_atoms attrs) {
-  return 1000000000;
-}
-
-int
-database_rep::complexity_val (db_atoms vals) {
-  int r=0;
-  for (int i=0; i<N(vals); i++)
-    r += N (val_lines[vals[i]]);
-  return r;
-}
-
-int
-database_rep::complexity_time (db_time t) {
-  return 1000000000;
-}
-
-int
-database_rep::complexity_query (tree q) {
-  if (is_tuple (q, "id"))
-    return complexity_id (query_args_as_atoms (q));
-  else if (is_tuple (q, "attr"))
-    return complexity_attr (query_args_as_atoms (q));
-  else if (is_tuple (q, "val"))
-    return complexity_val (query_args_as_atoms (q));
-  else if (is_tuple (q, "time", 1) && is_int (q[1]))
-    return complexity_time (as_double (q[1]));
-  else
-    return 0;
-}
-*/
-
-/******************************************************************************
-* Performing a multiple query
-******************************************************************************/
-
-/*
-db_line_nrs
-database_rep::query (tree q) {
-  if (!is_tuple (q)) return db_line_nrs ();
-  int best  = -1;
-  int lowest= 1000000000;
+database_rep::ansatz_index (tree q) {
+  if (!is_tuple (q)) return -1;
+  int best_i= -1;
+  int best_c= 1000000000;
   for (int i=0; i<N(q); i++) {
-    int c= complexity_query (q[i]);
-    if (c < lowest) {
-      best= i;
-      lowest= c;
+    int c= compute_complexity (q[i]);
+    if (c < best_c) {
+      best_i= i;
+      best_c= c;
     }
   }
-  if (lowest == 0) return db_line_nrs ();
-  
-
-  if (is_tuple (query, "id"))
-    return complexity_id (query_args_as_atoms (query));
-  else if (is_tuple (query, "attr"))
-    return complexity_attr (query_args_as_atoms (query));
-  else if (is_tuple (query, "val"))
-    return complexity_val (query_args_as_atoms (query));
-  else if (is_tuple (query, "time", 1) && is_int (query[1]))
-    return complexity_time (as_double (query[1]));
-  else
-    return 0;
+  return best_i;
 }
-*/
+
+db_atoms
+database_rep::ansatz (tree ql, db_time t) {
+  if (!is_tuple (ql)) return db_atoms ();
+  int a= ansatz_index (ql);
+  //cout << "ansatz index: " << a << LF;
+  if (a < 0) return ids_list;
+  tree q= ql[a];
+  db_atoms idsl;
+  hashset<db_atom> idss;
+  //db_atom attr= atom_encode [scm_unquote (q[0]->label)];
+  for (int i=1; i<N(q); i++)
+    if (atom_encode->contains (scm_unquote (q[i]->label))) {
+      db_atom val= atom_encode [scm_unquote (q[i]->label)];
+      db_line_nrs nrs= val_lines[val];
+      //cout << "trying " << val << ", " << nrs << LF;
+      for (int j=0; j<N(nrs); j++) {
+        db_line& l= db[nrs[j]];
+        //cout << "  line " << l->id << ", " << l->attr << ", " << l->val << LF;
+        if ((t == 0) || (l->created <= t && t < l->expires))
+          if (!idss->contains (l->id)) {
+            idss->insert (l->id);
+            idsl << l->id;
+          }
+      }
+    }
+  return idsl;
+}
+
+/******************************************************************************
+* Master query routine
+******************************************************************************/
+
+db_atoms
+database_rep::query (tree ql, db_time t, int limit) {
+  //cout << "query " << ql << ", " << t << ", " << limit << LF;
+  db_atoms ids= ansatz (ql, t);
+  //cout << "ids= " << ids << LF;
+  return filter (ids, ql, t, limit);
+}
