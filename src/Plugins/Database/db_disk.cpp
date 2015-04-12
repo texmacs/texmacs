@@ -144,7 +144,7 @@ database_rep::initialize () {
   if (exists (db_name)) {
     if (load_string (db_name, loaded, false)) {
       std_error << "Could not load database file "
-                << ::as_string (db_name) << LF;
+                << as_string (db_name) << LF;
       error_flag= true;
     }
     else replay (loaded);
@@ -152,7 +152,7 @@ database_rep::initialize () {
   else {
     if (save_string (db_name, "", false)) {
       std_error << "Could not open database file "
-                << ::as_string (db_name) << LF;
+                << as_string (db_name) << LF;
       error_flag= true;
     }
   }
@@ -162,7 +162,7 @@ void
 database_rep::purge () {
   if (error_flag || pending == "") return;
   int rnd= (int) (((unsigned int) random ()) & 0xffffff);
-  url db_append= glue (db_name, ".append-" * ::as_string (rnd));
+  url db_append= glue (db_name, ".append-" * as_string (rnd));
   if (!save_string (db_append, pending, false)) {
     append_to (db_append, db_name);
     remove (db_append);
@@ -171,7 +171,7 @@ database_rep::purge () {
   }
   else {
     std_error << "Could not save to database file "
-              << ::as_string (db_name) << LF;
+              << as_string (db_name) << LF;
     error_flag= true;
   }
 }

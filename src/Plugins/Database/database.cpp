@@ -30,9 +30,12 @@ db_line::db_line (db_atom id, db_atom attr, db_atom val,
 
 database_rep::database_rep (url u):
   db_name (u), db (),
-  atom_encode (0), atom_decode (),
+  atom_encode (-1), atom_decode (),
   id_lines (), val_lines (), ids_list (), ids_set (),
-  error_flag (false), loaded (""), pending ("")
+  error_flag (false), loaded (""), pending (""),
+  key_encode (-1), key_decode (),
+  atom_indexed (), key_occurrences (),
+  key_completions (), name_completions ()
 {
   if (is_none (db_name)) error_flag= false;
   else initialize ();
@@ -56,13 +59,14 @@ database_rep::as_atom (string s) {
     atom_decode << s;
     id_lines << db_line_nrs ();
     val_lines << db_line_nrs ();
+    atom_indexed << false;
     notify_created_atom (s);
   }
   return atom_encode[s];
 }
 
 string
-database_rep::as_string (db_atom a) {
+database_rep::from_atom (db_atom a) {
   ASSERT (a < N(atom_decode), "Invalid atom");
   return atom_decode[a];
 }
@@ -76,10 +80,10 @@ database_rep::as_atoms (strings s) {
 }
 
 strings
-database_rep::as_strings (db_atoms a) {
+database_rep::from_atoms (db_atoms a) {
   strings r;
   for (int i=0; i<N(a); i++)
-    r << as_string (a[i]);
+    r << from_atom (a[i]);
   return r;
 }
 
@@ -87,7 +91,7 @@ tree
 database_rep::as_tuple (db_atoms a) {
   tree r (TUPLE);
   for (int i=0; i<N(a); i++)
-    r << scm_quote (as_string (a[i]));
+    r << scm_quote (from_atom (a[i]));
   return r;
 }
 
@@ -142,8 +146,9 @@ database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
     ids_set->insert (id);
     ids_list << id;
   }
+  indexate (val);
   //cout << "l. " << nr << ":\t" << id << ", " << attr << ", " << val << LF;
-  //cout << "l. " << nr << ":\t" << as_string (id) << ", " << as_string (attr) << ", " << as_string (val) << LF;
+  //cout << "l. " << nr << ":\t" << from_atom (id) << ", " << from_atom (attr) << ", " << from_atom (val) << LF;
   return nr;
 }
 
@@ -266,7 +271,7 @@ get_field (url u, string id, string attr, db_time t) {
   db_atom _id= db->as_atom (id);
   db_atom _attr= db->as_atom (attr);
   db_atoms _vals= db->get_field (_id, _attr, t);
-  return db->as_strings (_vals);
+  return db->from_atoms (_vals);
 }
 
 void
@@ -282,7 +287,7 @@ get_attributes (url u, string id, db_time t) {
   database db= get_database (u);
   db_atom _id= db->as_atom (id);
   db_atoms _attrs= db->get_attributes (_id, t);
-  return db->as_strings (_attrs);
+  return db->from_atoms (_attrs);
 }
 
 void
@@ -312,5 +317,5 @@ strings
 query (url u, tree q, db_time t, int limit) {
   database db= get_database (u);
   db_atoms _ids= db->query (q, t, limit);
-  return db->as_strings (_ids);
+  return db->from_atoms (_ids);
 }

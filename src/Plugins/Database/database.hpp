@@ -54,6 +54,8 @@ typedef int db_line_nr;
 typedef array<db_line_nr> db_line_nrs;
 typedef array<string> strings;
 typedef db_atoms db_query;
+typedef int db_key;
+typedef array<db_key> db_keys;
 
 class database_rep: public concrete_struct {
 private:
@@ -62,7 +64,6 @@ private:
 
   hashmap<string,db_atom> atom_encode;
   array<string> atom_decode;
-
   array<db_line_nrs> id_lines;
   array<db_line_nrs> val_lines;
   db_atoms ids_list;
@@ -71,12 +72,19 @@ private:
   bool error_flag;
   string loaded;
   string pending;
+  
+  hashmap<string,db_atom> key_encode;
+  array<string> key_decode;
+  array<bool> atom_indexed;
+  array<db_atoms> key_occurrences;
+  hashmap<string,db_keys> key_completions;
+  hashmap<string,db_atoms> name_completions;
 
 public:
   db_atom as_atom (string s);
-  string as_string (db_atom a);
+  string from_atom (db_atom a);
   db_atoms as_atoms (strings s);
-  strings as_strings (db_atoms a);
+  strings from_atoms (db_atoms a);
   tree as_tuple (db_atoms a);
   db_atoms entry_as_atoms (tree t);
   tree entry_from_atoms (db_atoms pairs);
@@ -98,6 +106,12 @@ private:
   void replay (string s);
   void initialize ();
   void purge ();
+
+public:
+  db_key as_key (string s);
+  string from_key (db_key a);
+  void add_completed_as (db_key k);
+  void indexate (db_atom val);
 
 public:
   database_rep (url u);
