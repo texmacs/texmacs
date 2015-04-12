@@ -171,7 +171,11 @@ database_rep::query (tree ql, db_time t, int limit) {
   ql= normalize_query (ql);
   db_atoms ids= ansatz (ql, t);
   //cout << "ids= " << ids << LF;
-  ids= filter (ids, ql, t, limit);
+  bool sort_flag= false;
+  if (is_tuple (ql))
+    for (int i=0; i<N(ql); i++)
+      sort_flag= sort_flag || is_tuple (ql[i], "order", 2);
+  ids= filter (ids, ql, t, max (limit, sort_flag? 1000: 0));
   ids= sort_results (ids, ql, t);
   return ids;
 }
