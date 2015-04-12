@@ -114,7 +114,9 @@ public:
   string from_key (db_key a);
   void add_completed_as (db_key k);
   void indexate (db_atom val);
-  db_constraint encode_contains_constraint (tree q);
+  db_constraint encode_keywords_constraint (tree q);
+  strings get_completions (string s);
+  tree normalize_query (tree q);
 
 public:
   database_rep (url u);

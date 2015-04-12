@@ -13,6 +13,8 @@
 #include "hashset.hpp"
 #include "analyze.hpp"
 
+#define MAX_PREFIX_LENGTH 6
+
 /******************************************************************************
 * Computing list of keywords in a string
 ******************************************************************************/
@@ -106,7 +108,7 @@ void
 database_rep::add_completed_as (db_key k) {
   string kw= from_key (k);
   int pos= 0, n= N(kw);
-  for (int i=0; i<6 && pos<n; i++) {
+  for (int i=0; i<MAX_PREFIX_LENGTH && pos<n; i++) {
     tm_char_forwards (kw, pos);
     string ss= kw (0, pos);
     if (!key_completions->contains (ss))
@@ -135,7 +137,7 @@ database_rep::indexate (db_atom val) {
 ******************************************************************************/
 
 db_constraint
-database_rep::encode_contains_constraint (tree q) {
+database_rep::encode_keywords_constraint (tree q) {
   //cout << "Encoding " << q << LF;
   hashset<db_atom> done;
   db_constraint r;
@@ -161,5 +163,46 @@ database_rep::encode_contains_constraint (tree q) {
         }
       }
     }
+  return r;
+}
+
+strings
+database_rep::get_completions (string s) {
+  int pos=0, n=N(s);
+  for (int i=0; i<MAX_PREFIX_LENGTH && pos<n; i++)
+    tm_char_forwards (s, pos);
+  db_keys ks= key_completions (s (0, pos));
+  strings r;
+  for (int i=0; i<N(ks); i++)
+    if (pos<n || starts (from_key (ks[i]), s))
+      r << from_key (ks[i]);
+  return r;
+}
+
+tree
+database_rep::normalize_query (tree q) {
+  if (!is_tuple (q)) return q;
+  tree r (TUPLE);
+  for (int i=0; i<N(q); i++)
+    if (is_tuple (q[i], "contains", 1) ||
+        is_tuple (q[i], "completes", 1)) {
+      if (is_atomic (q[i][1]) && is_quoted (q[i][1]->label)) {
+        bool flag= is_tuple (q[i], "completes", 1);
+        string s= scm_unquote (q[i][1]->label);
+        strings kws= compute_keywords (s);
+        int n= N(kws);
+        if (flag) n--;
+        for (int j=0; j<n; j++)
+          r << tree (TUPLE, "keywords", scm_quote (kws[j]));
+        if (flag) {
+          tree t (TUPLE, "keywords");
+          strings cs= get_completions (kws[n]);
+          for (int k=0; k<N(cs); k++)
+            t << scm_quote (cs[k]);
+          r << t;
+        }
+      }
+    }
+    else r << q[i];
   return r;
 }

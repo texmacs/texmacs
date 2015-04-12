@@ -50,8 +50,8 @@ database_rep::encode_constraint (tree q) {
   string attr= q[0]->label;
   if (attr == "any")
     r << -1;
-  else if (attr == "contains")
-    return encode_contains_constraint (q);
+  else if (attr == "keywords")
+    return encode_keywords_constraint (q);
   else if (!is_quoted (q[0]->label))
     return db_constraint ();
   else if (atom_encode->contains (scm_unquote (q[0]->label)))
@@ -166,6 +166,7 @@ database_rep::ansatz (tree ql, db_time t) {
 db_atoms
 database_rep::query (tree ql, db_time t, int limit) {
   //cout << "query " << ql << ", " << t << ", " << limit << LF;
+  ql= normalize_query (ql);
   db_atoms ids= ansatz (ql, t);
   //cout << "ids= " << ids << LF;
   return filter (ids, ql, t, limit);
