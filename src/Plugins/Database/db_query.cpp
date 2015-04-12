@@ -50,13 +50,16 @@ database_rep::encode_constraint (tree q) {
   string attr= q[0]->label;
   if (attr == "any")
     r << -1;
+  else if (attr == "contains")
+    return encode_contains_constraint (q);
+  else if (!is_quoted (q[0]->label))
+    return db_constraint ();
   else if (atom_encode->contains (scm_unquote (q[0]->label)))
     r << atom_encode [scm_unquote (q[0]->label)];
   else return db_constraint ();
   for (int i=1; i<N(q); i++)
     if (atom_encode->contains (scm_unquote (q[i]->label)))
       r << atom_encode [scm_unquote (q[i]->label)];
-  if (N(r) == 1) return db_constraint ();
   return r;
 }
 
@@ -67,8 +70,9 @@ database_rep::encode_constraints (tree ql) {
   if (!is_tuple (ql)) failed= true;
   else for (int i=0; i<N(ql); i++) {
     db_constraint c= encode_constraint (ql[i]);
-    if (N(c) == 0) failed= true;
-    r << c;
+    if (N(c) == 1 && c[0] == -2);
+    else if (N(c) <= 1) failed= true;
+    else r << c;
   }
   if (failed) {
     r= db_constraints ();
@@ -81,7 +85,7 @@ db_atoms
 database_rep::filter (db_atoms ids, tree qt, db_time t, int limit) {
   //cout << "Query " << qt << "\n";
   db_constraints cs= encode_constraints (qt);
-  //cout << "Encoded as " << q << "\n";
+  //cout << "Encoded as " << cs << "\n";
   if (N(cs) == 1 && N(cs) == 0) return db_atoms ();
   db_atoms r;
   for (int i=0; i<N(ids); i++)
@@ -99,16 +103,14 @@ database_rep::filter (db_atoms ids, tree qt, db_time t, int limit) {
 int
 database_rep::compute_complexity (tree q) {
   //cout << "Computing complexity of " << q << LF;
-  if (!is_tuple (q)) return 0;
-  if (N(q) <= 1 || !is_atomic (q[0])) return 0;
-  if (!atom_encode->contains (scm_unquote (q[0]->label))) return 0;
-  //db_atom attr= atom_encode [scm_unquote (q[0]->label)];
+  db_constraint c= encode_constraint (q);
+  if (N(c) == 1 && c[0] == -2) return 1000000000;
+  if (N(c) <= 1) return 0;
   int r=0;
-  for (int i=1; i<N(q); i++)
-    if (atom_encode->contains (scm_unquote (q[i]->label))) {
-      db_atom val= atom_encode [scm_unquote (q[i]->label)];
-      r += N (val_lines[val]);
-    }
+  for (int i=1; i<N(c); i++) {
+    db_atom val= c[i];
+    r += N (val_lines[val]);
+  }
   //cout << "Return " << r << LF;
   return r;
 }
@@ -137,22 +139,23 @@ database_rep::ansatz (tree ql, db_time t) {
   tree q= ql[a];
   db_atoms idsl;
   hashset<db_atom> idss;
-  //db_atom attr= atom_encode [scm_unquote (q[0]->label)];
-  for (int i=1; i<N(q); i++)
-    if (atom_encode->contains (scm_unquote (q[i]->label))) {
-      db_atom val= atom_encode [scm_unquote (q[i]->label)];
-      db_line_nrs nrs= val_lines[val];
-      //cout << "trying " << val << ", " << nrs << LF;
-      for (int j=0; j<N(nrs); j++) {
-        db_line& l= db[nrs[j]];
-        //cout << "  line " << l->id << ", " << l->attr << ", " << l->val << LF;
-        if ((t == 0) || (l->created <= t && t < l->expires))
-          if (!idss->contains (l->id)) {
-            idss->insert (l->id);
-            idsl << l->id;
-          }
-      }
+  db_constraint c= encode_constraint (q);
+  if (N(c) == 1 && c[0] == -2) return ids_list;
+  if (N(c) <= 1) return db_atoms ();
+  for (int i=1; i<N(c); i++) {
+    db_atom val= c[i];
+    db_line_nrs nrs= val_lines[val];
+    //cout << "trying " << val << ", " << nrs << LF;
+    for (int j=0; j<N(nrs); j++) {
+      db_line& l= db[nrs[j]];
+      //cout << "  line " << l->id << ", " << l->attr << ", " << l->val << LF;
+      if ((t == 0) || (l->created <= t && t < l->expires))
+        if (!idss->contains (l->id)) {
+          idss->insert (l->id);
+          idsl << l->id;
+        }
     }
+  }
   return idsl;
 }
 

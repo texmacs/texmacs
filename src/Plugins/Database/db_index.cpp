@@ -129,3 +129,37 @@ database_rep::indexate (db_atom val) {
   }
   atom_indexed[val]= true;
 }
+
+/******************************************************************************
+* Using the index
+******************************************************************************/
+
+db_constraint
+database_rep::encode_contains_constraint (tree q) {
+  //cout << "Encoding " << q << LF;
+  hashset<db_atom> done;
+  db_constraint r;
+  r << -1;
+  for (int i=1; i<N(q); i++)
+    if (is_atomic (q[i])) {
+      string kw= scm_unquote (q[i]->label);
+      //cout << "  Keyword " << kw << LF;
+      if (key_encode->contains (kw)) {
+        db_key k= key_encode[kw];
+        db_atoms vals= key_occurrences[k];
+        if (N(r) + N(vals) > 1000) {
+          r= db_constraint ();
+          r << -2;
+          return r;
+        }
+        for (int i=0; i<N(vals); i++) {
+          //cout << "    Treating " << vals[i] << ", " << from_atom (vals[i]) << LF;
+          if (!done->contains (vals[i])) {
+            r << vals[i];
+            done->insert (vals[i]);
+          }
+        }
+      }
+    }
+  return r;
+}
