@@ -130,6 +130,8 @@
   (cond ((func? q :order) (cons 'order (cdr q)))
         ((func? q :match) (cons 'contains (cdr q)))
         ((func? q :prefix) (cons 'completes (cdr q)))
+        ((func? q :contains) (cons 'contains (cdr q)))
+        ((func? q :completes) (cons 'completes (cdr q)))
         (else q)))
 
 (tm-define (db-search l*)
@@ -171,4 +173,4 @@
   1)
 
 (tm-define (prefix->queries q)
-  (list (list :prefix q)))
+  (list (list :completes q)))
