@@ -110,7 +110,7 @@ private:
   void initialize ();
   void purge ();
 
-public:
+private:
   db_key as_key (string s);
   string from_key (db_key a);
   void add_completed_as (db_key k);
@@ -118,6 +118,10 @@ public:
   db_constraint encode_keywords_constraint (tree q);
   strings get_completions (string s);
   tree normalize_query (tree q);
+
+private:
+  array<strings> build_sort_tuples (db_atoms ids, db_atoms attrs, db_time t);
+  db_atoms sort_results (db_atoms ids, tree q, db_time t);
 
 public:
   database_rep (url u);

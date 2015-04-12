@@ -54,6 +54,7 @@ string&  operator << (string& a, string b);
 string   operator * (const char* a, string b);
 string   operator * (string a, string b);
 string   operator * (string a, const char* b);
+bool     operator < (string a, string b);
 bool     operator <= (string a, string b);
 int      hash (string s);
 

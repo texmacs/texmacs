@@ -52,6 +52,8 @@ database_rep::encode_constraint (tree q) {
     r << -1;
   else if (attr == "keywords")
     return encode_keywords_constraint (q);
+  else if (attr == "order") {
+    r << -2; return r; }
   else if (!is_quoted (q[0]->label))
     return db_constraint ();
   else if (atom_encode->contains (scm_unquote (q[0]->label)))
@@ -169,5 +171,7 @@ database_rep::query (tree ql, db_time t, int limit) {
   ql= normalize_query (ql);
   db_atoms ids= ansatz (ql, t);
   //cout << "ids= " << ids << LF;
-  return filter (ids, ql, t, limit);
+  ids= filter (ids, ql, t, limit);
+  ids= sort_results (ids, ql, t);
+  return ids;
 }

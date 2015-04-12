@@ -168,6 +168,17 @@ operator * (string a, const char* b) {
 }
 
 bool
+operator < (string s1, string s2) {
+  register int i;
+  for (i=0; i<N(s1); i++) {
+    if (i>=N(s2)) return false;
+    if (s1[i]<s2[i]) return true;
+    if (s2[i]<s1[i]) return false;
+  }
+  return i<N(s2);
+}
+
+bool
 operator <= (string s1, string s2) {
   register int i;
   for (i=0; i<N(s1); i++) {
