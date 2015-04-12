@@ -177,5 +177,6 @@ database_rep::query (tree ql, db_time t, int limit) {
       sort_flag= sort_flag || is_tuple (ql[i], "order", 2);
   ids= filter (ids, ql, t, max (limit, sort_flag? 1000: 0));
   ids= sort_results (ids, ql, t);
+  if (N(ids) > limit) ids= range (ids, 0, limit);
   return ids;
 }
