@@ -191,6 +191,7 @@ database_rep::normalize_query (tree q) {
         string s= scm_unquote (q[i][1]->label);
         strings kws= compute_keywords (s);
         int n= N(kws);
+        if (n == 0) continue;
         if (flag) n--;
         for (int j=0; j<n; j++)
           r << tree (TUPLE, "keywords", scm_quote (kws[j]));

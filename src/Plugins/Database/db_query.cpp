@@ -169,6 +169,7 @@ db_atoms
 database_rep::query (tree ql, db_time t, int limit) {
   //cout << "query " << ql << ", " << t << ", " << limit << LF;
   ql= normalize_query (ql);
+  //cout << "normalized query " << ql << ", " << t << ", " << limit << LF;
   db_atoms ids= ansatz (ql, t);
   //cout << "ids= " << ids << LF;
   bool sort_flag= false;
