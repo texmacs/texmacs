@@ -17,29 +17,32 @@
 ******************************************************************************/
 
 bool
-database_rep::line_satisfies (db_line_nr nr, db_constraints cs, db_time t) {
+database_rep::line_satisfies (db_line_nr nr, db_constraint c, db_time t) {
   db_line& l= db[nr];
-  //cout << "  Testing " << l->id << ", " << l->attr << ", " << l->val << LF;
+  //cout << "    Testing " << l->id << ", " << l->attr << ", " << l->val << LF;
+  //cout << "    Testing " << from_atom (l->id) << ", " << from_atom (l->attr) << ", " << from_atom (l->val) << LF;
   if (t < l->created || t >= l->expires) return false;
-  for (int i=0; i<N(cs); i++) {
-    db_constraint c= cs[i];
-    db_atom attr= c[0];
-    if (l->attr != attr && attr != -1) return false;
-    bool ok= false;
-    for (int j=1; j<N(c); j++)
-      ok= ok || l->val == c[j];
-    if (!ok) return false;
-  }
-  return true;
+  db_atom attr= c[0];
+  if (l->attr != attr && attr != -1) return false;
+  for (int j=1; j<N(c); j++)
+    if (l->val == c[j]) return true;
+  return false;
+}
+
+bool
+database_rep::id_satisfies (db_atom id, db_constraint c, db_time t) {
+  //cout << "  Test " << id << ", " << c << LF;
+  db_line_nrs nrs= id_lines[id];
+  for (int i=0; i<N(nrs); i++)
+    if (line_satisfies (nrs[i], c, t)) return true;
+  return false;
 }
 
 bool
 database_rep::id_satisfies (db_atom id, db_constraints cs, db_time t) {
-  db_line_nrs nrs= id_lines[id];
-  //cout << "Test " << id << ", " << nrs << LF;
-  for (int i=0; i<N(nrs); i++)
-    if (line_satisfies (nrs[i], cs, t)) return true;
-  return false;
+  for (int i=0; i<N(cs); i++)
+    if (!id_satisfies (id, cs[i], t)) return false;
+  return true;
 }
 
 db_constraint
@@ -171,13 +174,15 @@ database_rep::query (tree ql, db_time t, int limit) {
   ql= normalize_query (ql);
   //cout << "normalized query " << ql << ", " << t << ", " << limit << LF;
   db_atoms ids= ansatz (ql, t);
-  //cout << "ids= " << ids << LF;
+  //cout << "ansatz ids= " << ids << LF;
   bool sort_flag= false;
   if (is_tuple (ql))
     for (int i=0; i<N(ql); i++)
       sort_flag= sort_flag || is_tuple (ql[i], "order", 2);
   ids= filter (ids, ql, t, max (limit, sort_flag? 1000: 0));
+  //cout << "filtered ids= " << ids << LF;
   ids= sort_results (ids, ql, t);
+  //cout << "sorted ids= " << ids << LF;
   if (N(ids) > limit) ids= range (ids, 0, limit);
   return ids;
 }

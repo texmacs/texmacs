@@ -163,6 +163,7 @@ database_rep::encode_keywords_constraint (tree q) {
         }
       }
     }
+  //cout << "Encoded as " << r << LF;
   return r;
 }
 
