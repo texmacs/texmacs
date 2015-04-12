@@ -552,6 +552,8 @@
   (tmdb-get-entry get_entry (scheme_tree url string double))
   (tmdb-remove-entry remove_entry (void url string double))
   (tmdb-query query (array_string url scheme_tree double int))
+  (tmdb-get-completions get_completions (array_string url string))
+  (tmdb-get-name-completions get_name_completions (array_string url string))
 
   ;; SQL interface
   (supports-sql? sqlite3_present (bool))

@@ -167,7 +167,7 @@ database_rep::encode_keywords_constraint (tree q) {
 }
 
 strings
-database_rep::get_completions (string s) {
+database_rep::compute_completions (string s) {
   int pos=0, n=N(s);
   for (int i=0; i<MAX_PREFIX_LENGTH && pos<n; i++)
     tm_char_forwards (s, pos);
@@ -196,7 +196,7 @@ database_rep::normalize_query (tree q) {
           r << tree (TUPLE, "keywords", scm_quote (kws[j]));
         if (flag) {
           tree t (TUPLE, "keywords");
-          strings cs= get_completions (kws[n]);
+          strings cs= compute_completions (kws[n]);
           for (int k=0; k<N(cs); k++)
             t << scm_quote (cs[k]);
           r << t;

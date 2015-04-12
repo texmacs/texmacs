@@ -116,7 +116,7 @@ private:
   void add_completed_as (db_key k);
   void indexate (db_atom val);
   db_constraint encode_keywords_constraint (tree q);
-  strings get_completions (string s);
+  strings compute_completions (string s);
   tree normalize_query (tree q);
 
 private:
@@ -137,6 +137,8 @@ public:
 
   friend class database;
   friend void sync_databases ();
+  friend strings get_completions (url u, string s);
+  friend strings get_name_completions (url u, string s);
 };
 
 class database {
@@ -154,6 +156,8 @@ void set_entry (url u, string id, tree e, db_time t);
 tree get_entry (url u, string id, db_time t);
 void remove_entry (url u, string id, db_time t);
 strings query (url u, tree q, db_time t, int limit);
+strings get_completions (url u, string s);
+strings get_name_completions (url u, string s);
 
 void sync_databases ();
 

@@ -326,3 +326,19 @@ query (url u, tree q, db_time t, int limit) {
   db_atoms _ids= db->query (q, t, limit);
   return db->from_atoms (_ids);
 }
+
+strings
+get_completions (url u, string s) {
+  database db= get_database (u);
+  return db->compute_completions (s);
+}
+
+strings
+get_name_completions (url u, string s) {
+  //database db= get_database (u);
+  //return db->compute_name_completions (s);
+  (void) u;
+  strings r;
+  r << s;
+  return r;
+}
