@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|\<#64B0\>\<#5199\>\<#7B80\>\<#5355\>\<#7684\>\<#6587\>\<#6863\>>
@@ -16,7 +16,7 @@
 
     <branch|\<#73AF\>\<#5883\>|man-environments.zh.tm>
 
-    <branch|\<#5E03\>\<#5C40\>\<#95EE\>\<#9898\><em|>|man-layout.zh.tm>
+    <branch|\<#5E03\>\<#5C40\>\<#95EE\>\<#9898\>|man-layout.en.tm>
 
     <branch|\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>|man-fonts.zh.tm>
 
@@ -33,9 +33,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|font|sys-chinese>
-    <associate|language|chinese>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|\<#5F00\>\<#59CB\>\<#4F7F\>\<#7528\>>
@@ -8,7 +8,7 @@
   <\traverse>
     <branch|\<#672C\>\<#624B\>\<#518C\>\<#60EF\>\<#4F8B\>|man-conventions.zh.tm>
 
-    <branch|\<#914D\>\<#7F6E\> <TeXmacs>|man-setup.zh.tm>
+    <branch|\<#914D\>\<#7F6E\><TeXmacs>|man-setup.zh.tm>
 
     <branch|\<#65B0\>\<#5EFA\>\<#FF0C\>\<#6253\>\<#5F00\>\<#548C\>\<#4FDD\>\<#5B58\>\<#6587\>\<#6863\>|man-files.zh.tm>
 
@@ -25,9 +25,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|font|fireflysung>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

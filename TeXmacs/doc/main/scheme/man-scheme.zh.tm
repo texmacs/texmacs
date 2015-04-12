@@ -1,16 +1,14 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.2>
 
-<style|tmmanual>
+<style|<tuple|tmmanual|chinese>>
 
 <\body>
-  <tmdoc-title|\<#5B9A\>\<#5236\> <TeXmacs>>
+  <tmdoc-title|\<#5B9A\>\<#5236\><TeXmacs>>
 
-  \<#9AD8\>\<#5EA6\>\<#53EF\>\<#5B9A\>\<#5236\>\<#6027\>\<#662F\><TeXmacs>\<#7684\>\<#4E3B\>\<#8981\>\<#7279\>\<#70B9\>\<#4E4B\>\<#4E00\>.\<#5E38\>\<#7528\>\<#9009\>\<#9879\>\<#76F4\>\<#63A5\>\<#5728\><em|><menu|\<#7F16\>\<#8F91\>|\<#9996\>\<#9009\>\<#9879\>>\<#4E2D\><hlink|\<#914D\>\<#7F6E\>|../config/man-configuration.zh.tm>\<#FF0C\>\<#5176\>\<#4F59\>\<#53EF\>\<#7531\><name|Guile>
-  <name|Scheme>\<#6269\>\<#5C55\>\<#5B8C\>\<#6210\>\<#5B9A\>\<#5236\>.\<#63A5\>\<#4E0B\>\<#6765\>\<#FF0C\>\<#6211\>\<#4EEC\>\<#5BF9\>\<#5982\>\<#4F55\>\<#4F7F\>\<#7528\>Guile
-  Scheme\<#6269\>\<#5C55\>\<#5B9A\>\<#5236\><TeXmacs>\<#505A\>\<#4E00\>\<#4E2A\>\<#7B80\>\<#5355\>\<#7684\>\<#4ECB\>\<#7ECD\>.\ 
+  \<#9AD8\>\<#5EA6\>\<#53EF\>\<#5B9A\>\<#5236\>\<#6027\>\<#662F\><TeXmacs>\<#7684\>\<#4E3B\>\<#8981\>\<#7279\>\<#70B9\>\<#4E4B\>\<#4E00\>\<#3002\>\<#4E00\>\<#822C\>\<#9700\>\<#6C42\>\<#53EF\>\<#5728\><em|><menu|\<#7F16\>\<#8F91\>|\<#9996\>\<#9009\>\<#9879\>>\<#4E2D\>\<#7B80\>\<#5355\><hlink|\<#914D\>\<#7F6E\>|../config/man-configuration.zh.tm>\<#FF0C\>\<#6DF1\>\<#5165\>\<#5B9A\>\<#5236\>\<#5219\>\<#9700\>\<#4F7F\>\<#7528\><name|Guile>/<name|Scheme>\<#6269\>\<#5C55\>\<#3002\>
 
   <\traverse>
-    <branch|Guile\<#6269\>\<#5C55\>\<#8BED\>\<#8A00\>\<#5165\>\<#95E8\>|man-guile-intro.zh.tm>
+    <branch|<name|Guile>\<#6269\>\<#5C55\>\<#8BED\>\<#8A00\>\<#5165\>\<#95E8\>|man-guile-intro.zh.tm>
 
     <branch|\<#64B0\>\<#5199\>\<#4F60\>\<#81EA\>\<#5DF1\>\<#7684\>\<#521D\>\<#59CB\>\<#5316\>\<#914D\>\<#7F6E\>\<#6587\>\<#4EF6\>|man-initialization.zh.tm>
 
@@ -31,12 +29,8 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|font|sys-chinese>
-    <associate|language|chinese>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
 
 <\references>
   <\collection>

@@ -1,11 +1,11 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.2>
 
 <style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|\<#7CBE\>\<#901A\>\<#952E\>\<#76D8\>>
 
-  \<#672C\>\<#8282\>\<#4E3B\>\<#8BB2\>\<#5FEB\>\<#6377\>\<#952E\>,\<#76F8\>\<#5173\>\<#5185\>\<#5BB9\>\<#9664\>\<#672C\>\<#8282\>\<#5916\>\<#8FD8\>\<#53EF\>\<#4EE5\>\<#53C2\>\<#8003\><hlink|\<#914D\>\<#7F6E\>\<#952E\>\<#76D8\>|../../config/man-config-keyboard.en.tm>.
+  \<#672C\>\<#8282\>\<#4E3B\>\<#8BB2\>\<#5FEB\>\<#6377\>\<#952E\>\<#FF0C\>\<#76F8\>\<#5173\>\<#5185\>\<#5BB9\>\<#9664\>\<#672C\>\<#8282\>\<#5916\>\<#8FD8\>\<#53EF\>\<#4EE5\>\<#53C2\>\<#8003\><hlink|\<#914D\>\<#7F6E\>\<#952E\>\<#76D8\>|../../config/man-config-keyboard.en.tm>\<#3002\>
 
   <\traverse>
     <branch|\<#57FA\>\<#672C\>\<#524D\>\<#7F00\>\<#89C4\>\<#5219\>|man-general-rules.zh.tm>
@@ -28,3 +28,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

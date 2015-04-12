@@ -1,6 +1,6 @@
 <TeXmacs|1.99.2>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|GNU <TeXmacs> \<#7528\>\<#6237\>\<#624B\>\<#518C\>>
@@ -14,7 +14,7 @@
 
     <branch|\<#8868\>\<#683C\>\<#5904\>\<#7406\>|table/man-table.zh.tm>
 
-    <version-new|<branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.zh.tm>|<branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.zh.tm>>
+    <branch|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>|links/man-links.zh.tm>
 
     <branch|\<#5185\>\<#7F6E\>\<#4F5C\>\<#56FE\>\<#5DE5\>\<#5177\>|graphics/man-graphics.zh.tm>
 
@@ -24,7 +24,7 @@
 
     <branch|\<#5E7B\>\<#706F\>\<#7247\>|beamer/man-beamer.en.tm>
 
-    <branch|<TeXmacs> \<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
+    <branch|<TeXmacs>\<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
 
     <branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.en.tm>
 
@@ -43,8 +43,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|font|fireflysung>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
