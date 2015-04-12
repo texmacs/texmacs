@@ -101,7 +101,11 @@
   (append l1 (list-filter l2 (lambda (x) (not (assoc-ref l1 (car x)))))))
 
 (tm-define (db-set-entry id l)
-  (tmdb-set-entry (db-get-db) id l (db-get-time)))
+  (let* ((old-l (db-get-entry id))
+         (new-l (assoc-add db-extra-fields l)))
+    (when (and db-time-stamp? (not (ahash-ref new-l "date")))
+      (set! new-l (rcons new-l (list "date" (number->string (current-time))))))
+    (tmdb-set-entry (db-get-db) id new-l (db-get-time))))
 
 (tm-define (db-remove-entry id)
   (tmdb-remove-entry (db-get-db) id (db-get-time)))
@@ -135,8 +139,33 @@
 (tm-define (db-search-owner owner)
   (db-search (list (list "owner" owner))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Indexing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define db-indexing #f)
+
+(tm-define-macro (with-indexing ind . body)
+  `(with-global db-indexing ,ind ,@body))
+
+(tm-define (db-reset)
+  (former)
+  (set! db-indexing #f))
+
+(smart-table index-attribute-table
+  ("name" #t))
+
+(tm-define (index-do-indexate? attr)
+  #t)
+
 (tm-define (index-get-completions prefix)
   (tmdb-get-completions (db-get-db) prefix))
 
 (tm-define (index-get-name-completions prefix)
   (tmdb-get-name-completions (db-get-db) prefix))
+
+(tm-define (index-number-matches key)
+  1)
+
+(tm-define (prefix->queries q)
+  (list (list :prefix q)))
