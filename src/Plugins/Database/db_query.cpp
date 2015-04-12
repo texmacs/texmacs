@@ -13,61 +13,66 @@
 #include "analyze.hpp"
 
 /******************************************************************************
-* Fast filtering of lines which satisfy a complex query
+* Fast filtering of lines which satisfy a list of constraints
 ******************************************************************************/
 
 bool
-database_rep::line_satisfies (db_line_nr nr, db_query q, db_time t) {
+database_rep::line_satisfies (db_line_nr nr, db_constraints cs, db_time t) {
   db_line& l= db[nr];
   //cout << "  Testing " << l->id << ", " << l->attr << ", " << l->val << LF;
   if (t < l->created || t >= l->expires) return false;
-  int pos= 0;
-  while (pos < N(q)) {
-    int n= q[pos++];
-    int attr= q[pos++];
-    if (l->attr != attr) return false;
+  for (int i=0; i<N(cs); i++) {
+    db_constraint c= cs[i];
+    db_atom attr= c[0];
+    if (l->attr != attr && attr != -1) return false;
     bool ok= false;
-    for (int i=0; i<n; i++)
-      ok= ok || l->val == q[pos+i];
+    for (int j=1; j<N(c); j++)
+      ok= ok || l->val == c[j];
     if (!ok) return false;
-    pos += n;
   }
   return true;
 }
 
 bool
-database_rep::id_satisfies (db_atom id, db_query q, db_time t) {
+database_rep::id_satisfies (db_atom id, db_constraints cs, db_time t) {
   db_line_nrs nrs= id_lines[id];
   //cout << "Test " << id << ", " << nrs << LF;
   for (int i=0; i<N(nrs); i++)
-    if (line_satisfies (nrs[i], q, t)) return true;
+    if (line_satisfies (nrs[i], cs, t)) return true;
   return false;
 }
 
-db_query
-query_failed () {
-  db_query r;
-  r << -1;
+db_constraint
+database_rep::encode_constraint (tree q) {
+  db_constraint r;
+  if (!is_tuple (q)) return db_constraint ();
+  if (N(q) <= 1 || !is_atomic (q[0])) return db_constraint ();
+  string attr= q[0]->label;
+  if (attr == "any")
+    r << -1;
+  else if (atom_encode->contains (scm_unquote (q[0]->label)))
+    r << atom_encode [scm_unquote (q[0]->label)];
+  else return db_constraint ();
+  for (int i=1; i<N(q); i++)
+    if (atom_encode->contains (scm_unquote (q[i]->label)))
+      r << atom_encode [scm_unquote (q[i]->label)];
+  if (N(r) == 1) return db_constraint ();
   return r;
 }
 
-db_query
-database_rep::encode_query (tree ql) {
-  db_query r;
-  if (!is_tuple (ql)) query_failed ();
-  for (int i=0; i<N(ql); i++) {
-    tree q= ql[i];
-    if (is_tuple (q)) {
-      if (N(q) <= 1 || !is_atomic (q[0])) return query_failed ();
-      if (!atom_encode->contains (scm_unquote (q[0]->label)))
-        return query_failed ();
-      db_atoms ats;
-      for (int j=0; j<N(q); j++)
-        if (atom_encode->contains (scm_unquote (q[j]->label)))
-          ats << atom_encode [scm_unquote (q[j]->label)];
-      if (N(ats) == 1) return query_failed ();
-      r << (N(ats)-1) << ats;
-    }
+db_constraints
+database_rep::encode_constraints (tree ql) {
+  db_constraints r;
+  bool failed= false;
+  if (!is_tuple (ql)) failed= true;
+  else for (int i=0; i<N(ql); i++) {
+    db_constraint c= encode_constraint (ql[i]);
+    if (N(c) == 0) failed= true;
+    r << c;
+  }
+  if (failed) {
+    r= db_constraints ();
+    r << db_constraint ();
   }
   return r;
 }
@@ -75,12 +80,12 @@ database_rep::encode_query (tree ql) {
 db_atoms
 database_rep::filter (db_atoms ids, tree qt, db_time t, int limit) {
   //cout << "Query " << qt << "\n";
-  db_query q= encode_query (qt);
+  db_constraints cs= encode_constraints (qt);
   //cout << "Encoded as " << q << "\n";
-  if (N(q) == 1 && q[0] < 0) return db_atoms ();
+  if (N(cs) == 1 && N(cs) == 0) return db_atoms ();
   db_atoms r;
   for (int i=0; i<N(ids); i++)
-    if (id_satisfies (ids[i], q, t)) {
+    if (id_satisfies (ids[i], cs, t)) {
       r << ids[i];
       if (N(r) >= limit) break;
     }

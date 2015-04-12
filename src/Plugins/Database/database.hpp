@@ -53,7 +53,8 @@ CONCRETE_CODE(db_line);
 typedef int db_line_nr;
 typedef array<db_line_nr> db_line_nrs;
 typedef array<string> strings;
-typedef db_atoms db_query;
+typedef db_atoms db_constraint;
+typedef array<db_constraint> db_constraints;
 typedef int db_key;
 typedef array<db_key> db_keys;
 
@@ -91,9 +92,10 @@ public:
 
 private:
   db_line_nr extend_field (db_atom id, db_atom attr, db_atom vals, db_time t);
-  bool line_satisfies (db_line_nr nr, db_query q, db_time t);
-  bool id_satisfies (db_atom id, db_query q, db_time t);
-  db_query encode_query (tree q);
+  bool line_satisfies (db_line_nr nr, db_constraints cs, db_time t);
+  bool id_satisfies (db_atom id, db_constraints cs, db_time t);
+  db_constraint encode_constraint (tree q);
+  db_constraints encode_constraints (tree q);
   db_atoms filter (db_atoms ids, tree qt, db_time t, int limit);
   int compute_complexity (tree q);
   int ansatz_index (tree q);
