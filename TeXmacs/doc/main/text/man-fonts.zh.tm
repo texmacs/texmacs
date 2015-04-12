@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>>
@@ -10,8 +10,7 @@
   <\itemize>
     <item>\<#540D\>\<#79F0\> (roman, pandora, concrete\<#7B49\>\<#7B49\>)
 
-    <item>\<#5B57\>\<#65CF\> (roman, typewriter \<#6216\>\<#8005\> sans
-    serif)
+    <item>\<#5B57\>\<#65CF\> (roman, typewriter\<#6216\>\<#8005\>sans serif)
 
     <item>\<#5927\>\<#5C0F\> (\<#57FA\>\<#51C6\>\<#5927\>\<#5C0F\>\<#548C\>\<#76F8\>\<#5BF9\>\<#5927\>\<#5C0F\>
     )
@@ -23,9 +22,7 @@
   </itemize>
 
   \<#6CE8\>\<#610F\>\<#FF0C\>\<#5728\><LaTeX>
-  <math|2\<varepsilon\>>\<#7684\>\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>\<#4E2D\>\<#FF0C\>\<#6CA1\>\<#6709\>\<#7EC6\>\<#5206\>\<#5B57\>\<#4F53\>\<#540D\>\<#79F0\>\<#548C\>\<#5B57\>\<#65CF\>\<#3002\><em|>
-  \<#6CE8\>\<#610F\>\<#FF0C\>\<#57FA\>\<#51C6\>\<#5B57\>\<#4F53\>\<#5927\>\<#5C0F\>\<#662F\>\<#6574\>\<#4E2A\>\<#6587\>\<#6863\>\<#7684\>\<#5C5E\>\<#6027\>\<#FF0C\>\<#5728\>
-  <menu|Document|Font|Size> \<#4E2D\>\<#6307\>\<#5B9A\>\<#3002\>
+  <math|2\<varepsilon\>>\<#7684\>\<#5B57\>\<#4F53\>\<#9009\>\<#62E9\>\<#7CFB\>\<#7EDF\>\<#4E2D\>\<#FF0C\>\<#6CA1\>\<#6709\>\<#7EC6\>\<#5206\>\<#5B57\>\<#4F53\>\<#540D\>\<#79F0\>\<#548C\>\<#5B57\>\<#65CF\>\<#3002\>\<#6CE8\>\<#610F\>\<#FF0C\>\<#57FA\>\<#51C6\>\<#5B57\>\<#4F53\>\<#5927\>\<#5C0F\>\<#662F\>\<#6574\>\<#4E2A\>\<#6587\>\<#6863\>\<#7684\>\<#5C5E\>\<#6027\>\<#FF0C\>\<#5728\><menu|Document|Font|Size>\<#4E2D\>\<#6307\>\<#5B9A\>\<#3002\>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -39,8 +36,6 @@
 
 <\initial>
   <\collection>
-    <associate|font|sys-chinese>
     <associate|font-base-size|10>
-    <associate|language|chinese>
   </collection>
 </initial>

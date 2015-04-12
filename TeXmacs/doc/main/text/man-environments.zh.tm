@@ -15,9 +15,7 @@
     \<#7A7A\>\<#767D\>\<#592A\>\<#5C0F\>\<#FF0C\>\<#5BB9\>\<#4E0D\>\<#4E0B\>\<#6211\>\<#7684\>\<#8BC1\>\<#660E\>\<#3002\>(\<#8D39\>\<#9A6C\>)
   </proof>
 
-  <menu|Insert|Environment>\<#5373\>\<#63D2\>\<#5165\>\<#73AF\>\<#5883\>\<#3002\>\<#4E0E\>\<#5B9A\>\<#7406\>\<#7C7B\>\<#4F3C\>\<#7684\>\<#73AF\>\<#5883\>\<#6709\><markup|proposition>\<#FF0C\>
-  <markup|lemma>\<#FF0C\> <markup|corollary>\<#FF0C\> <markup|axiom>\<#FF0C\>
-  <markup|definition>\<#3002\>\<#4F7F\>\<#7528\><markup|dueto>\<#5B8F\>(\<#6309\>\<#4E0B\><key|\\
+  <menu|Insert|Environment>\<#5373\>\<#63D2\>\<#5165\>\<#73AF\>\<#5883\>\<#3002\>\<#4E0E\>\<#5B9A\>\<#7406\>\<#7C7B\>\<#4F3C\>\<#7684\>\<#73AF\>\<#5883\>\<#6709\><markup|proposition>\<#FF0C\><compound|markup|lemma>\<#FF0C\><markup|corollary>\<#FF0C\><markup|axiom>\<#FF0C\><markup|definition>\<#3002\>\<#4F7F\>\<#7528\><markup|dueto>\<#5B8F\>(\<#6309\>\<#4E0B\><key|\\
   d u e t o return>\<#8F93\>\<#5165\>\<#8BE5\>\<#5B8F\>)\<#53EF\>\<#4EE5\>\<#6307\>\<#5B9A\>\<#4E0E\>\<#5B9A\>\<#7406\>\<#76F8\>\<#5173\>\<#7684\>\<#5B66\>\<#8005\>\<#FF0C\>\<#50CF\>\<#8FD9\>\<#6837\>:
 
   <\theorem>
@@ -25,9 +23,7 @@
     circumstances, we have <math|a<rsup|2>+b<rsup|2>=c<rsup|2>>.
   </theorem>
 
-  \<#5176\>\<#5B83\>\<#5E38\>\<#7528\>\<#7684\>\<#73AF\>\<#5883\>\<#8FD8\>\<#6709\><markup|remark>\<#FF0C\><markup|note>\<#FF0C\><markup|example>\<#FF0C\><markup|warning>\<#FF0C\><compound|markup|exercise>\<#548C\><markup|problem>\<#FF0C\>\<#5176\>\<#6E32\>\<#67D3\>\<#6548\>\<#679C\>\<#4E0E\>\<#5B9A\>\<#7406\>\<#7C7B\>\<#4F3C\>\<#FF0C\>\<#53EA\>\<#662F\>\<#6CA1\>\<#6709\>\<#5F3A\>\<#8C03\>\<#663E\>\<#793A\>\<#5176\>\<#4E2D\>\<#5185\>\<#5BB9\>\<#3002\>\<#5176\>\<#4F59\>\<#73AF\>\<#5883\>\<#5982\><markup|verbatim>\<#FF0C\>
-  <markup|code>\<#FF0C\> <markup|quote>\<#FF0C\> <markup|quotation> \<#548C\>
-  <markup|verse>\<#53EF\>\<#7528\>\<#4E8E\>\<#8F93\>\<#5165\>\<#591A\>\<#884C\>\<#6587\>\<#672C\>\<#FF0C\>\<#4EE3\>\<#7801\>\<#FF0C\>\<#5F15\>\<#7528\>\<#6216\>\<#8005\>\<#8BD7\>\<#6B4C\>\<#3002\>
+  \<#5176\>\<#5B83\>\<#5E38\>\<#7528\>\<#7684\>\<#73AF\>\<#5883\>\<#8FD8\>\<#6709\><markup|remark>\<#FF0C\><markup|note>\<#FF0C\><markup|example>\<#FF0C\><markup|warning>\<#FF0C\><compound|markup|exercise>\<#548C\><markup|problem>\<#FF0C\>\<#5176\>\<#6E32\>\<#67D3\>\<#6548\>\<#679C\>\<#4E0E\>\<#5B9A\>\<#7406\>\<#7C7B\>\<#4F3C\>\<#FF0C\>\<#53EA\>\<#662F\>\<#6CA1\>\<#6709\>\<#5F3A\>\<#8C03\>\<#663E\>\<#793A\>\<#5176\>\<#4E2D\>\<#5185\>\<#5BB9\>\<#3002\>\<#5176\>\<#4F59\>\<#73AF\>\<#5883\>\<#5982\><markup|verbatim>\<#FF0C\><markup|code>\<#FF0C\><markup|quote>\<#FF0C\><markup|quotation>\<#548C\><markup|verse>\<#53EF\>\<#7528\>\<#4E8E\>\<#8F93\>\<#5165\>\<#591A\>\<#884C\>\<#6587\>\<#672C\>\<#FF0C\>\<#4EE3\>\<#7801\>\<#FF0C\>\<#5F15\>\<#7528\>\<#6216\>\<#8005\>\<#8BD7\>\<#6B4C\>\<#3002\>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
