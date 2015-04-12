@@ -48,11 +48,11 @@ database::database (url u) {
   rep= tm_new<database_rep> (u); };
 
 /******************************************************************************
-* Atom management
+* Internal subroutines
 ******************************************************************************/
 
 db_atom
-database_rep::as_atom (string s) {
+database_rep::create_atom (string s) {
   if (!atom_encode->contains (s)) {
     db_atom code= (db_atom) N (atom_decode);
     atom_encode (s)= code;
@@ -60,9 +60,37 @@ database_rep::as_atom (string s) {
     id_lines << db_line_nrs ();
     val_lines << db_line_nrs ();
     atom_indexed << false;
-    notify_created_atom (s);
   }
   return atom_encode[s];
+}
+
+db_line_nr
+database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
+  db_line_nr nr= (db_line_nr) N(db);
+  db_line l (id, attr, val, t, DB_MAX_TIME);
+  db << l;
+  id_lines[id] << nr;
+  val_lines[val] << nr;
+  if (!ids_set->contains (id)) {
+    ids_set->insert (id);
+    ids_list << id;
+  }
+  indexate (val);
+  //cout << "l. " << nr << ":\t" << id << ", " << attr << ", " << val << LF;
+  //cout << "l. " << nr << ":\t" << from_atom (id) << ", " << from_atom (attr) << ", " << from_atom (val) << LF;
+  return nr;
+}
+
+/******************************************************************************
+* Atom management
+******************************************************************************/
+
+db_atom
+database_rep::as_atom (string s) {
+  if (atom_encode->contains (s)) return atom_encode[s];
+  db_atom r= create_atom (s);
+  notify_created_atom (s);
+  return r;
 }
 
 string
@@ -129,27 +157,6 @@ database_rep::entry_from_atoms (db_atoms pairs) {
   for (int i=0; i<N(a); i++)
     r << as_tuple (a[i]);
   return r;
-}
-
-/******************************************************************************
-* Internal subroutines
-******************************************************************************/
-
-db_line_nr
-database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
-  db_line_nr nr= (db_line_nr) N(db);
-  db_line l (id, attr, val, t, DB_MAX_TIME);
-  db << l;
-  id_lines[id] << nr;
-  val_lines[val] << nr;
-  if (!ids_set->contains (id)) {
-    ids_set->insert (id);
-    ids_list << id;
-  }
-  indexate (val);
-  //cout << "l. " << nr << ":\t" << id << ", " << attr << ", " << val << LF;
-  //cout << "l. " << nr << ":\t" << from_atom (id) << ", " << from_atom (attr) << ", " << from_atom (val) << LF;
-  return nr;
 }
 
 /******************************************************************************

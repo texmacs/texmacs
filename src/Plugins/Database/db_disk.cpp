@@ -75,6 +75,7 @@ void
 database_rep::notify_created_atom (string s) {
   pending << (char) ((unsigned char) DB_CREATE_ATOM);
   marshall_string (pending, s);
+  //cout << "Notify created " << s << LF;
 }
 
 void
@@ -85,6 +86,9 @@ database_rep::notify_extended_field (db_line_nr nr) {
   marshall_number (pending, l->attr);
   marshall_number (pending, l->val);
   marshall_number (pending, (unsigned long int) l->created);
+  //cout << "Notify extended " << as_atom (l->id)
+  //<< ", " << as_atom (l->attr)
+  //<< ", " << as_atom (l->val) << LF;
 }
 
 void
@@ -93,6 +97,8 @@ database_rep::notify_removed_field (db_line_nr nr) {
   pending << (char) ((unsigned char) DB_REMOVE_FIELD);
   marshall_number (pending, nr);
   marshall_number (pending, (unsigned long int) l->expires);
+  //cout << "Notify removed " << as_atom (l->id)
+  //<< ", " << as_atom (l->attr) << LF;
 }
 
 /******************************************************************************
@@ -108,7 +114,7 @@ database_rep::replay (string s) {
     case DB_CREATE_ATOM:
       {
         string x= unmarshall_string (s, pos);
-        (void) as_atom (x);
+        (void) create_atom (x);
         break;
       }
     case DB_CREATE_FIELD:

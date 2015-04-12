@@ -91,6 +91,7 @@ public:
   tree entry_from_atoms (db_atoms pairs);
 
 private:
+  db_atom create_atom (string s);
   db_line_nr extend_field (db_atom id, db_atom attr, db_atom vals, db_time t);
   bool line_satisfies (db_line_nr nr, db_constraints cs, db_time t);
   bool id_satisfies (db_atom id, db_constraints cs, db_time t);
