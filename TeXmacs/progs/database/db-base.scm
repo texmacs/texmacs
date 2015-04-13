@@ -28,10 +28,6 @@
 (tm-define (db-reset)
   (set! current-database (url-none)))
 
-(tm-define-macro (db-transaction . body)
-  `(begin
-     ,@body))
-
 (tm-define (db-get-db)
   (if (url-none? current-database)
       (texmacs-error "db-get-db" "no database specified")
