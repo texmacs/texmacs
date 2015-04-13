@@ -73,7 +73,9 @@
 
 (tm-define (bib-last-name-sep a)
   ;; (:mode bib-plain?)
-  (bib-translate " and "))
+  (if (<= (length a) 3)
+      (bib-translate " and ")
+      (bib-translate ", and ")))
 
 (tm-define (bib-format-names a)
   ;; (:mode bib-plain?)
