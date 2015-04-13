@@ -69,8 +69,9 @@ compute_keywords (string s) {
   array<string> r;
   int i=0, n=N(s);
   while (i<n) {
-    while (i<n && !is_keyword_char (s[i]))
-      tm_char_forwards (s, i);
+    //while (i<n && !is_keyword_char (s[i]))
+    //tm_char_forwards (s, i);
+    while (i<n && !is_keyword_char (s[i])) i++;
     if (i >= n) break;
     int start= i;
     while (i<n && is_keyword_char (s[i])) i++;
