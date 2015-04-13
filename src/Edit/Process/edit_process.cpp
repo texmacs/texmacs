@@ -94,6 +94,7 @@ edit_process_rep::generate_bibliography (
         call (string ("bib-attach"), bib, bib_t);
       }
       else {
+	std_error << "Could not load BibTeX file " << fname;
         set_message ("Could not find bibliography file",
                      "compile bibliography");
         return;
