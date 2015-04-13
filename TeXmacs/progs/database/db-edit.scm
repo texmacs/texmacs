@@ -418,19 +418,18 @@
                                     (list "modus" "manual")
                                     (list "origin"))
              (with-time-stamp #t
-               (with-indexing :basic
-                 (with new-id (db-update-entry old-id new)
-                   (if (== new-id old-id)
-                       (begin
-                         (set-message "Entry up to date in database"
-                                      "save entry")
-                         :up-to-date)
-                       (with new-t (db-load-entry new-id)
-                         (tree-set (tree-ref t 0) new-id)
-                         (tree-set (tree-ref t 3) (tm-ref new-t 3))
-                         (set-message "Saved modifications in database"
-                                      "save entry")
-                         :saved))))))))))
+	       (with new-id (db-update-entry old-id new)
+		 (if (== new-id old-id)
+		     (begin
+		       (set-message "Entry up to date in database"
+				    "save entry")
+		       :up-to-date)
+		     (with new-t (db-load-entry new-id)
+		       (tree-set (tree-ref t 0) new-id)
+		       (tree-set (tree-ref t 3) (tm-ref new-t 3))
+		       (set-message "Saved modifications in database"
+				    "save entry")
+		       :saved)))))))))
 
 (define (keep-completing t opt?)
   (when (and (not opt?) (db-entry-any? t))

@@ -15,30 +15,6 @@
   (:use (database db-version)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Optimizing searches for speed
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (db-optimized-search* q)
-  (receive (l1 l2) (list-partition q (cut func? <> :match))
-    (with faster? (lambda (q1 q2)
-                    (<= (index-number-matches (cadr q1))
-                        (index-number-matches (cadr q2))))
-      (db-search (append (sort l1 faster?) l2)))))
-
-(tm-define (db-optimized-search q)
-  (if (not (func? (car q) :prefix))
-      (db-optimized-search* q)
-      (let* ((l (index-get-completions (cadar q)))
-             (t (make-ahash-table)))
-        (for (key l)
-          (when (< (ahash-size t) db-limit)
-            (with r (db-optimized-search* (cons (list :match key) (cdr q)))
-              (for (id r)
-                (ahash-set! t id #t)))))
-        (with r (ahash-set->list t)
-          (if (<= (length r) db-limit) r (sublist r 0 db-limit))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Allow query preferences to be set on a pro-file basis
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -106,25 +82,24 @@
          (a* (db-get-current-query file)))
     (set! a (assoc-add a a*))
     (with-database (user-database)
-      (with-indexing :basic
-        (with-limit (with limit (assoc-ref a "limit")
-                      (or (and limit (string->number limit)) 10))
-          (let* ((search (or (assoc-ref a "search") ""))
-                 (ss (list-filter (string-tokenize-comma search)
-                                  (lambda (s) (>= (string-length s) 2))))
-                 (sq (map (lambda (s) (list :match s)) ss))
-                 (asc? (!= (assoc-ref a "direction") "descend"))
-                 (order (or (assoc-ref a "order") "name"))
-                 (os* (string-tokenize-comma order))
-                 (os (list-filter os* (cut != <> "")))
-                 (oq (map (lambda (s) (list :order s asc?)) os))
-                 (kind (or (assoc-ref a "kind") "unknown"))
-                 (types (or (smart-ref db-kind-table kind) (list)))
-                 (q (append sq (list (cons "type" types)) oq))
-                 (ids (db-optimized-search q))
-                 (r (map db-load-entry ids))
-                 (present (or (assoc-ref a "present") "detailed")))
-            (map (cut entry-present <> present) r)))))))
+      (with-limit (with limit (assoc-ref a "limit")
+		    (or (and limit (string->number limit)) 10))
+	(let* ((search (or (assoc-ref a "search") ""))
+	       (ss (list-filter (string-tokenize-comma search)
+				(lambda (s) (>= (string-length s) 2))))
+	       (sq (map (lambda (s) (list :match s)) ss))
+	       (asc? (!= (assoc-ref a "direction") "descend"))
+	       (order (or (assoc-ref a "order") "name"))
+	       (os* (string-tokenize-comma order))
+	       (os (list-filter os* (cut != <> "")))
+	       (oq (map (lambda (s) (list :order s asc?)) os))
+	       (kind (or (assoc-ref a "kind") "unknown"))
+	       (types (or (smart-ref db-kind-table kind) (list)))
+	       (q (append sq (list (cons "type" types)) oq))
+	       (ids (db-search q))
+	       (r (map db-load-entry ids))
+	       (present (or (assoc-ref a "present") "detailed")))
+	  (map (cut entry-present <> present) r))))))
 
 (tmfs-load-handler (db name)
   (let* ((a (name->query name))

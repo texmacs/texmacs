@@ -116,8 +116,7 @@
              (ok? (lambda (e) (and (ahash-ref h (tm-ref e 2)) (db-entry? e))))
              (l (list-filter (tm-children body) ok?)))
         (with-database db
-          (with-indexing #f
-            (bib-save `(document ,@l))))
+	  (bib-save `(document ,@l)))
         db))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -131,8 +130,7 @@
              (t (convert tm-doc "texmacs-document" "texmacs-stree"))
              (body (tmfile-extract t 'body)))
         (with-database (bib-database)
-          (with-indexing :basic
-            (bib-save body)))
+	  (bib-save body))
         (when (buffer-exists? "tmfs://db/bib/global")
           (revert-buffer "tmfs://db/bib/global"))
         (set-message "Imported bibliographic entries" "import bibliography")
@@ -356,8 +354,7 @@
     (when (string-ends? key "-bibliography")
       (with doc (tm->stree val)
         (with-database (bib-database)
-          (with-indexing :basic
-            (bib-save doc))))))
+	  (bib-save doc)))))
   (former name key val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
