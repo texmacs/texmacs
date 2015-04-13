@@ -29,7 +29,7 @@ db_line::db_line (db_atom id, db_atom attr, db_atom val,
   rep= tm_new<db_line_rep> (id, attr, val, created, expires); }
 
 database_rep::database_rep (url u, bool clone):
-  db_name (u), db (), outdated (0), with_history (true),
+  db_name (u), db (), outdated (0), with_history (!clone),
   atom_encode (-1), atom_decode (),
   id_lines (), val_lines (), ids_list (), ids_set (),
   error_flag (false), loaded (""), pending (""),

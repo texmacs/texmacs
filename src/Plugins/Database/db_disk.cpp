@@ -194,7 +194,7 @@ database_rep::purge () {
   int rnd= (int) (((unsigned int) random ()) & 0xffffff);
   url db_append= glue (db_name, ".append-" * as_string (rnd));
   if (!save_string (db_append, pending, false)) {
-    append_to (db_append, db_name);
+    append_to (db_append, db_name);  // NOTE: critical atomic operations
     remove (db_append);
     loaded << pending;
     pending= "";
@@ -215,17 +215,17 @@ sync_databases () {
       dbs[i]->purge ();
     else {
       database db= dbs[i]->compress ();
-      url cur= dbs[i]->db_name;
-      url bak= glue (cur, ".bak");
-      move (cur, bak);
+      url current= dbs[i]->db_name;
+      int rnd= (int) (((unsigned int) random ()) & 0xffffff);
+      url replace= glue (current, ".replace-" * as_string (rnd));
+      db->db_name= replace;
       db->purge ();
-      if (db->error_flag) {
-        move (bak, cur);
+      db->db_name= current;
+      if (db->error_flag)
         dbs[i]->with_history= true;
-      }
       else {
+        move (replace, current);  // NOTE: critical atomic operations
         dbs[i]= db;
-        remove (bak);
       }
     }
 }
