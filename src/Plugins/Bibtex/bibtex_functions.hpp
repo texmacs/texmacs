@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "analyze.hpp"
+#include "universal.hpp"
 #include "convert.hpp"
 #include "hashmap.hpp"
 #include "hashset.hpp"

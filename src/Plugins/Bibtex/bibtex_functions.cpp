@@ -322,14 +322,14 @@ bib_change_case (tree& t, string (*change_case) (string)) {
 scheme_tree
 bib_locase (scheme_tree st) {
   tree t= simplify_correct (scheme_tree_to_tree (st));
-  bib_change_case (t, locase_all);
+  bib_change_case (t, uni_locase_all);
   return tree_to_scheme_tree (t); 
 }
 
 scheme_tree
 bib_upcase (scheme_tree st) {
   tree t= simplify_correct (scheme_tree_to_tree (st));
-  bib_change_case (t, upcase_all);
+  bib_change_case (t, uni_upcase_all);
   return tree_to_scheme_tree (t); 
 }
 
