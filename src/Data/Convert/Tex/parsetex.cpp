@@ -1466,7 +1466,7 @@ latex_parser::parse_alltt (string s, int& i, string end, string env, tree opt)
 * This routine may be used to transform accented characters to the Cork format
 ******************************************************************************/
 
-static char Cork_unaccented[128]= {
+char Cork_unaccented[128]= {
   'A', 'A', 'C', 'C', 'D', 'E', 'E', 'G',
   'L', 'L', ' ', 'N', 'N', ' ', 'O', 'R',
   'R', 'S', 'S', 'S', 'T', 'T', 'U', 'U',
@@ -1485,7 +1485,7 @@ static char Cork_unaccented[128]= {
   ' ', 'u', 'u', 'u', 'u', 'y', ' ', ' '
 };
 
-static char Cork_accent[128]= {
+char Cork_accent[128]= {
   'u' , 'k' , '\'', 'v' , 'v' , 'v' , 'k' , 'u' ,
   '\'', 'v' , ' ' , '\'', 'v' , ' ' , 'H' , '\'',
   'v' , '\'', 'v' , 'c' , 'v' , 'c' , 'H' , 'r' ,

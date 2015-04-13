@@ -11,52 +11,14 @@
 
 #include "Database/database.hpp"
 #include "hashset.hpp"
-#include "analyze.hpp"
 #include "convert.hpp"
+#include "universal.hpp"
 
 #define MAX_PREFIX_LENGTH 6
 
 /******************************************************************************
 * Computing list of keywords in a string
 ******************************************************************************/
-
-static char Cork_unaccented_bis[128]= {
-  'A', 'A', 'C', 'C', 'D', 'E', 'E', 'G',
-  'L', 'L', ' ', 'N', 'N', ' ', 'O', 'R',
-  'R', 'S', 'S', 'S', 'T', 'T', 'U', 'U',
-  'Y', 'Z', 'Z', 'Z', ' ', 'I', 'd', ' ',
-  'a', 'a', 'c', 'c', 'd', 'e', 'e', 'g',
-  'l', 'l', ' ', 'n', 'n', ' ', 'o', 'r',
-  'r', 's', 's', 's', 't', 't', 'u', 'u',
-  'y', 'z', 'z', 'z', ' ', ' ', ' ', ' ',
-  'A', 'A', 'A', 'A', 'A', 'A', ' ', 'C',
-  'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
-  'D', 'N', 'O', 'O', 'O', 'O', 'O', ' ',
-  ' ', 'U', 'U', 'U', 'U', 'Y', ' ', ' ',
-  'a', 'a', 'a', 'a', 'a', 'a', ' ', 'c',
-  'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
-  'd', 'n', 'o', 'o', 'o', 'o', 'o', ' ',
-  ' ', 'u', 'u', 'u', 'u', 'y', ' ', ' '
-};
-
-string
-uni_translit (string s) {
-  int i=0, n=N(s);
-  string r;
-  while (i<n)
-    if (((int) ((unsigned char) s[i])) >= 128) {
-      char c= Cork_unaccented_bis[((int) ((unsigned char) s[i])) - 128];
-      if (c != ' ') r << c;
-      else r << s[i];
-      i++;
-    }
-    else {
-      int start= i;
-      tm_char_forwards (s, i);
-      r << s (start, i);
-    }
-  return r;
-}
 
 inline bool
 is_keyword_char (char c) {
@@ -69,9 +31,7 @@ compute_keywords (array<string>& r, string s) {
   s= locase_all (s);
   int i=0, n=N(s);
   while (i<n) {
-    while (i<n && !is_keyword_char (s[i]))
-      tm_char_forwards (s, i);
-    //while (i<n && !is_keyword_char (s[i])) i++;
+    while (i<n && !is_keyword_char (s[i])) tm_char_forwards (s, i);
     if (i >= n) break;
     int start= i;
     while (i<n && is_keyword_char (s[i])) i++;
