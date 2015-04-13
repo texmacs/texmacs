@@ -106,7 +106,7 @@
 (tm-define (db-set-entry id l)
   (let* ((old-l (db-get-entry id))
          (new-l (assoc-add db-extra-fields l)))
-    (when (and db-time-stamp? (not (ahash-ref new-l "date")))
+    (when (and db-time-stamp? (not (assoc-ref new-l "date")))
       (set! new-l (rcons new-l (list "date" (number->string (current-time))))))
     (tmdb-set-entry (db-get-db) id new-l (db-get-time))))
 
