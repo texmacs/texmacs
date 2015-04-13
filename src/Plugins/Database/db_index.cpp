@@ -192,7 +192,7 @@ database_rep::compute_completions (string s) {
   db_keys ks= key_completions (s (0, pos));
   strings r;
   for (int i=0; i<N(ks); i++)
-    if (pos<n || starts (from_key (ks[i]), s))
+    if (pos == n || starts (from_key (ks[i]), s))
       r << from_key (ks[i]);
   return r;
 }
@@ -205,7 +205,7 @@ database_rep::compute_name_completions (string s) {
   db_atoms vals= name_completions (s (0, pos));
   strings r;
   for (int i=0; i<N(vals); i++)
-    if (pos<n || starts (from_atom (vals[i]), s))
+    if (pos == n || starts (from_atom (vals[i]), s))
       r << from_atom (vals[i]);
   return r;
 }
