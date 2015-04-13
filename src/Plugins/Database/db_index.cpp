@@ -12,6 +12,7 @@
 #include "Database/database.hpp"
 #include "hashset.hpp"
 #include "analyze.hpp"
+#include "convert.hpp"
 
 #define MAX_PREFIX_LENGTH 6
 
@@ -62,21 +63,37 @@ is_keyword_char (char c) {
   return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c == '_';
 }
 
-array<string>
-compute_keywords (string s) {
+void
+compute_keywords (array<string>& r, string s) {
   s= uni_translit (s);
   s= locase_all (s);
-  array<string> r;
   int i=0, n=N(s);
   while (i<n) {
-    //while (i<n && !is_keyword_char (s[i]))
-    //tm_char_forwards (s, i);
-    while (i<n && !is_keyword_char (s[i])) i++;
+    while (i<n && !is_keyword_char (s[i]))
+      tm_char_forwards (s, i);
+    //while (i<n && !is_keyword_char (s[i])) i++;
     if (i >= n) break;
     int start= i;
     while (i<n && is_keyword_char (s[i])) i++;
     r << s (start, i);
   }
+}
+
+void
+compute_keywords (array<string>& r, tree t) {
+  if (is_atomic (t)) compute_keywords (r, t->label);
+  else {
+    int i, n=N(t);
+    for (i=0; i<n; i++)
+      compute_keywords (r, t[i]);
+  }
+}
+
+array<string>
+compute_keywords (string s) {
+  array<string> r;
+  tree t= texmacs_to_tree (s);
+  compute_keywords (r, t);
   return r;
 }
 
