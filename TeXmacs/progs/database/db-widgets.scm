@@ -88,8 +88,8 @@
     (with-limit 20
       ;; TODO: filter on user permissions
       (let* ((types (smart-ref db-kind-table kind))
-	     (q (append (prefix->queries query)
-			(list (cons "type" types))))
+	     (q (list (list :completes query)
+		      (cons "type" types)))
 	     (ids (db-search-cached q))
 	     (l (map db-get-result-cached ids))
 	     (r (db-pretty-cached l kind :pretty)))
@@ -107,9 +107,7 @@
 (define (db-search-keypress db kind event old-query)
   (when (pair? event)
     (with (new-query key) event
-      (when (with-database db
-              (!= (prefix->queries new-query)
-                  (prefix->queries old-query)))
+      (when (!= new-query old-query)
         (with serial (+ db-search-keypress-serial 1)
           (set! db-search-keypress-serial serial)
           (delayed
