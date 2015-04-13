@@ -130,6 +130,7 @@ database_rep::replay (string s) {
       {
         db_line_nr nr= (db_line_nr) unmarshall_number (s, pos);
         db_time    t = (db_time)    unmarshall_number (s, pos);
+        if (db[nr]->expires == DB_MAX_TIME) outdated++;
         db[nr]->expires= t;
         break;
       }
@@ -138,6 +139,29 @@ database_rep::replay (string s) {
       break;
     }
   }
+}
+
+/******************************************************************************
+* Creating a new database with the active entries only
+******************************************************************************/
+
+database
+database_rep::compress () {
+  //cout << "Compressing " << outdated << " items out of " << N(db) << LF;
+  database clone (db_name, true);
+  for (int nr=0; nr<N(db); nr++) {
+    db_line& l= db[nr];
+    if (l->expires == DB_MAX_TIME) {
+      db_atom id  = clone->as_atom (from_atom (l->id  ));
+      db_atom attr= clone->as_atom (from_atom (l->attr));
+      db_atom val = clone->as_atom (from_atom (l->val ));
+      db_time t   = l->created;
+      db_line_nr cnr= clone->extend_field (id, attr, val, t);
+      clone->notify_extended_field (cnr);
+      //cout << "  Add " << from_atom (l->id) << ", " << from_atom (l->attr) << ", " << from_atom (l->val) << LF;
+    }
+  }
+  return clone;
 }
 
 /******************************************************************************
@@ -187,5 +211,21 @@ extern array<database> dbs;
 void
 sync_databases () {
   for (int i=0; i<N(dbs); i++)
-    dbs[i]->purge ();
+    if (dbs[i]->with_history || (2 * dbs[i]->outdated) <= N(dbs[i]->db))
+      dbs[i]->purge ();
+    else {
+      database db= dbs[i]->compress ();
+      url cur= dbs[i]->db_name;
+      url bak= glue (cur, ".bak");
+      move (cur, bak);
+      db->purge ();
+      if (db->error_flag) {
+        move (bak, cur);
+        dbs[i]->with_history= true;
+      }
+      else {
+        dbs[i]= db;
+        remove (bak);
+      }
+    }
 }

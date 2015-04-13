@@ -58,10 +58,13 @@ typedef array<db_constraint> db_constraints;
 typedef int db_key;
 typedef array<db_key> db_keys;
 
+class database;
 class database_rep: public concrete_struct {
 private:
   url db_name;
   array<db_line> db;
+  int outdated;
+  bool with_history;
 
   hashmap<string,db_atom> atom_encode;
   array<string> atom_decode;
@@ -109,6 +112,7 @@ private:
   void notify_extended_field (db_line_nr nr);
   void notify_removed_field (db_line_nr nr);
   void replay (string s);
+  database compress ();
   void initialize ();
   void purge ();
 
@@ -128,7 +132,7 @@ private:
   db_atoms sort_results (db_atoms ids, tree q, db_time t);
 
 public:
-  database_rep (url u);
+  database_rep (url u, bool clone= false);
 
   void set_field (db_atom id, db_atom attr, db_atoms vals, db_time t);
   db_atoms get_field (db_atom id, db_atom attr, db_time t);
@@ -139,7 +143,7 @@ public:
   void remove_entry (db_atom id, db_time t);
   db_atoms query (tree qt, db_time t, int limit);
 
-  friend class database;
+  friend void keep_history (url u, bool flag);
   friend void sync_databases ();
   friend strings get_completions (url u, string s);
   friend strings get_name_completions (url u, string s);
@@ -148,10 +152,11 @@ public:
 class database {
   CONCRETE(database);
   database ();
-  database (url u);
+  database (url u, bool clone= false);
 };
 CONCRETE_CODE(database);
 
+void keep_history (url u, bool flag);
 void set_field (url u, string id, string attr, strings vals, db_time t);
 strings get_field (url u, string id, string attr, db_time t);
 void remove_field (url u, string id, string attr, db_time t);

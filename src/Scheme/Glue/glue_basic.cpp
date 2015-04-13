@@ -6515,6 +6515,21 @@ tmg_persistent_file_name (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_tmdb_keep_history (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-keep-history");
+  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "tmdb-keep-history");
+
+  url in1= tmscm_to_url (arg1);
+  bool in2= tmscm_to_bool (arg2);
+
+  // TMSCM_DEFER_INTS;
+  keep_history (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_tmdb_set_field (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-set-field");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-set-field");
@@ -9360,6 +9375,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("persistent-has?",  tmg_persistent_hasP, 2, 0, 0);
   tmscm_install_procedure ("persistent-get",  tmg_persistent_get, 2, 0, 0);
   tmscm_install_procedure ("persistent-file-name",  tmg_persistent_file_name, 2, 0, 0);
+  tmscm_install_procedure ("tmdb-keep-history",  tmg_tmdb_keep_history, 2, 0, 0);
   tmscm_install_procedure ("tmdb-set-field",  tmg_tmdb_set_field, 5, 0, 0);
   tmscm_install_procedure ("tmdb-get-field",  tmg_tmdb_get_field, 4, 0, 0);
   tmscm_install_procedure ("tmdb-remove-field",  tmg_tmdb_remove_field, 4, 0, 0);

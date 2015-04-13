@@ -550,6 +550,7 @@
   (persistent-file-name persistent_file_name (url url string))
 
   ;; native TeXmacs databases
+  (tmdb-keep-history keep_history (void url bool))
   (tmdb-set-field set_field (void url string string array_string double))
   (tmdb-get-field get_field (array_string url string string double))
   (tmdb-remove-field remove_field (void url string string double))

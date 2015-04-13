@@ -28,8 +28,8 @@ db_line::db_line (db_atom id, db_atom attr, db_atom val,
                   db_time created, db_time expires) {
   rep= tm_new<db_line_rep> (id, attr, val, created, expires); }
 
-database_rep::database_rep (url u):
-  db_name (u), db (),
+database_rep::database_rep (url u, bool clone):
+  db_name (u), db (), outdated (0), with_history (true),
   atom_encode (-1), atom_decode (),
   id_lines (), val_lines (), ids_list (), ids_set (),
   error_flag (false), loaded (""), pending (""),
@@ -38,14 +38,14 @@ database_rep::database_rep (url u):
   key_completions (), name_completions ()
 {
   if (is_none (db_name)) error_flag= false;
-  else initialize ();
+  else if (!clone) initialize ();
 }
 
 database::database () {
   rep= tm_new<database_rep> (url_none ()); };
 
-database::database (url u) {
-  rep= tm_new<database_rep> (u); };
+database::database (url u, bool clone) {
+  rep= tm_new<database_rep> (u, clone); };
 
 /******************************************************************************
 * Internal subroutines
@@ -194,6 +194,7 @@ database_rep::remove_field (db_atom id, db_atom attr, db_time t) {
     if (l->attr == attr && l->expires == DB_MAX_TIME) {
       l->expires= t;
       notify_removed_field (nrs[i]);
+      outdated++;
     }
   }
 }
@@ -245,6 +246,7 @@ database_rep::remove_entry (db_atom id, db_time t) {
     if (l->expires == DB_MAX_TIME) {
       l->expires= t;
       notify_removed_field (nrs[i]);
+      outdated++;
     }
   }
 }
@@ -263,6 +265,14 @@ get_database (url u) {
     dbs << database (u);
   }
   return dbs [db_index [u->t]];
+}
+
+void
+keep_history (url u, bool flag) {
+  database db= get_database (u);
+  bool sync= (db->with_history != flag);
+  db->with_history= flag;
+  if (sync) sync_databases ();
 }
 
 void
