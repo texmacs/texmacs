@@ -15,4 +15,11 @@
 
 string uni_translit (string s);
 
+string uni_locase_char (string s);
+string uni_upcase_char (string s);
+string uni_locase_first (string s);
+string uni_upcase_first (string s);
+string uni_locase_all (string s);
+string uni_upcase_all (string s);
+
 #endif // defined UNIVERSAL_H

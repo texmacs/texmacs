@@ -4855,6 +4855,71 @@ tmg_tmstring_split (tmscm arg1) {
 }
 
 tmscm
+tmg_tmstring_translit (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-translit");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= uni_translit (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_tmstring_locase_first (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-locase-first");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= uni_locase_first (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_tmstring_upcase_first (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-upcase-first");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= uni_upcase_first (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_tmstring_locase_all (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-locase-all");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= uni_locase_all (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_tmstring_upcase_all (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-upcase-all");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= uni_upcase_all (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_packrat_define (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "packrat-define");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "packrat-define");
@@ -9175,6 +9240,11 @@ initialize_glue_basic () {
   tmscm_install_procedure ("string-next",  tmg_string_next, 2, 0, 0);
   tmscm_install_procedure ("string-previous",  tmg_string_previous, 2, 0, 0);
   tmscm_install_procedure ("tmstring-split",  tmg_tmstring_split, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-translit",  tmg_tmstring_translit, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-locase-first",  tmg_tmstring_locase_first, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-upcase-first",  tmg_tmstring_upcase_first, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-locase-all",  tmg_tmstring_locase_all, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-upcase-all",  tmg_tmstring_upcase_all, 1, 0, 0);
   tmscm_install_procedure ("packrat-define",  tmg_packrat_define, 3, 0, 0);
   tmscm_install_procedure ("packrat-property",  tmg_packrat_property, 4, 0, 0);
   tmscm_install_procedure ("packrat-inherit",  tmg_packrat_inherit, 2, 0, 0);

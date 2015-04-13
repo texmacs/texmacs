@@ -19,7 +19,7 @@
 
 #include "boxes.hpp"
 #include "editor.hpp"
-#include "analyze.hpp"
+#include "universal.hpp"
 #include "convert.hpp"
 #include "file.hpp"
 #include "iterator.hpp"

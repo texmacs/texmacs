@@ -119,3 +119,91 @@ uni_translit (string s) {
   }
   return r;
 }
+
+/******************************************************************************
+* Changing the case
+******************************************************************************/
+
+string
+uni_locase_char (string s) {
+  if (N(s) == 1) {
+    unsigned char c= s[0];
+    if ((c >= 'A' && c <= 'Z') ||
+	(c >= ((unsigned char) 0x80) && (c <= ((unsigned char) 0x9F))) ||
+	(c >= ((unsigned char) 0xC0) && (c <= ((unsigned char) 0xDF))))
+      return string ((char) (c + 0x20));
+    return s;
+  }
+  else if (starts (s, "<#") && ends (s, ">")) {
+    int code= from_hexadecimal (s (2, N(s) - 1));
+    if      (code >= 0x400 && code <= 0x40F) code += 0x50;
+    else if (code >= 0x410 && code <= 0x42F) code += 0x20;
+    else if (code >= 0x460 && code <= 0x4FF) {
+      if ((code & 1) == 0) code += 1;
+    }
+    return "<#" * as_hexadecimal (code) * ">";
+  }
+  else return s;
+}
+
+string
+uni_upcase_char (string s) {
+  if (N(s) == 1) {
+    unsigned char c= s[0];
+    if ((c >= 'a' && c <= 'z') ||
+	(c >= ((unsigned char) 0xA0) && (c <= ((unsigned char) 0xBF))) ||
+	(c >= ((unsigned char) 0xE0)))
+      return string ((char) (c - 0x20));
+    return s;
+  }
+  else if (starts (s, "<#") && ends (s, ">")) {
+    int code= from_hexadecimal (s (2, N(s) - 1));
+    if      (code >= 0x450 && code <= 0x45F) code -= 0x50;
+    else if (code >= 0x430 && code <= 0x44F) code -= 0x20;
+    else if (code >= 0x460 && code <= 0x4FF) {
+      if ((code & 1) == 1) code -= 1;
+    }
+    return "<#" * as_hexadecimal (code) * ">";
+  }
+  else return s;
+}
+
+string
+uni_locase_first (string s) {
+  if (N(s) == 0) return s;
+  int pos= 0;
+  tm_char_forwards (s, pos);
+  return uni_locase_char (s (0, pos)) * s (pos, N(s));
+}
+
+string
+uni_upcase_first (string s) {
+  if (N(s) == 0) return s;
+  int pos= 0;
+  tm_char_forwards (s, pos);
+  return uni_upcase_char (s (0, pos)) * s (pos, N(s));
+}
+
+string
+uni_locase_all (string s) {
+  string r;
+  int i=0, n=N(s);
+  while (i<n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    r << uni_locase_char (s (start, i));
+  }
+  return r;
+}
+
+string
+uni_upcase_all (string s) {
+  string r;
+  int i=0, n=N(s);
+  while (i<n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    r << uni_upcase_char (s (start, i));
+  }
+  return r;
+}

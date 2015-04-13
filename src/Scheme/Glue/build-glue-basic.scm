@@ -416,6 +416,12 @@
   (string-previous tm_char_previous (int string int))
   (tmstring-split tm_string_split (array_string string))
 
+  (tmstring-translit uni_translit (string string))
+  (tmstring-locase-first uni_locase_first (string string))
+  (tmstring-upcase-first uni_upcase_first (string string))
+  (tmstring-locase-all uni_locase_all (string string))
+  (tmstring-upcase-all uni_upcase_all (string string))
+
   ;; Packrat grammar and parsing tools
   (packrat-define packrat_define (void string string tree))
   (packrat-property packrat_property (void string string string string))
