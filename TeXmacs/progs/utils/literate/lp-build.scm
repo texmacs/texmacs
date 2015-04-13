@@ -136,50 +136,34 @@
 ;; Memorize which files have been built
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define lp-db (url->url "$TEXMACS_HOME_PATH/system/database/lp-master.db"))
-
-(define (lp-init-database)
-  (when (not (url-exists? lp-db))
-    ;;(display* "Create " lp-db "\n")
-    (sql-exec lp-db "CREATE TABLE built (src text, dir text, time text)")))
-
-(define (lp-sql . l)
-  (lp-init-database)
-  ;;(display* (url-tail lp-db) "] " (apply string-append l) "\n")
-  (sql-exec lp-db (apply string-append l)))
-
-(define (lp-sql* . l)
-  (with r (apply lp-sql l)
-    (with f (lambda (x) (and (pair? x) (car x)))
-      (map f (if (null? r) r (cdr r))))))
+(define lp-db (url->url "$TEXMACS_HOME_PATH/system/database/lp-master.tmdb"))
 
 (define (lp-set-time-stamp src dir)
-  (let* ((src* (sql-quote (url->system src)))
-         (dir* (sql-quote (url->system dir)))
+  (tmdb-keep-history lp-db #f)
+  (let* ((src* (url->system src))
+         (dir* (url->system dir))
+         (id (string-append src* "-" dir*))
          (time (number->string (url-last-modified src))))
-    (lp-sql "DELETE FROM built WHERE src=" src*
-            " AND dir=" dir*)
-    (lp-sql "INSERT INTO built VALUES (" src*
-            ", " dir* ", " time ")")))
+    (tmdb-set-field lp-db id "time-stamp" (list time) (current-time))))
 
 (define (lp-get-time-stamp src dir)
-  (let* ((src* (sql-quote (url->system src)))
-         (dir* (sql-quote (url->system dir)))
-         (l (lp-sql* "SELECT DISTINCT time FROM built WHERE src=" src*
-                     " AND dir=" dir*)))
-    (and l (nnull? l) (car l))))
+  (tmdb-keep-history lp-db #f)
+  (let* ((src* (url->system src))
+         (dir* (url->system dir))
+         (id (string-append src* "-" dir*)))
+    (with l (tmdb-get-field lp-db id "time-stamp" (current-time))
+      (and l (nnull? l) (car l)))))
 
 (define (lp-build-conditional src dir fun)
-  (if (not (supports-sql?)) (fun src dir)
-      (with stamp (lp-get-time-stamp src dir)
-        (when (or (not stamp)
-                  (not (url-exists? src))
-                  (not (url-exists? dir))
-                  (< (string->number stamp) (url-last-modified src)))
-          (fun src dir)
-          (when (and (url-exists? src)
-                     (url-exists? dir))
-            (lp-set-time-stamp src dir))))))
+  (with stamp (lp-get-time-stamp src dir)
+    (when (or (not stamp)
+              (not (url-exists? src))
+              (not (url-exists? dir))
+              (< (string->number stamp) (url-last-modified src)))
+      (fun src dir)
+      (when (and (url-exists? src)
+                 (url-exists? dir))
+        (lp-set-time-stamp src dir)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main build process
