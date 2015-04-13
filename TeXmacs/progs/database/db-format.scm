@@ -52,20 +52,7 @@
   ;; For each entry+field type, specify the encoding being used for
   ;; the field value.  This allows for instance to use TeXmacs snippets
   ;; instead of plain string values.
-  (("type" * *) :identity)
-  (("location" * *) :identity)
-  (("dir" * *) :identity)
-  (("date" * *) :identity)
-  (("pseudo" * *) :identity)
-  (("id" * *) :identity))
-
-(smart-table db-encoder-table
-  ;; The routine being used for encoding a field value as a string
-  (,:identity ,identity))
-
-(smart-table db-decoder-table
-  ;; The routine being used for decoding a field value from a string
-  (,:identity ,identity))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -81,12 +68,15 @@
 ;; Encoding and decoding of TeXmacs snippets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (db-encode-texmacs-one val)
+  (serialize-texmacs-snippet (stree->tree val)))
+
 (define (db-encode-texmacs vals)
   ;;(display* "Encode TeXmacs " vals "\n")
-  (map (cut convert <> "texmacs-stree" "texmacs-snippet") vals))
+  (map db-encode-texmacs-one vals))
 
 (define (db-decode-texmacs-one val)
-  (with r (convert val "texmacs-snippet" "texmacs-stree")
+  (with r (tree->stree (parse-texmacs-snippet val))
     (if (tm-func? r 'document 1) (tm-ref r 0) r)))
 
 (define (db-decode-texmacs vals)
@@ -112,7 +102,7 @@
       (smart-ref db-encoding-table (list '* type '*))
       (smart-ref db-encoding-table (list '* '* db-encoding))
       (smart-ref db-encoding-table (list '* '* '*))
-      :identity))
+      :texmacs))
 
 (define (db-encode-values type attr vals)
   (let* ((enc (db-get-encoding type attr))

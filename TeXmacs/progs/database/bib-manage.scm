@@ -53,10 +53,14 @@
         (db-set-field id "target" (list (url->system imported)))
         (db-set-field id "stamp" (list stamp))))))
 
+(define (convert-tmbib s)
+  (system-wait "Converting BibTeX file" "please wait")
+  (tmbib-document->texmacs* s))
+
 (define (bib-cache-create f)
   (with-global db-bib-origin (url->string (url-tail f))
     (let* ((bib-doc (string-load f))
-           (t (tmbib-document->texmacs* bib-doc))
+           (t (convert-tmbib bib-doc))
            (tm-doc (convert t "texmacs-stree" "texmacs-document"))
            (id (with-database bib-master (db-create-id)))
            (dupl (url->url (string-append bib-cache-dir "/" id ".bib")))
