@@ -120,7 +120,8 @@ edit_process_rep::generate_bibliography (
     }
     else if (starts (style, "tm-")) {
       string sbib;
-      load_string (bib_file, sbib, false);
+      if (load_string (bib_file, sbib, false))
+	std_error << "Could not load BibTeX file " << fname;
       tree te= bib_entries (parse_bib (sbib), bib_t);
       object ot= tree_to_stree (te);
       eval ("(use-modules (bibtex " * style (3, N(style)) * "))");
