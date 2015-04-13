@@ -96,6 +96,8 @@
          (pairs (append-map db-save-field (append meta last))))
     (cons* (list "type" type) (list "name" name) pairs)))
 
+(define db-save-serial 0)
+
 (tm-define (db-save-selected-entry t pred?)
   (set! t (db-save-pre t))
   (when (and (db-entry-any? t) (pred? (tm-ref t 1)))
@@ -103,8 +105,10 @@
            (id (tm-ref t 0))
            (type (tm-ref t 1))
            (name (tm-ref t 2)))
-      (system-wait (string-append "Processing database entry " name ", ")
-                   "please wait")
+      (set! db-save-serial (+ db-save-serial 1))
+      (when (== (remainder db-save-serial 10) 0)
+        (system-wait (string-append "Processing database entry " name ", ")
+                     "please wait"))
       (db-import-entry id all))))
 
 (define (db-duplicate? t)

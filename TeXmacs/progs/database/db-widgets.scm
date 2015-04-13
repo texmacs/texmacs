@@ -114,7 +114,7 @@
         (with serial (+ db-search-keypress-serial 1)
           (set! db-search-keypress-serial serial)
           (delayed
-            (:pause 333)
+            (:pause 200)
             (when (== db-search-keypress-serial serial)
               (with doc `(document ,@(db-search-results db kind new-query))
                 (buffer-set-body "tmfs://aux/db-search-results" doc))
