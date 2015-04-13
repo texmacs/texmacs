@@ -282,7 +282,8 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-S") || (s == "-setup") ||
 	       (s == "-delete-cache") || (s == "-delete-font-cache") ||
 	       (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
-	       (s == "-delete-doc-cache") || (s == "-delete-plugin-cache"));
+	       (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
+	       (s == "-delete-server-data") || (s == "-delete-databases"));
       else if (starts (s, "-psn"));
       else {
 	cout << "\n";
@@ -486,9 +487,12 @@ immediate_options (int argc, char** argv) {
       remove (url ("$TEXMACS_HOME_PATH/system/cache/dir_cache.scm"));
       remove (url ("$TEXMACS_HOME_PATH/system/cache/stat_cache.scm"));
     }
-    else if (s == "-delete-plugin-cache") {
+    else if (s == "-delete-plugin-cache")
       remove (url ("$TEXMACS_HOME_PATH/system/cache/plugin_cache.scm"));
-    }
+    else if (s == "-delete-server-data")
+      system ("rm -rf", url ("$TEXMACS_HOME_PATH/server"));
+    else if (s == "-delete-databases")
+      system ("rm -rf", url ("$TEXMACS_HOME_PATH/system/database"));
     else if (s == "-log-file" && i + 1 < argc) {
       i++;
       char* log_file = argv[i];
