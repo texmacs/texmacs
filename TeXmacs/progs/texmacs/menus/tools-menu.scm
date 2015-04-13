@@ -63,8 +63,7 @@
       (-> "Export selections as"
           (link clipboard-export-preference-menu)))
   ---
-  (if (supports-sql?)
-      ("Database tool" (toggle-preference "database tool")))
+  ("Database tool" (toggle-preference "database tool"))
   ("Debugging tool" (toggle-preference "debugging tool"))
   ("Developer tool" (toggle-preference "developer tool"))
   ("Linking tool" (toggle-preference "linking tool"))

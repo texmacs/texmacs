@@ -355,7 +355,7 @@
   (cond ((and (tm-func? t 'bib-entry 3)
               (tm-func? (tm-ref t 2) 'document))
          (let* ((id (with-database (user-database) (db-create-id)))
-                (date (with-database (user-database) (db-sql-date)))
+                (date (number->string (current-time)))
                 (type (tm->string (tm-ref t 0)))
                 (type* (if (== type "conference") "inproceedings" type))
                 (name (tm-ref t 1))

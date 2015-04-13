@@ -67,9 +67,6 @@
         ((number? db-time) db-time)
         (else (texmacs-error "db-get-time" "invalid time"))))
 
-(tm-define (db-sql-date)
-  (number->string (current-time)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic public interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -282,8 +282,7 @@
   (when (and (tm? names) (tm-func? names 'document))
     (set! names (tm-children (tm->stree names))))
   ;;(display* "Compile " style ", " names ", " bib-files "\n")
-  (cond ((not (supports-sql?)) (tree "Error: SQL not supported"))
-        ((not (supports-db?)) (tree "Error: database tool not activated"))
+  (cond ((not (supports-db?)) (tree "Error: database tool not activated"))
         ((not (and (list? names) (list-and (map string? names))))
          (tree "Error: invalid bibliographic key list"))
         (else

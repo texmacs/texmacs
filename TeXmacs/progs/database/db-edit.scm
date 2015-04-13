@@ -302,7 +302,7 @@
     (when doc
       (let* ((i (tree-index (tree-down doc)))
              (id (with-database (user-database) (db-create-id)))
-             (date (with-database (user-database) (db-sql-date)))
+             (date (number->string (current-time)))
              (res `(db-entry ,id ,type ""
                              (document
                                (db-field "contributor" ,(get-default-user))

@@ -97,7 +97,7 @@
   (!= (default-korean-font) "roman"))
 
 (define-public (supports-db?)
-  (and (supports-sql?) (== (get-preference "database tool") "on")))
+  (== (get-preference "database tool") "on"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode related

@@ -76,10 +76,10 @@
       (list "default" "Default User")))
 
 (tm-define (get-default-user)
-  (when (and (not db-the-default-user) (supports-sql?))
+  (when (not db-the-default-user)
     (and-with uid (find-default-user)
       (set! db-the-default-user uid)))
-  (when (and (not db-the-default-user) (supports-sql?))
+  (when (not db-the-default-user)
     (with info (create-default-user)
       (with (pseudo name) info
         (when (and (!= pseudo "default") (!= name "Default User"))
