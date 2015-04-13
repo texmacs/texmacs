@@ -60,6 +60,7 @@ database_rep::create_atom (string s) {
     id_lines << db_line_nrs ();
     val_lines << db_line_nrs ();
     atom_indexed << false;
+    name_indexed << false;
   }
   return atom_encode[s];
 }
@@ -76,6 +77,7 @@ database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
     ids_list << id;
   }
   indexate (val);
+  if (atom_decode[attr] == "name") indexate_name (val);
   //cout << "l. " << nr << ":\t" << id << ", " << attr << ", " << val << LF;
   //cout << "l. " << nr << ":\t" << from_atom (id) << ", " << from_atom (attr) << ", " << from_atom (val) << LF;
   return nr;
@@ -335,10 +337,6 @@ get_completions (url u, string s) {
 
 strings
 get_name_completions (url u, string s) {
-  //database db= get_database (u);
-  //return db->compute_name_completions (s);
-  (void) u;
-  strings r;
-  r << s;
-  return r;
+  database db= get_database (u);
+  return db->compute_name_completions (s);
 }

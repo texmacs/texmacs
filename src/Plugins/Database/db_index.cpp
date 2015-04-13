@@ -133,6 +133,22 @@ database_rep::indexate (db_atom val) {
   atom_indexed[val]= true;
 }
 
+void
+database_rep::indexate_name (db_atom val) {
+  if (name_indexed[val]) return;
+  string s= atom_decode[val];
+  int pos= 0, n= N(s);
+  for (int i=0; i<MAX_PREFIX_LENGTH && pos<n; i++) {
+    tm_char_forwards (s, pos);
+    string ss= s (0, pos);
+    if (!name_completions->contains (ss))
+      name_completions (ss)= db_keys ();
+    name_completions (ss) << val;
+    //cout << "Name completions " << ss << " -> " << name_completions[ss] << LF;
+  }
+  name_indexed[val]= true;
+}
+
 /******************************************************************************
 * Using the index
 ******************************************************************************/
@@ -178,6 +194,19 @@ database_rep::compute_completions (string s) {
   for (int i=0; i<N(ks); i++)
     if (pos<n || starts (from_key (ks[i]), s))
       r << from_key (ks[i]);
+  return r;
+}
+
+strings
+database_rep::compute_name_completions (string s) {
+  int pos=0, n=N(s);
+  for (int i=0; i<MAX_PREFIX_LENGTH && pos<n; i++)
+    tm_char_forwards (s, pos);
+  db_atoms vals= name_completions (s (0, pos));
+  strings r;
+  for (int i=0; i<N(vals); i++)
+    if (pos<n || starts (from_atom (vals[i]), s))
+      r << from_atom (vals[i]);
   return r;
 }
 

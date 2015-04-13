@@ -77,6 +77,7 @@ private:
   hashmap<string,db_atom> key_encode;
   array<string> key_decode;
   array<bool> atom_indexed;
+  array<bool> name_indexed;
   array<db_atoms> key_occurrences;
   hashmap<string,db_keys> key_completions;
   hashmap<string,db_atoms> name_completions;
@@ -116,8 +117,10 @@ private:
   string from_key (db_key a);
   void add_completed_as (db_key k);
   void indexate (db_atom val);
+  void indexate_name (db_atom val);
   db_constraint encode_keywords_constraint (tree q);
   strings compute_completions (string s);
+  strings compute_name_completions (string s);
   tree normalize_query (tree q);
 
 private:
