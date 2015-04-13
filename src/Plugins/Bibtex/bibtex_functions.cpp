@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : bibtex_functions.cpp
 * DESCRIPTION: BiBTeX internal functions
-* COPYRIGHT  : (C) 2010 David MICHEL
+* COPYRIGHT  : (C) 2010, 2015  David MICHEL, Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -233,43 +233,42 @@ bib_add_period (scheme_tree st) {
 * Change case of the first letter
 ******************************************************************************/
 
-char*
-bib_first_char (tree t) {
+bool
+bib_change_first (tree& t, string (*change_fun) (string)) {
   if (is_atomic (t)) {
     string s= t->label;
     int beg= 0;
     while ((beg < N(s)) && is_space (s[beg])) beg++;
-    if (beg < N(s)) return &(s[beg]);
-    else return 0;
+    if (beg >= N(s)) return false;
+    t= s (0, beg) * change_fun (s (beg, N(s)));
+    return true;
   }
   else if (is_compound (t, "verbatim"))
-    return 0;
+    return false;
   else if (is_compound (t, "slink"))
-    return 0;
+    return false;
   else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt")
-    return 0;
+    return false;
   else {
     int pos= 0;
     if (L(t) == WITH) pos= N(t)-1;
     else while ((pos < N(t)) && bib_is_bad (t[pos])) pos++;
-    if (pos < N(t)) return bib_first_char (t[pos]);
-    else return 0;
+    if (pos < N(t)) return bib_change_first (t[pos], change_fun);
+    else return false;
   }
 }
 
 scheme_tree
 bib_locase_first (scheme_tree st) {
   tree t= simplify_correct (scheme_tree_to_tree (st));
-  char* ch= bib_first_char (t);
-  if (ch != 0) *ch= locase (*ch);
+  bib_change_first (t, uni_locase_first);
   return tree_to_scheme_tree (t); 
 }
 
 scheme_tree
 bib_upcase_first (scheme_tree st) {
   tree t= simplify_correct (scheme_tree_to_tree (st));
-  char* ch= bib_first_char (t);
-  if (ch != 0) *ch= upcase (*ch);
+  bib_change_first (t, uni_upcase_first);
   return tree_to_scheme_tree (t); 
 }
 
