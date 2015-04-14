@@ -18,14 +18,19 @@
 #include "scheme.hpp"
 #include <stdio.h>
 #include <string.h>
-#ifndef __MINGW32__
 #include <unistd.h>
 #include <fcntl.h>
+#ifndef __MINGW32__
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#else
+namespace wsoc {
+#include <sys/types.h>
+#include <winsock2.h>
+}
 #endif
 #include <errno.h>
 
@@ -90,8 +95,21 @@ close_all_sockets () {
 
 string
 socket_link_rep::start () {
-#ifndef __MINGW32__
-  if (alive) return "busy";
+#ifdef __MINGW32__
+  using namespace wsoc;
+  {
+    WSAData data;
+    int ret;
+    ret=wsoc::WSAStartup(MAKEWORD(2,0), &data);
+    if(ret) {
+      char buf[32];
+      string str="Error: WSAStartup failed code:";
+      str << itoa(ret,buf,10);
+      return(str);
+    }
+  }
+#endif  
+	if (alive) return "busy";
   if (DEBUG_AUTO)
     debug_io << "Connecting to '" << host << ":" << port << "'\n";
   
@@ -116,16 +134,19 @@ socket_link_rep::start () {
     return "Error: refused connection to '" * where * "'";
 
   // testing whether it works
+#if defined(__MINGW__) || defined(__MINGW32__)
+  unsigned long flags = -1;
+  if (ioctlsocket (io, FIONBIO, &flags) == SOCKET_ERROR)
+    return "non working connection to '" * where * "'";
+#else
   int flags = O_NONBLOCK;
   if (fcntl (io, F_SETFL, flags) < 0)
     return "Error: non working connection to '" * where * "'";
+#endif
   alive = true;
   sn = socket_notifier (io, &socket_callback, this, NULL);  
   add_notifier (sn);
   return "ok";
-#else
-  return "Error: sockets not implemented";
-#endif
 }
 
 static string
@@ -145,7 +166,9 @@ debug_io_string (string s) {
 
 static int
 send_all (int s, char *buf, int *len) {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   int total= 0;          // how many bytes we've sent
   int bytes_left= *len;  // how many we have left to send
   int n= 0;
@@ -159,9 +182,6 @@ send_all (int s, char *buf, int *len) {
 
   *len= total;
   return n==-1? -1: 0;
-#else
-  return 0;
-#endif
 } 
 
 
@@ -178,7 +198,9 @@ socket_link_rep::write (string s, int channel) {
 
 void
 socket_link_rep::feed (int channel) {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   if ((!alive) || (channel != LINK_OUT)) return;
   char tempout[1024];
   int r= recv (io, tempout, 1024, 0);
@@ -192,7 +214,6 @@ socket_link_rep::feed (int channel) {
     if (DEBUG_IO) debug_io << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
   }
-#endif
 }
 
 string&
@@ -214,7 +235,9 @@ socket_link_rep::read (int channel) {
 
 void
 socket_link_rep::listen (int msecs) {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   if (!alive) return;
   fd_set rfds;
   FD_ZERO (&rfds);
@@ -224,7 +247,6 @@ socket_link_rep::listen (int msecs) {
   tv.tv_usec = 1000 * (msecs % 1000);
   int nr= select (io+1, &rfds, NULL, NULL, &tv);
   if (nr != 0 && FD_ISSET (io, &rfds)) feed (LINK_OUT);
-#endif
 }
 
 void
@@ -233,7 +255,9 @@ socket_link_rep::interrupt () {
 
 void
 socket_link_rep::stop () {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   if (!alive) return;
   if (type == SOCKET_SERVER) call ("server-remove", object (io));
   else if (type == SOCKET_CLIENT) call ("client-remove", object (io));
@@ -242,8 +266,14 @@ socket_link_rep::stop () {
   alive= false;
   remove_notifier (sn);
   sn = socket_notifier ();
+#ifdef __MINGW32__
+  closesocket (io);
+  WSACleanup();
+#else
+  //  close (io);  //fix it?
   wait (NULL);
 #endif
+  
 }
 
 /******************************************************************************
@@ -252,7 +282,9 @@ socket_link_rep::stop () {
 
 void
 socket_callback (void *obj, void* info) {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   (void) info;
   socket_link_rep* con= (socket_link_rep*) obj;
   if (!con->alive) {
@@ -283,5 +315,4 @@ socket_callback (void *obj, void* info) {
   }
   if (!is_nil (con->feed_cmd) && news)
     con->feed_cmd->apply ();
-#endif
 }

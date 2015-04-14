@@ -21,6 +21,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#else
+namespace wsoc {
+#include <sys/types.h>
+#include <ws2tcpip.h>
+}
+
 #endif
 
 hashset<pointer> socket_server_set;
@@ -55,8 +61,7 @@ number_of_servers () {
 
 void
 close_all_servers () {
-#ifndef __MINGW32__
-  iterator<pointer> it= iterate (socket_server_set);
+iterator<pointer> it= iterate (socket_server_set);
   while (it->busy()) {
     socket_server_rep* ss= (socket_server_rep*) it->next();
     if (ss->alive) {
@@ -64,7 +69,6 @@ close_all_servers () {
       ss->alive= false;
     }
   }
-#endif
 }
 
 /******************************************************************************
@@ -73,15 +77,40 @@ close_all_servers () {
 
 string
 socket_server_rep::start () {
-#ifndef __MINGW32__
   // get the server
-  if ((server = socket (PF_INET, SOCK_STREAM, 0)) == -1)
-    return "Error: call to 'socket' failed";
+
+#ifdef __MINGW32__
+  using namespace wsoc;
+  {
+    WSAData data;
+    int ret;
+    ret=WSAStartup(MAKEWORD(2,0), &data);
+    if(ret) {
+      char buf[32];
+      string str="Error: WSAStartup failed code:";
+      str << itoa(ret,buf,10);
+      return(str);
+    }
+  }
+#endif
+  if ((server = socket (PF_INET, SOCK_STREAM, 0)) == -1) {
+    string ret="Error: call to 'socket' failed";
+#ifdef __MINGW32__
+    char buf[32];
+    ret <<" code:"<<itoa(WSAGetLastError(),buf,10);
+#endif
+    return ret;
+  }
 
   // lose the pesky "address already in use" error message
   int yes= 1;
+#ifndef __MINGW32__
   if (setsockopt (server, SOL_SOCKET, SO_REUSEADDR,
-		  &yes, sizeof (int)) == -1)
+    &yes, sizeof (int)) == -1)
+#else
+  if (setsockopt (server, SOL_SOCKET, SO_REUSEADDR,
+    (const char*) &yes, sizeof (int)) == -1)
+#endif
     return "Error: call to 'setsockopt' failed";
 
   // bind
@@ -95,7 +124,11 @@ socket_server_rep::start () {
     return "Error: call to 'bind' failed";
 
   // listen
+#ifdef __MINGW32__
+  if (wsoc::listen (server, 10) == -1)
+#else
   if (::listen (server, 10) == -1)
+#endif
     return "Error: call to 'listen' failed";
 
   alive= true;
@@ -104,14 +137,14 @@ socket_server_rep::start () {
   add_notifier (sn);
   
   return "ok";
-#else
-  return "Error: sockets not implemented";
-#endif
+
 }
 
 void
 socket_server_rep::start_client () {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   struct sockaddr_in remote_address;
   socklen_t addrlen= sizeof (remote_address);
   int client= accept (server, (struct sockaddr *) &remote_address, &addrlen);
@@ -127,7 +160,6 @@ socket_server_rep::start_client () {
     tm_link new_ln= make_socket_link (addr, -1, SOCKET_SERVER, client);
     incoming << new_ln;
   }
-#endif
 }
 
 void
@@ -157,13 +189,19 @@ socket_server_rep::interrupt () {
 
 void
 socket_server_rep::stop () {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   // FIXME: close children
   if (!alive) return;
   incoming= array<tm_link> ();
   alive= false;
   remove_notifier (sn);
   sn= socket_notifier ();
+#ifdef __MINGW32__
+  closesocket (server);
+  WSACleanup();
+#else
   close (server);
   wait (NULL);
 #endif
@@ -175,7 +213,9 @@ socket_server_rep::stop () {
 
 void 
 socket_server_callback (void *obj, void *info) {
-#ifndef __MINGW32__
+#ifdef __MINGW32__
+  using namespace wsoc;
+#endif
   (void) info;
   socket_server_rep* ss = (socket_server_rep*) obj;
   bool busy= true;
@@ -201,5 +241,4 @@ socket_server_callback (void *obj, void *info) {
   
   if (!is_nil (ss->feed_cmd) && news)
     ss->feed_cmd->apply (); // call the data processor
-#endif
 }
