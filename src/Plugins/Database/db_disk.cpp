@@ -191,19 +191,38 @@ database_rep::initialize () {
 void
 database_rep::purge () {
   if (error_flag || pending == "") return;
-  int rnd= (int) (((unsigned int) random ()) & 0xffffff);
-  url db_append= glue (db_name, ".append-" * as_string (rnd));
-  if (!save_string (db_append, pending, false)) {
-    append_to (db_append, db_name);  // NOTE: critical atomic operations
-    remove (db_append);
-    loaded << pending;
-    pending= "";
+  
+  if (N(pending) <= 4096) {
+    // Appending is an atomic operation on most systems
+    // for block sizes of less than 4096 bytes
+    int rnd= (int) (((unsigned int) random ()) & 0xffffff);
+    url db_append= glue (db_name, ".append-" * as_string (rnd));
+    if (!save_string (db_append, pending, false)) {
+      append_to (db_append, db_name);  // NOTE: critical atomic operation
+      remove (db_append);
+      loaded << pending;
+      pending= "";
+      return;
+    }
+    else remove (db_append);
   }
   else {
-    std_error << "Could not save to database file "
-              << as_string (db_name) << LF;
-    error_flag= true;
+    // For larger appends, save the concatenation in a temporary file
+    // and use an atomic move in order to replace the old file
+    int rnd= (int) (((unsigned int) random ()) & 0xffffff);
+    url replace= glue (db_name, ".replace-" * as_string (rnd));
+    if (!save_string (replace, loaded * pending, false)) {
+      move (replace, db_name);  // NOTE: critical atomic operation
+      loaded << pending;
+      pending= "";
+      return;
+    }
+    else remove (replace);
   }
+
+  std_error << "Could not save to database file "
+            << as_string (db_name) << LF;
+  error_flag= true;
 }
 
 extern array<database> dbs;
@@ -224,7 +243,7 @@ sync_databases () {
       if (db->error_flag)
         dbs[i]->with_history= true;
       else {
-        move (replace, current);  // NOTE: critical atomic operations
+        move (replace, current);  // NOTE: critical atomic operation
         dbs[i]= db;
       }
     }
