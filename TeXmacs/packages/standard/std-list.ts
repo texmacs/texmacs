@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std|english>>
 
@@ -59,6 +59,8 @@
 
   <assign|compact-strong-dot-item|<macro|name|<compact-item|<item-strong|<arg|name>.
   >>>>
+
+  <assign|compact-strong-dot-item*|<macro|name|<no-indent><move|<item-strong|<arg|name>.>|-1.5fn|0fn>>>
 
   <assign|compact-strong-dash-item|<macro|name|<compact-item|<item-strong|<arg|name>>
   <emdash> >>>
@@ -216,6 +218,3 @@
 
   \;
 </body>
-
-<initial|<\collection>
-</collection>>

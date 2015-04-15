@@ -15,54 +15,75 @@
   (:use (server server-base)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Change the time if needed
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (with-identifier-context id . body)
+  `(if (npair? ,id)
+       (begin
+         ,@body)
+       (with-global db-time (cadr ,id)
+         (with-global ,id (car ,id)
+           ,@body))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface for basic database API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-service (remote-get-field id attr)
   ;;(display* "remote-get-field " id ", " attr "\n")
-  (with uid (or (server-get-user envelope) "all")
-    (cond ((not (db-allow? id uid "readable"))
-           (server-error envelope "Error: read access required for field"))
-          (else
-            (server-return envelope (db-get-field id attr))))))
+  (with-identifier-context id
+    (with uid (or (server-get-user envelope) "all")
+      (cond ((not (db-allow? id uid "readable"))
+             (server-error envelope "Error: read access required for field"))
+            (else
+              (server-return envelope (db-get-field id attr)))))))
 
 (tm-service (remote-set-field id attr vals)
   ;;(display* "remote-set-field " id ", " attr ", " vals "\n")
-  (with uid (server-get-user envelope)
-    (cond ((not uid)
-           (server-error envelope "Error: not logged in"))
-          ((not (db-allow? id uid "writable"))
-           (server-error envelope "Error: write access required for field"))
-          (else
-            (db-set-field id attr vals)
-            (server-return envelope #t)))))
+  (with-identifier-context id
+    (with uid (server-get-user envelope)
+      (cond ((not uid)
+             (server-error envelope "Error: not logged in"))
+            ((not (db-allow? id uid "writable"))
+             (server-error envelope "Error: write access required for field"))
+            ((!= id :now)
+             (server-error envelope "Error: cannot rewrite history"))
+            (else
+              (db-set-field id attr vals)
+              (server-return envelope #t))))))
 
 (tm-service (remote-get-attributes id)
   ;;(display* "remote-get-attributes " id "\n")
-  (with uid (or (server-get-user envelope) "all")
-    (cond ((not (db-allow? id uid "readable"))
-           (server-error envelope "Error: read access required for entry"))
-          (else
-            (server-return envelope (db-get-attributes id))))))
+  (with-identifier-context id
+    (with uid (or (server-get-user envelope) "all")
+      (cond ((not (db-allow? id uid "readable"))
+             (server-error envelope "Error: read access required for entry"))
+            (else
+              (server-return envelope (db-get-attributes id)))))))
 
 (tm-service (remote-get-entry id)
   ;;(display* "remote-get-entry " id "\n")
-  (with uid (or (server-get-user envelope) "all")
-    (cond ((not (db-allow? id uid "readable"))
-           (server-error envelope "Error: read access required for entry"))
-          (else
-            (server-return envelope (db-get-entry id))))))
+  (with-identifier-context id
+    (with uid (or (server-get-user envelope) "all")
+      (cond ((not (db-allow? id uid "readable"))
+             (server-error envelope "Error: read access required for entry"))
+            (else
+              (server-return envelope (db-get-entry id)))))))
 
 (tm-service (remote-set-entry id l)
   ;;(display* "remote-set-entry " id ", " l "\n")
-  (with uid (server-get-user envelope)
-    (cond ((not uid)
-           (server-error envelope "Error: not logged in"))
-          ((not (db-allow? id uid "writable"))
-           (server-error envelope "Error: write access required for entry"))
-          (else
-            (db-set-entry id l)
-            (server-return envelope #t)))))
+  (with-identifier-context id
+    (with uid (server-get-user envelope)
+      (cond ((not uid)
+             (server-error envelope "Error: not logged in"))
+            ((not (db-allow? id uid "writable"))
+             (server-error envelope "Error: write access required for entry"))
+            ((!= id :now)
+             (server-error envelope "Error: cannot rewrite history"))
+            (else
+              (db-set-entry id l)
+              (server-return envelope #t))))))
 
 (tm-service (remote-create-entry l)
   ;;(display* "remote-create-entry " id ", " l "\n")

@@ -440,6 +440,19 @@ tmg_texmacs_time () {
 }
 
 tmscm
+tmg_pretty_time (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "pretty-time");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= pretty_time (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_texmacs_memory () {
   // TMSCM_DEFER_INTS;
   int out= mem_used ();
@@ -8932,6 +8945,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("locale-to-language",  tmg_locale_to_language, 1, 0, 0);
   tmscm_install_procedure ("language-to-locale",  tmg_language_to_locale, 1, 0, 0);
   tmscm_install_procedure ("texmacs-time",  tmg_texmacs_time, 0, 0, 0);
+  tmscm_install_procedure ("pretty-time",  tmg_pretty_time, 1, 0, 0);
   tmscm_install_procedure ("texmacs-memory",  tmg_texmacs_memory, 0, 0, 0);
   tmscm_install_procedure ("bench-print",  tmg_bench_print, 1, 0, 0);
   tmscm_install_procedure ("bench-print-all",  tmg_bench_print_all, 0, 0, 0);

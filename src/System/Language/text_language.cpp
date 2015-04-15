@@ -457,6 +457,11 @@ string
 get_date (string lan, string fm) {
   return qt_get_date(lan, fm);
 }
+
+string
+pretty_time (int t) {
+  return qt_pretty_time (t);
+}
 #else
 
 static bool
@@ -514,6 +519,11 @@ get_date (string lan, string fm) {
   // if (lan == "ru_RU") date= iso_to_koi8 (date);
   set_env (lvar, old);
   return date;
+}
+
+string
+pretty_time (int t) {
+  return var_eval_system ("date -r " * as_string (t));
 }
 #endif
 

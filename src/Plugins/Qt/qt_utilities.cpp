@@ -669,6 +669,13 @@ qt_get_date (string lan, string fm) {
   return from_qstring (date);
 }
 
+string
+qt_pretty_time (int t) {
+  QDateTime dt= QDateTime::fromTime_t (t);
+  QString s= dt.toString ();
+  return from_qstring (s);
+}
+
 #ifndef _MBD_EXPERIMENTAL_PRINTER_WIDGET  // this is in qt_printer_widget
 
 #define PAPER(fmt)  case QPrinter::fmt : return "fmt"

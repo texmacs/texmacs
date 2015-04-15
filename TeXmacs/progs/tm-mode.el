@@ -58,7 +58,7 @@
     with-time with-time-stamp with-limit
     with-encoding with-indexing
     with-user with-extra-fields
-    with-remote-context
+    with-remote-context with-identifier-context
     user-ask
     tab icon-tab form item meti refreshable
     $when $let $let* $for $refreshable

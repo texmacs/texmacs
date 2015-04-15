@@ -65,7 +65,10 @@
   (cond ((== db-time :now) (current-time))
         ((== db-time :always) 0)
         ((number? db-time) db-time)
-        (else (texmacs-error "db-get-time" "invalid time"))))
+        ((string? db-time) (string->number db-time))
+        (else
+          (display* "db-time= " db-time "\n")
+          (texmacs-error "db-get-time" "invalid time"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic public interface

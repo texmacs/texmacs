@@ -151,14 +151,13 @@
           (db-expand accu added attr)))))
 
 (tm-define (db-expand-user uid attr)
-  (cond ((== uid #t) #t)
-        ((string? uid) (db-expand-user (list uid) attr))
+  (cond ((string? uid) (db-expand-user (list uid) attr))
         ((list? uid)
          (let* ((accu (list->ahash-set uid))
                 (todo accu)
                 (done (db-expand accu todo attr)))
            (rcons (sort (ahash-set->list done) string<=?) "all")))
-        (else "all")))
+        (else (list "all"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Access rights
@@ -166,13 +165,14 @@
 
 (tm-define (db-allow? id uid attr)
   ;;(display* "Allow " id ", " uid ", " attr "\n")
-  (let* ((ids (db-get-field id attr))
-         (exp (db-expand-user uid attr)))
-    ;;(display* "Expanded " uid " -> " exp "\n")
-    ;;(display* "Test " ids " -> " (nnull? (list-intersection ids exp)) "\n")
-    (or (nnull? (list-intersection ids exp))
-        (and (!= attr "owner")
-             (db-allow? id uid "owner")))))
+  (or (== uid #t)
+      (let* ((ids (db-get-field id attr))
+             (exp (db-expand-user uid attr)))
+        ;;(display* "Expanded " uid " -> " exp "\n")
+        ;;(display* "Test " ids " -> " (nnull? (list-intersection ids exp)) "\n")
+        (or (nnull? (list-intersection ids exp))
+            (and (!= attr "owner")
+                 (db-allow? id uid "owner"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrap basic interface to databases

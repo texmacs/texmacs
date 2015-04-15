@@ -144,6 +144,7 @@ namespace win32 {
 }
 #endif
 string get_date (string lan, string fm);
+string pretty_time (int t);
 
 string math_symbol_group (string s, string lan= "std-math");
 array<string> math_group_members (string s, string lan= "std-math");

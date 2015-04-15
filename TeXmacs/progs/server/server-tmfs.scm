@@ -98,6 +98,8 @@
             ((not (db-allow? rid uid "readable"))
              ;;(server-error envelope "Error: read access denied")
              (server-return envelope #f))
+            ((!= db-time :now)
+             (server-return envelope (list rid db-time)))
             (else (server-return envelope rid))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

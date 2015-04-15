@@ -93,6 +93,7 @@ void qt_image_data (url image, int& w, int&h, string& data, string& palette, str
 
 string qt_application_directory ();
 string qt_get_date (string lan, string fm);
+string qt_pretty_time (int t);
 
 bool qt_print (bool&, bool&, string&, url&, string&, string&, string&);
 

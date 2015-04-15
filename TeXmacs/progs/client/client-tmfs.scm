@@ -13,7 +13,8 @@
 
 (texmacs-module (client client-tmfs)
   (:use (client client-base)
-        (client client-db)))
+        (client client-db)
+        (version version-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -283,8 +284,35 @@
 ;; Versions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (remote-versions src)
-  (let* ((name (remote-file-name src))
+(tm-define (versioned? name)
+  (:require (remote-file? name))
+  #t)
+
+(tm-define (version-status name)
+  (:require (remote-file? name))
+  (if (buffer-modified? name) "modified" "unmodified"))
+
+(define (build-version-page name prefix l)
+  (with u (tmfs-string->url name)
+    ($generic
+      ($tmfs-title "History of "
+                   ($link (url->unix u)
+                     ($verbatim (url->system (url-tail u)))))
+      ($description-long
+        ($for (i (.. 0 (length l)))
+          ($with info (list-ref l i)
+            ($with (rid date vname by msg) info
+              ($let* ((dest (string-append prefix "time=" date "/" vname))
+                      (ln ($link dest (number->string (+ i 1))))
+                      (dt (pretty-time (string->number date)))
+                      (vs ($inline "Version " ln " by " by " on " dt)))
+                ($when (or (not msg) (== msg ""))
+                  ($begin `(compact-strong-dot-item* ,vs) $lf))
+                ($when (and msg (!= msg ""))
+                  ($describe-item vs msg))))))))))
+
+(define (compute-remote-versions rname)
+  (let* ((name (remote-file-name rname))
          (sname (tmfs-car name))
          (server (client-find-server sname))
          (fname (string-append "tmfs://remote-file/" name))
@@ -292,6 +320,14 @@
     (and server
          (client-remote-eval server `(remote-get-versions ,name)
            (lambda (l)
-             (display* "versions: " prefix ", " l "\n"))
+             (let* ((s (url->tmfs-string rname))
+                    (h (string-append "tmfs://history/" s))
+                    (doc (build-version-page s prefix l)))
+               (buffer-set h doc)))
            (lambda (err)
              (set-message err "get list with remote versions"))))))
+
+(tm-define (version-history u)
+  (:require (remote-file? u))
+  (compute-remote-versions u)
+  (list))
