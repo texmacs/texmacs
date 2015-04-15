@@ -61,7 +61,8 @@
         (append-map (cut search-file (cdr l) <>) matches))))
 
 (define (dir-contents dir)
-  (db-search (list (list "dir" dir))))
+  (db-search (list (list "dir" dir)
+                   (list :order "name" #t))))
 
 (define (file-name->resource name)
   (safe-car (search-file (tmfs->list name))))
@@ -199,23 +200,25 @@
 ;; Remote file manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (remote-create uid rname vid nr doc)
+(define (remote-create uid rname vid nr doc msg)
   (let* ((l (tmfs->list rname))
          (did (safe-car (search-file (cDr (cdr l)))))
+         (opt-msg (if msg `(("version-msg" ,msg)) `()))
          (rid (with-time-stamp #t
-                (db-create-entry (list (list "type" "file")
-                                       (list "name" (cAr l))
-                                       (list "owner" uid)
-                                       (list "version-list" vid)
-                                       (list "version-nr" nr)
-                                       (list "version-by" uid)))))
+                (db-create-entry `(("type" "file")
+                                   ("name" ,(cAr l))
+                                   ("owner" ,uid)
+                                   ("version-list" ,vid)
+                                   ("version-nr" ,nr)
+                                   ("version-by" ,uid)
+                                   ,@opt-msg))))
          (name (repository-add rid (url-suffix rname)))
          (fname (repository-get rid)))
     (inherit-properties rid did)
     (db-set-field rid "dir" (list did))
     (string-save doc fname)))
 
-(tm-service (remote-file-create rname doc)
+(tm-service (remote-file-create rname doc msg)
   ;;(display* "remote-file-create " rname ", " doc "\n")
   (with-remote-context rname
     (let* ((uid (server-get-user envelope))
@@ -234,7 +237,7 @@
              (server-error envelope "Error: cannot modify past"))
             (else
               (with vid (version-first uid (cAr l))
-                (remote-create uid rname vid "1" doc)
+                (remote-create uid rname vid "1" doc msg)
                 ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
                 (server-return envelope doc)))))))
 
@@ -256,7 +259,7 @@
               (with doc (string-load fname)
                 (server-return envelope doc)))))))
 
-(tm-service (remote-file-save rname doc)
+(tm-service (remote-file-save rname doc msg)
   ;;(display* "remote-file-save " rname ", " doc "\n")
   (with-remote-context rname
     (let* ((uid (server-get-user envelope))
@@ -277,7 +280,7 @@
              (server-error envelope "Error: cannot modify past"))
             (else
               (with nr (version-next vid)
-                (remote-create uid rname vid nr doc)
+                (remote-create uid rname vid nr doc msg)
                 (db-remove-entry rid)
                 ;;(display* "Versions " rname ": " (version-get-versions vid) "\n")
                 (server-return envelope doc)))))))

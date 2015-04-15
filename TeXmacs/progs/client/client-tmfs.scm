@@ -103,9 +103,20 @@
           (string->number (string-drop head 5))
           :now))))
 
+(tm-define (remote-strip-time fname)
+  (and-with rname (remote-file-name fname)
+    (let* ((name (tmfs-cdr rname))
+           (head (tmfs-car name)))
+      (if (string-starts? head "time=")
+          (string-append "tmfs://remote-file/"
+                         (tmfs-car rname) "/" (tmfs-cdr name))
+          fname))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define remote-commit-message #f)
 
 (tm-define (remote-home-directory server)
   (let* ((sname (client-find-server-name server))
@@ -124,8 +135,9 @@
   ;;(display* "remote-create-file " server ", " fname ", " doc "\n")
   (let* ((sname (client-find-server-name server))
          (name (substring fname 19 (string-length fname)))
-         (tm (convert doc "texmacs-stree" "texmacs-document")))
-    (client-remote-eval server `(remote-file-create ,name ,tm)
+         (tm (convert doc "texmacs-stree" "texmacs-document"))
+         (msg remote-commit-message))
+    (client-remote-eval server `(remote-file-create ,name ,tm ,msg)
       (lambda (msg)
         (load-buffer fname))
       (lambda (err)
@@ -196,11 +208,12 @@
   ;;(display* "SAVE ") (write doc) (display* "\n")
   (let* ((sname (tmfs-car name))
          (server (client-find-server sname))
-         (fname (string-append "tmfs://remote-file/" name)))
+         (fname (string-append "tmfs://remote-file/" name))
+         (msg remote-commit-message))
     (if (not server)
         (texmacs-error "remote-file" "invalid server")
         (with tm (convert doc "texmacs-stree" "texmacs-document")
-          (client-remote-eval server `(remote-file-save ,name ,tm)
+          (client-remote-eval server `(remote-file-save ,name ,tm ,msg)
             (lambda (saved)
               (set-message "file saved" "save remote file"))
             (lambda (err)
@@ -298,7 +311,7 @@
                                action))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Versions
+;; Versioning
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (versioned? name)
@@ -348,3 +361,24 @@
   (:require (remote-file? u))
   (compute-remote-versions u)
   (list))
+
+(tm-define (update-buffer name)
+  (:require (remote-file? name))
+  (revert-buffer name))
+
+(tm-define (commit-buffer-message name msg)
+  (:require (remote-file? name))
+  (with-global remote-commit-message msg
+    (save-buffer name)))
+
+(tm-define (version-interactive-commit name)
+  (:require (remote-file? name))
+  (commit-buffer name))
+
+(tm-define (version-revision? name)
+  (:require (remote-file? name))
+  (nin? (remote-get-time name) (list #f :now)))
+
+(tm-define (version-head name)
+  (:require (remote-file? name))
+  (string->url (remote-strip-time name)))

@@ -34,7 +34,7 @@
   (-> "Compare"
       (assuming (version-revision? (current-buffer))
         ("With current user version"
-         (compare-with-newer* (version-head (current-buffer)))))          
+         (compare-with-newer* (version-head (current-buffer)))))
       ("With older version"
        (choose-file compare-with-older "Compare with older version" ""))
       ("With newer version"
