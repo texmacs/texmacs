@@ -21,7 +21,7 @@ database_rep::line_satisfies (db_line_nr nr, db_constraint c, db_time t) {
   db_line& l= db[nr];
   //cout << "    Testing " << l->id << ", " << l->attr << ", " << l->val << LF;
   //cout << "    Testing " << from_atom (l->id) << ", " << from_atom (l->attr) << ", " << from_atom (l->val) << LF;
-  if (t < l->created || t >= l->expires) return false;
+  if ((t != 0) && (t < l->created || t >= l->expires)) return false;
   db_atom attr= c[0];
   if (l->attr != attr && attr != -1) return false;
   for (int j=1; j<N(c); j++)
