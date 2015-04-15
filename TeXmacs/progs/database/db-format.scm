@@ -46,7 +46,7 @@
   (list "type" "location" "dir" "date" "pseudo" "id"))
 
 (tm-define (db-meta-attributes)
-  (list "date" "contributor" "modus" "origin" "newer"))
+  (list "date" "contributor" "modus" "origin" "newer" "classifier"))
 
 (smart-table db-encoding-table
   ;; For each entry+field type, specify the encoding being used for

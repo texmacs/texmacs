@@ -224,6 +224,16 @@
   (when (in-database?)
     (link db-entry-menu))
   ---
+  (when (in-database?)
+    (=> "Class"
+        ("None" (db-set-class-preference* ""))
+        (if (nnull? db-recent-classes)
+            ---
+            (for (class (db-recent-classes))
+              ((check (eval class) "v" (db-test-class-preference? class))
+               (db-set-class-preference* class))))
+        ---
+        ("Other" (interactive db-set-class-preference*))))
   (when (db-importable?)
     (if (null? (db-recent-imports))
         ("Import" (db-import-select)))
