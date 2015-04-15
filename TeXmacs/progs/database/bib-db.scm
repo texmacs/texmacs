@@ -172,6 +172,11 @@
 ;; Conversion to native BibTeX documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (recursive-locase-all t)
+  (if (tm-atomic? t)
+      (locase-all t)
+      (cons (tm-label t) (map recursive-locase-all (tm-children t)))))
+
 (define (db-bib-keep-case s f?)
   (if (or (== s (locase-all s))
           (and f? (== s (upcase-first (locase-all s)))))
@@ -180,20 +185,37 @@
 (define (db-bib-keep-case* s)
   (db-bib-keep-case s #f))
 
+(define (db-bib-protect-strings l f?)
+  (if (null? l) l
+      (cons (db-bib-keep-case (car l) f?)
+            (db-bib-protect-strings (cdr l) (and f? (== (car l) ""))))))
+
+(define (db-bib-spaces? t)
+  (cond ((string? t)
+         (list-and (map (cut == <> "") (string-decompose t " "))))
+        ((tm-func? t 'concat)
+         (list-and (map db-bib-spaces? (tm-children t))))
+        ((with-like? t)
+         (db-bib-spaces? (cAr t)))
+        (else #f)))
+
+(define (db-bib-protect-list l f?)
+  (if (null? l) l
+      (cons (db-bib-protect (car l) f?)
+            (db-bib-protect-list (cdr l) (and f? (db-bib-spaces? (car l)))))))
+
 (define (db-bib-protect t f?)
   (cond ((tm-atomic? t)
          (let* ((l (string-decompose t " "))
-                (fl (list-filter l (lambda (s) (!= s ""))))
-                (nn? (nnull? fl))
-                (tail (map db-bib-keep-case* (if nn? (cdr fl) fl)))
-                (r (if f? (cons (db-bib-keep-case (car fl) f?) tail) tail)))
+                (r (db-bib-protect-strings l f?)))
            (apply tmconcat (list-intersperse r " "))))
-        (else
-          (with l (tm-children t)
-            (if (null? l) t
-                (cons* (tm-label t)
-                       (db-bib-protect (car l) f?)
-                       (map (cut db-bib-protect <> #f) (cdr l))))))))
+        ((tm-func? t 'concat)
+         (with l (db-bib-protect-list (tm-children t) f?)
+           (apply tmconcat l)))
+        ((and (with-like? t) (not (tm-func? t 'math)))
+         (rcons (cDr t) (db-bib-protect (cAr t) f?)))
+        ((== (recursive-locase-all t) t) t)
+        (else `(keepcase ,t))))
 
 (define (db-bib-name t)
   (let* ((c (if (tm-func? t 'concat) (tm-children t) (list t)))
