@@ -213,6 +213,11 @@ database_rep::purge () {
     int rnd= (int) (((unsigned int) random ()) & 0xffffff);
     url db_append= glue (db_name, ".append-" * as_string (rnd));
     if (!save_string (db_append, pending, false)) {
+      if (last_modified (db_name) > time_stamp) {
+        // FIXME: this test should really be part of the atomic operation
+        remove (db_append);
+        return;
+      }
       append_to (db_append, db_name);  // NOTE: critical atomic operation
       remove (db_append);
       loaded << pending;
@@ -229,6 +234,11 @@ database_rep::purge () {
     int rnd= (int) (((unsigned int) random ()) & 0xffffff);
     url replace= glue (db_name, ".replace-" * as_string (rnd));
     if (!save_string (replace, loaded * pending, false)) {
+      if (last_modified (db_name) > time_stamp) {
+        // FIXME: this test should really be part of the atomic operation
+        remove (replace);
+        return;
+      }
       move (replace, db_name);  // NOTE: critical atomic operation
       loaded << pending;
       pending= "";
@@ -249,6 +259,12 @@ bool require_check= false;
 
 void
 sync_databases () {
+  require_check= true;
+  for (int i=0; i<N(dbs); i++)
+    if (dbs[i]->pending != "") {
+      check_for_updates ();
+      break;
+    }
   require_check= true;
   for (int i=0; i<N(dbs); i++)
     if (dbs[i]->with_history || (2 * dbs[i]->outdated) <= N(dbs[i]->db))
