@@ -6,13 +6,16 @@
   <tmdoc-title|The <TeXmacs> database model>
 
   The <TeXmacs> database manipulation API has mainly been designed for
-  internal use and not as a<nbsp>general purpose interface to SQL. In
-  particular, we only support a limit number of entry types and field types,
-  although new types can easily be added later. Currently, databases are used
-  for managing remote files, bibliographies, user lists, versions, etc.
+  internal use. It is based on a<nbsp>dedicated
+  <hlink|NoSQL|http://en.wikipedia.org/wiki/NoSQL>-style database model,
+  using a variant of <hlink|column data stores|http://en.wikipedia.org/wiki/Column_%28data_store%29>.
+  For the moment, we only support a limit number of entry types and field
+  types, although new types can easily be added later. Currently, databases
+  are used for managing remote files, bibliographies, user lists, versions,
+  etc.
 
-  The interface has been kept to be as simple as possible, so that our
-  SQL-based implementation can be most easily optimized for efficiently when
+  The interface has been kept to be as simple as possible, so that our low
+  level implementation can be most easily optimized for efficiently when
   needed. Furthermore, the routines of our basic API can all be customized
   <em|a posteriori> to add specific features. For instance, the basic API is
   string-based, so a<nbsp>special additional layer was added to support
@@ -29,14 +32,6 @@
   cannot be manipulated directly, but it is possible to specify an
   alternative time for database queries, which make it possible to easily
   recover any past state of the database.
-
-  From the SQL implementation point of view, the database consists of a
-  single table with five columns: unique identifier, attribute, value,
-  creation date, expiration date. Grouping together rows with the same
-  identifier, one obtains the various entries. Grouping together rows with
-  the same identifier and the same attribute, one obtains the individual
-  values. Strictly speaking, the creation and expiration dates apply to
-  individual values in the lists of values.
 
   <paragraph|Macros for context specification>
 

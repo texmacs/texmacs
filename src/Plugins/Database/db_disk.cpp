@@ -145,13 +145,11 @@ database_rep::replay (string s) {
 * Creating a new database with the active entries only
 ******************************************************************************/
 
-database
-database_rep::compress () {
-  //cout << "Compressing " << outdated << " items out of " << N(db) << LF;
-  database clone (db_name, true);
-  for (int nr=0; nr<N(db); nr++) {
+void
+database_rep::replay (database clone, int start, bool all) {
+  for (int nr=start; nr<N(db); nr++) {
     db_line& l= db[nr];
-    if (l->expires == DB_MAX_TIME) {
+    if (all || l->expires == DB_MAX_TIME) {
       db_atom id  = clone->as_atom (from_atom (l->id  ));
       db_atom attr= clone->as_atom (from_atom (l->attr));
       db_atom val = clone->as_atom (from_atom (l->val ));
@@ -159,8 +157,21 @@ database_rep::compress () {
       db_line_nr cnr= clone->extend_field (id, attr, val, t);
       clone->notify_extended_field (cnr);
       //cout << "  Add " << from_atom (l->id) << ", " << from_atom (l->attr) << ", " << from_atom (l->val) << LF;
+      if (l->expires != DB_MAX_TIME) {
+        clone->db[cnr]->expires= t;
+        clone->notify_removed_field (cnr);
+        clone->outdated++;
+        //cout << "  Removed " << from_atom (l->id) << ", " << from_atom (l->attr) << ", " << from_atom (l->val) << LF;
+      }
     }
   }
+}
+
+database
+database_rep::compress () {
+  //cout << "Compressing " << outdated << " items out of " << N(db) << LF;
+  database clone (db_name, true);
+  replay (clone, 0, false);
   return clone;
 }
 
@@ -177,7 +188,11 @@ database_rep::initialize () {
                 << as_string (db_name) << LF;
       error_flag= true;
     }
-    else replay (loaded);
+    else {
+      replay (loaded);
+      start_pending= N(db);
+      time_stamp= last_modified (db_name);
+    }
   }
   else {
     if (save_string (db_name, "", false)) {
@@ -202,6 +217,8 @@ database_rep::purge () {
       remove (db_append);
       loaded << pending;
       pending= "";
+      start_pending= N(db);
+      time_stamp= last_modified (db_name);
       return;
     }
     else remove (db_append);
@@ -215,6 +232,8 @@ database_rep::purge () {
       move (replace, db_name);  // NOTE: critical atomic operation
       loaded << pending;
       pending= "";
+      start_pending= N(db);
+      time_stamp= last_modified (db_name);
       return;
     }
     else remove (replace);
@@ -226,9 +245,11 @@ database_rep::purge () {
 }
 
 extern array<database> dbs;
+bool require_check= false;
 
 void
 sync_databases () {
+  require_check= true;
   for (int i=0; i<N(dbs); i++)
     if (dbs[i]->with_history || (2 * dbs[i]->outdated) <= N(dbs[i]->db))
       dbs[i]->purge ();
@@ -243,8 +264,26 @@ sync_databases () {
       if (db->error_flag)
         dbs[i]->with_history= true;
       else {
+        db->start_pending= N(db->db);
+        db->time_stamp= last_modified (replace);
         move (replace, current);  // NOTE: critical atomic operation
         dbs[i]= db;
       }
     }
+}
+
+void
+check_for_updates () {
+  if (!require_check) return;
+  for (int i=0; i<N(dbs); i++)
+    if (last_modified (dbs[i]->db_name) > dbs[i]->time_stamp) {
+      //cout << "Updating from disk\n";
+      database db (dbs[i]->db_name);
+      // FIXME: a more incremental form of updating would be better
+      //if (dbs[i]->pending != "") cout << "Replay pending";
+      dbs[i]->replay (db, dbs[i]->start_pending, true);
+      db->purge ();
+      dbs[i]= db;
+    }
+  require_check= false;
 }

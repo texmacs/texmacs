@@ -33,6 +33,7 @@ database_rep::database_rep (url u, bool clone):
   atom_encode (-1), atom_decode (),
   id_lines (), val_lines (), ids_list (), ids_set (),
   error_flag (false), loaded (""), pending (""),
+  start_pending (0), time_stamp (0),
   key_encode (-1), key_decode (),
   atom_indexed (), key_occurrences (),
   key_completions (), name_completions ()
@@ -260,6 +261,7 @@ hashmap<tree,int> db_index;
 
 database
 get_database (url u) {
+  check_for_updates ();
   if (!db_index->contains (u->t)) {
     db_index (u->t)= N(dbs);
     dbs << database (u);

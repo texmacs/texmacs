@@ -76,6 +76,8 @@ private:
   bool error_flag;
   string loaded;
   string pending;
+  int start_pending;
+  int time_stamp;
   
   hashmap<string,db_atom> key_encode;
   array<string> key_decode;
@@ -112,6 +114,7 @@ private:
   void notify_extended_field (db_line_nr nr);
   void notify_removed_field (db_line_nr nr);
   void replay (string s);
+  void replay (database clone, int start, bool all);
   database compress ();
   void initialize ();
   void purge ();
@@ -145,6 +148,7 @@ public:
 
   friend void keep_history (url u, bool flag);
   friend void sync_databases ();
+  friend void check_for_updates ();
   friend strings get_completions (url u, string s);
   friend strings get_name_completions (url u, string s);
 };
@@ -169,5 +173,6 @@ strings get_completions (url u, string s);
 strings get_name_completions (url u, string s);
 
 void sync_databases ();
+void check_for_updates ();
 
 #endif // defined DATABASE_H

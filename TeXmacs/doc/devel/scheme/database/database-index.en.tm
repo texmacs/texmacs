@@ -5,15 +5,20 @@
 <\body>
   <tmdoc-title|Indexation>
 
-  The purpose of the first extension of the basic database API in
-  <scm|index-base.scm> is to permit searching for certain keywords in the
-  database entries. The current implementation achieves this by maintaining a
-  few additional tables with the list of entries in which given keywords
-  occur and counters of how many times a given keyword appears. We also
-  maintain a few additional prefix tables which allow us to search for
-  uncompleted keywords. The indexation mechanism only indexates
-  alphanumerical keywords and normalizes all keywords to lowercase; see
-  <verbatim|indexation.cpp> for more details.
+  The purpose of the first extension of the basic database API is to permit
+  searching for certain keywords in the database entries. The current
+  implementation achieves this by maintaining a<nbsp>few additional tables
+  with the list of entries in which given keywords occur. We also maintain
+  a<nbsp>few additional prefix tables which allow us to search for
+  uncompleted keywords. For efficiency reasons, the indexation is done at a
+  low level in C++.
+
+  It should be noticed that the indexation mechanism only indexates
+  alphanumerical keywords and normalizes all keywords to lowercase. Accented
+  characters and characters in other (<abbr|e.g.><nbsp>cyrillic) scripts are
+  also ``transliterated'' into basic unaccented roman characters. For
+  instance, we write ``é'' and ``\<#449\>'' as ``e'' and ``shch''. As a
+  consequence, a search for ``poincare'' will match ``Poincaré''.
 
   <paragraph|Macros for context specification>
 
