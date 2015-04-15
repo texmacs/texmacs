@@ -95,6 +95,14 @@
        (not (remote-root-directory? fname))
        (remote-root-directory? (remote-parent fname))))
 
+(tm-define (remote-get-time fname)
+  (and-with rname (remote-file-name fname)
+    (let* ((name (tmfs-cdr rname))
+           (head (tmfs-car name)))
+      (if (string-starts? head "time=")
+          (string->number (string-drop head 5))
+          :now))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -141,17 +149,26 @@
 
 (define remote-title-table (make-ahash-table))
 
+(define (append-time title t)
+  (if (in? t (list #f :now))
+      title
+      (string-append title " - " (pretty-time t))))
+
 (tmfs-title-handler (remote-file name doc)
   (let* ((sname (tmfs-car name))
          (server (client-find-server sname))
          (fname (string-append "tmfs://remote-file/" name))
-         (def-title (url->string (url-tail fname))))
-    (with old-title (or (ahash-ref remote-title-table fname) def-title)
+         (def-title (url->string (url-tail fname)))
+         (t (remote-get-time fname)))
+    (with old-title (or (ahash-ref remote-title-table fname)
+                        (append-time def-title t))
       (when server
         (with-remote-identifier rid server fname
           (when rid
             (with-remote-get-field new-title server rid "title"
-              (set! new-title (if (pair? new-title) (car new-title) old-title))
+              (set! new-title (if (pair? new-title)
+                                  (append-time (car new-title) t)
+                                  old-title))
               (when (and (buffer-exists? fname) (!= new-title old-title))
                 (buffer-set-title fname new-title))
               (ahash-set! remote-title-table fname new-title)))))
