@@ -223,15 +223,15 @@
     (link db-entry-menu))
   ---
   (when (in-database?)
-    (=> "Class"
-        ("None" (db-set-class-preference* ""))
-        (if (nnull? db-recent-classes)
-            ---
-            (for (class (db-recent-classes))
-              ((check (eval class) "v" (db-test-class-preference? class))
-               (db-set-class-preference* class))))
-        ---
-        ("Other" (interactive db-set-class-preference*))))
+    (=> "Storage"
+        (if (nnull? (recent-databases))
+	    (with cur (user-database)
+	      (for (db (recent-databases))
+		((check (eval (url->system (url-tail db)))
+			"v" (== db cur))
+		 (use-database db))))
+	    ---)
+        ("Other" (choose-file use-database "Select database" "generic"))))
   (when (db-importable?)
     (if (null? (db-recent-imports))
         ("Import" (db-import-select)))

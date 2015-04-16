@@ -31,49 +31,11 @@
     (set-preference key val)))
 
 (tm-define (db-get-current-query file)
-  (list (cons "classifier" (db-get-query-preference file "classifier" ""))
-        (cons "search" (db-get-query-preference file "search" ""))
+  (list (cons "search" (db-get-query-preference file "search" ""))
         (cons "order" (db-get-query-preference file "order" "name"))
         (cons "direction" (db-get-query-preference file "direction" "ascend"))
         (cons "limit" (db-get-query-preference file "limit" "10"))
         (cons "present" (db-get-query-preference file "present" "detailed"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Preferences for filtering on classifiers
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (db-recent-classes)
-  (with v (string-append "recent-classes-" (url->system (current-buffer)))
-    (with p (get-preference v)
-      (if (== p "default") (list)
-          (list-filter (string-decompose p ";") (cut != <> ""))))))
-
-(define (db-add-to-recent-classes c)
-  (with v (string-append "recent-classes-" (url->system (current-buffer)))
-    (with p (list-remove-duplicates (cons c (db-recent-classes)))
-      (when (> (length p) 10) (set! p (sublist p 0 10)))
-      (set! p (list-intersperse p ";"))
-      (set-preference v (apply string-append p)))))
-
-(tm-define (db-test-class-preference? class)
-  (== (db-get-class-preference) class))
-
-(tm-define (db-set-class-preference class)
-  (:argument class "Class")
-  (:check-mark "v" db-test-class-preference?)
-  (db-set-query-preference (current-buffer) "classifier" class)
-  (db-add-to-recent-classes class))
-
-(tm-define (db-set-class-preference* class)
-  (:argument class "Class")
-  (:check-mark "v" db-test-class-preference?)
-  (db-set-class-preference class)
-  (revert-buffer))
-
-(tm-define (db-get-class-preference)
-  (with class (db-get-query-preference (current-buffer) "classifier" "")
-    (db-add-to-recent-classes class)
-    class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieving the database queries
@@ -122,11 +84,7 @@
     (with-database (user-database kind)
       (with-limit (with limit (assoc-ref a "limit")
 		    (or (and limit (string->number limit)) 10))
-	(let* ((classifier (or (assoc-ref a "classifier") ""))
-               (cs (list-filter (string-tokenize-comma classifier)
-                                (cut != <> "")))
-               (cq (map (lambda (s) (list "classifier" s)) cs))
-               (search (or (assoc-ref a "search") ""))
+	(let* ((search (or (assoc-ref a "search") ""))
 	       (ss (list-filter (string-tokenize-comma search)
 				(lambda (s) (>= (string-length s) 2))))
 	       (sq (map (lambda (s) (list :match s)) ss))
@@ -137,7 +95,7 @@
 	       (oq (map (lambda (s) (list :order s asc?)) os))
 	       (kind (or (assoc-ref a "kind") "unknown"))
 	       (types (or (smart-ref db-kind-table kind) (list)))
-	       (q (append sq cq (list (cons "type" types)) oq))
+	       (q (append sq (list (cons "type" types)) oq))
 	       (ids (db-search q))
 	       (r (map db-load-entry ids))
 	       (present (or (assoc-ref a "present") "detailed")))

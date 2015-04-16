@@ -64,7 +64,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define db-the-default-user #f)
-(define db-the-default-pseudo #f)
 
 (define (create-default-user)
   (if (and (url-exists-in-path? "whoami")
@@ -93,32 +92,65 @@
     (set! db-the-default-user "default"))
   db-the-default-user)
 
-(tm-define (get-default-pseudo)
-  (when (not db-the-default-pseudo)
-    (with uid (get-default-user)
-      (set! db-the-default-pseudo (user->pseudo uid))))
-  db-the-default-pseudo)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Users databases
+;; User databases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define db-the-default-user-dir #f)
+(define dir-created-table (make-ahash-table))
 
-(tm-define (get-default-user-dir)
-  (when (not db-the-default-user-dir)
-    (set! db-the-default-user-dir
-          (string-append users-dir "/users/" (get-default-user)))
-    (when (not (url-exists? db-the-default-user-dir))
-      (system-mkdir db-the-default-user-dir)))
-  db-the-default-user-dir)
+(define (get-user-dir uid)
+  (with dir (string-append users-dir "/users/" uid)
+    (when (not (ahash-ref dir-created-table dir))
+      (system-mkdir dir)
+      (ahash-set! dir-created-table dir #t))
+    dir))
+
+(define (search-preferred-database-id uid kind)
+  (with ids (db-search `(("type" "preference")
+			 ("user" ,uid)
+			 ("key" ,(string-append "database-" kind))))
+    (and (nnull? ids) (car ids))))
+
+(tm-define (get-preferred-database uid kind)
+  (with-database users-master
+    (let* ((id (search-preferred-database-id uid kind))
+	   (val (and id (db-get-field-first id "value" #f))))
+      (if val (system->url val)
+	  (let* ((dir (get-user-dir uid))
+		 (pseudo (user->pseudo uid))
+		 (db* (string-append dir "/" pseudo "-" kind ".tmdb"))
+		 (db (string->url db*)))
+	    (set-preferred-database uid kind db)
+	    db)))))
+
+(tm-define (set-preferred-database uid kind db)
+  (with-database users-master
+    (with-time-stamp #t
+      (with id (or (search-preferred-database-id uid kind) (db-create-id))
+	(db-set-entry id `(("type" "preference")
+			   ("user" ,uid)
+			   ("key" ,(string-append "database-" kind))
+			   ("value" ,(url->system db))))))))
+
+(tm-define (recent-preferred-databases uid kind)
+  (with-database users-master
+    (with id (or (search-preferred-database-id uid kind) (db-create-id))
+      (with-time :always
+	(with vals (db-get-field id "value")
+	  (list-remove-duplicates (map system->url (reverse vals))))))))
 
 (tm-define (db-get-kind) "main")
 
-(tm-define (user-database . opt-suffix)
-  (let* ((suffix (if (null? opt-suffix) (db-get-kind) (car opt-suffix)))
-         (name (string-append (get-default-pseudo) "-" suffix ".tmdb")))
-    (url->url (string-append (get-default-user-dir) "/" name))))
+(tm-define (user-database . opt-kind)
+  (with kind (if (null? opt-kind) (db-get-kind) (car opt-kind))
+    (get-preferred-database (get-default-user) kind)))
+
+(tm-define (use-database db)
+  (set-preferred-database (get-default-user) (db-get-kind) db)
+  (revert-buffer))
+
+(tm-define (recent-databases)
+  (recent-preferred-databases (get-default-user) (db-get-kind)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables
