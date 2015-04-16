@@ -17,6 +17,8 @@
         (convert bibtex init-bibtex)
         (convert bibtex bibtexout)))
 
+(tm-define (bib-database) (user-database "bib"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Formats of bibliographic entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -376,7 +378,7 @@
 (tm-define (bib->db t)
   (cond ((and (tm-func? t 'bib-entry 3)
               (tm-func? (tm-ref t 2) 'document))
-         (let* ((id (with-database (user-database) (db-create-id)))
+         (let* ((id (with-database (bib-database) (db-create-id)))
                 (date (number->string (current-time)))
                 (type (tm->string (tm-ref t 0)))
                 (type* (if (== type "conference") "inproceedings" type))

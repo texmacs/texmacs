@@ -115,11 +115,11 @@
         ((== p "pretty") `(db-pretty-entry ,@(tm-children e)))
         (else e)))
 
-(define (get-db-fields a)
+(define (get-db-fields a kind)
   (let* ((file (or (assoc-ref a "tmfs") "unknown"))
          (a* (db-get-current-query file)))
     (set! a (assoc-add a a*))
-    (with-database (user-database)
+    (with-database (user-database kind)
       (with-limit (with limit (assoc-ref a "limit")
 		    (or (and limit (string->number limit)) 10))
 	(let* ((classifier (or (assoc-ref a "classifier") ""))
@@ -145,8 +145,8 @@
 
 (tmfs-load-handler (db name)
   (let* ((a (name->query name))
-         (kind (or (assoc-ref a "kind") "unknown"))
-         (l (get-db-fields a))
+         (kind (or (assoc-ref a "kind") "generic"))
+         (l (get-db-fields a kind))
          (l* (if (null? l) (list "") l)))
     `(document
        (TeXmacs ,(texmacs-version))

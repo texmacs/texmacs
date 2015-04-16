@@ -122,8 +122,6 @@
 ;; Automatically generated menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (db-get-kind) "unknown")
-
 (tm-define (db-get-types)
   (smart-ref db-kind-table (db-get-kind)))
 

@@ -31,10 +31,8 @@
 ;; The database for user management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define users-manage-dir "$TEXMACS_HOME_PATH/system/database")
-(define users-dir (string-append users-manage-dir "/users"))
-(define users-master
-  (url->url (string-append users-manage-dir "/users-master.tmdb")))
+(define users-dir "$TEXMACS_HOME_PATH/system/database")
+(define users-master (url->url (string-append users-dir "/users-master.tmdb")))
 
 (tm-define (add-user pseudo name)
   (with-database users-master
@@ -47,6 +45,10 @@
     (with ids (db-search (list (list "type" "user")
                                (list "pseudo" pseudo)))
       (and (nnull? ids) (car ids)))))
+
+(tm-define (user->pseudo uid)
+  (with-database users-master
+    (db-get-field-first uid "pseudo" #f)))
 
 (tm-define (set-default-user uid)
   (with-database users-master
@@ -62,6 +64,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define db-the-default-user #f)
+(define db-the-default-pseudo #f)
 
 (define (create-default-user)
   (if (and (url-exists-in-path? "whoami")
@@ -90,8 +93,32 @@
     (set! db-the-default-user "default"))
   db-the-default-user)
 
-(tm-define (user-database)
-  (url->url (string-append users-dir "/" (get-default-user) ".tmdb")))
+(tm-define (get-default-pseudo)
+  (when (not db-the-default-pseudo)
+    (with uid (get-default-user)
+      (set! db-the-default-pseudo (user->pseudo uid))))
+  db-the-default-pseudo)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Users databases
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define db-the-default-user-dir #f)
+
+(tm-define (get-default-user-dir)
+  (when (not db-the-default-user-dir)
+    (set! db-the-default-user-dir
+          (string-append users-dir "/users/" (get-default-user)))
+    (when (not (url-exists? db-the-default-user-dir))
+      (system-mkdir db-the-default-user-dir)))
+  db-the-default-user-dir)
+
+(tm-define (db-get-kind) "main")
+
+(tm-define (user-database . opt-suffix)
+  (let* ((suffix (if (null? opt-suffix) (db-get-kind) (car opt-suffix)))
+         (name (string-append (get-default-pseudo) "-" suffix ".tmdb")))
+    (url->url (string-append (get-default-user-dir) "/" name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important tables
