@@ -143,6 +143,37 @@
 ;; Manage user identities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define adding-user? #f)
+(define adding-info (make-ahash-table))
+
+(define (get-default-pseudo*)
+  (if adding-user?
+      "?"
+      (user->pseudo (get-default-user))))
+
+(define (get-user-info* attr)
+  (if adding-user?
+      (or (ahash-ref adding-info attr) "")
+      (get-user-info attr)))
+
+(define (set-user-info* attr val)
+  (if adding-user?
+      (begin
+        (ahash-set! adding-info attr val)
+        (let* ((pseudo (ahash-ref adding-info "pseudo"))
+               (name (ahash-ref adding-info "name")))
+          (when (and pseudo name (!= pseudo "") (!= name ""))
+            (with uid (add-user pseudo name)
+              (set! adding-user? #f)
+              (set-default-user uid)
+              (for (p (ahash-table->list adding-info))
+                (when (nin? (car p) (list "pseudo" "name"))
+                  (set-user-info (car p) (cdr p)))))
+            (refresh-now "identities-list"))))
+      (set-user-info attr val))
+  (when (== attr "pseudo")
+    (refresh-now "identities-list")))
+
 (tm-widget (db-identities-widget)
   (padded
     (hlist
@@ -150,11 +181,22 @@
         (vlist
           (bold (text "User"))
           ======
-          (choice (begin
-                    (set-default-user (pseudo->user answer))
-                    (refresh-now "identity-info"))
-                  (map user->pseudo (get-users-list))
-                  (user->pseudo (get-default-user)))))
+          (refreshable "identities-list"
+            (choice (begin
+                      (set! adding-user? #f)
+                      (set-default-user (pseudo->user answer))
+                      (refresh-now "identity-info"))
+                    (map user->pseudo (get-users-list))
+                    (get-default-pseudo*)))
+          ===
+          (hlist
+            ((icon "tm_add_2.xpm")
+             (set! adding-user? #t)
+             (set! adding-info (make-ahash-table))
+             (refresh-now "identities-list")
+             (refresh-now "identity-info"))
+            ((icon "tm_close_tool.xpm") (display* "Remove\n"))
+            >>)))
       // // //
       (resize "400px" "400px"
         (vlist
@@ -163,14 +205,14 @@
           (refreshable "identity-info"
             (aligned
               (item (text "Pseudo:")
-                (input (set-user-info "pseudo" answer) "string"
-                       (list (get-user-info "pseudo")) "40em"))
+                (input (set-user-info* "pseudo" answer) "string"
+                       (list (get-user-info* "pseudo")) "40em"))
               (item (text "Full name:")
-                (input (set-user-info "name" answer) "string"
-                       (list (get-user-info "name")) "40em"))
+                (input (set-user-info* "name" answer) "string"
+                       (list (get-user-info* "name")) "40em"))
               (item (text "Email:")
-                (input (set-user-info "email" answer) "string"
-                       (list (get-user-info "email")) "40em"))))
+                (input (set-user-info* "email" answer) "string"
+                       (list (get-user-info* "email")) "40em"))))
           (glue #f #t 0 0))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -179,6 +221,7 @@
 
 (tm-define (open-identities)
   (:interactive #t)
+  (set! adding-user? #f)
   (top-window db-identities-widget "Specify user identity"))
 
 (tm-define (open-db-chooser db kind name call-back)
