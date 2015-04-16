@@ -37,16 +37,17 @@
   ("Login" (interactive client-login-home)))
 
 (tm-menu (remote-submenu server)
-  ("Logout" (client-logout server))
+  ("Home" (load-buffer (remote-home-directory server)))
   ---
-  ("Home directory" (load-buffer (remote-home-directory server)))
   (when (remote-file-name (current-buffer))
     ("New remote file" (remote-create-file-interactive server))
     ("New remote directory" (remote-create-dir-interactive server))
     ;;("Browse files" (remote-browse server))
     (when (not (remote-home-directory? (current-buffer)))
       ("Rename" (remote-rename-interactive server)))
-    ("Permissions" (open-file-permissions-editor server (current-buffer)))))
+    ("Permissions" (open-file-permissions-editor server (current-buffer))))
+  ---
+  ("Logout" (client-logout server)))
 
 (menu-bind client-menu
   (with l (client-active-servers)
@@ -54,7 +55,6 @@
       (link client-menu))
     (assuming (== (length l) 1)
       (with server (car l)
-        (group (client-find-server-name server))
         (dynamic (remote-submenu server))))
     (assuming (> (length l) 1)
       (for (server l)
