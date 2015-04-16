@@ -189,11 +189,12 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/system/cache");
   make_dir ("$TEXMACS_HOME_PATH/system/database");
   make_dir ("$TEXMACS_HOME_PATH/system/database/bib");
-  make_dir ("$TEXMACS_HOME_PATH/system/database/users");
   make_dir ("$TEXMACS_HOME_PATH/system/tmp");
   make_dir ("$TEXMACS_HOME_PATH/texts");
+  make_dir ("$TEXMACS_HOME_PATH/users");
   change_mode ("$TEXMACS_HOME_PATH/server", 7 << 6);
   change_mode ("$TEXMACS_HOME_PATH/system", 7 << 6);
+  change_mode ("$TEXMACS_HOME_PATH/users", 7 << 6);
   clean_temp_dirs ();
 }
 

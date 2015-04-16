@@ -31,7 +31,7 @@
 ;; The database for user management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define users-dir "$TEXMACS_HOME_PATH/system/database")
+(define users-dir "$TEXMACS_HOME_PATH/users")
 (define users-master (url->url (string-append users-dir "/users-master.tmdb")))
 
 (tm-define (add-user pseudo name)
@@ -99,7 +99,7 @@
 (define dir-created-table (make-ahash-table))
 
 (define (get-user-dir uid)
-  (with dir (string-append users-dir "/users/" uid)
+  (with dir (string-append users-dir "/" uid)
     (when (not (ahash-ref dir-created-table dir))
       (system-mkdir dir)
       (ahash-set! dir-created-table dir #t))

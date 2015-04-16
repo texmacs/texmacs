@@ -491,8 +491,10 @@ immediate_options (int argc, char** argv) {
       remove (url ("$TEXMACS_HOME_PATH/system/cache/plugin_cache.scm"));
     else if (s == "-delete-server-data")
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/server"));
-    else if (s == "-delete-databases")
+    else if (s == "-delete-databases") {
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/system/database"));
+      system ("rm -rf", url ("$TEXMACS_HOME_PATH/users"));
+    }
     else if (s == "-log-file" && i + 1 < argc) {
       i++;
       char* log_file = argv[i];
