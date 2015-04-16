@@ -75,10 +75,13 @@ load_string (url u, string& s, bool fatal) {
     FILE* fin= fopen (_name, "rb");
 #else
     FILE* fin= fopen (_name, "r");
-    int fd= fileno (fin);
-    if (flock (fd, LOCK_SH) == -1) {
-      fclose (fin);
-      fin= NULL;
+    int fd= -1;
+    if (fin != NULL) {
+      fd= fileno (fin);
+      if (flock (fd, LOCK_SH) == -1) {
+        fclose (fin);
+        fin= NULL;
+      }
     }
 #endif
     if (fin == NULL) {
@@ -156,12 +159,15 @@ save_string (url u, string s, bool fatal) {
       FILE* fout= fopen (_name, "r+");
       bool rw= (fout != NULL);
       if (!rw) fout= fopen (_name, "w");
-      int fd= fileno (fout);
-      if (flock (fd, LOCK_EX) == -1) {
-        fclose (fout);
-        fout= NULL;
+      int fd= -1;
+      if (fout != NULL) {
+        fd= fileno (fout);
+        if (flock (fd, LOCK_EX) == -1) {
+          fclose (fout);
+          fout= NULL;
+        }
+        else if (rw) ftruncate (fd, 0);
       }
-      else if (rw) ftruncate (fd, 0);
 #endif
       if (fout == NULL) {
         err= true;
@@ -215,10 +221,13 @@ append_string (url u, string s, bool fatal) {
       FILE* fout= fopen (_name, "ab");
 #else
       FILE* fout= fopen (_name, "a");
-      int fd= fileno (fout);
-      if (flock (fd, LOCK_EX) == -1) {
-        fclose (fout);
-        fout= NULL;
+      int fd= -1;
+      if (fout != NULL) {
+        fd= fileno (fout);
+        if (flock (fd, LOCK_EX) == -1) {
+          fclose (fout);
+          fout= NULL;
+        }
       }
 #endif
       if (fout == NULL) {
