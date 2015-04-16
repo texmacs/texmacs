@@ -217,6 +217,7 @@
         ("Remove selected entries" (structured-remove-left)))))
 
 (menu-bind db-menu
+  ("Open identities" (open-identities))
   ("Open bibliography" (load-db-buffer "tmfs://db/bib/global"))
   ---
   (when (in-database?)

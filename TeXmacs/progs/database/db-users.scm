@@ -36,14 +36,14 @@
 
 (tm-define (add-user pseudo name)
   (with-database users-master
-    (db-create-entry (list (list "type" "user")
-                           (list "pseudo" pseudo)
-                           (list "name" name)))))
+    (db-create-entry `(("type" "user")
+                       ("pseudo" ,pseudo)
+                       ("name" ,name)))))
 
 (tm-define (pseudo->user pseudo)
   (with-database users-master
-    (with ids (db-search (list (list "type" "user")
-                               (list "pseudo" pseudo)))
+    (with ids (db-search `(("type" "user")
+                           ("pseudo" ,pseudo)))
       (and (nnull? ids) (car ids)))))
 
 (tm-define (user->pseudo uid)
@@ -52,12 +52,26 @@
 
 (tm-define (set-default-user uid)
   (with-database users-master
-    (db-set-field "root" "default-user" (list uid))))
+    (when (!= db-the-default-user uid)
+      (db-set-field "root" "default-user" (list uid))
+      (set! db-the-default-user uid))))
 
-(define (find-default-user)
+(define (search-default-user)
   (with-database users-master
     (with l (db-get-field "root" "default-user")
       (and (pair? l) (car l)))))
+
+(tm-define (set-user-info attr val)
+  (with-database users-master
+    (db-set-field (get-default-user) attr (list val))))
+
+(tm-define (get-user-info attr)
+  (with-database users-master
+    (db-get-field-first (get-default-user) attr "")))
+
+(tm-define (get-users-list)
+  (with-database users-master
+    (db-search `(("type" "user")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The default user
@@ -79,7 +93,7 @@
 
 (tm-define (get-default-user)
   (when (not db-the-default-user)
-    (and-with uid (find-default-user)
+    (and-with uid (search-default-user)
       (set! db-the-default-user uid)))
   (when (not db-the-default-user)
     (with info (create-default-user)

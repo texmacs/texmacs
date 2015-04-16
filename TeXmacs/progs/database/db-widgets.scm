@@ -140,12 +140,46 @@
 			 "tmfs://aux/db-search-results"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Manage user identities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (db-identities-widget)
+  (padded
+    (hlist
+      (resize "150px" "400px"
+        (vlist
+          (bold (text "User"))
+          ======
+          (choice (begin
+                    (set-default-user (pseudo->user answer))
+                    (refresh-now "identity-info"))
+                  (map user->pseudo (get-users-list))
+                  (user->pseudo (get-default-user)))))
+      // // //
+      (resize "400px" "400px"
+        (vlist
+          (bold (text "Information"))
+          ======
+          (refreshable "identity-info"
+            (aligned
+              (item (text "Pseudo:")
+                (input (set-user-info "pseudo" answer) "string"
+                       (list (get-user-info "pseudo")) "40em"))
+              (item (text "Full name:")
+                (input (set-user-info "name" answer) "string"
+                       (list (get-user-info "name")) "40em"))
+              (item (text "Email:")
+                (input (set-user-info "email" answer) "string"
+                       (list (get-user-info "email")) "40em"))))
+          (glue #f #t 0 0))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Exported routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (open-db-preferences)
+(tm-define (open-identities)
   (:interactive #t)
-  (top-window db-preferences-widget "TeXmacs database preferences"))
+  (top-window db-identities-widget "Specify user identity"))
 
 (tm-define (open-db-chooser db kind name call-back)
   (:interactive #t)
@@ -157,3 +191,7 @@
 		     (set! db-quit-search ignore)
 		     (apply call-back args))
 		   name))
+
+(tm-define (open-db-preferences)
+  (:interactive #t)
+  (top-window db-preferences-widget "TeXmacs database preferences"))
