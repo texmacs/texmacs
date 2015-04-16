@@ -151,6 +151,13 @@
 (define (get-user-info* attr)
   (if adding-user? "" (get-user-info attr)))
 
+(define (refresh-identities flag?)
+  (refresh-now "identities-list")
+  (refresh-now "identity-info")
+  (refresh-now "identity-buttons")
+  (when (and (in-database?) flag?)
+    (revert-buffer)))
+
 (define (set-identity vars vals)
   (if adding-user?
       (with t (make-ahash-table)
@@ -163,8 +170,7 @@
               (for-each set-user-info vars vals)
               (set! adding-user? #f)))))
       (for-each set-user-info vars vals))
-  (refresh-now "identities-list")
-  (refresh-now "identity-buttons"))
+  (refresh-identities #t))
 
 (tm-widget (delete-user-widget quit)
   (padded
@@ -177,9 +183,7 @@
         ("Cancel" (quit)) // // //
         ("Ok"
          (remove-user)
-         (refresh-now "identities-list")
-         (refresh-now "identity-info")
-         (refresh-now "identity-buttons")
+         (refresh-identities #t)
          (quit))
         >>))))
 
@@ -195,7 +199,7 @@
             (choice (begin
                       (set! adding-user? #f)
                       (set-default-user (pseudo->user answer))
-                      (refresh-now "identity-info"))
+                      (refresh-identities #t))
                     (sort (map user->pseudo (get-users-list)) string<=?)
                     (get-default-pseudo*)))))
       // // //
@@ -225,18 +229,15 @@
       (hlist
         ((icon "tm_add_2.xpm")
          (set! adding-user? #t)
-         (refresh-now "identities-list")
-         (refresh-now "identity-info")
-         (refresh-now "identity-buttons"))
+         (refresh-identities #f))
         (if (or adding-user? (> (length (get-users-list)) 1))
             ((icon "tm_close_tool.xpm")
              (if adding-user?
-                 (set! adding-user? #f)
+                 (begin
+                   (set! adding-user? #f)
+                   (refresh-identities #f))
                  (dialogue-window delete-user-widget noop
-                                  "Delete user identity"))
-             (refresh-now "identities-list")
-             (refresh-now "identity-info")
-             (refresh-now "identity-buttons")))
+                                  "Delete user identity"))))
         >>))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
