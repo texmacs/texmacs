@@ -144,76 +144,100 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define adding-user? #f)
-(define adding-info (make-ahash-table))
 
 (define (get-default-pseudo*)
-  (if adding-user?
-      "?"
-      (user->pseudo (get-default-user))))
+  (if adding-user? "?" (user->pseudo (get-default-user))))
 
 (define (get-user-info* attr)
-  (if adding-user?
-      (or (ahash-ref adding-info attr) "")
-      (get-user-info attr)))
+  (if adding-user? "" (get-user-info attr)))
 
-(define (set-user-info* attr val)
+(define (set-identity vars vals)
   (if adding-user?
-      (begin
-        (ahash-set! adding-info attr val)
-        (let* ((pseudo (ahash-ref adding-info "pseudo"))
-               (name (ahash-ref adding-info "name")))
-          (when (and pseudo name (!= pseudo "") (!= name ""))
+      (with t (make-ahash-table)
+        (for-each (cut ahash-set! t <> <>) vars vals)
+        (let* ((pseudo (ahash-ref t "pseudo"))
+               (name (ahash-ref t "name")))
+          (when (and (!= pseudo "") (!= name ""))
             (with uid (add-user pseudo name)
-              (set! adding-user? #f)
               (set-default-user uid)
-              (for (p (ahash-table->list adding-info))
-                (when (nin? (car p) (list "pseudo" "name"))
-                  (set-user-info (car p) (cdr p)))))
-            (refresh-now "identities-list"))))
-      (set-user-info attr val))
-  (when (== attr "pseudo")
-    (refresh-now "identities-list")))
+              (for-each set-user-info vars vals)
+              (set! adding-user? #f)))))
+      (for-each set-user-info vars vals))
+  (refresh-now "identities-list")
+  (refresh-now "identity-buttons"))
+
+(tm-widget (delete-user-widget quit)
+  (padded
+    (centered (text "Really delete user identity?"))
+    (centered (bold (text "All data attached to this identity will be lost")))
+    ======
+    (hlist
+      (explicit-buttons
+        >>
+        ("Cancel" (quit)) // // //
+        ("Ok"
+         (remove-user)
+         (refresh-now "identities-list")
+         (refresh-now "identity-info")
+         (refresh-now "identity-buttons")
+         (quit))
+        >>))))
 
 (tm-widget (db-identities-widget)
   (padded
+    ======
     (hlist
-      (resize "150px" "400px"
+      (resize "150px" "250px"
         (vlist
-          (bold (text "User"))
-          ======
+          ;;(bold (text "User"))
+          ;;======
           (refreshable "identities-list"
             (choice (begin
                       (set! adding-user? #f)
                       (set-default-user (pseudo->user answer))
                       (refresh-now "identity-info"))
-                    (map user->pseudo (get-users-list))
-                    (get-default-pseudo*)))
-          ===
-          (hlist
-            ((icon "tm_add_2.xpm")
-             (set! adding-user? #t)
-             (set! adding-info (make-ahash-table))
-             (refresh-now "identities-list")
-             (refresh-now "identity-info"))
-            ((icon "tm_close_tool.xpm") (display* "Remove\n"))
-            >>)))
+                    (sort (map user->pseudo (get-users-list)) string<=?)
+                    (get-default-pseudo*)))))
       // // //
-      (resize "400px" "400px"
+      (resize "375px" "250px"
         (vlist
-          (bold (text "Information"))
-          ======
+          ;;(bold (text "Information"))
+          ;;======
           (refreshable "identity-info"
-            (aligned
-              (item (text "Pseudo:")
-                (input (set-user-info* "pseudo" answer) "string"
-                       (list (get-user-info* "pseudo")) "40em"))
-              (item (text "Full name:")
-                (input (set-user-info* "name" answer) "string"
-                       (list (get-user-info* "name")) "40em"))
-              (item (text "Email:")
-                (input (set-user-info* "email" answer) "string"
-                       (list (get-user-info* "email")) "40em"))))
-          (glue #f #t 0 0))))))
+            (form "id-info"
+              (aligned
+                (item (text "Pseudo:")
+                  (form-input "pseudo" "string"
+                              (list (get-user-info* "pseudo")) "300px"))
+                (item (text "Full name:")
+                  (form-input "name" "string"
+                              (list (get-user-info* "name")) "300px"))
+                (item (text "Email:")
+                  (form-input "email" "string"
+                              (list (get-user-info* "email")) "300px")))
+              (glue #f #t 0 0)
+              (hlist
+                (explicit-buttons
+                  >>
+                  ("Set" (set-identity (form-fields) (form-values))))))))))
+    ===
+    (refreshable "identity-buttons"
+      (hlist
+        ((icon "tm_add_2.xpm")
+         (set! adding-user? #t)
+         (refresh-now "identities-list")
+         (refresh-now "identity-info")
+         (refresh-now "identity-buttons"))
+        (if (or adding-user? (> (length (get-users-list)) 1))
+            ((icon "tm_close_tool.xpm")
+             (if adding-user?
+                 (set! adding-user? #f)
+                 (dialogue-window delete-user-widget noop
+                                  "Delete user identity"))
+             (refresh-now "identities-list")
+             (refresh-now "identity-info")
+             (refresh-now "identity-buttons")))
+        >>))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Exported routines

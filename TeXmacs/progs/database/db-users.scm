@@ -40,6 +40,14 @@
                        ("pseudo" ,pseudo)
                        ("name" ,name)))))
 
+(tm-define (remove-user)
+  (let* ((del (get-default-user))
+         (rem (list-filter (get-users-list) (cut != <> del))))
+    (when (nnull? rem)
+      (set-default-user (car rem))
+      (with-database users-master
+        (db-remove-entry del)))))
+
 (tm-define (pseudo->user pseudo)
   (with-database users-master
     (with ids (db-search `(("type" "user")
@@ -63,7 +71,8 @@
 
 (tm-define (set-user-info attr val)
   (with-database users-master
-    (db-set-field (get-default-user) attr (list val))))
+    (when (!= val (get-user-info attr))
+      (db-set-field (get-default-user) attr (list val)))))
 
 (tm-define (get-user-info attr)
   (with-database users-master
