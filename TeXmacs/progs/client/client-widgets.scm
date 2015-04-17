@@ -119,22 +119,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget ((accept-licence-widget doc) cmd)
-  (with ok? #f
+  (let* ((ok? #f)
+	 (decl (string-append "I declare having read and agreed with "
+			      "the above licence agreement"))
+	 (msg (string-append "You must agree with the licence "
+			     "in order to proceed")))
     (padded
-      (resize "720px" "480px"
-	(texmacs-output
-	 (tmfile-extract doc 'body)
-	 (tmfile-extract doc 'style)))
+      (resize "720px" "80px"
+	(texmacs-output (tmfile-extract doc 'body)
+			`(style ,(tmfile-extract doc 'style))))
       ======
       (hlist
-	(toggle (set! ok answer) ok?) //
-	(text "I declare having read and agreed with the above licence agreement"))
+	(toggle (set! ok? answer) ok?) // // //
+	(text decl) >>)
       ======
       (bottom-buttons
 	>>
-	("Cancel" (cmd #f)) //
-	("Ok" (if ok? (cmd #t)
-		  (open-error "You must agree with the licence in order to proceed")))))))
+	("Cancel" (cmd #f)) // // //
+	("Ok" (if ok? (cmd #t) (open-error msg)))))))
 
 (tm-define (client-create-account server-name pseudo name passwd email)
   (with cmd (lambda ()
@@ -143,7 +145,6 @@
       (when (!= server -1)
 	(client-remote-eval server `(server-licence)
 	  (lambda (doc)
-	    (display* "Got licence " doc "\n")
 	    (client-stop server)
 	    (if (not doc) (cmd)
 		(dialogue-window (accept-licence-widget doc)
