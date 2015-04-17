@@ -17,24 +17,17 @@
         (client client-tmfs)
         (client client-widgets)))
 
-;;(menu-bind account-menu
-;;  ("Nickname" (remote-interactive-set-user-property "Nickname"))
-;;  ("Full name" (remote-interactive-set-user-property "Full name"))
-;;  ("Email address" (remote-interactive-set-user-property "Email"))
-;;  ("Home page" (remote-interactive-set-user-property "Web")))
-
-(tm-define (client-login-home server-name pseudo passwd)
-  (:argument server-name "Server")
-  (:argument pseudo "User pseudo")
-  (:argument passwd "password" "Password")
-  (client-login-then server-name pseudo passwd
-                     (lambda (ret)
-                       (with server (client-find-server server-name)
-                         (load-buffer (remote-home-directory server))))))
-
 (menu-bind start-client-menu
-  ("New account" (interactive client-new-account))
-  ("Login" (interactive client-login-home)))
+  (with l (client-accounts)
+    (if (null? l)
+	("Login" (open-remote-login "" "")))
+    (if (nnull? l)
+	(for (x l)
+	  (with (server-name pseudo) x
+	    ((eval (string-append "Login as " pseudo "@" server-name))
+	     (open-remote-login server-name pseudo))))
+	("Other login" (open-remote-login "" "")))
+    ("New account" (open-remote-account-creator))))
 
 (tm-menu (remote-submenu server)
   ("Home" (load-buffer (remote-home-directory server)))
@@ -42,7 +35,6 @@
   (when (remote-file-name (current-buffer))
     ("New remote file" (remote-create-file-interactive server))
     ("New remote directory" (remote-create-dir-interactive server))
-    ;;("Browse files" (remote-browse server))
     (when (not (remote-home-directory? (current-buffer)))
       ("Rename" (remote-rename-interactive server)))
     ("Permissions" (open-file-permissions-editor server (current-buffer))))

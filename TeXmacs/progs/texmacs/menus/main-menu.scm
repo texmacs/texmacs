@@ -37,8 +37,9 @@
 (menu-bind remote-menu
   (if (and (null? remote-client-list) (not (server-started?)))
       (link start-client-menu)
-      ---
-      (link start-server-menu))
+      ;;---
+      ;;(link start-server-menu)
+      )
   (if (and (null? remote-client-list) (server-started?))
       (link server-menu))
   (if (nnull? remote-client-list)

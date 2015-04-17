@@ -103,7 +103,7 @@
 
 (tmfs-load-handler (db name)
   (let* ((a (name->query name))
-         (kind (or (assoc-ref a "kind") "generic"))
+         (kind (or (assoc-ref a "kind") "general"))
          (l (get-db-fields a kind))
          (l* (if (null? l) (list "") l)))
     `(document

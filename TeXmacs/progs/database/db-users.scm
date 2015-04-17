@@ -162,7 +162,7 @@
 	(with vals (db-get-field id "value")
 	  (list-remove-duplicates (map system->url (reverse vals))))))))
 
-(tm-define (db-get-kind) "main")
+(tm-define (db-get-kind) "general")
 
 (tm-define (user-database . opt-kind)
   (with kind (if (null? opt-kind) (db-get-kind) (car opt-kind))

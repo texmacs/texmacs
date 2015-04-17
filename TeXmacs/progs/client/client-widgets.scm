@@ -15,6 +15,146 @@
   (:use (client client-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Account creation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((error-widget s) quit)
+  (padded
+    (centered (text s))
+    ======
+    (bottom-buttons
+      >> ("Ok" (quit)) >>)))
+
+(tm-define (open-error s)
+  (:interactive #t)
+  (dialogue-window (error-widget s) noop "Error"))
+
+(define (first-incomplete-field t pw? key?)
+  (cond ((== (ahash-ref t "server") "") "Server")
+	((== (ahash-ref t "pseudo") "") "Pseudo")
+	((== (ahash-ref t "name") "") "Full name")
+	((== (ahash-ref t "email") "") "Email")
+	((and pw? (== (ahash-ref t "password") "")) "Password")
+	((and pw? (== (ahash-ref t "repeat") "")) "Repeat")
+	(else #f)))
+
+(tm-widget (remote-account-widget quit)
+  (let* ((use-password? #t)
+	 (use-key? #f)
+	 (set-password?
+	  (lambda (flag?)
+	    (set! use-password? flag?)
+	    (refresh-now "password-info")))
+	 (set-key?
+	  (lambda (flag?)
+	    (set! use-key? flag?)
+	    (refresh-now "key-info"))))
+    (padded
+      (form "account-info"
+	(aligned
+	  (item (text "Server:")
+	    (form-input "server" "string"
+			(list "") "300px"))
+	  (item (text "Pseudo:")
+	    (form-input "pseudo" "string"
+			(list (get-user-info "pseudo")) "300px"))
+	  (item (text "Full name:")
+	    (form-input "name" "string"
+			(list (get-user-info "name")) "300px"))
+	  (item (text "Email:")
+	    (form-input "email" "string"
+			(list (get-user-info "email")) "300px")))
+	====== ======
+	(aligned
+	  (item (toggle (set-password? answer) use-password?)
+	    (hlist
+	      // (text "Allow authentification through password"))))
+	===
+	(refreshable "password-info"
+	  (when use-password?
+	    (aligned
+	      (item (text "Password:")
+		(form-input "password" "password" (list "") "300px"))
+	      (item (text "Repeat:")
+		(form-input "repeat" "password" (list "") "300px")))))
+	====== ======
+	(when #f
+	  (aligned
+	    (item (toggle (set-key? answer) use-key?)
+	      (hlist
+		// (text "Allow authentification through cryptographic key")))))
+	===
+	(refreshable "key-info"
+	  (when use-key?
+	    (text "Not yet implemented")))
+	======
+	(bottom-buttons
+	  >>
+	  ("Proceed"
+	   (with t (make-ahash-table)
+	     (for-each (cut ahash-set! t <> <>) (form-fields) (form-values))
+	     (cond ((not (or use-password? use-key?))
+		    (open-error
+		     "Please enable at least one authentification method"))
+		   ((and use-password? (!= (ahash-ref t "password")
+					   (ahash-ref t "repeat")))
+		    (open-error "Passwords do not match"))
+		   ((first-incomplete-field t use-password? use-key?) =>
+		    (lambda (s)
+		      (open-error (string-append "Missing '" s "'"))))
+		   (else
+		     (client-new-account (ahash-ref t "server")
+					 (ahash-ref t "pseudo")
+					 (ahash-ref t "name")
+					 (ahash-ref t "password")
+					 (ahash-ref t "email"))
+		     (quit))))))))))
+
+(tm-define (open-remote-account-creator)
+  (:interactive #t)
+  (dialogue-window remote-account-widget noop "Create remote account"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Login widgets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (client-login-home server-name pseudo passwd)
+  (:argument server-name "Server")
+  (:argument pseudo "User pseudo")
+  (:argument passwd "password" "Password")
+  (display* "Login " server-name ", " pseudo ", " passwd "\n")
+  (client-login-then server-name pseudo passwd
+                     (lambda (ret)
+                       (with server (client-find-server server-name)
+                         (load-buffer (remote-home-directory server))))))
+
+(tm-widget ((remote-login-widget server-name pseudo) quit)
+  (padded
+    (form "login-info"
+      ======
+      (aligned
+	(item (text "Server:")
+	  (form-input "server" "string"
+		      (list server-name) "300px"))
+	(item (text "Pseudo:")
+	  (form-input "pseudo" "string"
+		      (list pseudo) "300px"))
+	(item (text "Password:")
+	  (form-input "name" "password"
+		      (list "") "300px")))
+      ======
+      (bottom-buttons
+	>>
+	("Ok"
+	 (apply client-login-home (form-values))
+	 (quit))))))
+
+(tm-define (open-remote-login server-name pseudo)
+  (:interactive #t)
+  (dialogue-window (remote-login-widget server-name pseudo) noop
+		   "Remote login"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File browser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
