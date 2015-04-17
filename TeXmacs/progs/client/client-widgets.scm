@@ -103,16 +103,53 @@
 		    (lambda (s)
 		      (open-error (string-append "Missing '" s "'"))))
 		   (else
-		     (client-new-account (ahash-ref t "server")
-					 (ahash-ref t "pseudo")
-					 (ahash-ref t "name")
-					 (ahash-ref t "password")
-					 (ahash-ref t "email"))
+		     (client-create-account (ahash-ref t "server")
+					    (ahash-ref t "pseudo")
+					    (ahash-ref t "name")
+					    (ahash-ref t "password")
+					    (ahash-ref t "email"))
 		     (quit))))))))))
 
 (tm-define (open-remote-account-creator)
   (:interactive #t)
   (dialogue-window remote-account-widget noop "Create remote account"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Create account after licence agreement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((accept-licence-widget doc) cmd)
+  (with ok? #f
+    (padded
+      (resize "720px" "480px"
+	(texmacs-output
+	 (tmfile-extract doc 'body)
+	 (tmfile-extract doc 'style)))
+      ======
+      (hlist
+	(toggle (set! ok answer) ok?) //
+	(text "I declare having read and agreed with the above licence agreement"))
+      ======
+      (bottom-buttons
+	>>
+	("Cancel" (cmd #f)) //
+	("Ok" (if ok? (cmd #t)
+		  (open-error "You must agree with the licence in order to proceed")))))))
+
+(tm-define (client-create-account server-name pseudo name passwd email)
+  (with cmd (lambda ()
+	      (client-new-account server-name pseudo name passwd email ""))
+    (with server (client-start server-name)
+      (when (!= server -1)
+	(client-remote-eval server `(server-licence)
+	  (lambda (doc)
+	    (display* "Got licence " doc "\n")
+	    (client-stop server)
+	    (if (not doc) (cmd)
+		(dialogue-window (accept-licence-widget doc)
+				 (lambda (accept?)
+				   (if accept? (cmd)))
+				 "Server licence agreement"))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Login widgets

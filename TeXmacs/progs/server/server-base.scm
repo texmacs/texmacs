@@ -191,11 +191,17 @@
                 (pseudo->user pseudo))
     (server-set-user-info uid pseudo name passwd email admin)))
 
-(tm-service (new-account pseudo name passwd email)
+(tm-service (new-account pseudo name passwd email agreed)
   (if (server-find-user pseudo)
       (server-error envelope "user already exists")
       (with ret (server-create-user pseudo name passwd email #f)
 	(server-return envelope "done"))))
+
+(tm-service (server-licence)
+  (with f "$TEXMACS_HOME_PATH/server/licence.tm"
+    (with s (and (url-exists? f) (string-load f))
+      (with doc (and s (convert s "texmacs-document" "texmacs-stree"))
+	(server-return envelope doc)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Logging in
