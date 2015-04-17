@@ -125,8 +125,9 @@
 	 (msg (string-append "You must agree with the licence "
 			     "in order to proceed")))
     (padded
-      (resize "720px" "80px"
-	(texmacs-output (tmfile-extract doc 'body)
+      ======
+      (resize "720px" "480px"
+	(texmacs-output `(with "bg-color" "#fff" ,(tmfile-extract doc 'body))
 			`(style ,(tmfile-extract doc 'style))))
       ======
       (hlist
