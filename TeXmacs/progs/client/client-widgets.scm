@@ -118,6 +118,10 @@
 ;; Create account after licence agreement
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define ((save-licence-as doc) f)
+  (with s (convert doc "texmacs-stree" "texmacs-document")
+    (string-save s f)))
+
 (tm-widget ((accept-licence-widget doc) cmd)
   (let* ((ok? #f)
 	 (decl (string-append "I declare having read and agreed with "
@@ -136,7 +140,10 @@
       ======
       (bottom-buttons
 	>>
-	("Cancel" (cmd #f)) // // //
+	("Save" (choose-file (save-licence-as doc) "Save licence" "texmacs"))
+	// // //
+	("Cancel" (cmd #f))
+	// // //
 	("Ok" (if ok? (cmd #t) (open-error msg)))))))
 
 (tm-define (client-create-account server-name pseudo name passwd email)
