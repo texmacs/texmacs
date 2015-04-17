@@ -310,8 +310,13 @@
   (lazy-define (security wallet wallet-base)
                supports-wallet? wallet-initialized?
                wallet-on? wallet-off?)
+  (lazy-define (security wallet wallet-menu) with-wallet)
   (lazy-menu (security wallet wallet-menu) wallet-preferences-widget)
   (lazy-menu (security gpg gpg-widgets) gpg-preferences-widget))
+(when (!= (get-preference "experimental encryption") "on")
+  (tm-define-macro (with-wallet . body) `(begin ,@body))
+  (tm-define (wallet-get key) #f)
+  (tm-define (wallet-set key val) (noop)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 
 ;(display "Booting remote facilities\n")

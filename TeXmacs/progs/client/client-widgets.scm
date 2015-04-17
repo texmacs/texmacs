@@ -165,14 +165,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (client-login-home server-name pseudo passwd)
-  (:argument server-name "Server")
-  (:argument pseudo "User pseudo")
-  (:argument passwd "password" "Password")
-  (display* "Login " server-name ", " pseudo ", " passwd "\n")
-  (client-login-then server-name pseudo passwd
-                     (lambda (ret)
-                       (with server (client-find-server server-name)
-                         (load-buffer (remote-home-directory server))))))
+  (client-login-then
+   server-name pseudo passwd
+   (lambda (ret)
+     (when (== ret "ready")
+       (with-wallet
+         (wallet-set (list "remote" server-name pseudo) passwd))
+       (with server (client-find-server server-name)
+         (load-buffer (remote-home-directory server)))))))
 
 (tm-widget ((remote-login-widget server-name pseudo) quit)
   (padded
@@ -197,8 +197,12 @@
 
 (tm-define (open-remote-login server-name pseudo)
   (:interactive #t)
-  (dialogue-window (remote-login-widget server-name pseudo) noop
-		   "Remote login"))
+  (with-wallet
+    (with passwd (wallet-get (list "remote" server-name pseudo))
+      (if passwd
+          (client-login-home server-name pseudo passwd)
+          (dialogue-window (remote-login-widget server-name pseudo)
+                           noop "Remote login")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File browser
