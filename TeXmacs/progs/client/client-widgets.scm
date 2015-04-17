@@ -172,11 +172,19 @@
        (with-wallet
          (wallet-set (list "remote" server-name pseudo) passwd))
        (with server (client-find-server server-name)
-         (load-buffer (remote-home-directory server)))))))
+         (load-buffer (remote-home-directory server))))
+     (when (== ret "invalid password")
+       (with server (client-find-server server-name)
+         (client-logout server))
+       (dialogue-window (remote-login-widget server-name pseudo #t)
+                        noop "Remote login")))))
 
-(tm-widget ((remote-login-widget server-name pseudo) quit)
+(tm-widget ((remote-login-widget server-name pseudo retry?) quit)
   (padded
     (form "login-info"
+      (if retry?
+          ===
+          (centered (bold (text "Incorrect password; please try again."))))
       ======
       (aligned
 	(item (text "Server:")
@@ -191,9 +199,8 @@
       ======
       (bottom-buttons
 	>>
-	("Ok"
-	 (apply client-login-home (form-values))
-	 (quit))))))
+        ("Cancel" (quit)) // //
+	("Ok" (apply client-login-home (form-values)) (quit))))))
 
 (tm-define (open-remote-login server-name pseudo)
   (:interactive #t)
@@ -201,7 +208,7 @@
     (with passwd (wallet-get (list "remote" server-name pseudo))
       (if passwd
           (client-login-home server-name pseudo passwd)
-          (dialogue-window (remote-login-widget server-name pseudo)
+          (dialogue-window (remote-login-widget server-name pseudo #f)
                            noop "Remote login")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

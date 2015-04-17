@@ -44,7 +44,7 @@
 (menu-bind client-menu
   (with l (client-active-servers)
     (assuming (null? l)
-      (link client-menu))
+      (link start-client-menu))
     (assuming (== (length l) 1)
       (with server (car l)
         (dynamic (remote-submenu server))))
