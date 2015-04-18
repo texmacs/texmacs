@@ -61,13 +61,13 @@
         (append-map (cut search-file (cdr l) <>) matches))))
 
 (define (dir-contents dir)
-  (db-search (list (list "dir" dir)
-                   (list :order "name" #t))))
+  (db-search `(("dir" ,dir)
+               (:order "name" #t))))
 
-(define (file-name->resource name)
+(tm-define (file-name->resource name)
   (safe-car (search-file (tmfs->list name))))
 
-(define (resource->file-name rid)
+(tm-define (resource->file-name rid)
   (let* ((dir (db-get-field-first rid "dir" #f))
          (name (db-get-field-first rid "name" "?")))
     (if dir (string-append (resource->file-name dir) "/" name) name)))
