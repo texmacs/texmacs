@@ -52,7 +52,7 @@ socket_link_rep::socket_link_rep (string host2, int port2, int type2, int fd):
     sn = socket_notifier (io, &socket_callback, this, NULL);  
     add_notifier (sn);
     call ("server-add", object (io));
-  } 
+  }
 }
 
 socket_link_rep::~socket_link_rep () {
