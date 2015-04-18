@@ -15,6 +15,7 @@
   (:use (client client-base)
         (client client-db)
         (client client-tmfs)
+        (client client-sync)
         (client client-widgets)))
 
 (menu-bind start-client-menu

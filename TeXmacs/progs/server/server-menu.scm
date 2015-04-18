@@ -14,7 +14,8 @@
 (texmacs-module (server server-menu)
   (:use (server server-base)
         (server server-db)
-        (server server-tmfs)))
+        (server server-tmfs)
+        (server server-sync)))
 
 (menu-bind start-server-menu
   ("Start server" (server-start)))
