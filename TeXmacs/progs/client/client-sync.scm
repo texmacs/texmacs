@@ -35,11 +35,12 @@
   (set! u (url->url u))
   (cond ((dont-sync? u) (list))
         ((not (url-exists? u)) (list))
-        ((not (url-directory? u)) (list u))
+        ((not (url-directory? u)) (list (list #f u)))
         (else
           (let* ((dirl (url-append u (url-wildcard "*")))
                  (l (url->list (url-expand (url-complete dirl "r")))))
-            (append-map client-sync-list l)))))
+            (cons (list #t u)
+                  (append-map client-sync-list l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Merge with list of remote files to be synchronized
@@ -62,16 +63,19 @@
          (t (make-ahash-table)))
     (client-remote-eval server `(remote-sync-list ,rbase)
       (lambda (remote-l)
-        (for (local-x local-l)
-          (with d (url->string (url-subtract local-x local-base))
-            (ahash-set! t d (list #t))))
-        (for (remote-p remote-l)
-          (with (name id) remote-p
+        (for (local-e local-l)
+          (with (dir? name) local-e
+            (with d (url->string (url-subtract name local-base))
+              (ahash-set! t d (list dir? #t)))))
+        (for (remote-e remote-l)
+          (with (dir? name id) remote-e
             (let* ((base (tmfs-cdr (remote-file-name remote-base)))
                    (d (url->string (url-subtract name base)))
                    (prev (ahash-ref t d)))
-              (cond ((not prev) (ahash-set! t d (list #f id)))
-                    ((list-1? prev) (ahash-set! t d (list (car prev) id)))))))
+              (cond ((not prev)
+                     (ahash-set! t d (list dir? #f id)))
+                    ((list-1? prev)
+                     (ahash-set! t d (list dir? (cadr prev) id)))))))
         (with l (sort (ahash-table->list t) first-string-leq?)
           (cont l))))))
 
@@ -79,7 +83,7 @@
 ;; Determine local files which have to be uploaded
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (get-url-sync-info local-exists? local-name remote-name)
+(define (get-url-sync-info dir? local-exists? local-name remote-name)
   (with-database (user-database "sync")
     (let* ((server-name (tmfs-car (remote-file-name remote-name)))
            (ids (db-search `(("name" ,(url->system local-name))
@@ -92,20 +96,20 @@
           (let* ((local-id (car ids))
                  (date* (db-get-field-first local-id "date" #f))
                  (remote-id* (db-get-field-first local-id "remote-id" #f)))
-            (list local-name local-id date date* remote-id*))
+            (list dir? local-name local-id date date* remote-id*))
           (with local-id
               (db-create-entry `(("type" "sync")
                                  ("server" ,server-name)
                                  ("name" ,(url->system local-name))
                                  ("remote-name" ,(url->system remote-name))
                                  ("date" ,date)))
-            (list local-name local-id date #f #f))))))
+            (list dir? local-name local-id date #f #f))))))
 
 (define (get-sync-status info remote-name remote-id)
-  (with (local-name local-id date date* remote-id*) info
-    (let* ((local-info (list local-name local-id))
-           (remote-info (list remote-name remote-id))
-           (all-info (list local-info remote-info)))
+  (with (dir? local-name local-id date date* remote-id*) info
+    (let* ((local-info (list (url->system local-name) local-id))
+           (remote-info (list (remote-file-name remote-name) remote-id))
+           (all-info (append (list dir?) local-info remote-info)))
     (cond ((and date (== date date*) (== remote-id remote-id*)) #f)
           ((and date (== date date*) (not remote-id))
            (cons "local-delete" all-info))
@@ -123,10 +127,10 @@
     (lambda (l)
       (with r (list)
         (for (x l)
-          (with (rname local? . opt) x
+          (with (rname dir? local? . opt) x
             (let* ((local-name (url-append* local-base rname))
                    (remote-name (url-append* remote-base rname))
-                   (info (get-url-sync-info local? local-name remote-name))
+                   (info (get-url-sync-info dir? local? local-name remote-name))
                    (remote-id (and (nnull? opt) (car opt)))
                    (next (get-sync-status info remote-name remote-id)))
               (when next (set! r (cons next r))))))
@@ -137,24 +141,3 @@
     (lambda (l)
       (for (x l)
         (display* x "\n")))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Updating the database after synchronizing
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (define (download-file packet server-name)
-;;   (with (msg name id remote-name remote-id body) packet
-;;     (when (in? msg '("download" "uploaded"))
-;;       (with-database (user-database "sync")
-;;         (let* ((fields `(("name" ,name)
-;;                          ("type" "sync")
-;;                          ("server" ,server-name)))
-;;                (ids (db-search fields))
-;;                (id (if (nnull? ids) (car ids) (db-create fields)))
-;;                (u (system->url name))
-;;                (date (integer->string (last-modified u)))
-;;                (sync-date (integer->string (current-time))))
-;;           (db-set-field id "remote-name" (list remote-name))
-;;           (db-set-field id "remote-id" (list remote-id))
-;;           (db-set-field id "date" (list date))
-;;           (db-set-field id "sync-date" (list sync-date)))))))

@@ -27,8 +27,9 @@
   (if (not (db-allow? rid uid "readable")) (list)
       (if (== (db-get-field-first rid "type" #f) "dir")
           (with l (dir-contents rid)
-            (append-map (cut server-sync-list <> uid) l))
-          (list (list (resource->file-name rid) rid)))))
+            (cons (list #t (resource->file-name rid) rid)
+                  (append-map (cut server-sync-list <> uid) l)))
+          (list (list #f (resource->file-name rid) rid)))))
 
 (tm-service (remote-sync-list rname)
   ;;(display* "remote-sync-list " rname "\n")
