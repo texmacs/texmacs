@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (client client-widgets)
-  (:use (client client-tmfs)))
+  (:use (client client-tmfs)
+        (client client-sync)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Account creation
@@ -388,3 +389,86 @@
     (when rid
       (with attrs (list "readable" "writable" "owner")
         (open-entry-permissions-editor server rid attrs)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File synchronization widgets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (items-msg l i s)
+  (with n (length l)
+    (if (== n 1)
+        (string-append "1" i " file or directory " s)
+        (string-append (number->string n) i " files or directories " s))))
+
+(tm-widget ((simple-list-widget l) quit)
+  (padded
+    (resize "600px" "400px"
+      (scrollable
+        (choice (noop) l "")))))
+
+(define (list-item line)
+  (with (cmd dir? local-name local-id remote-name remote-id*) line
+    ;;(tmfs-cdr (remote-file-name remote-name))))
+    (url->system local-name)))
+
+(define (show-list l title)
+  (with fl (map list-item l)
+    (dialogue-window (simple-list-widget fl) noop title)))
+
+(tm-widget ((client-sync-widget l) quit)
+  (let* ((upl (filter-status-list l "upload"))
+         (dol (filter-status-list l "download"))
+         (ldl (filter-status-list l "local-delete"))
+         (rdl (filter-status-list l "remote-delete"))
+         (cfl (filter-status-list l "conflict")))
+    (padded
+      (form "sync-form"
+        (explicit-buttons
+          ===
+          (with msg (items-msg upl "" "to be uploaded")
+            (if (nnull? upl)
+                (hlist (text msg) // >> ("Details" (show-list upl msg)))))
+          ===
+          (with msg (items-msg dol "" "to be downloaded")
+            (if (nnull? dol)
+                (hlist (text msg) // >> ("Details" (show-list dol msg)))))
+          ===
+          (with msg (items-msg ldl " local" "to be deleted")
+            (if (nnull? ldl)
+                (hlist (text msg) // >> ("Details" (show-list ldl msg)))))
+          ===
+          (with msg (items-msg rdl " remote" "to be deleted")
+            (if (nnull? rdl)
+                (hlist (text msg) // >> ("Details" (show-list rdl msg)))))
+          ===
+          (with msg (items-msg cfl "" "with conflicts")
+            (if (nnull? cfl)
+                (hlist (text msg) // >> ("Details" (show-list cfl msg))))))
+        (if (nnull? upl)
+            ===
+            (hlist
+              (text "Message:") // //
+              (form-input "message" "string" (list "") "350px")))
+        ===
+        (bottom-buttons
+          >>
+          ("Cancel" (quit)) // //
+          ("Synchronize" (with msg (or (form-ref "message") "")
+                           (client-sync-proceed l msg quit))))))))
+
+(tm-define (open-sync-widget l)
+  (:interactive #t)
+  (if (null? l)
+      (set-message "up to date" "synchronize with remote server")
+      (dialogue-window (client-sync-widget l) noop
+                       "Synchronization status")))
+
+(tm-define (client-sync local-name remote-name)
+  (client-sync-status local-name remote-name
+    (lambda (l)
+      (for (x l)
+        (display* "Todo: " x "\n"))
+      (open-sync-widget l))))
+
+(tm-define (sync-test)
+  (client-sync (string->url "~/test/sync-test") (current-buffer)))

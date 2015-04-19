@@ -63,8 +63,8 @@
          (t (make-ahash-table)))
     (client-remote-eval server `(remote-sync-list ,rbase)
       (lambda (remote-l)
-        (for (x remote-l)
-          (display* "Got " x "\n"))
+        ;;(for (x remote-l)
+        ;;(display* "Got " x "\n"))
         (for (local-e local-l)
           (with (dir? name) local-e
             (with d (url->string (url-subtract name local-base))
@@ -78,8 +78,8 @@
                   (ahash-set! t d (list dir? #f id))
                   (ahash-set! t d (list dir? (cadr prev) id))))))
         (with l (sort (ahash-table->list t) first-string-leq?)
-          (for (x l)
-            (display* "Intermediate: " x "\n"))
+          ;;(for (x l)
+          ;;(display* "Intermediate: " x "\n"))
           (cont l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -107,9 +107,9 @@
 
 (define (get-sync-status info remote-name remote-id)
   (with (dir? local-name local-id date date* remote-id*) info
-    (display* "Sync status: " dir? ", " local-name ", " local-id
-              "; " date* " -> " date
-              "; " remote-name ", " remote-id* " -> " remote-id "\n")
+    ;;(display* "Sync status: " dir? ", " local-name ", " local-id
+    ;;          "; " date* " -> " date
+    ;;          "; " remote-name ", " remote-id* " -> " remote-id "\n")
     (let* ((local-info (list (url->system local-name) local-id))
            (remote-info (list (url->system remote-name) remote-id))
            (all-info (append (list dir?) local-info remote-info)))
@@ -136,7 +136,7 @@
 (define (file-dir-correct dir? u)
   (prepend-file-dir dir? (remote-file-name u)))
 
-(define (compute-sync-status local-base remote-base cont)
+(tm-define (client-sync-status local-base remote-base cont)
   (compute-sync-list local-base remote-base
     (lambda (l)
       (with r (list)
@@ -151,7 +151,7 @@
         (cont (reverse r))))))
 
 (tm-define (sync-test-old)
-  (compute-sync-status (string->url "~/test/sync-test") (current-buffer)
+  (client-sync-status (string->url "~/test/sync-test") (current-buffer)
     (lambda (l)
       (display* "----- result -----\n")
       (for (x l)
@@ -161,7 +161,7 @@
 ;; Transmitting the bulk data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (filter-status-list l which)
+(tm-define (filter-status-list l which)
   (list-filter l (lambda (line) (== (car line) which))))
 
 (define (status-line->server line)
@@ -174,7 +174,7 @@
       (rcons line doc))))
 
 (define (post-upload line uploaded)
-  (display* "post-upload " line ", " uploaded "\n")
+  ;;(display* "post-upload " line ", " uploaded "\n")
   (and uploaded
        (with-database (user-database "sync")
          (with (cmd dir? local-name local-id remote-name remote-id* doc) line
@@ -187,18 +187,18 @@
                (db-set-field local-id "sync-date" (list sync-date))
                #t))))))
 
-(define (client-upload uploads* cont)
+(define (client-upload uploads* msg cont)
   (if (null? uploads*) (cont #t)
       (with uploads (map append-doc uploads*)
         (with server (status-line->server (car uploads))
-          (client-remote-eval server `(remote-upload ,uploads "sync")
+          (client-remote-eval server `(remote-upload ,uploads ,msg)
             (lambda (r)
               (when (and (list? r) (== (length r) (length uploads)))
                 (with success? (list-and (map post-upload uploads r))
                   (cont success?)))))))))
 
 (define (post-download line downloaded)
-  (display* "post-download " line ", " downloaded "\n")
+  ;;(display* "post-download " line ", " downloaded "\n")
   (and downloaded
        (with-database (user-database "sync")
          (with (cmd dir? local-name local-id remote-name remote-id*) line
@@ -228,8 +228,8 @@
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (sync-test)
-  (compute-sync-status (string->url "~/test/sync-test") (current-buffer)
+(tm-define (sync-test-prev)
+  (client-sync-status (string->url "~/test/sync-test") (current-buffer)
     (lambda (l)
       (for (x l)
         (display* "Todo: " x "\n"))
@@ -239,3 +239,12 @@
           (client-download (filter-status-list l "download")
             (lambda (download-ok?)
               (display* "Downloading done " download-ok? "\n"))))))))
+
+(tm-define (client-sync-proceed l msg cont)
+  (client-upload (filter-status-list l "upload") msg
+    (lambda (upload-ok?)
+      ;;(display* "Uploading done " upload-ok? "\n")
+      (client-download (filter-status-list l "download")
+        (lambda (download-ok?)
+          ;;(display* "Downloading done " download-ok? "\n")
+          (cont))))))
