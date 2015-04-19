@@ -228,18 +228,6 @@
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (sync-test-prev)
-  (client-sync-status (string->url "~/test/sync-test") (current-buffer)
-    (lambda (l)
-      (for (x l)
-        (display* "Todo: " x "\n"))
-      (client-upload (filter-status-list l "upload")
-        (lambda (upload-ok?)
-          (display* "Uploading done " upload-ok? "\n")
-          (client-download (filter-status-list l "download")
-            (lambda (download-ok?)
-              (display* "Downloading done " download-ok? "\n"))))))))
-
 (tm-define (client-sync-proceed l msg cont)
   (client-upload (filter-status-list l "upload") msg
     (lambda (upload-ok?)
@@ -248,3 +236,17 @@
         (lambda (download-ok?)
           ;;(display* "Downloading done " download-ok? "\n")
           (cont))))))
+
+(tm-define (remote-upload local-name remote-name msg)
+  (client-sync-status local-name remote-name
+    (lambda (l)
+      (client-upload (append (filter-status-list l "upload")
+                             (filter-status-list l "conflict"))
+                     msg ignore))))
+
+(tm-define (remote-download local-name remote-name)
+  (client-sync-status local-name remote-name
+    (lambda (l)
+      (client-download (append (filter-status-list l "download")
+                               (filter-status-list l "conflict"))
+                       ignore))))

@@ -38,6 +38,8 @@
       ("Rename" (remote-rename-interactive server)))
     ("Permissions" (open-file-permissions-editor server (current-buffer))))
   ---
+  ("Upload" (remote-interactive-upload))
+  ---
   ("Logout" (client-logout server)))
 
 (menu-bind client-menu

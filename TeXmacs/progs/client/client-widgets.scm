@@ -472,3 +472,42 @@
 
 (tm-define (sync-test)
   (client-sync (string->url "~/test/sync-test") (current-buffer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Upload and download widgets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (upload-widget quit)
+  (padded
+    (form "upload-form"
+      ======
+      (aligned
+        (item (text "Local source:")
+          (hlist
+            (form-input "local-name" "string"
+                        (if (remote-file-name (current-buffer))
+                            (list "")
+                            (list (url->system (current-buffer))))
+                        "300px") // //
+            (explicit-buttons
+              ("Browse"
+               (choose-file (lambda (name)
+                              (form-set "local-name" (url->system name)))
+                            "Local file or directory" "generic")))))
+        (item (text "Remote destination:")
+          (form-input "remote-name" "string"
+                      (if (remote-file-name (current-buffer))
+                          (list (url->system (current-buffer)))
+                          (list ""))
+                      "300px"))
+        (item (text "Upload message:")
+          (form-input "message" "string" (list "") "300px")))
+      ======
+      (bottom-buttons
+        >>
+        ("Cancel" (quit)) // //
+        ("Upload" (quit))))))
+
+(tm-define (remote-interactive-upload)
+  (:interactive #t)
+  (dialogue-window upload-widget noop "Upload file or directory"))
