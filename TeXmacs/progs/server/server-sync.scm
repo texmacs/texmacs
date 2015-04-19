@@ -15,12 +15,24 @@
   (:use (server server-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Build list of files to be synchronized
+;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (dir-contents dir)
   (db-search `(("dir" ,dir)
                (:order "name" #t))))
+
+(define (remote-file-name fname)
+  (set! fname (url->string fname))
+  (cond ((string-starts? fname "tmfs://remote-file/")
+         (substring fname 19 (string-length fname)))
+        ((string-starts? fname "tmfs://remote-dir/")
+         (substring fname 18 (string-length fname)))
+        (else #f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Build list of files to be synchronized
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (server-sync-list rid uid)
   ;;(display* "  Visiting " rid ", " (resource->file-name rid) "\n")
@@ -44,3 +56,61 @@
                   (else
                     (with l (server-sync-list rid uid)
                       (server-return envelope l)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Uploading lists of files to the server
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remote-upload-one uid line msg)
+  (display* "  remote-upload-one " uid ", " line ", " msg "\n")
+  (with (cmd dir? local-name local-id remote-name remote-id doc) line
+    (let* ((rname (remote-file-name remote-name))
+           (rid (file-name->resource (tmfs-cdr rname))))
+      (cond ((and dir? (not rid))
+             (with r (server-dir-create uid rname)
+               (and (== (car r) :created) (cadr r))))
+            ((and dir? rid) rid)
+            ((not rid)
+             (with r (server-file-create uid rname doc msg)
+               (and (== (car r) :created) (cadr r))))
+            (else
+             (with r (server-file-save uid rname doc msg)
+               (and (== (car r) :created) (cadr r))))))))
+
+(tm-service (remote-upload l msg)
+  (display* "remote-upload " l ", " msg "\n")
+  (if (null? l)
+      (server-return envelope l)
+      (with rname (remote-file-name (fifth (car l)))
+        (with-remote-context rname
+          (with uid (server-get-user envelope)
+            (cond ((not uid) (server-error envelope "Error: not logged in"))
+                  (past? (server-error envelope "Error: cannot modify past"))
+                  (else
+                    (with r (map (cut remote-upload-one uid <> msg) l)
+                      (server-return envelope r)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Downloading lists of files from the server
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remote-download-one uid line)
+  (display* "  remote-download-one " uid ", " line "\n")
+  (with (cmd dir? local-name local-id remote-name remote-id) line
+    (let* ((rname (remote-file-name remote-name))
+           (rid (file-name->resource (tmfs-cdr rname))))
+      (if dir? (list remote-id "")
+          (with r (server-file-load uid rname)
+            (and (== (car r) :loaded)
+                 (list remote-id (cadr r))))))))
+
+(tm-service (remote-download l)
+  (display* "remote-download " l "\n")
+  (if (null? l)
+      (server-return envelope l)
+      (with rname (remote-file-name (fifth (car l)))
+        (with-remote-context rname
+          (with uid (server-get-user envelope)
+            (if (not uid) (server-error envelope "Error: not logged in")
+                (with r (map (cut remote-download-one uid <>) l)
+                  (server-return envelope r))))))))

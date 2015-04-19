@@ -85,11 +85,9 @@
 
 (define (get-url-sync-info dir? local-exists? local-name remote-name)
   (with-database (user-database "sync")
-    (let* ((server-name (tmfs-car (remote-file-name remote-name)))
-           (ids (db-search `(("name" ,(url->system local-name))
+    (let* ((ids (db-search `(("name" ,(url->system local-name))
                              ("remote-name" ,(url->system remote-name))
-                             ("type" "sync")
-                             ("server" ,server-name))))
+                             ("type" "sync"))))
            (date (and local-exists?
                       (number->string (url-last-modified local-name)))))
       (if (nnull? ids)
@@ -99,7 +97,6 @@
             (list dir? local-name local-id date date* remote-id*))
           (with local-id
               (db-create-entry `(("type" "sync")
-                                 ("server" ,server-name)
                                  ("name" ,(url->system local-name))
                                  ("remote-name" ,(url->system remote-name))
                                  ("date" ,date)))
@@ -108,7 +105,7 @@
 (define (get-sync-status info remote-name remote-id)
   (with (dir? local-name local-id date date* remote-id*) info
     (let* ((local-info (list (url->system local-name) local-id))
-           (remote-info (list (remote-file-name remote-name) remote-id))
+           (remote-info (list (url->system remote-name) remote-id))
            (all-info (append (list dir?) local-info remote-info)))
     (cond ((and date (== date date*) (== remote-id remote-id*)) #f)
           ((and date (== date date*) (not remote-id))
@@ -122,6 +119,14 @@
 (define (url-append* base u)
   (if (== (url->url u) (string->url ".")) base (url-append base u)))
 
+(define (prepend-file-dir dir? name)
+  (cond ((not name) u)
+        (dir? (string->url (string-append "tmfs://remote-dir/" name)))
+        (else (string->url (string-append "tmfs://remote-file/" name)))))
+
+(define (file-dir-correct dir? u)
+  (prepend-file-dir dir? (remote-file-name u)))
+
 (define (compute-sync-status local-base remote-base cont)
   (compute-sync-list local-base remote-base
     (lambda (l)
@@ -129,15 +134,99 @@
         (for (x l)
           (with (rname dir? local? . opt) x
             (let* ((local-name (url-append* local-base rname))
-                   (remote-name (url-append* remote-base rname))
+                   (remote-name-pre (url-append* remote-base rname))
+                   (remote-name (file-dir-correct dir? remote-name-pre))
                    (info (get-url-sync-info dir? local? local-name remote-name))
                    (remote-id (and (nnull? opt) (car opt)))
                    (next (get-sync-status info remote-name remote-id)))
               (when next (set! r (cons next r))))))
         (cont (reverse r))))))
 
-(tm-define (sync-test)
+(tm-define (sync-test-old)
   (compute-sync-status (string->url "~/test/sync-test") (current-buffer)
     (lambda (l)
       (for (x l)
         (display* x "\n")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Transmitting the bulk data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (filter-status-list l which)
+  (list-filter l (lambda (line) (== (car line) which))))
+
+(define (status-line->server line)
+  (with sname (tmfs-car (remote-file-name (fifth line)))
+    (client-find-server sname)))
+
+(define (append-doc line)
+  (with (cmd dir? local-name local-id remote-name remote-id*) line
+    (with doc (if dir? "" (string-load (system->url local-name)))
+      (rcons line doc))))
+
+(define (post-upload line uploaded)
+  (display* "post-upload " line ", " uploaded "\n")
+  (and uploaded
+       (with-database (user-database "sync")
+         (with (cmd dir? local-name local-id remote-name remote-id* doc) line
+           (with remote-id uploaded
+             (let* ((u (system->url local-name))
+                    (date (number->string (url-last-modified u)))
+                    (sync-date (number->string (current-time))))
+               (db-set-field local-id "remote-id" (list remote-id))
+               (db-set-field local-id "date" (list date))
+               (db-set-field local-id "sync-date" (list sync-date))
+               #t))))))
+
+(define (client-upload uploads* cont)
+  (if (null? uploads*) (cont #t)
+      (with uploads (map append-doc uploads*)
+        (with server (status-line->server (car uploads))
+          (client-remote-eval server `(remote-upload ,uploads "sync")
+            (lambda (r)
+              (when (and (list? r) (== (length r) (length uploads)))
+                (with success? (list-and (map post-upload uploads r))
+                  (cont success?)))))))))
+
+(define (post-download line downloaded)
+  (display* "post-download " line ", " downloaded "\n")
+  (and downloaded
+       (with-database (user-database "sync")
+         (with (cmd dir? local-name local-id remote-name remote-id*) line
+           (with (remote-id doc) downloaded
+             (with u (system->url local-name)
+               (if dir?
+                   (when (not (url-exists? u))
+                     (system-mkdir u))
+                   (string-save doc u))
+               (let* ((date (number->string (url-last-modified u)))
+                      (sync-date (number->string (current-time))))
+                 (db-set-field local-id "remote-id" (list remote-id))
+                 (db-set-field local-id "date" (list date))
+                 (db-set-field local-id "sync-date" (list sync-date))
+                 #t)))))))
+
+(define (client-download downloads cont)
+  (if (null? downloads) (cont #t)
+      (with server (status-line->server (car downloads))
+        (client-remote-eval server `(remote-download ,downloads)
+          (lambda (r)
+            (when (and (list? r) (== (length r) (length downloads)))
+              (with success? (list-and (map post-download downloads r))
+                (cont success?))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Master routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (sync-test)
+  (compute-sync-status (string->url "~/test/sync-test") (current-buffer)
+    (lambda (l)
+      (for (x l)
+        (display* "Todo: " x "\n"))
+      (client-upload (filter-status-list l "upload")
+        (lambda (upload-ok?)
+          (display* "Uploading done " upload-ok? "\n")
+          (client-download (filter-status-list l "download")
+            (lambda (download-ok?)
+              (display* "Downloading done " download-ok? "\n"))))))))
