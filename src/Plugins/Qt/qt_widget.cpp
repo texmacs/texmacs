@@ -509,8 +509,8 @@ widget input_text_widget (command call_back, string type, array<string> def,
 widget color_picker_widget (command call_back, bool bg, array<tree> proposals) {
   return tm_new<qt_color_picker_widget_rep> (call_back, bg, proposals);
 }
-widget file_chooser_widget (command cmd, string type, bool save) {
-  return tm_new<qt_chooser_widget_rep> (cmd, type, save);
+widget file_chooser_widget (command cmd, string type, string prompt) {
+  return tm_new<qt_chooser_widget_rep> (cmd, type, prompt);
 }
 widget printer_widget (command cmd, url ps_pdf_file) {
   return tm_new<qt_printer_widget_rep> (cmd, ps_pdf_file);

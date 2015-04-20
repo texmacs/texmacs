@@ -1152,7 +1152,7 @@ widget refreshable_widget (object promise, string kind)  { return widget(); }
 //widget input_text_widget (command call_back, string type, array<string> def,
 //                          int style, string width)  { return widget(); }
 //widget color_picker_widget (command call_back, bool bg, array<tree> proposals)  { return widget(); }
-//widget file_chooser_widget (command cmd, string type, bool save)  { return widget(); }
+//widget file_chooser_widget (command cmd, string type, string prompt)  { return widget(); }
 //widget printer_widget (command cmd, url ps_pdf_file)  { return widget(); }
 //widget texmacs_widget (int mask, command quit)  { return widget(); }
 widget ink_widget (command cb)  { return widget(); }

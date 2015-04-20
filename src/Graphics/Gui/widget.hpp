@@ -115,10 +115,11 @@ widget texmacs_widget (int mask, command quit);
   // the main TeXmacs widget and a command which is called on exit
   // the mask variable indicates whether the menu, icon bars, status bar, etc.
   // are visible or not
-widget file_chooser_widget (command cmd, string type, bool save);
+widget file_chooser_widget (command cmd, string type, string prompt);
   // file chooser widget for files of a given 'type';
   // for files of type "image", the widget includes a previsualizer for images
-  // 'save' indicates whether we intend to save the file
+  // 'prompt' contains a prompt if we intend to save the file
+  // and the empty string otherwise
 widget printer_widget (command cmd, url ps_pdf_file);
   // widget for printing a file, offering a way for selecting a page range,
   // changing the paper type and orientation, previewing, etc.;

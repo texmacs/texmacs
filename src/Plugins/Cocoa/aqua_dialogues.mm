@@ -33,7 +33,7 @@ class aqua_chooser_widget_rep: public aqua_widget_rep {
 protected:	
   command cmd;
   string type;
-  bool   save;
+  string prompt;
   string win_title;
   string directory;
   coord2 position;
@@ -56,9 +56,10 @@ public:
   void perform_dialog();
 };
 
-aqua_chooser_widget_rep::aqua_chooser_widget_rep (command _cmd, string _type, bool _save) 
+aqua_chooser_widget_rep::aqua_chooser_widget_rep (command _cmd, string
+_type, string _prompt) 
 : aqua_widget_rep(), cmd(_cmd), type(_type), 
-  save(_save), position (coord2 (0, 0)), 
+  prompt (_prompt), position (coord2 (0, 0)), 
   size (coord2 (100, 100)), file ("")
 {
 }
@@ -203,12 +204,12 @@ widget aqua_chooser_widget_rep::plain_window_widget (string s)
 
 
 
-widget file_chooser_widget (command cmd, string type, bool save) 
+widget file_chooser_widget (command cmd, string type, string prompt)
 // file chooser widget for files of a given type; for files of type "image",
 // the widget includes a previsualizer and a default magnification
 // for importation can be specified
 {
-  return tm_new <aqua_chooser_widget_rep> (cmd, type, save);
+  return tm_new <aqua_chooser_widget_rep> (cmd, type, prompt);
 }
 
 

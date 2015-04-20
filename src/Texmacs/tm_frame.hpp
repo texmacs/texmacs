@@ -73,7 +73,8 @@ public:
   void dialogue_start (string name, widget wid);
   void dialogue_inquire (int i, string& arg);
   void dialogue_end ();
-  void choose_file (object fun, string title, string type);
+  void choose_file (object fun, string title, string type,
+		    string prompt, url name);
   void interactive (object fun, scheme_tree p);
 };
 

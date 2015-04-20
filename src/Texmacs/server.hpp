@@ -86,7 +86,8 @@ public:
   virtual void dialogue_start (string name, widget wid) = 0;
   virtual void dialogue_inquire (int i, string& arg) = 0;
   virtual void dialogue_end () = 0;
-  virtual void choose_file (object fun, string title, string type) = 0;
+  virtual void choose_file (object fun, string title, string type,
+			    string prompt, url name) = 0;
   virtual void interactive (object fun, scheme_tree p) = 0;
 
   /* Miscellaneous routines */

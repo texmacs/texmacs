@@ -24,7 +24,7 @@ protected:
   command cmd;           //!< Scheme closure to execute when the file is chosen
   command quit;          //!< Execute when the dialog closes.
   string type;           //!< File types to filter in the dialog
-  bool   save;           //!< Is this a "Save" dialog?
+  string prompt;         //!< Is this a "Save" dialog?
   string win_title;      //!< Set by plain_window_widget()
   
   string directory; //!< Set this property sending SLOT_DIRECTORY to this widget
@@ -36,7 +36,7 @@ protected:
   QString defaultSuffix; //!< For use in QFileDialog::setDefaultSuffix()
 
 public:
-  qt_chooser_widget_rep (command, string, bool);
+  qt_chooser_widget_rep (command, string, string);
   
   virtual void send (slot s, blackbox val);
   virtual blackbox query (slot s, int type_id);

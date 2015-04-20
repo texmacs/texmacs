@@ -344,17 +344,21 @@ tmg_dialogue_end () {
 }
 
 tmscm
-tmg_choose_file (tmscm arg1, tmscm arg2, tmscm arg3) {
-  TMSCM_ASSERT_OBJECT (arg1, TMSCM_ARG1, "choose-file");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "choose-file");
-  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "choose-file");
+tmg_cpp_choose_file (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
+  TMSCM_ASSERT_OBJECT (arg1, TMSCM_ARG1, "cpp-choose-file");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-choose-file");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "cpp-choose-file");
+  TMSCM_ASSERT_STRING (arg4, TMSCM_ARG4, "cpp-choose-file");
+  TMSCM_ASSERT_URL (arg5, TMSCM_ARG5, "cpp-choose-file");
 
   object in1= tmscm_to_object (arg1);
   string in2= tmscm_to_string (arg2);
   string in3= tmscm_to_string (arg3);
+  string in4= tmscm_to_string (arg4);
+  url in5= tmscm_to_url (arg5);
 
   // TMSCM_DEFER_INTS;
-  get_server()->choose_file (in1, in2, in3);
+  get_server()->choose_file (in1, in2, in3, in4, in5);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -589,7 +593,7 @@ initialize_glue_server () {
   tmscm_install_procedure ("get-window-zoom-factor",  tmg_get_window_zoom_factor, 0, 0, 0);
   tmscm_install_procedure ("shell",  tmg_shell, 1, 0, 0);
   tmscm_install_procedure ("dialogue-end",  tmg_dialogue_end, 0, 0, 0);
-  tmscm_install_procedure ("choose-file",  tmg_choose_file, 3, 0, 0);
+  tmscm_install_procedure ("cpp-choose-file",  tmg_cpp_choose_file, 5, 0, 0);
   tmscm_install_procedure ("tm-interactive",  tmg_tm_interactive, 2, 0, 0);
   tmscm_install_procedure ("style-clear-cache",  tmg_style_clear_cache, 0, 0, 0);
   tmscm_install_procedure ("set-script-status",  tmg_set_script_status, 1, 0, 0);

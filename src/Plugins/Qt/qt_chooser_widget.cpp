@@ -1,13 +1,13 @@
 
 /******************************************************************************
- * MODULE     : qt_chooser_widget.cpp
- * DESCRIPTION: File chooser widget, native and otherwise
- * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
- *******************************************************************************
- * This software falls under the GNU general public license version 3 or later.
- * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
- * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
- ******************************************************************************/
+* MODULE     : qt_chooser_widget.cpp
+* DESCRIPTION: File chooser widget, native and otherwise
+* COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #include "qt_chooser_widget.hpp"
 #include "qt_utilities.hpp"
@@ -32,13 +32,13 @@
                or any of the supported file formats: "texmacs", "tmml",
                "postscript", etc. See perform_dialog()
  */
-qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, bool _save)
- : qt_widget_rep (file_chooser), cmd (_cmd), save (_save),
+qt_chooser_widget_rep::qt_chooser_widget_rep (command _cmd, string _type, string _prompt)
+ : qt_widget_rep (file_chooser), cmd (_cmd), prompt (_prompt),
    position (coord2 (0, 0)), size (coord2 (100, 100)), file ("")
 {
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "qt_chooser_widget_rep::qt_chooser_widget_rep type=\""
-                  << type << "\" save=\"" << save << "\"" << LF;
+                  << type << "\" prompt=\"" << prompt << "\"" << LF;
   if (! set_type (_type))
     set_type ("generic");
 }
@@ -222,15 +222,17 @@ qt_chooser_widget_rep::perform_dialog () {
   dialog->setViewMode (QFileDialog::Detail);
   if (type == "directory")
     dialog->setFileMode (QFileDialog::Directory);
-  else if (type == "image" && !save)  // check !save just in case we support it
+  else if (type == "image" && prompt == "")
+    // check non saving mode just in case we support it
     dialog->setFileMode (QFileDialog::ExistingFile);
   else
     dialog->setFileMode (QFileDialog::AnyFile);
 
-  if (save) {
+  if (prompt != "") {
     dialog->setDefaultSuffix (defaultSuffix);
     dialog->setAcceptMode (QFileDialog::AcceptSave);
-    dialog->setLabelText (QFileDialog::Accept, to_qstring (translate ("Save")));
+    dialog->setLabelText (QFileDialog::Accept,
+			  to_qstring (translate (prompt)));
   }
 
 #if (QT_VERSION >= 0x040400)

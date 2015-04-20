@@ -124,13 +124,10 @@ gcd (int i, int j) {
 }
 
 void
-tm_frame_rep::choose_file (object fun, string title, string type) {
-  url      name= get_master_buffer (get_current_buffer ());
+tm_frame_rep::choose_file (object fun, string title, string type,
+			   string prompt, url name) {
   command  cb  = dialogue_command (get_server(), fun, 1);
-  bool     save= starts (title, "Save") ||
-                 starts (title, "Export") ||
-                 (title == "Select database");
-  widget   wid = file_chooser_widget (cb, type, save);
+  widget   wid = file_chooser_widget (cb, type, prompt);
   if (!is_scratch (name)) {
     set_directory (wid, as_string (head (name)));
     if ((type != "image") && (type != "")) {

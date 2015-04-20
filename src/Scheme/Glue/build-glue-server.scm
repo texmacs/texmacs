@@ -45,7 +45,7 @@
 
   (shell shell (void string))
   (dialogue-end dialogue_end (void))
-  (choose-file choose_file (void object string string))
+  (cpp-choose-file choose_file (void object string string string url))
   (tm-interactive interactive (void object scheme_tree))
   
   (style-clear-cache style_clear_cache (void))

@@ -306,7 +306,8 @@ tree_view_widget (command cmd, tree data, tree data_roles) {
 }
 
 widget
-file_chooser_widget (command cmd, string type, bool save) {
+file_chooser_widget (command cmd, string type, string prompt) {
+  (void) prompt;
   return abstract (file_chooser_wk_widget (cmd, type));
 }
 
