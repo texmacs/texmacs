@@ -479,6 +479,52 @@
   (client-sync (string->url "~/test/sync-test") (current-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Widget for selecting files to be synchronized
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (client-to-sync-list)
+  (list (cons (string->url "Hello") (string->url "Hop"))))
+
+(tm-define (client-sync-all)
+  (noop))
+
+(tm-widget ((client-to-sync-widget server) quit)
+  (form "to-sync"
+    (let* ((l (client-to-sync-list))
+	   (lname "")
+	   (rname "")
+	   (select-entry
+	    (lambda (local-name)
+	      (set! lname local-name)
+	      (set! rname (url->system (assoc-ref l (system->url lname))))
+	      (form-set "local-name" lname)
+	      (form-set "remote-name" rname)
+	      (refresh-now "sync-pair"))))
+      (padded
+	(refreshable "sync-pair"
+	  (aligned
+	    (item (text "Local:")
+	      (dynamic (form-local-widget "to-sync" "local-name"
+					  "Local file or directory"
+					  "Local:" lname "300px")))
+	    (item (text "Remote:")
+	      (dynamic (form-remote-widget server "to-syncr" "remote-name"
+					   "Remote file or directory"
+					   "Remote:" rname "300px")))))
+	======
+	(resize "500px" "300px"
+	  (choice (select-entry answer) (map url->system (map car l)) ""))
+	======
+	(bottom-buttons
+	  >>
+	  ("Synchronize" (client-sync-all)))))))
+
+(tm-define (remote-interactive-sync server)
+  (:interactive #t)
+  (dialogue-window (client-to-sync-widget server) noop
+		   "Synchronize files and directories"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Upload and download widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

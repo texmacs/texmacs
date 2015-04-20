@@ -40,6 +40,7 @@
   ---
   ("Upload" (remote-interactive-upload server))
   ("Download" (remote-interactive-download server))
+  ("Synchronize" (remote-interactive-sync server))
   ---
   ("Logout" (client-logout server)))
 
