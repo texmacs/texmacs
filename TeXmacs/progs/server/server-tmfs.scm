@@ -304,6 +304,31 @@
               (server-error envelope (cadr r))
               (server-return envelope doc))))))
 
+(tm-define (server-file-remove uid rname)
+  (with rid (file-name->resource (tmfs-cdr rname))
+    (cond ((not uid)
+           (list :error "Error: not logged in"))
+          ((not rid)
+           (list :error (string-append
+                         "Error: file '" rname "' does not exist")))
+          ((not (db-allow? rid uid "writable"))
+           (list :error (string-append
+                         "Error: write access denied for '" rname "'")))
+          (else
+            (db-remove-entry rid)
+            (list :removed rid)))))
+
+(tm-service (remote-file-remove rname)
+  ;;(display* "remote-file-remove " rname "\n")
+  (with-remote-context rname
+    (if past?
+        (server-error envelope "Error: cannot modify past")
+        (let* ((uid (server-get-user envelope))
+               (r (server-file-remove uid rname)))
+          (if (== (car r) :error)
+              (server-error envelope (cadr r))
+              (server-return envelope "removed"))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -375,3 +400,41 @@
       (if (== (car r) :error)
           (server-error envelope (cadr r))
           (server-return envelope (cadr r))))))
+
+(define (server-files-remove uid prefix fids)
+  (when (nnull? fids)
+    (with r (server-files-remove uid (cdr fids))
+      (if (== (car r) :error) r
+          (with rname (string-append prefix "/"
+                                     (resource->file-name (car fids)))
+            (server-file-remove uid fname))))))
+
+(tm-define (server-dir-remove uid rname)
+  (with rid (file-name->resource (tmfs-cdr rname))
+    (cond ((not uid)
+           (list :error "Error: not logged in"))
+          ((not rid)
+           (list :error (string-append
+                         "Error: directory '" rname "' does not exist")))
+          ((not (db-allow? rid uid "writable"))
+           (list :error (string-append
+                         "Error: write access denied for '" rname "'")))
+          (else
+            (with fids (db-search `(("dir" ,rid)
+                                    (:order "name" #t)))
+              (with r (server-files-remove uid (tmfs-car rname) fids)
+                (if (== (car r) :error) r
+                    (begin
+                      (db-remove-entry rid)
+                      (list :removed rid)))))))))
+
+(tm-service (remote-dir-remove rname)
+  ;;(display* "remote-dir-remove " rname "\n")
+  (with-remote-context rname
+    (if past?
+        (server-error envelope "Error: cannot modify past")
+        (let* ((uid (server-get-user envelope))
+               (r (server-dir-remove uid rname)))
+          (if (== (car r) :error)
+              (server-error envelope (cadr r))
+              (server-return envelope "removed"))))))
