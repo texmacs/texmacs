@@ -85,6 +85,7 @@ refresh_widget_rep::handle_refresh (refresh_event ev) {
       else concrete (this->win->get_widget ()) << emit_update ();
     }
   }
+  else basic_widget_rep::handle_refresh (ev);
 }
 
 /******************************************************************************
@@ -140,6 +141,7 @@ refreshable_widget_rep::handle_refresh (refresh_event ev) {
       else concrete (this->win->get_widget ()) << emit_update ();
     }
   }
+  else basic_widget_rep::handle_refresh (ev);
 }
 
 /******************************************************************************
