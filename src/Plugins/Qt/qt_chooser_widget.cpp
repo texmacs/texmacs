@@ -229,10 +229,12 @@ qt_chooser_widget_rep::perform_dialog () {
     dialog->setFileMode (QFileDialog::AnyFile);
 
   if (prompt != "") {
+    string text= prompt;
+    if (ends (text, ":")) text= text (0, N(text) - 1);
+    if (ends (text, " as")) text= text (0, N(text) - 3);
     dialog->setDefaultSuffix (defaultSuffix);
     dialog->setAcceptMode (QFileDialog::AcceptSave);
-    dialog->setLabelText (QFileDialog::Accept,
-			  to_qstring (translate (prompt)));
+    dialog->setLabelText (QFileDialog::Accept, to_qstring (translate (text)));
   }
 
 #if (QT_VERSION >= 0x040400)
