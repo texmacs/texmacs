@@ -12,12 +12,10 @@
 #include "sys_utils.hpp"
 #include "file.hpp"
 #include "tree.hpp"
-#ifdef OS_WIN32
-#  include <sys/misc.h>
-#endif
 
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
 #  include "Qt/qt_sys_utils.hpp"
+#  include "Windows/mingw_sys_utils.hpp"
 #else
 #  include "Unix/unix_sys_utils.hpp"
 #endif
