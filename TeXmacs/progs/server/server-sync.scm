@@ -62,7 +62,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (remote-upload-one uid line msg)
-  (display* "  remote-upload-one " uid ", " line ", " msg "\n")
+  ;;(display* "  remote-upload-one " uid ", " line ", " msg "\n")
   (with (cmd dir? local-name local-id remote-name remote-id doc) line
     (let* ((rname (remote-file-name remote-name))
            (rid (file-name->resource (tmfs-cdr rname))))
@@ -78,7 +78,7 @@
                (and (== (car r) :created) (cadr r))))))))
 
 (tm-service (remote-upload l msg)
-  (display* "remote-upload " l ", " msg "\n")
+  ;;(display* "remote-upload " l ", " msg "\n")
   (if (null? l)
       (server-return envelope l)
       (with rname (remote-file-name (fifth (car l)))
@@ -95,7 +95,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (remote-download-one uid line)
-  (display* "  remote-download-one " uid ", " line "\n")
+  ;;(display* "  remote-download-one " uid ", " line "\n")
   (with (cmd dir? local-name local-id remote-name remote-id) line
     (let* ((rname (remote-file-name remote-name))
            (rid (file-name->resource (tmfs-cdr rname))))
@@ -105,7 +105,7 @@
                  (list remote-id (cadr r))))))))
 
 (tm-service (remote-download l)
-  (display* "remote-download " l "\n")
+  ;;(display* "remote-download " l "\n")
   (if (null? l)
       (server-return envelope l)
       (with rname (remote-file-name (fifth (car l)))
