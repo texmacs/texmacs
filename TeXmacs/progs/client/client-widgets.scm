@@ -220,7 +220,8 @@
   (let* ((parent (remote-parent dir))
          (this (url->string (url-tail dir)))
          (last (cons this dir)))
-    (if (not (remote-home-directory? dir))
+    (if (and (not (remote-home-directory? dir))
+	     (not (remote-root-directory? dir)))
         (rcons (get-ancestors parent) last)
         (list last))))
 
@@ -232,13 +233,16 @@
         (url-append full name))
       (remote-relative (remote-parent dir) name dir?)))
 
-(tm-widget ((remote-file-browser server orig type) quit)
+(tm-widget ((remote-file-browser server initial type) quit)
   (let* ((save-flag? (or (func? type :save-file 1)
                          (func? type :save-directory 1)))
          (dir-flag? (or (== type :directory)
                         (func? type :save-directory 1)))
-         (dir (if save-flag? (remote-parent orig) orig))
-         (file (and save-flag? (url->string (url-tail orig))))
+         (dir (if (and save-flag? (not (remote-home-directory? initial)))
+		  (remote-parent initial) initial))
+         (file (cond ((not save-flag?) #f)
+		     ((remote-home-directory? initial) "")
+		     (else (url->string (url-tail initial)))))
          (entries (list))
          (select-dir
           (lambda (d)
@@ -297,15 +301,16 @@
             >>
             ("Ok" (quit (url->url dir)))))))))
 
-(tm-define (open-remote-file-browser server dir type name cmd)
+(tm-define (open-remote-file-browser server initial type title cmd)
   (:interactive #t)
-  (dialogue-window (remote-file-browser server dir type) cmd name))
+  (dialogue-window (remote-file-browser server initial type) cmd title))
 
 (tm-define (remote-rename-interactive server)
   (:interactive #t)
   (with dir? (remote-directory? (current-buffer))
     (open-remote-file-browser
-     server (current-buffer)
+     server
+     (current-buffer)
      (list (if dir? :save-directory :save-file) "Rename as:")
      (if dir? "Rename directory" "Rename file")
      (lambda (new-name)
@@ -477,37 +482,78 @@
 ;; Upload and download widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (upload-widget quit)
+(tm-widget (form-local-widget form-name field-name title
+			      prompt initial width)
+  (with lname initial
+    (hlist
+      (refreshable "local-name"
+	(form-input field-name "string" (list lname) width))
+      // //
+      (explicit-buttons
+	("Browse"
+	 (choose-file (lambda (name)
+			(set! lname (url->system name))
+			(form-set field-name lname)
+			(refresh-now "local-name"))
+		      title "generic" prompt
+		      (with name (form-ref field-name)
+			(set! lname name)
+			(if (url-rooted? name)
+			    (system->url name)
+			    (system->url "~")))))))))
+
+(tm-widget (form-remote-widget server form-name field-name title
+			       prompt initial width)
+  (with rname initial
+    (hlist
+      (refreshable "remote-name"
+	(form-input field-name "string" (list rname) width))
+      // //
+      (explicit-buttons
+	("Browse"
+	 (open-remote-file-browser
+	  server
+	  (with name (form-ref field-name)
+	    (set! rname name)
+	    (if (remote-file-name name)
+		(system->url name)
+		(system->url (remote-home-directory server))))
+	  (if (== prompt "") :file (list :save-file prompt))
+	  title
+	  (lambda (name)
+	    (set! rname (url->system name))
+	    (form-set field-name rname)
+	    (refresh-now "remote-name"))))))))
+
+(tm-widget ((upload-widget server) quit)
   (padded
     (form "upload-form"
       ======
       (aligned
         (item (text "Local source:")
-          (hlist
-            (form-input "local-name" "string"
-                        (if (remote-file-name (current-buffer))
-                            (list "")
-                            (list (url->system (current-buffer))))
-                        "300px") // //
-            (explicit-buttons
-              ("Browse"
-               (choose-file (lambda (name)
-                              (form-set "local-name" (url->system name)))
-                            "Local file or directory" "generic")))))
+	  (with lname (if (remote-file-name (current-buffer)) ""
+			  (url->system (current-buffer)))
+	    (dynamic (form-local-widget "upload-form" "local-name"
+					"Local file or directory"
+					"" lname "300px"))))
         (item (text "Remote destination:")
-          (form-input "remote-name" "string"
-                      (if (remote-file-name (current-buffer))
-                          (list (url->system (current-buffer)))
-                          (list ""))
-                      "300px"))
+	  (with rname (if (remote-file-name (current-buffer))
+			  (url->system (current-buffer)) "")
+	    (dynamic (form-remote-widget server "upload-form" "remote-name"
+					 "Remote file or directory"
+					 "Upload as:" rname "300px"))))
         (item (text "Upload message:")
           (form-input "message" "string" (list "") "300px")))
       ======
       (bottom-buttons
         >>
         ("Cancel" (quit)) // //
-        ("Upload" (quit))))))
+        ("Upload"
+	 (display* "Local : " (form-ref "local-name") "\n")
+	 (display* "Remote: " (form-ref "remote-name") "\n")
+	 (quit))))))
 
-(tm-define (remote-interactive-upload)
+(tm-define (remote-interactive-upload server)
   (:interactive #t)
-  (dialogue-window upload-widget noop "Upload file or directory"))
+  (dialogue-window (upload-widget server) noop
+		   "Upload file or directory"))

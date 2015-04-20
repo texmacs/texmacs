@@ -38,7 +38,7 @@
       ("Rename" (remote-rename-interactive server)))
     ("Permissions" (open-file-permissions-editor server (current-buffer))))
   ---
-  ("Upload" (remote-interactive-upload))
+  ("Upload" (remote-interactive-upload server))
   ---
   ("Logout" (client-logout server)))
 
