@@ -549,9 +549,24 @@
         >>
         ("Cancel" (quit)) // //
         ("Upload"
-	 (display* "Local : " (form-ref "local-name") "\n")
-	 (display* "Remote: " (form-ref "remote-name") "\n")
-	 (quit))))))
+	 (let* ((local-name (system->url (form-ref "local-name")))
+		(remote-name (system->url (form-ref "remote-name")))
+		(message (form-ref "message")))
+	   (when (and (url-exists? local-name)
+		      (remote-file-name remote-name))
+	     (when (and (url-regular? local-name)
+			(remote-directory? remote-name))
+	       (set! remote-name (url-append remote-name
+					     (url-tail local-name))))
+	     (if (and (url-directory? local-name)
+		      (remote-file? remote-name))
+		 (set-message "cannot upload directory to file" "upload")
+		 (begin
+		   ;;(display* "Local  : " local-name "\n")
+		   ;;(display* "Remote : " remote-name "\n")
+		   ;;(display* "Message: " message "\n")
+		   (remote-upload local-name remote-name message)))
+	     (quit))))))))
 
 (tm-define (remote-interactive-upload server)
   (:interactive #t)

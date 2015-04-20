@@ -50,7 +50,7 @@
       (if (not uid) (server-error envelope "Error: not logged in")
           (with rid (file-name->resource (tmfs-cdr rname))
             (cond ((not rid)
-                   (server-return envelope #f))
+                   (server-return envelope (list)))
                   ((not (db-allow? rid uid "readable"))
                    (server-error envelope "Error: read access required"))
                   (else

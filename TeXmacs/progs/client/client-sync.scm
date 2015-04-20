@@ -56,6 +56,7 @@
        (string<=? (car l1) (car l2))))
 
 (define (compute-sync-list local-base remote-base cont)
+  ;;(display* "compute-sync-list " local-base ", " remote-base "\n")
   (let* ((rbase (remote-file-name remote-base))
          (server-name (tmfs-car rbase))
          (server (client-find-server server-name))
@@ -64,7 +65,7 @@
     (client-remote-eval server `(remote-sync-list ,rbase)
       (lambda (remote-l)
         ;;(for (x remote-l)
-        ;;(display* "Got " x "\n"))
+	;;(display* "Got " x "\n"))
         (for (local-e local-l)
           (with (dir? name) local-e
             (with d (url->string (url-subtract name local-base))
@@ -79,7 +80,7 @@
                   (ahash-set! t d (list dir? (cadr prev) id))))))
         (with l (sort (ahash-table->list t) first-string-leq?)
           ;;(for (x l)
-          ;;(display* "Intermediate: " x "\n"))
+	  ;;(display* "Intermediate: " x "\n"))
           (cont l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -241,8 +242,8 @@
   (client-sync-status local-name remote-name
     (lambda (l)
       (client-upload (append (filter-status-list l "upload")
-                             (filter-status-list l "conflict"))
-                     msg ignore))))
+			     (filter-status-list l "conflict"))
+		     msg ignore))))
 
 (tm-define (remote-download local-name remote-name)
   (client-sync-status local-name remote-name
