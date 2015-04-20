@@ -71,6 +71,8 @@ public:
 
   void handle_set_string (set_string_event ev);
   void handle_get_string (get_string_event ev);
+  void handle_get_coord2 (get_coord2_event ev);
+  void handle_set_coord2 (set_coord2_event ev);
 };
 
 /******************************************************************************
@@ -433,6 +435,17 @@ input_widget_rep::handle_get_string (get_string_event ev) {
     else ev->s= "#f";
   }
   else attribute_widget_rep::handle_get_string (ev);
+}
+
+void
+input_widget_rep::handle_get_coord2 (get_coord2_event ev) {
+  if (ev->which != "extra width") attribute_widget_rep::handle_get_coord2 (ev);
+  else { ev->c1= 0; ev->c2= 0; }
+}
+
+void
+input_widget_rep::handle_set_coord2 (set_coord2_event ev) {
+  if (ev->which != "extra width") attribute_widget_rep::handle_set_coord2 (ev);
 }
 
 /******************************************************************************
