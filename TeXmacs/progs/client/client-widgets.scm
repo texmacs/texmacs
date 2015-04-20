@@ -482,18 +482,32 @@
 ;; Widget for selecting files to be synchronized
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (client-to-sync-list)
-  (list (cons (string->url "Hello") (string->url "Hop"))))
+(tm-define (client-auto-sync-list)
+  (list))
 
-(tm-define (client-sync-all)
+(tm-define (client-auto-sync)
   (noop))
 
-(tm-widget ((client-to-sync-widget server) quit)
-  (form "to-sync"
-    (let* ((l (client-to-sync-list))
+(define (consistent-pair? x y)
+  (string-starts? (url->system x) (url->system y)))
+
+(define (consistent-with? x l)
+  (or (null? l)
+      (and (consistent-pair? x (car l))
+           (consistent-pair? (car l) x)
+           (consistent-with? x (cdr l)))))
+
+(define (consistent? l)
+  (or (null? l)
+      (and (consistent-with? (car l) (cdr l))
+           (consistent? (cdr l)))))
+
+(tm-widget ((client-auto-sync-widget server) quit)
+  (form "auto-sync"
+    (let* ((l (client-auto-sync-list))
 	   (lname "")
 	   (rname "")
-	   (select-entry
+	   (select-pair
 	    (lambda (local-name)
 	      (set! lname local-name)
 	      (set! rname (url->system (assoc-ref l (system->url lname))))
@@ -504,24 +518,42 @@
 	(refreshable "sync-pair"
 	  (aligned
 	    (item (text "Local:")
-	      (dynamic (form-local-widget "to-sync" "local-name"
+	      (dynamic (form-local-widget "auto-sync" "local-name"
 					  "Local file or directory"
-					  "Local:" lname "300px")))
+					  "Local:" lname "400px")))
 	    (item (text "Remote:")
-	      (dynamic (form-remote-widget server "to-syncr" "remote-name"
+	      (dynamic (form-remote-widget server "auto-sync" "remote-name"
 					   "Remote file or directory"
-					   "Remote:" rname "300px")))))
+					   "Remote:" rname "400px")))))
 	======
-	(resize "500px" "300px"
-	  (choice (select-entry answer) (map url->system (map car l)) ""))
+        (refreshable "sync-list"
+          (resize "500px" "300px"
+            (choice (select-pair answer) (map url->system (map car l)) "")))
 	======
-	(bottom-buttons
-	  >>
-	  ("Synchronize" (client-sync-all)))))))
+	(hlist
+          ((icon "tm_add_2.xpm")
+           (let* ((local-name (system->url (form-ref "local-name")))
+                  (remote-name (system->url (form-ref "remote-name"))))
+             (when (and (or (url-exists? local-name)
+                            (url-exists? (url-head local-name)))
+                        (remote-file-name remote-name))
+               (with new-l (assoc-set! (list-copy l) local-name remote-name)
+                 (when (and (consistent? (map car new-l))
+                            (consistent? (map cdr new-l)))
+                   (set! l new-l)
+                   (refresh-now "sync-list"))))))
+          ((icon "tm_close_tool.xpm")
+           (with local-name (system->url (form-ref "local-name"))
+               (with new-l (assoc-remove! (list-copy l) local-name)
+                 (set! l new-l)
+                 (refresh-now "sync-list"))))
+          >>
+          (explicit-buttons
+            ("Synchronize" (client-auto-sync))))))))
 
 (tm-define (remote-interactive-sync server)
   (:interactive #t)
-  (dialogue-window (client-to-sync-widget server) noop
+  (dialogue-window (client-auto-sync-widget server) noop
 		   "Synchronize files and directories"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
