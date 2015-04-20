@@ -87,7 +87,7 @@
       (db-set-field derived-rid (car prop) (cdr prop)))))
 
 (tm-service (remote-identifier rname)
-  ;;(display* "remote-identifier " rname ", " props "\n")
+  ;;(display* "remote-identifier " rname "\n")
   (with-remote-context rname
     (let* ((uid (server-get-user envelope))
            (rid (file-name->resource (tmfs-cdr rname))))

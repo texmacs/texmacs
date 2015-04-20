@@ -47,7 +47,7 @@
              (server-error envelope "Error: not logged in"))
             ((not (db-allow? id uid "writable"))
              (server-error envelope "Error: write access required for field"))
-            ((!= id :now)
+            ((!= db-time :now)
              (server-error envelope "Error: cannot rewrite history"))
             (else
               (db-set-field id attr vals)
@@ -79,14 +79,14 @@
              (server-error envelope "Error: not logged in"))
             ((not (db-allow? id uid "writable"))
              (server-error envelope "Error: write access required for entry"))
-            ((!= id :now)
+            ((!= db-time :now)
              (server-error envelope "Error: cannot rewrite history"))
             (else
               (db-set-entry id l)
               (server-return envelope #t))))))
 
 (tm-service (remote-create-entry l)
-  ;;(display* "remote-create-entry " id ", " l "\n")
+  ;;(display* "remote-create-entry " l "\n")
   (with uid (server-get-user envelope)
     (cond ((not uid)
            (server-error envelope "Error: not logged in"))
@@ -120,9 +120,9 @@
         (else #f)))
 
 (tm-service (remote-get-user-pseudo uid)
-  ;;(display* "remote-search-user " q "\n")
+  ;;(display* "remote-search-user-pseudo " uid "\n")
   (server-return envelope (get-user-field uid "pseudo")))
 
 (tm-service (remote-get-user-name uid)
-  ;;(display* "remote-search-user " q "\n")
+  ;;(display* "remote-search-user-name " uid "\n")
   (server-return envelope (get-user-field uid "name")))
