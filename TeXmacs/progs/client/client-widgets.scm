@@ -572,3 +572,48 @@
   (:interactive #t)
   (dialogue-window (upload-widget server) noop
 		   "Upload file or directory"))
+
+(tm-widget ((download-widget server) quit)
+  (padded
+    (form "download-form"
+      ======
+      (aligned
+        (item (text "Remote source:")
+	  (with rname (if (remote-file-name (current-buffer))
+			  (url->system (current-buffer)) "")
+	    (dynamic (form-remote-widget server "download-form" "remote-name"
+					 "Remote file or directory"
+					 "" rname "300px"))))
+        (item (text "Local destination:")
+	  (with lname (if (remote-file-name (current-buffer)) ""
+			  (url->system (current-buffer)))
+	    (dynamic (form-local-widget "download-form" "local-name"
+					"Local file or directory"
+					"Download as:" lname "300px")))))
+      ======
+      (bottom-buttons
+        >>
+        ("Cancel" (quit)) // //
+        ("Download"
+	 (let* ((remote-name (system->url (form-ref "remote-name")))
+		(local-name (system->url (form-ref "local-name"))))
+	   (when (and (remote-file-name remote-name)
+		      (or (url-exists? local-name)
+			  (url-exists? (url-head local-name))))
+	     (when (and (remote-file? remote-name)
+			(url-directory? local-name))
+	       (set! local-name (url-append local-name
+					    (url-tail remote-name))))
+	     (if (and (remote-directory? remote-name)
+		      (url-regular? local-name))
+		 (set-message "cannot download directory to file" "download")
+		 (begin
+		   ;;(display* "Remote : " remote-name "\n")
+		   ;;(display* "Local  : " local-name "\n")
+		   (remote-download local-name remote-name)))
+	     (quit))))))))
+
+(tm-define (remote-interactive-download server)
+  (:interactive #t)
+  (dialogue-window (download-widget server) noop
+		   "Download file or directory"))

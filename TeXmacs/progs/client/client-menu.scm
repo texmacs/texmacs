@@ -39,6 +39,7 @@
     ("Permissions" (open-file-permissions-editor server (current-buffer))))
   ---
   ("Upload" (remote-interactive-upload server))
+  ("Download" (remote-interactive-download server))
   ---
   ("Logout" (client-logout server)))
 
