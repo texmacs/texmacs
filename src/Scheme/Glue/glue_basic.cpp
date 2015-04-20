@@ -6320,6 +6320,21 @@ tmg_string_load (tmscm arg1) {
 }
 
 tmscm
+tmg_string_append_to_file (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-append-to-file");
+  TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "string-append-to-file");
+
+  string in1= tmscm_to_string (arg1);
+  url in2= tmscm_to_url (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string_append_to_file (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_system_move (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "system-move");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "system-move");
@@ -9375,6 +9390,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-cache-invalidate",  tmg_url_cache_invalidate, 1, 0, 0);
   tmscm_install_procedure ("string-save",  tmg_string_save, 2, 0, 0);
   tmscm_install_procedure ("string-load",  tmg_string_load, 1, 0, 0);
+  tmscm_install_procedure ("string-append-to-file",  tmg_string_append_to_file, 2, 0, 0);
   tmscm_install_procedure ("system-move",  tmg_system_move, 2, 0, 0);
   tmscm_install_procedure ("system-copy",  tmg_system_copy, 2, 0, 0);
   tmscm_install_procedure ("system-remove",  tmg_system_remove, 1, 0, 0);

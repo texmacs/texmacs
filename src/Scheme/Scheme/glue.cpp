@@ -643,6 +643,7 @@ url url_or (url u1, url u2) { return u1 | u2; }
 void string_save (string s, url u) { (void) save_string (u, s); }
 string string_load (url u) {
   string s; (void) load_string (u, s, false); return s; }
+void string_append_to_file (string s, url u) { (void) append_string (u, s); }
 url url_ref (url u, int i) { return u[i]; }
 
 /******************************************************************************

@@ -533,6 +533,7 @@
   (url-cache-invalidate web_cache_invalidate (void url))
   (string-save string_save (void string url))
   (string-load string_load (string url))
+  (string-append-to-file string_append_to_file (void string url))
   (system-move move (void url url))
   (system-copy copy (void url url))
   (system-remove remove (void url))
