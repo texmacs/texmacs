@@ -489,7 +489,7 @@
   (noop))
 
 (define (consistent-pair? x y)
-  (string-starts? (url->system x) (url->system y)))
+  (not (string-starts? (url->system x) (url->system y))))
 
 (define (consistent-with? x l)
   (or (null? l)
@@ -505,14 +505,13 @@
 (tm-widget ((client-auto-sync-widget server) quit)
   (form "auto-sync"
     (let* ((l (client-auto-sync-list))
-	   (lname "")
-	   (rname "")
+           (dummy (begin (form-set "local-name" "")
+                         (form-set "remote-name" "")))
 	   (select-pair
 	    (lambda (local-name)
-	      (set! lname local-name)
-	      (set! rname (url->system (assoc-ref l (system->url lname))))
-	      (form-set "local-name" lname)
-	      (form-set "remote-name" rname)
+	      (form-set "local-name" local-name)
+	      (form-set "remote-name"
+                        (url->system (assoc-ref l (system->url local-name))))
 	      (refresh-now "sync-pair"))))
       (padded
 	(refreshable "sync-pair"
@@ -520,15 +519,17 @@
 	    (item (text "Local:")
 	      (dynamic (form-local-widget "auto-sync" "local-name"
 					  "Local file or directory"
-					  "Local:" lname "400px")))
+					  "Local:" "350px")))
 	    (item (text "Remote:")
 	      (dynamic (form-remote-widget server "auto-sync" "remote-name"
 					   "Remote file or directory"
-					   "Remote:" rname "400px")))))
+					   "Remote:" "350px")))))
 	======
         (refreshable "sync-list"
           (resize "500px" "300px"
-            (choice (select-pair answer) (map url->system (map car l)) "")))
+            (choice (select-pair answer)
+                    (sort (map url->system (map car l)) string<=?)
+                    "")))
 	======
 	(hlist
           ((icon "tm_add_2.xpm")
@@ -560,48 +561,40 @@
 ;; Upload and download widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (form-local-widget form-name field-name title
-			      prompt initial width)
-  (with lname initial
-    (hlist
-      (refreshable "local-name"
-	(form-input field-name "string" (list lname) width))
-      // //
-      (explicit-buttons
-	("Browse"
-	 (choose-file (lambda (name)
-			(set! lname (url->system name))
-			(form-set field-name lname)
-			(refresh-now "local-name"))
-		      title "generic" prompt
-		      (with name (form-ref field-name)
-			(set! lname name)
-			(if (url-rooted? name)
-			    (system->url name)
-			    (system->url "~")))))))))
+(tm-widget (form-local-widget form-name field-name title prompt width)
+  (hlist
+    (refreshable "local-name"
+      (form-input field-name "string" (list (form-ref field-name)) width))
+    // //
+    (explicit-buttons
+      ("Browse"
+       (choose-file (lambda (name)
+                      (form-set field-name (url->system name))
+                      (refresh-now "local-name"))
+                    title "generic" prompt
+                    (with name (form-ref field-name)
+                      (if (url-rooted? name)
+                          (system->url name)
+                          (system->url "~"))))))))
 
-(tm-widget (form-remote-widget server form-name field-name title
-			       prompt initial width)
-  (with rname initial
-    (hlist
-      (refreshable "remote-name"
-	(form-input field-name "string" (list rname) width))
-      // //
-      (explicit-buttons
-	("Browse"
-	 (open-remote-file-browser
-	  server
-	  (with name (form-ref field-name)
-	    (set! rname name)
-	    (if (remote-file-name name)
-		(system->url name)
-		(system->url (remote-home-directory server))))
-	  (if (== prompt "") :file (list :save-file prompt))
-	  title
-	  (lambda (name)
-	    (set! rname (url->system name))
-	    (form-set field-name rname)
-	    (refresh-now "remote-name"))))))))
+(tm-widget (form-remote-widget server form-name field-name title prompt width)
+  (hlist
+    (refreshable "remote-name"
+      (form-input field-name "string" (list (form-ref field-name)) width))
+    // //
+    (explicit-buttons
+      ("Browse"
+       (open-remote-file-browser
+        server
+        (with name (form-ref field-name)
+          (if (remote-file-name name)
+              (system->url name)
+              (system->url (remote-home-directory server))))
+        (if (== prompt "") :file (list :save-file prompt))
+        title
+        (lambda (name)
+          (form-set field-name (url->system name))
+          (refresh-now "remote-name")))))))
 
 (tm-widget ((upload-widget server) quit)
   (padded
@@ -609,17 +602,19 @@
       ======
       (aligned
         (item (text "Local source:")
-	  (with lname (if (remote-file-name (current-buffer)) ""
-			  (url->system (current-buffer)))
+	  (with dummy (form-set "local-name"
+                                (if (remote-file-name (current-buffer)) ""
+                                    (url->system (current-buffer))))
 	    (dynamic (form-local-widget "upload-form" "local-name"
 					"Local file or directory"
-					"" lname "300px"))))
+					"" "300px"))))
         (item (text "Remote destination:")
-	  (with rname (if (remote-file-name (current-buffer))
-			  (url->system (current-buffer)) "")
+	  (with dummy (form-set "remote-name"
+                                (if (remote-file-name (current-buffer))
+                                    (url->system (current-buffer)) ""))
 	    (dynamic (form-remote-widget server "upload-form" "remote-name"
 					 "Remote file or directory"
-					 "Upload as:" rname "300px"))))
+					 "Upload as:" "300px"))))
         (item (text "Upload message:")
           (form-input "message" "string" (list "") "300px")))
       ======
@@ -657,17 +652,19 @@
       ======
       (aligned
         (item (text "Remote source:")
-	  (with rname (if (remote-file-name (current-buffer))
-			  (url->system (current-buffer)) "")
+	  (with dummy (form-set "remote-name"
+                                (if (remote-file-name (current-buffer))
+                                    (url->system (current-buffer)) ""))
 	    (dynamic (form-remote-widget server "download-form" "remote-name"
 					 "Remote file or directory"
-					 "" rname "300px"))))
+					 "" "300px"))))
         (item (text "Local destination:")
-	  (with lname (if (remote-file-name (current-buffer)) ""
-			  (url->system (current-buffer)))
+	  (with dummy (form-set "local-name"
+                                (if (remote-file-name (current-buffer)) ""
+                                    (url->system (current-buffer))))
 	    (dynamic (form-local-widget "download-form" "local-name"
 					"Local file or directory"
-					"Download as:" lname "300px")))))
+					"Download as:" "300px")))))
       ======
       (bottom-buttons
         >>
