@@ -23,7 +23,13 @@
 (tm-define current-database (url-none))
 
 (tm-define-macro (with-database db . body)
-  `(with-global current-database ,db ,@body))
+  `(with-global current-database ,db
+     ,@body))
+
+(tm-define-macro (with-database* db . body)
+  `(with-global current-database ,db
+     (tmdb-keep-history current-database #f)
+     ,@body))
 
 (tm-define (db-reset)
   (set! current-database (url-none)))

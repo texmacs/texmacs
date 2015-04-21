@@ -88,7 +88,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-url-sync-info dir? local-exists? local-name remote-name)
-  (with-database (user-database "sync")
+  (with-database* (user-database "sync")
     (let* ((ids (db-search `(("name" ,(url->system local-name))
                              ("remote-name" ,(url->system remote-name))
                              ("type" "sync"))))
@@ -178,7 +178,7 @@
 (define (post-upload line uploaded)
   ;;(display* "post-upload " line ", " uploaded "\n")
   (and uploaded
-       (with-database (user-database "sync")
+       (with-database* (user-database "sync")
          (with (cmd dir? local-name local-id remote-name remote-id* doc) line
            (with remote-id uploaded
              (let* ((u (system->url local-name))
@@ -202,7 +202,7 @@
 (define (post-download line downloaded)
   ;;(display* "post-download " line ", " downloaded "\n")
   (and downloaded
-       (with-database (user-database "sync")
+       (with-database* (user-database "sync")
          (with (cmd dir? local-name local-id remote-name remote-id*) line
            (with (remote-id doc) downloaded
              (with u (system->url local-name)
@@ -254,7 +254,7 @@
           (cont))))))
 
 (tm-define (client-auto-sync-list)
-  (with-database (user-database "sync")
+  (with-database* (user-database "sync")
     (with ids (db-search `(("type" "auto-sync")))
       (with build (lambda (id)
                     (let* ((lname (db-get-field-first id "name" ""))
@@ -263,14 +263,14 @@
         (map build ids)))))
 
 (tm-define (client-auto-sync-add lname rname)
-  (with-database (user-database "sync")
+  (with-database* (user-database "sync")
     (client-auto-sync-remove lname)
     (db-create-entry `(("type" "auto-sync")
                        ("name" ,(url->system lname))
                        ("remote-name" ,(url->system rname))))))
 
 (tm-define (client-auto-sync-remove lname)
-  (with-database (user-database "sync")
+  (with-database* (user-database "sync")
     (with ids (db-search `(("type" "auto-sync")
                            ("name" ,(url->system lname))))
       (for (id ids)
