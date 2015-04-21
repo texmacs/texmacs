@@ -124,6 +124,10 @@
            (cons "download" all-info))
           ((and (!= date date*) (== remote-id remote-id*))
            (cons "upload" all-info))
+          ((and remote-id (not date) (not date*))
+           (cons "download" all-info))
+          ((and date (not remote-id) (not remote-id*))
+           (cons "upload" all-info))
           (else (cons "conflict" all-info))))))
 
 (define (url-append* base u)
@@ -136,6 +140,30 @@
 
 (define (file-dir-correct dir? u)
   (prepend-file-dir dir? (remote-file-name u)))
+
+(define (conflicting-local-delete? line ref)
+  (and (!= (car line) "local-delete")
+       (third line)
+       (url-descends? (system->url (third line))
+                      (system->url (third ref)))))
+
+(define (conflicting-remote-delete? line ref)
+  (and (!= (car line) "remote-delete")
+       (fifth line)
+       (url-descends? (system->url (fifth line))
+                      (system->url (fifth ref)))))
+
+(define (requalify line l)
+  (with (cmd dir? local-name local-id remote-name remote-id*) line
+    (cond ((and (== cmd "local-delete")
+                (list-or (map (cut conflicting-local-delete? <> line) l)))
+           ;;(display* "Requalify " line "\n")
+           (cons "conflict" (cdr line)))
+          ((and (== cmd "remote-delete")
+                (list-or (map (cut conflicting-remote-delete? <> line) l)))
+           ;;(display* "Requalify " line "\n")
+           (cons "conflict" (cdr line)))
+          (else line))))
 
 (tm-define (client-sync-status local-base remote-base cont)
   ;;(display* "client-sync-status " local-base ", " remote-base "\n")
@@ -150,7 +178,12 @@
                    (info (get-url-sync-info dir? local? local-name remote-name))
                    (next (get-sync-status info remote-name remote-id)))
               (when next (set! r (cons next r))))))
+        (set! r (map (cut requalify <> r) r))
         (cont (reverse r))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Routines for testing and repairing broken entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (sync-test)
   (client-sync-status (string->url "~/test/sync-test") (current-buffer)
@@ -158,6 +191,17 @@
       (display* "----- result -----\n")
       (for (x l)
         (display* x "\n")))))
+
+(tm-define (sync-repair-one id)
+  (and-with lname (db-get-field-first id "name" #f)
+    (when (not (url-exists? lname))
+      (display* "Problematic entry: " id ", " lname "\n")
+      (db-remove-entry id))))
+
+(tm-define (sync-repair)
+  (with-database* (user-database "sync")
+    (with ids (db-search `(("type" "sync")))
+      (for-each sync-repair-one ids))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transmitting the bulk data

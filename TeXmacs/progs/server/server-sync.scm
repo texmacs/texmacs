@@ -120,7 +120,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (remote-remove-one uid line)
-  (display* "  remote-remove-one " uid ", " line "\n")
+  ;;(display* "  remote-remove-one " uid ", " line "\n")
   (with (cmd dir? local-name local-id remote-name remote-id) line
     (let* ((rname (remote-file-name remote-name))
            (rid (file-name->resource (tmfs-cdr rname))))
@@ -133,7 +133,7 @@
                  (list remote-id :removed)))))))
 
 (tm-service (remote-remove-several l)
-  (display* "remote-remove-several " l "\n")
+  ;;(display* "remote-remove-several " l "\n")
   (if (null? l)
       (server-return envelope l)
       (with rname (remote-file-name (fifth (car l)))
