@@ -128,7 +128,10 @@
            (cons "download" all-info))
           ((and date (not remote-id) (not remote-id*))
            (cons "upload" all-info))
-          (else (cons "conflict" all-info))))))
+          (else
+            (let* ((suf1 (if date "*" "-"))
+                   (suf2 (if remote-id "*" "-")))
+              (cons (string-append "conflict" suf1 suf2) all-info)))))))
 
 (define (url-append* base u)
   (if (== (url->url u) (string->url ".")) base (url-append base u)))
@@ -153,17 +156,37 @@
        (url-descends? (system->url (fifth line))
                       (system->url (fifth ref)))))
 
-(define (requalify line l)
+(define (requalify-deleted line l)
   (with (cmd dir? local-name local-id remote-name remote-id*) line
     (cond ((and (== cmd "local-delete")
                 (list-or (map (cut conflicting-local-delete? <> line) l)))
-           ;;(display* "Requalify " line "\n")
-           (cons "conflict" (cdr line)))
+           ;;(display* "Requalify deleted " line "\n")
+           (cons "conflict*-" (cdr line)))
           ((and (== cmd "remote-delete")
                 (list-or (map (cut conflicting-remote-delete? <> line) l)))
-           ;;(display* "Requalify " line "\n")
-           (cons "conflict" (cdr line)))
+           ;;(display* "Requalify deleted " line "\n")
+           (cons "conflict-*" (cdr line)))
           (else line))))
+
+(tm-define (requalify-conflicting line t)
+  (with (cmd dir? local-name local-id remote-name remote-id*) line
+    (let* ((action (or (ahash-ref t local-name) "Keep"))
+           (n (string-length cmd)))
+      (cond ((not (string-starts? cmd "conflict")) line)
+            ((== action "Keep") line)
+            ((and (== action "Local")
+                  (== (substring cmd (- n 2) (- n 1)) "*"))
+             (cons "upload" (cdr line)))
+            ((and (== action "Local")
+                  (== (substring cmd (- n 2) (- n 1)) "-"))
+             (cons "remote-delete" (cdr line)))
+            ((and (== action "Remote")
+                  (== (substring cmd (- n 1) n) "*"))
+             (cons "download" (cdr line)))
+            ((and (== action "Remote")
+                  (== (substring cmd (- n 1) n) "-"))
+             (cons "local-delete" (cdr line)))
+            (else line)))))
 
 (tm-define (client-sync-status local-base remote-base cont)
   ;;(display* "client-sync-status " local-base ", " remote-base "\n")
@@ -178,7 +201,7 @@
                    (info (get-url-sync-info dir? local? local-name remote-name))
                    (next (get-sync-status info remote-name remote-id)))
               (when next (set! r (cons next r))))))
-        (set! r (map (cut requalify <> r) r))
+        (set! r (map (cut requalify-deleted <> r) r))
         (cont (reverse r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -208,7 +231,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (filter-status-list l which)
-  (list-filter l (lambda (line) (== (car line) which))))
+  (list-filter l (lambda (line) (string-starts? (car line) which))))
 
 (define (status-line->server line)
   (with sname (tmfs-car (remote-file-name (fifth line)))

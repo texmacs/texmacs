@@ -434,12 +434,49 @@
   (with fl (map list-item l)
     (dialogue-window (simple-list-widget fl) noop title)))
 
+(tm-widget ((conflicts-list-widget l t) quit)
+  (let* ((set-all
+          (lambda (action)
+            (for (f l)
+              (ahash-set! t f action))
+            (refresh-now "selected-actions"))))
+    (padded
+      (hlist (text "Select the action to be undertaken for each conflict") >>)
+      ======
+      (resize "600px" "400px"
+        (scrollable
+          (padded
+            (refreshable "selected-actions"
+              (for (f l)
+                (hlist
+                  (enum (ahash-set! t f answer)
+                        '("Skip" "Local" "Remote")
+                        (or (ahash-ref t f) "Skip")
+                        "6em")
+                  // //
+                  (text f)
+                  >>)))
+            (glue #f #t 0 0))))
+      ======
+      (hlist
+        (explicit-buttons
+          ("Skip all" (set-all "Skip")) // //
+          ("Keep local" (set-all "Local")) // //
+          ("Keep remote" (set-all "Remote")) // //
+          >>
+          ("Ok" (quit)))))))
+
+(define (show-conflicts l t title)
+  (with fl (map list-item l)
+    (dialogue-window (conflicts-list-widget fl t) noop title)))
+
 (tm-widget ((client-sync-widget l) quit)
   (let* ((upl (filter-status-list l "upload"))
          (dol (filter-status-list l "download"))
          (ldl (filter-status-list l "local-delete"))
          (rdl (filter-status-list l "remote-delete"))
-         (cfl (filter-status-list l "conflict")))
+         (cfl (filter-status-list l "conflict"))
+         (t (make-ahash-table)))
     (padded
       (form "sync-form"
         (explicit-buttons
@@ -462,7 +499,8 @@
           ===
           (with msg (items-msg cfl "" "with conflicts")
             (if (nnull? cfl)
-                (hlist (text msg) // >> ("Details" (show-list cfl msg))))))
+                (hlist (text msg) // >>
+                       ("Details" (show-conflicts cfl t msg))))))
         (if (nnull? upl)
             ===
             (hlist
@@ -472,8 +510,12 @@
         (bottom-buttons
           >>
           ("Cancel" (quit)) // //
-          ("Synchronize" (with msg (or (form-ref "message") "")
-                           (client-sync-proceed l msg quit))))))))
+          ("Synchronize"
+           (with msg (or (form-ref "message") "")
+             (with r (map (cut requalify-conflicting <> t) l)
+               ;;(for (x r)
+               ;;(display* "Requalified: " x "\n"))
+               (client-sync-proceed l msg quit)))))))))
 
 (tm-define (open-sync-widget l)
   (:interactive #t)
