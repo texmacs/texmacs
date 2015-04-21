@@ -691,7 +691,12 @@ expand (url u) {
 
 bool
 descends (url u, url base) {
-  if (is_or (base)) return descends (u, base[1]) || descends (u, base[2]);
+  if (is_or (base))
+    return descends (u, base[1]) || descends (u, base[2]);
+  if (is_or (u))
+    return descends (u[1], base) && descends (u[2], base);
+  if (u == base)
+    return true;
   if (is_concat (u) && is_atomic (base))
     return u[1] == base;
   if (is_concat (u) && is_concat (base))

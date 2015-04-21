@@ -178,7 +178,8 @@
       s))
 
 (define-public (url->tmfs-string u)
-  (if (url-descends? u (get-texmacs-path))
+  (if (and (url-descends? u (get-texmacs-path))
+           (!= (url->url u) (get-texmacs-path)))
       (with base (url-append (get-texmacs-path) "x")
         (string-append "tm/" (url->unix (url-delta base u))))
       (let* ((protocol (url-root u))

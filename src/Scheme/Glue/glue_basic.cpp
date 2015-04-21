@@ -6391,6 +6391,19 @@ tmg_system_mkdir (tmscm arg1) {
 }
 
 tmscm
+tmg_system_rmdir (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "system-rmdir");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  rmdir (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_system_search_score (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "system-search-score");
   TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "system-search-score");
@@ -9395,6 +9408,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-copy",  tmg_system_copy, 2, 0, 0);
   tmscm_install_procedure ("system-remove",  tmg_system_remove, 1, 0, 0);
   tmscm_install_procedure ("system-mkdir",  tmg_system_mkdir, 1, 0, 0);
+  tmscm_install_procedure ("system-rmdir",  tmg_system_rmdir, 1, 0, 0);
   tmscm_install_procedure ("system-search-score",  tmg_system_search_score, 2, 0, 0);
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
   tmscm_install_procedure ("system-2",  tmg_system_2, 3, 0, 0);
