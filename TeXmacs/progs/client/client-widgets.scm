@@ -538,13 +538,10 @@
 ;; Widget for selecting files to be synchronized
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (consistent-pair? x y)
-  (not (string-starts? (url->system x) (url->system y))))
-
 (define (consistent-with? x l)
   (or (null? l)
-      (and (consistent-pair? x (car l))
-           (consistent-pair? (car l) x)
+      (and (not (url-descends? x (car l)))
+           (not (url-descends? (car l) x))
            (consistent-with? x (cdr l)))))
 
 (define (consistent? l)
