@@ -36,6 +36,7 @@
     ("New remote directory" (remote-create-dir-interactive server))
     (when (not (remote-home-directory? (current-buffer)))
       ("Rename" (remote-rename-interactive server)))
+    ("Remove" (remote-remove-interactive server))
     ("Permissions" (open-file-permissions-editor server (current-buffer))))
   ---
   ("Upload" (remote-interactive-upload server))

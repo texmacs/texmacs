@@ -305,6 +305,7 @@
               (server-return envelope doc))))))
 
 (tm-define (server-file-remove uid rname)
+  ;;(display* "server-file-remove " uid ", " rname "\n")
   (with rid (file-name->resource (tmfs-cdr rname))
     (cond ((not uid)
            (list :error "Error: not logged in"))
@@ -402,14 +403,16 @@
           (server-return envelope (cadr r))))))
 
 (define (server-files-remove uid prefix fids)
-  (when (nnull? fids)
-    (with r (server-files-remove uid (cdr fids))
-      (if (== (car r) :error) r
-          (with rname (string-append prefix "/"
-                                     (resource->file-name (car fids)))
-            (server-file-remove uid fname))))))
+  ;;(display* "server-files-remove " uid ", " fids "\n")
+  (if (null? fids) (list :removed)
+      (with r (server-files-remove uid prefix (cdr fids))
+        (if (== (car r) :error) r
+            (with rname (string-append prefix "/"
+                                       (resource->file-name (car fids)))
+              (server-file-remove uid rname))))))
 
 (tm-define (server-dir-remove uid rname)
+  ;;(display* "server-dir-remove " uid ", " rname "\n")
   (with rid (file-name->resource (tmfs-cdr rname))
     (cond ((not uid)
            (list :error "Error: not logged in"))

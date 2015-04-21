@@ -198,7 +198,8 @@
             (lambda (tm)
               (with doc (convert tm "texmacs-document" "texmacs-stree")
                 ;;(display* "LOAD ") (write doc) (display* "\n")
-                (remote-file-set name doc)))
+                (remote-file-set name doc))
+              (set-message "retrieved contents" "load remote file"))
             (lambda (err)
               (set-message err "load remote file")))
           (set-message "loading..." "load remote file")
@@ -262,7 +263,8 @@
         (begin
           (client-remote-eval server `(remote-dir-load ,name)
             (lambda (entries)
-              (remote-dir-set name (dir-page sname entries)))
+              (remote-dir-set name (dir-page sname entries))
+              (set-message "retrieved contents" "remote directory"))
             (lambda (err)
               (set-message err "remote directory")))
           (set-message "loading..." "remote directory")
@@ -309,6 +311,24 @@
                   (buffer-rename src dest)
                   (set-message (string-append "renamed as " (url->string dest))
                                action))))))))
+
+(tm-define (remote-remove what)
+  (let* ((dir? (remote-directory? what))
+         (name (remote-file-name what))
+         (server-name (car (tmfs->list name)))
+         (server (client-find-server server-name))
+         (action (if dir? "remove directory" "remove file"))
+         (done (if dir? "directory removed" "file removed"))
+         (cmd `(,(if dir? 'remote-dir-remove 'remote-file-remove) ,name)))
+    (if (remote-home-directory? what)
+        (set-message "not allowed to remove home directory" action)
+        (client-remote-eval server cmd
+          (lambda (removed)
+            (when (buffer-exists? what)
+              (buffer-close what))
+            (set-message done action))
+          (lambda (err)
+            (set-message err action))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Versioning

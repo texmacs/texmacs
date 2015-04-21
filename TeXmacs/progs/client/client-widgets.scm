@@ -305,6 +305,10 @@
   (:interactive #t)
   (dialogue-window (remote-file-browser server initial type) cmd title))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Operations on files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (remote-rename-interactive server)
   (:interactive #t)
   (with dir? (remote-directory? (current-buffer))
@@ -316,6 +320,16 @@
      (lambda (new-name)
        (when (url? new-name)
          (remote-rename (current-buffer) new-name))))))
+
+(tm-define (remote-remove-interactive server)
+  (:interactive #t)
+  (with msg (if (remote-directory? (current-buffer))
+                "Really remove directory and its recursive contents?"
+                "Really remove file?")
+    (user-confirm msg #f
+      (lambda (answ)
+        (when answ
+          (remote-remove (current-buffer)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Permissions editor
