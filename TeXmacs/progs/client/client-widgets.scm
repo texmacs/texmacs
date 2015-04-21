@@ -515,7 +515,7 @@
              (with r (map (cut requalify-conflicting <> t) l)
                ;;(for (x r)
                ;;(display* "Requalified: " x "\n"))
-               (client-sync-proceed l msg quit)))))))))
+               (client-sync-proceed r msg quit)))))))))
 
 (tm-define (open-sync-widget l)
   (:interactive #t)
