@@ -1012,3 +1012,15 @@
   (set! err (utf8->cork err))
   (dialogue-window (system-error-widget cmd out err) noop win-name)
   #f)
+
+(tm-widget ((message-widget msg) done)
+  (padded
+    (centered (text msg))
+    ===
+    (centered
+      (explicit-buttons
+        ("Ok" (done))))))
+
+(tm-define (show-message msg title)
+  (:interactive #t)
+  (dialogue-window (message-widget msg) noop title))

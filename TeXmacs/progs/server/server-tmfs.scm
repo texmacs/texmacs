@@ -411,8 +411,8 @@
                                        (resource->file-name (car fids)))
               (server-file-remove uid rname))))))
 
-(tm-define (server-dir-remove uid rname)
-  ;;(display* "server-dir-remove " uid ", " rname "\n")
+(tm-define (server-dir-remove uid rname recurse?)
+  ;;(display* "server-dir-remove " uid ", " rname ", " recurse? "\n")
   (with rid (file-name->resource (tmfs-cdr rname))
     (cond ((not uid)
            (list :error "Error: not logged in"))
@@ -425,11 +425,19 @@
           (else
             (with fids (db-search `(("dir" ,rid)
                                     (:order "name" #t)))
-              (with r (server-files-remove uid (tmfs-car rname) fids)
-                (if (== (car r) :error) r
-                    (begin
+              (cond (recurse?
+                     (with r (server-files-remove uid (tmfs-car rname) fids)
+                       (if (== (car r) :error) r
+                           (begin
+                             (db-remove-entry rid)
+                             (list :removed rid)))))
+                    ((nnull? fids)
+                     (list :error
+                           (string-append
+                            "Error: directory '" rname "' is non empty")))
+                    (else
                       (db-remove-entry rid)
-                      (list :removed rid)))))))))
+                      (list :removed rid))))))))
 
 (tm-service (remote-dir-remove rname)
   ;;(display* "remote-dir-remove " rname "\n")
@@ -437,7 +445,7 @@
     (if past?
         (server-error envelope "Error: cannot modify past")
         (let* ((uid (server-get-user envelope))
-               (r (server-dir-remove uid rname)))
+               (r (server-dir-remove uid rname #t)))
           (if (== (car r) :error)
               (server-error envelope (cadr r))
               (server-return envelope "removed"))))))

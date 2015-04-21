@@ -138,7 +138,7 @@
   (prepend-file-dir dir? (remote-file-name u)))
 
 (tm-define (client-sync-status local-base remote-base cont)
-  (display* "client-sync-status " local-base ", " remote-base "\n")
+  ;;(display* "client-sync-status " local-base ", " remote-base "\n")
   (compute-sync-list local-base remote-base
     (lambda (l)
       (with r (list)
@@ -152,7 +152,7 @@
               (when next (set! r (cons next r))))))
         (cont (reverse r))))))
 
-(tm-define (sync-test-old)
+(tm-define (sync-test)
   (client-sync-status (string->url "~/test/sync-test") (current-buffer)
     (lambda (l)
       (display* "----- result -----\n")
@@ -227,6 +227,41 @@
                 (cont success?))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Removing files and directories which disappeared on the other side
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remove-local-one line)
+  ;;(display* "remove-local-one " line "\n")
+  (with-database* (user-database "sync")
+    (with (cmd dir? local-name local-id remote-name remote-id*) line
+      (with u (system->url local-name)
+        (if dir? (system-rmdir u) (system-remove u)))
+      (db-remove-entry local-id))))
+
+(define (remove-local remove-l cont)
+  (set! remove-l (reverse remove-l))
+  (for (line remove-l)
+    (remove-local-one line))
+  (cont #t))
+
+(define (post-remove-remote line remove-status)
+  ;;(display* "post-remove-remote " line ", " remove-status "\n")
+  (and remove-status
+       (with-database* (user-database "sync")
+         (with (cmd dir? local-name local-id remote-name remote-id*) line
+           (db-remove-entry local-id)))))
+
+(define (remove-remote remove-l cont)
+  (set! remove-l (reverse remove-l))
+  (if (null? remove-l) (cont #t)
+      (with server (status-line->server (car remove-l))
+        (client-remote-eval server `(remote-remove-several ,remove-l)
+          (lambda (r)
+            (when (and (list? r) (== (length r) (length remove-l)))
+              (with success? (list-and (map post-remove-remote remove-l r))
+                (cont success?))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -251,7 +286,13 @@
       (client-download (filter-status-list l "download")
         (lambda (download-ok?)
           ;;(display* "Downloading done " download-ok? "\n")
-          (cont))))))
+          (remove-remote (filter-status-list l "remote-delete")
+            (lambda (remote-delete-ok?)
+              ;;(display* "Remote deletions done " remote-delete-ok? "\n")
+              (remove-local (filter-status-list l "local-delete")
+                (lambda (local-delete-ok?)
+                  ;;(display* "Local deletions done " local-delete-ok? "\n")
+                  (cont))))))))))
 
 (tm-define (client-auto-sync-list)
   (with-database* (user-database "sync")
@@ -275,18 +316,3 @@
                            ("name" ,(url->system lname))))
       (for (id ids)
         (db-remove-entry id)))))
-
-(define (client-auto-sync-status l cont)
-  (if (null? l)
-      (cont (list))
-      (client-sync-status (caar l) (cdar l)
-        (lambda (r1)
-          (client-auto-sync-status (cdr l)
-            (lambda (r2)
-              (cont (append r1 r2))))))))
-
-(tm-define (client-auto-sync)
-  (client-auto-sync-status (client-auto-sync-list)
-    (lambda (l)
-      (for (x l)
-        (display* x "\n")))))

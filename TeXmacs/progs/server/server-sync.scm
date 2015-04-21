@@ -114,3 +114,31 @@
             (if (not uid) (server-error envelope "Error: not logged in")
                 (with r (map (cut remote-download-one uid <>) l)
                   (server-return envelope r))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Removing lists of files from the server
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remote-remove-one uid line)
+  (display* "  remote-remove-one " uid ", " line "\n")
+  (with (cmd dir? local-name local-id remote-name remote-id) line
+    (let* ((rname (remote-file-name remote-name))
+           (rid (file-name->resource (tmfs-cdr rname))))
+      (if dir?
+          (with r (server-dir-remove uid rname #f)
+            (and (== (car r) :removed)
+                 (list remote-id :removed)))
+          (with r (server-file-remove uid rname)
+            (and (== (car r) :removed)
+                 (list remote-id :removed)))))))
+
+(tm-service (remote-remove-several l)
+  (display* "remote-remove-several " l "\n")
+  (if (null? l)
+      (server-return envelope l)
+      (with rname (remote-file-name (fifth (car l)))
+        (with-remote-context rname
+          (with uid (server-get-user envelope)
+            (if (not uid) (server-error envelope "Error: not logged in")
+                (with r (map (cut remote-remove-one uid <>) l)
+                  (server-return envelope r))))))))

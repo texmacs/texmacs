@@ -478,7 +478,10 @@
 (tm-define (open-sync-widget l)
   (:interactive #t)
   (if (null? l)
-      (set-message "up to date" "synchronize with remote server")
+      (begin
+        (set-message "up to date" "synchronize with remote server")
+        (show-message "Local files are in sync with those on the remote server"
+                      "Synchronize with remote server"))
       (dialogue-window (client-sync-widget l) noop
                        "Synchronization status")))
 
@@ -489,8 +492,21 @@
         (display* "Todo: " x "\n"))
       (open-sync-widget l))))
 
-(tm-define (sync-test)
-  (client-sync (string->url "~/test/sync-test") (current-buffer)))
+(define (client-auto-sync-status l cont)
+  (if (null? l)
+      (cont (list))
+      (client-sync-status (caar l) (cdar l)
+        (lambda (r1)
+          (client-auto-sync-status (cdr l)
+            (lambda (r2)
+              (cont (append r1 r2))))))))
+
+(tm-define (client-auto-sync)
+  (client-auto-sync-status (client-auto-sync-list)
+    (lambda (l)
+      (for (x l)
+        (display* "Todo: " x "\n"))
+      (open-sync-widget l))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Form fields for files with browse buttons
