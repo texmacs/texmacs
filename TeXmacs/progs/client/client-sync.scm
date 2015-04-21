@@ -138,6 +138,7 @@
   (prepend-file-dir dir? (remote-file-name u)))
 
 (tm-define (client-sync-status local-base remote-base cont)
+  (display* "client-sync-status " local-base ", " remote-base "\n")
   (compute-sync-list local-base remote-base
     (lambda (l)
       (with r (list)
@@ -229,15 +230,6 @@
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (client-sync-proceed l msg cont)
-  (client-upload (filter-status-list l "upload") msg
-    (lambda (upload-ok?)
-      ;;(display* "Uploading done " upload-ok? "\n")
-      (client-download (filter-status-list l "download")
-        (lambda (download-ok?)
-          ;;(display* "Downloading done " download-ok? "\n")
-          (cont))))))
-
 (tm-define (remote-upload local-name remote-name msg)
   (client-sync-status local-name remote-name
     (lambda (l)
@@ -251,3 +243,50 @@
       (client-download (append (filter-status-list l "download")
                                (filter-status-list l "conflict"))
                        ignore))))
+
+(tm-define (client-sync-proceed l msg cont)
+  (client-upload (filter-status-list l "upload") msg
+    (lambda (upload-ok?)
+      ;;(display* "Uploading done " upload-ok? "\n")
+      (client-download (filter-status-list l "download")
+        (lambda (download-ok?)
+          ;;(display* "Downloading done " download-ok? "\n")
+          (cont))))))
+
+(tm-define (client-auto-sync-list)
+  (with-database (user-database "sync")
+    (with ids (db-search `(("type" "auto-sync")))
+      (with build (lambda (id)
+                    (let* ((lname (db-get-field-first id "name" ""))
+                           (rname (db-get-field-first id "remote-name" "")))
+                      (cons (system->url lname) (system->url rname))))
+        (map build ids)))))
+
+(tm-define (client-auto-sync-add lname rname)
+  (with-database (user-database "sync")
+    (client-auto-sync-remove lname)
+    (db-create-entry `(("type" "auto-sync")
+                       ("name" ,(url->system lname))
+                       ("remote-name" ,(url->system rname))))))
+
+(tm-define (client-auto-sync-remove lname)
+  (with-database (user-database "sync")
+    (with ids (db-search `(("type" "auto-sync")
+                           ("name" ,(url->system lname))))
+      (for (id ids)
+        (db-remove-entry id)))))
+
+(define (client-auto-sync-status l cont)
+  (if (null? l)
+      (cont (list))
+      (client-sync-status (caar l) (cdar l)
+        (lambda (r1)
+          (client-auto-sync-status (cdr l)
+            (lambda (r2)
+              (cont (append r1 r2))))))))
+
+(tm-define (client-auto-sync)
+  (client-auto-sync-status (client-auto-sync-list)
+    (lambda (l)
+      (for (x l)
+        (display* x "\n")))))

@@ -493,14 +493,50 @@
   (client-sync (string->url "~/test/sync-test") (current-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Widget for selecting files to be synchronized
+;; Form fields for files with browse buttons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (client-auto-sync-list)
-  (list))
+(define (normalize name)
+  (if (string-ends? name "/") (normalize (string-drop-right name 1)) name))
 
-(tm-define (client-auto-sync)
-  (noop))
+(tm-widget (form-local-widget form-name field-name title prompt width)
+  (hlist
+    (refreshable "local-name"
+      (form-input field-name "string" (list (form-ref field-name)) width))
+    // //
+    (explicit-buttons
+      ("Browse"
+       (choose-file (lambda (name)
+                      (form-set field-name (normalize (url->system name)))
+                      (refresh-now "local-name"))
+                    title "generic" prompt
+                    (with name (form-ref field-name)
+                      (if (url-rooted? name)
+                          (system->url name)
+                          (system->url "~"))))))))
+
+(tm-widget (form-remote-widget server form-name field-name title prompt width)
+  (hlist
+    (refreshable "remote-name"
+      (form-input field-name "string" (list (form-ref field-name)) width))
+    // //
+    (explicit-buttons
+      ("Browse"
+       (open-remote-file-browser
+        server
+        (with name (form-ref field-name)
+          (if (remote-file-name name)
+              (system->url name)
+              (system->url (remote-home-directory server))))
+        (if (== prompt "") :file (list :save-file prompt))
+        title
+        (lambda (name)
+          (form-set field-name (normalize (url->system name)))
+          (refresh-now "remote-name")))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Widget for selecting files to be synchronized
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (consistent-pair? x y)
   (not (string-starts? (url->system x) (url->system y))))
@@ -556,11 +592,13 @@
                  (when (and (consistent? (map car new-l))
                             (consistent? (map cdr new-l)))
                    (set! l new-l)
+                   (client-auto-sync-add local-name remote-name)
                    (refresh-now "sync-list"))))))
           ((icon "tm_close_tool.xpm")
            (with local-name (system->url (form-ref "local-name"))
                (with new-l (assoc-remove! (list-copy l) local-name)
                  (set! l new-l)
+                 (client-auto-sync-remove local-name)
                  (refresh-now "sync-list"))))
           >>
           (explicit-buttons
@@ -574,41 +612,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Upload and download widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-widget (form-local-widget form-name field-name title prompt width)
-  (hlist
-    (refreshable "local-name"
-      (form-input field-name "string" (list (form-ref field-name)) width))
-    // //
-    (explicit-buttons
-      ("Browse"
-       (choose-file (lambda (name)
-                      (form-set field-name (url->system name))
-                      (refresh-now "local-name"))
-                    title "generic" prompt
-                    (with name (form-ref field-name)
-                      (if (url-rooted? name)
-                          (system->url name)
-                          (system->url "~"))))))))
-
-(tm-widget (form-remote-widget server form-name field-name title prompt width)
-  (hlist
-    (refreshable "remote-name"
-      (form-input field-name "string" (list (form-ref field-name)) width))
-    // //
-    (explicit-buttons
-      ("Browse"
-       (open-remote-file-browser
-        server
-        (with name (form-ref field-name)
-          (if (remote-file-name name)
-              (system->url name)
-              (system->url (remote-home-directory server))))
-        (if (== prompt "") :file (list :save-file prompt))
-        title
-        (lambda (name)
-          (form-set field-name (url->system name))
-          (refresh-now "remote-name")))))))
 
 (tm-widget ((upload-widget server) quit)
   (padded
