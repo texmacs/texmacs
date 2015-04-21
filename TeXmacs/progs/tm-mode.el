@@ -54,7 +54,7 @@
     logic-group logic-table logic-dispatcher
     with-aux with-action with-module
     with-cursor with-buffer with-author
-    with-server with-database
+    with-server with-database with-database*
     with-time with-time-stamp with-limit
     with-encoding with-indexing
     with-user with-extra-fields
@@ -139,6 +139,18 @@
 
 (add-hook 'scheme-mode-hook '(lambda () (texmacs-style)))
 
+(defun symbol-var-name (name)
+  (let ((r (symbol-name name)))
+    (let ((n (length r))
+          (l (max (- (length r) 1) 0)))
+      (let ((head (substring r 0 l))
+            (tail (substring r l)))
+        (if (string= tail "*") (concat head "\\*") r)))))
+
+(defun multiply-by-seven (number)
+  "Multiply NUMBER by seven."
+  (* 7 number))
+
 (defun texmacs-style ()
   (set-fill-column 79)
   (setq comment-column 40)
@@ -147,16 +159,16 @@
    (list
     (cons
      (concat "\\<\\("
-      (mapconcat 'symbol-name highlight-keywords "\\|") "\\)\\>")
+      (mapconcat 'symbol-var-name highlight-keywords "\\|") "\\)\\>")
      'font-lock-keyword-face)
     (cons
      (concat "(\\("
-      (mapconcat 'symbol-name highlight-definitions "\\|")
+      (mapconcat 'symbol-var-name highlight-definitions "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+\\)\\>")
      '(3 font-lock-function-name-face))
     (cons
      (concat "(\\("
-      (mapconcat 'symbol-name
+      (mapconcat 'symbol-var-name
        '(converter) "\\|")
       "\\)\\>[ 	]*\\((?\\)\\(\\sw+ \\sw+\\)\\>")
      '(3 font-lock-function-name-face))
