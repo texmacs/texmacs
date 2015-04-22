@@ -70,7 +70,7 @@ find_bib_file (url base, string fname,
 
 bool
 supports_db () {
-  return sqlite3_present () && get_preference ("database tool") == "on";
+  return get_preference ("database tool") == "on";
 }
 
 void
