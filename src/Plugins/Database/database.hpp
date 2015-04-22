@@ -108,6 +108,7 @@ private:
   int compute_complexity (tree q);
   int ansatz_index (tree q);
   db_atoms ansatz (tree ql, db_time t);
+  db_atoms filter_modified (db_atoms ids, db_time t1, db_time t2);
 
 private:
   void notify_created_atom (string s);

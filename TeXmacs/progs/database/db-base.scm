@@ -131,6 +131,7 @@
 (define (rewrite-query q)
   (cond ((func? q :order 2)
          (list 'order (cadr q) (nin? (caddr q) (list #f "#f"))))
+        ((func? q :modified) (cons 'modified (cdr q)))
         ((func? q :match) (cons 'contains (cdr q)))
         ((func? q :prefix) (cons 'completes (cdr q)))
         ((func? q :contains) (cons 'contains (cdr q)))

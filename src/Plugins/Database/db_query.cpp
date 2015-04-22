@@ -57,6 +57,8 @@ database_rep::encode_constraint (tree q) {
     return encode_keywords_constraint (q);
   else if (attr == "order") {
     r << -2; return r; }
+  else if (attr == "modified") {
+    r << -2; return r; }
   else if (!is_quoted (q[0]->label))
     return db_constraint ();
   else if (atom_encode->contains (scm_unquote (q[0]->label)))
@@ -165,6 +167,27 @@ database_rep::ansatz (tree ql, db_time t) {
 }
 
 /******************************************************************************
+* Search entries which were modified in a certain time period
+******************************************************************************/
+
+db_atoms
+database_rep::filter_modified (db_atoms ids, db_time t1, db_time t2) {
+  db_atoms r;
+  for (int i=0; i<N(ids); i++) {
+    db_atom id= ids[i];
+    db_line_nrs nrs= id_lines[id];
+    bool modified= false;
+    for (int j=0; j<N(nrs); j++) {
+      db_line& l= db[nrs[j]];
+      if (l->created >= t1 && l->created < t2) modified= true;
+      if (l->expires >= t1 && l->expires < t2) modified= true;
+    }
+    if (modified) r << id;
+  }
+  return r;
+}
+
+/******************************************************************************
 * Master query routine
 ******************************************************************************/
 
@@ -181,6 +204,18 @@ database_rep::query (tree ql, db_time t, int limit) {
       sort_flag= sort_flag || is_tuple (ql[i], "order", 2);
   ids= filter (ids, ql, t, max (limit, sort_flag? 1000: 0));
   //cout << "filtered ids= " << ids << LF;
+  for (int i=0; i<N(ql); i++) {
+    if (is_tuple (ql[i], "modified", 2) &&
+        is_atomic (ql[i][1]) && is_atomic (ql[i][2]) &&
+        is_quoted (ql[i][1]->label) && is_quoted (ql[i][2]->label)) {
+      string t1= scm_unquote (ql[i][1]->label);
+      string t2= scm_unquote (ql[i][2]->label);
+      if (is_int (t1) && is_int (t2))
+        ids= filter_modified (ids, (db_time) as_long_int (t1),
+                                   (db_time) as_long_int (t2));
+    }
+  }
+  //cout << "filtered on modified ids= " << ids << LF;
   ids= sort_results (ids, ql, t);
   //cout << "sorted ids= " << ids << LF;
   if (N(ids) > limit) ids= range (ids, 0, limit);
