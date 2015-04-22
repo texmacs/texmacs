@@ -12,36 +12,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (server server-db-sync)
-  (:use (server server-tmfs)))
+  (:use (server server-tmfs)
+        (database db-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Determining changes in a database
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-change-list* uid kind t)
-  (when (number? t) (set! t (number->string t)))
-  (let* ((types (or (smart-ref db-kind-table kind) #t))
-         ;; FIXME: db-kind-table may not be fully initialized
-         (ids '()))
-    (with-time :always
-      (with-user #t
-        (set! ids (db-search `(,@(if (== uid #t) (list)
-                                     `(("owner" ,uid)))
-                               ,@(if (== types #t) (list)
-                                     `(("type" ,@types)))
-                               (:modified ,t "10675199165"))))))
-    (with-user #t
-      (with get (lambda (id)
-                  (list id
-                        (with-time :always
-                          (db-get-field-first id "name" #f))
-                        (with-time :now
-                          (db-get-entry id))))
-        (map get ids)))))
-
 (tm-service (remote-db-changes kind t)
   (display* "remote-db-changes " kind ", " t "\n")
   (with uid (server-get-user envelope)
     (if (not uid) (server-error envelope "Error: not logged in")
-        (with l (db-change-list* uid kind t)
+        (with l (db-change-list uid kind t)
           (server-return envelope l)))))

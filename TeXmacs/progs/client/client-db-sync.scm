@@ -12,32 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (client client-db-sync)
-  (:use (client client-tmfs)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Determining changes in a database
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (db-change-list uid kind t)
-  (when (number? t) (set! t (number->string t)))
-  (let* ((types (or (smart-ref db-kind-table kind) #t))
-         ;; FIXME: db-kind-table may not be fully initialized
-         (ids '()))
-    (with-time :always
-      (with-user #t
-        (set! ids (db-search `(,@(if (== uid #t) (list)
-                                     `(("owner" ,uid)))
-                               ,@(if (== types #t) (list)
-                                     `(("type" ,@types)))
-                               (:modified ,t "10675199165"))))))
-    (with-user #t
-      (with get (lambda (id)
-                  (list id
-                        (with-time :always
-                          (db-get-field-first id "name" #f))
-                        (with-time :now
-                          (db-get-entry id))))
-        (map get ids)))))
+  (:use (client client-tmfs)
+        (database db-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building status list
@@ -58,17 +34,13 @@
   (with leq? (lambda (f1 f2) (string<=? (car f1) (car f2)))
     (== (sort e1 leq?) (sort e2 leq?))))
 
-(define (db-change-status local-l remote-l)
-  (display* "db-change-status ...\n")
+(define (db-change-status local-l remote-l kind)
   (let* ((local-t (db-change-table local-l))
          (remote-t (db-change-table remote-l))
          (status-t (make-ahash-table))
          (local-names (map car (ahash-table->list local-t)))
          (remote-names (map car (ahash-table->list remote-t)))
          (names (list-union local-names remote-names)))
-    (display* "local-t= " local-t "\n")
-    (display* "remote-t= " remote-t "\n")
-    (display* "names= " names "\n")
     (for (name names)
       (let* ((local-pair (ahash-ref local-t name))
              (remote-pair (ahash-ref remote-t name))
@@ -77,21 +49,40 @@
              (local-val (and local-pair (cadr local-pair)))
              (remote-val (and remote-pair (cadr remote-pair))))
         (cond ((and (null? local-val) (not remote-val))
-               (ahash-set! status-t name (list "remote-delete")))
+               (ahash-set! status-t name
+                           (list "remote-delete" kind)))
               ((and (null? remote-val) (not local-val))
-               (ahash-set! status-t name (list "local-delete")))
+               (ahash-set! status-t name
+                           (list "local-delete" kind)))
               ((and local-val (not remote-val))
-               (ahash-set! status-t name (list "upload" local-id local-val)))
+               (ahash-set! status-t name
+                           (list "upload" kind local-id local-val)))
               ((and remote-val (not local-val))
-               (ahash-set! status-t name (list "download" remote-id remote-val)))
+               (ahash-set! status-t name
+                           (list "download" kind remote-id remote-val)))
               ((and local-val remote-val (db-equivalent? local-val remote-val))
-               (ahash-set! status-t name (list "download" remote-val)))
+               (ahash-set! status-t name
+                           (list "download" kind remote-id remote-val)))
               (else
-               (ahash-set! status-t name (list "conflict"
-                                               local-id remote-id
-                                               local-val remote-val))))))
+               (ahash-set! status-t name
+                           (list "conflict" kind
+                                 local-id remote-id
+                                 local-val remote-val))))))
     (with leq? (lambda (f1 f2) (string<=? (car f1) (car f2)))
       (sort (ahash-table->list status-t) leq?))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Applying local changes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (define (db-local-sync-one cmd)
+;;   (cond ((== (car cmd) "local-delete")
+;;          ())
+;;         ((== (car cmd) "download")
+;;          ())))
+
+;; (define (db-local-sync l)
+;;   (list-and (map db-local-sync-one l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level interface
@@ -110,6 +101,6 @@
       (lambda (remote-l)
         (for (x remote-l)
           (display* "Remote: " x "\n"))
-        (with status-l (db-change-status local-l remote-l) 
+        (with status-l (db-change-status local-l remote-l "bib")
           (for (x status-l)
             (display* "Status: " x "\n")))))))

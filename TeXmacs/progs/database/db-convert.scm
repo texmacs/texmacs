@@ -175,3 +175,35 @@
 (tm-define (db-export-select)
   (:interactive #t)
   (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Subroutines for syncing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define db-forced-kinds? #f)
+
+(define (db-force-kinds)
+  (when (not db-forced-kinds?)
+    (import-from (database bib-manage))
+    (set! db-forced-kinds? #t)))
+
+(tm-define (db-change-list uid kind t)
+  (when (number? t) (set! t (number->string t)))
+  (db-force-kinds)
+  (let* ((types (or (smart-ref db-kind-table kind) #t))
+         (ids '()))
+    (with-time :always
+      (with-user #t
+        (set! ids (db-search `(,@(if (== uid #t) (list)
+                                     `(("owner" ,uid)))
+                               ,@(if (== types #t) (list)
+                                     `(("type" ,@types)))
+                               (:modified ,t "10675199165"))))))
+    (with-user #t
+      (with get (lambda (id)
+                  (list id
+                        (with-time :always
+                          (db-get-field-first id "name" #f))
+                        (with-time :now
+                          (db-get-entry id))))
+        (map get ids)))))
