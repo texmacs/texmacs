@@ -36,9 +36,16 @@
 
 (tm-define (add-user pseudo name)
   (with-database users-master
-    (db-create-entry `(("type" "user")
-                       ("pseudo" ,pseudo)
-                       ("name" ,name)))))
+    (db-set-entry pseudo `(("type" "user")
+                           ("pseudo" ,pseudo)
+                           ("name" ,name)))
+    pseudo))
+
+;; (tm-define (add-user pseudo name)
+;;   (with-database users-master
+;;     (db-create-entry `(("type" "user")
+;;                        ("pseudo" ,pseudo)
+;;                        ("name" ,name)))))
 
 (tm-define (remove-user)
   (let* ((del (get-default-user))

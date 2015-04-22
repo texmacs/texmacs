@@ -160,7 +160,8 @@
 (define (server-set-user-info uid pseudo name passwd email admin)
   (with-database (server-database)
     (with-user #t
-      (when (not uid) (set! uid (db-create-entry (list))))
+      (when (not uid) (set! uid pseudo))
+      ;;(when (not uid) (set! uid (db-create-entry (list))))
       (db-set-entry uid (list (list "type" "user")
                               (list "pseudo" pseudo)
                               (list "name" name)
