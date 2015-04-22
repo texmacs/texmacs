@@ -24,7 +24,7 @@
          (l2 (list-filter e2 ok?)))
     (list-permutation? l1 l2)))
 
-(tm-define (db-update-entry id new-l)
+(tm-define (db-update-entry id new-l . opt-new-id)
   (with old-l (db-get-entry id)
     (if (db-same-entries? new-l old-l) id
         (let* ((new-h (cons id (or (assoc-ref new-l "newer") (list))))
@@ -33,7 +33,10 @@
           (set! new-l (assoc-set! new-l "newer" app-h))
           (when db-time-stamp?
             (set! new-l (assoc-remove! new-l "date")))
-          (with new-id (db-create-entry new-l)
+          (with new-id (if (and (nnull? opt-new-id)
+                                (not (db-entry-exists? (car opt-new-id))))
+                           (car opt-new-id)
+                           (db-create-entry new-l))
             (db-remove-entry id)
             new-id)))))
 

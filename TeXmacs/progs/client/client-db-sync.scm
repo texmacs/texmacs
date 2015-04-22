@@ -75,14 +75,29 @@
 ;; Applying local changes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; (define (db-local-sync-one cmd)
-;;   (cond ((== (car cmd) "local-delete")
-;;          ())
-;;         ((== (car cmd) "download")
-;;          ())))
+(define (db-local-sync-one line)
+  (cond ((== (cadr line) "local-delete")
+         (with (name cmd kind) line
+           (with-database (user-database kind)
+             (with-time :now
+               (with ids (db-search `(("name" ,name)))
+                 (for-each db-remove-entry ids))))))
+        ((== (cadr cmd) "download")
+         (with (name cmd kind id val) line
+           (for (attr '("owner" "readable" "writable"))
+             (set! val (assoc-remove! val attr)))
+           (with-database (user-database kind)
+             (with-time :now
+               (with ids (db-search `(("name" ,name)))
+                 (if (null? ids)
+                     (if (db-entry-exists? id)
+                         (db-create-entry val)
+                         (db-set-entry id val))
+                     (db-update-entry (car ids) val id))))))))
+  #t)
 
-;; (define (db-local-sync l)
-;;   (list-and (map db-local-sync-one l)))
+(define (db-local-sync l)
+  (list-and (map db-local-sync-one l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level interface
