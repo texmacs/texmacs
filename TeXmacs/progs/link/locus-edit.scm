@@ -30,25 +30,24 @@
 (define texmacs-seed (seed->random-state seed-val))
 (define texmacs-serial-id (random 9342813113834066795298815 texmacs-seed))
 
-(define (base64 x)
+(define (base62 x)
   (if (== x 0) '()
-      (append (base64 (quotient x 64))
-	      (list (remainder x 64)))))
+      (append (base62 (quotient x 62))
+	      (list (remainder x 62)))))
 
 (define (aschar x)
   (cond ((< x 10) (integer->char (+ x 48)))
 	((< x 36) (integer->char (+ x 55)))
 	((< x 62) (integer->char (+ x 61)))
-	((== x 62) #\{)
-	(else #\})))
+	(else #\_)))
 
-(define (number->base64 x)
-  (list->string (map aschar (base64 x))))
+(define (number->base62 x)
+  (list->string (map aschar (base62 x))))
 
 (tm-define (create-unique-id)
   (:synopsis "Create a unique file or locus identifier")
   (set! texmacs-serial-id (+ texmacs-serial-id 1))
-  (string-append "+" (number->base64 texmacs-serial-id)))
+  (string-append "+" (number->base62 texmacs-serial-id)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creation of loci
