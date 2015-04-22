@@ -179,8 +179,10 @@ database_rep::filter_modified (db_atoms ids, db_time t1, db_time t2) {
     bool modified= false;
     for (int j=0; j<N(nrs); j++) {
       db_line& l= db[nrs[j]];
-      if (l->created >= t1 && l->created < t2) modified= true;
-      if (l->expires >= t1 && l->expires < t2) modified= true;
+      if (t1 > l->created || l->expires > t2) {
+        if (l->created >= t1 && l->created < t2) modified= true;
+        if (l->expires >= t1 && l->expires < t2) modified= true;
+      }
     }
     if (modified) r << id;
   }
