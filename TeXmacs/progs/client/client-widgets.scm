@@ -419,6 +419,12 @@
         (string-append "1" i " file or directory " s)
         (string-append (number->string n) i " files or directories " s))))
 
+(define (db-msg l i s)
+  (with n (length l)
+    (if (== n 1)
+        (string-append "1" i " database entry " s)
+        (string-append (number->string n) i " database entries " s))))
+
 (tm-widget ((simple-list-widget l) quit)
   (padded
     (resize "600px" "400px"
@@ -434,7 +440,15 @@
   (with fl (map list-item l)
     (dialogue-window (simple-list-widget fl) noop title)))
 
-(tm-widget ((conflicts-list-widget l t) quit)
+(define (db-list-item line)
+  (with (name cmd kind . args) line
+    (string-append kind " - " name)))
+
+(define (show-db-list l title)
+  (with fl (map db-list-item l)
+    (dialogue-window (simple-list-widget fl) noop title)))
+
+(tm-widget ((conflicts-list-widget l t can-skip?) quit)
   (let* ((set-all
           (lambda (action)
             (for (f l)
@@ -450,8 +464,11 @@
               (for (f l)
                 (hlist
                   (enum (ahash-set! t f answer)
-                        '("Skip" "Local" "Remote")
-                        (or (ahash-ref t f) "Skip")
+                        (if can-skip?
+                            '("Skip" "Local" "Remote")
+                            '("Local" "Remote"))
+                        (or (ahash-ref t f)
+                            (if can-skip? "Skip" "Remote"))
                         "6em")
                   // //
                   (text f)
@@ -460,7 +477,8 @@
       ======
       (hlist
         (explicit-buttons
-          ("Skip all" (set-all "Skip")) // //
+          (if can-skip?
+              ("Skip all" (set-all "Skip")) // //)
           ("Keep local" (set-all "Local")) // //
           ("Keep remote" (set-all "Remote")) // //
           >>
@@ -468,15 +486,27 @@
 
 (define (show-conflicts l t title)
   (with fl (map list-item l)
-    (dialogue-window (conflicts-list-widget fl t) noop title)))
+    (for (f fl) (when (not (ahash-ref t f)) (ahash-set! t f "Skip")))
+    (dialogue-window (conflicts-list-widget fl t #t) noop title)))
 
-(tm-widget ((client-sync-widget l) quit)
+(define (show-db-conflicts l t title)
+  (with fl (map db-list-item l)
+    (for (f fl) (when (not (ahash-ref t f)) (ahash-set! t f "Remote")))
+    (dialogue-window (conflicts-list-widget fl t #f) noop title)))
+
+(tm-widget ((client-sync-widget l dbl ltime rtime) quit)
   (let* ((upl (filter-status-list l "upload"))
          (dol (filter-status-list l "download"))
          (ldl (filter-status-list l "local-delete"))
          (rdl (filter-status-list l "remote-delete"))
          (cfl (filter-status-list l "conflict"))
-         (t (make-ahash-table)))
+         (t (make-ahash-table))
+         (dbupl (db-filter-status-list dbl "upload"))
+         (dbdol (db-filter-status-list dbl "download"))
+         (dbldl (db-filter-status-list dbl "local-delete"))
+         (dbrdl (db-filter-status-list dbl "remote-delete"))
+         (dbcfl (db-filter-status-list dbl "conflict"))
+         (dbt (make-ahash-table)))
     (padded
       (form "sync-form"
         (explicit-buttons
@@ -500,7 +530,28 @@
           (with msg (items-msg cfl "" "with conflicts")
             (if (nnull? cfl)
                 (hlist (text msg) // >>
-                       ("Details" (show-conflicts cfl t msg))))))
+                       ("Details" (show-conflicts cfl t msg)))))
+          ===
+          (with msg (db-msg dbupl "" "to be uploaded")
+            (if (nnull? dbupl)
+                (hlist (text msg) // >> ("Details" (show-db-list dbupl msg)))))
+          ===
+          (with msg (db-msg dol "" "to be downloaded")
+            (if (nnull? dbdol)
+                (hlist (text msg) // >> ("Details" (show-db-list dbdol msg)))))
+          ===
+          (with msg (db-msg ldl " local" "to be deleted")
+            (if (nnull? dbldl)
+                (hlist (text msg) // >> ("Details" (show-db-list dbldl msg)))))
+          ===
+          (with msg (db-msg rdl " remote" "to be deleted")
+            (if (nnull? dbrdl)
+                (hlist (text msg) // >> ("Details" (show-db-list dbrdl msg)))))
+          ===
+          (with msg (db-msg cfl "" "with conflicts")
+            (if (nnull? dbcfl)
+                (hlist (text msg) // >>
+                       ("Details" (show-db-conflicts dbcfl dbt msg))))))
         (if (nnull? upl)
             ===
             (hlist
@@ -517,14 +568,14 @@
                ;;(display* "Requalified: " x "\n"))
                (client-sync-proceed r msg quit)))))))))
 
-(tm-define (open-sync-widget l)
+(tm-define (open-sync-widget l dbl ltime rtime)
   (:interactive #t)
-  (if (null? l)
+  (if (and (null? l) (null? dbl))
       (begin
         (set-message "up to date" "synchronize with remote server")
-        (show-message "Local files are in sync with those on the remote server"
+        (show-message "Local client is in sync with the remote server"
                       "Synchronize with remote server"))
-      (dialogue-window (client-sync-widget l) noop
+      (dialogue-window (client-sync-widget l dbl ltime rtime) noop
                        "Synchronization status")))
 
 (tm-define (client-sync local-name remote-name)
@@ -532,7 +583,7 @@
     (lambda (l)
       (for (x l)
         (display* "Todo: " x "\n"))
-      (open-sync-widget l))))
+      (open-sync-widget l (list) "0" "0"))))
 
 (define (client-auto-sync-status l cont)
   (if (null? l)
@@ -543,12 +594,17 @@
             (lambda (r2)
               (cont (append r1 r2))))))))
 
-(tm-define (client-auto-sync)
+(tm-define (client-auto-sync server)
   (client-auto-sync-status (client-auto-sync-list)
+    ;; TODO: filter on server
     (lambda (l)
       (for (x l)
         (display* "Todo: " x "\n"))
-      (open-sync-widget l))))
+      (db-client-sync-status server
+        (lambda (dbl ltime rtime)
+          (for (x dbl)
+            (display* "Todo: " x "\n"))
+          (open-sync-widget l dbl ltime rtime))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Form fields for files with browse buttons
@@ -657,7 +713,7 @@
                  (refresh-now "sync-list"))))
           >>
           (explicit-buttons
-            ("Synchronize" (client-auto-sync))))))))
+            ("Synchronize" (client-auto-sync server))))))))
 
 (tm-define (remote-interactive-sync server)
   (:interactive #t)

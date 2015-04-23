@@ -97,6 +97,9 @@
     (with leq? (lambda (f1 f2) (string<=? (car f1) (car f2)))
       (sort (ahash-table->list status-t) leq?))))
 
+(tm-define (db-filter-status-list dbl cmd)
+  (list-filter dbl (lambda (line) (== (cadr line) cmd))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Applying local changes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
