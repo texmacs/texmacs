@@ -192,8 +192,14 @@
   (db-force-kinds)
   (let* ((types (or (smart-ref db-kind-table kind) #t))
          (ids '()))
+    (display* "uid= " uid "\n")
+    (display* "kind= " kind "\n")
+    (display* "types= " types "\n")
     (with-time :always
       (with-user #t
+        (when (!= types #t)
+          (display* (db-search `(,@(if (== types #t) (list)
+                                       `(("type" ,@types))))) "\n"))
         (set! ids (db-search `(,@(if (== uid #t) (list)
                                      `(("owner" ,uid)))
                                ,@(if (== types #t) (list)

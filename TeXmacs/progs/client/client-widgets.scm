@@ -536,19 +536,19 @@
             (if (nnull? dbupl)
                 (hlist (text msg) // >> ("Details" (show-db-list dbupl msg)))))
           ===
-          (with msg (db-msg dol "" "to be downloaded")
+          (with msg (db-msg dbdol "" "to be downloaded")
             (if (nnull? dbdol)
                 (hlist (text msg) // >> ("Details" (show-db-list dbdol msg)))))
           ===
-          (with msg (db-msg ldl " local" "to be deleted")
+          (with msg (db-msg dbldl " local" "to be deleted")
             (if (nnull? dbldl)
                 (hlist (text msg) // >> ("Details" (show-db-list dbldl msg)))))
           ===
-          (with msg (db-msg rdl " remote" "to be deleted")
+          (with msg (db-msg dbrdl " remote" "to be deleted")
             (if (nnull? dbrdl)
                 (hlist (text msg) // >> ("Details" (show-db-list dbrdl msg)))))
           ===
-          (with msg (db-msg cfl "" "with conflicts")
+          (with msg (db-msg dbcfl "" "with conflicts")
             (if (nnull? dbcfl)
                 (hlist (text msg) // >>
                        ("Details" (show-db-conflicts dbcfl dbt msg))))))
