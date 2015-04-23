@@ -16,6 +16,32 @@
         (database db-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Information about last synchronization
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (db-last-sync server)
+  (with-database (user-database "sync")
+    (let* ((server-name (client-find-server-name server))
+           (ids (db-search `(("type" "db-sync")
+                             ("server" ,server-name)))))
+      (if (null? ids)
+          (list "0" "0")
+          (list (db-get-field-first (car ids) "local-sync" "0")
+                (db-get-field-first (car ids) "remote-sync" "0"))))))
+
+(define (db-dub-in-sync server ltime rtime)
+  (with-database (user-database "sync")
+    (let* ((server-name (client-find-server-name server))
+           (ids (db-search `(("type" "db-sync")
+                             ("server" ,server-name))))
+           (id (if (nnull? ids) (car ids) (db-create-id))))
+      (db-set-entry id `(("type" "db-sync")
+                         ("name" "last-sync")
+                         ("server" ,server-name)
+                         ("local-sync" ,ltime)
+                         ("remote-sync" ,rtime))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building status list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -97,10 +123,11 @@
   #t)
 
 (define (db-local-sync l)
-  (list-and (map db-local-sync-one l)))
+  (and (list-and (map db-local-sync-one l))
+       (current-time)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; High level interface
+;; Test routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (current-server)
@@ -108,14 +135,49 @@
     (and (nnull? l) (car l))))
 
 (tm-define (db-sync-test)
-  (with local-l (with-database (user-database "bib")
-                  (db-change-list #t #t "0"))
-    (for (x local-l)
-      (display* "Local: " x "\n"))
-    (client-remote-eval (current-server) `(remote-db-changes "bib" "0")
-      (lambda (remote-l)
-        (for (x remote-l)
-          (display* "Remote: " x "\n"))
-        (with status-l (db-change-status local-l remote-l "bib")
-          (for (x status-l)
-            (display* "Status: " x "\n")))))))
+  (db-client-sync-status (current-server)
+    (lambda (status-l ltime rtime)
+      (for (x status-l)
+        (display* "Status: " x "\n"))
+      (display* "ltime : " ltime "\n")
+      (display* "rtime : " rtime "\n"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (local-db-changes kinds t)
+  ;;(display* "local-db-changes " kinds ", " t "\n")
+  (with l (map (lambda (kind)
+                 (with-database (user-database kind)
+                   (db-change-list #t #t t)))
+               kinds)
+    (list l (current-time))))
+
+(tm-define (db-client-sync-status server cont)
+  (let* ((kinds (list "bib"))
+         (timep (db-last-sync server)))
+    (with (ltime rtime) timep
+      (with local-p (local-db-changes kinds ltime)
+        (with (local-l ltime*) local-p
+          ;;(for (ll local-l)
+          ;;  (for (x ll)
+          ;;    (display* "Local: " x "\n")))
+          (client-remote-eval server `(remote-db-changes ,kinds ,rtime)
+            (lambda (remote-p)
+              (with (remote-l rtime*) remote-p
+                ;;(for (rl remote-l)
+                ;;  (for (x rl)
+                ;;    (display* "Remote: " x "\n")))
+                (with status-l (append-map db-change-status
+                                           local-l remote-l kinds)
+                  ;;(for (x status-l)
+                  ;;  (display* "Status: " x "\n"))
+                  (cont status-l ltime* rtime*))))))))))
+
+(tm-define (db-client-sync-proceed server l ltime rtime cont)
+  (with ltime* (db-local-sync l)
+    (client-remote-eval server `(remote-db-sync ,l)
+      (lambda (rtime*)
+        (db-dub-in-sync server ltime rtime)
+        (cont)))))

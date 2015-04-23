@@ -19,12 +19,12 @@
 ;; Determining changes in a database
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-service (remote-db-changes kind t)
-  (display* "remote-db-changes " kind ", " t "\n")
+(tm-service (remote-db-changes kinds t)
+  ;;(display* "remote-db-changes " kinds ", " t "\n")
   (with uid (server-get-user envelope)
     (if (not uid) (server-error envelope "Error: not logged in")
-        (with l (db-change-list uid kind t)
-          (server-return envelope l)))))
+        (with l (map (cut db-change-list uid <> t) kinds)
+          (server-return envelope (list l (current-time)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Applying remote changes
@@ -66,4 +66,4 @@
   (with uid (server-get-user envelope)
     (if (not uid) (server-error envelope "Error: not logged in")
         (with ok? (list-and (map (cut db-remote-sync-one uid <>) l))
-          (server-return envelope ok?)))))
+          (server-return envelope (and ok? (current-time)))))))
