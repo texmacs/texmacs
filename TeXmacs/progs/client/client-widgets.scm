@@ -572,7 +572,12 @@
                (client-sync-proceed r msg
                  (lambda ()
                    (db-client-sync-proceed server dbr ltime rtime
-                     quit)))))))))))
+                     (lambda (ok?)
+                       (when (not ok?)
+                         (show-message
+                          "Extra modifications occurred in the meantime"
+                          "Synchronize with remote server"))
+                       (quit)))))))))))))
 
 (tm-define (open-sync-widget server l dbl ltime rtime)
   (:interactive #t)

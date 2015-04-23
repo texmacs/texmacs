@@ -188,18 +188,13 @@
     (set! db-forced-kinds? #t)))
 
 (tm-define (db-change-list uid kind t)
+  (display* "Get changes " current-database ", " uid ", " kind ", " t "\n")
   (when (number? t) (set! t (number->string t)))
   (db-force-kinds)
   (let* ((types (or (smart-ref db-kind-table kind) #t))
          (ids '()))
-    (display* "uid= " uid "\n")
-    (display* "kind= " kind "\n")
-    (display* "types= " types "\n")
     (with-time :always
       (with-user #t
-        (when (!= types #t)
-          (display* (db-search `(,@(if (== types #t) (list)
-                                       `(("type" ,@types))))) "\n"))
         (set! ids (db-search `(,@(if (== uid #t) (list)
                                      `(("owner" ,uid)))
                                ,@(if (== types #t) (list)
@@ -212,4 +207,6 @@
                           (db-get-field-first id "name" #f))
                         (with-time :now
                           (db-get-entry id))))
-        (map get ids)))))
+        (with r (map get ids)
+          (display* "r= " r "\n")
+          r)))))

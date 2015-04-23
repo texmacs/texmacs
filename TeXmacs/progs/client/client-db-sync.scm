@@ -40,8 +40,8 @@
       (db-set-entry id `(("type" "db-sync")
                          ("name" "last-sync")
                          ("server" ,server-name)
-                         ("local-sync" ,ltime)
-                         ("remote-sync" ,rtime))))))
+                         ("local-sync" ,(number->string (+ ltime 1)))
+                         ("remote-sync" ,(number->string (+ rtime 1))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building status list
@@ -150,8 +150,9 @@
                      (db-update-entry (car ids) val id))))))))
   #t)
 
-(define (db-local-sync l)
-  (and (list-and (map db-local-sync-one l))
+(define (db-local-sync l kinds ltime)
+  (and (null? (apply append (car (local-db-changes kinds ltime))))
+       (list-and (map db-local-sync-one l))
        (current-time)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -174,6 +175,9 @@
 ;; High level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (db-sync-kinds)
+  (list "bib"))
+
 (define (local-db-changes kinds t)
   ;;(display* "local-db-changes " kinds ", " t "\n")
   (with l (map (lambda (kind)
@@ -183,29 +187,33 @@
     (list l (current-time))))
 
 (tm-define (db-client-sync-status server cont)
-  (let* ((kinds (list "bib"))
+  (let* ((kinds (db-sync-kinds))
          (timep (db-last-sync server)))
     (with (ltime rtime) timep
       (with local-p (local-db-changes kinds ltime)
         (with (local-l ltime*) local-p
-          ;;(for (ll local-l)
-          ;;  (for (x ll)
-          ;;    (display* "Local: " x "\n")))
+          (for (ll local-l)
+            (for (x ll)
+              (display* "Local: " x "\n")))
           (client-remote-eval server `(remote-db-changes ,kinds ,rtime)
             (lambda (remote-p)
               (with (remote-l rtime*) remote-p
-                ;;(for (rl remote-l)
-                ;;  (for (x rl)
-                ;;    (display* "Remote: " x "\n")))
+                (for (rl remote-l)
+                  (for (x rl)
+                    (display* "Remote: " x "\n")))
                 (with status-l (append-map db-change-status
                                            local-l remote-l kinds)
-                  ;;(for (x status-l)
-                  ;;  (display* "Status: " x "\n"))
+                  (for (x status-l)
+                    (display* "Status: " x "\n"))
                   (cont status-l ltime* rtime*))))))))))
 
 (tm-define (db-client-sync-proceed server l ltime rtime cont)
-  (with ltime* (db-local-sync l)
-    (client-remote-eval server `(remote-db-sync ,l)
-      (lambda (rtime*)
-        (db-dub-in-sync server ltime rtime)
-        (cont)))))
+  (with kinds (db-sync-kinds)
+    (if (nnull? (apply append (car (local-db-changes kinds ltime))))
+        (cont #f)
+        (client-remote-eval server `(remote-db-sync ,l ,kinds ,rtime)
+          (lambda (rtime*)
+            (if (not rtime*) (cont #f)
+                (with ltime* (db-local-sync l kinds ltime)
+                  (db-dub-in-sync server ltime* rtime*)
+                  (cont #t))))))))
