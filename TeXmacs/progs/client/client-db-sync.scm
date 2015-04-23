@@ -30,6 +30,8 @@
                 (db-get-field-first (car ids) "remote-sync" "0"))))))
 
 (define (db-dub-in-sync server ltime rtime)
+  (display* "db-dub-in-sync " (client-find-server-name server)
+            ", " ltime ", " rtime "\n")
   (with-database (user-database "sync")
     (let* ((server-name (client-find-server-name server))
            (ids (db-search `(("type" "db-sync")
@@ -100,6 +102,25 @@
 (tm-define (db-filter-status-list dbl cmd)
   (list-filter dbl (lambda (line) (== (cadr line) cmd))))
 
+(define (db-list-item line)
+  (with (name cmd kind . args) line
+    (string-append kind " - " name)))
+
+(tm-define (db-requalify-conflicting line t)
+  (if (!= (cadr line) "conflict") line
+      (with (name cmd kind local-id remote-id local-val remote-val) line
+        (let* ((key (string-append kind " - " name))
+               (action (or (ahash-ref t key) "Remote")))
+          (cond ((and (== action "Local") (null? local-val))
+                 (list name "remote-delete" kind))
+                ((and (== action "Local") (nnull? local-val))
+                 (list name "upload" kind local-id local-val))
+                ((and (== action "Remote") (null? remote-val))
+                 (list name "local-delete" kind))
+                ((and (== action "Remote") (nnull? remote-val))
+                 (list name "download" kind remote-id remote-val))
+                (else line))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Applying local changes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -110,14 +131,18 @@
            (with-database (user-database kind)
              (with-time :now
                (with ids (db-search `(("name" ,name)))
+                 (display* "Removing entries: " ids "\n")
                  (for-each db-remove-entry ids))))))
-        ((== (cadr cmd) "download")
+        ((== (cadr line) "download")
          (with (name cmd kind id val) line
            (for (attr '("owner" "readable" "writable"))
              (set! val (assoc-remove! val attr)))
            (with-database (user-database kind)
              (with-time :now
                (with ids (db-search `(("name" ,name)))
+                 (display* "Setting entry "
+                           (or (and (nnull? ids) (car ids)) "new")
+                           " (suggest " id ") to " val "\n")
                  (if (null? ids)
                      (if (db-entry-exists? id)
                          (db-create-entry val)

@@ -410,7 +410,7 @@
         (open-entry-permissions-editor server rid attrs)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; File synchronization widgets
+;; File and database synchronization widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (items-msg l i s)
@@ -494,7 +494,7 @@
     (for (f fl) (when (not (ahash-ref t f)) (ahash-set! t f "Remote")))
     (dialogue-window (conflicts-list-widget fl t #f) noop title)))
 
-(tm-widget ((client-sync-widget l dbl ltime rtime) quit)
+(tm-widget ((client-sync-widget server l dbl ltime rtime) quit)
   (let* ((upl (filter-status-list l "upload"))
          (dol (filter-status-list l "download"))
          (ldl (filter-status-list l "local-delete"))
@@ -563,27 +563,26 @@
           ("Cancel" (quit)) // //
           ("Synchronize"
            (with msg (or (form-ref "message") "")
-             (with r (map (cut requalify-conflicting <> t) l)
+             (let* ((r (map (cut requalify-conflicting <> t) l))
+                    (dbr (map (cut db-requalify-conflicting <> dbt) dbl)))
                ;;(for (x r)
                ;;(display* "Requalified: " x "\n"))
-               (client-sync-proceed r msg quit)))))))))
+               ;;(for (x dbr)
+               ;;(display* "Requalified: " x "\n"))
+               (client-sync-proceed r msg
+                 (lambda ()
+                   (db-client-sync-proceed server dbr ltime rtime
+                     quit)))))))))))
 
-(tm-define (open-sync-widget l dbl ltime rtime)
+(tm-define (open-sync-widget server l dbl ltime rtime)
   (:interactive #t)
   (if (and (null? l) (null? dbl))
       (begin
         (set-message "up to date" "synchronize with remote server")
         (show-message "Local client is in sync with the remote server"
                       "Synchronize with remote server"))
-      (dialogue-window (client-sync-widget l dbl ltime rtime) noop
+      (dialogue-window (client-sync-widget server l dbl ltime rtime) noop
                        "Synchronization status")))
-
-(tm-define (client-sync local-name remote-name)
-  (client-sync-status local-name remote-name
-    (lambda (l)
-      (for (x l)
-        (display* "Todo: " x "\n"))
-      (open-sync-widget l (list) "0" "0"))))
 
 (define (client-auto-sync-status l cont)
   (if (null? l)
@@ -604,7 +603,7 @@
         (lambda (dbl ltime rtime)
           (for (x dbl)
             (display* "Todo: " x "\n"))
-          (open-sync-widget l dbl ltime rtime))))))
+          (open-sync-widget server l dbl ltime rtime))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Form fields for files with browse buttons

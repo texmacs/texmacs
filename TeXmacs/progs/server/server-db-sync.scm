@@ -40,13 +40,14 @@
                       (ids (db-search `(("name" ,name)
                                         ("type" ,@types)
                                         ("owner" ,uid)))))
+                 (display* "Removing entries: " ids "\n")
                  (for-each db-remove-entry ids))))))
-        ((== (cadr cmd) "upload")
+        ((== (cadr line) "upload")
          (with (name cmd kind id val) line
            (for (attr '("owner" "readable" "writable"))
              (set! val (assoc-remove! val attr)))
-           (set! val (assoc-set! val "owner" uid))
-           (set! val (assoc-set! val "readable" "all"))
+           (set! val (assoc-set! val "owner" (list uid)))
+           (set! val (assoc-set! val "readable" (list "all")))
            (with-database (user-database kind)
              (with-time :now
                (let* ((types (smart-ref db-kind-table kind))
@@ -54,6 +55,9 @@
                       (ids (db-search `(("name" ,name)
                                         ("type" ,@types)
                                         ("owner" ,uid)))))
+                 (display* "Setting entry "
+                           (or (and (nnull? ids) (car ids)) "new")
+                           " (suggest " id ") to " val "\n")
                  (if (null? ids)
                      (if (db-entry-exists? id)
                          (db-create-entry val)
