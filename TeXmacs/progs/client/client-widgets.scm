@@ -667,62 +667,104 @@
       (and (consistent-with? (car l) (cdr l))
            (consistent? (cdr l)))))
 
-(tm-widget ((client-auto-sync-widget server) quit)
+(tm-widget ((client-auto-sync-modify-widget server lname) quit)
   (form "auto-sync"
     (let* ((l (client-auto-sync-list))
-           (dummy (begin (form-set "local-name" "")
-                         (form-set "remote-name" "")))
-	   (select-pair
-	    (lambda (local-name)
-	      (form-set "local-name" local-name)
-	      (form-set "remote-name"
-                        (url->system (assoc-ref l (system->url local-name))))
-	      (refresh-now "sync-pair"))))
+	   (rname (or (assoc-ref l lname) ""))
+	   (dummy (begin (form-set "local-name" lname)
+			 (form-set "remote-name" rname))))
       (padded
-	(refreshable "sync-pair"
-	  (aligned
-	    (item (text "Local:")
-	      (dynamic (form-local-widget "auto-sync" "local-name"
-					  "Local file or directory"
-					  "Local:" "350px")))
-	    (item (text "Remote:")
-	      (dynamic (form-remote-widget server "auto-sync" "remote-name"
-					   "Remote file or directory"
-					   "Remote:" "350px")))))
+	(aligned
+	  (item (text "Local:")
+	    (dynamic (form-local-widget "auto-sync" "local-name"
+					"Local file or directory"
+					"Local:" "350px")))
+	  (item (text "Remote:")
+	    (dynamic (form-remote-widget server "auto-sync" "remote-name"
+					 "Remote file or directory"
+					 "Remote:" "350px"))))
 	======
-        (refreshable "sync-list"
-          (resize "500px" "300px"
-            (choice (select-pair answer)
-                    (sort (map url->system (map car l)) string<=?)
-                    "")))
-	======
+	(bottom-buttons
+	  >>
+	  ("Cancel" (quit #f))
+	  // //
+	  ("Ok"
+	   (let* ((lname* (form-ref "local-name"))
+		  (rname* (form-ref "remote-name"))
+		  (new-l (assoc-set! (list-copy (assoc-remove! l lname))
+				     lname* rname*)))
+	     (if (and (consistent? (map system->url (map car new-l)))
+		      (consistent? (map system->url (map cdr new-l))))
+	       (begin
+		 (client-auto-sync-remove lname)
+		 (client-auto-sync-add lname* rname*)
+		 (quit lname*))
+	       (show-message
+		"Synchronized files and directories should be disjoint"
+		"Synchronize file or directory")))))))))
+
+(tm-define (client-auto-sync-modify server lname quit)
+  (dialogue-window (client-auto-sync-modify-widget server lname) quit
+		   "Synchronize file or directory"))
+
+(tm-widget (client-auto-sync-files-widget server)
+  (let* ((selected #f)
+	 (select
+	  (lambda (which)
+	    (let* ((refresh? (and (not selected) (!= selected which)))
+		   (change? (or (not selected) (== selected which))))
+	      (set! selected (and (!= selected which) which))
+	      (when refresh? (refresh-now "sync-file-pairs"))
+	      (when change? (refresh-now "sync-file-buttons"))))))
+    (padded
+      (refreshable "sync-file-pairs"
+	(for (p (client-auto-sync-list))
+	  (let* ((lname (car p))
+		 (rname (cdr p)))
+	    (aligned
+	      (item (toggle (select lname) (== selected lname))
+		(hlist // // (text lname) >>))
+	      (item (text "")
+		(hlist // // (text rname) >>))))))
+      ======
+      (refreshable "sync-file-buttons"
 	(hlist
-          ((icon "tm_add_2.xpm")
-           (let* ((local-name (system->url (form-ref "local-name")))
-                  (remote-name (system->url (form-ref "remote-name"))))
-             (when (and (or (url-exists? local-name)
-                            (url-exists? (url-head local-name)))
-                        (remote-file-name remote-name))
-               (with new-l (assoc-set! (list-copy l) local-name remote-name)
-                 (when (and (consistent? (map car new-l))
-                            (consistent? (map cdr new-l)))
-                   (set! l new-l)
-                   (client-auto-sync-add local-name remote-name)
-                   (refresh-now "sync-list"))))))
-          ((icon "tm_close_tool.xpm")
-           (with local-name (system->url (form-ref "local-name"))
-               (with new-l (assoc-remove! (list-copy l) local-name)
-                 (set! l new-l)
-                 (client-auto-sync-remove local-name)
-                 (refresh-now "sync-list"))))
-          >>
-          (explicit-buttons
-            ("Synchronize" (client-auto-sync server))))))))
+	  (explicit-buttons
+	    (if (not selected)
+		("Add"
+		 (client-auto-sync-modify server ""
+		   (lambda (new-lname)
+		     (refresh-now "sync-file-pairs")))))
+	    (if selected
+		("Edit"
+		 (client-auto-sync-modify server selected
+		   (lambda (new-lname)
+		     (when new-lname (set! selected new-lname))
+		     (refresh-now "sync-file-pairs"))))
+		// //
+		("Remove"
+                 (client-auto-sync-remove selected)
+                 (refresh-now "sync-file-pairs")))
+	    >>))))))
+
+(tm-widget ((client-auto-sync-widget server) quit)
+  (form "auto-sync"
+    (padded
+      (tabs
+	(tab (text "Data")
+	  (dynamic (client-auto-sync-files-widget server)))
+	(tab (text "Files")
+	  (dynamic (client-auto-sync-files-widget server))))
+      ======
+      (hlist
+	>>
+	(explicit-buttons
+	  ("Synchronize" (client-auto-sync server)))))))
 
 (tm-define (remote-interactive-sync server)
   (:interactive #t)
   (dialogue-window (client-auto-sync-widget server) noop
-		   "Synchronize files and directories"))
+		   "Synchronize with remote server"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Upload and download widgets
