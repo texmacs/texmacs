@@ -47,7 +47,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (url-subtract u base)
-  (if (== u base)
+  (if (== (url->url u) (url->url base))
       (string->url ".")
       (url-delta (url-append base "dummy") u)))
 
@@ -62,10 +62,12 @@
          (server (client-find-server server-name))
          (local-l (client-sync-list local-base))
          (t (make-ahash-table)))
+    ;;(for (x local-l)
+    ;;  (display* "Got local " x "\n"))
     (client-remote-eval server `(remote-sync-list ,rbase)
       (lambda (remote-l)
         ;;(for (x remote-l)
-	;;(display* "Got " x "\n"))
+	;;  (display* "Got remote " x "\n"))
         (for (local-e local-l)
           (with (dir? name) local-e
             (with d (url->string (url-subtract name local-base))
@@ -80,7 +82,7 @@
                   (ahash-set! t d (list dir? (cadr prev) id))))))
         (with l (sort (ahash-table->list t) first-string-leq?)
           ;;(for (x l)
-	  ;;(display* "Intermediate: " x "\n"))
+	  ;;  (display* "Intermediate: " x "\n"))
           (cont l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

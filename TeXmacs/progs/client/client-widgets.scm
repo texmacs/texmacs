@@ -732,8 +732,8 @@
 	      (item (toggle (select lname) (== selected lname))
 		(hlist // // (text lname) >>))
 	      (item (text "")
-		(hlist // // (text rname) >>))))))
-      ======
+		(hlist // // (text rname) >>))))
+	  ======))
       (refreshable "sync-file-buttons"
 	(hlist
 	  (explicit-buttons
