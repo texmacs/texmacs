@@ -188,7 +188,7 @@
     (set! db-forced-kinds? #t)))
 
 (tm-define (db-change-list uid kind t)
-  (display* "Get changes " current-database ", " uid ", " kind ", " t "\n")
+  ;;(display* "Get changes " current-database ", " uid ", " kind ", " t "\n")
   (when (number? t) (set! t (number->string t)))
   (db-force-kinds)
   (let* ((types (or (smart-ref db-kind-table kind) #t))
@@ -208,5 +208,5 @@
                         (with-time :now
                           (db-get-entry id))))
         (with r (map get ids)
-          (display* "r= " r "\n")
+          ;;(display* "r= " r "\n")
           r)))))

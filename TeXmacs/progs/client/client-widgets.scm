@@ -602,12 +602,12 @@
   (client-auto-sync-status (client-auto-sync-list)
     ;; TODO: filter on server
     (lambda (l)
-      (for (x l)
-        (display* "Todo: " x "\n"))
+      ;;(for (x l)
+      ;;  (display* "Todo: " x "\n"))
       (db-client-sync-status server
         (lambda (dbl ltime rtime)
-          (for (x dbl)
-            (display* "Todo: " x "\n"))
+          ;;(for (x dbl)
+          ;;  (display* "Todo: " x "\n"))
           (open-sync-widget server l dbl ltime rtime))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

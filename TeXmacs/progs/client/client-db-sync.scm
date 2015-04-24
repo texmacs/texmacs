@@ -221,19 +221,19 @@
     (with (ltime rtime) timep
       (with local-p (local-db-changes kinds ltime)
         (with (local-l ltime*) local-p
-          (for (ll local-l)
-            (for (x ll)
-              (display* "Local: " x "\n")))
+          ;;(for (ll local-l)
+          ;;  (for (x ll)
+          ;;    (display* "Local: " x "\n")))
           (client-remote-eval server `(remote-db-changes ,kinds ,rtime)
             (lambda (remote-p)
               (with (remote-l rtime*) remote-p
-                (for (rl remote-l)
-                  (for (x rl)
-                    (display* "Remote: " x "\n")))
+                ;;(for (rl remote-l)
+                ;;  (for (x rl)
+                ;;    (display* "Remote: " x "\n")))
                 (with status-l (append-map db-change-status
                                            local-l remote-l kinds)
-                  (for (x status-l)
-                    (display* "Status: " x "\n"))
+                  ;;(for (x status-l)
+                  ;;  (display* "Status: " x "\n"))
                   (when (and (null? status-l)
                              (nnull? (apply append (append local-l remote-l))))
                     (db-dub-in-sync server ltime* rtime*))
