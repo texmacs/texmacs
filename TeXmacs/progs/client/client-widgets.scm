@@ -599,7 +599,7 @@
               (cont (append r1 r2))))))))
 
 (tm-define (client-auto-sync server)
-  (client-auto-sync-status (client-auto-sync-list)
+  (client-auto-sync-status (client-auto-sync-list server)
     ;; TODO: filter on server
     (lambda (l)
       ;;(for (x l)
@@ -658,10 +658,10 @@
 
 (tm-widget (client-auto-sync-data-widget server)
   (padded
-    (hlist
-      (toggle (db-sync-kind server "bib" answer)
-	      (db-sync-kind? server "bib"))
-      // // (text "Synchronize bibliographic references") >>)))
+    (aligned
+      (item (toggle (db-sync-kind server "bib" answer)
+                    (db-sync-kind? server "bib"))
+        (hlist // // (text "Synchronize bibliographic references") >>)))))
 
 (define (consistent-with? x l)
   (or (null? l)
@@ -676,7 +676,7 @@
 
 (tm-widget ((client-auto-sync-modify-widget server lname) quit)
   (form "auto-sync"
-    (let* ((l (client-auto-sync-list))
+    (let* ((l (client-auto-sync-list server))
 	   (rname (or (assoc-ref l lname) ""))
 	   (dummy (begin (form-set "local-name" lname)
 			 (form-set "remote-name" rname))))
@@ -703,8 +703,8 @@
 	     (if (and (consistent? (map system->url (map car new-l)))
 		      (consistent? (map system->url (map cdr new-l))))
 	       (begin
-		 (client-auto-sync-remove lname)
-		 (client-auto-sync-add lname* rname*)
+		 (client-auto-sync-remove server lname)
+		 (client-auto-sync-add server lname* rname*)
 		 (quit lname*))
 	       (show-message
 		"Synchronized files and directories should be disjoint"
@@ -718,41 +718,35 @@
   (let* ((selected #f)
 	 (select
 	  (lambda (which)
-	    (let* ((refresh? (and (not selected) (!= selected which)))
-		   (change? (or (not selected) (== selected which))))
-	      (set! selected (and (!= selected which) which))
-	      (when refresh? (refresh-now "sync-file-pairs"))
-	      (when change? (refresh-now "sync-file-buttons"))))))
+            (set! selected (and (!= selected which) which))
+            (refresh-now "sync-file-buttons"))))
     (padded
       (refreshable "sync-file-pairs"
-	(for (p (client-auto-sync-list))
-	  (let* ((lname (car p))
-		 (rname (cdr p)))
-	    (aligned
-	      (item (toggle (select lname) (== selected lname))
-		(hlist // // (text lname) >>))
-	      (item (text "")
-		(hlist // // (text rname) >>))))
-	  ======))
+        (resize "450px" "250px"
+          (scrollable
+            (choice (select answer)
+                    (map car (client-auto-sync-list server))
+                    ""))))
+      ======
       (refreshable "sync-file-buttons"
 	(hlist
 	  (explicit-buttons
-	    (if (not selected)
-		("Add"
-		 (client-auto-sync-modify server ""
-		   (lambda (new-lname)
-		     (refresh-now "sync-file-pairs")))))
-	    (if selected
-		("Edit"
-		 (client-auto-sync-modify server selected
-		   (lambda (new-lname)
-		     (when new-lname (set! selected new-lname))
-		     (refresh-now "sync-file-pairs"))))
-		// //
-		("Remove"
-                 (client-auto-sync-remove selected)
-                 (refresh-now "sync-file-pairs")))
-	    >>))))))
+            ("Add"
+             (client-auto-sync-modify server ""
+	       (lambda (new-lname)
+                 (refresh-now "sync-file-pairs"))))
+            (when selected
+              // //
+              ("Edit"
+               (client-auto-sync-modify server selected
+	         (lambda (new-lname)
+                   (when new-lname (set! selected new-lname))
+                   (refresh-now "sync-file-pairs"))))
+              // //
+              ("Remove"
+               (client-auto-sync-remove server selected)
+               (refresh-now "sync-file-pairs")))
+            >>))))))
 
 (tm-widget ((client-auto-sync-widget server) quit)
   (form "auto-sync"
