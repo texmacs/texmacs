@@ -1,3 +1,4 @@
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : win-security.scm
@@ -15,69 +16,46 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Error handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define os-security-error-widget-cmd "")
-(define os-security-error-widget-out "")
-(define os-security-error-widget-err "")
-
-(tm-widget (os-security-error-widget cmd)
-  (resize ("400px" "800px" "800px") ("400px" "400px" "400px")
-  (centered (bold (text "Input command")))  
-  (scrollable
-    (for (x (string-decompose os-security-error-widget-cmd "\n")) (text x)))
-  ===
-  (centered (bold (text "Standard Output")))
-  (scrollable
-    (for (x (string-decompose os-security-error-widget-out "\n")) (text x)))
-  ===
-  (centered (bold (text "Error output")))
-  (scrollable
-    (for (x (string-decompose os-security-error-widget-err "\n")) (text x)))
-  ===
-  (bottom-buttons >> ("Ok" (cmd)))))
 
 (define (os-security-error cmd out err)
-  (set! os-security-error-widget-cmd (string-recompose cmd " "))
-  (set! os-security-error-widget-out (utf8->cork out))
-  (set! os-security-error-widget-err (utf8->cork err))
-  (dialogue-window os-security-error-widget noop
-		   "Windows security command failed")
-  #f)
-;; WAllet command name
+  (report-system-error "Windows security command failed" cmd out err))
 
-  (define walletcmd (url-concretize "$TEXMACS_PATH\\bin\\winwallet.exe"))
+;; WAllet command name
+(define wallet-cmd (url-concretize "$TEXMACS_PATH\\bin\\winwallet.exe"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Add generic password
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (os-security-add-generic-password account service password)
-  (with ret (evaluate-system (list walletcmd "ADD" account service)
-                               '(0) (list password) '(1 2))
-    (string= (car ret) "0")))
+  (with ret (evaluate-system (list wallet-cmd "ADD" account service)
+			     '(0) (list password) '(1 2))
+    (== (car ret) "0")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find generic password
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-
 (tm-define (os-security-find-generic-password account service)
-  (with ret (evaluate-system (list walletcmd  "GET" account service) '(0) (list "") '(1 2))
-    (if (string<> (car ret) "0")
-      (os-security-error (list walletcmd "GET"  account service) (cadr ret) (caddr ret))
-      (car (string-decompose (cadr ret) "\n")))))
+  (with ret (evaluate-system (list wallet-cmd "GET" account service)
+			     '(0) (list "") '(1 2))
+    (if (!= (car ret) "0")
+	(os-security-error (list wallet-cmd "GET" account service)
+			   (cadr ret) (caddr ret))
+	(car (string-decompose (cadr ret) "\n")))))
 
 (tm-define (os-security-quiet-find-generic-password account service)
-  (with ret (evaluate-system (list walletcmd "GET" account service) '(0) (list "")  '(1 2))
-    (if (string<> (car ret) "0")
-      #f
-      (car (string-decompose (cadr ret) "\n")))))
+  (with ret (evaluate-system (list wallet-cmd "GET" account service)
+			     '(0) (list "")  '(1 2))
+    (and (== (car ret) "0")
+	 (car (string-decompose (cadr ret) "\n")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delete generic password
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (os-security-delete-generic-password account service)
-  (with ret (evaluate-system (list walletcmd "RM" account service) '(0) (list "") '(1 2))
-    (if (string<> (car ret) "0")
-      (os-security-error (list cmd) (cadr ret) (caddr ret))
-      #t)))
+  (with ret (evaluate-system (list wallet-cmd "RM" account service)
+			     '(0) (list "") '(1 2))
+    (or (== (car ret) "0")
+	(os-security-error (list cmd) (cadr ret) (caddr ret)))))
