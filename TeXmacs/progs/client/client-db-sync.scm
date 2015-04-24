@@ -16,8 +16,33 @@
         (database db-convert)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Information about last synchronization
+;; Information about last synchronization and auto-sync kinds
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-sync-kinds server)
+  (list-filter (list "bib")
+	       (cut db-sync-kind? server <>)))
+
+(tm-define (db-sync-kind server kind on?)
+  (with-database (user-database "sync")
+    (let* ((server-name (client-find-server-name server))
+           (ids (db-search `(("type" "db-sync-kind")
+                             ("server" ,server-name)
+			     ("kind" ,kind))))
+           (id (if (nnull? ids) (car ids) (db-create-id))))
+      (db-set-entry id `(("type" "db-sync-kind")
+                         ("server" ,server-name)
+                         ("kind" ,kind)
+                         ("enabled" ,(if on? "yes" "no")))))))
+
+(tm-define (db-sync-kind? server kind)
+  (with-database (user-database "sync")
+    (let* ((server-name (client-find-server-name server))
+           (ids (db-search `(("type" "db-sync-kind")
+                             ("server" ,server-name)
+			     ("kind" ,kind)))))
+      (or (null? ids)
+	  (!= (db-get-field-first (car ids) "enabled" "yes") "no")))))
 
 (define (db-last-sync server)
   (with-database (user-database "sync")
@@ -182,9 +207,6 @@
 ;; High level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (db-sync-kinds)
-  (list "bib"))
-
 (define (local-db-changes kinds t)
   ;;(display* "local-db-changes " kinds ", " t "\n")
   (with l (map (lambda (kind)
@@ -194,7 +216,7 @@
     (list l (current-time))))
 
 (tm-define (db-client-sync-status server cont)
-  (let* ((kinds (db-sync-kinds))
+  (let* ((kinds (db-sync-kinds server))
          (timep (db-last-sync server)))
     (with (ltime rtime) timep
       (with local-p (local-db-changes kinds ltime)
@@ -218,7 +240,7 @@
                   (cont status-l ltime* rtime*))))))))))
 
 (tm-define (db-client-sync-proceed server l ltime rtime cont)
-  (with kinds (db-sync-kinds)
+  (with kinds (db-sync-kinds server)
     (if (nnull? (apply append (car (local-db-changes kinds ltime))))
         (cont #f)
         (client-remote-eval server `(remote-db-sync ,l ,kinds ,rtime)

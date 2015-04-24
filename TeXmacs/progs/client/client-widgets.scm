@@ -656,6 +656,13 @@
 ;; Widget for selecting files to be synchronized
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-widget (client-auto-sync-data-widget server)
+  (padded
+    (hlist
+      (toggle (db-sync-kind server "bib" answer)
+	      (db-sync-kind? server "bib"))
+      // // (text "Synchronize bibliographic references") >>)))
+
 (define (consistent-with? x l)
   (or (null? l)
       (and (not (url-descends? x (car l)))
@@ -752,7 +759,7 @@
     (padded
       (tabs
 	(tab (text "Data")
-	  (dynamic (client-auto-sync-files-widget server)))
+	  (dynamic (client-auto-sync-data-widget server)))
 	(tab (text "Files")
 	  (dynamic (client-auto-sync-files-widget server))))
       ======
