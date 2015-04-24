@@ -351,11 +351,12 @@
     (set-message "Exported bibliographic references" "export bibliography")))
 
 (tm-define (notify-set-attachment name key val)
-  (when (supports-db?)
-    (when (string-ends? key "-bibliography")
-      (with doc (tm->stree val)
-        (with-database (bib-database)
-	  (bib-save doc)))))
+  (when (get-boolean-preference "auto bib import")
+    (when (supports-db?)
+      (when (string-ends? key "-bibliography")
+        (with doc (tm->stree val)
+          (with-database (bib-database)
+            (bib-save doc))))))
   (former name key val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

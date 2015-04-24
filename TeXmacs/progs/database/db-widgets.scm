@@ -19,10 +19,16 @@
 ;; Preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preferences
+  ("auto bib import" "on" ignore))
+
 (tm-widget (db-preferences-widget)
-  ===
-  (text "Not yet implemented")
-  ===)
+  (padded
+      (aligned
+        (meti (with s "Automatically import bibliographies when opening files"
+                (hlist // // (text s) >>))
+          (toggle (set-boolean-preference "auto bib import" answer)
+                  (get-boolean-preference "auto bib import"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pretty printing with cache
