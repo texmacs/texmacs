@@ -29,13 +29,15 @@
     (if (db-same-entries? new-l old-l) id
         (let* ((new-h (cons id (or (assoc-ref new-l "newer") (list))))
                (old-h (or (assoc-ref old-l "newer") (list)))
-               (app-h (list-union new-h old-h)))
+               (app-h (list-remove-duplicates (append new-h old-h))))
           (set! new-l (assoc-set! new-l "newer" app-h))
           (when db-time-stamp?
             (set! new-l (assoc-remove! new-l "date")))
           (with new-id (if (and (nnull? opt-new-id)
                                 (not (db-entry-exists? (car opt-new-id))))
-                           (car opt-new-id)
+                           (begin
+                             (db-set-entry (car opt-new-id) new-l)
+                             (car opt-new-id))
                            (db-create-entry new-l))
             (db-remove-entry id)
             new-id)))))
@@ -60,7 +62,7 @@
   (with h (db-get-field nid "newer")
     (set! ids (list-difference ids h))
     (when (nnull? ids)
-      (db-set-field nid "newer" (append ids h)))))
+      (db-set-field nid "newer" (list-remove-duplicates (append ids h))))))
 
 (define (db-declare-superseded id)
   (when (nnull? (db-get-entry id))
@@ -109,7 +111,8 @@
                     (when db-duplicate-warning?
                       (display* "Kept existing version of entry " name "\n")))
                    ((and (== modus "manual") (!= xmodus "manual"))
-                    (set! l (assoc-set! l "newer" (cons xid his)))
+                    (with newer (list-remove-duplicates (cons xid his))
+                      (set! l (assoc-set! l "newer" newer)))
                     (db-set-entry id l)
                     (db-declare-superseded xid)
                     (when db-duplicate-warning?
@@ -124,7 +127,8 @@
                     (when db-duplicate-warning?
                       (display* "Kept existing version of entry " name "\n")))
                    (else
-                     (set! l (assoc-set! l "newer" (cons xid his)))
+                     (with newer (list-remove-duplicates (cons xid his))
+                       (set! l (assoc-set! l "newer" newer)))
                      (db-set-entry id l)
                      (db-declare-superseded xid)
                      (when db-duplicate-warning?
