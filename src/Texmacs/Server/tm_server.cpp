@@ -21,6 +21,7 @@
 #include "tm_link.hpp"
 #include "socket_notifier.hpp"
 #include "new_style.hpp"
+#include "Database/database.hpp"
 
 server* the_server= NULL;
 bool texmacs_started= false;
@@ -163,6 +164,7 @@ tm_server_rep::interpose_handler () {
   }
 
   windows_refresh ();
+  sync_databases ();
 }
 
 void
