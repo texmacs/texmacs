@@ -214,9 +214,20 @@
              (tail (bib-retrieve-several (cdr names))))
         (if head (cons head tail) tail))))
 
+(define (bib-retrieve-attached names)
+  (let* ((l (bib-attached-entries))
+         (t (make-ahash-table))
+         (get (lambda (name)
+                (and-with val (ahash-ref t name)
+                  (cons name val)))))
+    (for (e l) (ahash-set! t (tm-ref e 2) e))
+    (list-filter (map get names) identity)))
+
 (define (bib-retrieve-entries-from-one names db)
-  (with-database db
-    (bib-retrieve-several names)))
+  (if (== db :attached)
+      (bib-retrieve-attached names)
+      (with-database db
+        (bib-retrieve-several names))))
 
 (define (bib-retrieve-entries-from names dbs)
   (if (null? dbs) (list)
@@ -227,6 +238,7 @@
 
 (define (bib-get-db bib-file names)
   (cond ((== bib-file :default) (bib-database))
+        ((== bib-file :attached) :attached)
         ((== (url-suffix bib-file) "tmdb") (url->url bib-file))
         (else (bib-cache-database bib-file names))))
 
@@ -256,12 +268,13 @@
   (set! names (list-remove-duplicates names))
   (if (in? style (list "tm-abbrv" "tm-acm" "tm-alpha" "tm-elsart-num"
                        "tm-ieeetr" "tm-plain" "tm-siam" "tm-unsrt"))
-      (let* ((all-files (rcons bib-files :default))
+      (let* ((all-files `(,@bib-files :default :attached))
              (l (apply bib-retrieve-entries (cons names all-files)))
              (bl (map db->bib (map cdr l)))
              (doc `(document ,@bl)))
         (bib-generate prefix (string-drop style 3) doc))
-      (receive (b1 b2) (list-partition (rcons bib-files :default) bib-file?)
+      (receive (b1 b2) (list-partition `(,@bib-files :default :attached)
+                                       bib-file?)
         (let* ((l1 (apply bib-retrieve-entries (cons names b1)))
                (names2 (list-difference names (map car l1)))
                (l2 (apply bib-retrieve-entries (cons names2 b2)))
@@ -332,7 +345,7 @@
       (set! names (tm-children (tm->stree names))))
     (when (and (list? names) (list-and (map string? names)))
       (set! names (list-remove-duplicates names))
-      (let* ((all-files (rcons bib-files :default))
+      (let* ((all-files `(,@bib-files :default :attached))
              (l (apply bib-retrieve-entries (cons names all-files)))
              (doc `(document ,@(map cdr l))))
         (set-attachment (string-append prefix "-bibliography") doc)))))
@@ -341,10 +354,13 @@
   (with l (list-attachments)
     (list-filter l (cut string-ends? <> "-bibliography"))))
 
-(tm-define (bib-export-attachments f)
+(define (bib-attached-entries)
   (let* ((l (bib-attachments))
-         (bibs (map tm->stree (map get-attachment l)))
-         (b (append-map tm-children bibs))
+         (bibs (map tm->stree (map get-attachment l))))
+    (append-map tm-children bibs)))
+
+(tm-define (bib-export-attachments f)
+  (let* ((b (bib-attached-entries))
          (doc `(document ,@(map db->bib b)))
          (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
     (string-save bibtex-doc f)
