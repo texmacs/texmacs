@@ -106,6 +106,7 @@
   (append l1 (list-filter l2 (lambda (x) (not (assoc-ref l1 (car x)))))))
 
 (tm-define (db-set-entry id l)
+  ;;(display* "*** set " id " := " l ", " (db-get-db) "\n")
   (let* ((old-l (db-get-entry id))
          (new-l (assoc-add db-extra-fields l)))
     (when (and db-time-stamp? (not (assoc-ref new-l "date")))
@@ -113,6 +114,7 @@
     (tmdb-set-entry (db-get-db) id new-l (db-get-time))))
 
 (tm-define (db-remove-entry id)
+  ;;(display* "*** remove " id ", " (db-get-db) "\n")
   (tmdb-remove-entry (db-get-db) id (db-get-time)))
 
 (tm-define (db-create-id)
@@ -147,6 +149,9 @@
 
 (tm-define (db-search-owner owner)
   (db-search (list (list "owner" owner))))
+
+(tm-define (db-inspect-history name)
+  (tmdb-inspect-history (db-get-db) name))
 
 (tm-define (index-get-completions prefix)
   (tmdb-get-completions (db-get-db) prefix))
