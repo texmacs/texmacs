@@ -30,8 +30,8 @@
                 (db-get-field-first (car ids) "remote-sync" "0"))))))
 
 (define (db-dub-in-sync server ltime rtime)
-  (display* "db-dub-in-sync " (client-find-server-name server)
-            ", " ltime ", " rtime "\n")
+  ;;(display* "db-dub-in-sync " (client-find-server-name server)
+  ;;          ", " ltime ", " rtime "\n")
   (with-database (user-database "sync")
     (let* ((server-name (client-find-server-name server))
            (ids (db-search `(("type" "db-sync")
@@ -89,8 +89,7 @@
                (ahash-set! status-t name
                            (list "download" kind remote-id remote-val)))
               ((and local-val remote-val (db-equivalent? local-val remote-val))
-               (ahash-set! status-t name
-                           (list "download" kind remote-id remote-val)))
+               (noop))
               (else
                (ahash-set! status-t name
                            (list "conflict" kind
@@ -131,7 +130,8 @@
            (with-database (user-database kind)
              (with-time :now
                (with ids (db-search `(("name" ,name)))
-                 (display* "Removing entries: " ids "\n")
+                 ;;(display* ">>> At " (current-time)
+                 ;;          ", remove " ids "\n")
                  (for-each db-remove-entry ids))))))
         ((== (cadr line) "download")
          (with (name cmd kind id val) line
@@ -140,14 +140,21 @@
            (with-database (user-database kind)
              (with-time :now
                (with ids (db-search `(("name" ,name)))
-                 (display* "Setting entry "
-                           (or (and (nnull? ids) (car ids)) "new")
-                           " (suggest " id ") to " val "\n")
                  (if (null? ids)
                      (if (db-entry-exists? id)
-                         (db-create-entry val)
-                         (db-set-entry id val))
-                     (db-update-entry (car ids) val id))))))))
+                         (begin
+                           ;;(display* ">>> At " (current-time)
+                           ;;          ", create " val "\n")
+                           (db-create-entry val))
+                         (begin
+                           ;;(display* ">>> At " (current-time)
+                           ;;          ", set " id " := " val "\n")
+                           (db-set-entry id val)))
+                     (begin
+                       ;;(display* ">>> At " (current-time)
+                       ;;          ", update " (car ids) " := " val
+                       ;;          ", suggest " id "\n")
+                       (db-update-entry (car ids) val id)))))))))
   #t)
 
 (define (db-local-sync l kinds ltime)
@@ -205,6 +212,9 @@
                                            local-l remote-l kinds)
                   (for (x status-l)
                     (display* "Status: " x "\n"))
+                  (when (and (null? status-l)
+                             (nnull? (apply append (append local-l remote-l))))
+                    (db-dub-in-sync server ltime* rtime*))
                   (cont status-l ltime* rtime*))))))))))
 
 (tm-define (db-client-sync-proceed server l ltime rtime cont)

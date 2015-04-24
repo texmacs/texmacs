@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-service (remote-db-changes kinds t)
-  (display* "remote-db-changes " kinds ", " t "\n")
+  ;;(display* "remote-db-changes " kinds ", " t "\n")
   (with uid (server-get-user envelope)
     (if (not uid) (server-error envelope "Error: not logged in")
         (with l (map (cut db-change-list uid <> t) kinds)
@@ -31,6 +31,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (db-remote-sync-one uid line)
+  ;;(display* "]]] Sync one " current-database
+  ;;          ", " db-time ", " db-current-user "\n")
   (cond ((== (cadr line) "remote-delete")
          (with (name cmd kind) line
            (with-time :now
@@ -39,7 +41,8 @@
                     (ids (db-search `(("name" ,name)
                                       ("type" ,@types)
                                       ("owner" ,uid)))))
-               (display* "Removing entries: " ids "\n")
+               ;;(display* "]]] At " (current-time)
+               ;;          ", remove " ids "\n")
                (for-each db-remove-entry ids)))))
         ((== (cadr line) "upload")
          (with (name cmd kind id val) line
@@ -53,19 +56,28 @@
                     (ids (db-search `(("name" ,name)
                                       ("type" ,@types)
                                       ("owner" ,uid)))))
-               (display* "current-user= " db-current-user "\n")
-               (display* "Setting entry "
-                         (or (and (nnull? ids) (car ids)) "new")
-                         " (suggest " id ") to " val "\n")
+               ;;(with-time :always
+               ;;  (display* "]]] Previous " ids ", "
+               ;;            (db-search `(("name" ,name))) "\n"))
                (if (null? ids)
                    (if (db-entry-exists? id)
-                       (db-create-entry val)
-                       (db-set-entry id val))
-                   (db-update-entry (car ids) val id)))))))
+                       (begin
+                         ;;(display* "]]] At " (current-time)
+                         ;;          ", create " val "\n")
+                         (db-create-entry val))
+                       (begin
+                         ;;(display* "]]] At " (current-time)
+                         ;;          ", set " id " := " val "\n")
+                         (db-set-entry id val)))
+                   (begin
+                     ;;(display* "]]] At " (current-time)
+                     ;;          ", update " (car ids) " := " val
+                     ;;          ", suggest " id "\n")
+                     (db-update-entry (car ids) val id))))))))
   #t)
 
 (tm-service (remote-db-sync l kinds rtime)
-  (display* "remote-db-sync " l ", " kinds ", " rtime "\n")
+  ;;(display* "remote-db-sync " l ", " kinds ", " rtime "\n")
   (with uid (server-get-user envelope)
     (if (not uid) (server-error envelope "Error: not logged in")
         (with changes (append-map (cut db-change-list uid <> rtime) kinds)
