@@ -88,6 +88,7 @@ private:
   hashmap<string,db_atoms> name_completions;
 
 public:
+  bool atom_exists (string s);
   db_atom as_atom (string s);
   string from_atom (db_atom a);
   db_atoms as_atoms (strings s);
@@ -146,6 +147,7 @@ public:
   db_atoms get_entry (db_atom id, db_time t);
   void remove_entry (db_atom id, db_time t);
   db_atoms query (tree qt, db_time t, int limit);
+  void inspect_history (db_atom name);
 
   friend void keep_history (url u, bool flag);
   friend void sync_databases ();
@@ -170,6 +172,7 @@ void set_entry (url u, string id, tree e, db_time t);
 tree get_entry (url u, string id, db_time t);
 void remove_entry (url u, string id, db_time t);
 strings query (url u, tree q, db_time t, int limit);
+void inspect_history (url u, string name);
 strings get_completions (url u, string s);
 strings get_name_completions (url u, string s);
 

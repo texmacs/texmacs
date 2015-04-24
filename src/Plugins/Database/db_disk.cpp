@@ -220,6 +220,8 @@ database_rep::purge () {
       }
       append_to (db_append, db_name);  // NOTE: critical atomic operation
       remove (db_append);
+      //cout << "Appended latest changes in " << db_append
+      //<< " to " << db_name << LF;
       loaded << pending;
       pending= "";
       start_pending= N(db);
@@ -240,6 +242,8 @@ database_rep::purge () {
         return;
       }
       move (replace, db_name);  // NOTE: critical atomic operation
+      //cout << "Replaced " << db_name
+      //<< " by latest changes in " << replace << LF;
       loaded << pending;
       pending= "";
       start_pending= N(db);

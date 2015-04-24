@@ -6719,6 +6719,21 @@ tmg_tmdb_query (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_tmdb_inspect_history (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-inspect-history");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-inspect-history");
+
+  url in1= tmscm_to_url (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  inspect_history (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_tmdb_get_completions (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "tmdb-get-completions");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmdb-get-completions");
@@ -9428,6 +9443,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tmdb-get-entry",  tmg_tmdb_get_entry, 3, 0, 0);
   tmscm_install_procedure ("tmdb-remove-entry",  tmg_tmdb_remove_entry, 3, 0, 0);
   tmscm_install_procedure ("tmdb-query",  tmg_tmdb_query, 4, 0, 0);
+  tmscm_install_procedure ("tmdb-inspect-history",  tmg_tmdb_inspect_history, 2, 0, 0);
   tmscm_install_procedure ("tmdb-get-completions",  tmg_tmdb_get_completions, 2, 0, 0);
   tmscm_install_procedure ("tmdb-get-name-completions",  tmg_tmdb_get_name_completions, 2, 0, 0);
   tmscm_install_procedure ("supports-sql?",  tmg_supports_sqlP, 0, 0, 0);

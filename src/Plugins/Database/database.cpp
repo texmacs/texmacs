@@ -88,6 +88,11 @@ database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
 * Atom management
 ******************************************************************************/
 
+bool
+database_rep::atom_exists (string s) {
+  return atom_encode->contains (s);
+}
+
 db_atom
 database_rep::as_atom (string s) {
   if (atom_encode->contains (s)) return atom_encode[s];
@@ -252,6 +257,17 @@ database_rep::remove_entry (db_atom id, db_time t) {
   }
 }
 
+void
+database_rep::inspect_history (db_atom name) {
+  db_line_nrs nrs= val_lines[name];
+  for (int i=0; i<N(nrs); i++) {
+    db_line& l= db[nrs[i]];
+    if (from_atom (l->attr) == "name")
+      cout << from_atom (l->id) << ", name, " << from_atom (l->val) << ", "
+           << ((long int) l->created) << ", " << ((long int) l->expires) << LF;
+  }
+}
+
 /******************************************************************************
 * User interface for basic operations
 ******************************************************************************/
@@ -339,6 +355,15 @@ query (url u, tree q, db_time t, int limit) {
   database db= get_database (u);
   db_atoms _ids= db->query (q, t, limit);
   return db->from_atoms (_ids);
+}
+
+void
+inspect_history (url u, string name) {
+  database db= get_database (u);
+  if (db->atom_exists (name)) {
+    db_atom _val= db->as_atom (name);
+    db->inspect_history (_val);
+  }
 }
 
 strings
