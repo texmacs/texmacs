@@ -20,7 +20,6 @@
 (define (os-security-error cmd out err)
   (report-system-error "Windows security command failed" cmd out err))
 
-;; WAllet command name
 (define wallet-cmd (url-concretize "$TEXMACS_PATH\\bin\\winwallet.exe"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
