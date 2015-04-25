@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <active*|<\src-title>
@@ -91,6 +91,10 @@
     </src-comment>
   </active*>
 
+  <assign|if-ref|<macro|lab|body|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>>>>
+
+  <assign|if-ref*|<macro|lab|body|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>|<greyed|<arg|body>>>>>
+
   <assign|simple-link|<macro|destination|<hlink|<with|font-family|tt|<arg|destination>>|<arg|destination>>>>
 
   <assign|hyper-link*|<macro|body|destination|<hlink|<arg|body>|<arg|destination>>>>
@@ -131,8 +135,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
-    <associate|par-par-sep|0fn>
     <associate|preamble|true>
     <associate|sfactor|3>
   </collection>
