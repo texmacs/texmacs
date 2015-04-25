@@ -56,7 +56,7 @@
 
     <item*|Reduce>Andrey Grozin.
 
-    <item*|Scilab>Serge Steer and Claude Gomez.
+    <item*|Scilab>François Poulain, Serge Steer and Claude Gomez.
 
     <item*|Shell>Joris van der Hoeven.
 
