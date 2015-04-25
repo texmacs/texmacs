@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.2>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Authors and maintainers of plugins for <TeXmacs>>
@@ -36,7 +36,7 @@
 
     <item*|Maple>Joris van der Hoeven.
 
-    <item*|Mathemagix>Joris van der Hoeven.
+    <item*|Mathemagix>Joris van der Hoeven and Grégoire Lecerf.
 
     <item*|Matlab>Michael Graffam.
 
@@ -79,7 +79,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>
