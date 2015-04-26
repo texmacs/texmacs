@@ -66,6 +66,6 @@ array<string> file_completions (url search, url dir);
 
 url grep (string what, url u);
 url search_file_in (url u, string name);
-url search_file_upwards (url u, string stop_at, string name);
+url search_file_upwards (url u, string name, array<string> stops);
 
 #endif // defined FILE_H

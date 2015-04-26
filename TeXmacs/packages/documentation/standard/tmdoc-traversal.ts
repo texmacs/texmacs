@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|english>>
 
@@ -123,19 +123,19 @@
   </macro>>
 
   <assign|branch|<\macro|body|destination>
-    <item><hlink|<arg|body>|<arg|destination>>
+    <item><hlink|<arg|body>|<tmdoc-file|<arg|destination>>>
   </macro>>
 
   <assign|extra-branch|<\macro|body|destination>
-    <item><hlink|<with|color|#806040|<arg|body>>|<arg|destination>>
+    <item><hlink|<with|color|#806040|<arg|body>>|<tmdoc-file|<arg|destination>>>
   </macro>>
 
   <assign|continue|<\macro|body|destination>
-    <item><hlink|<with|color|#806040|<arg|body>>|<arg|destination>>
+    <item><hlink|<with|color|#806040|<arg|body>>|<tmdoc-file|<arg|destination>>>
   </macro>>
 
   <assign|optional-branch|<\macro|body|destination>
-    <item><hlink|<with|color|#208080|<arg|body>>|<arg|destination>>
+    <item><hlink|<with|color|#208080|<arg|body>>|<tmdoc-file|<arg|destination>>>
   </macro>>
 
   <assign|tmdoc-include|<\macro|inclusion>
@@ -144,6 +144,3 @@
 
   \;
 </body>
-
-<initial|<\collection>
-</collection>>

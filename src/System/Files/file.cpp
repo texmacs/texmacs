@@ -892,12 +892,22 @@ search_file_in (url u, string name) {
   return url_none ();
 }
 
+bool
+find_stop (url u, array<string> stops) {
+  if (head (u) == u) return false;
+  for (int i=0; i<N(stops); i++)
+    if (as_string (tail (u)) == stops[i]) return true;
+  return find_stop (head (u), stops);
+}
+
 url
-search_file_upwards (url u, string stop_at, string name) {
+search_file_upwards (url u, string name, array<string> stops) {
   //cout << "Search upwards " << u << LF;
   url f= search_file_in (u, name);
   if (!is_none (f)) return f;
-  if (as_string (tail (u)) == stop_at) return url_none ();
   if (head (u) == u) return url_none ();
-  return search_file_upwards (head (u), stop_at, name);
+  if (!find_stop (head (u), stops)) return url_none ();
+  for (int i=0; i<N(stops); i++)
+    if (as_string (tail (u)) == stops[i]) return url_none ();
+  return search_file_upwards (head (u), name, stops);
 }

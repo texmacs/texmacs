@@ -544,6 +544,7 @@
   (system-2 system (void string url url))
   (system-url->string sys_concretize (string url))
   (url-grep grep (url string url))
+  (url-search-upwards search_file_upwards (url url string array_string))
 
   ;; Persistent data
   (persistent-set persistent_set (void url string string))

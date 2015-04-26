@@ -33,9 +33,21 @@
 ;; Main expansions routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmdoc-relative cur name)
+  (with rel (url-relative cur name)
+    (if (url-exists? rel) rel
+        (let* ((nname (string-append name "." (ext-language-suffix) ".tm"))
+               (nfile (url-search-upwards (url-head cur) nname
+                                          (list "doc" "web" "texmacs"))))
+          (if (not (url-none? nfile)) nfile
+              (let* ((ename (string-append name ".en.tm"))
+                     (efile (url-search-upwards (url-head cur) ename
+                                                (list "doc" "web" "texmacs"))))
+                (if (not (url-none? efile)) efile rel)))))))
+
 (define (tmdoc-branch x root cur level done)
   (let* ((name (caddr x))
-	 (rel-name (url-relative cur name)))
+	 (rel-name (tmdoc-relative cur name)))
     (tmdoc-expand root rel-name level done)))
 
 (define (tmdoc-substitute-sub l root cur)

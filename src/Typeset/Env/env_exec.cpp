@@ -1450,12 +1450,16 @@ edit_env_rep::exec_find_file (tree t) {
 
 tree
 edit_env_rep::exec_find_file_upwards (tree t) {
-  if (N(t) != 2) return tree (ERROR, "bad find file upwards");
+  if (N(t) < 1) return tree (ERROR, "bad find file upwards");
   tree name= exec (t[0]);
-  tree root= exec (t[1]);
-  if (!is_atomic (name) || !is_atomic (root))
-    return tree (ERROR, "bad find file upwards");
-  url u= search_file_upwards (base_file_name, root->label, name->label);
+  array<string> roots;
+  for (int i=1; i<N(t); i++) {
+    tree root= exec (t[i]);
+    if (!is_atomic (name) || !is_atomic (root))
+      return tree (ERROR, "bad find file upwards");
+    roots << root->label;
+  }
+  url u= search_file_upwards (base_file_name, name->label, roots);
   if (!is_none (u)) {
     if (is_rooted (u, "default")) u= reroot (u, "file");
     return as_string (u);
