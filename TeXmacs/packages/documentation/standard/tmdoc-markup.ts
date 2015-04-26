@@ -91,9 +91,9 @@
     </src-comment>
   </active*>
 
-  <assign|if-ref|<macro|lab|body|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>>>>
+  <assign|if-ref|<macro|lab|body|<with|warn-missing|false|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>>>>>
 
-  <assign|if-ref*|<macro|lab|body|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>|<greyed|<arg|body>>>>>
+  <assign|if-ref*|<macro|lab|body|<with|warn-missing|false|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>|<greyed|<arg|body>>>>>>
 
   <assign|simple-link|<macro|destination|<hlink|<with|font-family|tt|<arg|destination>>|<arg|destination>>>>
 

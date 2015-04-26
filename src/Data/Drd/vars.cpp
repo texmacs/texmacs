@@ -28,6 +28,7 @@ string TABULAR ("tabular");
 string THE_LABEL ("the-label");
 string THE_TAGS ("the-tags");
 string THE_MODULES ("the-modules");
+string WARN_MISSING ("warn-missing");
 string GLOBAL_TITLE ("global-title");
 string GLOBAL_AUTHOR ("global-author");
 string GLOBAL_SUBJECT ("global-subject");
