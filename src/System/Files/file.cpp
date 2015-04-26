@@ -849,8 +849,22 @@ hashmap<tree,int> dir_stamp (0);
 hashmap<tree,bool> dir_is_dir (false);
 hashmap<tree,array<string> > dir_contents (no_strings);
 
+array<string>
+var_read_directory (url u) {
+  array<string> d;
+  if (is_rooted (u, "default") || is_rooted (u, "file")) {
+    bool error_flag= false;
+    array<string> a= read_directory (u, error_flag);
+    for (int i=0; i<N(a); i++)
+      if (!starts (a[i], "."))
+        d << a[i];
+  }
+  return d;
+}
+
 url
 search_file_in (url u, string name) {
+  //cout << "Search in " << u << LF;
   if (!dir_stamp->contains (u->t) ||
       texmacs_time () - dir_stamp [u->t] > 10000) {
     dir_is_dir->reset (u->t);
@@ -866,12 +880,7 @@ search_file_in (url u, string name) {
   }
 
   if (!dir_contents->contains (u->t)) {
-    bool error_flag= false;
-    array<string> a= read_directory (u, error_flag);
-    array<string> d;
-    for (int i=0; i<N(a); i++)
-      if (!starts (a[i], "."))
-        d << a[i];
+    array<string> d= var_read_directory (u);
     dir_contents (u->t)= d;
   }
 
@@ -885,8 +894,10 @@ search_file_in (url u, string name) {
 
 url
 search_file_upwards (url u, string stop_at, string name) {
+  //cout << "Search upwards " << u << LF;
   url f= search_file_in (u, name);
   if (!is_none (f)) return f;
   if (as_string (tail (u)) == stop_at) return url_none ();
+  if (head (u) == u) return url_none ();
   return search_file_upwards (head (u), stop_at, name);
 }

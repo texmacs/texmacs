@@ -19,12 +19,14 @@
 (define-group variant-tag
   (tmdoc-traversal-tag) (tmdoc-menu-tag)
   (tmdoc-annotation-tag) (tmdoc-style-annotation-tag)
-  (tmdoc-small-box-tag) (tmdoc-big-box-tag))
+  (tmdoc-small-box-tag) (tmdoc-big-box-tag)
+  (tmdoc-if-ref-tag) (tmdoc-link-tag))
 
 (define-group similar-tag
   (tmdoc-traversal-tag) (tmdoc-menu-tag)
   (tmdoc-annotation-tag) (tmdoc-style-annotation-tag)
-  (tmdoc-small-box-tag) (tmdoc-big-box-tag))
+  (tmdoc-small-box-tag) (tmdoc-big-box-tag)
+  (tmdoc-if-ref-tag) (tmdoc-link-tag))
 
 ;; TeXmacs documentation groups
 
@@ -45,3 +47,9 @@
 
 (define-group tmdoc-big-box-tag
   big-focus big-envbox)
+
+(define-group tmdoc-if-ref-tag
+  tmdoc-if-ref tmdoc-if-ref*)
+
+(define-group tmdoc-link-tag
+  tmdoc-link tmdoc-link*)
