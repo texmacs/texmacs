@@ -1461,7 +1461,7 @@ edit_env_rep::exec_find_file_upwards (tree t) {
   }
   url u= search_file_upwards (base_file_name, name->label, roots);
   if (!is_none (u)) {
-    if (is_rooted (u, "default")) u= reroot (u, "file");
+    //if (is_rooted (u, "default")) u= reroot (u, "file");
     return as_string (u);
   }
   return "false";

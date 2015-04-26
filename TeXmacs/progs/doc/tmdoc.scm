@@ -35,7 +35,7 @@
 
 (define (tmdoc-relative cur name)
   (with rel (url-relative cur name)
-    (if (url-exists? rel) rel
+    (if (url-regular? rel) rel
         (let* ((nname (string-append name "." (ext-language-suffix) ".tm"))
                (nfile (url-search-upwards (url-head cur) nname
                                           (list "doc" "web" "texmacs"))))
