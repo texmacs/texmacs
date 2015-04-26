@@ -262,6 +262,7 @@ private:
   tree exec_change_case (tree t, tree nc, bool exec_flag, bool first);
   tree exec_change_case (tree t);
   tree exec_find_file (tree t);
+  tree exec_find_file_upwards (tree t);
   tree exec_is_tuple (tree t);
   tree exec_lookup (tree t);
   tree exec_equal (tree t);

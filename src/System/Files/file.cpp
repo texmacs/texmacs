@@ -839,3 +839,54 @@ search_score (url u, array<string> a) {
   }
   return score;
 }
+
+/******************************************************************************
+* Searching files in a directory tree with caching
+******************************************************************************/
+
+array<string> no_strings;
+hashmap<tree,int> dir_stamp (0);
+hashmap<tree,bool> dir_is_dir (false);
+hashmap<tree,array<string> > dir_contents (no_strings);
+
+url
+search_file_in (url u, string name) {
+  if (!dir_stamp->contains (u->t) ||
+      texmacs_time () - dir_stamp [u->t] > 10000) {
+    dir_is_dir->reset (u->t);
+    dir_contents->reset (u->t);
+  }
+  dir_stamp (u->t)= texmacs_time ();
+
+  if (!dir_is_dir->contains (u->t))
+    dir_is_dir (u->t)= is_directory (u);
+  if (!dir_is_dir [u->t]) {
+    if (as_string (tail (u)) == name) return u;
+    return url_none ();
+  }
+
+  if (!dir_contents->contains (u->t)) {
+    bool error_flag= false;
+    array<string> a= read_directory (u, error_flag);
+    array<string> d;
+    for (int i=0; i<N(a); i++)
+      if (!starts (a[i], "."))
+        d << a[i];
+    dir_contents (u->t)= d;
+  }
+
+  array<string> d= dir_contents [u->t];
+  for (int i=0; i<N(d); i++) {
+    url f= search_file_in (u * d[i], name);
+    if (!is_none (f)) return f;
+  }
+  return url_none ();
+}
+
+url
+search_file_upwards (url u, string stop_at, string name) {
+  url f= search_file_in (u, name);
+  if (!is_none (f)) return f;
+  if (as_string (tail (u)) == stop_at) return url_none ();
+  return search_file_upwards (head (u), stop_at, name);
+}

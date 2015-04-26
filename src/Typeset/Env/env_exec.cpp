@@ -319,6 +319,8 @@ edit_env_rep::exec (tree t) {
     return exec_change_case (t);
   case FIND_FILE:
     return exec_find_file (t);
+  case FIND_FILE_UPWARDS:
+    return exec_find_file_upwards (t);
   case IS_TUPLE:
     return exec_is_tuple (t);
   case LOOK_UP:
@@ -1452,6 +1454,21 @@ edit_env_rep::exec_find_file (tree t) {
 }
 
 tree
+edit_env_rep::exec_find_file_upwards (tree t) {
+  if (N(t) != 2) return tree (ERROR, "bad find file upwards");
+  tree name= exec (t[0]);
+  tree root= exec (t[1]);
+  if (!is_atomic (name) || !is_atomic (root))
+    return tree (ERROR, "bad find file upwards");
+  url u= search_file_upwards (base_file_name, root->label, name->label);
+  if (!is_none (u)) {
+    if (is_rooted (u, "default")) u= reroot (u, "file");
+    return as_string (u);
+  }
+  return "false";
+}
+
+tree
 edit_env_rep::exec_is_tuple (tree t) {
   if (N(t)!=1) return tree (ERROR, "bad tuple query");
   return as_string_bool(is_tuple (exec (t[0])));
@@ -2109,6 +2126,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case _DATE:
   case TRANSLATE:
   case FIND_FILE:
+  case FIND_FILE_UPWARDS:
   case IS_TUPLE:
   case LOOK_UP:
   case EQUAL:

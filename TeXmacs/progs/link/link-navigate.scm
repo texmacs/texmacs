@@ -476,6 +476,8 @@
            (list default-root-handler default-post-handler))
           ((== root "tmfs") 
            (list tmfs-root-handler (lambda (x) (noop))))
+          ((== root "file") ;; TODO: to be refined
+           (list http-root-handler http-post-handler))
           ((or (== root "http") (== root "https"))
            (list http-root-handler http-post-handler))
           (else (display* "Unhandled url root: " root "\n")

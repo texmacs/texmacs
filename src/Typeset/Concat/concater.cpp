@@ -534,6 +534,7 @@ concater_rep::typeset (tree t, path ip) {
   case TRANSLATE:
   case CHANGE_CASE:
   case FIND_FILE:
+  case FIND_FILE_UPWARDS:
   case IS_TUPLE:
   case LOOK_UP:
   case EQUAL:

@@ -371,6 +371,8 @@ init_std_drd () {
 	fixed (1, 1, BIFORM) -> accessible (0) -> string_type (1));
   init (FIND_FILE, "find-file",
 	var_repeat (1, 1) -> returns_url () -> url_type (0)); // dirs and file
+  init (FIND_FILE_UPWARDS, "find-file-upwards",
+	fixed (2) -> returns_url () -> string_type (0));
   init (IS_TUPLE, "is-tuple",
 	fixed (1) -> returns_boolean () -> regular (0) -> name ("tuple?"));
   init (LOOK_UP, "look-up",
