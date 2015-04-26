@@ -42,7 +42,7 @@
 			 ,(cAr l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Rewriting document titles as a function of several style parameters
+;; Select
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (rewrite-select pat)
@@ -64,6 +64,15 @@
   (:secure #t)
   (with (op body2 . pat) (tree->list args)
     (list 'quote (cons 'tuple (select body (map rewrite-select pat))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language suffix
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (ext-language-suffix)
+  (:secure #t)
+  (with s (language-to-locale (get-output-language))
+    (if (>= (string-length s) 2) (substring s 0 2) "en")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Listings

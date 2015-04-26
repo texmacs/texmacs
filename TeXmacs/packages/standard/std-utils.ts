@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std>>
 
@@ -320,6 +320,8 @@
   </active*>
 
   <assign|localize|<macro|text|<translate|<arg|text>|english|<value|language>>>>
+
+  <assign|language-suffix|<macro|<extern|ext-language-suffix>>>
 
   <assign|map|<macro|fun|args|<extern|ext-map|<arg|fun>|<arg|args>>>>
 

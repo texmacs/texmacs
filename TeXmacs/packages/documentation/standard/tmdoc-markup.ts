@@ -95,6 +95,12 @@
 
   <assign|if-ref*|<macro|lab|body|<with|warn-missing|false|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>|<greyed|<arg|body>>>>>>
 
+  <assign|tmdoc-file|<macro|name|<or|<find-file-upwards|<merge|<arg|name>|.|<language-suffix>|.tm>|doc>|<find-file-upwards|<merge|<arg|name>|.en.tm>|doc>>>>
+
+  <assign|tmdoc-link|<macro|body|destination|<with|file|<tmdoc-file|<arg|destination>>|<if|<unequal|<value|file>|false>|<hlink|<arg|body>|<value|file>>|<arg|body>>>>>
+
+  <assign|tmdoc-link*|<macro|body|destination|<with|file|<tmdoc-file|<arg|destination>>|<if|<unequal|<value|file>|false>|<hlink|<arg|body>|<value|file>>|<with|color|red|<arg|body>>>>>>
+
   <assign|simple-link|<macro|destination|<hlink|<with|font-family|tt|<arg|destination>>|<arg|destination>>>>
 
   <assign|hyper-link*|<macro|body|destination|<hlink|<arg|body>|<arg|destination>>>>
