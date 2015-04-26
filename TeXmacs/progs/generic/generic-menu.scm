@@ -113,7 +113,10 @@
 (define (type->format type)
   (cond ((== type "adhoc") "n.a.")
         ((== type "raw") "n.a.")
-        ((== type "url") "smart-file")
+        ((== type "url")
+         ;; FIXME: filename editing is way too slow in Qt and
+         ;; tab completion does not seem to work anyway
+         (if (qt-gui?) "string" "smart-file"))
         ((== type "graphical") "n.a.")
         ((== type "point") "n.a.")
         ((== type "obsolete") "n.a.")
