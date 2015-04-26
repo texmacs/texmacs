@@ -994,19 +994,17 @@ edit_env_rep::exec_use_module (tree t) {
 
 tree
 edit_env_rep::exec_or (tree t) {
-  if (N(t)<2) return tree (ERROR, "bad or");
+  if (N(t) < 2) return tree (ERROR, "bad or");
   for (int i=0; i<N(t); i++) {
     tree ti= exec (t[i]);
-    if (is_compound (ti)) return tree (ERROR, "bad or");
-    if (! is_bool (ti->label)) return tree (ERROR, "bad or");
-    if (as_bool (ti->label)) return as_string_bool (true);
+    if (ti != "false") return ti;
   }
   return as_string_bool (false);
 }
 
 tree
 edit_env_rep::exec_xor (tree t) {
-  if (N(t)!=2) return tree (ERROR, "bad xor");
+  if (N(t) != 2) return tree (ERROR, "bad xor");
   tree t1= exec (t[0]);
   tree t2= exec (t[1]);
   if (is_compound (t1) || is_compound (t2)) return tree (ERROR, "bad xor");
@@ -1017,23 +1015,20 @@ edit_env_rep::exec_xor (tree t) {
 
 tree
 edit_env_rep::exec_and (tree t) {
-  if (N(t)<2) return tree (ERROR, "bad and");
-  for (int i=0; i<N(t); i++) {
+  if (N(t) < 2) return tree (ERROR, "bad and");
+  for (int i=0; i<N(t)-1; i++) {
     tree ti= exec (t[i]);
-    if (is_compound (ti)) return tree (ERROR, "bad and");
-    if (! is_bool (ti->label)) return tree (ERROR, "bad and");
-    if (! as_bool (ti->label)) return as_string_bool (false);
+    if (ti == "false") return ti;
   }
-  return as_string_bool (true);
+  return exec (t[N(t)-1]);
 }
 
 tree
 edit_env_rep::exec_not (tree t) {
-  if (N(t)!=1) return tree (ERROR, "bad not");
-  tree tt= exec(t[0]);
-  if (is_compound (tt)) return tree (ERROR, "bad not");
-  if (! is_bool (tt->label)) return tree (ERROR, "bad not");
-  return as_string_bool (! as_bool (tt->label));
+  if (N(t) != 1) return tree (ERROR, "bad not");
+  tree tt= exec (t[0]);
+  if (tt == "false") return "true";
+  else return "false";
 }
 
 tree
@@ -1698,10 +1693,11 @@ edit_env_rep::exec_get_binding (tree t) {
   if (type != 0 && type != 1) type= 0;
   if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
   else if (type == 1) value= tree (UNINIT);
-  if (complete && value == tree (UNINIT)) {
-    missing (key)= tree (GET_BINDING, key);
-    //typeset_warning << "Undefined reference " << key << LF;
-  }
+  if (complete && value == tree (UNINIT))
+    if (get_bool (WARN_MISSING)) {
+      missing (key)= tree (GET_BINDING, key);
+      //typeset_warning << "Undefined reference " << key << LF;
+    }
   //cout << t << ": " << key << " -> " << value << "\n";
   return value;
 }
