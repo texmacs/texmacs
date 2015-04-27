@@ -8833,6 +8833,65 @@ $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
 esac
 
 #--------------------------------------------------------------------
+# Fix for Mac OS X with genuine GCC and Qt framework
+#--------------------------------------------------------------------
+
+
+
+case "${host}" in
+  *apple*darwin*)
+
+
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+  OLDCXXFLAGS=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS -arch x86_64 -Xarch_x86_64 -mmacosx-version-min=10.8"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for whether C++ compiler supports -Xarch_x86_64" >&5
+$as_echo_n "checking for whether C++ compiler supports -Xarch_x86_64... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+    Xarch_x86_64="yes"
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+    Xarch_x86_64="no"
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  CXXFLAGS=$OLDCXXFLAGS
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+
+    if test "$Xarch_x86_64" = "no"; then
+      QT_CXXFLAGS=`echo $QT_CXXFLAGS | sed "s/ -Xarch_x86_64//g"`
+      QT_LDFLAGS=`echo $QT_LDFLAGS | sed "s/ -Xarch_x86_64//g"`
+    fi;;
+esac
+
+#--------------------------------------------------------------------
 # Substitute TeXmacs specific configuration parameters
 #--------------------------------------------------------------------
 
