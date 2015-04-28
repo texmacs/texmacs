@@ -14,8 +14,8 @@
 #include "tree.hpp"
 
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
-#  include "Qt/qt_sys_utils.hpp"
-#  include "Windows/mingw_sys_utils.hpp"
+# include "Qt/qt_sys_utils.hpp"
+#include "Windows/mingw_sys_utils.hpp"
 #else
 #  include "Unix/unix_sys_utils.hpp"
 #endif
@@ -65,7 +65,7 @@ eval_system (string s) {
 string
 var_eval_system (string s) {
   string r= eval_system (s);
-  while ((N(r)>0) && (r[N(r)-1]=='\n')) r= r (0,N(r)-1);
+  while ((N(r)>0) && (r[N(r)-1]=='\n' || r[N(r)-1]=='\r')) r= r (0,N(r)-1);
   return r;
 }
 
