@@ -864,7 +864,7 @@ var_read_directory (url u) {
 
 url
 search_file_in (url u, string name) {
-  //cout << "Search in " << u << LF;
+  // cout << "Search in " << u << ", " << name << LF;
   if (!dir_stamp->contains (u->t) ||
       texmacs_time () - dir_stamp [u->t] > 10000) {
     dir_is_dir->reset (u->t);
@@ -902,7 +902,7 @@ find_stop (url u, array<string> stops) {
 
 url
 search_file_upwards (url u, string name, array<string> stops) {
-  //cout << "Search upwards " << u << LF;
+  // cout << "Search upwards " << u << ", " << name << LF;
   url f= search_file_in (u, name);
   if (!is_none (f)) return f;
   if (head (u) == u) return url_none ();
