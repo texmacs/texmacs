@@ -948,7 +948,11 @@ resolve_in_path (url u) {
 	     (!starts (which, "no ")))
       cout << "TeXmacs] " << which << "\n";
   }
+#ifdef __MINGW32__
+  return resolve ((url_path ("$TEXMACS_PATH/bin") | url_path ("$PATH")) * u, "x");
+#else
   return resolve (url_path ("$PATH") * u, "x");
+#endif
 }
 
 bool
