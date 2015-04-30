@@ -55,39 +55,43 @@ int  main (int argc, char *argv[])
 {
 	int ret= ERR_OK;
 
-	if(!strcmp(argv[ARG_CMD], CMD_ADD)) {
-		if(argc != 4) ret= ERR_ARG;
-		else {
-			char buf[CRED_MAX_CREDENTIAL_BLOB_SIZE+1];
-			int cnt;
-			cnt= _read(0, buf, sizeof(buf));
-			if(cnt == -1) ret= ERR_RD;
-			else if(cnt == sizeof(buf)) ret= ERR_TOOLONG;
-			else {
-				CREDENTIAL cred = {0};
-				cred.Type = CRED_TYPE_GENERIC;
-				cred.TargetName = LPSTR(argv[ARG_APP]);
-				cred.CredentialBlobSize= cnt;
-				cred.CredentialBlob= (LPBYTE)buf;
-				cred.Persist= CRED_PERSIST_LOCAL_MACHINE;
-				cred.UserName= LPSTR(argv[ARG_USER]);
-				ret= ::CredWrite (&cred, 0)? ERR_OK:ERR_CRED;
-			}
-		}
-	} else if(argc != 3) ret= ERR_ARG;
-	else if(!strcmp(argv[ARG_CMD], CMD_GETP) || !strcmp(argv[ARG_CMD], CMD_GETN)) {
-			PCREDENTIAL pcred;
-			if(::CredRead (LPSTR(argv[ARG_APP]), CRED_TYPE_GENERIC, 0, &pcred)) {
-				if(!strcmp(argv[ARG_CMD], CMD_GETP)) {
-					if(_write(1, pcred->CredentialBlob,pcred->CredentialBlobSize) == -1) ret= ERR_WR;
-				} else {
-					if(_write(1, pcred->UserName, strlen(pcred->UserName)) == -1) ret= ERR_WR;
-				}
-				// must free memory allocated by CredRead()!
-				::CredFree (pcred);
-			} else ret= ERR_CRED;
-	} else if(!strcmp(argv[ARG_CMD], CMD_RM)) {
-			if(::CredDelete (LPCSTR(argv[ARG_APP]), CRED_TYPE_GENERIC, 0) == false) ret= ERR_CRED;
-	} else ret= ERR_CMD;
-	return(_return(ret));
+  if(argc < 2) ret= ERR_ARG;
+  else {
+    if(!strcmp(argv[ARG_CMD], CMD_ADD)) {
+      if(argc != 4) ret= ERR_ARG;
+      else {
+        char buf[CRED_MAX_CREDENTIAL_BLOB_SIZE+1];
+        int cnt;
+        cnt= _read(0, buf, sizeof(buf));
+        if(cnt == -1) ret= ERR_RD;
+        else if(cnt == sizeof(buf)) ret= ERR_TOOLONG;
+        else {
+          CREDENTIAL cred = {0};
+          cred.Type = CRED_TYPE_GENERIC;
+          cred.TargetName = LPSTR(argv[ARG_APP]);
+          cred.CredentialBlobSize= cnt;
+          cred.CredentialBlob= (LPBYTE)buf;
+          cred.Persist= CRED_PERSIST_LOCAL_MACHINE;
+          cred.UserName= LPSTR(argv[ARG_USER]);
+          ret= ::CredWrite (&cred, 0)? ERR_OK:ERR_CRED;
+        }
+      }
+    } else if(argc != 3) ret= ERR_ARG;
+    else if(!strcmp(argv[ARG_CMD], CMD_GETP) || !strcmp(argv[ARG_CMD], CMD_GETN)) {
+      PCREDENTIAL pcred;
+      if(::CredRead (LPSTR(argv[ARG_APP]), CRED_TYPE_GENERIC, 0, &pcred)) {
+        if(!strcmp(argv[ARG_CMD], CMD_GETP)) {
+          if(_write(1, pcred->CredentialBlob,pcred->CredentialBlobSize) == -1) ret= ERR_WR;
+
+        } else {
+          if(_write(1, pcred->UserName, strlen(pcred->UserName)) == -1) ret= ERR_WR;
+        }
+        // must free memory allocated by CredRead()!
+        ::CredFree (pcred);
+      } else ret= ERR_CRED;
+    } else if(!strcmp(argv[ARG_CMD], CMD_RM)) {
+      if(::CredDelete (LPCSTR(argv[ARG_APP]), CRED_TYPE_GENERIC, 0) == false) ret= ERR_CRED;
+    } else ret= ERR_CMD;
+  }
+  return(_return(ret));
 }
