@@ -95,17 +95,17 @@
 
 (define db-the-default-user #f)
 
+(define (get-full-name user)
+ (if (os-mingw?)
+   (or (and (url-exists-in-path? "fullname") (var-eval-system (string-append "fullname " user))) "DefaultUser")
+   (passwd:gecos (getpwnam user))))
+
 (define (create-default-user)
-  (if (and (url-exists-in-path? "whoami")
-           (url-exists-in-path? "finger")
-           (url-exists-in-path? "sed"))
-      (let* ((pseudo (var-eval-system "whoami"))
-             (cmd "finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'")
-             (name (var-eval-system cmd)))
-        (when (== pseudo "") (set! pseudo "default"))
-        (when (== name "") (set! pseudo "Default User"))
-        (list pseudo name))
-      (list "default" "Default User")))
+  (let* ((pseudo (getlogin))
+         (name (get-full-name pseudo)))
+         (when (== pseudo "") (set! pseudo "default"))
+         (when (== name "") (set! name "Default User"))
+        (list pseudo name)))
 
 (tm-define (get-default-user)
   (when (not db-the-default-user)
