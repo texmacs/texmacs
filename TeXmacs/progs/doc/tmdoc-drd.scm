@@ -34,7 +34,7 @@
   branch extra-branch continue optional-branch)
 
 (define-group tmdoc-menu-tag
-  menu submenu subsubmenu subsubsubmenu)
+  menu submenu subsubmenu subsubsubmenu subsubsubsubmenu)
 
 (define-group tmdoc-annotation-tag
   markup src-arg src-var src-length src-tt src-numeric src-textual)
