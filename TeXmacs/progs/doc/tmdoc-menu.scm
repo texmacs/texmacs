@@ -54,6 +54,7 @@
   ("Submenu" (make 'submenu))
   ("Subsubmenu" (make 'subsubmenu))
   ("Subsubsubmenu" (make 'subsubsubmenu))
+  ("Subsubsubsubmenu" (make 'subsubsubsubmenu))
   ---
   ("Icon" (make 'icon))
   ("Screenshot" (make 'screenshot)))
