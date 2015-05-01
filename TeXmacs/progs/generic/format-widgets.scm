@@ -148,7 +148,7 @@
   ======
   (centered
     (aligned
-      (meti (text "Use margin kerning (protrusion)")
+      (meti (hlist // (text "Use margin kerning (protrusion)"))
         (toggle (ahash-set! new "par-kerning-margin" (if answer "true" "false"))
                 (== (ahash-ref new "par-kerning-margin") "true"))))))
 

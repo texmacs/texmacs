@@ -25,8 +25,7 @@
 (tm-widget (db-preferences-widget)
   (padded
       (aligned
-        (meti (with s "Automatically import bibliographies when opening files"
-                (hlist // // (text s) >>))
+        (meti (hlist // (text "Automatically import bibliographies when opening files") >>)
           (toggle (set-boolean-preference "auto bib import" answer)
                   (get-boolean-preference "auto bib import"))))))
 

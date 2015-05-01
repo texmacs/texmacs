@@ -178,13 +178,13 @@
     (refreshable "page-margin-toggles"
       (centered
         (aligned
-          (meti (text "Determine margins from text width")
+          (meti (hlist // (text "Determine margins from text width"))
             (toggle (begin
                       (initial-set u "page-width-margin"
                                    (if answer "true" "false"))
                       (refresh-now "page-margin-settings"))
                     (== (initial-get u "page-width-margin") "true")))
-          (meti (text "Same screen margins as on paper")
+          (meti (hlist // (text "Same screen margins as on paper"))
             (toggle (begin
                       (initial-set u "page-screen-margin"
                                    (if answer "false" "true"))

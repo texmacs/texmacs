@@ -195,14 +195,14 @@
       (vlist (bold (text "Semantics")) ---
         (refreshable "math-pref-semantic-selections"
           (aligned
-            (meti (text "Semantic editing")
+            (meti (hlist // (text "Semantic editing"))
               (toggle (and (set-boolean-preference "semantic editing"
                                                    answer)
                            (refresh-now "math-pref-semantic-selections")
                            (refresh-now "math-pref-context"))
                       (get-boolean-preference "semantic editing")))
             (assuming (get-boolean-preference "semantic editing")
-              (meti (text "Semantic selections")
+              (meti (hlist // (text "Semantic selections"))
                 (toggle (set-boolean-preference "semantic selections"
                                                 answer)
                         (get-boolean-preference
@@ -211,17 +211,17 @@
       === ===
       (vlist (bold (text "Correction")) ---
         (aligned
-          (meti (text "Remove superfluous invisible operators")
+          (meti (hlist // (text "Remove superfluous invisible operators"))
             (toggle (set-boolean-preference
                      "manual remove superfluous invisible" answer)
                     (get-boolean-preference
                      "manual remove superfluous invisible")))
-          (meti (text "Insert missing invisible operators")
+          (meti (hlist // (text "Insert missing invisible operators"))
             (toggle (set-boolean-preference
                      "manual insert missing invisible" answer)
                     (get-boolean-preference
                      "manual insert missing invisible")))
-          (meti (text "Homoglyph substitutions")
+          (meti (hlist // (text "Homoglyph substitutions"))
             (toggle (set-boolean-preference
                      "manual homoglyph correct" answer)
                     (get-boolean-preference
@@ -240,13 +240,13 @@
   (bold (text "TeXmacs -> Html"))
   ===
   (aligned
-    (meti (text "Use CSS for more advanced formatting")
+    (meti (hlist // (text "Use CSS for more advanced formatting"))
       (toggle (set-boolean-preference "texmacs->html:css" answer)
               (get-boolean-preference "texmacs->html:css")))
-    (meti (text "Export mathematical formulas as MathML")
+    (meti (hlist // (text "Export mathematical formulas as MathML"))
       (toggle (set-boolean-preference "texmacs->html:mathml" answer)
               (get-boolean-preference "texmacs->html:mathml")))
-    (meti (text "Export mathematical formulas as images")
+    (meti (hlist // (text "Export mathematical formulas as images"))
       (toggle (set-boolean-preference "texmacs->html:images" answer)
               (get-boolean-preference "texmacs->html:images")))))
 
@@ -288,7 +288,7 @@
   (bold (text "LaTeX -> TeXmacs"))
   ===
   (aligned
-    (meti (text "Import sophisticated objects as pictures")
+    (meti (hlist // (text "Import sophisticated objects as pictures"))
       (toggle
         (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
         (get-boolean-preference "latex->texmacs:fallback-on-pictures"))))
@@ -296,19 +296,19 @@
   (bold (text "TeXmacs -> LaTeX"))
   ===
   (aligned
-    (meti (text "Replace TeXmacs styles with no LaTeX equivalents")
+    (meti (hlist // (text "Replace TeXmacs styles with no LaTeX equivalents"))
       (toggle (set-boolean-preference "texmacs->latex:replace-style" answer)
               (get-boolean-preference "texmacs->latex:replace-style")))
-    (meti (text "Expand TeXmacs macros with no LaTeX equivalents")
+    (meti (hlist // (text "Expand TeXmacs macros with no LaTeX equivalents"))
       (toggle (set-boolean-preference "texmacs->latex:expand-macros" answer)
               (get-boolean-preference "texmacs->latex:expand-macros")))
-    (meti (text "Expand user-defined macros")
+    (meti (hlist // (text "Expand user-defined macros"))
       (toggle (set-boolean-preference "texmacs->latex:expand-user-macros" answer)
               (get-boolean-preference "texmacs->latex:expand-user-macros")))
-    (meti (text "Export bibliographies as links")
+    (meti (hlist // (text "Export bibliographies as links"))
       (toggle (set-boolean-preference "texmacs->latex:indirect-bib" answer)
               (get-boolean-preference "texmacs->latex:indirect-bib")))
-    (meti (text "Allow for macro definitions in preamble")
+    (meti (hlist // (text "Allow for macro definitions in preamble"))
       (toggle (set-boolean-preference "texmacs->latex:use-macros" answer)
               (get-boolean-preference "texmacs->latex:use-macros"))))
   ===
@@ -323,22 +323,22 @@
   ===
   (refreshable "source-tracking"
     (aligned
-      (meti (text "Keep track of source code")
+      (meti (hlist // (text "Keep track of source code"))
         (toggle
          (set-latex-source-tracking answer)
          (get-latex-source-tracking)))
-      (meti (text "Only convert changes with respect to tracked version")
+      (meti (hlist // (text "Only convert changes with respect to tracked version"))
         (toggle
          (set-latex-conservative answer)
          (get-latex-conservative)))
       (meti (when (get-latex-source-tracking)
-              (text "Guarantee transparent source tracking"))
+              (hlist // (text "Guarantee transparent source tracking")))
         (when (get-latex-source-tracking)
           (toggle
            (set-latex-transparent-source-tracking answer)
            (get-latex-transparent-source-tracking))))
       (meti (when (get-latex-source-tracking)
-              (text "Store tracking information in LaTeX files"))
+              (hlist // (text "Store tracking information in LaTeX files")))
         (when (get-latex-source-tracking)
           (toggle
            (set-boolean-preference "texmacs->latex:attach-tracking-info" answer)
@@ -370,14 +370,14 @@
             "15em")))
   ===
   (aligned
-    (meti (text "Only convert changes when re-importing")
+    (meti (hlist // (text "Only convert changes when re-importing"))
       (toggle (set-bibtm-conservative answer)
               (get-bibtm-conservative))))
   ======
   (bold (text "TeXmacs -> BibTeX"))
   ===
   (aligned
-    (meti (text "Only convert changes with respect to imported version")
+    (meti (hlist // (text "Only convert changes with respect to imported version"))
       (toggle (set-tmbib-conservative answer)
               (get-tmbib-conservative)))))
 
@@ -400,7 +400,7 @@
   (bold (text "TeXmacs -> Verbatim"))
   ===
   (aligned
-    (meti (text "Use line wrapping for lines which are longer than 80 characters")
+    (meti (hlist // (text "Use line wrapping for lines which are longer than 80 characters"))
       (toggle (set-boolean-preference "texmacs->verbatim:wrap" answer)
               (get-boolean-preference "texmacs->verbatim:wrap"))))
   ===
@@ -414,7 +414,7 @@
   (bold (text "Verbatim -> TeXmacs"))
   ===
   (aligned
-    (meti (text "Merge lines into paragraphs unless separated by blank lines")
+    (meti (hlist // (text "Merge lines into paragraphs unless separated by blank lines"))
       (toggle (set-boolean-preference "verbatim->texmacs:wrap" answer)
               (get-boolean-preference "verbatim->texmacs:wrap"))))
   ===
@@ -432,13 +432,13 @@
   (bold (text "TeXmacs -> Pdf/Postscript"))
   ===
   (aligned
-    (meti (text "Produce Pdf using native export filter")
+    (meti (hlist // (text "Produce Pdf using native export filter"))
       (toggle (set-boolean-preference "native pdf" answer)
               (get-boolean-preference "native pdf")))
-    (meti (text "Produce Postscript using native export filter")
+    (meti (hlist // (text "Produce Postscript using native export filter"))
       (toggle (set-boolean-preference "native postscript" answer)
               (get-boolean-preference "native postscript")))
-    (meti (text "Expand beamer slides")
+    (meti (hlist // (text "Expand beamer slides"))
       (toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
               (get-boolean-preference "texmacs->pdf:expand slides")))))
 
