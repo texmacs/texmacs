@@ -175,9 +175,9 @@
   ("Save" (save-buffer))
   ("Save as" (choose-file save-buffer-as "Save TeXmacs file" "texmacs"))
   ---
-   (if (use-print-dialog?)
-       ("Preview" (preview-buffer))
-       ("Print" (interactive-print-buffer)))
+  (if (use-print-dialog?)
+      ("Preview" (preview-buffer))
+      ("Print" (interactive-print-buffer)))
   (if (not (use-print-dialog?))
       (-> "Print" (link print-menu)))
   (if (not (os-mingw?)) (-> "Page setup" (link page-setup-menu)))

@@ -542,50 +542,6 @@
     (for (x l) (set-preference-name "scripting language" x (scripts-name x)))
     (cons "None" (map scripts-name l))))
 
-(tm-widget (experimental-preferences-widget cmd)
-  (padded
-    (hlist >>> 
-      (bold (text "Warning: These features are work in progress.")) >>>)
-    ======
-    (hlist
-      (aligned
-        (item (text "Encryption:")
-          (toggle (set-boolean-preference "experimental encryption" answer)
-                  (get-boolean-preference "experimental encryption")))
-        (item (text "Fast environments:")
-          (toggle (set-boolean-preference "fast environments" answer)
-                  (get-boolean-preference "fast environments")))
-        (item (text "Alpha transparency:")
-          (toggle (set-boolean-preference "experimental alpha" answer)
-                  (get-boolean-preference "experimental alpha")))
-        (item (text "New style fonts:")
-          (toggle (set-boolean-preference "new style fonts" answer)
-                  (get-boolean-preference "new style fonts")))
-        (item (text "New bibliography dialogue:")
-          (toggle (set-boolean-preference "gui:new bibliography dialogue" answer)
-                  (get-boolean-preference "gui:new bibliography dialogue"))))
-      /// ///
-      (aligned
-        (item (text "Program bracket matching:")
-          (toggle (set-boolean-preference "prog:highlight brackets" answer)
-                  (get-boolean-preference "prog:highlight brackets")))
-        (item (text "Automatic program brackets:")
-          (toggle (set-boolean-preference "prog:automatic brackets" answer)
-                  (get-boolean-preference "prog:automatic brackets")))
-        (item (text "Program bracket selections:")
-          (toggle (set-boolean-preference "prog:select brackets" answer)
-                  (get-boolean-preference "prog:select brackets")))
-        (assuming (qt-gui?)  ; TODO: recode the dialogue in scheme
-          (item (text "Use print dialogue:") 
-            (toggle (set-boolean-preference "gui:print dialogue" answer)
-                    (get-boolean-preference "gui:print dialogue")))))))
-    (bottom-buttons >>> ("Ok" (cmd))))
-
-(tm-define (open-experimental-preferences)
-  (:interactive #t)
-  (dialogue-window experimental-preferences-widget 
-                   noop "Experimental preferences"))
-
 (tm-widget (script-preferences-widget)
   (aligned
     (item (text "Execution of scripts:")
@@ -609,40 +565,78 @@
         ;;    (dynamic (script-preferences-widget))))
         ))))
 
+(tm-widget (experimental-preferences-widget)
+  (hlist
+    (aligned
+      (meti (hlist // (text "Encryption"))
+        (toggle (set-boolean-preference "experimental encryption" answer)
+                (get-boolean-preference "experimental encryption")))
+      (meti (hlist // (text "Fast environments"))
+        (toggle (set-boolean-preference "fast environments" answer)
+                (get-boolean-preference "fast environments")))
+      (meti (hlist // (text "Alpha transparency"))
+        (toggle (set-boolean-preference "experimental alpha" answer)
+                (get-boolean-preference "experimental alpha")))
+      (meti (hlist // (text "New style fonts"))
+        (toggle (set-boolean-preference "new style fonts" answer)
+                (get-boolean-preference "new style fonts")))
+      (meti (hlist // (text "New bibliography dialogue"))
+        (toggle (set-boolean-preference "gui:new bibliography dialogue" answer)
+                (get-boolean-preference "gui:new bibliography dialogue"))))
+    /// ///
+    (vlist
+      (aligned
+        (meti (hlist // (text "Program bracket matching"))
+          (toggle (set-boolean-preference "prog:highlight brackets" answer)
+                  (get-boolean-preference "prog:highlight brackets")))
+        (meti (hlist // (text "Automatic program brackets"))
+          (toggle (set-boolean-preference "prog:automatic brackets" answer)
+                  (get-boolean-preference "prog:automatic brackets")))
+        (meti (hlist // (text "Program bracket selections"))
+          (toggle (set-boolean-preference "prog:select brackets" answer)
+                  (get-boolean-preference "prog:select brackets")))
+        (assuming (qt-gui?)  ; TODO: recode the dialogue in scheme
+          (meti (hlist // (text "Use print dialogue"))
+            (toggle (set-boolean-preference "gui:print dialogue" answer)
+                    (get-boolean-preference "gui:print dialogue")))))
+      (glue #f #t 0 0))))
+
 (tm-widget (other-preferences-widget)
-  (aligned
-    (item (text "Automatically save:")
-      (enum (set-pretty-preference "autosave" answer)
-            '("5 sec" "30 sec" "120 sec" "300 sec" "Disable")
-            (get-pretty-preference "autosave")
-            "15em"))
-    (item (text "Security:")
-      (enum (set-pretty-preference "security" answer)
-            '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
-            (get-pretty-preference "security")
-            "15em"))
-    (item (text "Scripting language:")
-      (enum (set-pretty-preference "scripting language" answer)
-            (scripts-preferences-list)
-            (get-pretty-preference "scripting language")
-            "15em"))
-    (item (text "Document updates run:")
-      (hlist
-        (enum (set-pretty-preference "document update times" answer)
-              '("Once" "Twice" "Three times")
-              (get-pretty-preference "document update times") 
-              "15em")))
-    (assuming (updater-supported?)
-      (item (text "Check for automatic updates:")
-        (enum (set-pretty-preference "updater:interval" answer)
-              (automatic-checks-choices)
-              (get-pretty-preference "updater:interval")
-              "15em")))
-    (assuming (updater-supported?)
-      (item (text "Last check:") (text (last-check-string))))
-    (item (text "Experimental features:")
-      (explicit-buttons 
-        ("Configure" (interactive open-experimental-preferences))))))
+  (centered
+    (aligned
+      (item (text "Automatically save:")
+        (enum (set-pretty-preference "autosave" answer)
+              '("5 sec" "30 sec" "120 sec" "300 sec" "Disable")
+              (get-pretty-preference "autosave")
+              "15em"))
+      (item (text "Security:")
+        (enum (set-pretty-preference "security" answer)
+              '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
+              (get-pretty-preference "security")
+              "15em"))
+      (item (text "Scripting language:")
+        (enum (set-pretty-preference "scripting language" answer)
+              (scripts-preferences-list)
+              (get-pretty-preference "scripting language")
+              "15em"))
+      (item (text "Document updates run:")
+        (hlist
+          (enum (set-pretty-preference "document update times" answer)
+                '("Once" "Twice" "Three times")
+                (get-pretty-preference "document update times") 
+                "15em")))
+      (assuming (updater-supported?)
+        (item (text "Check for automatic updates:")
+          (enum (set-pretty-preference "updater:interval" answer)
+                (automatic-checks-choices)
+                (get-pretty-preference "updater:interval")
+                "15em")))
+      (assuming (updater-supported?)
+        (item (text "Last check:") (text (last-check-string))))))
+  ======
+  (bold (text "Experimental features (to be used with care)"))
+  ======
+  (dynamic (experimental-preferences-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences widget
