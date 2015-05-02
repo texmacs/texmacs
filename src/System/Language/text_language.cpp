@@ -54,7 +54,7 @@ text_language_rep::advance (tree t, int& pos) {
     // while ((pos<N(s)) && (s[pos]==' ')) pos++;
     if ((pos == N(s)) || (!is_punctuation (s[pos])))
       return &tp_space_rep;
-    return &tp_blank_rep;
+    return &tp_nb_space_rep;
   }
   
   if (is_punctuation (s[pos])) {
@@ -110,6 +110,104 @@ text_language_rep::hyphenate (
 }
 
 /******************************************************************************
+* French typography
+******************************************************************************/
+
+struct french_language_rep: language_rep {
+  hashmap<string,string> patterns;
+  hashmap<string,string> hyphenations;
+
+  french_language_rep (string lan_name, string hyph_name);
+  text_property advance (tree t, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+};
+
+french_language_rep::french_language_rep (string lan_name, string hyph_name):
+  language_rep (lan_name), patterns ("?"), hyphenations ("?") {
+    load_hyphen_tables (hyph_name, patterns, hyphenations, true); }
+
+inline bool
+is_french_punctuation (register char c) {
+  return is_punctuation (c) || (c=='\23') || (c=='\24');
+}
+
+text_property
+french_language_rep::advance (tree t, int& pos) {
+  string s= t->label;
+  if (pos == N(s)) return &tp_normal_rep;
+
+  if (s[pos]==' ') {
+    pos++;
+    if (pos>1 && s[pos-2] == '\23')
+      return &tp_nb_thin_space_rep;
+    // while ((pos<N(s)) && (s[pos]==' ')) pos++;
+    if ((pos == N(s)) || (!is_french_punctuation (s[pos])))
+      return &tp_space_rep;
+    if (s[pos] == '\23')
+      return &tp_space_rep;
+    if (s[pos] == ':' || s[pos] == ';' ||
+        s[pos] == '!' || s[pos] == '?' || s[pos] == '\24')
+      return &tp_nb_thin_space_rep;
+    return &tp_nb_space_rep;
+  }
+  
+  if (is_french_punctuation (s[pos])) {
+    while ((pos<N(s)) && is_french_punctuation (s[pos])) pos++;
+    if ((pos==N(s)) || (s[pos]!=' ')) return &tp_normal_rep;
+    switch (s[pos-1]) {
+    case '\23':
+      return &tp_nb_thin_space_rep;
+    case '\24':
+    case ',': case ':': case ';': case '`': case '\'':
+      return &tp_space_rep;
+    case '.': case '!': case '?':
+      return &tp_period_rep;
+    }
+    return &tp_space_rep;
+  }
+
+  if (s[pos]=='-') {
+    pos++;
+    while ((pos<N(s)) && (s[pos]=='-')) pos++;
+    return &tp_hyph_rep;
+  }
+
+  if (is_iso_alpha (s[pos])) {
+    while ((pos<N(s)) && is_iso_alpha (s[pos])) pos++;
+    return &tp_normal_rep;
+  }
+
+  if (is_numeric (s[pos])) { // can not be a '.'
+    while ((pos<N(s)) && is_numeric (s[pos])) pos++;
+    while (s[pos-1]=='.') pos--;
+    return &tp_normal_rep;
+  }
+
+  if (s[pos]=='<') {
+    while ((pos<N(s)) && (s[pos]!='>')) pos++;
+    if (pos<N(s)) pos++;
+    return &tp_normal_rep;
+  }
+
+  pos++;
+  return &tp_normal_rep;
+}
+
+array<int>
+french_language_rep::get_hyphens (string s) {
+  return ::get_hyphens (s, patterns, hyphenations);
+}
+
+void
+french_language_rep::hyphenate (
+  string s, int after, string& left, string& right)
+{
+  array<int> penalty= get_hyphens (s);
+  std_hyphenate (s, after, left, right, penalty[after]);
+}
+
+/******************************************************************************
 * Eastern text languages / using UCS entities
 ******************************************************************************/
 
@@ -140,7 +238,7 @@ ucs_text_language_rep::advance (tree t, int& pos) {
     // while ((pos<N(s)) && (s[pos]==' ')) pos++;
     if ((pos == N(s)) || (!is_punctuation (s[pos])))
       return &tp_space_rep;
-    return &tp_blank_rep;
+    return &tp_nb_space_rep;
   }
   
   if (is_punctuation (s[pos])) {
@@ -544,6 +642,11 @@ make_text_language (string s, string h) {
 }
 
 static language
+make_french_language (string s, string h) {
+  return tm_new<french_language_rep> (s, h);
+}
+
+static language
 make_oriental_language (string s) {
   return tm_new<oriental_language_rep> (s);
 }
@@ -561,7 +664,7 @@ text_language (string s) {
   if (s == "dutch")      return make_text_language (s, "dutch");
   if (s == "english")    return make_text_language (s, "us");
   if (s == "finnish")    return make_text_language (s, "finnish");
-  if (s == "french")     return make_text_language (s, "french");
+  if (s == "french")     return make_french_language (s, "french");
   if (s == "german")     return make_text_language (s, "german");
   if (s == "hungarian")  return make_text_language (s, "hungarian");
   if (s == "italian")    return make_text_language (s, "italian");

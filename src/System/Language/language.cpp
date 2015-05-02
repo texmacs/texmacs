@@ -19,14 +19,20 @@ text_property_rep tp_normal_rep
   (TP_NORMAL);
 text_property_rep tp_hyph_rep
   (TP_HYPH, SPC_NONE, SPC_NONE, 0, 0);
+text_property_rep tp_thin_space_rep
+  (TP_THIN_SPACE, SPC_NONE, SPC_THIN_SPACE, 0, 0);
 text_property_rep tp_space_rep
-  (TP_SPACE, SPC_NONE, SPC_SPACE, 0,0);
+  (TP_SPACE, SPC_NONE, SPC_SPACE, 0, 0);
 text_property_rep tp_dspace_rep
-  (TP_DSPACE, SPC_NONE, SPC_DSPACE, 0,0);
+  (TP_DSPACE, SPC_NONE, SPC_DSPACE, 0, 0);
+text_property_rep tp_nb_thin_space_rep
+  (TP_NB_THIN_SPACE, SPC_NONE, SPC_THIN_SPACE, 0, HYPH_INVALID);
+text_property_rep tp_nb_space_rep
+  (TP_NB_SPACE, SPC_NONE, SPC_SPACE, 0, HYPH_INVALID);
+text_property_rep tp_nb_dspace_rep
+  (TP_NB_DSPACE, SPC_NONE, SPC_DSPACE, 0, HYPH_INVALID);
 text_property_rep tp_period_rep
   (TP_PERIOD, SPC_NONE, SPC_PERIOD, 0, 0);
-text_property_rep tp_blank_rep
-  (TP_BLANK, SPC_NONE, SPC_SPACE, 0, HYPH_INVALID);
 text_property_rep tp_half_rep
   (TP_OPERATOR, SPC_NONE, SPC_HALF, 0, HYPH_INVALID);
 text_property_rep tp_operator_rep

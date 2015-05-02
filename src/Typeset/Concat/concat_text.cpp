@@ -49,6 +49,9 @@ concater_rep::typeset_colored_substring
   switch (spc_type) { \
   case SPC_NONE: \
     break; \
+  case SPC_THIN_SPACE: \
+    print ((6 * spc) / 10); \
+    break; \
   case SPC_SPACE: \
     print (spc); \
     break; \
@@ -80,6 +83,9 @@ concater_rep::typeset_colored_substring
 #define PRINT_CONDENSED_SPACE(spc_type) \
   switch (spc_type) { \
   case SPC_NONE: \
+    break; \
+  case SPC_THIN_SPACE: \
+    print ((6 * spc) / 10); \
     break; \
   case SPC_SPACE: \
     print (spc); \

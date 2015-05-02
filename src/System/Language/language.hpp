@@ -24,29 +24,33 @@ RESOURCE(language);
 * The text property class
 ******************************************************************************/
 
-#define TP_NORMAL         0
-#define TP_HYPH           1
-#define TP_SPACE          2
-#define TP_DSPACE         3
-#define TP_BLANK          4
-#define TP_PERIOD         5
-#define TP_OPERATOR       6
-#define TP_SHORTOP        7
-#define TP_OTHER          8
-#define TP_CJK_NORMAL     9
-#define TP_CJK_NO_BREAK  10
-#define TP_CJK_PERIOD    11
+#define TP_NORMAL          0
+#define TP_HYPH            1
+#define TP_THIN_SPACE      2
+#define TP_SPACE           3
+#define TP_DSPACE          4
+#define TP_NB_THIN_SPACE   5
+#define TP_NB_SPACE        6
+#define TP_NB_DSPACE       7
+#define TP_PERIOD          8
+#define TP_OPERATOR        9
+#define TP_SHORTOP        10
+#define TP_OTHER          11
+#define TP_CJK_NORMAL     12
+#define TP_CJK_NO_BREAK   13
+#define TP_CJK_PERIOD     14
 
-#define SPC_NONE          0
-#define SPC_SPACE         1
-#define SPC_DSPACE        2
-#define SPC_PERIOD        3
-#define SPC_TINY          4
-#define SPC_HALF          5
-#define SPC_OPERATOR      6
-#define SPC_BIGOP         7
-#define SPC_CJK_NORMAL    8
-#define SPC_CJK_PERIOD    9
+#define SPC_NONE           0
+#define SPC_THIN_SPACE     1
+#define SPC_SPACE          2
+#define SPC_DSPACE         3
+#define SPC_PERIOD         4
+#define SPC_TINY           5
+#define SPC_HALF           6
+#define SPC_OPERATOR       7
+#define SPC_BIGOP          8
+#define SPC_CJK_NORMAL     9
+#define SPC_CJK_PERIOD    10
 
 #define HYPH_STD       10000
 #define HYPH_PANIC     1000000

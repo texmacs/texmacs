@@ -14,9 +14,12 @@
 
 extern text_property_rep tp_normal_rep;
 extern text_property_rep tp_hyph_rep;
+extern text_property_rep tp_thin_space_rep;
 extern text_property_rep tp_space_rep;
 extern text_property_rep tp_dspace_rep;
-extern text_property_rep tp_blank_rep;
+extern text_property_rep tp_nb_thin_space_rep;
+extern text_property_rep tp_nb_space_rep;
+extern text_property_rep tp_nb_dspace_rep;
 extern text_property_rep tp_period_rep;
 extern text_property_rep tp_operator_rep;
 extern text_property_rep tp_shortop_rep;
