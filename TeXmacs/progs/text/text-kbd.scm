@@ -23,6 +23,7 @@
 (kbd-map
   (:mode in-text?)
   ("\"" (insert-quote))
+  ("\" var" "\"")
   ("<" "<less>")
   (">" "<gtr>")
   ("< var" "")
@@ -269,7 +270,9 @@
   ("text:symbol O" "Ž")
   ("text:symbol U" "–")
   ("text:symbol o" "®")
-  ("text:symbol u" "¶"))
+  ("text:symbol u" "¶")
+  ("text:symbol O var" "Ø")
+  ("text:symbol o var" "ø"))
 
 (kbd-map
   (:mode in-spanish?)
@@ -302,6 +305,12 @@
   ("text:symbol X" "™")
   ("text:symbol z" "»")
   ("text:symbol Z" "›")
+  ("text:symbol a var" "æ")
+  ("text:symbol A var" "Æ")
+  ("text:symbol o var" "ø")
+  ("text:symbol O var" "Ø")
+  ("text:symbol s var" "ÿ")
+  ("text:symbol S var" "ß")
   ("text:symbol z var" "¹")
   ("text:symbol Z var" "™"))
 

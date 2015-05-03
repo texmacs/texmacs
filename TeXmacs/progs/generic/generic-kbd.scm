@@ -177,7 +177,6 @@
   ("symbol %" "%")
   ("symbol _" "_")
   ("symbol ^" "^")
-  ("symbol \"" "\"")
   ("symbol (" "(")
   ("symbol )" ")")
   ("symbol [" "[")
