@@ -145,7 +145,7 @@ clean_temp_dirs () {
     if (is_int (a[i]))
       if (!process_running (as_int (a[i])))
         if (a[i] != as_string ((int) getpid ()))
-          rmdir (url (main_tmp_dir) * url (a[i]));
+          system ("rm -rf", url (main_tmp_dir) * url (a[i]));
 #endif
 }
 
@@ -450,14 +450,23 @@ setup_texmacs () {
 
 void
 init_texmacs () {
+  //cout << "Initialize -- Succession status table\n";
   init_succession_status_table ();
+  //cout << "Initialize -- Succession standard DRD\n";
   init_std_drd ();
+  //cout << "Initialize -- Main paths\n";
   init_main_paths ();
+  //cout << "Initialize -- User dirs\n";
   init_user_dirs ();
+  //cout << "Initialize -- User preferences\n";
   load_user_preferences ();
+  //cout << "Initialize -- Guile\n";
   init_guile ();
+  //cout << "Initialize -- Environment variables\n";
   init_env_vars ();
+  //cout << "Initialize -- Miscellaneous\n";
   init_misc ();
+  //cout << "Initialize -- Deprecated\n";
   init_deprecated ();
 }
 
