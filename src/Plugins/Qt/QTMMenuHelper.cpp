@@ -34,18 +34,19 @@
 /*! Queues the object's command into the main queue. */
 void 
 QTMCommand::apply()  {
+BEGIN_SLOT
   if (!is_nil (cmd)) {
     the_gui->process_command (cmd);
     if (DEBUG_QT) {
       debug_qt << "QTMCommand::apply() (delayed)\n";
       /* FIXME: this sometimes crashes:
-      cmd->print(debug_qt);
-      debug_qt << "\n";
-       */
+         cmd->print(debug_qt);
+         debug_qt << "\n";
+      */
     }
   }
+END_SLOT
 }
-
 
 /******************************************************************************
  * QTMAction
@@ -76,14 +77,17 @@ QTMAction::set_text (string s) {
 
 void 
 QTMAction::doRefresh() {
+BEGIN_SLOT
   set_text (str);
+END_SLOT
 }
 
 void
-QTMAction::showToolTip()
-{
+QTMAction::showToolTip() {
+BEGIN_SLOT
   _timer->start (500);   // Restarts the timer if already running
   _pos = QCursor::pos();
+END_SLOT
 }
 
 /*
@@ -98,16 +102,18 @@ QTMAction::showToolTip()
  stops, the distance is bigger than the given constant and no tooltip is
  displayed.
  */
+
 void
 QTMAction::doShowToolTip() {
+BEGIN_SLOT
   static int step = QApplication::font().pointSize();
   _timer->stop();
   if ((QCursor::pos() - _pos).manhattanLength() < step)  // Hideous HACK
     QToolTip::showText (QCursor::pos(), toolTip());
   else
     QToolTip::hideText();
+END_SLOT
 }
-
 
 /******************************************************************************
  * QTMWidgetAction
@@ -345,7 +351,7 @@ QTMLazyMenu::transferActions (QWidget* from) {
   while (!list.isEmpty()) {
     QAction* a = list.takeFirst();
     removeAction (a);
-      // For some reason, using deleteLater() leaks all the QActions
+    // For some reason, using deleteLater() leaks all the QActions
     //a->deleteLater();
     delete a;
   }
@@ -359,16 +365,19 @@ QTMLazyMenu::transferActions (QWidget* from) {
 
 void
 QTMLazyMenu::force () {
+BEGIN_SLOT
   QMenu* m = concrete (promise_widget())->get_qmenu();
   transferActions (m);
+END_SLOT
 }
 
 void
 QTMLazyMenu::destroy (QObject* obj) {
+BEGIN_SLOT
   (void) obj;
   deleteLater();
+END_SLOT
 }
-
 
 /******************************************************************************
  * QTMInputTextWidgetHelper
@@ -385,16 +394,19 @@ QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid,
 
 void
 QTMInputTextWidgetHelper::apply () {
+BEGIN_SLOT
   if (done) return;
   done = true;
   the_gui->process_command (wid()->cmd, wid()->ok
                             ? list_object (object (wid()->input))
                             : list_object (object (false)));
+END_SLOT
 }
 
 /*! Executed when the enter key is pressed. */
 void
 QTMInputTextWidgetHelper::commit () {
+BEGIN_SLOT
   QTMLineEdit* le = qobject_cast <QTMLineEdit*> (sender());
   if (!le) return;
 
@@ -408,11 +420,13 @@ QTMInputTextWidgetHelper::commit () {
     concrete (get_canvas (win))->qwid->setFocus();
 
   if (win) apply();    // This is 0 inside a dialog => no command
+END_SLOT
 }
 
 /*! Executed after commit of the input field (enter) and when losing focus */
 void
 QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
+BEGIN_SLOT
   QTMLineEdit* le = qobject_cast <QTMLineEdit*> (sender());
   if (!le) return;
 
@@ -429,6 +443,7 @@ QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
 
   widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
   if (win) apply();    // This is 0 inside a dialog => no command
+END_SLOT
 }
 
 /******************************************************************************
@@ -450,8 +465,10 @@ QTMFieldWidgetHelper::QTMFieldWidgetHelper (qt_widget _wid, QLineEdit* cb)
 
 void
 QTMFieldWidgetHelper::commit (const QString& qst) {
+BEGIN_SLOT
   static_cast<qt_field_widget_rep*> (wid.rep)->input =
       scm_quote (from_qstring (qst));
+END_SLOT
 }
 
 /******************************************************************************
@@ -765,6 +782,7 @@ QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
  */
 void
 QTMTabWidget::resizeOthers (int current) {
+BEGIN_SLOT
   for (int i = 0; i < count(); ++i) {
     if (i != current)
       widget(i)->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -783,9 +801,8 @@ QTMTabWidget::resizeOthers (int current) {
   if (window()->minimumSize()!=QSize (0,0) && 
       window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
     window()->setFixedSize (window()->sizeHint());
+END_SLOT
 }
-
-
 
 /******************************************************************************
  * QTMRefreshWidget
@@ -855,6 +872,7 @@ QTMRefreshWidget::deleteLayout (QLayout* l) {
 
 void
 QTMRefreshWidget::doRefresh (string kind) {
+BEGIN_SLOT
   if (recompute (kind)) {
     if (qwid) qwid->setParent (NULL);
     delete qwid;
@@ -872,6 +890,7 @@ QTMRefreshWidget::doRefresh (string kind) {
         window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
       window()->setFixedSize (window()->sizeHint());  
   }
+END_SLOT
 }
 
 
@@ -932,6 +951,7 @@ QTMRefreshableWidget::deleteLayout (QLayout* l) {
 
 void
 QTMRefreshableWidget::doRefresh (string kind) {
+BEGIN_SLOT
   if (recompute (kind)) {
     if (qwid) qwid->setParent (NULL);
     delete qwid;
@@ -949,6 +969,7 @@ QTMRefreshableWidget::doRefresh (string kind) {
         window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
       window()->setFixedSize (window()->sizeHint());  
   }
+END_SLOT
 }
 
 
@@ -1034,8 +1055,7 @@ QTMComboBox::event (QEvent* ev) {
  It also scrolls the viewport to the position of selected items in QListWidgets.
  */
 void
-QTMScrollArea::setWidgetAndConnect (QWidget* w)
-{
+QTMScrollArea::setWidgetAndConnect (QWidget* w) {
   setWidget (w);
  
   listViews = w->findChildren<QTMListView*>();
@@ -1048,8 +1068,8 @@ QTMScrollArea::setWidgetAndConnect (QWidget* w)
 
 /*! Scrolls the area to a given index in a QTMListView. */
 void
-QTMScrollArea::scrollToSelection (const QItemSelection& sel)
-{
+QTMScrollArea::scrollToSelection (const QItemSelection& sel) {
+BEGIN_SLOT
   if (sel.isEmpty())
     return;
 
@@ -1063,6 +1083,7 @@ QTMScrollArea::scrollToSelection (const QItemSelection& sel)
     if (! viewport()->geometry().contains (x, y))
       ensureVisible (x, y, r.width(), r.height());
   }
+END_SLOT
 }
 
 /*! Work around a problem with scrolling before the widget is shown.
@@ -1071,15 +1092,13 @@ QTMScrollArea::scrollToSelection (const QItemSelection& sel)
  insufficient amount. See the comments to QTMScrollArea.
  */
 void
-QTMScrollArea::showEvent (QShowEvent* ev)
-{
+QTMScrollArea::showEvent (QShowEvent* ev) {
   for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it) {
     QItemSelection sel = (*it)->selectionModel()->selection();
     (*it)->selectionChanged (sel, sel);
   }
   QScrollArea::showEvent (ev);
 }
-
 
 /******************************************************************************
  * QTMListView
@@ -1144,10 +1163,11 @@ QTMListView::QTMListView (const command& cmd,
  */
 void
 QTMListView::selectionChanged (const QItemSelection& c, const QItemSelection& p) {
+BEGIN_SLOT
   QListView::selectionChanged (c, p);
   emit selectionChanged (c);
+END_SLOT
 }
-
 
 /******************************************************************************
  * QTMTreeView
@@ -1171,6 +1191,7 @@ QTMTreeView::currentChanged (const QModelIndex& curr, const QModelIndex& prev) {
 
 void
 QTMTreeView::callOnChange (const QModelIndex& index, bool mouse) {
+BEGIN_SLOT
   object arguments = mouse ? list_object ((int)QApplication::mouseButtons())
                            : list_object (-1);
     
@@ -1188,6 +1209,7 @@ QTMTreeView::callOnChange (const QModelIndex& index, bool mouse) {
     d = tmModel()->data (index, ++cnt);
   }
   _cmd (arguments);
+END_SLOT
 }
 
 inline QTMTreeModel*

@@ -22,6 +22,7 @@
 #include "file.hpp"
 #include "sys_utils.hpp"
 #include "qt_utilities.hpp"
+#include "qt_gui.hpp"
 #include "analyze.hpp"
 #include "dictionary.hpp"
 #include "image_files.hpp"
@@ -114,6 +115,7 @@ QTMImagePreview::QTMImagePreview (QWidget* parent)
 
 void
 QTMImagePreview::setImage (const QString& file) {
+BEGIN_SLOT
   QImage img;
   wid->setText ("");
   hei->setText ("");
@@ -175,6 +177,7 @@ QTMImagePreview::setImage (const QString& file) {
   }
   else
     image->setPixmap (QPixmap::fromImage (img.scaled (98, 98, Qt::KeepAspectRatio, Qt::FastTransformation)));
+END_SLOT
 }
 
 QTMImageDialog::QTMImageDialog (QWidget* parent, const QString& caption, const QString& directory, const QString& filter)

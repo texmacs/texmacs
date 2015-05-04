@@ -11,6 +11,7 @@
 
 #include "tm_link.hpp"
 #include "qt_utilities.hpp"
+#include "qt_gui.hpp"
 #include "QTMPipeLink.hpp"
 #include <QByteArray>
 
@@ -32,8 +33,10 @@ debug_io_string (QByteArray s) {
 
 void
 QTMPipeLink::readErrOut () {
+BEGIN_SLOT
   feedBuf (QProcess::StandardError);
   feedBuf (QProcess::StandardOutput);
+END_SLOT
 }
 
 QTMPipeLink::QTMPipeLink (string cmd2) : cmd (cmd2), outbuf (""), errbuf ("") {}

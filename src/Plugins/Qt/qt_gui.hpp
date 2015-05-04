@@ -206,4 +206,12 @@ public:
 /*! Force an immediate update of the internal texmacs state. */
 void force_update();
 
+#define BEGIN_SLOT                              \
+  try {
+#define END_SLOT                                \
+  }                                             \
+  catch (string s) {                            \
+    the_exception= s;                           \
+  }
+
 #endif // defined QT_GUI_HPP
