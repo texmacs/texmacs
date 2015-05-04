@@ -147,6 +147,11 @@
 (define (greyed? style)
   (!= (logand style widget-style-grey) 0))
 
+(define (adjust-translation s t)
+  (cond ((not (and (string? s) (qt-gui?) (os-macos?))) t)
+        ((string-starts? s "Preference") (string-replace t "c" "<#441>"))
+        (else t)))
+
 (define (make-menu-label p style . opt)
   "Make widget for menu label @p."
   ;; Possibilities for p:
@@ -164,7 +169,7 @@
   (let ((tt? (and (nnull? opt) (car opt)))
         (col (color (if (greyed? style) "dark grey" "black"))))
     (cond ((translatable? p)            ; "text"
-           (widget-text (translate p) style col #t))
+           (widget-text (adjust-translation p (translate p)) style col #t))
           ((tuple? p 'balloon 2)        ; (balloon <label> "balloon text")
            (make-menu-label (cadr p) style tt?))
           ((tuple? p 'extend)           ; (extend <label> . ws)
