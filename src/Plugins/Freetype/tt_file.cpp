@@ -21,12 +21,6 @@
 
 static hashmap<string,string> tt_fonts ("no");
 
-static url
-search_sub_dirs (url root) {
-  url dirs= complete (root * url_wildcard (), "dr");
-  return expand (dirs);
-}
-
 url
 tt_font_path () {
   string xtt= get_env ("TEXMACS_FONT_PATH");

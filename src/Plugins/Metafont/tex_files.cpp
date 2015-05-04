@@ -207,15 +207,9 @@ get_kpsepath (string s) {
     while ((end>start) && (r[end-1]=='/')) end--;
     string dir= r (start, end);
     if (dir == ".") continue;
-    p= expand (complete (dir * url_wildcard (), "dr")) | p;
+    p= search_sub_dirs (dir) | p;
   }
   return p;
-}
-
-static url
-search_sub_dirs (url root) {
-  url dirs= complete (root * url_wildcard (), "dr");
-  return expand (dirs);
 }
 
 void

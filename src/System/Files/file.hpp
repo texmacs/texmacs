@@ -62,6 +62,7 @@ void ps2pdf (url u1, url u2);
 
 int search_score (url u, array<string> a);
 
+url search_sub_dirs (url root);
 array<string> file_completions (url search, url dir);
 
 url grep (string what, url u);

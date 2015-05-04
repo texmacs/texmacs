@@ -841,6 +841,38 @@ search_score (url u, array<string> a) {
 }
 
 /******************************************************************************
+* Finding recursive non hidden subdirectories of a given directory
+******************************************************************************/
+
+static void
+search_sub_dirs (url& all, url root) {
+  if (is_or (root)) {
+    search_sub_dirs (all, root[2]);
+    search_sub_dirs (all, root[1]);
+  }
+  else if (is_directory (root)) {
+    bool err= false;
+    array<string> a= read_directory (root, err);
+    if (!err) {
+      for (int i=N(a)-1; i>=0; i--)
+        if (N(a[i])>0 && a[i][0] != '.')
+          search_sub_dirs (all, root * a[i]);
+    }
+    cout << "Add " << root << LF;
+    all= root | all;
+  }
+}
+
+url
+search_sub_dirs (url root) {
+  url all= url_none ();
+  search_sub_dirs (all, complete (root, "dr"));
+  return all;
+  //url dirs= complete (root * url_wildcard (), "dr");
+  //return expand (dirs);
+}
+
+/******************************************************************************
 * Searching files in a directory tree with caching
 ******************************************************************************/
 
