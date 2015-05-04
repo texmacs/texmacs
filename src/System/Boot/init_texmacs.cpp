@@ -279,14 +279,14 @@ init_env_vars () {
   url all_root= style_root | package_root;
   url style_path=
     get_env_path ("TEXMACS_STYLE_PATH",
-		  expand (complete (all_root * url_wildcard (), "dr")));
+                  search_sub_dirs (all_root));
   url text_root=
     get_env_path ("TEXMACS_TEXT_ROOT",
 		  "$TEXMACS_HOME_PATH/texts:$TEXMACS_PATH/texts" |
 		  plugin_path ("texts"));
   url text_path=
     get_env_path ("TEXMACS_TEXT_PATH",
-		  expand (complete (text_root * url_wildcard (), "dr")));
+                  search_sub_dirs (text_root));
 
   // Get other data paths
   (void) get_env_path ("TEXMACS_FILE_PATH",text_path | style_path);
