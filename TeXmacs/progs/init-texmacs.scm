@@ -109,6 +109,7 @@
                  (kernel old-gui old-gui-form)
                  (kernel old-gui old-gui-test))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting utilities\n")
 (lazy-define (utils library cursor) notify-cursor-moved)
@@ -121,14 +122,16 @@
 (define supports-email? (url-exists-in-path? "mmail"))
 (if supports-email? (use-modules (utils email email-tmfs)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting BibTeX style modules\n")
 (use-modules (bibtex bib-utils))
 (lazy-define (bibtex bib-complete) current-bib-file citekey-completions)
 (lazy-menu (bibtex bib-widgets) open-bibliography-inserter)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
-;;(display "Booting main TeXmacs functionality\n")
+;(display "Booting main TeXmacs functionality\n")
 (use-modules (texmacs texmacs tm-server) (texmacs texmacs tm-view)
              (texmacs texmacs tm-files) (texmacs texmacs tm-print))
 (use-modules (texmacs keyboard config-kbd))
@@ -144,6 +147,7 @@
 (use-modules (texmacs menus main-menu))
 (tm-define (notify-set-attachment name key val) (noop))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting generic mode\n")
 (lazy-keyboard (generic generic-kbd) always?)
@@ -181,6 +185,7 @@
 (tm-property (open-document-metadata) (:interactive #t))
 (tm-property (open-document-colors) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting text mode\n")
 (lazy-keyboard (text text-kbd) in-text?)
@@ -188,6 +193,7 @@
 	   text-menu text-block-menu text-inline-menu
            text-icons text-block-icons text-inline-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
@@ -199,12 +205,14 @@
 (lazy-initialize (math math-menu) (in-math?))
 (lazy-define (math math-edit) brackets-refresh)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting programming modes\n")
 (lazy-keyboard (prog prog-kbd) in-prog?)
 (lazy-menu (prog prog-menu) prog-format-menu prog-format-icons
 	   prog-menu prog-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting source mode\n")
 (lazy-keyboard (source source-kbd) always?)
@@ -214,12 +222,14 @@
 (lazy-define (source macro-widgets) editable-macro? open-macro-editor
 	     open-macros-editor)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting table mode\n")
 (lazy-keyboard (table table-kbd) in-table?)
 (lazy-menu (table table-menu) insert-table-menu)
 (lazy-define (table table-edit) table-resize-notify)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting graphics mode\n")
 (lazy-keyboard (graphics graphics-kbd) in-active-graphics?)
@@ -231,12 +241,14 @@
              graphics-release-right graphics-start-drag-left
              graphics-dragging-left graphics-end-drag-left)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting formal and natural languages\n")
 (lazy-language (language minimal) minimal)
 (lazy-language (language std-math) std-math)
 (lazy-define (language natural) replace)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting dynamic features\n")
 (lazy-keyboard (dynamic fold-kbd) always?)
@@ -252,6 +264,7 @@
 (lazy-define (dynamic calc-edit) calc-ready? calc-table-renumber)
 (lazy-initialize (dynamic session-menu) (in-session?))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting documentation\n")
 (lazy-keyboard (doc tmdoc-kbd) in-manual?)
@@ -272,8 +285,8 @@
 (lazy-tmfs-handler (doc tmdoc) help)
 (lazy-tmfs-handler (doc apidoc) apidoc)
 (define-secure-symbols tmdoc-include)
-
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting converters\n")
 (lazy-format (convert rewrite init-rewrite) texmacs scheme cpp verbatim)
@@ -293,6 +306,7 @@
              latex-has-style? latex-has-package?
              latex-has-texmacs-style? latex-has-texmacs-package?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting database facilities\n")
 (lazy-define (database db-widget) open-db-chooser)
@@ -304,6 +318,7 @@
 (lazy-tmfs-handler (database db-tmfs) db)
 (lazy-keyboard (database bib-kbd) in-bib?)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting security tools\n")
 (when (== (get-preference "experimental encryption") "on")
@@ -318,6 +333,7 @@
   (tm-define (wallet-get key) #f)
   (tm-define (wallet-set key val) (noop)))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting remote facilities\n")
 (lazy-define (client client-tmfs) remote-home-directory)
@@ -325,6 +341,7 @@
 (lazy-menu (client client-menu) start-client-menu client-menu)
 (lazy-tmfs-handler (client client-tmfs) remote-file)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting linking facilities\n")
 (lazy-menu (link link-menu) link-menu)
@@ -335,12 +352,14 @@
 (lazy-define (link link-extern) get-constellation
              get-link-locations register-link-locations)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting versioning facilities\n")
 (lazy-menu (version version-menu) version-menu)
 (lazy-keyboard (version version-kbd) with-versioning-tool?)
 (lazy-define (version version-tmfs) update-buffer commit-buffer)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting debugging and developer facilities\n")
 (lazy-menu (debug debug-menu) debug-menu)
@@ -348,10 +367,12 @@
 (lazy-define (debug debug-widgets) notify-debug-message
              open-debug-console open-error-messages)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting plugins\n")
 (for-each lazy-plugin-initialize (plugin-list))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting fonts\n")
 (use-modules (fonts fonts-ec) (fonts fonts-adobe) (fonts fonts-x)
@@ -364,19 +385,21 @@
 (tm-property (open-font-selector) (:interactive #t))
 (tm-property (open-document-font-selector) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting regression testing\n")
 (lazy-define (check check-master) check-all)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
+
+;(display "Booting autoupdater\n")
+(when (updater-supported?) 
+  (use-modules (utils misc updater))
+  (delayed (:idle 2000) (updater-initialize)))
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "------------------------------------------------------\n")
 (delayed (:idle 10000) (autosave-delayed))
 (texmacs-banner)
 ;(display "Initialization done\n")
-
-;(display "Booting autoupdater\n")
-(if (updater-supported?) 
-  (begin 
-    (use-modules (utils misc updater))
-    (delayed (:idle 2000) (updater-initialize))))
-;(display* "time: " (- (texmacs-time) boot-start) "\n")
