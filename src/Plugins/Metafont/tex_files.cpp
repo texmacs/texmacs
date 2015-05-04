@@ -221,7 +221,7 @@ reset_tfm_path (bool rehash) { (void) rehash;
     search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/tfm") |
     search_sub_dirs ("$TEXMACS_PATH/fonts/tfm") |
     "$TEX_TFM_PATH" |
-    (tfm == ""? url_none (): tfm);
+    ((tfm == "" || tfm == "{}") ? url_none () : tfm);
   if ((get_setting ("MAKETFM") != "false") ||
       (get_setting ("TEXHASH") == "true"))
     if (get_setting ("KPSEWHICH") != "true")

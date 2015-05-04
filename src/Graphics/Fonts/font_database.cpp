@@ -277,7 +277,8 @@ on_blacklist (string name) {
 
 void
 font_database_build (url u) {
-  if (is_or (u)) {
+  if (is_none (u));
+  else if (is_or (u)) {
     font_database_build (u[1]);
     font_database_build (u[2]);
   }
@@ -433,7 +434,8 @@ build_back_table () {
 
 void
 font_database_collect (url u) {
-  if (is_or (u)) {
+  if (is_none (u));
+  else if (is_or (u)) {
     font_database_collect (u[1]);
     font_database_collect (u[2]);
   }
