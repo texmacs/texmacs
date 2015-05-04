@@ -17,8 +17,10 @@
 ;; Memory
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (show-memory-information s)
-  (string-append s "#[" (number->string (texmacs-memory)) "#bytes]"))
+(define (show-memory-information t)
+  (let* ((s (tree->stree t))
+         (a `(concat ,s " [" ,(number->string (texmacs-memory)) " bytes]")))
+    (stree->tree a)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Guile
