@@ -20,12 +20,22 @@
 void
 QTMGuiHelper::doUpdate () {
   // cout << "UPDATE " << texmacs_time () << LF;
-  gui->update();
+  try {
+    gui->update();
+  }
+  catch (string s) {
+    the_exception= s;
+  }
 }
 
 void
 QTMGuiHelper::doRefresh () {
-  emit refresh();
+  try {
+    emit refresh();
+  }
+  catch (string s) {
+    the_exception= s;
+  }
 }
 
 bool
@@ -44,63 +54,93 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
 
 void
 QTMGuiHelper::doWriteSocketNotification (int socket) {
-  if (DEBUG_QT)
-    debug_qt << "WRITE SOCKET NOTIFICATION " << socket << " "
-             << texmacs_time () << LF;
-  iterator<socket_notifier> it = iterate (gui->write_notifiers);
-  while (it->busy ()) {
-    socket_notifier sn= it->next ();
-    if (sn->fd == socket) {
+  try {
+    if (DEBUG_QT)
+      debug_qt << "WRITE SOCKET NOTIFICATION " << socket << " "
+	       << texmacs_time () << LF;
+    iterator<socket_notifier> it = iterate (gui->write_notifiers);
+    while (it->busy ()) {
+      socket_notifier sn= it->next ();
+      if (sn->fd == socket) {
         //sn->notify();
-      the_gui->process_socket_notification (sn);
-      the_gui->enable_notifier (sn, false);
+	the_gui->process_socket_notification (sn);
+	the_gui->enable_notifier (sn, false);
+      }
     }
+  }
+  catch (string s) {
+    the_exception= s;
   }
 }
 
 void
 QTMGuiHelper::doReadSocketNotification (int socket) {
-  if (DEBUG_QT)
-    debug_qt << "READ SOCKET NOTIFICATION " << socket << " "
-             << texmacs_time () << LF;
-  iterator<socket_notifier> it = iterate (gui->read_notifiers);
-  while (it->busy ()) {
-    socket_notifier sn= it->next ();
-    if (sn->fd == socket) {
+  try {
+    if (DEBUG_QT)
+      debug_qt << "READ SOCKET NOTIFICATION " << socket << " "
+	       << texmacs_time () << LF;
+    iterator<socket_notifier> it = iterate (gui->read_notifiers);
+    while (it->busy ()) {
+      socket_notifier sn= it->next ();
+      if (sn->fd == socket) {
         //sn->notify();
-      the_gui->process_socket_notification (sn);
-      the_gui->enable_notifier (sn, false);
+	the_gui->process_socket_notification (sn);
+	the_gui->enable_notifier (sn, false);
+      }
     }
+  }
+  catch (string s) {
+    the_exception= s;
   }
 }
 
 void
 QTMGuiHelper::aboutToShowMainMenu() {
   //cout << "Show :" << menu_count << LF;
-  menu_count++;
+  try {
+    menu_count++;
+  }
+  catch (string s) {
+    the_exception= s;
+  }
 }
 
 void 
 QTMGuiHelper::aboutToHideMainMenu() {
-  menu_count--;
+  try {
+    menu_count--;
     //cout << "Hide :" << menu_count << " " << N(waiting_widgets) <<  LF;
-  if (menu_count <= 0) {
-    menu_count = 0;
-    QTimer::singleShot (0, the_gui->gui_helper, SLOT (doPopWaitingWidgets ()));
+    if (menu_count <= 0) {
+      menu_count = 0;
+      QTimer::singleShot (0, the_gui->gui_helper, SLOT (doPopWaitingWidgets ()));
+    }
+  }
+  catch (string s) {
+    the_exception= s;
   }
 }
 
 void 
 QTMGuiHelper::doPopWaitingWidgets() {
-  if (!is_nil (waiting_widgets)) {
-    if (DEBUG_QT)
-      debug_qt << "Installing postponed menu" << LF;
-    waiting_widgets->item->install_main_menu();
-    waiting_widgets = waiting_widgets->next;
+  try {
+    if (!is_nil (waiting_widgets)) {
+      if (DEBUG_QT)
+	debug_qt << "Installing postponed menu" << LF;
+      waiting_widgets->item->install_main_menu();
+      waiting_widgets = waiting_widgets->next;
+    }
+  }
+  catch (string s) {
+    the_exception= s;
   }
 }
 
 void
 QTMGuiHelper::emitTmSlotRefresh (string kind) {
-  emit tmSlotRefresh (kind);
+  try {
+    emit tmSlotRefresh (kind);
+  }
+  catch (string s) {
+    the_exception= s;
+  }
 }
