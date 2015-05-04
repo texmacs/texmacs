@@ -84,9 +84,10 @@ is_recursively_up_to_date (url dir) {
   array<string> a= read_directory (dir, error_flag);
   for (int i=0; i<N(a); i++)
     if (url (a[i]) != url_here () && url (a[i]) != url_parent ())
-      if (is_directory (dir * a[i]))
-	if (!is_recursively_up_to_date (dir * a[i]))
-	  return false;
+      if (N(a[i])>0 && a[i][0] != '.')
+        if (is_directory (dir * a[i]))
+          if (!is_recursively_up_to_date (dir * a[i]))
+            return false;
   return true;
 }
 
