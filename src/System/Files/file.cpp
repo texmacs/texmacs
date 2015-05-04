@@ -846,7 +846,8 @@ search_score (url u, array<string> a) {
 
 static void
 search_sub_dirs (url& all, url root) {
-  if (is_or (root)) {
+  if (is_none (root));
+  else if (is_or (root)) {
     search_sub_dirs (all, root[2]);
     search_sub_dirs (all, root[1]);
   }
@@ -858,7 +859,6 @@ search_sub_dirs (url& all, url root) {
         if (N(a[i])>0 && a[i][0] != '.')
           search_sub_dirs (all, root * a[i]);
     }
-    cout << "Add " << root << LF;
     all= root | all;
   }
 }
@@ -866,10 +866,9 @@ search_sub_dirs (url& all, url root) {
 url
 search_sub_dirs (url root) {
   url all= url_none ();
-  search_sub_dirs (all, complete (root, "dr"));
+  //cout << "Search in " << root << " -> " << expand (complete (root, "dr")) << LF;
+  search_sub_dirs (all, expand (complete (root, "dr")));
   return all;
-  //url dirs= complete (root * url_wildcard (), "dr");
-  //return expand (dirs);
 }
 
 /******************************************************************************
