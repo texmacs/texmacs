@@ -17,8 +17,9 @@
 #include "merge_sort.hpp"
 #include "drd_std.hpp"
 #include "language.hpp"
-#ifndef __MINGW32__
 #include <unistd.h>
+#ifdef __MINGW32__
+#include <time.h>
 #endif
 
 tree texmacs_settings = tuple ();
@@ -114,18 +115,20 @@ make_dir (url which) {
 static url
 url_temp_dir_sub () {
 #ifdef __MINGW32__
-  static string pid= "1";
-  return url (main_tmp_dir) * url (pid);
+  static url tmp_dir= url_system(main_tmp_dir) * url_system(as_string(time(NULL)));
 #else
-  static string pid= as_string ((int) getpid ());
-  return url (main_tmp_dir) * url (pid);
+  static url tmp_dir= url_system(main_tmp_dir) * url_system(as_string ((int) getpid ()));
 #endif
+  return (tmp_dir);
 }
 
 url
 url_temp_dir () {
-  url u= url_temp_dir_sub ();
-  make_dir (u);
+  static url u;
+  if(u == url_none()) {
+    u= url_temp_dir_sub ();
+    make_dir (u);
+  }
   return u;
 }
 
@@ -138,14 +141,26 @@ process_running (int pid) {
 
 static void
 clean_temp_dirs () {
-#ifndef __MINGW32__
   bool err= false;
   array<string> a= read_directory (main_tmp_dir, err);
+#ifndef __MINGW32__
   for (int i=0; i<N(a); i++)
     if (is_int (a[i]))
       if (!process_running (as_int (a[i])))
-        if (a[i] != as_string ((int) getpid ()))
+        if (a[i] != as_string ((int) getpid ()))make
           system ("rm -rf", url (main_tmp_dir) * url (a[i]));
+#else
+  /* delete the directories after 7 days */
+  time_t ts = as_int (basename (url_temp_dir_sub())) - (3600 * 24 * 7 );
+  for (int i=0; i<N(a); i++) {
+    time_t td= as_int (a[i]);
+    if (td && td < ts) {
+      url cur = url (main_tmp_dir) * url (a[i]);
+      array<string> f= read_directory (cur, err);
+      for (int j=0; j<N(f); j++) remove(cur * url (f[j]));
+      _rmdir (as_charp (as_string( cur)));
+    }
+  }
 #endif
 }
 
