@@ -147,7 +147,7 @@ clean_temp_dirs () {
   for (int i=0; i<N(a); i++)
     if (is_int (a[i]))
       if (!process_running (as_int (a[i])))
-        if (a[i] != as_string ((int) getpid ()))make
+        if (a[i] != as_string ((int) getpid ()))
           system ("rm -rf", url (main_tmp_dir) * url (a[i]));
 #else
   /* delete the directories after 7 days */
