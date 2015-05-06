@@ -151,16 +151,17 @@ clean_temp_dirs () {
           system ("rm -rf", url (main_tmp_dir) * url (a[i]));
 #else
   /* delete the directories after 7 days */
-  time_t ts = as_int (basename (url_temp_dir_sub())) - (3600 * 24 * 7 );
-  for (int i=0; i<N(a); i++) {
-    time_t td= as_int (a[i]);
-    if (td && td < ts) {
-      url cur = url (main_tmp_dir) * url (a[i]);
-      array<string> f= read_directory (cur, err);
-      for (int j=0; j<N(f); j++) remove(cur * url (f[j]));
-      _rmdir (as_charp (as_string( cur)));
+  time_t ts = as_int (basename (url_temp_dir_sub ())) - (3600 * 24 * 7 );
+  for (int i=0; i<N(a); i++)     
+    if (is_int (a[i])) {
+      time_t td= as_int (a[i]);
+      if (td < ts) {
+        url cur = url (main_tmp_dir) * url (a[i]);
+        array<string> f= read_directory (cur, err);
+        for (int j=0; j<N(f); j++) remove(cur * url (f[j]));
+        _rmdir (as_charp (as_string (cur)));
+      }
     }
-  }
 #endif
 }
 
