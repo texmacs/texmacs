@@ -68,7 +68,8 @@ struct _file_actions_t {
 static void
 _unix_system_warn (pid_t pid, string which, string msg) {
   (void) which;
-  debug_io << "unix_system, pid " << pid << ", warning: " << msg << "\n";
+  io_warning << "unix_system, pid " << pid
+	     << ", warning: " << msg << "\n";
 }
 
 int
@@ -108,7 +109,8 @@ unix_system (array<string> arg,
       if (fd_in[i] < 0)
         arg_[j]= replace (arg_[j], "$$" * as_string (i),
 	  	          as_string (pp_in[i].in ()));
-  debug_io << "unix_system, launching: " << arg_ << "\n"; 
+  if (DEBUG_IO)
+    debug_io << "unix_system, launching: " << arg_ << "\n"; 
   array<char*> _arg;
   for (int j= 0; j < N(arg_); j++)
     _arg << as_charp (arg_[j]);
@@ -119,10 +121,12 @@ unix_system (array<string> arg,
   for (int j= 0; j < N(arg_); j++)
     tm_delete_array (_arg[j]);
   if (status != 0) {
-    debug_io << "unix_system, failed" << "\n";
+    if (DEBUG_IO) debug_io << "unix_system, failed" << "\n";
     return -1;
   }
-  debug_io << "unix_system, succeeded to create pid " << pid << "\n";
+  if (DEBUG_IO)
+    debug_io << "unix_system, succeeded to create pid "
+	     << pid << "\n";
 
   // send/receive data to/from spawn process
   array<int> pos_in (n_in);
@@ -173,7 +177,9 @@ unix_system (array<string> arg,
       _unix_system_warn (pid, which, "waiting spawn process");
     }
   }
-  debug_io << "unix_system, pid " << pid << " terminated" << "\n"; 
+  if (DEBUG_IO)
+    debug_io << "unix_system, pid " << pid
+	     << " terminated" << "\n"; 
   if (wret < 0 || WIFEXITED(status) == 0) return -1;
   return WEXITSTATUS(status);
 }
