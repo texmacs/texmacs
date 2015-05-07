@@ -64,19 +64,19 @@
 			    (string->list (tm->string t2))))
 	(else 0)))
 
-(define (tree-focus ref l)
+(define (tree-focus-index ref l)
   (cond ((null? l) #f)
 	((tree-inside? (car l) ref) 0)
-	((and (list? (car l)) (tree-focus ref (car l))) 0)
+	((and (list? (car l)) (tree-focus-index ref (car l))) 0)
 	(else
-	 (with r (tree-focus ref (cdr l))
+	 (with r (tree-focus-index ref (cdr l))
 	   (if r (+ r 1) #f)))))
 
-(define (tree-get-focus ref t l)
+(define (tree-get-focus-index ref t l)
   (if (or (== t ref) (not (tree-inside? t ref)))
-      (tree-focus ref l)
-      (with r (tree-focus t l)
-	(if r r (tree-get-focus ref (tree-up t) l)))))
+      (tree-focus-index ref l)
+      (with r (tree-focus-index t l)
+	(if r r (tree-get-focus-index ref (tree-up t) l)))))
 
 (tm-define (tree-set-diff ref t)
   (:type (-> tree content void))
@@ -114,7 +114,7 @@
 	   (if (== (tm-car ref) (tm-car t)) ref
 	       (tree-assign-node! ref (tm-car t))))
 	  (else
-	   (with pos (tree-focus ref (tm-cdr t))
+	   (with pos (tree-focus-index ref (tm-cdr t))
 	     (if (or (not pos) (tree-is-buffer? ref))
                  (tree-assign! ref t)
 		 (let* ((tl (tm->list t))
