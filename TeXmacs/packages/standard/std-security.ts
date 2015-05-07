@@ -50,8 +50,8 @@
   </macro>>
 
   <assign|gpg-decrypted-block-detailed|<\macro|body|recipients>
-    <\surround|<no-indent><framed|<with|font-series|bold|Decrypted block
-    to:><new-line><arg|recipients><new-line>><new-line><new-line>|<right-flush><new-line><hrule>>
+    <\surround|<no-indent><framed|<with|font-series|bold|Decrypted block with
+    recipients><new-line><arg|recipients><new-line>><new-line><new-line>|<right-flush><new-line><hrule>>
       <arg|body>
     </surround>
   </macro>>
@@ -63,8 +63,8 @@
   <assign|gpg-encrypted-block|<\xmacro|v>
     <\surround|<no-indent>|>
       <\framed>
-        <with|font-series|bold|Encrypted block
-        to:><new-line><map-args|gpg-render-recipient-item|document|v|1>
+        <with|font-series|bold|Encrypted block with
+        recipients><new-line><map-args|gpg-render-recipient-item|document|v|1>
       </framed>
     </surround>
   </xmacro>>

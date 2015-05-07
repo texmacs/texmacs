@@ -49,11 +49,11 @@
 ;; Global settings and initialization
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (gpg-userdir)
+(tm-define (gpg-userdir)
   (url-concretize (string-append "$TEXMACS_HOME_PATH/users/"
 				 (get-default-user))))
 
-(define (gpg-homedir)
+(tm-define (gpg-homedir)
   (url-append (gpg-userdir) "gnupg"))
 
 (define (gpg-make-homedir)
@@ -83,7 +83,7 @@
   (and (!= (get-preference "experimental encryption") "off")
        (!= gpg-executable "")
        (url-exists-in-path? gpg-executable)
-       (url-exists? (url-append (gpg-homedir) "pubring.gpg"))))
+       (url-exists? (gpg-homedir))))
 
 (define (gpg-notify-experimental-encryption var val)
   (and (== val "on")

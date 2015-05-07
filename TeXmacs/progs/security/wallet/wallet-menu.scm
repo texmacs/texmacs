@@ -236,12 +236,14 @@
           (scrollable
             (padded
               (for (x (wallet-entries))
-                (aligned (item (toggle
-                   (if answer
-		       (ahash-set! tbl (car x) #t)
-		       (ahash-remove! tbl (car x)))
-		   #f)
-		   (text (wallet-entry->string x))))))))
+                (aligned
+		  (item (hlist (toggle
+				(if answer
+				    (ahash-set! tbl (car x) #t)
+				    (ahash-remove! tbl (car x)))
+				#f) //)
+		    (text (wallet-entry->string x)))))
+	      (glue #f #t 0 0))))
         ===
         (bottom-buttons
           >>
@@ -286,11 +288,6 @@
 
 (define-preferences
   ("wallet persistent status" "off" notify-wallet-persistent-status))
-
-(on-exit
-  (if (wallet-on?)
-      (set-preference "wallet persistent status" "on")
-      (set-preference "wallet persistent status" "off")))
 
 (tm-define (wallet-persistent-status-on?)
   (== (get-preference "wallet persistent status") "on"))
