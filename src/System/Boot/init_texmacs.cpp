@@ -125,7 +125,7 @@ url_temp_dir_sub () {
 url
 url_temp_dir () {
   static url u;
-  if(u == url_none()) {
+  if (u == url_none()) {
     u= url_temp_dir_sub ();
     make_dir (u);
   }
@@ -158,7 +158,7 @@ clean_temp_dirs () {
       if (td < ts) {
         url cur = url (main_tmp_dir) * url (a[i]);
         array<string> f= read_directory (cur, err);
-        for (int j=0; j<N(f); j++) remove(cur * url (f[j]));
+        for (int j=0; j<N(f); j++) remove (cur * url (f[j]));
         _rmdir (as_charp (as_string (cur)));
       }
     }
