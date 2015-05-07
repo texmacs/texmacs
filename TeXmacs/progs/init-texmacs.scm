@@ -326,8 +326,10 @@
                supports-wallet? wallet-initialized?
                wallet-on? wallet-off?)
   (lazy-define (security wallet wallet-menu) with-wallet)
+  (lazy-define (security gpg gpg-widgets) open-gpg-key-manager)
   (lazy-menu (security wallet wallet-menu) wallet-preferences-widget)
-  (lazy-menu (security gpg gpg-widgets) gpg-preferences-widget))
+  (lazy-menu (security gpg gpg-widgets) gpg-preferences-widget)
+  (lazy-menu (security gpg gpg-menu) gpg-menu))
 (when (!= (get-preference "experimental encryption") "on")
   (tm-define-macro (with-wallet . body) `(begin ,@body))
   (tm-define (wallet-get key) #f)

@@ -17,6 +17,9 @@
 (when (os-macos?) 
   (use-modules (security keychain macos-security)))
 
+(when (or (os-mingw?) (os-win32?))
+  (use-modules (security keychain win-security)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remember wallet master passphrase
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -25,7 +28,10 @@
 (define wallet-account "wallet")
 
 (tm-define (wallet-can-remember-passphrase?)
-  (and (os-macos?) (url-exists-in-path? "security")))
+  (or
+   (and (os-macos?) (url-exists-in-path? "security"))
+   (and (os-mingw?) (url-exists-in-path? "winwallet"))
+   (and (os-win32?) (url-exists-in-path? "winwallet"))))
 
 (tm-define (wallet-save-passphrase passphrase)
   (and (wallet-can-remember-passphrase?)

@@ -12,8 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (security gpg gpg-widgets)
-  (:use (security gpg gpg-base))
-  (:use (security wallet wallet-menu)))
+  (:use (security gpg gpg-base)
+	(security wallet wallet-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Misc
@@ -149,7 +149,7 @@
 				    ", " (gpg-get-key-fingerprint k))))
 	 (keys (gpg-public-keys))
 	 (sels gpg-widget-selected-public-key-fingerprints))
-  (resize ("500px" "700px" "9999px") ("200px" "200px" "9999px") 
+  (resize ("700px" "700px" "9999px") ("200px" "200px" "9999px") 
   (padded
   (scrollable
     (padded
@@ -157,9 +157,9 @@
 	(aligned
           (item (toggle
               (if answer
-                (ahash-set! sels x #t)
-                (ahash-remove! sels x))
-              (ahash-ref sels x))
+                (ahash-set! sels (gpg-get-key-fingerprint x) #t)
+                (ahash-remove! sels (gpg-get-key-fingerprint x)))
+              (ahash-ref sels (gpg-get-key-fingerprint x)))
             (text (key->string x)))))))))
   ===
   (bottom-buttons
@@ -167,8 +167,7 @@
     >>
     ("Ok"
       (set! gpg-widget-selected-public-key-fingerprints sels)
-      (cmd (cons "Ok" 
-        (map gpg-get-key-fingerprint (ahash-entries sels))))))))
+      (cmd (cons "Ok" (ahash-entries sels)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encryption
@@ -460,8 +459,7 @@
 ;; Public key manager
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define gpg-widget-manage-public-keys-variable-keys
-  (gpg-public-keys))
+(define gpg-widget-manage-public-keys-variable-keys (list))
 
 (tm-widget ((gpg-widget-confirm-delete-public-keys cb) cmd)
   (padded
@@ -476,7 +474,10 @@
   (let* ((key->string
 	  (lambda (k) (string-append " " (gpg-get-key-user-id k)
 				     ", " (gpg-get-key-fingerprint k))))
-	 (sels (make-ahash-table)))
+	 (sels (begin
+		 (set! gpg-widget-manage-public-keys-variable-keys
+		       (gpg-public-keys))
+		 (make-ahash-table))))
   (refreshable "gpg-refreshable-manage-public-keys"
   (scrollable
     (for (x gpg-widget-manage-public-keys-variable-keys)
@@ -541,24 +542,6 @@
 ;; Collected key manager
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; FIXME << move to gpg-base
-(tm-define (gpg-import-public-key-from-collected fingerprint)
-  (and-with s (ahash-ref gpg-collected-public-keys-table fingerprint)
-	    (gpg-import-public-keys (second s))))
-
-(tm-define (gpg-collected-public-key-fingerprints)
-  (ahash-entries gpg-collected-public-keys-table))
-
-(tm-define (gpg-collected-public-key-uid fingerprint)
-  (first (ahash-ref gpg-collected-public-keys-table fingerprint)))
-
-(tm-define (gpg-collected-public-key-data fingerprint)
-  (second (ahash-ref gpg-collected-public-keys-table fingerprint)))
-
-(tm-define (gpg-delete-collected-public-key fingerprint)
-  (ahash-remove! gpg-collected-public-keys-table fingerprint))
-
-
 (tm-widget ((gpg-widget-confirm-delete-collected-public-keys cb) cmd)
   (padded
     (bold (text "Are you sure you want to delete collected public keys?"))
@@ -572,7 +555,9 @@
   (let* ((fingerprint->string
 	  (lambda (x) (string-append
 		       " " (gpg-collected-public-key-uid x) ", " x)))
-	 (fingerprints (gpg-collected-public-key-fingerprints)))
+	 (fingerprints (begin
+			 (tm-gpg-collect-public-keys-from-buffer)
+			 (gpg-collected-public-key-fingerprints))))
   (with sels (make-ahash-table)
   (refreshable "gpg-refreshable-manage-collected-public-keys"
   (scrollable
@@ -591,7 +576,7 @@
     (explicit-buttons
       (when (> (ahash-size sels) 0)
         ("Delete" (with cb (lambda ()
-          (map gpg-delete-collected-public-key (ahash-entries sels))
+          (gpg-delete-collected-public-keys (ahash-entries sels))
           (set! fingerprints (gpg-collected-public-key-fingerprints))
           (set! sels (make-ahash-table))
           (refresh-now "gpg-refreshable-manage-collected-public-keys"))
@@ -599,7 +584,7 @@
                            noop "Confirm collected public key deletion"))))
       // //
       (when (> (ahash-size sels) 0)
-        ("Trust"
+        ("Import"
           (map gpg-import-public-key-from-collected (ahash-entries sels))
           (map gpg-delete-collected-public-key (ahash-entries sels))
           (set! fingerprints (gpg-collected-public-key-fingerprints))
@@ -636,6 +621,9 @@
     (tab (text "Collected keys")
       (centered       
         (dynamic (gpg-widget-manage-collected-public-keys)))))))
+
+(tm-define (open-gpg-key-manager)
+  (top-window gpg-widget-manage-keys "Key manager"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GnuPG preferences
@@ -675,10 +663,7 @@
     (text "Cipher algorithm for passphrase encryption:") // //
     (enum (gpg-set-cipher-algorithm answer)
           (list "AES192" "AES256")
-          (gpg-get-cipher-algorithm) "7em") >>)
-  (hlist (explicit-buttons 
-	      ("Open key manager"
-	       (top-window gpg-widget-manage-keys "Key manager"))) >>))
+          (gpg-get-cipher-algorithm) "7em") >>))
 
 (tm-widget (gpg-preferences-widget)
   (if (supports-gpg?)

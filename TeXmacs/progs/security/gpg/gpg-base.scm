@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (security gpg gpg-base)
-  (:use (utils base environment)))
+  (:use (utils base environment))
+  (:use (database db-users)))
 
 ;(display "TeXmacs] Loading GnuPG base support (http://www.gnupg.org)\n")
 
@@ -22,34 +23,18 @@
 
 (define gpg-executable "")
 
-(define gpg-executable-version-table (make-ahash-table))
-
-(define (gpg-valid-executable? exe)
-  (let* ((x (ahash-ref gpg-executable-version-table exe))
-         (tmp ""))
-    (if x (!= x "no")
-        (with b (and
-                 (!= exe "")
-                 (url-exists-in-path? exe)
-                 (with ret (evaluate-system (list exe "--version")
-                                            '() '() '(1 2))
-                   (set! tmp (cadr ret))
-                   (and (== (car ret) "0")
-                        (string-contains? tmp "GnuPG"))))
-          (if b
-              (with aux (string-decompose (car (string-decompose tmp "\n")) " ")
-                (with ver (if (>= (length aux) 3) (third aux) "no")
-                  (ahash-set! gpg-executable-version-table exe ver)
-                  (!= ver "no")))
-              (begin
-                (ahash-set! gpg-executable-version-table exe "no")
-                #f))))))
+(tm-define (gpg-valid-executable? exe)
+  (and (!= exe "") (url-exists-in-path? exe)))
 
 (define (notify-gpg-executable var val)
-  (set! gpg-executable val))
+  (if (gpg-valid-executable? val)
+      (set! gpg-executable val)
+      (set! gpg-executable "")))
 
 (define-preferences
-  ("gpg executable" (if (url-exists-in-path? "gpg") "gpg" "gpg2")
+  ("gpg executable" (cond ((url-exists-in-path? "gpg") "gpg")
+			  ((url-exists-in-path? "gpg2") "gpg2")
+			  (else ""))
    notify-gpg-executable))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,20 +49,25 @@
 ;; Global settings and initialization
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define gpg-homedir
-  (url-concretize "$TEXMACS_HOME_PATH/system/gnupg"))
+(define (gpg-userdir)
+  (url-concretize (string-append "$TEXMACS_HOME_PATH/users/"
+				 (get-default-user))))
+
+(define (gpg-homedir)
+  (url-append (gpg-userdir) "gnupg"))
 
 (define (gpg-make-homedir)
-  (when (not (url-exists? gpg-homedir))
-    (system-mkdir gpg-homedir)
+  (when (not (url-exists? (gpg-userdir)))
+    (system-mkdir (gpg-userdir)))
+  (when (not (url-exists? (gpg-homedir)))
+    (system-mkdir (gpg-homedir))
     (when (not (or (os-mingw?) (os-win32?)))
-      (system-1 "chmod og-rwx" gpg-homedir))))
-
-(when (gpg-valid-executable? gpg-executable)
-  (gpg-make-homedir))
+      (system-1 "chmod og-rwx" (gpg-homedir))))
+  (url-exists? (gpg-homedir)))
 
 (tm-define (gpg-get-executable)
   (:synopsis "GnuPG executable")
+  (gpg-make-homedir)
   gpg-executable)
 
 (tm-define (gpg-set-executable exe)
@@ -90,16 +80,58 @@
 
 (tm-define (supports-gpg?)
   (:synopsis "Tells if GnuPG is available")
-  (and (gpg-valid-executable? gpg-executable)
-       (url-exists? gpg-homedir)))
+  (and (!= (get-preference "experimental encryption") "off")
+       (!= gpg-executable "")
+       (url-exists-in-path? gpg-executable)
+       (url-exists? (url-append (gpg-homedir) "pubring.gpg"))))
 
-(tm-define (gpg-version)
-  (string-decompose
-    (ahash-ref gpg-executable-version-table gpg-executable) "."))
+(define (gpg-notify-experimental-encryption var val)
+  (and (== val "on")
+       (gpg-valid-executable? gpg-executable)
+       (gpg-make-homedir)))
 
-(tm-define (gpg-major-version-number)
-  (with ver (gpg-version)
-    (if (not (null? ver)) (car ver) "?")))
+(define-preferences
+  ("experimental encryption" "off" gpg-notify-experimental-encryption))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ahash tables attached to documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (ahash-entries h)
+  (map first (ahash-table->list h)))
+
+(define (ahash-values h)
+  (map cdr (ahash-table->list h)))
+
+(define (ahash-table->stree t)
+  `(collection . 
+    ,(map (lambda (p) (if (list? (cdr p))
+			  `(associate ,(car p) (tuple . ,(cdr p)))
+			  `(associate ,(car p) ,(cdr p))))
+	 (sort (ahash-table->list t)
+	       (lambda (x y) (string< (car x) (car y)))))))
+
+(define (stree->ahash-table t)
+  (list->ahash-table
+   (map (lambda (p) 
+          (if (list? (third p))
+              `(,(second p) . ,(cdr (third p)))
+              `(,(second p) . ,(third p))))
+	(cdr t))))
+
+(tm-define (gpg-set-ahash-table-attachment var val)
+  (set-attachment var (stree->tree (ahash-table->stree val))))
+
+(tm-define (gpg-get-ahash-table-attachment var)
+   (stree->ahash-table (tree->stree (get-attachment var))))
+
+(tm-define (gpg-get-ahash-set-attachment var key val)
+  (with t (gpg-get-ahash-table-attachment var)
+    (ahash-set! t key val)
+    (set-ahash-table-attachment var t)))
+
+(tm-define (gpg-get-ahash-ref-attachment var key)
+  (ahash-ref (gpg-get-ahash-table-attachment var) key))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cypher algorithm used for passphrase encryption
@@ -129,18 +161,77 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define gpg-collected-public-keys-url
-  (url-concretize "$TEXMACS_HOME_PATH/system/gnupg/collected-public-keys.scm"))
+  (url-append (gpg-homedir) "collected-public-keys.scm"))
 
-(tm-define gpg-collected-public-keys-table (make-ahash-table))
+(define (ahash-entries h)
+  (map first (ahash-table->list h)))
 
-(when (url-exists? gpg-collected-public-keys-url)
-  (set! gpg-collected-public-keys-table
-	(list->ahash-table (load-object gpg-collected-public-keys-url))))
-
-(on-exit
+(tm-define (gpg-collected-public-keys)
   (when (supports-gpg?)
-	(save-object gpg-collected-public-keys-url
-		     (ahash-table->list gpg-collected-public-keys-table))))
+    (with t (make-ahash-table)
+      (when (url-exists? gpg-collected-public-keys-url)
+	(set! t (list->ahash-table
+		 (load-object gpg-collected-public-keys-url))))
+      t)))
+
+(tm-define (gpg-add-collected-public-keys ckeys)
+  (when (supports-gpg?)
+    (with t (make-ahash-table)
+      (when (url-exists? gpg-collected-public-keys-url)
+	(set! t (list->ahash-table
+		 (load-object gpg-collected-public-keys-url))))
+      (for (f (ahash-entries ckeys))
+	(ahash-set! t f (ahash-ref ckeys f)))
+      (save-object gpg-collected-public-keys-url
+		   (ahash-table->list t)))))
+
+(tm-define (gpg-delete-collected-public-keys fingerprints)
+  (when (supports-gpg?)
+    (with t (make-ahash-table)
+      (when (url-exists? gpg-collected-public-keys-url)
+	(set! t (list->ahash-table
+		 (load-object gpg-collected-public-keys-url))))
+      (for (f fingerprints)
+	(ahash-remove! t f))
+      (save-object gpg-collected-public-keys-url
+		   (ahash-table->list t)))))
+
+(tm-define (gpg-import-public-key-from-collected fingerprint)
+  (and-with s (ahash-ref (gpg-collected-public-keys) fingerprint)
+	    (gpg-import-public-keys (second s))))
+
+(tm-define (gpg-collected-public-key-fingerprints)
+  (ahash-entries (gpg-collected-public-keys)))
+
+(tm-define (gpg-collected-public-key-uid fingerprint)
+  (first (ahash-ref (gpg-collected-public-keys) fingerprint)))
+
+(tm-define (gpg-collected-public-key-data fingerprint)
+  (second (ahash-ref (gpg-collected-public-keys) fingerprint)))
+
+(tm-define (gpg-delete-collected-public-key fingerprint)
+  (gpg-delete-collected-public-keys (list fingerprint)))
+
+(define (get-key-fingerprints-from-buffer)
+  (ahash-entries (gpg-get-ahash-table-attachment "gpg")))
+
+(define (get-new-key-fingerprints-from-buffer)
+  (let* ((d (get-key-fingerprints-from-buffer))
+	 (t (list->ahash-table (map (lambda (x) (list x #t)) d))))
+  (for (x (gpg-public-key-fingerprints))
+    (if (ahash-ref t x) (ahash-remove! t x)))
+  (ahash-entries t)))
+
+(tm-define (tm-gpg-collect-public-keys-from-buffer)
+  (:secure #t)
+  (:synopsis "Collect public keys from buffer")
+  (let* ((fingerprints (get-new-key-fingerprints-from-buffer))
+	 (ckeys (gpg-get-ahash-table-attachment "gpg"))
+	 (keys (make-ahash-table)))
+    (for (f fingerprints)
+      (and-with val (ahash-ref ckeys f)
+	(ahash-set! keys f val)))
+    (gpg-add-collected-public-keys keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Error handling
@@ -155,9 +246,9 @@
 
 (define (gpg-executable-default homedir)
   (if (url-none? homedir)
-      (list gpg-executable "--homedir" (url->system gpg-homedir)
+      (list (gpg-get-executable) "--homedir" (url->system (gpg-homedir))
             "--batch" "--no-tty" "--no-use-agent")
-      (list gpg-executable "--homedir" (url->system homedir)
+      (list (gpg-get-executable) "--homedir" (url->system homedir)
             "--batch" "--no-tty" "--no-use-agent")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

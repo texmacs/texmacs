@@ -136,7 +136,9 @@
       ("Keep unfolded" (make 'keep-unfolded))
       (if #f
           ("Animate folding" (noop))
-          ("Animate unfolding" (noop)))))
+          ("Animate unfolding" (noop))))
+  (if (== (get-preference "experimental encryption") "on")
+      (-> "Encrypt" (link gpg-menu))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operate on buffers with dynamic markup
