@@ -149,7 +149,8 @@
 
 (define (adjust-translation s t)
   (cond ((not (and (string? s) (qt-gui?) (os-macos?))) t)
-        ((string-starts? s "Preference") (string-replace t "c" "<#441>"))
+        ((string-starts? s "Preference")
+	 (string-replace (string-replace t "c" "<#441>") "e" "<#435>"))
         (else t)))
 
 (define (make-menu-label p style . opt)
