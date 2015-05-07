@@ -48,20 +48,25 @@
   (string-append "find-generic-password"
 		 " -a " (string-quote account)
 		 " -s " (string-quote service)
-		 " -w " "\n"))
+		 " -g " "\n"))
 
+(define (system-security-parse-password s)
+  (let* ((x (string-trim-right s #\newline))
+	 (y (string-decompose x "password: ")))
+    (and (>= (length y) 2) (string-unquote (second y)))))
+  
 (tm-define (system-security-find-generic-password account service)
   (let* ((cmd (system-security-find-generic-password-command account service))
          (ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))))
     (if (!= (car ret) "0")
         (system-security-error (list cmd) (cadr ret) (caddr ret))
-        (car (string-decompose (cadr ret) "\n")))))
+	(system-security-parse-password (caddr ret)))))
 
 (tm-define (system-security-quiet-find-generic-password account service)
   (let* ((cmd (system-security-find-generic-password-command account service))
          (ret (evaluate-system (list "security" "-i") '(0) (list cmd) '(1 2))))
     (and (== (car ret) "0")
-         (car (string-decompose (cadr ret) "\n")))))
+	 (system-security-parse-password (caddr ret)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Delete generic password
