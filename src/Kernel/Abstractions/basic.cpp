@@ -188,10 +188,10 @@ void
 tm_throw (const char* msg) {
   the_exception= msg;
   the_report   = get_crash_report (msg);
-  //cout << "Throwing " << msg << LF;
-  //cout << "-------------------------------------------------\n";
-  //cout << the_report << LF;
-  //cout << "-------------------------------------------------\n";
+  cout << "Throwing " << msg << LF;
+  cout << "-------------------------------------------------\n";
+  cout << the_report << LF;
+  cout << "-------------------------------------------------\n";
   throw string (msg);
 }
 
