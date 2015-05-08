@@ -3873,6 +3873,8 @@ is_std_textual_env (string s) {
       << "small-table" << "big-table" << "small-figure" << "big-figure"
       << "tabular" << "tabular*" << "block" << "block*" << "descriptive-table"
       << "description" << "itemize" << "enumerate"
+      << "bibliography" << "bib-list" << "thebibliography"
+      << "bib-field" << "bib-entry" << "db-field" << "db-entry"
       << "itemize-minus" << "enumerate-roman" << "enumerate-alpha"
       << "strong" << "em" << "dfn" << "sample"
       << "name" << "person" << "cite*" << "abbr" << "acronym"

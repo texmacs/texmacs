@@ -82,7 +82,7 @@
       ((or (bib-null? p) (nlist? p)) "")
       ((== (length p) 1) "")
       ((== (length p) 2) (list-ref p 1))
-      (else `(concat ,(list-ref p 1) "--" ,(list-ref p 2))))))
+      (else `(concat ,(list-ref p 1) ,bib-range-symbol ,(list-ref p 2))))))
 
 (tm-define (bib-format-chapter-pages x)
   (:mode bib-acm?)

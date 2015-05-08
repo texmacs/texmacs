@@ -76,7 +76,7 @@
       ((== (length p) 2)
        `(concat ,(bib-translate "p.") (nbsp) ,(list-ref p 1)))
       (else `(concat ,(bib-translate "pp.") (nbsp)
-                     ,(list-ref p 1) "--" ,(list-ref p 2))))))
+                     ,(list-ref p 1) ,bib-range-symbol ,(list-ref p 2))))))
 
 (tm-define (bib-format-vol-num-pages x)
   (:mode bib-elsart-num?)
@@ -89,7 +89,8 @@
                ((or (bib-null? pp) (nlist? pp)) "")
 	       ((equal? 1 (length pp)) "")
 	       ((equal? 2 (length pp)) (list-ref pp 1))
-	       (else `(concat ,(list-ref pp 1) "--" ,(list-ref pp 2)))))))
+	       (else `(concat ,(list-ref pp 1) ,bib-range-symbol
+                              ,(list-ref pp 2)))))))
     (when (not (bib-null? n))
       (set! v `(concat ,v (nbsp) "(" ,n ")")))
     (bib-new-list " " `(,j ,v ,y ,p))))

@@ -156,7 +156,7 @@
        `(concat ,(bib-translate "page ") ,(list-ref p 1)))
       (else
 	`(concat ,(bib-translate "pages ")
-		 ,(list-ref p 1) "--" ,(list-ref p 2))))))
+		 ,(list-ref p 1) ,bib-range-symbol ,(list-ref p 2))))))
 
 (tm-define (bib-format-chapter-pages x)
   ;; (:mode bib-plain?)
@@ -183,7 +183,8 @@
 		    ((equal? 1 (length p)) "")
 		    ((equal? 2 (length p)) `(concat ":" ,(list-ref p 1)))
 		    (else
-		      `(concat ":" ,(list-ref p 1) "--" ,(list-ref p 2)))))))
+		      `(concat ":" ,(list-ref p 1)
+                               ,bib-range-symbol ,(list-ref p 2)))))))
     (if (and (== vol "") (== num ""))
         (bib-format-pages x)
         `(concat ,vol ,num ,pag))))

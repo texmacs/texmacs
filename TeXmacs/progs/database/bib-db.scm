@@ -248,7 +248,8 @@
 
 (define (db-bib-pages t)
   (if (not (tm-atomic? t)) t
-      (let* ((l (string-decompose t "-"))
+      (let* ((t* (string-replace t "" "-"))
+             (l (string-decompose t* "-"))
              (fl (list-filter l (lambda (s) (!= s "")))))
         (if (<= (length l) 1) `(bib-pages ,t) `(bib-pages ,@fl)))))
 
@@ -333,7 +334,7 @@
              (apply tmconcat (map bib-db-unmacro r)))))
         ((tm-func? t 'bib-pages)
          (let* ((l (map bib-db-unmacro (tm-children t)))
-                (r (list-intersperse l "--")))
+                (r (list-intersperse l "")))
            (apply tmconcat r)))
         ((tm-func? t 'concat)
          (with l (map bib-db-unmacro (tm-children t))
