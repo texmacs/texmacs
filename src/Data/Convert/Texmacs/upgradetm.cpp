@@ -3844,6 +3844,106 @@ upgrade_subsession (tree t, bool in_session= false) {
 }
 
 /******************************************************************************
+* Upgrade quotes
+******************************************************************************/
+
+static hashset<string> std_textual_envs;
+
+static array<string>&
+operator << (array<string>& a, const char* s) {
+  return a << string (s);
+}
+
+static bool
+is_std_textual_env (string s) {
+  if (N(std_textual_envs) == 0) {
+    array<string> a;
+    a << "part" << "chapter" << "section" << "subsection"
+      << "subsubsection" << "paragraph" << "subparagraph" << "appendix"
+      << "part*" << "chapter*" << "section*" << "subsection*"
+      << "subsubsection*" << "paragraph*" << "subparagraph*" << "appendix*"
+      << "abstract" << "theorem" << "proposition" << "lemma"
+      << "corollary" << "proof" << "axiom" << "definition"
+      << "notation" << "conjecture" << "remark" << "note"
+      << "example" << "exercise" << "warning" << "convention"
+      << "acknowledgments" << "quote" << "quotation" << "verse"
+      << "indent" << "compact" << "jump-in"
+      << "algorithm" << "body" << "render-code"
+      << "center" << "left-aligned" << "right-aligned"
+      << "small-table" << "big-table" << "small-figure" << "big-figure"
+      << "tabular" << "tabular*" << "block" << "block*" << "descriptive-table"
+      << "description" << "itemize" << "enumerate"
+      << "itemize-minus" << "enumerate-roman" << "enumerate-alpha"
+      << "strong" << "em" << "dfn" << "sample"
+      << "name" << "person" << "cite*" << "abbr" << "acronym"
+      << "really-tiny" << "tiny" << "very-small" << "small" << "flat-size"
+      << "normal-size" << "large" << "very-large" << "huge" << "really-huge"
+      << "underline" << "overline" << "pastel" << "greyed" << "light"
+      << "british" << "bulgarian" << "chinese" << "croatian"
+      << "czech" << "danish" << "dutch" << "english" << "finnish"
+      << "french" << "german" << "hungarian" << "italian" << "japanese"
+      << "korean" << "polish" << "portuguese" << "romanian" << "russian"
+      << "slovene" << "spanish" << "swedish" << "taiwanese" << "ukrainian"
+      << "switch" << "screens" << "tiny-switch" << "shown" << "hidden"
+      << "unroll" << "unroll-compressed" << "unroll-phantoms" << "unroll-greyed"
+      << "folded" << "unfolded";
+    for (int i=0; i<N(a); i++) std_textual_envs->insert (a[i]);
+  }
+  return std_textual_envs->contains (s);
+}
+
+static string
+upgrade_quotes (string s) {
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; )
+    if (s[i] == '<') {
+      int start= i;
+      tm_char_forwards (s, i);
+      r << s (start, i);
+    }
+    else if (s[i] == '-' && i+1 < n && s[i+1] == '-') { r << "\25"; i += 2; }
+    else if (s[i] == '\'' && i+1 < n && s[i+1] == '\'') { r << "\21"; i += 2; }
+    else if (s[i] == '`' && i+1 < n && s[i+1] == '`') { r << "\20"; i += 2; }
+    else { r << s[i]; i++; }
+  return r;
+}
+
+tree
+upgrade_quotes (tree t) {
+  if (is_atomic (t))
+    return upgrade_quotes (t->label);
+  else if (is_concat (t)) {
+    int i, n= N(t);
+    tree r (t, n);
+    bool adjust= false;
+    for (i=0; i<n; i++) {
+      adjust= adjust || is_compound (t[i], "emdash", 0);
+      r[i]= upgrade_quotes (t[i]);
+    }
+    if (adjust) r= simplify_correct (r);
+    return r;
+  }
+  else if (is_compound (t, "emdash", 0))
+    return "\26";
+  else if (is_compound (t, "body", 1))
+    return compound ("body", upgrade_quotes (t[0]));
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++) {
+      if (is_std_textual_env (as_string (L(t))))
+        r[i]= upgrade_quotes (t[i]);
+      else if (std_drd->get_type_child (t, i) != TYPE_REGULAR ||
+               std_drd->get_env_child (t, i, MODE, "text") != "text")
+        r[i]= t[i];
+      else r[i]= upgrade_quotes (t[i]);
+    }
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -3880,6 +3980,7 @@ upgrade_tex (tree t) {
   t= clean_spaces (t);
   t= clean_header (t);
   t= upgrade_doc_language (t);
+  t= upgrade_quotes (t);
   upgrade_tex_flag= false;
   return t;
 }
@@ -4023,7 +4124,9 @@ upgrade (tree t, string version) {
     t= upgrade_varsession (t);
     t= upgrade_subsession (t);
   }
-    
+  if (version_inf_eq (version, "1.99.2"))
+    t= upgrade_quotes (t);
+  
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
   return t;
