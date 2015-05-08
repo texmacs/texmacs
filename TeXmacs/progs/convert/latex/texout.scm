@@ -381,11 +381,19 @@
   (output-tex (string-append "\\end{" what "}")))
 
 (define (texout-script where l)
-  (output-tex where)
   (let ((x (car l)))
-    (cond ((and (string? x) (= (string-length x) 1) (nin? x (list "<" ">")))
+    (cond ((and (== x '(prime)) (== where "^"))
+           (output-tex "'"))
+          ((and (func? x '!concat) (== where "^")
+                (pair? (cdr x)) (== (cadr x) '(prime))
+                (list-and (map (cut == <> '(prime)) (cdr x))))
+           (output-tex (apply string-append (map (lambda a "'") (cdr x)))))
+          ((and (string? x) (= (string-length x) 1) (nin? x (list "<" ">")))
+           (output-tex where)
            (output-tex x))
-	  (else (texout-args l)))))
+	  (else
+           (output-tex where)
+           (texout-args l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main output routines
