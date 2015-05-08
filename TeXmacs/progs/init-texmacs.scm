@@ -330,6 +330,7 @@
   (lazy-menu (security wallet wallet-menu) wallet-preferences-widget)
   (lazy-menu (security gpg gpg-widgets) gpg-preferences-widget)
   (lazy-menu (security gpg gpg-menu) gpg-menu))
+(define (supports-gpg?) #f)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
