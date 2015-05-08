@@ -68,6 +68,17 @@ concater_rep::typeset_bigop (tree t, path ip) {
   else typeset_error (t, ip);
 }
 
+string
+replace_primes (string s) {
+  string r;
+  int i, n= N(s);
+  for (i=0; i<n; i++)
+    if (s[i] == '\'') r << "<prime>";
+    else if (s[i] == '`') r << "<backprime>";
+    else r << s[i];
+  return r;
+}
+
 void
 concater_rep::typeset_lprime (tree t, path ip) {
   if ((N(t) == 1) && is_atomic (t[0])) {
@@ -76,11 +87,13 @@ concater_rep::typeset_lprime (tree t, path ip) {
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');
+    if (env->fn->type == FONT_TYPE_TEX)
+      s= replace_primes (s);
     tree old_il;
     if (!flag) old_il= env->local_begin_script ();
     path sip= descend (ip, 0);
     box b1, b2;
-    b2= typeset_as_concat (env, t[0], sip);
+    b2= typeset_as_concat (env, s /*t[0]*/, sip);
     b2= symbol_box (sip, b2, N(t[0]->label));
     b2= move_box (sip, b2,
 		  flag? 0: env->as_length (string ("-0.05fn")),
@@ -100,11 +113,13 @@ concater_rep::typeset_rprime (tree t, path ip) {
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');
+    if (env->fn->type == FONT_TYPE_TEX)
+      s= replace_primes (s);
     tree old_il;
     if (!flag) old_il= env->local_begin_script ();
     path sip= descend (ip, 0);
     box b1, b2;
-    b2= typeset_as_concat (env, t[0], sip);
+    b2= typeset_as_concat (env, s /*t[0]*/, sip);
     b2= symbol_box (sip, b2, N(t[0]->label));
     b2= move_box (sip, b2,
 		  flag? 0: env->as_length (string ("0.05fn")),

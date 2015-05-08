@@ -24,12 +24,31 @@
   ("cmd tab" (program-indent #f))
   ("cmd S-tab" (program-indent #t)) ; TODO
   ("cmd A-tab" (program-indent-all #f))
-  ; rewrite some text mode shortcuts
+
+  ;; override some text mode shortcuts
   ("space var" (insert-tabstop))
   ("space var var" (begin (insert-tabstop) (insert-tabstop)))
   ("$" (insert "$"))
-  ("$ tab" (make 'math))
-  ("\\ tab" (make 'hybrid)))
+  ("$ var" (make 'math))
+  ("\\" "\\")
+  ("\\ var" (make 'hybrid))
+  ("`" "`")
+  ("` var" "<#2018>")
+  ("'" "'")
+  ("' var" "<#2019>")
+  ("< <" "<less><less>")
+  ("> >" "<gtr><gtr>")
+  ("' '" "''")
+  ("` `" "``")
+  ("- -" "--")
+  ("- - -" "---")
+  ("< < var" "")
+  ("> > var" "")
+  ("' ' var" "")
+  ("` ` var" "")
+  (", , var" "")
+  ("- - var" "")
+  ("- - - var" ""))
 
 (kbd-map
   (:mode in-prog-scheme?)
