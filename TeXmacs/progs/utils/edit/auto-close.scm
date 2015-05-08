@@ -88,6 +88,42 @@
       (insert-quote-sub quoting-style)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Smart apostrophes (or closing single quotes when appropriate)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (find-opening-quote* s i)
+  (let* ((open  (string-search-backwards "<#2018>" i s))
+         (close (string-search-backwards "<#2019>" i s)))
+    (and (>= open 0) (or (< close 0) (< close open)) open)))
+
+(define (find-opening-quote t i j)
+  (cond ((and (string? (tm-ref t i))
+              (find-opening-quote* (tm-ref t i) j)) #t)
+        ((and (string? (tm-ref t i))
+              (>= (string-search-forwards "<#2019>" 0 (tm-ref t i)) 0)) #f)
+        ((and (> i 0)
+              (let* ((s (tm-ref t (- i 1)))
+                     (n (if (string? s) (string-length s) 0)))
+                (find-opening-quote t (- i 1) n))) #t)
+        (else #f)))
+
+(define (search-opening-quote)
+  (cond ((and (tree-up (cursor-tree))
+              (tm-func? (tree-up (cursor-tree)) 'concat))
+         (find-opening-quote (tm->stree (tree-up (cursor-tree)))
+                             (tree-index (cursor-tree))
+                             (cAr (cursor-path))))
+        ((tm-atomic? (cursor-tree))
+         (find-opening-quote* (tm->stree (cursor-tree))
+                              (cAr (cursor-path))))
+        (else #f)))
+
+(tm-define (insert-apostrophe flag?)
+  (if (xor flag? (nnot (search-opening-quote)))
+      (insert "<#2019>")
+      (insert "'")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
