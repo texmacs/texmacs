@@ -84,9 +84,9 @@
     </src-comment>
   </active*>
 
-  <assign|text-cursor|<macro|<with|color|red|\|>>>
+  <assign|text-cursor|<macro|<resize|<with|color|red|\|>|0.5w||0.5w|>>>
 
-  <assign|math-cursor|<macro|<math-ignore|<with|color|#c000ff|\|>>>>
+  <assign|math-cursor|<macro|<math-ignore|<resize|<with|color|#c000ff|\|>|0.5w||0.5w|>>>>
 
   <assign|cursor|<macro|<math-ignore|<if|<equal|<value|mode>|math>|<math-cursor>|<text-cursor>>>>>
 
