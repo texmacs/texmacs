@@ -19,23 +19,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-math-menu
-  ("Formula" (make 'math))
+  ("Inline formula" (make 'math))
   (if (style-has? "env-math-dtd")
-      ("Equation" (make-equation*))
-      ("Equations" (make-eqnarray*))))
+      ("Displayed formula" (make-equation*))
+      ("Several equations" (make-eqnarray*))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special mathematical text properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind math-special-format-menu
+  (-> "Display style"
+      ("On" (make-with "math-display" "true"))
+      ("Off" (make-with "math-display" "false")))
   (-> "Index level"
       ("Normal" (make-with "math-level" "0"))
       ("Script size" (make-with "math-level" "1"))
       ("Script script size" (make-with "math-level" "2")))
-  (-> "Display style"
-      ("On" (make-with "math-display" "true"))
-      ("Off" (make-with "math-display" "false")))
   (-> "Condensed"
       ("On" (make-with "math-condensed" "true"))
       ("Off" (make-with "math-condensed" "false"))))
@@ -66,7 +66,7 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link math-font-menu)))
-  (-> "Mathematics" (link math-special-format-menu))
+  (link math-special-format-menu)
   ---
   (-> "Whitespace" (link horizontal-space-menu))
   (-> "Line break" (link line-break-menu))
@@ -1111,14 +1111,14 @@
       ("Small inline" (make-with "math-display" "false"))
       ("Large displayed" (make-with "math-display" "true"))
       ---
-      (group "Spacing")
-      ("Normal" (make-with "math-condensed" "false"))
-      ("Condensed" (make-with "math-condensed" "true"))
-      ---
       (group "Size")
       ("Normal" (make-with "math-level" "0"))
       ("Script size" (make-with "math-level" "1"))
-      ("Script script size" (make-with "math-level" "2"))))
+      ("Script script size" (make-with "math-level" "2"))
+      ---
+      (group "Spacing")
+      ("Normal" (make-with "math-condensed" "false"))
+      ("Condensed" (make-with "math-condensed" "true"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for inserting mathematical markup
@@ -1249,11 +1249,11 @@
 
 (tm-define (focus-tag-name l)
   (:require (== l 'math))
-  "Formula")
+  "Inline formula")
 
 (tm-define (focus-tag-name l)
   (:require (in? l '(equation equation*)))
-  "Equation")
+  "Displayed formula")
 
 (tm-define (focus-tag-name l)
   (:require (in? l '(eqnarray eqnarray*)))
@@ -1269,8 +1269,8 @@
 
 (tm-menu (focus-variant-menu t)
   (:require (tree-in? t '(math equation equation*)))
-  ("Formula" (variant-formula t))
-  ("Equation" (variant-equation t)))
+  ("Inline formula" (variant-formula t))
+  ("Displayed formula" (variant-equation t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Script focus menus

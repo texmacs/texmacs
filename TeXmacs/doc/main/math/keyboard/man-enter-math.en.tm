@@ -9,16 +9,17 @@
   formulas into the main text:
 
   <\description>
-    <item*|<menu|Insert|Mathematics|Formula> or <key|$>>
+    <item*|<menu|Insert|Mathematics|Inline formula> or <key|$>>
 
     This entry corresponds to small <em|inline formulas> like
     <math|a<rsup|2>+b<rsup|2>=c<rsup|2>> inside a textual paragraph. Note
     that formulas are typeset specially so they do not take too much vertical
     space. For example, limits are always displayed on the right. Limits can
-    be displayed below in formulas with <menu|Format|Formula style|on>. In
+    be displayed below in formulas with <menu|Format|Display style|on>. In
     formulas, formula style is off by default.
 
-    <item*|<menu|Insert|Mathematics|Equation> or <shortcut|(make-equation*)>>
+    <item*|<menu|Insert|Mathematics|Displayed formula> or
+    <shortcut|(make-equation*)>>
 
     This entry is used for entering bigger <em|displayed equations>, like
 
@@ -32,7 +33,7 @@
     <shortcut|(variant-circulate (focus-tree) #t)> allows you to switch
     between inline formulas and displayed equations.
 
-    <item*|<menu|Insert|Mathematics|Equations> or
+    <item*|<menu|Insert|Mathematics|Several equations> or
     <shortcut|(make-eqnarray*)>>
 
     This entry allows you to create an <markup|eqnarray*>, a three columns
@@ -69,6 +70,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<initial|<\collection>
-</collection>>
