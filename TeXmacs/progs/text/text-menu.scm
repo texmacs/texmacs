@@ -369,7 +369,8 @@
   ("Compact" (make-tmlist 'description-compact))
   ("Aligned" (make-tmlist 'description-aligned))
   ("Dashes" (make-tmlist 'description-dash))
-  ("Long" (make-tmlist 'description-long)))
+  ("Long" (make-tmlist 'description-long))
+  ("Paragraphs" (make-tmlist 'description-paragraphs)))
 
 (menu-bind list-menu
   ("Itemize" (make-tmlist 'itemize))
@@ -391,7 +392,8 @@
   ("Compact" (make-tmlist 'description-compact))
   ("Aligned" (make-tmlist 'description-aligned))
   ("Dashes" (make-tmlist 'description-dash))
-  ("Long" (make-tmlist 'description-long)))
+  ("Long" (make-tmlist 'description-long))
+  ("Paragraphs" (make-tmlist 'description-paragraphs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatically generated content

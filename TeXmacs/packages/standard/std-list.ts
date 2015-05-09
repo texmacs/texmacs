@@ -186,6 +186,22 @@
 
   <\active*>
     <\src-comment>
+      Descriptions which use one paragraph for each item with description
+    </src-comment>
+  </active*>
+
+  <assign|item-paragraph|<macro|name|<paragraph-title|<arg|name>>>>
+
+  <assign|description-paragraphs|<\macro|body>
+    <\with|item*|<value|item-paragraph>>
+      <\padded-normal|<item-vsep>|<item-vsep>>
+        <surround|<no-page-break*>|<no-indent*>|<arg|body>>
+      </padded-normal>
+    </with>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Further standard list environments
     </src-comment>
   </active*>

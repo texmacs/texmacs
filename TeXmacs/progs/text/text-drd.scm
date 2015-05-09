@@ -82,7 +82,7 @@
 
 (define-group description-tag
   description description-compact description-aligned
-  description-dash description-long)
+  description-dash description-long description-paragraphs)
 
 ;; Document titles
 
