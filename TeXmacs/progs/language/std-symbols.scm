@@ -245,7 +245,7 @@
     (:type infix)
     (:penalty 40)
     (:spacing default default)
-    "<cdot>" "<times>" "<otimes>"
+    "<cdot>" "<times>" "<otimes>" "<product>"
     "<circ>" "<bullet>" "<odot>" "<boxdot>" "<boxtimes>"
     "<dottimes>" "<dototimes>" "<ltimes>" "<rtimes>" "<atimes>" "<btimes>"
     "<exterior>" "<join>"

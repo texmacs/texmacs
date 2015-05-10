@@ -16,6 +16,7 @@
     "x" "y" "z" "--" "---" "" "~" "ddot"
 0   "mathGamma"
 1   "mathLaplace"
+5   "product"
 42  "asterisk"
 44  "comma"
 46  "point"
