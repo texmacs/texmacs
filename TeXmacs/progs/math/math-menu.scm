@@ -97,7 +97,7 @@
   (-> "Big operator"
       (tile 8 (link big-operator-menu)))
   ---
-  (-> "Binary operation"
+  (-> "Binary operator"
       (tile 8 (link binary-operation-menu)))
   (-> "Binary relation"
       (tile 8 (link binary-relation-menu-1))
