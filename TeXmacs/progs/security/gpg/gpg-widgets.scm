@@ -146,28 +146,29 @@
 (tm-widget (gpg-widget-select-public-key-fingerprints cmd)
   (let* ((key->string
 	  (lambda (k) (string-append (gpg-get-key-user-id k)
-				    ", " (gpg-get-key-fingerprint k))))
+				     ", " (gpg-get-key-fingerprint k))))
 	 (keys (gpg-public-keys))
 	 (sels gpg-widget-selected-public-key-fingerprints))
-  (resize ("700px" "700px" "9999px") ("200px" "200px" "9999px") 
-  (padded
-  (scrollable
-    (padded
-      (for (x keys)
-	(aligned
-          (item (toggle
-              (if answer
-                (ahash-set! sels (gpg-get-key-fingerprint x) #t)
-                (ahash-remove! sels (gpg-get-key-fingerprint x)))
-              (ahash-ref sels (gpg-get-key-fingerprint x)))
-            (text (key->string x)))))))))
-  ===
-  (bottom-buttons
-    ("Cancel" (cmd (list "Cancel")))
-    >>
-    ("Ok"
-      (set! gpg-widget-selected-public-key-fingerprints sels)
-      (cmd (cons "Ok" (ahash-entries sels)))))))
+    (resize ("700px" "700px" "9999px") ("200px" "200px" "9999px") 
+      (padded
+	(scrollable
+	  (padded
+	    (for (x keys)
+	      (aligned
+		(item (toggle
+		       (if answer
+			   (ahash-set! sels (gpg-get-key-fingerprint x) #t)
+			   (ahash-remove! sels (gpg-get-key-fingerprint x)))
+		       (ahash-ref sels (gpg-get-key-fingerprint x)))
+		  (hlist // // (text (key->string x))))))
+	    (glue #f #t 0 0)))
+	===
+	(bottom-buttons
+	  ("Cancel" (cmd (list "Cancel")))
+	  >>
+	  ("Ok"
+	   (set! gpg-widget-selected-public-key-fingerprints sels)
+	   (cmd (cons "Ok" (ahash-entries sels)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encryption
@@ -181,8 +182,8 @@
   (:secure #t)
   (:synopsis "Interactive GnuPG encryption")
   (dialogue-window gpg-widget-select-public-key-fingerprints
-    (lambda (x) (gpg-command-encrypt data callback x))
-    "Select GnuPG recipients"))
+		   (lambda (x) (gpg-command-encrypt data callback x))
+		   "Select GnuPG recipients"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ask and remember password

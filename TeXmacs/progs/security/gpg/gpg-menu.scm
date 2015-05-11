@@ -22,21 +22,20 @@
 
 (menu-bind gpg-menu
   (when (supports-gpg?)
-    ("Inline public key encryption"
-     (tm-gpg-dialogue-insert-decrypted))
-    ("Block of public key encryption"
-     (tm-gpg-dialogue-insert-decrypted-block))
-    ;("Encrypt all" (tm-gpg-dialogue-encrypt-buffer))
-    ;("Decrypt all" (tm-gpg-dialogue-decrypt-buffer))
-    ;("Collect public keys from buffer"
-    ; (tm-gpg-collect-public-keys-from-buffer))
+    (group "Public key encryption")
+    ("Inline content" (tm-gpg-dialogue-insert-decrypted))
+    ("Block content" (tm-gpg-dialogue-insert-decrypted-block))
+    ;;("Encrypt all" (tm-gpg-dialogue-encrypt-buffer))
+    ;;("Decrypt all" (tm-gpg-dialogue-decrypt-buffer))
+    ;;("Collect public keys from buffer"
+    ;; (tm-gpg-collect-public-keys-from-buffer))
     ---
-    ("Inline passphrase encryption"
-     (tm-gpg-insert-passphrase-decrypted))
-    ("Block of passphrase encryption"
-     (tm-gpg-insert-passphrase-decrypted-block))))
-    ;("Passphrase encrypt all" (tm-gpg-dialogue-passphrase-encrypt-buffer))
-    ;("Passphrase decrypt all" (tm-gpg-dialogue-passphrase-decrypt-buffer))))
+    (group "Passphrase encryption")
+    ("Inline content" (tm-gpg-insert-passphrase-decrypted))
+    ("Block content" (tm-gpg-insert-passphrase-decrypted-block))
+    ;;("Encrypt all" (tm-gpg-dialogue-passphrase-encrypt-buffer))
+    ;;("Decrypt all" (tm-gpg-dialogue-passphrase-decrypt-buffer))
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus predicates
