@@ -321,16 +321,14 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting security tools\n")
-(when #f
-  (lazy-define (security wallet wallet-base)
-               supports-wallet? wallet-initialized?
-               wallet-on? wallet-off?)
-  (lazy-define (security wallet wallet-menu) with-wallet)
-  (lazy-define (security gpg gpg-widgets) open-gpg-key-manager)
-  (lazy-menu (security wallet wallet-menu) wallet-preferences-widget)
-  (lazy-menu (security gpg gpg-widgets) gpg-preferences-widget)
-  (lazy-menu (security gpg gpg-menu) gpg-menu))
-(define (supports-gpg?) #f)
+(lazy-define (security wallet wallet-base)
+	     supports-wallet? wallet-initialized?
+	     wallet-on? wallet-off?)
+(lazy-define (security wallet wallet-menu) with-wallet)
+(lazy-define (security gpg gpg-widgets) open-gpg-key-manager)
+(lazy-menu (security wallet wallet-menu) wallet-preferences-widget)
+(lazy-menu (security gpg gpg-widgets) gpg-preferences-widget)
+(lazy-menu (security gpg gpg-menu) gpg-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
