@@ -56,7 +56,7 @@
   ("inactive C->" (make 'write))
   ("inactive )" (make 'wiki-link))
   ("inactive #" (make 'arg))
-  ("inactive $" (make 'symbol))
+  ;;("inactive $" (make 'symbol))
   ("inactive '" (make 'quote))
   ("inactive `" (make 'quasiquote))
   ("inactive ," (make 'unquote))
