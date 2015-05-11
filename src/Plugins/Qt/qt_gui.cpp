@@ -58,8 +58,33 @@ qt_gui_rep* the_gui = NULL;
 int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 
 /******************************************************************************
- * Constructor and geometry
- ******************************************************************************/
+* FIXME: temporary hack by Joris
+* Additional wait mechanism to keep CPU usage down
+******************************************************************************/
+
+#ifdef QT_CPU_FIX
+static double tm_count= 0.0;
+static double tm_delay= 1.0;
+
+void
+tm_wake_up () {
+  tm_delay= 1.0;
+}
+
+void
+tm_sleep () {
+  //tm_count += 1.0;
+  tm_delay= 1.0001 * tm_delay;
+  if (tm_delay > 250000.0) tm_delay= 250000;
+  //cout << tm_count << ", " << tm_delay << "\r";
+  //cout.flush ();
+  usleep ((int) floor (tm_delay));
+}
+#endif
+
+/******************************************************************************
+* Constructor and geometry
+******************************************************************************/
 
 qt_gui_rep::qt_gui_rep (int &argc, char **argv):
 interrupted (false), waitWindow (NULL), popup_wid_time (0), q_translator (0),
@@ -529,12 +554,19 @@ gui_refresh () {
  considered a limitation of the current implementation of interpose_handler
  Likewise this function is just a hack to get things working properly.
  */
+
 void
 qt_gui_rep::process_queued_events (int max) {
   int count = 0;
   while (max < 0 || count < max)  {
     const queued_event& ev = waiting_events.next();
     if (ev.x1 == qp_type::QP_NULL) break;
+#ifdef QT_CPU_FIX
+    if (ev.x1 != qp_type::QP_NULL &&
+	ev.x1 != qp_type::QP_SOCKET_NOTIFICATION &&
+	ev.x1 != qp_type::QP_DELAYED_COMMANDS)
+      tm_wake_up ();
+#endif
     switch (ev.x1) {
       case qp_type::QP_NULL :
         break;
@@ -720,8 +752,16 @@ qt_gui_rep::add_event (const queued_event& ev) {
  needs_update(), and ensuring that interpose_handler() is run during a pass in
  the event loop after we reactivate the timer with a pause (see FIXME below).
  */
+
 void
 qt_gui_rep::update () {
+#ifdef QT_CPU_FIX
+  int std_delay= 1;
+  tm_sleep ();
+#else
+  int std_delay= 1000 / 6;
+#endif
+
   if (updating) {
     cout << "NESTED UPDATING: This should not happen" << LF;
     need_update();
@@ -795,7 +835,7 @@ qt_gui_rep::update () {
   
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
-  else                delay = max (0, min (1000/6, delay));
+  else                delay = max (0, min (std_delay, delay));
   
   updatetimer->start (delay);
   updating = false;

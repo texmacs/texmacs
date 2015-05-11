@@ -213,6 +213,9 @@ socket_link_rep::feed (int channel) {
   else if (r != 0) {
     if (DEBUG_IO) debug_io << debug_io_string (string (tempout, r));
     outbuf << string (tempout, r);
+#ifdef QT_CPU_FIX
+    tm_wake_up ();
+#endif
   }
 }
 
