@@ -111,6 +111,7 @@
   (in-math% (and (== (get-env "mode") "math") (not (in-graphics?))))
   (in-prog% (and (== (get-env "mode") "prog") (not (in-graphics?))))
   (in-math-not-hybrid% (not (inside? 'hybrid)) in-math%)
+  (in-math-or-hybrid% (or (in-math?) (inside? 'hybrid)))
   (in-table% (and (inside? 'table) (not (in-graphics?))))
   (in-session% (and (or (inside? 'session) (inside? 'program))
                     (not (in-graphics?))))
