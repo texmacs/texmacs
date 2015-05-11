@@ -360,100 +360,107 @@
 				     ", " (gpg-get-key-fingerprint k))))
 	 (keys (gpg-secret-keys))
 	 (sels (make-ahash-table)))
-  (refreshable "gpg-refreshable-manage-secret-keys"
-  (scrollable
-    (for (x (with k (gpg-get-default-key-fingerprint)
-	      (if (!= k "")
-		  (list (gpg-search-key-by-fingerprint k keys))
-		  (list))))
-      (aligned (item (toggle
-        (begin
-          (if answer
-              (ahash-set! sels x #t)
-              (ahash-remove! sels x))
-          (refresh-now "gpg-refreshable-manage-secret-keys"))
-        (ahash-ref sels x))
-	    (bold (text (key->string x))))))
-    (for (x (with y (gpg-get-default-key-fingerprint)
-	      (filter (lambda (k) (!= (gpg-get-key-fingerprint k) y)) keys)))
-      (aligned (item (toggle
-        (begin
-          (if answer
-              (ahash-set! sels x #t)
-              (ahash-remove! sels x))
-          (refresh-now "gpg-refreshable-manage-secret-keys"))
-        (ahash-ref sels x))
-	    (text (key->string x)))))
-    (glue #f #t 0 5))
-  ===    
-  (hlist >>
-    (explicit-buttons
-      (when (= (ahash-size sels) 0)
-        ("New identity"
-          (with cb (lambda ()
-              (set! keys (gpg-secret-keys))
-              (refresh-now "gpg-refreshable-manage-secret-keys")
-              (set! gpg-widget-manage-public-keys-variable-keys
-                  (gpg-public-keys))
-              (refresh-now "gpg-refreshable-manage-public-keys"))
-            (gpg-dialogue-gen-key cb))))
-      // //
-      (when (= (ahash-size sels) 1)
-        ("Set default"
-	  (gpg-set-default-key-fingerprint
-	    (gpg-get-key-fingerprint (car (ahash-entries sels))))
-	  (set! sels (make-ahash-table))
-	  (refresh-now "gpg-refreshable-manage-secret-keys")))
-      // //
-      (when (> (ahash-size sels) 0)
-        ("Delete"
-          (with cb (lambda () (map gpg-delete-secret-and-public-key
-            (map gpg-get-key-fingerprint (ahash-entries sels)))
-	    (when (member (gpg-get-default-key-fingerprint)
-			  (ahash-entries sels))
-	      (gpg-set-default-key-fingerprint ""))
-            (set! keys (gpg-secret-keys))
-            (set! sels (make-ahash-table))
-            (refresh-now "gpg-refreshable-manage-secret-keys")
-            (set! gpg-widget-manage-public-keys-variable-keys
-                  (gpg-public-keys))
-            (refresh-now "gpg-refreshable-manage-public-keys"))
-          (dialogue-window (gpg-widget-confirm-delete-secret-keys cb)
-                           noop "Confirm secret key deletion"))))
-      // //
-      (when (> (ahash-size sels) 0)
-        ("Export"
-          (with fingerprints
-              (map gpg-get-key-fingerprint (ahash-entries sels))
-            (choose-file
-              (lambda (x) (string-save
-                            (gpg-export-secret-keys fingerprints) x)
-                      (set! sels (make-ahash-table))
-                      (refresh-now "gpg-refreshable-manage-secret-keys"))
-              "Export selected secret keys to file" "gpg"))))
-      // //
-      (when (= (ahash-size sels) 0)
-        ("Import"
-          (begin (choose-file
-            (lambda (x)
-              (gpg-import-secret-keys (string-load x))
-              (set! keys (gpg-secret-keys))
-              (refresh-now "gpg-refreshable-manage-secret-keys")
-              (set! gpg-widget-manage-public-keys-variable-keys
-                    (gpg-public-keys))
-              (refresh-now "gpg-refreshable-manage-public-keys"))
-            "Import secret keys" "gpg"))))
-      // //
-      (when (nnull? keys)
-        ("Select all"
-          (for (x keys) (ahash-set! sels x #t))
-          (refresh-now "gpg-refreshable-manage-secret-keys")))
-      // //
-      (when (> (ahash-size sels) 0)
-        ("Reset all"
-          (set! sels (make-ahash-table))
-          (refresh-now "gpg-refreshable-manage-secret-keys"))))
-    >>))))
+    (refreshable "gpg-refreshable-manage-secret-keys"
+      (scrollable
+	(padded
+	  (for (x (with k (gpg-get-default-key-fingerprint)
+		    (if (!= k "")
+			(list (gpg-search-key-by-fingerprint k keys))
+			(list))))
+	    (aligned
+	      (item (toggle
+		     (begin
+		       (if answer
+			   (ahash-set! sels x #t)
+			   (ahash-remove! sels x))
+		       (refresh-now "gpg-refreshable-manage-secret-keys"))
+		     (ahash-ref sels x))
+		(bold (text (key->string x))))))
+	  (for (x (with y (gpg-get-default-key-fingerprint)
+		    (filter (lambda (k) (!= (gpg-get-key-fingerprint k) y))
+			    keys)))
+	    (aligned
+	      (item (toggle
+		     (begin
+		       (if answer
+			   (ahash-set! sels x #t)
+			   (ahash-remove! sels x))
+		       (refresh-now "gpg-refreshable-manage-secret-keys"))
+		     (ahash-ref sels x))
+		(text (key->string x)))))
+	  (glue #f #t 0 5)))
+      ===
+      (hlist
+	(explicit-buttons
+	  (when (= (ahash-size sels) 0)
+	    ("New identity"
+	     (with cb (lambda ()
+			(set! keys (gpg-secret-keys))
+			(refresh-now "gpg-refreshable-manage-secret-keys")
+			(set! gpg-widget-manage-public-keys-variable-keys
+			      (gpg-public-keys))
+			(refresh-now "gpg-refreshable-manage-public-keys"))
+	       (gpg-dialogue-gen-key cb))))
+	  // //
+	  (when (= (ahash-size sels) 1)
+	    ("Set default"
+	     (gpg-set-default-key-fingerprint
+	      (gpg-get-key-fingerprint (car (ahash-entries sels))))
+	     (set! sels (make-ahash-table))
+	     (refresh-now "gpg-refreshable-manage-secret-keys")))
+	  // //
+	  (when (> (ahash-size sels) 0)
+	    ("Delete"
+	     (with cb (lambda ()
+			(map gpg-delete-secret-and-public-key
+			     (map gpg-get-key-fingerprint
+				  (ahash-entries sels)))
+			(when (member (gpg-get-default-key-fingerprint)
+				      (ahash-entries sels))
+			  (gpg-set-default-key-fingerprint ""))
+			(set! keys (gpg-secret-keys))
+			(set! sels (make-ahash-table))
+			(refresh-now "gpg-refreshable-manage-secret-keys")
+			(set! gpg-widget-manage-public-keys-variable-keys
+			      (gpg-public-keys))
+			(refresh-now "gpg-refreshable-manage-public-keys"))
+	       (dialogue-window (gpg-widget-confirm-delete-secret-keys cb)
+				noop "Confirm secret key deletion"))))
+	  >>
+	  (when (> (ahash-size sels) 0)
+	    ("Export"
+	     (with fingerprints
+		 (map gpg-get-key-fingerprint (ahash-entries sels))
+	       (choose-file
+		(lambda (x)
+		  (string-save
+		   (gpg-export-secret-keys fingerprints) x)
+		  (set! sels (make-ahash-table))
+		  (refresh-now "gpg-refreshable-manage-secret-keys"))
+		"Export selected secret keys to file" "gpg"))))
+	  // //
+	  (when (= (ahash-size sels) 0)
+	    ("Import"
+	     (begin (choose-file
+		     (lambda (x)
+		       (gpg-import-secret-keys (string-load x))
+		       (set! keys (gpg-secret-keys))
+		       (refresh-now "gpg-refreshable-manage-secret-keys")
+		       (set! gpg-widget-manage-public-keys-variable-keys
+			     (gpg-public-keys))
+		       (refresh-now "gpg-refreshable-manage-public-keys"))
+		     "Import secret keys" "gpg"))))
+	  ;;// //
+	  ;;(when (nnull? keys)
+	  ;;  ("Select all"
+	  ;;    (for (x keys) (ahash-set! sels x #t))
+	  ;;    (refresh-now "gpg-refreshable-manage-secret-keys")))
+	  ;;// //
+	  ;;(when (> (ahash-size sels) 0)
+	  ;;  ("Reset all"
+	  ;;    (set! sels (make-ahash-table))
+	  ;;    (refresh-now "gpg-refreshable-manage-secret-keys")))
+	  )))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public key manager
@@ -478,65 +485,69 @@
 		 (set! gpg-widget-manage-public-keys-variable-keys
 		       (gpg-public-keys))
 		 (make-ahash-table))))
-  (refreshable "gpg-refreshable-manage-public-keys"
-  (scrollable
-    (for (x gpg-widget-manage-public-keys-variable-keys)
-      (aligned
-        (item (toggle
-          (begin
-            (if answer
-              (ahash-set! sels x #t)
-              (ahash-remove! sels x))
-            (refresh-now "gpg-refreshable-manage-public-keys"))
-          (ahash-ref sels x))
-          (text (key->string x)))))
-    (glue #f #t 0 5))
-  ===    
-  (hlist >>
-    (explicit-buttons
-      (when (> (ahash-size sels) 0)
-        ("Delete"
-          (with cb (lambda () (map gpg-delete-public-key
-            (map gpg-get-key-fingerprint (ahash-entries sels)))
-            (set! gpg-widget-manage-public-keys-variable-keys
-                  (gpg-public-keys))
-            (set! sels (make-ahash-table))
-            (refresh-now "gpg-refreshable-manage-public-keys"))
-          (dialogue-window (gpg-widget-confirm-delete-public-keys cb)
-                           noop "Confirm public key deletion"))))
-      // //
-      (when (> (ahash-size sels) 0)
-        ("Export"
-          (with fingerprints
-              (map gpg-get-key-fingerprint (ahash-entries sels))
-            (choose-file
-              (lambda (x) (string-save
-                            (gpg-export-public-keys fingerprints) x)
-                      (set! sels (make-ahash-table))
-                      (refresh-now "gpg-refreshable-manage-public-keys"))
-              "Export selected public keys to file" "gpg"))))
-      // //
-      (when (= (ahash-size sels) 0)
-        ("Import"
-          (begin (choose-file
-            (lambda (x)
-              (gpg-import-public-keys (string-load x))
-              (set! gpg-widget-manage-public-keys-variable-keys
-                    (gpg-public-keys))
-              (refresh-now "gpg-refreshable-manage-public-keys"))
-            "Import public keys" "gpg"))))
-      // //
-      (when (nnull? gpg-widget-manage-public-keys-variable-keys)
-        ("Select all"
-          (for (x gpg-widget-manage-public-keys-variable-keys)
-            (ahash-set! sels x #t))
-          (refresh-now "gpg-refreshable-manage-public-keys")))
-      // //
-      (when (> (ahash-size sels) 0)
-        ("Reset all"
-          (set! sels (make-ahash-table))
-          (refresh-now "gpg-refreshable-manage-public-keys"))))
-    >>))))
+    (refreshable "gpg-refreshable-manage-public-keys"
+      (scrollable
+	(padded
+	  (for (x gpg-widget-manage-public-keys-variable-keys)
+	    (aligned
+	      (item (toggle
+		     (begin
+		       (if answer
+			   (ahash-set! sels x #t)
+			   (ahash-remove! sels x))
+		       (refresh-now "gpg-refreshable-manage-public-keys"))
+		     (ahash-ref sels x))
+		(text (key->string x)))))
+	  (glue #f #t 0 5)))
+      ===
+      (hlist
+	(explicit-buttons
+	  (when (> (ahash-size sels) 0)
+	    ("Delete"
+	     (with cb (lambda ()
+			(map gpg-delete-public-key
+			     (map gpg-get-key-fingerprint
+				  (ahash-entries sels)))
+			(set! gpg-widget-manage-public-keys-variable-keys
+			      (gpg-public-keys))
+			(set! sels (make-ahash-table))
+			(refresh-now "gpg-refreshable-manage-public-keys"))
+	       (dialogue-window (gpg-widget-confirm-delete-public-keys cb)
+				noop "Confirm public key deletion"))))
+	  >>
+	  (when (> (ahash-size sels) 0)
+	    ("Export"
+	     (with fingerprints
+		 (map gpg-get-key-fingerprint (ahash-entries sels))
+	       (choose-file
+		(lambda (x)
+		  (string-save
+		   (gpg-export-public-keys fingerprints) x)
+		  (set! sels (make-ahash-table))
+		  (refresh-now "gpg-refreshable-manage-public-keys"))
+		"Export selected public keys to file" "gpg"))))
+	  // //
+	  (when (= (ahash-size sels) 0)
+	    ("Import"
+	     (begin (choose-file
+		     (lambda (x)
+		       (gpg-import-public-keys (string-load x))
+		       (set! gpg-widget-manage-public-keys-variable-keys
+			     (gpg-public-keys))
+		       (refresh-now "gpg-refreshable-manage-public-keys"))
+		     "Import public keys" "gpg"))))
+	  ;;// //
+	  ;;(when (nnull? gpg-widget-manage-public-keys-variable-keys)
+	  ;;  ("Select all"
+	  ;;    (for (x gpg-widget-manage-public-keys-variable-keys)
+	  ;;      (ahash-set! sels x #t))
+	  ;;    (refresh-now "gpg-refreshable-manage-public-keys")))
+	  ;;// //
+	  ;;(when (> (ahash-size sels) 0)
+	  ;;  ("Reset all"
+	  ;;    (set! sels (make-ahash-table))
+	  ;;    (refresh-now "gpg-refreshable-manage-public-keys")))
+	  )))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Collected key manager
@@ -557,70 +568,78 @@
 		       " " (gpg-collected-public-key-uid x) ", " x)))
 	 (fingerprints (begin
 			 (tm-gpg-collect-public-keys-from-buffer)
-			 (gpg-collected-public-key-fingerprints))))
-  (with sels (make-ahash-table)
-  (refreshable "gpg-refreshable-manage-collected-public-keys"
-  (scrollable
-    (for (x fingerprints)
-        (aligned (item (toggle
-          (begin
-            (if answer
-              (ahash-set! sels x #t)
-              (ahash-remove! sels x))
-            (refresh-now "gpg-refreshable-manage-collected-public-keys"))
-          (ahash-ref sels x))
-          (text (fingerprint->string x)))))
-    (glue #f #t 0 5))
-  ===    
-  (hlist >>
-    (explicit-buttons
-      (when (> (ahash-size sels) 0)
-        ("Delete" (with cb (lambda ()
-          (gpg-delete-collected-public-keys (ahash-entries sels))
-          (set! fingerprints (gpg-collected-public-key-fingerprints))
-          (set! sels (make-ahash-table))
-          (refresh-now "gpg-refreshable-manage-collected-public-keys"))
-          (dialogue-window (gpg-widget-confirm-delete-collected-public-keys cb)
-                           noop "Confirm collected public key deletion"))))
-      // //
-      (when (> (ahash-size sels) 0)
-        ("Import"
-          (map gpg-import-public-key-from-collected (ahash-entries sels))
-          (map gpg-delete-collected-public-key (ahash-entries sels))
-          (set! fingerprints (gpg-collected-public-key-fingerprints))
-          (set! sels (make-ahash-table))
-          (refresh-now "gpg-refreshable-manage-collected-public-keys")
-          (set! gpg-widget-manage-public-keys-variable-keys
-                (gpg-public-keys))
-          (refresh-now "gpg-refreshable-manage-public-keys")))
-      // //
-      (when (nnull? fingerprints)
-        ("Select all"
-          (for (x fingerprints) (ahash-set! sels x #t))
-          (refresh-now "gpg-refreshable-manage-collected-public-keys")))
-      // //
-      (when (> (ahash-size sels) 0)
-        ("Reset all"
-          (set! sels (make-ahash-table))
-          (refresh-now "gpg-refreshable-manage-collected-public-keys"))))
-    >>)))))
+			 (gpg-collected-public-key-fingerprints)))
+	 (sels (make-ahash-table)))
+    (refreshable "gpg-refreshable-manage-collected-public-keys"
+      (scrollable
+	(padded
+	  (for (x fingerprints)
+	    (aligned
+	      (item (toggle
+		     (begin
+		       (if answer
+			   (ahash-set! sels x #t)
+			   (ahash-remove! sels x))
+		       (refresh-now
+			"gpg-refreshable-manage-collected-public-keys"))
+		     (ahash-ref sels x))
+		(text (fingerprint->string x)))))
+	  (glue #f #t 0 5)))
+      ===
+      (hlist
+	(explicit-buttons
+	  (when (> (ahash-size sels) 0)
+	    ("Delete"
+	     (with cb (lambda ()
+			(gpg-delete-collected-public-keys (ahash-entries sels))
+			(set! fingerprints
+			      (gpg-collected-public-key-fingerprints))
+			(set! sels (make-ahash-table))
+			(refresh-now
+			 "gpg-refreshable-manage-collected-public-keys"))
+	       (dialogue-window
+		(gpg-widget-confirm-delete-collected-public-keys cb)
+		noop "Confirm collected public key deletion"))))
+	  >>
+	  (when (> (ahash-size sels) 0)
+	    ("Import"
+	     (map gpg-import-public-key-from-collected (ahash-entries sels))
+	     (map gpg-delete-collected-public-key (ahash-entries sels))
+	     (set! fingerprints (gpg-collected-public-key-fingerprints))
+	     (set! sels (make-ahash-table))
+	     (refresh-now "gpg-refreshable-manage-collected-public-keys")
+	     (set! gpg-widget-manage-public-keys-variable-keys
+		   (gpg-public-keys))
+	     (refresh-now "gpg-refreshable-manage-public-keys")))
+	  ;;// //
+	  ;;(when (nnull? fingerprints)
+	  ;;  ("Select all"
+	  ;;    (for (x fingerprints) (ahash-set! sels x #t))
+	  ;;    (refresh-now "gpg-refreshable-manage-collected-public-keys")))
+	  ;;// //
+	  ;;(when (> (ahash-size sels) 0)
+	  ;;  ("Reset all"
+	  ;;    (set! sels (make-ahash-table))
+	  ;;    (refresh-now "gpg-refreshable-manage-collected-public-keys")))
+	  )))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Key manager
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (gpg-widget-manage-keys)
-  (resize ("700px" "700px" "9999px") ("300px" "400px" "9999px")
-  (tabs
-    (tab (text "Secret keys")
-      (centered
-        (dynamic (gpg-widget-manage-secret-keys))))
-    (tab (text "Public keys")
-      (centered
-        (dynamic (gpg-widget-manage-public-keys))))
-    (tab (text "Collected keys")
-      (centered       
-        (dynamic (gpg-widget-manage-collected-public-keys)))))))
+  (padded
+    (resize ("700px" "700px" "9999px") ("300px" "400px" "9999px")
+      (tabs
+	(tab (text "Secret keys")
+	  (centered
+	    (dynamic (gpg-widget-manage-secret-keys))))
+	(tab (text "Public keys")
+	  (centered
+	    (dynamic (gpg-widget-manage-public-keys))))
+	(tab (text "Collected keys")
+	  (centered
+	    (dynamic (gpg-widget-manage-collected-public-keys))))))))
 
 (tm-define (open-gpg-key-manager)
   (top-window gpg-widget-manage-keys "Key manager"))
