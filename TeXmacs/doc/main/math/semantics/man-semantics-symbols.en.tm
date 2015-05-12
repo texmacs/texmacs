@@ -83,7 +83,9 @@
   point>>|<row|<cell|<key|. var>>|<cell|.>|<cell|<math|\<mathlambda\>x\<point\>x<rsup|2>>>|<cell|Dot
   connector>>|<row|<cell|<key|* var var var>>|<cell|<math|\<cdot\>>>|<cell|<math|\<b-v\>\<cdot\>\<b-w\>>>|<cell|Dot
   multiplication>>|<row|<cell|<key|. var var>>|<cell|<math|\<cdummy\>>>|<cell|<math|\<cdummy\>+1>>|<cell|Dummy
-  widcard>>|<row|<cell|<key|\\ var>>|<cell|<math|\\>>|<cell|<math|\\x>>|<cell|Backslash>>|<row|<cell|<key|\\
+  widcard>>|<row|<cell|<key|:>>|<cell|<math|:>>|<cell|<math|<around*|{|x\<in\>E:P<around*|(|x|)>|}>>>|<cell|Separator>>|<row|<cell|<shortcut|\<of\>>>|<cell|<math|\<of\>>>|<cell|<math|x\<of\><math-ss|Int>>>|<cell|Type
+  satisfaction>>|<row|<cell|<shortcut|\<over\>>>|<cell|<math|\<over\>>>|<cell|<math|121\<over\>11=11>>|<cell|Division>>|<row|<cell|<key|\\
+  var>>|<cell|<math|\\>>|<cell|<math|\\x>>|<cell|Backslash>>|<row|<cell|<key|\\
   var var>>|<cell|<math|\\>>|<cell|<math|\<bbb-N\><rsup|\<gtr\>>=\<bbb-N\>\<setminus\><around*|{|0|}>>>|<cell|Set
   minus>>|<row|<cell|<key|&>>|<cell|<math|\<wedge\>>>|<cell|<math|1=1\<wedge\>2=2>>|<cell|Logical
   and>>|<row|<cell|<key|* &>>|<cell|<math|\<exterior\>>>|<cell|<math|\<mathd\>x\<exterior\>\<mathd\>y>>|<cell|Wedge
