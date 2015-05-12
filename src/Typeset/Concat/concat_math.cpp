@@ -62,7 +62,7 @@ concater_rep::typeset_bigop (tree t, path ip) {
     print (STD_ITEM, OP_BIG, b);
     penalty_min (HYPH_PANIC);
     if ((l != "int") && (l != "oint")) with_limits (LIMITS_DISPLAY);
-    if (flag) print (spc);
+    if (flag) print (env->display_style? spc: (spc / 2));
     // temporarary: use parameters from operator-big class in std-math.syx
   }
   else typeset_error (t, ip);
