@@ -19,7 +19,7 @@
   (textual-operator-tag))
 
 (define-group fraction-tag
-  frac tfrac dfrac frac*)
+  frac tfrac dfrac frac* cfrac)
 
 (define-group vertical-script-tag
   below above)
