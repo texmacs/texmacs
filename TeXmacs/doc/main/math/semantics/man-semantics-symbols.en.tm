@@ -60,12 +60,8 @@
   <TeXmacs> supports two quite general schemes for entering homoglyphs. On
   the one hand, we often rely on the standard variant system. For instance,
   <math|\<times\>> and <math|\<ast\>> are obtained using <shortcut|\<times\>>
-  and <shortcut|\<ast\>>. When applicable, we also support the following
-  convention: first type the character with a similar semantics and then type
-  the character which corresponds to the rendering. This convention was
-  already used above for the invisible homoglyphs, and often allows for
-  shorter shortcuts. In table<nbsp><reference|homoglyph-table> we have given
-  the complete list of homoglyphs supported by <TeXmacs>.
+  and <shortcut|\<ast\>>. In table<nbsp><reference|homoglyph-table> we have
+  given the complete list of homoglyphs supported by <TeXmacs>.
 
   <big-table|<block|<tformat|<table|<row|<cell|Shortcut>|<cell|Glyph>|<cell|Example>|<cell|Semantics>>|<row|<cell|<key|*>>|<cell|>|<cell|<math|a*b>>|<cell|Multiplication>>|<row|<cell|<key|space>>|<cell|>|<cell|<math|sin
   x>>|<cell|Function application>>|<row|<cell|<shortcut|\<nocomma\>>>|<cell|>|<cell|<math|a<rsub|i\<nocomma\>j>=a<rsub|j\<nocomma\>i>>>|<cell|Invisible
