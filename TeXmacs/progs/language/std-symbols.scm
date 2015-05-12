@@ -582,7 +582,7 @@
     (:spacing none none)
     "<mathd>" "<mathD>" "<mathLaplace>" "<partial>" "<nabla>"
     "<Re>" "<Im>" "<complement>"
-    "<sum>" "<prod>" "<int>" "<oint>")
+    "<sum>" "<prod>" "<int>" "<oint>" "<intlim>" "<ointlim>")
 
   ;; FIXME: spacing behind $\sin$ is currently incorrect,
   ;; because the transition OP_UNARY -> OP_TEXT is not detected
