@@ -303,7 +303,8 @@
     "cap" "sqcap")
 
   (define Big-sum-symbol
-    "int" "oint" "intlim" "ointlim" "sum" "oplus" "triangledown")
+    "intlim" "ointlim" ;; NOTE: in front, because of packrat parsing
+    "int" "oint" "sum" "oplus" "triangledown")
 
   (define Big-product-symbol
     "prod" "otimes" "odot" "triangleup")
