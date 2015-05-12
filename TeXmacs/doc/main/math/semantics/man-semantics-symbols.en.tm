@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.99.2>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Semantics of mathematical symbols>
@@ -48,7 +48,7 @@
     the increment <math|\<nosymbol\>+1>.
 
     <item><label|nobracket>An invisible bracket (mainly for internal use). A
-    matching pair of invisible brackets is entered using <key|( space>.
+    matching pair of invisible brackets is entered using <key|( var>.
   </itemize>
 
   Again it is recommended that authors carefully enter these various
@@ -68,20 +68,19 @@
   the complete list of homoglyphs supported by <TeXmacs>.
 
   <big-table|<block|<tformat|<table|<row|<cell|Shortcut>|<cell|Glyph>|<cell|Example>|<cell|Semantics>>|<row|<cell|<key|*>>|<cell|>|<cell|<math|a*b>>|<cell|Multiplication>>|<row|<cell|<key|space>>|<cell|>|<cell|<math|sin
-  x>>|<cell|Function application>>|<row|<cell|<key|,
-  space>>|<cell|>|<cell|<math|a<rsub|i\<nocomma\>j>=a<rsub|j\<nocomma\>i>>>|<cell|Invisible
-  separator>>|<row|<cell|<key|+ space>>|<cell|>|<cell|<with|mode|math|17\<noplus\><frac*|3|8>>>|<cell|Invisible
-  addition>>|<row|<cell|<key|. space>>|<cell|>|<cell|<math|\<nosymbol\>+1>>|<cell|Invisible
-  symbol>>|<row|<cell|<key|( space>>|<cell|>|<cell|<math|\<Phi\>\<equiv\><around*|\<nobracket\>|\<forall\>x,P<around*|(|x|)>|\<nobracket\>>>>|<cell|Invisible
+  x>>|<cell|Function application>>|<row|<cell|<shortcut|\<nocomma\>>>|<cell|>|<cell|<math|a<rsub|i\<nocomma\>j>=a<rsub|j\<nocomma\>i>>>|<cell|Invisible
+  separator>>|<row|<cell|<shortcut|\<noplus\>>>|<cell|>|<cell|<with|mode|math|17\<noplus\><frac*|3|8>>>|<cell|Invisible
+  addition>>|<row|<cell|<shortcut|\<nosymbol\>>>|<cell|>|<cell|<math|\<nosymbol\>+1>>|<cell|Invisible
+  symbol>>|<row|<cell|<key|( var>>|<cell|>|<cell|<math|\<Phi\>\<equiv\><around*|\<nobracket\>|\<forall\>x,P<around*|(|x|)>|\<nobracket\>>>>|<cell|Invisible
   bracket(s)>>|<row|<cell|<key|\|>>|<cell|<math|\|>>|<cell|<math|<around*|\||-x|\|>=<around*|\||x|\|>>>|<cell|Absolute
   value>>|<row|<cell|<key|\| var>>|<cell|<math|\|>>|<cell|<math|<around*|{|x\<in\>\<bbb-R\>\|x\<gtr\>0|}>>>|<cell|Separating
   bar>>|<row|<cell|<key|\| var var>>|<cell|<math|\|>>|<cell|<math|<around*|\<langle\>|a<rsub|i><rsup|2><mid|\|>a<rsub|j><rsup|2>|\<rangle\>>>>|<cell|Extensible
   middle bar>>|<row|<cell|<key|\| var var var
   var>>|<cell|<math|\|>>|<cell|<math|11\<divides\>1001>>|<cell|Divides
-  relation>>|<row|<cell|<key|,>>|<cell|<math|,>>|<cell|<math|f<around*|(|x,y|)>>>|<cell|Comma
-  separator>>|<row|<cell|<key|, var>>|<cell|<math|,>>|<cell|<math|123\<comma\>456>>|<cell|Decimal
-  comma>>|<row|<cell|<key|.>>|<cell|<math|.>>|<cell|<math|123.456>>|<cell|Decimal
-  point>>|<row|<cell|<key|. var>>|<cell|<math|.>>|<cell|<math|\<mathlambda\>x\<point\>x<rsup|2>>>|<cell|Dot
+  relation>>|<row|<cell|<key|,>>|<cell|,>|<cell|<math|f<around*|(|x,y|)>>>|<cell|Comma
+  separator>>|<row|<cell|<key|, var>>|<cell|,>|<cell|<math|123\<comma\>456>>|<cell|Decimal
+  comma>>|<row|<cell|<key|.>>|<cell|.>|<cell|<math|123.456>>|<cell|Decimal
+  point>>|<row|<cell|<key|. var>>|<cell|.>|<cell|<math|\<mathlambda\>x\<point\>x<rsup|2>>>|<cell|Dot
   connector>>|<row|<cell|<key|* var var var>>|<cell|<math|\<cdot\>>>|<cell|<math|\<b-v\>\<cdot\>\<b-w\>>>|<cell|Dot
   multiplication>>|<row|<cell|<key|. var var>>|<cell|<math|\<cdummy\>>>|<cell|<math|\<cdummy\>+1>>|<cell|Dummy
   widcard>>|<row|<cell|<key|\\ var>>|<cell|<math|\\>>|<cell|<math|\\x>>|<cell|Backslash>>|<row|<cell|<key|\\
@@ -99,9 +98,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
