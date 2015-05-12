@@ -266,7 +266,7 @@
     (:type infix)
     (:penalty 40)
     (:spacing default default)
-    "<div>" "<oover>" "<divideontimes>" "<oslash>" "<boxslash>")
+    "<over>" "<div>" "<oover>" "<divideontimes>" "<oslash>" "<boxslash>")
 
   (define Over-condensed-symbol
     (:type infix)
