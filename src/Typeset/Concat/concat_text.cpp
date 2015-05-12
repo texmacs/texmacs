@@ -71,6 +71,7 @@ concater_rep::typeset_colored_substring
     print (space (spc->min>>1, spc->def>>1, spc->max)); \
     break; \
   case SPC_BIGOP: \
+    print (spc); \
     break; \
   case SPC_CJK_NORMAL: \
     print (space (-(spc->min>>5), 0, spc->max>>5)); \

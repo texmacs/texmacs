@@ -175,7 +175,7 @@
 
   ("space" (insert-invisible " "))
   ("space var" "<space>")
-  ("space var" "<nospace>")
+  ("space var var" "<nospace>")
   ("space space" (noop) (make-space "1em"))
   ("space space space" (noop) (make-space "2em"))
   (", var" "<comma>")
@@ -994,6 +994,7 @@
   (". . var var var var var" "<udots>")
   (":" ":")
   (": var" "<of>")
+  (": var var" "<over>")
   (": :" "<colons>")
   (": >" "<transtype>")
   (": =" "<assign>")

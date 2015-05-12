@@ -558,17 +558,17 @@
     "<varnothing>" "<vartriangle>" "<yen>")
 
   (define Spacing-visible-symbol
-    (:type symbol)
-    (:spacing default none)
+    (:type infix)
+    (:spacing half none)
     " ")
 
   (define Spacing-wide-symbol
-    (:type symbol)
+    (:type infix)
     (:spacing big none)
     "<space>")
 
   (define Spacing-invisible-symbol
-    (:type symbol)
+    (:type infix)
     (:penalty invalid)
     (:spacing none none)
     "<nospace>")
