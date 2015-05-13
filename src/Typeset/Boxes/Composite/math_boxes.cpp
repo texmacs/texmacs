@@ -28,6 +28,10 @@ SI
 italic_correction (box L, box R) {
   double slope_L= L->right_slope ();
   double slope_R= R->left_slope ();
+  if (L->get_type () == BIG_OP_BOX)
+    if (slope_L >= slope_R && slope_L > 0)
+      if (R->get_type () != BIG_OP_BOX)
+        return L->right_correction () + R->left_correction ();
   if (slope_L == slope_R) return 0;
   if (slope_L * slope_R == 0.0)
     return L->right_correction () + R->left_correction ();

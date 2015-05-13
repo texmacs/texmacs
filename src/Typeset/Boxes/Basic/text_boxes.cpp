@@ -447,7 +447,7 @@ big_operator_box (path ip, string s, font fn, pencil pen, int n) {
   fn->get_extents (r, ex);
   SI y= fn->yfrac - ((ex->y1 + ex->y2) >> 1);
   box mvb= move_box (ip, text_box (ip, 0, r, fn, pen), 0, y, false, true);
-  return macro_box (ip, mvb, fn);
+  return macro_box (ip, mvb, fn, BIG_OP_BOX);
 }
 
 box

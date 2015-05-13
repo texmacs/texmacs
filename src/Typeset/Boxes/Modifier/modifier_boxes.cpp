@@ -329,7 +329,8 @@ frozen_box_rep::find_rip () {
 
 struct macro_box_rep: public composite_box_rep {
   font big_fn; // big character font if non nil
-  macro_box_rep (path ip, box b, font big_fn);
+  int  btype;
+  macro_box_rep (path ip, box b, font big_fn, int btype);
   operator tree () { return tree (TUPLE, "macro", (tree) bs[0]); }
   box adjust_kerning (int mode, double factor);
 
@@ -341,6 +342,7 @@ struct macro_box_rep: public composite_box_rep {
   path      find_tree_path (path bp);
   cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
+  int       get_type ();
   string    get_leaf_string ();
   font      get_leaf_font ();
   pencil    get_leaf_pencil ();
@@ -371,8 +373,8 @@ struct macro_box_rep: public composite_box_rep {
     return y2- syx; }
 };
 
-macro_box_rep::macro_box_rep (path ip, box b, font fn):
-  composite_box_rep (ip), big_fn (fn) {
+macro_box_rep::macro_box_rep (path ip, box b, font fn, int bt):
+  composite_box_rep (ip), big_fn (fn), btype (bt) {
     insert (b, 0, 0); position (); finalize (); }
 box macro_box_rep::adjust_kerning (int mode, double factor) {
   return macro_box (ip, bs[0]->adjust_kerning (mode, factor), big_fn); }
@@ -392,6 +394,8 @@ cursor macro_box_rep::find_cursor (path bp) {
   return box_rep::find_cursor (bp); }
 selection macro_box_rep::find_selection (path lbp, path rbp) {
   return box_rep::find_selection (lbp, rbp); }
+int macro_box_rep::get_type () {
+  return btype; }
 string macro_box_rep::get_leaf_string () {
   return bs[0]->get_leaf_string (); }
 font macro_box_rep::get_leaf_font () {
@@ -421,6 +425,6 @@ frozen_box (path ip, box b) {
 }
 
 box
-macro_box (path ip, box b, font big_fn) {
-  return tm_new<macro_box_rep> (ip, b, big_fn);
+macro_box (path ip, box b, font big_fn, int btype) {
+  return tm_new<macro_box_rep> (ip, b, big_fn, btype);
 }

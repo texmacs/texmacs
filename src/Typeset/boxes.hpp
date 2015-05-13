@@ -30,6 +30,7 @@
 #define SCROLL_BOX    4
 #define TEXT_BOX      5
 #define SHORTER_BOX   6
+#define BIG_OP_BOX    7
 
 /******************************************************************************
 * The cursor class

@@ -54,7 +54,7 @@ static bool
 is_big_italic (string l) {
   int n= N(l);
   if (n < 3) return false;
-  if (l[n-3] == 'l' && l[n-2] == 'i' && l[n-1] != 'm')
+  if (l[n-3] == 'l' && l[n-2] == 'i' && l[n-1] == 'm')
     return is_big_italic (l (0, n-3));
   if (l[n-3] != 'i' || l[n-2] != 'n' || l[n-1] != 't') return false;
   if (l[0] == 'u' && l[1] == 'p') return is_big_italic (l (2, n));
@@ -87,7 +87,7 @@ concater_rep::typeset_bigop (tree t, path ip) {
     penalty_min (HYPH_PANIC);
     if (!is_big_without_limits (l)) with_limits (LIMITS_DISPLAY);
     if (flag) {
-      if (is_big_italic (l)) print (spc / 4);
+      if (is_big_italic (l)) print (env->display_style? 0: (spc / 4));
       else print (env->display_style? spc: (spc / 2));
     }
     // temporarary: use parameters from operator-big class in std-math.syx
