@@ -63,6 +63,8 @@ int nr_windows = 0; // FIXME: fake variable, referenced in tm_server
 ******************************************************************************/
 
 #ifdef QT_CPU_FIX
+#include <unistd.h>
+
 static double tm_count= 0.0;
 static double tm_delay= 1.0;
 
