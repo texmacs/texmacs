@@ -50,28 +50,24 @@ concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
   else typeset_error (t, ip);
 }
 
-static bool
-is_big_italic (string l) {
+static void
+get_big_flags (string l, bool& int_flag, bool& it_flag, bool& lim_flag) {
   int n= N(l);
-  if (n < 3) return false;
-  if (l[n-3] == 'l' && l[n-2] == 'i' && l[n-1] == 'm')
-    return is_big_italic (l (0, n-3));
-  if (l[n-3] != 'i' || l[n-2] != 'n' || l[n-1] != 't') return false;
-  if (l[0] == 'u' && l[1] == 'p') return is_big_italic (l (2, n));
-  if (n == 3) return true;
-  return l == "iint" || l == "iiint" || l == "iiiint" || l == "idotsint" ||
-         l == "oint" || l == "oiint" || l == "oiiint";
-}
-
-static bool
-is_big_without_limits (string l) {
-  int n= N(l);
-  if (n < 3) return false;
-  if (l[n-3] != 'i' || l[n-2] != 'n' || l[n-1] != 't') return false;
-  if (l[0] == 'u' && l[1] == 'p') return is_big_without_limits (l (2, n));
-  if (n == 3) return true;
-  return l == "iint" || l == "iiint" || l == "iiiint" || l == "idotsint" ||
-         l == "oint" || l == "oiint" || l == "oiiint";
+  if (n < 3) return;
+  if (l[n-3] == 'l' && l[n-2] == 'i' && l[n-1] == 'm') {
+    l= l (0, n-3);
+    n -= 3;
+    if (l[n-3] != 'i' || l[n-2] != 'n' || l[n-1] != 't') return;
+    int_flag= true;
+    it_flag = l[0] != 'u' || l[1] != 'p';
+    lim_flag= true;
+  }
+  else {
+    if (l[n-3] != 'i' || l[n-2] != 'n' || l[n-1] != 't') return;
+    int_flag= true;
+    it_flag = l[0] != 'u' || l[1] != 'p';
+    lim_flag= false;
+  }
 }
 
 void
@@ -81,9 +77,9 @@ concater_rep::typeset_bigop (tree t, path ip) {
     string l= t[0]->label;
     string s= "<big-" * l * ">";
     bool flag= (!env->math_condensed) && (l != ".");
+    bool stix= starts (env->fn->res_name, "stix-");
     box b;
-    // TODO: some caching of the larger font
-    if (starts (env->fn->res_name, "stix-")) {
+    if (stix) {
       font mfn= rubber_font (env->fn);
       b= big_operator_box (ip, s, mfn, env->pen,
                            env->display_style? 2: 1);
@@ -96,9 +92,12 @@ concater_rep::typeset_bigop (tree t, path ip) {
                               env->display_style? 2: 1);
     print (STD_ITEM, OP_BIG, b);
     penalty_min (HYPH_PANIC);
-    if (!is_big_without_limits (l)) with_limits (LIMITS_DISPLAY);
+    bool int_flag= false, it_flag= false, lim_flag= true;
+    get_big_flags (l, int_flag, it_flag, lim_flag);
+    if (lim_flag) with_limits (LIMITS_DISPLAY);
     if (flag) {
-      if (is_big_italic (l)) print (env->display_style? 0: (spc / 4));
+      if (int_flag && stix) print (env->display_style? (spc / 2): (spc / 4));
+      else if (it_flag) print (env->display_style? 0: (spc / 4));
       else print (env->display_style? spc: (spc / 2));
     }
     // temporarary: use parameters from operator-big class in std-math.syx
