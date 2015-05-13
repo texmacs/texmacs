@@ -242,6 +242,8 @@
   ("math:symbol:limits O var" (math-big-operator "upointlim"))
   ("math:symbol:limits O O" (math-big-operator "oiintlim"))
   ("math:symbol:limits O O var" (math-big-operator "upoiintlim"))
+  ("math:symbol:limits O O O" (math-big-operator "oiiintlim"))
+  ("math:symbol:limits O O O var" (math-big-operator "upoiiintlim"))
 
   ("math:symbol I !" (math-big-operator "intlim"))
   ("math:symbol I var !" (math-big-operator "upintlim"))
@@ -256,6 +258,8 @@
   ("math:symbol O var !" (math-big-operator "upointlim"))
   ("math:symbol O O !" (math-big-operator "oiintlim"))
   ("math:symbol O O var !" (math-big-operator "upoiintlim"))
+  ("math:symbol O O O !" (math-big-operator "oiiintlim"))
+  ("math:symbol O O O var !" (math-big-operator "upoiiintlim"))
 
   ("math:symbol I" (math-big-operator "int"))
   ("math:symbol I var" (math-big-operator "upint"))
@@ -281,6 +285,10 @@
   ("math:symbol O O var" (math-big-operator "upoiint"))
   ("math:symbol O O var var" (math-big-operator "oiintlim"))
   ("math:symbol O O var var var" (math-big-operator "upoiintlim"))
+  ("math:symbol O O O" (math-big-operator "oiiint"))
+  ("math:symbol O O O var" (math-big-operator "upoiiint"))
+  ("math:symbol O O O var var" (math-big-operator "oiiintlim"))
+  ("math:symbol O O O var var var" (math-big-operator "upoiiintlim"))
 
   ("math:symbol A" (math-big-operator "amalg"))
   ("math:symbol B" (math-big-operator "parallel"))

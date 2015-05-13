@@ -80,10 +80,11 @@
   bignone bigtimes bigoplus bigotimes bigodot
   bigvee bigwedge bigsqcup bigcup bigcap bigpluscup
   bigtriangledown bigtriangleup
-  int bigiint bigiiint bigiiiint bigidotsint oint bigoiint
-  bigintwl bigiintwl bigiiintwl bigiiiintwl bigidotsintwl bigointwl bigoiintwl
-  bigupint bigupiint bigupiiint bigupoint bigupoiint
-  bigupintwl bigupiintwl bigupiiintwl bigupointwl bigupoiintwl)
+  int bigiint bigiiint bigiiiint bigidotsint oint bigoiint bigoiiint
+  bigintwl bigiintwl bigiiintwl bigiiiintwl bigidotsintwl
+  bigointwl bigoiintwl bigoiiintwl
+  bigupint bigupiint bigupiiint bigupoint bigupoiint bigupoiiint
+  bigupintwl bigupiintwl bigupiiintwl bigupointwl bigupoiintwl bigupoiiintwl)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols from latexsym package

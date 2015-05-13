@@ -297,7 +297,7 @@
     "wedge" "curlywedge")
 
   (define Big-union-symbol
-    "cup" "sqcup" "amalg" "uplus" "box")
+    "cup" "sqcup" "amalg" "uplus" "pluscup" "box")
 
   (define Big-intersection-symbol
     "cap" "sqcap")
@@ -305,10 +305,11 @@
   (define Big-sum-symbol
     "sum" "oplus" "triangledown"
     ;; NOTE: declaration order is important, because of packrat parsing
-    "intlim" "iintlim" "iiintlim" "iiiintlim" "idotsintlim" "ointlim" "oiintlim"
-    "int" "iint" "iiint" "iiiint" "idotsint" "oint" "oiint"
-    "upintlim" "upiintlim" "upiiintlim" "upointlim" "upoiintlim"
-    "upint" "upiint" "upiiint" "upoint" "upoiint")
+    "intlim" "iintlim" "iiintlim" "iiiintlim" "idotsintlim"
+    "ointlim" "oiintlim" "oiiintlim"
+    "int" "iint" "iiint" "iiiint" "idotsint" "oint" "oiint" "oiiint"
+    "upintlim" "upiintlim" "upiiintlim" "upointlim" "upoiintlim" "upoiiintlim"
+    "upint" "upiint" "upiiint" "upoint" "upoiint" "upoiiint")
 
   (define Big-product-symbol
     "prod" "otimes" "odot" "triangleup")
@@ -324,7 +325,7 @@
     (:penalty panic)
     (:spacing none big)
     "<big-int>" "<big-iint>" "<big-iiint>" "<big-iiiint>" "<big-idotsint>"
-    "<big-oint>" "<big-oiint>")
+    "<big-oint>" "<big-oiint>" "<big-oiiint>")
 
   (define Big-lim-symbol
     (:type prefix)
@@ -334,7 +335,7 @@
     "<big-sum>" "<big-prod>" "<big-amalg>"
     "<big-intlim>" "<big-iintlim>" "<big-iiintlim>"
     "<big-iiiintlim>" "<big-idotsintlim>"
-    "<big-ointlim>" "<big-oiintlim>"
+    "<big-ointlim>" "<big-oiintlim>" "<big-oiiintlim>"
     "<big-cap>" "<big-cup>" "<big-sqcap>" "<big-sqcup>"
     "<big-vee>" "<big-wedge>" "<big-curlyvee>" "<big-curlywedge>"
     "<big-odot>" "<big-otimes>" "<big-oplus>" "<big-uplus>"
@@ -593,9 +594,9 @@
     "<Re>" "<Im>" "<complement>"
     "<sum>" "<prod>"
     "<int>" "<iint>" "<iiint>" "<iiiint>" "<idotsint>"
-    "<oint>" "<oiint>"
+    "<oint>" "<oiint>" "<oiiint>"
     "<intlim>" "<iintlim>" "<iiintlim>" "<iiiintlim>" "<idotsintlim>"
-    "<ointlim>" "<oiintlim>")
+    "<ointlim>" "<oiintlim>" "<oiiintlim>")
 
   ;; FIXME: spacing behind $\sin$ is currently incorrect,
   ;; because the transition OP_UNARY -> OP_TEXT is not detected

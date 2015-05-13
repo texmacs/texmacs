@@ -60,7 +60,7 @@ is_big_italic (string l) {
   if (l[0] == 'u' && l[1] == 'p') return is_big_italic (l (2, n));
   if (n == 3) return true;
   return l == "iint" || l == "iiint" || l == "iiiint" || l == "idotsint" ||
-         l == "oint" || l == "oiint";
+         l == "oint" || l == "oiint" || l == "oiiint";
 }
 
 static bool
@@ -71,7 +71,7 @@ is_big_without_limits (string l) {
   if (l[0] == 'u' && l[1] == 'p') return is_big_without_limits (l (2, n));
   if (n == 3) return true;
   return l == "iint" || l == "iiint" || l == "iiiint" || l == "idotsint" ||
-         l == "oint" || l == "oiint";
+         l == "oint" || l == "oiint" || l == "oiiint";
 }
 
 void
@@ -81,8 +81,19 @@ concater_rep::typeset_bigop (tree t, path ip) {
     string l= t[0]->label;
     string s= "<big-" * l * ">";
     bool flag= (!env->math_condensed) && (l != ".");
-    box b= big_operator_box (ip, s, env->fn, env->pen,
-			     env->display_style? 2: 1);
+    box b;
+    // TODO: some caching of the larger font
+    if (starts (env->fn->res_name, "stix-")) {
+      font mfn= rubber_font (env->fn);
+      b= big_operator_box (ip, s, mfn, env->pen,
+                           env->display_style? 2: 1);
+    }
+    else if (env->display_style && env->fn->type == FONT_TYPE_UNICODE) {
+      font mfn= rubber_font (env->fn);
+      b= big_operator_box (ip, s, mfn, env->pen, 1);
+    }
+    else b= big_operator_box (ip, s, env->fn, env->pen,
+                              env->display_style? 2: 1);
     print (STD_ITEM, OP_BIG, b);
     penalty_min (HYPH_PANIC);
     if (!is_big_without_limits (l)) with_limits (LIMITS_DISPLAY);
