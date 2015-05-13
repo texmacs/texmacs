@@ -454,11 +454,11 @@
 ("<cap>"		"#2229")
 ("<cup>"		"#222A")
 ("<big-int>"		"#222B")
-; double integral	"#222E"
-; triple integral	"#222D"
+("<big-iint>"		"#222C")
+("<big-iiint>"		"#222D")
 ("<big-oint>"		"#222E")
-; surface integral	"#222F"
-; volume integral	"#2230"
+("<big-oiint>"		"#222F")
+("<big-oiiint>"		"#2230")
 ; clockwise integral	"#2231"
 ; clockwise contour integral "#2232"
 ; anticlockwise contour integral "#2233"
