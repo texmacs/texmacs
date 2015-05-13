@@ -95,7 +95,7 @@
   (-> "Large separator" (tile 8 (link middle-delimiter-menu)))
   (-> "Large closing bracket" (tile 8 (link right-delimiter-menu)))
   (-> "Big operator"
-      (tile 8 (link big-operator-menu)))
+      (tile 6 (link big-operator-menu)))
   ---
   (-> "Binary operator"
       (tile 8 (link binary-operation-menu)))
@@ -234,26 +234,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind big-operator-menu
+  (symbol "<big-int-2>" (math-big-operator "int"))
+  (symbol "<big-iint-2>" (math-big-operator "iint"))
+  (symbol "<big-iiint-2>" (math-big-operator "iiint"))
+  (symbol "<big-idotsint-2>" (math-big-operator "idotsint"))
+  (symbol "<big-oint-2>" (math-big-operator "oint"))
+  (symbol "<big-oiint-2>" (math-big-operator "oiint"))
   (symbol "<big-sum-2>" (math-big-operator "sum"))
   (symbol "<big-prod-2>" (math-big-operator "prod"))
-  (symbol "<big-int-2>" (math-big-operator "int"))
-  (symbol "<big-oint-2>" (math-big-operator "oint"))
   (symbol "<big-amalg-2>" (math-big-operator "amalg"))
-  (symbol "<big-cap-2>" (math-big-operator "cap"))
-  (symbol "<big-cup-2>" (math-big-operator "cup"))
-  (symbol "<big-wedge-2>" (math-big-operator "wedge"))
-  (symbol "<big-vee-2>" (math-big-operator "vee"))
   (symbol "<big-odot-2>" (math-big-operator "odot"))
   (symbol "<big-oplus-2>" (math-big-operator "oplus"))
   (symbol "<big-otimes-2>" (math-big-operator "otimes"))
+  (symbol "<big-cap-2>" (math-big-operator "cap"))
+  (symbol "<big-cup-2>" (math-big-operator "cup"))
+  (symbol "<big-pluscup-2>" (math-big-operator "pluscup"))
   (symbol "<big-sqcap-2>" (math-big-operator "sqcap"))
   (symbol "<big-sqcup-2>" (math-big-operator "sqcup"))
+  (symbol "<big-box-2>" (math-big-operator "box"))
+  (symbol "<big-wedge-2>" (math-big-operator "wedge"))
+  (symbol "<big-vee-2>" (math-big-operator "vee"))
   (symbol "<big-curlywedge-2>" (math-big-operator "curlywedge"))
   (symbol "<big-curlyvee-2>" (math-big-operator "curlyvee"))
   (symbol "<big-triangleup-2>" (math-big-operator "triangleup"))
   (symbol "<big-triangledown-2>" (math-big-operator "triangledown"))
-  (symbol "<big-box-2>" (math-big-operator "box"))
-  (symbol "<big-pluscup-2>" (math-big-operator "pluscup"))
   (symbol "<big-parallel-2>" (math-big-operator "parallel"))
   (symbol "<big-interleave-2>" (math-big-operator "interleave")))
 
@@ -1143,7 +1147,7 @@
       ("Superscript above" (make-above)))
   /
   (=> (balloon (icon "tm_bigop.xpm") "Insert a big operator")
-      (tile 8 (link big-operator-menu)))
+      (tile 6 (link big-operator-menu)))
   (=> (balloon (icon "tm_bigaround.xpm") "Insert large delimiters")
       (tile 8 (link large-delimiter-menu))
       ---

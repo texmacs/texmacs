@@ -272,15 +272,19 @@ tex_rubber_font_rep::magnify (double zoom) {
 
 double
 tex_rubber_font_rep::get_left_slope (string s) {
-  if ((N(s)>=5) && (s(0,5)=="<big-") && (get_right_correction(s)!=0))
-    return 0.25;
+  if ((N(s)>=5) && (s(0,5)=="<big-") && (get_right_correction(s)!=0)) {
+    if (N(s) >= 7 && s(5,7) == "up") return 0.125;
+    else return 0.25;
+  }
   return slope;
 }
 
 double
 tex_rubber_font_rep::get_right_slope (string s) {
-  if ((N(s)>=5) && (s(0,5)=="<big-") && (get_right_correction(s)!=0))
-    return 0.25;
+  if ((N(s)>=5) && (s(0,5)=="<big-") && (get_right_correction(s)!=0)) {
+    if (N(s) >= 7 && s(5,7) == "up") return 0.125;
+    else return 0.25;
+  }
   return slope;
 }
 

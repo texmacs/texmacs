@@ -303,8 +303,12 @@
     "cap" "sqcap")
 
   (define Big-sum-symbol
-    "intlim" "ointlim" ;; NOTE: in front, because of packrat parsing
-    "int" "oint" "sum" "oplus" "triangledown")
+    "sum" "oplus" "triangledown"
+    ;; NOTE: declaration order is important, because of packrat parsing
+    "intlim" "iintlim" "iiintlim" "iiiintlim" "idotsintlim" "ointlim" "oiintlim"
+    "int" "iint" "iiint" "iiiint" "idotsint" "oint" "oiint"
+    "upintlim" "upiintlim" "upiiintlim" "upointlim" "upoiintlim"
+    "upint" "upiint" "upiiint" "upoint" "upoiint")
 
   (define Big-product-symbol
     "prod" "otimes" "odot" "triangleup")
@@ -319,14 +323,18 @@
     (:type prefix)
     (:penalty panic)
     (:spacing none big)
-    "<big-int>" "<big-oint>")
+    "<big-int>" "<big-iint>" "<big-iiint>" "<big-iiiint>" "<big-idotsint>"
+    "<big-oint>" "<big-oiint>")
 
   (define Big-lim-symbol
     (:type prefix)
     (:penalty panic)
     (:spacing none big)
     (:limits display)
-    "<big-sum>" "<big-prod>" "<big-amalg>" "<big-intlim>" "<big-ointlim>"
+    "<big-sum>" "<big-prod>" "<big-amalg>"
+    "<big-intlim>" "<big-iintlim>" "<big-iiintlim>"
+    "<big-iiiintlim>" "<big-idotsintlim>"
+    "<big-ointlim>" "<big-oiintlim>"
     "<big-cap>" "<big-cup>" "<big-sqcap>" "<big-sqcup>"
     "<big-vee>" "<big-wedge>" "<big-curlyvee>" "<big-curlywedge>"
     "<big-odot>" "<big-otimes>" "<big-oplus>" "<big-uplus>"
@@ -583,7 +591,11 @@
     (:spacing none none)
     "<mathd>" "<mathD>" "<mathLaplace>" "<partial>" "<nabla>"
     "<Re>" "<Im>" "<complement>"
-    "<sum>" "<prod>" "<int>" "<oint>" "<intlim>" "<ointlim>")
+    "<sum>" "<prod>"
+    "<int>" "<iint>" "<iiint>" "<iiiint>" "<idotsint>"
+    "<oint>" "<oiint>"
+    "<intlim>" "<iintlim>" "<iiintlim>" "<iiiintlim>" "<idotsintlim>"
+    "<ointlim>" "<oiintlim>")
 
   ;; FIXME: spacing behind $\sin$ is currently incorrect,
   ;; because the transition OP_UNARY -> OP_TEXT is not detected

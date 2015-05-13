@@ -50,6 +50,30 @@ concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
   else typeset_error (t, ip);
 }
 
+static bool
+is_big_italic (string l) {
+  int n= N(l);
+  if (n < 3) return false;
+  if (l[n-3] == 'l' && l[n-2] == 'i' && l[n-1] != 'm')
+    return is_big_italic (l (0, n-3));
+  if (l[n-3] != 'i' || l[n-2] != 'n' || l[n-1] != 't') return false;
+  if (l[0] == 'u' && l[1] == 'p') return is_big_italic (l (2, n));
+  if (n == 3) return true;
+  return l == "iint" || l == "iiint" || l == "iiiint" || l == "idotsint" ||
+         l == "oint" || l == "oiint";
+}
+
+static bool
+is_big_without_limits (string l) {
+  int n= N(l);
+  if (n < 3) return false;
+  if (l[n-3] != 'i' || l[n-2] != 'n' || l[n-1] != 't') return false;
+  if (l[0] == 'u' && l[1] == 'p') return is_big_without_limits (l (2, n));
+  if (n == 3) return true;
+  return l == "iint" || l == "iiint" || l == "iiiint" || l == "idotsint" ||
+         l == "oint" || l == "oiint";
+}
+
 void
 concater_rep::typeset_bigop (tree t, path ip) {
   if ((N(t) == 1) && is_atomic (t[0])) {
@@ -61,8 +85,11 @@ concater_rep::typeset_bigop (tree t, path ip) {
 			     env->display_style? 2: 1);
     print (STD_ITEM, OP_BIG, b);
     penalty_min (HYPH_PANIC);
-    if ((l != "int") && (l != "oint")) with_limits (LIMITS_DISPLAY);
-    if (flag) print (env->display_style? spc: (spc / 2));
+    if (!is_big_without_limits (l)) with_limits (LIMITS_DISPLAY);
+    if (flag) {
+      if (is_big_italic (l)) print (spc / 4);
+      else print (env->display_style? spc: (spc / 2));
+    }
     // temporarary: use parameters from operator-big class in std-math.syx
   }
   else typeset_error (t, ip);

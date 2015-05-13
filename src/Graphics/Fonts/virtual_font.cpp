@@ -46,6 +46,10 @@ struct virtual_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
+
+  double get_left_slope (string s);
+  double get_right_slope (string s);
+  SI get_right_correction (string s);
 };
 
 virtual_font_rep::virtual_font_rep (
@@ -223,6 +227,9 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return ver_extend (gl, pos, by);
   }
 
+  if (is_tuple (t, "italic", 3))
+    return compile (t[1], ex);
+
   failed_error << "TeXmacs] The defining tree is " << t << "\n";
   FAILED ("invalid virtual character");
   return glyph ();
@@ -399,6 +406,11 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     draw_clipped (ren, t[1], x, y, ex->x3, ex->y3 + pos, ex->x4, ex->y4);
     return;
   }
+
+  if (is_tuple (t, "italic", 3)) {
+    draw (ren, t[1], x, y);
+    return;
+  }
 }
 
 void
@@ -544,6 +556,34 @@ virtual_font_rep::get_glyph (string s) {
   int c= get_char (s, cfnm, cfng);
   if (c == -1) return font_rep::get_glyph (s);
   else return cfng->get(c);
+}
+
+/******************************************************************************
+* Slope and italic correction
+******************************************************************************/
+
+double
+virtual_font_rep::get_left_slope (string s) {
+  tree t= get_tree (s);
+  if (is_tuple (t, "italic", 3))
+    return as_double (t[2]);
+  return font_rep::get_left_slope (s);
+}
+
+double
+virtual_font_rep::get_right_slope (string s) {
+  tree t= get_tree (s);
+  if (is_tuple (t, "italic", 3))
+    return as_double (t[2]);
+  return font_rep::get_right_slope (s);
+}
+
+SI
+virtual_font_rep::get_right_correction (string s) {
+  tree t= get_tree (s);
+  if (is_tuple (t, "italic", 3))
+    return (SI) (as_double (t[3]) * unit);
+  return font_rep::get_right_correction (s);
 }
 
 /******************************************************************************

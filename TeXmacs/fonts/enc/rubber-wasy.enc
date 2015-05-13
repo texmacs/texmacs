@@ -1,1 +1,4 @@
-114 "big-varint" "big-iint" "big-iiint" "big-varoint" "big-oiint"
+114 "big-upint" "big-upiint" "big-upiiint"
+    "big-upoint" "big-upoiint"
+114 "big-upintlim" "big-upiintlim" "big-upiiintlim"
+    "big-upointlim" "big-upoiintlim"
