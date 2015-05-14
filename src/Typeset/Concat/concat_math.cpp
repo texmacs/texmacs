@@ -306,8 +306,14 @@ concater_rep::typeset_sqrt (tree t, path ip) {
     if (disp) env->local_end (MATH_DISPLAY, old);
   }
   SI sep= env->fn->sep;
+  font lfn= env->fn;
+  bool stix= starts (lfn->res_name, "stix-");
+  if (stix) lfn= rubber_font (lfn);
   box sqrtb= delimiter_box (decorate_left (ip), "<large-sqrt>",
-                            env->fn, env->pen, b->y1, b->y2+ sep);
+                            lfn, env->pen, b->y1, b->y2+ sep);
+  if (stix) sqrtb= shift_box (decorate_left (ip), sqrtb,
+                              -env->fn->wline/2, -env->fn->wline/3,
+                              false, true);
   print (sqrt_box (ip, b, ind, sqrtb, env->fn, env->pen));
 }
 

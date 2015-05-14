@@ -145,6 +145,7 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
   }
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
+  if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<left-|")) {
     // TODO: how to do this in a better way?
     rew= s;
