@@ -376,7 +376,7 @@ make_rubber_font (font fn) {
   if (starts (fn->res_name, "stix-"))
     return rubber_stix_font (fn);
   else if (fn->type == FONT_TYPE_UNICODE)
-    return fn->magnify (sqrt (2.0));
+    return rubber_unicode_font (fn);
   else
     return fn;
 }

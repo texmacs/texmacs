@@ -84,9 +84,10 @@ concater_rep::typeset_bigop (tree t, path ip) {
       b= big_operator_box (ip, s, mfn, env->pen,
                            env->display_style? 2: 1);
     }
-    else if (env->display_style && env->fn->type == FONT_TYPE_UNICODE) {
+    else if (env->fn->type == FONT_TYPE_UNICODE) {
       font mfn= rubber_font (env->fn);
-      b= big_operator_box (ip, s, mfn, env->pen, 1);
+      b= big_operator_box (ip, s, mfn, env->pen,
+                           env->display_style? 2: 1);
     }
     else b= big_operator_box (ip, s, env->fn, env->pen,
                               env->display_style? 2: 1);

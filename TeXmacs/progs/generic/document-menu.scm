@@ -375,7 +375,7 @@
       (link document-short-chinese-font-menu))
   ---
   (if (and (new-fonts?) (use-popups?))
-      ("Other" (open-font-selector)))
+      ("Other" (open-document-font-selector)))
   (if (not (and (new-fonts?) (use-popups?)))
       (-> "Other" (link document-font-menu))))
 
