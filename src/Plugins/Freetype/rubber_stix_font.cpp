@@ -26,6 +26,9 @@ struct rubber_stix_font_rep: font_rep {
   font up_ints;
   font up_intsD;
   font size1;
+  font size2;
+  font size3;
+  font size4;
 
   hashmap<string,int> mapper;
   hashmap<string,string> rewriter;
@@ -67,12 +70,18 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
     up_ints= unicode_font ("STIXIntegralsUp-Regular", base->size, dpi);
     up_intsD= unicode_font ("STIXIntegralsUpD-Regular", base->size, dpi);
     size1= unicode_font ("STIXSizeOneSym-Regular", base->size, dpi);
+    size2= unicode_font ("STIXSizeTwoSym-Regular", base->size, dpi);
+    size3= unicode_font ("STIXSizeThreeSym-Regular", base->size, dpi);
+    size4= unicode_font ("STIXSizeFourSym-Regular", base->size, dpi);
   }
   else {
     intsD= unicode_font ("STIXIntegralsD-Bold", base->size, dpi);
     up_ints= unicode_font ("STIXIntegralsUp-Bold", base->size, dpi);
     up_intsD= unicode_font ("STIXIntegralsUpD-Bold", base->size, dpi);
     size1= unicode_font ("STIXSizeOneSym-Bold", base->size, dpi);
+    size2= unicode_font ("STIXSizeTwoSym-Bold", base->size, dpi);
+    size3= unicode_font ("STIXSizeThreeSym-Bold", base->size, dpi);
+    size4= unicode_font ("STIXSizeFourSym-Bold", base->size, dpi);
   }
 }
 
@@ -96,7 +105,7 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
     rew= s;
     return 1;
   }
-  else if (starts (s, "<big-") && ends (s, "-2>")) {
+  if (starts (s, "<big-") && ends (s, "-2>")) {
     string r= s (5, N(s) - 3);
     if (ends (r, "lim")) r= r (0, N(r) - 3);
     if (starts (r, "up") && ends (r, "int")) {
@@ -119,6 +128,37 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
     rew= s;
     return 2;
   }
+  if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
+  if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
+  if (starts (s, "<left-|")) {
+    // TODO: how to do this in a better way?
+    rew= s;
+    return 0;
+  }
+  if (starts (s, "<left-") && ends (s, "-1>")) {
+    string r= s (6, N(s) - 3);
+    if (N(r) > 1) r= "<" * r * ">";
+    rew= r;
+    return 7;
+  }
+  if (starts (s, "<left-") && ends (s, "-2>")) {
+    string r= s (6, N(s) - 3);
+    if (N(r) > 1) r= "<" * r * ">";
+    rew= r;
+    return 8;
+  }
+  if (starts (s, "<left-") && ends (s, "-3>")) {
+    string r= s (6, N(s) - 3);
+    if (N(r) > 1) r= "<" * r * ">";
+    rew= r;
+    return 9;
+  }
+  if (starts (s, "<left-") && ends (s, "-4>")) {
+    string r= s (6, N(s) - 3);
+    if (N(r) > 1) r= "<" * r * ">";
+    rew= r;
+    return 10;
+  }
   rew= s;
   return 0;
 }
@@ -132,7 +172,7 @@ rubber_stix_font_rep::search_font_cached (string s, string& rew) {
   int nr= search_font_sub (s, rew);
   mapper(s)= nr;
   rewriter(s)= rew;
-  //cout << s << " -> " << nr << LF;
+  //cout << s << " -> " << nr << ", " << rew << LF;
   return nr;
 }
 
@@ -163,6 +203,18 @@ rubber_stix_font_rep::search_font (string& s, SI& dy) {
   case 6:
     dy= (2 * base->yx) / 3;
     return size1;
+  case 7:
+    dy= 0;
+    return size1;
+  case 8:
+    dy= 0;
+    return size2;
+  case 9:
+    dy= 0;
+    return size3;
+  case 10:
+    dy= 0;
+    return size4;
   default:
     dy= 0;
     return base;

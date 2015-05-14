@@ -383,11 +383,19 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
       break;
     case VAR_AROUND:
       if (N(t) == 3) {
+        font old_fn= env->fn;
+        font new_fn= env->fn;
+        if (starts (new_fn->res_name, "stix-"))
+          new_fn= rubber_font (new_fn);
+        env->fn= new_fn;
         typeset (make_large (LEFT, t[0]),
                  decorate_middle (descend (ip, 0)));
+        env->fn= old_fn;
         typeset (t[1], descend (ip, 1));
+        env->fn= new_fn;
         typeset (make_large (RIGHT, t[2]),
                  decorate_middle (descend (ip, 2)));
+        env->fn= old_fn;
       }
       else typeset_error (t, ip);
       break;
