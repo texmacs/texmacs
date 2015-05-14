@@ -1005,6 +1005,10 @@
 	   (list 'underbrace arg))
 	  ((in? acc '("<overbrace>" "<overbrace*>"))
 	   (tmtex-below `(,(car l) (text (downbracefill)))))
+	  ((in? acc '("<punderbrace>" "<punderbrace*>"))
+	   (list 'underbrace arg))
+	  ((in? acc '("<poverbrace>" "<poverbrace*>"))
+	   (tmtex-below `(,(car l) (text (downbracefill)))))
 	  ;; imperfect translations
 	  ((in? acc '("<squnderbrace>" "<squnderbrace*>"))
 	   (list 'underbrace arg))
@@ -1043,6 +1047,10 @@
 	  ((in? acc '("<overbrace>" "<overbrace*>"))
 	   (list 'overbrace arg))
 	  ((in? acc '("<underbrace>" "<underbrace*>"))
+	   (tmtex-above `(,(car l) (text (upbracefill)))))
+	  ((in? acc '("<poverbrace>" "<poverbrace*>"))
+	   (list 'overbrace arg))
+	  ((in? acc '("<punderbrace>" "<punderbrace*>"))
 	   (tmtex-above `(,(car l) (text (upbracefill)))))
 	  ;; FIXME: imperfect translations
 	  ((== acc "<abovering>") (list 'dot arg))

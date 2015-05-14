@@ -148,12 +148,16 @@
 (logic-table tm->mathml-only-above%
   ("<wide-overbrace>" "&OverBrace;")
   ("<wide-underbrace*>" "&UnderBrace;")
+  ("<wide-poverbrace>" "&OverParenthesis;")
+  ("<wide-punderbrace*>" "&UnderParenthesis;")
   ("<wide-sqoverbrace>" "&OverBracket;")
   ("<wide-squnderbrace*>" "&UnderBracket;"))
 
 (logic-table tm->mathml-only-below%
   ("<wide-overbrace*>" "&OverBrace;")
   ("<wide-underbrace>" "&UnderBrace;")
+  ("<wide-poverbrace*>" "&OverParenthesis;")
+  ("<wide-punderbrace>" "&UnderParenthesis;")
   ("<wide-sqoverbrace*>" "&OverBracket;")
   ("<wide-squnderbrace>" "&UnderBracket;"))
 

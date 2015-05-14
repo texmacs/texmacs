@@ -251,7 +251,14 @@
 
 (define wide-list-3
   '("<wide-overbrace>" "<wide-underbrace*>"
+    "<wide-poverbrace>" "<wide-punderbrace*>"
     "<wide-sqoverbrace>" "<wide-squnderbrace*>"
+    "<wide-varrightarrow>" "<wide-varleftarrow>" "<wide-bar>"))
+
+(define wide-list-4
+  '("<wide-underbrace>" "<wide-overbrace*>"
+    "<wide-punderbrace>" "<wide-poverbrace*>"
+    "<wide-squnderbrace>" "<wide-sqoverbrace*>"
     "<wide-varrightarrow>" "<wide-varleftarrow>" "<wide-bar>"))
 
 (tm-define (variant-circulate t forward?)
@@ -266,7 +273,10 @@
           (tree-set t 1 (list-ref wide-list-2 j))))
       (and-with i (list-find-index wide-list-3 (lambda (x) (== x s)))
         (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-3))
-          (tree-set t 1 (list-ref wide-list-3 j)))))))
+          (tree-set t 1 (list-ref wide-list-3 j))))
+      (and-with i (list-find-index wide-list-4 (lambda (x) (== x s)))
+        (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-4))
+          (tree-set t 1 (list-ref wide-list-4 j)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wide arrows

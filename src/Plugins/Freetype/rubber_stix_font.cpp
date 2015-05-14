@@ -29,6 +29,11 @@ struct rubber_stix_font_rep: font_rep {
   font size2;
   font size3;
   font size4;
+  font wide1;
+  font wide2;
+  font wide3;
+  font wide4;
+  font wide5;
 
   hashmap<string,int> mapper;
   hashmap<string,string> rewriter;
@@ -73,6 +78,11 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
     size2= unicode_font ("STIXSizeTwoSym-Regular", base->size, dpi);
     size3= unicode_font ("STIXSizeThreeSym-Regular", base->size, dpi);
     size4= unicode_font ("STIXSizeFourSym-Regular", base->size, dpi);
+    wide1= size1;
+    wide2= size2;
+    wide3= size3;
+    wide4= size4;
+    wide5= unicode_font ("STIXSizeFiveSym-Regular", base->size, dpi);
   }
   else {
     intsD= unicode_font ("STIXIntegralsD-Bold", base->size, dpi);
@@ -82,6 +92,11 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
     size2= unicode_font ("STIXSizeTwoSym-Bold", base->size, dpi);
     size3= unicode_font ("STIXSizeThreeSym-Bold", base->size, dpi);
     size4= unicode_font ("STIXSizeFourSym-Bold", base->size, dpi);
+    wide1= unicode_font ("STIXSizeOneSym-Regular", base->size, dpi);
+    wide2= unicode_font ("STIXSizeTwoSym-Regular", base->size, dpi);
+    wide3= unicode_font ("STIXSizeThreeSym-Regular", base->size, dpi);
+    wide4= unicode_font ("STIXSizeFourSym-Regular", base->size, dpi);
+    wide5= unicode_font ("STIXSizeFiveSym-Regular", base->size, dpi);
   }
 }
 
@@ -159,6 +174,40 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
     rew= r;
     return 10;
   }
+  if (starts (s, "<rubber-") && ends (s, ">")) {
+    int pos= search_backwards ("-", N(s), s);
+    if (pos > 8) {
+      string r= s (8, pos);
+      int nr= as_int (s (pos+1, N(s)-1));
+      if (nr < 0) nr= 0;
+      if (nr > 5) nr= 5;
+      if (r == "hat") rew= "<#2C6>";
+      else if (r == "tilde") rew= "<#2DC>";
+      else if (r == "check") rew= "<#2C7>";
+      else if (r == "bar") rew= "<#203E>";
+      else if (r == "vect") rew= "<#20D7>";
+      else if (r == "breve") rew= "<#2D8>";
+      else if (r == "invbreve") rew= "<#311>";
+      else if (r == "punderbrace") rew= "<#23DD>";
+      else if (r == "punderbrace*") rew= "<#23DD>";
+      else if (r == "underbrace") rew= "<#23DF>";
+      else if (r == "underbrace*") rew= "<#23DF>";
+      else if (r == "squnderbrace") rew= "<#23B5>";
+      else if (r == "squnderbrace*") rew= "<#23B5>";
+      else if (r == "poverbrace") rew= "<#23DC>";
+      else if (r == "poverbrace*") rew= "<#23DC>";
+      else if (r == "overbrace") rew= "<#23DE>";
+      else if (r == "overbrace*") rew= "<#23DE>";
+      else if (r == "sqoverbrace") rew= "<#23B4>";
+      else if (r == "sqoverbrace*") rew= "<#23B4>";
+      else {
+        rew= s;
+        return 0;
+      }
+      if (nr == 0) return 0;
+      else return 10 + nr;
+    }
+  }
   rew= s;
   return 0;
 }
@@ -215,6 +264,21 @@ rubber_stix_font_rep::search_font (string& s, SI& dy) {
   case 10:
     dy= 0;
     return size4;
+  case 11:
+    dy= 0;
+    return wide1;
+  case 12:
+    dy= 0;
+    return wide2;
+  case 13:
+    dy= 0;
+    return wide3;
+  case 14:
+    dy= 0;
+    return wide4;
+  case 15:
+    dy= 0;
+    return wide5;
   default:
     dy= 0;
     return base;

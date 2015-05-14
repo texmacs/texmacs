@@ -1060,6 +1060,8 @@
       ---
       ("Overbrace" (make-wide "<wide-overbrace>"))
       ("Underbrace" (make-wide "<wide-underbrace*>"))
+      ("Round overbrace" (make-wide "<wide-poverbrace>"))
+      ("Round underbrace" (make-wide "<wide-punderbrace*>"))
       ("Square overbrace" (make-wide "<wide-sqoverbrace>"))
       ("Square underbrace" (make-wide "<wide-squnderbrace*>"))
       ("Right arrow" (make-wide "<wide-varrightarrow>"))
@@ -1082,6 +1084,8 @@
       ---
       ("Overbrace" (make-wide-under "<wide-overbrace*>"))
       ("Underbrace" (make-wide-under "<wide-underbrace>"))
+      ("Round overbrace" (make-wide-under "<wide-poverbrace*>"))
+      ("Round underbrace" (make-wide-under "<wide-punderbrace>"))
       ("Square overbrace" (make-wide-under "<wide-sqoverbrace*>"))
       ("Square underbrace" (make-wide-under "<wide-squnderbrace>"))
       ("Right arrow" (make-wide-under "<wide-varrightarrow>"))

@@ -87,6 +87,7 @@ box text_box (path ip, int pos, string s, font fn, pencil pen);
 box delimiter_box (path ip, string s, font fn, pencil pen, SI y1, SI y2);
 box big_operator_box (path ip, string s, font fn, pencil pen, int n);
 box wide_box (path ip, string s, font fn, pencil pen, SI width);
+box wide_stix_box (path ip, string s, font fn, pencil pen, SI width);
 box bracket_box (path ip, int br_type, pencil pen, SI y1, SI y2);
 box wide_hat_box (path ip, SI x1, SI x2, pencil pen);
 box wide_tilda_box (path ip, SI x1, SI x2, pencil pen);

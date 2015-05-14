@@ -418,6 +418,22 @@ get_wide (string s, font fn, SI width) {
   }
 }
 
+static string
+get_wide_stix (string s, font fn, SI width) {
+  ASSERT (N(s) >= 2 && s[0] == '<' && s[N(s)-1] == '>',
+	  "invalid rubber character");
+  string radical= s (0, N(s)-1) * "-";
+  metric ex;
+  int n= 0;
+  while (true) {
+    string test= radical * as_string (n) * ">";
+    fn->get_extents (test, ex);
+    if (ex->x2- ex->x1 > width || n >= 6)
+      return radical * as_string (n) * ">";
+    n++;
+  }
+}
+
 /******************************************************************************
 * Exported routines
 ******************************************************************************/
@@ -453,6 +469,15 @@ big_operator_box (path ip, string s, font fn, pencil pen, int n) {
 box
 wide_box (path ip, string s, font fn, pencil pen, SI width) {
   string r= get_wide (s, fn, width);
+  metric ex;
+  fn->get_extents (r, ex);
+  box b= text_box (ip, 0, r, fn, pen);
+  return macro_box (ip, b, fn);
+}
+
+box
+wide_stix_box (path ip, string s, font fn, pencil pen, SI width) {
+  string r= get_wide_stix (s, fn, width);
   metric ex;
   fn->get_extents (r, ex);
   box b= text_box (ip, 0, r, fn, pen);

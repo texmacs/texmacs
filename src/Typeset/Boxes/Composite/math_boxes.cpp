@@ -319,8 +319,33 @@ compute_wide_accent (path ip, box b, string s,
   bool wide= (b->w() >= (fn->wfn)) || request_wide;
   if (ends (s, "dot>") || (s == "<acute>") ||
       (s == "<grave>") || (s == "<abovering>")) wide= false;
+  bool stix= starts (fn->res_name, "stix-");
+  if (wide && stix) {
+    if (s == "^") s= "<hat>";
+    if (s == "~") s= "<tilde>";
+    if (s == "<hat>" || s == "<tilde>" || s == "<check>" ||
+        ends (s, "brace>") || ends (s, "brace*>")) {
+      font wfn= rubber_font (fn);
+      SI width= b->x2- b->x1 - fn->wfn/2;
+      wideb= wide_stix_box (decorate_middle (ip),
+                            "<rubber-" * s (1, N(s)-1) * ">",
+                            wfn, pen, width);
+      if (wideb->w() >= width) {
+        if (b->right_slope () != 0)
+          wideb= shift_box (decorate_middle (ip), wideb,
+                            (SI) (-0.5 * b->right_slope () * fn->yx), 0);
+        sep= above? -fn->yx: fn->sep;
+        if (above) {
+          if (s == "<overbrace>" || s == "<squnderbrace*>") sep= 2 * fn->sep;
+          if (s == "<poverbrace>") sep= 3 * fn->sep;
+        }
+        return wide;
+      }
+    }
+  }
   if (wide) {
     SI w= fn->wline;
+    if (stix) w= (SI) (1.189 * w);
     pencil wpen= pen->set_width (w);
     if ((s == "^") || (s == "<hat>"))
       wideb= wide_hat_box   (decorate_middle (ip), b->x1, b->x2, wpen);
@@ -332,9 +357,9 @@ compute_wide_accent (path ip, box b, string s,
       wideb= wide_vect_box  (decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<check>")
       wideb= wide_check_box (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<breve>")
+    else if (s == "<breve>" || s == "<punderbrace>" || s == "<punderbrace*>")
       wideb= wide_breve_box (decorate_middle (ip), b->x1, b->x2, wpen);
-    else if (s == "<invbreve>")
+    else if (s == "<invbreve>" || s == "<poverbrace>" || s == "<poverbrace*>")
       wideb= wide_invbreve_box(decorate_middle (ip), b->x1, b->x2, wpen);
     else if (s == "<squnderbrace>" || s == "<squnderbrace*>")
       wideb= wide_squbr_box (decorate_middle (ip), b->x1, b->x2, wpen);
@@ -344,12 +369,15 @@ compute_wide_accent (path ip, box b, string s,
                           "<rubber-" * s (1, N(s)-1) * ">",
                           fn, pen, b->x2- b->x1);
     sep= fn->sep;
+    if (stix) sep= (SI) (1.5 * sep);
   }
   else {
     wideb= text_box (decorate_middle (ip), 0, s, fn, pen);
-    if (fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0)
+    if (fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0) {
+      double factor= (stix? 0.2: 0.5);
       wideb= shift_box (decorate_middle (ip), wideb,
-                        (SI) (-0.5 * b->right_slope () * fn->yx), 0);
+                        (SI) (-factor * b->right_slope () * fn->yx), 0);
+    }
     sep= above? -fn->yx: fn->sep;
   }
   return wide;
