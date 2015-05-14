@@ -169,9 +169,18 @@
 ;; primitives or other special constructs. If they are explicitely
 ;; present, they are exported as a regular-sized character.
 
+
 ("<prod>"		"#220F")
 ("<sum>"		"#2211")
 ("<int>"		"#222B")
+("<iint>"		"#222C")
+("<iiint>"		"#222D")
+("<oint>"		"#222E")
+("<oiint>"		"#222F")
+("<oiiint>"		"#2230")
+("<big-box>"  	        "#25FD")
+("<big-square>"         "#25FD")
+("<pluscup>"	        "#2A04")
 ("<big-prod-1>"		"#220F")
 ("<big-amalg-1>"        "#2210")
 ("<big-sum-1>"		"#2211")
@@ -181,6 +190,8 @@
 ("<big-vee-1>"		"#22C1")
 ("<big-cap-1>"		"#22C2")
 ("<big-cup-1>"		"#22C3")
+("<big-box-1>"	        "#25FD")
+("<big-square-1>"       "#25FD")
 ("<big-odot-1>"		"#2A00")
 ("<big-oplus-1>"	"#2A01")
 ("<big-otimes-1>"	"#2A02")

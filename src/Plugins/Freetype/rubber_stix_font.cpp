@@ -117,6 +117,7 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
       rew= s;
       return 0;
     }
+    if (r == "box") s= "<big-square-1>";
     rew= s;
     return 1;
   }
@@ -140,6 +141,7 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
       rew= "<big-" * r * ">";
       return 1;
     }
+    if (r == "box") s= "<big-square-2>";
     rew= s;
     return 2;
   }

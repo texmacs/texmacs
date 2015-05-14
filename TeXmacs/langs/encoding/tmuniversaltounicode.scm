@@ -820,14 +820,14 @@
 
 ;;; Enclosed Alphanumerics			2460--24FF
 
-("<circledS>"		"#24C8")
+("<circledS>"		                "#24C8")
 
 
 ;;; Geometric Shapes				25A0--25FF
 
 ;; Geometric Shapes
-("<blacksquare>"				"#25A0")
-("<Square>"					"#25A1")
+("<blacksquare>"			"#25A0")
+("<Square>"				"#25A1")
 ; white square with rounded corners		"#25A2"
 ; white square containing black small square	"#25A3"
 ; square with horizontal fill			"#25A4"
