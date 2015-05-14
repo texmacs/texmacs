@@ -16,5 +16,7 @@
     "capricornus" "aquarius" "pisces" "cent" "permil" "thorn" "Thorn" "dh"
     "openo" "ataribox" "APLuparrowbox" "APLdownarrowbox" "APLleftarrowbox"
     "APLrightarrowbox"
-124 "brokenvert" "APLinput" "APLbox" "APLcomment"
 50  "square"
+114 "wasy-int-1" "wasy-iint-1" "wasy-iiint-1" "wasy-oint-1" "wasy-oiint-1"
+    "wasy-int-2" "wasy-iint-2" "wasy-iiint-2" "wasy-oint-2" "wasy-oiint-2"
+124 "brokenvert" "APLinput" "APLbox" "APLcomment"

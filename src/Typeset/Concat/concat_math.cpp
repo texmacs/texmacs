@@ -96,8 +96,11 @@ concater_rep::typeset_bigop (tree t, path ip) {
     get_big_flags (l, int_flag, it_flag, lim_flag);
     if (lim_flag) with_limits (LIMITS_DISPLAY);
     if (flag) {
-      if (int_flag && stix) print (env->display_style? (spc / 2): (spc / 4));
-      else if (it_flag) print (env->display_style? 0: (spc / 4));
+      if (int_flag) {
+        if (stix) print (env->display_style? (spc / 2): (spc / 4));
+        else if (it_flag) print (env->display_style? 0: (spc / 4));
+        else print (spc / 4);
+      }
       else print (env->display_style? spc: (spc / 2));
     }
     // temporarary: use parameters from operator-big class in std-math.syx

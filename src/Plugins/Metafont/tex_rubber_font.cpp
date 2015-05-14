@@ -272,18 +272,18 @@ tex_rubber_font_rep::magnify (double zoom) {
 
 double
 tex_rubber_font_rep::get_left_slope (string s) {
-  if ((N(s)>=5) && (s(0,5)=="<big-") && (get_right_correction(s)!=0)) {
+  if (N(s) >= 5 && s(0,5) == "<big-") {
     if (N(s) >= 7 && s(5,7) == "up") return 0.125;
-    else return 0.25;
+    else if (get_right_correction (s) != 0) return 0.25;
   }
   return slope;
 }
 
 double
 tex_rubber_font_rep::get_right_slope (string s) {
-  if ((N(s)>=5) && (s(0,5)=="<big-") && (get_right_correction(s)!=0)) {
+  if (N(s) >= 5 && s(0,5) == "<big-") {
     if (N(s) >= 7 && s(5,7) == "up") return 0.125;
-    else return 0.25;
+    else if (get_right_correction (s) != 0) return 0.25;
   }
   return slope;
 }
@@ -297,6 +297,8 @@ tex_rubber_font_rep::get_right_correction (string s) {
     QN  pre_c= ext->dict[r];
     int n    = as_int (s (i+1, N(s)-1));
     QN  c    = tfm->nth_in_list (pre_c, n);
+    if (N(s) >= 7 && s(5,7) == "up" && s(N(s)-3,N(s)) == "-1>")
+      return conv (tfm->i (c)) / 4;
     return conv (tfm->i (c));
   }
   return 0;
