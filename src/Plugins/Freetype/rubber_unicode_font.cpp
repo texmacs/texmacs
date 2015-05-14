@@ -1,8 +1,8 @@
 
 /******************************************************************************
 * MODULE     : rubber_unicode_font.cpp
-* DESCRIPTION: True Type math fonts (using FreeType II)
-* COPYRIGHT  : (C) 2010  Joris van der Hoeven
+* DESCRIPTION: Rubber unicode fonts
+* COPYRIGHT  : (C) 2015  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

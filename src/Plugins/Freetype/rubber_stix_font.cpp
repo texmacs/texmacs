@@ -1,8 +1,8 @@
 
 /******************************************************************************
 * MODULE     : rubber_stix_font.cpp
-* DESCRIPTION: True Type math fonts (using FreeType II)
-* COPYRIGHT  : (C) 2010  Joris van der Hoeven
+* DESCRIPTION: Rubber Stix fonts
+* COPYRIGHT  : (C) 2015  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -34,6 +34,7 @@ struct rubber_stix_font_rep: font_rep {
   font wide3;
   font wide4;
   font wide5;
+  font assemble;
 
   hashmap<string,int> mapper;
   hashmap<string,string> rewriter;
@@ -83,6 +84,7 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
     wide3= size3;
     wide4= size4;
     wide5= unicode_font ("STIXSizeFiveSym-Regular", base->size, dpi);
+    assemble= rubber_assemble_font (size1);
   }
   else {
     intsD= unicode_font ("STIXIntegralsD-Bold", base->size, dpi);
@@ -97,6 +99,7 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
     wide3= unicode_font ("STIXSizeThreeSym-Regular", base->size, dpi);
     wide4= unicode_font ("STIXSizeFourSym-Regular", base->size, dpi);
     wide5= unicode_font ("STIXSizeFiveSym-Regular", base->size, dpi);
+    assemble= rubber_assemble_font (wide1);
   }
 }
 
@@ -153,6 +156,10 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
     rew= s;
     return 0;
   }
+  if (starts (s, "<left-") && ends (s, "-0>")) {
+    rew= s;
+    return 0;
+  }
   if (starts (s, "<left-") && ends (s, "-1>")) {
     string r= s (6, N(s) - 3);
     if (N(r) > 1) r= "<" * r * ">";
@@ -176,6 +183,18 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
     if (N(r) > 1) r= "<" * r * ">";
     rew= r;
     return 10;
+  }
+  if (starts (s, "<left-")) {
+    int pos= search_backwards ("-", N(s), s);
+    if (pos > 6) {
+      string r= s (6, pos);
+      if (r == "(" || r == ")" ||
+          r == "[" || r == "]" ||
+          r == "{" || r == "}") {
+        rew= s;
+        return 16;
+      }
+    }
   }
   if (starts (s, "<rubber-") && ends (s, ">")) {
     int pos= search_backwards ("-", N(s), s);
@@ -282,6 +301,9 @@ rubber_stix_font_rep::search_font (string& s, SI& dy) {
   case 15:
     dy= 0;
     return wide5;
+  case 16:
+    dy= 0;
+    return assemble;
   default:
     dy= 0;
     return base;

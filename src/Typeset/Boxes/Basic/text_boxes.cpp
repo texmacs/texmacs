@@ -378,8 +378,16 @@ get_delimiter (string s, font fn, SI height) {
   fn->get_extents (third, ey);
   SI h2= ey->y2- ey->y1;
   if (h2 <= h1) return second;
+  if (h2 >= height) return third;
   SI  d= h2- h1;
   int n= (height + (d-1) - h1) / d;
+
+  while (n > 2) {
+    string test= radical * as_string (n+1) * ">";
+    fn->get_extents (test, ey);
+    if (ey->y2- ey->y1 >= height) n= (7*n)/8;
+    else break;
+  }
 
   while (true) {
     string test= radical * as_string (n+1) * ">";
