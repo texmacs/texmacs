@@ -135,7 +135,7 @@ rubber_assemble_font_rep::get_extents (string s, metric& ex) {
   int num;
   array<string> pieces= get_pieces (s, num);
   if (num <= 4)
-    larger[num]->get_extents (s, ex);
+    larger[num]->get_extents (pieces[0], ex);
   else {
     ex->x1= ex->x3= ex->y3= PLUS_INFINITY;
     ex->x2= ex->x4= ex->y4= MINUS_INFINITY;
@@ -162,7 +162,7 @@ rubber_assemble_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   int num;
   array<string> pieces= get_pieces (s, num);
   if (num <= 4)
-    larger[num]->draw_fixed (ren, s, x, y);
+    larger[num]->draw_fixed (ren, pieces[0], x, y);
   else {
     SI dy=0;
     for (int i=0; i<N(pieces); i++) {
@@ -179,7 +179,7 @@ rubber_assemble_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk)
   int num;
   array<string> pieces= get_pieces (s, num);
   if (num <= 4)
-    larger[num]->draw_fixed (ren, s, x, y, xk);
+    larger[num]->draw_fixed (ren, pieces[0], x, y, xk);
   else {
     SI dy=0;
     for (int i=0; i<N(pieces); i++) {

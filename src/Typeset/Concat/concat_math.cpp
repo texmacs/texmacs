@@ -79,12 +79,7 @@ concater_rep::typeset_bigop (tree t, path ip) {
     bool flag= (!env->math_condensed) && (l != ".");
     bool stix= starts (env->fn->res_name, "stix-");
     box b;
-    if (stix) {
-      font mfn= rubber_font (env->fn);
-      b= big_operator_box (ip, s, mfn, env->pen,
-                           env->display_style? 2: 1);
-    }
-    else if (env->fn->type == FONT_TYPE_UNICODE) {
+    if (env->fn->type == FONT_TYPE_UNICODE) {
       font mfn= rubber_font (env->fn);
       b= big_operator_box (ip, s, mfn, env->pen,
                            env->display_style? 2: 1);
@@ -394,6 +389,7 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
         font old_fn= env->fn;
         font new_fn= env->fn;
         if (starts (new_fn->res_name, "stix-"))
+          //if (env->fn->type == FONT_TYPE_UNICODE)
           new_fn= rubber_font (new_fn);
         env->fn= new_fn;
         typeset (make_large (LEFT, t[0]),

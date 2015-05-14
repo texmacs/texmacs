@@ -23,6 +23,7 @@ struct rubber_unicode_font_rep: font_rep {
   font baseS;
   font baseL;
   font baseD;
+  font assemble;
   bool big_sums;
 
   hashmap<string,int> mapper;
@@ -68,6 +69,7 @@ rubber_unicode_font_rep::rubber_unicode_font_rep (string name, font base2):
   baseS= base->magnify (sqrt (0.5));
   baseL= base->magnify (sqrt (2.0));
   baseD= base->magnify (2.0);
+  assemble= rubber_assemble_font (base);
 }
 
 /******************************************************************************
@@ -98,6 +100,23 @@ rubber_unicode_font_rep::search_font_sub (string s, string& rew) {
       if (r == "<sum>" || r == "<prod>" || ends (r, "int>"))
         if (big_sums) return 2;
       return 3;
+    }
+  }
+  if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
+  if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
+  if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
+  if (starts (s, "<left-")) {
+    int pos= search_backwards ("-", N(s), s);
+    if (pos > 6) {
+      string r= s (6, pos);
+      if ((r == "(" && base->supports ("<#239C>")) ||
+          (r == ")" && base->supports ("<#239F>")) ||
+          (r == "[" && base->supports ("<#23A2>")) ||
+          (r == "]" && base->supports ("<#23A5>")) ||
+          ((r == "{" || r == "}") && base->supports ("<#23AA>"))) {
+        rew= s;
+        return 4;
+      }
     }
   }
   rew= s;
@@ -135,6 +154,9 @@ rubber_unicode_font_rep::search_font (string& s, SI& dy) {
   case 3:
     dy= 0;
     return baseD;
+  case 4:
+    dy= 0;
+    return assemble;
   default:
     dy= 0;
     return base;
