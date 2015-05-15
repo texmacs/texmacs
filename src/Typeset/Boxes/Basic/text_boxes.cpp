@@ -377,7 +377,7 @@ get_delimiter (string s, font fn, SI height) {
     int d= h - last;
     if (last > 0 && d > 0) {
       int plus= (height - h - 1) / d;
-      if (plus <= 1) {
+      if (plus <= 1 || n <= 4) {
 	n++;
 	last= h;
       }

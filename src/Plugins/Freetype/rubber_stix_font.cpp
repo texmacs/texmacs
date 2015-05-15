@@ -39,11 +39,12 @@ struct rubber_stix_font_rep: font_rep {
 
   hashmap<string,int> mapper;
   hashmap<string,string> rewriter;
+  hashmap<string,string> delimiter;
 
   rubber_stix_font_rep (string name, font base);
-  int search_font_sub (string s, string& rew);
-  int search_font_cached (string s, string& rew);
-  font search_font (string& s, SI& dy);
+  int search_font_sub (string s, string& rew, string& ltype);
+  int search_font_cached (string s, string& rew, string& ltype);
+  font search_font (string& s, SI& dy, string& ltype);
   font search_font (string& s);
 
   bool supports (string c);
@@ -129,7 +130,8 @@ large_size (string s) {
 }
 
 int
-rubber_stix_font_rep::search_font_sub (string s, string& rew) {
+rubber_stix_font_rep::search_font_sub (string s, string& rew, string& ltype) {
+  ltype= "";
   if (starts (s, "<big-") && ends (s, "-1>")) {
     string r= s (5, N(s) - 3);
     if (ends (r, "lim")) r= r (0, N(r) - 3);
@@ -172,6 +174,10 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
+  if (starts (s, "<left-")) {
+    int pos= search_backwards ("-", N(s), s);
+    if (pos > 6) ltype= s (6, pos);
+  }
   if (starts (s, "<left-|") || starts (s, "<left-interleave-")) {
     int nr= large_size (s);
     if (nr == 0) rew= s;
@@ -218,6 +224,12 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
         rew= s;
         return 17;
       }
+      if (r == "/" || r == "\\" ||
+          r == "langle" || r == "rangle") {
+        if (N(r) == 1) rew= r;
+        else rew= "<" * r * ">";
+        return 10;
+      }
     }
   }
   if (starts (s, "<rubber-") && ends (s, ">")) {
@@ -259,22 +271,24 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
 }
 
 int
-rubber_stix_font_rep::search_font_cached (string s, string& rew) {
+rubber_stix_font_rep::search_font_cached (string s, string& rew, string& ltype) {
   if (mapper->contains (s)) {
     rew= rewriter[s];
+    ltype= delimiter[s];
     return mapper[s];
   }
-  int nr= search_font_sub (s, rew);
+  int nr= search_font_sub (s, rew, ltype);
   mapper(s)= nr;
   rewriter(s)= rew;
+  delimiter(s)= ltype;
   //cout << s << " -> " << nr << ", " << rew << LF;
   return nr;
 }
 
 font
-rubber_stix_font_rep::search_font (string& s, SI& dy) {
+rubber_stix_font_rep::search_font (string& s, SI& dy, string& ltype) {
   string rew;
-  int nr= search_font_cached (s, rew);
+  int nr= search_font_cached (s, rew, ltype);
   s= rew;
   switch (nr) {
   case 0:
@@ -340,7 +354,8 @@ rubber_stix_font_rep::search_font (string& s, SI& dy) {
 font
 rubber_stix_font_rep::search_font (string& s) {
   SI dy;
-  return search_font (s, dy);
+  string ltype;
+  return search_font (s, dy, ltype);
 }
 
 /******************************************************************************
@@ -353,13 +368,110 @@ rubber_stix_font_rep::supports (string c) {
   return fn->supports (c);
 }
 
+inline void
+adjust_hspace (metric& ex, SI plus) {
+  ex->x1 -= plus;
+  ex->x2 += plus;
+}
+
 void
 rubber_stix_font_rep::get_extents (string s, metric& ex) {
   SI dy;
-  font fn= search_font (s, dy);
+  string ltype;
+  string orig= s;
+  font fn= search_font (s, dy, ltype);
   fn->get_extents (s, ex);
   ex->y1 += dy; ex->y2 += dy;
   ex->y3 += dy; ex->y4 += dy;
+  if (ltype != "") {
+    int nr= large_size (orig);
+    if (ltype[0] == '|' || ltype == "interleave") {
+      if (ex->y2 - ex->y1 >= 9 * base->yx)
+        adjust_hspace (ex, base->wfn / 10);
+      else if (ex->y2 - ex->y1 >= 6 * base->yx)
+        adjust_hspace (ex, base->wfn / 15);
+      else if (ex->y2 - ex->y1 >= 3 * base->yx)
+        adjust_hspace (ex, base->wfn / 20);
+    }
+    else if (ltype[0] == '(') {
+      if (nr == 2)
+        ex->x1 += base->wfn / 24;
+      else if (nr == 3)
+        ex->x1 += base->wfn / 10;
+      else if (nr == 4)
+        ex->x1 += base->wfn / 18;
+      else if (nr > 4) {
+        ex->x1 -= base->wfn / 8;
+        ex->x2 += base->wfn / 16;
+      }
+    }
+    else if (ltype[0] == ')') {
+      if (nr == 2)
+        ex->x2 -= base->wfn / 24;
+      else if (nr == 3)
+        ex->x2 -= base->wfn / 10;
+      else if (nr == 4)
+        ex->x2 -= base->wfn / 18;
+      else if (nr > 4) {
+        ex->x2 += base->wfn / 8;
+        ex->x1 -= base->wfn / 16;
+      }
+    }
+    else if (ltype[0] == '{') {
+      if (nr == 2)
+        adjust_hspace (ex, -base->wfn / 15);
+      else if (nr == 3)
+        adjust_hspace (ex, -base->wfn / 10);
+      else if (nr == 4) {
+        ex->x2 -= base->wfn / 5;
+        ex->x1 += base->wfn / 10;
+      }
+    }
+    else if (ltype[0] == '}') {
+      if (nr == 2)
+        adjust_hspace (ex, -base->wfn / 15);
+      else if (nr == 3)
+        adjust_hspace (ex, -base->wfn / 10);
+      else if (nr == 4) {
+        ex->x1 += base->wfn / 5;
+        ex->x2 -= base->wfn / 10;
+      }
+    }
+    else if (ltype[0] == '[' || ltype == "llbracket" ||
+             ltype == "lfloor" || ltype == "lceil") {
+      if (nr == 2)
+        ex->x1 += base->wfn / 30;
+      else if (nr == 3)
+        ex->x1 += base->wfn / 20;
+      else if (nr == 4)
+        ex->x1 += base->wfn / 10;
+      else if (nr > 4 && ltype != "llbracket") {
+        ex->x1 -= base->wfn / 8;
+        ex->x2 += base->wfn / 32;
+      }
+    }
+    else if (ltype[0] == ']' || ltype == "rrbracket" ||
+             ltype == "rfloor" || ltype == "rceil") {
+      if (nr == 2)
+        ex->x2 -= base->wfn / 30;
+      else if (nr == 3)
+        ex->x2 -= base->wfn / 20;
+      else if (nr == 4)
+        ex->x2 -= base->wfn / 10;
+      else if (nr > 4 && ltype != "rrbracket") {
+        ex->x2 += base->wfn / 8;
+        ex->x1 -= base->wfn / 32;
+      }
+    }
+    else if (ltype == "langle" || ltype == "rangle") {
+      if (nr == 2)
+        adjust_hspace (ex, -base->wfn / 36);
+      else if (nr == 3)
+        adjust_hspace (ex, -base->wfn / 24);
+      else if (nr >= 4)
+        adjust_hspace (ex, -base->wfn / 12);
+    }
+  }
 }
 
 void
@@ -393,14 +505,17 @@ rubber_stix_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
 void
 rubber_stix_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   SI dy;
-  font fn= search_font (s, dy);
+  string ltype;
+  string orig= s;
+  font fn= search_font (s, dy, ltype);
   fn->draw_fixed (ren, s, x, y + dy);
 }
 
 void
 rubber_stix_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
   SI dy;
-  font fn= search_font (s, dy);
+  string ltype;
+  font fn= search_font (s, dy, ltype);
   fn->draw_fixed (ren, s, x, y + dy, xk);
 }
 
@@ -412,7 +527,8 @@ rubber_stix_font_rep::magnify (double zoom) {
 glyph
 rubber_stix_font_rep::get_glyph (string s) {
   SI dy;
-  font fn= search_font (s, dy);
+  string ltype;
+  font fn= search_font (s, dy, ltype);
   return move (fn->get_glyph (s), 0, dy);
 }
 
