@@ -18,6 +18,11 @@
 
 void
 concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
+  font old_fn= env->fn;
+  if (starts (old_fn->res_name, "stix-"))
+    //if (old_fn->type == FONT_TYPE_UNICODE)
+    env->fn= rubber_font (old_fn);
+
   if ((N(t) == 1) && is_atomic (t[0])) {
     string s= prefix * t[0]->label * ">";
     box b= text_box (ip, 0, s, env->fn, env->pen);
@@ -48,6 +53,8 @@ concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
     print (STD_ITEM, otp, b);
   }
   else typeset_error (t, ip);
+
+  env->fn= old_fn;
 }
 
 static void
