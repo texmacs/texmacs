@@ -61,7 +61,7 @@ clip (glyph gl, SI x1, SI y1, SI x2, SI y2) {
   glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++) {
-      bool x_ok= (i+gl->xoff >= x1) && (i+gl->xoff < x2);
+      bool x_ok= (i-gl->xoff >= x1) && (i-gl->xoff < x2);
       bool y_ok= (gl->yoff-j >= y1) && (gl->yoff-j < y2);
       bmr->set_x (i, j, x_ok && y_ok? gl->get_x (i, j): 0);
     }
