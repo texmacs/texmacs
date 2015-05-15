@@ -138,6 +138,15 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return join (gl1, move (gl2, dx, 0));
   }
 
+  if (is_tuple (t, "vglue", 2)) {
+    metric ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    SI dy= ex->y2 - ey->y1;
+    outer_fit (ex, ey, 0, dy);
+    return join (gl1, move (gl2, 0, dy));
+  }
+
   if (is_tuple (t, "add", 2)) {
     metric ey;
     glyph gl1= compile (t[1], ex);
@@ -295,6 +304,16 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "vglue", 2)) {
+    metric ex, ey;
+    get_metric (t[1], ex);
+    get_metric (t[2], ey);
+    SI dy= ex->y2 - ey->y1;
+    draw (ren, t[1], x, y);
+    draw (ren, t[2], x, y + dy);
+    return;
+  }
+
   if (is_tuple (t, "add", 2)) {
     metric ex, ey;
     get_metric (t[1], ex);
@@ -433,6 +452,8 @@ virtual_font_rep::draw_transformed (renderer ren, scheme_tree t, SI x, SI y,
 * Getting extents and drawing strings
 ******************************************************************************/
 
+bool is_hex_digit (char c);
+
 static tree
 subst_sharp (tree t, string by) {
   if (is_atomic (t)) {
@@ -440,6 +461,7 @@ subst_sharp (tree t, string by) {
     string s= t->label;
     i= search_forwards ("#", s);
     if (i == -1) return s;
+    else if (i == 0 && N(s) >= 2 && is_hex_digit (s[1])) return s;
     else return s(0,i) * by * s(i+1,N(s));
   }
   else {

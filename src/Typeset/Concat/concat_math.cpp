@@ -389,7 +389,7 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
         font old_fn= env->fn;
         font new_fn= env->fn;
         if (starts (new_fn->res_name, "stix-"))
-          //if (env->fn->type == FONT_TYPE_UNICODE)
+          //if (new_fn->type == FONT_TYPE_UNICODE)
           new_fn= rubber_font (new_fn);
         env->fn= new_fn;
         typeset (make_large (LEFT, t[0]),
