@@ -8,6 +8,21 @@
   <section|Changes from version 1.99.1 to 1.99.3>
 
   <\itemize>
+    <item>High quality support of STIX fonts (1.99.3).
+
+    <item>Various improvements concerning mathematical typesetting (1.99.3).
+
+    <item>Improved punctuation, including support for French punctuation
+    rules (1.99.3).
+
+    <item>Improved experimental client-server support (1.99.3).
+
+    <item>Encrypting/decrypting pieces of documents (1.99.3).
+
+    <item>New experimental bibliographic database management (1.99.3).
+
+    <item>New experimental database facilities (1.99.3).
+
     <item>Added style package for literate programming (1.99.3).
 
     <item>Consistent support for multiple bibliographies, indexes,
@@ -21,7 +36,7 @@
 
     <item>Added support for the Croatian language (1.99.2).
 
-    <item>Added experimental ``conservative'' converters for <LaTeX>
+    <item>Added experimental \Pconservative\Q converters for <LaTeX>
     (1.99.2).
 
     <item>Various improvements for <LaTeX> converters (1.99.2).
@@ -85,8 +100,8 @@
 
     <item>Improved portability of plug-in detection (1.0.7.19).
 
-    <item>Implementation of arbitrary zoom factors and ``fit to paragraph
-    width'' (1.0.7.18).
+    <item>Implementation of arbitrary zoom factors and \Pfit to paragraph
+    width\Q (1.0.7.18).
 
     <item>New widget for user preferences (1.0.7.18).
 
@@ -650,7 +665,7 @@
 
     <item>Better handling of parameters for page size and margins (1.0.3.8).
 
-    <item>Implementation of ``mutators'', tags which may modify themselves
+    <item>Implementation of \Pmutators\Q, tags which may modify themselves
     (1.0.3.8).
 
     <item>Let computer algebra sessions make use of mutators (1.0.3.8).
@@ -1092,7 +1107,7 @@
 
     <item>Visual environment information when editing (1.0.0.5).
 
-    <item>Letter and exam styles; old letter becomes ``generic'' (1.0.0.5).
+    <item>Letter and exam styles; old letter becomes \Pgeneric\Q (1.0.0.5).
 
     <item>Implementation of overline and underline macros (1.0.0.5).
 
@@ -1348,7 +1363,7 @@
 
     <item>Some minor bug corrections (0.3.4.10).
 
-    <item>Started ``lazyfication'' of typesetter (0.3.4.10).
+    <item>Started \Plazyfication\Q of typesetter (0.3.4.10).
 
     <item>Short documentation on tables (0.3.4.9).
 
@@ -1684,7 +1699,7 @@
 
     <item>Implementation of a file chooser (0.2.5-8).
 
-    <item>Menus have been made ``sticky'' (0.2.5-8).
+    <item>Menus have been made \Psticky\Q (0.2.5-8).
 
     <item>Corrected bugs in the russian language support (0.2.5-7).
 
@@ -1754,7 +1769,7 @@
     <item>Automatic generation of bibliographies using <verbatim|bibtex>
     (0.2.4c).
 
-    <item>Auto save recovery and ``no changes need to be saved'' (0.2.4b).
+    <item>Auto save recovery and \Pno changes need to be saved\Q (0.2.4b).
 
     <item>Nicer recursive dynamic commands (0.2.4b).
 
@@ -1839,3 +1854,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
