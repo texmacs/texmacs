@@ -3866,6 +3866,10 @@ is_std_textual_env (string s) {
       << "corollary" << "proof" << "axiom" << "definition"
       << "notation" << "conjecture" << "remark" << "note"
       << "example" << "exercise" << "warning" << "convention"
+      << "theorem*" << "proposition*" << "lemma*"
+      << "corollary*" << "proof*" << "axiom*" << "definition*"
+      << "notation*" << "conjecture*" << "remark*" << "note*"
+      << "example*" << "exercise*" << "warning*" << "convention*"
       << "acknowledgments" << "quote" << "quotation" << "verse"
       << "indent" << "compact" << "jump-in"
       << "algorithm" << "body" << "render-code"
@@ -3886,7 +3890,8 @@ is_std_textual_env (string s) {
       << "french" << "german" << "hungarian" << "italian" << "japanese"
       << "korean" << "polish" << "portuguese" << "romanian" << "russian"
       << "slovene" << "spanish" << "swedish" << "taiwanese" << "ukrainian"
-      << "switch" << "screens" << "tiny-switch" << "shown" << "hidden"
+      << "switch" << "screens" << "tiny-switch"
+      << "shown" << "hidden" << "shown*" << "hidden*"
       << "unroll" << "unroll-compressed" << "unroll-phantoms" << "unroll-greyed"
       << "folded" << "unfolded";
     for (int i=0; i<N(a); i++) std_textual_envs->insert (a[i]);
