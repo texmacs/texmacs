@@ -89,6 +89,12 @@ rubber_assemble_font_rep::search_font (string s, string& r) {
         code= virt->dict ["<rubber-lceil-#>"];
       else if (r == "rceil")
         code= virt->dict ["<rubber-rceil-#>"];
+      else if (r == "|")
+        code= virt->dict ["<rubber-bar-#>"];
+      else if (r == "||")
+        code= virt->dict ["<rubber-parallel-#>"];
+      else if (r == "interleave")
+        code= virt->dict ["<rubber-interleave-#>"];
       else
         code= virt->dict ["<rubber-lparenthesis-#>"];
       r= string ((char) code) * as_string (nr) * ">";
@@ -117,7 +123,9 @@ rubber_assemble_font_rep::supports (string s) {
 	r == "[" || r == "]" ||
 	r == "{" || r == "}" ||
 	r == "lfloor" || r == "rfloor" ||
-	r == "lceil" || r == "rceil";
+	r == "lceil" || r == "rceil" ||
+	r == "|" || r == "||" ||
+	r == "interleave";
     }
   }
   return false;

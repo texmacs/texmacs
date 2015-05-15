@@ -34,7 +34,8 @@ struct rubber_stix_font_rep: font_rep {
   font wide3;
   font wide4;
   font wide5;
-  font assemble;
+  font assemble1;
+  font assemble2;
 
   hashmap<string,int> mapper;
   hashmap<string,string> rewriter;
@@ -84,7 +85,8 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
     wide3= size3;
     wide4= size4;
     wide5= unicode_font ("STIXSizeFiveSym-Regular", base->size, dpi);
-    assemble= rubber_assemble_font (size1);
+    assemble1= rubber_assemble_font (base);
+    assemble2= rubber_assemble_font (size1);
   }
   else {
     intsD= unicode_font ("STIXIntegralsD-Bold", base->size, dpi);
@@ -99,13 +101,32 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
     wide3= unicode_font ("STIXSizeThreeSym-Regular", base->size, dpi);
     wide4= unicode_font ("STIXSizeFourSym-Regular", base->size, dpi);
     wide5= unicode_font ("STIXSizeFiveSym-Regular", base->size, dpi);
-    assemble= rubber_assemble_font (wide1);
+    assemble1= rubber_assemble_font (base);
+    assemble2= rubber_assemble_font (wide1);
   }
 }
 
 /******************************************************************************
 * Find the font
 ******************************************************************************/
+
+static string
+large_type (string s) {
+  int pos= search_backwards ("-", N(s), s);
+  if (pos > 6) return s (1, pos);
+  else if (!starts (s, "<") || !ends (s, ">")) return s;
+  else return s (1, N(s) - 1);
+}
+
+static int
+large_size (string s) {
+  int pos= search_backwards ("-", N(s), s);
+  if (pos > 6) {
+    string r= s (pos + 1, N(s) - 1);
+    return as_int (r);
+  }
+  return 0;
+}
 
 int
 rubber_stix_font_rep::search_font_sub (string s, string& rew) {
@@ -151,10 +172,11 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
-  if (starts (s, "<left-|")) {
-    // TODO: how to do this in a better way?
-    rew= s;
-    return 0;
+  if (starts (s, "<left-|") || starts (s, "<left-interleave-")) {
+    int nr= large_size (s);
+    if (nr == 0) rew= s;
+    else rew= "<" * large_type (s) * "-" * as_string (nr + 4) * ">";
+    return 16;
   }
   if (starts (s, "<left-") && ends (s, "-0>")) {
     rew= s;
@@ -194,7 +216,7 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
           r == "lfloor" || r == "rfloor" ||
           r == "lceil" || r == "rceil") {
         rew= s;
-        return 16;
+        return 17;
       }
     }
   }
@@ -305,7 +327,10 @@ rubber_stix_font_rep::search_font (string& s, SI& dy) {
     return wide5;
   case 16:
     dy= 0;
-    return assemble;
+    return assemble1;
+  case 17:
+    dy= 0;
+    return assemble2;
   default:
     dy= 0;
     return base;

@@ -40,5 +40,9 @@
   (rubber-rceil-#
     (vglue (ver-take #23A5 0.5 # 0.25)
       #23A4))
-  (rubber-vbar-#
-    (ver-take #23A2 0.5 # 0.25)))
+  (rubber-bar-#
+    (ver-take | 0.5 # 0.25))
+  (rubber-parallel-#
+    (ver-take || 0.5 # 0.25))
+  (rubber-interleave-#
+    (ver-take interleave 0.5 # 0.25)))
