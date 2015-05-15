@@ -363,40 +363,47 @@ get_delimiter (string s, font fn, SI height) {
 	  "invalid rubber character");
   height -= PIXEL;
   string radical= s (0, N(s)-1) * "-";
-  string first  = radical * "0>";
-  metric ex;
-  fn->get_extents (first, ex);
-  if ((ex->y2- ex->y1) >= height) return first;
-
-  string second  = radical * "1>";
-  fn->get_extents (second, ex);
-  SI h1= ex->y2- ex->y1;
-  if (h1 >= (height-PIXEL)) return second;
-
-  string third = radical * "2>";
-  metric ey;
-  fn->get_extents (third, ey);
-  SI h2= ey->y2- ey->y1;
-  if (h2 <= h1) return second;
-  if (h2 >= height) return third;
-  SI  d= h2- h1;
-  int n= (height + (d-1) - h1) / d;
-
-  while (n > 2) {
-    string test= radical * as_string (n+1) * ">";
-    fn->get_extents (test, ey);
-    if (ey->y2- ey->y1 >= height) n= (7*n)/8;
-    else break;
-  }
-
+  string best= radical * "0>";
+  SI best_h= 0;
+  int n= 0;
+  SI last= 0;
   while (true) {
-    string test= radical * as_string (n+1) * ">";
-    fn->get_extents (test, ey);
-    if (ey->y2- ey->y1 >= height) return test;
-    if ((ey->y2- ey->y1 <= h2) && (n>1)) return radical * as_string (n) * ">";
-    h2= ey->y2- ey->y1;
-    n++;
+    metric ex;
+    string test= radical * as_string (n) * ">";
+    fn->get_extents (test, ex);
+    SI h= ex->y2 - ex->y1;
+    if (h >= (height - (n==1? PIXEL: 0))) return test;
+    if (h > best_h) { best_h= h; best= test; }
+    int d= h - last;
+    if (last > 0 && d > 0) {
+      int plus= (height - h - 1) / d;
+      if (plus <= 1) {
+	n++;
+	last= h;
+      }
+      else {
+	int n2= n + plus;
+	metric ex2;
+	string test2= radical * as_string (n2) * ">";
+	fn->get_extents (test2, ex2);
+	SI h2= ex2->y2 - ex2->y1;
+	if (h2 >= height || h2 < h) {
+	  n++;
+	  last= h;
+	}
+	else {
+	  n= n2;
+	  last= 0;
+	}
+      }
+    }
+    else if (last <= 0 || n < 10) {
+      n++;
+      last= h;
+    }
+    else return best;
   }
+  return s;
 }
 
 static string
