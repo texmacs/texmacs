@@ -215,7 +215,7 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "ver-extend", 3) || is_tuple (t, "ver-extend", 4)) {
     glyph gl= compile (t[1], ex);
-    int pos= (int) (as_double (t[2]) * gl->height);
+    int pos= (int) ((1.0 - as_double (t[2])) * gl->height);
     SI  add= (SI)  (as_double (t[3]) * unit);
     if (is_tuple (t, "ver-extend", 4))
       add= (SI)  (as_double (t[3]) * as_double (t[4]) * unit);
@@ -389,7 +389,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_tuple (t, "ver-extend", 3) || is_tuple (t, "ver-extend", 4)) {
     metric ex;
     get_metric (t[1], ex);
-    SI pos= (SI) (as_double (t[2]) * (ex->y2 - ex->y1));
+    SI pos= (SI) ((1.0 - as_double (t[2])) * (ex->y2 - ex->y1));
     SI add= (SI) (as_double (t[3]) * unit);
     if (is_tuple (t, "ver-extend", 4))
       add= (SI) (as_double (t[3]) * as_double (t[4]) * unit);
