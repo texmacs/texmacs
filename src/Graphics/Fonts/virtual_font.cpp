@@ -236,6 +236,22 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return ver_extend (gl, pos, by);
   }
 
+  if (is_tuple (t, "ver-take", 3) || is_tuple (t, "ver-take", 4)) {
+    glyph gl= compile (t[1], ex);
+    int pos= (int) ((1.0 - as_double (t[2])) * gl->height);
+    SI  add= (SI)  (as_double (t[3]) * (ex->y2 - ex->y1));
+    if (is_tuple (t, "ver-take", 4))
+      add= (SI) (as_double (t[3]) * as_double (t[4]) * (ex->y2 - ex->y1));
+    int nr = add / PIXEL;
+    if (pos < 0) pos= 0;
+    if (pos >= gl->height) pos= gl->height-1;
+    ex->y1= -add;
+    ex->y2= 0;
+    ex->y3= -nr * PIXEL;
+    ex->y4= 0;
+    return ver_take (gl, pos, nr);
+  }
+
   if (is_tuple (t, "italic", 3))
     return compile (t[1], ex);
 
@@ -423,6 +439,25 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     }
     draw_clipped (ren, t[1], x, y - add, ex->x3, ex->y3, ex->x4, ex->y3 + pos);
     draw_clipped (ren, t[1], x, y, ex->x3, ex->y3 + pos, ex->x4, ex->y4);
+    return;
+  }
+
+  if (is_tuple (t, "ver-take", 3) || is_tuple (t, "ver-take", 4)) {
+    metric ex;
+    get_metric (t[1], ex);
+    SI pos= (SI) ((1.0 - as_double (t[2])) * (ex->y2 - ex->y1));
+    SI add= (SI) (as_double (t[3]) * (ex->y2 - ex->y1));
+    if (is_tuple (t, "ver-take", 4))
+      add= (SI) (as_double (t[3]) * as_double (t[4]) * (ex->y2 - ex->y1));
+    if (add > 0 && ex->y2 > ex->y1) {
+      SI  h = ex->y2 - ex->y1;
+      int n = (int) ((20 * add + h - 1) / h);
+      SI  dy= (add + n - 1) / n;
+      SI  hy= (add + 2*n - 1) / (2*n);
+      for (int i=0; i<n; i++)
+        draw_clipped (ren, t[1], x, y + i*dy - add - (ex->y3 + pos),
+                      ex->x3, ex->y3 + pos - hy, ex->x4, ex->y3 + pos + hy);
+    }
     return;
   }
 

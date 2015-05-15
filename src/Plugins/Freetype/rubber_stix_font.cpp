@@ -190,7 +190,9 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew) {
       string r= s (6, pos);
       if (r == "(" || r == ")" ||
           r == "[" || r == "]" ||
-          r == "{" || r == "}") {
+          r == "{" || r == "}" ||
+          r == "lfloor" || r == "rfloor" ||
+          r == "lceil" || r == "rceil") {
         rew= s;
         return 16;
       }

@@ -84,6 +84,8 @@ glyph ver_flip   (glyph gl);
 glyph pos_rotate (glyph gl);
 glyph hor_extend (glyph gl, int pos, int by);
 glyph ver_extend (glyph gl, int pos, int by);
+glyph hor_take   (glyph gl, int pos, int nr);
+glyph ver_take   (glyph gl, int pos, int nr);
 
 int pixel_count (glyph g);
 double left_protrusion (glyph g, glyph o);
