@@ -60,9 +60,14 @@ socket_link_rep::~socket_link_rep () {
   socket_link_set->remove ((pointer) this);
 }
 
+socket_link_rep*
+make_weak_socket_link (string host, int port, int type, int fd) {
+  return tm_new<socket_link_rep> (host, port, type, fd);
+}
+
 tm_link
 make_socket_link (string host, int port, int type, int fd) {
-  return tm_new<socket_link_rep> (host, port, type, fd);
+  return make_weak_socket_link (host, port, type, fd);
 }
 
 tm_link

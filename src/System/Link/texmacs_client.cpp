@@ -17,6 +17,7 @@
 typedef socket_link_rep* weak_socket_link;
 static array<weak_socket_link> the_clients;
 static bool clients_started= false;
+socket_link_rep* make_weak_socket_link (string h, int p, int t, int f);
 
 /******************************************************************************
 * Client side
@@ -29,7 +30,7 @@ client_start (string host) {
     clients_started= true;
   }
   weak_socket_link client=
-    tm_new<socket_link_rep> (host, 6561, SOCKET_CLIENT, -1);
+    make_weak_socket_link (host, 6561, SOCKET_CLIENT, -1);
   if (!client->alive)
     cout << "TeXmacs] Starting client... " << client->start () << "\n";
   if (client->alive) {
