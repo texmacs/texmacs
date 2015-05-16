@@ -481,15 +481,16 @@ box
 delimiter_box (path ip, string s, font fn, pencil pen, SI bot, SI top) {
   SI h= top - bot;
   string r= get_delimiter (s, fn, h);
+  box b= text_box (ip, 0, r, fn, pen);
   metric ex;
   fn->get_extents (r, ex);
-  SI x= -ex->x1;
-  SI y= (top+ bot- ex->y1- ex->y2) >> 1;
+  SI x= -b->x1;
+  SI y= (top+ bot- b->y1- b->y2) >> 1;
   //cout << s << ", " << bot/PIXEL << " -- " << top/PIXEL
   //     << " -> " << r << "; " << x/PIXEL << ", " << y/PIXEL << "\n";
-  //cout << "  extents: " << ex->x1/PIXEL << ", " << ex->y1/PIXEL
-  //     << "; " << ex->x2/PIXEL << ", " << ex->y2/PIXEL << "\n";
-  box mvb= move_box (ip, text_box (ip, 0, r, fn, pen), x, y, false, true);
+  //cout << "  extents: " << b->x1/PIXEL << ", " << b->y1/PIXEL
+  //     << "; " << b->x2/PIXEL << ", " << b->y2/PIXEL << "\n";
+  box mvb= move_box (ip, b, x, y, false, true);
   return macro_box (ip, mvb, fn);
 }
 
