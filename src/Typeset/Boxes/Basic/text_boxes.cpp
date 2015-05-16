@@ -482,8 +482,6 @@ delimiter_box (path ip, string s, font fn, pencil pen, SI bot, SI top) {
   SI h= top - bot;
   string r= get_delimiter (s, fn, h);
   box b= text_box (ip, 0, r, fn, pen);
-  metric ex;
-  fn->get_extents (r, ex);
   SI x= -b->x1;
   SI y= (top+ bot- b->y1- b->y2) >> 1;
   //cout << s << ", " << bot/PIXEL << " -- " << top/PIXEL
