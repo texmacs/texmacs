@@ -20,19 +20,17 @@
 
 struct rubber_unicode_font_rep: font_rep {
   font base;
-  font baseS;
-  font baseL;
-  font baseD;
-  font assemble;
+  array<bool> initialized;
+  array<font> larger;
   bool big_sums;
 
   hashmap<string,int> mapper;
   hashmap<string,string> rewriter;
 
   rubber_unicode_font_rep (string name, font base);
+  font get_font (int nr);
   int search_font_sub (string s, string& rew);
   int search_font_cached (string s, string& rew);
-  font search_font (string& s, SI& dy);
   font search_font (string& s);
 
   bool supports (string c);
@@ -66,10 +64,34 @@ rubber_unicode_font_rep::rubber_unicode_font_rep (string name, font base2):
     //<< ((double) (ex->y2-ex->y1)) / base->yx << LF;
     if ((((double) (ex->y2-ex->y1)) / base->yx) >= 1.55) big_sums= true;
   }
-  baseS= base->magnify (sqrt (0.5));
-  baseL= base->magnify (sqrt (2.0));
-  baseD= base->magnify (2.0);
-  assemble= rubber_assemble_font (base);
+  for (int i=0; i<5; i++) {
+    initialized << false;
+    larger << base;
+  }
+}
+
+font
+rubber_unicode_font_rep::get_font (int nr) {
+  ASSERT (nr < N(larger), "wrong font number");
+  if (initialized[nr]) return larger[nr];
+  initialized[nr]= true;
+  switch (nr) {
+  case 0:
+    break;
+  case 1:
+    larger[nr]= base->magnify (sqrt (0.5));
+    break;
+  case 2:
+    larger[nr]= base->magnify (sqrt (2.0));
+    break;
+  case 3:
+    larger[nr]= base->magnify (2.0);
+    break;
+  case 4:
+    larger[nr]= rubber_assemble_font (base);
+    break;
+  }
+  return larger[nr];
 }
 
 /******************************************************************************
@@ -137,36 +159,11 @@ rubber_unicode_font_rep::search_font_cached (string s, string& rew) {
 }
 
 font
-rubber_unicode_font_rep::search_font (string& s, SI& dy) {
+rubber_unicode_font_rep::search_font (string& s) {
   string rew;
   int nr= search_font_cached (s, rew);
   s= rew;
-  switch (nr) {
-  case 0:
-    dy= 0;
-    return base;
-  case 1:
-    dy= 0;
-    return baseS;
-  case 2:
-    dy= 0;
-    return baseL;
-  case 3:
-    dy= 0;
-    return baseD;
-  case 4:
-    dy= 0;
-    return assemble;
-  default:
-    dy= 0;
-    return base;
-  }
-}
-
-font
-rubber_unicode_font_rep::search_font (string& s) {
-  SI dy;
-  return search_font (s, dy);
+  return get_font (nr);
 }
 
 /******************************************************************************
@@ -198,11 +195,8 @@ rubber_unicode_font_rep::supports (string s) {
 
 void
 rubber_unicode_font_rep::get_extents (string s, metric& ex) {
-  SI dy;
-  font fn= search_font (s, dy);
+  font fn= search_font (s);
   fn->get_extents (s, ex);
-  ex->y1 += dy; ex->y2 += dy;
-  ex->y3 += dy; ex->y4 += dy;
 }
 
 void
@@ -235,16 +229,14 @@ rubber_unicode_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
 
 void
 rubber_unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
-  SI dy;
-  font fn= search_font (s, dy);
-  fn->draw_fixed (ren, s, x, y + dy);
+  font fn= search_font (s);
+  fn->draw_fixed (ren, s, x, y);
 }
 
 void
 rubber_unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
-  SI dy;
-  font fn= search_font (s, dy);
-  fn->draw_fixed (ren, s, x, y + dy, xk);
+  font fn= search_font (s);
+  fn->draw_fixed (ren, s, x, y, xk);
 }
 
 font
@@ -254,9 +246,8 @@ rubber_unicode_font_rep::magnify (double zoom) {
 
 glyph
 rubber_unicode_font_rep::get_glyph (string s) {
-  SI dy;
-  font fn= search_font (s, dy);
-  return move (fn->get_glyph (s), 0, dy);
+  font fn= search_font (s);
+  return fn->get_glyph (s);
 }
 
 /******************************************************************************
