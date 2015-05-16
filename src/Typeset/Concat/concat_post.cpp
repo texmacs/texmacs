@@ -187,11 +187,11 @@ concater_rep::handle_matching (int start, int end) {
   //cout << "matching " << start << " -- " << end << "\n";
   //cout << a << "\n\n";
   int i;
-  SI y1= min (a[start]->b->y1, a[end]->b->y2);
-  SI y2= max (a[start]->b->y1, a[end]->b->y2);
+  SI y1=  MAX_SI;
+  SI y2= -MAX_SI;
+  bool uninit= true;
   a[start]->penalty++;
   a[end]->penalty++;
-  // cout << "Start: " << (y2-y1) << "\n";
   for (i=start+1; i<end; i++) {
     if (a[i]->type == OBSOLETE_ITEM) continue;
     // cout << "  " << a[i] << ": " << (a[i]->b->y2- a[i]->b->y1) << "\n";
@@ -202,7 +202,13 @@ concater_rep::handle_matching (int start, int end) {
     y1= min (y1, lo);
     y2= max (y2, hi);
     a[i]->penalty++;
+    uninit= false;
   }
+  if (uninit) {
+    y1= min (a[start]->b->y1, a[end]->b->y2);
+    y2= max (a[start]->b->y1, a[end]->b->y2);
+  }
+
   for (i=start; i<=end; i++) {
     int tp= a[i]->type;
     if (tp == LEFT_BRACKET_ITEM ||
@@ -211,19 +217,31 @@ concater_rep::handle_matching (int start, int end) {
       {
         string ls= a[i]->b->get_leaf_string ();
         pencil lp= a[i]->b->get_leaf_pencil ();
-        font lf= a[i]->b->get_leaf_font ();
+	font   fn= a[i]->b->get_leaf_font ();
+
+        // find the middle of the bracket, around where to center
+	SI mid= (a[i]->b->y1 + a[i]->b->y2) >> 1;
+        bool custom=
+          N(ls) > 2 && ls[N(ls)-2] <= '9' && ls[N(ls)-2] >= '0' &&
+          !ends (ls, "-0>");
+        if (custom) {
+          int pos= N(ls)-1;
+          while (pos > 0 && ls[pos] != '-') pos--;
+          if (pos > 0 && ls[pos-1] == '-') pos--;
+          string ss= ls (0, pos) * ">";
+          box auxb= text_box (a[i]->b->ip, 0, ss, fn, lp);
+          mid= (auxb->y1 + auxb->y2) >> 1;
+        }
 
 	// make symmetric and prevent from too large delimiters if possible
-	font fn = a[i]->b->get_leaf_font ();
 	SI Y1   = y1 + (fn->sep >> 1);
 	SI Y2   = y2 - (fn->sep >> 1);
 	SI tol  = fn->sep << 1;
-	SI mid  = (a[i]->b->y1 + a[i]->b->y2) >> 1;
 	SI drift= ((Y1 + Y2) >> 1) - mid; // fn->yfrac;
 	if (drift < 0) Y2 += min (-drift, tol) << 1;
 	else Y1 -= min (drift, tol) << 1;
 
-        // further adjustments when the enclosed expression is not very heigh
+        // further adjustments when the enclosed expression is not very high
         // and for empty brackets
         SI h= y2 - y1 - fn->sep;
         SI d= 5 * fn->yx - h;
@@ -233,8 +251,8 @@ concater_rep::handle_matching (int start, int end) {
             Y1 += d/6; Y2 -= d/12; }
 
         // replace item by large or small delimiter
-        if (Y1 < fn->y1 || Y2 > fn->y2)
-          a[i]->b= delimiter_box (a[i]->b->ip, ls, fn, lp, Y1, Y2);
+        if (Y1 < fn->y1 || Y2 > fn->y2 || custom)
+          a[i]->b= delimiter_box (a[i]->b->ip, ls, fn, lp, Y1, Y2, mid, y1, y2);
         else {
           string s= "<nobracket>";
           int j;
@@ -243,7 +261,7 @@ concater_rep::handle_matching (int start, int end) {
           if (j<N(ls) && ls[N(ls)-1] == '>') s= ls (j+1, N(ls)-1);
           if (N(s) > 1 && s[0] != '<') s= "<" * s * ">";
           else if (N(s) == 0 || s == ".") s= "<nobracket>";
-          a[i]->b= text_box (a[i]->b->ip, 0, s, lf, lp);
+          a[i]->b= text_box (a[i]->b->ip, 0, s, fn, lp);
           tp= STD_ITEM;
         }
         a[i]->type= STD_ITEM;

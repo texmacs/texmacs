@@ -85,6 +85,8 @@ box image_box (path ip, url u, SI w, SI h, int alpha, int px);
 
 box text_box (path ip, int pos, string s, font fn, pencil pen);
 box delimiter_box (path ip, string s, font fn, pencil pen, SI y1, SI y2);
+box delimiter_box (path ip, string s, font fn, pencil pen,
+                   SI bot, SI top, SI mid, SI real_bot, SI real_top);
 box big_operator_box (path ip, string s, font fn, pencil pen, int n);
 box wide_box (path ip, string s, font fn, pencil pen, SI width);
 box wide_stix_box (path ip, string s, font fn, pencil pen, SI width);
