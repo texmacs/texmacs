@@ -21,10 +21,12 @@
 
 struct rubber_assemble_font_rep: font_rep {
   font base;
+  array<bool> initialized;
   array<font> larger;
   translator virt;
 
   rubber_assemble_font_rep (string name, font base);
+  font get_font (int nr);
   int search_font (string s, string& r);
 
   bool supports (string c);
@@ -45,15 +47,25 @@ rubber_assemble_font_rep::rubber_assemble_font_rep (string name, font base2):
   font_rep (name, base2), base (base2)
 {
   this->copy_math_pars (base);
+  initialized << true;
   larger << base;
-  double m= sqrt (sqrt (2.0)), p= m;
   for (int i=1; i<=MAGNIFIED_NUMBER; i++) {
-    larger << base->magnify (p);
-    p *= m;
+    initialized << false;
+    larger << base;
   }
   int dpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
+  initialized << true;
   larger << virtual_font (base, "unilong", base->size, dpi);
   virt= load_translator ("unilong");
+}
+
+font
+rubber_assemble_font_rep::get_font (int nr) {
+  ASSERT (nr < N(larger), "wrong font number");
+  if (initialized[nr]) return larger[nr];
+  initialized[nr]= true;
+  larger[nr]= base->magnify (pow (2.0, ((double) nr) / 4.0));
+  return larger[nr];
 }
 
 int
@@ -135,21 +147,21 @@ void
 rubber_assemble_font_rep::get_extents (string s, metric& ex) {
   string name;
   int num= search_font (s, name);
-  larger[num]->get_extents (name, ex);
+  get_font (num) -> get_extents (name, ex);
 }
 
 void
 rubber_assemble_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   string name;
   int num= search_font (s, name);
-  larger[num]->draw (ren, name, x, y);
+  get_font (num) -> draw (ren, name, x, y);
 }
 
 void
 rubber_assemble_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
   string name;
   int num= search_font (s, name);
-  larger[num]->draw (ren, name, x, y, xk);
+  get_font (num) -> draw (ren, name, x, y, xk);
 }
 
 font
@@ -161,7 +173,7 @@ glyph
 rubber_assemble_font_rep::get_glyph (string s) {
   string name;
   int num= search_font (s, name);
-  return larger[num]->get_glyph (name);
+  return get_font (num) -> get_glyph (name);
 }
 
 /******************************************************************************
