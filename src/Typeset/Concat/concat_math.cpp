@@ -22,38 +22,44 @@ concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
   if (starts (old_fn->res_name, "stix-"))
     //if (old_fn->type == FONT_TYPE_UNICODE)
     env->fn= rubber_font (old_fn);
-
-  if ((N(t) == 1) && is_atomic (t[0])) {
-    string s= prefix * t[0]->label * ">";
-    box b= text_box (ip, 0, s, env->fn, env->pen);
-    print (tp, otp, b);
-    // temporarary: use parameters from group-open class in std-math.syx
-    // bug: allow hyphenation after ) and before *
-  }
-  else if ((N(t) == 2) && is_atomic (t[0]) && is_int (t[1])) {
-    int nr= max (as_int (t[1]->label), 0);
-    string s= prefix * t[0]->label * "-" * as_string (nr) * ">";
-    box b= text_box (ip, 0, s, env->fn, env->pen);
-    SI dy= env->fn->yfrac - ((b->y1 + b->y2) >> 1);
-    box mvb= move_box (ip, b, 0, dy, false, true);
-    print (STD_ITEM, otp, macro_box (ip, mvb, env->fn));
-  }
-  else if ((N(t) >= 2) && is_atomic (t[0])) {
-    SI y1, y2;
-    if (N(t) == 2) {
-      SI l= env->as_length (t[1]) >> 1;
-      y1= env->fn->yfrac - l;
-      y2= env->fn->yfrac + l;
+  
+  if (N(t) < 1 || !is_atomic (t[0]))
+    typeset_error (t, ip);
+  else {
+    string br= t[0]->label;
+    if (N(br) > 2 && br[0] == '<' && br[N(br)-1] == '>')
+      br= br (1, N(br) - 1);
+    if (N(t) == 1) {
+      string s= prefix * br * ">";
+      box b= text_box (ip, 0, s, env->fn, env->pen);
+      print (tp, otp, b);
+      // temporarary: use parameters from group-open class in std-math.syx
+      // bug: allow hyphenation after ) and before *
+    }
+    else if (N(t) == 2 && is_int (t[1])) {
+      int nr= max (as_int (t[1]->label), 0);
+      string s= prefix * br * "-" * as_string (nr) * ">";
+      box b= text_box (ip, 0, s, env->fn, env->pen);
+      SI dy= env->fn->yfrac - ((b->y1 + b->y2) >> 1);
+      box mvb= move_box (ip, b, 0, dy, false, true);
+      print (STD_ITEM, otp, macro_box (ip, mvb, env->fn));
     }
     else {
-      y1= env->as_length (t[1]);
-      y2= env->as_length (t[2]);
+      SI y1, y2;
+      if (N(t) == 2) {
+        SI l= env->as_length (t[1]) >> 1;
+        y1= env->fn->yfrac - l;
+        y2= env->fn->yfrac + l;
+      }
+      else {
+        y1= env->as_length (t[1]);
+        y2= env->as_length (t[2]);
+      }
+      string s= prefix * br * ">";
+      box b= delimiter_box (ip, s, env->fn, env->pen, y1, y2);
+      print (STD_ITEM, otp, b);
     }
-    string s= prefix * t[0]->label * ">";
-    box b= delimiter_box (ip, s, env->fn, env->pen, y1, y2);
-    print (STD_ITEM, otp, b);
   }
-  else typeset_error (t, ip);
 
   env->fn= old_fn;
 }

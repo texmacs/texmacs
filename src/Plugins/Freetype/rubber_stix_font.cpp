@@ -126,6 +126,7 @@ rubber_stix_font_rep::get_font (int nr) {
 static string
 large_type (string s) {
   int pos= search_backwards ("-", N(s), s);
+  if (pos > 6 && s[pos-1] == '-') pos--;
   if (pos > 6) return s (1, pos);
   else if (!starts (s, "<") || !ends (s, ">")) return s;
   else return s (1, N(s) - 1);
@@ -135,6 +136,7 @@ static int
 large_size (string s) {
   int pos= search_backwards ("-", N(s), s);
   if (pos > 6) {
+    if (s[pos-1] == '-') pos--;
     string r= s (pos + 1, N(s) - 1);
     return as_int (r);
   }
@@ -192,9 +194,17 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew, string& ltype) {
   }
   if (starts (s, "<left-|") || starts (s, "<left-interleave-")) {
     int nr= large_size (s);
-    if (nr == 0) rew= s;
-    else rew= "<" * large_type (s) * "-" * as_string (nr + 4) * ">";
-    return 16;
+    if (nr <= 0) {
+      string r= large_type (s);
+      r= r (5, N(r));
+      if (N(r) > 1) r= "<" * r * ">";
+      rew= r;
+      return 0;
+    }
+    else {
+      rew= "<" * large_type (s) * "-" * as_string (nr + 9) * ">";
+      return 16;
+    }
   }
   if (starts (s, "<left-") && ends (s, "-0>")) {
     rew= s;
@@ -228,12 +238,19 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew, string& ltype) {
     int pos= search_backwards ("-", N(s), s);
     if (pos > 6) {
       string r= s (6, pos);
+      int nr= as_int (s (pos+1, N(s)-1));
       if (r == "(" || r == ")" ||
-          r == "[" || r == "]" ||
-          r == "{" || r == "}" ||
-          r == "lfloor" || r == "rfloor" ||
+          r == "[" || r == "]") {
+        rew= "<left-" * r * "-" * as_string (nr + 5) * ">";
+        return 17;
+      }
+      if (r == "{" || r == "}") {
+        rew= "<left-" * r * "-" * as_string (nr + 2) * ">";
+        return 17;
+      }
+      if (r == "lfloor" || r == "rfloor" ||
           r == "lceil" || r == "rceil") {
-        rew= s;
+        rew= "<left-" * r * "-" * as_string (nr + 9) * ">";
         return 17;
       }
       if (r == "/" || r == "\\" ||
