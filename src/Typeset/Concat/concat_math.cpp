@@ -31,7 +31,8 @@ concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
     // bug: allow hyphenation after ) and before *
   }
   else if ((N(t) == 2) && is_atomic (t[0]) && is_int (t[1])) {
-    string s= prefix * t[0]->label * "-" * t[1]->label * ">";
+    int nr= max (as_int (t[1]->label), 0);
+    string s= prefix * t[0]->label * "-" * as_string (nr) * ">";
     box b= text_box (ip, 0, s, env->fn, env->pen);
     SI dy= env->fn->yfrac - ((b->y1 + b->y2) >> 1);
     box mvb= move_box (ip, b, 0, dy, false, true);
@@ -360,7 +361,17 @@ bracket_color (int nl) {
 
 static tree
 make_large (tree_label l, tree t) {
-  if (!is_atomic (t)) return tree (l, ".");
+  if (!is_atomic (t)) {
+    if (is_func (t, l)) {
+      if (N(t) == 2 && is_atomic (t[0]) && is_int (t[1])) {
+        string s= t[0]->label;
+        if (N(s) >= 3 && s[0] == '<' && s[N(s)-1] == '>') s= s (1, N(s)-1);
+        return tree (l, s * "-" * t[1]->label);
+      }
+      else return t;
+    }
+    else return tree (l, ".");
+  }
   string s= t->label;
   if (N(s) <= 1) return tree (l, s);
   if (s[0] != '<' || s[N(s)-1] != '>' || s == "<nobracket>")

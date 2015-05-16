@@ -15,7 +15,8 @@
   (:use (utils library tree)
 	(utils library cursor)
 	(utils edit auto-close)
-	(math math-drd)))
+	(math math-drd)
+        (generic format-geometry-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some drd properties, which should go into table-drd.scm later on
@@ -296,32 +297,37 @@
 ;; Modifying the shape of brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define brackets
-  '(("(" ")")
-    ("[" "]")
-    ("{" "}")
-    ("<langle>" "<rangle>")
-    ("|" "|")
-    ("<||>" "<||>")
-    ("<lfloor>" "<rfloor>")
-    ("<lceil>" "<rceil>")
-    ("<llbracket>" "<rrbracket>")))
+(define lbrackets
+  '("(" "[" "{" "<langle>" "|" "<||>" "<lfloor>" "<lceil>" "<llbracket>"))
+
+(define mbrackets
+  '("|" "<||>" "/" "\\"))
+
+(define rbrackets
+  '(")" "]" "}" "<rangle>" "|" "<||>" "<rfloor>" "<rceil>" "<rrbracket>"))
+
+(define (bracket-circulate t forward? brackets)
+  (cond ((and (tree-in? t '(around around*))
+              (== (tree-arity t) 3))
+         (bracket-circulate (tree-ref t 0) forward? lbrackets)
+         (bracket-circulate (tree-ref t 2) forward? rbrackets))
+        ((and (tree-is? t 'left) (> (tree-arity t) 1))
+         (bracket-circulate (tree-ref t 0) forward? lbrackets))
+        ((and (tree-is? t 'mid) (> (tree-arity t) 1))
+         (bracket-circulate (tree-ref t 0) forward? mbrackets))
+        ((and (tree-is? t 'right) (> (tree-arity t) 1))
+         (bracket-circulate (tree-ref t 0) forward? rbrackets))
+        ((and (tree-atomic? t)
+              (in? (tree->string t) brackets))
+         (let* ((s (tree->string t))
+                (i (list-find-index brackets (lambda (x) (== x s))))
+                (j (modulo (+ i (if forward? 1 -1)) (length brackets)))
+                (r (list-ref brackets j)))
+           (tree-assign t r)))))
 
 (tm-define (variant-circulate t forward?)
-  (:require (tree-in? t '(around around*)))
-  (when (and (== (tree-arity t) 3)
-             (tree-atomic? (tree-ref t 0))
-             (tree-atomic? (tree-ref t 2)))
-    (let* ((l (tree->string (tree-ref t 0)))
-           (r (tree->string (tree-ref t 2)))
-           (p (list l r)))
-      (when (in? p brackets)
-        (let* ((i (list-find-index brackets (lambda (x) (== x p))))
-               (j (modulo (+ i (if forward? 1 -1)) (length brackets)))
-               (nl (car (list-ref brackets j)))
-               (nr (cadr (list-ref brackets j))))
-          (tree-assign (tree-ref t 0) nl)
-          (tree-assign (tree-ref t 2) nr))))))
+  (:require (tree-in? t '(left mid right around around*)))
+  (bracket-circulate t forward? mbrackets))
 
 (define bigops
   '("<int>" "<intlim>" "<oint>" "<ointlim>"
@@ -342,6 +348,34 @@
                (j (modulo (+ i (if forward? 1 -1)) (length bigops)))
                (ns (list-ref bigops j)))
           (tree-assign (tree-ref t 0) ns))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Modifying the dimension of brackets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (bracket-size-increase t by)
+  (cond ((and (tree-in? t '(left mid right))
+              (>= (tree-arity t) 2))
+         (bracket-size-increase (tree-ref t 1) by))
+        ((and (tree-in? t '(around around*))
+              (== (tree-arity t) 3))
+         (when (tree-atomic? (tree-ref t 0))
+           (tree-set t 0 `(left ,(tree-ref t 0) "0")))
+         (when (tree-atomic? (tree-ref t 2))
+           (tree-set t 2 `(right ,(tree-ref t 2) "0")))
+         (bracket-size-increase (tree-ref t 0) by)
+         (bracket-size-increase (tree-ref t 2) by))
+        ((tree-integer? t)
+         (let* ((old (tree->number t))
+                (new (+ old by)))
+           (tree-set t (number->string new))))
+        ((tm-length? t)
+         (length-increase t by))))
+
+(tm-define (geometry-vertical t down?)
+  (:require (tree-in? t '(left mid right around around*)))
+  (with inc (if down? -1 1)
+    (bracket-size-increase t inc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Not necessarily matching brackets

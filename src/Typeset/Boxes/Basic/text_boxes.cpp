@@ -357,10 +357,34 @@ text_box_rep::get_leaf_offset (string search) {
 * Computing right size for rubber characters
 ******************************************************************************/
 
+static int
+get_number (string s, int& pos) {
+  int n= N(s);
+  pos= n-1;
+  while (pos > 0 && s[pos] != '-') pos--;
+  if (pos > 0 && s[pos-1] == '-') pos--;
+  return as_int (s (pos+1, n-1));
+}
+
 static string
 get_delimiter (string s, font fn, SI height) {
-  ASSERT (N(s) >= 2 && s[0] == '<' && s[N(s)-1] == '>',
+  int ns= N(s);
+  ASSERT (ns >= 2 && s[0] == '<' && s[ns-1] == '>',
 	  "invalid rubber character");
+  if (s[ns-2] >= '0' && s[ns-2] <= '9') {
+    int pos;
+    int plus= get_number (s, pos);
+    if (pos > 0) {
+      string s2= s (0, pos) * ">";
+      string r2= get_delimiter (s2, fn, height);
+      int pos2;
+      int nr2= get_number (r2, pos2);
+      if (pos2 > 0) {
+        int nr= max (nr2 + plus, 0);
+        return r2 (0, pos2) * "-" * as_string (nr) * ">";
+      }
+    }
+  }
   height -= PIXEL;
   string radical= s (0, N(s)-1) * "-";
   string best= radical * "0>";
