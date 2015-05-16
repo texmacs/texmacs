@@ -21,7 +21,7 @@
 struct rubber_unicode_font_rep: font_rep {
   font base;
   array<bool> initialized;
-  array<font> larger;
+  array<font> subfn;
   bool big_sums;
 
   hashmap<string,int> mapper;
@@ -66,32 +66,32 @@ rubber_unicode_font_rep::rubber_unicode_font_rep (string name, font base2):
   }
   for (int i=0; i<5; i++) {
     initialized << false;
-    larger << base;
+    subfn << base;
   }
 }
 
 font
 rubber_unicode_font_rep::get_font (int nr) {
-  ASSERT (nr < N(larger), "wrong font number");
-  if (initialized[nr]) return larger[nr];
+  ASSERT (nr < N(subfn), "wrong font number");
+  if (initialized[nr]) return subfn[nr];
   initialized[nr]= true;
   switch (nr) {
   case 0:
     break;
   case 1:
-    larger[nr]= base->magnify (sqrt (0.5));
+    subfn[nr]= base->magnify (sqrt (0.5));
     break;
   case 2:
-    larger[nr]= base->magnify (sqrt (2.0));
+    subfn[nr]= base->magnify (sqrt (2.0));
     break;
   case 3:
-    larger[nr]= base->magnify (2.0);
+    subfn[nr]= base->magnify (2.0);
     break;
   case 4:
-    larger[nr]= rubber_assemble_font (base);
+    subfn[nr]= rubber_assemble_font (base);
     break;
   }
-  return larger[nr];
+  return subfn[nr];
 }
 
 /******************************************************************************
