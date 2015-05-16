@@ -353,7 +353,7 @@
 ;; Modifying the dimension of brackets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (bracket-size-increase t by)
+(define (bracket-size-increase t by)
   (cond ((and (tree-in? t '(left mid right))
               (>= (tree-arity t) 2))
          (bracket-size-increase (tree-ref t 1) by))
@@ -364,7 +364,11 @@
          (when (tree-atomic? (tree-ref t 2))
            (tree-set t 2 `(right ,(tree-ref t 2) "0")))
          (bracket-size-increase (tree-ref t 0) by)
-         (bracket-size-increase (tree-ref t 2) by))
+         (bracket-size-increase (tree-ref t 2) by)
+         (when (tm-equal? (tree-ref t 0 1) "0")
+           (tree-set t 0 (tree-ref t 0 0)))
+         (when (tm-equal? (tree-ref t 2 1) "0")
+           (tree-set t 2 (tree-ref t 2 0))))
         ((tree-integer? t)
          (let* ((old (tree->number t))
                 (new (+ old by)))
@@ -376,6 +380,16 @@
   (:require (tree-in? t '(left mid right around around*)))
   (with inc (if down? -1 1)
     (bracket-size-increase t inc)))
+
+(define (bracket-size-reset t)
+  (when (and (tree-in? t '(left mid right)) (>= (tree-arity t) 1))
+    (tree-set t (tree-ref t 0))))
+
+(tm-define (geometry-default t)
+  (:require (tree-in? t '(around around*)))
+  (when (== (tree-arity t) 3)
+    (bracket-size-reset (tree-ref t 0))
+    (bracket-size-reset (tree-ref t 2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Not necessarily matching brackets
