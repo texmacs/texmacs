@@ -100,6 +100,7 @@
   ("Clip" (make-clipped "" "" "" ""))
   ---
   ("Smash" (make 'smash))
+  ("Reduce" (make-reduce-by "0.5ex"))
   ("Swell" (make 'swell)))
 
 (menu-bind format-special-menu

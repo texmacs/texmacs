@@ -130,6 +130,7 @@ struct shift_box_rep: public change_box_rep {
   int get_type () { return MOVE_BOX; }
   box adjust_kerning (int mode, double factor);
   operator tree () { return tree (TUPLE, "shift", (tree) bs[0]); }
+  void get_bracket_extents (SI& lo, SI& hi);
 };
 
 shift_box_rep::shift_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
@@ -148,6 +149,16 @@ shift_box_rep::adjust_kerning (int mode, double factor) {
   return move_box (ip, body, dx, dy, child_flag, big_flag);
 }
 
+void
+shift_box_rep::get_bracket_extents (SI& lo, SI& hi) {
+  if (sx(0) == 0 && sy(0) == 0) {
+    bs[0]->get_bracket_extents (lo, hi);
+    lo += dy;
+    hi += dy;
+  }
+  else box_rep::get_bracket_extents (lo, hi);
+}
+
 /******************************************************************************
 * Resizing boxes
 ******************************************************************************/
@@ -156,6 +167,7 @@ struct resize_box_rep: public change_box_rep {
   resize_box_rep (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 		  bool child_flag, bool adjust);
   operator tree () { return tree (TUPLE, "resize", (tree) bs[0]); }
+  void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
 resize_box_rep::resize_box_rep (
@@ -174,6 +186,7 @@ struct vresize_box_rep: public change_box_rep {
   vresize_box_rep (path ip, box b, SI y1, SI y2);
   operator tree () { return tree (TUPLE, "vresize", (tree) bs[0]); }
   box adjust_kerning (int mode, double factor);
+  void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
 vresize_box_rep::vresize_box_rep (path ip, box b, SI Y1, SI Y2):
@@ -197,6 +210,7 @@ struct vcorrect_box_rep: public change_box_rep {
   vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor);
   operator tree () { return tree (TUPLE, "vcorrect", (tree) bs[0]); }
   box adjust_kerning (int mode, double factor);
+  void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
 vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor2, SI bot_cor2):
@@ -239,6 +253,7 @@ public:
   void post_display (renderer &ren);
   //cursor find_cursor (path bp);
   //selection find_selection (path lbp, path rbp);
+  void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
 transformed_box_rep::transformed_box_rep (path ip, box b, frame fr2):
@@ -277,6 +292,7 @@ public:
   operator tree () { return tree (TUPLE, "effect", eff_t); }
   box adjust_kerning (int mode, double factor);
   void redraw (renderer ren, path p, rectangles& l);
+  void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
 effect_box_rep::effect_box_rep (path ip, array<box> bs, tree eff2):
@@ -355,6 +371,7 @@ public:
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
   selection find_selection (path lbp, path rbp);
+  void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
 clip_box_rep::clip_box_rep (

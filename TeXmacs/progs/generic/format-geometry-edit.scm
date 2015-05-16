@@ -352,6 +352,12 @@
     (insert-go-to `(clipped "" ,l ,b ,r ,t) '(0 0))
     (set-adjust-message "Adjust clipping" "clipped")))
 
+(tm-define (make-reduce-by by)
+  (:argument by "Reduce by")
+  (wrap-selection-small
+    (insert-go-to `(reduce-by "" ,by) '(0 0))
+    (set-adjust-message "Reduce vertical size" "reduce-by")))
+
 (define (replace-empty-horizontal t)
   (replace-empty t 1 `(plus "1l" ,(get-zero-unit)))
   (replace-empty t 3 `(plus "1r" ,(get-zero-unit))))
