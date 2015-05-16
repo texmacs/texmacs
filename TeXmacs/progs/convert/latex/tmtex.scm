@@ -141,6 +141,7 @@
   (tabular* ("" "c" "" #f))
   (matrix ((,(string->symbol "left(")) "c" (,(string->symbol "right)")) #f))
   (det ((left|) "c" (right|) #f))
+  (bmatrix ((,(string->symbol "left[")) "c" (,(string->symbol "right]")) #f))
   (stack ("" "c" "" #f))
   (choice ((left\{) "l" (right.) #f)))
 

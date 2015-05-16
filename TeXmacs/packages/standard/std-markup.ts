@@ -329,7 +329,11 @@
 
   <assign|smash-bottom|<macro|body|<vresize|<arg|body>|0ex|1t>>>
 
-  <assign|smash-by|<macro|body|by|<vresize|<arg|body>|<plus|1b|<arg|by>>|<minus|1t|<arg|by>>>>>
+  <assign|reduce-by|<macro|body|by|<vresize|<arg|body>|<plus|1b|<arg|by>>|<minus|1t|<arg|by>>>>>
+
+  <assign|reduce-top-by|<macro|body|by|<vresize|<arg|body>||<minus|1t|<arg|by>>>>>
+
+  <assign|reduce-bottom-by|<macro|body|by|<vresize|<arg|body>|<plus|1b|<arg|by>>|>>>
 
   \;
 

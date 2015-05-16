@@ -246,6 +246,23 @@
       (rubber-space-increase t inc))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Vertical adjustments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (vadjust-context? t)
+  (tree-in? t (reduce-by-tag-list)))
+
+(tm-define (geometry-speed t inc?)
+  (:require (vadjust-context? t))
+  (with inc (if inc? 1 -1)
+    (length-increase-step (tree-ref t 1) inc)))
+
+(tm-define (geometry-vertical t down?)
+  (:require (vadjust-context? t))
+  (with inc (if down? 1 -1)
+    (length-increase (tree-ref t 1) inc)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Move and shift
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

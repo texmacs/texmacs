@@ -25,7 +25,7 @@
 (define-group similar-tag (math-table-tag))
 
 (define-group math-table-tag
-  matrix det)
+  matrix det bmatrix)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Invisible operators

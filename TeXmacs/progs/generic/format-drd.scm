@@ -17,10 +17,10 @@
 ;; General groups
 
 (define-group variant-tag
-  (move-tag) (resize-tag) (smash-tag) (swell-tag))
+  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag))
 
 (define-group similar-tag
-  (move-tag) (resize-tag) (smash-tag) (swell-tag))
+  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag))
 
 ;; Various geometry adjustment tags
 
@@ -35,3 +35,6 @@
 
 (define-group swell-tag
   swell swell-bottom swell-top)
+
+(define-group reduce-by-tag
+  reduce-by reduce-bottom-by reduce-top-by)
