@@ -1399,8 +1399,20 @@
           (alternate-second? (focus-tree)))
    (alternate-toggle (focus-tree))))
 
+(tm-menu (focus-extra-menu t)
+  (:require (tree-in? t '(left mid right around around*)))
+  ---
+  ("Increase size" (geometry-up))
+  ("Decrease size" (geometry-down)))
+
 (tm-menu (focus-toggle-icons t)
   (:require (tree-in? t '(around around*)))
   ((check (balloon (icon "tm_large_around.xpm") "Large brackets") "v"
           (alternate-second? (focus-tree)))
-   (alternate-toggle (focus-tree))))
+   (alternate-toggle (focus-tree)))
+  ;; TODO: create suitable tm_minus icon for decreasing bracket size
+  ;;((balloon (icon "tm_add.xpm") "Increase bracket size")
+  ;; (geometry-up))
+  ;;((balloon (icon "tm_close_tool.xpm") "Decrease bracket size")
+  ;; (geometry-down))
+  )
