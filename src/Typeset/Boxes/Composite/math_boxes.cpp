@@ -30,7 +30,7 @@ italic_correction (box L, box R) {
   double slope_R= R->left_slope ();
   //cout << L << ", " << slope_L << " | " << R << ", " << slope_R << LF;
   if (L->get_type () == BIG_OP_BOX)
-    if (slope_L + 0.01 >= slope_R && slope_L > 0)
+    if (1.5 * slope_L >= slope_R && slope_L > 0)
       if (R->get_type () != BIG_OP_BOX)
         return L->right_correction () + R->left_correction ();
   if (slope_L == slope_R) return 0;
