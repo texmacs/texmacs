@@ -18,6 +18,54 @@
         (math math-edit)
         (table table-edit)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
+;; for its own personal use
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (os-macos?)
+  (kbd-map
+    (:mode in-math?)
+    ("å" (make-above)) ;; Alt-a
+    ("Å" (make-wide "<invbreve>")) ;; Alt-A
+    ("big-int" (make-below)) ;; Alt-b
+    ("Ç" (make-wide "<check>")) ;; Alt-C
+    ("<#192>" (make-fraction)) ;; Alt-f
+    ("<#192> var" (make 'tfrac))
+    ("<#192> var var" (make 'dfrac))
+    ("<#192> var var var" (make 'frac*))
+    ("<#192> var var var var" (make 'cfrac))
+    ("Ø" (make 'op)) ;; Alt-O
+    ("ÿ" (make-sqrt)) ;; Alt-s
+    ("ÿ var" (make-var-sqrt))
+    ("dagger" (make 'tabular)) ;; Alt-t
+    ("dagger var" (make 'tabular*))
+    ("dagger var var" (make 'block))
+    ("dagger var var var" (make 'block*))
+    ("dagger var var var var" (make 'stack))
+    ("lozenge" (make-wide "<vect>")) ;; Alt-V
+
+    ("geq" (make-wide "<dot>")) ;; Alt-.
+    ("geq var" (make-wide "<ddot>"))
+    ("geq var var" (make-wide "<dddot>"))
+    ("geq var var var" (make-wide "<ddddot>"))
+    ("æ" (make-wide "<acute>")) ;; Alt-'
+    ("Æ" (make-wide "<ddot>")) ;; Alt-"
+    ("Æ var" (make-wide "<dddot>"))
+    ("Æ var var" (make-wide "<ddddot>"))
+    ("" (make-wide "^")) ;; Alt-^
+    ("" (make-wide "<wide-bar>")) ;; Alt--
+    ("" (make-wide-under "<wide-bar>")) ;; Alt-_
+
+    ("{ dagger" (make 'choice)) ;; { Alt-t
+    ("( dagger" (make 'matrix))
+    ("[ dagger" (make 'bmatrix))
+    ("| dagger" (make 'det))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main keyboard shortcuts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (kbd-map
   (:mode in-math?)
   ;; must come first in order not to screw the menus up
@@ -177,6 +225,15 @@
   ("table N m" (make 'matrix))
   ("table N d" (make 'det))
   ("table N s" (make 'stack))
+  ("math t" (make 'tabular))
+  ("math t var" (make 'tabular*))
+  ("math t var var" (make 'block))
+  ("math t var var var" (make 'block*))
+  ("math t var var var var" (make 'stack))
+  ("{ math t" (make 'choice))
+  ("( math t" (make 'matrix))
+  ("[ math t" (make 'bmatrix))
+  ("| math t" (make 'det))
 
   ("font R" (make-with "math-font" "roman"))
   ("font K" (make-with "math-font" "concrete"))
