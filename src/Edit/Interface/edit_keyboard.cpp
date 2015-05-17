@@ -230,8 +230,12 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
 #ifdef USE_EXCEPTIONS
   try {
 #endif
-    if (DEBUG_KEYBOARD)
+    if (DEBUG_KEYBOARD) {
+      //for (int i=0; i<N(key); i++)
+      //  cout << ((int) (unsigned char) key[i]) << " ";
+      //cout << "\n";
       debug_keyboard << "Pressed " << key << " at " << t << "\n";
+    }
     //time_t t1= texmacs_time ();
     if (is_nil (eb)) apply_changes ();
     start_editing ();
