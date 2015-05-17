@@ -248,19 +248,21 @@
   '("~" "^" "<bar>" "<vect>" "<check>" "<breve>" "<invbreve>"))
 
 (define wide-list-2
-  '("<acute>" "<grave>" "<dot>" "<ddot>" "<abovering>"))
+  '("<acute>" "<grave>" "<dot>" "<ddot>" "<dddot>" "<ddddot>" "<abovering>"))
 
 (define wide-list-3
   '("<wide-overbrace>" "<wide-underbrace*>"
     "<wide-poverbrace>" "<wide-punderbrace*>"
-    "<wide-sqoverbrace>" "<wide-squnderbrace*>"
-    "<wide-varrightarrow>" "<wide-varleftarrow>" "<wide-bar>"))
+    "<wide-sqoverbrace>" "<wide-squnderbrace*>"))
 
 (define wide-list-4
   '("<wide-underbrace>" "<wide-overbrace*>"
     "<wide-punderbrace>" "<wide-poverbrace*>"
-    "<wide-squnderbrace>" "<wide-sqoverbrace*>"
-    "<wide-varrightarrow>" "<wide-varleftarrow>" "<wide-bar>"))
+    "<wide-squnderbrace>" "<wide-sqoverbrace*>"))
+
+(define wide-list-5
+  '("<wide-varrightarrow>" "<wide-varleftarrow>"
+    "<wide-varleftrightarrow>" "<wide-bar>"))
 
 (tm-define (variant-circulate t forward?)
   (:require (tree-in? t '(wide wide*)))
@@ -277,7 +279,10 @@
           (tree-set t 1 (list-ref wide-list-3 j))))
       (and-with i (list-find-index wide-list-4 (lambda (x) (== x s)))
         (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-4))
-          (tree-set t 1 (list-ref wide-list-4 j)))))))
+          (tree-set t 1 (list-ref wide-list-4 j))))
+      (and-with i (list-find-index wide-list-5 (lambda (x) (== x s)))
+        (with j (modulo (+ i (if forward? 1 -1)) (length wide-list-5))
+          (tree-set t 1 (list-ref wide-list-5 j)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wide arrows

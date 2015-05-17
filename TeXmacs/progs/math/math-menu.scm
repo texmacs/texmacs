@@ -1056,6 +1056,8 @@
       ("Grave" (make-wide "<grave>"))
       ("Dot" (make-wide "<dot>"))
       ("Two dots" (make-wide "<ddot>"))
+      ("Three dots" (make-wide "<dddot>"))
+      ("Four dots" (make-wide "<ddddot>"))
       ("Circle" (make-wide "<abovering>"))
       ---
       ("Overbrace" (make-wide "<wide-overbrace>"))
@@ -1064,8 +1066,10 @@
       ("Round underbrace" (make-wide "<wide-punderbrace*>"))
       ("Square overbrace" (make-wide "<wide-sqoverbrace>"))
       ("Square underbrace" (make-wide "<wide-squnderbrace*>"))
+      ---
       ("Right arrow" (make-wide "<wide-varrightarrow>"))
       ("Left arrow" (make-wide "<wide-varleftarrow>"))
+      ("Left-right arrow" (make-wide "<wide-varleftrightarrow>"))
       ("Wide bar" (make-wide "<wide-bar>")))
   (-> "Accent below"
       ("Tilda" (make-wide-under "~"))
@@ -1080,6 +1084,8 @@
       ("Grave" (make-wide-under "<grave>"))
       ("Dot" (make-wide-under "<dot>"))
       ("Two dots" (make-wide-under "<ddot>"))
+      ("Three dots" (make-wide-under "<dddot>"))
+      ("Four dots" (make-wide-under "<ddddot>"))
       ("Circle" (make-wide-under "<abovering>"))
       ---
       ("Overbrace" (make-wide-under "<wide-overbrace*>"))
@@ -1088,8 +1094,10 @@
       ("Round underbrace" (make-wide-under "<wide-punderbrace>"))
       ("Square overbrace" (make-wide-under "<wide-sqoverbrace*>"))
       ("Square underbrace" (make-wide-under "<wide-squnderbrace>"))
+      ---
       ("Right arrow" (make-wide-under "<wide-varrightarrow>"))
       ("Left arrow" (make-wide-under "<wide-varleftarrow>"))
+      ("Left-right arrow" (make-wide-under "<wide-varleftrightarrow>"))
       ("Wide bar" (make-wide-under "<wide-bar>")))
   (-> "Symbol" (link symbol-menu))
   (-> "Textual operator" (link textual-operator-menu))
