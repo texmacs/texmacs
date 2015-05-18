@@ -139,6 +139,12 @@
 ;; Triangle with text inside
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-group graphical-contains-curve-tag
+  arrow-with-text arrow-with-text*)
+
+(define-group graphical-contains-text-tag
+  triangle-with-text)
+
 (tm-define (graphics-incomplete? obj)
   (:require (tm-is? obj 'triangle-with-text))
   ;;(display* "incomplete? " obj " -> " (< (tm-arity obj) 3) "\n")
@@ -170,15 +176,21 @@
        (with "text-at-halign" "center" "text-at-valign" "center"
          (text-at ,(tm-ref t 0) ,p)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Arrow or line with text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-graphics (arrow-with-text P1 P2 T)
+  (arrow-with-text-sub P1 P2 T 1.0))
+
+(define-graphics (arrow-with-text* P1 P2 T)
+  (arrow-with-text-sub P1 P2 T -1.0))
+
 (define-group graphical-contains-curve-tag
   arrow-with-text arrow-with-text*)
 
 (define-group graphical-contains-text-tag
-  triangle-with-text)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Arrow or line with text
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  arrow-with-text arrow-with-text*)
 
 (define-group variant-tag
   (arrow-with-text-tag))
@@ -229,14 +241,10 @@
        (with "text-at-halign" ,ha "text-at-valign" ,va
          (math-at (small ,(tm-ref t 0)) ,(complex->point c))))))
 
-(define-graphics (arrow-with-text P1 P2 T)
-  (arrow-with-text-sub P1 P2 T 1.0))
-
-(define-graphics (arrow-with-text* P1 P2 T)
-  (arrow-with-text-sub P1 P2 T -1.0))
-
-(define-group graphical-contains-curve-tag
-  arrow-with-text arrow-with-text*)
-
-(define-group graphical-contains-text-tag
-  arrow-with-text arrow-with-text*)
+(tm-define (kbd-remove t forwards?)
+  (:require (and (tree-in? t '(arrow-with-text arrow-with-text*))
+                 (tree-down t)
+                 (== (tree-index (tree-down t)) 2)
+                 (tree-func? (tree-down t) 'math-at 1)
+                 (tree-empty? (tree-ref t 2 0))))
+  (tree-set t `(line ,(tree-ref t 0) ,(tree-ref t 1))))
