@@ -523,7 +523,12 @@ upgrade_big (tree t) {
 
 static tree
 downgrade_bracket (tree t, bool large) {
-  if (!is_atomic (t)) return t;
+  if (!is_atomic (t)) {
+    if (large && N(t) > 0)
+      if (is_func (t, LEFT) || is_func (t, MID) || is_func (t, RIGHT))
+	return t[0];
+    return t;
+  }
   string s= t->label;
   if (large) {
     if (t == "<nobracket>") return tree (".");
