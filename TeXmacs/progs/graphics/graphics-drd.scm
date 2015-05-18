@@ -29,6 +29,9 @@
 (define-group graphical-text-tag
   text-at math-at)
 
+(define-group graphical-contains-curve-tag
+  (graphical-curve-tag))
+
 (define-group graphical-contains-text-tag
   (graphical-text-tag))
 

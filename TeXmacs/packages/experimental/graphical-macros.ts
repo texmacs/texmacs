@@ -54,7 +54,15 @@
 
   <assign|triangle-with-text|<macro|p1|p2|p3|t|<extern|triangle-with-text|<arg|p1>|<arg|p2>|<arg|p3>|<quote-arg|t>>>>
 
+  <assign|arrow-with-text|<macro|p1|p2|t|<extern|arrow-with-text|<arg|p1>|<arg|p2>|<quote-arg|t>>>>
+
+  <assign|arrow-with-text*|<macro|p1|p2|t|<extern|arrow-with-text*|<arg|p1>|<arg|p2>|<quote-arg|t>>>>
+
   <drd-props|triangle-with-text|arity|4|accessible|3>
+
+  <drd-props|arrow-with-text|arity|3|accessible|2>
+
+  <drd-props|arrow-with-text*|arity|3|accessible|2>
 
   \;
 </body>

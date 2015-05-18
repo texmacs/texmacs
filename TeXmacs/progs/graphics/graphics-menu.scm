@@ -119,7 +119,8 @@
       ---
       ("Cartesian"   (graphics-set-visual-grid 'cartesian))
       ("Polar"       (graphics-set-visual-grid 'polar))
-      ("Logarithmic" (graphics-set-visual-grid 'logarithmic)))
+      ("Logarithmic" (graphics-set-visual-grid 'logarithmic))
+      ("Notebook"    (graphics-set-notebook-grid)))
   (when (!= (graphics-get-grid-type #t) 'empty)
     (-> "Center"
 	("Default"      (graphics-set-grid-center "0" "0" #t))

@@ -348,6 +348,12 @@
         (set-message "Left click: new object" "")
         (graphics-decorations-reset))))
 
+(define (inside-graphical-text?)
+  (and-with l (select-first (s2f current-x) (s2f current-y))
+    (and-with p (and (nnull? l) (car l))
+      (and-with t (path->tree (cDr p))
+	(not (tree-in? t '(text-at math-at)))))))
+
 (tm-define (edit_left-button mode x y)
   (:require (== mode 'edit))
   (:state graphics-state)
@@ -358,11 +364,13 @@
              (next-point)))
         ((and (current-in? (graphical-text-tag-list))
               (== (car (graphics-mode)) 'edit)
-              (graphical-contains-text-tag? (cadr (graphics-mode))))
+              (graphical-contains-text-tag? (cadr (graphics-mode)))
+              (not (graphical-contains-curve-tag? (cadr (graphics-mode))))
+	      (inside-graphical-text?))
          (set-texmacs-pointer 'text-arrow)
          (go-to (car (select-first (s2f current-x) (s2f current-y)))))
         (else
-         (edit-insert x y)))
+	 (edit-insert x y)))
   (set! previous-leftclick `(point ,current-x ,current-y)))
 
 (tm-define (edit_middle-button mode x y)

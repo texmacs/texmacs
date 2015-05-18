@@ -98,6 +98,8 @@
   ("Draw image" (make-graphics))
   (when (selection-active-small?)
     ("Draw over selection" (make-graphics-over-selection)))
+  (if (in-math?)
+      ("Commutative diagram" (make-cd)))
   ("Link image" (choose-file make-link-image "Load image" "image"))
   ("Insert image" (choose-file make-inline-image "Load image" "image"))
   (if (detailed-menus?)

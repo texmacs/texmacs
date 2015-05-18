@@ -23,6 +23,33 @@
 ;;   below, this code is clean.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Commutative diagrams
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-set-notebook-grid)
+  (graphics-set-visual-grid 'cartesian)
+  (graphics-set-unit "1cm")
+  (graphics-set-grid-aspect 'detailed 2 #t)
+  (graphics-set-grid-color 'subunits "#e0e0ff")
+  (delayed
+    (:idle 1)
+    (graphics-set-grid-color 'units "#e0e0ff")
+    (delayed
+      (:idle 1)
+      (graphics-set-grid-color 'axes "#e0e0ff"))))
+
+(tm-define (make-cd)
+  (make-graphics)
+  (delayed
+    (:idle 1)
+    (add-style-package "graphical-macros")
+    (graphics-set-extents "8.1cm" "3.1cm")
+    (graphics-set-text-at-halign "center")
+    (graphics-set-arrow-end "<gtr>")
+    (graphics-set-mode '(edit math-at))
+    (graphics-set-notebook-grid)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global properties of graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
