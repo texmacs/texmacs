@@ -38,11 +38,12 @@
     ("Ø" (make 'op)) ;; Alt-O
     ("ÿ" (make-sqrt)) ;; Alt-s
     ("ÿ var" (make-var-sqrt))
-    ("dagger" (make 'tabular)) ;; Alt-t
-    ("dagger var" (make 'tabular*))
-    ("dagger var var" (make 'block))
-    ("dagger var var var" (make 'block*))
-    ("dagger var var var var" (make 'stack))
+    ("dagger" (make 'tabular*)) ;; Alt-t
+    ("dagger var" (make 'matrix))
+    ("dagger var var" (make 'det))
+    ("dagger var var var" (make 'bmatrix))
+    ("dagger var var var var" (make 'choice))
+    ("dagger var var var var var" (make 'stack))
     ("lozenge" (make-wide "<vect>")) ;; Alt-V
 
     ("geq" (make-wide "<dot>")) ;; Alt-.
@@ -225,15 +226,16 @@
   ("table N m" (make 'matrix))
   ("table N d" (make 'det))
   ("table N s" (make 'stack))
-  ("math t" (make 'tabular))
-  ("math t var" (make 'tabular*))
-  ("math t var var" (make 'block))
-  ("math t var var var" (make 'block*))
-  ("math t var var var var" (make 'stack))
   ("{ math t" (make 'choice))
   ("( math t" (make 'matrix))
   ("[ math t" (make 'bmatrix))
   ("| math t" (make 'det))
+  ("math t" (make 'tabular*))
+  ("math t var" (make 'matrix))
+  ("math t var var" (make 'det))
+  ("math t var var var" (make 'bmatrix))
+  ("math t var var var var" (make 'choice))
+  ("math t var var var var var" (make 'stack))
 
   ("font R" (make-with "math-font" "roman"))
   ("font K" (make-with "math-font" "concrete"))
