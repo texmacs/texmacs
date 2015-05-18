@@ -42,7 +42,6 @@
   (make-graphics)
   (delayed
     (:idle 1)
-    (add-style-package "graphical-macros")
     (graphics-set-extents "8.1cm" "3.1cm")
     (graphics-set-text-at-halign "center")
     (graphics-set-arrow-end "<gtr>")

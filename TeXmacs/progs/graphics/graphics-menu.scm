@@ -270,9 +270,11 @@
   ("Mathematics" (graphics-set-mode '(edit math-at)))
   (assuming (style-has? "std-markup-dtd")
     ---
-    (for (tag (sort gr-tags-user symbol<=?))
-      ((eval (upcase-first (symbol->string tag)))
-       (graphics-set-mode `(edit ,tag)))))
+    (with l (list-union gr-tags-user '(arrow-with-text arrow-with-text*))
+      (for (tag (sort l symbol<=?))
+        ((eval (upcase-first (symbol->string tag)))
+         (import-from (graphics graphics-markup))
+         (graphics-set-mode `(edit ,tag))))))
   ---
   ("Set properties" (graphics-set-mode '(group-edit props)))
   ("Move objects" (graphics-set-mode '(group-edit move)))

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std>>
 
@@ -53,6 +53,14 @@
       </with>
     </with>
   </macro>>
+
+  <assign|arrow-with-text|<macro|p1|p2|t|<extern|arrow-with-text|<arg|p1>|<arg|p2>|<quote-arg|t>>>>
+
+  <assign|arrow-with-text*|<macro|p1|p2|t|<extern|arrow-with-text*|<arg|p1>|<arg|p2>|<quote-arg|t>>>>
+
+  <drd-props|arrow-with-text|arity|3|accessible|2>
+
+  <drd-props|arrow-with-text*|arity|3|accessible|2>
 
   <\active*>
     <\src-comment>
