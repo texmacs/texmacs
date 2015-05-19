@@ -128,12 +128,11 @@
 (define (go-to* p)
   (go-to p)
   (when (and (not (cursor-accessible?)) (not (in-source?)))
-    (with p (cursor-path)
-      (cursor-show-hidden)
-      (delayed
-        (:pause 25)
-        (set! search-serial (+ search-serial 1))
-        (perform-search-sub 100 #f)))))
+    (cursor-show-hidden)
+    (delayed
+      (:pause 25)
+      (set! search-serial (+ search-serial 1))
+      (perform-search-sub 100 #f))))
 
 (define (perform-search-sub limit top?)
   (let* ((what (buffer-get-body (search-buffer)))
@@ -382,6 +381,13 @@
   (when (in? key '("F3" "C-f" "A-f" "M-f" "C-g" "A-g" "M-g" "C-s" "A-s" "M-s"))
     (set! pending-key-strokes last-search)))
 
+(define (notify-bar-change)
+  ;; FIXME: not clear what is the most appriate setting here
+  ;; The value 127 is safest, but causes the whole document to be re-typeset
+  (if (style-has? "beamer-style")
+      (notify-change 127)
+      (notify-change 68)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -559,12 +565,12 @@
   (show-bottom-tools 0 #t)
   (search-toolbar-search "")
   (wait-for-toolbar)
-  (notify-change 68)
+  (notify-bar-change)
   (delayed
     (:idle 250)
     (keyboard-focus-on "search")
     (search-toolbar-search pending-key-strokes)
-    (notify-change 68)
+    (notify-bar-change)
     (stop-waiting-for-toolbar)))
 
 (tm-define (toolbar-search-end)
@@ -575,8 +581,11 @@
   (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #f)
   (set! search-serial (+ search-serial 1))
+  (set! pending-key-strokes "")
   (when toolbar-db-active?
-    (db-show-toolbar)))
+    (db-show-toolbar))
+  (when (and (not (cursor-accessible?)) (not (in-source?)))
+    (cursor-show-hidden)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Replace toolbar
@@ -652,12 +661,12 @@
   (show-bottom-tools 0 #t)
   (search-toolbar-search "")
   (wait-for-toolbar)
-  (notify-change 68)
+  (notify-bar-change)
   (delayed
     (:idle 250)
     (keyboard-focus-on "replace-what")
     (search-toolbar-search pending-key-strokes)
-    (notify-change 68)
+    (notify-bar-change)
     (stop-waiting-for-toolbar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
