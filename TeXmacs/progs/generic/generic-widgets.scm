@@ -341,6 +341,7 @@
 
 (define waiting-for-toolbar? #f)
 (define pending-key-strokes "")
+(define last-search "")
 
 (define (wait-for-toolbar)
   (set! waiting-for-toolbar? #t)
@@ -356,7 +357,9 @@
 (tm-define (keyboard-press key time)
   (:require waiting-for-toolbar?)
   (when (== (tmstring-length key) 1)
-    (set! pending-key-strokes (string-append pending-key-strokes key))))
+    (set! pending-key-strokes (string-append pending-key-strokes key)))
+  (when (in? key '("F3" "C-f" "A-f" "M-f" "C-g" "A-g" "M-g" "C-s" "A-s" "M-s"))
+    (set! pending-key-strokes last-search)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search widget
@@ -476,6 +479,7 @@
 (tm-define (search-toolbar-keypress what r?)
   (with key (and (pair? what) (cadr what))
     (if (pair? what) (set! what (car what)))
+    (set! last-search what)
     (cond ((== key "home") (search-extreme-match #f))
           ((== key "end") (search-extreme-match #t))
           ((== key "up") (search-next-match #f))
@@ -539,7 +543,9 @@
     (keyboard-focus-on "search")
     (perform-search)
     (notify-change 68)
-    (stop-waiting-for-toolbar)))
+    (stop-waiting-for-toolbar)
+    (when (!= pending-key-strokes "")
+      (search-toolbar-search pending-key-strokes))))
 
 (tm-define (toolbar-search-end)
   (cancel-alt-selection "alternate")
@@ -631,7 +637,9 @@
     (keyboard-focus-on "replace-what")
     (perform-search)
     (notify-change 68)
-    (stop-waiting-for-toolbar)))
+    (stop-waiting-for-toolbar)
+    (when (!= pending-key-strokes "")
+      (search-toolbar-search pending-key-strokes))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hiding paragraphs which do not match
