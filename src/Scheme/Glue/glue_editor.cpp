@@ -1787,6 +1787,15 @@ tmg_go_to_label (tmscm arg1) {
 }
 
 tmscm
+tmg_cursor_accessibleP () {
+  // TMSCM_DEFER_INTS;
+  bool out= get_current_editor()->cursor_is_accessible ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_cursor_show_if_hidden () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->show_cursor_if_hidden ();
@@ -3216,6 +3225,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("go-start-paragraph",  tmg_go_start_paragraph, 0, 0, 0);
   tmscm_install_procedure ("go-end-paragraph",  tmg_go_end_paragraph, 0, 0, 0);
   tmscm_install_procedure ("go-to-label",  tmg_go_to_label, 1, 0, 0);
+  tmscm_install_procedure ("cursor-accessible?",  tmg_cursor_accessibleP, 0, 0, 0);
   tmscm_install_procedure ("cursor-show-if-hidden",  tmg_cursor_show_if_hidden, 0, 0, 0);
   tmscm_install_procedure ("select-all",  tmg_select_all, 0, 0, 0);
   tmscm_install_procedure ("select-line",  tmg_select_line, 0, 0, 0);

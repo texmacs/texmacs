@@ -490,6 +490,11 @@ search_label (tree t, string which) {
   }
 }
 
+bool
+edit_cursor_rep::cursor_is_accessible () {
+  return is_accessible_cursor (et, tp);
+}
+
 void
 edit_cursor_rep::show_cursor_if_hidden () {
   if (!is_accessible_cursor (et, tp) && !in_source ()) {

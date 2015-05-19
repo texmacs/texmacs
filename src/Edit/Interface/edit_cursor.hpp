@@ -28,6 +28,7 @@ protected:
   cursor& the_cursor ();
   cursor& the_ghost_cursor ();
 
+  bool cursor_is_accessible ();
   path make_cursor_accessible (path p, bool forwards);
   path tree_path (path sp, SI x, SI y, SI delta);
   bool cursor_move_sub (SI& x0, SI& y0, SI& delta, SI dx, SI dy);

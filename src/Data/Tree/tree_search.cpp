@@ -58,6 +58,7 @@ merge (range_set& sel, range_set ssel) {
 static bool
 is_accessible_for_search (tree t, int i) {
   if (is_accessible_child (t, i)) return true;
+  if (is_func (t, HIDDEN)) return true;
   if (get_access_mode () != DRD_ACCESS_SOURCE) return false;
   if (is_func (t, RAW_DATA)) return false;
   return i >= 0 && i < N(t);

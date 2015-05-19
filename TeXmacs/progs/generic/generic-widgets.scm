@@ -125,11 +125,22 @@
       (set-access-mode old-mode)
       r)))
 
-(define (perform-search-sub limit)
+(define (go-to* p)
+  (go-to p)
+  (when (and (not (cursor-accessible?)) (not (in-source?)))
+    (with p (cursor-path)
+      (cursor-show-hidden)
+      (delayed
+        (:pause 25)
+        (set! search-serial (+ search-serial 1))
+        (perform-search-sub 100 #f)))))
+
+(define (perform-search-sub limit top?)
   (let* ((what (buffer-get-body (search-buffer)))
          (ok? #t)
 	 (too-many-matches? #f)
-	 (serial search-serial))
+	 (serial search-serial)
+         (go-to** (if top? go-to* go-to)))
     (when (tm-func? what 'document 1)
       (set! what (tm-ref what 0)))
     (when (tm-func? what 'inactive 1)
@@ -141,7 +152,7 @@
           (begin
             (selection-cancel)
             (cancel-alt-selection "alternate")
-            (go-to (get-search-reference #t)))
+            (go-to** (get-search-reference #t)))
           (let* ((t (buffer-tree))
                  (sels* (tree-perform-search t what (tree->path t) limit))
                  (sels (filter-search-results sels*)))
@@ -152,7 +163,7 @@
 		  ((null? sels)
 		   (selection-cancel)
 		   (cancel-alt-selection "alternate")
-		   (go-to (get-search-reference #t))
+		   (go-to** (get-search-reference #t))
 		   (set! ok? #f))
 		  (else
 		   (set-alt-selection "alternate" sels)
@@ -168,11 +179,11 @@
       (delayed
 	(:pause limit)
 	(when (== serial search-serial)
-	  (perform-search-sub (* 2 limit)))))))
+	  (perform-search-sub (* 2 limit) top?))))))
 
 (define (perform-search*)
   (set! search-serial (+ search-serial 1))
-  (perform-search-sub 100))
+  (perform-search-sub 100 #t))
 
 (define (perform-search)
   (search-show-only)
@@ -223,7 +234,7 @@
                            (search-next sels cur strict?)
                            (search-previous sels cur strict?))
            (selection-set-range-set sel)
-           (go-to (car sel))
+           (go-to* (car sel))
            (when strict? (set-search-reference (car sel)))
            #t))))
 
@@ -234,7 +245,7 @@
                            (list (cAr (cDr sels)) (cAr sels))
                            (list (car sels) (cadr sels)))
            (selection-set-range-set sel)
-           (go-to (car sel))
+           (go-to* (car sel))
            (set-search-reference (car sel))))))
 
 (tm-define (search-next-match forward?)
@@ -272,7 +283,7 @@
          (cur (get-search-reference #t)))
     (and (nnull? sels)
          (and-with sel (search-next sels cur #f)
-           (go-to (car sel))
+           (go-to* (car sel))
            (selection-set-range-set sel)
            (clipboard-cut "dummy")
            (insert-go-to (tree-copy by) (path-end by '()))
@@ -548,9 +559,11 @@
   (show-bottom-tools 0 #t)
   (search-toolbar-search "")
   (wait-for-toolbar)
+  (notify-change 68)
   (delayed
     (:idle 250)
     (keyboard-focus-on "search")
+    ;;(search-toolbar-search pending-key-strokes)
     (perform-search)
     (notify-change 68)
     (stop-waiting-for-toolbar)
@@ -642,6 +655,7 @@
   (show-bottom-tools 0 #t)
   (search-toolbar-search "")
   (wait-for-toolbar)
+  (notify-change 68)
   (delayed
     (:idle 250)
     (keyboard-focus-on "replace-what")
