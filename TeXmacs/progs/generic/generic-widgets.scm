@@ -563,12 +563,10 @@
   (delayed
     (:idle 250)
     (keyboard-focus-on "search")
-    ;;(search-toolbar-search pending-key-strokes)
+    (search-toolbar-search pending-key-strokes)
     (perform-search)
     (notify-change 68)
-    (stop-waiting-for-toolbar)
-    (when (!= pending-key-strokes "")
-      (search-toolbar-search pending-key-strokes))))
+    (stop-waiting-for-toolbar)))
 
 (tm-define (toolbar-search-end)
   (cancel-alt-selection "alternate")
@@ -659,11 +657,9 @@
   (delayed
     (:idle 250)
     (keyboard-focus-on "replace-what")
-    (perform-search)
+    (search-toolbar-search pending-key-strokes)
     (notify-change 68)
-    (stop-waiting-for-toolbar)
-    (when (!= pending-key-strokes "")
-      (search-toolbar-search pending-key-strokes))))
+    (stop-waiting-for-toolbar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hiding paragraphs which do not match
