@@ -564,7 +564,6 @@
     (:idle 250)
     (keyboard-focus-on "search")
     (search-toolbar-search pending-key-strokes)
-    (perform-search)
     (notify-change 68)
     (stop-waiting-for-toolbar)))
 
