@@ -156,7 +156,7 @@
          (w (type->width type))
          (setter (lambda (x)
 		   (when x
-		     (tree-set (focus-tree) i (inputter-encode x type))))))
+                     (tree-set (focus-tree) i (inputter-encode x type))))))
     (assuming (== name "")
       //)
     (assuming (!= name "")

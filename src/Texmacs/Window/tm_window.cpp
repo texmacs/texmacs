@@ -317,6 +317,12 @@ tm_window_rep::refresh () {
 * Menus
 ******************************************************************************/
 
+#ifdef QTTEXMACS
+bool menu_caching= false;
+#else
+bool menu_caching= true;
+#endif
+
 bool
 tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   object xmenu= call ("menu-expand", eval ("'" * menu));
@@ -333,7 +339,7 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   //cout << "Compute " << menu << "\n";
   object umenu= eval ("'" * menu);
   w= make_menu_widget (umenu);
-  menu_cache (xmenu)= w;
+  if (menu_caching) menu_cache (xmenu)= w;
   return true;
 }
 

@@ -809,6 +809,7 @@ END_SLOT
  ******************************************************************************/
 
 widget make_menu_widget (object wid);
+extern bool menu_caching;
 
 QTMRefreshWidget::QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _kind)
 : QWidget (), strwid (_strwid), kind (_kind),
@@ -841,7 +842,7 @@ QTMRefreshWidget::recompute (string what) {
     object uwid = eval (s);
     cur = make_menu_widget (uwid);
     tmwid->add_child (cur); // FIXME?! Is this ok? what when we refresh?
-    cache (xwid) = cur;
+    if (menu_caching) cache (xwid) = cur;
     return true;
   }
 }

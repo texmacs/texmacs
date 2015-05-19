@@ -14,6 +14,7 @@
 #include "scheme.hpp"
 
 widget make_menu_widget (object wid);
+extern bool menu_caching;
 
 /******************************************************************************
 * Refresh widgets
@@ -65,7 +66,7 @@ refresh_widget_rep::recompute (string what) {
     //cout << "uwid= " << uwid << "\n";
     cur= make_menu_widget (uwid);
     //cout << "cur= " << cur << "\n";
-    cache (xwid)= cur;
+    if (menu_caching) cache (xwid)= cur;
     return true;
   }
 }
