@@ -44,7 +44,9 @@ struct virtual_font_rep: font_rep {
 
   bool supports (string c);
   void get_extents (string s, metric& ex);
+  void get_xpositions (string s, SI* xpos, SI xk);
   void draw_fixed (renderer ren, string s, SI x, SI y);
+  void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font magnify (double zoom);
 
   double get_left_slope (string s);
@@ -587,6 +589,16 @@ virtual_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
+virtual_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
+  metric ex;
+  get_extents (s, ex);
+  xpos[0]= ex->x1 + xk;
+  xpos[N(s)]= ex->x2 + xk;
+  for (int i=1; i<N(s); i++)
+    xpos[i]= (xpos[0] + xpos[N(s)]) >> 1;
+}
+
+void
 virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (ren->is_screen) {
     font_metric cfnm;
@@ -598,6 +610,11 @@ virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
     tree t= get_tree (s);
     if (t != "") draw (ren, t, x, y);
   }
+}
+
+void
+virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
+  draw_fixed (ren, s, x+xk, y);
 }
 
 font
