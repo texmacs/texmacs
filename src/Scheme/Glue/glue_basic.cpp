@@ -2410,6 +2410,28 @@ tmg_tag_possible_arityP (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_set_access_mode (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "set-access-mode");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= set_access_mode (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_access_mode () {
+  // TMSCM_DEFER_INTS;
+  int out= get_access_mode ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_assign (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree-assign");
   TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "tree-assign");
@@ -9155,6 +9177,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tag-minimal-arity",  tmg_tag_minimal_arity, 1, 0, 0);
   tmscm_install_procedure ("tag-maximal-arity",  tmg_tag_maximal_arity, 1, 0, 0);
   tmscm_install_procedure ("tag-possible-arity?",  tmg_tag_possible_arityP, 2, 0, 0);
+  tmscm_install_procedure ("set-access-mode",  tmg_set_access_mode, 1, 0, 0);
+  tmscm_install_procedure ("get-access-mode",  tmg_get_access_mode, 0, 0, 0);
   tmscm_install_procedure ("tree-assign",  tmg_tree_assign, 2, 0, 0);
   tmscm_install_procedure ("tree-var-insert",  tmg_tree_var_insert, 3, 0, 0);
   tmscm_install_procedure ("tree-remove",  tmg_tree_remove, 3, 0, 0);

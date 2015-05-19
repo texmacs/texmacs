@@ -12,6 +12,7 @@
 #include "tree_search.hpp"
 #include "analyze.hpp"
 #include "boot.hpp"
+#include "drd_mode.hpp"
 
 int  search_max_hits= 1000000;
 bool blank_match_flag= false;
@@ -52,6 +53,14 @@ merge (range_set& sel, range_set ssel) {
   for (int i=0; i+1<N(ssel); i+=2)
     if (N(sel) == 0 || path_less_eq (sel[N(sel)-1], ssel[i]))
       sel << ssel[i] << ssel[i+1];
+}
+
+static bool
+is_accessible_for_search (tree t, int i) {
+  if (is_accessible_child (t, i)) return true;
+  if (get_access_mode () != DRD_ACCESS_SOURCE) return false;
+  if (is_func (t, RAW_DATA)) return false;
+  return i >= 0 && i < N(t);
 }
 
 /******************************************************************************
@@ -105,7 +114,7 @@ match_cascaded (tree t, tree what) {
   if (match (t, what)) return true;
   if (cascaded_match_flag && is_compound (t))
     for (int i=0; i<N(t); i++)
-      if (is_accessible_child (t, i))
+      if (is_accessible_for_search (t, i))
         if (match_cascaded (t[i], what))
           return true;
   return false;
@@ -253,7 +262,7 @@ search_compound (range_set& sel, tree t, tree what, path p) {
     return;
   }
   for (int i=0; i<N(t); i++)
-    if (is_accessible_child (t, i))
+    if (is_accessible_for_search (t, i))
       search (sel, t[i], what, p * i);
 }
 
@@ -375,7 +384,7 @@ select_direct (range_set& sel, tree t, tree what, path p) {
 void
 select_cascaded (range_set& sel, tree t, tree what, path p) {
   for (int i=0; i<N(t); i++)
-    if (is_accessible_child (t, i))
+    if (is_accessible_for_search (t, i))
       select (sel, t[i], what, p*i);  
 }
 

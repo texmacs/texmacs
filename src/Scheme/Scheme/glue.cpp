@@ -13,6 +13,7 @@
 
 #include "promise.hpp"
 #include "tree.hpp"
+#include "drd_mode.hpp"
 #include "tree_search.hpp"
 #include "modification.hpp"
 #include "patch.hpp"

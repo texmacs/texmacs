@@ -219,6 +219,8 @@
   (tag-minimal-arity minimal_arity (int tree_label))
   (tag-maximal-arity maximal_arity (int tree_label))
   (tag-possible-arity? correct_arity (bool tree_label int))
+  (set-access-mode set_access_mode (int int))
+  (get-access-mode get_access_mode (int))
 
   (tree-assign tree_assign (tree tree content))
   (tree-var-insert tree_insert (tree tree int content))
