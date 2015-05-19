@@ -335,6 +335,30 @@
   ("std 3" (insert '(wildcard "z"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hacks for keyboard events between the moments that
+;; a search was triggered and that the search bar actually shows up
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define waiting-for-toolbar? #f)
+(define pending-key-strokes "")
+
+(define (wait-for-toolbar)
+  (set! waiting-for-toolbar? #t)
+  (set! pending-key-strokes "")
+  (delayed
+    (:pause 3000)
+    (when waiting-for-toolbar?
+      (stop-waiting-for-toolbar))))
+
+(define (stop-waiting-for-toolbar)
+  (set! waiting-for-toolbar? #f))
+
+(tm-define (keyboard-press key time)
+  (:require waiting-for-toolbar?)
+  (when (== (tmstring-length key) 1)
+    (set! pending-key-strokes (string-append pending-key-strokes key))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -479,7 +503,8 @@
     ;;  (texmacs-input `(document "")
     ;;                 `(style (tuple "generic"))
     ;;                 (search-buffer)))
-    (input (search-toolbar-keypress answer #f) "search" (list "") "25em")
+    (input (search-toolbar-keypress answer #f) "search"
+           (list pending-key-strokes) "25em")
     //
     ((balloon (icon "tm_search_first.xpm") "First occurrence")
      (search-extreme-match #f))
@@ -508,11 +533,13 @@
   (set! toolbar-replace-active? #f)
   (show-bottom-tools 0 #t)
   (search-toolbar-search "")
+  (wait-for-toolbar)
   (delayed
     (:idle 250)
     (keyboard-focus-on "search")
     (perform-search)
-    (notify-change 68)))
+    (notify-change 68)
+    (stop-waiting-for-toolbar)))
 
 (tm-define (toolbar-search-end)
   (cancel-alt-selection "alternate")
@@ -558,10 +585,12 @@
 (tm-widget (replace-toolbar)
   (hlist
     (text "Replace: ")
-    (input (search-toolbar-keypress answer #t) "replace-what" (list "") "15em")
+    (input (search-toolbar-keypress answer #t) "replace-what"
+           (list pending-key-strokes) "15em")
     //
     (text "by: ")
-    (input (replace-toolbar-keypress answer) "replace-by" (list "") "15em")
+    (input (replace-toolbar-keypress answer) "replace-by"
+           (list "") "15em")
     //
     ;;(if (nnull? (get-alt-selection "alternate"))
     ((balloon (icon "tm_search_first.xpm") "First occurrence")
@@ -596,11 +625,13 @@
   (set! toolbar-replace-active? #t)
   (show-bottom-tools 0 #t)
   (search-toolbar-search "")
+  (wait-for-toolbar)
   (delayed
     (:idle 250)
     (keyboard-focus-on "replace-what")
     (perform-search)
-    (notify-change 68)))
+    (notify-change 68)
+    (stop-waiting-for-toolbar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hiding paragraphs which do not match
