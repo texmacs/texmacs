@@ -157,6 +157,8 @@
     </src-comment>
   </active*>
 
+  <assign|index-enabled|true>
+
   <assign|index-prefix|idx>
 
   <assign|with-index|<macro|idx|body|<with|index-prefix|<arg|idx>|<arg|body>>>>
@@ -164,7 +166,7 @@
   <assign|index-line|<macro|key|entry|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><write|<value|index-prefix>|<tuple|<arg|key>||<arg|entry>>>>>>
 
-  <assign|index-write|<macro|entry|<style-with|src-compact|none|<auto-label><write|<value|index-prefix>|<tuple|<arg|entry>|<pageref|<the-auto>>>>>>>
+  <assign|index-write|<macro|entry|<style-with|src-compact|none|<if|<value|index-enabled>|<auto-label><write|<value|index-prefix>|<tuple|<arg|entry>|<pageref|<the-auto>>>>>>>>
 
   <assign|index|<macro|key|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><index-write|<tuple|<arg|key>>>>>>

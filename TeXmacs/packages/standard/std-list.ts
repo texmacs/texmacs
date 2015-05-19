@@ -86,7 +86,7 @@
 
   <assign|render-item|<macro|name|<assign|last-item|<arg|name>><current-item|<arg|name>>>>
 
-  <assign|item*|<macro|name|<set-binding|<arg|name>><render-item|<arg|name>>>>
+  <assign|item*|<macro|name|<render-item|<arg|name>><with|index-enabled|false|<set-binding|<arg|name>>>>>
 
   <assign|item|<macro|<next-item><render-item|<the-item>>>>
 
