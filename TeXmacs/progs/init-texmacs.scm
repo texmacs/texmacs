@@ -240,7 +240,8 @@
              graphics-release-left graphics-release-middle
              graphics-release-right graphics-start-drag-left
              graphics-dragging-left graphics-end-drag-left)
-(lazy-define (graphics graphics-markup) arrows-with-text arrows-with-text*)
+(lazy-define (graphics graphics-markup) arrow-with-text arrow-with-text*)
+(define-secure-symbols arrow-with-text arrow-with-text*)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
