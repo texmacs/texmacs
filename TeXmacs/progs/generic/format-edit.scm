@@ -221,7 +221,7 @@
 (tm-property (make-vspace-before spc)
   (:argument spc "Vertical space"))
 
-(tm-property (make-vspace-after)
+(tm-property (make-vspace-after spc)
   (:argument spc "Vertical space"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
