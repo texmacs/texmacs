@@ -939,6 +939,8 @@ bib_parse_fields (tree& t) {
   int nb= bib_get_fields (t, fields);
   array<tree> latex= bib_latex_array (
       latex_to_tree (parse_latex (cork_to_sourcecode (fields), false, false)));
+  //cout << "<<< " << t << LF;
+  //cout << ">>> " << latex << LF;
   for (int k=0; k<N(latex); k++)
     if (is_atomic (latex[k]) && is_hyper_link (latex[k]->label))
       latex[k]= compound ("slink", latex[k]);
