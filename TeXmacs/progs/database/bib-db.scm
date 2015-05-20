@@ -346,6 +346,12 @@
   (cond ((tm-atomic? t)
          (with r (locase-all (tm->string t))
            (if first? (upcase-first r) r)))
+        ((or (tm-func? t 'verbatim) (tm-func? t 'slink)) t)
+        ((and (tm-func? t 'with 3)
+              (tm-equal? (tm-ref t 0) "font-family")
+              (tm-equal? (tm-ref t 1) "tt")) t)
+        ((and (tm-func? t 'with 3)
+              (tm-equal? (tm-ref t 0) "math-font")) t)
         ((tm-func? t 'keepcase 1) t)
         (else
           (with l (tm-children t)

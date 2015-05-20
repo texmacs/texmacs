@@ -249,6 +249,8 @@ bib_change_first (tree& t, string (*change_fun) (string)) {
     return false;
   else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt")
     return false;
+  else if (is_func (t, WITH, 3) && t[0] == MATH_FONT)
+    return false;
   else {
     int pos= 0;
     if (L(t) == WITH) pos= N(t)-1;
@@ -312,6 +314,7 @@ bib_change_case (tree& t, string (*change_case) (string)) {
   else if (is_compound (t, "verbatim"));
   else if (is_compound (t, "slink"));
   else if (is_func (t, WITH, 3) && t[0] == FONT_FAMILY && t[1] == "tt");
+  else if (is_func (t, WITH, 3) && t[0] == MATH_FONT);
   else if (L(t) == WITH) bib_change_case (t[N(t)-1], change_case);
   else if (L(t) == as_tree_label ("keepcase")) t= t[0];
   else if (L(t) == CONCAT || L(t) == DOCUMENT)
