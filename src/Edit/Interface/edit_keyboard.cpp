@@ -121,7 +121,7 @@ edit_interface_rep::try_shortcut (string comb) {
 	    shorth == ""? 1: 3000);
     }
     if ((status & 1) == 1) cmd ();
-    else if (N(shorth) > 0) insert_tree (shorth);
+    else if (N(shorth) > 0) call ("kbd-insert", shorth);
     //cout << "Mark= " << sh_mark << "\n";
     return true;    
   }
@@ -174,13 +174,13 @@ edit_interface_rep::key_press (string gkey) {
     if ((i >= 32 && i <= 127) || (i >= 128 && i <= 255) || (i == 25))
       if (!inside_active_graphics ()) {
         archive_state ();
-        insert_tree (rew);
+        call ("kbd-insert", rew);
       }
     interrupt_shortcut ();
   }
   else if (contains_unicode_char (rew)) {
     archive_state ();
-    insert_tree (key);
+    call ("kbd-insert", key);
     interrupt_shortcut ();    
   }
   else if (DEBUG_KEYBOARD)

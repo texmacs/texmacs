@@ -291,7 +291,7 @@
   (:synopsis "Add symbols in @l to keyboard mapping")
   (define (fun s)
     (list s (string-append "insert#<" s ">")
-	  (list 'insert (string-append "<" s ">"))))
+	  (list 'kbd-insert (string-append "<" s ">"))))
   `(kbd-commands ,@(map fun l)))
 
 (tm-define (emulate-keyboard k)
