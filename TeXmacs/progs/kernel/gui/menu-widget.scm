@@ -147,10 +147,22 @@
 (define (greyed? style)
   (!= (logand style widget-style-grey) 0))
 
+(define (recursive-occurs? w t)
+  (cond ((string? t) (string-occurs? w t))
+        ((list? t) (list-or (map (cut recursive-occurs? w <>) t)))
+        (else #f)))
+
+(define (recursive-replace t w b)
+  (cond ((string? t) (string-replace t w b))
+        ((list? t) (map (cut recursive-replace <> w b) t))
+        (else t)))
+
 (define (adjust-translation s t)
-  (cond ((not (and (string? s) (qt-gui?) (os-macos?))) t)
-        ((string-starts? s "Preference")
-	 (string-replace (string-replace t "c" "<#441>") "e" "<#435>"))
+  (cond ((not (and (qt-gui?) (os-macos?))) t)
+        ((recursive-occurs? "reference" s)
+	 (recursive-replace (recursive-replace t "c" "<#441>") "e" "<#435>"))
+        ((recursive-occurs? "onfigur" s)
+	 (recursive-replace t "o" "<#43E>"))
         (else t)))
 
 (define (make-menu-label p style . opt)
@@ -211,7 +223,7 @@
 
 (define (make-menu-group s style)
   "Make @(group :string?) menu item."
-  (widget-menu-group (translate s) style))
+  (widget-menu-group (adjust-translation s (translate s)) style))
 
 (define (make-menu-text s style)
   "Make @(text :string?) menu item."

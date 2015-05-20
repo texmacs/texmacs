@@ -30,11 +30,11 @@
   ---
   (group "Configuration")
   ((replace "Open %1" (verbatim "my-init-texmacs.scm"))
-    (load-buffer 
-     (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm")))
+   (load-buffer 
+    (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm")))
   ((replace "Open %1" (verbatim "my-init-buffer.scm"))
-    (load-buffer 
-     (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm")))
-    ((replace "Open %1" (verbatim "preferences.scm"))
-    (load-buffer 
-     (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm"))))
+   (load-buffer 
+    (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm")))
+  ((replace "Open %1" (verbatim "preferences.scm"))
+   (load-buffer 
+    (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm"))))
