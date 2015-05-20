@@ -3951,6 +3951,25 @@ upgrade_quotes (tree t) {
 }
 
 /******************************************************************************
+* Upgrade ancient
+******************************************************************************/
+
+tree
+upgrade_rigid (tree t) {
+  // Miscellaneous upgrading routine for old documents
+  if (is_atomic (t)) return t;
+  else if (is_func (t, INACTIVE, 1) && is_func (t[0], RIGID))
+    return upgrade_rigid (t[0]);
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_rigid (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -4131,8 +4150,10 @@ upgrade (tree t, string version) {
     t= upgrade_varsession (t);
     t= upgrade_subsession (t);
   }
-  if (version_inf_eq (version, "1.99.2"))
+  if (version_inf_eq (version, "1.99.2")) {
     t= upgrade_quotes (t);
+    t= upgrade_rigid (t);
+  }
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
