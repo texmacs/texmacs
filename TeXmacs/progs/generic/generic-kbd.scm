@@ -49,10 +49,10 @@
   ("$ var" "$")
 
   ("-" "-")
-  ("space" " ")
+  ("space" (kbd-space))
   ("tab" (kbd-tab))
   ("return" (kbd-return))
-  ("S-space" " ")
+  ("S-space" (kbd-shift-space))
   ("S-tab" (kbd-shift-tab))
   ("S-return" (kbd-shift-return))
   ("C-return" (kbd-control-return))

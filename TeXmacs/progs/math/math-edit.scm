@@ -38,6 +38,9 @@
 	((in? (after-cursor) '(" " "*")) (noop))
 	(else (insert s))))
 
+(tm-define (kbd-math-space)
+  (insert-invisible " "))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special customizations inside equation environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

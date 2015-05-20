@@ -88,6 +88,10 @@
 
 (tm-define (insert-return) (insert-raw-return))
 
+(tm-define (kbd-space-bar t shift?)
+  (and-with p (tree-outer t)
+    (kbd-space-bar p shift?)))
+
 (tm-define (kbd-enter t shift?)
   (and-with p (tree-outer t)
     (kbd-enter p shift?)))
@@ -107,6 +111,10 @@
 (tm-define (kbd-variant t forwards?)
   (and-with p (tree-outer t)
     (kbd-variant p forwards?)))
+
+(tm-define (kbd-space-bar t shift?)
+  (:require (tree-is-buffer? t))
+  (kbd-insert " "))
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is-buffer? t))
@@ -162,6 +170,10 @@
   (:require (tree-is-buffer? t))
   (make-htab "5mm"))
 
+(tm-define (kbd-space)
+  (kbd-space-bar (focus-tree) #f))
+(tm-define (kbd-shift-space)
+  (kbd-space-bar (focus-tree) #t))
 (tm-define (kbd-return)
   (kbd-enter (focus-tree) #f))
 (tm-define (kbd-shift-return)

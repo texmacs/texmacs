@@ -264,11 +264,12 @@
   ("onehalf" (insert '(frac "1" "2")))
   ("threequarters" (insert '(frac "3" "4")))
 
-  ("space" (insert-invisible " "))
+  ("space" (kbd-math-space))
   ("space var" "<space>")
   ("space var var" "<nospace>")
   ("space space" (noop) (make-space "1em"))
   ("space space space" (noop) (make-space "2em"))
+  ("S-space" (kbd-math-space))
   (", var" "<comma>")
   (", var var" "<nocomma>")
   (", var var space" (insert '(separating-space "0.2em")))
