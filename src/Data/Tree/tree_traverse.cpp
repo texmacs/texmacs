@@ -509,6 +509,30 @@ more_inside (tree t, path p, path q, tree_label which) {
     search_upwards (t, path_up (p), which);
 }
 
+bool
+var_inside_same_sub (tree t, path p, path q, tree_label which) {
+  path pq= search_upwards (t, path_up (q), which);
+  path pp= search_upwards (t, path_up (p), which);
+  if (!(pq <= pp)) return false;
+  path c= common (p, q);
+  tree st= subtree (t, c);
+  path sp= p / c;
+  path sq= q / c;
+  if (N(sp) == 0 || N(sq) == 0) return false;
+  if (sp == path (0) || sp == path (1)) return true;
+  if (sq == path (0) || sq == path (1)) return true;
+  // TODO: maybe further adjustments will be necessary in the future
+  return false;
+}
+
+bool
+var_inside_same (tree t, path p, path q, tree_label which) {
+  return
+    inside_same (t, p, q, which) ||
+    var_inside_same_sub (t, p, q, which) ||
+    var_inside_same_sub (t, q, p, which);
+}
+
 /******************************************************************************
 * Find sections in document
 ******************************************************************************/
