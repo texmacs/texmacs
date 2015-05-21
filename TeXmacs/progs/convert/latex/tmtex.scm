@@ -602,9 +602,14 @@
   `(!invariant ,(car l)))
 
 (define (tmtex-mtm l)
-  `(!concat (!marker btm ,(car l))
-            ,(tmtex (cadr l))
-            (!marker etm ,(car l))))
+  (cond ((null? l) "")
+        ((null? (cdr l)) (tmtex (car l)))
+        (else
+          (with lab (car l)
+            (when (func? lab 'mtm 1) (set! lab (cadr lab)))
+            `(!concat (!marker btm ,lab)
+                      ,(tmtex (cadr l))
+                      (!marker etm ,lab))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simple text
