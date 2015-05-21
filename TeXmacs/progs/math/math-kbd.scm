@@ -266,6 +266,8 @@
 
   ("space var" "<space>")
   ("space var var" "<nospace>")
+  ("space var var var" (insert '(application-space "1em")))
+  ("space var var var var" (insert '(application-space "2em")))
   (", var" "<comma>")
   (", var var" "<nocomma>")
   (", var var var" (insert '(separating-space "0.2em")))

@@ -118,7 +118,7 @@
 ;; Useful subroutines for length manipulations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (length-increase t by)
+(tm-define (length-increase t by)
   (cond ((tree-in? t '(plus minimum maximum))
 	 (length-increase (tree-ref t :last) by))
 	((tree-in? t '(minus))
@@ -156,7 +156,9 @@
   (tree-is? t 'space))
 
 (tm-define (var-space-context? t)
-  (or (tree-is? t 'space) (tree-func? t 'separating-space 1)))
+  (or (tree-is? t 'space)
+      (tree-func? t 'separating-space 1)
+      (tree-func? t 'application-space 1)))
 
 (define (space-make-ternary t)
   (cond ((== (tm-arity t) 1) (tree-insert t 1 '("0ex" "1ex")))

@@ -209,6 +209,7 @@ edit_text_rep::remove_text_sub (bool forward) {
       return;
     default:
       if (is_compound (t, "separating-space", 1)) back_monolithic (p);
+      else if (is_compound (t, "application-space", 1)) back_monolithic (p);
       else back_general (p, forward);
       break;
     }
