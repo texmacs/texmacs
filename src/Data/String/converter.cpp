@@ -280,11 +280,17 @@ convert_utf8_to_LaTeX (string input) {
       unsigned int code= decode_from_utf8 (input, i);
       string unicode= input (start, i);
       r = apply (conv, unicode);
-      output << r;
       if (r == unicode) {
-        cout << "TeXmacs] non ascii character <#" << as_hexadecimal (code)
-          << "> on output: " << unicode << "\nLaTeX output may not compile.\n";
+        if (code == 10) output << "-";
+        else {
+          output << r;
+          cout << "TeXmacs] non ascii character <#"
+               << as_hexadecimal (code) << "> on output: "
+               << unicode << "\nLaTeX output may not compile.\n";
+          //output << "(error)";
+        }
       }
+      else output << r;
     }
   }
   return output;

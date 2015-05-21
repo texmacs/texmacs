@@ -22,6 +22,8 @@
 
 (use-modules (ice-9 format))
 
+(tm-define tmtex-debug-mode? #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -626,7 +628,7 @@
 
 (define (tmtex-error l)
   (display* "TeXmacs] error in conversion: " l "\n")
-  "")
+  (if tmtex-debug-mode? "(error)" ""))
 
 (define (tmtex-marginal-left-note l)
   `(marginpar (!option ,(tmtex (cAr l))) ,(tmtex '())))
@@ -883,8 +885,9 @@
 
 (define (tmtex-left l)
   (let* ((s (tmtex-large-decode (car l)))
-	 (n (if (> (length l) 1) (string->number (cadr l)) 0))
-	 (b (cond ((= n 1) "bigl")
+	 (n (if (= (length l) 2) (string->number (cadr l)) 0))
+	 (b (cond ((not n) "left")
+                  ((= n 1) "bigl")
 		  ((= n 2) "Bigl")
 		  ((= n 3) "biggl")
 		  ((= n 4) "Biggl")
@@ -893,8 +896,9 @@
 
 (define (tmtex-mid l)
   (let* ((s (tmtex-large-decode (car l)))
-	 (n (if (> (length l) 1) (string->number (cadr l)) 0))
-	 (b (cond ((= n 1) "bigm")
+	 (n (if (= (length l) 2) (string->number (cadr l)) 0))
+	 (b (cond ((not n) "middle")
+                  ((= n 1) "bigm")
 		  ((= n 2) "Bigm")
 		  ((= n 3) "biggm")
 		  ((= n 4) "Biggm")
@@ -903,8 +907,9 @@
 
 (define (tmtex-right l)
   (let* ((s (tmtex-large-decode (car l)))
-	 (n (if (> (length l) 1) (string->number (cadr l)) 0))
-	 (b (cond ((= n 1) "bigr")
+	 (n (if (= (length l) 2) (string->number (cadr l)) 0))
+	 (b (cond ((not n) "right")
+                  ((= n 1) "bigr")
 		  ((= n 2) "Bigr")
 		  ((= n 3) "biggr")
 		  ((= n 4) "Biggr")
