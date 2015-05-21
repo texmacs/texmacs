@@ -58,6 +58,7 @@
   (epsfig "epsfig")
   (includegraphics "graphicx")
   (rotatebox "graphicx")
+  (reflectbox "graphicx")
 
   (mathscr "mathrsfs")
   (EuScript "euscript")

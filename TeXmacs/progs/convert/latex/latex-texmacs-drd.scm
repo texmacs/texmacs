@@ -47,7 +47,8 @@
   longhookrightarrow longhookleftarrow longdownarrow longuparrow
   triangleup precdot preceqdot llangle rrangle join um upl upm ump upequal
   assign plusassign minusassign timesassign overassign
-  lflux gflux colons transtype udots)
+  lflux gflux colons transtype udots
+  rightmap leftmap leftrightmap)
 
 (logic-rules
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-symbol% 'x))
