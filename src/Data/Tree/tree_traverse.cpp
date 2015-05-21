@@ -396,9 +396,13 @@ acceptable_border (tree t, path p, path q, hashset<int> labs) {
 
 static bool
 acceptable_child (tree t, path p, hashset<int> labs) {
+  tree st= subtree (t, path_up (p));
+  if (is_compound (st) && labs->contains ((int) L(st)))
+    if (last_item (p) == 0 || last_item (p) == 1)
+      return true;
   p= path_up (p);
   while (!is_nil (p)) {
-    tree st= subtree (t, path_up (p));
+    st= subtree (t, path_up (p));
     if (labs->contains ((int) L(st)))
       if (is_accessible_child (st, last_item (p)))
         return true;
