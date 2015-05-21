@@ -21,12 +21,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-texmacs-symbol%
-  ;; arrows with limits
+  ;; arrows and other symbols with limits
   leftarrowlim rightarrowlim leftrightarrowlim mapstolim
   longleftarrowlim longrightarrowlim longleftrightarrowlim longmapstolim
   leftsquigarrowlim rightsquigarrowlim leftrightsquigarrowlim
   equallim longequallim Leftarrowlim Rightarrowlim
   Leftrightarrowlim Longleftarrowlim Longrightarrowlim Longleftrightarrowlim
+  cdotslim
 
   ;; asymptotic relations by Joris
   nasymp asympasymp nasympasymp simsim nsimsim npreccurlyeq

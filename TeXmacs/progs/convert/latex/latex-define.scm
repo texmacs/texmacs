@@ -21,7 +21,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (smart-table latex-texmacs-macro
-  ;; arrows with limits
+  ;; arrows and other symbols with limits
   (leftarrowlim "\\mathop{\\leftarrow}\\limits")
   (rightarrowlim "\\mathop{\\rightarrow}\\limits")
   (leftrightarrowlim "\\mathop{\\leftrightarrow}\\limits")
@@ -41,6 +41,7 @@
   (Longleftarrowlim "\\mathop{\\longleftarrow}\\limits")
   (Longrightarrowlim "\\mathop{\\longrightarrow}\\limits")
   (Longleftrightarrowlim "\\mathop{\\longleftrightarrow}\\limits")
+  (cdotslim "\\mathop{\\cdots}\\limits")
 
   ;; asymptotic relations by Joris
   (nasymp "\\not\\asymp")
