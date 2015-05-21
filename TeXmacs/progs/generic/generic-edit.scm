@@ -114,7 +114,7 @@
 
 (tm-define (kbd-space-bar t shift?)
   (:require (tree-is-buffer? t))
-  (kbd-insert " "))
+  (insert " "))
 
 (tm-define (kbd-enter t shift?)
   (:require (tree-is-buffer? t))

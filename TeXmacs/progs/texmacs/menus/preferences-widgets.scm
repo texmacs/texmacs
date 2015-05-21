@@ -77,6 +77,18 @@
 ;; Keyboard preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preference-names "text spacebar"
+  ("default" "Default")
+  ("allow multiple spaces" "Allow multiple spaces")
+  ("glue multiple spaces" "Glue multiple spaces")
+  ("no multiple spaces" "No multiple spaces"))
+
+(define-preference-names "math spacebar"
+  ("default" "Default")
+  ("allow spurious spaces" "Allow spurious spaces")
+  ("avoid spurious spaces" "Avoid spurious spaces")
+  ("no spurious spaces" "No spurious spaces"))
+
 (define-preference-names "automatic quotes"
   ("default" "Default")
   ("none" "Disabled")
@@ -102,6 +114,18 @@
 
 (tm-widget (keyboard-preferences-widget)
   (aligned
+    (item (text "Space bar in text mode:")
+      (enum (set-pretty-preference "text spacebar" answer)
+            '("Default" "No multiple spaces"
+	      "Glue multiple spaces" "Allow multiple spaces")
+            (get-pretty-preference "text spacebar")
+            "15em"))
+    (item (text "Space bar in math mode:")
+      (enum (set-pretty-preference "math spacebar" answer)
+            '("Default" "No spurious spaces"
+	      "Avoid spurious spaces" "Allow spurious spaces")
+            (get-pretty-preference "math spacebar")
+            "15em"))
     (item (text "Automatic quotes:")
       (enum (set-pretty-preference "automatic quotes" answer)
             '("Default" "Disabled" "Dutch" "English" "French" "German" "Spanish" "Swiss")

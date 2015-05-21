@@ -29,17 +29,51 @@
   matrix det bmatrix)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Invisible operators
+;; Spaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (insert-invisible s)
-  (:synopsis "insert an invisible mathematical symbol")
-  (cond ((in? (before-cursor) '(" " "*")) (noop))
-	((in? (after-cursor) '(" " "*")) (noop))
-	(else (insert s))))
+(define (allow-space? b)
+  (and b (not (tm-func? b 'big))
+       (or (not (tm-atomic? b))
+	   (with type (math-symbol-type (tm->string b))
+	     (nin? type (list "prefix" "infix" "separator"
+			      "opening-bracket" "middle-bracket"))))))
 
-(tm-define (kbd-math-space)
-  (insert-invisible " "))
+(define (adjust-leftwards t)
+  (if (and (tree? t) (tree-in? t '(rsub rsup rprime)) (tree-ref t :previous))
+      (adjust-leftwards (tree-ref t :previous))
+      t))
+
+(tm-define (kbd-space-bar t shift?)
+  (:require (and (tree-is-buffer? t) (in-math?)))
+  (let* ((b (adjust-leftwards (before-cursor)))
+	 (p (get-preference "math spacebar")))
+    (cond ((== p "allow spurious spaces")
+	   (insert " "))
+	  ((and (== b " ") (== p "no spurious spaces"))
+	   (noop))
+	  ((== b " ")
+	   (remove-text #f)
+	   (make-space "1em"))
+	  ((and (tree? b) (tree-func? b 'space 1))
+	   (if (and (tree-atomic? (tree-ref b 0))
+		    (string-ends? (tree->string (tree-ref b 0)) "em"))
+	       (make-space "1em")
+	       (geometry-horizontal b #t)))
+	  ((not (allow-space? b))
+	   (noop))
+	  (else
+	   (insert " ")))))
+
+(tm-define (kbd-insert s)
+  (:require (in-math?))
+  (when (== (before-cursor) " ")
+    (let* ((p (get-preference "math spacebar"))
+	   (type (if (string? s) (math-symbol-type s) "symbol")))
+      (when (in? type (list "postfix" "infix" "separator"
+			    "middle-bracket" "closing-bracket"))
+	(remove-text #f))))
+  (former s))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special customizations inside equation environments

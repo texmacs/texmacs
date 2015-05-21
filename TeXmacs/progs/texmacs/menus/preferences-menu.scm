@@ -98,6 +98,18 @@
               ("Yawerty" "yawerty")
               ("Koi8-r" "koi8-r")
               ("Cp1251" "cp1251"))
+        (enum ("Spacebar in text mode" "text spacebar")
+              ("Default" "default")
+              ---
+              ("Allow multiple spaces" "allow multiple spaces")
+              ("Glue multiple spaces" "glue multiple spaces")
+              ("No multiple spaces" "no multiple spaces"))
+        (enum ("Spacebar in math mode" "math spacebar")
+              ("Default" "default")
+              ---
+              ("Allow spurious spaces" "allow spurious spaces")
+              ("Avoid spurious spaces" "avoid spurious spaces")
+              ("No spurious spaces" "no spurious spaces"))
         (enum ("Automatic quotes" "automatic quotes")
               ("Default" "default")
               ---
