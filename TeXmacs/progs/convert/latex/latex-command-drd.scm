@@ -38,7 +38,7 @@
   begingroup endgroup printindex today bmod toprule midrule bottomrule
 
   ;; AMS commands
-  qed dotsc dotsb dotsm dotsi dotso
+  dotsc dotsb dotsm dotsi dotso qed
   ;; temporarily
   hline hrulefill
   ;; rewritten

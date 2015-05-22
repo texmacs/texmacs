@@ -42,17 +42,19 @@
 (tm-define (tmtex-style-init body)
   (:mode ifac-style?)
   (init-elsevier body)
-  (set! tmtex-packages (cons "natbib" tmtex-packages))
-  (latex-set-packages '("natbib")))
+  ;;(set! tmtex-packages (cons "natbib" tmtex-packages))
+  ;;(latex-set-packages '("natbib"))
+  )
 
 (tm-define (tmtex-style-init body)
   (:mode jsc-style?)
   (init-elsevier body)
   (set! tmtex-packages (cons "natbib" tmtex-packages))
-  (latex-set-packages '("amsthm" "yjsco" "natbib")))
+  (latex-set-packages '("amsthm" "yjsco" ;;"natbib"
+                        )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Preprocessing datas
+;; Preprocessing data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-style-preprocess doc)
@@ -394,3 +396,11 @@
 	(list (list '!begin "eqnarray") r)  ;; FIXME: why do elsequation
 	(list (list '!begin "eqnarray*") r) ;; and elsequation* not work?
 	)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Elsevier specific macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table latex-texmacs-macro
+  (:mode elsevier-style?)
+  (qed #f))
