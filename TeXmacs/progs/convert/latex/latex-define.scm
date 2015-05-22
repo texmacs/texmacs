@@ -43,6 +43,58 @@
   (Longleftrightarrowlim "\\mathop{\\longleftrightarrow}\\limits")
   (cdotslim "\\mathop{\\cdots}\\limits")
 
+  ;; rotated arrows and other symbols
+  (mapsfrom (!group (mbox (rotatebox (!option "origin=c") "180"
+				     (!math (mapsto))))))
+  (longmapsfrom (!group (mbox (rotatebox (!option "origin=c") "180"
+					 (!math (longmapsto))))))
+  (mapmulti (!group (mbox (rotatebox (!option "origin=c") "180"
+				     (!math "\\multimap")))))
+  (leftsquigarrow (!group (mbox (rotatebox (!option "origin=c") "180"
+					   (!math (rightsquigarrow))))))
+  (upequal (!group (mbox (rotatebox (!option "origin=c") "90"
+				    (!math "=")))))
+  (downequal (!group (mbox (rotatebox (!option "origin=c") "-90"
+				      (!math "=")))))
+  (longupequal (!group (mbox (rotatebox (!option "origin=c") "90"
+					(!math (longequal))))))
+  (longdownequal (!group (mbox (rotatebox (!option "origin=c") "-90"
+					  (!math (longequal))))))
+  (longuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
+					(!math (longrightarrow))))))
+  (longdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+					  (!math (longrightarrow))))))
+  (Longuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
+					(!math (Longrightarrow))))))
+  (Longdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+					  (!math (Longrightarrow))))))
+  (mapsup (!group (mbox (rotatebox (!option "origin=c") "90"
+				   (!math (mapsto))))))
+  (mapsdown (!group (mbox (rotatebox (!option "origin=c") "-90"
+				     (!math (mapsto))))))
+  (longmapsup (!group (mbox (rotatebox (!option "origin=c") "90"
+				       (!math (longmapsto))))))
+  (longmapsdown (!group (mbox (rotatebox (!option "origin=c") "-90"
+					 (!math (longmapsto))))))
+  (upsquigarrow (!group (mbox (rotatebox (!option "origin=c") "90"
+					 (!math (rightsquigarrow))))))
+  (downsquigarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+					   (!math (rightsquigarrow))))))
+  (hookuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
+					(!math (hookrightarrow))))))
+  (hookdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+					  (!math (hookrightarrow))))))
+  (longhookuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
+					    (!math (longhookrightarrow))))))
+  (longhookdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+					      (!math (longhookrightarrow))))))
+  (Backepsilon (!group (mbox (rotatebox (!option "origin=c") "180"
+					"E"))))
+  (Mho (!group (mbox (rotatebox (!option "origin=c") "180"
+				(!math "\\Omega")))))
+  (btimes (!group (mbox (rotatebox (!option "origin=c") "90"
+                                   (!math "\\ltimes")))))
+  
   ;; asymptotic relations by Joris
   (nasymp "\\not\\asymp")
   (asympasymp "{\\asymp\\!\\!\\!\\!\\!\\!-}")
@@ -64,13 +116,6 @@
   (gggeq "\\geq\\!\\!\\!\\geq\\!\\!\\!\\geq")
 
   ;; extra literal symbols
-  (upequal (!group (mbox (rotatebox (!option "origin=c") "90" (!math "=")))))
-  (Backepsilon (!group (mbox (rotatebox (!option "origin=c") "180" "E"))))
-  (Mho (!group (mbox (rotatebox (!option "origin=c") "180" (!math "\\Omega")))))
-  (btimes (!group (mbox (rotatebox (!option "origin=c") "90"
-                                   (!math "\\ltimes")))))
-  (mapmulti (!group (mbox (rotatebox (!option "origin=c") "180"
-                                   (!math "\\multimap")))))
   (mathcatalan "C")
   (mathd "\\mathrm{d}")
   (mathD "\\mathrm{D}")
@@ -123,8 +168,6 @@
   (longequal "{=\\!\\!=}")
   (longhookrightarrow "{\\lhook\\joinrel\\relbar\\joinrel\\rightarrow}")
   (longhookleftarrow "{\\leftarrow\\joinrel\\relbar\\joinrel\\rhook}")
-  (longdownarrow "\\downarrow")
-  (longuparrow "\\uparrow")
   (triangleup "\\triangle")
   (precdot "{\\prec\\hspace{-0.6em}\\cdot}\\;\\,")
   (preceqdot "{\\preccurlyeq\\hspace{-0.6em}\\cdot}\\;\\,")

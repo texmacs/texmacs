@@ -1739,7 +1739,7 @@
            (tmtex-tt (cAr x))))
 	(else
           (begin
-	    (display* "TeXmacs] non converted verbatim content: \n" x "\n")
+	    (display* "TeXmacs] non converted verbatim content: " x "\n")
             ""))))
 
 (define (unescape-angles l)
@@ -2015,7 +2015,7 @@
 	 `(bibitem (!option ,(tmtex (car l))) ,(cadr l)))
 	(else
           (begin
-	    (display* "TeXmacs] non converted bibitem content: \n"
+	    (display* "TeXmacs] non converted bibitem content: "
                       (list s l) "\n")
             ""))))
 

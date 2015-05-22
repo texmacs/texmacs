@@ -29,6 +29,15 @@
   Leftrightarrowlim Longleftarrowlim Longrightarrowlim Longleftrightarrowlim
   cdotslim
 
+  ;; rotated arrows and other symbols
+  mapsfrom longmapsfrom mapmulti leftsquigarrow
+  upequal downequal longupequal longdownequal
+  longuparrow longdownarrow Longuparrow Longdownarrow
+  mapsup mapsdown longmapsup longmapsdown
+  upsquigarrow downsquigarrow
+  hookuparrow hookdownarrow longhookuparrow longhookdownarrow
+  btimes Backepsilon Mho
+
   ;; asymptotic relations by Joris
   nasymp asympasymp nasympasymp simsim nsimsim npreccurlyeq
   precprec precpreceq precprecprec precprecpreceq
@@ -36,7 +45,6 @@
   lleq llleq ggeq gggeq
 
   ;; extra literal symbols
-  btimes Backepsilon Mho mapmulti
   mathcatalan mathd mathD mathe matheuler mathlambda mathi mathpi
   Alpha Beta Epsilon Eta Iota Kappa Mu Nu Omicron Chi Rho Tau Zeta
 
@@ -45,8 +53,8 @@
   bignone nobracket nospace nocomma noplus nosymbol
   nin nni notni nequiv nleadsto
   dotamalg dottimes dotoplus dototimes dotast into longequal
-  longhookrightarrow longhookleftarrow longdownarrow longuparrow
-  triangleup precdot preceqdot llangle rrangle join um upl upm ump upequal
+  longhookrightarrow longhookleftarrow
+  triangleup precdot preceqdot llangle rrangle join um upl upm ump
   assign plusassign minusassign timesassign overassign
   lflux gflux colons transtype udots subsetsim supsetsim
   rightmap leftmap leftrightmap)
