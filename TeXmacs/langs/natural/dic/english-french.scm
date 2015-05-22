@@ -976,7 +976,7 @@
 ("my documents" "mes documents")
 ("n-th root" "racine n-ième")
 ("n-th" "n-ième")
-("name" "police")
+("name" "nom")
 ("negation" "négation")
 ("never" "jamais")
 ("new account" "nouveau compte")
