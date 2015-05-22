@@ -48,7 +48,7 @@
   longhookrightarrow longhookleftarrow longdownarrow longuparrow
   triangleup precdot preceqdot llangle rrangle join um upl upm ump upequal
   assign plusassign minusassign timesassign overassign
-  lflux gflux colons transtype udots
+  lflux gflux colons transtype udots subsetsim supsetsim
   rightmap leftmap leftrightmap)
 
 (logic-rules

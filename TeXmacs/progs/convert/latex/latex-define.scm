@@ -145,6 +145,8 @@
   (colons "\\,:\\,")
   (transtype "\\,:\\!!>")
   (udots "{\\mathinner{\\mskip1mu\\raise1pt\\vbox{\\kern7pt\\hbox{.}}\\mskip2mu\\raise4pt\\hbox{.}\\mskip2mu\\raise7pt\\hbox{.}\\mskip1mu}}")
+  (subsetsim (underset (sim) (subset)))
+  (supsetsim (underset (sim) (supset)))
   (rightmap (!group (!append (shortmid) "\\!\\!\\!-")))
   (leftmap (!group (!append "-\\!\\!\\!" (shortmid))))
   (leftrightmap (!group (!append (shortmid) "\\!\\!\\!-\\!\\!\\!"
