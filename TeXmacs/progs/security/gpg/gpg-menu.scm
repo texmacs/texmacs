@@ -25,16 +25,16 @@
     (group "Public key encryption")
     ("Inline content" (tm-gpg-dialogue-insert-decrypted))
     ("Block content" (tm-gpg-dialogue-insert-decrypted-block))
-    ;;("Encrypt all" (tm-gpg-dialogue-encrypt-buffer))
-    ;;("Decrypt all" (tm-gpg-dialogue-decrypt-buffer))
+    ;;("Encrypt all" (tm-gpg-dialogue-encrypt-all))
+    ;;("Decrypt all" (tm-gpg-dialogue-decrypt-all))
     ;;("Collect public keys from buffer"
     ;; (tm-gpg-collect-public-keys-from-buffer))
     ---
     (group "Passphrase encryption")
     ("Inline content" (tm-gpg-insert-passphrase-decrypted))
     ("Block content" (tm-gpg-insert-passphrase-decrypted-block))
-    ;;("Encrypt all" (tm-gpg-dialogue-passphrase-encrypt-buffer))
-    ;;("Decrypt all" (tm-gpg-dialogue-passphrase-decrypt-buffer))
+    ;;("Encrypt all" (tm-gpg-dialogue-passphrase-encrypt-all))
+    ;;("Decrypt all" (tm-gpg-dialogue-passphrase-decrypt-all))
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -204,3 +204,26 @@
   (:require (tm-gpg-decrypted? t))
   //
   ("Recipients" (tm-gpg-dialogue-replace-decrypted (focus-tree))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Encryption of whole buffer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-in? t '(gpg-passphrase-encrypted-buffer)))
+  ((check (balloon (icon "tm_lock_closed.xpm") "Encrypted buffer") "v"
+          (alternate-second? (focus-tree)))
+   (tm-gpg-dialogue-passphrase-decrypt-buffer (current-buffer))))
+
+(menu-bind document-encryption-menu
+  (when (supports-gpg?)
+    (if (== (get-init "encryption") "")
+	("Passphrase encryption"
+	 (tm-gpg-dialogue-passphrase-buffer-set-encryption)))
+    (if (== (get-init "encryption") "gpg-passphrase")
+	("New passphrase"
+	 (tm-gpg-dialogue-passphrase-buffer-set-encryption))
+	("Disable encryption"
+	 (tm-gpg-passphrase-buffer-unset-encryption)))))
+
+

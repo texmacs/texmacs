@@ -758,7 +758,9 @@
       ("Default" (init-default "prog-scripts"))
       ---
       (link supported-scripts-menu))
-  (-> "Informative flags" (link document-informative-flags-menu)))
+  (-> "Informative flags" (link document-informative-flags-menu))
+  (if (== (get-preference "experimental encryption") "on")
+      (-> "Encryption" (link document-encryption-menu))))
 
 (menu-bind compressed-document-menu
   (-> "Style" (link document-style-menu))
@@ -787,7 +789,9 @@
       ("Default" (init-default "prog-scripts"))
       ---
       (link supported-scripts-menu))
-  (-> "Informative flags" (link document-informative-flags-menu)))
+  (-> "Informative flags" (link document-informative-flags-menu))
+  (if (== (get-preference "experimental encryption") "on")
+      (-> "Encryption" (link document-encryption-menu))))
 
 (menu-bind document-menu
   (if (use-menus?)
@@ -840,6 +844,10 @@
   (-> (eval (number-columns-text (get-init "par-columns")))
       ("One column" (init-env "par-columns" "1"))
       ("Two columns" (init-env "par-columns" "2")))
+  (if (and (== (get-preference "experimental encryption") "on")
+	   (!= (get-init "encryption") ""))
+      (=> (balloon (icon "tm_lock_open.xpm") "Encryption")
+	  (link document-encryption-menu)))
   (-> (eval (upcase-first (get-init "language")))
       (link document-language-menu))
   (-> (eval (upcase-first (get-init "font")))
@@ -911,6 +919,10 @@
         ("Papyrus" (init-page-medium "papyrus"))
         ("Automatic" (init-page-medium "automatic"))
         ("Beamer" (init-page-medium "beamer")))
+    (if (and (== (get-preference "experimental encryption") "on")
+	     (!= (get-init "encryption") ""))
+	(=> (balloon (icon "tm_lock_open.xpm") "Encryption")
+	 (link document-encryption-menu)))
     (=> (balloon (icon (eval (current-language-icon))) "Document language")
         (link document-language-menu))))
 

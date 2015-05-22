@@ -61,6 +61,24 @@
   (not (wallet-on?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Persistent wallet status
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define wallet-persistent-status "off")
+
+(define (notify-wallet-persistent-status var val)
+  (set! wallet-persistent-status val))
+
+(define-preferences
+  ("wallet persistent status" "off" notify-wallet-persistent-status))
+
+(tm-define (wallet-persistent-status-on?)
+  (== (get-preference "wallet persistent status") "on"))
+
+(tm-define (wallet-persistent-status-off?)
+  (not (wallet-persistent-status-on?)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check passphrase
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -76,11 +94,13 @@
   (:synopsis "Turn wallet on using @passphrase") 
   (:interactive #t)
   (:argument passphrase "password" "Wallet passphrase")
-  (gpg-wallet-turn-on passphrase))
+  (gpg-wallet-turn-on passphrase)
+  (set-preference "wallet persistent status" "on"))
 
 (tm-define (wallet-turn-off)
   (:synopsis "Turn wallet off") 
-  (gpg-wallet-turn-off))
+  (gpg-wallet-turn-off)
+  (set-preference "wallet persistent status" "off"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set, get, delete entries

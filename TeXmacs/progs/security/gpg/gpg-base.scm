@@ -63,11 +63,13 @@
     (system-mkdir (gpg-homedir))
     (when (not (or (os-mingw?) (os-win32?)))
       (system-1 "chmod og-rwx" (gpg-homedir))))
-  (url-exists? (gpg-homedir)))
+  (evaluate-system (list (gpg-get-executable) "--list-keys"
+			 "--homedir" (url->system (gpg-homedir)))
+			 '() '() '(1 2))
+  (url-exists? (url-append (gpg-homedir) "pubring.gpg")))
 
 (tm-define (gpg-get-executable)
   (:synopsis "GnuPG executable")
-  (gpg-make-homedir)
   gpg-executable)
 
 (tm-define (gpg-set-executable exe)
@@ -75,20 +77,19 @@
   (:synopsis "Set GnuPG executable")
   (:argument exe "GnuPG executable")
   (when (gpg-valid-executable? exe)
-    (gpg-make-homedir)
     (set-preference "gpg executable" exe)))
 
 (tm-define (supports-gpg?)
   (:synopsis "Tells if GnuPG is available")
-  (and (!= (get-preference "experimental encryption") "off")
+  (and (== (get-preference "experimental encryption") "on")
        (!= gpg-executable "")
        (url-exists-in-path? gpg-executable)
-       (url-exists? (gpg-homedir))))
+       (or (url-exists? (url-append (gpg-homedir) "pubring.gpg"))
+	   (gpg-make-homedir))))
 
 (define (gpg-notify-experimental-encryption var val)
   (and (== val "on")
-       (gpg-valid-executable? gpg-executable)
-       (gpg-make-homedir)))
+       (gpg-valid-executable? gpg-executable)))
 
 (define-preferences
   ("experimental encryption" "off" gpg-notify-experimental-encryption))
@@ -319,7 +320,7 @@
          (cmd (gpg-executable-list-public-keys dir))
          (ret (evaluate-system cmd '() '() '(1 2))))
     (if (!= (car ret) "0")
-        (gpg-error cmd (cadr ret) (caddr ret))
+        (begin (gpg-error cmd (cadr ret) (caddr ret)) '())
         (let* ((srows (string-decompose (utf8->cork (cadr ret)) "\n"))
                (crows (filter (lambda (x) (!= x "")) srows))
                (rows (map gpg-decompose-key-string crows)))
@@ -356,7 +357,7 @@
          (cmd (gpg-executable-list-secret-keys dir))
          (ret (evaluate-system cmd '() '() '(1 2))))
     (if (!= (car ret) "0")
-        (gpg-error cmd (cadr ret) (caddr ret))
+        (begin (gpg-error cmd (cadr ret) (caddr ret)) '())
         (let* ((srows (string-decompose (utf8->cork (cadr ret)) "\n"))
                (crows (filter (lambda (x) (!= x "")) srows))
                (rows (map gpg-decompose-key-string crows)))

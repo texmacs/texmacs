@@ -44,7 +44,7 @@
        (url-exists? gpg-wallet-table-url)
        (with fingerprints (gpg-secret-key-fingerprints gpg-wallet-url)
          (and fingerprints (not (null? fingerprints))
-              (string= (car fingerprints) gpg-wallet-key-fingerprint)))))
+              (== (car fingerprints) gpg-wallet-key-fingerprint)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check passphrase
@@ -89,20 +89,23 @@
 (tm-define (gpg-wallet-initialize passphrase)
   ;; very first initialization
   (when (and (not (gpg-wallet-on?)) (not (gpg-wallet-initialized?)))
+    (when (not (url-exists? (url-head gpg-wallet-url)))
+      (system-mkdir (url-head gpg-wallet-url)))
     (when (not (url-exists? gpg-wallet-url))
       (system-mkdir gpg-wallet-url)
       (when (not (or (os-mingw?) (os-win32?)))
         (system-1 "chmod og-rwx" gpg-wallet-url)))
-    (when (null? (gpg-secret-keys gpg-wallet-url))
-      (gpg-gen-key "__TeXmacs_wallet__"
-                   "TeXmacs wallet" "" passphrase
-                   gpg-wallet-url))
-    (with fingerprints (gpg-secret-key-fingerprints gpg-wallet-url)
-      (and (nnull? fingerprints)
-           (begin
-             (set-preference "gpg wallet key fingerprint" (car fingerprints))
-             (set! gpg-wallet-table (make-ahash-table))
-             (gpg-wallet-turn-off))))))
+    (when (url-exists? gpg-wallet-url)
+      (when (null? (gpg-secret-keys gpg-wallet-url))
+	(gpg-gen-key "__TeXmacs_wallet__"
+		     "TeXmacs wallet" "" passphrase
+		     gpg-wallet-url))
+      (with fingerprints (gpg-secret-key-fingerprints gpg-wallet-url)
+	(and (nnull? fingerprints)
+	     (begin
+	       (set-preference "gpg wallet key fingerprint" (car fingerprints))
+	       (set! gpg-wallet-table (make-ahash-table))
+	       (gpg-wallet-turn-off)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Reinitialize

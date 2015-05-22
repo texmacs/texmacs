@@ -223,7 +223,12 @@
                               (list (get-user-info* "name")) "300px"))
                 (item (text "Email:")
                   (form-input "email" "string"
-                              (list (get-user-info* "email")) "300px")))
+                              (list (get-user-info* "email")) "300px"))
+                (item (text "GnuPG key:")
+		  (hlist (if (!= (get-user-info "gpg-key-fingerprint") "")
+		      (text (string-take-right
+			     (get-user-info "gpg-key-fingerprint") 8)))
+		   >> ((icon "tm_add.xpm") (open-gpg-key-manager)))))
               (glue #f #t 0 0)
               (hlist
                 (explicit-buttons

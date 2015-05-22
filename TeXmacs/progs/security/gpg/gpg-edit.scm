@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (security gpg gpg-edit)
-  (:use (security gpg gpg-widgets)))
+  (:use (security gpg gpg-widgets)
+	(utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Predicates
@@ -193,7 +194,7 @@
   (with-innermost t 'gpg-decrypted
     (tm-gpg-encrypt t)))
 
-(tm-define (tm-gpg-dialogue-encrypt-buffer)
+(tm-define (tm-gpg-dialogue-encrypt-all)
   (:secure #t)
   (:synopsis "Encrypt buffer")
   (map tm-gpg-encrypt (select (root-tree)
@@ -242,20 +243,20 @@
   (with-innermost t 'gpg-passphrase-decrypted
     (tm-gpg-dialogue-passphrase-encrypt t)))
 
-(tm-define (tm-gpg-passphrase-encrypt-buffer passphrase)
+(tm-define (tm-gpg-passphrase-encrypt-all passphrase)
   (:secure #t)
   (:synopsis "Encrypt all passphrase decrypted regions")
   (with f (lambda (x) (tm-gpg-passphrase-encrypt x passphrase))
     (map f (select (root-tree) '(:* gpg-passphrase-decrypted-block)))
     (map f (select (root-tree) '(:* gpg-passphrase-decrypted)))))
 
-(tm-define (tm-gpg-dialogue-passphrase-encrypt-buffer)
+(tm-define (tm-gpg-dialogue-passphrase-encrypt-all)
   (:secure #t)
   (:synopsis "Interactive passphrase encryption")
   (dialogue-window gpg-widget-ask-new-passphrase
     (lambda (action)
       (tm-gpg-command-passphrase-encrypt
-       tm-gpg-passphrase-encrypt-buffer action))
+       tm-gpg-passphrase-encrypt-all action))
       "Passphrase encryption"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -323,13 +324,13 @@
   (with-innermost t 'gpg-encrypted
     (tm-gpg-dialogue-decrypt t)))
 
-(tm-define (tm-gpg-dialogue-decrypt-buffer)
+(tm-define (tm-gpg-dialogue-decrypt-all)
   (:secure #t)
   (:synopsis "Interactive decryption of all encrypted regions")
   (with s (append (select (root-tree) '(:* gpg-encrypted-block))
 		  (select (root-tree) '(:* gpg-encrypted)))
     (when (nnull? s)
-      (tm-gpg-dialogue-decrypt (car s) tm-gpg-dialogue-decrypt-buffer))))
+      (tm-gpg-dialogue-decrypt (car s) tm-gpg-dialogue-decrypt-all))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Passphrase decrypt
@@ -374,7 +375,7 @@
   (with-innermost t 'gpg-passphrase-encrypted
     (tm-gpg-dialogue-passphrase-decrypt t)))
 
-(tm-define (tm-gpg-passphrase-decrypt-buffer passphrase)
+(tm-define (tm-gpg-passphrase-decrypt-all passphrase)
   (:secure #t)
   (:synopsis "Passphrase decrypt all regions in buffer")
   (with f (lambda (x) (tm-gpg-passphrase-decrypt x passphrase))
@@ -433,3 +434,126 @@
 		(tm-gpg-passphrase-decrypted? t)
 		(tm-gpg-passphrase-encrypted? t)))
   (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Passphrase encrypt buffer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Passphrases kept in memory (and in wallet, if enabled)
+(define gpg-buffer-passphrase-table (make-ahash-table))
+
+(tm-define (gpg-set-buffer-passphrase url passphrase)
+  (with var (url-concretize url)
+    (ahash-set! gpg-buffer-passphrase-table var passphrase)
+    (with-wallet
+      (wallet-set `(gpg-buffer-passphrase ,var) passphrase))))
+
+(tm-define (gpg-delete-buffer-passphrase url)
+  (with var (url-concretize url)
+    (when (ahash-ref gpg-buffer-passphrase-table var)
+      (ahash-remove! gpg-buffer-passphrase-table var)
+      (with-wallet
+	(wallet-delete `(gpg-buffer-passphrase ,var))))))
+
+(tm-define (gpg-get-buffer-passphrase url)
+  (ahash-ref gpg-buffer-passphrase-table (url-concretize url)))
+
+(tm-define (gpg-copy-buffer-passphrase old-url new-url)
+  (gpg-set-buffer-passphrase new-url (gpg-get-buffer-passphrase old-url)))
+
+(tm-define (gpg-move-buffer-passphrase old-url new-url)
+  (gpg-set-buffer-passphrase new-url (gpg-get-buffer-passphrase old-url))
+  (gpg-delete-buffer-passphrase old-url))
+
+
+;; Enable/disable encryption
+(tm-define (tm-gpg-dialogue-passphrase-buffer-set-encryption)
+  (dialogue-window gpg-widget-ask-new-passphrase
+    (lambda (action)
+      (when (and (list? action) (nnull? action) (== (first action) "Ok"))
+	(gpg-set-buffer-passphrase (current-buffer) (second action))
+	(init-env "encryption" "gpg-passphrase")
+	(delayed
+	  (:idle 1)
+	  (save-buffer)
+	  (autosave-buffer (current-buffer)))))
+    "Passphrase encryption"))
+
+(tm-define (tm-gpg-passphrase-buffer-unset-encryption)
+  (init-env "encryption" "")
+  (init-default "encryption")
+  (gpg-delete-buffer-passphrase (current-buffer))
+  (delayed
+    (:idle 1)
+    (save-buffer)
+    (autosave-buffer (current-buffer))))
+
+
+;; Encrypt before saving
+(tm-widget ((gpg-widget-error-export-tree-texmacs-hook name) cmd)
+  (centered (text "GnuPG error: buffer encryption failed"))
+  (centered (text (string-append "while saving " (url->system name))))
+  (bottom-buttons
+    >>
+    ("Disable encryption"
+     (tm-gpg-passphrase-buffer-unset-encryption)
+     (cmd "Disable"))))
+
+;; Encrypt before saving
+(tm-define (tree-export-encrypted name t)
+  (:require (== (with-buffer name (get-init "encryption"))
+		"gpg-passphrase"))
+  (let* ((err (lambda ()
+		(set-message `(concat "Could not save " ,(url->system name))
+			     "Save file")
+		(dialogue-window
+		 (gpg-widget-error-export-tree-texmacs-hook name)
+		 noop "Encryption error")))
+	 (dec (serialize-texmacs t))
+	 (passphrase (gpg-get-buffer-passphrase name)))
+    (if (and dec passphrase)
+      (with enc (gpg-passphrase-encrypt dec passphrase)
+	(if enc
+	    (stree->tree
+	     `(document (TeXmacs ,(texmacs-version))
+			(style (tuple "generic"))
+			(body (document
+				(gpg-passphrase-encrypted-buffer ,enc)))))
+	    (begin (err) t)))
+      (begin (err) t))))
+
+(tm-define (encrypted-buffer? t)
+  (and-with b (tm-file-extract t 'body)
+    (and (tm-func? b 'document)
+	 (> (tm-arity b) 0)
+	 (tm-func? (tm-ref b 0) 'gpg-passphrase-encrypted-buffer))))
+
+;; Decrypt after loading
+(tm-define (tm-gpg-dialogue-passphrase-decrypt-buffer name)
+  (with b (buffer-get name)
+    (when (encrypted-buffer? b)
+      (let* ((t (tree-ref (tm-file-extract b 'body) 0))
+	     (enc (tree->string (tree-ref t 0)))
+	     (decryptable? (lambda (x) (gpg-decryptable? enc x)))
+	     (decrypt (lambda (x)
+			(and-with dec (gpg-passphrase-decrypt enc x)
+			  (buffer-set name (parse-texmacs-snippet dec))
+			  (gpg-set-buffer-passphrase name x)))))
+	(with-wallet
+	  (with passphrase (wallet-get `(gpg-buffer-passphrase
+					 ,(url-concretize name)))
+	    (if (and passphrase (decryptable? passphrase))
+		(decrypt passphrase)
+		(dialogue-window 
+		 (gpg-widget-ask-standalone-passphrase decryptable?)
+		 (lambda (action)
+		   (when (and (list? action) (nnull? action)
+			      (== (first action) "Ok"))
+		     (decrypt (second action))))
+		 "Passphrase decryption"))))))))
+
+;; Save as
+(tm-define (save-buffer-as-main new-name . args)
+  (:require (== (get-init "encryption") "gpg-passphrase"))
+  (gpg-copy-buffer-passphrase (current-buffer) new-name)
+  (former new-name args))

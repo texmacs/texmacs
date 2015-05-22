@@ -242,7 +242,7 @@
 				    (ahash-set! tbl (car x) #t)
 				    (ahash-remove! tbl (car x)))
 				#f) //)
-		    (text (wallet-entry->string x)))))
+		    (hlist // // (text (wallet-entry->string x))))))
 	      (glue #f #t 0 0))))
         ===
         (bottom-buttons
@@ -278,22 +278,8 @@
   (set-preference "wallet always remember" "off"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Persistent wallet status
+;; Open wallet on demand
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define wallet-persistent-status "off")
-
-(define (notify-wallet-persistent-status var val)
-  (set! wallet-persistent-status val))
-
-(define-preferences
-  ("wallet persistent status" "off" notify-wallet-persistent-status))
-
-(tm-define (wallet-persistent-status-on?)
-  (== (get-preference "wallet persistent status") "on"))
-
-(tm-define (wallet-persistent-status-off?)
-  (not (wallet-persistent-status-on?)))
 
 (tm-define-macro (with-wallet . body)
   `(if (and (wallet-initialized?)

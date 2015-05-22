@@ -33,7 +33,7 @@
   </macro>>
 
   <assign|gpg-render-recipient-item|<\macro|z>
-    <htab|3em>-- <gpg-render-recipient|<arg|z>>
+    <htab|3em>\U <gpg-render-recipient|<arg|z>>
   </macro>>
 
   <assign|gpg-decrypted-block-none|<\macro|body|recipients>
@@ -113,6 +113,20 @@
   <assign|gpg-passphrase-decrypted|<macro|v|<arg|v>>>
 
   <assign|gpg-passphrase-encrypted|<macro|v|<inline-tag|passphrase-encrypted-data>>>
+
+  <\active*>
+    <\src-comment>
+      Passphrase encryption of whole buffer via GnuPG.
+    </src-comment>
+  </active*>
+
+  <assign|gpg-passphrase-encrypted-buffer|<\macro|body>
+    <\surround|<no-indent>|>
+      <\framed>
+        <with|font-series|bold|Passphrase encrypted buffer>
+      </framed>
+    </surround>
+  </macro>>
 </body>
 
 <\initial>

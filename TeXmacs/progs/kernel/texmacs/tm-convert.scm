@@ -274,6 +274,12 @@
 ;; Other useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (tm-file-extract doc what)
+  (and (tm-func? doc 'document)
+       (with val (assoc-ref (map tm->list (tm-children doc)) what)
+         (if (pair? val) (set! val (car val)))
+         val)))
+
 (define-public (tmfile? doc)
   (and (tmfile-extract doc 'TeXmacs) (tmfile-extract doc 'body)))
 

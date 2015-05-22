@@ -348,6 +348,9 @@
         (else
           (switch-to-buffer name)))
   (buffer-notify-recent name)
+  (when (nnull? (select (buffer-get name)
+			'(:* gpg-passphrase-encrypted-buffer)))
+    (tm-gpg-dialogue-passphrase-decrypt-buffer name))
   (noop))
 
 (define (load-buffer-load name opts)

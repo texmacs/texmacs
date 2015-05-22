@@ -32,6 +32,7 @@
 (define gpg-default-key-fingerprint "")
 
 (define (notify-gpg-default-key-fingerprint var val)
+  (set-user-info "gpg-key-fingerprint" val)
   (set! gpg-default-key-fingerprint val))
 
 (define-preferences
@@ -44,7 +45,7 @@
 	  (== gpg-default-key-fingerprint ""))
       gpg-default-key-fingerprint
       (begin
-	 (set-preference "gpg default key fingerprint" "")
+	 (set-user-info "gpg-key-fingerprint" "")
 	 "")))
 
 (tm-define (gpg-set-default-key-fingerprint fingerprint)
@@ -54,6 +55,7 @@
   (:argument fingerprint "Key fingerprint")
   (when (or (gpg-secret-key-fingerprint? fingerprint)
 	    (== fingerprint ""))
+    (refresh-now "identity-info")
     (set-preference "gpg default key fingerprint" fingerprint)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -90,9 +92,11 @@
       (form "Generate new GnuPG key"
         (aligned
           (item (text "Name:")
-            (form-input "name" "string" (list "") "10w"))
+            (form-input "name" "string"
+			(list (get-user-info "name")) "10w"))
           (item (text "Email:")
-            (form-input "email" "string" (list "") "10w"))
+            (form-input "email" "string"
+			(list (get-user-info "email")) "10w"))
           (item (text "Comment:")
             (form-input "comment" "string" (list "") "10w"))
           (item (text "Passphrase:")
@@ -262,32 +266,45 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (gpg-widget-ask-new-passphrase cmd)
-  (with error #f
-  (resize "500px" "180px"
-    (refreshable "gpg-refreshable-ask-new-passphrase"
-      (padded
-        (if error (hlist >> (bold (text "Passphrases mismatch")) >>))
-        (centered (text "Enter new passphrase for encryption"))
-    === ===
-  (form "Ask new passphrase"
-    (aligned
-      (item (text "New passphrase:")
-        (form-input "passphrase1" "password" '() "10w"))
-      (item (text "Retype passphrase:")
-        (form-input "passphrase2" "password" '() "8w")))
-    (bottom-buttons
-      ("Cancel"
-       (cmd (list "Cancel")))
-      >>
-      ("Ok"
-       (with n (length (form-values))
-         (if (and (> n 1) (string? (first (form-values)))
-                          (string? (second (form-values))))
-           (if (== (first (form-values)) (second (form-values)))
-             (cmd (list "Ok" (first (form-values))))
-             (begin
-               (set! error #t)
-               (refresh-now "gpg-refreshable-ask-new-passphrase")))))))))))))
+  (with error ""
+    (resize "500px" "180px"
+      (refreshable "gpg-refreshable-ask-new-passphrase"
+	(padded
+	  (if (== error "mismatch")
+	      (hlist >> (bold (text "Passphrases mismatch")) >>))
+	  (if (== error "empty")
+	      (hlist >> (bold (text "Wrong empty passphrase")) >>))
+	  (centered (text "Enter new passphrase for encryption"))
+	  === ===
+	  (form "Ask new passphrase"
+	    (aligned
+	      (item (text "New passphrase:")
+		(form-input "passphrase1" "password" '("") "10w"))
+	      (item (text "Retype passphrase:")
+		(form-input "passphrase2" "password" '("") "10w")))
+	    (bottom-buttons
+	      ("Cancel"
+	       (cmd (list "Cancel")))
+	      >>
+	      ("Ok"
+	       (let* ((n (length (form-values)))
+		      (passwd1 (if (and (> n 0)
+					(string? (first (form-values))))
+				   (first (form-values)) ""))
+		      (passwd2 (if (and (> n 1)
+					(string? (second (form-values))))
+				   (second (form-values)) "")))
+		 (if (== passwd1 passwd2)
+		     (if (!= passwd1 "")
+			 (cmd (list "Ok" passwd1))
+			 (begin
+			   (set! error "empty")
+			   (refresh-now
+			    "gpg-refreshable-ask-new-passphrase")))
+		     (begin
+		       (set! error "mismatch")
+		       (refresh-now
+			"gpg-refreshable-ask-new-passphrase"))))))))))))
 
 (define (gpg-command-passphrase-encrypt data callback action)
   (when (and (list? action) (nnull? action) (== (first action) "Ok"))
@@ -376,7 +393,7 @@
 			   (ahash-remove! sels x))
 		       (refresh-now "gpg-refreshable-manage-secret-keys"))
 		     (ahash-ref sels x))
-		(bold (text (key->string x))))))
+		(hlist // // (bold (text (key->string x)))))))
 	  (for (x (with y (gpg-get-default-key-fingerprint)
 		    (filter (lambda (k) (!= (gpg-get-key-fingerprint k) y))
 			    keys)))
@@ -388,7 +405,7 @@
 			   (ahash-remove! sels x))
 		       (refresh-now "gpg-refreshable-manage-secret-keys"))
 		     (ahash-ref sels x))
-		(text (key->string x)))))
+		(hlist // // (text (key->string x))))))
 	  (glue #f #t 0 5)))
       ===
       (hlist
@@ -498,7 +515,7 @@
 			   (ahash-remove! sels x))
 		       (refresh-now "gpg-refreshable-manage-public-keys"))
 		     (ahash-ref sels x))
-		(text (key->string x)))))
+		(hlist // // (text (key->string x))))))
 	  (glue #f #t 0 5)))
       ===
       (hlist
@@ -584,7 +601,7 @@
 		       (refresh-now
 			"gpg-refreshable-manage-collected-public-keys"))
 		     (ahash-ref sels x))
-		(text (fingerprint->string x)))))
+		(hlist // // (text (fingerprint->string x))))))
 	  (glue #f #t 0 5)))
       ===
       (hlist
