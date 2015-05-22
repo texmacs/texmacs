@@ -60,14 +60,22 @@
 					(!math (longequal))))))
   (longdownequal (!group (mbox (rotatebox (!option "origin=c") "-90"
 					  (!math (longequal))))))
+  (longupminus (!group (mbox (rotatebox (!option "origin=c") "90"
+					(!math (longminus))))))
+  (longdownminus (!group (mbox (rotatebox (!option "origin=c") "-90"
+					  (!math (longminus))))))
   (longuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
 					(!math (longrightarrow))))))
   (longdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
 					  (!math (longrightarrow))))))
+  (longupdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+                                            (!math (longleftrightarrow))))))
   (Longuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
 					(!math (Longrightarrow))))))
   (Longdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
 					  (!math (Longrightarrow))))))
+  (Longupdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+                                            (!math (Longleftrightarrow))))))
   (mapsup (!group (mbox (rotatebox (!option "origin=c") "90"
 				   (!math (mapsto))))))
   (mapsdown (!group (mbox (rotatebox (!option "origin=c") "-90"
@@ -80,6 +88,8 @@
 					 (!math (rightsquigarrow))))))
   (downsquigarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
 					   (!math (rightsquigarrow))))))
+  (updownsquigarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
+                                             (!math (leftrightsquigarrow))))))
   (hookuparrow (!group (mbox (rotatebox (!option "origin=c") "90"
 					(!math (hookrightarrow))))))
   (hookdownarrow (!group (mbox (rotatebox (!option "origin=c") "-90"
@@ -165,6 +175,7 @@
   (dototimes "\\mathaccent95{\\otimes}")
   (dotast "\\mathaccent95{*}")
   (into "\\rightarrow")
+  (longminus "{-\\!\\!-}")
   (longequal "{=\\!\\!=}")
   (longhookrightarrow "{\\lhook\\joinrel\\relbar\\joinrel\\rightarrow}")
   (longhookleftarrow "{\\leftarrow\\joinrel\\relbar\\joinrel\\rhook}")

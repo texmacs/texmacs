@@ -31,12 +31,13 @@
 
   ;; rotated arrows and other symbols
   mapsfrom longmapsfrom mapmulti leftsquigarrow
-  upequal downequal longupequal longdownequal
-  longuparrow longdownarrow Longuparrow Longdownarrow
+  upequal downequal longupequal longdownequal longupminus longdownminus
+  longuparrow longdownarrow longupdownarrow
+  Longuparrow Longdownarrow Longupdownarrow
   mapsup mapsdown longmapsup longmapsdown
-  upsquigarrow downsquigarrow
+  upsquigarrow downsquigarrow updownsquigarrow
   hookuparrow hookdownarrow longhookuparrow longhookdownarrow
-  btimes Backepsilon Mho
+  Backepsilon Mho btimes
 
   ;; asymptotic relations by Joris
   nasymp asympasymp nasympasymp simsim nsimsim npreccurlyeq
@@ -52,7 +53,8 @@
   exterior Exists bigintwl bigointwl asterisk point cdummy comma copyright
   bignone nobracket nospace nocomma noplus nosymbol
   nin nni notni nequiv nleadsto
-  dotamalg dottimes dotoplus dototimes dotast into longequal
+  dotamalg dottimes dotoplus dototimes dotast into
+  longminus longequal
   longhookrightarrow longhookleftarrow
   triangleup precdot preceqdot llangle rrangle join um upl upm ump
   assign plusassign minusassign timesassign overassign

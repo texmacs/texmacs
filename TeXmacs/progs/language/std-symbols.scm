@@ -543,9 +543,13 @@
 
     "<uparrow>" "<Uparrow>" "<downarrow>" "<Downarrow>"
     "<updownarrow>" "<Updownarrow>" "<mapsup>" "<mapsdown>"
-    "<hookuparrow>" "<hookdownarrow>" "<longuparrow>" "<Longuparrow>"
+    "<hookuparrow>" "<hookdownarrow>"
+    "<upsquigarrow>" "<downsquigarrow>" "<updownsquigarrow>"
+    "<upequal>" "<downequal>"
+    "<longuparrow>" "<Longuparrow>"
     "<longdownarrow>" "<Longdownarrow>" "<longupdownarrow>" "<Longupdownarrow>"
     "<longmapsup>" "<longmapsdown>" "<longhookuparrow>" "<longhookdownarrow>"
+    "<longupequal>" "<longdownequal>" "<longupminus>" "<longdownminus>"
 
     "<prime>" "<emptyset>"
     "<surd>" "<top>" "<bot>" "<angle>"

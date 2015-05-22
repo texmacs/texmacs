@@ -47,6 +47,7 @@
   (hookdownarrow (enlarge (0.18 -0.25 (rot-right hookrightarrow)) 0.18 0.18 0 0))
   (upsquigarrow (enlarge (0.18 -0.25 (rot-left rightsquigarrow)) 0.18 0.18 0 0))
   (downsquigarrow (enlarge (0.18 -0.25 (rot-right rightsquigarrow)) 0.18 0.18 0 0))
+  (updownsquigarrow (enlarge (0.18 -0.25 (rot-left leftrightsquigarrow)) 0.18 0.18 0 0))
   (longuparrow (enlarge (0.18 -0.6 (rot-left longrightarrow)) 0.18 0.18 0 0))
   (longdownarrow (enlarge (0.18 -0.6 (rot-left longleftarrow)) 0.18 0.18 0 0))
   (longupdownarrow (enlarge (0.18 -0.6 (rot-left longleftrightarrow)) 0.18 0.18 0 0))
@@ -57,6 +58,10 @@
   (longmapsdown (enlarge (0.18 -0.6 (rot-right longmapsto)) 0.18 0.18 0 0))
   (longhookuparrow (enlarge (0.18 -0.6 (rot-left longhookrightarrow)) 0.18 0.18 0 0))
   (longhookdownarrow (enlarge (0.18 -0.6 (rot-right longhookrightarrow)) 0.18 0.18 0 0))
+  (longupminus (enlarge (0.18 -0.25 (rot-left longminus)) 0.18 0.18 0 0))
+  (longdownminus (enlarge (0.18 -0.25 (rot-right longminus)) 0.18 0.18 0 0))
+  (longupequal (enlarge (0.18 -0.25 (rot-left longequal)) 0.18 0.18 0 0))
+  (longdownequal (enlarge (0.18 -0.25 (rot-right longequal)) 0.18 0.18 0 0))
 
   (leftarrowlim (enlarge leftarrow 0 0 -0.1 -0.1))
   (rightarrowlim (enlarge rightarrow 0 0 -0.1 -0.1))
