@@ -66,3 +66,6 @@
 (tm-define (check-all u)
   (:synopsis "Run all regression tests in directory @u.")
   (check-latex-export u))
+
+(tm-define (run-checks)
+  (check-latex-export "$TEXMACS_CHECKS/latex-export"))

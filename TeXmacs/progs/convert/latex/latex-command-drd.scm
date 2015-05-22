@@ -90,7 +90,8 @@
   sideset stackrel citeauthoryear
   setcounter addtocounter setlength addtolength
   colorbox scalebox texorpdfstring raisebox foreignlanguage
-  Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut)
+  Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut
+  ifthispageodd)
 
 (logic-group latex-command-3%
   ifthenelse resizebox fcolorbox @setfontsize eIf multicolumn)

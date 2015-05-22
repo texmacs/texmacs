@@ -1342,10 +1342,10 @@
 (define (tmtex-specific l)
   (cond ((== (car l) "latex") (tmtex-tt (cadr l)))
 	((== (car l) "image") (tmtex-eps (cadr l)))
-	(else
-          (begin
-            (display* "TeXmacs] non converted specific content: \n" l "\n")
-            ""))))
+	((== (car l) "printer") (tmtex (cadr l)))
+	((== (car l) "odd") `(ifthispageodd ,(tmtex (cadr l)) ""))
+	((== (car l) "even") `(ifthispageodd "" ,(tmtex (cadr l))))
+	(else "")))
 
 (define (tmtex-eps-names)
   (set! tmtex-serial (+ tmtex-serial 1))

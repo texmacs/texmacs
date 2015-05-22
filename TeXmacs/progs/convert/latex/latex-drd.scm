@@ -135,7 +135,9 @@
   (index "makeidx")
   (printindex "makeidx")
 
-  (inparaenum "paralist"))
+  (inparaenum "paralist")
+
+  (ifthispageodd "scrextend"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page size settings
