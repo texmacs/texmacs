@@ -152,7 +152,7 @@
   ("tmcode" #t))
 
 (logic-group latex-texmacs-environment-0%
-  begin-proof begin-leftaligned begin-rightaligned
+  begin-proof begin-leftaligned begin-rightaligned begin-quoteenv
   begin-tmindent begin-elsequation begin-elsequation*)
 
 (logic-group latex-texmacs-environment-0*%

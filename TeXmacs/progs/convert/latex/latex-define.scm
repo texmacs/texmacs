@@ -424,10 +424,14 @@
    (!append (!begin "flushright")
 	    ---
             (!end "flushright")))
+  ("quoteenv"
+   (!append (begin "quote")
+	    ---
+            (end "quote")))
   ("tmcode"
    ((!option "")
     (!append (begin "alltt")
-	    ---
+             ---
              (end "alltt"))))
   ("tmparmod"
    ((!begin "list" "" (!append "\\setlength{\\topsep}{0pt}"
@@ -441,8 +445,8 @@
 	     ---)))
   ("tmparsep"
    (!append (begingroup) "\\setlength{\\parskip}{" 1 "}"
-	     ---
-	     (endgroup)))
+            ---
+            (endgroup)))
   ("tmindent"
    ((!begin "tmparmod" "1.5em" "0pt" "0pt") ---))
   ("elsequation" ((!begin "eqnarray") (!append --- "&&")))

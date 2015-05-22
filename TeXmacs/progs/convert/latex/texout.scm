@@ -16,6 +16,13 @@
 	(convert tools output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Make environment names acceptable
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tex-env-name s)
+  (if (string? s) (string-replace s "-" "") s))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface for unicode output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -363,6 +370,7 @@
   (texout-args args))
 
 (define (texout-begin* what args inside)
+  (set! what (tex-env-name what))
   (output-tex (string-append "\\begin{" what "}"))
   (texout-args args)
   (output-lf)
@@ -371,6 +379,7 @@
   (output-tex (string-append "\\end{" what "}")))
 
 (define (texout-begin what args inside)
+  (set! what (tex-env-name what))
   (output-tex (string-append "\\begin{" what "}"))
   (texout-args args)
   (output-indent 2)
