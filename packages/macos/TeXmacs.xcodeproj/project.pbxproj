@@ -299,6 +299,36 @@
 		49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71916FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
 		49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BEF71616FDD566004BAE73 /* metadata-springer.cpp */; };
+		49C096011B0F93C600E038BA /* rubber_assemble_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C095FE1B0F93C600E038BA /* rubber_assemble_font.cpp */; };
+		49C096021B0F93C600E038BA /* rubber_assemble_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C095FE1B0F93C600E038BA /* rubber_assemble_font.cpp */; };
+		49C096031B0F93C600E038BA /* rubber_assemble_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C095FE1B0F93C600E038BA /* rubber_assemble_font.cpp */; };
+		49C096041B0F93C600E038BA /* rubber_stix_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C095FF1B0F93C600E038BA /* rubber_stix_font.cpp */; };
+		49C096051B0F93C600E038BA /* rubber_stix_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C095FF1B0F93C600E038BA /* rubber_stix_font.cpp */; };
+		49C096061B0F93C600E038BA /* rubber_stix_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C095FF1B0F93C600E038BA /* rubber_stix_font.cpp */; };
+		49C096071B0F93C600E038BA /* rubber_unicode_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096001B0F93C600E038BA /* rubber_unicode_font.cpp */; };
+		49C096081B0F93C600E038BA /* rubber_unicode_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096001B0F93C600E038BA /* rubber_unicode_font.cpp */; };
+		49C096091B0F93C600E038BA /* rubber_unicode_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096001B0F93C600E038BA /* rubber_unicode_font.cpp */; };
+		49C096111B0F945300E038BA /* database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960B1B0F945300E038BA /* database.cpp */; };
+		49C096121B0F945300E038BA /* database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960B1B0F945300E038BA /* database.cpp */; };
+		49C096131B0F945300E038BA /* database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960B1B0F945300E038BA /* database.cpp */; };
+		49C096141B0F945300E038BA /* db_disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960D1B0F945300E038BA /* db_disk.cpp */; };
+		49C096151B0F945300E038BA /* db_disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960D1B0F945300E038BA /* db_disk.cpp */; };
+		49C096161B0F945300E038BA /* db_disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960D1B0F945300E038BA /* db_disk.cpp */; };
+		49C096171B0F945300E038BA /* db_index.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960E1B0F945300E038BA /* db_index.cpp */; };
+		49C096181B0F945300E038BA /* db_index.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960E1B0F945300E038BA /* db_index.cpp */; };
+		49C096191B0F945300E038BA /* db_index.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960E1B0F945300E038BA /* db_index.cpp */; };
+		49C0961A1B0F945300E038BA /* db_query.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960F1B0F945300E038BA /* db_query.cpp */; };
+		49C0961B1B0F945300E038BA /* db_query.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960F1B0F945300E038BA /* db_query.cpp */; };
+		49C0961C1B0F945300E038BA /* db_query.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C0960F1B0F945300E038BA /* db_query.cpp */; };
+		49C0961D1B0F945300E038BA /* db_sort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096101B0F945300E038BA /* db_sort.cpp */; };
+		49C0961E1B0F945300E038BA /* db_sort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096101B0F945300E038BA /* db_sort.cpp */; };
+		49C0961F1B0F945300E038BA /* db_sort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096101B0F945300E038BA /* db_sort.cpp */; };
+		49C096221B0F947D00E038BA /* universal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096201B0F947D00E038BA /* universal.cpp */; };
+		49C096231B0F947D00E038BA /* universal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096201B0F947D00E038BA /* universal.cpp */; };
+		49C096241B0F947D00E038BA /* universal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096201B0F947D00E038BA /* universal.cpp */; };
+		49C096261B0F94B100E038BA /* conservative_bib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096251B0F94B100E038BA /* conservative_bib.cpp */; };
+		49C096271B0F94B100E038BA /* conservative_bib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096251B0F94B100E038BA /* conservative_bib.cpp */; };
+		49C096281B0F94B100E038BA /* conservative_bib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C096251B0F94B100E038BA /* conservative_bib.cpp */; };
 		49CC0DFE18D30BDB007AB053 /* latex_tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CC0DFD18D30BDB007AB053 /* latex_tools.cpp */; };
 		49CC0DFF18D30BDB007AB053 /* latex_tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CC0DFD18D30BDB007AB053 /* latex_tools.cpp */; };
 		49CC0E0018D30BDB007AB053 /* latex_tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49CC0DFD18D30BDB007AB053 /* latex_tools.cpp */; };
@@ -1659,6 +1689,18 @@
 		49AA0884181166140090FD84 /* font_protrusion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_protrusion.cpp; sourceTree = "<group>"; };
 		49BEF71616FDD566004BAE73 /* metadata-springer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-springer.cpp"; sourceTree = "<group>"; };
 		49BEF71716FDD566004BAE73 /* metadata.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = metadata.hpp; sourceTree = "<group>"; };
+		49C095FE1B0F93C600E038BA /* rubber_assemble_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rubber_assemble_font.cpp; sourceTree = "<group>"; };
+		49C095FF1B0F93C600E038BA /* rubber_stix_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rubber_stix_font.cpp; sourceTree = "<group>"; };
+		49C096001B0F93C600E038BA /* rubber_unicode_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rubber_unicode_font.cpp; sourceTree = "<group>"; };
+		49C0960B1B0F945300E038BA /* database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = database.cpp; path = Database/database.cpp; sourceTree = "<group>"; };
+		49C0960C1B0F945300E038BA /* database.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = database.hpp; path = Database/database.hpp; sourceTree = "<group>"; };
+		49C0960D1B0F945300E038BA /* db_disk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = db_disk.cpp; path = Database/db_disk.cpp; sourceTree = "<group>"; };
+		49C0960E1B0F945300E038BA /* db_index.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = db_index.cpp; path = Database/db_index.cpp; sourceTree = "<group>"; };
+		49C0960F1B0F945300E038BA /* db_query.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = db_query.cpp; path = Database/db_query.cpp; sourceTree = "<group>"; };
+		49C096101B0F945300E038BA /* db_sort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = db_sort.cpp; path = Database/db_sort.cpp; sourceTree = "<group>"; };
+		49C096201B0F947D00E038BA /* universal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = universal.cpp; sourceTree = "<group>"; };
+		49C096211B0F947D00E038BA /* universal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = universal.hpp; sourceTree = "<group>"; };
+		49C096251B0F94B100E038BA /* conservative_bib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = conservative_bib.cpp; sourceTree = "<group>"; };
 		49CC0DFD18D30BDB007AB053 /* latex_tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_tools.cpp; sourceTree = "<group>"; };
 		49D6464418478DD2001541E1 /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
 		49D6464518478DD2001541E1 /* base64.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = base64.hpp; sourceTree = "<group>"; };
@@ -2263,7 +2305,6 @@
 		9C6632E11676B229000D7974 /* font_database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_database.cpp; sourceTree = "<group>"; };
 		9C6632E71676B272000D7974 /* preferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = preferences.cpp; sourceTree = "<group>"; };
 		9C6632ED1676B28E000D7974 /* tt_tools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_tools.cpp; sourceTree = "<group>"; };
-		9C6632EE1676B28E000D7974 /* tt_tools.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tt_tools.hpp; sourceTree = "<group>"; };
 		9C722BEB10D2F7C700C41915 /* qt_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_sys_utils.cpp; sourceTree = "<group>"; };
 		9C722BEC10D2F7C700C41915 /* qt_sys_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_sys_utils.hpp; sourceTree = "<group>"; };
 		9C722C0D10D2F88800C41915 /* unix_sys_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unix_sys_utils.cpp; sourceTree = "<group>"; };
@@ -2794,6 +2835,19 @@
 			path = Colors;
 			sourceTree = "<group>";
 		};
+		49C0960A1B0F944100E038BA /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				49C0960B1B0F945300E038BA /* database.cpp */,
+				49C0960C1B0F945300E038BA /* database.hpp */,
+				49C0960D1B0F945300E038BA /* db_disk.cpp */,
+				49C0960E1B0F945300E038BA /* db_index.cpp */,
+				49C0960F1B0F945300E038BA /* db_query.cpp */,
+				49C096101B0F945300E038BA /* db_sort.cpp */,
+			);
+			name = Database;
+			sourceTree = "<group>";
+		};
 		49DD8FA616DB75C100647CA2 /* Sqlite3 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3011,6 +3065,8 @@
 				4934A47318C5D01E00BF1E6A /* fast_search.cpp */,
 				4934A47418C5D01E00BF1E6A /* fast_search.hpp */,
 				9C0B479410A8CC0F0097A335 /* merge_sort.hpp */,
+				49C096201B0F947D00E038BA /* universal.cpp */,
+				49C096211B0F947D00E038BA /* universal.hpp */,
 				49FFF7C41635D3690031CFDC /* wencoding.cpp */,
 				49FFF7C51635D3690031CFDC /* wencoding.hpp */,
 			);
@@ -3311,6 +3367,7 @@
 				9C0B484B10A8CC100097A335 /* Bibtex */,
 				9C0B484E10A8CC100097A335 /* Cairo */,
 				9C0B485410A8CC100097A335 /* Cocoa */,
+				49C0960A1B0F944100E038BA /* Database */,
 				9C0B487010A8CC100097A335 /* Freetype */,
 				9C0B487910A8CC100097A335 /* Ghostscript */,
 				9C0B487C10A8CC100097A335 /* Imlib2 */,
@@ -3397,20 +3454,23 @@
 		9C0B487010A8CC100097A335 /* Freetype */ = {
 			isa = PBXGroup;
 			children = (
-				497822CA16EC86D40054F5BA /* tt_analyze.cpp */,
-				9C6632ED1676B28E000D7974 /* tt_tools.cpp */,
-				9C6632EE1676B28E000D7974 /* tt_tools.hpp */,
-				9CEDAA351264FF88009630CC /* unicode_math_font.cpp */,
 				9C0B487110A8CC100097A335 /* free_type.cpp */,
 				9C0B487210A8CC100097A335 /* free_type.hpp */,
+				49C095FE1B0F93C600E038BA /* rubber_assemble_font.cpp */,
+				49C095FF1B0F93C600E038BA /* rubber_stix_font.cpp */,
+				49C096001B0F93C600E038BA /* rubber_unicode_font.cpp */,
+				497822CA16EC86D40054F5BA /* tt_analyze.cpp */,
 				9C0B487310A8CC100097A335 /* tt_face.cpp */,
 				9C0B487410A8CC100097A335 /* tt_face.hpp */,
 				9C0B487510A8CC100097A335 /* tt_file.cpp */,
 				9C0B487610A8CC100097A335 /* tt_file.hpp */,
 				9C0B487710A8CC100097A335 /* tt_font.cpp */,
-				491132F216767D3E009F1A5C /* tt_tools.cpp */,
+				9C6632ED1676B28E000D7974 /* tt_tools.cpp */,
 				491132F316767D3E009F1A5C /* tt_tools.hpp */,
 				9C0B487810A8CC100097A335 /* unicode_font.cpp */,
+				9CEDAA351264FF88009630CC /* unicode_math_font.cpp */,
+				491132F216767D3E009F1A5C /* tt_tools.cpp */,
+				491132F316767D3E009F1A5C /* tt_tools.hpp */,
 			);
 			path = Freetype;
 			sourceTree = "<group>";
@@ -4320,6 +4380,7 @@
 		9CFEB3FE11D79AF6005C12C4 /* BibTeX */ = {
 			isa = PBXGroup;
 			children = (
+				49C096251B0F94B100E038BA /* conservative_bib.cpp */,
 				9CFEB3FF11D79AF6005C12C4 /* parsebib.cpp */,
 			);
 			path = BibTeX;
@@ -4756,6 +4817,7 @@
 				9C0B49F810A8CC110097A335 /* totm.cpp in Sources */,
 				9C0B49F910A8CC110097A335 /* upgradetm.cpp in Sources */,
 				9C0B49FA10A8CC110097A335 /* verbatim.cpp in Sources */,
+				49C0961D1B0F945300E038BA /* db_sort.cpp in Sources */,
 				9C0B49FB10A8CC110097A335 /* fromxml.cpp in Sources */,
 				9C0B49FC10A8CC110097A335 /* parsexml.cpp in Sources */,
 				9C0B49FD10A8CC110097A335 /* drd_info.cpp in Sources */,
@@ -4768,6 +4830,7 @@
 				9C0B4A0310A8CC110097A335 /* commute.cpp in Sources */,
 				9C0B4A0410A8CC110097A335 /* patch.cpp in Sources */,
 				9C0B4A0510A8CC110097A335 /* edit_observer.cpp in Sources */,
+				49C096171B0F945300E038BA /* db_index.cpp in Sources */,
 				9C0B4A0610A8CC110097A335 /* ip_observer.cpp in Sources */,
 				9C0B4A0710A8CC110097A335 /* link.cpp in Sources */,
 				493EAE301958CAE500F01CED /* python_language.cpp in Sources */,
@@ -4845,8 +4908,10 @@
 				9C0B4A6210A8CC110097A335 /* tree.cpp in Sources */,
 				9C0B4A6310A8CC110097A335 /* tree_label.cpp in Sources */,
 				9C0B4A6510A8CC110097A335 /* bibtex.cpp in Sources */,
+				49C096141B0F945300E038BA /* db_disk.cpp in Sources */,
 				9C0B4A7310A8CC110097A335 /* TMButtonsController.m in Sources */,
 				9C0B4A7510A8CC110097A335 /* free_type.cpp in Sources */,
+				49C0961A1B0F945300E038BA /* db_query.cpp in Sources */,
 				9C0B4A7610A8CC110097A335 /* tt_face.cpp in Sources */,
 				9C0B4A7710A8CC110097A335 /* tt_file.cpp in Sources */,
 				9C0B4A7810A8CC110097A335 /* tt_font.cpp in Sources */,
@@ -4942,7 +5007,9 @@
 				9C0B4B1A10A8CC110097A335 /* bridge_formatting.cpp in Sources */,
 				9C0B4B1B10A8CC110097A335 /* bridge_gui.cpp in Sources */,
 				9C0B4B1C10A8CC110097A335 /* bridge_hidden.cpp in Sources */,
+				49C096221B0F947D00E038BA /* universal.cpp in Sources */,
 				9C0B4B1D10A8CC110097A335 /* bridge_locus.cpp in Sources */,
+				49C096071B0F93C600E038BA /* rubber_unicode_font.cpp in Sources */,
 				9C0B4B1E10A8CC110097A335 /* bridge_mark.cpp in Sources */,
 				9C0B4B1F10A8CC110097A335 /* bridge_rewrite.cpp in Sources */,
 				9C0B4B2010A8CC110097A335 /* bridge_surround.cpp in Sources */,
@@ -5034,6 +5101,7 @@
 				49F9FA131573BA86006C7258 /* new_project.cpp in Sources */,
 				49F9FA161573BA86006C7258 /* new_window.cpp in Sources */,
 				9CD1513B15A72D0F006F2205 /* metadata.cpp in Sources */,
+				49C096261B0F94B100E038BA /* conservative_bib.cpp in Sources */,
 				49FFF7C61635D3690031CFDC /* wencoding.cpp in Sources */,
 				9C6632DE1676B208000D7974 /* qt_font.cpp in Sources */,
 				9C6632E21676B229000D7974 /* font_database.cpp in Sources */,
@@ -5073,6 +5141,8 @@
 				490DBDA9176EEEBD001F362A /* scilab_language.cpp in Sources */,
 				491BF36E178BFF4C00C69EEF /* tm_sparkle.mm in Sources */,
 				49A513F119426DD70017E373 /* colors.cpp in Sources */,
+				49C096011B0F93C600E038BA /* rubber_assemble_font.cpp in Sources */,
+				49C096041B0F93C600E038BA /* rubber_stix_font.cpp in Sources */,
 				491BF371178BFF4C00C69EEF /* tm_updater.cpp in Sources */,
 				491BF374178BFF4C00C69EEF /* tm_winsparkle.cpp in Sources */,
 				493F45F9179EC49F00E2972D /* latex_preview.cpp in Sources */,
@@ -5081,6 +5151,7 @@
 				4915C7D218093E4D00C3D2B7 /* parse_vernac.cpp in Sources */,
 				491563F618141C2000EEBBC9 /* font_protrusion.cpp in Sources */,
 				49194C6C184E892800DC45E2 /* tree_search.cpp in Sources */,
+				49C096111B0F945300E038BA /* database.cpp in Sources */,
 				49250532186DD65400D32374 /* QTMTreeModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5128,6 +5199,8 @@
 				49D6464818478DD2001541E1 /* base64.cpp in Sources */,
 				9CCC740E10D303D900E88D90 /* drd_std.cpp in Sources */,
 				9CCC740F10D303D900E88D90 /* tag_info.cpp in Sources */,
+				49C096091B0F93C600E038BA /* rubber_unicode_font.cpp in Sources */,
+				49C0961F1B0F945300E038BA /* db_sort.cpp in Sources */,
 				9CCC741010D303D900E88D90 /* vars.cpp in Sources */,
 				9CCC741110D303D900E88D90 /* archiver.cpp in Sources */,
 				9CCC741210D303D900E88D90 /* commute.cpp in Sources */,
@@ -5155,6 +5228,7 @@
 				9CCC743210D303D900E88D90 /* edit_keyboard.cpp in Sources */,
 				9CCC743310D303D900E88D90 /* edit_mouse.cpp in Sources */,
 				9CCC743410D303D900E88D90 /* edit_repaint.cpp in Sources */,
+				49C096241B0F947D00E038BA /* universal.cpp in Sources */,
 				9CCC743510D303D900E88D90 /* edit_delete.cpp in Sources */,
 				9CCC743610D303D900E88D90 /* edit_dynamic.cpp in Sources */,
 				9CCC743710D303D900E88D90 /* edit_math.cpp in Sources */,
@@ -5177,6 +5251,7 @@
 				9CCC744710D303D900E88D90 /* math_font.cpp in Sources */,
 				9CCC744810D303D900E88D90 /* translator.cpp in Sources */,
 				4934A47718C5D01E00BF1E6A /* fast_search.cpp in Sources */,
+				49C096061B0F93C600E038BA /* rubber_stix_font.cpp in Sources */,
 				9CCC744910D303D900E88D90 /* virtual_font.cpp in Sources */,
 				9CCC744A10D303D900E88D90 /* widget.cpp in Sources */,
 				9CCC744B10D303D900E88D90 /* math_tree.cpp in Sources */,
@@ -5223,6 +5298,7 @@
 				9CCC747210D303D900E88D90 /* load_pk.cpp in Sources */,
 				9CCC747310D303D900E88D90 /* load_tex.cpp in Sources */,
 				9CCC747410D303D900E88D90 /* load_tfm.cpp in Sources */,
+				49C096191B0F945300E038BA /* db_index.cpp in Sources */,
 				9CCC747510D303D900E88D90 /* tex_files.cpp in Sources */,
 				9CCC747610D303D900E88D90 /* tex_font.cpp in Sources */,
 				9CCC747710D303D900E88D90 /* tex_init.cpp in Sources */,
@@ -5250,6 +5326,7 @@
 				9CCC74A810D303D900E88D90 /* pipe_link.cpp in Sources */,
 				9CCC74A910D303D900E88D90 /* socket_link.cpp in Sources */,
 				9CCC74AA10D303D900E88D90 /* socket_notifier.cpp in Sources */,
+				49C096031B0F93C600E038BA /* rubber_assemble_font.cpp in Sources */,
 				9CCC74AB10D303D900E88D90 /* socket_server.cpp in Sources */,
 				9CCC74AC10D303D900E88D90 /* texmacs_client.cpp in Sources */,
 				9CCC74AD10D303D900E88D90 /* texmacs_server.cpp in Sources */,
@@ -5270,6 +5347,7 @@
 				9CCC74BD10D303D900E88D90 /* boxes.cpp in Sources */,
 				9CCC74BE10D303D900E88D90 /* rubber_boxes.cpp in Sources */,
 				9CCC74BF10D303D900E88D90 /* stretch_boxes.cpp in Sources */,
+				49C096131B0F945300E038BA /* database.cpp in Sources */,
 				9CCC74C010D303D900E88D90 /* text_boxes.cpp in Sources */,
 				9CCC74C110D303D900E88D90 /* composite_boxes.cpp in Sources */,
 				9CCC74C210D303D900E88D90 /* concat_boxes.cpp in Sources */,
@@ -5310,6 +5388,7 @@
 				9CCC74E410D303D900E88D90 /* concat_macro.cpp in Sources */,
 				9CCC74E510D303D900E88D90 /* concat_math.cpp in Sources */,
 				9CCC74E610D303D900E88D90 /* concat_post.cpp in Sources */,
+				49C096161B0F945300E038BA /* db_disk.cpp in Sources */,
 				9CCC74E710D303D900E88D90 /* concat_text.cpp in Sources */,
 				9CCC74E810D303D900E88D90 /* concater.cpp in Sources */,
 				9CCC74E910D303D900E88D90 /* env.cpp in Sources */,
@@ -5403,7 +5482,9 @@
 				4929A892170207440028991F /* frame.cpp in Sources */,
 				4929A895170207440028991F /* grid.cpp in Sources */,
 				4929A898170207440028991F /* point.cpp in Sources */,
+				49C096281B0F94B100E038BA /* conservative_bib.cpp in Sources */,
 				4932C1A61704F54200E87D8C /* brush.cpp in Sources */,
+				49C0961C1B0F945300E038BA /* db_query.cpp in Sources */,
 				4973E9A318BC945F001F74F0 /* r_language.cpp in Sources */,
 				49DEED25170ACFB800332D9F /* picture.cpp in Sources */,
 				49DEED28170ACFB800332D9F /* raster_picture.cpp in Sources */,
@@ -5448,10 +5529,12 @@
 				9CD4E5FF10B14AB300E0DD5C /* parsexml.cpp in Sources */,
 				9CD4E60010B14AB300E0DD5C /* drd_info.cpp in Sources */,
 				9CD4E60110B14AB300E0DD5C /* drd_mode.cpp in Sources */,
+				49C096151B0F945300E038BA /* db_disk.cpp in Sources */,
 				9CD4E60210B14AB300E0DD5C /* drd_std.cpp in Sources */,
 				9CD4E60310B14AB300E0DD5C /* tag_info.cpp in Sources */,
 				9CD4E60410B14AB300E0DD5C /* vars.cpp in Sources */,
 				9CD4E60510B14AB300E0DD5C /* archiver.cpp in Sources */,
+				49C096121B0F945300E038BA /* database.cpp in Sources */,
 				9CD4E60610B14AB300E0DD5C /* commute.cpp in Sources */,
 				9CD4E60710B14AB300E0DD5C /* patch.cpp in Sources */,
 				9CD4E60810B14AB300E0DD5C /* edit_observer.cpp in Sources */,
@@ -5592,9 +5675,11 @@
 				9CD4E6B410B14AB300E0DD5C /* stretch_boxes.cpp in Sources */,
 				9CD4E6B510B14AB300E0DD5C /* text_boxes.cpp in Sources */,
 				9CD4E6B610B14AB300E0DD5C /* composite_boxes.cpp in Sources */,
+				49C096081B0F93C600E038BA /* rubber_unicode_font.cpp in Sources */,
 				9CD4E6B710B14AB300E0DD5C /* concat_boxes.cpp in Sources */,
 				9CD4E6B810B14AB300E0DD5C /* decoration_boxes.cpp in Sources */,
 				9CD4E6B910B14AB300E0DD5C /* math_boxes.cpp in Sources */,
+				49C0961B1B0F945300E038BA /* db_query.cpp in Sources */,
 				9CD4E6BA10B14AB300E0DD5C /* misc_boxes.cpp in Sources */,
 				9CD4E6BB10B14AB300E0DD5C /* script_boxes.cpp in Sources */,
 				9CD4E6BC10B14AB300E0DD5C /* stack_boxes.cpp in Sources */,
@@ -5644,6 +5729,7 @@
 				9CD4E6E510B14AB300E0DD5C /* formatter.cpp in Sources */,
 				9CD4E6E610B14AB300E0DD5C /* line_item.cpp in Sources */,
 				9CD4E6E710B14AB300E0DD5C /* page_item.cpp in Sources */,
+				49C096021B0F93C600E038BA /* rubber_assemble_font.cpp in Sources */,
 				9CD4E6ED10B14AB300E0DD5C /* lazy_gui.cpp in Sources */,
 				9CD4E6EE10B14AB300E0DD5C /* lazy_paragraph.cpp in Sources */,
 				9CD4E6EF10B14AB300E0DD5C /* lazy_typeset.cpp in Sources */,
@@ -5656,6 +5742,7 @@
 				9CD4E6F610B14AB300E0DD5C /* vpenalty.cpp in Sources */,
 				9CD4E6F710B14AB300E0DD5C /* stacker.cpp in Sources */,
 				9CD4E6F810B14AB300E0DD5C /* cell.cpp in Sources */,
+				49C096271B0F94B100E038BA /* conservative_bib.cpp in Sources */,
 				9CD4E6F910B14AB300E0DD5C /* table.cpp in Sources */,
 				9CD4E70A10B14AEE00E0DD5C /* array_widget.cpp in Sources */,
 				9CD4E70B10B14AEE00E0DD5C /* attribute_event.cpp in Sources */,
@@ -5676,6 +5763,7 @@
 				9CD4E71A10B14AEE00E0DD5C /* popup_button.cpp in Sources */,
 				9CD4E71B10B14AEE00E0DD5C /* popup_widget.cpp in Sources */,
 				9CD4E71C10B14AEE00E0DD5C /* scroll_event.cpp in Sources */,
+				49C0961E1B0F945300E038BA /* db_sort.cpp in Sources */,
 				9CD4E71D10B14AEE00E0DD5C /* scroll_widget.cpp in Sources */,
 				9CD4E71E10B14AEE00E0DD5C /* scrollable_widget.cpp in Sources */,
 				9CD4E71F10B14AEE00E0DD5C /* scrollbar_widget.cpp in Sources */,
@@ -5734,6 +5822,7 @@
 				9C0B09B714FF0A3D004ABDCE /* fromcls.cpp in Sources */,
 				9C6723D714FFD4EC005F1FE9 /* object.cpp in Sources */,
 				9C6723D814FFD4EE005F1FE9 /* guile_tm.cpp in Sources */,
+				49C096181B0F945300E038BA /* db_index.cpp in Sources */,
 				9C6723D914FFD4F1005F1FE9 /* glue.cpp in Sources */,
 				9C4FCFF8150F73100087378D /* new_document.cpp in Sources */,
 				492ED6CC150FD27D00DB0FB5 /* new_data.cpp in Sources */,
@@ -5768,6 +5857,7 @@
 				4929A891170207440028991F /* frame.cpp in Sources */,
 				4929A894170207440028991F /* grid.cpp in Sources */,
 				4929A897170207440028991F /* point.cpp in Sources */,
+				49C096231B0F947D00E038BA /* universal.cpp in Sources */,
 				4932C1A51704F54200E87D8C /* brush.cpp in Sources */,
 				49DEED24170ACFB800332D9F /* picture.cpp in Sources */,
 				49CC0DFF18D30BDB007AB053 /* latex_tools.cpp in Sources */,
@@ -5776,6 +5866,7 @@
 				491BB5961731182600A755DF /* enlightened.cpp in Sources */,
 				491BB5991731182600A755DF /* transformed.cpp in Sources */,
 				491BB59C1731182600A755DF /* triangulated.cpp in Sources */,
+				49C096051B0F93C600E038BA /* rubber_stix_font.cpp in Sources */,
 				491BB5A01731183800A755DF /* pencil.cpp in Sources */,
 				491BB5A81731186A00A755DF /* effect.cpp in Sources */,
 				495DB2D718CCB02300FE485A /* fakedlopen.c in Sources */,
