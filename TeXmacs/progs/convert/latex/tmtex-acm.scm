@@ -166,3 +166,8 @@
 (smart-table latex-texmacs-environment
   (:mode acm-style?)
   ("proof" #f))
+
+(tm-define (tmtex-cite-detail s l)
+  (:mode acm-style?)
+  `(!concat ,(tex-apply 'cite (tmtex (car l)))
+            " (" ,(tmtex (cadr l)) ")"))

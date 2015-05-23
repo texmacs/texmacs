@@ -330,7 +330,7 @@
   (:synopsis "Variant of tex-concat which concatenates adjacent strings")
   (tex-concat (tex-concat-strings l)))
 
-(define tex-apply
+(tm-define tex-apply
   (lambda l
     (if (or (tmtex-math-mode?) (logic-in? (car l) tmpre-sectional%)) l
 	(list '!group l))))
@@ -2245,6 +2245,9 @@
   (tex-apply 'citetext `(!concat (citealp ,(tmtex (car l))) ", "
 				 ,(tmtex (cadr l)))))
 
+(define (tmtex-cite-detail-hook s l)
+  (tmtex-cite-detail s l))
+
 (define (tmtex-cite-raw s l)
   (tex-apply 'citealp (tmtex-cite-list l)))
 
@@ -2627,7 +2630,7 @@
   (made-by-TeXmacs (,(tmtex-rename 'madebyTeXmacs) 0))
   (cite (,tmtex-cite -1))
   (nocite (,tmtex-nocite -1))
-  (cite-detail (,tmtex-cite-detail 2))
+  (cite-detail (,tmtex-cite-detail-hook 2))
   (cite-raw (,tmtex-cite-raw -1))
   (cite-raw* (,tmtex-cite-raw* -1))
   (cite-textual (,tmtex-cite-textual -1))
