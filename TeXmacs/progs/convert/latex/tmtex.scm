@@ -1780,6 +1780,13 @@
 	(set! tmtex-appendices? #t)
 	(list '!concat '(appendix) app)))))
 
+(define (tmtex-appendix* s l)
+  (with app (list (if (latex-book-style?) 'chapter* 'section*) (tmtex (car l)))
+    (if tmtex-appendices? app
+      (begin
+	(set! tmtex-appendices? #t)
+	(list '!concat '(appendix) app)))))
+
 (define (tmtex-tt-document l)
   (cond ((null? l) "")
 	((null? (cdr l)) (tmtex-tt (car l)))
@@ -2505,6 +2512,7 @@
   (show-part (,tmtex-show-part -1))
   ((:or doc-title-options author-data) (,tmtex-default -1))
   (appendix (,tmtex-appendix 1))
+  (appendix* (,tmtex-appendix* 1))
   ((:or theorem proposition lemma corollary proof axiom definition
 	notation conjecture remark note example exercise problem warning
 	convention quote-env quotation verse solution question answer
