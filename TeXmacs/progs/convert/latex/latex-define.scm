@@ -557,6 +557,7 @@
     "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
   (tmfloat
    (!append
+    (!ignore (ifthenelse) (captionof) (widthof))
     "\\newcommand{\\tmfloatcontents}{}\n"
     "\\newlength{\\tmfloatwidth}\n"
     "\\newcommand{\\tmfloat}[5]{\n"

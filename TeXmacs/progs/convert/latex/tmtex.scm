@@ -1179,6 +1179,19 @@
                `(tformat ,@(map (cut block-align <> (length n)) n) ,t))))
         (else t)))
 
+(define (tm-big-figure? t)
+  (tm-in? t '(big-figure big-table)))
+
+(define (tm-replace-figure t)
+  (cond ((tm-func? t 'big-figure)
+         (list 'tmfloat "h" "big" "figure" (cadr t) (caddr t)))
+        ((tm-func? t 'big-table)
+         (list 'tmfloat "h" "big" "table" (cadr t) (caddr t)))
+        (else t)))
+
+(define (tmtex-figure-adjust t)
+  (tm-replace t tm-big-figure? tm-replace-figure))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1214,7 +1227,8 @@
 (define (tmtex-table-apply key args x)
   (let* ((props (logic-ref tmtex-table-props% key)))
     (when (not (tmtex-math-mode?))
-      (set! x (tmtex-block-adjust x)))
+      (set! x (tmtex-block-adjust x))
+      (set! x (tmtex-figure-adjust x)))
     (if props
 	(let* ((env (if (tmtex-math-mode?) 'array 'tabular))
 	       (before (car props))
