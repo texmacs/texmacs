@@ -1141,6 +1141,45 @@
   (tmtex-eps (cons 'tree l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hacks for tables with multi-paragraph cells
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (map-or l1 l2)
+  (if (or (null? l1) (null? l2)) (list)
+      (cons (or (car l1) (car l2)) (map-or (cdr l1) (cdr l2)))))
+
+(define (tmtex-block-columns t)
+  (cond ((tm-func? t 'tformat) (tmtex-block-columns (cAr t)))
+        ((tm-func? t 'table 1) (tmtex-block-columns (cAr t)))
+        ((tm-func? t 'table)
+         (let* ((b1 (tmtex-block-columns `(table ,(cadr t))))
+                (b2 (tmtex-block-columns `(table ,@(cddr t)))))
+           (map-or b1 b2)))
+        ((tm-func? t 'row) (map tmtex-block-columns (cdr t)))
+        ((tm-func? t 'cell) (tmtex-block-columns (cAr t)))
+        (else (tm-func? t 'document))))
+
+(define (column-numbers l i)
+  (cond ((null? l) (list))
+        ((car l) (cons i (column-numbers (cdr l) (+ i 1))))
+        (else (column-numbers (cdr l) (+ i 1)))))
+
+(define (block-align nr out-of)
+  (let* ((c (number->string nr))
+         (p (string-append "p{" (number->string (/ 12.0 out-of)) "cm}")))
+    `(cwith "1" "-1" ,c ,c "cell-halign" ,p)))
+
+(define (tmtex-block-adjust t)
+  (cond ((tm-func? t 'tformat)
+         (append (cDr t) (list (tmtex-block-adjust (cAr t)))))
+        ((tm-func? t 'table)
+         (let* ((b (tmtex-block-columns t))
+                (n (column-numbers b 1)))
+           (if (null? n) t
+               `(tformat ,@(map (cut block-align <> (length n)) n) ,t))))
+        (else t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1174,6 +1213,8 @@
 
 (define (tmtex-table-apply key args x)
   (let* ((props (logic-ref tmtex-table-props% key)))
+    (when (not (tmtex-math-mode?))
+      (set! x (tmtex-block-adjust x)))
     (if props
 	(let* ((env (if (tmtex-math-mode?) 'array 'tabular))
 	       (before (car props))
@@ -1184,8 +1225,9 @@
 	       (e (list '!begin (symbol->string env) (tmtex-table-args p)))
 	       (r (tmtex-table-make p)))
 	  (tex-concat (list before (list e r) after)))
-	(list `(!begin ,(symbol->string key) ,@args)
-	      (tmtex-table-make (tmtable-parser x))))))
+        (begin
+          (list `(!begin ,(symbol->string key) ,@args)
+                (tmtex-table-make (tmtable-parser x)))))))
 
 (define (tmtex-tformat l)
   (tmtex-table-apply 'tabular '() (cons 'tformat l)))

@@ -295,8 +295,8 @@
     (define (format-by axis name default)
       (map (lambda (fs)
              (if (or (null? fs) (null? (last fs)) (null? (last (car fs))))
-			    default
-			    (tmformat-cell-value (first fs))))
+                 default
+                 (tmformat-cell-value (first fs))))
 	   ((cond ((eq? axis :row) tmtable-format-partition-by-row)
 		  ((eq? axis :column) tmtable-format-partition-by-column))
 	    this
