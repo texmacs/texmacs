@@ -154,3 +154,15 @@
 (tm-define (tmtex-acm-crdata s l)
   (:mode acm-style?)
   `(crdata ,@(map tmtex l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ACM specific macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table latex-texmacs-macro
+  (:mode acm-style?)
+  (qed #f))
+
+(smart-table latex-texmacs-environment
+  (:mode acm-style?)
+  ("proof" #f))
