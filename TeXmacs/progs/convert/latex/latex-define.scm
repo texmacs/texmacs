@@ -358,6 +358,7 @@
   (tmaction (!group (!append (color "blue") 1)))
   (ontop (genfrac "" "" "0pt" "" 1 2))
   (subindex (index (!append 1 "!" 2)))
+  (renderfootnote (footnotetext (!append (tmrsup 1) " " 2)))
 
   ;; Ternary macros
   (tmsession (!group (!append (tt) 3)))

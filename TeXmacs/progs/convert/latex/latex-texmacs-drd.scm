@@ -100,7 +100,8 @@
   tmfoldedgrouped tmunfoldedgrouped tmfoldedexplain tmunfoldedexplain
   tmfoldedplain tmunfoldedplain tmfoldedenv tmunfoldedenv
   tmfoldedstd tmunfoldedstd tmfolded tmunfolded
-  tminput tminputmath tmhlink tmaction ontop subindex)
+  tminput tminputmath tmhlink tmaction ontop subindex
+  renderfootnote)
 
 (logic-group latex-texmacs-3%
   tmsession tmfoldedio tmunfoldedio tmfoldediomath tmunfoldediomath
