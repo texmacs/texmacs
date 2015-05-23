@@ -133,6 +133,47 @@
            (set! tmtex-use-unicode?  #f)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Determination of the mode in which commands are used
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define command-text-uses (make-ahash-table))
+(define command-math-uses (make-ahash-table))
+
+(define (compute-mode-stats t mode)
+  (when (tree-compound? t)
+    (let* ((h (if (== mode (tree "math"))
+                  command-math-uses
+                  command-text-uses))
+           (n (or (ahash-ref h (tree-label t)) 0)))
+      (ahash-set! h (tree-label t) (+ n 1))
+      (for-each (lambda (i)
+                  (with nmode (tree-child-env t i "mode" mode)
+                    (compute-mode-stats (tree-ref t i) nmode)))
+                (.. 0 (tree-arity t))))))
+
+(define (init-mode-stats t)
+  (set! command-text-uses (make-ahash-table))
+  (set! command-math-uses (make-ahash-table))
+  (compute-mode-stats (tm->tree t) "text"))
+
+(define (tmtex-pre t)
+  (cond ((tm-func? t 'para)
+         (cons '!paragraph (map-in-order tmtex-pre (tm-children t))))
+        ((and (tm-func? t 'assign 2) (tm-atomic? (tm-ref t 0)))
+         (let* ((lab (string->symbol (tm-ref t 0)))
+                (tnr (or (ahash-ref command-text-uses lab) 0))
+                (mnr (or (ahash-ref command-math-uses lab) 0)))
+           ;;(display* lab ", " tnr ", " mnr "\n")
+           (if (>= tnr mnr)
+               (tmtex t)
+               (begin
+                 (tmtex-env-set "mode" "math")
+                 (with r (tmtex t)
+                   (tmtex-env-reset "mode")
+                   r)))))
+        (else (tmtex t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -157,6 +198,22 @@
   (("font-shape" "slanted") tmtextsl)
   (("font-shape" "italic") tmtextit)
   (("font-shape" "small-caps") tmtextsc)
+  (("par-columns" "2") (!begin "multicols" "2"))
+  (("par-columns" "3") (!begin "multicols" "3"))
+  (("par-mode" "center") (!begin "center"))
+  (("par-mode" "left") (!begin "flushleft"))
+  (("par-mode" "right") (!begin "flushright")))
+
+(logic-table tex-with-cmd-math%
+  (("font-family" "rm") mathrm)
+  (("font-family" "ss") mathsf)
+  (("font-family" "tt") mathtt)
+  (("font-series" "medium") tmmathmd)
+  (("font-series" "bold") tmmathbf)
+  (("font-shape" "right") mathrm)
+  (("font-shape" "slanted") mathit)
+  (("font-shape" "italic") mathit)
+  (("font-shape" "small-caps") mathrm)
   (("math-font" "cal") mathcal)
   (("math-font" "cal*") mathscr)
   (("math-font" "cal**") EuScript)
@@ -175,12 +232,7 @@
   (("math-font-family" "tt") mathtt)
   (("math-font-family" "bf") mathbf)
   (("math-font-family" "it") mathit)
-  (("math-font-series" "bold") tmmathbf)
-  (("par-columns" "2") (!begin "multicols" "2"))
-  (("par-columns" "3") (!begin "multicols" "3"))
-  (("par-mode" "center") (!begin "center"))
-  (("par-mode" "left") (!begin "flushleft"))
-  (("par-mode" "right") (!begin "flushright")))
+  (("math-font-series" "bold") tmmathbf))
 
 (logic-table tex-assign-cmd%
   (("font-family" "rm") rmfamily)
@@ -584,6 +636,7 @@
          (doc-preamble (tmtex-filter-preamble (tmtex-filter-style-macro doc)))
          (doc-body-pre (tmtex-filter-body doc))
          (doc-body (tmtex-apply-init doc-body-pre init-bis)))
+    (init-mode-stats doc-body-pre)
     (latex-set-texmacs-style (if (pair? styles) (car styles) "none"))
     (latex-set-texmacs-packages (if (pair? styles) (cdr styles) (list)))
     (if (== (get-preference "texmacs->latex:expand-user-macros") "on")
@@ -591,7 +644,7 @@
     (if (null? styles) (tmtex doc)
       (let* ((styles* (tmtex-filter-styles styles))
              (preamble* (ahash-with tmtex-env :preamble #t
-                                    (map-in-order tmtex doc-preamble)))
+                                    (map-in-order tmtex-pre doc-preamble)))
              (body* (tmtex doc-body))
              (needs (list tmtex-languages tmtex-colors tmtex-colormaps)))
         (list '!file body* styles* needs init preamble*)))))
@@ -1142,9 +1195,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmtex-get-with-cmd var val)
-  (if (or (and (string-prefix? "math-font" var) (not (tmtex-math-mode?)))
-          (and (string-prefix? "font-" var) (tmtex-math-mode?))) #f
-    (logic-ref tex-with-cmd% (list var val))))
+  (if (tmtex-math-mode?)
+      (or (logic-ref tex-with-cmd-math% (list var val))
+          (logic-ref tex-with-cmd% (list var val)))
+      (logic-ref tex-with-cmd% (list var val))))
 
 (define (tmtex-get-assign-cmd var val)
   (if (== var "font-size")
@@ -1239,7 +1293,8 @@
 	      (else arg)))
       (let ((w (tmtex-get-with-cmd var val))
 	    (a (tmtex-get-assign-cmd var val)))
-	(cond (w (list w arg))
+	(cond ((and w (tm-func? arg w 1)) arg)
+              (w (list w arg))
 	      (a (list '!group (tex-concat (list (list a) " " arg))))
 	      ((== "par-left" var)    (tmtex-make-parmod val "0pt" "0pt" arg))
 	      ((== "par-right" var)   (tmtex-make-parmod "0pt" val "0pt" arg))
