@@ -1953,6 +1953,9 @@
 (define (tmtex-footnotesize s l)
   (tex-apply 'footnotesize (tmtex (car l))))
 
+(define (tmtex-small s l)
+  (tex-apply 'small (tmtex (car l))))
+
 (define (tmtex-normalsize s l)
   (tex-apply 'normalsize (tmtex (car l))))
 
@@ -2542,9 +2545,11 @@
   (really-small (,tmtex-scriptsize 1))
   (very-small (,tmtex-scriptsize 1))
   (smaller (,tmtex-footnotesize 1))
-  (flat-size (,tmtex-footnotesize 1))
+  (small (,tmtex-small 1))
+  (flat-size (,tmtex-small 1))
   (normal-size (,tmtex-normalsize 1))
   (sharp-size (,tmtex-large 1))
+  (large (,tmtex-large 1))
   (larger (,tmtex-Large 1))
   (very-large (,tmtex-LARGE 1))
   (really-large (,tmtex-LARGE 1))
