@@ -1463,15 +1463,21 @@
 ;; Metadata for documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (make-inline t)
+  (tm-replace t '(new-line) '(next-line)))
+
+(tm-define (tmtex-inline t)
+  (tmtex (make-inline t)))
+
 (tm-define (tmtex-doc-title t)
-  `(title ,(tmtex (cadr t))))
+  `(title ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-doc-running-title t)
-  `(tmrunningtitle ,(tmtex (cadr t))))
+  `(tmrunningtitle ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-doc-subtitle t)
   (set! t (tmtex-remove-line-feeds t))
-  `(tmsubtitle ,(tmtex (cadr t))))
+  `(tmsubtitle ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-doc-note t)
   (set! t (tmtex-remove-line-feeds t))
@@ -1482,13 +1488,13 @@
   `(tmmisc ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-date t)
-  `(date ,(tmtex (cadr t))))
+  `(date ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-doc-running-author t)
-  `(tmrunningauthor ,(tmtex (cadr t))))
+  `(tmrunningauthor ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-author-name t)
-  `(author ,(tmtex (cadr t))))
+  `(author ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-author-affiliation t)
   (set! t (tmtex-remove-line-feeds t))
@@ -1496,11 +1502,11 @@
 
 (tm-define (tmtex-author-email t)
   (set! t (tmtex-remove-line-feeds t))
-  `(tmemail ,(tmtex (cadr t))))
+  `(tmemail ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-author-homepage t)
   (set! t (tmtex-remove-line-feeds t))
-  `(tmhomepage ,(tmtex (cadr t))))
+  `(tmhomepage ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-author-note t)
   (set! t (tmtex-remove-line-feeds t))
