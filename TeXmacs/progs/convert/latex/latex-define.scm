@@ -567,8 +567,12 @@
     "  \\renewcommand{\\tmfloatcontents}{#4}\n"
     "  \\setlength{\\tmfloatwidth}{\\widthof{\\tmfloatcontents}+1in}\n"
     "  \\ifthenelse{\\equal{#2}{small}}\n"
-    "    {\\ifthenelse{\\lengthtest{\\tmfloatwidth > \\linewidth}}\n"
-    "      {\\setlength{\\tmfloatwidth}{\\linewidth}}{}}\n"
+    ;; FIXME: the length test frequently produces an error:
+    ;; '! Missing = inserted for \ifdim'.
+    ;; I (Joris) did not manage to understand this LaTeX mess.
+    ;;"    {\\ifthenelse{\\lengthtest{\\tmfloatwidth > \\linewidth}}\n"
+    ;;"      {\\setlength{\\tmfloatwidth}{\\linewidth}}{}}\n"
+    "    {\\setlength{\\tmfloatwidth}{0.45\\linewidth}}\n"
     "    {\\setlength{\\tmfloatwidth}{\\linewidth}}\n"
     "  \\begin{minipage}[#1]{\\tmfloatwidth}\n"
     "    \\begin{center}\n"
