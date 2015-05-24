@@ -207,6 +207,9 @@
 ;; Actual conversion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (std-converter-options from to)
+  (or (ahash-ref converter-options (list from to)) '()))
+
 (define (convert-via what from path options)
   ;;(display* "convert-via " what ", " from ", " path ", " options "\n")
   (if (null? path)
@@ -218,8 +221,8 @@
 	(if fun
 	    (let* ((last? (null? (cdr path)))
 		   (opts1 (acons 'last? last? options))
-		   (opts2 (ahash-ref converter-options (list from (car path))))
-		   (what* (fun what (append opts1 (or opts2 '()))))
+		   (opts2 (std-converter-options from (car path)))
+		   (what* (fun what (append opts1 opts2)))
 		   (result (convert-via what* (car path) (cdr path) options)))
 	      (if (and (not last?) (string-ends? (car path) "-file"))
 		  (system-remove what*))

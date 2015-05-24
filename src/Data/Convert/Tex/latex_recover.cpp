@@ -15,6 +15,7 @@
 #include "file.hpp"
 #include "scheme.hpp"
 
+tree latex_expand (tree doc, url name);
 bool tracked_tree_to_latex_document (tree, object, string&, string&);
 
 /******************************************************************************
@@ -78,9 +79,10 @@ number_latex_pages (url log) {
 ******************************************************************************/
 
 void
-try_latex_export (tree doc, object opts, url dest) {
+try_latex_export (tree doc, object opts, url src, url dest) {
   string s, ms;
   cout << "TeXmacs] Performing conversion\n";
+  doc= latex_expand (doc, src);
   if (tracked_tree_to_latex_document (doc, opts, s, ms))
     cout << "TeXmacs] could not track LaTeX export\n";
   else if (save_string (dest, s, false))

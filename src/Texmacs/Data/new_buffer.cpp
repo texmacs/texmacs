@@ -527,6 +527,13 @@ buffer_export (url name, url dest, string fm) {
 }
 
 tree
+latex_expand (tree doc, url name) {
+  tm_view vw= concrete_view (get_recent_view (name));
+  tree body= vw->ed->exec_latex (extract (doc, "body"));
+  return change_doc_attr (doc, "body", body);
+}
+
+tree
 latex_expand (tree doc) {
   tm_view vw= concrete_view (url (as_string (extract (doc, "view"))));
   tree body= vw->ed->exec_latex (extract (doc, "body"));

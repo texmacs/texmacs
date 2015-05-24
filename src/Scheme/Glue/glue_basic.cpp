@@ -5341,17 +5341,19 @@ tmg_conservative_latex_2texmacs (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_try_latex_export (tmscm arg1, tmscm arg2, tmscm arg3) {
+tmg_try_latex_export (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "try-latex-export");
   TMSCM_ASSERT_OBJECT (arg2, TMSCM_ARG2, "try-latex-export");
   TMSCM_ASSERT_URL (arg3, TMSCM_ARG3, "try-latex-export");
+  TMSCM_ASSERT_URL (arg4, TMSCM_ARG4, "try-latex-export");
 
   content in1= tmscm_to_content (arg1);
   object in2= tmscm_to_object (arg2);
   url in3= tmscm_to_url (arg3);
+  url in4= tmscm_to_url (arg4);
 
   // TMSCM_DEFER_INTS;
-  try_latex_export (in1, in2, in3);
+  try_latex_export (in1, in2, in3, in4);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -9401,7 +9403,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("conservative-texmacs->latex",  tmg_conservative_texmacs_2latex, 2, 0, 0);
   tmscm_install_procedure ("tracked-texmacs->latex",  tmg_tracked_texmacs_2latex, 2, 0, 0);
   tmscm_install_procedure ("conservative-latex->texmacs",  tmg_conservative_latex_2texmacs, 2, 0, 0);
-  tmscm_install_procedure ("try-latex-export",  tmg_try_latex_export, 3, 0, 0);
+  tmscm_install_procedure ("try-latex-export",  tmg_try_latex_export, 4, 0, 0);
   tmscm_install_procedure ("parse-xml",  tmg_parse_xml, 1, 0, 0);
   tmscm_install_procedure ("parse-html",  tmg_parse_html, 1, 0, 0);
   tmscm_install_procedure ("parse-bib",  tmg_parse_bib, 1, 0, 0);

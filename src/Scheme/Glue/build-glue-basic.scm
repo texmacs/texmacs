@@ -455,7 +455,7 @@
                                (string content object))
   (tracked-texmacs->latex tracked_texmacs_to_latex (string content object))
   (conservative-latex->texmacs conservative_latex_to_texmacs (tree string bool))
-  (try-latex-export try_latex_export (void content object url))
+  (try-latex-export try_latex_export (void content object url url))
   (parse-xml parse_xml (scheme_tree string))
   (parse-html parse_html (scheme_tree string))
   (parse-bib parse_bib (tree string))
