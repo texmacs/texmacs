@@ -780,10 +780,12 @@
 (define (tmtex-line-break l) (tex-apply 'linebreak))
 (define (tmtex-page-break l) (tex-apply 'pagebreak))
 (define (tmtex-new-page l) (tex-apply 'newpage))
-(define (tmtex-new-line l) (tex-apply '!newline))
 (define (tmtex-next-line l) (list '!nextline))
 (define (tmtex-no-break l) '(!group (nobreak)))
 (define (tmtex-emdash l) "---")
+
+(define (tmtex-new-line l)
+  (if (tmtex-math-mode?) (tmtex-next-line l) (tex-apply '!newline)))
 
 (tm-define (tmtex-decode-length len)
   ;; FIXME: should be completed
@@ -2075,7 +2077,13 @@
     r))
 
 (define (tmtex-math s l)
-  (tmtex `(with "mode" "math" ,(car l))))
+  (cond ((not (tm-func? (car l) 'document))
+         (tmtex `(with "mode" "math" ,(car l))))
+        ((tm-func? (car l) 'document 1)
+         (tmtex `(math ,(cadr (car l)))))
+        (else
+          (with ps (map (lambda (x) `(math ,x)) (cdar l))
+            (tmtex `(document ,@ps))))))
 
 (define (tmtex-textual x)
   (tmtex-env-set "mode" "text")
