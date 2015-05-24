@@ -85,8 +85,10 @@ tree   tracked_latex_to_texmacs (string s, bool as_pic);
 string conservative_texmacs_to_latex (tree doc, object opts);
 string tracked_texmacs_to_latex (tree doc, object opts);
 tree   conservative_latex_to_texmacs (string s, bool as_pic);
-int    number_latex_errors (url aux);
-int    number_latex_pages (url aux);
+void   try_latex_export (tree doc, object opts, url dest);
+int    number_latex_errors (url log);
+tree   get_latex_errors (url log);
+int    number_latex_pages (url log);
 
 /*** Xml / Html / Mathml ***/
 tree   parse_xml (string s);

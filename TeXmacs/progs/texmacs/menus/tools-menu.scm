@@ -40,9 +40,12 @@
       ("Inclusions" (inclusions-gc))
       ("Plugins" (reinit-plugin-cache))
       ("Styles" (style-clear-cache)))
-  (-> "Web"
-      ("Create web site" (tmweb-interactive-build))
-      ("Update web site" (tmweb-interactive-update)))
+  (-> "LaTeX"
+      ("Run LaTeX on buffer" (run-latex-buffer)))
+  (if (url-exists-in-path? "pdflatex")
+      (-> "Web"
+          ("Create web site" (tmweb-interactive-build))
+          ("Update web site" (tmweb-interactive-update))))
   (if supports-email?
       (-> "Email"
           ("Open mailbox" (email-open-mailbox))
