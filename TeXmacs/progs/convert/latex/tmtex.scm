@@ -333,10 +333,13 @@
   (:synopsis "Variant of tex-concat which concatenates adjacent strings")
   (tex-concat (tex-concat-strings l)))
 
-(tm-define tex-apply
-  (lambda l
-    (if (or (tmtex-math-mode?) (logic-in? (car l) tmpre-sectional%)) l
-	(list '!group l))))
+(tm-define (tex-apply . l)
+  (if (or (tmtex-math-mode?) (logic-in? (car l) tmpre-sectional%)) l
+      (list '!group l)))
+
+(tm-define (tex-math-apply . l)
+  (if (tmtex-math-mode?) l
+      (list 'ensuremath l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Strings
@@ -347,10 +350,10 @@
        (== (substring s 0 (string-length r)) r)))
 
 (define (tmtex-modified-token op s i)
-  (tex-apply op
-   (if (= (string-length s) (+ i 1))
-       (substring s i (string-length s))
-       (tex-apply (string->symbol (substring s i (string-length s)))))))
+  (tex-math-apply op
+    (if (= (string-length s) (+ i 1))
+        (substring s i (string-length s))
+        (tex-apply (string->symbol (substring s i (string-length s)))))))
 
 (logic-table latex-text-symbols%
   ("#20AC"         euro)
@@ -379,7 +382,7 @@
         ((string-starts? s "frak-") (tmtex-modified-token 'mathfrak s 5))
         ((string-starts? s "bbb-") (tmtex-modified-token 'mathbbm s 4))
         ((string-starts? s "b-cal-")
-         (tex-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
+         (tex-math-apply 'tmmathbf (tmtex-modified-token 'mathcal s 6)))
         ((string-starts? s "b-up-") (tmtex-modified-token 'mathbf s 5))
         ((string-starts? s "b-") (tmtex-modified-token 'tmmathbf s 2))
         ((and (not (tmtex-math-mode?)) (logic-ref latex-text-symbols% s))
@@ -2277,6 +2280,11 @@
 (define (tmtex-choose s l)
   (list 'binom (tmtex (car l)) (tmtex (cadr l))))
 
+(define (tmtex-text-tt s l)
+  (if (tmtex-math-mode?)
+      (tmtex-math-tt s l)
+      (tmtex-modifier s l)))
+
 (define (tmtex-modifier s l)
   (tex-apply (string->symbol (string-append "tm" s)) (tmtex (car l))))
 
@@ -2704,7 +2712,8 @@
   (href (,tmtex-href 1))
   (slink (,tmtex-href 1))
   (choose (,tmtex-choose 2))
-  ((:or strong em tt name samp abbr dfn kbd var acronym person)
+  (tt (,tmtex-text-tt 1))
+  ((:or strong em name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))
   (menu (,tmtex-menu -1))
   (with-TeXmacs-text (,(tmtex-rename 'withTeXmacstext) 0))
