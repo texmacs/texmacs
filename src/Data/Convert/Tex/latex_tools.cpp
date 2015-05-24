@@ -485,8 +485,7 @@ number_latex_errors (url log) {
   string s;
   if (load_string (log, s, false)) return -1;
   //cout << "Log file" << LF << HRULE << s << HRULE;
-  //return count_occurrences ("\n! ", s);
-  return count_occurrences ("! ", s);
+  return count_occurrences ("\12! ", s) + count_occurrences ("\15! ", s);
 }
 
 int
