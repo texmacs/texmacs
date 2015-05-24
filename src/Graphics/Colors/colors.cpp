@@ -349,7 +349,8 @@ color_from_name (string s) {
   return black;
 }
 
-string named_color_to_xcolormap (string s) {
+string
+named_color_to_xcolormap (string s) {
   s= locase_all (s);
 
   if (init_colors) {

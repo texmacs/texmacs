@@ -1333,23 +1333,22 @@
           ((and (== cm "HTML") (nnull? force-html))
            `((!option "HTML") ,(html-color->latex-xcolor s)))
           ((== cm "texmacs")
-            (begin
-              (if (nin? s tmtex-colors)
-                (set! tmtex-colors (append (list s) tmtex-colors)))
-              s))
+           (when (nin? s tmtex-colors)
+             (set! tmtex-colors (append (list s) tmtex-colors)))
+           s)
+          ((in? cm (list "x11names"))
+           (tmtex-decode-color (get-hex-color s) #t))
           (else
-            (begin
-              (if (and
-                    (nin? cm tmtex-colormaps)
-                    (!= cm "xcolor") (!= cm "none"))
-                (set! tmtex-colormaps (append (list cm) tmtex-colormaps)))
-              s)))))
+            (when (and (nin? cm tmtex-colormaps)
+                       (!= cm "xcolor") (!= cm "none"))
+              (set! tmtex-colormaps (append (list cm) tmtex-colormaps)))
+            s))))
 
 (define (tmtex-make-color val arg)
   (with ltxcolor (tmtex-decode-color val #t)
     (if (list? ltxcolor)
-      `(!group (!append (color ,@ltxcolor) ,arg))
-      `(tmcolor ,ltxcolor ,arg))))
+        `(!group (!append (color ,@ltxcolor) ,arg))
+        `(tmcolor ,ltxcolor ,arg))))
 
 (define (tmtex-with-one var val arg)
   (if (== var "mode")
