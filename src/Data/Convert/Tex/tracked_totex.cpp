@@ -146,7 +146,7 @@ latex_check_transparency (string ums, string s,
 }
 
 /******************************************************************************
-* LaTeX -> TeXmacs conversion with source tracking
+* TeXmacs -> LaTeX conversion with source tracking
 ******************************************************************************/
 
 string
@@ -171,13 +171,9 @@ purify (tree d) {
   return r;
 }
 
-string
-tracked_texmacs_to_latex (tree d, object opts) {
-  if (get_preference ("texmacs->latex:source-tracking", "off") != "on")
-    return tree_to_latex_document (d, opts);
-  tree t= extract (d, "body");
-
-  string ms, s;
+bool
+tracked_tree_to_latex_document (tree d, object opts, string& s, string& ms) {
+  tree   t      = extract (d, "body");
   string tt_opt = "texmacs->latex:transparent-source-tracking";
   bool   tt_flag= get_preference (tt_opt, "off") == "on";
   if (tt_flag) s= tree_to_latex_document (d, opts);
@@ -204,9 +200,19 @@ tracked_texmacs_to_latex (tree d, object opts) {
     latex_declare_transparent (ms, new_invalid);
     if (N(new_invalid) > N(invalid)) { invalid= new_invalid; continue; }
     latex_check_transparency (ums, s, corr, invalid);
-    if (N(invalid) <= old_nr) return s;
+    if (N(invalid) <= old_nr) return true;
   }
   //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
+  return false;
+}
+
+string
+tracked_texmacs_to_latex (tree d, object opts) {
+  if (get_preference ("texmacs->latex:source-tracking", "off") != "on")
+    return tree_to_latex_document (d, opts);
+
+  string ms, s;
+  if (tracked_tree_to_latex_document (d, opts, s, ms)) return s;
 
   string post;
   post << tree_to_scheme (purify (d));
