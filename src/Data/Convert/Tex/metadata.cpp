@@ -92,6 +92,9 @@ is_metadata (tree u) {
          is_tuple (u, "\\tmaffiliation")     ||
          is_tuple (u, "\\tmarxiv")           ||
          is_tuple (u, "\\tmemail")           ||
+         is_tuple (u, "\\tmfnaffiliation")   ||
+         is_tuple (u, "\\tmfnemail")         ||
+         is_tuple (u, "\\tmfnhomepage")      ||
          is_tuple (u, "\\tmhomepage")        ||
          is_tuple (u, "\\tmkeywords")        ||
          is_tuple (u, "\\tmmisc")            ||
@@ -180,24 +183,21 @@ get_latex_author_datas (tree t) {
         author_data= tree (APPLY, "\\author-data");
       }
     }
-    else if (is_tuple (u, "\\thanks", 1)) {
+    else if (is_tuple (u, "\\thanks", 1))
       author_data << tree (APPLY, "\\author-misc", u[1]);
-    }
-    else if (is_tuple (u, "\\tmaffiliation", 1)) {
+    else if (is_tuple (u, "\\tmaffiliation", 1) ||
+             is_tuple (u, "\\tmfnaffiliation", 1))
       author_data << tree (APPLY, "\\author-affiliation", cltm (u[1]));
-    }
-    else if (is_tuple (u, "\\tmmisc", 1)) {
+    else if (is_tuple (u, "\\tmmisc", 1))
       author_data << tree (APPLY, "\\author-misc", cltm (u[1]));
-    }
-    else if (is_tuple (u, "\\tmnote", 1)) {
+    else if (is_tuple (u, "\\tmnote", 1))
       author_data << tree (APPLY, "\\author-note", cltm (u[1]));
-    }
-    else if (is_tuple (u, "\\tmemail", 1)) {
+    else if (is_tuple (u, "\\tmemail", 1) ||
+             is_tuple (u, "\\tmfnemail", 1))
       author_data << tree (APPLY, "\\author-email", cltm (u[1]));
-    }
-    else if (is_tuple (u, "\\tmhomepage", 1)) {
+    else if (is_tuple (u, "\\tmhomepage", 1) ||
+             is_tuple (u, "\\tmfnhomepage", 1))
       author_data << tree (APPLY, "\\author-homepage", cltm (u[1]));
-    }
     else
       author_name << u;
   }

@@ -185,7 +185,7 @@
 
 (tm-define (tmtex-author-homepage t)
   (:mode springer-style?)
-  `(tmhomepage ,(tmtex (cadr t))))
+  `(tmfnhomepage ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-note t)
   (:mode springer-style?)

@@ -69,6 +69,11 @@
   (set! t (tmtex-remove-line-feeds t))
   `(email ,(tmtex (cadr t))))
 
+(tm-define (tmtex-author-homepage t)
+  (:mode ieee-conf-style?)
+  (set! t (tmtex-remove-line-feeds t))
+  `(tmfnhomepage ,(tmtex-inline (cadr t))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; IEEEtran metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

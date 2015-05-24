@@ -81,8 +81,10 @@
   tmverbatim tmop tmstrong tmem tmtt tmname tmsamp tmabbr
   tmdfn tmkbd tmvar tmacronym tmperson tmscript tmdef
   dueto op tmdate tmoutput tmerrput tmtiming
-  tmrunningtitle tmrunningauthor tmaffiliation tmemail tmhomepage
-  tmsubtitle tmacmhomepage tmacmmisc tmieeeemail tmnote tmmisc)
+  tmsubtitle tmrunningtitle tmrunningauthor
+  tmaffiliation tmemail tmhomepage
+  tmfnaffiliation tmfnemail tmfnhomepage
+  tmacmhomepage tmacmmisc tmieeeemail tmnote tmmisc)
 
 (logic-group latex-texmacs-1*%
   tmcodeinline)

@@ -1565,7 +1565,7 @@
   `(author ,(tmtex-inline (cadr t))))
 
 (tm-define (tmtex-author-affiliation t)
-  (set! t (tmtex-remove-line-feeds t))
+  ;;(set! t (tmtex-remove-line-feeds t))
   `(tmaffiliation ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-email t)
@@ -1681,7 +1681,7 @@
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs* emails* urls* miscs* notes*)
   (let* ((names  (tmtex-concat-Sep (map cadr names)))
-         (result `(,@names ,@affiliations ,@emails ,@urls ,@notes ,@miscs)))
+         (result `(,@names ,@notes ,@miscs ,@affiliations ,@emails ,@urls)))
     (if (null? result) '()
       `(author (!paragraph ,@result)))))
 

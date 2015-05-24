@@ -313,6 +313,9 @@ get_metadata_arity (string s, bool abs_flag) {
     metadata_commands ("\\tmaffiliation")= 1;
     metadata_commands ("\\tmemail")= 1;
     metadata_commands ("\\tmhomepage")= 1;
+    metadata_commands ("\\tmfnaffiliation")= 1;
+    metadata_commands ("\\tmfnemail")= 1;
+    metadata_commands ("\\tmfnhomepage")= 1;
     metadata_commands ("\\tmmisc")= 1;
     metadata_commands ("\\tmnote")= 1;
     metadata_commands ("\\tmsubtitle")= 1;

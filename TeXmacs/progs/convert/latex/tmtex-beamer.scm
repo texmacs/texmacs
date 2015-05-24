@@ -193,7 +193,7 @@
 
 (tm-define (tmtex-author-homepage t)
   (:mode beamer-style?)
-  `(tmhomepage ,(tmtex (cadr t))))
+  `(tmfnhomepage ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-note t)
   (:mode beamer-style?)
