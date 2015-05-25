@@ -40,9 +40,8 @@
     (with-aux tm-file
       (system-remove latex-file)
       (if (url? latex-file) (set! current-save-target latex-file))
-      (with-global current-save-target latex-file
-        (export-buffer-main (current-buffer) latex-file
-                            "latex" (list :overwrite)))
+      (export-buffer-main (current-buffer) latex-file
+                          "latex" (list :overwrite))
       (display* "Checking LaTeX on " (url->string latex-file) "...\n")
       (with status (run-pdflatex latex-file)
         (cond ((not status) (display* "  LaTeX export failed\n"))

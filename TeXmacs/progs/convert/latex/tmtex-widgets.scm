@@ -124,8 +124,7 @@
   (with tex (current-buffer-suffixed "tex")
     (if (not tex)
         (set-message "TeXmacs buffer on disk expected" "latex-export")
-        (with-global current-save-target tex
-          (export-buffer tex)))))
+        (export-buffer tex))))
 
 (define (latex-run)
   (cond ((not (url-exists? (current-buffer)))
@@ -156,7 +155,7 @@
          (pdf (current-buffer-suffixed "pdf")))
     (if (not (and tex pdf))
         (set-message "TeXmacs buffer on disk expected" "latex-export")
-        (with-global current-save-target tex
+        (begin
           (export-buffer tex)
           (run-pdflatex tex)
           (preview-file pdf)))))
