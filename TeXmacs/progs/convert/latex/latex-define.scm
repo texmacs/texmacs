@@ -421,22 +421,14 @@
 	    ---
 	    (hspace* (fill)) (!math (Box)) (medskip)))
   ("leftaligned"
-   (!append (!begin "flushleft")
-	    ---
-            (!end "flushleft")))
+   ((!begin "flushleft") ---))
   ("rightaligned"
-   (!append (!begin "flushright")
-	    ---
-            (!end "flushright")))
+   ((!begin "flushright") ---))
   ("quoteenv"
-   (!append (begin "quote")
-	    ---
-            (end "quote")))
+   ((!begin "quote") ---))
   ("tmcode"
    ((!option "")
-    (!append (begin "alltt")
-             ---
-             (end "alltt"))))
+    ((!begin "alltt") ---)))
   ("tmparmod"
    ((!begin "list" "" (!append "\\setlength{\\topsep}{0pt}"
 			       "\\setlength{\\leftmargin}{" 1 "}"
