@@ -209,45 +209,57 @@ texmacs_error_find (string s, string src, hashmap<int,array<path> > corr) {
 * Export, run LaTeX, and analyze
 ******************************************************************************/
 
-void
+tree
 try_latex_export (tree doc, object opts, url src, url dest) {
   string s, ms;
-  cout << "TeXmacs] Performing conversion\n";
   doc= latex_expand (doc, src);
   if (tracked_tree_to_latex_document (doc, opts, s, ms))
-    cout << "TeXmacs] could not track LaTeX export\n";
-  else {
-    hashmap<int,array<path> > corr;
-    string us= latex_unmark (ms, hashset<path> (), corr);
-    if (save_string (dest, us, false))
-      cout << "TeXmacs] could not save LaTeX export\n";
+    return "Error: could not track LaTeX export";
+  hashmap<int,array<path> > corr;
+  string us= latex_unmark (ms, hashset<path> (), corr);
+  if (save_string (dest, us, false))
+    return "Error: could not save LaTeX export";
+  system ("pdflatex -interaction=batchmode", dest);
+  url log= glue (unglue (dest, N (suffix (dest))), "log");
+  int nr= number_latex_errors (log);
+  if (nr == 0) return tree (TUPLE);
+  tree errs= get_latex_errors (log);
+  tree r (TUPLE);
+  r << us;
+  tree b= extract (doc, "body");
+  for (int i=0; i<N(errs); i++) {
+    string err= errs[i]->label;
+    //cout << "------------ Error " << i+1 << LF;
+    //cout << err << LF;
+    /*
+    int pos= latex_error_find (err, us);
+    if (pos < 0) cout << "Position could not be found\n";
     else {
-      cout << "TeXmacs] Running pdflatex\n";
-      system ("pdflatex -interaction=batchmode", dest);
-      url log= glue (unglue (dest, N (suffix (dest))), "log");
-      int nr= number_latex_errors (log);
-      if (nr == 0) cout << "TeXmacs] succesfull LaTeX export\n";
-      else cout << "TeXmacs] LaTeX export contains " << nr << " error(s)\n";
-      tree errs= get_latex_errors (log);
-      for (int i=0; i<N(errs); i++) {
-        string err= errs[i]->label;
-        cout << "------------ Error " << i+1 << LF;
-        //cout << err << LF;
-        /*
-        int pos= latex_error_find (err, us);
-        if (pos < 0) cout << "Position could not be found\n";
-        else {
-          cout << us (max (pos-50, 0), pos)
-               << "[*]"
-               << us (pos, min (pos+50, N(us))) << LF;
-        }
-        */
-        tree b= extract (doc, "body");
-        path p= texmacs_error_find (err, us, corr);
-        if (is_nil (p) || !has_subtree (b, p))
-          cout << "Position could not be found\n";
-        else cout << subtree (b, p) << LF;
-      }
+      cout << us (max (pos-50, 0), pos)
+           << "[*]"
+           << us (pos, min (pos+50, N(us))) << LF;
+    }
+    */
+    /*
+    path p= texmacs_error_find (err, us, corr);
+    if (is_nil (p) || !has_subtree (b, p))
+      cout << "Position could not be found\n";
+    else cout << subtree (b, p) << LF;
+    */
+    int pos= latex_error_find (err, us);
+    path p= texmacs_error_find (err, us, corr);
+    if (is_nil (p) || !has_subtree (b, p)) r << err;
+    else {
+      tree t (TUPLE);
+      t << tree (err)
+        << tree (latex_error_message (err))
+        << tree (latex_error_explain (err))
+        << tree (latex_error_position (err))
+        << tree (latex_error_extra (err))
+        << as_tree (pos)
+        << subtree (b, p);
+      r << t;
     }
   }
+  return r;
 }

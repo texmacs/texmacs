@@ -5353,10 +5353,10 @@ tmg_try_latex_export (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   url in4= tmscm_to_url (arg4);
 
   // TMSCM_DEFER_INTS;
-  try_latex_export (in1, in2, in3, in4);
+  tree out= try_latex_export (in1, in2, in3, in4);
   // TMSCM_ALLOW_INTS;
 
-  return TMSCM_UNSPECIFIED;
+  return tree_to_tmscm (out);
 }
 
 tmscm

@@ -2951,15 +2951,3 @@
           (if (not tmtex-use-macros?)
               (set! r (latex-expand-macros r)))
           r))))
-
-(tm-define (run-latex-buffer)
-  (cond ((not (url-exists? (current-buffer)))
-         (set-message "buffer must be on disk" "run-latex-buffer"))
-        ((not (buffer-has-name? (current-buffer)))
-         (set-message "buffer must have a name" "run-latex-buffer"))
-        (else
-          (let* ((opts (std-converter-options "texmacs-stree" "latex-document"))
-                 (tm (current-buffer))
-                 (nr (string-length (url-suffix tm)))
-                 (tex (url-glue (url-unglue tm nr) "tex")))
-            (try-latex-export (buffer-get tm) opts tm tex)))))
