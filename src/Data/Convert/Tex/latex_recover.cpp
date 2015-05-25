@@ -209,6 +209,25 @@ latex_error_find (string s, string src) {
   else return aft;
 }
 
+int
+get_line_number (string s, int pos) {
+  int l=1;
+  pos= min (pos, N(s));
+  for (int i=0; i<pos; i++)
+    if (s[i] == '\n') l++;
+  return l;
+}
+
+int
+get_column_number (string s, int pos) {
+  int c=0;
+  pos= min (pos, N(s));
+  for (int i=0; i<pos; i++)
+    if (s[i] == '\n') c=0;
+    else c++;
+  return c;
+}
+
 /******************************************************************************
 * Find the error in the TeXmacs source file
 ******************************************************************************/
@@ -279,8 +298,8 @@ try_latex_export (tree doc, object opts, url src, url dest) {
       << tree (latex_error_explain (err))
       << tree (latex_error_position (err))
       << tree (latex_error_extra (err));
-    if (!is_nil (p) && has_subtree (b, p))
-      t << as_tree (pos) << ((tree) p);
+    if (pos >= 0) t << as_tree (pos);
+    if (!is_nil (p) && has_subtree (b, p)) t << ((tree) p);
     r << t;
   }
   return r;

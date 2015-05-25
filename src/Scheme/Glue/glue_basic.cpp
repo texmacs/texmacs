@@ -5341,6 +5341,36 @@ tmg_conservative_latex_2texmacs (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_get_line_number (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-line-number");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "get-line-number");
+
+  string in1= tmscm_to_string (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= get_line_number (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_column_number (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "get-column-number");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "get-column-number");
+
+  string in1= tmscm_to_string (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= get_column_number (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_try_latex_export (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "try-latex-export");
   TMSCM_ASSERT_OBJECT (arg2, TMSCM_ARG2, "try-latex-export");
@@ -9403,6 +9433,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("conservative-texmacs->latex",  tmg_conservative_texmacs_2latex, 2, 0, 0);
   tmscm_install_procedure ("tracked-texmacs->latex",  tmg_tracked_texmacs_2latex, 2, 0, 0);
   tmscm_install_procedure ("conservative-latex->texmacs",  tmg_conservative_latex_2texmacs, 2, 0, 0);
+  tmscm_install_procedure ("get-line-number",  tmg_get_line_number, 2, 0, 0);
+  tmscm_install_procedure ("get-column-number",  tmg_get_column_number, 2, 0, 0);
   tmscm_install_procedure ("try-latex-export",  tmg_try_latex_export, 4, 0, 0);
   tmscm_install_procedure ("parse-xml",  tmg_parse_xml, 1, 0, 0);
   tmscm_install_procedure ("parse-html",  tmg_parse_html, 1, 0, 0);

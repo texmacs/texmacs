@@ -65,6 +65,22 @@
           (tree-select src)
           (tree-go-to src :start))))))
 
+(define (latex-error-show doc err)
+  (when (>= (tree-arity err) 7)
+    (let* ((pos (tree->number (tree-ref err 6)))
+           (l (- (get-line-number doc pos) 1))
+           (c (get-column-number doc pos))
+           (src (buffer-get-body "tmfs://aux/latex-source")))
+      (and-with line (tree-ref src l)
+        (when (and (tree-atomic? line)
+                   (<= c (string-length (tree->string line))))
+          (with-buffer "tmfs://aux/latex-source"
+            (let* ((p (tree->path line))
+                   (b (append p (list 0)))
+                   (e (append p (list c))))
+              (selection-set b e)
+              (tree-go-to line c))))))))
+
 (tm-widget ((latex-errors-widget buf doc errs) quit)
   (let* ((digest (map latex-error-digest errs))
          (errnr 0)
@@ -74,16 +90,22 @@
                 (set! err (list-ref errs errnr))
                 (buffer-set-body "tmfs://aux/latex-error"
                                  (latex-error-doc (list-ref errs errnr)))
-                (latex-error-track buf err))))
+                (latex-error-track buf err)
+                (latex-error-show doc err))))
     (padded
       (resize "800px" "200px"
         (scrollable
           (choice (sel answer) digest (latex-error-digest err))))
       ======
-      (resize "800px" "200px"
+      (resize "800px" "150px"
         (texmacs-input (latex-error-doc (list-ref errs errnr))
                        `(style (tuple "generic"))
-                       (string-append "tmfs://aux/latex-error"))))))
+                       "tmfs://aux/latex-error"))
+      ======
+      (resize "800px" "450px"
+        (texmacs-input (string->document doc)
+                       `(style (tuple "verbatim-source"))
+                       "tmfs://aux/latex-source")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Convert, run pdflatex, and examine errors

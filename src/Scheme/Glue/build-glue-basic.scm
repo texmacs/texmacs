@@ -455,6 +455,8 @@
                                (string content object))
   (tracked-texmacs->latex tracked_texmacs_to_latex (string content object))
   (conservative-latex->texmacs conservative_latex_to_texmacs (tree string bool))
+  (get-line-number get_line_number (int string int))
+  (get-column-number get_column_number (int string int))
   (try-latex-export try_latex_export (tree content object url url))
   (parse-xml parse_xml (scheme_tree string))
   (parse-html parse_html (scheme_tree string))
