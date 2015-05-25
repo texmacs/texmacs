@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|std-pattern>>
 
@@ -299,7 +299,9 @@
   </macro>>
 
   <assign|abstract|<\macro|body>
-    <render-abstract|<arg|body>>
+    <\render-abstract>
+      <arg|body>
+    </render-abstract>
   </macro>>
 
   <\active*>

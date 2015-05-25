@@ -17,7 +17,7 @@
 ;; Test LaTeX export
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (run-pdflatex tex-file)
+(tm-define (run-pdflatex tex-file)
   (and (url-exists? tex-file)
        (let* ((tex-dir  (url-head tex-file))
               (pdf-file (url-glue (url-unglue tex-file 4) ".pdf"))

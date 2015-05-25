@@ -13,7 +13,8 @@
 
 (texmacs-module (convert latex tmtex-widgets)
   (:use (convert latex tmtex)
-        (utils library cursor)))
+        (utils library cursor)
+        (check check-master)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The widget for examing LaTeX errors
@@ -111,24 +112,54 @@
 ;; Convert, run pdflatex, and examine errors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (run-latex-buffer)
+(define (current-buffer-suffixed suf)
+  (and (url-exists? (current-buffer))
+       (buffer-has-name? (current-buffer))
+       (let* ((tm (current-buffer))
+              (nr (string-length (url-suffix tm)))
+              (tex (url-glue (url-unglue tm nr) suf)))
+         (and (== (url-suffix tm) "tm") tex))))
+
+(define (latex-export)
+  (with tex (current-buffer-suffixed "tex")
+    (if (not tex)
+        (set-message "TeXmacs buffer on disk expected" "latex-export")
+        (export-buffer tex))))
+
+(define (latex-run)
   (cond ((not (url-exists? (current-buffer)))
-         (set-message "buffer must be on disk" "run-latex-buffer"))
+         (set-message "buffer must be on disk" "latex-run"))
         ((not (buffer-has-name? (current-buffer)))
-         (set-message "buffer must have a name" "run-latex-buffer"))
+         (set-message "buffer must have a name" "latex-run"))
+        ((not (current-buffer-suffixed "tex"))
+         (set-message "TeXmacs buffer expected" "latex-run"))
         (else
           (let* ((opts (std-converter-options "texmacs-stree" "latex-document"))
                  (tm (current-buffer))
-                 (nr (string-length (url-suffix tm)))
-                 (tex (url-glue (url-unglue tm nr) "tex"))
+                 (tex (current-buffer-suffixed "tex"))
                  (report (try-latex-export (buffer-get tm) opts tm tex)))
             (if (tree-atomic? report)
-                (set-message (tree->string report) "run-latex-buffer")
+                (set-message (tree->string report) "latex-run")
                 (let* ((buf (current-buffer))
                        (doc (tree->string (tree-ref report 0)))
                        (errs (cdr (tree-children report))))
                   (if (null? errs)
                       (set-message "Generated LaTeX document contains no errors"
-                                   "run-latex-buffer")
+                                   "latex-run")
                       (dialogue-window (latex-errors-widget buf doc errs)
                                        noop "LaTeX errors"))))))))
+
+(define (latex-preview)
+  (let* ((tex (current-buffer-suffixed "tex"))
+         (pdf (current-buffer-suffixed "pdf")))
+    (if (not (and tex pdf))
+        (set-message "TeXmacs buffer on disk expected" "latex-export")
+        (begin
+          (export-buffer tex)
+          (run-pdflatex tex)
+          (preview-file pdf)))))
+
+(menu-bind tmtex-menu
+  ("Export" (latex-export))
+  ("Run" (latex-run))
+  ("Preview" (latex-preview)))
