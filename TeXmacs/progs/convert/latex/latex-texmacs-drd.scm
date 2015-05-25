@@ -40,7 +40,7 @@
   Backepsilon Mho btimes
 
   ;; asymptotic relations by Joris
-  nasymp asympasymp nasympasymp simsim nsimsim npreccurlyeq
+  nasymp asympasymp nasympasymp simsim nsimsim
   precprec precpreceq precprecprec precprecpreceq
   succsucc succsucceq succsuccsucc succsuccsucceq
   lleq llleq ggeq gggeq

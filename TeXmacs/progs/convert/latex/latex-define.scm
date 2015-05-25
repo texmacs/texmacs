@@ -111,7 +111,6 @@
   (nasympasymp "{\\not\\asymp\\!\\!\\!\\!\\!\\!-}")
   (simsim "{\\approx\\!\\!\\!\\!\\!\\!-}")
   (nsimsim "{\\not\\approx\\!\\!\\!\\!\\!\\!-}")
-  (npreccurlyeq "\\not\\preccurlyeq")
   (precprec "\\prec\\!\\!\\!\\prec")
   (precpreceq "\\preceq\\!\\!\\!\\preceq")
   (precprecprec "\\prec\\!\\!\\!\\prec\\!\\!\\!\\prec")
