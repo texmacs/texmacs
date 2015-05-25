@@ -124,7 +124,8 @@
   (with tex (current-buffer-suffixed "tex")
     (if (not tex)
         (set-message "TeXmacs buffer on disk expected" "latex-export")
-        (export-buffer tex))))
+        (with-global current-save-target tex
+          (export-buffer tex)))))
 
 (define (latex-run)
   (cond ((not (url-exists? (current-buffer)))
@@ -137,7 +138,8 @@
           (let* ((opts (std-converter-options "texmacs-stree" "latex-document"))
                  (tm (current-buffer))
                  (tex (current-buffer-suffixed "tex"))
-                 (report (try-latex-export (buffer-get tm) opts tm tex)))
+                 (report (with-global current-save-target tex
+                           (try-latex-export (buffer-get tm) opts tm tex))))
             (if (tree-atomic? report)
                 (set-message (tree->string report) "latex-run")
                 (let* ((buf (current-buffer))
@@ -154,7 +156,7 @@
          (pdf (current-buffer-suffixed "pdf")))
     (if (not (and tex pdf))
         (set-message "TeXmacs buffer on disk expected" "latex-export")
-        (begin
+        (with-global current-save-target tex
           (export-buffer tex)
           (run-pdflatex tex)
           (preview-file pdf)))))
