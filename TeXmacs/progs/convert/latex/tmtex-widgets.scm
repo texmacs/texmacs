@@ -96,7 +96,7 @@
     (padded
       (resize "800px" "200px"
         (scrollable
-          (choice (sel answer) digest (latex-error-digest err))))
+          (choice (sel answer) digest "")))
       ======
       (resize "800px" "150px"
         (texmacs-input (latex-error-doc (list-ref errs errnr))
