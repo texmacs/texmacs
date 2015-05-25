@@ -240,11 +240,12 @@ texmacs_error_find (string s, string src, hashmap<int,array<path> > corr) {
     if (corr->contains (pos)) {
       array<path> a= corr[pos];
       for (int i=0; i<N(a); i++)
-        if (last_item (a[i]) == 0)
+        if (!is_nil (a[i]) && last_item (a[i]) == 0)
           return path_up (a[i]);
     }
     pos--;
   }
+  return path ();
 }
 
 /******************************************************************************
