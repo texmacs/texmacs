@@ -17,6 +17,7 @@
 
 tree latex_expand (tree doc, url name);
 bool tracked_tree_to_latex_document (tree, object, string&, string&);
+string latex_unmark (string, hashset<path>, hashmap<int,array<path> >&);
 
 /******************************************************************************
 * Getting information out of log files
@@ -186,6 +187,25 @@ latex_error_find (string s, string src) {
 }
 
 /******************************************************************************
+* Find the error in the TeXmacs source file
+******************************************************************************/
+
+path
+texmacs_error_find (string s, string src, hashmap<int,array<path> > corr) {
+  int pos= latex_error_find (s, src);
+  if (pos < 0) return path ();
+  while (pos > 0) {
+    if (corr->contains (pos)) {
+      array<path> a= corr[pos];
+      for (int i=0; i<N(a); i++)
+        if (last_item (a[i]) == 0)
+          return path_up (a[i]);
+    }
+    pos--;
+  }
+}
+
+/******************************************************************************
 * Export, run LaTeX, and analyze
 ******************************************************************************/
 
@@ -196,26 +216,37 @@ try_latex_export (tree doc, object opts, url src, url dest) {
   doc= latex_expand (doc, src);
   if (tracked_tree_to_latex_document (doc, opts, s, ms))
     cout << "TeXmacs] could not track LaTeX export\n";
-  else if (save_string (dest, s, false))
-    cout << "TeXmacs] could not save LaTeX export\n";
   else {
-    cout << "TeXmacs] Running pdflatex\n";
-    system ("pdflatex -interaction=batchmode", dest);
-    url log= glue (unglue (dest, N (suffix (dest))), "log");
-    int nr= number_latex_errors (log);
-    if (nr == 0) cout << "TeXmacs] succesfull LaTeX export\n";
-    else cout << "TeXmacs] LaTeX export contains " << nr << " error(s)\n";
-    tree errs= get_latex_errors (log);
-    for (int i=0; i<N(errs); i++) {
-      cout << "------------ Error " << i+1 << LF;
-      //cout << errs[i] << LF;
-      string err= errs[i]->label;
-      int pos= latex_error_find (err, s);
-      if (pos < 0) cout << "Position could not be found\n";
-      else {
-        cout << s (max (pos-50, 0), pos)
-             << "[*]"
-             << s (pos, min (pos+50, N(s))) << LF;
+    hashmap<int,array<path> > corr;
+    string us= latex_unmark (ms, hashset<path> (), corr);
+    if (save_string (dest, us, false))
+      cout << "TeXmacs] could not save LaTeX export\n";
+    else {
+      cout << "TeXmacs] Running pdflatex\n";
+      system ("pdflatex -interaction=batchmode", dest);
+      url log= glue (unglue (dest, N (suffix (dest))), "log");
+      int nr= number_latex_errors (log);
+      if (nr == 0) cout << "TeXmacs] succesfull LaTeX export\n";
+      else cout << "TeXmacs] LaTeX export contains " << nr << " error(s)\n";
+      tree errs= get_latex_errors (log);
+      for (int i=0; i<N(errs); i++) {
+        string err= errs[i]->label;
+        cout << "------------ Error " << i+1 << LF;
+        //cout << err << LF;
+        /*
+        int pos= latex_error_find (err, us);
+        if (pos < 0) cout << "Position could not be found\n";
+        else {
+          cout << us (max (pos-50, 0), pos)
+               << "[*]"
+               << us (pos, min (pos+50, N(us))) << LF;
+        }
+        */
+        tree b= extract (doc, "body");
+        path p= texmacs_error_find (err, us, corr);
+        if (is_nil (p) || !has_subtree (b, p))
+          cout << "Position could not be found\n";
+        else cout << subtree (b, p) << LF;
       }
     }
   }
