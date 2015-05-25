@@ -133,6 +133,15 @@ latex_error_position (string s) {
 }
 
 string
+latex_error_line (string s) {
+  string t= latex_error_tail (s);
+  if (!starts (t, "l.")) return "?";
+  int pos= search_forwards (" ", t);
+  if (pos < 0) return "?";
+  return t (2, pos);
+}
+
+string
 latex_error_extra (string s) {
   string t= latex_error_tail (s);
   string x= other_lines (other_lines (t));
@@ -252,6 +261,8 @@ try_latex_export (tree doc, object opts, url src, url dest) {
     else {
       tree t (TUPLE);
       t << tree (err)
+        << tree ("l" * latex_error_line (err) * ". " *
+                 latex_error_message (err))
         << tree (latex_error_message (err))
         << tree (latex_error_explain (err))
         << tree (latex_error_position (err))
