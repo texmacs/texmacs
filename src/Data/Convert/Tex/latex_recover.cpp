@@ -280,7 +280,7 @@ try_latex_export (tree doc, object opts, url src, url dest) {
       << tree (latex_error_position (err))
       << tree (latex_error_extra (err));
     if (!is_nil (p) && has_subtree (b, p))
-      t << as_tree (pos) << subtree (b, p);
+      t << as_tree (pos) << ((tree) p);
     r << t;
   }
   return r;

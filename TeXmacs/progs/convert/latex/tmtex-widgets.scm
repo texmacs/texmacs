@@ -12,7 +12,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (convert latex tmtex-widgets)
-  (:use (convert latex tmtex)))
+  (:use (convert latex tmtex)
+        (utils library cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The widget for examing LaTeX errors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (latex-error-digest err)
   (tree->string (tree-ref err 1)))
@@ -45,7 +50,22 @@
 (define (latex-error-doc err)
   `(document (code ,(latex-error-doc* err))))
 
-(tm-widget ((latex-errors-widget doc errs) quit)
+(define (decode-path t)
+  (and (tree-func? t 'tuple)
+       (list-and (map tree-integer? (tree-children t)))
+       (map tree->number (tree-children t))))
+
+(define (latex-error-track buf err)
+  (when (>= (tree-arity err) 8)
+    (let* ((p (decode-path (tree-ref err 7)))
+           (b (buffer-get-body buf))
+           (src (apply tree-ref (cons b p))))
+      (when src
+        (with-buffer buf
+          (tree-select src)
+          (tree-go-to src :start))))))
+
+(tm-widget ((latex-errors-widget buf doc errs) quit)
   (let* ((digest (map latex-error-digest errs))
          (errnr 0)
          (err (list-ref errs errnr))
@@ -53,7 +73,8 @@
                 (set! errnr (or (list-find-index digest (cut == <> msg)) 0))
                 (set! err (list-ref errs errnr))
                 (buffer-set-body "tmfs://aux/latex-error"
-                                 (latex-error-doc (list-ref errs errnr))))))
+                                 (latex-error-doc (list-ref errs errnr)))
+                (latex-error-track buf err))))
     (padded
       (resize "800px" "200px"
         (scrollable
@@ -63,6 +84,10 @@
         (texmacs-input (latex-error-doc (list-ref errs errnr))
                        `(style (tuple "generic"))
                        (string-append "tmfs://aux/latex-error"))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Convert, run pdflatex, and examine errors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (run-latex-buffer)
   (cond ((not (url-exists? (current-buffer)))
@@ -77,10 +102,11 @@
                  (report (try-latex-export (buffer-get tm) opts tm tex)))
             (if (tree-atomic? report)
                 (set-message (tree->string report) "run-latex-buffer")
-                (let* ((doc (tree->string (tree-ref report 0)))
+                (let* ((buf (current-buffer))
+                       (doc (tree->string (tree-ref report 0)))
                        (errs (cdr (tree-children report))))
                   (if (null? errs)
                       (set-message "Generated LaTeX document contains no errors"
                                    "run-latex-buffer")
-                      (dialogue-window (latex-errors-widget doc errs)
+                      (dialogue-window (latex-errors-widget buf doc errs)
                                        noop "LaTeX errors"))))))))
