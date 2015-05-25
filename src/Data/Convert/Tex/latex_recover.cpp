@@ -117,10 +117,19 @@ latex_error_message (string s) {
   return first_line (s);
 }
 
+void
+strip (string& s, string what) {
+  if (ends (s, what)) s= s (0, N(s) - N(what));
+  while (ends (s, "\n") || ends (s, " ")) s= s (0, N(s) - 1);
+}
+
 string
 latex_error_explain (string s) {
   string ss= other_lines (latex_error_head (s));
   while (starts (ss, "\n")) ss= ss (1, N(ss));
+  while (ends (ss, "\n") || ends (ss, " ")) ss= ss (0, N(ss) - 1);
+  strip (ss, "...");
+  strip (ss, "Type  H <return>  for immediate help.");
   return ss;
 }
 
@@ -146,6 +155,11 @@ latex_error_extra (string s) {
   string t= latex_error_tail (s);
   string x= other_lines (other_lines (t));
   while (starts (x, "\n")) x= x (1, N(x));
+  while (ends (x, "\n") || ends (x, " ")) x= x (0, N(x) - 1);
+  strip (x, "or  <return>  to continue without it.");
+  strip (x, "Type  I <command> <return>  to replace it with another command,");
+  strip (x, "If that doesn't work, type  X <return>  to quit.");
+  strip (x, "Try typing  <return>  to proceed.");
   return x;
 }
 
@@ -257,20 +271,17 @@ try_latex_export (tree doc, object opts, url src, url dest) {
     */
     int pos= latex_error_find (err, us);
     path p= texmacs_error_find (err, us, corr);
-    if (is_nil (p) || !has_subtree (b, p)) r << err;
-    else {
-      tree t (TUPLE);
-      t << tree (err)
-        << tree ("l" * latex_error_line (err) * ". " *
-                 latex_error_message (err))
-        << tree (latex_error_message (err))
-        << tree (latex_error_explain (err))
-        << tree (latex_error_position (err))
-        << tree (latex_error_extra (err))
-        << as_tree (pos)
-        << subtree (b, p);
-      r << t;
-    }
+    tree t (TUPLE);
+    t << tree (err)
+      << tree ("l." * latex_error_line (err) * " " *
+               latex_error_message (err))
+      << tree (latex_error_message (err))
+      << tree (latex_error_explain (err))
+      << tree (latex_error_position (err))
+      << tree (latex_error_extra (err));
+    if (!is_nil (p) && has_subtree (b, p))
+      t << as_tree (pos) << subtree (b, p);
+    r << t;
   }
   return r;
 }

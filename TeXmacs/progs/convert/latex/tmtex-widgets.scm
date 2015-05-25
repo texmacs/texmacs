@@ -15,21 +15,54 @@
   (:use (convert latex tmtex)))
 
 (define (latex-error-digest err)
-  (if (<= (tree-arity err) 1)
-      "Miscellaneous error"
-      (tree->string (tree-ref err 1))))
+  (tree->string (tree-ref err 1)))
+
+(define (string->document s)
+  (with l (string-tokenize-by-char (string->tmstring s) #\newline)
+    `(document ,@l)))
+
+(define (latex-error-doc* err)
+  (if (<= (tree-arity err) 2)
+      (string->document (tree->string (tree-ref err 0)))
+      `(document
+         (padded
+           (with "color" "dark red"
+             ,(string->document (tree->string (tree-ref err 2))))
+           "0fn" "0.5fn")
+         (padded
+           (with "color" "black"
+             ,(string->document (tree->string (tree-ref err 3))))
+           "0fn" "0.5fn")
+         (padded
+           (with "color" "dark blue"
+             ,(string->document (tree->string (tree-ref err 4))))
+           "0fn" "0.5fn")
+         (padded
+           (with "color" "black"
+             ,(string->document (tree->string (tree-ref err 5))))
+           "0fn" "0.5fn"))))
+
+(define (latex-error-doc err)
+  `(document (code ,(latex-error-doc* err))))
 
 (tm-widget ((latex-errors-widget doc errs) quit)
-  (let* ((digest (map latex-error-digest errs)))
+  (let* ((digest (map latex-error-digest errs))
+         (errnr 0)
+         (err (list-ref errs errnr))
+         (sel (lambda (msg)
+                (set! errnr (or (list-find-index digest (cut == <> msg)) 0))
+                (set! err (list-ref errs errnr))
+                (buffer-set-body "tmfs://aux/latex-error"
+                                 (latex-error-doc (list-ref errs errnr))))))
     (padded
-      (resize "600px" "200px"
+      (resize "800px" "200px"
         (scrollable
-          (choice (ignore answer) digest (car digest))))
+          (choice (sel answer) digest (latex-error-digest err))))
       ======
-      (explicit-buttons
-        (hlist
-          >>>
-          ("Ok" (quit)))))))
+      (resize "800px" "200px"
+        (texmacs-input (latex-error-doc (list-ref errs errnr))
+                       `(style (tuple "generic"))
+                       (string-append "tmfs://aux/latex-error"))))))
 
 (tm-define (run-latex-buffer)
   (cond ((not (url-exists? (current-buffer)))
