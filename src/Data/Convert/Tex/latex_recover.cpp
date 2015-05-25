@@ -255,16 +255,24 @@ tree
 try_latex_export (tree doc, object opts, url src, url dest) {
   string s, ms;
   doc= latex_expand (doc, src);
-  if (tracked_tree_to_latex_document (doc, opts, s, ms))
+  //cout << "Exporting to LaTeX\n";
+  if (tracked_tree_to_latex_document (doc, opts, s, ms)) {
+    //cout << "Failed to export\n";
     return "Error: could not track LaTeX export";
+  }
   hashmap<int,array<path> > corr;
   string us= latex_unmark (ms, hashset<path> (), corr);
-  if (save_string (dest, us, false))
+  if (save_string (dest, us, false)) {
+    //cout << "Could not save\n";
     return "Error: could not save LaTeX export";
-  system ("pdflatex -interaction=batchmode", dest);
+  }
+  //cout << "Running pdflatex\n";
+  string cmd=
+    "cd " * sys_concretize (head (dest)) *
+    "; pdflatex -interaction=batchmode " * as_system_string (tail (dest));
+  cout << cmd << LF;
+  system (cmd);
   url log= glue (unglue (dest, N (suffix (dest))), "log");
-  int nr= number_latex_errors (log);
-  if (nr == 0) return tree (TUPLE);
   tree errs= get_latex_errors (log);
   tree r (TUPLE);
   r << us;
