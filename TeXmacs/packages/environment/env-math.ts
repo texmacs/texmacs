@@ -114,7 +114,9 @@
     </equations-base>
   </macro>>
 
-  <assign|eqnarray|<macro|body|<eqnarray*|<tformat|<arg|body>>>>>
+  <assign|eqnarray|<\macro|body>
+    <eqnarray*|<tformat|<arg|body>>>
+  </macro>>
 
   <assign|leqnarray*|<\macro|body>
     <\equations-base>
@@ -132,7 +134,31 @@
     </equations-base>
   </macro>>
 
-  <assign|flalign|<\macro|body>
+  <assign|align|<\macro|body>
+    <align*|<tformat|<arg|body>>>
+  </macro>>
+
+  <assign|alignat*|<\macro|ncol|body>
+    <align*|<tformat|<arg|body>>>
+  </macro>>
+
+  <assign|alignat|<\macro|ncol|body>
+    <align|<tformat|<arg|body>>>
+  </macro>>
+
+  <assign|aligned*|<\macro|body>
+    <align*|<tformat|<arg|body>>>
+  </macro>>
+
+  <assign|aligned|<\macro|body>
+    <aligned*|<tformat|<arg|body>>>
+  </macro>>
+
+  <assign|alignedat*|<\macro|ncol|body>
+    <align*|<tformat|<arg|body>>>
+  </macro>>
+
+  <assign|alignedat|<\macro|ncol|body>
     <align|<tformat|<arg|body>>>
   </macro>>
 
@@ -140,24 +166,8 @@
     <align*|<tformat|<arg|body>>>
   </macro>>
 
-  <assign|alignedat|<\macro|ncol|body>
-    <align|<arg|body>>
-  </macro>>
-
-  <assign|aligned|<\macro|body>
-    <align|<arg|body>>
-  </macro>>
-
-  <assign|alignat|<\macro|ncol|body>
-    <align|<arg|body>>
-  </macro>>
-
-  <assign|alignat*|<\macro|ncol|body>
-    <align|<arg|body>>
-  </macro>>
-
-  <assign|align|<\macro|body>
-    <align*|<tformat|<arg|body>>>
+  <assign|flalign|<\macro|body>
+    <align|<tformat|<arg|body>>>
   </macro>>
 
   <assign|multline*|<\macro|body>
@@ -190,9 +200,9 @@
     <eqsplit*|<tformat|<arg|body>>>
   </macro>>
 
-  <assign|subequations|<macro|<arg|body>><arg|body>>
-
-  \;
+  <assign|subequations|<\macro|body>
+    <arg|body>
+  </macro>>
 
   \;
 </body>

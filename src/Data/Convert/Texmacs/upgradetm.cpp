@@ -3954,12 +3954,33 @@ upgrade_quotes (tree t) {
 * Upgrade ancient
 ******************************************************************************/
 
+static charp equation_tags[]= {
+  "equation", "equation*", "eqnarray", "eqnarray*",
+  "leqnarray", "leqnarray*", "align", "align*",
+  "falign", "falign*", "aligned", "aligned*",
+  "multline", "multline*", "gather", "gather*",
+  "eqsplit", "eqsplit*",
+  ""
+};
+
+bool
+is_equation_env (tree t) {
+  if (is_atomic (t) || N(t) != 1) return false;
+  static hashset<tree_label> H;
+  if (N(H) == 0)
+    for (int i=0; equation_tags[i][0] != '\0'; i++)
+      H->insert (as_tree_label (equation_tags[i]));
+  return H->contains (L(t));
+}
+
 tree
 upgrade_ancient (tree t) {
   // Miscellaneous upgradings for old documents
   if (is_atomic (t)) return t;
   else if (is_func (t, INACTIVE, 1) && is_func (t[0], RIGID))
     return upgrade_ancient (t[0]);
+  else if (is_equation_env (t) && !is_func (t[0], DOCUMENT))
+    return tree (L(t), tree (DOCUMENT, upgrade_ancient (t[0])));
   else {
     int i, n= N(t);
     tree r (t, n);
