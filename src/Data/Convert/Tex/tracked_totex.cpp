@@ -16,6 +16,7 @@
 #include "base64.hpp"
 #include "iterator.hpp"
 #include "fast_search.hpp"
+#include "file.hpp"
 
 /******************************************************************************
 * Add markers to TeXmacs document
@@ -180,13 +181,20 @@ tracked_tree_to_latex_document (tree d, object opts, string& s, string& ms) {
 
   hashset<path> invalid;
   hashmap<int,array<path> > corr;
+  int attempt= 0;
   while (true) {
+    attempt++;
     //cout << HRULE << "Invalid markers" << LF << HRULE << invalid << LF;
     hashset<path> l= copy (invalid);
     tree mt= texmacs_mark (t, path (), l);
     //cout << HRULE << "Marked texmacs" << LF << HRULE << mt << LF;
     tree md= change_doc_attr (d, "body", mt);
     ms= tree_to_latex_document (md, opts);
+    if (false) {
+      cout << "Attempt " << attempt << LF;
+      string mname= "marked-" * as_string (attempt) * ".tex";
+      save_string ("$TEXMACS_HOME_PATH/system/tmp/" * mname, ms, false);
+    }
     //cout << HRULE << "Marked latex" << LF << HRULE << ms << LF;
     l->insert (path (-1)); // force checking
     string ums= latex_unmark (ms, l, corr);
