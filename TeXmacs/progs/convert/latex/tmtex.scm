@@ -58,7 +58,8 @@
   (elsarticle-style%    (in? tmtex-style '("elsarticle")) elsevier-style%)
   (elsart-style%        (in? tmtex-style '("elsart"))     elsevier-style%)
   (ifac-style%          (in? tmtex-style '("ifac"))       elsevier-style%)
-  (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate")))
+  (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate"
+                                           "acm_proc_article-sp")))
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
   (ams-style%           (in? tmtex-style '("amsart")))
   (revtex-style%        (in? tmtex-style '("aip" "aps")))
