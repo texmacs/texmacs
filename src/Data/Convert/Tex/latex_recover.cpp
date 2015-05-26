@@ -259,7 +259,9 @@ try_latex_export (tree doc, object opts, url src, url dest) {
   //cout << "Exporting to LaTeX\n";
   if (tracked_tree_to_latex_document (doc, opts, s, ms)) {
     //cout << "Failed to export\n";
-    return "Error: could not track LaTeX export";
+    //return "Error: could not track LaTeX export";
+    cout << "TeXmacs] Failed to track LaTeX export\n";
+    ms= s;
   }
   hashmap<int,array<path> > corr;
   string us= latex_unmark (ms, hashset<path> (), corr);
