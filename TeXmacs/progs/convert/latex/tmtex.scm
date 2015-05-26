@@ -162,7 +162,8 @@
               (string-starts? (symbol->string (car t)) "tmtext"))
          `(text ,t))
         ((and (pair? t) (symbol? (car t))
-              (string-starts? (symbol->string (car t)) "math"))
+              (or (string-starts? (symbol->string (car t)) "tmmath")
+                  (string-starts? (symbol->string (car t)) "math")))
          `(ensuremath ,t))
         ((func? t '!concat)
          `(!concat ,@(map mode-protect (cdr t))))
@@ -2922,8 +2923,12 @@
 	 (l6 (map as-string (collect-user-defs st)))
 	 (l7 (if (preference-on? "texmacs->latex:expand-user-macros") '() l6))
          (l8 (list-difference (collect-user-macros st) (list-union l0 l6)))
-	 (l9 (list-difference (list-union l2 l5 l7 l8) l1)))
-    `(collection ,@(map tmtex-env-macro l9))))
+	 (l9 (list-difference (list-union l2 l5 l7 l8) l1))
+         (l10 (list-filter l0 (lambda (s) (and (string? s)
+                                               (<= (string-length s) 2)))))
+         (l11 (list-difference l10 (list "tt" "em" "op")))
+         (l12 (list-difference l9 l11)))
+    `(collection ,@(map tmtex-env-macro l12))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface
