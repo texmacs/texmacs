@@ -244,6 +244,7 @@
   (tmtextit (!group (itshape) (!group 1)))
   (tmtextsc (!group (scshape) (!group 1)))
   (tmmathbf (ensuremath (boldsymbol 1)))
+  (tmmathmd (ensuremath 1))
   (tmop (ensuremath (operatorname 1)))
   (tmstrong (textbf 1))
   (tmem (!group "\\em " 1 "\\/"))

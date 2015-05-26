@@ -77,7 +77,7 @@
 (logic-group latex-texmacs-1%
   key tmrsub tmrsup keepcase
   tmtextrm tmtextsf tmtexttt tmtextmd tmtextbf
-  tmtextup tmtextsl tmtextit tmtextsc tmmathbf
+  tmtextup tmtextsl tmtextit tmtextsc tmmathbf tmmathmd
   tmverbatim tmop tmstrong tmem tmtt tmname tmsamp tmabbr
   tmdfn tmkbd tmvar tmacronym tmperson tmscript tmdef
   dueto op tmdate tmoutput tmerrput tmtiming
