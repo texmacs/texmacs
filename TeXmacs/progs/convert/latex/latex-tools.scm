@@ -497,16 +497,17 @@
 
 (tm-define (html-color->latex-xcolor s)
   "Take an hexa html color string and return an hex triplet string"
-  (cond ((string-starts? s "#") (html-color->latex-xcolor (string-tail s 1)))
-        ((== 3 (string-length s))
-         (let ((r (substring s 0 1))
-               (g (substring s 1 2))
-               (b (substring s 2 3)))
-           (string-append r r g g b b)))
-        ((== 4 (string-length s)) (html-color->latex-xcolor (string-take s 3)))
-        ((== 6 (string-length s)) s)
-        ((== 8 (string-length s)) (string-take s 6))
-        (else s)))
+  (upcase-all
+   (cond ((string-starts? s "#") (html-color->latex-xcolor (string-tail s 1)))
+         ((== 3 (string-length s))
+          (let ((r (substring s 0 1))
+                (g (substring s 1 2))
+                (b (substring s 2 3)))
+            (string-append r r g g b b)))
+         ((== 4 (string-length s)) (html-color->latex-xcolor (string-take s 3)))
+         ((== 6 (string-length s)) s)
+         ((== 8 (string-length s)) (string-take s 6))
+         (else s))))
 
 (define (latex-colors-defs colors)
   (apply string-append
