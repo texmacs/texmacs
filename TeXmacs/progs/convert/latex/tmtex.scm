@@ -2077,7 +2077,9 @@
     r))
 
 (define (tmtex-math s l)
-  (cond ((not (tm-func? (car l) 'document))
+  (cond ((tm-in? (car l) '(equation equation* eqnarray eqnarray*))
+         (tmtex (car l)))
+        ((not (tm-func? (car l) 'document))
          (tmtex `(with "mode" "math" ,(car l))))
         ((tm-func? (car l) 'document 1)
          (tmtex `(math ,(cadr (car l)))))
