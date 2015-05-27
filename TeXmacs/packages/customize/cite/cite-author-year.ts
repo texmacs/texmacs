@@ -136,7 +136,13 @@
   <assign|bibitem*|<macro|text|<style-with|src-compact|none|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><render-natbibitem|<transform-natbibitem|<natbib-author*|<arg|text>>,
   <natbib-year|<arg|text>>>><set-binding|<arg|text>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Extra macros
+    </src-comment>
+  </active*>
+
+  <assign|natexlab|<macro|x|<em|<arg|x>>>>
 </body>
 
 <\initial>
