@@ -997,7 +997,8 @@
 (menu-bind semantic-math-preferences-menu
   ("Semantic editing" (toggle-preference "semantic editing"))
   (when (== (get-preference "semantic editing") "on")
-    ("Semantic selections" (toggle-preference "semantic selections"))))
+    ("Semantic selections" (toggle-preference "semantic selections")))
+  (if #f ("Semantic correctness" (toggle-preference "semantic correctness"))))
 
 (menu-bind semantic-annotation-menu
   ("Ordinary symbol" (make 'math-ordinary))

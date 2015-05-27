@@ -230,7 +230,13 @@
                 (toggle (set-boolean-preference "semantic selections"
                                                 answer)
                         (get-boolean-preference
-                         "semantic selections"))))))
+                         "semantic selections"))))
+            (if #f
+                (meti (hlist // (text "Semantic correctness"))
+                  (toggle (set-boolean-preference "semantic correctness"
+                                                  answer)
+                          (get-boolean-preference
+                           "semantic correctness"))))))
           (glue #f #t 0 5))
       === ===
       (vlist (bold (text "Correction")) ---

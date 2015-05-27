@@ -77,6 +77,7 @@
   ("show only semantic focus" "on" (lambda args (noop)))
   ("semantic editing" "off" (lambda args (noop)))
   ("semantic selections" "on" (lambda args (noop)))
+  ("semantic correctness" "off" (lambda args (noop)))
   ("remove superfluous invisible" "off" (lambda args (noop)))
   ("insert missing invisible" "off" (lambda args (noop)))
   ("zealous invisible correct" "off" (lambda args (noop)))
