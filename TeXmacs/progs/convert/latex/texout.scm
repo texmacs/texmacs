@@ -109,9 +109,9 @@
                      (set! pre-end "\n\\end{CJK*}")
                      (output-verbatim "\\usepackage{CJK}\n")))
                   (else
-                    ;;(if (or (uses-cyrillic? doc-preamble)
-                    ;;        (uses-cyrillic? doc-body))
-                    ;;    (output-verbatim "\\usepackage[T2A,T1]{fontenc}\n"))
+                    (if (or (uses-cyrillic? doc-preamble)
+                            (uses-cyrillic? doc-body))
+                        (output-verbatim "\\usepackage[T2A,T1]{fontenc}\n"))
                     (with langs
                       (apply string-append (list-intersperse lan ", "))
                       (output-verbatim "\\usepackage[" langs "]{babel}\n"))
