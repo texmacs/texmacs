@@ -125,6 +125,9 @@ class qt_gui_rep {
   hashmap<string,tree>   selection_t;
   hashmap<string,string> selection_s;
   
+  hashmap<socket_notifier,pointer>  read_notifiers;
+  hashmap<socket_notifier,pointer> write_notifiers;
+
   QTranslator* q_translator;
   
   time_t time_credit;        // interval to interrupt long redrawings
@@ -174,6 +177,11 @@ public:
   void need_update();
   void refresh_language();
   
+  /* socket notifications */
+  void add_notifier (socket_notifier);
+  void remove_notifier (socket_notifier);
+  void enable_notifier (socket_notifier, bool);
+  
   /* queued processing */
   void process_keypress (qt_simple_widget_rep *wid, string key, time_t t);
   void process_keyboard_focus (qt_simple_widget_rep *wid, bool has_focus,
@@ -183,6 +191,7 @@ public:
   void process_resize (qt_simple_widget_rep *wid, SI x, SI y);
   void process_command (command _cmd);
   void process_command (command _cmd, object _args);
+  void process_socket_notification (socket_notifier sn);
   void process_delayed_commands (); 
   void process_queued_events (int max = -1);
   

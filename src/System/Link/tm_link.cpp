@@ -82,7 +82,6 @@ tm_link_rep::read_packet (int channel, int timeout, bool& success) {
 
 void
 tm_link_rep::secure_server (string client_public) {
-  return;
   if (secret != "") return;
   string k= secret_generate ();
   string s= rsa_encode (k, client_public);
@@ -92,7 +91,6 @@ tm_link_rep::secure_server (string client_public) {
 
 void
 tm_link_rep::secure_client () {
-  return;
   if (secret != "") return;
   write ("!", LINK_IN);
   write_packet (rsa_my_public_key (), LINK_IN);
@@ -101,4 +99,3 @@ tm_link_rep::secure_client () {
   if (!success) { stop (); return; }
   secret= rsa_decode (r, rsa_my_private_key ());
 }
-
