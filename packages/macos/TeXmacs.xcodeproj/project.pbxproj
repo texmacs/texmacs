@@ -289,6 +289,9 @@
 		49896901152B981400DB1E9E /* TeXmacs.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9C61B42A141A1B780035D78F /* TeXmacs.icns */; };
 		498BA6B6184C966F00608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
 		498BA6B7184C968000608A7B /* PDFWriter.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 4907D0D81812E2BC00D893B4 /* PDFWriter.o */; };
+		499CCC0A1B16242B0094E0A9 /* latex_recover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499CCC091B16242B0094E0A9 /* latex_recover.cpp */; };
+		499CCC0B1B16242B0094E0A9 /* latex_recover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499CCC091B16242B0094E0A9 /* latex_recover.cpp */; };
+		499CCC0C1B16242B0094E0A9 /* latex_recover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499CCC091B16242B0094E0A9 /* latex_recover.cpp */; };
 		49A513F119426DD70017E373 /* colors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513E719426DD70017E373 /* colors.cpp */; };
 		49A513F219426DD70017E373 /* colors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513E719426DD70017E373 /* colors.cpp */; };
 		49A513F319426DD70017E373 /* colors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A513E719426DD70017E373 /* colors.cpp */; };
@@ -1676,6 +1679,7 @@
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
 		4973E9A018BC945F001F74F0 /* r_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = r_language.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
+		499CCC091B16242B0094E0A9 /* latex_recover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_recover.cpp; sourceTree = "<group>"; };
 		49A513E719426DD70017E373 /* colors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = colors.cpp; sourceTree = "<group>"; };
 		49A513E819426DD70017E373 /* colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = colors.hpp; sourceTree = "<group>"; };
 		49A513E919426DD70017E373 /* dvips_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dvips_colors.hpp; sourceTree = "<group>"; };
@@ -2960,9 +2964,10 @@
 				4934A46418C5D00000BF1E6A /* conservative_totex.cpp */,
 				9C0B476810A8CC0F0097A335 /* convert_tex.hpp */,
 				9C0B09B614FF0A3D004ABDCE /* fromcls.cpp */,
-				9C0B476910A8CC0F0097A335 /* fromtex.cpp */,
 				492EA53C18634091007F16D8 /* fromtex_post.cpp */,
+				9C0B476910A8CC0F0097A335 /* fromtex.cpp */,
 				9C0B476A10A8CC0F0097A335 /* inittex.cpp */,
+				499CCC091B16242B0094E0A9 /* latex_recover.cpp */,
 				49CC0DFD18D30BDB007AB053 /* latex_tools.cpp */,
 				495712F716E90E5900934EA3 /* metadata-acm.cpp */,
 				49FDFA6416F0C677002B830A /* metadata-ams.cpp */,
@@ -3466,7 +3471,6 @@
 				9C0B487610A8CC100097A335 /* tt_file.hpp */,
 				9C0B487710A8CC100097A335 /* tt_font.cpp */,
 				9C6632ED1676B28E000D7974 /* tt_tools.cpp */,
-				491132F316767D3E009F1A5C /* tt_tools.hpp */,
 				9C0B487810A8CC100097A335 /* unicode_font.cpp */,
 				9CEDAA351264FF88009630CC /* unicode_math_font.cpp */,
 				491132F216767D3E009F1A5C /* tt_tools.cpp */,
@@ -4987,6 +4991,7 @@
 				9C0B4B0710A8CC110097A335 /* decoration_boxes.cpp in Sources */,
 				9C0B4B0810A8CC110097A335 /* math_boxes.cpp in Sources */,
 				9C0B4B0910A8CC110097A335 /* misc_boxes.cpp in Sources */,
+				499CCC0A1B16242B0094E0A9 /* latex_recover.cpp in Sources */,
 				9C0B4B0A10A8CC110097A335 /* script_boxes.cpp in Sources */,
 				9C0B4B0B10A8CC110097A335 /* stack_boxes.cpp in Sources */,
 				4934A47518C5D01E00BF1E6A /* fast_search.cpp in Sources */,
@@ -5472,6 +5477,7 @@
 				9CE5CF8B16EFDB5B001A6292 /* glue.cpp in Sources */,
 				9CE5CF8C16EFDB5E001A6292 /* object.cpp in Sources */,
 				4964705316F72CB500D95FC4 /* font_guess.cpp in Sources */,
+				499CCC0C1B16242B0094E0A9 /* latex_recover.cpp in Sources */,
 				4964705616F72CB500D95FC4 /* smart_font.cpp in Sources */,
 				490A9D2816F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
 				491FC57E16F900140038929C /* font_translate.cpp in Sources */,
@@ -5630,6 +5636,7 @@
 				49A513F519426DD70017E373 /* true_color.cpp in Sources */,
 				9CD4E66C10B14AB300E0DD5C /* tex_init.cpp in Sources */,
 				9CD4E66D10B14AB300E0DD5C /* tex_rubber_font.cpp in Sources */,
+				499CCC0B1B16242B0094E0A9 /* latex_recover.cpp in Sources */,
 				9CD4E66E10B14AB300E0DD5C /* openssl.cpp in Sources */,
 				9CD4E68A10B14AB300E0DD5C /* init_texmacs.cpp in Sources */,
 				9CD4E68B10B14AB300E0DD5C /* init_upgrade.cpp in Sources */,
