@@ -32,6 +32,10 @@
   (:mode springer-style?)
   (if (== x "llncs") x "svjour3"))
 
+(tm-define (tmtex-transform-style x)
+  (:mode svmono-style?)
+  x)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Springer metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -360,3 +364,34 @@
         `(((!begin "abstract")
           (!document ,@(map cadr abstract) ,@class)))))
     `(!document ,@abstract)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Springer specific macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(smart-table latex-texmacs-env-preamble
+  (:mode sv-style?)
+  ("theorem" #f)
+  ("proposition" #f)
+  ("lemma" #f)
+  ("corollary" #f)
+  ("definition" #f)
+  ("exercise" #f)
+  ("problem" #f)
+  ("solution" #f)
+  ("remark" #f)
+  ("note" #f)
+  ("case" #f)
+  ("conjecture" #f)
+  ("example" #f)
+  ("property" #f)
+  ("question" #f)
+  ("claim" #f))
+
+(smart-table latex-texmacs-environment
+  (:mode sv-style?)
+  ("proof" #f))
+
+(smart-table latex-texmacs-macro
+  (:mode svmono-style?)
+  (chapter #f))

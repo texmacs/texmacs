@@ -199,7 +199,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-mathabx-symbol%
-  divides ndivides npreccurlyeq asterisk)
+  divides ndivides npreccurlyeq asterisk
+  dottimes nequiv precdot)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols from textcomp package

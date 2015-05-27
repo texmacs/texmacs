@@ -86,7 +86,7 @@
   (in? p latex-dependencies))
 
 (tm-define (latex-book-style?)
-  (in? latex-style '("book")))
+  (in? latex-style '("book" "svmono")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Catcode generation

@@ -818,6 +818,7 @@ latex_symbol_to_tree (string s) {
       if (s == "Arrowvert")     return "<||>";
       if (s == "lbrace")        return "{";
       if (s == "rbrace")        return "}";
+      if (s == "tmprecdot")     return "<precdot>";
       
       if (starts (s, "up")) {
         if (s == "upalpha") return "<up-alpha>";

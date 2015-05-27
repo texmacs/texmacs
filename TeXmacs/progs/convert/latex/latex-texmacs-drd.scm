@@ -56,7 +56,8 @@
   dotamalg dottimes dotoplus dototimes dotast into
   longminus longequal
   longhookrightarrow longhookleftarrow
-  triangleup precdot preceqdot llangle rrangle join um upl upm ump
+  triangleup tmprecdot preceqdot
+  llangle rrangle join um upl upm ump
   assign plusassign minusassign timesassign overassign
   lflux gflux colons transtype udots subsetsim supsetsim
   rightmap leftmap leftrightmap)
