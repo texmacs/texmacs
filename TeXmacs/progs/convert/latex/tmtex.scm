@@ -1952,9 +1952,18 @@
       (list '!verbatim (tmtex-tt (escape-braces (escape-backslashes (car l)))))
       (list 'tmverbatim (tmtex (car l)))))
 
+(define (sharp-fix t)
+  (cond ((and (func? t '!document) (nnull? (cdr t)))
+         `(!document ,(sharp-fix (cadr t)) ,@(cddr t)))
+        ((and (func? t '!concat) (nnull? (cdr t)))
+         `(!concat ,(sharp-fix (cadr t)) ,@(cddr t)))
+        ((and (string? t) (string-starts? t "#"))
+         (string-append "\\" t))
+        (else t)))
+
 (define (tmtex-verbatim* s l)
   (if (func? (car l) 'document)
-      (list '!verbatim* (tmtex-tt (car l)))
+      (list '!verbatim* (sharp-fix (tmtex-tt (car l))))
       (list 'tmverbatim (tmtex (car l)))))
 
 (define (tmtex-code-inline s l)
