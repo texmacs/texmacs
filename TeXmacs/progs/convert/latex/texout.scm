@@ -26,6 +26,16 @@
 ;; Interface for unicode output
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (uses-cyrillic? t)
+  (and tmtex-use-ascii?
+       (cond ((func? t '!widechar 1)
+              (with s (string-convert (symbol->string (cadr t)) "UTF-8" "LaTeX")
+                (or (string-starts? s "{\\cyr")
+                    (string-starts? s "{\\CYR"))))
+             ((pair? t)
+              (list-or (map uses-cyrillic? (cdr t))))
+             (else #f))))
+
 (define (output-tex s)
   (output-text (if tmtex-use-ascii? (string-convert s "UTF-8" "LaTeX") s)))
 
@@ -76,7 +86,8 @@
 	 (doc-misc (append '(!concat) doc-preamble (list doc-body)))
 	 (doc-src (cdr (cddddr l)))
          (post-begin "")
-         (pre-end    ""))
+         (pre-end    "")
+         (cyr? (or (uses-cyrillic? doc-preamble) (uses-cyrillic? doc-body))))
 
     (if (not has-preamble?)
       (begin
@@ -99,6 +110,8 @@
                      (set! pre-end "\n\\end{CJK*}")
                      (output-verbatim "\\usepackage{CJK}\n")))
                   (else
+                    (if cyr?
+                      (output-verbatim "\\usepackage[T2A,T1]{fontenc}\n"))
                     (with langs
                       (apply string-append (list-intersperse lan ", "))
                       (output-verbatim "\\usepackage[" langs "]{babel}\n"))
