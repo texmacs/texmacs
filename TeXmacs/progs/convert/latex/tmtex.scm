@@ -580,11 +580,12 @@
 
 (tm-define (tmtex-transform-style x)
   (cond ((in? x '("generic" "exam" "old-generic" "old-article"
-                  "tmarticle" "tmdoc" "mmxdoc"))          "article")
-        ((in? x '("book" "old-book" "tmbook" "tmmanual")) "book")
-        ((in? x '("letter"  "old-letter"))                "letter")
-        ((in? x '("beamer"  "old-beamer"))                "beamer")
-        ((in? x '("seminar" "old-seminar"))               "slides")
+                  "tmarticle" "tmdoc" "mmxdoc"))           "article")
+        ((in? x '("book" "old-book" "tmbook" "tmmanual"))  "book")
+        ((in? x '("letter"  "old-letter"))                 "letter")
+        ((in? x '("beamer"  "old-beamer"))                 "beamer")
+        ((in? x '("seminar" "old-seminar"))                "slides")
+        ((in? x '("svmono"))                               "book")
         ((not tmtex-replace-style?) x)
         (else #f)))
 
@@ -2419,10 +2420,20 @@
       (set! tmtex-auto-consume nr)
       `(glossaryentry ,(tmtex (car l)) ,(tmtex (cadr l)) (pageref ,lab)))))
 
+(define (tmtex-glossary-line t)
+  (with r (tmtex t)
+    (if (func? r 'glossaryentry) r
+        `(listpart ,r))))
+
+(define (tmtex-glossary-body b)
+  (if (not (tm-func? b 'document))
+      (tmtex b)
+      (cons '!document (map-in-order tmtex-glossary-line (cdr b)))))
+
 (define (tmtex-the-glossary s l)
   `(!document
       (,(if (latex-book-style?) 'chapter* 'section*) "Glossary")
-      ((!begin "theglossary" ,(car l)) ,(tmtex (cadr l)))))
+      ((!begin "theglossary" ,(car l)) ,(tmtex-glossary-body (cadr l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main conversion routines

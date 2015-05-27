@@ -137,6 +137,8 @@
 
   (inparaenum "paralist")
 
+  (listpart "expdlist")
+
   (ifthispageodd "scrextend"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

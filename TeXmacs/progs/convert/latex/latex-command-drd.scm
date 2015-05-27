@@ -80,7 +80,7 @@
   newlength newdimen newskip
   Comment COMMENT For ForAll If Input KwData KwResult KwRet lnl nllabel
   lElse uElse Output Repeat Until UNTIL While
-  etalchar MR)
+  etalchar MR listpart)
 
 (logic-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
