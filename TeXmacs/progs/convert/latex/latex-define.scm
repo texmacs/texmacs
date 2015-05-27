@@ -152,7 +152,6 @@
   (Exists "\\exists")
   (bigintwl "\\int")
   (bigointwl "\\oint")
-  (asterisk "*")
   (point ".")
   (cdummy "\\cdot")
   (comma "{,}")

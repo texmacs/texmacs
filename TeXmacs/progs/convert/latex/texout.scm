@@ -106,7 +106,7 @@
                       (output-verbatim "\\usepackage[utf8]{inputenc}\n")))))
           (output-verbatim tm-uses)
           (if (string-occurs? "makeidx" (latex-use-package-command doc-body))
-            (output-verbatim "\\makeindex"))
+            (output-verbatim "\\makeindex\n"))
           (output-verbatim tm-init)
 
           (if (!= tm-preamble "")
