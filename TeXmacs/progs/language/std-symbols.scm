@@ -359,7 +359,7 @@
   (define Prime-symbol
     (:type symbol)
     (:penalty panic)
-    "'" "`" "<dag>" "<ddag>" "<asterisk>" "<kreuz>")
+    "'" "`" "<dag>" "<ddag>" "<asterisk>" "<star>" "<kreuz>")
 
   (define Ponctuation-visible-symbol
     (:type separator)

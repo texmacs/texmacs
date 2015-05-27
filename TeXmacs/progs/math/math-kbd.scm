@@ -26,18 +26,18 @@
 (when (os-macos?)
   (kbd-map
     (:mode in-math?)
-    ("å" (make-above)) ;; Alt-a
-    ("Å" (make-wide "<invbreve>")) ;; Alt-A
+    ("Ã¥" (make-above)) ;; Alt-a
+    ("Ã…" (make-wide "<invbreve>")) ;; Alt-A
     ("big-int" (make-below)) ;; Alt-b
-    ("Ç" (make-wide "<check>")) ;; Alt-C
+    ("Ã‡" (make-wide "<check>")) ;; Alt-C
     ("<#192>" (make-fraction)) ;; Alt-f
     ("<#192> var" (make 'tfrac))
     ("<#192> var var" (make 'dfrac))
     ("<#192> var var var" (make 'frac*))
     ("<#192> var var var var" (make 'cfrac))
-    ("Ø" (make 'op)) ;; Alt-O
-    ("ÿ" (make-sqrt)) ;; Alt-s
-    ("ÿ var" (make-var-sqrt))
+    ("Ã˜" (make 'op)) ;; Alt-O
+    ("ÃŸ" (make-sqrt)) ;; Alt-s
+    ("ÃŸ var" (make-var-sqrt))
     ("dagger" (make 'tabular*)) ;; Alt-t
     ("dagger var" (make 'matrix))
     ("dagger var var" (make 'det))
@@ -50,13 +50,13 @@
     ("geq var" (make-wide "<ddot>"))
     ("geq var var" (make-wide "<dddot>"))
     ("geq var var var" (make-wide "<ddddot>"))
-    ("æ" (make-wide "<acute>")) ;; Alt-'
-    ("Æ" (make-wide "<ddot>")) ;; Alt-"
-    ("Æ var" (make-wide "<dddot>"))
-    ("Æ var var" (make-wide "<ddddot>"))
-    ("" (make-wide "^")) ;; Alt-^
-    ("" (make-wide "<wide-bar>")) ;; Alt--
-    ("" (make-wide-under "<wide-bar>")) ;; Alt-_
+    ("Ã¦" (make-wide "<acute>")) ;; Alt-'
+    ("Ã†" (make-wide "<ddot>")) ;; Alt-"
+    ("Ã† var" (make-wide "<dddot>"))
+    ("Ã† var var" (make-wide "<ddddot>"))
+    ("ï¬‚" (make-wide "^")) ;; Alt-^
+    ("â€“" (make-wide "<wide-bar>")) ;; Alt--
+    ("â€”" (make-wide-under "<wide-bar>")) ;; Alt-_
 
     ("{ dagger" (make 'choice)) ;; { Alt-t
     ("( dagger" (make 'matrix))
@@ -105,19 +105,22 @@
   ("\"" (make-rprime "'") (make-rprime "'"))
   ("` var" (make-lprime "'"))
   ("` var var" (make-lprime "<asterisk>"))
-  ("` var var var" (make-lprime "<dag>"))
-  ("` var var var var" (make-lprime "<ddag>"))
-  ("` var var var var var" (make-lprime "<kreuz>"))
+  ("` var var var" (make-lprime "<star>"))
+  ("` var var var var" (make-lprime "<dag>"))
+  ("` var var var var var" (make-lprime "<ddag>"))
+  ("` var var var var var var" (make-lprime "<kreuz>"))
   ("' var" (make-rprime "`"))
   ("' var var" (make-rprime "<asterisk>"))
-  ("' var var var" (make-rprime "<dag>"))
-  ("' var var var var" (make-rprime "<ddag>"))
-  ("' var var var var var" (make-rprime "<kreuz>"))
+  ("' var var var" (make-rprime "<star>"))
+  ("' var var var var" (make-rprime "<dag>"))
+  ("' var var var var var" (make-rprime "<ddag>"))
+  ("' var var var var var var" (make-rprime "<kreuz>"))
   ("\" var" (make-rprime "`") (make-rprime "`"))
   ("\" var var" (make-rprime "<asterisk>") (make-rprime "<asterisk>"))
-  ("\" var var var" (make-rprime "<dag>") (make-rprime "<dag>"))
-  ("\" var var var var" (make-rprime "<ddag>") (make-rprime "<ddag>"))
-  ("\" var var var var var" (make-rprime "<kreuz>") (make-rprime "<kreuz>"))
+  ("\" var var var" (make-rprime "<star>") (make-rprime "<star>"))
+  ("\" var var var var" (make-rprime "<dag>") (make-rprime "<dag>"))
+  ("\" var var var var var" (make-rprime "<ddag>") (make-rprime "<ddag>"))
+  ("\" var var var var var var" (make-rprime "<kreuz>") (make-rprime "<kreuz>"))
   ("math:greek '" (make-rprime "<dag>"))
   ("math:greek \"" (make-rprime "<ddag>"))
   ("math:greek +" (make-rprime "<kreuz>"))
