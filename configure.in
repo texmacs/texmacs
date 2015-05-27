@@ -740,6 +740,7 @@ case "${host}" in
   *mingw*)
     AC_MSG_RESULT([final adjustments for mingw host])
     CONFIG_OS=MINGW
+    CONFIG_QTPIPES="yes"
     CONFIG_OS_COMPAT="Windows"
     CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
     CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"

@@ -14,6 +14,76 @@
 #include "socket_link.hpp"
 #include "scheme.hpp"
 
+#ifdef QTTEXMACS
+#include "Qt/QTMsockets.hpp"
+
+#define CLT_KO(c) (c == NULL || !c->alive())
+
+static array<socket_link*> the_clients;
+static bool clients_started= false;
+
+/******************************************************************************
+* Client side
+******************************************************************************/
+
+int
+client_start (string host) {
+  if (!clients_started) {
+    (void) eval ("(use-modules (client client-base))");
+    clients_started= true;
+  }
+  socket_link *client= tm_new<socket_link> (host, 6561);
+  if(client) {
+    string err = client->start ();
+    if (client->alive () && !N (err)) {
+      int cltid= N (the_clients);
+      DBG_IO ("Client started Id:" << cltid);
+      the_clients << client;
+      call ("client-add", object (cltid));
+      return (cltid);
+    }
+    DBG_IO ("Client Error : " << err);
+    tm_delete (client);
+  } else DBG_IO ("Can't allocate memory for client");
+    return -1;
+}
+
+void
+client_stop (int fd) {
+  call ("client-remove", object (fd));
+  socket_link *client= the_clients[fd];
+  the_clients[fd]= NULL;
+  client->stop ();
+  tm_delete (client);
+}
+
+string
+client_read (int fd) {
+  socket_link *client= the_clients[fd];
+  if (CLT_KO (client)) return "";
+  bool success;
+  string back= client->read_packet (LINK_OUT, 0, success);
+  DBG_IOS ("Client in:", back);
+  return back;
+}
+
+void
+client_write (int fd, string s) {
+  socket_link *client= the_clients[fd];
+  if (CLT_KO (client)) return;
+  DBG_IOS ("Client out:", s);
+  client->write_packet (s, LINK_IN);
+}
+
+void
+enter_secure_mode (int fd) {
+  socket_link *client= the_clients[fd];
+  if (client == NULL || !client->alive ()) return;
+  client->secure_client ();
+}
+
+#else // Non QT part
+
 typedef socket_link_rep* weak_socket_link;
 static array<weak_socket_link> the_clients;
 static bool clients_started= false;
@@ -87,3 +157,4 @@ enter_secure_mode (int fd) {
   if (client == NULL || !client->alive) return;
   client->secure_client ();
 }
+#endif

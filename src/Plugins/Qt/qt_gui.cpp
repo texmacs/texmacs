@@ -431,68 +431,6 @@ qt_gui_rep::event_loop () {
 
 
 /******************************************************************************
- * Sockets notifications
- ******************************************************************************/
-
-void
-qt_gui_rep::add_notifier (socket_notifier sn)
-{
-  QSocketNotifier* qsn;
-  remove_notifier (sn);     // replace any already present notifier
-  
-  if (DEBUG_QT) debug_qt << "ADD NOTIFIER " << sn->fd << LF;
-  
-    // installs both a read and a write notifier
-    // (the texmacs interface does not specify enough its needs)
-  
-  qsn = new QSocketNotifier (sn->fd, QSocketNotifier::Read, gui_helper);
-  read_notifiers (sn) = static_cast<pointer> (qsn);
-  QObject::connect (qsn, SIGNAL (activated (int)),
-                    gui_helper, SLOT (doReadSocketNotification (int)));
-  
-  qsn = new QSocketNotifier (sn->fd, QSocketNotifier::Write, gui_helper);
-  write_notifiers (sn) = static_cast<pointer> (qsn);
-  QObject::connect (qsn, SIGNAL (activated (int)),
-                    gui_helper, SLOT (doWriteSocketNotification (int)));
-}
-
-void
-qt_gui_rep::remove_notifier (socket_notifier sn)
-{
-  QSocketNotifier *qsn;
-  
-  if (DEBUG_QT) debug_qt << "REMOVE NOTIFIER" << LF;
-  
-    // disable the (r/w) notifiers to prevent them to fire past this point
-    // and schedule them for deletion at the end of the current runloop
-  
-  qsn = (QSocketNotifier *)read_notifiers [sn];
-  if (qsn) {
-    qsn->setEnabled (false);
-    qsn->deleteLater ();
-  }
-  read_notifiers->reset (sn);
-  
-  qsn = (QSocketNotifier *)write_notifiers (sn);
-  if (qsn) {
-    qsn->setEnabled (false);
-    qsn->deleteLater ();
-  }
-  write_notifiers->reset (sn);
-}
-
-void
-qt_gui_rep::enable_notifier (socket_notifier sn, bool flag)
-{
-  QSocketNotifier *qsn;
-  qsn = (QSocketNotifier *)read_notifiers (sn);
-  if (qsn) qsn->setEnabled (flag);
-  qsn = (QSocketNotifier *)write_notifiers (sn);
-  if (qsn) qsn->setEnabled (flag);
-}
-
-
-/******************************************************************************
  * Main routines
  ******************************************************************************/
 
@@ -606,13 +544,6 @@ qt_gui_rep::process_queued_events (int max) {
           concrete_simple_widget (x.x1)->handle_notify_resize (x.x2, x.x3) ;
       }
         break;
-      case qp_type::QP_SOCKET_NOTIFICATION :
-      {
-        socket_notifier sn = open_box <socket_notifier> (ev.x2) ;
-        sn->notify ();
-        enable_notifier (sn, true);
-      }
-        break;
       case qp_type::QP_COMMAND :
       {
         command cmd = open_box <command> (ev.x2) ;
@@ -638,7 +569,6 @@ qt_gui_rep::process_queued_events (int max) {
     switch (ev.x1) {
       case qp_type::QP_COMMAND:
       case qp_type::QP_COMMAND_ARGS:
-      case qp_type::QP_SOCKET_NOTIFICATION:
       case qp_type::QP_RESIZE:
       case qp_type::QP_DELAYED_COMMANDS:
         break;
@@ -677,12 +607,6 @@ void
 qt_gui_rep::process_resize (qt_simple_widget_rep *wid, SI x, SI y ) {
   typedef triple<widget, SI, SI > T;
   add_event (queued_event (qp_type::QP_RESIZE, close_box<T> (T (wid, x, y))));
-}
-
-void
-qt_gui_rep::process_socket_notification (socket_notifier sn) {
-  add_event (queued_event (qp_type::QP_SOCKET_NOTIFICATION,
-                           close_box<socket_notifier> (sn)));
 }
 
 void

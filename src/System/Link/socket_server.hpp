@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#ifndef QTTEXMACS
 #ifndef SOCKET_SERVER_H
 #define SOCKET_SERVER_H
 #include "tm_link.hpp"
@@ -41,3 +42,4 @@ public:
 };
 
 #endif // SOCKET_SERVER_H
+#endif // QTTEXMACS
