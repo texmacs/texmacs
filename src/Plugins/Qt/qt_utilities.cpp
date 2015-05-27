@@ -11,6 +11,7 @@
 
 #include "QTMStyle.hpp"
 #include "qt_utilities.hpp"
+#include <time.h>
 
 #include <QImage>
 #include <QPrinter>
@@ -659,6 +660,11 @@ qt_get_date (string lan, string fm) {
       return y * "," * m * "," * d;
     }
     else fm = "d MMMM yyyy";
+  } else if (fm[0] == '%') {
+    char buf[64]; time_t ti; struct tm ts;
+    time (&ti);
+    strftime (buf, sizeof(buf), as_charp(fm), ::localtime(&ti));
+    return buf;
   }
   QLocale loc = QLocale (to_qstring (language_to_locale(lan)));
 #if (QT_VERSION >= 0x040400)
