@@ -15,42 +15,58 @@
   (:use (math math-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insertions
+;; Check syntactic correctness
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (path-common p1 p2)
-  (if (or (null? p1) (null? p2) (!= (car p1) (car p2))) (list)
-      (cons (car p1) (path-common (cdr p1) (cdr p2)))))
+(define (math-correct? . opt-p)
+  (if (null? opt-p)
+      (math-correct? (cDr (cursor-path)))
+      (let* ((p (car opt-p))
+	     (t (path->tree p))
+	     (val (get-env-tree-at "mode" (append p (list 0)))))
+	(or (tm-func? t 'cell)
+	    (not (tm-equal? val "math"))
+	    (and (or (tm-in? t '(lsub lsup rsub rsup))
+		     (tree-func? (tree-up t) 'concat)
+		     (with ok? (packrat-correct? "std-math" "Main" t)
+		       (display* t ", " ok? "\n")
+		       ok?))
+		 (!= p (buffer-path))
+		 (math-correct? (cDr p)))))))
 
-(define (sem-tree op)
-  (let* ((np (cursor-path))
-         (cp (path-common (cDr op) (cDr np))))
-    (path->tree cp)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrapped insertions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (kbd-insert s)
-  (:require (in-sem-math?))
-  (let* ((cp (cursor-path))
-         (ct (cursor-tree))
-         (bt (before-cursor))
+(define (wrap-insert cmd)
+  (let* ((bt (before-cursor))
          (at (after-cursor)))
-    (if (not (packrat-correct? "std-math" "Main" ct))
-        (former s)
+    (if (not (math-correct?))
+        (cmd)
         (begin
           (when (tm-func? bt 'suppressed)
             (tree-cut bt))
           (when (tm-func? at 'suppressed)
             (tree-cut at))
-          (former s)
-          (when (not (packrat-correct? "std-math" "Main" (sem-tree cp)))
+          (cmd)
+          (when (not (math-correct?))
             (insert '(suppressed (tiny-box))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Insertions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-insert s)
+  (:require (in-sem-math?))
+  (display* "Insert " s "\n")
+  (wrap-insert (lambda () (former s))))
 
 (tm-define (kbd-backspace)
   (:require (in-sem-math?))
-  (let* ((cp (cursor-path))
-         (ct (cursor-tree))
-         (bt (before-cursor))
+  (display* "Backspace\n")
+  (let* ((bt (before-cursor))
          (at (after-cursor)))
-    (if (not (packrat-correct? "std-math" "Main" ct))
+    (if (not (math-correct?))
         (former)
         (begin
           (when (tm-func? bt 'suppressed)
@@ -60,5 +76,18 @@
           (former)
           (when (and (string? bt) (== (math-symbol-type bt) "infix"))
             (insert `(suppressed ,bt)))
-          (when (not (packrat-correct? "std-math" "Main" (sem-tree cp)))
+          (when (not (math-correct?))
             (insert '(suppressed (tiny-box))))))))
+
+(tm-define (math-make . l)
+  (with cmd (lambda () (apply make l))
+    (wrap-insert cmd)))
+
+(kbd-map
+  (:mode in-sem-math?)
+  ("_" (math-make 'rsub))
+  ("^" (math-make 'rsup))
+  ("<#192>" (math-make 'frac))
+  ("ÿ" (math-make 'sqrt))
+  ("math f" (math-make 'frac))
+  ("math s" (math-make 'sqrt)))
