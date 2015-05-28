@@ -74,13 +74,19 @@
           (when (tm-func? at 'suppressed)
             (tree-cut at))
           (former)
-          (when (and (string? bt) (== (math-symbol-type bt) "infix"))
+          (when (and (string? bt)
+		     (in? (math-symbol-type bt) (list "infix" "separator")))
             (insert `(suppressed ,bt)))
           (when (not (math-correct?))
             (insert '(suppressed (tiny-box))))))))
 
 (tm-define (math-make . l)
   (with cmd (lambda () (apply make l))
+    (wrap-insert cmd)))
+
+(tm-define (math-big-operator op)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former op))
     (wrap-insert cmd)))
 
 (kbd-map
