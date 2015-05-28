@@ -152,7 +152,7 @@
 
   <assign|right-script|<macro|body|s|<active*|<tabular|<tformat|<cwith|1|1|1|-1|cell-lsep|0spc>|<cwith|1|1|1|-1|cell-rsep|0spc>|<cwith|1|1|1|-1|cell-bsep|0spc>|<cwith|1|1|1|-1|cell-tsep|0spc>|<cwith|1|1|1|-1|cell-vcorrect|n>|<cwith|1|1|1|-1|cell-valign|c>|<cwith|1|1|2|2|cell-halign|c>|<table|<row|<cell|<with|math-level|<plus|<value|math-level>|1>|<resize||0ex||1ex|>>>|<cell|<arg|body>>|<cell|<with|math-level|<plus|<value|math-level>|1>|<resize|<arg|s>|<plus|1l|0.5ex>||<plus|1l|1.5ex>|>>>>>>>>>>
 
-  <assign|suppressed|<macro|x|<with|color|#e9d0c1|<arg|x>>>>
+  <assign|suppressed|<macro|x|<with|color|#e0b080|<arg|x>>>>
 
   <drd-props|suppressed|arity|1|accessible|none>
 

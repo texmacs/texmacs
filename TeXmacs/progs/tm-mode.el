@@ -29,7 +29,7 @@
     association-tile bar concat dense-bar dense-tile document
     header-bar sequence short-bar short-tile minibar
     wrap-selection-any wrap-selection-small
-    try-modification
+    try-modification try-correct
     tabs icon-tabs padded centered aligned bottom-buttons scrollable
     hlist vlist hsplit vsplit explicit-buttons horizontal vertical
     $begin $cond))

@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (math math-sem-edit)
-  (:use (math math-edit)))
+  (:use (math math-edit)
+        (utils library tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check syntactic correctness
@@ -29,28 +30,69 @@
 	    (and (or (tm-in? t '(lsub lsup rsub rsup))
 		     (tree-func? (tree-up t) 'concat)
 		     (with ok? (packrat-correct? "std-math" "Main" t)
-		       (display* t ", " ok? "\n")
+		       ;;(display* t ", " ok? "\n")
 		       ok?))
 		 (!= p (buffer-path))
 		 (math-correct? (cDr p)))))))
+
+(define (try-correct-rewrite l)
+  (cond ((null? l) `#f)
+        ((and (null? (cdr l)) (func? (car l) 'else))
+         `(begin ,@(cdar l)))
+        ((npair? (car l))
+         (texmacs-error "try-correct-rewrite" "syntax error"))
+        (else
+          (let* ((h `(begin ,@(car l) (math-correct?)))
+                 (r (try-correct-rewrite (cdr l))))
+            `(or (try-modification ,h) ,r)))))
+
+(define-macro (try-correct . l)
+  (try-correct-rewrite l))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapped insertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (wrap-insert cmd)
+(define (remove-suppressed)
   (let* ((bt (before-cursor))
          (at (after-cursor)))
-    (if (not (math-correct?))
+    (when (tm-func? bt 'suppressed)
+      (tree-cut bt))
+    (when (tm-func? at 'suppressed)
+      (tree-cut at))))
+
+(define (wrap-insert cmd)
+  (if (not (math-correct?))
+      (cmd)
+      (try-correct
+        ((remove-suppressed)
+         (cmd)
+         (when (not (math-correct?))
+           (insert '(suppressed (tiny-box)))))
+        ((when (tm-func? (before-cursor) 'suppressed)
+           (tree-go-to (before-cursor) 0))
+         (cmd)
+         (when (not (math-correct?))
+           (insert '(suppressed (tiny-box)))))
+        ((cmd)
+         (when (not (math-correct?))
+           (insert '(suppressed (tiny-box)))))
+        ((insert '(suppressed (tiny-box)))
+         (cmd)
+         (when (not (math-correct?))
+           (insert '(suppressed (tiny-box))))))))
+
+(define (wrap-remove cmd forwards?)
+  (if (not (math-correct?))
+      (cmd)
+      (with st (if forwards? (after-cursor) (before-cursor))
+        (remove-suppressed)
         (cmd)
-        (begin
-          (when (tm-func? bt 'suppressed)
-            (tree-cut bt))
-          (when (tm-func? at 'suppressed)
-            (tree-cut at))
-          (cmd)
-          (when (not (math-correct?))
-            (insert '(suppressed (tiny-box))))))))
+        (when (and (string? st)
+                   (in? (math-symbol-type st) (list "infix" "separator")))
+          (insert `(suppressed ,st)))
+        (when (not (math-correct?))
+          (insert '(suppressed (tiny-box)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insertions
@@ -58,27 +100,18 @@
 
 (tm-define (kbd-insert s)
   (:require (in-sem-math?))
-  (display* "Insert " s "\n")
+  ;;(display* "Insert " s "\n")
   (wrap-insert (lambda () (former s))))
 
 (tm-define (kbd-backspace)
   (:require (in-sem-math?))
-  (display* "Backspace\n")
-  (let* ((bt (before-cursor))
-         (at (after-cursor)))
-    (if (not (math-correct?))
-        (former)
-        (begin
-          (when (tm-func? bt 'suppressed)
-            (tree-cut bt))
-          (when (tm-func? at 'suppressed)
-            (tree-cut at))
-          (former)
-          (when (and (string? bt)
-		     (in? (math-symbol-type bt) (list "infix" "separator")))
-            (insert `(suppressed ,bt)))
-          (when (not (math-correct?))
-            (insert '(suppressed (tiny-box))))))))
+  ;;(display* "Backspace\n")
+  (wrap-remove former #f))
+
+(tm-define (kbd-delete)
+  (:require (in-sem-math?))
+  ;;(display* "Delete\n")
+  (wrap-remove former #t))
 
 (tm-define (math-make . l)
   (with cmd (lambda () (apply make l))
