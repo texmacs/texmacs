@@ -392,7 +392,7 @@ is_empty (tree t) {
       if (!is_empty (t[i])) return false;
     return is_concat (t) || (n<=1);
   }
-  return false;
+  return is_compound (t, "suppressed");
 }
 
 /******************************************************************************

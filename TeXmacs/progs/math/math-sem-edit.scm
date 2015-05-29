@@ -61,26 +61,39 @@
     (when (tm-func? at 'suppressed)
       (tree-cut at))))
 
+(define (add-suppressed-arg t)
+  (when (tm-equal? t "")
+    (tree-set! t '(suppressed (tiny-box))))
+  (when (tm-in? t '(table row cell))
+    (for-each add-suppressed-arg (tree-children t))))
+
+(define (add-suppressed-upwards t)
+  (when (!= (tree->path t) (buffer-path))
+    (when (tree-in? t '(frac sqrt table))
+      (for-each add-suppressed-arg (tree-children t)))
+    (add-suppressed-upwards (tree-up t))))
+
+(define (add-suppressed)
+  (when (not (math-correct?))
+    (insert '(suppressed (tiny-box))))
+  (add-suppressed-upwards (cursor-tree)))
+
 (define (wrap-insert cmd)
   (if (not (math-correct?))
       (cmd)
       (try-correct
         ((remove-suppressed)
          (cmd)
-         (when (not (math-correct?))
-           (insert '(suppressed (tiny-box)))))
+         (add-suppressed))
         ((when (tm-func? (before-cursor) 'suppressed)
            (tree-go-to (before-cursor) 0))
          (cmd)
-         (when (not (math-correct?))
-           (insert '(suppressed (tiny-box)))))
+         (add-suppressed))
         ((cmd)
-         (when (not (math-correct?))
-           (insert '(suppressed (tiny-box)))))
+         (add-suppressed))
         ((insert '(suppressed (tiny-box)))
          (cmd)
-         (when (not (math-correct?))
-           (insert '(suppressed (tiny-box))))))))
+         (add-suppressed)))))
 
 (define (wrap-remove cmd forwards?)
   (if (not (math-correct?))
@@ -91,8 +104,7 @@
         (when (and (string? st)
                    (in? (math-symbol-type st) (list "infix" "separator")))
           (insert `(suppressed ,st)))
-        (when (not (math-correct?))
-          (insert '(suppressed (tiny-box)))))))
+        (add-suppressed))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insertions
@@ -121,6 +133,31 @@
   (:require (in-sem-math?))
   (with cmd (lambda () (former op))
     (wrap-insert cmd)))
+
+(tm-define (math-bracket-open . l)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (apply former l))
+    (wrap-insert cmd)))
+
+(tm-define (math-separator . l)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (apply former l))
+    (wrap-insert cmd)))
+
+(tm-define (math-bracket-close . l)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (apply former l))
+    (wrap-insert cmd)))
+
+;;(tm-define (make-wide sym)
+;;  (:require (in-sem-math?))
+;;  (with cmd (lambda () (former sym))
+;;    (wrap-insert cmd)))
+
+;;(tm-define (make-wide-under sym)
+;;  (:require (in-sem-math?))
+;;  (with cmd (lambda () (former sym))
+;;    (wrap-insert cmd)))
 
 (kbd-map
   (:mode in-sem-math?)
