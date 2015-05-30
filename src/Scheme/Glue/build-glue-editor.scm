@@ -39,8 +39,8 @@
 
   ;; general modification routines
   (inside? inside (bool tree_label))
-  (insert insert_tree (void content))
-  (insert-go-to var_insert_tree (void content path))
+  (cpp-insert insert_tree (void content))
+  (cpp-insert-go-to var_insert_tree (void content path))
   (insert-raw-go-to insert_tree (void content path))
   (insert-raw-return insert_return (void))
   (remove-text remove_text (void bool))

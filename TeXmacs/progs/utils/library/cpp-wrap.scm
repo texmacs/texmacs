@@ -17,16 +17,16 @@
 ;; Inserting general tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (insert t) (cpp-insert t))
+(tm-define (insert-go-to t p) (cpp-insert-go-to t p))
+
 (tm-define (make tag . opt-arity)
   (if (null? opt-arity)
       (cpp-make tag)
       (cpp-make-arity tag (car opt-arity))))
 
-(tm-define (make-with var val)
-  (cpp-make-with var val))
-
-(tm-define (make-hybrid)
-  (cpp-make-hybrid))
+(tm-define (make-with var val) (cpp-make-with var val))
+(tm-define (make-hybrid) (cpp-make-hybrid))
 
 (tm-define (make-rigid) (cpp-make-rigid))
 (tm-define (make-lprime s) (cpp-make-lprime s))

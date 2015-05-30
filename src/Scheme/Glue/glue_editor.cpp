@@ -200,8 +200,8 @@ tmg_insideP (tmscm arg1) {
 }
 
 tmscm
-tmg_insert (tmscm arg1) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "insert");
+tmg_cpp_insert (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "cpp-insert");
 
   content in1= tmscm_to_content (arg1);
 
@@ -213,9 +213,9 @@ tmg_insert (tmscm arg1) {
 }
 
 tmscm
-tmg_insert_go_to (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "insert-go-to");
-  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "insert-go-to");
+tmg_cpp_insert_go_to (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "cpp-insert-go-to");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "cpp-insert-go-to");
 
   content in1= tmscm_to_content (arg1);
   path in2= tmscm_to_path (arg2);
@@ -3094,8 +3094,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("position-set",  tmg_position_set, 2, 0, 0);
   tmscm_install_procedure ("position-get",  tmg_position_get, 1, 0, 0);
   tmscm_install_procedure ("inside?",  tmg_insideP, 1, 0, 0);
-  tmscm_install_procedure ("insert",  tmg_insert, 1, 0, 0);
-  tmscm_install_procedure ("insert-go-to",  tmg_insert_go_to, 2, 0, 0);
+  tmscm_install_procedure ("cpp-insert",  tmg_cpp_insert, 1, 0, 0);
+  tmscm_install_procedure ("cpp-insert-go-to",  tmg_cpp_insert_go_to, 2, 0, 0);
   tmscm_install_procedure ("insert-raw-go-to",  tmg_insert_raw_go_to, 2, 0, 0);
   tmscm_install_procedure ("insert-raw-return",  tmg_insert_raw_return, 0, 0, 0);
   tmscm_install_procedure ("remove-text",  tmg_remove_text, 1, 0, 0);

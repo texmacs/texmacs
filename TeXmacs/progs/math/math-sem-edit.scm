@@ -13,7 +13,30 @@
 
 (texmacs-module (math math-sem-edit)
   (:use (math math-edit)
-        (utils library tree)))
+        (utils library tree)
+        (utils library cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Useful predicates
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (math-nary? t)
+  (tree-in? t '(frac tfrac dfrac cfrac frac*
+                sqrt table tree above below)))
+
+(define (quantifier? s)
+  (and (string? s) (== (math-symbol-group s) "Quantifier-symbol")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Quick checking whether we are in math mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tree-in-math? t)
+  (and (tree->path t)
+       (or (tree-in? t '(math equation equation* eqnarray eqnarray*))
+           (and (not (tree-in? t '(text)))
+                (!= (tree->path t) (buffer-path))
+                (tree-in-math? (tree-up t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check syntactic correctness
@@ -23,10 +46,9 @@
   (if (null? opt-p)
       (math-correct? (cDr (cursor-path)))
       (let* ((p (car opt-p))
-	     (t (path->tree p))
-	     (val (get-env-tree-at "mode" (append p (list 0)))))
+	     (t (path->tree p)))
 	(or (tm-func? t 'cell)
-	    (not (tm-equal? val "math"))
+	    (not (tree-in-math? t))
 	    (and (or (tm-in? t '(lsub lsup rsub rsup))
 		     (tree-func? (tree-up t) 'concat)
 		     (with ok? (packrat-correct? "std-math" "Main" t)
@@ -58,10 +80,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapped insertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (math-nary? t)
-  (tree-in? t '(frac tfrac dfrac cfrac frac*
-                sqrt table tree above below)))
 
 (define (remove-suppressed)
   (let* ((bt (before-cursor))
@@ -103,7 +121,27 @@
          (add-suppressed))
         ((insert '(suppressed (tiny-box)))
          (cmd)
-         (add-suppressed)))))
+         (add-suppressed))
+        ((remove-suppressed)
+         (cmd)
+         (when (tree-is? (tree-up (cursor-tree)) 'long-arrow)
+           (with-cursor (append (tree->path (tree-up (cursor-tree))) (list 1))
+             (insert '(suppressed (tiny-box))))
+           (add-suppressed)))
+        ((remove-suppressed)
+         (with s (before-cursor)
+           (when (quantifier? s)
+             (cmd)
+             (let* ((sep (if (== s "mathlambda") "<point>" ","))
+                    (ins `(concat ,sep (tiny-box))))
+               (insert `(suppressed ,ins))))))
+        ((remove-suppressed)
+         (cmd)
+         (with s (before-cursor)
+           (when (quantifier? s)
+             (let* ((sep (if (== s "mathlambda") "<point>" ","))
+                    (ins `(concat (tiny-box) ,sep (tiny-box))))
+               (insert `(suppressed ,ins)))))))))
 
 (define (wrap-remove cmd forwards?)
   (if (not (math-correct?))
@@ -135,10 +173,20 @@
   ;;(display* "Delete\n")
   (wrap-remove former #t))
 
+(tm-define (make . l)
+  (with cmd (lambda () (apply former l))
+    (if (in-sem-math?)
+        (wrap-insert cmd)
+        (begin
+          (cmd)
+          (when (tree-in-math? (cursor-tree))
+            (add-suppressed))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrappers for insertion of new tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(wrap-inserter math-insert)
 (wrap-inserter make)
 (wrap-inserter math-big-operator)
 (wrap-inserter math-bracket-open)
