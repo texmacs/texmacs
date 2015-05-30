@@ -49,9 +49,19 @@
 (define-macro (try-correct . l)
   (try-correct-rewrite l))
 
+(define-macro (wrap-inserter fun)
+  `(tm-define (,fun . l)
+     (:require (in-sem-math?))
+     (with cmd (lambda () (apply former l))
+       (wrap-insert cmd))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapped insertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (math-nary? t)
+  (tree-in? t '(frac tfrac dfrac cfrac frac*
+                sqrt table tree above below)))
 
 (define (remove-suppressed)
   (let* ((bt (before-cursor))
@@ -69,7 +79,7 @@
 
 (define (add-suppressed-upwards t)
   (when (!= (tree->path t) (buffer-path))
-    (when (tree-in? t '(frac sqrt table))
+    (when (math-nary? t)
       (for-each add-suppressed-arg (tree-children t)))
     (add-suppressed-upwards (tree-up t))))
 
@@ -126,94 +136,47 @@
   (wrap-remove former #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Wrappers
+;; Wrappers for insertion of new tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (make . l)
-  (with cmd (lambda () (apply former l))
-    (wrap-insert cmd)))
+(wrap-inserter make)
+(wrap-inserter math-big-operator)
+(wrap-inserter math-bracket-open)
+(wrap-inserter math-separator)
+(wrap-inserter math-bracket-close)
+(wrap-inserter make-rigid)
+(wrap-inserter make-lprime)
+(wrap-inserter make-rprime)
+(wrap-inserter make-below)
+(wrap-inserter make-above)
+(wrap-inserter make-script)
+(wrap-inserter make-fraction)
+(wrap-inserter make-sqrt)
+(wrap-inserter make-wide)
+(wrap-inserter make-wide-under)
+(wrap-inserter make-neg)
+(wrap-inserter make-tree)
+(wrap-inserter make-long-arrow)
+(wrap-inserter make-long-arrow*)
 
-(tm-define (math-big-operator op)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former op))
-    (wrap-insert cmd)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrappers for other editing functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (math-bracket-open . l)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (apply former l))
-    (wrap-insert cmd)))
+(wrap-inserter kbd-space)
+(wrap-inserter kbd-shift-space)
+(wrap-inserter kbd-return)
+(wrap-inserter kbd-shift-return)
+(wrap-inserter kbd-control-return)
+(wrap-inserter kbd-shift-control-return)
+(wrap-inserter kbd-alternate-return)
+(wrap-inserter kbd-shift-alternate-return)
 
-(tm-define (math-separator . l)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (apply former l))
-    (wrap-insert cmd)))
-
-(tm-define (math-bracket-close . l)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (apply former l))
-    (wrap-insert cmd)))
-
-(tm-define (make-rigid)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
-
-(tm-define (make-lprime sym)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former sym))
-    (wrap-insert cmd)))
-
-(tm-define (make-rprime sym)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former sym))
-    (wrap-insert cmd)))
-
-(tm-define (make-below)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
-
-(tm-define (make-above)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
-
-(tm-define (make-script r? sup?)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former r? sup?))
-    (wrap-insert cmd)))
-
-(tm-define (make-fraction)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
-
-(tm-define (make-sqrt)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
-
-(tm-define (make-var-sqrt)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
-
-(tm-define (make-wide sym)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former sym))
-    (wrap-insert cmd)))
-
-(tm-define (make-wide-under sym)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former sym))
-    (wrap-insert cmd)))
-
-(tm-define (make-neg)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
-
-(tm-define (make-tree)
-  (:require (in-sem-math?))
-  (with cmd (lambda () (former))
-    (wrap-insert cmd)))
+(wrap-inserter structured-insert-left)
+(wrap-inserter structured-insert-right)
+(wrap-inserter structured-insert-up)
+(wrap-inserter structured-insert-down)
+(wrap-inserter structured-insert-start)
+(wrap-inserter structured-insert-end)
+(wrap-inserter structured-insert-top)
+(wrap-inserter structured-insert-bottom)
