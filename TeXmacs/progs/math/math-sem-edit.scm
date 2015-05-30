@@ -125,8 +125,12 @@
   ;;(display* "Delete\n")
   (wrap-remove former #t))
 
-(tm-define (math-make . l)
-  (with cmd (lambda () (apply make l))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrappers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make . l)
+  (with cmd (lambda () (apply former l))
     (wrap-insert cmd)))
 
 (tm-define (math-big-operator op)
@@ -149,21 +153,67 @@
   (with cmd (lambda () (apply former l))
     (wrap-insert cmd)))
 
-;;(tm-define (make-wide sym)
-;;  (:require (in-sem-math?))
-;;  (with cmd (lambda () (former sym))
-;;    (wrap-insert cmd)))
+(tm-define (make-rigid)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))
 
-;;(tm-define (make-wide-under sym)
-;;  (:require (in-sem-math?))
-;;  (with cmd (lambda () (former sym))
-;;    (wrap-insert cmd)))
+(tm-define (make-lprime sym)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former sym))
+    (wrap-insert cmd)))
 
-(kbd-map
-  (:mode in-sem-math?)
-  ("_" (math-make 'rsub))
-  ("^" (math-make 'rsup))
-  ("<#192>" (math-make 'frac))
-  ("ÿ" (math-make 'sqrt))
-  ("math f" (math-make 'frac))
-  ("math s" (math-make 'sqrt)))
+(tm-define (make-rprime sym)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former sym))
+    (wrap-insert cmd)))
+
+(tm-define (make-below)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))
+
+(tm-define (make-above)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))
+
+(tm-define (make-script r? sup?)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former r? sup?))
+    (wrap-insert cmd)))
+
+(tm-define (make-fraction)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))
+
+(tm-define (make-sqrt)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))
+
+(tm-define (make-var-sqrt)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))
+
+(tm-define (make-wide sym)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former sym))
+    (wrap-insert cmd)))
+
+(tm-define (make-wide-under sym)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former sym))
+    (wrap-insert cmd)))
+
+(tm-define (make-neg)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))
+
+(tm-define (make-tree)
+  (:require (in-sem-math?))
+  (with cmd (lambda () (former))
+    (wrap-insert cmd)))

@@ -107,9 +107,9 @@
   ("Group" (make-rigid))
   ("Superpose" (make 'superpose))
   ("Repeat object" (make 'repeat))
-  ("Decorate atoms" (make-arity 'datoms 2))
-  ;;("Decorate lines" (make-arity 'dlines 2))
-  ;;("Decorate pages" (make-arity 'dpages 2))
+  ("Decorate atoms" (make 'datoms 2))
+  ;;("Decorate lines" (make 'dlines 2))
+  ;;("Decorate pages" (make 'dpages 2))
   )
 
 (menu-bind transform-menu

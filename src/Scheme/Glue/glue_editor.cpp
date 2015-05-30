@@ -287,8 +287,8 @@ tmg_remove_structure_upwards () {
 }
 
 tmscm
-tmg_make (tmscm arg1) {
-  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "make");
+tmg_cpp_make (tmscm arg1) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "cpp-make");
 
   tree_label in1= tmscm_to_tree_label (arg1);
 
@@ -300,9 +300,9 @@ tmg_make (tmscm arg1) {
 }
 
 tmscm
-tmg_make_arity (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "make-arity");
-  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "make-arity");
+tmg_cpp_make_arity (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "cpp-make-arity");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "cpp-make-arity");
 
   tree_label in1= tmscm_to_tree_label (arg1);
   int in2= tmscm_to_int (arg2);
@@ -380,9 +380,9 @@ tmg_remove_argument_at (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_make_with (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-with");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "make-with");
+tmg_cpp_make_with (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-make-with");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-make-with");
 
   string in1= tmscm_to_string (arg1);
   string in2= tmscm_to_string (arg2);
@@ -423,7 +423,7 @@ tmg_make_style_with (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_make_hybrid () {
+tmg_cpp_make_hybrid () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_hybrid ();
   // TMSCM_ALLOW_INTS;
@@ -987,7 +987,7 @@ tmg_length_divide (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_make_rigid () {
+tmg_cpp_make_rigid () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_rigid ();
   // TMSCM_ALLOW_INTS;
@@ -996,8 +996,8 @@ tmg_make_rigid () {
 }
 
 tmscm
-tmg_make_lprime (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-lprime");
+tmg_cpp_make_lprime (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-make-lprime");
 
   string in1= tmscm_to_string (arg1);
 
@@ -1009,8 +1009,8 @@ tmg_make_lprime (tmscm arg1) {
 }
 
 tmscm
-tmg_make_rprime (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-rprime");
+tmg_cpp_make_rprime (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-make-rprime");
 
   string in1= tmscm_to_string (arg1);
 
@@ -1022,7 +1022,7 @@ tmg_make_rprime (tmscm arg1) {
 }
 
 tmscm
-tmg_make_below () {
+tmg_cpp_make_below () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_below ();
   // TMSCM_ALLOW_INTS;
@@ -1031,7 +1031,7 @@ tmg_make_below () {
 }
 
 tmscm
-tmg_make_above () {
+tmg_cpp_make_above () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_above ();
   // TMSCM_ALLOW_INTS;
@@ -1040,9 +1040,9 @@ tmg_make_above () {
 }
 
 tmscm
-tmg_make_script (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "make-script");
-  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "make-script");
+tmg_cpp_make_script (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "cpp-make-script");
+  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "cpp-make-script");
 
   bool in1= tmscm_to_bool (arg1);
   bool in2= tmscm_to_bool (arg2);
@@ -1055,7 +1055,7 @@ tmg_make_script (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_make_fraction () {
+tmg_cpp_make_fraction () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_fraction ();
   // TMSCM_ALLOW_INTS;
@@ -1064,7 +1064,7 @@ tmg_make_fraction () {
 }
 
 tmscm
-tmg_make_sqrt () {
+tmg_cpp_make_sqrt () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_sqrt ();
   // TMSCM_ALLOW_INTS;
@@ -1073,8 +1073,8 @@ tmg_make_sqrt () {
 }
 
 tmscm
-tmg_make_wide (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-wide");
+tmg_cpp_make_wide (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-make-wide");
 
   string in1= tmscm_to_string (arg1);
 
@@ -1086,8 +1086,8 @@ tmg_make_wide (tmscm arg1) {
 }
 
 tmscm
-tmg_make_wide_under (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "make-wide-under");
+tmg_cpp_make_wide_under (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-make-wide-under");
 
   string in1= tmscm_to_string (arg1);
 
@@ -1099,7 +1099,7 @@ tmg_make_wide_under (tmscm arg1) {
 }
 
 tmscm
-tmg_make_var_sqrt () {
+tmg_cpp_make_var_sqrt () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_var_sqrt ();
   // TMSCM_ALLOW_INTS;
@@ -1108,7 +1108,7 @@ tmg_make_var_sqrt () {
 }
 
 tmscm
-tmg_make_neg () {
+tmg_cpp_make_neg () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_neg ();
   // TMSCM_ALLOW_INTS;
@@ -1117,7 +1117,7 @@ tmg_make_neg () {
 }
 
 tmscm
-tmg_make_tree () {
+tmg_cpp_make_tree () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->make_tree ();
   // TMSCM_ALLOW_INTS;
@@ -3101,17 +3101,17 @@ initialize_glue_editor () {
   tmscm_install_procedure ("remove-text",  tmg_remove_text, 1, 0, 0);
   tmscm_install_procedure ("remove-structure",  tmg_remove_structure, 1, 0, 0);
   tmscm_install_procedure ("remove-structure-upwards",  tmg_remove_structure_upwards, 0, 0, 0);
-  tmscm_install_procedure ("make",  tmg_make, 1, 0, 0);
-  tmscm_install_procedure ("make-arity",  tmg_make_arity, 2, 0, 0);
+  tmscm_install_procedure ("cpp-make",  tmg_cpp_make, 1, 0, 0);
+  tmscm_install_procedure ("cpp-make-arity",  tmg_cpp_make_arity, 2, 0, 0);
   tmscm_install_procedure ("activate",  tmg_activate, 0, 0, 0);
   tmscm_install_procedure ("insert-argument",  tmg_insert_argument, 1, 0, 0);
   tmscm_install_procedure ("remove-argument",  tmg_remove_argument, 1, 0, 0);
   tmscm_install_procedure ("insert-argument-at",  tmg_insert_argument_at, 2, 0, 0);
   tmscm_install_procedure ("remove-argument-at",  tmg_remove_argument_at, 2, 0, 0);
-  tmscm_install_procedure ("make-with",  tmg_make_with, 2, 0, 0);
+  tmscm_install_procedure ("cpp-make-with",  tmg_cpp_make_with, 2, 0, 0);
   tmscm_install_procedure ("make-mod-active",  tmg_make_mod_active, 1, 0, 0);
   tmscm_install_procedure ("make-style-with",  tmg_make_style_with, 2, 0, 0);
-  tmscm_install_procedure ("make-hybrid",  tmg_make_hybrid, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-hybrid",  tmg_cpp_make_hybrid, 0, 0, 0);
   tmscm_install_procedure ("activate-latex",  tmg_activate_latex, 0, 0, 0);
   tmscm_install_procedure ("activate-hybrid",  tmg_activate_hybrid, 1, 0, 0);
   tmscm_install_procedure ("activate-symbol",  tmg_activate_symbol, 0, 0, 0);
@@ -3155,19 +3155,19 @@ initialize_glue_editor () {
   tmscm_install_procedure ("length-mult",  tmg_length_mult, 2, 0, 0);
   tmscm_install_procedure ("length?",  tmg_lengthP, 1, 0, 0);
   tmscm_install_procedure ("length-divide",  tmg_length_divide, 2, 0, 0);
-  tmscm_install_procedure ("make-rigid",  tmg_make_rigid, 0, 0, 0);
-  tmscm_install_procedure ("make-lprime",  tmg_make_lprime, 1, 0, 0);
-  tmscm_install_procedure ("make-rprime",  tmg_make_rprime, 1, 0, 0);
-  tmscm_install_procedure ("make-below",  tmg_make_below, 0, 0, 0);
-  tmscm_install_procedure ("make-above",  tmg_make_above, 0, 0, 0);
-  tmscm_install_procedure ("make-script",  tmg_make_script, 2, 0, 0);
-  tmscm_install_procedure ("make-fraction",  tmg_make_fraction, 0, 0, 0);
-  tmscm_install_procedure ("make-sqrt",  tmg_make_sqrt, 0, 0, 0);
-  tmscm_install_procedure ("make-wide",  tmg_make_wide, 1, 0, 0);
-  tmscm_install_procedure ("make-wide-under",  tmg_make_wide_under, 1, 0, 0);
-  tmscm_install_procedure ("make-var-sqrt",  tmg_make_var_sqrt, 0, 0, 0);
-  tmscm_install_procedure ("make-neg",  tmg_make_neg, 0, 0, 0);
-  tmscm_install_procedure ("make-tree",  tmg_make_tree, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-rigid",  tmg_cpp_make_rigid, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-lprime",  tmg_cpp_make_lprime, 1, 0, 0);
+  tmscm_install_procedure ("cpp-make-rprime",  tmg_cpp_make_rprime, 1, 0, 0);
+  tmscm_install_procedure ("cpp-make-below",  tmg_cpp_make_below, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-above",  tmg_cpp_make_above, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-script",  tmg_cpp_make_script, 2, 0, 0);
+  tmscm_install_procedure ("cpp-make-fraction",  tmg_cpp_make_fraction, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-sqrt",  tmg_cpp_make_sqrt, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-wide",  tmg_cpp_make_wide, 1, 0, 0);
+  tmscm_install_procedure ("cpp-make-wide-under",  tmg_cpp_make_wide_under, 1, 0, 0);
+  tmscm_install_procedure ("cpp-make-var-sqrt",  tmg_cpp_make_var_sqrt, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-neg",  tmg_cpp_make_neg, 0, 0, 0);
+  tmscm_install_procedure ("cpp-make-tree",  tmg_cpp_make_tree, 0, 0, 0);
   tmscm_install_procedure ("make-subtable",  tmg_make_subtable, 0, 0, 0);
   tmscm_install_procedure ("table-deactivate",  tmg_table_deactivate, 0, 0, 0);
   tmscm_install_procedure ("table-extract-format",  tmg_table_extract_format, 0, 0, 0);

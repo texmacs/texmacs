@@ -83,7 +83,7 @@
   (when (inside? 'letter-header)
         ("Address" (make-header 'address))
         ("Date" (make-header 'letter-date))
-        ("Today" (begin (make-header 'letter-date) (make-arity 'date 0)))
+        ("Today" (begin (make-header 'letter-date) (make 'date 0)))
         ("Destination" (make-header 'destination)))
   ---
   (when (not (inside? 'letter-header))
@@ -611,7 +611,7 @@
   ("Author" (make-doc-data-element 'doc-author))
   ("Date" (make-doc-data-element 'doc-date))
   ("Today"
-   (begin (make-doc-data-element 'doc-date) (make-arity 'date 0)))
+   (begin (make-doc-data-element 'doc-date) (make 'date 0)))
   ("Miscellanous" (make-doc-data-element 'doc-misc))
   ("Note" (make-doc-data-element 'doc-note))
   ("TeXmacs notice" (begin (make-doc-data-element 'doc-note)

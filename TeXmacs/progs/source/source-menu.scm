@@ -21,7 +21,7 @@
 
 (menu-bind source-define-menu
   ("Assign" (make 'assign))
-  ("With" (make-arity 'with 3))
+  ("With" (make 'with 3))
   ("Value" (make 'value)))
 
 (menu-bind source-macro-menu
@@ -75,7 +75,7 @@
   ("Length" (make 'length))
   ("Range" (make 'range))
   ("Number" (make 'number))
-  ("Today" (make-arity 'date 0))
+  ("Today" (make 'date 0))
   ("Formatted date" (make 'date))
   ("Translate" (make 'translate))
   ("Find file" (make 'find-file)))

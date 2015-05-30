@@ -112,6 +112,7 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting utilities\n")
+(use-modules (utils library cpp-wrap))
 (lazy-define (utils library cursor) notify-cursor-moved)
 (lazy-define (utils cas cas-out) cas->stree)
 (lazy-define (utils plugins plugin-cmd) pre-serialize verbatim-serialize)
