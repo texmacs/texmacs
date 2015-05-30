@@ -20,6 +20,9 @@
 ;; Useful predicates
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (in-sem?)
+  (== (get-preference "semantic correctness") "on"))
+
 (define (math-nary? t)
   (tree-in? t '(frac tfrac dfrac cfrac frac*
                 sqrt table tree above below)))
@@ -28,15 +31,22 @@
   (and (string? s) (== (math-symbol-group s) "Quantifier-symbol")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Quick checking whether we are in math mode
+;; Quick check whether we are in math mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (get-mode t p mode)
+  (if (null? p) mode
+      (get-mode (tree-ref t (car p)) (cdr p)
+                (tree-child-env t (car p) "mode" mode))))
+
+(define (path-in-math? p)
+  (tm-equal? (get-mode (path->tree (list (car p))) (cdr p) "text") "math"))
+
 (define (tree-in-math? t)
-  (and (tree->path t)
-       (or (tree-in? t '(math equation equation* eqnarray eqnarray*))
-           (and (not (tree-in? t '(text)))
-                (!= (tree->path t) (buffer-path))
-                (tree-in-math? (tree-up t))))))
+  (and (tree->path t) (path-in-math? (tree->path t))))
+
+(define (in-math-mode?)
+  (path-in-math? (cDr (cursor-path))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check syntactic correctness
@@ -175,12 +185,12 @@
 
 (tm-define (make . l)
   (with cmd (lambda () (apply former l))
-    (if (in-sem-math?)
-        (wrap-insert cmd)
-        (begin
-          (cmd)
-          (when (tree-in-math? (cursor-tree))
-            (add-suppressed))))))
+    (cond ((not (in-sem?)) (cmd))
+          ((in-math?) (wrap-insert cmd))
+          (else
+            (cmd)
+            (when (in-math-mode?)
+              (add-suppressed))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrappers for insertion of new tags
