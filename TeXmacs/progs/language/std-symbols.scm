@@ -407,7 +407,8 @@
   (define Suspension-nolim-symbol
     (:type symbol)
     (:penalty invalid invalid)
-    "<ldots>" "<cdots>" "<udots>" "<vdots>" "<ddots>" "<mdots>" "<colons>")
+    "<ldots>" "<cdots>" "<hdots>" "<vdots>"
+    "<ddots>" "<udots>" "<mdots>" "<colons>")
   
   (define Suspension-lim-symbol
     (:type symbol)

@@ -17,17 +17,36 @@
 ;; Inserting general tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (insert t) (cpp-insert t))
-(tm-define (insert-go-to t p) (cpp-insert-go-to t p))
+(tm-define (path-in t l)
+  (let* ((f (and (nnull? l) (car l)))
+         (r (and (nnull? l) (cdr l))))
+    (cond ((null? l) l)
+          ((== l '(:start)) (path-start t (list)))
+          ((== l '(:end)) (path-end t (list)))
+          ((tm-atomic? t) l)
+          ((== f :first) (path-in t (cons 0 (cdr l))))
+          ((== f :last) (path-in t (cons (- (tm-arity t) 1) (cdr l))))
+          ((and (integer? (car l)) (tm-ref t (car l)))
+           (cons (car l) (path-in (tm-ref t (car l)) (cdr l))))
+          (else (texmacs-error "path-in" "invalid path")))))
+
+(tm-define (insert t . opt-l)
+  (if (null? opt-l)
+      (cpp-insert t)
+      (cpp-insert-go-to t (path-in t opt-l))))
 
 (tm-define (make tag . opt-arity)
   (if (null? opt-arity)
       (cpp-make tag)
       (cpp-make-arity tag (car opt-arity))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrappers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (insert-go-to t p) (cpp-insert-go-to t p))
 (tm-define (make-with var val) (cpp-make-with var val))
 (tm-define (make-hybrid) (cpp-make-hybrid))
-
 (tm-define (make-rigid) (cpp-make-rigid))
 (tm-define (make-lprime s) (cpp-make-lprime s))
 (tm-define (make-rprime s) (cpp-make-rprime s))

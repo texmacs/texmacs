@@ -30,6 +30,15 @@
 (define (quantifier? s)
   (and (string? s) (== (math-symbol-group s) "Quantifier-symbol")))
 
+(define (suppressed-before?)
+  (tm-is? (before-cursor) 'suppressed))
+
+(define (suppressed-after?)
+  (tm-is? (after-cursor) 'suppressed))
+
+(define (suppressed-around?)
+  (or (suppressed-before?) (suppressed-after?)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Quick check whether we are in math mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -74,7 +83,7 @@
         ((npair? (car l))
          (texmacs-error "try-correct-rewrite" "syntax error"))
         (else
-          (let* ((h `(begin ,@(car l) (math-correct?)))
+          (let* ((h `(and ,@(car l) (math-correct?)))
                  (r (try-correct-rewrite (cdr l))))
             `(or (try-modification ,h) ,r)))))
 
@@ -91,13 +100,17 @@
 ;; Wrapped insertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (position-wrt-suppressed after?)
+  (when (and (not after?) (suppressed-before?))
+    (tree-go-to (before-cursor) :start))
+  (when (and after? (suppressed-after?))
+    (tree-go-to (after-cursor) :end)))
+
 (define (remove-suppressed)
-  (let* ((bt (before-cursor))
-         (at (after-cursor)))
-    (when (tm-func? bt 'suppressed)
-      (tree-cut bt))
-    (when (tm-func? at 'suppressed)
-      (tree-cut at))))
+  (while (tm-func? (before-cursor) 'suppressed)
+    (tree-cut (before-cursor)))
+  (when (tm-func? (after-cursor) 'suppressed)
+    (tree-cut (after-cursor))))
 
 (define (add-suppressed-arg t)
   (when (tm-equal? t "")
@@ -113,10 +126,22 @@
 
 (define (add-suppressed)
   (when (not (math-correct?))
-    (insert '(suppressed (tiny-box))))
-  (add-suppressed-upwards (cursor-tree)))
+    (insert '(suppressed (tiny-box)) :start))
+  (add-suppressed-upwards (cursor-tree))
+  #t)
+
+(define (clean-suppressed)
+  (when (and (not (math-correct?)) (suppressed-around?))
+    (try-correct
+      ((remove-suppressed)
+       (add-suppressed)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Insertions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (wrap-insert cmd)
+  (clean-suppressed)
   (if (not (math-correct?))
       (cmd)
       (try-correct
@@ -134,54 +159,33 @@
          (add-suppressed))
         ((remove-suppressed)
          (cmd)
-         (when (tree-is? (tree-up (cursor-tree)) 'long-arrow)
-           (with-cursor (append (tree->path (tree-up (cursor-tree))) (list 1))
-             (insert '(suppressed (tiny-box))))
-           (add-suppressed)))
+         (and (tree-is? (tree-up (cursor-tree)) 'long-arrow)
+              (begin
+                (with-cursor (append (cDDr (cursor-path)) (list 1))
+                  (insert '(suppressed (tiny-box))))
+                (add-suppressed))))
         ((remove-suppressed)
          (with s (before-cursor)
-           (when (quantifier? s)
-             (cmd)
-             (let* ((sep (if (== s "mathlambda") "<point>" ","))
-                    (ins `(concat ,sep (tiny-box))))
-               (insert `(suppressed ,ins))))))
+           (and (quantifier? s)
+                (begin
+                  (cmd)
+                  (let* ((sep (if (== s "mathlambda") "<point>" ","))
+                         (ins `(concat ,sep (tiny-box))))
+                    (insert `(suppressed ,ins) :start)
+                    #t)))))
         ((remove-suppressed)
          (cmd)
          (with s (before-cursor)
-           (when (quantifier? s)
-             (let* ((sep (if (== s "mathlambda") "<point>" ","))
-                    (ins `(concat (tiny-box) ,sep (tiny-box))))
-               (insert `(suppressed ,ins)))))))))
-
-(define (wrap-remove cmd forwards?)
-  (if (not (math-correct?))
-      (cmd)
-      (with st (if forwards? (after-cursor) (before-cursor))
-        (remove-suppressed)
-        (cmd)
-        (when (and (string? st)
-                   (in? (math-symbol-type st) (list "infix" "separator")))
-          (insert `(suppressed ,st)))
-        (add-suppressed))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insertions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+           (and (quantifier? s)
+                (let* ((sep (if (== s "mathlambda") "<point>" ","))
+                       (ins `(concat (tiny-box) ,sep (tiny-box))))
+                  (insert `(suppressed ,ins) :start)
+                  #t)))))))
 
 (tm-define (kbd-insert s)
   (:require (in-sem-math?))
   ;;(display* "Insert " s "\n")
   (wrap-insert (lambda () (former s))))
-
-(tm-define (kbd-backspace)
-  (:require (in-sem-math?))
-  ;;(display* "Backspace\n")
-  (wrap-remove former #f))
-
-(tm-define (kbd-delete)
-  (:require (in-sem-math?))
-  ;;(display* "Delete\n")
-  (wrap-remove former #t))
 
 (tm-define (make . l)
   (with cmd (lambda () (apply former l))
@@ -193,7 +197,54 @@
               (add-suppressed))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Wrappers for insertion of new tags
+;; Removals
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (wrap-remove cmd forwards?)
+  (clean-suppressed)
+  (if (not (math-correct?))
+      (cmd)
+      (try-correct
+        ((and (suppressed-around?)
+              (begin
+                (remove-suppressed)
+                (with empty? (tree-empty? (cursor-tree))
+                  (cmd)
+                  (when (not (and empty? (math-correct?)))
+                    (remove-suppressed))
+                  (add-suppressed)))))
+        ((remove-suppressed)
+         (with empty? (tree-empty? (cursor-tree))
+           (cmd)
+           (if (and empty? (math-correct?))
+               (add-suppressed)
+               (and (suppressed-around?)
+                    (begin
+                      (remove-suppressed)
+                      (add-suppressed))))))
+        ((with st (if forwards? (after-cursor) (before-cursor))
+           (remove-suppressed)
+           (cmd)
+           (when (and (string? st)
+                      (in? (math-symbol-type st) (list "infix" "separator")))
+             (insert `(suppressed ,st) :start))
+           (add-suppressed)))
+        ((position-wrt-suppressed forwards?)
+         (cmd)
+         (add-suppressed)))))
+
+(tm-define (kbd-backspace)
+  (:require (in-sem-math?))
+  ;;(display* "Backspace\n")
+  (wrap-remove former #f))
+
+(tm-define (kbd-delete)
+  (:require (in-sem-math?))
+  ;;(display* "Delete\n")
+  (wrap-remove former #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Further wrappers for insertion of new tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (wrap-inserter math-insert)
