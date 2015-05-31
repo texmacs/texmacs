@@ -391,6 +391,6 @@
 (wrap-inserter make-hybrid)
 
 (tm-define (kbd-enter t forwards?)
-  (:require (and (tree-is? t 'hybrid) (tree-in-math? t)))
+  (:require (and (tree-is? t 'hybrid) (in-sem?) (tree-in-math? t)))
   (with cmd (lambda () (activate-hybrid #f))
     (perform-insert cmd)))

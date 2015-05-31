@@ -99,6 +99,7 @@
 
   (frak-imath (clip frak-i * * * 0.47))
   (frak-jmath (clip frak-j * * * 0.47))
+  (short-underscore (enlarge (clip _ 0.05 0.4 * *) 0 -0.15 0 0))
 
   (venus (join (0 0.1 female)))
   (mars (join (0 -0.1 male)))
