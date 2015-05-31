@@ -281,6 +281,10 @@
     (Main "\n")
     Relaxed-expressions)
 
+  (define Strict
+    (Strict "\n")
+    Relaxed-expressions)
+
   (define Relaxed-expressions
     (Relaxed-expressions Middle Relaxed-expression-list)
     Relaxed-expression-list)

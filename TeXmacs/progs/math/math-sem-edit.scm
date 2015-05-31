@@ -110,6 +110,18 @@
 (define (in-math-mode?)
   (path-in-math? (cDr (cursor-path))))
 
+(define (session-math? t)
+  (tree-in? t '(input-math folded-io-math unfolded-io-math)))
+
+(define (displayed-math? t)
+  (tree-in? t '(equation equation*)))
+
+(define (get-math-type t)
+  (cond ((tree-search-upwards t session-math?) "Strict")
+        ((tree-search-upwards t 'cell) "Cell")
+        ((tree-search-upwards t displayed-math?) "Main")
+        (else "Strict")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check syntactic correctness
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -123,8 +135,10 @@
 	    (not (tree-in-math? t))
 	    (and (or (tm-in? t '(lsub lsup rsub rsup))
 		     (tree-func? (tree-up t) 'concat)
-		     (with ok? (packrat-correct? "std-math" "Main" t)
+		     (let* ((type (get-math-type t))
+                            (ok? (packrat-correct? "std-math" type t)))
 		       ;;(display* t ", " ok? "\n")
+		       ;;(display* (tm->stree t) ", " type ", " ok? "\n")
 		       ok?))
 		 (!= p (buffer-path))
 		 (math-correct? (cDr p)))))))
@@ -166,7 +180,7 @@
     (tree-cut (after-cursor))))
 
 (define (add-suppressed-arg t)
-  (when (tm-equal? t "")
+  (when (and (tm-equal? t "") (!= (get-math-type t) "Cell"))
     (tree-set! t '(suppressed (tiny-box))))
   (when (tm-in? t '(table row cell))
     (for-each add-suppressed-arg (tree-children t))))
