@@ -47,6 +47,7 @@
 (tm-define (insert-go-to t p) (cpp-insert-go-to t p))
 (tm-define (make-with var val) (cpp-make-with var val))
 (tm-define (make-hybrid) (cpp-make-hybrid))
+
 (tm-define (make-rigid) (cpp-make-rigid))
 (tm-define (make-lprime s) (cpp-make-lprime s))
 (tm-define (make-rprime s) (cpp-make-rprime s))
@@ -60,3 +61,7 @@
 (tm-define (make-wide-under s) (cpp-make-wide-under s))
 (tm-define (make-neg) (cpp-make-neg))
 (tm-define (make-tree) (cpp-make-tree))
+
+(tm-define (clipboard-copy cb) (cpp-clipboard-copy cb))
+(tm-define (clipboard-cut cb) (cpp-clipboard-cut cb))
+(tm-define (clipboard-paste cb) (cpp-clipboard-paste cb))

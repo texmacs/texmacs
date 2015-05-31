@@ -1990,8 +1990,8 @@ tmg_selection_set_range_set (tmscm arg1) {
 }
 
 tmscm
-tmg_clipboard_copy (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "clipboard-copy");
+tmg_cpp_clipboard_copy (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-clipboard-copy");
 
   string in1= tmscm_to_string (arg1);
 
@@ -2003,8 +2003,8 @@ tmg_clipboard_copy (tmscm arg1) {
 }
 
 tmscm
-tmg_clipboard_cut (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "clipboard-cut");
+tmg_cpp_clipboard_cut (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-clipboard-cut");
 
   string in1= tmscm_to_string (arg1);
 
@@ -2044,8 +2044,8 @@ tmg_clipboard_cut_between (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_clipboard_paste (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "clipboard-paste");
+tmg_cpp_clipboard_paste (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-clipboard-paste");
 
   string in1= tmscm_to_string (arg1);
 
@@ -3246,11 +3246,11 @@ initialize_glue_editor () {
   tmscm_install_procedure ("selection-path",  tmg_selection_path, 0, 0, 0);
   tmscm_install_procedure ("selection-set",  tmg_selection_set, 2, 0, 0);
   tmscm_install_procedure ("selection-set-range-set",  tmg_selection_set_range_set, 1, 0, 0);
-  tmscm_install_procedure ("clipboard-copy",  tmg_clipboard_copy, 1, 0, 0);
-  tmscm_install_procedure ("clipboard-cut",  tmg_clipboard_cut, 1, 0, 0);
+  tmscm_install_procedure ("cpp-clipboard-copy",  tmg_cpp_clipboard_copy, 1, 0, 0);
+  tmscm_install_procedure ("cpp-clipboard-cut",  tmg_cpp_clipboard_cut, 1, 0, 0);
   tmscm_install_procedure ("clipboard-cut-at",  tmg_clipboard_cut_at, 1, 0, 0);
   tmscm_install_procedure ("clipboard-cut-between",  tmg_clipboard_cut_between, 2, 0, 0);
-  tmscm_install_procedure ("clipboard-paste",  tmg_clipboard_paste, 1, 0, 0);
+  tmscm_install_procedure ("cpp-clipboard-paste",  tmg_cpp_clipboard_paste, 1, 0, 0);
   tmscm_install_procedure ("selection-move",  tmg_selection_move, 0, 0, 0);
   tmscm_install_procedure ("clipboard-clear",  tmg_clipboard_clear, 1, 0, 0);
   tmscm_install_procedure ("selection-cancel",  tmg_selection_cancel, 0, 0, 0);

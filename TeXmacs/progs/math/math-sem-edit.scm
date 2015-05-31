@@ -157,12 +157,6 @@
 (define-macro (try-correct . l)
   (try-correct-rewrite l))
 
-(define-macro (wrap-inserter fun)
-  `(tm-define (,fun . l)
-     (:require (in-sem-math?))
-     (with cmd (lambda () (apply former l))
-       (wrap-insert cmd))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapped insertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -252,6 +246,12 @@
       (cmd)
       (perform-insert cmd)))
 
+(define-macro (wrap-inserter fun)
+  `(tm-define (,fun . l)
+     (:require (in-sem-math?))
+     (with cmd (lambda () (apply former l))
+       (wrap-insert cmd))))
+
 (tm-define (kbd-insert s)
   (:require (in-sem-math?))
   ;;(display* "Insert " s "\n")
@@ -315,6 +315,12 @@
         ((selection-active-any?) (remove-selection cmd forwards?))
         (else (perform-remove cmd forwards?))))
 
+(define-macro (wrap-remover fun forwards?)
+  `(tm-define (,fun . l)
+     (:require (in-sem-math?))
+     (with cmd (lambda () (apply former l))
+       (wrap-remove cmd ,forwards?))))
+
 (tm-define (kbd-backspace)
   (:require (in-sem-math?))
   ;;(display* "Backspace\n")
@@ -371,6 +377,9 @@
 (wrap-inserter structured-insert-end)
 (wrap-inserter structured-insert-top)
 (wrap-inserter structured-insert-bottom)
+
+(wrap-remover clipboard-cut #f)
+(wrap-inserter clipboard-paste)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hybrid commands
