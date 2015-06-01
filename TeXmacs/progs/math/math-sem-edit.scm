@@ -305,7 +305,8 @@
 
 (define (perform-remove cmd forwards?)
   (try-correct
-    ((and (suppressed-around?)
+    (;; removal when there is suppressed content around the cursor
+     (and (suppressed-around?)
           (begin
             (remove-suppressed)
             (with empty? (tree-empty? (cursor-tree))
@@ -313,7 +314,8 @@
               (when (not (and empty? (math-correct?)))
                 (remove-suppressed))
               (add-suppressed)))))
-    ((remove-suppressed)
+    (;; regular removal of content
+     (remove-suppressed)
      (with empty? (tree-empty? (cursor-tree))
        (cmd)
        (if (and empty? (math-correct?))
@@ -322,17 +324,22 @@
                 (begin
                   (remove-suppressed)
                   (add-suppressed))))))
-    ((remove-suppressed)
+    (;; removal of actual infix operators
+     (remove-suppressed)
      (let* ((st (if forwards? (after-cursor) (before-cursor)))
             (inf? (if forwards? (before-actual-infix?) (after-actual-infix?))))
        (when (== st "*") (set! st "<cdot>"))
        (cmd)
        (when inf? (insert `(suppressed ,st) (if forwards? :end :start)))
        (add-suppressed)))
-    ((position-wrt-suppressed forwards?)
+    (;; need to jump over suppressed content around the cursor before deletion
+     ;; e.g. pressing backspace after suppressed content in
+     ;; \sum_{k \in K} <suppressed> \circ C
+     (position-wrt-suppressed forwards?)
      (cmd)
      (add-suppressed))
-    ((remove-suppressed)
+    (;; removal of actual infix spaces
+     (remove-suppressed)
      (let* ((st (if forwards? (after-cursor) (before-cursor)))
             (spc? (space? st)))
        (cmd)
