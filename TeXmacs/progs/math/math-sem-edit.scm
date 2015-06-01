@@ -31,6 +31,10 @@
 (define (quantifier? s)
   (and (string? s) (== (math-symbol-group s) "Quantifier-symbol")))
 
+(define (space? t)
+  (or (in? t '(" " "<space>" "<nospace>"))
+      (tm-in? t '(application-space))))
+
 (define (suppressed-before?)
   (tm-is? (before-cursor) 'suppressed))
 
@@ -177,7 +181,10 @@
     (tree-cut (after-cursor))))
 
 (define (add-suppressed-arg t)
-  (when (and (tm-equal? t "") (!= (get-math-type t) "Cell"))
+  (when (and (tm-equal? t "")
+             (not (or (tm-is? (tree-up t) 'cell)
+                      (and (tm-is? (tree-up t) 'document)
+                           (tm-is? (tree-up (tree-up t)) 'cell)))))
     (tree-set! t '(suppressed (tiny-box))))
   (when (tm-in? t '(table row cell))
     (for-each add-suppressed-arg (tree-children t))))
@@ -241,7 +248,13 @@
             (let* ((sep (if (== s "mathlambda") "<point>" ","))
                    (ins `(concat (tiny-box) ,sep (tiny-box))))
               (insert `(suppressed ,ins) :start)
-              #t))))))
+              #t))))
+    ((remove-suppressed)
+     (insert `(suppressed (explicit-space)))
+     (cmd))
+    ((remove-suppressed)
+     (cmd)
+     (insert `(suppressed (explicit-space))))))
 
 (define (wrap-insert cmd)
   (clean-suppressed)
@@ -295,12 +308,20 @@
     ((remove-suppressed)
      (let* ((st (if forwards? (after-cursor) (before-cursor)))
             (inf? (if forwards? (before-actual-infix?) (after-actual-infix?))))
+       (when (== st "*") (set! st "<cdot>"))
        (cmd)
        (when inf? (insert `(suppressed ,st) (if forwards? :end :start)))
        (add-suppressed)))
     ((position-wrt-suppressed forwards?)
      (cmd)
-     (add-suppressed))))
+     (add-suppressed))
+    ((remove-suppressed)
+     (let* ((st (if forwards? (after-cursor) (before-cursor)))
+            (spc? (space? st)))
+       (cmd)
+       (when spc?
+         (insert `(suppressed (explicit-space)) (if forwards? :end :start)))
+       (add-suppressed)))))
 
 (define (remove-selection cmd forwards?)
   (let* ((t (selection-tree)))
@@ -308,6 +329,7 @@
     (try-correct
       ((and (infix? t)
             (with op (get-infix-op t)
+              (when (== op "*") (set! op "<cdot>"))
               (insert `(suppressed ,op) (if forwards? :end :start))
               (add-suppressed))))
       ((add-suppressed)))))
