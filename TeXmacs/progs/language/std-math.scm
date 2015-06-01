@@ -490,7 +490,11 @@
     (+ (or (- "a" "z") (- "A" "Z"))))
 
   (define Number
-    ((+ (- "0" "9")) (or ((or "." "<comma>") (* (- "0" "9"))) ""))))
+    ((+ (- "0" "9")) (or "." "<comma>") (+ (- "0" "9")))
+    ((+ (- "0" "9")) (or "." "<comma>"))
+    ((or "." "<comma>") (+ (- "0" "9")))
+    (+ (- "0" "9"))
+    (or "." "<comma>")))
 
 (define-language std-math
   (:synopsis "default semantics for mathematical formulas")
