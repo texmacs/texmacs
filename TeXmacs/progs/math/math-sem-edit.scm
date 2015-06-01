@@ -210,26 +210,32 @@
 
 (define (perform-insert cmd)
   (try-correct
-    ((remove-suppressed)
+    (;; regular insertion of new content
+     (remove-suppressed)
      (cmd)
      (add-suppressed))
-    ((when (tm-func? (before-cursor) 'suppressed)
+    (;; starting right script or prime after a suppressed symbol
+     (when (tm-func? (before-cursor) 'suppressed)
        (tree-go-to (before-cursor) 0))
      (cmd)
      (add-suppressed))
-    ((cmd)
-     (add-suppressed))
-    ((insert '(suppressed (tiny-box)))
+    (;; inserting a pure infix operator after a suppressed symbol
      (cmd)
      (add-suppressed))
-    ((remove-suppressed)
+    (;; adding an infix operator after another one
+     (insert '(suppressed (tiny-box)))
+     (cmd)
+     (add-suppressed))
+    (;; starting a long arrow with a script
+     (remove-suppressed)
      (cmd)
      (and (tree-is? (tree-up (cursor-tree)) 'long-arrow)
           (begin
             (with-cursor (append (cDDr (cursor-path)) (list 1))
               (insert '(suppressed (tiny-box))))
             (add-suppressed))))
-    ((remove-suppressed)
+    (;; entering a quantifier together with the corresponding variable
+     (remove-suppressed)
      (with s (before-cursor)
        (and (quantifier? s)
             (begin
@@ -238,7 +244,8 @@
                      (ins `(concat ,sep (tiny-box))))
                 (insert `(suppressed ,ins) :start)
                 #t)))))
-    ((remove-suppressed)
+    (;; entering a quantifier
+     (remove-suppressed)
      (cmd)
      (with s (before-cursor)
        (and (quantifier? s)
@@ -246,12 +253,25 @@
                    (ins `(concat (tiny-box) ,sep (tiny-box))))
               (insert `(suppressed ,ins) :start)
               #t))))
-    ((remove-suppressed)
+    (;; add Greek symbol after other Greek symbol
+     (remove-suppressed)
      (insert `(suppressed (explicit-space)))
      (cmd))
-    ((remove-suppressed)
+    (;; add Greek symbol before other Greek symbol
+     (remove-suppressed)
      (cmd)
-     (insert `(suppressed (explicit-space))))))
+     (insert `(suppressed (explicit-space))))
+    (;; add character before single infix operator
+     (remove-suppressed)
+     (let* ((s (after-cursor))
+            (t (cursor-tree)))
+       (and (infix? s)
+            (infix? t)
+            (begin
+              (with-cursor (tree->path t :end)
+                (insert `(suppressed (tiny-box))))
+              (cmd)
+              #t))))))
 
 (define (wrap-insert cmd)
   (clean-suppressed)
