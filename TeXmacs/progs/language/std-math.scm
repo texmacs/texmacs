@@ -361,8 +361,9 @@
 
   (define Quantified
     (Quantifier-prefixes Ponctuation-infix Quantified)
-    (Quantifier-fenced Quantified)
     (Quantifier-fenced Space-infix Quantified)
+    (Quantifier-fenced Quantified)
+    Quantifier-fenced
     Implication)
 
   (define Implication
