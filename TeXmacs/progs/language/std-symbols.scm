@@ -30,10 +30,15 @@
   (define Models-symbol
     (:type infix)
     (:spacing default default)
-    "<models>" "<vdash>" "<dashv>" "<vDash>" "<Vdash>" "<Vvdash>" "<VDash>"
-    "<longvdash>" "<longdashv>" "<longvDash>"
-    "<longVdash>" "<longVvdash>" "<longVDash>"
-    "<nvdash>" "<ndashv>" "<nvDash>" "<nVdash>" "<nVvdash>" "<nVDash>")
+    "<models>"
+    "<vdash>" "<dashv>" "<vDash>" "<Dashv>"
+    "<Vdash>" "<dashV>" "<VDash>" "<DashV>"
+    "<Vvdash>" "<dashVv>" "<VvDash>" "<DashVv>"
+    "<longvdash>" "<longdashv>" "<longvDash>" "<longDashv>"
+    "<longVdash>" "<longdashV>" "<longVDash>" "<longDashV>"
+    "<longVvdash>" "<longdashVv>" "<longVvDash>" "<longDashVv>"
+    "<nvdash>" "<ndashv>" "<nvDash>" "<nDashv>"
+    "<nVdash>" "<ndashV>" "<nVDash>" "<nDashV>")
 
   (define Quantifier-symbol
     (:type prefix)

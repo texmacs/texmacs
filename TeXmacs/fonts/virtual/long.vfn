@@ -86,8 +86,15 @@
   (longvdash (join (0 0 vdash) (0.4 0.095 -)))
   (longVdash (join (0 0 Vdash) (0.525 0.095 -)))
   (longVvdash (join (0 0 Vvdash) (0.7 0.095 -)))
+  (longdashv (hor-flip longvdash))
+  (longdashV (hor-flip longVdash))
+  (longdashVv (hor-flip longVvdash))
   (longvDash (join (0 0 vDash) (0.4 0.095 =)))
-  (longdashv (join (0 0.095 -) (0.4 0 dashv)))
+  (longVDash (join (0 0 VDash) (0.6 0.095 =)))
+  (longVvDash (join (0 0 VvDash) (0.8 0.095 =)))
+  (longDashv (hor-flip longvDash))
+  (longDashV (hor-flip longVDash))
+  (longDashVv (hor-flip longVvDash))
 
   (rubber-overbrace-#
     (0 0.2
