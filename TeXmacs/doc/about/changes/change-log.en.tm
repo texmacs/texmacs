@@ -8,6 +8,13 @@
   <section|Changes from version 1.99.1 to 1.99.3>
 
   <\itemize>
+    <item>Experimental math editing mode that enforces syntactic correctness
+    (1.99.3).
+
+    <item>A series of improvements in the converter to <LaTeX> (1.99.3).
+
+    <item>Tool for examining errors in the <LaTeX> export (1.99.3).
+
     <item>High quality support of STIX fonts (1.99.3).
 
     <item>Various improvements concerning mathematical typesetting (1.99.3).
