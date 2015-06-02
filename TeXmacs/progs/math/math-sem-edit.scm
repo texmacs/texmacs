@@ -50,8 +50,9 @@
 
 (define (infix? t)
   (cond ((tm-atomic? t)
-         (in? (math-symbol-type (tm->string t))
-              (list "infix" "separator")))
+         (and (== (tmstring-length (tm->string t)) 1)
+              (in? (math-symbol-type (tm->string t))
+                   (list "infix" "separator"))))
         ((tm-func? t 'concat)
          (list-and (map var-infix? (tm-children t))))
         ((tm-in? t '(wide neg))
@@ -287,11 +288,20 @@
        (cmd)
        (add-suppressed)))))
 
+(define (insert-with-selection cmd)
+  (let* ((t (selection-tree)))
+    (try-correct
+      ((kbd-backspace)
+       (perform-insert cmd)
+       (and (math-correct?)
+            (with ins (lambda () (insert t))
+              (perform-insert ins)))))))
+
 (define (wrap-insert cmd)
   (clean-suppressed)
-  (if (not (math-correct?))
-      (cmd)
-      (perform-insert cmd)))
+  (cond ((not (math-correct?)) (cmd))
+        ((selection-active-any?) (insert-with-selection cmd))
+        (else (perform-insert cmd))))
 
 (define-macro (wrap-inserter fun)
   `(tm-define (,fun . l)
