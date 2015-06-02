@@ -54,12 +54,16 @@
               (list "infix" "separator")))
         ((tm-func? t 'concat)
          (list-and (map var-infix? (tm-children t))))
+        ((tm-in? t '(wide neg))
+         (infix? (tm-ref t 0)))
         (else #f)))
 
 (define (get-infix-op t)
   (cond ((tm-atomic? t) t)
         ((tm-func? t 'concat)
          (list-or (map get-infix-op (tm-children t))))
+        ((tm-in? t '(wide neg))
+         (get-infix-op (tm-ref t 0)))
         (else #f)))
 
 (define (before-actual-infix?)
