@@ -146,6 +146,10 @@ packrat_parser_rep::serialize (tree t, path p) {
     case NEW_DPAGE:
       break;
 
+    case WIDE:
+    case NEG:
+      serialize (t[0], p * 0);
+      break;
     case SYNTAX:
       serialize (t[1], path (-1));
       break;

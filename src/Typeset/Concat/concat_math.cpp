@@ -207,7 +207,7 @@ concater_rep::typeset_long_arrow (tree t, path ip) {
   env->local_end (MATH_CONDENSED, old_mc);
   env->local_end (MATH_DISPLAY, old_ds);
 
-  string s= as_string (t[0]);
+  string s= env->exec_string (t[0]);
   SI w= sup_b->w();
   if (N(t) == 3) w= max (w, sub_b->w());
   w += env->fn->wquad;
@@ -331,7 +331,7 @@ void
 concater_rep::typeset_wide (tree t, path ip, bool above) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  string s= as_string (t[1]);
+  string s= env->exec_string (t[1]);
   if (s == "^") s= "<hat>";
   if (s == "~") s= "<tilde>";
   bool request_wide= is_func (t, VAR_WIDE);
@@ -341,7 +341,8 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   }
   if (ends (s, "brace>") || ends (s, "brace*>"))
     b= move_box (decorate_middle (descend (ip, 0)), b, 0, 0, true);
-  print (wide_box (ip, b, s, env->fn, env->pen, request_wide, above));
+  box wb= wide_box (ip, b, s, env->fn, env->pen, request_wide, above);
+  print_semantic (wb, t[0]);
   if (ends (s, "brace>")) with_limits (LIMITS_ALWAYS);
 }
 
@@ -349,7 +350,7 @@ void
 concater_rep::typeset_neg (tree t, path ip) {
   if (N(t) != 1) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  print (neg_box (ip, b, env->fn, env->pen));
+  print_semantic (neg_box (ip, b, env->fn, env->pen), t[0]);
 }
 
 /******************************************************************************

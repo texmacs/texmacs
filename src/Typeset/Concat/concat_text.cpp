@@ -270,16 +270,13 @@ concater_rep::typeset_rigid (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_syntax (tree t, path ip) {
-  if (N(t) != 2) { typeset_error (t, ip); return; }
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  b= move_box (ip, b, 0, 0, true);
-  if (is_atomic (t[1]) && tm_string_length (t[1]->label) == 1) {
+concater_rep::print_semantic (box b, tree sem) {
+  if (is_atomic (sem) && tm_string_length (sem->label) == 1) {
     space  spc= env->fn->spc;
     space  extra= env->fn->extra;
     bool   condensed= env->math_condensed;
     int    pos= 0;
-    string s= t[1]->label;
+    string s= sem->label;
     text_property tp= env->lan->advance (s, pos);
     int k= N(a);
     while (k > 0 && a[k-1]->op_type == OP_SKIP) k--;
@@ -300,7 +297,16 @@ concater_rep::typeset_syntax (tree t, path ip) {
       else PRINT_SPACE (tp->spc_after)
     }
   }
-  else print (b);
+  else print (b);  
+}
+
+void
+concater_rep::typeset_syntax (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  b= move_box (ip, b, 0, 0, true);
+  tree sem= env->exec (t[1]);
+  print_semantic (b, sem);
 }
 
 /******************************************************************************
