@@ -26,18 +26,18 @@
 (when (os-macos?)
   (kbd-map
     (:mode in-math?)
-    ("å" (make-above)) ;; Alt-a
-    ("Å" (make-wide "<invbreve>")) ;; Alt-A
+    ("\xe5" (make-above)) ;; Alt-a
+    ("\xc5" (make-wide "<invbreve>")) ;; Alt-A
     ("big-int" (make-below)) ;; Alt-b
-    ("Ç" (make-wide "<check>")) ;; Alt-C
+    ("\xc7" (make-wide "<check>")) ;; Alt-C
     ("<#192>" (make-fraction)) ;; Alt-f
     ("<#192> var" (make 'tfrac))
     ("<#192> var var" (make 'dfrac))
     ("<#192> var var var" (make 'frac*))
     ("<#192> var var var var" (make 'cfrac))
-    ("Ø" (make 'op)) ;; Alt-O
-    ("ß" (make-sqrt)) ;; Alt-s
-    ("ß var" (make-var-sqrt))
+    ("\xd8" (make 'op)) ;; Alt-O
+    ("\xff" (make-sqrt)) ;; Alt-s
+    ("\xff var" (make-var-sqrt))
     ("dagger" (make 'tabular*)) ;; Alt-t
     ("dagger var" (make 'matrix))
     ("dagger var var" (make 'det))
@@ -50,13 +50,13 @@
     ("geq var" (make-wide "<ddot>"))
     ("geq var var" (make-wide "<dddot>"))
     ("geq var var var" (make-wide "<ddddot>"))
-    ("æ" (make-wide "<acute>")) ;; Alt-'
-    ("Æ" (make-wide "<ddot>")) ;; Alt-"
-    ("Æ var" (make-wide "<dddot>"))
-    ("Æ var var" (make-wide "<ddddot>"))
-    ("ﬂ" (make-wide "^")) ;; Alt-^
-    ("–" (make-wide "<wide-bar>")) ;; Alt--
-    ("—" (make-wide-under "<wide-bar>")) ;; Alt-_
+    ("\xe6" (make-wide "<acute>")) ;; Alt-'
+    ("\xc6" (make-wide "<ddot>")) ;; Alt-"
+    ("\xc6 var" (make-wide "<dddot>"))
+    ("\xc6 var var" (make-wide "<ddddot>"))
+    ("\x1d" (make-wide "^")) ;; Alt-^
+    ("\x15" (make-wide "<wide-bar>")) ;; Alt--
+    ("\x16" (make-wide-under "<wide-bar>")) ;; Alt-_
 
     ("{ dagger" (make 'choice)) ;; { Alt-t
     ("( dagger" (make 'matrix))
