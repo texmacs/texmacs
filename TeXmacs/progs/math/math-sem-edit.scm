@@ -255,14 +255,6 @@
                    (ins `(concat (tiny-box) ,sep (tiny-box))))
               (insert `(suppressed ,ins) :start)
               #t))))
-    (;; add Greek symbol after other Greek symbol
-     (remove-suppressed)
-     (insert `(suppressed (explicit-space)))
-     (cmd))
-    (;; add Greek symbol before other Greek symbol
-     (remove-suppressed)
-     (cmd)
-     (insert `(suppressed (explicit-space))))
     (;; add character before single infix operator
      (remove-suppressed)
      (let* ((s (after-cursor))
@@ -273,7 +265,23 @@
               (with-cursor (tree->path t :end)
                 (insert `(suppressed (tiny-box))))
               (cmd)
-              #t))))))
+              #t))))
+    (;; add Greek symbol after other Greek symbol
+     (remove-suppressed)
+     (insert `(suppressed (explicit-space)))
+     (cmd)
+     (add-suppressed))
+    (;; add Greek symbol before other Greek symbol
+     (remove-suppressed)
+     (insert-go-to `(suppressed (explicit-space)) '(0))
+     (cmd)
+     (add-suppressed))
+    (;; add content in the middle of an operator
+     (with spc `(suppressed (explicit-space))
+       (remove-suppressed)
+       (insert-go-to `(concat ,spc ,spc) '(0 1))
+       (cmd)
+       (add-suppressed)))))
 
 (define (wrap-insert cmd)
   (clean-suppressed)
