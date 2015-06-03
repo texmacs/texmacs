@@ -290,16 +290,19 @@ edit_modify_rep::archive_state () {
 
 void
 edit_modify_rep::start_editing () {
+  //cout << "Start editing" << LF << INDENT;
   set_author (this_author ());
 }
 
 void
 edit_modify_rep::end_editing () {
+  //cout << UNINDENT << "End editing" << LF;
   global_confirm ();
 }
 
 void
 edit_modify_rep::cancel_editing () {
+  //cout << UNINDENT << "Cancel editing" << LF;
   global_cancel ();
 }
 
@@ -310,26 +313,31 @@ edit_modify_rep::start_slave (double a) {
 
 void
 edit_modify_rep::mark_start (double a) {
+  //cout << "Mark start " << a << LF << INDENT;
   arch->mark_start (a);
 }
 
 bool
 edit_modify_rep::mark_cancel (double a) {
+  //cout << UNINDENT << "Mark cancel " << a << LF;
   return arch->mark_cancel (a);
 }
 
 void
 edit_modify_rep::mark_end (double a) {
+  //cout << UNINDENT << "Mark end " << a << LF;
   arch->mark_end (a);
 }
 
 void
 edit_modify_rep::add_undo_mark () {
+  //cout << "Add undo mark" << LF;
   arch->confirm ();
 }
 
 void
 edit_modify_rep::remove_undo_mark () {
+  //cout << "Remove undo mark" << LF;
   arch->retract ();
 }
 
