@@ -32,21 +32,25 @@
 ;; Spaces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (allow-space? b)
+(tm-define (allow-space-after? b)
   (and b (not (tm-func? b 'big))
        (or (not (tm-atomic? b))
-	   (with type (math-symbol-type (tm->string b))
+           (let* ((s (tm->string b))
+                  (last (and (!= s "") (tmstring-reverse-ref s 0)))
+                  (type (and last (math-symbol-type last))))
 	     (nin? type (list "prefix" "infix" "separator"
 			      "opening-bracket" "middle-bracket"))))))
 
-(define (adjust-leftwards t)
-  (if (and (tree? t) (tree-in? t '(rsub rsup rprime)) (tree-ref t :previous))
-      (adjust-leftwards (tree-ref t :previous))
+(tm-define (skip-decorations-leftwards t)
+  (if (and (tree? t)
+           (tree-in? t '(rsub rsup rprime suppressed))
+           (tree-ref t :previous))
+      (skip-decorations-leftwards (tree-ref t :previous))
       t))
 
 (tm-define (kbd-space-bar t shift?)
   (:require (and (tree-is-buffer? t) (in-math?)))
-  (let* ((b (adjust-leftwards (before-cursor)))
+  (let* ((b (skip-decorations-leftwards (before-cursor)))
 	 (p (get-preference "math spacebar")))
     (cond ((== p "allow spurious spaces")
 	   (insert " "))
@@ -60,7 +64,7 @@
 		    (string-ends? (tree->string (tree-ref b 0)) "em"))
 	       (make-space "1em")
 	       (geometry-horizontal b #t)))
-	  ((not (allow-space? b))
+	  ((not (allow-space-after? b))
 	   (noop))
 	  (else
 	   (insert " ")))))

@@ -464,3 +464,20 @@
   (:require (and (tree-is? t 'hybrid) (in-sem?) (tree-in-math? t)))
   (with cmd (lambda () (activate-hybrid #f))
     (perform-insert cmd)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Further tweaking
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (kbd-space-ok?)
+  (let* ((b (skip-decorations-leftwards (before-cursor)))
+	 (p (get-preference "math spacebar")))
+    (or (== p "allow spurious spaces") (allow-space-after? b))))
+
+(tm-define (kbd-space)
+  (:require (in-sem-math?))
+  (when (kbd-space-ok?) (former)))
+
+(tm-define (kbd-shift-space)
+  (:require (in-sem-math?))
+  (when (kbd-space-ok?) (former)))
