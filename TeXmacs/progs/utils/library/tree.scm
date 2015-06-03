@@ -354,13 +354,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define-macro (try-modification . body)
-  `(let* ((mark-nr (mark-new))
-	  (mark-cursor (cursor-path)))
+  `(with mark-nr (mark-new)
      (mark-start mark-nr)
+     (archive-state)
      (with mark-ok (begin ,@body)
        (if mark-ok
 	   (mark-end mark-nr)
-	   (begin
-	     (mark-cancel mark-nr)
-	     (go-to-path mark-cursor)))
+           (mark-cancel mark-nr))
        mark-ok)))
