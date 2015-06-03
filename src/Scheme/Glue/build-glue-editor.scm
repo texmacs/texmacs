@@ -243,6 +243,7 @@
   (redo-possibilities redo_possibilities (int))
   (redo redo (void int))
   (show-history show_history (void))
+  (archive-state archive_state (void))
   (start-editing start_editing (void))
   (end-editing end_editing (void))
   (cancel-editing cancel_editing (void))

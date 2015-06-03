@@ -2363,6 +2363,15 @@ tmg_show_history () {
 }
 
 tmscm
+tmg_archive_state () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->archive_state ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_start_editing () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->start_editing ();
@@ -3279,6 +3288,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("redo-possibilities",  tmg_redo_possibilities, 0, 0, 0);
   tmscm_install_procedure ("redo",  tmg_redo, 1, 0, 0);
   tmscm_install_procedure ("show-history",  tmg_show_history, 0, 0, 0);
+  tmscm_install_procedure ("archive-state",  tmg_archive_state, 0, 0, 0);
   tmscm_install_procedure ("start-editing",  tmg_start_editing, 0, 0, 0);
   tmscm_install_procedure ("end-editing",  tmg_end_editing, 0, 0, 0);
   tmscm_install_procedure ("cancel-editing",  tmg_cancel_editing, 0, 0, 0);
