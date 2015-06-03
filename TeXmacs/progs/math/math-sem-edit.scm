@@ -291,6 +291,10 @@
 (define (insert-with-selection cmd)
   (let* ((t (selection-tree)))
     (try-correct
+      ((and (not (suppressed-around?))
+            (begin
+              (cmd)
+              (add-suppressed))))
       ((kbd-backspace)
        (perform-insert cmd)
        (and (math-correct?)
