@@ -528,7 +528,31 @@ is_marker (patch p, double m, bool birth) {
 }
 
 static patch
-remove_marker (patch archive, double m) {
+compress (patch archive1) {
+  if (nr_undo (archive1) == 0) return archive1;
+  patch un1= get_undo (archive1);
+  patch re1= get_redo (archive1);
+  if (!is_author (car (un1))) return archive1;
+  if (is_birth (car (un1) [0])) return archive1;
+  if (!is_branch (re1) || N(re1) != 0) return archive1;
+  patch archive2= compress (cdr (un1));
+  if (nr_undo (archive2) == 0) return archive1;
+  patch un2= get_undo (archive2);
+  patch re2= get_redo (archive2);
+  if (!is_author (car (un2))) return archive1;
+  if (is_birth (car (un2) [0])) return archive1;
+  if (!is_branch (re2) || N(re2) != 0) return archive1;
+  if (get_author (car (un1)) != get_author (car (un2))) return archive1;
+  //cout << "cun1= " << car (un1) << LF;
+  //cout << "cun2= " << car (un2) << LF;
+  patch cun= compactify (patch (car (un1), car (un2)));
+  //cout << "cun = " << cun << LF;
+  //return archive1;
+  return make_history (patch (cun, cdr (un2)), re2);
+}
+
+static patch
+remove_marker_bis (patch archive, double m) {
   ASSERT (nr_undo (archive) != 0, "marker not found");
   if (is_marker (car (get_undo (archive)), m, false)) {
     ASSERT (nr_redo (archive) == 0, "cannot remove marker");
@@ -537,8 +561,14 @@ remove_marker (patch archive, double m) {
   else {
     patch un= get_undo (archive);
     patch re= get_redo (archive);
-    return make_history (patch (car (un), remove_marker (cdr (un), m)), re);
+    patch rem= remove_marker_bis (cdr (un), m);
+    return make_history (patch (car (un), rem), re);
   }
+}
+
+static patch
+remove_marker (patch archive, double m) {
+  return remove_marker_bis (compress (archive), m);
 }
 
 void
