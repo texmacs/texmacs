@@ -660,8 +660,10 @@ qt_get_date (string lan, string fm) {
       return y * "," * m * "," * d;
     }
     else fm = "d MMMM yyyy";
-  } else if (fm[0] == '%') {
-    char buf[64]; time_t ti; struct tm ts;
+  }
+  else if (fm[0] == '%') {
+    char buf[64];
+    time_t ti;
     time (&ti);
     strftime (buf, sizeof(buf), as_charp(fm), ::localtime(&ti));
     return buf;
