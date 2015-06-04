@@ -8,7 +8,7 @@
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
-
+#ifndef QTTEXMACS
 #include "socket_server.hpp"
 #include "sys_utils.hpp"
 #include "hashset.hpp"
@@ -242,3 +242,4 @@ socket_server_callback (void *obj, void *info) {
   if (!is_nil (ss->feed_cmd) && news)
     ss->feed_cmd->apply (); // call the data processor
 }
+#endif

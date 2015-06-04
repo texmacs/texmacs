@@ -47,42 +47,6 @@ QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
 }
 
 void
-QTMGuiHelper::doWriteSocketNotification (int socket) {
-BEGIN_SLOT
-  if (DEBUG_QT)
-    debug_qt << "WRITE SOCKET NOTIFICATION " << socket << " "
-             << texmacs_time () << LF;
-  iterator<socket_notifier> it = iterate (gui->write_notifiers);
-  while (it->busy ()) {
-    socket_notifier sn= it->next ();
-    if (sn->fd == socket) {
-      //sn->notify();
-      the_gui->process_socket_notification (sn);
-      the_gui->enable_notifier (sn, false);
-    }
-  }
-END_SLOT
-}
-
-void
-QTMGuiHelper::doReadSocketNotification (int socket) {
-BEGIN_SLOT
-  if (DEBUG_QT)
-    debug_qt << "READ SOCKET NOTIFICATION " << socket << " "
-             << texmacs_time () << LF;
-  iterator<socket_notifier> it = iterate (gui->read_notifiers);
-  while (it->busy ()) {
-    socket_notifier sn= it->next ();
-    if (sn->fd == socket) {
-      //sn->notify();
-      the_gui->process_socket_notification (sn);
-      the_gui->enable_notifier (sn, false);
-    }
-  }
-END_SLOT
-}
-
-void
 QTMGuiHelper::aboutToShowMainMenu() {
 BEGIN_SLOT
   //cout << "Show :" << menu_count << LF;

@@ -30,8 +30,6 @@ protected:
 public slots:
   void doUpdate ();
   void doRefresh ();
-  void doReadSocketNotification (int socket);  
-  void doWriteSocketNotification (int socket);  
   
   void aboutToShowMainMenu ();
   void aboutToHideMainMenu ();
