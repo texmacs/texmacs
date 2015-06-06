@@ -275,17 +275,21 @@ init_std_drd () {
 	binding (0) -> accessible (1));
   init (PROVIDES, "provides",
 	fixed (1) -> returns_boolean () -> string_type (0));
-  init (VALUE, "value", fixed (1) -> variable (0));
+  init (VALUE, "value", fixed (1) -> variable (0) ->
+        locals (0, "mode", "src"));
   init (QUOTE_VALUE, "quote-value",
-	fixed (1) -> variable (0) -> name ("quoted value"));
+	fixed (1) -> variable (0) -> name ("quoted value") ->
+        locals (0, "mode", "src"));
   init (MACRO, "macro",
 	var_repeat (1, 1, BIFORM) -> argument (0) -> regular (1));
   init (DRD_PROPS, "drd-props",
 	repeat (3, 2) -> name ("drd properties"));
   init (QUOTE_ARG, "quote-arg",
-	repeat (1, 1, BIFORM) -> argument (0) -> name ("quoted argument"));
+	repeat (1, 1, BIFORM) -> argument (0) -> name ("quoted argument") ->
+        locals (0, "mode", "src"));
   init (ARG, "arg",
-	repeat (1, 1, BIFORM) -> argument (0) -> name ("argument"));
+	repeat (1, 1, BIFORM) -> argument (0) -> name ("argument") ->
+        locals (0, "mode", "src"));
   init (COMPOUND, "compound",
 	repeat (1, 1, BIFORM) -> variable (0) -> accessible (1));
   // FIXME: should be refined. The current setting is f.i. needed for "theorem"

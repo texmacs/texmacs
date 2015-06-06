@@ -29,7 +29,7 @@
 
     <assign|L|\<cal-L\>>
 
-    <assign|o|<with|magnification|0.7|\<cal-O\>>>
+    <assign|o|<with|magnification|<times|0.7|<value|magnification>>|\<cal-O\>>>
 
     <assign|O|\<cal-O\>>
 
@@ -197,7 +197,7 @@
 
     \;
 
-    <assign|bpartial|<with|math-font-series|bold|\<partial\>>>
+    <assign|bpartial|<with|font-series|bold|math-font-series|bold|\<partial\>>>
 
     <assign|xor|<space|0.6spc>\<triangledown\><space|0.6spc>>
 
