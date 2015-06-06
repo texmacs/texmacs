@@ -28,6 +28,9 @@
   (tree-in? t '(frac tfrac dfrac cfrac frac*
                 sqrt table tree above below)))
 
+(define (math-annotation-context? t)
+  (tree-in? t (math-annotation-tag-list)))
+
 (define (quantifier? s)
   (and (string? s) (== (math-symbol-group s) "Quantifier-symbol")))
 
@@ -145,6 +148,7 @@
 	(or (tm-func? t 'cell)
 	    (not (tree-in-math? t))
 	    (and (or (tm-in? t '(lsub lsup rsub rsup))                     
+                     (tree-search-upwards t math-annotation-context?)
 		     (tm-in? (tree-up t) '(concat around around*))
                      (let* ((type (get-math-type t))
                             (ok? (packrat-correct? "std-math" type t)))

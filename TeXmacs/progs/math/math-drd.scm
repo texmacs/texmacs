@@ -27,5 +27,11 @@
 (define-group textual-operator-tag
   math-up math-ss math-tt math-bf math-it math-sl)
 
+(define-group math-annotation-tag
+  math-separator math-quantifier math-imply math-or math-and
+  math-not math-relation math-union math-intersection math-exclude
+  math-plus math-minus math-times math-over math-big
+  math-prefix math-postfix math-open math-close math-ordinary math-ignore)
+
 (define-alternate wide wide*)
 (define-alternate around around*)
