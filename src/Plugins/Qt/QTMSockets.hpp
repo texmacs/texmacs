@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : QTMsockets.hpp
+* MODULE     : QTMSockets.hpp
 * DESCRIPTION: QT TeXmacs sockets manager - Header
 * COPYRIGHT  : (C) 2015 Denis RAUX
 *******************************************************************************

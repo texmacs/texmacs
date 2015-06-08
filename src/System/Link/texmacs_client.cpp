@@ -15,7 +15,7 @@
 #include "scheme.hpp"
 
 #ifdef QTTEXMACS
-#include "Qt/QTMsockets.hpp"
+#include "Qt/QTMSockets.hpp"
 
 #define CLT_KO(c) (c == NULL || !c->alive())
 

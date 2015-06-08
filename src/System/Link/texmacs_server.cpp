@@ -15,7 +15,7 @@
 #include "scheme.hpp"
 
 #ifdef QTTEXMACS
-#include "Qt/QTMsockets.hpp"
+#include "Qt/QTMSockets.hpp"
 
 static socket_server* the_server= NULL;
 //int socket_link::id= 0;
