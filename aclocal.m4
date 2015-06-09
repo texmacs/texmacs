@@ -119,8 +119,8 @@ AC_DEFUN([HACKED_AT_WITH_QT],[
 if test -z $TMBUILDENV
 then AT_WITH_QT
      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
-     QT_FRAMEWORKS_PATH=`qmake -query QT_INSTALL_LIBS`
-     QT_PLUGINS_PATH=`qmake -query QT_INSTALL_PLUGINS`
+     QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
+     QT_PLUGINS_PATH=`$QMAKE -query QT_INSTALL_PLUGINS`
      if [[[ $QT_CFLAGS =~ mmacosx-version-min= ]]]
      then MACOSX_DEPLOYMENT_TARGET="${QT_CFLAGS#*mmacosx-version-min=}" 
         MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET%% *}

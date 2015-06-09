@@ -48,6 +48,7 @@ CXXPDF = @PDF_CFLAGS@
 
 LD = @CXX@
 LDFLAGS = @LDFLAGS@ @CONFIG_BFLAGS@ @QT_LDFLAGS@ $(CXXPROFILE)
+LIBS = @LIBS@
 LDRT = @CONFIG_LDRT@
 LDSTATIC = @CONFIG_BSTATIC@
 LDSHARED = @CONFIG_BSHARED@
@@ -378,16 +379,16 @@ $(texmacs_c_deps):   Objects/%.o: %.c
 
 ifeq "$(link)" "shared"
 ifeq "$(CONFIG_OS)" "DEC"
-link_bin = $(strip $(LD) $(LDFLAGS) -lstdc++ $(LDSHARED) $^ $(1) -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) -lstdc++ $(LDSHARED) $^ $(1) $(LIBS) -o $@)
 else
-link_bin = $(strip $(LD) $(LDFLAGS) $(LDSHARED) $^ $(1) -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) $(LDSHARED) $^ $(1) $(LIBS) -o $@)
 endif
 endif
 ifeq "$(link)" "static"
 ifeq "$(CONFIG_OS)" "DEC"
-link_bin = $(strip $(LD) $(LDFLAGS) $^ $(LDSTATIC) $(1) -lstdc++ -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) $^ $(LDSTATIC) $(1) $(LIBS) -lstdc++ -o $@)
 else
-link_bin = $(strip $(LD) $(LDFLAGS) $^ -Wl,-Bstatic $(1) $(LDSTATIC) -static-libgcc -o $@)
+link_bin = $(strip $(LD) $(LDFLAGS) $^ -Wl,-Bstatic $(1) $(LDSTATIC) $(LIBS) -static-libgcc -o $@)
 endif
 endif
 
