@@ -352,6 +352,8 @@
 		49DEED2B170ACFDB00332D9F /* qt_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED29170ACFDB00332D9F /* qt_picture.cpp */; };
 		49DEED2D170ACFDB00332D9F /* qt_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED29170ACFDB00332D9F /* qt_picture.cpp */; };
 		49DEED34170B110900332D9F /* x_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED32170B110900332D9F /* x_picture.cpp */; };
+		49E5CC271B26C92E00A02C5A /* QTMSockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */; };
+		49E5CC281B26C92E00A02C5A /* QTMSockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
 		49F251D4151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		49F251D5151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
@@ -664,10 +666,8 @@
 		9C74D960123BF892008959D1 /* packrat_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95C123BF892008959D1 /* packrat_parser.cpp */; };
 		9C74D962123BF892008959D1 /* packrat_grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95A123BF892008959D1 /* packrat_grammar.cpp */; };
 		9C74D963123BF892008959D1 /* packrat_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95C123BF892008959D1 /* packrat_parser.cpp */; };
-		9C74D964123BF892008959D1 /* win32_get_date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95E123BF892008959D1 /* win32_get_date.cpp */; };
 		9C74D965123BF892008959D1 /* packrat_grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95A123BF892008959D1 /* packrat_grammar.cpp */; };
 		9C74D966123BF892008959D1 /* packrat_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95C123BF892008959D1 /* packrat_parser.cpp */; };
-		9C74D967123BF892008959D1 /* win32_get_date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C74D95E123BF892008959D1 /* win32_get_date.cpp */; };
 		9C75B68612895366008DE84F /* aligned_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B68512895366008DE84F /* aligned_widget.cpp */; };
 		9C75B720128973D5008DE84F /* minibar_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B71F128973D5008DE84F /* minibar_widget.cpp */; };
 		9C75B76C12897795008DE84F /* color_picker_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C75B76B12897795008DE84F /* color_picker_widget.cpp */; };
@@ -1723,6 +1723,8 @@
 		49DEED2A170ACFDB00332D9F /* qt_picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_picture.hpp; sourceTree = "<group>"; };
 		49DEED32170B110900332D9F /* x_picture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = x_picture.cpp; sourceTree = "<group>"; };
 		49DEED33170B110900332D9F /* x_picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = x_picture.hpp; sourceTree = "<group>"; };
+		49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMSockets.cpp; sourceTree = "<group>"; };
+		49E5CC261B26C92E00A02C5A /* QTMSockets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMSockets.hpp; sourceTree = "<group>"; };
 		49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
 		49F251D2151B70840091FF99 /* persistent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = persistent.cpp; sourceTree = "<group>"; };
 		49F251D3151B70840091FF99 /* persistent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = persistent.hpp; sourceTree = "<group>"; };
@@ -2317,7 +2319,6 @@
 		9C74D95B123BF892008959D1 /* packrat_grammar.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat_grammar.hpp; sourceTree = "<group>"; };
 		9C74D95C123BF892008959D1 /* packrat_parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_parser.cpp; sourceTree = "<group>"; };
 		9C74D95D123BF892008959D1 /* packrat_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = packrat_parser.hpp; sourceTree = "<group>"; };
-		9C74D95E123BF892008959D1 /* win32_get_date.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = win32_get_date.cpp; sourceTree = "<group>"; };
 		9C75B68512895366008DE84F /* aligned_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aligned_widget.cpp; sourceTree = "<group>"; };
 		9C75B71F128973D5008DE84F /* minibar_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = minibar_widget.cpp; sourceTree = "<group>"; };
 		9C75B76B12897795008DE84F /* color_picker_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color_picker_widget.cpp; sourceTree = "<group>"; };
@@ -3566,16 +3567,15 @@
 		9C0B489D10A8CC100097A335 /* Qt */ = {
 			isa = PBXGroup;
 			children = (
-				9C6632DC1676B208000D7974 /* qt_font.cpp */,
-				9C6632DD1676B208000D7974 /* qt_font.hpp */,
+				9C0B48A410A8CC100097A335 /* NOTES */,
 				9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */,
 				9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */,
 				9C088F7312B1BAD000A18E04 /* qt_color_picker_widget.cpp */,
 				9C088F7412B1BAD000A18E04 /* qt_color_picker_widget.hpp */,
 				9C0B48A610A8CC100097A335 /* qt_dialogues.cpp */,
 				9C0B48A710A8CC100097A335 /* qt_dialogues.hpp */,
-				490A039C1671601100611E4C /* qt_font.cpp */,
-				490A039D1671601100611E4C /* qt_font.hpp */,
+				9C6632DC1676B208000D7974 /* qt_font.cpp */,
+				9C6632DD1676B208000D7974 /* qt_font.hpp */,
 				9C0B48A810A8CC100097A335 /* qt_gui.cpp */,
 				9C0B48A910A8CC100097A335 /* qt_gui.hpp */,
 				9C0B48AA10A8CC100097A335 /* qt_menu.cpp */,
@@ -3619,6 +3619,8 @@
 				9C855ABF12BEB4EC00DCBE1D /* QTMPrinterSettings.hpp */,
 				9C99F04610AD84DE00B2113D /* QTMScrollView.cpp */,
 				9C99F04510AD84DE00B2113D /* QTMScrollView.hpp */,
+				49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */,
+				49E5CC261B26C92E00A02C5A /* QTMSockets.hpp */,
 				9C0B48B810A8CC100097A335 /* QTMStyle.cpp */,
 				9C0B48B910A8CC100097A335 /* QTMStyle.hpp */,
 				49630B59186D6A3600C9268F /* QTMTreeModel.cpp */,
@@ -3627,10 +3629,11 @@
 				9C0B48BB10A8CC100097A335 /* QTMWidget.hpp */,
 				9C0B48BC10A8CC100097A335 /* QTMWindow.cpp */,
 				9C0B48BD10A8CC100097A335 /* QTMWindow.hpp */,
+				9C0B48BE10A8CC100097A335 /* TODO */,
 				4918B5C917F83A7300130EA9 /* WINPrint.cpp */,
 				4918B5CA17F83A7300130EA9 /* WINPrint.hpp */,
-				9C0B48A410A8CC100097A335 /* NOTES */,
-				9C0B48BE10A8CC100097A335 /* TODO */,
+				490A039C1671601100611E4C /* qt_font.cpp */,
+				490A039D1671601100611E4C /* qt_font.hpp */,
 			);
 			path = Qt;
 			sourceTree = "<group>";
@@ -3931,7 +3934,6 @@
 				490DBDA8176EEEBD001F362A /* scilab_language.cpp */,
 				9C0B494310A8CC110097A335 /* text_language.cpp */,
 				9C0B494410A8CC110097A335 /* verb_language.cpp */,
-				9C74D95E123BF892008959D1 /* win32_get_date.cpp */,
 			);
 			path = Language;
 			sourceTree = "<group>";
@@ -4914,6 +4916,7 @@
 				9C0B4A6510A8CC110097A335 /* bibtex.cpp in Sources */,
 				49C096141B0F945300E038BA /* db_disk.cpp in Sources */,
 				9C0B4A7310A8CC110097A335 /* TMButtonsController.m in Sources */,
+				49E5CC271B26C92E00A02C5A /* QTMSockets.cpp in Sources */,
 				9C0B4A7510A8CC110097A335 /* free_type.cpp in Sources */,
 				49C0961A1B0F945300E038BA /* db_query.cpp in Sources */,
 				9C0B4A7610A8CC110097A335 /* tt_face.cpp in Sources */,
@@ -5174,6 +5177,7 @@
 				9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */,
 				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
 				9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */,
+				49E5CC281B26C92E00A02C5A /* QTMSockets.cpp in Sources */,
 				9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */,
 				9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */,
 				9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */,
@@ -5435,7 +5439,6 @@
 				9CFEB40111D79AF6005C12C4 /* parsebib.cpp in Sources */,
 				9C74D965123BF892008959D1 /* packrat_grammar.cpp in Sources */,
 				9C74D966123BF892008959D1 /* packrat_parser.cpp in Sources */,
-				9C74D967123BF892008959D1 /* win32_get_date.cpp in Sources */,
 				9CE18E85125E685D00641CFC /* tree_brackets.cpp in Sources */,
 				9CF78E0F125FBF9700CA5846 /* highlight_observer.cpp in Sources */,
 				9CEDAA321264FF6C009630CC /* tree_analyze.cpp in Sources */,
@@ -5800,7 +5803,6 @@
 				9CFEB40211D79AF6005C12C4 /* parsebib.cpp in Sources */,
 				9C74D962123BF892008959D1 /* packrat_grammar.cpp in Sources */,
 				9C74D963123BF892008959D1 /* packrat_parser.cpp in Sources */,
-				9C74D964123BF892008959D1 /* win32_get_date.cpp in Sources */,
 				9CE18E84125E685D00641CFC /* tree_brackets.cpp in Sources */,
 				9CF78E0E125FBF9700CA5846 /* highlight_observer.cpp in Sources */,
 				9CEDAA311264FF6C009630CC /* tree_analyze.cpp in Sources */,
