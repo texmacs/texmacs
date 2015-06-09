@@ -353,7 +353,7 @@
 		49DEED2D170ACFDB00332D9F /* qt_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED29170ACFDB00332D9F /* qt_picture.cpp */; };
 		49DEED34170B110900332D9F /* x_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED32170B110900332D9F /* x_picture.cpp */; };
 		49E5CC271B26C92E00A02C5A /* QTMSockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */; };
-		49E5CC281B26C92E00A02C5A /* QTMSockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */; };
+		49E5CC2B1B26CE7800A02C5A /* QTMSockets.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E5CC261B26C92E00A02C5A /* QTMSockets.hpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
 		49F251D4151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		49F251D5151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
@@ -5168,6 +5168,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49E5CC2B1B26CE7800A02C5A /* QTMSockets.hpp in Sources */,
 				490536B9184A2E72008B9ECE /* QTMApplication.hpp in Sources */,
 				9C855AC612BEB71600DCBE1D /* QTMPrintDialog.hpp in Sources */,
 				9C855AC712BEB71600DCBE1D /* QTMPrinterSettings.hpp in Sources */,
@@ -5177,7 +5178,6 @@
 				9C08C97610D19EB20070A0B7 /* QTMPipeLink.hpp in Sources */,
 				9C99F05710AD8C6100B2113D /* QTMScrollView.hpp in Sources */,
 				9CC6149010A999460055F808 /* QTMInteractiveInputHelper.hpp in Sources */,
-				49E5CC281B26C92E00A02C5A /* QTMSockets.cpp in Sources */,
 				9CC6149110A999460055F808 /* QTMMenuHelper.hpp in Sources */,
 				9CC6149310A999460055F808 /* QTMWidget.hpp in Sources */,
 				9CC6149410A999460055F808 /* QTMWindow.hpp in Sources */,
