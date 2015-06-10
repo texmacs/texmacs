@@ -102,6 +102,7 @@
 
 (define (create-default-user)
   (let* ((pseudo (getlogin))
+         (pseudo (if (== pseudo #f) (passwd:name (getpwuid (getuid))) pseudo ))
          (name (get-full-name pseudo)))
          (when (== pseudo "") (set! pseudo "default"))
          (when (== name "") (set! name "Default User"))
