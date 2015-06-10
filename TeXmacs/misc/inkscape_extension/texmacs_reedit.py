@@ -2,7 +2,7 @@
 """
 *******************************************************************************
 * Texmacs extension for Inkscape
-* COPYRIGHT  : (C) 2014 Philippe JOYEZ and the TeXmacs team
+* COPYRIGHT  : (C) 2012 Philippe JOYEZ and the TeXmacs team
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -66,7 +66,7 @@ NSS = {
     u'svg': SVG_NS
 }
 
-tm_file="<TeXmacs|1.0.7.15>\n\n<style|generic>\n\n<\\body>\n %s \n\n</body>"
+tm_file="<TeXmacs|1.0.7.15>\n\n<style|generic>\n\n<\\body>\n %s \n\n</body>\n\n<\\initial>\n %s \n\n</initial>"
 tm_dummy_equation="<\equation*>\n    1+1\n  </equation*>\n"
 tm_no_equation="\\;\n"
 tm_scheme_cmd_line_args =  "(begin (show-icon-bar 3 #t) (menu-bind texmacs-extra-icons "\
@@ -74,6 +74,7 @@ tm_scheme_cmd_line_args =  "(begin (show-icon-bar 3 #t) (menu-bind texmacs-extra
 		"(url-glue (current-buffer) \".svg\"))(quit-TeXmacs))))((balloon \"Cancel\" "\
 		"\"abandon modifying equation\")(quit-TeXmacs)))%s) "
 tm_extra_latex_cmd_line_args=  "(delayed (:idle 000)(insert (latex->texmacs (parse-latex \"\\\\[ %s \\\\]\"))))"
+tm_no_style=""
 
 #------------------------------------------------------------------------------
 # Inkscape plugin functionality
@@ -91,13 +92,13 @@ class Texmacs(inkex.Effect):
         """Perform the effect: create/modify embedded equation"""
         
         # Find equation and how to modify it
-        old_node, latex_option_cmd, tm_equation = self.get_old()
+        old_node, latex_option_cmd, tm_equation, tm_style = self.get_old()
         
         # build full scheme command line command        
         scheme_cmd = tm_scheme_cmd_line_args % latex_option_cmd
 
         # call texmacs for editing
-        self.call_texmacs(scheme_cmd, tm_equation)
+        self.call_texmacs(scheme_cmd, tm_equation, tm_style)
 
         svg_name = self.tmp_name + ".svg" #if successful texmacs creates that svg file
         if os.path.isfile(svg_name):
@@ -129,20 +130,24 @@ class Texmacs(inkex.Effect):
             
             elif '{%s}texmacscode'%TEXMACS_NS in node.attrib: # that group contains texmacs data
             	tm_equation = node.attrib.get('{%s}texmacscode' % TEXMACS_NS, '').decode('string-escape')
-            	return (node, '', tm_equation)
+            	if '{%s}texmacstyle'%TEXMACS_NS in node.attrib: #further contains styling info
+            	    tm_style = node.attrib.get('{%s}texmacstyle' % TEXMACS_NS, '').decode('string-escape')
+            	else:
+                    tm_style =''
+            	return (node, '', tm_equation, tm_style)
 
             elif '{%s}text'%TEXTEXT_NS in node.attrib:  #implements Textext conversion to TeXmacs
             	latex_code = node.attrib.get('{%s}text' % TEXTEXT_NS, '')
-                return (node, tm_extra_latex_cmd_line_args % latex_code, tm_no_equation)
+                return (node, tm_extra_latex_cmd_line_args % latex_code, tm_no_equation, tm_no_style)
 
 		# if we arrive here no editable equation was in
         # selection (including no selection): launch TeXmacs with dummy equation.
-        return (None, '', tm_dummy_equation)
+        return (None, '', tm_dummy_equation, tm_no_style)
 
-    def call_texmacs(self, scheme_cmd, equ):
+    def call_texmacs(self, scheme_cmd, equ, styl):
 			f_tmp = open(self.tmp_name, 'w') # create a temporaty tm file that texmacs will edit
 			try:
-				f_tmp.write(tm_file % equ) #insert equation to be edited in file (blank in textext case)
+				f_tmp.write(tm_file %( equ, styl)) #insert equation to be edited in file (blank in textext case)
 			finally:
 				f_tmp.close()
 			cmd = [texmacs_path,"-x",scheme_cmd , self.tmp_name]
@@ -238,4 +243,3 @@ class Texmacs(inkex.Effect):
 if __name__ == "__main__":
     e = Texmacs()
     e.affect()
-

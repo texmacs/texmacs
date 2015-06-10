@@ -136,12 +136,28 @@
   ;; removes node (with children if any)
   (tree-remove! (tree-ref node :up) (tree-index node) 1))
 
+(define (copy-node! node parent-dest pos)
+  ;; insert an existing node (with children if any) as new child of parent-dest
+  ;; FIXME: No sanity check! parent should not be in node's subtree!
+  (tree-insert! parent-dest pos `(,node)))
+
 (define (move-node! node parent-dest pos)
   ;; moves an existing node (with children if any) and
   ;; insert it as new child of parent-dest
   ;; FIXME: No sanity check! parent should not be in node's subtree!
-  (tree-insert! parent-dest pos `(,node))
+  (copy-node! node parent-dest pos)
   (remove-node! node))
+
+(define (remove-node-raise-children! node . firstlast)
+  ;; similar to "remove tag" operation in the editor
+  (let* ((parent (tree-ref node :up))
+         (pos (+ (tree-index node) 1))
+         (lastindex (if (< (length firstlast) 2) (- (tree-arity node) 1) (cadr firstlast) ))
+         (firstindex (- (if (null? firstlast) 0 (car firstlast)) 1)))
+    (do ((i lastindex (- i 1))) ((= i firstindex))
+      (copy-node! (tree-ref node i) parent pos))
+    (remove-node! node)
+    ))
 
 (define (replace-leaftext! leaf newtext)
   ;; replace a node's content by a new string.
@@ -200,6 +216,18 @@
 (define (tm-encode tm-fragment-tree)
   (escape-to-ascii (serialize-texmacs tm-fragment-tree)))
 
+(define (remove-clip! clipg)
+  (let* ((parent (tree-ref clipg :up))
+         (pos (+ (tree-index clipg) 1))
+         (lastindex (- (tree-arity clipg) 1)))
+    (do ((i lastindex (- i 1))) ((= i 0))
+      (let* ((node (tree-ref clipg i)))
+             (move-node! node parent pos)))
+    (remove-node! clipg)
+    ))
+
+(tm-define (cr2? s) (or (equal? (tree->stree s) "\n") (equal? (tree->stree s) "\n  ")))
+
 (define (refactor-svg dest tm-fragment)
   ;; reorganize svg file and inject attributes containing tm code of
   ;; equation. dest is the url of the svg file to be edited
@@ -242,18 +270,22 @@
        ;; third: the new data we want to insert in the tree
        (latex-code (latex-encode tm-fragment))
        (tm-code (tm-encode tm-fragment))
+       (tm-style (tm-encode (get-all-inits)))
        ;; define new attributes containing latex and texmacs code:
        (extra-latex-attrib
         `((xmlns:ns0 "http://www.iki.fi/pav/software/textext/")
           (ns0:text ,latex-code) (ns0:preamble "texmacs_latex.sty")))
        (extra-tm-attrib `((xmlns:ns1 "http://www.texmacs.org/")
-                          (ns1:texmacscode ,tm-code)))
+                          (ns1:texmacscode ,tm-code) (ns1:texmacstyle ,tm-style)))
        ;; OK, the texmacs namespace maybe not correctly described at that url
        (old->new-labels (newids! idlist tm-code))
        ;; rename all ids, create an association list of old to new ids
        )
 
     ;; fourth: modify tree
+    (map remove-node! (select svgroot '(:* (:match :cr2?))))
+    (map remove-clip! (reverse (select maingroup '(:* g @ clip-path :up :up))))
+    (map remove-node! (select defs '(:* clipPath) ))
     (replace-hlinks! hreflist old->new-labels)
     ;; replace hlinks with new pointers
     (tree-insert! maingroup-attrib 1 extra-latex-attrib)
