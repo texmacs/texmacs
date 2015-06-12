@@ -7407,6 +7407,7 @@ case "${host}" in
 $as_echo "final adjustments for an Intel or AMD GNU/Linux host" >&6; }
     CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
     CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
+    CONFIG_QTPIPES="yes"
   ;;
   i*86-*-freebsd* | x86_64-*-freebsd*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Intel or AMD GNU/BSD host" >&5
