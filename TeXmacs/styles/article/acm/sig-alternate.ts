@@ -1,18 +1,18 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.2>
 
 <style|<tuple|source|doc>>
 
 <\body>
   <\active*>
     <\src-title>
-      <src-style-file|sig-alternate|1.0>
+      <src-style-file|sig-alternate|1.1>
 
       <\src-purpose>
         The sig-alternate style.
       </src-purpose>
 
       <\src-copyright|2011>
-        Joris van der Hoeven
+        Joris van der Hoeven, 2015 by Gr?goire Lecerf
       </src-copyright>
 
       <\src-license>
@@ -47,7 +47,7 @@
 
   <assign|conference-copyright-year|20XX>
 
-  <assign|conference-cr-data|X-XXXXX-XX-X/XX/XX>
+  <assign|conference-cr-data|XXX-X-XXXX-XXXX-X/XX/XX>
 
   <assign|conference-price|$15.00>
 
@@ -57,10 +57,20 @@
 
   <assign|crdata|<macro|data|<assign|conference-cr-data|<arg|data>>>>
 
-  <assign|make-conference-permissions|<macro|<with|font|times|par-par-sep|0pt|par-line-sep|0pt|par-sep|1pt|font-base-size|8pt|<no-indent><value|conference-boilerplate><new-line><no-indent><with|font-shape|italic|<value|conference-name>>,
-  <value|conference-info><new-line><no-indent>Copyright
-  <value|conference-copyright-year> ACM <value|conference-cr-data>
-  ...<value|conference-price>.>>>
+  <assign|permission|<macro|data|<assign|conference-boilerplate|<arg|data>>>>
+
+  <assign|conference-copyrightetc|Copyright <value|conference-copyright-year>
+  ACM <value|conference-cr-data> ...<value|conference-price>.>
+
+  <assign|copyrightetc|<macro|data|<assign|conference-copyrightetc|<arg|data>>>>
+
+  <assign|conference-permission-par-line-sep|0pt>
+
+  <assign|conference-permission-font-base-size|8pt>
+
+  <assign|make-conference-permissions|<macro|<with|font|TeX Gyre
+  Termes|par-par-sep|0pt|par-line-sep|<value|conference-permission-par-line-sep>|par-sep|1pt|font-base-size|<value|conference-permission-font-base-size>|<no-indent><value|conference-boilerplate><new-line><no-indent><with|font-shape|italic|<value|conference-name>>,
+  <value|conference-info><new-line><no-indent><value|conference-copyrightetc>>>>
 
   <active*|<\src-comment>
     TeX-like style parameters.
@@ -166,9 +176,11 @@
 
   <assign|section-sep|<macro|.<space|1em>>>
 
-  <assign|section-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|10pt|4pt|2pt>><large|<with|font|times|<change-case|<arg|name>|UPCASE>>><vspace|<tex-len|4pt|0pt|0pt>>>>>>>>
+  <assign|section-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|10pt|4pt|2pt>><large|<with|font|TeX
+  Gyre Termes|<change-case|<arg|name>|UPCASE>>><vspace|<tex-len|4pt|0pt|0pt>>>>>>>>
 
-  <assign|subsection-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|8pt|2pt|1pt>><large|<with|font|times|<arg|name>>><vspace|<tex-len|4pt|0pt|0pt>>>>>>>>
+  <assign|subsection-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-bold|<style-with|src-compact|none|<vspace*|<tex-len|8pt|2pt|1pt>><large|<with|font|TeX
+  Gyre Termes|<arg|name>>><vspace|<tex-len|4pt|0pt|0pt>>>>>>>>
 
   <assign|subsubsection-title|<macro|name|<surround||<yes-indent*>|<style-with|src-compact|none|<sectional-normal-italic|<style-with|src-compact|none|<vspace*|<tex-len|8pt|2pt|1pt>><large|<arg|name>><vspace|<tex-len|4pt|0pt|0pt>>>>>>>>
 
@@ -179,7 +191,7 @@
   <assign|render-bibliography|<\macro|name|body>
     <principal-section|<arg|name>>
 
-    <with|par-first|0fn|par-par-sep|0fn|<arg|body>>
+    <with|par-first|0fn|par-par-sep|0fn|par-mode|left|<arg|body>>
   </macro>>
 
   <assign|transform-bibitem|<macro|body|[<arg|body>] \ >>
@@ -190,12 +202,14 @@
     </src-comment>
   </active*>
 
-  <assign|title-bold-hv|<macro|x|<with|font|helvetica|font-base-size|18|font-series|bold|math-font-series|bold|<arg|x>>>>
+  <assign|title-bold-hv|<macro|x|<with|font|TeX Gyre
+  Heros|font-base-size|18|font-series|bold|math-font-series|bold|<arg|x>>>>
 
-  <assign|title-hv|<macro|x|<with|font|helvetica|font-base-size|12|<arg|x>>>>
+  <assign|title-hv|<macro|x|<with|font|TeX Gyre
+  Heros|font-base-size|12|<arg|x>>>>
 
   <assign|doc-title|<\macro|x>
-    <\surround|<vspace*|2em>|<vspace|1.5em>>
+    <\surround|<new-line><vspace*|<minus|2em|10pt>>|<vspace|1.5em>>
       <doc-title-block|<title-bold-hv|<arg|x>>>
     </surround>
   </macro>>
@@ -233,12 +247,12 @@
   <assign|render-abstract|<\macro|body>
     <section*|<abstract-text>>
 
-    <surround|<no-indent>|<float|footnote||<smaller|<make-conference-permissions>>>|<arg|body>>
+    <surround|<no-indent>|<float|footnote|bf|<smaller|<make-conference-permissions>>>|<arg|body>>
   </macro>>
 
-  <assign|abstract-category-item|<macro|ind|cat|sub|det|<arg|ind>
-  [<with|font-series|bold|<change-case|<arg|cat>|UPCASE>>]:
-  <arg|sub>--<with|font-shape|italic|<arg|det>>>>
+  <assign|abstract-category-item|<macro|ind|cat|sub|det|<arg|ind><if|<unequal|<arg|cat>|<uninit>>|
+  [<with|font-series|bold|<arg|cat>>]><if|<unequal|<arg|sub>|<uninit>>|:
+  <arg|sub>><if|<unequal|<arg|det>|<uninit>>|\V<with|font-shape|italic|<arg|det>>>>>
 
   <assign|abstract-category|<\xmacro|args>
     <subsection*|Categories and Subject Descriptors>
