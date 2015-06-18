@@ -108,16 +108,20 @@ static string main_tmp_dir= "$TEXMACS_HOME_PATH/system/tmp";
 
 static void
 make_dir (url which) {
-  if (!is_directory (which))
+  if (!is_directory (which)) {
+    make_dir (head (which));
     mkdir (which);
+  }
 }
 
 static url
 url_temp_dir_sub () {
 #ifdef __MINGW32__
-  static url tmp_dir= url_system(main_tmp_dir) * url_system(as_string(time(NULL)));
+  static url tmp_dir=
+    url_system (main_tmp_dir) * url_system (as_string (time (NULL)));
 #else
-  static url tmp_dir= url_system(main_tmp_dir) * url_system(as_string ((int) getpid ()));
+  static url tmp_dir=
+    url_system (main_tmp_dir) * url_system (as_string ((int) getpid ()));
 #endif
   return (tmp_dir);
 }

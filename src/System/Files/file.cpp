@@ -612,8 +612,7 @@ rmdir (url u) {
 void
 mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
-  if (exists (u)) return;
-  {
+  if (!exists (u)) {
     c_string _u (concretize (u));
 #if defined(__MINGW__) || defined(__MINGW32__)
     (void) ::mkdir (_u);
