@@ -1118,7 +1118,7 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
   }
   if (cfid != NULL) {
     begin_text ();
-#if 0
+#if 1
     contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
     prev_text_x = to_x(x);
     prev_text_y = to_y(y);
