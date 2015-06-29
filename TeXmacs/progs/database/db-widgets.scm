@@ -224,11 +224,14 @@
                 (item (text "Email:")
                   (form-input "email" "string"
                               (list (get-user-info* "email")) "300px"))
-                (item (text "GnuPG key:")
-		  (hlist (if (!= (get-user-info "gpg-key-fingerprint") "")
-		      (text (string-take-right
-			     (get-user-info "gpg-key-fingerprint") 8)))
-		   >> ((icon "tm_add.xpm") (open-gpg-key-manager)))))
+		(item (text "GnuPG key:")
+		  (hlist (when (and (== (get-preference
+					 "experimental encryption") "on")
+				    (supports-gpg?))
+			   (with key (get-user-info "gpg-key-fingerprint")
+			     (text (if (== key "") ""
+				       (string-take-right key 8))))
+			   >> ((icon "tm_add.xpm") (open-gpg-key-manager))))))
               (glue #f #t 0 0)
               (hlist
                 (explicit-buttons
