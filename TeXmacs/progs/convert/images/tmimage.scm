@@ -283,11 +283,12 @@
        )
 
     ;; fourth: modify tree
+    (replace-hlinks! hreflist old->new-labels)
+    ;; replace hlinks with new pointers
     (map remove-node! (select svgroot '(:* (:match :cr2?))))
     (map remove-clip! (reverse (select maingroup '(:* g @ clip-path :up :up))))
     (map remove-node! (select defs '(:* clipPath) ))
-    (replace-hlinks! hreflist old->new-labels)
-    ;; replace hlinks with new pointers
+    ;; cleanup & simplify svg tree removing unecessary clips
     (tree-insert! maingroup-attrib 1 extra-latex-attrib)
     ;; for textext compatibility
     (tree-insert! maingroup-attrib 2 extra-tm-attrib)
