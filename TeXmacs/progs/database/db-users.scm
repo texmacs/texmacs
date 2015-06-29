@@ -99,7 +99,7 @@
  (if (os-mingw?)
      (or (and (url-exists-in-path? "fullname")
               (var-eval-system (string-append "fullname " user)))
-         "DefaultUser")
+         "Default User")
      (passwd:gecos (getpwnam user))))
 
 (define (create-default-user)
@@ -116,12 +116,9 @@
   (when (not db-the-default-user)
     (with info (create-default-user)
       (with (pseudo name) info
-        (when (and (!= pseudo "default") (!= name "Default User"))
-          (with me (add-user pseudo name)
-            (set-default-user me)
-            (set! db-the-default-user me))))))
-  (when (not db-the-default-user)
-    (set! db-the-default-user "default"))
+	(with me (add-user pseudo name)
+	  (set-default-user me)
+	  (set! db-the-default-user me)))))
   db-the-default-user)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
