@@ -47,7 +47,7 @@
     <explain-macro|attr|key-1|val-1|<with|mode|math|\<cdots\>>|key-n|val-n><explain-synopsis|XML-like
     attributes>
   <|explain>
-    This tag is included for future compatability with XML. It is used for
+    This tag is included for future compatibility with XML. It is used for
     encoding XML-style attributes by <TeXmacs> trees. For instance, the
     fragment
 

@@ -8,7 +8,7 @@
   The routine <scm|tree-set> and the corresponding macro <scm|tree-set!> can
   be used as a higher level interface to the fundamental routines for
   modifying trees as described in the <hlink|previous
-  section|edit-fundamental.en.tm>. However, the it is still up to the user to
+  section|edit-fundamental.en.tm>. However, it is still up to the user to
   verify that the resulting edit tree is still correct.
 
   <\explain>

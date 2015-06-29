@@ -1098,7 +1098,7 @@ case "$enable_qtpipes" in
         fi
 	;;
     *)
-	AC_MSG_ERROR([bad option --enable-qtpipes=$enable_qt])
+	AC_MSG_ERROR([bad option --enable-qtpipes=$enable_qtpipes])
 	;;
 esac
 
