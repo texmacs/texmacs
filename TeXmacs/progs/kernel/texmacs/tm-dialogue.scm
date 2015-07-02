@@ -87,7 +87,8 @@
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()
 	      (if (not ,(cadar body)) #t
-		  (begin (proc) 0)))))
+		  (with left (proc)
+		    (if (== left #t) 0 left))))))
 	((== (caar body) :clean)
 	 `(with proc ,(delayed-sub (cdr body))
 	    (lambda ()

@@ -75,9 +75,8 @@
   (ahash-set! server-client-active? client #t)
   (with wait 1
     (delayed
-      (:pause ((lambda () (inexact->exact (round wait)))))
       (:while (ahash-ref server-client-active? client))
-      ;;(:pause ((lambda () (inexact->exact (round wait)))))
+      (:pause ((lambda () (inexact->exact (round wait)))))
       (:do (set! wait (min (* 1.01 wait) 2500)))
       (with msg (server-read client)
         (when (!= msg "")
