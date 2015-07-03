@@ -2921,6 +2921,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 #--------------------------------------------------------------------
 # Retrieve SVN revision number from working dir or fallback file
 #--------------------------------------------------------------------
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking current Subversion revision number" >&5
 $as_echo_n "checking current Subversion revision number... " >&6; }
 SVNREV=`svnversion -n . 2>/dev/null`
@@ -2943,9 +2944,9 @@ fi
 
 PACKAGE="TeXmacs"
 DEBIAN_NAME="texmacs"
-DEVEL_VERSION="1.99.2"
+DEVEL_VERSION="1.99.3"
 DEVEL_RELEASE="1"         # I think we should use SVNREV here
-STABLE_VERSION="1.99.2"
+STABLE_VERSION="1.99.3"
 STABLE_RELEASE="1"
 
 DEVEL_VERSION_MAJOR="1"   #testing
@@ -8574,7 +8575,7 @@ $as_echo "disabling Qt pipes" >&6; }
         fi
 	;;
     *)
-	as_fn_error $? "bad option --enable-qtpipes=$enable_qt" "$LINENO" 5
+	as_fn_error $? "bad option --enable-qtpipes=$enable_qtpipes" "$LINENO" 5
 	;;
 esac
 

@@ -18,6 +18,7 @@ AC_CANONICAL_HOST
 #--------------------------------------------------------------------
 # Retrieve SVN revision number from working dir or fallback file
 #--------------------------------------------------------------------
+
 AC_MSG_CHECKING(current Subversion revision number)
 SVNREV=`svnversion -n . 2>/dev/null`
 SVNREV=${SVNREV/:/_}
@@ -37,9 +38,9 @@ AC_SUBST(SVNREV)
 
 PACKAGE="TeXmacs"
 DEBIAN_NAME="texmacs"
-DEVEL_VERSION="1.99.2"
+DEVEL_VERSION="1.99.3"
 DEVEL_RELEASE="1"         # I think we should use SVNREV here
-STABLE_VERSION="1.99.2"
+STABLE_VERSION="1.99.3"
 STABLE_RELEASE="1"
 
 DEVEL_VERSION_MAJOR="1"   #testing
