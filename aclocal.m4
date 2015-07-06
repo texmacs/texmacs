@@ -8,15 +8,21 @@ AC_DEFUN([GUILE_FLAGS],[
 ## The GUILE_FLAGS macro.
   ## First, let's just see if we can find Guile at all.
   AC_MSG_CHECKING(for Guile)
-  guile-config link > /dev/null || {
-    echo "configure: cannot find guile-config; is Guile installed?" 1>&2
-    exit 1
+  GUILE_BIN="guile18"
+  GUILE_CONFIG="guile18-config"
+  guile18-config link > /dev/null || {
+    GUILE_BIN="guile"
+    GUILE_CONFIG="guile-config"
+    guile-config link > /dev/null || {
+      echo "configure: cannot find guile-config; is Guile installed?" 1>&2
+      exit 1
+    }
   }
-  GUILE_ORIGINAL_CFLAGS="`guile-config compile`"
+  GUILE_ORIGINAL_CFLAGS="`$GUILE_CONFIG compile`"
   GUILE_CFLAGS="$GUILE_ORIGINAL_CFLAGS"
   GUILE_VARIANT_CFLAGS="$GUILE_ORIGINAL_CFLAGS $GUILE_ORIGINAL_CFLAGS/guile $GUILE_ORIGINAL_CFLAGS/libguile"
-  GUILE_LDFLAGS="`guile-config link`"
-  GUILE_VARIANT_LDFLAGS="-L`guile-config info libdir` -lguile -lreadline -ltermcap"
+  GUILE_LDFLAGS="`$GUILE_CONFIG link`"
+  GUILE_VARIANT_LDFLAGS="-L`$GUILE_CONFIG info libdir` -lguile -lreadline -ltermcap"
   AC_SUBST(GUILE_CFLAGS)
   AC_SUBST(GUILE_LDFLAGS)
   AC_MSG_RESULT(yes)

@@ -729,6 +729,7 @@ GREP
 CXXCPP
 GUILE_DATA_PATH
 CONFIG_GUILE_SERIAL
+GUILE_BIN
 GUILE_LDFLAGS
 GUILE_CFLAGS
 ac_ct_OBJCXX
@@ -4662,35 +4663,35 @@ if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
   ## First, let's just see if we can find Guile at all.
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Guile" >&5
 $as_echo_n "checking for Guile... " >&6; }
-  guile-config link > /dev/null || {
-    echo "configure: cannot find guile-config; is Guile installed?" 1>&2
-    exit 1
+  GUILE_BIN="guile18"
+  GUILE_CONFIG="guile18-config"
+  guile18-config link > /dev/null || {
+    GUILE_BIN="guile"
+    GUILE_CONFIG="guile-config"
+    guile-config link > /dev/null || {
+      echo "configure: cannot find guile-config; is Guile installed?" 1>&2
+      exit 1
+    }
   }
-  GUILE_ORIGINAL_CFLAGS="`guile-config compile`"
+  GUILE_ORIGINAL_CFLAGS="`$GUILE_CONFIG compile`"
   GUILE_CFLAGS="$GUILE_ORIGINAL_CFLAGS"
   GUILE_VARIANT_CFLAGS="$GUILE_ORIGINAL_CFLAGS $GUILE_ORIGINAL_CFLAGS/guile $GUILE_ORIGINAL_CFLAGS/libguile"
-  GUILE_LDFLAGS="`guile-config link`"
-  GUILE_VARIANT_LDFLAGS="-L`guile-config info libdir` -lguile -lreadline -ltermcap"
+  GUILE_LDFLAGS="`$GUILE_CONFIG link`"
+  GUILE_VARIANT_LDFLAGS="-L`$GUILE_CONFIG info libdir` -lguile -lreadline -ltermcap"
 
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 fi
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
 $as_echo_n "checking version of guile... " >&6; }
 if test -z "$GUILE_EFFECTIVE_VERSION" ; then
-  GUILE_EFFECTIVE_VERSION=`guile -c '(display (version))'`
+  GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_EFFECTIVE_VERSION" >&5
 $as_echo "$GUILE_EFFECTIVE_VERSION" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
-$as_echo_n "checking guile data path... " >&6; }
-if test -z "$GUILE_DATA_PATH" ; then
-  GUILE_DATA_PATH=`guile-config info pkgdatadir`
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
-$as_echo "$GUILE_DATA_PATH" >&6; }
 
 case "$GUILE_EFFECTIVE_VERSION" in
   1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
@@ -4710,6 +4711,16 @@ If you know what you are doing, run configure with --enable-guile2=yes" "$LINENO
     CONFIG_GUILE_SERIAL="C"
   ;;
 esac
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
+$as_echo_n "checking guile data path... " >&6; }
+if test -z "$GUILE_DATA_PATH" ; then
+  GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
+$as_echo "$GUILE_DATA_PATH" >&6; }
+
+
 
 
 
@@ -7097,7 +7108,7 @@ LIBS="$SAVE_LIBS"
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ... arguments behave correctly" >&5
 $as_echo_n "checking whether ... arguments behave correctly... " >&6; }
 if test -z "$GUILE_CFLAGS"; then
-  CXXFLAGS="`guile-config compile`"
+  CXXFLAGS="`$GUILE_CONFIG compile`"
 else
   CXXFLAGS="$GUILE_CFLAGS"
 fi
@@ -7139,7 +7150,7 @@ CXXFLAGS=""
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking the size_t of guile strings" >&5
 $as_echo_n "checking the size_t of guile strings... " >&6; }
 if test -z "$GUILE_CFLAGS"; then
-  CXXFLAGS="`guile-config compile`"
+  CXXFLAGS="`$GUILE_CONFIG compile`"
 else
   CXXFLAGS="$GUILE_CFLAGS"
 fi
@@ -7451,7 +7462,7 @@ $as_echo "final adjustments for cygwin host" >&6; }
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
     GUILE_LDFLAGS=""
-    for l in $(guile-config link)
+    for l in $($GUILE_CONFIG link)
     do if [[ $l =~ ^-L ]]
        then GuileLibPath=${l#-L}
        elif [[ $l =~ ^-l ]]
