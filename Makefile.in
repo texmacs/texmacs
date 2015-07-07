@@ -547,6 +547,7 @@ WINDOWS_BUNDLE: TEXMACS
 	$(MV) $(WINDOWS_BUILD_DIR)/bin/texmacs.bin $(WINDOWS_BUILD_DIR)/bin/texmacs.exe
 	$(RM) -r $(WINDOWS_BUILD_DIR)/bin/texmacs
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
+	$(CP) $(WINDOWS_PACKAGE_SRC)/*.exe $(WINDOWS_BUILD_DIR)/bin
 	find `guile-config info pkgdatadir` -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \; 
 	[ -d $(WINDOWS_BUILD_BIN_DIR) ] && cp -u  $(DLLS) $(WINDOWS_BUILD_BIN_DIR)
 	[ -d $(WINDOWS_BUILD_BIN_DIR) ] && $(CP) -u $(QT_PLUGINS_PATH)/* $(WINDOWS_BUILD_BIN_DIR)

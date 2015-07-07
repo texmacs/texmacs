@@ -1,8 +1,15 @@
-/*
-** Get user's full name
-**
-** Denis RAUX LIX 2013
-*/
+
+/******************************************************************************
+* MODULE     : FullNmae.cpp
+* DESCRIPTION: Get user's full name. 
+*              Must be complied with Microsoft visual studio
+* COPYRIGHT  : (C) 2015  Denis RAUX
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
+
 
 #define _WIN32_DCOM
 #include <iostream>
