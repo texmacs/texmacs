@@ -164,7 +164,7 @@ template<typename T> int type_helper<T>::id  = new_type_identifier ();
 template<typename T> T   type_helper<T>::init= T ();
 
 #ifdef QTTEXMACS
-#define QT_CPU_FIX 1
+//#define QT_CPU_FIX 1
 #ifdef QT_CPU_FIX
 void tm_wake_up ();
 void tm_sleep ();
