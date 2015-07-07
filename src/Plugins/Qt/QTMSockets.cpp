@@ -203,7 +203,6 @@ socket_link::data_set_ready (int s) {
   else {
     inbuf << string (data, lgdata);
     DBG_IO ("Data Received:" << string(data, lgdata));
-    tm_wake_up ();
     qsnr->setEnabled (true);
   }
 }
