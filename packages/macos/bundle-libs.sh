@@ -39,12 +39,12 @@ function bundle_all_libs
   
      [ -f "$libdest/$plib" ] || cp "$lib" "$libdest/." && \
        install_name_tool -id "$rpath/$blib" "$libdest/$blib" && \
-       bundle_all_libs "$libdest/$blib" || return 55
+       { bundle_all_libs "$libdest/$blib" || return $?; } || return 55
 
      install_name_tool -change "$lib" "@rpath/$blib" "$target" || return 56
 
   done
-  install_name_tool -add_rpath $rpath $target
+  install_name_tool -add_rpath $rpath $target || return 57
 }
 
 function bundle_install_plugin
@@ -174,7 +174,7 @@ fi
 cd "$BASEDIR"
 mkdir -p "$BUNDLE_FRAMEWORKS"
 echo "ALL:$@ QT:$QT_FRAMWORK_PATH"
-bundle_all_libs "$EXECUTABLE"  || return $?
+bundle_all_libs "$EXECUTABLE"  || exit $?
 bundle_qt_frameworks "$EXECUTABLE"
 bundle_qt_plugins "$EXECUTABLE" "imageformats accessible"
 bundle_other_frameworks "$EXECUTABLE" "Sparkle"
