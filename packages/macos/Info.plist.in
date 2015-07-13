@@ -47,5 +47,9 @@
     <string>MainMenu</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
+    <key>NSHighResolutionCapable</key>
+    <false/>
+    <key>NSHighResolutionMagnifyAllowed</key>
+    <false/>
   </dict>
 </plist>
