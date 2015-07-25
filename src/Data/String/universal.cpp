@@ -124,6 +124,45 @@ uni_translit (string s) {
 * Changing the case
 ******************************************************************************/
 
+hashmap<string,string> locase_tab;
+hashmap<string,string> upcase_tab;
+
+static void
+add_greek (string sym) {
+  locase_tab ("<" * upcase_first (sym) * ">")= "<" * sym * ">";
+  upcase_tab ("<" * sym * ">")= "<" * upcase_first (sym) * ">";
+  upcase_tab ("<var" * sym * ">")= "<" * upcase_first (sym) * ">";
+}
+
+static void
+init_case_tables () {
+  if (N(locase_tab) != 0) return;
+  add_greek ("alpha");
+  add_greek ("beta");
+  add_greek ("gamma");
+  add_greek ("delta");
+  add_greek ("epsilon");
+  add_greek ("zeta");
+  add_greek ("eta");
+  add_greek ("theta");
+  add_greek ("iota");
+  add_greek ("kappa");
+  add_greek ("lambda");
+  add_greek ("mu");
+  add_greek ("nu");
+  add_greek ("xi");
+  add_greek ("omicron");
+  add_greek ("pi");
+  add_greek ("rho");
+  add_greek ("sigma");
+  add_greek ("tau");
+  add_greek ("upsilon");
+  add_greek ("phi");
+  add_greek ("chi");
+  add_greek ("psi");
+  add_greek ("omega");
+}
+
 string
 uni_locase_char (string s) {
   if (N(s) == 1) {
@@ -136,14 +175,25 @@ uni_locase_char (string s) {
   }
   else if (starts (s, "<#") && ends (s, ">")) {
     int code= from_hexadecimal (s (2, N(s) - 1));
-    if      (code >= 0x400 && code <= 0x40F) code += 0x50;
+    if (code >= 0x386 && code <= 0x3AB) {
+      if      (code >= 0x391 && code <= 0x3AB) code += 0x20;
+      else if (code >= 0x386 && code <= 0x386) code += 0x26;
+      else if (code >= 0x388 && code <= 0x38A) code += 0x25;
+      else if (code >= 0x38C && code <= 0x38C) code += 0x40;
+      else if (code >= 0x38E && code <= 0x38F) code += 0x3f;
+    }
+    else if (code >= 0x400 && code <= 0x40F) code += 0x50;
     else if (code >= 0x410 && code <= 0x42F) code += 0x20;
     else if (code >= 0x460 && code <= 0x4FF) {
       if ((code & 1) == 0) code += 1;
     }
     return "<#" * as_hexadecimal (code) * ">";
   }
-  else return s;
+  else {
+    init_case_tables ();
+    if (locase_tab->contains (s)) return locase_tab[s];
+    return s;
+  }
 }
 
 string
@@ -158,14 +208,25 @@ uni_upcase_char (string s) {
   }
   else if (starts (s, "<#") && ends (s, ">")) {
     int code= from_hexadecimal (s (2, N(s) - 1));
-    if      (code >= 0x450 && code <= 0x45F) code -= 0x50;
+    if (code >= 0x3AC && code <= 0x3CE) {
+      if      (code >= 0x3B1 && code <= 0x3CB) code -= 0x20;
+      else if (code >= 0x3AC && code <= 0x3AC) code -= 0x26;
+      else if (code >= 0x3AD && code <= 0x3AF) code -= 0x25;
+      else if (code >= 0x3CC && code <= 0x3CC) code -= 0x40;
+      else if (code >= 0x3CD && code <= 0x3CE) code -= 0x3f;
+    }
+    else if (code >= 0x450 && code <= 0x45F) code -= 0x50;
     else if (code >= 0x430 && code <= 0x44F) code -= 0x20;
     else if (code >= 0x460 && code <= 0x4FF) {
       if ((code & 1) == 1) code -= 1;
     }
     return "<#" * as_hexadecimal (code) * ">";
   }
-  else return s;
+  else {
+    init_case_tables ();
+    if (upcase_tab->contains (s)) return upcase_tab[s];
+    return s;
+  }
 }
 
 string

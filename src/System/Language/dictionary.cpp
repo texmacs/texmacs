@@ -13,6 +13,7 @@
 #include "file.hpp"
 #include "convert.hpp"
 #include "converter.hpp"
+#include "universal.hpp"
 #include "drd_std.hpp"
 #include "scheme.hpp"
 
@@ -88,7 +89,7 @@ dictionary_rep::translate (string s, bool guess) {
   // Is lowercase version of s in dictionary?
   string ls= locase_first (s);
   if (table->contains (ls) && table[ls] != "")
-    return upcase_first (table[ls]);
+    return uni_upcase_first (table[ls]);
   
   // Attempt to split the string and translate its parts?
   if (!guess) return s;
