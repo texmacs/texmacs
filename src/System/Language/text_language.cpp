@@ -426,6 +426,7 @@ windows_locale_to_language (string s) {
   if (s == "Finnish_Finland.1252") return "finnish";
   if (s == "French_France.1252") return "french";
   if (s == "German_Germany.1252") return "german";
+  if (s == "Greek_Greece.1253") return "greek";
   if (s == "Hungarian_Hungary.1250") return "hungarian";
   if (s == "Italian_Italy.1252") return "italian";
   if (s == "Japanese_Japan.932") return "japanese";
@@ -449,6 +450,7 @@ locale_to_language (string s) {
   if (N(s) > 2) s= s (0, 2);
   if (s == "bg") return "bulgarian";
   if (s == "zh") return "chinese";
+  if (s == "hr") return "croatian";
   if (s == "cs") return "czech";
   if (s == "da") return "danish";
   if (s == "nl") return "dutch";
@@ -456,7 +458,7 @@ locale_to_language (string s) {
   if (s == "fi") return "finnish";
   if (s == "fr") return "french";
   if (s == "de") return "german";
-  if (s == "hr") return "croatian";
+  if (s == "gr") return "greek";
   if (s == "hu") return "hungarian";
   if (s == "it") return "italian";
   if (s == "ja") return "japanese";
@@ -486,6 +488,7 @@ language_to_locale (string s) {
   if (s == "finnish")    return "fi_FI";
   if (s == "french")     return "fr_FR";
   if (s == "german")     return "de_DE";
+  if (s == "greek")      return "gr_GR";
   if (s == "hungarian")  return "hu_HU";
   if (s == "italian")    return "it_IT";
   if (s == "japanese")   return "ja_JP";
@@ -508,6 +511,7 @@ language_to_local_ISO_charset (string s) {
   if (s == "chinese")    return "";
   if (s == "croatian")   return "ISO-8859-2";
   if (s == "czech")      return "ISO-8859-2";
+  if (s == "greek")      return "ISO-8859-7";
   if (s == "hungarian")  return "ISO-8859-2";
   if (s == "japanese")   return "";
   if (s == "korean")     return "";
@@ -666,6 +670,7 @@ text_language (string s) {
   if (s == "finnish")    return make_text_language (s, "finnish");
   if (s == "french")     return make_french_language (s, "french");
   if (s == "german")     return make_text_language (s, "german");
+  if (s == "greek")      return make_text_language (s, "greek");
   if (s == "hungarian")  return make_text_language (s, "hungarian");
   if (s == "italian")    return make_text_language (s, "italian");
   if (s == "japanese")   return make_oriental_language (s);

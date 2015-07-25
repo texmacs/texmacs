@@ -173,6 +173,8 @@ x_gui_rep::default_font_sub (bool tt, bool mini, bool bold) {
     }
     if (out_lan == "chinese" || out_lan == "taiwanese")
       return unicode_font ("fireflysung", sz, dpi);
+    if (out_lan == "greek")
+      return unicode_font ("Stix", sz, dpi);
     //if (out_lan == "japanese")
     //return unicode_font ("ipagui", sz, dpi);
     //if (out_lan == "korean")
