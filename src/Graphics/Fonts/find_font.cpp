@@ -133,6 +133,14 @@ find_font_bis (tree t) {
   if (is_tuple (t, "la", 4))
     return tex_la_font (as_string (t[1]), as_int (t[2]) * 100,
 			as_int (t[3]), as_int (t[4]) * 100);
+  
+  if (is_tuple (t, "gr", 3))
+    return tex_gr_font (as_string (t[1]), as_int (t[2]) * 100,
+			as_int (t[3]), 1000);
+
+  if (is_tuple (t, "gr", 4))
+    return tex_gr_font (as_string (t[1]), as_int (t[2]) * 100,
+			as_int (t[3]), as_int (t[4]) * 100);
 
   if (is_tuple (t, "adobe", 3))
     return tex_adobe_font (as_string (t[1]), as_int (t[2]),

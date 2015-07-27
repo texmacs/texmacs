@@ -18,8 +18,9 @@
 #define TEX_ANY   0
 #define TEX_EC    1
 #define TEX_LA    2
-#define TEX_CM    3
-#define TEX_ADOBE 4
+#define TEX_GR    3
+#define TEX_CM    4
+#define TEX_ADOBE 5
 
 static void special_initialize ();
 
@@ -129,11 +130,8 @@ static bool special_initialized= false;
 static hashmap<string,string> special_translate ("");
 
 static void
-special_initialize () {
-  if (special_initialized) return;
-  special_translate ("<less>")= "<";
-  special_translate ("<gtr>")= ">";
-  translator trl= load_translator ("larm");
+special_initialize (string enc) {
+  translator trl= load_translator (enc);
   iterator<string> it= iterate (trl->dict);
   while (it->busy ()) {
     string s= it->next ();
@@ -144,6 +142,15 @@ special_initialize () {
       special_translate (su)= string ((char) (unsigned char) trl->dict[s]);
     }
   }
+}
+
+static void
+special_initialize () {
+  if (special_initialized) return;
+  special_translate ("<less>")= "<";
+  special_translate ("<gtr>")= ">";
+  special_initialize ("larm");
+  special_initialize ("grmn");
   special_initialized= true;
 }
 
@@ -491,6 +498,7 @@ tex_font_rep::supports (string s) {
       else return false;
     case TEX_EC:
     case TEX_LA:
+    case TEX_GR:
       return N(s) == 1 || s == "<less>" || s == "<gtr>";
     case TEX_CM:
     case TEX_ADOBE:
@@ -512,6 +520,7 @@ tex_font_rep::get_extents (string s, metric& ex) {
       break;
     case TEX_EC:
     case TEX_LA:
+    case TEX_GR:
       for (i=0; i<N(s); i++)
         if (s[i]=='<') {
           special_get_extents (s, ex);
@@ -605,6 +614,7 @@ tex_font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
       break;
     case TEX_EC:
     case TEX_LA:
+    case TEX_GR:
       for (i=0; i<n; i++)
         if (s[i]=='<') {
           special_get_xpositions (s, xpos, ligf);
@@ -646,6 +656,7 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
       break;
     case TEX_EC:
     case TEX_LA:
+    case TEX_GR:
       for (i=0; i<N(s); i++)
         if (s[i]=='<') {
           special_draw (ren, s, ox, y);
@@ -708,6 +719,8 @@ tex_font_rep::magnify (double zoom) {
     return tex_ec_font (family, size, ndpi, dsize);
   case TEX_LA:
     return tex_la_font (family, size, ndpi, dsize);
+  case TEX_GR:
+    return tex_gr_font (family, size, ndpi, dsize);
   case TEX_CM:
     return tex_cm_font (family, size, ndpi, dsize);
   case TEX_ADOBE:
@@ -724,6 +737,7 @@ tex_font_rep::get_left_correction (string s) {
     break;
   case TEX_EC:
   case TEX_LA:
+  case TEX_GR:
     if (s[0] == '<') return special_get_left_correction (s);
     break;
   case TEX_CM:
@@ -745,6 +759,7 @@ tex_font_rep::get_right_correction (string s) {
     break;
   case TEX_EC:
   case TEX_LA:
+  case TEX_GR:
     if (s[N(s)-1] == '>') return special_get_right_correction (s);
     break;
   case TEX_CM:
@@ -766,6 +781,7 @@ tex_font_rep::get_glyph (string s) {
     break;
   case TEX_EC:
   case TEX_LA:
+  case TEX_GR:
     if (s == "<less>") s= "<";
     if (s == "<gtr>") s= ">";
     break;
@@ -817,6 +833,13 @@ tex_la_font (string family, int size, int dpi, int dsize) {
   string name= "la:" * family * as_string (size) * "@" * as_string(dpi);
   return make (font, name,
     tm_new<tex_font_rep> (name, TEX_LA, family, size, dpi, dsize));
+}
+
+font
+tex_gr_font (string family, int size, int dpi, int dsize) {
+  string name= "gr:" * family * as_string (size) * "@" * as_string(dpi);
+  return make (font, name,
+    tm_new<tex_font_rep> (name, TEX_GR, family, size, dpi, dsize));
 }
 
 font

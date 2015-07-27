@@ -120,6 +120,7 @@ font tex_font (string fam, int size, int dpi, int dsize=10);
 font tex_cm_font (string fam, int size, int dpi, int dsize=10);
 font tex_ec_font (string fam, int size, int dpi, int dsize=10);
 font tex_la_font (string fam, int size, int dpi, int dsize=10);
+font tex_gr_font (string fam, int size, int dpi, int dsize=10);
 font tex_adobe_font (string fam, int size, int dpi, int dsize=10);
 font tex_rubber_font (string trl_name,
 		      string fam, int size, int dpi, int dsize=10);
