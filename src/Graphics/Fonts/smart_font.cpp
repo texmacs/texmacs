@@ -382,6 +382,7 @@ struct smart_font_rep: font_rep {
                   string series, string shape, int sz, int dpi);
   font   get_math_font (string fam, string var, string ser, string sh);
   font   get_cyrillic_font (string fam, string var, string ser, string sh);
+  font   get_greek_font (string fam, string var, string ser, string sh);
 
   void   advance (string s, int& pos, string& r, int& nr);
   int    resolve (string c, string fam, int attempt);
@@ -477,6 +478,12 @@ font
 smart_font_rep::get_cyrillic_font (string fam, string var, string ser, string sh) {
   find_closest (fam, var, ser, sh);
   return find_font ("cyrillic", var, ser, sh, sz, dpi);
+}
+
+font
+smart_font_rep::get_greek_font (string fam, string var, string ser, string sh) {
+  find_closest (fam, var, ser, sh);
+  return find_font ("greek", var, ser, sh, sz, dpi);
 }
 
 static string
@@ -622,6 +629,12 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       }
     }
 
+    if (fam == "roman" && get_unicode_range (c) == "greek") {
+      tree key= tuple ("greek", fam, variant, series, rshape);
+      int nr= sm->add_font (key, REWRITE_NONE);
+      initialize_font (nr);
+      return sm->add_char (key, c);
+    }
     if (is_math_family (fam)) {
       tree key= tuple ("math", fam, variant, series, rshape);
       int nr= sm->add_font (key, REWRITE_MATH);
@@ -699,6 +712,8 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= get_math_font (a[1], a[2], a[3], a[4]);
   else if (a[0] == "cyrillic")
     fn[nr]= get_cyrillic_font (a[1], a[2], a[3], a[4]);
+  else if (a[0] == "greek")
+    fn[nr]= get_greek_font (a[1], a[2], a[3], a[4]);
   else if (a[0] == "special")
     fn[nr]= smart_font (family, variant, series, "right", sz, dpi);
   else if (a[0] == "other") {
