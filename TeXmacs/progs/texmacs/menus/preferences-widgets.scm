@@ -50,11 +50,7 @@
             "18em"))
     (item (text "User interface language:")
       (enum (set-pretty-preference "language" answer)
-            '("British" "Bulgarian" "Chinese" "Croatian" "Czech"
-              "Dutch" "Danish" "English" "Finnish" "French" "German"
-              "Hungarian" "Italian" "Japanese" "Korean" "Polish"
-              "Portuguese" "Romanian" "Russian" "Slovene"
-              "Spanish" "Swedish" "Taiwanese" "Ukrainian")
+            (map upcase-first supported-languages)
             (get-pretty-preference "language")
             "18em"))
     (item (text "Complex actions:")
