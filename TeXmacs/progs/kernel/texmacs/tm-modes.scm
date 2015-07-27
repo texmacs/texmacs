@@ -148,9 +148,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public supported-languages
-  '("british" "bulgarian" "chinese" "croatian" "czech" "danish" "dutch"
-    "english" "finnish" "french" "german" "hungarian" "italian" "japanese"
-    "korean" "polish" "portuguese" "romanian" "russian" "slovene" "spanish"
+  '("british" "bulgarian" "chinese" "croatian" "czech"
+    "danish" "dutch" "english" "finnish" "french" "german"
+    ;; "greek"
+    "hungarian" "italian" "japanese" "korean" "polish"
+    "portuguese" "romanian" "russian" "slovene" "spanish"
     "swedish" "taiwanese" "ukrainian"))
 
 (define-public (supported-language? lan)
@@ -177,6 +179,7 @@
   (in-finnish% (== (get-env "language") "finnish") in-text%)
   (in-french% (== (get-env "language") "french") in-text%)
   (in-german% (== (get-env "language") "german") in-text%)
+  (in-greek% (== (get-env "language") "greek") in-text%)
   (in-hungarian% (== (get-env "language") "hungarian") in-text%)
   (in-italian% (== (get-env "language") "italian") in-text%)
   (in-japanese% (== (get-env "language") "japanese") in-oriental%)
