@@ -78,6 +78,51 @@
   ("prog:select brackets" "off" notify-select-brackets))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Bracket handling for strings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (string-bracket-find* s pos inc br ibr level)
+  ;(display* "find: pos= " pos ", level= " level "\n")
+  (cond ((or (< pos 0) (>= pos (string-length s))) (- -1 (abs level)))
+        ((and (== level 1) (== (string-ref s pos) br)) 
+         ;(display* "returning at " pos "\n")
+         pos)
+        ((== (string-ref s pos) br)
+         ;(display* "found at " pos "\n")
+         (string-bracket-find* s (+ pos inc) inc br ibr (- level 1)))
+        ((== (string-ref s pos) ibr)
+         (string-bracket-find* s (+ pos inc) inc br ibr (+ level 1)))
+        (else (string-bracket-find* s (+ pos inc) inc br ibr level))))
+
+(define (string-bracket-find s pos inc br ibr level)
+  (with r (string-bracket-find* s pos inc br ibr level)
+    (and (>= r 0) r)))
+
+(tm-define (string-bracket-level s pos inc br ibr)
+  (with ret (string-bracket-find* s pos inc br ibr 0)
+    (if (< ret 0) (- -1 ret)
+        (string-bracket-level s (+ ret inc) inc br ibr))))
+
+(tm-define (string-bracket-forward s pos br ibr)
+  (:synopsis "find previous bracket @br with inverse @ibr in @s at @pos")
+  (string-bracket-find s pos 1 br ibr 0))
+
+(tm-define (string-bracket-backward s pos br ibr)
+  (:synopsis "find next bracket @br with inverse @ibr in @s at @pos")
+  (string-bracket-find s pos -1 br ibr 0))
+
+(tm-define (program-previous-match row br ibr)
+  (:synopsis "find matching opening row for @row and bracket @br")
+  (let* ((s (program-row row))
+         (last (- (string-length s) 1)))    
+    (if (not s) row
+        (with ret (string-bracket-level s last -1 br ibr)
+          (if (== ret 0) row
+              (with pos (program-bracket-find row last -1 br ibr -1)
+                (if (not pos) row
+                    (car pos))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bracket handling
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
