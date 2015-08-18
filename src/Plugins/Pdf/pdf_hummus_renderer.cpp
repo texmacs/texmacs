@@ -1054,19 +1054,17 @@ pdf_hummus_renderer_rep::draw_glyphs()
   }
 }
 
-
-
-static double font_size (string name) {
-    int pos= search_forwards (".", name);
-    int szpos= pos-1;
-    while ((szpos>0) && is_numeric (name[szpos-1])) szpos--;
-    double size= as_double (name (szpos, pos));
-    if (size == 0) size= 10;
-    double dpi= as_double (name (pos+1, N(name)-2));
-    double mag= (size) * (dpi/72.0);
-    return mag;
+static double
+font_size (string name) {
+  int pos= search_backwards (".", name);
+  int szpos= pos-1;
+  while ((szpos>0) && is_numeric (name[szpos-1])) szpos--;
+  double size= as_double (name (szpos, pos));
+  if (size == 0) size= 10;
+  double dpi= as_double (name (pos+1, N(name)-2));
+  double mag= (size) * (dpi/72.0);
+  return mag;
 }
-
 
 void
 pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
