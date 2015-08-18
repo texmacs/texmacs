@@ -1081,9 +1081,10 @@ pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
         starts (fontname, "eur") ||
         starts (fontname, "eus") ||
         starts (fontname, "msam") ||
-        starts (fontname, "msbm"))
+        starts (fontname, "msbm")) {
       draw (161, fn, x, y);
-    return;
+      return;
+    }
   }
   string char_name (fontname * "-" * as_string ((int) ch));
   pdf_raw_image glyph;
