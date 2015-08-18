@@ -24,6 +24,7 @@ void gs_to_png (url image, url png, int w_px, int h_px);
 void gs_to_eps (url image, url eps);
 void gs_to_pdf (url doc, url pdf, bool landsc, double paper_h, double paper_w);
 void gs_to_ps (url doc, url ps, bool landsc, double paper_h, double paper_w);
+bool gs_check (url doc);
 void tm_gs (url image);
 
 #endif // USE_GS

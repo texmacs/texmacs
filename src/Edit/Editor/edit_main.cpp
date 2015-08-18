@@ -296,6 +296,11 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
     gs_to_ps (name, orig, landsc, h/cm, w/cm);
     ::remove (name);
   }
+  if (ps || pdf)
+    if (get_preference ("texmacs->pdf:check", "off") == "on") {
+      system_wait ("Checking exported file for correctness", "please wait");
+      gs_check (orig);
+    }
 #endif
 }
 

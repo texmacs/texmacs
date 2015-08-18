@@ -16,20 +16,25 @@
 #include "analyze.hpp"
 #include "file.hpp"
 
-string
-gs_prefix () {
+static string
+gs_executable () {
 #if defined (__MINGW__) || defined (__MINGW32__)
   static string cmd; // no need to resolve each time
   if (cmd == "") {
     url gs= resolve_in_path ("gswin32c");
-    if(is_none(gs))
+    if (is_none (gs))
       gs= url_system (get_env ("TEXMACS_PATH")) * "bin" * "gswin32c";
-    cmd= sys_concretize (gs) * " ";
+    cmd= sys_concretize (gs);
   }
   return copy (cmd);
 #else
-  return "gs ";
+  return "gs";
 #endif
+}
+
+string
+gs_prefix () {
+  return gs_executable () * string (" ");
 }
 
 bool
@@ -198,4 +203,24 @@ tm_gs (url image) {
   system (cmd);
 }
 
+bool
+gs_check (url doc) {
+  if (!exists_in_path (gs_executable ())) return true;
+  array<string> cmd;
+  cmd << gs_executable ();
+  cmd << string ("-dNOPAUSE"); cmd << string ("-dBATCH");
+  cmd << string ("-dDEBUG"); cmd << string ("-sDEVICE=nullpage");
+  cmd << sys_concretize (doc);
+  array<int> out; out << 1; out << 2;
+  //cout << "cmd= " << cmd << LF;
+  array<string> ret= evaluate_system (cmd, array<int> (), array<string> (), out);
+  //cout << "ret= " << ret << LF;
+  if (ret [0] != "0" || ret[2] != "") {
+    //convert_error << ret[1] << LF;
+    convert_error << "for file " << doc << LF;
+    convert_error << ret[2] << LF;
+    return false;
+  }
+  return true;
+}
 #endif

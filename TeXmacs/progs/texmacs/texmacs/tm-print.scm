@@ -79,6 +79,7 @@
   ("native pdf" "on" noop)
   ("native postscript" "on" noop)
   ("texmacs->pdf:expand slides" "off" noop)
+  ("texmacs->pdf:check" "off" noop)
   ("preview command" "default" notify-preview-command)
   ("printing command" "lpr" notify-printing-command)
   ("paper type" (get-default-paper-size) notify-paper-type)
