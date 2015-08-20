@@ -3,6 +3,8 @@
 # See doc/index.html for further information.
 
 JOBS               := 1
+TARGET             := i686-pc-mingw32
+SOURCEFORGE_MIRROR := kent.dl.sourceforge.net
 
 PREFIX     := $(PWD)/usr
 LOG_DIR    := $(PWD)/log
@@ -24,25 +26,17 @@ VERSION    := 0.1
 
 
 #BUILD_ARCHS    := ppc i386 x86_64
-#TARGET_i386    := i386-apple-darwin10.4.0
-#TARGET_x86_64  := x86_64-apple-darwin10.4.0
-#TARGET_ppc     := powerpc-apple-darwin10.4.0
+BUILD_ARCH    :=  i386
+TARGET_i386    := i386-apple-darwin10.4.0
+TARGET_x86_64  := x86_64-apple-darwin10.4.0
+TARGET_ppc     := powerpc-apple-darwin10.4.0
 
-# Build for host machine
-
-HOST := $(shell uname -p)-apple-darwin$(shell uname -r)
-BUILD_ARCH    :=  $(shell uname -m)
-TARGET_$(BUILD_ARCH) := $(HOST)
-#CONFIGURE_HOST := --host='$(TARGET_$(3))'
-CONFIGURE_HOST := 
+HOST := $(shell sh ./config.guess)
 
 # point to your devtools here
-
-#DEVTOOLS := /Developer_3.2.6
-#MACOS_SDK := $(DEVTOOLS)/SDKs/MacOSX10.5.sdk
-#BASE_FLAGS := -arch $(BUILD_ARCH) -mmacosx-version-min=10.5 -isysroot $(MACOS_SDK) -Wl,-syslibroot,$(MACOS_SDK) -Wl,-search_paths_first
-
-BASE_FLAGS := -arch $(BUILD_ARCH)
+DEVTOOLS :=  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer
+MACOS_SDK := /Users/mgubi/t/SDKs/MacOSX10.6.sdk
+BASE_FLAGS := -arch $(BUILD_ARCH) -mmacosx-version-min=10.6 -isysroot $(MACOS_SDK) -Wl,-syslibroot,$(MACOS_SDK) -Wl,-search_paths_first
 BASE_CFLAGS := -I$(PREFIX)/include 
 BASE_LDFLAGS :=  -L$(PREFIX)/lib  
 
@@ -60,7 +54,9 @@ unexport EXTRA_LDFLAGS LD LDFLAGS LIBRARY_PATH LIBS NM
 unexport OBJC_INCLUDE_PATH PKG_CONFIG PKG_CONFIG_PATH QMAKESPEC
 unexport RANLIB STRIP
 
-#export PATH := $(DEVTOOLS)/usr/bin:$(PATH)
+
+
+export PATH := $(DEVTOOLS)/usr/bin:$(PATH)
 # be sure to use the non-llvm gcc
 #export CC := gcc-4.2
 #export CXX := g++-4.2

@@ -33,10 +33,11 @@ endef
 
 define $(PKG)_BUILD_ARCH
     cd '$(1)' && '$(1)'/configure\
-        $(CONFIGURE_HOST) \
+        --host='$(TARGET_$(3))' \
         NM='$(DEVTOOLS)/usr/bin/nm -p' \
         --prefix='$(PREFIX)' \
         --disable-shared \
+        --without-x \
 	    CC='gcc $(BASE_FLAGS)' CXX='g++ $(BASE_FLAGS)' \
         CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
         CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' \

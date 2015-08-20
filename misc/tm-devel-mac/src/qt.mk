@@ -5,12 +5,12 @@
 # Qt
 PKG             := qt
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.8.5
-$(PKG)_CHECKSUM := 745f9ebf091696c0d5403ce691dc28c039d77b9e
+$(PKG)_VERSION  := 4.8.6
+$(PKG)_CHECKSUM := ddf9c20ca8309a116e0466c42984238009525da6
 $(PKG)_SUBDIR   := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION).tar.gz
 $(PKG)_WEBSITE  := http://qt.nokia.com/
-$(PKG)_URL      := http://download.qt-project.org/official_releases/qt/4.8/4.8.5/$($(PKG)_FILE)
+$(PKG)_URL      := http://download.qt.io/archive/qt/4.8/4.8.6/$($(PKG)_FILE)
 $(PKG)_DEPS     := 
 #gcc libodbc++ postgresql freetds openssl libgcrypt zlib libpng jpeg libmng tiff sqlite libiconv
 
@@ -23,7 +23,6 @@ endef
 
 define $(PKG)_BUILD
     cd '$(1)' && ./configure \
-        -platform unsupported/macx-clang \
         -opensource \
         -confirm-license \
         -fast \
@@ -56,20 +55,17 @@ define $(PKG)_BUILD
         -nomake examples \
         -nomake tools \
         -system-zlib \
+        -qt-libtiff \
         -qt-libpng \
         -qt-libmng \
-        -system-libtiff \
-        -system-libjpeg \
+        -qt-libjpeg \
         -openssl \
         -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci \
 		-no-sql-odbc -no-sql-psql -no-sql-sqlite -no-sql-sqlite2 \
 		-no-sql-sqlite_symbian -no-sql-tds \
         -arch '$(BUILD_ARCH)' \
+		-sdk '$(MACOS_SDK)'  \
         -v
-        
-#		-sdk '$(MACOS_SDK)'  \
-#        -qt-libtiff \
-#        -qt-libjpeg \
 
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     rm -rf '$(PREFIX)/mkspecs'
