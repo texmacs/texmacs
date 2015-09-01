@@ -480,7 +480,7 @@ MACOS_BUNDLE: TEXMACS
 	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
 	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec cp -R {} $(MACOS_PACKAGE_TEXMACS)/progs/ \;
 	$(CHMOD) -R go=rX $(MACOS_PACKAGE_TEXMACS)/progs/ice-9
-	find $(MACOS_PACKAGE_TEXMACS) -name .svn -exec rm -rf {} \;
+	find -d $(MACOS_PACKAGE_TEXMACS) -name .svn -exec rm -rf {} \;
 
 	@echo Deploying libraries into application bundle.
 	QT_PLUGINS_PATH="$(QT_PLUGINS_PATH)" QT_PLUGINS_LIST="$(QT_PLUGINS_LIST)" \

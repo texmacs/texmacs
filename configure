@@ -663,6 +663,7 @@ CONFIG_OS_COMPAT
 CONFIG_OS_SUFFIX
 CONFIG_OS
 CONFIG_CXXDIALECT
+QT_PLUGINS_LIST
 QT_PLUGINS_PATH
 QT_FRAMEWORKS_PATH
 CONFIG_GUI_DEFINE
@@ -823,6 +824,7 @@ enable_pdf_renderer
 enable_console
 enable_qt
 with_qt
+enable_QtPlugins
 enable_qtpipes
 enable_cocoa
 enable_profile
@@ -1475,6 +1477,8 @@ Optional Features:
   --enable-pdf-renderer   use native PDF renderer for pdf export
   --enable-console        enable windows console
   --disable-qt            replace Qt by X11 interface
+  --enable-QtPlugins[=list]
+                          defauts plugins: imageformats,accessible
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
   --enable-profile        enable gcc compilation flag for profiling with gprof
@@ -8559,6 +8563,27 @@ $as_echo "enabling X11 port" >&6; }
 	;;
 esac
 
+# Qt Plugins list
+
+QT_PLUGINS_LIST=imageformats,accessible
+# Check whether --enable-QtPlugins was given.
+if test "${enable_QtPlugins+set}" = set; then :
+  enableval=$enable_QtPlugins; QT_PLUGINS_LIST=$enableval
+else
+  QT_PLUGINS_LIST=imageformats,accessible
+fi
+
+case $QT_PLUGINS_LIST in
+yes) QT_PLUGINS_LIST=imageformats,accessible;;
+no) unset QT_PLUGINS_LIST
+esac
+
+[[ $enable_qt == no ]] &&  unset QT_PLUGINS_LIST
+for p in ${QT_PLUGINS_LIST/,/ }
+do [ -d $QT_PLUGINS_PATH/$p ] || as_fn_error $? "QT plugins not found!" "$LINENO" 5
+done
+
+# Qt Pipes
 # Check whether --enable-qtpipes was given.
 if test "${enable_qtpipes+set}" = set; then :
   enableval=$enable_qtpipes;
@@ -8634,6 +8659,7 @@ case "$CONFIG_GUI" in
 #        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
 	;;
 esac
+
 
 
 

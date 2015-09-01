@@ -18,43 +18,39 @@
 #
 
 function set_rpath
-{ # $1 file name $2 new rpath
-	local args rpath value cmdout
-	cmdout="$(otool -lX $1)" || return 42
+{ # $1 = returned value
+	local args rpath value cmdout file=$1  retval=$2
+	cmdout="$(otool -lX $file)" || return 42
 	while read rpath value
 	do
-		[[ $rpath == path ]] && args="$args -delete_rpath $value"
+		[[ $rpath == path ]] && args+=" -delete_rpath $value"
 	done <<< "$cmdout"
-	[ -n "$2" ] &&  args="$args -add_rpath $2"
-	[ -z "$args" ] && return 0
-	install_name_tool $args $1 || return 43
+	eval $retval+=$args
 }
 	
 function bundle_all_libs
 {
 #	$1   executable  or library path (relative to Contents directory)
-  local rpath="@executable_path/../Resources/lib"
   local libdest="Resources/lib"
 
   echo "Bundling all libraries for [$1]"
-  bundle_all_libs_sub "$1" || return $?
-  set_rpath "$1" $rpath || return $?
+  bundle_all_libs_sub "$1" "@executable_path/../Resources/lib"
 }
   
 function bundle_all_libs_sub
 {
-# $1 is library to process with path relative to Contents directory
+# $file is library to process with path relative to Contents directory
 
-	local lib change cmdout libname
-	[[ $(otool -DX "$1") == @executable_path/../$1 ]] && return 0
-	echo "Process $1"
-  install_name_tool -id "@executable_path/../$1" "$1" || return 31
-	cmdout="$(otool -LX "$1")" || return 41
+	local lib change cmdout libname file="$1" rpath="$2" d
+	[[ $(otool -DX "$file") == @executable_path/../$file ]] && return 0
+	echo "Process $file"
+  install_name_tool -id "@executable_path/../$file" "$file" || return 31
+	cmdout="$(otool -LX "$file")" || return 41
 	# Add local Libs and Force bundling of (system) libltdl (changed in OSX 10.8)
   while read -r lib version
   do
   	case $lib in
-  	@executable_path/../$1) ;;
+  	@executable_path/../$file) ;;
   	/System*) ;;
   	/+(opt/local|sw|Users|usr/local)/*/lib*.dylib|/usr/lib/libltdl.*.dylib)
     local blib="$(basename $lib)"
@@ -62,20 +58,32 @@ function bundle_all_libs_sub
     bundle_all_libs_sub "$libdest/$blib" || return $?
     change="$change -change $lib  @rpath/$blib"
     ;; 
-    /*/*.framework/*)
-    local fwname="${lib%%.framework/*}.framework"; fwname="${fwname##*/}"
+    *.framework/*)
+    local fwloc="${lib%%.framework/*}.framework"; 
+    if [[ ! "$fwloc" =~ ^/.* ]]; then 
+      if [[ -f /Library/Frameworks/$lib ]]
+      then fwloc="/Library/Frameworks/$fwloc"
+      else return 32
+      fi
+    fi
+
+    local fwname="${fwloc##*/}"
     local blib=$(basename $lib)
     local fwbase="Frameworks/$fwname"
     [ -d "$fwbase" ] || mkdir "$fwbase" || return 12
-    [ -f "$fwbase/$blib" ] || cp "$lib" "$fwbase" || return 12
+    for d in Resources Contents
+    do [ -d "$fwloc/$d" -a ! -d "$fwbase/$d" ] && { cp -RL "$fwloc/$d" "$fwbase" || return 13; }
+    done
+    [ -f "$fwbase/$blib" ] || cp "$fwloc/${lib#*.framework}" "$fwbase" || return 14
     bundle_all_libs_sub "$fwbase/$blib" || return $?
     change="$change -change $lib  @executable_path/../$fwbase/$blib"
 		;;
 		esac
 	done <<< "$cmdout"
-  set_rpath "$1" || return $?
+  set_rpath "$file" change || return $?
+  [ "$rpath" ] && change+=" -add_rpath $rpath"
   [ -z "$change" ] && return 0
-  install_name_tool $change "$1" || return 33
+  install_name_tool $change "$file" || return 33
   return 0
 }
 
