@@ -34,7 +34,7 @@ function bundle_all_libs
   local libdest="Resources/lib"
 
   echo "Bundling all libraries for [$1]"
-  bundle_all_libs_sub "$1" "@executable_path/../Resources/lib"
+  bundle_all_libs_sub "$1"
 }
   
 function bundle_all_libs_sub
@@ -56,7 +56,7 @@ function bundle_all_libs_sub
     local blib="$(basename $lib)"
    	[ -f "$libdest/$blib" ] || cp "$lib" "$libdest" && chmod u+w "$libdest/$blib" || return 11
     bundle_all_libs_sub "$libdest/$blib" || return $?
-    change="$change -change $lib  @rpath/$blib"
+    change="$change -change $lib  @executable_path/../Resources/lib/$blib"
     ;; 
     *.framework/*)
     local fwloc="${lib%%.framework/*}.framework"; 
