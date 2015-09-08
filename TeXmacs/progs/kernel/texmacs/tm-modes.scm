@@ -149,8 +149,7 @@
 
 (define-public supported-languages
   '("british" "bulgarian" "chinese" "croatian" "czech"
-    "danish" "dutch" "english" "finnish" "french" "german"
-    ;; "greek"
+    "danish" "dutch" "english" "finnish" "french" "german" "greek"
     "hungarian" "italian" "japanese" "korean" "polish"
     "portuguese" "romanian" "russian" "slovene" "spanish"
     "swedish" "taiwanese" "ukrainian"))
