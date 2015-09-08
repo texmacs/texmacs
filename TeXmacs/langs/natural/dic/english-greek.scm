@@ -1045,7 +1045,7 @@
 ("portuguese" "πορτογαλικά")
 ("position" "θέση")
 ("position float" "τοποθέτηση μετακινούμενου")
-("position floating object" "τοποθέτηση μετακινούμενου αντικειμένου"
+("position floating object" "τοποθέτηση μετακινούμενου αντικειμένου")
 ("position the table" "τοποθέτηση του πίνακα")
 ("postscript" "postscript")
 ("postscript image" "εικόνα postscript")
