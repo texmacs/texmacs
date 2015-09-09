@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.3>
 
 <style|<tuple|tmdoc|english>>
 
@@ -22,6 +22,8 @@
 
     <item*|German>Dietmar Jung, Hans Dembinski, Jan Ulrich Hasecke, Christoph
     Strobel, Joris van der Hoeven, Thomas Langen, Ralf Treinen.
+
+    <item*|Greek>Alkis Akritas.
 
     <item*|Hungarian>András Kadinger.
 
