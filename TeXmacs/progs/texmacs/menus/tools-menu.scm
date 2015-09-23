@@ -60,6 +60,7 @@
       ("Count lines" (show-line-count)))
   (-> "Miscellaneous"
       ("Clear undo history" (clear-undo-history))
+      ("Save auxiliary data" (toggle-save-aux))
       ---
       (-> "Import selections as"
           (link clipboard-import-preference-menu))

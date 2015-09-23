@@ -53,3 +53,10 @@
 (tm-define (show-line-count)
   (with nr (count-lines (selection-or-document))
     (set-message (string-append "Line count: " (number->string nr)) "")))
+
+(define (save-aux-enabled?) (== (get-env "save-aux") "true"))
+(tm-define (toggle-save-aux)
+  (:synopsis "Toggle whether we save auxiliary data.")
+  (:check-mark "v" save-aux-enabled?)
+  (let ((new (if (== (get-env "save-aux") "true") "false" "true")))
+    (init-env "save-aux" new)))
