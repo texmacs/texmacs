@@ -371,10 +371,24 @@ parse_other_lexeme (hashmap<string,string>& t, string s, int& pos) {
   }
 }
 
+static bool
+is_hex_char (char c) {
+  return (c >= '0' && c <= '9') ||
+         (c >= 'A' && c <= 'F') ||
+         (c >= 'a' && c <= 'f');
+}
+
 static void
 parse_number (string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
+  if (i+3 <= N(s) && s[i] == '0' &&
+      (s[i+1] == 'x' || s[i+1] == 'X') && is_hex_char (s[i+2])) {
+    i += 2;
+    while (i<N(s) && is_hex_char (s[i])) i++;
+    pos= i;
+    return;
+  }
   if (s[i] == '.') return;
   while (i<N(s) && 
 	 (is_number (s[i]) ||
