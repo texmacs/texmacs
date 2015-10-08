@@ -22,7 +22,7 @@
 typedef int db_atom;
 typedef double db_time;
 typedef array<db_atom> db_atoms;
-#define DB_MAX_TIME ((db_time) 10675199166)
+#define DB_MAX_TIME ((db_time) 10675199166.0)
 
 class db_line_rep: public concrete_struct {
 public:
