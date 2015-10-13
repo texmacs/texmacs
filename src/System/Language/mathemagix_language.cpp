@@ -191,6 +191,7 @@ mathemagix_color_setup_keywords (hashmap<string, string> & t)  {
   t ("sequel")= c;
   t ("split")= c;
   t ("step")= c;
+  t ("stereotype")= e;
   t ("structure")= e;
   t ("supports?")= c;
   t ("then")= c;
