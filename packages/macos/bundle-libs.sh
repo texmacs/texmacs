@@ -63,7 +63,11 @@ function bundle_all_libs_sub
     if [[ ! "$fwloc" =~ ^/.* ]]; then 
       if [[ -f /Library/Frameworks/$lib ]]
       then fwloc="/Library/Frameworks/$fwloc"
-      else return 32
+      else  
+        if [[ -f "$QT_FRAMEWORKS_PATH/$lib" ]]
+        then fwloc="$QT_FRAMEWORKS_PATH/$fwloc"
+        else return 32
+        fi
       fi
     fi
 
