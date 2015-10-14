@@ -7465,7 +7465,6 @@ $as_echo "final adjustments for cygwin host" >&6; }
     CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
-    GUILE_LDFLAGS=""
     for l in $($GUILE_CONFIG link)
     do if [[ $l =~ ^-L ]]
        then GuileLibPath=${l#-L}
