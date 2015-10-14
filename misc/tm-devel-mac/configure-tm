@@ -66,10 +66,10 @@ export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
   ./configure \
   --host=${!TARGET_ARCH} \
   --enable-macosx-extensions\
-  --enable-qt\
+  --enable-qt --enable-QtPlugins=imageformats \
   CC="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
   CXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
-  OBJCC="clang -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
+  OBJC="clang -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK  -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
   OBJCXX="clang++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -I$SDK/usr/include/c++/4.2.1/i686-apple-darwin10" \
   CPP="gcc -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
   CPPCXX="g++ -arch $ARCH  -mmacosx-version-min=10.5 -isysroot $SDK -E" \
