@@ -484,6 +484,7 @@ MACOS_BUNDLE: TEXMACS
 
 	@echo Deploying libraries into application bundle.
 	QT_PLUGINS_PATH="$(QT_PLUGINS_PATH)" QT_PLUGINS_LIST="$(QT_PLUGINS_LIST)" \
+	QT_FRAMEWORKS_PATH="$(QT_FRAMEWORKS_PATH)" \
 	  $(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
