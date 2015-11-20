@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.1>
 
 <style|<tuple|tmdoc|chinese>>
 
@@ -12,7 +12,7 @@
 
     <branch|<TeXmacs>\<#7684\>\<#4F5C\>\<#8005\>\<#4EEC\>|authors/authors.zh.tm>
 
-    <branch|\<#91CD\>\<#8981\>\<#6539\>\<#53D8\>|changes/changes-main.zh.tm>
+    <branch|\<#91CD\>\<#8981\>\<#6539\>\<#53D8\>|changes/changes-main.en.tm>
   </traverse>
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
@@ -24,6 +24,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<initial|<\collection>
-</collection>>
