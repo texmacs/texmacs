@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.1>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|\<#94FE\>\<#63A5\>\<#548C\>\<#5185\>\<#5BB9\>\<#81EA\>\<#52A8\>\<#751F\>\<#6210\>>
@@ -18,6 +18,8 @@
 
     <branch|\<#7F16\>\<#5236\>\<#672F\>\<#8BED\>\<#8868\>|man-glossary.zh.tm>
 
+    <branch|Multiple extractions|man-multiple-extractions.en.tm>
+
     <branch|\<#4E66\>\<#7C4D\>\<#548C\>\<#591A\>\<#6587\>\<#4EF6\>\<#7684\>\<#6587\>\<#6863\>|man-multifile.en.tm>
   </traverse>
 
@@ -30,6 +32,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<initial|<\collection>
-</collection>>
