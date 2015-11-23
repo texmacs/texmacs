@@ -124,8 +124,8 @@ uni_translit (string s) {
 * Changing the case
 ******************************************************************************/
 
-hashmap<string,string> locase_tab;
-hashmap<string,string> upcase_tab;
+hashmap<string,string> locase_tab ("");
+hashmap<string,string> upcase_tab ("");
 
 static void
 add_greek (string sym) {
