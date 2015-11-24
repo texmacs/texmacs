@@ -357,7 +357,7 @@
 (define (bib-attached-entries)
   (let* ((l (bib-attachments))
          (bibs (map tm->stree (map get-attachment l))))
-    (append-map tm-children bibs)))
+    (append-map (lambda (x) (if (string? x) (list) (tm-children x))) bibs)))
 
 (tm-define (bib-export-attachments f)
   (let* ((b (bib-attached-entries))
