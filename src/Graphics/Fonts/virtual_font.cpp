@@ -361,22 +361,24 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_tuple (t, "hor-flip", 1)) {
     metric ex;
     get_metric (t[1], ex);
-    SI ox= x + ((ex->x1 + ex->x2) >> 1);
+    SI ox= x + ex->x3 + ex->x4;
     frame f= scaling (point (-1.0, 1.0), point ((double) ox, 0.0));
-    draw_transformed (ren, t[1], (ex->x1 - ex->x2) >> 1, y, f);
+    draw_transformed (ren, t[1], 0, y, f);
     return;
   }
 
   if (is_tuple (t, "ver-flip", 1)) {
     metric ex;
     get_metric (t[1], ex);
-    SI oy= y + ((ex->y1 + ex->y2) >> 1);
+    SI oy= y + ex->y3 + ex->y4;
     frame f= scaling (point (1.0, -1.0), point (0.0, (double) oy));
-    draw_transformed (ren, t[1], x, (ex->y1 - ex->y2) >> 1, f);
+    draw_transformed (ren, t[1], x, 0, f);
     return;
   }
 
   if (is_tuple (t, "rot-left", 1)) {
+    // FIXME: check that we should not use physical metrics
+    // as in the case of hor-flip and ver-flip
     metric ex;
     get_metric (t[1], ex);
     //cout << "left " << (x/PIXEL) << ", " << (y/PIXEL) << "; "
@@ -390,6 +392,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   }
 
   if (is_tuple (t, "rot-right", 1)) {
+    // FIXME: check that we should not use physical metrics
+    // as in the case of hor-flip and ver-flip
     metric ex;
     get_metric (t[1], ex);
     //cout << "right " << (x/PIXEL) << ", " << (y/PIXEL) << "; "
