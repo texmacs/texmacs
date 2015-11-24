@@ -182,6 +182,18 @@
 	((null? l2) (list-diff (normalize `(,tag ,@l1)) '(version-suppressed)))
 	((== (car l1) (car l2))
 	 (cons (car l1) (compare-versions-list tag (cdr l1) (cdr l2))))
+        ((or (tm-func? (car l1) 'hide-preamble 1)
+             (tm-func? (car l2) 'hide-preamble 1))
+         (cond ((not (tm-is? (car l1) 'hide-preamble))
+                (compare-versions-list
+                 tag (cons `(hide-preamble (document "")) l1) l2))
+               ((not (tm-is? (car l2) 'hide-preamble))
+                (compare-versions-list
+                 tag l1 (cons `(hide-preamble (document "")) l2)))
+               (else
+                 (cons `(hide-preamble
+                         ,(compare-versions (cadar l1) (cadar l2)))
+                       (compare-versions-list tag (cdr l1) (cdr l2))))))
 	(else
 	  (receive (i1 i2 n) (var-longest-common l1 l2)
 	    ;;(display* "  common " (sublist l1 i1 (+ i1 n)) "\n")
