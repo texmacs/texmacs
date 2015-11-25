@@ -133,9 +133,12 @@
   (table-remove-column table_remove_column (void bool))
   (table-nr-rows table_nr_rows (int))
   (table-nr-columns table_nr_columns (int))
+  (table-get-extents table_get_extents (array_int))
   (table-set-extents table_set_extents (void int int))
   (table-which-row table_which_row (int))
   (table-which-column table_which_column (int))
+  (table-which-cells table_which_cells (array_int))
+  
   (table-cell-path table_search_cell (path int int))
   (table-go-to table_go_to (void int int))
   (table-set-format table_set_format (void string content))

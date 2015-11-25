@@ -1223,6 +1223,15 @@ tmg_table_nr_columns () {
 }
 
 tmscm
+tmg_table_get_extents () {
+  // TMSCM_DEFER_INTS;
+  array_int out= get_current_editor()->table_get_extents ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_int_to_tmscm (out);
+}
+
+tmscm
 tmg_table_set_extents (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "table-set-extents");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "table-set-extents");
@@ -1253,6 +1262,15 @@ tmg_table_which_column () {
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
+}
+
+tmscm
+tmg_table_which_cells () {
+  // TMSCM_DEFER_INTS;
+  array_int out= get_current_editor()->table_which_cells ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_int_to_tmscm (out);
 }
 
 tmscm
@@ -3186,9 +3204,11 @@ initialize_glue_editor () {
   tmscm_install_procedure ("table-remove-column",  tmg_table_remove_column, 1, 0, 0);
   tmscm_install_procedure ("table-nr-rows",  tmg_table_nr_rows, 0, 0, 0);
   tmscm_install_procedure ("table-nr-columns",  tmg_table_nr_columns, 0, 0, 0);
+  tmscm_install_procedure ("table-get-extents",  tmg_table_get_extents, 0, 0, 0);
   tmscm_install_procedure ("table-set-extents",  tmg_table_set_extents, 2, 0, 0);
   tmscm_install_procedure ("table-which-row",  tmg_table_which_row, 0, 0, 0);
   tmscm_install_procedure ("table-which-column",  tmg_table_which_column, 0, 0, 0);
+  tmscm_install_procedure ("table-which-cells",  tmg_table_which_cells, 0, 0, 0);
   tmscm_install_procedure ("table-cell-path",  tmg_table_cell_path, 2, 0, 0);
   tmscm_install_procedure ("table-go-to",  tmg_table_go_to, 2, 0, 0);
   tmscm_install_procedure ("table-set-format",  tmg_table_set_format, 2, 0, 0);

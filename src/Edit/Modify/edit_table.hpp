@@ -95,9 +95,11 @@ public:
   void   table_remove_column (bool forward, bool flag= false);
   int    table_nr_rows ();
   int    table_nr_columns ();
+  array<int> table_get_extents ();
   void   table_set_extents (int rows, int cols);
   int    table_which_row ();
   int    table_which_column ();
+  array<int> table_which_cells ();
   path   table_search_cell (int row, int col);
   void   table_go_to (int row, int col);
   void   table_set_format (string var, tree val);

@@ -1232,6 +1232,17 @@ edit_table_rep::table_nr_columns () {
   return nr_cols;
 }
 
+array<int>
+edit_table_rep::table_get_extents () {
+  array<int> r;
+  int nr_rows, nr_cols;
+  path fp= search_format ();
+  if (is_nil (fp)) return r;
+  table_get_extents (fp, nr_rows, nr_cols);
+  r << nr_rows << nr_cols;
+  return r;
+}
+  
 void
 edit_table_rep::table_set_extents (int rows, int cols) {
   path fp= search_format ();
@@ -1257,6 +1268,25 @@ edit_table_rep::table_which_column () {
   path fp= search_format (row, col);
   if (is_nil (fp)) return 0;
   return col+1;
+}
+
+array<int>
+edit_table_rep::table_which_cells () {
+  array<int> r;
+  if (selection_active_table (false)) {
+    int row1, col1, row2, col2;
+    path fp= selection_get_subtable (row1, col1, row2, col2);
+    if (is_nil (fp)) return r;
+    r << row1+1 << row2+1 << col1+1 << col2+1;
+  }
+  else {
+    int row, col;
+    path fp= search_format (row, col);
+    if (is_nil (fp)) return array<int> ();
+    row++; col++;
+    r << row << row << col << col;
+  }
+  return r;
 }
 
 path

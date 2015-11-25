@@ -480,12 +480,6 @@
    '("cell-lsep" "cell-rsep" "cell-bsep" "cell-tsep")
    (make-list 4 padding)))
 
-(tm-define (cell-set-border border)
-  (:argument border "Cell border width")
-  (cell-set-format-list
-   '("cell-lborder" "cell-rborder" "cell-bborder" "cell-tborder")
-   (make-list 4 border)))
-
 (tm-define (cell-set-span rs cs)
   (:argument rs "Row span")
   (:argument cs "Column span")
@@ -601,6 +595,67 @@
      ((== old "b") (cell-set-format var "B"))
      ((== old "B") (cell-set-format var "c"))
      (else (cell-set-format var "t")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set cell borders
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (table-select-cells r1 r2 c1 c2)
+  (let* ((p1 (table-cell-path r1 c1))
+         (p2 (table-cell-path r2 c2)))
+    (when (and (pair? p1) (pair? p2))
+      (let* ((q1 (rcons (cDr p1) 0))
+             (q2 (rcons (cDr p2) 1)))
+        (selection-set q1 q2)))))
+
+(tm-define (cell-set-borders L R B T l r b t)
+  (:argument L "Outer left border width")
+  (:argument R "Outer right border width")
+  (:argument B "Outer bottom border width")
+  (:argument T "Outer top border width")
+  (:argument l "Inner left border width")
+  (:argument r "Inner right border width")
+  (:argument b "Inner bottom border width")
+  (:argument t "Inner top border width")
+  (when (nnull? (table-get-extents))
+    (with (rows cols) (table-get-extents)
+      (with (r1 r2 c1 c2) (table-which-cells)
+        (cell-set-format-list
+         '("cell-lborder" "cell-rborder" "cell-bborder" "cell-tborder")
+         (list l r b t))
+        (when (!= T t)
+          (table-select-cells r1 r1 c1 c2)
+          (cell-set-format "cell-tborder" T))
+        (when (> r1 1)
+          (table-select-cells (- r1 1) (- r1 1) c1 c2)
+          (cell-set-format "cell-bborder" T))
+        (when (!= B b)
+          (table-select-cells r2 r2 c1 c1)
+          (cell-set-format "cell-bborder" B))
+        (when (< r1 rows)
+          (table-select-cells (+ r2 1) (+ r2 1) c1 c2)
+          (cell-set-format "cell-tborder" B))
+        (when (!= L l)
+          (table-select-cells r1 r2 c1 c1)
+          (cell-set-format "cell-lborder" L))
+        (when (> c1 1)
+          (table-select-cells r1 r2 (- c1 1) (- c1 1))
+          (cell-set-format "cell-rborder" L))
+        (when (!= R r)
+          (table-select-cells r1 r2 c2 c2)
+          (cell-set-format "cell-rborder" R))
+        (when (< c2 cols)
+          (table-select-cells r1 r2 (+ c2 1) (+ c2 1))
+          (cell-set-format "cell-lborder" R))))))
+
+(tm-define (clear-cell-borders)
+  (cell-set-borders "0ln" "0ln" "0ln" "0ln" "0ln" "0ln" "0ln" "0ln"))
+
+(tm-define (cell-set-border border)
+  (:argument border "Cell border width")
+  (cell-set-format-list
+   '("cell-lborder" "cell-rborder" "cell-bborder" "cell-tborder")
+   (make-list 4 border)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special commands for full width math tables
