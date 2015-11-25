@@ -247,6 +247,45 @@ restricted_exec (edit_env env, tree t, int end) {
     env->exec (t[0]);
 }
 
+static tree
+filter_format (tree fm, int i, int n) {
+  array<tree> r;
+  for (int k=0; k<N(fm); k++)
+    if (is_func (fm[k], CWITH) && N(fm[k]) >= 4 &&
+        is_int (fm[k][0]) && is_int (fm[k][1])) {
+      int j1= as_int (fm[k][0]->label);
+      int j2= as_int (fm[k][1]->label);
+      if (j1 > 0) j1--; else j1 += n;
+      if (j2 > 0) j2--; else j2 += n;
+      if (i >= j1 && i <= j2) r << fm[k] (2, N(fm[k]));
+    }
+  return tree (TFORMAT, r);
+}
+
+static void
+table_descend (tree& t, path& p, tree& fm) {
+  while (!is_nil (p)) {
+    if (L(t) == TFORMAT && p->item == N(t) - 1) {
+      array<tree> r;
+      for (int k=0; k<N(t)-1; k++)
+        if (is_func (t[k], CWITH, 6) &&
+            is_atomic (t[k][4]) &&
+            !starts (t[k][4]->label, "cell-"))
+          r << t[k];
+      fm= tree (TFORMAT, r);
+      t= t[N(t)-1];
+      p= p->next;
+    }
+    else if ((L(t) == TABLE || L(t) == ROW) &&
+             p->item >= 0 && p->item < N(t)) {
+      fm= filter_format (fm, p->item, N(t));
+      t= t[p->item];
+      p= p->next;
+    }
+    else break;
+  }
+}
+
 void
 edit_typeset_rep::typeset_exec_until (path p) {
   //time_t t1= texmacs_time ();
@@ -276,17 +315,27 @@ edit_typeset_rep::typeset_exec_until (path p) {
     while (!is_nil (q)) {
       int i= q->item;
       restricted_exec (env, t, i);
-      tree w= drd->get_env_child (t, i, tree (ATTR));
-      if (w == "") break;
-      //cout << "t= " << t << "\n";
-      //cout << "i= " << i << "\n";
-      //cout << "w= " << w << "\n";
-      for (int j=0; j<N(w); j+=2) {
-	//cout << w[j] << " := " << env->exec (w[j+1]) << "\n";
-	env->write (w[j]->label, env->exec (w[j+1]));
+      if (L(t) == TFORMAT && i == N(t) - 1) {
+        tree fm= tree (TFORMAT);
+        table_descend (t, q, fm);
+        if (!is_nil (q))
+          for (int k=0; k<N(fm); k++)
+            if (is_func (fm[k], CWITH, 2))
+              env->write (fm[k][0]->label, fm[k][1]);
       }
-      t= t[i];
-      q= q->next;
+      else {
+        tree w= drd->get_env_child (t, i, tree (ATTR));
+        if (w == "") break;
+        //cout << "t= " << t << "\n";
+        //cout << "i= " << i << "\n";
+        //cout << "w= " << w << "\n";
+        for (int j=0; j<N(w); j+=2) {
+          //cout << w[j] << " := " << env->exec (w[j+1]) << "\n";
+          env->write (w[j]->label, env->exec (w[j+1]));
+        }
+        t= t[i];
+        q= q->next;
+      }
     }
     if (env->read (PREAMBLE) == "true")
       env->write (MODE, "src");

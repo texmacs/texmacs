@@ -747,7 +747,6 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
   }
 }
 
-
 tree
 drd_info_rep::get_env_child (tree t, int i, string var, tree val) {
   tree env= get_env_child (t, i, tree (ATTR));

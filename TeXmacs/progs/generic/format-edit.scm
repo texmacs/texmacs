@@ -73,12 +73,22 @@
         `(with ,@(cDr l) ,(add-with l (cAr l))))
       `(with ,@l ,t)))
 
+(define (get-cars l)
+  (if (or (null? l) (null? (cdr l))) (list)
+      (cons (car l) (get-cars (cddr l)))))
+
+(define (get-cadrs l)
+  (if (or (null? l) (null? (cdr l))) (list)
+      (cons (cadr l) (get-cadrs (cddr l)))))
+
 (tm-define (make-multi-with l)
   (when (nnull? l)
-    (with t (if (selection-active-any?) (selection-tree) "")
-      (if (selection-active-any?) (clipboard-cut "null"))
-      (insert-go-to (add-with l t) (cons (length l) (path-end t '())))
-      (with-simplify (cursor-tree)))))
+    (if (selection-active-table?)
+        (for-each cell-set-format (get-cars l) (get-cadrs l))
+        (with t (if (selection-active-any?) (selection-tree) "")
+          (if (selection-active-any?) (clipboard-cut "null"))
+          (insert-go-to (add-with l t) (cons (length l) (path-end t '())))
+          (with-simplify (cursor-tree))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modifying paragraph properties
@@ -87,11 +97,14 @@
 (tm-define (make-line-with var val)
   (:synopsis "Make 'with' with one or more paragraphs as its scope")
   (:check-mark "o" test-env?)
-  (if (not (selection-active-normal?))
-      (select-line))
-  (make-with var val)
-  (insert-return)
-  (remove-text #f))
+  (if (and (selection-active-table?) #f) ;; FIXME: does not work yet
+      (make-with var val)
+      (begin
+        (if (not (selection-active-normal?))
+            (select-line))
+        (make-with var val)
+        (insert-return)
+        (remove-text #f))))
 
 (tm-define (make-interactive-line-with var)
   (:interactive #t)
@@ -100,11 +113,14 @@
 
 (tm-define (make-multi-line-with l)
   (when (nnull? l)
-    (when (not (selection-active-normal?))
-      (select-line))
-    (make-multi-with l)
-    (insert-return)
-    (remove-text #f)))
+    (if (and (selection-active-table?) #f) ;; FIXME: does not work yet
+        (make-multi-with l)
+        (begin
+          (when (not (selection-active-normal?))
+            (select-line))
+          (make-multi-with l)
+          (insert-return)
+          (remove-text #f)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting and toggling with-like tags

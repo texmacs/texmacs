@@ -141,6 +141,8 @@ public:
   cell_rep (edit_env env);
 
   void typeset (tree fm, tree t, path ip);
+  void cell_local_begin (tree fm);
+  void cell_local_end (tree fm);
   void format_cell (tree fm);
   void format_item (tree with);
   void compute_width (SI& mw, SI& lw, SI& rw, bool large);

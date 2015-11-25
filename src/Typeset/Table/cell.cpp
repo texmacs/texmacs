@@ -28,6 +28,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
     t = t[0];
   }
 
+  cell_local_begin (fm);
   if (is_func (t, SUBTABLE, 1)) {
     lsep= rsep= bsep= tsep= 0;
     T= table (env, 2);
@@ -67,6 +68,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
       env->local_end (PAGE_MEDIUM, old1);
     }
   }
+  cell_local_end (fm);
 
   if (decoration != "") {
     int i, j, or_row= -1, or_col= -1;
@@ -88,6 +90,34 @@ cell_rep::typeset (tree fm, tree t, path iq) {
     if (or_row != -1) {
       D= table (env, 1, or_row, or_col);
       D->typeset (attach_deco (decoration, iq));
+    }
+  }
+}
+
+void
+cell_rep::cell_local_begin (tree fm) {
+  int i, l= N(fm);
+  for (i=0; i<l; i++) {
+    tree with= fm[i];
+    if (is_func (with, CWITH, 2) &&
+        is_atomic (with[0]) &&
+        !starts (with[0]->label, "cell-")) {
+      tree old= env->local_begin (with[0]->label, with[1]);
+      var (with[0]->label)= old;
+    }
+  }
+}
+
+void
+cell_rep::cell_local_end (tree fm) {
+  int i, l= N(fm);
+  for (i=l-1; i>=0; i--) {
+    tree with= fm[i];
+    if (is_func (with, CWITH, 2) &&
+        is_atomic (with[0]) &&
+        !starts (with[0]->label, "cell-")) {
+      tree old= var [with[0]->label];
+      env->local_end (with[0]->label, old);
     }
   }
 }

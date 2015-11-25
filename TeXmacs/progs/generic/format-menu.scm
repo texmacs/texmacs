@@ -72,7 +72,7 @@
 
 (menu-bind color-menu
   (if (allow-pattern-colors?)
-      (pick-background "" (insert-go-to `(with "color" ,answer "") '(2 0))))
+      (pick-background "" (make-with "color" answer)))
   (if (not (allow-pattern-colors?))
       (pick-color (make-with "color" answer)))
   ---

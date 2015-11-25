@@ -44,8 +44,12 @@
 ;; Wrappers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (make-with var val)
+  (cond ((selection-active-table?) (cell-set-format var val))
+        ((nstring? val) (insert-go-to `(with ,var ,val "") '(2 0)))
+        (else (cpp-make-with var val))))
+
 (tm-define (insert-go-to t p) (cpp-insert-go-to t p))
-(tm-define (make-with var val) (cpp-make-with var val))
 (tm-define (make-hybrid) (cpp-make-hybrid))
 
 (tm-define (make-rigid) (cpp-make-rigid))
