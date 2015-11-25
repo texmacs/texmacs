@@ -154,13 +154,17 @@
 
 (menu-bind cell-border-menu
   ("All" (interactive cell-set-border))
-  ("Left" (cell-interactive-set "cell-lborder"))
-  ("Right" (cell-interactive-set "cell-rborder"))
-  ("Bottom" (cell-interactive-set "cell-bborder"))
-  ("Top" (cell-interactive-set "cell-tborder")))
+  ("Horizontal" (interactive cell-set-hborder))
+  ("Vertical" (interactive cell-set-vborder))
+  ("Left" (interactive cell-set-lborder))
+  ("Right" (interactive cell-set-rborder))
+  ("Bottom" (interactive cell-set-bborder))
+  ("Top" (interactive cell-set-tborder)))
 
 (menu-bind cell-padding-menu
   ("All" (interactive cell-set-padding))
+  ("Horizontal" (interactive cell-set-hpadding))
+  ("Vertical" (interactive cell-set-vpadding))
   ("Left" (cell-interactive-set "cell-lsep"))
   ("Right" (cell-interactive-set "cell-rsep"))
   ("Bottom" (cell-interactive-set "cell-bsep"))
