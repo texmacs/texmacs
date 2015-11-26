@@ -192,10 +192,10 @@ initialize_default_env () {
   env (CELL_VMODE)       = "auto";      // height determination mode
   env (CELL_HALIGN)      = "l";         // horizontal alignment
   env (CELL_VALIGN)      = "B";         // vertical alignment
-  env (CELL_LSEP)        = "0fn";       // left cell padding
-  env (CELL_RSEP)        = "0fn";       // right cell padding
-  env (CELL_BSEP)        = "0fn";       // bottom cell padding
-  env (CELL_TSEP)        = "0fn";       // top cell padding
+  env (CELL_LSEP)        = "1spc";      // left cell padding
+  env (CELL_RSEP)        = "1spc";      // right cell padding
+  env (CELL_BSEP)        = "1sep";      // bottom cell padding
+  env (CELL_TSEP)        = "1sep";      // top cell padding
   env (CELL_LBORDER)     = "0ln";       // left cell border width
   env (CELL_RBORDER)     = "0ln";       // right cell border width
   env (CELL_BBORDER)     = "0ln";       // bottom cell border width

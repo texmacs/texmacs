@@ -47,6 +47,9 @@
       (-> "Font" (link text-font-menu)))
   ("Paragraph" (open-paragraph-format))
   ("Page" (open-page-format))
+  (when (inside? 'table)
+    ("Cell" (open-cell-properties))
+    ("Table" (open-table-properties)))
   ---
   (-> "Whitespace" (link space-menu))
   (-> "Indentation" (link indentation-menu))
