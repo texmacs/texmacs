@@ -1329,11 +1329,11 @@ pdf_image_rep::flush (PDFWriter& pdfw)
 			// note that we have to return since flush_raster
 			// already build the appopriate Form XObject into the PDF
 
-
 			if ((s == "jpg") || (s == "jpeg"))
 				if (flush_jpg(pdfw, name)) return;
 
-			if (flush_raster (pdfw, name)) return;
+			if (!(s == "png" && exists_in_path ("convert")))
+			  if (flush_raster (pdfw, name)) return;
 
 			// if this fails try using convert from ImageMagik
 			// to convert to pdf
