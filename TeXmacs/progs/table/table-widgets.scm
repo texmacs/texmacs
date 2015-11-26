@@ -22,23 +22,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (cell-set var val)
-  (when val
-    (cell-set-format var val)
-    (cond ((and (== var "cell-hmode") (== val "auto"))
-	   (cell-set-format "cell-width" ""))
-	  ((and (== var "cell-width") (!= val "")
-		(== (cell-get-format "cell-hmode") "auto"))
-	   (cell-set-format "cell-hmode" "exact"))
-	  ((and (== var "cell-vmode") (== val "auto"))
-	   (cell-set-format "cell-height" ""))
-	  ((and (== var "cell-height") (!= val "")
-		(== (cell-get-format "cell-vmode") "auto"))
-	   (cell-set-format "cell-vmode" "exact")))
-    (refresh-now "cell-properties")
-    ))
+  (let* ((active? (selection-active-table?))
+         (p1 (selection-get-start))
+         (p2 (selection-get-end)))
+    (when val
+      (cell-set-format var val)
+      (cond ((and (== var "cell-hmode") (== val "auto"))
+             (cell-set-format "cell-width" ""))
+            ((and (== var "cell-width") (!= val "")
+                  (== (cell-get-format "cell-hmode") "auto"))
+             (cell-set-format "cell-hmode" "exact"))
+            ((and (== var "cell-vmode") (== val "auto"))
+             (cell-set-format "cell-height" ""))
+            ((and (== var "cell-height") (!= val "")
+                  (== (cell-get-format "cell-vmode") "auto"))
+             (cell-set-format "cell-vmode" "exact")))
+      ;;(refresh-now "cell-properties")
+      (if active? ;; FIXME: find a robust way to keep the selection
+          (selection-set p1 p2)))))
 
 (define (cell-get var)
   (cell-get-format var))
+
+(define (cell-get-background)
+  (with bg (cell-get-format "cell-background")
+    (if (and (string? bg) (!= bg "")) bg "white")))
 
 (define (table-set var val)
   (when val
@@ -171,9 +179,7 @@
 ;; Cell properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (cell-size-widget)
-  (bold (text "Size"))
-  ===
+(tm-widget (cell-size-color-widget)
   (refreshable "cell-properties"
     (aligned
       (item (text "Width:")
@@ -185,7 +191,7 @@
 	  ///
 	  (input (cell-set "cell-width" answer) "string"
 		 (list (cell-get "cell-width")) "6em")
-	  /// ///
+	  /// //
 	  (text "Stretch:")
 	  //
 	  (input (cell-set "cell-hpart" answer) "string"
@@ -199,7 +205,7 @@
 	  ///
 	  (input (cell-set "cell-height" answer) "string"
 		 (list (cell-get "cell-height")) "6em")
-	  /// ///
+	  /// //
 	  (text "Stretch:")
 	  //
 	  (input (cell-set "cell-vpart" answer) "string"
@@ -212,7 +218,12 @@
 	    '("Off" "Bottom" "Top" "Both")
 	    (decode-vcorrect (cell-get "cell-vcorrect"))
 	    "7em")
-      >>>)))
+      >>> >>>
+      ;;(text "Background color:")
+      ;;//
+      ;;(=> (color (cell-get-background) #f #f 25 17)
+      ;;    (link cell-color-menu))
+      )))
 
 (tm-widget (cell-border-widget)
   (horizontal
@@ -288,8 +299,11 @@
 
 (tm-widget (cell-properties-widget quit)
   (padded
-    (dynamic (cell-size-widget))
-    === === === === ===
+    (horizontal
+      (vertical
+        (dynamic (cell-size-color-widget)))
+      >>>)
+    ====== ======
     (horizontal
       >>>
       (vertical
@@ -298,15 +312,13 @@
       (vertical
 	(dynamic (cell-padding-widget)))
       >>>)
-    === === === === ===
+    ====== ======
     (horizontal
-      >>>
       (vertical
         (dynamic (cell-alignment-widget)))
       >>>
       (vertical
-	(dynamic (cell-large-widget)))
-      >>>)))
+	(dynamic (cell-large-widget))))))
 
 (tm-define (open-cell-properties)
   (:interactive #t)
@@ -317,10 +329,49 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (table-size-widget)
-  (bold (text "Size"))
-  ===
   (refreshable "table-properties"
     (aligned
+      (item (text "Rows:")
+	(horizontal
+	  (enum (when answer
+                  (table-set-extents (string->number answer)
+                                     (table-nr-columns)))
+                (list (number->string (table-nr-rows))
+                      "1" "2" "3" "4" "5" "6" "7" "8" "")
+                (number->string (table-nr-rows)) "3em")
+          /// ///
+          (text "Minimum:") ///
+	  (enum (table-set "table-min-rows" answer)
+                (list (table-get "table-min-rows")
+                      "1" "2" "3" "4" "5" "6" "7" "8" "")
+		(table-get "table-min-rows") "3em")
+          /// ///
+          (text "Maximum:") ///
+	  (enum (table-set "table-max-rows" answer)
+                (list (table-get "table-max-rows")
+                      "1" "2" "3" "4" "5" "6" "7" "8" "")
+		(table-get "table-max-rows") "3em")))
+      (item (text "Columns:")
+	(horizontal
+	  (enum (when answer
+                  (table-set-extents (table-nr-rows)
+                                     (string->number answer)))
+                (list (number->string (table-nr-columns))
+                      "1" "2" "3" "4" "5" "6" "7" "8" "")
+                (number->string (table-nr-columns)) "3em")
+          /// ///
+          (text "Minimum:") ///
+	  (enum (table-set "table-min-cols" answer)
+                (list (table-get "table-min-cols")
+                      "1" "2" "3" "4" "5" "6" "7" "8" "")
+		(table-get "table-min-cols") "3em")
+          /// ///
+          (text "Maximum:") ///
+	  (enum (table-set "table-max-cols" answer)
+                (list (table-get "table-max-cols")
+                      "1" "2" "3" "4" "5" "6" "7" "8" "")
+		(table-get "table-max-cols") "3em")))
+      (item === ===)
       (item (text "Width:")
 	(horizontal
 	  (enum (table-set "table-hmode" (encode-mode answer))
@@ -329,7 +380,8 @@
 		"7em")
 	  ///
 	  (input (table-set "table-width" answer) "string"
-		 (list (table-get "table-width") "1par") "6em")))
+		 (list (table-get "table-width") "1par") "6em")
+          >>> >>>))
       (item (text "Height:")
 	(horizontal
 	  (enum (table-set "table-vmode" (encode-mode answer))
@@ -338,7 +390,8 @@
 		"7em")
 	  ///
 	  (input (table-set "table-height" answer) "string"
-		 (list (table-get "table-height")) "6em"))))))
+		 (list (table-get "table-height")) "6em")
+          >>> >>>)))))
 
 (tm-widget (table-border-widget)
   (horizontal
@@ -414,7 +467,7 @@
       (vertical
         (dynamic (table-size-widget)))
       >>>)
-    === === ===
+    ====== ======
     (horizontal
       >>>
       (vertical
@@ -423,7 +476,7 @@
       (vertical
 	(dynamic (table-padding-widget)))
       >>>)
-    === === === === ===
+    ====== ======
     (horizontal
       >>>
       (vertical
