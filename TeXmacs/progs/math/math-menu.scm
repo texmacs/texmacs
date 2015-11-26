@@ -66,11 +66,11 @@
       ("Font" (interactive open-font-selector)))
   (if (not (new-fonts?))
       (-> "Font" (link math-font-menu)))
-  (link math-special-format-menu)
   (when (inside? 'table)
-      ---
       ("Cell" (open-cell-properties))
       ("Table" (open-table-properties)))
+  ---
+  (link math-special-format-menu)
   ---
   (-> "Whitespace" (link horizontal-space-menu))
   (-> "Line break" (link line-break-menu))

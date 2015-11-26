@@ -121,6 +121,26 @@
 	((== m "Baseline") "B")
 	(else "B")))
 
+(define (decode-valign* m)
+  (cond ((== m "f") "Axis")
+	((== m "t") "Top")
+	((== m "c") "Center")
+	((== m "b") "Bottom")
+	((== m "T") "Top baseline")
+	((== m "C") "Center baseline")
+	((== m "B") "Bottom baseline")
+	(else "Axis")))
+
+(define (encode-valign* m)
+  (cond ((== m "Axis") "f")
+	((== m "Top") "t")
+	((== m "Center") "c")
+	((== m "Bottom") "b")
+	((== m "Top baseline") "T")
+	((== m "Center baseline") "C")
+	((== m "Bottom baseline") "B")
+	(else "f")))
+
 (define (decode-hyphen m)
   (cond ((== m "t") "Top")
 	((== m "c") "Center")
@@ -358,9 +378,42 @@
 	(input (table-set "table-bsep" answer) "string"
 	       (list (table-get "table-bsep") "0fn") "6em")))))
 
+(tm-widget (table-alignment-widget)
+  (horizontal
+    >>> (bold (text "Alignment")) >>>)
+  ===
+  (refreshable "table-properties"
+    (aligned
+      (item (text "Horizontal:")
+        (enum (table-set "table-halign" (encode-halign answer))
+              '("Left" "Center" "Right")
+              (decode-halign (table-get "table-halign"))
+              "10em"))
+      (item (text "Vertical:")
+        (enum (table-set "table-valign" (encode-valign* answer))
+              '("Axis" "Top" "Center" "Bottom"
+                "Top baseline" "Center baseline" "Bottom baseline")
+              (decode-valign* (table-get "table-halign"))
+              "10em")))))
+
+(tm-widget (table-large-widget)
+  (horizontal
+    >>> (bold (text "Large tables")) >>>)
+  ===
+  (refreshable "table-properties"
+    (aligned
+      (meti (horizontal // (text "Enable page breaking"))
+        (toggle
+         (table-set "table-hyphen" (if answer "y" "n"))
+         (== (table-get "table-hyphen") "y"))))
+    (glue #f #t 0 0)))
+
 (tm-widget (table-properties-widget quit)
   (padded
-    (dynamic (table-size-widget))
+    (horizontal
+      (vertical
+        (dynamic (table-size-widget)))
+      >>>)
     === === ===
     (horizontal
       >>>
@@ -369,6 +422,15 @@
       >>>
       (vertical
 	(dynamic (table-padding-widget)))
+      >>>)
+    === === === === ===
+    (horizontal
+      >>>
+      (vertical
+        (dynamic (table-alignment-widget)))
+      >>>
+      (vertical
+	(dynamic (table-large-widget)))
       >>>)))
 
 (tm-define (open-table-properties)
