@@ -34,7 +34,7 @@
 	  ((and (== var "cell-height") (!= val "")
 		(== (cell-get-format "cell-vmode") "auto"))
 	   (cell-set-format "cell-vmode" "exact")))
-    ;;(refresh-now "cell-properties")
+    (refresh-now "cell-properties")
     ))
 
 (define (cell-get var)
@@ -90,6 +90,62 @@
 	((== m "Top") "t")
 	((== m "Both") "a")
 	(else "a")))
+
+(define (decode-halign m)
+  (cond ((== m "l") "Left")
+	((== m "c") "Center")
+	((== m "r") "Right")
+	((== m "L.") "Decimal dot")
+	((== m "L,") "Decimal comma")
+	(else "Left")))
+
+(define (encode-halign m)
+  (cond ((== m "Left") "l")
+	((== m "Center") "c")
+	((== m "Right") "r")
+	((== m "Decimal dot") "L.")
+	((== m "Decimal comma") "L,")
+	(else "l")))
+
+(define (decode-valign m)
+  (cond ((== m "t") "Top")
+	((== m "c") "Center")
+	((== m "b") "Bottom")
+	((== m "B") "Baseline")
+	(else "Baseline")))
+
+(define (encode-valign m)
+  (cond ((== m "Top") "t")
+	((== m "Center") "c")
+	((== m "Bottom") "b")
+	((== m "Baseline") "B")
+	(else "B")))
+
+(define (decode-hyphen m)
+  (cond ((== m "t") "Top")
+	((== m "c") "Center")
+	((== m "b") "Bottom")
+	((== m "n") "Off")
+	(else "Off")))
+
+(define (encode-hyphen m)
+  (cond ((== m "Top") "t")
+	((== m "Center") "c")
+	((== m "Bottom") "b")
+	((== m "Off") "n")
+	(else "n")))
+
+(define (decode-block m)
+  (cond ((== m "no") "Never")
+	((== m "auto") "When wrapping")
+	((== m "yes") "Always")
+	(else "When wrapping")))
+
+(define (encode-block m)
+  (cond ((== m "Never") "no")
+	((== m "When wrapping") "auto")
+	((== m "Always") "yes")
+	(else "auto")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Cell properties
@@ -176,10 +232,44 @@
 	(input (cell-set "cell-bsep" answer) "string"
 	       (list (cell-get "cell-bsep") "1sep") "6em")))))
 
+(tm-widget (cell-alignment-widget)
+  (horizontal
+    >>> (bold (text "Alignment")) >>>)
+  ===
+  (refreshable "cell-properties"
+    (aligned
+      (item (text "Horizontal:")
+        (enum (cell-set "cell-halign" (encode-halign answer))
+              '("Left" "Center" "Right" "Decimal dot" "Decimal comma")
+              (decode-halign (cell-get "cell-halign"))
+              "7em"))
+      (item (text "Vertical:")
+        (enum (cell-set "cell-valign" (encode-valign answer))
+              '("Top" "Center" "Bottom" "Baseline")
+              (decode-valign (cell-get "cell-halign"))
+              "7em")))))
+
+(tm-widget (cell-large-widget)
+  (horizontal
+    >>> (bold (text "Large cells")) >>>)
+  ===
+  (refreshable "cell-properties"
+    (aligned
+      (item (text "Line wrapping:")
+        (enum (cell-set "cell-hyphen" (encode-hyphen answer))
+              '("Off" "Top" "Center" "Bottom")
+              (decode-hyphen (cell-get "cell-hyphen"))
+              "11em"))
+      (item (text "Block content:")
+        (enum (cell-set "cell-block" (encode-block answer))
+              '("Never" "When wrapping" "Always")
+              (decode-block (cell-get "cell-block"))
+              "11em")))))
+
 (tm-widget (cell-properties-widget quit)
   (padded
     (dynamic (cell-size-widget))
-    === === ===
+    === === === === ===
     (horizontal
       >>>
       (vertical
@@ -187,6 +277,15 @@
       >>>
       (vertical
 	(dynamic (cell-padding-widget)))
+      >>>)
+    === === === === ===
+    (horizontal
+      >>>
+      (vertical
+        (dynamic (cell-alignment-widget)))
+      >>>
+      (vertical
+	(dynamic (cell-large-widget)))
       >>>)))
 
 (tm-define (open-cell-properties)

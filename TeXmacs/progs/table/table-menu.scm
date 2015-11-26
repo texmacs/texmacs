@@ -105,8 +105,9 @@
 
 (menu-bind table-special-menu
   ("Table breaking" (toggle-table-hyphen))
-  ("Deactivate" (table-deactivate))
-  ("Extract format" (table-extract-format)))
+  ;;("Deactivate" (table-deactivate))
+  (if (in-source?)
+      ("Extract format" (table-extract-format))))
 
 (menu-bind cell-mode-menu
   ("Cells" (set-cell-mode "cell"))
@@ -118,27 +119,30 @@
   ("Left" (cell-set-halign "l"))
   ("Center" (cell-set-halign "c"))
   ("Right" (cell-set-halign "r"))
-  (-> "Baseline"
-      ("Left" (cell-set-halign "L"))
-      ("Center" (cell-set-halign "C"))
-      ("Right" (cell-set-halign "R")))
-  (-> "Decimal dot"
-      ("Left" (cell-set-halign "L."))
-      ("Center" (cell-set-halign "C."))
-      ("Right" (cell-set-halign "R.")))
-  (-> "Decimal comma"
-      ("Left" (cell-set-halign "L,"))
-      ("Center" (cell-set-halign "C,"))
-      ("Right" (cell-set-halign "R,"))))
+  ;;(-> "Baseline"
+  ;;    ("Left" (cell-set-halign "L"))
+  ;;    ("Center" (cell-set-halign "C"))
+  ;;    ("Right" (cell-set-halign "R")))
+  ;;(-> "Decimal dot"
+  ;;    ("Left" (cell-set-halign "L."))
+  ;;    ("Center" (cell-set-halign "C."))
+  ;;    ("Right" (cell-set-halign "R.")))
+  ;;(-> "Decimal comma"
+  ;;    ("Left" (cell-set-halign "L,"))
+  ;;    ("Center" (cell-set-halign "C,"))
+  ;;    ("Right" (cell-set-halign "R,")))
+  ("Decimal dot" (cell-set-halign "L."))
+  ("Decimal comma" (cell-set-halign "L.")))
 
 (menu-bind cell-valign-menu
   ("Bottom" (cell-set-valign "b"))
   ("Center" (cell-set-valign "c"))
   ("Top" (cell-set-valign "t"))
-  (-> "Baseline"
-      ("Bottom" (cell-set-valign "B"))
-      ("Center" (cell-set-valign "C"))
-      ("Top" (cell-set-valign "T"))))
+  ;;(-> "Baseline"
+  ;;    ("Bottom" (cell-set-valign "B"))
+  ;;    ("Center" (cell-set-valign "C"))
+  ;;    ("Top" (cell-set-valign "T")))
+  ("Baseline" (cell-set-valign "B")))
 
 (menu-bind cell-width-menu
   ("Automatic" (cell-set-automatic-width))
@@ -182,16 +186,12 @@
 
 (menu-bind cell-special-menu
   (when (== (get-cell-mode) "cell")
-    ("Insert subtable" (make-subtable)))
+    ("Insert subtable" (make-subtable))
+    (when (selection-active-table?)
+      ("Join selected cells" (cell-set-span-selection)))
+    (when (cell-spans-more?)
+      ("Dissociate joined cells" (cell-reset-span))))
   ---
-  (when (== (get-cell-mode) "cell")
-    (-> "Cell span"
-        (when (selection-active-table?)
-	  ("Join selected cells" (cell-set-span-selection)))
-        (when (cell-spans-more?)
-	  ("Undo cell join" (cell-reset-span)))
-        ("Horizontal" (interactive cell-set-column-span))
-        ("Vertical" (interactive cell-set-row-span))))
   (-> "Text height correction"
       ("Off" (cell-set-vcorrect "n"))
       ---
