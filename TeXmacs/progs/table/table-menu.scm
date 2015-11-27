@@ -156,7 +156,12 @@
   ("Exact" (cell-ia-exact-height))
   ("Minimal" (cell-ia-minimal-height))
   ("Maximal" (cell-ia-maximal-height))
-  ("Stretch factor" (cell-interactive-set "cell-vpart")))
+  ("Stretch factor" (cell-interactive-set "cell-vpart"))
+  (-> "Adjust limits"
+      ("None" (cell-set-vcorrect "n"))
+      ("Bottom" (cell-set-vcorrect "b"))
+      ("Top" (cell-set-vcorrect "t"))
+      ("Both" (cell-set-vcorrect "a"))))
 
 (menu-bind cell-border-menu
   ("All" (interactive cell-set-border))
@@ -186,32 +191,25 @@
               (lambda (col) (cell-set-background col)) '()))
   ("Other" (interactive cell-set-background)))
 
+(menu-bind cell-wrapping-menu
+  ("Off" (cell-set-hyphen "n"))
+  ---
+  ("Top" (cell-set-hyphen "t"))
+  ("Center" (cell-set-hyphen "c"))
+  ("Bottom" (cell-set-hyphen "b")))
+
+(menu-bind cell-block-menu
+  ("Never" (cell-set-block "no"))
+  ("When line wrapping" (cell-set-block "auto"))
+  ("Always" (cell-set-block "yes")))
+
 (menu-bind cell-special-menu
   (when (== (get-cell-mode) "cell")
     ("Insert subtable" (make-subtable))
     (when (selection-active-table?)
       ("Join selected cells" (cell-set-span-selection)))
     (when (cell-spans-more?)
-      ("Dissociate joined cells" (cell-reset-span))))
-  ---
-  (-> "Text height correction"
-      ("Off" (cell-set-vcorrect "n"))
-      ---
-      ("Bottom" (cell-set-vcorrect "b"))
-      ("Top" (cell-set-vcorrect "t"))
-      ("Both" (cell-set-vcorrect "a")))
-  (-> "Line wrapping"
-      ("Off" (cell-set-hyphen "n"))
-      ---
-      ("Top" (cell-set-hyphen "t"))
-      ("Center" (cell-set-hyphen "c"))
-      ("Bottom" (cell-set-hyphen "b")))
-  (-> "Block content"
-      ("Never" (cell-set-block "no"))
-      ("When line wrapping" (cell-set-block "auto"))
-      ("Always" (cell-set-block "yes")))
-  ;;(-> "Glue decorations" (tile 2 (link cell-decoration-icons)))
-  )
+      ("Dissociate joined cells" (cell-reset-span)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main Table menu
@@ -251,6 +249,8 @@
   (-> "Vertical alignment" (link cell-valign-menu))
   (-> "Background color" (link cell-color-menu))
   ;;---
+  (-> "Line wrapping" (link cell-wrapping-menu))
+  (-> "Block content" (link cell-block-menu))
   (-> "Special" (link cell-special-menu)))
 
 (menu-bind vertical-table-cell-menu
