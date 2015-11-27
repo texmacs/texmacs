@@ -69,8 +69,8 @@
 
 (define (add-with l t)
   (if (tm-is? t 'with)
-      (with l (tm-children t)
-        `(with ,@(cDr l) ,(add-with l (cAr l))))
+      (with c (tm-children t)
+        `(with ,@(cDr c) ,(add-with l (cAr c))))
       `(with ,@l ,t)))
 
 (define (get-cars l)
