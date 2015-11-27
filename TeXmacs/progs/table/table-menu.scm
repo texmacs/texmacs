@@ -132,7 +132,7 @@
   ;;    ("Center" (cell-set-halign "C,"))
   ;;    ("Right" (cell-set-halign "R,")))
   ("Decimal dot" (cell-set-halign "L."))
-  ("Decimal comma" (cell-set-halign "L.")))
+  ("Decimal comma" (cell-set-halign "L,")))
 
 (menu-bind cell-valign-menu
   ("Bottom" (cell-set-valign "b"))
@@ -461,6 +461,15 @@
   (=> (balloon (icon "tm_set_properties.xpm") "Table properties")
       (mini #f (link table-menu))))
 
+(define (cell-halign-icon)
+  (with h (cell-get-format "cell-halign")
+    (cond ((== h "l") "tm_cell_left.xpm")
+	  ((== h "c") "tm_cell_center.xpm")
+	  ((== h "r") "tm_cell_right.xpm")
+	  ((== h "L.") "tm_cell_dot.xpm")
+	  ((== h "L,") "tm_cell_dot.xpm")
+	  (else "tm_cell_left.xpm"))))
+
 (tm-menu (focus-extra-icons t)
   (:require (table-markup-context? t))
   (glue #f #f 10 0)
@@ -481,7 +490,7 @@
         (=> (balloon "All cells" "Change cell operation mode")
             (mini #f
               (link cell-mode-icons))))
-    (=> (balloon (icon "tm_cell_size.xpm") "Modify cell size")
+    (=> (balloon (icon "tm_cell_size_var.xpm") "Modify cell size")
         (mini #f
           (group "Width")
           (link cell-width-menu)
@@ -495,7 +504,7 @@
           ---
           (group "Padding")
           (link cell-padding-menu)))
-    (=> (balloon (icon "tm_cell_pos.xpm") "Modify cell alignment")
+    (=> (balloon (icon (eval (cell-halign-icon))) "Modify cell alignment")
         (mini #f
           (group "Horizontal alignment")
           (link cell-halign-menu)
