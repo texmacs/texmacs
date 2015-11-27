@@ -1208,7 +1208,7 @@
       ---
       (tile 6 (link dots-menu)))
   /
-  (=> (balloon (icon "tm_greek.xpm") "Insert a greek character")
+  (=> (balloon (icon "tm_greek_char.xpm") "Insert a greek character")
       (tile 8 (link lower-greek-menu))
       ---
       (tile 8 (link upper-greek-menu)))
