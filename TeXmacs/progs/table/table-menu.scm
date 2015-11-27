@@ -461,7 +461,10 @@
               "v" (table-test-parwidth?))
        (table-toggle-parwidth)))
   (=> (balloon (icon "tm_set_properties.xpm") "Table properties")
-      (mini #f (link table-menu))))
+      (mini #f
+	(link table-menu)
+	---
+	("Table properties" (open-table-properties)))))
 
 (define (cell-halign-icon)
   (with h (cell-get-format "cell-halign")
@@ -479,19 +482,27 @@
     (if (== (get-cell-mode) "cell")
         (=> (balloon "Cell" "Change cell operation mode")
             (mini #f
-              (link cell-mode-icons))))
+              (link cell-mode-icons)
+	      ---
+	      ("Cell properties" (open-cell-properties)))))
     (if (== (get-cell-mode) "row")
         (=> (balloon "Row" "Change cell operation mode")
             (mini #f
-              (link cell-mode-icons))))
+              (link cell-mode-icons)
+	      ---
+	      ("Cell properties" (open-cell-properties)))))
     (if (== (get-cell-mode) "column")
         (=> (balloon "Column" "Change cell operation mode")
             (mini #f
-              (link cell-mode-icons))))
+              (link cell-mode-icons)
+	      ---
+	      ("Cell properties" (open-cell-properties)))))
     (if (== (get-cell-mode) "table")
         (=> (balloon "All cells" "Change cell operation mode")
             (mini #f
-              (link cell-mode-icons))))
+              (link cell-mode-icons)
+	      ---
+	      ("Cell properties" (open-cell-properties)))))
     (=> (balloon (icon "tm_cell_size_var.xpm") "Modify cell size")
         (mini #f
           (group "Width")
@@ -521,7 +532,8 @@
             "v" (cell-test-wrap?))
      (cell-toggle-wrap))
     (if (and (not (cell-spans-more?))
-	     (not (selection-active-table?)))
+	     (not (selection-active-table?))
+	     (> (* (table-nr-rows) (table-nr-columns)) 1))
 	((balloon (icon "tm_cell_subtable.xpm")
 		  "Transform cell into subtable")
 	 (make-subtable)))
