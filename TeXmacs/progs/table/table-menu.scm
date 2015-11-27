@@ -148,13 +148,15 @@
   ("Automatic" (cell-set-automatic-width))
   ("Exact" (cell-ia-exact-width))
   ("Minimal" (cell-ia-minimal-width))
-  ("Maximal" (cell-ia-maximal-width)))
+  ("Maximal" (cell-ia-maximal-width))
+  ("Stretch factor" (cell-interactive-set "cell-hpart")))
 
 (menu-bind cell-height-menu
   ("Automatic" (cell-set-automatic-height))
   ("Exact" (cell-ia-exact-height))
   ("Minimal" (cell-ia-minimal-height))
-  ("Maximal" (cell-ia-maximal-height)))
+  ("Maximal" (cell-ia-maximal-height))
+  ("Stretch factor" (cell-interactive-set "cell-vpart")))
 
 (menu-bind cell-border-menu
   ("All" (interactive cell-set-border))
@@ -208,9 +210,6 @@
       ("Never" (cell-set-block "no"))
       ("When line wrapping" (cell-set-block "auto"))
       ("Always" (cell-set-block "yes")))
-  (-> "Distribute unused space"
-      ("Horizontal part" (cell-interactive-set "cell-hpart"))
-      ("Vertical part" (cell-interactive-set "cell-vpart")))
   ;;(-> "Glue decorations" (tile 2 (link cell-decoration-icons)))
   )
 
