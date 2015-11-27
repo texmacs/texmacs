@@ -203,13 +203,15 @@
   ("When line wrapping" (cell-set-block "auto"))
   ("Always" (cell-set-block "yes")))
 
-(menu-bind cell-special-menu
-  (when (== (get-cell-mode) "cell")
-    ("Insert subtable" (make-subtable))
-    (when (selection-active-table?)
-      ("Join selected cells" (cell-set-span-selection)))
-    (when (cell-spans-more?)
-      ("Dissociate joined cells" (cell-reset-span)))))
+(menu-bind cell-split-join-menu
+  (when (and (== (get-cell-mode) "cell")
+	     (not (selection-active-table?)))
+    ("Insert subtable" (make-subtable)))
+  (when (selection-active-table?)
+    ("Join selected cells" (cell-set-span-selection)))
+  (when (and (== (get-cell-mode) "cell")
+	     (cell-spans-more?))
+    ("Dissociate joined cells" (cell-reset-span))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main Table menu
@@ -251,7 +253,8 @@
   ;;---
   (-> "Line wrapping" (link cell-wrapping-menu))
   (-> "Block content" (link cell-block-menu))
-  (-> "Special" (link cell-special-menu)))
+  ---
+  (link cell-split-join-menu))
 
 (menu-bind vertical-table-cell-menu
   (=> "Table" (link table-menu))
@@ -520,4 +523,4 @@
     (=> (balloon (icon "tm_cell_special.xpm")
                  "Special cell properties and actions")
         (mini #f
-          (link  cell-special-menu)))))
+          (link  cell-split-join-menu)))))
