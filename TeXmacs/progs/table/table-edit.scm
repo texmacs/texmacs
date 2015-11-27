@@ -638,9 +638,9 @@
             (cell-set-format "cell-bborder" T)))
         (when B
           (when (!= B b)
-            (table-select-cells r2 r2 c1 c1)
+            (table-select-cells r2 r2 c1 c2)
             (cell-set-format "cell-bborder" B))
-          (when (< r1 rows)
+          (when (< r2 rows)
             (table-select-cells (+ r2 1) (+ r2 1) c1 c2)
             (cell-set-format "cell-tborder" B)))
         (when L

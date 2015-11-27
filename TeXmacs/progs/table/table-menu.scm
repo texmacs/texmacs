@@ -163,6 +163,50 @@
       ("Top" (cell-set-vcorrect "t"))
       ("Both" (cell-set-vcorrect "a"))))
 
+(menu-bind cell-border-icons-menu
+  ((icon "tm_border_none.xpm")
+   (cell-set-borders "0ln" "0ln" "0ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_l.xpm")
+   (cell-set-borders "0ln" "0ln" "1ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_r.xpm")
+   (cell-set-borders "0ln" "0ln" "0ln" "1ln" #f #f #f #f))
+  ((icon "tm_border_lr.xpm")
+   (cell-set-borders "0ln" "0ln" "1ln" "1ln" #f #f #f #f))
+  ((icon "tm_border_t.xpm")
+   (cell-set-borders "1ln" "0ln" "0ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_lt.xpm")
+   (cell-set-borders "1ln" "0ln" "1ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_rt.xpm")
+   (cell-set-borders "1ln" "0ln" "0ln" "1ln" #f #f #f #f))
+  ((icon "tm_border_lrt.xpm")
+   (cell-set-borders "1ln" "0ln" "1ln" "1ln" #f #f #f #f))
+  ((icon "tm_border_b.xpm")
+   (cell-set-borders "0ln" "1ln" "0ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_lb.xpm")
+   (cell-set-borders "0ln" "1ln" "1ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_rb.xpm")
+   (cell-set-borders "0ln" "1ln" "0ln" "1ln" #f #f #f #f))
+  ((icon "tm_border_lrb.xpm")
+   (cell-set-borders "0ln" "1ln" "1ln" "1ln" #f #f #f #f))
+  ((icon "tm_border_tb.xpm")
+   (cell-set-borders "1ln" "1ln" "0ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_ltb.xpm")
+   (cell-set-borders "1ln" "1ln" "1ln" "0ln" #f #f #f #f))
+  ((icon "tm_border_rtb.xpm")
+   (cell-set-borders "1ln" "1ln" "0ln" "1ln" #f #f #f #f))
+  ((icon "tm_border_lrtb.xpm")
+   (cell-set-borders "1ln" "1ln" "1ln" "1ln" #f #f #f #f)))
+
+(menu-bind cell-borders-icons-menu
+  ((icon "tm_both_none.xpm")
+   (cell-set-borders "0ln" "0ln" "0ln" "0ln" "0ln" "0ln" "0ln" "0ln"))
+  ((icon "tm_both_h.xpm")
+   (cell-set-borders "0ln" "0ln" "1ln" "1ln" "0ln" "0ln" "1ln" "1ln"))
+  ((icon "tm_both_v.xpm")
+   (cell-set-borders "1ln" "1ln" "0ln" "0ln" "1ln" "1ln" "0ln" "0ln"))
+  ((icon "tm_both_hv.xpm")
+   (cell-set-borders "1ln" "1ln" "1ln" "1ln" "1ln" "1ln" "1ln" "1ln")))
+
 (menu-bind cell-border-menu
   ("All" (interactive cell-set-border))
   ("Horizontal" (interactive cell-set-hborder))
@@ -171,6 +215,12 @@
   ("Right" (interactive cell-set-rborder))
   ("Bottom" (interactive cell-set-bborder))
   ("Top" (interactive cell-set-tborder)))
+
+(menu-bind cell-alt-border-menu
+  (tile 4 (link cell-border-icons-menu))
+  (if (selection-active-table?)
+      ---
+      (tile 4 (link cell-borders-icons-menu))))
 
 (menu-bind cell-padding-menu
   ("All" (interactive cell-set-padding))
@@ -245,7 +295,7 @@
   ;;---
   (-> "Width" (link cell-width-menu))
   (-> "Height" (link cell-height-menu))
-  (-> "Border" (link cell-border-menu))
+  (-> "Border" (link cell-alt-border-menu))
   (-> "Padding" (link cell-padding-menu))
   (-> "Horizontal alignment" (link cell-halign-menu))
   (-> "Vertical alignment" (link cell-valign-menu))
@@ -513,7 +563,7 @@
     (=> (balloon (icon "tm_cell_border.xpm") "Change border of cell")
         (mini #f
           (group "Border")
-          (link cell-border-menu)
+          (link cell-alt-border-menu)
           ---
           (group "Padding")
           (link cell-padding-menu)))
