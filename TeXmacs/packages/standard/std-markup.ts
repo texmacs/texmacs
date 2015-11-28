@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.3>
 
 <style|<tuple|source|std>>
 
@@ -288,6 +288,10 @@
   <assign|block|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<arg|body>>>>
 
   <assign|block*|<macro|body|<tformat|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-halign|c>|<arg|body>>>>
+
+  <assign|wide-tabular|<macro|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-hpart|0.001>|<cwith|1|-1|1|1|cell-lsep|0fn>|<cwith|1|-1|-1|-1|cell-rsep|0fn>|<arg|body>>>>
+
+  <assign|wide-block|<macro|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-hpart|0.001>|<cwith|1|-1|1|-1|cell-rborder|1ln>|<cwith|1|-1|1|-1|cell-bborder|1ln>|<cwith|1|1|1|-1|cell-tborder|1ln>|<cwith|1|-1|1|1|cell-lborder|1ln>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
