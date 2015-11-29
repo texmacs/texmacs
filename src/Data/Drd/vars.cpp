@@ -170,6 +170,7 @@ string TABLE_RBORDER ("table-rborder");
 string TABLE_BBORDER ("table-bborder");
 string TABLE_TBORDER ("table-tborder");
 string TABLE_HYPHEN ("table-hyphen");
+string TABLE_BLOCK ("table-block");
 string TABLE_MIN_ROWS ("table-min-rows");
 string TABLE_MIN_COLS ("table-min-cols");
 string TABLE_MAX_ROWS ("table-max-rows");

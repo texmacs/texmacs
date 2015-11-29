@@ -156,6 +156,7 @@ extern string TABLE_RBORDER;
 extern string TABLE_BBORDER;
 extern string TABLE_TBORDER;
 extern string TABLE_HYPHEN;
+extern string TABLE_BLOCK;
 extern string TABLE_MIN_ROWS;
 extern string TABLE_MIN_COLS;
 extern string TABLE_MAX_ROWS;

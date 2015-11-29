@@ -1041,7 +1041,8 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
   }
 
   string hyphen= as_string (table_get_format (fp, TABLE_HYPHEN));
-  if (hyphen == "y") {
+  string block = as_string (table_get_format (fp, TABLE_BLOCK));
+  if (hyphen == "y" || block == "yes") {
     path q= fp;
     if (is_extension (subtree (et, path_up (q)), 1)) q= path_up (q);
     tree st= subtree (et, path_up (q));

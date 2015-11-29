@@ -216,8 +216,10 @@
 
   ("table N t" (make 'tabular))
   ("table N T" (make 'tabular*))
+  ("table N w" (make 'wide-tabular))
   ("table N b" (make 'block))
-  ("table N B" (make 'block*)))
+  ("table N B" (make 'block*))
+  ("table N W" (make 'wide-block)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs keymap

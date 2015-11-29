@@ -175,6 +175,7 @@ initialize_default_env () {
   env (TABLE_BBORDER)    = "0ln";       // bottom table border width
   env (TABLE_TBORDER)    = "0ln";       // top table border width
   env (TABLE_HYPHEN)     = "n";         // vertical hyphenation
+  env (TABLE_BLOCK)      = "no";        // consider table as block content
   env (TABLE_MIN_ROWS)   = "";          // suggested minimal number of rows
   env (TABLE_MIN_COLS)   = "";          // suggested minimal number of columns
   env (TABLE_MAX_ROWS)   = "";          // suggested maximal number of rows

@@ -22,11 +22,14 @@
 ;; Some drd properties, which should go into table-drd.scm later on
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-group variant-tag (table-tag))
-(define-group similar-tag (table-tag))
+(define-group variant-tag (table-tag) (wide-table-tag))
+(define-group similar-tag (table-tag) (wide-table-tag))
 
 (define-group table-tag
   tabular tabular* block block*)
+
+(define-group wide-table-tag
+  wide-tabular wide-block)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Supplementary routines for cetting cell and table formats
