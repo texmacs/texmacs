@@ -18,56 +18,6 @@
         (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Useful subroutines
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (cell-set var val)
-  (let* ((active? (selection-active-table?))
-         (p1 (selection-get-start))
-         (p2 (selection-get-end)))
-    (when val
-      (cell-set-format var val)
-      (cond ((and (== var "cell-hmode") (== val "auto"))
-             (cell-set-format "cell-width" ""))
-            ((and (== var "cell-width") (!= val "")
-                  (== (cell-get-format "cell-hmode") "auto"))
-             (cell-set-format "cell-hmode" "exact"))
-            ((and (== var "cell-vmode") (== val "auto"))
-             (cell-set-format "cell-height" ""))
-            ((and (== var "cell-height") (!= val "")
-                  (== (cell-get-format "cell-vmode") "auto"))
-             (cell-set-format "cell-vmode" "exact")))
-      ;;(refresh-now "cell-properties")
-      (if active? ;; FIXME: find a robust way to keep the selection
-          (selection-set p1 p2)))))
-
-(define (cell-get var)
-  (cell-get-format var))
-
-(define (cell-get-background)
-  (with bg (cell-get-format "cell-background")
-    (if (and (string? bg) (!= bg "")) bg "white")))
-
-(define (table-set var val)
-  (when val
-    (table-set-format var val)
-    (cond ((and (== var "table-hmode") (== val "auto"))
-	   (table-set-format "table-width" ""))
-	  ((and (== var "table-width") (!= val "")
-		(== (table-get-format "table-hmode") "auto"))
-	   (table-set-format "table-hmode" "exact"))
-	  ((and (== var "table-vmode") (== val "auto"))
-	   (table-set-format "table-height" ""))
-	  ((and (== var "table-height") (!= val "")
-		(== (table-get-format "table-vmode") "auto"))
-	   (table-set-format "table-vmode" "exact")))
-    ;;(refresh-now "table-properties")
-    ))
-
-(define (table-get var)
-  (table-get-format var))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Encode/decode properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -179,44 +129,48 @@
 ;; Cell properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (cell-get-background)
+  (with bg (cell-get-format "cell-background")
+    (if (and (string? bg) (!= bg "")) bg "white")))
+
 (tm-widget (cell-size-color-widget)
   (refreshable "cell-properties"
     (aligned
       (item (text "Width:")
 	(horizontal
-	  (enum (cell-set "cell-hmode" (encode-mode answer))
+	  (enum (cell-set-format* "cell-hmode" (encode-mode answer))
 		'("Auto" "Exact" "Minimal" "Maximal")
-		(decode-mode (cell-get "cell-hmode"))
+		(decode-mode (cell-get-format "cell-hmode"))
 		"7em")
 	  ///
-	  (input (cell-set "cell-width" answer) "string"
-		 (list (cell-get "cell-width")) "6em")
+	  (input (cell-set-format* "cell-width" answer) "string"
+		 (list (cell-get-format "cell-width")) "6em")
 	  /// //
 	  (text "Stretch:")
 	  //
-	  (input (cell-set "cell-hpart" answer) "string"
-		 (list (cell-get "cell-hpart")) "6em")))
+	  (input (cell-set-format* "cell-hpart" answer) "string"
+		 (list (cell-get-format "cell-hpart")) "6em")))
       (item (text "Height:")
 	(horizontal
-	  (enum (cell-set "cell-vmode" (encode-mode answer))
+	  (enum (cell-set-format* "cell-vmode" (encode-mode answer))
 		'("Auto" "Exact" "Minimal" "Maximal")
-		(decode-mode (cell-get "cell-vmode"))
+		(decode-mode (cell-get-format "cell-vmode"))
 		"7em")
 	  ///
-	  (input (cell-set "cell-height" answer) "string"
-		 (list (cell-get "cell-height")) "6em")
+	  (input (cell-set-format* "cell-height" answer) "string"
+		 (list (cell-get-format "cell-height")) "6em")
 	  /// //
 	  (text "Stretch:")
 	  //
-	  (input (cell-set "cell-vpart" answer) "string"
-		 (list (cell-get "cell-vpart")) "6em"))))
+	  (input (cell-set-format* "cell-vpart" answer) "string"
+		 (list (cell-get-format "cell-vpart")) "6em"))))
     === ===
     (horizontal
       (text "Text height correction:")
       ///
-      (enum (cell-set "cell-vcorrect" (encode-vcorrect answer))
+      (enum (cell-set-format* "cell-vcorrect" (encode-vcorrect answer))
 	    '("Off" "Bottom" "Top" "Both")
-	    (decode-vcorrect (cell-get "cell-vcorrect"))
+	    (decode-vcorrect (cell-get-format "cell-vcorrect"))
 	    "7em")
       >>> >>>
       ;;(text "Background color:")
@@ -232,17 +186,17 @@
   (refreshable "cell-properties"
     (aligned
       (item (text "Left:")
-	(input (cell-set "cell-lborder" answer) "string"
-	       (list (cell-get "cell-lborder") "0ln" "1ln") "6em"))
+	(input (cell-set-format* "cell-lborder" answer) "string"
+	       (list (cell-get-format "cell-lborder") "0ln" "1ln") "6em"))
       (item (text "Right:")
-	(input (cell-set "cell-rborder" answer) "string"
-	       (list (cell-get "cell-rborder") "0ln" "1ln") "6em"))
+	(input (cell-set-format* "cell-rborder" answer) "string"
+	       (list (cell-get-format "cell-rborder") "0ln" "1ln") "6em"))
       (item (text "Top:")
-	(input (cell-set "cell-tborder" answer) "string"
-	       (list (cell-get "cell-tborder") "0ln" "1ln") "6em"))
+	(input (cell-set-format* "cell-tborder" answer) "string"
+	       (list (cell-get-format "cell-tborder") "0ln" "1ln") "6em"))
       (item (text "Bottom:")
-	(input (cell-set "cell-bborder" answer) "string"
-	       (list (cell-get "cell-bborder") "0ln" "1ln") "6em")))))
+	(input (cell-set-format* "cell-bborder" answer) "string"
+	       (list (cell-get-format "cell-bborder") "0ln" "1ln") "6em")))))
 
 (tm-widget (cell-padding-widget)
   (horizontal
@@ -251,17 +205,17 @@
   (refreshable "cell-properties"
     (aligned
       (item (text "Left:")
-	(input (cell-set "cell-lsep" answer) "string"
-	       (list (cell-get "cell-lsep") "1spc") "6em"))
+	(input (cell-set-format* "cell-lsep" answer) "string"
+	       (list (cell-get-format "cell-lsep") "1spc") "6em"))
       (item (text "Right:")
-	(input (cell-set "cell-rsep" answer) "string"
-	       (list (cell-get "cell-rsep") "1spc") "6em"))
+	(input (cell-set-format* "cell-rsep" answer) "string"
+	       (list (cell-get-format "cell-rsep") "1spc") "6em"))
       (item (text "Top:")
-	(input (cell-set "cell-tsep" answer) "string"
-	       (list (cell-get "cell-tsep") "1sep") "6em"))
+	(input (cell-set-format* "cell-tsep" answer) "string"
+	       (list (cell-get-format "cell-tsep") "1sep") "6em"))
       (item (text "Bottom:")
-	(input (cell-set "cell-bsep" answer) "string"
-	       (list (cell-get "cell-bsep") "1sep") "6em")))))
+	(input (cell-set-format* "cell-bsep" answer) "string"
+	       (list (cell-get-format "cell-bsep") "1sep") "6em")))))
 
 (tm-widget (cell-alignment-widget)
   (horizontal
@@ -270,14 +224,14 @@
   (refreshable "cell-properties"
     (aligned
       (item (text "Horizontal:")
-        (enum (cell-set "cell-halign" (encode-halign answer))
+        (enum (cell-set-format* "cell-halign" (encode-halign answer))
               '("Left" "Center" "Right" "Decimal dot" "Decimal comma")
-              (decode-halign (cell-get "cell-halign"))
+              (decode-halign (cell-get-format "cell-halign"))
               "7em"))
       (item (text "Vertical:")
-        (enum (cell-set "cell-valign" (encode-valign answer))
+        (enum (cell-set-format* "cell-valign" (encode-valign answer))
               '("Top" "Center" "Bottom" "Baseline")
-              (decode-valign (cell-get "cell-halign"))
+              (decode-valign (cell-get-format "cell-halign"))
               "7em")))))
 
 (tm-widget (cell-large-widget)
@@ -287,14 +241,14 @@
   (refreshable "cell-properties"
     (aligned
       (item (text "Line wrapping:")
-        (enum (cell-set "cell-hyphen" (encode-hyphen answer))
+        (enum (cell-set-format* "cell-hyphen" (encode-hyphen answer))
               '("Off" "Top" "Center" "Bottom")
-              (decode-hyphen (cell-get "cell-hyphen"))
+              (decode-hyphen (cell-get-format "cell-hyphen"))
               "11em"))
       (item (text "Block content:")
-        (enum (cell-set "cell-block" (encode-block answer))
+        (enum (cell-set-format* "cell-block" (encode-block answer))
               '("Never" "When wrapping" "Always")
-              (decode-block (cell-get "cell-block"))
+              (decode-block (cell-get-format "cell-block"))
               "11em")))))
 
 (tm-widget (cell-properties-widget quit)
@@ -341,16 +295,16 @@
                 (number->string (table-nr-rows)) "3em")
           /// ///
           (text "Minimum:") ///
-	  (enum (table-set "table-min-rows" answer)
-                (list (table-get "table-min-rows")
+	  (enum (table-set-format* "table-min-rows" answer)
+                (list (table-get-format "table-min-rows")
                       "1" "2" "3" "4" "5" "6" "7" "8" "")
-		(table-get "table-min-rows") "3em")
+		(table-get-format "table-min-rows") "3em")
           /// ///
           (text "Maximum:") ///
-	  (enum (table-set "table-max-rows" answer)
-                (list (table-get "table-max-rows")
+	  (enum (table-set-format* "table-max-rows" answer)
+                (list (table-get-format "table-max-rows")
                       "1" "2" "3" "4" "5" "6" "7" "8" "")
-		(table-get "table-max-rows") "3em")))
+		(table-get-format "table-max-rows") "3em")))
       (item (text "Columns:")
 	(horizontal
 	  (enum (when answer
@@ -361,36 +315,36 @@
                 (number->string (table-nr-columns)) "3em")
           /// ///
           (text "Minimum:") ///
-	  (enum (table-set "table-min-cols" answer)
-                (list (table-get "table-min-cols")
+	  (enum (table-set-format* "table-min-cols" answer)
+                (list (table-get-format "table-min-cols")
                       "1" "2" "3" "4" "5" "6" "7" "8" "")
-		(table-get "table-min-cols") "3em")
+		(table-get-format "table-min-cols") "3em")
           /// ///
           (text "Maximum:") ///
-	  (enum (table-set "table-max-cols" answer)
-                (list (table-get "table-max-cols")
+	  (enum (table-set-format* "table-max-cols" answer)
+                (list (table-get-format "table-max-cols")
                       "1" "2" "3" "4" "5" "6" "7" "8" "")
-		(table-get "table-max-cols") "3em")))
+		(table-get-format "table-max-cols") "3em")))
       (item === ===)
       (item (text "Width:")
 	(horizontal
-	  (enum (table-set "table-hmode" (encode-mode answer))
+	  (enum (table-set-format* "table-hmode" (encode-mode answer))
 		'("Auto" "Exact" "Minimal" "Maximal")
-		(decode-mode (table-get "table-hmode"))
+		(decode-mode (table-get-format "table-hmode"))
 		"7em")
 	  ///
-	  (input (table-set "table-width" answer) "string"
-		 (list (table-get "table-width") "1par") "6em")
+	  (input (table-set-format* "table-width" answer) "string"
+		 (list (table-get-format "table-width") "1par") "6em")
           >>> >>>))
       (item (text "Height:")
 	(horizontal
-	  (enum (table-set "table-vmode" (encode-mode answer))
+	  (enum (table-set-format* "table-vmode" (encode-mode answer))
 		'("Auto" "Exact" "Minimal" "Maximal")
-		(decode-mode (table-get "table-vmode"))
+		(decode-mode (table-get-format "table-vmode"))
 		"7em")
 	  ///
-	  (input (table-set "table-height" answer) "string"
-		 (list (table-get "table-height")) "6em")
+	  (input (table-set-format* "table-height" answer) "string"
+		 (list (table-get-format "table-height")) "6em")
           >>> >>>)))))
 
 (tm-widget (table-border-widget)
@@ -400,17 +354,17 @@
   (refreshable "table-properties"
     (aligned
       (item (text "Left:")
-	(input (table-set "table-lborder" answer) "string"
-	       (list (table-get "table-lborder") "0ln" "1ln") "6em"))
+	(input (table-set-format* "table-lborder" answer) "string"
+	       (list (table-get-format "table-lborder") "0ln" "1ln") "6em"))
       (item (text "Right:")
-	(input (table-set "table-rborder" answer) "string"
-	       (list (table-get "table-rborder") "0ln" "1ln") "6em"))
+	(input (table-set-format* "table-rborder" answer) "string"
+	       (list (table-get-format "table-rborder") "0ln" "1ln") "6em"))
       (item (text "Top:")
-	(input (table-set "table-tborder" answer) "string"
-	       (list (table-get "table-tborder") "0ln" "1ln") "6em"))
+	(input (table-set-format* "table-tborder" answer) "string"
+	       (list (table-get-format "table-tborder") "0ln" "1ln") "6em"))
       (item (text "Bottom:")
-	(input (table-set "table-bborder" answer) "string"
-	       (list (table-get "table-bborder") "0ln" "1ln") "6em")))))
+	(input (table-set-format* "table-bborder" answer) "string"
+	       (list (table-get-format "table-bborder") "0ln" "1ln") "6em")))))
 
 (tm-widget (table-padding-widget)
   (horizontal
@@ -419,17 +373,17 @@
   (refreshable "table-properties"
     (aligned
       (item (text "Left:")
-	(input (table-set "table-lsep" answer) "string"
-	       (list (table-get "table-lsep") "0fn") "6em"))
+	(input (table-set-format* "table-lsep" answer) "string"
+	       (list (table-get-format "table-lsep") "0fn") "6em"))
       (item (text "Right:")
-	(input (table-set "table-rsep" answer) "string"
-	       (list (table-get "table-rsep") "0fn") "6em"))
+	(input (table-set-format* "table-rsep" answer) "string"
+	       (list (table-get-format "table-rsep") "0fn") "6em"))
       (item (text "Top:")
-	(input (table-set "table-tsep" answer) "string"
-	       (list (table-get "table-tsep") "0fn") "6em"))
+	(input (table-set-format* "table-tsep" answer) "string"
+	       (list (table-get-format "table-tsep") "0fn") "6em"))
       (item (text "Bottom:")
-	(input (table-set "table-bsep" answer) "string"
-	       (list (table-get "table-bsep") "0fn") "6em")))))
+	(input (table-set-format* "table-bsep" answer) "string"
+	       (list (table-get-format "table-bsep") "0fn") "6em")))))
 
 (tm-widget (table-alignment-widget)
   (horizontal
@@ -438,15 +392,15 @@
   (refreshable "table-properties"
     (aligned
       (item (text "Horizontal:")
-        (enum (table-set "table-halign" (encode-halign answer))
+        (enum (table-set-format* "table-halign" (encode-halign answer))
               '("Left" "Center" "Right")
-              (decode-halign (table-get "table-halign"))
+              (decode-halign (table-get-format "table-halign"))
               "10em"))
       (item (text "Vertical:")
-        (enum (table-set "table-valign" (encode-valign* answer))
+        (enum (table-set-format* "table-valign" (encode-valign* answer))
               '("Axis" "Top" "Center" "Bottom"
                 "Top baseline" "Center baseline" "Bottom baseline")
-              (decode-valign* (table-get "table-halign"))
+              (decode-valign* (table-get-format "table-halign"))
               "10em")))))
 
 (tm-widget (table-large-widget)
@@ -457,8 +411,8 @@
     (aligned
       (meti (horizontal // (text "Enable page breaking"))
         (toggle
-         (table-set "table-hyphen" (if answer "y" "n"))
-         (== (table-get "table-hyphen") "y"))))
+         (table-set-format* "table-hyphen" (if answer "y" "n"))
+         (== (table-get-format "table-hyphen") "y"))))
     (glue #f #t 0 0)))
 
 (tm-widget (table-properties-widget quit)

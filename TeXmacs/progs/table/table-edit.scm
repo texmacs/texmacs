@@ -29,6 +29,76 @@
   tabular tabular* block block*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Supplementary routines for cetting cell and table formats
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (keep-table-selection . body)
+  `(with (sr1 sr2 sc1 sc2) (table-which-cells)
+     (with ktres (begin ,@body)
+       (if (or (!= sr2 sr1) (!= sc2 sc1))
+           ;; FIXME: find a robust way to keep the selection
+           (delayed
+             (:pause 10)
+             (table-select-cells sr1 sr2 sc1 sc2)))
+       ktres)))       
+
+(tm-define (cell-set-format* var val)
+  (when val
+    (keep-table-selection
+      (cell-set-format var val)
+      (cond ((and (== var "cell-hmode") (== val "auto"))
+             (cell-set-format "cell-width" ""))
+            ((and (== var "cell-width") (!= val "")
+                  (== (cell-get-format "cell-hmode") "auto"))
+             (cell-set-format "cell-hmode" "exact"))
+            ((and (== var "cell-vmode") (== val "auto"))
+             (cell-set-format "cell-height" ""))
+            ((and (== var "cell-height") (!= val "")
+                  (== (cell-get-format "cell-vmode") "auto"))
+             (cell-set-format "cell-vmode" "exact")))
+      ;;(refresh-now "cell-properties")
+      )))
+
+(tm-define (cell-set-format-list vars vals)
+  (if (selection-active-any?)
+      (let ((sp (position-new))
+            (ep (position-new)))
+        (position-set sp (selection-get-start))
+        (position-set ep (selection-get-end))
+        (map (lambda (var val)
+               (selection-set (position-get sp) (position-get ep))
+               (cell-set-format var val))
+             vars vals)
+        (position-delete sp)
+        (position-delete ep))
+      (map cell-set-format vars vals)))
+
+(tm-define (cell-set-format-list* vars vals)
+  (keep-table-selection
+    (cell-set-format-list vars vals)
+    ;;(refresh-now "cell-properties")
+    ))
+    
+(tm-define (table-set-format* var val)
+  (when val
+    (table-set-format var val)
+    (cond ((and (== var "table-hmode") (== val "auto"))
+	   (table-set-format "table-width" ""))
+	  ((and (== var "table-width") (!= val "")
+		(== (table-get-format "table-hmode") "auto"))
+	   (table-set-format "table-hmode" "exact"))
+	  ((and (== var "table-vmode") (== val "auto"))
+	   (table-set-format "table-height" ""))
+	  ((and (== var "table-height") (!= val "")
+		(== (table-get-format "table-vmode") "auto"))
+	   (table-set-format "table-vmode" "exact")))
+    ;;(refresh-now "table-properties")
+    ))
+
+(tm-define (table-set-format-list vars vals)
+  (map table-set-format vars vals))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting rows and columns
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -145,11 +215,8 @@
 
 (tm-define (table-interactive-set var)
   (:interactive #t)
-  (interactive (lambda (s) (table-set-format var s))
+  (interactive (lambda (s) (table-set-format* var s))
     (logic-ref env-var-description% var)))
-
-(define (table-set-format-list vars vals)
-  (map table-set-format vars vals))
 
 (tm-define (table-set-rows nr)
   (:synopsis "Set the number of rows of the table to @nr.")
@@ -268,50 +335,48 @@
 
 (tm-define (table-set-padding padding)
   (:argument padding "Padding")
-  (table-set-format "table-lsep" padding)
-  (table-set-format "table-rsep" padding)
-  (table-set-format "table-bsep" padding)
-  (table-set-format "table-tsep" padding))
+  (table-set-format-list
+   (list "table-lsep" "table-rsep" "table-bsep" "table-tsep")
+   (list padding padding padding padding)))
 
 (tm-define (table-set-border border)
   (:argument border "Border width")
-  (table-set-format "table-lborder" border)
-  (table-set-format "table-rborder" border)
-  (table-set-format "table-bborder" border)
-  (table-set-format "table-tborder" border))
+  (table-set-format-list
+   (list "table-lborder" "table-rborder" "table-bborder" "table-tborder")
+   (list border border border border)))
 
 (define (table-get-halign) (table-get-format "table-halign"))
 (define (table-test-halign? s) (== (table-get-halign) s))
 (tm-define (table-set-halign s)
   (:synopsis "Set horizontal table alignment.")
   (:check-mark "*" table-test-halign?)
-  (table-set-format "table-halign" s))
+  (table-set-format* "table-halign" s))
 
 (define (table-test-specific-halign? . l) (== (table-get-halign) "O"))
 (tm-define (table-specific-halign col)
   (:synopsis "Align horizontally at the baseline of a specific column.")
   (:check-mark "*" table-test-specific-halign?)
   (:argument col "Align at column")
-  (table-set-format "table-col-origin" col)
-  (table-set-format "table-halign" "O"))
+  (table-set-format-list (list "table-col-origin" "table-halign")
+                         (list col "O")))
 
 (define (table-get-valign) (table-get-format "table-valign"))
 (define (table-test-valign? s) (== (table-get-valign) s))
 (tm-define (table-set-valign s)
   (:synopsis "Set vertical table alignment.")
   (:check-mark "*" table-test-valign?)
-  (table-set-format "table-valign" s))
+  (table-set-format* "table-valign" s))
 
 (define (table-test-specific-valign? . l) (== (table-get-valign) "O"))
 (tm-define (table-specific-valign row)
   (:synopsis "Align vertically at the baseline of a specific row.")
   (:check-mark "*" table-test-specific-valign?)
   (:argument row "Align at row")
-  (table-set-format "table-row-origin" row)
-  (table-set-format "table-valign" "O"))
+  (table-set-format-list (list "table-row-origin" "table-valign")
+                         (list row "O")))
 
 (define (table-hyphen?) (== "y" (table-get-format "table-hyphen")))
-(define (table-set-hyphen s) (table-set-format "table-hyphen" s))
+(define (table-set-hyphen s) (table-set-format* "table-hyphen" s))
 (tm-define (toggle-table-hyphen)
   (:synopsis "Toggle table hyphenation.")
   (:check-mark "v" table-hyphen?)
@@ -327,22 +392,8 @@
 
 (tm-define (cell-interactive-set var)
   (:interactive #t)
-  (interactive (lambda (s) (cell-set-format var s))
+  (interactive (lambda (s) (cell-set-format* var s))
     (logic-ref env-var-description% var)))
-
-(define (cell-set-format-list vars vals)
-  (if (selection-active-any?)
-      (let ((sp (position-new))
-            (ep (position-new)))
-        (position-set sp (selection-get-start))
-        (position-set ep (selection-get-end))
-        (map (lambda (var val)
-               (selection-set (position-get sp) (position-get ep))
-               (cell-set-format var val))
-             vars vals)
-        (position-delete sp)
-        (position-delete ep))
-      (map cell-set-format vars vals)))
 
 (tm-define (table-insert-blank-row h)
   (:synopsis "Insert a blank row below cursor.")
@@ -522,14 +573,14 @@
 (tm-define (cell-set-halign s)
   (:synopsis "Set horizontal cell alignment.")
   (:check-mark "o" cell-test-halign?)
-  (cell-set-format "cell-halign" s))
+  (cell-set-format* "cell-halign" s))
 
 (define (cell-get-valign) (cell-get-format "cell-valign"))
 (define (cell-test-valign? s) (== (cell-get-valign) s))
 (tm-define (cell-set-valign s)
   (:synopsis "Set vertical cell alignment.")
   (:check-mark "o" cell-test-valign?)
-  (cell-set-format "cell-valign" s))
+  (cell-set-format* "cell-valign" s))
 
 (define (cell-get-background) (cell-get-format "cell-background"))
 (define (cell-test-background? s) (== (cell-get-background) s))
@@ -537,66 +588,66 @@
   (:synopsis "Set background color of cell.")
   (:argument s "Cell color")
   (:check-mark "o" cell-test-background?)
-  (cell-set-format "cell-background" s))
+  (cell-set-format* "cell-background" s))
 
 (define (cell-get-vcorrect) (cell-get-format "cell-vcorrect"))
 (define (cell-test-vcorrect? s) (== (cell-get-vcorrect) s))
 (tm-define (cell-set-vcorrect s)
   (:synopsis "Set vertical correction mode for cell.")
   (:check-mark "o" cell-test-vcorrect?)
-  (cell-set-format "cell-vcorrect" s))
+  (cell-set-format* "cell-vcorrect" s))
 
 (define (cell-get-hyphen) (cell-get-format "cell-hyphen"))
 (define (cell-test-hyphen? s) (== (cell-get-hyphen) s))
 (tm-define (cell-set-hyphen s)
   (:synopsis "Set cell wrapping mode.")
   (:check-mark "o" cell-test-hyphen?)
-  (cell-set-format "cell-hyphen" s))
+  (cell-set-format* "cell-hyphen" s))
 
 (tm-define (cell-test-wrap?) (!= (cell-get-hyphen) "n"))
 (tm-define (cell-toggle-wrap)
   (:synopsis "Toggle cell wrapping mode.")
   (:check-mark "o" cell-test-wrap?)
   (if (cell-test-wrap?)
-      (cell-set-format "cell-hyphen" "n")
-      (cell-set-format "cell-hyphen" "t")))
+      (cell-set-format* "cell-hyphen" "n")
+      (cell-set-format* "cell-hyphen" "t")))
 
 (define (cell-get-block) (cell-get-format "cell-block"))
 (define (cell-test-block? s) (== (cell-get-block) s))
 (tm-define (cell-set-block s)
   (:synopsis "Does the cell contain block content?")
   (:check-mark "o" cell-test-block?)
-  (cell-set-format "cell-block" s))
+  (cell-set-format* "cell-block" s))
 
 (tm-define (cell-halign-left)
   (let* ((var "cell-halign")
 	 (old (cell-get-format var)))
     (cond
-     ((== old "r") (cell-set-format var "c"))
-     (else (cell-set-format var "l")))))
+     ((== old "r") (cell-set-format* var "c"))
+     (else (cell-set-format* var "l")))))
 
 (tm-define (cell-halign-right)
   (let* ((var "cell-halign")
 	 (old (cell-get-format var)))
     (cond
-     ((== old "l") (cell-set-format var "c"))
-     (else (cell-set-format var "r")))))
+     ((== old "l") (cell-set-format* var "c"))
+     (else (cell-set-format* var "r")))))
 
 (tm-define (cell-valign-down)
   (let* ((var "cell-valign")
 	 (old (cell-get-format var)))
     (cond
-     ((== old "c") (cell-set-format var "B"))
-     ((== old "t") (cell-set-format var "c"))
-     (else (cell-set-format var "b")))))
+     ((== old "c") (cell-set-format* var "B"))
+     ((== old "t") (cell-set-format* var "c"))
+     (else (cell-set-format* var "b")))))
 
 (tm-define (cell-valign-up)
   (let* ((var "cell-valign")
 	 (old (cell-get-format var)))
     (cond
-     ((== old "b") (cell-set-format var "B"))
-     ((== old "B") (cell-set-format var "c"))
-     (else (cell-set-format var "t")))))
+     ((== old "b") (cell-set-format* var "B"))
+     ((== old "B") (cell-set-format* var "c"))
+     (else (cell-set-format* var "t")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set cell borders
@@ -619,44 +670,45 @@
   (:argument b "Inner bottom border width")
   (:argument l "Inner left border width")
   (:argument r "Inner right border width")
-  (when (nnull? (table-get-extents))
-    (with (rows cols) (table-get-extents)
-      (with (r1 r2 c1 c2) (table-which-cells)
-        (let* ((vars (list "cell-tborder" "cell-bborder"
-                           "cell-lborder" "cell-rborder"))
-               (vals (list t b l r))
-               (and* (lambda (a b) (and b a)))
-               (vars* (list-filter (map and* vars vals) identity))
-               (vals* (list-filter vals identity)))
-          (cell-set-format-list vars* vals*))
-        (when T
-          (when (!= T t)
-            (table-select-cells r1 r1 c1 c2)
-            (cell-set-format "cell-tborder" T))
-          (when (> r1 1)
-            (table-select-cells (- r1 1) (- r1 1) c1 c2)
-            (cell-set-format "cell-bborder" T)))
-        (when B
-          (when (!= B b)
-            (table-select-cells r2 r2 c1 c2)
-            (cell-set-format "cell-bborder" B))
-          (when (< r2 rows)
-            (table-select-cells (+ r2 1) (+ r2 1) c1 c2)
-            (cell-set-format "cell-tborder" B)))
-        (when L
-          (when (!= L l)
-            (table-select-cells r1 r2 c1 c1)
-            (cell-set-format "cell-lborder" L))
-          (when (> c1 1)
-            (table-select-cells r1 r2 (- c1 1) (- c1 1))
-            (cell-set-format "cell-rborder" L)))
-        (when R
-          (when (!= R r)
-            (table-select-cells r1 r2 c2 c2)
-            (cell-set-format "cell-rborder" R))
-          (when (< c2 cols)
-            (table-select-cells r1 r2 (+ c2 1) (+ c2 1))
-            (cell-set-format "cell-lborder" R)))))))
+  (keep-table-selection
+    (when (nnull? (table-get-extents))
+      (with (rows cols) (table-get-extents)
+        (with (r1 r2 c1 c2) (table-which-cells)
+          (let* ((vars (list "cell-tborder" "cell-bborder"
+                            "cell-lborder" "cell-rborder"))
+                 (vals (list t b l r))
+                 (and* (lambda (a b) (and b a)))
+                 (vars* (list-filter (map and* vars vals) identity))
+                 (vals* (list-filter vals identity)))
+            (cell-set-format-list vars* vals*))
+          (when T
+            (when (!= T t)
+              (table-select-cells r1 r1 c1 c2)
+              (cell-set-format "cell-tborder" T))
+            (when (> r1 1)
+              (table-select-cells (- r1 1) (- r1 1) c1 c2)
+              (cell-set-format "cell-bborder" T)))
+          (when B
+            (when (!= B b)
+              (table-select-cells r2 r2 c1 c2)
+              (cell-set-format "cell-bborder" B))
+            (when (< r2 rows)
+              (table-select-cells (+ r2 1) (+ r2 1) c1 c2)
+              (cell-set-format "cell-tborder" B)))
+          (when L
+            (when (!= L l)
+              (table-select-cells r1 r2 c1 c1)
+              (cell-set-format "cell-lborder" L))
+            (when (> c1 1)
+              (table-select-cells r1 r2 (- c1 1) (- c1 1))
+              (cell-set-format "cell-rborder" L)))
+          (when R
+            (when (!= R r)
+              (table-select-cells r1 r2 c2 c2)
+              (cell-set-format "cell-rborder" R))
+            (when (< c2 cols)
+              (table-select-cells r1 r2 (+ c2 1) (+ c2 1))
+              (cell-set-format "cell-lborder" R))))))))
 
 (tm-define (cell-set-border b)
   (:argument b "Border width")
