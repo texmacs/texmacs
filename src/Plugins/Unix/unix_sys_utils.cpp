@@ -13,11 +13,14 @@
 #include "file.hpp"
 #include "timer.hpp"
 #include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <spawn.h>
+#include <unistd.h>
 #include <sys/wait.h>
 
+// for thread safe strings
+#include <string>
+ 
 int
 unix_system (string s) {
   c_string _s (s * " > /dev/null 2>&1");
@@ -46,15 +49,79 @@ extern char **environ;
 struct _pipe_t {
   int rep[2];
   int st;
-  inline _pipe_t () { st= pipe (rep);
-    fcntl(rep[0], F_SETFL, fcntl(rep[0], F_GETFL) | O_NONBLOCK);
-    fcntl(rep[1], F_SETFL, fcntl(rep[1], F_GETFL) | O_NONBLOCK); }
+  inline _pipe_t () {
+    st= pipe (rep);
+    int fl= fcntl (rep[0], F_GETFL);
+    fl = fl & (~(int) O_NONBLOCK);
+    fcntl (rep[0], F_SETFL, fl);
+    fl= fcntl (rep[1], F_GETFL);
+    fl= fl & (~(int) O_NONBLOCK);
+    fcntl (rep[1], F_SETFL, fl); }
   inline ~_pipe_t () { close (rep[0]); close (rep[1]); }
   inline int in () const { return rep[0]; }
   inline int out () const { return rep[1]; }
   inline int status () const { return st; }
 };
 
+// asynchronous channel between spawn process
+struct _channel {
+  int fd;
+  std::string data;
+  int buffer_size;
+  array<char> buffer;
+  int status;
+  _channel () : status (0) {}
+  void _init_in (int fd2, string data2, int chunk_size) {
+    fd= fd2;
+    c_string tmp (data2); data= std::string (tmp);
+    buffer_size= chunk_size; }
+  void _init_out (int fd2, int buffer_size2) {
+    fd= fd2;
+    buffer_size= buffer_size2;
+    buffer= array<char> (buffer_size2); }
+};
+
+// data read from spawn process
+static void*
+_background_read_task (void* channel_as_void_ptr) {
+  _channel* c= (_channel*) channel_as_void_ptr;
+  int fd= c->fd;
+  std::string& s= c->data;
+  int n= c->buffer_size;
+  char* b= A (c->buffer);
+  int m;
+  do {
+    m= read (fd, b, n);
+    // cout << "read " << m << " bytes from " << fd << "\n";
+    if (m > 0) s += std::basic_string<char> (b, m);
+    if (m == 0) { if (close (fd) != 0) c->status= -1; }
+  } while (m > 0);
+  return (void*) NULL;
+}
+
+// data written to spawn process
+static void*
+_background_write_task (void* channel_as_void_ptr) {
+  _channel* c= (_channel*) channel_as_void_ptr;
+  int fd= c->fd;
+  const char* d= c->data.data ();
+  int n= c->buffer_size;
+  int t= (c->data).size(), k= 0, o= 0;
+  if (t == 0) return (void*) NULL;
+  if (n == 0) { c->status= -1; return (void*) NULL; }
+  do {
+    int m= min (n, t - k);
+    // cout << "writting " << m << " bytes / " << t-k << "\n";
+    o= write (fd, (void*) (d + k), m);
+    // cout << "written " << o << " bytes to " << fd << "\n";
+    if (o > 0) k += o;
+    if (o < 0) { close (fd); c->status= -1; }
+    if (k == t) { if (close (fd) != 0) c->status= -1; }
+  } while (o > 0 && k < t);
+  return (void*) NULL;
+}
+
+// exception safe file actions
 struct _file_actions_t {
   posix_spawn_file_actions_t rep;
   int st;
@@ -65,6 +132,7 @@ struct _file_actions_t {
   inline int status () const { return st; }
 };
 
+// Texmacs warning for long spawn commands
 static void
 _unix_system_warn (pid_t pid, string which, string msg) {
   (void) which;
@@ -128,58 +196,59 @@ unix_system (array<string> arg,
     debug_io << "unix_system, succeeded to create pid "
 	     << pid << "\n";
 
-  // send/receive data to/from spawn process
-  array<int> pos_in (n_in);
-  for (int i= 0; i < n_in; i++) pos_in[i]= 0;
-  const int chunk_size= 256; // FIXME?
-  array<char> buffer (chunk_size);
+  // close useless ports
   for (int i= 0; i < n_in ; i++) close (pp_in[i].in ());
   for (int i= 0; i < n_out; i++) close (pp_out[i].out ());
-  bool busy= true;
-  int transferred= 0;
-  time_t last_transfer_time= texmacs_time ();
-  for (int i= 0; i < n_in; i++)
-    if (N(str_in[i]) == 0)
-      if (close (pp_in[i].out ()) != 0) return -1;
-  while (busy) {
-    if (texmacs_time () - last_transfer_time > 100) usleep (100);
-    if (texmacs_time () - last_transfer_time > 5000) { // FIXME?
-      last_transfer_time= texmacs_time ();
-      _unix_system_warn (pid, which, "silent spawn process");
-    }
-    busy= false; transferred= 0;
-    for (int i= 0; i < n_in; i++) {
-      if (N(str_in[i]) > pos_in[i]) {
-        int m= min (chunk_size, N(str_in[i]) - pos_in[i]);
-        int o= write (pp_in[i].out (), &(str_in[i][pos_in[i]]), m);
-        if (o >= 0) { pos_in[i] += o; transferred += o; }
-	busy= true;
-        if (N(str_in[i]) == pos_in[i]) {
-          if (close (pp_in[i].out ()) != 0) return -1; } } }
-    for (int i= 0; i < n_out; i++) {
-      if (fcntl (pp_out[i].in (), F_GETFL) != -1) {
-	busy= true;
-        int m= read (pp_out[i].in (), A (buffer), chunk_size);
-	if (m > 0) transferred += m;
-        if (m == 0) {
-          if (close (pp_out[i].in ()) != 0) return -1; }
-        if (m > 0) {
-          (*(str_out[i])) << string ((const char*) A (buffer), m); } } }
-    if (transferred > 0) last_transfer_time= texmacs_time ();
+
+  // write to spawn process
+  array<_channel> channels_in (n_in);
+  array<pthread_t> threads_write (n_in);
+  for (int i= 0; i < n_in; i++) {
+    channels_in[i]._init_in (pp_in[i].out (), str_in[i], 1 << 12);
+    if (pthread_create (&threads_write[i], NULL /* &attr */,
+			_background_write_task,
+			(void *) &(channels_in[i])))
+      return -1;
   }
-  // wait for process
+
+  // read from spawn process
+  array<_channel> channels_out (n_out);
+  array<pthread_t> threads_read (n_out);
+  for (int i= 0; i < n_out; i++) {
+    channels_out[i]._init_out (pp_out[i].in (), 1 << 12); 
+    if (pthread_create (&threads_read[i], NULL /* &attr */,
+			_background_read_task,
+			(void *) &(channels_out[i])))
+      return -1;
+  }
+
   int wret;
   time_t last_wait_time= texmacs_time ();
   while ((wret= waitpid (pid, &status, WNOHANG)) == 0) {
     usleep (100);
-    if (texmacs_time () - last_wait_time > 5000) { // FIXME?
+    if (texmacs_time () - last_wait_time > 5000) {
       last_wait_time= texmacs_time ();
       _unix_system_warn (pid, which, "waiting spawn process");
     }
   }
   if (DEBUG_IO)
-    debug_io << "unix_system, pid " << pid
-	     << " terminated" << "\n"; 
+    debug_io << "unix_system, pid " << pid << " terminated" << "\n"; 
+
+  // wait for terminating threads
+  void* exit_status;
+  int thread_status= 0;
+  for (int i= 0; i < n_in; i++) {
+    pthread_join (threads_write[i], &exit_status);
+    if (channels_in[i].status < 0) thread_status= -1;
+  }
+  for (int i= 0; i < n_out; i++) {
+    pthread_join (threads_read[i], &exit_status);
+    *(str_out[i])= string (channels_out[i].data.data (),
+                           channels_out[i].data.length ());
+    if (channels_out[i].status < 0) thread_status= -1;
+  }
+
+  if (thread_status < 0) return thread_status;
   if (wret < 0 || WIFEXITED(status) == 0) return -1;
   return WEXITSTATUS(status);
 }
