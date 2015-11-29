@@ -33,11 +33,11 @@
       ---)
   (if (not (in-math?))
       ("Wide tabular" (make 'wide-tabular)))
-  ("Regular tabular" (make 'tabular))
+  ("Plain tabular" (make 'tabular))
   ("Centered tabular" (make 'tabular*))
   (if (not (in-math?))
       ("Wide block" (make 'wide-block)))
-  ("Regular block" (make 'block))
+  ("Plain block" (make 'block))
   ("Centered block" (make 'block*))
   (if (and (style-has? "std-dtd") (in-math?))
       ---
