@@ -809,9 +809,14 @@ edit_table_rep::table_write_subtable (
   path fp, int row, int col, tree subt)
 {
   int nr_rows, nr_cols, sub_rows, sub_cols;
+  int min_rows, min_cols, max_rows, max_cols;
   table_get_extents (fp, nr_rows, nr_cols);
   ::table_get_extents (subt, sub_rows, sub_cols);
-  if ((nr_rows < row+sub_rows) || (nr_cols < col+sub_cols)) return;
+  table_get_limits (fp, min_rows, min_cols, max_rows, max_cols);
+  if ((max_rows < row + sub_rows) || (max_cols < col + sub_cols)) return;
+  if ((nr_rows < row + sub_rows) || (nr_cols < col + sub_cols))
+    table_set_extents (fp, max (nr_rows, row + sub_rows),
+                           max (nr_cols, col + sub_cols));
 
   path old_tp= tp;
   tp= fp * 0;
