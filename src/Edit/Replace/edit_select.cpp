@@ -791,11 +791,12 @@ edit_select_rep::raw_cut (path p1, path p2) {
   if (is_func (t, TFORMAT) || is_func (t, TABLE) || is_func (t, ROW)) {
     path fp= ::table_search_format (et, p);
     tree st= subtree (et, fp);
-    int row1, col1, row2, col2;
+    int row1, col1, row2, col2, nr_rows, nr_cols;
     table_search_coordinates (st, tail (p1, N(fp)), row1, col1);
     table_search_coordinates (st, tail (p2, N(fp)), row2, col2);
     if (row1>row2) { int tmp= row1; row1= row2; row2= tmp; }
     if (col1>col2) { int tmp= col1; col1= col2; col2= tmp; }
+    table_get_extents (fp, nr_rows, nr_cols);
 
     int i, j;
     for (i=row1; i<=row2; i++)
@@ -811,6 +812,10 @@ edit_select_rep::raw_cut (path p1, path p2) {
       table_del_format (fp, row1+1, col1+1, row2+1, col2+1, "");
 
     if (fp == search_format ()) {
+      if (col1 == 0 && col2 == nr_cols-1 && row2 > row1)
+        table_remove (fp, row1 + 1, col1, row2 - row1, 0);      
+      else if (row1 == 0 && row2 == nr_rows-1 && col2 > col1)
+        table_remove (fp, row1, col1 + 1, 0, col2 - col1);      
       table_correct_block_content ();
       table_resize_notify ();
     }
