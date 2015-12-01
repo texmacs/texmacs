@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.3>
 
 <style|<tuple|source|std|english>>
 
@@ -74,7 +74,7 @@
     </src-comment>
   </active*>
 
-  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/20x20/mode|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>||2ex||-0.333ex>>>
+  <assign|icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/modern/32x32/table|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/20x20/mode|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|$TEXMACS_DOC_PATH/images/pixmaps|$TEXMACS_HOME_PATH/doc/images/pixmaps|$TEXMACS_PATH/doc/images/pixmaps|http://www.gnu.org/software/texmacs-doc/images/pixmaps|<arg|name>>||2ex||-0.333ex>>>
 
   <assign|screenshot|<macro|name|<image|<find-file|$TEXMACS_DOC_PATH/images/screenshots|$TEXMACS_HOME_PATH/doc/images/screenshots|$TEXMACS_PATH/doc/images/screenshots|http://www.gnu.org/software/texmacs-doc/images/screenshots|<arg|name>>|0.5w|0.5h||>>>
 
