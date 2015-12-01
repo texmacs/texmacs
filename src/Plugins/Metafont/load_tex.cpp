@@ -30,8 +30,8 @@
  */
 static int
 mag (double dpi, double size, double dsize) {
-  if ((size>=100) && (dsize<100)) dsize *= 100;
-  if ((dsize>=100) && (size<100))  size *= 100;
+  if ((size>=316) && (dsize<100)) dsize *= 100;
+  if ((dsize>=316) && (size<100))  size *= 100;
   return (int) (((size * dpi) / dsize) + 0.5);
 }
 
