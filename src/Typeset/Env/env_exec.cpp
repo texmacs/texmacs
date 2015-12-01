@@ -1436,12 +1436,18 @@ edit_env_rep::exec_find_file (tree t) {
   for (i=0; i<(n-1); i++) {
     url u= resolve (url (r[i]->label, r[n-1]->label));
     if (!is_none (u)) {
+      url d= delta (base_file_name, u);
+      if (!is_rooted (d) && !(is_concat (d) && is_parent (d[1])))
+        return as_string (d);
       if (is_rooted (u, "default")) u= reroot (u, "file");
       return as_string (u);
     }
   }
   url u= resolve (base_file_name * url_parent () * r[n-1]->label);
   if (!is_none (u)) {
+    url d= delta (base_file_name, u);
+    if (!is_rooted (d) && !(is_concat (d) && is_parent (d[1])))
+      return as_string (d);
     if (is_rooted (u, "default")) u= reroot (u, "file");
     return as_string (u);
   }
@@ -1461,6 +1467,9 @@ edit_env_rep::exec_find_file_upwards (tree t) {
   }
   url u= search_file_upwards (base_file_name, name->label, roots);
   if (!is_none (u)) {
+    url d= delta (base_file_name, u);
+    if (!is_rooted (d))
+      return as_string (d);
     //if (is_rooted (u, "default")) u= reroot (u, "file");
     return as_string (u);
   }
