@@ -156,7 +156,8 @@ const char* default_look_and_feel ();
 template<typename T>
 struct type_helper {
   static int id;
-  static T   init;
+  static T init;
+  static inline T init_val () { return T (); }
 };
 
 int new_type_identifier ();
