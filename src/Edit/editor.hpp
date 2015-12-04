@@ -396,6 +396,7 @@ public:
   virtual path   table_search_cell (int row, int col) = 0;
   virtual void   table_go_to (int row, int col) = 0;
   virtual void   table_set_format (string var, tree val) = 0;
+  virtual tree   table_get_format () = 0;
   virtual string table_get_format (string var) = 0;
   virtual void   table_del_format (string var= "") = 0;
   virtual void   table_format_center () = 0;

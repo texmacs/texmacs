@@ -142,6 +142,7 @@
   (table-cell-path table_search_cell (path int int))
   (table-go-to table_go_to (void int int))
   (table-set-format table_set_format (void string content))
+  (table-get-format-all table_get_format (tree))
   (table-get-format table_get_format (string string))
   (table-del-format table_del_format (void string))
   (table-row-decoration table_row_decoration (void bool))

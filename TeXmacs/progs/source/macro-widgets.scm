@@ -80,23 +80,26 @@
   (and-with t (macro-retrieve u)
     (macro-apply* u t)))
 
+(define (build-macro-document* l def)
+  (when (and (tm-func? def 'assign 2)
+	     (tm-equal? (tm-ref def 1) '(uninit)))
+    (set! def `(assign ,(tm-ref def 0) (macro ""))))
+  (let* ((mac (if (tm-func? (tm-ref def 1) 'macro)
+		  `(edit-macro ,l ,@(tm-children (tm-ref def 1)))
+		  `(edit-tag ,l ,(tm-ref def 1))))
+	 (pre (buffer-get-preamble (buffer-tree)))
+	 (doc `(document (hide-preamble ,pre) ,mac)))
+    doc))
+
 (define (build-macro-document l)
   (and-with def (get-definition l)
-    (when (and (tm-func? def 'assign 2)
-               (tm-equal? (tm-ref def 1) '(uninit)))
-      (set! def `(assign ,(tm-ref def 0) (macro ""))))
-    (let* ((mac (if (tm-func? (tm-ref def 1) 'macro)
-                    `(edit-macro ,l ,@(tm-children (tm-ref def 1)))
-                    `(edit-tag ,l ,(tm-ref def 1))))
-           (pre (buffer-get-preamble (buffer-tree)))
-           (doc `(document (hide-preamble ,pre) ,mac)))
-      doc)))
+    (build-macro-document* l def)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing a single macro
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget ((macro-editor u packs doc) quit)
+(tm-widget ((macro-editor u packs doc mode) quit)
   (padded
     (resize "600px" "300px"
       (texmacs-input doc `(style (tuple ,@packs)) u))
@@ -104,7 +107,7 @@
     (hlist
       (enum (set-macro-mode u answer)
             '("Text" "Source")
-            "Text" "6em")
+            mode "6em")
       >>
       (explicit-buttons
         ("Apply" (macro-apply u))
@@ -123,10 +126,28 @@
          (packs (get-style-list))
          (styps (list-remove-duplicates (append packs (list "macro-editor")))))
     (and-with doc (build-macro-document l)
-      (dialogue-window (macro-editor u styps doc)
+      (dialogue-window (macro-editor u styps doc "Text")
                        (lambda x (noop))
                        "Macro editor")
       (buffer-set-master u b))))
+
+(tm-define (create-table-macro l)
+  (:interactive #t)
+  (when (inside? 'table)
+    (if (symbol? l) (set! l (symbol->string l)))
+    (let* ((b (current-buffer-url))
+	   (u (string-append "tmfs://aux/edit-" l))
+	   (packs (get-style-list))
+	   (styps (list-remove-duplicates
+		   (append packs (list "macro-editor"))))
+	   (fm (table-get-format-all))
+	   (tf `(tformat ,@(tree-children fm) (arg "body")))
+	   (def `(assign ,l (inactive* (macro "body" ,tf)))))
+      (and-with doc (build-macro-document* l def)
+	(dialogue-window (macro-editor u styps doc "Source")
+			 (lambda x (noop))
+			 "Macro editor")
+	(buffer-set-master u b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing a macro chosen from the list of all defined macros

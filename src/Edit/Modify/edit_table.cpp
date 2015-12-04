@@ -1335,6 +1335,13 @@ edit_table_rep::table_set_format (string var, tree val) {
   }
 }
 
+tree
+edit_table_rep::table_get_format () {
+  path fp= search_format ();
+  if (is_nil (fp)) return "";
+  return table_get_format (fp);
+}
+
 string
 edit_table_rep::table_get_format (string var) {
   path fp= search_format ();

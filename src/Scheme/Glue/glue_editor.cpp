@@ -1319,6 +1319,15 @@ tmg_table_set_format (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_table_get_format_all () {
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->table_get_format ();
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_table_get_format (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "table-get-format");
 
@@ -3212,6 +3221,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("table-cell-path",  tmg_table_cell_path, 2, 0, 0);
   tmscm_install_procedure ("table-go-to",  tmg_table_go_to, 2, 0, 0);
   tmscm_install_procedure ("table-set-format",  tmg_table_set_format, 2, 0, 0);
+  tmscm_install_procedure ("table-get-format-all",  tmg_table_get_format_all, 0, 0, 0);
   tmscm_install_procedure ("table-get-format",  tmg_table_get_format, 1, 0, 0);
   tmscm_install_procedure ("table-del-format",  tmg_table_del_format, 1, 0, 0);
   tmscm_install_procedure ("table-row-decoration",  tmg_table_row_decoration, 1, 0, 0);
