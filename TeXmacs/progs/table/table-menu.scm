@@ -110,8 +110,7 @@
 (menu-bind table-special-menu
   ("Table breaking" (toggle-table-hyphen))
   ;;("Deactivate" (table-deactivate))
-  (if (in-source?)
-      ("Extract format" (table-extract-format))))
+  ("Create table macro" (create-table-macro "")))
 
 (menu-bind cell-mode-menu
   ("Cells" (set-cell-mode "cell"))
