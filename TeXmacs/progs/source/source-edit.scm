@@ -145,7 +145,8 @@
 	     (tree-in? body 0 '(show-preamble hide-preamble))
 	     (tree-is? body 0 0 'document))
 	(cons (source-comment "Macro definitions.")
-	      (tree-children (tree-ref body 0 0))))))
+	      (tree-children (tree-ref body 0 0)))
+	(list))))
 
 (tm-define (extract-style-file style?)
   (let* ((tit (extract-source-title style?))
