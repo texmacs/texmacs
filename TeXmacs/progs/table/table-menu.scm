@@ -53,10 +53,10 @@
 (menu-bind table-size-menu
   ("Set number of rows" (interactive table-set-rows))
   ("Minimal number of rows" (table-interactive-set "table-min-rows"))
-  ("Minimal number of columns" (table-interactive-set "table-min-cols"))
+  ("Maximal number of rows" (table-interactive-set "table-max-rows"))
   ---
   ("Set number of columns" (interactive table-set-columns))
-  ("Maximal number of rows" (table-interactive-set "table-max-rows"))
+  ("Minimal number of columns" (table-interactive-set "table-min-cols"))
   ("Maximal number of columns" (table-interactive-set "table-max-cols")))
 
 (menu-bind table-width-menu
@@ -165,6 +165,10 @@
       ("Bottom" (cell-set-vcorrect "b"))
       ("Top" (cell-set-vcorrect "t"))
       ("Both" (cell-set-vcorrect "a"))))
+
+(menu-bind cell-span-menu
+  ("Horizontal" (interactive cell-set-column-span))
+  ("Vertical" (interactive cell-set-row-span)))
 
 (menu-bind cell-border-icons-menu
   ((icon "tm_border_none.xpm")
@@ -298,6 +302,8 @@
   ;;---
   (-> "Width" (link cell-width-menu))
   (-> "Height" (link cell-height-menu))
+  (when (and (== (get-cell-mode) "cell") (not (selection-active-any?)))
+    (-> "Span" (link cell-span-menu)))
   (-> "Border" (link cell-alt-border-menu))
   (-> "Padding" (link cell-padding-menu))
   (-> "Horizontal alignment" (link cell-halign-menu))
@@ -562,7 +568,11 @@
           (link cell-width-menu)
           ---
           (group "Height")
-          (link cell-height-menu)))
+          (link cell-height-menu)
+	  (when (and (== (get-cell-mode) "cell") (not (selection-active-any?)))
+	    ---
+	    (group "Span")
+	    (link cell-span-menu))))
     (=> (balloon (icon "tm_cell_border.xpm") "Change border of cell")
         (mini #f
           (group "Border")
