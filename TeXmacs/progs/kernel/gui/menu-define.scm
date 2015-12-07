@@ -515,8 +515,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (standard-pattern-list scale)
-  (with d (url-read-directory "$TEXMACS_PATH/misc/patterns" "*.png")
-    (map (lambda (x) `(pattern ,(url->unix x) ,scale "")) d)))
+  (let* ((dir "$TEXMACS_PATH/misc/patterns")
+         (l (url-read-directory dir "*.png"))
+         (d (map (cut url-delta (string-append dir "/x") <>) l))
+         (f (map (lambda (x) (string-append dir "/" (url->unix x))) d)))
+    (map (lambda (x) `(pattern ,x ,scale "")) f)))
 
 (tm-menu (standard-pattern-menu cmd scale)
   (tile 8
