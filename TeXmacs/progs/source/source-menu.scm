@@ -13,7 +13,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (source source-menu)
-  (:use (source source-edit)))
+  (:use (source source-edit)
+	(source macro-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Transformational markup for the macro language
@@ -134,7 +135,7 @@
 
 (menu-bind source-macros-menu
   ("New macro" (open-macro-editor ""))
-  (when (inside? 'table)
+  (when (can-create-table-macro?)
     ("Create table macro" (create-table-macro "")))
   ("Edit macros" (open-macros-editor))
   ("Edit preamble" (toggle-preamble))

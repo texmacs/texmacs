@@ -12,7 +12,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (source macro-widgets)
-  (:use (source macro-edit)))
+  (:use (source macro-edit)
+	(version version-edit) ;; FIXME: for selection-trees
+	))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for macro editing widgets
@@ -131,9 +133,43 @@
                        "Macro editor")
       (buffer-set-master u b))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Table macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (contains-table? t)
+  (or (and (tm-func? t 'table) t)
+      (and (tm-compound? t)
+	   (list-or (map contains-table? (tm-children t))))))
+
+(tm-define (can-create-table-macro?)
+  (or (inside? 'table)
+      (and (selection-active-any?)
+	   (list-or (map contains-table? (selection-trees))))))
+
+(define (position-inside-table)
+  (or (inside? 'table)
+      (and-with t (can-create-table-macro?)
+	(while (tm-in? t '(tformat table row cell))
+	  (set! t (tm-ref t 0)))
+	(tree-go-to t :start))))
+
+(define (tformat-subst-selection t tf)
+  (cond ((tm-atomic? t) t)
+	((tm-func? t 'tformat)
+	 (with r (tformat-subst-selection (cAr (tm-children t)) tf)
+	   (if (tm-func? r 'tformat) r
+	       (append (cDr (tm-children t)) (list r)))))
+	((tm-in? t '(table tabular tabular* wide-tabular
+			   block block* wide-block)) tf)
+	(else (cons (tm-label t)
+		    (map (cut tformat-subst-selection <> tf)
+			 (tm-children t))))))
+
 (tm-define (create-table-macro l)
   (:interactive #t)
-  (when (inside? 'table)
+  (when (can-create-table-macro?)
+    (position-inside-table)
     (if (symbol? l) (set! l (symbol->string l)))
     (let* ((b (current-buffer-url))
 	   (u (string-append "tmfs://aux/edit-" l))
@@ -142,7 +178,11 @@
 		   (append packs (list "macro-editor"))))
 	   (fm (table-get-format-all))
 	   (tf `(tformat ,@(tree-children fm) (arg "body")))
-	   (def `(assign ,l (inactive* (macro "body" ,tf)))))
+	   (body (if (selection-active-any?)
+		     (with sel (tm->stree (selection-tree))
+		       (tformat-subst-selection sel tf))
+		     tf))
+	   (def `(assign ,l (inactive* (macro "body" ,body)))))
       (and-with doc (build-macro-document* l def)
 	(dialogue-window (macro-editor u styps doc "Source")
 			 (lambda x (noop))
