@@ -501,6 +501,7 @@
   (url-rooted-tmfs? is_rooted_tmfs (bool url))
   (url-root get_root (string url))
   (url-unroot unroot (url url))
+  (url-atomic? is_atomic (bool url))
   (url-concat? is_concat (bool url))
   (url-or? is_or (bool url))
   (url-ref url_ref (url url int))

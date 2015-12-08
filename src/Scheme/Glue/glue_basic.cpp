@@ -5899,6 +5899,19 @@ tmg_url_unroot (tmscm arg1) {
 }
 
 tmscm
+tmg_url_atomicP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-atomic?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_atomic (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_url_concatP (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-concat?");
 
@@ -9475,6 +9488,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-rooted-tmfs?",  tmg_url_rooted_tmfsP, 1, 0, 0);
   tmscm_install_procedure ("url-root",  tmg_url_root, 1, 0, 0);
   tmscm_install_procedure ("url-unroot",  tmg_url_unroot, 1, 0, 0);
+  tmscm_install_procedure ("url-atomic?",  tmg_url_atomicP, 1, 0, 0);
   tmscm_install_procedure ("url-concat?",  tmg_url_concatP, 1, 0, 0);
   tmscm_install_procedure ("url-or?",  tmg_url_orP, 1, 0, 0);
   tmscm_install_procedure ("url-ref",  tmg_url_ref, 2, 0, 0);
