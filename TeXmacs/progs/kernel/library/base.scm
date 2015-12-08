@@ -318,7 +318,8 @@
   (buffer-get-master (current-buffer)))
 
 (define-public (buffer-in-recent-menu? u)
-  (not (url-rooted-tmfs? u)))
+  (or (not (url-rooted-tmfs? u))
+      (string-starts? (url->unix u) "tmfs://part/")))
 
 (define-public (buffer-in-menu? u)
   (or (buffer-in-recent-menu? u)

@@ -52,10 +52,18 @@
 ;; Dynamic menu for recent files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (short-menu-name u)
+  (if (not (url-rooted-tmfs? u))
+      (url->system (url-tail u))
+      (tmfs-title u `(document ""))))
+
+(define (long-menu-name u)
+  (url->system u))
+
 (tm-menu (file-list-menu l)
   (for (name l)
-    (let* ((short-name `(verbatim ,(url->system (url-tail name))))
-           (long-name `(verbatim ,(url->system name))))
+    (let* ((short-name `(verbatim ,(short-menu-name name)))
+           (long-name `(verbatim ,(long-menu-name name))))
       ((balloon (eval short-name) (eval long-name))
        (load-buffer name)))))
 
