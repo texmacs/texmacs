@@ -467,16 +467,6 @@
   (with u (db->bib* t)
     (serialize-bibtex (texmacs->bibtex u))))
 
-(define (associate->binding t)
-  (and (tm-func? t 'associate 2)
-       (cons (cadr t) (caddr t))))
-
-(define (collection-ref col key)
-  (and (tm-func? col 'collection)
-       (let* ((c (tm-children (tm->stree col)))
-              (l (list-filter (map associate->binding c) identity)))
-         (assoc-ref l key))))
-
 ;; (tm-define (texmacs->tmbib-document doc)
 ;;   (let* ((u (db->bib* doc))
 ;;          (s (serialize-bibtex (texmacs->bibtex u)))

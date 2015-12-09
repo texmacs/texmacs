@@ -155,3 +155,31 @@
       (and (tree-atomic? s) (tm-length-unit (tree->string s)))
       (and-with pos (tm-length-unit-search s 0)
 	(substring s pos (string-length s)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Collections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-public (associate->binding t)
+  (and (tm-func? t 'associate 2)
+       (cons (cadr t) (caddr t))))
+
+(define-public (collection->assoc col)
+  (and (tm-func? col 'collection)
+       (with c (tm-children (tm->stree col))
+         (list-filter (map associate->binding c) identity))))
+
+(define-public (collection-ref col key)
+  (and-with l (collection->assoc col)
+    (assoc-ref l key)))
+
+(define-public (binding->associate b)
+  `(associate ,(car b) ,(cdr b)))
+
+(define-public (assoc->collection l)
+  `(collection ,@(map binding->associate l)))
+
+(define-public (collection-append c1 c2)
+  (let* ((a1 (collection->assoc c1))
+         (a2 (collection->assoc c2)))
+    (and a1 a2 (assoc->collection (append a1 a2)))))
