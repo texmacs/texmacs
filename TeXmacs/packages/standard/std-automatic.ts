@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.4>
 
 <style|<tuple|source|std>>
 
@@ -240,7 +240,19 @@
   <assign|glossary-2|<macro|entry|explain|right|<margin-first-other|0fn|10fn|<style-with|src-compact|none|<resize|<arg|entry>
   |||<maximum|1r|10fn>|><arg|explain><glossary-dots><no-break><arg|right>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Shared documents.
+    </src-comment>
+  </active*>
+
+  <assign|part-info|<macro|name|<style-with|src-compact|none|<label|<merge|part:|<arg|name>>><write|parts|<tuple|<arg|name>|chapter-nr|<value|chapter-nr>|section-nr|<value|section-nr><value|>|subsection-nr|<value|subsection-nr>>>>>>
+
+  <assign|shared|<macro|unique-id|mirror-id|body|<with|old-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<surround|<hidden|<part-info|<arg|unique-id>><extern|mirror-initialize|<quote-arg|xbody>>>|<right-flush>|<with|locus-color|<value|old-color>|<arg|body>>>>>>>
+
+  <assign|include*|<macro|name|<\surround|<part-info|<arg|name>>|>
+    <include|<arg|name>>
+  </surround>>>
 </body>
 
 <\initial>
