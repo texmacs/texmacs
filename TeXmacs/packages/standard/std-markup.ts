@@ -1,4 +1,4 @@
-<TeXmacs|1.99.3>
+<TeXmacs|1.99.4>
 
 <style|<tuple|source|std>>
 
@@ -483,6 +483,8 @@
   <assign|slink|<macro|body|<hlink|<with|font-family|tt|language|verbatim|<arg|body>>|<arg|body>>>>
 
   <assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>
+
+  <assign|shared|<macro|unique-id|mirror-id|body|<with|old-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<surround|<hidden|<extern|mirror-initialize|<quote-arg|xbody>>>|<right-flush>|<with|locus-color|<value|old-color>|<arg|body>>>>>>>
 </body>
 
 <\initial>

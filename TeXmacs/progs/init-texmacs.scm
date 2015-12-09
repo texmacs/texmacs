@@ -319,6 +319,11 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
+;(display "Booting partial document facilities\n")
+;(lazy-tmfs-handler (part part-tmfs) part)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
+
 ;(display "Booting database facilities\n")
 (lazy-define (database db-widget) open-db-chooser)
 (lazy-define (database db-menu) db-show-toolbar)

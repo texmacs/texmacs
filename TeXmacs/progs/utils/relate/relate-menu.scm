@@ -23,7 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (mirror-context? t)
-  (and (tree-func? t 'mirror 3)
+  (and (or (tree-func? t 'mirror 3) (tree-func? t 'shared 3))
        (tree-atomic? (tree-ref t 0))
        (tree-atomic? (tree-ref t 1))))
 
