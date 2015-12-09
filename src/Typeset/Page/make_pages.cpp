@@ -83,8 +83,8 @@ pager_rep::pages_format (pagelet pg) {
   //      << " stretch " << pg->stretch
   //      << " height " << stretch_space (pg->ht, pg->stretch) << LF << INDENT;
   if (N (pg->ins) == 0) {
-    if (N(pages) == 0) return empty_box (ip);
-    return empty_box (pages[N(pages)-1]->find_rip());
+    if (N(pages) == 0) return dummy_box (decorate_middle (ip));
+    return dummy_box (decorate_middle (pages [N(pages)-1] -> find_rip ()));
   }
   else if (N (pg->ins) == 1) {
     insertion ins= pg->ins[0];

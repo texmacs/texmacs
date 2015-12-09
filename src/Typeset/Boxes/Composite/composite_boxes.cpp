@@ -212,14 +212,18 @@ composite_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 }
 
 path
-composite_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
-  int m= find_child (x, y, delta, force);
-  if (m==-1) return box_rep::find_box_path (x, y, delta, force);
-  else {
-    SI xx= x- sx(m), yy= y- sy(m);
-    SI dd= delta + get_delta (xx, bs[m]->x1, bs[m]->x2);
-    return path (m, bs[m]->find_box_path (xx, yy, dd, force));
-  }
+composite_box_rep::find_box_path (SI x, SI y, SI delta,
+                                  bool force, bool& found) {
+  int i, n= subnr(), m= find_child (x, y, delta, force);
+  if (m != -1)
+    for (i=0; i<=n; i++) {
+      int c= (m+i) % n;
+      SI xx= x- sx(c), yy= y- sy(c);
+      SI dd= delta + get_delta (xx, bs[c]->x1, bs[c]->x2);
+      path r= path (c, bs[c]->find_box_path (xx, yy, dd, force, found));
+      if (found || i == n) return r;
+    }
+  return box_rep::find_box_path (x, y, delta, force, found);
 }
 
 path

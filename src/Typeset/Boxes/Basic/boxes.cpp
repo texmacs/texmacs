@@ -106,9 +106,10 @@ box_rep::adjust_cell_geometry (SI dx, SI dl, SI dr) {
 ******************************************************************************/
 
 path
-box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
+box_rep::find_box_path (SI x, SI y, SI delta, bool force, bool& found) {
   (void) y;
   (void) force;
+  found= true;
   SI m= (x1+x2)>>1;
   return path (((x<m) || ((x==m) && (delta<0)))? 0: 1);
 }
@@ -172,7 +173,8 @@ box_rep::find_selection (path lbp, path rbp) {
 
 path
 box_rep::find_tree_path (SI x, SI y, SI delta) {
-  path bp= find_box_path (x, y, delta, false);
+  bool found;
+  path bp= find_box_path (x, y, delta, false, found);
   //cout << "Find " << x << ", " << y << "; " << delta;
   //cout << " -> " << bp << "\n";
   return find_tree_path (bp);
@@ -242,7 +244,10 @@ find_innermost_scroll (box b, path p) {
 
 path
 find_scrolled_box_path (box b, path sp, SI x, SI y, SI delta) {
-  if (is_nil (sp)) return b->find_box_path (x, y, delta, false);
+  if (is_nil (sp)) {
+    bool found;
+    return b->find_box_path (x, y, delta, false, found);
+  }
   else {
     int m= sp->item;
     SI xx= x - b->sx (m), yy= y - b->sy (m);

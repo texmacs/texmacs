@@ -453,7 +453,8 @@ side_box_rep::adjust_kerning (int mode, double factor) {
 int
 side_box_rep::find_child (SI x, SI y, SI delta, bool force) {
   if (outside (x, delta, x1, x2)) {
-    int side= box_rep::find_box_path (x, y, delta, force)->item;
+    bool found;
+    int side= box_rep::find_box_path (x, y, delta, force, found)->item;
     if (bs[0]->accessible () || force) {
       if ((side == 0) && (nr_left == 0)) return 0;
       if ((side == 1) && (nr_right == 0)) return 0;

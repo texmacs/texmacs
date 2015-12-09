@@ -50,7 +50,7 @@ struct concat_box_rep: public composite_box_rep {
   int       find_any_child (SI x, SI y, SI delta, SI& delta_out);
   int       find_accessible_child (SI x, SI y, SI delta, SI& delta_out);
   int       find_child (SI x, SI y, SI delta, bool force);
-  path      find_box_path (SI x, SI y, SI delta, bool force);
+  path      find_box_path (SI x, SI y, SI delta, bool force, bool& found);
   path      find_tree_path (path bp);
   cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
@@ -410,16 +410,20 @@ concat_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 }
 
 path
-concat_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
+concat_box_rep::find_box_path (SI x, SI y, SI delta, bool force, bool& found) {
   int delta_out, m;
   if (force) m= find_any_child (x, y, delta, delta_out);
   else m= find_accessible_child (x, y, delta, delta_out);
-  if (m==-1) return box_rep::find_box_path (x, y, delta, force);
-  else {
-    SI xx= x- sx(m), yy= y- sy(m);
-    SI dd= delta_out + get_delta (xx, bs[m]->x1, bs[m]->x2);
-    return path (m, bs[m]->find_box_path (xx, yy, dd, force));
-  }
+  int i, n= subnr();
+  if (m != -1)
+    for (i=0; i<=n; i++) {
+      int c= (m+i) % n;
+      SI xx= x- sx(c), yy= y- sy(c);
+      SI dd= delta_out + get_delta (xx, bs[c]->x1, bs[c]->x2);
+      path r= path (c, bs[c]->find_box_path (xx, yy, dd, force, found));
+      if (found || i == n) return r;
+    }
+  return box_rep::find_box_path (x, y, delta, force, found);
 }
 
 path

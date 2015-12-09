@@ -75,6 +75,7 @@ copy (ornament_parameters ps) {
 ******************************************************************************/
 
 box empty_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
+box dummy_box (path ip, int x1=0, int y1=0, int x2=0, int y2=0);
 box marker_box (path ip, int x1, int y1, int x2, int y2, box ref);
 box test_box (path ip);
 box line_box (path ip, SI x1, SI y1, SI x2, SI y2, pencil pen);

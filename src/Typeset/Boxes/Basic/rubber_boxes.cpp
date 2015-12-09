@@ -40,6 +40,16 @@ struct empty_box_rep: public box_rep {
   void display (renderer ren) { (void) ren; }
 };
 
+struct dummy_box_rep: public box_rep {
+  dummy_box_rep (path ip, int x1b, int y1b, int x2b, int y2b): box_rep (ip) {
+    x3=x4=y3=y4=0; x1= x1b; y1=y1b; x2=x2b; y2=y2b; }
+  operator tree () { return "dummy"; }
+  void display (renderer ren) { (void) ren; }
+  path find_box_path (SI x, SI y, SI delta, bool force, bool& found) {
+    bool dummy; found= false;
+    return box_rep::find_box_path (x, y, delta, force, dummy); }
+};
+
 struct marker_box_rep: public box_rep {
   int pos;
   box ref;
@@ -215,6 +225,11 @@ bracket_box_rep::display (renderer ren) {
 box
 empty_box (path ip, int x1, int y1, int x2, int y2) {
   return tm_new<empty_box_rep> (ip, x1, y1, x2, y2);
+}
+
+box
+dummy_box (path ip, int x1, int y1, int x2, int y2) {
+  return tm_new<dummy_box_rep> (ip, x1, y1, x2, y2);
 }
 
 box

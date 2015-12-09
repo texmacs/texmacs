@@ -30,7 +30,8 @@ public:
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
-  virtual path            find_box_path (SI x, SI y, SI delta, bool force);
+  virtual path            find_box_path (SI x, SI y, SI delta,
+                                         bool force, bool & found);
   virtual path            find_lip ();
   virtual path            find_rip ();
   virtual path            find_left_box_path ();

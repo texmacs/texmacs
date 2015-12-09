@@ -133,7 +133,7 @@ public:
   time_t anim_next_update () { return started_at + cum_len[current]; }
   void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 
-  path          find_box_path (SI x, SI y, SI delta, bool force);
+  path          find_box_path (SI x, SI y, SI delta, bool force, bool& found);
   path          find_box_path (path p, bool& found);
   path          find_tree_path (path bp);
   cursor        find_cursor (path bp);
@@ -261,10 +261,11 @@ anim_compose_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
 ******************************************************************************/
 
 path
-anim_compose_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
+anim_compose_box_rep::find_box_path (SI x, SI y, SI delta,
+                                     bool force, bool& found) {
   if (outside (x, delta, x1, x2) && (is_accessible (ip) || force))
-    return box_rep::find_box_path (x, y, delta, force);
-  return path (0, bs[current]->find_box_path (x, y, delta, force));
+    return box_rep::find_box_path (x, y, delta, force, found);
+  return path (0, bs[current]->find_box_path (x, y, delta, force, found));
 }
 
 path

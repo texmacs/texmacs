@@ -38,7 +38,8 @@ struct composite_box_rep: public box_rep {
   void    display (renderer ren);
 
   virtual int             find_child (SI x, SI y, SI delta, bool force);
-  virtual path            find_box_path (SI x, SI y, SI delta, bool force);
+  virtual path            find_box_path (SI x, SI y, SI delta,
+                                         bool force, bool & found);
   virtual path            find_lip ();
   virtual path            find_rip ();
   virtual path            find_box_path (path p, bool& found);

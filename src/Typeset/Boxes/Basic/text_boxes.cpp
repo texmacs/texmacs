@@ -65,7 +65,7 @@ struct text_box_rep: public box_rep {
   SI        sup_lo_base (int level);
   SI        sup_hi_lim  (int level);
 
-  path      find_box_path (SI x, SI y, SI delta, bool force);
+  path      find_box_path (SI x, SI y, SI delta, bool force, bool& found);
   path      find_lip ();
   path      find_rip ();
   path      find_right_box_path ();
@@ -185,9 +185,11 @@ text_box_rep::sup_hi_lim  (int level) {
 ******************************************************************************/
 
 path
-text_box_rep::find_box_path (SI x, SI y, SI delta, bool force) {
+text_box_rep::find_box_path (SI x, SI y, SI delta, bool force, bool& found) {
   (void) y;
   (void) force;
+  found= true;
+  
   STACK_NEW_ARRAY (xpos, SI, N(str)+1);
   if (is_nil (xk)) fn->get_xpositions (str, xpos);
   else {

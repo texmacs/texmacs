@@ -183,7 +183,7 @@ public:
   virtual path      find_rip ();
   virtual path      find_left_box_path ();
   virtual path      find_right_box_path ();
-  virtual path      find_box_path (SI x, SI y, SI delta, bool force);
+  virtual path      find_box_path (SI x, SI y, SI d, bool force, bool& found);
   virtual cursor    find_cursor (path bp);
   virtual selection find_selection (path lbp, path rbp);
   virtual path      find_tree_path (path bp);
