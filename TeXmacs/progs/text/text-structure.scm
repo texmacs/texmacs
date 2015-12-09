@@ -52,6 +52,9 @@
 	 (upcase-first (string-replace (symbol->string (tm-car t)) "-" " ")))
 	((tree-is? t 'concat)
 	 (tm/section-get-title-string-sub (tree-children t)))
+        ((and (tm-func? t 'shared 3)
+              (tm-func? (tm-ref t 2) 'document))
+         (tm/section-get-title-string (tm-ref t 2 0)))
 	(else "no title")))
 
 (define (tm/section-detect? t pred?)
@@ -60,6 +63,9 @@
 	((tree-is? t 'concat)
 	 (list-find (tree-children t)
 		    (lambda (x) (tm/section-detect? x pred?))))
+        ((and (tm-func? t 'shared 3)
+              (tm-func? (tm-ref t 2) 'document))
+         (tm/section-detect? (tm-ref t 2 0) pred?))
 	(else #f)))
 
 (define (tm/section-split l pred?)
