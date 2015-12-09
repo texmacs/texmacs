@@ -298,6 +298,13 @@
          (if (tree? val) (set! val (tree->stree val)))
          val)))
 
+(define-public (tmfile-assign doc what val)
+  (if (tree? doc) (set! doc (tree->stree doc)))
+  (and (func? doc 'document)
+       (with l (reverse (cdr doc))
+         (set! l (assoc-set! l what (list (tm->tree val))))
+         (cons 'document (reverse l)))))
+
 (define (default-init var)
   ;; FIXME: should use C++ code
   (cond ((== var "mode") "text")
