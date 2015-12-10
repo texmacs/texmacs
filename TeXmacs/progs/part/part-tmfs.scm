@@ -95,6 +95,10 @@
       (unpack-extra-inits (cdr (tm-children t)))
       (list)))
 
+(define (exclude-from-inherit)
+  (list "preamble" "mode"
+        "page-medium" "page-printed" "page-first"))
+
 (define (part-expand doc mas u m)
   (cond ((tm-atomic? doc) doc)
         ((tm-func? doc 'body 1)
@@ -106,8 +110,9 @@
            (if val `(,(tm-label doc) ,val) doc)))
         ((tm-is? doc 'initial)
          (let* ((mt (tmfile-extract mas 'initial))
+                (xt (collection-exclude mt (exclude-from-inherit)))
                 (ft (tm-ref doc 0))
-                (jt (if mt (collection-append mt ft) ft))
+                (jt (if xt (collection-append xt ft) ft))
                 (refs (tmfile-extract mas 'references))
                 (aux (tmfile-extract mas 'auxiliary))
                 (parts (collection-ref aux "parts"))
@@ -116,9 +121,14 @@
                 (xinit (append-map (cut get-extra-init <> delta) l))
                 (t (collection-append jt `(collection ,@xinit))))
            `(initial ,t)))
-        (else (cons (tm-label doc)
-                    (map (cut part-expand <> mas u m)
-                         (tm-children doc))))))
+        ((tm-is? doc 'document)
+         (when (and (tmfile-extract doc 'body)
+                    (not (tmfile-extract doc 'initial)))
+           (set! doc (tmfile-assign doc 'initial (assoc->collection (list)))))
+         (cons 'document
+               (map (cut part-expand <> mas u m)
+                    (tm-children doc))))
+        (else doc)))
 
 (tmfs-load-handler (part name)
   (let* ((u (tmfs-string->url name))

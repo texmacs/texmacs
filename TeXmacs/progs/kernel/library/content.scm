@@ -181,5 +181,11 @@
 
 (define-public (collection-append c1 c2)
   (let* ((a1 (collection->assoc c1))
-         (a2 (collection->assoc c2)))
-    (and a1 a2 (assoc->collection (append a1 a2)))))
+         (a2 (collection->assoc c2))
+         (a  (and a1 a2 (assoc-remove-duplicates* (append a1 a2)))))
+    (and a1 a2 (assoc->collection a))))
+
+(define-public (collection-exclude c l)
+  (let* ((a (collection->assoc c))
+         (b (and a (assoc-exclude a l))))
+    (and a (assoc->collection b))))

@@ -426,3 +426,30 @@
   (and (pair? x)
        (pair? (cdr x))
        (null? (cddr x))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Operations on association lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (assoc-remove-duplicates-sub t l)
+  (cond ((null? l) l)
+	((ahash-ref t (caar l))
+         (assoc-remove-duplicates-sub t (cdr l)))
+	(else
+	 (ahash-set! t (caar l) #t)
+	 (cons (car l) (assoc-remove-duplicates-sub t (cdr l))))))
+
+(define-public (assoc-remove-duplicates l)
+  (with t (make-ahash-table)
+    (assoc-remove-duplicates-sub t l)))
+
+(define-public (assoc-remove-duplicates* l)
+  (reverse (assoc-remove-duplicates (reverse l))))
+
+(define-public (assoc-difference l1 l2)
+  (with s (list->ahash-table l2)
+    (list-filter l1 (lambda (x) (not (ahash-ref s (car x)))))))
+
+(define-public (assoc-exclude l1 l2)
+  (with s (list->ahash-set l2)
+    (list-filter l1 (lambda (x) (not (ahash-ref s (car x)))))))
