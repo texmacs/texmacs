@@ -351,6 +351,9 @@
   (when (nnull? (select (buffer-get name)
 			'(:* gpg-passphrase-encrypted-buffer)))
     (tm-gpg-dialogue-passphrase-decrypt-buffer name))
+  (and-with master (and (url-rooted-tmfs? name) (tmfs-master name))
+    (when (!= master name)
+      (buffer-set-master name master)))
   (noop))
 
 (define (load-buffer-load name opts)

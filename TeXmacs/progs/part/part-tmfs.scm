@@ -140,3 +140,8 @@
     (if (and m f)
         (tmfs-document exp)
         ($generic "Invalid file."))))
+
+(tmfs-master-handler (part name)
+  (let* ((u (tmfs-string->url name))
+         (f (part-file u)))
+    (or f name)))

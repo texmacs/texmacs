@@ -434,6 +434,22 @@ is_rooted_tmfs (url u) {
 }
 
 bool
+is_tmfs_protocol (url u, string protocol) {
+  return
+    u->t == protocol ||
+    is_concat (u) && is_tmfs_protocol (u[1], protocol);
+}
+
+bool
+is_rooted_tmfs (url u, string protocol) {
+  return
+    (is_concat (u) && is_root_tmfs (u[1]) &&
+                      is_tmfs_protocol (u[2], protocol)) ||
+    (is_or (u) && is_rooted_tmfs (u[1], protocol) &&
+                  is_rooted_tmfs (u[2], protocol));
+}
+
+bool
 is_rooted_blank (url u) {
   return
     is_root_blank (u) ||

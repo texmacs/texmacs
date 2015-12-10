@@ -239,7 +239,8 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
       set_message (verbatim (ret), "interactive command");
   }
   else if (get_preference ("interactive questions") == "popup" ||
-	   is_aux_buffer (get_current_buffer_safe ())) {
+	   (is_aux_buffer (get_current_buffer_safe ()) &&
+            !is_rooted_tmfs (get_current_buffer_safe (), "part"))) {
     int i, n= N(p);
     array<string> prompts (n);
     for (i=0; i<n; i++)
