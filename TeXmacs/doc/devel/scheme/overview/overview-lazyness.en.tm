@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.4>
 
 <style|tmdoc>
 
@@ -46,10 +46,12 @@
 
   Because the number of <TeXmacs> modules and plug-ins keeps on growing, it
   is inefficient to load all modules when booting. Instead, initialization
-  files are assumed to declare the provided functionality in a <em|lazy> way,
-  so that the corresponding modules will only be loaded when the
-  functionality is explictly needed. Some modules may also be loaded during
-  spare time, when the computer is waiting for user input.
+  files are assumed to declare the provided functionality in a <em|lazy> way:
+  whenever the functionality is explictly needed, <TeXmacs> is triggered to
+  load the corresponding modules (if this was not already done). In addition,
+  <TeXmacs> may load some of these modules during spare time, when the
+  computer is waiting for user input. Indeed, this helps increasing the
+  reactivity of <TeXmacs> at the first use of the functionality.
 
   For instance, assume that you defined a large new editing function
   <scm|foo-action> inside the module <scm|(foo-edit)>. Then your
@@ -75,7 +77,7 @@
   has the important consequence that you can no longer make assumptions on
   when a particular module is loaded. For instance, when you attempt to
   redefine a keyboard shortcut in your personal initialization file, it may
-  happen that the standard definition is loaded after your ``redefinition''.
+  happen that the standard definition is loaded after your \Predefinition\Q.
   In that case, your redefinition remains without consequence.
 
   For this reason, <TeXmacs> also provides the instruction <scm|import-from>
