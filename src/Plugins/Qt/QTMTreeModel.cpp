@@ -261,8 +261,8 @@ qt_tree_observer_rep::~qt_tree_observer_rep () {
 void
 qt_tree_observer_rep::announce (tree& ref, modification mod) {
   (void) ref; (void) mod;
-  if (mod->k != MOD_SET_CURSOR)
-    model->beginResetModel();
+  //if (mod->k != MOD_SET_CURSOR)
+  //  model->beginResetModel();
   /* MOD_SET_CURSOR is announced only for TeXmacs buffers. We might want to also
    keep a pointer to a QItemSelectionModel, or maybe some QTMItemSelectionModel
    (which would allow for intermediate proxy models used by the views, as does
@@ -292,8 +292,8 @@ qt_tree_observer_rep::announce (tree& ref, modification mod) {
 void
 qt_tree_observer_rep::done (tree& ref, modification mod) {
   (void) ref; (void) mod;
-  if (mod->k != MOD_SET_CURSOR)
-    model->endResetModel();
+  //if (mod->k != MOD_SET_CURSOR)
+  //  model->endResetModel();
 }
 
 observer
