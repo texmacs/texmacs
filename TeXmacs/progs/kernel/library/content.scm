@@ -173,6 +173,11 @@
   (and-with l (collection->assoc col)
     (assoc-ref l key)))
 
+(define-public (collection-set col key val)
+  (and-with l (collection->assoc col)
+    (set! l (assoc-set! l key val))
+    (assoc->collection l)))
+
 (define-public (binding->associate b)
   `(associate ,(car b) ,(cdr b)))
 
