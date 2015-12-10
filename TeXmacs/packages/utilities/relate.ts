@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.4>
 
 <style|source>
 
@@ -28,7 +28,7 @@
     </src-comment>
   </active*>
 
-  <assign|mirror|<macro|unique-id|mirror-id|body|<with|old-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<surround|<hidden|<extern|mirror-initialize|<quote-arg|body>>>|<if|<equal|<get-label|<arg|body>>|document>|<right-flush>>|<with|locus-color|<value|old-color>|<arg|body>>>>>>>
+  <assign|mirror|<macro|unique-id|mirror-id|body|<with|old-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<surround|<hidden|<extern|mirror-initialize|<quote-arg|body>>>|<if|<equal|<get-label|<quote-arg|body>>|document>|<right-flush>>|<with|locus-color|<value|old-color>|<arg|body>>>>>>>
 </body>
 
 <\initial>
