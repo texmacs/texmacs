@@ -46,7 +46,7 @@ pager_rep::pager_rep (path ip2, edit_env env2, array<page_item> l2):
   show_hf   = env->get_bool (PAGE_SHOW_HF) && paper;
   if (nr_cols > 1) text_width = (text_width+col_sep+1) * nr_cols - col_sep;
 
-  page_offset= 0;
+  page_offset= env->first_page - 1;
   cur_top= 0;
 }
 

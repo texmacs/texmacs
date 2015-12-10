@@ -141,7 +141,11 @@
         (item (text "Orientation:")
           (enum (initial-set u "page-orientation" answer)
                 '("portrait" "landscape")
-                (initial-get u "page-orientation") "10em")))))
+                (initial-get u "page-orientation") "10em"))
+        (item (text "First page:")
+          (enum (initial-set u "page-first" answer)
+                (list (initial-get u "page-first") "")
+                (initial-get u "page-first") "10em")))))
   ===
   (centered
     (refreshable "page-user-format-settings"

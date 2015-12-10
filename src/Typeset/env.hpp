@@ -149,6 +149,7 @@ public:
   double       magn;
   double       mgfy;
   double       flexibility;
+  int          first_page;
   int          mode;
   int          mode_op;
   language     lan;

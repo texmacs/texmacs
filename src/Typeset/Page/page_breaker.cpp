@@ -42,6 +42,7 @@ struct page_breaker_rep {
   space fnote_sep;
   space float_sep;
   font  fn;
+  int   first_page;
   bool  last_page_flag;
 
   int                 nr_flows;   // number of flows;
@@ -86,8 +87,8 @@ struct page_breaker_rep {
   array<pagelet>      best_pgs;   // & pagelets
 
   page_breaker_rep (array<page_item> l, space ph, int quality,
-			 space fn_sep, space fnote_sep,
-			 space float_sep, font fn);
+                    space fn_sep, space fnote_sep, space float_sep,
+                    font fn, int fp);
 
   void init_flows (int start, int end);
   void init_flows (array<page_item> l, int start, int end, path p, path flb);
@@ -142,10 +143,12 @@ struct page_breaker_rep {
 
 page_breaker_rep::page_breaker_rep (
   array<page_item> l2, space ph, int quality2,
-  space fn_sep2, space fnote_sep2, space float_sep2, font fn2):
+  space fn_sep2, space fnote_sep2, space float_sep2,
+  font fn2, int fp2):
     l (l2), papyrus_mode (ph == (MAX_SI >> 1)), height (ph),
     fn_sep (fn_sep2), fnote_sep (fnote_sep2), float_sep (float_sep2),
-    fn (fn2), flow_id (-1), brk_nr (-1), quality (quality2)
+    fn (fn2), first_page (fp2),
+    flow_id (-1), brk_nr (-1), quality (quality2)
 {}
 
 /******************************************************************************
@@ -1471,18 +1474,21 @@ page_breaker_rep::make_skeleton () {
   skeleton sk;
   int i, j, n= N(l);
   bool dpage_flag= false;
+  int page_offset= first_page - 1;
   for (i=0, j=0; j<n; j++) {
     if ((!papyrus_mode) && (l[j]->type == PAGE_CONTROL_ITEM))
       if ((l[j]->t == PAGE_BREAK) ||
 	  (l[j]->t == NEW_PAGE) || (l[j]->t == NEW_DPAGE))
 	{
-	  if (dpage_flag && ((N(sk)&1) == 1))
+	  if (dpage_flag && ((N(sk) + page_offset) & 1) == 1)
 	    sk << pagelet (space (0));
 	  dpage_flag= (l[j]->t == NEW_DPAGE);
 	  last_page_flag= (l[j]->t != PAGE_BREAK);
 	  if (i<j) assemble_skeleton (sk, i, j);
 	  i=j+1;
 	}
+      else if (is_tuple (l[j]->t, "env_page") && l[j]->t[1] == PAGE_NR)
+        page_offset= as_int (l[j]->t[2]->label) - N(sk) - 1;
   }
   if (i<j) {
     if (dpage_flag && ((N(sk)&1) == 1))
@@ -1499,10 +1505,12 @@ page_breaker_rep::make_skeleton () {
 
 skeleton
 break_pages (array<page_item> l, space ph, int qual,
-	     space fn_sep, space fnote_sep, space float_sep, font fn)
+	     space fn_sep, space fnote_sep, space float_sep,
+             font fn, int first_page)
 {
   page_breaker_rep* H=
-    tm_new<page_breaker_rep> (l, ph, qual, fn_sep, fnote_sep, float_sep, fn);
+    tm_new<page_breaker_rep> (l, ph, qual, fn_sep, fnote_sep, float_sep,
+                              fn, first_page);
   // cout << HRULE << LF;
   skeleton sk= H->make_skeleton ();
   tm_delete (H);

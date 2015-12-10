@@ -83,6 +83,7 @@ initialize_default_var_type () {
   var_type (PAGE_TYPE)          = Env_Fixed;
   var_type (PAGE_BREAKING)      = Env_Fixed;
   var_type (PAGE_FLEXIBILITY)   = Env_Fixed;
+  var_type (PAGE_FIRST)         = Env_Fixed;
   var_type (PAGE_WIDTH)         = Env_Page_Extents;
   var_type (PAGE_HEIGHT)        = Env_Page_Extents;
   var_type (PAGE_WIDTH_MARGIN)  = Env_Page;

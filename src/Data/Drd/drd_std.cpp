@@ -912,6 +912,7 @@ init_std_drd () {
   init_var (PAGE_SCREEN_MARGIN, TYPE_BOOLEAN);
   init_var (PAGE_BREAKING, TYPE_STRING);
   init_var (PAGE_FLEXIBILITY, TYPE_NUMERIC);
+  init_var (PAGE_FIRST, TYPE_NUMERIC);
   init_var (PAGE_NR, TYPE_INTEGER);
   init_var (PAGE_THE_PAGE, TYPE_ADHOC);
   init_var (PAGE_WIDTH, TYPE_LENGTH);

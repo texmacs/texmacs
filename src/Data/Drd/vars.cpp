@@ -114,6 +114,7 @@ string PAGE_HEIGHT_MARGIN ("page-height-margin");
 string PAGE_SCREEN_MARGIN ("page-screen-margin");
 string PAGE_BREAKING ("page-breaking");
 string PAGE_FLEXIBILITY ("page-flexibility");
+string PAGE_FIRST ("page-first");
 string PAGE_NR ("page-nr");
 string PAGE_THE_PAGE ("page-the-page");
 string PAGE_WIDTH ("page-width");

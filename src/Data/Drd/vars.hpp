@@ -104,6 +104,7 @@ extern string PAGE_HEIGHT_MARGIN;
 extern string PAGE_SCREEN_MARGIN;
 extern string PAGE_BREAKING;
 extern string PAGE_FLEXIBILITY;
+extern string PAGE_FIRST;
 extern string PAGE_NR;
 extern string PAGE_THE_PAGE;
 extern string PAGE_WIDTH;
