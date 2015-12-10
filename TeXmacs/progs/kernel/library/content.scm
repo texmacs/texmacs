@@ -190,6 +190,12 @@
          (a  (and a1 a2 (assoc-remove-duplicates* (append a1 a2)))))
     (and a1 a2 (assoc->collection a))))
 
+(define-public (collection-delta c1 c2)
+  (let* ((a1 (collection->assoc c1))
+         (a2 (collection->assoc c2))
+         (a  (and a1 a2 (assoc-delta a1 a2))))
+    (and a1 a2 (assoc->collection a))))
+
 (define-public (collection-exclude c l)
   (let* ((a (collection->assoc c))
          (b (and a (assoc-exclude a l))))

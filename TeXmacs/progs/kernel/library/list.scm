@@ -447,8 +447,12 @@
   (reverse (assoc-remove-duplicates (reverse l))))
 
 (define-public (assoc-difference l1 l2)
-  (with s (list->ahash-table l2)
-    (list-filter l1 (lambda (x) (not (ahash-ref s (car x)))))))
+  (with t (list->ahash-table l2)
+    (list-filter l1 (lambda (x) (not (ahash-ref t (car x)))))))
+
+(define-public (assoc-delta l1 l2)
+  (with t (list->ahash-table l1)
+    (list-filter l2 (lambda (x) (!= (ahash-ref t (car x)) (cdr x))))))
 
 (define-public (assoc-exclude l1 l2)
   (with s (list->ahash-set l2)
