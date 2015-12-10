@@ -97,8 +97,9 @@
   ("gpg-info-level-detailed" "Show details"))
 
 (tm-define (standard-options l)
-  (:require (or (tm-gpg-symbol-decrypted? l)
-		(tm-gpg-symbol-passphrase-decrypted? l)))
+  (:require (and (supports-gpg?)
+                 (or (tm-gpg-symbol-decrypted? l)
+                     (tm-gpg-symbol-passphrase-decrypted? l))))
   (list "gpg-info-level-none"
 	"gpg-info-level-short"
         "gpg-info-level-detailed"))
@@ -118,42 +119,42 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-toggle-menu t)
-  (:require (tm-gpg-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-decrypted? t)))
   ("Encrypt" (tm-gpg-encrypt (focus-tree))))
 
 (tm-menu (focus-toggle-menu t)
-  (:require (tm-gpg-passphrase-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-passphrase-decrypted? t)))
   ("Encrypt" (tm-gpg-dialogue-passphrase-encrypt (focus-tree))))
 
 (tm-menu (focus-toggle-menu t)
-  (:require (tm-gpg-encrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-encrypted? t)))
   ("Decrypt" (tm-gpg-dialogue-decrypt (focus-tree))))
 
 (tm-menu (focus-toggle-menu t)
-  (:require (tm-gpg-passphrase-encrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-passphrase-encrypted? t)))
   ("Decrypt" (tm-gpg-dialogue-passphrase-decrypt (focus-tree))))
 
 
 (tm-menu (focus-toggle-icons t)
-  (:require (tm-gpg-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-decrypted? t)))
   ((check (balloon (icon "tm_lock_open.xpm") "Decrypted") "v"
           (alternate-second? (focus-tree)))
    (tm-gpg-encrypt (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
-  (:require (tm-gpg-passphrase-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-passphrase-decrypted? t)))
   ((check (balloon (icon "tm_lock_open.xpm") "Decrypted") "v"
           (alternate-second? (focus-tree)))
    (tm-gpg-dialogue-passphrase-encrypt (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
-  (:require (tm-gpg-encrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-encrypted? t)))
   ((check (balloon (icon "tm_lock_closed.xpm") "Encrypted") "v"
           (alternate-second? (focus-tree)))
    (tm-gpg-dialogue-decrypt (focus-tree))))
 
 (tm-menu (focus-toggle-icons t)
-  (:require (tm-gpg-passphrase-encrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-passphrase-encrypted? t)))
   ((check (balloon (icon "tm_lock_closed.xpm") "Encrypted") "v"
           (alternate-second? (focus-tree)))
    (tm-gpg-dialogue-passphrase-decrypt (focus-tree))))
@@ -163,15 +164,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (alternate-toggle t)
-  (:require (tm-gpg-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-decrypted? t)))
   (tm-gpg-encrypt t))
 
 (tm-define (alternate-toggle t)
-  (:require (tm-gpg-encrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-encrypted? t)))
   (tm-gpg-dialogue-decrypt t))
 
 (tm-define (alternate-toggle t)
-  (:require (tm-gpg-passphrase-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-passphrase-decrypted? t)))
   (tm-gpg-dialogue-passphrase-encrypt t))
 
 (tm-define (alternate-toggle t)
@@ -183,28 +184,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-hidden-icons t)
-  (:require (tm-gpg-decrypted? t)))
+  (:require (and (supports-gpg?) (tm-gpg-decrypted? t))))
 
 (tm-menu (focus-hidden-icons t)
-  (:require (tm-gpg-encrypted? t)))
+  (:require (and (supports-gpg?) (tm-gpg-encrypted? t))))
 
 (tm-menu (focus-hidden-icons t)
-  (:require (tm-gpg-passphrase-decrypted? t)))
+  (:require (and (supports-gpg?) (tm-gpg-passphrase-decrypted? t))))
 
 (tm-menu (focus-hidden-icons t)
-  (:require (tm-gpg-passphrase-encrypted? t)))
+  (:require (and (supports-gpg?) (tm-gpg-passphrase-encrypted? t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (focus-extra-menu t)
-  (:require (tm-gpg-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-decrypted? t)))
   ---
   ("Recipients" (tm-gpg-dialogue-replace-decrypted (focus-tree))))
 
 (tm-menu (focus-extra-icons t)
-  (:require (tm-gpg-decrypted? t))
+  (:require (and (supports-gpg?) (tm-gpg-decrypted? t)))
   //
   ("Recipients" (tm-gpg-dialogue-replace-decrypted (focus-tree))))
 
