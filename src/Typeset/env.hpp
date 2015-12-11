@@ -107,6 +107,7 @@
 #define INFO_SHORT         2
 #define INFO_DETAILED      3
 #define INFO_PAPER         4
+#define INFO_SHORT_PAPER   5
 
 /******************************************************************************
 * The edit environment

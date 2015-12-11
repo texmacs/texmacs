@@ -90,10 +90,16 @@ concater_rep::flag_ok (string s, path ip, color col) {
   a= a/6;
   color light= rgb_color (r, g, b, a);
   int info= env->info_level;
-  if (info == INFO_MINIMAL || info == INFO_SHORT) {
+  if (info == INFO_MINIMAL || info == INFO_SHORT || info == INFO_SHORT_PAPER) {
     box infob= info_box (dip, h, pencil (col, env->fn->wline), light);
-    box specb= specific_box (ip, infob, "screen", env->fn);
-    print (specb);
+    if (info == INFO_SHORT_PAPER) {
+      box b= resize_box (ip, infob, 0, 0, 0, env->fn->yx);
+      print (b);
+    }
+    else {
+      box specb= specific_box (ip, infob, "screen", env->fn);
+      print (specb);
+    }
   }
   else if (info == INFO_DETAILED || info == INFO_PAPER) {
     int sz= script (env->fn_size, env->index_level+2);
