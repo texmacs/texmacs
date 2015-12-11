@@ -18,7 +18,7 @@
 #define QTM_MINI_FONTSIZE 12 // also see uses of preference "gui:mini-fontsize"
                              // toolbar creation and config should be in scheme
 #else
-#define QTM_MINI_FONTSIZE 10
+#define QTM_MINI_FONTSIZE 9
 #endif
 
 #ifdef Q_WS_MAC
