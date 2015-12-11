@@ -166,6 +166,10 @@ move_any (tree t, path p, bool forward) {
   path q = path_up (p);
   int  l = last_item (p);
   tree st= subtree (t, q);
+  if (!is_nil (q) && is_func (subtree (t, path_up (q)), RAW_DATA)) {
+    if (forward) return path_up (q) * 1;
+    else return path_up (q) * 0;
+  }
   if (is_atomic (st)) {
     string s= st->label;
     ASSERT (l >= 0 && l <= N(s), "out of range");

@@ -29,7 +29,10 @@ is_inside (tree t, path p) {
     for (i=0; i<k; tm_char_forwards (s, i)) {}
     return i == k;
   }
-  else if (is_atom (p)) return p->item == 0 || p->item == 1;
+  else if (is_atom (p))
+    return p->item == 0 || p->item == 1;
+  else if (is_func (t, RAW_DATA, 1))
+    return p == path (0, 0);
   else return p->item >= 0 && p->item < N(t) &&
 	      is_inside (t[p->item], p->next);
 }
@@ -47,6 +50,8 @@ closest_inside (tree t, path p) {
   }
   else if (is_atom (p) || p->item < 0 || p->item >= N(t))
     return path (max (0, min (1, p->item)));
+  else if (is_func (t, RAW_DATA, 1))
+    return path (0, 0);
   else return path (p->item, closest_inside (t[p->item], p->next));
 }
 
