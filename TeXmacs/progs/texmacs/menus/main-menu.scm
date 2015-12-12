@@ -140,6 +140,8 @@
       (link new-file-menu))
   (=> (balloon (icon "tm_open.xpm") "Load a file") (link load-menu))
   (=> (balloon (icon "tm_save.xpm") "Save this buffer") (link save-menu))
+  ((balloon (icon "tm_build.xpm") "Update this buffer")
+   (update-document "all"))
   (if (use-print-dialog?)
       ((balloon (icon "tm_print.xpm") "Print") (interactive-print-buffer)))
   (if (not (use-print-dialog?))
