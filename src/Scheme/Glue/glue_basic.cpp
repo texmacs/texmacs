@@ -4718,6 +4718,36 @@ tmg_hexadecimal_2integer (tmscm arg1) {
 }
 
 tmscm
+tmg_cpp_string_tokenize (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-string-tokenize");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-string-tokenize");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= tokenize (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_cpp_string_recompose (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_ARRAY_STRING (arg1, TMSCM_ARG1, "cpp-string-tokenize");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-string-tokenize");
+
+  array_string in1= tmscm_to_array_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= recompose (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_find_left_bracket (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "find-left-bracket");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "find-left-bracket");
@@ -9403,6 +9433,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("integer->hexadecimal",  tmg_integer_2hexadecimal, 1, 0, 0);
   tmscm_install_procedure ("integer->padded-hexadecimal",  tmg_integer_2padded_hexadecimal, 2, 0, 0);
   tmscm_install_procedure ("hexadecimal->integer",  tmg_hexadecimal_2integer, 1, 0, 0);
+  tmscm_install_procedure ("cpp-string-tokenize",  tmg_cpp_string_tokenize, 2, 0, 0);
+  tmscm_install_procedure ("cpp-string-recompose",  tmg_cpp_string_recompose, 2, 0, 0);
   tmscm_install_procedure ("find-left-bracket",  tmg_find_left_bracket, 3, 0, 0);
   tmscm_install_procedure ("find-right-bracket",  tmg_find_right_bracket, 3, 0, 0);
   tmscm_install_procedure ("string->tmstring",  tmg_string_2tmstring, 1, 0, 0);

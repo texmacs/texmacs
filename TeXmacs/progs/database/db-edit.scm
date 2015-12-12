@@ -55,6 +55,11 @@
 ;; Utility functions for database markup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (db-field-attr f)
+  (and (db-field-any? f)
+       (tm-atomic? (tm-ref f 0))
+       (tm->string (tm-ref f 0))))
+
 (tm-define (db-field-find l attr)
   (and (nnull? l)
        (or (and (db-field-any? (car l))

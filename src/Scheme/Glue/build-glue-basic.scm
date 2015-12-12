@@ -402,6 +402,8 @@
   (integer->hexadecimal as_hexadecimal (string int))
   (integer->padded-hexadecimal as_hexadecimal (string int int))
   (hexadecimal->integer from_hexadecimal (int string))
+  (cpp-string-tokenize tokenize (array_string string string))
+  (cpp-string-recompose recompose (string array_string string))
   
   ; Program bracket matching
   (find-left-bracket find_left_bracket (path path string string))

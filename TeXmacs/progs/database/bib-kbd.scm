@@ -35,11 +35,54 @@
   (focus-open-search-tool t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Transform author and editor names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (transform-one-name s*)
+  (let* ((s (string-trim-both s*))
+         (l (cpp-string-tokenize s " ")))
+    (cond ((== (length l) 0) "")
+          ((== (length l) 1) s)
+          (else (with r (cpp-string-recompose (cDr l) " ")
+                  `(concat ,(string-append r " ") (name ,(cAr l))))))))
+
+(define (transform-name s)
+  (if (nstring? s) s
+      (let* ((l1 (cpp-string-tokenize s " and "))
+             (l2 (map transform-one-name l1)))
+        (cond ((== (length l2) 0) "")
+              ((== (length l2) 1) (car l2))
+              (else (with r (list-intersperse l2 '(name-sep))
+                      (apply tmconcat r)))))))
+
+(define (transform-names t)
+  (cond ((string? t) (transform-name t))
+        ((tm-func? t 'concat)
+         (let* ((l (tm-children t))
+                (sc (list-scatter l (cut == <> '(name-sep)) #f))
+                (ls (map (lambda (l) (apply tmconcat l))  sc))
+                (ns (map transform-name ls))
+                (n (list-intersperse ns '(name-sep))))
+           (apply tmconcat n)))
+        (else t)))
+
+(tm-define (kbd-enter t shift?)
+  (:require (and (db-field? t) (not shift?)
+                 (in? (db-field-attr t) (list "author" "editor"))))
+  (let* ((old (tm->stree (tm-ref t :down)))
+         (new (transform-names old)))
+    (if (== new old)
+        (former t shift?)
+        (tree-assign (tm-ref t :down) new))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering names
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (kbd-map
   (:mode in-bib-names?)
+  ("space a" " a")
+  ("space a n" " an")
   ("space a n d space" (make-name-sep))
   ("," (make-name-sep))
   (", var" ",")
