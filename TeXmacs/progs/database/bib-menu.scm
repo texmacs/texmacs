@@ -130,5 +130,3 @@
        (when (and (tree->path u)
 		  (tree-in? (tree-up u) '(cite nocite cite-detail)))
 	 (tree-set! u key))))))
-
-(display* "Loaded\n")
