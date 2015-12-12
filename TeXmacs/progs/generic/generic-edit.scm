@@ -931,3 +931,7 @@
         ;;(display* "Remap " (ahash-ref remote-control-remap key) "\n")
         (key-press (ahash-ref remote-control-remap key)))
       (key-press key)))
+
+(tm-define (focus-open-search-tool t)
+  (:interactive #t)
+  (noop))

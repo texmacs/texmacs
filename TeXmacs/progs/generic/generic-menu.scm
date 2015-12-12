@@ -53,6 +53,9 @@
   (:require (tree-in? t '(reference pageref hlink locus ornament)))
   #t)
 
+(tm-define (focus-can-search? t)
+  #f)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -335,6 +338,8 @@
     (-> "Preferences"
         (dynamic (focus-preferences-menu t))))
   ("Describe" (focus-help))
+  (assuming (focus-can-search? t)
+    ("Search in database" (focus-open-search-tool t)))
   ("Delete" (remove-structure-upwards)))
 
 (tm-menu (focus-move-menu t)
@@ -451,7 +456,10 @@
     (=> (balloon (icon "tm_focus_prefs.xpm") "Preferences for tag")
 	(dynamic (focus-preferences-menu t))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
-   (focus-help)))
+   (focus-help))
+  (assuming (focus-can-search? t)
+    ((balloon (icon "tm_focus_search.xpm") "Search in database")
+     (focus-open-search-tool t))))
 
 (tm-menu (focus-move-icons t)
   ((balloon (icon "tm_similar_first.xpm") "Go to first similar tag")
