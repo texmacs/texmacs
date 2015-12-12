@@ -113,3 +113,22 @@
       (link bib-jr-menu))
   ((balloon (icon "tm_and.xpm") "Insert more names")
    (make-name-sep)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Opening focus search tool for citations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-can-search? t)
+  (:require (and (supports-db?) (bib-cite-context? t)))
+  #t)
+
+(tm-define (focus-open-search-tool t)
+  (:require (and (supports-db?) (bib-cite-context? t)))
+  (and-with u (tree-down t)
+    (open-bib-chooser
+     (lambda (key)
+       (when (and (tree->path u)
+		  (tree-in? (tree-up u) '(cite nocite cite-detail)))
+	 (tree-set! u key))))))
+
+(display* "Loaded\n")

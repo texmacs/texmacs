@@ -32,12 +32,7 @@
 
 (tm-define (kbd-alternate-variant t forwards?)
   (:require (and (supports-db?) (bib-cite-context? t)))
-  (and-with u (tree-down t)
-    (open-bib-chooser
-     (lambda (key)
-       (when (and (tree->path u)
-		  (tree-in? (tree-up u) '(cite nocite cite-detail)))
-	 (tree-set! u key))))))
+  (focus-open-search-tool t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering names
