@@ -199,7 +199,8 @@ latex_parser::parse (string s, int& i, string stop, int change) {
 	  (s[i] != '$' && s[i] != '}' &&
 	   (i+2>n || s(i,i+2) != "\\]") &&
 	   (i+2>n || s(i,i+2) != "\\)") &&
-	   (i+4>n || s(i,i+4) != "\\end")))) {
+	   (i+4>n || s(i,i+4) != "\\end"))) &&
+	 (stop != "\\egroup" || i+7>n || s(i,i+7) != "\\egroup")) {
     if (lf == 'N' && s[i] != '\n') lf= 'M';
     switch (s[i]) {
     case '~':
@@ -511,6 +512,21 @@ latex_parser::parse_backslash (string s, int& i, int change) {
     while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
     if (i<n && s[i] == '{') { i++; u= parse (s, i, "}"); i++; }
     return tree (TUPLE, "\\href", ss, u);
+  }
+  if (((i+8)<n) && (s(i,i+7)=="\\bgroup")) {
+    i+=7;
+    tree t (CONCAT);
+    t << tree (TUPLE, "\\begingroup");
+    t << parse (s, i, "\\egroup", change);
+    t << tree (TUPLE, "\\endgroup");
+    if (((i+8)<n) && (s(i,i+7)=="\\egroup")) i+=7;
+    if ((i<n) && (!is_space (s[i]))) return t;
+    int ln=0;
+    while ((i<n) && is_space (s[i]))
+      if (s[i++]=='\n') ln++;
+    if (ln >= 2) t << "\n";
+    else if (i<n) t << " ";
+    return t;
   }
 
   /************************ special commands *********************************/
