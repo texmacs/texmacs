@@ -170,7 +170,7 @@ evaluate_impl (tree t) {
     return evaluate_for_each (t);
   case EXTERN:
     return evaluate_rewrite (t);
-  case INCLUDE:
+  case VAR_INCLUDE:
     return evaluate_include (t);
   case USE_PACKAGE:
     return evaluate_use_package (t);

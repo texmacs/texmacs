@@ -76,7 +76,7 @@ void
 bridge_rewrite_rep::my_typeset (int desired_status) {
   initialize (env->rewrite (st));
   ttt->insert_marker (st, ip);
-  if (is_func (st, INCLUDE)) {
+  if (is_func (st, VAR_INCLUDE)) {
     url save_name= env->cur_file_name;
     url file_name= url_unix (env->exec_string (st[0]));
     env->cur_file_name= relative (env->base_file_name, file_name);

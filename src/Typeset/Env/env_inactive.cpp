@@ -29,7 +29,7 @@ is_long_arg (tree t, int i) {
   int n= N(t);
   switch (L(t)) {
   case DOCUMENT:
-  case INCLUDE:
+  case VAR_INCLUDE:
   case TFORMAT:
   case TABLE:
     return true;

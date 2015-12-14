@@ -309,7 +309,7 @@ is_multi_paragraph (tree t) {
   case ACTIVE:
   case VAR_ACTIVE:
     return is_multi_paragraph (t[N(t)-1]);
-  case INCLUDE:
+  case VAR_INCLUDE:
     return true;
   case LOCUS:
   case CANVAS:

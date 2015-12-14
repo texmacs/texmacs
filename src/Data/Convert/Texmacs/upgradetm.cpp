@@ -1407,7 +1407,7 @@ static tree
 upgrade_project (tree t) {
   if (is_atomic (t)) return t;
   else if (is_expand (t, "include-document", 1))
-    return tree (INCLUDE, t[1]);
+    return tree (VAR_INCLUDE, t[1]);
   else {
     int i, n= N(t);
     tree r (t, n);

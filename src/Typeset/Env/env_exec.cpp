@@ -97,7 +97,7 @@ edit_env_rep::rewrite (tree t) {
       macro_src= old_src;
       return r;
     }
-  case INCLUDE:
+  case VAR_INCLUDE:
     {
       if (N(t) == 0) return tree (ERROR, "invalid include");
       url file_name= url_unix (exec_string (t[0]));
@@ -261,7 +261,7 @@ edit_env_rep::exec (tree t) {
     return exec_for_each (t);
   case EXTERN:
     return exec_rewrite (t);
-  case INCLUDE:
+  case VAR_INCLUDE:
     return exec_rewrite (t);
   case USE_PACKAGE:
     return exec_use_package (t);
@@ -2114,7 +2114,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     (void) exec (t);
     return false;
   case EXTERN:
-  case INCLUDE:
+  case VAR_INCLUDE:
     return exec_until_rewrite (t, p, var, level);
   case USE_PACKAGE:
   case USE_MODULE:
@@ -2473,7 +2473,7 @@ edit_env_rep::depends (tree t, string s, int level) {
 	   is_func (t, EVAL_ARGS))
     {
       // FIXME: this does not handle more complex dependencies,
-      // like those encountered after rewritings (INCLUDE, EXTERN, etc.)
+      // like those encountered after rewritings (VAR_INCLUDE, EXTERN, etc.)
       tree v= (L(t) == MAP_ARGS? t[2]: t[0]);
       if (is_compound (v)) return false;
       if (!macro_arg->item->contains (v->label)) return false;

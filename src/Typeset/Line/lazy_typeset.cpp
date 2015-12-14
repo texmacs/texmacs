@@ -528,7 +528,7 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_compound (env, t, ip);
   case EXTERN:
     return make_lazy_rewrite (env, t, ip);
-  case INCLUDE:
+  case VAR_INCLUDE:
     return make_lazy_rewrite (env, t, ip);
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:

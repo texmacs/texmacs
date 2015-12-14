@@ -217,6 +217,7 @@ edit_interface_rep::compute_operation_footer (tree st) {
       if (is_atomic (st[0])) r= as_string (st[0]);
       else r= "compound";
       break;
+    case VAR_INCLUDE:
     case INCLUDE:
       r= concat ("include ", as_string (st[0])); break;
     case INACTIVE:

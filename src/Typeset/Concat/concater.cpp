@@ -501,8 +501,11 @@ concater_rep::typeset (tree t, path ip) {
   case EXTERN:
     typeset_rewrite (t, ip);
     break;
-  case INCLUDE:
+  case VAR_INCLUDE:
     typeset_include (t, ip);
+    break;
+  case INCLUDE:
+    typeset_compound (t, ip);
     break;
   case USE_PACKAGE:
   case USE_MODULE:

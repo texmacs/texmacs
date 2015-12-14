@@ -131,7 +131,7 @@ rewrite_impl (tree t) {
       return r;
     }
 #endif // CLASSICAL_MACRO_EXPANSION
-  case INCLUDE:
+  case VAR_INCLUDE:
     {
       url base_file_name (as_string (std_env ["base-file-name"]));
       url file_name= url_system (evaluate_string (t[0]));

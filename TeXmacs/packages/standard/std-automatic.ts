@@ -250,8 +250,8 @@
 
   <assign|shared|<macro|unique-id|mirror-id|body|<with|old-color|<value|locus-color>|locus-color|preserve|<locus|<id|<arg|mirror-id>>|<observer|<arg|unique-id>|mirror-notify>|<surround|<hidden|<part-info|<arg|unique-id>><extern|mirror-initialize|<quote-arg|xbody>>>|<right-flush>|<with|locus-color|<value|old-color>|<arg|body>>>>>>>
 
-  <assign|include*|<macro|name|<\surround|<part-info|<arg|name>>|>
-    <include|<arg|name>>
+  <assign|include|<macro|name|<\surround|<part-info|<arg|name>>|>
+    <include*|<arg|name>>
   </surround>>>
 </body>
 

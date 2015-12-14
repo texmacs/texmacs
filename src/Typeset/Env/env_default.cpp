@@ -325,6 +325,8 @@ initialize_default_env () {
 			   tree (LOCUS, copy (ref_id), ln3, reftxt));
   env ("pageref")= tree (MACRO, "Id",
 			 tree (LOCUS, copy (ref_id), copy (ln3), preftxt));
+  env ("include")= tree (MACRO, "name",
+			 tree (VAR_INCLUDE, tree (ARG, "name")));
 
   /* further standard macros */
   env ("error")=
