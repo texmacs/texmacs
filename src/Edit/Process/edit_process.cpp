@@ -54,6 +54,14 @@ remove_labels (tree t) {
 * Automatically generate a bibliography
 ******************************************************************************/
 
+void
+copy_bst_file (url base, string style) {
+  string bst= style * ".bst";
+  url u1= url ("$TEXMACS_HOME_PATH/system/bib", bst);
+  url u2= relative (base, bst);
+  if (!exists (u1) && exists (u2)) copy (u2, u1);
+}
+
 url
 find_bib_file (url base, string fname,
                string suffix= ".bib", bool rooted= false) {
@@ -84,6 +92,7 @@ edit_process_rep::generate_bibliography (
   tree bib_t= buf->data->aux[bib];
   if (buf->prj != NULL) bib_t= buf->prj->data->aux[bib];
   tree t;
+  copy_bst_file (buf->buf->name, style);
   url bib_file= find_bib_file (buf->buf->name, fname);
   //cout << fname << " -> " << concretize (bib_file) << "\n";
   if (is_none (bib_file)) {
