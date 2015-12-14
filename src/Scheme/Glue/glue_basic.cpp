@@ -4734,8 +4734,8 @@ tmg_cpp_string_tokenize (tmscm arg1, tmscm arg2) {
 
 tmscm
 tmg_cpp_string_recompose (tmscm arg1, tmscm arg2) {
-  TMSCM_ASSERT_ARRAY_STRING (arg1, TMSCM_ARG1, "cpp-string-tokenize");
-  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-string-tokenize");
+  TMSCM_ASSERT_ARRAY_STRING (arg1, TMSCM_ARG1, "cpp-string-recompose");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-string-recompose");
 
   array_string in1= tmscm_to_array_string (arg1);
   string in2= tmscm_to_string (arg2);
