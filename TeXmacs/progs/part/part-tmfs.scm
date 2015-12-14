@@ -18,7 +18,7 @@
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (part-master u)
+(tm-define (part-master u)
   (and (url-concat? u)  
        (or (part-master (url-head u))
            (and (== (url-suffix u) "tm") u))))
@@ -36,7 +36,7 @@
            (and-with d (part-delta (url-head u))
              (url-append d (url-tail u))))))
 
-(define (part-file u)
+(tm-define (part-file u)
   (let* ((m (part-master u))
          (p (part-parent u))
          (d (part-delta u)))

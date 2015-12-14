@@ -256,6 +256,31 @@
       #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Buffer with included files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tm-include? t)
+  (and (tm-func? t 'include 1)
+       (tm-atomic? (tm-ref t 0))
+       (not (string-starts? (tm->string (tm-ref t 0)) ".."))))
+
+(tm-define (tm-get-includes doc)
+  (cond ((tm-func? doc 'with)
+	 (tm-get-includes (tm-ref doc :last)))
+	((tm-func? doc 'document)
+	 (append-map tm-get-includes (tm-children doc)))
+	((tm-include? doc)
+	 (list (tm->string (tm-ref doc 0))))
+	(else (list))))
+
+(tm-define (buffer-get-includes)
+  (tm-get-includes (buffer-tree)))
+
+(tm-define (buffer-contains-includes?)
+  (and (nnull? (buffer-get-includes))
+       (url-rooted-protocol? (current-buffer) "default")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The dynamic document part menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -282,6 +307,10 @@
       ---
       (when (in? (buffer-get-part-mode) '(:one :several))
 	(link document-parts-menu))))
+
+(menu-bind document-part-menu
+  (:require (buffer-contains-includes?))
+  (link document-master-menu))
 
 (menu-bind project-manage-menu
   (group "Upgrade")
