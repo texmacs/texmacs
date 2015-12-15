@@ -681,6 +681,7 @@
   (buffer-pretend-modified pretend_buffer_modified (void url))
   (buffer-pretend-saved pretend_buffer_saved (void url))
   (buffer-pretend-autosaved pretend_buffer_autosaved (void url))
+  (buffer-attach-notifier attach_buffer_notifier (void url))
   (buffer-has-name? buffer_has_name (bool url))
   (buffer-aux? is_aux_buffer (bool url))
   (buffer-import buffer_import (bool url url string))

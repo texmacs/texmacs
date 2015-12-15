@@ -27,6 +27,17 @@ string propose_title (string old_title, url u, tree doc);
 * Check for changes in the buffer
 ******************************************************************************/
 
+void
+tm_buffer_rep::attach_notifier () {
+  if (notify) return;
+  string id= "file-" * as_string (buf->name);
+  tree& st (subtree (the_et, rp));
+  call ("buffer-initialize", id, st, buf->name);
+  lns= link_repository (true);
+  lns->insert_locus (id, st, "buffer-notify");
+  notify= true;
+}
+
 bool
 tm_buffer_rep::needs_to_be_saved () {
   if (buf->read_only) return false;
@@ -390,6 +401,13 @@ pretend_buffer_autosaved (url name) {
   array<url> vs= buffer_to_views (name);
   for (int i=0; i<N(vs); i++)
     view_to_editor (vs[i]) -> notify_save (false);
+}
+
+void
+attach_buffer_notifier (url name) {
+  tm_buffer buf= concrete_buffer (name);
+  if (is_nil (buf)) return;
+  buf->attach_notifier ();
 }
 
 /******************************************************************************

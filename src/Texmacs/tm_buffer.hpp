@@ -33,14 +33,17 @@ public:
   array<tm_view> vws;     // views attached to buffer
   tm_buffer prj;          // buffer which corresponds to the project
   path rp;                // path to the document's root in the_et
+  link_repository lns;    // global links
+  bool notify;            // notify modifications to scheme
 
   inline tm_buffer_rep (url name):
     buf (name), data (),
-    vws (0), prj (NULL), rp (new_document ()) {}
+    vws (0), prj (NULL), rp (new_document ()), notify (false) {}
 
   inline ~tm_buffer_rep () {
     delete_document (rp); }
 
+  void attach_notifier ();
   bool needs_to_be_saved ();
   bool needs_to_be_autosaved ();
 };

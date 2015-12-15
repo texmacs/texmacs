@@ -95,6 +95,7 @@ bool buffer_modified_since_autosave (url name);
 void pretend_buffer_modified (url name);
 void pretend_buffer_saved (url name);
 void pretend_buffer_autosaved (url name);
+void attach_buffer_notifier (url name);
 bool buffer_has_name (url name);
 bool buffer_import (url name, url src, string fm);
 bool buffer_load (url name);

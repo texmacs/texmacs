@@ -138,6 +138,9 @@
       (when (>= (length (id->trees (mirror-unique-id t))) 2)
         (mirror-invalidate t)))))
 
+(tm-define (buffer-initialize id t name)
+  (display* "Initialize " id ", " name "\n"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Updating
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -183,3 +186,6 @@
             (with old (or (ahash-ref mirror-pending uid) (list))
               (ahash-set! mirror-pending uid
                           (cons (modification-copy mod) old)))))))))
+
+(tm-define (buffer-notify event t mod)
+  (display* "Buffer event " event ", " mod "\n"))

@@ -320,6 +320,7 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting partial document facilities\n")
+(lazy-define (part part-shared) buffer-initialize buffer-notify)
 (lazy-menu (part part-menu) document-master-menu)
 (lazy-tmfs-handler (part part-tmfs) part)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
