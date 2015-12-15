@@ -138,9 +138,6 @@
       (when (>= (length (id->trees (mirror-unique-id t))) 2)
         (mirror-invalidate t)))))
 
-(tm-define (buffer-initialize id t name)
-  (display* "Initialize " id ", " name "\n"))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Updating
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -168,6 +165,16 @@
               (mirror-invalidate t)))))
       (set! mirror-pending (make-ahash-table)))))
 
+(define (mirror-list-notify l mod)
+  (for (m l)
+    (with uid (mirror-unique-id m)
+      (when uid
+        (when (== (ahash-size mirror-pending) 0)
+          (delayed (:idle 1) (mirror-treat-pending)))
+        (with old (or (ahash-ref mirror-pending uid) (list))
+          (ahash-set! mirror-pending uid
+                      (cons (modification-copy mod) old)))))))
+
 (tm-define (mirror-notify event t mod)
   (:secure #t)
   (when (and mirror-idle?
@@ -177,15 +184,83 @@
              (mirror-body? t))
     ;;(display* event ", " (tree->path t) ", "
     ;;(modification->scheme mod) "\n")
+    (and-with p (tree-up t)
+      (when (tree-func? p 'shared)
+        (buffer-initialize-shared (mirror-id p))
+        (buffer-notify-shared (mirror-id p) mod)))
     (with l (mirror-list t)
-      (for (m l)
-        (with uid (mirror-unique-id m)
-          (when uid
-            (when (== (ahash-size mirror-pending) 0)
-              (delayed (:idle 1) (mirror-treat-pending)))
-            (with old (or (ahash-ref mirror-pending uid) (list))
-              (ahash-set! mirror-pending uid
-                          (cons (modification-copy mod) old)))))))))
+      (mirror-list-notify l mod))))
+      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sharing entire buffers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define buffer-shared-list (make-ahash-table))
+(define buffer-pending (make-ahash-table))
+(define buffer-black-list (make-ahash-table))
+
+(tm-define (buffer-initialize id t buf)
+  (ahash-set! buffer-shared-list id #t))
 
 (tm-define (buffer-notify event t mod)
-  (display* "Buffer event " event ", " mod "\n"))
+  (when (and mirror-idle?
+             ;;(not (busy-versioning?))
+             (== event 'announce)
+             (!= (modification-type mod) 'set-cursor))
+    (with ids (list-filter (tree->ids t)
+                           (cut ahash-ref buffer-shared-list <>))
+      (when (== (length ids) 1)
+        (let* ((other? (lambda (u) (!= (tree->path t) (tree->path u))))
+               (l (list-filter (id->trees (car ids)) other?)))
+          (mirror-list-notify l mod))))))
+
+(tm-define (buffer-initialize-shared id)
+  (with buf id
+    ;;(when (not (buffer-exists? buf))
+    ;;  (delayed
+    ;;    (:idle 1)
+    ;;    (load-buffer buf :background)))
+    (if (not (ahash-ref buffer-shared-list id))
+        (when (buffer-exists? buf)
+          (buffer-attach-notifier buf)
+          (ahash-set! buffer-shared-list id #t)
+          (ahash-set! buffer-black-list id #t))
+        (when (not (buffer-exists? buf))
+          (ahash-remove! buffer-shared-list id)))))
+
+(define (buffer-restore buf)
+  (with-author mirror-author
+    (with-global mirror-idle? #f
+      (let* ((t (buffer-get-body buf))
+             (other? (lambda (u) (!= (tree->path t) (tree->path u))))
+             (l (list-filter (id->trees buf) other?)))
+        (when (nnull? l)
+          (tree-set! t (tree-copy (car l))))
+        (ahash-remove! buffer-black-list buf)))))
+
+(define (buffer-treat-pending)
+  (with-author mirror-author
+    (with-global mirror-idle? #f
+      (for (key-im (ahash-table->list buffer-pending))
+        (let* ((id (car key-im))
+               (ok? (not (ahash-ref buffer-black-list id)))
+               (t (buffer-get-body id)))
+          (for (mod (reverse (cdr key-im)))
+            (when ok?
+              (if (modification-applicable? t mod)
+                  (begin
+                    ;;(display* "Applying " (modification->scheme mod)
+                    ;;" to " (tm->stree t) "\n")
+                    (modification-apply! t mod))
+                  (set! ok? #f))))
+          (when (and t (not ok?))
+            (buffer-restore id))))
+      (set! buffer-pending (make-ahash-table)))))
+
+(tm-define (buffer-notify-shared id mod)
+  (when (ahash-ref buffer-shared-list id)
+    (when (== (ahash-size buffer-pending) 0)
+      (delayed (:idle 1) (buffer-treat-pending)))
+    (with old (or (ahash-ref buffer-pending id) (list))
+      (ahash-set! buffer-pending id
+                  (cons (modification-copy mod) old)))))

@@ -30,7 +30,7 @@ string propose_title (string old_title, url u, tree doc);
 void
 tm_buffer_rep::attach_notifier () {
   if (notify) return;
-  string id= "file-" * as_string (buf->name);
+  string id= as_string (buf->name, URL_UNIX);
   tree& st (subtree (the_et, rp));
   call ("buffer-initialize", id, st, buf->name);
   lns= link_repository (true);
