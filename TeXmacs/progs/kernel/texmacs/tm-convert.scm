@@ -281,16 +281,23 @@
 ;; Other useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (tm-file-extract doc what)
+(define-public (tmfile-get doc what)
   (and (tm-func? doc 'document)
        (with val (assoc-ref (map tm->list (tm-children doc)) what)
          (if (pair? val) (set! val (car val)))
          val)))
 
+(define-public (tmfile-set doc what val)
+  (and (tm-func? doc 'document)
+       (with l (reverse (map tm->list (tm-children doc)))
+         (set! l (assoc-set! l what (list val)))
+         (cons 'document (reverse l)))))
+
 (define-public (tmfile? doc)
-  (and (tmfile-extract doc 'TeXmacs) (tmfile-extract doc 'body)))
+  (and (tmfile-get doc 'TeXmacs) (tmfile-get doc 'body)))
 
 (define-public (tmfile-extract doc what)
+  ;; FIXME: use tmfile-get instead whenever possible
   (if (tree? doc) (set! doc (tree->stree doc)))
   (and (func? doc 'document)
        (with val (assoc-ref (cdr doc) what)
@@ -299,6 +306,7 @@
          val)))
 
 (define-public (tmfile-assign doc what val)
+  ;; FIXME: use tmfile-set instead whenever possible
   (if (tree? doc) (set! doc (tree->stree doc)))
   (and (func? doc 'document)
        (with l (reverse (cdr doc))

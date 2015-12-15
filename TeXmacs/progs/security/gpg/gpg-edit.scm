@@ -523,7 +523,7 @@
       (begin (err) t))))
 
 (tm-define (encrypted-buffer? t)
-  (and-with b (tm-file-extract t 'body)
+  (and-with b (tmfile-get t 'body)
     (and (tm-func? b 'document)
 	 (> (tm-arity b) 0)
 	 (tm-func? (tm-ref b 0) 'gpg-passphrase-encrypted-buffer))))
@@ -532,7 +532,7 @@
 (tm-define (tm-gpg-dialogue-passphrase-decrypt-buffer name)
   (with b (buffer-get name)
     (when (encrypted-buffer? b)
-      (let* ((t (tree-ref (tm-file-extract b 'body) 0))
+      (let* ((t (tree-ref (tmfile-get b 'body) 0))
 	     (enc (tree->string (tree-ref t 0)))
 	     (decryptable? (lambda (x) (gpg-decryptable? enc x)))
 	     (decrypt (lambda (x)
