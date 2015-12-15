@@ -50,7 +50,7 @@
          (m (part-master u))
          (f (part-file u))
          (t (tree-import m "texmacs"))
-	 (b (tmfile-extract t 'body))
+	 (b (tmfile-get t 'body))
 	 (l (tm-get-includes b)))
     ((eval (url->string (url-tail m))) (load-buffer m))
     ---
