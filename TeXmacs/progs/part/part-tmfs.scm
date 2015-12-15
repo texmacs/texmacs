@@ -12,26 +12,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (part part-tmfs)
-  (:use (part part-shared)))
+  (:use (part part-shared)
+        (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tm-suffix? u)
+  (in? (url-suffix u) (list "tm" "tm~" "tm#")))
+
 (tm-define (part-master u)
   (and (url-concat? u)  
        (or (part-master (url-head u))
-           (and (== (url-suffix u) "tm") u))))
+           (and (tm-suffix? u) u))))
 
 (define (part-parent u)
   (and (url-concat? u)
-       (if (== (url-suffix (url-head u)) "tm")
+       (if (tm-suffix? u)
            (url-head u)
            (part-parent (url-head u)))))
 
 (define (part-delta u)
   (and (url-concat? u)
-       (if (== (url-suffix (url-head u)) "tm")
+       (if (tm-suffix? u)
            (url-tail u)
            (and-with d (part-delta (url-head u))
              (url-append d (url-tail u))))))
@@ -92,7 +96,7 @@
            (if (and h t) (string-append h " - " t)
                (or h t))))
         ((url-atomic? u)
-         (and (== (url-suffix u) "tm")
+         (and (tm-suffix? u)
               (url->string (url-basename u))))
         (else #f)))
 
@@ -216,10 +220,26 @@
     ;;(display* "com= " (tm->stree com) "\n")
     (if (tree-export (tm->tree com) f "texmacs")
         (buffer-pretend-modified f)
-        (begin
-          (buffer-pretend-saved f)
-          ;; FIXME: remove autosave file and perform further cleaning
-          ))))
+        (buffer-pretend-saved f))))
+
+(tmfs-autosave-handler (part name suf)
+  (if (string-ends? name "/") (set! name (string-append name "x")))
+  (let* ((u (tmfs-string->url name))
+         (f (part-file u)))
+    (and (url-autosave f suf)
+         (string-append "tmfs://part/" name suf))))
+
+(tmfs-remove-handler (part name)
+  (if (string-ends? name "/") (set! name (string-append name "x")))
+  (let* ((u (tmfs-string->url name))
+         (f (part-file u)))
+    (url-remove f)))
+
+(tmfs-date-handler (part name)
+  (if (string-ends? name "/") (set! name (string-append name "x")))
+  (let* ((u (tmfs-string->url name))
+         (f (part-file u)))
+    (url-last-modified f)))
 
 (tmfs-permission-handler (part name type)
   (if (string-ends? name "/") (set! name (string-append name "x")))

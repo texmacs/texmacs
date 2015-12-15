@@ -17,6 +17,38 @@
         (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Supplementary routines on urls, taking into account the TeXmacs file system
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define cpp-url-last-modified url-last-modified)
+(define cpp-url-newer? url-newer?)
+
+(tm-define (url-last-modified u)
+  (if (url-rooted-tmfs? u)
+      (tmfs-date u)
+      (cpp-url-last-modified u)))
+
+(tm-define (url-newer? u1 u2)
+  (if (or (url-rooted-tmfs? u1) (url-rooted-tmfs? u2))
+      (and-let* ((d1 (url-last-modified u1))
+                 (d2 (url-last-modified u2)))
+        (> d1 d2))))
+
+(tm-define (url-remove u)
+  (if (url-rooted-tmfs? u)
+      (tmfs-remove u)
+      (system-remove u)))
+
+(tm-define (url-autosave u suf)
+  (if (url-rooted-tmfs? u)
+      (tmfs-autosave u suf)
+      (and (or (url-scratch? u)
+               (url-test? u "fw")
+               (and (not (url-exists? u))
+                    (url-test? u "c")))
+           (url-glue u suf))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -268,7 +300,8 @@
 
 (define (autosave-eligible? name)
   (and (not (url-rooted-web? name))
-       (not (url-rooted-tmfs? name))))
+       (or (not (url-rooted-tmfs? name))
+           (tmfs-autosave name "~"))))
 
 (define (autosave-propose name)
   (and (autosave-eligible? name)
@@ -281,29 +314,26 @@
        (== (most-recent-suffix name) "#")))
 
 (define (autosave-remove name)
-  (when (file-exists? (url-glue name "~"))
-    (system-remove (url-glue name "~")))
-  (when (file-exists? (url-glue name "#"))
-    (system-remove (url-glue name "#"))))
+  (when (url-exists? (url-glue name "~"))
+    (url-remove (url-glue name "~")))
+  (when (url-exists? (url-glue name "#"))
+    (url-remove (url-glue name "#"))))
 
 (tm-define (autosave-buffer name)
   (when (and (buffer-modified-since-autosave? name)
-             (or (url-scratch? name)
-                 (url-test? name "fw")
-                 (and (not (url-exists? name))
-                      (url-test? name "c"))))
+             (url-autosave name "~"))
     ;;(display* "Autosave " name "\n")
     ;; FIXME: incorrectly autosaves after cursor movements only
     (let* ((vname `(verbatim ,(url->system name)))
            (suffix (if (rescue-mode?) "#" "~"))
-           (aname (url-glue name suffix))
+           (aname (url-autosave name suffix))
            (fm (url-format name)))
       (if (url-scratch? name) (set! aname name))
-      (cond ((!= fm "texmacs")
+      (cond ((nin? fm (list "texmacs" "stm"))
              (when (not (rescue-mode?))
                (set-message `(concat "Warning: " ,vname " not auto-saved")
                             "Auto-save file")))
-            ((buffer-export name aname "texmacs")
+            ((buffer-export name aname fm)
              (when (not (rescue-mode?))
                (set-message `(concat "Failed to auto-save " ,vname)
                             "Auto-save file")))
