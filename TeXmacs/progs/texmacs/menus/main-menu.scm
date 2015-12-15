@@ -115,6 +115,7 @@
           (-> "Link" (link link-menu)))
       (if (in-presentation?)
           (-> "Dynamic" (link dynamic-menu)))
+      (-> "Focus" (link focus-menu))
       (-> "Format" (link format-menu)))
   (-> "Document" (link document-menu))
   (if (== (get-init-tree "sectional-short-style") (tree 'macro "false"))
