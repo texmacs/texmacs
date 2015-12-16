@@ -22,6 +22,7 @@
 
 (define cpp-url-last-modified url-last-modified)
 (define cpp-url-newer? url-newer?)
+(define cpp-buffer-last-save buffer-last-save)
 
 (tm-define (url-last-modified u)
   (if (url-rooted-tmfs? u)
@@ -52,6 +53,14 @@
 (tm-define (url-wrap u)
   (and (url-rooted-tmfs? u)
        (tmfs-wrap u)))
+
+(tm-define (buffer-last-save u)
+  (with base (url-wrap u)
+    (cond ((not base)
+           (cpp-buffer-last-save u))
+          ((buffer-exists? base)
+           (buffer-last-save base))
+          (else (url-last-modified base)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous subroutines
