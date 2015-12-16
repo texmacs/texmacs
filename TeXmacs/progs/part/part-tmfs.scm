@@ -165,9 +165,7 @@
 
 (tmfs-master-handler (part name)
   (if (string-ends? name "/") (set! name (string-append name "x")))
-  (let* ((u (tmfs-string->url name))
-         (f (part-file u)))
-    (or f name)))
+  (or (part-file (tmfs-string->url name)) name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving
@@ -222,30 +220,6 @@
         (buffer-pretend-modified f)
         (buffer-pretend-saved f))))
 
-(tmfs-autosave-handler (part name suf)
+(tmfs-wrap-handler (part name)
   (if (string-ends? name "/") (set! name (string-append name "x")))
-  (let* ((u (tmfs-string->url name))
-         (f (part-file u)))
-    (and (url-autosave f suf)
-         (string-append "tmfs://part/" name suf))))
-
-(tmfs-remove-handler (part name)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (let* ((u (tmfs-string->url name))
-         (f (part-file u)))
-    (url-remove f)))
-
-(tmfs-date-handler (part name)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (let* ((u (tmfs-string->url name))
-         (f (part-file u)))
-    (url-last-modified f)))
-
-(tmfs-permission-handler (part name type)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (let* ((u (tmfs-string->url name))
-         (f (part-file u)))
-    (cond ((not f) #f)
-          ((== type "read") (url-test? f "r"))
-          ((== type "write") (url-test? f "w"))
-          (else #f))))
+  (part-file (tmfs-string->url name)))

@@ -287,6 +287,14 @@
   (with d (url-expand (url-complete (url-append u (url-wildcard wc)) "r"))
     (url->list d)))
 
+(define-public (url-remove u)
+  (system-remove u))
+
+(define-public (url-autosave u suf)
+  (and (not (url-rooted-web? name))
+       (not (url-rooted-tmfs? name))
+       (url-glue u suf)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

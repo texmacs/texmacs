@@ -63,7 +63,7 @@
     tab icon-tab form item meti refreshable
     $when $let $let* $for $refreshable
     tmfs-load-handler tmfs-save-handler
-    tmfs-autosave-handler tmfs-remove-handler
+    tmfs-autosave-handler tmfs-remove-handler tmfs-wrap-handler
     tmfs-date-handler tmfs-title-handler tmfs-permission-handler
     tmfs-master-handler tmfs-format-handler))
 
