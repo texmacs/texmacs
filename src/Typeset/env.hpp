@@ -141,6 +141,7 @@ public:
   bool                         read_only;   // write-protected ?
   hashmap<string,tree>         missing;     // missing refs
   array<tree>                  redefined;   // redefined labels
+  hashmap<string,bool>         touched;     // touched refs
   link_repository              link_env;
 
   int          dpi;

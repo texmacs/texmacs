@@ -1685,6 +1685,7 @@ edit_env_rep::exec_set_binding (tree t) {
 	extra << "#" << part (1, N(part));
       local_ref (key) << extra;
     }
+    touched (key)= true;
     if (complete && is_tuple (old_value) && N(old_value) >= 1) {
       string old_s= tree_as_string (old_value[0]);
       string new_s= tree_as_string (value);

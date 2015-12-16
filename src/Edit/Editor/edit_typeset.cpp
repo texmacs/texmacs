@@ -34,9 +34,9 @@ bool enable_fastenv= false;
 edit_typeset_rep::edit_typeset_rep ():
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
-  stydef (UNINIT), pre (UNINIT), init (UNINIT), fin (UNINIT),
+  stydef (UNINIT), pre (UNINIT), init (UNINIT), fin (UNINIT), grefs (UNINIT),
   env (drd, buf->buf->master,
-       buf->data->ref, (buf->prj==NULL? buf->data->ref: buf->prj->data->ref),
+       buf->data->ref, (buf->prj==NULL? grefs: buf->prj->data->ref),
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux),
        buf->data->att, (buf->prj==NULL? buf->data->att: buf->prj->data->att)),
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {
@@ -65,6 +65,8 @@ edit_typeset_rep::edit_typeset_rep ():
       }
     }
   }
+  else if (buf->data->init ["part-flag"] == "true")
+    grefs= copy (buf->data->ref);
 }
 
 edit_typeset_rep::~edit_typeset_rep () { delete_typesetter (ttt); }
@@ -759,6 +761,17 @@ report_redefined (array<tree> redefined) {
   }
 }
 
+static void
+clean_unused (hashmap<string,tree>& refs, hashmap<string,bool> used) {
+  array<string> a;
+  for (iterator<string> it= iterate (refs); it->busy(); ) {
+    string key= it->next ();
+    if (!used->contains (key)) a << key;
+  }
+  for (int i=0; i<N(a); i++)
+    refs->reset (a[i]);
+}
+
 void
 edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   int missing_nr= INT_MAX;
@@ -767,6 +780,7 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
     typeset_sub (x1, y1, x2, y2);
     if (!env->complete) break;
     env->complete= false;
+    clean_unused (env->local_ref, env->touched);
     if (N(env->missing) == 0 && N(env->redefined) == 0) break;
     if ((N(env->missing) == missing_nr && N(env->redefined) == redefined_nr) ||
         (N(env->missing) > missing_nr || N(env->redefined) > redefined_nr)) {

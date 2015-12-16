@@ -62,10 +62,11 @@
             (unpack-extra-inits (cddr l)))))
 
 (define (get-extra-init t delta)
-  (if (and (tm-func? t 'tuple)
-           (tm-equal? (tm-ref t 0) delta))
-      (unpack-extra-inits (cdr (tm-children t)))
-      (list)))
+  (cons `(associate "part-flag" "true")
+        (if (and (tm-func? t 'tuple)
+                 (tm-equal? (tm-ref t 0) delta))
+            (unpack-extra-inits (cdr (tm-children t)))
+            (list))))
 
 (define (exclude-from-inherit)
   (list "preamble" "mode"

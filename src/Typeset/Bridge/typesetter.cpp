@@ -133,6 +133,7 @@ typesetter_rep::determine_page_references (box b) {
     else if (is_func (old, TUPLE, 3))
       env->local_ref (var)= tuple (old[0], val, old[2]);
     else env->local_ref (var)= tuple (old, val);
+    env->touched (var)= true;
   }
 }
 
@@ -159,8 +160,9 @@ typesetter_rep::typeset () {
   // Typeset
   if (env->complete) {
     env->local_aux= hashmap<string,tree> (UNINIT);
-    env->missing= hashmap<string,tree> (UNINIT);
+    env->missing  = hashmap<string,tree> (UNINIT);
     env->redefined= array<tree> ();
+    env->touched  = hashmap<string,bool> (false);
   }
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
   pager ppp= tm_new<pager_rep> (br->ip, env, l);

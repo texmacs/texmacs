@@ -24,7 +24,8 @@ protected:
   hashmap<string,tree> stydef;            // environment after styles
   hashmap<string,tree> pre;               // environment after styles and init
   hashmap<string,tree> init;              // environment changes w.r.t. style
-  hashmap<string,tree> fin ;              // environment changes w.r.t. doc
+  hashmap<string,tree> fin;               // environment changes w.r.t. doc
+  hashmap<string,tree> grefs;             // global references
   edit_env env;                           // the environment for typesetting
   typesetter ttt;                         // the (not) yet typesetted document
 
