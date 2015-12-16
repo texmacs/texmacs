@@ -27,11 +27,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind document-master-menu
-  (if (buffer-has-preamble?)
-      ("Show preamble" (buffer-set-part-mode :preamble)))
-  (if (not (buffer-has-preamble?))
-      ("Create preamble" (buffer-make-preamble)))
-  ("Show main document" (buffer-set-part-mode :all))
+  (link preamble-menu)
   ---
   (for (incl (buffer-get-includes))
     ((eval incl) (goto-include (current-buffer) incl))))

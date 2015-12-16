@@ -34,8 +34,14 @@
         (include-list prj t))
       (list)))
 
-(tm-define (project-menu)
+(tm-define (project-list-menu)
   (buffer-list-menu (project-file-list)))
+
+(menu-bind project-menu
+  (if (== (project-get) (current-buffer))
+      (link preamble-menu)
+      ---)
+  (link project-list-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document style
@@ -736,7 +742,8 @@
   ;;(link remove-package-menu)
   ;;---
   ;;("Other" (interactive remove-style-package)))
-  (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
+  (if (and (not (project-attached?))
+           (!= (get-init-tree "sectional-short-style") (tree 'macro "false")))
       (-> "Part" (link document-part-menu)))
   (-> "Source"
       ("Edit source tree" (toggle-preamble))
@@ -765,7 +772,8 @@
 (menu-bind compressed-document-menu
   (-> "Style" (link document-style-menu))
   (link document-style-extra-menu)
-  (if (!= (get-init-tree "sectional-short-style") (tree 'macro "false"))
+  (if (and (not (project-attached?))
+           (!= (get-init-tree "sectional-short-style") (tree 'macro "false")))
       (-> "Part" (link document-part-menu)))
   (-> "Source"
       ("Edit source tree" (toggle-preamble))

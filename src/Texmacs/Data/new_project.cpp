@@ -41,14 +41,28 @@ project_attach (string prj_name) {
 }
 
 bool
+is_implicit_project (tm_buffer buf) {
+  if (suffix (buf->buf->name) == "tp") return true;
+  array<url> vs= buffer_to_views (buf->buf->name);
+  for (int i=0; i<N(vs); i++) {
+    editor ed= view_to_editor (vs[i]);
+    if (ed->get_init_string ("project-flag") == "true") return true;
+    if (ed->get_init_string ("project-flag") == "false") return false;
+  }
+  return buf->data->init ["project-flag"] == "true";
+}
+
+bool
 project_attached () {
   tm_buffer buf= concrete_buffer (get_current_buffer ());
+  if (is_implicit_project (buf)) return true;
   return buf->data->project != "";
 }
 
 url
 project_get () {
   tm_buffer buf= concrete_buffer (get_current_buffer ());
+  if (is_implicit_project (buf)) return buf->buf->name;
   if (buf->data->project == "") return url_none ();
   return buf->prj->buf->name;
 }

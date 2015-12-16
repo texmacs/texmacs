@@ -161,7 +161,8 @@
            page-break-menu)
 (lazy-menu (generic document-menu) document-menu
            project-menu document-style-menu global-language-menu)
-(lazy-menu (generic document-part) document-part-menu project-manage-menu)
+(lazy-menu (generic document-part)
+           preamble-menu document-part-menu project-manage-menu)
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-menu
            texmacs-insert-icons
            insert-link-menu insert-image-menu insert-animation-menu)
