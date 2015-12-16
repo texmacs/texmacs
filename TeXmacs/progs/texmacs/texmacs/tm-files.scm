@@ -32,7 +32,8 @@
   (if (or (url-rooted-tmfs? u1) (url-rooted-tmfs? u2))
       (and-let* ((d1 (url-last-modified u1))
                  (d2 (url-last-modified u2)))
-        (> d1 d2))))
+        (> d1 d2))
+      (cpp-url-newer? u1 u2)))
 
 (tm-define (url-remove u)
   (if (url-rooted-tmfs? u)
