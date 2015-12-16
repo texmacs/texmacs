@@ -49,6 +49,10 @@
   (init-env "project-flag"
             (if (== (get-init "project-flag") "true") "false" "true")))
 
+(define (project-attach* u)
+  (with name (url->unix (url-delta (current-buffer) u))
+    (project-attach name)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main internal representations for document parts:
 ;;   :preamble -> (document (show-preamble preamble) (ignore body))
@@ -331,6 +335,7 @@
     ("Expand inclusions" (buffer-expand-includes)))
   ---
   (when (not (project-attached?))
-    ("Attach master" (interactive project-attach)))
+    ("Attach master"
+     (choose-file project-attach* "Attach master file for project" "texmacs")))
   (when (project-attached?)
     ("Detach master" (project-detach))))
