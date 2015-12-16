@@ -247,6 +247,8 @@
 	       ((and (in? (car t1) '(table tformat))
                      (not (similar-tables? t1 t2)))
 		(diff t1 t2))
+               ((in? (car t1) '(shared mirror))
+                (rcons (cDr t2) (compare-versions (cAr t1) (cAr t2))))
 	       (else
 		 (let* ((tt1 (tm->tree t1))
 			(tt2 (tm->tree t2)))
