@@ -261,8 +261,7 @@
 
 (define (tm-include? t)
   (and (tm-func? t 'include 1)
-       (tm-atomic? (tm-ref t 0))
-       (not (string-starts? (tm->string (tm-ref t 0)) ".."))))
+       (tm-atomic? (tm-ref t 0))))
 
 (tm-define (tm-get-includes doc)
   (cond ((tm-func? doc 'with)
