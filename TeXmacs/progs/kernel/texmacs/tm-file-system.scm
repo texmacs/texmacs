@@ -224,7 +224,7 @@
       (let* ((protocol (url-root u))
              (file (url->unix (url-unroot u))))
         (cond ((== protocol "")
-               (string-append "here" file))
+               (string-append "here/" file))
               ((== protocol "default")
                (if (os-mingw?)
                    (string-append "file/" (strip-colon file))

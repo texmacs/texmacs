@@ -20,15 +20,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (goto-include buf incl)
-  (let* ((old (url->unix buf))
-	 (new (string-append "tmfs://part" old "/" incl)))
-    (load-buffer new)))
+  (load-buffer (part-url buf (url-relative buf incl))))
 
 (define (drop-tmfs-data u)
   (with s (url->string u)
     (if (string-starts? s "tmfs://part/")
-	(unix->url (string-drop s (string-length "tmfs://part")))
-	u)))
+	(string-drop s (string-length "tmfs://part/"))
+	(url->tmfs-string u))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The dynamic document part menu
@@ -46,9 +44,9 @@
 
 (menu-bind document-part-menu
   (:require (url-rooted-tmfs-protocol? (current-buffer) "part"))
-  (let* ((u (drop-tmfs-data (current-buffer)))
-         (m (part-master u))
-         (f (part-file u))
+  (let* ((name (drop-tmfs-data (current-buffer)))
+         (m (part-master name))
+         (f (part-file name))
          (t (tree-import m "texmacs"))
 	 (b (tmfile-get t 'body))
 	 (l (tm-get-includes b)))

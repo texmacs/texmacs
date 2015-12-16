@@ -19,32 +19,32 @@
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tm-suffix? u)
-  (in? (url-suffix u) (list "tm" "tm~" "tm#")))
+(tm-define (part-master name)
+  (with pos (string-search-forwards ".tm/" 0 name)
+    (if (<= pos 0)
+        (tmfs-string->url name)
+        (tmfs-string->url (substring name 0 (+ pos 3))))))
 
-(tm-define (part-master u)
-  (and (url-concat? u)  
-       (or (part-master (url-head u))
-           (and (tm-suffix? u) u))))
+(tm-define (part-file name)
+  (with pos (string-search-forwards ".tm/" 0 name)
+    (if (<= pos 0)
+        (tmfs-string->url name)
+        (let* ((m (tmfs-string->url (substring name 0 (+ pos 3))))
+               (s (substring name (+ pos 4) (string-length name)))
+               (f (tmfs-string->url s)))
+          (if (string-starts? s "here/")
+              (url-relative m f)
+              f)))))
 
-(define (part-parent u)
-  (and (url-concat? u)
-       (if (tm-suffix? u)
-           (url-head u)
-           (part-parent (url-head u)))))
-
-(define (part-delta u)
-  (and (url-concat? u)
-       (if (tm-suffix? u)
-           (url-tail u)
-           (and-with d (part-delta (url-head u))
-             (url-append d (url-tail u))))))
-
-(tm-define (part-file u)
-  (let* ((m (part-master u))
-         (p (part-parent u))
-         (d (part-delta u)))
-    (if (== u m) u (url-relative (part-file p) d))))
+(tm-define (part-url master file)
+  (cond ((== master file)
+         (string-append "tmfs://part/" (url->tmfs-string master)))
+        ((url-descends? file (url-head master))
+         (string-append "tmfs://part/" (url->tmfs-string master)
+                        "/" (url->tmfs-string (url-delta master file))))
+        (else
+         (string-append "tmfs://part/" (url->tmfs-string master)
+                        "/" (url->tmfs-string file)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for managing the initial environment
@@ -89,22 +89,13 @@
 ;; Titles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (part-title u)
-  (cond ((url-concat? u)
-         (let* ((h (part-title (url-head u)))
-                (t (part-title (url-tail u))))
-           (if (and h t) (string-append h " - " t)
-               (or h t))))
-        ((url-atomic? u)
-         (and (tm-suffix? u)
-              (url->string (url-basename u))))
-        (else #f)))
-
 (tmfs-title-handler (part name doc)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (with u (tmfs-string->url name)
-    (or (part-title u)
-        (url->system (url-tail u)))))
+  (let* ((m (part-master name))
+         (f (part-file name)))
+    (if (== m f)
+        (url->unix (url-basename (url-tail m)))
+        (string-append (url->unix (url-basename (url-tail m))) " - "
+                       (url->unix (url-basename (url-tail f)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading
@@ -152,10 +143,8 @@
         (else doc)))
 
 (tmfs-load-handler (part name)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (let* ((u (tmfs-string->url name))
-         (m (part-master u))
-         (f (part-file u))
+  (let* ((m (part-master name))
+         (f (part-file name))
          (doc (tree-import f "texmacs"))
          (mas (if (== m f) doc (tree-import m "texmacs")))
          (exp (part-expand doc mas f m)))
@@ -164,8 +153,7 @@
         ($generic "Invalid file."))))
 
 (tmfs-master-handler (part name)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (or (part-file (tmfs-string->url name)) name))
+  (part-file name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving
@@ -208,10 +196,8 @@
         (else doc)))
 
 (tmfs-save-handler (part name doc)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (let* ((u (tmfs-string->url name))
-         (m (part-master u))
-         (f (part-file u))
+  (let* ((m (part-master name))
+         (f (part-file name))
          (ori (tree-import f "texmacs"))
          (mas (if (== m f) doc (tree-import m "texmacs")))
          (com (part-compress doc ori mas f m)))
@@ -221,5 +207,4 @@
         (buffer-pretend-saved f))))
 
 (tmfs-wrap-handler (part name)
-  (if (string-ends? name "/") (set! name (string-append name "x")))
-  (part-file (tmfs-string->url name)))
+  (part-file name))
