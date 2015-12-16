@@ -36,6 +36,12 @@
               (url-relative m f)
               f)))))
 
+(tm-define (part-open-name u)
+  (with s (url->string u)
+    (if (string-starts? s "tmfs://part/")
+	(string-drop s (string-length "tmfs://part/"))
+	(url->tmfs-string u))))
+
 (tm-define (part-url master file)
   (cond ((== master file)
          (string-append "tmfs://part/" (url->tmfs-string master)))

@@ -28,21 +28,25 @@
     (list-or (map url-directory? l))))
 
 (tm-define (version-tool name)
-  (if (ahash-ref version-tool-table name)
-      (with tool (ahash-ref version-tool-table name)
-        (and (!= tool "") tool))
-      (with tool
-          (cond ((svn-active? name) "svn")
-                (else ""))
-        (ahash-set! version-tool-table name tool)
-        (when (and tool (not (ahash-ref version-tool-loaded tool)))
-          (ahash-set! version-tool-loaded tool #t)
-          (cond ((== tool "svn")
-                 (module-provide '(version version-svn)))))
-        (and (!= tool "") tool))))
+  (or (if (ahash-ref version-tool-table name)
+          (with tool (ahash-ref version-tool-table name)
+            (and (!= tool "") tool))
+          (with tool
+              (cond ((svn-active? name) "svn")
+                    (else ""))
+            (ahash-set! version-tool-table name tool)
+            (when (and tool (not (ahash-ref version-tool-loaded tool)))
+              (ahash-set! version-tool-loaded tool #t)
+              (cond ((== tool "svn")
+                     (module-provide '(version version-svn)))))
+            (and (!= tool "") tool)))
+      (and-with base (url-wrap name)
+        (and (version-tool base) "wrap"))))
 
 (tm-define (versioned? name)
-  (nnot (version-tool name)))
+  (or (nnot (version-tool name))
+      (and-with base (url-wrap name)
+        (versioned? base))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Getting the main status of a file
@@ -68,6 +72,19 @@
   (with u (tmfs-string->url name)
     (string-append (url->system (url-tail u)) " - History")))
 
+(define (revision-url u rev)
+  (with base (url-wrap u)
+    (cond ((not base)
+           (string-append "tmfs://revision/" rev "/" (url->tmfs-string u)))
+          ((url-rooted-tmfs-protocol? u "part")
+           (import-from (part part-tmfs))
+           (let* ((name (part-open-name u))
+                  (m (part-master name))
+                  (f (part-file name)))
+             (part-url (revision-url m rev)
+                       (revision-url f rev))))
+          (else (revision-url base rev)))))
+
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
     (with h (version-history u)
@@ -81,7 +98,7 @@
           ($description-long
             ($for (x h)
               ($with (rev by date msg) x
-                ($with dest (string-append "tmfs://revision/" rev "/" name)
+                ($with dest (revision-url u rev)
                   ($describe-item
                       ($inline "Version " ($link dest rev)
                                " by " by " on " date)
@@ -157,3 +174,31 @@
 (tm-define (version-interactive-commit name)
   (:interactive #t)
   (save-buffer name :commit))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Version control for wrapped urls
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-status name)
+  (:require (== (version-tool name) "wrap"))
+  (version-status (url-wrap name)))
+
+(tm-define (version-history name)
+  (:require (== (version-tool name) "wrap"))
+  (version-history (url-wrap name)))
+
+(tm-define (version-revision name rev)
+  (:require (== (version-tool name) "wrap"))
+  (version-revision (url-wrap name) rev))
+
+(tm-define (version-update name)
+  (:require (== (version-tool name) "wrap"))
+  (version-update (url-wrap name)))
+
+(tm-define (version-register name)
+  (:require (== (version-tool name) "wrap"))
+  (version-register (url-wrap name)))
+
+(tm-define (version-commit name msg)
+  (:require (== (version-tool name) "wrap"))
+  (version-commit (url-wrap name) msg))
