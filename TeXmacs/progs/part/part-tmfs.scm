@@ -95,7 +95,9 @@
     (if (== m f)
         (url->unix (url-basename (url-tail m)))
         (string-append (url->unix (url-basename (url-tail m))) " - "
-                       (url->unix (url-basename (url-tail f)))))))
+                       (if (url-rooted-tmfs? f)
+                           (tmfs-title f doc)
+                           (url->unix (url-basename (url-tail f))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading

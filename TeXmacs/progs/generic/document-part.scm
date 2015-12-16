@@ -277,8 +277,7 @@
   (tm-get-includes (buffer-tree)))
 
 (tm-define (buffer-contains-includes?)
-  (and (nnull? (buffer-get-includes))
-       (url-rooted-protocol? (current-buffer) "default")))
+  (nnull? (buffer-get-includes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The dynamic document part menu
