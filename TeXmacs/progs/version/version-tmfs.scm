@@ -72,18 +72,8 @@
   (with u (tmfs-string->url name)
     (string-append (url->system (url-tail u)) " - History")))
 
-(define (revision-url u rev)
-  (with base (url-wrap u)
-    (cond ((not base)
-           (string-append "tmfs://revision/" rev "/" (url->tmfs-string u)))
-          ((url-rooted-tmfs-protocol? u "part")
-           (import-from (part part-tmfs))
-           (let* ((name (part-open-name u))
-                  (m (part-master name))
-                  (f (part-file name)))
-             (part-url (revision-url m rev)
-                       (revision-url f rev))))
-          (else (revision-url base rev)))))
+(tm-define (version-revision-url u rev)
+  (string-append "tmfs://revision/" rev "/" (url->tmfs-string u)))
 
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
@@ -98,7 +88,7 @@
           ($description-long
             ($for (x h)
               ($with (rev by date msg) x
-                ($with dest (revision-url u rev)
+                ($with dest (version-revision-url u rev)
                   ($describe-item
                       ($inline "Version " ($link dest rev)
                                " by " by " on " date)
@@ -130,8 +120,9 @@
 (tm-define (version-revision name rev) "")
 
 (tmfs-load-handler (revision name)
-  (let* ((rev (tmfs-car name))
-         (u (tmfs-string->url (tmfs-cdr name))))
+  (let* ((u (tmfs-string->url (tmfs-cdr name)))
+         (tool (version-tool u)) ;; NOTE: forces lazy loading
+         (rev (tmfs-car name)))
     (version-revision u rev)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -202,3 +193,35 @@
 (tm-define (version-commit name msg)
   (:require (== (version-tool name) "wrap"))
   (version-commit (url-wrap name) msg))
+
+(tm-define (version-revision-url u rev)
+  (:require (url-wrap u))
+  (version-revision-url (url-wrap u) rev))
+
+(tm-define (version-revision? u)
+  (:require (url-wrap u))
+  (version-revision? (url-wrap u)))
+
+(tm-define (version-head u)
+  (:require (url-wrap u))
+  (version-head (url-wrap u)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Specific customizations for parts of documents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-revision-url u rev)
+  (:require (url-rooted-tmfs-protocol? u "part"))
+  (import-from (part part-tmfs))
+  (let* ((name (part-open-name u))
+         (m (part-master name))
+         (f (part-file name)))
+    (part-url (version-revision-url m rev) (version-revision-url f rev))))
+
+(tm-define (version-head u)
+  (:require (url-rooted-tmfs-protocol? u "part"))
+  (import-from (part part-tmfs))
+  (let* ((name (part-open-name u))
+         (m (part-master name))
+         (f (part-file name)))
+    (part-url (version-head m) (version-head f))))

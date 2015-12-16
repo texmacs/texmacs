@@ -156,9 +156,7 @@
          (doc (tree-import f "texmacs"))
          (mas (if (== m f) doc (tree-import m "texmacs")))
          (exp (part-expand doc mas f m)))
-    (if (and m f (not (string-ends? name "/x")))
-        (tmfs-document exp)
-        ($generic "Invalid file."))))
+    (tmfs-document exp)))
 
 (tmfs-master-handler (part name)
   (part-file name))
