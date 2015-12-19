@@ -374,7 +374,7 @@ edit_process_rep::generate_glossary (string gly) {
 	for (j=0; j<N(D); j++)
 	  if ((is_compound (D[j], "glossary-1") ||
 	       is_compound (D[j], "glossary-2")) &&
-	      (D[j][1] == G[i][1]))
+	      (D[j][0] == G[i][1]))
 	    {
 	      tree C= D[j][N(D[j])-1];
 	      if (!is_concat (C)) C= tree (CONCAT, C);
