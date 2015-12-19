@@ -111,6 +111,8 @@
 (tm-define (rich-length->tm s)
   (with r (string-replace s "-" "+-")
     (with l (string-decompose r "+")
+      (when (and (nnull? l) (== (car l) ""))
+        (set! l (cdr l)))
       (if (<= (length l) 1) s
 	  `(plus ,@l)))))
 
