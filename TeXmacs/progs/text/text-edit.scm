@@ -422,7 +422,8 @@
     (when t
       (let* ((l (tree-label t))
              (l* (symbol-append l '*)))
-        (tree-set t `(,l* ,(tm-ref t 0) ,new-name ,(tm-ref t :last)))))))
+        (tree-set t `(,l* ,@(cDr (tm-children t))
+                          ,new-name ,(tm-ref t :last)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing enunciations
