@@ -393,6 +393,37 @@
     (if (not (make-return-after))
         (insert (list 'bibliography aux style file-name '(document ""))))))
 
+(tm-define (automatic-section-context? t)
+  (tree-in? t (automatic-section-tag-list)))
+
+(define (automatic-name-var t)
+  (cond ((tm-func? t 'table-of-contents) "table-of-contents-text")
+        ((tm-func? t 'bibliography) "bibliography-text")
+        ((tm-func? t 'the-index) "index-text")
+        ((tm-func? t 'the-glossary) "glossary-text")
+        ((tm-func? t 'list-of-figures) "list-of-figures")
+        ((tm-func? t 'list-of-tables) "list-of-tables")
+        (else #f)))
+
+(define (automatic-section-name)
+  (with-innermost t automatic-section-context?
+    (let* ((var (automatic-name-var t))
+           (val (if var (get-env-tree var) "")))
+      (when (tm-func? val 'macro 1)
+        (set! val (tm-ref val 0)))
+      (when (and (tm-func? val 'localize 1) (tm-atomic? (tm-ref val 0)))
+        (set! val (tm-ref val 0)))
+      (if (tm-atomic? val) (tm->string val) ""))))
+
+(tm-define (automatic-section-rename new-name)
+  (:argument new-name "New name")
+  (:proposals new-name (list (automatic-section-name)))
+  (with-innermost t automatic-section-context?
+    (when t
+      (let* ((l (tree-label t))
+             (l* (symbol-append l '*)))
+        (tree-set t `(,l* ,(tm-ref t 0) ,new-name ,(tm-ref t :last)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing enunciations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

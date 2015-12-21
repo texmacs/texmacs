@@ -917,3 +917,18 @@
           (frame-titled? (focus-tree)))
    (frame-toggle-title t))
   (dynamic (former t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Renaming automatically generated sections
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-toggle-menu t)
+  (:require (automatic-section-context? t))
+  (dynamic (former t))
+  ("Rename" (interactive automatic-section-rename)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (automatic-section-context? t))
+  (dynamic (former t))
+  ((balloon (icon "tm_small_textual.xpm") "Rename section")
+   (interactive automatic-section-rename)))
