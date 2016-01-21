@@ -1146,6 +1146,8 @@
 
   ("< | var" "<vartriangleleft>")
   ("< | var var" "<blacktriangleleft>")
+  ("< | var var =" "<blacktrianglelefteqslant>")
+  ("< | var var = var" "<blacktrianglelefteq>")
   ("< | var /" "<ntriangleleft>")
   ("< | var =" "<trianglelefteqslant>")
   ("< | var = /" "<ntrianglelefteqslant>")
@@ -1153,6 +1155,8 @@
   ("< | var = var /" "<ntrianglelefteq>")
   ("| > var" "<vartriangleright>")
   ("| > var var" "<blacktriangleright>")
+  ("| > var var =" "<blacktrianglerighteqslant>")
+  ("| > var var = var" "<blacktrianglerighteq>")
   ("| > var /" "<ntriangleright>")
   ("| > var =" "<trianglerighteqslant>")
   ("| > var = /" "<ntrianglerighteqslant>")
