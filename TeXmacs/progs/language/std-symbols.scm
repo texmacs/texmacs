@@ -124,8 +124,11 @@
 
     "<vartriangleleft>" "<vartriangleright>"
     "<triangleleft>" "<triangleright>"
-    "<trianglelefteq>" "<trianglerighteq>" "<trianglelefteqslant>"
-    "<trianglerighteqslant>" "<blacktriangleleft>" "<blacktriangleright>"
+    "<trianglelefteq>" "<trianglerighteq>"
+    "<trianglelefteqslant>" "<trianglerighteqslant>"
+    "<blacktriangleleft>" "<blacktriangleright>"
+    "<blacktrianglelefteq>" "<blacktrianglerighteq>"
+    "<blacktrianglelefteqslant>" "<blacktrianglerighteqslant>"
     "<ntriangleleft>" "<ntriangleright>"
     "<ntrianglelefteq>" "<ntrianglerighteq>"
     "<ntrianglelefteqslant>" "<ntrianglerighteqslant>"
