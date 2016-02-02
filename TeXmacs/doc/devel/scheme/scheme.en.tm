@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.4>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Programming <scheme> extensions to <TeXmacs>>
@@ -26,7 +26,7 @@
     <branch|Writing <TeXmacs> bibliography
     styles|bibliography/bibliography.en.tm>
 
-    <branch|Other topics (tmfs, links,...)|api/api.en.tm>
+    <branch|Other topics (tmfs, links, glue symbols...)|api/api.en.tm>
   </traverse>
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
@@ -38,9 +38,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>

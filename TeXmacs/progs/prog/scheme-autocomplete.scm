@@ -22,12 +22,10 @@
 ;;    text after the cursor.
 ;;  - Add a layer decoupling from the specific scheme implementation for
 ;;    better portability.
-;;  - During compile time build lists of symbols exported in the glue and
-;;    add them to the completions tree.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (prog scheme-autocomplete)
-  (:use (utils library ptrees)))
+  (:use (utils library ptrees) (prog glue-symbols)))
 
 (define completions (make-ptree))
 
@@ -64,9 +62,8 @@
 (tm-define (scheme-completions-rebuild)
   (display "Texmacs] Populating autocompletions tree... ")
   (let ((start (texmacs-time))
-        (symbols (all-used-symbols)))
+        (symbols (append (all-used-symbols) (all-glued-symbols))))
     (scheme-completions-add-list symbols)
-    ;(scheme-completions-add-list (all-glued-symbols))
     (display* (length symbols) " symbols in "
               (- (texmacs-time) start) " msec\n")
     (set! scheme-completions-built? #t)))

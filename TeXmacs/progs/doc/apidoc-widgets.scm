@@ -199,7 +199,7 @@
                       clw-string
                       clw-string-filter))
    (explicit-buttons
-    ("See documentation" (help-window "scheme" clw-string)))))
+    ("See documentation" (help-window "scheme" (tmstring->string clw-string))))))
 
 (tm-define (open-symbol-browser)
   (set! clw-string "")

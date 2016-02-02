@@ -1,11 +1,18 @@
 #!/bin/sh
 # Program to make Guile interface to TeXmacs
 
+# update documentation of glue 
+./build-auto-doc
+
 if test $# = 2; then
   guile -l build-glue.scm -l $1 -c "(quit)" | cat > $2
 else
   echo "Usage: build-glue <input.scm> <output.cpp>"
 fi
+
+# FIXME? I can't see any reason for repeating the same code 4 times
+# I leave it there in case it's some shell magic I don't understand
+
 #!/bin/sh
 # Program to make Guile interface to TeXmacs
 
