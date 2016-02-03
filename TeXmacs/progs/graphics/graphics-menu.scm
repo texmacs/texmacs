@@ -366,6 +366,13 @@
   (". . . . ." (graphics-set-dash-style "10"))
   ("- - - - -" (graphics-set-dash-style "11100"))
   ("- . - . -" (graphics-set-dash-style "1111010"))
+  ---
+  (group "Motif")
+  ("Zigzag" (graphics-set-dash-style "zigzag"))
+  ("Wave" (graphics-set-dash-style "wave"))
+  ("Pulse" (graphics-set-dash-style "pulse"))
+  ("Loops" (graphics-set-dash-style "loops"))
+  ("Meander" (graphics-set-dash-style "meander"))
   ;;---
   ;;("Other" (interactive graphics-set-dash-style_))
   ---
@@ -375,8 +382,9 @@
   ("2 ln" (graphics-set-dash-style-unit "2ln"))
   ("5 ln" (graphics-set-dash-style-unit "5ln"))
   ("10 ln" (graphics-set-dash-style-unit "10ln"))
+  ("20 ln" (graphics-set-dash-style-unit "20ln"))
   ---
-  ("Other" (interactive graphics-set-dash-style-unit)))
+  ("Other" (interactive graphics-set-dash-style-unit*)))
 
 (menu-bind graphics-line-arrows-menu
   (group "Right arrow")

@@ -110,6 +110,7 @@
         ((== x "10") ". . . . .")
         ((== x "11100") "- - - - -")
         ((== x "1111010") "- . - . -")
+        ((string-alpha? x) x)
         (else "other")))
 
 (tm-define (decode-arrow x)

@@ -281,12 +281,13 @@ struct curve_box_rep: public box_rep {
   pencil pen;
   curve c;
   array<bool> style;
+  array<point> motif;
   SI style_unit;
   array<SI> styled_n;
   brush fill_br;
   array<box> arrows;
   curve_box_rep (path ip, curve c, pencil pen,
-		 array<bool> style, SI style_unit,
+		 array<bool> style, array<point> motif, SI style_unit,
 		 brush fill_br,
 		 array<box> arrows);
   box transform (frame fr);
@@ -297,17 +298,18 @@ struct curve_box_rep: public box_rep {
   operator tree () { return "curve"; }
   SI length ();
   void apply_style ();
+  void apply_motif (array<box> arrows);
 };
 
 curve_box_rep::curve_box_rep (path ip2, curve c2, pencil pen2,
-  array<bool> style2, SI style_unit2, brush fill_br2,
-  array<box> arrows2)
-  :
-  box_rep (ip2), pen (pen2), c (c2),
-  style (style2), style_unit (style_unit2),
-  fill_br (fill_br2)
+  array<bool> style2, array<point> motif2, SI style_unit2,
+  brush fill_br2, array<box> arrows2):
+    box_rep (ip2), pen (pen2), c (c2),
+    style (style2), motif (motif2), style_unit (style_unit2),
+    fill_br (fill_br2)
 {
   a= c->rectify (PIXEL);
+  apply_motif (arrows2);
   int i, n= N(a);
   x1= y1= x3= y3= MAX_SI;
   x2= y2= x4= y4= -MAX_SI;
@@ -356,7 +358,8 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, pencil pen2,
 
 box
 curve_box_rep::transform (frame fr) {
-  return curve_box (ip, fr (c), pen, style, style_unit, fill_br, arrows);
+  return curve_box (ip, fr (c), pen, style, motif, style_unit,
+                    fill_br, arrows);
 }
 
 SI
@@ -601,6 +604,72 @@ curve_box_rep::apply_style () {
   if (style[n2-1]) styled_n[N(styled_n)-1]= nbu;
 }
 
+void
+curve_box_rep::apply_motif (array<box> arrows) {
+  int n= N(motif);
+  if (n <= 0 || fnull (style_unit,1e-6)) return;
+  SI l= length ();
+  int k= l / style_unit;
+  if (k<=0) return;
+  SI unit= l / k;
+  array<point> b;
+  b << a[0];
+  SI rem= 0;
+  for (int i=1; i<N(a); i++) {
+    double no= norm (a[i] - a[i-1]);
+    double t= 0.0;
+    while (true) {
+      SI res= (SI) ((1.0 - t) * no);
+      if (rem + res < unit - 32) {
+        // NOTE: 32 serves as safety margin
+        rem += res;
+        break;
+      }
+      t += ((double) (unit - rem)) / no;
+      if (t >= 0.999) t= 1.0;
+      point d= t * (a[i] - a[i-1]);
+      b << (a[i-1] + d);
+      rem= 0;
+    }
+  }
+  if (N(b) <= 2 && b[0] == b[N(b)-1]) return;
+  a= b;
+  b= array<point> ();
+  for (int i=0; i<N(a); i++) {
+    point cur = a[i];
+    point prev= (i == 0? a[N(a)-2]: a[i-1]);
+    point next= (i == N(a)-1? a[1]: a[i+1]);
+    if (i == 0 && a[0] != a[N(a)-1])
+      prev= cur - (next - cur);
+    if (i == N(a) - 1 && a[0] != a[N(a)-1])
+      next= cur + (cur - prev);
+    point u= (next == prev? point (0.0, 0.0):
+              unit * (next - prev) / norm (next - prev));
+    b << (cur + point (-u[1],  u[0]));
+  }
+  array<point> ta;
+  ta << a[0];
+  for (int i=0; i+1<N(a); i++) {
+    array<point> mot= motif;
+    if ((i == 0 && N(arrows) > 0 && !is_nil (arrows[0])) ||
+        (i == N(a)-2 && N(arrows) > 1 && !is_nil (arrows[1]))) {
+      mot= array<point> (0);
+      mot << point (0.0, 0.0);
+      mot << point (1.0, 0.0);
+    }
+    for (int j=0; j<N(mot); j++) {
+      double x= mot[j][0];
+      double y= mot[j][1];
+      point u= a[i] + x * (a[i+1] - a[i]);
+      point v= b[i] + x * (b[i+1] - b[i]);
+      point w= u + y * (v - u);
+      if (w != ta[N(ta)-1]) ta << w;
+    }
+  }
+  ta << a[N(a)-1];
+  a= ta;
+}
+
 /******************************************************************************
 * 3D graphics
 ******************************************************************************/
@@ -652,10 +721,11 @@ point_box (path ip, point p, SI r, pencil pen, brush br, string style) {
 
 box
 curve_box (path ip, curve c, pencil pen,
-           array<bool> style, SI style_unit,
+           array<bool> style, array<point> motif, SI style_unit,
            brush fill_br, array<box> arrows)
 {
-  return tm_new<curve_box_rep> (ip, c, pen, style, style_unit, fill_br, arrows);
+  return tm_new<curve_box_rep> (ip, c, pen, style, motif, style_unit,
+                                fill_br, arrows);
 }
 
 box

@@ -796,6 +796,11 @@
   (:check-mark "*" (graphics-test-property? "gr-dash-style-unit"))
   (graphics-set-property "gr-dash-style-unit" val))
 
+(tm-define (graphics-set-dash-style-unit* hu vu)
+  (:argument hu "Horizontal dash style unit")
+  (:argument vu "Vertical dash style unit")
+  (graphics-set-property "gr-dash-style-unit" `(tuple ,hu ,vu)))
+
 (tm-define (graphics-set-fill-color val)
   (:argument val "Fill color")
   (:check-mark "*" (graphics-test-property? "gr-fill-color"))

@@ -179,7 +179,9 @@ public:
   int          src_compact;
   int          src_close;
   array<bool>  dash_style;
+  array<point> dash_motif;
   SI           dash_style_unit;
+  double       dash_style_ratio;
   brush        fill_brush;
   array<tree>  line_arrows;
   string       text_at_halign;
@@ -420,6 +422,7 @@ public:
   void   update_src_compact ();
   void   update_src_close ();
   void   update_dash_style ();
+  void   update_dash_style_unit ();
   void   update_line_arrows ();
   void   update ();
   void   update (string env_var);

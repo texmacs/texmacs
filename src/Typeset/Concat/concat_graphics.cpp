@@ -71,6 +71,8 @@ notify_graphics_extents (tree t, point lbot, point rtop) {
 void
 concater_rep::typeset_graphics (tree t, path ip) {
 BEGIN_MAGNIFY
+  env->update_color ();
+  env->update_dash_style_unit ();
   grid gr= as_grid (env->read (GR_GRID));
   array<box> bs;
   gr->set_aspect (env->read (GR_GRID_ASPECT));
@@ -296,7 +298,7 @@ BEGIN_MAGNIFY
     }
     curve c= env->fr (poly_segment (a, cip));
     print (curve_box (ip, c, env->pen,
-                      env->dash_style, env->dash_style_unit,
+                      env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));
   }
 END_MAGNIFY
@@ -321,7 +323,7 @@ BEGIN_MAGNIFY
     else {
       curve c= env->fr (arc (a, cip, close));
       print (curve_box (ip, c, env->pen,
-                        env->dash_style, env->dash_style_unit,
+                        env->dash_style, env->dash_motif, env->dash_style_unit,
                         env->fill_brush, typeset_line_arrows (ip)));
     }
   }
@@ -346,7 +348,7 @@ BEGIN_MAGNIFY
     }
     curve c= env->fr (N(a)>=3 ? spline (a, cip, close): poly_segment (a, cip));
     print (curve_box (ip, c, env->pen,
-                      env->dash_style, env->dash_style_unit,
+                      env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));
   }
 END_MAGNIFY
