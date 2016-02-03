@@ -171,6 +171,7 @@
 
 (tm-define (graphics-mode-attributes mode)
   (cond ((func? mode 'edit 1) (graphics-attributes (cadr mode)))
+        ((func? mode 'hand-edit 1) (graphics-attributes (cadr mode)))
         ((== mode '(group-edit props)) (graphics-all-attributes))
         (else '())))
 

@@ -425,6 +425,37 @@
       (invalidate-graphical-object)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hand drawn objects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (edit_move mode x y)
+  (:require (== mode 'hand-edit))
+  (:state graphics-state)
+  (noop))
+
+(tm-define (edit_start-drag mode x y)
+  (:require (== mode 'hand-edit))
+  (:state graphics-state)
+  (set-texmacs-pointer 'graphics-cross)
+  (edit-clean-up)
+  (object_create (cadr (graphics-mode)) x y))
+  
+(tm-define (edit_drag mode x y)
+  (:require (== mode 'hand-edit))
+  (:state graphics-state)
+  (let* ((obj (car (sketch-get1)))
+         (rad (stree-radical obj)))
+    (set-cdr! rad (append (cdr rad) (list `(point ,x ,y))))
+    (object-set! obj))
+  (graphics-decorations-update))
+
+(tm-define (edit_end-drag mode x y)
+  (:require (== mode 'hand-edit))
+  (:state graphics-state)
+  (object_commit)
+  (graphics-decorations-reset))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Don't dispatch certain actions on textual arguments of graphical macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
