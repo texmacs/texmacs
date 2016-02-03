@@ -355,9 +355,12 @@ disable_double_clicks () {
 }
 
 static string
-detect_left_drag (void* handle, string type, SI x, SI y, time_t t, SI d) {
+detect_left_drag (void* handle, string type, SI x, SI y, time_t t,
+                  int m, SI d) {
   if (left_handle != handle) drag_left_reset ();
   left_handle= handle;
+  if (left_dragging && type == "move" && (m&1) == 0)
+    type= "release-left";
   if (type == "press-left") {
     left_dragging= true;
     left_started = true;
@@ -408,9 +411,12 @@ drag_right_reset () {
 }
 
 static string
-detect_right_drag (void* handle, string type, SI x, SI y, time_t t, SI d) {
+detect_right_drag (void* handle, string type, SI x, SI y, time_t t,
+                   int m, SI d) {
   if (right_handle != handle) drag_right_reset ();
   right_handle= handle;
+  if (right_dragging && type == "move" && (m&4) == 0)
+    type= "release-right";
   if (type == "press-right") {
     right_dragging= true;
     right_started = true;
@@ -553,13 +559,13 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
 
     string rew= kind;
     SI dist= (SI) (5 * PIXEL / magf);
-    rew= detect_left_drag ((void*) this, rew, x, y, t, dist);
+    rew= detect_left_drag ((void*) this, rew, x, y, t, m, dist);
     if (rew == "start-drag-left") {
       call_mouse_event (rew, left_x, left_y, m, t);
       delayed_call_mouse_event ("dragging-left", x, y, m, t);
     }
     else {
-      rew= detect_right_drag ((void*) this, rew, x, y, t, dist);
+      rew= detect_right_drag ((void*) this, rew, x, y, t, m, dist);
       if (rew == "start-drag-right") {
         call_mouse_event (rew, right_x, right_y, m, t);
         delayed_call_mouse_event ("dragging-right", x, y, m, t);
