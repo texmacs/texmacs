@@ -830,3 +830,8 @@
   (:argument val "Text-at vertical alignment")
   (:check-mark "*" (graphics-test-property? "gr-text-at-valign"))
   (graphics-set-property "gr-text-at-valign" val))
+
+(tm-define (graphics-get-snap-mode)
+  (tm->tree (if (== (car (graphics-mode)) 'hand-edit)
+		`(tuple)
+		`(tuple "all"))))

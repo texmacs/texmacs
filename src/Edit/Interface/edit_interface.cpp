@@ -26,6 +26,7 @@
 #include "gui.hpp" // for gui_interrupted
 
 extern void (*env_next_prog)(void);
+extern void set_snap_mode (tree t);
 
 /*static*/ string
 MODE_LANGUAGE (string mode) {
@@ -772,6 +773,12 @@ edit_interface_rep::apply_changes () {
       if (!is_nil (gr - stored_rects))
         invalidate (gx1, gy1, gx2, gy2);
     }
+  }
+
+  // cout << "Graphics snapping\n";
+  if (inside_active_graphics ()) {
+    tree t= as_tree (call ("graphics-get-snap-mode"));
+    set_snap_mode (t);
   }
   
   // cout << "Handling environment changes\n";

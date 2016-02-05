@@ -34,9 +34,53 @@ edit_graphics_rep::~edit_graphics_rep () {}
 * Extra subroutines for graphical selections
 ******************************************************************************/
 
+static tree snap_mode;
+
+void
+set_snap_mode (tree t) {
+  //cout << "Snap mode= " << t << "\n";
+  snap_mode= t;
+}
+
+bool
+check_snap_mode (string type) {
+  if (!is_tuple (snap_mode)) return true;
+  for (int i=0; i<N(snap_mode); i++)
+    if (snap_mode[i] == "all") return true;
+    else if (snap_mode[i] == type) return true;
+  return false;
+}
+
 bool
 can_snap (gr_selection sel) {
-  //if (sel->type == "grid-curve-point") return false;
+  string type= sel->type;
+  if (type == "free")
+    return true;
+  if (type == "point")
+    return check_snap_mode ("control point");
+  if (type == "curve-handle")
+    return check_snap_mode ("control point");
+  if (type == "curve-point")
+    return check_snap_mode ("curve point");
+  if (type == "curve-point&curve-point")
+    return check_snap_mode ("curve-curve intersection");
+  if (type == "grid-point")
+    return check_snap_mode ("grid point");
+  if (type == "grid-curve-point")
+    return check_snap_mode ("grid curve point");
+  if (type == "curve-point&grid-curve-point")
+    return check_snap_mode ("curve-grid intersection");
+  if (type == "grid-curve-point&curve-point")
+    return check_snap_mode ("curve-grid intersection");
+  if (type == "text")
+    return check_snap_mode ("text");
+  if (type == "text-handle")
+    return check_snap_mode ("control point");
+  if (type == "text-border")
+    return check_snap_mode ("text border");
+  if (type == "text-border-point")
+    return check_snap_mode ("text border point");
+  cout << "Uncaptured snap type " << type << "\n";
   return true;
 }
 
@@ -206,6 +250,7 @@ edit_graphics_rep::find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2) {
 
 point
 edit_graphics_rep::adjust (point p) {
+  
   frame f= find_frame ();
   grid g= find_grid ();
   if (!is_nil (g) && !is_nil (gr0) && g != gr0) {
