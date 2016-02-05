@@ -56,6 +56,8 @@ can_snap (gr_selection sel) {
   string type= sel->type;
   if (type == "free")
     return true;
+  if (type == "box")
+    return true;
   if (type == "point")
     return check_snap_mode ("control point");
   if (type == "curve-handle")
