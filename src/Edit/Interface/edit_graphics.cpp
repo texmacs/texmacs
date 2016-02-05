@@ -34,6 +34,12 @@ edit_graphics_rep::~edit_graphics_rep () {}
 * Extra subroutines for graphical selections
 ******************************************************************************/
 
+bool
+can_snap (gr_selection sel) {
+  //if (sel->type == "grid-curve-point") return false;
+  return true;
+}
+
 gr_selection
 snap_to_guide (point p, gr_selections sels, double eps) {
   if (N(sels) == 0) {
@@ -48,10 +54,12 @@ snap_to_guide (point p, gr_selections sels, double eps) {
   gr_selection best;
   best->type= "none";
   for (int i=0; i<N(sels); i++)
-    if (sels[i]->type == "grid-point")
-      best= sels[i];
-    else if (is_nil (sels[i]->c))
-      return sels[i];
+    if (can_snap (sels[i])) {
+      if (sels[i]->type == "grid-point")
+	best= sels[i];
+      else if (is_nil (sels[i]->c))
+	return sels[i];
+    }
 
   for (int i=0; i<N(sels); i++)
     for (int j=i+1; j<N(sels); j++) {
@@ -69,13 +77,20 @@ snap_to_guide (point p, gr_selections sels, double eps) {
 	      sel->dist= (SI) norm (ins[k] - p);
 	      sel->cp  = append (sels[i]->cp, sels[j]->cp);
 	      sel->pts = append (sels[i]->pts, sels[j]->pts);
-	      best= sel;
+	      if (can_snap (sel)) best= sel;
 	    }
 	}
     }
-  
+
   if (best->type != "none") return best;
-  return sels[0];
+  if (can_snap (sels[0])) return sels[0];
+  else {
+    gr_selection snap;
+    snap->type= "free";
+    snap->p= p;
+    snap->dist= 0;
+    return snap;
+  }
 }
 
 /******************************************************************************
