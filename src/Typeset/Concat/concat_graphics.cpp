@@ -250,7 +250,7 @@ BEGIN_MAGNIFY
     for (i=0; i<n; i++)
       u[i]= env->exec (t[i]);
     point p= env->fr (env->as_point (u));
-    print (point_box (ip, p, 20*PIXEL, env->pen,
+    print (point_box (ip, p, env->point_size, env->pen,
                       env->fill_brush, env->point_style));
   }
 END_MAGNIFY

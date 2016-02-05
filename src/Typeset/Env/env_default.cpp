@@ -225,6 +225,7 @@ initialize_default_env () {
   env (GR_OPACITY)       = "default";   // opacity of new objects
   env (GR_COLOR)         = "default";   // color of new objects
   env (GR_POINT_STYLE)   = "default";   // point style of new objects
+  env (GR_POINT_SIZE)    = "default";   // point size of new objects
   env (GR_LINE_WIDTH)    = "default";   // line width for new objects
   env (GR_LINE_JOIN)     = "default";   // line join for new objects
   env (GR_LINE_CAPS)     = "default";   // line caps for new objects
@@ -244,6 +245,7 @@ initialize_default_env () {
   env (GID)              = "default";   // graphical identifier
   env (MAGNIFY)          = "1";         // magnification for graphical objects
   env (POINT_STYLE)      = "disk";      // point style (square, circle...)
+  env (POINT_SIZE)       = "4px";       // point size
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (LINE_JOIN)        = "normal";    // junctions in multilines
   env (LINE_CAPS)        = "normal";    // caps at ends

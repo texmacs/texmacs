@@ -115,6 +115,7 @@ initialize_default_var_type () {
   var_type (PAGE_MNOTE_WIDTH)   = Env_Page;
 
   var_type (POINT_STYLE)        = Env_Point_Style;
+  var_type (POINT_SIZE)         = Env_Point_Size;
   var_type (LINE_WIDTH)         = Env_Line_Width;
   var_type (DASH_STYLE)         = Env_Dash_Style;
   var_type (DASH_STYLE_UNIT)    = Env_Dash_Style_Unit;
@@ -742,6 +743,7 @@ edit_env_rep::update () {
   update_geometry ();
   update_frame ();
   point_style= get_string (POINT_STYLE);
+  point_size= get_length (POINT_SIZE);
   update_color ();
   update_pattern_mode ();
   update_dash_style ();
@@ -837,6 +839,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Point_Style:
     point_style= get_string (POINT_STYLE);
+    break;
+  case Env_Point_Size:
+    point_size= get_length (POINT_SIZE);
     break;
   case Env_Line_Width:
     update_color ();

@@ -59,12 +59,13 @@
 #define Env_Src_Compact       27
 #define Env_Src_Close         28
 #define Env_Point_Style       29
-#define Env_Dash_Style        30
-#define Env_Dash_Style_Unit   31
-#define Env_Fill_Color        32
-#define Env_Line_Arrows       33
-#define Env_Text_At_Halign    34
-#define Env_Text_At_Valign    35
+#define Env_Point_Size        30
+#define Env_Dash_Style        31
+#define Env_Dash_Style_Unit   32
+#define Env_Fill_Color        33
+#define Env_Line_Arrows       34
+#define Env_Text_At_Halign    35
+#define Env_Text_At_Valign    36
 
 /******************************************************************************
 * For style file editing
@@ -166,6 +167,7 @@ public:
   pencil       pen;
   bool         no_patterns;
   string       point_style;
+  SI           point_size;
   bool         preamble;
   int          info_level;
   SI           gw;

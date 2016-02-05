@@ -1014,6 +1014,7 @@ init_std_drd () {
   init_var (GR_OPACITY, TYPE_NUMERIC);
   init_var (GR_COLOR, TYPE_COLOR);
   init_var (GR_POINT_STYLE, TYPE_STRING);
+  init_var (GR_POINT_SIZE, TYPE_LENGTH);
   init_var (GR_LINE_WIDTH, TYPE_LENGTH);
   init_var (GR_LINE_JOIN, TYPE_STRING);
   init_var (GR_LINE_CAPS, TYPE_STRING);
@@ -1033,6 +1034,7 @@ init_std_drd () {
   init_var (GID, TYPE_INTEGER);
   init_var (MAGNIFY, TYPE_NUMERIC);
   init_var (POINT_STYLE, TYPE_STRING);
+  init_var (POINT_SIZE, TYPE_LENGTH);
   init_var (LINE_WIDTH, TYPE_LENGTH);
   init_var (LINE_JOIN, TYPE_STRING);
   init_var (LINE_CAPS, TYPE_STRING);

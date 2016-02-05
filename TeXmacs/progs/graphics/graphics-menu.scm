@@ -348,6 +348,21 @@
   ("Round" (graphics-set-point-style "round"))
   ("Square" (graphics-set-point-style "square")))
 
+(menu-bind graphics-point-size-menu
+  ("1 px" (graphics-set-point-size "1px"))
+  ("2 px" (graphics-set-point-size "2px"))
+  ("4 px" (graphics-set-point-size "default"))
+  ("6 px" (graphics-set-point-size "6px"))
+  ("10 px" (graphics-set-point-size "10px"))
+  ---
+  ("1 ln" (graphics-set-point-size "1ln"))
+  ("2 ln" (graphics-set-point-size "2ln"))
+  ("4 ln" (graphics-set-point-size "4ln"))
+  ("6 ln" (graphics-set-point-size "6ln"))
+  ("10 ln" (graphics-set-point-size "10ln"))
+  ---
+  ("Other" (interactive graphics-set-point-size)))
+
 (menu-bind graphics-line-width-menu
   ;;("Default" (graphics-set-line-width "default"))
   ;;---
@@ -465,6 +480,8 @@
         (-> "Opacity" (link graphics-opacity-menu))))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-style")
       (-> "Point style" (link graphics-point-style-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "point-size")
+      (-> "Point size" (link graphics-point-size-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
       (-> "Line width" (link graphics-line-width-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
@@ -584,6 +601,14 @@
              (s (if (== ps "default") "disk" ps)))
 	(=> (eval s)
 	    (link graphics-point-style-menu)))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "point-size")
+    /
+    (mini #t
+      (group "Size:")
+      (let* ((ps (graphics-get-property "gr-point-size"))
+             (s (if (== ps "default") "4px" ps)))
+	(=> (eval s)
+	    (link graphics-point-size-menu)))))
   (assuming
       (or (graphics-mode-attribute? (graphics-mode) "line-width")
           (graphics-mode-attribute? (graphics-mode) "dash-style"))
