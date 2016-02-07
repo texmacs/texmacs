@@ -43,6 +43,13 @@
   ("Center" (graphics-set-geo-valign "center"))
   ("Bottom" (graphics-set-geo-valign "bottom")))
 
+(menu-bind graphics-overlap-menu
+  ("None" (graphics-set-overlap "0cm"))
+  ("1 cm" (graphics-set-overlap "1cm"))
+  ("Full" (graphics-set-overlap "1pag"))
+  ---
+  ("Other" (interactive graphics-set-overlap)))
+
 (menu-bind graphics-resize-menu
   (group "Width")
   ("Fast decrease" (graphics-decrease-hsize-fast))
@@ -103,10 +110,14 @@
 
 (menu-bind graphics-global-menu
   (group "Graphics")
-  (-> "Size" (link graphics-extents-menu))
-  (-> "Resize" (link graphics-resize-menu))
-  (-> "Crop" (link graphics-auto-crop-menu))
-  (-> "Alignment" (link graphics-alignment-menu))
+  (if (not (inside-graphical-over-under?))
+      (-> "Size" (link graphics-extents-menu))
+      (-> "Resize" (link graphics-resize-menu))
+      (-> "Crop" (link graphics-auto-crop-menu))
+      (-> "Alignment" (link graphics-alignment-menu)))
+  (if (inside-graphical-over-under?)
+      ("Draw over" (graphics-toggle-over-under))
+      (-> "Overlap" (link graphics-overlap-menu)))
   ---
   (-> "Unit" (link graphics-frame-unit-menu))
   (-> "Origin" (link graphics-frame-origin-menu))

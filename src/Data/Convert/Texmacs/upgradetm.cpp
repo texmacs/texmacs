@@ -4002,6 +4002,30 @@ upgrade_ancient (tree t) {
 }
 
 /******************************************************************************
+* Upgrade draw over/under
+******************************************************************************/
+
+tree
+upgrade_draw_over_under (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "draw-over", 2))
+    return compound ("draw-over",
+                     upgrade_ancient (t[0]),
+                     upgrade_ancient (t[1]), "0cm");
+  else if (is_compound (t, "draw-under", 2))
+    return compound ("draw-under",
+                     upgrade_ancient (t[0]),
+                     upgrade_ancient (t[1]), "0cm");
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_draw_over_under (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -4186,6 +4210,8 @@ upgrade (tree t, string version) {
     t= upgrade_quotes (t);
     t= upgrade_ancient (t);
   }
+  if (version_inf_eq (version, "1.99.4"))
+    t= upgrade_draw_over_under (t);
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

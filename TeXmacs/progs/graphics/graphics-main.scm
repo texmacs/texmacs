@@ -23,34 +23,29 @@
 ;;   below, this code is clean.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Commutative diagrams
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (graphics-set-notebook-grid)
-  (graphics-set-visual-grid 'cartesian)
-  (graphics-set-unit "1cm")
-  (graphics-set-grid-aspect 'detailed 2 #t)
-  (graphics-set-grid-color 'subunits "#e0e0ff")
-  (delayed
-    (:idle 1)
-    (graphics-set-grid-color 'units "#e0e0ff")
-    (delayed
-      (:idle 1)
-      (graphics-set-grid-color 'axes "#e0e0ff"))))
-
-(tm-define (make-cd)
-  (make-graphics)
-  (delayed
-    (:idle 1)
-    (graphics-set-extents "8.1cm" "3.1cm")
-    (graphics-set-text-at-halign "center")
-    (graphics-set-arrow-end "<gtr>")
-    (graphics-set-mode '(edit math-at))
-    (graphics-set-notebook-grid)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global properties of graphics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (inside-draw-over?)
+  (inside? 'draw-over))
+
+(tm-define (graphics-toggle-over-under)
+  (:check-mark "*" inside-draw-over?)
+  (with-innermost t graphical-over-under-context?
+    (cond ((tree-is? t 'draw-over)
+           (tree-assign-node! t 'draw-under)
+           (tree-go-to t 0 :end))
+          ((tree-is? t 'draw-under)
+           (tree-assign-node! t 'draw-over)
+           (if (tree-is? (tree-ref t 1) 'with)
+               (tree-go-to t 1 (- (tree-arity (tree-ref t 1)) 1) :end)
+               (tree-go-to t 1 :end))))))
+
+(tm-define (graphics-set-overlap w)
+  (:argument w "Width of overlapping border")
+  (when (inside-graphical-over-under?)
+    (with-innermost t graphical-over-under-context?
+      (tree-set t 2 w))))
 
 (tm-define (graphics-geometry)
   (with geo (tree->stree (get-env-tree "gr-geometry"))
@@ -227,6 +222,32 @@
                ((== a "center") "top")
                ((== a "bottom") "center")
                (else "default"))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Commutative diagrams
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-set-notebook-grid)
+  (graphics-set-visual-grid 'cartesian)
+  (graphics-set-unit "1cm")
+  (graphics-set-grid-aspect 'detailed 2 #t)
+  (graphics-set-grid-color 'subunits "#e0e0ff")
+  (delayed
+    (:idle 1)
+    (graphics-set-grid-color 'units "#e0e0ff")
+    (delayed
+      (:idle 1)
+      (graphics-set-grid-color 'axes "#e0e0ff"))))
+
+(tm-define (make-cd)
+  (make-graphics)
+  (delayed
+    (:idle 1)
+    (graphics-set-extents "8.1cm" "3.1cm")
+    (graphics-set-text-at-halign "center")
+    (graphics-set-arrow-end "<gtr>")
+    (graphics-set-mode '(edit math-at))
+    (graphics-set-notebook-grid)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 3D transformations

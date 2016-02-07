@@ -44,6 +44,9 @@
 (define-group graphical-tag
   (graphical-non-group-tag) (graphical-group-tag))
 
+(define-group graphical-over-under-tag
+  draw-over draw-under)
+
 (tm-define (graphical-text-context? t)
   (tm-in? t (graphical-text-tag-list)))
 
@@ -53,8 +56,14 @@
 (tm-define (graphical-text-arg-context? t)
   (and (graphical-text-context? t) (< (tm-arity t) 2)))
 
+(tm-define (graphical-over-under-context? t)
+  (tm-in? t (graphical-over-under-tag-list)))
+
 (tm-define (inside-graphical-text?)
   (tree-innermost graphical-text-context?))
+
+(tm-define (inside-graphical-over-under?)
+  (tree-innermost graphical-over-under-context?))
 
 (tm-define gr-tags-user      (list))
 (tm-define gr-tags-all       (graphical-tag-list))
