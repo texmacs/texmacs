@@ -852,7 +852,49 @@
   (:check-mark "*" (graphics-test-property? "gr-text-at-valign"))
   (graphics-set-property "gr-text-at-valign" val))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Snapping
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define graphics-current-snap (list "all"))
+
+(define graphics-snap-types
+  (list "control point"
+        "grid point" "grid curve point" "curve-grid intersection"
+        "curve point" "curve-curve intersection"
+         "text border point" "text border"))
+
 (tm-define (graphics-get-snap-mode)
   (tm->tree (if (== (car (graphics-mode)) 'hand-edit)
 		`(tuple)
-		`(tuple "all"))))
+		`(tuple ,@graphics-current-snap))))
+
+(tm-define (graphics-get-snap type)
+  (or (in? type graphics-current-snap)
+      (in? "all" graphics-current-snap)))
+
+(tm-define (graphics-test-snap? type)
+  (if (== type "none")
+      (null? graphics-current-snap)
+      (graphics-get-snap type)))
+
+(tm-define (graphics-set-snap type)
+  (:check-mark "*" graphics-test-snap?)
+  (cond ((== type "none")
+         (set! graphics-current-snap (list)))
+        ((== type "all")
+         (set! graphics-current-snap (list "all")))
+        ((nin? type graphics-current-snap)
+         (set! graphics-current-snap (cons type graphics-current-snap)))))
+
+(tm-define (graphics-reset-snap type)
+  (when (in? "all" graphics-current-snap)
+    (set! graphics-current-snap graphics-snap-types))
+  (when (in? type graphics-current-snap)
+    (set! graphics-current-snap (list-remove graphics-current-snap type))))
+
+(tm-define (graphics-toggle-snap type)
+  (:check-mark "*" graphics-test-snap?)
+  (if (graphics-get-snap type)
+      (graphics-reset-snap type)
+      (graphics-set-snap type)))

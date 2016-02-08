@@ -467,6 +467,18 @@
   ("Center" (graphics-set-text-at-valign "center"))
   ("Top" (graphics-set-text-at-valign "top")))
 
+(menu-bind graphics-snap-menu
+  ("None" (graphics-set-snap "none"))
+  ("All" (graphics-set-snap "all"))
+  ---
+  ("Grid points" (graphics-toggle-snap "grid point"))
+  ("Grid curves" (graphics-toggle-snap "grid curve point"))
+  ("Grid-curve intersections" (graphics-toggle-snap "curve-grid intersection"))
+  ("Curve points" (graphics-toggle-snap "curve point"))
+  ("Curve intersections" (graphics-toggle-snap "curve-curve intersection"))
+  ("Text corners" (graphics-toggle-snap "text border point"))
+  ("Text borders" (graphics-toggle-snap "text border")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for graphics mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -504,7 +516,9 @@
     (assuming (graphics-mode-attribute? (graphics-mode) "text-at-halign")
       (-> "Horizontal alignment" (link graphics-text-halign-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "text-at-valign")
-      (-> "Vertical alignment" (link graphics-text-valign-menu)))))
+      (-> "Vertical alignment" (link graphics-text-valign-menu))))
+  ---
+  (-> "Snap" (link graphics-snap-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for graphics mode
@@ -661,6 +675,39 @@
 	(=> (eval s)
 	    (link graphics-text-valign-menu))))))
 
+(tm-menu (graphics-snap-icons)
+  (mini #t
+    (=> "Snap:"
+        (link graphics-snap-menu))
+    (if (graphics-get-snap "grid point")
+        ((balloon (icon "tm_snap_grid.xpm")
+                  "Snap to grid")
+         (graphics-reset-snap "grid point")))
+    (if (graphics-get-snap "grid curve point")
+        ((balloon (icon "tm_snap_grid_curve.xpm")
+                  "Snap to grid curve")
+         (graphics-reset-snap "grid curve point")))
+    (if (graphics-get-snap "curve-grid intersection")
+        ((balloon (icon "tm_snap_grid_intersection.xpm")
+                  "Snap to intersections of curves")
+         (graphics-reset-snap "curve-grid intersection")))
+    (if (graphics-get-snap "curve point")
+        ((balloon (icon "tm_snap_curve.xpm")
+                  "Snap to curves")
+         (graphics-reset-snap "curve point")))
+    (if (graphics-get-snap "curve-curve intersection")
+        ((balloon (icon "tm_snap_curve_intersection.xpm")
+                  "Snap to intersections of curves")
+         (graphics-reset-snap "curve-curve intersection")))
+    (if (graphics-get-snap "text border point")
+        ((balloon (icon "tm_snap_text_border.xpm")
+                  "Snap to text corners")
+         (graphics-reset-snap "text border point")))
+    (if (graphics-get-snap "text border")
+        ((balloon (icon "tm_snap_text_deco.xpm")
+                  "Snap to text borders")
+         (graphics-reset-snap "text border")))))
+
 (define (gr-mode->string s)
   (cond ((== s '(edit point)) "point")
         ((== s '(edit line)) "line")
@@ -695,4 +742,6 @@
                  "Current graphical mode")
         (link graphics-mode-menu)))
   (assuming (nnull? (graphics-mode-attributes (graphics-mode)))
-    (link graphics-property-icons)))
+    (link graphics-property-icons))
+  /
+  (link graphics-snap-icons))
