@@ -856,7 +856,12 @@
 ;; Snapping
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define graphics-current-snap (list "all"))
+(define (get-snap)
+  (with val (graphics-get-property "gr-snap")
+    (if (tm-func? val 'tuple) (tm-children val) (list "all"))))
+
+(define (set-snap l)
+  (graphics-set-property "gr-snap" `(tuple ,@l)))
 
 (define graphics-snap-types
   (list "control point"
@@ -867,31 +872,31 @@
 (tm-define (graphics-get-snap-mode)
   (tm->tree (if (== (car (graphics-mode)) 'hand-edit)
 		`(tuple)
-		`(tuple ,@graphics-current-snap))))
+		`(tuple ,@(get-snap)))))
 
 (tm-define (graphics-get-snap type)
-  (or (in? type graphics-current-snap)
-      (in? "all" graphics-current-snap)))
+  (or (in? type (get-snap))
+      (in? "all" (get-snap))))
 
 (tm-define (graphics-test-snap? type)
   (if (== type "none")
-      (null? graphics-current-snap)
+      (null? (get-snap))
       (graphics-get-snap type)))
 
 (tm-define (graphics-set-snap type)
   (:check-mark "*" graphics-test-snap?)
   (cond ((== type "none")
-         (set! graphics-current-snap (list)))
+         (set-snap (list)))
         ((== type "all")
-         (set! graphics-current-snap (list "all")))
-        ((nin? type graphics-current-snap)
-         (set! graphics-current-snap (cons type graphics-current-snap)))))
+         (set-snap (list "all")))
+        ((nin? type (get-snap))
+         (set-snap (cons type (get-snap))))))
 
 (tm-define (graphics-reset-snap type)
-  (when (in? "all" graphics-current-snap)
-    (set! graphics-current-snap graphics-snap-types))
-  (when (in? type graphics-current-snap)
-    (set! graphics-current-snap (list-remove graphics-current-snap type))))
+  (when (in? "all" (get-snap))
+    (set-snap graphics-snap-types))
+  (when (in? type (get-snap))
+    (set-snap (list-remove (get-snap) type))))
 
 (tm-define (graphics-toggle-snap type)
   (:check-mark "*" graphics-test-snap?)
