@@ -300,7 +300,7 @@
   `((with "color" ,color
       "point-style" "square"
       "fill-color" ,fill-color
-      (concat . ,op))))
+      (concat ,@op))))
 
 (define (create-graphical-contours l ptr pts) ;; Group mode
   ;; This routine draws the contours of each one

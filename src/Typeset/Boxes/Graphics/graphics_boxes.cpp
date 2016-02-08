@@ -241,8 +241,7 @@ point_box_rep::display (renderer ren) {
   y[3]= ((SI) p[1]) - r;
   if (style == "none");
   else if (style == "square") {
-    if (pen->get_type () != pencil_none &&
-	br->get_type () != brush_none) {
+    if (br->get_type () != brush_none) {
       ren->set_pencil (pen->set_width (ren->pixel));
       ren->set_brush (br);
       ren->line (x[0], y[0], x[1], y[1]);
