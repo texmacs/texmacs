@@ -201,6 +201,8 @@
 (tm-define (start-operation opn p obj)
   (:require (graphical-non-group-tag? (car obj)))
   (set! current-path #f)
+  (if (not sticky-point)
+      (set! preselected (nnull? (sketch-get))))
   (if sticky-point
       ;;Perform operation
       (begin
@@ -210,7 +212,9 @@
                 'start-operation)
             (remove-undo-mark))
         (set! graphics-undo-enabled #t)
-        (graphics-forget-states))
+        (graphics-forget-states)
+        (if (not preselected) (unselect-all p obj))
+        (set! preselected #f))
       ;;Start operation
       (cond
         ((and (not multiselecting) (eq? (cadr (graphics-mode)) 'group-ungroup))

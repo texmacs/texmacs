@@ -40,6 +40,7 @@
 	  (selecting-x0 #f)
 	  (selecting-y0 #f)
 	  (multiselecting #f)
+	  (preselected #f)
 	  (layer-of-last-removed-object #f)))
   (props ((current-x (f2s (get-graphical-x)))
 	  (current-y (f2s (get-graphical-y)))
@@ -108,6 +109,7 @@
     (state-set! st 'selecting-x0 selecting-x0)
     (state-set! st 'selecting-y0 selecting-y0)
     (state-set! st 'multiselecting multiselecting)
+    (state-set! st 'preselected preselected)
     (state-set! st 'current-path current-path)
     st))
 
@@ -135,6 +137,7 @@
   (set! selecting-x0 (state-ref st 'selecting-x0))
   (set! selecting-y0 (state-ref st 'selecting-y0))
   (set! multiselecting (state-ref st 'multiselecting))
+  (set! preselected (state-ref st 'preselected))
   (set! current-path (state-ref st 'current-path)))
 
 ;; State stack (2)
@@ -205,6 +208,7 @@
   (set! selecting-x0 #f)
   (set! selecting-y0 #f)
   (set! multiselecting #f)
+  (set! preselected #f)
   (set! current-path #f)
   (set! layer-of-last-removed-object #f))
 
@@ -462,6 +466,7 @@
 	  (set! graphics-undo-enabled #t)
 	  (set! remove-undo-mark? #f)
 	  (set! multiselecting #f)
+	  (set! preselected #f)
 	  (if graphics-first-state
 	      (graphics-back-first))
 	  (graphics-forget-states)
