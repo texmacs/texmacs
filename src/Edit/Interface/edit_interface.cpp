@@ -27,6 +27,7 @@
 
 extern void (*env_next_prog)(void);
 extern void set_snap_mode (tree t);
+extern void set_snap_distance (SI d);
 
 /*static*/ string
 MODE_LANGUAGE (string mode) {
@@ -779,6 +780,8 @@ edit_interface_rep::apply_changes () {
   if (inside_active_graphics ()) {
     tree t= as_tree (call ("graphics-get-snap-mode"));
     set_snap_mode (t);
+    string val= as_string (call ("graphics-get-snap-distance"));
+    set_snap_distance (as_length (val));
   }
   
   // cout << "Handling environment changes\n";

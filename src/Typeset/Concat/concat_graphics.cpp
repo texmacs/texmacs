@@ -202,7 +202,8 @@ BEGIN_MAGNIFY
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
-      print (text_at_box (ip, b, x, y, axis, env->fn->spc->def));
+      SI pad= env->get_length (TEXT_AT_MARGIN);
+      print (text_at_box (ip, b, x, y, axis, pad));
     }
   }
 END_MAGNIFY

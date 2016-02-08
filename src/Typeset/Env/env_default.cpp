@@ -220,6 +220,7 @@ initialize_default_env () {
   env (GR_EDIT_GRID)        = gr_edit_grid;   // edit grid
   env (GR_EDIT_GRID_ASPECT) = gr_grid_aspect; // edit grid (subdivisions)
   env (GR_TRANSFORMATION)   = gr_transf;      // 3D transformation
+  env (GR_SNAP_DISTANCE)    = "10px";         // default snap distance
 
   env (GR_MAGNIFY)       = "default";   // magnify of new objects
   env (GR_OPACITY)       = "default";   // opacity of new objects
@@ -260,7 +261,7 @@ initialize_default_env () {
   env (FILL_STYLE)       = "plain";     // fill style
   env (TEXT_AT_HALIGN)   = "left";      // horizontal text-at alignment
   env (TEXT_AT_VALIGN)   = "base";      // vertical text-at alignment
-  env (TEXT_AT_MARGIN)   = "base";      // margin for smart guides
+  env (TEXT_AT_MARGIN)   = "1spc";      // margin for smart guides
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags

@@ -108,7 +108,8 @@
   ("fill-color" . "none")
   ("fill-style" . "plain")
   ("text-at-halign" . "left")
-  ("text-at-valign" . "base"))
+  ("text-at-valign" . "base")
+  ("text-at-margin" . "1spc"))
 
 (tm-define (graphics-attribute-default attr)
   (if (gr-prefixed? attr)
@@ -165,7 +166,7 @@
 (tm-define (graphics-attributes tag)
   (:require (graphical-text-tag? tag))
   (append (graphics-common-attributes)
-          '("text-at-halign" "text-at-valign")))
+          '("text-at-halign" "text-at-valign" "text-at-margin")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-group-tag? tag))

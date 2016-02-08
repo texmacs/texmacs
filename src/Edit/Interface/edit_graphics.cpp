@@ -35,11 +35,18 @@ edit_graphics_rep::~edit_graphics_rep () {}
 ******************************************************************************/
 
 static tree snap_mode;
+static SI snap_distance;
 
 void
 set_snap_mode (tree t) {
   //cout << "Snap mode= " << t << "\n";
   snap_mode= t;
+}
+
+void
+set_snap_distance (SI d) {
+  //cout << "Snap distance= " << d << "\n";
+  snap_distance= d;
 }
 
 bool
@@ -267,9 +274,9 @@ edit_graphics_rep::adjust (point p) {
   if (is_nil (f2)) return p;
   point fp= f2 (p);
   if ((tree) g != "empty_grid") {
-    point q= g->find_point_around (p, 10*get_pixel_size (), f);
+    point q= g->find_point_around (p, snap_distance, f);
     point fq= f2 (q);
-    if (norm (fq - fp) < 10*get_pixel_size ()) {
+    if (norm (fq - fp) < snap_distance) {
       gr_selection sel;
       sel->type= "grid-point";
       sel->p   = fq;
@@ -277,10 +284,10 @@ edit_graphics_rep::adjust (point p) {
       sels << sel;
     }
     array<grid_curve> gc=
-      g->get_curves_around (p, 10*get_pixel_size (), f);
+      g->get_curves_around (p, snap_distance, f);
     for (int i=0; i<N(gc); i++) {
       point fc= closest (f2 (gc[i]->c), fp);
-      if (norm (fc - fp) < 10*get_pixel_size ()) {
+      if (norm (fc - fp) < snap_distance) {
         gr_selection sel;
         sel->type= "grid-curve-point";
         sel->p   = fc;
@@ -311,7 +318,7 @@ edit_graphics_rep::graphical_select (double x, double y) {
   gr_selections sels;
   point p0 = point (x, y);
   point p = f (p0);
-  sels= eb->graphical_select ((SI)p[0], (SI)p[1], 10*get_pixel_size ());
+  sels= eb->graphical_select ((SI)p[0], (SI)p[1], snap_distance);
   gs= sels;
   gr0= empty_grid ();
   grid g= find_grid ();

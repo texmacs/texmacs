@@ -223,6 +223,7 @@ string GR_GRID_ASPECT ("gr-grid-aspect");
 string GR_EDIT_GRID ("gr-edit-grid");
 string GR_EDIT_GRID_ASPECT ("gr-edit-grid-aspect");
 string GR_TRANSFORMATION ("gr-transformation");
+string GR_SNAP_DISTANCE ("gr-snap-distance");
 
 string GR_MAGNIFY ("gr-magnify");
 string GR_OPACITY ("gr-opacity");

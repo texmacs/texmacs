@@ -874,6 +874,10 @@
 		`(tuple)
 		`(tuple ,@(get-snap)))))
 
+(tm-define (graphics-get-snap-distance)
+  (with val (graphics-get-property "gr-snap-distance")
+    (if (string? val) val "10px")))
+
 (tm-define (graphics-get-snap type)
   (or (in? type (get-snap))
       (in? "all" (get-snap))))
@@ -903,3 +907,13 @@
   (if (graphics-get-snap type)
       (graphics-reset-snap type)
       (graphics-set-snap type)))
+
+(tm-define (graphics-set-snap-distance val)
+  (:argument val "Snap distance")
+  (:check-mark "*" (graphics-test-property? "gr-snap-distance"))
+  (graphics-set-property "gr-snap-distance" val))
+
+(tm-define (graphics-set-snap-text-padding val)
+  (:argument val "Text padding for snapping")
+  (:check-mark "*" (graphics-test-property? "gr-text-at-margin"))
+  (graphics-set-property "gr-text-at-margin" val))

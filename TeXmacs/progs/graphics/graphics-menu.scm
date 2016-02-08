@@ -471,13 +471,36 @@
   ("None" (graphics-set-snap "none"))
   ("All" (graphics-set-snap "all"))
   ---
-  ("Grid points" (graphics-toggle-snap "grid point"))
-  ("Grid curves" (graphics-toggle-snap "grid curve point"))
-  ("Grid-curve intersections" (graphics-toggle-snap "curve-grid intersection"))
+  (if (!= (graphics-get-grid-type #t) 'empty)
+      ("Grid points" (graphics-toggle-snap "grid point"))
+      ("Grid curves" (graphics-toggle-snap "grid curve point"))
+      ("Grid-curve intersections"
+       (graphics-toggle-snap "curve-grid intersection")))
   ("Curve points" (graphics-toggle-snap "curve point"))
   ("Curve intersections" (graphics-toggle-snap "curve-curve intersection"))
   ("Text corners" (graphics-toggle-snap "text border point"))
-  ("Text borders" (graphics-toggle-snap "text border")))
+  ("Text borders" (graphics-toggle-snap "text border"))
+  ---
+  (-> "Snap distance"
+      ("2 px" (graphics-set-snap-distance "2px"))
+      ("5 px" (graphics-set-snap-distance "5px"))
+      ("10 px" (graphics-set-snap-distance "10px"))
+      ("20 px" (graphics-set-snap-distance "20px"))
+      ---
+      ("Other" (interactive graphics-set-snap-distance)))
+  (assuming (graphics-mode-attribute? (graphics-mode) "text-at-margin")
+    (-> "Text padding"
+        ("0.5 spc" (graphics-set-snap-text-padding "0.5spc"))
+        ("1 spc" (graphics-set-snap-text-padding "1spc"))
+        ("1.5 spc" (graphics-set-snap-text-padding "1.5spc"))
+        ("2 spc" (graphics-set-snap-text-padding "2spc"))
+        ---
+        ("3 ln" (graphics-set-snap-text-padding "3ln"))
+        ("5 ln" (graphics-set-snap-text-padding "5ln"))
+        ("7 ln" (graphics-set-snap-text-padding "7ln"))
+        ("10 ln" (graphics-set-snap-text-padding "10ln"))
+        ---
+        ("Other" (interactive graphics-set-snap-text-padding)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for graphics mode
@@ -679,18 +702,19 @@
   (mini #t
     (=> "Snap:"
         (link graphics-snap-menu))
-    (if (graphics-get-snap "grid point")
-        ((balloon (icon "tm_snap_grid.xpm")
-                  "Snap to grid")
-         (graphics-reset-snap "grid point")))
-    (if (graphics-get-snap "grid curve point")
-        ((balloon (icon "tm_snap_grid_curve.xpm")
-                  "Snap to grid curve")
-         (graphics-reset-snap "grid curve point")))
-    (if (graphics-get-snap "curve-grid intersection")
-        ((balloon (icon "tm_snap_grid_intersection.xpm")
-                  "Snap to intersections of curves")
-         (graphics-reset-snap "curve-grid intersection")))
+    (if (!= (graphics-get-grid-type #t) 'empty)
+        (if (graphics-get-snap "grid point")
+            ((balloon (icon "tm_snap_grid.xpm")
+                      "Snap to grid")
+             (graphics-reset-snap "grid point")))
+        (if (graphics-get-snap "grid curve point")
+            ((balloon (icon "tm_snap_grid_curve.xpm")
+                      "Snap to grid curve")
+             (graphics-reset-snap "grid curve point")))
+        (if (graphics-get-snap "curve-grid intersection")
+            ((balloon (icon "tm_snap_grid_intersection.xpm")
+                      "Snap to intersections of curves")
+             (graphics-reset-snap "curve-grid intersection"))))
     (if (graphics-get-snap "curve point")
         ((balloon (icon "tm_snap_curve.xpm")
                   "Snap to curves")
