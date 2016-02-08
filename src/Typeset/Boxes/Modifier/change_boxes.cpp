@@ -168,6 +168,7 @@ struct resize_box_rep: public change_box_rep {
 		  bool child_flag, bool adjust);
   operator tree () { return tree (TUPLE, "resize", (tree) bs[0]); }
   void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
+  gr_selections graphical_select (SI x, SI y, SI dist);
 };
 
 resize_box_rep::resize_box_rep (
@@ -180,6 +181,15 @@ resize_box_rep::resize_box_rep (
   x2= X2; y2= Y2;
   if (adjust) left_justify ();
   finalize ();
+}
+
+gr_selections
+resize_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  int i, n= subnr();
+  for (i=n-1; i>=0; i--)
+    res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
+  return res;
 }
 
 struct vresize_box_rep: public change_box_rep {

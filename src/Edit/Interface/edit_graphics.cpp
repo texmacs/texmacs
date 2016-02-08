@@ -57,7 +57,7 @@ can_snap (gr_selection sel) {
   if (type == "free")
     return true;
   if (type == "box")
-    return true;
+    return false;
   if (type == "point")
     return check_snap_mode ("control point");
   if (type == "curve-handle")
@@ -112,7 +112,9 @@ snap_to_guide (point p, gr_selections sels, double eps) {
       if (!is_nil (sels[i]->c) &&
 	  !is_nil (sels[j]->c) &&
 	  (sels[i]->type != "grid-curve-point" ||
-	   sels[j]->type != "grid-curve-point"))
+	   sels[j]->type != "grid-curve-point") &&
+          !ends (sels[i]->type, "handle") &&
+          !ends (sels[j]->type, "handle"))
 	{
 	  array<point> ins= intersection (sels[i]->c, sels[j]->c, p, eps);
 	  for (int k=0; k<N(ins); k++)
@@ -252,7 +254,6 @@ edit_graphics_rep::find_graphical_region (SI& x1, SI& y1, SI& x2, SI& y2) {
 
 point
 edit_graphics_rep::adjust (point p) {
-  
   frame f= find_frame ();
   grid g= find_grid ();
   if (!is_nil (g) && !is_nil (gr0) && g != gr0) {
