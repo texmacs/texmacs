@@ -348,7 +348,14 @@
                          (point ,x ,selecting-y0)
                          (point ,x ,y)
                          (point ,selecting-x0 ,y)))))))
-	  (graphics-decorations-update))))
+          (begin
+            (cond (current-path
+                   (set-message "Left click: operate; Right click: select/unselect" ""))
+                  ((nnull? (sketch-get))
+                   (set-message "Left click: operate" ""))
+                  (else
+                   (set-message "Move over object on which to operate" "")))
+            (graphics-decorations-update)))))
 
 (tm-define (edit_move mode x y)
   (:require (and (== mode 'edit) (current-in? '(gr-group))))
@@ -374,7 +381,7 @@
   (:state graphics-state)
   (if (!= (logand (get-keyboard-modifiers) ShiftMask) 0)
       (if (null? (sketch-get))
-	  (middle-button)
+	  (graphics-delete)
 	  (remove-selected-objects))
       (unselect-all current-path current-obj)))
 
