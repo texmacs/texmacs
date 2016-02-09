@@ -372,6 +372,12 @@ curve_box_rep::graphical_distance (SI x, SI y) {
     ax.p1= a[i+1];
     gd= min (gd, (SI)seg_dist (ax, p));
   }
+  array<double> abs;
+  array<point> pts;
+  array<path> paths;
+  int np= c->get_control_points (abs, pts, paths);
+  for (i=0; i<np; i++)
+    gd= min (gd, (SI) norm (pts[i] - p));
   return gd;
 }
 
