@@ -672,6 +672,230 @@ spline (array<point> a, array<path> cip, bool close, bool interpol) {
 }
 
 /******************************************************************************
+* Bezier curves
+******************************************************************************/
+
+struct bezier_rep: public curve_rep {
+  array<point> a;
+  array<point> P;
+  bezier_rep (array<point> a);
+  point evaluate (double t);
+  void rectify_cumul (array<point>& cum, double t0, double t1, double eps);
+  void rectify_cumul (array<point>& cum, double eps);
+  double bound (double t, double eps);
+  point grad (double t, bool& error);
+  double curvature (double t1, double t2);
+};
+
+bezier_rep::bezier_rep (array<point> a2): a (a2) {
+  P << a[0];
+  P << (-3.0*a[0] + 3.0*a[1]);
+  P << (3.0*a[0] - 6.0*a[1] + 3.0*a[2]);
+  P << (-a[0] + 3.0*a[1] - 3.0*a[2] + a[3]);
+}
+
+point
+bezier_rep::evaluate (double t) {
+  return ((P[3]*t + P[2])*t + P[1])*t + P[0];
+}
+
+void
+bezier_rep::rectify_cumul (array<point>& cum, double t0, double t1, double e) {
+  point p0= evaluate (t0);
+  point p1= evaluate (t1);
+  //if (bound ((t0 + t1) / 2.0, e / 4.0) < (t1 - t0))
+    for (int k=1; k<=4; k++) {
+      double x= ((double) k) / 5.0;
+      double t= (1.0 - x) * t0 + x * t1;
+      point  q= evaluate (t);
+      point  r= (1.0 - x) * p0 + x * p1;
+      if (norm (q - r) >= (e / 10.0)) {
+	rectify_cumul (cum, t0, (t0 + t1) / 2.0, e);
+	rectify_cumul (cum, (t0 + t1) / 2.0, t1, e);
+	return;
+      }
+    }
+  cum << p1;
+}
+
+void
+bezier_rep::rectify_cumul (array<point>& cum, double eps) {
+  rectify_cumul (cum, 0.0, 1.0, eps);
+}
+
+double
+bezier_rep::bound (double t, double eps) {
+  double K= 3.0*norm(P[3]) + 2.0*norm(P[2]) + norm(P[1]);
+  return min (1.0 / (K + 1.0e-6), 1.0);
+}
+
+point
+bezier_rep::grad (double t, bool& error) {
+  error= false;
+  return ((3.0*P[3]*t) + 2.0*P[2]) + P[1];
+}
+
+double
+bezier_rep::curvature (double t1, double t2) {
+  return tm_infinity; // FIXME
+}
+
+curve
+bezier (array<point> a) {
+  return tm_new<bezier_rep> (a);
+}
+
+/******************************************************************************
+* Poly-Bezier curves
+******************************************************************************/
+
+struct poly_bezier_rep: public curve_rep {
+  double phi;
+  array<point> a;
+  array<path> cip;
+  curve wrap;
+  bool simple;
+  bool closed;
+  poly_bezier_rep (array<point> a, array<path> cip, bool simple, bool closed);
+  point evaluate (double t);
+  void rectify_cumul (array<point>& cum, double eps);
+  double bound (double t, double eps);
+  point grad (double t, bool& error);
+  double curvature (double t1, double t2);
+  int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
+};
+
+poly_bezier_rep::poly_bezier_rep (array<point> a2, array<path> cip2,
+				  bool simple2, bool closed2):
+  phi (3.0), a (a2), cip (cip2), simple (simple2), closed (closed2)
+{
+  array<point> p;
+  if (simple) {
+    array<point> b;
+    int di= (closed? 0: 1);
+    for (int i=di; i<N(a)-di; i++) {
+      point p0= a[(i+N(a)-1) % N(a)];
+      point p1= a[i];
+      point p2= a[(i+1) % N(a)];
+      if (norm (p2 - p0) < 1.0e-6) {
+	b << (p0 + (phi - 1.0) * p1) / phi;
+	b << p1;
+	b << ((phi - 1.0) * p1 + p2) / phi;
+      }
+      else {
+	point u= (p2 - p0) / norm (p2 - p0);
+	double l1= norm (p1 - p0) / phi;
+	double l2= norm (p2 - p1) / phi;
+	b << p1 - l1 * u;
+	b << p1;
+	b << p1 + l2 * u;
+      }
+    }
+    if (closed) {
+      p << range (b, 1, N(b));
+      p << range (b, 0, 2);
+    }
+    else if (N(a) == 2) {
+      p << a[0];
+      p << ((phi - 1.0) * a[0] + a[1]) / phi;
+      p << (a[0] + (phi - 1.0) * a[1]) / phi;
+      p << a[1];
+    }
+    else {
+      p << a[0];
+      if (norm (b[0] - a[0]) < 1.0e-6) p << b[0];
+      else {
+	double l1= norm (a[1] - a[0]) / phi;
+	double l2= norm (b[0] - a[0]);
+	p << a[0] + (b[0] - a[0]) * (l1 / l2);
+      }
+      p << b;
+      if (norm (a[N(a)-1] - b[N(b)-1]) < 1.0e-6) p << b[N(b)-1];
+      else {
+	double l1= norm (a[N(a)-1] - a[N(a)-2]) / phi;
+	double l2= norm (b[N(b)-1] - a[N(a)-1]);
+	p << a[N(a)-1] + (b[N(b)-1] - a[N(a)-1]) * (l1 / l2);
+      }
+      p << a[N(a)-1];
+    }
+  }
+  else {
+    p= copy (a);
+    if (closed) p << a[0];
+    if (((N(p) - 1) % 3) == 1) {
+      p << p[N(p)-1];
+      p[N(p)-2]= p[N(p)-3] + (p[N(p)-3] - p[N(p)-4]);
+    }
+    if (((N(p) - 1) % 3) == 2) {
+      p << p[N(p)-1];
+      p[N(p)-2]= p[N(p)-3];
+    }
+  }
+  array<curve> cs;
+  for (int i=0; (i+3)<N(p); i+=3) {
+    array<point> b;
+    b << p[i] << p[i+1] << p[i+2] << p[i+3];
+    cs << bezier (b);
+  }
+  wrap= compound (cs);
+}
+
+point
+poly_bezier_rep::evaluate (double t) {
+  return wrap->evaluate (t);
+}
+
+void
+poly_bezier_rep::rectify_cumul (array<point>& cum, double eps) {
+  wrap->rectify_cumul (cum, eps);
+}
+
+double
+poly_bezier_rep::bound (double t, double eps) {
+  return wrap->bound (t, eps);
+}
+
+point
+poly_bezier_rep::grad (double t, bool& error) {
+  return wrap->grad (t, error);
+}
+
+double
+poly_bezier_rep::curvature (double t1, double t2) {
+  return wrap->curvature (t1, t2);
+}
+
+int
+poly_bezier_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& rcip)
+{
+  abs = array<double> ();
+  pts = a;
+  rcip= cip;
+  if (simple) {
+    int n= N(a);
+    int k= (closed? n: n-1);
+    for (int i=0; i<n; i++)
+      abs << ((double) i) / ((double) k);
+  }
+  else {
+    int n= N(a);
+    if (!closed) n--;
+    int k= 3*((n+2)/3);
+    for (int i=0; i<n; i++)
+      abs << ((double) i) / ((double) k);
+    if (!closed) abs << 1.0;
+  }
+  return N(a);
+}
+
+curve
+poly_bezier (array<point> a, array<path> cip, bool simple, bool closed) {
+  return tm_new<poly_bezier_rep> (a, cip, simple, closed);
+}
+
+/******************************************************************************
 * Arcs
 ******************************************************************************/
 
@@ -804,39 +1028,71 @@ arc_rep::get_control_points (
 ******************************************************************************/
 
 struct compound_curve_rep: public curve_rep {
-  curve c1, c2;
-  int n1, n2;
-  compound_curve_rep (curve c1b, curve c2b):
-    c1 (c1b), c2 (c2b), n1 (c1->nr_components()), n2 (c2->nr_components()) {}
-  int nr_components () { return n1 + n2; }
+  array<curve> cs;
+  compound_curve_rep (array<curve> cs2): cs (cs2) {}
+  int nr_components () {
+    int tot= 0;
+    for (int i=0; i<N(cs); i++)
+      tot += cs[i]->nr_components ();
+    return tot; }
+  int get_index (double t) {
+    int i= (int) floor (N(cs) * t);
+    if (i < 0) return 0;
+    if (i >= N(cs)) return N(cs) - 1;
+    return i;
+  }
+  double get_subtime (double t) {
+    int i= (int) floor (N(cs) * t);
+    double res= (N(cs) * t) - floor (N(cs) * t);
+    if (i < 0) return 0.0;
+    if (i >= N(cs)) return 1.0;
+    return res;
+  }
   point evaluate (double t) {
-    double n= n1+n2;
-    if (t <= n1/n) return c1 (t*n/n1);
-    else return c2 (t*n/n2 - n1); }
+    return cs [get_index (t)]->evaluate (get_subtime (t)); }
   void rectify_cumul (array<point>& a, double eps) {
-    c1->rectify_cumul (a, eps);
-    c2->rectify_cumul (a, eps);
+    for (int i=0; i<N(cs); i++)
+      cs[i]->rectify_cumul (a, eps);
   }
   double bound (double t, double eps) {
-    return curve_rep::bound (t, eps);
+    double st= get_subtime (t);
+    double dt= cs [get_index (t)]->bound (st, eps);
+    dt= min (min (dt, st + 1.0e-6), 1.0 + 1.0e-6 - st);
+    return dt / N(cs);
   }
   point grad (double t, bool& error) {
-    double n= n1+n2;
-    if (t <= n1/n) return (n * c1->grad ((t*n)/n1, error)) / n1;
-    else return (n * c2->grad ((t*n)/n2 - n1, error)) / n2;
+    int i= get_index (t);
+    point g= cs[i]->grad (get_subtime (t), error);
+    if (get_subtime (t) <= 1.0e-6 && i > 0) {
+      point g2= cs[i-1]->grad (1.0, error);
+      if (norm (g2 - g) >= 1.0e-6) error= true;
+    }
+    return N(cs) * g;
   }
   double curvature (double t1, double t2) {
-    return max (c1->curvature (t1, t2), c2->curvature (t1, t2));
+    int i1= get_index (t1);
+    int i2= get_index (t2);
+    double u1= get_subtime (t1);
+    double u2= get_subtime (t2);
+    double m= 0.0;
+    if (i1 == i2)
+      m= cs[i1]->curvature (u1, u2);
+    else
+      for (int i=i1; i<=i2; i++) {
+	if (i == i1) m= max (m, cs[i]->curvature (u1, 1.0));
+	else if (i == i2) m= max (m, cs[i]->curvature (0.0, u2));
+	else m= max (m, cs[i]->curvature (0.0, 1.0));
+      }
+    return m;
   }
-  /*int get_control_points (
-    array<double>&abs, array<point>& pts, array<path>& cip);
-  */
 };
 
 curve
-operator * (curve c1, curve c2) {
-  // FIXME: we might want to test whether c1(1.0) is approx equal to c2(0.0)
-  return tm_new<compound_curve_rep> (c1, c2);
+compound (array<curve> a) {
+  // FIXME: we might want to test for continuity at the junctions
+  if (N(a) == 0) FAILED ("at least one curve expected");
+  if (N(a) == 1) return a[0];
+  return tm_new<compound_curve_rep> (a);
 }
 
 /******************************************************************************

@@ -77,8 +77,10 @@ curve segment (point p1, point p2);
 curve poly_segment (array<point> a, array<path> cip);
 curve spline (
   array<point> a, array<path> cip, bool close=false, bool interpol=true);
+curve bezier (array<point> a);
+curve poly_bezier (array<point> a, array<path> cip, bool simple, bool closed);
 curve arc (array<point> a, array<path> cip, bool close=false);
-curve operator * (curve c1, curve c2);
+curve compound (array<curve> cs);
 curve invert (curve c);
 
 array<point> intersection (curve f, curve g, point p0, double eps);

@@ -741,6 +741,12 @@ concater_rep::typeset (tree t, path ip) {
   case CSPLINE:
     typeset_cspline (t, ip);
     break;
+  case BEZIER:
+  case CBEZIER:
+  case SMOOTH:
+  case CSMOOTH:
+    typeset_bezier (t, ip);
+    break;
   case FILL:
     typeset_fill (t, ip);
     break;

@@ -631,6 +631,14 @@ init_std_drd () {
 	repeat (2, 1) -> returns_graphical () -> point_type (0));
   init (CSPLINE, "cspline",
 	repeat (3, 1) -> returns_graphical () -> point_type (0));
+  init (BEZIER, "bezier",
+	repeat (2, 1) -> returns_graphical () -> point_type (0));
+  init (CBEZIER, "cbezier",
+	repeat (3, 1) -> returns_graphical () -> point_type (0));
+  init (SMOOTH, "smooth",
+	repeat (2, 1) -> returns_graphical () -> point_type (0));
+  init (CSMOOTH, "csmooth",
+	repeat (3, 1) -> returns_graphical () -> point_type (0));
   init (FILL, "fill",
 	repeat (1, 1));                       // Not yet implemented
   init (IMAGE, "image",

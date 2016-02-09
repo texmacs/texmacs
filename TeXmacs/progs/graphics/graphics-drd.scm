@@ -24,7 +24,7 @@
   point)
 
 (define-group graphical-curve-tag
-  line cline spline cspline arc carc)
+  line cline spline cspline bezier cbezier smooth csmooth arc carc)
 
 (define-group graphical-text-tag
   text-at math-at)
