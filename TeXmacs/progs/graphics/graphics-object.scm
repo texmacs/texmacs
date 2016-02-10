@@ -236,7 +236,7 @@
              (in-interval? y t (+ t eps) > <=)))))
 
 (define draw-nonsticky-curp #t)
-(define (create-graphical-contour o edge no) ;; Point mode
+(define (create-graphical-contour* o edge no) ;; Point mode
   (define (curp lp)
     (if draw-nonsticky-curp lp '()))
   (cond ((== (car o) 'point)
@@ -252,45 +252,54 @@
 	        (mag (get-graphical-prop 'basic "magnify")))
            (create-graphical-embedding-box
             o ha va "center" "center" mag)))
-        (else (if (integer? no)
-		  (let* ((l (list-tail (cdr o) no))
-		         (ll (length l)))
-                    (append
-                     (with h (list-head (cdr o) no)
-                       (if (and edge
-                                (in? (car o)
-                                     '(cline cspline carc))
-                                (== (+ no 1) (length (cdr o))))
-                           (cons `(with "point-style"
-                                      ,(if sticky-point
-                                           "square" "disk")
-                                    ,(car h)) (cdr h))
-                           h))
-                     (cons
-                      (list 'with "point-style" "disk"
-                            (cons 'concat
-                                  (if (< ll 2)
-                                      (if sticky-point
-                                          '()
-                                          (if edge
-                                              (list-head l 1)
-                                              (curp (list-head l 1))))
-                                      (if edge
-                                          (with l2 (list-head l 2)
-                                            (if sticky-point
-                                                `(,(cons* 'with
-					         "point-style"
-					         "square"
-					        `((concat .
-                                                          ,(cdr l2)))))
-                                                l2))
-                                          (cons
-                                           `(with "point-style"
-                                                "square"
-                                              ,(list-ref l 1))
-					   (curp (list-head l 1))))))) '())
-                     (if (> ll 2) (list-tail l 2) '())))
-		  (cdr o)))))
+        ((integer? no)
+         (let* ((l (list-tail (cdr o) no))
+                (ll (length l)))
+           (append
+            (with h (list-head (cdr o) no)
+              (if (and edge
+                       (in? (car o) (graphical-closed-curve-tag-list))
+                       (== (+ no 1) (length (cdr o))))
+                  (cons `(with "point-style"
+                             ,(if sticky-point "square" "disk")
+                           ,(car h)) (cdr h))
+                  h))
+            (cons
+             (list 'with "point-style" "disk"
+                   (cons 'concat
+                         (if (< ll 2)
+                             (if sticky-point '()
+                                 (if edge
+                                     (list-head l 1)
+                                     (curp (list-head l 1))))
+                             (if edge
+                                 (with l2 (list-head l 2)
+                                   (if sticky-point
+                                       `(with "point-style" "square"
+                                          (concat ,@(cdr l2)))
+                                       l2))
+                                 (cons
+                                  `(with "point-style" "square"
+                                     ,(list-ref l 1))
+                                  (curp (list-head l 1))))))) '())
+            (if (> ll 2) (list-tail l 2) '()))))
+        (else (cdr o))))
+
+(define (compress l)
+  (cond ((or (null? l) (null? (cdr l))) l)
+        ((null? (cddr l)) (cdr l))
+        (else (cons (car l) (compress (cddr l))))))
+
+(define (compress* l)
+  (if (<= (length l) 50) l
+      (compress* (compress l))))
+
+(define (create-graphical-contour o edge no)
+  (if (> (length o) 50)
+      (let* ((o2 (cons (car o) (compress (cdr o))))
+             (no2 (if (integer? no) (quotient no 2) no)))
+        (create-graphical-contour o2 edge no2))
+      (create-graphical-contour* o edge no)))
 
 ;; Graphical contours (group mode)
 ;;NOTE: This subsection is OK
@@ -390,11 +399,11 @@
                   (set! t (if (== pts 'object-and-points)
                               (cons o
                                     (asc curscol default-color-selected-points
-                                         (cdr o)))
+                                         (compress* (cdr o))))
                               (if (== pts 'object)
                                   `(,o)
                                   (asc curscol default-color-selected-points
-                                       (cdr o)))))))
+                                       (compress* (cdr o))))))))
           (set! res (append res
                             (if props
                                 `(,(append props `(,(cons* 'concat t))))

@@ -23,8 +23,14 @@
 (define-group graphical-atomic-tag
   point)
 
+(define-group graphical-open-curve-tag
+  line spline bezier smooth arc)
+
+(define-group graphical-closed-curve-tag
+  cline cspline cbezier csmooth carc)
+
 (define-group graphical-curve-tag
-  line cline spline cspline bezier cbezier smooth csmooth arc carc)
+  (graphical-open-curve-tag) (graphical-closed-curve-tag))
 
 (define-group graphical-text-tag
   text-at math-at)
