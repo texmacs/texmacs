@@ -1,13 +1,19 @@
-<TeXmacs|1.99.3>
+<TeXmacs|1.99.4>
 
 <style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.4>
+  <section|Changes from version 1.99.1 to 1.99.5>
 
   <\itemize>
+    <item>Rudimentary support for inking (1.99.5).
+
+    <item>Customizable snapping in graphics mode (1.99.5).
+
+    <item>Various enhancements and fixes for graphics mode (1.99.5).
+
     <item>Various bug fixes (1.99.4).
 
     <item>Various improvements for the table editor (1.99.4).
