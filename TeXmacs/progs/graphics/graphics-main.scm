@@ -41,6 +41,23 @@
                (tree-go-to t 1 (- (tree-arity (tree-ref t 1)) 1) :end)
                (tree-go-to t 1 :end))))))
 
+(tm-define (graphics-enter-into t)
+  (set! t (tree-ref t 1))
+  (while (tree-is? t 'with)
+    (set! t (tm-ref t :last)))
+  (when (tree-is? t 'graphics)
+    (tree-go-to t :last :end)))
+
+(tm-define (graphics-enter)
+  (with t (cursor-tree)
+    (when (tree-is? t 'draw-under)
+      (tree-assign-node! t 'draw-over))
+    (if (tree-is? t 'draw-over)
+        (graphics-enter-into t)
+        (with-innermost u 'draw-under
+          (tree-assign-node! u 'draw-over)
+          (graphics-enter-into u)))))
+
 (tm-define (graphics-exit-right)
   (cond ((inside-graphical-over-under?)
          (with-innermost t graphical-over-under-context?

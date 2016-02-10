@@ -34,6 +34,10 @@
 
   <assign|draw-under|<macro|bg|fg|pad|<with|dims|<box-info|<gr-tbl|<arg|bg>>|wh>|cm-1|<over|<look-up|<cm-length>|0>>|<with|ww|<look-up|<value|dims>|0>|hh|<look-up|<value|dims>|1>|pd|<over|<arg|pad>|0.5tmpt>|<with|gr-geometry|<gr-geom|<tuple|<plus|<value|ww>|<value|pd>>|<plus|<value|hh>|<value|pd>>>|<value|cm-1>>|<style-with|src-compact|none|<superpose|<gr-tbl|<arg|bg>>|<freeze|<resize|<move|<gr-tbl|<arg|fg>>|<minus|<arg|pad>>|>|0|<plus|0.5ex|<times|<value|hh>|-0.5tmpt>>|<times|<value|ww>|1tmpt>|<plus|0.5ex|<times|<value|hh>|0.5tmpt>>>>>>>>>>>
 
+  <drd-props|draw-over|arity|3|length|2>
+
+  <drd-props|draw-under|arity|3|length|2>
+
   <\active*>
     <\src-comment>
       Predefined useful objects.

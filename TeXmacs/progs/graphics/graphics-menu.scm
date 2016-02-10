@@ -46,6 +46,7 @@
 (menu-bind graphics-overlap-menu
   ("None" (graphics-set-overlap "0cm"))
   ("1 cm" (graphics-set-overlap "1cm"))
+  ("2 cm" (graphics-set-overlap "2cm"))
   ("Full" (graphics-set-overlap "1pag"))
   ---
   ("Other" (interactive graphics-set-overlap)))
@@ -784,3 +785,15 @@
     (link graphics-property-icons))
   /
   (link graphics-snap-icons))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special menus for draw-over / draw-under
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-hidden-icons t)
+  (:require (tree-in? t '(draw-over draw-under)))
+  (glue #f #f 10 0)
+  ((balloon (icon "tm_enter_image.xpm") "Enter graphics mode")
+   (graphics-enter))
+  (assuming (hidden-child? t 2)
+    (dynamic (string-input-icon t 2))))

@@ -681,10 +681,17 @@
   (apply make-image (cons* (url->delta-unix (car l)) #t (cdr l))))
 
 (tm-define (make-graphics-over-selection)
+  (when (selection-active-any?)
+    (with selection (selection-tree)
+      (clipboard-cut "graphics background")
+      (insert-go-to `(draw-over ,selection (graphics) "0cm") '(1 1)))))
+
+(tm-define (make-graphics-over)
   (if (selection-active-any?)
-  (with selection (selection-tree)
-    (clipboard-cut "graphics background")
-    (insert-go-to `(draw-over ,selection (graphics) "0cm") '(1 1)))))
+      (with selection (selection-tree)
+        (clipboard-cut "graphics background")
+        (insert-go-to `(draw-over ,selection (graphics) "2cm") '(1 1)))
+      (insert-go-to `(draw-over "" (graphics) "2cm") '(1 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Thumbnails facility

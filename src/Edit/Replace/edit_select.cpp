@@ -958,8 +958,12 @@ edit_select_rep::focus_get (bool skip_flag) {
     return focus_search (focus_p, skip_flag, false);
   if (selection_active_any ())
     return focus_search (selection_get_path (), skip_flag, false);
-  else
+  else {
+    tree st= subtree (et, path_up (tp));
+    if (is_compound (st, "draw-over")) skip_flag= false;
+    if (is_compound (st, "draw-under")) skip_flag= false;
     return focus_search (path_up (tp), skip_flag, true);
+  }
 }
 
 /******************************************************************************

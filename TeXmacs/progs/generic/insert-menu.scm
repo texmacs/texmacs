@@ -95,19 +95,20 @@
       ("Small figure" (make 'small-figure))
       ("Big figure" (make 'big-figure))
       ---)
-  ("Draw image" (make-graphics))
-  (when (selection-active-small?)
-    ("Draw over selection" (make-graphics-over-selection)))
-  (if (in-math?)
-      ("Commutative diagram" (make-cd)))
   ("Link image" (choose-file make-link-image "Load image" "image"))
   ("Insert image" (choose-file make-inline-image "Load image" "image"))
   (if (detailed-menus?)
       ("Thumbnails" (make-thumbnails)))
   (if (or (lazy-plugin-force)
 	  (and (style-has? "scripts-dtd") (scripts-defined? "gnuplot")))
-      ---
-      (-> "Plot" (link scripts-plot-menu))))
+      (-> "Plot" (link scripts-plot-menu)))
+  ---
+  ("Draw image" (make-graphics))
+  (when (selection-active-small?)
+    ("Draw over selection" (make-graphics-over-selection)))
+  ("Ink here" (make-graphics-over))
+  (if (in-math?)
+      ("Commutative diagram" (make-cd))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Insert animations

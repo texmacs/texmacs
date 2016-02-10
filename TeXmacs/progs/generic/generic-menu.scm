@@ -84,7 +84,7 @@
        (tree-atomic? (tree-ref t i))
        (!= (tree->stree (tree-ref t i)) "")))
 
-(define (hidden-child? t i)
+(tm-define (hidden-child? t i)
   (and (not (tree-accessible-child? t i))
        (not (string-variable-name? t i))
        (!= (type->format (tree-child-type t i)) "n.a.")))
