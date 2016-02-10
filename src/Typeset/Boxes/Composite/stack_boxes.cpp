@@ -35,6 +35,7 @@ struct stack_box_rep: public composite_box_rep {
   path      find_tree_path (path bp);
   cursor    find_cursor (path bp);
   selection find_selection (path lbp, path rbp);
+  gr_selections graphical_select (SI x, SI y, SI dist);
   gr_selections graphical_select (SI x1, SI y1, SI x2, SI y2);
 };
 
@@ -343,6 +344,19 @@ stack_box_rep::find_selection (path lbp, path rbp) {
     return selection (rs, lp, rp);
   }
   else return box_rep::find_selection (lbp, rbp);
+}
+
+gr_selections
+stack_box_rep::graphical_select (SI x, SI y, SI dist) {
+  gr_selections res;
+  if (graphical_distance (x, y) <= 5000 * PIXEL) {
+    // NOTE : increased threshold needed for draw-over
+    // FIXME: we might want to use a dynamic threshold instead
+    int i, n= subnr();
+    for (i=n-1; i>=0; i--)
+      res << bs[i]->graphical_select (x- sx(i), y- sy(i), dist);
+  }
+  return res;
 }
 
 gr_selections
