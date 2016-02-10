@@ -205,6 +205,14 @@ seg_dist (axis ax, point p) {
     return min (norm (ap), norm (bp));
 }
 
+double
+seg_dist (point p1, point p2, point p) {
+  axis ax;
+  ax.p0= p1;
+  ax.p1= p2;
+  return seg_dist (ax, p);
+}
+
 bool
 collinear (point p1, point p2) {
   return fnull (fabs (inner (p1, p2)) - norm(p1)*norm(p2), 1.0e-6);

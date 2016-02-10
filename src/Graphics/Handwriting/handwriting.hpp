@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : learn_handwriting.hpp
+* MODULE     : handwriting.hpp
 * DESCRIPTION: Facilities for handwriting
 * COPYRIGHT  : (C) 2012  Joris van der Hoeven
 *******************************************************************************
@@ -20,3 +20,5 @@ extern array<array<double> > learned_cont2;
 
 void register_glyph (string name, contours gl);
 string recognize_glyph (contours gl);
+
+array<point> simplify (array<point> a, double eps, double thr);

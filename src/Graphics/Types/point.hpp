@@ -48,6 +48,7 @@ typedef struct { point p0, p1; } axis;
 point  proj         (axis a, point p);
 double dist         (axis a, point p);
 double seg_dist     (axis a, point p);
+double seg_dist     (point p1, point p2, point p);
 axis   midperp      (point p1, point p2, point p3);
 point  intersection (axis A, axis B);
 
