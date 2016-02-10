@@ -557,7 +557,9 @@
   (=> (balloon (icon "tm_graphics_geometry.xpm") "Graphics geometry")
       (link graphics-global-menu))
   (=> (balloon (icon "tm_graphics_grid.xpm") "Graphics grids")
-      (link graphics-grids-menu)))
+      (link graphics-grids-menu))
+  ((balloon (icon "tm_exit_image.xpm") "Exit graphics mode")
+   (graphics-exit-right)))
 
 (tm-menu (graphics-insert-icons)
   ;;(=> (balloon (icon "tm_cell_special.xpm") "Graphical mode")
@@ -588,7 +590,10 @@
    (graphics-set-mode '(edit text-at)))
   ((check (balloon (icon "tm_math.xpm") "Insert mathematics")
           "v" (== (graphics-mode) '(edit math-at)))
-   (graphics-set-mode '(edit math-at))))
+   (graphics-set-mode '(edit math-at)))
+  ((check (balloon (icon "tm_ink_mode.xpm") "Insert hand drawn curves")
+          "v" (== (graphics-mode) '(hand-edit line)))
+   (graphics-set-mode '(hand-edit line))))
 
 (tm-menu (graphics-group-property-icons)
   ((check (balloon (icon "tm_edit_props.xpm") "Change objects properties")

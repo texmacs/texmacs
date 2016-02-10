@@ -41,6 +41,21 @@
                (tree-go-to t 1 (- (tree-arity (tree-ref t 1)) 1) :end)
                (tree-go-to t 1 :end))))))
 
+(tm-define (graphics-exit-right)
+  (cond ((inside-graphical-over-under?)
+         (with-innermost t graphical-over-under-context?
+           (tree-go-to t :end)))
+        ((inside? 'graphics)
+         (with-innermost t 'graphics
+           (while (and (tree-up t) (tree-func? (tree-up t) 'with))
+             (set! t (tree-up t)))
+           (tree-go-to t :end)))
+        ((tree-is? (cursor-tree) 'graphics)
+         (with t (cursor-tree)
+           (while (and (tree-up t) (tree-func? (tree-up t) 'with))
+             (set! t (tree-up t)))
+           (tree-go-to t :end)))))
+
 (tm-define (graphics-set-overlap w)
   (:argument w "Width of overlapping border")
   (when (inside-graphical-over-under?)
