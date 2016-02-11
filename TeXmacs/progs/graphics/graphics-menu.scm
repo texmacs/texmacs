@@ -289,11 +289,12 @@
   ("Hand drawn" (graphics-set-mode '(hand-edit line))) 
   (assuming (style-has? "std-markup-dtd")
     ---
-    (with l (list-union gr-tags-user '(arrow-with-text arrow-with-text*))
-      (for (tag (sort l symbol<=?))
-        ((eval (upcase-first (symbol->string tag)))
-         (import-from (graphics graphics-markup))
-         (graphics-set-mode `(edit ,tag))))))
+    (with u (list-union gr-tags-user '(arrow-with-text arrow-with-text*))
+      (with l (list-filter u (lambda (s) (style-has? (symbol->string s))))
+        (for (tag (sort l symbol<=?))
+          ((eval (upcase-first (symbol->string tag)))
+           (import-from (graphics graphics-markup))
+           (graphics-set-mode `(edit ,tag)))))))
   ---
   ("Set properties" (graphics-set-mode '(group-edit props)))
   ("Move objects" (graphics-set-mode '(group-edit move)))
