@@ -523,6 +523,8 @@
 (menu-bind graphics-focus-menu
   (-> (eval (upcase-first (gr-mode->string (graphics-mode))))
       (link graphics-mode-menu))
+  (if (inside-graphical-over-under?)
+      ("Exit graphics" (graphics-exit-right)))
   (assuming (nnull? (graphics-mode-attributes (graphics-mode)))
     ---
     (assuming (graphics-mode-attribute? (graphics-mode) "color")
@@ -790,6 +792,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special menus for draw-over / draw-under
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-hidden-menu t)
+  (:require (tree-in? t '(draw-over draw-under)))
+  ---
+  ("Enter graphics" (graphics-enter))
+  (assuming (hidden-child? t 2)
+    (dynamic (string-input-menu t 2))))
 
 (tm-menu (focus-hidden-icons t)
   (:require (tree-in? t '(draw-over draw-under)))
