@@ -46,6 +46,8 @@
               (font-exists-in-tt? "Apple Symbols")
               (font-exists-in-tt? "texgyretermes-regular"))
           (-> "True type"
+              (if (font-exists-in-tt? "texgyrebonum-regular")
+                  ("Bonum" (make-with "font" "bonum")))
               (if (font-exists-in-tt? "DejaVuSerif")
                   ("Dejavu" (make-with "font" "dejavu")))
               (if (font-exists-in-tt? "LucidaGrande")
@@ -54,6 +56,8 @@
                   ("Luxi" (make-with "font" "luxi")))
               (if (font-exists-in-tt? "texgyrepagella-regular")
                   ("Pagella" (make-with "font" "pagella")))
+              (if (font-exists-in-tt? "texgyreschola-regular")
+                  ("Schola" (make-with "font" "schola")))
               (if (font-exists-in-tt? "Apple Symbols")
                   ("Symbols" (make-with "font" "apple-symbols")))
               (if (font-exists-in-tt? "texgyretermes-regular")

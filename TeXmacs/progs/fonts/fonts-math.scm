@@ -375,6 +375,23 @@
      (unicode $bit $s $d)
      (roman $t $a $b $s $d)))
 
+   ;;((math-bonum $t bold right $s $d)
+   ;; (unicode-math texgyrebonum-bold texgyrebonum-bold
+   ;;		  texgyrebonum-bold texgyrebonum-bold
+   ;;		  $t $a $b $s $d))
+   ((math-bonum $t $a right $s $d)
+    (unicode-math texgyrebonum-math texgyrebonum-math
+		  texgyrebonum-bold texgyrebonum-bold
+		  $t $a $b $s $d))
+   ;;((math-bonum $t bold $b $s $d)
+   ;; (unicode-math texgyrebonum-bold texgyrebonum-bolditalic
+   ;;		  texgyrebonum-bold texgyrebonum-bolditalic
+   ;;		  $t $a $b $s $d))
+   ((math-bonum $t $a $b $s $d)
+    (unicode-math texgyrebonum-math texgyrebonum-italic
+		  texgyrebonum-bold texgyrebonum-bolditalic
+		  $t $a $b $s $d))
+
    ;;((math-pagella $t bold right $s $d)
    ;; (unicode-math texgyrepagella-bold texgyrepagella-bold
    ;;		  texgyrepagella-bold texgyrepagella-bold
@@ -390,6 +407,23 @@
    ((math-pagella $t $a $b $s $d)
     (unicode-math texgyrepagella-math texgyrepagella-italic
 		  texgyrepagella-bold texgyrepagella-bolditalic
+		  $t $a $b $s $d))
+
+   ;;((math-schola $t bold right $s $d)
+   ;; (unicode-math texgyreschola-bold texgyreschola-bold
+   ;;		  texgyreschola-bold texgyreschola-bold
+   ;;		  $t $a $b $s $d))
+   ((math-schola $t $a right $s $d)
+    (unicode-math texgyreschola-math texgyreschola-math
+		  texgyreschola-bold texgyreschola-bold
+		  $t $a $b $s $d))
+   ;;((math-schola $t bold $b $s $d)
+   ;; (unicode-math texgyreschola-bold texgyreschola-bolditalic
+   ;;		  texgyreschola-bold texgyreschola-bolditalic
+   ;;		  $t $a $b $s $d))
+   ((math-schola $t $a $b $s $d)
+    (unicode-math texgyreschola-math texgyreschola-italic
+		  texgyreschola-bold texgyreschola-bolditalic
 		  $t $a $b $s $d))
 
    ;;((math-termes $t bold right $s $d)

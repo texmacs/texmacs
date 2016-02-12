@@ -136,17 +136,21 @@ upgrade_family_name (string f) {
     t ("wqy-zenhei")= "WenQuanYi Zen Hei";
     t ("dejavu")= "DejaVu";
     t ("stix")= "Stix";
+    t ("bonum")= "TeX Gyre Bonum";
     t ("chancery")= "TeX Gyre Chorus";
     t ("pagella")= "TeX Gyre Pagella";
+    t ("schola")= "TeX Gyre Schola";
     t ("termes")= "TeX Gyre Termes";
 
     t ("adobe")= "Stix";
     t ("Duerer")= "duerer";
     t ("math-asana")= "Asana Math";
     t ("math-apple")= "Apple Symbols";
+    t ("math-bonum")= "TeX Gyre Bonum";
     t ("math-dejavu")= "DejaVu";
     t ("math-lucida")= "Lucida Grande";
     t ("math-pagella")= "TeX Gyre Pagella";
+    t ("math-schola")= "TeX Gyre Schola";
     t ("math-stix")= "Stix";
     t ("math-termes")= "TeX Gyre Termes";
 
