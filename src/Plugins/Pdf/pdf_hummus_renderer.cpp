@@ -24,6 +24,7 @@
 #include "link.hpp"
 #include "frame.hpp"
 #include "Ghostscript/gs_utilities.hpp" // for gs_prefix
+#include "wencoding.hpp"
 
 #ifdef QTTEXMACS
 #include "Qt/qt_utilities.hpp"
@@ -290,7 +291,13 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   // setup library
 
   EStatusCode status;
+#if (defined (__MINGW__) || defined (__MINGW32__))
+    // WIN is using 8bit encodings, but pdfwriter expects UTF8
+    // if path or file contains non-ascii characters we need an extra conversion step. 
+    status = pdfWriter.StartPDF(as_charp(western_to_utf8(concretize (pdf_file_name))), ePDFVersion14 ); // PDF 1.4 for alpha
+#else
 	status = pdfWriter.StartPDF(as_charp(concretize (pdf_file_name)), ePDFVersion14 ); // PDF 1.4 for alpha
+#endif  
 	//   , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
 	//   , PDFCreationSettings(false) ); // true = compression on
 	if (status != PDFHummus::eSuccess) {
@@ -982,7 +989,13 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
     PDFUsedFont* font;
     {
       //debug_convert << "GetFontForFile "  << u  << LF;
+#if (defined (__MINGW__) || defined (__MINGW32__))
+    // WIN is using 8bit encodings, but pdfwriter expects UTF8
+    // if path or file contains non-ascii characters we need an extra conversion step. 
+      c_string _u (western_to_utf8(concretize (u)));
+#else
       c_string _u (concretize (u));
+#endif  
       font = pdfWriter.GetFontForFile((char*)_u);
       //tm_delete_array(_rname);
     }
@@ -1338,7 +1351,14 @@ pdf_image_rep::flush (PDFWriter& pdfw)
 			// if this fails try using convert from ImageMagik
 			// to convert to pdf
 			string cmd= "convert";
-			system (cmd, sys_concretize (name), sys_concretize(temp));
+#if (defined (__MINGW__) || defined (__MINGW32__))
+            if (!exists_in_path("conjure")) // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
+            // better test for "conjure" for the presence of imagemagick
+               convert_error << "\n pdf_hummus cannot process png file without ImageMagick\n Please install ImageMagick and try again";
+            else system (sys_concretize(resolve_in_path(cmd)), name, temp);
+#else
+			system (cmd, name, temp);
+#endif  
 		} else {
 			// * ps or eps
 			// use gs to convert eps to pdf and take care of properly handling the bounding box
@@ -1368,7 +1388,11 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   PDFRectangle cropBox (0, 0, w, h);
   double tMat[6] = { scale_x, 0, 0, scale_y, 0, 0};
   
+#if (defined (__MINGW__) || defined (__MINGW32__))
+  PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(western_to_utf8(concretize(temp))));
+#else
   PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(concretize(temp)));
+#endif  
   if(copyingContext) {
     PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
     status = copyingContext->MergePDFPageToFormXObject(form,0);
