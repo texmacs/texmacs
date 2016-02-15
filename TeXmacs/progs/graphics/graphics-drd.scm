@@ -101,6 +101,7 @@
   ("opacity" . "100%")
   ("point-style" . "disk")
   ("point-size" . "4px")
+  ("point-border" . "1px")
   ("line-width" . "1ln")
   ("line-join" . "normal")
   ("line-caps" . "normal")
@@ -159,7 +160,7 @@
 (tm-define (graphics-attributes tag)
   (:require (== tag 'point))
   (append (graphics-common-attributes)
-          '("fill-color" "point-style" "point-size")))
+          '("fill-color" "point-style" "point-size" "point-border")))
 
 (tm-define (graphics-attributes tag)
   (:require (or (graphical-curve-tag? tag) (graphical-user-tag? tag)))

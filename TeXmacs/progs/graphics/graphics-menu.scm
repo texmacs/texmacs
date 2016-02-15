@@ -385,6 +385,19 @@
   ---
   ("Other" (interactive graphics-set-point-size)))
 
+(menu-bind graphics-point-border-menu
+  ("0.5 px" (graphics-set-point-border "0.5px"))
+  ("1 px" (graphics-set-point-border "default"))
+  ("2 px" (graphics-set-point-border "2px"))
+  ("5 px" (graphics-set-point-border "5px"))
+  ---
+  ("0.5 ln" (graphics-set-point-border "0.5ln"))
+  ("1 ln" (graphics-set-point-border "1ln"))
+  ("2 ln" (graphics-set-point-border "2ln"))
+  ("5 ln" (graphics-set-point-border "5ln"))
+  ---
+  ("Other" (interactive graphics-set-point-border)))
+
 (menu-bind graphics-line-width-menu
   ;;("Default" (graphics-set-line-width "default"))
   ;;---
@@ -541,6 +554,8 @@
       (-> "Point style" (link graphics-point-style-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "point-size")
       (-> "Point size" (link graphics-point-size-menu)))
+    (assuming (graphics-mode-attribute? (graphics-mode) "point-border")
+      (-> "Point border" (link graphics-point-border-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "line-width")
       (-> "Line width" (link graphics-line-width-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "dash-style")
@@ -675,6 +690,14 @@
              (s (if (== ps "default") "4px" ps)))
 	(=> (eval s)
 	    (link graphics-point-size-menu)))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "point-border")
+    /
+    (mini #t
+      (group "Border:")
+      (let* ((ps (graphics-get-property "gr-point-border"))
+             (s (if (== ps "default") "1px" ps)))
+	(=> (eval s)
+	    (link graphics-point-border-menu)))))
   (assuming
       (or (graphics-mode-attribute? (graphics-mode) "line-width")
           (graphics-mode-attribute? (graphics-mode) "dash-style"))

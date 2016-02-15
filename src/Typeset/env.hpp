@@ -168,6 +168,7 @@ public:
   bool         no_patterns;
   string       point_style;
   SI           point_size;
+  SI           point_border;
   bool         preamble;
   int          info_level;
   SI           gw;

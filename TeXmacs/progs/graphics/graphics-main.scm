@@ -839,6 +839,11 @@
   (:check-mark "*" (graphics-test-property? "gr-point-size"))
   (graphics-set-property "gr-point-size" val))
 
+(tm-define (graphics-set-point-border val)
+  (:argument val "Point border")
+  (:check-mark "*" (graphics-test-property? "gr-point-border"))
+  (graphics-set-property "gr-point-border" val))
+
 (tm-define (graphics-set-line-width val)
   (:argument val "Line width")
   (:check-mark "*" (graphics-test-property? "gr-line-width"))

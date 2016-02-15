@@ -262,7 +262,7 @@ point_box_rep::display (renderer ren) {
   if (style == "none");
   else if (N(a) != 0) {
     if (br->get_type () != brush_none) {
-      ren->set_pencil (pen->set_width (ren->pixel));
+      ren->set_pencil (pen);
       ren->set_brush (br);
       for (int i=0; i<N(a); i++) {
 	int j= (i+1) % (N(a));
@@ -276,7 +276,7 @@ point_box_rep::display (renderer ren) {
       ren->polygon (x, y, false);
     }
     if (pen->get_type () != pencil_none) {
-      ren->set_pencil (pen->set_width (ren->pixel));
+      ren->set_pencil (pen);
       for (int i=0; i<N(a); i++) {
 	int j= (i+1) % (N(a));
 	ren->line ((SI) a[i][0], (SI) a[i][1], (SI) a[j][0], (SI) a[j][1]);
@@ -284,6 +284,7 @@ point_box_rep::display (renderer ren) {
     }
   }
   else {
+    SI w = (SI) pen->get_width ();
     SI cx= (SI) p[0];
     SI cy= (SI) p[1];
     SI lx= cx - r;
@@ -292,12 +293,12 @@ point_box_rep::display (renderer ren) {
     SI ty= cy + r;
     if (style == "disk" || br->get_type () != brush_none) {
       ren->set_brush (style == "disk" ? pen->get_brush () : br);
-      ren->arc (lx, by+ren->pixel, rx, ty+ren->pixel, 0, 64*360);
-      ren->fill_arc (lx, by+ren->pixel, rx, ty+ren->pixel, 0, 64*360);
+      ren->arc (lx, by+w, rx, ty+w, 0, 64*360);
+      ren->fill_arc (lx, by+w, rx, ty+w, 0, 64*360);
     }
     if (pen->get_type () != pencil_none) {
-      ren->set_pencil (pen->set_width (ren->pixel));
-      ren->arc (lx, by+ren->pixel, rx, ty+ren->pixel, 0, 64*360);
+      ren->set_pencil (pen);
+      ren->arc (lx, by+w, rx, ty+w, 0, 64*360);
     }
   }
 }
