@@ -89,6 +89,12 @@ can_snap (gr_selection sel) {
     return check_snap_mode ("text border");
   if (type == "text-border-point")
     return check_snap_mode ("text border point");
+  if (type == "text-border&grid-curve-point")
+    return check_snap_mode ("text border") &&
+           check_snap_mode ("curve-curve intersection");
+  if (type == "grid-curve-point&text-border")
+    return check_snap_mode ("text border") &&
+           check_snap_mode ("curve-curve intersection");
   cout << "Uncaptured snap type " << type << "\n";
   return true;
 }
