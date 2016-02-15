@@ -365,7 +365,10 @@
   ;;("Disk" (graphics-set-point-style "disk"))
   ("Disk" (graphics-set-point-style "default"))
   ("Round" (graphics-set-point-style "round"))
-  ("Square" (graphics-set-point-style "square")))
+  ("Square" (graphics-set-point-style "square"))
+  ("Diamond" (graphics-set-point-style "diamond"))
+  ("Triangle" (graphics-set-point-style "triangle"))
+  ("Star" (graphics-set-point-style "star")))
 
 (menu-bind graphics-point-size-menu
   ("1 px" (graphics-set-point-size "1px"))

@@ -206,10 +206,36 @@ point_box_rep::point_box_rep (path ip2, point p2, SI r2, pencil pen2,
     box_rep (ip2), p (p2), r (r2), pen (pen2),
     br (br2), style (style2)
 {
-  x1= x3= ((SI) p[0]) - r;
-  y1= y3= ((SI) p[1]) - r;
-  x2= x4= ((SI) p[0]) + r;
-  y2= y4= ((SI) p[1]) + r;
+  SI w= pen->get_width () >> 1;
+  x1= x3= ((SI) p[0]) - r - w;
+  y1= y3= ((SI) p[1]) - r - w;
+  x2= x4= ((SI) p[0]) + r + w;
+  y2= y4= ((SI) p[1]) + r + w;
+}
+
+static array<point>
+get_contour (string style) {
+  array<point> a;
+  if (style == "square")
+    a << point (-1.0, -1.0) << point ( 1.0, -1.0)
+      << point ( 1.0,  1.0) << point (-1.0,  1.0);
+  else if (style == "diamond")
+    a << point (-1.0,  0.0) << point ( 0.0, -1.0)
+      << point ( 1.0,  0.0) << point ( 0.0,  1.0);
+  else if (style == "triangle")
+    a << point (-1.0, -1.0) << point ( 1.0, -1.0)
+      << point ( 0.0,  1.0);
+  else if (style == "star") {
+    int n= 5;
+    for (int i=0; i<2*n; i++) {
+      double b= (2.0 * 3.141592653) * (1.0 * i) / (2.0 * n);
+      double r= ((i&1) == 0? 1.0: 0.5);
+      double x= r * sin (b);
+      double y= r * cos (b);
+      a << point (x, y);
+    }
+  }
+  return a;
 }
 
 gr_selections
@@ -230,43 +256,48 @@ point_box_rep::graphical_select (SI x, SI y, SI dist) {
 
 void
 point_box_rep::display (renderer ren) {
-  array<SI> x (4), y (4);
-  x[0]= ((SI) p[0]) - r;
-  y[0]= ((SI) p[1]) - r;
-  x[1]= ((SI) p[0]) - r;
-  y[1]= ((SI) p[1]) + r;
-  x[2]= ((SI) p[0]) + r;
-  y[2]= ((SI) p[1]) + r;
-  x[3]= ((SI) p[0]) + r;
-  y[3]= ((SI) p[1]) - r;
+  array<point> a= get_contour (style);
+  for (int i=0; i<N(a); i++)
+    a[i]= p + ((double) r) * a[i];
   if (style == "none");
-  else if (style == "square") {
+  else if (N(a) != 0) {
     if (br->get_type () != brush_none) {
       ren->set_pencil (pen->set_width (ren->pixel));
       ren->set_brush (br);
-      ren->line (x[0], y[0], x[1], y[1]);
-      ren->line (x[1], y[1], x[2], y[2]);
-      ren->line (x[2], y[2], x[3], y[3]);
-      ren->line (x[3], y[3], x[0], y[0]);
+      for (int i=0; i<N(a); i++) {
+	int j= (i+1) % (N(a));
+	ren->line ((SI) a[i][0], (SI) a[i][1], (SI) a[j][0], (SI) a[j][1]);
+      }
+      array<SI> x (N(a)), y (N(a));
+      for (int i=0; i<N(a); i++) {
+	x[i]= (SI) a[i][0];
+	y[i]= (SI) a[i][1];
+      }
       ren->polygon (x, y, false);
     }
     if (pen->get_type () != pencil_none) {
       ren->set_pencil (pen->set_width (ren->pixel));
-      ren->line (x[0], y[0], x[1], y[1]);
-      ren->line (x[1], y[1], x[2], y[2]);
-      ren->line (x[2], y[2], x[3], y[3]);
-      ren->line (x[3], y[3], x[0], y[0]);
+      for (int i=0; i<N(a); i++) {
+	int j= (i+1) % (N(a));
+	ren->line ((SI) a[i][0], (SI) a[i][1], (SI) a[j][0], (SI) a[j][1]);
+      }
     }
   }
   else {
+    SI cx= (SI) p[0];
+    SI cy= (SI) p[1];
+    SI lx= cx - r;
+    SI by= cy - r;
+    SI rx= cx + r;
+    SI ty= cy + r;
     if (style == "disk" || br->get_type () != brush_none) {
       ren->set_brush (style == "disk" ? pen->get_brush () : br);
-      ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
-      ren->fill_arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
+      ren->arc (lx, by+ren->pixel, rx, ty+ren->pixel, 0, 64*360);
+      ren->fill_arc (lx, by+ren->pixel, rx, ty+ren->pixel, 0, 64*360);
     }
     if (pen->get_type () != pencil_none) {
       ren->set_pencil (pen->set_width (ren->pixel));
-      ren->arc (x[0], y[0]+ren->pixel, x[2], y[2]+ren->pixel, 0, 64*360);
+      ren->arc (lx, by+ren->pixel, rx, ty+ren->pixel, 0, 64*360);
     }
   }
 }
