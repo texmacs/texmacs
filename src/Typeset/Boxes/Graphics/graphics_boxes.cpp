@@ -235,6 +235,16 @@ get_contour (string style) {
       a << point (x, y);
     }
   }
+  else if (style == "plus")
+    a << point ( 0.0,  0.0) << point ( 1.0,  0.0)
+      << point ( 0.0,  0.0) << point ( 0.0,  1.0)
+      << point ( 0.0,  0.0) << point (-1.0,  0.0)
+      << point ( 0.0,  0.0) << point ( 0.0, -1.0);
+  else if (style == "cross")
+    a << point ( 0.0,  0.0) << point ( 1.0,  1.0)
+      << point ( 0.0,  0.0) << point (-1.0,  1.0)
+      << point ( 0.0,  0.0) << point (-1.0, -1.0)
+      << point ( 0.0,  0.0) << point ( 1.0, -1.0);
   return a;
 }
 

@@ -368,7 +368,9 @@
   ("Square" (graphics-set-point-style "square"))
   ("Diamond" (graphics-set-point-style "diamond"))
   ("Triangle" (graphics-set-point-style "triangle"))
-  ("Star" (graphics-set-point-style "star")))
+  ("Star" (graphics-set-point-style "star"))
+  ("Plus" (graphics-set-point-style "plus"))
+  ("Cross" (graphics-set-point-style "cross")))
 
 (menu-bind graphics-point-size-menu
   ("1 px" (graphics-set-point-size "1px"))
