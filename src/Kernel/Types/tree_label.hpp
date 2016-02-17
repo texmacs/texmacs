@@ -78,7 +78,8 @@ enum tree_label {
   PAR_LENGTH, PAG_LENGTH,                         // other
   GW_LENGTH, GH_LENGTH, GU_LENGTH,                // extents & unit of graphics
   TMPT_LENGTH, PX_LENGTH,                         // miscellaneous
-  MSEC_LENGTH, SEC_LENGTH, MIN_LENGTH, HR_LENGTH,  // durations
+  MS_LENGTH, S_LENGTH, MSEC_LENGTH, SEC_LENGTH,   // durations
+  MIN_LENGTH, HR_LENGTH,
 
   // tags for source tree editing
   STYLE_WITH, VAR_STYLE_WITH, STYLE_ONLY, VAR_STYLE_ONLY,
@@ -98,6 +99,8 @@ enum tree_label {
   SPECIFIC, FLAG,
 
   // animations
+  ANIM_STATIC, ANIM_DYNAMIC, MORPH,
+  ANIM_TIME, ANIM_PORTION,
   ANIM_COMPOSE, ANIM_REPEAT, ANIM_CONSTANT,
   ANIM_TRANSLATE, ANIM_PROGRESSIVE, VIDEO, SOUND,
 

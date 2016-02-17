@@ -47,6 +47,7 @@ edit_env_rep::edit_env_rep (drd_info& drd2,
   update ();
   complete= false;
   recover_env= tuple ();
+  anim_start= anim_end= anim_portion= 0.0;
 }
 
 edit_env::edit_env (drd_info& drd,
