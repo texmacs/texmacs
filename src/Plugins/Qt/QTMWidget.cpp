@@ -153,7 +153,22 @@ initkeymap () {
   // map (Qt::Key_Find        , "find" );
   // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );
 }
-
+#ifdef __MINGW32__
+enum WindowsNativeModifiers {
+    ShiftLeft            = 0x00000001,
+    ControlLeft          = 0x00000002,
+    AltLeft              = 0x00000004,
+    MetaLeft             = 0x00000008,
+    ShiftRight           = 0x00000010,
+    ControlRight         = 0x00000020,
+    AltRight             = 0x00000040,
+    MetaRight            = 0x00000080,
+    CapsLock             = 0x00000100,
+    NumLock              = 0x00000200,
+    ScrollLock           = 0x00000400,
+    ExtendedKey          = 0x01000000,
+};
+#endif
 static long int QTMWcounter = 0; // debugging hack
 
 /*! Constructor.
@@ -440,7 +455,6 @@ QTMWidget::paintEvent (QPaintEvent* event) {
     p.drawPixmap (qr, backingPixmap, qr);
   }
 }
-
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
   if (is_nil (tmwid)) return;
@@ -460,6 +474,11 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       debug_qt << "key  : " << key << LF;
       debug_qt << "text : " << event->text().toAscii().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
+#ifdef __MINGW32__
+      debug_qt << "nativeScanCode: " << event->nativeScanCode() << LF; 
+      debug_qt << "nativeVirtualKey: " << event->nativeVirtualKey() << LF;
+      debug_qt << "nativeModifiers: " << event->nativeModifiers() << LF;
+#endif
       if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
       if (mods & Qt::MetaModifier) debug_qt << "meta\n";
       if (mods & Qt::ControlModifier) debug_qt << "control\n";
@@ -468,22 +487,21 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     }
 
     string r;
-#ifdef __MINGW32__
-    // denis begin
-    if (event->text().count() == 1) {
-      QChar c= event->text()[0];
-      if (c.isPrint() && event->modifiers() != Qt::MetaModifier) {
-        // not a control character or dead key or modifier
-        char ac=c.toAscii();
-        if (ac && ac != ' ') { // a true ascii printable
-          r= ac;
-          if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "ascii key= " <<r << "\n";	
-          the_gui->process_keypress (tm_widget(), r, texmacs_time());
-          return;
-        }
-      }
-    }
-    // denis end
+#ifdef __MINGW32__ 
+/* "Qt::Key_AltGr On Windows, when the KeyDown event for this key is sent,
+* the Ctrl+Alt modifiers are also set." (excerpt from Qt doc)
+* However the AltGr key is used to obtain many symbols 
+* which should not be regarded as C-A- shortcuts.
+* (e.g. \ or @ on a French keyboard) 
+* 
+* Hence, when "native modifiers" are (ControlLeft | AltRight) 
+* we clear Qt's Ctrl+Alt modifiers
+*/
+    if ((event->nativeModifiers() & (ControlLeft | AltRight)) == (ControlLeft | AltRight)){
+		if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "assuming it's an AltGr key code"<<LF;
+		mods &= ~Qt::AltModifier;
+		mods &= ~Qt::ControlModifier;
+	}
 #endif
     if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
@@ -539,9 +557,9 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
         }
 #ifdef Q_WS_MAC
           // Alt produces many symbols in Mac keyboards: []|{} etc.
-        mods &=~ Qt::AltModifier;
+        mods &= ~Qt::AltModifier; //unset Alt
 #endif
-        mods &=~ Qt::ShiftModifier;
+        mods &= ~Qt::ShiftModifier;
       }
     }
     if (r == "") return;
