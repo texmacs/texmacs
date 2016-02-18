@@ -78,8 +78,8 @@ edit_env_rep::animate (tree t) {
     for (int i=0; i<N(t); i++)
       if (is_tuple (t[i]) && N(t[i]) >= 2 && is_double (t[i][0])) {
         double ti= as_double (t[i][0]);
-        if (ti < tt && ti > t0) { i0= i; t0= ti; c0= t[i][1]; }
-        if (ti > tt && ti < t1) { i1= i; t1= ti; c1= t[i][1]; }
+        if (ti-1.0e-6 <= tt && ti > t0) { i0= i; t0= ti; c0= t[i][1]; }
+        if (ti+1.0e-6 >= tt && ti < t1) { i1= i; t1= ti; c1= t[i][1]; }
       }
       else if (!is_tuple (t[i]) && i0 == -1) { i0= i; t0= 0.0; c0= t[i]; }
       else if (!is_tuple (t[i]) && i1 == -1) { i1= i; t1= 1.0; c1= t[i]; }
@@ -226,7 +226,39 @@ edit_env_rep::checkout_animation (tree t) {
 ******************************************************************************/
 
 tree
+insert_frame (tree a, tree f, double t) {
+  if (is_func (a, MORPH)) {
+    bool done= false;
+    tree b (MORPH);
+    tree ins (TUPLE, as_string (t), f);
+    for (int i=0; i<N(a); i++) {
+      if (is_tuple (a[i]) && N(a[i]) >= 2 && is_double (a[i][0]) && !done) {
+        double x= as_double (a[i][0]);
+        if (ins[0] == a[i][0]) b << ins;
+        else if (t < x) { b << ins << a[i]; done= true; }
+        else b << a[i];
+      }
+      else b << a[i];
+    }
+    if (!done) b << ins;
+    return b;
+  }
+  else {
+    tree r (MORPH, tree (TUPLE, "0", a),
+                   tree (TUPLE, as_string (t), f));
+    return r;
+  }
+}
+
+tree
 edit_env_rep::commit_animation (tree t) {
   if (N(t) < 5) return t;
-  return tree (ANIM_STATIC, t[0], t[2], t[3], t[4]);
+  tree a= tree (ANIM_STATIC, t[0], t[2], t[3], t[4]);
+  tree u= checkout_animation (a);
+  if (u[1] == t[1]) return a;
+  int tot= max (as_length (exec (t[2])), 1);
+  int cur= max (as_length (exec (t[4])), 1);
+  double portion= (1.0 * cur) / (1.0 * tot);
+  a[0]= insert_frame (a[0], t[1], portion);
+  return a;
 }
