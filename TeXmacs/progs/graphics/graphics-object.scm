@@ -145,7 +145,7 @@
 (tm-define (create-graphical-props mode ps0)
   (let ((tab (make-ahash-table))
         (l (graphics-all-attributes)))
-    (set! l (list-difference l '("gid")))
+    (set! l (list-difference l '("gid" "anim-id")))
     (cond
       ((== mode 'active)
        (for (var l)

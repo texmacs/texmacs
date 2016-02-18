@@ -340,6 +340,13 @@
   (with val (graphics-get-raw-property var)
      (tree->stree val)))
 
+(tm-define ((graphics-get-property-at p) var)
+  (with r (if (and (pair? p) (in? var (list "gr-gid" "gr-anim-id")))
+              (graphics-path-property p (string-drop var 3))
+              (graphics-get-property var))
+    ;;(display* p ", " var " ~~> " r "\n")
+    r))
+
 (tm-define (graphics-set-property var val)
   (with p (graphics-graphics-path)
     (cond ((tree? val) (graphics-set-property var (tree->stree val)))

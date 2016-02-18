@@ -225,6 +225,8 @@ string GR_EDIT_GRID_ASPECT ("gr-edit-grid-aspect");
 string GR_TRANSFORMATION ("gr-transformation");
 string GR_SNAP_DISTANCE ("gr-snap-distance");
 
+string GR_GID ("gr-gid");
+string GR_ANIM_ID ("gr-anim-id");
 string GR_MAGNIFY ("gr-magnify");
 string GR_OPACITY ("gr-opacity");
 string GR_COLOR ("gr-color");
@@ -248,6 +250,7 @@ string GR_TEXT_AT_VALIGN ("gr-text-at-valign");
 string GR_TEXT_AT_MARGIN ("gr-text-at-margin");
 
 string GID ("gid");
+string ANIM_ID ("anim-id");
 string MAGNIFY ("magnify");
 string POINT_STYLE ("point-style");
 string POINT_SIZE ("point-size");

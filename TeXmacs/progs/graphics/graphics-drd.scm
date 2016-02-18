@@ -96,6 +96,7 @@
 
 (define-table attribute-default-table
   ("gid" . "default")
+  ("anim-id" . "default")
   ("magnify" . "1")
   ("color" . "black")
   ("opacity" . "100%")
@@ -149,7 +150,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (graphics-common-attributes)
-  '("gid" "magnify" "color" "opacity"))
+  '("gid" "anim-id" "magnify" "color" "opacity"))
 
 (tm-define (graphics-all-attributes)
   (map car (ahash-table->list attribute-default-table)))

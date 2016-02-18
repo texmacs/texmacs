@@ -24,6 +24,7 @@
 (tm-define (anim-checkout t)
   (with r (animate-checkout t)
     (tree-assign-node! t (tree-label r))
+    (tree-set! t 0 (tree-ref r 0))
     (tree-insert! t 1 (list (tree-ref r 1)))
     (tree-go-to t 1 :start)))
 
@@ -40,5 +41,6 @@
     (tree-set! t 4 now))
   (with r (animate-checkout `(anim-static ,(tree-ref t 0)
                                           ,@(cddr (tm-children t))))
+    (tree-set! t 0 (tree-ref r 0))
     (tree-set! t 1 (tree-ref r 1))
     (tree-go-to t 1 :start)))

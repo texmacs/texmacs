@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "env.hpp"
+#include "scheme.hpp"
 
 /******************************************************************************
 * Main execution
@@ -169,6 +170,94 @@ morph_color (string s0, string s1, double t) {
 }
 
 tree
+morph_with (tree t0, tree t1, edit_env env) {
+  if (!is_func (t0, WITH))
+    return morph_with (tree (WITH, t0), t1, env);
+  if (!is_func (t1, WITH))
+    return morph_with (t0, tree (WITH, t1), env);
+  tree r (WITH);
+  for (int i0=0; i0+1<N(t0); i0+=2) {
+    tree v0= t0[i0+1], v1;
+    int i1;
+    for (i1=0; i1+1<N(t1); i1+=2)
+      if (t0[i0] == t1[i1]) {
+        v1= t1[i1+1];
+        break;
+      }
+    if (i1+1 >= N(t1)) v1= env->read (as_string (t0[i0]));
+    r << t0[i0] << morph (v0, v1, env);
+  }
+  for (int i1=0; i1+1<N(t1); i1+=2) {
+    bool found= false;
+    for (int i0=0; i0+1<N(t0); i0+=2)
+      if (t0[i0] == t1[i1]) { found= true; break; }
+    if (found) continue;
+    tree v0= env->read (as_string (t1[i1]));
+    tree v1= t1[i1+1];
+    r << t1[i1] << morph (v0, v1, env);
+  }
+  r << morph (t0[N(t0)-1], t1[N(t1)-1], env);
+  return r;
+}
+
+string
+get_anim_id (tree t) {
+  if (!is_func (t, WITH)) return "";
+  for (int i=0; i+1<N(t); i++)
+    if (t[i] == ANIM_ID)
+      return as_string (t[i+1]);
+  return get_anim_id (t[N(t)-1]);
+}
+
+tree
+morph_graphics (tree t0, tree t1, edit_env env) {
+  tree r (GRAPHICS, "");
+  hashset<string> done;
+  int i0=0, i1=0;
+  while (i0 < N(t0) && i1 < N(t1)) {
+    if (!is_compound (t0[i0])) { i0++; continue; }
+    if (!is_compound (t1[i1])) { i1++; continue; }
+    string id0= get_anim_id (t0[i0]);
+    string id1= get_anim_id (t1[i1]);
+    if (done->contains (id0)) { i0++; continue; }
+    if (done->contains (id1)) { i1++; continue; }
+    if (id0 == id1) {
+      r << morph (t0[i0], t1[i1], env);
+      i0++; i1++; continue;
+    }
+    if (id0 == "") {
+      r << morph (t0[i0], "", env);
+      i0++; continue;
+    }
+    if (id1 == "") {
+      r << morph ("", t1[i1], env);
+      i1++; continue;
+    }
+    int j0= i0+1, j1= i1+1;
+    for (j0=i0+1; j0<N(t0); j0++)
+      if (get_anim_id (t0[j0]) == id1) break;
+    for (j1=i1+1; j1<N(t1); j1++)
+      if (get_anim_id (t1[j1]) == id0) break;
+    if (j1<N(t1) && (j0>=N(t0) || (j1-i1 < j0-i0))) {
+      r << morph (t0[i0], t1[j1], env);
+      i0++; done->insert (id0); continue;
+    }
+    if (j0<N(t0) && (j1>=N(t1) || (j0-i0 < j1-i1))) {
+      r << morph (t0[j0], t1[i1], env);
+      i1++; done->insert (id0); continue;
+    }
+    r << morph (t0[i0], "", env);
+    r << morph ("", t1[i1], env);
+    i0++; i1++;
+  }
+  while (i0 < N(t0))
+    r << morph (t0[i0++], "", env);
+  while (i1 < N(t1))
+    r << morph ("", t1[i1++], env);
+  return r;
+}
+
+tree
 morph (tree t0, tree t1, edit_env env) {
   if (is_atomic (t0) && is_atomic (t1)) {
     double t = env->anim_portion;
@@ -186,6 +275,10 @@ morph (tree t0, tree t1, edit_env env) {
   }
   else if (is_atomic (t0) || is_atomic (t1))
     return morph_trivial (t0, t1, env);
+  else if (is_func (t0, WITH) || is_func (t1, WITH))
+    return morph_with (t0, t1, env);
+  else if (is_func (t0, GRAPHICS) && is_func (t1, GRAPHICS))
+    return morph_graphics (t0, t1, env);
   else if (L(t0) == L(t1) && N(t0) == N(t1)) {
     int i, n= N(t0);
     tree tt (t0, n);
@@ -197,6 +290,80 @@ morph (tree t0, tree t1, edit_env env) {
     return morph_length (t0, t1, env);
   else
     return morph_trivial (t0, t1, env);
+}
+
+/******************************************************************************
+* Adding animated object identifiers
+******************************************************************************/
+
+tree insert_anim_ids (tree t);
+
+array<tree>
+insert_anim_ids (array<tree> a) {
+  if (N(a) == 0) return a;
+  bool same= true;
+  for (int i=1; i<N(a); i++) {
+    same= same && (is_atomic (a[0]) == is_atomic (a[i]));
+    if (same && is_compound (a[0]))
+      same= same && L(a[0]) == L(a[i]) && N(a[0]) == N(a[i]);
+  }
+  if (!same) {
+    array<tree> b= copy (a);
+    for (int i=0; i<N(a); i++)
+      b[i]= insert_anim_ids (a[i]);
+    return b;
+  }
+  else if (is_atomic (a[0])) return a;
+  else {
+    int n= N(a[0]);
+    array<tree> r (N(a));
+    for (int i=0; i<N(a); i++)
+      r[i]= tree (a[i], n);
+    for (int c=0; c<n; c++) {
+      array<tree> b (N(a));
+      for (int i=0; i<N(a); i++)
+        b[i]= a[i][c];
+      if (is_func (a[0], GRAPHICS)) {
+        bool ins= true;
+        for (int i=0; i<N(b); i++)
+          ins= ins && (is_compound (b[i]) && get_anim_id (b[i]) == "");
+        if (ins) {
+          string id= as_string (call ("create-unique-id"));
+          for (int i=0; i<N(b); i++) {
+            if (!is_func (b[i], WITH)) b[i]= tree (WITH, b[i]);
+            b[i]= tree (WITH, ANIM_ID, id) * b[i];
+          }
+        }
+      }
+      array<tree> rew= insert_anim_ids (b);
+      for (int i=0; i<N(a); i++)
+        r[i][c]= rew[i];
+    }
+    return r;
+  }
+}
+
+tree
+insert_anim_ids (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, MORPH))
+    return tree (L(t), insert_anim_ids (A(t)));
+  else {
+    int i, n=N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++) {
+      r[i]= insert_anim_ids (t[i]);
+      if (is_func (t, GRAPHICS) && is_compound (t[i])) {
+        string id= get_anim_id (t[i]);
+        if (id == "") {
+          id= as_string (call ("create-unique-id"));
+          if (!is_func (r[i], WITH)) r[i]= tree (WITH, r[i]);
+          r[i]= tree (WITH, ANIM_ID, id) * r[i];
+        }
+      }
+    }
+    return r;
+  }
 }
 
 /******************************************************************************
@@ -214,11 +381,12 @@ edit_env_rep::checkout_animation (tree t) {
   anim_start  = 0.0;
   anim_end    = 0.001 * tot;
   anim_portion= (1.0 * cur) / (1.0 * tot);
-  tree frame= animate (t[0]);
+  tree a= insert_anim_ids (t[0]);
+  tree frame= animate (a);
   anim_start  = old_start;
   anim_end    = old_end;
   anim_portion= old_portion;
-  return compound ("anim-edit", t[0], frame, t[1], t[2], t[3]);
+  return compound ("anim-edit", a, frame, t[1], t[2], t[3]);
 }
 
 /******************************************************************************
@@ -234,7 +402,7 @@ insert_frame (tree a, tree f, double t) {
     for (int i=0; i<N(a); i++) {
       if (is_tuple (a[i]) && N(a[i]) >= 2 && is_double (a[i][0]) && !done) {
         double x= as_double (a[i][0]);
-        if (ins[0] == a[i][0]) b << ins;
+        if (fabs (t - x) < 1.0e-6) { b << ins; done= true; }
         else if (t < x) { b << ins << a[i]; done= true; }
         else b << a[i];
       }
@@ -259,6 +427,6 @@ edit_env_rep::commit_animation (tree t) {
   int tot= max (as_length (exec (t[2])), 1);
   int cur= max (as_length (exec (t[4])), 1);
   double portion= (1.0 * cur) / (1.0 * tot);
-  a[0]= insert_frame (a[0], t[1], portion);
+  a[0]= insert_frame (a[0], insert_anim_ids (t[1]), portion);
   return a;
 }

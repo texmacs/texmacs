@@ -143,6 +143,8 @@
             (when (nin? var '("gid"))
               (ahash-set! tab var (ahash-ref graphical-attrs var))))
           (graphical-fetch-props (car (sketch-get)))
+          (for (var (list "anim-id"))
+            (ahash-set! tab var (ahash-ref graphical-attrs var)))
           (set! obj (graphics-enrich-bis
                      obj (ahash-ref graphical-attrs "gid") tab))
           (set! current-edge-sel? #f)
