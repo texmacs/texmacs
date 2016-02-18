@@ -18,14 +18,19 @@
 ;; Utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-menu (input-duration-icon name t i)
-  (let* ((in (tree->string (tree-ref t i)))
-         (setter (lambda (x)
-		   (when x
-                     (tree-set (focus-tree) i x)))))
+(tm-menu (anim-input-icon name t i setter)
+  (with in (tree->string (tree-ref t i))
     (mini #t
       (group (eval (string-append name ":")))
       (input (setter answer) "string" (list in) "5em"))))
+
+(tm-menu (anim-duration-icon name t i)
+  (with setter (lambda (x) (when x (tree-set t i x)))
+    (dynamic (anim-input-icon name t i setter))))
+
+(tm-menu (anim-now-icon name t i)
+  (with setter (lambda (x) (when x (anim-set-now t x)))
+    (dynamic (anim-input-icon name t i setter))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized focus icons
@@ -37,16 +42,16 @@
 (tm-menu (focus-hidden-icons t)
   (:require (tree-in? t '(anim-static anim-dynamic)))
   //
-  (dynamic (input-duration-icon "Duration" t 1))
-  (dynamic (input-duration-icon "Step" t 2))
-  (dynamic (input-duration-icon "Now" t 3))
+  (dynamic (anim-duration-icon "Duration" t 1))
+  (dynamic (anim-duration-icon "Step" t 2))
+  (dynamic (anim-duration-icon "Now" t 3))
   //
   ("Edit" (anim-checkout t)))
 
 (tm-menu (animate-focus-icons t)
   //
-  (dynamic (input-duration-icon "Duration" t 2))
-  (dynamic (input-duration-icon "Step" t 3))
-  (dynamic (input-duration-icon "Now" t 4))
+  (dynamic (anim-duration-icon "Duration" t 2))
+  (dynamic (anim-duration-icon "Step" t 3))
+  (dynamic (anim-now-icon "Now" t 4))
   //
   ("Play" (anim-commit t)))
