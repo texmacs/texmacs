@@ -113,6 +113,9 @@ make_bridge (typesetter ttt, tree st, path ip) {
   case HLINK:
   case ACTION:
     return bridge_compound (ttt, st, ip);
+  case ANIM_STATIC:
+  case ANIM_DYNAMIC:
+    return bridge_eval (ttt, st, ip);
   case CANVAS:
     return bridge_canvas (ttt, st, ip);
   case ORNAMENT:

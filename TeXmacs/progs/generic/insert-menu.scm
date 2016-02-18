@@ -115,6 +115,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-animation-menu
+  (when (selection-active-small?)
+    ("Animate" (interactive animate-selection)))
+  ---
   ("Fixed" (interactive make-anim-constant))
   ("Compose" (make 'anim-compose))
   ("Repeat" (make 'anim-repeat))

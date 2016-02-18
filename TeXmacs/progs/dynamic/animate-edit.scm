@@ -21,6 +21,20 @@
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (make-animate t len)
+  (with r (animate-checkout `(anim-static ,t ,len "0.1s" "0s"))
+    (insert-go-to r (cons 1 (path-start (tm-ref r 1) '())))))
+
+(tm-define (animate-selection len)
+  (:argument len "Duration")
+  (with sel (selection-tree)
+    (clipboard-cut "primary")
+    (make-animate sel len)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Start and end editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (tm-define (anim-checkout t)
   (with r (animate-checkout t)
     (tree-assign-node! t (tree-label r))
