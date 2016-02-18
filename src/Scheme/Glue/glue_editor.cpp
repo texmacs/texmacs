@@ -3005,6 +3005,32 @@ tmg_html_expand (tmscm arg1) {
 }
 
 tmscm
+tmg_animate_checkout (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "animate-checkout");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->checkout_animation (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_animate_commit (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "animate-commit");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->commit_animation (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_idle_time () {
   // TMSCM_DEFER_INTS;
   int out= get_current_editor()->idle_time ();
@@ -3371,6 +3397,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("verbatim-expand",  tmg_verbatim_expand, 1, 0, 0);
   tmscm_install_procedure ("latex-expand",  tmg_latex_expand, 1, 0, 0);
   tmscm_install_procedure ("html-expand",  tmg_html_expand, 1, 0, 0);
+  tmscm_install_procedure ("animate-checkout",  tmg_animate_checkout, 1, 0, 0);
+  tmscm_install_procedure ("animate-commit",  tmg_animate_commit, 1, 0, 0);
   tmscm_install_procedure ("idle-time",  tmg_idle_time, 0, 0, 0);
   tmscm_install_procedure ("change-time",  tmg_change_time, 0, 0, 0);
   tmscm_install_procedure ("menu-before-action",  tmg_menu_before_action, 0, 0, 0);

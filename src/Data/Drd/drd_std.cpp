@@ -568,10 +568,10 @@ init_std_drd () {
 	argument (2) -> name (2, "source"));
 
   init (ANIM_STATIC, "anim-static",
-	fixed (1, 2, BIFORM) -> returns_animation () ->
+	fixed (1, 3, BIFORM) -> returns_animation () ->
         duration (1));
   init (ANIM_DYNAMIC, "anim-dynamic",
-	fixed (1, 2, BIFORM) -> returns_animation () ->
+	fixed (1, 3, BIFORM) -> returns_animation () ->
         duration (1));
   init (MORPH, "morph",
 	repeat (1, 1) -> regular (0));

@@ -995,6 +995,8 @@
 "verbatim-expand"
 "latex-expand"
 "html-expand"
+"animate-checkout"
+"animate-commit"
 "idle-time"
 "change-time"
 "menu-before-action"

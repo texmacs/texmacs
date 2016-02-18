@@ -425,6 +425,16 @@ compound (string s, tree t1, tree t2, tree t3, tree t4) {
 }
 
 tree
+compound (string s, tree t1, tree t2, tree t3, tree t4, tree t5) {
+  return tree (make_tree_label (s), t1, t2, t3, t4, t5);
+}
+
+tree
+compound (string s, tree t1, tree t2, tree t3, tree t4, tree t5, tree t6) {
+  return tree (make_tree_label (s), t1, t2, t3, t4, t5, t6);
+}
+
+tree
 compound (string s, array<tree> a) {
   return tree (make_tree_label (s), a);
 }

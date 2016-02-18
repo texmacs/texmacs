@@ -483,6 +483,8 @@
   <assign|slink|<macro|body|<hlink|<with|font-family|tt|language|verbatim|<arg|body>>|<arg|body>>>>
 
   <assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>
+
+  <assign|anim-edit|<macro|body|current|duration|step|now|<arg|current>>>
 </body>
 
 <\initial>

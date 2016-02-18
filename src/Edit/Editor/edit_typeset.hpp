@@ -86,6 +86,9 @@ public:
   tree     exec_latex (tree t);
   tree     texmacs_exec (tree t);
 
+  tree     checkout_animation (tree t);
+  tree     commit_animation (tree t);
+
   void     change_style (tree style);
   tree     get_init_all ();
   void     init_env (string var, tree by);

@@ -384,9 +384,11 @@ public:
   bool   exec_until (tree t, path p, string var, int level);
   string exec_string (tree t);        /* should be inline */
   tree   expand (tree t, bool search_accessible= false);
-  tree   animate (tree t);
   bool   depends (tree t, string s, int level);
   tree   rewrite (tree t);
+  tree   animate (tree t);
+  tree   checkout_animation (tree t);
+  tree   commit_animation (tree t);
 
   inline void monitored_write (string s, tree t) {
     back->write_back (s, env); env (s)= t; }

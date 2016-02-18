@@ -131,6 +131,21 @@ morph_number (string s0, string s1, double t) {
 tree
 morph_length (tree t0, tree t1, edit_env env) {
   double t = env->anim_portion;
+  if (fabs (t - 0.0) < 0.000001) return t0;
+  if (fabs (t - 1.0) < 0.000001) return t1;
+  if (t0 == t1) return t0;
+  if (is_atomic (t0) && is_atomic (t1)) {
+    SI x0, x1;
+    string u0, u1;
+    env->get_length_unit (t0->label, x0, u0);
+    env->get_length_unit (t1->label, x1, u1);
+    if (u0 == u1) {
+      double l0= as_double (t0->label (0, N(t0->label) - N(u0)));
+      double l1= as_double (t1->label (0, N(t1->label) - N(u1)));
+      double lt= (1.0-t) * l0 + t * l1;
+      return as_string (lt) * u0;
+    }
+  }
   tree a0= as_string (1.0 - t);
   tree a1= as_string (t);
   tree expr= tree (PLUS, tree (TIMES, a0, t0), tree (TIMES, a1, t1));
@@ -182,4 +197,36 @@ morph (tree t0, tree t1, edit_env env) {
     return morph_length (t0, t1, env);
   else
     return morph_trivial (t0, t1, env);
+}
+
+/******************************************************************************
+* Checking out one frame of an animation for editing
+******************************************************************************/
+
+tree
+edit_env_rep::checkout_animation (tree t) {
+  if (N(t) < 4) return t;
+  int tot= max (as_length (exec (t[1])), 1);
+  int cur= max (as_length (exec (t[3])), 1);
+  double old_start  = anim_start;
+  double old_end    = anim_end;
+  double old_portion= anim_portion;
+  anim_start  = 0.0;
+  anim_end    = 0.001 * tot;
+  anim_portion= (1.0 * cur) / (1.0 * tot);
+  tree frame= animate (t[0]);
+  anim_start  = old_start;
+  anim_end    = old_end;
+  anim_portion= old_portion;
+  return compound ("anim-edit", t[0], frame, t[1], t[2], t[3]);
+}
+
+/******************************************************************************
+* Commit one frame of an animation after editing
+******************************************************************************/
+
+tree
+edit_env_rep::commit_animation (tree t) {
+  if (N(t) < 5) return t;
+  return tree (ANIM_STATIC, t[0], t[2], t[3], t[4]);
 }

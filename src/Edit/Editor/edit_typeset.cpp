@@ -655,6 +655,20 @@ edit_typeset_rep::texmacs_exec (tree t) {
 }
 
 /******************************************************************************
+* Wrappers for editing animations
+******************************************************************************/
+
+tree
+edit_typeset_rep::checkout_animation (tree t) {
+  return env->checkout_animation (t);
+}
+
+tree
+edit_typeset_rep::commit_animation (tree t) {
+  return env->commit_animation (t);
+}
+
+/******************************************************************************
 * Initialization
 ******************************************************************************/
 

@@ -528,7 +528,9 @@
   (assuming (in-graphics?)
     (dynamic (graphics-focus-icons)))
   (assuming (not (in-graphics?))
-    (dynamic (standard-focus-icons (focus-tree)))))
+    (dynamic (standard-focus-icons (focus-tree))))
+  (assuming (inside? 'anim-edit)
+    (dynamic (animate-focus-icons (tree-innermost 'anim-edit)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for customizable environments

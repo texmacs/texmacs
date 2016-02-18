@@ -475,8 +475,10 @@ edit_env_rep::update_geometry () {
   gh= as_length ("0.6par");
   gvalign= as_string ("center");
   if (is_tuple (t, "geometry", 2) || is_tuple (t, "geometry", 3)) {
-    if (is_length (as_string (t[1]))) gw= as_length (t[1]);
-    if (is_length (as_string (t[2]))) gh= as_length (t[2]);
+    if (is_length (as_string (t[1])) || is_anylen (t[1]))
+      gw= as_length (t[1]);
+    if (is_length (as_string (t[2])) || is_anylen (t[2]))
+      gh= as_length (t[2]);
     if (is_tuple (t, "geometry", 3))
       gvalign= as_string (t[3]);
   }

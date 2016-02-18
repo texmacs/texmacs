@@ -270,6 +270,7 @@
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
            plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-menu (dynamic calc-menu) calc-table-menu calc-insert-menu)
+(lazy-menu (dynamic animate-menu) animate-focus-icons)
 (lazy-define (dynamic fold-edit) dynamic-make-slides)
 (lazy-define (dynamic session-edit) scheme-eval)
 (lazy-define (dynamic calc-edit) calc-ready? calc-table-renumber)
