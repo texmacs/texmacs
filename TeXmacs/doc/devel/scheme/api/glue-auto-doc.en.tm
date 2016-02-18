@@ -7763,6 +7763,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(animate-checkout <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|checkout_animation> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(animate-commit <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|commit_animation> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(idle-time)>
 <explain-synopsis|no synopsis>
   <|explain>
