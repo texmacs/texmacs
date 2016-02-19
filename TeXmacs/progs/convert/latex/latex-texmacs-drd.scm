@@ -53,8 +53,8 @@
   exterior Exists bigintwl bigointwl asterisk point cdummy comma copyright
   bignone nobracket nospace nocomma noplus nosymbol
   nin nni notni nequiv nleadsto
-  dotamalg dottimes dotoplus dototimes dotast into
-  longminus longequal
+  dotminus dotpm dotmp dotamalg dottimes dotoplus dototimes dotast
+  into longminus longequal
   longhookrightarrow longhookleftarrow
   triangleup tmprecdot preceqdot
   llangle rrangle join um upl upm ump
