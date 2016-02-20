@@ -213,16 +213,25 @@ tree
 morph_graphics (tree t0, tree t1, edit_env env) {
   tree r (GRAPHICS, "");
   hashset<string> done;
+  done->insert ("");
   int i0=0, i1=0;
+  //cout << "Morphing " << env->anim_start << ", " << env->anim_end
+  //     << "; " << env->anim_portion << "\n" << HRULE << "\n";
+  //for (int k=0; k<N(t0); k++)
+  //  cout << k << ": " << t0[k] << "\n";
+  //cout << HRULE << "\n";
+  //for (int k=0; k<N(t1); k++)
+  //  cout << k << ": " << t1[k] << "\n";
+  //cout << HRULE << "\n";
   while (i0 < N(t0) && i1 < N(t1)) {
-    if (!is_compound (t0[i0])) { i0++; continue; }
-    if (!is_compound (t1[i1])) { i1++; continue; }
     string id0= get_anim_id (t0[i0]);
     string id1= get_anim_id (t1[i1]);
     if (done->contains (id0)) { i0++; continue; }
     if (done->contains (id1)) { i1++; continue; }
     if (id0 == id1) {
       r << morph (t0[i0], t1[i1], env);
+      done->insert (id0);
+      done->insert (id1);
       i0++; i1++; continue;
     }
     if (id0 == "") {
@@ -233,27 +242,31 @@ morph_graphics (tree t0, tree t1, edit_env env) {
       r << morph ("", t1[i1], env);
       i1++; continue;
     }
-    int j0= i0+1, j1= i1+1;
+    int j0, j1;
     for (j0=i0+1; j0<N(t0); j0++)
       if (get_anim_id (t0[j0]) == id1) break;
     for (j1=i1+1; j1<N(t1); j1++)
       if (get_anim_id (t1[j1]) == id0) break;
-    if (j1<N(t1) && (j0>=N(t0) || (j1-i1 < j0-i0))) {
+    if (j1<N(t1) && (j0>=N(t0) || (j1-i1 <= j0-i0))) {
       r << morph (t0[i0], t1[j1], env);
-      i0++; done->insert (id0); continue;
+      done->insert (id0);
+      i0++; continue;
     }
-    if (j0<N(t0) && (j1>=N(t1) || (j0-i0 < j1-i1))) {
+    if (j0<N(t0) && (j1>=N(t1) || (j0-i0 <= j1-i1))) {
       r << morph (t0[j0], t1[i1], env);
-      i1++; done->insert (id0); continue;
+      done->insert (id1);
+      i1++; continue;
     }
     r << morph (t0[i0], "", env);
     r << morph ("", t1[i1], env);
     i0++; i1++;
   }
-  while (i0 < N(t0))
-    r << morph (t0[i0++], "", env);
-  while (i1 < N(t1))
-    r << morph ("", t1[i1++], env);
+  for (; i0 < N(t0); i0++)
+    if (!done->contains (get_anim_id (t0[i0])))
+      r << morph (t0[i0], "", env);
+  for (; i1 < N(t0); i1++)
+    if (!done->contains (get_anim_id (t1[i1])))
+      r << morph ("", t1[i1], env);
   return r;
 }
 
