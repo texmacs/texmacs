@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.4>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|XML serialization>
@@ -21,7 +21,7 @@
 
   <paragraph*|The encoding for strings>
 
-  The leafs of <TeXmacs> trees are traslated from the universal <TeXmacs>
+  The leafs of <TeXmacs> trees are translated from the universal <TeXmacs>
   encoding into Unicode. Characters without Unicode equivalents are
   represented as entities (in the future, we rather plan to create a
   <verbatim|tmsym> tag for representing such characters).
@@ -30,14 +30,14 @@
 
   Trees with a single child are simply represented by the corresponding XML
   tag. In the case when a tree has several children, then each child is
-  enclosed into a <verbatim|tm-arg> tag. For instance,
-  <with|mode|math|<sqrt|x+y>> is simply represented as
+  enclosed into a <verbatim|tm-arg> tag. For instance, <math|<sqrt|x+y>> is
+  simply represented as
 
   <\quote-env>
     <framed-fragment|<verbatim|\<less\>sqrt\<gtr\>y+z\<less\>/sqrt\<gtr\>>>
   </quote-env>
 
-  whereas the fraction <with|mode|math|<frac|1|2>> is represented as
+  whereas the fraction <math|<frac|1|2>> is represented as
 
   <\quote-env>
     <\framed-fragment>
@@ -63,7 +63,7 @@
 
   Some tags are represented in a special way in XML. The <markup|concat> tag
   is simply represented by a textual concatenation. For instance,
-  <with|mode|math|<frac|1|2>+<sqrt|x+y>> is represented as
+  <math|<frac|1|2>+<sqrt|x+y>> is represented as
 
   <\quote-env>
     <framed-fragment|<\verbatim>
@@ -84,30 +84,28 @@
   is represented as
 
   <\tm-fragment>
-    <\with|par-par-sep|0fn>
-      <\verbatim>
-        \<less\>quote-env\<gtr\>
+    <\verbatim>
+      \<less\>quote-env\<gtr\>
 
-        \ \ \<less\>tm-par\<gtr\>
+      \ \ \<less\>tm-par\<gtr\>
 
-        \ \ \ \ Ik ben de blauwbilgorgel.
+      \ \ \ \ Ik ben de blauwbilgorgel.
 
-        \ \ \<less\>/tm-par\<gtr\>
+      \ \ \<less\>/tm-par\<gtr\>
 
-        \ \ \<less\>tm-par\<gtr\>
+      \ \ \<less\>tm-par\<gtr\>
 
-        \ \ \ \ Als ik niet wok of worgel,
+      \ \ \ \ Als ik niet wok of worgel,
 
-        \ \ \<less\>/tm-par\<gtr\>
+      \ \ \<less\>/tm-par\<gtr\>
 
-        \<less\>/quote-env\<gtr\>
-      </verbatim>
-    </with>
+      \<less\>/quote-env\<gtr\>
+    </verbatim>
   </tm-fragment>
 
   A <markup|with> tag with only string attributes and values is represented
-  using the standard XML attribute notation. For instance, ``some
-  <with|color|blue|blue> text'' would be represented as
+  using the standard XML attribute notation. For instance, \Psome
+  <with|color|blue|blue> text\Q would be represented as
 
   <\quote-env>
     <framed-fragment|<\verbatim>
@@ -125,8 +123,8 @@
     </verbatim>>
   </quote-env>
 
-  would be imported as ``<inactive*|some <my-tag|<attr|beast|heary>|special>
-  text>''. This will make it possible, in principle, to use <TeXmacs> as an
+  would be imported as \P<inactive*|some <my-tag|<attr|beast|heary>|special>
+  text>\Q. This will make it possible, in principle, to use <TeXmacs> as an
   editor of general XML files.
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
@@ -139,8 +137,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
