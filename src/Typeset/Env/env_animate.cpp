@@ -117,7 +117,7 @@ edit_env_rep::animate (tree t) {
 
 tree
 morph_trivial (tree t, tree u, edit_env env) {
-  if (env->anim_portion < 0.5) return t;
+  if (env->anim_portion < 0.999) return t;
   else return u;
 }
 
@@ -196,6 +196,45 @@ morph_with (tree t0, tree t1, edit_env env) {
     tree v1= t1[i1+1];
     r << t1[i1] << morph (v0, v1, env);
   }
+  r << morph (t0[N(t0)-1], t1[N(t1)-1], env);
+  return r;
+}
+
+static tree head (tree t) { return t (0, N(t) - 1); }
+static tree prev (tree t) { return t[N(t)-2]; }
+static tree tail (tree t) { return t[N(t)-1]; }
+
+tree
+morph_tformat (tree t0, tree t1, edit_env env) {
+  tree r (TFORMAT);
+  for (int i0=0; i0+1<N(t0); i0++)
+    if (is_func (t0[i0], CWITH)) {
+      int i1;
+      tree v0= tail (t0[i0]), v1;
+      for (i1=0; i1+1<N(t1); i1++)
+        if (is_func (t1[i1], CWITH))
+          if (head (t0[i0]) == head (t1[i1])) {
+            v1= tail (t1[i1]);
+            break;
+          }
+      if (i1+1 >= N(t1)) v1= env->read (as_string (prev (t0[i0])));
+      tree w= copy (t0[i0]);
+      w[N(w)-1]= morph (v0, v1, env);
+      r << w;
+    }
+  for (int i1=0; i1+1<N(t1); i1++)
+    if (is_func (t1[i1], CWITH)) {
+      bool found= false;
+      for (int i0=0; i0+1<N(t0); i0++)
+        if (is_func (t0[i0], CWITH))
+          if (head (t0[i0]) == head (t1[i1])) { found= true; break; }
+      if (found) continue;
+      tree v0= env->read (as_string (prev (t1[i1])));
+      tree v1= tail (t1[i1]);
+      tree w= copy (t1[i1]);
+      w[N(w)-1]= morph (v0, v1, env);
+      r << w;
+    }
   r << morph (t0[N(t0)-1], t1[N(t1)-1], env);
   return r;
 }
@@ -289,6 +328,8 @@ morph (tree t0, tree t1, edit_env env) {
   }
   else if (is_func (t0, WITH) || is_func (t1, WITH))
     return morph_with (t0, t1, env);
+  else if (is_func (t0, TFORMAT) && is_func (t1, TFORMAT))
+    return morph_tformat (t0, t1, env);
   else if (is_atomic (t0) || is_atomic (t1))
     return morph_trivial (t0, t1, env);
   else if (is_func (t0, GRAPHICS) && is_func (t1, GRAPHICS))
