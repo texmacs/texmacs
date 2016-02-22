@@ -1115,6 +1115,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(anim-control-times <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_control_times> which returns
+    <scm|array_double>.
+  </explain>
+
+  <\explain>
     <scm|(tree-\<gtr\>stree <scm-arg|tree>)>
 <explain-synopsis|no synopsis>
   <|explain>

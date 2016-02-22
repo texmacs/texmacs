@@ -526,6 +526,7 @@ double as_percentage (tree t);
 bool is_magnification (string s);
 double get_magnification (string s);
 int decode_alpha (string s);
+array<double> get_control_times (tree t);
 
 void set_graphical_value (tree var, tree val);
 bool has_graphical_value (tree var);

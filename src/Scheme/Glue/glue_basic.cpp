@@ -1671,6 +1671,19 @@ tmg_image_2psdoc (tmscm arg1) {
 }
 
 tmscm
+tmg_anim_control_times (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "anim-control-times");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_double out= get_control_times (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_double_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_2stree (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree->stree");
 
@@ -9259,6 +9272,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("logical-font-substitute",  tmg_logical_font_substitute, 1, 0, 0);
   tmscm_install_procedure ("font-family-main",  tmg_font_family_main, 1, 0, 0);
   tmscm_install_procedure ("image->psdoc",  tmg_image_2psdoc, 1, 0, 0);
+  tmscm_install_procedure ("anim-control-times",  tmg_anim_control_times, 1, 0, 0);
   tmscm_install_procedure ("tree->stree",  tmg_tree_2stree, 1, 0, 0);
   tmscm_install_procedure ("stree->tree",  tmg_stree_2tree, 1, 0, 0);
   tmscm_install_procedure ("tree->string",  tmg_tree_2string, 1, 0, 0);

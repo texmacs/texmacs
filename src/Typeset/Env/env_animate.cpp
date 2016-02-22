@@ -11,6 +11,7 @@
 
 #include "env.hpp"
 #include "scheme.hpp"
+#include "merge_sort.hpp"
 
 /******************************************************************************
 * Main execution
@@ -419,6 +420,34 @@ insert_anim_ids (tree t) {
     }
     return r;
   }
+}
+
+/******************************************************************************
+* Obtaining the control times of an animation
+******************************************************************************/
+
+static void
+get_control_times (tree t, array<double>& ts) {
+  if (is_atomic (t)) return;
+  int i=0, n=N(t);
+  if (is_func (t, MORPH))
+    for (i=0; i<n; i++)
+      if (is_tuple (t[i]) && N(t[i]) >= 2 && is_double (t[i][0]))
+        ts << as_double (t[i][0]);
+  for (i=0; i<n; i++)
+    get_control_times (t[i], ts);
+}
+
+array<double>
+get_control_times (tree t) {
+  array<double> a;
+  get_control_times (t, a);
+  merge_sort (a);
+  array<double> r;
+  for (int i=0; i<N(a); i++)
+    if (i == 0 || a[i] != a[i-1])
+      r << a[i];
+  return r;
 }
 
 /******************************************************************************

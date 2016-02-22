@@ -164,6 +164,7 @@
 "logical-font-substitute"
 "font-family-main"
 "image->psdoc"
+"anim-control-times"
 "tree->stree"
 "stree->tree"
 "tree->string"

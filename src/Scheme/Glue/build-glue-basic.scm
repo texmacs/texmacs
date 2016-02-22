@@ -162,8 +162,9 @@
   (logical-font-substitute apply_substitutions (array_string array_string))
   (font-family-main main_family (string string))
 
-  ;; routines for images
+  ;; routines for images and animations
   (image->psdoc image_to_psdoc (string url))
+  (anim-control-times get_control_times (array_double content))
 
   ;; routines for trees
   (tree->stree tree_to_scheme_tree (scheme_tree tree))
