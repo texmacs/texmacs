@@ -301,12 +301,9 @@ edit_interface_rep::selection_visible () {
   SI extra= (cur_sb == 1? 20 * pixel: 0);
   bool scroll_x= (end_x < vx1 + extra) || (end_x >= vx2 - extra);
   bool scroll_y= (end_y < vy1 + extra) || (end_y >= vy2 - extra);
-  SI new_x= vx1;
-  if (scroll_x) new_x= end_x - ((vx2-vx1)>>1);
-  SI new_y= vy2;
-  if (scroll_y) new_y= end_y + ((vy2-vy1)>>1);
-
   if (scroll_x || scroll_y) {
+    SI new_x = (scroll_x)? end_x : (vx1+vx2)/2;
+    SI new_y = (scroll_y)? end_y : (vy1+vy2)/2;
     scroll_to (new_x, new_y);
     send_invalidate_all (this);
     SI old_vx1= vx1, old_vy1= vy1;
