@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.4>
 
 <style|<tuple|tmdoc|chinese>>
 
@@ -37,20 +37,20 @@
   <menu|Edit|Preferences|Keyboard|Automatic quotes>
   \<#6539\>\<#53D8\>\<#8BBE\>\<#7F6E\>\<#3002\>\<#4F60\>\<#4E5F\>\<#53EF\>\<#4EE5\>\<#7528\>\<#5FEB\>\<#6377\>\<#952E\>\<#8FD9\>\<#6837\>\<#8F93\>\<#5165\>\<#5F15\>\<#53F7\>\<#FF1A\>
 
-  <big-table|<with|language|british|<with|font|roman|<descriptive-table|<tformat|<cwith|1|-1|3|3|cell-lborder|1ln>|<cwith|1|1|1|-1|cell-row-span|1>|<cwith|1|1|1|-1|cell-col-span|2>|<cwith|1|1|1|-1|cell-halign|c>|<cwith|1|1|1|1|cell-row-span|1>|<cwith|1|1|1|1|cell-col-span|4>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|4|4|cell-halign|c>|<table|<row|<cell|Shortcuts>|<cell|>|<cell|>|<cell|>>|<row|<cell|<key|symbol
+  <big-table|<with|language|british|<with|font|roman|<descriptive-table|<tformat|<cwith|1|-1|3|3|cell-lborder|1ln>|<cwith|1|1|1|-1|cell-row-span|1>|<cwith|1|1|1|-1|cell-col-span|2>|<cwith|1|1|1|-1|cell-halign|c>|<cwith|1|1|1|1|cell-row-span|1>|<cwith|1|1|1|1|cell-col-span|4>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|4|4|cell-halign|c>|<table|<row|<cell|\<#5FEB\>\<#6377\>\<#952E\>>|<cell|>|<cell|>|<cell|>>|<row|<cell|<key|symbol
   ">>|<cell|">|<cell|<key|, ,>>|<cell|\R>>|<row|<cell|<key|\<less\>
   var>>|<cell|\N>|<cell|<key|\<gtr\> var>>|<cell|\O>>|<row|<cell|<key|\<less\>
-  \<less\>>>|<cell|\S>|<cell|<key|\<gtr\> \<gtr\>>>|<cell|\T>>>>>>>|Typing
-  raw quotes\<#3002\>>
+  \<less\>>>|<cell|\S>|<cell|<key|\<gtr\>
+  \<gtr\>>>|<cell|\T>>>>>>>|\<#8F93\>\<#5165\>\<#5F15\>\<#53F7\>\<#548C\>\<#4E66\>\<#540D\>\<#53F7\>>
 
-  <with|font|roman|``>\<#82F1\>\<#6587\><with|font|roman|''>\<#7684\>\<#5F15\>\<#53F7\>\<#662F\>\<#76F8\>\<#7EE7\>\<#4E24\>\<#4E2A\>\<#91CD\>\<#97F3\>\<#7B26\>\<#6216\>\<#8005\>\<#5355\>\<#5F15\>\<#53F7\>\<#7684\>\<#8FDE\>\<#63A5\>\<#3002\>\<#5B83\>\<#4EEC\>\<#53EF\>\<#4EE5\>\<#4F7F\>\<#7528\><key|`
+  <with|font|roman|\P>\<#82F1\>\<#6587\><with|font|roman|\Q>\<#7684\>\<#5F15\>\<#53F7\>\<#662F\>\<#76F8\>\<#7EE7\>\<#4E24\>\<#4E2A\>\<#91CD\>\<#97F3\>\<#7B26\>\<#6216\>\<#8005\>\<#5355\>\<#5F15\>\<#53F7\>\<#7684\>\<#8FDE\>\<#63A5\>\<#3002\>\<#5B83\>\<#4EEC\>\<#53EF\>\<#4EE5\>\<#4F7F\>\<#7528\><key|`
   `>\<#521B\>\<#5EFA\><key|' '> \<#FF0C\>\<#4F46\>\<#662F\>\<#5B9E\>\<#9645\>\<#4E0A\>\<#8FD9\>\<#662F\>\<#4E24\>\<#4E2A\>\<#5B57\>\<#7B26\>\<#7684\>\<#7279\>\<#6B8A\>\<#5C55\>\<#793A\>\<#FF0C\>\<#800C\>\<#4E0D\>\<#662F\>\<#5355\>\<#4E2A\>\<#7279\>\<#6B8A\>\<#7684\>\<#5B57\>\<#7B26\>\<#3002\>
 
   \<#4E00\>\<#4E9B\>\<#5FEB\>\<#6377\>\<#952E\>\<#5728\>\<#7279\>\<#5B9A\>\<#8BED\>\<#8A00\>\<#73AF\>\<#5883\>\<#4E0B\>\<#751F\>\<#6548\>\<#3002\>\<#4F60\>\<#53EF\>\<#4EE5\>\<#4F7F\>\<#7528\>
   <menu|Document|Language> \<#8BBE\>\<#7F6E\>\<#6587\>\<#6863\>\<#7684\>\<#8BED\>\<#8A00\>\<#FF0C\>\<#6216\>\<#8005\>
   <menu|Format|Language> \<#8BBE\>\<#7F6E\>\<#9009\>\<#4E2D\>\<#533A\>\<#57DF\>\<#7684\>\<#8BED\>\<#8A00\>(\<#89C1\><hlink|\<#8F93\>\<#5165\>\<#6587\>\<#672C\>\<#6982\>\<#51B5\>|../man-generalities.zh.tm>)\<#3002\>
 
-  <big-table|<with|font|roman|<with|language|british|<descriptive-table|<tformat|<cwith|1|1|1|-1|cell-row-span|1>|<cwith|1|1|1|-1|cell-col-span|2>|<cwith|1|1|1|-1|cell-halign|c>|<cwith|1|-1|3|3|cell-lborder|1ln>|<cwith|1|-1|5|5|cell-lborder|1ln>|<cwith|1|-1|7|7|cell-lborder|1ln>|<cwith|6|11|1|4|cell-bborder|0>|<cwith|6|11|1|4|cell-rborder|0>|<cwith|6|11|3|3|cell-lborder|0>|<cwith|1|1|5|5|cell-row-span|1>|<cwith|1|1|5|5|cell-col-span|4>|<twith|table-lborder|0>|<cwith|1|-1|1|1|cell-lborder|0>|<twith|table-bborder|0>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|2|5|1|1|cell-lborder|1ln>|<cwith|5|5|1|4|cell-bborder|1ln>|<cwith|11|11|5|8|cell-bborder|1ln>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|4|4|cell-halign|c>|<cwith|1|-1|6|6|cell-halign|c>|<cwith|1|-1|8|8|cell-halign|c>|<table|<row|<cell|Hungarian>|<cell|>|<cell|Spanish>|<cell|>|<cell|Polish>|<cell|>|<cell|>|<cell|>>|<row|<cell|<key|symbol
+  <big-table|<with|font|roman|<with|language|british|<descriptive-table|<tformat|<cwith|1|1|1|-1|cell-row-span|1>|<cwith|1|1|1|-1|cell-col-span|2>|<cwith|1|1|1|-1|cell-halign|c>|<cwith|1|-1|3|3|cell-lborder|1ln>|<cwith|1|-1|5|5|cell-lborder|1ln>|<cwith|1|-1|7|7|cell-lborder|1ln>|<cwith|6|11|1|4|cell-bborder|0>|<cwith|6|11|1|4|cell-rborder|0>|<cwith|6|11|3|3|cell-lborder|0>|<cwith|1|1|5|5|cell-row-span|1>|<cwith|1|1|5|5|cell-col-span|4>|<twith|table-lborder|0>|<cwith|1|-1|1|1|cell-lborder|0>|<twith|table-bborder|0>|<cwith|1|1|1|1|cell-lborder|1ln>|<cwith|2|5|1|1|cell-lborder|1ln>|<cwith|5|5|1|4|cell-bborder|1ln>|<cwith|11|11|5|8|cell-bborder|1ln>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|4|4|cell-halign|c>|<cwith|1|-1|6|6|cell-halign|c>|<cwith|1|-1|8|8|cell-halign|c>|<table|<row|<cell|\<#5308\>\<#7259\>\<#5229\>\<#8BED\>>|<cell|>|<cell|\<#897F\>\<#73ED\>\<#7259\>\<#8BED\>>|<cell|>|<cell|\<#6CE2\>\<#5170\>\<#8BED\>>|<cell|>|<cell|>|<cell|>>|<row|<cell|<key|symbol
   o>>|<cell|<with|language|hungarian|®>>|<cell|<key|!
   var>>|<cell|<with|language|spanish|½>>|<cell|<key|symbol
   a>>|<cell|<with|language|polish|¡>>|<cell|<key|symbol
@@ -78,14 +78,13 @@
   n>>|<cell|<with|language|polish|«>>|<cell|<key|symbol z
   var>>|<cell|<with|language|polish|¹>>>|<row|<cell|>|<cell|>|<cell|>|<cell|>|<cell|<key|symbol
   N>>|<cell|<with|language|polish|‹>>|<cell|<key|symbol Z
-  var>>|<cell|<with|language|polish|™>>>>>>>>|Language-specific text
-  shorthands>
+  var>>|<cell|<with|language|polish|™>>>>>>>>|\<#8BED\>\<#8A00\>\<#76F8\>\<#5173\>\<#7684\>\<#6587\>\<#672C\>\<#5FEB\>\<#6377\>\<#952E\>>
 
   \<#8BED\>\<#8A00\>\<#76F8\>\<#5173\>\<#7684\>\<#5FEB\>\<#6377\>\<#952E\>\<#4F1A\>\<#8986\>\<#76D6\>\<#66F4\>\<#52A0\>\<#4E00\>\<#822C\>\<#7684\>\<#5FEB\>\<#6377\>\<#952E\>\<#FF1A\>\<#6BD4\>\<#5982\>\<#FF0C\>\<#5728\>\<#5308\>\<#7259\>\<#5229\>\<#8BED\>\<#73AF\>\<#5883\>\<#4E0B\>\<#FF0C\>\<#4F60\>\<#65E0\>\<#6CD5\>\<#8F7B\>\<#6613\>\<#5730\>\<#8F93\>\<#5165\>\<#5B57\>\<#7B26\>
-  <with|font|roman|``ø''>\<#3002\>
+  <with|font|roman|\Pø\Q>\<#3002\>
 
-  <tmdoc-copyright|1998--2003|Joris van der
-  Hoeven<tmdoc-copyright-extra|David Allouche>>
+  <tmdoc-copyright|1998-2016|Joris van der Hoeven<tmdoc-copyright-extra|David
+  Allouche>, Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
