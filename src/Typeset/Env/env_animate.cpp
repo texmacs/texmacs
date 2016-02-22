@@ -423,34 +423,6 @@ insert_anim_ids (tree t) {
 }
 
 /******************************************************************************
-* Obtaining the control times of an animation
-******************************************************************************/
-
-static void
-get_control_times (tree t, array<double>& ts) {
-  if (is_atomic (t)) return;
-  int i=0, n=N(t);
-  if (is_func (t, MORPH))
-    for (i=0; i<n; i++)
-      if (is_tuple (t[i]) && N(t[i]) >= 2 && is_double (t[i][0]))
-        ts << as_double (t[i][0]);
-  for (i=0; i<n; i++)
-    get_control_times (t[i], ts);
-}
-
-array<double>
-get_control_times (tree t) {
-  array<double> a;
-  get_control_times (t, a);
-  merge_sort (a);
-  array<double> r;
-  for (int i=0; i<N(a); i++)
-    if (i == 0 || a[i] != a[i-1])
-      r << a[i];
-  return r;
-}
-
-/******************************************************************************
 * Checking out one frame of an animation for editing
 ******************************************************************************/
 
@@ -513,4 +485,79 @@ edit_env_rep::commit_animation (tree t) {
   double portion= (1.0 * cur) / (1.0 * tot);
   a[0]= insert_frame (a[0], insert_anim_ids (t[1]), portion);
   return a;
+}
+
+/******************************************************************************
+* Obtaining the control times of an animation
+******************************************************************************/
+
+static void
+get_control_times (tree t, array<double>& ts) {
+  if (is_atomic (t)) return;
+  int i=0, n=N(t);
+  if (is_func (t, MORPH))
+    for (i=0; i<n; i++)
+      if (is_tuple (t[i]) && N(t[i]) >= 2 && is_double (t[i][0]))
+        ts << as_double (t[i][0]);
+  for (i=0; i<n; i++)
+    get_control_times (t[i], ts);
+}
+
+array<double>
+get_control_times (tree t) {
+  array<double> a;
+  get_control_times (t, a);
+  merge_sort (a);
+  array<double> r;
+  for (int i=0; i<N(a); i++)
+    if (i == 0 || a[i] != a[i-1])
+      r << a[i];
+  return r;
+}
+
+/******************************************************************************
+* Morph expansion
+******************************************************************************/
+
+static string
+as_nice_string (double x) {
+  double x2= round (1000.0 * x) / 1000.0;
+  if (fabs (x2 - x) < 1.0e-6) return as_string (x2);
+  return as_string (x);
+}
+
+tree
+edit_env_rep::expand_morph (tree t) {
+  if (is_func (t, ANIM_STATIC, 4) ||
+      is_func (t, ANIM_DYNAMIC, 4) ||
+      is_compound (t, "anim-edit", 5)) {
+    int tot= max (as_length (exec (t[N(t)-3])), 1);
+    double old_start  = anim_start;
+    double old_end    = anim_end;
+    double old_portion= anim_portion;
+    anim_start  = 0.0;
+    anim_end    = 0.001 * tot;
+    anim_portion= 0.0;
+    tree r (t, N(t));
+    r[0]= expand_morph (t[0]);
+    for (int i=1; i<N(t); i++) r[i]= t[i];
+    anim_start  = old_start;
+    anim_end    = old_end;
+    anim_portion= old_portion;
+    return r;
+  }
+  else {
+    array<double> a= get_control_times (t);
+    if (N(a) == 0) return t;
+    tree r (MORPH);
+    for (int i=0; i<N(a); i++) {
+      string s= as_nice_string (a[i]);
+      double old_portion= anim_portion;
+      anim_portion= a[i];
+      tree frame= animate (a);
+      anim_portion= old_portion;
+      r << tuple (s, frame);
+    }
+    return r;
+  }
 }

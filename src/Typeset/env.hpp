@@ -389,6 +389,7 @@ public:
   tree   animate (tree t);
   tree   checkout_animation (tree t);
   tree   commit_animation (tree t);
+  tree   expand_morph (tree t);
 
   inline void monitored_write (string s, tree t) {
     back->write_back (s, env); env (s)= t; }
