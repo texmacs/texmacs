@@ -1,4 +1,15 @@
 #!/bin/sh
+
 echo -ne "\002verbatim:"
-octave -v
-cd $TEXMACS_PATH/plugins/octave/octave; exec octave -qi tm-start.m
+OV=$(octave -v) 
+echo "$OV"
+
+cd $TEXMACS_PATH/plugins/octave/octave
+# octave changed extensions for scripts at v4
+if [[ $(grep -o -P "version.{1,2}" <<< $OV |cut -c 9 ) -lt "4" ]] ; then
+# v3
+ exec octave -qi tm-start.m
+else
+# v4 or newer
+ exec octave -qi tm-start.oc
+fi
