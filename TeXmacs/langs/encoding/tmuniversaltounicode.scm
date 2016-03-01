@@ -719,8 +719,9 @@
 ("<recorder>"		"#2315")
 ; position indicator	"#2316"
 ; viewdata square	"#2317"
-; place of interest sign "#2318"
+("<place of interest sign>"		"#2318");; Apple command key 
 ; turned not sign	"#2319"
+("<option key>"		"#2325")
 
 ;; GUI icons
 ; watch			"#231A"
@@ -999,6 +1000,7 @@
 
 ("<checkmark>"		"#2713")
 ("<maltese>"		"#2720")
+; black diamond minus white x	"#2756"
 
 
 ;;; Supplemental Arrows-B
