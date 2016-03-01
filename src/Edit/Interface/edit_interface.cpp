@@ -299,11 +299,23 @@ edit_interface_rep::selection_visible () {
   if ((vx2 - vx1 <= 80*pixel) || (vy2 - vy1 <= 80*pixel)) return;
 
   SI extra= (cur_sb == 1? 20 * pixel: 0);
+  /*
   bool scroll_x= (end_x < vx1 + extra) || (end_x >= vx2 - extra);
   bool scroll_y= (end_y < vy1 + extra) || (end_y >= vy2 - extra);
   if (scroll_x || scroll_y) {
     SI new_x = (scroll_x)? end_x : (vx1+vx2)/2;
     SI new_y = (scroll_y)? end_y : (vy1+vy2)/2;
+  */
+  // trying a "proportional" scroll 
+  SI mx = max (-end_x + vx1 + extra , max( end_x - vx2 + extra, 0 ));
+  SI my = max (-end_y + vy1 + extra , max( end_y - vy2 + extra, 0 ));
+
+  if ((mx>0) || (my>0)) {
+	SI vxc = (vx1+vx2)/2, dx = end_x - vxc;
+	SI vyc = (vy1+vy2)/2, dy = end_y - vyc;
+    SI new_x = vxc+ ((extra)? (mx*dx)/extra: dx);
+	SI new_y = vyc+ ((extra)? (my*dy)/extra: dy);
+  //end change
     scroll_to (new_x, new_y);
     send_invalidate_all (this);
     SI old_vx1= vx1, old_vy1= vy1;
