@@ -99,4 +99,5 @@
   ("keyboard" (debug-toggle "keyboard"))
   ("packrat" (debug-toggle "packrat"))
   ("flatten" (debug-toggle "flatten"))
-  ("correct" (debug-toggle "correct")))
+  ("correct" (debug-toggle "correct"))
+  ("convert" (debug-toggle "convert")))

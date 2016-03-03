@@ -568,7 +568,7 @@ convert_using_iconv (string input, string from, string to) {
 void
 put_prefix_code (string key, string value, hashtree<char,string> tree) {
   /*
-  if (DEBUG_STD) {
+  if (DEBUG_CONVERT) {
     hashtree<char,string> ht= find_node (key,tree);
     if (ht->label != "")
       debug_convert << "overwriting " << ht->label << " with " << value << '\n';
@@ -598,7 +598,7 @@ hashtree_from_dictionary (
   hashtree<char,string> dic, string file_name, escape_type key_escape,
   escape_type val_escape, bool reverse)
 {
-  if (DEBUG_STD) debug_convert << "Loading dictionary " << file_name << LF;
+  if (DEBUG_CONVERT) debug_convert << "Loading dictionary " << file_name << LF;
   string key_string, val_string, file;
   file_name = file_name * ".scm";
   if (load_string (url ("$TEXMACS_PATH/langs/encoding", file_name),

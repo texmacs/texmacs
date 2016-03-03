@@ -18,7 +18,7 @@
 
 static inline void
 dbg (string s) {
-  if (DEBUG_AUTO) debug_convert << s << LF;
+  if (DEBUG_CONVERT) debug_convert << s << LF;
 }
 
 static string latex_command= "pdflatex";
