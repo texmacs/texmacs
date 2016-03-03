@@ -1,5 +1,5 @@
 /*
-   Source File : PDFFormXObject.cpp
+   Source File : PDFTiledPattern.cpp
 
 
    Copyright 2011 Gal Kahana PDFWriter
@@ -18,46 +18,46 @@
 
    
 */
-#include "PDFFormXObject.h"
+#include "PDFTiledPattern.h"
 #include "PDFStream.h"
-#include "XObjectContentContext.h"
+#include "TiledPatternContentContext.h"
 #include "ObjectsContext.h"
 
-PDFFormXObject::PDFFormXObject(PDFHummus::DocumentContext* inDocumentContext,ObjectIDType inFormXObjectID,PDFStream* inXObjectStream,ObjectIDType inFormXObjectResourcesDictionaryID)
+PDFTiledPattern::PDFTiledPattern(PDFHummus::DocumentContext* inDocumentContext,ObjectIDType inObjectID, PDFStream* inStream, ObjectIDType inResourcesDictionaryID)
 {
-	mXObjectID = inFormXObjectID;
-	mResourcesDictionaryID = inFormXObjectResourcesDictionaryID;
-	mContentStream = inXObjectStream;
-	mContentContext = new XObjectContentContext(inDocumentContext,this);	
+	mObjectID = inObjectID;
+	mResourcesDictionaryID = inResourcesDictionaryID;
+	mContentStream = inStream;
+	mContentContext = new TiledPatternContentContext(inDocumentContext, this);
 }
 
-PDFFormXObject::~PDFFormXObject(void)
+PDFTiledPattern::~PDFTiledPattern(void)
 {
 	delete mContentStream;
 	delete mContentContext;
 }
 
-ObjectIDType PDFFormXObject::GetObjectID()
+ObjectIDType PDFTiledPattern::GetObjectID()
 {
-	return mXObjectID;
+	return mObjectID;
 }
 
-ObjectIDType PDFFormXObject::GetResourcesDictionaryObjectID()
+ObjectIDType PDFTiledPattern::GetResourcesDictionaryObjectID()
 {
 	return mResourcesDictionaryID;
 }
 
-ResourcesDictionary& PDFFormXObject::GetResourcesDictionary()
+ResourcesDictionary& PDFTiledPattern::GetResourcesDictionary()
 {
 	return mResources;
 }
 
-PDFStream* PDFFormXObject::GetContentStream()
+PDFStream* PDFTiledPattern::GetContentStream()
 {
 	return mContentStream;
 }
 
-XObjectContentContext* PDFFormXObject::GetContentContext()
+TiledPatternContentContext* PDFTiledPattern::GetContentContext()
 {
 	return mContentContext;
 }

@@ -2597,17 +2597,17 @@ void TIFFImageHandler::SamplePlanarSeparateToContig(unsigned char* inBuffer,
 tsize_t TIFFImageHandler::SampleRGBAToRGB(tdata_t inData, uint32 inSampleCount)
 {
 	uint32 i = 0;
-	uint32 sample = 0;
 	uint8 alpha = 0;
+    uint8* theData = (uint8*)inData;
 	
 	for (i = 0; i < inSampleCount; i++) 
 	{
-		sample=((uint32*)inData)[i];
-		alpha=(uint8)((255 - (sample & 0xff)));
-		((uint8 *)inData)[i * 3] = (uint8) ((sample >> 24) & 0xff) + alpha;
-		((uint8 *)inData)[i * 3 + 1] = (uint8) ((sample >> 16) & 0xff) + alpha;
-		((uint8 *)inData)[i * 3 + 2] = (uint8) ((sample >> 8) & 0xff) + alpha;
-		
+        alpha = 255 - theData[i*4+3];
+        
+        theData[i*3] = theData[i*4] + alpha;
+        theData[i*3+1] = theData[i*4+1] + alpha;
+        theData[i*3+2] = theData[i*4+2] + alpha;
+        
 	}
 
 	return (i * 3);
@@ -3511,8 +3511,17 @@ PDFFormXObject* TIFFImageHandler::CreateFormXObjectFromTIFFStream(	IByteReaderWi
 
 DoubleAndDoublePair TIFFImageHandler::ReadImageDimensions(IByteReaderWithPosition* inTIFFStream,unsigned long inImageIndex)
 {
+    return ReadImageInfo(inTIFFStream,inImageIndex).dimensions;
+}
+
+TIFFImageHandler::TiffImageInfo TIFFImageHandler::ReadImageInfo(IByteReaderWithPosition* inTIFFStream,unsigned long inImageIndex)
+{
 	TIFF* input = NULL;
-    DoubleAndDoublePair result(-1,-1);
+    TiffImageInfo imageInfo;
+	
+	imageInfo.dimensions.first = -1;
+	imageInfo.dimensions.second = -1;
+	imageInfo.colorComponents = 0;
     EStatusCode status;
     
 	do
@@ -3541,7 +3550,7 @@ DoubleAndDoublePair TIFFImageHandler::ReadImageDimensions(IByteReaderWithPositio
 		InitializeConversionState();
 		mT2p->input = input;
 		mT2p->inputFilePath = "";
-		mT2p->pdf_page = inImageIndex;
+		mT2p->pdf_page = (tdir_t)inImageIndex;
         
         
         status = ReadTopLevelTiffInformation();
@@ -3562,8 +3571,9 @@ DoubleAndDoublePair TIFFImageHandler::ReadImageDimensions(IByteReaderWithPositio
         status = ReadTIFFPageInformation();
         if(status != PDFHummus::eSuccess)
             break;
-        result.first = mT2p->pdf_mediabox.x2 - mT2p->pdf_mediabox.x1;
-        result.second = mT2p->pdf_mediabox.y2 - mT2p->pdf_mediabox.y1;
+        imageInfo.dimensions.first = mT2p->pdf_mediabox.x2 - mT2p->pdf_mediabox.x1;
+        imageInfo.dimensions.second = mT2p->pdf_mediabox.y2 - mT2p->pdf_mediabox.y1;
+		imageInfo.colorComponents = mT2p->tiff_samplesperpixel;
 		      
 	}while(false);
     
@@ -3571,7 +3581,54 @@ DoubleAndDoublePair TIFFImageHandler::ReadImageDimensions(IByteReaderWithPositio
 	if(input != NULL)
 		TIFFClose(input);
     
-    return result;
+    return imageInfo;
+}
+
+unsigned long TIFFImageHandler::ReadImagePageCount(IByteReaderWithPosition* inTIFFStream)
+{
+	TIFF* input = NULL;
+	unsigned long result = 0;
+	EStatusCode status;
+
+	do
+	{
+		TIFFSetErrorHandler(ReportError);
+		TIFFSetWarningHandler(ReportWarning);
+
+		StreamWithPos streamInfo;
+		streamInfo.mStream = inTIFFStream;
+		streamInfo.mOriginalPosition = inTIFFStream->GetCurrentPosition();
+
+		input = TIFFClientOpen("Stream", "r", (thandle_t)&streamInfo, STATIC_streamRead,
+			STATIC_streamWrite,
+			STATIC_streamSeek,
+			STATIC_streamClose,
+			STATIC_tiffSize,
+			STATIC_tiffMap,
+			STATIC_tiffUnmap);
+		if (!input)
+		{
+			TRACE_LOG("TIFFImageHandler::ReadImagePageCount. cannot open stream for reading");
+			break;
+		}
+
+
+		InitializeConversionState();
+		mT2p->input = input;
+		mT2p->inputFilePath = "";
+
+		status = ReadTopLevelTiffInformation();
+		if (status != PDFHummus::eSuccess)
+			break;
+
+		result = mT2p->tiff_pagecount;
+	} while (false);
+
+	DestroyConversionState();
+	if (input != NULL)
+		TIFFClose(input);
+
+	return result;
 }
 
 #endif

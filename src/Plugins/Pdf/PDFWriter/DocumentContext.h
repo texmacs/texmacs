@@ -32,6 +32,7 @@
 #include "PDFEmbedParameterTypes.h"
 #include "PDFDocumentHandler.h"
 #include "ObjectsBasicTypes.h"
+#include "EHummusImageType.h"
 
 #include <string>
 #include <set>
@@ -42,6 +43,8 @@
 
 using namespace IOBasicTypes;
 
+typedef std::pair<ObjectIDType,bool> ObjectIDTypeAndBool;
+
 class DictionaryContext;
 class ObjectsContext;
 class PDFPage;
@@ -51,6 +54,7 @@ class IDocumentContextExtender;
 class PageContentContext;
 class ResourcesDictionary;
 class PDFFormXObject;
+class PDFTiledPattern;
 class PDFRectangle;
 class PDFImageXObject;
 class PDFUsedFont;
@@ -61,6 +65,7 @@ class IResourceWritingTask;
 class IFormEndWritingTask;
 class PDFDocumentCopyingContext;
 class IPageEndWritingTask;
+class ITiledPatternEndWritingTask;
 
 typedef std::set<IDocumentContextExtender*> IDocumentContextExtenderSet;
 typedef std::pair<PDFHummus::EStatusCode,ObjectIDType> EStatusCodeAndObjectIDType;
@@ -75,9 +80,26 @@ typedef std::list<IFormEndWritingTask*> IFormEndWritingTaskList;
 typedef std::map<PDFFormXObject*,IFormEndWritingTaskList> PDFFormXObjectToIFormEndWritingTaskListMap;
 typedef std::list<IPageEndWritingTask*> IPageEndWritingTaskList;
 typedef std::map<PDFPage*,IPageEndWritingTaskList> PDFPageToIPageEndWritingTaskListMap;
+typedef std::list<ITiledPatternEndWritingTask*> ITiledPatternEndWritingTaskList;
+typedef std::map<PDFTiledPattern*, ITiledPatternEndWritingTaskList> PDFTiledPatternToITiledPatternEndWritingTaskListMap;
+typedef std::pair<std::string,unsigned long> StringAndULongPair;
 
 namespace PDFHummus
 {
+	struct HummusImageInformation
+	{
+		HummusImageInformation(){writtenObjectID = 0;imageType=eUndefined;imageWidth=-1;imageHeight=-1;}
+    
+		ObjectIDType writtenObjectID;
+		EHummusImageType imageType;
+		double imageWidth;
+		double imageHeight;
+	};
+
+
+	typedef std::map<StringAndULongPair,HummusImageInformation> StringAndULongPairToHummusImageInformationMap;
+
+
 	class DocumentContext
 	{
 	public:
@@ -87,8 +109,8 @@ namespace PDFHummus
 		void SetObjectsContext(ObjectsContext* inObjectsContext);
 		void SetOutputFileInformation(OutputFile* inOutputFile);
 		PDFHummus::EStatusCode	WriteHeader(EPDFVersion inPDFVersion);
-		PDFHummus::EStatusCode	FinalizeNewPDF();
-        PDFHummus::EStatusCode	FinalizeModifiedPDF(PDFParser* inModifiedFileParser,EPDFVersion inModifiedPDFVersion);
+		PDFHummus::EStatusCode	FinalizeNewPDF(bool inEmbedFonts);
+        PDFHummus::EStatusCode	FinalizeModifiedPDF(PDFParser* inModifiedFileParser,EPDFVersion inModifiedPDFVersion,bool inEmbedFonts);
 
 		TrailerInformation& GetTrailerInformation();
 		CatalogInformation& GetCatalogInformation();
@@ -127,7 +149,26 @@ namespace PDFHummus
 
 		// no release version of ending a form XObject. owner should delete it (regular delete...nothin special)
 		PDFHummus::EStatusCode EndFormXObjectNoRelease(PDFFormXObject* inFormXObject);
-        
+
+		// Tiled Pattern  creation and finalization
+		PDFTiledPattern* StartTiledPattern(
+											int inPaintType,
+											int inTilingType,
+											const PDFRectangle& inBoundingBox,
+											double inXStep,
+											double inYStep,
+											const double* inMatrix = NULL);
+		PDFTiledPattern* StartTiledPattern(int inPaintType,
+											int inTilingType,
+											const PDFRectangle& inBoundingBox,
+											double inXStep,
+											double inYStep,
+											ObjectIDType inObjectID,
+											const double* inMatrix = NULL);
+		PDFHummus::EStatusCode EndTiledPattern(PDFTiledPattern* inTiledPattern);
+		PDFHummus::EStatusCode EndTiledPatternAndRelease(PDFTiledPattern* inTiledPattern);
+
+
 		// Image XObject creating. 
 		// note that as oppose to other methods, create the image xobject also writes it, so there's no "WriteXXXXAndRelease" for image.
 		// So...release the object yourself [just delete it]
@@ -212,6 +253,12 @@ namespace PDFHummus
 		PDFDocumentCopyingContext* CreatePDFCopyingContext(IByteReaderWithPosition* inPDFStream);
         PDFDocumentCopyingContext* CreatePDFCopyingContext(PDFParser* inPDFParser);
 
+		// some public image info services, for users of hummus
+		DoubleAndDoublePair GetImageDimensions(const std::string& inImageFile,unsigned long inImageIndex = 0);
+		EHummusImageType GetImageType(const std::string& inImageFile,unsigned long inImageIndex);
+		unsigned long GetImagePagesCount(const std::string& inImageFile);
+
+
 		// Font [Text] (font index is for multi-font files. for single file fonts, pass 0)
 		PDFUsedFont* GetFontForFile(const std::string& inFontFilePath,long inFontIndex);
 		// second overload is for type 1, when an additional metrics file is available
@@ -237,7 +284,10 @@ namespace PDFHummus
         std::string AddExtendedResourceMapping(PDFPage* inPage,
                                           const std::string& inResourceCategoryName,
                                           IResourceWritingTask* inWritingTask);
-        std::string AddExtendedResourceMapping(ResourcesDictionary* inResourceDictionary,
+		std::string AddExtendedResourceMapping(PDFTiledPattern* inTiledPattern,
+										const std::string& inResourceCategoryName,
+										IResourceWritingTask* inWritingTask);
+		std::string AddExtendedResourceMapping(ResourcesDictionary* inResourceDictionary,
                                           const std::string& inResourceCategoryName,
                                           IResourceWritingTask* inWritingTask);
         
@@ -245,10 +295,8 @@ namespace PDFHummus
         void RegisterFormEndWritingTask(PDFFormXObject* inFormXObject,IFormEndWritingTask* inWritingTask);
         // Extensibility option. option of writing a single time task for when a particular page ends
         void RegisterPageEndWritingTask(PDFPage* inPageObject,IPageEndWritingTask* inWritingTask);
-
-
-		// JPG images handler for retrieving JPG images information
-		JPEGImageHandler& GetJPEGImageHandler();
+		// Extensibility option. option of writing a single time task for when a particular pattern ends
+		void RegisterTiledPatternEndWritingTask(PDFTiledPattern* inTiledPatternObject, ITiledPatternEndWritingTask* inWritingTask);
 
 
 		PDFHummus::EStatusCode WriteState(ObjectsContext* inStateWriter,ObjectIDType inObjectID);
@@ -262,6 +310,18 @@ namespace PDFHummus
 		// internal methods for copying context listeners handling
 		void RegisterCopyingContext(PDFDocumentCopyingContext* inCopyingContext);
 		void UnRegisterCopyingContext(PDFDocumentCopyingContext* inCopyingContext);
+
+		// internal methods for easy image writing
+		EStatusCode WriteFormForImage(const std::string& inImagePath,unsigned long inImageIndex,ObjectIDType inObjectID);
+		ObjectIDTypeAndBool RegisterImageForDrawing(const std::string& inImageFile,unsigned long inImageIndex);
+
+		// JPG images handler for retrieving JPG images information
+		JPEGImageHandler& GetJPEGImageHandler();
+		// tiff image handler accessor
+#ifndef PDFHUMMUS_NO_TIFF
+        TIFFImageHandler&  GetTIFFImageHandler();
+#endif
+
 	private:
 		ObjectsContext* mObjectsContext;
 		TrailerInformation mTrailerInformation;
@@ -283,6 +343,8 @@ namespace PDFHummus
         ResourcesDictionaryAndStringToIResourceWritingTaskListMap mResourcesTasks;
         PDFFormXObjectToIFormEndWritingTaskListMap mFormEndTasks;
         PDFPageToIPageEndWritingTaskListMap mPageEndTasks;
+		PDFTiledPatternToITiledPatternEndWritingTaskListMap mTiledPatternEndTasks;
+	    StringAndULongPairToHummusImageInformationMap mImagesInformation;
 		
 		void WriteHeaderComment(EPDFVersion inPDFVersion);
 		void Write4BinaryBytes();
@@ -306,7 +368,7 @@ namespace PDFHummus
                                                        const std::string& inResourceDictionaryLabel,
                                                        MapIterator<ObjectIDTypeToStringMap> inMapping);
 		bool IsIdentityMatrix(const double* inMatrix);
-		PDFHummus::EStatusCode WriteUsedFontsDefinitions();
+		PDFHummus::EStatusCode WriteUsedFontsDefinitions(bool inEmbedFonts);
 		EStatusCodeAndObjectIDType WriteAnnotationAndLinkForURL(const std::string& inURL,const PDFRectangle& inLinkClickArea);
 
 		void WriteTrailerState(ObjectsContext* inStateWriter,ObjectIDType inObjectID);
@@ -333,5 +395,6 @@ namespace PDFHummus
         bool DoExtendersRequireCatalogUpdate(PDFParser* inModifiedFileParser);
         bool RequiresXrefStream(PDFParser* inModifiedFileParser);
         PDFHummus::EStatusCode WriteXrefStream(LongFilePositionType& outXrefPosition);
+		HummusImageInformation& GetImageInformationStructFor(const std::string& inImageFile,unsigned long inImageIndex);
 	};
 }

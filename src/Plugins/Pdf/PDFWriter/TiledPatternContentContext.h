@@ -1,5 +1,5 @@
 /*
-   Source File : XObjectContentContext.h
+   Source File : TiledPatternContentContext.h
 
 
    Copyright 2011 Gal Kahana PDFWriter
@@ -21,13 +21,13 @@
 #pragma once
 #include "AbstractContentContext.h"
 
-class PDFFormXObject;
+class PDFTiledPattern;
 
-class XObjectContentContext : public AbstractContentContext
+class TiledPatternContentContext : public AbstractContentContext
 {
 public:
-	XObjectContentContext(PDFHummus::DocumentContext* inDocumentContext,PDFFormXObject* inFormXObject);
-	virtual ~XObjectContentContext(void);
+	TiledPatternContentContext(PDFHummus::DocumentContext* inDocumentContext, PDFTiledPattern* inObject);
+	virtual ~TiledPatternContentContext(void);
 
 private:
 
@@ -35,5 +35,5 @@ private:
 	virtual ResourcesDictionary* GetResourcesDictionary();
 	virtual void ScheduleImageWrite(const std::string& inImagePath,unsigned long inImageIndex,ObjectIDType inObjectID);
 
-	PDFFormXObject* mPDFFormXObjectOfContext;
+	PDFTiledPattern* mObjectOfContext;
 };

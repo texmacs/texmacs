@@ -425,7 +425,7 @@ EStatusCode PDFParser::ParseTrailerDictionary()
 		}
 
 		// k. now that all is well, just parse the damn dictionary, which is actually...the easiest part.
-		mObjectParser.ResetReadState();
+		mObjectParser.ResetReadState(aTokenizer);
 		PDFObjectCastPtr<PDFDictionary> dictionaryObject(mObjectParser.ParseNewObject(mParserExtender));
 		if(!dictionaryObject)
 		{
@@ -618,8 +618,8 @@ EStatusCode PDFParser::ParseXrefFromXrefTable(XrefEntryInput* inXrefTable,
 			}
 			if(currentObject < inXrefSize)
 			{
-				inXrefTable[currentObject].mObjectPosition = LongFilePositionTypeBox((const char*)entry);
-				inXrefTable[currentObject].mRivision = ULong((const char*)(entry+11));
+				inXrefTable[currentObject].mObjectPosition = LongFilePositionTypeBox(std::string((const char*)entry, 10));
+				inXrefTable[currentObject].mRivision = ULong(std::string((const char*)(entry + 11), 5));
 				inXrefTable[currentObject].mType = entry[17] == 'n' ? eXrefEntryExisting:eXrefEntryDelete;
 			}
 			++currentObject;
@@ -637,8 +637,8 @@ EStatusCode PDFParser::ParseXrefFromXrefTable(XrefEntryInput* inXrefTable,
 				}
 				if(currentObject < inXrefSize)
 				{
-					inXrefTable[currentObject].mObjectPosition = LongFilePositionTypeBox((const char*)entry);
-					inXrefTable[currentObject].mRivision = ULong((const char*)(entry+11));
+					inXrefTable[currentObject].mObjectPosition = LongFilePositionTypeBox(std::string((const char*)entry, 10));
+					inXrefTable[currentObject].mRivision = ULong(std::string((const char*)(entry + 11), 5));
 					inXrefTable[currentObject].mType = entry[17] == 'n' ? eXrefEntryExisting:eXrefEntryDelete;
 				}
 				++currentObject;
@@ -648,7 +648,7 @@ EStatusCode PDFParser::ParseXrefFromXrefTable(XrefEntryInput* inXrefTable,
 			break;
 
 	}while(false);	
-	mObjectParser.ResetReadState(); // cause read without consulting with the tokenizer...so now there shouldn't be available tokens
+	mObjectParser.ResetReadState(tokenizer); // reset with tokenizer in case got extra token.s
 
 	return status;
 }
@@ -1076,7 +1076,7 @@ EStatusCode PDFParser::ParseDirectory(LongFilePositionType inXrefPosition,
 				break;
 			}
             
-            if(outExtendedTable)
+            if(*outExtendedTable)
             {
                 inXrefTable = *outExtendedTable;
                 inXrefSize = *outExtendedTableSize;
@@ -1466,7 +1466,7 @@ EStatusCode PDFParser::ParseXrefFromXrefStream(XrefEntryInput* inXrefTable,
                 {
                     inXrefTable = ExtendXrefTableToSize(inXrefTable,inXrefSize,readXrefSize);
                     inXrefSize = readXrefSize;
-                    if(outExtendedTable && *outExtendedTable)
+                    if(*outExtendedTable)
                         delete[] *outExtendedTable;
                     *outExtendedTable = inXrefTable;
                     *outExtendedTableSize = readXrefSize;
@@ -1512,7 +1512,7 @@ EStatusCode PDFParser::ParseXrefFromXrefStream(XrefEntryInput* inXrefTable,
                     {
                         inXrefTable = ExtendXrefTableToSize(inXrefTable,inXrefSize,startObject +  objectsCount);
                         inXrefSize = startObject +  objectsCount;
-                        if(outExtendedTable && *outExtendedTable)
+                        if(*outExtendedTable)
                             delete[] *outExtendedTable;
                         *outExtendedTable = inXrefTable;
                         *outExtendedTableSize = startObject +  objectsCount;

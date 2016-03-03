@@ -1,5 +1,5 @@
 /*
-   Source File : PDFFormXObject.h
+   Source File : PDFTiledPattern.h
 
 
    Copyright 2011 Gal Kahana PDFWriter
@@ -30,29 +30,29 @@ namespace PDFHummus
 };
 
 class PDFStream;
-class XObjectContentContext;
+class TiledPatternContentContext;
 class ObjectsContext;
 
-class PDFFormXObject
+class PDFTiledPattern
 {
 public:
 
-	PDFFormXObject(PDFHummus::DocumentContext* inDocumentContext,ObjectIDType inFormXObjectID,PDFStream* inXObjectStream,ObjectIDType inFormXObjectResourcesDictionaryID);
-	~PDFFormXObject(void);
+	PDFTiledPattern(PDFHummus::DocumentContext* inDocumentContext,ObjectIDType inObjectID,PDFStream* inStream,ObjectIDType inResourcesDictionaryID);
+	~PDFTiledPattern(void);
 
 	ObjectIDType GetObjectID();
 	ObjectIDType GetResourcesDictionaryObjectID();
 
 	ResourcesDictionary& GetResourcesDictionary();
-	XObjectContentContext* GetContentContext();
+	TiledPatternContentContext* GetContentContext();
 	PDFStream* GetContentStream();
 
 	
 private:
 
-	ObjectIDType mXObjectID;
+	ObjectIDType mObjectID;
 	ObjectIDType mResourcesDictionaryID;
 	ResourcesDictionary mResources;
 	PDFStream* mContentStream;
-	XObjectContentContext* mContentContext;
+	TiledPatternContentContext* mContentContext;
 };

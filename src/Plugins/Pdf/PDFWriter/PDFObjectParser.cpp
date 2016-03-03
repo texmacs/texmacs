@@ -67,6 +67,12 @@ void PDFObjectParser::ResetReadState()
 	mTokenizer.ResetReadState();
 }
 
+void PDFObjectParser::ResetReadState(const PDFParserTokenizer& inExternalTokenizer)
+{
+	mTokenBuffer.clear();
+	mTokenizer.ResetReadState(inExternalTokenizer);
+}
+
 static const std::string scR = "R";
 static const std::string scStream = "stream";
 PDFObject* PDFObjectParser::ParseNewObject(IPDFParserExtender* inParserExtender)
@@ -194,8 +200,8 @@ PDFObject* PDFObjectParser::ParseNewObject(IPDFParserExtender* inParserExtender)
 				if(scStream == token) 
 				{
 					// yes, found a stream. record current position as the position where the stream starts. 
-					// [tokenizer took care that the posiiton should be that way with a special case]
-					pdfObject = new PDFStreamInput((PDFDictionary*)pdfObject,mCurrentPositionProvider->GetCurrentPosition());
+					// remove from the current stream position the size of the tokenizer buffer, which is "read", but not used
+					pdfObject = new PDFStreamInput((PDFDictionary*)pdfObject, mCurrentPositionProvider->GetCurrentPosition() - mTokenizer.GetReadBufferSize());
 				}
 				else
 				{

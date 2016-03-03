@@ -129,7 +129,6 @@ EStatusCode TrueTypeEmbeddedFontWriter::CreateTrueTypeSubset(	FreeTypeFaceWrappe
 
 		if(mTrueTypeInput.GetOpenTypeFontType() != EOpenTypeTrueType)
 		{
-			status = PDFHummus::eFailure;
 			TRACE_LOG("TrueTypeEmbeddedFontWriter::CreateTrueTypeSubset, font file is not true type, so there is an exceptions here. expecting true types only");
 			break;
 		}
@@ -366,7 +365,9 @@ EStatusCode TrueTypeEmbeddedFontWriter::WriteTrueTypeHeader()
 	mPrimitivesWriter.WriteUSHORT(smallerPowerTwo);
 	mPrimitivesWriter.WriteUSHORT((tableCount - (1<<smallerPowerTwo)) << 4);
 
-	WriteEmptyTableEntry("cmap",mCMAPEntryWritingOffset);
+	if (mTrueTypeInput.mOS2Exists)
+		WriteEmptyTableEntry("OS/2", mOS2EntryWritingOffset);
+	WriteEmptyTableEntry("cmap", mCMAPEntryWritingOffset);
 	if(mTrueTypeInput.mCVTExists)
 		WriteEmptyTableEntry("cvt ",mCVTEntryWritingOffset);
 	if(mTrueTypeInput.mFPGMExists)
@@ -378,8 +379,6 @@ EStatusCode TrueTypeEmbeddedFontWriter::WriteTrueTypeHeader()
 	WriteEmptyTableEntry("loca",mLOCAEntryWritingOffset);
 	WriteEmptyTableEntry("maxp",mMAXPEntryWritingOffset);
 	WriteEmptyTableEntry("name",mNAMEEntryWritingOffset);
-    if(mTrueTypeInput.mOS2Exists)
-        WriteEmptyTableEntry("OS/2",mOS2EntryWritingOffset);
 	if(mTrueTypeInput.mPREPExists)
 		WriteEmptyTableEntry("prep",mPREPEntryWritingOffset);
 

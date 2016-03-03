@@ -887,3 +887,5 @@ void Type1ToCFFEmbeddedFontWriter::TranslateFromFreeTypeToType1(FreeTypeFaceWrap
         outGlyphNames.push_back(inFontInfo.GetGlyphName(*it));
     
 }
+
+

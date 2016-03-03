@@ -43,32 +43,39 @@ TrueTypeANSIFontWriter::~TrueTypeANSIFontWriter(void)
 static const std::string scPlus = "+";
 EStatusCode TrueTypeANSIFontWriter::WriteFont(	FreeTypeFaceWrapper& inFontInfo,
 											WrittenFontRepresentation* inFontOccurrence,
-											ObjectsContext* inObjectsContext)
+											ObjectsContext* inObjectsContext,
+											bool inEmbedFont)
 {
-	const char* postscriptFontName = FT_Get_Postscript_Name(inFontInfo);
-	if(!postscriptFontName)
+	std::string postscriptFontName = inFontInfo.GetPostscriptName();
+	if(postscriptFontName.length() == 0)
 	{
 		TRACE_LOG("TrueTypeANSIFontWriter::WriteFont, unexpected failure. no postscript font name for font");
 		return PDFHummus::eFailure;
 	}
-	std::string subsetFontName = inObjectsContext->GenerateSubsetFontPrefix() + scPlus + postscriptFontName;
+	std::string fontName;
 
 	// reset embedded font object ID (and flag...to whether it was actually embedded or not, which may 
-	// happen due to font embedding restrictions)
+	// happen due to font embedding restrictions, or due to users choice)
 	mEmbeddedFontFileObjectID = 0;
 
 	TrueTypeEmbeddedFontWriter embeddedFontWriter;
 
-	EStatusCode status = embeddedFontWriter.WriteEmbeddedFont(	inFontInfo,
-																inFontOccurrence->GetGlyphIDsAsOrderedVector(),
-																inObjectsContext,
-																mEmbeddedFontFileObjectID);
-	if(PDFHummus::eFailure == status)
-		return status;
+	if (inEmbedFont)
+	{
+		fontName = inObjectsContext->GenerateSubsetFontPrefix() + scPlus + postscriptFontName;
+		EStatusCode status = embeddedFontWriter.WriteEmbeddedFont(inFontInfo,
+																	inFontOccurrence->GetGlyphIDsAsOrderedVector(),
+																	inObjectsContext,
+																	mEmbeddedFontFileObjectID);
+		if (PDFHummus::eFailure == status)
+			return status;
+	}
+	else
+		fontName  = postscriptFontName;
 
 	ANSIFontWriter fontWriter;
 
-	return fontWriter.WriteFont(inFontInfo,inFontOccurrence,inObjectsContext,this,subsetFontName);
+	return fontWriter.WriteFont(inFontInfo, inFontOccurrence, inObjectsContext, this, fontName);
 }
 
 static const std::string scTrueType = "TrueType";

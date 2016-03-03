@@ -108,16 +108,16 @@ bool WrittenFontTrueType::AddToANSIRepresentation(	const GlyphUnicodeMappingList
 }
 
 
-EStatusCode WrittenFontTrueType::WriteFontDefinition(FreeTypeFaceWrapper& inFontInfo)
+EStatusCode WrittenFontTrueType::WriteFontDefinition(FreeTypeFaceWrapper& inFontInfo,bool inEmbedFont)
 {
 	EStatusCode status = PDFHummus::eSuccess;
 	do
 	{
-		if(mANSIRepresentation && mANSIRepresentation->mWrittenObjectID != 0)
+		if(mANSIRepresentation && !mANSIRepresentation->isEmpty() && mANSIRepresentation->mWrittenObjectID != 0)
 		{
 			TrueTypeANSIFontWriter fontWriter;
 
-			status = fontWriter.WriteFont(inFontInfo,mANSIRepresentation,mObjectsContext);
+			status = fontWriter.WriteFont(inFontInfo, mANSIRepresentation, mObjectsContext, inEmbedFont);
 			if(status != PDFHummus::eSuccess)
 			{
 				TRACE_LOG("WrittenFontTrueType::WriteFontDefinition, Failed to write Ansi font definition");
@@ -126,12 +126,12 @@ EStatusCode WrittenFontTrueType::WriteFontDefinition(FreeTypeFaceWrapper& inFont
 			}
 		}
 
-		if(mCIDRepresentation && mCIDRepresentation->mWrittenObjectID != 0)
+		if(mCIDRepresentation && !mCIDRepresentation->isEmpty()  && mCIDRepresentation->mWrittenObjectID != 0)
 		{
 			CIDFontWriter fontWriter;
 			TrueTypeDescendentFontWriter descendentFontWriter;
 
-			status = fontWriter.WriteFont(inFontInfo,mCIDRepresentation,mObjectsContext,&descendentFontWriter);
+			status = fontWriter.WriteFont(inFontInfo, mCIDRepresentation, mObjectsContext, &descendentFontWriter, inEmbedFont);
 			if(status != PDFHummus::eSuccess)
 			{
 				TRACE_LOG("WrittenFontTrueType::WriteFontDefinition, Failed to write CID font definition");

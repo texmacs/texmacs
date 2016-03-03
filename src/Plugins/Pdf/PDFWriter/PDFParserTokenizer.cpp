@@ -48,6 +48,15 @@ void PDFParserTokenizer::ResetReadState()
 	mRecentTokenPosition = 0;
 }
 
+
+void PDFParserTokenizer::ResetReadState(const PDFParserTokenizer& inExternalTokenizer)
+{
+	mTokenBuffer = inExternalTokenizer.mTokenBuffer;
+	mHasTokenBuffer = inExternalTokenizer.mHasTokenBuffer;
+	mStreamPositionTracker = inExternalTokenizer.mStreamPositionTracker;
+	mRecentTokenPosition = inExternalTokenizer.mRecentTokenPosition;
+}
+
 static const Byte scBackSlash[] = {'\\'};
 static const std::string scStream = "stream";
 static const char scCR = '\r';
@@ -355,6 +364,11 @@ void PDFParserTokenizer::SaveTokenBuffer(Byte inToSave)
 	mHasTokenBuffer = true;
 	mTokenBuffer = inToSave;
 	--mStreamPositionTracker; // decreasing position trakcer, because it is as if the byte is put back in the stream
+}
+
+IOBasicTypes::LongFilePositionType PDFParserTokenizer::GetReadBufferSize()
+{
+	return mHasTokenBuffer ? 1 : 0;
 }
 
 static const Byte scEntityBreakers[] = {'(',')','<','>',']','[','{','}','/','%'};

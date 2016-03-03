@@ -57,6 +57,8 @@ public:
 
 	// calls this when changing underlying stream position
 	void ResetReadState();
+	// cll this when wanting to reset to another tokenizer state (it's a copycon, essentially)
+	void ResetReadState(const PDFParserTokenizer& inExternalTokenizer);
 
 	// Advanced option!
 	// This will return the position of the stream on the first byte of the recently provided token (use after GetNextToken).
@@ -64,6 +66,12 @@ public:
 	// In other words - use only if the only position movement is through GetNextToken repeated calls.
 	// Specifically "ResetReadState" resets the count
 	IOBasicTypes::LongFilePositionType GetRecentTokenPosition();
+
+	// return the current buffer size. may be 1 or 0. if 1, means that the next char for tokenizing will be taken
+	// from the buffer rather from the stream and only later the stream read will be resumed. 
+	// if you are trying to determine the current position reading the stream, take this size into account (substracting from the current position)
+	// to get the "virtual" position from the tokenizer point of view.
+	IOBasicTypes::LongFilePositionType GetReadBufferSize();
 private:
 
 	IByteReader* mStream;
