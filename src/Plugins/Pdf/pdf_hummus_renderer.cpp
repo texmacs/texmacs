@@ -43,6 +43,7 @@
 #include "PDFWriter/XObjectContentContext.h"
 #include "PDFWriter/PDFFormXObject.h"
 #include "PDFWriter/InfoDictionary.h"
+#include "PDFWriter/PDFPageInput.h"
 
 /******************************************************************************
  * pdf_hummus_renderer
@@ -1298,7 +1299,7 @@ public:
   
   pdf_image_rep(url _u, ObjectIDType _id)
     : u(_u), id(_id)
-  { image_size (u, w, h); }
+  { image_size (u, w, h); } 
   ~pdf_image_rep() {}
 
   bool flush_jpg (PDFWriter& pdfw, url image);
@@ -1352,7 +1353,7 @@ pdf_image_rep::flush (PDFWriter& pdfw)
 			// to convert to pdf
 			string cmd= "convert";
 #if (defined (__MINGW__) || defined (__MINGW32__))
-            if (!exists_in_path("conjure")) // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
+            if (!exists_in_path("conjure"); // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
             // better test for "conjure" for the presence of imagemagick
                convert_error << "\n pdf_hummus cannot process png file without ImageMagick\n Please install ImageMagick and try again";
             else system (sys_concretize(resolve_in_path(cmd)), name, temp);
@@ -1385,8 +1386,8 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   EStatusCode status = PDFHummus::eFailure;
   DocumentContext& dc = pdfw.GetDocumentContext();
   
-  PDFRectangle cropBox (0, 0, w, h);
-  double tMat[6] = { scale_x, 0, 0, scale_y, 0, 0};
+  //PDFRectangle cropBox (0, 0, w, h);
+  //double tMat[6] = { scale_x, 0, 0, scale_y, 0, 0};
   
 #if (defined (__MINGW__) || defined (__MINGW32__))
   PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(western_to_utf8(concretize(temp))));
@@ -1394,7 +1395,64 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(concretize(temp)));
 #endif  
   if(copyingContext) {
-    PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
+	PDFPageInput pageInput(copyingContext->GetSourceDocumentParser(),
+                                       copyingContext->GetSourceDocumentParser()->ParsePage(0));
+	int rot= pageInput.GetRotate();
+	PDFRectangle cropBox=pageInput.GetCropBox();
+	PDFRectangle mediaBox=pageInput.GetMediaBox();
+	
+	if (DEBUG_CONVERT) {
+	  debug_convert << "imagesize w,h={"<<w<< ", "<<h <<"}"<< LF;
+	  debug_convert << "image ="<<temp<<LF;
+	  debug_convert << "crop box={"<<cropBox.LowerLeftX<< ", "<<cropBox.UpperRightX << ", "<<cropBox.LowerLeftY<< ", "<<cropBox.UpperRightY<<"}"<< LF;
+	  debug_convert <<"media box={"<<mediaBox.LowerLeftX<< ", "<<mediaBox.UpperRightX << ", "<<mediaBox.LowerLeftY<< ", "<<mediaBox.UpperRightY<<"}"<< LF;
+    }
+	
+	w=(int) cropBox.UpperRightX-cropBox.LowerLeftX;
+	h=(int) cropBox.UpperRightY-cropBox.LowerLeftY;
+	if (DEBUG_CONVERT) debug_convert << "w,h={"<<w<< ", "<<h <<"}"<< LF;
+	double tMat[6] ={ scale_x ,0, 0, scale_y, 0, 0} ;
+	int z;
+switch  (rot) {
+	if (DEBUG_CONVERT) debug_convert << "degrees image rotated :"<< rot << LF;
+    case 0 : //default already assigned
+	   break;
+	case 90 :
+	   tMat[0] = 0;
+	   tMat[1] = -scale_x ;
+	   tMat[2] = scale_y;
+       tMat[3] = 0;
+	   tMat[4] = -cropBox.LowerLeftY;
+	   tMat[5] = cropBox.UpperRightX ;
+	   if (DEBUG_CONVERT) debug_convert << "dx,dy={"<<tMat[4]<< ", "<<tMat[5] <<"}"<< LF;
+	   z = w;
+	   w = h;
+	   h = z;
+ 	   break;
+	case 180 :
+	   tMat[0] = -scale_x;
+	   tMat[1] = 0;
+	   tMat[2] = 0;
+       tMat[3] = -scale_y;
+	   tMat[4] = cropBox.UpperRightX ;
+	   tMat[5] = cropBox.UpperRightY ;
+	   break;
+	case 270 :
+ 	   tMat[0] = 0;
+	   tMat[1] = scale_x ;
+	   tMat[2] = -scale_y;
+       tMat[3] = 0;
+	   tMat[4] = cropBox.UpperRightY ;
+	   tMat[5] = -cropBox.LowerLeftX;
+	   z = w;
+	   w = h;
+	   h = z;
+	   break;
+    default :
+	   convert_error << "unexpected rotate()="<< rot<<" in image "<<temp << LF;
+}
+
+	PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
     status = copyingContext->MergePDFPageToFormXObject(form,0);
     if(status == eSuccess) pdfw.EndFormXObjectAndRelease(form);
     delete copyingContext;
