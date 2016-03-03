@@ -1,0 +1,337 @@
+%!PS
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+%
+% $Id: pdf_info.ps 6300 2005-12-28 19:56:24Z alexcher $
+
+% Dump some info from a PDF file
+
+% usage: gs -dNODISPLAY -q -sFile=____.pdf [-dDumpMediaSizes] [-dDumpFontsUsed [-dShowEmbeddedFonts] ] toolbin/pdf_info.ps
+
+/QUIET true def		% in case they forgot
+
+/showoptions {
+  (           where "options" are:) =
+  (           -dDumpMediaSizes=false    (default true) MediaBox and CropBox for each page) =
+  (           -dDumpFontsNeeded=false   (default true)Fonts used, but not embedded) =
+  (           -dDumpFontsUsed           List all fonts used) =
+  (           -dShowEmbeddedFonts       only meaningful with -dDumpFontsUsed) =
+  (\n          If no options are given, the default is -dDumpMediaSizes -dDumpFontsNeeded) =
+  () =
+  flush
+} bind def
+
+/DumpMediaSizes where { pop } { /DumpMediaSizes true def } ifelse
+/DumpFontsNeeded where { pop } { /DumpFontsNeeded true def } ifelse
+
+[ shellarguments
+  { counttomark 1 eq {
+      dup 0 get (-) 0 get ne {
+        % File specified on the command line using:  -- toolbin/pdf_info.ps infile.pdf
+        /File exch def
+        false	% don't show usage
+      } {
+        true	% show usage and quit
+      } ifelse
+    } { true } ifelse
+    {
+      (\n*** Usage: gs [options] -- toolbin/pdf_info.ps infile.pdf  ***\n\n) print
+      showoptions
+      quit
+    } if
+  } if
+
+/File where not {
+  (\n   *** Missing input file name \(use -sFile=____.pdf\)\n) =
+  (    usage: gs -dNODISPLAY -q -sFile=____.pdf [ options ] toolbin/pdf_info.ps\n) =
+  showoptions
+  quit
+} if
+cleartomark		% discard the dict from --where--
+
+% ---- No more executable code on the top level after this line -----
+% ---- except 2 lines at the very end                           -----
+
+/dump-pdf-info {    % (fname) -> -
+  () = (        ) print print ( has ) print 
+  PDFPageCount dup =print 10 mod 1 eq { ( page.\n) } { ( pages\n) } ifelse = flush
+
+  % Print out the "Info" dictionary if present
+  Trailer /Info knownoget {
+     dup /Title knownoget { (Title: ) print = flush } if
+     dup /Author knownoget { (Author: ) print = flush } if
+     dup /Subject knownoget { (Subject: ) print = flush } if
+     dup /Keywords knownoget { (Keywords: ) print = flush } if
+     dup /Creator knownoget { (Creator: ) print = flush } if
+     dup /Producer knownoget { (Producer: ) print = flush } if
+     dup /CreationDate knownoget { (CreationDate: ) print = flush } if
+     dup /ModDate knownoget { (ModDate: ) print = flush } if
+     dup /Trapped knownoget { (Trapped: ) print = flush } if
+     pop
+  } if
+} bind def
+
+/dump-media-sizes {
+  DumpMediaSizes {
+  () =
+  % Print out the Page Size info for each page.
+    1 1 PDFPageCount {
+      dup (Page ) print =print
+      pdfgetpage dup
+      /UserUnit pget {
+        ( UserUnit: ) print =print
+      } if
+      dup /MediaBox pget {
+        ( MediaBox: ) print oforce_array ==only
+      } if
+      dup /CropBox pget {
+        ( CropBox: ) print oforce_array ==only
+      } if
+      dup /Rotate pget {
+         (    Rotate = ) print =print
+      } if
+      pageusestransparency {
+          (     Page uses transparency features) print
+      } if
+      () = flush
+    } for
+  } if
+} bind def
+
+% List of standard font names for use when we are showing the FontsNeeded
+/StdFontNames [
+ /Times-Roman /Helvetica /Courier /Symbol
+ /Times-Bold /Helvetica-Bold /Courier-Bold /ZapfDingbats
+ /Times-Italic /Helvetica-Oblique /Courier-Oblique
+ /Times-BoldItalic /Helvetica-BoldOblique /Courier-BoldOblique
+] def
+
+/res-type-dict 10 dict begin
+  /Font {
+    { 
+      exch pop oforce 
+      dup //null ne {
+        dup /DescendantFonts knownoget {
+           exch pop 0 get oforce
+        } if
+        dup /FontDescriptor knownoget {
+          dup /FontFile known 1 index /FontFile2 known or exch /FontFile3 known or
+          /ShowEmbeddedFonts where { pop pop //false } if {
+            pop			% skip embedded fonts
+          } {
+            /BaseFont knownoget { %  not embedded
+              FontsUsed exch //null put
+            } if
+          } ifelse
+        } {
+          /BaseFont knownoget { % no FontDescriptor, not embedded
+            FontsUsed exch //null put
+          } if
+        } ifelse
+      } {
+        pop
+      } ifelse
+    } forall	% traverse the dictionary
+  } bind def
+
+  /XObject {
+    { 
+      exch pop oforce
+      dup //null ne {
+        dup /Subtype knownoget {
+          /Form eq {
+            /Resources knownoget {
+              get-fonts-from-res
+            } if
+          } {
+            pop
+          } ifelse
+        } {
+          pop
+        } ifelse
+      } {
+        pop
+      } ifelse
+    } forall
+  } bind def
+  
+  /Pattern {
+    { 
+      exch pop oforce
+      dup //null ne {
+        /Resources knownoget {
+          get-fonts-from-res
+        } if
+      } {
+        pop
+      } ifelse
+    } forall
+  } bind def
+currentdict end readonly def
+
+% <<res-dict>> get-fonts-from-res -
+/get-fonts-from-res {
+  oforce 
+  dup //null ne {
+    { 
+      oforce
+      dup //null ne {
+        //res-type-dict 3 -1 roll 
+        .knownget {
+          exec
+        } {
+          pop
+        } ifelse
+      } {
+        pop pop
+      } ifelse
+    } forall
+  } {
+    pop
+  } ifelse
+} bind def
+
+currentdict /res-type-dict undef
+
+/getPDFfonts {	%	(filename) getPDFfonts array_of_font_names
+  /FontsUsed 1000 dict def	% this will increase if needed
+  1 1 PDFPageCount {
+    pdfgetpage			% get pagedict
+    dup /Resources pget { get-fonts-from-res } if
+    /Annots knownoget {
+      { oforce
+        dup //null ne {
+          /AP knownoget {
+            { exch pop oforce 
+              dup //null ne {
+                dup /Resources knownoget {
+                  get-fonts-from-res
+                } if
+                { exch pop oforce
+                  dup type /dicttype eq {
+                    /Resources knownoget {
+                      get-fonts-from-res
+                    } if
+                  } {
+                    pop
+                  } ifelse
+                } forall
+              } {
+                pop
+              } ifelse
+            } forall
+          } if
+        } {
+          pop
+        } ifelse
+      } forall
+    } if
+  } for
+  % If DumpFontsUsed is not true, then remove the 'standard' fonts from the list
+  systemdict /DumpFontsUsed known not {
+    StdFontNames {
+      FontsUsed 1 index known { FontsUsed 1 index undef } if
+      pop
+    } forall
+  } if
+
+  % Now dump the FontsUsed dict into an array so we can sort it.
+  [ FontsUsed { pop } forall ]
+  { 100 string cvs exch 100 string cvs exch lt } .sort
+} bind def
+
+/dump-fonts-used {
+  systemdict /DumpFontsUsed known
+  {
+    (\nFont or CIDFont resources used:) =
+    getPDFfonts { = } forall
+  } {
+    DumpFontsNeeded {
+      getPDFfonts
+      dup length 0 gt {
+        (\nFonts Needed that are not embedded \(system fonts required\):) =
+        { (    ) print = } forall
+      } {
+        pop
+        (\nNo system fonts are needed.) =
+      } ifelse
+    } if
+  } ifelse
+} bind def
+
+% Copy selected subfiles to temporary files and return the file names
+% as a PostScript names to protect them from restore.
+% Currently, all PDF files in the Portfolio are extracted and returned.
+%
+% - pdf_collection_files [ /temp_file_name ... /temp_file_name
+/pdf_collection_files {
+  mark
+  Trailer /Root oget
+  dup /Collection oknown {
+    /Names knownoget {
+      /EmbeddedFiles knownoget {
+        pdf_collection_names
+      } if
+    } if
+  } {
+    pop
+  } ifelse
+} bind def
+
+% Output all the info about the file
+/dump {  % (title) -> -
+  /PDFPageCount pdfpagecount def
+  dump-pdf-info
+  dump-media-sizes
+  dump-fonts-used
+} bind def
+
+% Choose between collection vs plain file.
+% Enumerate collections and apply the dump procedure.
+/enum-pdfs {		% - -> -
+  File (r) file runpdfbegin
+  pdf_collection_files
+  dup mark eq {
+    pop
+    File dump
+    runpdfend
+  } {
+    runpdfend
+    ] 0 1 2 index length 1 sub {
+        2 copy get exch           %  [file ... ] file i
+        1 add (0123456789) cvs    %  [file ... ] file (i+1)
+        File exch ( part ) exch concatstrings concatstrings
+        exch                      %  [file ... ] (fname part i+1) file
+        dup type /filetype eq {
+          runpdfbegin
+          dump
+          runpdfend
+          closefile
+        } {
+          .namestring
+          dup (r) file
+          runpdfbegin
+          exch dump
+          runpdfend
+          deletefile
+        } ifelse
+    } for
+    pop
+  } ifelse
+} bind def
+
+enum-pdfs
+quit
+

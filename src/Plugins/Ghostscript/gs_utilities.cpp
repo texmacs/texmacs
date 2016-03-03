@@ -75,17 +75,91 @@ void
 gs_image_size (url image, int& w_pt, int& h_pt) {
   string buf;
   bool err= load_string (image, buf, false);
-  if (!err && gs_image_size_sub (buf, w_pt, h_pt)) return;
   if (!err) {
+    if ((suffix (image) == "pdf") && gs_PDFimage_size (image, w_pt, h_pt)) return; 
+    if (gs_image_size_sub (buf, w_pt, h_pt)) return;
+  
     string cmd= gs_prefix ();
     cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -dEPSCrop -sDEVICE=bbox ";
-    cmd << sys_concretize (image);
+	cmd << sys_concretize (image);
     buf= eval_system (cmd);
+  
+    if (gs_image_size_sub (buf, w_pt, h_pt)) return;
   }
-  if (!err && gs_image_size_sub (buf, w_pt, h_pt)) return;
   convert_error << "Cannot read image file '" << image << "'"
                 << " in gs_image_size" << LF;
   w_pt= 0; h_pt= 0;
+}
+
+bool
+gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
+  if (DEBUG_CONVERT) debug_convert << "gs PDF image size :"<<LF;
+  string buf;
+  //bool err= load_string (image, buf, false); //already tested
+  //if (!err) {
+    string cmd= gs_prefix ();
+    cmd << "-dNODISPLAY -q -sFile=";
+	cmd << sys_concretize (image);
+	cmd <<" "<<sys_concretize ("$TEXMACS_PATH/misc/convert/pdf_info.ps");
+    buf= eval_system (cmd);
+  /*}
+  else {
+  convert_error << "Cannot read PDF image file '" << image << "'"
+                << " in gs_PDFimage_size" << LF;
+  w_pt= 0; h_pt= 0;
+  return false;
+  }*/
+  //if CropBox is defined, then use it, else Mediabox
+  string type="CropBox";
+  int pos= search_forwards ("CropBox: [", buf);
+  if (pos < 0) {
+	  if (DEBUG_CONVERT) debug_convert << "CropBox not found"<<LF;
+	  type="MediaBox";
+	  pos= search_forwards ("MediaBox: [", buf);
+      if (pos < 0) {
+	    if (DEBUG_CONVERT) debug_convert << "MediaBox not found"<<LF;
+        return false;
+	  }	
+  }
+  bool ok= read (buf, pos, type*": [");
+  double X1, Y1, X2, Y2;
+  int x1, y1, x2, y2;
+  skip_spaces (buf, pos);
+  ok= read_double (buf, pos, X1) && ok;
+  x1= (int) floor (X1);
+  skip_spaces (buf, pos);
+  ok= read_double (buf, pos, Y1) && ok;
+  y1= (int) floor (Y1);
+  skip_spaces (buf, pos);
+  ok= read_double (buf, pos, X2) && ok;
+  x2= (int) ceil (X2);
+  skip_spaces (buf, pos);
+  ok= read_double (buf, pos, Y2) && ok;
+  y2= (int) ceil (Y2);
+  if (!ok) {
+	  if (DEBUG_CONVERT) debug_convert << "no box dims not found"<<LF;
+	  return false;
+  }
+  w_pt= x2-x1;
+  h_pt= y2-y1;
+  pos= search_forwards ("Rotate =", buf);
+  //if (pos < 0) return false;
+  ok= read (buf, pos, "Rotate =");
+  int rot;
+  if (ok) {
+     skip_spaces (buf, pos);
+     ok= read_int  (buf, pos, rot) ;
+     if (ok && ((rot % 180) == 90 )) {//the image is rotated : swap axes lengths
+	   if (DEBUG_CONVERT) debug_convert << "Rotate ="<<rot<<LF;
+	   h_pt= x2-x1;
+       w_pt= y2-y1;
+     } else {
+	  if (DEBUG_CONVERT) debug_convert << "Rotate not found"<<LF;
+	  return false;
+  }
+  }
+  if (DEBUG_CONVERT) debug_convert << type<< "Box size ="<<w_pt<<" x "<< h_pt <<LF;
+  return true;
 }
 
 void ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2);
@@ -93,38 +167,60 @@ void ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2);
 static bool
 use_converts (url image) {
 #if defined(__MINGW__) || defined(__MINGW32__)
-  (void) image; return false;
+  //(void) image; return false;
+  
+  // the native pdf renderer now assumes convert is available...
+  static bool has_image_magick = exists_in_path("conjure"); 
+  // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
+  // better test for "conjure" for the presence of imagemagick
+
 #else
   // NOTE: determine whether we should use image magick.
   // Indeed, EPSCrop unfortunately does not correctly handle
   // non trivial offsets of bounding boxes
   static bool has_image_magick= exists_in_path ("convert");
+#endif
   int bx1, by1, bx2, by2;
   ps_bounding_box (image, bx1, by1, bx2, by2);
   return has_image_magick && (bx1 != 0 || by1 != 0);
-#endif
 }
 
 void
 gs_to_png (url image, url png, int w, int h) {
   if (use_converts (image)) {
-    string cmd= "convert ";
-    cmd << "-density 300x300 -geometry " << as_string (w) << "x" << as_string (h) << "! ";  
-    cmd << sys_concretize (image) << " ";
+	if (DEBUG_CONVERT) debug_convert << "gs_to_png using convert"<<LF;
+	string cmd= "convert";
+	#if (defined (__MINGW__) || defined (__MINGW32__))
+       cmd = sys_concretize(resolve_in_path(cmd));
+    #endif  
+    cmd << " -density 300x300 -geometry " << as_string (w) << "x" << as_string (h) << "! ";  
+    if (suffix (image) == "pdf") cmd << "-define pdf:use-cropbox=true ";
+	cmd << sys_concretize (image) << " ";
     cmd << sys_concretize (png);
     system (cmd);
   }
   else {
+    if (DEBUG_CONVERT) debug_convert << "gs_to_png using gs"<<LF;
     string cmd= gs_prefix ();
     cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-    cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dTextAlphaBits=4 -dEPSCrop ";
+    cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dTextAlphaBits=4 ";
+    if (suffix (image) == "pdf") {
+		cmd << "-dUseCropBox ";
+	} else { 
+		cmd << "-dEPSCrop ";
+	}
     cmd << "-g" << as_string (w) << "x" << as_string (h) << " ";
     int bbw, bbh;
     int rw, rh;
     gs_image_size (image, bbw, bbh);
     rw= (w*72-1)/bbw+1;
     rh= (h*72-1)/bbh+1;
-    cmd << "-r" << as_string (rw) << "x" << as_string (rh) << " ";  
+	if (DEBUG_CONVERT) {
+	debug_convert << "w="<<w<<" h="<<h<<LF;
+	debug_convert << "bbw="<<bbw<<" bbh="<<bbh<<LF;
+	debug_convert <<" res ="<<rw<<" * "<<rh <<LF;
+    }
+	cmd << "-r" << as_string (rw) << "x" << as_string (rh) << " ";  
     cmd << "-sOutputFile=" << sys_concretize (png) << " ";
     cmd << sys_concretize (image);
     system (cmd);
@@ -135,6 +231,9 @@ void
 gs_to_eps (url image, url eps) {
   if (use_converts (image)) {
     string cmd= "convert ";
+	#if (defined (__MINGW__) || defined (__MINGW32__))
+       cmd = sys_concretize(resolve_in_path(cmd));
+    #endif  
     cmd << sys_concretize (image) << " ";
     cmd << sys_concretize (eps);
     system (cmd);
