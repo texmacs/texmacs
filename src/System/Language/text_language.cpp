@@ -146,7 +146,7 @@ french_language_rep::advance (tree t, int& pos) {
       return &tp_space_rep;
     if (s[pos] == '\23')
       return &tp_space_rep;
-    if (s[pos] == ':' || s[pos] == ';' ||
+    if (/*s[pos] == ':' ||*/ s[pos] == ';' ||
         s[pos] == '!' || s[pos] == '?' || s[pos] == '\24')
       return &tp_nb_thin_space_rep;
     return &tp_nb_space_rep;
