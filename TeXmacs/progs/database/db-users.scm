@@ -95,16 +95,32 @@
 
 (define db-the-default-user #f)
 
+(define (safe-getpwnam id)
+  (catch #t
+	 (lambda () (passwd:gecos (getpwnam user)))
+	 (lambda err
+	   (display* "Error in getpwnam: " err "\n")
+	   "")))
+
+(define (safe-getpwuid id)
+  (catch #t
+	 (lambda () (passwd:name (getpwuid id)))
+	 (lambda err
+	   (display* "Error in getpwuid: " err "\n")
+	   "")))
+
 (define (get-full-name user)
  (if (os-mingw?)
      (or (and (url-exists-in-path? "fullname")
               (var-eval-system (string-append "fullname " user)))
          "Default User")
-     (passwd:gecos (getpwnam user))))
+     (safe-getpwnam user)))
 
 (define (create-default-user)
-  (let* ((pseudo (or (getlogin) (passwd:name (getpwuid (getuid)))))
+  (let* ((pseudo (or (getlogin) (safe-getpwuid (getuid))))
          (name (get-full-name pseudo)))
+    ;;(display* "pseudo= " pseudo "\n")
+    ;;(display* "name= " name "\n")
     (when (== pseudo "") (set! pseudo "default"))
     (when (== name "") (set! name "Default User"))
     (list pseudo name)))
