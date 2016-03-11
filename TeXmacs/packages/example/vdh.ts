@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.4>
 
 <style|source>
 
@@ -116,6 +116,8 @@
     <assign|rsY|<with|math-font|cal*|Y>>
 
     <assign|rsZ|<with|math-font|cal*|Z>>
+
+    <assign|rso|<very-small|<with|math-font|cal*|O>>>
 
     \;
 
