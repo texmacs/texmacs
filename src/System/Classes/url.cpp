@@ -437,7 +437,7 @@ bool
 is_tmfs_protocol (url u, string protocol) {
   return
     u->t == protocol ||
-    is_concat (u) && is_tmfs_protocol (u[1], protocol);
+    (is_concat (u) && is_tmfs_protocol (u[1], protocol));
 }
 
 bool
@@ -603,7 +603,7 @@ suffix (url u) {
   if ((i>0) && (i<n-1)) {
     string r= s (i+1, n);
     while ((N(r)>0) && (r[N(r)-1]=='~' || r[N(r)-1]=='#')) r= r(0, N(r)-1);
-    return r;
+    return locase_all(r);
   }
   return "";
 }
