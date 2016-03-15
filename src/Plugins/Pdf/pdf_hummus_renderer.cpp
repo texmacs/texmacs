@@ -1353,7 +1353,7 @@ pdf_image_rep::flush (PDFWriter& pdfw)
 			// to convert to pdf
 			string cmd= "convert";
 #if (defined (__MINGW__) || defined (__MINGW32__))
-            if (!exists_in_path("conjure"); // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
+            if (!exists_in_path("conjure")) // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
             // better test for "conjure" for the presence of imagemagick
                convert_error << "\n pdf_hummus cannot process png file without ImageMagick\n Please install ImageMagick and try again";
             else system (sys_concretize(resolve_in_path(cmd)), name, temp);
