@@ -34,6 +34,8 @@ typedef list<int> path;
 #define OBSERVER_HIGHLIGHT  8
 #define OBSERVER_WIDGET     9
 
+#define ADDENDUM_PLAYER     1
+
 /******************************************************************************
 * The observer class
 ******************************************************************************/
@@ -161,8 +163,8 @@ void tree_pointer_delete (observer o);
 
 path obtain_position (observer o);
 
-observer tree_addendum_new (tree t, int kind, blackbox bb);
-void tree_addendum_new (observer o);
+observer tree_addendum_new (tree t, int kind, blackbox bb, bool keep= true);
+void tree_addendum_delete (observer o);
 
 observer search_observer (tree& ref, int type);
 bool admits_edit_observer (tree t);

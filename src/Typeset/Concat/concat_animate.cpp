@@ -10,6 +10,50 @@
 ******************************************************************************/
 
 #include "concater.hpp"
+#include "blackbox.hpp"
+#include "player.hpp"
+
+extern tree the_et;
+
+/******************************************************************************
+* Basic constructs for animations
+******************************************************************************/
+
+path
+search_animation_ip (path ip) {
+  if (is_nil (ip)) return ip;
+  path p= reverse (ip);
+  if (has_subtree (the_et, p)) {
+    tree t= subtree (the_et, p);
+    blackbox bb;
+    bool ok= t->obs->get_contents (ADDENDUM_PLAYER, bb);
+    if (ok) return ip;
+  }
+  return search_animation_ip (ip->next);
+}
+
+path
+search_longest_ip (path ip) {
+  path p= reverse (ip);
+  if (has_subtree (the_et, p)) return ip;
+  return search_longest_ip (ip->next);
+}
+
+path
+edit_env_rep::get_animation_ip (path ip) {
+  if (!is_nil (ip) && ip->item < 0) {
+    if (ip->item == DECORATION && !is_nil (ip->next)) ip= ip->next->next;
+    else ip= ip->next;
+  }
+  path aip= search_animation_ip (ip);
+  if (!is_nil (aip)) return aip;
+  aip= search_longest_ip (ip);
+  if (is_nil (aip)) return aip;
+  tree t= subtree (the_et, reverse (aip));
+  blackbox bb= close_box<player> (player ());
+  (void) tree_addendum_new (t, ADDENDUM_PLAYER, bb, false);
+  return aip;
+}
 
 /******************************************************************************
 * Basic constructs for animations

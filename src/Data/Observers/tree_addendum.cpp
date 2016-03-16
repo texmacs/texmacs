@@ -13,6 +13,7 @@
 ******************************************************************************/
 
 #include "tree.hpp"
+#include "list.hpp"
 #include "blackbox.hpp"
 
 /******************************************************************************
@@ -24,10 +25,11 @@ private:
   tree_rep* ptr;
   int kind;
   blackbox contents;
+  bool keep;
 
 public:
-  tree_addendum_rep (tree ref, int kind2, blackbox contents2):
-    ptr (ref.rep), kind (kind2), contents (contents2) {}
+  tree_addendum_rep (tree ref, int kind2, blackbox contents2, bool keep2):
+    ptr (ref.rep), kind (kind2), contents (contents2), keep (keep2) {}
   int get_type () { return OBSERVER_ADDENDUM; }
   tm_ostream& print (tm_ostream& out) {
     return out << " addendum (" << kind << ", " << contents << ")"; }
@@ -53,6 +55,8 @@ public:
 * Specific routines for tree_addendum observers
 ******************************************************************************/
 
+static list<observer> zombies;
+
 bool
 tree_addendum_rep::get_contents (int which, blackbox& bb) {
   if (which != kind) return false;
@@ -71,8 +75,14 @@ tree_addendum_rep::set_tree (tree t) {
   if (ptr != t.rep) {
     tree ref (ptr);
     remove_observer (ref->obs, observer (this));
-    ptr= t.rep;
-    insert_observer (t->obs, observer (this));
+    if (keep) {
+      ptr= t.rep;
+      insert_observer (t->obs, observer (this));
+    }
+    else {
+      ptr= NULL;
+      zombies= list<observer> (observer (this));
+    }
   }
   return true;
 }
@@ -165,13 +175,13 @@ tree_addendum_rep::notify_detach (tree& ref, tree closest, bool right) {
 ******************************************************************************/
 
 observer
-tree_addendum (tree ref, int kind, blackbox contents) {
-  return tm_new<tree_addendum_rep> (ref, kind, contents);
+tree_addendum (tree ref, int kind, blackbox contents, bool keep) {
+  return tm_new<tree_addendum_rep> (ref, kind, contents, keep);
 }
 
 observer
-tree_addendum_new (tree ref, int kind, blackbox contents) {
-  observer obs= tree_addendum (ref, kind, contents);
+tree_addendum_new (tree ref, int kind, blackbox contents, bool keep) {
+  observer obs= tree_addendum (ref, kind, contents, keep);
   attach_observer (ref, obs);
   return obs;
 }
