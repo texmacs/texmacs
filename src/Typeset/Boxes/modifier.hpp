@@ -58,6 +58,12 @@ public:
   SI        sup_hi_lim  (int level);
   void      get_bracket_extents (SI& lo, SI& hi);
 
+  virtual player     anim_player ();
+  virtual double     anim_delay ();
+  virtual double     anim_duration ();
+  virtual void       anim_position (double delay);
+  virtual rectangles anim_invalid ();
+
   virtual int   anim_length ();
   virtual bool  anim_started ();
   virtual bool  anim_finished ();

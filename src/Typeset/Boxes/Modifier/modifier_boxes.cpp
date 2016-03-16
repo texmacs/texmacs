@@ -159,6 +159,12 @@ modifier_box_rep::graphical_select (SI x1, SI y1, SI x2, SI y2) {
 * Animations
 ******************************************************************************/
 
+player modifier_box_rep::anim_player () { return b->anim_player (); }
+double modifier_box_rep::anim_delay () { return b->anim_delay (); }
+double modifier_box_rep::anim_duration () { return b->anim_duration (); }
+void   modifier_box_rep::anim_position (double t) { b->anim_position (t); }
+rectangles modifier_box_rep::anim_invalid () { return b->anim_invalid (); }
+
 int modifier_box_rep::anim_length () { return b->anim_length (); }
 bool modifier_box_rep::anim_started () { return b->anim_started (); }
 bool modifier_box_rep::anim_finished () { return b->anim_finished (); }
