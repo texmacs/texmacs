@@ -148,10 +148,12 @@ tree_addendum_rep::notify_assign_node (tree& ref, tree_label op) {
 void
 tree_addendum_rep::notify_insert_node (tree& ref, int pos) {
   //cout << "Notify insert node " << ref << ", " << pos << "\n";
-  // NOTE: we might want to remove these lines; see tree_pointer.cpp
-  remove_observer (ref[pos]->obs, observer (this));
-  ptr= ref.rep;
-  insert_observer (ref->obs, observer (this));
+  // NOTE: should we remove the 'false'? see also tree_pointer.cpp
+  if (keep && false) {
+    remove_observer (ref[pos]->obs, observer (this));
+    ptr= ref.rep;
+    insert_observer (ref->obs, observer (this));
+  }
   //cout << "position -> " << obtain_position (observer (this)) << "\n";
 }
 

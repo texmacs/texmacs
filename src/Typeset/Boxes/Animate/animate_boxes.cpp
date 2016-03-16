@@ -40,12 +40,13 @@ refresh_at (time_t t) {
 ******************************************************************************/
 
 struct anim_constant_box_rep: public composite_box_rep {
+  player pl;
   bool   started;
   time_t started_at;
   bool   finished;
   int    length;
 
-  anim_constant_box_rep (path ip, box b, int length);
+  anim_constant_box_rep (path ip, box b, player pl, int length);
   operator tree () { return tree (TUPLE, "anim_constant", (tree) bs[0]); }
 
   void   pre_display (renderer& ren);
@@ -58,8 +59,9 @@ struct anim_constant_box_rep: public composite_box_rep {
   void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
-anim_constant_box_rep::anim_constant_box_rep (path ip, box b, int length2):
-  composite_box_rep (ip), length (length2)
+anim_constant_box_rep::anim_constant_box_rep (path ip, box b, player pl2,
+                                              int length2):
+  composite_box_rep (ip), pl (pl2), length (length2)
 {
   insert (b, 0, 0);
   position ();
@@ -105,14 +107,15 @@ anim_constant_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
 
 class anim_compose_box_rep: public box_rep {
 public:
+  array<box> bs;
+  array<int> cum_len;
+  player     pl;
   bool       started;
   time_t     started_at;
   int        current;
   bool       finished;
-  array<box> bs;
-  array<int> cum_len;
 
-  anim_compose_box_rep (path ip, array<box> bs);
+  anim_compose_box_rep (path ip, array<box> bs, player pl);
   ~anim_compose_box_rep ();
 
   int       subnr () { return 1; }
@@ -145,8 +148,8 @@ public:
 * Composition of animations / basic routines
 ******************************************************************************/
 
-anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> bs2):
-  box_rep (ip), bs (bs2), cum_len (N(bs))
+anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player p2):
+  box_rep (ip), bs (b2), cum_len (N(bs)), pl (p2)
 {
   ASSERT (N(bs) != 0, "empty animation");
 
@@ -304,11 +307,12 @@ anim_compose_box_rep::graphical_select (SI x, SI y, SI dist) {
 ******************************************************************************/
 
 struct anim_repeat_box_rep: public composite_box_rep {
+  player pl;
   bool   started;
   time_t started_at;
   int    length;
 
-  anim_repeat_box_rep (path ip, box b);
+  anim_repeat_box_rep (path ip, box b, player pl);
   operator tree () { return tree (TUPLE, "anim_repeat", (tree) bs[0]); }
 
   void pre_display (renderer& ren);
@@ -320,8 +324,8 @@ struct anim_repeat_box_rep: public composite_box_rep {
   void anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
-anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b):
-  composite_box_rep (ip)
+anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b, player pl2):
+  composite_box_rep (ip), pl (pl2)
 {
   insert (b, 0, 0);
   position ();
@@ -363,6 +367,7 @@ anim_repeat_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
 
 struct anim_effect_box_rep: public composite_box_rep {
   box    b;
+  player pl;
   bool   started;
   bool   finished;
   time_t started_at;
@@ -370,7 +375,7 @@ struct anim_effect_box_rep: public composite_box_rep {
   int    length;
   SI     old_clip_x1, old_clip_x2, old_clip_y1, old_clip_y2;
 
-  anim_effect_box_rep (path ip, box b, int len);
+  anim_effect_box_rep (path ip, box b, player pl, int len);
   operator tree () { return tree (TUPLE, "anim_effect", (tree) b); }
 
   void pre_display (renderer& ren);
@@ -387,8 +392,8 @@ struct anim_effect_box_rep: public composite_box_rep {
   void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
-anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, int len):
-  composite_box_rep (ip), b (b2)
+anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player p2, int len):
+  composite_box_rep (ip), b (b2), pl (p2)
 {
   insert (b, 0, 0);
   position ();
@@ -463,8 +468,9 @@ anim_effect_box_rep::anim_get_invalid
 struct anim_translate_box_rep: public anim_effect_box_rep {
   SI start_x, start_y, end_x, end_y;
 
-  anim_translate_box_rep (path ip, box b, int len, SI sx, SI sy, SI ex, SI ey):
-    anim_effect_box_rep (ip, b, len),
+  anim_translate_box_rep (path ip, box b, player pl,
+                          int len, SI sx, SI sy, SI ex, SI ey):
+    anim_effect_box_rep (ip, b, pl, len),
     start_x (sx), start_y (sy), end_x (ex), end_y (ey) {}
   operator tree () { return tree (TUPLE, "anim_translate", (tree) b); }
 
@@ -478,8 +484,9 @@ struct anim_translate_box_rep: public anim_effect_box_rep {
 
 struct anim_progressive_box_rep: public anim_effect_box_rep {
   rectangle start_r, end_r;
-  anim_progressive_box_rep (path ip, box b, int l, rectangle r1, rectangle r2):
-    anim_effect_box_rep (ip, b, l),
+  anim_progressive_box_rep (path ip, box b, player pl,
+                            int l, rectangle r1, rectangle r2):
+    anim_effect_box_rep (ip, b, pl, l),
     start_r (r1), end_r (r2) {}
   operator tree () { return tree (TUPLE, "anim_progressive", (tree) b); }
 
@@ -498,11 +505,12 @@ struct anim_progressive_box_rep: public anim_effect_box_rep {
 ******************************************************************************/
 
 struct sound_box_rep: public box_rep {
+  player pl;
   url    u;
   bool   started;
 
-  sound_box_rep (path ip, url u2, SI h):
-    box_rep (ip), u (u2), started (false) { y2= h; }
+  sound_box_rep (path ip, player pl2, url u2, SI h):
+    box_rep (ip), pl (pl2), u (u2), started (false) { y2= h; }
   operator tree () { return tree (TUPLE, "sound", u->t); }
   void display (renderer ren) { (void) ren; }
 
@@ -543,16 +551,16 @@ decompose_gif (url u) {
 }
 
 static void
-add_frames (array<box>& v, path ip, url u, int w, int h, int a,
+add_frames (array<box>& v, path ip, player pl, url u, int w, int h, int a,
             int msecs, int px) {
   if (is_none (u)) return;
   else if (is_or (u)) {
-    add_frames (v, ip, u[1], w, h, a, msecs, px);
-    add_frames (v, ip, u[2], w, h, a, msecs, px);
+    add_frames (v, ip, pl, u[1], w, h, a, msecs, px);
+    add_frames (v, ip, pl, u[2], w, h, a, msecs, px);
   }
   else {
     box imb= image_box (ip, u, w, h, a, px);
-    v << anim_constant_box (ip, imb, msecs);
+    v << anim_constant_box (ip, imb, pl, msecs);
   }
 }
 
@@ -561,42 +569,45 @@ add_frames (array<box>& v, path ip, url u, int w, int h, int a,
 ******************************************************************************/
 
 box
-anim_constant_box (path ip, box b, int len) {
-  return tm_new<anim_constant_box_rep> (ip, b, len);
+anim_constant_box (path ip, box b, player pl, int len) {
+  return tm_new<anim_constant_box_rep> (ip, b, pl, len);
 }
 
 box
-anim_compose_box (path ip, array<box> bs) {
-  return tm_new<anim_compose_box_rep> (ip, bs);
+anim_compose_box (path ip, array<box> bs, player pl) {
+  return tm_new<anim_compose_box_rep> (ip, bs, pl);
 }
 
 box
-anim_repeat_box (path ip, box b) {
-  return tm_new<anim_repeat_box_rep> (ip, b);
+anim_repeat_box (path ip, box b, player pl) {
+  return tm_new<anim_repeat_box_rep> (ip, b, pl);
 }
 
 box
-anim_translate_box (path ip, box b, int len, SI sx, SI sy, SI ex, SI ey) {
-  return tm_new<anim_translate_box_rep> (ip, b, len, sx, sy, ex, ey);
+anim_translate_box (path ip, box b, player pl,
+                    int len, SI sx, SI sy, SI ex, SI ey) {
+  return tm_new<anim_translate_box_rep> (ip, b, pl, len, sx, sy, ex, ey);
 }
 
 box
-anim_progressive_box (path ip, box b, int len, rectangle r1, rectangle r2) {
-  return tm_new<anim_progressive_box_rep> (ip, b, len, r1, r2);
+anim_progressive_box (path ip, box b, player pl,
+                      int len, rectangle r1, rectangle r2) {
+  return tm_new<anim_progressive_box_rep> (ip, b, pl, len, r1, r2);
 }
 
 box
-sound_box (path ip, url u, SI h) {
-  return tm_new<sound_box_rep> (ip, u, h);
+sound_box (path ip, player pl, url u, SI h) {
+  return tm_new<sound_box_rep> (ip, pl, u, h);
 }
 
 box
-video_box (path ip, url u, SI w, SI h, int alpha, int ms, bool rep, int px) {
+video_box (path ip, player pl, url u,
+           SI w, SI h, int alpha, int ms, bool rep, int px) {
   url frames= decompose_gif (u);
   if (is_none (frames)) return empty_box (ip, 0, 0, w, h);
   array<box> bs;
-  add_frames (bs, decorate (ip), frames, w, h, alpha, ms, px);
-  box b= anim_compose_box (rep? decorate (ip): ip, bs);
-  if (rep) return anim_repeat_box (ip, b);
+  add_frames (bs, decorate (ip), pl, frames, w, h, alpha, ms, px);
+  box b= anim_compose_box (rep? decorate (ip): ip, bs, pl);
+  if (rep) return anim_repeat_box (ip, b, pl);
   else return b;
 }
