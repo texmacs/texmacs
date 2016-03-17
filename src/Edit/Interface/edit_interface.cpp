@@ -46,7 +46,7 @@ MODE_LANGUAGE (string mode) {
 edit_interface_rep::edit_interface_rep ():
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
-  do_animate (false), next_animate (last_change-1),
+  do_animate (false), next_animate (last_change-1), anim_next (1.0e12),
   full_screen (false), got_focus (false),
   sh_s (""), sh_mark (0), pre_edit_s (""), pre_edit_mark (0),
   popup_win (),
@@ -814,6 +814,14 @@ edit_interface_rep::apply_changes () {
 
 void
 edit_interface_rep::animate () {
+  if (((double) texmacs_time ()) >= anim_next) {
+    rectangles rs= eb->anim_invalid ();
+    invalidate (rs);
+    clear_next_refresh ();
+    anim_next= 1.0e12;
+  }
+
+  /*
   // cout << do_animate << ", " << next_animate << "\n";
   if (do_animate && texmacs_time () - next_animate >= 0) {
     bool flag= false;
@@ -825,6 +833,7 @@ edit_interface_rep::animate () {
     do_animate  = flag;
     next_animate= at;
   }
+  */
 }
 
 /******************************************************************************

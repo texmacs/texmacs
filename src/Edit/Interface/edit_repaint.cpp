@@ -26,11 +26,12 @@ edit_interface_rep::draw_text (renderer ren, rectangles& l) {
   bool tp_found= false;
   tree bg= get_init_value (BG_COLOR);
   ren->set_background (bg);
-  refresh_needed= do_animate;
-  refresh_next  = next_animate;
+  //refresh_needed= do_animate;
+  //refresh_next  = next_animate;
   eb->redraw (ren, eb->find_box_path (tp, tp_found), l);
-  do_animate  = refresh_needed;
-  next_animate= refresh_next;
+  anim_next= min (anim_next, get_next_refresh ());
+  //do_animate  = refresh_needed;
+  //next_animate= refresh_next;
 }
 
 void

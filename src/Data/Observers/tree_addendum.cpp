@@ -55,8 +55,6 @@ public:
 * Specific routines for tree_addendum observers
 ******************************************************************************/
 
-static list<observer> zombies;
-
 bool
 tree_addendum_rep::get_contents (int which, blackbox& bb) {
   if (which != kind) return false;
@@ -79,10 +77,7 @@ tree_addendum_rep::set_tree (tree t) {
       ptr= t.rep;
       insert_observer (t->obs, observer (this));
     }
-    else {
-      ptr= NULL;
-      zombies= list<observer> (observer (this));
-    }
+    // FIXME: if !keep, then is it safe to not reinsert the observer?
   }
   return true;
 }

@@ -42,4 +42,7 @@ bool operator == (player p1, player p2);
 bool operator != (player p1, player p2);
 tm_ostream& operator << (tm_ostream& out, player p);
 
+double get_next_refresh ();
+void clear_next_refresh ();
+
 #endif // defined PLAYER_H

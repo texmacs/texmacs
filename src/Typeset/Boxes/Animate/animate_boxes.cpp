@@ -37,16 +37,31 @@ refresh_at (time_t t) {
 }
 
 /******************************************************************************
-* Animations which remain constant for a fixed duration
+* Base classes for animation boxes
 ******************************************************************************/
 
-struct anim_rep {
+struct anim_box_rep: public box_rep {
   player pl;
   double delay;
   double duration;
 
-  anim_rep (player pl2, double duration2):
-    pl (pl2), delay (0.0), duration (duration2) {}
+  anim_box_rep (path ip, player pl2, double duration2):
+    box_rep (ip), pl (pl2), delay (0.0), duration (duration2) {}
+
+  player anim_player () { return pl; }
+  double anim_delay () { return delay; }
+  double anim_duration () { return duration; }
+  void   anim_position (double pos) { delay= pos; }
+  double anim_time () { return pl->get_elapsed () - delay; }
+};
+
+struct composite_anim_box_rep: public composite_box_rep {
+  player pl;
+  double delay;
+  double duration;
+
+  composite_anim_box_rep (path ip, player pl2, double duration2):
+    composite_box_rep (ip), pl (pl2), delay (0.0), duration (duration2) {}
 
   player anim_player () { return pl; }
   double anim_delay () { return delay; }
@@ -59,7 +74,7 @@ struct anim_rep {
 * Animations which remain constant for a fixed duration
 ******************************************************************************/
 
-struct anim_constant_box_rep: public composite_box_rep, public anim_rep {
+struct anim_constant_box_rep: public composite_anim_box_rep {
   bool   started;
   time_t started_at;
   bool   finished;
@@ -80,7 +95,7 @@ struct anim_constant_box_rep: public composite_box_rep, public anim_rep {
 
 anim_constant_box_rep::anim_constant_box_rep (path ip, box b, player pl,
                                               int length2):
-  composite_box_rep (ip), anim_rep (pl, (double) length2), length (length2)
+  composite_anim_box_rep (ip, pl, (double) length2), length (length2)
 {
   insert (b, 0, 0);
   position ();
@@ -124,7 +139,7 @@ anim_constant_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
 * Compositions of animations
 ******************************************************************************/
 
-class anim_compose_box_rep: public box_rep, public anim_rep {
+class anim_compose_box_rep: public anim_box_rep {
 public:
   array<box> bs;
   array<int> cum_len;
@@ -133,6 +148,7 @@ public:
   time_t     started_at;
   int        current;
   bool       finished;
+  double     last_delay;
 
   anim_compose_box_rep (path ip, array<box> bs, player pl);
   ~anim_compose_box_rep ();
@@ -171,14 +187,15 @@ public:
 ******************************************************************************/
 
 anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player pl):
-  box_rep (ip), anim_rep (pl, 0.0),
+  anim_box_rep (ip, pl, 0.0),
   bs (b2), cum_len (N(bs)), offsets (N(bs))
 {
   ASSERT (N(bs) != 0, "empty animation");
 
-  started = false;
-  finished= false;
-  current = 0;
+  started   = false;
+  finished  = false;
+  current   = 0;
+  last_delay= 0.0;
 
   int i, n= N(bs);
   x1= y1= x3= y3= MAX_SI;
@@ -237,8 +254,8 @@ anim_compose_box_rep::find_tag (string name) {
 
 double
 anim_compose_box_rep::get_index (double t) {
-  for (int i=0; i+1 < N(bs); i++)
-    if (t < offsets[i+1]) return i;
+  for (int i=0; i<N(bs); i++)
+    if (t < offsets[i]) return i;
   return N(bs) - 1;
 }
 
@@ -247,7 +264,8 @@ anim_compose_box_rep::anim_invalid () {
   rectangles rs= box_rep::anim_invalid ();
   double t = anim_time ();
   int    ix= get_index (t);
-  if (ix != current) rs << rectangle (x1, y1, x2, y2);
+  if (ix != current || delay != last_delay)
+    rs << rectangle (x1, y1, x2, y2);
   return rs;
 }
 
@@ -255,15 +273,18 @@ void
 anim_compose_box_rep::pre_display (renderer& ren) {
   double t = anim_time ();
   int    ix= get_index (t);
-  if (ix != current) {
-    bs[ix]->anim_position (delay + offsets[ix]);
-    if (pl->speed > 0 && ix != N(bs) -1)
-      pl->request_refresh (offsets[ix+1] - t);
-    if (pl->speed < 0 && ix != 0)
-      pl->request_refresh (t - offsets[ix]);
-    // current= ix;
+  if (pl->speed > 0 && ix != N(bs)-1)
+    pl->request_refresh (offsets[ix] - t);
+  if (pl->speed < 0 && ix != 0)
+    pl->request_refresh (t - offsets[ix-1]);
+  if (ix != current || delay != last_delay) {
+    if (ix == 0) bs[ix]->anim_position (delay);
+    else bs[ix]->anim_position (delay + offsets[ix-1]);
+    current   = ix;
+    last_delay= delay;
   }
 
+  /*
   (void) ren;
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
@@ -280,6 +301,7 @@ anim_compose_box_rep::pre_display (renderer& ren) {
     }
   }
   if (!finished) refresh_at (anim_next_update ());
+  */
 }
 
 void
@@ -358,7 +380,8 @@ anim_compose_box_rep::graphical_select (SI x, SI y, SI dist) {
 * Animations which are repeated ad infinam
 ******************************************************************************/
 
-struct anim_repeat_box_rep: public composite_box_rep, public anim_rep {
+struct anim_repeat_box_rep: public composite_anim_box_rep {
+  double updated;
   bool   started;
   time_t started_at;
   int    length;
@@ -373,10 +396,12 @@ struct anim_repeat_box_rep: public composite_box_rep, public anim_rep {
   void anim_start_at (time_t at);
   void anim_finish_now () {}
   void anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
+  rectangles anim_invalid ();
 };
 
 anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b, player pl):
-  composite_box_rep (ip), anim_rep (pl, 1000000000.0)
+  composite_anim_box_rep (ip, pl, b->anim_duration ()),
+  updated (1000000000.0)
 {
   insert (b, 0, 0);
   position ();
@@ -392,7 +417,9 @@ anim_repeat_box_rep::pre_display (renderer& ren) {
   bs[0]->anim_position (delay + it * duration);
   if (pl->speed > 0) pl->request_refresh ((it + 1.0) * duration - t);
   else pl->request_refresh (t - it * duration);
+  updated= t;
 
+  /*
   (void) ren;
   if (!started) anim_start_at (texmacs_time ());
   else if (length > 0) {
@@ -404,6 +431,7 @@ anim_repeat_box_rep::pre_display (renderer& ren) {
       bs[0]->anim_start_at (started_at);
     }
   }
+  */
 }
 
 void
@@ -418,11 +446,20 @@ anim_repeat_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
   if (started) bs[0]->anim_get_invalid (f, at, rs);
 }
 
+rectangles
+anim_repeat_box_rep::anim_invalid () {
+  rectangles rs= bs[0]->anim_invalid ();
+  double t = anim_time ();
+  if (floor (t / duration) != floor (updated / duration))
+    rs << rectangle (x1, y1, x2, y2);
+  return rs;
+}
+
 /******************************************************************************
 * Special content effects
 ******************************************************************************/
 
-struct anim_effect_box_rep: public composite_box_rep, public anim_rep {
+struct anim_effect_box_rep: public composite_anim_box_rep {
   box    b;
   bool   started;
   bool   finished;
@@ -430,6 +467,7 @@ struct anim_effect_box_rep: public composite_box_rep, public anim_rep {
   time_t last_update;
   int    length;
   SI     old_clip_x1, old_clip_x2, old_clip_y1, old_clip_y2;
+  double current;
 
   anim_effect_box_rep (path ip, box b, player pl, int len);
   operator tree () { return tree (TUPLE, "anim_effect", (tree) b); }
@@ -450,7 +488,8 @@ struct anim_effect_box_rep: public composite_box_rep, public anim_rep {
 };
 
 anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player pl, int len):
-  composite_box_rep (ip), anim_rep (pl, (double) len), b (b2)
+  composite_anim_box_rep (ip, pl, (double) len),
+  b (b2), current (0.0)
 {
   insert (b, 0, 0);
   position ();
@@ -462,8 +501,16 @@ anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player pl, int len):
 
 void
 anim_effect_box_rep::pre_display (renderer& ren) {
-  pl->request_refresh (0.0);
+  double t= anim_time ();
+  double x= max (0.0, min (1.0, t / duration));
+  if (pl->speed > 0 && x < 1.0) pl->request_refresh (0.0);
+  if (pl->speed < 0 && x > 0.0) pl->request_refresh (0.0);
+  set_position (x);
+  ren->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  set_clipping (ren, x);
+  current= x;
 
+  /*
   double t= 1.0;
   if (!started) anim_start_at (texmacs_time ());
 
@@ -483,6 +530,7 @@ anim_effect_box_rep::pre_display (renderer& ren) {
 
   ren->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
   set_clipping (ren, t);
+  */
 }
 
 void
@@ -527,7 +575,9 @@ anim_effect_box_rep::anim_get_invalid
 rectangles
 anim_effect_box_rep::anim_invalid () {
   rectangles rs= bs[0]->anim_invalid ();
-  rs << rectangle (x1, y1, x2, y2);
+  double t= anim_time ();
+  double x= max (0.0, min (1.0, t / duration));
+  if (x != current) rs << rectangle (x1, y1, x2, y2);
   return rs;
 }
 
@@ -570,12 +620,12 @@ struct anim_progressive_box_rep: public anim_effect_box_rep {
 * Sound boxes
 ******************************************************************************/
 
-struct sound_box_rep: public box_rep, public anim_rep {
+struct sound_box_rep: public anim_box_rep {
   url    u;
   bool   started;
 
   sound_box_rep (path ip, player pl, url u2, SI h):
-    box_rep (ip), anim_rep (pl, 0.0), u (u2), started (false) { y2= h; }
+    anim_box_rep (ip, pl, 0.0), u (u2), started (false) { y2= h; }
   operator tree () { return tree (TUPLE, "sound", u->t); }
   void display (renderer ren) { (void) ren; }
 
