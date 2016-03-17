@@ -118,6 +118,8 @@
 "new-fonts?"
 "tmtm-eqnumber->nonumber"
 "busy-versioning?"
+"players-set-elapsed"
+"players-set-speed"
 "tt-exists?"
 "tt-dump"
 "tt-font-name"

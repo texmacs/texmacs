@@ -131,7 +131,9 @@
   (:require (toggle-context? t))
   (with i (if (toggle-first-context? t) 1 0)
     (variant-set t (ahash-ref alternate-table (tree-label t)))
-    (tree-go-to t i :start)))
+    (tree-go-to t i :start)
+    (when (> i 0)
+      (players-set-elapsed (tree-ref t i) 0.0))))
 
 (tm-define (dynamic-extremal t forwards?)
   (:require (toggle-context? t))
@@ -218,7 +220,8 @@
   (if (null? args) (set! args '(:start)))
   (when (switch-valid-child? t i)
     (switch-select t i)
-    (apply tree-go-to (cons* t i 0 args))))
+    (apply tree-go-to (cons* t i 0 args))
+    (players-set-elapsed (tree-ref t i) 0.0)))
 
 (tm-define (switch-insert-at t i)
   (set! i (if (== i :end) (tree-arity t) (switch-index t i)))
@@ -372,11 +375,25 @@
        (tree-atomic? (tree-ref t 1))
        (tree->number (tree-ref t 1))))
 
+(define (overlays-animate t old new)
+  (when (tree-compound? t)
+    (when (and (overlay-visible? t new)
+               (not (overlay-visible? t old)))
+      (players-set-elapsed t 0.0))
+    (for-each (cut overlays-animate <> old new)
+              (tree-children t))))
+
+(define (overlays-set t new)
+  (with old (tree->number (tree-ref t 0))
+    (when (!= new old)
+      (tree-set t 0 (number->string new))
+      (overlays-animate t old new))))
+
 (tm-define (overlays-switch-to t i)
   (when (overlays-context? t)
     (let* ((tot (tree->number (tree-ref t 1)))
            (nxt (min (max i 1) tot)))
-      (tree-set t 0 (number->string nxt)))))
+      (overlays-set t nxt))))
 
 (tm-define (overlay-current t)
   (and-with p (tree-search-upwards t overlays-context?)
@@ -404,7 +421,7 @@
   (:require (overlays-context? t))
   (let* ((tot (tree->number (tree-ref t 1)))
          (nxt (if forwards? tot 1)))
-    (tree-set t 0 (number->string nxt))
+    (overlays-set t nxt)
     (when (not (tree-innermost overlay-context?))
       (tree-go-to t 2 :start))))
 
@@ -414,7 +431,7 @@
          (tot (tree->number (tree-ref t 1)))
          (inc (if forwards? 1 -1))
          (nxt (min (max (+ cur inc) 1) tot)))
-    (tree-set t 0 (number->string nxt))
+    (overlays-set t nxt)
     (when (not (tree-innermost overlay-context?))
       (tree-go-to t 2 :start))))
 
@@ -827,7 +844,7 @@
          (nxt (min (max (+ cur inc) 1) tot)))
     (and (!= nxt cur)
          (begin
-           (tree-set t 0 (number->string nxt))
+           (overlays-set t nxt)
            (when (not (tree-innermost overlay-context?))
              (tree-go-to t 2 :start))
            #t))))

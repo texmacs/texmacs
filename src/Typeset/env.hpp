@@ -538,4 +538,7 @@ bool graphics_needs_update ();
 void graphics_require_update (tree var);
 void graphics_notify_update (tree var);
 
+void players_set_elapsed (tree t, double el);
+void players_set_speed (tree t, double sp);
+
 #endif // defined ENV_H

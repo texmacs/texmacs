@@ -109,6 +109,8 @@
   (new-fonts? get_new_fonts (bool))
   (tmtm-eqnumber->nonumber eqnumber_to_nonumber (tree tree))
   (busy-versioning? is_busy_versioning (bool))
+  (players-set-elapsed players_set_elapsed (void tree double))
+  (players-set-speed players_set_speed (void tree double))
 
   ;; routines for the font database
   (tt-exists? tt_font_exists (bool string))

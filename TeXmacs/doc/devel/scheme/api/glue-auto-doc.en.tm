@@ -747,6 +747,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(players-set-elapsed <scm-arg|tree> <scm-arg|double>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|players_set_elapsed> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(players-set-speed <scm-arg|tree> <scm-arg|double>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|players_set_speed> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(tt-exists? <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

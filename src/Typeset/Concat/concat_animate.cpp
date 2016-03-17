@@ -185,3 +185,37 @@ concater_rep::typeset_video (tree t, path ip) {
   }
   else typeset_dynamic (tree (ERROR, "bad video", t[0]), ip);
 }
+
+/******************************************************************************
+* Extra routines for controlling the animation players
+******************************************************************************/
+
+void
+players_set_elapsed (tree t, double el) {
+  blackbox bb;
+  bool ok= t->obs->get_contents (ADDENDUM_PLAYER, bb);
+  if (ok) {
+    player pl= open_box<player> (bb);
+    pl->set_elapsed (el);
+  }
+  if (is_compound (t)) {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      players_set_elapsed (t[i], el);
+  }
+}
+
+void
+players_set_speed (tree t, double sp) {
+  blackbox bb;
+  bool ok= t->obs->get_contents (ADDENDUM_PLAYER, bb);
+  if (ok) {
+    player pl= open_box<player> (bb);
+    pl->set_speed (sp);
+  }
+  if (is_compound (t)) {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      players_set_elapsed (t[i], sp);
+  }
+}

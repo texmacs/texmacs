@@ -46,7 +46,7 @@ copy (player p) {
 
 void
 player_rep::set_elapsed (double t) {
-  started= (t / speed) - ((double) texmacs_time ());
+  started= ((double) texmacs_time ()) - (t / speed);
 }
 
 double

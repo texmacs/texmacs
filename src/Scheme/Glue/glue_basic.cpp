@@ -1069,6 +1069,36 @@ tmg_busy_versioningP () {
 }
 
 tmscm
+tmg_players_set_elapsed (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "players-set-elapsed");
+  TMSCM_ASSERT_DOUBLE (arg2, TMSCM_ARG2, "players-set-elapsed");
+
+  tree in1= tmscm_to_tree (arg1);
+  double in2= tmscm_to_double (arg2);
+
+  // TMSCM_DEFER_INTS;
+  players_set_elapsed (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_players_set_speed (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "players-set-speed");
+  TMSCM_ASSERT_DOUBLE (arg2, TMSCM_ARG2, "players-set-speed");
+
+  tree in1= tmscm_to_tree (arg1);
+  double in2= tmscm_to_double (arg2);
+
+  // TMSCM_DEFER_INTS;
+  players_set_speed (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_tt_existsP (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tt-exists?");
 
@@ -9226,6 +9256,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("new-fonts?",  tmg_new_fontsP, 0, 0, 0);
   tmscm_install_procedure ("tmtm-eqnumber->nonumber",  tmg_tmtm_eqnumber_2nonumber, 1, 0, 0);
   tmscm_install_procedure ("busy-versioning?",  tmg_busy_versioningP, 0, 0, 0);
+  tmscm_install_procedure ("players-set-elapsed",  tmg_players_set_elapsed, 2, 0, 0);
+  tmscm_install_procedure ("players-set-speed",  tmg_players_set_speed, 2, 0, 0);
   tmscm_install_procedure ("tt-exists?",  tmg_tt_existsP, 1, 0, 0);
   tmscm_install_procedure ("tt-dump",  tmg_tt_dump, 1, 0, 0);
   tmscm_install_procedure ("tt-font-name",  tmg_tt_font_name, 1, 0, 0);
