@@ -146,10 +146,8 @@ public:
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
-  player anim_player () { return pl; }
-  double anim_delay () { return delay; }
-  double anim_duration () { return offsets[N(bs)-1]; }
-  void   anim_position (double pos) { delay= pos; }
+  double get_index (double t);
+  rectangles anim_invalid ();
 
   void   pre_display (renderer& ren);
   int    anim_length () { return cum_len[N(bs)-1]; }
@@ -237,8 +235,35 @@ anim_compose_box_rep::find_tag (string name) {
 * Compositions of animations / animation routines
 ******************************************************************************/
 
+double
+anim_compose_box_rep::get_index (double t) {
+  for (int i=0; i+1 < N(bs); i++)
+    if (t < offsets[i+1]) return i;
+  return N(bs) - 1;
+}
+
+rectangles
+anim_compose_box_rep::anim_invalid () {
+  rectangles rs= box_rep::anim_invalid ();
+  double t = anim_time ();
+  int    ix= get_index (t);
+  if (ix != current) rs << rectangle (x1, y1, x2, y2);
+  return rs;
+}
+
 void
 anim_compose_box_rep::pre_display (renderer& ren) {
+  double t = anim_time ();
+  int    ix= get_index (t);
+  if (ix != current) {
+    bs[ix]->anim_position (delay + offsets[ix]);
+    if (pl->speed > 0 && ix != N(bs) -1)
+      pl->request_refresh (offsets[ix+1] - t);
+    if (pl->speed < 0 && ix != 0)
+      pl->request_refresh (t - offsets[ix]);
+    // current= ix;
+  }
+
   (void) ren;
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
@@ -362,6 +387,12 @@ anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b, player pl):
 
 void
 anim_repeat_box_rep::pre_display (renderer& ren) {
+  double t = anim_time ();
+  double it= floor (t / duration);
+  bs[0]->anim_position (delay + it * duration);
+  if (pl->speed > 0) pl->request_refresh ((it + 1.0) * duration - t);
+  else pl->request_refresh (t - it * duration);
+
   (void) ren;
   if (!started) anim_start_at (texmacs_time ());
   else if (length > 0) {
@@ -415,6 +446,7 @@ struct anim_effect_box_rep: public composite_box_rep, public anim_rep {
   void   anim_finish_now ();
   time_t anim_next_update ();
   void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
+  rectangles anim_invalid ();
 };
 
 anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player pl, int len):
@@ -430,6 +462,8 @@ anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player pl, int len):
 
 void
 anim_effect_box_rep::pre_display (renderer& ren) {
+  pl->request_refresh (0.0);
+
   double t= 1.0;
   if (!started) anim_start_at (texmacs_time ());
 
@@ -488,6 +522,13 @@ anim_effect_box_rep::anim_get_invalid
     bs[0]->anim_get_invalid (f, at, rs);
     if (!finished) anim_check_invalid (f, at, rs);
   }
+}
+
+rectangles
+anim_effect_box_rep::anim_invalid () {
+  rectangles rs= bs[0]->anim_invalid ();
+  rs << rectangle (x1, y1, x2, y2);
+  return rs;
 }
 
 struct anim_translate_box_rep: public anim_effect_box_rep {

@@ -66,6 +66,12 @@ player_rep::get_speed () {
   return speed;
 }
 
+void
+player_rep::request_refresh (double dt) {
+  double t= texmacs_time () + fabs (dt / speed) + 1.0;
+  (void) t;
+}
+
 bool
 operator == (player p1, player p2) {
   return p1->started == p2->started && p1->speed == p2->speed;

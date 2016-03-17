@@ -24,6 +24,7 @@ public:
   double get_elapsed ();
   void   set_speed (double s);
   double get_speed ();
+  void   request_refresh (double dt);
 
   friend class player;
 };
