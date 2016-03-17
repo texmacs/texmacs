@@ -40,25 +40,26 @@ refresh_at (time_t t) {
 * Animations which remain constant for a fixed duration
 ******************************************************************************/
 
-struct anim_box_rep: public composite_box_rep {
+struct anim_rep {
   player pl;
   double delay;
   double duration;
 
-  anim_box_rep (path ip, player pl2, double duration2):
-    composite_box_rep (ip), pl (pl2), delay (0.0), duration (duration2) {}
+  anim_rep (player pl2, double duration2):
+    pl (pl2), delay (0.0), duration (duration2) {}
 
   player anim_player () { return pl; }
   double anim_delay () { return delay; }
   double anim_duration () { return duration; }
   void   anim_position (double pos) { delay= pos; }
+  double anim_time () { return pl->get_elapsed () - delay; }
 };
 
 /******************************************************************************
 * Animations which remain constant for a fixed duration
 ******************************************************************************/
 
-struct anim_constant_box_rep: public anim_box_rep {
+struct anim_constant_box_rep: public composite_box_rep, public anim_rep {
   bool   started;
   time_t started_at;
   bool   finished;
@@ -79,7 +80,7 @@ struct anim_constant_box_rep: public anim_box_rep {
 
 anim_constant_box_rep::anim_constant_box_rep (path ip, box b, player pl,
                                               int length2):
-  anim_box_rep (ip, pl, (double) length2), length (length2)
+  composite_box_rep (ip), anim_rep (pl, (double) length2), length (length2)
 {
   insert (b, 0, 0);
   position ();
@@ -123,12 +124,10 @@ anim_constant_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
 * Compositions of animations
 ******************************************************************************/
 
-class anim_compose_box_rep: public box_rep {
+class anim_compose_box_rep: public box_rep, public anim_rep {
 public:
   array<box> bs;
   array<int> cum_len;
-  player     pl;
-  double     delay;
   array<double> offsets;
   bool       started;
   time_t     started_at;
@@ -173,8 +172,9 @@ public:
 * Composition of animations / basic routines
 ******************************************************************************/
 
-anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player p2):
-  box_rep (ip), bs (b2), cum_len (N(bs)), pl (p2), delay (0.0), offsets (N(bs))
+anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player pl):
+  box_rep (ip), anim_rep (pl, 0.0),
+  bs (b2), cum_len (N(bs)), offsets (N(bs))
 {
   ASSERT (N(bs) != 0, "empty animation");
 
@@ -204,6 +204,7 @@ anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player p2):
     cum_len[i]= len;
     offsets[i]= (double) len;
   }
+  duration= offsets[n-1];
 }
 
 anim_compose_box_rep::~anim_compose_box_rep () {}
@@ -332,7 +333,7 @@ anim_compose_box_rep::graphical_select (SI x, SI y, SI dist) {
 * Animations which are repeated ad infinam
 ******************************************************************************/
 
-struct anim_repeat_box_rep: public anim_box_rep {
+struct anim_repeat_box_rep: public composite_box_rep, public anim_rep {
   bool   started;
   time_t started_at;
   int    length;
@@ -350,7 +351,7 @@ struct anim_repeat_box_rep: public anim_box_rep {
 };
 
 anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b, player pl):
-  anim_box_rep (ip, pl, 1000000000.0)
+  composite_box_rep (ip), anim_rep (pl, 1000000000.0)
 {
   insert (b, 0, 0);
   position ();
@@ -390,7 +391,7 @@ anim_repeat_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
 * Special content effects
 ******************************************************************************/
 
-struct anim_effect_box_rep: public anim_box_rep {
+struct anim_effect_box_rep: public composite_box_rep, public anim_rep {
   box    b;
   bool   started;
   bool   finished;
@@ -417,7 +418,7 @@ struct anim_effect_box_rep: public anim_box_rep {
 };
 
 anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player pl, int len):
-  anim_box_rep (ip, pl, (double) len), b (b2)
+  composite_box_rep (ip), anim_rep (pl, (double) len), b (b2)
 {
   insert (b, 0, 0);
   position ();
@@ -528,21 +529,14 @@ struct anim_progressive_box_rep: public anim_effect_box_rep {
 * Sound boxes
 ******************************************************************************/
 
-struct sound_box_rep: public box_rep {
-  player pl;
-  double delay;
+struct sound_box_rep: public box_rep, public anim_rep {
   url    u;
   bool   started;
 
-  sound_box_rep (path ip, player pl2, url u2, SI h):
-    box_rep (ip), pl (pl2), u (u2), started (false) { y2= h; }
+  sound_box_rep (path ip, player pl, url u2, SI h):
+    box_rep (ip), anim_rep (pl, 0.0), u (u2), started (false) { y2= h; }
   operator tree () { return tree (TUPLE, "sound", u->t); }
   void display (renderer ren) { (void) ren; }
-
-  player anim_player () { return pl; }
-  double anim_delay () { return delay; }
-  double anim_duration () { return 0.0; }
-  void   anim_position (double pos) { delay= pos; }
 
   void play_sound () {
     if (exists_in_path ("play"))
