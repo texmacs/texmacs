@@ -216,7 +216,7 @@ bridge_compound_rep::my_typeset (int desired_status) {
         i<m? descend (ip,i+d): decorate_right(ip);
       }
     initialize (f[n], d, f);
-      // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
     if (!the_drd->is_child_enforcing (st))
       ttt->insert_marker (st, ip);
     body->typeset (desired_status);
@@ -225,7 +225,7 @@ bridge_compound_rep::my_typeset (int desired_status) {
   }
   else {
     initialize (f, d, f);
-    ///*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
+    // /*IF_NON_CHILD_ENFORCING(st)*/ ttt->insert_marker (st, ip);
     if (!the_drd->is_child_enforcing (st))
       ttt->insert_marker (st, ip);
     body->typeset (desired_status);

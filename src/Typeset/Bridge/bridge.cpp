@@ -84,6 +84,11 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_compound (ttt, st, ip);
   case ARG:
     return bridge_argument (ttt, st, ip);
+  case MAP_ARGS:
+    // FIXME: we might want to merge bridge_rewrite and bridge_eval
+    // 'map_args' should really be implemented using bridge_rewrite,
+    // but bridge_eval leads to better locality of updates for 'screens'
+    return bridge_eval (ttt, st, ip);
   case MARK:
     return bridge_mark (ttt, st, ip);
   case EXPAND_AS:
