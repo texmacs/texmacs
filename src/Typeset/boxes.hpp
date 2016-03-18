@@ -144,6 +144,7 @@ public:
   virtual box       subbox (int i);
   virtual tree      action (tree t, SI x, SI y, SI delta);
   virtual void      loci (SI x, SI y, SI d, list<string>& ids, rectangles& rs);
+  virtual void      display_links (renderer ren);
   virtual void      position_at (SI x, SI y, rectangles& change_log);
   virtual void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   virtual path      find_tag (string name);

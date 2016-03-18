@@ -649,8 +649,8 @@ locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
 
 void
 locus_box_rep::post_display (renderer &ren) {
-  if (ref!="") ren->href(ref, x1, y1, x2, y2);
-  if (anchor!="") ren->anchor(anchor, x1, y1, x2, y2);
+  if (ref != "") ren->href (ref, x1, y1, x2, y2);
+  if (anchor != "") ren->anchor (anchor, x1, y1, x2, y2);
 }
 
 /******************************************************************************
