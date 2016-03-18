@@ -62,6 +62,7 @@ public:
   virtual double     anim_delay ();
   virtual double     anim_duration ();
   virtual void       anim_position (double delay);
+  virtual double     anim_next ();
   virtual rectangles anim_invalid ();
 
   virtual int   anim_length ();

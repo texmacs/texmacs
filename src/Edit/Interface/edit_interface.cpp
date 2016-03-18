@@ -817,8 +817,6 @@ edit_interface_rep::animate () {
   if (((double) texmacs_time ()) >= anim_next) {
     rectangles rs= eb->anim_invalid ();
     invalidate (rs);
-    clear_next_refresh ();
-    anim_next= 1.0e12;
   }
 
   /*

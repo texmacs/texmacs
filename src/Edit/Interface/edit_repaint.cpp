@@ -15,6 +15,7 @@
 
 extern int nr_painted;
 extern void clear_pattern_rectangles (renderer ren, rectangles l);
+extern bool animated_flag;
 
 /******************************************************************************
 * repainting the window
@@ -28,8 +29,13 @@ edit_interface_rep::draw_text (renderer ren, rectangles& l) {
   ren->set_background (bg);
   //refresh_needed= do_animate;
   //refresh_next  = next_animate;
+  animated_flag= (texmacs_time () >= anim_next);
+  if (animated_flag) anim_next= 1.0e12;
   eb->redraw (ren, eb->find_box_path (tp, tp_found), l);
-  anim_next= min (anim_next, get_next_refresh ());
+  if (animated_flag) {
+    double t= max (((double) texmacs_time ()) + 25.0, eb->anim_next ());
+    anim_next= min (anim_next, t);
+  }
   //do_animate  = refresh_needed;
   //next_animate= refresh_next;
 }

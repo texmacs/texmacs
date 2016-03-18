@@ -40,6 +40,8 @@ refresh_at (time_t t) {
 * Base classes for animation boxes
 ******************************************************************************/
 
+bool animated_flag= false;
+
 struct anim_box_rep: public box_rep {
   player pl;
   double delay;
@@ -53,6 +55,7 @@ struct anim_box_rep: public box_rep {
   double anim_duration () { return duration; }
   void   anim_position (double pos) { delay= pos; }
   double anim_time () { return pl->get_elapsed () - delay; }
+  void   pre_display (renderer& ren) { (void) ren; animated_flag= true; }
 };
 
 struct composite_anim_box_rep: public composite_box_rep {
@@ -68,6 +71,7 @@ struct composite_anim_box_rep: public composite_box_rep {
   double anim_duration () { return duration; }
   void   anim_position (double pos) { delay= pos; }
   double anim_time () { return pl->get_elapsed () - delay; }
+  void   pre_display (renderer& ren) { (void) ren; animated_flag= true; }
 };
 
 /******************************************************************************
@@ -106,6 +110,7 @@ anim_constant_box_rep::anim_constant_box_rep (path ip, box b, player pl,
 void
 anim_constant_box_rep::pre_display (renderer& ren) {
   (void) ren;
+  animated_flag= true;
   if (!started) anim_start_at (texmacs_time ());
   else if (!finished) {
     finished= (texmacs_time () - (started_at+length) >= 0);
@@ -147,7 +152,9 @@ public:
   bool       started;
   time_t     started_at;
   int        current;
+  double     cur_delay;
   bool       finished;
+  int        last_index;
   double     last_delay;
 
   anim_compose_box_rep (path ip, array<box> bs, player pl);
@@ -162,7 +169,9 @@ public:
   void      collect_page_numbers (hashmap<string,tree>& h, tree page);
   path      find_tag (string name);
 
-  double get_index (double t);
+  int    get_index (double t);
+  void   anim_resync ();
+  double anim_next ();
   rectangles anim_invalid ();
 
   void   pre_display (renderer& ren);
@@ -195,6 +204,8 @@ anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player pl):
   started   = false;
   finished  = false;
   current   = 0;
+  cur_delay = 0.0;
+  last_index= 0;
   last_delay= 0.0;
 
   int i, n= N(bs);
@@ -252,25 +263,55 @@ anim_compose_box_rep::find_tag (string name) {
 * Compositions of animations / animation routines
 ******************************************************************************/
 
-double
+int
 anim_compose_box_rep::get_index (double t) {
   for (int i=0; i<N(bs); i++)
     if (t < offsets[i]) return i;
   return N(bs) - 1;
 }
 
+void
+anim_compose_box_rep::anim_resync () {
+  double t = anim_time ();
+  int    ix= get_index (t);
+  if (ix != current || delay != cur_delay) {
+    if (ix == 0) bs[ix]->anim_position (delay);
+    else bs[ix]->anim_position (delay + offsets[ix-1]);
+    current  = ix;
+    cur_delay= delay;
+  }
+}
+
+double
+anim_compose_box_rep::anim_next () {
+  anim_resync ();
+  double r= bs[current]->anim_next ();
+  if (pl->speed > 0 && current != N(bs)-1)
+    return min (r, pl->get_refresh_time (offsets[current] - anim_time ()));
+  if (pl->speed < 0 && current != 0)
+    return min (r, pl->get_refresh_time (anim_time () - offsets[current-1]));
+  return r;
+}
+
 rectangles
 anim_compose_box_rep::anim_invalid () {
   rectangles rs= box_rep::anim_invalid ();
-  double t = anim_time ();
-  int    ix= get_index (t);
-  if (ix != current || delay != last_delay)
+  anim_resync ();
+  if (current != last_index) rs << box_rep::anim_invalid ();
+  if (current != last_index || delay != last_delay)
     rs << rectangle (x1, y1, x2, y2);
   return rs;
 }
 
 void
 anim_compose_box_rep::pre_display (renderer& ren) {
+  (void) ren;
+  animated_flag= true;
+  anim_resync ();
+  last_index= current;
+  last_delay= delay;
+
+  /*
   double t = anim_time ();
   int    ix= get_index (t);
   if (pl->speed > 0 && ix != N(bs)-1)
@@ -283,6 +324,7 @@ anim_compose_box_rep::pre_display (renderer& ren) {
     current   = ix;
     last_delay= delay;
   }
+  */
 
   /*
   (void) ren;
@@ -381,7 +423,8 @@ anim_compose_box_rep::graphical_select (SI x, SI y, SI dist) {
 ******************************************************************************/
 
 struct anim_repeat_box_rep: public composite_anim_box_rep {
-  double updated;
+  double current_it;
+  double last_it;
   bool   started;
   time_t started_at;
   int    length;
@@ -396,12 +439,15 @@ struct anim_repeat_box_rep: public composite_anim_box_rep {
   void anim_start_at (time_t at);
   void anim_finish_now () {}
   void anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
+
+  void anim_resync ();
+  double anim_next ();
   rectangles anim_invalid ();
 };
 
 anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b, player pl):
   composite_anim_box_rep (ip, pl, b->anim_duration ()),
-  updated (1000000000.0)
+  current_it (0.0), last_it (0.0)
 {
   insert (b, 0, 0);
   position ();
@@ -411,13 +457,51 @@ anim_repeat_box_rep::anim_repeat_box_rep (path ip, box b, player pl):
 }
 
 void
+anim_repeat_box_rep::anim_resync () {
+  double t = anim_time ();
+  double it= floor (t / duration);
+  if (it != current_it) {
+    bs[0]->anim_position (delay + it * duration);
+    current_it= it;
+  }
+}
+
+double
+anim_repeat_box_rep::anim_next () {
+  anim_resync ();
+  double r= bs[0]->anim_next ();
+  double t= anim_time ();
+  if (pl->speed > 0)
+    r= min (r, pl->get_refresh_time ((current_it + 1.0) * duration - t));
+  else
+    r= min (r, pl->get_refresh_time (t - current_it * duration));
+  return r;
+}
+
+rectangles
+anim_repeat_box_rep::anim_invalid () {
+  anim_resync ();
+  rectangles rs= bs[0]->anim_invalid ();
+  if (current_it != last_it)
+    rs << rectangle (x1, y1, x2, y2);
+  return rs;
+}
+
+void
 anim_repeat_box_rep::pre_display (renderer& ren) {
+  (void) ren;
+  animated_flag= true;
+  anim_resync ();
+  last_it= current_it;
+
+  /*
   double t = anim_time ();
   double it= floor (t / duration);
   bs[0]->anim_position (delay + it * duration);
   if (pl->speed > 0) pl->request_refresh ((it + 1.0) * duration - t);
   else pl->request_refresh (t - it * duration);
   updated= t;
+  */
 
   /*
   (void) ren;
@@ -446,15 +530,6 @@ anim_repeat_box_rep::anim_get_invalid (bool& f, time_t& at, rectangles& rs) {
   if (started) bs[0]->anim_get_invalid (f, at, rs);
 }
 
-rectangles
-anim_repeat_box_rep::anim_invalid () {
-  rectangles rs= bs[0]->anim_invalid ();
-  double t = anim_time ();
-  if (floor (t / duration) != floor (updated / duration))
-    rs << rectangle (x1, y1, x2, y2);
-  return rs;
-}
-
 /******************************************************************************
 * Special content effects
 ******************************************************************************/
@@ -467,7 +542,8 @@ struct anim_effect_box_rep: public composite_anim_box_rep {
   time_t last_update;
   int    length;
   SI     old_clip_x1, old_clip_x2, old_clip_y1, old_clip_y2;
-  double current;
+  double current_x;
+  double last_x;
 
   anim_effect_box_rep (path ip, box b, player pl, int len);
   operator tree () { return tree (TUPLE, "anim_effect", (tree) b); }
@@ -484,12 +560,15 @@ struct anim_effect_box_rep: public composite_anim_box_rep {
   void   anim_finish_now ();
   time_t anim_next_update ();
   void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
+
+  void anim_resync ();
+  double anim_next ();
   rectangles anim_invalid ();
 };
 
 anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player pl, int len):
   composite_anim_box_rep (ip, pl, (double) len),
-  b (b2), current (0.0)
+  b (b2), current_x (0.0), last_x (0.0)
 {
   insert (b, 0, 0);
   position ();
@@ -500,7 +579,40 @@ anim_effect_box_rep::anim_effect_box_rep (path ip, box b2, player pl, int len):
 }
 
 void
+anim_effect_box_rep::anim_resync () {
+  double t= anim_time ();
+  current_x= max (0.0, min (1.0, t / duration));
+}
+
+double
+anim_effect_box_rep::anim_next () {
+  anim_resync ();
+  double r= bs[0]->anim_next ();
+  if (pl->speed > 0 && 1.0 > current_x)
+    r= min (r, pl->get_refresh_time (0.0));
+  if (0 > pl->speed && 0.0 < current_x)
+    r= min (r, pl->get_refresh_time (0.0));
+  return r;
+}
+
+rectangles
+anim_effect_box_rep::anim_invalid () {
+  rectangles rs= bs[0]->anim_invalid ();
+  anim_resync ();
+  if (current_x != last_x) rs << rectangle (x1, y1, x2, y2);
+  return rs;
+}
+
+void
 anim_effect_box_rep::pre_display (renderer& ren) {
+  animated_flag= true;
+  anim_resync ();
+  set_position (current_x);
+  ren->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
+  set_clipping (ren, current_x);
+  last_x= current_x;
+
+  /*
   double t= anim_time ();
   double x= max (0.0, min (1.0, t / duration));
   if (pl->speed > 0 && x < 1.0) pl->request_refresh (0.0);
@@ -509,6 +621,7 @@ anim_effect_box_rep::pre_display (renderer& ren) {
   ren->get_clipping (old_clip_x1, old_clip_y1, old_clip_x2, old_clip_y2);
   set_clipping (ren, x);
   current= x;
+  */
 
   /*
   double t= 1.0;
@@ -570,15 +683,6 @@ anim_effect_box_rep::anim_get_invalid
     bs[0]->anim_get_invalid (f, at, rs);
     if (!finished) anim_check_invalid (f, at, rs);
   }
-}
-
-rectangles
-anim_effect_box_rep::anim_invalid () {
-  rectangles rs= bs[0]->anim_invalid ();
-  double t= anim_time ();
-  double x= max (0.0, min (1.0, t / duration));
-  if (x != current) rs << rectangle (x1, y1, x2, y2);
-  return rs;
 }
 
 struct anim_translate_box_rep: public anim_effect_box_rep {

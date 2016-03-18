@@ -163,6 +163,7 @@ player modifier_box_rep::anim_player () { return b->anim_player (); }
 double modifier_box_rep::anim_delay () { return b->anim_delay (); }
 double modifier_box_rep::anim_duration () { return b->anim_duration (); }
 void   modifier_box_rep::anim_position (double t) { b->anim_position (t); }
+double modifier_box_rep::anim_next () { return b->anim_next (); }
 rectangles modifier_box_rep::anim_invalid () { return b->anim_invalid (); }
 
 int modifier_box_rep::anim_length () { return b->anim_length (); }

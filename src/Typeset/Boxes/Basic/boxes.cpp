@@ -740,6 +740,17 @@ box_rep::anim_position (double t) {
     subbox (i)->anim_position (t);
 }
 
+double
+box_rep::anim_next () {
+  double r= 1.0e12;
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    double sr= subbox (i)->anim_next ();
+    r= min (r, sr);
+  }
+  return r;
+}
+
 rectangles
 box_rep::anim_invalid () {
   rectangles rs;

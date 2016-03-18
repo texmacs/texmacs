@@ -66,6 +66,11 @@ player_rep::get_speed () {
   return speed;
 }
 
+double
+player_rep::get_refresh_time (double dt) {
+  return texmacs_time () + fabs (dt / speed) + 1.0;
+}
+
 bool
 operator == (player p1, player p2) {
   return p1->started == p2->started && p1->speed == p2->speed;
@@ -80,26 +85,4 @@ tm_ostream&
 operator << (tm_ostream& out, player p) {
   out << "player (" << p->started << ", " << p->speed << ")";
   return out;
-}
-
-/******************************************************************************
-* Refreshing
-******************************************************************************/
-
-static double next_refresh= 1.0e12;
-
-void
-player_rep::request_refresh (double dt) {
-  double t= texmacs_time () + fabs (dt / speed) + 1.0;
-  next_refresh= min (next_refresh, t);
-}
-
-double
-get_next_refresh () {
-  return max (next_refresh, ((double) texmacs_time ()) + 40.0);
-}
-
-void
-clear_next_refresh () {
-  next_refresh= 1.0e12;
 }
