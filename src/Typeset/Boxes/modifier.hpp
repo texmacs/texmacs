@@ -64,13 +64,6 @@ public:
   virtual void       anim_position (double delay);
   virtual double     anim_next ();
   virtual rectangles anim_invalid ();
-
-  virtual int   anim_length ();
-  virtual bool  anim_started ();
-  virtual bool  anim_finished ();
-  virtual void  anim_start_at (time_t at);
-  virtual void  anim_finish_now ();
-  virtual void  anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
 };
 
 #endif // defined MODIFIER_H

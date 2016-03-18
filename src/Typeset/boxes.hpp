@@ -250,15 +250,6 @@ public:
   virtual double     anim_next ();
   virtual rectangles anim_invalid ();
 
-  virtual int    anim_length ();
-  virtual bool   anim_started ();
-  virtual bool   anim_finished ();
-  virtual void   anim_start_at (time_t at);
-  virtual void   anim_finish_now ();
-  virtual time_t anim_next_update ();
-          void   anim_check_invalid (bool& flag, time_t& at, rectangles& rs);
-  virtual void   anim_get_invalid (bool& flag, time_t& at, rectangles& rs);
-
   /********************************* obsolete ********************************/
 
   friend struct page_box_rep; // temporary friends for accessing x0 and y0
