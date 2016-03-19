@@ -114,6 +114,12 @@ intersection (rectangle r1, rectangle r2, rectangles& l) {
 }
 
 rectangle
+least_upper_bound (rectangle r1, rectangle r2) {
+  return rectangle (min (r1->x1, r2->x1), min (r1->y1, r2->y1),
+                    max (r1->x2, r2->x2), max (r1->y2, r2->y2));
+}
+
+rectangle
 operator * (rectangle r, int d) {
   return rectangle (r->x1*d, r->y1*d, r->x2*d, r->y2*d);
 }

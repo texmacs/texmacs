@@ -140,14 +140,15 @@ public:
   virtual void      display (renderer ren) = 0;
   virtual void      clear_incomplete (rectangles& rs, SI pixel,
 				      int i, int i1, int i2);
-  virtual int       subnr ();
-  virtual box       subbox (int i);
-  virtual tree      action (tree t, SI x, SI y, SI delta);
-  virtual void      loci (SI x, SI y, SI d, list<string>& ids, rectangles& rs);
-  virtual void      display_links (renderer ren);
-  virtual void      position_at (SI x, SI y, rectangles& change_log);
-  virtual void      collect_page_numbers (hashmap<string,tree>& h, tree page);
-  virtual path      find_tag (string name);
+  virtual int  subnr ();
+  virtual box  subbox (int i);
+  virtual tree action (tree t, SI x, SI y, SI delta);
+  virtual void loci (SI x, SI y, SI d, list<string>& ids, rectangles& rs);
+  virtual void display_links (renderer ren);
+  virtual void position_at (SI x, SI y, rectangles& change_log);
+  virtual void collect_page_numbers (hashmap<string,tree>& h, tree page);
+  virtual void collect_page_colors (array<brush>& bs, array<rectangle>& rs);
+  virtual path find_tag (string name);
 
   virtual int  reindex (int i, int item, int n);
   virtual void redraw (renderer ren, path p, rectangles& l);

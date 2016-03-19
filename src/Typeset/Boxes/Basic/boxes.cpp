@@ -820,6 +820,17 @@ box_rep::collect_page_numbers (hashmap<string,tree>& h, tree page) {
   (void) h; (void) page;
 }
 
+void
+box_rep::collect_page_colors (array<brush>& bs, array<rectangle>& rs) {
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    array<rectangle> rs2;
+    subbox (i)->collect_page_colors (bs, rs2);
+    for (int j=0; j<N(rs2); j++)
+      rs << translate (rs2[j], sx (i), sy (i));
+  }
+}
+
 path
 box_rep::find_tag (string name) {
   (void) name;

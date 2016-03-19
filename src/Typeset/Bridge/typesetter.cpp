@@ -182,6 +182,13 @@ typesetter_rep::typeset (SI& x1b, SI& y1b, SI& x2b, SI& y2b) {
   change_log= requires_update (change_log);
   rectangle r (0, 0, 0, 0);
   if (!is_nil (change_log)) r= least_upper_bound (change_log);
+  array<brush> new_bgs;
+  array<rectangle> rs;
+  b->collect_page_colors (new_bgs, rs);
+  for (int i=0; i<min(N(old_bgs), N(new_bgs)); i++)
+    if (new_bgs[i] != old_bgs[i])
+      r= least_upper_bound (r, rs[i]);
+  old_bgs= new_bgs;
   x1b= r->x1; y1b= r->y1; x2b= r->x2; y2b= r->y2;
   change_log= rectangles ();
   return b;

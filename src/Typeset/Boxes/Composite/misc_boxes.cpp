@@ -105,6 +105,7 @@ struct page_box_rep: composite_box_rep {
   void display (renderer ren);
   void clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
+  void collect_page_colors (array<brush>& bs, array<rectangle>& rs);
   path find_left_box_path ();
   path find_right_box_path ();
 };
@@ -205,6 +206,12 @@ void
 page_box_rep::collect_page_numbers (hashmap<string,tree>& h, tree dummy) {
   (void) dummy;
   bs[0]->collect_page_numbers (h, page);
+}
+
+void
+page_box_rep::collect_page_colors (array<brush>& bs, array<rectangle>& rs) {
+  bs << page_bgc;
+  rs << rectangle (x1, y1, x2, y2);
 }
 
 path

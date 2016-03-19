@@ -818,20 +818,6 @@ edit_interface_rep::animate () {
     rectangles rs= eb->anim_invalid ();
     invalidate (rs);
   }
-
-  /*
-  // cout << do_animate << ", " << next_animate << "\n";
-  if (do_animate && texmacs_time () - next_animate >= 0) {
-    bool flag= false;
-    time_t at= 0;
-    rectangles rs;
-    eb->anim_get_invalid (flag, at, rs);
-    if (flag && texmacs_time () - at >= 0)
-      invalidate (rs);
-    do_animate  = flag;
-    next_animate= at;
-  }
-  */
 }
 
 /******************************************************************************
