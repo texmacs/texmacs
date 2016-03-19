@@ -19,13 +19,14 @@
 pager_rep::pager_rep (path ip2, edit_env env2, array<page_item> l2):
   ip (ip2), env (env2), style (UNINIT), l (l2)
 {
-  style (PAGE_THE_PAGE)   = tree (MACRO, compound ("page-nr"));
-  style (PAGE_ODD_HEADER) = env->read (PAGE_ODD_HEADER);
-  style (PAGE_ODD_FOOTER) = env->read (PAGE_ODD_FOOTER);
-  style (PAGE_EVEN_HEADER)= env->read (PAGE_EVEN_HEADER);
-  style (PAGE_EVEN_FOOTER)= env->read (PAGE_EVEN_FOOTER);
-  style (PAGE_THIS_HEADER)= "";
-  style (PAGE_THIS_FOOTER)= "";
+  style (PAGE_THE_PAGE)     = tree (MACRO, compound ("page-nr"));
+  style (PAGE_ODD_HEADER)   = env->read (PAGE_ODD_HEADER);
+  style (PAGE_ODD_FOOTER)   = env->read (PAGE_ODD_FOOTER);
+  style (PAGE_EVEN_HEADER)  = env->read (PAGE_EVEN_HEADER);
+  style (PAGE_EVEN_FOOTER)  = env->read (PAGE_EVEN_FOOTER);
+  style (PAGE_THIS_HEADER)  = "";
+  style (PAGE_THIS_FOOTER)  = "";
+  style (PAGE_THIS_BG_COLOR)= "";
 
   int nr_cols= env->get_int (PAR_COLUMNS);
   paper= (env->get_string (PAGE_MEDIUM) == "paper");
@@ -126,7 +127,7 @@ format_stack (path ip, array<page_item> l, SI height, bool may_stretch) {
 }
 
 box
-page_box (path ip, box b, tree page, int page_nr,
+page_box (path ip, box b, tree page, int page_nr, brush bgc,
 	  SI width, SI height, SI left, SI top, SI bot,
 	  box header, box footer, SI head_sep, SI foot_sep)
 {
@@ -140,7 +141,7 @@ page_box (path ip, box b, tree page, int page_nr,
   array<SI>  decs_x (2); decs_x [0]= left  ; decs_x [1]= left;
   array<SI>  decs_y (2); decs_y [0]= h_y   ; decs_y [1]= f_y;
 
-  return page_box (ip, page, page_nr, width, height,
+  return page_box (ip, page, page_nr, bgc, width, height,
 		   bs, bs_x, bs_y,
 		   decs, decs_x, decs_y);
 }
@@ -179,7 +180,7 @@ pager_rep::end_page (bool flag) {
   box lb  = move_box (ip, sb, 0, 0);
   SI  nr  = N(pages)+1+page_offset;
   SI  left= (nr&1)==0? even: odd;
-  box pb  = page_box (ip, lb, as_string (nr), nr,
+  box pb  = page_box (ip, lb, as_string (nr), nr, brush (none),
 		      width, height, left, top, top+ text_height,
 		      make_header(), make_footer(), head_sep, foot_sep);
 
@@ -216,6 +217,15 @@ pager_rep::make_footer (bool empty_flag) {
   style (PAGE_THIS_FOOTER) = "";
   env->local_end (PAR_COLUMNS, old);
   return b;
+}
+
+brush
+pager_rep::make_background (bool empty_flag) {
+  if (empty_flag) return brush (false);
+  tree bgc= style [PAGE_THIS_BG_COLOR];
+  style (PAGE_THIS_BG_COLOR) = "";
+  if (bgc == "") return brush (false);
+  return brush (bgc);
 }
 
 /******************************************************************************

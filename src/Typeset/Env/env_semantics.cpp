@@ -108,6 +108,7 @@ initialize_default_var_type () {
   var_type (PAGE_EVEN_FOOTER)   = Env_Page;
   var_type (PAGE_THIS_HEADER)   = Env_Page;
   var_type (PAGE_THIS_FOOTER)   = Env_Page;
+  var_type (PAGE_THIS_BG_COLOR) = Env_Page;
   var_type (PAGE_FNOTE_SEP)     = Env_Page;
   var_type (PAGE_FNOTE_BARLEN)  = Env_Page;
   var_type (PAGE_FLOAT_SEP)     = Env_Page;

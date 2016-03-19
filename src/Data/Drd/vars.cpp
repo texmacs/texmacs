@@ -137,6 +137,7 @@ string PAGE_EVEN_HEADER ("page-even-header");
 string PAGE_EVEN_FOOTER ("page-even-footer");
 string PAGE_THIS_HEADER ("page-this-header");
 string PAGE_THIS_FOOTER ("page-this-footer");
+string PAGE_THIS_BG_COLOR ("page-this-bg-color");
 string PAGE_SCREEN_WIDTH ("page-screen-width");
 string PAGE_SCREEN_HEIGHT ("page-screen-height");
 string PAGE_SCREEN_LEFT ("page-screen-left");

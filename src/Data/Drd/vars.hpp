@@ -127,6 +127,7 @@ extern string PAGE_EVEN_HEADER;
 extern string PAGE_EVEN_FOOTER;
 extern string PAGE_THIS_HEADER;
 extern string PAGE_THIS_FOOTER;
+extern string PAGE_THIS_BG_COLOR;
 extern string PAGE_SCREEN_WIDTH;
 extern string PAGE_SCREEN_HEIGHT;
 extern string PAGE_SCREEN_LEFT;

@@ -75,9 +75,10 @@ public:
   //void start_page ();
   //void print (page_item item);
   //void end_page (bool flag);
-  box  make_header (bool empty_flag);
-  box  make_footer (bool empty_flag);
-  box  make_pages ();
+  box   make_header (bool empty_flag);
+  box   make_footer (bool empty_flag);
+  brush make_background (bool empty_flag);
+  box   make_pages ();
 
   friend struct stacker_rep;
   friend box typeset_paragraph (edit_env env, tree t, path ip);

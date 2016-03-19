@@ -153,7 +153,7 @@ box clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2);
 box clip_box (path ip, box b, SI x1, SI y1, SI x2, SI y2,
 	      tree xt, tree yt, SI scx, SI scy);
 box vcorrect_box (path ip, box b, SI top_cor, SI bot_cor);
-box page_box (path ip, tree page, int page_nr, SI w, SI h,
+box page_box (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
 	      array<box> bs  , array<SI> bs_x  , array<SI> bs_y,
 	      array<box> decs, array<SI> decs_x, array<SI> decs_y);
 box locus_box (path ip, box b, list<string> ids, SI pixel);

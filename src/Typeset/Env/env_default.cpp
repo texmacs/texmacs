@@ -146,6 +146,7 @@ initialize_default_env () {
   env (PAGE_ODD_FOOTER)  = "";          // footer on odd pages
   env (PAGE_EVEN_HEADER) = "";          // header on even pages
   env (PAGE_EVEN_FOOTER) = "";          // footer on even pages
+  env (PAGE_THIS_BG_COLOR) = "";        // background color of this page
   env (PAGE_SCREEN_WIDTH)  = "10cm";    // width of current window (for auto)
   env (PAGE_SCREEN_HEIGHT) = "10cm";    // height of current window (for auto)
   env (PAGE_SCREEN_LEFT) = "5mm";       // left margin for screen editing

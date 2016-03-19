@@ -219,6 +219,8 @@
       (set! l (cons `(set-this-page-header ,doc) l)))
     (and-with doc (get-field-contents "tmfs://aux/this-page-footer")
       (set! l (cons `(set-this-page-footer ,doc) l)))
+    (and-with bg (ahash-ref settings "page-this-bg-color")
+      (set! l (cons `(assign "page-this-bg-color" ,bg) l)))
     (when (nnull? l)
       (with-buffer u
         (for (x l) (insert x))
@@ -228,6 +230,15 @@
   (in? (current-buffer)
        (list (string->url "tmfs://aux/this-page-header")
              (string->url "tmfs://aux/this-page-footer"))))
+
+(define (page-set-background settings what)
+  (let* ((var "page-this-bg-color")
+         (old (ahash-ref settings var)))
+    (cond ((== what "unchanged")
+           (ahash-remove! settings var))
+          ((== what "color")
+           (interactive-color (lambda (c) (ahash-set! settings var c))
+                              (if old (list old) (list)))))))
 
 (tm-widget ((page-formatter u style settings) quit)
   (padded
@@ -240,6 +251,10 @@
         (item (text "Page number rendering:")
           (enum (ahash-set! settings 'page-the-page answer)
                 '("unchanged" "normal" "roman" "Roman")
+                "unchanged" "10em"))
+        (item (text "Page background:")
+          (enum (page-set-background settings answer)
+                '("unchanged" "color")
                 "unchanged" "10em"))))
     ======
     (bold (text "This page header"))

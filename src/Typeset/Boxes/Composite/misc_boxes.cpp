@@ -90,12 +90,13 @@ scatter_box_rep::find_selection (path lbp, path rbp) {
 ******************************************************************************/
 
 struct page_box_rep: composite_box_rep {
-  tree page;
-  int  page_nr;
-  box  decoration;
-  int  old_page;
+  tree  page;
+  int   page_nr;
+  brush page_bgc;
+  box   decoration;
+  int   old_page;
 
-  page_box_rep (path ip, tree page, int page_nr, SI w, SI h,
+  page_box_rep (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
 		array<box> bs, array<SI> x, array<SI> y, box dec);
   operator tree ();
   int find_child (SI x, SI y, SI delta, bool force);
@@ -108,10 +109,10 @@ struct page_box_rep: composite_box_rep {
   path find_right_box_path ();
 };
 
-page_box_rep::page_box_rep (path ip2, tree page2, int nr2, SI w, SI h,
+page_box_rep::page_box_rep (path ip2, tree p2, int nr2, brush bgc, SI w, SI h,
 			    array<box> bs, array<SI> x, array<SI> y, box dec):
   composite_box_rep (ip2, bs, x, y),
-  page (page2), page_nr (nr2), decoration (dec), old_page (0)
+  page (p2), page_nr (nr2), page_bgc (bgc), decoration (dec), old_page (0)
 {
   x1= min (x1, 0);
   x2= max (x2, w);
@@ -122,6 +123,12 @@ page_box_rep::page_box_rep (path ip2, tree page2, int nr2, SI w, SI h,
     x4= max (x4, decoration->x0+ decoration->x4);
     y3= min (y3, decoration->y0+ decoration->y3);
     y4= max (y4, decoration->y0+ decoration->y4);
+  }
+  if (page_bgc->get_type () != brush_none) {
+    x3= min (x3, 0);
+    x4= max (x4, w);
+    y3= min (y3, -h);
+    y4= max (y4, 0);
   }
   finalize ();
 }
@@ -149,6 +156,10 @@ page_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 
 void
 page_box_rep::pre_display (renderer& ren) {
+  if (page_bgc->get_type () != brush_none) {
+    ren->set_background (page_bgc);
+    ren->clear_pattern (x1, y1, x2, y2);
+  }
   old_page= ren->cur_page;
   ren->set_page_nr (page_nr);
 }
@@ -216,10 +227,11 @@ scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y) {
 }
 
 box
-page_box (path ip, tree page, int page_nr, SI w, SI h,
+page_box (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
 	  array<box> bs, array<SI> bs_x, array<SI> bs_y,
 	  array<box> decs, array<SI> decs_x, array<SI> decs_y) {
   box dec;
   if (N (decs) > 0) dec= composite_box (ip, decs, decs_x, decs_y, false);
-  return tm_new<page_box_rep> (ip, page, page_nr, w, h, bs, bs_x, bs_y, dec);
+  return tm_new<page_box_rep> (ip, page, page_nr, bgc,
+                               w, h, bs, bs_x, bs_y, dec);
 }

@@ -959,6 +959,7 @@ init_std_drd () {
   init_var (PAGE_EVEN_FOOTER, TYPE_REGULAR, "even page footer");
   init_var (PAGE_THIS_HEADER, TYPE_REGULAR);
   init_var (PAGE_THIS_FOOTER, TYPE_REGULAR);
+  init_var (PAGE_THIS_BG_COLOR, TYPE_COLOR);
   init_var (PAGE_SCREEN_WIDTH, TYPE_LENGTH);
   init_var (PAGE_SCREEN_HEIGHT, TYPE_LENGTH);
   init_var (PAGE_SCREEN_LEFT, TYPE_LENGTH);
