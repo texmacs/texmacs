@@ -693,7 +693,7 @@
   ---
   ("Palette" (interactive-background
               (lambda (col) (init-env "bg-color" col)) '()))
-  ("Pattern" (choose-file set-background-picture
+  ("Pattern" (choose-file set-background-pattern
                           "Background pattern" "image"))
   ("Picture" (choose-file set-background-picture
                           "Background picture" "image"))

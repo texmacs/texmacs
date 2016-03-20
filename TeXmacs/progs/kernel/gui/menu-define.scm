@@ -514,25 +514,45 @@
 ;; Basic pattern picker
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (standard-pattern-list scale)
-  (let* ((dir "$TEXMACS_PATH/misc/patterns")
-         (l (url-read-directory dir "*.png"))
+(define (standard-pattern-list dir scale)
+  (let* ((l1 (url-read-directory dir "*.png"))
+         (l2 (url-read-directory dir "*.jpg"))
+         (l3 (url-read-directory dir "*.gif"))
+         (l (append l1 l2 l3))
          (d (map (cut url-delta (string-append dir "/x") <>) l))
          (f (map (lambda (x) (string-append dir "/" (url->unix x))) d)))
     (map (lambda (x) `(pattern ,x ,scale "")) f)))
 
-(tm-menu (standard-pattern-menu cmd scale)
+(tm-menu (standard-pattern-menu cmd dir scale)
   (tile 8
-    (for (col (standard-pattern-list scale))
+    (for (col (standard-pattern-list dir scale))
       (explicit-buttons
-        ((color col #f #f 32 24)
+        ((color col #f #f 32 32)
          (cmd col))))))
+
+(define-public (clipart-list)
+  (list-filter
+   (list (list "Hatch" "/opt/local/share/openclipart/special/patterns")
+         (list "Personal" "~/patterns")
+         (list "Simple" "~/simple-tiles"))
+   (lambda (p) (url-exists? (cadr p)))))
+
+(tm-menu (clipart-pattern-menu cmd scale)
+  (for (p (clipart-list))
+    (-> (eval (car p))
+        (dynamic (standard-pattern-menu cmd (cadr p) scale)))))
 
 (define (gui-make-pick-background x)
   `(menu-dynamic
      (dynamic (standard-color-menu (lambda (answer) ,@(cddr x))))
      (glue #f #f 0 5)
-     (dynamic (standard-pattern-menu (lambda (answer) ,@(cddr x)) ,(cadr x)))))
+     (dynamic (standard-pattern-menu (lambda (answer) ,@(cddr x))
+                                     "$TEXMACS_PATH/misc/patterns"
+                                     ,(cadr x)))
+     (assuming (nnull? (clipart-list))
+       ---
+       (dynamic (clipart-pattern-menu (lambda (answer) ,@(cddr x))
+                                      ,(cadr x))))))
 
 (extend-table gui-make-table
   (pick-background ,gui-make-pick-background))
