@@ -222,6 +222,11 @@ qt_renderer_rep::set_pencil (pencil np) {
     painter->setOpacity (qreal (pattern_alpha) / qreal (255));
     if (pm != NULL) {
       b= QBrush (*pm);
+      double pox, poy;
+      decode (0, 0, pox, poy);
+      QTransform tr;
+      tr.translate (pox, poy);
+      b.setTransform (tr);
       p= QPen (b, pw);
     }
   }
@@ -251,7 +256,16 @@ qt_renderer_rep::set_brush (brush br) {
     QImage* pm= get_pattern_image (br, pixel);
     int pattern_alpha= br->get_alpha ();
     painter->setOpacity (qreal (pattern_alpha) / qreal (255));
-    if (pm != NULL) painter->setBrush (QBrush (*pm));
+    if (pm != NULL) {
+      QBrush b (*pm);
+      double pox, poy;
+      decode (0, 0, pox, poy);
+      QTransform tr;
+      tr.translate (pox, poy);
+      //tr.rotate (45.0);
+      b.setTransform (tr);
+      painter->setBrush (b);
+    }
   }
 }
 
