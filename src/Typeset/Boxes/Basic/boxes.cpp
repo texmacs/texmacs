@@ -508,10 +508,12 @@ box_rep::get_leaf_offset (string search) {
 int nr_painted= 0;
 
 void
-clear_pattern_rectangles (renderer ren, rectangles l) {
+clear_pattern_rectangles (renderer ren, rectangle m, rectangles l) {
   while (!is_nil (l)) {
     rectangle r (l->item);
-    ren->clear_pattern (r->x1- ren->ox, r->y1- ren->oy,
+    ren->clear_pattern (m->x1- ren->ox, m->y1- ren->oy,
+			m->x2- ren->ox, m->y2- ren->oy,
+                        r->x1- ren->ox, r->y1- ren->oy,
 			r->x2- ren->ox, r->y2- ren->oy);
     l= l->next;
   }

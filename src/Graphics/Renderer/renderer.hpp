@@ -100,6 +100,8 @@ public:
   virtual void line (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void lines (array<SI> x, array<SI> y) = 0;
   virtual void clear (SI x1, SI y1, SI x2, SI y2) = 0;
+  virtual void clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
+                              SI x1, SI y1, SI x2, SI y2);
   virtual void clear_pattern (SI x1, SI y1, SI x2, SI y2);
   virtual void fill (SI x1, SI y1, SI x2, SI y2) = 0;
   virtual void arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) = 0;

@@ -231,6 +231,16 @@
        (list (string->url "tmfs://aux/this-page-header")
              (string->url "tmfs://aux/this-page-footer"))))
 
+(define ((set-page-pattern settings) name)
+  (when (pair? name) (set! name (car name)))
+  (when (url? name) (set! name (url->unix name)))
+  (ahash-set! settings "page-this-bg-color" `(pattern ,name "" "")))
+
+(define ((set-page-picture settings) name)
+  (when (pair? name) (set! name (car name)))
+  (when (url? name) (set! name (url->unix name)))
+  (ahash-set! settings "page-this-bg-color" `(pattern ,name "100%" "100@")))
+
 (define (page-set-background settings what)
   (let* ((var "page-this-bg-color")
          (old (ahash-ref settings var)))
@@ -238,7 +248,13 @@
            (ahash-remove! settings var))
           ((== what "color")
            (interactive-color (lambda (c) (ahash-set! settings var c))
-                              (if old (list old) (list)))))))
+                              (if old (list old) (list))))
+          ((== what "pattern")
+           (choose-file (set-page-pattern settings)
+                        "Background pattern" "image"))
+          ((== what "picture")
+           (choose-file (set-page-picture settings)
+                        "Background picture" "image")))))
 
 (tm-widget ((page-formatter u style settings) quit)
   (padded
@@ -254,7 +270,7 @@
                 "unchanged" "10em"))
         (item (text "Page background:")
           (enum (page-set-background settings answer)
-                '("unchanged" "color")
+                '("unchanged" "color" "pattern" "picture")
                 "unchanged" "10em"))))
     ======
     (bold (text "This page header"))

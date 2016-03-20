@@ -14,7 +14,7 @@
 #include "gui.hpp" // for gui_interrupted
 
 extern int nr_painted;
-extern void clear_pattern_rectangles (renderer ren, rectangles l);
+extern void clear_pattern_rectangles (renderer ren, rectangle m, rectangles l);
 extern bool animated_flag;
 
 /******************************************************************************
@@ -190,7 +190,10 @@ edit_interface_rep::draw_pre (renderer win, renderer ren, rectangle r) {
   // draw surroundings
   tree bg= get_init_value (BG_COLOR);
   ren->set_background (bg);
-  clear_pattern_rectangles (ren, rectangles (translate (r, ren->ox, ren->oy)));
+  rectangle m (eb->x1, eb->y1, eb->x2, eb->y2);
+  rectangle tm= translate (m, ren->ox, ren->oy);
+  rectangle tr= translate (r, ren->ox, ren->oy);
+  clear_pattern_rectangles (ren, tm, tr);
   draw_surround (ren, r);
 
   // predraw cursor
@@ -311,7 +314,10 @@ edit_interface_rep::handle_clear (renderer win, SI x1, SI y1, SI x2, SI y2) {
   win->set_zoom_factor (zoomf);
   tree bg= get_init_value (BG_COLOR);
   win->set_background (bg);
-  win->clear_pattern (max (eb->x1, x1), max (eb->y1, y1),
+  rectangle m (eb->x1, eb->y1, eb->x2, eb->y2);
+  rectangle tm= translate (m, win->ox, win->oy);
+  win->clear_pattern (m->x1, m->y1, m->x2, m->y2,
+                      max (eb->x1, x1), max (eb->y1, y1),
 		      min (eb->x2, x2), min (eb->y2, y2));
   draw_surround (win, rectangle (x1, y1, x2, y2));
   win->reset_zoom_factor ();

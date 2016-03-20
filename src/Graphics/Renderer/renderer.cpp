@@ -328,7 +328,8 @@ bool is_percentage (tree t, string s= "%");
 double as_percentage (tree t);
 
 void
-renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
+renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
+                             SI x1, SI y1, SI x2, SI y2) {
   brush b= get_background ();
   brush_kind kind= b->get_type ();
   if (kind == brush_none);
@@ -350,27 +351,32 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
     double pt= ((double) 600*PIXEL) / 72.0;
     SI imw= (SI) (((double) imw_pt) * pt);
     SI imh= (SI) (((double) imh_pt) * pt);
+    double ratio= ((double) max (imw_pt, 1)) / ((double) max (imh_pt, 1));
 
-    SI w= x2 - x1, h= y2 - y1;
+    bool flag= false;
+    SI w= mx2 - mx1, h= my2 - my1;
     if (pattern[1] == "") w= imw;
     else if (is_int (pattern[1])) w= as_int (pattern[1]);
     else if (is_percentage (pattern[1]))
       w= (SI) (as_percentage (pattern[1]) * ((double) w));
-    else if (is_percentage (pattern[1], "@"))
-      w= (SI) (as_percentage (pattern[1]) * ((double) h));
+    else flag= true;
     if (pattern[1] == "") h= imh;
     else if (is_int (pattern[2])) h= as_int (pattern[2]);
     else if (is_percentage (pattern[2]))
       h= (SI) (as_percentage (pattern[2]) * ((double) h));
     else if (is_percentage (pattern[2], "@"))
-      h= (SI) (as_percentage (pattern[2]) * ((double) w));
+      h= (SI) (as_percentage (pattern[2]) * ((double) w) / ratio);
+    if (flag && is_percentage (pattern[1], "@"))
+      w= (SI) (as_percentage (pattern[1]) * ((double) h) * ratio);
     w= ((w + pixel - 1) / pixel) * pixel;
     h= ((h + pixel - 1) / pixel) * pixel;
 
-    SI sx= 0; //is_percentage (pattern[1])? 0: ox;
-    SI sy= 0; //is_percentage (pattern[2])? 0: oy;
-    if (is_percentage (pattern[1]) || is_percentage (pattern[1], "@")) sx= -x1;
-    if (is_percentage (pattern[2]) || is_percentage (pattern[2], "@")) sy= -y1;
+    SI sx= ox;
+    SI sy= oy;
+    if (is_percentage (pattern[1]) || is_percentage (pattern[1], "@"))
+      sx= -mx1;
+    if (is_percentage (pattern[2]) || is_percentage (pattern[2], "@"))
+      sy= -my2;
     scalable im= load_scalable_image (u, w, h, pixel);
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
       for (int j= ((y1+sy)/h) - 1; j <= ((y2+sy)/h) + 1; j++) {
@@ -382,6 +388,11 @@ renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
     set_clipping (cx1, cy1, cx2, cy2, true);
   }
   else clear (x1, y1, x2, y2);
+}
+
+void
+renderer_rep::clear_pattern (SI x1, SI y1, SI x2, SI y2) {
+  clear_pattern (x1, y1, x2, y2, x1, y1, x2, y2);
 }
 
 #undef RND
