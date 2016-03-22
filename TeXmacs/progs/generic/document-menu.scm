@@ -667,6 +667,9 @@
 ;; The Document -> Color menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (set-background col)
+  (init-env-tree "bg-color" col))
+
 (define (set-background-pattern name)
   (when (pair? name) (set! name (car name)))
   (when (url? name) (set! name (url->unix name)))
@@ -691,12 +694,8 @@
   ---
   (pick-background "" (init-env-tree "bg-color" answer))
   ---
-  ("Palette" (interactive-background
-              (lambda (col) (init-env "bg-color" col)) '()))
-  ("Pattern" (choose-file set-background-pattern
-                          "Background pattern" "image"))
-  ("Picture" (choose-file set-background-picture
-                          "Background picture" "image"))
+  ("Palette" (interactive-background set-background '()))
+  ("Pattern" (open-pattern-selector set-background "1cm"))
   ("Other" (init-interactive-env "bg-color")))
 
 (menu-bind document-colors-menu

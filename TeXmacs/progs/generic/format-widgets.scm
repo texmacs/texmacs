@@ -302,3 +302,67 @@
          (t  (make-ahash-table)))
     (dialogue-window (page-formatter u st t)
                      noop "Page format")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pattern selector
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget ((pattern-selector u col w h) cmd)
+  (padded
+    (hlist
+      (vlist
+        (refreshable "pattern-sample"
+          (resize "300px" "300px"
+            (texmacs-output `(document
+                               (block
+                                (tformat
+                                 (cwith "1" "1" "1" "1" "cell-width" "290px")
+                                 (cwith "1" "1" "1" "1" "cell-height" "290px")
+                                 (cwith "1" "1" "1" "1" "cell-vmode" "exact")
+                                 (cwith "1" "1" "1" "1" "cell-background" ,col)
+                                 (table (row (cell ""))))))
+                            `(style (tuple "generic"))))))
+      // // //
+      (explicit-buttons
+        (vlist
+          (hlist
+            ("Color" (interactive-color
+                      (lambda (c)
+                        (set! col c)
+                        (refresh-now "pattern-sample"))
+                      '())) >>)
+          (hlist
+            ("Pattern" (choose-file
+                        (lambda (c)
+                          (when (and (pair? c) (url? (car c)))
+                            (set! col `(pattern ,(url->unix (car c)) ,w ,h)))
+                          (refresh-now "pattern-sample"))
+                        "Background pattern" "image")) >>)
+          ======
+          (aligned
+            (item (text "Width:")
+              (enum (begin
+                      (set! w answer)
+                      (when (tm-func? col 'pattern 3)
+                        (set! col `(pattern ,(cadr col) ,w ,h)))
+                      (refresh-now "pattern-sample"))
+                    (list w "100%" "100@" "1cm") "" "10em"))
+            (item (text "Height:")
+              (enum (begin
+                      (set! h answer)
+                      (when (tm-func? col 'pattern 3)
+                        (set! col `(pattern ,(cadr col) ,w ,h)))
+                      (refresh-now "pattern-sample"))
+                    (list h "100%" "100@" "1cm") "" "10em")))
+          (glue #f #t 0 0))))
+    ======
+    (explicit-buttons
+      (hlist
+        >>>
+        ("Ok" (cmd col))))))
+
+(tm-define (open-pattern-selector cmd w)
+  (:interactive #t)
+  (with u (current-buffer)
+    (dialogue-window (pattern-selector u "white" w "100@")
+                     cmd "Pattern selector")))

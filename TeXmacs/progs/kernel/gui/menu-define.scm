@@ -526,9 +526,10 @@
 (tm-menu (standard-pattern-menu cmd dir scale)
   (tile 8
     (for (col (standard-pattern-list dir scale))
-      (explicit-buttons
-        ((color col #f #f 32 32)
-         (cmd col))))))
+      (with col2 `(pattern ,(cadr col) "100%" "100@")
+        (explicit-buttons
+          ((color col2 #f #f 32 32)
+           (cmd col)))))))
 
 (define-public (clipart-list)
   (list-filter

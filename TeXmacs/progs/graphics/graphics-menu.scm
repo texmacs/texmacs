@@ -327,6 +327,7 @@
       (pick-color (graphics-set-color answer)))
   ---
   ("Palette" (interactive-color (lambda (c) (graphics-set-color c)) '()))
+  ("Pattern" (open-pattern-selector graphics-set-color "1gu"))
   ("Other" (interactive graphics-set-color)))
 
 (menu-bind grid-color-axes-menu
@@ -473,6 +474,7 @@
       (pick-color (graphics-set-fill-color answer)))
   ---
   ("Palette" (interactive-color (lambda (c) (graphics-set-fill-color c)) '()))
+  ("Pattern" (open-pattern-selector graphics-set-fill-color "1gu"))
   ("Other" (interactive graphics-set-fill-color)))
 
 (menu-bind graphics-text-halign-menu
