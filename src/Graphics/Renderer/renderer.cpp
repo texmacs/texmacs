@@ -371,12 +371,8 @@ renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
     w= ((w + pixel - 1) / pixel) * pixel;
     h= ((h + pixel - 1) / pixel) * pixel;
 
-    SI sx= ox;
-    SI sy= oy;
-    if (is_percentage (pattern[1]) || is_percentage (pattern[1], "@"))
-      sx= -mx1;
-    if (is_percentage (pattern[2]) || is_percentage (pattern[2], "@"))
-      sy= -my2;
+    SI sx= -mx1;
+    SI sy= -my2;
     scalable im= load_scalable_image (u, w, h, pixel);
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
       for (int j= ((y1+sy)/h) - 1; j <= ((y2+sy)/h) + 1; j++) {
