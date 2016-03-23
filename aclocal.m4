@@ -1,6 +1,14 @@
 m4_include([misc/m4/x11.m4])
 m4_include([misc/m4/qt.m4])
 m4_include([misc/m4/guile.m4])
+m4_include([misc/m4/sparkle.m4])
+m4_include([misc/m4/imlib2.m4])
+m4_include([misc/m4/sql.m4])
+m4_include([misc/m4/axel.m4])
+m4_include([misc/m4/cairo.m4])
+m4_include([misc/m4/gs.m4])
+m4_include([misc/m4/hummus.m4])
+m4_include([misc/m4/iconv.m4])
 
 #-------------------------------------------------------------------
 # Support for stack traces

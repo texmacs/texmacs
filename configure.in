@@ -187,72 +187,7 @@ AC_SUBST(CONFIG_BDL)
 #--------------------------------------------------------------------
 # Checks for iconv library
 #--------------------------------------------------------------------
-
-AC_ARG_WITH(iconv,
-AS_HELP_STRING([--with-iconv@<:@=DIR@:>@], [where to find iconv [system]]))
-
-# Check for iconv
-# Modified from GNOME's libxml2 configure.in
-AC_LANG_SAVE
-AC_LANG_C  # compile C to avoid the 'const char**' problem
-
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_iconv" = "no" ; then
-    AC_MSG_RESULT([disabling iconv support])
-else
-    if test -n "$ICONV_CFLAGS" -a -n "$ICONV_LDFLAGS"; then
-       CPPFLAGS="$ICONV_CFLAGS" # for AC_TRY_LINK
-       LDFLAGS="$ICONV_LDFLAGS"
-    fi
-    if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
-       CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
-       LDFLAGS="-L$with_iconv/lib"
-       ICONV_CFLAGS="-I$with_iconv/include"
-       ICONV_LDFLAGS="-L$with_iconv/lib"
-    fi
-
-    AC_CHECK_HEADER(iconv.h,
-    AC_MSG_CHECKING(for iconv)
-    AC_TRY_LINK(
-[
-#include <stdlib.h>
-#include <iconv.h>
-],[
-    iconv_t cd = iconv_open ("","");
-    iconv (cd, NULL, NULL, NULL, NULL);
-],[
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_ICONV, 1, [Use iconv library])
-],[
-    AC_MSG_RESULT(no)
-    AC_MSG_CHECKING(for iconv in -liconv)
-#    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
-    LIBS="-liconv"                # for AC_TRY_LINK
-    AC_TRY_LINK(
-[
-#include <stdlib.h>
-#include <iconv.h>
-],[
-      iconv_t cd = iconv_open ("","");
-      iconv (cd, NULL, NULL, NULL, NULL);
-],[
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_ICONV, 1, [Use iconv library])
-      ICONV_LDFLAGS="${ICONV_LDFLAGS/-liconv} -liconv"
-],[
-      AC_MSG_RESULT(no)
-      AC_MSG_WARN([absence of iconv may crash HTML import])
-  ])]))
-fi
-
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-AC_LANG_RESTORE  # restore C++ language
-AC_SUBST(ICONV_CFLAGS)
-AC_SUBST(ICONV_LDFLAGS)
+LC_ICONV
 
 #--------------------------------------------------------------------
 # Checks for freetype library
@@ -317,284 +252,31 @@ AC_SUBST(FREETYPE_LDFLAGS)
 #--------------------------------------------------------------------
 # Checks for Cairo library
 #--------------------------------------------------------------------
-
-AC_ARG_WITH(cairo,
-AS_HELP_STRING([--with-cairo@<:@=ARG@:>@],
-[with cairo support [ARG=no]]))
-
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_cairo" = "no" -o "$with_cairo" = "" ; then
-    AC_MSG_RESULT([disabling cairo support])
-else
-    CPPFLAGS=`pkg-config --cflags cairo`
-    LIBS=`pkg-config --libs cairo`
-    AC_CHECK_HEADER(cairo.h,
-    AC_MSG_CHECKING(for cairo)
-    AC_TRY_LINK(
-[
-#include <cairo.h>
-],[
-    cairo_surface_t *surface;
-    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
-],[
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_CAIRO, 1, [Use cairo library])
-    CAIRO_CFLAGS="$CPPFLAGS"
-    if test "$with_cairo" = "linked" ; then
-      CAIRO_LDFLAGS="$LIBS"
-      AC_DEFINE(LINKED_CAIRO, 1, [Link cairo library with TeXmacs])
-    fi
-],[
-    AC_MSG_RESULT(no)]))
-fi
-
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-
-AC_SUBST(CAIRO_CFLAGS)
-AC_SUBST(CAIRO_LDFLAGS)
+LC_CAIRO
 
 #--------------------------------------------------------------------
 # Checks for Imlib2 library
 #--------------------------------------------------------------------
-
-AC_ARG_WITH(imlib2,
-AS_HELP_STRING([--with-imlib2@<:@=ARG@:>@],
-[with imlib2 support [ARG=no]]))
-
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
-    AC_MSG_RESULT([disabling imlib2 support])
-else
-    CPPFLAGS=`imlib2-config --cflags`
-    LIBS=`imlib2-config --libs`
-    AC_CHECK_HEADER(Imlib2.h,
-    AC_MSG_CHECKING(for imlib2)
-    AC_TRY_LINK(
-[
-#include <X11/Xlib.h>
-#include <Imlib2.h>
-#include <stdio.h>
-#include <string.h>
-],[
-    Imlib_Image image= imlib_load_image("");
-],[
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_IMLIB2, 1, [Use imlib2 library])
-    IMLIB2_CFLAGS="$CPPFLAGS"
-    if test "$with_imlib2" = "linked" ; then
-      IMLIB2_LDFLAGS="$LIBS"
-      AC_DEFINE(LINKED_IMLIB2, 1, [Link imlib2 library with TeXmacs])
-    fi
-],[
-    AC_MSG_RESULT(no)]))
-fi
-
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-
-AC_SUBST(IMLIB2_CFLAGS)
-AC_SUBST(IMLIB2_LDFLAGS)
+LC_IMLIB2
 
 #--------------------------------------------------------------------
 # Checks for Axel library
 #--------------------------------------------------------------------
-
-AC_ARG_WITH(axel,
-AS_HELP_STRING([--with-axel@<:@=ARG@:>@],
-[with axel support [ARG=no]]))
-
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_axel" = "no" -o "$with_axel" = "" ; then
-    AC_MSG_RESULT([disabling axel support])
-else
-    CPPFLAGS=`axel-config --cflags`
-    LIBS=`axel-config --libs`
-    AC_CHECK_HEADER(QGui/Viewer.h,
-    AC_MSG_CHECKING(for axel)
-    AC_TRY_LINK(
-[
-#include <QGui/Viewer.h>
-],[
-    Viewer viewer(0);
-],[
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_AXEL, 1, [Use axel library])
-    AXEL_CFLAGS="$CPPFLAGS"
-    if test "$with_axel" = "linked" ; then
-      AXEL_LDFLAGS="$LIBS"
-      AC_DEFINE(LINKED_AXEL, 1, [Link axel library with TeXmacs])
-    fi
-],[
-    AC_MSG_RESULT(no)]))
-fi
-
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-
-AC_SUBST(AXEL_CFLAGS)
-AC_SUBST(AXEL_LDFLAGS)
-
+LC_AXEL
 #--------------------------------------------------------------------
 # Checks for ghostscript library
 #--------------------------------------------------------------------
-
-AC_ARG_WITH(gs,
-AS_HELP_STRING([--with-gs@<:@=ARG@:>@],
-[with ghostscript support [ARG=yes]]))
-
-if test "$with_gs" = "no" ; then
-    AC_MSG_RESULT([disabling ghostscript support])
-else
-case "${host}" in
-  *mingw*)
-    GS_EXE="gswin32c.exe"
-    GS_DLL="gsdll32.dll"
-    AC_CHECK_PROG([HAS_GS_EXE], [${GS_EXE}], [yes], [no])
-    AC_CHECK_PROG([HAS_GS_LIB], [${GS_DLL}], [yes], [no])
-  ;;
-  *)
-    AC_CHECK_PROG([HAS_GS_EXE], [gs], [yes], [no])
-    HAS_GS_LIB="yes"
-  ;;
-esac
-if test "x${HAS_GS_EXE}" = "xyes" -a "x${HAS_GS_LIB}" = "xyes"; then
-  AC_DEFINE([USE_GS], [1], [Use ghostscript])
-  CONFIG_GS="Ghostscript"
-  AC_SUBST([CONFIG_GS])
-  AC_SUBST([GS_EXE])
-  AC_SUBST([GS_DLL])
-else
-  AC_MSG_RESULT([disabling ghostscript support])
-fi
-fi
+LC_GS
 
 #--------------------------------------------------------------------
 # Checks for sqlite3 library
 #--------------------------------------------------------------------
-
-AC_ARG_WITH(sqlite3,
-AS_HELP_STRING([--with-sqlite3@<:@=ARG@:>@],
-[with sqlite3 support [ARG=no]]))
-
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_sqlite3" = "no" -o "$with_sqlite3" = "" ; then
-    AC_MSG_RESULT([disabling sqlite3 support])
-else
-    CPPFLAGS=`pkg-config --cflags sqlite3`
-    LIBS=`pkg-config --libs sqlite3`
-    AC_CHECK_HEADER(sqlite3.h,
-    AC_MSG_CHECKING(for sqlite3)
-    AC_TRY_LINK(
-[
-#include <sqlite3.h>
-],[
-    int res= sqlite3_threadsafe ();
-],[
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_SQLITE3, 1, [Use sqlite3 library])
-    SQLITE3_CFLAGS="$CPPFLAGS"
-    if test "$with_sqlite3" = "linked" ; then
-      SQLITE3_LDFLAGS="$LIBS"
-      AC_DEFINE(LINKED_SQLITE3, 1, [Link sqlite3 library with TeXmacs])
-    fi
-],[
-    AC_MSG_RESULT(no)]))
-fi
-
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-
-AC_SUBST(SQLITE3_CFLAGS)
-AC_SUBST(SQLITE3_LDFLAGS)
+LC_SQL
 
 #--------------------------------------------------------------------
 # Checks for (Win)Sparkle framework
 #--------------------------------------------------------------------
-
-AC_ARG_WITH(sparkle,
-AS_HELP_STRING([--with-sparkle@<:@=ARG@:>@],
-[with (Win)Sparkle autoupdater [ARG=no]]))
-
-SAVE_OBJCFLAGS="$OBJCFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
-    AC_MSG_RESULT([disabling Sparkle usage])
-else
-  case "${host}" in
-  *mingw*)  
-    AC_MSG_CHECKING([whether we can use the WinSparkle library])
-    AC_LANG_PUSH([C])
-    CFLAGS="-I $with_sparkle"
-    LDFLAGS="-L $with_sparkle"
-    LIBS="-lwinsparkle"
-    AC_TRY_LINK(
-[
-#include <winsparkle.h>
-#include <winsparkle.h>
-],[
-win_sparkle_init();
-],[
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
-    SPARKLE_CFLAGS="$CFLAGS"
-    SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
-    WINSPARKLE_PATH="$with_sparkle"
-    WINSPARKLE_DLL="WinSparkle*.dll"
-],[
-    AC_MSG_RESULT(no) ])
-    AC_LANG_POP([C])
-    ;;
-  *apple*darwin*)
-    AC_MSG_CHECKING([whether we can use the Sparkle framework])
-    AC_LANG_PUSH([Objective C])
-    OBJCFLAGS="-F $with_sparkle"
-    LDFLAGS="-F $with_sparkle -framework Sparkle"
-    AC_TRY_LINK(
-[
-#include <Cocoa/Cocoa.h>
-#include <Sparkle/Sparkle.h>
-],[
-SUUpdater* updater;
-],[
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(USE_SPARKLE, 1, [Use Sparkle framework])
-    SPARKLE_CFLAGS="$OBJCFLAGS"
-    SPARKLE_LDFLAGS="$LDFLAGS"
-    SPARKLE_FRAMEWORK_PATH="$with_sparkle"
-    CONFIG_SPARKLE="Updater"
-],[
-    AC_MSG_RESULT(no)]
-    CONFIG_SPARKLE="")
-    AC_LANG_POP([Objective C])
-    ;;
-  esac
-fi
-
-OBJFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-
-AC_SUBST(SPARKLE_CFLAGS)
-AC_SUBST(SPARKLE_LDFLAGS)
-AC_SUBST(SPARKLE_FRAMEWORK_PATH)
-AC_SUBST(CONFIG_SPARKLE)
-AC_SUBST(WINSPARKLE_DLL)
-AC_SUBST(WINSPARKLE_PATH)
-
+LC_SPARKLE
 
 #--------------------------------------------------------------------
 # Fixes for erroneous behaviour of gcc/g++ and guile on some systems
@@ -893,63 +575,7 @@ fi
 #--------------------------------------------------------------------
 # Native PDF renderer based on Hummus
 #--------------------------------------------------------------------
-
-AC_ARG_ENABLE(pdf-renderer,
-             [  --enable-pdf-renderer   use native PDF renderer for pdf export],
-             [], [enable_pdf_renderer="yes"])
-case "$enable_pdf_renderer" in
-    yes)
-        SAVE_CPPFLAGS="$CPPFLAGS"
-        SAVE_LDFLAGS="$LDFLAGS"
-        SAVE_LIBS="$LIBS"
-        if test -z "$FREETYPE_CFLAGS"; then
-            FREETYPE_CFLAGS=`freetype-config --cflags`
-        fi
-        CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
-        if test -z "$FREETYPE_LDFLAGS"; then
-            FREETYPE_LDFLAGS=`freetype-config --libs`
-        fi
-        LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
-        AC_CHECK_HEADER(ft2build.h,
-        AC_MSG_CHECKING(whether freetype defines T1_EncodingType)
-        AC_TRY_LINK(
-[
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_TYPE1_TABLES_H
-],[
-FT_Library ft_library;
-T1_EncodingType t;
-(void) FT_Init_FreeType (&ft_library);
-],[
-        AC_MSG_RESULT(yes)
-   	AC_MSG_RESULT([enabling native PDF renderer])
-        AC_DEFINE(PDF_RENDERER, 1, [Enabling native PDF renderer])
-#        CONFIG_PDF="Pdf Pdf/dvipdfmx"
-#        CONFIG_PDF="Pdf Pdf/PDFWriter"
-        CONFIG_PDF="Pdf"
-      	PDF_CFLAGS="-DPDFHUMMUS_NO_TIFF -DPDFHUMMUS_NO_DCT"
-],[
-        AC_MSG_RESULT(no)
-        AC_MSG_ERROR([cannot find FreeType or your version is < 2.4.8.
-If you have several versions installed please use the proper freetype-config script to set
-the environment variables FREETYPE_CFLAGS and FREETYPE_LDFLAGS. 
-                     ])
-        CONFIG_PDF=""
-]))
-        CPPFLAGS="$SAVE_CPPFLAGS"
-        LDFLAGS="$SAVE_LDFLAGS"
-        LIBS="$SAVE_LIBS"
-        ;;
-    no)
-    	AC_MSG_RESULT([disabling native PDF renderer])
-        CONFIG_PDF=""
-	;;
-    *)
-	AC_MSG_ERROR([bad option --enable-pdf-renderer=$enable_pdf_renderer])
-	;;
-esac
-AC_SUBST(CONFIG_PDF)
+LC_HUMMUS
 
 #--------------------------------------------------------------------
 # Windows console

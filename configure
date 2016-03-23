@@ -6083,43 +6083,7 @@ fi
 #--------------------------------------------------------------------
 # Checks for iconv library
 #--------------------------------------------------------------------
-
-
-# Check whether --with-iconv was given.
-if test "${with_iconv+set}" = set; then :
-  withval=$with_iconv;
-fi
-
-
-# Check for iconv
-# Modified from GNOME's libxml2 configure.in
-
 ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-  # compile C to avoid the 'const char**' problem
-
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_iconv" = "no" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling iconv support" >&5
-$as_echo "disabling iconv support" >&6; }
-else
-    if test -n "$ICONV_CFLAGS" -a -n "$ICONV_LDFLAGS"; then
-       CPPFLAGS="$ICONV_CFLAGS" # for AC_TRY_LINK
-       LDFLAGS="$ICONV_LDFLAGS"
-    fi
-    if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
-       CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
-       LDFLAGS="-L$with_iconv/lib"
-       ICONV_CFLAGS="-I$with_iconv/include"
-       ICONV_LDFLAGS="-L$with_iconv/lib"
-    fi
-
-    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
@@ -6257,7 +6221,43 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-ac_fn_c_check_header_mongrel "$LINENO" "iconv.h" "ac_cv_header_iconv_h" "$ac_includes_default"
+
+
+# Check whether --with-iconv was given.
+if test "${with_iconv+set}" = set; then :
+  withval=$with_iconv;
+fi
+
+
+  # Check for iconv
+  # Modified from GNOME's libxml2 configure.in
+
+  ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+  # compile C to avoid the 'const char**' problem
+
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test "$with_iconv" = "no" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling iconv support" >&5
+$as_echo "disabling iconv support" >&6; }
+  else
+      if test -n "$ICONV_CFLAGS" -a -n "$ICONV_LDFLAGS"; then
+         CPPFLAGS="$ICONV_CFLAGS" # for AC_TRY_LINK
+         LDFLAGS="$ICONV_LDFLAGS"
+      fi
+      if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
+         CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
+         LDFLAGS="-L$with_iconv/lib"
+         ICONV_CFLAGS="-I$with_iconv/include"
+         ICONV_LDFLAGS="-L$with_iconv/lib"
+      fi
+
+      ac_fn_c_check_header_mongrel "$LINENO" "iconv.h" "ac_cv_header_iconv_h" "$ac_includes_default"
 if test "x$ac_cv_header_iconv_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for iconv" >&5
 $as_echo_n "checking for iconv... " >&6; }
@@ -6311,41 +6311,8 @@ fi
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <stdlib.h>
-#include <iconv.h>
-
-int
-main ()
-{
-
-    iconv_t cd = iconv_open ("","");
-    iconv (cd, NULL, NULL, NULL, NULL);
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-$as_echo "#define USE_ICONV 1" >>confdefs.h
-
-
-else
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for iconv in -liconv" >&5
-$as_echo_n "checking for iconv in -liconv... " >&6; }
-#    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
-    LIBS="-liconv"                # for AC_TRY_LINK
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <stdlib.h>
-#include <iconv.h>
+  #include <stdlib.h>
+  #include <iconv.h>
 
 int
 main ()
@@ -6365,13 +6332,46 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define USE_ICONV 1" >>confdefs.h
 
-      ICONV_LDFLAGS="${ICONV_LDFLAGS/-liconv} -liconv"
 
 else
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: absence of iconv may crash HTML import" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for iconv in -liconv" >&5
+$as_echo_n "checking for iconv in -liconv... " >&6; }
+  #    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
+      LIBS="-liconv"                # for AC_TRY_LINK
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+  #include <stdlib.h>
+  #include <iconv.h>
+
+int
+main ()
+{
+
+        iconv_t cd = iconv_open ("","");
+        iconv (cd, NULL, NULL, NULL, NULL);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+$as_echo "#define USE_ICONV 1" >>confdefs.h
+
+        ICONV_LDFLAGS="${ICONV_LDFLAGS/-liconv} -liconv"
+
+else
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: absence of iconv may crash HTML import" >&5
 $as_echo "$as_me: WARNING: absence of iconv may crash HTML import" >&2;}
 
 fi
@@ -6383,17 +6383,18 @@ rm -f core conftest.err conftest.$ac_objext \
 fi
 
 
-fi
+  fi
 
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-ac_ext=cpp
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
+  ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   # restore C++ language
+
 
 
 
@@ -6503,30 +6504,30 @@ if test "${with_cairo+set}" = set; then :
 fi
 
 
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_cairo" = "no" -o "$with_cairo" = "" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling cairo support" >&5
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test "$with_cairo" = "no" -o "$with_cairo" = "" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling cairo support" >&5
 $as_echo "disabling cairo support" >&6; }
-else
-    CPPFLAGS=`pkg-config --cflags cairo`
-    LIBS=`pkg-config --libs cairo`
-    ac_fn_cxx_check_header_mongrel "$LINENO" "cairo.h" "ac_cv_header_cairo_h" "$ac_includes_default"
+  else
+      CPPFLAGS=`pkg-config --cflags cairo`
+      LIBS=`pkg-config --libs cairo`
+      ac_fn_cxx_check_header_mongrel "$LINENO" "cairo.h" "ac_cv_header_cairo_h" "$ac_includes_default"
 if test "x$ac_cv_header_cairo_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cairo" >&5
 $as_echo_n "checking for cairo... " >&6; }
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <cairo.h>
+  #include <cairo.h>
 
 int
 main ()
 {
 
-    cairo_surface_t *surface;
-    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
+      cairo_surface_t *surface;
+      surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
 
   ;
   return 0;
@@ -6534,22 +6535,22 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 $as_echo "#define USE_CAIRO 1" >>confdefs.h
 
-    CAIRO_CFLAGS="$CPPFLAGS"
-    if test "$with_cairo" = "linked" ; then
-      CAIRO_LDFLAGS="$LIBS"
+      CAIRO_CFLAGS="$CPPFLAGS"
+      if test "$with_cairo" = "linked" ; then
+        CAIRO_LDFLAGS="$LIBS"
 
 $as_echo "#define LINKED_CAIRO 1" >>confdefs.h
 
-    fi
+      fi
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
@@ -6557,11 +6558,12 @@ rm -f core conftest.err conftest.$ac_objext \
 fi
 
 
-fi
+  fi
 
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
+
 
 
 
@@ -6577,32 +6579,32 @@ if test "${with_imlib2+set}" = set; then :
 fi
 
 
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling imlib2 support" >&5
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test "$with_imlib2" = "no" -o "$with_imlib2" = "" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling imlib2 support" >&5
 $as_echo "disabling imlib2 support" >&6; }
-else
-    CPPFLAGS=`imlib2-config --cflags`
-    LIBS=`imlib2-config --libs`
-    ac_fn_cxx_check_header_mongrel "$LINENO" "Imlib2.h" "ac_cv_header_Imlib2_h" "$ac_includes_default"
+  else
+      CPPFLAGS=`imlib2-config --cflags`
+      LIBS=`imlib2-config --libs`
+      ac_fn_cxx_check_header_mongrel "$LINENO" "Imlib2.h" "ac_cv_header_Imlib2_h" "$ac_includes_default"
 if test "x$ac_cv_header_Imlib2_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for imlib2" >&5
 $as_echo_n "checking for imlib2... " >&6; }
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <X11/Xlib.h>
-#include <Imlib2.h>
-#include <stdio.h>
-#include <string.h>
+  #include <X11/Xlib.h>
+  #include <Imlib2.h>
+  #include <stdio.h>
+  #include <string.h>
 
 int
 main ()
 {
 
-    Imlib_Image image= imlib_load_image("");
+      Imlib_Image image= imlib_load_image("");
 
   ;
   return 0;
@@ -6610,22 +6612,22 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 $as_echo "#define USE_IMLIB2 1" >>confdefs.h
 
-    IMLIB2_CFLAGS="$CPPFLAGS"
-    if test "$with_imlib2" = "linked" ; then
-      IMLIB2_LDFLAGS="$LIBS"
+      IMLIB2_CFLAGS="$CPPFLAGS"
+      if test "$with_imlib2" = "linked" ; then
+        IMLIB2_LDFLAGS="$LIBS"
 
 $as_echo "#define LINKED_IMLIB2 1" >>confdefs.h
 
-    fi
+      fi
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
@@ -6633,11 +6635,12 @@ rm -f core conftest.err conftest.$ac_objext \
 fi
 
 
-fi
+  fi
 
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
+
 
 
 
@@ -6653,29 +6656,29 @@ if test "${with_axel+set}" = set; then :
 fi
 
 
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_axel" = "no" -o "$with_axel" = "" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling axel support" >&5
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test "$with_axel" = "no" -o "$with_axel" = "" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling axel support" >&5
 $as_echo "disabling axel support" >&6; }
-else
-    CPPFLAGS=`axel-config --cflags`
-    LIBS=`axel-config --libs`
-    ac_fn_cxx_check_header_mongrel "$LINENO" "QGui/Viewer.h" "ac_cv_header_QGui_Viewer_h" "$ac_includes_default"
+  else
+      CPPFLAGS=`axel-config --cflags`
+      LIBS=`axel-config --libs`
+      ac_fn_cxx_check_header_mongrel "$LINENO" "QGui/Viewer.h" "ac_cv_header_QGui_Viewer_h" "$ac_includes_default"
 if test "x$ac_cv_header_QGui_Viewer_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for axel" >&5
 $as_echo_n "checking for axel... " >&6; }
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <QGui/Viewer.h>
+  #include <QGui/Viewer.h>
 
 int
 main ()
 {
 
-    Viewer viewer(0);
+      Viewer viewer(0);
 
   ;
   return 0;
@@ -6683,22 +6686,22 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 $as_echo "#define USE_AXEL 1" >>confdefs.h
 
-    AXEL_CFLAGS="$CPPFLAGS"
-    if test "$with_axel" = "linked" ; then
-      AXEL_LDFLAGS="$LIBS"
+      AXEL_CFLAGS="$CPPFLAGS"
+      if test "$with_axel" = "linked" ; then
+        AXEL_LDFLAGS="$LIBS"
 
 $as_echo "#define LINKED_AXEL 1" >>confdefs.h
 
-    fi
+      fi
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
@@ -6706,11 +6709,11 @@ rm -f core conftest.err conftest.$ac_objext \
 fi
 
 
-fi
+  fi
 
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
 
 
 
@@ -6726,15 +6729,15 @@ if test "${with_gs+set}" = set; then :
 fi
 
 
-if test "$with_gs" = "no" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling ghostscript support" >&5
+  if test "$with_gs" = "no" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling ghostscript support" >&5
 $as_echo "disabling ghostscript support" >&6; }
-else
-case "${host}" in
-  *mingw*)
-    GS_EXE="gswin32c.exe"
-    GS_DLL="gsdll32.dll"
-    # Extract the first word of "${GS_EXE}", so it can be a program name with args.
+  else
+  case "${host}" in
+    *mingw*)
+      GS_EXE="gswin32c.exe"
+      GS_DLL="gsdll32.dll"
+      # Extract the first word of "${GS_EXE}", so it can be a program name with args.
 set dummy ${GS_EXE}; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -6772,7 +6775,7 @@ $as_echo "no" >&6; }
 fi
 
 
-    # Extract the first word of "${GS_DLL}", so it can be a program name with args.
+      # Extract the first word of "${GS_DLL}", so it can be a program name with args.
 set dummy ${GS_DLL}; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -6810,9 +6813,9 @@ $as_echo "no" >&6; }
 fi
 
 
-  ;;
-  *)
-    # Extract the first word of "gs", so it can be a program name with args.
+    ;;
+    *)
+      # Extract the first word of "gs", so it can be a program name with args.
 set dummy gs; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -6850,22 +6853,23 @@ $as_echo "no" >&6; }
 fi
 
 
-    HAS_GS_LIB="yes"
-  ;;
-esac
-if test "x${HAS_GS_EXE}" = "xyes" -a "x${HAS_GS_LIB}" = "xyes"; then
+      HAS_GS_LIB="yes"
+    ;;
+  esac
+  if test "x${HAS_GS_EXE}" = "xyes" -a "x${HAS_GS_LIB}" = "xyes"; then
 
 $as_echo "#define USE_GS 1" >>confdefs.h
 
-  CONFIG_GS="Ghostscript"
+    CONFIG_GS="Ghostscript"
 
 
 
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling ghostscript support" >&5
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling ghostscript support" >&5
 $as_echo "disabling ghostscript support" >&6; }
-fi
-fi
+  fi
+  fi
+
 
 #--------------------------------------------------------------------
 # Checks for sqlite3 library
@@ -6878,29 +6882,29 @@ if test "${with_sqlite3+set}" = set; then :
 fi
 
 
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_sqlite3" = "no" -o "$with_sqlite3" = "" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling sqlite3 support" >&5
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test "$with_sqlite3" = "no" -o "$with_sqlite3" = "" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling sqlite3 support" >&5
 $as_echo "disabling sqlite3 support" >&6; }
-else
-    CPPFLAGS=`pkg-config --cflags sqlite3`
-    LIBS=`pkg-config --libs sqlite3`
-    ac_fn_cxx_check_header_mongrel "$LINENO" "sqlite3.h" "ac_cv_header_sqlite3_h" "$ac_includes_default"
+  else
+      CPPFLAGS=`pkg-config --cflags sqlite3`
+      LIBS=`pkg-config --libs sqlite3`
+      ac_fn_cxx_check_header_mongrel "$LINENO" "sqlite3.h" "ac_cv_header_sqlite3_h" "$ac_includes_default"
 if test "x$ac_cv_header_sqlite3_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sqlite3" >&5
 $as_echo_n "checking for sqlite3... " >&6; }
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <sqlite3.h>
+  #include <sqlite3.h>
 
 int
 main ()
 {
 
-    int res= sqlite3_threadsafe ();
+      int res= sqlite3_threadsafe ();
 
   ;
   return 0;
@@ -6908,22 +6912,22 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 $as_echo "#define USE_SQLITE3 1" >>confdefs.h
 
-    SQLITE3_CFLAGS="$CPPFLAGS"
-    if test "$with_sqlite3" = "linked" ; then
-      SQLITE3_LDFLAGS="$LIBS"
+      SQLITE3_CFLAGS="$CPPFLAGS"
+      if test "$with_sqlite3" = "linked" ; then
+        SQLITE3_LDFLAGS="$LIBS"
 
 $as_echo "#define LINKED_SQLITE3 1" >>confdefs.h
 
-    fi
+      fi
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
@@ -6931,11 +6935,12 @@ rm -f core conftest.err conftest.$ac_objext \
 fi
 
 
-fi
+  fi
 
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
+
 
 
 
@@ -6945,43 +6950,44 @@ LIBS="$SAVE_LIBS"
 #--------------------------------------------------------------------
 
 
+
 # Check whether --with-sparkle was given.
 if test "${with_sparkle+set}" = set; then :
   withval=$with_sparkle;
 fi
 
 
-SAVE_OBJCFLAGS="$OBJCFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Sparkle usage" >&5
+  SAVE_OBJCFLAGS="$OBJCFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Sparkle usage" >&5
 $as_echo "disabling Sparkle usage" >&6; }
-else
-  case "${host}" in
-  *mingw*)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we can use the WinSparkle library" >&5
+  else
+    case "${host}" in
+    *mingw*)
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we can use the WinSparkle library" >&5
 $as_echo_n "checking whether we can use the WinSparkle library... " >&6; }
-    ac_ext=c
+      ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-    CFLAGS="-I $with_sparkle"
-    LDFLAGS="-L $with_sparkle"
-    LIBS="-lwinsparkle"
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+      CFLAGS="-I $with_sparkle"
+      LDFLAGS="-L $with_sparkle"
+      LIBS="-lwinsparkle"
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <winsparkle.h>
-#include <winsparkle.h>
+  #include <winsparkle.h>
+  #include <winsparkle.h>
 
 int
 main ()
 {
 
-win_sparkle_init();
+  win_sparkle_init();
 
   ;
   return 0;
@@ -6989,53 +6995,52 @@ win_sparkle_init();
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 $as_echo "#define USE_SPARKLE 1" >>confdefs.h
 
-    SPARKLE_CFLAGS="$CFLAGS"
-    SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
-    WINSPARKLE_PATH="$with_sparkle"
-    WINSPARKLE_DLL="WinSparkle*.dll"
+      SPARKLE_CFLAGS="$CFLAGS"
+      SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
+      WINSPARKLE_PATH="$with_sparkle"
+      WINSPARKLE_DLL="WinSparkle*.dll"
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-    ac_ext=cpp
+      ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-    ;;
-  *apple*darwin*)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we can use the Sparkle framework" >&5
+      ;;
+    *apple*darwin*)
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we can use the Sparkle framework" >&5
 $as_echo_n "checking whether we can use the Sparkle framework... " >&6; }
-    ac_ext=m
+      ac_ext=m
 ac_cpp='$OBJCPP $CPPFLAGS'
 ac_compile='$OBJC -c $OBJCFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$OBJC -o conftest$ac_exeext $OBJCFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_objc_compiler_gnu
 
-    OBJCFLAGS="-F $with_sparkle"
-    LDFLAGS="-F $with_sparkle -framework Sparkle"
-
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+      OBJCFLAGS="-F $with_sparkle"
+      LDFLAGS="-F $with_sparkle -framework Sparkle"
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <Cocoa/Cocoa.h>
-#include <Sparkle/Sparkle.h>
+  #include <Cocoa/Cocoa.h>
+  #include <Sparkle/Sparkle.h>
 
 int
 main ()
 {
 
-SUUpdater* updater;
+  SUUpdater* updater;
 
   ;
   return 0;
@@ -7043,37 +7048,37 @@ SUUpdater* updater;
 _ACEOF
 if ac_fn_objc_try_link "$LINENO"; then :
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 $as_echo "#define USE_SPARKLE 1" >>confdefs.h
 
-    SPARKLE_CFLAGS="$OBJCFLAGS"
-    SPARKLE_LDFLAGS="$LDFLAGS"
-    SPARKLE_FRAMEWORK_PATH="$with_sparkle"
-    CONFIG_SPARKLE="Updater"
+      SPARKLE_CFLAGS="$OBJCFLAGS"
+      SPARKLE_LDFLAGS="$LDFLAGS"
+      SPARKLE_FRAMEWORK_PATH="$with_sparkle"
+      CONFIG_SPARKLE="Updater"
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-    CONFIG_SPARKLE=""
+      CONFIG_SPARKLE=""
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-    ac_ext=cpp
+      ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-    ;;
-  esac
-fi
+      ;;
+    esac
+  fi
 
-OBJFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
+  OBJFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
 
 
 
@@ -7757,44 +7762,44 @@ fi
 # Native PDF renderer based on Hummus
 #--------------------------------------------------------------------
 
-# Check whether --enable-pdf-renderer was given.
+  # Check whether --enable-pdf-renderer was given.
 if test "${enable_pdf_renderer+set}" = set; then :
   enableval=$enable_pdf_renderer;
 else
   enable_pdf_renderer="yes"
 fi
 
-case "$enable_pdf_renderer" in
-    yes)
-        SAVE_CPPFLAGS="$CPPFLAGS"
-        SAVE_LDFLAGS="$LDFLAGS"
-        SAVE_LIBS="$LIBS"
-        if test -z "$FREETYPE_CFLAGS"; then
-            FREETYPE_CFLAGS=`freetype-config --cflags`
-        fi
-        CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
-        if test -z "$FREETYPE_LDFLAGS"; then
-            FREETYPE_LDFLAGS=`freetype-config --libs`
-        fi
-        LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
-        ac_fn_cxx_check_header_mongrel "$LINENO" "ft2build.h" "ac_cv_header_ft2build_h" "$ac_includes_default"
+  case "$enable_pdf_renderer" in
+      yes)
+          SAVE_CPPFLAGS="$CPPFLAGS"
+          SAVE_LDFLAGS="$LDFLAGS"
+          SAVE_LIBS="$LIBS"
+          if test -z "$FREETYPE_CFLAGS"; then
+              FREETYPE_CFLAGS=`freetype-config --cflags`
+          fi
+          CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
+          if test -z "$FREETYPE_LDFLAGS"; then
+              FREETYPE_LDFLAGS=`freetype-config --libs`
+          fi
+          LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
+          ac_fn_cxx_check_header_mongrel "$LINENO" "ft2build.h" "ac_cv_header_ft2build_h" "$ac_includes_default"
 if test "x$ac_cv_header_ft2build_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether freetype defines T1_EncodingType" >&5
 $as_echo_n "checking whether freetype defines T1_EncodingType... " >&6; }
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_TYPE1_TABLES_H
+  #include <ft2build.h>
+  #include FT_FREETYPE_H
+  #include FT_TYPE1_TABLES_H
 
 int
 main ()
 {
 
-FT_Library ft_library;
-T1_EncodingType t;
-(void) FT_Init_FreeType (&ft_library);
+  FT_Library ft_library;
+  T1_EncodingType t;
+  (void) FT_Init_FreeType (&ft_library);
 
   ;
   return 0;
@@ -7802,27 +7807,27 @@ T1_EncodingType t;
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling native PDF renderer" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling native PDF renderer" >&5
 $as_echo "enabling native PDF renderer" >&6; }
 
 $as_echo "#define PDF_RENDERER 1" >>confdefs.h
 
-#        CONFIG_PDF="Pdf Pdf/dvipdfmx"
-#        CONFIG_PDF="Pdf Pdf/PDFWriter"
-        CONFIG_PDF="Pdf"
-      	PDF_CFLAGS="-DPDFHUMMUS_NO_TIFF -DPDFHUMMUS_NO_DCT"
+  #        CONFIG_PDF="Pdf Pdf/dvipdfmx"
+  #        CONFIG_PDF="Pdf Pdf/PDFWriter"
+          CONFIG_PDF="Pdf"
+          PDF_CFLAGS="-DPDFHUMMUS_NO_TIFF -DPDFHUMMUS_NO_DCT"
 
 else
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-        as_fn_error $? "cannot find FreeType or your version is < 2.4.8.
-If you have several versions installed please use the proper freetype-config script to set
-the environment variables FREETYPE_CFLAGS and FREETYPE_LDFLAGS.
-                     " "$LINENO" 5
-        CONFIG_PDF=""
+          as_fn_error $? "cannot find FreeType or your version is < 2.4.8.
+  If you have several versions installed please use the proper freetype-config script to set
+  the environment variables FREETYPE_CFLAGS and FREETYPE_LDFLAGS.
+                       " "$LINENO" 5
+          CONFIG_PDF=""
 
 fi
 rm -f core conftest.err conftest.$ac_objext \
@@ -7830,19 +7835,20 @@ rm -f core conftest.err conftest.$ac_objext \
 fi
 
 
-        CPPFLAGS="$SAVE_CPPFLAGS"
-        LDFLAGS="$SAVE_LDFLAGS"
-        LIBS="$SAVE_LIBS"
-        ;;
-    no)
-    	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling native PDF renderer" >&5
+          CPPFLAGS="$SAVE_CPPFLAGS"
+          LDFLAGS="$SAVE_LDFLAGS"
+          LIBS="$SAVE_LIBS"
+          ;;
+      no)
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling native PDF renderer" >&5
 $as_echo "disabling native PDF renderer" >&6; }
-        CONFIG_PDF=""
-	;;
-    *)
-	as_fn_error $? "bad option --enable-pdf-renderer=$enable_pdf_renderer" "$LINENO" 5
-	;;
-esac
+          CONFIG_PDF=""
+    ;;
+      *)
+    as_fn_error $? "bad option --enable-pdf-renderer=$enable_pdf_renderer" "$LINENO" 5
+    ;;
+  esac
+
 
 
 #--------------------------------------------------------------------
