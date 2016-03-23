@@ -346,7 +346,9 @@ qt_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   double rx1, ry1, rx2, ry2;
   decode (x1, y1, rx1, ry1);
   decode (x2, y2, rx2, ry2);
-  QBrush br(to_qcolor (pen->get_color ()));
+  QBrush br= painter->brush ();
+  if (is_nil (fg_brush) || fg_brush->get_type () != brush_pattern)
+    br= QBrush (to_qcolor (pen->get_color ()));
   QPainterPath pp;
   pp.arcMoveTo (QRectF (rx1, ry2, rx2-rx1, ry1-ry2), alpha / 64);
   pp.arcTo (QRectF (rx1, ry2, rx2-rx1, ry1-ry2), alpha / 64, delta / 64);
