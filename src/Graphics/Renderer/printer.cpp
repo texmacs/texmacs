@@ -931,7 +931,12 @@ printer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
     string ps_image= ps_load (u);
     string imtext= is_ramdisc (u)? "inline image": as_string (u);
     int x1, y1, x2, y2;
-    ps_bounding_box (u, x1, y1, x2, y2);
+    if (suffix(u)=="eps") ps_bounding_box (u, x1, y1, x2, y2); //get cached value
+    //if original image is not eps at this point it was already converted through a temp file
+    // and it is the bbox of the temp file was cached...
+    // do not call ps_bounding_box otherwise the image will get converted AGAIN
+    // extract bbox from ps code that was generated
+    else ps_read_bbox (ps_image, x1, y1, x2, y2); 
     image (imtext, ps_image, x1, y1, x2, y2, w, h, x, y, alpha);
   }
 }

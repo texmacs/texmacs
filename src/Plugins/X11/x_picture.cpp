@@ -20,7 +20,7 @@
 #define IMLIB2_X11TEXMACS // for imlib2_display
 #include "Imlib2/imlib2.hpp"
 
-extern hashmap<tree,string> ps_bbox;
+//extern hashmap<tree,string> ps_bbox; //not used
 extern int nr_windows;
 
 #define VCONVERT(c) (true_colors? (c & 0xffffff): the_gui->cmap [c & 0xffffff])

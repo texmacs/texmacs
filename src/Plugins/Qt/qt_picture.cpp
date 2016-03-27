@@ -152,80 +152,21 @@ get_image (url u, int w, int h) {
   QImage *pm = NULL;
 
   if (qt_supports (u))
-    pm= new QImage (utf8_to_qstring (concretize (u)));
-  else if (suffix (u) == "ps" ||
-           suffix (u) == "eps" ||
-           suffix (u) == "pdf") {
+    pm= new QImage (utf8_to_qstring (concretize (u))); 
+    //pm= new QImage ((QString) utf8_to_qstring (cork_to_utf8 (as_string (u))).toLocal8Bit ());//same as in QTMFileDialog
+   // a ramdisk png image does not load (in linux at least) with this last way... 
+  else {
     url temp= url_temp (".png");
     image_to_png (u, temp, w, h);
-/*
-      string idstr= eval_system ("identify",u);
-      int i=0;
-      int a=0,b=0;
-      while(i<N(idstr)) {
-        b=0;
-        if(idstr[i]==' ') {
-          i++;
-          a=i;
-          while(i<N(idstr) && idstr[i]>'0' && idstr[i]<'9')
-            i++;
-          if(i>=N(idstr))
-            break;
-          if(idstr[i] != 'x')
-            continue;
-          i++;
-          b=i;
-          while(i<N(idstr) && idstr[i]>'0' && idstr[i]<'9')
-            i++;
-          if(i<N(idstr) && idstr[i]==' ')
-            break;
-        }
-        i++;
-      }
-      int iw,ih;
-      if(b>0) {
-        iw=as_int(idstr(a,b-1));
-        ih=as_int(idstr(b,i));
-      } else {
-        int bbx1,bby1,bbx2,bby2;
-        ps_bounding_box(u,bbx1,bby1,bbx2,bby2);
-        iw=bbx2-bbx1;
-        ih=bby2-bby1;
-      }
-
-//      float resx = 72*w/((bbx2-bbx1)*(cx2-cx1));
-//      float resy = 72*h/((bby2-bby1)*(cy2-cy1));
-      float resx = 144*w/(iw*(cx2-cx1));
-      float resy = 144*h/(ih*(cy2-cy1));
-
-      url temp= url_temp (".png");
-      system ("convert -density " * as_string(resx) * "x" * as_string(resy)
-             * " -scale 50% -crop " * as_string(w) * "x" * as_string(h)
-             * "+" * as_string (cx1*w/(cx2-cx1))
-             * "+" * as_string ((1-cy2)*h/(cy2-cy1))
-             * "! -background white -flatten", u, temp);
-*/
     pm= new QImage (to_qstring (as_string (temp)));
+    //pm= new QImage ((QString) utf8_to_qstring (cork_to_utf8 (as_string (temp))).toLocal8Bit ());//same as in QTMFileDialog 
     remove (temp);
   }
   if (pm == NULL || pm->isNull ()) {
-    if (pm != NULL) {
-      delete pm;
-      pm= NULL;
-    }
-    if (as_bool (call ("file-converter-exists?", u, "x.png"))) {
-      url temp= url_temp (".png");
-      call ("file-convert", object (u), object (temp));
-      pm= new QImage (to_qstring (as_string (temp)));
-      remove (temp);
-    }
-    if (pm == NULL || pm->isNull ()) {
       if (pm != NULL) delete pm;
       cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
       return NULL;
-    }
   }
-
   if (pm->width () != w || pm->height () != h)
     (*pm)= pm->scaled (w, h);
   return pm;

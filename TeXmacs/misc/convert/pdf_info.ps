@@ -293,8 +293,10 @@ currentdict /res-type-dict undef
 % Output all the info about the file
 /dump {  % (title) -> -
   /PDFPageCount pdfpagecount def
-  dump-pdf-info
+% sometimes headers contain null character that prevent break reading the rest of the data on windows
+% we put the media size first to be sure to get to them (actually we could drop the rest)
   dump-media-sizes
+  dump-pdf-info
   dump-fonts-used
 } bind def
 

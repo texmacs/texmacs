@@ -25,9 +25,20 @@
   (:name "Pdf")
   (:suffix "pdf"))
 
-(converter pdf-file postscript-file
-  (:require (url-exists-in-path? "pdf2ps"))
-  (:shell "pdf2ps" from to))
+;;(converter pdf-file postscript-file
+;;  (:require (url-exists-in-path? "pdf2ps"))
+;;  (:shell "pdf2ps" from to))
+  
+;; many options for pdf->ps/eps see http://tex.stackexchange.com/a/20884
+;; this one does a better rendering than pdf2ps (also based on gs):
+(with gs (if (or (os-win32?) (os-mingw?)) "gswin32c" "gs")
+  (converter pdf-file postscript-file
+  ;;(:require (url-exists-in-path? gs )) ;; gs IS a dependency
+  (:shell ,gs "-q -dNOCACHE -dUseCropBox -dNOPAUSE -dBATCH -dSAFER -sDEVICE=eps2write -sOutputFile=" to from)))  
+;; problem: 
+;; eps2write available starting with gs  9.14 (2014-03-26)
+;; epswrite removed in gs 9.16 (2015-03-30)
+
 
 (converter postscript-file pdf-file
   (:require (url-exists-in-path? "ps2pdf"))
@@ -56,9 +67,13 @@
   (:require (url-exists-in-path? "inkscape"))
   (:shell "inkscape" "-z" "-f" from "-P" to))
 
+(converter svg-file pdf-file
+  (:require (url-exists-in-path? "inkscape"))
+  (:shell "inkscape" "-z" "-f" from "-A" to))
+
 (converter svg-file png-file
-  (:require (url-exists-in-path? "rsvg"))
-  (:shell "rsvg" "-f png" from to))
+  (:require (url-exists-in-path? "rsvg-convert"))
+  (:shell "rsvg-convert" "-f png -d 300" "-o " to from))
 
 (define-format geogebra
   (:name "Geogebra")

@@ -13,6 +13,7 @@
 #include "Boxes/construct.hpp"
 #include "file.hpp"
 #include "player.hpp"
+#include "Files/image_files.hpp"
 
 /******************************************************************************
 * Global animation tracking
@@ -509,12 +510,12 @@ static hashmap<tree,tree> decomposed_gif ("");
 
 static url
 decompose_gif (url u) {
-  if (!exists_in_path ("convert"))
+  if (!has_image_magick())
     return url_none ();
   if (!decomposed_gif->contains (u->t)) {
     url tmp= url_temp ("");
     url res= glue (tmp, "_%04d.gif");
-    system ("convert +adjoin -coalesce", u, res);
+    system (imagemagick_cmd () *" +adjoin -coalesce", u, res);
     decomposed_gif (u->t)= tmp->t;
   }
   url tmp= as_url (decomposed_gif [u->t]);

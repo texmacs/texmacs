@@ -76,8 +76,8 @@
   "Helper routine for converter macro"
   (cond ((func? cmd :penalty 1)
 	 (converter-set-penalty from to (second cmd)))
-        ((func? cmd :require 1)
-	 (if (not ((second cmd))) (converter-remove from to)))
+;;        ((func? cmd :require 1) ;; already handled earlier now 
+;;	 (if (not ((second cmd))) (converter-remove from to)))
         ((func? cmd :option 2)
 	 (converter-define-option from to (second cmd) (third cmd)))
         ((func? cmd :function 1)
@@ -108,23 +108,38 @@
 	 (to (if (string? to*) to* (symbol->string to*))))
     (set! converter-distance (make-ahash-table))
     (set! converter-path (make-ahash-table))
-    (converter-set-penalty from to 1.0)
-    `(for-each (lambda (x) (converter-cmd ,from ,to x))
-	       ,(list 'quasiquote (map converter-sub options)))))
+;; NEW if (:required) clause present but not fulfilled do nothing
+;; this enables to define several possible implementations of a given converter
+;; not presuming on the availability of external tools : the last valid one is retained
+;; (previously the last defined -even if unavailable- erased whatever was already defined)
+    (cond ((and (in? (car (first options)) '(:penalty)) 
+            (in? (car (second options)) '(:require)) 
+            (not (eval (second (second options))))) (noop))
+          ((and (in? (car (first options)) '(:require)) 
+            (not (eval (second (first options))))) (noop))
+          (else (converter-set-penalty from to 1.0) 
+             `(for-each (lambda (x) (converter-cmd ,from ,to x))
+	         ,(list 'quasiquote (map converter-sub options)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (converter-shell-cmd l from to)
+  (with x (car l)
+    (string-append (if (or (os-win32?) (os-mingw?)) 
+                     (escape-shell (url-concretize (url-resolve-in-path x))) x) " "
+      (converter-shell-cmd-args (cdr l) from to))))
+
+(define (converter-shell-cmd-args l from to)
   (if (null? l) ""
       (with x (car l)
-	(string-append (cond ((== x 'from) (url-concretize from))
-			     ((== x 'to) (url-concretize to))
+	(string-append (cond ((== x 'from) (escape-shell (url-concretize from)))
+			     ((== x 'to) (escape-shell (url-concretize to)))
 			     (else x))
 		       (cond ((and (string? x) (string-ends? x "=")) "")
                              (else " "))
-		       (converter-shell-cmd (cdr l) from to)))))
+		       (converter-shell-cmd-args (cdr l) from to)))))
 
 (define (converter-shell l from to-format opts)
   ;;(display* "converter-shell " l ", " from ", " to-format ", " opts "\n")
@@ -133,10 +148,11 @@
 	 (dsuf (format-default-suffix to-format))
 	 (suf (if (and dsuf (!= dsuf "")) (string-append "." dsuf) ""))
 	 (to (if (and last? dest) dest (url-glue (url-temp) suf)))
-	 (cmd (converter-shell-cmd l from to)))
+	 (cmd (if (or (os-win32?) (os-mingw?)) (escape-shell (converter-shell-cmd l from to))
+             (converter-shell-cmd l from to))))
     ;;(display* "shell: " cmd "\n")
     (system cmd)
-    to))
+    (if (url-exists? to) to #f)))
 
 (define-public (converter-save s opts)
   "Helper routine for define-format macro"
@@ -144,7 +160,7 @@
 	 (dest (assoc-ref opts 'dest))
 	 (to (if (and last? dest) dest (url-temp))))
     (string-save s to)
-    to))
+    (if (url-exists? to) to #f)))
 
 (define-public (converter-load u opts)
   "Helper routine for define-format macro"

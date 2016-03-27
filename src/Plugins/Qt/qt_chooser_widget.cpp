@@ -273,12 +273,12 @@ qt_chooser_widget_rep::perform_dialog () {
 #if !defined(Q_WS_MAC) // && !defined(Q_WS_WIN)   //at least windows Xp and 7 lack image preview, switch to custom dialog
         file = "(list " * file * imgdialog->getParamsAsString () * ")"; //set image size from preview
 #else //MacOs only now
-        QPixmap pic (fileNames.first());
+        QPixmap pic (fileNames.first()); // Qt can't eps & pdf in windows.
         string params;
-          // HACK: which value should we choose here?
-//Philippe: using	image_size (u,  w,  h); would make the behavior consistent across platforms.
+        // HACK: which value should we choose here?
+        //On other platforms we call image_size (u,  w,  h) which returns size in pt units.
         int ww = (get_current_editor()->get_page_width () / PIXEL) / 3;
-        int  w = min (ww, pic.width()); // in windows Xp and 7 this does not give a valid size for eps or pdf images
+        int  w = min (ww, pic.width());
         int  h = ((double) pic.height() / (double) pic.width()) * (double) w;   // no risk of division by zero here on invalid file?
         params << "\"" << from_qstring (QString ("%1px").arg (w)) << "\" "
                << "\"" << from_qstring (QString ("%1px").arg (h)) << "\" "

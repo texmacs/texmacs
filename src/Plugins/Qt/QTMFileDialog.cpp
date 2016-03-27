@@ -122,15 +122,16 @@ BEGIN_SLOT
   xps->setText ("");
   yps->setText ("");
 
-  if (file.endsWith (".ps") ||
-      file.endsWith (".eps") ||
-      file.endsWith (".pdf")) {
+  url image_url= url_system (scm_unquote (from_qstring_utf8 (file)));
+  if (DEBUG_CONVERT) debug_convert<<"image preview :["<<image_url<<"]"<<LF;
+  if (!(as_string(image_url)=="") && !is_directory(image_url) && exists(image_url) ){
     url temp= url_temp (".png");
-    url image_url= url_system (scm_unquote (from_qstring_utf8 (file)));
     int w_pt, h_pt;
     double w, h;
     image_size (image_url, w_pt, h_pt);
-    if (w_pt*h_pt !=0) { //necessary if gs returns h=v=0 (for instance 0-size pdf) 
+    if (w_pt*h_pt !=0) { //necessary if gs returns h=v=0 (for instance 0-size pdf)
+      wid->setText (QString::number (w_pt) + "pt");
+      hei->setText (QString::number (h_pt) + "pt");
       if (w_pt > h_pt) {
         w= 98;
         h= h_pt*98/w_pt;
@@ -143,20 +144,15 @@ BEGIN_SLOT
         else w= (int)w;
         h= 98;
 	  }
-	  image_to_png (image_url, temp, w, h); 
-//	  cout << "loads in qt? " << 
-      img.load (utf8_to_qstring (cork_to_utf8 (as_string (temp))).toLocal8Bit ());
-	  //use here same hack as in qt_chooser_widget.cpp::perform_dialog
-	  // otherwise temp file in french windows is not recognized (path with spaces and accents)
-	  // probably worth generalizing as url_to_qtfilename() ?
+	  //generate thumbnail :
+	  image_to_png (image_url, temp, w, h);
+	  // hack originally in qt_chooser_widget.cpp::perform_dialogwith comments :
+	      // FIXME: charset detection in to_qstring() (if that hack is still there)
+	      // fails sometimes, so we bypass it to force the proper (?) conversions here.
+	      // what was used previously : QByteArray arr   = to_qstring (as_string (u)).toLocal8Bit ();
+	  // this can handle e.g. a file in french windows whose path has spaces and accents
+	  img.load (utf8_to_qstring (cork_to_utf8 (as_string (temp))).toLocal8Bit ());
 	  remove (temp);
-    }
-  }
-  else {
-    img.load (file);
-    if (!img.isNull()) {
-      wid->setText (QString::number (img.width ()) + "px");
-      hei->setText (QString::number (img.height ()) + "px");
     }
   }
 

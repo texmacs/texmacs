@@ -149,11 +149,11 @@ latex_load_preview (url wdir, bool dvips= false) {
   string cmdln= "cd \"" * as_string (wdir) * "\"; ";
   if (dvips) {
     cmdln << "dvips temp.dvi && "
-      << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
+      << gs_prefix()* " -sDEVICE="*eps_device()*" -dSAFER -q -dNOPAUSE -dBATCH "
       << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.ps";
   }
   else {
-    cmdln << "gs -sDEVICE=epswrite -dSAFER -q -dNOPAUSE -dBATCH "
+    cmdln << gs_prefix()* " -sDEVICE="*eps_device()*" -dSAFER -q -dNOPAUSE -dBATCH "
       << "-dLanguageLevel=3 -sOutputFile=temp%d.eps temp.pdf";
   }
   dbg ("GS command: " * cmdln);

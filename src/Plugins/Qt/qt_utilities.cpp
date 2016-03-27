@@ -26,6 +26,7 @@
 
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QImageReader>
 
 #include "colors.hpp"
 
@@ -356,39 +357,42 @@ to_color (const QColor& c) {
  * Image conversion
  ******************************************************************************/
 
-  //FIXME!?!?
 bool
 qt_supports (url u) {
-  string s= suffix (u);
-  if (s == "ps" || s == "eps" || s == "pdf") return false;
-  return true;
+  static QList<QByteArray> formats = QImageReader::supportedImageFormats();
+/*  if (DEBUG_CONVERT) {
+	  debug_convert <<"QT valid formats:";
+	  foreach (QString _format, formats) debug_convert <<", "<< from_qstring(_format);
+	  debug_convert <<LF;
+  }	*/  
+  string suf=suffix (u);
+  bool ans = (bool) formats.contains((QByteArray) as_charp(suf));
+  //if (DEBUG_CONVERT) {debug_convert <<"QT valid format:"<<((ans)?"yes":"no")<<LF;}
+  return ans;
 }
 
-void
-qt_image_size (url image, int& w, int& h) {
-    //cout <<  concretize (image) << LF;
+bool
+qt_image_size (url image, int& w, int& h) {// w, h in points
+  if (DEBUG_CONVERT) debug_convert << "qt_image_size :" <<LF;
   QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
-    if (as_bool (call ("file-converter-exists?", image, "x.png"))) {
-      url temp= url_temp (".png");
-      call ("file-convert", object (image), object (temp));
-      qt_image_size (temp, w, h);
-      remove (temp);
-    }
-    else {
       convert_error << "Cannot read image file '" << image << "'"
       << " in qt_image_size" << LF;
       w= 35; h= 35;
-    }
+	  return false;
   }
   else {
-    w= im.width ();
-    h= im.height ();
+    w= (im.width ()*2834)/im.dotsPerMeterX();
+    h= (im.height()*2834)/im.dotsPerMeterY();
+    if (DEBUG_CONVERT) debug_convert <<"QT dotsPerMeter: "
+        <<w<<" x "<<h<<LF;
+    return true;      
   }
 }
 
 void
-qt_convert_image (url image, url dest, int w, int h) {
+qt_convert_image (url image, url dest, int w, int h) {// w, h in pixels
+  if (DEBUG_CONVERT) debug_convert << "qt_convert_image " << image << " -> "<<dest<<LF;
   QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ())
     convert_error << "Cannot read image file '" << image << "'"
@@ -401,13 +405,66 @@ qt_convert_image (url image, url dest, int w, int h) {
 }
 
 void
+qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
+// use a QPrinter to output raster images to eps or pdf
+// dpi is the maximum dpi : the image will either be dowsampled to that dpi
+// or the actual dpi will be lower  
+  if (DEBUG_CONVERT) debug_convert << "qt_image_to_eps_or_pdf " << image << " -> "<<outfile<<LF;
+  QPrinter printer;
+  printer.setOrientation(QPrinter::Portrait);
+  if (suffix(outfile)=="eps") printer.setOutputFormat(QPrinter::PostScriptFormat); 
+  //note that PostScriptFormat is gone in Qt5. a substitute?: http://soft.proindependent.com/eps/
+  else printer.setOutputFormat(QPrinter::PdfFormat);
+  printer.setFullPage(true);
+  if (!dpi) dpi=96; 
+  printer.setResolution(dpi);
+  printer.setOutputFileName(utf8_to_qstring (concretize (outfile)));
+  QImage im (utf8_to_qstring (concretize (image)));
+  if (im.isNull ()) {
+    convert_error << "Cannot read image file '" << image << "'"
+    << " in qt_image_to_pdf" << LF;
+  // load the "?" image?
+  }
+  else {
+/*  if (DEBUG_CONVERT) debug_convert << "size asked " << w_pt << "x"<<h_pt
+  << " at " << maximum dpi <<" dpi"<<LF
+  << "dpi set: " << printer.resolution() <<LF;
+*/
+    if (dpi > 0 && w_pt > 0 && h_pt > 0) {
+	    printer.setPaperSize(QSizeF(w_pt, h_pt), QPrinter::Point); // in points
+
+      // w_pt and h_pt are dimensions in points (and there are 72 points per inch)
+      int ww = w_pt * dpi / 72;
+      int hh = h_pt * dpi / 72;
+      if ((ww < im.width ()) ||( hh < im.height ())) //downsample if possible to reduce file size
+	      im= im.scaled (ww, hh, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+  	  else // image was too small, reduce dpi accordingly to fill page
+        printer.setResolution((int) (dpi*im.width())/(double)ww);
+      if (DEBUG_CONVERT) debug_convert << "dpi asked: "<< dpi <<" ; actual dpi set: " << printer.resolution() <<LF;
+	  }
+	  else printer.setPaperSize(QSizeF(im.width (), im.height ()), QPrinter::DevicePixel);
+    QPainter p;
+    p.begin(&printer);
+    p.drawImage(0, 0, im);
+    p.end();
+    }
+}
+
+void qt_image_to_eps(url image, url outfile, int w_pt, int h_pt, int dpi) {
+  qt_image_to_pdf(image, outfile, w_pt, h_pt, dpi);};
+
+/* not in use anymore : now use a Qt printer that outputs ps.
+void
 qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
+  if (DEBUG_CONVERT) debug_convert << "qt_image_to_eps " << image << " -> "<<eps<<LF;
   string r= qt_image_to_eps (image, w_pt, h_pt, dpi);
   save_string (eps, r);
 }
 
 string
 qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
+  if (DEBUG_CONVERT) debug_convert << "in qt_image_to_eps"<<LF; 
+
   static const char* d= "0123456789ABCDEF";
   QImage im (utf8_to_qstring (concretize (image)));
   string r;
@@ -453,7 +510,7 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
           l= 0;
         }
       }
-      if (alpha) {
+     if (alpha) {
         v= 0;
         for (i=0; i < im.width (); i++) {
           v+= (qAlpha (im.pixel (i, j)) == 0) << (3 - i % 4);
@@ -505,9 +562,9 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
   return r;
 }
 
-
 void
 qt_image_data (url image, int& w, int&h, string& data, string& palette, string& mask) {
+	debug_convert << "in qt_image_data"<<LF; 
   (void) palette;
   QImage im (utf8_to_qstring (concretize (image)));
   
@@ -518,6 +575,8 @@ qt_image_data (url image, int& w, int&h, string& data, string& palette, string& 
     << " in qt_image_data" << LF;
   else {
     bool alpha= im.hasAlphaChannel ();
+	if (alpha) im.fill( Qt::transparent );
+
     w=  im.width ();
     h=  im.height ();
     
@@ -532,8 +591,6 @@ qt_image_data (url image, int& w, int&h, string& data, string& palette, string& 
         data[l++] = qGreen (p);
         data[l++] = qBlue (p);
       }
-    }
-    
     if (alpha) {
       mask = string ((w*h+7)/8);
       
@@ -550,10 +607,9 @@ qt_image_data (url image, int& w, int&h, string& data, string& palette, string& 
           }
         }
       }
-    }
-    
   }
 }
+*/
 
 QPixmap
 as_pixmap (const QImage& im) {
