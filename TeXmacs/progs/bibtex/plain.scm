@@ -546,8 +546,10 @@
   (if (bib-empty? x "author")
       (if (bib-empty? x "editor")
 	  (list-ref x 2)
-	  (author-sort-format (bib-cdr (bib-field x "editor"))))
-      (author-sort-format (bib-cdr (bib-field x "author")))))
+	  (string-upcase (author-sort-format
+                          (bib-cdr (bib-field x "editor")))))
+      (string-upcase (author-sort-format
+                      (bib-cdr (bib-field x "author"))))))
 
 (define (author-sort-key x ae)
   (if (bib-empty? x ae)
