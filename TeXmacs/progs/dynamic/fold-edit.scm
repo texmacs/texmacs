@@ -733,9 +733,10 @@
 (tm-define (dynamic-make-slides)
   (init-default "page-medium" "page-type" "page-width" "page-height"
                 "page-width-margin" "page-height-margin"
-                "page-odd" "page-even" "page-right"
-                "par-width" "page-odd-shift" "page-even-shift"
-                "page-top" "page-bot" "page-height-margin")
+                ;;"page-odd" "page-even" "page-right"
+                ;;"par-width" "page-odd-shift" "page-even-shift"
+                ;;"page-top" "page-bot"
+                )
   (add-style-package "slides")
   (if (preference-on? "texmacs->pdf:expand slides")
       (let* ((t (buffer-tree))
