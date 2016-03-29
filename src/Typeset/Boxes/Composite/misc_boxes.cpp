@@ -161,10 +161,11 @@ page_box_rep::pre_display (renderer& ren) {
     ren->set_background (page_bgc);
     ren->clear_pattern (x1, y1, x2, y2);
   }
-  //else ren->clear_pattern (x1, y1, x2, y2);
-  // FIXME: uncomment in order to render background patterns with
-  // the appropriate origin on each page.  This requires you to use
-  // the same margins on paper and on the screen.
+  else if (ren->get_background ()->get_type () == brush_pattern) {
+    ren->clear_pattern (x1, y1, x2, y2);
+    // FIXME: the borders of pages are not always correctly cleared
+    // using the above line, especially during slow scrolling.
+  }
   old_page= ren->cur_page;
   ren->set_page_nr (page_nr);
 }
