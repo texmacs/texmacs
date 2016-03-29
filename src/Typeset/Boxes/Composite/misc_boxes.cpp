@@ -166,7 +166,9 @@ page_box_rep::pre_display (renderer& ren) {
   // the appropriate origin on each page.  This requires you to use
   // the same margins on paper and on the screen.  This does not yet
   // get the origins of other background patterns right, such as
-  // filled cells and closed curves.
+  // filled cells and closed curves.  This would require us to
+  // store the offset of the page origin in the renderer and
+  // translate all patterns accordingly.
   old_page= ren->cur_page;
   ren->set_page_nr (page_nr);
 }
