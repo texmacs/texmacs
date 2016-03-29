@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.4>
 
 <style|source>
 
@@ -29,10 +29,10 @@
   <assign|title-theme|title-bar>
 
   <assign|tit|<\macro|body>
-    <\with|par-left|<minus|<value|page-screen-left>>|par-right|<minus|<value|page-screen-right>>>
+    <\with|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>>
       <shift|<with|color|<title-color>|math-color|<title-color>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|2|2|1|1|cell-vcorrect|n>|<cwith|2|2|1|1|cell-halign|l>|<twith|table-valign|T>|<table|<row|<\cell>
         <title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>
-      </cell>>|<row|<cell|<with|locus-color|grey|opacity|100%|<tiny|<screens-bar|<quote-arg|body>>>>>>>>>||0em||>>|0mm|<value|page-screen-top>>
+      </cell>>|<row|<cell|<with|locus-color|grey|opacity|100%|<tiny|<screens-bar|<quote-arg|body>>>>>>>>>||0em||>>|0mm|<value|page-top>>
     </with>
   </macro>>
 </body>
