@@ -35,6 +35,8 @@ public:
   SI           even;
   SI           top;
   SI           bot;
+  SI           dtop;
+  SI           dbot;
   SI           may_extend;
   SI           may_shrink;
   SI           head_sep;
@@ -78,6 +80,7 @@ public:
   box   make_header (bool empty_flag);
   box   make_footer (bool empty_flag);
   brush make_background (bool empty_flag);
+  void  adjust_margins (bool empty_flag);
   box   make_pages ();
 
   friend struct stacker_rep;

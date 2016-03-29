@@ -162,11 +162,13 @@ pager_rep::pages_make_page (pagelet pg) {
   env->write (PAGE_NR, as_string (nr));
   env->write (PAGE_THE_PAGE, style[PAGE_THE_PAGE]);
   tree page_t= env->exec (compound (PAGE_THE_PAGE));
-  box header= make_header (N (pg->ins) == 0);
-  box footer= make_footer (N (pg->ins) == 0);
-  brush bgc = make_background (N (pg->ins) == 0);
-  return page_box (ip, lb, page_t, nr, bgc,
-		   width, height, left, top, top+ text_height,
+  bool empty= N (pg->ins) == 0;
+  box header= make_header (empty);
+  box footer= make_footer (empty);
+  brush bgc = make_background (empty);
+  adjust_margins (empty);
+  return page_box (ip, lb, page_t, nr, bgc, width, height,
+                   left, top + dtop, top + dtop + text_height,
 		   header, footer, head_sep, foot_sep);
 }
 
@@ -197,12 +199,13 @@ pager_rep::papyrus_make () {
   SI ph= b->h();
   if (env->get_string (PAGE_MEDIUM) == "beamer")
     ph= max (ph, env->page_user_height);
+  brush bgc = make_background (false);
+  adjust_margins (false);
   SI left  = (odd+even) >> 1;
   SI height= top + bot + ph;
   array<box> bs   (1); bs   [0]= b;
   array<SI>  bs_x (1); bs_x [0]= left;
-  array<SI>  bs_y (1); bs_y [0]= -top;
-  brush bgc = make_background (false);
+  array<SI>  bs_y (1); bs_y [0]= -top - dtop;
   box pb= page_box (ip, "?", 0, bgc, width, height,
 		    bs, bs_x, bs_y, 0, 0, 0);
   pages << pb;

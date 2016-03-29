@@ -957,6 +957,8 @@ init_std_drd () {
   init_var (PAGE_ODD_FOOTER, TYPE_REGULAR, "odd page footer");
   init_var (PAGE_EVEN_HEADER, TYPE_REGULAR, "even page header");
   init_var (PAGE_EVEN_FOOTER, TYPE_REGULAR, "even page footer");
+  init_var (PAGE_THIS_TOP, TYPE_LENGTH);
+  init_var (PAGE_THIS_BOT, TYPE_LENGTH);
   init_var (PAGE_THIS_HEADER, TYPE_REGULAR);
   init_var (PAGE_THIS_FOOTER, TYPE_REGULAR);
   init_var (PAGE_THIS_BG_COLOR, TYPE_COLOR);

@@ -135,6 +135,8 @@ string PAGE_ODD_HEADER ("page-odd-header");
 string PAGE_ODD_FOOTER ("page-odd-footer");
 string PAGE_EVEN_HEADER ("page-even-header");
 string PAGE_EVEN_FOOTER ("page-even-footer");
+string PAGE_THIS_TOP ("page-this-top");
+string PAGE_THIS_BOT ("page-this-bot");
 string PAGE_THIS_HEADER ("page-this-header");
 string PAGE_THIS_FOOTER ("page-this-footer");
 string PAGE_THIS_BG_COLOR ("page-this-bg-color");

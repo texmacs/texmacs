@@ -349,7 +349,9 @@ bridge_rep::typeset (int desired_status) {
 	  last= i;
 	}
         else if (is_tuple (l[i]->t, "env_page") &&
-                 l[i]->t[1] == PAGE_THIS_BG_COLOR)
+                 (l[i]->t[1] == PAGE_THIS_TOP ||
+                  l[i]->t[1] == PAGE_THIS_BOT ||
+                  l[i]->t[1] == PAGE_THIS_BG_COLOR))
           special_l << l[i];
       box lb= stack_box (path (ip), bs, spc);
       if (first != -1) lb= move_box (path (ip), lb, 0, bs[first]->y2);

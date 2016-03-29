@@ -125,6 +125,8 @@ extern string PAGE_ODD_HEADER;
 extern string PAGE_ODD_FOOTER;
 extern string PAGE_EVEN_HEADER;
 extern string PAGE_EVEN_FOOTER;
+extern string PAGE_THIS_TOP;
+extern string PAGE_THIS_BOT;
 extern string PAGE_THIS_HEADER;
 extern string PAGE_THIS_FOOTER;
 extern string PAGE_THIS_BG_COLOR;

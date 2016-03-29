@@ -228,6 +228,18 @@ pager_rep::make_background (bool empty_flag) {
   return brush (bgc);
 }
 
+void
+pager_rep::adjust_margins (bool empty_flag) {
+  dtop= dbot= 0;
+  if (empty_flag) return;
+  tree topt= style [PAGE_THIS_TOP];
+  tree bott= style [PAGE_THIS_BOT];
+  if (topt != UNINIT) dtop= env->as_length (topt) - top;
+  if (bott != UNINIT) dbot= env->as_length (bott) - bot;
+  style->reset (PAGE_THIS_TOP);
+  style->reset (PAGE_THIS_BOT);
+}
+
 /******************************************************************************
 * Typesetting all pages
 ******************************************************************************/
