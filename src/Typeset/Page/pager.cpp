@@ -248,12 +248,44 @@ box
 pager_rep::make_pages () {
   if (paper) pages_make ();
   else papyrus_make ();
-  int i, nr_pages= N(pages);
-  array<SI>  x  (nr_pages);
-  array<SI>  y  (nr_pages);
-  for (i=0; i<nr_pages; i++) {
-    x[i]= 0;
-    y[i]= (i==0? 0: y[i-1]- pages[i-1]->h());
+
+  int nr_pages= N(pages);
+  int d= 0;
+  int nx= min (1, max (1, nr_pages));
+  int ny= ((nr_pages + nx - 1 + d) / nx);
+
+  array<SI> xx (nx);
+  xx[0]= 0;
+  for (int i=1; i<nx; i++) {
+    xx[i]= xx[i-1];
+    for (int j=0; j<ny; j++) {
+      int p= j*nx + i - d;
+      if (p >= 0 && p < nr_pages)
+        xx[i]= max (xx[i-1] + pages[p]->w(), xx[i]);
+    }
   }
+
+  array<SI> yy (ny);
+  yy[0]= 0;
+  for (int j=1; j<ny; j++) {
+    yy[j]= yy[j-1];
+    for (int i=0; i<nx; i++) {
+      int p= j*nx + i - d;
+      if (p >= 0 && p < nr_pages)
+        yy[j]= min (yy[j-1] - pages[p]->h(), yy[j]);
+    }
+  }
+
+  array<SI> x (nr_pages);
+  array<SI> y (nr_pages);
+  for (int i=0; i<nx; i++)
+    for (int j=0; j<ny; j++) {
+      int p= j*nx + i - d;
+      if (p >= 0 && p < nr_pages) {
+        x[p]= xx[i];
+        y[p]= yy[j];
+      }
+    }
+
   return move_box (ip, scatter_box (ip, pages, x, y), 0, 0);
 }
