@@ -286,6 +286,13 @@ qt_renderer_rep::lines (array<SI> x, array<SI> y) {
   STACK_NEW_ARRAY (pnt, QPointF, n);
   for (i=0; i<n; i++)
     decode (x[i], y[i], pnt[i].rx(), pnt[i].ry());
+
+  QPen p= painter->pen();
+  p.setCapStyle (pen->get_cap () == cap_round? Qt::RoundCap: Qt::SquareCap);
+  if (x[N(x)-1] == x[0] && y[N(y)-1] == y[0]) p.setCapStyle (Qt::RoundCap);
+  p.setJoinStyle (Qt::RoundJoin);
+  painter->setPen (p);
+
   painter->setRenderHints (QPainter::Antialiasing);
   painter->drawPolyline (pnt, n);
   STACK_DELETE_ARRAY (pnt);
