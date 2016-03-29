@@ -514,6 +514,15 @@
 ;; Basic pattern picker
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (tm-pattern name w h)
+  (cond ((url-exists? (url-append "$TEXMACS_PATTERN_PATH" (url-tail name)))
+         `(pattern ,(url->unix (url-tail name)) ,w ,h))
+        ((string-starts? (url->unix (url->delta-unix name)) "../")
+         (when (url? name) (set! name (url->unix name)))
+         `(pattern ,name ,w ,h))         
+        (else
+         `(pattern ,(url->unix (url->delta-unix name)) ,w ,h))))
+
 (define (standard-pattern-list dir scale)
   (let* ((l1 (url-read-directory dir "*.png"))
          (l2 (url-read-directory dir "*.jpg"))
@@ -521,12 +530,12 @@
          (l (append l1 l2 l3))
          (d (map (cut url-delta (string-append dir "/x") <>) l))
          (f (map (lambda (x) (string-append dir "/" (url->unix x))) d)))
-    (map (lambda (x) `(pattern ,x ,scale "")) f)))
+    (map (lambda (x) (tm-pattern x scale "")) f)))
 
 (tm-menu (standard-pattern-menu cmd dir scale)
   (tile 8
     (for (col (standard-pattern-list dir scale))
-      (with col2 `(pattern ,(cadr col) "100%" "100@")
+      (with col2 (tm-pattern (cadr col) "100%" "100@")
         (explicit-buttons
           ((color col2 #f #f 32 32)
            (cmd col)))))))

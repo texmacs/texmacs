@@ -298,6 +298,12 @@
 (define-public (url-wrap u)
   #f)
 
+(define-public (url->delta-unix u)
+  (with base (buffer-get-master (current-buffer))
+    (when (and (url-rooted? u) (not (url-none? base)))
+      (set! u (url-delta base u))))
+  (url->unix u))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

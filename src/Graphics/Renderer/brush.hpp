@@ -12,6 +12,7 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 #include "tree.hpp"
+class url;
 
 enum brush_kind {
   brush_none,
@@ -29,6 +30,7 @@ public:
 
   virtual color get_color () = 0;
   virtual tree get_pattern () = 0;
+  virtual url get_pattern_url ();
   virtual int get_alpha () = 0;
 
   friend class brush;

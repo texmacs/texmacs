@@ -177,7 +177,7 @@ double as_percentage (tree t);
 static QImage*
 get_pattern_image (brush br, SI pixel) {
   tree pattern= br->get_pattern ();
-  url u= as_string (pattern[0]);
+  url u= br->get_pattern_url ();
   int imw_pt, imh_pt;
   image_size (u, imw_pt, imh_pt);
   double pt= ((double) 600*PIXEL) / 72.0;

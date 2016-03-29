@@ -233,8 +233,7 @@
 
 (define ((set-page-pattern settings) name)
   (when (pair? name) (set! name (car name)))
-  (when (url? name) (set! name (url->unix name)))
-  (ahash-set! settings "page-this-bg-color" `(pattern ,name "" "")))
+  (ahash-set! settings "page-this-bg-color" (tm-pattern name "" "")))
 
 (define (page-set-background settings what)
   (let* ((var "page-this-bg-color")
@@ -298,6 +297,11 @@
 ;; Pattern selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (normalize-color col)
+  (if (tm-func? col 'pattern 3)
+      (tm-pattern (cadr col) (caddr col) (cadddr col))
+      col))
+
 (tm-widget ((pattern-selector u col w h) cmd)
   (padded
     (hlist
@@ -350,7 +354,7 @@
     (explicit-buttons
       (hlist
         >>>
-        ("Ok" (cmd col))))))
+        ("Ok" (cmd (normalize-color col)))))))
 
 (tm-define (open-pattern-selector cmd w)
   (:interactive #t)

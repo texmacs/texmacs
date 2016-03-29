@@ -672,13 +672,11 @@
 
 (define (set-background-pattern name)
   (when (pair? name) (set! name (car name)))
-  (when (url? name) (set! name (url->unix name)))
-  (init-env-tree "bg-color" `(pattern ,name "" "")))
+  (init-env-tree "bg-color" (tm-pattern name "" "")))
 
 (define (set-background-picture name)
   (when (pair? name) (set! name (car name)))
-  (when (url? name) (set! name (url->unix name)))
-  (init-env-tree "bg-color" `(pattern ,name "100%" "100@")))
+  (init-env-tree "bg-color" (tm-pattern name "100%" "100@")))
 
 (menu-bind document-foreground-color-menu
   ("Default" (init-default "color"))

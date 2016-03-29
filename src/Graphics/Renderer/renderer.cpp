@@ -345,7 +345,7 @@ renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
     get_clipping (cx1, cy1, cx2, cy2);
     extra_clipping (x1, y1, x2, y2);
 
-    url u= as_string (pattern[0]);
+    url u= b->get_pattern_url ();
     int imw_pt, imh_pt;
     image_size (u, imw_pt, imh_pt);
     double pt= ((double) 600*PIXEL) / 72.0;

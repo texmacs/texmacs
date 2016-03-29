@@ -11,6 +11,9 @@
 
 #include "brush.hpp"
 #include "gui.hpp"
+#include "url.hpp"
+
+url get_current_buffer_safe ();
 
 /******************************************************************************
 * Equality
@@ -81,6 +84,19 @@ public:
   tree get_pattern () { return pattern; }
   int get_alpha () { return alpha; }
 };
+
+url
+brush_rep::get_pattern_url () {
+  tree t= get_pattern ();
+  if (is_atomic (t) || N(t) == 0 || !is_atomic (t[0])) return url ();
+  url u= as_string (t[0]);
+  url r= resolve (url ("$TEXMACS_PATTERN_PATH") * u);
+  if (!is_none (r)) return r;
+  url base= get_current_buffer_safe ();
+  r= resolve (relative (base, u));
+  if (!is_none (r)) return r;
+  return u;
+}
 
 /******************************************************************************
 * Constructors

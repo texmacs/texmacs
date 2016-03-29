@@ -667,10 +667,6 @@
       (insert-go-to `(specific ,s "") '(1 0))
       (insert-go-to `(inactive (specific ,s "")) '(0 1 0))))
 
-(define (url->delta-unix u)
-  (if (url-rooted? u) (set! u (url-delta (current-buffer) u)))
-  (url->unix u))
-
 (tm-define (make-include u)
   (insert `(include ,(url->delta-unix u))))
 

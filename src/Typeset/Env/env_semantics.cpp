@@ -408,9 +408,15 @@ edit_env_rep::update_color () {
   tree pc= env [COLOR];
   tree fc= env [FILL_COLOR];
   if (pc == "none") pen= pencil (false);
-  else pen= pencil (pc, alpha, get_length (LINE_WIDTH));
+  else {
+    if (L(pc) == PATTERN) pc= exec (pc);
+    pen= pencil (pc, alpha, get_length (LINE_WIDTH));
+  }
   if (fc == "none") fill_brush= brush (false);
-  else fill_brush= brush (fc, alpha);
+  else {
+    if (L(fc) == PATTERN) fc= exec (fc);
+    fill_brush= brush (fc, alpha);
+  }
 }
 
 void
