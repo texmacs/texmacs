@@ -1414,8 +1414,8 @@ switch  (rot) {
 	   tMat[1] = 0;
 	   tMat[2] = 0;
      tMat[3] = 1;
-	   tMat[4] = 0 ;
-	   tMat[5] = 0 ;
+	   tMat[4] =  -cropBox.LowerLeftX;
+	   tMat[5] =  -cropBox.LowerLeftY;
 	   break;
 	case 90 :
 	   tMat[0] = 0;
