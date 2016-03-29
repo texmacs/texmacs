@@ -38,6 +38,8 @@
 
   <assign|screens-bar|<macro|body|<extern|screens-bar|<quote-arg|body>>>>
 
+  <assign|screens-emphasize|<macro|body|<wide*|<arg|body>|\<wide-bar\>>>>
+
   <\active*>
     <\src-comment>
       Global document layout

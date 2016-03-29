@@ -30,11 +30,12 @@
     (if t (number->string (tree-arity (tree-up t))) "-1")))
 
 (define (screen-link i strong?)
-  (let* ((nr (number->string (+ i 1)))
+  (let* ((nr* (number->string (+ i 1)))
+         (nr (if strong? `(screens-emphasize ,nr*) nr*))
          (s (number->string i))
          (cmd (string-append "(screens-switch-to " s ")"))
          (act `(action ,nr ,cmd)))
-    `(concat ,(if strong? `(strong ,act) act) " ")))
+    `(concat ,act " ")))
 
 (tm-define (screens-bar body)
   (:secure #t)
