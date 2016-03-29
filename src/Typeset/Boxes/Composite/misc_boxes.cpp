@@ -161,6 +161,12 @@ page_box_rep::pre_display (renderer& ren) {
     ren->set_background (page_bgc);
     ren->clear_pattern (x1, y1, x2, y2);
   }
+  //else ren->clear_pattern (x1, y1, x2, y2);
+  // FIXME: uncomment in order to render background patterns with
+  // the appropriate origin on each page.  This requires you to use
+  // the same margins on paper and on the screen.  This does not yet
+  // get the origins of other background patterns right, such as
+  // filled cells and closed curves.
   old_page= ren->cur_page;
   ren->set_page_nr (page_nr);
 }
