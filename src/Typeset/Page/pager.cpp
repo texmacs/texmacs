@@ -258,9 +258,19 @@ pager_rep::make_pages () {
   array<box> pg= pages;
   if (env->get_string (PAGE_MEDIUM) == "paper" &&
       env->get_string (PAGE_BORDER) != "none")
-    for (int i=0; i<nr_pages; i++)
-      pg[i]= page_border_box (pages[i]->ip, pages[i],
-                              10*pixel, 10*pixel, 10*pixel, 10*pixel);
+    for (int i=0; i<nx; i++)
+      for (int j=0; j<ny; j++) {
+        int p= j*nx + i - d;
+        if (p >= 0 && p < nr_pages) {
+          SI l= 10*pixel, r= 10*pixel;
+          SI b= 10*pixel, t= 10*pixel;
+          if (env->get_string (PAGE_BORDER) == "attached") {
+            if (i > 0) l= 2*pixel/3;
+            if (i < nx-1) r= 0;
+          }
+          pg[p]= page_border_box (pages[p]->ip, pages[p], l, r, b, t);
+        }
+      }
 
   array<SI> xx (nx);
   xx[0]= 0;
@@ -295,5 +305,5 @@ pager_rep::make_pages () {
       }
     }
 
-  return move_box (ip, scatter_box (ip, pg, x, y), 0, 0);
+  return move_box (ip, scatter_box (ip, pg, x, y, nr_pages > 1), 0, 0);
 }

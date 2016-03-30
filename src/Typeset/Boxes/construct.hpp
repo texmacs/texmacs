@@ -115,7 +115,8 @@ box composite_box (path ip, array<box> bs, array<SI> x, array<SI> y,
 box table_box (path ip, array<box> bs, array<SI> x, array<SI> y,
                array<string> halign, int cols);
 box superpose_box (path ip, array<box> bs, bool bfl= true);
-box scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y);
+box scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y,
+                 bool bg_flag= false);
 box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 	      SI bl, SI br, SI bb, SI bt, brush fg, brush bg);
 box remember_box (path ip, box b);

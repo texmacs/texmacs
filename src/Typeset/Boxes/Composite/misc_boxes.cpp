@@ -19,22 +19,31 @@
 ******************************************************************************/
 
 struct scatter_box_rep: composite_box_rep {
-  tree page;
-  box  decoration;
+  tree       page;
+  box        decoration;
+  rectangles rs;
 
-  scatter_box_rep (path ip, array<box> bs, array<SI> x, array<SI> y);
+  scatter_box_rep (path ip, array<box> bs, array<SI> x, array<SI> y, bool f);
   operator tree ();
   int       find_child (SI x, SI y, SI delta, bool force);
   path      find_left_box_path ();
   path      find_right_box_path ();
   selection find_selection (path lbp, path rbp);
+  void      pre_display (renderer& ren);
+  void      display_background (renderer ren);
 };
 
 scatter_box_rep::scatter_box_rep (
-  path ip2, array<box> bs, array<SI> x, array<SI> y):
+  path ip2, array<box> bs, array<SI> x, array<SI> y, bool f):
     composite_box_rep (ip2, bs, x, y)
 {
   finalize ();
+  if (f) {
+    rectangles all (rectangle (x1, y1, x2, y2));
+    for (int i=0; i<N(bs); i++)
+      rs= rectangles (rectangle (sx1(i), sy1(i), sx2(i), sy2(i)), rs);
+    rs= all - rs;
+  }
 }
 
 scatter_box_rep::operator tree () {
@@ -85,6 +94,29 @@ scatter_box_rep::find_selection (path lbp, path rbp) {
     }
     return sel;
   }
+}
+
+void
+scatter_box_rep::pre_display (renderer& ren) {
+  display_background (ren);
+}
+
+void
+scatter_box_rep::display_background (renderer ren) {
+  if (is_nil (rs)) return;
+  brush bgc= ren->get_background ();
+#ifdef QTTEXMACS
+  ren->set_background (rgb_color (160, 160, 160));
+#else
+  ren->set_background (light_grey);
+#endif
+  rectangles rects= rs;
+  while (!is_nil (rects)) {
+    rectangle r= rects->item;
+    ren->clear_pattern (r->x1, r->y1, r->x2, r->y2);
+    rects= rects->next;
+  }
+  ren->set_background (bgc);
 }
 
 /******************************************************************************
@@ -305,8 +337,8 @@ page_border_box_rep::display_background (renderer ren) {
 ******************************************************************************/
 
 box
-scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y) {
-  return tm_new<scatter_box_rep> (ip, bs, x, y);
+scatter_box (path ip, array<box> bs, array<SI> x, array<SI> y, bool f) {
+  return tm_new<scatter_box_rep> (ip, bs, x, y, f);
 }
 
 box
