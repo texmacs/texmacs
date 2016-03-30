@@ -187,9 +187,9 @@ ps_load (url image) {
 
   string s, suf= suffix (image);
   if (suf == "ps" || suf == "eps") 
-	  load_string (image, s, false);
+    load_string (image, s, false);
   else 
-	  s=image_to_psdoc (image); // call converters, then load resulting ps
+    s= image_to_psdoc (image); // call converters, then load resulting ps
 
   if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/unknown.ps", s, true);
   return s;
@@ -344,42 +344,43 @@ pdf_image_size (url image, int& w, int& h) {
 
 void
 image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
-  if (DEBUG_CONVERT) debug_convert << "image_to_eps ... ";
-/* if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
+  if (DEBUG_CONVERT) debug_convert << "image_to_eps ...";
+  /* if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
      std_warning << concretize (eps) << " has no .eps or .ps suffix\n";
-   }
-*/
+     }
+  */
   string s= suffix (image);
-// First try to preserve "vectorialness"
+  // First try to preserve "vectorialness"
 
-// Note : since inkscape would most likely be the prog called to translate svg
-// we could at no additional cost allow other vector formats
-// supported by inkscape : ai, svgz, cdr, wmf ...
-  if ((s=="svg") && (call_scm_converter(image, eps))) return;
+  // Note: since inkscape would most likely be the prog called to
+  // translate svg we could at no additional cost allow other
+  // vector formats supported by inkscape : ai, svgz, cdr, wmf ...
+  if ((s == "svg") && (call_scm_converter (image, eps))) return;
   
 #ifdef USE_GS
   if (gs_supports (image)) {
-  	if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
+    if (DEBUG_CONVERT) debug_convert << " using gs" << LF;
     gs_to_eps (image, eps);
     return;
   }
 #endif
-//converters below will yield only raster images.
+  //converters below will yield only raster images.
 #ifdef QTTEXMACS 
   if (qt_supports (image)) {
-  	if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
+    if (DEBUG_CONVERT) debug_convert << " using qt" << LF;
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
     return;
   }
 #endif
-  if ((s!="svg") && call_scm_converter(image, eps)) return;
-  call_imagemagick_convert(image, eps, w_pt, h_pt, dpi);
+  if (DEBUG_CONVERT) debug_convert << " using plug-ins" << LF;
+  if ((s != "svg") && call_scm_converter (image, eps)) return;
+  call_imagemagick_convert (image, eps, w_pt, h_pt, dpi);
 }
 
 string
 image_to_psdoc (url image) {
   if (DEBUG_CONVERT) debug_convert << "image_to_psdoc " << image << LF;
-
+  
   url psfile= url_temp (".eps");
   image_to_eps (image, psfile);
   string psdoc;
@@ -393,68 +394,73 @@ void
 image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   if (DEBUG_CONVERT) debug_convert << "image_to_pdf ... ";
   string s= suffix (image);
-// First try to preserve "vectorialness"
-  if ((s=="svg") && call_scm_converter(image, pdf)) return;
+  // First try to preserve "vectorialness"
+  if ((s == "svg") && call_scm_converter(image, pdf)) return;
 #ifdef USE_GS
   if (gs_supports (image)) {
-	  if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
+    if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
     gs_to_pdf (image, pdf, w_pt, h_pt);
     return;
   }
 #endif
-//converters below will yield only raster images.
+  //converters below will yield only raster images.
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
-  	if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
+    if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_image_to_pdf (image, pdf, w_pt, h_pt, dpi);
     return;
   }
 #endif
-  if ((s!="svg") && call_scm_converter(image, pdf)) return;
+  if ((s != "svg") && call_scm_converter (image, pdf)) return;
   call_imagemagick_convert(image, pdf, w_pt, h_pt, dpi);
 }
 
 void
 image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   if (DEBUG_CONVERT) debug_convert << "image_to_png ... ";
-/* if (suffix (png) != "png") {
-   std_warning << concretize (png) << " has no .png suffix\n";
-  }
-*/
+  /* if (suffix (png) != "png") {
+     std_warning << concretize (png) << " has no .png suffix\n";
+     }
+  */
 #ifdef MACOSX_EXTENSIONS
   //cout << "mac convert " << image << ", " << png << "\n";
   if (mac_supports (image)) {
-  	if (DEBUG_CONVERT) debug_convert << " using mac_os "<<LF;
+    if (DEBUG_CONVERT) debug_convert << " using mac_os "<<LF;
     mac_image_to_png (image, png, w, h);
     return;
   }
 #endif
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
-  	if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
+    if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_convert_image (image, png, w, h);
     return;
   }
 #endif
 #ifdef USE_GS
   if (gs_supports (image)) {
-  	if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
+    if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
     gs_to_png (image, png, w, h);
     return;
   }
 #endif
   if (call_scm_converter(image, png)) return;
-  call_imagemagick_convert(image, png, w, h);
+  call_imagemagick_convert (image, png, w, h);
 }
 
 bool
 call_scm_converter(url image, url dest) {
-	if (as_bool (call ("file-converter-exists?", "x."*suffix(image), "x."*suffix(dest)))) {
-      call ("file-convert", object (image), object (dest));
-	  bool success= exists(dest);
-    if (success && DEBUG_CONVERT) debug_convert << "scm file-convert"<<concretize(image)<<" -> "<<concretize(dest)<<LF;
-	  return success;
-	}  
+  if (as_bool (call ("file-converter-exists?",
+                     "x." * suffix (image),
+                     "x." * suffix (dest)))) {
+    call ("file-convert", object (image), object (dest));
+    bool success= exists (dest);
+    if (success && DEBUG_CONVERT)
+      debug_convert << "scm file-convert " << concretize (image)
+                    << " -> " << concretize (dest) << LF;
+    return success;
+  }
+  return false;
 }
 
 /******************************************************************************
@@ -462,9 +468,10 @@ call_scm_converter(url image, url dest) {
 * last resort solution -- should rarely be useful.
 ******************************************************************************/
 
-bool has_image_magick(){
+bool
+has_image_magick (){
 #if defined(__MINGW__) || defined(__MINGW32__)
-  static bool has_imagemagick = exists_in_path("conjure"); 
+  static bool has_imagemagick = exists_in_path ("conjure"); 
   // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
   // better test for "conjure" for the presence of imagemagick
 #else
@@ -475,78 +482,81 @@ bool has_image_magick(){
 
 string
 imagemagick_cmd () {
-	if (has_image_magick()) {
+  if (has_image_magick()) {
 #if defined(__MINGW__) || defined(__MINGW32__)
-       static string  image_magick_cmd = sys_concretize(resolve_in_path("convert"));
+    static string image_magick_cmd=
+      sys_concretize (resolve_in_path ("convert"));
 #else
-       static string  image_magick_cmd = "convert";
+    static string image_magick_cmd= "convert";
 #endif
-       return copy(image_magick_cmd);
-	} 
-	else return "";
+    return copy (image_magick_cmd);
+  } 
+  else return "";
 }
 
 void
-call_imagemagick_convert(url image, url dest, int w_pt, int h_pt, int dpi) {
-  if (has_image_magick()) { 
-	string cmd= imagemagick_cmd();
-	string s= suffix (image);
-  if (s != "pdf" && s != "ps" && s != "eps" && dpi > 0 && w_pt > 0 && h_pt > 0) {
-    int ww= w_pt * dpi / 72; //number of pixels @dpi to make w_pt
-    int hh= h_pt * dpi / 72;
-	int w_px,h_px;
-    bool ok= imagemagick_image_size(image, w_px, h_px, false);
-    if (ok && (ww < w_px || hh < h_px)) { // down-sample image if unecessarily large
-      cmd << " -resize " * as_string (ww) * "x" * as_string (hh) * "!";
+call_imagemagick_convert (url image, url dest, int w_pt, int h_pt, int dpi) {
+  if (has_image_magick ()) { 
+    string cmd= imagemagick_cmd ();
+    string s= suffix (image);
+    if (s != "pdf" && s != "ps" && s != "eps" &&
+        dpi > 0 && w_pt > 0 && h_pt > 0) {
+      int ww= w_pt * dpi / 72; //number of pixels @dpi to make w_pt
+      int hh= h_pt * dpi / 72;
+      int w_px,h_px;
+      bool ok= imagemagick_image_size(image, w_px, h_px, false);
+      if (ok && (ww < w_px || hh < h_px)) {
+        // down-sample image if unecessarily large
+        cmd << " -resize " * as_string (ww) * "x" * as_string (hh) * "!";
+      }
     }
-  }
-  system (cmd, image, dest);
+    system (cmd, image, dest);
   }
 }
 
 bool
 imagemagick_image_size(url image, int& w, int& h, bool pt_units) {
-	if (!has_image_magick()) return false;
+  if (!has_image_magick()) return false;
   else {		
-  string cmd= "identify"; //ImageMagick utility
+    string cmd= "identify"; //ImageMagick utility
 #if defined(__MINGW__) || defined(__MINGW32__)
-  cmd = sys_concretize(resolve_in_path(cmd));
+    cmd = sys_concretize(resolve_in_path(cmd));
 #endif
-  cmd << " -ping -format \"%w %h %x\\n%y\""; 
-  string sz= eval_system (cmd, image);
-  int w_px, h_px, ok= true, pos= 0;
-  string unit;
-  ok= read_int (sz, pos, w_px);
-  skip_spaces (sz, pos);  
-  ok= ok && read_int (sz, pos, h_px);
-  if (!ok) return false;
-  else 
-    if (!pt_units) { //return numbers of pixels
-      w = w_px;
-      h = h_px;	
-      return true;
-    }
-    else { 
-      double densityx=72, densityy=72, ptperpix=1;
-      skip_spaces (sz, pos);
-      ok= ok && read_double (sz, pos, densityx);
-      if (densityx == 0) return false;
-      else {
-        ok= ok && read_line (sz, pos, unit);    
-        // according to the IM doc, units should be in [PixelsPerCentimeter,PixelsPerInch,Undefined]
-        // When "Undefined" IM gives the nonsensical default value of 72 "dots per Undefined"
-        // svg is SCALABLE and hence logically gives "Undefined"; in that case we assume 90 dpi
-        // so that the physical image size matches that of svg created with inkscape
-        if (unit == "PixelsPerCentimeter") ptperpix = 72/(2.54*densityx);
+    cmd << " -ping -format \"%w %h %x\\n%y\""; 
+    string sz= eval_system (cmd, image);
+    int w_px, h_px, ok= true, pos= 0;
+    string unit;
+    ok= read_int (sz, pos, w_px);
+    skip_spaces (sz, pos);  
+    ok= ok && read_int (sz, pos, h_px);
+    if (!ok) return false;
+    else
+      if (!pt_units) { //return numbers of pixels
+        w = w_px;
+        h = h_px;	
+        return true;
+      }
+      else { 
+        double densityx=72, densityy=72, ptperpix=1;
+        skip_spaces (sz, pos);
+        ok= ok && read_double (sz, pos, densityx);
+        if (densityx == 0) return false;
+        else {
+          ok= ok && read_line (sz, pos, unit);    
+          // according to the IM doc, units should be in [PixelsPerCentimeter,PixelsPerInch,Undefined]
+          // When "Undefined" IM gives the nonsensical default value of 72 "dots per Undefined"
+          // svg is SCALABLE and hence logically gives "Undefined"; in that case we assume 90 dpi
+          // so that the physical image size matches that of svg created with inkscape
+          if (unit == "PixelsPerCentimeter") ptperpix = 72/(2.54*densityx);
           else if (unit == "PixelsPerInch") ptperpix = 72/densityx;
-               else if (unit == "Undefined") ptperpix = 90/densityx; 
-        w= (int) w_px*ptperpix;
-        h= (int) h_px*ptperpix;
-        ok= ok && read_double (sz, pos, densityy);
-        if ((densityy != 0) && (densityy != densityx)) h =(int) (h*densityx/densityy);
-        return ok;
-      }          
-    }
-	}
-  
-}   
+          else if (unit == "Undefined") ptperpix = 90/densityx; 
+          w= (int) w_px * ptperpix;
+          h= (int) h_px * ptperpix;
+          ok= ok && read_double (sz, pos, densityy);
+          if ((densityy != 0) && (densityy != densityx))
+            h= (int) (h*densityx/densityy);
+          return ok;
+        }
+      }
+  }
+}
