@@ -123,6 +123,10 @@ initialize_default_env () {
   env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?
   env (PAGE_HEIGHT_MARGIN) = "false";   // compute margins from par-width?
   env (PAGE_SCREEN_MARGIN) = "true";    // special margins for screen editing?
+  env (PAGE_SINGLE)      = "false";     // display page by page
+  env (PAGE_PACKET)      = "1";         // display pages by packets of 1,2,...
+  env (PAGE_OFFSET)      = "0";         // first page's offset in first packet
+  env (PAGE_BORDER)      = "default";   // page border decorations
   env (PAGE_BREAKING)    = "professional";  // quality of page breaking
   env (PAGE_FLEXIBILITY) = "1";         // flexibility factor of stretch
   env (PAGE_FIRST)       = "1";         // number of first page

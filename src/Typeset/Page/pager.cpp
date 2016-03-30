@@ -250,8 +250,16 @@ pager_rep::make_pages () {
   else papyrus_make ();
 
   int nr_pages= N(pages);
-  int d= 0;
-  int nx= min (1, max (1, nr_pages));
+  int nx= min (env->page_packet, max (1, nr_pages));
+  if (nx <= 0) {
+    double pw= max (pages[0]->w(), 1);
+    double ph= max (pages[0]->h(), 1);
+    double sw= max (env->get_length (PAGE_SCREEN_WIDTH), 1);
+    double sh= max (env->get_length (PAGE_SCREEN_HEIGHT), 1);
+    double nr= sqrt ((double) nr_pages) * (pw/ph) / (sw/sh);
+    nx= max (1, min ((int) ceil (nr), nr_pages));
+  }
+  int d = env->page_offset % nx;
   int ny= ((nr_pages + nx - 1 + d) / nx);
 
   array<SI> xx (nx);

@@ -202,6 +202,10 @@ public:
   string       page_type;
   bool         page_landscape;
   bool         page_automatic;
+  bool         page_single;
+  int          page_packet;
+  int          page_offset;
+  tree         page_border;
   int          page_margin_mode;
   SI           page_width;
   SI           page_height;

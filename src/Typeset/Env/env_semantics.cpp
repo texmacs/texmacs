@@ -232,6 +232,11 @@ edit_env_rep::update_page_pars () {
       page_height= page_user_height + page_top_margin + page_bottom_margin;
     }
   }
+
+  page_single= get_bool (PAGE_SINGLE);
+  page_packet= get_int (PAGE_PACKET);
+  page_offset= get_int (PAGE_OFFSET);
+  page_border= read (PAGE_BORDER);
 }
 
 void
