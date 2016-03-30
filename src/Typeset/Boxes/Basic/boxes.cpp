@@ -601,6 +601,33 @@ box_rep::post_display (renderer &ren) {
   (void) ren;
 }
 
+void
+box_rep::display_background (renderer ren) {
+  (void) ren;
+}
+
+void
+box_rep::redraw_background (renderer ren) {
+  ren->move_origin (x0, y0);
+  display_background (ren);
+  int i, n=subnr ();
+  for (i=0; i<n; i++)
+    subbox (i)->redraw_background (ren);
+  ren->move_origin (-x0, -y0);
+}
+
+void
+box_rep::clear (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+  SI old_x1, old_y1, old_x2, old_y2;
+  ren->get_clipping (old_x1, old_y1, old_x2, old_y2);
+  if (max (old_x1, x1) < min (old_x2, x2) &&
+      max (old_y1, y1) < min (old_y2, y2)) {
+    ren->extra_clipping (x1, y1, x2, y2);
+    redraw_background (ren);
+    ren->set_clipping (old_x1, old_y1, old_x2, old_y2, true);
+  }
+}
+
 /******************************************************************************
 * The cursor class
 ******************************************************************************/

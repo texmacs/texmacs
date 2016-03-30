@@ -138,6 +138,7 @@ public:
   virtual void      pre_display (renderer& ren);
   virtual void      post_display (renderer& ren);
   virtual void      display (renderer ren) = 0;
+  virtual void      display_background (renderer ren);
   virtual void      clear_incomplete (rectangles& rs, SI pixel,
 				      int i, int i1, int i2);
   virtual int  subnr ();
@@ -152,7 +153,9 @@ public:
 
   virtual int  reindex (int i, int item, int n);
   virtual void redraw (renderer ren, path p, rectangles& l);
+  virtual void redraw_background (renderer ren);
   void redraw (renderer ren, path p, rectangles& l, SI x, SI y);
+  void clear (renderer ren, SI x1, SI y1, SI x2, SI y2);
 
   /*************************** positioning routines **************************/
 

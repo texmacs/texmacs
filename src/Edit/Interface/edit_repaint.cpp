@@ -22,6 +22,22 @@ extern bool animated_flag;
 ******************************************************************************/
 
 void
+edit_interface_rep::draw_background (renderer ren,
+                                     SI x1, SI y1, SI x2, SI y2) {
+  tree bg= get_init_value (BG_COLOR);
+  ren->set_background (bg);
+  if (get_init_value (PAGE_MEDIUM) == "paper")
+    eb->clear (ren, x1, y1, x2, y2);
+  else {
+    rectangle m (eb->x1, eb->y1, eb->x2, eb->y2);
+    rectangle r (x1, y1, x2, y2);
+    rectangle tm= translate (m, ren->ox, ren->oy);
+    rectangle tr= translate (r, ren->ox, ren->oy);
+    clear_pattern_rectangles (ren, tm, tr);
+  }
+}
+
+void
 edit_interface_rep::draw_text (renderer ren, rectangles& l) {
   nr_painted=0;
   bool tp_found= false;
@@ -115,6 +131,7 @@ edit_interface_rep::draw_surround (renderer ren, rectangle r) {
 
 void
 edit_interface_rep::draw_context (renderer ren, rectangle r) {
+  /*
   int i;
   ren->set_pencil (pencil (light_grey, pixel));
   for (i=1; i<N(eb[0]); i++) {
@@ -122,6 +139,7 @@ edit_interface_rep::draw_context (renderer ren, rectangle r) {
     if ((y >= r->y1) && (y < r->y2))
       ren->line (r->x1, y, r->x2, y);
   }
+  */
   draw_surround (ren, r);
 }
 
@@ -188,12 +206,7 @@ edit_interface_rep::draw_graphics (renderer ren) {
 void
 edit_interface_rep::draw_pre (renderer win, renderer ren, rectangle r) {
   // draw surroundings
-  tree bg= get_init_value (BG_COLOR);
-  ren->set_background (bg);
-  rectangle m (eb->x1, eb->y1, eb->x2, eb->y2);
-  rectangle tm= translate (m, ren->ox, ren->oy);
-  rectangle tr= translate (r, ren->ox, ren->oy);
-  clear_pattern_rectangles (ren, tm, tr);
+  draw_background (ren, r->x1, r->y1, r->x2, r->y2);
   draw_surround (ren, r);
 
   // predraw cursor
@@ -312,13 +325,8 @@ edit_interface_rep::handle_clear (renderer win, SI x1, SI y1, SI x2, SI y2) {
   x1= (SI) (x1 / magf); y1= (SI) (y1 / magf);
   x2= (SI) (x2 / magf); y2= (SI) (y2 / magf);
   win->set_zoom_factor (zoomf);
-  tree bg= get_init_value (BG_COLOR);
-  win->set_background (bg);
-  rectangle m (eb->x1, eb->y1, eb->x2, eb->y2);
-  rectangle tm= translate (m, win->ox, win->oy);
-  win->clear_pattern (m->x1, m->y1, m->x2, m->y2,
-                      max (eb->x1, x1), max (eb->y1, y1),
-		      min (eb->x2, x2), min (eb->y2, y2));
+  draw_background (win, max (eb->x1, x1), max (eb->y1, y1),
+                        min (eb->x2, x2), min (eb->y2, y2));
   draw_surround (win, rectangle (x1, y1, x2, y2));
   win->reset_zoom_factor ();
 }

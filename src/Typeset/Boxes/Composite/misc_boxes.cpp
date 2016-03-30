@@ -11,6 +11,8 @@
 
 #include "Boxes/composite.hpp"
 #include "Boxes/construct.hpp"
+#include "Boxes/change.hpp"
+#include "colors.hpp"
 
 /******************************************************************************
 * A page box contains a main box and decorations
@@ -100,6 +102,8 @@ struct page_box_rep: composite_box_rep {
 		array<box> bs, array<SI> x, array<SI> y, box dec);
   operator tree ();
   int find_child (SI x, SI y, SI delta, bool force);
+  void display_background (renderer ren);
+  void redraw_background (renderer ren);
   void pre_display (renderer& ren);
   void post_display (renderer& ren);
   void display (renderer ren);
@@ -153,6 +157,24 @@ page_box_rep::find_child (SI x, SI y, SI delta, bool force) {
 	m= i;
       }
   return m;
+}
+
+void
+page_box_rep::display_background (renderer ren) {
+  if (page_bgc->get_type () != brush_none) {
+    brush bgc= ren->get_background ();
+    ren->set_background (page_bgc);
+    ren->clear_pattern (x1, y1, x2, y2);
+    ren->set_background (bgc);
+  }
+  else ren->clear_pattern (x1, y1, x2, y2);
+}
+
+void
+page_box_rep::redraw_background (renderer ren) {
+  ren->move_origin (x0, y0);
+  display_background (ren);
+  ren->move_origin (-x0, -y0);
 }
 
 void
@@ -230,6 +252,55 @@ page_box_rep::find_right_box_path () {
 }
 
 /******************************************************************************
+* Page border boxes
+******************************************************************************/
+
+struct page_border_box_rep: change_box_rep {
+  SI l, r, b, t;
+  page_border_box_rep (path ip, box b, SI l, SI r, SI b, SI t);
+  operator tree ();
+  void pre_display (renderer& ren);
+  void display_background (renderer ren);
+};
+
+page_border_box_rep::page_border_box_rep (path ip2, box pb,
+                                          SI l2, SI r2, SI b2, SI t2):
+  change_box_rep (ip2, false), l (l2), r (r2), b (b2), t (t2)
+{
+  insert (pb, l, -t);
+  position ();
+  x1 -= l; x2 += r;
+  y1 -= b; y2 += t;
+  x3 -= l; x4 += r;
+  y3 -= b; y4 += t;
+  finalize ();
+}
+
+page_border_box_rep::operator tree () {
+  return tree (TUPLE, "bordered", (tree) bs[0]);
+}
+
+void
+page_border_box_rep::pre_display (renderer& ren) {
+  display_background (ren);
+}
+
+void
+page_border_box_rep::display_background (renderer ren) {
+  brush bgc= ren->get_background ();
+#ifdef QTTEXMACS
+  ren->set_background (rgb_color (160, 160, 160));
+#else
+  ren->set_background (light_grey);
+#endif
+  ren->clear_pattern (x1, y1, sx1 (0), y2);
+  ren->clear_pattern (sx2 (0), y1, x2, y2);
+  ren->clear_pattern (sx1 (0), y1, sx2 (0), sy1 (0));
+  ren->clear_pattern (sx1 (0), sy2 (0), sx2 (0), y2);
+  ren->set_background (bgc);
+}
+
+/******************************************************************************
 * box construction routines
 ******************************************************************************/
 
@@ -246,4 +317,10 @@ page_box (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
   if (N (decs) > 0) dec= composite_box (ip, decs, decs_x, decs_y, false);
   return tm_new<page_box_rep> (ip, page, page_nr, bgc,
                                w, h, bs, bs_x, bs_y, dec);
+}
+
+box
+page_border_box (path ip, box pb, SI l, SI r, SI b, SI t) {
+  box rb= tm_new<page_border_box_rep> (ip, pb, l, r, b, t);
+  return rb;
 }

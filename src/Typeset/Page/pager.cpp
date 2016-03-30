@@ -254,6 +254,14 @@ pager_rep::make_pages () {
   int d = env->page_offset % nx;
   int ny= ((nr_pages + nx - 1 + d) / nx);
 
+  SI pixel= env->pixel;
+  array<box> pg= pages;
+  if (env->get_string (PAGE_MEDIUM) == "paper" &&
+      env->get_string (PAGE_BORDER) != "none")
+    for (int i=0; i<nr_pages; i++)
+      pg[i]= page_border_box (pages[i]->ip, pages[i],
+                              10*pixel, 10*pixel, 10*pixel, 10*pixel);
+
   array<SI> xx (nx);
   xx[0]= 0;
   for (int i=1; i<nx; i++) {
@@ -261,7 +269,7 @@ pager_rep::make_pages () {
     for (int j=0; j<ny; j++) {
       int p= j*nx + i - d;
       if (p >= 0 && p < nr_pages)
-        xx[i]= max (xx[i-1] + pages[p]->w(), xx[i]);
+        xx[i]= max (xx[i-1] + pg[p]->w(), xx[i]);
     }
   }
 
@@ -272,7 +280,7 @@ pager_rep::make_pages () {
     for (int i=0; i<nx; i++) {
       int p= j*nx + i - d;
       if (p >= 0 && p < nr_pages)
-        yy[j]= min (yy[j-1] - pages[p]->h(), yy[j]);
+        yy[j]= min (yy[j-1] - pg[p]->h(), yy[j]);
     }
   }
 
@@ -287,5 +295,5 @@ pager_rep::make_pages () {
       }
     }
 
-  return move_box (ip, scatter_box (ip, pages, x, y), 0, 0);
+  return move_box (ip, scatter_box (ip, pg, x, y), 0, 0);
 }

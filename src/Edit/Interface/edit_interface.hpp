@@ -101,6 +101,7 @@ public:
   void set_extents (SI x1, SI y1, SI x2, SI y2);
 
   /* repainting the window */
+  void draw_background (renderer ren, SI x1, SI y1, SI x2, SI y2);
   void draw_text (renderer ren, rectangles& l);
   void draw_surround (renderer ren, rectangle r);
   void draw_context (renderer ren, rectangle r);
