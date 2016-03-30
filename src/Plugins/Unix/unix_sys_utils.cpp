@@ -19,8 +19,10 @@
 #include <sys/wait.h>
 
 // for thread safe strings
+#ifdef QTTEXMACS
 #include <string>
- 
+#endif
+
 int
 unix_system (string s) {
   c_string _s (s * " > /dev/null 2>&1");
@@ -44,6 +46,7 @@ unix_system (string cmd, string& result) {
 * Evaluation via specified file descriptors
 ******************************************************************************/
 
+#ifdef QTTEXMACS
 extern char **environ;
 
 struct _pipe_t {
@@ -252,3 +255,15 @@ unix_system (array<string> arg,
   if (wret < 0 || WIFEXITED(status) == 0) return -1;
   return WEXITSTATUS(status);
 }
+
+#else
+
+int
+unix_system (array<string> arg,
+	     array<int> fd_in, array<string> str_in,
+	     array<int> fd_out, array<string*> str_out) {
+  (void) arg; (void) fd_in; (void) str_in; (void) fd_out; (void) str_out;
+  FAILED ("unsupported system call");
+}
+
+#endif
