@@ -203,6 +203,7 @@ get_pattern_image (brush br, SI pixel) {
 
 void
 qt_renderer_rep::set_pencil (pencil np) {
+  painter->setOpacity (qreal (1.0));
   basic_renderer_rep::set_pencil (np);
   QPen p (painter->pen ());
   QBrush b (painter->brush ());
