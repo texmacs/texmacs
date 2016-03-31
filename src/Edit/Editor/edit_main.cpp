@@ -26,11 +26,6 @@
 #include "../../Style/Memorizer/clean_copy.hpp"
 #endif
 
-#ifdef PDF_RENDERER
-//#include "Pdf/pdf_renderer.hpp"
-#include "Pdf/pdf_hummus_renderer.hpp"
-#endif
-
 #ifdef USE_GS
 #include "Ghostscript/gs_utilities.hpp"
 #endif
@@ -43,6 +38,7 @@
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
 #include "Qt/WINPrint.hpp"
 #endif
+
 /******************************************************************************
 * Constructors and destructor
 ******************************************************************************/
@@ -259,15 +255,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
   }
 
   // Print pages
-  renderer ren;
-#ifdef PDF_RENDERER
-  if (use_pdf () && (pdf || !use_ps ()))
-    ren= pdf_hummus_renderer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
-  else
-    ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
-#else
-  ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
-#endif
+  renderer ren= printer (name, dpi, pages, page_type, landsc, w/cm, h/cm);
   
   if (ren->is_started ()) {
     int i;
@@ -360,8 +348,8 @@ edit_main_rep::export_ps (url name, string first, string last) {
 array<int>
 edit_main_rep::print_snippet (url name, tree t) {
   string s= suffix (name);
-  bool ps= ((s== "ps") || (s == "eps") );
-  if  (use_pdf ()) ps= ps || (s== "pdf");
+  bool ps= (s == "ps" || s == "eps");
+  if (use_pdf ()) ps= (ps || s == "pdf");
   typeset_prepare ();
   int dpi= as_int (printing_dpi);
   //if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
@@ -370,13 +358,14 @@ edit_main_rep::print_snippet (url name, tree t) {
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
     if (ps) make_eps (name, b, dpi);
     else {
-      url temp= url_temp ( (use_pdf ())? ".pdf" : ".eps" );
+      url temp= url_temp (use_pdf ()? ".pdf": ".eps");
       make_eps (temp, b, dpi);
       ::remove (name);
-      if (!call_scm_converter(temp, name)) {
-        call_imagemagick_convert( temp, name);
+      if (!call_scm_converter (temp, name)) {
+        call_imagemagick_convert (temp, name);
         if (!exists (name))
-          convert_error << "could not convert snippet " <<temp<< "\nto :" << name << "\n";
+          convert_error << "could not convert snippet " << temp
+                        << " into :" << name << "\n";
       }
       ::remove (temp);
     }

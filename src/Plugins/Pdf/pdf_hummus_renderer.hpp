@@ -18,8 +18,8 @@
 #include "url.hpp"
 
 renderer pdf_hummus_renderer (url pdf_file_name, int dpi, int nr_pages= 1,
-		  string page_type= "a4", bool landscape= false,
-		  double paper_w= 21.0, double paper_h= 29.7);
+                              string page_type= "a4", bool landscape= false,
+                              double paper_w= 21.0, double paper_h= 29.7);
 		  
 void hummus_pdf_image_size (url image, int& w, int& h);
 

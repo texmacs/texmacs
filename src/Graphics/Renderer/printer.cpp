@@ -23,6 +23,10 @@
 #include "frame.hpp"
 #include "converter.hpp"
 
+#ifdef PDF_RENDERER
+#include "Pdf/pdf_hummus_renderer.hpp"
+#endif
+
 string PS_CLIP_PUSH ("gsave");
 string PS_CLIP_POP ("grestore");
 string PS_CLIP ("cl");
@@ -1077,10 +1081,17 @@ printer_rep::generate_metadata () {
 * user interface
 ******************************************************************************/
 
+bool use_pdf ();
+bool use_ps ();
+
 renderer
 printer (url ps_file_name, int dpi, int nr_pages,
-	 string page_type, bool landscape, double paper_w, double paper_h)
-{
+	 string page_type, bool landscape, double paper_w, double paper_h) {
+#ifdef PDF_RENDERER
+  if (use_pdf () && (suffix (ps_file_name) == "pdf" || !use_ps ()))
+    return pdf_hummus_renderer (ps_file_name, dpi, nr_pages,
+                                page_type, landscape, paper_w, paper_h);
+#endif
   page_type= as_string (call ("standard-paper-size", object (page_type)));
   return tm_new<printer_rep> (ps_file_name, dpi, nr_pages,
                               page_type, landscape, paper_w, paper_h);

@@ -90,6 +90,5 @@ public:
 
   friend class editor;
 };
-  bool use_pdf ();
-  bool use_ps (); 
+
 #endif // defined EDIT_MAIN_H
