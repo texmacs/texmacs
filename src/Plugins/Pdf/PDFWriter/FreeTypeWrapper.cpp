@@ -16,6 +16,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
+   ****************************************************************************
+   This file has been modified by François Poulain <fpoulain@metrodore.fr>
+   See Rev 8507 for details
+   Modified again by Grégoire Lecerf after the update of rev. 9980
+   to avoid crashes after generating pdf on some platforms (FreeType bug?).
+   ****************************************************************************
    
 */
 #include "FreeTypeWrapper.h"
@@ -51,6 +57,7 @@ FreeTypeWrapper::FreeTypeWrapper(void)
 
 FreeTypeWrapper::~FreeTypeWrapper(void)
 {
+#if 0
 	FTFaceToFTStreamListMap::iterator it = mOpenStreams.begin();
 	for (; it != mOpenStreams.end(); ++it)
 	{
@@ -60,10 +67,10 @@ FreeTypeWrapper::~FreeTypeWrapper(void)
 			delete *itStreams;
 		}
 	}
+#endif
 	mOpenStreams.clear();
 	if (mFreeType)
 		FT_Done_FreeType(mFreeType);
-
 }
 
 // using my own streams, to implement UTF8 paths
