@@ -33,6 +33,7 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 #include "scheme.hpp"
+#include "timer.hpp"
 #include "Imlib2/imlib2.hpp"
 
 #ifdef MACOSX_EXTENSIONS
@@ -448,12 +449,20 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   call_imagemagick_convert (image, png, w, h);
 }
 
+static time_t scm_converter_lock= 0;
+
 bool
 call_scm_converter(url image, url dest) {
-  if (as_bool (call ("file-converter-exists?",
+  if (scm_converter_lock != 0 &&
+      scm_converter_lock + 10000 < texmacs_time ())
+    scm_converter_lock= 0;
+  if (scm_converter_lock == 0 &&
+      as_bool (call ("file-converter-exists?",
                      "x." * suffix (image),
                      "x." * suffix (dest)))) {
+    scm_converter_lock= texmacs_time ();
     call ("file-convert", object (image), object (dest));
+    scm_converter_lock= 0;
     bool success= exists (dest);
     if (success && DEBUG_CONVERT)
       debug_convert << "scm file-convert " << concretize (image)
