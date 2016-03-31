@@ -105,11 +105,7 @@ void
 scatter_box_rep::display_background (renderer ren) {
   if (is_nil (rs)) return;
   brush bgc= ren->get_background ();
-#ifdef QTTEXMACS
-  ren->set_background (rgb_color (160, 160, 160));
-#else
-  ren->set_background (light_grey);
-#endif
+  ren->set_background (tm_background);
   rectangles rects= rs;
   while (!is_nil (rects)) {
     rectangle r= rects->item;
@@ -288,17 +284,22 @@ page_box_rep::find_right_box_path () {
 ******************************************************************************/
 
 struct page_border_box_rep: change_box_rep {
-  SI l, r, b, t;
-  page_border_box_rep (path ip, box b, SI l, SI r, SI b, SI t);
+  SI l, r, b, t, pixel;
+  page_border_box_rep (path ip, box b, SI l, SI r, SI b, SI t, SI pixel);
   operator tree ();
   void pre_display (renderer& ren);
   void display_background (renderer ren);
 };
 
 page_border_box_rep::page_border_box_rep (path ip2, box pb,
-                                          SI l2, SI r2, SI b2, SI t2):
-  change_box_rep (ip2, false), l (l2), r (r2), b (b2), t (t2)
+                                          SI l2, SI r2, SI b2, SI t2,
+                                          SI pixel2):
+  change_box_rep (ip2, false), l (l2), r (r2), b (b2), t (t2), pixel (pixel2)
 {
+  if (l > 0 && l <= pixel) l= 1;
+  if (r > 0 && r <= pixel) r= 1;
+  if (b > 0 && b <= pixel) b= 1;
+  if (t > 0 && t <= pixel) t= 1;
   insert (pb, l, -t);
   position ();
   x1 -= l; x2 += r;
@@ -320,15 +321,15 @@ page_border_box_rep::pre_display (renderer& ren) {
 void
 page_border_box_rep::display_background (renderer ren) {
   brush bgc= ren->get_background ();
-#ifdef QTTEXMACS
-  ren->set_background (rgb_color (160, 160, 160));
-#else
-  ren->set_background (light_grey);
-#endif
-  ren->clear_pattern (x1, y1, sx1 (0), y2);
-  ren->clear_pattern (sx2 (0), y1, x2, y2);
-  ren->clear_pattern (sx1 (0), y1, sx2 (0), sy1 (0));
-  ren->clear_pattern (sx1 (0), sy2 (0), sx2 (0), y2);
+  ren->set_background (tm_background);
+  if (sx1(0) > x1)
+    ren->clear_pattern (x1, y1, sx1 (0), y2);
+  if (x2 > sx2(0))
+    ren->clear_pattern (sx2 (0), y1, x2, y2);
+  if (sy1(0) > y1)
+    ren->clear_pattern (sx1 (0), y1, sx2 (0), sy1 (0));
+  if (y2 > sy2(0))
+    ren->clear_pattern (sx1 (0), sy2 (0), sx2 (0), y2);
   ren->set_background (bgc);
 }
 
@@ -352,7 +353,7 @@ page_box (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
 }
 
 box
-page_border_box (path ip, box pb, SI l, SI r, SI b, SI t) {
-  box rb= tm_new<page_border_box_rep> (ip, pb, l, r, b, t);
+page_border_box (path ip, box pb, SI l, SI r, SI b, SI t, SI pixel) {
+  box rb= tm_new<page_border_box_rep> (ip, pb, l, r, b, t, pixel);
   return rb;
 }

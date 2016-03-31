@@ -118,7 +118,7 @@ edit_interface_rep::draw_cursor (renderer ren) {
 
 void
 edit_interface_rep::draw_surround (renderer ren, rectangle r) { 	 
-  ren->set_background (light_grey);
+  ren->set_background (tm_background);
   string medium= get_init_string (PAGE_MEDIUM);
   if (medium == "automatic") return;
   if (medium == "beamer" && full_screen) return;
@@ -133,7 +133,7 @@ void
 edit_interface_rep::draw_context (renderer ren, rectangle r) {
   /*
   int i;
-  ren->set_pencil (pencil (light_grey, pixel));
+  ren->set_pencil (pencil (tm_background, pixel));
   for (i=1; i<N(eb[0]); i++) {
     SI y= eb->sy(0)+ eb[0]->sy2(i);
     if ((y >= r->y1) && (y < r->y2))

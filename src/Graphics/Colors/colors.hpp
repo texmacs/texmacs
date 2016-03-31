@@ -25,6 +25,8 @@ extern color black, white, red, green, blue;
 extern color yellow, magenta, orange, brown, pink;
 extern color light_grey, grey, dark_grey;
 
+extern color tm_background;
+
 void set_true_colors (bool b);
 bool get_reverse_colors ();
 void set_reverse_colors (bool b);

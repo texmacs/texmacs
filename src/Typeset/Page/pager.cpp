@@ -265,10 +265,10 @@ pager_rep::make_pages () {
           SI l= 10*pixel, r= 10*pixel;
           SI b= 10*pixel, t= 10*pixel;
           if (env->get_string (PAGE_BORDER) == "attached") {
-            if (i > 0) l= 2*pixel/3;
+            if (i > 0) l= pixel;
             if (i < nx-1) r= 0;
           }
-          pg[p]= page_border_box (pages[p]->ip, pages[p], l, r, b, t);
+          pg[p]= page_border_box (pages[p]->ip, pages[p], l, r, b, t, pixel);
         }
       }
 

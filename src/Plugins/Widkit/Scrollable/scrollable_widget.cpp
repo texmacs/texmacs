@@ -195,7 +195,7 @@ scrollable_widget_rep::handle_repaint (repaint_event ev) {
   SI sy1= a[0]->y1() - oy;
   SI sx2= a[0]->x2() - ox;
   SI sy2= a[0]->y2() - oy;
-  color bg= layout_light (ren);
+  color bg= tm_background; // layout_light (ren);
   ren->set_background (bg);
   ren->set_pencil (bg);
   if (ev->x1 < sx1) ren->fill (ev->x1, my1, sx1, my2);
