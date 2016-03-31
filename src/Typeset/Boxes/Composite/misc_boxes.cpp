@@ -150,18 +150,16 @@ page_box_rep::page_box_rep (path ip2, tree p2, int nr2, brush bgc, SI w, SI h,
   x1= min (x1, 0);
   x2= max (x2, w);
   y1= -h;
-  y2= 0;
+  y2=  0;
+  x3= min (x3,  0);
+  x4= max (x4,  w);
+  y3= min (y3, -h);
+  y4= max (y4,  0);
   if (!is_nil (decoration)) {
     x3= min (x3, decoration->x0+ decoration->x3);
     x4= max (x4, decoration->x0+ decoration->x4);
     y3= min (y3, decoration->y0+ decoration->y3);
     y4= max (y4, decoration->y0+ decoration->y4);
-  }
-  if (page_bgc->get_type () != brush_none) {
-    x3= min (x3, 0);
-    x4= max (x4, w);
-    y3= min (y3, -h);
-    y4= max (y4, 0);
   }
   finalize ();
 }
@@ -207,15 +205,7 @@ page_box_rep::redraw_background (renderer ren) {
 
 void
 page_box_rep::pre_display (renderer& ren) {
-  if (page_bgc->get_type () != brush_none) {
-    ren->set_background (page_bgc);
-    ren->clear_pattern (x1, y1, x2, y2);
-  }
-  else if (ren->get_background ()->get_type () == brush_pattern) {
-    ren->clear_pattern (x1, y1, x2, y2);
-    // FIXME: the borders of pages are not always correctly cleared
-    // using the above line, especially during slow scrolling.
-  }
+  display_background (ren);
   old_page= ren->cur_page;
   ren->set_page_nr (page_nr);
 }
@@ -296,10 +286,6 @@ page_border_box_rep::page_border_box_rep (path ip2, box pb,
                                           SI pixel2):
   change_box_rep (ip2, false), l (l2), r (r2), b (b2), t (t2), pixel (pixel2)
 {
-  if (l > 0 && l <= pixel) l= 1;
-  if (r > 0 && r <= pixel) r= 1;
-  if (b > 0 && b <= pixel) b= 1;
-  if (t > 0 && t <= pixel) t= 1;
   insert (pb, l, -t);
   position ();
   x1 -= l; x2 += r;
@@ -318,18 +304,46 @@ page_border_box_rep::pre_display (renderer& ren) {
   display_background (ren);
 }
 
+static void
+set_shadow (renderer ren, SI alpha) {
+  color c= rgb_color (0, 0, 0, alpha);
+  ren->set_background (blend_colors (c, tm_background));
+}
+
 void
 page_border_box_rep::display_background (renderer ren) {
   brush bgc= ren->get_background ();
   ren->set_background (tm_background);
-  if (sx1(0) > x1)
-    ren->clear_pattern (x1, y1, sx1 (0), y2);
-  if (x2 > sx2(0))
-    ren->clear_pattern (sx2 (0), y1, x2, y2);
-  if (sy1(0) > y1)
-    ren->clear_pattern (sx1 (0), y1, sx2 (0), sy1 (0));
-  if (y2 > sy2(0))
-    ren->clear_pattern (sx1 (0), sy2 (0), sx2 (0), y2);
+  SI X1= sx1(0), Y1= sy1(0), X2= sx2(0), Y2= sy2(0);
+  if (X1 > x1) ren->clear_pattern (x1, y1, X1, y2);
+  if (x2 > X2) ren->clear_pattern (X2, y1, x2, y2);
+  if (Y1 > y1) ren->clear_pattern (X1, y1, X2, Y1);
+  if (y2 > Y2) ren->clear_pattern (X1, Y2, X2, y2);
+
+  SI p= ren->pixel;
+  if (X1 > x1 + 2 * p) {
+    set_shadow (ren, 128);
+    ren->clear_pattern (X1-p, Y1, X1, Y2-p);
+    set_shadow (ren, 16);
+    ren->clear_pattern (X1-2*p, Y1, X1-p, Y2-2*p);
+  }
+  if (x2 - 2 * p > X2) {
+    set_shadow (ren, 16);
+    ren->clear_pattern (X2+p, Y1, X2+2*p, Y2-2*p);
+    set_shadow (ren, 128);
+    ren->clear_pattern (X2, Y1, X1+p, Y2-p);
+  }
+  if (Y1 > y1 - 4 * p) {
+    set_shadow (ren, 160);
+    ren->clear_pattern (X1, Y1-p, X2, Y1);
+    set_shadow (ren, 128);
+    ren->clear_pattern (X1-p, Y1-2*p, X2+p, Y1-p);
+    set_shadow (ren, 64);
+    ren->clear_pattern (X1-p, Y1-3*p, X2+p, Y1-2*p);
+    set_shadow (ren, 16);
+    ren->clear_pattern (X1-p, Y1-4*p, X2+p, Y1-3*p);
+  }
+
   ren->set_background (bgc);
 }
 
