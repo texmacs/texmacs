@@ -566,12 +566,14 @@
 
 (menu-bind document-page-menu
   (-> "Type"
-      ("Default" (init-default-page-medium))
+      ("Default" (init-default-page-rendering))
       ---
-      ("Paper" (init-page-medium "paper"))
-      ("Papyrus" (init-page-medium "papyrus"))
-      ("Automatic" (init-page-medium "automatic"))
-      ("Beamer" (init-page-medium "beamer")))
+      ("Paper" (init-page-rendering "paper"))
+      ("Papyrus" (init-page-rendering "papyrus"))
+      ("Automatic" (init-page-rendering "automatic"))
+      ("Beamer" (init-page-rendering "beamer"))
+      ("Book" (init-page-rendering "book"))
+      ("Panorama" (init-page-rendering "panorama")))
   (-> "Size"
       (link document-page-size-menu))
   (-> "Orientation"
@@ -948,10 +950,12 @@
         ("One column" (init-env "par-columns" "1"))
         ("Two columns" (init-env "par-columns" "2"))
         ---
-        ("Paper" (init-page-medium "paper"))
-        ("Papyrus" (init-page-medium "papyrus"))
-        ("Automatic" (init-page-medium "automatic"))
-        ("Beamer" (init-page-medium "beamer")))
+        ("Paper" (init-page-rendering "paper"))
+        ("Papyrus" (init-page-rendering "papyrus"))
+        ("Automatic" (init-page-rendering "automatic"))
+        ("Beamer" (init-page-rendering "beamer"))
+        ("Book" (init-page-rendering "book"))
+        ("Panorama" (init-page-rendering "panorama")))
     (if (and (== (get-preference "experimental encryption") "on")
 	     (!= (get-init "encryption") ""))
 	(=> (balloon (icon "tm_lock_open.xpm") "Encryption")

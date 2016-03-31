@@ -126,9 +126,9 @@
     (refreshable "page-format-settings"
       (aligned
         (item (text "Screen rendering:")
-          (enum (initial-set u "page-medium" answer)
-                '("paper" "papyrus" "automatic" "beamer")
-                (initial-get u "page-medium") "10em"))
+          (enum (initial-set-page-rendering u answer)
+                '("paper" "papyrus" "automatic" "beamer" "book" "panorama")
+                (initial-get-page-rendering u) "10em"))
         (item (text "Page type:")
           (enum (begin
                   (initial-set u "page-type" answer)
@@ -167,6 +167,7 @@
      >>>
      ("Reset"
       (initial-default u "page-medium" "page-type" "page-orientation"
+                         "page-border" "page-packet" "page-offset"
                          "page-width" "page-height")
       (refresh-now "page-format-settings")
       (refresh-now "page-user-format-settings"))

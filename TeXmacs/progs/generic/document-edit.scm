@@ -181,13 +181,13 @@
   (init-default "page-medium")
   (notify-page-change))
 
-(define (test-page-medium? s) (string=? (get-env "page-medium") s))
+(define (test-page-medium? s) (== (get-init "page-medium") s))
 (tm-define (init-page-medium s)
   (:check-mark "*" test-page-medium?)
   (init-env "page-medium" s)
   (notify-page-change))
 
-(define (test-page-type? s) (string=? (get-env "page-type") s))
+(define (test-page-type? s) (== (get-init "page-type") s))
 (tm-define (init-page-type s)
   (:check-mark "*" test-page-type?)
   (init-env "page-type" s)
@@ -212,6 +212,52 @@
   (:check-mark "*" test-page-orientation?)
   (init-env "page-orientation" s)
   (notify-page-change))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Wrapper for global page rendering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (test-default-page-rendering?) (test-default? "page-medium"))
+(tm-define (init-default-page-rendering)
+  (:check-mark "*" test-default-page-rendering?)
+  (init-default "page-medium")
+  (init-default "page-border")
+  (init-default "page-packet")
+  (init-default "page-offset")
+  (notify-page-change))
+
+(tm-define (get-init-page-rendering)
+  (cond ((== (get-init "page-border") "attached") "book")
+        ((!= (get-init "page-packet") "1") "panorama")
+        (else (get-init "page-medium"))))
+
+(define (test-page-rendering? s) (== (get-init-page-rendering) s))
+(tm-define (init-page-rendering s)
+  (:check-mark "*" test-page-rendering?)
+  (cond ((== s "book")
+         (init-env "page-medium" "paper")
+         (init-env "page-border" "attached")
+         (init-env "page-packet" "2")
+         (init-env "page-offset" "1"))
+        ((== s "panorama")
+         (init-env "page-medium" "paper")
+         (init-env "page-packet" "5")
+         (init-default "page-border")
+         (init-default "page-offset"))
+        (else
+          (init-env "page-medium" s)
+          (init-default "page-border")
+          (init-default "page-packet")
+          (init-default "page-offset")))
+  (notify-page-change))
+
+(tm-define (initial-get-page-rendering u)
+  (with-buffer u
+    (get-init-page-rendering)))
+
+(tm-define (initial-set-page-rendering u s)
+  (with-buffer u
+    (init-page-rendering s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further page layout settings
