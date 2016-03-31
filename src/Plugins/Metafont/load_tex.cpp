@@ -276,6 +276,7 @@ load_tex_pk (string family, int size, int dpi, int dsize,
 
 static void
 rubber_status (glyph& gl, int st) {
+  if (is_nil (gl)) return;
   gl -> status |= st;
   gl -> yoff    = 0;
 }
