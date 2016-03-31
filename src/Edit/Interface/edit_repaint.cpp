@@ -43,8 +43,6 @@ edit_interface_rep::draw_text (renderer ren, rectangles& l) {
   bool tp_found= false;
   tree bg= get_init_value (BG_COLOR);
   ren->set_background (bg);
-  //refresh_needed= do_animate;
-  //refresh_next  = next_animate;
   animated_flag= (texmacs_time () >= anim_next);
   if (animated_flag) anim_next= 1.0e12;
   eb->redraw (ren, eb->find_box_path (tp, tp_found), l);
@@ -52,8 +50,6 @@ edit_interface_rep::draw_text (renderer ren, rectangles& l) {
     double t= max (((double) texmacs_time ()) + 25.0, eb->anim_next ());
     anim_next= min (anim_next, t);
   }
-  //do_animate  = refresh_needed;
-  //next_animate= refresh_next;
 }
 
 void
@@ -131,15 +127,6 @@ edit_interface_rep::draw_surround (renderer ren, rectangle r) {
 
 void
 edit_interface_rep::draw_context (renderer ren, rectangle r) {
-  /*
-  int i;
-  ren->set_pencil (pencil (tm_background, pixel));
-  for (i=1; i<N(eb[0]); i++) {
-    SI y= eb->sy(0)+ eb[0]->sy2(i);
-    if ((y >= r->y1) && (y < r->y2))
-      ren->line (r->x1, y, r->x2, y);
-  }
-  */
   draw_surround (ren, r);
 }
 

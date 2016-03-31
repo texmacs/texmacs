@@ -297,10 +297,6 @@ path find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta);
 void find_canvas_info (box b, path sp, SI& x, SI& y, SI& sx, SI& sy,
 		       rectangle& outer, rectangle& inner);
 
-extern bool   refresh_needed;
-extern time_t refresh_next;
-void          refresh_at (time_t t);
-
 #define DECORATION        (-1)
 #define DECORATION_LEFT   (-2)
 #define DECORATION_MIDDLE (-3)

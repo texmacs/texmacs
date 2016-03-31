@@ -46,7 +46,7 @@ MODE_LANGUAGE (string mode) {
 edit_interface_rep::edit_interface_rep ():
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
-  do_animate (false), next_animate (last_change-1), anim_next (1.0e12),
+  anim_next (1.0e12),
   full_screen (false), got_focus (false),
   sh_s (""), sh_mark (0), pre_edit_s (""), pre_edit_mark (0),
   popup_win (),

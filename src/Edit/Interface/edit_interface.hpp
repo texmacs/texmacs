@@ -28,8 +28,6 @@ protected:
   int           env_change;    // which things have been changed ?
   time_t        last_change;   // time of last processed change
   time_t        last_update;   // time of last update of menu, icons and footer
-  bool          do_animate;    // are we in an animation ?
-  time_t        next_animate;  // time for next animation
   double        anim_next;     // time for next animation
   bool          full_screen;   // full screen mode ?
   bool          got_focus;     // do we have keyboard focus ?

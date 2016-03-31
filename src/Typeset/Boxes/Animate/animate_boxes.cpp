@@ -16,28 +16,6 @@
 #include "Files/image_files.hpp"
 
 /******************************************************************************
-* Global animation tracking
-******************************************************************************/
-
-bool   refresh_needed= false;
-time_t refresh_next  = 0;
-
-void
-refresh_at (time_t t) {
-  time_t now= texmacs_time ();
-  if (t - now < 0) t= now;
-  if (refresh_needed) {
-    if (refresh_next - now < 0) refresh_next= now;
-    if (t - refresh_next < 0) refresh_next= t;
-  }
-  else {
-    refresh_needed= true;
-    refresh_next  = t;
-  }
-  //cout << "Refresh at " << t << " -> " << refresh_next << "\n";
-}
-
-/******************************************************************************
 * Base classes for animation boxes
 ******************************************************************************/
 
