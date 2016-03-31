@@ -22,7 +22,7 @@
 #    include "Widkit/simple_wk_widget.hpp"
 #  endif
 #endif
-#include "server.hpp"
+#include "Texmacs/server.hpp"
 #include "drd_info.hpp"
 #ifdef EXPERIMENTAL
 #  include "../Style/Environment/environment.hpp"

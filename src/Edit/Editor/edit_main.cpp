@@ -20,6 +20,7 @@
 #include "drd_std.hpp"
 #include "message.hpp"
 #include <setjmp.h>
+#include "image_files.hpp"
 
 #ifdef EXPERIMENTAL
 #include "../../Style/Memorizer/clean_copy.hpp"
@@ -358,7 +359,9 @@ edit_main_rep::export_ps (url name, string first, string last) {
 
 array<int>
 edit_main_rep::print_snippet (url name, tree t) {
-  bool ps= suffix (name) == "ps" || suffix (name) == "eps";
+  string s= suffix (name);
+  bool ps= ((s== "ps") || (s == "eps") );
+  if  (use_pdf ()) ps= ps || (s== "pdf");
   typeset_prepare ();
   int dpi= as_int (printing_dpi);
   //if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
@@ -367,12 +370,14 @@ edit_main_rep::print_snippet (url name, tree t) {
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
     if (ps) make_eps (name, b, dpi);
     else {
-      url temp= url_temp (".eps");
+      url temp= url_temp ( (use_pdf ())? ".pdf" : ".eps" );
       make_eps (temp, b, dpi);
       ::remove (name);
-      system ("convert", temp, name);
-      if (!exists (name))
-        cout << "TeXmacs] warning, failed to create image " << name << "\n";
+      if (!call_scm_converter(temp, name)) {
+        call_imagemagick_convert( temp, name);
+        if (!exists (name))
+          convert_error << "could not convert snippet " <<temp<< "\nto :" << name << "\n";
+      }
       ::remove (temp);
     }
   }

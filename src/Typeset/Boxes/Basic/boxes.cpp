@@ -16,6 +16,10 @@
 #include "file.hpp"
 #include "merge_sort.hpp"
 #include "player.hpp"
+#ifdef PDF_RENDERER
+#include "Pdf/pdf_hummus_renderer.hpp"
+#endif
+#include "Editor/edit_main.hpp"
 
 extern tree the_et;
 
@@ -904,7 +908,7 @@ attach_dip (tree ref, path dip) {
 }
 
 /******************************************************************************
-* Convert to postscript
+* Convert to postscript or pdf 
 ******************************************************************************/
 
 void
@@ -915,7 +919,15 @@ make_eps (url name, box b, int dpi) {
   SI h= b->y4 - b->y3;
   b->x0= -b->x3;
   b->y0= -b->y4;
+#ifdef PDF_RENDERER
+  renderer ren;
+  if (use_pdf() && (suffix (name) == "pdf") )
+    ren= pdf_hummus_renderer (name, dpi, 1, "user", false, w/cm, h/cm);
+  else
+    ren= printer (name, dpi, 1, "user", false, w/cm, h/cm);
+#else
   renderer ren= printer (name, dpi, 1, "user", false, w/cm, h/cm);
+#endif
   ren->set_background (white);
   ren->set_pencil (black);
   rectangles rs;
