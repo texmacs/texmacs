@@ -416,7 +416,7 @@
   <assign|tiny-block|<xmacro|switch-args|<map-args|identity|concat|switch-args>>>
 
   <assign|slide|<\macro|body>
-    <\surround||<right-flush><new-page>>
+    <\surround||<new-page>>
       <arg|body>
     </surround>
   </macro>>
@@ -450,6 +450,8 @@
   <drd-props|expanded|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|slides|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|slide|arity|1|accessible|all|border|no>
 
   \;
 

@@ -903,13 +903,37 @@
   (dynamic-traverse (buffer-tree) mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Specific navigation for 'screens' switch
+;; Specific routines for 'screens' switch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (screens-switch-to which)
   (:secure #t)
   (and-with t (tree-innermost 'screens)
     (switch-to t which :start)))
+
+(tm-define (screens-show-all)
+  (and-with t (tree-innermost 'screens)
+    (for (c (tree-children t))
+      (when (tree-in? c '(hidden shown))
+        (tree-assign-node! c 'slide)))))
+
+(tm-define (screens-show-this)
+  (and-with t (tree-innermost 'screens)
+    (for (c (tree-children t))
+      (when (tree-func? c 'slide)
+        (tree-assign-node! c (if (cursor-inside? c) 'shown 'hidden))))))
+
+(define (expand-slides? s)
+  (in? s (list "paper" "book" "panorama")))
+
+(tm-define (init-page-rendering s)
+  (:require (inside? 'screens))
+  (with o (get-init-page-rendering)
+    (when (and (expand-slides? s) (not (expand-slides? o)))
+      (screens-show-all))
+    (when (and (not (expand-slides? s)) (expand-slides? o))
+      (screens-show-this))
+    (former s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Entering slide titles
