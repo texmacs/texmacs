@@ -270,7 +270,8 @@ image_size (url image, int& w, int& h) {
 
 void
 image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72 inch)
-if (DEBUG_CONVERT) debug_convert<< "image_size not cached for :" << image <<LF;
+  if (DEBUG_CONVERT) debug_convert<< "image_size not cached for :" << image <<LF;
+  //if (is_ramdisc (image)) image= concretize (image);
   string suf = suffix (image);	
   if (suf=="pdf") {
     pdf_image_size (image, w, h);

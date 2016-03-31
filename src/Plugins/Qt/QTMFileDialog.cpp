@@ -113,8 +113,8 @@ QTMImagePreview::QTMImagePreview (QWidget* parent)
   setImage (0);
 }
 
-void
-QTMImagePreview::setImage (const QString& file) {
+void 
+QTMImagePreview::setImage (const QString& file) { 	  //generate thumbnail
 BEGIN_SLOT
   QImage img;
   wid->setText ("");
@@ -122,7 +122,13 @@ BEGIN_SLOT
   xps->setText ("");
   yps->setText ("");
 
-  url image_url= url_system (scm_unquote (from_qstring_utf8 (file)));
+//  url image_url= url_system (scm_unquote (from_qstring_utf8 (file)));
+  QByteArray arr   = file.toLocal8Bit ();
+  const char* cstr = arr.constData ();
+  string localname = string ((char*) cstr);
+  url image_url= url_system (localname); 
+  //same conversion as in qt_chooser_widget_rep::perform_dialog ()
+  //handles correctly paths with non-ascii characters in windows (8-bit page code encoding but NOT full unicode)
   if (DEBUG_CONVERT) debug_convert<<"image preview :["<<image_url<<"]"<<LF;
   if (!(as_string(image_url)=="") && !is_directory(image_url) && exists(image_url) ){
     url temp= url_temp (".png");

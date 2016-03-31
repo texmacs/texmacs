@@ -1327,28 +1327,28 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   url temp;
   string s= suffix (name);
   // debug_convert << "flushing :" << fname << LF;
-	if (s == "pdf") {
-		temp=name;
-		name=url_none();
-	} 
-	else {
-	  temp= url_temp (".pdf");
-			// first try to work out inclusion using our own tools
-			// note that we have to return since flush_raster and flush_jpg
-			// already build the appopriate Form XObject into the PDF
-
-	  if ((s == "jpg") || (s == "jpeg")) 
-			if (flush_jpg(pdfw, name)) return;
-					  
-	  // other formats we generate a pdf (with available converters) that we'll embbed
-      image_to_pdf (name, temp, w, h, 300);
-	  // the 300 dpi setting is the maximum dpi of raster images that will be generated:
-	  // images that are to dense will de downsampled to keep file small
-	  // (other are not up-sampled) 
-	  // dpi DOES NOT apply for vector images that we know how to handle : eps, svg(if inkscape present)
-	  // 
-	  // TODO: make the max dpi setting smarter (printer resolution, preference ...)
-	}
+  if (s == "pdf") {
+    temp=name;
+    name=url_none();
+  } 
+  else {
+    temp= url_temp (".pdf");
+    // first try to work out inclusion using our own tools
+    // note that we have to return since flush_raster and flush_jpg
+    // already build the appopriate Form XObject into the PDF
+  
+  if ((s == "jpg") || (s == "jpeg")) 
+    if (flush_jpg(pdfw, name)) return;
+          
+  // other formats we generate a pdf (with available converters) that we'll embbed
+  image_to_pdf (name, temp, w, h, 300);
+  // the 300 dpi setting is the maximum dpi of raster images that will be generated:
+  // images that are to dense will de downsampled to keep file small
+  // (other are not up-sampled) 
+  // dpi DOES NOT apply for vector images that we know how to handle : eps, svg(if inkscape present)
+  // 
+  // TODO: make the max dpi setting smarter (printer resolution, preference ...)
+  }
   EStatusCode status = PDFHummus::eFailure;
   DocumentContext& dc = pdfw.GetDocumentContext();
   
@@ -1358,13 +1358,13 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(concretize(temp)));
 #endif  
   if(copyingContext) {
-	PDFPageInput pageInput(copyingContext->GetSourceDocumentParser(),
+	  PDFPageInput pageInput(copyingContext->GetSourceDocumentParser(),
                                        copyingContext->GetSourceDocumentParser()->ParsePage(0));
 	
     double tMat[6] ={ 1,0, 0, 1, 0, 0} ;
     PDFRectangle cropBox (0,0,0,0);
-	pdf_image_info (temp, w, h, cropBox, tMat, pageInput);
-	PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
+   	pdf_image_info (temp, w, h, cropBox, tMat, pageInput);
+	  PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
     status = copyingContext->MergePDFPageToFormXObject(form,0);
     if(status == eSuccess) pdfw.EndFormXObjectAndRelease(form);
     delete copyingContext;
@@ -1379,18 +1379,18 @@ pdf_image_rep::flush (PDFWriter& pdfw)
 
 void
 hummus_pdf_image_size (url image, int& w, int& h) {
-    InputFile pdfFile;
-    PDFParser* parser= new PDFParser();
+  InputFile pdfFile;
+  PDFParser* parser= new PDFParser();
 #if (defined (__MINGW__) || defined (__MINGW32__))
-    pdfFile.OpenFile(as_charp(western_to_utf8(concretize(image))));
+  pdfFile.OpenFile(as_charp(western_to_utf8(concretize(image))));
 #else
-    pdfFile.OpenFile(as_charp(concretize(image)));
+  pdfFile.OpenFile(as_charp(concretize(image)));
 #endif
-    parser->StartPDFParsing(pdfFile.GetInputStream());
-    PDFPageInput pageInput(parser, parser->ParsePage(0));	
-    double tMat[6] ={ 1,0, 0, 1, 0, 0};
-    PDFRectangle cropBox (0,0,0,0);
-    pdf_image_info (image, w, h, cropBox, tMat, pageInput);
+  parser->StartPDFParsing(pdfFile.GetInputStream());
+  PDFPageInput pageInput(parser, parser->ParsePage(0));	
+  double tMat[6] ={ 1,0, 0, 1, 0, 0};
+  PDFRectangle cropBox (0,0,0,0);
+  pdf_image_info (image, w, h, cropBox, tMat, pageInput);
 	delete(parser);
 }
 
@@ -1402,54 +1402,54 @@ pdf_image_info (url image, int& w, int& h, PDFRectangle& cropBox, double (&tMat)
 	w= cropBox.UpperRightX-cropBox.LowerLeftX;
 	h= cropBox.UpperRightY-cropBox.LowerLeftY;
 	if (DEBUG_CONVERT) {
-	  debug_convert << "hummus_pdf_image_size:"<< LF
+	  debug_convert << "hummus_pdf_image_info:"<< LF
         << "image ="<<image<<LF
 	      << "crop box={"<<cropBox.LowerLeftX<< ", "<<cropBox.UpperRightX << ", "<<cropBox.LowerLeftY<< ", "<<cropBox.UpperRightY<<"}"<< LF
         << "w,h={"<<w<< ", "<<h <<"}"<< LF;
   }
 	int z;
 switch  (rot) {
-    case 0 :
-	   tMat[0] = 1; 
-	   tMat[1] = 0;
-	   tMat[2] = 0;
-     tMat[3] = 1;
-	   tMat[4] =  -cropBox.LowerLeftX;
-	   tMat[5] =  -cropBox.LowerLeftY;
-	   break;
-	case 90 :
-	   tMat[0] = 0;
-	   tMat[1] = -1 ;
-	   tMat[2] = 1;
-     tMat[3] = 0;
-	   tMat[4] = -cropBox.LowerLeftY;
-	   tMat[5] = cropBox.UpperRightX ;
-	   z = w;
-	   w = h;
-	   h = z;
- 	   break;
-	case 180 :
-	   tMat[0] = -1;
-	   tMat[1] = 0;
-	   tMat[2] = 0;
-	   tMat[3] = -1;
-	   tMat[4] = cropBox.UpperRightX ;
-	   tMat[5] = cropBox.UpperRightY ;
-	   break;
-	case 270 :
- 	   tMat[0] = 0;
-	   tMat[1] = 1 ;
-	   tMat[2] = -1;
-	   tMat[3] = 0;
-	   tMat[4] = cropBox.UpperRightY ;
-	   tMat[5] = -cropBox.LowerLeftX;
-	   z = w;
-	   w = h;
-	   h = z;
-	   break;
-    default :
-	   convert_error << "unexpected rotate()="<< rot<<" in image "<<image << LF;
-}
+  case 0 :
+    tMat[0] = 1; 
+    tMat[1] = 0;
+    tMat[2] = 0;
+    tMat[3] = 1;
+    tMat[4] = -cropBox.LowerLeftX;
+    tMat[5] = -cropBox.LowerLeftY;
+    break;
+  case 90 :
+    tMat[0] = 0;
+    tMat[1] = -1 ;
+    tMat[2] = 1;
+    tMat[3] = 0;
+    tMat[4] = -cropBox.LowerLeftY;
+    tMat[5] = cropBox.UpperRightX ;
+    z = w;
+    w = h;
+    h = z;
+    break;
+  case 180 :
+    tMat[0] = -1;
+    tMat[1] = 0;
+    tMat[2] = 0;
+    tMat[3] = -1;
+    tMat[4] = cropBox.UpperRightX ;
+    tMat[5] = cropBox.UpperRightY ;
+    break;
+  case 270 :
+    tMat[0] = 0;
+    tMat[1] = 1 ;
+    tMat[2] = -1;
+    tMat[3] = 0;
+    tMat[4] = cropBox.UpperRightY ;
+    tMat[5] = -cropBox.LowerLeftX;
+    z = w;
+    w = h;
+    h = z;
+    break;
+  default :
+    convert_error << "unexpected rotate()="<< rot<<" in image "<<image << LF;
+  }
 if (DEBUG_CONVERT) debug_convert << "degrees image rotated :"<< rot << LF
 								 << "dx,dy={"<<tMat[4]<< ", "<<tMat[5] <<"}"<< LF;
 	   

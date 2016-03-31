@@ -374,7 +374,12 @@ qt_supports (url u) {
 bool
 qt_image_size (url image, int& w, int& h) {// w, h in points
   if (DEBUG_CONVERT) debug_convert << "qt_image_size :" <<LF;
-  QImage im= QImage (utf8_to_qstring (concretize (image)));
+  string name;
+  if (is_ramdisc (image)) name= concretize (image);
+  else name= as_string(image);
+  QImage im;
+  im.load(utf8_to_qstring (cork_to_utf8 (name)).toLocal8Bit ());
+  //same hacky conversion as in qt_chooser_widget.cpp::perform_dialog
   if (im.isNull ()) {
       convert_error << "Cannot read image file '" << image << "'"
       << " in qt_image_size" << LF;
@@ -393,14 +398,20 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
 void
 qt_convert_image (url image, url dest, int w, int h) {// w, h in pixels
   if (DEBUG_CONVERT) debug_convert << "qt_convert_image " << image << " -> "<<dest<<LF;
-  QImage im (utf8_to_qstring (concretize (image)));
+  QImage im;
+  im.load(utf8_to_qstring (cork_to_utf8 (as_string (image))).toLocal8Bit ());
+  //same hacky conversion as in qt_chooser_widget.cpp::perform_dialog
   if (im.isNull ())
     convert_error << "Cannot read image file '" << image << "'"
     << " in qt_convert_image" << LF;
   else {
     if (w > 0 && h > 0)
       im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    im.scaled (w, h).save (utf8_to_qstring (concretize (dest)));
+    im.save (utf8_to_qstring (cork_to_utf8 (as_string (dest))).toLocal8Bit ());
+    //same hacky conversion as in qt_chooser_widget.cpp::perform_dialog
+  if (!exists(dest)) convert_error << "Could not convert '" << image << "' to '" <<dest
+    << "' in qt_convert_image" << LF;
+
   }
 }
 
