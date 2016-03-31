@@ -228,6 +228,8 @@ edit_interface_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
 * Scroll so as to make the cursor and the selection visible
 ******************************************************************************/
 
+static SI absval (SI x) { return max (x, -x); }
+
 void
 edit_interface_rep::cursor_visible () {
   path sp= find_innermost_scroll (eb, tp);
@@ -235,14 +237,68 @@ edit_interface_rep::cursor_visible () {
   if (is_nil (sp)) {
     update_visible ();
     cu->y1 -= 2*pixel; cu->y2 += 2*pixel;
-    if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) <  vx1) ||
-	(cu->ox+ ((SI) (cu->y2 * cu->slope)) >= vx2) ||
-	(cu->oy+ cu->y1 <  vy1) ||
-	(cu->oy+ cu->y2 >= vy2))
-      {
-	scroll_to (cu->ox, cu->oy);
-	send_invalidate_all (this);
+    bool must_update=
+      (cu->ox+ ((SI) (cu->y1 * cu->slope)) <  vx1) ||
+      (cu->ox+ ((SI) (cu->y2 * cu->slope)) >= vx2) ||
+      (cu->oy+ cu->y1 <  vy1) ||
+      (cu->oy+ cu->y2 >= vy2);
+
+    box pages= eb[0];
+    if (N(pages) > 1) {
+      SI vw= vx2 - vx1, vh= vy2 - vy1;
+      for (int i=0; i<N(pages); i++) {
+        SI scx, scy;
+        SERVER (scroll_where (scx, scy));
+        scx= (SI) (scx / magf);
+        scy= (SI) (scy / magf);
+        SI x1= eb->sy(0)+ pages->sx1 (i);
+        SI x2= eb->sy(0)+ pages->sx2 (i);
+        SI y1= eb->sy(0)+ pages->sy1 (i);
+        SI y2= eb->sy(0)+ pages->sy2 (i);
+        SI pw= x2 - x1, ph= y2 - y1;
+        if (cu->ox >= x1 && x2 > cu->ox &&
+            cu->oy >= y1 && y2 > cu->oy &&
+            3*vw > 2*pw && 3*vh > 2*ph) {
+          if (!must_update) {
+            SI d= 5*pixel;
+            if (pw >= vw) {
+              if (vx1 > x1 + d && absval (x2 - vx2) > d) must_update= true;
+              if (x2 > vx2 + d && absval (x1 - vx1) > d) must_update= true;
+            }
+            else if (vx1 > x1 + d || x2 > vx2 + d) must_update= true;
+            if (ph >= vh) {
+              if (vy1 > y1 + d && absval (y2 - vy2) > d) must_update= true;
+              if (y2 > vy2 + d && absval (y1 - vy1) > d) must_update= true;
+            }
+            else if (vy1 > y1 + d || y2 > vy2 + d) must_update= true;
+          }
+          if (must_update) {
+            //cout << "Cursor on page " << i << LF;
+            //cout << "Visual " << vx1/PIXEL << ", " << vy1/PIXEL
+            //     << "; " << vx2/PIXEL << ", " << vy2/PIXEL << LF;
+            //cout << "Page " << x1/PIXEL << ", " << y1/PIXEL
+            //     << "; " << x2/PIXEL << ", " << y2/PIXEL << LF;
+            SI mx= (x1 + x2) >> 1, my= (y1 + y2) >> 1;
+            if (pw >= vw) {
+              if (cu->ox > mx) mx= x2 - ((vx2 - vx1) >> 1);
+              else             mx= x1 + ((vx2 - vx1) >> 1);
+            }
+            if (ph >= vh) {
+              if (cu->oy > my) my= y2 - ((vy2 - vy1) >> 1);
+              else             my= y1 + ((vy2 - vy1) >> 1);
+            }
+            scroll_to (mx, my);
+            send_invalidate_all (this);
+            return;
+          }
+        }
       }
+    }
+
+    if (must_update) {
+      scroll_to (cu->ox, cu->oy);
+      send_invalidate_all (this);
+    }
   }
   else {
     SI x, y, sx, sy;
@@ -307,15 +363,15 @@ edit_interface_rep::selection_visible () {
     SI new_y = (scroll_y)? end_y : (vy1+vy2)/2;
   */
   // trying a "proportional" scroll 
-  SI mx = max (-end_x + vx1 + extra , max( end_x - vx2 + extra, 0 ));
-  SI my = max (-end_y + vy1 + extra , max( end_y - vy2 + extra, 0 ));
+  SI mx = max (-end_x + vx1 + extra, max (end_x - vx2 + extra, 0));
+  SI my = max (-end_y + vy1 + extra, max (end_y - vy2 + extra, 0));
 
   if ((mx>0) || (my>0)) {
-	SI vxc = (vx1+vx2)/2, dx = end_x - vxc;
-	SI vyc = (vy1+vy2)/2, dy = end_y - vyc;
+    SI vxc = (vx1+vx2)/2, dx = end_x - vxc;
+    SI vyc = (vy1+vy2)/2, dy = end_y - vyc;
     SI new_x = vxc+ ((extra)? (mx*dx)/extra: dx);
-	SI new_y = vyc+ ((extra)? (my*dy)/extra: dy);
-  //end change
+    SI new_y = vyc+ ((extra)? (my*dy)/extra: dy);
+    //end change
     scroll_to (new_x, new_y);
     send_invalidate_all (this);
     SI old_vx1= vx1, old_vy1= vy1;
