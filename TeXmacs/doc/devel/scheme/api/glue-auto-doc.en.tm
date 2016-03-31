@@ -6179,7 +6179,15 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(get-page-width)>
+    <scm|(get-page-count)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_page_count> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-page-width <scm-arg|bool>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_page_width> which returns
@@ -6187,10 +6195,34 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(get-page-height)>
+    <scm|(get-pages-width <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_pages_width> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-page-height <scm-arg|bool>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_page_height> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-total-width <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_total_width> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-total-height <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_total_height> which returns
     <scm|int>.
   </explain>
 

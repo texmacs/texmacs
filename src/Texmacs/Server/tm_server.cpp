@@ -202,8 +202,8 @@ tm_server_rep::set_printer_dpi (string dpi) {
 
 void
 tm_server_rep::set_default_zoom_factor (double zoom) {
-  if (zoom >= 10.0) zoom= 10.0;
-  if (zoom <=  0.1) zoom=  0.1;
+  if (zoom >= 25.0 ) zoom= 25.0;
+  if (zoom <=  0.04) zoom=  0.04;
   zoom= normal_zoom (zoom);
   def_zoomf= zoom;
 }

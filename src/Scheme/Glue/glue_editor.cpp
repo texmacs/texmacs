@@ -692,18 +692,74 @@ tmg_init_hasP (tmscm arg1) {
 }
 
 tmscm
-tmg_get_page_width () {
+tmg_get_page_count () {
   // TMSCM_DEFER_INTS;
-  int out= get_current_editor()->get_page_width ();
+  int out= get_current_editor()->get_page_count ();
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
 }
 
 tmscm
-tmg_get_page_height () {
+tmg_get_page_width (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "get-page-width");
+
+  bool in1= tmscm_to_bool (arg1);
+
   // TMSCM_DEFER_INTS;
-  int out= get_current_editor()->get_page_height ();
+  int out= get_current_editor()->get_page_width (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_pages_width (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "get-pages-width");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_pages_width (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_page_height (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "get-page-height");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_page_height (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_total_width (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "get-total-width");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_total_width (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_total_height (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "get-total-height");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->get_total_height (in1);
   // TMSCM_ALLOW_INTS;
 
   return int_to_tmscm (out);
@@ -3196,8 +3252,12 @@ initialize_glue_editor () {
   tmscm_install_procedure ("context-has?",  tmg_context_hasP, 1, 0, 0);
   tmscm_install_procedure ("style-has?",  tmg_style_hasP, 1, 0, 0);
   tmscm_install_procedure ("init-has?",  tmg_init_hasP, 1, 0, 0);
-  tmscm_install_procedure ("get-page-width",  tmg_get_page_width, 0, 0, 0);
-  tmscm_install_procedure ("get-page-height",  tmg_get_page_height, 0, 0, 0);
+  tmscm_install_procedure ("get-page-count",  tmg_get_page_count, 0, 0, 0);
+  tmscm_install_procedure ("get-page-width",  tmg_get_page_width, 1, 0, 0);
+  tmscm_install_procedure ("get-pages-width",  tmg_get_pages_width, 1, 0, 0);
+  tmscm_install_procedure ("get-page-height",  tmg_get_page_height, 1, 0, 0);
+  tmscm_install_procedure ("get-total-width",  tmg_get_total_width, 1, 0, 0);
+  tmscm_install_procedure ("get-total-height",  tmg_get_total_height, 1, 0, 0);
   tmscm_install_procedure ("get-attachment",  tmg_get_attachment, 1, 0, 0);
   tmscm_install_procedure ("set-attachment",  tmg_set_attachment, 2, 0, 0);
   tmscm_install_procedure ("reset-attachment",  tmg_reset_attachment, 1, 0, 0);

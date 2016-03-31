@@ -72,8 +72,12 @@ public:
   double   get_env_double (string var_name);
   double   get_init_double (string var_name);
   language get_env_language ();
-  SI       get_page_width ();
-  SI       get_page_height ();
+  int      get_page_count ();
+  SI       get_page_width (bool deco);
+  SI       get_pages_width (bool deco);
+  SI       get_page_height (bool deco);
+  SI       get_total_width (bool deco);
+  SI       get_total_height (bool deco);
 
   tree     exec (tree t, hashmap<string,tree> env, bool expand_refs= true);
   tree     exec_texmacs (tree t, path p);

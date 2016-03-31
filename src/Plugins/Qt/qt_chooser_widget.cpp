@@ -277,7 +277,7 @@ qt_chooser_widget_rep::perform_dialog () {
         string params;
         // HACK: which value should we choose here?
         //On other platforms we call image_size (u,  w,  h) which returns size in pt units.
-        int ww = (get_current_editor()->get_page_width () / PIXEL) / 3;
+        int ww = (get_current_editor()->get_page_width (false) / PIXEL) / 3;
         int  w = min (ww, pic.width());
         int  h = ((double) pic.height() / (double) pic.width()) * (double) w;   // no risk of division by zero here on invalid file?
         params << "\"" << from_qstring (QString ("%1px").arg (w)) << "\" "

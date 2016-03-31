@@ -434,6 +434,9 @@ public:
   void   update_page_pars ();
   void   get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
 			SI& odd, SI& even, SI& top, SI& bottom);
+  SI     get_page_width (bool deco);
+  SI     get_pages_width (bool deco);
+  SI     get_page_height (bool deco);
   tree   decode_arrow (tree t, string l, string h);
   void   update_font ();
   void   update_color ();

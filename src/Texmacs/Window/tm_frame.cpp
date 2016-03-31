@@ -189,8 +189,8 @@ tm_frame_rep::visible_footer () {
 void
 tm_frame_rep::set_window_zoom_factor (double zoom) {
   if (!has_current_view ()) return;
-  if (zoom >= 10.0) zoom= 10.0;
-  if (zoom <=  0.1) zoom=  0.1;
+  if (zoom >= 25.0 ) zoom= 25.0;
+  if (zoom <=  0.04) zoom=  0.04;
   zoom= normal_zoom (zoom);
   concrete_window () -> set_window_zoom_factor (zoom);
 }

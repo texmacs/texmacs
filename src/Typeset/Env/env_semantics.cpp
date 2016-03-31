@@ -271,6 +271,38 @@ edit_env_rep::get_page_pars (SI& w, SI& h, SI& width, SI& height,
   */
 }
 
+SI
+edit_env_rep::get_page_width (bool deco) {
+  SI w= page_user_width + page_odd_margin + page_right_margin;
+  if (get_string (PAGE_MEDIUM) == "paper" &&
+      get_string (PAGE_BORDER) != "none" &&
+      deco) w += 20 * pixel;
+  return w;
+}
+
+SI
+edit_env_rep::get_pages_width (bool deco) {
+  SI w= page_user_width + page_odd_margin + page_right_margin;
+  if (get_string (PAGE_MEDIUM) == "paper" &&
+      get_string (PAGE_BORDER) != "attached" &&
+      get_string (PAGE_BORDER) != "none" &&
+      deco) w += 20 * pixel;
+  w= w * page_packet;
+  if (get_string (PAGE_MEDIUM) == "paper" &&
+      get_string (PAGE_BORDER) == "attached" &&
+      deco) w += 20 * pixel;
+  return w;
+}
+
+SI
+edit_env_rep::get_page_height (bool deco) {
+  SI h= page_user_height + page_top_margin + page_bottom_margin;
+  if (get_string (PAGE_MEDIUM) == "paper" &&
+      get_string (PAGE_BORDER) != "none" &&
+      deco) h += 20 * pixel;
+  return h;
+}
+
 /******************************************************************************
 * Retrieving ornament parameters
 ******************************************************************************/

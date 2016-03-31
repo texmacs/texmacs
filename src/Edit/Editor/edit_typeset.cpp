@@ -474,18 +474,52 @@ edit_typeset_rep::get_env_language () {
   else return prog_language (get_env_string (PROG_LANGUAGE));
 }
 
-SI
-edit_typeset_rep::get_page_width () {
-  (void) get_env_string (PAGE_WIDTH);
-  return (env->page_user_width + env->page_odd_margin +
-          env->page_right_margin + std_shrinkf - 1) / std_shrinkf;
+int
+edit_typeset_rep::get_page_count () {
+  return N (eb[0]);
 }
 
 SI
-edit_typeset_rep::get_page_height () {
+edit_typeset_rep::get_page_width (bool deco) {
+  (void) get_env_string (PAGE_WIDTH);
+  return (env->get_page_width (deco) + std_shrinkf - 1) / std_shrinkf;
+}
+
+SI
+edit_typeset_rep::get_pages_width (bool deco) {
+  (void) get_env_string (PAGE_WIDTH);
+  return (env->get_pages_width (deco) + std_shrinkf - 1) / std_shrinkf;
+}
+
+SI
+edit_typeset_rep::get_page_height (bool deco) {
   (void) get_env_string (PAGE_HEIGHT);
-  return (env->page_user_height + env->page_top_margin +
-          env->page_bottom_margin + std_shrinkf - 1) / std_shrinkf;
+  return (env->get_page_height (deco) + std_shrinkf - 1) / std_shrinkf;
+}
+
+SI
+edit_typeset_rep::get_total_width (bool deco) {
+  SI w= eb->w();
+  if (!deco) {
+    SI w1= env->get_pages_width (false);
+    SI w2= env->get_pages_width (true);
+    w -= (w2 - w1);
+  }
+  return (w + std_shrinkf - 1) / std_shrinkf;
+}
+
+SI
+edit_typeset_rep::get_total_height (bool deco) {
+  SI h= eb->h();
+  if (!deco) {
+    SI h1= env->get_page_height (false);
+    SI h2= env->get_page_height (true);
+    int nr= get_page_count ();
+    int nx= env->page_packet;
+    int ny= ((nr + env->page_offset) + nx - 1) / nx;
+    h -= ny * (h2 - h1);
+  }
+  return (h + std_shrinkf - 1) / std_shrinkf;
 }
 
 /******************************************************************************

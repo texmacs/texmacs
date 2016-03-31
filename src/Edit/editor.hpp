@@ -274,8 +274,12 @@ public:
   virtual double   get_env_double (string var_name) = 0;
   virtual double   get_init_double (string var_name) = 0;
   virtual language get_env_language () = 0;
-  virtual SI       get_page_width () = 0;
-  virtual SI       get_page_height () = 0;
+  virtual int      get_page_count () = 0;
+  virtual SI       get_page_width (bool deco) = 0;
+  virtual SI       get_pages_width (bool deco) = 0;
+  virtual SI       get_page_height (bool deco) = 0;
+  virtual SI       get_total_width (bool deco) = 0;
+  virtual SI       get_total_height (bool deco) = 0;
   virtual tree     exec_texmacs (tree t, path p) = 0;
   virtual tree     exec_texmacs (tree t) = 0;
   virtual tree     exec_verbatim (tree t, path p) = 0;
