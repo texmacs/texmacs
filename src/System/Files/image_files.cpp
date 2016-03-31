@@ -33,7 +33,6 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 #include "scheme.hpp"
-#include "timer.hpp"
 #include "Imlib2/imlib2.hpp"
 
 #ifdef MACOSX_EXTENSIONS
@@ -271,7 +270,6 @@ image_size (url image, int& w, int& h) {
 void
 image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72 inch)
   if (DEBUG_CONVERT) debug_convert<< "image_size not cached for :" << image <<LF;
-  //if (is_ramdisc (image)) image= concretize (image);
   string suf = suffix (image);	
   if (suf=="pdf") {
     pdf_image_size (image, w, h);
@@ -373,9 +371,11 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
     return;
   }
+  if ((s != "svg") && (s != "pnm") && call_scm_converter(image, eps)) return;
+  // if s is in {"jpg","jpeg","tif","gif","png","pnm"} then scheme converters
+  // would return the call here (see init_images.scm) causing an infinite loop.
+  // Except pnm,the others are treated by qt.
 #endif
-  if (DEBUG_CONVERT) debug_convert << " using plug-ins" << LF;
-  if ((s != "svg") && call_scm_converter (image, eps)) return;
   call_imagemagick_convert (image, eps, w_pt, h_pt, dpi);
 }
 
@@ -391,7 +391,7 @@ image_to_psdoc (url image) {
   return psdoc;
 }
 
-//essentially the same code as image_to_eps 
+//mostly the same code as image_to_eps 
 void 
 image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   if (DEBUG_CONVERT) debug_convert << "image_to_pdf ... ";
@@ -450,20 +450,12 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   call_imagemagick_convert (image, png, w, h);
 }
 
-static time_t scm_converter_lock= 0;
-
 bool
 call_scm_converter(url image, url dest) {
-  if (scm_converter_lock != 0 &&
-      scm_converter_lock + 10000 < texmacs_time ())
-    scm_converter_lock= 0;
-  if (scm_converter_lock == 0 &&
-      as_bool (call ("file-converter-exists?",
+  if (as_bool (call ("file-converter-exists?",
                      "x." * suffix (image),
                      "x." * suffix (dest)))) {
-    scm_converter_lock= texmacs_time ();
     call ("file-convert", object (image), object (dest));
-    scm_converter_lock= 0;
     bool success= exists (dest);
     if (success && DEBUG_CONVERT)
       debug_convert << "scm file-convert " << concretize (image)
