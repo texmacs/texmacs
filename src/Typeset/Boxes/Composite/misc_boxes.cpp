@@ -323,15 +323,15 @@ page_border_box_rep::display_background (renderer ren) {
   SI p= ren->pixel;
   if (X1 > x1 + 2 * p) {
     set_shadow (ren, 128);
-    ren->clear_pattern (X1-p, Y1, X1, Y2-p);
+    ren->clear_pattern (X1-p, Y1-p, X1, Y2-p);
     set_shadow (ren, 16);
-    ren->clear_pattern (X1-2*p, Y1, X1-p, Y2-2*p);
+    ren->clear_pattern (X1-2*p, Y1-p, X1-p, Y2-2*p);
   }
   if (x2 - 2 * p > X2) {
     set_shadow (ren, 16);
     ren->clear_pattern (X2+p, Y1, X2+2*p, Y2-2*p);
     set_shadow (ren, 128);
-    ren->clear_pattern (X2, Y1, X1+p, Y2-p);
+    ren->clear_pattern (X2, Y1, X2+p, Y2-p);
   }
   if (Y1 > y1 - 4 * p) {
     set_shadow (ren, 160);
