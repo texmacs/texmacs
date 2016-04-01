@@ -80,6 +80,10 @@
 
   <assign|item-vsep|<macro|0fn>>
 
+  <assign|page-odd-footer|>
+
+  <assign|page-even-footer|>
+
   <\active*>
     <\src-comment>
       Titles

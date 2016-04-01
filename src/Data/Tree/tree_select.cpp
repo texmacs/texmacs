@@ -117,13 +117,17 @@ selection_adjust (tree t, path i1, path i2, path& o1, path& o2) {
   else {
     tree_label l= L(t);
     if ((l==DOCUMENT) || (l==PARA) || (l==CONCAT)) {
-      if (is_compound (t[i1->item])) {
+      if (is_compound (t[i1->item], "slide"))
+        o1= path (i1->item, start (t[i1->item]));
+      else if (is_compound (t[i1->item])) {
         path mid;
         selection_adjust (t[i1->item], i1->next, end (t[i1->item]), o1, mid);
         o1= path (i1->item, o1);
       }
       else o1= i1;
-      if (is_compound (t[i2->item])) {
+      if (is_compound (t[i2->item], "slide"))
+        o2= path (i2->item, end (t[i2->item]));
+      else if (is_compound (t[i2->item])) {
         path mid;
         selection_adjust (t[i2->item], start(t[i2->item]), i2->next, mid, o2);
         o2= path (i2->item, o2);
