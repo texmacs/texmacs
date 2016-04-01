@@ -903,48 +903,6 @@
   (dynamic-traverse (buffer-tree) mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Specific routines for 'screens' switch
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (screens-switch-to which)
-  (:secure #t)
-  (and-with t (tree-innermost 'screens)
-    (switch-to t which :start)))
-
-(tm-define (screens-show-all)
-  (and-with t (tree-innermost 'screens)
-    (for (c (tree-children t))
-      (when (tree-in? c '(hidden shown))
-        (tree-assign-node! c 'slide)))))
-
-(tm-define (screens-show-this)
-  (and-with t (tree-innermost 'screens)
-    (for (c (tree-children t))
-      (when (tree-func? c 'slide)
-        (tree-assign-node! c (if (cursor-inside? c) 'shown 'hidden))))))
-
-(define (expand-slides? s)
-  (in? s (list "paper" "book" "panorama")))
-
-(tm-define (init-page-rendering s)
-  (:require (inside? 'screens))
-  (with o (get-init-page-rendering)
-    (when (and (expand-slides? s) (not (expand-slides? o)))
-      (screens-show-all))
-    (when (and (not (expand-slides? s)) (expand-slides? o))
-      (screens-show-this))
-    (former s)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Entering slide titles
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (kbd-enter t shift?)
-  (:require (tree-is? t 'tit))
-  (tree-go-to t :end)
-  (insert-return))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific behaviour for switches inside list environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -965,3 +923,63 @@
       (begin
         (switch-insert-at t :var-next)
         (make-item))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Entering slide titles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-enter t shift?)
+  (:require (tree-is? t 'tit))
+  (tree-go-to t :end)
+  (insert-return))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Specific routines for 'screens' switch
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (screens-switch-to which)
+  (:secure #t)
+  (and-with t (tree-innermost 'screens)
+    (switch-to t which :start)))
+
+(tm-define (screens-show-all)
+  (and-with t (tree-innermost 'screens)
+    (for (c (tree-children t))
+      (when (tree-in? c '(hidden shown))
+        (tree-assign-node! c 'slide)))
+    (tree-assign-node! t 'document)
+    (tree-insert-node! t 0 '(slideshow))))
+
+(tm-define (screens-show-this)
+  (and-with t (tree-innermost 'slideshow)
+    (when (and (== (tree-arity t) 1) (tree-is? (tree-ref t 0) 'document))
+      (tree-remove-node! t 0)
+      (tree-assign-node! t 'screens)
+      (for (c (tree-children t))
+	(when (tree-func? c 'slide)
+	  (tree-assign-node! c (if (cursor-inside? c) 'shown 'hidden)))))))
+
+(define (expand-slides? s)
+  (in? s (list "paper" "book" "panorama")))
+
+(tm-define (init-page-rendering s)
+  (:require (or (inside? 'screens) (inside? 'slideshow)))
+  (with o (get-init-page-rendering)
+    (when (and (expand-slides? s) (not (expand-slides? o)))
+      (screens-show-all))
+    (when (and (not (expand-slides? s)) (expand-slides? o))
+      (screens-show-this))
+    (former s)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing slideshows in expanded form
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (screens-switch-to which)
+  (:require (inside? 'slideshow))
+  (and-with t (tree-innermost 'slideshow)
+    (when (and (== (tree-arity t) 1) (tree-is? (tree-ref t 0) 'document))
+      (set! t (tree-ref t 0))
+      (when (== which :first) (set! which 0))
+      (when (== which :last) (set! which (- (tree-arity t) 1)))
+      (tree-go-to t which :start))))

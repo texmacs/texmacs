@@ -427,6 +427,10 @@
     </quasi>>
   </xmacro>>
 
+  <assign|slideshow|<\macro|body>
+    <arg|body>
+  </macro>>
+
   \;
 
   <assign|switch|<value|document-block>>
@@ -452,6 +456,8 @@
   <drd-props|slides|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|slide|arity|1|accessible|all|border|no>
+
+  <drd-props|slideshow|arity|1|accessible|all|border|no>
 
   \;
 

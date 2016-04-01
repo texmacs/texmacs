@@ -17,7 +17,10 @@
         (dynamic fold-edit)))
 
 (define (screens-parent? t)
-  (tree-is? (tree-up t) 'screens))
+  (with p (tree-up t)
+    (or (tree-is? p 'screens)
+	(and (tree-is? p 'document)
+	     (tree-is? (tree-up p) 'slideshow)))))
 
 (tm-define (screens-index body)
   (:secure #t)
