@@ -166,7 +166,8 @@
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-menu
            texmacs-insert-icons
            insert-link-menu insert-image-menu insert-animation-menu)
-(lazy-define (generic document-edit) update-document get-init-page-rendering)
+(lazy-define (generic document-edit) update-document
+             get-init-page-rendering init-page-rendering)
 (lazy-define (generic generic-edit) notify-activated notify-disactivated)
 (lazy-define (generic generic-doc) focus-help)
 (lazy-define (generic generic-widgets) search-toolbar replace-toolbar

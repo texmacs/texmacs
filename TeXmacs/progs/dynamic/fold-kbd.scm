@@ -32,7 +32,8 @@
   ("S-F10" (dynamic-previous))
   ("S-F11" (dynamic-next))
   ("S-F12" (dynamic-last))
-  ("C-F9" (toggle-full-screen-mode)))
+  ("C-F9" (toggle-full-screen-mode))
+  ("C-F10" (toggle-panorama-mode)))
 
 (kbd-map
   (:mode in-screens?)
