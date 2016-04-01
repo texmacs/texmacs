@@ -994,6 +994,7 @@ command_queue::exec (object cmd) {
   start_times << (((time_t) texmacs_time ()) - 1000000000);
   lapse = texmacs_time();
   the_gui->need_update();
+  wait= true;
 }
 
 void
@@ -1002,6 +1003,7 @@ command_queue::exec_pause (object cmd) {
   start_times << ((time_t) texmacs_time ());
   lapse = texmacs_time();
   the_gui->need_update();
+  wait= true;
 }
 
 void

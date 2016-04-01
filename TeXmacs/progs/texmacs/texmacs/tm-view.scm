@@ -125,8 +125,9 @@
       (begin
         (init-env "info-flag" saved-informative-flags)
         (full-screen-mode #f #f)
-        (fit-to-screen))
+	(restore-zoom (get-init-page-rendering)))
       (begin
+	(save-zoom (get-init-page-rendering))
         (set! saved-informative-flags (get-init-env "info-flag"))
         (init-env "info-flag" "none")
         (full-screen-mode #t #f)
@@ -135,7 +136,13 @@
 (tm-define (toggle-full-screen-edit-mode)
   (:synopsis "Toggle full screen edit mode.")
   (:check-mark "v" full-screen-edit?)
-  (full-screen-mode (not (full-screen-edit?)) (not (full-screen-edit?))))
+  (let* ((old (full-screen?))
+	 (new (not (full-screen-edit?))))
+    (when (and (not old) new)
+      (save-zoom (get-init-page-rendering)))
+    (full-screen-mode new new)
+    (when (and old (not new))
+      (restore-zoom (get-init-page-rendering)))))
 
 (tm-define (toggle-remote-control-mode)
   (:synopsis "Toggle remote keyboard control mode.")
@@ -150,7 +157,9 @@
   (set! z (max (min z 25.0) 0.04))
   (if (== (windows-number) 1)
       (set-preference "zoom factor" (number->string z))
-      (set-window-zoom-factor z)))
+      (set-window-zoom-factor z))
+  (notify-page-change)
+  (notify-change 1))
 
 (tm-define (other-zoom-factor s)
   (:argument s "Zoom factor")
@@ -158,6 +167,20 @@
       (with p (string->number (string-drop-right s 1))
         (change-zoom-factor (* 0.01 p)))
       (change-zoom-factor (string->number s))))
+
+(define zoom-table (make-ahash-table))
+
+(tm-define (save-zoom mode)
+  (when (not (full-screen?))
+    (with key (list (current-buffer) mode)
+      (ahash-set! zoom-table key (get-window-zoom-factor)))))
+
+(tm-define (restore-zoom mode)
+  (when (not (full-screen?))
+    (with key (list (current-buffer) mode)
+      (and-with zf (ahash-ref zoom-table key)
+	(when (!= zf (get-window-zoom-factor))
+	  (change-zoom-factor zf))))))
 
 (define (normalize-zoom-sub zoom l)
   (cond ((null? l) zoom)

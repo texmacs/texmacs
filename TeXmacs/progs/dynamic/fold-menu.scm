@@ -13,7 +13,8 @@
 
 (texmacs-module (dynamic fold-menu)
   (:use (dynamic fold-edit)
-        (generic generic-menu)))
+        (generic generic-menu)
+	(generic document-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for direct folding and switching
@@ -316,6 +317,11 @@
 (tm-define (focus-can-move? t)
   (:require (tree-is? t 'screens))
   #f)
+
+(tm-menu (focus-variant-icons t)
+  (:require (tree-is? t 'screens))
+  (=> "Screens"
+      (link page-rendering-menu)))
 
 (tm-menu (standard-focus-menu t)
   (:require (tree-is? t 'screens))

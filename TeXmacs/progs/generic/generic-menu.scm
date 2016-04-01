@@ -433,17 +433,20 @@
 
 (tm-menu (focus-tag-extra-icons t))
 
+(tm-menu (focus-variant-icons t)
+  (with l (focus-variants-of t)
+    (assuming (<= (length l) 1)
+      (inert ((eval (focus-tag-name (tree-label t))) (noop))))
+    (assuming (> (length l) 1)
+      (=> (balloon (eval (focus-tag-name (tree-label t)))
+		   "Structured variant")
+	  (dynamic (focus-variant-menu t))))))
+
 (tm-menu (focus-tag-icons t)
   (dynamic (focus-toggle-icons t))
   (dynamic (focus-position-float-icons t))
   (mini #t
-    (with l (focus-variants-of t)
-      (assuming (<= (length l) 1)
-        (inert ((eval (focus-tag-name (tree-label t))) (noop))))
-      (assuming (> (length l) 1)
-        (=> (balloon (eval (focus-tag-name (tree-label t)))
-                     "Structured variant")
-            (dynamic (focus-variant-menu t))))))
+    (dynamic (focus-variant-icons t)))
   (dynamic (focus-tag-extra-icons t))
   (assuming (cursor-inside? t)
     ((balloon (icon "tm_exit_left.xpm") "Exit tag on the left")
