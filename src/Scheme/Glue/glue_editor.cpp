@@ -2073,6 +2073,34 @@ tmg_selection_set_range_set (tmscm arg1) {
 }
 
 tmscm
+tmg_clipboard_set (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "clipboard-set");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "clipboard-set");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->selection_set (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_clipboard_get (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "clipboard-get");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->selection_get (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_cpp_clipboard_copy (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-clipboard-copy");
 
@@ -3371,6 +3399,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("selection-path",  tmg_selection_path, 0, 0, 0);
   tmscm_install_procedure ("selection-set",  tmg_selection_set, 2, 0, 0);
   tmscm_install_procedure ("selection-set-range-set",  tmg_selection_set_range_set, 1, 0, 0);
+  tmscm_install_procedure ("clipboard-set",  tmg_clipboard_set, 2, 0, 0);
+  tmscm_install_procedure ("clipboard-get",  tmg_clipboard_get, 1, 0, 0);
   tmscm_install_procedure ("cpp-clipboard-copy",  tmg_cpp_clipboard_copy, 1, 0, 0);
   tmscm_install_procedure ("cpp-clipboard-cut",  tmg_cpp_clipboard_cut, 1, 0, 0);
   tmscm_install_procedure ("clipboard-cut-at",  tmg_clipboard_cut_at, 1, 0, 0);

@@ -7131,6 +7131,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(clipboard-set <scm-arg|string> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|selection_set> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(clipboard-get <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|selection_get> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(cpp-clipboard-copy <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

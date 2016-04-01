@@ -216,6 +216,8 @@
   (selection-path selection_get_path (path))
   (selection-set selection_set_paths (void path path))
   (selection-set-range-set selection_set_range_set (void array_path))
+  (clipboard-set selection_set (void string content))
+  (clipboard-get selection_get (tree string))
   (cpp-clipboard-copy selection_copy (void string))
   (cpp-clipboard-cut selection_cut (void string))
   (clipboard-cut-at cut (void path))

@@ -648,6 +648,13 @@ edit_select_rep::selection_copy (string key) {
   }
 }
 
+tree
+edit_select_rep::selection_get (string key) {
+  tree t; string s;
+  (void) ::get_selection (key, t, s, selection_import);
+  return t;
+}
+
 void
 edit_select_rep::selection_paste (string key) {
   tree t; string s;

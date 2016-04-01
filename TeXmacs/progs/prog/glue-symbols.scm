@@ -916,6 +916,8 @@
 "selection-path"
 "selection-set"
 "selection-set-range-set"
+"clipboard-set"
+"clipboard-get"
 "cpp-clipboard-copy"
 "cpp-clipboard-cut"
 "clipboard-cut-at"
