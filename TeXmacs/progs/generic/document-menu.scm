@@ -876,6 +876,8 @@
       (link document-page-size-menu))
   (-> (eval (string-append (get-init "font-base-size") " pt"))
       (link document-font-base-size-menu))
+  (-> (eval (upcase-first (get-init-page-rendering)))
+      (link page-rendering-menu))
   (-> (eval (upcase-first (get-init "page-orientation")))
       ("Portrait" (init-page-orientation "portrait"))
       ("Landscape" (init-page-orientation "landscape")))

@@ -283,18 +283,20 @@
   (:require (== l "title-theme"))
   #f)
 
-(tm-define (slide-propose-title? t)
-  (and-with u (tree-ref t :down :down)
-    (and (tree-is? u 'document)
-         (not (tree-is? u 0 'tit)))))
+(tm-define (slide-propose-title? t*)
+  (with t (if (slideshow-context? t*) (tree-ref t* 0) t*)
+    (and-with u (tree-ref t :down :down)
+      (and (tree-is? u 'document)
+           (not (tree-is? u 0 'tit))))))
 
-(tm-define (slide-insert-title t)
-  (with u (tree-ref t :down :down)
-    (tree-insert u 0 '((tit "")))
-    (tree-go-to u 0 0 0)))
+(tm-define (slide-insert-title t*)
+  (with t (if (slideshow-context? t*) (tree-ref t* 0) t*)
+    (with u (tree-ref t :down :down)
+      (tree-insert u 0 '((tit "")))
+      (tree-go-to u 0 0 0))))
 
 (tm-define (search-slide-name t)
-  (cond ((tree-in? t '(shown hidden document))
+  (cond ((tree-in? t '(shown hidden slide document))
          (search-slide-name (tree-ref t 0)))
         ((tree-is? t 'tit)
          (texmacs->code (verbatim-expand (tm-ref t 0)) "cork"))
@@ -305,26 +307,31 @@
     (string-append "Slide " (number->string (+ i 1))
                    (if (== s "") "" (string-append ": " s)))))
 
-(tm-menu (focus-slides-menu t)
-  (for (i (.. 0 (tree-arity t)))
-    ((eval (get-slide-name (tree-ref t i) i))
-     (switch-to t i))))
+(tm-menu (focus-slides-menu t*)
+  (with t (if (slideshow-context? t*) (tree-ref t* 0) t*)
+    (for (i (.. 0 (tree-arity t)))
+      ((eval (get-slide-name (tree-ref t i) i))
+       (screens-switch-to i)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menus shen focus is on 'screens' tag
+;; Menus when focus is on 'screens' tag
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (focus-can-move? t)
-  (:require (tree-is? t 'screens))
+  (:require (screens-context? t))
   #f)
 
-(tm-menu (focus-variant-icons t)
-  (:require (tree-is? t 'screens))
-  (=> "Screens"
-      (link page-rendering-menu)))
+(tm-menu (focus-tag-menu t)
+  (:require (screens-context? t))
+  (inert ((eval (focus-tag-name (tree-label t))) (noop) (noop)))
+  (-> (eval (upcase-first (get-init-page-rendering)))
+      (link page-rendering-menu))
+  (-> "Preferences"
+      (dynamic (focus-preferences-menu t)))
+  ("Describe" (focus-help)))
 
 (tm-menu (standard-focus-menu t)
-  (:require (tree-is? t 'screens))
+  (:require (screens-context? t))
   (dynamic (focus-style-menu t))
   ---
   (dynamic (focus-tag-menu t))
@@ -336,18 +343,30 @@
     ---
     ("Title" (slide-insert-title t))))
 
+(tm-menu (focus-tag-icons t)
+  (:require (screens-context? t))
+  (mini #t (inert ((eval (focus-tag-name (tree-label t))) (noop))))
+  (=> (balloon (icon (eval (current-page-icon))) "Page layout")
+      (link page-rendering-menu))
+  (assuming (focus-has-preferences? t)
+    (=> (balloon (icon "tm_focus_prefs.xpm") "Preferences for tag")
+	(dynamic (focus-preferences-menu t))))
+  ((balloon (icon "tm_focus_help.xpm") "Describe tag")
+   (focus-help)))
+
 (tm-menu (standard-focus-icons t)
-  (:require (tree-is? t 'screens))
+  (:require (screens-context? t))
   (dynamic (focus-style-icons t))  
   //
   (minibar (dynamic (focus-insert-icons t)))
   //
   (minibar (dynamic (focus-tag-icons t)))
   //
-  (with i (tree-index (tree-down t))
-    (mini #t
-      (=> (eval (get-slide-name (tree-ref t i) i))
-          (dynamic (focus-slides-menu t)))))
+  (with u (if (slideshow-context? t) (tree-ref t 0) t)
+    (with i (tree-index (tree-down u))
+      (mini #t
+        (=> (eval (get-slide-name (tree-ref u i) i))
+            (dynamic (focus-slides-menu t))))))
   (assuming (slide-propose-title? t)
     //
     (minibar

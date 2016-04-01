@@ -937,6 +937,15 @@
 ;; Specific routines for 'screens' switch
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (slideshow-context? t)
+  (and (tree-is? t 'slideshow)
+       (== (tree-arity t) 1)
+       (tree-is? (tree-ref t 0) 'document)))
+
+(tm-define (screens-context? t)
+  (or (tree-is? t 'screens)
+      (slideshow-context? t)))
+
 (tm-define (screens-switch-to which)
   (:secure #t)
   (and-with t (tree-innermost 'screens)
@@ -983,3 +992,31 @@
       (when (== which :first) (set! which 0))
       (when (== which :last) (set! which (- (tree-arity t) 1)))
       (tree-go-to t which :start))))
+
+(tm-define (structured-horizontal? t)
+  (:require (slideshow-context? t))
+  #t)
+
+(tm-define (focus-can-insert? t)
+  (:require (slideshow-context? t))
+  #t)
+
+(tm-define (focus-can-remove? t)
+  (:require (slideshow-context? t))
+  #t)
+
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (slideshow-context? t))
+  (set! t (tree-ref t 0))
+  (with i (+ (tree-index (tree-down t)) (if forwards? 1 0))
+    (tree-insert! t i '((slide (document ""))))
+    (tree-go-to t i 0 0 0)))
+
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (slideshow-context? t))
+  (set! t (tree-ref t 0))
+  (let* ((i (- (tree-index (tree-down t)) (if forwards? 0 1)))
+         (n (tree-arity t)))
+    (when (and (>= i 0) (> n 1))
+      (tree-remove! t i 1)
+      (tree-go-to t (min i (- n 1)) (if forwards? :start :end)))))

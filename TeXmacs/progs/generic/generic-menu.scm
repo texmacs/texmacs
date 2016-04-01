@@ -20,43 +20,6 @@
         (source source-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Focus predicates
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (focus-has-variants? t)
-  (> (length (focus-variants-of t)) 1))
-
-(tm-define (focus-has-toggles? t)
-  (or (numbered-context? t)
-      (alternate-context? t)))
-
-(tm-define (focus-can-move? t)
-  #t)
-
-(tm-define (focus-can-insert-remove? t)
-  (and (or (structured-horizontal? t) (structured-vertical? t))
-       (cursor-inside? t)))
-
-(tm-define (focus-can-insert? t)
-  (< (tree-arity t) (tree-maximal-arity t)))
-
-(tm-define (focus-can-remove? t)
-  (> (tree-arity t) (tree-minimal-arity t)))
-
-(tm-define (focus-has-geometry? t)
-  #f)
-
-(tm-define (focus-has-preferences? t)
-  (and (tree-compound? t) (tree-label-extension? (tree-label t))))
-
-(tm-define (focus-has-preferences? t)
-  (:require (tree-in? t '(reference pageref hlink locus ornament)))
-  #t)
-
-(tm-define (focus-can-search? t)
-  #f)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Variants
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -433,20 +396,17 @@
 
 (tm-menu (focus-tag-extra-icons t))
 
-(tm-menu (focus-variant-icons t)
-  (with l (focus-variants-of t)
-    (assuming (<= (length l) 1)
-      (inert ((eval (focus-tag-name (tree-label t))) (noop))))
-    (assuming (> (length l) 1)
-      (=> (balloon (eval (focus-tag-name (tree-label t)))
-		   "Structured variant")
-	  (dynamic (focus-variant-menu t))))))
-
 (tm-menu (focus-tag-icons t)
   (dynamic (focus-toggle-icons t))
   (dynamic (focus-position-float-icons t))
   (mini #t
-    (dynamic (focus-variant-icons t)))
+    (with l (focus-variants-of t)
+      (assuming (<= (length l) 1)
+        (inert ((eval (focus-tag-name (tree-label t))) (noop))))
+      (assuming (> (length l) 1)
+        (=> (balloon (eval (focus-tag-name (tree-label t)))
+                     "Structured variant")
+            (dynamic (focus-variant-menu t))))))
   (dynamic (focus-tag-extra-icons t))
   (assuming (cursor-inside? t)
     ((balloon (icon "tm_exit_left.xpm") "Exit tag on the left")

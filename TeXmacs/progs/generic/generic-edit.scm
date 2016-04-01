@@ -237,6 +237,43 @@
       (table-markup-context? t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus predicates
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (focus-has-variants? t)
+  (> (length (focus-variants-of t)) 1))
+
+(tm-define (focus-has-toggles? t)
+  (or (numbered-context? t)
+      (alternate-context? t)))
+
+(tm-define (focus-can-move? t)
+  #t)
+
+(tm-define (focus-can-insert-remove? t)
+  (and (or (structured-horizontal? t) (structured-vertical? t))
+       (cursor-inside? t)))
+
+(tm-define (focus-can-insert? t)
+  (< (tree-arity t) (tree-maximal-arity t)))
+
+(tm-define (focus-can-remove? t)
+  (> (tree-arity t) (tree-minimal-arity t)))
+
+(tm-define (focus-has-geometry? t)
+  #f)
+
+(tm-define (focus-has-preferences? t)
+  (and (tree-compound? t) (tree-label-extension? (tree-label t))))
+
+(tm-define (focus-has-preferences? t)
+  (:require (tree-in? t '(reference pageref hlink locus ornament)))
+  #t)
+
+(tm-define (focus-can-search? t)
+  #f)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tree traversal
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
