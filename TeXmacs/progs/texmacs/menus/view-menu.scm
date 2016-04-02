@@ -28,6 +28,7 @@
   ---
   ("Full screen mode"  (toggle-full-screen-edit-mode))
   ("Presentation mode" (toggle-full-screen-mode))
+  ("Show panorama" (toggle-panorama-mode))
   ("Remote control" (toggle-remote-control-mode))
   ---
   ("Fit to screen" (fit-to-screen))
