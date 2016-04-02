@@ -179,7 +179,8 @@ shrink (glyph gl, int xfactor, int yfactor,
   int i, j, x, y;
   int index, indey, entry;
   int ww=(X2-X1)*xfactor, hh=(Y2-Y1)*yfactor;
-  STACK_NEW_ARRAY (bitmap, int, ww*hh);
+  int* bitmap= tm_new_array<int> (ww*hh);
+  //STACK_NEW_ARRAY (bitmap, int, ww*hh);
   for (i=0; i<ww*hh; i++) bitmap[i]=0;
   for (y=0, index= ww*frac_y+ frac_x; y<gl->height; y++, index-=ww)
     for (x=0; x<gl->width; x++)
@@ -207,7 +208,8 @@ shrink (glyph gl, int xfactor, int yfactor,
     }
   xo= off_x;
   yo= off_y;
-  STACK_DELETE_ARRAY (bitmap);
+  tm_delete_array (bitmap);
+  //STACK_DELETE_ARRAY (bitmap);
 
   // cout << CB << "\n";
   return CB;
