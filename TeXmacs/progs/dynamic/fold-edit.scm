@@ -946,6 +946,12 @@
   (or (tree-is? t 'screens)
       (slideshow-context? t)))
 
+(tm-define (nr-pages)
+  (:require (tree-innermost screens-context?))
+  (with t* (tree-innermost screens-context?)
+    (with t (if (slideshow-context? t*) (tree-ref t* 0) t*)
+      (tree-arity t))))
+
 (tm-define (screens-switch-to which)
   (:secure #t)
   (and-with t (tree-innermost 'screens)

@@ -7723,6 +7723,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(cpp-nr-pages)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|nr_pages> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(print-to-file <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>

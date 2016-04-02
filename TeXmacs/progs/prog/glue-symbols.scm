@@ -990,6 +990,7 @@
 "notify-page-change"
 "notify-change"
 "get-metadata"
+"cpp-nr-pages"
 "print-to-file"
 "print-pages-to-file"
 "print"

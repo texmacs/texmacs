@@ -372,6 +372,8 @@
   ("C-*" (alternate-toggle (focus-tree)))
   ("C-+" (zoom-in (sqrt (sqrt 2.0))))
   ("C--" (zoom-out (sqrt (sqrt 2.0))))
+  ("C-8" (fit-all-to-screen))
+  ("C-9" (fit-to-screen))
   ("C-0" (fit-to-screen-width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

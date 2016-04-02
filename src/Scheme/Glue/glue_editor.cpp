@@ -2899,6 +2899,15 @@ tmg_get_metadata (tmscm arg1) {
 }
 
 tmscm
+tmg_cpp_nr_pages () {
+  // TMSCM_DEFER_INTS;
+  int out= get_current_editor()->nr_pages ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_print_to_file (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "print-to-file");
 
@@ -3473,6 +3482,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("notify-page-change",  tmg_notify_page_change, 0, 0, 0);
   tmscm_install_procedure ("notify-change",  tmg_notify_change, 1, 0, 0);
   tmscm_install_procedure ("get-metadata",  tmg_get_metadata, 1, 0, 0);
+  tmscm_install_procedure ("cpp-nr-pages",  tmg_cpp_nr_pages, 0, 0, 0);
   tmscm_install_procedure ("print-to-file",  tmg_print_to_file, 1, 0, 0);
   tmscm_install_procedure ("print-pages-to-file",  tmg_print_pages_to_file, 3, 0, 0);
   tmscm_install_procedure ("print",  tmg_print, 0, 0, 0);

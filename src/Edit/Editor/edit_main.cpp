@@ -200,6 +200,17 @@ use_ps () {
 #endif
 }
 
+int
+edit_main_rep::nr_pages () {
+  string medium = env->get_string (PAGE_MEDIUM);
+  if (medium == "paper") return N (eb[0]);
+  typeset_prepare ();
+  env->write (PAGE_MEDIUM, "paper");
+  box the_box= typeset_as_document (env, subtree (et, rp), reverse (rp));
+  env->write (PAGE_MEDIUM, medium);
+  return N (the_box[0]);
+}
+
 void
 edit_main_rep::print (url name, bool conform, int first, int last) {
   bool ps  = (suffix (name) == "ps");

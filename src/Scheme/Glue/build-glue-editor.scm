@@ -300,6 +300,7 @@
   (notify-page-change notify_page_change (void))
   (notify-change notify_change (void int))
   (get-metadata get_metadata (string string))
+  (cpp-nr-pages nr_pages (int))
   (print-to-file print_to_file (void url))
   (print-pages-to-file print_to_file (void url string string))
   (print print_buffer (void))

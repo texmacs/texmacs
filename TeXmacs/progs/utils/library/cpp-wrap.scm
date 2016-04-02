@@ -69,3 +69,5 @@
 (tm-define (clipboard-copy cb) (cpp-clipboard-copy cb))
 (tm-define (clipboard-cut cb) (cpp-clipboard-cut cb))
 (tm-define (clipboard-paste cb) (cpp-clipboard-paste cb))
+
+(tm-define (nr-pages) (cpp-nr-pages))
