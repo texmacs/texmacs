@@ -14,6 +14,8 @@
 
 #include <QStyle>
 
+int qt_zoom (int sz);
+
 #ifdef Q_WS_MAC
 #define QTM_MINI_FONTSIZE 12 // also see uses of preference "gui:mini-fontsize"
                              // toolbar creation and config should be in scheme

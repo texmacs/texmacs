@@ -10,6 +10,7 @@
  ******************************************************************************/
 
 #include "tm_ostream.hpp"
+#include "renderer.hpp"
 
 #include "QTMStyle.hpp"
 #include "QTMApplication.hpp"
@@ -18,6 +19,11 @@
 #include <qdrawutil.h>
 #include <QPainter>
 #include <QMainWindow>
+
+int
+qt_zoom (int sz) {
+  return (int) (retina_scale * ((double) sz));
+}
 
 QStyle*
 qtmstyle () {

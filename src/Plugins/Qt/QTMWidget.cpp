@@ -653,7 +653,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     pal.setColor (QPalette::WindowText, Qt::white);
     imwidget->setPalette (pal);
     QFont f = imwidget->font();
-    f.setPointSize (30);
+    f.setPointSize (qt_zoom (30));
     imwidget->setFont (f);
     imwidget->setMargin (5);
   }

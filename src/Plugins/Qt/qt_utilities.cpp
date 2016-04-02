@@ -72,7 +72,7 @@ QFont
 to_qfont (int style, QFont font) {
   if (style & WIDGET_STYLE_MINI) {  // Use smaller text font
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-    font.setPointSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+    font.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
   }
   if (style & WIDGET_STYLE_MONOSPACED) {  // Use monospaced font
     font.setFixedPitch (true);        //FIXME: ignored for fonts in QActions

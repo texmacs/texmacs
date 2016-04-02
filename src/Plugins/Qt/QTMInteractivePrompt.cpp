@@ -41,7 +41,7 @@ QTMInteractivePrompt::QTMInteractivePrompt(qt_widget int_prompt,
   
   QFont f = font ();
   int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-  f.setPointSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+  f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
   li->widget()->setFont (f);
   li2->widget()->setFont (f);
 }

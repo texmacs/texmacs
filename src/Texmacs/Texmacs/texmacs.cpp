@@ -261,7 +261,9 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-q") || (s == "-quit"))
 	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
       else if ((s == "-r") || (s == "-reverse"))
-	set_reverse_colors(true);
+	set_reverse_colors (true);
+      else if ((s == "-R") || (s == "-retina"))
+	retina_scale= 2.0;
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;
 	if (i<argc) {

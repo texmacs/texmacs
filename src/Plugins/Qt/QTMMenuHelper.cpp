@@ -241,7 +241,7 @@ QTMMinibarAction::createWidget (QWidget* parent) {
       tb->setIconSize (sz);
       QFont f = tb->font();
       int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
-      f.setPointSize (fs > 0 ? fs : QTM_MINI_FONTSIZE);
+      f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
       tb->setFont(f);
       l->addWidget (tb);
     }
