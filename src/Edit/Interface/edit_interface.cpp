@@ -258,7 +258,7 @@ edit_interface_rep::cursor_visible () {
         SI pw= x2 - x1, ph= y2 - y1;
         if (cu->ox >= x1 && x2 > cu->ox &&
             cu->oy >= y1 && y2 > cu->oy &&
-            3*vw > 2*pw && 3*vh > 2*ph) {
+            5*vw > 3*pw && 5*vh > 3*ph) {
           if (!must_update) {
             SI d= 5*pixel;
             if (pw >= vw) {
