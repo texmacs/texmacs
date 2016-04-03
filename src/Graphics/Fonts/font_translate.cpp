@@ -256,15 +256,25 @@ bool
 find_closest (string& family, string& variant, string& series, string& shape,
 	      int attempt) {
   static hashmap<tree,tree> closest_cache (UNINIT);
-  tree key= tuple (family, variant, series, shape, as_string (attempt));
+  tree val= tuple (copy (family), variant, series, shape);
+  tree key= tuple (copy (family), variant, series, shape, as_string (attempt));
   if (closest_cache->contains (key)) {
     tree t = closest_cache[key];
     family = t[0]->label;
     variant= t[1]->label;
     series = t[2]->label;
     shape  = t[3]->label;
-    return t != key;
+    return t != val;
   }
+  /*
+  else if (attempt == FONT_ATTEMPTS && family != "modern") {
+    family= "modern";
+    find_closest (family, variant, series, shape, 0);
+    tree t= tuple (family, variant, series, shape);
+    closest_cache (key)= t;
+    return t != val;
+  }
+  */
   else {
     //cout << "< " << family << ", " << variant
     //     << ", " << series << ", " << shape << "\n";
@@ -280,7 +290,7 @@ find_closest (string& family, string& variant, string& series, string& shape,
     //     << ", " << series << ", " << shape << "\n";
     tree t= tuple (family, variant, series, shape);
     closest_cache (key)= t;
-    return t != key;
+    return t != val;
   }
 }
 

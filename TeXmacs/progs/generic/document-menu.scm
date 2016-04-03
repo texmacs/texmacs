@@ -123,7 +123,7 @@
 
 (menu-bind document-font-menu
   (-> "Text font"
-      ("Default" (init-default "font"))
+      ("Default" (init-default "font" "math-font" "prg-font"))
       ---
       ("Concrete" (init-env "font" "concrete"))
       (if (url-exists-in-tex? "pnr10.mf")

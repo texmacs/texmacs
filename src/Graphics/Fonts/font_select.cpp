@@ -190,6 +190,7 @@ style_features (string s) {
     else if (v[i] == "Book"); // for DejaVu fonts
     else if (v[i] == "Slanted") r << "Oblique";
     else if (v[i] == "Inclined") r << "Italic";
+    else if (v[i] == "Versalitas") r << "SmallCaps";
     else r << v[i];
   }
   v= tokenize (r, " ");

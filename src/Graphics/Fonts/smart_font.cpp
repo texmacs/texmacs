@@ -147,6 +147,14 @@ is_greek (string c) {
   return t[c];
 }
 
+static bool
+is_rubber (string c) {
+  return (starts (c, "<large-") ||
+          starts (c, "<left-") ||
+          starts (c, "<right-") ||
+          starts (c, "<mid-")) && ends (c, ">");
+}
+
 static hashmap<string,string> special_table ("");
 
 static bool
@@ -167,6 +175,8 @@ is_special (string s) {
     special_table ("|")= "<mid>";
     special_table ("'")= "<#2B9>";
     special_table ("`")= "<backprime>";
+    special_table ("<hat>")= "<#2C6>";
+    special_table ("<tilde>")= "<#2DC>";
   }
   if (starts (s, "<big-."))
     special_table (s)= "";
@@ -386,6 +396,7 @@ struct smart_font_rep: font_rep {
 
   void   advance (string s, int& pos, string& r, int& nr);
   int    resolve (string c, string fam, int attempt);
+  int    resolve_rubber (string c, string fam, int attempt);
   int    resolve (string c);
   void   initialize_font (int nr);
   int    adjusted_dpi (string fam, string var, string ser, string sh, int att);
@@ -575,7 +586,7 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
 }
 
 int
-smart_font_rep::resolve (string c, string fam, int attempt) { 
+smart_font_rep::resolve (string c, string fam, int attempt) {
   //cout << "Resolve " << c << " in " << fam << ", attempt " << attempt << "\n";
   array<string> a= trimmed_tokenize (fam, "=");
   if (N(a) >= 2) {
@@ -625,6 +636,8 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       font cfn= closest_font (fam, variant, series, rshape, sz, dpi, 1);
       if (cfn->supports (c)) {
         tree key= tuple (fam, variant, series, rshape, "1");
+        int nr= sm->add_font (key, REWRITE_NONE);
+        initialize_font (nr);
         return sm->add_char (key, c);
       }
     }
@@ -653,20 +666,43 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
 
   if (attempt > 1) {
     string range= get_unicode_range (c);
-    if (range != "") {
+    if (true) {
       int a= attempt - 1;
-      string v= variant;
-      if (v == "rm") v= range;
-      else v= v * "-" * range;
+      string v;
+      if (range == "") v= variant;
+      else if (v == "rm") v= range;
+      else v= variant * "-" * range;
       font cfn= closest_font (fam, v, series, rshape, sz, dpi, a);
       //cout << "Trying " << c << " in " << cfn->res_name << "\n";
       if (cfn->supports (c)) {
         tree key= tuple (fam, v, series, rshape, as_string (a));
+        int nr= sm->add_font (key, REWRITE_NONE);
+        initialize_font (nr);
         return sm->add_char (key, c);
       }
     }
   }
 
+  return -1;
+}
+
+int
+smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
+  //cout << "Rubber " << c << ", " << fam << ", " << attempt << LF;
+  int l= search_forwards ("-", 0, c) + 1;
+  int r= search_forwards ("-", l, c);
+  if (r == -1) r= N(c) - 1;
+  string ss= c (l, r);
+  int bnr;
+  if (N(ss) == 1) bnr= resolve (ss, fam, attempt);
+  else bnr= resolve ("<" * ss * ">", fam, attempt);
+  if (bnr >= 0 && bnr < N(fn) && !is_nil (fn[bnr])) {
+    tree key= tuple ("rubber", as_string (bnr));
+    int nr= sm->add_font (key, REWRITE_NONE);
+    initialize_font (nr);
+    if (fn[nr]->supports (c))
+      return sm->add_char (key, c);
+  }
   return -1;
 }
 
@@ -680,10 +716,12 @@ smart_font_rep::resolve (string c) {
   }
 
   array<string> a= trimmed_tokenize (family, ",");
-  for (int attempt= 1; attempt <= 20; attempt++) {
+  for (int attempt= 1; attempt <= FONT_ATTEMPTS; attempt++) {
     if (attempt > 1 && substitute_math_letter (c, math_kind) != "") break;
     for (int i= 0; i < N(a); i++) {
       int nr= resolve (c, a[i], attempt);
+      if (nr >= 0) return nr;
+      if (is_rubber (c)) nr= resolve_rubber (c, a[i], attempt);
       if (nr >= 0) return nr;
     }
   }
@@ -750,6 +788,10 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font (family, "outline", series, "right", sz, dpi);
   else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi);
+  else if (a[0] == "rubber" && N(a) == 2 && is_int (a[1])) {
+    initialize_font (as_int (a[1]));
+    fn[nr]= rubber_unicode_font (fn[as_int (a[1])]);
+  }
   else {
     int ndpi= adjusted_dpi (a[0], a[1], a[2], a[3], as_int (a[4]));
     fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, as_int (a[4]));

@@ -377,7 +377,7 @@
         (if flag?
             ("Reset"
              (begin
-               (init-default "font" "font-base-size"
+               (init-default "font" "font-base-size" "math-font" "prog-font"
                              "font-family" "font-series" "font-shape")
                (selector-initialize-font get-init)
                (refresh-now "font-family-selector")

@@ -18,6 +18,8 @@ RESOURCE(font);
 
 struct glyph;
 
+#define FONT_ATTEMPTS  20
+
 #define FONT_TYPE_TEX      0
 #define FONT_TYPE_UNICODE  1
 #define FONT_TYPE_QT       2
