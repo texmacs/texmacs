@@ -393,7 +393,8 @@ get_delimiter (string s, font fn, SI height) {
   SI best_h= 0;
   int n= 0;
   SI last= 0;
-  while (true) {
+  int credit= 20;
+  while (credit > 0) {
     metric ex;
     string test= radical * as_string (n) * ">";
     fn->get_extents (test, ex);
@@ -428,8 +429,9 @@ get_delimiter (string s, font fn, SI height) {
       last= h;
     }
     else return best;
+    credit--;
   }
-  return s;
+  return best;
 }
 
 static string
@@ -451,11 +453,14 @@ get_wide (string s, font fn, SI width) {
   SI  d= w2- w1;
   int n= (width-w1) / (d+1);
 
+  int credit= 20;
   while (true) {
     string test= radical * as_string (n+1) * ">";
     fn->get_extents (test, ey);
-    if (ey->x2- ey->x1 > width) return radical * as_string (n) * ">";
+    if (ey->x2- ey->x1 > width || credit <= 0)
+      return radical * as_string (n) * ">";
     n++;
+    credit--;
   }
 }
 
