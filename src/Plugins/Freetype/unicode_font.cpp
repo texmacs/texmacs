@@ -118,7 +118,8 @@ unicode_font_rep::unicode_font_rep (string name,
   // get fraction bar parameters
   get_extents ("-", ex);
   yfrac= (ex->y3 + ex->y4) >> 1;
-
+  //wline= min (ex->y4 - ex->y3, ex->y2 - ex->y1);
+  
   // get space length
   get_extents (" ", ex);
   spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (3*(ex->x2-ex->x1))>>1);
