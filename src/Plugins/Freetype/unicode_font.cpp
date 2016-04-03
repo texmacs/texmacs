@@ -115,11 +115,17 @@ unicode_font_rep::unicode_font_rep (string name,
   wfn          = (wpt*design_size) >> 8;
   wline        = wfn/20;
 
-  // get fraction bar parameters
-  get_extents ("-", ex);
+  // get fraction bar parameters; reasonable compromise between several fonts
+  if (supports ("-")) get_extents ("-", ex);
+  else get_extents ("x", ex);
   yfrac= (ex->y3 + ex->y4) >> 1;
-  //wline= min (ex->y4 - ex->y3, ex->y2 - ex->y1);
-  
+  if (supports ("-")) {
+    wline= min (ex->y4 - ex->y3, ex->y2 - ex->y1);
+    wline= min (wline, wfn/8);
+    wline= max (wline, wfn/48);
+    yfrac += wline/4;
+  }
+
   // get space length
   get_extents (" ", ex);
   spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (3*(ex->x2-ex->x1))>>1);
