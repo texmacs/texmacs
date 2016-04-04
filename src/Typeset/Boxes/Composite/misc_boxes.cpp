@@ -275,7 +275,7 @@ page_box_rep::find_right_box_path () {
 
 struct page_border_box_rep: change_box_rep {
   SI l, r, b, t, pixel;
-  page_border_box_rep (path ip, box b, SI l, SI r, SI b, SI t, SI pixel);
+  page_border_box_rep (path ip, box pb, SI l, SI r, SI b, SI t, SI pixel);
   operator tree ();
   void pre_display (renderer& ren);
   void display_background (renderer ren);
