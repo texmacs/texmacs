@@ -105,10 +105,14 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
       SI x= (SI) (as_double (t[0]) * unit);
       SI y= (SI) (as_double (t[1]) * unit);
       glyph gl= compile (t[2], ex);
-      ex->x1 += x; ex->y1 += y;
-      ex->x2 += x; ex->y2 += y;
-      ex->x3 += x - PIXEL; ex->y3 += y + PIXEL;
-      ex->x4 += x - PIXEL; ex->y4 += y + PIXEL;
+      if (x != 0) {
+        ex->x1 += x; ex->x3 += x - PIXEL;
+        ex->x2 += x; ex->x4 += x + PIXEL;
+      }
+      if (y != 0) {
+        ex->y1 += y; ex->y3 += y - PIXEL;
+        ex->y2 += y; ex->y4 += y + PIXEL;
+      }
       return move (gl, x, y);
     }
 
@@ -171,11 +175,47 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "clip")) {
     glyph gl= compile (t[1], ex);
-    if (N(t)>2 && t[2]!="*") ex->x1= ex->x3= (SI) (as_double (t[2]) * unit);
-    if (N(t)>3 && t[3]!="*") ex->x2= ex->x4= (SI) (as_double (t[3]) * unit);
-    if (N(t)>4 && t[4]!="*") ex->y1= ex->y3= (SI) (as_double (t[4]) * unit);
-    if (N(t)>5 && t[5]!="*") ex->y2= ex->y4= (SI) (as_double (t[5]) * unit);
-    return clip (gl, ex->x3, ex->y3, ex->x4, ex->y4);
+    SI x1, y1, x2, y2;
+    get_bounding_box (gl, x1, y1, x2, y2);
+    if (N(t)>2 && t[2]!="*")
+      x1= ex->x1= ex->x3= (SI) (as_double (t[2]) * unit);
+    if (N(t)>3 && t[3]!="*")
+      x2= ex->x2= ex->x4= (SI) (as_double (t[3]) * unit);
+    if (N(t)>4 && t[4]!="*")
+      y1= ex->y1= ex->y3= (SI) (as_double (t[4]) * unit);
+    if (N(t)>5 && t[5]!="*")
+      y2= ex->y2= ex->y4= (SI) (as_double (t[5]) * unit);
+    return clip (gl, x1, y1, x2, y2);
+  }
+
+  if (is_tuple (t, "part")) {
+    glyph gl= compile (t[1], ex);
+    SI ox= ex->x1, gw= ex->x2 - ex->x1;
+    SI oy= ex->y1, gh= ex->y2 - ex->y1;
+    SI x1, y1, x2, y2;
+    get_bounding_box (gl, x1, y1, x2, y2);
+    if (N(t)>2 && t[2]!="*")
+      x1= ex->x1= ex->x3= ox + (SI) (as_double (t[2]) * gw);
+    if (N(t)>3 && t[3]!="*")
+      x2= ex->x2= ex->x4= ox + (SI) (as_double (t[3]) * gw);
+    if (N(t)>4 && t[4]!="*")
+      y1= ex->y1= ex->y3= oy + (SI) (as_double (t[4]) * gh);
+    if (N(t)>5 && t[5]!="*")
+      y2= ex->y2= ex->y4= oy + (SI) (as_double (t[5]) * gh);
+    glyph cgl= clip (gl, x1, y1, x2, y2);
+    SI dx= 0, dy= 0;
+    if (N(t)>6) dx= (SI) (as_double (t[6]) * gw);
+    if (N(t)>7) dy= (SI) (as_double (t[7]) * gh);
+    if (dx == 0 && dy == 0) return cgl;
+    if (dx != 0) {
+      ex->x1 += dx; ex->x3 += dx - PIXEL;
+      ex->x2 += dx; ex->x4 += dx + PIXEL;
+    }
+    if (dy != 0) {
+      ex->y1 += dy; ex->y3 += dy - PIXEL;
+      ex->y2 += dy; ex->y4 += dy + PIXEL;
+    }
+    return move (cgl, dx, dy);
   }
 
   if (is_tuple (t, "hor-flip", 1))
@@ -362,6 +402,22 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "part")) {
+    metric ex;
+    get_metric (t[1], ex);
+    SI ox= ex->x1, gw= ex->x2 - ex->x1;
+    SI oy= ex->y1, gh= ex->y2 - ex->y1;
+    if (N(t)>2 && t[2]!="*") ex->x1= ex->x3= ox + (SI) (as_double (t[2]) * gw);
+    if (N(t)>3 && t[3]!="*") ex->x2= ex->x4= ox + (SI) (as_double (t[3]) * gw);
+    if (N(t)>4 && t[4]!="*") ex->y1= ex->y3= oy + (SI) (as_double (t[4]) * gh);
+    if (N(t)>5 && t[5]!="*") ex->y2= ex->y4= oy + (SI) (as_double (t[5]) * gh);
+    SI dx= 0, dy= 0;
+    if (N(t)>6) dx= (SI) (as_double (t[6]) * gw);
+    if (N(t)>7) dy= (SI) (as_double (t[7]) * gh);
+    draw_clipped (ren, t[1], x + dx, y + dy, ex->x3, ex->y3, ex->x4, ex->y4);
+    return;
+  }
+
   if (is_tuple (t, "hor-flip", 1)) {
     metric ex;
     get_metric (t[1], ex);
@@ -531,8 +587,8 @@ make_char_font (string name, font_metric& cfnm, font_glyphs& cfng) {
 int
 virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
   int c= ((N(s)==0)? -1: ((QN) s[0]));
-  if ((c<0) || (c>=last)) return -1;
   if (N(s)==1) {
+    if ((c<0) || (c>=last)) return -1;
     cfnm= fnm;
     cfng= fng;
     if (is_nil (fng->get(c)))
@@ -549,6 +605,7 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
     return c2;
   }
   else {
+    if ((c<0) || (c>=last)) return -1;
     make_char_font (res_name * s, cfnm, cfng);
     tree t= subst_sharp (virt->virt_def[c], s(1,N(s)));
     if (is_nil (cfng->get(0)))

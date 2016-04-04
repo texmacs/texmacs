@@ -73,6 +73,8 @@ glyph_rep::set_1 (int i, int j, int with) {
 
 tm_ostream& operator << (tm_ostream& out, glyph gl);
 
+void get_bounding_box (glyph gl, SI& x1, SI& y1, SI& x2, SI& y2);
+
 glyph shrink     (glyph gl, int xf, int yf, SI& xo, SI& yo);
 glyph join       (glyph gl1, glyph gl2);
 glyph glue       (glyph gl1, glyph gl2);

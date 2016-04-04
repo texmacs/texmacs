@@ -12,6 +12,14 @@
 #include "bitmap_font.hpp"
 #include "renderer.hpp"
 
+void
+get_bounding_box (glyph gl, SI& x1, SI& y1, SI& x2, SI& y2) {
+  x1= (-gl->xoff) * PIXEL;
+  x2= (gl->width-1 - gl->xoff) * PIXEL;
+  y1= (gl->yoff - (gl->height-1)) * PIXEL;
+  y2= (gl->yoff) * PIXEL;
+}
+
 glyph
 join (glyph gl1, glyph gl2) {
   int x1= min (-gl1->xoff, -gl2->xoff);

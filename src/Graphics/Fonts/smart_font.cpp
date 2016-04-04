@@ -110,6 +110,18 @@ find_in_virtual (string c) {
   return "";
 }
 
+static bool gen_initialized= false;
+static translator gen_trl;
+
+static bool
+find_in_general (string c) {
+  if (!gen_initialized) {
+    gen_trl= load_translator ("general");
+    gen_initialized= true;
+  }
+  return gen_trl->dict->contains (c);
+}
+
 /******************************************************************************
 * Special characters in mathematical fonts
 ******************************************************************************/
@@ -713,6 +725,10 @@ smart_font_rep::resolve (string c) {
       return sm->add_char (tuple ("italic-math"), c);
     if (is_special (c))
       return sm->add_char (tuple ("special"), c);
+    if (find_in_general (c)) {
+      //cout << "Found " << c << " in general\n";
+      return sm->add_char (tuple ("virtual", "general"), c);
+    }
   }
 
   array<string> a= trimmed_tokenize (family, ",");
