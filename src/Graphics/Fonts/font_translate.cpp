@@ -282,10 +282,14 @@ find_closest (string& family, string& variant, string& series, string& shape,
     lfn= apply_substitutions (lfn);
     array<string> pfn= search_font (lfn, attempt);
     array<string> nfn= logical_font (pfn[0], pfn[1]);
+    //cout << lfn << " -> " << nfn << "\n";
     family= get_family (nfn);
     variant= get_variant (nfn);
     series= get_series (nfn);
     shape= get_shape (nfn);
+    if ( contains (string ("smallcaps"), lfn) &&
+	!contains (string ("smallcaps"), nfn))
+      shape= shape * "-poorsc";
     //cout << "> " << family << ", " << variant
     //     << ", " << series << ", " << shape << "\n";
     tree t= tuple (family, variant, series, shape);

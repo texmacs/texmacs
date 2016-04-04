@@ -235,6 +235,16 @@ find_font (string family, string variant,
     as_string (sz) * "-" * as_string (dpi);
   if (font::instances->contains (s)) return font (s);
 
+  if (ends (shape, "-poorsc")) {
+    string shape2= shape (0, N(shape) - 7);
+    font fn= find_font (family, variant, series, shape2, sz, dpi);
+    if (!is_nil (fn)) {
+      font scfn= poor_smallcaps_font (fn);
+      font::instances (s)= (pointer) scfn.rep;
+      return scfn;
+    }
+  }
+
   string family2= family;
   if (family == "sys-chinese") family2= default_chinese_font_name ();
   if (family == "sys-japanese") family2= default_japanese_font_name ();

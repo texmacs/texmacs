@@ -46,8 +46,9 @@ poor_smallcaps_font_rep::poor_smallcaps_font_rep (
     metric ex, eX;
     base->get_extents ("x", ex);
     base->get_extents ("X", eX);
-    double f= ((ex->y4 - ex->y3) / (eX->y4 - eX->y3));
-    subfn[1]= base->magnify (f);
+    double hx= ex->y2 - ex->y1;
+    double hX= eX->y2 - eX->y1;
+    subfn[1]= base->magnify (hx / hX);
   }
   else subfn[1]= base->magnify (0.75);
 }
@@ -72,7 +73,6 @@ poor_smallcaps_font_rep::advance (string s, int& pos, string& r, int& nr) {
     else break;
   }
   r= s (start, pos);
-  if (nr < 0) return;
   if (nr == 1) r= uni_upcase_all (r);
 }
 
