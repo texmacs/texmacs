@@ -89,6 +89,8 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_atomic (t)) {
     string r= t->label;
+    if (r == "#28") r= "(";
+    if (r == "#29") r= ")";
     if (N(r)>1) r= "<" * r * ">";
     base_fn->get_extents (r, ex);
     glyph gl= base_fn->get_glyph (r);
@@ -283,6 +285,8 @@ void
 virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_atomic (t)) {
     string r= t->label;
+    if (r == "#28") r= "(";
+    if (r == "#29") r= ")";
     if (N(r)>1) r= "<" * r * ">";
     base_fn->draw (ren, r, x, y);
     return;

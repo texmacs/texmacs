@@ -1,0 +1,10 @@
+
+(virtual-font
+  (rubber-lparenthesis-# (ver-extend #28 0.5 # 0.1))
+  (rubber-rparenthesis-# (ver-extend #29 0.5 # 0.1))
+  (rubber-lbracket-# (ver-extend [ 0.5 # 0.1))
+  (rubber-rbracket-# (ver-extend ] 0.5 # 0.1))
+  (rubber-lcurly-# (vglue (ver-extend (clip { * * * 0.5) 0.25 # 0.05)
+                          (ver-extend (clip { * * 0.5 *) 0.75 # 0.05)))
+  (rubber-rcurly-# (vglue (ver-extend (clip } * * * 0.5) 0.25 # 0.05)
+                          (ver-extend (clip } * * 0.5 *) 0.75 # 0.05))))
