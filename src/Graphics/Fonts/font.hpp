@@ -116,6 +116,7 @@ font rubber_unicode_font (font base);
 font rubber_stix_font (font base);
 font rubber_assemble_font (font base);
 font rubber_font (font base);
+font poor_smallcaps_font (font base);
 font x_font (string family, int size, int dpi);
 font qt_font (string family, int size, int dpi);
 font tex_font (string fam, int size, int dpi, int dsize=10);
