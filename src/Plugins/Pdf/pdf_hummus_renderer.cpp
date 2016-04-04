@@ -1364,7 +1364,7 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     double tMat[6] ={ 1,0, 0, 1, 0, 0} ;
     PDFRectangle cropBox (0,0,0,0);
    	pdf_image_info (temp, w, h, cropBox, tMat, pageInput);
-	  PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
+	   PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
     status = copyingContext->MergePDFPageToFormXObject(form,0);
     if(status == eSuccess) pdfw.EndFormXObjectAndRelease(form);
     delete copyingContext;
@@ -1386,12 +1386,19 @@ hummus_pdf_image_size (url image, int& w, int& h) {
 #else
   pdfFile.OpenFile(as_charp(concretize(image)));
 #endif
-  parser->StartPDFParsing(pdfFile.GetInputStream());
-  PDFPageInput pageInput(parser, parser->ParsePage(0));	
-  double tMat[6] ={ 1,0, 0, 1, 0, 0};
-  PDFRectangle cropBox (0,0,0,0);
-  pdf_image_info (image, w, h, cropBox, tMat, pageInput);
-	delete(parser);
+  EStatusCode status = parser->StartPDFParsing(pdfFile.GetInputStream());
+  if (status != PDFHummus::eFailure) {
+    PDFPageInput pageInput(parser, parser->ParsePage(0));
+    double tMat[6] ={ 1,0, 0, 1, 0, 0};
+    PDFRectangle cropBox (0,0,0,0);
+    pdf_image_info (image, w, h, cropBox, tMat, pageInput);
+    delete(parser);
+  }
+  else {
+    convert_error << "pdf_hummus, failed to get image size for: "
+                  <<image << LF;
+    w=h=0;              
+  }
 }
 
 void

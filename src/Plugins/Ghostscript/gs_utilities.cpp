@@ -210,8 +210,12 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
     }
     string ans= eval_system (cmd);
     if (DEBUG_CONVERT) debug_convert << cmd <<LF
-      <<"answer :"<<ans <<LF
-      <<"png generated? "<< exists(png)<<LF;
+      <<"answer :"<<ans <<LF;
+    if (! exists(png)) {
+      convert_error << "gs_to_png failed for "<< image <<LF;
+      image =  "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
+      gs_to_png (image, png, w, h);
+    }
 }
 
 void

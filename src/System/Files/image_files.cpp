@@ -263,6 +263,11 @@ image_size (url image, int& w, int& h) {
   else {
   w=h=0;
   image_size_sub (image, w, h);
+  if ((w <= 0) || (h <= 0)) {
+    convert_error << "bad image size for '" << image << "'"
+        << " setting 35x35 " << LF;
+      w= 35; h= 35;
+	   }
   imagesize (lookup)= (imsize){w,h};
   }
 }
