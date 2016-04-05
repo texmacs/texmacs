@@ -88,6 +88,7 @@ glyph hor_extend (glyph gl, int pos, int by);
 glyph ver_extend (glyph gl, int pos, int by);
 glyph hor_take   (glyph gl, int pos, int nr);
 glyph ver_take   (glyph gl, int pos, int nr);
+glyph slanted    (glyph gl, double slant);
 
 int pixel_count (glyph g);
 double left_protrusion (glyph g, glyph o);
@@ -121,5 +122,8 @@ struct font_glyphs_rep: rep<font_glyphs> {
 
 font_metric std_font_metric (string s, metric* fnm, int bc, int ec);
 font_glyphs std_font_glyphs (string name, glyph* fng, int bc, int ec);
+
+font_metric slanted (font_metric fnm, double slant);
+font_glyphs slanted (font_glyphs fng, double slant);
 
 #endif // defined BITMAP_FONT_H

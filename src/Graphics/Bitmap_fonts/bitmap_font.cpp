@@ -34,7 +34,7 @@ SI font_metric_rep::kerning (int left_code, int right_code) {
 * Standard bitmap metrics
 ******************************************************************************/
 
-static metric error_metric;
+metric error_metric;
 
 struct std_font_metric_rep: public font_metric_rep {
   int bc, ec;
@@ -80,7 +80,7 @@ font_glyphs_rep::~font_glyphs_rep () {
 * Standard bitmap fonts
 ******************************************************************************/
 
-static glyph error_glyph;
+glyph error_glyph;
 
 struct std_font_glyphs_rep: public font_glyphs_rep {
   int bc, ec;
