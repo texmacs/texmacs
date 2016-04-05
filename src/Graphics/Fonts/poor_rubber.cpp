@@ -72,44 +72,65 @@ poor_rubber_font_rep::search_font (string s, string& r) {
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<left-")) {
-    int pos= search_backwards ("-", N(s), s);
-    if (pos > 6) {
-      r= s (6, pos);
-      int num= as_int (s (pos+1, N(s)-1));
-      int nr= num - 5;
-      int code;
-      if (num <= MAGNIFIED_NUMBER) return num;
-      else if (r == "(")
-        code= virt->dict ["<rubber-lparenthesis-#>"];
-      else if (r == ")")
-        code= virt->dict ["<rubber-rparenthesis-#>"];
-      else if (r == "[")
-        code= virt->dict ["<rubber-lbracket-#>"];
-      else if (r == "]")
-        code= virt->dict ["<rubber-rbracket-#>"];
-      else if (r == "{")
-        code= virt->dict ["<rubber-lcurly-#>"];
-      else if (r == "}")
-        code= virt->dict ["<rubber-rcurly-#>"];
-      else if (r == "lfloor")
-        code= virt->dict ["<rubber-lfloor-#>"];
-      else if (r == "rfloor")
-        code= virt->dict ["<rubber-rfloor-#>"];
-      else if (r == "lceil")
-        code= virt->dict ["<rubber-lceil-#>"];
-      else if (r == "rceil")
-        code= virt->dict ["<rubber-rceil-#>"];
-      else if (r == "|")
-        code= virt->dict ["<rubber-bar-#>"];
-      else if (r == "||")
-        code= virt->dict ["<rubber-parallel-#>"];
-      else if (r == "interleave")
-        code= virt->dict ["<rubber-interleave-#>"];
-      else
-        code= virt->dict ["<rubber-lparenthesis-#>"];
-      r= string ((char) code) * as_string (nr) * ">";
-      return MAGNIFIED_NUMBER + 1;
+    int pos= search_backwards ("-", N(s), s), num;
+    if (pos > 6) { r= s (6, pos); num= as_int (s (pos+1, N(s)-1)); }
+    else { r= s (6, N(s)-1); num= 0; }
+    //cout << "Search " << base->res_name << ", " << s
+    //     << ", " << r << ", " << num << LF;
+    int nr= max (num - 5, 0);
+    int code;
+    if (num <= MAGNIFIED_NUMBER) {
+      if (N(r) > 1) r= "<" * r * ">";
+      if (!base->supports (r) && N(r)>1) {
+        if (r == "<||>") r= "<emu-dbar>";
+        else if (r == "<interleave>") r= "<emu-tbar>";
+        else if (r == "<llbracket>") r= "<emu-dlbracket>";
+        else if (r == "<rrbracket>") r= "<emu-drbracket>";
+        else r= "<emu-" * r (1, N(r)-1) * ">";
+      }
+      return num;
     }
+    else if (r == "(")
+      code= virt->dict ["<rubber-lparenthesis-#>"];
+    else if (r == ")")
+      code= virt->dict ["<rubber-rparenthesis-#>"];
+    else if (r == "[")
+      code= virt->dict ["<rubber-lbracket-#>"];
+    else if (r == "]")
+      code= virt->dict ["<rubber-rbracket-#>"];
+    else if (r == "{")
+      code= virt->dict ["<rubber-lcurly-#>"];
+    else if (r == "}")
+      code= virt->dict ["<rubber-rcurly-#>"];
+    else if (r == "|")
+      code= virt->dict ["<rubber-bar-#>"];
+    else if (r == "||") {
+      if (base->supports ("<||>"))
+        code= virt->dict ["<rubber-parallel-#>"];
+      else code= virt->dict ["<rubber-parallel*-#>"];
+    }
+    else if (r == "interleave") {
+      if (base->supports ("<interleave>"))
+        code= virt->dict ["<rubber-interleave-#>"];
+      else code= virt->dict ["<rubber-interleave*-#>"];
+    }
+    else if (r == "lfloor" || r == "rfloor" ||
+             r == "lceil" || r == "rceil" ||
+             r == "llbracket" || r == "rrbracket") {
+      if (base->supports ("<" * r * ">"))
+        code= virt->dict ["<rubber-" * r * "-#>"];
+      else code= virt->dict ["<rubber-" * r * "*-#>"];
+    }
+    else if (r == "dlfloor" || r == "drfloor" ||
+             r == "dlceil" || r == "drceil" ||
+             r == "tlbracket" || r == "trbracket" ||
+             r == "tlfloor" || r == "trfloor" ||
+             r == "tlceil" || r == "trceil")
+      code= virt->dict ["<rubber-" * r * "-#>"];
+    else
+      code= virt->dict ["<rubber-lparenthesis-#>"];
+    r= string ((char) code) * as_string (nr) * ">";
+    return MAGNIFIED_NUMBER + 1;
   }
   r= s;
   return 0;
@@ -125,17 +146,30 @@ poor_rubber_font_rep::supports (string s) {
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<left-")) {
+    string r;
     int pos= search_backwards ("-", N(s), s);
-    if (pos > 6) {
-      string r= s (6, pos);
-      return
-	r == "(" || r == ")" ||
-	r == "[" || r == "]" ||
-	r == "{" || r == "}" ||
-	r == "lfloor" || r == "rfloor" ||
-	r == "lceil" || r == "rceil" ||
-	r == "|" || r == "||" ||
-	r == "interleave";
+    if (pos > 6) r= s (6, pos);
+    else r= s (6, N(s)-1);
+    //cout << "Check " << base->res_name << ", " << s
+    //     << ", " << r << LF;
+    if (r == "(" || r == ")" ||
+        r == "[" || r == "]" ||
+        r == "{" || r == "}" || r == "|")
+      return base->supports (r);
+    if (r == "||" || r == "interleave") {
+      if (base->supports ("<" * r * ">")) return true;
+      return base->supports ("|");
+    }
+    if (r == "llbracket" || r == "rrbracket" ||
+        r == "lfloor" || r == "rfloor" ||
+        r == "lceil" || r == "rceil" ||
+        r == "dlfloor" || r == "drfloor" ||
+        r == "dlceil" || r == "drceil" ||
+        r == "tlbracket" || r == "trbracket" ||
+        r == "tlfloor" || r == "trfloor" ||
+        r == "tlceil" || r == "trceil") {
+      if (base->supports ("<" * r * ">")) return true;
+      return base->supports ("[") && base->supports ("]");
     }
   }
   return false;
@@ -181,5 +215,6 @@ poor_rubber_font_rep::get_glyph (string s) {
 font
 poor_rubber_font (font base) {
   string name= "poorrubber[" * base->res_name * "]";
-  return make (font, name, tm_new<poor_rubber_font_rep> (name, base));
+  font enh= virtual_enhance_font (base, "general");
+  return make (font, name, tm_new<poor_rubber_font_rep> (name, enh));
 }

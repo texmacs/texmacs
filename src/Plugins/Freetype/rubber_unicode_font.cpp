@@ -64,7 +64,7 @@ rubber_unicode_font_rep::rubber_unicode_font_rep (string name, font base2):
     //<< ((double) (ex->y2-ex->y1)) / base->yx << LF;
     if ((((double) (ex->y2-ex->y1)) / base->yx) >= 1.55) big_sums= true;
   }
-  for (int i=0; i<6; i++) {
+  for (int i=0; i<5; i++) {
     initialized << false;
     subfn << base;
   }
@@ -89,9 +89,6 @@ rubber_unicode_font_rep::get_font (int nr) {
     break;
   case 4:
     subfn[nr]= rubber_assemble_font (base);
-    break;
-  case 5:
-    subfn[nr]= base->magnify (sqrt (sqrt (2.0)));
     break;
   }
   return subfn[nr];
@@ -146,8 +143,6 @@ rubber_unicode_font_rep::search_font_sub (string s, string& rew) {
       rew= r;
       if (N(rew) > 1) rew= "<" * rew * ">";
       if (ends (s, "-0>")) return 0;
-      if (ends (s, "-1>")) return 5;
-      if (ends (s, "-2>")) return 2;
       return 0;
     }
   }
@@ -200,8 +195,6 @@ rubber_unicode_font_rep::supports (string s) {
       if (N(r) > 1) r= "<" * r * ">";
       if (!base->supports (r)) return false;
       if (ends (s, "-0>")) return true;
-      if (ends (s, "-1>")) return true;
-      if (ends (s, "-2>")) return true;
       if (r == "(") return base->supports ("<#239C>");
       if (r == ")") return base->supports ("<#239F>");
       if (r == "[") return base->supports ("<#23A2>");

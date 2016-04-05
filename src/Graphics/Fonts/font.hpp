@@ -109,6 +109,7 @@ string default_korean_font_name ();
 
 font error_font (font fn);
 font virtual_font (font base, string family, int size, int dpi);
+font virtual_enhance_font (font base, string virt);
 font tt_font (string family, int size, int dpi);
 font unicode_font (string family, int size, int dpi);
 font unicode_math_font (font up, font it, font bup, font bit, font fb);

@@ -586,8 +586,9 @@ make_char_font (string name, font_metric& cfnm, font_glyphs& cfng) {
 
 int
 virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
-  int c= ((N(s)==0)? -1: ((QN) s[0]));
-  if (N(s)==1) {
+  if (N(s) == 0) return -1;
+  if (N(s) == 1) {
+    int c= ((QN) s[0]);
     if ((c<0) || (c>=last)) return -1;
     cfnm= fnm;
     cfng= fng;
@@ -605,6 +606,7 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
     return c2;
   }
   else {
+    int c= ((QN) s[0]);
     if ((c<0) || (c>=last)) return -1;
     make_char_font (res_name * s, cfnm, cfng);
     tree t= subst_sharp (virt->virt_def[c], s(1,N(s)));

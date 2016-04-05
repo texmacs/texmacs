@@ -23,4 +23,6 @@
   (emu-tlceil  (join (part emu-tlbracket * * 0.5 *)
                      (part emu-tlbracket * * 0.25 0.75 0 -0.25)))
   (emu-trceil  (join (part emu-trbracket * * 0.5 *)
-                     (part emu-trbracket * * 0.25 0.75 0 -0.25))))
+                     (part emu-trbracket * * 0.25 0.75 0 -0.25)))
+  (emu-dbar (join #7C (part #7C * * * * 0.6 0)))
+  (emu-tbar (join #7C (part #7C * * * * 0.6 0) (part #7C * * * * 1.2 0))))

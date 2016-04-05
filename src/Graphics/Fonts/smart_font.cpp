@@ -698,6 +698,8 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
   return -1;
 }
 
+extern bool has_poor_rubber;
+
 int
 smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   //cout << "Rubber " << c << ", " << fam << ", " << attempt << LF;
@@ -705,13 +707,26 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   int r= search_forwards ("-", l, c);
   if (r == -1) r= N(c) - 1;
   string ss= c (l, r);
-  int bnr;
-  if (N(ss) == 1) bnr= resolve (ss, fam, attempt);
-  else bnr= resolve ("<" * ss * ">", fam, attempt);
+  string goal= ss;
+  if (N(goal) != 1) goal= "<" * goal * ">";
+  if (has_poor_rubber) {
+    if (goal == "<||>" || goal == "<interleave>") goal= "|";
+    if (goal == "<lfloor>" || goal == "<lceil>" ||
+        goal == "<llbracket>" || goal == "<dlfloor>" || goal == "<dlceil>" ||
+        goal == "<tlbracket>" || goal == "<tlfloor>" || goal == "<tlceil>")
+      goal= "[";
+    if (goal == "<rfloor>" || goal == "<rceil>" ||
+        goal == "<rrbracket>" || goal == "<drfloor>" || goal == "<drceil>" ||
+        goal == "<trbracket>" || goal == "<trfloor>" || goal == "<trceil>")
+      goal= "]";
+  }
+  int bnr= resolve (goal, fam, attempt);
   if (bnr >= 0 && bnr < N(fn) && !is_nil (fn[bnr])) {
     tree key= tuple ("rubber", as_string (bnr));
     int nr= sm->add_font (key, REWRITE_NONE);
     initialize_font (nr);
+    //cout << fn[nr]->res_name << " supports " << c
+    //     << "? " << fn[nr]->supports (c) << LF;
     if (fn[nr]->supports (c))
       return sm->add_char (key, c);
   }
@@ -806,7 +821,8 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= virtual_font (this, a[1], sz, dpi);
   else if (a[0] == "rubber" && N(a) == 2 && is_int (a[1])) {
     initialize_font (as_int (a[1]));
-    fn[nr]= rubber_unicode_font (fn[as_int (a[1])]);
+    fn[nr]= rubber_font (fn[as_int (a[1])]);
+    //fn[nr]= rubber_unicode_font (fn[as_int (a[1])]);
     //fn[nr]= poor_rubber_font (fn[as_int (a[1])]);
   }
   else {
