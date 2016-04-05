@@ -40,6 +40,7 @@ struct poor_rubber_font_rep: font_rep {
 ******************************************************************************/
 
 #define MAGNIFIED_NUMBER 4
+#define HUGE_ADJUST      6
 
 poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
   font_rep (name, base2), base (base2)
@@ -47,13 +48,10 @@ poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
   this->copy_math_pars (base);
   initialized << true;
   larger << base;
-  for (int i=1; i<=MAGNIFIED_NUMBER; i++) {
+  for (int i=1; i<=MAGNIFIED_NUMBER+1; i++) {
     initialized << false;
     larger << base;
   }
-  int dpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
-  initialized << true;
-  larger << virtual_font (base, "poorlong", base->size, dpi);
   virt= load_translator ("poorlong");
 }
 
@@ -62,7 +60,13 @@ poor_rubber_font_rep::get_font (int nr) {
   ASSERT (nr < N(larger), "wrong font number");
   if (initialized[nr]) return larger[nr];
   initialized[nr]= true;
-  larger[nr]= base->magnify (pow (2.0, ((double) nr) / 4.0));
+  if (nr <= MAGNIFIED_NUMBER)
+    larger[nr]= base->magnify (pow (2.0, ((double) nr) / 4.0));
+  else {
+    font large= get_font (2);
+    int dpi= (72 * large->wpt + (PIXEL/2)) / PIXEL;
+    larger[nr]= virtual_font (large, "poorlong", large->size, dpi);
+  }
   return larger[nr];
 }
 
@@ -129,7 +133,8 @@ poor_rubber_font_rep::search_font (string s, string& r) {
       code= virt->dict ["<rubber-" * r * "-#>"];
     else
       code= virt->dict ["<rubber-lparenthesis-#>"];
-    r= string ((char) code) * as_string (nr) * ">";
+    
+    r= string ((char) code) * as_string (nr + HUGE_ADJUST) * ">";
     return MAGNIFIED_NUMBER + 1;
   }
   r= s;
