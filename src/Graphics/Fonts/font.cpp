@@ -292,6 +292,17 @@ font_rep::get_glyph (string s) {
   return glyph (0, 0, 0, 0);
 }
 
+font
+font_rep::poor_magnify (double zoomx, double zoomy) {
+  ASSERT (zoomx == zoomy, "should conserve aspect-ratio");
+  return magnify (zoomx, zoomy);
+}
+
+font
+font_rep::magnify (double zoom) {
+  return magnify (zoom, zoom);
+}
+
 /******************************************************************************
 * Error font: used to draw unindentified characters
 ******************************************************************************/
@@ -303,8 +314,7 @@ struct error_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoom);
-  font modulate (modulation m);
+  font magnify (double zoomx, double zoomy);
 };
 
 error_font_rep::error_font_rep (string name, font fnb):
@@ -332,13 +342,8 @@ error_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 }
 
 font
-error_font_rep::magnify (double zoom) {
-  return error_font (fn->magnify (zoom));
-}
-
-font
-error_font_rep::modulate (modulation m) {
-  return error_font (fn->modulate (m));
+error_font_rep::magnify (double zoomx, double zoomy) {
+  return error_font (fn->magnify (zoomx, zoomy));
 }
 
 font
@@ -412,14 +417,6 @@ script (int sz, int level) {
   if (level>2) level=2;
   for (i=0; i<level; i++) sz= (sz*2+2)/3;
   return sz;
-}
-
-font
-bad_modulate (font fn, modulation m) {
-  cout << "font      = " << fn->res_name << "\n";
-  cout << "modulation= " << m->expression () << "\n";
-  FAILED ("modulation not implemented");
-  return fn;
 }
 
 string

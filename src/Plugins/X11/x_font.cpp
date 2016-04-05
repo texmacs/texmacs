@@ -427,14 +427,9 @@ x_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 }
 
 font
-x_font_rep::magnify (double zoom) {
-  return x_font (family, size, (int) tm_round (dpi * zoom));
-}
-
-font
-x_font_rep::modulate (modulation m) {
-  if (!is_zoom (m)) return bad_modulate (this, m);
-  return x_font (family, size, (int) tm_round (dpi * get_zoom (m)));
+x_font_rep::magnify (double zoomx, double zoomy) {
+  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
+  return x_font (family, size, (int) tm_round (dpi * zoomx));
 }
 
 glyph

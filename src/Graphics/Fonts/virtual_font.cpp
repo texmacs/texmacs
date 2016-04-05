@@ -47,8 +47,7 @@ struct virtual_font_rep: font_rep {
   void get_xpositions (string s, SI* xpos, SI xk);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoom);
-  font modulate (modulation m);
+  font magnify (double zoomx, double zoomy);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
@@ -686,16 +685,10 @@ virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
 }
 
 font
-virtual_font_rep::magnify (double zoom) {
-  return virtual_font (base_fn->magnify (zoom), fn_name,
-		       size, (int) tm_round (dpi * zoom));
-}
-
-font
-virtual_font_rep::modulate (modulation m) {
-  if (!is_zoom (m)) return bad_modulate (this, m);
-  return virtual_font (base_fn->modulate (m), fn_name,
-		       size, (int) tm_round (dpi * get_zoom (m)));
+virtual_font_rep::magnify (double zoomx, double zoomy) {
+  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
+  return virtual_font (base_fn->magnify (zoomx, zoomy), fn_name, size,
+                       (int) tm_round (dpi * zoomx));
 }
 
 glyph

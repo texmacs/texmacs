@@ -35,8 +35,7 @@ struct tex_rubber_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void draw (renderer ren, int c, SI x, SI& y, SI& real_y);
   void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoom);
-  font modulate (modulation m);
+  font magnify (double zoomx, double zoomy);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
@@ -49,8 +48,7 @@ struct tex_dummy_rubber_font_rep: font_rep {
   bool supports (string c);
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoom);
-  font modulate (modulation m);
+  font magnify (double zoomx, double zoomy);
 };
 
 /******************************************************************************
@@ -263,15 +261,10 @@ tex_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 }
 
 font
-tex_rubber_font_rep::magnify (double zoom) {
-  int ndpi= (int) tm_round (dpi * zoom);
+tex_rubber_font_rep::magnify (double zoomx, double zoomy) {
+  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
+  int ndpi= (int) tm_round (dpi * zoomx);
   return tex_rubber_font (trl, family, size, ndpi, dsize);
-}
-
-font
-tex_rubber_font_rep::modulate (modulation m) {
-  if (!is_zoom (m)) return bad_modulate (this, m);
-  return magnify (get_zoom (m));
 }
 
 /******************************************************************************
@@ -350,13 +343,8 @@ tex_dummy_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 }
 
 font
-tex_dummy_rubber_font_rep::magnify (double zoom) {
-  return tex_dummy_rubber_font (base_fn->magnify (zoom));
-}
-
-font
-tex_dummy_rubber_font_rep::modulate (modulation m) {
-  return tex_dummy_rubber_font (base_fn->modulate (m));
+tex_dummy_rubber_font_rep::magnify (double zoomx, double zoomy) {
+  return tex_dummy_rubber_font (base_fn->magnify (zoomx, zoomy));
 }
 
 font

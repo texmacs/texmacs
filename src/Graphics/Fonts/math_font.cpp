@@ -44,8 +44,7 @@ struct math_font_rep: font_rep {
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoom);
-  font modulate (modulation m);
+  font magnify (double zoomx, double zoomy);
   glyph get_glyph (string s);
 
   double get_left_slope  (string s);
@@ -195,16 +194,10 @@ math_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
 }
 
 font
-math_font_rep::magnify (double zoom) {
-  return math_font (def, base_fn->magnify (zoom), error_fn->magnify (zoom),
-		    zf * zoom);
-}
-
-font
-math_font_rep::modulate (modulation m) {
-  if (!is_zoom (m)) return bad_modulate (this, m);
-  return math_font (def, base_fn->modulate (m), error_fn->modulate (m),
-		    zf * get_zoom (m));
+math_font_rep::magnify (double zoomx, double zoomy) {
+  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
+  return math_font (def, base_fn->magnify (zoomx, zoomy),
+                    error_fn->magnify (zoomx, zoomy), zf * zoomx);
 }
 
 glyph

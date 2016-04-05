@@ -33,8 +33,7 @@ struct rubber_assemble_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoom);
-  font modulate (modulation m);
+  font magnify (double zoomx, double zoomy);
   glyph get_glyph (string s);
 };
 
@@ -166,13 +165,8 @@ rubber_assemble_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk)
 }
 
 font
-rubber_assemble_font_rep::magnify (double zoom) {
-  return rubber_assemble_font (base->magnify (zoom));
-}
-
-font
-rubber_assemble_font_rep::modulate (modulation m) {
-  return rubber_assemble_font (base->modulate (m));
+rubber_assemble_font_rep::magnify (double zoomx, double zoomy) {
+  return rubber_assemble_font (base->magnify (zoomx, zoomy));
 }
 
 glyph

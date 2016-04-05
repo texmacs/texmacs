@@ -44,8 +44,7 @@ struct rubber_stix_font_rep: font_rep {
   void get_xpositions (string s, SI* xpos, SI xk);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoom);
-  font modulate (modulation m);
+  font magnify (double zoomx, double zoomy);
   glyph get_glyph (string s);
 
   double get_left_slope  (string s);
@@ -494,13 +493,8 @@ rubber_stix_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
 }
 
 font
-rubber_stix_font_rep::magnify (double zoom) {
-  return rubber_stix_font (base->magnify (zoom));
-}
-
-font
-rubber_stix_font_rep::modulate (modulation m) {
-  return rubber_stix_font (base->modulate (m));
+rubber_stix_font_rep::magnify (double zoomx, double zoomy) {
+  return rubber_stix_font (base->magnify (zoomx, zoomy));
 }
 
 glyph
