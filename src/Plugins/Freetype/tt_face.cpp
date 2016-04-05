@@ -53,12 +53,12 @@ load_tt_face (string name) {
 static metric error_metric;
 
 tt_font_metric_rep::tt_font_metric_rep (
-  string name, string family, int size2, int dpi2):
-  font_metric_rep (name), size (size2), dpi (dpi2), fnm (NULL)
+  string name, string family, int size2, int hdpi2, int vdpi2):
+  font_metric_rep (name), size (size2), hdpi (hdpi2), vdpi (vdpi2), fnm (NULL)
 {
   face= load_tt_face (family);
   bad_font_metric= face->bad_face ||
-    ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
+    ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
   if (bad_font_metric) return;
 
   error_metric->x1= error_metric->y1= 0;
@@ -78,7 +78,7 @@ tt_font_metric_rep::exists (int i) {
 metric&
 tt_font_metric_rep::get (int i) {
   if (!face->bad_face && !fnm->contains(i)) {
-    ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
+    ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
     FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
       return error_metric;
@@ -111,16 +111,17 @@ tt_font_metric_rep::kerning (int left, int right) {
   FT_Vector k;
   FT_UInt l= ft_get_char_index (face->ft_face, left);
   FT_UInt r= ft_get_char_index (face->ft_face, right);
-  ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
+  ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
   if (ft_get_kerning (face->ft_face, l, r, FT_KERNING_DEFAULT, &k)) return 0;
   return tt_si (k.x);
 }
 
 font_metric
-tt_font_metric (string family, int size, int dpi) {
-  string name= family * as_string (size) * "@" * as_string (dpi);
+tt_font_metric (string family, int size, int hdpi, int vdpi) {
+  string name= family * as_string (size) * "@" * as_string (hdpi);
+  if (vdpi != hdpi) name << "," << as_string (vdpi);
   return make (font_metric, name,
-	       tm_new<tt_font_metric_rep> (name, family, size, dpi));
+	       tm_new<tt_font_metric_rep> (name, family, size, hdpi, vdpi));
 }
 
 /******************************************************************************
@@ -130,19 +131,20 @@ tt_font_metric (string family, int size, int dpi) {
 static glyph error_glyph;
 
 tt_font_glyphs_rep::tt_font_glyphs_rep (
-  string name, string family, int size2, int dpi2):
-  font_glyphs_rep (name), size (size2), dpi (dpi2), fng (glyph ())
+  string name, string family, int size2, int hdpi2, int vdpi2):
+  font_glyphs_rep (name), size (size2),
+  hdpi (hdpi2), vdpi (vdpi2), fng (glyph ())
 {
   face= load_tt_face (family);
   bad_font_glyphs= face->bad_face ||
-    ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
+    ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
   if (bad_font_glyphs) return;
 }
 
 glyph&
 tt_font_glyphs_rep::get (int i) {
   if (!face->bad_face && !fng->contains(i)) {
-    ft_set_char_size (face->ft_face, 0, size<<6, dpi, dpi);
+    ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
     FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
       return error_glyph;
@@ -182,11 +184,13 @@ tt_font_glyphs_rep::get (int i) {
 }
 
 font_glyphs
-tt_font_glyphs (string family, int size, int dpi) {
+tt_font_glyphs (string family, int size, int hdpi, int vdpi) {
   string name=
-    family * ":" * as_string (size) * "." * as_string (dpi) * "tt";
+    family * ":" * as_string (size) * "." * as_string (hdpi);
+  if (vdpi != hdpi) name << "," << as_string (vdpi);
+  name << "tt";
   return make (font_glyphs, name,
-	       tm_new<tt_font_glyphs_rep> (name, family, size, dpi));
+	       tm_new<tt_font_glyphs_rep> (name, family, size, hdpi, vdpi));
 }
 
 #endif // USE_FREETYPE

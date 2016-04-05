@@ -51,8 +51,8 @@ tt_font_rep::tt_font_rep (string name, string family2, int size2, int dpi2):
   font_rep (name), family (family2), dpi (dpi2)
 {
   size= size2;
-  fnm = tt_font_metric (family, size, std_dpi);
-  fng = tt_font_glyphs (family, size, dpi);
+  fnm = tt_font_metric (family, size, std_dpi, std_dpi);
+  fng = tt_font_glyphs (family, size, dpi, dpi);
   if (fnm->bad_font_metric || fng->bad_font_glyphs) {
     fnm= std_font_metric (res_name, NULL, 0, -1);
     fng= std_font_glyphs (res_name, NULL, 0, -1);

@@ -28,11 +28,11 @@ struct tt_face_rep: rep<tt_face> {
 struct tt_font_metric_rep: font_metric_rep {
   bool bad_metric;
   tt_face face;
-  int size, dpi;
+  int size, hdpi, vdpi;
   hashmap<int,pointer> fnm;
   //metric* fnm;
   //bool* done;
-  tt_font_metric_rep (string name, string family, int size, int dpi);
+  tt_font_metric_rep (string name, string family, int size, int hdpi, int vdpi);
   bool exists (int char_code);
   metric& get (int char_code);
   SI kerning (int left_code, int right_code);
@@ -41,17 +41,17 @@ struct tt_font_metric_rep: font_metric_rep {
 struct tt_font_glyphs_rep: font_glyphs_rep {
   bool bad_glyphs;
   tt_face face;
-  int size, dpi;
+  int size, hdpi, vdpi;
   hashmap<int,glyph> fng;
   //glyph* fng;
   //bool* done;
-  tt_font_glyphs_rep (string name, string family, int size, int dpi);
+  tt_font_glyphs_rep (string name, string family, int size, int hdpi, int vdpi);
   glyph& get (int char_code);
 };
 
 tt_face load_tt_face (string name);
-font_metric tt_font_metric (string family, int size, int dpi);
-//font_glyphs tt_font_glyphs (string family, int size, int dpi);
+font_metric tt_font_metric (string family, int size, int hdpi, int vdpi);
+//font_glyphs tt_font_glyphs (string family, int size, int hdpi, int vdpi);
 
 #endif // USE_FREETYPE
 

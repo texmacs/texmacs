@@ -205,7 +205,7 @@ try_pk (string family, int size, int dpi, int dsize,
   if (tt_name != "") {
     if (font_glyphs::instances -> contains (tt_name))
       pk= font_glyphs (tt_name);
-    else pk= tt_font_glyphs (tt_name, tt_size, tt_dpi);
+    else pk= tt_font_glyphs (tt_name, tt_size, tt_dpi, tt_dpi);
     return true;
   }
 #endif // USE_FREETYPE

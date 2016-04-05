@@ -541,7 +541,7 @@ array<string>
 tt_analyze (string family) {
   array<string> r;
   font fn= tt_font (family, 10, 1200);
-  font_metric fnm= tt_font_metric (family, 10, 1200);
+  font_metric fnm= tt_font_metric (family, 10, 1200, 1200);
   //cout << "Analyzing " << family << "\n";
 
   get_glyph_fatal= false;
