@@ -251,7 +251,7 @@ concater_rep::handle_matching (int start, int end) {
             Y1 += d/6; Y2 -= d/12; }
 
         // replace item by large or small delimiter
-        if (Y1 < fn->y1 || Y2 > fn->y2 || custom)
+        if (Y1 < fn->y1 || Y2 > fn->y2 || custom || use_poor_rubber (fn))
           a[i]->b= delimiter_box (a[i]->b->ip, ls, fn, lp, Y1, Y2, mid, y1, y2);
         else {
           string s= "<nobracket>";

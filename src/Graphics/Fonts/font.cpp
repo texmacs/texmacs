@@ -372,6 +372,12 @@ qt_font (string family, int size, int dpi) {
 static hashmap<string,font> larger_font_table;
 bool has_poor_rubber= true;
 
+bool
+use_poor_rubber (font fn) {
+  return has_poor_rubber && fn->type == FONT_TYPE_UNICODE &&
+    !starts (fn->res_name, "stix-");
+}
+
 static font
 make_rubber_font (font fn) {
   if (starts (fn->res_name, "stix-"))
