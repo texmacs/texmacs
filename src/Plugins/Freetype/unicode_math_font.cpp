@@ -41,6 +41,7 @@ struct unicode_math_font_rep: font_rep {
   void draw_fixed (renderer ren, string s, SI x, SI y);
   void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font magnify (double zoom);
+  font modulate (modulation m);
   glyph get_glyph (string s);
 
   double get_left_slope  (string s);
@@ -241,6 +242,15 @@ unicode_math_font_rep::magnify (double zoom) {
 			    bold_upright->magnify (zoom),
 			    bold_italic->magnify (zoom),
 			    fall_back->magnify (zoom));
+}
+
+font
+unicode_math_font_rep::modulate (modulation m) {
+  return unicode_math_font (upright->modulate (m),
+			    italic->modulate (m),
+			    bold_upright->modulate (m),
+			    bold_italic->modulate (m),
+			    fall_back->modulate (m));
 }
 
 glyph

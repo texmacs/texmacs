@@ -50,8 +50,10 @@ ABSTRACT_NULL_CODE(modulation);
 ******************************************************************************/
 
 bool is_identity (modulation m);
+bool is_zoom (modulation m);
 bool is_linear (modulation m);
 bool is_composite (modulation m);
+double get_zoom (modulation m);
 modulation car (modulation m);
 modulation cdr (modulation m);
 

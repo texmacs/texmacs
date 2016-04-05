@@ -33,6 +33,7 @@ struct qt_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
+  font modulate (modulation m);
   //glyph get_glyph (string s);
 };
 

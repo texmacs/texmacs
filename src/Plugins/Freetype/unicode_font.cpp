@@ -53,6 +53,7 @@ struct unicode_font_rep: font_rep {
   void draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
+  font modulate (modulation m);
   glyph get_glyph (string s);
   double get_left_slope  (string s);
   double get_right_slope (string s);
@@ -333,6 +334,12 @@ unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 font
 unicode_font_rep::magnify (double zoom) {
   return unicode_font (family, size, (int) tm_round (dpi * zoom));
+}
+
+font
+unicode_font_rep::modulate (modulation m) {
+  if (!is_zoom (m)) return bad_modulate (this, m);
+  return unicode_font (family, size, (int) tm_round (dpi * get_zoom (m)));
 }
 
 glyph

@@ -33,6 +33,7 @@ struct poor_rubber_font_rep: font_rep {
   void draw_fixed (renderer ren, string s, SI x, SI y);
   void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font magnify (double zoom);
+  font modulate (modulation m);
   glyph get_glyph (string s);
 };
 
@@ -227,6 +228,11 @@ poor_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
 font
 poor_rubber_font_rep::magnify (double zoom) {
   return poor_rubber_font (base->magnify (zoom));
+}
+
+font
+poor_rubber_font_rep::modulate (modulation m) {
+  return poor_rubber_font (base->modulate (m));
 }
 
 glyph

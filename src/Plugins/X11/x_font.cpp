@@ -431,6 +431,12 @@ x_font_rep::magnify (double zoom) {
   return x_font (family, size, (int) tm_round (dpi * zoom));
 }
 
+font
+x_font_rep::modulate (modulation m) {
+  if (!is_zoom (m)) return bad_modulate (this, m);
+  return x_font (family, size, (int) tm_round (dpi * get_zoom (m)));
+}
+
 glyph
 x_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);

@@ -39,6 +39,7 @@ struct tt_font_rep: font_rep {
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
+  font modulate (modulation m);
   glyph get_glyph (string s);
 };
 
@@ -186,6 +187,12 @@ tt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 font
 tt_font_rep::magnify (double zoom) {
   return tt_font (family, size, (int) tm_round (dpi * zoom));
+}
+
+font
+tt_font_rep::modulate (modulation m) {
+  if (!is_zoom (m)) return bad_modulate (this, m);
+  return tt_font (family, size, (int) tm_round (dpi * get_zoom (m)));
 }
 
 glyph

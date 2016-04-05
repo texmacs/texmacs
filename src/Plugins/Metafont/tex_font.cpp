@@ -48,6 +48,7 @@ struct tex_font_rep: font_rep {
   void get_xpositions (string s, SI* xpos);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
+  font modulate (modulation m);
   SI   get_left_correction (string s);
   SI   get_right_correction (string s);
   glyph get_glyph (string s);
@@ -727,6 +728,12 @@ tex_font_rep::magnify (double zoom) {
     return tex_adobe_font (family, size, ndpi, dsize);
   }
   return tex_font (family, size, ndpi, dsize);
+}
+
+font
+tex_font_rep::modulate (modulation m) {
+  if (!is_zoom (m)) return bad_modulate (this, m);
+  return magnify (get_zoom (m));
 }
 
 SI

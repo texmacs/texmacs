@@ -39,6 +39,14 @@ is_identity (modulation m) {
 }
 
 bool
+is_zoom (modulation m) {
+  if (!is_linear (m)) return false;
+  double m11, m12, m21, m22;
+  m->get_matrix (m11, m12, m21, m22);
+  return m11 == m22 && m12 == 0.0 && m21 == 0.0;
+}
+
+bool
 is_linear (modulation m) {
   return m->kind == modulation_identity || m->kind == modulation_linear;
 }
@@ -46,6 +54,13 @@ is_linear (modulation m) {
 bool
 is_composite (modulation m) {
   return m->kind == modulation_composite;
+}
+
+double
+get_zoom (modulation m) {
+  double m11, m12, m21, m22;
+  m->get_matrix (m11, m12, m21, m22);
+  return m11;
 }
 
 modulation car (modulation m) { return m->car (); }

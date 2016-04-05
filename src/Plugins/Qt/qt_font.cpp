@@ -112,6 +112,12 @@ qt_font_rep::magnify (double zoom) {
   return qt_font (family, size, (int) round (dpi * zoom));
 }
 
+font
+qt_font_rep::modulate (modulation m) {
+  if (!is_zoom (m)) return bad_modulate (this, m);
+  return qt_font (family, size, (int) round (dpi * get_zoom (m)));
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/

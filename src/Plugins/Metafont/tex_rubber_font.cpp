@@ -36,6 +36,7 @@ struct tex_rubber_font_rep: font_rep {
   void draw (renderer ren, int c, SI x, SI& y, SI& real_y);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
+  font modulate (modulation m);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
@@ -49,6 +50,7 @@ struct tex_dummy_rubber_font_rep: font_rep {
   void get_extents (string s, metric& ex);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoom);
+  font modulate (modulation m);
 };
 
 /******************************************************************************
@@ -266,6 +268,12 @@ tex_rubber_font_rep::magnify (double zoom) {
   return tex_rubber_font (trl, family, size, ndpi, dsize);
 }
 
+font
+tex_rubber_font_rep::modulate (modulation m) {
+  if (!is_zoom (m)) return bad_modulate (this, m);
+  return magnify (get_zoom (m));
+}
+
 /******************************************************************************
 * Metric properties of rubber boxes
 ******************************************************************************/
@@ -344,6 +352,11 @@ tex_dummy_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 font
 tex_dummy_rubber_font_rep::magnify (double zoom) {
   return tex_dummy_rubber_font (base_fn->magnify (zoom));
+}
+
+font
+tex_dummy_rubber_font_rep::modulate (modulation m) {
+  return tex_dummy_rubber_font (base_fn->modulate (m));
 }
 
 font

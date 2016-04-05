@@ -420,6 +420,7 @@ struct smart_font_rep: font_rep {
   void   draw_fixed (renderer ren, string s, SI x, SI y);
   void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font   magnify (double zoom);
+  font   modulate (modulation m);
   glyph  get_glyph (string s);
   double get_left_slope  (string s);
   double get_right_slope (string s);
@@ -1009,6 +1010,13 @@ font
 smart_font_rep::magnify (double zoom) {
   return smart_font (family, variant, series, shape, sz,
                      (int) tm_round (dpi * zoom));
+}
+
+font
+smart_font_rep::modulate (modulation m) {
+  if (!is_zoom (m)) return bad_modulate (this, m);
+  return smart_font (family, variant, series, shape, sz,
+                     (int) tm_round (dpi * get_zoom (m)));
 }
 
 /******************************************************************************

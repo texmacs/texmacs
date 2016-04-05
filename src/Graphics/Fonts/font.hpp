@@ -12,7 +12,7 @@
 #ifndef FONT_H
 #define FONT_H
 #include "space.hpp"
-#include "renderer.hpp"
+#include "modulation.hpp"
 
 RESOURCE(font);
 
@@ -86,6 +86,7 @@ struct font_rep: rep<font> {
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
   virtual void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   virtual font   magnify (double zoom) = 0;
+  virtual font   modulate (modulation m) = 0;
   virtual void   draw (renderer ren, string s, SI x, SI y, SI xk, bool ext);
   virtual void   draw (renderer ren, string s, SI x, SI y);
   virtual void   draw (renderer ren, string s, SI x, SI y, SI xk);
@@ -150,6 +151,7 @@ font smart_font (string family, string variant, string series, string shape,
                  string tf, string tv, string tw, string ts, int sz, int dpi);
 
 int  script (int sz, int level);
+font bad_modulate (font fn, modulation m);
 
 // Font database
 extern bool new_fonts;
