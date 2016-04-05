@@ -50,7 +50,7 @@ poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
   this->copy_math_pars (base);
   initialized << true;
   larger << base;
-  for (int i=1; i<=MAGNIFIED_NUMBER+1; i++) {
+  for (int i=1; i<=MAGNIFIED_NUMBER+2; i++) {
     initialized << false;
     larger << base;
   }
@@ -64,16 +64,22 @@ poor_rubber_font_rep::get_font (int nr) {
   initialized[nr]= true;
   if (nr <= MAGNIFIED_NUMBER)
     larger[nr]= base->magnify (pow (2.0, ((double) nr) / 4.0));
-  else {
+  else if (nr == MAGNIFIED_NUMBER + 1) {
     font large= get_font (2);
     int dpi= (72 * large->wpt + (PIXEL/2)) / PIXEL;
     larger[nr]= virtual_font (large, "poorlong", large->size, dpi);
   }
+  else
+    larger[nr]= rubber_unicode_font (base);
   return larger[nr];
 }
 
 int
 poor_rubber_font_rep::search_font (string s, string& r) {
+  if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
+    r= s;
+    return MAGNIFIED_NUMBER + 2;
+  }
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
@@ -171,6 +177,13 @@ poor_rubber_font_rep::narrow_bars () {
 
 bool
 poor_rubber_font_rep::supports (string s) {
+  if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
+    string r= s (5, N(s) - 3);
+    if (ends (r, "lim")) r= r (0, N(r) - 3);
+    if (starts (r, "up")) r= r (2, N(r));
+    if (N(r) > 1) r= "<" * r * ">";
+    return base->supports (r);
+  }
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
   if (starts (s, "<large-")) s= "<left-" * s (7, N(s));
