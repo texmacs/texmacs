@@ -37,16 +37,17 @@ struct math_font_rep: font_rep {
   double       zf;
 
   math_font_rep (string name, scheme_tree t, font base, font error, double zf);
-  void init_font (int fn_nr, font& fn);
-  void search_font (string& s, font& fn);
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoomx, double zoomy);
-  glyph get_glyph (string s);
-
+  void   init_font (int fn_nr, font& fn);
+  void   search_font (string& s, font& fn);
+  bool   supports (string c);
+  void   get_extents (string s, metric& ex);
+  void   get_xpositions (string s, SI* xpos);
+  void   draw_fixed (renderer ren, string s, SI x, SI y);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
+  font   magnify (double zoomx, double zoomy);
+  void   advance_glyph (string s, int& pos);
+  glyph  get_glyph (string s);
+  int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   double get_left_slope  (string s);
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
@@ -200,11 +201,29 @@ math_font_rep::magnify (double zoomx, double zoomy) {
                     error_fn->magnify (zoomx, zoomy), zf * zoomx);
 }
 
+void
+math_font_rep::advance_glyph (string s, int& pos) {
+  if (pos >= N(s)) return;
+  int i= pos;
+  tm_char_forwards (s, i);
+  string ss= s (pos, i);
+  font fn;
+  search_font (ss, fn);
+  return fn->advance_glyph (s, pos);
+}
+
 glyph
 math_font_rep::get_glyph (string s) {
   font fn;
   search_font (s, fn);
   return fn->get_glyph (s);
+}
+
+int
+math_font_rep::index_glyph (string s, font_metric& fnm, font_glyphs& fng) {
+  font fn;
+  search_font (s, fn);
+  return fn->index_glyph (s, fnm, fng);
 }
 
 /******************************************************************************

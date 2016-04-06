@@ -29,12 +29,13 @@ struct rubber_assemble_font_rep: font_rep {
   font get_font (int nr);
   int search_font (string s, string& r);
 
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoomx, double zoomy);
+  bool  supports (string c);
+  void  get_extents (string s, metric& ex);
+  void  draw_fixed (renderer ren, string s, SI x, SI y);
+  void  draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
+  font  magnify (double zoomx, double zoomy);
   glyph get_glyph (string s);
+  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 };
 
 /******************************************************************************
@@ -174,6 +175,14 @@ rubber_assemble_font_rep::get_glyph (string s) {
   string name;
   int num= search_font (s, name);
   return get_font (num) -> get_glyph (name);
+}
+
+int
+rubber_assemble_font_rep::index_glyph (string s, font_metric& fnm,
+                                                 font_glyphs& fng) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> index_glyph (name, fnm, fng);
 }
 
 /******************************************************************************

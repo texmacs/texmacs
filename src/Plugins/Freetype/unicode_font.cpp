@@ -46,18 +46,20 @@ struct unicode_font_rep: font_rep {
   unicode_font_rep (string name, string family, int size, int dpi);
 
   unsigned int ligature_replace (unsigned int c, string s, int& i);
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos, bool ligf);
-  void get_xpositions (string s, SI* xpos);
-  void draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoomx, double zoomy);
-  glyph get_glyph (string s);
+  bool   supports (string c);
+  void   get_extents (string s, metric& ex);
+  void   get_xpositions (string s, SI* xpos, bool ligf);
+  void   get_xpositions (string s, SI* xpos);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
+  void   draw_fixed (renderer ren, string s, SI x, SI y);
+  font   magnify (double zoomx, double zoomy);
+  void   advance_glyph (string s, int& pos);
+  glyph  get_glyph (string s);
+  int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   double get_left_slope  (string s);
   double get_right_slope (string s);
-  SI get_left_correction  (string s);
-  SI get_right_correction  (string s);
+  SI     get_left_correction  (string s);
+  SI     get_right_correction  (string s);
 };
 
 /******************************************************************************
@@ -338,6 +340,14 @@ unicode_font_rep::magnify (double zoomx, double zoomy) {
   return unicode_font (family, size, (int) tm_round (dpi * zoomx));
 }
 
+void
+unicode_font_rep::advance_glyph (string s, int& pos) {
+  if (pos >= N(s)) return;
+  unsigned int uc= read_unicode_char (s, pos);
+  if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
+    uc= ligature_replace (uc, s, pos);
+}
+
 glyph
 unicode_font_rep::get_glyph (string s) {
   int i= 0, n= N(s);
@@ -346,6 +356,18 @@ unicode_font_rep::get_glyph (string s) {
   glyph gl= fng->get (uc);
   if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
+}
+
+int
+unicode_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
+  int i= 0, n= N(s);
+  unsigned int uc= read_unicode_char (s, i);
+  if (i != n) return font_rep::index_glyph (s, rm, rg);
+  glyph gl= fng->get (uc);
+  if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
+  rm= fnm;
+  rg= fng;
+  return uc;
 }
 
 double

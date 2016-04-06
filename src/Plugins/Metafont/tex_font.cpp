@@ -23,6 +23,7 @@
 #define TEX_ADOBE 5
 
 static void special_initialize ();
+font_metric tfm_font_metric (tex_font_metric tfm, font_glyphs pk, double unit);
 
 /******************************************************************************
 * TeX text fonts
@@ -41,26 +42,28 @@ struct tex_font_rep: font_rep {
   tex_font_rep (string name, int status,
 		string family, int size, int dpi, int dsize);
 
-  bool raw_supports (unsigned char c);
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos, bool ligf);
-  void get_xpositions (string s, SI* xpos);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoomx, double zoomy);
-  SI   get_left_correction (string s);
-  SI   get_right_correction (string s);
+  bool  raw_supports (unsigned char c);
+  bool  supports (string c);
+  void  get_extents (string s, metric& ex);
+  void  get_xpositions (string s, SI* xpos, bool ligf);
+  void  get_xpositions (string s, SI* xpos);
+  void  draw_fixed (renderer ren, string s, SI x, SI y);
+  font  magnify (double zoomx, double zoomy);
+  SI    get_left_correction (string s);
+  SI    get_right_correction (string s);
+  void  advance_glyph (string s, int& pos);
   glyph get_glyph (string s);
-  void special_get_extents (string s, metric& ex);
-  void special_get_xpositions (string s, SI* xpos, bool ligf);
-  void special_draw (renderer ren, string s, SI x, SI y);
-  SI   special_get_left_correction (string s);
-  SI   special_get_right_correction (string s);
-  void accented_get_extents (string s, metric& ex);
-  void accented_get_xpositions (string s, SI* xpos, bool ligf);
-  void accented_draw (renderer ren, string s, SI x, SI y);
-  SI   accented_get_left_correction (string s);
-  SI   accented_get_right_correction (string s);
+  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
+  void  special_get_extents (string s, metric& ex);
+  void  special_get_xpositions (string s, SI* xpos, bool ligf);
+  void  special_draw (renderer ren, string s, SI x, SI y);
+  SI    special_get_left_correction (string s);
+  SI    special_get_right_correction (string s);
+  void  accented_get_extents (string s, metric& ex);
+  void  accented_get_xpositions (string s, SI* xpos, bool ligf);
+  void  accented_draw (renderer ren, string s, SI x, SI y);
+  SI    accented_get_left_correction (string s);
+  SI    accented_get_right_correction (string s);
 };
 
 /******************************************************************************
@@ -90,7 +93,7 @@ tex_font_rep::tex_font_rep (string name, int status2,
   extra->min   = extra->min >> 1;
   extra->max   = extra->min << 1;
   sep          = ((((dpi*PIXEL)/72)*design_size) >> 8) / 10;
-  exec         = ! ends (family, "tt");
+  exec         = !ends (family, "tt");
 
   y1           = conv (-262080);   // -0.25 quad
   y2           = y1+ display_size; //  0.75 quad
@@ -550,9 +553,10 @@ tex_font_rep::get_extents (string s, metric& ex) {
   STACK_NEW_ARRAY (ker, int, m);
 
   if (exec) {
-  for (i=0; i<n; i++) s_copy[i]= ((QN) s[i]);
-  tfm->execute (s_copy, n, buf, ker, m);
-  } else {
+    for (i=0; i<n; i++) s_copy[i]= ((QN) s[i]);
+    tfm->execute (s_copy, n, buf, ker, m);
+  }
+  else {
     m = n;
     for (i=0; i<m; ++i) {
       buf[i]= s[i] & 255;
@@ -687,9 +691,10 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
   STACK_NEW_ARRAY (ker, int, m);
 
   if (exec) {
-  for (i=0; i<n; i++) str[i]= ((QN) s[i]);
-  tfm->execute (str, n, buf, ker, m);
-  } else {
+    for (i=0; i<n; i++) str[i]= ((QN) s[i]);
+    tfm->execute (str, n, buf, ker, m);
+  }
+  else {
     m = n;
     for (i=0; i<m; ++i) {
       buf[i]= s[i] & 255;
@@ -774,6 +779,40 @@ tex_font_rep::get_right_correction (string s) {
   return conv (tfm->i ((QN) s[N(s)-1]));
 }
 
+void
+tex_font_rep::advance_glyph (string s, int& pos) {
+  if (pos >= N(s)) return;
+  if (!exec || (status != TEX_ANY && s[pos] == '<'))
+    tm_char_forwards (s, pos);
+  else {
+    int c= -1;
+    int start= pos;
+    while (pos < N(s)) {
+      int prev= pos;
+      tm_char_forwards (s, pos);
+      string r= s (start, pos);
+
+      int n= N(r);
+      int m= (n+16) << 1;
+      STACK_NEW_ARRAY (str, int, n);
+      STACK_NEW_ARRAY (buf, int, m);
+      STACK_NEW_ARRAY (ker, int, m);
+      for (int i=0; i<n; i++) str[i]= ((QN) r[i]);
+      tfm->execute (str, n, buf, ker, m);      
+      bool done= (m > 0 && buf[0] == c);
+      if (!done && m > 0) c= buf[0];
+      STACK_DELETE_ARRAY (str);
+      STACK_DELETE_ARRAY (buf);
+      STACK_DELETE_ARRAY (ker);
+
+      if (done) {
+        pos= prev;
+        break;
+      }
+    }
+  }
+}
+
 glyph
 tex_font_rep::get_glyph (string s) {
   register int i;
@@ -802,7 +841,80 @@ tex_font_rep::get_glyph (string s) {
   return gl;
 }
 
+int
+tex_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
+  register int i;
+  switch (status) {
+  case TEX_ANY:
+    break;
+  case TEX_EC:
+  case TEX_LA:
+  case TEX_GR:
+    if (s == "<less>") s= "<";
+    if (s == "<gtr>") s= ">";
+    break;
+  case TEX_CM:
+  case TEX_ADOBE:
+    if (s == "<less>") s= "<";
+    if (s == "<gtr>") s= ">";
+    for (i=0; i<N(s); i++)
+      if ((s[i] & 128) != 0)
+	return font_rep::index_glyph (s, rm, rg);
+    break;
+  }
+  if (N(s)!=1) return font_rep::index_glyph (s, rm, rg);
+  int c= ((QN) s[0]);
+  glyph gl= pk->get (c);
+  if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
+  FAILED ("conversion of tex_font_metric into font_metric not implemented");
+  rm= tfm_font_metric (tfm, pk, unit);
+  rg= pk;
+  return c;
+}
+
+/******************************************************************************
+* TeX font metrics as usual metrics
+******************************************************************************/
+
+extern metric error_metric;
+
+struct tfm_font_metric_rep: public font_metric_rep {
+  tex_font_metric tfm;
+  font_glyphs pk;
+  double unit;
+  hashmap<int,pointer> ms;
+  tfm_font_metric_rep (string name, tex_font_metric tfm2,
+                       font_glyphs pk2, double unit2):
+    font_metric_rep (name), tfm (tfm2), pk (pk2),
+    unit (unit2), ms (error_metric) {}
+  bool exists (int c) {
+    return c >= ((int) tfm->bc) && ((int) tfm->ec) >= c; }
+  metric& get (int c) {
+    if (!exists (c)) return error_metric;
+    if (!ms->contains (c)) {
+      metric_struct* r= tm_new<metric_struct> ();
+      ms(c)= (pointer) r;
+      r->x1=  0;
+      r->x2=  conv (tfm->w(c));
+      r->y1= -conv (tfm->d(c));
+      r->y2=  conv (tfm->h(c));
+      glyph gl= pk->get (c);
+      r->x3= -((int) gl->xoff) * PIXEL;
+      r->x4=  ((int) (gl->width- gl->xoff)) * PIXEL;
+      r->y3=  ((int) (gl->yoff- gl->height)) * PIXEL;
+      r->y4=  ((int) gl->yoff) * PIXEL;
+    }
+    return *((metric*) ((void*) ms[c])); }
+};
+
 #undef conv
+
+font_metric
+tfm_font_metric (tex_font_metric tfm, font_glyphs pk, double unit) {
+  string name= tfm->res_name * ":" * pk->res_name * ":" * as_string (unit);
+  return make (font_metric, name,
+               tm_new<tfm_font_metric_rep> (name, tfm, pk, unit));
+}
 
 /******************************************************************************
 * Interface

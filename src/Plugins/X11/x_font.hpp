@@ -35,12 +35,13 @@ struct x_font_rep: font_rep {
   font_glyphs fng;
 
   x_font_rep (string name, string family, int size, int dpi);
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoomx, double zoomy);
+  bool  supports (string c);
+  void  get_extents (string s, metric& ex);
+  void  get_xpositions (string s, SI* xpos);
+  void  draw_fixed (renderer ren, string s, SI x, SI y);
+  font  magnify (double zoomx, double zoomy);
   glyph get_glyph (string s);
+  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 };
 
 #endif // defined X_FONT_H

@@ -34,12 +34,14 @@ struct tt_font_rep: font_rep {
 
   tt_font_rep (string name, string family, int size, int dpi);
 
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoomx, double zoomy);
+  bool  supports (string c);
+  void  get_extents (string s, metric& ex);
+  void  get_xpositions (string s, SI* xpos);
+  void  draw_fixed (renderer ren, string s, SI x, SI y);
+  font  magnify (double zoomx, double zoomy);
+  void  advance_glyph (string s, int& pos);
   glyph get_glyph (string s);
+  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 };
 
 /******************************************************************************
@@ -189,6 +191,11 @@ tt_font_rep::magnify (double zoomx, double zoomy) {
   return tt_font (family, size, (int) tm_round (dpi * zoomx));
 }
 
+void
+tt_font_rep::advance_glyph (string s, int& pos) {
+  if (pos < N(s)) pos++;
+}
+
 glyph
 tt_font_rep::get_glyph (string s) {
   if (N(s)!=1) return font_rep::get_glyph (s);
@@ -196,6 +203,17 @@ tt_font_rep::get_glyph (string s) {
   glyph gl= fng->get (c);
   if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
+}
+
+int
+tt_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
+  if (N(s)!=1) return font_rep::index_glyph (s, rm, rg);
+  int c= ((QN) s[0]);
+  glyph gl= fng->get (c);
+  if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
+  rm= fnm;
+  rg= fng;
+  return c;
 }
 
 /******************************************************************************

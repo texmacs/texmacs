@@ -17,6 +17,8 @@
 RESOURCE(font);
 
 struct glyph;
+struct font_metric;
+struct font_glyphs;
 
 #define FONT_ATTEMPTS  20
 
@@ -102,7 +104,10 @@ struct font_rep: rep<font> {
   void var_get_extents (string s, metric& ex);
   void var_get_xpositions (string s, SI* xpos);
   void var_draw (renderer ren, string s, SI x, SI y);
+
+  virtual void  advance_glyph (string s, int& pos);
   virtual glyph get_glyph (string s);
+  virtual int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 };
 
 string default_chinese_font_name ();

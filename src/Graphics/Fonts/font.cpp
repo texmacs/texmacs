@@ -282,6 +282,11 @@ font_rep::var_draw (renderer ren, string s, SI x, SI y) {
 //bool get_glyph_fatal= true;
 bool get_glyph_fatal= false;
 
+void
+font_rep::advance_glyph (string s, int& pos) {
+  tm_char_forwards (s, pos);
+}
+
 glyph
 font_rep::get_glyph (string s) {
   if (get_glyph_fatal) {
@@ -290,6 +295,16 @@ font_rep::get_glyph (string s) {
   }
   else cout << "  no bitmap available for " << s << "\n";
   return glyph (0, 0, 0, 0);
+}
+
+int
+font_rep::index_glyph (string s, font_metric& fnm, font_glyphs& fng) {
+  if (get_glyph_fatal) {
+    failed_error << "glyph name: " << s << "\n";
+    FAILED ("no bitmap available");
+  }
+  else cout << "  no bitmap available for " << s << "\n";
+  return -1;
 }
 
 font

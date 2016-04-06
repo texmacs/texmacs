@@ -420,7 +420,9 @@ struct smart_font_rep: font_rep {
   void   draw_fixed (renderer ren, string s, SI x, SI y);
   void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font   magnify (double zoomx, double zoomy);
+  void   advance_glyph (string s, int& pos);
   glyph  get_glyph (string s);
+  int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   double get_left_slope  (string s);
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
@@ -1016,14 +1018,37 @@ smart_font_rep::magnify (double zoomx, double zoomy) {
 * Other routines for fonts
 ******************************************************************************/
 
+void
+smart_font_rep::advance_glyph (string s, int& pos) {
+  if (pos >= N(s)) return;
+  int i= pos, nr;
+  string r= s;
+  advance (s, i, r, nr);
+  if (nr < 0) { tm_char_forwards (s, pos); return; }
+  int pos2= 0;
+  fn[nr]->advance_glyph (r, pos2);
+  if (pos + pos2 <= N(s) && r (0, pos2) == s (pos, pos+pos2)) pos += pos2;
+  else tm_char_forwards (s, pos);
+}
+
 glyph
 smart_font_rep::get_glyph (string s) {
   int i=0, n= N(s), nr;
   if (n == 0) return fn[0]->get_glyph (s);
   string r= s;
   advance (s, i, r, nr);
-  if (nr<0) return glyph ();
+  if (nr < 0) return glyph ();
   return fn[nr]->get_glyph (r);
+}
+
+int
+smart_font_rep::index_glyph (string s, font_metric& fnm, font_glyphs& fng) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return -1;
+  string r= s;
+  advance (s, i, r, nr);
+  if (nr < 0) return -1;
+  return fn[nr]->index_glyph (r, fnm, fng);
 }
 
 double

@@ -31,17 +31,18 @@ struct unicode_math_font_rep: font_rep {
 			 font upright, font italic,
 			 font bold_upright, font bold_italic,
 			 font fall_back);
-  int search_font_sub (string s);
-  font search_font (string& s);
+  int    search_font_sub (string s);
+  font   search_font (string& s);
 
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos);
-  void get_xpositions (string s, SI* xpos, SI xk);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoomx, double zoomy);
-  glyph get_glyph (string s);
+  bool   supports (string c);
+  void   get_extents (string s, metric& ex);
+  void   get_xpositions (string s, SI* xpos);
+  void   get_xpositions (string s, SI* xpos, SI xk);
+  void   draw_fixed (renderer ren, string s, SI x, SI y);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
+  font   magnify (double zoomx, double zoomy);
+  glyph  get_glyph (string s);
+  int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 
   double get_left_slope  (string s);
   double get_right_slope (string s);
@@ -247,6 +248,13 @@ glyph
 unicode_math_font_rep::get_glyph (string s) {
   font fn= search_font (s);
   return fn->get_glyph (s);
+}
+
+int
+unicode_math_font_rep::index_glyph (string s, font_metric& fnm,
+                                              font_glyphs& fng) {
+  font fn= search_font (s);
+  return fn->index_glyph (s, fnm, fng);
 }
 
 /******************************************************************************

@@ -41,6 +41,7 @@ struct virtual_font_rep: font_rep {
   void  draw_transformed (renderer ren, scheme_tree t, SI x, SI y, frame f);
   int   get_char (string s, font_metric& fnm, font_glyphs& fng);
   glyph get_glyph (string s);
+  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 
   bool supports (string c);
   void get_extents (string s, metric& ex);
@@ -698,6 +699,12 @@ virtual_font_rep::get_glyph (string s) {
   int c= get_char (s, cfnm, cfng);
   if (c == -1) return font_rep::get_glyph (s);
   else return cfng->get(c);
+}
+
+int
+virtual_font_rep::index_glyph (string s, font_metric& cfnm,
+                                         font_glyphs& cfng) {
+  return get_char (s, cfnm, cfng);
 }
 
 /******************************************************************************

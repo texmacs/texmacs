@@ -441,6 +441,17 @@ x_font_rep::get_glyph (string s) {
   return gl;
 }
 
+int
+x_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
+  if (N(s)!=1) return font_rep::index_glyph (s, rm, rg);
+  int c= ((QN) s[0]);
+  glyph gl= fng->get (c);
+  if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
+  rm= fnm;
+  rg= fng;
+  return c;
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
