@@ -42,7 +42,7 @@ struct poor_rubber_font_rep: font_rep {
 ******************************************************************************/
 
 #define MAGNIFIED_NUMBER 4
-#define HUGE_ADJUST      6
+#define HUGE_ADJUST      1
 
 poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
   font_rep (name, base2), base (base2)
@@ -62,10 +62,14 @@ poor_rubber_font_rep::get_font (int nr) {
   ASSERT (nr < N(larger), "wrong font number");
   if (initialized[nr]) return larger[nr];
   initialized[nr]= true;
-  if (nr <= MAGNIFIED_NUMBER)
-    larger[nr]= base->magnify (pow (2.0, ((double) nr) / 4.0));
+  if (nr <= MAGNIFIED_NUMBER) {
+    double zoomy= pow (2.0, ((double) nr) / 4.0);
+    double zoomx= sqrt (zoomy);
+    //larger[nr]= base->magnify (zoomx, zoomy);
+    larger[nr]= poor_stretched_font (base, zoomx, zoomy);
+  }
   else if (nr == MAGNIFIED_NUMBER + 1) {
-    font large= get_font (2);
+    font large= get_font (MAGNIFIED_NUMBER);
     int dpi= (72 * large->wpt + (PIXEL/2)) / PIXEL;
     larger[nr]= virtual_font (large, "poorlong", large->size, dpi);
   }

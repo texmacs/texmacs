@@ -128,6 +128,7 @@ bool use_poor_rubber (font fn);
 font poor_rubber_font (font base);
 font poor_smallcaps_font (font base);
 font poor_italic_font (font base, double slant);
+font poor_stretched_font (font base, double zoomx, double zoomy);
 font x_font (string family, int size, int dpi);
 font qt_font (string family, int size, int dpi);
 font tex_font (string fam, int size, int dpi, int dsize=10);

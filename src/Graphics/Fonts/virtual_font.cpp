@@ -31,28 +31,30 @@ struct virtual_font_rep: font_rep {
   hashmap<scheme_tree,metric_struct> trm;
 
   virtual_font_rep (string name, font base, string vname, int size, int dpi);
-  glyph compile_bis (scheme_tree t, metric& ex);
-  glyph compile (scheme_tree t, metric& ex);
-  void  get_metric (scheme_tree t, metric& ex);
-  tree  get_tree (string s);
-  void  draw (renderer ren, scheme_tree t, SI x, SI y);
-  void  draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
-                      SI x1, SI y1, SI x2, SI y2);
-  void  draw_transformed (renderer ren, scheme_tree t, SI x, SI y, frame f);
-  int   get_char (string s, font_metric& fnm, font_glyphs& fng);
-  glyph get_glyph (string s);
-  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
+  glyph  compile_bis (scheme_tree t, metric& ex);
+  glyph  compile (scheme_tree t, metric& ex);
+  void   get_metric (scheme_tree t, metric& ex);
+  tree   get_tree (string s);
+  void   draw (renderer ren, scheme_tree t, SI x, SI y);
+  void   draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
+                       SI x1, SI y1, SI x2, SI y2);
+  void   draw_transformed (renderer ren, scheme_tree t, SI x, SI y, frame f);
+  int    get_char (string s, font_metric& fnm, font_glyphs& fng);
+  glyph  get_glyph (string s);
+  int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 
-  bool supports (string c);
-  void get_extents (string s, metric& ex);
-  void get_xpositions (string s, SI* xpos, SI xk);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  void draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font magnify (double zoomx, double zoomy);
+  bool   supports (string c);
+  void   get_extents (string s, metric& ex);
+  void   get_xpositions (string s, SI* xpos);
+  void   get_xpositions (string s, SI* xpos, bool lit);
+  void   get_xpositions (string s, SI* xpos, SI xk);
+  void   draw_fixed (renderer ren, string s, SI x, SI y);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
+  font   magnify (double zoomx, double zoomy);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
-  SI get_right_correction (string s);
+  SI     get_right_correction (string s);
 };
 
 virtual_font_rep::virtual_font_rep (
@@ -657,10 +659,21 @@ virtual_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
+virtual_font_rep::get_xpositions (string s, SI* xpos) {
+  get_xpositions (s, xpos, 0);
+}
+
+void
+virtual_font_rep::get_xpositions (string s, SI* xpos, bool lit) {
+  (void) lit;
+  get_xpositions (s, xpos, 0);
+}
+
+void
 virtual_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
   metric ex;
   get_extents (s, ex);
-  xpos[0]= ex->x1 + xk;
+  xpos[0]= xk;
   xpos[N(s)]= ex->x2 + xk;
   for (int i=1; i<N(s); i++)
     xpos[i]= (xpos[0] + xpos[N(s)]) >> 1;
