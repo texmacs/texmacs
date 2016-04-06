@@ -120,14 +120,19 @@ unicode_font_rep::unicode_font_rep (string name,
   wline        = wfn/20;
 
   // get fraction bar parameters; reasonable compromise between several fonts
-  if (supports ("-")) get_extents ("-", ex);
+  if (supports ("<#2212>")) get_extents ("<#2212>", ex);
+  else if (supports ("-")) get_extents ("-", ex);
   else get_extents ("x", ex);
-  yfrac= (ex->y3 + ex->y4) >> 1;
-  if (supports ("-")) {
-    wline= min (ex->y4 - ex->y3, ex->y2 - ex->y1);
-    wline= min (wline, wfn/8);
-    wline= max (wline, wfn/48);
-    yfrac += wline/4;
+  yfrac= (ex->y1 + ex->y2) >> 1;
+  if (supports ("-") || supports ("<#2212>")) {
+    wline= ex->y2 - ex->y1;
+    if (supports ("<#2212>"));
+    else if (supports ("<#2013>")) {
+      get_extents ("<#2013>", ex);
+      wline= min (wline, ex->y2 - ex->y1);
+    }
+    wline= max (min (wline, wfn/8), wfn/48);
+    if (!supports ("<#2212>")) yfrac += wline/4;
   }
 
   // get space length
