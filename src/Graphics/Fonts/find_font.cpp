@@ -244,6 +244,15 @@ find_font (string family, string variant,
       return scfn;
     }
   }
+  else if (ends (shape, "-poorit")) {
+    string shape2= shape (0, N(shape) - 7);
+    font fn= find_font (family, variant, series, shape2, sz, dpi);
+    if (!is_nil (fn)) {
+      font scfn= poor_italic_font (fn, 0.25);
+      font::instances (s)= (pointer) scfn.rep;
+      return scfn;
+    }
+  }
 
   string family2= family;
   if (family == "sys-chinese") family2= default_chinese_font_name ();

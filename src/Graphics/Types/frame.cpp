@@ -116,6 +116,35 @@ rotation_2D (point center, double angle) {
 }
 
 /******************************************************************************
+* Slantings
+******************************************************************************/
+
+struct slanting_rep: public frame_rep {
+  point center;
+  double slant;
+  slanting_rep (point c, double s): center (c), slant (s) { linear= true; }
+  operator tree () {
+    return tuple ("slanting", as_string (center), as_string (slant)); }
+  point direct_transform (point p) {
+    return slanted (p - center,  slant) + center; }
+  point inverse_transform (point p) {
+    return slanted (p - center, -slant) + center; }
+  point jacobian (point p, point v, bool &error) {
+    (void) p; error= false; return slanted (v, slant); }
+  point jacobian_of_inverse (point p, point v, bool &error) {
+    (void) p; error= false; return slanted (v, slant); }
+  double direct_bound (point p, double eps) {
+    (void) p; return eps / sqrt (1.0 + slant*slant); }
+  double inverse_bound (point p, double eps) {
+    (void) p; return eps / sqrt (1.0 + slant*slant); }
+};
+
+frame
+slanting (point center, double slant) {
+  return tm_new<slanting_rep> (center, slant);
+}
+
+/******************************************************************************
 * Affine transformations
 ******************************************************************************/
 

@@ -357,6 +357,8 @@ glyph
 unicode_font_rep::get_glyph (string s) {
   int i= 0, n= N(s);
   unsigned int uc= read_unicode_char (s, i);
+  if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
+    uc= ligature_replace (uc, s, i);
   if (i != n) return font_rep::get_glyph (s);
   glyph gl= fng->get (uc);
   if (is_nil (gl)) return font_rep::get_glyph (s);
@@ -367,6 +369,8 @@ int
 unicode_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   int i= 0, n= N(s);
   unsigned int uc= read_unicode_char (s, i);
+  if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
+    uc= ligature_replace (uc, s, i);
   if (i != n) return font_rep::index_glyph (s, rm, rg);
   glyph gl= fng->get (uc);
   if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);

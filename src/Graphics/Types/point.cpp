@@ -161,6 +161,11 @@ rotate_2D (point p, point o, double angle) {
   return mult (cos (angle), sin (angle), p - o) + o;
 }
 
+point
+slanted (point p, double slant) {
+  return point (p[0] + p[1] * slant, p[1]);
+}
+
 double
 norm (point p) {
   return sqrt (inner (p, p));

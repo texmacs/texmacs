@@ -36,6 +36,7 @@ tree  as_tree (point p);
 
 double inner (point p1, point p2);
 point  rotate_2D (point p, point o, double angle);
+point  slanted (point p, double slant);
 
 double norm (point p);
 double arg (point p);

@@ -291,9 +291,13 @@ glyph
 font_rep::get_glyph (string s) {
   if (get_glyph_fatal) {
     failed_error << "glyph name: " << s << "\n";
+    failed_error << "font      : " << res_name << "\n";    
     FAILED ("no bitmap available");
   }
-  else cout << "  no bitmap available for " << s << "\n";
+  else {
+    cout << "TeXmacs] warning, no bitmap available for " << s << "\n";
+    cout << "TeXmacs]   in font " << res_name << "\n";
+  }
   return glyph (0, 0, 0, 0);
 }
 
@@ -301,9 +305,13 @@ int
 font_rep::index_glyph (string s, font_metric& fnm, font_glyphs& fng) {
   if (get_glyph_fatal) {
     failed_error << "glyph name: " << s << "\n";
+    failed_error << "font      : " << res_name << "\n";    
     FAILED ("no bitmap available");
   }
-  else cout << "  no bitmap available for " << s << "\n";
+  else {
+    cout << "TeXmacs] warning, no glyph index available for " << s << "\n";
+    cout << "TeXmacs]   in font " << res_name << "\n";
+  }
   return -1;
 }
 

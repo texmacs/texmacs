@@ -290,6 +290,11 @@ find_closest (string& family, string& variant, string& series, string& shape,
     if ( contains (string ("smallcaps"), lfn) &&
 	!contains (string ("smallcaps"), nfn))
       shape= shape * "-poorsc";
+    if ((contains (string ("italic"), lfn) ||
+         contains (string ("slanted"), lfn)) &&
+	!contains (string ("italic"), nfn) &&
+        !contains (string ("slanted"), nfn))
+      shape= shape * "-poorit";
     //cout << "> " << family << ", " << variant
     //     << ", " << series << ", " << shape << "\n";
     tree t= tuple (family, variant, series, shape);

@@ -63,6 +63,7 @@ template<typename T> class matrix;
 frame scaling (double magnify, point shift);
 frame scaling (point magnify, point shift);
 frame rotation_2D (point center, double angle);
+frame slanting (point center, double slant);
 frame affine_2D (matrix<double> m);
 
 // Operations on transformations
