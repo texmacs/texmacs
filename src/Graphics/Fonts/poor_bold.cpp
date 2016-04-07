@@ -56,8 +56,8 @@ poor_bold_font_rep::poor_bold_font_rep (string name, font b,
   font_rep (name, b), base (b), lofat (l), upfat (h)
 {
   this->copy_math_pars (base);
-  dlo= (SI) lofat * wfn;
-  dup= (SI) upfat * wfn;
+  dlo= (SI) (lofat * wfn);
+  dup= (SI) (upfat * wfn);
 
   this->spc    = this->spc + space (dlo >> 1);
   this->wquad += dup;
@@ -87,6 +87,7 @@ poor_bold_font_rep::supports (string s) {
 void
 poor_bold_font_rep::get_extents (string s, metric& ex) {
   base->get_extents (s, ex);
+  if (N(s) == 0) return;
   STACK_NEW_ARRAY (xpos, SI, N(s)+1);
   get_xpositions (s, xpos);
   ex->x4 += xpos[N(s)] - ex->x2;
@@ -147,7 +148,7 @@ poor_bold_font_rep::draw_fixed (renderer ren, string s,
       font_metric fnm;
       font_glyphs fng;
       int c= index_glyph (ss, fnm, fng);
-      if (c >= 0) ren->draw (c, fng, x + xpos[start], y);
+      if (c >= 0) ren->draw (c, fng, start==0? x: x + xpos[start], y);
     }
     else {
       FAILED ("vectorial boldening not yet implemented");
@@ -196,7 +197,10 @@ poor_bold_font_rep::advance_glyph (string s, int& pos) {
 glyph
 poor_bold_font_rep::get_glyph (string s) {
   glyph gl= base->get_glyph (s);
-  return bolden (gl, lofat, upfat);
+  if (is_nil (gl)) return gl;
+  SI dpen, dtot;
+  fatten (s, dpen, dtot);
+  return bolden (gl, dpen);
 }
 
 int
@@ -204,8 +208,10 @@ poor_bold_font_rep::index_glyph (string s, font_metric& fnm,
                                            font_glyphs& fng) {
   int c= base->index_glyph (s, fnm, fng);
   if (c < 0) return c;
-  fnm= bolden (fnm, lofat, upfat);
-  fng= bolden (fng, lofat, upfat);
+  SI dpen, dtot;
+  fatten (s, dpen, dtot);
+  fnm= bolden (fnm, dtot);
+  fng= bolden (fng, dpen);
   return c;
 }
 

@@ -186,10 +186,36 @@ vstretch (font_glyphs fng, double factor) {
 * Boldening of font metrics
 ******************************************************************************/
 
+struct bolden_font_metric_rep: public font_metric_rep {
+  font_metric fnm;
+  SI dtot;
+  hashmap<int,pointer> ms;
+  bolden_font_metric_rep (string name, font_metric fnm2, SI dtot2):
+    font_metric_rep (name), fnm (fnm2), dtot (dtot2), ms (error_metric) {}
+  bool exists (int c) { return fnm->exists (c); }
+  metric& get (int c) {
+    metric& m (fnm->get (c));
+    if (&m == &error_metric) return error_metric;
+    if (!ms->contains (c)) {
+      metric_struct* r= tm_new<metric_struct> ();
+      ms(c)= (pointer) r;
+      r->x1= m->x1;
+      r->x2= m->x2 + dtot;
+      r->x3= m->x3;
+      r->x4= m->x4 + dtot;
+      r->y1= m->y1;
+      r->y2= m->y2;
+      r->y3= m->y3;
+      r->y4= m->y4;
+    }
+    return *((metric*) ((void*) ms[c])); }
+};
+
 font_metric
-bolden (font_metric fnm, double lofat, double upfat) {
-  (void) lofat; (void) upfat;
-  return fnm;
+bolden (font_metric fnm, SI dtot) {
+  string name= fnm->res_name * "-bolden[" * as_string (dtot) * "]";
+  return make (font_metric, name,
+	       tm_new<bolden_font_metric_rep> (name, fnm, dtot));
 }
 
 /******************************************************************************
@@ -197,13 +223,39 @@ bolden (font_metric fnm, double lofat, double upfat) {
 ******************************************************************************/
 
 glyph
-bolden (glyph gl, double lofat, double upfat) {
-  (void) lofat; (void) upfat;
-  return gl;
+bolden (glyph gl, SI dpen) {
+  int dw= (dpen + (PIXEL/2)) / PIXEL;
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww + dw, hh, gl->xoff, gl->yoff, gl->depth);
+  for (j=0; j<hh; j++)
+    for (i=0; i<(ww+dw); i++)
+      bmr->set_x (i, j, 0);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++) {
+      int val= gl->get_x (i, j);
+      for (int k=0; k<=dw; k++)
+        bmr->set_x (i+k, j, max (val, bmr->get_x (i+k, j)));
+    }
+  return bmr;
 }
 
+struct bolden_font_glyphs_rep: public font_glyphs_rep {
+  font_glyphs fng;
+  SI dpen;
+  hashmap<int,glyph> gs;
+  bolden_font_glyphs_rep (string name, font_glyphs fng2, SI dpen2):
+    font_glyphs_rep (name), fng (fng2), dpen (dpen2), gs (error_glyph) {}
+  glyph& get (int c) {
+    glyph& orig (fng->get (c));
+    if ((&orig != &error_glyph) && !gs->contains (c))
+      gs(c)= bolden (orig, dpen);
+    return gs(c); }
+};
+
 font_glyphs
-bolden (font_glyphs fng, double lofat, double upfat) {
-  (void) lofat; (void) upfat;
-  return fng;
+bolden (font_glyphs fng, SI dpen) {
+  string name= fng->res_name * "-bolden[" * as_string (dpen) * "]";
+  return make (font_glyphs, name,
+               tm_new<bolden_font_glyphs_rep> (name, fng, dpen));
 }

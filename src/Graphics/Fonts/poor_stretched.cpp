@@ -101,7 +101,7 @@ poor_stretched_font_rep::draw_fixed (renderer ren, string s,
     //cout << "Drawing " << ss << ", " << c
     //     << " at " << (xpos[start]/PIXEL) << "\n";
     //cout << fng->get (c) << "\n\n";
-    if (c >= 0) ren->draw (c, fng, x + xpos[start], y);
+    if (c >= 0) ren->draw (c, fng, start==0? x: x + xpos[start], y);
   }
 }
 

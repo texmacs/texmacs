@@ -95,7 +95,7 @@ poor_italic_font_rep::draw_fixed (renderer ren, string s,
     font_metric fnm;
     font_glyphs fng;
     int c= index_glyph (ss, fnm, fng);
-    if (c >= 0) ren->draw (c, fng, x + xpos[start], y);
+    if (c >= 0) ren->draw (c, fng, start==0? x: x + xpos[start], y);
   }
 }
 
