@@ -63,6 +63,7 @@ font_rep::copy_math_pars (font fn) {
   ysup_hi_lim  = fn->ysup_hi_lim;
   yshift       = fn->yshift;
   wpt          = fn->wpt;
+  hpt          = fn->hpt;
   wfn          = fn->wfn;
   wline        = fn->wline;
   wquad        = fn->wquad;

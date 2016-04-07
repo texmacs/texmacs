@@ -54,9 +54,10 @@ rubber_assemble_font_rep::rubber_assemble_font_rep (string name, font base2):
     initialized << false;
     larger << base;
   }
-  int dpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
+  int hdpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
+  int vdpi= (72 * base->hpt + (PIXEL/2)) / PIXEL;
   initialized << true;
-  larger << virtual_font (base, "unilong", base->size, dpi, dpi);
+  larger << virtual_font (base, "unilong", base->size, hdpi, vdpi);
   virt= load_translator ("unilong");
 }
 

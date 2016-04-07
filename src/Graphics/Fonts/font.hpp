@@ -64,6 +64,7 @@ struct font_rep: rep<font> {
   SI       yshift;           // vertical script shift inside fractions
 
   SI       wpt;              // width of one point in font
+  SI       hpt;              // height of one point in font (usually wpt)
   SI       wfn;              // wpt * design size in points
   SI       wline;            // width of fraction bars and so
   SI       wquad;            // quad space (often width of widest character M)

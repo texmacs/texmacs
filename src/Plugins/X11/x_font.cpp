@@ -342,6 +342,7 @@ x_font_rep::x_font_rep (string name, string family2, int size2, int dpi2):
 
   // compute other widths
   wpt          = (dpi*PIXEL)/72;
+  hpt          = (dpi*PIXEL)/72;
   wfn          = (wpt*design_size) >> 8;
   wline        = wfn/20;
 

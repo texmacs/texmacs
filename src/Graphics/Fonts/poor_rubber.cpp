@@ -69,8 +69,9 @@ poor_rubber_font_rep::get_font (int nr) {
   }
   else if (nr == MAGNIFIED_NUMBER + 1) {
     font large= get_font (MAGNIFIED_NUMBER);
-    int dpi= (72 * large->wpt + (PIXEL/2)) / PIXEL;
-    larger[nr]= virtual_font (large, "poorlong", large->size, dpi, dpi);
+    int hdpi= (72 * large->wpt + (PIXEL/2)) / PIXEL;
+    int vdpi= (72 * large->hpt + (PIXEL/2)) / PIXEL;
+    larger[nr]= virtual_font (large, "poorlong", large->size, hdpi, vdpi);
   }
   else
     larger[nr]= rubber_unicode_font (base);
