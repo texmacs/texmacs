@@ -1076,7 +1076,9 @@ font_size (string name) {
   while ((szpos>0) && is_numeric (name[szpos-1])) szpos--;
   double size= as_double (name (szpos, pos));
   if (size == 0) size= 10;
-  double dpi= as_double (name (pos+1, N(name)-2));
+  int end= pos+1;
+  while (end < N(name) && is_numeric (name[end])) end++;
+  double dpi= as_double (name (pos+1, end));
   double mag= (size) * (dpi/72.0);
   return mag;
 }

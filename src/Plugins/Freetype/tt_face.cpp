@@ -119,7 +119,7 @@ tt_font_metric_rep::kerning (int left, int right) {
 font_metric
 tt_font_metric (string family, int size, int hdpi, int vdpi) {
   string name= family * as_string (size) * "@" * as_string (hdpi);
-  if (vdpi != hdpi) name << "," << as_string (vdpi);
+  if (vdpi != hdpi) name << "x" << as_string (vdpi);
   return make (font_metric, name,
 	       tm_new<tt_font_metric_rep> (name, family, size, hdpi, vdpi));
 }
@@ -187,7 +187,7 @@ font_glyphs
 tt_font_glyphs (string family, int size, int hdpi, int vdpi) {
   string name=
     family * ":" * as_string (size) * "." * as_string (hdpi);
-  if (vdpi != hdpi) name << "," << as_string (vdpi);
+  if (vdpi != hdpi) name << "x" << as_string (vdpi);
   name << "tt";
   return make (font_glyphs, name,
 	       tm_new<tt_font_glyphs_rep> (name, family, size, hdpi, vdpi));

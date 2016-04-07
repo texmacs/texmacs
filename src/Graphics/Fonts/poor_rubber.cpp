@@ -68,10 +68,13 @@ poor_rubber_font_rep::get_font (int nr) {
     larger[nr]= base->magnify (zoomx, zoomy);
   }
   else if (nr == MAGNIFIED_NUMBER + 1) {
-    font large= get_font (MAGNIFIED_NUMBER);
-    int hdpi= (72 * large->wpt + (PIXEL/2)) / PIXEL;
-    int vdpi= (72 * large->hpt + (PIXEL/2)) / PIXEL;
-    larger[nr]= virtual_font (large, "poorlong", large->size, hdpi, vdpi);
+    int hdpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
+    int vdpi= (72 * base->hpt + (PIXEL/2)) / PIXEL;
+    font vfn= virtual_font (base, "poorlong", base->size, hdpi, vdpi);
+    double zoomy= pow (2.0, ((double) MAGNIFIED_NUMBER) / 4.0);
+    double zoomx= sqrt (zoomy);
+    larger[nr]= poor_stretched_font (vfn, zoomx, zoomy);
+    //larger[nr]= vfn->magnify (zoomx, zoomy);
   }
   else
     larger[nr]= rubber_unicode_font (base);

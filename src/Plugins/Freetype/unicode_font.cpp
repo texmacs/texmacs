@@ -433,7 +433,7 @@ unicode_font_rep::get_right_correction (string s) {
 font
 unicode_font (string family, int size, int hdpi, int vdpi) {
   string name= "unicode:" * family * as_string (size) * "@" * as_string (hdpi);
-  if (vdpi != hdpi) name << "," << as_string (vdpi);
+  if (vdpi != hdpi) name << "x" << as_string (vdpi);
   return make (font, name,
                tm_new<unicode_font_rep> (name, family, size, hdpi, vdpi));
 }

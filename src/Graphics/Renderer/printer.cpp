@@ -475,9 +475,6 @@ static string pfb_to_pfa (url file) {
 
 #undef HEX_PER_LINE
 
-
-
-
 void
 printer_rep::generate_tex_fonts () {
   hashset<string> done;
@@ -496,9 +493,8 @@ printer_rep::generate_tex_fonts () {
       int pos2= search_backwards (":", fn_name);
       root= fn_name (0, pos2);
       url u= tt_font_find (root);
-      if (suffix (u) == "pfb") {
+      if (suffix (u) == "pfb")
         ttf = pfb_to_pfa (u);
-      }
     }
 #endif
 
@@ -602,6 +598,7 @@ printer_rep::set_transformation (frame fr) {
 
 void
 printer_rep::reset_transformation () {
+  //cout << "Reset transformation\n";
   renderer_rep::unclip ();
   print ("grestore");
 }
@@ -677,6 +674,7 @@ printer_rep::set_background (brush b) {
 
 void
 printer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
+  //cout << "Draw " << ch << " at " << (x/PIXEL) << ", " << (y/PIXEL) << "\n";
   if (opacity == 0) return;
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;

@@ -229,7 +229,7 @@ tt_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
 font
 tt_font (string family, int size, int hdpi, int vdpi) {
   string name= "tt:" * family * as_string (size) * "@" * as_string (hdpi);
-  if (vdpi != hdpi) name << "," << as_string (vdpi);
+  if (vdpi != hdpi) name << "x" << as_string (vdpi);
   return make (font, name,
                tm_new<tt_font_rep> (name, family, size, hdpi, vdpi));
 }

@@ -43,6 +43,7 @@ struct virtual_font_rep: font_rep {
   void   draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
                        SI x1, SI y1, SI x2, SI y2);
   void   draw_transformed (renderer ren, scheme_tree t, SI x, SI y, frame f);
+  void   advance_glyph (string s, int& pos);
   int    get_char (string s, font_metric& fnm, font_glyphs& fng);
   glyph  get_glyph (string s);
   int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
@@ -617,7 +618,8 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
   else {
     int c= ((QN) s[0]);
     if ((c<0) || (c>=last)) return -1;
-    make_char_font (res_name * s, cfnm, cfng);
+    string sub= "[" * as_string (c) * "," * s(1,N(s)-1) * "]";
+    make_char_font (res_name * sub, cfnm, cfng);
     tree t= subst_sharp (virt->virt_def[c], s(1,N(s)));
     if (is_nil (cfng->get(0)))
       cfng->get(0)= compile (t, cfnm->get(0));
@@ -711,6 +713,11 @@ virtual_font_rep::magnify (double zoomx, double zoomy) {
                        (int) tm_round (vdpi * zoomy));
 }
 
+void
+virtual_font_rep::advance_glyph (string s, int& pos) {
+  pos= N(s);
+}
+
 glyph
 virtual_font_rep::get_glyph (string s) {
   font_metric cfnm;
@@ -763,7 +770,7 @@ virtual_font (font base, string name, int size, int hdpi, int vdpi) {
   string full_name=
     base->res_name * "#virtual-" *
     name * as_string (size) * "@" * as_string (hdpi);
-  if (vdpi != hdpi) full_name << "," << vdpi;
+  if (vdpi != hdpi) full_name << "x" << vdpi;
   return make (font, full_name,
                tm_new<virtual_font_rep> (full_name, base, name, size,
                                          hdpi, vdpi));
