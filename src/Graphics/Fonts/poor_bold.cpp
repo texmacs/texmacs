@@ -65,6 +65,11 @@ poor_bold_font_rep::poor_bold_font_rep (string name, font b,
 
 void
 poor_bold_font_rep::fatten (string c, SI& dpen, SI& dtot) {
+  // FIXME: a future improvement would be to allow the total increase 'dtot'
+  // of width to be higher than the thickening 'dpen'.  For instance,
+  // for the character 'i', we should have dtot = dpen, but for 'n'
+  // and 'fi', we should rather have dtot = 2 dpen; for 'm', we should
+  // even have dtot = 3 pen.  This requires horizontal font stretching.
   if (is_uni_upcase_char (c)) {
     dpen= dup;
     dtot= dup;
