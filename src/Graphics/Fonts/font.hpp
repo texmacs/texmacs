@@ -115,7 +115,7 @@ string default_japanese_font_name ();
 string default_korean_font_name ();
 
 font error_font (font fn);
-font virtual_font (font base, string family, int size, int dpi);
+font virtual_font (font base, string family, int size, int hdpi, int vdpi);
 font virtual_enhance_font (font base, string virt);
 font tt_font (string family, int size, int dpi);
 font unicode_font (string family, int size, int dpi);
@@ -143,7 +143,7 @@ font tex_dummy_rubber_font (font base_fn);
 
 void font_rule (tree which, tree by);
 font find_font (scheme_tree t);
-font find_magnified_font (scheme_tree t, double zf);
+font find_magnified_font (scheme_tree t, double zoomx, double zoomy);
 font find_font (string family, string fn_class,
 		string series, string shape, int sz, int dpi);
 bool find_closest (string& family, string& variant,
@@ -151,8 +151,9 @@ bool find_closest (string& family, string& variant,
 font closest_font (string family, string variant, string series, string shape,
 		   int sz, int dpi, int attempt= 1);
 
-font math_font (scheme_tree t, font base_fn, font error_fn, double zoom= 1.0);
-font compound_font (scheme_tree def, double zoom= 1.0);
+font math_font (scheme_tree t, font base_fn, font error_fn,
+                double zoomx, double zoomy);
+font compound_font (scheme_tree def, double zoomx, double zoomy);
 font smart_font (string family, string variant, string series, string shape,
                  int sz, int dpi);
 font smart_font (string family, string variant, string series, string shape,

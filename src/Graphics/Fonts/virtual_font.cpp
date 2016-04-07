@@ -23,14 +23,18 @@ struct virtual_font_rep: font_rep {
   font         base_fn;
   string       fn_name;
   translator   virt;
-  int          size, dpi;
+  int          size;
+  int          hdpi;
+  int          vdpi;
   int          last;
   font_metric  fnm;
   font_glyphs  fng;
-  double       unit;
+  double       hunit;
+  double       vunit;
   hashmap<scheme_tree,metric_struct> trm;
 
-  virtual_font_rep (string name, font base, string vname, int size, int dpi);
+  virtual_font_rep (string name, font base, string vname, int size,
+                    int hdpi, int vdpi);
   glyph  compile_bis (scheme_tree t, metric& ex);
   glyph  compile (scheme_tree t, metric& ex);
   void   get_metric (scheme_tree t, metric& ex);
@@ -58,16 +62,18 @@ struct virtual_font_rep: font_rep {
 };
 
 virtual_font_rep::virtual_font_rep (
-  string name, font base, string vname, int size2, int dpi2):
+  string name, font base, string vname, int size2, int hdpi2, int vdpi2):
     font_rep (name, base), base_fn (base), fn_name (vname),
-    virt (load_translator (vname)), size (size2), dpi (dpi2),
+    virt (load_translator (vname)), size (size2),
+    hdpi (hdpi2), vdpi (vdpi2),
     last (N(virt->virt_def)),
     fnm (std_font_metric (name, tm_new_array<metric> (last), 0, last-1)),
     fng (std_font_glyphs (name, tm_new_array<glyph> (last), 0, last-1)),
     trm (metric_struct ())
 {
   copy_math_pars (base_fn);
-  unit= ((size*dpi)/72)*PIXEL;
+  hunit= ((size*hdpi)/72)*PIXEL;
+  vunit= ((size*vdpi)/72)*PIXEL;
 }
 
 /******************************************************************************
@@ -105,8 +111,8 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   if (is_func (t, TUPLE, 3) &&
       (is_double (t[0])) && (is_double (t[1])))
     {
-      SI x= (SI) (as_double (t[0]) * unit);
-      SI y= (SI) (as_double (t[1]) * unit);
+      SI x= (SI) (as_double (t[0]) * hunit);
+      SI y= (SI) (as_double (t[1]) * vunit);
       glyph gl= compile (t[2], ex);
       if (x != 0) {
         ex->x1 += x; ex->x3 += x - PIXEL;
@@ -169,10 +175,10 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "enlarge")) {
     glyph gl= compile (t[1], ex);
-    if (N(t)>2) ex->x1 -= (SI) (as_double (t[2]) * unit);
-    if (N(t)>3) ex->x2 += (SI) (as_double (t[3]) * unit);
-    if (N(t)>4) ex->y1 -= (SI) (as_double (t[4]) * unit);
-    if (N(t)>5) ex->y2 += (SI) (as_double (t[5]) * unit);
+    if (N(t)>2) ex->x1 -= (SI) (as_double (t[2]) * hunit);
+    if (N(t)>3) ex->x2 += (SI) (as_double (t[3]) * hunit);
+    if (N(t)>4) ex->y1 -= (SI) (as_double (t[4]) * vunit);
+    if (N(t)>5) ex->y2 += (SI) (as_double (t[5]) * vunit);
     return gl;
   }
 
@@ -181,13 +187,13 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     SI x1, y1, x2, y2;
     get_bounding_box (gl, x1, y1, x2, y2);
     if (N(t)>2 && t[2]!="*")
-      x1= ex->x1= ex->x3= (SI) (as_double (t[2]) * unit);
+      x1= ex->x1= ex->x3= (SI) (as_double (t[2]) * hunit);
     if (N(t)>3 && t[3]!="*")
-      x2= ex->x2= ex->x4= (SI) (as_double (t[3]) * unit);
+      x2= ex->x2= ex->x4= (SI) (as_double (t[3]) * hunit);
     if (N(t)>4 && t[4]!="*")
-      y1= ex->y1= ex->y3= (SI) (as_double (t[4]) * unit);
+      y1= ex->y1= ex->y3= (SI) (as_double (t[4]) * vunit);
     if (N(t)>5 && t[5]!="*")
-      y2= ex->y2= ex->y4= (SI) (as_double (t[5]) * unit);
+      y2= ex->y2= ex->y4= (SI) (as_double (t[5]) * vunit);
     return clip (gl, x1, y1, x2, y2);
   }
 
@@ -258,9 +264,9 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {
     glyph gl= compile (t[1], ex);
     int pos= (int) (as_double (t[2]) * gl->width);
-    SI  add= (SI)  (as_double (t[3]) * unit);
+    SI  add= (SI)  (as_double (t[3]) * hunit);
     if (is_tuple (t, "hor-extend", 4))
-      add= (SI)  (as_double (t[3]) * as_double (t[4]) * unit);
+      add= (SI)  (as_double (t[3]) * as_double (t[4]) * hunit);
     int by = add / PIXEL;
     if (pos < 0) pos= 0;
     if (pos >= gl->width) pos= gl->width-1;
@@ -272,9 +278,9 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   if (is_tuple (t, "ver-extend", 3) || is_tuple (t, "ver-extend", 4)) {
     glyph gl= compile (t[1], ex);
     int pos= (int) ((1.0 - as_double (t[2])) * gl->height);
-    SI  add= (SI)  (as_double (t[3]) * unit);
+    SI  add= (SI)  (as_double (t[3]) * vunit);
     if (is_tuple (t, "ver-extend", 4))
-      add= (SI)  (as_double (t[3]) * as_double (t[4]) * unit);
+      add= (SI)  (as_double (t[3]) * as_double (t[4]) * vunit);
     int by = add / PIXEL;
     if (pos < 0) pos= 0;
     if (pos >= gl->height) pos= gl->height-1;
@@ -338,8 +344,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_func (t, TUPLE, 3) &&
       (is_double (t[0])) && (is_double (t[1])))
     {
-      SI dx= (SI) (as_double (t[0]) * unit);
-      SI dy= (SI) (as_double (t[1]) * unit);
+      SI dx= (SI) (as_double (t[0]) * hunit);
+      SI dy= (SI) (as_double (t[1]) * vunit);
       draw (ren, t[2], x+dx, y+dy);
       return;
     }
@@ -397,10 +403,10 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_tuple (t, "clip")) {
     metric ex;
     get_metric (t[1], ex);
-    if (N(t)>2 && t[2]!="*") ex->x3= (SI) (as_double (t[2]) * unit);
-    if (N(t)>3 && t[3]!="*") ex->x4= (SI) (as_double (t[3]) * unit);
-    if (N(t)>4 && t[4]!="*") ex->y3= (SI) (as_double (t[4]) * unit);
-    if (N(t)>5 && t[5]!="*") ex->y4= (SI) (as_double (t[5]) * unit);
+    if (N(t)>2 && t[2]!="*") ex->x3= (SI) (as_double (t[2]) * hunit);
+    if (N(t)>3 && t[3]!="*") ex->x4= (SI) (as_double (t[3]) * hunit);
+    if (N(t)>4 && t[4]!="*") ex->y3= (SI) (as_double (t[4]) * vunit);
+    if (N(t)>5 && t[5]!="*") ex->y4= (SI) (as_double (t[5]) * vunit);
     draw_clipped (ren, t[1], x, y, ex->x3, ex->y3, ex->x4, ex->y4);
     return;
   }
@@ -473,9 +479,9 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     metric ex;
     get_metric (t[1], ex);
     SI pos= (SI) (as_double (t[2]) * (ex->x2 - ex->x1));
-    SI add= (SI) (as_double (t[3]) * unit);
+    SI add= (SI) (as_double (t[3]) * hunit);
     if (is_tuple (t, "hor-extend", 4))
-      add= (SI) (as_double (t[3]) * as_double (t[4]) * unit);
+      add= (SI) (as_double (t[3]) * as_double (t[4]) * hunit);
     if (add > 0 && ex->x2 > ex->x1) {
       SI  w = ex->x2 - ex->x1;
       int n = (int) ((20 * add + w - 1) / w);
@@ -494,9 +500,9 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     metric ex;
     get_metric (t[1], ex);
     SI pos= (SI) ((1.0 - as_double (t[2])) * (ex->y2 - ex->y1));
-    SI add= (SI) (as_double (t[3]) * unit);
+    SI add= (SI) (as_double (t[3]) * vunit);
     if (is_tuple (t, "ver-extend", 4))
-      add= (SI) (as_double (t[3]) * as_double (t[4]) * unit);
+      add= (SI) (as_double (t[3]) * as_double (t[4]) * vunit);
     if (add > 0 && ex->y2 > ex->y1) {
       SI  h = ex->y2 - ex->y1;
       int n = (int) ((20 * add + h - 1) / h);
@@ -700,9 +706,9 @@ virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
 
 font
 virtual_font_rep::magnify (double zoomx, double zoomy) {
-  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
   return virtual_font (base_fn->magnify (zoomx, zoomy), fn_name, size,
-                       (int) tm_round (dpi * zoomx));
+                       (int) tm_round (hdpi * zoomx),
+                       (int) tm_round (vdpi * zoomy));
 }
 
 glyph
@@ -744,7 +750,7 @@ SI
 virtual_font_rep::get_right_correction (string s) {
   tree t= get_tree (s);
   if (is_tuple (t, "italic", 3))
-    return (SI) (as_double (t[3]) * unit);
+    return (SI) (as_double (t[3]) * hunit);
   return font_rep::get_right_correction (s);
 }
 
@@ -753,10 +759,12 @@ virtual_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 font
-virtual_font (font base, string name, int size, int dpi) {
+virtual_font (font base, string name, int size, int hdpi, int vdpi) {
   string full_name=
     base->res_name * "#virtual-" *
-    name * as_string (size) * "@" * as_string (dpi);
+    name * as_string (size) * "@" * as_string (hdpi);
+  if (vdpi != hdpi) full_name << "," << vdpi;
   return make (font, full_name,
-    tm_new<virtual_font_rep> (full_name, base, name, size, dpi));
+               tm_new<virtual_font_rep> (full_name, base, name, size,
+                                         hdpi, vdpi));
 }

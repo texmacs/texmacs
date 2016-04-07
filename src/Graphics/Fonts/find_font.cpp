@@ -77,7 +77,7 @@ find_font_bis (tree t) {
   if ((arity (t)==0) || is_compound (t[0])) return font ();
 
   if (is_tuple (t, "compound"))
-    return compound_font (t (1, N(t)));
+    return compound_font (t (1, N(t)), 1.0, 1.0);
 
   if (is_tuple (t, "truetype", 3))
     return tt_font (as_string (t[1]), as_int (t[2]), as_int (t[3]));
@@ -175,7 +175,7 @@ find_font_bis (tree t) {
     if (is_nil (fn)) return fn;
     font error_fn= error_font (find_font (t[4]));
     if (is_nil (error_fn)) error_fn= error_font (fn);
-    return math_font (t, fn, error_fn);
+    return math_font (t, fn, error_fn, 1.0, 1.0);
   }
 
   if (!font_conversion->contains (t[0]->label)) {
@@ -215,10 +215,10 @@ find_font (tree t) {
 }
 
 font
-find_magnified_font (tree t, double zoom) {
+find_magnified_font (tree t, double zoomx, double zoomy) {
   font fn= find_font (t);
   if (is_nil (fn)) return fn;
-  return fn->magnify (zoom);
+  return fn->magnify (zoomx, zoomy);
 }
 
 /******************************************************************************

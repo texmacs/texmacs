@@ -45,7 +45,7 @@ virtual_enhance_font_rep::virtual_enhance_font_rep (
 {
   this->copy_math_pars (base);
   int dpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
-  extra= virtual_font (base, virt, base->size, dpi);
+  extra= virtual_font (base, virt, base->size, dpi, dpi);
 }
 
 bool

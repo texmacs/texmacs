@@ -820,7 +820,7 @@ smart_font_rep::initialize_font (int nr) {
   else if (a[0] == "bbb" && N(a) == 1)
     fn[nr]= smart_font (family, "outline", series, "right", sz, dpi);
   else if (a[0] == "virtual")
-    fn[nr]= virtual_font (this, a[1], sz, dpi);
+    fn[nr]= virtual_font (this, a[1], sz, dpi, dpi);
   else if (a[0] == "rubber" && N(a) == 2 && is_int (a[1])) {
     initialize_font (as_int (a[1]));
     fn[nr]= rubber_font (fn[as_int (a[1])]);
