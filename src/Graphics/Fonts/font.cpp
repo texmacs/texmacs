@@ -317,8 +317,7 @@ font_rep::index_glyph (string s, font_metric& fnm, font_glyphs& fng) {
 
 font
 font_rep::poor_magnify (double zoomx, double zoomy) {
-  ASSERT (zoomx == zoomy, "should conserve aspect-ratio");
-  return magnify (zoomx, zoomy);
+  return poor_stretched_font (this, zoomx, zoomy);
 }
 
 font

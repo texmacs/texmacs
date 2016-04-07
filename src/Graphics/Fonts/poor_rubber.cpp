@@ -65,8 +65,7 @@ poor_rubber_font_rep::get_font (int nr) {
   if (nr <= MAGNIFIED_NUMBER) {
     double zoomy= pow (2.0, ((double) nr) / 4.0);
     double zoomx= sqrt (zoomy);
-    //larger[nr]= base->magnify (zoomx, zoomy);
-    larger[nr]= poor_stretched_font (base, zoomx, zoomy);
+    larger[nr]= base->magnify (zoomx, zoomy);
   }
   else if (nr == MAGNIFIED_NUMBER + 1) {
     font large= get_font (MAGNIFIED_NUMBER);
