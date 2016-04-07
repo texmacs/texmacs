@@ -54,6 +54,7 @@ struct tex_font_rep: font_rep {
   void  advance_glyph (string s, int& pos);
   glyph get_glyph (string s);
   int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
+  int   get_ligature_code (string s);
   void  special_get_extents (string s, metric& ex);
   void  special_get_xpositions (string s, SI* xpos, bool ligf);
   void  special_draw (renderer ren, string s, SI x, SI y);
@@ -612,6 +613,7 @@ tex_font_rep::get_extents (string s, metric& ex) {
 void
 tex_font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
   register int i, n= N(s);
+  xpos[0]= 0;
   if (n == 0) return;
   
   switch (status) {
@@ -799,7 +801,7 @@ tex_font_rep::advance_glyph (string s, int& pos) {
       STACK_NEW_ARRAY (buf, int, m);
       STACK_NEW_ARRAY (ker, int, m);
       for (int i=0; i<n; i++) str[i]= ((QN) r[i]);
-      tfm->execute (str, n, buf, ker, m);      
+      tfm->execute (str, n, buf, ker, m);
       bool done= (m > 0 && buf[0] == c);
       if (!done && m > 0) c= buf[0];
       STACK_DELETE_ARRAY (str);
@@ -835,8 +837,10 @@ tex_font_rep::get_glyph (string s) {
 	return font_rep::get_glyph (s);
     break;
   }
-  if (N(s)!=1) return font_rep::get_glyph (s);
-  int c= ((QN) s[0]);
+  int c;
+  if (N(s) != 1) c= get_ligature_code (s);
+  else c= ((QN) s[0]);
+  if (c == -1) return font_rep::get_glyph (s);
   glyph gl= pk->get (c);
   if (is_nil (gl)) return font_rep::get_glyph (s);
   return gl;
@@ -863,14 +867,31 @@ tex_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
 	return font_rep::index_glyph (s, rm, rg);
     break;
   }
-  if (N(s)!=1) return font_rep::index_glyph (s, rm, rg);
-  int c= ((QN) s[0]);
+  int c;
+  if (N(s) != 1) c= get_ligature_code (s);
+  else c= ((QN) s[0]);
+  if (c == -1) return font_rep::index_glyph (s, rm, rg);
   glyph gl= pk->get (c);
   if (is_nil (gl)) return font_rep::index_glyph (s, rm, rg);
-  FAILED ("conversion of tex_font_metric into font_metric not implemented");
   rm= tfm_font_metric (tfm, pk, unit);
   rg= pk;
   return c;
+}
+
+int
+tex_font_rep::get_ligature_code (string s) {
+  int n= N(s);
+  int m= (n+16) << 1;
+  STACK_NEW_ARRAY (str, int, n);
+  STACK_NEW_ARRAY (buf, int, m);
+  STACK_NEW_ARRAY (ker, int, m);
+  for (int i=0; i<n; i++) str[i]= ((QN) s[i]);
+  tfm->execute (str, n, buf, ker, m);
+  STACK_DELETE_ARRAY (str);
+  STACK_DELETE_ARRAY (buf);
+  STACK_DELETE_ARRAY (ker);
+  if (m == 1) return buf[0];
+  else return -1;
 }
 
 /******************************************************************************

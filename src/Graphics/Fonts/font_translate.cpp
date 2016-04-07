@@ -282,18 +282,20 @@ find_closest (string& family, string& variant, string& series, string& shape,
     lfn= apply_substitutions (lfn);
     array<string> pfn= search_font (lfn, attempt);
     array<string> nfn= logical_font (pfn[0], pfn[1]);
-    //cout << lfn << " -> " << nfn << "\n";
+    array<string> gfn= guessed_features (pfn[0], pfn[1]);
+    //cout << lfn << " -> " << nfn << ", " << gfn << "\n";
+    gfn << nfn;
     family= get_family (nfn);
     variant= get_variant (nfn);
     series= get_series (nfn);
     shape= get_shape (nfn);
     if ( contains (string ("smallcaps"), lfn) &&
-	!contains (string ("smallcaps"), nfn))
+	!contains (string ("smallcaps"), gfn))
       shape= shape * "-poorsc";
     if ((contains (string ("italic"), lfn) ||
-         contains (string ("slanted"), lfn)) &&
-	!contains (string ("italic"), nfn) &&
-        !contains (string ("slanted"), nfn))
+         contains (string ("oblique"), lfn)) &&
+	!contains (string ("italic"), gfn) &&
+        !contains (string ("oblique"), gfn))
       shape= shape * "-poorit";
     //cout << "> " << family << ", " << variant
     //     << ", " << series << ", " << shape << "\n";
