@@ -29,6 +29,7 @@ RESOURCE(smart_map);
 #define REWRITE_CYRILLIC   2
 #define REWRITE_LETTERS    3
 #define REWRITE_SPECIAL    4
+#define REWRITE_POOR_BBB   5
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -553,6 +554,8 @@ rewrite (string s, int kind) {
     return rewrite_letters (s);
   case REWRITE_SPECIAL:
     return special_table [s];
+  case REWRITE_POOR_BBB:
+    return s (N(s)-2, N(s)-1);
   default:
     return s;
   }
@@ -746,6 +749,24 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in general\n";
       return sm->add_char (tuple ("virtual", "general"), c);
     }
+    /*
+    if (N(c) == 7 && starts (c, "<bbb-")) {
+      array<string> a= trimmed_tokenize (family, ",");
+      for (int i=0; i < N(a); i++) {
+        int nr= resolve (c, a[i], 1);
+        if (nr >= 0) return nr;
+      }
+      for (int i=0; i < N(a); i++) {
+        font cfn= closest_font (a[i], variant, series, rshape, sz, dpi, 1);
+        if (cfn->supports (c (N(c)-2, N(c)-1))) {
+          tree key= tuple ("poor-bbb");
+          int nr= sm->add_font (key, REWRITE_POOR_BBB);
+          initialize_font (nr);
+          return sm->add_char (key, c);
+        }
+      }
+    }
+    */
   }
 
   array<string> a= trimmed_tokenize (family, ",");
@@ -821,6 +842,9 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font (family, "outline", series, "right", sz, dpi);
   else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi, dpi);
+  else if (a[0] == "poor-bbb") {
+    font sfn= smart_font (family, variant, series, "right", sz, dpi);
+    fn[nr]= poor_bbb_font (sfn); }
   else if (a[0] == "rubber" && N(a) == 2 && is_int (a[1])) {
     initialize_font (as_int (a[1]));
     fn[nr]= rubber_font (fn[as_int (a[1])]);

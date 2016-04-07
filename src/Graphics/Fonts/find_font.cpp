@@ -235,22 +235,22 @@ find_font (string family, string variant,
     as_string (sz) * "-" * as_string (dpi);
   if (font::instances->contains (s)) return font (s);
 
-  if (ends (shape, "-poorsc")) {
-    string shape2= shape (0, N(shape) - 7);
-    font fn= find_font (family, variant, series, shape2, sz, dpi);
-    if (!is_nil (fn)) {
-      font scfn= poor_smallcaps_font (fn);
-      font::instances (s)= (pointer) scfn.rep;
-      return scfn;
-    }
-  }
-  else if (ends (shape, "-poorit")) {
+  if (ends (shape, "-poorit")) {
     string shape2= shape (0, N(shape) - 7);
     font fn= find_font (family, variant, series, shape2, sz, dpi);
     if (!is_nil (fn)) {
       font itfn= poor_italic_font (fn, 0.25);
       font::instances (s)= (pointer) itfn.rep;
       return itfn;
+    }
+  }
+  else if (ends (shape, "-poorsc")) {
+    string shape2= shape (0, N(shape) - 7);
+    font fn= find_font (family, variant, series, shape2, sz, dpi);
+    if (!is_nil (fn)) {
+      font scfn= poor_smallcaps_font (fn);
+      font::instances (s)= (pointer) scfn.rep;
+      return scfn;
     }
   }
   else if (ends (series, "-poorbf")) {
@@ -260,6 +260,15 @@ find_font (string family, string variant,
       font bffn= poor_bold_font (fn);
       font::instances (s)= (pointer) bffn.rep;
       return bffn;
+    }
+  }
+  else if (ends (variant, "-poorbbb")) {
+    string variant2= variant (0, N(variant) - 8);
+    font fn= find_font (family, variant2, series, shape, sz, dpi);
+    if (!is_nil (fn)) {
+      font bbbfn= poor_bbb_font (fn);
+      font::instances (s)= (pointer) bbbfn.rep;
+      return bbbfn;
     }
   }
 

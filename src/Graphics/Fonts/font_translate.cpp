@@ -289,6 +289,9 @@ find_closest (string& family, string& variant, string& series, string& shape,
     variant= get_variant (nfn);
     series= get_series (nfn);
     shape= get_shape (nfn);
+    if ( contains (string ("outline"), lfn) &&
+	!contains (string ("outline"), gfn))
+      variant= variant * "-poorbbb";
     if ( contains (string ("bold"), lfn) &&
 	!contains (string ("bold"), gfn))
       series= series * "-poorbf";

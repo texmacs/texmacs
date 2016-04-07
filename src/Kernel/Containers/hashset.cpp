@@ -126,4 +126,10 @@ hashset<T>::operator tree () {
   return t;
 }
 
+template<class T> hashset<T>&
+operator << (hashset<T>& h, T x) {
+  h->insert (x);
+  return h;
+}
+
 #endif // defined HASHSET_CC

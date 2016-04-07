@@ -58,6 +58,7 @@ template<class T> inline int N (hashset<T> h) { return h->size; }
 template<class T> bool operator == (hashset<T> h1, hashset<T> h2);
 template<class T> bool operator <= (hashset<T> h1, hashset<T> h2);
 template<class T> bool operator <  (hashset<T> h1, hashset<T> h2);
+template<class T> hashset<T>& operator << (hashset<T>& h, T x);
 
 #include "hashset.cpp"
 

@@ -11,6 +11,7 @@
 
 #include "bitmap_font.hpp"
 #include "renderer.hpp"
+#include "hashset.hpp"
 
 extern glyph error_glyph;
 extern metric error_metric;
@@ -258,4 +259,102 @@ bolden (font_glyphs fng, SI dpen) {
   string name= fng->res_name * "-bolden[" * as_string (dpen) * "]";
   return make (font_glyphs, name,
                tm_new<bolden_font_glyphs_rep> (name, fng, dpen));
+}
+
+/******************************************************************************
+* Emulation of blackboard bold fonts
+******************************************************************************/
+
+static hashset<int> bbb_left;
+static hashset<int> bbb_right;
+
+static void
+bbb_initialize () {
+  if (N(bbb_left) != 0) return;
+  bbb_left  << ((int) 'K')<< ((int) 'N') << ((int) 'R');
+  bbb_right << ((int) '1') << ((int) '2') << ((int) '3') << ((int) '4')
+            << ((int) '7') << ((int) '9')
+            << ((int) 'J')
+            << ((int) 'a') << ((int) 'd') << ((int) 'g') << ((int) 'j')
+            << ((int) 'q') << ((int) 'y')
+            << ((int) ')') << ((int) ']') << ((int) '}');
+}
+
+glyph
+erase_interior (glyph gl, SI pen) {
+  int r= (pen + (PIXEL/2)) / PIXEL;
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++) {
+      bmr->set_x (i, j, gl->get_x (i, j));
+      bool erase= i>=r && j>=r && ww>i+r && hh>j+r;
+      if (erase)
+        for (int dj= -r; dj <= r; dj++)
+          for (int di= -r; di <= r; di++)
+            if ((di*di + dj*dj) <= r*r)
+              if (gl->get_x (i+di, j+dj) == 0)
+                erase= false;
+      if (erase) bmr->set_x (i, j, 0);
+    }
+  return bmr;
+}
+
+glyph
+make_bbb (glyph gl, SI pen, SI fat) {
+  int dw= (fat + (PIXEL/2)) / PIXEL;
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww + dw, hh, gl->xoff, gl->yoff, gl->depth);
+  for (j=0; j<hh; j++) {    
+    for (i=0; i<dw; i++)
+      bmr->set_x (i, j, 0);
+    for (i=0; i<ww; i++)
+      bmr->set_x (i+dw, j, gl->get_x (i, j));
+  }
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++)
+      if (gl->get_x (i, j) != 0) {
+        for (int k=0; k<dw; k++)
+          bmr->set_x (i+k, j, 1);
+        break;
+      }
+  return erase_interior (bmr, pen);
+}
+
+glyph
+make_bbb (glyph gl, int code, SI pen, SI fat) {
+  bbb_initialize ();
+  if (bbb_left->contains (code))
+    return make_bbb (gl, pen, fat);
+  else if (false && bbb_right->contains (code)) {
+    glyph fgl = hor_flip (gl);
+    glyph fret= make_bbb (fgl, pen, fat);
+    return hor_flip (fret);
+  }
+  else return erase_interior (bolden (gl, fat), pen);
+}
+
+struct make_bbb_font_glyphs_rep: public font_glyphs_rep {
+  font_glyphs fng;
+  SI penw, fatw;
+  hashmap<int,glyph> gs;
+  make_bbb_font_glyphs_rep (string name, font_glyphs fng2, SI pw, SI fw):
+    font_glyphs_rep (name), fng (fng2),
+    penw (pw), fatw (fw), gs (error_glyph) {}
+  glyph& get (int c) {
+    glyph& orig (fng->get (c));
+    if ((&orig != &error_glyph) && !gs->contains (c))
+      gs(c)= make_bbb (orig, c, penw, fatw);
+    return gs(c); }
+};
+
+font_glyphs
+make_bbb (font_glyphs fng, SI penw, SI fatw) {
+  string name= fng->res_name * "-make_bbb[" * as_string (penw);
+  if (fatw != 4 * penw) name << "," << as_string (fatw);
+  name << "]";
+  return make (font_glyphs, name,
+               tm_new<make_bbb_font_glyphs_rep> (name, fng, penw, fatw));
 }
