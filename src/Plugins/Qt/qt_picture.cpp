@@ -150,16 +150,12 @@ picture_renderer (picture p, double zoomf) {
 QImage*
 get_image (url u, int w, int h) {
   QImage *pm = NULL;
-  string name;
-  if (is_ramdisc (u)) name = concretize(u);
-  else name = as_string(u);
-  pm= new QImage ();
   if (qt_supports (u))
-    pm->load(utf8_to_qstring (cork_to_utf8 (name)).toLocal8Bit ());//same as in QTMFileDialog
+    pm= new QImage (os8bits_to_qstring (concretize (u))); 
   else {
     url temp= url_temp (".png");
     image_to_png (u, temp, w, h);
-    pm->load(utf8_to_qstring (cork_to_utf8 (as_string (temp))).toLocal8Bit ());//same as in QTMFileDialog 
+    pm= new QImage (os8bits_to_qstring (as_string (temp)));
     remove (temp);
   }
   if (pm == NULL || pm->isNull ()) {

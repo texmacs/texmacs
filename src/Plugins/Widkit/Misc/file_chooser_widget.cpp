@@ -21,6 +21,8 @@
 #include "analyze.hpp"
 #include "scheme.hpp"
 #include "dictionary.hpp"
+#include "converter.hpp"
+#include "language.hpp"
 
 #ifdef OS_WIN32
 #include <X11/Xlib.h>
@@ -675,7 +677,7 @@ file_chooser_widget_rep::handle_get_string (get_string_event ev) {
       a[0]["file"]["input"] << get_string ("input", name);
       if (name == "#f") { ev->s= "#f"; return; }
       url u= url_system (scm_unquote (dir)) * url_system (scm_unquote (name));
-      ev->s= "(system->url " * scm_quote (as_string (u)) * ")";
+      ev->s= "(system->url " * scm_quote (convert(as_string (u), get_locale_charset () ,"Cork")) * ")";
     }
     if (type == "image") {
       string hsize, vsize, xpos, ypos;

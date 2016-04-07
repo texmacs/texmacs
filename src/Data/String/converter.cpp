@@ -15,6 +15,10 @@
 #include <iconv.h>
 #endif
 #include <errno.h>
+#ifdef QTTEXMACS
+#include "Qt/qt_utilities.hpp"
+#endif
+
 
 RESOURCE_CODE (converter);
 
@@ -451,6 +455,18 @@ string
 cork_to_ascii (string input) {
   converter conv = load_converter ("Cork", "ASCII");
   return apply (conv, input);
+}
+
+string
+cork_to_os8bits (const string s){   // os8bits!=UTF8 on windows
+#ifdef QTTEXMACS
+  return from_qstring_os8bits(utf8_to_qstring (cork_to_utf8 (s)));
+  // Qt can't explicitly return OS encoding; we stick to qt routines for consistency
+#else
+  // return convert(s , "Cork", get_locale_charset ());
+  // since this is X11 we can assume locale_charset==UTF8
+  return convert(s , "Cork", "UTF-8");  
+#endif
 }
 
 #ifdef USE_ICONV

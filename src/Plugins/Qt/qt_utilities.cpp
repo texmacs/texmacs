@@ -266,17 +266,23 @@ to_qstringlist (array<string> l) {
  it's cork, but often it's utf8. For instance when the title is built in a tmfs
  title handler in scheme, it is sent to us as an utf8 string. Should we convert
  before? Another example are items in the go-menu: file names are internally
- stored as utf8, but we assume that strings are sent to us for display in
+ stored using the os 8-bit encoding (UTF-8 on linux/Mac OS locale code page on windows),
+ but we assume that strings are sent to us for display in
  widgets as cork and thus display the wrong encoding.
  
  It gets tricky soon, so for the time being we use this hack.
  */
-QString
+QString //uses heuristics
 to_qstring (const string& s) {
   if (looks_utf8 (s) && !(looks_ascii (s) || looks_universal (s)))
     return utf8_to_qstring (s);
   else
     return utf8_to_qstring (cork_to_utf8 (s));
+}
+
+string
+from_qstring (const QString &s) {
+  return utf8_to_cork (from_qstring_utf8 (s));
 }
 
 QString
@@ -300,9 +306,21 @@ from_qstring_utf8 (const QString &s) {
   return string ((char*) cstr);
 }
 
+// os8bits == UTF-8 on linux/Mac OS but ==locale codepage on windows
+// Qt offers no way to explicitly know what is the encoding used!
+// note that older Unix/linuxes did not use UTF-8
+QString
+os8bits_to_qstring (const string& s) {
+  c_string p (s);
+  QString nss= QString::fromLocal8Bit (p, N(s));
+  return nss;
+}
+
 string
-from_qstring (const QString &s) {
-  return utf8_to_cork (from_qstring_utf8 (s));
+from_qstring_os8bits (const QString &s) {
+  QByteArray arr= s.toLocal8Bit ();
+  const char* cstr= arr.constData ();
+  return string ((char*) cstr);
 }
 
 // This should provide better lookup times
@@ -374,12 +392,7 @@ qt_supports (url u) {
 bool
 qt_image_size (url image, int& w, int& h) {// w, h in points
   if (DEBUG_CONVERT) debug_convert << "qt_image_size :" <<LF;
-  string name;
-  if (is_ramdisc (image)) name= concretize (image);
-  else name= as_string(image);
-  QImage im;
-  im.load(utf8_to_qstring (cork_to_utf8 (name)).toLocal8Bit ());
-  //same hacky conversion as in qt_chooser_widget.cpp::perform_dialog
+  QImage im= QImage (os8bits_to_qstring (concretize (image)));
   if (im.isNull ()) {
       convert_error << "Cannot read image file '" << image << "'"
       << " in qt_image_size" << LF;
@@ -398,20 +411,14 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
 void
 qt_convert_image (url image, url dest, int w, int h) {// w, h in pixels
   if (DEBUG_CONVERT) debug_convert << "qt_convert_image " << image << " -> "<<dest<<LF;
-  QImage im;
-  im.load(utf8_to_qstring (cork_to_utf8 (as_string (image))).toLocal8Bit ());
-  //same hacky conversion as in qt_chooser_widget.cpp::perform_dialog
+  QImage im (os8bits_to_qstring (concretize (image)));
   if (im.isNull ())
     convert_error << "Cannot read image file '" << image << "'"
     << " in qt_convert_image" << LF;
   else {
     if (w > 0 && h > 0)
       im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    im.save (utf8_to_qstring (cork_to_utf8 (as_string (dest))).toLocal8Bit ());
-    //same hacky conversion as in qt_chooser_widget.cpp::perform_dialog
-  if (!exists(dest)) convert_error << "Could not convert '" << image << "' to '" <<dest
-    << "' in qt_convert_image" << LF;
-
+    im.scaled (w, h).save (os8bits_to_qstring (concretize (dest)));
   }
 }
 
@@ -429,8 +436,8 @@ qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
   printer.setFullPage(true);
   if (!dpi) dpi=96; 
   printer.setResolution(dpi);
-  printer.setOutputFileName(utf8_to_qstring (concretize (outfile)));
-  QImage im (utf8_to_qstring (concretize (image)));
+  printer.setOutputFileName(os8bits_to_qstring (concretize (outfile)));
+  QImage im (os8bits_to_qstring (concretize (image)));
   if (im.isNull ()) {
     convert_error << "Cannot read image file '" << image << "'"
     << " in qt_image_to_pdf" << LF;

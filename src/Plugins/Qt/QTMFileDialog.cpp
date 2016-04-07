@@ -122,13 +122,8 @@ BEGIN_SLOT
   xps->setText ("");
   yps->setText ("");
 
-//  url image_url= url_system (scm_unquote (from_qstring_utf8 (file)));
-  QByteArray arr   = file.toLocal8Bit ();
-  const char* cstr = arr.constData ();
-  string localname = string ((char*) cstr);
-  url image_url= url_system (localname); 
-  //same conversion as in qt_chooser_widget_rep::perform_dialog ()
-  //handles correctly paths with non-ascii characters in windows (8-bit page code encoding but NOT full unicode)
+  string localname = from_qstring_os8bits(file);
+  url image_url= url_system (localname);
   if (DEBUG_CONVERT) debug_convert<<"image preview :["<<image_url<<"]"<<LF;
   if (!(as_string(image_url)=="") && !is_directory(image_url) && exists(image_url) ){
     url temp= url_temp (".png");
@@ -152,12 +147,7 @@ BEGIN_SLOT
 	  }
 	  //generate thumbnail :
 	  image_to_png (image_url, temp, w, h);
-	  // hack originally in qt_chooser_widget.cpp::perform_dialogwith comments :
-	      // FIXME: charset detection in to_qstring() (if that hack is still there)
-	      // fails sometimes, so we bypass it to force the proper (?) conversions here.
-	      // what was used previously : QByteArray arr   = to_qstring (as_string (u)).toLocal8Bit ();
-	  // this can handle e.g. a file in french windows whose path has spaces and accents
-	  img.load (utf8_to_qstring (cork_to_utf8 (as_string (temp))).toLocal8Bit ());
+	  img.load (os8bits_to_qstring (as_string (temp)));
 	  remove (temp);
     }
   }

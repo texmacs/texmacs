@@ -544,7 +544,8 @@ get_locale_language () {
 string
 get_locale_charset () {
 #if defined(__MINGW__) || defined(__MINGW32__)
-  return ("UTF-8");
+  return language_to_local_ISO_charset (get_locale_language ());
+  // for now we use 8-bit codepage stuff in windows; it would be nice to switch to unicode.
 #else
   return nl_langinfo (CODESET);
 #endif

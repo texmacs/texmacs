@@ -261,13 +261,8 @@ qt_chooser_widget_rep::perform_dialog () {
   if (dialog->exec ()) {
     fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
-      url u = url_system (scm_unquote (from_qstring (fileNames.first())));
-        // FIXME: charset detection in to_qstring() (if that hack is still there)
-        // fails sometimes, so we bypass it to force the proper (?) conversions here.
-      //QByteArray arr   = to_qstring (as_string (u)).toLocal8Bit ();
-      QByteArray arr   = utf8_to_qstring (cork_to_utf8 (as_string (u))).toLocal8Bit ();
-      const char* cstr = arr.constData ();
-      string localname = string ((char*) cstr);
+      string localname = utf8_to_cork (from_qstring_utf8 (fileNames.first()));
+      // here we need the filename encoded cork-universal because it is exposed in the document, in the <image> tag
       file = "(system->url " * scm_quote (localname) * ")";
       if (type == "image") {
 #if !defined(Q_WS_MAC) // && !defined(Q_WS_WIN)   //at least windows Xp and 7 lack image preview, switch to custom dialog
