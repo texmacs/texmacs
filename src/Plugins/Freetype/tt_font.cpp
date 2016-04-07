@@ -18,9 +18,11 @@
 
 #define std_dpi 600
 #define std_pixel (std_shrinkf*256)
-#define ROUND(l) ((l*dpi+(std_dpi>>1))/std_dpi)
-#define FLOOR(l) ((((l*dpi)/std_dpi)/std_pixel)*std_pixel)
-#define CEIL(l) (((((l*dpi+(std_dpi-1))/std_dpi)+std_pixel-1)/std_pixel)*std_pixel)
+#define ROUND(l) ((l*hdpi+(std_dpi>>1))/std_dpi)
+#define FLOOR(l) ((((l*hdpi)/std_dpi)/std_pixel)*std_pixel)
+#define CEIL(l) (((((l*hdpi+(std_dpi-1))/std_dpi)+std_pixel-1)/std_pixel)*std_pixel)
+
+font tt_font (string family, int size, int hdpi, int vdpi);
 
 /******************************************************************************
 * True Type fonts
@@ -28,11 +30,12 @@
 
 struct tt_font_rep: font_rep {
   string      family;
-  int         dpi;
+  int         hdpi;
+  int         vdpi;
   font_metric fnm;
   font_glyphs fng;
 
-  tt_font_rep (string name, string family, int size, int dpi);
+  tt_font_rep (string name, string family, int size, int hdpi, int vdpi);
 
   bool  supports (string c);
   void  get_extents (string s, metric& ex);
@@ -48,18 +51,19 @@ struct tt_font_rep: font_rep {
 * Initialization of main font parameters
 ******************************************************************************/
 
-tt_font_rep::tt_font_rep (string name, string family2, int size2, int dpi2):
-  font_rep (name), family (family2), dpi (dpi2)
+tt_font_rep::tt_font_rep (string name, string family2, int size2,
+                          int hdpi2, int vdpi2):
+  font_rep (name), family (family2), hdpi (hdpi2), vdpi (vdpi2)
 {
   size= size2;
-  fnm = tt_font_metric (family, size, std_dpi, std_dpi);
-  fng = tt_font_glyphs (family, size, dpi, dpi);
+  fnm = tt_font_metric (family, size, std_dpi, (std_dpi * vdpi) / hdpi);
+  fng = tt_font_glyphs (family, size, hdpi, vdpi);
   if (fnm->bad_font_metric || fng->bad_font_glyphs) {
     fnm= std_font_metric (res_name, NULL, 0, -1);
     fng= std_font_glyphs (res_name, NULL, 0, -1);
     if (DEBUG_AUTO)
       debug_fonts << "Font " << family << " " << size << "pt "
-                  << "at " << dpi << " dpi could not be loaded\n";
+                  << "at " << hdpi << " dpi could not be loaded\n";
     
   }
 
@@ -87,8 +91,8 @@ tt_font_rep::tt_font_rep (string name, string family2, int size2, int dpi2):
   yshift       = yx/6;
 
   // compute other widths
-  wpt          = (dpi*PIXEL)/72;
-  hpt          = (dpi*PIXEL)/72;
+  wpt          = (hdpi*PIXEL)/72;
+  hpt          = (vdpi*PIXEL)/72;
   wfn          = (wpt*design_size) >> 8;
   wline        = wfn/20;
 
@@ -188,8 +192,9 @@ tt_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 
 font
 tt_font_rep::magnify (double zoomx, double zoomy) {
-  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
-  return tt_font (family, size, (int) tm_round (dpi * zoomx));
+  return tt_font (family, size,
+                  (int) tm_round (hdpi * zoomx),
+                  (int) tm_round (vdpi * zoomy));
 }
 
 void
@@ -222,17 +227,23 @@ tt_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
 ******************************************************************************/
 
 font
-tt_font (string family, int size, int dpi) {
-  string name= "tt:" * family * as_string (size) * "@" * as_string(dpi);
+tt_font (string family, int size, int hdpi, int vdpi) {
+  string name= "tt:" * family * as_string (size) * "@" * as_string (hdpi);
+  if (vdpi != hdpi) name << "," << as_string (vdpi);
   return make (font, name,
-    tm_new<tt_font_rep> (name, family, size, dpi));
+               tm_new<tt_font_rep> (name, family, size, hdpi, vdpi));
+}
+
+font
+tt_font (string family, int size, int dpi) {
+  return tt_font (family, size, dpi, dpi);
 }
 
 #else
 
 font
 tt_font (string family, int size, int dpi) {
-  string name= "tt:" * family * as_string (size) * "@" * as_string(dpi);
+  string name= "tt:" * family * as_string (size) * "@" * as_string (dpi);
   failed_error << "Font name= " << name << "\n";
   FAILED ("true type support was disabled");
   return font ();

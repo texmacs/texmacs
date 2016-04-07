@@ -20,9 +20,9 @@
 
 #define std_dpi 600
 #define std_pixel (std_shrinkf*256)
-#define ROUND(l) ((l*dpi+(std_dpi>>1))/std_dpi)
-#define FLOOR(l) ((((l*dpi)/std_dpi)/std_pixel)*std_pixel)
-#define CEIL(l) (((((l*dpi+(std_dpi-1))/std_dpi)+std_pixel-1)/std_pixel)*std_pixel)
+#define ROUND(l) ((l*hdpi+(std_dpi>>1))/std_dpi)
+#define FLOOR(l) ((((l*hdpi)/std_dpi)/std_pixel)*std_pixel)
+#define CEIL(l) (((((l*hdpi+(std_dpi-1))/std_dpi)+std_pixel-1)/std_pixel)*std_pixel)
 
 #define LIGATURE_FF   1
 #define LIGATURE_FI   2
@@ -32,18 +32,21 @@
 #define LIGATURE_FFL 32
 #define LIGATURE_ST  64
 
+font unicode_font (string family, int size, int hdpi, int vdpi);
+
 /******************************************************************************
 * True Type fonts
 ******************************************************************************/
 
 struct unicode_font_rep: font_rep {
   string      family;
-  int         dpi;
+  int         hdpi;
+  int         vdpi;
   font_metric fnm;
   font_glyphs fng;
   int         ligs;
 
-  unicode_font_rep (string name, string family, int size, int dpi);
+  unicode_font_rep (string name, string family, int size, int hdpi, int vdpi);
 
   unsigned int ligature_replace (unsigned int c, string s, int& i);
   bool   supports (string c);
@@ -67,21 +70,19 @@ struct unicode_font_rep: font_rep {
 ******************************************************************************/
 
 unicode_font_rep::unicode_font_rep (string name,
-  string family2, int size2, int dpi2):
-  font_rep (name), family (family2), dpi (dpi2), ligs (0)
+  string family2, int size2, int hdpi2, int vdpi2):
+    font_rep (name), family (family2), hdpi (hdpi2), vdpi (vdpi2), ligs (0)
 {
   type= FONT_TYPE_UNICODE;
   size= size2;
-  fnm = tt_font_metric (family, size, std_dpi, std_dpi);
-  fng = tt_font_glyphs (family, size, dpi, dpi);
-  //fnm = slanted (fnm, 0.25);
-  //fng = slanted (fng, 0.25);
+  fnm = tt_font_metric (family, size, std_dpi, (std_dpi * vdpi) / hdpi);
+  fng = tt_font_glyphs (family, size, hdpi, vdpi);
   if (fnm->bad_font_metric || fng->bad_font_glyphs) {
     fnm= std_font_metric (res_name, NULL, 0, -1);
     fng= std_font_glyphs (res_name, NULL, 0, -1);
     if (DEBUG_AUTO)
       debug_fonts << "TeXmacs] Font " << family << " " << size << "pt "
-                  << "at " << dpi << " dpi could not be loaded\n";
+                  << "at " << hdpi << " dpi could not be loaded\n";
     
   }
 
@@ -115,8 +116,8 @@ unicode_font_rep::unicode_font_rep (string name,
   yshift       = yx/6;
 
   // compute other widths
-  wpt          = (dpi*PIXEL)/72;
-  hpt          = (dpi*PIXEL)/72;
+  wpt          = (hdpi*PIXEL)/72;
+  hpt          = (vdpi*PIXEL)/72;
   wfn          = (wpt*design_size) >> 8;
   wline        = wfn/20;
 
@@ -342,8 +343,9 @@ unicode_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 
 font
 unicode_font_rep::magnify (double zoomx, double zoomy) {
-  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
-  return unicode_font (family, size, (int) tm_round (dpi * zoomx));
+  return unicode_font (family, size,
+                       (int) tm_round (hdpi * zoomx),
+                       (int) tm_round (vdpi * zoomy));
 }
 
 void
@@ -429,17 +431,23 @@ unicode_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 font
-unicode_font (string family, int size, int dpi) {
-  string name= "unicode:" * family * as_string (size) * "@" * as_string(dpi);
+unicode_font (string family, int size, int hdpi, int vdpi) {
+  string name= "unicode:" * family * as_string (size) * "@" * as_string (hdpi);
+  if (vdpi != hdpi) name << "," << as_string (vdpi);
   return make (font, name,
-    tm_new<unicode_font_rep> (name, family, size, dpi));
+               tm_new<unicode_font_rep> (name, family, size, hdpi, vdpi));
+}
+
+font
+unicode_font (string family, int size, int dpi) {
+  return unicode_font (family, size, dpi, dpi);
 }
 
 #else
 
 font
 unicode_font (string family, int size, int dpi) {
-  string name= "unicode:" * family * as_string (size) * "@" * as_string(dpi);
+  string name= "unicode:" * family * as_string (size) * "@" * as_string (dpi);
   failed_error << "Font name= " << name << "\n";
   FAILED ("true type support was disabled");
   return font ();
