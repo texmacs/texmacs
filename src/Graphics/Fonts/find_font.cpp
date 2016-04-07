@@ -248,9 +248,18 @@ find_font (string family, string variant,
     string shape2= shape (0, N(shape) - 7);
     font fn= find_font (family, variant, series, shape2, sz, dpi);
     if (!is_nil (fn)) {
-      font scfn= poor_italic_font (fn, 0.25);
-      font::instances (s)= (pointer) scfn.rep;
-      return scfn;
+      font itfn= poor_italic_font (fn, 0.25);
+      font::instances (s)= (pointer) itfn.rep;
+      return itfn;
+    }
+  }
+  else if (ends (series, "-poorbf")) {
+    string series2= series (0, N(series) - 7);
+    font fn= find_font (family, variant, series2, shape, sz, dpi);
+    if (!is_nil (fn)) {
+      font bffn= poor_bold_font (fn);
+      font::instances (s)= (pointer) bffn.rep;
+      return bffn;
     }
   }
 

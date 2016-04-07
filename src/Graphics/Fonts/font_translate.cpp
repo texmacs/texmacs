@@ -289,6 +289,11 @@ find_closest (string& family, string& variant, string& series, string& shape,
     variant= get_variant (nfn);
     series= get_series (nfn);
     shape= get_shape (nfn);
+    /*
+    if ( contains (string ("bold"), lfn) &&
+	!contains (string ("bold"), gfn))
+      series= series * "-poorbf";
+    */
     if ( contains (string ("smallcaps"), lfn) &&
 	!contains (string ("smallcaps"), gfn))
       shape= shape * "-poorsc";

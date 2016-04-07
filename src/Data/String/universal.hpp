@@ -22,4 +22,7 @@ string uni_upcase_first (string s);
 string uni_locase_all (string s);
 string uni_upcase_all (string s);
 
+inline bool is_uni_locase_char (string s) { return uni_locase_char (s) == s; }
+inline bool is_uni_upcase_char (string s) { return uni_upcase_char (s) == s; }
+
 #endif // defined UNIVERSAL_H

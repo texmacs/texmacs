@@ -181,3 +181,29 @@ vstretch (font_glyphs fng, double factor) {
   return make (font_glyphs, name,
                tm_new<vstretch_font_glyphs_rep> (name, fng, factor));
 }
+
+/******************************************************************************
+* Boldening of font metrics
+******************************************************************************/
+
+font_metric
+bolden (font_metric fnm, double lofat, double upfat) {
+  (void) lofat; (void) upfat;
+  return fnm;
+}
+
+/******************************************************************************
+* Boldening of font glyphs
+******************************************************************************/
+
+glyph
+bolden (glyph gl, double lofat, double upfat) {
+  (void) lofat; (void) upfat;
+  return gl;
+}
+
+font_glyphs
+bolden (font_glyphs fng, double lofat, double upfat) {
+  (void) lofat; (void) upfat;
+  return fng;
+}
