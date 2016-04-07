@@ -151,7 +151,12 @@ poor_bold_font_rep::draw_fixed (renderer ren, string s,
       if (c >= 0) ren->draw (c, fng, start==0? x: x + xpos[start], y);
     }
     else {
-      FAILED ("vectorial boldening not yet implemented");
+      SI dpen, dtot;
+      fatten (ss, dpen, dtot);
+      for (int k=0; k<=8; k++) {
+        SI dx= (k*dpen) / 8;
+        base->draw (ren, ss, x + dx + (start==0? 0: xpos[start]), y);
+      }
     }
   }
 }
