@@ -262,26 +262,140 @@ bolden (font_glyphs fng, SI dpen) {
 }
 
 /******************************************************************************
-* Emulation of blackboard bold fonts
+* Detailed analysis for how to emulate blackboard bold fonts
 ******************************************************************************/
 
-static hashset<int> bbb_left;
-static hashset<int> bbb_right;
+void
+get_line_offsets (glyph gl, int j, int& start, int& end) {
+  int ww= gl->width;
+  for (int i=0; i<ww; i++)
+    if (gl->get_x (i, j) != 0) {
+      start= i;
+      for (; i<ww; i++)
+	if (i+1 >= ww || gl->get_x (i+1, j) == 0) {
+	  end= i;
+	  return;
+	}
+    }
+  start= end= -1;
+}
 
-static void
-bbb_initialize () {
-  if (N(bbb_left) != 0) return;
-  bbb_left  << ((int) 'K')<< ((int) 'N') << ((int) 'R');
-  bbb_right << ((int) '1') << ((int) '2') << ((int) '3') << ((int) '4')
-            << ((int) '7') << ((int) '9')
-            << ((int) 'J')
-            << ((int) 'a') << ((int) 'd') << ((int) 'g') << ((int) 'j')
-            << ((int) 'q') << ((int) 'y')
-            << ((int) ')') << ((int) ']') << ((int) '}');
+void
+adjust_bbb_offsets (glyph gl, SI delta, int next, int prev,
+		    array<int>& start, array<int>& end) {
+  int ww= gl->width;
+  if (start[prev] == -1) {
+    start[next]= end[next]= -1;
+    return;
+  }
+
+  if (end[next] + delta < start[prev]) {
+    int lo= start[prev] - delta;
+    int hi= min (end[prev] + delta + 1, ww);
+    for (int i= lo; i < hi; i++)
+      if (gl->get_x (i, next) != 0) {
+	int i1= i;
+	while (i1 > 0 && gl->get_x (i1-1, next) != 0) i1--;
+	int i2= i;
+	while (i2+1 < ww && gl->get_x (i2+1, next) != 0) i2--;
+	start[next]= i1;
+	end  [next]= i2;
+	return;
+      }
+    start[next]= end[next]= -1;
+    return;    
+  }
+
+  if (start[next] > end[prev] + delta) {
+    start[next]= end[next]= -1;
+    return;
+  }
+}
+
+void
+get_bbb_offsets (glyph gl, SI fat, array<int>& start, array<int>& end) {
+  int dw= (fat + (PIXEL/2)) / PIXEL;
+  int hh= gl->height;
+  start= array<int> (hh);
+  end  = array<int> (hh);
+  for (int j=0; j<hh; j++)
+    get_line_offsets (gl, j, start[j], end[j]);
+  for (int j=0; j<hh; j++)
+    if (start[j] != -1) {
+      int j1= j;
+      while (j+1<hh && start[j+1] != -1) j++;
+      int j2= j;
+      int m = (j1 + j2) >> 1;
+      int delta= max (1, dw/4);
+      for (int k=m+1; k<=j2; k++)
+	adjust_bbb_offsets (gl, delta, k, k-1, start, end);
+      for (int k=m-1; k>=j1; k--)
+	adjust_bbb_offsets (gl, delta, k, k+1, start, end);
+    }
 }
 
 glyph
-erase_interior (glyph gl, SI pen) {
+bolden_at (glyph gl, array<int> start, SI pen, SI fat) {
+  int dw= (fat + (PIXEL/2)) / PIXEL;
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww + dw, hh, gl->xoff, gl->yoff, gl->depth);
+  for (j=0; j<hh; j++) {
+    int off= start[j];
+    for (i=0; i<ww; i++)
+      if (i < off) bmr->set_x (i, j, gl->get_x (i, j));
+      else if (i > off) bmr->set_x (i+dw, j, gl->get_x (i, j));
+      else for (int k=0; k<=dw; k++)
+	     bmr->set_x (i+k, j, 1);
+  }
+  return bmr;
+}
+
+glyph
+hollow (glyph gl, array<int> start, array<int> end, SI pen, SI fat) {
+  int dw= (fat + (PIXEL/2)) / PIXEL;
+  int r= (pen + (PIXEL/2)) / PIXEL;
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  for (j=0; j<hh; j++) {
+    int i1= start[j];
+    int i2= start[j] + dw + (r >> 1);
+    //int i2= end  [j] + dw;
+    for (i=0; i<ww; i++) {
+      bmr->set_x (i, j, gl->get_x (i, j));
+      if (i > i1 && i2 > i) {
+	bool erase= ((i>=r) && (j>=r) && (i+r<ww) && (hh>j+r));
+        if (erase) {
+	  int c0= 0, c1= 0;
+	  for (int dj= -r; dj <= r; dj++)
+	    for (int di= -r; di <= r; di++)
+	      if ((di*di + dj*dj) <= r*r)
+		if (gl->get_x (i+di, j+dj) == 0) c0++;
+		else c1++;
+	  erase= 20*c0 < c1;
+	}
+	if (erase) bmr->set_x (i, j, 0);
+      }
+    }
+  }
+  return bmr;
+}
+
+glyph
+var_make_bbb (glyph gl, SI pen, SI fat) {
+  array<int> start, end;
+  get_bbb_offsets (gl, fat, start, end);
+  glyph bgl= bolden_at (gl, start, pen, fat);
+  return hollow (bgl, start, end, pen, fat);
+}
+
+/******************************************************************************
+* Emulation of blackboard bold fonts
+******************************************************************************/
+
+glyph
+hollow (glyph gl, SI pen) {
   int r= (pen + (PIXEL/2)) / PIXEL;
   int i, j;
   int ww= gl->width, hh= gl->height;
@@ -290,12 +404,15 @@ erase_interior (glyph gl, SI pen) {
     for (i=0; i<ww; i++) {
       bmr->set_x (i, j, gl->get_x (i, j));
       bool erase= i>=r && j>=r && ww>i+r && hh>j+r;
-      if (erase)
+      if (erase) {
+	int c0= 0, c1= 0;
         for (int dj= -r; dj <= r; dj++)
           for (int di= -r; di <= r; di++)
             if ((di*di + dj*dj) <= r*r)
-              if (gl->get_x (i+di, j+dj) == 0)
-                erase= false;
+              if (gl->get_x (i+di, j+dj) == 0) c0++;
+	      else c1++;
+	erase= 20*c0 < c1;
+      }
       if (erase) bmr->set_x (i, j, 0);
     }
   return bmr;
@@ -320,20 +437,42 @@ make_bbb (glyph gl, SI pen, SI fat) {
           bmr->set_x (i+k, j, 1);
         break;
       }
-  return erase_interior (bmr, pen);
+  return hollow (bmr, pen);
+}
+
+static hashset<int> bbb_left;
+static hashset<int> bbb_right;
+
+static void
+bbb_initialize () {
+  if (N(bbb_left) != 0) return;
+  bbb_left  << ((int) 'K')<< ((int) 'N') << ((int) 'R');
+  bbb_right << ((int) '1') << ((int) '2') << ((int) '3')
+            << ((int) '5') << ((int) '7') << ((int) '9')
+            << ((int) 'J')
+            << ((int) 'a') << ((int) 'd') << ((int) 'g') << ((int) 'j')
+            << ((int) 'q') << ((int) 'y')
+            << ((int) ')') << ((int) ']') << ((int) '}');
 }
 
 glyph
 make_bbb (glyph gl, int code, SI pen, SI fat) {
   bbb_initialize ();
-  if (bbb_left->contains (code))
+  if (bbb_right->contains (code)) {
+    glyph fgl = hor_flip (gl);
+    glyph fret= var_make_bbb (fgl, pen, fat);
+    return hor_flip (fret);
+  }
+  else if (true || bbb_left->contains (code))
+    return var_make_bbb (gl, pen, fat);
+  else if (bbb_left->contains (code))
     return make_bbb (gl, pen, fat);
   else if (false && bbb_right->contains (code)) {
     glyph fgl = hor_flip (gl);
     glyph fret= make_bbb (fgl, pen, fat);
     return hor_flip (fret);
   }
-  else return erase_interior (bolden (gl, fat), pen);
+  else return hollow (bolden (gl, fat), pen);
 }
 
 struct make_bbb_font_glyphs_rep: public font_glyphs_rep {
