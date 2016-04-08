@@ -679,6 +679,25 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
         return sm->add_char (key, c);
     }
+    if (N(c) == 7 && starts (c, "<bbb-")) {
+      font cfn= closest_font (fam, variant, series, rshape, sz, dpi, 1);
+      if (cfn->supports (c (N(c)-2, N(c)-1))) {
+        array<string> lfn= logical_font (fam, variant, series, rshape);
+        lfn= apply_substitutions (lfn);
+        array<string> pfn= search_font (lfn, 1);
+        array<string> ch = font_database_characteristics (pfn[0], pfn[1]);
+        double rat= ((double) cfn->yx) / ((double) cfn->wfn);
+        double hw = rat * get_up_pen_width (ch);
+        double vw = rat * get_up_pen_height (ch);
+        double lw = ((double) cfn->wline) / ((double) cfn->wfn);
+        hw= max (hw, 0.25 * lw);
+        vw= max (vw, 0.25 * lw);
+        tree key= tuple ("poor-bbb", as_string (hw), as_string (vw));
+        int nr= sm->add_font (key, REWRITE_POOR_BBB);
+        initialize_font (nr);
+        return sm->add_char (key, c);
+      }
+    }
   }
 
   if (attempt > 1) {
@@ -748,32 +767,6 @@ smart_font_rep::resolve (string c) {
     if (find_in_general (c)) {
       //cout << "Found " << c << " in general\n";
       return sm->add_char (tuple ("virtual", "general"), c);
-    }
-    if (N(c) == 7 && starts (c, "<bbb-")) {
-      array<string> a= trimmed_tokenize (family, ",");
-      for (int i=0; i < N(a); i++) {
-        int nr= resolve (c, a[i], 1);
-        if (nr >= 0) return nr;
-      }
-      for (int i=0; i < N(a); i++) {
-        font cfn= closest_font (a[i], variant, series, rshape, sz, dpi, 1);
-        if (cfn->supports (c (N(c)-2, N(c)-1))) {
-	  array<string> lfn= logical_font (a[i], variant, series, rshape);
-	  lfn= apply_substitutions (lfn);
-	  array<string> pfn= search_font (lfn, 1);
-	  array<string> ch = font_database_characteristics (pfn[0], pfn[1]);
-	  double rat= ((double) cfn->yx) / ((double) cfn->wfn);
-	  double hw = rat * get_up_pen_width (ch);
-	  double vw = rat * get_up_pen_height (ch);
-	  double lw = ((double) cfn->wline) / ((double) cfn->wfn);
-	  hw= max (hw, 0.25 * lw);
-	  vw= max (vw, 0.25 * lw);
-          tree key= tuple ("poor-bbb", as_string (hw), as_string (vw));
-          int nr= sm->add_font (key, REWRITE_POOR_BBB);
-          initialize_font (nr);
-          return sm->add_char (key, c);
-        }
-      }
     }
   }
 
