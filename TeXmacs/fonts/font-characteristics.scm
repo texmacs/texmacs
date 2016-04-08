@@ -96,7 +96,7 @@
 ((Catenary\ Stamp Regular) (Ascii Greek Cyrillic mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=89 em=111 lvw=2 lhw=24 uvw=23 uhw=23 fillp=55 vcnt=57 lasprat=85 pasprat=71 loasc=101 lodes=100 dides=100))
 ((Chalkboard Bold) (Ascii mono=no sans=yes slant=0 italic=no case=mixed regular=yes ex=87 em=163 lvw=25 lhw=26 uvw=26 uhw=25 fillp=53 vcnt=61 lasprat=100 pasprat=87 loasc=147 lodes=156 dides=110))
 ((Chalkboard Regular) (Ascii mono=no sans=yes slant=0 italic=no case=mixed regular=yes ex=84 em=164 lvw=17 lhw=17 uvw=17 uhw=17 fillp=41 vcnt=44 lasprat=99 pasprat=82 loasc=146 lodes=154 dides=107))
-((Chalkduster Regular) (Ascii mono=no sans=no slant=0 italic=yes case=mixed regular=yes ex=87 em=160 lvw=31 lhw=0 uvw=0 uhw=41 fillp=37 vcnt=46 lasprat=121 pasprat=112 loasc=182 lodes=205 dides=119))
+((Chalkduster Regular) (Ascii mono=no sans=no slant=0 italic=yes case=mixed regular=yes ex=87 em=160 lvw=24 lhw=17 uvw=31 uhw=24 fillp=37 vcnt=46 lasprat=121 pasprat=112 loasc=182 lodes=205 dides=119))
 ((Charakterny Regular) (Ascii Latin mono=no sans=yes slant=13 italic=yes case=mixed regular=no ex=66 em=184 lvw=18 lhw=6 uvw=19 uhw=6 fillp=25 vcnt=26 lasprat=102 pasprat=99 loasc=151 lodes=175 dides=142))
 ((Charis\ SIL Bold) (Ascii Latin Cyrillic MathSymbols mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=81 em=186 lvw=29 lhw=11 uvw=33 uhw=13 fillp=46 vcnt=50 lasprat=111 pasprat=103 loasc=153 lodes=148 dides=103))
 ((Charis\ SIL Bold\ Italic) (Ascii Latin Cyrillic MathSymbols mono=no sans=no slant=21 italic=yes case=mixed regular=yes ex=84 em=179 lvw=28 lhw=11 uvw=30 uhw=13 fillp=44 vcnt=48 lasprat=101 pasprat=102 loasc=147 lodes=145 dides=113))

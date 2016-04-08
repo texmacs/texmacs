@@ -91,8 +91,7 @@ glyph ver_take   (glyph gl, int pos, int nr);
 glyph slanted    (glyph gl, double slant);
 glyph vstretch   (glyph gl, double factor);
 glyph bolden     (glyph gl, SI dpen);
-glyph make_bbb   (glyph gl, int code, SI penw, SI fatw);
-glyph hollow     (glyph gl, SI pen);
+glyph make_bbb   (glyph gl, int code, SI penw, SI penh, SI fatw);
 
 int pixel_count (glyph g);
 double left_protrusion (glyph g, glyph o);
@@ -133,6 +132,6 @@ font_metric vstretch (font_metric fnm, double factor);
 font_glyphs vstretch (font_glyphs fng, double factor);
 font_metric bolden (font_metric fnm, SI dtot);
 font_glyphs bolden (font_glyphs fng, SI dpen);
-font_glyphs make_bbb (font_glyphs fng, SI penw, SI fatw);
+font_glyphs make_bbb (font_glyphs fng, SI penw, SI penh, SI fatw);
 
 #endif // defined BITMAP_FONT_H

@@ -749,7 +749,6 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in general\n";
       return sm->add_char (tuple ("virtual", "general"), c);
     }
-    /*
     if (N(c) == 7 && starts (c, "<bbb-")) {
       array<string> a= trimmed_tokenize (family, ",");
       for (int i=0; i < N(a); i++) {
@@ -759,14 +758,23 @@ smart_font_rep::resolve (string c) {
       for (int i=0; i < N(a); i++) {
         font cfn= closest_font (a[i], variant, series, rshape, sz, dpi, 1);
         if (cfn->supports (c (N(c)-2, N(c)-1))) {
-          tree key= tuple ("poor-bbb");
+	  array<string> lfn= logical_font (a[i], variant, series, rshape);
+	  lfn= apply_substitutions (lfn);
+	  array<string> pfn= search_font (lfn, 1);
+	  array<string> ch = font_database_characteristics (pfn[0], pfn[1]);
+	  double rat= ((double) cfn->yx) / ((double) cfn->wfn);
+	  double hw = rat * get_up_pen_width (ch);
+	  double vw = rat * get_up_pen_height (ch);
+	  double lw = ((double) cfn->wline) / ((double) cfn->wfn);
+	  hw= max (hw, 0.25 * lw);
+	  vw= max (vw, 0.25 * lw);
+          tree key= tuple ("poor-bbb", as_string (hw), as_string (vw));
           int nr= sm->add_font (key, REWRITE_POOR_BBB);
           initialize_font (nr);
           return sm->add_char (key, c);
         }
       }
     }
-    */
   }
 
   array<string> a= trimmed_tokenize (family, ",");
@@ -842,9 +850,11 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font (family, "outline", series, "right", sz, dpi);
   else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi, dpi);
-  else if (a[0] == "poor-bbb") {
+  else if (a[0] == "poor-bbb" && N(a) == 3) {
+    double pw= as_double (a[1]);
+    double ph= as_double (a[2]);
     font sfn= smart_font (family, variant, series, "right", sz, dpi);
-    fn[nr]= poor_bbb_font (sfn); }
+    fn[nr]= poor_bbb_font (sfn, pw, ph, 1.5*pw); }
   else if (a[0] == "rubber" && N(a) == 2 && is_int (a[1])) {
     initialize_font (as_int (a[1]));
     fn[nr]= rubber_font (fn[as_int (a[1])]);

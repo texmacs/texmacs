@@ -335,7 +335,7 @@ get_bbb_offsets (glyph gl, SI fat, array<int>& start, array<int>& end) {
 }
 
 glyph
-bolden_at (glyph gl, array<int> start, SI pen, SI fat) {
+bolden_at (glyph gl, array<int> start, SI fat) {
   int dw= (fat + (PIXEL/2)) / PIXEL;
   int i, j;
   int ww= gl->width, hh= gl->height;
@@ -352,27 +352,35 @@ bolden_at (glyph gl, array<int> start, SI pen, SI fat) {
 }
 
 glyph
-hollow (glyph gl, array<int> start, array<int> end, SI pen, SI fat) {
+hollow (glyph gl, array<int> start, array<int> end,
+	SI penw, SI penh, SI fat) {
+  double rx= ((double) penw) / ((double) PIXEL);
+  double ry= ((double) penh) / ((double) PIXEL);
+  int    Rx= (int) floor (rx + 0.5);
+  int    Ry= (int) floor (ry + 0.5);
   int dw= (fat + (PIXEL/2)) / PIXEL;
-  int r= (pen + (PIXEL/2)) / PIXEL;
   int i, j;
   int ww= gl->width, hh= gl->height;
   glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<hh; j++) {
     int i1= start[j];
-    int i2= start[j] + dw + (r >> 1);
-    //int i2= end  [j] + dw;
+    int i2= start[j] + dw; // + (Rx >> 1);
     for (i=0; i<ww; i++) {
       bmr->set_x (i, j, gl->get_x (i, j));
       if (i > i1 && i2 > i) {
-	bool erase= ((i>=r) && (j>=r) && (i+r<ww) && (hh>j+r));
+	bool erase= ((i>=Rx) && (j>=Ry) && (i+Rx<ww) && (hh>j+Ry));
         if (erase) {
 	  int c0= 0, c1= 0;
-	  for (int dj= -r; dj <= r; dj++)
-	    for (int di= -r; di <= r; di++)
-	      if ((di*di + dj*dj) <= r*r)
+	  for (int dj= -Ry; dj <= Ry; dj++)
+	    for (int di= -Rx; di <= Rx; di++) {
+	      double fx= di/rx, fy= dj/ry;
+	      if ((fx*fx + fy*fy) <= 1.0) {
+	      //if (max (abs (fx), abs (fy)) <= 1.0) {
+	      //if (abs (fx) + abs (fy) <= 1.0) {
 		if (gl->get_x (i+di, j+dj) == 0) c0++;
 		else c1++;
+	      }
+	    }
 	  erase= 20*c0 < c1;
 	}
 	if (erase) bmr->set_x (i, j, 0);
@@ -383,11 +391,11 @@ hollow (glyph gl, array<int> start, array<int> end, SI pen, SI fat) {
 }
 
 glyph
-var_make_bbb (glyph gl, SI pen, SI fat) {
+var_make_bbb (glyph gl, SI penw, SI penh, SI fat) {
   array<int> start, end;
   get_bbb_offsets (gl, fat, start, end);
-  glyph bgl= bolden_at (gl, start, pen, fat);
-  return hollow (bgl, start, end, pen, fat);
+  glyph bgl= bolden_at (gl, start, fat);
+  return hollow (bgl, start, end, penw, penh, fat);
 }
 
 /******************************************************************************
@@ -395,49 +403,32 @@ var_make_bbb (glyph gl, SI pen, SI fat) {
 ******************************************************************************/
 
 glyph
-hollow (glyph gl, SI pen) {
-  int r= (pen + (PIXEL/2)) / PIXEL;
+hollow (glyph gl, SI penw, SI penh) {
+  double rx= ((double) penw) / ((double) PIXEL);
+  double ry= ((double) penh) / ((double) PIXEL);
+  int    Rx= (int) floor (rx + 0.5);
+  int    Ry= (int) floor (ry + 0.5);
   int i, j;
   int ww= gl->width, hh= gl->height;
   glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++) {
       bmr->set_x (i, j, gl->get_x (i, j));
-      bool erase= i>=r && j>=r && ww>i+r && hh>j+r;
+      bool erase= i>=Rx && j>=Ry && ww>i+Rx && hh>j+Ry;
       if (erase) {
 	int c0= 0, c1= 0;
-        for (int dj= -r; dj <= r; dj++)
-          for (int di= -r; di <= r; di++)
-            if ((di*di + dj*dj) <= r*r)
+        for (int dj= -Ry; dj <= Ry; dj++)
+          for (int di= -Rx; di <= Rx; di++) {
+	    double fx= di/rx, fy= dj/ry;
+            if ((fx*fx + fy*fy) <= 1.0)
               if (gl->get_x (i+di, j+dj) == 0) c0++;
 	      else c1++;
+	  }
 	erase= 20*c0 < c1;
       }
       if (erase) bmr->set_x (i, j, 0);
     }
   return bmr;
-}
-
-glyph
-make_bbb (glyph gl, SI pen, SI fat) {
-  int dw= (fat + (PIXEL/2)) / PIXEL;
-  int i, j;
-  int ww= gl->width, hh= gl->height;
-  glyph bmr (ww + dw, hh, gl->xoff, gl->yoff, gl->depth);
-  for (j=0; j<hh; j++) {    
-    for (i=0; i<dw; i++)
-      bmr->set_x (i, j, 0);
-    for (i=0; i<ww; i++)
-      bmr->set_x (i+dw, j, gl->get_x (i, j));
-  }
-  for (j=0; j<hh; j++)
-    for (i=0; i<ww; i++)
-      if (gl->get_x (i, j) != 0) {
-        for (int k=0; k<dw; k++)
-          bmr->set_x (i+k, j, 1);
-        break;
-      }
-  return hollow (bmr, pen);
 }
 
 static hashset<int> bbb_left;
@@ -449,51 +440,45 @@ bbb_initialize () {
   bbb_left  << ((int) 'K')<< ((int) 'N') << ((int) 'R');
   bbb_right << ((int) '1') << ((int) '2') << ((int) '3')
             << ((int) '5') << ((int) '7') << ((int) '9')
-            << ((int) 'J')
+            << ((int) 'A') << ((int) 'J') << ((int) 'M')
             << ((int) 'a') << ((int) 'd') << ((int) 'g') << ((int) 'j')
             << ((int) 'q') << ((int) 'y')
             << ((int) ')') << ((int) ']') << ((int) '}');
 }
 
 glyph
-make_bbb (glyph gl, int code, SI pen, SI fat) {
+make_bbb (glyph gl, int code, SI penw, SI penh, SI fat) {
   bbb_initialize ();
   if (bbb_right->contains (code)) {
     glyph fgl = hor_flip (gl);
-    glyph fret= var_make_bbb (fgl, pen, fat);
+    glyph fret= var_make_bbb (fgl, penw, penh, fat);
     return hor_flip (fret);
   }
   else if (true || bbb_left->contains (code))
-    return var_make_bbb (gl, pen, fat);
-  else if (bbb_left->contains (code))
-    return make_bbb (gl, pen, fat);
-  else if (false && bbb_right->contains (code)) {
-    glyph fgl = hor_flip (gl);
-    glyph fret= make_bbb (fgl, pen, fat);
-    return hor_flip (fret);
-  }
-  else return hollow (bolden (gl, fat), pen);
+    return var_make_bbb (gl, penw, penh, fat);
+  else return hollow (bolden (gl, fat), penw, penh);
 }
 
 struct make_bbb_font_glyphs_rep: public font_glyphs_rep {
   font_glyphs fng;
-  SI penw, fatw;
+  SI penw, penh, fatw;
   hashmap<int,glyph> gs;
-  make_bbb_font_glyphs_rep (string name, font_glyphs fng2, SI pw, SI fw):
+  make_bbb_font_glyphs_rep (string name, font_glyphs fng2,
+			    SI pw, SI ph, SI fw):
     font_glyphs_rep (name), fng (fng2),
-    penw (pw), fatw (fw), gs (error_glyph) {}
+    penw (pw), penh (ph), fatw (fw), gs (error_glyph) {}
   glyph& get (int c) {
     glyph& orig (fng->get (c));
     if ((&orig != &error_glyph) && !gs->contains (c))
-      gs(c)= make_bbb (orig, c, penw, fatw);
+      gs(c)= make_bbb (orig, c, penw, penh, fatw);
     return gs(c); }
 };
 
 font_glyphs
-make_bbb (font_glyphs fng, SI penw, SI fatw) {
+make_bbb (font_glyphs fng, SI penw, SI penh, SI fatw) {
   string name= fng->res_name * "-make_bbb[" * as_string (penw);
-  if (fatw != 4 * penw) name << "," << as_string (fatw);
-  name << "]";
+  name << "," << as_string (penh);
+  name << "," << as_string (fatw) << "]";
   return make (font_glyphs, name,
-               tm_new<make_bbb_font_glyphs_rep> (name, fng, penw, fatw));
+               tm_new<make_bbb_font_glyphs_rep> (name, fng, penw, penh, fatw));
 }

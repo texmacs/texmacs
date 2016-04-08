@@ -532,6 +532,24 @@ characteristic_distance (array<string> a1, array<string> a2) {
 }
 
 /******************************************************************************
+* Nice accessors
+******************************************************************************/
+
+static double
+get_ratio (array<string> a, string prop) {
+  string ex = find_attribute_value (a, "ex");
+  string val= find_attribute_value (a, prop);
+  if (ex == "" || val == "" || as_double (ex) == 0.0) return 0.0;
+  return as_double (val) / as_double (ex);
+}
+
+double get_M_width (array<string> a) { return get_ratio (a, "em"); }
+double get_lo_pen_width  (array<string> a) { return get_ratio (a, "lvw"); }
+double get_lo_pen_height (array<string> a) { return get_ratio (a, "lhw"); }
+double get_up_pen_width  (array<string> a) { return get_ratio (a, "uvw"); }
+double get_up_pen_height (array<string> a) { return get_ratio (a, "uhw"); }
+
+/******************************************************************************
 * Master routine
 ******************************************************************************/
 
@@ -565,19 +583,14 @@ tt_analyze (string family) {
   return r;
 }
 
-double
-trace_distance (string v1, string v2, double m) {
-  return 0;
-}
+double trace_distance (string v1, string v2, double m) { return 0; }
+string find_attribute_value (array<string> a, string s) { return ""; }
+int characteristic_distance (array<string> a, array<string> s) { return 0; }
 
-string
-find_attribute_value (array<string> a, string s) {
-  return "";
-}
-
-int
-characteristic_distance (array<string> a, array<string> s) {
-  return 0;
-}
+double get_M_width (array<string> a) { return 0.0; }
+double get_lo_pen_width  (array<string> a) { return 0.0; }
+double get_lo_pen_height (array<string> a) { return 0.0; }
+double get_up_pen_width  (array<string> a) { return 0.0; }
+double get_up_pen_height (array<string> a) { return 0.0; }
 
 #endif // USE_FREETYPE

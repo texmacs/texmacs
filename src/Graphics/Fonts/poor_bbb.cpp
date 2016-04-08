@@ -20,11 +20,14 @@
 struct poor_bbb_font_rep: font_rep {
   font   base;
   double penw;
+  double penh;
   double fatw;
-  SI     pen;
+  SI     wpen;
+  SI     hpen;
   SI     fat;
 
-  poor_bbb_font_rep (string name, font base, double penw, double fatw);
+  poor_bbb_font_rep (string name, font base,
+		     double penw, double penh, double fatw);
 
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
@@ -50,12 +53,14 @@ struct poor_bbb_font_rep: font_rep {
 * Initialization of main font parameters
 ******************************************************************************/
 
-poor_bbb_font_rep::poor_bbb_font_rep (string name, font b, double p, double d):
-  font_rep (name, b), base (b), penw (p), fatw (d)
+poor_bbb_font_rep::poor_bbb_font_rep (string name, font b,
+				      double pw, double ph, double d):
+  font_rep (name, b), base (b), penw (pw), penh (ph), fatw (d)
 {
   this->copy_math_pars (base);
-  pen= (SI) (penw * wfn);
-  fat= (SI) (fatw * wfn);
+  wpen= (SI) (penw * wfn);
+  hpen= (SI) (penh * wfn);
+  fat = (SI) (fatw * wfn);
 
   this->spc    = this->spc + space (fat >> 1);
   this->wquad += fat;
@@ -152,7 +157,7 @@ poor_bbb_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
 
 font
 poor_bbb_font_rep::magnify (double zoomx, double zoomy) {
-  return poor_bbb_font (base->magnify (zoomx, zoomy), penw, fatw);
+  return poor_bbb_font (base->magnify (zoomx, zoomy), penw, penh, fatw);
 }
 
 /******************************************************************************
@@ -172,7 +177,7 @@ poor_bbb_font_rep::get_glyph (string s) {
   font_glyphs fng;
   int c= base->index_glyph (s, fnm, fng);
   if (c < 0) return glyph ();
-  return make_bbb (gl, c, pen, fat);
+  return make_bbb (gl, c, wpen, hpen, fat);
 }
 
 int
@@ -181,7 +186,7 @@ poor_bbb_font_rep::index_glyph (string s, font_metric& fnm,
   int c= base->index_glyph (s, fnm, fng);
   if (c < 0) return c;
   fnm= bolden   (fnm, fat);
-  fng= make_bbb (fng, pen, fat);
+  fng= make_bbb (fng, wpen, hpen, fat);
   return c;
 }
 
@@ -214,17 +219,17 @@ poor_bbb_font_rep::get_right_correction (string s) {
 ******************************************************************************/
 
 font
-poor_bbb_font (font base, double penw, double fatw) {
-  string name= "poorbbb[" * base->res_name * "," * as_string (penw);
-  if (fatw != 4 * penw) name << "," << as_string (fatw);
-  name << "]";
-  return make (font, name, tm_new<poor_bbb_font_rep> (name, base, penw, fatw));
+poor_bbb_font (font base, double penw, double penh, double fatw) {
+  string name= "poorbbb[" * base->res_name;
+  name << "," << as_string (penw);
+  name << "," << as_string (penh);
+  name << "," << as_string (fatw) << "]";
+  return make (font, name,
+	       tm_new<poor_bbb_font_rep> (name, base, penw, penh, fatw));
 }
 
 font
 poor_bbb_font (font base) {
-  //double penw= 1.0 * ((double) base->wline) / ((double) base->wfn);
   double penw= 0.6 * ((double) base->wline) / ((double) base->wfn);
-  //return poor_bbb_font (base, penw, 2 * penw);
-  return poor_bbb_font (base, penw, 3 * penw);
+  return poor_bbb_font (base, penw, penw, 3 * penw);
 }
