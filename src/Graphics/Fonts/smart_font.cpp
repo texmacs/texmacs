@@ -847,7 +847,7 @@ smart_font_rep::initialize_font (int nr) {
     double pw= as_double (a[1]);
     double ph= as_double (a[2]);
     font sfn= smart_font (family, variant, series, "right", sz, dpi);
-    fn[nr]= poor_bbb_font (sfn, pw, ph, 1.5*pw); }
+    fn[nr]= poor_bbb_font (sfn, pw, ph, 1.75*pw); }
   else if (a[0] == "rubber" && N(a) == 2 && is_int (a[1])) {
     initialize_font (as_int (a[1]));
     fn[nr]= rubber_font (fn[as_int (a[1])]);

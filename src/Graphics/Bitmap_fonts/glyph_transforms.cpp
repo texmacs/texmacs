@@ -280,6 +280,16 @@ get_line_offsets (glyph gl, int j, int& start, int& end) {
   start= end= -1;
 }
 
+int
+left_width (glyph gl) {
+  int hh= gl->height;
+  int s1, e1, s2, e2, s3, e3;
+  get_line_offsets (gl, (4*hh)/10, s1, e1);
+  get_line_offsets (gl, (5*hh)/10, s2, e2);
+  get_line_offsets (gl, (6*hh)/10, s3, e3);
+  return min (e1-s1+1, min (e2-s2+1, e3-s3+1));
+}
+
 void
 adjust_bbb_offsets (glyph gl, SI delta, int next, int prev,
 		    array<int>& start, array<int>& end) {
@@ -352,8 +362,7 @@ bolden_at (glyph gl, array<int> start, SI fat) {
 }
 
 glyph
-hollow (glyph gl, array<int> start, array<int> end,
-	SI penw, SI penh, SI fat) {
+hollow (glyph gl, array<int> start, SI penw, SI penh, SI fat) {
   double rx= ((double) penw) / ((double) PIXEL);
   double ry= ((double) penh) / ((double) PIXEL);
   int    Rx= (int) floor (rx + 0.5);
@@ -375,8 +384,8 @@ hollow (glyph gl, array<int> start, array<int> end,
 	    for (int di= -Rx; di <= Rx; di++) {
 	      double fx= di/rx, fy= dj/ry;
 	      if ((fx*fx + fy*fy) <= 1.0) {
-	      //if (max (abs (fx), abs (fy)) <= 1.0) {
-	      //if (abs (fx) + abs (fy) <= 1.0) {
+                //if (max (abs (fx), abs (fy)) <= 1.0) {
+                //if (abs (fx) + abs (fy) <= 1.0) {
 		if (gl->get_x (i+di, j+dj) == 0) c0++;
 		else c1++;
 	      }
@@ -390,12 +399,36 @@ hollow (glyph gl, array<int> start, array<int> end,
   return bmr;
 }
 
+static void
+fix_left_border (glyph gl, array<int>& start, SI& penw, SI& fat) {
+  SI lw= left_width (gl) * PIXEL;
+  if (4*lw < 3*penw) {
+    if (true) {
+      fat  -= ((penw >> 1) - lw);
+      penw -= ((penw - lw) >> 1);
+    }
+    else if (true) {
+      fat -= (penw - 2*lw);
+      penw = lw;
+    }
+    else if (true) {
+      for (int j=0; j<N(start); j++)
+        if (start[j] >= 0)
+          start[j] += (penw - lw) / PIXEL;
+      fat -= (penw - lw);
+      penw = lw;
+    }
+  }
+}
+
 glyph
-var_make_bbb (glyph gl, SI penw, SI penh, SI fat) {
+var_make_bbb (glyph gl, int code, SI penw, SI penh, SI fat) {
   array<int> start, end;
   get_bbb_offsets (gl, fat, start, end);
   glyph bgl= bolden_at (gl, start, fat);
-  return hollow (bgl, start, end, penw, penh, fat);
+  if (code == ((int) 'A') || code == ((int) 'M') || code == ((int) 'N'))
+    fix_left_border (gl, start, penw, fat);
+  return hollow (bgl, start, penw, penh, fat);
 }
 
 /******************************************************************************
@@ -440,7 +473,8 @@ bbb_initialize () {
   bbb_left  << ((int) 'K')<< ((int) 'N') << ((int) 'R');
   bbb_right << ((int) '1') << ((int) '2') << ((int) '3')
             << ((int) '5') << ((int) '7') << ((int) '9')
-            << ((int) 'A') << ((int) 'J') << ((int) 'M')
+            << ((int) 'J')
+    //      << ((int) 'A') << ((int) 'J') << ((int) 'M')
             << ((int) 'a') << ((int) 'd') << ((int) 'g') << ((int) 'j')
             << ((int) 'q') << ((int) 'y')
             << ((int) ')') << ((int) ']') << ((int) '}');
@@ -451,11 +485,11 @@ make_bbb (glyph gl, int code, SI penw, SI penh, SI fat) {
   bbb_initialize ();
   if (bbb_right->contains (code)) {
     glyph fgl = hor_flip (gl);
-    glyph fret= var_make_bbb (fgl, penw, penh, fat);
+    glyph fret= var_make_bbb (fgl, code, penw, penh, fat);
     return hor_flip (fret);
   }
   else if (true || bbb_left->contains (code))
-    return var_make_bbb (gl, penw, penh, fat);
+    return var_make_bbb (gl, code, penw, penh, fat);
   else return hollow (bolden (gl, fat), penw, penh);
 }
 
