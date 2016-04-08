@@ -5918,17 +5918,17 @@ done
 # Checks for dl library
 #--------------------------------------------------------------------
 
-ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
+  ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
 if test "x$ac_cv_func_dlopen" = xyes; then :
 
 fi
 
-if test "$ac_cv_func_dl" = "yes"; then
+  if test "$ac_cv_func_dl" = "yes"; then
 
 $as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
 
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
 $as_echo_n "checking for dlopen in -ldl... " >&6; }
 if ${ac_cv_lib_dl_dlopen+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -5973,8 +5973,8 @@ _ACEOF
 
 fi
 
-  if test "$ac_cv_lib_dl_dlopen" = "yes"; then
-    for ac_func in dlopen
+    if test "$ac_cv_lib_dl_dlopen" = "yes"; then
+      for ac_func in dlopen
 do :
   ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
 if test "x$ac_cv_func_dlopen" = xyes; then :
@@ -5985,12 +5985,12 @@ _ACEOF
 fi
 done
 
-    CONFIG_BDL="-ldl"
+      CONFIG_BDL="-ldl"
 
 $as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
 
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dld_link in -ldld" >&5
+    else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dld_link in -ldld" >&5
 $as_echo_n "checking for dld_link in -ldld... " >&6; }
 if ${ac_cv_lib_dld_dld_link+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -6035,13 +6035,13 @@ _ACEOF
 
 fi
 
-    if test "$ac_cv_lib_dld_dld_link" = "yes"; then
-      CONFIG_BDL="-ldl"
+      if test "$ac_cv_lib_dld_dld_link" = "yes"; then
+        CONFIG_BDL="-ldl"
 
 $as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
 
-    else
-      for ac_func in shl_load
+      else
+        for ac_func in shl_load
 do :
   ac_fn_cxx_check_func "$LINENO" "shl_load" "ac_cv_func_shl_load"
 if test "x$ac_cv_func_shl_load" = xyes; then :
@@ -6052,13 +6052,13 @@ _ACEOF
 fi
 done
 
-      if test "$ac_cv_func_shl_load" = "yes"; then
-        CONFIG_BDL="-ldl"
+        if test "$ac_cv_func_shl_load" = "yes"; then
+          CONFIG_BDL="-ldl"
 
 $as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
 
-      else
-        for ac_func in dlopen
+        else
+          for ac_func in dlopen
 do :
   ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
 if test "x$ac_cv_func_dlopen" = xyes; then :
@@ -6069,15 +6069,16 @@ _ACEOF
 fi
 done
 
-        if test "$ac_cv_func_dlopen" = "yes"; then
+          if test "$ac_cv_func_dlopen" = "yes"; then
 
 $as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
 
+          fi
         fi
       fi
     fi
   fi
-fi
+
 
 
 #--------------------------------------------------------------------
@@ -6402,7 +6403,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 # Checks for freetype library
 #--------------------------------------------------------------------
 
-# Check whether --enable-freetype was given.
+  # Check whether --enable-freetype was given.
 if test "${enable_freetype+set}" = set; then :
   enableval=$enable_freetype; disable_freetype="yes"
 else
@@ -6417,33 +6418,33 @@ if test "${with_freetype+set}" = set; then :
 fi
 
 
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-if test -z "$FREETYPE_CFLAGS"; then
-  FREETYPE_CFLAGS=`freetype-config --cflags`
-fi
-CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
-if test -z "$FREETYPE_LDFLAGS"; then
-  FREETYPE_LDFLAGS=`freetype-config --libs`
-fi
-LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
-ac_fn_cxx_check_header_mongrel "$LINENO" "ft2build.h" "ac_cv_header_ft2build_h" "$ac_includes_default"
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+  if test -z "$FREETYPE_CFLAGS"; then
+    FREETYPE_CFLAGS=`freetype-config --cflags`
+  fi
+  CPPFLAGS="$CPPFLAGS $FREETYPE_CFLAGS"
+  if test -z "$FREETYPE_LDFLAGS"; then
+    FREETYPE_LDFLAGS=`freetype-config --libs`
+  fi
+  LIBS="$LDFLAGS $FREETYPE_LDFLAGS"
+  ac_fn_cxx_check_header_mongrel "$LINENO" "ft2build.h" "ac_cv_header_ft2build_h" "$ac_includes_default"
 if test "x$ac_cv_header_ft2build_h" = xyes; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for freetype" >&5
 $as_echo_n "checking for freetype... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+  #include <ft2build.h>
+  #include FT_FREETYPE_H
 
 int
 main ()
 {
 
-    FT_Library ft_library;
-    (void) FT_Init_FreeType (&ft_library);
+      FT_Library ft_library;
+      (void) FT_Init_FreeType (&ft_library);
 
   ;
   return 0;
@@ -6451,44 +6452,45 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 $as_echo "#define USE_FREETYPE 1" >>confdefs.h
 
-    FREETYPE_CFLAGS="$CPPFLAGS"
-    if test "$with_freetype" = "linked" -o "$with_freetype" = "" ; then
-      FREETYPE_LDFLAGS="$LIBS"
+      FREETYPE_CFLAGS="$CPPFLAGS"
+      if test "$with_freetype" = "linked" -o "$with_freetype" = "" ; then
+        FREETYPE_LDFLAGS="$LIBS"
 
 $as_echo "#define LINKED_FREETYPE 1" >>confdefs.h
 
-    fi
+      fi
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-    as_fn_error $? "cannot link freetype library" "$LINENO" 5
+      as_fn_error $? "cannot link freetype library" "$LINENO" 5
 
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 else
 
-    if test "$disable_freetype" != "yes"; then
-      as_fn_error $? "Cannot find freetype library.
-TeXmacs almost need freetype library to work properly.
-If you know what you are doing, you can configure with --disable-freetype" "$LINENO" 5
-    fi
+      if test "$disable_freetype" != "yes"; then
+        as_fn_error $? "Cannot find freetype library.
+  TeXmacs almost need freetype library to work properly.
+  If you know what you are doing, you can configure with --disable-freetype" "$LINENO" 5
+      fi
 
 
 fi
 
 
 
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
+
 
 
 
