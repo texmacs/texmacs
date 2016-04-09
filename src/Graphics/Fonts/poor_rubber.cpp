@@ -98,7 +98,8 @@ poor_rubber_font_rep::search_font (string s, string& r) {
     //     << ", " << r << ", " << num << LF;
     int nr= max (num - 5, 0);
     int code;
-    if (num <= MAGNIFIED_NUMBER || r == "/" || r == "\\") {
+    if (num <= MAGNIFIED_NUMBER ||
+        r == "/" || r == "\\" || r == "langle" || r == "rangle") {
       num= min (num, MAGNIFIED_NUMBER);
       if (N(r) > 1) r= "<" * r * ">";
       if ((r == "|" || r == "<||>" || r == "<interleave>") &&
@@ -229,6 +230,10 @@ poor_rubber_font_rep::supports (string s) {
         r == "tlceil" || r == "trceil") {
       if (base->supports ("<" * r * ">")) return true;
       return base->supports ("[") && base->supports ("]");
+    }
+    if (r == "langle" || r == "rangle") {
+      if (base->supports ("<" * r * ">")) return true;
+      //return base->supports ("<less>") && base->supports ("<gtr>");
     }
   }
   return false;
