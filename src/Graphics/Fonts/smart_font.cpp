@@ -360,6 +360,7 @@ main_family (string f) {
 string
 get_unicode_range (string c) {
   string uc= cork_to_utf8 (c);
+  if (N(uc) == 0) return "";
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
   string range= "";
@@ -409,6 +410,7 @@ struct smart_font_rep: font_rep {
 
   void   advance (string s, int& pos, string& r, int& nr);
   int    resolve (string c, string fam, int attempt);
+  bool   is_italic_prime (string c);
   int    resolve_rubber (string c, string fam, int attempt);
   int    resolve (string c);
   void   initialize_font (int nr);
@@ -722,6 +724,18 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
   return -1;
 }
 
+bool
+smart_font_rep::is_italic_prime (string c) {
+  if (c != "'" && c != "`") return false;
+  array<string> a= trimmed_tokenize (family, ",");
+  string s= "<#2B9>";
+  if (c == "`") s= "<backprime>";
+  for (int i= 0; i < N(a); i++)
+    if (resolve (s, a[i], 1) >= 0)
+      return false;
+  return true;
+}
+
 extern bool has_poor_rubber;
 
 int
@@ -763,6 +777,10 @@ smart_font_rep::resolve (string c) {
     if (is_greek (c)) {
       //cout << "Found " << c << " in greek\n";
       return sm->add_char (tuple ("italic-math"), c);
+    }
+    if (is_italic_prime (c)) {
+      //cout << "Found " << c << " in italic prime\n";
+      return sm->add_char (tuple ("italic-math"), c);      
     }
     if (is_special (c)) {
       //cout << "Found " << c << " in special\n";

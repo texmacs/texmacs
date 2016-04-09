@@ -175,8 +175,8 @@ class symbol_box_rep: public modifier_box_rep {
 public:
   symbol_box_rep (path ip, box b, int n);
   operator tree () { return tree (TUPLE, "symbol", subbox(0)); }
-  box  adjust_kerning (int mode, double factor);
-  path find_box_path (SI x, SI y, SI delta, bool force, bool& found);
+  box    adjust_kerning (int mode, double factor);
+  path   find_box_path (SI x, SI y, SI delta, bool force, bool& found);
 };
 
 symbol_box_rep::symbol_box_rep (path ip, box b2, int n2):
