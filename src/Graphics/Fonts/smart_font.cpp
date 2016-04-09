@@ -760,10 +760,14 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
 int
 smart_font_rep::resolve (string c) {
   if (math_kind != 0) {
-    if (is_greek (c))
+    if (is_greek (c)) {
+      //cout << "Found " << c << " in greek\n";
       return sm->add_char (tuple ("italic-math"), c);
-    if (is_special (c))
+    }
+    if (is_special (c)) {
+      //cout << "Found " << c << " in special\n";
       return sm->add_char (tuple ("special"), c);
+    }
     if (find_in_general (c)) {
       //cout << "Found " << c << " in general\n";
       return sm->add_char (tuple ("virtual", "general"), c);
@@ -775,18 +779,30 @@ smart_font_rep::resolve (string c) {
     if (attempt > 1 && substitute_math_letter (c, math_kind) != "") break;
     for (int i= 0; i < N(a); i++) {
       int nr= resolve (c, a[i], attempt);
-      if (nr >= 0) return nr;
+      if (nr >= 0) {
+        //initialize_font (nr);
+        //cout << "Found " << c << " in " << fn[nr]->res_name << "\n";
+        return nr;
+      }
       if (is_rubber (c)) nr= resolve_rubber (c, a[i], attempt);
-      if (nr >= 0) return nr;
+      if (nr >= 0) {
+        //cout << "Found " << c << " in poor-rubber\n";
+        return nr;
+      }
     }
   }
 
   string sf= substitute_math_letter (c, math_kind);
-  if (sf != "") return sm->add_char (tuple (sf), c);
+  if (sf != "") {
+    //cout << "Found " << c << " in " << sf << " (math-letter)\n";
+    return sm->add_char (tuple (sf), c);
+  }
 
   string virt= find_in_virtual (c);
-  if (math_kind != 0 && !unicode_provides (c) && virt == "")
+  if (math_kind != 0 && !unicode_provides (c) && virt == "") {
+    //cout << "Found " << c << " in other\n";
     return sm->add_char (tuple ("other"), c);
+  }
 
   if (virt != "") {
     //cout << "Found " << c << " in " << virt << "\n";

@@ -46,15 +46,5 @@
   \;
 </body>
 
-<\initial>
-  <\collection>
-    <associate|font|bonum>
-    <associate|math-font|math-bonum>
-  </collection>
-</initial>
-
-<\references>
-  <\collection>
-    <associate|auto-1|<tuple|1|?>>
-  </collection>
-</references>
+<initial|<\collection>
+</collection>>
