@@ -170,7 +170,11 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
   QN c= tfm->nth_in_list (pre_c, n);
   if (tfm->tag (c) != 3) get_extents (c, ex);
   else {
-    int i, nr_rep= n- tfm->list_len (pre_c);
+    int i, nr_rep= n - tfm->list_len (pre_c);
+    if (tfm->top (c) == 0 && tfm->mid (c) == 0 && tfm->bot (c) == 0)
+      nr_rep += tfm->list_len (pre_c) + 1;
+    else if (tfm->top (c) == 0 || tfm->bot (c) == 0)
+      nr_rep += max (tfm->list_len (pre_c) - 2, 0);
 
     ex->x1= ex->x3= ex->y3= PLUS_INFINITY;
     ex->x2= ex->x4= ex->y4= MINUS_INFINITY;
@@ -244,8 +248,11 @@ tex_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 
   if (tfm->tag (c) != 3) ren->draw (c, pk, x, y);
   else {
-    int i;
-    int nr_rep= n- tfm->list_len (pre_c);
+    int i, nr_rep= n - tfm->list_len (pre_c);
+    if (tfm->top (c) == 0 && tfm->mid (c) == 0 && tfm->bot (c) == 0)
+      nr_rep += tfm->list_len (pre_c) + 1;
+    else if (tfm->top (c) == 0 || tfm->bot (c) == 0)
+      nr_rep += max (tfm->list_len (pre_c) - 2, 0);
 
     SI real_y= y; // may be necessary to round y
                   // using SI temp= x; decode (temp, y); encode (temp, y);
