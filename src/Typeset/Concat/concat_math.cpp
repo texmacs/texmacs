@@ -170,6 +170,9 @@ concater_rep::typeset_rprime (tree t, path ip) {
     path sip= descend (ip, 0);
     box b1, b2;
     b2= typeset_as_concat (env, s /*t[0]*/, sip);
+    if (b2->right_slope () == 0.25001 && b2->y1 > 0)
+      // NOTE: hack for detection of poor italic font
+      b2= shift_box (sip, b2, (SI) (-1.0 * b2->y1 * b2->right_slope ()), 0);
     b2= symbol_box (sip, b2, N(t[0]->label));
     b2= move_box (sip, b2,
 		  flag? 0: env->as_length (string ("0.05fn")),

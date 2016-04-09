@@ -239,7 +239,8 @@ find_font (string family, string variant,
     string shape2= shape (0, N(shape) - 7);
     font fn= find_font (family, variant, series, shape2, sz, dpi);
     if (!is_nil (fn)) {
-      font itfn= poor_italic_font (fn, 0.25);
+      font itfn= poor_italic_font (fn, 0.25001);
+      // NOTE: precise value 0.25001 also used in 'concat_math'
       font::instances (s)= (pointer) itfn.rep;
       return itfn;
     }

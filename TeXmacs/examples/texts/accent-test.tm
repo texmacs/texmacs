@@ -41,12 +41,16 @@
     \<Gamma\><rprime|'>,\<Delta\><rprime|'>,\<Theta\><rprime|'>,\<Lambda\><rprime|'>,\<Xi\><rprime|'>,\<Pi\><rprime|'>,\<Sigma\><rprime|'>,\<Upsilon\><rprime|'>,\<Phi\><rprime|'>,\<Psi\><rprime|'>,\<Omega\><rprime|'>
   </equation*>
 
+  <\equation*>
+    1<rprime|'>,2<rprime|'>,3<rprime|'>,4<rprime|'>,5<rprime|'>,6<rprime|'>,7<rprime|'>,8<rprime|'>,9<rprime|'>,0<rprime|'>,<around*|[|x|]><rprime|'>
+  </equation*>
+
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|font|Marker Felt>
+    <associate|font|Chalkduster>
     <associate|math-font|math-termes>
   </collection>
 </initial>

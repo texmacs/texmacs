@@ -24,6 +24,7 @@ struct poor_italic_font_rep: font_rep {
   poor_italic_font_rep (string name, font base, double xslant);
 
   bool   supports (string c);
+  SI     get (string c);
   void   get_extents (string s, metric& ex);
   void   get_xpositions (string s, SI* xpos);
   void   get_xpositions (string s, SI* xpos, bool lig);
@@ -214,9 +215,9 @@ get_multiplier (string r) {
     double _D= 0.7;
     double _O= 0.6;
     double _b= 0.5;
+    double _k= 0.6;
     double _n= 0.7;
     double _o= 0.65;
-    double _t= 0.4;
     multipliers ("A")= _A;
     multipliers ("B")= _B;
     multipliers ("C")= _O;
@@ -230,14 +231,16 @@ get_multiplier (string r) {
     multipliers ("c")= _o;
     multipliers ("e")= _o;
     multipliers ("h")= _b;
+    multipliers ("k")= _k;
     multipliers ("m")= _n;
     multipliers ("n")= _n;
     multipliers ("o")= _o;
     multipliers ("p")= _o;
     multipliers ("r")= _o;
     multipliers ("p")= _o;
-    multipliers ("t")= _t;
+    multipliers ("t")= _b;
     multipliers ("<eta>")= _n;
+    multipliers ("<lambda>")= _b;
     multipliers ("<theta>")= _n;
     multipliers ("<omicron>")= _o;
     multipliers ("<rho>")= _o;
@@ -275,7 +278,8 @@ poor_italic_font_rep::get_right_correction (string s) {
 font
 poor_italic_font (font base, double slant) {
   string name= "pooritalic[" * base->res_name;
-  if (slant != 0.25) name << "," << as_string (slant);
+  if (slant != 0.25001) name << "," << as_string (slant);
+  // NOTE: precise value 0.25001 also used in 'concat_math'
   name << "]";
   return make (font, name, tm_new<poor_italic_font_rep> (name, base, slant));
 }
