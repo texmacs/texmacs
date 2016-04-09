@@ -98,7 +98,8 @@ poor_rubber_font_rep::search_font (string s, string& r) {
     //     << ", " << r << ", " << num << LF;
     int nr= max (num - 5, 0);
     int code;
-    if (num <= MAGNIFIED_NUMBER) {
+    if (num <= MAGNIFIED_NUMBER || r == "/" || r == "\\") {
+      num= min (num, MAGNIFIED_NUMBER);
       if (N(r) > 1) r= "<" * r * ">";
       if ((r == "|" || r == "<||>" || r == "<interleave>") &&
           narrow_bars ()) {
@@ -112,6 +113,14 @@ poor_rubber_font_rep::search_font (string s, string& r) {
         else if (r == "<llbracket>") r= "<emu-dlbracket>";
         else if (r == "<rrbracket>") r= "<emu-drbracket>";
         else r= "<emu-" * r (1, N(r)-1) * ">";
+      }
+      else if (r == "\\" && base->supports ("/")) {
+        metric ex1, ex2;
+        base -> get_extents ("/", ex1);
+        base -> get_extents ("\\", ex2);
+        double h1= ex1->y2 - ex1->y1;
+        double h2= ex2->y2 - ex2->y1;
+        if (fabs ((h2/h1) - 1.0) > 0.05) r= "<emu-backslash>";
       }
       return num;
     }
@@ -203,7 +212,8 @@ poor_rubber_font_rep::supports (string s) {
     //     << ", " << r << LF;
     if (r == "(" || r == ")" ||
         r == "[" || r == "]" ||
-        r == "{" || r == "}" || r == "|")
+        r == "{" || r == "}" ||
+        r == "/" || r == "\\" || r == "|")
       return base->supports (r);
     if (r == "||" || r == "interleave") {
       if (base->supports ("<" * r * ">")) return true;

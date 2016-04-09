@@ -1,5 +1,6 @@
 
 (virtual-font
+  (emu-backslash (hor-flip /))
   (emu-lfloor (join (part [ * * * 0.5) (part [ * * 0.25 0.75 0  0.25)))
   (emu-rfloor (join (part ] * * * 0.5) (part ] * * 0.25 0.75 0  0.25)))
   (emu-lceil  (join (part [ * * 0.5 *) (part [ * * 0.25 0.75 0 -0.25)))
