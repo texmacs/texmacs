@@ -1,40 +1,31 @@
-<TeXmacs|1.0.1.17>
+<TeXmacs|1.99.4>
+
+<style|source>
 
 <\body>
-  Unselect preamble mode (in the Document menu) in order to see the effect of
-  the commands below:
+  Unselect ``Source tree'' mode (in the Document\<into\>Source menu) in order
+  to see the effect of the commands below:
 
   \;
 
-  <assign|test|<func|f|<apply|<apply|f>|Joris>>>
+  <assign|test|<macro|f|<compound|<arg|f>|Joris>>>
 
-  <apply|test|<func|name|Hallo <apply|name>...>>
+  <test|<macro|name|Hallo <arg|name>...>>
 
-  <assign|Hallo|<func|<func|name|Hallo <apply|name>!>>>
+  <assign|Hallo|<macro|<macro|name|Hallo <arg|name>!>>>
 
-  <apply|Hallo>
+  <Hallo>
 
-  <apply|test|<apply|Hallo>>
+  <test|<Hallo>>
 
   \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
     <associate|active|false>
-    <associate|reduction page bottom margin|15mm>
-    <associate|page type|a4>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|window width|1008640>
+    <associate|preamble|true>
     <associate|window height|732160>
-    <associate|reduction page top margin|15mm>
+    <associate|window width|1008640>
   </collection>
 </initial>
