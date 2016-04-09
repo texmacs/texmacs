@@ -204,6 +204,54 @@ poor_italic_font_rep::get_left_correction (string s) {
   return base->get_left_correction (s) + dx;
 }
 
+static hashmap<string,double> multipliers (1.0);
+
+static double
+get_multiplier (string r) {
+  if (N(multipliers) == 0) {
+    double _A= 0.25;
+    double _B= 0.8;
+    double _D= 0.7;
+    double _O= 0.6;
+    double _b= 0.5;
+    double _n= 0.7;
+    double _o= 0.65;
+    double _t= 0.4;
+    multipliers ("A")= _A;
+    multipliers ("B")= _B;
+    multipliers ("C")= _O;
+    multipliers ("D")= _D;
+    multipliers ("L")= 0;
+    multipliers ("O")= _O;
+    multipliers ("P")= _B;
+    multipliers ("Q")= _O;
+    multipliers ("R")= _B;
+    multipliers ("b")= _b;
+    multipliers ("c")= _o;
+    multipliers ("e")= _o;
+    multipliers ("h")= _b;
+    multipliers ("m")= _n;
+    multipliers ("n")= _n;
+    multipliers ("o")= _o;
+    multipliers ("p")= _o;
+    multipliers ("r")= _o;
+    multipliers ("p")= _o;
+    multipliers ("t")= _t;
+    multipliers ("<eta>")= _n;
+    multipliers ("<theta>")= _n;
+    multipliers ("<omicron>")= _o;
+    multipliers ("<rho>")= _o;
+    multipliers ("<phi>")= _o;
+    multipliers ("<omega>")= _o;
+    multipliers ("<Delta>")= _A;
+    multipliers ("<Theta>")= _O;
+    multipliers ("<Lambda>")= _A;
+    multipliers ("<Phi>")= _O;
+    multipliers ("<Omega>")= _O;
+  }
+  return multipliers[r];
+}
+
 SI
 poor_italic_font_rep::get_right_correction (string s) {
   if (N(s) == 0) return 0;
@@ -214,7 +262,8 @@ poor_italic_font_rep::get_right_correction (string s) {
   base->get_extents (s, ex);
   SI dx= 0;
   if (ex->y2 > 0) dx= (SI) (xslant * ex->y2);
-  // FIXME: we should apply a smaller correction if there is no ink
+  dx= (SI) (get_multiplier (r) * dx);
+  // FIXME: we should apply a better correction if there is no ink
   // in the upper right corner (e.g. 'b' as compared to 'd')
   return base->get_right_correction (s) + dx;
 }
