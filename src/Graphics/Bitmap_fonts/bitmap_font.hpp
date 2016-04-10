@@ -89,7 +89,7 @@ glyph ver_extend (glyph gl, int pos, int by);
 glyph hor_take   (glyph gl, int pos, int nr);
 glyph ver_take   (glyph gl, int pos, int nr);
 glyph slanted    (glyph gl, double slant);
-glyph vstretch   (glyph gl, double factor);
+glyph stretched  (glyph gl, double xf, double yf);
 glyph bolden     (glyph gl, SI dpen);
 glyph make_bbb   (glyph gl, int code, SI penw, SI penh, SI fatw);
 
@@ -129,7 +129,7 @@ font_glyphs std_font_glyphs (string name, glyph* fng, int bc, int ec);
 font_metric slanted (font_metric fnm, double slant);
 font_glyphs slanted (font_glyphs fng, double slant);
 font_metric stretched (font_metric fnm, double xf, double yf);
-font_glyphs vstretch (font_glyphs fng, double factor);
+font_glyphs stretched (font_glyphs fng, double xf, double yf);
 font_metric bolden (font_metric fnm, SI dtot);
 font_glyphs bolden (font_glyphs fng, SI dpen);
 font_glyphs make_bbb (font_glyphs fng, SI penw, SI penh, SI fatw);

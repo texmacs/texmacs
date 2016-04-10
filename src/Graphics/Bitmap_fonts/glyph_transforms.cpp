@@ -138,52 +138,70 @@ stretched (font_metric fnm, double xf, double yf) {
 ******************************************************************************/
 
 glyph
-vstretch (glyph gl, double factor) {
-  int i, j, J;
+stretched (glyph gl, double xf, double yf) {
+  int i, j, I, J;
   int ww= gl->width, hh= gl->height;
+  int x1= -gl->xoff, x2= ww - gl->xoff;
+  int X1= (int) floor (xf * x1), X2= (int) ceil (xf * x2);
+  int WW= X2 - X1;
   int y1= gl->yoff - hh, y2= gl->yoff;
-  int Y1= (int) floor (factor * y1), Y2= (int) ceil (factor * y2);
+  int Y1= (int) floor (yf * y1), Y2= (int) ceil (yf * y2);
   int HH= Y2 - Y1;
-  glyph bmr (ww, HH, gl->xoff, Y2, gl->depth);
-  for (i=0; i<ww; i++)
+  glyph bmr (WW, HH, -X1, Y2, gl->depth);
+  for (I=0; I<WW; I++) {
+    int X = I + X1;
+    int i1= ((int) floor (X / xf)) - x1;
+    int i2= ((int) ceil  ((X + 1) / xf)) - x1;
+    i1= max (min (i1, ww-1), 0);
+    i2= max (min (i2, ww-1), 0);
     for (J=0; J<HH; J++) {
       int Y = J + Y1;
-      int j1= ((int) floor (Y / factor)) - y1;
-      int j2= ((int) ceil  ((Y + 1) / factor)) - y1;
+      int j1= ((int) floor (Y / yf)) - y1;
+      int j2= ((int) ceil  ((Y + 1) / yf)) - y1;
       j1= max (min (j1, hh-1), 0);
       j2= max (min (j2, hh-1), 0);
       double sum= 0.0;
-      for (j= j1; j<j2; j++)
-        if (gl->get_x (i, j)) {
-          double Y1b= factor * (j + y1);
-          double Y2b= factor * ((j + 1) + y1);
-          Y1b= max (Y + 0.0, Y1b);
-          Y2b= min (Y + 1.0, Y2b);
-          if (Y1b < Y2b) sum += Y2b - Y1b;
-        }
-      bmr->set_x (i, J, sum >= 0.5? 1: 0);
+      for (i= i1; i<i2; i++)
+        for (j= j1; j<j2; j++)
+          if (gl->get_x (i, j)) {
+            double X1b= xf * (i + x1);
+            double X2b= xf * ((i + 1) + x1);
+            X1b= max (X + 0.0, X1b);
+            X2b= min (X + 1.0, X2b);
+            double Y1b= yf * (j + y1);
+            double Y2b= yf * ((j + 1) + y1);
+            Y1b= max (Y + 0.0, Y1b);
+            Y2b= min (Y + 1.0, Y2b);
+            if (X1b < X2b && Y1b < Y2b)
+              sum += (X2b - X1b) * (Y2b - Y1b);
+          }
+      bmr->set_x (I, J, sum >= 0.5? 1: 0);
     }
+  }
   return bmr;
 }
 
-struct vstretch_font_glyphs_rep: public font_glyphs_rep {
+struct stretched_font_glyphs_rep: public font_glyphs_rep {
   font_glyphs fng;
-  double factor;
+  double xf, yf;
   hashmap<int,glyph> gs;
-  vstretch_font_glyphs_rep (string name, font_glyphs fng2, double factor2):
-    font_glyphs_rep (name), fng (fng2), factor (factor2), gs (error_glyph) {}
+  stretched_font_glyphs_rep (string name, font_glyphs fng2,
+                             double xf2, double yf2):
+    font_glyphs_rep (name), fng (fng2),
+    xf (xf2), yf (yf2), gs (error_glyph) {}
   glyph& get (int c) {
     glyph& orig (fng->get (c));
     if ((&orig != &error_glyph) && !gs->contains (c))
-      gs(c)= vstretch (orig, factor);
+      gs(c)= stretched (orig, xf, yf);
     return gs(c); }
 };
 
 font_glyphs
-vstretch (font_glyphs fng, double factor) {
-  string name= fng->res_name * "-vstretch[" * as_string (factor) * "]";
+stretched (font_glyphs fng, double xf, double yf) {
+  string name= fng->res_name * "-stretched[";
+  name << as_string (xf) << "," << as_string (yf) << "]";
   return make (font_glyphs, name,
-               tm_new<vstretch_font_glyphs_rep> (name, fng, factor));
+               tm_new<stretched_font_glyphs_rep> (name, fng, xf, yf));
 }
 
 /******************************************************************************

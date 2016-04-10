@@ -167,7 +167,7 @@ poor_stretched_font_rep::advance_glyph (string s, int& pos) {
 glyph
 poor_stretched_font_rep::get_glyph (string s) {
   glyph gl= base->get_glyph (s);
-  return vstretch (gl, factor);
+  return stretched (gl, 1.0, factor);
 }
 
 int
@@ -176,7 +176,7 @@ poor_stretched_font_rep::index_glyph (string s, font_metric& fnm,
   int c= base->index_glyph (s, fnm, fng);
   if (c < 0) return c;
   fnm= stretched (fnm, 1.0, factor);
-  fng= vstretch (fng, factor);
+  fng= stretched (fng, 1.0, factor);
   return c;
 }
 
