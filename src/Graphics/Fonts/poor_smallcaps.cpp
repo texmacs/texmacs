@@ -49,7 +49,7 @@ poor_smallcaps_font_rep::poor_smallcaps_font_rep (
     base->get_extents ("X", eX);
     double hx= ex->y2 - ex->y1;
     double hX= eX->y2 - eX->y1;
-    subfn[1]= base->magnify (hx / hX);
+    subfn[1]= base->magnify (sqrt (hx / hX), hx / hX);
   }
   else subfn[1]= base->magnify (0.75);
 }
