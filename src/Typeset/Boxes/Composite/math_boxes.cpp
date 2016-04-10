@@ -317,10 +317,23 @@ bool
 compute_wide_accent (path ip, box b, string s,
                      font fn, pencil pen, bool request_wide, bool above,
                      box& wideb, SI& sep) {
+  bool stix= starts (fn->res_name, "stix-");
   bool wide= (b->w() >= (fn->wfn)) || request_wide;
   if (ends (s, "dot>") || (s == "<acute>") ||
       (s == "<grave>") || (s == "<abovering>")) wide= false;
-  bool stix= starts (fn->res_name, "stix-");
+  bool very_wide= false;
+  SI   accw= fn->wfn;
+  if (wide) {
+    if (true || stix) very_wide= true;
+    else if (s == "^" || s == "<hat>" || s == "~" || s == "<tilde>" ||
+             s == "<bar>" || s == "<vect>" || s == "<check>" ||
+             s == "<breve>" || s == "<invbreve>") {
+      box wb= text_box (decorate_middle (ip), 0, s, fn, pen);
+      accw= wb->x4 - wb->x3;
+      if (b->w() >= 16*accw) very_wide= true;
+    }
+    else very_wide= true;
+  }
   if (wide && stix) {
     if (s == "^") s= "<hat>";
     if (s == "~") s= "<tilde>";
@@ -344,7 +357,7 @@ compute_wide_accent (path ip, box b, string s,
       }
     }
   }
-  if (wide) {
+  if (very_wide) {
     SI w= fn->wline;
     if (stix) w= (SI) (1.189 * w);
     pencil wpen= pen->set_width (w);
@@ -371,6 +384,23 @@ compute_wide_accent (path ip, box b, string s,
                           fn, pen, b->x2- b->x1);
     sep= fn->sep;
     if (stix) sep= (SI) (1.5 * sep);
+  }
+  else if (wide) {
+    SI pad= fn->wfn - accw;
+    pad= (SI) ((0.75 * accw * pad) / (b->w() - pad));
+    double sx= ((double) (b->w() - pad)) / ((double) accw);
+    sx= floor (4.0*sx) / 4.0;
+    double sy= sqrt (sqrt (sx));
+    font sfn= fn->magnify (sx, sy);
+    wideb= text_box (decorate_middle (ip), 0, s, sfn, pen);
+    wideb= resize_box (decorate_middle (ip), wideb,
+                       max (wideb->x1, wideb->x3), wideb->y1,
+                       min (wideb->x2, wideb->x4), wideb->y2);
+    if (fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0)
+      wideb= shift_box (decorate_middle (ip), wideb,
+                        (SI) (-0.5 * b->right_slope () * fn->yx), 0);
+    sep= above? -fn->yx: fn->sep;
+    if (above) sep -= 3 * (sy - 1.0) * fn->sep;
   }
   else {
     wideb= text_box (decorate_middle (ip), 0, s, fn, pen);
