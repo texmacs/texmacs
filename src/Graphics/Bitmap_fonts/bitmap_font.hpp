@@ -128,7 +128,7 @@ font_glyphs std_font_glyphs (string name, glyph* fng, int bc, int ec);
 
 font_metric slanted (font_metric fnm, double slant);
 font_glyphs slanted (font_glyphs fng, double slant);
-font_metric vstretch (font_metric fnm, double factor);
+font_metric stretched (font_metric fnm, double xf, double yf);
 font_glyphs vstretch (font_glyphs fng, double factor);
 font_metric bolden (font_metric fnm, SI dtot);
 font_glyphs bolden (font_glyphs fng, SI dpen);

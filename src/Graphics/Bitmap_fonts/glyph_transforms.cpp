@@ -95,15 +95,17 @@ slanted (font_glyphs fng, double slant) {
 }
 
 /******************************************************************************
-* Vertical stretching of font metrics
+* Stretching of font metrics
 ******************************************************************************/
 
-struct vstretch_font_metric_rep: public font_metric_rep {
+struct stretched_font_metric_rep: public font_metric_rep {
   font_metric fnm;
-  double factor;
+  double xf, yf;
   hashmap<int,pointer> ms;
-  vstretch_font_metric_rep (string name, font_metric fnm2, double factor2):
-    font_metric_rep (name), fnm (fnm2), factor (factor2), ms (error_metric) {}
+  stretched_font_metric_rep (string name, font_metric fnm2,
+                             double xf2, double yf2):
+    font_metric_rep (name), fnm (fnm2),
+    xf (xf2), yf (yf2), ms (error_metric) {}
   bool exists (int c) { return fnm->exists (c); }
   metric& get (int c) {
     metric& m (fnm->get (c));
@@ -111,23 +113,24 @@ struct vstretch_font_metric_rep: public font_metric_rep {
     if (!ms->contains (c)) {
       metric_struct* r= tm_new<metric_struct> ();
       ms(c)= (pointer) r;
-      r->x1= m->x1;
-      r->x2= m->x2;
-      r->x3= m->x3;
-      r->x4= m->x4;
-      r->y1= (SI) floor (factor * m->y1 + 0.5);
-      r->y2= (SI) floor (factor * m->y2 + 0.5);
-      r->y3= (SI) floor (factor * m->y3);
-      r->y4= (SI) ceil  (factor * m->y4);
+      r->x1= (SI) floor (xf * m->x1 + 0.5);
+      r->x2= (SI) floor (xf * m->x2 + 0.5);
+      r->x3= (SI) floor (xf * m->x3);
+      r->x4= (SI) ceil  (xf * m->x4);
+      r->y1= (SI) floor (yf * m->y1 + 0.5);
+      r->y2= (SI) floor (yf * m->y2 + 0.5);
+      r->y3= (SI) floor (yf * m->y3);
+      r->y4= (SI) ceil  (yf * m->y4);
     }
     return *((metric*) ((void*) ms[c])); }
 };
 
 font_metric
-vstretch (font_metric fnm, double factor) {
-  string name= fnm->res_name * "-vstretch[" * as_string (factor) * "]";
+stretched (font_metric fnm, double xf, double yf) {
+  string name= fnm->res_name * "-stretched[";
+  name << as_string (xf) << "," << as_string (yf) << "]";
   return make (font_metric, name,
-	       tm_new<vstretch_font_metric_rep> (name, fnm, factor));
+	       tm_new<stretched_font_metric_rep> (name, fnm, xf, yf));
 }
 
 /******************************************************************************

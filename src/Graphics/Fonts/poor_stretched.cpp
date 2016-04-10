@@ -175,7 +175,7 @@ poor_stretched_font_rep::index_glyph (string s, font_metric& fnm,
                                                 font_glyphs& fng) {
   int c= base->index_glyph (s, fnm, fng);
   if (c < 0) return c;
-  fnm= vstretch (fnm, factor);
+  fnm= stretched (fnm, 1.0, factor);
   fng= vstretch (fng, factor);
   return c;
 }
