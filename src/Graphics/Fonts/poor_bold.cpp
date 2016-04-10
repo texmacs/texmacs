@@ -63,6 +63,25 @@ poor_bold_font_rep::poor_bold_font_rep (string name, font b,
   this->wquad += dup;
 }
 
+static hashmap<string,double> bold_multiplier (1.0);
+
+static double
+get_bold_multiplier (string s) {
+  if (N (bold_multiplier) != 0) return bold_multiplier[s];
+  array<string> _2_0;
+  array<string> _3_0;
+  _2_0 << string ("B") << string ("D") << string ("H") << string ("O")
+       << string ("P") << string ("Q") << string ("R") << string ("U")
+       << string ("a") << string ("b") << string ("d") << string ("g")
+       << string ("h") << string ("n") << string ("o") << string ("p")
+       << string ("q") << string ("u")
+       << string ("0") << string ("6") << string ("8") << string ("9");
+  _3_0 << string ("m");
+  for (int i=0; i<N(_2_0); i++) bold_multiplier (_2_0[i])= 2.0;
+  for (int i=0; i<N(_3_0); i++) bold_multiplier (_3_0[i])= 3.0;
+  return bold_multiplier[s];
+}
+
 void
 poor_bold_font_rep::fatten (string c, SI& dpen, SI& dtot) {
   // FIXME: a future improvement would be to allow the total increase 'dtot'
@@ -70,13 +89,14 @@ poor_bold_font_rep::fatten (string c, SI& dpen, SI& dtot) {
   // for the character 'i', we should have dtot = dpen, but for 'n'
   // and 'fi', we should rather have dtot = 2 dpen; for 'm', we should
   // even have dtot = 3 pen.  This requires horizontal font stretching.
+  double m= 1.0; // get_bold_multiplier (c);
   if (is_uni_upcase_char (c)) {
     dpen= dup;
-    dtot= dup;
+    dtot= (SI) (m * dup);
   }
   else {
     dpen= dlo;
-    dtot= dlo;
+    dtot= (SI) (m * dlo);
   }
 }
 
@@ -210,7 +230,7 @@ poor_bold_font_rep::get_glyph (string s) {
   if (is_nil (gl)) return gl;
   SI dpen, dtot;
   fatten (s, dpen, dtot);
-  return bolden (gl, dpen);
+  return bolden (gl, dpen, dtot);
 }
 
 int
@@ -221,7 +241,7 @@ poor_bold_font_rep::index_glyph (string s, font_metric& fnm,
   SI dpen, dtot;
   fatten (s, dpen, dtot);
   fnm= bolden (fnm, dtot);
-  fng= bolden (fng, dpen);
+  fng= bolden (fng, dpen, dtot);
   return c;
 }
 
