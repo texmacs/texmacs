@@ -323,6 +323,14 @@ from_qstring_os8bits (const QString &s) {
   return string ((char*) cstr);
 }
 
+string
+cork_to_os8bits (const string s){   
+  // Note: this function is declared in converter.hpp 
+  // (and implemented in converter.cpp for X11)
+  // In Qt version we stick to Qt routines for consistency
+  return from_qstring_os8bits(utf8_to_qstring (cork_to_utf8 (s)));
+}
+
 // This should provide better lookup times
 static QHash<QString, QColor> _NamedColors;
 
