@@ -456,6 +456,14 @@ fix_left_border (glyph gl, array<int>& start, SI& penw, SI& fat) {
   }
 }
 
+static void
+decrease_width (glyph gl, array<int>& start, SI& penw, SI& fat) {
+  (void) start;
+  SI dw= (SI) (0.25 * penw);
+  fat  += dw;
+  penw -= dw;
+}
+
 glyph
 var_make_bbb (glyph gl, int code, SI penw, SI penh, SI fat) {
   array<int> start, end;
@@ -463,6 +471,8 @@ var_make_bbb (glyph gl, int code, SI penw, SI penh, SI fat) {
   glyph bgl= bolden_at (gl, start, fat);
   if (code == ((int) 'A') || code == ((int) 'M') || code == ((int) 'N'))
     fix_left_border (gl, start, penw, fat);
+  else if (true || (code != ((int) 'S') && code != ((int) 's')))
+    decrease_width (gl, start, penw, fat);
   return hollow (bgl, start, penw, penh, fat);
 }
 
