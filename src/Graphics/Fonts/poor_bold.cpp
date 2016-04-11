@@ -79,6 +79,12 @@ get_bold_multiplier (string s) {
        << string ("m");
   for (int i=0; i<N(_1_5); i++) bold_multiplier (_1_5[i])= 1.5;
   for (int i=0; i<N(_2_0); i++) bold_multiplier (_2_0[i])= 2.0;
+  array<string> accs= get_accented_list ();
+  for (int i=0; i<N(accs); i++) {
+    string unacc= uni_unaccent_char (accs[i]);
+    if (bold_multiplier->contains (unacc))
+      bold_multiplier (accs[i])= bold_multiplier [unacc];
+  }
   return bold_multiplier[s];
 }
 
@@ -89,7 +95,7 @@ poor_bold_font_rep::fatten (string c, SI& dpen, SI& dtot) {
   // for the character 'i', we should have dtot = dpen, but for 'n'
   // and 'fi', we should rather have dtot = 2 dpen; for 'm', we should
   // even have dtot = 3 pen.  This requires horizontal font stretching.
-  double m= 1.0; //get_bold_multiplier (c);
+  double m= get_bold_multiplier (c);
   if (is_uni_upcase_char (c)) {
     dpen= dup;
     dtot= (SI) (m * dup);

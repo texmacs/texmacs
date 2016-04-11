@@ -11,6 +11,7 @@
 
 #include "universal.hpp"
 #include "hashmap.hpp"
+#include "converter.hpp"
 
 /******************************************************************************
 * Transliteration
@@ -267,4 +268,63 @@ uni_upcase_all (string s) {
     r << uni_upcase_char (s (start, i));
   }
   return r;
+}
+
+/******************************************************************************
+* Retrieving accents
+******************************************************************************/
+
+static array<string> accented_list;
+static hashmap<string,string> unaccent_table;
+static hashmap<string,string> get_accent_table;
+
+static void
+fill (array<int> a, int start, int kind) {
+  for (int i=0; i<N(a); i++)
+    if (a[i] != -1) {
+      int code= start + i;
+      string c= utf8_to_cork (encode_as_utf8 (code));
+      string v= utf8_to_cork (encode_as_utf8 (a[i]));
+      if (kind == 0) accented_list << c;
+      if (kind == 0) unaccent_table (c)= v;
+      else get_accent_table (c)= v;
+    }
+}
+
+array<string>
+get_accented_list () {
+  (void) uni_unaccent_char ("a");
+  return accented_list;
+}
+
+string
+uni_unaccent_char (string s) {
+  if (N(unaccent_table) != 0) return unaccent_table[s];
+  array<int> a;
+  a << 0x41 << 0x41 << 0x41 << 0x41 << 0x41 << 0x41 <<   -1 << 0x43
+    << 0x45 << 0x45 << 0x45 << 0x45 << 0x49 << 0x49 << 0x49 << 0x49
+    << 0x44 << 0x4E << 0x4F << 0x4F << 0x4F << 0x4F << 0x4F <<   -1
+    << 0x4F << 0x55 << 0x55 << 0x55 << 0x55 << 0x59 <<   -1 <<   -1
+    << 0x61 << 0x61 << 0x61 << 0x61 << 0x61 << 0x61 <<   -1 << 0x63
+    << 0x65 << 0x65 << 0x65 << 0x65 << 0x69 << 0x69 << 0x69 << 0x69
+    << 0x64 << 0x6E << 0x6F << 0x6F << 0x6F << 0x6F << 0x6F <<   -1
+    << 0x6F << 0x75 << 0x75 << 0x75 << 0x75 << 0x79 <<   -1 << 0x79;
+  fill (a, 0xC0, 0);
+  return unaccent_table[s];
+}
+
+string
+uni_get_accent_char (string s) {
+  if (N(get_accent_table) != 0) return get_accent_table[s];
+  array<int> a;
+  a << 0x60 << 0x0B4 << 0x2C6 << 0x2DC << 0x0A8 << 0x2DA <<    -1 << 0xB8
+    << 0x60 << 0x0B4 << 0x2C6 << 0x0A8 << 0x060 << 0x0B4 << 0x2C6 << 0xA8
+    <<   -1 << 0x2DC << 0x060 << 0x0B4 << 0x2C6 << 0x2DC << 0x0A8 <<   -1
+    <<   -1 << 0x060 << 0x0B4 << 0x2C6 << 0x0A8 << 0x0B4 <<    -1 <<   -1
+    << 0x60 << 0x0B4 << 0x2C6 << 0x2DC << 0x0A8 << 0x2DA <<    -1 << 0xB8
+    << 0x60 << 0x0B4 << 0x2C6 << 0x0A8 << 0x060 << 0x0B4 << 0x2C6 << 0xA8
+    <<   -1 << 0x2DC << 0x060 << 0x0B4 << 0x2C6 << 0x2DC << 0x0A8 <<   -1
+    <<   -1 << 0x060 << 0x0B4 << 0x2C6 << 0x0A8 << 0x0B4 <<    -1 << 0xA8;
+  fill (a, 0xC0, 1);
+  return get_accent_table[s];
 }
