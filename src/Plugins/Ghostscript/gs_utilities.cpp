@@ -44,17 +44,13 @@ string
 eps_device () {
   static string dev; // no need to resolve each time
   if (dev == "") {
-    string cmd= gs_prefix ()*" -v";
-    string buf= eval_system (cmd);
-    int pos= search_forwards ("Ghostscript", buf);
-    bool ok=(pos < 0) ?false:true;
-    pos+=11;
-    skip_spaces (buf, pos);
+    string cmd= gs_prefix ()*" --version";
+    string buf= var_eval_system (cmd);
     double ver;
-    ok= ok&&read_double (buf, pos, ver);
-    if (ok) {
-      if (DEBUG_CONVERT) debug_convert << "gs version :"<<as_string(ver)<<LF;
-      if (ver*100>=914) dev="eps2write";
+    int pos=0;
+    if (read_double (buf, pos, ver)) {
+      if (DEBUG_CONVERT) debug_convert << "gs version :"<<buf<<LF;
+      if (ver >= 9.14) dev="eps2write";
       else dev="epswrite";
     }
     else  convert_error << "Cannot determine gs version"<<LF;
@@ -107,6 +103,31 @@ gs_image_size (url image, int& w_pt, int& h_pt) {
   w_pt= 0; h_pt= 0;
 }
 
+void 
+gs_fix_bbox (url eps, int x1, int y1, int x2, int y2) {
+// used to restore appropriate bounding box of an eps file in case epswrite 
+// spuriously changes it (see gs_to_eps)
+  string outbuf, buf;
+  int inx1, iny1, inx2, iny2;
+  bool err = load_string (eps, buf, false);
+  if (!err) {
+    if (DEBUG_CONVERT) debug_convert<< "fix_bbox input bbox : ";
+    err = !ps_read_bbox (buf, inx1, iny1, inx2, iny2 );
+    if ( err || (inx1==x1 && iny1==y1 && inx2==x2 && iny2==y2)) return;
+    int pos= search_forwards ("%%BoundingBox:", buf);
+    pos += 14;
+    outbuf << buf(0, pos)
+      << " " << as_string(x1) << " " << as_string(y1) 
+      << " " << as_string(x2) << " " << as_string(y2) << "\n";
+    skip_line (buf, pos);
+    if (read (buf, pos, "%%HiResBoundingBox:")) skip_line (buf, pos);
+    outbuf << buf(pos, N(buf));
+    save_string (eps, outbuf, true);
+    if (DEBUG_CONVERT) 
+      debug_convert<< "restored bbox : " << ps_read_bbox (outbuf, x1, y1, x2, y2 )<<LF;
+  } 
+}
+
 bool
 gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
   if (DEBUG_CONVERT) debug_convert << "gs PDF image size :"<<LF;
@@ -155,11 +176,15 @@ gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
   int rot;
   if (ok) {
     skip_spaces (buf, pos);
-    ok= read_int  (buf, pos, rot) ;
-    if (ok && ((rot % 180) == 90 )) {//the image is rotated : swap axes lengths
-      if (DEBUG_CONVERT) debug_convert << "Rotate ="<<rot<<LF;
-      h_pt= x2-x1;
-      w_pt= y2-y1;
+    ok = read_int  (buf, pos, rot) ;
+    if (ok) {
+      rot = rot%360;
+      if (rot < 0) rot +=360;
+      if ((rot % 180) == 90 ) {//the image is rotated : swap axes lengths
+        if (DEBUG_CONVERT) debug_convert << "Rotate ="<<rot<<LF;
+        h_pt= x2-x1;
+        w_pt= y2-y1;
+      }
     } 
     else {
       if (DEBUG_CONVERT) debug_convert << "Rotate not found"<<LF;
@@ -221,31 +246,38 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
 void
 gs_to_eps (url image, url eps) { //this should be used mostly for pdf->eps conversion.
   string cmd;
+  int bx1, by1, bx2, by2; // bounding box
   if (DEBUG_CONVERT) debug_convert << "gs_to_eps"<<LF;
-    cmd= gs_prefix ();
-    cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-    cmd << "-sDEVICE=ps2write"; 
-    //Note: eps(2)write and bbox devices do a "smart" job of finding the cropbox on their own, generally changing
-    // the margins/aspect ratio of the image defined by the pdf CropBox|MediaBox
-    //in spite of its name ps2write does writes the Bounding box. ps2write has been available since 2010.
-    cmd << " -sOutputFile=" << sys_concretize (eps) << " ";
-    if (suffix(image) == "pdf") {
-      cmd << "-dUseCropBox ";
-      cmd << sys_concretize (image);
-    }  
-    else {
-      int bx1, by1, bx2, by2; // bounding box
-      ps_bounding_box (image, bx1, by1, bx2, by2);
-      cmd << "-dDEVICEWIDTHPOINTS=" << as_string (bx2-bx1)
-        << " -dDEVICEHEIGHTPOINTS=" << as_string (by2-by1)<<" ";
-     //don't use -dEPSCrop which works incorrectly if (bx1 != 0 || by1 != 0)
-      cmd << "-c \" "<< as_string (-bx1) << " "<< as_string (-by1) <<" translate gsave \" "
-           << sys_concretize (image)<< " -c \" grestore \"";       
+  cmd= gs_prefix ();
+  cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
+  cmd << "-sDEVICE="<<eps_device ();
+  cmd << " -sOutputFile=" << sys_concretize (eps) << " ";
+  if (suffix(image) == "pdf") {
+    image_size (image, bx2, by2);
+    bx1=by1=0;
+    cmd << "-dUseCropBox "
+      << " -dDEVICEWIDTHPOINTS=" << as_string (bx2)
+      << " -dDEVICEHEIGHTPOINTS=" << as_string (by2)<<" "
+      << sys_concretize (image);
+  }  
+  else {
+    ps_bounding_box (image, bx1, by1, bx2, by2);
+    cmd << " -dDEVICEWIDTHPOINTS=" << as_string (bx2-bx1)
+      << " -dDEVICEHEIGHTPOINTS=" << as_string (by2-by1)<<" ";
+    //don't use -dEPSCrop which works incorrectly if (bx1 != 0 || by1 != 0)
+    cmd << "-c \" "<< as_string (-bx1) << " " << as_string (-by1) 
+      << " translate gsave \" "
+      << sys_concretize (image)
+      << " -c \" grestore \"";     
   }
-    string ans= eval_system (cmd);
+  string ans= eval_system (cmd);
   if (DEBUG_CONVERT) debug_convert << cmd <<LF
-      <<"answer :"<<ans <<LF
-      <<"eps generated? "<< exists(eps)<<LF;
+    <<"answer :"<<ans <<LF
+    <<"eps generated? "<< exists(eps)<<LF;
+  // eps(2)write and bbox devices do a "smart" job of finding the boundingbox on their own,
+  // possibly changing the original margins/aspect ratio defined by the pdf CropBox|MediaBox
+  // here were restore the original size.
+  gs_fix_bbox (eps, 0, 0, bx2-bx1, by2-by1);
 }
 
 // This conversion is appropriate for eps images

@@ -1405,63 +1405,64 @@ hummus_pdf_image_size (url image, int& w, int& h) {
 
 void
 pdf_image_info (url image, int& w, int& h, PDFRectangle& cropBox, double (&tMat)[6], PDFPageInput& pageInput) {
-	int rot= pageInput.GetRotate();
-	cropBox=pageInput.GetCropBox();
-	//PDFRectangle mediaBox=pageInput.GetMediaBox();
-	w= cropBox.UpperRightX-cropBox.LowerLeftX;
-	h= cropBox.UpperRightY-cropBox.LowerLeftY;
-	if (DEBUG_CONVERT) {
-	  debug_convert << "hummus_pdf_image_info:"<< LF
-        << "image ="<<image<<LF
-	      << "crop box={"<<cropBox.LowerLeftX<< ", "<<cropBox.UpperRightX << ", "<<cropBox.LowerLeftY<< ", "<<cropBox.UpperRightY<<"}"<< LF
-        << "w,h={"<<w<< ", "<<h <<"}"<< LF;
+  int rot= (pageInput.GetRotate())%360;
+  if (rot < 0) rot +=360;
+  cropBox=pageInput.GetCropBox();
+  //PDFRectangle mediaBox=pageInput.GetMediaBox();
+  w= cropBox.UpperRightX-cropBox.LowerLeftX;
+  h= cropBox.UpperRightY-cropBox.LowerLeftY;
+  if (DEBUG_CONVERT) {
+    debug_convert << "hummus_pdf_image_info:"<< LF
+      << "image ="<<image<<LF
+      << "crop box={"<<cropBox.LowerLeftX<< ", "<<cropBox.UpperRightX 
+      << ", "<<cropBox.LowerLeftY<< ", "<<cropBox.UpperRightY<<"}"<< LF
+      << "w,h={"<<w<< ", "<<h <<"}"<< LF;
   }
-	int z;
-switch  (rot) {
-  case 0 :
-    tMat[0] = 1; 
-    tMat[1] = 0;
-    tMat[2] = 0;
-    tMat[3] = 1;
-    tMat[4] = -cropBox.LowerLeftX;
-    tMat[5] = -cropBox.LowerLeftY;
-    break;
-  case 90 :
-    tMat[0] = 0;
-    tMat[1] = -1 ;
-    tMat[2] = 1;
-    tMat[3] = 0;
-    tMat[4] = -cropBox.LowerLeftY;
-    tMat[5] = cropBox.UpperRightX ;
-    z = w;
-    w = h;
-    h = z;
-    break;
-  case 180 :
-    tMat[0] = -1;
-    tMat[1] = 0;
-    tMat[2] = 0;
-    tMat[3] = -1;
-    tMat[4] = cropBox.UpperRightX ;
-    tMat[5] = cropBox.UpperRightY ;
-    break;
-  case 270 :
-    tMat[0] = 0;
-    tMat[1] = 1 ;
-    tMat[2] = -1;
-    tMat[3] = 0;
-    tMat[4] = cropBox.UpperRightY ;
-    tMat[5] = -cropBox.LowerLeftX;
-    z = w;
-    w = h;
-    h = z;
-    break;
-  default :
-    convert_error << "unexpected rotate()="<< rot<<" in image "<<image << LF;
-  }
-if (DEBUG_CONVERT) debug_convert << "degrees image rotated :"<< rot << LF
-								 << "dx,dy={"<<tMat[4]<< ", "<<tMat[5] <<"}"<< LF;
-	   
+  int z;
+  switch  (rot) {
+    case 0 :
+      tMat[0] = 1; 
+      tMat[1] = 0;
+      tMat[2] = 0;
+      tMat[3] = 1;
+      tMat[4] = -cropBox.LowerLeftX;
+      tMat[5] = -cropBox.LowerLeftY;
+      break;
+    case 90 :
+      tMat[0] = 0;
+      tMat[1] = -1 ;
+      tMat[2] = 1;
+      tMat[3] = 0;
+      tMat[4] = -cropBox.LowerLeftY;
+      tMat[5] = cropBox.UpperRightX ;
+      z = w;
+      w = h;
+      h = z;
+      break;
+    case 180 :
+      tMat[0] = -1;
+      tMat[1] = 0;
+      tMat[2] = 0;
+      tMat[3] = -1;
+      tMat[4] = cropBox.UpperRightX ;
+      tMat[5] = cropBox.UpperRightY ;
+      break;
+    case 270 :
+      tMat[0] = 0;
+      tMat[1] = 1 ;
+      tMat[2] = -1;
+      tMat[3] = 0;
+      tMat[4] = cropBox.UpperRightY ;
+      tMat[5] = -cropBox.LowerLeftX;
+      z = w;
+      w = h;
+      h = z;
+      break;
+    default :
+      convert_error << "unexpected rotate()="<< rot<<" in image "<<image << LF;
+    }
+  if (DEBUG_CONVERT) debug_convert << "degrees image rotated :"<< rot << LF
+    << "dx,dy={"<<tMat[4]<< ", "<<tMat[5] <<"}"<< LF;
 }
 
 /* not used any longer
