@@ -68,17 +68,17 @@ static hashmap<string,double> bold_multiplier (1.0);
 static double
 get_bold_multiplier (string s) {
   if (N (bold_multiplier) != 0) return bold_multiplier[s];
+  array<string> _1_5;
   array<string> _2_0;
-  array<string> _3_0;
-  _2_0 << string ("B") << string ("D") << string ("H") << string ("O")
-       << string ("P") << string ("Q") << string ("R") << string ("U")
-       << string ("a") << string ("b") << string ("d") << string ("g")
-       << string ("h") << string ("n") << string ("o") << string ("p")
-       << string ("q") << string ("u")
-       << string ("0") << string ("6") << string ("8") << string ("9");
-  _3_0 << string ("m");
+  _1_5 << string ("#") << string ("%") << string ("&") << string ("@")
+       << string ("A") << string ("B") << string ("C") << string ("D")
+       << string ("G") << string ("K") << string ("P") << string ("R")
+       << string ("V") << string ("Y")
+       << string ("w");
+  _2_0 << string ("H") << string ("M") << string ("N") << string ("W")
+       << string ("m");
+  for (int i=0; i<N(_1_5); i++) bold_multiplier (_1_5[i])= 1.5;
   for (int i=0; i<N(_2_0); i++) bold_multiplier (_2_0[i])= 2.0;
-  for (int i=0; i<N(_3_0); i++) bold_multiplier (_3_0[i])= 3.0;
   return bold_multiplier[s];
 }
 
@@ -89,7 +89,7 @@ poor_bold_font_rep::fatten (string c, SI& dpen, SI& dtot) {
   // for the character 'i', we should have dtot = dpen, but for 'n'
   // and 'fi', we should rather have dtot = 2 dpen; for 'm', we should
   // even have dtot = 3 pen.  This requires horizontal font stretching.
-  double m= 1.0; // get_bold_multiplier (c);
+  double m= 1.0; //get_bold_multiplier (c);
   if (is_uni_upcase_char (c)) {
     dpen= dup;
     dtot= (SI) (m * dup);
@@ -178,9 +178,27 @@ poor_bold_font_rep::draw_fixed (renderer ren, string s,
     else {
       SI dpen, dtot;
       fatten (ss, dpen, dtot);
-      for (int k=0; k<=8; k++) {
-        SI dx= (k*dpen) / 8;
-        base->draw (ren, ss, x + dx + (start==0? 0: xpos[start]), y);
+      if (dpen == dtot) {
+        for (int k=0; k<=8; k++) {
+          SI dx= (k*dpen) / 8;
+          base->draw (ren, ss, x + dx + (start==0? 0: xpos[start]), y);
+        }
+      }
+      else {
+        metric ex;
+        base->get_extents (ss, ex);
+        SI xw= ex->x4 - ex->x3;
+        double c= 1.0; // approximation of orig_penw / dpen
+        double eps= (c * (dtot - dpen)) / (xw + c * (dtot - dpen));
+        SI dpen2= (SI) ((1.0 - eps) * dpen);
+        double lambda= ((double) (xw + dtot - dpen2)) / ((double) xw);
+        lambda= floor (100.0 * lambda + 0.5) / 100.0;
+        //font mbase= base->magnify (lambda, 1.0);
+        font mbase= poor_stretched_font (base, lambda, 1.0);
+        for (int k=0; k<=8; k++) {
+          SI dx= (k*dpen2) / 8;
+          mbase->draw (ren, ss, x + dx + (start==0? 0: xpos[start]), y);
+        }
       }
     }
   }
