@@ -50,7 +50,7 @@ poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
   this->copy_math_pars (base);
   initialized << true;
   larger << base;
-  for (int i=1; i<=MAGNIFIED_NUMBER+2; i++) {
+  for (int i=1; i<=2*MAGNIFIED_NUMBER+4; i++) {
     initialized << false;
     larger << base;
   }
@@ -62,17 +62,20 @@ poor_rubber_font_rep::get_font (int nr) {
   ASSERT (nr < N(larger), "wrong font number");
   if (initialized[nr]) return larger[nr];
   initialized[nr]= true;
-  if (nr <= MAGNIFIED_NUMBER) {
-    double zoomy= pow (2.0, ((double) nr) / 4.0);
+  if (nr <= 2*MAGNIFIED_NUMBER + 1) {
+    int hnr= nr / 2;
+    double zoomy= pow (2.0, ((double) hnr) / 4.0);
     double zoomx= sqrt (zoomy);
+    if ((nr & 1) == 1) zoomx= sqrt (zoomx);
     larger[nr]= base->magnify (zoomx, zoomy);
   }
-  else if (nr == MAGNIFIED_NUMBER + 1) {
+  else if (nr == 2*MAGNIFIED_NUMBER + 2 || nr == 2*MAGNIFIED_NUMBER + 3) {
     int hdpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
     int vdpi= (72 * base->hpt + (PIXEL/2)) / PIXEL;
     font vfn= virtual_font (base, "poorlong", base->size, hdpi, vdpi);
     double zoomy= pow (2.0, ((double) MAGNIFIED_NUMBER) / 4.0);
     double zoomx= sqrt (zoomy);
+    if ((nr & 1) == 1) zoomx= sqrt (zoomx);
     larger[nr]= poor_stretched_font (vfn, zoomx, zoomy);
     //larger[nr]= vfn->magnify (zoomx, zoomy);
   }
@@ -81,11 +84,29 @@ poor_rubber_font_rep::get_font (int nr) {
   return larger[nr];
 }
 
+static hashset<string> thin_delims;
+
+static bool
+is_thin (string s) {
+  if (N(thin_delims) == 0)
+    thin_delims << string ("|") << string ("||") << string ("interleave")
+                << string ("[") << string ("]")
+                << string ("lfloor") << string ("rfloor")
+                << string ("lceil") << string ("rceil")
+                << string ("llbracket") << string ("rrbracket")
+                << string ("dlfloor") << string ("drfloor")
+                << string ("dlceil") << string ("drceil")
+                << string ("tlbracket") << string ("trbracket")
+                << string ("tlfloor") << string ("trfloor")
+                << string ("tlceil") << string ("trceil");
+  return thin_delims->contains (s);
+}
+
 int
 poor_rubber_font_rep::search_font (string s, string& r) {
   if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
     r= s;
-    return MAGNIFIED_NUMBER + 2;
+    return 2*MAGNIFIED_NUMBER + 4;
   }
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
   if (starts (s, "<right-")) s= "<left-" * s (7, N(s));
@@ -97,6 +118,7 @@ poor_rubber_font_rep::search_font (string s, string& r) {
     //cout << "Search " << base->res_name << ", " << s
     //     << ", " << r << ", " << num << LF;
     int nr= max (num - 5, 0);
+    int thin= (is_thin (r)? 1: 0);
     int code;
     if (num <= MAGNIFIED_NUMBER ||
         r == "/" || r == "\\" || r == "langle" || r == "rangle") {
@@ -123,7 +145,7 @@ poor_rubber_font_rep::search_font (string s, string& r) {
         double h2= ex2->y2 - ex2->y1;
         if (fabs ((h2/h1) - 1.0) > 0.05) r= "<emu-backslash>";
       }
-      return num;
+      return 2*num + thin;
     }
     else if (r == "(")
       code= virt->dict ["<rubber-lparenthesis-#>"];
@@ -172,7 +194,7 @@ poor_rubber_font_rep::search_font (string s, string& r) {
       code= virt->dict ["<rubber-lparenthesis-#>"];
     
     r= string ((char) code) * as_string (nr + HUGE_ADJUST) * ">";
-    return MAGNIFIED_NUMBER + 1;
+    return 2*MAGNIFIED_NUMBER + 2 + thin;
   }
   r= s;
   return 0;
