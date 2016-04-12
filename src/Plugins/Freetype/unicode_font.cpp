@@ -123,10 +123,11 @@ unicode_font_rep::unicode_font_rep (string name,
 
   // get fraction bar parameters; reasonable compromise between several fonts
   if (supports ("<#2212>")) get_extents ("<#2212>", ex);
+  else if (supports ("+")) get_extents ("+", ex);
   else if (supports ("-")) get_extents ("-", ex);
   else get_extents ("x", ex);
   yfrac= (ex->y1 + ex->y2) >> 1;
-  if (supports ("-") || supports ("<#2212>")) {
+  if (supports ("<#2212>") || supports ("+") || supports ("-")) {
     wline= ex->y2 - ex->y1;
     if (supports ("<#2212>"));
     else if (supports ("<#2013>")) {
@@ -136,6 +137,7 @@ unicode_font_rep::unicode_font_rep (string name,
     wline= max (min (wline, wfn/8), wfn/48);
     if (!supports ("<#2212>")) yfrac += wline/4;
   }
+  if (starts (res_name, "unicode:Papyrus.")) wline= (2*wline)/3;
 
   // get space length
   get_extents (" ", ex);
