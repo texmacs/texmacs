@@ -116,7 +116,7 @@ string default_japanese_font_name ();
 string default_korean_font_name ();
 
 font error_font (font fn);
-font virtual_font (font base, string family, int size, int hdpi, int vdpi);
+font virtual_font (font base, string fam, int sz, int hdpi, int vdpi, bool ext);
 font virtual_enhance_font (font base, string virt);
 font tt_font (string family, int size, int dpi);
 font unicode_font (string family, int size, int dpi);

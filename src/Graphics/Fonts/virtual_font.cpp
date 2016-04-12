@@ -14,6 +14,7 @@
 #include "translator.hpp"
 #include "analyze.hpp"
 #include "frame.hpp"
+#include "iterator.hpp"
 
 /******************************************************************************
 * The virtual font class
@@ -26,15 +27,19 @@ struct virtual_font_rep: font_rep {
   int          size;
   int          hdpi;
   int          vdpi;
+  bool         extend;
   int          last;
   font_metric  fnm;
   font_glyphs  fng;
   double       hunit;
   double       vunit;
   hashmap<scheme_tree,metric_struct> trm;
+  hashmap<string,bool> sup;
 
   virtual_font_rep (string name, font base, string vname, int size,
-                    int hdpi, int vdpi);
+                    int hdpi, int vdpi, bool extend);
+  bool   supported (scheme_tree t);
+  bool   supported (string c);
   glyph  compile_bis (scheme_tree t, metric& ex);
   glyph  compile (scheme_tree t, metric& ex);
   void   get_metric (scheme_tree t, metric& ex);
@@ -63,18 +68,80 @@ struct virtual_font_rep: font_rep {
 };
 
 virtual_font_rep::virtual_font_rep (
-  string name, font base, string vname, int size2, int hdpi2, int vdpi2):
+  string name, font base, string vname, int size2,
+  int hdpi2, int vdpi2, bool extend2):
     font_rep (name, base), base_fn (base), fn_name (vname),
     virt (load_translator (vname)), size (size2),
-    hdpi (hdpi2), vdpi (vdpi2),
+    hdpi (hdpi2), vdpi (vdpi2), extend (extend2),
     last (N(virt->virt_def)),
     fnm (std_font_metric (name, tm_new_array<metric> (last), 0, last-1)),
     fng (std_font_glyphs (name, tm_new_array<glyph> (last), 0, last-1)),
-    trm (metric_struct ())
+    trm (metric_struct ()), sup (false)
 {
   copy_math_pars (base_fn);
   hunit= ((size*hdpi)/72)*PIXEL;
   vunit= ((size*vdpi)/72)*PIXEL;
+}
+
+/******************************************************************************
+* Check integrity of virtual character
+******************************************************************************/
+
+bool
+virtual_font_rep::supported (scheme_tree t) {
+  if (is_atomic (t)) {
+    string r= t->label;
+    if (r == "#28") r= "(";
+    if (r == "#29") r= ")";
+    if (N(r)>1) r= "<" * r * ">";
+    if (!extend || base_fn->supports (r) || !virt->dict->contains (r))
+      return base_fn->supports (r);
+    if (!virt->dict->contains (r)) return false;
+    return supported (virt->virt_def [virt->dict [r]]);
+  }
+
+  if (is_func (t, TUPLE, 3) && (is_double (t[0])) && (is_double (t[1])))
+    return supported (t[2]);
+
+  if (is_tuple (t, "join") ||
+      is_tuple (t, "glue", 2) ||
+      is_tuple (t, "glue*", 2) ||
+      is_tuple (t, "glue-above", 2) ||
+      is_tuple (t, "glue-below", 2) ||
+      is_tuple (t, "add", 2)) {
+    int i, n= N(t);
+    for (i=1; i<n; i++)
+      if (!supported (t[i])) return false;
+    return true;
+  }
+
+  if (is_tuple (t, "enlarge") ||
+      is_tuple (t, "clip") ||
+      is_tuple (t, "part") ||
+      is_tuple (t, "hor-flip", 1) ||
+      is_tuple (t, "ver-flip", 1) ||
+      is_tuple (t, "rot-left", 1) ||
+      is_tuple (t, "rot-right", 1) ||
+      is_tuple (t, "hor-extend", 3) ||
+      is_tuple (t, "hor-extend", 4) ||
+      is_tuple (t, "ver-extend", 3) ||
+      is_tuple (t, "ver-extend", 4) ||
+      is_tuple (t, "ver-take", 3) ||
+      is_tuple (t, "ver-take", 4) ||
+      is_tuple (t, "italic", 3))
+    return supported (t[1]);
+
+  return false;
+}
+
+bool
+virtual_font_rep::supported (string c) {
+  if (!sup->contains (c)) {
+    tree t= get_tree (c);
+    if (t == "") sup (c)= false;
+    else sup (c)= supported (t);
+  }
+  return sup[c];
 }
 
 /******************************************************************************
@@ -102,8 +169,15 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     if (r == "#28") r= "(";
     if (r == "#29") r= ")";
     if (N(r)>1) r= "<" * r * ">";
-    base_fn->get_extents (r, ex);
-    glyph gl= base_fn->get_glyph (r);
+    glyph gl;
+    if (!extend || base_fn->supports (r) || !virt->dict->contains (r)) {
+      base_fn->get_extents (r, ex);
+      gl= base_fn->get_glyph (r);
+    }
+    else {
+      scheme_tree u= virt->virt_def [virt->dict [r]];
+      gl= compile (u, ex);
+    }
     if (gl->width == 0 && gl->height == 0)
       ex->x1= ex->y1= ex->x2= ex->y2= ex->x3= ex->y3= ex->x4= ex->y4= 0;
     return gl;
@@ -156,11 +230,20 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return join (gl1, move (gl2, dx, 0));
   }
 
-  if (is_tuple (t, "vglue", 2)) {
+  if (is_tuple (t, "glue-above", 2)) {
     metric ey;
     glyph gl1= compile (t[1], ex);
     glyph gl2= compile (t[2], ey);
     SI dy= ex->y2 - ey->y1;
+    outer_fit (ex, ey, 0, dy);
+    return join (gl1, move (gl2, 0, dy));
+  }
+
+  if (is_tuple (t, "glue-below", 2)) {
+    metric ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    SI dy= ex->y1 - ey->y2;
     outer_fit (ex, ey, 0, dy);
     return join (gl1, move (gl2, 0, dy));
   }
@@ -338,7 +421,12 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     if (r == "#28") r= "(";
     if (r == "#29") r= ")";
     if (N(r)>1) r= "<" * r * ">";
-    base_fn->draw (ren, r, x, y);
+    if (!extend || base_fn->supports (r) || !virt->dict->contains (r))
+      base_fn->draw (ren, r, x, y);
+    else {
+      scheme_tree u= virt->virt_def [virt->dict [r]];
+      draw (ren, u, x, y);
+    }
     return;
   }
   
@@ -376,11 +464,21 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
-  if (is_tuple (t, "vglue", 2)) {
+  if (is_tuple (t, "glue-above", 2)) {
     metric ex, ey;
     get_metric (t[1], ex);
     get_metric (t[2], ey);
     SI dy= ex->y2 - ey->y1;
+    draw (ren, t[1], x, y);
+    draw (ren, t[2], x, y + dy);
+    return;
+  }
+
+  if (is_tuple (t, "glue-below", 2)) {
+    metric ex, ey;
+    get_metric (t[1], ex);
+    get_metric (t[2], ey);
+    SI dy= ex->y1 - ey->y2;
     draw (ren, t[1], x, y);
     draw (ren, t[2], x, y + dy);
     return;
@@ -629,27 +727,28 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
 
 tree
 virtual_font_rep::get_tree (string s) {
-  int c= ((N(s)==0)? -1: ((QN) s[0]));
-  if ((c<0) || (c>=last)) return "";
-  if (N(s)==1) return virt->virt_def[c];
-  else if (s[0] == '<' && s[N(s)-1] == '>') {
+  if (s == "") return "";
+  int c= ((QN) s[0]);
+  if (s[0] == '<' && s[N(s)-1] == '>') {
     if (!virt->dict->contains (s)) return "";
     int c2= virt->dict [s];
     return virt->virt_def[c2];
   }
+  else if ((c<0) || (c>=last)) return "";
+  else if (N(s)==1) return virt->virt_def[c];
   else return subst_sharp (virt->virt_def[c], s(1,N(s)));
 }
 
 bool
 virtual_font_rep::supports (string s) {
-  font_metric cfnm;
-  font_glyphs cfng;
-  int c= get_char (s, cfnm, cfng);
-  return c != -1;
+  if (extend && base_fn->supports (s)) return true;
+  return supported (s);
 }
 
 void
 virtual_font_rep::get_extents (string s, metric& ex) {
+  if (extend && base_fn->supports (s)) {
+    base_fn->get_extents (s, ex); return; }
   font_metric cfnm;
   font_glyphs cfng;
   int c= get_char (s, cfnm, cfng);
@@ -679,6 +778,8 @@ virtual_font_rep::get_xpositions (string s, SI* xpos, bool lit) {
 
 void
 virtual_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
+  if (extend && base_fn->supports (s)) {
+    base_fn->get_xpositions (s, xpos, xk); return; }
   metric ex;
   get_extents (s, ex);
   xpos[0]= xk;
@@ -689,7 +790,9 @@ virtual_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
 
 void
 virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
-  if (ren->is_screen) {
+  if (extend && base_fn->supports (s))
+    base_fn->draw_fixed (ren, s, x, y);
+  else if (ren->is_screen) {
     font_metric cfnm;
     font_glyphs cfng;
     int c= get_char (s, cfnm, cfng);
@@ -710,7 +813,7 @@ font
 virtual_font_rep::magnify (double zoomx, double zoomy) {
   return virtual_font (base_fn->magnify (zoomx, zoomy), fn_name, size,
                        (int) tm_round (hdpi * zoomx),
-                       (int) tm_round (vdpi * zoomy));
+                       (int) tm_round (vdpi * zoomy), extend);
 }
 
 void
@@ -720,6 +823,8 @@ virtual_font_rep::advance_glyph (string s, int& pos) {
 
 glyph
 virtual_font_rep::get_glyph (string s) {
+  if (extend && base_fn->supports (s))
+    return base_fn->get_glyph (s);
   font_metric cfnm;
   font_glyphs cfng;
   int c= get_char (s, cfnm, cfng);
@@ -730,6 +835,8 @@ virtual_font_rep::get_glyph (string s) {
 int
 virtual_font_rep::index_glyph (string s, font_metric& cfnm,
                                          font_glyphs& cfng) {
+  if (extend && base_fn->supports (s))
+    return base_fn->index_glyph (s, cfnm, cfng);
   return get_char (s, cfnm, cfng);
 }
 
@@ -739,6 +846,8 @@ virtual_font_rep::index_glyph (string s, font_metric& cfnm,
 
 double
 virtual_font_rep::get_left_slope (string s) {
+  if (extend && base_fn->supports (s))
+    return base_fn->get_left_slope (s);
   tree t= get_tree (s);
   if (is_tuple (t, "italic", 3))
     return as_double (t[2]);
@@ -747,6 +856,8 @@ virtual_font_rep::get_left_slope (string s) {
 
 double
 virtual_font_rep::get_right_slope (string s) {
+  if (extend && base_fn->supports (s))
+    return base_fn->get_right_slope (s);
   tree t= get_tree (s);
   if (is_tuple (t, "italic", 3))
     return as_double (t[2]);
@@ -755,6 +866,8 @@ virtual_font_rep::get_right_slope (string s) {
 
 SI
 virtual_font_rep::get_right_correction (string s) {
+  if (extend && base_fn->supports (s))
+    return base_fn->get_right_correction (s);
   tree t= get_tree (s);
   if (is_tuple (t, "italic", 3))
     return (SI) (as_double (t[3]) * hunit);
@@ -765,13 +878,28 @@ virtual_font_rep::get_right_correction (string s) {
 * User interface
 ******************************************************************************/
 
+static hashmap<string,bool> vdefined (false);
+
+bool
+virtually_defined (string c, string name) {
+  if (!vdefined->contains (name)) {
+    vdefined (name)= true;
+    translator virt= load_translator (name);
+    iterator<string> it= iterate (virt->dict);
+    while (it->busy ())
+      vdefined (name * "-" * it->next ())= true;
+  }
+  return vdefined [name * "-" * c];
+}
+
 font
-virtual_font (font base, string name, int size, int hdpi, int vdpi) {
+virtual_font (font base, string name, int size,
+              int hdpi, int vdpi, bool extend) {
   string full_name=
-    base->res_name * "#virtual-" *
+    base->res_name * (extend? string ("#enhance-"): string ("#virtual-")) *
     name * as_string (size) * "@" * as_string (hdpi);
   if (vdpi != hdpi) full_name << "x" << vdpi;
   return make (font, full_name,
                tm_new<virtual_font_rep> (full_name, base, name, size,
-                                         hdpi, vdpi));
+                                         hdpi, vdpi, extend));
 }

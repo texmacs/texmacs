@@ -83,7 +83,7 @@ math_font_rep::init_font (int fn_nr, font& fn) {
   if (is_tuple (t, "virtual", 3))
     fn= virtual_font (this, as_string (t[1]), as_int (t[2]),
 		      (int) tm_round (as_int (t[3]) * hzf),
-                      (int) tm_round (as_int (t[3]) * vzf));
+                      (int) tm_round (as_int (t[3]) * vzf), false);
   else
     fn= find_magnified_font (t, hzf, vzf);
   ASSERT (!is_nil (fn), "font not found");

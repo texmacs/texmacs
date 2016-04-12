@@ -1,0 +1,12 @@
+
+(virtual-font
+  (minus -)
+  (pm (glue-above minus +))
+  (mp (glue-above + minus))
+  (leq (glue-below less minus))
+  (geq (glue-below gtr minus))
+  (assign (glue \: (0.2 0 =)))
+  (plusassign (glue + (0.2 0 =)))
+  (minusassign (glue minus (0.2 0 =)))
+  (astassign (glue asterisk (0.2 0 =)))
+  (overassign (glue / (0.2 0 =))))

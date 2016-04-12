@@ -76,7 +76,7 @@ compound_font_rep::advance (string s, int& pos, string& r, int& ch) {
     if (is_tuple (t, "virtual", 3))
       fn[ch]= virtual_font (this, as_string (t[1]), as_int (t[2]),
 			    (int) tm_round (as_int (t[3]) * hzf),
-                            (int) tm_round (as_int (t[3]) * vzf));
+                            (int) tm_round (as_int (t[3]) * vzf), false);
     else
       fn[ch]= find_magnified_font (t, hzf, vzf);
     ASSERT (!is_nil (fn[ch]), "font not found");

@@ -15,6 +15,8 @@
 #include "Freetype/tt_tools.hpp"
 #include "translator.hpp"
 
+bool virtually_defined (string c, string name);
+
 /******************************************************************************
 * Efficient computation of the appropriate subfont
 ******************************************************************************/
@@ -700,6 +702,13 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         return sm->add_char (key, c);
       }
     }
+    if (fam == mfam && virtually_defined (c, "emu-basic")) {
+      tree key= tuple ("emulate", "emu-basic");
+      int nr= sm->add_font (key, REWRITE_NONE);
+      initialize_font (nr);
+      if (fn[nr]->supports (c))
+        return sm->add_char (key, c);
+    }
   }
 
   if (attempt > 1) {
@@ -876,7 +885,9 @@ smart_font_rep::initialize_font (int nr) {
   else if (a[0] == "bbb" && N(a) == 1)
     fn[nr]= smart_font (family, "outline", series, "right", sz, dpi);
   else if (a[0] == "virtual")
-    fn[nr]= virtual_font (this, a[1], sz, dpi, dpi);
+    fn[nr]= virtual_font (this, a[1], sz, dpi, dpi, false);
+  else if (a[0] == "emulate")
+    fn[nr]= virtual_font (fn[SUBFONT_MAIN], a[1], sz, dpi, dpi, true);
   else if (a[0] == "poor-bbb" && N(a) == 3) {
     double pw= as_double (a[1]);
     double ph= as_double (a[2]);

@@ -72,7 +72,7 @@ poor_rubber_font_rep::get_font (int nr) {
   else if (nr == 2*MAGNIFIED_NUMBER + 2 || nr == 2*MAGNIFIED_NUMBER + 3) {
     int hdpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
     int vdpi= (72 * base->hpt + (PIXEL/2)) / PIXEL;
-    font vfn= virtual_font (base, "poorlong", base->size, hdpi, vdpi);
+    font vfn= virtual_font (base, "poorlong", base->size, hdpi, vdpi, false);
     double zoomy= pow (2.0, ((double) MAGNIFIED_NUMBER) / 4.0);
     double zoomx= sqrt (zoomy);
     if ((nr & 1) == 1) zoomx= sqrt (zoomx);
