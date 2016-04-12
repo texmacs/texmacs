@@ -103,6 +103,14 @@ virtual_font_rep::supported (scheme_tree t) {
   if (is_func (t, TUPLE, 3) && (is_double (t[0])) && (is_double (t[1])))
     return supported (t[2]);
 
+  if (is_tuple (t, "or") && N(t) >= 2) {
+    int i, n= N(t);
+    for (i=1; i<n; i++)
+      if (supported (t[i]))
+        return true;
+    return false;
+  }
+
   if (is_tuple (t, "join") ||
       is_tuple (t, "glue", 2) ||
       is_tuple (t, "glue*", 2) ||
@@ -131,6 +139,9 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "italic", 3))
     return supported (t[1]);
 
+  if (is_tuple (t, "align") && N(t) >= 3)
+    return supported (t[1]) && supported (t[2]);
+
   return false;
 }
 
@@ -158,6 +169,18 @@ outer_fit (metric& ex, metric& ey, SI x, SI y) {
   ex->y3= min (ex->y3, y+ ey->y3);
   ex->x4= max (ex->x4, x+ ey->x4);
   ex->y4= max (ex->y4, y+ ey->y4);
+}
+
+static void
+move (metric& ex, SI x, SI y) {
+  if (x != 0) {
+    ex->x1 += x; ex->x3 += x - PIXEL;
+    ex->x2 += x; ex->x4 += x + PIXEL;
+  }
+  if (y != 0) {
+    ex->y1 += y; ex->y3 += y - PIXEL;
+    ex->y2 += y; ex->y4 += y + PIXEL;
+  }
 }
 
 glyph
@@ -189,16 +212,17 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
       SI x= (SI) (as_double (t[0]) * hunit);
       SI y= (SI) (as_double (t[1]) * vunit);
       glyph gl= compile (t[2], ex);
-      if (x != 0) {
-        ex->x1 += x; ex->x3 += x - PIXEL;
-        ex->x2 += x; ex->x4 += x + PIXEL;
-      }
-      if (y != 0) {
-        ex->y1 += y; ex->y3 += y - PIXEL;
-        ex->y2 += y; ex->y4 += y + PIXEL;
-      }
+      move (ex, x, y);
       return move (gl, x, y);
     }
+
+  if (is_tuple (t, "or") && N(t) >= 2) {
+    int i, n= N(t);
+    for (i=1; i<n-1; i++)
+      if (supported (t[i]))
+        return compile (t[i], ex);
+    return compile (t[n-1], ex);
+  }
 
   if (is_tuple (t, "join")) {
     int i, n= N(t);
@@ -389,6 +413,27 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return ver_take (gl, pos, nr);
   }
 
+  if (is_tuple (t, "align") && N(t) >= 3) {
+    metric ex2;
+    glyph gl= compile (t[1], ex);
+    glyph gl2= compile (t[2], ex2);
+    double xa= 0.0, xa2= 0.0, ya= 0.0, ya2= 0.0;
+    if (N(t) >= 4 && is_double (t[3])) xa= xa2= as_double (t[3]);
+    if (N(t) >= 5 && is_double (t[4])) ya= ya2= as_double (t[4]);
+    if (N(t) >= 6 && is_double (t[5])) xa2= as_double (t[5]);
+    if (N(t) >= 7 && is_double (t[6])) ya2= as_double (t[6]);
+    SI ax = (SI) (ex ->x1 + xa  * (ex ->x2 - ex ->x1));
+    SI ax2= (SI) (ex2->x1 + xa2 * (ex2->x2 - ex2->x1));
+    SI ay = (SI) (ex ->y1 + ya  * (ex ->y2 - ex ->y1));
+    SI ay2= (SI) (ex2->y1 + ya2 * (ex2->y2 - ex2->y1));
+    SI dx = ax2 - ax;
+    SI dy = ay2 - ay;
+    if (N(t) >= 4 && t[3] == "*") dx= 0;
+    if (N(t) >= 5 && t[4] == "*") dy= 0;
+    move (ex, dx, dy);
+    return move (gl, dx, dy);
+  }
+
   if (is_tuple (t, "italic", 3))
     return compile (t[1], ex);
 
@@ -438,6 +483,17 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
       draw (ren, t[2], x+dx, y+dy);
       return;
     }
+
+  if (is_tuple (t, "or") && N(t) >= 2) {
+    int i, n= N(t);
+    for (i=1; i<n-1; i++)
+      if (supported (t[i])) {
+        draw (ren, t[i], x, y);
+        return;
+      }
+    draw (ren, t[n-1], x, y);
+    return;
+  }
 
   if (is_tuple (t, "join")) {
     int i, n= N(t);
@@ -632,6 +688,27 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
         draw_clipped (ren, t[1], x, y + i*dy - add - (ex->y3 + pos),
                       ex->x3, ex->y3 + pos - hy, ex->x4, ex->y3 + pos + hy);
     }
+    return;
+  }
+
+  if (is_tuple (t, "align") && N(t) >= 3) {
+    metric ex, ex2;
+    get_metric (t[1], ex);
+    get_metric (t[2], ex2);
+    double xa= 0.0, xa2= 0.0, ya= 0.0, ya2= 0.0;
+    if (N(t) >= 4 && is_double (t[3])) xa= xa2= as_double (t[3]);
+    if (N(t) >= 5 && is_double (t[4])) ya= ya2= as_double (t[4]);
+    if (N(t) >= 6 && is_double (t[5])) xa2= as_double (t[5]);
+    if (N(t) >= 7 && is_double (t[6])) ya2= as_double (t[6]);
+    SI ax = (SI) (ex ->x1 + xa  * (ex ->x2 - ex ->x1));
+    SI ax2= (SI) (ex2->x1 + xa2 * (ex2->x2 - ex2->x1));
+    SI ay = (SI) (ex ->y1 + ya  * (ex ->y2 - ex ->y1));
+    SI ay2= (SI) (ex2->y1 + ya2 * (ex2->y2 - ex2->y1));
+    SI dx = ax2 - ax;
+    SI dy = ay2 - ay;
+    if (N(t) >= 4 && t[3] == "*") dx= 0;
+    if (N(t) >= 5 && t[4] == "*") dy= 0;
+    draw (ren, t[1], x+dx, y+dy);
     return;
   }
 
