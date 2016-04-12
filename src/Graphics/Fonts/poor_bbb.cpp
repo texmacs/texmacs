@@ -231,5 +231,5 @@ poor_bbb_font (font base, double penw, double penh, double fatw) {
 font
 poor_bbb_font (font base) {
   double penw= 0.6 * ((double) base->wline) / ((double) base->wfn);
-  return poor_bbb_font (base, penw, penw, 3 * penw);
+  return poor_bbb_font (base, penw, penw, 1.5 * penw);
 }

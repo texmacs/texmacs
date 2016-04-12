@@ -76,6 +76,41 @@ clip (glyph gl, SI x1, SI y1, SI x2, SI y2) {
   return bmr;
 }
 
+bool
+empty_column (glyph gl, int i) {
+  int hh= gl->height;
+  for (int j=0; j<hh; j++)
+    if (gl->get_x (i, j) != 0)
+      return false;
+  return true;
+}
+
+bool
+empty_row (glyph gl, int j) {
+  int ww= gl->width;
+  for (int i=0; i<ww; i++)
+    if (gl->get_x (i, j) != 0)
+      return false;
+  return true;
+}
+
+glyph
+simplify (glyph gl) {
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  int i1= 0, i2= ww-1, j1= 0, j2= hh-1;
+  while (i1 < ww && empty_column (gl, i1)) i1++;
+  while (i2 >= 0 && empty_column (gl, i2)) i2--;
+  while (j1 < hh && empty_row (gl, j1)) j1++;
+  while (j2 >= 0 && empty_row (gl, j2)) j2--;
+  if (i1 == ww) { i1= j1= 0; i2= j2= -1; }
+  glyph bmr (i2-i1+1, j2-j1+1, gl->xoff-i1, gl->yoff-j1, gl->depth);
+  for (j=j1; j<=j2; j++)
+    for (i=i1; i<=i2; i++)
+      bmr->set_x (i-i1, j-j1, gl->get_x (i, j));
+  return bmr;
+}
+
 glyph
 hor_flip (glyph gl) {
   int i, j;

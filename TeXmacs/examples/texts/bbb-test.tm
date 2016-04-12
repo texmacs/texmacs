@@ -18,5 +18,9 @@
   </equation*>
 </body>
 
-<initial|<\collection>
-</collection>>
+<\initial>
+  <\collection>
+    <associate|font|Marker Felt>
+    <associate|math-font|math-schola>
+  </collection>
+</initial>

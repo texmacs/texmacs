@@ -116,6 +116,7 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "glue*", 2) ||
       is_tuple (t, "glue-above", 2) ||
       is_tuple (t, "glue-below", 2) ||
+      is_tuple (t, "stack", 2) ||
       is_tuple (t, "add", 2)) {
     int i, n= N(t);
     for (i=1; i<n; i++)
@@ -123,7 +124,20 @@ virtual_font_rep::supported (scheme_tree t) {
     return true;
   }
 
-  if (is_tuple (t, "enlarge") ||
+  if (is_tuple (t, "glue-above", 3) ||
+      is_tuple (t, "glue-below", 3) ||
+      is_tuple (t, "stack", 3)) {
+    int i, n= N(t);
+    for (i=1; i<n-1; i++)
+      if (!supported (t[i])) return false;
+    return true;
+  }
+
+  if (is_tuple (t, "magnify", 3) ||
+      is_tuple (t, "enlarge") ||
+      is_tuple (t, "crop", 1) ||
+      is_tuple (t, "hor-crop", 1) ||
+      is_tuple (t, "ver-crop", 1) ||
       is_tuple (t, "clip") ||
       is_tuple (t, "part") ||
       is_tuple (t, "hor-flip", 1) ||
@@ -139,8 +153,17 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "italic", 3))
     return supported (t[1]);
 
-  if (is_tuple (t, "align") && N(t) >= 3)
+  if ((is_tuple (t, "align") && N(t) >= 3) ||
+      is_tuple (t, "scale", 4))
     return supported (t[1]) && supported (t[2]);
+
+  if (is_tuple (t, "font") && N(t) >= 3) {
+    for (int i=2; i<N(t); i++)
+      if (is_atomic (t[i]) &&
+          starts (base_fn->res_name, "unicode:" * t[i]->label))
+        return supported (t[1]);
+    return false;
+  }
 
   return false;
 }
@@ -180,6 +203,29 @@ move (metric& ex, SI x, SI y) {
   if (y != 0) {
     ex->y1 += y; ex->y3 += y - PIXEL;
     ex->y2 += y; ex->y4 += y + PIXEL;
+  }
+}
+
+static double
+get_magnification (SI w1, SI w2, double sc) {
+  if (w1 <= 0 || w2 <= 0 || sc == 0.0) return 1.0;
+  double f= ((double) w2) / ((double) w1);
+  return exp (sc * log (f));
+}
+
+static void
+stretch (metric& ex, double mx, double my) {
+  if (mx != 1.0) {
+    ex->x1=  (SI) floor (mx * ex->x1);
+    ex->x2=  (SI) ceil  (mx * ex->x2);
+    ex->x3= ((SI) floor (mx * ex->x3)) - PIXEL;
+    ex->x4= ((SI) ceil  (mx * ex->x4)) + PIXEL;
+  }
+  if (my != 1.0) {
+    ex->y1=  (SI) floor (my * ex->y1);
+    ex->y2=  (SI) ceil  (my * ex->y2);
+    ex->y3= ((SI) floor (my * ex->y3)) - PIXEL;
+    ex->y4= ((SI) ceil  (my * ex->y4)) + PIXEL;
   }
 }
 
@@ -254,22 +300,41 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return join (gl1, move (gl2, dx, 0));
   }
 
-  if (is_tuple (t, "glue-above", 2)) {
+  if (is_tuple (t, "glue-above", 2) ||
+      is_tuple (t, "glue-above", 3)) {
     metric ey;
     glyph gl1= compile (t[1], ex);
     glyph gl2= compile (t[2], ey);
     SI dy= ex->y2 - ey->y1;
+    if (N(t) >= 4 && is_double (t[3]))
+      dy += (SI) (as_double (t[3]) * vunit);
     outer_fit (ex, ey, 0, dy);
     return join (gl1, move (gl2, 0, dy));
   }
 
-  if (is_tuple (t, "glue-below", 2)) {
+  if (is_tuple (t, "glue-below", 2) ||
+      is_tuple (t, "glue-below", 3)) {
     metric ey;
     glyph gl1= compile (t[1], ex);
     glyph gl2= compile (t[2], ey);
     SI dy= ex->y1 - ey->y2;
+    if (N(t) >= 4 && is_double (t[3]))
+      dy -= (SI) (as_double (t[3]) * vunit);
     outer_fit (ex, ey, 0, dy);
     return join (gl1, move (gl2, 0, dy));
+  }
+
+  if (is_tuple (t, "stack", 2) ||
+      is_tuple (t, "stack", 3)) {
+    metric ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    SI dy= ex->y1 - ey->y2;
+    SI up= (ey->y2 - ey->y1) >> 1;
+    if (N(t) >= 4 && is_double (t[3]))
+      dy -= (SI) (as_double (t[3]) * vunit);
+    outer_fit (ex, ey, 0, dy);
+    return move (join (gl1, move (gl2, 0, dy)), 0, up);
   }
 
   if (is_tuple (t, "add", 2)) {
@@ -281,12 +346,38 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return join (gl1, move (gl2, dx, 0));
   }
 
+  if (is_tuple (t, "magnify", 3)) {
+    glyph gl= compile (t[1], ex);
+    double mx= 1.0, my= 1.0;
+    if (is_double (t[2])) mx= as_double (t[2]);
+    if (is_double (t[3])) my= as_double (t[3]);
+    stretch (ex, mx, my);
+    return stretched (gl, mx, my);
+  }
+
   if (is_tuple (t, "enlarge")) {
     glyph gl= compile (t[1], ex);
     if (N(t)>2) ex->x1 -= (SI) (as_double (t[2]) * hunit);
     if (N(t)>3) ex->x2 += (SI) (as_double (t[3]) * hunit);
     if (N(t)>4) ex->y1 -= (SI) (as_double (t[4]) * vunit);
     if (N(t)>5) ex->y2 += (SI) (as_double (t[5]) * vunit);
+    return gl;
+  }
+
+  if (is_tuple (t, "crop", 1) ||
+      is_tuple (t, "hor-crop", 1) ||
+      is_tuple (t, "ver-crop", 1)) {
+    glyph gl= simplify (compile (t[1], ex));
+    SI x1, y1, x2, y2;
+    get_bounding_box (gl, x1, y1, x2, y2);
+    if (!is_tuple (t, "ver-crop")) {
+      ex->x1= ex->x3= x1; ex->x3 -= PIXEL;
+      ex->x2= ex->x4= x2; ex->x4 += PIXEL;
+    }
+    if (!is_tuple (t, "hor-crop")) {
+      ex->y1= ex->y3= y1; ex->y3 -= PIXEL;
+      ex->y2= ex->y4= y2; ex->y4 += PIXEL;
+    }
     return gl;
   }
 
@@ -434,6 +525,26 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return move (gl, dx, dy);
   }
 
+  if (is_tuple (t, "scale", 4)) {
+    metric ex2;
+    glyph gl = compile (t[1], ex);
+    glyph gl2= compile (t[2], ex2);
+    double sx= 0.0, sy= 0.0;
+    if (N(t) >= 4 && t[3] != "*" && is_double (t[3])) sx= as_double (t[3]);
+    if (N(t) >= 5 && t[4] != "*" && is_double (t[4])) sy= as_double (t[4]);
+    SI w = ex ->x2 - ex ->x1;
+    SI w2= ex2->x2 - ex2->x1;
+    SI h = ex ->y2 - ex ->y1;
+    SI h2= ex2->y2 - ex2->y1;
+    double mx= get_magnification (w, w2, sx);
+    double my= get_magnification (h, h2, sy);
+    stretch (ex, mx, my);
+    return stretched (gl, mx, my);
+  }
+
+  if (is_tuple (t, "font") && N(t) >= 3)
+    return compile (t[1], ex);
+
   if (is_tuple (t, "italic", 3))
     return compile (t[1], ex);
 
@@ -520,23 +631,43 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
-  if (is_tuple (t, "glue-above", 2)) {
+  if (is_tuple (t, "glue-above", 2) ||
+      is_tuple (t, "glue-above", 3)) {
     metric ex, ey;
     get_metric (t[1], ex);
     get_metric (t[2], ey);
     SI dy= ex->y2 - ey->y1;
+    if (N(t) >= 4 && is_double (t[3]))
+      dy += (SI) (as_double (t[3]) * vunit);
     draw (ren, t[1], x, y);
     draw (ren, t[2], x, y + dy);
     return;
   }
 
-  if (is_tuple (t, "glue-below", 2)) {
+  if (is_tuple (t, "glue-below", 2) ||
+      is_tuple (t, "glue-below", 3)) {
     metric ex, ey;
     get_metric (t[1], ex);
     get_metric (t[2], ey);
     SI dy= ex->y1 - ey->y2;
+    if (N(t) >= 4 && is_double (t[3]))
+      dy -= (SI) (as_double (t[3]) * vunit);
     draw (ren, t[1], x, y);
     draw (ren, t[2], x, y + dy);
+    return;
+  }
+
+  if (is_tuple (t, "stack", 2) ||
+      is_tuple (t, "stack", 3)) {
+    metric ex, ey;
+    get_metric (t[1], ex);
+    get_metric (t[2], ey);
+    SI dy= ex->y1 - ey->y2;
+    SI up= (ey->y2 - ey->y1) >> 1;
+    if (N(t) >= 4 && is_double (t[3]))
+      dy -= (SI) (as_double (t[3]) * vunit);
+    draw (ren, t[1], x, y + up);
+    draw (ren, t[2], x, y + dy + up);
     return;
   }
 
@@ -550,7 +681,28 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "magnify", 3)) {
+    metric ex;
+    get_metric (t[1], ex);
+    double mx= 1.0, my= 1.0;
+    if (is_double (t[2])) mx= as_double (t[2]);
+    if (is_double (t[3])) my= as_double (t[3]);
+    ren->move_origin (x, y);
+    ren->set_transformation (scaling (point (mx, my), point (0.0, 0.0)));
+    draw (ren, t[1], 0, 0);
+    ren->reset_transformation ();
+    ren->move_origin (-x, -y);
+    return;
+  }
+
   if (is_tuple (t, "enlarge")) {
+    draw (ren, t[1], x, y);
+    return;
+  }
+
+  if (is_tuple (t, "crop", 1) ||
+      is_tuple (t, "hor-crop", 1) ||
+      is_tuple (t, "ver-crop", 1)) {
     draw (ren, t[1], x, y);
     return;
   }
@@ -709,6 +861,32 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     if (N(t) >= 4 && t[3] == "*") dx= 0;
     if (N(t) >= 5 && t[4] == "*") dy= 0;
     draw (ren, t[1], x+dx, y+dy);
+    return;
+  }
+
+  if (is_tuple (t, "scale", 4)) {
+    metric ex, ex2;
+    get_metric (t[1], ex);
+    get_metric (t[2], ex2);
+    double sx= 0.0, sy= 0.0;
+    if (N(t) >= 4 && t[3] != "*" && is_double (t[3])) sx= as_double (t[3]);
+    if (N(t) >= 5 && t[4] != "*" && is_double (t[4])) sy= as_double (t[4]);
+    SI w = ex ->x2 - ex ->x1;
+    SI w2= ex2->x2 - ex2->x1;
+    SI h = ex ->y2 - ex ->y1;
+    SI h2= ex2->y2 - ex2->y1;
+    double mx= get_magnification (w, w2, sx);
+    double my= get_magnification (h, h2, sy);
+    ren->move_origin (x, y);
+    ren->set_transformation (scaling (point (mx, my), point (0.0, 0.0)));
+    draw (ren, t[1], 0, 0);
+    ren->reset_transformation ();
+    ren->move_origin (-x, -y);
+    return;
+  }
+
+  if (is_tuple (t, "font") && N(t) >= 3) {
+    draw (ren, t[1], x, y);
     return;
   }
 
