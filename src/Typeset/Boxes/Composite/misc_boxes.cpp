@@ -312,6 +312,7 @@ set_shadow (renderer ren, SI alpha) {
 
 void
 page_border_box_rep::display_background (renderer ren) {
+  if (!ren->is_screen) return;
   brush bgc= ren->get_background ();
   ren->set_background (tm_background);
   SI X1= sx1(0), Y1= sy1(0), X2= sx2(0), Y2= sy2(0);
