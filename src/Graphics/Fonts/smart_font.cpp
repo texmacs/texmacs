@@ -119,9 +119,9 @@ static bool gen_initialized= false;
 static translator gen_trl;
 
 static bool
-find_in_general (string c) {
+find_in_emu_bracket (string c) {
   if (!gen_initialized) {
-    gen_trl= load_translator ("general");
+    gen_trl= load_translator ("emu-bracket");
     gen_initialized= true;
   }
   return gen_trl->dict->contains (c);
@@ -797,9 +797,9 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in special\n";
       return sm->add_char (tuple ("special"), c);
     }
-    if (find_in_general (c)) {
-      //cout << "Found " << c << " in general\n";
-      return sm->add_char (tuple ("virtual", "general"), c);
+    if (find_in_emu_bracket (c)) {
+      //cout << "Found " << c << " in emu-bracket\n";
+      return sm->add_char (tuple ("virtual", "emu-bracket"), c);
     }
   }
 

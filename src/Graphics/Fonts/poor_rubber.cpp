@@ -54,7 +54,7 @@ poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
     initialized << false;
     larger << base;
   }
-  virt= load_translator ("poorlong");
+  virt= load_translator ("emu-large");
 }
 
 font
@@ -72,7 +72,7 @@ poor_rubber_font_rep::get_font (int nr) {
   else if (nr == 2*MAGNIFIED_NUMBER + 2 || nr == 2*MAGNIFIED_NUMBER + 3) {
     int hdpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
     int vdpi= (72 * base->hpt + (PIXEL/2)) / PIXEL;
-    font vfn= virtual_font (base, "poorlong", base->size, hdpi, vdpi, false);
+    font vfn= virtual_font (base, "emu-large", base->size, hdpi, vdpi, false);
     double zoomy= pow (2.0, ((double) MAGNIFIED_NUMBER) / 4.0);
     double zoomx= sqrt (zoomy);
     if ((nr & 1) == 1) zoomx= sqrt (zoomx);
@@ -309,6 +309,6 @@ poor_rubber_font_rep::index_glyph (string s, font_metric& fnm,
 font
 poor_rubber_font (font base) {
   string name= "poorrubber[" * base->res_name * "]";
-  font enh= virtual_enhance_font (base, "general");
+  font enh= virtual_enhance_font (base, "emu-bracket");
   return make (font, name, tm_new<poor_rubber_font_rep> (name, enh));
 }
