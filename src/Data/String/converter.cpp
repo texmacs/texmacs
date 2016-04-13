@@ -109,6 +109,7 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-fallback", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
     ht = dic;
   }
@@ -118,6 +119,15 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"unicode-cork-oneway", UTF8, BIT2BIT, false);
     hashtree_from_dictionary (dic,"tmuniversaltounicode", UTF8, BIT2BIT, true);
     hashtree_from_dictionary (dic,"unicode-symbol-oneway", UTF8, BIT2BIT, true);
+    ht = dic;
+  }
+  if (from=="Strict-Cork" && to=="UTF-8" ) {
+    hashtree<char,string> dic;
+    hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
     ht = dic;
   }
   else if (from=="UTF-8" && to=="HTML") {
@@ -133,6 +143,7 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-fallback", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"t2atounicode", BIT2BIT, UTF8, false);
     ht = dic;
@@ -181,6 +192,7 @@ converter_rep::load () {
       //hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"tmuniversaltounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-oneway", BIT2BIT, UTF8, false);
+    hashtree_from_dictionary (dic,"symbol-unicode-fallback", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"symbol-unicode-math", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"cork-to-real-ascii", BIT2BIT, BIT2BIT, false);
     ht = dic;
@@ -333,6 +345,23 @@ sourcecode_to_cork (string input) {
 string
 cork_to_utf8 (string input) {
   converter conv= load_converter ("Cork", "UTF-8");
+  int start= 0, i, n= N(input);
+  string r;
+  for (i=0; i<n; i++)
+    if (input[i] == '<' && i+1<n && input[i+1] == '#') {
+      r << apply (conv, input (start, i));
+      start= i= i+2;
+      while (i<n && input[i] != '>') i++;
+      r << encode_as_utf8 (from_hexadecimal (input (start, i)));
+      start= i+1;
+    }
+  r << apply (conv, input (start, n));
+  return r;
+}
+
+string
+strict_cork_to_utf8 (string input) {
+  converter conv= load_converter ("Strict-Cork", "UTF-8");
   int start= 0, i, n= N(input);
   string r;
   for (i=0; i<n; i++)

@@ -222,26 +222,6 @@
 ("<equallim>"			"=")
 ("<longequallim>"		"#FF1D")
 
-;;; Long arrows
-
-;; These arrows have no long variant in unicode. They are exported as regular
-;; arrows.
-
-;; No long "two headed" arrow
-("<longtwoheadleftarrow>"	"#219E")
-("<longtwoheadrightarrow>"	"#21A0")
-
-;; No "long upwards arrow" or "long downwards arrow"
-("<longuparrow>"		"#2191")
-("<longdownarrow>"		"#2193")
-("<longupdownarrow>"		"#2195")
-("<Longuparrow>"		"#21D1")
-("<Longdownarrow>"		"#21D3")
-("<Longupdownarrow>"		"#21D5")
-("<longhookrightarrow>"		"#21AA")
-;("<longmapsup>"		"")
-;("<longmapsdown>"		"")
-
 ;;; Unary operator variants
 
 ;; Unicode makes no distinction between unary and binary operators. TeXmacs

@@ -176,7 +176,7 @@ static hashmap<string,string> special_table ("");
 
 static bool
 unicode_provides (string s) {
-  return cork_to_utf8 (s) != s;
+  return strict_cork_to_utf8 (s) != s;
 }
 
 static bool
@@ -315,7 +315,7 @@ init_unicode_substitution () {
 
 int
 get_utf8_code (string c) {
-  string uc= cork_to_utf8 (c);
+  string uc= strict_cork_to_utf8 (c);
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
   if (pos == N(uc)) return code;
@@ -363,7 +363,7 @@ main_family (string f) {
 
 string
 get_unicode_range (string c) {
-  string uc= cork_to_utf8 (c);
+  string uc= strict_cork_to_utf8 (c);
   if (N(uc) == 0) return "";
   int pos= 0;
   int code= decode_from_utf8 (uc, pos);
@@ -526,7 +526,7 @@ rewrite_math (string s) {
     int start= i;
     tm_char_forwards (s, i);
     if (s[start] == '<' && start+1 < n && s[start+1] == '#' && s[i-1] == '>')
-      r << utf8_to_cork (cork_to_utf8 (s (start, i)));
+      r << utf8_to_cork (strict_cork_to_utf8 (s (start, i)));
     else r << s (start, i);
   }
   return r;
@@ -703,6 +703,13 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         initialize_font (nr);
         return sm->add_char (key, c);
       }
+    }
+    if (fam == mfam && virtually_defined (c, "emu-long-arrow")) {
+      tree key= tuple ("emulate", "emu-long-arrow");
+      int nr= sm->add_font (key, REWRITE_NONE);
+      initialize_font (nr);
+      if (fn[nr]->supports (c))
+        return sm->add_char (key, c);
     }
     if (fam == mfam && virtually_defined (c, "emu-basic")) {
       tree key= tuple ("emulate", "emu-basic");
@@ -888,8 +895,12 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font (family, "outline", series, "right", sz, dpi);
   else if (a[0] == "virtual")
     fn[nr]= virtual_font (this, a[1], sz, dpi, dpi, false);
-  else if (a[0] == "emulate")
-    fn[nr]= virtual_font (fn[SUBFONT_MAIN], a[1], sz, dpi, dpi, true);
+  else if (a[0] == "emulate") {
+    font vfn= fn[SUBFONT_MAIN];
+    if (a[1] == "emu-basic")
+      vfn= virtual_font (vfn, "emu-long-arrow", sz, dpi, dpi, true);
+    fn[nr]= virtual_font (vfn, a[1], sz, dpi, dpi, true);
+  }
   else if (a[0] == "poor-bbb" && N(a) == 3) {
     double pw= as_double (a[1]);
     double ph= as_double (a[2]);

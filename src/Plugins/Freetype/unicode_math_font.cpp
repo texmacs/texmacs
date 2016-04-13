@@ -70,13 +70,13 @@ unicode_math_font_rep::unicode_math_font_rep
 
 static bool
 unicode_provides (string s) {
-  return cork_to_utf8 (s) != s;
+  return strict_cork_to_utf8 (s) != s;
 }
 
 static unsigned int
 cork_to_unicode (string s) {
   int i= 0;
-  return decode_from_utf8 (cork_to_utf8 (s), i);
+  return decode_from_utf8 (strict_cork_to_utf8 (s), i);
 }
 
 //static string
