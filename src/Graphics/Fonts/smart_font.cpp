@@ -98,7 +98,9 @@ static array<translator> std_trl;
 static void
 initialize_virtual () {
   if (virt_initialized) return;
-  std_virt << string ("long") << string ("negate") << string ("misc");
+  std_virt << string ("tradi-long")
+           << string ("tradi-negate")
+           << string ("tradi-misc");
   for (int i=0; i<N(std_virt); i++)
     std_trl << load_translator (std_virt[i]);
   virt_initialized= true;
