@@ -116,6 +116,7 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "glue*", 2) ||
       is_tuple (t, "glue-above", 2) ||
       is_tuple (t, "glue-below", 2) ||
+      is_tuple (t, "row", 2) ||
       is_tuple (t, "stack", 2) ||
       is_tuple (t, "add", 2)) {
     int i, n= N(t);
@@ -126,7 +127,9 @@ virtual_font_rep::supported (scheme_tree t) {
 
   if (is_tuple (t, "glue-above", 3) ||
       is_tuple (t, "glue-below", 3) ||
-      is_tuple (t, "stack", 3)) {
+      is_tuple (t, "stack", 3) ||
+      (is_tuple (t, "left-fit", 3) && is_double (t[3])) ||
+      (is_tuple (t, "right-fit", 3) && is_double (t[3]))) {
     int i, n= N(t);
     for (i=1; i<n-1; i++)
       if (!supported (t[i])) return false;
@@ -137,6 +140,8 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "enlarge") ||
       is_tuple (t, "crop", 1) ||
       is_tuple (t, "hor-crop", 1) ||
+      is_tuple (t, "left-crop", 1) ||
+      is_tuple (t, "right-crop", 1) ||
       is_tuple (t, "ver-crop", 1) ||
       is_tuple (t, "clip") ||
       is_tuple (t, "part") ||
@@ -324,6 +329,18 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return join (gl1, move (gl2, 0, dy));
   }
 
+  if (is_tuple (t, "row", 2)) {
+    metric ey;
+    tree u= tuple ("glue", tuple ("right-crop", t[1]),
+                   tuple ("-0.1", "0", tuple ("left-crop", t[2])));
+    glyph gl1= compile (u, ey);
+    glyph gl2= compile (tuple ("glue", t[1], t[2]), ex);
+    SI delta= (SI) (0.1 * hunit);
+    ex->x2 -= delta;
+    SI dx= ((ex->x2 - ex->x1) - (ey->x2 - ey->x1)) >> 1;
+    return move (gl1, dx, 0);
+  }
+
   if (is_tuple (t, "stack", 2) ||
       is_tuple (t, "stack", 3)) {
     metric ey;
@@ -336,6 +353,23 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     outer_fit (ex, ey, 0, dy);
     return move (join (gl1, move (gl2, 0, dy)), 0, up);
   }
+
+  if (is_tuple (t, "right-fit", 3) && is_double (t[3])) {
+    metric ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    SI x2= ex->x2 + ((SI) (as_double (t[3]) * (ey->x2 - ey->x1)));
+    SI dx= collision_offset (gl1, gl2, true);
+    outer_fit (ex, ey, dx, 0);
+    ex->x2= x2;
+    return join (gl1, move (gl2, dx, 0));
+  }
+
+  if (is_tuple (t, "left-fit", 3) && is_double (t[3]))
+    return compile (tuple ("hor-flip",
+                           tuple ("right-fit",
+                                  tuple ("hor-flip", t[1]),
+                                  tuple ("hor-flip", t[2]), t[3])), ex);
 
   if (is_tuple (t, "add", 2)) {
     metric ey;
@@ -366,15 +400,22 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "crop", 1) ||
       is_tuple (t, "hor-crop", 1) ||
+      is_tuple (t, "left-crop", 1) ||
+      is_tuple (t, "right-crop", 1) ||
       is_tuple (t, "ver-crop", 1)) {
     glyph gl= simplify (compile (t[1], ex));
     SI x1, y1, x2, y2;
     get_bounding_box (gl, x1, y1, x2, y2);
-    if (!is_tuple (t, "ver-crop")) {
+    if (is_tuple (t, "crop") ||
+        is_tuple (t, "hor-crop") ||
+        is_tuple (t, "left-crop"))
       ex->x1= ex->x3= x1; ex->x3 -= PIXEL;
+    if (is_tuple (t, "crop") ||
+        is_tuple (t, "hor-crop") ||
+        is_tuple (t, "right-crop"))
       ex->x2= ex->x4= x2; ex->x4 += PIXEL;
-    }
-    if (!is_tuple (t, "hor-crop")) {
+    if (is_tuple (t, "crop") ||
+        is_tuple (t, "ver-crop")) {
       ex->y1= ex->y3= y1; ex->y3 -= PIXEL;
       ex->y2= ex->y4= y2; ex->y4 += PIXEL;
     }
@@ -657,6 +698,19 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "row", 2)) {
+    metric ex, ey;
+    tree u= tuple ("glue", tuple ("right-crop", t[1]),
+                   tuple ("-0.1", "0", tuple ("left-crop", t[2])));
+    get_metric (u, ey);
+    get_metric (tuple ("glue", t[1], t[2]), ex);
+    SI delta= (SI) (0.1 * hunit);
+    ex->x2 -= delta;
+    SI dx= ((ex->x2 - ex->x1) - (ey->x2 - ey->x1)) >> 1;
+    draw (ren, u, x + dx, y);
+    return;
+  }
+
   if (is_tuple (t, "stack", 2) ||
       is_tuple (t, "stack", 3)) {
     metric ex, ey;
@@ -668,6 +722,24 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
       dy -= (SI) (as_double (t[3]) * vunit);
     draw (ren, t[1], x, y + up);
     draw (ren, t[2], x, y + dy + up);
+    return;
+  }
+
+  if (is_tuple (t, "right-fit", 3) && is_double (t[3])) {
+    metric ex, ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    SI dx= collision_offset (gl1, gl2, true);
+    draw (ren, t[1], x, y);
+    draw (ren, t[2], x + dx, y);
+    return;
+  }
+
+  if (is_tuple (t, "left-fit", 3) && is_double (t[3])) {
+    draw (ren, tuple ("hor-flip",
+                      tuple ("right-fit",
+                             tuple ("hor-flip", t[1]),
+                             tuple ("hor-flip", t[2]), t[3])), x, y);
     return;
   }
 
@@ -702,6 +774,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
 
   if (is_tuple (t, "crop", 1) ||
       is_tuple (t, "hor-crop", 1) ||
+      is_tuple (t, "left-crop", 1) ||
+      is_tuple (t, "right-crop", 1) ||
       is_tuple (t, "ver-crop", 1)) {
     draw (ren, t[1], x, y);
     return;

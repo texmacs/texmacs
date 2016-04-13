@@ -12,6 +12,10 @@
 #include "bitmap_font.hpp"
 #include "renderer.hpp"
 
+/******************************************************************************
+* Information about glyphs
+******************************************************************************/
+
 void
 get_bounding_box (glyph gl, SI& x1, SI& y1, SI& x2, SI& y2) {
   x1= (-gl->xoff) * PIXEL;
@@ -19,6 +23,68 @@ get_bounding_box (glyph gl, SI& x1, SI& y1, SI& x2, SI& y2) {
   y1= (gl->yoff - (gl->height-1)) * PIXEL;
   y2= (gl->yoff) * PIXEL;
 }
+
+bool
+empty_column (glyph gl, int i) {
+  int hh= gl->height;
+  for (int j=0; j<hh; j++)
+    if (gl->get_x (i, j) != 0)
+      return false;
+  return true;
+}
+
+bool
+empty_row (glyph gl, int j) {
+  int ww= gl->width;
+  for (int i=0; i<ww; i++)
+    if (gl->get_x (i, j) != 0)
+      return false;
+  return true;
+}
+
+int
+first_in_row (glyph gl, int j) {
+  int ww= gl->width;
+  for (int i=0; i<ww; i++)
+    if (gl->get_x (i, j) != 0)
+      return i;
+  return ww;
+}
+
+int
+last_in_row (glyph gl, int j) {
+  int ww= gl->width;
+  for (int i=ww-1; i>=0; i--)
+    if (gl->get_x (i, j) != 0)
+      return i;
+  return -1;
+}
+
+SI
+collision_offset (glyph gl1, glyph gl2, bool overlap) {
+  int w1= gl1->width, h1= gl1->height, h2= gl2->height;
+  int best= -1000000;
+  for (int j2=0; j2<h2; j2++) {
+    int y = gl2->yoff - j2;
+    int j1= gl1->yoff - y;
+    if (0 <= j1 && j1 < h1 &&
+        !empty_row (gl1, j1) &&
+        !empty_row (gl2, j2)) {
+      int end1  = last_in_row (gl1, j1);
+      int start2= first_in_row (gl2, j2);
+      int end2  = last_in_row (gl2, j2);
+      int di    = end1 - (overlap? end2: start2);
+      int dx    = di - gl1->xoff + gl2->xoff;
+      best= max (best, dx);
+    }
+  }
+  if (best > -1000000) return best * PIXEL;
+  return (gl1->xoff + w1 - gl2->xoff) * PIXEL;
+}
+
+/******************************************************************************
+* Combining glyphs
+******************************************************************************/
 
 glyph
 join (glyph gl1, glyph gl2) {
@@ -40,6 +106,27 @@ join (glyph gl1, glyph gl2) {
       bmr->set_x (i+dx, j+dy,
 		  max (bmr->get_x (i+dx, j+dy), gl2->get_x (i, j)));
 
+  return bmr;
+}
+
+/******************************************************************************
+* Operating on glyphs
+******************************************************************************/
+
+glyph
+simplify (glyph gl) {
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  int i1= 0, i2= ww-1, j1= 0, j2= hh-1;
+  while (i1 < ww && empty_column (gl, i1)) i1++;
+  while (i2 >= 0 && empty_column (gl, i2)) i2--;
+  while (j1 < hh && empty_row (gl, j1)) j1++;
+  while (j2 >= 0 && empty_row (gl, j2)) j2--;
+  if (i1 == ww) { i1= j1= 0; i2= j2= -1; }
+  glyph bmr (i2-i1+1, j2-j1+1, gl->xoff-i1, gl->yoff-j1, gl->depth);
+  for (j=j1; j<=j2; j++)
+    for (i=i1; i<=i2; i++)
+      bmr->set_x (i-i1, j-j1, gl->get_x (i, j));
   return bmr;
 }
 
@@ -73,41 +160,6 @@ clip (glyph gl, SI x1, SI y1, SI x2, SI y2) {
       bool y_ok= (gl->yoff-j >= y1) && (gl->yoff-j < y2);
       bmr->set_x (i, j, x_ok && y_ok? gl->get_x (i, j): 0);
     }
-  return bmr;
-}
-
-bool
-empty_column (glyph gl, int i) {
-  int hh= gl->height;
-  for (int j=0; j<hh; j++)
-    if (gl->get_x (i, j) != 0)
-      return false;
-  return true;
-}
-
-bool
-empty_row (glyph gl, int j) {
-  int ww= gl->width;
-  for (int i=0; i<ww; i++)
-    if (gl->get_x (i, j) != 0)
-      return false;
-  return true;
-}
-
-glyph
-simplify (glyph gl) {
-  int i, j;
-  int ww= gl->width, hh= gl->height;
-  int i1= 0, i2= ww-1, j1= 0, j2= hh-1;
-  while (i1 < ww && empty_column (gl, i1)) i1++;
-  while (i2 >= 0 && empty_column (gl, i2)) i2--;
-  while (j1 < hh && empty_row (gl, j1)) j1++;
-  while (j2 >= 0 && empty_row (gl, j2)) j2--;
-  if (i1 == ww) { i1= j1= 0; i2= j2= -1; }
-  glyph bmr (i2-i1+1, j2-j1+1, gl->xoff-i1, gl->yoff-j1, gl->depth);
-  for (j=j1; j<=j2; j++)
-    for (i=i1; i<=i2; i++)
-      bmr->set_x (i-i1, j-j1, gl->get_x (i, j));
   return bmr;
 }
 
