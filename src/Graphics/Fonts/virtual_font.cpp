@@ -1077,6 +1077,18 @@ virtual_font_rep::draw_transformed (renderer ren, scheme_tree t, SI x, SI y,
 
 bool is_hex_digit (char c);
 
+static string
+decode_sharp (string c, string& nr) {
+  nr= "";
+  if (N(c) < 4 || c[N(c)-1] != '>') return c;
+  int i= N(c)-2;
+  if (c[i] < '0' || c[i] > '9') return c;
+  while (i >= 0 && c[i] >= '0' && c[i] <= '9') i--;
+  if (i < 0 || c[i] != '-') return c;
+  nr= c (i+1, N(c)-1);
+  return c (0, i) * "-#>";
+}
+
 static tree
 subst_sharp (tree t, string by) {
   if (is_atomic (t)) {
@@ -1108,8 +1120,9 @@ make_char_font (string name, font_metric& cfnm, font_glyphs& cfng) {
 
 int
 virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
-  if (N(s) == 0) return -1;
-  if (N(s) == 1) {
+  int n= N(s);
+  if (n == 0) return -1;
+  if (n == 1) {
     int c= ((QN) s[0]);
     if ((c<0) || (c>=last)) return -1;
     cfnm= fnm;
@@ -1118,8 +1131,18 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
       fng->get(c)= compile (virt->virt_def[c], fnm->get(c));
     return c;
   }
-  else if (s[0] == '<' && s[N(s)-1] == '>') {
-    if (!virt->dict->contains (s)) return -1;
+  else if (s[0] == '<' && s[n-1] == '>') {
+    if (!virt->dict->contains (s)) {
+      if (s[n-2] < '0' || s[n-2] > '9') return -1;
+      string nr;
+      s= decode_sharp (s, nr);
+      if (!virt->dict->contains (s)) return -1;
+      int c2= virt->dict [s];
+      string ss= "x";
+      ss[0]= (char) c2;
+      ss << nr;
+      return get_char (ss, cfnm, cfng);
+    }
     int c2= virt->dict [s];
     cfnm= fnm;
     cfng= fng;
@@ -1130,9 +1153,9 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
   else {
     int c= ((QN) s[0]);
     if ((c<0) || (c>=last)) return -1;
-    string sub= "[" * as_string (c) * "," * s(1,N(s)-1) * "]";
+    string sub= "[" * as_string (c) * "," * s(1,n) * "]";
     make_char_font (res_name * sub, cfnm, cfng);
-    tree t= subst_sharp (virt->virt_def[c], s(1,N(s)));
+    tree t= subst_sharp (virt->virt_def[c], s(1,n));
     if (is_nil (cfng->get(0)))
       cfng->get(0)= compile (t, cfnm->get(0));
     return 0;
@@ -1142,15 +1165,22 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
 tree
 virtual_font_rep::get_tree (string s) {
   if (s == "") return "";
-  int c= ((QN) s[0]);
-  if (s[0] == '<' && s[N(s)-1] == '>') {
-    if (!virt->dict->contains (s)) return "";
+  int c= ((QN) s[0]), n= N(s);
+  if (s[0] == '<' && s[n-1] == '>') {
+    if (!virt->dict->contains (s)) {
+      if (s[n-2] < '0' || s[n-2] > '9') return "";
+      string nr;
+      s= decode_sharp (s, nr);
+      if (!virt->dict->contains (s)) return "";
+      int c2= virt->dict [s];
+      return subst_sharp (virt->virt_def[c2], nr);
+    }
     int c2= virt->dict [s];
     return virt->virt_def[c2];
   }
   else if ((c<0) || (c>=last)) return "";
-  else if (N(s)==1) return virt->virt_def[c];
-  else return subst_sharp (virt->virt_def[c], s(1,N(s)));
+  else if (n==1) return virt->virt_def[c];
+  else return subst_sharp (virt->virt_def[c], s(1,n));
 }
 
 bool
@@ -1300,10 +1330,14 @@ virtually_defined (string c, string name) {
     vdefined (name)= true;
     translator virt= load_translator (name);
     iterator<string> it= iterate (virt->dict);
-    while (it->busy ())
-      vdefined (name * "-" * it->next ())= true;
+    while (it->busy ()) {
+      string c= it->next ();
+      vdefined (name * "-" * c)= true;
+    }
   }
-  return vdefined [name * "-" * c];
+  if (vdefined [name * "-" * c]) return true;
+  string nr;
+  return vdefined [name * "-" * decode_sharp (c, nr)];
 }
 
 font
