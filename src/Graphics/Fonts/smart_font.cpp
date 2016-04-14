@@ -910,7 +910,6 @@ smart_font_rep::initialize_font (int nr) {
     initialize_font (as_int (a[1]));
     fn[nr]= rubber_font (fn[as_int (a[1])]);
     //fn[nr]= rubber_unicode_font (fn[as_int (a[1])]);
-    //fn[nr]= poor_rubber_font (fn[as_int (a[1])]);
   }
   else {
     int ndpi= adjusted_dpi (a[0], a[1], a[2], a[3], as_int (a[4]));

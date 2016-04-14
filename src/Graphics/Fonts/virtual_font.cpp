@@ -780,6 +780,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     glyph gl1= compile (t[1], ex);
     glyph gl2= compile (t[2], ey);
     SI dx= collision_offset (gl1, gl2, true);
+    dx += 2*PIXEL; // FIXME: needed to counter rounding errors
     draw (ren, t[1], x, y);
     draw (ren, t[2], x + dx, y);
     return;
