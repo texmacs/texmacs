@@ -718,6 +718,13 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (c))
         return sm->add_char (key, c);
     }
+    if (fam == mfam && virtually_defined (c, "emu-arrows")) {
+      tree key= tuple ("emulate", "emu-arrows");
+      int nr= sm->add_font (key, REWRITE_NONE);
+      initialize_font (nr);
+      if (fn[nr]->supports (c))
+        return sm->add_char (key, c);
+    }
   }
 
   if (attempt > 1) {
@@ -897,7 +904,7 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= virtual_font (this, a[1], sz, dpi, dpi, false);
   else if (a[0] == "emulate") {
     font vfn= fn[SUBFONT_MAIN];
-    if (a[1] == "emu-operators")
+    if (a[1] != "emu-fundamental")
       vfn= virtual_font (vfn, "emu-fundamental", sz, dpi, dpi, true);
     fn[nr]= virtual_font (vfn, a[1], sz, dpi, dpi, true);
   }
