@@ -44,18 +44,12 @@
                 (font (glue minus (hor-flip minus))
                       Chalkboard Chalkduster)
                 (hor-extend minus 0.5 1 0.25)))
-  (lefthead (or (font (magnify (scale less 0 1 1) 0.5 0.5)
-                      Didot)
-                (font #2039
-                      Chalkboard)
-                (magnify #2039 1.25 1.25)
-                (magnify (scale less 0 1 1) 0.5 0.5)))
-  (righthead (or (font (magnify (scale gtr 0 1 1) 0.5 0.5)
-                       Didot)
-                 (font #203A
-                       Chalkboard)
-                 (magnify #203A 1.25 1.25)
-                 (magnify (scale gtr 0 1 1) 0.5 0.5)))
+  (smallless (magnify less 0.5 0.5))
+  (smallgtr (magnify gtr 0.5 0.5))
+  (lefthead* (or (font smallless Didot) #2039 smallless))
+  (righthead* (or (font smallgtr Didot) #203A smallgtr))
+  (lefthead (scale lefthead* (max-height lefthead* (magnify = 1.5 1.5)) @ 1))
+  (righthead (scale righthead* (max-height lefthead* (magnify = 1.5 1.5)) @ 1))
   (leftarrow (left-fit arrowbar (align lefthead arrowbar * 0.5) 0.1))
   (rightarrow (right-fit arrowbar (align righthead arrowbar * 0.5) 0.1))
   (leftrightarrow (join (part leftarrow * 0.55)
@@ -67,14 +61,14 @@
   (leftmap (right-fit arrowbar (align varshortmid arrowbar * 0.5) 0.5))
   (leftrightmap (join (part leftmap * 0.55)
                       (part rightmap 0.45 *)))
-  (lefttwohead  (or (font (join lefthead (0.1 0 lefthead))
-                          Didot)
-                    #AB
-                    (join lefthead (0.1 0 lefthead))))
-  (righttwohead (or (font (join righthead (0.1 0 righthead))
-                          Didot)
-                    #BB
-                    (join righthead (0.1 0 righthead))))
+  (twolefthead (join lefthead (0.15 0 lefthead)))
+  (lefttwohead* (or (font twolefthead Didot) #AB twolefthead))
+  (lefttwohead (scale lefttwohead*
+                      (max-height lefttwohead* (magnify = 1.5 1.5)) @ 1))
+  (tworighthead (join righthead (0.15 0 righthead)))
+  (righttwohead* (or (font tworighthead Didot) #BB tworighthead))
+  (righttwohead (scale righttwohead*
+                       (max-height righttwohead* (magnify = 1.5 1.5)) @ 1))
   (twoheadleftarrow (left-fit arrowbar
                               (align lefttwohead arrowbar * 0.5) 0.1))
   (twoheadrightarrow (right-fit arrowbar
@@ -102,8 +96,10 @@
                 (font (glue = (hor-flip =))
                       Chalkboard)
                 (hor-extend = 0.5 1 0.25)))
-  (Leftarrow (left-fit Arrowbar (align lefthead Arrowbar * 0.5) 0.333))
-  (Rightarrow (right-fit Arrowbar (align righthead Arrowbar * 0.5) 0.333))
+  (Lefthead (scale lefthead* (max-height lefthead* (magnify = 1.8 1.8)) @ 1))
+  (Righthead (scale righthead* (max-height lefthead* (magnify = 1.8 1.8)) @ 1))
+  (Leftarrow (left-fit Arrowbar (align Lefthead Arrowbar * 0.5) 0.333))
+  (Rightarrow (right-fit Arrowbar (align Righthead Arrowbar * 0.5) 0.333))
   (Leftrightarrow (join (part Leftarrow * 0.55)
                         (part Rightarrow 0.45 *)))
 

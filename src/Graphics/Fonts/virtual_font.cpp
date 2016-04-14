@@ -159,7 +159,11 @@ virtual_font_rep::supported (scheme_tree t) {
     return supported (t[1]);
 
   if ((is_tuple (t, "align") && N(t) >= 3) ||
-      is_tuple (t, "scale", 4))
+      is_tuple (t, "scale", 4) ||
+      is_tuple (t, "min-width", 2) ||
+      is_tuple (t, "max-width", 2) ||
+      is_tuple (t, "min-height", 2) ||
+      is_tuple (t, "max-height", 2))
     return supported (t[1]) && supported (t[2]);
 
   if (is_tuple (t, "font") && N(t) >= 3) {
@@ -232,6 +236,18 @@ stretch (metric& ex, double mx, double my) {
     ex->y3= ((SI) floor (my * ex->y3)) - PIXEL;
     ex->y4= ((SI) ceil  (my * ex->y4)) + PIXEL;
   }
+}
+
+static void
+assign (metric& ex, metric ex2) {
+  ex->x1= ex2->x1;
+  ex->x2= ex2->x2;
+  ex->x3= ex2->x3;
+  ex->x4= ex2->x4;
+  ex->y1= ex2->y1;
+  ex->y2= ex2->y2;
+  ex->y3= ex2->y3;
+  ex->y4= ex2->y4;
 }
 
 glyph
@@ -579,8 +595,42 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     SI h2= ex2->y2 - ex2->y1;
     double mx= get_magnification (w, w2, sx);
     double my= get_magnification (h, h2, sy);
+    if (N(t) >= 4 && t[3] == "@") sx= sy;
+    if (N(t) >= 5 && t[4] == "@") sy= sx;
     stretch (ex, mx, my);
     return stretched (gl, mx, my);
+  }
+
+  if (is_tuple (t, "min-width", 2)) {
+    metric ex2;
+    glyph gl = compile (t[1], ex);
+    glyph gl2= compile (t[2], ex2);
+    if ((ex->x2 - ex->x1) <= (ex2->x2 - ex2->x1)) return gl;
+    else { assign (ex, ex2); return gl2; }
+  }
+
+  if (is_tuple (t, "max-width", 2)) {
+    metric ex2;
+    glyph gl = compile (t[1], ex);
+    glyph gl2= compile (t[2], ex2);
+    if ((ex->x2 - ex->x1) >= (ex2->x2 - ex2->x1)) return gl;
+    else { assign (ex, ex2); return gl2; }
+  }
+
+  if (is_tuple (t, "min-height", 2)) {
+    metric ex2;
+    glyph gl = compile (t[1], ex);
+    glyph gl2= compile (t[2], ex2);
+    if ((ex->y2 - ex->y1) <= (ex2->y2 - ex2->y1)) return gl;
+    else { assign (ex, ex2); return gl2; }
+  }
+
+  if (is_tuple (t, "max-height", 2)) {
+    metric ex2;
+    glyph gl = compile (t[1], ex);
+    glyph gl2= compile (t[2], ex2);
+    if ((ex->y2 - ex->y1) >= (ex2->y2 - ex2->y1)) return gl;
+    else { assign (ex, ex2); return gl2; }
   }
 
   if (is_tuple (t, "font") && N(t) >= 3)
@@ -951,12 +1001,46 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     SI h2= ex2->y2 - ex2->y1;
     double mx= get_magnification (w, w2, sx);
     double my= get_magnification (h, h2, sy);
+    if (N(t) >= 4 && t[3] == "@") sx= sy;
+    if (N(t) >= 5 && t[4] == "@") sy= sx;
     ren->move_origin (x, y);
     ren->set_transformation (scaling (point (mx, my), point (0.0, 0.0)));
     draw (ren, t[1], 0, 0);
     ren->reset_transformation ();
     ren->move_origin (-x, -y);
     return;
+  }
+
+  if (is_tuple (t, "min-width", 2)) {
+    metric ex, ex2;
+    get_metric (t[1], ex);
+    get_metric (t[2], ex2);
+    if ((ex->x2 - ex->x1) <= (ex2->x2 - ex2->x1)) draw (ren, t[1], x, y);
+    else draw (ren, t[2], x, y);
+  }
+
+  if (is_tuple (t, "max-width", 2)) {
+    metric ex, ex2;
+    get_metric (t[1], ex);
+    get_metric (t[2], ex2);
+    if ((ex->x2 - ex->x1) >= (ex2->x2 - ex2->x1)) draw (ren, t[1], x, y);
+    else draw (ren, t[2], x, y);
+  }
+
+  if (is_tuple (t, "min-height", 2)) {
+    metric ex, ex2;
+    get_metric (t[1], ex);
+    get_metric (t[2], ex2);
+    if ((ex->y2 - ex->y1) <= (ex2->y2 - ex2->y1)) draw (ren, t[1], x, y);
+    else draw (ren, t[2], x, y);
+  }
+
+  if (is_tuple (t, "max-height", 2)) {
+    metric ex, ex2;
+    get_metric (t[1], ex);
+    get_metric (t[2], ex2);
+    if ((ex->y2 - ex->y1) >= (ex2->y2 - ex2->y1)) draw (ren, t[1], x, y);
+    else draw (ren, t[2], x, y);
   }
 
   if (is_tuple (t, "font") && N(t) >= 3) {
