@@ -348,10 +348,10 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   if (is_tuple (t, "row", 2)) {
     metric ey;
     tree u= tuple ("glue", tuple ("right-crop", t[1]),
-                   tuple ("-0.1", "0", tuple ("left-crop", t[2])));
+                   tuple ("-0.05", "0", tuple ("left-crop", t[2])));
     glyph gl1= compile (u, ey);
     glyph gl2= compile (tuple ("glue", t[1], t[2]), ex);
-    SI delta= (SI) (0.1 * hunit);
+    SI delta= (SI) (0.05 * hunit);
     ex->x2 -= delta;
     SI dx= ((ex->x2 - ex->x1) - (ey->x2 - ey->x1)) >> 1;
     return move (gl1, dx, 0);
@@ -751,10 +751,10 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_tuple (t, "row", 2)) {
     metric ex, ey;
     tree u= tuple ("glue", tuple ("right-crop", t[1]),
-                   tuple ("-0.1", "0", tuple ("left-crop", t[2])));
+                   tuple ("-0.05", "0", tuple ("left-crop", t[2])));
     get_metric (u, ey);
     get_metric (tuple ("glue", t[1], t[2]), ex);
-    SI delta= (SI) (0.1 * hunit);
+    SI delta= (SI) (0.05 * hunit);
     ex->x2 -= delta;
     SI dx= ((ex->x2 - ex->x1) - (ey->x2 - ey->x1)) >> 1;
     draw (ren, u, x + dx, y);
