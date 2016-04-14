@@ -1,5 +1,20 @@
 
 (virtual-font
+  (minus* (or (font (scale (hor-crop _) (hor-crop +) 1 *)
+                    Baskerville meyne_textur Papyrus)
+              (scale - + 1 *)))
+  (minus (align minus* + 0.5 0.5))
+
+  (smallless (magnify less 0.5 0.5))
+  (smallgtr (magnify gtr 0.5 0.5))
+  (lefthead* (or (font smallless Didot) #2039 smallless))
+  (righthead* (or (font smallgtr Didot) #203A smallgtr))
+  (lefthead (scale lefthead* (max-height lefthead* (magnify = 1.5 1.5)) @ 1))
+  (righthead (scale righthead* (max-height lefthead* (magnify = 1.5 1.5)) @ 1))
+  (Lefthead (scale lefthead* (max-height lefthead* (magnify = 1.8 1.8)) @ 1))
+  (Righthead (scale righthead* (max-height lefthead* (magnify = 1.8 1.8)) @ 1))
+  (varshortmid (magnify (scale (hor-crop |) lefthead * 1) 1 0.66666))
+
   (leftarrow (hor-flip rightarrow))
   (Leftarrow (hor-flip Rightarrow))
   (mapsfrom (hor-flip mapsto))
@@ -7,8 +22,28 @@
 
   (arrowbar* (join (part rightarrow * 0.5)
                    (part leftarrow 0.5 *)))
+  (arrowbar (or arrowbar*
+  	    	(font (glue (glue minus (hor-flip minus))
+  	    	      	    (glue minus (hor-flip minus)))
+                      Essays1743 meyne_textur)
+                (font (glue minus (hor-flip minus))
+                      Chalkboard Cuprum)
+                (font (magnify minus 1.5 *)
+                      Chalkduster)
+                (magnify minus 1.25 *)))
+
   (Arrowbar* (join (part Rightarrow * 0.5)
                    (part Leftarrow 0.5 *)))
+  (Arrowbar (or Arrowbar*
+  	    	(font (glue (glue = (hor-flip =))
+  	    	      	    (glue = (hor-flip =)))
+                      Essays1743 meyne_textur)
+                (font (glue = (hor-flip =))
+                      Chalkboard Cuprum)
+                (font (magnify = 1.5 *)
+                      Chalkduster)
+                (magnify = 1.25 *)))
+
   (rightmap (join (part mapsto * 0.5)
                   (part leftarrow 0.5 *)))
   (leftmap (join (part rightarrow * 0.5)
