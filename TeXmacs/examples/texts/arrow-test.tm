@@ -14,7 +14,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|Optima>
+    <associate|font|Papyrus>
     <associate|math-font|math-termes>
     <associate|page-type|a5>
   </collection>

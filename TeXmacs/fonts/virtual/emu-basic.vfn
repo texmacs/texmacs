@@ -37,7 +37,8 @@
                (align . + 1 0.5)
                (align . + 0 1.25)))
 
-  (arrowbar (or (font (glue (glue minus (hor-flip minus))
+  (arrowbar (or arrowbar*
+  	    	(font (glue (glue minus (hor-flip minus))
   	    	      	    (glue minus (hor-flip minus)))
                       Essays1743 meyne_textur)
                 (font (glue minus (hor-flip minus))
@@ -61,7 +62,7 @@
   (rightmap (left-fit arrowbar (align varshortmid arrowbar * 0.5) 0.5))
   (leftmap (right-fit arrowbar (align varshortmid arrowbar * 0.5) 0.5))
   (leftrightmap (join (part leftmap * 0.55)
-                      (part rightmap 0.45 *)))
+                      (part rightmap 0.45 *)))  
   (twolefthead (join lefthead (0.15 0 lefthead)))
   (lefttwohead* (or (font twolefthead Didot) #AB twolefthead))
   (lefttwohead (scale lefttwohead*
@@ -85,10 +86,13 @@
   (longrightmap (row rightmap arrowbar))
   (longleftmap (row arrowbar leftmap))
   (longleftrightmap (row rightmap leftmap))
+  (longhookrightarrow (row lefthook rightarrow))
+  (longhookleftarrow (row leftarrow righthook))
   (longtwoheadleftarrow (row twoheadleftarrow arrowbar))
   (longtwoheadrightarrow (row arrowbar twoheadrightarrow))
 
-  (Arrowbar (or (font (glue (glue = (hor-flip =))
+  (Arrowbar (or Arrowbar*
+  	    	(font (glue (glue = (hor-flip =))
   	    	      	    (glue = (hor-flip =)))
                       Essays1743 meyne_textur)
                 (font (glue = (hor-flip =))
