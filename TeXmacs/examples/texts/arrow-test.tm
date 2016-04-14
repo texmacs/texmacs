@@ -10,12 +10,19 @@
   <\equation*>
     <tabular*|<tformat|<table|<row|<cell|X<long-arrow|\<rubber-leftarrow\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-rightarrow\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-leftrightarrow\>|a+b+c+d>Y>>|<row|<cell|X<long-arrow|\<rubber-mapsfrom\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-mapsto\>|a+b+c+d>Y>|<cell|>|<cell|>>|<row|<cell|X<long-arrow|\<rubber-twoheadrightarrow\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-twoheadleftarrow\>|a+b+c+d>Y>|<cell|>|<cell|>>|<row|<cell|X<long-arrow|\<rubber-Rightarrow\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-Leftarrow\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-Leftrightarrow\>|a+b+c+d>Y>>|<row|<cell|X<long-arrow|\<rubber-minus\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-equal\>|a+b+c+d>Y>|<cell|>|<cell|>>|<row|<cell|X<long-arrow|\<rubber-leftharpoonup\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-rightharpoonup\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-leftrightharpoons\>|a+b+c+d>Y>>|<row|<cell|X<long-arrow|\<rubber-leftharpoondown\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-rightharpoondown\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-rightleftharpoons\>|a+b+c+d>Y>>|<row|<cell|X<long-arrow|\<rubber-hookleftarrow\>|a+b+c+d>Y>|<cell|>|<cell|X<long-arrow|\<rubber-hookrightarrow\>|a+b+c+d>Y>|<cell|>|<cell|>>>>>
   </equation*>
+
+  \;
+
+  <\equation*>
+    <tabular*|<tformat|<table|<row|<cell|\<upminus\>>|<cell|\<uparrow\>>|<cell|\<downarrow\>>|<cell|\<updownarrow\>>|<cell|>|<cell|\<downequal\>>|<cell|\<Uparrow\>>|<cell|\<Downarrow\>>|<cell|\<Updownarrow\>>|<cell|>|<cell|\<upharpoonleft\>>|<cell|\<downharpoonleft\>>|<cell|\<upharpoonright\>>|<cell|\<downharpoonright\>>|<cell|>|<cell|\<mapsup\>>|<cell|\<mapsdown\>>|<cell|\<hookuparrow\>>|<cell|\<hookdownarrow\>>>|<row|<cell|\<longdownminus\>>|<cell|\<longuparrow\>>|<cell|\<longdownarrow\>>|<cell|\<longupdownarrow\>>|<cell|>|<cell|\<longdownequal\>>|<cell|\<Longuparrow\>>|<cell|\<Longdownarrow\>>|<cell|\<Longupdownarrow\>>|<cell|>|<cell|\<longupharpoonleft\>>|<cell|\<longdownharpoonleft\>>|<cell|\<longupharpoonright\>>|<cell|\<longdownharpoonright\>>|<cell|>|<cell|\<longmapsup\>>|<cell|\<longmapsdown\>>|<cell|\<longhookuparrow\>>|<cell|\<longhookdownarrow\>>>|<row|<cell|<op|\<rubber-upminus-20\>>>|<cell|<op|\<rubber-uparrow-20\>>>|<cell|<op|\<rubber-downarrow-20\>>>|<cell|<op|\<rubber-updownarrow-20\>>>|<cell|>|<cell|<op|\<rubber-upequal-20\>>>|<cell|<op|\<rubber-Uparrow-20\>>>|<cell|<op|\<rubber-Downarrow-20\>>>|<cell|<op|\<rubber-Updownarrow-20\>>>|<cell|>|<cell|<op|\<rubber-upharpoonleft-20\>>>|<cell|<op|\<rubber-downharpoonleft-20\>>>|<cell|<op|\<rubber-upharpoonright-20\>>>|<cell|<op|\<rubber-downharpoonright-20\>>>|<cell|>|<cell|<op|\<rubber-mapsup-20\>>>|<cell|<op|\<rubber-mapsdown-20\>>>|<cell|<op|\<rubber-hookuparrow-20\>>>|<cell|<op|\<rubber-hookdownarrow-20\>>>>>>>
+  </equation*>
+
+  \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|font|Papyrus>
-    <associate|math-font|math-termes>
+    <associate|font|Chalkduster>
     <associate|page-type|a5>
   </collection>
 </initial>

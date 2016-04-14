@@ -173,6 +173,7 @@
     "<circlearrowleft>" "<circlearrowdown>"
     "<curvearrowleft>" "<curvearrowright>"
     "<downdownarrows>" "<downharpoonleft>" "<downharpoonright>"
+    "<longdownharpoonleft>" "<longdownharpoonright>"
     "<leftarrowtail>" "<leftleftarrows>" "<leftrightarrows>"
     "<longleftleftarrows>" "<longleftrightarrows>"
     "<leftrightharpoons>" "<rightleftharpoons>"
@@ -183,8 +184,9 @@
     "<longrightleftarrows>" "<longrightrightarrows>"
     "<leftsquigarrow>" "<rightsquigarrow>" "<leftrightsquigarrow>"
     "<Rsh>" "<twoheadleftarrow>" "<twoheadrightarrow>"
-    "<upharpoonleft>" "<upharpoonright>" "<upuparrows>"
-    "<leftrightmap>" "<pointer>")
+    "<upharpoonleft>" "<upharpoonright>"
+    "<longupharpoonleft>" "<longupharpoonright>"
+    "<upuparrows>" "<leftrightmap>" "<pointer>")
   
   (define Arrow-lim-symbol
     (:type infix)
@@ -558,7 +560,7 @@
     "<updownarrow>" "<Updownarrow>" "<mapsup>" "<mapsdown>"
     "<hookuparrow>" "<hookdownarrow>"
     "<upsquigarrow>" "<downsquigarrow>" "<updownsquigarrow>"
-    "<upequal>" "<downequal>"
+    "<upminus>" "<downminus>" "<upequal>" "<downequal>"
     "<longuparrow>" "<Longuparrow>"
     "<longdownarrow>" "<Longdownarrow>" "<longupdownarrow>" "<Longupdownarrow>"
     "<longmapsup>" "<longmapsdown>" "<longhookuparrow>" "<longhookdownarrow>"
