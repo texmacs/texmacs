@@ -38,6 +38,7 @@ struct virtual_font_rep: font_rep {
 
   virtual_font_rep (string name, font base, string vname, int size,
                     int hdpi, int vdpi, bool extend);
+  scheme_tree exec (scheme_tree t);
   bool   supported (scheme_tree t);
   bool   supported (string c);
   glyph  compile_bis (scheme_tree t, metric& ex);
@@ -84,6 +85,59 @@ virtual_font_rep::virtual_font_rep (
 }
 
 /******************************************************************************
+* Execution of expressions
+******************************************************************************/
+
+scheme_tree
+virtual_font_rep::exec (scheme_tree t) {
+  //cout << "Exec " << t << "\n";
+  if (is_atomic (t)) return t;
+  else if (is_tuple (t, "+")) {
+    scheme_tree r= "0";
+    for (int i=1; i<N(t); i++) {
+      scheme_tree a= exec (t[i]);
+      if (!is_double (a)) return "error";
+      r= as_string (as_double (r) + as_double (a));
+    }
+    return r;
+  }
+  else if (is_tuple (t, "-", 2)) {
+    scheme_tree a= exec (t[1]);
+    scheme_tree b= exec (t[2]);
+    if (!(is_double (a) && is_double (b))) return "error";
+    return as_string (as_double (a) - as_double (b));
+  }
+  else if (is_tuple (t, "*")) {
+    scheme_tree r= "1";
+    for (int i=1; i<N(t); i++) {
+      scheme_tree a= exec (t[i]);
+      if (!is_double (a)) return "error";
+      r= as_string (as_double (r) * as_double (a));
+    }
+    return r;
+  }
+  else if (is_tuple (t, "/", 2)) {
+    scheme_tree a= exec (t[1]);
+    scheme_tree b= exec (t[2]);
+    if (!(is_double (a) && is_double (b))) return "error";
+    return as_string (as_double (a) / as_double (b));
+  }
+  else if (is_tuple (t, "width", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    double w= ((double) (ex->x2 - ex->x1)) / hunit;
+    return as_string (w);
+  }
+  else if (is_tuple (t, "height", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    double w= ((double) (ex->y2 - ex->y1)) / hunit;
+    return as_string (w);
+  }
+  else return t;
+}
+
+/******************************************************************************
 * Check integrity of virtual character
 ******************************************************************************/
 
@@ -102,6 +156,12 @@ virtual_font_rep::supported (scheme_tree t) {
 
   if (is_func (t, TUPLE, 3) && (is_double (t[0])) && (is_double (t[1])))
     return supported (t[2]);
+
+  if (is_tuple (t, "with", 3) && is_atomic (t[1])) {
+    tree var= t[1];
+    tree val= exec (t[2]);
+    return supported (replace (t[3], var, val));
+  }
 
   if (is_tuple (t, "or") && N(t) >= 2) {
     int i, n= N(t);
@@ -160,6 +220,7 @@ virtual_font_rep::supported (scheme_tree t) {
 
   if ((is_tuple (t, "align") && N(t) >= 3) ||
       is_tuple (t, "scale", 4) ||
+      is_tuple (t, "hor-scale", 2) ||
       is_tuple (t, "min-width", 2) ||
       is_tuple (t, "max-width", 2) ||
       is_tuple (t, "min-height", 2) ||
@@ -283,6 +344,12 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
       return move (gl, x, y);
     }
 
+  if (is_tuple (t, "with", 3) && is_atomic (t[1])) {
+    tree var= t[1];
+    tree val= exec (t[2]);
+    return compile (replace (t[3], var, val), ex);
+  }
+
   if (is_tuple (t, "or") && N(t) >= 2) {
     int i, n= N(t);
     for (i=1; i<n-1; i++)
@@ -347,8 +414,8 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "row", 2)) {
     metric ey;
-    tree u= tuple ("glue", tuple ("right-crop", t[1]),
-                   tuple ("-0.05", "0", tuple ("left-crop", t[2])));
+    scheme_tree u= tuple ("glue", tuple ("right-crop", t[1]),
+                          tuple ("-0.05", "0", tuple ("left-crop", t[2])));
     glyph gl1= compile (u, ey);
     glyph gl2= compile (tuple ("glue", t[1], t[2]), ex);
     SI delta= (SI) (0.05 * hunit);
@@ -604,6 +671,14 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return stretched (gl, mx, my);
   }
 
+  if (is_tuple (t, "hor-scale", 2)) {
+    scheme_tree ct1= tuple ("hor-crop", t[1]);
+    scheme_tree ct2= tuple ("hor-crop", t[2]);
+    scheme_tree u  = tuple ("scale", ct1, ct2, "1", "*");
+    scheme_tree v  = tuple ("align", u, t[2], "0.5", "0.5");
+    return compile (v, ex);
+  }
+
   if (is_tuple (t, "min-width", 2)) {
     metric ex2;
     glyph gl = compile (t[1], ex);
@@ -689,6 +764,13 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
       return;
     }
 
+  if (is_tuple (t, "with", 3) && is_atomic (t[1])) {
+    tree var= t[1];
+    tree val= exec (t[2]);
+    draw (ren, replace (t[3], var, val), x, y);
+    return;
+  }
+
   if (is_tuple (t, "or") && N(t) >= 2) {
     int i, n= N(t);
     for (i=1; i<n-1; i++)
@@ -753,8 +835,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
 
   if (is_tuple (t, "row", 2)) {
     metric ex, ey;
-    tree u= tuple ("glue", tuple ("right-crop", t[1]),
-                   tuple ("-0.05", "0", tuple ("left-crop", t[2])));
+    scheme_tree u= tuple ("glue", tuple ("right-crop", t[1]),
+                          tuple ("-0.05", "0", tuple ("left-crop", t[2])));
     get_metric (u, ey);
     get_metric (tuple ("glue", t[1], t[2]), ex);
     SI delta= (SI) (0.05 * hunit);
@@ -1014,6 +1096,15 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     draw (ren, t[1], 0, 0);
     ren->reset_transformation ();
     ren->move_origin (-x, -y);
+    return;
+  }
+
+  if (is_tuple (t, "hor-scale", 2)) {
+    scheme_tree ct1= tuple ("hor-crop", t[1]);
+    scheme_tree ct2= tuple ("hor-crop", t[2]);
+    scheme_tree u  = tuple ("scale", ct1, ct2, "1", "*");
+    scheme_tree v  = tuple ("align", u, t[2], "0.5", "0.5");
+    draw (ren, v, x, y);
     return;
   }
 
