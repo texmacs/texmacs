@@ -4,7 +4,7 @@
 
 <\body>
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|->|<cell|=>|<cell|x\<equiv\>y>|<cell|\<sim\>>|<cell|\<approx\>>|<cell|\<simeq\>>|<cell|\<cong\>>|<cell|\<approxeq\>>|<cell|\<asymp\>>|<cell|\<asympasymp\>>|<cell|\<simsim\>>>|<row|<cell|>|<cell|\<neq\>>|<cell|\<nequiv\>>|<cell|\<nsim\>>|<cell|\<napprox\>>|<cell|\<nsimeq\>>|<cell|\<ncong\>>|<cell|>|<cell|\<nasymp\>>|<cell|\<nasympasymp\>>|<cell|\<nsimsim\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|->|<cell|=>|<cell|\<equiv\>>|<cell|\<sim\>>|<cell|\<approx\>>|<cell|\<simeq\>>|<cell|\<cong\>>|<cell|\<approxeq\>>|<cell|\<asymp\>>|<cell|\<asympasymp\>>|<cell|\<simsim\>>>|<row|<cell|>|<cell|\<neq\>>|<cell|\<nequiv\>>|<cell|\<nsim\>>|<cell|\<napprox\>>|<cell|\<nsimeq\>>|<cell|\<ncong\>>|<cell|>|<cell|\<nasymp\>>|<cell|\<nasympasymp\>>|<cell|\<nsimsim\>>>>>>
   </equation*>
 
   <\equation*>
@@ -52,7 +52,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|American Typewriter>
+    <associate|font|Cochin>
     <associate|math-font|math-bonum>
     <associate|page-type|a5>
   </collection>

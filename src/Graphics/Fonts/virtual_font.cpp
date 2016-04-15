@@ -364,9 +364,12 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     glyph gl2= compile (t[2], ey);
     SI dy= ex->y1 - ey->y2;
     SI up= (ey->y2 - ey->y1) >> 1;
+    SI lo= 0;
     if (N(t) >= 4 && is_double (t[3]))
-      dy -= (SI) (as_double (t[3]) * vunit);
+      lo= (SI) (as_double (t[3]) * vunit);
+    dy -= lo; up += (lo >> 1);
     outer_fit (ex, ey, 0, dy);
+    move (ex, 0, up);
     return move (join (gl1, move (gl2, 0, dy)), 0, up);
   }
 
@@ -768,8 +771,10 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     get_metric (t[2], ey);
     SI dy= ex->y1 - ey->y2;
     SI up= (ey->y2 - ey->y1) >> 1;
+    SI lo= 0;
     if (N(t) >= 4 && is_double (t[3]))
-      dy -= (SI) (as_double (t[3]) * vunit);
+      lo= (SI) (as_double (t[3]) * vunit);
+    dy -= lo; up += (lo >> 1);
     draw (ren, t[1], x, y + up);
     draw (ren, t[2], x, y + dy + up);
     return;
