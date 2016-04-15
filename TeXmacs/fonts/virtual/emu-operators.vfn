@@ -6,6 +6,9 @@
   (leq (stack less (0 -0.5 (scale minus less 1 *)) 0.1))
   (geq (stack gtr  (0 -0.5 (scale minus gtr  1 *)) 0.1))
 
+  (halfequal (ver-crop (part = * * * 0.5)))
+  (equiv (align (join = (align halfequal = * 2)) = * 0.5))
+
   (assign (glue (align \: = * 0.5) (0.2 0 =)))
   (plusassign (glue (align + = * 0.5) (0.2 0 =)))
   (minusassign (glue (align minus = * 0.5) (0.2 0 =)))
