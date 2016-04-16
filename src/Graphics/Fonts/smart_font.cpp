@@ -26,12 +26,14 @@ RESOURCE(smart_map);
 #define SUBFONT_MAIN  0
 #define SUBFONT_ERROR 1
 
-#define REWRITE_NONE       0
-#define REWRITE_MATH       1
-#define REWRITE_CYRILLIC   2
-#define REWRITE_LETTERS    3
-#define REWRITE_SPECIAL    4
-#define REWRITE_POOR_BBB   5
+#define REWRITE_NONE           0
+#define REWRITE_MATH           1
+#define REWRITE_CYRILLIC       2
+#define REWRITE_LETTERS        3
+#define REWRITE_SPECIAL        4
+#define REWRITE_POOR_BBB       5
+#define REWRITE_ITALIC_GREEK   6
+#define REWRITE_UPRIGHT_GREEK  7
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -342,6 +344,54 @@ substitute_math_letter (string c, int math_kind) {
 }
 
 /******************************************************************************
+* Getting mathematical characters from unicode planes
+******************************************************************************/
+
+static hashmap<string,string> italic_greek ("");
+
+static void
+unicode_subst_back (int dest, int src, int nr, hashmap<string,string>& h) {
+  for (int i=0; i<nr; i++) {
+    string csrc = upcase_all ("<#" * as_hexadecimal (src  + i) * ">");
+    string cdest= upcase_all ("<#" * as_hexadecimal (dest + i) * ">");
+    if (src  + i < 128) csrc = string ((char) (src + i));
+    if (dest + i < 128) cdest= string ((char) (dest + i));
+    h (csrc)= cdest;
+    csrc= locase_all (csrc);
+    h (csrc)= cdest;
+    csrc= rewrite_math (csrc);
+    h (csrc)= cdest;
+  }
+}
+
+string
+substitute_italic_greek (string c) {
+  hashmap<string,string>& h (italic_greek);
+  if (N (h) == 0) {
+    int start= 0x1d6e2;
+    unicode_subst_back (start, 0x391, 25, h); // FIXME: attention to 0x3a2
+    unicode_subst_back (start + 25, 0x2207, 1, h);
+    unicode_subst_back (start + 26, 0x3b1, 25, h);
+    unicode_subst_back (start + 51, 0x2202, 1, h);
+    unicode_subst_back (start + 52, 0x3f5, 1, h);
+    unicode_subst_back (start + 53, 0x3d1, 1, h);
+    unicode_subst_back (start + 54, 0x3f0, 1, h);
+    unicode_subst_back (start + 55, 0x3d5, 1, h);
+  }
+  if (!italic_greek->contains (c)) return "";
+  return italic_greek[c];
+}
+
+string
+substitute_upright_greek (string c) {
+  if (!starts (c, "<up")) return "";
+  if (starts (c, "<up-")) c= "<" * c (4, N(c));
+  else if (starts (c, "<up")) c= "<" * c (3, N(c));
+  if (!is_greek (c)) return "";
+  return c;
+}
+
+/******************************************************************************
 * Font sequences
 ******************************************************************************/
 
@@ -562,6 +612,10 @@ rewrite (string s, int kind) {
     return special_table [s];
   case REWRITE_POOR_BBB:
     return s (N(s)-2, N(s)-1);
+  case REWRITE_ITALIC_GREEK:
+    return substitute_italic_greek (s);
+  case REWRITE_UPRIGHT_GREEK:
+    return substitute_upright_greek (s);
   default:
     return s;
   }
@@ -799,7 +853,21 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
 int
 smart_font_rep::resolve (string c) {
   if (math_kind != 0) {
+    string ugc= substitute_upright_greek (c);
+    if (ugc != "" && fn[SUBFONT_MAIN]->supports (ugc)) {
+      tree key= tuple ("upright-greek");
+      int nr= sm->add_font (key, REWRITE_UPRIGHT_GREEK);
+      initialize_font (nr);
+      return sm->add_char (key, c);
+    }
     if (is_greek (c)) {
+      string gc= substitute_italic_greek (c);
+      if (gc != "" && fn[SUBFONT_MAIN]->supports (gc)) {
+        tree key= tuple ("italic-greek");
+        int nr= sm->add_font (key, REWRITE_ITALIC_GREEK);
+        initialize_font (nr);
+        return sm->add_char (key, c);
+      }
       //cout << "Found " << c << " in greek\n";
       return sm->add_char (tuple ("italic-math"), c);
     }
@@ -880,6 +948,10 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font (family, variant, series, "italic", sz, dpi);
   else if (a[0] == "bold-italic-math")
     fn[nr]= smart_font (family, variant, "bold", "italic", sz, dpi);
+  else if (a[0] == "italic-greek")
+    fn[nr]= fn[SUBFONT_MAIN];
+  else if (a[0] == "upright-greek")
+    fn[nr]= fn[SUBFONT_MAIN];
   else if (a[0] == "tt")
     fn[nr]= smart_font (family, "tt", series, "right", sz, dpi);
   else if (a[0] == "ss")
