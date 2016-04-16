@@ -19,8 +19,8 @@
 void
 get_bounding_box (glyph gl, SI& x1, SI& y1, SI& x2, SI& y2) {
   x1= (-gl->xoff) * PIXEL;
-  x2= (gl->width-1 - gl->xoff) * PIXEL;
-  y1= (gl->yoff - (gl->height-1)) * PIXEL;
+  x2= (gl->width - gl->xoff) * PIXEL;
+  y1= (gl->yoff - gl->height) * PIXEL;
   y2= (gl->yoff) * PIXEL;
 }
 

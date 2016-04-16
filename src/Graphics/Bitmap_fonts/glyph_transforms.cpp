@@ -12,6 +12,7 @@
 #include "bitmap_font.hpp"
 #include "renderer.hpp"
 #include "hashset.hpp"
+#include "frame.hpp"
 
 extern glyph error_glyph;
 extern metric error_metric;
@@ -560,4 +561,60 @@ make_bbb (font_glyphs fng, SI penw, SI penh, SI fatw) {
   name << "," << as_string (fatw) << "]";
   return make (font_glyphs, name,
                tm_new<make_bbb_font_glyphs_rep> (name, fng, penw, penh, fatw));
+}
+
+/******************************************************************************
+* General transformations
+******************************************************************************/
+
+void
+transform (metric& ey, metric ex, frame fr) {
+  rectangle sr= rectangle (ex->x1, ex->y1, ex->x2, ex->y2);
+  rectangle si= rectangle (ex->x3, ex->y3, ex->x4, ex->y4);
+  rectangle tr= fr (sr);
+  rectangle ti= fr (si);
+  ey->x1= tr->x1; ey->y1= tr->y1;
+  ey->x2= tr->x2; ey->y2= tr->y2;
+  ey->x3= ti->x1; ey->y3= ti->y1;
+  ey->x4= ti->x2; ey->y4= ti->y2;
+}
+
+void
+rotate (metric& ey, metric ex, double angle, double ox, double oy) {
+  return transform (ey, ex, rotation_2D (point (ox, oy), angle));
+}
+
+glyph
+transform (glyph gl, frame fr) {
+  SI x1, y1, x2, y2;
+  get_bounding_box (gl, x1, y1, x2, y2);
+  rectangle tr= fr (rectangle (x1, y1, x2, y2));
+  int tu1= min (tr->x1, tr->x2) / PIXEL - 1;
+  int tv1= min (tr->y1, tr->y2) / PIXEL - 1;
+  int tu2= max (tr->x1, tr->x2) / PIXEL + 1;
+  int tv2= max (tr->y1, tr->y2) / PIXEL + 1;
+  int tw = tu2-tu1;
+  int th = tv2-tv1;
+  glyph bmr (tw, th, -tu1, tv2, gl->depth);
+  for (int tj=0; tj<th; tj++)
+    for (int ti=0; ti<tw; ti++) {
+      SI tx= (tu1+ti) * PIXEL + (PIXEL >> 1);
+      SI ty= (tv2-tj) * PIXEL - (PIXEL >> 1);
+      point tp ((double) tx, (double) ty);
+      point p= fr->inverse_transform (tp);
+      int u= (int) floor (p[0] / PIXEL);
+      int v= (int) ceil  (p[1] / PIXEL);
+      int i= gl->xoff + u;
+      int j= gl->yoff - v;
+      int val= 0;
+      if (i >= 0 && gl->width > i && j >= 0 && gl->height > j)
+        val= gl->get_x (i, j);
+      bmr->set_x (ti, tj, val);
+    }
+  return simplify (bmr);
+}
+
+glyph
+rotate (glyph gl, double angle, double ox, double oy) {
+  return transform (gl, rotation_2D (point (ox, oy), angle));
 }

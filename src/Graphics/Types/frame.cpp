@@ -43,6 +43,29 @@ frame::operator [] (rectangle r) {
 }
 
 /******************************************************************************
+* Shift
+******************************************************************************/
+
+struct shift_2D_rep: public frame_rep {
+  point d;
+  shift_2D_rep (point d2): d (d2) { linear= true; }
+  operator tree () { return tuple ("shift_2D", as_tree (d)); }
+  point direct_transform (point p) { return p + d; }
+  point inverse_transform (point p) { return p - d; }
+  point jacobian (point p, point v, bool &error) {
+    (void) p; error= false; return v; }
+  point jacobian_of_inverse (point p, point v, bool &error) {
+    (void) p; error= false; return v; }
+  double direct_bound (point p, double eps) { (void) p; return eps; }
+  double inverse_bound (point p, double eps) { (void) p; return eps; }
+};
+
+frame
+shift_2D (point d) {
+  return tm_new<shift_2D_rep> (d);
+}
+
+/******************************************************************************
 * Scalings
 ******************************************************************************/
 

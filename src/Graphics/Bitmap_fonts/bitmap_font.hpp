@@ -13,6 +13,8 @@
 #define BITMAP_FONT_H
 #include "resource.hpp"
 
+class frame;
+
 RESOURCE(font_metric);
 RESOURCE(font_glyphs);
 
@@ -79,6 +81,8 @@ bool empty_row (glyph gl, int j);
 int  first_in_row (glyph gl, int j);
 int  last_in_row (glyph gl, int j);
 SI   collision_offset (glyph gl1, glyph gl2, bool overlap);
+void transform (metric& ey, metric ex, frame fr);
+void rotate (metric& ey, metric ex, double angle, double ox, double oy);
 
 glyph shrink     (glyph gl, int xf, int yf, SI& xo, SI& yo);
 glyph join       (glyph gl1, glyph gl2);
@@ -98,6 +102,8 @@ glyph slanted    (glyph gl, double slant);
 glyph stretched  (glyph gl, double xf, double yf);
 glyph bolden     (glyph gl, SI dpen, SI dtot);
 glyph make_bbb   (glyph gl, int code, SI penw, SI penh, SI fatw);
+glyph transform  (glyph gl, frame fr);
+glyph rotate     (glyph gl, double angle, double ox, double oy);
 
 int pixel_count (glyph g);
 double left_protrusion (glyph g, glyph o);

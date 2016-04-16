@@ -60,6 +60,7 @@ ABSTRACT_NULL_CODE(frame);
 
 // Transformations
 template<typename T> class matrix;
+frame shift_2D (point d);
 frame scaling (double magnify, point shift);
 frame scaling (point magnify, point shift);
 frame rotation_2D (point center, double angle);

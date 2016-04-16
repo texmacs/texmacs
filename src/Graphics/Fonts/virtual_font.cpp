@@ -216,6 +216,7 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "ver-flip", 1) ||
       is_tuple (t, "rot-left", 1) ||
       is_tuple (t, "rot-right", 1) ||
+      (is_tuple (t, "rotate") && N(t) >= 3) ||
       is_tuple (t, "hor-extend", 3) ||
       is_tuple (t, "hor-extend", 4) ||
       is_tuple (t, "ver-extend", 3) ||
@@ -228,6 +229,9 @@ virtual_font_rep::supported (scheme_tree t) {
   if ((is_tuple (t, "align") && N(t) >= 3) ||
       is_tuple (t, "scale", 4) ||
       is_tuple (t, "hor-scale", 2) ||
+      is_tuple (t, "pretend", 2) ||
+      is_tuple (t, "hor-pretend", 2) ||
+      is_tuple (t, "ver-pretend", 2) ||
       is_tuple (t, "min-width", 2) ||
       is_tuple (t, "max-width", 2) ||
       is_tuple (t, "min-height", 2) ||
@@ -608,6 +612,20 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return move (gl, -ey->y1, ey->x2);
   }
 
+  if (is_tuple (t, "rotate") && N(t) >= 3) {
+    metric ey;
+    glyph gl= compile (t[1], ey);
+    double angle= 0.0;
+    if (N(t) >= 3 && is_double (t[2])) angle= as_double (t[2]);
+    double xf= 0.5, yf= 0.5;
+    if (N(t) >= 4 && is_double (t[3])) xf= as_double (t[3]);
+    if (N(t) >= 5 && is_double (t[4])) yf= as_double (t[4]);
+    SI ox= ey->x1 + ((SI) (xf * (ey->x2 - ey->x1)));
+    SI oy= ey->y1 + ((SI) (yf * (ey->y2 - ey->y1)));
+    rotate (ex, ey, angle, ox, oy);
+    return rotate (gl, angle, ox, oy);
+  }
+
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {
     glyph gl= compile (t[1], ex);
     int pos= (int) (as_double (t[2]) * gl->width);
@@ -698,6 +716,23 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     scheme_tree u  = tuple ("scale", ct1, ct2, "1", "*");
     scheme_tree v  = tuple ("align", u, t[2], "0.5", "0.5");
     return compile (v, ex);
+  }
+
+  if (is_tuple (t, "pretend", 2) ||
+      is_tuple (t, "hor-pretend", 2) ||
+      is_tuple (t, "ver-pretend", 2)) {
+    metric ex2;
+    glyph gl = compile (t[1], ex);
+    glyph gl2= compile (t[2], ex2);
+    if (is_tuple (t, "pretend") || is_tuple (t, "hor-pretend")) {
+      ex->x1= ex2->x1;
+      ex->x2= ex2->x2;
+    }
+    if (is_tuple (t, "pretend") || is_tuple (t, "hor-pretend")) {
+      ex->y1= ex2->y1;
+      ex->y2= ex2->y2;
+    }
+    return gl;
   }
 
   if (is_tuple (t, "min-width", 2)) {
@@ -1031,6 +1066,21 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "rotate") && N(t) >= 3) {
+    metric ey;
+    get_metric (t[1], ey);
+    double angle= 0.0;
+    if (N(t) >= 3 && is_double (t[2])) angle= as_double (t[2]);
+    double xf= 0.5, yf= 0.5;
+    if (N(t) >= 4 && is_double (t[3])) xf= as_double (t[3]);
+    if (N(t) >= 5 && is_double (t[4])) yf= as_double (t[4]);
+    SI ox= x + ey->x1 + ((SI) (xf * (ey->x2 - ey->x1)));
+    SI oy= y + ey->y1 + ((SI) (yf * (ey->y2 - ey->y1)));
+    frame fr= rotation_2D (point (ox, oy), angle);
+    draw_transformed (ren, t[1], x, y, fr);
+    return;
+  }
+
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {
     metric ex;
     get_metric (t[1], ex);
@@ -1142,6 +1192,13 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     scheme_tree u  = tuple ("scale", ct1, ct2, "1", "*");
     scheme_tree v  = tuple ("align", u, t[2], "0.5", "0.5");
     draw (ren, v, x, y);
+    return;
+  }
+
+  if (is_tuple (t, "pretend", 2) ||
+      is_tuple (t, "hor-pretend", 2) ||
+      is_tuple (t, "ver-pretend", 2)) {
+    draw (ren, t[1], x, y);
     return;
   }
 
