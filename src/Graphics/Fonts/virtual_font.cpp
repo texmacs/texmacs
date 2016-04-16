@@ -134,6 +134,11 @@ virtual_font_rep::exec (scheme_tree t) {
     double w= ((double) (ex->y2 - ex->y1)) / hunit;
     return as_string (w);
   }
+  else if (is_tuple (t, "sep-equal", 0)) {
+    scheme_tree u= tuple ("-", tuple ("height", "="),
+                          tuple ("*", "2", tuple ("height", "minus")));
+    return exec (u);
+  }
   else return t;
 }
 
@@ -178,6 +183,8 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "glue-below", 2) ||
       is_tuple (t, "row", 2) ||
       is_tuple (t, "stack", 2) ||
+      is_tuple (t, "stack-equal", 2) ||
+      is_tuple (t, "stack-less", 2) ||
       is_tuple (t, "add", 2)) {
     int i, n= N(t);
     for (i=1; i<n; i++)
@@ -438,6 +445,20 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     outer_fit (ex, ey, 0, dy);
     move (ex, 0, up);
     return move (join (gl1, move (gl2, 0, dy)), 0, up);
+  }
+
+  if (is_tuple (t, "stack-equal", 2)) {
+    scheme_tree d= exec (tuple ("sep-equal"));
+    scheme_tree u= tuple ("align", tuple ("stack", t[1], t[2], d),
+                          "=", "*", "0.5");
+    return compile (u, ex);
+  }
+
+  if (is_tuple (t, "stack-less", 2)) {
+    scheme_tree d= exec (tuple ("sep-equal"));
+    scheme_tree u= tuple ("align", tuple ("stack", t[1], t[2], d),
+                          "less", "*", "0.5");
+    return compile (u, ex);
   }
 
   if (is_tuple (t, "right-fit", 3) && is_double (t[3])) {
@@ -859,6 +880,22 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     dy -= lo; up += (lo >> 1);
     draw (ren, t[1], x, y + up);
     draw (ren, t[2], x, y + dy + up);
+    return;
+  }
+
+  if (is_tuple (t, "stack-equal", 2)) {
+    scheme_tree d= exec (tuple ("sep-equal"));
+    scheme_tree u= tuple ("align", tuple ("stack", t[1], t[2], d),
+                          "=", "*", "0.5");
+    draw (ren, u, x, y);
+    return;
+  }
+
+  if (is_tuple (t, "stack-less", 2)) {
+    scheme_tree d= exec (tuple ("sep-equal"));
+    scheme_tree u= tuple ("align", tuple ("stack", t[1], t[2], d),
+                          "less", "*", "0.5");
+    draw (ren, u, x, y);
     return;
   }
 
