@@ -1208,6 +1208,23 @@ smart_font (string family, string variant, string series, string shape,
     }
   }
 
+  if (family == "bonum") family= "TeX Gyre Bonum";
+  if (family == "pagella") family= "TeX Gyre Pagella";
+  if (family == "schola") family= "TeX Gyre Schola";
+  if (family == "termes") family= "TeX Gyre Termes";
+  if (starts (family, "TeX Gyre")) {
+    if (starts (family, "TeX Gyre Bonum") ||
+        starts (family, "TeX Gyre Pagella") ||
+        starts (family, "TeX Gyre Schola") ||
+        starts (family, "TeX Gyre Termes")) {
+      if (shape == "mathitalic" && series == "medium") {
+        if (!ends (family, " Math")) family= family * " Math";
+      }
+      else if (ends (family, " Math"))
+        family= family (0, N(family) - 5);
+    }
+  }
+
   string name=
     family * "-" * variant * "-" *
     series * "-" * shape * "-" *
