@@ -26,7 +26,6 @@ struct poor_rubber_font_rep: font_rep {
   poor_rubber_font_rep (string name, font base);
   font get_font (int nr);
   int search_font (string s, string& r);
-  bool narrow_bars ();
 
   bool  supports (string c);
   void  get_extents (string s, metric& ex);
@@ -124,13 +123,7 @@ poor_rubber_font_rep::search_font (string s, string& r) {
         r == "/" || r == "\\" || r == "langle" || r == "rangle") {
       num= min (num, MAGNIFIED_NUMBER);
       if (N(r) > 1) r= "<" * r * ">";
-      if ((r == "|" || r == "<||>" || r == "<interleave>") &&
-          narrow_bars ()) {
-        if (r == "|") r= "<emu-bar*>";
-        if (r == "<||>") r= "<emu-dbar*>";
-        if (r == "<interleave>") r= "<emu-tbar*>";
-      }
-      else if (N(r)>1 && !base->supports (r)) {
+      if (N(r)>1 && !base->supports (r)) {
         if (r == "<||>") r= "<emu-dbar>";
         else if (r == "<interleave>") r= "<emu-tbar>";
         else if (r == "<llbracket>") r= "<emu-dlbracket>";
@@ -159,12 +152,6 @@ poor_rubber_font_rep::search_font (string s, string& r) {
       code= virt->dict ["<rubber-lcurly-#>"];
     else if (r == "}")
       code= virt->dict ["<rubber-rcurly-#>"];
-    else if ((r == "|" || r == "||" || r == "interleave") && narrow_bars ()) {
-      code= virt->dict ["<rubber-lparenthesis-#>"]; // NOTE: avoids warning
-      if (r == "|") code= virt->dict ["<rubber-narrow-bar-#>"];
-      if (r == "||") code= virt->dict ["<rubber-narrow-parallel-#>"];
-      if (r == "interleave") code= virt->dict ["<rubber-narrow-interleave-#>"];
-    }
     else if (r == "|")
       code= virt->dict ["<rubber-bar-#>"];
     else if (r == "||") {
@@ -198,16 +185,6 @@ poor_rubber_font_rep::search_font (string s, string& r) {
   }
   r= s;
   return 0;
-}
-
-bool
-poor_rubber_font_rep::narrow_bars () {
-  if (starts (res_name, "poorrubber[unicode:texgyre")) {
-    int pos= N(string("poorrubber[unicode:texgyre"));
-    string which= res_name (pos, N(res_name));
-    return !starts (which, "termes");
-  }
-  return false;
 }
 
 /******************************************************************************
