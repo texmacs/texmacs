@@ -20,7 +20,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<sqsubset\>>|<cell|\<sqsubseteq\>>|<cell|>|<cell|\<nsqsubset\>>|<cell|\<nsqsubseteq\>>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>|<row|<cell|\<sqsupset\>>|<cell|\<sqsupseteq\>>|<cell|>|<cell|\<nsqsupset\>>|<cell|\<nsqsupseteq\>>|<cell|>|<cell|>|<cell|>|<cell|>|<cell|>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<sqsubset\>>|<cell|\<sqsubseteq\>>|<cell|\<sqsubseteqq\>>|<cell|\<nsqsubset\>>|<cell|\<nsqsubseteq\>>|<cell|\<sqsubsetneq\>>|<cell|>|<cell|\<nsqsubseteqq\>>|<cell|\<sqsubsetneqq\>>|<cell|>>|<row|<cell|\<sqsupset\>>|<cell|\<sqsupseteq\>>|<cell|\<sqsupseteqq\>>|<cell|\<nsqsupset\>>|<cell|\<nsqsupseteq\>>|<cell|\<sqsupsetneq\>>|<cell|>|<cell|\<nsqsupseteqq\>>|<cell|\<sqsupsetneqq\>>|<cell|>>>>>
   </equation*>
 
   <\equation*>
@@ -52,8 +52,8 @@
 
 <\initial>
   <\collection>
-    <associate|font|TeX Gyre Pagella>
-    <associate|math-font|math-pagella>
+    <associate|font|Papyrus>
+    <associate|math-font|math-schola>
     <associate|page-type|a5>
   </collection>
 </initial>

@@ -5,10 +5,11 @@
               (scale - + 1 *)))
   (minus (align minus* + 0.5 0.5))
   (varshortmid (magnify (scale (hor-crop |) lefthead * 1) 1 0.66666))
+  (vminus (align (crop (rot-right minus)) minus 0 0.5))
 
   (slash (or (font minus
                    Baskerville Cuprum)
-             (font (magnify minus * 0.6)
+             (font (magnify (row arrowbar arrowbar) * 0.6)
                    Essays1743)
              /))
   (auxnsim  (join = (align (magnify nsim  0.5 *) = 0.5 0.5)))
@@ -26,6 +27,17 @@
                                           (magnify = 0.6 4.5)))) = 0 0.5))
   (slash5 (align (crop (reslash slash (or (magnify auxnleqq 0.65 1)
                                           (magnify = 0.65 5.5)))) = 0 0.5))
+
+  (eqset (or (join (part supset * 0.55) (part subset 0.45 *))
+             (join (align (magnify minus 1.25 *) less 0 0)
+                   (align (magnify minus 1.25 *) less 0 1))))
+
+  (smile* (align (or (part asymp * * 0.5 *)
+                     (scale (crop breve) (crop =) 1 *))
+                 = 0.5 0.5))
+  (frown* (align (or (part asymp * * * 0.5)
+                     (scale (crop (hor-flip (ver-flip breve))) (crop =) 1 *))
+                 = 0.5 0.5))
 
   (smallless (magnify less 0.5 0.5))
   (smallgtr (magnify gtr 0.5 0.5))

@@ -81,6 +81,7 @@ bool  empty_row (glyph gl, int j);
 int   first_in_row (glyph gl, int j);
 int   last_in_row (glyph gl, int j);
 SI    collision_offset (glyph gl1, glyph gl2, bool overlap);
+int   probe (glyph gl, int x, int y, int dx, int dy);
 void  transform (metric& ey, metric ex, frame fr);
 void  rotate (metric& ey, metric ex, double angle, double ox, double oy);
 frame reslash (metric slash, metric proto);

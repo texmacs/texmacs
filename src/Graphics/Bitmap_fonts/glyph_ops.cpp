@@ -82,6 +82,27 @@ collision_offset (glyph gl1, glyph gl2, bool overlap) {
   return (gl1->xoff + w1 - gl2->xoff) * PIXEL;
 }
 
+int
+probe (glyph gl, int x, int y, int dx, int dy) {
+  // Find distance to first pixel from a given point into a given direction
+  int w= gl->width, h= gl->height;
+  int i0= gl->xoff + x;
+  int j0= gl->yoff - y;
+  int i= i0, j= j0, di= dx, dj= -dy;
+  if (i < 0 && di > 0) i= 0;
+  if (i >= w && di < 0) i= w-1;
+  if (j < 0 && dj > 0) j= 0;
+  if (j >= h && dj < 0) j= h-1;
+  while (true) {
+    if (0 > i || i >= w || 0 > j || j >= h) return 0;
+    if (gl->get_x (i, j) != 0) break;
+    i += di; j += dj;
+  }
+  if (di != 0) return i - i0;
+  if (dj != 0) return j0 - j;
+  return 0;
+}
+
 /******************************************************************************
 * Combining glyphs
 ******************************************************************************/
