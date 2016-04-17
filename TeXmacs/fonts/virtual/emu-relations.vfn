@@ -1,0 +1,31 @@
+
+(virtual-font
+  (halfequal (ver-crop (part = * * * 0.5)))
+  (equiv (align (join = (align halfequal = * 2)) = * 0.5))
+  (smile smile*)
+  (frown frown*)
+  (approx (with y (- (height minus) (height =))
+            (align (join sim (0 y sim)) = * 0.5)))
+  (simeq (stack-equal (hor-scale sim minus) minus))
+  (cong (stack-equal (hor-scale sim =) =))
+  (approxeq (stack-equal (hor-scale approx minus) minus))
+  (asymp (with d (- (sep-equal) (* 0.5 (height minus)))
+           (align (stack (hor-scale smile* =) (hor-scale frown* =) d)
+                  = * 0.5)))
+  (asympasymp
+    (stack-equal (stack-equal (hor-scale (bottom-crop smile*) minus) minus)
+                 (hor-scale (top-crop frown*) minus)))
+  (simsim
+    (stack-equal (stack-equal (hor-scale sim minus) minus)
+                 (hor-scale sim minus)))
+
+  (neq (negate = slash2))
+  (nequiv (negate equiv slash3))
+  (nsim (negate sim slash1))
+  (napprox (negate approx slash2))
+  (nsimeq (negate simeq slash2))
+  (ncong (negate cong slash3))
+  (napproxeq (negate approxeq slash3))
+  (nasymp (negate asymp slash2))
+  (nasympasymp (negate asympasymp slash3))
+  (nsimsim (negate simsim slash3)))

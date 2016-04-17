@@ -8,11 +8,23 @@
   </equation*>
 
   <\equation*>
+    <tabular*|<tformat|<table|<row|<cell|\<vdash\>>|<cell|\<Vdash\>>|<cell|\<Vvdash\>>|<cell|\<vDash\>>|<cell|\<VDash\>>|<cell|\<VvDash\>>|<cell|\<nvdash\>>|<cell|\<nVdash\>>|<cell|\<nvDash\>>|<cell|\<nVDash\>>>|<row|<cell|\<dashv\>>|<cell|\<dashV\>>|<cell|\<dashVv\>>|<cell|\<Dashv\>>|<cell|\<DashV\>>|<cell|\<DashVv\>>|<cell|\<ndashv\>>|<cell|\<ndashV\>>|<cell|\<nDashv\>>|<cell|\<nDashV\>>>>>>
+  </equation*>
+
+  <\equation*>
     <tabular*|<tformat|<table|<row|<cell|\<less\>>|<cell|\<leqslant\>>|<cell|\<leq\>>|<cell|\<leqq\>>|<cell|\<nless\>>|<cell|\<nleqslant\>>|<cell|\<nleq\>>|<cell|\<lneq\>>|<cell|\<nleqq\>>|<cell|\<lneqq\>>|<cell|\<lvertneqq\>>>|<row|<cell|\<gtr\>>|<cell|\<geqslant\>>|<cell|\<geq\>>|<cell|\<geqq\>>|<cell|\<ngtr\>>|<cell|\<ngeqslant\>>|<cell|\<ngeq\>>|<cell|\<gneq\>>|<cell|\<ngeqq\>>|<cell|\<gneqq\>>|<cell|\<gvertneqq\>>>>>>
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<prec\>>|<cell|\<preccurlyeq\>>|<cell|\<preceq\>>|<cell|>|<cell|\<nprec\>>|<cell|\<npreccurlyeq\>>|<cell|\<npreceq\>>|<cell|>|<cell|\<nleqq\>>|<cell|\<precneqq\>>|<cell|>>|<row|<cell|\<succ\>>|<cell|\<succcurlyeq\>>|<cell|\<succeq\>>|<cell|>|<cell|\<nsucc\>>|<cell|\<nsucccurlyeq\>>|<cell|\<nsucceq\>>|<cell|>|<cell|\<ngeqq\>>|<cell|\<succneqq\>>|<cell|>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<lesseqdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<gtrdot\>>|<cell|\<gtreqdot\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
+  </equation*>
+
+  <\equation*>
+    <tabular*|<tformat|<table|<row|<cell|\<prec\>>|<cell|\<preccurlyeq\>>|<cell|\<preceq\>>|<cell|\<preceqq\>>|<cell|\<nprec\>>|<cell|\<npreccurlyeq\>>|<cell|\<npreceq\>>|<cell|\<precneq\>>|<cell|\<npreceqq\>>|<cell|\<precneqq\>>|<cell|\<precvertneqq\>>>|<row|<cell|\<succ\>>|<cell|\<succcurlyeq\>>|<cell|\<succeq\>>|<cell|\<succeqq\>>|<cell|\<nsucc\>>|<cell|\<nsucccurlyeq\>>|<cell|\<nsucceq\>>|<cell|\<succneq\>>|<cell|\<nsucceqq\>>|<cell|\<succneqq\>>|<cell|\<succvertneqq\>>>>>>
+  </equation*>
+
+  <\equation*>
+    <tabular*|<tformat|<table|<row|<cell|\<precdot\>>|<cell|\<precsim\>>|<cell|\<precapprox\>>|<cell|\<nprecsim\>>|<cell|\<precnsim\>>|<cell|\<nprecapprox\>>|<cell|\<precnapprox\>>>|<row|<cell|\<dotsucc\>>|<cell|\<succsim\>>|<cell|\<succapprox\>>|<cell|\<nsuccsim\>>|<cell|\<succnsim\>>|<cell|\<nsuccapprox\>>|<cell|\<succnapprox\>>>>>>
   </equation*>
 
   <\equation*>
@@ -20,15 +32,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<sqsubset\>>|<cell|\<sqsubseteq\>>|<cell|\<sqsubseteqq\>>|<cell|\<nsqsubset\>>|<cell|\<nsqsubseteq\>>|<cell|\<sqsubsetneq\>>|<cell|>|<cell|\<nsqsubseteqq\>>|<cell|\<sqsubsetneqq\>>|<cell|>>|<row|<cell|\<sqsupset\>>|<cell|\<sqsupseteq\>>|<cell|\<sqsupseteqq\>>|<cell|\<nsqsupset\>>|<cell|\<nsqsupseteq\>>|<cell|\<sqsupsetneq\>>|<cell|>|<cell|\<nsqsupseteqq\>>|<cell|\<sqsupsetneqq\>>|<cell|>>>>>
-  </equation*>
-
-  <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<gtrdot\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
-  </equation*>
-
-  <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<precdot\>>|<cell|\<precsim\>>|<cell|\<precapprox\>>|<cell|\<nprecsim\>>|<cell|\<precnsim\>>|<cell|\<nprecapprox\>>|<cell|\<precnapprox\>>>|<row|<cell|\<dotsucc\>>|<cell|\<succsim\>>|<cell|\<succapprox\>>|<cell|\<nsuccsim\>>|<cell|\<succnsim\>>|<cell|\<nsuccapprox\>>|<cell|\<succnapprox\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<sqsubset\>>|<cell|\<sqsubseteq\>>|<cell|\<sqsubseteqq\>>|<cell|\<nsqsubset\>>|<cell|\<nsqsubseteq\>>|<cell|\<sqsubsetneq\>>|<cell|\<varsqsubsetneq\>>|<cell|\<nsqsubseteqq\>>|<cell|\<sqsubsetneqq\>>|<cell|\<varsqsubsetneqq\>>>|<row|<cell|\<sqsupset\>>|<cell|\<sqsupseteq\>>|<cell|\<sqsupseteqq\>>|<cell|\<nsqsupset\>>|<cell|\<nsqsupseteq\>>|<cell|\<sqsupsetneq\>>|<cell|\<varsqsupsetneq\>>|<cell|\<nsqsupseteqq\>>|<cell|\<sqsupsetneqq\>>|<cell|\<varsqsupsetneqq\>>>>>>
   </equation*>
 
   <\equation*>
@@ -43,17 +47,12 @@
     <tabular*|<tformat|<table|<row|<cell|\<in\>>|<cell|\<nin\>>|<cell|\<vartriangleleft\>>|<cell|\<trianglelefteqslant\>>|<cell|\<trianglelefteq\>>|<cell|\<ntriangleleft\>>|<cell|\<ntrianglelefteqslant\>>|<cell|\<ntrianglelefteq\>>|<cell|\<blacktriangleleft\>>|<cell|\<blacktrianglelefteqslant\>>|<cell|\<blacktrianglelefteq\>>>|<row|<cell|\<ni\>>|<cell|\<nni\>>|<cell|\<vartriangleright\>>|<cell|\<trianglerighteqslant\>>|<cell|\<trianglerighteq\>>|<cell|\<ntriangleright\>>|<cell|\<ntrianglerighteqslant\>>|<cell|\<ntrianglerighteq\>>|<cell|\<blacktriangleright\>>|<cell|\<blacktrianglerighteqslant\>>|<cell|\<blacktrianglerighteq\>>>>>>
   </equation*>
 
-  <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<vdash\>>|<cell|\<Vdash\>>|<cell|\<Vvdash\>>|<cell|\<vDash\>>|<cell|\<VDash\>>|<cell|\<VvDash\>>|<cell|\<nvdash\>>|<cell|\<nVdash\>>|<cell|\<nvDash\>>|<cell|\<nVDash\>>>|<row|<cell|\<dashv\>>|<cell|\<dashV\>>|<cell|\<dashVv\>>|<cell|\<Dashv\>>|<cell|\<DashV\>>|<cell|\<DashVv\>>|<cell|\<ndashv\>>|<cell|\<ndashV\>>|<cell|\<nDashv\>>|<cell|\<nDashV\>>>>>>
-  </equation*>
-
   \;
 </body>
 
 <\initial>
   <\collection>
     <associate|font|Papyrus>
-    <associate|math-font|math-schola>
     <associate|page-type|a5>
   </collection>
 </initial>

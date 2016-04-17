@@ -6,6 +6,7 @@
   (minus (align minus* + 0.5 0.5))
   (varshortmid (magnify (scale (hor-crop |) lefthead * 1) 1 0.66666))
   (vminus (align (crop (rot-right minus)) minus 0 0.5))
+  (sim (align ~ = 0 0.5))
 
   (slash (or (font minus
                    Baskerville Cuprum)
