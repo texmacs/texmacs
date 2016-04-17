@@ -384,6 +384,29 @@ unicode_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   return uc;
 }
 
+static bool
+is_math_italic (string c) {
+  if (N(c) <= 2) return false;
+  int i= 0;
+  int code= decode_from_utf8 (strict_cork_to_utf8 (c), i);
+  if (code < 0x2100 || code > 0x1d7ff) return false;
+  if (code <= 0x213a) {
+    if (code == 0x210a || code == 0x210b || code == 0x210e ||
+        code == 0x210f || code == 0x2110 || code == 0x2112 ||
+        code == 0x2113 || code == 0x211b || code == 0x212c ||
+        code == 0x212f || code == 0x2130 || code == 0x2131 ||
+        code == 0x2133 || code == 0x2134)
+      return true;
+  }
+  else if (code >= 0x1d400) {
+    if (code >= 0x1d434 && code <= 0x1d503) return true;
+    if (code >= 0x1d608 && code <= 0x1d66f) return true;
+    if (code >= 0x1d6e2 && code <= 0x1d755) return true;
+    if (code >= 0x1d790 && code <= 0x1d7c9) return true;
+  }
+  return false;
+}
+
 double
 unicode_font_rep::get_left_slope (string s) {
   if (N(s) == 0) return slope;
@@ -391,7 +414,10 @@ unicode_font_rep::get_left_slope (string s) {
   tm_char_forwards (s, pos);
   if (pos == 1) return slope;
   metric ex;
-  get_extents (s (0, pos), ex);
+  string c= s (pos, N(s));
+  if (N(c) >= 3 && is_math_italic (c))
+    return max (slope, 0.2); // FIXME: should be determined more reliably
+  get_extents (c, ex);
   if (ex->y3 >= 0) return slope;
   double sl= ((double) (ex->x3 - ex->x1)) / ((double) ex->y3);
   if (sl > slope + 0.05) return sl;
@@ -405,7 +431,10 @@ unicode_font_rep::get_right_slope (string s) {
   tm_char_backwards (s, pos);
   if (pos == N(s) - 1) return slope;
   metric ex;
-  get_extents (s (pos, N(s)), ex);
+  string c= s (pos, N(s));
+  if (N(c) >= 3 && is_math_italic (c))
+    return max (slope, 0.2); // FIXME: should be determined more reliably
+  get_extents (c, ex);
   if (ex->y4 <= 0) return slope;
   double sl= ((double) (ex->x4 - ex->x2)) / ((double) ex->y4);
   if (sl > slope + 0.05) return sl;
