@@ -23,6 +23,17 @@
   (asympasymp (stack-equal smileeq (hor-scale frown minus)))
   (simsim (stack-equal simeq (hor-scale sim minus)))
 
+  (neq (negate = slash2))
+  (nequiv (negate equiv slash3))
+  (nsim (negate sim slash1))
+  (napprox (negate approx slash2))
+  (nsimeq (negate simeq slash2))
+  (ncong (negate cong slash3))
+  (napproxeq (negate approxeq slash3))
+  (nasymp (negate asymp slash2))
+  (nasympasymp (negate asympasymp slash3))
+  (nsimsim (negate simsim slash3))
+
   (leq (stack-less less (hor-scale minus less)))
   (geq (stack-less gtr  (hor-scale minus gtr )))
   (leqq (stack-less less (hor-scale = less)))

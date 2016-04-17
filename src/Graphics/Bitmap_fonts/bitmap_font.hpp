@@ -75,14 +75,15 @@ glyph_rep::set_1 (int i, int j, int with) {
 
 tm_ostream& operator << (tm_ostream& out, glyph gl);
 
-void get_bounding_box (glyph gl, SI& x1, SI& y1, SI& x2, SI& y2);
-bool empty_column (glyph gl, int i);
-bool empty_row (glyph gl, int j);
-int  first_in_row (glyph gl, int j);
-int  last_in_row (glyph gl, int j);
-SI   collision_offset (glyph gl1, glyph gl2, bool overlap);
-void transform (metric& ey, metric ex, frame fr);
-void rotate (metric& ey, metric ex, double angle, double ox, double oy);
+void  get_bounding_box (glyph gl, SI& x1, SI& y1, SI& x2, SI& y2);
+bool  empty_column (glyph gl, int i);
+bool  empty_row (glyph gl, int j);
+int   first_in_row (glyph gl, int j);
+int   last_in_row (glyph gl, int j);
+SI    collision_offset (glyph gl1, glyph gl2, bool overlap);
+void  transform (metric& ey, metric ex, frame fr);
+void  rotate (metric& ey, metric ex, double angle, double ox, double oy);
+frame reslash (metric slash, metric proto);
 
 glyph shrink     (glyph gl, int xf, int yf, SI& xo, SI& yo);
 glyph join       (glyph gl1, glyph gl2);

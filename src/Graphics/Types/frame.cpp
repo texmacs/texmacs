@@ -168,6 +168,31 @@ slanting (point center, double slant) {
 }
 
 /******************************************************************************
+* Linear transformations
+******************************************************************************/
+
+struct linear_2D_rep: public frame_rep {
+  matrix<double> m, u;
+  linear_2D_rep (matrix<double> m2): m (m2), u (invert (m)) {
+    linear= true; }
+  operator tree () {
+    return tuple ("linear_2D", as_tree (m)); }
+  point direct_transform (point p) { return m * p; }
+  point inverse_transform (point p) { return u * p; }
+  point jacobian (point p, point v, bool &error) {
+    (void) p; error= false; return m * v; }
+  point jacobian_of_inverse (point p, point v, bool &error) {
+    (void) p; error= false; return u * v; }
+  double direct_bound (point p, double eps) { (void) p; return eps; }
+  double inverse_bound (point p, double eps) { (void) p; return eps; }
+};
+
+frame
+linear_2D (matrix<double> m) {
+  return tm_new<linear_2D_rep> (m);
+}
+
+/******************************************************************************
 * Affine transformations
 ******************************************************************************/
 

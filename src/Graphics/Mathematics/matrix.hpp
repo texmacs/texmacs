@@ -218,6 +218,29 @@ operator * (matrix<T> m, array<T> v) {
   return prod;
 }
 
+TMPL matrix<T>
+matrix_2D (T a, T b, T c, T d) {
+  matrix<T> m (T(0), 2, 2);
+  m (0, 0)= a;
+  m (0, 1)= b;
+  m (1, 0)= c;
+  m (1, 1)= d;
+  return m;
+}
+
+TMPL matrix<T>
+invert (matrix<T> m) {
+  int rows= NR (m), cols= NC (m);
+  ASSERT (rows == 2 && cols == 2, "only dimension two has been implemented");
+  T det= m (0, 0) * m (1, 1) - m (0, 1) * m (1, 0);
+  matrix<T> inv (T(0), rows, cols);
+  inv (0, 0)=  m (1, 1) / det;
+  inv (0, 1)= -m (0, 1) / det;
+  inv (1, 0)= -m (1, 0) / det;
+  inv (1, 1)=  m (0, 0) / det;
+  return inv;
+}
+
 TMPL array<T>
 projective_apply (matrix<T> m, array<T> v) {
   int n= NR (m);

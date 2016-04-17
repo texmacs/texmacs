@@ -232,6 +232,8 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "pretend", 2) ||
       is_tuple (t, "hor-pretend", 2) ||
       is_tuple (t, "ver-pretend", 2) ||
+      is_tuple (t, "reslash", 2) ||
+      is_tuple (t, "negate", 2) ||
       is_tuple (t, "min-width", 2) ||
       is_tuple (t, "max-width", 2) ||
       is_tuple (t, "min-height", 2) ||
@@ -728,11 +730,37 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
       ex->x1= ex2->x1;
       ex->x2= ex2->x2;
     }
-    if (is_tuple (t, "pretend") || is_tuple (t, "hor-pretend")) {
+    if (is_tuple (t, "pretend") || is_tuple (t, "ver-pretend")) {
       ex->y1= ex2->y1;
       ex->y2= ex2->y2;
     }
     return gl;
+  }
+
+  if (is_tuple (t, "reslash", 2)) {
+    metric ex1, ex2;
+    glyph gl1= compile (t[1], ex1);
+    glyph gl2= compile (t[2], ex2);
+    frame fr = reslash (ex1, ex2);
+    transform (ex, ex1, fr);
+    point p1= fr (point ((double) ex1->x1, (double) ex1->y1));
+    point p2= point ((double) ex2->x1, (double) ex2->y1);
+    point dp= p2 - p1;
+    SI dx= floor (dp[0]);
+    SI dy= floor (dp[1]);
+    move (ex, dx, dy);
+    ex->x1= ex2->x1;
+    ex->y1= ex2->y1;
+    ex->x2= ex2->x2;
+    ex->y2= ex2->y2;
+    return move (transform (gl1, fr), dx, dy);
+  }
+
+  if (is_tuple (t, "negate", 2)) {
+    scheme_tree a= tuple ("align", t[2], t[1], "0.5", "0.5");
+    scheme_tree u= tuple ("join", t[1], a);
+    scheme_tree p= tuple ("pretend", u, t[1]);
+    return compile (p, ex);
   }
 
   if (is_tuple (t, "min-width", 2)) {
@@ -1046,7 +1074,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     //     << (ex->x2/PIXEL) << ", " << (ex->y2/PIXEL) << "\n";
     SI ox= x + ex->x1;
     SI oy= y + ex->y2;
-    frame f= rotation_2D (point (ox, oy), 1.57079632679);
+    frame f= rotation_2D (point ((double) ox, (double) oy), 1.57079632679);
     draw_transformed (ren, t[1], x - ex->y2, y + ex->x1, f);
     return;
   }
@@ -1061,7 +1089,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     //     << (ex->x2/PIXEL) << ", " << (ex->y2/PIXEL) << "\n";
     SI ox= x + ex->x2;
     SI oy= y + ex->y1;
-    frame f= rotation_2D (point (ox, oy), -1.57079632679);
+    frame f= rotation_2D (point ((double) ox, (double) oy), -1.57079632679);
     draw_transformed (ren, t[1], x + ex->y1, y - ex->x2, f);
     return;
   }
@@ -1076,7 +1104,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     if (N(t) >= 5 && is_double (t[4])) yf= as_double (t[4]);
     SI ox= x + ey->x1 + ((SI) (xf * (ey->x2 - ey->x1)));
     SI oy= y + ey->y1 + ((SI) (yf * (ey->y2 - ey->y1)));
-    frame fr= rotation_2D (point (ox, oy), angle);
+    frame fr= rotation_2D (point ((double) ox, (double) oy), angle);
     draw_transformed (ren, t[1], x, y, fr);
     return;
   }
@@ -1199,6 +1227,31 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
       is_tuple (t, "hor-pretend", 2) ||
       is_tuple (t, "ver-pretend", 2)) {
     draw (ren, t[1], x, y);
+    return;
+  }
+
+  if (is_tuple (t, "reslash", 2)) {
+    metric ex1, ex2;
+    get_metric (t[1], ex1);
+    get_metric (t[2], ex2);
+    frame fr= reslash (ex1, ex2);
+    point p1= fr (point ((double) ex1->x1, (double) ex1->y1));
+    point p2= point ((double) ex2->x1, (double) ex2->y1);
+    point dp= p2 - p1;
+    SI dx= floor (dp[0]);
+    SI dy= floor (dp[1]);
+    x += dx; y += dy;
+    point sh= point ((double) x, (double) y);
+    fr= shift_2D (sh) * fr * shift_2D (-sh);
+    draw_transformed (ren, t[1], x, y, fr);
+    return;
+  }
+
+  if (is_tuple (t, "negate", 2)) {
+    scheme_tree a= tuple ("align", t[2], t[1], "0.5", "0.5");
+    scheme_tree u= tuple ("join", t[1], a);
+    scheme_tree p= tuple ("pretend", u, t[1]);
+    draw (ren, p, x, y);
     return;
   }
 

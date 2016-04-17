@@ -584,6 +584,38 @@ rotate (metric& ey, metric ex, double angle, double ox, double oy) {
   return transform (ey, ex, rotation_2D (point (ox, oy), angle));
 }
 
+template<typename T> matrix<T>
+invert2 (matrix<T> m) {
+  int rows= NR (m), cols= NC (m);
+  ASSERT (rows == 2 && cols == 2, "only dimension two has been implemented");
+  T det= m (0, 0) * m (1, 1) - m (0, 1) * m (1, 0);
+  matrix<T> inv (T(0), rows, cols);
+  inv (0, 0)=  m (1, 1) / det;
+  inv (0, 1)= -m (0, 1) / det;
+  inv (1, 0)= -m (1, 0) / det;
+  inv (1, 1)=  m (0, 0) / det;
+  return inv;
+}
+
+frame
+reslash (metric slash, metric proto) {
+  double w1= (slash->x4 - slash->x3) / PIXEL;
+  double h1= (slash->y4 - slash->y3) / PIXEL;
+  double w2= (proto->x4 - proto->x3) / PIXEL;
+  double h2= (proto->y4 - proto->y3) / PIXEL;
+  if (w1 == 0.0 || h1 == 0.0 || w2 == 0.0 || h2 == 0.0)
+    return shift_2D (point (0.0, 0.0));
+  double n1= sqrt (w1*w1 + h1*h1);
+  double n2= sqrt (w2*w2 + h2*h2);
+  double u1= -h1 / n1;
+  double v1=  w1 / n1;
+  double u2= -h2 / n2;
+  double v2=  w2 / n2;
+  matrix<double> m1= matrix_2D (w1, u1, h1, v1);
+  matrix<double> m2= matrix_2D (w2, u2, h2, v2);
+  return linear_2D (m2 * invert (m1));
+}
+
 glyph
 transform (glyph gl, frame fr) {
   SI x1, y1, x2, y2;
