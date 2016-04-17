@@ -155,7 +155,8 @@ is_greek (string c) {
   if (N(t) == 0) {
     array<int> a;
     //for (int i= 0x391; i<0x3a9; i++) if (i != 0x3a2) a << i;
-    for (int i= 0x3b1; i<0x3c9; i++) a << i;
+    for (int i= 0x3b1; i <= 0x3c9; i++) a << i;
+    a << 0x3d1 << 0x3d5 << 0x3d6 << 0x3f0 << 0x3f1 << 0x3f5;
     for (int i= 0; i<N(a); i++) {
       string s= upcase_all ("<#" * as_hexadecimal (a[i]) * ">");
       t (s)= true;
@@ -257,6 +258,8 @@ unicode_greek (int start, string fn) {
   unicode_subst (start + 53, 0x3d1, 1, fn);
   unicode_subst (start + 54, 0x3f0, 1, fn);
   unicode_subst (start + 55, 0x3d5, 1, fn);
+  unicode_subst (start + 56, 0x3f1, 1, fn);
+  unicode_subst (start + 57, 0x3d6, 1, fn);
 }
 
 static void
@@ -377,6 +380,8 @@ substitute_italic_greek (string c) {
     unicode_subst_back (start + 53, 0x3d1, 1, h);
     unicode_subst_back (start + 54, 0x3f0, 1, h);
     unicode_subst_back (start + 55, 0x3d5, 1, h);
+    unicode_subst_back (start + 56, 0x3f1, 1, h);
+    unicode_subst_back (start + 57, 0x3d6, 1, h);
   }
   if (!italic_greek->contains (c)) return "";
   return italic_greek[c];
