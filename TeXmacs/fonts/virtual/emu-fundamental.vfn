@@ -6,7 +6,6 @@
   (minus (align minus* + 0.5 0.5))
   (varshortmid (magnify (scale (hor-crop |) lefthead * 1) 1 0.66666))
   (vminus (align (crop (rot-right minus)) minus 0 0.5))
-  (sim (align ~ = 0 0.5))
 
   (slash (or (font minus
                    Baskerville Cuprum)
@@ -93,4 +92,14 @@
   (lefthook (join (part hookrightarrow * 0.5)
   	    	  (part leftarrow 0.5 *)))
   (righthook (join (part rightarrow * 0.5)
-  	           (part hookleftarrow 0.5 *))))
+  	           (part hookleftarrow 0.5 *)))
+
+  (sim (align ~ = 0 0.5))
+  (approx (with y (- (height minus) (height =))
+            (align (join sim (0 y sim)) = * 0.5)))
+  (halfequal (ver-crop (part = * * * 0.5)))
+  (equiv (align (join = (align halfequal = * 2)) = * 0.5))
+
+  (ldot (align . + * 0))
+  (cdot (align . + * 0.5))
+  (hdot (align . + * 1)))

@@ -8,7 +8,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<vdash\>>|<cell|\<Vdash\>>|<cell|\<Vvdash\>>|<cell|\<vDash\>>|<cell|\<VDash\>>|<cell|\<VvDash\>>|<cell|\<nvdash\>>|<cell|\<nVdash\>>|<cell|\<nvDash\>>|<cell|\<nVDash\>>>|<row|<cell|\<dashv\>>|<cell|\<dashV\>>|<cell|\<dashVv\>>|<cell|\<Dashv\>>|<cell|\<DashV\>>|<cell|\<DashVv\>>|<cell|\<ndashv\>>|<cell|\<ndashV\>>|<cell|\<nDashv\>>|<cell|\<nDashV\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<vdash\>>|<cell|\<Vdash\>>|<cell|\<Vvdash\>>|<cell|\<vDash\>>|<cell|\<VDash\>>|<cell|\<VvDash\>>|<cell|\<nvdash\>>|<cell|\<nVdash\>>|<cell|\<nVvdash\>>|<cell|\<nvDash\>>|<cell|\<nVDash\>>|<cell|\<nVvDash\>>>|<row|<cell|\<dashv\>>|<cell|\<dashV\>>|<cell|\<dashVv\>>|<cell|\<Dashv\>>|<cell|\<DashV\>>|<cell|\<DashVv\>>|<cell|\<ndashv\>>|<cell|\<ndashV\>>|<cell|\<ndashVv\>>|<cell|\<nDashv\>>|<cell|\<nDashV\>>|<cell|\<nDashVv\>>>>>>
   </equation*>
 
   <\equation*>
@@ -16,7 +16,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<lesseqdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<gtrdot\>>|<cell|\<gtreqdot\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<leqdot\>>|<cell|\<lesseqdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<gtrdot\>>|<cell|\<geqdot\>>|<cell|\<gtreqdot\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
   </equation*>
 
   <\equation*>
@@ -53,6 +53,7 @@
 <\initial>
   <\collection>
     <associate|font|Papyrus>
+    <associate|math-font|math-stix>
     <associate|page-type|a5>
   </collection>
 </initial>

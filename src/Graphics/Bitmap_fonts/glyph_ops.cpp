@@ -181,7 +181,7 @@ clip (glyph gl, SI x1, SI y1, SI x2, SI y2) {
       bool y_ok= (gl->yoff-j >= y1) && (gl->yoff-j < y2);
       bmr->set_x (i, j, x_ok && y_ok? gl->get_x (i, j): 0);
     }
-  return bmr;
+  return simplify (bmr);
 }
 
 glyph
@@ -252,7 +252,7 @@ hor_take (glyph gl, int pos, int nr) {
   for (j=0; j<hh; j++)
     for (i=0; i<nr; i++)
       bmr->set_x (i, j, gl->get_x (pos, j));
-  return bmr;
+  return simplify (bmr);
 }
 
 glyph
@@ -274,5 +274,5 @@ ver_take (glyph gl, int pos, int nr) {
   for (j=0; j<nr; j++)
     for (i=0; i<ww; i++)
       bmr->set_x (i, j, gl->get_x (i, pos));
-  return bmr;
+  return simplify (bmr);
 }

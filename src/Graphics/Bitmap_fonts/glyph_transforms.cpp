@@ -72,7 +72,7 @@ slanted (glyph gl, double slant) {
     for (i=0; i<ww; i++)
       bmr->set_x (i+l+dx, j, gl->get_x (i, j));
   }
-  return bmr;
+  return simplify (bmr);
 }
 
 struct slanted_font_glyphs_rep: public font_glyphs_rep {
@@ -179,7 +179,7 @@ stretched (glyph gl, double xf, double yf) {
       bmr->set_x (I, J, sum >= 0.5? 1: 0);
     }
   }
-  return bmr;
+  return simplify (bmr);
 }
 
 struct stretched_font_glyphs_rep: public font_glyphs_rep {
@@ -260,7 +260,7 @@ bolden (glyph gl, SI dpen) {
       for (int k=0; k<=dw; k++)
         bmr->set_x (i+k, j, max (val, bmr->get_x (i+k, j)));
     }
-  return bmr;
+  return simplify (bmr);
 }
 
 glyph
@@ -394,7 +394,7 @@ bolden_at (glyph gl, array<int> start, SI fat) {
       else for (int k=0; k<=dw; k++)
 	     bmr->set_x (i+k, j, 1);
   }
-  return bmr;
+  return simplify (bmr);
 }
 
 glyph
@@ -432,7 +432,7 @@ hollow (glyph gl, array<int> start, SI penw, SI penh, SI fat) {
       }
     }
   }
-  return bmr;
+  return simplify (bmr);
 }
 
 static void
@@ -507,7 +507,7 @@ hollow (glyph gl, SI penw, SI penh) {
       }
       if (erase) bmr->set_x (i, j, 0);
     }
-  return bmr;
+  return simplify (bmr);
 }
 
 static hashset<int> bbb_left;
