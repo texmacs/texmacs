@@ -16,30 +16,44 @@
 * Bounding boxes for transformed rectangles
 ******************************************************************************/
 
+void
+frame::enclose (double& x1, double& y1, double& x2, double& y2,
+                point p1, point p2, bool direct) {
+  int n= 1;
+  if (!rep->linear) n= 20;
+  for (int i=0; i<n; i++) {
+    point p= p1 + (((double) i) / ((double) n)) * (p2 - p1);
+    point q= (direct? operator () (p): operator [] (p));
+    x1= min (x1, q[0]);
+    y1= min (y1, q[1]);
+    x2= max (x2, q[0]);
+    y2= max (y2, q[1]);
+  }
+}
+
+rectangle
+frame::enclose (rectangle r, bool direct) {
+  double x1= 1.0e100, y1= 1.0e100, x2= -1.0e100, y2= -1.0e100;
+  point p1= point (r->x1, r->y1);
+  point p2= point (r->x2, r->y1);
+  point p3= point (r->x2, r->y2);
+  point p4= point (r->x1, r->y2);
+  enclose (x1, y1, x2, y2, p1, p2, direct);
+  enclose (x1, y1, x2, y2, p2, p3, direct);
+  enclose (x1, y1, x2, y2, p3, p4, direct);
+  enclose (x1, y1, x2, y2, p4, p1, direct);
+  return rectangle ((SI) floor (x1 + 0.5), (SI) floor (y1 + 0.5),
+                    (SI) floor (x2 + 0.5), (SI) floor (y2 + 0.5));
+}
+
 rectangle
 frame::operator () (rectangle r) {
-  point t1a= operator () (point (r->x1, r->y1));
-  point t2a= operator () (point (r->x2, r->y2));
-  point t1b= operator () (point (r->x1, r->y2));
-  point t2b= operator () (point (r->x2, r->y1));
-  SI x1= (SI) (min (min (t1a[0], t2a[0]), min (t1b[0], t2b[0])) + 0.5);
-  SI y1= (SI) (min (min (t1a[1], t2a[1]), min (t1b[1], t2b[1])) + 0.5);
-  SI x2= (SI) (max (max (t1a[0], t2a[0]), max (t1b[0], t2b[0])) + 0.5);
-  SI y2= (SI) (max (max (t1a[1], t2a[1]), max (t1b[1], t2b[1])) + 0.5);
-  return rectangle (x1, y1, x2, y2);
+  return enclose (r, true);
 }
 
 rectangle
 frame::operator [] (rectangle r) {
-  point t1a= operator [] (point (r->x1, r->y1));
-  point t2a= operator [] (point (r->x2, r->y2));
-  point t1b= operator [] (point (r->x1, r->y2));
-  point t2b= operator [] (point (r->x2, r->y1));
-  SI x1= (SI) (min (min (t1a[0], t2a[0]), min (t1b[0], t2b[0])) + 0.5);
-  SI y1= (SI) (min (min (t1a[1], t2a[1]), min (t1b[1], t2b[1])) + 0.5);
-  SI x2= (SI) (max (max (t1a[0], t2a[0]), max (t1b[0], t2b[0])) + 0.5);
-  SI y2= (SI) (max (max (t1a[1], t2a[1]), max (t1b[1], t2b[1])) + 0.5);
-  return rectangle (x1, y1, x2, y2);
+  return enclose (r, false);
 }
 
 /******************************************************************************
@@ -226,6 +240,44 @@ struct affine_2D_rep: public frame_rep {
 frame
 affine_2D (matrix<double> m) {
   return tm_new<affine_2D_rep> (m);
+}
+
+/******************************************************************************
+* Vertical bending
+******************************************************************************/
+
+struct bend_frame_rep: public frame_rep {
+  double (*fun) (double);
+  bend_frame_rep (double (*fun2) (double)): fun (fun2) {}
+  operator tree () {
+    return tuple ("bend"); }
+  point direct_transform (point p) {
+    return point (p[0], p[1] + fun (p[0])); }
+  point inverse_transform (point p) {
+    return point (p[0], p[1] - fun (p[0])); }
+  point jacobian (point p, point v, bool &error) {
+    (void) p; (void) v; (void) error;
+    FAILED ("not yet implemented");
+    return p; }
+  point jacobian_of_inverse (point p, point v, bool &error) {
+    (void) p; (void) v; (void) error;
+    FAILED ("not yet implemented");
+    return p; }
+  double direct_bound (point p, double eps) { (void) p; return eps; }
+  double inverse_bound (point p, double eps) { (void) p; return eps; }
+};
+
+frame
+bend_frame (double (*fun) (double)) {
+  return tm_new<bend_frame_rep> (fun);
+}
+
+frame
+bend_frame (double (*fun) (double),
+            double x1, double y1, double x2, double y2) {
+  frame phi= scaling (point (x2 - x1, y2 - y1), point (x1, y1));
+  frame fr = bend_frame (fun);
+  return phi * fr *invert (phi);
 }
 
 /******************************************************************************

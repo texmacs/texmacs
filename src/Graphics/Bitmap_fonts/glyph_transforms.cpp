@@ -650,3 +650,100 @@ glyph
 rotate (glyph gl, double angle, double ox, double oy) {
   return transform (gl, rotation_2D (point (ox, oy), angle));
 }
+
+/******************************************************************************
+* Making curly inequalities
+******************************************************************************/
+
+static void
+curly_transform (int px, int py, int qx, int qy, int rr, int& x, int& y) {
+  point  p= point ((double) px, (double) py);
+  point  q= point ((double) qx, (double) qy);
+  point  a= point ((double)  x, (double)  y);
+  point  m= (p + q) / 2;
+  point  u= (q - p) / norm (q - p);
+  point  v= point (u[1], -u[0]);
+  double r= rr;
+  double s= norm (q - p) / 2;
+  double d= sqrt (r*r - s*s);
+  point  o= m - d * v;
+  double alpha= atan2 (s, d);
+  point  b= a - o;
+  point  c= point (b[0] * v[0] + b[1] * v[1], b[1] * v[0] - b[0] * v[1]);
+  double phi= atan2 (c[1], c[0]);
+  double rho= norm (c);
+  rho += (d - r);
+  point t= o + rho * v + (phi / alpha) * ((q - p) / 2);
+  x= (int) floor (t[0] + 0.5);
+  y= (int) floor (t[1] + 0.5);
+}
+
+glyph
+curly (glyph gl) {
+  gl= simplify (gl);
+  int ww= gl->width, hh= gl->height;
+  int padx= ww >> 2, pady= hh >> 2;
+  glyph bmr (ww+2*padx, hh+2*pady, gl->xoff+padx, gl->yoff+pady, gl->depth);
+  int mid= (first_in_column (gl, 0) + last_in_column (gl, 0)) >> 1;
+  int dis= max (hh - mid, mid);
+  //int rad= (int) ceil (1.5 * sqrt ((double) (dis*dis + ww*ww)));
+  int rad= (int) ceil (1.25 * ((dis*dis + ww*ww) / (2.0 * dis)));
+  for (int ii=0; ii<ww+2*padx; ii++)
+    for (int jj=0; jj<hh+2*pady; jj++) {
+      int i= ii - padx, j= jj - pady;
+      int i1= i, j1= j, i2= i, j2= j;
+      curly_transform (ww, 0  , 0 , mid, rad, i1, j1);
+      curly_transform (0 , mid, ww, hh , rad, i2, j2);
+      int val= 0;
+      if (j < mid || j1 < mid)
+        if (i1 >= 0 && ww > i1 && j1 >= 0 && hh > j1)
+          val= max (val, gl->get_x (i1, j1));
+      if (j >= mid || j2 >= mid)
+        if (i2 >= 0 && ww > i2 && j2 >= 0 && hh > j2)
+          val= max (val, gl->get_x (i2, j2));
+      bmr->set_x (ii, jj, val);
+    }
+  return simplify (bmr);
+}
+
+/******************************************************************************
+* Other specific transformations
+******************************************************************************/
+
+static double
+curly_up (double x) {
+  double r= 1.25;
+  return 0.85 * (x - (r - sqrt (fabs (r*r - x*x))) / (r - sqrt (r*r - 1.0)));
+  //return 1.0 * (x - x*x);
+}
+
+glyph
+var_curly (glyph gl) {
+  gl= simplify (gl);
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  int mid= (first_in_column (gl, 0) + last_in_column (gl, 0)) >> 1;
+  for (i=0; i<ww; i++) {
+    double t= ((double) i) / ((double) (ww-1));
+    double u= curly_up (t);
+    int dj1=   (int) floor ((hh-1-mid) * u);
+    int dj2= -((int) floor (mid * u));
+    for (j=0; j<hh; j++) {
+      int val1= 0, val2= 0;
+      if (j+dj1 >= 0 && hh > j+dj1) val1= gl->get_x (i, j+dj1);
+      if (j+dj2 >= 0 && hh > j+dj2) val2= gl->get_x (i, j+dj2);
+      int val= 0;
+      if (j >= mid || j+dj1 >= mid) val= max (val, val1);
+      if (j <  mid || j+dj2 <  mid) val= max (val, val2);
+      bmr->set_x (i, j, val);
+      //if (v > t) bmr->set_x (i, j, j >= mid? val1: val2);
+      //else bmr->set_x (i, j, val1>=val2? val1: val2);
+      //if (j >= mid) dj= (int) floor ((hh-1-mid) * u);
+      // else dj= -((int) floor (mid * u));
+      //if (j+dj >= 0 && hh > j+dj)
+      //  bmr->set_x (i, j, gl->get_x (i, j+dj));
+    }
+  }
+  return simplify (bmr);
+}

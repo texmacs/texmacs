@@ -60,6 +60,24 @@ last_in_row (glyph gl, int j) {
   return -1;
 }
 
+int
+first_in_column (glyph gl, int i) {
+  int hh= gl->height;
+  for (int j=0; j<hh; j++)
+    if (gl->get_x (i, j) != 0)
+      return j;
+  return hh;
+}
+
+int
+last_in_column (glyph gl, int i) {
+  int hh= gl->height;
+  for (int j=hh-1; j>=0; j--)
+    if (gl->get_x (i, j) != 0)
+      return j;
+  return -1;
+}
+
 SI
 collision_offset (glyph gl1, glyph gl2, bool overlap) {
   int w1= gl1->width, h1= gl1->height, h2= gl2->height;

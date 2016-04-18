@@ -80,6 +80,8 @@ bool  empty_column (glyph gl, int i);
 bool  empty_row (glyph gl, int j);
 int   first_in_row (glyph gl, int j);
 int   last_in_row (glyph gl, int j);
+int   first_in_column (glyph gl, int i);
+int   last_in_column (glyph gl, int i);
 SI    collision_offset (glyph gl1, glyph gl2, bool overlap);
 int   probe (glyph gl, int x, int y, int dx, int dy);
 void  transform (metric& ey, metric ex, frame fr);
@@ -106,6 +108,7 @@ glyph bolden     (glyph gl, SI dpen, SI dtot);
 glyph make_bbb   (glyph gl, int code, SI penw, SI penh, SI fatw);
 glyph transform  (glyph gl, frame fr);
 glyph rotate     (glyph gl, double angle, double ox, double oy);
+glyph curly      (glyph gl);
 
 int pixel_count (glyph g);
 double left_protrusion (glyph g, glyph o);

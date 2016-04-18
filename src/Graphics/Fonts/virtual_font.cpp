@@ -249,6 +249,7 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "rot-left", 1) ||
       is_tuple (t, "rot-right", 1) ||
       (is_tuple (t, "rotate") && N(t) >= 3) ||
+      is_tuple (t, "curly", 1) ||
       is_tuple (t, "hor-extend", 3) ||
       is_tuple (t, "hor-extend", 4) ||
       is_tuple (t, "ver-extend", 3) ||
@@ -663,6 +664,11 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     SI oy= ey->y1 + ((SI) (yf * (ey->y2 - ey->y1)));
     rotate (ex, ey, angle, ox, oy);
     return rotate (gl, angle, ox, oy);
+  }
+
+  if (is_tuple (t, "curly", 1)) {
+    glyph gl= compile (t[1], ex);
+    return curly (gl);
   }
 
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {
