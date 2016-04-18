@@ -34,13 +34,14 @@ struct virtual_font_rep: font_rep {
   double       hunit;
   double       vunit;
   hashmap<scheme_tree,metric_struct> trm;
-  hashmap<string,bool> sup;
+  hashmap<string,bool> sup_bit;
+  hashmap<string,bool> sup_svg;
 
   virtual_font_rep (string name, font base, string vname, int size,
                     int hdpi, int vdpi, bool extend);
   scheme_tree exec (scheme_tree t);
-  bool   supported (scheme_tree t);
-  bool   supported (string c);
+  bool   supported (scheme_tree t, bool svg);
+  bool   supported (string c, bool svg);
   glyph  compile_bis (scheme_tree t, metric& ex);
   glyph  compile (scheme_tree t, metric& ex);
   void   get_metric (scheme_tree t, metric& ex);
@@ -77,7 +78,7 @@ virtual_font_rep::virtual_font_rep (
     last (N(virt->virt_def)),
     fnm (std_font_metric (name, tm_new_array<metric> (last), 0, last-1)),
     fng (std_font_glyphs (name, tm_new_array<glyph> (last), 0, last-1)),
-    trm (metric_struct ()), sup (false)
+    trm (metric_struct ()), sup_bit (false), sup_svg (false)
 {
   copy_math_pars (base_fn);
   hunit= ((size*hdpi)/72)*PIXEL;
@@ -177,7 +178,7 @@ virtual_font_rep::exec (scheme_tree t) {
 ******************************************************************************/
 
 bool
-virtual_font_rep::supported (scheme_tree t) {
+virtual_font_rep::supported (scheme_tree t, bool svg) {
   if (is_atomic (t)) {
     string r= t->label;
     if (r == "#28") r= "(";
@@ -186,22 +187,22 @@ virtual_font_rep::supported (scheme_tree t) {
     if (!extend || base_fn->supports (r) || !virt->dict->contains (r))
       return base_fn->supports (r);
     if (!virt->dict->contains (r)) return false;
-    return supported (virt->virt_def [virt->dict [r]]);
+    return supported (virt->virt_def [virt->dict [r]], svg);
   }
 
   if (is_func (t, TUPLE, 3) && (is_double (t[0])) && (is_double (t[1])))
-    return supported (t[2]);
+    return supported (t[2], svg);
 
   if (is_tuple (t, "with", 3) && is_atomic (t[1])) {
     tree var= t[1];
     tree val= exec (t[2]);
-    return supported (replace (t[3], var, val));
+    return supported (replace (t[3], var, val), svg);
   }
 
   if (is_tuple (t, "or") && N(t) >= 2) {
     int i, n= N(t);
     for (i=1; i<n; i++)
-      if (supported (t[i]))
+      if (supported (t[i], svg))
         return true;
     return false;
   }
@@ -218,7 +219,7 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "add", 2)) {
     int i, n= N(t);
     for (i=1; i<n; i++)
-      if (!supported (t[i])) return false;
+      if (!supported (t[i], svg)) return false;
     return true;
   }
 
@@ -229,7 +230,7 @@ virtual_font_rep::supported (scheme_tree t) {
       (is_tuple (t, "right-fit", 3) && is_double (t[3]))) {
     int i, n= N(t);
     for (i=1; i<n-1; i++)
-      if (!supported (t[i])) return false;
+      if (!supported (t[i], svg)) return false;
     return true;
   }
 
@@ -249,7 +250,7 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "rot-left", 1) ||
       is_tuple (t, "rot-right", 1) ||
       (is_tuple (t, "rotate") && N(t) >= 3) ||
-      is_tuple (t, "curly", 1) ||
+      (is_tuple (t, "curly", 1) && !svg) ||
       is_tuple (t, "hor-extend", 3) ||
       is_tuple (t, "hor-extend", 4) ||
       is_tuple (t, "ver-extend", 3) ||
@@ -257,7 +258,7 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "ver-take", 3) ||
       is_tuple (t, "ver-take", 4) ||
       is_tuple (t, "italic", 3))
-    return supported (t[1]);
+    return supported (t[1], svg);
 
   if ((is_tuple (t, "align") && N(t) >= 3) ||
       is_tuple (t, "scale", 4) ||
@@ -271,13 +272,13 @@ virtual_font_rep::supported (scheme_tree t) {
       is_tuple (t, "max-width", 2) ||
       is_tuple (t, "min-height", 2) ||
       is_tuple (t, "max-height", 2))
-    return supported (t[1]) && supported (t[2]);
+    return supported (t[1], svg) && supported (t[2], svg);
 
   if (is_tuple (t, "font") && N(t) >= 3) {
     for (int i=2; i<N(t); i++)
       if (is_atomic (t[i]) &&
           starts (base_fn->res_name, "unicode:" * t[i]->label))
-        return supported (t[1]);
+        return supported (t[1], svg);
     return false;
   }
 
@@ -285,11 +286,12 @@ virtual_font_rep::supported (scheme_tree t) {
 }
 
 bool
-virtual_font_rep::supported (string c) {
+virtual_font_rep::supported (string c, bool svg) {
+  hashmap<string,bool>& sup (svg? sup_svg: sup_bit);
   if (!sup->contains (c)) {
     tree t= get_tree (c);
     if (t == "") sup (c)= false;
-    else sup (c)= supported (t);
+    else sup (c)= supported (t, svg);
   }
   return sup[c];
 }
@@ -399,7 +401,7 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   if (is_tuple (t, "or") && N(t) >= 2) {
     int i, n= N(t);
     for (i=1; i<n-1; i++)
-      if (supported (t[i]))
+      if (supported (t[i], false))
         return compile (t[i], ex);
     return compile (t[n-1], ex);
   }
@@ -901,7 +903,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_tuple (t, "or") && N(t) >= 2) {
     int i, n= N(t);
     for (i=1; i<n-1; i++)
-      if (supported (t[i])) {
+      if (supported (t[i], false)) {
         draw (ren, t[i], x, y);
         return;
       }
@@ -1474,7 +1476,7 @@ virtual_font_rep::get_tree (string s) {
 bool
 virtual_font_rep::supports (string s) {
   if (extend && base_fn->supports (s)) return true;
-  return supported (s);
+  return supported (s, false);
 }
 
 void
@@ -1524,7 +1526,7 @@ void
 virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (extend && base_fn->supports (s))
     base_fn->draw_fixed (ren, s, x, y);
-  else if (ren->is_screen) {
+  else if (ren->is_screen || !supported (s, true)) {
     font_metric cfnm;
     font_glyphs cfng;
     int c= get_char (s, cfnm, cfng);

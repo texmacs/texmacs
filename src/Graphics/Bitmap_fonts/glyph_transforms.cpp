@@ -48,7 +48,7 @@ struct slanted_font_metric_rep: public font_metric_rep {
 
 font_metric
 slanted (font_metric fnm, double slant) {
-  string name= fnm->res_name * "-slanted[" * as_string (slant) * "]";
+  string name= "slanted[" * fnm->res_name * "," * as_string (slant) * "]";
   return make (font_metric, name,
 	       tm_new<slanted_font_metric_rep> (name, fnm, slant));
 }
@@ -90,7 +90,7 @@ struct slanted_font_glyphs_rep: public font_glyphs_rep {
 
 font_glyphs
 slanted (font_glyphs fng, double slant) {
-  string name= fng->res_name * "-slanted[" * as_string (slant) * "]";
+  string name= "slanted[" * fng->res_name * "," * as_string (slant) * "]";
   return make (font_glyphs, name,
                tm_new<slanted_font_glyphs_rep> (name, fng, slant));
 }
@@ -128,7 +128,7 @@ struct stretched_font_metric_rep: public font_metric_rep {
 
 font_metric
 stretched (font_metric fnm, double xf, double yf) {
-  string name= fnm->res_name * "-stretched[";
+  string name= "stretched[" * fnm->res_name * ",";
   name << as_string (xf) << "," << as_string (yf) << "]";
   return make (font_metric, name,
 	       tm_new<stretched_font_metric_rep> (name, fnm, xf, yf));
@@ -199,7 +199,7 @@ struct stretched_font_glyphs_rep: public font_glyphs_rep {
 
 font_glyphs
 stretched (font_glyphs fng, double xf, double yf) {
-  string name= fng->res_name * "-stretched[";
+  string name= "stretched[" * fng->res_name * ",";
   name << as_string (xf) << "," << as_string (yf) << "]";
   return make (font_glyphs, name,
                tm_new<stretched_font_glyphs_rep> (name, fng, xf, yf));
@@ -236,7 +236,7 @@ struct bolden_font_metric_rep: public font_metric_rep {
 
 font_metric
 bolden (font_metric fnm, SI dtot) {
-  string name= fnm->res_name * "-bolden[" * as_string (dtot) * "]";
+  string name= "bolden[" * fnm->res_name * "," * as_string (dtot) * "]";
   return make (font_metric, name,
 	       tm_new<bolden_font_metric_rep> (name, fnm, dtot));
 }
@@ -291,7 +291,7 @@ struct bolden_font_glyphs_rep: public font_glyphs_rep {
 
 font_glyphs
 bolden (font_glyphs fng, SI dpen, SI dtot) {
-  string name= fng->res_name * "-bolden[" * as_string (dpen);
+  string name= "bolden[" * fng->res_name * "," * as_string (dpen);
   if (dtot != dpen) name << "," << as_string (dtot) << "]";
   return make (font_glyphs, name,
                tm_new<bolden_font_glyphs_rep> (name, fng, dpen, dtot));
@@ -556,7 +556,7 @@ struct make_bbb_font_glyphs_rep: public font_glyphs_rep {
 
 font_glyphs
 make_bbb (font_glyphs fng, SI penw, SI penh, SI fatw) {
-  string name= fng->res_name * "-make_bbb[" * as_string (penw);
+  string name= "make_bbb[" * fng->res_name * "," * as_string (penw);
   name << "," << as_string (penh);
   name << "," << as_string (fatw) << "]";
   return make (font_glyphs, name,
