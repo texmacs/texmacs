@@ -16,7 +16,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<leqdot\>>|<cell|\<lesseqdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<gtrdot\>>|<cell|\<geqdot\>>|<cell|\<gtreqdot\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<leqdot\>>|<cell|\<leqslantdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<dotgtr\>>|<cell|\<geqdot\>>|<cell|\<dotgeqslant\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
   </equation*>
 
   <\equation*>
@@ -24,7 +24,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<precdot\>>|<cell|\<precsim\>>|<cell|\<precapprox\>>|<cell|\<nprecsim\>>|<cell|\<precnsim\>>|<cell|\<nprecapprox\>>|<cell|\<precnapprox\>>>|<row|<cell|\<dotsucc\>>|<cell|\<succsim\>>|<cell|\<succapprox\>>|<cell|\<nsuccsim\>>|<cell|\<succnsim\>>|<cell|\<nsuccapprox\>>|<cell|\<succnapprox\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<precdot\>>|<cell|\<preceqdot\>>|<cell|\<preccurlyeqdot\>>|<cell|\<precsim\>>|<cell|\<precapprox\>>|<cell|\<nprecsim\>>|<cell|\<precnsim\>>|<cell|\<nprecapprox\>>|<cell|\<precnapprox\>>>|<row|<cell|\<dotsucc\>>|<cell|\<dotsucceq\>>|<cell|\<dotsucccurlyeq\>>|<cell|\<succsim\>>|<cell|\<succapprox\>>|<cell|\<nsuccsim\>>|<cell|\<succnsim\>>|<cell|\<nsuccapprox\>>|<cell|\<succnapprox\>>>>>>
   </equation*>
 
   <\equation*>
@@ -52,7 +52,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|Papyrus>
+    <associate|font|Optima>
     <associate|math-font|math-stix>
     <associate|page-type|a5>
   </collection>
