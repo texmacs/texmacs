@@ -103,7 +103,8 @@ cell_rep::cell_local_begin (tree fm) {
         is_atomic (with[0]) &&
         !starts (with[0]->label, "cell-")) {
       tree old= env->local_begin (with[0]->label, with[1]);
-      var (with[0]->label)= old;
+      string v= with[0]->label * "-" * as_string (i);
+      var (v)= old;
     }
   }
 }
@@ -116,7 +117,8 @@ cell_rep::cell_local_end (tree fm) {
     if (is_func (with, CWITH, 2) &&
         is_atomic (with[0]) &&
         !starts (with[0]->label, "cell-")) {
-      tree old= var [with[0]->label];
+      string v= with[0]->label * "-" * as_string (i);
+      tree old= var [v];
       env->local_end (with[0]->label, old);
     }
   }
