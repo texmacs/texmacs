@@ -38,7 +38,6 @@
   (gnapprox (stack-less gtr  (negate (hor-scale approx gtr ) slash2*)))
 
   (prec (curly less))
-  (prec* (curly less))
   (succ (hor-flip (curly (hor-flip gtr))))
   (preceq (stack-less prec (hor-scale minus prec)))
   (succeq (stack-less succ (hor-scale minus succ)))
