@@ -154,7 +154,7 @@ is_greek (string c) {
   static hashmap<string,bool> t (false);
   if (N(t) == 0) {
     array<int> a;
-    //for (int i= 0x391; i<0x3a9; i++) if (i != 0x3a2) a << i;
+    //for (int i= 0x391; i<=0x3a9; i++) if (i != 0x3a2) a << i;
     for (int i= 0x3b1; i <= 0x3c9; i++) a << i;
     a << 0x3d1 << 0x3d5 << 0x3d6 << 0x3f0 << 0x3f1 << 0x3f5;
     for (int i= 0; i<N(a); i++) {
@@ -765,6 +765,13 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
     }
     if (fam == mfam && virtually_defined (c, "emu-fundamental")) {
       tree key= tuple ("emulate", "emu-fundamental");
+      int nr= sm->add_font (key, REWRITE_NONE);
+      initialize_font (nr);
+      if (fn[nr]->supports (c))
+        return sm->add_char (key, c);
+    }
+    if (fam == mfam && virtually_defined (c, "emu-greek")) {
+      tree key= tuple ("emulate", "emu-greek");
       int nr= sm->add_font (key, REWRITE_NONE);
       initialize_font (nr);
       if (fn[nr]->supports (c))

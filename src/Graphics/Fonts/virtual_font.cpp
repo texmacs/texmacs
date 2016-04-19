@@ -123,6 +123,24 @@ virtual_font_rep::exec (scheme_tree t) {
     if (!(is_double (a) && is_double (b))) return "error";
     return as_string (as_double (a) / as_double (b));
   }
+  else if (is_tuple (t, "min")) {
+    scheme_tree r= "1000000000.0";
+    for (int i=1; i<N(t); i++) {
+      scheme_tree a= exec (t[i]);
+      if (!is_double (a)) return "error";
+      r= as_string (min (as_double (r), as_double (a)));
+    }
+    return r;
+  }
+  else if (is_tuple (t, "max")) {
+    scheme_tree r= "-1000000000.0";
+    for (int i=1; i<N(t); i++) {
+      scheme_tree a= exec (t[i]);
+      if (!is_double (a)) return "error";
+      r= as_string (max (as_double (r), as_double (a)));
+    }
+    return r;
+  }
   else if (is_tuple (t, "width", 1)) {
     metric ex;
     get_metric (t[1], ex);
@@ -164,6 +182,36 @@ virtual_font_rep::exec (scheme_tree t) {
     else
       r= ((double) (y+dy)) / vunit;
     return as_string (r);
+  }
+  else if (is_tuple (t, "penw", 4) || is_tuple (t, "penh", 4)) {
+    metric ex;
+    glyph  gl= compile (t[1], ex);
+    double x1f= 0.0, x2f= 1.0;
+    double y1f= 0.0, y2f= 1.0;
+    if (is_double (t[2])) x1f= x2f= as_double (t[2]);
+    if (is_double (t[4])) y1f= y2f= as_double (t[4]);
+    if (is_tuple (t, "penw") && is_double (t[3])) x2f= as_double (t[3]);
+    if (is_tuple (t, "penh") && is_double (t[3])) y1f= as_double (t[3]);
+    SI x1= (SI) (ex->x1 + x1f * (ex->x2 - ex->x1));
+    SI x2= (SI) (ex->x1 + x2f * (ex->x2 - ex->x1));
+    SI y1= (SI) (ex->y1 + y1f * (ex->y2 - ex->y1));
+    SI y2= (SI) (ex->y1 + y2f * (ex->y2 - ex->y1));
+    int xx1= (int) floor (((double) x1) / PIXEL + 0.5);
+    int xx2= (int) floor (((double) x2) / PIXEL + 0.5);
+    int yy1= (int) floor (((double) y1) / PIXEL + 0.5);
+    int yy2= (int) floor (((double) y2) / PIXEL + 0.5);
+    if (is_tuple (t, "penw")) {
+      int pos1= xx1 + probe (gl, xx1, yy2,  1, 0);
+      int pos2= xx2 + probe (gl, xx2, yy2, -1, 0);
+      int w   = max (pos2 - pos1 + 1, 0) * PIXEL;
+      return as_string (((double) w) / hunit);
+    }
+    else {
+      int pos1= yy1 + probe (gl, xx1, yy1,  1, 0);
+      int pos2= yy2 + probe (gl, xx1, yy2, -1, 0);
+      int h   = max (pos2 - pos1 + 1, 0) * PIXEL;
+      return as_string (((double) h) / vunit);
+    }
   }
   else if (is_tuple (t, "sep-equal", 0)) {
     scheme_tree yt= tuple ("ypos", "=", "0.5", "0.5", "+");
@@ -208,6 +256,8 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
   }
 
   if (is_tuple (t, "join") ||
+      (is_tuple (t, "intersect", 2) && !svg) ||
+      (is_tuple (t, "exclude", 2) && !svg) ||
       is_tuple (t, "glue", 2) ||
       is_tuple (t, "glue*", 2) ||
       is_tuple (t, "glue-above", 2) ||
@@ -236,6 +286,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
 
   if (is_tuple (t, "magnify", 3) ||
       is_tuple (t, "enlarge") ||
+      is_tuple (t, "unindent", 1) ||
       is_tuple (t, "crop", 1) ||
       is_tuple (t, "hor-crop", 1) ||
       is_tuple (t, "left-crop", 1) ||
@@ -261,10 +312,13 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
     return supported (t[1], svg);
 
   if ((is_tuple (t, "align") && N(t) >= 3) ||
+      (is_tuple (t, "align*") && N(t) >= 3) ||
       is_tuple (t, "scale", 4) ||
       is_tuple (t, "hor-scale", 2) ||
       is_tuple (t, "pretend", 2) ||
       is_tuple (t, "hor-pretend", 2) ||
+      is_tuple (t, "left-pretend", 2) ||
+      is_tuple (t, "right-pretend", 2) ||
       is_tuple (t, "ver-pretend", 2) ||
       is_tuple (t, "reslash", 2) ||
       is_tuple (t, "negate", 2) ||
@@ -418,6 +472,20 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return gl1;
   }
 
+  if (is_tuple (t, "intersect", 2)) {
+    metric ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    return intersect (gl1, gl2);
+  }
+
+  if (is_tuple (t, "exclude", 2)) {
+    metric ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    return exclude (gl1, gl2);
+  }
+
   if (is_tuple (t, "glue", 2)) {
     metric ey;
     glyph gl1= compile (t[1], ex);
@@ -546,6 +614,13 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return gl;
   }
 
+  if (is_tuple (t, "unindent", 1)) {
+    glyph gl= compile (t[1], ex);
+    SI dx= -ex->x1;
+    move (ex, dx, 0);
+    return move (gl, dx, 0);
+  }
+
   if (is_tuple (t, "crop", 1) ||
       is_tuple (t, "hor-crop", 1) ||
       is_tuple (t, "left-crop", 1) ||
@@ -559,19 +634,19 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     if (is_tuple (t, "crop") ||
         is_tuple (t, "hor-crop") ||
         is_tuple (t, "left-crop"))
-      ex->x1= ex->x3= x1; ex->x3 -= PIXEL;
+      ex->x1= ex->x3= x1;
     if (is_tuple (t, "crop") ||
         is_tuple (t, "hor-crop") ||
         is_tuple (t, "right-crop"))
-      ex->x2= ex->x4= x2; ex->x4 += PIXEL;
+      ex->x2= ex->x4= x2;
     if (is_tuple (t, "crop") ||
         is_tuple (t, "ver-crop") ||
         is_tuple (t, "bottom-crop"))
-      ex->y1= ex->y3= y1; ex->y3 -= PIXEL;
+      ex->y1= ex->y3= y1;
     if (is_tuple (t, "crop") ||
         is_tuple (t, "ver-crop") ||
         is_tuple (t, "top-crop"))
-      ex->y2= ex->y4= y2; ex->y4 += PIXEL;
+      ex->y2= ex->y4= y2;
     return gl;
   }
 
@@ -717,7 +792,7 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return ver_take (gl, pos, nr);
   }
 
-  if (is_tuple (t, "align") && N(t) >= 3) {
+  if (is_tuple (t, "align") && N(t) >= 3) { // logical alignment
     metric ex2;
     glyph gl= compile (t[1], ex);
     glyph gl2= compile (t[2], ex2);
@@ -732,6 +807,28 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     SI ay2= (SI) (ex2->y1 + ya2 * (ex2->y2 - ex2->y1));
     SI dx = ax2 - ax;
     SI dy = ay2 - ay;
+    if (N(t) >= 4 && t[3] == "*") dx= 0;
+    if (N(t) >= 5 && t[4] == "*") dy= 0;
+    move (ex, dx, dy);
+    return move (gl, dx, dy);
+  }
+
+  if (is_tuple (t, "align*") && N(t) >= 3) { // ink alignment
+    metric ex1, ex2;
+    glyph gl = compile (t[1], ex);
+    glyph gl1= compile (tuple ("crop", t[1]), ex1);
+    glyph gl2= compile (tuple ("crop", t[2]), ex2);
+    double xa1= 0.0, xa2= 0.0, ya1= 0.0, ya2= 0.0;
+    if (N(t) >= 4 && is_double (t[3])) xa1= xa2= as_double (t[3]);
+    if (N(t) >= 5 && is_double (t[4])) ya1= ya2= as_double (t[4]);
+    if (N(t) >= 6 && is_double (t[5])) xa2= as_double (t[5]);
+    if (N(t) >= 7 && is_double (t[6])) ya2= as_double (t[6]);
+    SI ax1= (SI) (ex1->x3 + xa1 * (ex1->x4 - ex1->x3));
+    SI ax2= (SI) (ex2->x3 + xa2 * (ex2->x4 - ex2->x3));
+    SI ay1= (SI) (ex1->y3 + ya1 * (ex1->y4 - ex1->y3));
+    SI ay2= (SI) (ex2->y3 + ya2 * (ex2->y4 - ex2->y3));
+    SI dx = ax2 - ax1;
+    SI dy = ay2 - ay1;
     if (N(t) >= 4 && t[3] == "*") dx= 0;
     if (N(t) >= 5 && t[4] == "*") dy= 0;
     move (ex, dx, dy);
@@ -767,6 +864,8 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "pretend", 2) ||
       is_tuple (t, "hor-pretend", 2) ||
+      is_tuple (t, "left-pretend", 2) ||
+      is_tuple (t, "right-pretend", 2) ||
       is_tuple (t, "ver-pretend", 2)) {
     metric ex2;
     glyph gl = compile (t[1], ex);
@@ -775,6 +874,8 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
       ex->x1= ex2->x1;
       ex->x2= ex2->x2;
     }
+    else if (is_tuple (t, "left-pretend")) ex->x1= ex2->x1;
+    else if (is_tuple (t, "right-pretend")) ex->x2= ex2->x2;
     if (is_tuple (t, "pretend") || is_tuple (t, "ver-pretend")) {
       ex->y1= ex2->y1;
       ex->y2= ex2->y2;
@@ -1055,6 +1156,13 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "unindent", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    draw (ren, t[1], x - ex->x1, y);
+    return;
+  }
+
   if (is_tuple (t, "crop", 1) ||
       is_tuple (t, "hor-crop", 1) ||
       is_tuple (t, "left-crop", 1) ||
@@ -1238,6 +1346,27 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
+  if (is_tuple (t, "align*") && N(t) >= 3) {
+    metric ex1, ex2;
+    get_metric (t[1], ex1);
+    get_metric (t[2], ex2);
+    double xa1= 0.0, xa2= 0.0, ya1= 0.0, ya2= 0.0;
+    if (N(t) >= 4 && is_double (t[3])) xa1= xa2= as_double (t[3]);
+    if (N(t) >= 5 && is_double (t[4])) ya1= ya2= as_double (t[4]);
+    if (N(t) >= 6 && is_double (t[5])) xa2= as_double (t[5]);
+    if (N(t) >= 7 && is_double (t[6])) ya2= as_double (t[6]);
+    SI ax1= (SI) (ex1->x3 + xa1 * (ex1->x4 - ex1->x3));
+    SI ax2= (SI) (ex2->x3 + xa2 * (ex2->x4 - ex2->x3));
+    SI ay1= (SI) (ex1->y3 + ya1 * (ex1->y4 - ex1->y3));
+    SI ay2= (SI) (ex2->y3 + ya2 * (ex2->y4 - ex2->y3));
+    SI dx = ax2 - ax1;
+    SI dy = ay2 - ay1;
+    if (N(t) >= 4 && t[3] == "*") dx= 0;
+    if (N(t) >= 5 && t[4] == "*") dy= 0;
+    draw (ren, t[1], x+dx, y+dy);
+    return;
+  }
+
   if (is_tuple (t, "scale", 4)) {
     metric ex, ex2;
     get_metric (t[1], ex);
@@ -1272,6 +1401,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
 
   if (is_tuple (t, "pretend", 2) ||
       is_tuple (t, "hor-pretend", 2) ||
+      is_tuple (t, "left-pretend", 2) ||
+      is_tuple (t, "right-pretend", 2) ||
       is_tuple (t, "ver-pretend", 2)) {
     draw (ren, t[1], x, y);
     return;

@@ -148,6 +148,40 @@ join (glyph gl1, glyph gl2) {
   return bmr;
 }
 
+glyph
+intersect (glyph gl1, glyph gl2) {
+  int i, j;
+  int ww= gl1->width, hh= gl1->height, ww2= gl2->width, hh2= gl2->height;
+  glyph bmr (ww, hh, gl1->xoff, gl1->yoff, gl1->depth);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++) {
+      int c = gl1->get_x (i, j);
+      int i2= i - gl1->xoff + gl2->xoff;
+      int j2= j - gl1->yoff + gl2->yoff;
+      if (i2 >= 0 && ww2 > i2 && j2 >= 0 && hh2 > j2)
+        c= min (c, gl2->get_x (i2, j2));
+      bmr->set_x (i, j, c);
+    }
+  return simplify (bmr);
+}
+
+glyph
+exclude (glyph gl1, glyph gl2) {
+  int i, j;
+  int ww= gl1->width, hh= gl1->height, ww2= gl2->width, hh2= gl2->height;
+  glyph bmr (ww, hh, gl1->xoff, gl1->yoff, gl1->depth);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++) {
+      int c = gl1->get_x (i, j);
+      int i2= i - gl1->xoff + gl2->xoff;
+      int j2= j - gl1->yoff + gl2->yoff;
+      if (i2 >= 0 && ww2 > i2 && j2 >= 0 && hh2 > j2)
+        if (gl2->get_x (i2, j2) != 0) c= 0;
+      bmr->set_x (i, j, c);
+    }
+  return simplify (bmr);
+}
+
 /******************************************************************************
 * Operating on glyphs
 ******************************************************************************/

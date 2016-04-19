@@ -90,6 +90,8 @@ frame reslash (metric slash, metric proto);
 
 glyph shrink     (glyph gl, int xf, int yf, SI& xo, SI& yo);
 glyph join       (glyph gl1, glyph gl2);
+glyph intersect  (glyph gl1, glyph gl2);
+glyph exclude    (glyph gl1, glyph gl2);
 glyph glue       (glyph gl1, glyph gl2);
 glyph add        (glyph gl1, glyph gl2);
 glyph move       (glyph gl, SI x, SI y);
