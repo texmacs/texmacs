@@ -6,8 +6,9 @@
   (Lambda* (hor-flip (ver-flip V)))
   (Lambda Lambda*)
 
-  (Phi* (join (align I (magnify O 1 0.65) 0.5 *)
-              (align (magnify O 1 0.65) I * 0.5)))
+  (Phi** (join (align I (magnify O 1 0.625) 0.5 *)
+               (align (magnify O 1 0.625) I * 0.5)))
+  (Phi* (bitmap Phi**))
   (Phi Phi*)
 
   (Zx (with d (min (- (penw X 0 0.4 0.25) (penw Z 0 0.4 0.25)) 0)
@@ -18,10 +19,11 @@
 
   (H1 (part H * * 0.75 *))
   (H2 (part H * * 0.7 0.8))
-  (H3 (align (crop (part H 0.45 0.55 0.25 0.75)) (crop H) 0 0))
+  (H3* (align (crop (part H 0.45 0.55 0.25 0.75)) (crop H) 0 0))
+  (H3 (join H3* (align H3* H3* 0 * 1) (align H3* H3* 0 * 2)))
   (H4 (part H * * * 0.25))
   (H5 (join H1 H4 (align (magnify H2 * 5.5) H4 * 0 * 1)))
-  (H6 (align (magnify H3 8 *) (crop H5) 0.5 1))
+  (H6 (align (magnify H3 2 *) (crop H5) 0.5 1))
   (Pi* (join H5 H6))
   (Pi Pi*)
 
@@ -37,7 +39,8 @@
   (O2 (join O1 (align (hor-pretend I4 I3) (hor-crop O1) 0 0 0 1)
                (align (hor-pretend I5 I3) (hor-crop O1) 1 0 1 1)))
   (O3 (align (unindent (hor-crop O2)) I * 1))
-  (Psi* (hor-crop (join O3 (align* I O3 0.5 *))))
+  (Psi** (hor-crop (join O3 (align* I O3 0.5 *))))
+  (Psi* (bitmap Psi**))
   (Psi Psi*)
 
   (Z1a (join (part (hor-flip Z) 0.5 * 0.75 *)
@@ -49,13 +52,14 @@
             (part Z 0.5 * * 0.25)))
   (E1a (join (part (hor-flip (hor-crop E)) 0.25 0.6 0.35 0.65)
              (part (hor-crop E) 0.4 0.75 0.35 0.65)))
-  (E1b (align (join (0.1 0 (part (hor-flip E) * 0.4 0.7 0.9))
-                    (-0.1 0 (part E 0.6 * 0.7 0.9))) E * 0.65))
+  (E1b (align (join (0.1 0 (part (hor-flip E) * 0.4 0.7 0.85))
+                    (-0.1 0 (part E 0.6 * 0.7 0.85))) E * 0.65))
   (E1 (or (font E1b Papyrus) E1a))
   (Xi* (join Z2 (align Z1 Z2 0.5 *) (align E1 Z2 0.5 *)))
   (Xi Xi*)
 
-  (Theta* (join O (align* E1 O 0.5 *)))
+  (Theta** (join O (align* E1 O 0.5 *)))
+  (Theta* (bitmap Theta**))
   (Theta Theta*)
 
   (Lambda2 (bottom-crop Lambda))
@@ -64,7 +68,8 @@
   (H7* (scale H3 (hor-crop Lambda3) 1 *))
   (H7 (with m (/ (width (crop Lambda3)) (width (crop H3)))
         (magnify H3 m *)))
-  (Delta* (join Lambda3 (align* H7 Lambda3 0.5 1 0.5 0)))
+  (Delta** (join Lambda3 (align* H7 Lambda3 0.5 1 0.5 0)))
+  (Delta* (bitmap Delta**))
   (Delta Delta*)
 
   (O4 (align* (magnify O 0.9 0.85) O * 1))
@@ -82,7 +87,8 @@
   (N1 (crop (part N * 0.4 0.2 0.3)))
   (N2 (align* (with m (/ (height Z7) (height N1))
                 (magnify N1 * m)) Z7 * 0.5))
-  (Omega* (join O5 O6 O7 Z5 Z6
-                (align* N2 Z5 1 * 1 *)
-                (align* N2 Z6 0 * 0 *)))
+  (Omega** (join O5 O6 O7 Z5 Z6
+                 (align* N2 Z5 1 * 1 *)
+                 (align* N2 Z6 0 * 0 *)))
+  (Omega* (bitmap Omega**))
   (Omega Omega*))
