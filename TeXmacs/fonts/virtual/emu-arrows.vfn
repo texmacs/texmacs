@@ -29,12 +29,14 @@
   (rightharpoondown (join (part rightarrow * 0.5)
                           (part rightarrow 0.5 * * 0.5)
                           (part leftarrow 0.5 *)))
-  (leftrightarrows (stack leftarrow rightarrow -0.1))
-  (rightleftarrows (stack rightarrow leftarrow -0.1))
-  (leftrightharpoons (stack (ver-crop leftharpoonup)
-                            (ver-crop rightharpoondown) 0.1))
-  (rightleftharpoons (stack (ver-crop rightharpoonup)
-                            (ver-crop leftharpoondown) 0.1))
+  (leftrightarrows (align (stack leftarrow rightarrow -0.1) arrowbar * 0.5))
+  (rightleftarrows (align (stack rightarrow leftarrow -0.1) arrowbar * 0.5))
+  (leftrightharpoons
+    (align (stack (ver-crop leftharpoonup)
+                  (ver-crop rightharpoondown) 0.1) arrowbar * 0.5))
+  (rightleftharpoons
+    (align (stack (ver-crop rightharpoonup)
+                  (ver-crop leftharpoondown) 0.1) arrowbar * 0.5))
 
   (longminus (row arrowbar arrowbar))
   (longequal (row Arrowbar Arrowbar))

@@ -258,6 +258,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
   if (is_tuple (t, "join") ||
       (is_tuple (t, "intersect", 2) && !svg) ||
       (is_tuple (t, "exclude", 2) && !svg) ||
+      (is_tuple (t, "bitmap", 1) && !svg) ||
       is_tuple (t, "glue", 2) ||
       is_tuple (t, "glue*", 2) ||
       is_tuple (t, "glue-above", 2) ||
@@ -485,6 +486,9 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     glyph gl2= compile (t[2], ey);
     return exclude (gl1, gl2);
   }
+
+  if (is_tuple (t, "bitmap", 1))
+    return compile (t[1], ex);
 
   if (is_tuple (t, "glue", 2)) {
     metric ey;
@@ -1016,6 +1020,11 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     int i, n= N(t);
     for (i=1; i<n; i++)
       draw (ren, t[i], x, y);
+    return;
+  }
+
+  if (is_tuple (t, "bitmap", 1)) {
+    draw (ren, t[1], x, y);
     return;
   }
 
