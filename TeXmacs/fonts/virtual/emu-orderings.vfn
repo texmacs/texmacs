@@ -244,6 +244,8 @@
   (ntrianglelefteqslant  (negate trianglelefteqslant  slash4))
   (ntrianglerighteqslant (negate trianglerighteqslant slash4))
 
+  (blacktriangleleft (flood-fill triangleleft 0.5 0.5))
+  (blacktriangleright (flood-fill triangleright 0.5 0.5))
   (blacktrianglelefteq
     (stack-less blacktriangleleft  (hor-scale minus blacktriangleleft)))
   (blacktrianglerighteq

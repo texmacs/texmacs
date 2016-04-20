@@ -304,6 +304,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       (is_tuple (t, "rotate") && N(t) >= 3) ||
       (is_tuple (t, "curly", 1) && !svg) ||
       (is_tuple (t, "bottom-edge") && !svg) ||
+      (is_tuple (t, "flood-fill", 3) && !svg) ||
       is_tuple (t, "hor-extend", 3) ||
       is_tuple (t, "hor-extend", 4) ||
       is_tuple (t, "ver-extend", 3) ||
@@ -762,6 +763,17 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     if (N(t) >= 4 && is_double (t[3]))
       keepy= (SI) floor (as_double (t[3]) * vunit);
     return bottom_edge (gl, penh, keepy);
+  }
+
+  if (is_tuple (t, "flood-fill", 3)) {
+    glyph gl= compile (t[1], ex);
+    SI x= (ex->x3 + ex->x4) >> 1;
+    SI y= (ex->y3 + ex->y4) >> 1;
+    if (is_double (t[2]))
+      x= (SI) floor (ex->x3 + as_double (t[2]) * (ex->x4 - ex->x3));
+    if (is_double (t[3]))
+      y= (SI) floor (ex->y3 + as_double (t[3]) * (ex->y4 - ex->y3));
+    return flood_fill (gl, x, y);
   }
 
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {

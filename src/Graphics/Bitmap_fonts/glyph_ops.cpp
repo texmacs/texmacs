@@ -347,3 +347,33 @@ bottom_edge (glyph gl, SI penh, SI keepy) {
   }
   return simplify (bmr);
 }
+
+glyph
+flood_fill (glyph gl, SI px, SI py) {
+  gl= simplify (gl);
+  glyph bmr= simplify (gl);
+  int ww= gl->width, hh= gl->height;
+  int pi= gl->xoff + (px + (PIXEL >> 1)) / PIXEL;
+  int pj= gl->yoff - (py + (PIXEL >> 1)) / PIXEL;
+  if (pi < 0) pi= 0;
+  if (pi >= ww) pi= ww-1;
+  if (pj < 0) pi= 0;
+  if (pj >= hh) pj= hh-1;
+  
+  array<int> todo;
+  todo << pi << pj;
+  array<int> next;
+  while (N(todo) != 0) {
+    for (int k=0; k+1<N(todo); k+=2) {
+      int i= todo[k], j= todo[k+1];
+      if ((i < ww) && (i >= 0) && (j < hh) && (j >= 0))
+        if (bmr->get_x (i, j) == 0) {
+          bmr->set_x (i, j, 1);
+          next << i+1 << j << i-1 << j << i << j+1 << i << j-1;
+        }
+    }
+    todo= next;
+    next= array<int> ();
+  }
+  return bmr;
+}

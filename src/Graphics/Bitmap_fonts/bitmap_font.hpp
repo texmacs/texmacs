@@ -105,6 +105,7 @@ glyph ver_extend  (glyph gl, int pos, int by);
 glyph hor_take    (glyph gl, int pos, int nr);
 glyph ver_take    (glyph gl, int pos, int nr);
 glyph bottom_edge (glyph gl, SI penh, SI keepy);
+glyph flood_fill  (glyph gl, SI px, SI py);
 glyph slanted     (glyph gl, double slant);
 glyph stretched   (glyph gl, double xf, double yf);
 glyph bolden      (glyph gl, SI dpen, SI dtot);
