@@ -44,7 +44,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<in\>>|<cell|\<nin\>>|<cell|\<vartriangleleft\>>|<cell|\<trianglelefteqslant\>>|<cell|\<trianglelefteq\>>|<cell|\<ntriangleleft\>>|<cell|\<ntrianglelefteqslant\>>|<cell|\<ntrianglelefteq\>>|<cell|\<blacktriangleleft\>>|<cell|\<blacktrianglelefteqslant\>>|<cell|\<blacktrianglelefteq\>>>|<row|<cell|\<ni\>>|<cell|\<nni\>>|<cell|\<vartriangleright\>>|<cell|\<trianglerighteqslant\>>|<cell|\<trianglerighteq\>>|<cell|\<ntriangleright\>>|<cell|\<ntrianglerighteqslant\>>|<cell|\<ntrianglerighteq\>>|<cell|\<blacktriangleright\>>|<cell|\<blacktrianglerighteqslant\>>|<cell|\<blacktrianglerighteq\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<in\>>|<cell|\<nin\>>|<cell|\<vartriangleleft\>>|<cell|\<trianglelefteqslant\>>|<cell|\<trianglelefteq\>>|<cell|\<ntriangleleft\>>|<cell|\<ntrianglelefteqslant\>>|<cell|\<ntrianglelefteq\>>|<cell|\<blacktriangleleft\>>|<cell|\<blacktrianglelefteqslant\>>|<cell|\<blacktrianglelefteq\>>|<cell|\<nblacktriangleleft\>>|<cell|\<nblacktrianglelefteqslant\>>|<cell|\<nblacktrianglelefteq\>>>|<row|<cell|\<ni\>>|<cell|\<nni\>>|<cell|\<vartriangleright\>>|<cell|\<trianglerighteqslant\>>|<cell|\<trianglerighteq\>>|<cell|\<ntriangleright\>>|<cell|\<ntrianglerighteqslant\>>|<cell|\<ntrianglerighteq\>>|<cell|\<blacktriangleright\>>|<cell|\<blacktrianglerighteqslant\>>|<cell|\<blacktrianglerighteq\>>|<cell|\<nblacktriangleright\>>|<cell|\<nblacktrianglerighteqslant\>>|<cell|\<nblacktrianglerighteq\>>>>>>
   </equation*>
 
   \;
@@ -52,7 +52,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|Optima>
+    <associate|font|Papyrus>
     <associate|math-font|math-stix>
     <associate|page-type|a5>
   </collection>

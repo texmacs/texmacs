@@ -207,8 +207,8 @@ virtual_font_rep::exec (scheme_tree t) {
       return as_string (((double) w) / hunit);
     }
     else {
-      int pos1= yy1 + probe (gl, xx1, yy1,  1, 0);
-      int pos2= yy2 + probe (gl, xx1, yy2, -1, 0);
+      int pos1= yy1 + probe (gl, xx1, yy1, 0,  1);
+      int pos2= yy2 + probe (gl, xx1, yy2, 0, -1);
       int h   = max (pos2 - pos1 + 1, 0) * PIXEL;
       return as_string (((double) h) / vunit);
     }
@@ -303,6 +303,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       is_tuple (t, "rot-right", 1) ||
       (is_tuple (t, "rotate") && N(t) >= 3) ||
       (is_tuple (t, "curly", 1) && !svg) ||
+      (is_tuple (t, "bottom-edge") && !svg) ||
       is_tuple (t, "hor-extend", 3) ||
       is_tuple (t, "hor-extend", 4) ||
       is_tuple (t, "ver-extend", 3) ||
@@ -750,6 +751,17 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   if (is_tuple (t, "curly", 1)) {
     glyph gl= compile (t[1], ex);
     return curly (gl);
+  }
+
+  if (is_tuple (t, "bottom-edge") && N(t) >= 2) {
+    glyph gl= compile (t[1], ex);
+    SI penh = 5 * PIXEL;
+    SI keepy= ((ex->y3 + ex->y4) >> 1) - (ex->y4 - ex->y3) / 20;
+    if (N(t) >= 3 && is_double (t[2]))
+      penh = (SI) floor (as_double (t[2]) * vunit);
+    if (N(t) >= 4 && is_double (t[3]))
+      keepy= (SI) floor (as_double (t[3]) * vunit);
+    return bottom_edge (gl, penh, keepy);
   }
 
   if (is_tuple (t, "hor-extend", 3) || is_tuple (t, "hor-extend", 4)) {

@@ -99,6 +99,8 @@
             (align (join sim (0 y sim)) = * 0.5)))
   (halfequal (ver-crop (part = * * * 0.5)))
   (equiv (align (join = (align halfequal = * 2)) = * 0.5))
+  (backsim (hor-flip sim))
+  (ni (hor-flip in))
 
   (ldot (align . + * 0))
   (cdot (align . + * 0.5))

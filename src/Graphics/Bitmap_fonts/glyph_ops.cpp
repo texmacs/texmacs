@@ -328,3 +328,22 @@ ver_take (glyph gl, int pos, int nr) {
       bmr->set_x (i, j, gl->get_x (i, pos));
   return simplify (bmr);
 }
+
+glyph
+bottom_edge (glyph gl, SI penh, SI keepy) {
+  int ph= (penh + PIXEL - 1) / PIXEL;
+  int kj= gl->yoff - (keepy + (PIXEL >> 1)) / PIXEL;
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  for (i=0; i<ww; i++) {
+    int j2= last_in_column (gl, i);
+    int j1= min (j2 - ph, kj);
+    bool ok= j2 > 0 && j2 > (kj - (ph >> 1));
+    for (j=0; j<hh; j++)
+      if (ok && j > j1 && j2 >= j)
+        bmr->set_x (i, j, gl->get_x (i, j));
+      else bmr->set_x (i, j, 0);
+  }
+  return simplify (bmr);
+}

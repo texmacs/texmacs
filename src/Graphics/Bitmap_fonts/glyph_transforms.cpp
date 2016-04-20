@@ -687,18 +687,19 @@ curly (glyph gl) {
   int mid= (first_in_column (gl, 0) + last_in_column (gl, 0)) >> 1;
   int dis= max (hh - mid, mid);
   int rad= (int) ceil (1.25 * ((dis*dis + ww*ww) / (2.0 * dis)));
+  bool jlo= (2*mid > dis), jhi= (2*(hh-mid) > dis);
   for (int ii=0; ii<ww+2*padx; ii++)
     for (int jj=0; jj<hh+2*pady; jj++) {
       int i= ii - padx, j= jj - pady;
       int i1= i, j1= j, i2= i, j2= j;
-      curly_transform (ww, 0  , 0 , mid, rad, i1, j1);
-      curly_transform (0 , mid, ww, hh , rad, i2, j2);
+      if (jlo) curly_transform (ww, 0  , 0 , mid, rad, i1, j1);
+      if (jhi) curly_transform (0 , mid, ww, hh , rad, i2, j2);
       int val= 0;
       if (j < mid || j1 < mid)
-        if (i1 >= 0 && ww > i1 && j1 >= 0 && hh > j1)
+        if (jlo && i1 >= 0 && ww > i1 && j1 >= 0 && hh > j1)
           val= max (val, gl->get_x (i1, j1));
       if (j >= mid || j2 >= mid)
-        if (i2 >= 0 && ww > i2 && j2 >= 0 && hh > j2)
+        if (jhi && i2 >= 0 && ww > i2 && j2 >= 0 && hh > j2)
           val= max (val, gl->get_x (i2, j2));
       bmr->set_x (ii, jj, val);
     }
