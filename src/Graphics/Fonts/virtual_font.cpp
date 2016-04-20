@@ -317,6 +317,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
   if ((is_tuple (t, "align") && N(t) >= 3) ||
       (is_tuple (t, "align*") && N(t) >= 3) ||
       is_tuple (t, "scale", 4) ||
+      is_tuple (t, "scale*", 4) ||
       is_tuple (t, "hor-scale", 2) ||
       is_tuple (t, "pretend", 2) ||
       is_tuple (t, "hor-pretend", 2) ||
@@ -863,7 +864,7 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return move (gl, dx, dy);
   }
 
-  if (is_tuple (t, "scale", 4)) {
+  if (is_tuple (t, "scale", 4) || is_tuple (t, "scale*", 4)) {
     metric ex2;
     glyph gl = compile (t[1], ex);
     glyph gl2= compile (t[2], ex2);
@@ -874,6 +875,12 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     SI w2= ex2->x2 - ex2->x1;
     SI h = ex ->y2 - ex ->y1;
     SI h2= ex2->y2 - ex2->y1;
+    if (is_tuple (t, "scale*")) {
+      w = ex ->x4 - ex ->x3;
+      w2= ex2->x4 - ex2->x3;
+      h = ex ->y4 - ex ->y3;
+      h2= ex2->y4 - ex2->y3;
+    }
     double mx= get_magnification (w, w2, sx);
     double my= get_magnification (h, h2, sy);
     if (N(t) >= 4 && t[3] == "@") sx= sy;
@@ -1411,7 +1418,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
-  if (is_tuple (t, "scale", 4)) {
+  if (is_tuple (t, "scale", 4) || is_tuple (t, "scale*", 4)) {
     metric ex, ex2;
     get_metric (t[1], ex);
     get_metric (t[2], ex2);
@@ -1422,6 +1429,12 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     SI w2= ex2->x2 - ex2->x1;
     SI h = ex ->y2 - ex ->y1;
     SI h2= ex2->y2 - ex2->y1;
+    if (is_tuple (t, "scale*")) {
+      w = ex ->x4 - ex ->x3;
+      w2= ex2->x4 - ex2->x3;
+      h = ex ->y4 - ex ->y3;
+      h2= ex2->y4 - ex2->y3;
+    }
     double mx= get_magnification (w, w2, sx);
     double my= get_magnification (h, h2, sy);
     if (N(t) >= 4 && t[3] == "@") sx= sy;

@@ -32,6 +32,7 @@
              (join (align (magnify minus 1.25 *) less 0 0)
                    (align (magnify minus 1.25 *) less 0 1))))
 
+  (invbreve (ver-flip breve))
   (smile* (align (or (part asymp * * 0.5 *)
                      (scale (crop breve) (crop =) 1 *))
                  = 0.5 0.5))
@@ -55,11 +56,13 @@
   (righttwohead* (or (font tworighthead Didot) #BB tworighthead))
   (righttwohead (scale righttwohead*
                        (max-height righttwohead* (magnify = 1.5 1.5)) @ 1))
+  (multihead (align #B0 arrowbar 0 0.5))
 
   (leftarrow (hor-flip rightarrow))
   (Leftarrow (hor-flip Rightarrow))
   (mapsfrom (hor-flip mapsto))
   (hookleftarrow (hor-flip hookrightarrow))
+  (mapmulti (hor-flip multimap))
 
   (arrowbar* (join (part rightarrow * 0.5)
                    (part leftarrow 0.5 *)))

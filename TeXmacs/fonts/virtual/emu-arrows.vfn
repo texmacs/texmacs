@@ -37,6 +37,8 @@
   (rightleftharpoons
     (align (stack (ver-crop rightharpoonup)
                   (ver-crop leftharpoondown) 0.1) arrowbar * 0.5))
+  (multimap (glue (right-crop arrowbar) (left-crop multihead)))
+  (mapmulti (glue (right-crop multihead) (left-crop arrowbar)))
 
   (longminus (row arrowbar arrowbar))
   (longequal (row Arrowbar Arrowbar))
@@ -67,6 +69,8 @@
                                 (ver-crop longrightharpoondown) 0.1))
   (longrightleftharpoons (stack (ver-crop longrightharpoonup)
                                 (ver-crop longleftharpoondown) 0.1))
+  (longmultimap (row arrowbar multimap))
+  (longmapmulti (row mapmulti arrowbar))
 
   (rubber-minus-# (hor-extend arrowbar 0.5 # 0.1))
   (rubber-equal-# (hor-extend Arrowbar 0.5 # 0.1))
@@ -88,6 +92,13 @@
   (rubber-rightharpoondown-# (hor-extend rightharpoondown 0.25 # 0.1))
   (rubber-leftrightharpoons-# (hor-extend leftrightharpoons 0.5 # 0.1))
   (rubber-rightleftharpoons-# (hor-extend rightleftharpoons 0.5 # 0.1))
+  (rubber-mapmulti-# (hor-extend mapmulti 0.75 # 0.1))
+  (rubber-multimap-# (hor-extend multimap 0.25 # 0.1))
+
+  (rubber-mapsto*-#
+    (bitmap (hor-extend mapsto 0.5 # 0.1)))
+  (rubber-leftrightharpoons*-#
+    (bitmap (hor-extend leftrightharpoons 0.5 # 0.1)))
 
   (upminus (align (rot-left minus) minus 0 0.5))
   (downminus (align (rot-right minus) minus 0 0.5))
