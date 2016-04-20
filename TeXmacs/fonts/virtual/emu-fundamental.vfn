@@ -9,7 +9,7 @@
 
   (slash (or (font minus
                    Baskerville Cuprum)
-             (font (magnify (row arrowbar arrowbar) * 0.6)
+             (font (magnify (row arrowbar arrowbar) * 0.7)
                    Essays1743)
              /))
   (auxnsim  (join = (align (magnify nsim  0.5 *) = 0.5 0.5)))

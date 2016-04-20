@@ -931,7 +931,18 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   }
 
   if (is_tuple (t, "negate", 2)) {
-    scheme_tree a= tuple ("align", t[2], t[1], "0.5", "0.5");
+    tree bar= t[2];
+    metric ex1, ex2;
+    get_metric (t[1], ex1);
+    get_metric (t[2], ex2);
+    SI h1 = ex1->y4 - ex1->y3;
+    SI h2 = ex2->y4 - ex2->y3;
+    SI sep= (SI) floor (as_double (exec (tuple ("sep-equal"))) * vunit);
+    if (h2 < h1+sep || h2 >= h1+4*sep) {
+      double mag= ((double) (h1+2*sep)) / ((double) h2);
+      bar= tuple ("magnify", bar, "1", as_string (mag));
+    }
+    scheme_tree a= tuple ("align", bar, t[1], "0.5", "0.5");
     scheme_tree u= tuple ("join", t[1], a);
     scheme_tree p= tuple ("pretend", u, t[1]);
     return compile (p, ex);
@@ -1459,7 +1470,18 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
   }
 
   if (is_tuple (t, "negate", 2)) {
-    scheme_tree a= tuple ("align", t[2], t[1], "0.5", "0.5");
+    tree bar= t[2];
+    metric ex1, ex2;
+    get_metric (t[1], ex1);
+    get_metric (t[2], ex2);
+    SI h1 = ex1->y4 - ex1->y3;
+    SI h2 = ex2->y4 - ex2->y3;
+    SI sep= (SI) floor (as_double (exec (tuple ("sep-equal"))) * vunit);
+    if (h2 < h1+sep || h2 >= h1+4*sep) {
+      double mag= ((double) (h1+2*sep)) / ((double) h2);
+      bar= tuple ("magnify", bar, "1", as_string (mag));
+    }
+    scheme_tree a= tuple ("align", bar, t[1], "0.5", "0.5");
     scheme_tree u= tuple ("join", t[1], a);
     scheme_tree p= tuple ("pretend", u, t[1]);
     draw (ren, p, x, y);

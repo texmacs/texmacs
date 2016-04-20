@@ -52,7 +52,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|Papyrus>
+    <associate|font|Essays1743>
     <associate|math-font|math-stix>
     <associate|page-type|a5>
   </collection>
