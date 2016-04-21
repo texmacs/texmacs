@@ -377,3 +377,24 @@ flood_fill (glyph gl, SI px, SI py) {
   }
   return bmr;
 }
+
+/******************************************************************************
+* Miscellaneous glyphs
+******************************************************************************/
+
+glyph
+circle_glyph (SI rad, SI penw) {
+  int rr= (rad + (penw >> 1)) / PIXEL + 1;
+  int ww= 2*rr-1, hh= 2*rr-1;
+  glyph bmr (ww, hh, rr, rr, 1);
+  for (int i=0; i<ww; i++)
+    for (int j=0; j<hh; j++) {
+      double x= (double) ((i - rr) * PIXEL);
+      double y= (double) ((j - rr) * PIXEL);
+      SI d= (SI) ceil (sqrt (x*x + y*y));
+      if ((rad + (penw >> 1)) > d && (d >= rad - (penw >> 1)))
+        bmr->set_x (i, j, 1);
+      else bmr->set_x (i, j, 0);
+    }
+  return simplify (bmr);
+}

@@ -342,6 +342,9 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
     return false;
   }
 
+  if (is_tuple (t, "circle", 2) && !svg)
+    return true;
+
   return false;
 }
 
@@ -994,6 +997,15 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
   if (is_tuple (t, "italic", 3))
     return compile (t[1], ex);
+
+  if (is_tuple (t, "circle", 2)) {
+    SI r= (SI) floor (as_double (t[1]) * hunit);
+    SI w= (SI) floor (as_double (t[2]) * hunit);
+    SI R= r + (w >> 1);
+    ex->x1= ex->x3= ex->y1= ex->y3= -R;
+    ex->x2= ex->x4= ex->y2= ex->y4=  R;
+    return circle_glyph (r, w);
+  }
 
   failed_error << "TeXmacs] The defining tree is " << t << "\n";
   FAILED ("invalid virtual character");

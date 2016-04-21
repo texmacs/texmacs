@@ -114,6 +114,8 @@ glyph transform   (glyph gl, frame fr);
 glyph rotate      (glyph gl, double angle, double ox, double oy);
 glyph curly       (glyph gl);
 
+glyph circle_glyph (SI rad, SI penw);
+
 int pixel_count (glyph g);
 double left_protrusion (glyph g, glyph o);
 double right_protrusion (glyph g, glyph o);
