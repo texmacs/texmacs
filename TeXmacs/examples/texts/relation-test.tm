@@ -53,7 +53,6 @@
 <\initial>
   <\collection>
     <associate|font|Papyrus>
-    <associate|math-font|math-stix>
     <associate|page-type|a5>
   </collection>
 </initial>

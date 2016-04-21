@@ -798,6 +798,13 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (c))
         return sm->add_char (key, c);
     }
+    if (fam == mfam && virtually_defined (c, "emu-setrels")) {
+      tree key= tuple ("emulate", "emu-setrels");
+      int nr= sm->add_font (key, REWRITE_NONE);
+      initialize_font (nr);
+      if (fn[nr]->supports (c))
+        return sm->add_char (key, c);
+    }
     if (fam == mfam && virtually_defined (c, "emu-arrows")) {
       tree key= tuple ("emulate", "emu-arrows");
       int nr= sm->add_font (key, REWRITE_NONE);
