@@ -34,6 +34,7 @@ struct virtual_font_rep: font_rep {
   double       hunit;
   double       vunit;
   hashmap<scheme_tree,metric_struct> trm;
+  hashmap<scheme_tree,glyph> trg;
   hashmap<string,bool> sup_bit;
   hashmap<string,bool> sup_svg;
 
@@ -78,7 +79,8 @@ virtual_font_rep::virtual_font_rep (
     last (N(virt->virt_def)),
     fnm (std_font_metric (name, tm_new_array<metric> (last), 0, last-1)),
     fng (std_font_glyphs (name, tm_new_array<glyph> (last), 0, last-1)),
-    trm (metric_struct ()), sup_bit (false), sup_svg (false)
+    trm (metric_struct ()), trg (glyph ()),
+    sup_bit (false), sup_svg (false)
 {
   copy_math_pars (base_fn);
   hunit= ((size*hdpi)/72)*PIXEL;
@@ -1000,8 +1002,14 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
 
 glyph
 virtual_font_rep::compile (scheme_tree t, metric& ex) {
+  if (trg->contains (t)) {
+    ex[0]= trm[t];
+    return trg[t];
+  }
   glyph r= compile_bis (t, ex);
   trm(t)= ex[0];
+  if (is_tuple (t, "curly"))
+    trg(t)= r;
   return r;
 }
 
