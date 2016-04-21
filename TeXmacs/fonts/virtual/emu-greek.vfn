@@ -17,7 +17,7 @@
                          (part Z * * * 0.5)) Zx))
   (Sigma Sigma*)
 
-  (H1 (part H * * 0.75 *))
+  (H1 (part H * * 0.7 *))
   (H2 (part H * * 0.7 0.8))
   (H3* (align (crop (part H 0.45 0.55 0.25 0.75)) (crop H) 0 0))
   (H3 (join H3* (align H3* H3* 0 * 1) (align H3* H3* 0 * 2)))
