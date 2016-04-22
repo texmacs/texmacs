@@ -202,6 +202,25 @@ bar_right (glyph gl1, glyph gl2) {
   return join (gl1, intersect (gl2, filled));
 }
 
+glyph
+bar_bottom (glyph gl1, glyph gl2) {
+  int ww1= gl1->width, hh1= gl1->height;
+  if (ww1 == 0 || hh1 == 0) return gl1;
+  int i, j;
+  int b1= 0, bi1= 0, b2= 0, bi2= ww1-1;
+  for (i=0; i<(ww1>>1); i++)
+    if (last_in_column (gl1, i) > b1) {
+      b1= last_in_column (gl1, i); bi1= i; }
+  for (i=ww1-1; i>=(ww1>>1); i--)
+    if (last_in_column (gl1, i) > b2) {
+      b2= last_in_column (gl1, i); bi2= i; }
+  glyph filled= copy (gl1);
+  for (i= bi1; i <= bi2; i++)
+    for (j= last_in_column (gl1, i); j<hh1; j++)
+      filled->set_x (i, j, 1);
+  return join (gl1, intersect (gl2, filled));
+}
+
 /******************************************************************************
 * Operating on glyphs
 ******************************************************************************/

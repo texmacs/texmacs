@@ -273,7 +273,9 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       (is_tuple (t, "bar-right*", 2) && !svg) ||
       (is_tuple (t, "bar-right", 2) && !svg) ||
       (is_tuple (t, "bar-left", 2) && !svg) ||
-      (is_tuple (t, "bar-bottom", 2) && !svg)) {
+      (is_tuple (t, "bar-bottom*", 2) && !svg) ||
+      (is_tuple (t, "bar-bottom", 2) && !svg) ||
+      (is_tuple (t, "bar-top", 2) && !svg)) {
     int i, n= N(t);
     for (i=1; i<n; i++)
       if (!supported (t[i], svg)) return false;
@@ -623,6 +625,28 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     tree u2= tuple ("align*", t[2], u1, "1", "0.5");
     tree b = tuple ("bar-right*", u1, u2);
     return compile (b, ex);
+  }
+
+  if (is_tuple (t, "bar-bottom*")) {
+    metric ey;
+    glyph gl1= compile (t[1], ex);
+    glyph gl2= compile (t[2], ey);
+    outer_fit (ex, ey, 0, 0);
+    return bar_bottom (gl1, gl2);
+  }
+
+  if (is_tuple (t, "bar-bottom", 2)) {
+    tree u1= t[1];
+    tree u2= tuple ("align*", t[2], u1, "0.5", "0");
+    tree b = tuple ("bar-bottom*", u1, u2);
+    return compile (b, ex);
+  }
+
+  if (is_tuple (t, "bar-top", 2)) {
+    tree u1= tuple ("ver-flip", t[1]);
+    tree u2= tuple ("align*", tuple ("ver-flip", t[2]), u1, "0.5", "0");
+    tree b = tuple ("bar-bottom*", u1, u2);
+    return compile (tuple ("ver-flip", b), ex);
   }
 
   if (is_tuple (t, "add", 2)) {

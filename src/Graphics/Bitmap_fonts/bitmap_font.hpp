@@ -96,6 +96,7 @@ glyph glue        (glyph gl1, glyph gl2);
 glyph add         (glyph gl1, glyph gl2);
 glyph move        (glyph gl, SI x, SI y);
 glyph bar_right   (glyph gl1, glyph gl2);
+glyph bar_bottom  (glyph gl1, glyph gl2);
 glyph copy        (glyph gl);
 glyph simplify    (glyph gl);
 glyph clip        (glyph gl, SI x1, SI y1, SI x2, SI y3);
