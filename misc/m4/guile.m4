@@ -87,42 +87,6 @@ $CONFIG_DOTS
 ], $1, $2)
 ])
 
-
-
-
-AC_DEFUN([LC_OLD_GUILE],[
-  AC_MSG_CHECKING(whether ... arguments behave correctly)
-  if test -z "$GUILE_CFLAGS"; then
-    CXXFLAGS="`$GUILE_CONFIG compile`"
-  else
-    CXXFLAGS="$GUILE_CFLAGS"
-  fi
-  LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
-    AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
-  ],[
-  # LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
-    LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
-    LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
-      AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
-  ])
-  AC_MSG_CHECKING(the size_t of guile strings)
-  if test -z "$GUILE_CFLAGS"; then
-    CXXFLAGS="`$GUILE_CONFIG compile`"
-  else
-    CXXFLAGS="$GUILE_CFLAGS"
-  fi
-  AC_RUN_IFELSE([LM_GUILE_SIZE], [
-          AC_DEFINE(guile_str_size_t, int, [Guile string size type])
-          AC_MSG_RESULT(int)
-        ],[
-          AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
-          AC_MSG_RESULT(size_t)
-    ])
-  CXXFLAGS=""
-])
-
-
-
 AC_DEFUN([LC_GUILE_STATIC],[
 AC_MSG_CHECKING([if statically linking with guile works])
 SAVE_CPPFLAGS="$CPPFLAGS"
@@ -204,6 +168,34 @@ AC_DEFUN([LC_GUILE],[
   AC_SUBST(CONFIG_GUILE_SERIAL)
   AC_SUBST(GUILE_DATA_PATH)
 
-  LC_OLD_GUILE
+  AC_MSG_CHECKING(whether ... arguments behave correctly)
+  if test -z "$GUILE_CFLAGS"; then
+    CXXFLAGS="`$GUILE_CONFIG compile`"
+  else
+    CXXFLAGS="$GUILE_CFLAGS"
+  fi
+        LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
+          AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
+        ],[
+  #       LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+          LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+          LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+            AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+        ])
+  AC_MSG_CHECKING(the size_t of guile strings)
+  if test -z "$GUILE_CFLAGS"; then
+    CXXFLAGS="`$GUILE_CONFIG compile`"
+  else
+    CXXFLAGS="$GUILE_CFLAGS"
+  fi
+        AC_RUN_IFELSE([LM_GUILE_SIZE], [
+          AC_DEFINE(guile_str_size_t, int, [Guile string size type])
+          AC_MSG_RESULT(int)
+        ],[
+          AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
+          AC_MSG_RESULT(size_t)
+    ])
+  CXXFLAGS=""
+
   LC_GUILE_STATIC
 ])

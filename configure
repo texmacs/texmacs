@@ -4706,7 +4706,6 @@ $as_echo "$GUILE_DATA_PATH" >&6; }
 
 
 
-
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ... arguments behave correctly" >&5
 $as_echo_n "checking whether ... arguments behave correctly... " >&6; }
   if test -z "$GUILE_CFLAGS"; then
@@ -5221,6 +5220,7 @@ fi
 CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
+
 
 
 #--------------------------------------------------------------------
