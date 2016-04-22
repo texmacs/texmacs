@@ -90,7 +90,7 @@ $CONFIG_DOTS
 
 
 
-AC_DEFUN([LC_WITH_GUILE],[
+AC_DEFUN([LC_OLD_GUILE],[
   AC_MSG_CHECKING(whether ... arguments behave correctly)
   if test -z "$GUILE_CFLAGS"; then
     CXXFLAGS="`$GUILE_CONFIG compile`"
