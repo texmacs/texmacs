@@ -95,6 +95,8 @@ glyph exclude     (glyph gl1, glyph gl2);
 glyph glue        (glyph gl1, glyph gl2);
 glyph add         (glyph gl1, glyph gl2);
 glyph move        (glyph gl, SI x, SI y);
+glyph cut_right   (glyph gl1, glyph gl2);
+glyph cut_bottom  (glyph gl1, glyph gl2);
 glyph simplify    (glyph gl);
 glyph clip        (glyph gl, SI x1, SI y1, SI x2, SI y3);
 glyph hor_flip    (glyph gl);

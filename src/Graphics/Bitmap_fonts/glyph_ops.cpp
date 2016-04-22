@@ -182,6 +182,42 @@ exclude (glyph gl1, glyph gl2) {
   return simplify (bmr);
 }
 
+glyph
+cut_right (glyph gl1, glyph gl2) {
+  int i, j;
+  int ww= gl1->width, hh= gl1->height, ww2= gl2->width;
+  glyph bmr (ww, hh, gl1->xoff, gl1->yoff, gl1->depth);
+  for (j=0; j<hh; j++) {
+    int j2= j - gl1->yoff + gl2->yoff;
+    int I2= first_in_row (gl2, j2);
+    int I = I2 - gl2->xoff + gl1->xoff;
+    for (i=0; i<ww; i++) {
+      int c = gl1->get_x (i, j);
+      if (i < I || I2 >= ww2) c= 0;
+      bmr->set_x (i, j, c);
+    }
+  }
+  return simplify (bmr);
+}
+
+glyph
+cut_bottom (glyph gl1, glyph gl2) {
+  int i, j;
+  int ww= gl1->width, hh= gl1->height;
+  glyph bmr (ww, hh, gl1->xoff, gl1->yoff, gl1->depth);
+  for (i=0; i<ww; i++) {
+    int i2= i - gl1->xoff + gl2->xoff;
+    int J2= last_in_column (gl2, i2);
+    int J = J2 - gl2->yoff + gl1->yoff;
+    for (j=0; j<hh; j++) {
+      int c = gl1->get_x (i, j);
+      if (j < J || J2 < 0) c= 0;
+      bmr->set_x (i, j, c);
+    }
+  }
+  return simplify (bmr);
+}
+
 /******************************************************************************
 * Operating on glyphs
 ******************************************************************************/
