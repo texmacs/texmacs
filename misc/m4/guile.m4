@@ -53,7 +53,7 @@ $CONFIG_DOTS
 
 
 
-AC_DEFUN([LC_GUILE],[
+AC_DEFUN([LC_WITH_GUILE],[
   AC_MSG_CHECKING(whether ... arguments behave correctly)
   if test -z "$GUILE_CFLAGS"; then
     CXXFLAGS="`$GUILE_CONFIG compile`"
@@ -135,4 +135,49 @@ fi
 CPPFLAGS="$SAVE_CPPFLAGS"
 LDFLAGS="$SAVE_LDFLAGS"
 LIBS="$SAVE_LIBS"
+])
+
+AC_DEFUN([LC_GUILE],[
+  AC_ARG_ENABLE(guile2,
+  [  --enable-guile2         enable compilation with Guile 2, for development purposes],
+      [], [enable_guile2="no"])
+
+  if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
+    GUILE_FLAGS
+  fi
+
+  AC_MSG_CHECKING(version of guile)
+  if test -z "$GUILE_EFFECTIVE_VERSION" ; then
+    GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
+  fi
+  AC_MSG_RESULT($GUILE_EFFECTIVE_VERSION)
+
+  case "$GUILE_EFFECTIVE_VERSION" in
+    1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+      CONFIG_GUILE_SERIAL="A"
+    ;;
+    1.6* | 1.7*)
+      CONFIG_GUILE_SERIAL="B"
+    ;;
+    2.*)
+      CONFIG_GUILE_SERIAL="D"
+      if test "$enable_guile2" != "yes"; then
+        AC_MSG_ERROR([TeXmacs is incompatible with Guile 2.
+  If you know what you are doing, run configure with --enable-guile2=yes])
+      fi
+    ;;
+    *)
+      CONFIG_GUILE_SERIAL="C"
+    ;;
+  esac
+
+  AC_MSG_CHECKING(guile data path)
+  if test -z "$GUILE_DATA_PATH" ; then
+    GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
+  fi
+  AC_MSG_RESULT($GUILE_DATA_PATH)
+
+  AC_SUBST(GUILE_BIN)
+  AC_SUBST(CONFIG_GUILE_SERIAL)
+  AC_SUBST(GUILE_DATA_PATH)
 ])

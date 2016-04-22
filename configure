@@ -4631,7 +4631,7 @@ fi
 # Checks for Guile
 #--------------------------------------------------------------------
 
-# Check whether --enable-guile2 was given.
+  # Check whether --enable-guile2 was given.
 if test "${enable_guile2+set}" = set; then :
   enableval=$enable_guile2;
 else
@@ -4639,7 +4639,7 @@ else
 fi
 
 
-if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
+  if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
 
 ## The GUILE_FLAGS macro.
   ## First, let's just see if we can find Guile at all.
@@ -4665,42 +4665,43 @@ $as_echo_n "checking for Guile... " >&6; }
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-fi
+  fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
 $as_echo_n "checking version of guile... " >&6; }
-if test -z "$GUILE_EFFECTIVE_VERSION" ; then
-  GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_EFFECTIVE_VERSION" >&5
+  if test -z "$GUILE_EFFECTIVE_VERSION" ; then
+    GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
+  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_EFFECTIVE_VERSION" >&5
 $as_echo "$GUILE_EFFECTIVE_VERSION" >&6; }
 
-case "$GUILE_EFFECTIVE_VERSION" in
-  1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
-    CONFIG_GUILE_SERIAL="A"
-  ;;
-  1.6* | 1.7*)
-    CONFIG_GUILE_SERIAL="B"
-  ;;
-  2.*)
-    CONFIG_GUILE_SERIAL="D"
-    if test "$enable_guile2" != "yes"; then
-      as_fn_error $? "TeXmacs is incompatible with Guile 2.
-If you know what you are doing, run configure with --enable-guile2=yes" "$LINENO" 5
-    fi
-  ;;
-  *)
-    CONFIG_GUILE_SERIAL="C"
-  ;;
-esac
+  case "$GUILE_EFFECTIVE_VERSION" in
+    1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+      CONFIG_GUILE_SERIAL="A"
+    ;;
+    1.6* | 1.7*)
+      CONFIG_GUILE_SERIAL="B"
+    ;;
+    2.*)
+      CONFIG_GUILE_SERIAL="D"
+      if test "$enable_guile2" != "yes"; then
+        as_fn_error $? "TeXmacs is incompatible with Guile 2.
+  If you know what you are doing, run configure with --enable-guile2=yes" "$LINENO" 5
+      fi
+    ;;
+    *)
+      CONFIG_GUILE_SERIAL="C"
+    ;;
+  esac
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
 $as_echo_n "checking guile data path... " >&6; }
-if test -z "$GUILE_DATA_PATH" ; then
-  GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
+  if test -z "$GUILE_DATA_PATH" ; then
+    GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
+  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
 $as_echo "$GUILE_DATA_PATH" >&6; }
+
 
 
 
