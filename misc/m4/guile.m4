@@ -15,7 +15,7 @@ AC_DEFUN([LM_FUNC_CHECK],[AC_LANG_PROGRAM([
 
 AC_DEFUN([LM_GUILE_DOTS],[AC_LANG_PROGRAM([
 @%:@include <gh.h>
-@%:@include <GUbILE_LIB_NAME.h>
+@%:@include <GUILE_LIB_NAME.h>
 
 typedef SCM (*FN)(...);
 
