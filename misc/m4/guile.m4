@@ -40,8 +40,8 @@ void print_string (SCM s) {
 # from the official guile distribution
 #-------------------------------------------------------------------
 
-AC_DEFUN([GUILE_FLAGS],[
-## The GUILE_FLAGS macro.
+AC_DEFUN([LC_WITH_GUILE],[
+## The LC_WITH_GUILE macro.
   ## First, let's just see if we can find Guile at all.
   AC_MSG_CHECKING(for Guile)
   GUILE_BIN="guile18"
@@ -180,7 +180,7 @@ AC_DEFUN([LC_GUILE],[
       [], [enable_guile2="no"])
 
   if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
-    GUILE_FLAGS
+    LC_WITH_GUILE
   fi
 
   AC_MSG_CHECKING(version of guile)
