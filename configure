@@ -4641,7 +4641,7 @@ fi
 
   if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
 
-## The GUILE_FLAGS macro.
+## The LC_WITH_GUILE macro.
   ## First, let's just see if we can find Guile at all.
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Guile" >&5
 $as_echo_n "checking for Guile... " >&6; }
@@ -7144,30 +7144,37 @@ $as_echo_n "checking the size_t of guile strings... " >&6; }
   else
     CXXFLAGS="$GUILE_CFLAGS"
   fi
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-    #include <guile/gh.h>
-    #include <libguile.h>
-    void print_string (SCM s) {
-      int len_r;
-      char* r= gh_scm2newstr (s, &len_r); }
+#include <gh.h>
+#include <GUILE_LIB_NAME.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
 
 int
 main ()
 {
 
-
   ;
   return 0;
 }
 _ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
+if ac_fn_cxx_try_run "$LINENO"; then :
 
 
 $as_echo "#define guile_str_size_t int" >>confdefs.h
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: int" >&5
 $as_echo "int" >&6; }
 
 else
@@ -7175,11 +7182,14 @@ else
 
 $as_echo "#define guile_str_size_t size_t" >>confdefs.h
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: size_t" >&5
 $as_echo "size_t" >&6; }
 
 fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
   CXXFLAGS=""
 
 

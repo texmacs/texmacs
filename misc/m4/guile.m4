@@ -118,20 +118,13 @@ AC_DEFUN([LC_OLD_GUILE],[
   else
     CXXFLAGS="$GUILE_CFLAGS"
   fi
-  AC_TRY_COMPILE([
-    #include <guile/gh.h>
-    #include <libguile.h>
-    void print_string (SCM s) {
-      int len_r;
-      char* r= gh_scm2newstr (s, &len_r); }
-  ],[
-  ],[
-    AC_DEFINE(guile_str_size_t, int, [Guile string size type])
-    AC_MSG_RESULT(int)
-  ],[
-    AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
-    AC_MSG_RESULT(size_t)
-  ])
+  AC_RUN_IFELSE([LM_GUILE_SIZE], [
+          AC_DEFINE(guile_str_size_t, int, [Guile string size type])
+          AC_MSG_RESULT(int)
+        ],[
+          AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
+          AC_MSG_RESULT(size_t)
+    ])
   CXXFLAGS=""
 ])
 
