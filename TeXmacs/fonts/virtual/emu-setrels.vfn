@@ -1,0 +1,107 @@
+
+(virtual-font
+  (vminus/eqset (align (scale vminus (crop eqset) * 1) eqset 0 0.5))
+  (ohalf (part osubset * 0.5 * *))
+  (halfo (unindent (part osubset 0.5 * * *)))
+  (sheqset (magnify eqset 0.6 *))
+  (sheqset* (magnify eqset 0.2 *))
+  (smallohalf (part smallosubset * 0.5 * *))
+  (smallhalfo (unindent (part smallosubset 0.5 * * *)))
+  (shsmalleqset (magnify smalleqset 0.6 *))
+
+  (prein (with w (width ohalf)
+           (join (align* ohalf (w 0 sheqset*) 1 * 0 *)
+                 (w 0 sheqset*))))
+  (preni (pretend (join sheqset* (align* halfo sheqset* 0 * 1 *)) prein))
+  (in (join prein (align* (scale* minus prein 1 0) prein 0 0.5)))
+  (ni (join preni (align* (scale* minus preni 1 0) preni 1 0.5)))
+  (nin (negate in slash3))
+  (nni (negate ni slash3))
+
+  (subset (with w (width ohalf)
+            (join (align* ohalf (w 0 sheqset) 1 * 0 *)
+                  (w 0 sheqset))))
+  (supset (pretend (join sheqset (align* halfo sheqset 0 * 1 *)) subset))
+  (subseteq (stack-less subset (hor-scale minus subset)))
+  (supseteq (stack-less supset (hor-scale minus supset)))
+  (subseteqq (stack-less subset (hor-scale = subset)))
+  (supseteqq (stack-less supset (hor-scale = supset)))
+  (nsubset (negate subset slash3))
+  (nsupset (negate supset slash3))
+  (nsubseteq (negate subseteq slash4))
+  (nsupseteq (negate supseteq slash4))
+  (nsubseteqq (negate subseteqq slash5))
+  (nsupseteqq (negate supseteqq slash5))
+  (subsetneq (stack-less subset (negate (hor-scale minus subset) slash1*)))
+  (supsetneq (stack-less supset (negate (hor-scale minus supset) slash1*)))
+  (subsetneqq (stack-less subset (negate (hor-scale = subset) slash2*)))
+  (supsetneqq (stack-less supset (negate (hor-scale = supset) slash2*)))
+  (varsubsetneq
+    (join subseteq
+          (align (pretend (align slash2* (hor-scale = subset) 0.5 0.5)
+                          (hor-scale = subset))
+                 subseteq * 0)))
+  (varsupsetneq
+    (join supseteq
+          (align (pretend (align slash2* (hor-scale = supset) 0.5 0.5)
+                          (hor-scale = supset))
+                 supseteq * 0)))
+  (varsubsetneqq
+    (join subseteqq
+          (align (pretend (align slash3* (hor-scale equiv subset) 0.6 0.5)
+                          (hor-scale equiv subset))
+                 subseteqq * 0)))
+  (varsupsetneqq
+    (join supseteqq
+          (align (pretend (align slash3* (hor-scale equiv supset) 0.2 0.5)
+                          (hor-scale equiv supset))
+                 supseteqq * 0)))
+  (smallsubset (with w (width smallohalf)
+                 (join (align* smallohalf (w 0 smalleqset) 1 * 0 *)
+                       (w 0 smalleqset))))
+  (smallsupset (pretend (join smalleqset
+                              (align* smallhalfo smalleqset 0 * 1 *))
+                        smallsubset))
+  (Subset (join subset (align* smallsubset subset 1 0.5)))
+  (Supset (join supset (align* smallsupset supset 0 0.5)))
+  (subsetplus (join subset (align* (magnify + 0.6 0.6) subset 0.75 0.5)))
+  (supsetplus (join supset (align* (magnify + 0.6 0.6) supset 0.25 0.5)))
+
+  (sqsubset (left-fit  eqset vminus/eqset 0.5))
+  (sqsupset (right-fit eqset vminus/eqset 0.5))
+  (sqsubseteq (stack-less sqsubset (hor-scale minus sqsubset)))
+  (sqsupseteq (stack-less sqsupset (hor-scale minus sqsupset)))
+  (sqsubseteqq (stack-less sqsubset (hor-scale = sqsubset)))
+  (sqsupseteqq (stack-less sqsupset (hor-scale = sqsupset)))
+  (nsqsubset (negate sqsubset slash3))
+  (nsqsupset (negate sqsupset slash3))
+  (nsqsubseteq (negate sqsubseteq slash4))
+  (nsqsupseteq (negate sqsupseteq slash4))
+  (nsqsubseteqq (negate sqsubseteqq slash5))
+  (nsqsupseteqq (negate sqsupseteqq slash5))
+  (sqsubsetneq (stack-less sqsubset
+                           (negate (hor-scale minus sqsubset) slash1*)))
+  (sqsupsetneq (stack-less sqsupset
+                           (negate (hor-scale minus sqsupset) slash1*)))
+  (sqsubsetneqq (stack-less sqsubset (negate (hor-scale = sqsubset) slash2*)))
+  (sqsupsetneqq (stack-less sqsupset (negate (hor-scale = sqsupset) slash2*)))
+  (varsqsubsetneq
+    (join sqsubseteq
+          (align (pretend (align slash2* (hor-scale = sqsubset) 0.5 0.5)
+                          (hor-scale = sqsubset))
+                 sqsubseteq * 0)))
+  (varsqsupsetneq
+    (join sqsupseteq
+          (align (pretend (align slash2* (hor-scale = sqsupset) 0.5 0.5)
+                          (hor-scale = sqsupset))
+                 sqsupseteq * 0)))
+  (varsqsubsetneqq
+    (join sqsubseteqq
+          (align (pretend (align slash3* (hor-scale equiv sqsubset) 0.6 0.5)
+                          (hor-scale equiv sqsubset))
+                 sqsubseteqq * 0)))
+  (varsqsupsetneqq
+    (join sqsupseteqq
+          (align (pretend (align slash3* (hor-scale equiv sqsupset) 0.2 0.5)
+                          (hor-scale equiv sqsupset))
+                 sqsupseteqq * 0))))
