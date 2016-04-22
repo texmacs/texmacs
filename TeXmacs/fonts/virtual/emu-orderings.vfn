@@ -136,13 +136,10 @@
   (nsuccsucceq (negate succsucceq slash4))
   (nsuccsuccsucceq (negate succsuccsucceq slash4))
 
-  (vminus/less (with m (- 1.0 (/ (height minus) (height less)))
-                 (align (magnify (scale vminus (crop less) * 1) * m)
-                        less 0 0.5)))
-  (triangleleft  (right-fit less vminus/less 0.5))
-  (triangleright (left-fit  gtr  vminus/less 0.5))
-  (vartriangleleft  (right-fit less vminus/less 0.5))
-  (vartriangleright (left-fit  gtr  vminus/less 0.5))
+  (triangleleft  (bar-right less (scale* vminus less 0 1)))
+  (triangleright (bar-left  gtr  (scale* vminus less 0 1)))
+  (vartriangleleft  (bar-right less (scale* vminus less 0 1)))
+  (vartriangleright (bar-left  gtr  (scale* vminus less 0 1)))
   (trianglelefteq  (stack-less triangleleft  (hor-scale minus triangleleft)))
   (trianglerighteq (stack-less triangleright (hor-scale minus triangleright)))
   (trianglelefteqslant

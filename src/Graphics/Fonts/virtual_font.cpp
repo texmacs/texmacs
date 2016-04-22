@@ -270,8 +270,10 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       is_tuple (t, "stack-equal", 2) ||
       is_tuple (t, "stack-less", 2) ||
       is_tuple (t, "add", 2) ||
-      (is_tuple (t, "adjoin-right", 2) && !svg) ||
-      (is_tuple (t, "adjoin-bottom", 2) && !svg)) {
+      (is_tuple (t, "bar-right*", 2) && !svg) ||
+      (is_tuple (t, "bar-right", 2) && !svg) ||
+      (is_tuple (t, "bar-left", 2) && !svg) ||
+      (is_tuple (t, "bar-bottom", 2) && !svg)) {
     int i, n= N(t);
     for (i=1; i<n; i++)
       if (!supported (t[i], svg)) return false;
@@ -601,17 +603,26 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
                                   tuple ("hor-flip", t[1]),
                                   tuple ("hor-flip", t[2]), t[3])), ex);
 
-  if (is_tuple (t, "adjoin-right")) {
+  if (is_tuple (t, "bar-right*")) {
     metric ey;
     glyph gl1= compile (t[1], ex);
     glyph gl2= compile (t[2], ey);
-    gl2= cut_right (gl2, gl1);
-    
-    SI x2= ex->x2 + ((SI) (as_double (t[3]) * (ey->x2 - ey->x1)));
-    SI dx= collision_offset (gl1, gl2, true);
-    outer_fit (ex, ey, dx, 0);
-    ex->x2= x2;
-    return join (gl1, move (gl2, dx, 0));
+    outer_fit (ex, ey, 0, 0);
+    return bar_right (gl1, gl2);
+  }
+
+  if (is_tuple (t, "bar-left", 2)) {
+    tree u1= tuple ("hor-flip", t[1]);
+    tree u2= tuple ("align*", tuple ("hor-flip", t[2]), u1, "1", "0.5");
+    tree b = tuple ("bar-right*", u1, u2);
+    return compile (tuple ("hor-flip", b), ex);
+  }
+
+  if (is_tuple (t, "bar-right", 2)) {
+    tree u1= t[1];
+    tree u2= tuple ("align*", t[2], u1, "1", "0.5");
+    tree b = tuple ("bar-right*", u1, u2);
+    return compile (b, ex);
   }
 
   if (is_tuple (t, "add", 2)) {

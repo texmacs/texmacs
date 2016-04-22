@@ -160,6 +160,7 @@ intersect (glyph gl1, glyph gl2) {
       int j2= j - gl1->yoff + gl2->yoff;
       if (i2 >= 0 && ww2 > i2 && j2 >= 0 && hh2 > j2)
         c= min (c, gl2->get_x (i2, j2));
+      else c= 0;
       bmr->set_x (i, j, c);
     }
   return simplify (bmr);
@@ -183,44 +184,38 @@ exclude (glyph gl1, glyph gl2) {
 }
 
 glyph
-cut_right (glyph gl1, glyph gl2) {
+bar_right (glyph gl1, glyph gl2) {
+  int ww1= gl1->width, hh1= gl1->height;
+  if (ww1 == 0 || hh1 == 0) return gl1;
   int i, j;
-  int ww= gl1->width, hh= gl1->height, ww2= gl2->width;
-  glyph bmr (ww, hh, gl1->xoff, gl1->yoff, gl1->depth);
-  for (j=0; j<hh; j++) {
-    int j2= j - gl1->yoff + gl2->yoff;
-    int I2= first_in_row (gl2, j2);
-    int I = I2 - gl2->xoff + gl1->xoff;
-    for (i=0; i<ww; i++) {
-      int c = gl1->get_x (i, j);
-      if (i < I || I2 >= ww2) c= 0;
-      bmr->set_x (i, j, c);
-    }
-  }
-  return simplify (bmr);
-}
-
-glyph
-cut_bottom (glyph gl1, glyph gl2) {
-  int i, j;
-  int ww= gl1->width, hh= gl1->height;
-  glyph bmr (ww, hh, gl1->xoff, gl1->yoff, gl1->depth);
-  for (i=0; i<ww; i++) {
-    int i2= i - gl1->xoff + gl2->xoff;
-    int J2= last_in_column (gl2, i2);
-    int J = J2 - gl2->yoff + gl1->yoff;
-    for (j=0; j<hh; j++) {
-      int c = gl1->get_x (i, j);
-      if (j < J || J2 < 0) c= 0;
-      bmr->set_x (i, j, c);
-    }
-  }
-  return simplify (bmr);
+  int r1= 0, rj1= 0, r2= 0, rj2= hh1-1;
+  for (j=0; j<(hh1>>1); j++)
+    if (last_in_row (gl1, j) > r1) {
+      r1= last_in_row (gl1, j); rj1= j; }
+  for (j=hh1-1; j>=(hh1>>1); j--)
+    if (last_in_row (gl1, j) > r2) {
+      r2= last_in_row (gl1, j); rj2= j; }
+  glyph filled= copy (gl1);
+  for (j= rj1; j <= rj2; j++)
+    for (i= last_in_row (gl1, j); i<ww1; i++)
+      filled->set_x (i, j, 1);
+  return join (gl1, intersect (gl2, filled));
 }
 
 /******************************************************************************
 * Operating on glyphs
 ******************************************************************************/
+
+glyph
+copy (glyph gl) {
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++)
+      bmr->set_x (i, j, gl->get_x (i, j));
+  return bmr;
+}
 
 glyph
 simplify (glyph gl) {
@@ -387,7 +382,7 @@ bottom_edge (glyph gl, SI penh, SI keepy) {
 glyph
 flood_fill (glyph gl, SI px, SI py) {
   gl= simplify (gl);
-  glyph bmr= simplify (gl);
+  glyph bmr= copy (gl);
   int ww= gl->width, hh= gl->height;
   int pi= gl->xoff + (px + (PIXEL >> 1)) / PIXEL;
   int pj= gl->yoff - (py + (PIXEL >> 1)) / PIXEL;
