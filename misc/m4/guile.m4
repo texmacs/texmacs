@@ -97,21 +97,14 @@ AC_DEFUN([LC_OLD_GUILE],[
   else
     CXXFLAGS="$GUILE_CFLAGS"
   fi
-  AC_TRY_COMPILE([
-    #include <guile/gh.h>
-    #include <libguile.h>
-    typedef SCM (*FN)(...);
-    static SCM identity (SCM x) { return x; }
-    void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
-  ],[
-  ],[
+  LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
     AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
-    AC_MSG_RESULT(yes)
   ],[
-    AC_MSG_RESULT(no)
+  # LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+    LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+    LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+      AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
   ])
-  CXXFLAGS=""
-
   AC_MSG_CHECKING(the size_t of guile strings)
   if test -z "$GUILE_CFLAGS"; then
     CXXFLAGS="`$GUILE_CONFIG compile`"
