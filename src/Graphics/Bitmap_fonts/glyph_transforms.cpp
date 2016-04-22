@@ -72,6 +72,7 @@ slanted (glyph gl, double slant) {
     for (i=0; i<ww; i++)
       bmr->set_x (i+l+dx, j, gl->get_x (i, j));
   }
+  bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }
 
@@ -179,6 +180,7 @@ stretched (glyph gl, double xf, double yf) {
       bmr->set_x (I, J, sum >= 0.5? 1: 0);
     }
   }
+  bmr->lwidth= (SI) floor (xf * gl->lwidth + 0.5);
   return simplify (bmr);
 }
 
@@ -203,6 +205,57 @@ stretched (font_glyphs fng, double xf, double yf) {
   name << as_string (xf) << "," << as_string (yf) << "]";
   return make (font_glyphs, name,
                tm_new<stretched_font_glyphs_rep> (name, fng, xf, yf));
+}
+
+/******************************************************************************
+* Pen width preserving stretching of font glyphs
+******************************************************************************/
+
+glyph
+deepen (glyph gl, double yf, SI penw) {
+  // NOTE: straight line segments of width penw will conserve their width
+  int i, j, J;
+  int ww= gl->width, hh= gl->height;
+  int y1= gl->yoff - hh, y2= gl->yoff;
+  int Y1= (int) floor (yf * y1), Y2= (int) ceil (yf * y2);
+  int HH= Y2 - Y1;
+  double delta= ((double) Y2) - yf * y2;
+  glyph bmr (ww, HH+1, gl->xoff, Y2, gl->depth);
+  for (i=0; i<ww; i++) {
+    for (J=0; J<HH; J++)
+      bmr->set_x (i, J, 0);
+    for (j=0; j<hh; ) {
+      while (j<hh && gl->get_x (i, j) == 0) j++;
+      int j1= j;
+      while (j<hh && gl->get_x (i, j) != 0) j++;
+      int j2= j;
+      if (j2 > j1) {
+        double pw= ((double) penw) / PIXEL;
+        double vw= (double) (j2 - j1);
+        double zf= 1.0;
+        if (vw > pw) zf= sqrt (pw*pw + yf*yf * (vw*vw - pw*pw)) / vw;
+        double nw= zf * vw;
+        double mu= 1.0;
+        if (((double) hh) > vw) mu= ((double) j1) / (((double) hh) - vw);
+        double nj1= mu * (yf * hh - nw) + delta;
+        double nj2= nj1 + nw + delta;
+        int J1= (int) floor (nj1 + 0.5);
+        int J2= (int) floor (nj2 + 0.5);
+        J1= max (min (J1, HH), 0);
+        J2= max (min (J2, HH), 0);
+        for (J= J1; J<J2; J++) bmr->set_x (i, J, 1);
+      }
+    }
+  }
+  bmr->lwidth= gl->lwidth;
+  return simplify (bmr);
+}
+
+glyph
+widen (glyph gl, double xf, SI penw) {
+  glyph r= transpose (deepen (transpose (gl), xf, penw));
+  r->lwidth= (SI) floor (xf * gl->lwidth + 0.5);
+  return r;
 }
 
 /******************************************************************************
@@ -260,6 +313,7 @@ bolden (glyph gl, SI dpen) {
       for (int k=0; k<=dw; k++)
         bmr->set_x (i+k, j, max (val, bmr->get_x (i+k, j)));
     }
+  bmr->lwidth= gl->lwidth + dw;
   return simplify (bmr);
 }
 
@@ -394,6 +448,7 @@ bolden_at (glyph gl, array<int> start, SI fat) {
       else for (int k=0; k<=dw; k++)
 	     bmr->set_x (i+k, j, 1);
   }
+  bmr->lwidth= gl->lwidth + dw;
   return simplify (bmr);
 }
 
@@ -432,6 +487,7 @@ hollow (glyph gl, array<int> start, SI penw, SI penh, SI fat) {
       }
     }
   }
+  bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }
 
@@ -507,6 +563,7 @@ hollow (glyph gl, SI penw, SI penh) {
       }
       if (erase) bmr->set_x (i, j, 0);
     }
+  bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }
 
@@ -703,5 +760,6 @@ curly (glyph gl) {
           val= max (val, gl->get_x (i2, j2));
       bmr->set_x (ii, jj, val);
     }
+  bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }

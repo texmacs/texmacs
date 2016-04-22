@@ -294,6 +294,8 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
   }
 
   if (is_tuple (t, "magnify", 3) ||
+      is_tuple (t, "deepen", 3) ||
+      is_tuple (t, "widen", 3) ||
       is_tuple (t, "enlarge") ||
       is_tuple (t, "unindent", 1) ||
       is_tuple (t, "crop", 1) ||
@@ -665,6 +667,26 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     if (is_double (t[3])) my= as_double (t[3]);
     stretch (ex, mx, my);
     return stretched (gl, mx, my);
+  }
+
+  if (is_tuple (t, "deepen", 3)) {
+    glyph gl= compile (t[1], ex);
+    double my= 1.0;
+    SI pw= 5*PIXEL;
+    if (is_double (t[2])) my= as_double (t[2]);
+    if (is_double (t[3])) pw= (SI) floor (as_double (t[3]) * vunit);
+    stretch (ex, 1.0, my);
+    return deepen (gl, my, pw);
+  }
+
+  if (is_tuple (t, "widen", 3)) {
+    glyph gl= compile (t[1], ex);
+    double mx= 1.0;
+    SI pw= 5*PIXEL;
+    if (is_double (t[2])) mx= as_double (t[2]);
+    if (is_double (t[3])) pw= (SI) floor (as_double (t[3]) * hunit);
+    stretch (ex, mx, 1.0);
+    return widen (gl, mx, pw);
   }
 
   if (is_tuple (t, "enlarge")) {

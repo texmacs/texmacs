@@ -145,6 +145,9 @@ join (glyph gl1, glyph gl2) {
       bmr->set_x (i+dx, j+dy,
 		  max (bmr->get_x (i+dx, j+dy), gl2->get_x (i, j)));
 
+  int lo= min (-gl1->xoff, -gl2->xoff);
+  int hi= max (gl1->lwidth - gl1->xoff, gl2->lwidth - gl2->xoff);
+  bmr->lwidth= hi - lo;
   return bmr;
 }
 
@@ -163,6 +166,7 @@ intersect (glyph gl1, glyph gl2) {
       else c= 0;
       bmr->set_x (i, j, c);
     }
+  bmr->lwidth= gl1->lwidth;
   return simplify (bmr);
 }
 
@@ -180,6 +184,7 @@ exclude (glyph gl1, glyph gl2) {
         if (gl2->get_x (i2, j2) != 0) c= 0;
       bmr->set_x (i, j, c);
     }
+  bmr->lwidth= gl1->lwidth;
   return simplify (bmr);
 }
 
@@ -250,6 +255,7 @@ simplify (glyph gl) {
   for (j=j1; j<=j2; j++)
     for (i=i1; i<=i2; i++)
       bmr->set_x (i-i1, j-j1, gl->get_x (i, j));
+  bmr->lwidth= gl->lwidth;
   return bmr;
 }
 
@@ -283,6 +289,7 @@ clip (glyph gl, SI x1, SI y1, SI x2, SI y2) {
       bool y_ok= (gl->yoff-j >= y1) && (gl->yoff-j < y2);
       bmr->set_x (i, j, x_ok && y_ok? gl->get_x (i, j): 0);
     }
+  bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }
 
@@ -306,6 +313,18 @@ ver_flip (glyph gl) {
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++)
       bmr->set_x (i, hh-1-j, gl->get_x (i, j));
+  bmr->lwidth= gl->lwidth;
+  return bmr;
+}
+
+glyph
+transpose (glyph gl) {
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (hh, ww, gl->yoff, gl->xoff, gl->depth);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++)
+      bmr->set_x (j, i, gl->get_x (i, j));
   bmr->lwidth= gl->lwidth;
   return bmr;
 }
@@ -365,6 +384,7 @@ ver_extend (glyph gl, int pos, int by) {
   for (j=0; j<(hh+by); j++)
     for (i=0; i<ww; i++)
       bmr->set_x (i, j, gl->get_x (i, j<pos? j: (j<pos+by? pos: j-by)));
+  bmr->lwidth= gl->lwidth;
   return bmr;
 }
 
@@ -376,6 +396,7 @@ ver_take (glyph gl, int pos, int nr) {
   for (j=0; j<nr; j++)
     for (i=0; i<ww; i++)
       bmr->set_x (i, j, gl->get_x (i, pos));
+  bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }
 
@@ -395,6 +416,7 @@ bottom_edge (glyph gl, SI penh, SI keepy) {
         bmr->set_x (i, j, gl->get_x (i, j));
       else bmr->set_x (i, j, 0);
   }
+  bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }
 
@@ -425,6 +447,7 @@ flood_fill (glyph gl, SI px, SI py) {
     todo= next;
     next= array<int> ();
   }
+  bmr->lwidth= gl->lwidth;
   return bmr;
 }
 
