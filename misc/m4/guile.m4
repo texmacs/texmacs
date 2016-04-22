@@ -1,3 +1,40 @@
+#--------------------------------------------------------------------
+# Various test programs definition
+#--------------------------------------------------------------------
+AC_DEFUN([LM_FUNC_CHECK],[AC_LANG_PROGRAM([
+ /* Override any GCC internal prototype to avoid an error.
+    Use char because int might match the return type of a GCC
+    builtin and then its argument prototype would still apply.  */
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+ char [$1] ();
+ ],[
+ return [$1] ();
+])])
+
+AC_DEFUN([LM_GUILE_DOTS],[AC_LANG_PROGRAM([
+@%:@include <gh.h>
+@%:@include <GUbILE_LIB_NAME.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+])])
+
+
+AC_DEFUN([LM_GUILE_SIZE],[AC_LANG_PROGRAM([
+@%:@include <gh.h>
+@%:@include <GUILE_LIB_NAME.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r); 
+}
+])])
+
+
 #-------------------------------------------------------------------
 # Modified version of GUILE_FLAGS in guile.m4
 # from the official guile distribution
