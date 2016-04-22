@@ -41,27 +41,49 @@ void print_string (SCM s) {
 #-------------------------------------------------------------------
 
 AC_DEFUN([LC_WITH_GUILE],[
-## The LC_WITH_GUILE macro.
-  ## First, let's just see if we can find Guile at all.
-  AC_MSG_CHECKING(for Guile)
-  GUILE_BIN="guile18"
-  GUILE_CONFIG="guile18-config"
-  guile18-config link > /dev/null || {
-    GUILE_BIN="guile"
-    GUILE_CONFIG="guile-config"
-    guile-config link > /dev/null || {
-      echo "configure: cannot find guile-config; is Guile installed?" 1>&2
-      exit 1
-    }
-  }
-  GUILE_ORIGINAL_CFLAGS="`$GUILE_CONFIG compile`"
-  GUILE_CFLAGS="$GUILE_ORIGINAL_CFLAGS"
-  GUILE_VARIANT_CFLAGS="$GUILE_ORIGINAL_CFLAGS $GUILE_ORIGINAL_CFLAGS/guile $GUILE_ORIGINAL_CFLAGS/libguile"
-  GUILE_LDFLAGS="`$GUILE_CONFIG link`"
-  GUILE_VARIANT_LDFLAGS="-L`$GUILE_CONFIG info libdir` -lguile -lreadline -ltermcap"
+	[guile_config=$1]
+  AC_CHECK_PROGS(guile_config, guile18-config guile-config guile20-config, [])
+  
+  LC_WITH_GUILE_tmp1="$($guile_config link) $($guile_config compile)" && dnl
+  LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" && dnl
+  LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" && dnl
+  GUILE_VERSION=$($guile_config info guileversion) && dnl
+  GUILE_VERSIONT=${GUILE_VERSION#*.*.} &&
+  GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSIONT} && dnl
+  GUILE_DATA_PATH=$($guile_config info pkgdatadir)/${GUILE_VERSION} || dnl
+  AC_MSG_ERROR([cannot find guile-config; is Guile installed?])
+  LC_SCATTER_FLAGS([$LC_WITH_GUILE_tmp1], [GUILE_TMP])
+
+  LC_SET_EMPTY_FLAGS([GUILE_TMP],[GUILE])
+  LC_CLEAR_FLAGS([GUILE_TMP])
+
+  # complete include path according the library name
+  LC_GET_ARG_VALUE(GUILE_CPPFLAGS, [-I], [LC_WITH_GUILE_tmp2])
+  LC_GET_ARG_VALUE(GUILE_LIBS, [-l], [GUILE_LIB])
+  LC_APPEND_FLAG([-I$LC_WITH_GUILE_tmp2/$GUILE_LIB], [GUILE_CPPFLAGS])
+  # Get the lib name
+  GUILE_NUM=${GUILE_LIB@%:@guile}
+  GUILE_NUM=${GUILE_NUM:-0}
+
+  AC_DEFUN([GUILE_LIB_NAME], [lib$GUILE_LIB])
+  unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
+
+  LC_COMBINE_FLAGS([GUILE],[guile])
+  LC_SUBST(GUILE)
+  GUILE_BIN="$GUILE_LIB"
+  GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
+  GUILE_CONFIG="$guile_config"
+  GUILE_CFLAGS="$GUILE_CPPFLAGS"
+  GUILE_LDFLAGS=""
   AC_SUBST(GUILE_CFLAGS)
   AC_SUBST(GUILE_LDFLAGS)
-  AC_MSG_RESULT(yes)
+#  if [[ "$GUILE_VERSION" = "$GUILE_EFFECTIVE_VERSION" ]]
+#  then echo ok
+#  else
+#    echo not ok
+#    echo $GUILE_VERSION
+#    echo $GUILE_EFFECTIVE_VERSION
+#  fi
 ])
 
 #-------------------------------------------------------------------
