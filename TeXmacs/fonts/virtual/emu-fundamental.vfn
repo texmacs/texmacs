@@ -127,13 +127,19 @@
                osubset1))
 
   (oempty1 (with rad (/ (max (width (crop +)) (height (crop +))) 2)
-             (with penw (height (crop minus))
-               (pretend (align* (circle rad penw) + 0.5 0.5) +))))
+             (with penw (frac-width)
+               (with d (/ penw 2)
+                 (unindent (enlarge
+                   (pretend (align* (circle rad penw) + 0.5 0.5) +)
+                   d d))))))
   (oempty2 (with sz (+ (max (width (crop +)) (height (crop +)))
-  	  	       (/ (height minus) 2))
+  	  	       (/ (frac-width) 2))
              (with mx (/ sz (width (crop o)))
                (with my (/ sz (height (crop o)))
-                 (pretend (align* (magnify o mx my) + 0.5 0.5) +)))))
+                 (with d (/ (frac-width) 2)
+                   (unindent (enlarge
+                     (pretend (align* (magnify o mx my) + 0.5 0.5) +)
+                     d d)))))))
   (oempty (or (font oempty2 Chalkduster Papyrus)
               oempty1))
   (small+ (magnify + 0.5 1))

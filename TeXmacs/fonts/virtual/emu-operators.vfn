@@ -129,10 +129,14 @@
                 (magnify vminus 1 my))))
   (hvplus (join (align* hbarplus + 0.5 0.5)
                 (align* vbarplus + 0.5 0.5)))
-  (boxempty (pretend (join (align* hbarplus hvplus 0.5 0)
-                           (align* hbarplus hvplus 0.5 1)
-                           (align* vbarplus hvplus 0 0.5)
-                           (align* vbarplus hvplus 1 0.5)) +))
+  (boxempty
+    (with d (/ (frac-width) 2)
+      (unindent (enlarge
+        (pretend (join (align* hbarplus hvplus 0.5 0)
+                       (align* hbarplus hvplus 0.5 1)
+                       (align* vbarplus hvplus 0 0.5)
+                       (align* vbarplus hvplus 1 0.5)) +)
+        d d))))
   (box boxempty)
   (Box boxempty)
   (boxplus (join boxempty (align* + boxempty 0.5 0.5)))

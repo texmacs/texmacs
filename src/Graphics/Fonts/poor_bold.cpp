@@ -62,6 +62,7 @@ poor_bold_font_rep::poor_bold_font_rep (string name, font b,
 
   this->spc    = this->spc + space (dlo >> 1);
   this->wquad += dup;
+  this->wline += vertical (dup);
 }
 
 static hashmap<string,double> bold_multiplier (1.0);

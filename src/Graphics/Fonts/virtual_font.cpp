@@ -349,7 +349,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
   if (is_tuple (t, "font") && N(t) >= 3) {
     for (int i=2; i<N(t); i++)
       if (is_atomic (t[i]) &&
-          starts (base_fn->res_name, "unicode:" * t[i]->label))
+          occurs ("unicode:" * t[i]->label, base_fn->res_name))
         return supported (t[1], svg);
     return false;
   }
