@@ -220,6 +220,8 @@ virtual_font_rep::exec (scheme_tree t) {
     scheme_tree yb= tuple ("ypos", "=", "0.5", "0.5", "-");
     return exec (tuple ("-", yt, yb));
   }
+  else if (is_tuple (t, "frac-width", 0))
+    return exec (tuple ("height", tuple ("ver-crop", "minus")));
   else return t;
 }
 
@@ -328,6 +330,8 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       (is_tuple (t, "align*") && N(t) >= 3) ||
       is_tuple (t, "scale", 4) ||
       is_tuple (t, "scale*", 4) ||
+      (is_tuple (t, "fscale", 5) && !svg) ||
+      (is_tuple (t, "fscale*", 5) && !svg) ||
       is_tuple (t, "hor-scale", 2) ||
       is_tuple (t, "pretend", 2) ||
       is_tuple (t, "hor-pretend", 2) ||
@@ -941,7 +945,8 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return move (gl, dx, dy);
   }
 
-  if (is_tuple (t, "scale", 4) || is_tuple (t, "scale*", 4)) {
+  if (is_tuple (t, "scale", 4) || is_tuple (t, "scale*", 4) ||
+      is_tuple (t, "fscale", 5) || is_tuple (t, "fscale*", 5)) {
     metric ex2;
     glyph gl = compile (t[1], ex);
     glyph gl2= compile (t[2], ex2);
@@ -952,7 +957,7 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     SI w2= ex2->x2 - ex2->x1;
     SI h = ex ->y2 - ex ->y1;
     SI h2= ex2->y2 - ex2->y1;
-    if (is_tuple (t, "scale*")) {
+    if (is_tuple (t, "scale*") || is_tuple (t, "fscale*")) {
       w = ex ->x4 - ex ->x3;
       w2= ex2->x4 - ex2->x3;
       h = ex ->y4 - ex ->y3;
@@ -963,7 +968,17 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     if (N(t) >= 4 && t[3] == "@") sx= sy;
     if (N(t) >= 5 && t[4] == "@") sy= sx;
     stretch (ex, mx, my);
-    return stretched (gl, mx, my);
+    if (is_tuple (t, "scale", 4) || is_tuple (t, "scale*", 4))
+      return stretched (gl, mx, my);
+    else {
+      // Faithful width preserving scaling
+      SI penw= (SI) floor (hunit * as_double (t[5]));
+      SI penh= (SI) floor (vunit * as_double (t[5]));
+      glyph r= gl;
+      if (mx != 1.0) r= widen  (gl, mx, penw);
+      if (my != 1.0) r= deepen (gl, my, penh);
+      return r;
+    }
   }
 
   if (is_tuple (t, "hor-scale", 2)) {

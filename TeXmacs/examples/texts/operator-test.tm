@@ -4,7 +4,7 @@
 
 <\body>
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|=>|<cell|+>|<cell|->|<cell|\<pm\>>|<cell|\<mp\>>|<cell|\<times\>>|<cell|\<oplus\>>|<cell|\<otimes\>>|<cell|\<ast\>>|<cell|\<amalg\>>>|<row|<cell|\<doteq\>>|<cell|\<dotplus\>>|<cell|\<dotminus\>>|<cell|\<dotpm\>>|<cell|\<dotmp\>>|<cell|\<dottimes\>>|<cell|\<dotoplus\>>|<cell|\<dototimes\>>|<cell|\<dotast\>>|<cell|\<dotamalg\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|=>|<cell|+>|<cell|->|<cell|\<pm\>>|<cell|\<mp\>>|<cell|\<times\>>|<cell|\<oplus\>>|<cell|\<otimes\>>|<cell|\<ast\>>|<cell|\<amalg\>>|<cell|>>|<row|<cell|\<doteq\>>|<cell|\<dotplus\>>|<cell|\<dotminus\>>|<cell|\<dotpm\>>|<cell|\<dotmp\>>|<cell|\<dottimes\>>|<cell|\<dotoplus\>>|<cell|\<dototimes\>>|<cell|\<dotast\>>|<cell|\<dotamalg\>>|<cell|>>>>>
   </equation*>
 
   <\equation*>
@@ -12,18 +12,19 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<ltimes\>>|<cell|\<rtimes\>>|<cell|\<leftthreetimes\>>|<cell|\<rightthreetimes\>>|<cell|\<angle\>>|<cell|\<ast\>>|<cell|\<diamond\>>|<cell|\<forall\>>|<cell|\<neg\>>>|<row|<cell|\<btimes\>>|<cell|\<ttimes\>>|<cell|>|<cell|>|<cell|\<div\>>|<cell|\<star\>>|<cell|\<kreuz\>>|<cell|\<exists\>>|<cell|\<Exists\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<ltimes\>>|<cell|\<rtimes\>>|<cell|\<leftthreetimes\>>|<cell|\<rightthreetimes\>>|<cell|\<angle\>>|<cell|\<ast\>>|<cell|\<diamond\>>|<cell|\<forall\>>|<cell|\<neg\>>>|<row|<cell|\<btimes\>>|<cell|\<ttimes\>>|<cell|\<lefttimesthree\>>|<cell|\<righttimesthree\>>|<cell|\<div\>>|<cell|\<star\>>|<cell|\<kreuz\>>|<cell|\<exists\>>|<cell|\<Exists\>>>>>>
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<wedge\>>|<cell|\<cap\>>|<cell|\<sqcap\>>|<cell|\<curlywedge\>>|<cell|\<curlywedgeuparrow\>>|<cell|\<curlywedgedownarrow\>>|<cell|\<barwedge\>>|<cell|\<vartriangle\>>|<cell|>>|<row|<cell|\<vee\>>|<cell|\<cup\>>|<cell|\<sqcup\>>|<cell|\<curlyvee\>>|<cell|\<curlyveedownarrow\>>|<cell|\<curlyveeuparrow\>>|<cell|\<veebar\>>|<cell|\<triangledown\>>|<cell|\<uplus\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<wedge\>>|<cell|\<cap\>>|<cell|\<sqcap\>>|<cell|\<curlywedge\>>|<cell|\<barwedge\>>|<cell|\<vartriangle\>>|<cell|>>|<row|<cell|\<vee\>>|<cell|\<cup\>>|<cell|\<sqcup\>>|<cell|\<curlyvee\>>|<cell|\<veebar\>>|<cell|\<triangledown\>>|<cell|\<uplus\>>>>>>
   </equation*>
+
+  \;
 </body>
 
 <\initial>
   <\collection>
-    <associate|font|schola>
-    <associate|math-font|math-schola>
+    <associate|font|Papyrus>
     <associate|page-type|a7>
   </collection>
 </initial>

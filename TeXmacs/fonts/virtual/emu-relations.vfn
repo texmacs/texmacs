@@ -5,7 +5,7 @@
   (approxeq (stack-equal (hor-scale approx minus) minus))
   (smile smile*)
   (frown frown*)
-  (asymp (with d (- (sep-equal) (* 0.5 (height minus)))
+  (asymp (with d (- (sep-equal) (* 0.5 (frac-width)))
            (align (stack (hor-scale smile* =) (hor-scale frown* =) d)
                   = * 0.5)))
   (asympasymp
