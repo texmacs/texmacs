@@ -798,7 +798,6 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (c))
         return sm->add_char (key, c);
     }
-    /*
     if (fam == mfam && virtually_defined (c, "emu-setrels")) {
       tree key= tuple ("emulate", "emu-setrels");
       int nr= sm->add_font (key, REWRITE_NONE);
@@ -806,7 +805,6 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (c))
         return sm->add_char (key, c);
     }
-    */
     if (fam == mfam && virtually_defined (c, "emu-arrows")) {
       tree key= tuple ("emulate", "emu-arrows");
       int nr= sm->add_font (key, REWRITE_NONE);
@@ -887,6 +885,10 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
 
 int
 smart_font_rep::resolve (string c) {
+  //cout << "Resolving " << c
+  //     << " for " << mfam << ", " << family << ", " << variant
+  //     << ", " << series << ", " << shape << ", " << rshape
+  //     << "; " << fn[SUBFONT_MAIN]->res_name << "\n";
   if (math_kind != 0) {
     string ugc= substitute_upright_greek (c);
     if (ugc != "" && fn[SUBFONT_MAIN]->supports (ugc)) {
