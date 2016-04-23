@@ -52,12 +52,28 @@ first_in_row (glyph gl, int j) {
 }
 
 int
+first_in_rows (glyph gl, int j1, int j2) {
+  int i= gl->width;
+  for (int j=j1; j<=j2; j++)
+    i= min (i, first_in_row (gl, j));
+  return i;
+}
+
+int
 last_in_row (glyph gl, int j) {
   int ww= gl->width;
   for (int i=ww-1; i>=0; i--)
     if (gl->get_x (i, j) != 0)
       return i;
   return -1;
+}
+
+int
+last_in_rows (glyph gl, int j1, int j2) {
+  int i= -1;
+  for (int j=j1; j<=j2; j++)
+    i= max (i, last_in_row (gl, j));
+  return i;
 }
 
 int

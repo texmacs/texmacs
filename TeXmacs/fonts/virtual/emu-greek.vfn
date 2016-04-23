@@ -5,6 +5,7 @@
 
   (Lambda* (hor-flip (ver-flip V)))
   (Lambda Lambda*)
+  (ssLambda (unserif Lambda))
 
   (Phi** (join (align I (magnify O 1 0.625) 0.5 *)
                (align (magnify O 1 0.625) I * 0.5)))
@@ -62,14 +63,7 @@
   (Theta* (bitmap Theta**))
   (Theta Theta*)
 
-  (Lambda2 (bottom-crop Lambda))
-  (Lambda3 (with h (/ (height (ver-crop H3)) (height Lambda2))
-             (part Lambda2 * * h *)))
-  (H7* (scale H3 (hor-crop Lambda3) 1 *))
-  (H7 (with m (/ (width (crop Lambda3)) (width (crop H3)))
-        (magnify H3 m *)))
-  (Delta** (join Lambda3 (align* H7 Lambda3 0.5 1 0.5 0)))
-  (Delta* (bitmap Delta**))
+  (Delta* (bar-bottom ssLambda (scale* H3 ssLambda 1 0)))
   (Delta Delta*)
 
   (O4 (align* (magnify O 0.9 0.85) O * 1))

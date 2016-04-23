@@ -16,6 +16,8 @@
 #include "frame.hpp"
 #include "iterator.hpp"
 
+int get_utf8_code (string c);
+
 /******************************************************************************
 * The virtual font class
 ******************************************************************************/
@@ -323,6 +325,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       is_tuple (t, "ver-extend", 4) ||
       is_tuple (t, "ver-take", 3) ||
       is_tuple (t, "ver-take", 4) ||
+      (is_tuple (t, "unserif") && !svg) ||
       is_tuple (t, "italic", 3))
     return supported (t[1], svg);
 
@@ -900,6 +903,19 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     ex->y3= -nr * PIXEL;
     ex->y4= 0;
     return ver_take (gl, pos, nr);
+  }
+
+  if (is_tuple (t, "unserif") && N(t) >= 2) {
+    glyph gl= compile (t[1], ex);
+    string s;
+    if (N(t) >= 3 && is_atomic (t[2])) s= t[2]->label;
+    else if (is_atomic (t[1])) s= t[1]->label;
+    if (N(s) != 1) s= "<" * s * ">";
+    int code= get_utf8_code (s);
+    SI penw= (SI) floor (as_double (exec (tuple ("frac-width"))) * vunit);
+    glyph uns= unserif (gl, code, penw);
+    normalize_borders (uns, ex);
+    return uns;
   }
 
   if (is_tuple (t, "align") && N(t) >= 3) { // logical alignment

@@ -153,4 +153,20 @@
                  (pretend (align* (magnify #B0 mx my) small+ 0.5 0.5)
                           small+)))))
   (osmall (or (font osmall2 Chalkduster Papyrus)
-              osmall1)))
+              osmall1))
+
+  (preall0
+    (with penw (frac-width)
+      (fscale*
+        (fscale* (unindent (rot-right (crop less)))
+                 preall2 1 * penw)
+        preall2 * 1 penw)))
+  (preall1 (with penw (frac-width)
+             (pretend (align* preall0 preall2 0.5 0.5) preall2)))
+  (preall2 (ver-flip (unserif V)))
+  (preall
+    (or (font preall2
+              Essays1743)
+        preall1))
+  (forall (font (ver-flip A)
+                Chalkduster MarkerFelt)))

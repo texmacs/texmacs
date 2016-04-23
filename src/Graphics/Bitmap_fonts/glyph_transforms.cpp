@@ -772,13 +772,3 @@ curly (glyph gl) {
   bmr->lwidth= gl->lwidth;
   return simplify (bmr);
 }
-
-/******************************************************************************
-* Removing serifs
-******************************************************************************/
-
-glyph
-unserif (glyph gl, SI ypos, SI yrad, int serial) {
-  (void) ypos; (void) yrad; (void) serial;
-  return gl;
-}
