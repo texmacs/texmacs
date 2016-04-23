@@ -60,7 +60,8 @@ load_string (url u, string& s, bool fatal) {
     bool doc_flag= do_cache_doc (name);
     string cache_type= doc_flag? string ("doc_cache"): string ("file_cache");
     if (doc_flag) cache_load ("doc_cache");
-    if (is_cached (cache_type, name) && is_up_to_date (url_parent (r))) {
+    bool currently_cached= is_cached (cache_type, name);
+    if (currently_cached && is_up_to_date (url_parent (r))) {
       s= cache_get (cache_type, name) -> label;
       return false;
     }
@@ -120,7 +121,7 @@ load_string (url u, string& s, bool fatal) {
     bench_cumul ("load file");
 
     // Cache file contents
-    if (!err && N(s) <= 10000)
+    if (!err && (N(s) <= 10000 || currently_cached))
       if (file_flag || doc_flag)
 	cache_set (cache_type, name, s);
     // End caching
