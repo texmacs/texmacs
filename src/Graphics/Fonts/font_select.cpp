@@ -653,6 +653,7 @@ search_font_among (array<string> v, array<string> fams, array<string> avoid,
   array<string> vx= logical_font_enrich (v);
   if (!strict) v = remove_other (v);
   if (!strict) vx= remove_other (vx);
+  //cout << "    Searching " << v << ", " << vx << "\n";
   best_d1= D_INFINITY;
   int best_d2= D_INFINITY + 1;
   double best_d3= 1000000.0;
