@@ -264,10 +264,11 @@ widen (glyph gl, double xf, SI penw) {
 
 struct bolden_font_metric_rep: public font_metric_rep {
   font_metric fnm;
-  SI dtot;
+  SI dtot, dver;
   hashmap<int,pointer> ms;
-  bolden_font_metric_rep (string name, font_metric fnm2, SI dtot2):
-    font_metric_rep (name), fnm (fnm2), dtot (dtot2), ms (error_metric) {}
+  bolden_font_metric_rep (string name, font_metric fnm2, SI dtot2, SI dver2):
+    font_metric_rep (name), fnm (fnm2),
+    dtot (dtot2), dver (dver2), ms (error_metric) {}
   bool exists (int c) { return fnm->exists (c); }
   metric& get (int c) {
     metric& m (fnm->get (c));
@@ -279,19 +280,22 @@ struct bolden_font_metric_rep: public font_metric_rep {
       r->x2= m->x2 + dtot;
       r->x3= m->x3;
       r->x4= m->x4 + dtot;
-      r->y1= m->y1;
-      r->y2= m->y2;
-      r->y3= m->y3;
-      r->y4= m->y4;
+      r->y1= m->y1 - (dver >> 1);
+      r->y2= m->y2 + (dver >> 1);
+      r->y3= m->y3 - (dver >> 1);
+      r->y4= m->y4 + (dver >> 1);
     }
     return *((metric*) ((void*) ms[c])); }
 };
 
 font_metric
-bolden (font_metric fnm, SI dtot) {
-  string name= "bolden[" * fnm->res_name * "," * as_string (dtot) * "]";
+bolden (font_metric fnm, SI dtot, SI dver) {
+  if (dver < 0) dver= -dver;
+  string name= "bolden[" * fnm->res_name * "," * as_string (dtot);
+  if (dver != 0) name << "," << as_string (dver);
+  name << "]";
   return make (font_metric, name,
-	       tm_new<bolden_font_metric_rep> (name, fnm, dtot));
+	       tm_new<bolden_font_metric_rep> (name, fnm, dtot, dver));
 }
 
 /******************************************************************************
@@ -299,56 +303,61 @@ bolden (font_metric fnm, SI dtot) {
 ******************************************************************************/
 
 glyph
-bolden (glyph gl, SI dpen) {
+bolden (glyph gl, SI dpen, SI dver) {
+  double slope= ((double) dver) / ((double) dpen);
   int dw= (dpen + (PIXEL/2)) / PIXEL;
+  int dh= 2 * (max (dver, -dver) / (2 * PIXEL) + 1);
   int i, j;
   int ww= gl->width, hh= gl->height;
-  glyph bmr (ww + dw, hh, gl->xoff, gl->yoff, gl->depth);
-  for (j=0; j<hh; j++)
+  glyph bmr (ww + dw, hh + dh, gl->xoff, gl->yoff + (dh >> 1), gl->depth);
+  for (j=0; j<(hh+dh); j++)
     for (i=0; i<(ww+dw); i++)
       bmr->set_x (i, j, 0);
   for (j=0; j<hh; j++)
-    for (i=0; i<ww; i++) {
-      int val= gl->get_x (i, j);
-      for (int k=0; k<=dw; k++)
-        bmr->set_x (i+k, j, max (val, bmr->get_x (i+k, j)));
-    }
+    for (i=0; i<ww; i++)
+      if (gl->get_x (i, j) != 0)
+        for (int k=0; k<=dw; k++) {
+          int l= (int) floor (slope * (k - 0.5 * ((double) dw)) + 0.5);
+          bmr->set_x (i+k, j+l+(dh>>1), 1);
+        }
   bmr->lwidth= gl->lwidth + dw;
   return simplify (bmr);
 }
 
 glyph
-bolden (glyph gl, SI dpen, SI dtot) {
-  if (dtot <= dpen) return bolden (gl, dpen);
+bolden (glyph gl, SI dpen, SI dtot, SI dver) {
+  if (dtot <= dpen) return bolden (gl, dpen, dver);
   SI xw= gl->width * PIXEL;
   double c= 1.0; // approximation of orig_penw / dpen
   double eps= (c * (dtot - dpen)) / (xw + c * (dtot - dpen));
   SI dpen2= (SI) ((1.0 - eps) * dpen);
   double lambda= ((double) (xw + dtot - dpen2)) / ((double) xw);
   glyph wgl= stretched (gl, lambda, 1.0);
-  return bolden (wgl, dpen2);
+  return bolden (wgl, dpen2, dver);
 }
 
 struct bolden_font_glyphs_rep: public font_glyphs_rep {
   font_glyphs fng;
-  SI dpen, dtot;
+  SI dpen, dtot, dver;
   hashmap<int,glyph> gs;
-  bolden_font_glyphs_rep (string name, font_glyphs fng2, SI dpen2, SI dtot2):
+  bolden_font_glyphs_rep (string name, font_glyphs fng2,
+                          SI dpen2, SI dtot2, SI dver2):
     font_glyphs_rep (name), fng (fng2),
-    dpen (dpen2), dtot (dtot2), gs (error_glyph) {}
+    dpen (dpen2), dtot (dtot2), dver (dver2), gs (error_glyph) {}
   glyph& get (int c) {
     glyph& orig (fng->get (c));
     if ((&orig != &error_glyph) && !gs->contains (c))
-      gs(c)= bolden (orig, dpen, dtot);
+      gs(c)= bolden (orig, dpen, dtot, dver);
     return gs(c); }
 };
 
 font_glyphs
-bolden (font_glyphs fng, SI dpen, SI dtot) {
+bolden (font_glyphs fng, SI dpen, SI dtot, SI dver) {
   string name= "bolden[" * fng->res_name * "," * as_string (dpen);
   if (dtot != dpen) name << "," << as_string (dtot) << "]";
+  if (dver != 0) name << "," << as_string (dver) << "]";
   return make (font_glyphs, name,
-               tm_new<bolden_font_glyphs_rep> (name, fng, dpen, dtot));
+               tm_new<bolden_font_glyphs_rep> (name, fng, dpen, dtot, dver));
 }
 
 /******************************************************************************
@@ -593,7 +602,7 @@ make_bbb (glyph gl, int code, SI penw, SI penh, SI fat) {
   }
   else if (true || bbb_left->contains (code))
     return var_make_bbb (gl, code, penw, penh, fat);
-  else return hollow (bolden (gl, fat), penw, penh);
+  else return hollow (bolden (gl, fat, 0), penw, penh);
 }
 
 struct make_bbb_font_glyphs_rep: public font_glyphs_rep {
@@ -762,4 +771,14 @@ curly (glyph gl) {
     }
   bmr->lwidth= gl->lwidth;
   return simplify (bmr);
+}
+
+/******************************************************************************
+* Removing serifs
+******************************************************************************/
+
+glyph
+unserif (glyph gl, SI ypos, SI yrad, int serial) {
+  (void) ypos; (void) yrad; (void) serial;
+  return gl;
 }

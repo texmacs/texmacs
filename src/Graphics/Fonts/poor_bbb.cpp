@@ -185,7 +185,7 @@ poor_bbb_font_rep::index_glyph (string s, font_metric& fnm,
                                           font_glyphs& fng) {
   int c= base->index_glyph (s, fnm, fng);
   if (c < 0) return c;
-  fnm= bolden   (fnm, fat);
+  fnm= bolden   (fnm, fat, 0);
   fng= make_bbb (fng, wpen, hpen, fat);
   return c;
 }

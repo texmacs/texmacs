@@ -114,7 +114,7 @@ glyph slanted     (glyph gl, double slant);
 glyph stretched   (glyph gl, double xf, double yf);
 glyph deepen      (glyph gl, double yf, SI penw);
 glyph widen       (glyph gl, double xf, SI penw);
-glyph bolden      (glyph gl, SI dpen, SI dtot);
+glyph bolden      (glyph gl, SI dpen, SI dtot, SI dver);
 glyph make_bbb    (glyph gl, int code, SI penw, SI penh, SI fatw);
 glyph transform   (glyph gl, frame fr);
 glyph rotate      (glyph gl, double angle, double ox, double oy);
@@ -159,8 +159,8 @@ font_metric slanted (font_metric fnm, double slant);
 font_glyphs slanted (font_glyphs fng, double slant);
 font_metric stretched (font_metric fnm, double xf, double yf);
 font_glyphs stretched (font_glyphs fng, double xf, double yf);
-font_metric bolden (font_metric fnm, SI dtot);
-font_glyphs bolden (font_glyphs fng, SI dpen, SI dtot);
+font_metric bolden (font_metric fnm, SI dtot, SI dver);
+font_glyphs bolden (font_glyphs fng, SI dpen, SI dtot, SI dver);
 font_glyphs make_bbb (font_glyphs fng, SI penw, SI penh, SI fatw);
 
 #endif // defined BITMAP_FONT_H

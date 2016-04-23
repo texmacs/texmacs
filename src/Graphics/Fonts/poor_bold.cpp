@@ -27,6 +27,7 @@ struct poor_bold_font_rep: font_rep {
   poor_bold_font_rep (string name, font base, double lofat, double upfat);
 
   void   fatten (string c, SI& dpen, SI& dtot);
+  SI     vertical (SI dpen);
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
   void   adjust_xpositions (string s, SI* xpos, bool lig);
@@ -67,6 +68,7 @@ static hashmap<string,double> bold_multiplier (1.0);
 
 static double
 get_bold_multiplier (string s) {
+  // FIXME: there is still a lot of room for improvements here
   if (N (bold_multiplier) != 0) return bold_multiplier[s];
   array<string> _1_5;
   array<string> _2_0;
@@ -90,11 +92,6 @@ get_bold_multiplier (string s) {
 
 void
 poor_bold_font_rep::fatten (string c, SI& dpen, SI& dtot) {
-  // FIXME: a future improvement would be to allow the total increase 'dtot'
-  // of width to be higher than the thickening 'dpen'.  For instance,
-  // for the character 'i', we should have dtot = dpen, but for 'n'
-  // and 'fi', we should rather have dtot = 2 dpen; for 'm', we should
-  // even have dtot = 3 pen.  This requires horizontal font stretching.
   double m= get_bold_multiplier (c);
   if (is_uni_upcase_char (c)) {
     dpen= dup;
@@ -104,6 +101,11 @@ poor_bold_font_rep::fatten (string c, SI& dpen, SI& dtot) {
     dpen= dlo;
     dtot= (SI) (m * dlo);
   }
+}
+
+SI
+poor_bold_font_rep::vertical (SI penw) {
+  return penw >> 2;
 }
 
 /******************************************************************************
@@ -202,8 +204,10 @@ poor_bold_font_rep::draw_fixed (renderer ren, string s,
         //font mbase= base->magnify (lambda, 1.0);
         font mbase= poor_stretched_font (base, lambda, 1.0);
         for (int k=0; k<=8; k++) {
+          double slope= -((double) vertical (dpen)) / ((double) dpen);
           SI dx= (k*dpen2) / 8;
-          mbase->draw (ren, ss, x + dx + (start==0? 0: xpos[start]), y);
+          SI dy= (SI) floor (slope * (dx - (dpen2 >> 1)));
+          mbase->draw (ren, ss, x + dx + (start==0? 0: xpos[start]), y + dy);
         }
       }
     }
@@ -254,7 +258,7 @@ poor_bold_font_rep::get_glyph (string s) {
   if (is_nil (gl)) return gl;
   SI dpen, dtot;
   fatten (s, dpen, dtot);
-  return bolden (gl, dpen, dtot);
+  return bolden (gl, dpen, dtot, vertical (dpen));
 }
 
 int
@@ -264,8 +268,8 @@ poor_bold_font_rep::index_glyph (string s, font_metric& fnm,
   if (c < 0) return c;
   SI dpen, dtot;
   fatten (s, dpen, dtot);
-  fnm= bolden (fnm, dtot);
-  fng= bolden (fng, dpen, dtot);
+  fnm= bolden (fnm, dtot, vertical (dpen));
+  fng= bolden (fng, dpen, dtot, vertical (dpen));
   return c;
 }
 
