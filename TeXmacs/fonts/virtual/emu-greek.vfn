@@ -1,5 +1,19 @@
 
 (virtual-font
+  (Alpha A)
+  (Beta B)
+  (Epsilon E)
+  (Zeta Z)
+  (Eta H)
+  (Iota I)
+  (Kappa K)
+  (Mu M)
+  (Nu N)
+  (Omicron O)
+  (Rho P)
+  (Tau T)
+  (Chi X)
+
   (Gamma* (ver-flip L))
   (Gamma Gamma*)
 
