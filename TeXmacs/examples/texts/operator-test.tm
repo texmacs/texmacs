@@ -24,7 +24,6 @@
 
 <\initial>
   <\collection>
-    <associate|font|Papyrus>
-    <associate|page-type|a7>
+    <associate|page-type|a5>
   </collection>
 </initial>

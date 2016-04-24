@@ -38,7 +38,8 @@
     "<longVdash>" "<longdashV>" "<longVDash>" "<longDashV>"
     "<longVvdash>" "<longdashVv>" "<longVvDash>" "<longDashVv>"
     "<nvdash>" "<ndashv>" "<nvDash>" "<nDashv>"
-    "<nVdash>" "<ndashV>" "<nVDash>" "<nDashV>")
+    "<nVdash>" "<ndashV>" "<nVDash>" "<nDashV>"
+    "<nVvdash>" "<ndashVv>" "<nVvDash>" "<nDashVv>")
 
   (define Quantifier-symbol
     (:type prefix)
@@ -87,10 +88,11 @@
     (:spacing default default)
 
     "=" "<ne>" "<neq>" "<longequal>" "<less>" "<gtr>" "<le>" "<leq>"
-    "<prec>" "<preceq>" "<ll>" "<lleq>" "<subset>" "<subseteq>"
-    "<sqsubset>" "<sqsubseteq>" "<in>" "<ni>" "<of>"
-    "<ge>" "<geq>" "<succ>" "<succeq>"
-    "<gg>" "<ggeq>" "<supset>" "<supseteq>" "<sqsupset>" "<sqsupseteq>"
+    "<prec>" "<preceq>" "<preceqq>" "<ll>" "<lleq>" "<subset>" "<subseteq>"
+    "<sqsubset>" "<sqsubseteq>" "<sqsubseteqq>" "<in>" "<ni>" "<of>"
+    "<ge>" "<geq>" "<succ>" "<succeq>" "<succeqq>"
+    "<gg>" "<ggeq>" "<supset>" "<supseteq>"
+    "<sqsupset>" "<sqsupseteq>" "<sqsupseteqq>"
     "<equiv>" "<nequiv>" "<sim>" "<simeq>" "<asymp>" "<approx>" "<cong>"
     "<subsetsim>" "<supsetsim>" "<doteq>" "<propto>" "<varpropto>"
     "<perp>" "<bowtie>" "<Join>" "<smile>" "<frown>" "<signchange>"
@@ -101,27 +103,40 @@
     "<Bumpeq>" "<bumpeq>" "<circeq>" "<triangleq>"
     "<curlyeqprec>" "<curlyeqsucc>" "<Doteq>" "<doteqdot>" "<eqcirc>"
     "<eqslantgtr>" "<eqslantless>" "<fallingdotseq>" "<geqq>" "<geqslant>"
-    "<ggg>" "<gggtr>" "<gnapprox>" "<gneq>" "<gneqq>" "<gnsim>" "<gtrapprox>"
-    "<gtrdot>" "<gtreqdot>" "<gtreqless>" "<gtreqqless>" "<gtrless>"
+    "<ggg>" "<gggtr>" "<ngtrapprox>" "<gnapprox>" "<gneq>" "<gneqq>"
+    "<ngtrsim>" "<gnsim>" "<gtrapprox>"
+    "<gtrdot>" "<gtreqdot>" "<dotgtr>" "<dotgeq>" "<dotgeqslant>"
+    "<gtreqless>" "<gtreqqless>" "<gtrless>"
     "<gtrsim>" "<gvertneqq>" "<leqq>" "<leqslant>" "<lessapprox>"
-    "<lessdot>" "<lesseqdot>" "<lesseqgtr>" "<lesseqqgtr>" "<lessgtr>"
-    "<lesssim>" "<lll>" "<llless>" "<lnapprox>" "<lneq>" "<lneqq>"
-    "<lnsim>" "<lvertneqq>" "<napprox>" "<ngeq>" "<ngeqq>" "<ngeqslant>"
-    "<ngtr>" "<nleq>" "<nleqq>" "<nleqslant>" "<nless>" "<nprec>" "<npreceq>"
+    "<lessdot>" "<lesseqdot>" "<leqdot>" "<leqslantdot>"
+    "<lesseqgtr>" "<lesseqqgtr>" "<lessgtr>"
+    "<lesssim>" "<lll>" "<llless>" "<nlessapprox>" "<lnapprox>"
+    "<lneq>" "<lneqq>" "<nlesssim>" "<lnsim>"
+    "<lvertneqq>" "<napprox>" "<ngeq>" "<ngeqq>" "<ngeqslant>"
+    "<ngtr>" "<nleq>" "<nleqq>" "<nleqslant>" "<nless>"
+    "<nprec>" "<npreceq>" "<precneq>" "<npreceqq>"
     "<nsim>" "<nsimeq>""<ncong>" "<napproxeq>"
-    "<nasymp>" "<nsubset>" "<nsupset>"
-    "<nsqsubset>" "<nsqsupset>" "<nsqsubseteq>" "<nsqsupseteq>"
-    "<nsubseteq>" "<nsucc>" "<nsucceq>"
+    "<nasymp>" "<nsubset>" "<nsupset>" "<nsqsubset>" "<nsqsupset>"
+    "<nsqsubseteq>" "<sqsubsetneq>" "<varsqsubsetneq>"
+    "<nsqsupseteq>" "<sqsupsetneq>" "<varsqsupsetneq>"
+    "<nsqsubseteqq>" "<sqsubsetneqq>" "<varsqsubsetneqq>"
+    "<nsqsupseteqq>" "<sqsupsetneqq>" "<varsqsupsetneqq>"
+    "<nsubseteq>" "<nsucc>" "<nsucceq>" "<succneq>" "<nsucceqq>"
     "<nsupseteq>" "<nsupseteqq>" "<precapprox>" "<preccurlyeq>"
-    "<npreccurlyeq>" "<precnapprox>" "<precneqq>"
-    "<precsim>" "<precnsim>" "<risingdoteq>" "<Subset>"
-    "<subseteqq>" "<subsetneq>" "<subsetneqq>" "<succapprox>"
-    "<succcurlyeq>" "<nsucccurlyeq>" "<succnapprox>" "<succneqq>"
-    "<succsim>" "<succnsim>" "<Supset>" "<supseteqq>"
-    "<supsetneq>" "<supsetneqq>"
+    "<npreccurlyeq>" "<nprecapprox>" "<precnapprox>"
+    "<precneqq>" "<precvertneqq>"
+    "<precsim>" "<nprecsim>" "<precnsim>" "<risingdoteq>" "<Subset>"
+    "<subseteqq>" "<subsetneq>"
+    "<nsubseteqq>" "<subsetneqq>" "<succapprox>"
+    "<succcurlyeq>" "<nsucccurlyeq>" "<nsuccapprox>" "<succnapprox>"
+    "<succneqq>" "<succvertneqq>"
+    "<succsim>" "<nsuccsim>" "<succnsim>" "<Supset>" "<supseteqq>"
+    "<nsupsetneqq>" "<supsetneq>" "<supsetneqq>"
     "<thickapprox>" "<thicksim>" "<varsubsetneq>" "<varsubsetneqq>"
     "<varsupsetneq>" "<varsupsetneqq>" "<llleq>" "<gggeq>"
     "<subsetplus>" "<supsetplus>"
+    "<nll>" "<nlleq>" "<nlll>" "<nllleq>"
+    "<ngg>" "<nggeq>" "<nggg>" "<ngggeq>"
 
     "<vartriangleleft>" "<vartriangleright>"
     "<triangleleft>" "<triangleright>"
@@ -133,13 +148,18 @@
     "<ntriangleleft>" "<ntriangleright>"
     "<ntrianglelefteq>" "<ntrianglerighteq>"
     "<ntrianglelefteqslant>" "<ntrianglerighteqslant>"
+    "<nblacktriangleleft>" "<nblacktriangleright>"
+    "<nblacktrianglelefteq>" "<nblacktrianglerighteq>"
+    "<nblacktrianglelefteqslant>" "<nblacktrianglerighteqslant>"
 
     "<precprec>" "<precpreceq>" "<precprecprec>" "<precprecpreceq>"
     "<succsucc>" "<succsucceq>" "<succsuccsucc>" "<succsuccsucceq>"
     "<nprecprec>" "<nprecpreceq>" "<nprecprecprec>" "<nprecprecpreceq>"
     "<nsuccsucc>" "<nsuccsucceq>" "<nsuccsuccsucc>" "<nsuccsuccsucceq>"
     "<asympasymp>" "<nasympasymp>" "<simsim>" "<nsimsim>" "<nin>" "<nni>"
-    "<notin>" "<notni>" "<precdot>" "<preceqdot>" "<dotsucc>" "<dotsucceq>"
+    "<notin>" "<notni>"
+    "<precdot>" "<preceqdot>" "<preccurlyeqdot>"
+    "<dotsucc>" "<dotsucceq>" "<dotsucccurlyeq>"
 
     "<because>" "<between>" "<therefore>")
 
@@ -218,7 +238,7 @@
     (:type infix)
     (:penalty 30)
     (:spacing default default)
-    "<setminus>" "<smallsetminus>")
+    "<setminus>" "<smallsetminus>" "<bslash>")
 
   (define Plus-visible-symbol
     (:type infix)
@@ -262,11 +282,13 @@
     (:spacing default default)
     "<cdot>" "<times>" "<otimes>" "<product>"
     "<circ>" "<bullet>" "<odot>" "<boxdot>" "<boxtimes>" "<boxcircle>"
-    "<dottimes>" "<dototimes>" "<ltimes>" "<rtimes>" "<atimes>" "<btimes>"
+    "<dottimes>" "<dototimes>"
+    "<ltimes>" "<rtimes>" "<btimes>" "<ttimes>"
     "<exterior>" "<join>"
     "<ast>" "<star>" "<oast>" "<boxast>" "<dotast>"
     "<circledast>" "<circledcirc>" "<varocircle>" "<boxbox>"
-    "<leftthreetimes>" "<rightthreetimes>")
+    "<leftthreetimes>" "<rightthreetimes>"
+    "<lefttimesthree>" "<righttimesthree>")
 
   (define Times-invisible-symbol
     (:type infix)
@@ -281,7 +303,8 @@
     (:type infix)
     (:penalty 40)
     (:spacing default default)
-    "<over>" "<div>" "<oover>" "<divideontimes>" "<oslash>" "<boxslash>")
+    "<over>" "<div>" "<oover>" "<divideontimes>"
+    "<oslash>" "<boxslash>" "<dslash>")
 
   (define Over-condensed-symbol
     (:type infix)
@@ -570,9 +593,9 @@
     "<prime>" "<emptyset>"
     "<surd>" "<top>" "<bot>" "<angle>"
     "<flat>" "<natural>" "<sharp>" "<backslash>"
-    "<infty>" "<infty>" "<Box>" "<Diamont>"
+    "<infty>" "<infty>" "<Box>" "<Diamont>" "<oempty>" "<boxempty>"
     "<triangle>" "<clubsuit>" "<diamondsuit>" "<heartsuit>"
-    "<spadesuit>" "<diamond>" "<box>" "<bullet>"
+    "<spadesuit>" "<diamond>" "<box>" "<smallbox>" "<bullet>"
     "<eigthnote>" "<quarternote>" "<halfnote>" "<fullnote>" "<twonotes>"
     "<sun>" "<leftmoon>" "<rightmoon>" "<earth>" "<male>" "<female>"
     "<kreuz>" "<recorder>" "<phone>" "<checked>" "<bell>"

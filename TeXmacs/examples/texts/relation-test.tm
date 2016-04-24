@@ -16,7 +16,7 @@
   </equation*>
 
   <\equation*>
-    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<leqdot\>>|<cell|\<leqslantdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<dotgtr\>>|<cell|\<geqdot\>>|<cell|\<dotgeqslant\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
+    <tabular*|<tformat|<table|<row|<cell|\<lessdot\>>|<cell|\<leqdot\>>|<cell|\<leqslantdot\>>|<cell|\<lesssim\>>|<cell|\<lessapprox\>>|<cell|\<nlesssim\>>|<cell|\<lnsim\>>|<cell|\<nlessapprox\>>|<cell|\<lnapprox\>>>|<row|<cell|\<dotgtr\>>|<cell|\<dotgeq\>>|<cell|\<dotgeqslant\>>|<cell|\<gtrsim\>>|<cell|\<gtrapprox\>>|<cell|\<ngtrsim\>>|<cell|\<gnsim\>>|<cell|\<ngtrapprox\>>|<cell|\<gnapprox\>>>>>>
   </equation*>
 
   <\equation*>
