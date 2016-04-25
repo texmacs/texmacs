@@ -130,6 +130,19 @@ find_in_emu_bracket (string c) {
   return gen_trl->dict->contains (c);
 }
 
+static array<string>
+emu_font_names () {
+  array<string> a;
+  a << string ("emu-fundamental")
+    << string ("emu-greek")
+    << string ("emu-operators")
+    << string ("emu-relations")
+    << string ("emu-orderings")
+    << string ("emu-setrels")
+    << string ("emu-arrows");
+  return a;
+}
+
 /******************************************************************************
 * Special characters in mathematical fonts
 ******************************************************************************/
@@ -764,54 +777,16 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         return sm->add_char (key, c);
       }
     }
-    if (fam == mfam && virtually_defined (c, "emu-fundamental")) {
-      tree key= tuple ("emulate", "emu-fundamental");
-      int nr= sm->add_font (key, REWRITE_NONE);
-      initialize_font (nr);
-      if (fn[nr]->supports (c))
-        return sm->add_char (key, c);
-    }
-    if (fam == mfam && virtually_defined (c, "emu-greek")) {
-      tree key= tuple ("emulate", "emu-greek");
-      int nr= sm->add_font (key, REWRITE_NONE);
-      initialize_font (nr);
-      if (fn[nr]->supports (c))
-        return sm->add_char (key, c);
-    }
-    if (fam == mfam && virtually_defined (c, "emu-operators")) {
-      tree key= tuple ("emulate", "emu-operators");
-      int nr= sm->add_font (key, REWRITE_NONE);
-      initialize_font (nr);
-      if (fn[nr]->supports (c))
-        return sm->add_char (key, c);
-    }
-    if (fam == mfam && virtually_defined (c, "emu-relations")) {
-      tree key= tuple ("emulate", "emu-relations");
-      int nr= sm->add_font (key, REWRITE_NONE);
-      initialize_font (nr);
-      if (fn[nr]->supports (c))
-        return sm->add_char (key, c);
-    }
-    if (fam == mfam && virtually_defined (c, "emu-orderings")) {
-      tree key= tuple ("emulate", "emu-orderings");
-      int nr= sm->add_font (key, REWRITE_NONE);
-      initialize_font (nr);
-      if (fn[nr]->supports (c))
-        return sm->add_char (key, c);
-    }
-    if (fam == mfam && virtually_defined (c, "emu-setrels")) {
-      tree key= tuple ("emulate", "emu-setrels");
-      int nr= sm->add_font (key, REWRITE_NONE);
-      initialize_font (nr);
-      if (fn[nr]->supports (c))
-        return sm->add_char (key, c);
-    }
-    if (fam == mfam && virtually_defined (c, "emu-arrows")) {
-      tree key= tuple ("emulate", "emu-arrows");
-      int nr= sm->add_font (key, REWRITE_NONE);
-      initialize_font (nr);
-      if (fn[nr]->supports (c))
-        return sm->add_char (key, c);
+    if (fam == mfam) {
+      array<string> emu_names= emu_font_names ();
+      for (int i=0; i<N(emu_names); i++)
+	if (virtually_defined (c, emu_names[i])) {
+	  tree key= tuple ("emulate", emu_names[i]);
+	  int nr= sm->add_font (key, REWRITE_NONE);
+	  initialize_font (nr);
+	  if (fn[nr]->supports (c))
+	    return sm->add_char (key, c);
+	}
     }
   }
 
