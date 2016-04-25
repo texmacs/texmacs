@@ -681,6 +681,11 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   //cout << "Got " << r << " in " << fn[nr]->res_name << "\n";
 }
 
+bool
+is_italic_font (string master) {
+  return contains (string ("italic"), master_features (master));
+}
+
 int
 smart_font_rep::resolve (string c, string fam, int attempt) {
   //cout << "Resolve " << c << " in " << fam << ", attempt " << attempt << "\n";
@@ -777,7 +782,7 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         return sm->add_char (key, c);
       }
     }
-    if (fam == mfam) {
+    if (fam == mfam && !is_italic_font (mfam)) {
       array<string> emu_names= emu_font_names ();
       for (int i=0; i<N(emu_names); i++)
 	if (virtually_defined (c, emu_names[i])) {
@@ -829,6 +834,7 @@ extern bool has_poor_rubber;
 int
 smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   //cout << "Rubber " << c << ", " << fam << ", " << attempt << LF;
+  if (is_italic_font (mfam)) return -1;
   int l= search_forwards ("-", 0, c) + 1;
   int r= search_forwards ("-", l, c);
   if (r == -1) r= N(c) - 1;
@@ -892,7 +898,7 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in special\n";
       return sm->add_char (tuple ("special"), c);
     }
-    if (find_in_emu_bracket (c)) {
+    if (find_in_emu_bracket (c) && !is_italic_font (mfam)) {
       //cout << "Found " << c << " in emu-bracket\n";
       return sm->add_char (tuple ("virtual", "emu-bracket"), c);
     }
