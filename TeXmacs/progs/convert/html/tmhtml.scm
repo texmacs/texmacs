@@ -1082,7 +1082,7 @@
 (define (tmhtml-png y)
   (let* ((mag (ahash-ref tmhtml-env :mag))
 	 (x (if (or (nstring? mag) (== mag "1")) y
-		`(with "font-size" ,mag ,y)))
+		`(with "magnification" ,mag ,y)))
 	 (l1 (tmhtml-collect-labels y))
 	 (l2 (if (null? l1) l1 (list (car l1)))))
     (with cached (ahash-ref tmhtml-image-cache x)
