@@ -66,7 +66,8 @@ poor_rubber_font_rep::get_font (int nr) {
     double zoomy= pow (2.0, ((double) hnr) / 4.0);
     double zoomx= sqrt (zoomy);
     if ((nr & 1) == 1) zoomx= sqrt (zoomx);
-    larger[nr]= base->magnify (zoomx, zoomy);
+    larger[nr]= poor_stretched_font (base, zoomx, zoomy);
+    //larger[nr]= base->magnify (zoomx, zoomy);
   }
   else if (nr == 2*MAGNIFIED_NUMBER + 2 || nr == 2*MAGNIFIED_NUMBER + 3) {
     int hdpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;

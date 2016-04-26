@@ -218,7 +218,7 @@ bar_right (glyph gl1, glyph gl2) {
       r2= last_in_row (gl1, j); rj2= j; }
   glyph filled= copy (gl1);
   for (j= rj1; j <= rj2; j++)
-    for (i= last_in_row (gl1, j); i<ww1; i++)
+    for (i= max (last_in_row (gl1, j), 0); i<ww1; i++)
       filled->set_x (i, j, 1);
   return join (gl1, intersect (gl2, filled));
 }
@@ -237,7 +237,7 @@ bar_bottom (glyph gl1, glyph gl2) {
       b2= last_in_column (gl1, i); bi2= i; }
   glyph filled= copy (gl1);
   for (i= bi1; i <= bi2; i++)
-    for (j= last_in_column (gl1, i); j<hh1; j++)
+    for (j= max (last_in_column (gl1, i), 0); j<hh1; j++)
       filled->set_x (i, j, 1);
   return join (gl1, intersect (gl2, filled));
 }
