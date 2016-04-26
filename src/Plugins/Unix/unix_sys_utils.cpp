@@ -16,12 +16,9 @@
 #include <fcntl.h>
 #include <spawn.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/wait.h>
-
-// for thread safe strings
-#ifdef QTTEXMACS
-#include <string>
-#endif
+#include <pthread.h>
 
 int
 unix_system (string s) {
@@ -46,9 +43,69 @@ unix_system (string cmd, string& result) {
 * Evaluation via specified file descriptors
 ******************************************************************************/
 
-#ifdef QTTEXMACS
+#if !defined(__MINGW__) && !defined(__MINGW32__) && !defined(OS_WIN32)
+
 extern char **environ;
 
+// exception safe mutex
+struct _mutex {
+  pthread_mutex_t rep;
+  inline _mutex () { pthread_mutex_init (&rep, NULL); }
+  inline ~_mutex () { pthread_mutex_destroy (&rep); }
+};
+
+struct _mutex_lock {
+  pthread_mutex_t* rep;
+  inline _mutex_lock (_mutex& m): rep (&(m.rep)) {
+    pthread_mutex_lock (rep); }
+  inline ~_mutex_lock () {
+    pthread_mutex_unlock (rep); }
+};
+
+// thread safe malloc and free
+static _mutex _ts_memory_lock;
+
+void*
+_ts_malloc (int n) {
+  _mutex_lock lock (_ts_memory_lock);
+  return malloc (n);
+}
+
+void
+_ts_free (void* a) {
+  _mutex_lock lock (_ts_memory_lock);
+  free (a);
+}
+
+// thread safe strings
+struct _ts_string {
+  int n, l;
+  char* a;
+
+  inline _ts_string (): n (0), l (0), a (NULL) {}
+  inline ~_ts_string () { if (l != 0) _ts_free ((void*) a); }
+
+  void resize (int m) {
+    if (m <= n) return;
+    int new_l= max (2 * n, m);
+    char* new_a= (char*) _ts_malloc (new_l * sizeof (char));
+    memcpy (new_a, a, n);
+    _ts_free ((void*) a);
+    a= new_a;
+    l= new_l; }
+
+  void append (char* b, int m) {
+    resize (m + n);
+    memcpy (a + n, b, m);
+    n += m; }
+
+  void copy (char* b, int m) {
+    resize (m);
+    memcpy (a, b, m);
+    n= m; }
+};
+
+// pipe
 struct _pipe_t {
   int rep[2];
   int st;
@@ -69,14 +126,14 @@ struct _pipe_t {
 // asynchronous channel between spawn process
 struct _channel {
   int fd;
-  std::string data;
+  _ts_string data;
   int buffer_size;
   array<char> buffer;
   int status;
   _channel () : status (0) {}
   void _init_in (int fd2, string data2, int chunk_size) {
     fd= fd2;
-    c_string tmp (data2); data= std::string (tmp);
+    data.copy (&data2[0], N(data2));
     buffer_size= chunk_size; }
   void _init_out (int fd2, int buffer_size2) {
     fd= fd2;
@@ -89,14 +146,13 @@ static void*
 _background_read_task (void* channel_as_void_ptr) {
   _channel* c= (_channel*) channel_as_void_ptr;
   int fd= c->fd;
-  std::string& s= c->data;
   int n= c->buffer_size;
   char* b= A (c->buffer);
   int m;
   do {
     m= read (fd, b, n);
     // cout << "read " << m << " bytes from " << fd << "\n";
-    if (m > 0) s += std::basic_string<char> (b, m);
+    if (m > 0) c->data.append (b, m);
     if (m == 0) { if (close (fd) != 0) c->status= -1; }
   } while (m > 0);
   return (void*) NULL;
@@ -107,9 +163,9 @@ static void*
 _background_write_task (void* channel_as_void_ptr) {
   _channel* c= (_channel*) channel_as_void_ptr;
   int fd= c->fd;
-  const char* d= c->data.data ();
+  const char* d= c->data.a;
   int n= c->buffer_size;
-  int t= (c->data).size(), k= 0, o= 0;
+  int t= (c->data).n, k= 0, o= 0;
   if (t == 0) return (void*) NULL;
   if (n == 0) { c->status= -1; return (void*) NULL; }
   do {
@@ -246,8 +302,8 @@ unix_system (array<string> arg,
   }
   for (int i= 0; i < n_out; i++) {
     pthread_join (threads_read[i], &exit_status);
-    *(str_out[i])= string (channels_out[i].data.data (),
-                           channels_out[i].data.length ());
+    *(str_out[i])= string (channels_out[i].data.a,
+                           channels_out[i].data.n);
     if (channels_out[i].status < 0) thread_status= -1;
   }
 
@@ -267,3 +323,4 @@ unix_system (array<string> arg,
 }
 
 #endif
+
