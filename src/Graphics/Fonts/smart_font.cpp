@@ -763,7 +763,7 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (fn[nr]->supports (rewrite (c, REWRITE_CYRILLIC)))
         return sm->add_char (key, c);
     }
-    if (N(c) == 7 && starts (c, "<bbb-")) {
+    if (N(c) == 7 && starts (c, "<bbb-") && !occurs ("TeX Gyre", mfam)) {
       font cfn= closest_font (fam, variant, series, rshape, sz, dpi, 1);
       if (cfn->supports (c (N(c)-2, N(c)-1))) {
         array<string> lfn= logical_font (fam, variant, series, rshape);
