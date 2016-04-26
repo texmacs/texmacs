@@ -811,6 +811,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(font-database-extend-local <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|font_database_extend_local> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(font-database-build-global)>
 <explain-synopsis|no synopsis>
   <|explain>

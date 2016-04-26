@@ -126,6 +126,7 @@
 "tt-analyze"
 "font-database-build"
 "font-database-build-local"
+"font-database-extend-local"
 "font-database-build-global"
 "font-database-build-characteristics"
 "font-database-insert-global"

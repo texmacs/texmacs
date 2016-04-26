@@ -18,14 +18,37 @@
 #include "Metafont/tex_files.hpp"
 #include "timer.hpp"
 #include "data_cache.hpp"
+#include "scheme.hpp"
 
 static hashmap<string,string> tt_fonts ("no");
+
+url
+add_to_path (url u, url d) {
+  if (is_or (d)) return add_to_path (add_to_path (u, d[1]), d[2]);
+  if (is_none (u) || u == d) return d;
+  if (is_or (u) && u[1] == d) return u;
+  if (is_or (u)) return u[1] | add_to_path (u[2], d);
+  return u | d;
+}
+
+void
+tt_extend_font_path (url u) {
+  if (!is_directory (u)) u= head (u);
+  string old= get_preference ("imported fonts", "");
+  if (old == "") set_preference ("imported fonts", as_unix_string (u));
+  else {
+    url dirs= add_to_path (url_unix (old), u);
+    set_preference ("imported fonts", as_unix_string (dirs));
+  }
+}
 
 url
 tt_font_path () {
   string xtt= get_env ("TEXMACS_FONT_PATH");
   url xu= url_none ();
   if (xtt != "") xu= search_sub_dirs (xtt);
+  string ximp= get_preference ("imported fonts", "");
+  if (ximp != "") xu= xu | search_sub_dirs (url_unix (ximp));
   return
     xu |
     search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype") |

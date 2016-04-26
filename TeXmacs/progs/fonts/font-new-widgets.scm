@@ -245,7 +245,7 @@
   (vertical
     (bold (text "Family"))
     ===
-    (resize ("300px" "300px" "2000px") ("325px" "325px" "2000px")
+    (resize "300px" "325px"
       (scrollable
         (choice (set! selector-font-family answer)
                 (selected-families)
@@ -255,7 +255,7 @@
   (vertical
     (bold (text "Style"))
     ===
-    (resize ("200px" "200px" "400px") ("325px" "325px" "2000px")
+    (resize "200px" "325px"
       (scrollable
         (choice (set! selector-font-style answer)
                 (selected-styles selector-font-family)
@@ -265,7 +265,7 @@
   (vertical
     (bold (text "Size"))
     ===
-    (resize ("75px" "75px" "75px") ("325px" "325px" "2000px")
+    (resize "75px" "325px"
       (scrollable
         (choice (set! selector-font-size answer)
                 (font-default-sizes)
@@ -344,9 +344,14 @@
     (text (selector-font-simulate-comment))
     >>>)
   ===
-  (resize ("300px" "300px" "2000px") ("225px" "225px" "225px")
+  (resize "850px" "225px"
     (scrollable
       (link font-sample-text))))
+
+(tm-define (font-import name)
+  (font-database-extend-local name)
+  (refresh-now "font-family-selector")
+  (refresh-now "font-size-selector"))
 
 (tm-widget ((font-selector flag?) quit)
   (padded
@@ -374,6 +379,7 @@
                 "Unicode 4000-4fff")
               (get-font-sample-kind) "120px")
         >>>
+        ("Import" (choose-file font-import "Import font" "")) // //
         (if flag?
             ("Reset"
              (begin

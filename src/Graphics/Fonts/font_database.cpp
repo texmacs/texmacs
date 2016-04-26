@@ -334,6 +334,16 @@ font_database_build_local () {
 }
 
 void
+font_database_extend_local (url u) {
+  tt_extend_font_path (u);
+  font_database_load ();
+  font_database_build (u);
+  font_database_build_characteristics (false);
+  font_database_guess_features ();
+  font_database_save ();
+}
+
+void
 font_database_build_global (url u) {
   fonts_loaded= fonts_global_loaded= false;
   font_table= hashmap<tree,tree> (UNINIT);

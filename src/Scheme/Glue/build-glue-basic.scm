@@ -119,6 +119,7 @@
   (tt-analyze tt_analyze (array_string string))
   (font-database-build font_database_build (void url))
   (font-database-build-local font_database_build_local (void))
+  (font-database-extend-local font_database_extend_local (void url))
   (font-database-build-global font_database_build_global (void))
   (font-database-build-characteristics
    font_database_build_characteristics (void bool))
