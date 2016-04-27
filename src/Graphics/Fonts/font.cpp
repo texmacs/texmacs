@@ -304,6 +304,7 @@ font_rep::get_glyph (string s) {
 
 int
 font_rep::index_glyph (string s, font_metric& fnm, font_glyphs& fng) {
+  (void) fnm; (void) fng;
   if (get_glyph_fatal) {
     failed_error << "glyph name: " << s << "\n";
     failed_error << "font      : " << res_name << "\n";    

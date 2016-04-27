@@ -162,6 +162,7 @@ parse_declaration_sub (string s, int& i, string cmd,
                        hashmap<string,path>& h) {
   // NOTE: routine parses all options between arguments,
   // as well as any trailing option if trail_opt holds.
+  (void) trail_opt;
   int b= i, n= N(s);
   i += N(cmd);
   string first;
@@ -227,6 +228,7 @@ parse_declaration (string s, int& i, string cmd,
   int b= i;
   if (!parse_declaration_sub (s, i, cmd, arity, trail_opt, h))
     i= b + N(cmd);
+  return true;
 }
 
 hashmap<string,path>

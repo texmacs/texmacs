@@ -422,6 +422,7 @@ edit_graphics_rep::draw_graphical_object (renderer ren) {
 
 void
 edit_graphics_rep::back_in_text_at (tree t, path p, bool forward) {
+  (void) forward;
   int i= last_item (p);
   if ((i == 0) && is_empty (t[0])) {
     p= path_up (p);
