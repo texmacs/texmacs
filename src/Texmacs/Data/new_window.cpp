@@ -26,12 +26,14 @@ static int last_window= 1;
 static array<url> all_windows;
 extern int nr_windows;
 
+/*
 static path
 reset (path p, int i) {
   if (is_nil (p)) return p;
   else if (p->item == i) return p->next;
   else return path (p->item, reset (p->next, i));
 }
+*/
 
 url
 create_window_id () {

@@ -116,12 +116,14 @@ tm_frame_rep::dialogue_end () {
   }
 }
 
+/*
 static int
 gcd (int i, int j) {
   if (i<j)  return gcd (j, i);
   if (j==0) return i;
   return gcd (j, i%j);
 }
+*/
 
 void
 tm_frame_rep::choose_file (object fun, string title, string type,

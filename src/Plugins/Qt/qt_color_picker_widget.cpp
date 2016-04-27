@@ -22,8 +22,8 @@
  * Needed for whitebox_rep::display
  */
 inline tm_ostream& 
-operator<< (tm_ostream& out, const QColor& col) {
-  return out << "Color: " << col << "\n";
+operator << (tm_ostream& out, const QColor& col) {
+  return out << "Color: " << from_qcolor (col) << "\n";
 }
 
 qt_color_picker_widget_rep::qt_color_picker_widget_rep 

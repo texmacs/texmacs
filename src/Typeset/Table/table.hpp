@@ -85,7 +85,7 @@ public:
   void finish ();
   array<box> var_finish ();
 
-  friend class lazy_table_rep;
+  friend struct lazy_table_rep;
 };
 
 class table {

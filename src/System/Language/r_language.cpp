@@ -1,12 +1,13 @@
+
 /******************************************************************************
- * MODULE     : r_language.cpp
- * DESCRIPTION: the "r" language
- * COPYRIGHT  : (C) 2008  Francis Jamet
- *******************************************************************************
- * This software falls under the GNU general public license version 3 or later.
- * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
- * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
- ******************************************************************************/
+* MODULE     : r_language.cpp
+* DESCRIPTION: the "r" language
+* COPYRIGHT  : (C) 2008  Francis Jamet
+*******************************************************************************
+* This software falls under the GNU general public license version 3 or later.
+* It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+******************************************************************************/
 
 #include "analyze.hpp"
 #include "hyphenate.hpp"
@@ -15,16 +16,13 @@
 
 #define COLOR_MARKUP "#500d04"
 
-
-
 static void parse_number (string s, int& pos);
 static void parse_string (string s, int& pos);
 static void parse_alpha (string s, int& pos);
 static bool is_in_str( char c, const char *str )  ;
 static bool is_number_start( char c ) ;
-static inline bool is_identifier_start( char c ) ;
+//static inline bool is_identifier_start( char c ) ;
 static void advance_till( string s, int & pos, char c) ;
-
 
 r_language_rep::r_language_rep (string name):
   language_rep (name), colored ("")
@@ -181,11 +179,12 @@ is_number_start( char c ) {
   return( is_digit(c) || is_in_str( c, "." ) ) ;
 }
 
+/*
 static inline bool 
 is_identifier_start( char c ) {
   return( is_alpha(c) || is_in_str( c, "._$`" ) ) ;
 }
-
+*/
 
 
 
@@ -444,7 +443,7 @@ parse_number (string s, int& pos) {
 	possible_exp = 0 ;
 	continue ;
       }
-      if( (possible_hex == 3 ) ) {
+      if( possible_hex == 3 ) {
 	if( is_in_str( s[i], "0123456789abcdefABCDEF" ) ) {
 	  valid_number = true ;
 	  continue ;

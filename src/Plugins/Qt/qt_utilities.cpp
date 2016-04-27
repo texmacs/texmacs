@@ -360,7 +360,7 @@ to_qcolor (const string& col) {
  */
 string
 from_qcolor (const QColor& col) {
-  return from_qstring(col.name());
+  return from_qstring (col.name ());
 }
 
 QColor

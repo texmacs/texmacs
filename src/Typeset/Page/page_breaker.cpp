@@ -1476,7 +1476,7 @@ page_breaker_rep::make_skeleton () {
   bool dpage_flag= false;
   int page_offset= first_page - 1;
   for (i=0, j=0; j<n; j++) {
-    if ((!papyrus_mode) && (l[j]->type == PAGE_CONTROL_ITEM))
+    if ((!papyrus_mode) && (l[j]->type == PAGE_CONTROL_ITEM)) {
       if ((l[j]->t == PAGE_BREAK) ||
 	  (l[j]->t == NEW_PAGE) || (l[j]->t == NEW_DPAGE))
 	{
@@ -1489,6 +1489,7 @@ page_breaker_rep::make_skeleton () {
 	}
       else if (is_tuple (l[j]->t, "env_page") && l[j]->t[1] == PAGE_NR)
         page_offset= as_int (l[j]->t[2]->label) - N(sk) - 1;
+    }
   }
   if (i<j) {
     if (dpage_flag && ((N(sk)&1) == 1))

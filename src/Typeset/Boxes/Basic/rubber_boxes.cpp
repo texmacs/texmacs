@@ -59,8 +59,10 @@ struct marker_box_rep: public box_rep {
       x3= x4= y3= y4= 0; x1= x1b; y1= y1b; x2= x2b; y2= y2b; }
   operator tree () { return "marker"; }
   void display (renderer ren) { (void) ren; }
-  path find_box_path (SI x, SI y, SI delta, bool force) {
-    (void) x; (void) y; (void) delta; (void) force; return path (0); }
+  path find_box_path (SI x, SI y, SI delta, bool force, bool& found) {
+    (void) x; (void) y; (void) delta; (void) force;
+    found= true;
+    return path (0); }
   path find_lip () {
     return is_accessible (ip)? descend (ip, pos): ip; }
   path find_rip () {

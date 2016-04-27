@@ -564,9 +564,10 @@ hollow (glyph gl, SI penw, SI penh) {
         for (int dj= -Ry; dj <= Ry; dj++)
           for (int di= -Rx; di <= Rx; di++) {
 	    double fx= di/rx, fy= dj/ry;
-            if ((fx*fx + fy*fy) <= 1.0)
+            if ((fx*fx + fy*fy) <= 1.0) {
               if (gl->get_x (i+di, j+dj) == 0) c0++;
 	      else c1++;
+            }
 	  }
 	erase= 20*c0 < c1;
       }

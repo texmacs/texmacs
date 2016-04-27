@@ -30,10 +30,10 @@ struct tex_rubber_font_rep: font_rep {
   tex_rubber_font_rep (string name, string trl_name,
 		       string family, int size, int dpi, int dsize);
   bool supports (string c);
-  void get_extents (int c, metric& ex);
+  void get_raw_extents (int c, metric& ex);
   void get_partial_extents (int c, metric& ex);
   void get_extents (string s, metric& ex);
-  void draw (renderer ren, int c, SI x, SI& y, SI& real_y);
+  void draw_raw (renderer ren, int c, SI x, SI& y, SI& real_y);
   void draw_fixed (renderer ren, string s, SI x, SI y);
   font magnify (double zoomx, double zoomy);
 
@@ -121,7 +121,7 @@ tex_rubber_font_rep::supports (string c) {
 }
 
 void
-tex_rubber_font_rep::get_extents (int c, metric& ex) {
+tex_rubber_font_rep::get_raw_extents (int c, metric& ex) {
   glyph gl= pk->get (c);
   if (is_nil (gl))
     ex->x1= ex->y1= ex->x2= ex->y2= ex->x3= ex->y3= ex->x4= ex->y4= 0;
@@ -143,7 +143,7 @@ tex_rubber_font_rep::get_extents (int c, metric& ex) {
 void
 tex_rubber_font_rep::get_partial_extents (int c, metric& ex) {
   metric ey;
-  get_extents (c, ey);
+  get_raw_extents (c, ey);
   ex->x1= min (ex->x1, ey->x1); ex->y1 -= (ey->y2-ey->y1);
   ex->x2= max (ex->x2, ey->x2);
   ex->x3= min (ex->x3, ey->x3); ex->y3= min (ex->y3, ex->y1+ (ey->y3-ey->y1));
@@ -168,7 +168,7 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
 
   // get extents
   QN c= tfm->nth_in_list (pre_c, n);
-  if (tfm->tag (c) != 3) get_extents (c, ex);
+  if (tfm->tag (c) != 3) get_raw_extents (c, ex);
   else {
     int i, nr_rep= n - tfm->list_len (pre_c);
     if (tfm->top (c) == 0 && tfm->mid (c) == 0 && tfm->bot (c) == 0)
@@ -221,7 +221,7 @@ tex_rubber_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-tex_rubber_font_rep::draw (renderer ren, int c, SI x, SI& y, SI& real_y) {
+tex_rubber_font_rep::draw_raw (renderer ren, int c, SI x, SI& y, SI& real_y) {
   ren->draw (c, pk, x, y);
   SI delta  = conv (tfm->h (c)+ tfm->d (c));
   SI pixel  = ren->pixel;
@@ -256,15 +256,15 @@ tex_rubber_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 
     SI real_y= y; // may be necessary to round y
                   // using SI temp= x; decode (temp, y); encode (temp, y);
-    if (tfm->top (c)!=0) draw (ren, tfm->top (c), x, y, real_y);
+    if (tfm->top (c)!=0) draw_raw (ren, tfm->top (c), x, y, real_y);
     if (tfm->rep (c)!=0)
       for (i=0; i<nr_rep; i++)
-	draw (ren, tfm->rep (c), x, y, real_y);
-    if (tfm->mid (c)!=0) draw (ren, tfm->mid (c), x, y, real_y);
+	draw_raw (ren, tfm->rep (c), x, y, real_y);
+    if (tfm->mid (c)!=0) draw_raw (ren, tfm->mid (c), x, y, real_y);
     if ((tfm->rep (c)!=0) && (tfm->mid (c)!=0))
       for (i=0; i<nr_rep; i++)
-	draw (ren, tfm->rep (c), x, y, real_y);
-    if (tfm->bot (c)!=0) draw (ren, tfm->bot (c), x, y, real_y);
+	draw_raw (ren, tfm->rep (c), x, y, real_y);
+    if (tfm->bot (c)!=0) draw_raw (ren, tfm->bot (c), x, y, real_y);
   }
 }
 
