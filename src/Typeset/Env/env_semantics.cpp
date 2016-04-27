@@ -419,6 +419,8 @@ edit_env_rep::update_font () {
                     script (fn_size, index_level), (int) (magn*dpi));
     break;
   }
+  string eff= get_string (FONT_EFFECTS);
+  if (N(eff) != 0) fn= apply_effects (fn, eff);
 }
 
 int

@@ -163,6 +163,7 @@ font smart_font (string family, string variant, string series, string shape,
                  int sz, int dpi);
 font smart_font (string family, string variant, string series, string shape,
                  string tf, string tv, string tw, string ts, int sz, int dpi);
+font apply_effects (font fn, string effects);
 
 int  script (int sz, int level);
 

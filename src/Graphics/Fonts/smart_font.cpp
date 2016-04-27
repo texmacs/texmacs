@@ -1372,3 +1372,49 @@ smart_font (string family, string variant, string series, string shape,
   if (shape == "right") tsh= "mathupright";
   return smart_font (tfam, tvar, tser, tsh, sz, dpi);
 }
+
+font
+apply_effects (font fn, string effects) {
+  if (N(effects) == 0) return fn;
+  array<string> a= trimmed_tokenize (effects, ",");
+  for (int i=0; i<N(a); i++) {
+    array<string> b= trimmed_tokenize (a[i], "=");
+    if (N(b) == 2) {
+      if (b[0] == "bold" && is_double (b[1])) {
+        double emb= as_double (b[1]);
+        if (emb < 1.0) emb= 1.0;
+        if (emb > 5.0) emb= 5.0;
+        double fat= ((emb - 1.0) * fn->wline) / fn->wfn;
+        fn= poor_bold_font (fn, fat, fat);
+      }
+      else if (b[0] == "bbb" && is_double (b[1])) {
+        double emb= as_double (b[1]);
+        if (emb < 1.0) emb= 1.0;
+        if (emb > 5.0) emb= 5.0;
+        double penw= ((double) fn->wline) / ((double) fn->wfn);
+        double penh= ((double) fn->wline) / ((double) fn->wfn);
+        double fat = ((emb - 1.0) * fn->wline) / fn->wfn;
+        fn= poor_bbb_font (fn, penw, penh, fat);
+      }
+      else if (b[0] == "slant" && is_double (b[1])) {
+        double slant= as_double (b[1]);
+        if (slant < -2.0) slant= -2.0;
+        if (slant >  2.0) slant=  2.0;
+        fn= poor_italic_font (fn, slant);
+      }
+      else if (b[0] == "hmagnify" && is_double (b[1])) {
+        double xmag= as_double (b[1]);
+        if (xmag < 0.1) xmag= 0.1;
+        if (xmag > 10.0) xmag= 10.0;
+        fn= poor_stretched_font (fn, xmag, 1.0);
+      }
+      else if (b[0] == "vmagnify" && is_double (b[1])) {
+        double ymag= as_double (b[1]);
+        if (ymag < 0.1) ymag= 0.1;
+        if (ymag > 10.0) ymag= 10.0;
+        fn= poor_stretched_font (fn, 1.0, ymag);
+      }
+    }
+  }
+  return fn;
+}

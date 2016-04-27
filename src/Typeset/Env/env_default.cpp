@@ -62,6 +62,7 @@ initialize_default_env () {
   env (FONT_SHAPE)       = "right";     // the font shape in text mode
   env (FONT_SIZE)        = "1";         // the font size multiplier
   env (FONT_BASE_SIZE)   = "10";        // the font base size
+  env (FONT_EFFECTS)     = "";          // additional effects applied to font
   env (MAGNIFICATION)    = "1";         // magnification (slides for instance)
   env (COLOR)            = "black";     // the color
   env (OPACITY)          = "100%";      // the opacity

@@ -873,6 +873,7 @@ init_std_drd () {
   init_var (FONT_SHAPE, TYPE_STRING);
   init_var (FONT_SIZE, TYPE_NUMERIC);
   init_var (FONT_BASE_SIZE, TYPE_NUMERIC);
+  init_var (FONT_EFFECTS, TYPE_STRING);
   init_var (MAGNIFICATION, TYPE_NUMERIC);
   init_var (COLOR, TYPE_COLOR);
   init_var (OPACITY, TYPE_NUMERIC);

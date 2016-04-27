@@ -923,7 +923,7 @@
 	  (link document-encryption-menu)))
   (-> (eval (upcase-first (get-init "language")))
       (link document-language-menu))
-  (-> (eval (upcase-first (get-init "font")))
+  (-> (eval (upcase-first (font-family-main (get-init "font"))))
       (link document-short-font-menu)))
 
 (tm-menu (standard-focus-menu t)
@@ -978,7 +978,7 @@
     (=> (balloon (eval (string-append (get-init "font-base-size") "pt"))
                  "Font size")
         (link document-font-base-size-menu))
-    (=> (balloon (eval (upcase-first (get-init "font")))
+    (=> (balloon (eval (upcase-first (font-family-main (get-init "font"))))
                  "Main document font")
         (link document-short-font-menu))
     (=> (balloon (icon (eval (current-page-icon))) "Page layout")

@@ -43,6 +43,7 @@ string FONT_SERIES ("font-series");
 string FONT_SHAPE ("font-shape");
 string FONT_SIZE ("font-size");
 string FONT_BASE_SIZE ("font-base-size");
+string FONT_EFFECTS ("font-effects");
 string MAGNIFICATION ("magnification");
 string COLOR ("color");
 string OPACITY ("opacity");
