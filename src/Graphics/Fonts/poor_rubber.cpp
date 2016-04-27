@@ -277,7 +277,7 @@ poor_rubber_font_rep::index_glyph (string s, font_metric& fnm,
                                              font_glyphs& fng) {
   string name;
   int num= search_font (s, name);
-  return get_font (num) -> index_glyph (s, fnm, fng);
+  return get_font (num) -> index_glyph (name, fnm, fng);
 }
 
 /******************************************************************************
@@ -288,5 +288,8 @@ font
 poor_rubber_font (font base) {
   string name= "poorrubber[" * base->res_name * "]";
   font enh= virtual_enhance_font (base, "emu-bracket");
+  //int hdpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
+  //int vdpi= (72 * base->hpt + (PIXEL/2)) / PIXEL;
+  //font enh= virtual_font (base, "emu-bracket", base->size, hdpi, vdpi, true);
   return make (font, name, tm_new<poor_rubber_font_rep> (name, enh));
 }
