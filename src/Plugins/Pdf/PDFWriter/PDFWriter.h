@@ -36,6 +36,10 @@
 #include <string>
 #include <utility>
 
+#ifndef PDFHUMMUS_NO_TIFF
+#define PDFHUMMUS_NO_TIFF
+#endif
+
 typedef std::pair<double,double> DoubleAndDoublePair;
 
 struct LogConfiguration
