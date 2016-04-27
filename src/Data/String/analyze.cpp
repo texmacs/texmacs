@@ -202,20 +202,20 @@ ispanish_to_spanish (string s) {
   for (i=0; i<n; i++)
     if ((s[i] == '\'') && ((i+1)<n)) {
       switch (s[i+1]) {
-      case 'A': r << 'Á'; break;
-      case 'E': r << 'É'; break;
-      case 'I': r << 'Í'; break;
-      case 'N': r << 'Ñ'; break;
-      case 'O': r << 'Ó'; break;
-      case 'U': r << 'Ú'; break;
-      case 'Y': r << 'Ý'; break;
-      case 'a': r << 'á'; break;
-      case 'e': r << 'é'; break;
-      case 'i': r << 'í'; break;
-      case 'n': r << 'ñ'; break;
-      case 'o': r << 'ó'; break;
-      case 'u': r << 'ú'; break;
-      case 'y': r << 'ý'; break;
+      case 'A': r << '\301'; break;
+      case 'E': r << '\311'; break;
+      case 'I': r << '\315'; break;
+      case 'N': r << '\321'; break;
+      case 'O': r << '\323'; break;
+      case 'U': r << '\332'; break;
+      case 'Y': r << '\335'; break;
+      case 'a': r << '\341'; break;
+      case 'e': r << '\351'; break;
+      case 'i': r << '\355'; break;
+      case 'n': r << '\361'; break;
+      case 'o': r << '\363'; break;
+      case 'u': r << '\372'; break;
+      case 'y': r << '\375'; break;
       default : r << '\'' << s[i+1];
       }
       i++;
@@ -230,20 +230,20 @@ spanish_to_ispanish (string s) {
   string r;
   for (i=0; i<n; i++)
     switch (s[i]) {
-    case 'Á': r << "'A"; break;
-    case 'É': r << "'E"; break;
-    case 'Í': r << "'I"; break;
-    case 'Ñ': r << "'N"; break;
-    case 'Ó': r << "'O"; break;
-    case 'Ú': r << "'U"; break;
-    case 'Ý': r << "'Y"; break;
-    case 'á': r << "'a"; break;
-    case 'é': r << "'e"; break;
-    case 'í': r << "'i"; break;
-    case 'ñ': r << "'n"; break;
-    case 'ó': r << "'o"; break;
-    case 'ú': r << "'u"; break;
-    case 'ý': r << "'y"; break;
+    case '\301': r << "'A"; break;
+    case '\311': r << "'E"; break;
+    case '\315': r << "'I"; break;
+    case '\321': r << "'N"; break;
+    case '\323': r << "'O"; break;
+    case '\332': r << "'U"; break;
+    case '\335': r << "'Y"; break;
+    case '\341': r << "'a"; break;
+    case '\351': r << "'e"; break;
+    case '\355': r << "'i"; break;
+    case '\361': r << "'n"; break;
+    case '\363': r << "'o"; break;
+    case '\372': r << "'u"; break;
+    case '\375': r << "'y"; break;
     default : r << s[i];
     }
   return r;
@@ -254,7 +254,7 @@ igerman_to_german (string s) {
   int i, n= N(s);
   string r;
   for (i=0; i<n; i++)
-    if (s[i] == 'ß') r << 'ÿ';
+    if (s[i] == '\337') r << '\377';
     else r << s[i];
   return r;
 }
@@ -264,7 +264,7 @@ german_to_igerman (string s) {
   int i, n= N(s);
   string r;
   for (i=0; i<n; i++)
-    if (s[i] == 'ÿ') r << 'ß';
+    if (s[i] == '\377') r << '\337';
     else r << s[i];
   return r;
 }
@@ -274,9 +274,9 @@ german_to_igerman (string s) {
 ******************************************************************************/
 
 static string il2_to_cork_string=
-  "€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ Š ‰‘Ÿ’“”™š› ¡ª©±²³´¹º»ÁÂ€Äˆ‚ÇƒÉ†Ë…ÍÎ„Ð‹ŒÓÔŽÖ.—Ú–ÜÝ•ÿ¯áâ ä¨¢ç£é¦ë¥íî¤ž«¬óô®ö/°·ú¶üýµ ";
+  "\200\201\202\203\204\205\206\207\210\211\212\213\214\215\216\217\220\221\222\223\224\225\226\227\230\231\232\233\234\235\236\237 \201\212 \211\221\237\222\223\224\231\232\233 \241\252\251\261\262\263\264\271\272\273\217\301\302\200\304\210\202\307\203\311\206\313\205\315\316\204\320\213\214\323\324\216\326.\220\227\332\226\334\335\225\377\257\341\342\240\344\250\242\347\243\351\246\353\245\355\356\244\236\253\254\363\364\256\366/\260\267\372\266\374\375\265 ";
 static string cork_to_il2_string=
-  "Ã¡ÆÈÏÌÊGÅ¥£ÑÒ ÕÀØ¦©ª«ÞÛÙY¬®¯IIð§ã±æèïìêgåµ³ñò õàø¶¹º»þûùy¼¾¿i!?LAÁÂAÄAAÇEÉEËIÍÎIÐNOÓÔOÖOOUÚUÜÝ Saáâaäaaçeéeëiíîiðnoóôoöoouúuüý ß";
+  "\303\241\306\310\317\314\312G\305\245\243\321\322 \325\300\330\246\251\252\253\336\333\331Y\254\256\257II\360\247\343\261\346\350\357\354\352g\345\265\263\361\362 \365\340\370\266\271\272\273\376\373\371y\274\276\277i!?LA\301\302A\304AA\307E\311E\313I\315\316I\320NO\323\324O\326OOU\332U\334\335 Sa\341\342a\344aa\347e\351e\353i\355\356i\360no\363\364o\366oou\372u\374\375 \337";
 
 static char
 il2_to_cork (char c) {
@@ -315,27 +315,27 @@ cork_to_il2 (string s) {
 ******************************************************************************/
 
 static string koi8_to_iso_string=
-  "áâ÷çäåöúéêëìíîïðòóôõæèãþûýÿùøüàñÁÂ×ÇÄÅÖÚÉÊËÌÍÎÏÐÒÓÔÕÆÈÃÞÛÝßÙØÜÀÑ";
+  "\341\342\367\347\344\345\366\372\351\352\353\354\355\356\357\360\362\363\364\365\346\350\343\376\373\375\377\371\370\374\340\361\301\302\327\307\304\305\326\332\311\312\313\314\315\316\317\320\322\323\324\325\306\310\303\336\333\335\337\331\330\334\300\321";
 static string iso_to_koi8_string=
-  "þàáöäåôãõèéêëìíîïÿðñòóæâüûçøýù÷úÞÀÁÖÄÅÔÃÕÈÉÊËÌÍÎÏßÐÑÒÓÆÂÜÛÇØÝÙ×Ú";
+  "\376\340\341\366\344\345\364\343\365\350\351\352\353\354\355\356\357\377\360\361\362\363\346\342\374\373\347\370\375\371\367\372\336\300\301\326\304\305\324\303\325\310\311\312\313\314\315\316\317\337\320\321\322\323\306\302\334\333\307\330\335\331\327\332";
 
 static char
 koi8_to_iso (char c, bool ukrainian) {
   int i= (int) ((unsigned char) c);
-  if (i==156) return '³';
-  if (i==188) return '£';
+  if (i==156) return '\263';
+  if (i==188) return '\243';
   if (ukrainian)
   {
      switch(c)
      {
-         case 'I':return '¶';
-         case 'ˆ':return '·';
-         case '™':return '´';
-         case '€':return '½';
-         case 'i':return '¦';
-         case '¨':return '§';
-         case '¹':return '¤';
-         case ' ':return '­';
+         case 'I':return '\266';
+         case '\210':return '\267';
+         case '\231':return '\264';
+         case '\200':return '\275';
+         case 'i':return '\246';
+         case '\250':return '\247';
+         case '\271':return '\244';
+         case '\240':return '\255';
      }
   }
   if (i<192) return c;
@@ -345,20 +345,20 @@ koi8_to_iso (char c, bool ukrainian) {
 static char
 iso_to_koi8 (char c, bool ukrainian) {
   int i= (int) ((unsigned char) c);
-  if (c=='³') return (char) 156;
-  if (c=='£') return (char) 188;
+  if (c=='\263') return (char) 156;
+  if (c=='\243') return (char) 188;
   if (ukrainian)
   {
      switch(c)
      {
-         case '¶':return 'I';
-         case '·':return 'ˆ';
-         case '´':return '™';
-         case '½':return '€';
-         case '¦':return 'i';
-         case '§':return '¨';
-         case '¤':return '¹';
-         case '­':return ' ';
+         case '\266':return 'I';
+         case '\267':return '\210';
+         case '\264':return '\231';
+         case '\275':return '\200';
+         case '\246':return 'i';
+         case '\247':return '\250';
+         case '\244':return '\271';
+         case '\255':return '\240';
      }
   }
   if (i<192) return c;

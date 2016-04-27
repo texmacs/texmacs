@@ -65,7 +65,7 @@ public:
 
   string get_metadata (string kind);
   int  nr_pages ();
-  void print (url ps_name, bool to_file, int first, int last);
+  void print_doc (url ps_name, bool to_file, int first, int last);
   void print_to_file (url ps_name, string first="1", string last="1000000");
   void print_buffer (string first="1", string last="1000000");
   void export_ps (url ps_name, string first="1", string last="1000000");

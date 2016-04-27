@@ -17,7 +17,7 @@
 * Routines intern to the array<T> class
 ******************************************************************************/
 
-static inline int
+inline int
 round_length (int n, size_t s) {
   (void) s;
   if (n<6) return n;

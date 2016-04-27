@@ -22,7 +22,7 @@ public:
   static inline tree index_name (index_type i) {
     (void) i; return "x"; }
   static inline scalar_type access (T x, index_type var) {
-    return x; }
+    (void) var; return x; }
 };
 
 template<typename T, typename U>

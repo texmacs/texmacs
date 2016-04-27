@@ -212,7 +212,7 @@ edit_main_rep::nr_pages () {
 }
 
 void
-edit_main_rep::print (url name, bool conform, int first, int last) {
+edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   bool ps  = (suffix (name) == "ps");
   bool pdf = (suffix (name) == "pdf");
   url  orig= resolve (name, "");
@@ -307,7 +307,7 @@ edit_main_rep::print (url name, bool conform, int first, int last) {
 
 void
 edit_main_rep::print_to_file (url name, string first, string last) {
-  print (name, false, as_int (first), as_int (last));
+  print_doc (name, false, as_int (first), as_int (last));
   set_message ("Done printing", "print to file");
 }
 
@@ -318,11 +318,11 @@ edit_main_rep::print_buffer (string first, string last) {
    {
      target= url_temp (".pdf"); 
      WINPrint wprt(to_qstring(as_string(target)),env->page_landscape);
-     if(wprt.doit) print (target, false,wprt.first_page,wprt.last_page);
+     if(wprt.doit) print_doc (target, false,wprt.first_page,wprt.last_page);
    }
 #else
   target= url_temp (".ps"); 
-  print (target, false, as_int (first), as_int (last));
+  print_doc (target, false, as_int (first), as_int (last));
   system (printing_cmd, target);  // Send the document to the printer
   set_message ("Done printing", "print buffer");
  #endif
@@ -341,7 +341,7 @@ edit_main_rep::print_buffer (string first, string last) {
   string paper_type;
   if (qt_print (to_file, landscape, printer, name, first, last, paper_type)) {
       if (!to_file) name = url_temp (".ps");
-      print (name, false, as_int (first), as_int (last));
+      print_doc (name, false, as_int (first), as_int (last));
       if (!to_file) {
         string cmd = printing_cmd * " -P" * printer;
         system (cmd, name);  
@@ -353,7 +353,7 @@ edit_main_rep::print_buffer (string first, string last) {
 
 void
 edit_main_rep::export_ps (url name, string first, string last) {
-  print (name, true, as_int (first), as_int (last));
+  print_doc (name, true, as_int (first), as_int (last));
 }
 
 array<int>
