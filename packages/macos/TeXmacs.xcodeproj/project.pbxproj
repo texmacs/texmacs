@@ -277,6 +277,9 @@
 		4942BEF71679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
 		4942BEF81679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
 		4942BEF91679293B00A6C354 /* font_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4942BEF61679293B00A6C354 /* font_select.cpp */; };
+		494DEEE31CD0EF8F00D882BE /* glyph_unserif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494DEEE21CD0EF8F00D882BE /* glyph_unserif.cpp */; };
+		494DEEE41CD0EF8F00D882BE /* glyph_unserif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494DEEE21CD0EF8F00D882BE /* glyph_unserif.cpp */; };
+		494DEEE51CD0EF8F00D882BE /* glyph_unserif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 494DEEE21CD0EF8F00D882BE /* glyph_unserif.cpp */; };
 		4950FA5317E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
 		4950FA5417E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
 		4950FA5517E8349800425005 /* highlight_boxes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4950FA5217E8349800425005 /* highlight_boxes.cpp */; };
@@ -1710,6 +1713,7 @@
 		493F45F7179EC49F00E2972D /* latex_preview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_preview.cpp; sourceTree = "<group>"; };
 		493F45F8179EC49F00E2972D /* latex_preview.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = latex_preview.hpp; sourceTree = "<group>"; };
 		4942BEF61679293B00A6C354 /* font_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_select.cpp; sourceTree = "<group>"; };
+		494DEEE21CD0EF8F00D882BE /* glyph_unserif.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glyph_unserif.cpp; sourceTree = "<group>"; };
 		4950FA5117E8347600425005 /* change.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = change.hpp; sourceTree = "<group>"; };
 		4950FA5217E8349800425005 /* highlight_boxes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = highlight_boxes.cpp; sourceTree = "<group>"; };
 		4952408B1AC402A800A611AD /* indexation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = indexation.cpp; sourceTree = "<group>"; };
@@ -3274,6 +3278,7 @@
 				9C0B47D710A8CC100097A335 /* glyph_ops.cpp */,
 				9C0B47D810A8CC100097A335 /* glyph_shrink.cpp */,
 				4911B18C1CCA195900F0AFFD /* glyph_transforms.cpp */,
+				494DEEE21CD0EF8F00D882BE /* glyph_unserif.cpp */,
 				9C0B47D610A8CC100097A335 /* glyph.cpp */,
 			);
 			path = Bitmap_fonts;
@@ -5174,6 +5179,7 @@
 				4901F0E5128B4F7200CC54C6 /* qt_printer_widget.cpp in Sources */,
 				9C225A65128B5EB00039258C /* qt_chooser_widget.cpp in Sources */,
 				9CCC738F12A7D6DA006EDBDA /* HIDRemote.m in Sources */,
+				494DEEE31CD0EF8F00D882BE /* glyph_unserif.cpp in Sources */,
 				9CF1389612A9B65F009F02C9 /* qt_ui_element.cpp in Sources */,
 				9C4B87A612AE5BD100F8571A /* packrat_serializer.cpp in Sources */,
 				9C3D2E5912B0D662009E33AD /* tree_select.cpp in Sources */,
@@ -5507,6 +5513,7 @@
 				9CCC74ED10D303D900E88D90 /* env_length.cpp in Sources */,
 				9CCC74EE10D303D900E88D90 /* env_semantics.cpp in Sources */,
 				9CCC74EF10D303D900E88D90 /* format.cpp in Sources */,
+				494DEEE51CD0EF8F00D882BE /* glyph_unserif.cpp in Sources */,
 				9CCC74F010D303D900E88D90 /* formatter.cpp in Sources */,
 				9CCC74F110D303D900E88D90 /* line_item.cpp in Sources */,
 				9CCC74F210D303D900E88D90 /* page_item.cpp in Sources */,
@@ -5817,6 +5824,7 @@
 				9CD4E6C710B14AB300E0DD5C /* bridge_docrange.cpp in Sources */,
 				9CD4E6C810B14AB300E0DD5C /* bridge_document.cpp in Sources */,
 				9CD4E6C910B14AB300E0DD5C /* bridge_eval.cpp in Sources */,
+				494DEEE41CD0EF8F00D882BE /* glyph_unserif.cpp in Sources */,
 				9CD4E6CA10B14AB300E0DD5C /* bridge_expand_as.cpp in Sources */,
 				9CD4E6CB10B14AB300E0DD5C /* bridge_formatting.cpp in Sources */,
 				9CD4E6CC10B14AB300E0DD5C /* bridge_gui.cpp in Sources */,
