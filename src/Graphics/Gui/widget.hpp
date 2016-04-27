@@ -272,10 +272,12 @@ widget refreshable_widget (object prom, string kind= "any");
 //   mods contains the active keyboard modifiers at time t
 // void simple_widget_rep::handle_set_zoom_factor (double zoom);
 //   set the zoom factor for painting
-// void simple_widget_rep::handle_clear (SI x1, SI y1, SI x2, SI y2);
+// void simple_widget_rep::handle_clear
+//        (renderer ren, SI x1, SI y1, SI x2, SI y2);
 //   clear the widget to the background color
 //   this event may for instance occur when scrolling
-// void simple_widget_rep::handle_repaint (SI x1, SI y1, SI x2, SI y2);
+// void simple_widget_rep::handle_repaint
+//        (renderer ren, SI x1, SI y1, SI x2, SI y2);
 //   repaint the region (x1, y1, x2, y2)
 
 #endif // defined WIDGET_H
