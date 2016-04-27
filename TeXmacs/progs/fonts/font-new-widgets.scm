@@ -43,7 +43,49 @@
        ,(string-append
          "Mathematics: <leq><geq><leqslant><geqslant><prec><succ> "
          "<leftarrow><rightarrow><Leftarrow><Rightarrow><mapsto> "
-         "<times><cdot><oplus><otimes>"))))
+         "<times><cdot><oplus><otimes>")
+       (concat "Variants: " (strong "Bold") "  " (em "Italic")
+               "  " (name "Small Capitals") "  " (samp "Sans Serif")
+               "  " (kbd "Typewriter")))))
+
+(define (math-selector-text)
+  `(with "par-par-sep" "0.2em"
+     (document
+       (concat "Lowercase Roman: "
+         (math "a b c d e f g h i j k l m n o p q r s t u v w x y z"))
+       (concat "Uppercase Roman: "
+         (math "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"))
+       (concat "Lowercase Greek: "
+         (math ,(string-append
+                 "<alpha> <beta> <gamma> <delta> <varepsilon> <zeta> <eta>"
+                 " <theta> <iota> <kappa> <lambda> <mu> <nu> <xi> <omicron>"
+                 " <pi> <rho> <sigma> <tau> <upsilon> <varphi> <psi>"
+                 " <chi> <omega>")))
+       (concat "Uppercase Greek: "
+         (math ,(string-append
+                 "<Alpha> <Beta> <Gamma> <Delta> <Epsilon> <Zeta> <Eta>"
+                 " <Theta> <Iota> <Kappa> <Lambda> <Mu> <Nu> <Xi> <Omicron>"
+                 " <Pi> <Rho> <Sigma> <Tau> <Upsilon> <Phi> <Psi>"
+                 " <Chi> <Omega>")))
+       (concat "Blackboard bold: "
+         (math ,(string-append
+                 "<bbb-A> <bbb-B> <bbb-C> <bbb-D> <bbb-E> <bbb-F> <bbb-G>"
+                 " <bbb-H> <bbb-I> <bbb-J> <bbb-K> <bbb-L> <bbb-M> <bbb-N>"
+                 " <bbb-O> <bbb-P> <bbb-Q> <bbb-R> <bbb-S> <bbb-T> <bbb-U>"
+                 " <bbb-V> <bbb-W> <bbb-X> <bbb-Y> <bbb-Z>")))
+       (concat "Calligraphic: "
+         (math ,(string-append
+                 "<cal-A> <cal-B> <cal-C> <cal-D> <cal-E> <cal-F> <cal-G>"
+                 " <cal-H> <cal-I> <cal-J> <cal-K> <cal-L> <cal-M> <cal-N>"
+                 " <cal-O> <cal-P> <cal-Q> <cal-R> <cal-S> <cal-T> <cal-U>"
+                 " <cal-V> <cal-W> <cal-X> <cal-Y> <cal-Z>")))
+       (concat "Fraktur: "
+         (math ,(string-append
+                 "<frak-A> <frak-B> <frak-C> <frak-D> <frak-E> <frak-F>"
+                 " <frak-G> <frak-H> <frak-I> <frak-J> <frak-K> <frak-L>"
+                 " <frak-M> <frak-N> <frak-O> <frak-P> <frak-Q> <frak-R>"
+                 " <frak-S> <frak-T> <frak-U> <frak-V> <frak-W> <frak-X>"
+                 " <frak-Y> <frak-Z>"))))))
 
 (define-public sample-text (standard-selector-text))
 (define-public sample-kind "Standard")
@@ -57,7 +99,9 @@
 
 (define (set-font-sample-kind kind)
   (set! sample-kind kind)
-  (cond ((== kind "ASCII")
+  (cond ((== kind "Mathematics")
+         (set! sample-text (math-selector-text)))
+        ((== kind "ASCII")
          (set-font-sample-range "20" "7f"))
         ((== kind "Latin")
          (set-font-sample-range "80" "ff"))
@@ -119,7 +163,8 @@
     (set! selector-font-family (car fn))
     (set! selector-font-style (cadr fn))
     (set! selector-font-size sz)
-    (selector-initialize-search)))
+    (selector-initialize-search)
+    (selector-initialize-customize)))
 
 (tm-define (selector-get-changes getter)
   (if (== selector-font-style "Unknown")
@@ -134,8 +179,8 @@
             (set! l (cons* "font-series" (logical-font-series fn) l)))
           (when (!= (logical-font-variant fn) (getter "font-family"))
             (set! l (cons* "font-family" (logical-font-variant fn) l)))
-          (when (!= (logical-font-family fn) (getter "font"))
-            (set! l (cons* "font" (logical-font-family fn) l)))
+          (when (!= (logical-font-family* fn) (getter "font"))
+            (set! l (cons* "font" (logical-font-family* fn) l)))
           l))))
 
 (define (selector-font-simulate-comment)
@@ -161,14 +206,14 @@
 (define (selector-font-demo-text)
   (with fn (selector-get-font)
     ;;(display* "Font: " fn "\n")
-    ;;(display* "Internal font: " (logical-font-family fn)
+    ;;(display* "Internal font: " (logical-font-family* fn)
     ;;          ", " (logical-font-variant fn)
     ;;          ", " (logical-font-series fn)
     ;;          ", " (logical-font-shape fn)
     ;;          ", " selector-font-size "\n")
     `(document
        (with
-         "font" ,(logical-font-family fn)
+         "font" ,(logical-font-family* fn)
          "font-family" ,(logical-font-variant fn)
          "font-series" ,(logical-font-series fn)
          "font-shape" ,(logical-font-shape fn)
@@ -233,6 +278,56 @@
   (search-font-styles family (selected-properties)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global state for font customization
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (selector-customize?)
+  (== (get-preference "advanced font customization") "on"))
+
+(tm-define (selector-customize! on?)
+  (if on?
+      (set-preference "advanced font customization" "on")
+      (reset-preference "advanced font customization"))
+  (refresh-now "font-customized-selector"))
+
+(tm-define selector-customize-table (make-ahash-table))
+
+(tm-define (selector-customize-get which default)
+  (or (ahash-ref selector-customize-table which) default))
+
+(tm-define (selector-customize-set! which val)
+  (if (or (== val "") (== val "default") (== val "Default"))
+      (ahash-remove! selector-customize-table which)
+      (ahash-set! selector-customize-table which val)))
+
+(define (selector-initialize-customize)
+  (set! selector-customize-table (make-ahash-table)))
+
+(define (logical-font-family* fn)
+  (let* ((fam   (logical-font-family fn))
+         (bf    (selector-customize-get "bf"    #f))
+         (it    (selector-customize-get "it"    #f))
+         (sc    (selector-customize-get "sc"    #f))
+         (ss    (selector-customize-get "ss"    #f))
+         (tt    (selector-customize-get "tt"    #f))
+         (math  (selector-customize-get "math"  #f))
+         (greek (selector-customize-get "greek" #f))
+         (bbb   (selector-customize-get "bbb"   #f))
+         (cal   (selector-customize-get "cal"   #f))
+         (frak  (selector-customize-get "frak"  #f)))
+    (if bf    (set! fam (string-append "bold=" bf "," fam)))
+    (if it    (set! fam (string-append "italic=" it "," fam)))
+    (if sc    (set! fam (string-append "smallcaps=" sc "," fam)))
+    (if ss    (set! fam (string-append "sansserif=" ss "," fam)))
+    (if tt    (set! fam (string-append "typewriter=" tt "," fam)))
+    (if math  (set! fam (string-append "math=" math "," fam)))
+    (if greek (set! fam (string-append "greek=" greek "," fam)))
+    (if bbb   (set! fam (string-append "bbb=" bbb "," fam)))
+    (if cal   (set! fam (string-append "cal=" cal "," fam)))
+    (if frak  (set! fam (string-append "frak="frak  "," fam)))
+    fam))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -245,7 +340,7 @@
   (vertical
     (bold (text "Family"))
     ===
-    (resize "300px" "325px"
+    (resize "300px" "350px"
       (scrollable
         (choice (set! selector-font-family answer)
                 (selected-families)
@@ -255,7 +350,7 @@
   (vertical
     (bold (text "Style"))
     ===
-    (resize "200px" "325px"
+    (resize "200px" "350px"
       (scrollable
         (choice (set! selector-font-style answer)
                 (selected-styles selector-font-family)
@@ -265,7 +360,7 @@
   (vertical
     (bold (text "Size"))
     ===
-    (resize "75px" "325px"
+    (resize "75px" "350px"
       (scrollable
         (choice (set! selector-font-size answer)
                 (font-default-sizes)
@@ -336,7 +431,86 @@
               '("Any" "ASCII" "Latin" "Greek" "Cyrillic"
                 "CJK" "Hangul" "Math Symbols" "Math Extra" "Math Letters")
               selector-search-glyphs "120px")))
+    (horizontal (glue #f #t 0 0))
+    ;;(horizontal
+    ;;  >>>
+    ;;  (toggle (selector-customize! answer) (selector-customize?)) ///
+    ;;  (text "Advanced customizations")
+    ;;  >>>)
+    ))
+
+(tm-widget (font-effect-selector which)
+  (enum (selector-customize-set! which answer)
+        '("0.5" "0.6" "0.7" "0.8" "0.9" "1"
+          "1.1" "1.2" "1.4" "1.6" "1.8" "2" "")
+        (selector-customize-get which "1") "50px"))
+
+(tm-widget (font-effects-selector)
+  (vertical
+    (aligned
+      (item (text "Embolden:")
+        (dynamic (font-effect-selector "embold")))
+      (item (text "Slant:")
+        (dynamic (font-effect-selector "slant")))
+      (item (text "Extend:")
+        (dynamic (font-effect-selector "extend")))
+      (item (text "Stretch:")
+        (dynamic (font-effect-selector "widen"))))
     (horizontal (glue #f #t 0 0))))
+
+(tm-widget (subfont-selector which)
+  (enum (selector-customize-set! which answer)
+        '("Default" "TeXmacs Computer Modern" "Stix"
+          "TeX Gyre Bonum" "TeX Gyre Pagella"
+          "TeX Gyre Schola" "TeX Gyre Termes" "")
+        (selector-customize-get which "1") "160px"))
+
+(tm-widget (font-variant-selector)
+  (vertical
+    (aligned
+      (item (text "Bold:")
+        (dynamic (subfont-selector "bf")))
+      (item (text "Italic:")
+        (dynamic (subfont-selector "it")))
+      (item (text "Small capitals:")
+        (dynamic (subfont-selector "sc")))
+      (item (text "Sans serif:")
+        (dynamic (subfont-selector "ss")))
+      (item (text "Typewriter:")
+        (dynamic (subfont-selector "tt"))))
+    (horizontal (glue #f #t 0 0))))
+
+(tm-widget (font-math-selector)
+  (vertical
+    (aligned
+      (item (text "Mathematics:")
+        (dynamic (subfont-selector "math")))
+      (item (text "Greek:")
+        (dynamic (subfont-selector "greek")))
+      (item (text "Blackboard bold:")
+        (dynamic (subfont-selector "bbb")))
+      (item (text "Calligraphic:")
+        (dynamic (subfont-selector "cal")))
+      (item (text "Fraktur:")
+        (dynamic (subfont-selector "frak"))))
+    (horizontal (glue #f #t 0 0))))
+
+(tm-widget (font-customized-selector)
+  (assuming (selector-customize?)
+    === === ===
+    (hlist
+      (bold (text "Font customization"))
+      >>>)
+    ===
+    (horizontal
+      (link font-effects-selector)
+      >>>
+      (link font-variant-selector)
+      >>>
+      (link font-math-selector))
+    === === ===)
+  (assuming (not (selector-customize?))
+    === === ===))
 
 (tm-widget (font-selector-demo)
   (hlist
@@ -365,13 +539,14 @@
         (link font-size-selector))
       ///
       (link font-properties-selector))
-    === === ===
+    (refreshable "font-customized-selector"
+      (link font-customized-selector))
     (refresh font-selector-demo auto)
     === ===
     (explicit-buttons
       (hlist
         (enum (set-font-sample-kind answer)
-              '("Standard" "Selection"
+              '("Standard" "Mathematics" "Selection"
                 "ASCII" "Latin" "Greek" "Cyrillic" "CJK" "Hangul"
                 "Math Symbols" "Math Extra" "Math Letters"
                 "Unicode 0000-0fff" "Unicode 1000-1fff"

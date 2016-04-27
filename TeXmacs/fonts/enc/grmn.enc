@@ -19,6 +19,7 @@
     "kappa" "lambda" "mu" "nu" "omicron"
     "pi" "chi" "rho" "sigma" "tau" "upsilon"
 119 "omega" "xi" "psi" "zeta"
+102 "varphi"
 97  "#3B1" "#3B2" "#3C2" "#3B4" "#3B5" "#3C6" "#3B3" "#3B7"
     "#3B9" "#3B8" "#3BA" "#3BB" "#3BC" "#3BD" "#3BF" "#3C0"
     "#3C7" "#3C1" "#3C3" "#3C4" "#3C5"
