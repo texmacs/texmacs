@@ -311,6 +311,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       is_tuple (t, "bottom-crop", 1) ||
       is_tuple (t, "clip") ||
       is_tuple (t, "part") ||
+      is_tuple (t, "copy", 1) ||
       is_tuple (t, "hor-flip", 1) ||
       is_tuple (t, "ver-flip", 1) ||
       is_tuple (t, "rot-left", 1) ||
@@ -785,6 +786,9 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     }
     return move (cgl, dx, dy);
   }
+
+  if (is_tuple (t, "copy", 1))
+    return copy (compile (t[1], ex));
 
   if (is_tuple (t, "hor-flip", 1))
     return hor_flip (compile (t[1], ex));
@@ -1374,6 +1378,9 @@ virtual_font_rep::draw_tree (renderer ren, scheme_tree t, SI x, SI y) {
     draw_clipped (ren, t[1], x + dx, y + dy, ex->x3, ex->y3, ex->x4, ex->y4);
     return;
   }
+
+  if (is_tuple (t, "copy", 1))
+    draw_tree (ren, t[1], x, y);
 
   if (is_tuple (t, "hor-flip", 1)) {
     metric ex;
