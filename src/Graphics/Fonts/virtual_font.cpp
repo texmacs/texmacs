@@ -49,7 +49,7 @@ struct virtual_font_rep: font_rep {
   glyph  compile (scheme_tree t, metric& ex);
   void   get_metric (scheme_tree t, metric& ex);
   tree   get_tree (string s);
-  void   draw (renderer ren, scheme_tree t, SI x, SI y);
+  void   draw_tree (renderer ren, scheme_tree t, SI x, SI y);
   void   draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
                        SI x1, SI y1, SI x2, SI y2);
   void   draw_transformed (renderer ren, scheme_tree t, SI x, SI y, frame f);
@@ -1139,7 +1139,7 @@ virtual_font_rep::get_metric (scheme_tree t, metric& ex) {
 ******************************************************************************/
 
 void
-virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
+virtual_font_rep::draw_tree (renderer ren, scheme_tree t, SI x, SI y) {
   if (is_atomic (t)) {
     string r= t->label;
     if (r == "#28") r= "(";
@@ -1149,7 +1149,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
       base_fn->draw (ren, r, x, y);
     else {
       scheme_tree u= virt->virt_def [virt->dict [r]];
-      draw (ren, u, x, y);
+      draw_tree (ren, u, x, y);
     }
     return;
   }
@@ -1159,14 +1159,14 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     {
       SI dx= (SI) (as_double (t[0]) * hunit);
       SI dy= (SI) (as_double (t[1]) * vunit);
-      draw (ren, t[2], x+dx, y+dy);
+      draw_tree (ren, t[2], x+dx, y+dy);
       return;
     }
 
   if (is_tuple (t, "with", 3) && is_atomic (t[1])) {
     tree var= t[1];
     tree val= exec (t[2]);
-    draw (ren, replace (t[3], var, val), x, y);
+    draw_tree (ren, replace (t[3], var, val), x, y);
     return;
   }
 
@@ -1174,22 +1174,22 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     int i, n= N(t);
     for (i=1; i<n-1; i++)
       if (supported (t[i], false)) {
-        draw (ren, t[i], x, y);
+        draw_tree (ren, t[i], x, y);
         return;
       }
-    draw (ren, t[n-1], x, y);
+    draw_tree (ren, t[n-1], x, y);
     return;
   }
 
   if (is_tuple (t, "join")) {
     int i, n= N(t);
     for (i=1; i<n; i++)
-      draw (ren, t[i], x, y);
+      draw_tree (ren, t[i], x, y);
     return;
   }
 
   if (is_tuple (t, "bitmap", 1)) {
-    draw (ren, t[1], x, y);
+    draw_tree (ren, t[1], x, y);
     return;
   }
 
@@ -1197,8 +1197,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     metric ex;
     get_metric (t[1], ex);
     SI dx= ex->x2- ((base_fn->wpt*28)>>4);
-    draw (ren, t[1], x, y);
-    draw (ren, t[2], x + dx, y);
+    draw_tree (ren, t[1], x, y);
+    draw_tree (ren, t[2], x + dx, y);
     return;
   }
 
@@ -1206,8 +1206,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     metric ex;
     get_metric (t[1], ex);
     SI dx= ex->x2;
-    draw (ren, t[1], x, y);
-    draw (ren, t[2], x + dx, y);
+    draw_tree (ren, t[1], x, y);
+    draw_tree (ren, t[2], x + dx, y);
     return;
   }
 
@@ -1219,8 +1219,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     SI dy= ex->y2 - ey->y1;
     if (N(t) >= 4 && is_double (t[3]))
       dy += (SI) (as_double (t[3]) * vunit);
-    draw (ren, t[1], x, y);
-    draw (ren, t[2], x, y + dy);
+    draw_tree (ren, t[1], x, y);
+    draw_tree (ren, t[2], x, y + dy);
     return;
   }
 
@@ -1232,8 +1232,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     SI dy= ex->y1 - ey->y2;
     if (N(t) >= 4 && is_double (t[3]))
       dy -= (SI) (as_double (t[3]) * vunit);
-    draw (ren, t[1], x, y);
-    draw (ren, t[2], x, y + dy);
+    draw_tree (ren, t[1], x, y);
+    draw_tree (ren, t[2], x, y + dy);
     return;
   }
 
@@ -1246,7 +1246,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     SI delta= (SI) (0.05 * hunit);
     ex->x2 -= delta;
     SI dx= ((ex->x2 - ex->x1) - (ey->x2 - ey->x1)) >> 1;
-    draw (ren, u, x + dx, y);
+    draw_tree (ren, u, x + dx, y);
     return;
   }
 
@@ -1261,8 +1261,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     if (N(t) >= 4 && is_double (t[3]))
       lo= (SI) (as_double (t[3]) * vunit);
     dy -= lo; up += (lo >> 1);
-    draw (ren, t[1], x, y + up);
-    draw (ren, t[2], x, y + dy + up);
+    draw_tree (ren, t[1], x, y + up);
+    draw_tree (ren, t[2], x, y + dy + up);
     return;
   }
 
@@ -1270,7 +1270,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     scheme_tree d= exec (tuple ("sep-equal"));
     scheme_tree u= tuple ("align", tuple ("stack", t[1], t[2], d),
                           "=", "*", "0.5");
-    draw (ren, u, x, y);
+    draw_tree (ren, u, x, y);
     return;
   }
 
@@ -1278,7 +1278,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     scheme_tree d= exec (tuple ("sep-equal"));
     scheme_tree u= tuple ("align", tuple ("stack", t[1], t[2], d),
                           "less", "*", "0.5");
-    draw (ren, u, x, y);
+    draw_tree (ren, u, x, y);
     return;
   }
 
@@ -1288,16 +1288,16 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     glyph gl2= compile (t[2], ey);
     SI dx= collision_offset (gl1, gl2, true);
     dx += 2*PIXEL; // FIXME: needed to counter rounding errors
-    draw (ren, t[1], x, y);
-    draw (ren, t[2], x + dx, y);
+    draw_tree (ren, t[1], x, y);
+    draw_tree (ren, t[2], x + dx, y);
     return;
   }
 
   if (is_tuple (t, "left-fit", 3) && is_double (t[3])) {
-    draw (ren, tuple ("hor-flip",
-                      tuple ("right-fit",
-                             tuple ("hor-flip", t[1]),
-                             tuple ("hor-flip", t[2]), t[3])), x, y);
+    draw_tree (ren, tuple ("hor-flip",
+                           tuple ("right-fit",
+                                  tuple ("hor-flip", t[1]),
+                                  tuple ("hor-flip", t[2]), t[3])), x, y);
     return;
   }
 
@@ -1306,8 +1306,8 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     get_metric (t[1], ex);
     get_metric (t[2], ey);
     SI dx= ((ex->x1+ ex->x2- ey->x1- ey->x2) >> 1);
-    draw (ren, t[1], x, y);
-    draw (ren, t[2], x + dx, y);
+    draw_tree (ren, t[1], x, y);
+    draw_tree (ren, t[2], x + dx, y);
     return;
   }
 
@@ -1319,21 +1319,21 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     if (is_double (t[3])) my= as_double (t[3]);
     ren->move_origin (x, y);
     ren->set_transformation (scaling (point (mx, my), point (0.0, 0.0)));
-    draw (ren, t[1], 0, 0);
+    draw_tree (ren, t[1], 0, 0);
     ren->reset_transformation ();
     ren->move_origin (-x, -y);
     return;
   }
 
   if (is_tuple (t, "enlarge")) {
-    draw (ren, t[1], x, y);
+    draw_tree (ren, t[1], x, y);
     return;
   }
 
   if (is_tuple (t, "unindent", 1)) {
     metric ex;
     get_metric (t[1], ex);
-    draw (ren, t[1], x - ex->x1, y);
+    draw_tree (ren, t[1], x - ex->x1, y);
     return;
   }
 
@@ -1344,7 +1344,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
       is_tuple (t, "ver-crop", 1) ||
       is_tuple (t, "top-crop", 1) ||
       is_tuple (t, "bottom-crop", 1)) {
-    draw (ren, t[1], x, y);
+    draw_tree (ren, t[1], x, y);
     return;
   }
 
@@ -1516,7 +1516,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     SI dy = ay2 - ay;
     if (N(t) >= 4 && t[3] == "*") dx= 0;
     if (N(t) >= 5 && t[4] == "*") dy= 0;
-    draw (ren, t[1], x+dx, y+dy);
+    draw_tree (ren, t[1], x+dx, y+dy);
     return;
   }
 
@@ -1537,7 +1537,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     SI dy = ay2 - ay1;
     if (N(t) >= 4 && t[3] == "*") dx= 0;
     if (N(t) >= 5 && t[4] == "*") dy= 0;
-    draw (ren, t[1], x+dx, y+dy);
+    draw_tree (ren, t[1], x+dx, y+dy);
     return;
   }
 
@@ -1564,7 +1564,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     if (N(t) >= 5 && t[4] == "@") sy= sx;
     ren->move_origin (x, y);
     ren->set_transformation (scaling (point (mx, my), point (0.0, 0.0)));
-    draw (ren, t[1], 0, 0);
+    draw_tree (ren, t[1], 0, 0);
     ren->reset_transformation ();
     ren->move_origin (-x, -y);
     return;
@@ -1575,7 +1575,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     scheme_tree ct2= tuple ("hor-crop", t[2]);
     scheme_tree u  = tuple ("scale", ct1, ct2, "1", "*");
     scheme_tree v  = tuple ("align", u, t[2], "0.5", "0.5");
-    draw (ren, v, x, y);
+    draw_tree (ren, v, x, y);
     return;
   }
 
@@ -1584,7 +1584,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
       is_tuple (t, "left-pretend", 2) ||
       is_tuple (t, "right-pretend", 2) ||
       is_tuple (t, "ver-pretend", 2)) {
-    draw (ren, t[1], x, y);
+    draw_tree (ren, t[1], x, y);
     return;
   }
 
@@ -1620,7 +1620,7 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     scheme_tree a= tuple ("align", bar, t[1], "0.5", "0.5");
     scheme_tree u= tuple ("join", t[1], a);
     scheme_tree p= tuple ("pretend", u, t[1]);
-    draw (ren, p, x, y);
+    draw_tree (ren, p, x, y);
     return;
   }
 
@@ -1628,41 +1628,41 @@ virtual_font_rep::draw (renderer ren, scheme_tree t, SI x, SI y) {
     metric ex, ex2;
     get_metric (t[1], ex);
     get_metric (t[2], ex2);
-    if ((ex->x2 - ex->x1) <= (ex2->x2 - ex2->x1)) draw (ren, t[1], x, y);
-    else draw (ren, t[2], x, y);
+    if ((ex->x2 - ex->x1) <= (ex2->x2 - ex2->x1)) draw_tree (ren, t[1], x, y);
+    else draw_tree (ren, t[2], x, y);
   }
 
   if (is_tuple (t, "max-width", 2)) {
     metric ex, ex2;
     get_metric (t[1], ex);
     get_metric (t[2], ex2);
-    if ((ex->x2 - ex->x1) >= (ex2->x2 - ex2->x1)) draw (ren, t[1], x, y);
-    else draw (ren, t[2], x, y);
+    if ((ex->x2 - ex->x1) >= (ex2->x2 - ex2->x1)) draw_tree (ren, t[1], x, y);
+    else draw_tree (ren, t[2], x, y);
   }
 
   if (is_tuple (t, "min-height", 2)) {
     metric ex, ex2;
     get_metric (t[1], ex);
     get_metric (t[2], ex2);
-    if ((ex->y2 - ex->y1) <= (ex2->y2 - ex2->y1)) draw (ren, t[1], x, y);
-    else draw (ren, t[2], x, y);
+    if ((ex->y2 - ex->y1) <= (ex2->y2 - ex2->y1)) draw_tree (ren, t[1], x, y);
+    else draw_tree (ren, t[2], x, y);
   }
 
   if (is_tuple (t, "max-height", 2)) {
     metric ex, ex2;
     get_metric (t[1], ex);
     get_metric (t[2], ex2);
-    if ((ex->y2 - ex->y1) >= (ex2->y2 - ex2->y1)) draw (ren, t[1], x, y);
-    else draw (ren, t[2], x, y);
+    if ((ex->y2 - ex->y1) >= (ex2->y2 - ex2->y1)) draw_tree (ren, t[1], x, y);
+    else draw_tree (ren, t[2], x, y);
   }
 
   if (is_tuple (t, "font") && N(t) >= 3) {
-    draw (ren, t[1], x, y);
+    draw_tree (ren, t[1], x, y);
     return;
   }
 
   if (is_tuple (t, "italic", 3)) {
-    draw (ren, t[1], x, y);
+    draw_tree (ren, t[1], x, y);
     return;
   }
 }
@@ -1671,7 +1671,7 @@ void
 virtual_font_rep::draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
                                 SI x1, SI y1, SI x2, SI y2) {
   ren->clip (x + x1, y + y1, x + x2, y + y2);
-  draw (ren, t, x, y);
+  draw_tree (ren, t, x, y);
   ren->unclip ();  
 }
 
@@ -1679,7 +1679,7 @@ void
 virtual_font_rep::draw_transformed (renderer ren, scheme_tree t, SI x, SI y,
                                     frame f) {
   ren->set_transformation (f);
-  draw (ren, t, x, y);
+  draw_tree (ren, t, x, y);
   ren->reset_transformation ();  
 }
 
@@ -1856,7 +1856,7 @@ virtual_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   }
   else {
     tree t= get_tree (s);
-    if (t != "") draw (ren, t, x, y);
+    if (t != "") draw_tree (ren, t, x, y);
   }
 }
 
