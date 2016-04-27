@@ -260,6 +260,7 @@ END_MAGNIFY
 
 static tree
 protect_arrow (edit_env env, tree t) {
+  (void) env;
   return tree (WITH, "arrow-begin", "none", "arrow-end", "none",
                "dash-style", "none", t);
 }

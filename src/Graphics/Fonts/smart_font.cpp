@@ -47,6 +47,7 @@ public:
   smart_map_rep (string name, tree fn):
     rep<smart_map> (name), cht (-1), fn_nr (-1), fn_spec (2), fn_rewr (2)
   {
+    (void) fn;
     for (int i=0; i<256; i++) chv[i]= -1;
     fn_nr (tuple ("main" ))= SUBFONT_MAIN;
     fn_nr (tuple ("error"))= SUBFONT_ERROR;

@@ -346,6 +346,7 @@ error_font_rep::error_font_rep (string name, font fnb):
 
 bool
 error_font_rep::supports (string c) {
+  (void) c;
   return true;
 }
 

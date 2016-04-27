@@ -88,6 +88,7 @@ box_rep::contains_rectangle (SI X1, SI Y1, SI X2, SI Y2) {
 
 box
 box_rep::adjust_kerning (int mode, double factor) {
+  (void) mode; (void) factor;
   return this;
 }
 

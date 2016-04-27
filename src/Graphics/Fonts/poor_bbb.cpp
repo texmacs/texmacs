@@ -107,6 +107,7 @@ poor_bbb_font_rep::get_xpositions (string s, SI* xpos) {
 
 void
 poor_bbb_font_rep::get_xpositions (string s, SI* xpos, bool lig) {
+  (void) lig;
   get_xpositions (s, xpos);
 }
 

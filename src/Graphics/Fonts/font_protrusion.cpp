@@ -172,6 +172,7 @@ add_quanjiao (hashmap<string,double>& t, int mode, bool right) {
 
 void
 add_banjiao (hashmap<string,double>& t, int mode, bool right) {
+  (void) mode;
   if (right) add_cjk_right_protrusion (t);
   else add_cjk_left_protrusion (t);
 }

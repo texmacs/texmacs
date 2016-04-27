@@ -524,7 +524,7 @@ fix_left_border (glyph gl, array<int>& start, SI& penw, SI& fat) {
 
 static void
 decrease_width (glyph gl, array<int>& start, SI& penw, SI& fat) {
-  (void) start;
+  (void) gl; (void) start;
   SI dw= (SI) (0.25 * penw);
   fat  += dw;
   penw -= dw;

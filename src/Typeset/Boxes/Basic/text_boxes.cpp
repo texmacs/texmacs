@@ -503,6 +503,7 @@ box
 delimiter_box (path ip, string s, font fn, pencil pen,
                SI bot, SI top, SI mid, SI real_bot, SI real_top)
 {
+  (void) real_bot; (void) real_top;
   SI h= top - bot;
   string r= get_delimiter (s, fn, h);
   box b= text_box (ip, 0, r, fn, pen);

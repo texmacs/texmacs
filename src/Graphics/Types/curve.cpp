@@ -725,8 +725,9 @@ bezier_rep::rectify_cumul (array<point>& cum, double eps) {
 
 double
 bezier_rep::bound (double t, double eps) {
+  (void) t;
   double K= 3.0*norm(P[3]) + 2.0*norm(P[2]) + norm(P[1]);
-  return min (1.0 / (K + 1.0e-6), 1.0);
+  return min (eps / (K + 1.0e-6), 1.0);
 }
 
 point
@@ -737,6 +738,7 @@ bezier_rep::grad (double t, bool& error) {
 
 double
 bezier_rep::curvature (double t1, double t2) {
+  (void) t1; (void) t2;
   return tm_infinity; // FIXME
 }
 

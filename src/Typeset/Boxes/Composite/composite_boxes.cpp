@@ -406,6 +406,7 @@ struct table_box_rep: public concrete_composite_box_rep {
 
 box
 table_box_rep::adjust_kerning (int mode, double factor) {
+  (void) mode;
   int n= N(bs), i, j;
   array<box> adj (n);
   array<SI>  cdw (n);

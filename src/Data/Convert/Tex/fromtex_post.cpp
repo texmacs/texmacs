@@ -1954,6 +1954,7 @@ remove_empty_withs (tree t) {
 
 tree
 merge_successive_withs (tree t, bool force_concat= false) {
+  (void) force_concat;
   if (is_atomic (t)) return t;
   int i, n= N(t);
   tree r(L(t));

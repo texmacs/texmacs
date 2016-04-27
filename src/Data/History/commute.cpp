@@ -73,6 +73,7 @@ invert (modification m, tree t) {
   default:
     FAILED ("unexpected situation");
   }
+  return m;
 }
 
 /******************************************************************************
@@ -307,6 +308,7 @@ swap (modification& m1, modification& m2) {
   }
   else return swap_basic (m1, m2);
   FAILED ("unexpected situation");
+  return false;
 }
 
 bool

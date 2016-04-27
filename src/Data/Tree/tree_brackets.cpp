@@ -191,6 +191,7 @@ detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
 
 static array<int>
 detect_probable (array<tree> a, array<int> tp_in) {
+  (void) a;
   array<int> tp= upgrade_probable (tp_in);
   int last_open= -1;
   for (int i=0; i<N(tp); i++)

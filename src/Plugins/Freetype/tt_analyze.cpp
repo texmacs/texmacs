@@ -68,6 +68,7 @@ sane_font (array<string> r, font_metric fnm, string family,
 
 void
 analyze_range (font fn, font_metric fnm, array<string>& r, string family) {
+  (void) fn;
   bool ec= starts (family, "ec") && ends (family, "10");
   string lfn= locase_all (family);
   if (starts (lfn, "lastresort") ||

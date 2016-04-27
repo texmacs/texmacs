@@ -22,7 +22,7 @@ void tm_ostream_rep::flush () {}
 void tm_ostream_rep::clear () {}
 bool tm_ostream_rep::is_writable () const { return false; }
 void tm_ostream_rep::write (const char*) {}
-void tm_ostream_rep::write (tree t) {}
+void tm_ostream_rep::write (tree t) { (void) t; }
 
 /******************************************************************************
 * Standard streams

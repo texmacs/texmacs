@@ -117,11 +117,13 @@ ispeller_rep::send (string cmd) {
 
 string
 ispell_encode (string lan, string s) {
+  (void) lan;
   return cork_to_utf8 (s);
 }
 
 string
 ispell_decode (string lan, string s) {
+  (void) lan;
   return utf8_to_cork (s);
 }
 

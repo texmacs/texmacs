@@ -278,6 +278,7 @@ load_xpm (url file_name) {
 
 string
 picture_as_eps (picture pic, int dpi) {
+  (void) dpi;
   if (DEBUG_CONVERT) debug_convert<< "in picture_as_eps " <<LF;
   static const char* d= "0123456789ABCDEF";
   int w_pt= pic->get_width (), h_pt= pic->get_height ();

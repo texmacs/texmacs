@@ -342,6 +342,7 @@ extern int nr_painted;
 
 void
 effect_box_rep::redraw (renderer ren, path p, rectangles& l) {
+  (void) p; (void) l;
   if (((nr_painted&15) == 15) && gui_interrupted (true)) return;
   ren->move_origin (x0, y0);
   array<picture> pics (subnr ());

@@ -216,6 +216,7 @@ from_nsstring (NSString *s) {
          isPressed:(BOOL)isPressed
 fromHardwareWithAttributes:(NSMutableDictionary *)attributes
 {
+  (void) theHidRemote; (void) attributes;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
   mac_remote_button (from_nsstring([self buttonNameForButtonCode:buttonCode]), isPressed);
   [pool release];

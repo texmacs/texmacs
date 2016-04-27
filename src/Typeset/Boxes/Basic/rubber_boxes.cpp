@@ -73,6 +73,7 @@ struct marker_box_rep: public box_rep {
     found= !is_nil (p) && is_accessible (ip);
     return path (0); }
   path find_tree_path (path bp) {
+    (void) bp;
     if (is_accessible (ip)) return reverse (descend (ip, pos));
     else return reverse (descend_decode (ip, 0)); }
   cursor find_cursor (path bp) {

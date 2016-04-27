@@ -143,6 +143,7 @@ tm_window_rep::tm_window_rep (tree doc, command quit):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
+  (void) doc;
   zoomf= get_server () -> get_default_zoom_factor ();
 }
 

@@ -78,6 +78,7 @@ root (modification mod) {
   case MOD_SET_CURSOR: return path_up (mod->p);
   default: FAILED ("invalid modification type");
   }
+  return path ();
 }
 
 int
@@ -91,6 +92,7 @@ index (modification mod) {
   case MOD_SET_CURSOR: return last_item (mod->p);
   default: FAILED ("invalid modification type");
   }
+  return 0;
 }
 
 int
@@ -101,6 +103,7 @@ argument (modification mod) {
   case MOD_INSERT_NODE: return last_item (mod->p);
   default: FAILED ("invalid modification type");
   }
+  return 0;
 }
 
 tree_label
@@ -142,6 +145,7 @@ get_type (modification mod) {
   case MOD_SET_CURSOR: return "set-cursor";
   default: FAILED ("invalid modification type");
   }
+  return "none";
 }
 
 path

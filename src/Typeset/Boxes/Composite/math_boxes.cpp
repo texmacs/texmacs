@@ -89,6 +89,7 @@ frac_box_rep::frac_box_rep (
 
 box
 frac_box_rep::adjust_kerning (int mode, double factor) {
+  (void) mode;
   box num= bs[0]->adjust_kerning (0, factor);
   box den= bs[1]->adjust_kerning (0, factor);
   return frac_box (ip, num, den, fn, sfn, pen);
@@ -156,6 +157,7 @@ sqrt_box_rep::sqrt_box_rep (
 
 box
 sqrt_box_rep::adjust_kerning (int mode, double factor) {
+  (void) mode;
   box body = bs[0]->adjust_kerning (0, factor);
   box ramif= (N(bs) == 3? box (): bs[1]->adjust_kerning (0, factor/2));
   box sqrtb= (N(bs) == 3? bs[1]: bs[2]);
@@ -285,6 +287,7 @@ tree_box_rep::tree_box_rep (path ip, array<box> bs, font fn2, pencil pen2):
 
 box
 tree_box_rep::adjust_kerning (int mode, double factor) {
+  (void) mode;
   int n= (N(bs)+1)>>1;
   array<box> adj (n);
   for (int i=0; i<n; i++)
@@ -517,6 +520,7 @@ wide_box_rep::wide_box_rep (
 
 box
 wide_box_rep::adjust_kerning (int mode, double factor) {
+  (void) mode;
   box body= ref->adjust_kerning (START_OF_LINE + END_OF_LINE, factor);
   return wide_box (ip, body, s, fn, pen, request_wide, above);
 }

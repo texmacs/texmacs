@@ -657,6 +657,7 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 
 - (void)_delayedAutoRecovery:(NSTimer *)aTimer
 {
+        (void) aTimer;
 	[_autoRecoveryTimer invalidate];
 	[_autoRecoveryTimer release];
 	_autoRecoveryTimer = nil;
@@ -1900,6 +1901,7 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 
 - (void)_serviceNotificationFor:(io_service_t)service messageType:(natural_t)messageType messageArgument:(void *)messageArgument
 {
+        (void) messageArgument;
 	if (messageType == kIOMessageServiceIsTerminated)
 	{
 		[self _destructService:service];
@@ -1971,6 +1973,7 @@ static void get_system_version(int* major, int* minor, int* bugfix)
 
 - (void)_secureInputNotificationFor:(io_service_t)service messageType:(natural_t)messageType messageArgument:(void *)messageArgument
 {
+        (void) service; (void) messageArgument;
 	if (messageType == kIOMessageServiceBusyStateChange)
 	{
 		UInt64 old_lastSecureEventInputPIDSum = _lastSecureEventInputPIDSum;

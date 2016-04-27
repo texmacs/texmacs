@@ -106,7 +106,7 @@ change_extents (raster<C> r, int w, int h, int ox, int oy) {
 
 template<typename C> raster<C>
 trim_border (raster<C> r, int lb, int bb, int rb, int tb) {
-  int x1= lb - r->ox, y1= lb - r->oy;
+  int x1= lb - r->ox, y1= bb - r->oy;
   int x2= r->w - rb - r->ox, y2= r->h - tb - r->oy;
   return subraster (r, x1, y1, x2, y2);
 }

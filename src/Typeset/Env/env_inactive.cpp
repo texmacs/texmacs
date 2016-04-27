@@ -111,6 +111,7 @@ is_long (tree t) {
 
 static tree
 highlight (tree t, tree orig, int kind) {
+  (void) orig;
   switch (kind) {
   case TYPE_INVALID:
     return compound ("src-unknown", t);

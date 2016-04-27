@@ -470,6 +470,7 @@ renderer
 renderer_rep::shadow (scalable& im , SI x1, SI y1, SI x2, SI y2) {
   (void) im; (void) x1; (void) y1; (void) x2; (void) y2;
   FAILED ("shadowing is not supported");
+  return NULL;
 }
 
 void

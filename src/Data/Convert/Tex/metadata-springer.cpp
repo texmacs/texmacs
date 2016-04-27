@@ -196,11 +196,13 @@ get_springer_author_datas (tree t, string s, bool llncs=false) {
 
 static array<tree>
 get_llncs_affiliation_datas (tree t, bool llncs=false) {
+  (void) llncs;
   return get_springer_author_datas (t, "affiliation");
 }
 
 static array<tree>
 get_springer_affiliation_datas (tree t, bool llncs=false) {
+  (void) llncs;
   int i, n=N(t);
   array<tree> r, author_datas, author_affiliation;
   tree tmp (CONCAT);

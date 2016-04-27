@@ -58,7 +58,8 @@ public:
   argument_effect_rep (int nr2): nr (nr2) {}
   rectangle get_logical_extents (array<rectangle> rs) { return rs[nr]; }
   rectangle get_extents (array<rectangle> rs) { return rs[nr]; }
-  picture apply (array<picture> pics, SI pixel) { return pics[nr]; }
+  picture apply (array<picture> pics, SI pixel) {
+    (void) pixel; return pics[nr]; }
 };
 
 effect argument_effect (int nr) {

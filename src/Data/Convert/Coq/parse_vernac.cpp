@@ -373,19 +373,23 @@ parse_list (string s, int &i) {
 
 static void
 parse_pretty_printing_definition (string s) {
+  (void) s;
 }
 
 static void
 parse_pretty_printing_removal (string s) {
+  (void) s;
 }
 
 static bool
 is_defining_pretty_printing (string s, int i) {
+  (void) s; (void) i;
   return false;
 }
 
 static bool
 is_removing_pretty_printing (string s, int i) {
+  (void) s; (void) i;
   return false;
 }
 

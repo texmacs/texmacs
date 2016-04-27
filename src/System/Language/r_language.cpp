@@ -186,12 +186,10 @@ is_identifier_start( char c ) {
 }
 */
 
-
-
-
 static void
 parse_identifier (hashmap<string, string>& t,
 		  string s, int& pos, bool postfix) {
+  (void) postfix;
   int i=pos;
   if ( pos>=N(s) ) return;
 
