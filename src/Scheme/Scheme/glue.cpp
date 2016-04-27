@@ -734,7 +734,7 @@ var_apply (tree& t, patch p) {
 
 typedef hashmap<string,string> table_string_string;
 
-static bool
+bool
 tmscm_is_table_string_string (tmscm p) {
   if (tmscm_is_null (p)) return true;
   else if (!tmscm_is_pair (p)) return false;
