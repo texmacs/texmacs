@@ -66,8 +66,14 @@ poor_italic_font_rep::supports (string s) {
 void
 poor_italic_font_rep::get_extents (string s, metric& ex) {
   base->get_extents (s, ex);
-  ex->x3 += (SI) floor (xslant * ex->y3);
-  ex->x4 += (SI) floor (xslant * ex->y4);
+  if (xslant >= 0.0) {
+    ex->x3 += (SI) floor (xslant * ex->y3);
+    ex->x4 += (SI) ceil  (xslant * ex->y4);
+  }
+  else {
+    ex->x3 += (SI) floor (xslant * ex->y4);
+    ex->x4 += (SI) ceil  (xslant * ex->y3);
+  }
 }
 
 void
@@ -199,7 +205,10 @@ poor_italic_font_rep::get_left_correction (string s) {
   metric ex;
   base->get_extents (s, ex);
   SI dx= 0;
-  if (ex->y1 < 0) dx= (SI) (xslant * (-ex->y1));
+  if (ex->y1 < 0) {
+    if (xslant >= 0.0) dx= (SI) (xslant * (-ex->y1));
+    else dx= (SI) ((-xslant) * ex->y2);
+  }
   // FIXME: we should apply a smaller correction if there is no ink
   // in the bottom left corner (e.g. 'q' as compared to 'p')
   return base->get_left_correction (s) + dx;
@@ -264,8 +273,13 @@ poor_italic_font_rep::get_right_correction (string s) {
   metric ex;
   base->get_extents (s, ex);
   SI dx= 0;
-  if (ex->y2 > 0) dx= (SI) (xslant * ex->y2);
-  dx= (SI) (get_multiplier (r) * dx);
+  if (xslant >= 0.0) {
+    if (ex->y2 > 0) dx= (SI) (xslant * ex->y2);
+    dx= (SI) (get_multiplier (r) * dx);
+  }
+  else {
+    if (ex->y1 < 0) dx= (SI) (xslant * ex->y1);
+  }
   // FIXME: we should apply a better correction if there is no ink
   // in the upper right corner (e.g. 'b' as compared to 'd')
   return base->get_right_correction (s) + dx;

@@ -34,10 +34,18 @@ struct slanted_font_metric_rep: public font_metric_rep {
     if (!ms->contains (c)) {
       metric_struct* r= tm_new<metric_struct> ();
       ms(c)= (pointer) r;
-      r->x1= m->x1;
-      r->x2= m->x2;
-      r->x3= m->x3 + (SI) floor (m->y3 * slant);
-      r->x4= m->x4 + (SI) ceil  (m->y4 * slant);
+      if (slant >= 0.0) {
+	r->x1= m->x1;
+	r->x2= m->x2;
+	r->x3= m->x3 + (SI) floor (m->y3 * slant);
+	r->x4= m->x4 + (SI) ceil  (m->y4 * slant);
+      }
+      else {
+	r->x1= m->x1;
+	r->x2= m->x2;
+	r->x3= m->x3 + (SI) floor (m->y4 * slant);
+	r->x4= m->x4 + (SI) ceil  (m->y3 * slant);
+      }
       r->y1= m->y1;
       r->y2= m->y2;
       r->y3= m->y3;
@@ -63,6 +71,10 @@ slanted (glyph gl, double slant) {
   int ww= gl->width, hh= gl->height;
   int t= gl->yoff, b= (hh-1) - gl->yoff;
   int l= (int) ceil (slant * b), r= (int) ceil (slant * t);
+  if (slant < 0) {
+    l= (int) ceil (-slant * t);
+    r= (int) ceil (-slant * b);
+  }
   int nw= ww + l + r;
   glyph bmr (nw, hh, gl->xoff + l, gl->yoff, gl->depth);
   for (j=0; j<hh; j++) {
