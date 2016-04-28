@@ -426,7 +426,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  freetype windowsres)) $(texmacs_c_deps)
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDICONV) \
-   $(LDGUILE) $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) \
+   $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) \
    $(LDDL) $(LDSPARKLE)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
