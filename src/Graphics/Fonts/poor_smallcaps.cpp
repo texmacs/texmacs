@@ -207,7 +207,7 @@ poor_smallcaps_font_rep::index_glyph (string s, font_metric& fnm,
   string r= s;
   advance (s, i, r, nr);
   if (nr < 0) return -1;
-  return subfn[nr] -> index_glyph (s, fnm, fng);
+  return subfn[nr] -> index_glyph (r, fnm, fng);
 }
 
 double
