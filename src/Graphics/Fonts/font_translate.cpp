@@ -89,7 +89,7 @@ get_shape (array<string> v) {
 * Upgrade old family names
 ******************************************************************************/
 
-static string
+string
 upgrade_family_name (string f) {
   static hashmap<string,string> t ("");
   if (N(t) == 0) {

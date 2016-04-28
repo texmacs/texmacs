@@ -19,6 +19,7 @@ array<string> remove_other (array<string> a, bool keep_glyphs= true);
 bool same_kind (string s1, string s2);
 bool is_glyphs (string s);
 bool is_category (string s);
+string upgrade_family_name (string f);
 
 /******************************************************************************
 * Basic subroutines
@@ -265,6 +266,7 @@ Replace (string s, string w, string b) {
 string
 family_to_master (string f) {
   if (occurs (",", f) && occurs ("=", f)) f= main_family (f);
+  f= upgrade_family_name (f);
   font_database_load ();
   if (!font_features->contains (tree (f))) {
     cout << "TeXmacs] missing '" << f << "' family\n";
@@ -313,6 +315,7 @@ family_to_master (string f) {
 array<string>
 master_to_families (string m) {
   if (occurs (",", m) && occurs ("=", m)) m= main_family (m);
+  f= upgrade_family_name (f);
   font_database_load ();
   if (!font_variants->contains (tree (m))) {
     cout << "TeXmacs] missing '" << m << "' master\n";
