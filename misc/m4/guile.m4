@@ -124,24 +124,17 @@ AC_DEFUN([LC_GUILE],[
   fi
   AC_MSG_RESULT($GUILE_EFFECTIVE_VERSION)
 
-  case "$GUILE_EFFECTIVE_VERSION" in
-    1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
-      CONFIG_GUILE_SERIAL="A"
-    ;;
-    1.6* | 1.7*)
-      CONFIG_GUILE_SERIAL="B"
-    ;;
-    2.*)
-      CONFIG_GUILE_SERIAL="D"
-      if test "$enable_guile2" != "yes"; then
-        AC_MSG_ERROR([TeXmacs is incompatible with Guile 2.
-  If you know what you are doing, run configure with --enable-guile2=yes])
-      fi
-    ;;
-    *)
-      CONFIG_GUILE_SERIAL="C"
-    ;;
-  esac
+    case "$GUILE_VERSION" in
+      1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*) AC_DEFINE([GUILE_A],[1],[Guile version]) ;;
+      1.6* | 1.7*) AC_DEFINE(GUILE_B,[1],[Guile version]) ;;
+      2.*) AC_DEFINE(GUILE_D,[1],[Guile version])
+        if test "$enableval" != "no"; then
+          AC_MSG_ERROR([TeXmacs is incompatible with Guile 2.
+    If you know what you are doing, run configure with --enable-guile2])
+        fi 
+      ;;
+      *) AC_DEFINE(GUILE_C,[1],[Guile version]) ;;
+    esac
 
   AC_MSG_CHECKING(guile data path)
   if test -z "$GUILE_DATA_PATH" ; then
@@ -150,7 +143,6 @@ AC_DEFUN([LC_GUILE],[
   AC_MSG_RESULT($GUILE_DATA_PATH)
 
   AC_SUBST(GUILE_BIN)
-  AC_SUBST(CONFIG_GUILE_SERIAL)
   AC_SUBST(GUILE_DATA_PATH)
 
   AC_MSG_CHECKING(whether ... arguments behave correctly)
@@ -181,4 +173,7 @@ AC_DEFUN([LC_GUILE],[
           AC_MSG_RESULT(size_t)
     ])
   CXXFLAGS=""
+
+  CONFIG_GUILE_SERIAL="X"
+  AC_SUBST(CONFIG_GUILE_SERIAL)
 ])

@@ -12,6 +12,18 @@
 /* Enable experimental style rewriting code */
 #undef EXPERIMENTAL
 
+/* Guile version */
+#undef GUILE_A
+
+/* Guile version */
+#undef GUILE_B
+
+/* Guile version */
+#undef GUILE_C
+
+/* Guile version */
+#undef GUILE_D
+
 /* Define to 1 if you have the `dlopen' function. */
 #undef HAVE_DLOPEN
 
