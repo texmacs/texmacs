@@ -4646,7 +4646,7 @@ fi
 
   if [[ "$withval" != no ]]
   then
-  # Check whether --enable-guile2 was given.
+    # Check whether --enable-guile2 was given.
 if test "${enable_guile2+set}" = set; then :
   enableval=$enable_guile2;
 else
@@ -4654,7 +4654,7 @@ else
 fi
 
 
-  if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
+    if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
 
 	guile_config=
   for ac_prog in guile18-config guile-config guile20-config
@@ -6003,14 +6003,14 @@ fi
 #    echo $GUILE_EFFECTIVE_VERSION
 #  fi
 
-  fi
+    fi
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
 $as_echo_n "checking version of guile... " >&6; }
-  if test -z "$GUILE_EFFECTIVE_VERSION" ; then
-    GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
-  fi
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_EFFECTIVE_VERSION" >&5
+    if test -z "$GUILE_EFFECTIVE_VERSION" ; then
+      GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
+    fi
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_EFFECTIVE_VERSION" >&5
 $as_echo "$GUILE_EFFECTIVE_VERSION" >&6; }
 
     case "$GUILE_VERSION" in
@@ -6033,12 +6033,12 @@ $as_echo "#define GUILE_C 1" >>confdefs.h
  ;;
     esac
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
 $as_echo_n "checking guile data path... " >&6; }
-  if test -z "$GUILE_DATA_PATH" ; then
-    GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
-  fi
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
+    if test -z "$GUILE_DATA_PATH" ; then
+      GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
+    fi
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
 $as_echo "$GUILE_DATA_PATH" >&6; }
 
 

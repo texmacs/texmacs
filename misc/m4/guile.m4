@@ -115,19 +115,19 @@ AC_DEFUN([LC_GUILE],[
   [where to find guile-config [system]]), [], [unset withval])
   if [[[ "$withval" != no ]]]
   then
-  AC_ARG_ENABLE(guile2,
-  [  --enable-guile2         enable compilation with Guile 2, for development purposes],
-      [], [enable_guile2="no"])
+    AC_ARG_ENABLE(guile2,
+    [  --enable-guile2         enable compilation with Guile 2, for development purposes],
+        [], [enable_guile2="no"])
 
-  if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
-    LC_WITH_GUILE
-  fi
+    if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
+      LC_WITH_GUILE
+    fi
 
-  AC_MSG_CHECKING(version of guile)
-  if test -z "$GUILE_EFFECTIVE_VERSION" ; then
-    GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
-  fi
-  AC_MSG_RESULT($GUILE_EFFECTIVE_VERSION)
+    AC_MSG_CHECKING(version of guile)
+    if test -z "$GUILE_EFFECTIVE_VERSION" ; then
+      GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
+    fi
+    AC_MSG_RESULT($GUILE_EFFECTIVE_VERSION)
 
     case "$GUILE_VERSION" in
       1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*) AC_DEFINE([GUILE_A],[1],[Guile version]) ;;
@@ -141,14 +141,14 @@ AC_DEFUN([LC_GUILE],[
       *) AC_DEFINE(GUILE_C,[1],[Guile version]) ;;
     esac
 
-  AC_MSG_CHECKING(guile data path)
-  if test -z "$GUILE_DATA_PATH" ; then
-    GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
-  fi
-  AC_MSG_RESULT($GUILE_DATA_PATH)
+    AC_MSG_CHECKING(guile data path)
+    if test -z "$GUILE_DATA_PATH" ; then
+      GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
+    fi
+    AC_MSG_RESULT($GUILE_DATA_PATH)
 
-  AC_SUBST(GUILE_BIN)
-  AC_SUBST(GUILE_DATA_PATH)
+    AC_SUBST(GUILE_BIN)
+    AC_SUBST(GUILE_DATA_PATH)
   else
     AC_MSG_ERROR([ cannot work without Guile])
   fi
