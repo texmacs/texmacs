@@ -110,6 +110,11 @@ $CONFIG_DOTS
 ])
 
 AC_DEFUN([LC_GUILE],[
+  AC_ARG_WITH(guile,
+  AS_HELP_STRING([--with-guile@<:@=DIR@:>@],
+  [where to find guile-config [system]]), [], [unset withval])
+  if [[[ "$withval" != no ]]]
+  then
   AC_ARG_ENABLE(guile2,
   [  --enable-guile2         enable compilation with Guile 2, for development purposes],
       [], [enable_guile2="no"])
@@ -144,6 +149,9 @@ AC_DEFUN([LC_GUILE],[
 
   AC_SUBST(GUILE_BIN)
   AC_SUBST(GUILE_DATA_PATH)
+  else
+    AC_MSG_ERROR([ cannot work without Guile])
+  fi
 
   AC_MSG_CHECKING(whether ... arguments behave correctly)
   if test -z "$GUILE_CFLAGS"; then

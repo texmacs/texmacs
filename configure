@@ -789,6 +789,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+with_guile
 enable_guile2
 with_x
 with_iconv
@@ -1475,6 +1476,7 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-guile[=DIR]      where to find guile-config [system]
   --with-x                use the X Window System
   --with-iconv[=DIR]      where to find iconv [system]
   --with-freetype[=ARG]   with freetype support [ARG=linked]
@@ -4634,6 +4636,16 @@ fi
 # Checks for Guile
 #--------------------------------------------------------------------
 
+
+# Check whether --with-guile was given.
+if test "${with_guile+set}" = set; then :
+  withval=$with_guile;
+else
+  unset withval
+fi
+
+  if [[ "$withval" != no ]]
+  then
   # Check whether --enable-guile2 was given.
 if test "${enable_guile2+set}" = set; then :
   enableval=$enable_guile2;
@@ -6031,6 +6043,9 @@ $as_echo "$GUILE_DATA_PATH" >&6; }
 
 
 
+  else
+    as_fn_error $? " cannot work without Guile" "$LINENO" 5
+  fi
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ... arguments behave correctly" >&5
 $as_echo_n "checking whether ... arguments behave correctly... " >&6; }
