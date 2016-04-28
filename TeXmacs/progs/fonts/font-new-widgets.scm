@@ -559,10 +559,12 @@
             ("Reset"
              (begin
                (init-default "font" "font-base-size" "math-font" "prog-font"
-                             "font-family" "font-series" "font-shape")
+                             "font-family" "font-series" "font-shape"
+                             "font-effects")
                (selector-initialize-font get-init)
                (refresh-now "font-family-selector")
-               (refresh-now "font-size-selector")))
+               (refresh-now "font-size-selector")
+               (refresh-now "font-customized-selector")))
             // //
             ("Ok" (quit (selector-get-changes get-init))))
         (if (not flag?)
