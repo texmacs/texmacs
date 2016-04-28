@@ -826,7 +826,8 @@ tex_font_rep::get_glyph (string s) {
   case TEX_LA:
   case TEX_GR:
     if (s == "<less>") s= "<";
-    if (s == "<gtr>") s= ">";
+    else if (s == "<gtr>") s= ">";
+    else if (N(s) >= 2 && s[0] == '<') s= special_translate[s];
     break;
   case TEX_CM:
   case TEX_ADOBE:
@@ -856,7 +857,8 @@ tex_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   case TEX_LA:
   case TEX_GR:
     if (s == "<less>") s= "<";
-    if (s == "<gtr>") s= ">";
+    else if (s == "<gtr>") s= ">";
+    else if (N(s) >= 2 && s[0] == '<') s= special_translate[s];
     break;
   case TEX_CM:
   case TEX_ADOBE:

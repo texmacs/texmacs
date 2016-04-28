@@ -13,6 +13,8 @@
 #include "translator.hpp"
 #include "Metafont/load_tex.hpp"
 
+font_metric tfm_font_metric (tex_font_metric tfm, font_glyphs pk, double unit);
+
 /******************************************************************************
 * TeX rubber fonts
 ******************************************************************************/
@@ -29,13 +31,15 @@ struct tex_rubber_font_rep: font_rep {
 
   tex_rubber_font_rep (string name, string trl_name,
 		       string family, int size, int dpi, int dsize);
-  bool supports (string c);
-  void get_raw_extents (int c, metric& ex);
-  void get_partial_extents (int c, metric& ex);
-  void get_extents (string s, metric& ex);
-  void draw_raw (renderer ren, int c, SI x, SI& y, SI& real_y);
-  void draw_fixed (renderer ren, string s, SI x, SI y);
-  font magnify (double zoomx, double zoomy);
+  bool  supports (string c);
+  void  get_raw_extents (int c, metric& ex);
+  void  get_partial_extents (int c, metric& ex);
+  void  get_extents (string s, metric& ex);
+  void  draw_raw (renderer ren, int c, SI x, SI& y, SI& real_y);
+  void  draw_fixed (renderer ren, string s, SI x, SI y);
+  font  magnify (double zoomx, double zoomy);
+  glyph get_glyph (string s);
+  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 
   double get_left_slope (string s);
   double get_right_slope (string s);
@@ -273,6 +277,38 @@ tex_rubber_font_rep::magnify (double zoomx, double zoomy) {
   if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
   int ndpi= (int) tm_round (dpi * zoomx);
   return tex_rubber_font (trl, family, size, ndpi, dsize);
+}
+
+glyph
+tex_rubber_font_rep::get_glyph (string s) {
+  int i;
+  for (i=N(s)-1; i>0; i--) if (s[i]=='-') break;
+  string r= s (0, i) * ">";
+  QN pre_c= ext->dict[r];
+  int n= as_int (s (i+1, N(s)-1));
+  if ((pre_c<tfm->bc) || (pre_c>tfm->ec)) return font_rep::get_glyph (s);
+  QN c = tfm->nth_in_list (pre_c, n);
+  if (tfm->tag (c) == 3) return font_rep::get_glyph (s);
+  glyph gl= pk->get (c);
+  if (is_nil (gl)) return font_rep::get_glyph (s);
+  return gl;
+}
+
+int
+tex_rubber_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
+  int i;
+  for (i=N(s)-1; i>0; i--) if (s[i]=='-') break;
+  string r= s (0, i) * ">";
+  QN pre_c= ext->dict[r];
+  int n= as_int (s (i+1, N(s)-1));
+  if ((pre_c<tfm->bc) || (pre_c>tfm->ec)) return -1;
+  QN c = tfm->nth_in_list (pre_c, n);
+  if (tfm->tag (c) == 3) return -1;
+  glyph gl= pk->get (c);
+  if (is_nil (gl)) return -1;
+  rm= tfm_font_metric (tfm, pk, unit);
+  rg= pk;
+  return c;
 }
 
 /******************************************************************************

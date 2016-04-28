@@ -1354,7 +1354,8 @@ smart_font (string family, string variant, string series, string shape,
     return smart_font_bis (family, variant, series, shape, sz, dpi);
   font fn1= smart_font_bis (family, "rm", series, shape, sz, dpi);
   font fn2= smart_font_bis (family, variant, series, shape, sz, dpi);
-  double zoom= ((double) fn1->yx) / ((double) fn2->yx);
+  double zoom= ((double) fn1->yx) / max (((double) fn2->yx), 1.0);
+  if (fn1->yx < PIXEL || fn2->yx < PIXEL) zoom= 1.0;
   if (zoom > 0.975 && zoom < 1.025) return fn2;
   return fn2->magnify (zoom);
 }

@@ -210,6 +210,12 @@ poor_stretched_font_rep::get_right_correction (string s) {
 
 font
 poor_stretched_font (font base, double zoomx, double zoomy) {
+  if (zoomx != zoomx) zoomx= 1.0;
+  if (zoomy != zoomy) zoomy= 1.0;
+  if (zoomx < 0.01) zoomx= 0.01;
+  if (zoomy < 0.01) zoomy= 0.01;
+  if (zoomx > 100.0) zoomx= 100.0;
+  if (zoomy > 100.0) zoomy= 100.0;
   if (zoomx != 1.0)
     return poor_stretched_font (base->magnify (zoomx), 1.0, zoomy / zoomx);
   if (zoomy == 1.0)
