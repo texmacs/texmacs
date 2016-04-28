@@ -109,43 +109,6 @@ $CONFIG_DOTS
 ], $1, $2)
 ])
 
-AC_DEFUN([LC_GUILE_STATIC],[
-AC_MSG_CHECKING([if statically linking with guile works])
-SAVE_CPPFLAGS="$CPPFLAGS"
-SAVE_LDFLAGS="$LDFLAGS"
-SAVE_LIBS="$LIBS"
-CPPFLAGS="$GUILE_CFLAGS"
-LDFLAGS="-static"
-LIBS="$GUILE_LDFLAGS"
-TEXMACS_LINK_GUILE([tm_link_guile_static="yes"],
-		   [tm_link_guile_static="no"])
-AC_MSG_RESULT(["$tm_link_guile_static"])
-if test "$tm_link_guile_static" = "no" ; then
-   AC_MSG_CHECKING([if it works with -lltdl])
-   LIBS="$GUILE_LDFLAGS -lltdl"
-   TEXMACS_LINK_GUILE([tm_link_guile_static_ltdl="yes"],
-		      [tm_link_guile_static_ltdl="no"])
-   AC_MSG_RESULT(["$tm_link_guile_static_ltdl"])
-   if test "$tm_link_guile_static_ltdl" = "yes" ; then
-      GUILE_LDFLAGS="$GUILE_LDFLAGS -lltdl"
-   else
-      AC_MSG_CHECKING([if it works with -lltdl -ldl])
-      LIBS="$GUILE_LDFLAGS -lltdl -ldl"
-      TEXMACS_LINK_GUILE([tm_link_guile_static_ltdl_ldl="yes"],
-			 [tm_link_guile_static_ltdl_ldl="no"])
-      AC_MSG_RESULT(["$tm_link_guile_static_ltdl_ldl"])
-      if test "$tm_link_guile_static_ltdl_ldl" = "yes" ; then
-	 GUILE_LDFLAGS="$GUILE_LDFLAGS -lltdl -ldl"
-      else
-         AC_MSG_WARN([unable to link statically with guile])
-      fi
-   fi
-fi
-CPPFLAGS="$SAVE_CPPFLAGS"
-LDFLAGS="$SAVE_LDFLAGS"
-LIBS="$SAVE_LIBS"
-])
-
 AC_DEFUN([LC_GUILE],[
   AC_ARG_ENABLE(guile2,
   [  --enable-guile2         enable compilation with Guile 2, for development purposes],
@@ -218,6 +181,4 @@ AC_DEFUN([LC_GUILE],[
           AC_MSG_RESULT(size_t)
     ])
   CXXFLAGS=""
-
-  LC_GUILE_STATIC
 ])
