@@ -115,13 +115,11 @@ AC_DEFUN([LC_GUILE],[
   [where to find guile-config [system]]), [], [unset withval])
   if [[[ "$withval" != no ]]]
   then
+    LC_WITH_GUILE($withval)
+
     AC_ARG_ENABLE(guile2,
     [  --enable-guile2         enable compilation with Guile 2, for development purposes],
         [], [enable_guile2="no"])
-
-    if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
-      LC_WITH_GUILE
-    fi
 
     AC_MSG_CHECKING(version of guile)
     if test -z "$GUILE_EFFECTIVE_VERSION" ; then

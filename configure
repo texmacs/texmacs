@@ -4646,17 +4646,8 @@ fi
 
   if [[ "$withval" != no ]]
   then
-    # Check whether --enable-guile2 was given.
-if test "${enable_guile2+set}" = set; then :
-  enableval=$enable_guile2;
-else
-  enable_guile2="no"
-fi
 
-
-    if test -z "$GUILE_CFLAGS" -a -z "$GUILE_LDFLAGS"; then
-
-	guile_config=
+	guile_config=$withval
   for ac_prog in guile18-config guile-config guile20-config
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
@@ -6003,7 +5994,14 @@ fi
 #    echo $GUILE_EFFECTIVE_VERSION
 #  fi
 
-    fi
+
+    # Check whether --enable-guile2 was given.
+if test "${enable_guile2+set}" = set; then :
+  enableval=$enable_guile2;
+else
+  enable_guile2="no"
+fi
+
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
 $as_echo_n "checking version of guile... " >&6; }
