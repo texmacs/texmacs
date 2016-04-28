@@ -1453,7 +1453,8 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-guile2         enable compilation with Guile 2, for development purposes
+  --disable-guile2=yes    enable compilation with Guile 2, for development
+                          purposes
   --disable-freetype      enable compilation without freetype
   --disable-fastalloc     omit fast allocator for small objects
   --enable-experimental   support new style rewriting code
@@ -5999,17 +6000,14 @@ fi
 if test "${enable_guile2+set}" = set; then :
   enableval=$enable_guile2;
 else
-  enable_guile2="no"
+  unset enableval
 fi
 
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking version of guile" >&5
-$as_echo_n "checking version of guile... " >&6; }
-    if test -z "$GUILE_EFFECTIVE_VERSION" ; then
-      GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
-    fi
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_EFFECTIVE_VERSION" >&5
-$as_echo "$GUILE_EFFECTIVE_VERSION" >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Guile version $GUILE_VERSION" >&5
+$as_echo "$as_me: Guile version $GUILE_VERSION" >&6;}
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Guile effective version $GUILE_EFFECTIVE_VERSION" >&5
+$as_echo "$as_me: Guile effective version $GUILE_EFFECTIVE_VERSION" >&6;}
 
     case "$GUILE_VERSION" in
       1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)

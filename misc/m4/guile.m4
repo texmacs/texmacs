@@ -118,14 +118,11 @@ AC_DEFUN([LC_GUILE],[
     LC_WITH_GUILE($withval)
 
     AC_ARG_ENABLE(guile2,
-    [  --enable-guile2         enable compilation with Guile 2, for development purposes],
-        [], [enable_guile2="no"])
+      AS_HELP_STRING([--disable-guile2=[yes]],[enable compilation with Guile 2, for development purposes]),
+      [], [unset enableval])
 
-    AC_MSG_CHECKING(version of guile)
-    if test -z "$GUILE_EFFECTIVE_VERSION" ; then
-      GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
-    fi
-    AC_MSG_RESULT($GUILE_EFFECTIVE_VERSION)
+    AC_MSG_NOTICE(Guile version $GUILE_VERSION)
+    AC_MSG_NOTICE(Guile effective version $GUILE_EFFECTIVE_VERSION)
 
     case "$GUILE_VERSION" in
       1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*) AC_DEFINE([GUILE_A],[1],[Guile version]) ;;
