@@ -171,6 +171,8 @@
       (list)
       (with fn (selector-get-font)
         (with l '()
+          (when (!= (selector-font-effects) (getter "font-effects"))
+            (set! l (cons* "font-effects" (selector-font-effects) l)))
           (when (!= selector-font-size (getter "font-base-size"))
             (set! l (cons* "font-base-size" selector-font-size l)))
           (when (!= (logical-font-shape fn) (getter "font-shape"))
@@ -218,6 +220,7 @@
          "font-series" ,(logical-font-series fn)
          "font-shape" ,(logical-font-shape fn)
          "font-base-size" ,selector-font-size
+         "font-effects" ,(selector-font-effects)
          ,sample-text))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -296,7 +299,8 @@
   (or (ahash-ref selector-customize-table which) default))
 
 (tm-define (selector-customize-set! which val)
-  (if (or (== val "") (== val "default") (== val "Default"))
+  (if (or (== val "") (== val "default") (== val "Default")
+	  (== val (font-effect-default which)))
       (ahash-remove! selector-customize-table which)
       (ahash-set! selector-customize-table which val)))
 
@@ -326,6 +330,27 @@
     (if cal   (set! fam (string-append "cal=" cal "," fam)))
     (if frak  (set! fam (string-append "frak="frak  "," fam)))
     fam))
+
+(define (selector-font-effects)
+  (let* ((effs   (list))
+         (embold (selector-customize-get "embold" #f))
+         (embbb  (selector-customize-get "embbb"  #f))
+         (slant  (selector-customize-get "slant"  #f))
+         (hmag   (selector-customize-get "hmag"   #f))
+         (vmag   (selector-customize-get "vmag"   #f))
+         (hext   (selector-customize-get "hext"   #f))
+         (vext   (selector-customize-get "vext"   #f)))
+    (with add (lambda (var val)
+		(when val
+		  (set! effs (rcons effs (string-append var "=" val)))))
+      (add "hmagnify" hmag)
+      (add "vmagnify" vmag)
+      (add "hextend" hext)
+      (add "vextend" vext)
+      (add "bold" embold)
+      (add "bbb" embbb)
+      (add "slant" slant)
+      (string-recompose effs ","))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Font selector
@@ -439,23 +464,44 @@
     ;;  >>>)
     ))
 
+(define (font-effect-defaults which)
+  (cond ((== which "embold")
+	 '("1" "1.25" "1.5" "2" "2.5" "3" "3.5" "4" ""))
+	((== which "embbb")
+	 '("1" "1.5" "2" "2.5" "3" "3.5" "4" "4.5" "5" ""))
+	((== which "slant")
+	 '("-0.5" "-0.25" "-0.1" "0"
+	   "0.1" "0.2" "0.25" "0.3" "0.4" "0.5" "0.75" "1" ""))
+	(else
+	  '("0.5" "0.6" "0.7" "0.8" "0.9" "1"
+	    "1.1" "1.2" "1.3" "1.4" "1.5" "1.6" "1.8" "2" ""))))
+
+(define (font-effect-default which)
+  (cond ((== which "slant") "0")
+	(else "1")))
+
 (tm-widget (font-effect-selector which)
   (enum (selector-customize-set! which answer)
-        '("0.5" "0.6" "0.7" "0.8" "0.9" "1"
-          "1.1" "1.2" "1.4" "1.6" "1.8" "2" "")
-        (selector-customize-get which "1") "50px"))
+        (font-effect-defaults which)
+        (selector-customize-get which (font-effect-default which)) "50px"))
 
 (tm-widget (font-effects-selector)
   (vertical
     (aligned
-      (item (text "Embolden:")
-        (dynamic (font-effect-selector "embold")))
       (item (text "Slant:")
         (dynamic (font-effect-selector "slant")))
-      (item (text "Extend:")
-        (dynamic (font-effect-selector "extend")))
-      (item (text "Stretch:")
-        (dynamic (font-effect-selector "widen"))))
+      (item (text "Embold:")
+        (dynamic (font-effect-selector "embold")))
+      (item (text "Double stroke:")
+        (dynamic (font-effect-selector "embbb")))
+      ;;(item (text "Extend horizontally:")
+      ;;  (dynamic (font-effect-selector "hext")))
+      ;;(item (text "Extend vertically:")
+      ;;  (dynamic (font-effect-selector "vext")))
+      (item (text "Magnify horizontally:")
+        (dynamic (font-effect-selector "hmag")))
+      (item (text "Magnify vertically:")
+        (dynamic (font-effect-selector "vmag"))))
     (horizontal (glue #f #t 0 0))))
 
 (tm-widget (subfont-selector which)

@@ -39,6 +39,7 @@ initialize_default_var_type () {
   var_type (FONT_SHAPE)         = Env_Font;
   var_type (FONT_SIZE)          = Env_Font_Size;
   var_type (FONT_BASE_SIZE)     = Env_Font_Size;
+  var_type (FONT_EFFECTS)       = Env_Font;
   var_type (MAGNIFICATION)      = Env_Magnification;
   var_type (MAGNIFY)            = Env_Magnify;
   var_type (COLOR)              = Env_Color;

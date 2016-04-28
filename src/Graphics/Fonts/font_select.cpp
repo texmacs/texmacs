@@ -315,7 +315,7 @@ family_to_master (string f) {
 array<string>
 master_to_families (string m) {
   if (occurs (",", m) && occurs ("=", m)) m= main_family (m);
-  f= upgrade_family_name (f);
+  m= upgrade_family_name (m);
   font_database_load ();
   if (!font_variants->contains (tree (m))) {
     cout << "TeXmacs] missing '" << m << "' master\n";
