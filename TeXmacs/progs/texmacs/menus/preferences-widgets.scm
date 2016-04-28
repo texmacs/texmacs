@@ -609,12 +609,16 @@
       (meti (hlist // (text "New style fonts"))
         (toggle (set-boolean-preference "new style fonts" answer)
                 (get-boolean-preference "new style fonts")))
-      (meti (hlist // (text "New bibliography dialogue"))
-        (toggle (set-boolean-preference "gui:new bibliography dialogue" answer)
-                (get-boolean-preference "gui:new bibliography dialogue"))))
+      (meti (hlist // (text "Advanced font customization"))
+        (toggle (set-boolean-preference "advanced font customization" answer)
+                (get-boolean-preference "advanced font customization"))))
     /// ///
     (vlist
       (aligned
+        (meti (hlist // (text "New bibliography dialogue"))
+          (toggle
+           (set-boolean-preference "gui:new bibliography dialogue" answer)
+           (get-boolean-preference "gui:new bibliography dialogue")))
         (meti (hlist // (text "Program bracket matching"))
           (toggle (set-boolean-preference "prog:highlight brackets" answer)
                   (get-boolean-preference "prog:highlight brackets")))
