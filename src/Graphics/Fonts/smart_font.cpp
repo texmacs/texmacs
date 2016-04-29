@@ -17,7 +17,6 @@
 
 bool virtually_defined (string c, string name);
 font smart_font_bis (string f, string v, string s, string sh, int sz, int d);
-string tex_gyre_fix (string family, string series, string shape);
 
 /******************************************************************************
 * Efficient computation of the appropriate subfont
@@ -455,6 +454,61 @@ get_unicode_range (string c) {
 }
 
 /******************************************************************************
+* Font substitutions
+******************************************************************************/
+
+string
+tex_gyre_fix (string family, string series, string shape) {
+  if (family == "bonum") family= "TeX Gyre Bonum";
+  if (family == "pagella") family= "TeX Gyre Pagella";
+  if (family == "schola") family= "TeX Gyre Schola";
+  if (family == "termes") family= "TeX Gyre Termes";
+  if (starts (family, "TeX Gyre")) {
+    if (starts (family, "TeX Gyre Bonum") ||
+        starts (family, "TeX Gyre Pagella") ||
+        starts (family, "TeX Gyre Schola") ||
+        starts (family, "TeX Gyre Termes")) {
+      if (shape == "mathitalic" && series == "medium") {
+        if (!ends (family, " Math")) family= family * " Math";
+      }
+      else if (ends (family, " Math"))
+        family= family (0, N(family) - 5);
+    }
+  }
+  return family;
+}
+
+string
+stix_fix (string family, string series, string shape) {
+  if (family == "stix") family= "Stix";
+  if (starts (family, "Stix")) {
+    if (shape == "mathitalic" && series == "medium") {
+      if (!ends (family, " Math")) family= family * " Math";
+    }
+    else if (ends (family, " Math"))
+      family= family (0, N(family) - 5);
+  }
+  return family;
+}
+
+string
+math_fix (string family, string series, string shape) {
+  if (starts (shape, "math")) {
+    array<string> a= trimmed_tokenize (family, ","), b;
+    for (int i=0; i<N(a); i++)
+      if (starts (a[i], "math=")) {
+        string mathfn= a[i] (5, N(a[i]));
+        mathfn= tex_gyre_fix (mathfn, series, shape);
+        //mathfn= stix_fix (mathfn, series, shape);
+        b << mathfn;
+      }
+      else b << a[i];
+    family= recompose (b, ",");
+  }
+  return family;
+}
+
+/******************************************************************************
 * The smart font class
 ******************************************************************************/
 
@@ -721,6 +775,7 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       if (!ok) return -1;
     }
     fam= tex_gyre_fix (fam, series, shape);
+    //fam= stix_fix (fam, series, shape);
   }
 
   if (attempt == 1) {
@@ -1280,27 +1335,6 @@ smart_font_rep::get_right_correction (string s) {
 * User interface
 ******************************************************************************/
 
-string
-tex_gyre_fix (string family, string series, string shape) {
-  if (family == "bonum") family= "TeX Gyre Bonum";
-  if (family == "pagella") family= "TeX Gyre Pagella";
-  if (family == "schola") family= "TeX Gyre Schola";
-  if (family == "termes") family= "TeX Gyre Termes";
-  if (starts (family, "TeX Gyre")) {
-    if (starts (family, "TeX Gyre Bonum") ||
-        starts (family, "TeX Gyre Pagella") ||
-        starts (family, "TeX Gyre Schola") ||
-        starts (family, "TeX Gyre Termes")) {
-      if (shape == "mathitalic" && series == "medium") {
-        if (!ends (family, " Math")) family= family * " Math";
-      }
-      else if (ends (family, " Math"))
-        family= family (0, N(family) - 5);
-    }
-  }
-  return family;
-}
-
 font
 smart_font_bis (string family, string variant, string series, string shape,
                 int sz, int dpi) {
@@ -1328,13 +1362,8 @@ smart_font_bis (string family, string variant, string series, string shape,
     }
   }
   family= tex_gyre_fix (family, series, shape);
-  if (starts (shape, "math")) {
-    array<string> a= trimmed_tokenize (family, ","), b;
-    for (int i=0; i<N(a); i++)
-      if (starts (a[i], "math=")) b << a[i] (5, N(a[i]));
-      else b << a[i];
-    family= recompose (b, ",");
-  }
+  //family= stix_fix (family, series, shape);
+  family= math_fix (family, series, shape);
   string sh= shape;
   if (shape == "mathitalic" || shape == "mathshape") sh= "right";
   string mfam= main_family (family);

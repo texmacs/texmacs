@@ -304,6 +304,23 @@
       (ahash-remove! selector-customize-table which)
       (ahash-set! selector-customize-table which val)))
 
+(tm-define (selector-customize-get* which default)
+  (with val (selector-customize-get which default)
+    (cond ((== val "roman") "TeXmacs Computer Modern")
+          ((== val "bonum") "TeX Gyre Bonum")
+          ((== val "pagella") "TeX Gyre Pagella")
+          ((== val "schola") "TeX Gyre Schola")
+          ((== val "termes") "TeX Gyre Termes")
+          (else val))))
+
+(tm-define (selector-customize-set!* which val)
+  (cond ((== val "TeXmacs Computer Modern") (set! val "roman"))
+        ((== val "TeX Gyre Bonum") (set! val "bonum"))
+        ((== val "TeX Gyre Pagella") (set! val "pagella"))
+        ((== val "TeX Gyre Schola") (set! val "schola"))
+        ((== val "TeX Gyre Termes") (set! val "termes")))
+  (selector-customize-set! which val))
+
 (define (selector-initialize-customize getter)
   (let* ((fam  (getter "font"))
          (effs (getter "font-effects")))
@@ -536,9 +553,9 @@
 	(append l (list which "")))))
 
 (tm-widget (subfont-selector which)
-  (enum (selector-customize-set! which answer)
-	(default-subfonts (selector-customize-get which "Default"))
-        (selector-customize-get which "Default") "160px"))
+  (enum (selector-customize-set!* which answer)
+	(default-subfonts (selector-customize-get* which "Default"))
+        (selector-customize-get* which "Default") "160px"))
 
 (tm-widget (font-variant-selector)
   (vertical
