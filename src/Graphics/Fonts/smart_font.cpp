@@ -17,6 +17,7 @@
 
 bool virtually_defined (string c, string name);
 font smart_font_bis (string f, string v, string s, string sh, int sz, int d);
+string tex_gyre_fix (string family, string series, string shape);
 
 /******************************************************************************
 * Efficient computation of the appropriate subfont
@@ -719,6 +720,7 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
       }
       if (!ok) return -1;
     }
+    fam= tex_gyre_fix (fam, series, shape);
   }
 
   if (attempt == 1) {
