@@ -1278,10 +1278,36 @@ smart_font_rep::get_right_correction (string s) {
 * User interface
 ******************************************************************************/
 
+string
+tex_gyre_fix (string family, string series, string shape) {
+  if (family == "bonum") family= "TeX Gyre Bonum";
+  if (family == "pagella") family= "TeX Gyre Pagella";
+  if (family == "schola") family= "TeX Gyre Schola";
+  if (family == "termes") family= "TeX Gyre Termes";
+  if (starts (family, "TeX Gyre")) {
+    if (starts (family, "TeX Gyre Bonum") ||
+        starts (family, "TeX Gyre Pagella") ||
+        starts (family, "TeX Gyre Schola") ||
+        starts (family, "TeX Gyre Termes")) {
+      if (shape == "mathitalic" && series == "medium") {
+        if (!ends (family, " Math")) family= family * " Math";
+      }
+      else if (ends (family, " Math"))
+        family= family (0, N(family) - 5);
+    }
+  }
+  return family;
+}
+
 font
 smart_font_bis (string family, string variant, string series, string shape,
                 int sz, int dpi) {
   if (!new_fonts) return find_font (family, variant, series, shape, sz, dpi);
+  string name=
+    family * "-" * variant * "-" *
+    series * "-" * shape * "-" *
+    as_string (sz) * "-" * as_string (dpi) * "-smart";
+  if (font::instances->contains (name)) return font (name);
   if (starts (family, "tc"))
     // FIXME: temporary hack for symbols from std-symbol.ts
     return find_font (family, variant, series, shape, sz, dpi);
@@ -1299,29 +1325,7 @@ smart_font_bis (string family, string variant, string series, string shape,
       family= "cjk=" * name * ",roman";
     }
   }
-
-  if (family == "bonum") family= "TeX Gyre Bonum";
-  if (family == "pagella") family= "TeX Gyre Pagella";
-  if (family == "schola") family= "TeX Gyre Schola";
-  if (family == "termes") family= "TeX Gyre Termes";
-  if (starts (family, "TeX Gyre")) {
-    if (starts (family, "TeX Gyre Bonum") ||
-        starts (family, "TeX Gyre Pagella") ||
-        starts (family, "TeX Gyre Schola") ||
-        starts (family, "TeX Gyre Termes")) {
-      if (shape == "mathitalic" && series == "medium") {
-        if (!ends (family, " Math")) family= family * " Math";
-      }
-      else if (ends (family, " Math"))
-        family= family (0, N(family) - 5);
-    }
-  }
-
-  string name=
-    family * "-" * variant * "-" *
-    series * "-" * shape * "-" *
-    as_string (sz) * "-" * as_string (dpi) * "-smart";
-  if (font::instances->contains (name)) return font (name);
+  family= tex_gyre_fix (family, series, shape);
   if (starts (shape, "math")) {
     array<string> a= trimmed_tokenize (family, ","), b;
     for (int i=0; i<N(a); i++)
