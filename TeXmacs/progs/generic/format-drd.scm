@@ -17,10 +17,12 @@
 ;; General groups
 
 (define-group variant-tag
-  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag))
+  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
+  (basic-effect-tag) (detailed-effect-tag) (motion-effect-tag))
 
 (define-group similar-tag
-  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag))
+  (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
+  (basic-effect-tag) (detailed-effect-tag) (motion-effect-tag))
 
 ;; Various geometry adjustment tags
 
@@ -38,3 +40,15 @@
 
 (define-group reduce-by-tag
   reduce-by reduce-bottom-by reduce-top-by)
+
+(define-group basic-effect-tag
+  blur outline thicken erode)
+
+(define-group detailed-effect-tag
+  gaussian-blur oval-blur rectangular-blur
+  gaussian-outline oval-outline rectangular-outline
+  gaussian-thicken oval-thicken rectangular-thicken
+  gaussian-erode oval-erode rectangular-erode)
+
+(define-group motion-effect-tag
+  motion-blur motion-outline motion-thicken motion-erode)

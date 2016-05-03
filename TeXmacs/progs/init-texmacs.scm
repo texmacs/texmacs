@@ -155,7 +155,7 @@
 (lazy-menu (generic generic-menu) focus-menu texmacs-focus-icons)
 (lazy-menu (generic format-menu) format-menu
            font-size-menu color-menu horizontal-space-menu
-           transform-menu specific-menu
+           transform-menu specific-menu text-effects-menu
            vertical-space-menu indentation-menu line-break-menu
            page-header-menu page-footer-menu page-numbering-menu
            page-break-menu)

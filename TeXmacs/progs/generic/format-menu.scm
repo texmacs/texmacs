@@ -117,6 +117,63 @@
   ---
   (link format-special-menu))
 
+(menu-bind text-blur-menu
+  ("Blur" (make-effect 'blur "1ln"))
+  ---
+  ("Gaussian blur" (make-effect 'gaussian-blur "1ln" "0.5ln" "0"))
+  ("Oval blur" (make-effect 'oval-blur "1ln" "0.5ln" "0"))
+  ("Rectangular blur" (make-effect 'rectangular-blur "1ln" "0.5ln" "0"))
+  ("Motion blur" (make-effect 'motion-blur "1ln" "0.5ln")))
+
+(menu-bind text-outline-menu
+  ("Outline" (make-effect 'outline "1ln"))
+  ---
+  ("Gaussian outline" (make-effect 'gaussian-outline "1ln" "0.5ln" "0"))
+  ("Oval outline" (make-effect 'oval-outline "1ln" "0.5ln" "0"))
+  ("Rectangular outline" (make-effect 'rectangular-outline "1ln" "0.5ln" "0"))
+  ("Motion outline" (make-effect 'motion-outline "1ln" "0.5ln")))
+
+(menu-bind text-thicken-menu
+  ("Thicken" (make-effect 'thicken "1ln"))
+  ---
+  ("Gaussian thicken" (make-effect 'gaussian-thicken "1ln" "0.5ln" "0"))
+  ("Oval thicken" (make-effect 'oval-thicken "1ln" "0.5ln" "0"))
+  ("Rectangular thicken" (make-effect 'rectangular-thicken "1ln" "0.5ln" "0"))
+  ("Motion thicken" (make-effect 'motion-thicken "1ln" "0.5ln")))
+
+(menu-bind text-erode-menu
+  ("Erode" (make-effect 'erode "1ln"))
+  ---
+  ("Gaussian erode" (make-effect 'gaussian-erode "1ln" "0.5ln" "0"))
+  ("Oval erode" (make-effect 'oval-erode "1ln" "0.5ln" "0"))
+  ("Rectangular erode" (make-effect 'rectangular-erode "1ln" "0.5ln" "0"))
+  ("Motion erode" (make-effect 'motion-erode "1ln" "0.5ln")))
+
+(menu-bind text-font-effects-menu
+  ("Embold" (make-with-like '(embold "2" "")))
+  ("Blackboard embold" (make-with-like '(embbb "3" "")))
+  ("Slant" (make-with-like '(slant "0.25" "")))
+  ("Condensed" (make-with-like '(extended "0.8" "")))
+  ("Extended" (make-with-like '(extended "1.2" "")))
+  ("Magnify horizontally" (make-with-like '(hmagnify "2" "")))
+  ("Magnify vertically" (make-with-like '(hmagnify "2" ""))))
+
+(menu-bind text-effects-menu
+  ;;(group "Basic effects")
+  ;;(-> "Blur" (link text-blur-menu))
+  ;;(-> "Outline" (link text-outline-menu))
+  ;;(-> "Thicken" (link text-thicken-menu))
+  ;;(-> "Erode" (link text-erode-menu))
+  ;;---
+  ;;(group "Compound effects")
+  ;;("Engrave" (make-effect 'engrave "1ln" "0.5ln" "grey"))
+  ;;("Emboss" (make-effect 'emboss "1ln" "0.5ln" "grey"))
+  ;;("Shadow" (make-effect 'shadow "1ln" "0.5ln" "grey" "1ln"))
+  ;;("Burning" (make-effect 'burning))
+  ;;---
+  ;;(group "Font effects")
+  (link text-font-effects-menu))
+
 (menu-bind specific-menu
   ("TeXmacs" (make-specific "texmacs"))
   ("LaTeX" (make-specific "latex"))
@@ -133,7 +190,8 @@
       (-> "Opacity" (link opacity-menu)))
   (-> "Space" (link horizontal-space-menu))
   (-> "Transform" (link transform-menu))
-  (-> "Specific" (link specific-menu)))
+  (-> "Specific" (link specific-menu))
+  (-> "Effects" (link text-effects-menu)))
 
 (menu-bind textual-properties-menu
   (-> "Color" (link color-menu))
@@ -141,7 +199,8 @@
       (-> "Opacity" (link opacity-menu)))
   (-> "Space" (link horizontal-space-menu))
   (-> "Transform" (link transform-menu))
-  (-> "Specific" (link specific-menu)))
+  (-> "Specific" (link specific-menu))
+  (-> "Effects" (link text-effects-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Paragraph menu and submenus

@@ -164,6 +164,15 @@
 	(else
 	  (insert-go-to w (list (- (tm-arity w) 1) 0)))))
 
+(tm-define (make-effect . args)
+  (if (selection-active-any?)
+      (let* ((selection (selection-tree))
+             (ins `(,(car args) ,selection ,@(cdr args)))
+             (end (path-end selection '())))
+        (clipboard-cut "nowhere")
+        (insert-go-to ins (cons 0 end)))
+      (insert-go-to `(,(car args) "" ,(cdr args)) (list 0 0))))
+
 (tm-define (toggle-with-like w back)
   (with t (if (and (selection-active-any?)
 		   (== (selection-tree) (path->tree (selection-path))))

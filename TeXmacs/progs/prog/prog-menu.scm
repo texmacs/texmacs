@@ -61,7 +61,8 @@
       (link color-menu))
   (-> "Adjust" (link adjust-menu))
   (-> "Specific" (link specific-menu))
-  (-> "Special" (link format-special-menu)))
+  (-> "Special" (link format-special-menu))
+  (-> "Effects" (link text-effects-menu)))
 
 (menu-bind prog-format-menu
   (if (use-menus?)
