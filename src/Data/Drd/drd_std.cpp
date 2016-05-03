@@ -612,7 +612,7 @@ init_std_drd () {
 	accessible (0) -> graphical (0));
   init (GR_EFFECT, "gr-effect",
 	var_repeat (1, 1, BIFORM) -> returns_graphical () ->
-	accessible (0) -> graphical (0) ->
+	accessible (0) ->
         effect (1));
   /*
   init (TEXT_AT, "text-at",
