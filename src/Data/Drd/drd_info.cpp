@@ -773,11 +773,11 @@ drd_info_rep::set_environment (hashmap<string,tree> env2) {
 }
 
 tree
-drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
+drd_info_rep::arg_access (tree t, tree arg, tree env, int& type, bool& found) {
   // returns "" if unaccessible and the env if accessible
-  //cout << "  arg_access " << t << ", " << arg << ", " << env << "\n";
+  // cout << "  arg_access " << t << ", " << arg << ", " << env << "\n";
   if (is_atomic (t)) return "";
-  else if (t == arg) return env;
+  else if (t == arg) { found= true; return env; }
   else if (is_func (t, QUOTE_ARG, 1) && N(arg) == 1 && t[0] == arg[0])
     return env;
   else if (is_func (t, MAP_ARGS) && (t[2] == arg[0])) {
@@ -799,7 +799,7 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
   else if (is_func (t, WITH)) {
     int n= N(t)-1;
     //cout << "env= " << drd_env_merge (env, t (0, n)) << "\n";
-    return arg_access (t[n], arg, drd_env_merge (env, t (0, n)), type);
+    return arg_access (t[n], arg, drd_env_merge (env, t (0, n)), type, found);
   }
   else if (is_func (t, TFORMAT)) {
     int n= N(t)-1;
@@ -807,27 +807,29 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type) {
     tree newf= oldf * tree (TFORMAT, A (t (0, n)));
     tree w   = tree (ATTR, CELL_FORMAT, newf);
     tree cenv= get_env_child (t, n, drd_env_merge (env, w));
-    return arg_access (t[n], arg, cenv, type);
+    return arg_access (t[n], arg, cenv, type, found);
   }
   else if (is_func (t, COMPOUND) && N(t) >= 1 && is_atomic (t[0]))
     return arg_access (compound (t[0]->label, A (t (1, N(t)))),
-		       arg, env, type);
+		       arg, env, type, found);
   else if ((is_func (t, IF) || is_func (t, VAR_IF)) && N(t) >= 2)
-    return arg_access (t[1], arg, env, type);
+    return arg_access (t[1], arg, env, type, found);
   else {
     int i, n= N(t);
     for (i=0; i<n; i++) {
-      int  ctype= get_type_child (t, i);
-      tree cenv = get_env_child (t, i, env);
-      tree aenv = arg_access (t[i], arg, cenv, ctype);
+      int  ctype = get_type_child (t, i);
+      bool cfound= false;
+      tree cenv  = get_env_child (t, i, env);
+      tree aenv  = arg_access (t[i], arg, cenv, ctype, cfound);
       if (aenv != "") {
-	if (ctype != TYPE_INVALID) type= ctype;
+	if (ctype != TYPE_INVALID) { type= ctype; found= cfound; }
 	if (is_accessible_child (t, i)) return aenv;
       }
-      else if (type == TYPE_UNKNOWN &&
+      else if (cfound /*type == TYPE_UNKNOWN*/ &&
                ctype != TYPE_INVALID &&
                ctype != TYPE_UNKNOWN) {
-        type= ctype;
+        type = ctype;
+        found= cfound;
         //cout << "  found type " << t << ", " << arg << ", " << type << "\n";
       }
     }
@@ -891,9 +893,10 @@ drd_info_rep::heuristic_init_macro (string var, tree macro) {
     if (is_atomic (macro[i]))
       if (l >= START_EXTENSIONS || get_child_name (l, i) == "")
         set_child_name (l, i, macro[i]->label);
-    int  type= TYPE_UNKNOWN;
+    int  type = TYPE_UNKNOWN;
+    bool found= false;
     tree arg (ARG, macro[i]);
-    tree env= arg_access (macro[n], arg, tree (ATTR), type);
+    tree env= arg_access (macro[n], arg, tree (ATTR), type, found);
     //if (var == "section" || var == "section-title")
     //cout << var << " -> " << env << ", " << macro << "\n";
     //if (var == "math")
@@ -937,9 +940,10 @@ drd_info_rep::heuristic_init_xmacro (string var, tree xmacro) {
   set_arity (l, m, 1, ARITY_REPEAT, CHILD_DETAILED);
   set_type (l, get_type (xmacro[1]));
   for (i=0; i<=m; i++) {
-    int type= TYPE_UNKNOWN;
+    int  type = TYPE_UNKNOWN;
+    bool found= false;
     tree arg (ARG, xmacro[0], as_string (i));
-    tree env= arg_access (xmacro[1], arg, tree (ATTR), type);
+    tree env= arg_access (xmacro[1], arg, tree (ATTR), type, found);
     //cout << var << ", " << xmacro << ", " << i << " -> " << type << "\n";
     set_type (l, i, type);
     if (env != "") {
