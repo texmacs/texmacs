@@ -910,6 +910,8 @@ attach_dip (tree ref, path dip) {
 
 void
 make_eps (url name, box b, int dpi) {
+  //cout << "Make eps " << name << ", " << dpi << ", " << ((tree) b) << "\n";
+  //cout << "  Extents " << b->w() / PIXEL << ", " << b->h() / PIXEL << "\n";
   double inch= ((double) dpi * PIXEL);
   double cm  = inch / 2.54;
   SI w= b->x4 - b->x3;
