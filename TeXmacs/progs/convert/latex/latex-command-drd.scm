@@ -49,6 +49,9 @@
   ;; bibtex
   bysame
 
+  ;; for (e.g.) includegraphics
+  width height
+
   ;; Algorithms
   AND BlankLine Ensure ENSURE FALSE GLOBALS NOT OR PRINT Require REQUIRE RETURN
   State STATE TO KwTo TRUE XOR Else ENDBODY EndFor ENDFOR EndFunction EndIf
