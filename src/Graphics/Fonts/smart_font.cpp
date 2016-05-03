@@ -1450,6 +1450,20 @@ apply_effects (font fn, string effects) {
         if (ymag > 10.0) ymag= 10.0;
         fn= poor_stretched_font (fn, 1.0, ymag);
       }
+      else if (b[0] == "hextended" && is_double (b[1])) {
+        double xf= as_double (b[1]);
+        if (xf < 0.1) xf= 0.1;
+        if (xf > 10.0) xf= 10.0;
+        fn= poor_extended_font (fn, xf);
+      }
+      /*
+      else if (b[0] == "vextended" && is_double (b[1])) {
+        double yf= as_double (b[1]);
+        if (yf < 0.1) yf= 0.1;
+        if (yf > 10.0) yf= 10.0;
+        fn= poor_vextended_font (fn, yf);
+      }
+      */
     }
   }
   return fn;

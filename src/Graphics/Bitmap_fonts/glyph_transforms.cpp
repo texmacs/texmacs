@@ -270,6 +270,29 @@ widen (glyph gl, double xf, SI penw) {
   return r;
 }
 
+struct extended_font_glyphs_rep: public font_glyphs_rep {
+  font_glyphs fng;
+  double xf;
+  SI penw;
+  hashmap<int,glyph> gs;
+  extended_font_glyphs_rep (string name, font_glyphs fng2, double xf2, SI p2):
+    font_glyphs_rep (name), fng (fng2),
+    xf (xf2), penw (p2), gs (error_glyph) {}
+  glyph& get (int c) {
+    glyph& orig (fng->get (c));
+    if ((&orig != &error_glyph) && !gs->contains (c))
+      gs(c)= widen (orig, xf, penw);
+    return gs(c); }
+};
+
+font_glyphs
+extended (font_glyphs fng, double xf, SI penw) {
+  string name= "extended[" * fng->res_name * ",";
+  name << as_string (xf) << "," << as_string (penw) << "]";
+  return make (font_glyphs, name,
+               tm_new<extended_font_glyphs_rep> (name, fng, xf, penw));
+}
+
 /******************************************************************************
 * Boldening of font metrics
 ******************************************************************************/
