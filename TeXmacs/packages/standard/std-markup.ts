@@ -474,6 +474,26 @@
 
   <\active*>
     <\src-comment>
+      Poor man font effects.
+    </src-comment>
+  </active*>
+
+  <assign|add-font-effect|<macro|prop|val|body|<with|font-effects|<merge|<value|font-effects>|<if|<equal|<value|font-effects>|>||,>|<arg|prop>|=|<arg|val>>|<arg|body>>>>
+
+  <assign|embold|<macro|val|body|<add-font-effect|bold|<arg|val>|<arg|body>>>>
+
+  <assign|embbb|<macro|val|body|<add-font-effect|bbb|<arg|val>|<arg|body>>>>
+
+  <assign|slant|<macro|val|body|<add-font-effect|slant|<arg|val>|<arg|body>>>>
+
+  <assign|hmagnify|<macro|val|body|<add-font-effect|hmagnify|<arg|val>|<arg|body>>>>
+
+  <assign|vmagnify|<macro|val|body|<add-font-effect|vmagnify|<arg|val>|<arg|body>>>>
+
+  <assign|extended|<macro|val|body|<add-font-effect|hextended|<arg|val>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
       Miscellaneous.
     </src-comment>
   </active*>
