@@ -416,3 +416,30 @@
 
 	(system-remove temp1) ;; temp eps file not needed anymore
 	)))
+
+(tm-define (export-selection-as-pdf myurl)
+  (:synopsis "Generates Pdf file for the current selection")
+  (:argument myurl "A full file url with extension")
+  (when (selection-active-any?)
+    (let* (;; step 1 prepare and typeset selection
+           ;;if selection is part of math need to re-encapsulate
+           ;; it with math to obtain proper typesetting :
+           (tm-fragment
+            (cond ((tree-multi-paragraph? (selection-tree))
+                   (selection-tree))
+                  ((in-math?)
+                   (stree->tree `(math ,(selection-tree))))
+                  (else (selection-tree))))
+           ;; also if selection spans several lines of text,
+           ;; need to encapsulate it in a fixed-width table
+           ;;to enforce pagewidth :
+           (tm-fragment-enforce-pagewidth
+            (if (tree-multi-paragraph? (selection-tree))
+                (stree->tree
+                 `(tabular
+                   (tformat (twith "table-width" "1par")
+                            (twith "table-hmode" "exact")
+                            (cwith "1" "1" "1" "1" "cell-hyphen" "t")
+                            (table (row (cell (document ,tm-fragment)))))))
+                tm-fragment)))
+      (print-snippet myurl tm-fragment-enforce-pagewidth))))
