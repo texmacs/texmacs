@@ -390,6 +390,7 @@
   (with old (tree->number (tree-ref t 0))
     (when (!= new old)
       (tree-set t 0 (number->string new))
+      (graphics-update-proviso (tree-ref t 2) (number->string new))
       (overlays-animate t old new))))
 
 (tm-define (overlays-switch-to t i)
@@ -410,6 +411,11 @@
   (and (overlay-context? t)
        (with ref (tree->number (tree-ref t 0))
          (cond ((not (integer? ref)) #f)
+               ((tree-is? t 'show-always)     #t)
+               ((tree-is? t 'show-from)       (>= i ref))
+               ((tree-is? t 'show-until)      (<= i ref))
+               ((tree-is? t 'show-this)       (== i ref))
+               ((tree-is? t 'show-other)      (!= i ref))
                ((tree-is? t 'overlay-from)    (>= i ref))
                ((tree-is? t 'overlay-until)   (<= i ref))
                ((tree-is? t 'overlay-this)    (== i ref))
@@ -480,7 +486,9 @@
          (tot (tree->number (tree-ref t 1)))
          (ins (if forwards? (+ cur 1) cur)))
     (overlay-renumber (tree-ref t 2) ins tot 1)
-    (if forwards? (tree-set t 0 (number->string ins)))
+    (when forwards?
+      (tree-set t 0 (number->string ins))
+      (graphics-update-proviso (tree-ref t 2) (number->string ins)))
     (tree-set t 1 (number->string (+ tot 1)))))
 
 (tm-define (structured-remove-horizontal t forwards?)
@@ -490,7 +498,9 @@
          (del (if forwards? cur (- cur 1))))
     (when (and (> del 0) (> tot 1))
       (overlay-renumber (tree-ref t 2) del tot -1)
-      (if (not forwards?) (tree-set t 0 (number->string del)))
+      (when (not forwards?)
+        (tree-set t 0 (number->string del))
+        (graphics-update-proviso (tree-ref t 2) (number->string del)))
       (tree-set t 1 (number->string (- tot 1))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

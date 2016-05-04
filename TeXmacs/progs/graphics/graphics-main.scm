@@ -810,6 +810,41 @@
   (func? mode 'group-edit 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Provisos for graphical objects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-get-proviso)
+  (graphics-get-property "gr-proviso"))
+
+(define (graphics-test-proviso? val)
+  (with old (graphics-get-property "gr-proviso")
+    (or (and (func? val 'quasiquote 1)
+             (graphics-test-proviso? (cadr val)))
+        (and (pair? val) (pair? old)
+             (== (car val) (car old)))
+        (== val old))))
+
+(tm-define (graphics-set-proviso val)
+  (:argument val "Proviso")
+  (:check-mark "*" graphics-test-proviso?)
+  (graphics-set-property "gr-proviso" val))
+
+(define (update-proviso-sub l val)
+  (when (and (nnull? l) (nnull? (cdr l)))
+    (when (and (tm-equal? (car l) "gr-proviso")
+               (tree-compound? (cadr l))
+               (== (tree-arity (cadr l)) 1)
+               (tree-atomic? (tree-ref (cadr l) 0)))
+      (tree-set (tree-ref (cadr l) 0) val))
+    (update-proviso-sub (cddr l) val)))
+
+(tm-define (graphics-update-proviso t val)
+  (when (tree-compound? t)
+    (when (tree-is? t 'with)
+      (update-proviso-sub (cDr (tree-children t)) val))
+    (for-each (cut graphics-update-proviso <> val) (tree-children t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Attributes for graphical objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

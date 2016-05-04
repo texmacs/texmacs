@@ -505,6 +505,18 @@
 
   \;
 
+  <assign|show-always|<macro|here|true>>
+
+  <assign|show-from|<macro|start|<greatereq|<value|overlay-nr>|<arg|start>>>>
+
+  <assign|show-until|<macro|end|<lesseq|<value|overlay-nr>|<arg|end>>>>
+
+  <assign|show-this|<macro|here|<equal|<value|overlay-nr>|<arg|here>>>>
+
+  <assign|show-other|<macro|avoid|<unequal|<value|overlay-nr>|<arg|avoid>>>>
+
+  \;
+
   <assign|overlay-cond|<macro|cond|body|<compound|<if|<arg|cond>|shown*|hidden*>|<arg|body>>>>
 
   <assign|overlay-from|<macro|start|body|<overlay-cond|<greatereq|<value|overlay-nr>|<arg|start>>|<arg|body>>>>

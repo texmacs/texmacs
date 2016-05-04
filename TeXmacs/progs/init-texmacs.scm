@@ -252,6 +252,8 @@
              graphics-release-left graphics-release-middle
              graphics-release-right graphics-start-drag-left
              graphics-dragging-left graphics-end-drag-left)
+(lazy-define (graphics graphics-main) graphics-update-proviso
+             graphics-get-proviso graphics-set-proviso)
 (lazy-define (graphics graphics-markup) arrow-with-text arrow-with-text*)
 (define-secure-symbols arrow-with-text arrow-with-text*)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
@@ -268,13 +270,14 @@
 (lazy-keyboard (dynamic fold-kbd) always?)
 (lazy-keyboard (dynamic scripts-kbd) always?)
 (lazy-keyboard (dynamic calc-kbd) always?)
-(lazy-menu (dynamic fold-menu) insert-fold-menu dynamic-menu dynamic-icons)
+(lazy-menu (dynamic fold-menu) insert-fold-menu dynamic-menu dynamic-icons
+           graphics-overlays-menu graphics-overlays-icons)
 (lazy-menu (dynamic session-menu) insert-session-menu session-help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
            plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-menu (dynamic calc-menu) calc-table-menu calc-insert-menu)
 (lazy-menu (dynamic animate-menu) animate-focus-icons)
-(lazy-define (dynamic fold-edit) dynamic-make-slides)
+(lazy-define (dynamic fold-edit) dynamic-make-slides overlays-context?)
 (lazy-define (dynamic session-edit) scheme-eval)
 (lazy-define (dynamic calc-edit) calc-ready? calc-table-renumber)
 (lazy-initialize (dynamic session-menu) (in-session?))

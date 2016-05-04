@@ -545,6 +545,8 @@
       (link graphics-mode-menu))
   (if (inside-graphical-over-under?)
       ("Exit graphics" (graphics-exit-right)))
+  (assuming (nnot (tree-innermost overlays-context?))
+    (link graphics-overlays-menu))
   (assuming (nnull? (graphics-mode-attributes (graphics-mode)))
     ---
     (assuming (graphics-mode-attribute? (graphics-mode) "color")
@@ -814,6 +816,8 @@
     (=> (balloon (eval (upcase-first (gr-mode->string (graphics-mode))))
                  "Current graphical mode")
         (link graphics-mode-menu)))
+  (assuming (nnot (tree-innermost overlays-context?))
+    (link graphics-overlays-icons))
   (assuming (nnull? (graphics-mode-attributes (graphics-mode)))
     (link graphics-property-icons))
   /

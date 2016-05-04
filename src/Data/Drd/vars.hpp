@@ -213,6 +213,7 @@ extern string GR_SNAP_DISTANCE;
 
 extern string GR_GID;
 extern string GR_ANIM_ID;
+extern string GR_PROVISO;
 extern string GR_MAGNIFY;
 extern string GR_OPACITY;
 extern string GR_COLOR;
@@ -237,6 +238,7 @@ extern string GR_TEXT_AT_MARGIN;
 
 extern string GID;
 extern string ANIM_ID;
+extern string PROVISO;
 extern string MAGNIFY;
 extern string POINT_STYLE;
 extern string POINT_SIZE;

@@ -466,6 +466,54 @@ set_graphical_values (tree t) {
   }
 }
 
+box
+typeset_gr_item (edit_env env, tree t, path ip, bool& ok) {
+  ok= false;
+  if (is_func (t, WITH)) {
+    int i, n= N(t), k= (n-1)>>1; // is k=0 allowed ?
+    if ((n&1) != 1) return empty_box (ip);
+
+    STACK_NEW_ARRAY(vars,string,k);
+    STACK_NEW_ARRAY(oldv,tree,k);
+    STACK_NEW_ARRAY(newv,tree,k);
+    for (i=0; i<k; i++) {
+      tree var_t= env->exec (t[i<<1]);
+      if (is_atomic (var_t)) {
+	string var= var_t->label;
+	vars[i]= var;
+	oldv[i]= env->read (var);
+	newv[i]= env->exec (t[(i<<1)+1]);
+        if (var == PROVISO && newv[i] == "false") {
+          STACK_DELETE_ARRAY(vars);
+          STACK_DELETE_ARRAY(oldv);
+          STACK_DELETE_ARRAY(newv);
+          return empty_box (ip);
+        }
+      }
+      else {
+	STACK_DELETE_ARRAY(vars);
+	STACK_DELETE_ARRAY(oldv);
+	STACK_DELETE_ARRAY(newv);
+	return empty_box (ip);
+      }
+    }
+
+    // for (i=0; i<k; i++) env->monitored_write_update (vars[i], newv[i]);
+    for (i=0; i<k; i++) env->write_update (vars[i], newv[i]);
+    box b= typeset_as_atomic (env, t[n-1], descend (ip, n-1));
+    for (i=k-1; i>=0; i--) env->write_update (vars[i], oldv[i]);
+    STACK_DELETE_ARRAY(vars);
+    STACK_DELETE_ARRAY(oldv);
+    STACK_DELETE_ARRAY(newv);
+    ok= true;
+    return b;
+  }
+  else {
+    ok= true;
+    return typeset_as_atomic (env, t, ip);
+  }
+}
+
 void
 concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
   int i, n= N(t);
@@ -497,8 +545,11 @@ concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
     }
 
   for (i=0; i<n; i++)
-    if (the_drd->get_type (t[i]) != TYPE_CONSTRAINT && !is_atomic (t[i]))
-      bs << typeset_as_atomic (env, t[i], descend (ip, i));
+    if (the_drd->get_type (t[i]) != TYPE_CONSTRAINT && !is_atomic (t[i])) {
+      bool ok;
+      box b= typeset_gr_item (env, t[i], descend (ip, i), ok);
+      if (ok) bs << b;
+    }
 }
 
 /******************************************************************************

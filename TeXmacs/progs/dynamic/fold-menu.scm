@@ -392,12 +392,12 @@
   (:require (== l "overlay-nr"))
   #f)
 
-(define (get-overlays-menu-name t)
+(define (get-overlays-menu-name prefix t)
   (let* ((cur (overlays-current t))
          (tot (overlays-arity t)))
     (set! cur (if cur (number->string cur) "?"))
     (set! tot (if tot (number->string tot) "?"))
-    (string-append "Overlay " cur "/" tot)))
+    (string-append prefix cur "/" tot)))
 
 (tm-menu (focus-overlays-menu t)
   (for (i (.. 1 (or (+ (overlays-arity t) 1) 2)))
@@ -412,7 +412,7 @@
 (tm-menu (focus-hidden-icons t)
   (:require (overlays-context? t))
   //
-  (=> (eval (get-overlays-menu-name t))
+  (=> (eval (get-overlays-menu-name "Overlay " t))
       (dynamic (focus-overlays-menu t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -436,3 +436,51 @@
   (:require (overlay-context? t))
   //
   (dynamic (focus-overlay-icons t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Overlays in graphics mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (proviso-name p)
+  (cond ((tm-func? p 'show-this 1) "=")
+        ((tm-func? p 'show-from 1) ">=")
+        ((tm-func? p 'show-until 1) "<=")
+        (else "*")))
+
+(tm-menu (graphics-overlays-mode-menu)
+  (let* ((t (tree-innermost overlays-context?))
+         (cur (and t (number->string (overlays-current t)))))
+    ("This" (graphics-set-proviso `(show-this ,cur)))
+    ("From" (graphics-set-proviso `(show-from ,cur)))
+    ("Until" (graphics-set-proviso `(show-until ,cur)))
+    ("Always" (graphics-set-proviso "default"))))
+
+(tm-menu (graphics-overlays-manage-menu)
+  (let* ((t (tree-innermost overlays-context?))
+         (cur (and t (number->string (overlays-current t)))))
+    ("Insert overlay before" (structured-insert-horizontal t #f))
+    ("Insert overlay after"  (structured-insert-horizontal t #t))
+    ("Remove overlay before" (structured-remove-horizontal t #f))
+    ("Remove overlay after"  (structured-remove-horizontal t #t))
+    ---
+    (dynamic (focus-overlays-menu t))))
+
+(tm-menu (graphics-overlays-menu)
+  (with t (tree-innermost overlays-context?)
+    (assuming (nnot t)
+      ---
+      (-> "Overlay mode"
+          (link graphics-overlays-mode-menu))
+      (-> (eval (get-overlays-menu-name "Overlay " t))
+          (link graphics-overlays-manage-menu)))))
+
+(tm-menu (graphics-overlays-icons)
+  (with t (tree-innermost overlays-context?)
+    (assuming (nnot t)
+      /
+      (mini #t
+        (group "Overlay:")
+        (=> (eval (proviso-name (graphics-get-proviso)))
+            (link graphics-overlays-mode-menu))
+        (=> (eval (get-overlays-menu-name "" t))
+            (link graphics-overlays-manage-menu))))))

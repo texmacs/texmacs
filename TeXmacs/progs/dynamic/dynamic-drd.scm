@@ -96,16 +96,19 @@
 ;; overlays
 
 (define-group variant-tag
-  (overlays-tag) (unary-overlay-tag) (binary-overlay-tag))
+  (overlays-tag) (nullary-overlay-tag) (unary-overlay-tag) (binary-overlay-tag))
 
 (define-group similar-tag
-  (overlays-tag) (unary-overlay-tag) (binary-overlay-tag))
+  (overlays-tag) (nullary-overlay-tag) (unary-overlay-tag) (binary-overlay-tag))
 
 (define-group overlays-tag
   overlays overlays-compressed overlays-phantoms overlays-greyed)
 
 (define-group overlay-tag
-  (unary-overlay-tag) (binary-overlay-tag))
+  (nullary-overlay-tag) (unary-overlay-tag) (binary-overlay-tag))
+
+(define-group nullary-overlay-tag
+  show-always show-from show-until show-this show-other)
 
 (define-group unary-overlay-tag
   overlay-from overlay-until overlay-this overlay-other)

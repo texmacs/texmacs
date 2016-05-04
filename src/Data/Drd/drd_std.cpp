@@ -1043,6 +1043,7 @@ init_std_drd () {
 
   init_var (GR_GID, TYPE_INTEGER);
   init_var (GR_ANIM_ID, TYPE_INTEGER);
+  init_var (GR_PROVISO, TYPE_BOOLEAN);
   init_var (GR_MAGNIFY, TYPE_NUMERIC);
   init_var (GR_OPACITY, TYPE_NUMERIC);
   init_var (GR_COLOR, TYPE_COLOR);
@@ -1067,6 +1068,7 @@ init_std_drd () {
 
   init_var (GID, TYPE_INTEGER);
   init_var (ANIM_ID, TYPE_INTEGER);
+  init_var (PROVISO, TYPE_BOOLEAN);
   init_var (MAGNIFY, TYPE_NUMERIC);
   init_var (POINT_STYLE, TYPE_STRING);
   init_var (POINT_SIZE, TYPE_LENGTH);

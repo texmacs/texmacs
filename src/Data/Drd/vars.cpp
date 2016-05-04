@@ -235,6 +235,7 @@ string GR_SNAP_DISTANCE ("gr-snap-distance");
 
 string GR_GID ("gr-gid");
 string GR_ANIM_ID ("gr-anim-id");
+string GR_PROVISO ("gr-proviso");
 string GR_MAGNIFY ("gr-magnify");
 string GR_OPACITY ("gr-opacity");
 string GR_COLOR ("gr-color");
@@ -259,6 +260,7 @@ string GR_TEXT_AT_MARGIN ("gr-text-at-margin");
 
 string GID ("gid");
 string ANIM_ID ("anim-id");
+string PROVISO ("proviso");
 string MAGNIFY ("magnify");
 string POINT_STYLE ("point-style");
 string POINT_SIZE ("point-size");
