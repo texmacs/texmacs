@@ -73,6 +73,10 @@
 #pragma once
 
 #ifndef PDFHUMMUS_NO_TIFF
+#define PDFHUMMUS_NO_TIFF
+#endif
+
+#ifndef PDFHUMMUS_NO_TIFF
 
 #include "EStatusCode.h"
 #include "ObjectsBasicTypes.h"

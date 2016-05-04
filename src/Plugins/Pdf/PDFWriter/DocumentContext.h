@@ -20,6 +20,10 @@
 */
 #pragma once
 
+#ifndef PDFHUMMUS_NO_TIFF
+#define PDFHUMMUS_NO_TIFF
+#endif
+
 #include "EStatusCode.h"
 #include "EPDFVersion.h"
 #include "IOBasicTypes.h"

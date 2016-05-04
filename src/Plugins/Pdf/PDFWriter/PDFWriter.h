@@ -25,6 +25,10 @@
 
 */
 
+#ifndef PDFHUMMUS_NO_TIFF
+#define PDFHUMMUS_NO_TIFF
+#endif
+
 #include "EPDFVersion.h"
 #include "OutputFile.h"
 #include "DocumentContext.h"
@@ -35,10 +39,6 @@
 
 #include <string>
 #include <utility>
-
-#ifndef PDFHUMMUS_NO_TIFF
-#define PDFHUMMUS_NO_TIFF
-#endif
 
 typedef std::pair<double,double> DoubleAndDoublePair;
 
