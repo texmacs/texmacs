@@ -129,14 +129,8 @@
 /* Enabling Qt pipes */
 #undef QTPIPES
 
-/* The size of `ssize_t', as computed by sizeof. */
-#undef SIZEOF_SSIZE_T
-
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
-
-/* The size of `__darwin_ssize_t', as computed by sizeof. */
-#undef SIZEOF___DARWIN_SSIZE_T
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
