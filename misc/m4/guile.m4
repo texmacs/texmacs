@@ -135,11 +135,7 @@ AC_DEFUN([LC_GUILE],[
       *) AC_DEFINE(GUILE_C,[1],[Guile version]) ;;
     esac
 
-    AC_MSG_CHECKING(guile data path)
-    if test -z "$GUILE_DATA_PATH" ; then
-      GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
-    fi
-    AC_MSG_RESULT($GUILE_DATA_PATH)
+    AC_MSG_NOTICE([Guile data path: $GUILE_DATA_PATH])
 
     AC_SUBST(GUILE_BIN)
     AC_SUBST(GUILE_DATA_PATH)

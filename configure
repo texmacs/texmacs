@@ -5108,13 +5108,8 @@ $as_echo "#define GUILE_C 1" >>confdefs.h
  ;;
     esac
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking guile data path" >&5
-$as_echo_n "checking guile data path... " >&6; }
-    if test -z "$GUILE_DATA_PATH" ; then
-      GUILE_DATA_PATH=`$GUILE_CONFIG info pkgdatadir`
-    fi
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GUILE_DATA_PATH" >&5
-$as_echo "$GUILE_DATA_PATH" >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Guile data path: $GUILE_DATA_PATH" >&5
+$as_echo "$as_me: Guile data path: $GUILE_DATA_PATH" >&6;}
 
 
 
