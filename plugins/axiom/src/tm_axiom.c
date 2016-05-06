@@ -164,7 +164,7 @@ void line(void)
 #ifdef LOG
   lline();
 #endif
-  if (/*wait_type && */(code==NORMAL))
+  if (/*wait_type &&*/ code == NORMAL)
   { if (len==1) return;
     wait_type=0;
     if (len==78)

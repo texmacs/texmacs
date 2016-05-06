@@ -14,6 +14,8 @@
 #include <sys/select.h>
 #if HAVE_PTY_H
 #include <pty.h>
+#else
+#include <util.h>
 #endif
 
 #include <utmp.h>
