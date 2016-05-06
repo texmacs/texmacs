@@ -196,13 +196,13 @@ pager_rep::papyrus_make () {
 
   box sb= pages_format (sk[0]);
   box b = move_box (ip, sb, 0, 0);
-  SI ph= b->h();
-  if (env->get_string (PAGE_MEDIUM) == "beamer")
-    ph= max (ph, env->page_user_height);
   brush bgc = make_background (false);
   adjust_margins (false);
+  SI ph= b->h();
   SI left  = (odd+even) >> 1;
-  SI height= top + bot + ph;
+  SI height= top + dtop + bot + dbot + ph;
+  if (env->get_string (PAGE_MEDIUM) == "beamer")
+    height= max (height, env->page_user_height + top + bot);
   array<box> bs   (1); bs   [0]= b;
   array<SI>  bs_x (1); bs_x [0]= left;
   array<SI>  bs_y (1); bs_y [0]= -top - dtop;
