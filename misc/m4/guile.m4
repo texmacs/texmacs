@@ -71,10 +71,8 @@ AC_DEFUN([LC_WITH_GUILE],[
   GUILE_BIN="$GUILE_LIB"
   GUILE_CONFIG="$guile_config"
   GUILE_CFLAGS="$GUILE_CPPFLAGS"
-  GUILE_LDFLAGS=""
   AC_SUBST(GUILE_BIN)
   AC_SUBST(GUILE_CFLAGS)
-  AC_SUBST(GUILE_LDFLAGS)
 
   GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
 #  if [[ "$GUILE_VERSION" = "$GUILE_EFFECTIVE_VERSION" ]]
@@ -147,21 +145,31 @@ AC_DEFUN([LC_GUILE],[
   AX_SAVE_FLAGS	
   LC_SET_FLAGS([GUILE])
 
+  unset g_success
+  AC_CHECK_HEADER(gh.h, [
+    AC_CHECK_HEADER(GUILE_LIB_NAME.h, [
+      LC_LINK_IFELSE([Guile],[LM_FUNC_CHECK([gh_scm2newstr])], [
+        g_success=1
         LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
         ],[
-  #       LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
-          LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
-          LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
-            AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
         ])
         AC_RUN_IFELSE([LM_GUILE_SIZE], [
           AC_DEFINE(guile_str_size_t, int, [Guile string size type])
-          AC_MSG_RESULT(int)
+          AC_MSG_RESULT(checking for Guile size type... int)
         ],[
           AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
-          AC_MSG_RESULT(size_t)
-    ])
+          AC_MSG_RESULT(checking for Guile size type... size_t)
+    ])])])])
+    if [[ ! $g_success ]];then 
+      AC_MSG_ERROR([It seems that guile-config does not provide the right parameters.
+      Consult the config.log for error details and check your guile installation])
+    unset g_success
+  fi
 
   CONFIG_GUILE_SERIAL="X"
   AC_SUBST(CONFIG_GUILE_SERIAL)
