@@ -413,6 +413,10 @@
     <surround||<right-flush>|<map-args|identity|document|switch-args>>
   </xmacro>>
 
+  <assign|gpag-length|<macro|1pag>>
+
+  <assign|gr-screen|<macro|body|<surround|<assign|gpagbis-length|<gpag-length>>|<assign|gpag-length|<macro|1pag>>|<with|gpag-length|<macro|1gpagbis>|<arg|body>>>>>
+
   <assign|tiny-block|<xmacro|switch-args|<map-args|identity|concat|switch-args>>>
 
   <assign|slide|<\macro|body>
@@ -448,6 +452,8 @@
   <drd-props|switch|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|screens|arity|<tuple|repeat|1|1>|accessible|all|border|no>
+
+  <drd-props|gr-screen|arity|1|accessible|all|border|no>
 
   <drd-props|tiny-switch|arity|<tuple|repeat|1|1>|accessible|all>
 

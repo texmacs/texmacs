@@ -91,6 +91,7 @@
   (:mode in-active-graphics?)
   ("+" (graphics-zoom-in))
   ("-" (graphics-zoom-out))
+  ("0" (graphics-set-zoom 0.5))
   ("1" (graphics-set-zoom 1.0))
   ("2" (graphics-set-zoom 2.0))
   ("3" (graphics-set-zoom 3.0))

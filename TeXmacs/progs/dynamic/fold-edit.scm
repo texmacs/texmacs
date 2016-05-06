@@ -997,6 +997,45 @@
     (former s)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customizations for graphical screens
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (innermost-gr-screen)
+  (and-with t (tree-innermost 'screens)
+    (and-with s (tree-down t)
+      (when (tree-func? s 'document 1)
+        (set! s (tree-ref s 0)))
+      (when (or (tree-func? s 'shown 1) (tree-func? s 'hidden 1))
+        (set! s (tree-ref s 0)))
+      (when (tree-func? s 'document 1)
+        (set! s (tree-ref s 0)))
+      (or (and (tree-func? s 'gr-screen 1)
+               s)
+          (and (tree-is? s 'document)
+               (>= (tree-arity s) 1)
+               (tree-func? (tree-ref s 0) 'gr-screen 1)
+               (tree-ref s 0))
+          (and (tree-is? s 'document)
+               (>= (tree-arity s) 2)
+               (tree-is? (tree-ref s 0) 'tit)
+               (tree-func? (tree-ref s 1) 'gr-screen 1)
+               (tree-ref s 1))))))
+
+(tm-define (innermost-graphics-screen)
+  (and-with t (innermost-gr-screen)
+    (set! t (tree-ref t 0))
+    (when (tree-func? t 'document 1) (set! t (tm-ref t 0)))
+    (when (tree-is? t 'with) (set! t (tm-ref t :last)))
+    (when (tree-func? t 'document 1) (set! t (tm-ref t 0)))
+    (and (tree-is? t 'graphics) t)))
+
+(tm-define (dynamic-traverse-buffer mode)
+  (:require (and (inside? 'gr-screen) (in-graphics?)))
+  (former mode)
+  (and-with t (innermost-graphics-screen)
+    (tree-go-to t 0 :start)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editing slideshows in expanded form
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

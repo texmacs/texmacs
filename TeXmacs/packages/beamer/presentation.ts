@@ -111,7 +111,7 @@
   <assign|tit|<macro|body|<with|color|<title-color>|math-color|<title-color>|ornament-color|<title-bar-color>|<ornament|<title-left|<arg|body>><htab|5mm><with|font-series|bold|math-font-series|bold|<large|<space|0em|-0.6ex|1.6ex><arg|body>>><htab|5mm><title-right|<arg|body>>>>>>
 
   <assign|tit|<\macro|body>
-    <\surround|<assign|page-this-top|0mm>|<vspace|5mm>>
+    <\surround|<assign|page-this-top|0mm>|<assign|gpag-length|<macro|<minus|1pag|2.25fn>>><vspace|5mm>>
       <\with|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>>
         <with|color|<title-color>|math-color|<title-color>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<table|<row|<\cell>
           <title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>
