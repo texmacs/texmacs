@@ -712,9 +712,9 @@ GUILE_CPP
 GUILE_CXX
 CONFIG_GUILE_SERIAL
 GUILE_DATA_PATH
-GUILE_BIN
 GUILE_LDFLAGS
 GUILE_CFLAGS
+GUILE_BIN
 guile_config
 ac_ct_OBJCXX
 OBJCXXFLAGS
@@ -4692,7 +4692,7 @@ fi
 done
 
 
-  LC_WITH_GUILE_tmp1="$($guile_config link) $($guile_config compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" &&   GUILE_VERSION=$($guile_config info guileversion) &&   GUILE_VERSIONT=${GUILE_VERSION#*.*.} &&
+  LC_WITH_GUILE_tmp1="$($guile_config link)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" &&   GUILE_VERSION=$($guile_config info guileversion) &&   GUILE_VERSIONT=${GUILE_VERSION#*.*.} &&
   GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSIONT} &&   GUILE_DATA_PATH=$($guile_config info pkgdatadir)/${GUILE_VERSION} ||   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
 
   LC_SCATTER_FLAGS_list="$LC_WITH_GUILE_tmp1"
@@ -5065,6 +5065,7 @@ fi
 
 
 
+
   GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
 #  if [[ "$GUILE_VERSION" = "$GUILE_EFFECTIVE_VERSION" ]]
 #  then echo ok
@@ -5111,6 +5112,10 @@ $as_echo "#define GUILE_C 1" >>confdefs.h
     { $as_echo "$as_me:${as_lineno-$LINENO}: Guile data path: $GUILE_DATA_PATH" >&5
 $as_echo "$as_me: Guile data path: $GUILE_DATA_PATH" >&6;}
 
+
+cat >>confdefs.h <<_ACEOF
+#define GUILE_NUM $GUILE_NUM
+_ACEOF
 
 
   else
@@ -5673,13 +5678,6 @@ fi
   fi
 
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ... arguments behave correctly" >&5
-$as_echo_n "checking whether ... arguments behave correctly... " >&6; }
-  if test -z "$GUILE_CFLAGS"; then
-    CXXFLAGS="`$GUILE_CONFIG compile`"
-  else
-    CXXFLAGS="$GUILE_CFLAGS"
-  fi
 
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
 $as_echo_n "checking Guile DOTS linking... " >&6; }
@@ -5994,13 +5992,6 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking the size_t of guile strings" >&5
-$as_echo_n "checking the size_t of guile strings... " >&6; }
-  if test -z "$GUILE_CFLAGS"; then
-    CXXFLAGS="`$GUILE_CONFIG compile`"
-  else
-    CXXFLAGS="$GUILE_CFLAGS"
-  fi
         if test "$cross_compiling" = yes; then :
   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
@@ -6047,7 +6038,6 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
-  CXXFLAGS=""
 
   CONFIG_GUILE_SERIAL="X"
 

@@ -44,7 +44,7 @@ AC_DEFUN([LC_WITH_GUILE],[
 	[guile_config=$1]
   AC_CHECK_PROGS(guile_config, guile18-config guile-config guile20-config, [])
   
-  LC_WITH_GUILE_tmp1="$($guile_config link) $($guile_config compile)" && dnl
+  LC_WITH_GUILE_tmp1="$($guile_config link)" && dnl
   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" && dnl
   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" && dnl
   GUILE_VERSION=$($guile_config info guileversion) && dnl
@@ -72,6 +72,7 @@ AC_DEFUN([LC_WITH_GUILE],[
   GUILE_CONFIG="$guile_config"
   GUILE_CFLAGS="$GUILE_CPPFLAGS"
   GUILE_LDFLAGS=""
+  AC_SUBST(GUILE_BIN)
   AC_SUBST(GUILE_CFLAGS)
   AC_SUBST(GUILE_LDFLAGS)
 
@@ -137,7 +138,7 @@ AC_DEFUN([LC_GUILE],[
 
     AC_MSG_NOTICE([Guile data path: $GUILE_DATA_PATH])
 
-    AC_SUBST(GUILE_BIN)
+    AC_DEFINE_UNQUOTED([GUILE_NUM], [$GUILE_NUM], [Guile library name])
     AC_SUBST(GUILE_DATA_PATH)
   else
     AC_MSG_ERROR([ cannot work without Guile])
@@ -146,12 +147,6 @@ AC_DEFUN([LC_GUILE],[
   AX_SAVE_FLAGS	
   LC_SET_FLAGS([GUILE])
 
-  AC_MSG_CHECKING(whether ... arguments behave correctly)
-  if test -z "$GUILE_CFLAGS"; then
-    CXXFLAGS="`$GUILE_CONFIG compile`"
-  else
-    CXXFLAGS="$GUILE_CFLAGS"
-  fi
         LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
         ],[
@@ -160,12 +155,6 @@ AC_DEFUN([LC_GUILE],[
           LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
             AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
         ])
-  AC_MSG_CHECKING(the size_t of guile strings)
-  if test -z "$GUILE_CFLAGS"; then
-    CXXFLAGS="`$GUILE_CONFIG compile`"
-  else
-    CXXFLAGS="$GUILE_CFLAGS"
-  fi
         AC_RUN_IFELSE([LM_GUILE_SIZE], [
           AC_DEFINE(guile_str_size_t, int, [Guile string size type])
           AC_MSG_RESULT(int)
@@ -173,7 +162,6 @@ AC_DEFUN([LC_GUILE],[
           AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
           AC_MSG_RESULT(size_t)
     ])
-  CXXFLAGS=""
 
   CONFIG_GUILE_SERIAL="X"
   AC_SUBST(CONFIG_GUILE_SERIAL)

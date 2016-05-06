@@ -24,6 +24,9 @@
 /* Guile version */
 #undef GUILE_D
 
+/* Guile library name */
+#undef GUILE_NUM
+
 /* Define to 1 if you have the `dlopen' function. */
 #undef HAVE_DLOPEN
 
