@@ -68,15 +68,14 @@ AC_DEFUN([LC_WITH_GUILE],[
   AC_DEFUN([GUILE_LIB_NAME], [lib$GUILE_LIB])
   unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
 
-  LC_COMBINE_FLAGS([GUILE],[guile])
-  LC_SUBST(GUILE)
   GUILE_BIN="$GUILE_LIB"
-  GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
   GUILE_CONFIG="$guile_config"
   GUILE_CFLAGS="$GUILE_CPPFLAGS"
   GUILE_LDFLAGS=""
   AC_SUBST(GUILE_CFLAGS)
   AC_SUBST(GUILE_LDFLAGS)
+
+  GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
 #  if [[ "$GUILE_VERSION" = "$GUILE_EFFECTIVE_VERSION" ]]
 #  then echo ok
 #  else
@@ -148,6 +147,9 @@ AC_DEFUN([LC_GUILE],[
     AC_MSG_ERROR([ cannot work without Guile])
   fi
 
+  AX_SAVE_FLAGS	
+  LC_SET_FLAGS([GUILE])
+
   AC_MSG_CHECKING(whether ... arguments behave correctly)
   if test -z "$GUILE_CFLAGS"; then
     CXXFLAGS="`$GUILE_CONFIG compile`"
@@ -179,4 +181,8 @@ AC_DEFUN([LC_GUILE],[
 
   CONFIG_GUILE_SERIAL="X"
   AC_SUBST(CONFIG_GUILE_SERIAL)
+
+  AX_RESTORE_FLAGS
+  LC_COMBINE_FLAGS([GUILE],[guile])
+  LC_SUBST([GUILE])
 ])
