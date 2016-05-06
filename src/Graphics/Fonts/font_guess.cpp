@@ -208,10 +208,10 @@ guessed_distance_families (string fam1, string fam2) {
   if (memo->contains (key)) return memo[key];
   array<string> stys1= font_database_styles (fam1);
   array<string> stys2= font_database_styles (fam2);
-  if (N(stys1) == 0 || N(stys2) == 0) {
+  if (N(stys1) == 0 && fam1 != "tcx" && fam1 != "tc")
     stys1= font_database_global_styles (fam1);
+  if (N(stys2) == 0 && fam2 != "tcx" && fam2 != "tc")
     stys2= font_database_global_styles (fam2);
-  }
   double d= 1000000.0;
   for (int i1=0; i1<N(stys1); i1++)
     for (int i2=0; i2<N(stys2); i2++)

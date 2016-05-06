@@ -268,7 +268,8 @@ family_to_master (string f) {
   if (occurs (",", f) && occurs ("=", f)) f= main_family (f);
   f= upgrade_family_name (f);
   font_database_load ();
-  if (!font_features->contains (tree (f))) {
+  if (!font_features->contains (tree (f)) &&
+      f != "tcx" && f != "tc") {
     cout << "TeXmacs] missing '" << f << "' family\n";
     font_database_global_load ();
   }
@@ -317,7 +318,8 @@ master_to_families (string m) {
   if (occurs (",", m) && occurs ("=", m)) m= main_family (m);
   m= upgrade_family_name (m);
   font_database_load ();
-  if (!font_variants->contains (tree (m))) {
+  if (!font_variants->contains (tree (m)) &&
+      m != "tcx" && m != "tc") {
     cout << "TeXmacs] missing '" << m << "' master\n";
     font_database_global_load ();
   }
