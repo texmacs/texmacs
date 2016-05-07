@@ -84,6 +84,22 @@ next_without_border (tree t, path p) {
   return false;
 }
 
+static int
+lowest_accessible_child (tree t) {
+  for (int i=0; i<N(t); i++)
+    if (the_drd->is_accessible_child (t, i))
+      return i;
+  return 0;
+}
+
+static int
+highest_accessible_child (tree t) {
+  for (int i=N(t)-1; i>=0; i--)
+    if (the_drd->is_accessible_child (t, i))
+      return i;
+  return N(t) - 1;
+}
+
 bool
 is_accessible_cursor (tree t, path p) {
   if (is_atomic (t) || is_atom (p)) {
@@ -96,8 +112,10 @@ is_accessible_cursor (tree t, path p) {
   }
   else if (0 > p->item || p->item >= N(t)) return false;
   else if (the_drd->is_parent_enforcing (t) &&
-	   ((p->item == 0 && p->next == start (t[0])) ||
-	    (p->item == N(t)-1 && p->next == end (t[p->item]))))
+	   ((p->item == lowest_accessible_child (t) &&
+             p->next == start (t[p->item])) ||
+	    (p->item == highest_accessible_child (t) &&
+             p->next == end (t[p->item]))))
     return false;
   else switch (L(t)) {
     case CONCAT:
@@ -159,9 +177,11 @@ closest_accessible (tree t, path p) {
 	  r= path (j, r);
 	  if (!is_concat (t) || !next_without_border (t, r)) {
 	    if (the_drd->is_parent_enforcing (t)) {
-	      if (r->item == 0 && r->next == start (t[0]))
+	      if (r->item == lowest_accessible_child (t) &&
+                  !is_accessible_cursor (t, p))
 		return path (0);
-	      if (r->item == N(t)-1 && r->next == end (t[r->item]))
+	      if (r->item == highest_accessible_child (t) &&
+                  !is_accessible_cursor (t, p))
 		return path (1);	    
 	    }
 	    return r;
@@ -231,10 +251,12 @@ valid_cursor (tree t, path p, bool start_flag) {
     if (start_flag) return (p->item!=0);
     return true;
   }
-  if (the_drd->is_parent_enforcing (t))
-    if ((p->item == 0 && p->next == start (t[0])) ||
-	(p->item == N(t)-1 && p->next == end (t[p->item])))
-      return false;
+  if (the_drd->is_parent_enforcing (t) &&
+      ((p->item == lowest_accessible_child (t) &&
+        p->next == start (t[p->item])) ||
+       (p->item == highest_accessible_child (t) &&
+        p->next == end (t[p->item]))))
+    return false;
   if (is_concat (t)) {
     if (next_without_border (t, p)) return false;
     return valid_cursor (t[p->item], p->next, start_flag || (p->item!=0));
@@ -301,8 +323,12 @@ pre_correct (tree t, path p) {
     }
   path r (p->item, pre_correct (t[p->item], p->next));
   if (the_drd->is_parent_enforcing (t)) {
-    if (r->item == 0 && r->next == start (t[0])) return path (0);
-    if (r->item == N(t)-1 && r->next == end (t[r->item])) return path (1);
+    if (r->item == lowest_accessible_child (t) &&
+        !valid_cursor (t, p, false))
+      return path (0);
+    if (r->item == highest_accessible_child (t) &&
+        !valid_cursor (t, p, false))
+      return path (1);	    
   }
   return r;
 }
