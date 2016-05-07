@@ -31,8 +31,8 @@
 (menu-bind switch-menu
   (when (with t (tree-innermost dynamic-context?)
           (and t (switch-context? t)))
-    ("Add branch before" (switch-insert-at (focus-tree) :current))
-    ("Add branch after" (switch-insert-at (focus-tree) :var-next))
+    ("Add branch before" (switch-insert-at (focus-tree) :current #f))
+    ("Add branch after" (switch-insert-at (focus-tree) :var-next #f))
     ("Remove this branch" (switch-remove-at (focus-tree) :current))
     ---
     (when (switch-index (focus-tree))
