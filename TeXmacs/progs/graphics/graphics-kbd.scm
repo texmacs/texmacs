@@ -143,7 +143,7 @@
   ("pagedown" (screens-switch-to :next)))
 
 (define graphics-keys
-  '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9"
+  '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
     "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
     "backspace" "delete" "tab" "F1" "F2" "F3" "F4" "F9" "F10" "F11" "F12"))
 

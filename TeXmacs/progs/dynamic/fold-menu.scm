@@ -314,6 +314,29 @@
        (screens-switch-to i)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Graphical slides
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (slide-propose-graphics? t*)
+  (with t (if (slideshow-context? t*) (tree-ref t* 0) t*)
+    (and-with u (tree-ref t :down :down)
+      (or (tm-equal? u '(document ""))
+          (and (tree-func? u 'document 1)
+               (tree-is? u 0 'tit))
+          (and (tree-func? u 'document 2)
+               (tree-is? u 0 'tit)
+               (tm-equal? (tree-ref u 1) ""))))))
+
+(tm-define (slide-insert-graphics t*)
+  (with t (if (slideshow-context? t*) (tree-ref t* 0) t*)
+    (with u (tree-ref t :down :down)
+      (when (and (tree-func? u 'document 1)
+                 (tree-is? u 0 'tit))
+        (tree-insert! u 1 (list "")))
+      (tree-go-to u :last 0)
+      (make-graphics "1gpar" "1gpag"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus when focus is on 'screens' tag
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -341,7 +364,10 @@
   (dynamic (focus-slides-menu t))
   (assuming (slide-propose-title? t)
     ---
-    ("Title" (slide-insert-title t))))
+    ("Title" (slide-insert-title t)))
+  (assuming (slide-propose-graphics? t)
+    ---
+    ("Draw" (slide-insert-graphics t))))
 
 (tm-menu (focus-tag-icons t)
   (:require (screens-context? t))
@@ -370,7 +396,11 @@
   (assuming (slide-propose-title? t)
     //
     (minibar
-     ((balloon "Title" "Insert title") (slide-insert-title t)))))
+     ((balloon "Title" "Insert title") (slide-insert-title t))))
+  (assuming (slide-propose-graphics? t)
+    //
+    (minibar
+     ((balloon "Draw" "Draw graphics") (slide-insert-graphics t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu customizations for overlays
@@ -455,26 +485,16 @@
     ("Until" (graphics-set-proviso `(show-until ,cur)))
     ("Always" (graphics-set-proviso "default"))))
 
-(tm-menu (graphics-overlays-manage-menu)
-  (let* ((t (tree-innermost overlays-context?))
-         (cur (and t (number->string (overlays-current t)))))
-    ("Insert overlay before" (structured-insert-horizontal t #f))
-    ("Insert overlay after"  (structured-insert-horizontal t #t))
-    ("Remove overlay before" (structured-remove-horizontal t #f))
-    ("Remove overlay after"  (structured-remove-horizontal t #t))
-    ---
-    (dynamic (focus-overlays-menu t))))
-
-(tm-menu (graphics-overlays-menu)
+(tm-menu (graphics-focus-overlays-menu)
   (with t (tree-innermost overlays-context?)
     (assuming (nnot t)
       ---
       (-> "Overlay mode"
           (link graphics-overlays-mode-menu))
       (-> (eval (get-overlays-menu-name "Overlay " t))
-          (link graphics-overlays-manage-menu)))))
+          (dynamic (focus-overlays-menu t))))))
 
-(tm-menu (graphics-overlays-icons)
+(tm-menu (graphics-focus-overlays-icons)
   (with t (tree-innermost overlays-context?)
     (assuming (nnot t)
       /
@@ -483,4 +503,28 @@
         (=> (eval (proviso-name (graphics-get-proviso)))
             (link graphics-overlays-mode-menu))
         (=> (eval (get-overlays-menu-name "" t))
-            (link graphics-overlays-manage-menu))))))
+            (dynamic (focus-overlays-menu t)))))))
+
+(tm-menu (graphics-screens-menu)
+  (with t (tree-innermost screens-context?)
+    (assuming (nnot t)
+      ("Insert slide before" (structured-insert-horizontal t #f))
+      ("Insert slide after"  (structured-insert-horizontal t #t))
+      ("Remove slide before" (structured-remove-horizontal t #f))
+      ("Remove slide after"  (structured-remove-horizontal t #t)))))
+
+(tm-menu (graphics-overlays-manage-menu)
+  (with t (tree-innermost overlays-context?)
+    (assuming (nnot t)
+      ("Insert overlay before" (structured-insert-horizontal t #f))
+      ("Insert overlay after"  (structured-insert-horizontal t #t))
+      ("Remove overlay before" (structured-remove-horizontal t #f))
+      ("Remove overlay after"  (structured-remove-horizontal t #t)))))
+
+(tm-menu (graphics-overlays-menu)
+  (with t (tree-innermost overlays-context?)
+    (assuming (not t)
+      ("Insert overlay before" (make-gr-overlays #f))
+      ("Insert overlay after" (make-gr-overlays #t)))
+    (assuming t
+      (link graphics-overlays-manage-menu))))

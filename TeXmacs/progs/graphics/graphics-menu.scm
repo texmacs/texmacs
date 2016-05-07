@@ -537,6 +537,9 @@
 (menu-bind graphics-insert-menu
   (-> "Geometry" (link graphics-global-menu))
   (-> "Grid" (link graphics-grids-menu))
+  (assuming (inside? 'screens)
+    (-> "Slides" (link graphics-screens-menu)))
+  (-> "Overlays" (link graphics-overlays-menu))
   ---
   (link graphics-mode-menu))
 
@@ -546,7 +549,7 @@
   (if (inside-graphical-over-under?)
       ("Exit graphics" (graphics-exit-right)))
   (assuming (nnot (tree-innermost overlays-context?))
-    (link graphics-overlays-menu))
+    (link graphics-focus-overlays-menu))
   (assuming (nnull? (graphics-mode-attributes (graphics-mode)))
     ---
     (assuming (graphics-mode-attribute? (graphics-mode) "color")
@@ -586,6 +589,16 @@
       (link graphics-global-menu))
   (=> (balloon (icon "tm_graphics_grid.xpm") "Graphics grids")
       (link graphics-grids-menu))
+  (assuming (inside? 'screens)
+    (=> (balloon (icon "tm_overlays.xpm") "Graphical slides and overlays")
+        (group "Slides")
+        (link graphics-screens-menu)
+        ---
+        (group "Overlays")
+        (link graphics-overlays-menu)))
+  (assuming (not (inside? 'screens))
+    (=> (balloon (icon "tm_overlays.xpm") "Graphical overlays")
+        (link graphics-overlays-menu)))
   ((balloon (icon "tm_exit_image.xpm") "Exit graphics mode")
    (graphics-exit-right)))
 
@@ -817,7 +830,7 @@
                  "Current graphical mode")
         (link graphics-mode-menu)))
   (assuming (nnot (tree-innermost overlays-context?))
-    (link graphics-overlays-icons))
+    (link graphics-focus-overlays-icons))
   (assuming (nnull? (graphics-mode-attributes (graphics-mode)))
     (link graphics-property-icons))
   /

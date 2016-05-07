@@ -246,6 +246,8 @@
 ;(display "Booting graphics mode\n")
 (lazy-keyboard (graphics graphics-kbd) in-active-graphics?)
 (lazy-menu (graphics graphics-menu) graphics-menu graphics-icons)
+(lazy-define (graphics graphics-object) graphics-decorations-update)
+(lazy-define (graphics graphics-utils) make-graphics)
 (lazy-define (graphics graphics-edit)
              graphics-busy?
              graphics-reset-context graphics-undo-enabled
@@ -271,7 +273,8 @@
 (lazy-keyboard (dynamic scripts-kbd) always?)
 (lazy-keyboard (dynamic calc-kbd) always?)
 (lazy-menu (dynamic fold-menu) insert-fold-menu dynamic-menu dynamic-icons
-           graphics-overlays-menu graphics-overlays-icons)
+           graphics-overlays-menu graphics-screens-menu
+           graphics-focus-overlays-menu graphics-focus-overlays-icons)
 (lazy-menu (dynamic session-menu) insert-session-menu session-help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
            plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)

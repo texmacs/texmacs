@@ -553,6 +553,8 @@
 
   <assign|gpag-length|<macro|1pag>>
 
+  <assign|gpar-length|<macro|1par>>
+
   <assign|gr-screen|<macro|body|<\surround|<assign|gpagbis-length|<gpag-length>>|<assign|gpag-length|<macro|1pag>>>
     <\with|gpag-length|<macro|1gpagbis>>
       <arg|body>
@@ -565,7 +567,7 @@
 
   <drd-props|gr-screen|arity|1|accessible|all|border|outer>
 
-  <drd-props|gr-overlays|arity|3|accessible|2|border|outer>
+  <drd-props|gr-overlays|arity|3|accessible|2|hidden|0|hidden|1|border|outer>
 
   <\active*>
     <\src-comment>

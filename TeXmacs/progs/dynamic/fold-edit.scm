@@ -1118,7 +1118,8 @@
 
 (define (go-to-graphics)
   (and-with t (innermost-graphics-screen)
-    (tree-go-to t 0 :start)))
+    (tree-go-to t 0 :start)
+    (graphics-decorations-update)))
 
 (tm-define (dynamic-operate-on-buffer mode)
   ;;(:require (in-screens-graphics?))
@@ -1152,6 +1153,8 @@
          `(tit ""))
         ((tree-func? t 'gr-screen 1)
          `(gr-screen ,(extract-slide-template (tree-ref t 0))))
+        ((tree-func? t 'gr-overlays 3)
+         `(gr-overlays "1" "1" ,(extract-slide-template (tree-ref t 2))))
         ((tree-is? t 'with)
          (with l (tree-children t)
            `(with ,@(cDr l) ,(extract-slide-template (cAr l)))))
@@ -1174,3 +1177,10 @@
                   (>= (tree-arity s) 1)
                   (tree-func? (tree-ref s 0) 'gr-screen 1))
              (go-to-graphics))))))
+
+(tm-define (make-gr-overlays forwards?)
+  (and-with t (tree-innermost 'graphics)
+    (while (tree-is? t :up 'with)
+      (set! t (tree-up t)))
+    (when (not (overlays-context? t))
+      (tree-set! t `(gr-overlays ,(if forwards? "2" "1") "2" ,t)))))
