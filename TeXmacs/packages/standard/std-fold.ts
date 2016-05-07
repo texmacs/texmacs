@@ -413,10 +413,6 @@
     <surround||<right-flush>|<map-args|identity|document|switch-args>>
   </xmacro>>
 
-  <assign|gpag-length|<macro|1pag>>
-
-  <assign|gr-screen|<macro|body|<surround|<assign|gpagbis-length|<gpag-length>>|<assign|gpag-length|<macro|1pag>>|<with|gpag-length|<macro|1gpagbis>|<arg|body>>>>>
-
   <assign|tiny-block|<xmacro|switch-args|<map-args|identity|concat|switch-args>>>
 
   <assign|slide|<\macro|body>
@@ -452,8 +448,6 @@
   <drd-props|switch|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|screens|arity|<tuple|repeat|1|1>|accessible|all|border|no>
-
-  <drd-props|gr-screen|arity|1|accessible|all|border|no>
 
   <drd-props|tiny-switch|arity|<tuple|repeat|1|1>|accessible|all>
 
@@ -550,6 +544,28 @@
   <assign|alter-colors|<macro|body|hidden-color|shown-color|<style-with|src-compact|none|<with|hidden*|<quasi|<macro|x|<with|color|<unquote|<arg|hidden-color>>|<arg|x>>>>|shown*|<quasi|<macro|x|<with|color|<unquote|<arg|shown-color>>|<arg|x>>>>|<arg|body>>>>>
 
   <drd-props|alter-colors|arity|3|color|1|color|2>
+
+  <\active*>
+    <\src-comment>
+      Special macros for graphical slideshows.
+    </src-comment>
+  </active*>
+
+  <assign|gpag-length|<macro|1pag>>
+
+  <assign|gr-screen|<macro|body|<\surround|<assign|gpagbis-length|<gpag-length>>|<assign|gpag-length|<macro|1pag>>>
+    <\with|gpag-length|<macro|1gpagbis>>
+      <arg|body>
+    </with>
+  </surround>>>
+
+  <assign|gr-overlays|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
+    <arg|body>
+  </surround>>>>
+
+  <drd-props|gr-screen|arity|1|accessible|all|border|outer>
+
+  <drd-props|gr-overlays|arity|3|accessible|2|border|outer>
 
   <\active*>
     <\src-comment>

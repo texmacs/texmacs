@@ -25,6 +25,9 @@
 (define (in-active-graphics?)
   (and (in-graphics?) (== (get-env "preamble") "false")))
 
+(define (in-beamer-graphics?)
+  (and (in-active-graphics?) (in-screens?)))
+
 (define (graphics-context? t)
   (tree-is? t 'graphics))
 
@@ -128,7 +131,16 @@
   ("C-left" (graphics-rotate-xz -0.1))
   ("C-right" (graphics-rotate-xz 0.1))
   ("C-up" (graphics-rotate-yz 0.1))
-  ("C-down" (graphics-rotate-yz -0.1)))
+  ("C-down" (graphics-rotate-yz -0.1))
+  ("C-home" (graphics-zmove 'foreground))
+  ("C-end" (graphics-zmove 'background))
+  ("C-pageup" (graphics-zmove 'closer))
+  ("C-pagedown" (graphics-zmove 'farther)))
+
+(kbd-map
+  (:mode in-beamer-graphics?)
+  ("pageup" (screens-switch-to :previous))
+  ("pagedown" (screens-switch-to :next)))
 
 (define graphics-keys
   '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9"

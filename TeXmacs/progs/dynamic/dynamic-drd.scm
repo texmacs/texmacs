@@ -96,12 +96,17 @@
 ;; overlays
 
 (define-group variant-tag
-  (overlays-tag) (nullary-overlay-tag) (unary-overlay-tag) (binary-overlay-tag))
+  (std-overlays-tag)
+  (nullary-overlay-tag) (unary-overlay-tag) (binary-overlay-tag))
 
 (define-group similar-tag
-  (overlays-tag) (nullary-overlay-tag) (unary-overlay-tag) (binary-overlay-tag))
+  (std-overlays-tag)
+  (nullary-overlay-tag) (unary-overlay-tag) (binary-overlay-tag))
 
 (define-group overlays-tag
+  (std-overlays-tag) gr-overlays)
+
+(define-group std-overlays-tag
   overlays overlays-compressed overlays-phantoms overlays-greyed)
 
 (define-group overlay-tag
