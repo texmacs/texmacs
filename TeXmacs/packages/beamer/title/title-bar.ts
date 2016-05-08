@@ -29,7 +29,7 @@
   <assign|title-theme|title-bar>
 
   <assign|tit|<\macro|body>
-    <\surround|<assign|page-this-top|0mm>|<assign|gpag-length|<macro|<minus|1pag|2fn>>><vspace|5mm>>
+    <\surround|<assign|page-this-top|0mm>|<assign|gpag-length|<macro|<minus|1pag|2.25fn>>><vspace|5mm>>
       <\with|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>>
         <with|color|<title-color>|math-color|<title-color>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|2|2|1|1|cell-vcorrect|n>|<cwith|2|2|1|1|cell-halign|l>|<twith|table-valign|T>|<table|<row|<\cell>
           <title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>
