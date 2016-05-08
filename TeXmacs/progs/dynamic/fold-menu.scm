@@ -14,7 +14,8 @@
 (texmacs-module (dynamic fold-menu)
   (:use (dynamic fold-edit)
         (generic generic-menu)
-	(generic document-menu)))
+	(generic document-menu)
+        (generic format-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus for direct folding and switching
@@ -283,22 +284,6 @@
   (:require (== l "title-theme"))
   #f)
 
-(tm-define (slide-get-switch t)
-  (if (slideshow-context? t) (tree-ref t 0) t))
-
-(tm-define (slide-get-document t)
-  (cond ((not (tree? t)) #f)
-        ((slideshow-context? t)
-         (slide-get-document (tree-ref t 0 :down :down)))
-        ((screens-context? t)
-         (slide-get-document (tree-ref t :down :down)))
-        ((tree-in? t '(shown hidden screen slide))
-         (slide-get-document (tree-ref t 0)))
-        ((tree-is? t 'with)
-         (slide-get-document (tree-ref t :last)))
-        ((tree-is? t 'document) t)
-        (else #f)))
-
 (tm-define (slide-propose-title? t)
   (and-with u (slide-get-document t)
     (not (tree-is? u 0 'tit))))
@@ -347,6 +332,47 @@
     (tree-set u :last `(gr-screen (document "")))
     (tree-go-to u :last 0 0 0)
     (make-graphics "1gpar" "1gpag" "axis")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Slide background color
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-widget (slide-page-formatter quit)
+  (let* ((col (tm->stree (slide-get-bg-color)))
+         (setter (lambda (c)
+                   (set! col c)
+                   (slide-set-bg-color col)
+                   (refresh-now "slide-color-sample"))))
+    (padded
+      (bold (text "Background color"))
+      ===
+      (hlist
+        (refreshable "slide-color-sample"
+          (resize "150px" "100px"
+            (texmacs-output `(document
+                               (block
+                                (tformat
+                                 (cwith "1" "1" "1" "1" "cell-width" "140px")
+                                 (cwith "1" "1" "1" "1" "cell-height" "90px")
+                                 (cwith "1" "1" "1" "1" "cell-vmode" "exact")
+                                 (cwith "1" "1" "1" "1" "cell-background" ,col)
+                                 (table (row (cell ""))))))
+                            `(style (tuple "generic")))))
+        // // //
+        (explicit-buttons
+          (vlist
+            ("Color" (interactive-color setter (list)))
+            ("Pattern" (open-pattern-selector setter "1cm"))
+            (glue #f #t 0 0))))
+      ======
+      (explicit-buttons
+        (hlist
+          >>>
+          ("Ok" (quit)))))))
+
+(tm-define (open-page-format)
+  (:require (or (inside? 'screens) (inside? 'slideshow)))
+  (dialogue-window slide-page-formatter noop "Page format"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus when focus is on 'screens' tag

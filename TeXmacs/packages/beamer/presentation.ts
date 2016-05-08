@@ -122,6 +122,18 @@
 
   <\active*>
     <\src-comment>
+      Customized screens
+    </src-comment>
+  </active*>
+
+  <assign|with-screen-color|<\macro|col|body>
+    <surround|<assign|page-this-bg-color|<arg|col>>||<arg|body>>
+  </macro>>
+
+  <drd-props|with-screen-color|arity|2|hidden|0|accessible|1|border|no>
+
+  <\active*>
+    <\src-comment>
       Customized session elements
     </src-comment>
   </active*>
