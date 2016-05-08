@@ -333,7 +333,8 @@
       (when (and (tree-func? u 'document 1)
                  (tree-is? u 0 'tit))
         (tree-insert! u 1 (list "")))
-      (tree-go-to u :last 0)
+      (tree-set u :last `(gr-screen (document "")))
+      (tree-go-to u :last 0 0 0)
       (make-graphics "1gpar" "1gpag"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
