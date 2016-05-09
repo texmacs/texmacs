@@ -1,67 +1,48 @@
+#--------------------------------------------------------------------
+# Checks for iconv library
+#--------------------------------------------------------------------
+
 AC_DEFUN([LC_ICONV],[
-  AC_ARG_WITH(iconv,
-  AS_HELP_STRING([--with-iconv@<:@=DIR@:>@], [where to find iconv [system]]))
+AC_ARG_WITH(iconv,
+AS_HELP_STRING([--with-iconv@<:@=DIR@:>@], [where to find iconv []]),
+	[], [unset withval;])
 
-  # Check for iconv
-  # Modified from GNOME's libxml2 configure.in
-  AC_LANG_SAVE
-  AC_LANG_C  # compile C to avoid the 'const char**' problem
-
-  SAVE_CPPFLAGS="$CPPFLAGS"
-  SAVE_LDFLAGS="$LDFLAGS"
-  SAVE_LIBS="$LIBS"
-  if test "$with_iconv" = "no" ; then
-      AC_MSG_RESULT([disabling iconv support])
-  else
-      if test -n "$ICONV_CFLAGS" -a -n "$ICONV_LDFLAGS"; then
-         CPPFLAGS="$ICONV_CFLAGS" # for AC_TRY_LINK
-         LDFLAGS="$ICONV_LDFLAGS"
-      fi
-      if test "$with_iconv" != "yes" -a "$with_iconv" != "" ; then
-         CPPFLAGS="-I$with_iconv/include" # for AC_TRY_LINK
-         LDFLAGS="-L$with_iconv/lib"
-         ICONV_CFLAGS="-I$with_iconv/include"
-         ICONV_LDFLAGS="-L$with_iconv/lib"
-      fi
-
-      AC_CHECK_HEADER(iconv.h,
-      AC_MSG_CHECKING(for iconv)
-      AC_TRY_LINK(
-  [
-  #include <stdlib.h>
-  #include <iconv.h>
-  ],[
-      iconv_t cd = iconv_open ("","");
-      iconv (cd, NULL, NULL, NULL, NULL);
-  ],[
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_ICONV, 1, [Use iconv library])
-  ],[
-      AC_MSG_RESULT(no)
-      AC_MSG_CHECKING(for iconv in -liconv)
-  #    LDFLAGS="${ICONV_LDFLAGS}"    # for AC_TRY_LINK
-      LIBS="-liconv"                # for AC_TRY_LINK
-      AC_TRY_LINK(
-  [
-  #include <stdlib.h>
-  #include <iconv.h>
-  ],[
-        iconv_t cd = iconv_open ("","");
-        iconv (cd, NULL, NULL, NULL, NULL);
-  ],[
-        AC_MSG_RESULT(yes)
+if [[[ "$withval" != no ]]]
+then
+  i_failure=1
+  
+  [$0]_LIBPATHS="$LDFLAGS $withval -L/opt -L/sw"
+  
+  LC_GET_ARG_VALUE([$0]_LIBPATHS, [-L], [$0]_LIBPATH)
+  STRIP_ARG([[$0]_LIBPATHS], -L$[$0]_LIBPATH)
+  
+  while test -n "$[$0]_LIBPATH"
+  do
+    LC_CLEAR_FLAGS([ICONV]) # no external iconv definition allowed
+    LC_SET_TRIVIAL_FLAGS([ICONV],[${$0_LIBPATH]%/lib})
+    AX_SAVE_FLAGS	
+    LC_SET_FLAGS([ICONV])
+    AC_CHECK_HEADER(iconv.h, [
+      LC_LINK_IFELSE([iconv], [AC_LANG_PROGRAM([[@%:@include <iconv.h>]],
+        [[iconv_open("",""); ]])
+      ], [
+        AX_RESTORE_FLAGS
+        LC_COMBINE_FLAGS([ICONV],[iconv])
         AC_DEFINE(USE_ICONV, 1, [Use iconv library])
-        ICONV_LDFLAGS="${ICONV_LDFLAGS/-liconv} -liconv"
-  ],[
-        AC_MSG_RESULT(no)
-        AC_MSG_WARN([absence of iconv may crash HTML import])
-    ])]))
+        unset i_failure
+        unset [$0]_LIBPATH
+      ], [
+        AC_MSG_ERROR([you may have several versions of iconv installed,
+          use with-iconv=iconv_base_path (i.e /usr/local) to specify one location])
+    ])],[
+      LC_GET_ARG_VALUE([$0]_LIBPATHS, [-L], [$0]_LIBPATH)
+      STRIP_ARG([[$0]_LIBPATHS], -L$[$0]_LIBPATH)
+    ])
+  done
+  if [[ $i_failure ]]
+  then AC_MSG_ERROR([absence of iconv may crash HTML import or prevent the build
+        but it is possible to run configure --with-iconv=no])
   fi
-
-  CPPFLAGS="$SAVE_CPPFLAGS"
-  LDFLAGS="$SAVE_LDFLAGS"
-  LIBS="$SAVE_LIBS"
-  AC_LANG_RESTORE  # restore C++ language
-  AC_SUBST(ICONV_CFLAGS)
-  AC_SUBST(ICONV_LDFLAGS)
+fi
+LC_SUBST([ICONV])
 ])
