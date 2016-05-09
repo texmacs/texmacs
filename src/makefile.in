@@ -53,7 +53,6 @@ LDRT = @CONFIG_LDRT@
 LDSTATIC = @CONFIG_BSTATIC@
 LDSHARED = @CONFIG_BSHARED@
 LDPATH = @CONFIG_BPATH@
-LDDL = @CONFIG_BDL@
 LDX11 = @X11_LDFLAGS@
 LDCOCOA = @COCOA_LDFLAGS@
 LDQT = @QT_LIBS@
@@ -422,7 +421,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDICONV) \
    $(LDAXEL) $(LDCAIRO) $(LDIMLIB2) $(LDSQLITE3) $(LDFREETYPE) \
-   $(LDDL) $(LDSPARKLE)
+   $(LDSPARKLE)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@

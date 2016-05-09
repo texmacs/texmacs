@@ -696,7 +696,6 @@ FREETYPE_LDFLAGS
 FREETYPE_CFLAGS
 ICONV_CPP
 ICONV_CXX
-CONFIG_BDL
 X_EXTRA_LIBS
 X_LIBS
 X_PRE_LIBS
@@ -7908,23 +7907,12 @@ done
 # Checks for dl library
 #--------------------------------------------------------------------
 
-  ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
-if test "x$ac_cv_func_dlopen" = xyes; then :
-
-fi
-
-  if test "$ac_cv_func_dl" = "yes"; then
-
-$as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
-
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
-$as_echo_n "checking for dlopen in -ldl... " >&6; }
-if ${ac_cv_lib_dl_dlopen+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing dlopen" >&5
+$as_echo_n "checking for library containing dlopen... " >&6; }
+if ${ac_cv_search_dlopen+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-ldl  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7943,50 +7931,46 @@ return dlopen ();
   return 0;
 }
 _ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_dl_dlopen=yes
-else
-  ac_cv_lib_dl_dlopen=no
+for ac_lib in '' libdl libdld; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_search_dlopen=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
-$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
-if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBDL 1
-_ACEOF
-
-  LIBS="-ldl $LIBS"
-
-fi
-
-    if test "$ac_cv_lib_dl_dlopen" = "yes"; then
-      for ac_func in dlopen
-do :
-  ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
-if test "x$ac_cv_func_dlopen" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_DLOPEN 1
-_ACEOF
-
+    conftest$ac_exeext
+  if ${ac_cv_search_dlopen+:} false; then :
+  break
 fi
 done
+if ${ac_cv_search_dlopen+:} false; then :
 
-      CONFIG_BDL="-ldl"
+else
+  ac_cv_search_dlopen=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_dlopen" >&5
+$as_echo "$ac_cv_search_dlopen" >&6; }
+ac_res=$ac_cv_search_dlopen
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
-$as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
+$as_echo "#define TM_DYNAMIC_LINKING dlopen" >>confdefs.h
 
-    else
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dld_link in -ldld" >&5
-$as_echo_n "checking for dld_link in -ldld... " >&6; }
-if ${ac_cv_lib_dld_dld_link+:} false; then :
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing dld_link" >&5
+$as_echo_n "checking for library containing dld_link... " >&6; }
+if ${ac_cv_search_dld_link+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-ldld  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8005,69 +7989,103 @@ return dld_link ();
   return 0;
 }
 _ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_dld_dld_link=yes
-else
-  ac_cv_lib_dld_dld_link=no
+for ac_lib in '' libdl libdld; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_search_dld_link=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dld_dld_link" >&5
-$as_echo "$ac_cv_lib_dld_dld_link" >&6; }
-if test "x$ac_cv_lib_dld_dld_link" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBDLD 1
-_ACEOF
-
-  LIBS="-ldld $LIBS"
-
-fi
-
-      if test "$ac_cv_lib_dld_dld_link" = "yes"; then
-        CONFIG_BDL="-ldl"
-
-$as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
-
-      else
-        for ac_func in shl_load
-do :
-  ac_fn_cxx_check_func "$LINENO" "shl_load" "ac_cv_func_shl_load"
-if test "x$ac_cv_func_shl_load" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_SHL_LOAD 1
-_ACEOF
-
+    conftest$ac_exeext
+  if ${ac_cv_search_dld_link+:} false; then :
+  break
 fi
 done
+if ${ac_cv_search_dld_link+:} false; then :
 
-        if test "$ac_cv_func_shl_load" = "yes"; then
-          CONFIG_BDL="-ldl"
-
-$as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
-
-        else
-          for ac_func in dlopen
-do :
-  ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
-if test "x$ac_cv_func_dlopen" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_DLOPEN 1
-_ACEOF
-
+else
+  ac_cv_search_dld_link=no
 fi
-done
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_dld_link" >&5
+$as_echo "$ac_cv_search_dld_link" >&6; }
+ac_res=$ac_cv_search_dld_link
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
-          if test "$ac_cv_func_dlopen" = "yes"; then
+$as_echo "#define TM_DYNAMIC_LINKING dld_link" >>confdefs.h
 
-$as_echo "#define DYNAMIC_LINKING 1" >>confdefs.h
+else
 
-          fi
-        fi
-      fi
-    fi
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing shl_load" >&5
+$as_echo_n "checking for library containing shl_load... " >&6; }
+if ${ac_cv_search_shl_load+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char shl_load ();
+int
+main ()
+{
+return shl_load ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' libdl libdld; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
   fi
+  if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_search_shl_load=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_shl_load+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_shl_load+:} false; then :
+
+else
+  ac_cv_search_shl_load=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_shl_load" >&5
+$as_echo "$ac_cv_search_shl_load" >&6; }
+ac_res=$ac_cv_search_shl_load
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+$as_echo "#define TM_DYNAMIC_LINKING shl_load" >>confdefs.h
+
+fi
+
+
+fi
+
+
+fi
 
 
 

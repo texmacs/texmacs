@@ -1,31 +1,16 @@
+
+#--------------------------------------------------------------------
+# Checks for dlopen in standard or dl library
+# we are looking in sequence for dlopen or dld_link or shl_load in
+# standard libs or libdl or libdld
+#--------------------------------------------------------------------
+
+m4_define([dyn_link_ok],[AC_DEFINE(TM_DYNAMIC_LINKING, [$1], [Dynamic linking function name])])
+
 AC_DEFUN([LC_DLOPEN],[
-  AC_CHECK_FUNC(dlopen)
-  if test "$ac_cv_func_dl" = "yes"; then
-    AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
-  else
-    AC_CHECK_LIB(dl,dlopen)
-    if test "$ac_cv_lib_dl_dlopen" = "yes"; then
-      AC_CHECK_FUNCS(dlopen)
-      CONFIG_BDL="-ldl"
-      AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
-    else
-      AC_CHECK_LIB(dld,dld_link)
-      if test "$ac_cv_lib_dld_dld_link" = "yes"; then
-        CONFIG_BDL="-ldl"
-        AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
-      else
-        AC_CHECK_FUNCS(shl_load)
-        if test "$ac_cv_func_shl_load" = "yes"; then
-          CONFIG_BDL="-ldl"
-          AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
-        else
-          AC_CHECK_FUNCS(dlopen)
-          if test "$ac_cv_func_dlopen" = "yes"; then
-            AC_DEFINE(DYNAMIC_LINKING, 1, [Dynamic linking works])
-          fi
-        fi
-      fi
-    fi
-  fi
-  AC_SUBST(CONFIG_BDL)
+  AC_SEARCH_LIBS(dlopen, libdl libdld, [dyn_link_ok(dlopen)],[
+    AC_SEARCH_LIBS(dld_link, libdl libdld, [dyn_link_ok(dld_link)],[
+      AC_SEARCH_LIBS(shl_load, libdl libdld, [dyn_link_ok(shl_load)])
+    ])
+  ])
 ])

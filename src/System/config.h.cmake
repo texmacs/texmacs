@@ -7,7 +7,7 @@
 #cmakedefine DOTS_OK 1
 
 /* Dynamic linking works */
-#cmakedefine DYNAMIC_LINKING 1
+#cmakedefine TM_DYNAMIC_LINKING 1
 
 /* Enable experimental style rewriting code */
 #cmakedefine EXPERIMENTAL 1

@@ -6,9 +6,6 @@
 /* Defined if ...-style argument passing works */
 #undef DOTS_OK
 
-/* Dynamic linking works */
-#undef DYNAMIC_LINKING
-
 /* Enable experimental style rewriting code */
 #undef EXPERIMENTAL
 
@@ -36,9 +33,6 @@
 /* Guile library name */
 #undef GUILE_NUM
 
-/* Define to 1 if you have the `dlopen' function. */
-#undef HAVE_DLOPEN
-
 /* Define to 1 if the system has the type `FILE'. */
 #undef HAVE_FILE
 
@@ -51,20 +45,11 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `dl' library (-ldl). */
-#undef HAVE_LIBDL
-
-/* Define to 1 if you have the `dld' library (-ldld). */
-#undef HAVE_LIBDLD
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
 /* Define to 1 if you have the <pty.h> header file. */
 #undef HAVE_PTY_H
-
-/* Define to 1 if you have the `shl_load' function. */
-#undef HAVE_SHL_LOAD
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -146,6 +131,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Dynamic linking function name */
+#undef TM_DYNAMIC_LINKING
 
 /* Use axel library */
 #undef USE_AXEL
