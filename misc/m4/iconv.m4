@@ -11,7 +11,7 @@ if [[[ "$withval" != no ]]]
 then
   i_failure=1
   
-  [$0]_LIBPATHS="$LDFLAGS $withval -L/opt -L/sw"
+  [$0]_LIBPATHS="$LDFLAGS $withval -L/opt/local/lib -L/sw/lib"
   
   LC_GET_ARG_VALUE([$0]_LIBPATHS, [-L], [$0]_LIBPATH)
   STRIP_ARG([[$0]_LIBPATHS], -L$[$0]_LIBPATH)
