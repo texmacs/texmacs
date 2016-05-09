@@ -25,7 +25,7 @@ static hashmap<string,pointer> dyn_linked (NULL);
 
 string
 symbol_install (string lib, string symb, pointer& f) {
-#ifndef __MINGW32__
+#if (defined (TM_DYNAMIC_LINKING) && !defined(__MINGW32__))
   // f becomes NULL in case of failure
   // status message returned
   string out;
@@ -36,7 +36,7 @@ symbol_install (string lib, string symb, pointer& f) {
     else {
       lib= concretize (name);
       c_string _lib (lib);
-      dyn_linked (lib)= dlopen (_lib, RTLD_LAZY);
+      dyn_linked (lib)= TM_DYNAMIC_LINKING (_lib, RTLD_LAZY);
       if (dyn_linked [lib] == NULL) {
 	const char *err = dlerror();
 	if (err != NULL) out= string ((char *) err);
