@@ -12,6 +12,15 @@
 /* Enable experimental style rewriting code */
 #undef EXPERIMENTAL
 
+/* gs path relative to TEXMACS_PATH */
+#undef GS_EXE
+
+/* gs fonts */
+#undef GS_FONTS
+
+/* gs lib */
+#undef GS_LIB
+
 /* Guile version */
 #undef GUILE_A
 
