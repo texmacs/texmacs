@@ -12274,7 +12274,7 @@ no) unset QT_PLUGINS_LIST
 esac
 
 [[ $enable_qt == no ]] &&  unset QT_PLUGINS_LIST
-for p in ${QT_PLUGINS_LIST/,/ }
+for p in ${QT_PLUGINS_LIST//,/ }
 do [ -d $QT_PLUGINS_PATH/$p ] || as_fn_error $? "QT plugins not found!" "$LINENO" 5
 done
 
