@@ -97,7 +97,7 @@
 
 (define (safe-getpwnam id)
   (catch #t
-	 (lambda () (passwd:gecos (getpwnam user)))
+	 (lambda () (passwd:gecos (getpwnam id)))
 	 (lambda err
 	   (display* "Error in getpwnam: " err "\n")
 	   "")))
