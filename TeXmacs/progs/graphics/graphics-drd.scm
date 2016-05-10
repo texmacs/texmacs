@@ -32,8 +32,14 @@
 (define-group graphical-curve-tag
   (graphical-open-curve-tag) (graphical-closed-curve-tag))
 
-(define-group graphical-text-tag
+(define-group graphical-short-text-tag
   text-at math-at)
+
+(define-group graphical-long-text-tag
+  document-at)
+
+(define-group graphical-text-tag
+  (graphical-short-text-tag) (graphical-long-text-tag))
 
 (define-group graphical-contains-curve-tag
   (graphical-curve-tag))
@@ -118,7 +124,8 @@
   ("fill-style" . "plain")
   ("text-at-halign" . "left")
   ("text-at-valign" . "base")
-  ("text-at-margin" . "1spc"))
+  ("text-at-margin" . "1spc")
+  ("doc-at-valign" . "top"))
 
 (tm-define (graphics-attribute-default attr)
   (if (gr-prefixed? attr)
@@ -171,11 +178,17 @@
             "line-width" "line-join" "line-caps" "line-effects"
             "dash-style" "dash-style-unit"
             "arrow-begin" "arrow-end" "arrow-length" "arrow-height")))
-  
+
 (tm-define (graphics-attributes tag)
   (:require (graphical-text-tag? tag))
   (append (graphics-common-attributes)
           '("text-at-halign" "text-at-valign" "text-at-margin")))
+
+(tm-define (graphics-attributes tag)
+  (:require (graphical-long-text-tag? tag))
+  (append (graphics-common-attributes)
+          '("text-at-halign" "doc-at-valign" "text-at-margin"
+            "fill-color" "doc-at-width")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-group-tag? tag))
@@ -183,6 +196,13 @@
 
 (tm-define (graphics-attribute? tag attr)
   (in? attr (graphics-attributes tag)))
+
+(tm-define (graphics-valign-var t)
+  (cond ((in? t (graphical-short-text-tag-list)) "text-at-valign")
+        ((in? t (graphical-long-text-tag-list)) "doc-at-valign")
+        ((tree? t) (graphics-valign-var (tree-label t)))
+        ((pair? t) (graphics-valign-var (car t)))
+        (else "text-at-valign")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Attributes for editing modes
@@ -202,7 +222,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (graphics-minimal? obj)
-  (or (tm-in? obj '(point text-at math-at))
+  (or (tm-in? obj '(point text-at math-at document-at))
       (== (tm-arity obj) (tag-minimal-arity (tm-car obj)))))
 
 (tm-define (graphics-incomplete? obj)

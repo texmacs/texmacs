@@ -145,6 +145,7 @@ class concater_rep {
   void typeset_gr_effect (tree t, path ip);
   void typeset_text_at (tree t, path ip);
   void typeset_math_at (tree t, path ip);
+  void typeset_document_at (tree t, path ip);
   void typeset_point (tree t, path ip);
   array<box> typeset_line_arrows (path ip);
   void typeset_line (tree t, path ip, bool close);

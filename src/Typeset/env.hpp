@@ -67,6 +67,7 @@
 #define Env_Line_Arrows       34
 #define Env_Text_At_Halign    35
 #define Env_Text_At_Valign    36
+#define Env_Doc_At_Valign     37
 
 /******************************************************************************
 * For style file editing
@@ -198,6 +199,7 @@ public:
   array<tree>  line_arrows;
   string       text_at_halign;
   string       text_at_valign;
+  string       doc_at_valign;
 
   string       page_type;
   bool         page_landscape;

@@ -924,6 +924,11 @@
   (:check-mark "*" (graphics-test-property? "gr-text-at-valign"))
   (graphics-set-property "gr-text-at-valign" val))
 
+(tm-define (graphics-set-doc-at-valign val)
+  (:argument val "Document-at vertical alignment")
+  (:check-mark "*" (graphics-test-property? "gr-doc-at-valign"))
+  (graphics-set-property "gr-doc-at-valign" val))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Snapping
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

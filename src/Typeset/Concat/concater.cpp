@@ -724,6 +724,9 @@ concater_rep::typeset (tree t, path ip) {
   case MATH_AT:
     typeset_math_at (t, ip);
     break;
+  case DOCUMENT_AT:
+    typeset_document_at (t, ip);
+    break;
   case _POINT:
     typeset_point (t, ip);
     break;

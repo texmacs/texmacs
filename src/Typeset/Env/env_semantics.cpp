@@ -131,6 +131,7 @@ initialize_default_var_type () {
   var_type (ARROW_HEIGHT)       = Env_Line_Arrows;
   var_type (TEXT_AT_HALIGN)     = Env_Text_At_Halign;
   var_type (TEXT_AT_VALIGN)     = Env_Text_At_Valign;
+  var_type (DOC_AT_VALIGN)      = Env_Doc_At_Valign;
   var_type (GR_FRAME)           = Env_Frame;
   var_type (GR_GEOMETRY)        = Env_Geometry;
   var_type (GR_GRID)            = Env_Grid;
@@ -804,6 +805,7 @@ edit_env_rep::update () {
   update_line_arrows ();
   text_at_halign= get_string (TEXT_AT_HALIGN);
   text_at_valign= get_string (TEXT_AT_VALIGN);
+  doc_at_valign= get_string (DOC_AT_VALIGN);
 
   update_src_style ();
   update_src_special ();
@@ -917,6 +919,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Text_At_Valign:
     text_at_valign= get_string (TEXT_AT_VALIGN);
+    break;
+  case Env_Doc_At_Valign:
+    doc_at_valign= get_string (DOC_AT_VALIGN);
     break;
   case Env_Src_Style:
     update_src_style ();

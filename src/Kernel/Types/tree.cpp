@@ -380,7 +380,10 @@ is_mod_active_once (tree t) {
 
 bool
 is_graphical_text (tree t) {
-  return is_func (t, TEXT_AT) || is_func (t, MATH_AT);
+  return
+    is_func (t, TEXT_AT) ||
+    is_func (t, MATH_AT) ||
+    is_func (t, DOCUMENT_AT);
 }
 
 bool

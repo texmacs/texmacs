@@ -82,7 +82,7 @@ can_snap (gr_selection sel) {
     return check_snap_mode ("curve-grid intersection");
   if (type == "grid-curve-point&curve-point")
     return check_snap_mode ("curve-grid intersection");
-  if (type == "text")
+  if (type == "text" || type == "group")
     return check_snap_mode ("text");
   if (type == "text-handle")
     return check_snap_mode ("control point");

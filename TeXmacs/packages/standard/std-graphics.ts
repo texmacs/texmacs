@@ -46,11 +46,11 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-box|<macro|w|body|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<twith|table-width|<arg|w>>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
+  <assign|doc-at-width|1par>
+
+  <assign|paragraph-box|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<twith|table-width|<value|doc-at-width>>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|fill-color>>|<table|<row|<\cell>
     <arg|body>
   </cell>>>>>>>
-
-  <drd-props|paragraph-box|arity|2|length|0|border|no>
 
   <\active*>
     <\src-comment>

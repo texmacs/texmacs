@@ -630,6 +630,9 @@ init_std_drd () {
 	options (1, 1, BIFORM) -> returns_graphical () ->
 	accessible (0) -> point_type (1) ->
         locals (0, "mode", "math"));
+  init (DOCUMENT_AT, "document-at",
+	options (1, 1, BIFORM) -> returns_graphical () ->
+	accessible (0) -> regular (0) -> point_type (1));
   init (_POINT, "point",
 	repeat (1, 1) -> returns_graphical () -> point_type (0));
   init (LINE, "line",
@@ -1065,6 +1068,7 @@ init_std_drd () {
   init_var (GR_TEXT_AT_HALIGN, TYPE_STRING);
   init_var (GR_TEXT_AT_VALIGN, TYPE_STRING);
   init_var (GR_TEXT_AT_MARGIN, TYPE_LENGTH);
+  init_var (GR_DOC_AT_VALIGN, TYPE_STRING);
 
   init_var (GID, TYPE_INTEGER);
   init_var (ANIM_ID, TYPE_INTEGER);
@@ -1088,6 +1092,7 @@ init_std_drd () {
   init_var (TEXT_AT_HALIGN, TYPE_STRING);
   init_var (TEXT_AT_VALIGN, TYPE_STRING);
   init_var (TEXT_AT_MARGIN, TYPE_LENGTH);
+  init_var (DOC_AT_VALIGN, TYPE_STRING);
 
   init_var (SRC_STYLE, TYPE_STRING);
   init_var (SRC_SPECIAL, TYPE_STRING);

@@ -284,17 +284,26 @@
       ("Closed bezier" (graphics-set-mode '(edit cbezier))))
   ("Arc" (graphics-set-mode '(edit arc)))
   ("Circle" (graphics-set-mode '(edit carc)))
+  ---
   ("Text" (graphics-set-mode '(edit text-at)))
   ("Mathematics" (graphics-set-mode '(edit math-at)))
+  ("Long text" (graphics-set-mode '(edit document-at)))
   ("Hand drawn" (graphics-set-mode '(hand-edit line))) 
   (assuming (style-has? "std-markup-dtd")
-    ---
-    (with u (list-union gr-tags-user '(arrow-with-text arrow-with-text*))
+    (with u '(arrow-with-text arrow-with-text*)
       (with l (list-filter u (lambda (s) (style-has? (symbol->string s))))
         (for (tag (sort l symbol<=?))
           ((eval (upcase-first (symbol->string tag)))
            (import-from (graphics graphics-markup))
-           (graphics-set-mode `(edit ,tag)))))))
+           (graphics-set-mode `(edit ,tag))))))
+    (with u (list-difference gr-tags-user '(arrow-with-text arrow-with-text*))
+      (with l (list-filter u (lambda (s) (style-has? (symbol->string s))))
+        (assuming (nnull? l)
+          ---
+          (for (tag (sort l symbol<=?))
+            ((eval (upcase-first (symbol->string tag)))
+             (import-from (graphics graphics-markup))
+             (graphics-set-mode `(edit ,tag))))))))
   ---
   ("Set properties" (graphics-set-mode '(group-edit props)))
   ("Move objects" (graphics-set-mode '(group-edit move)))
@@ -495,6 +504,16 @@
   ("Center" (graphics-set-text-at-valign "center"))
   ("Top" (graphics-set-text-at-valign "top")))
 
+(menu-bind graphics-doc-valign-menu
+  ;;("Default" (graphics-set-doc-at-valign "default"))
+  ;;---
+  ("Bottom" (graphics-set-doc-at-valign "bottom"))
+  ("Base" (graphics-set-doc-at-valign "base"))
+  ("Axis" (graphics-set-doc-at-valign "axis"))
+  ("Center" (graphics-set-doc-at-valign "center"))
+  ;;("Top" (graphics-set-text-at-valign "top"))
+  ("Top" (graphics-set-doc-at-valign "default")))
+
 (menu-bind graphics-snap-menu
   ("None" (graphics-set-snap "none"))
   ("All" (graphics-set-snap "all"))
@@ -576,7 +595,10 @@
     (assuming (graphics-mode-attribute? (graphics-mode) "text-at-halign")
       (-> "Horizontal alignment" (link graphics-text-halign-menu)))
     (assuming (graphics-mode-attribute? (graphics-mode) "text-at-valign")
-      (-> "Vertical alignment" (link graphics-text-valign-menu))))
+      (-> "Vertical alignment" (link graphics-text-valign-menu)))
+    (assuming (not (graphics-mode-attribute? (graphics-mode) "text-at-valign"))
+      (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-valign")
+        (-> "Vertical alignment" (link graphics-doc-valign-menu)))))
   ---
   (-> "Snap" (link graphics-snap-menu)))
 
@@ -626,12 +648,16 @@
   ((check (balloon (icon "tm_carc_mode.xpm") "Insert circles")
           "v" (== (graphics-mode) '(edit carc)))
    (graphics-set-mode '(edit carc)))
+  /
   ((check (balloon (icon "tm_textat_mode.xpm") "Insert text")
           "v" (== (graphics-mode) '(edit text-at)))
    (graphics-set-mode '(edit text-at)))
   ((check (balloon (icon "tm_math.xpm") "Insert mathematics")
           "v" (== (graphics-mode) '(edit math-at)))
    (graphics-set-mode '(edit math-at)))
+  ;;((check (balloon (icon "tm_textat_mode.xpm") "Insert multiple paragraphs")
+  ;;        "v" (== (graphics-mode) '(edit document-at)))
+  ;; (graphics-set-mode '(edit document-at)))
   ((check (balloon (icon "tm_ink_mode.xpm") "Insert hand drawn curves")
           "v" (== (graphics-mode) '(hand-edit line)))
    (graphics-set-mode '(hand-edit line))))
@@ -745,7 +771,8 @@
         (=> (eval s)
             (link graphics-line-arrows-menu)))))
   (assuming (or (graphics-mode-attribute? (graphics-mode) "text-at-halign")
-                (graphics-mode-attribute? (graphics-mode) "text-at-valign"))
+                (graphics-mode-attribute? (graphics-mode) "text-at-valign")
+                (graphics-mode-attribute? (graphics-mode) "doc-at-valign"))
     /
     (mini #t
       (group "Alignment:")
@@ -753,10 +780,18 @@
              (s (if (== al "default") "left" al)))
 	(=> (eval s)
 	    (link graphics-text-halign-menu)))
-      (let* ((al (graphics-get-property "gr-text-at-valign"))
-             (s (if (== al "default") "base" al)))
-	(=> (eval s)
-	    (link graphics-text-valign-menu))))))
+      (assuming (graphics-mode-attribute? (graphics-mode) "text-at-valign")
+        (let* ((al (graphics-get-property "gr-text-at-valign"))
+               (s (if (== al "default") "base" al)))
+          (=> (eval s)
+              (link graphics-text-valign-menu))))
+      (assuming (not (graphics-mode-attribute? (graphics-mode)
+                                               "text-at-valign"))
+        (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-valign")
+          (let* ((al (graphics-get-property "gr-doc-at-valign"))
+                 (s (if (== al "default") "top" al)))
+            (=> (eval s)
+                (link graphics-doc-valign-menu))))))))
 
 (tm-menu (graphics-snap-icons)
   (mini #t
@@ -806,6 +841,7 @@
         ((== s '(edit carc)) "circle")
         ((== s '(edit text-at)) "text")
         ((== s '(edit math-at)) "mathematics")
+        ((== s '(edit document-at)) "long text")
         ((== s '(group-edit props)) "properties")
         ((== s '(group-edit move)) "move")
         ((== s '(group-edit zoom)) "resize")

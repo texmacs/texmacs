@@ -211,7 +211,9 @@
 
 (tm-define (geometry-vertical t down?)
   (:require (graphical-text-context? t))
-  (let* ((old (graphical-get-attribute t "text-at-valign"))
+  (display* t ", " (graphics-valign-var t) "\n")
+  (let* ((valign-var (graphics-valign-var t))
+         (old (graphical-get-attribute t valign-var))
          (new (if down?
                   (cond ((== old "bottom") "base")
                         ((== old "base") "axis")
@@ -221,7 +223,7 @@
                         ((== old "center") "axis")
                         ((== old "axis") "base")
                         (else "bottom")))))
-    (graphical-set-attribute t "text-at-valign" new)))
+    (graphical-set-attribute t valign-var new)))
 
 (tm-define (geometry-extremal t forwards?)
   (:require (graphical-text-context? t))
@@ -230,7 +232,7 @@
 
 (tm-define (geometry-incremental t down?)
   (:require (graphical-text-context? t))
-  (graphical-set-attribute t "text-at-valign"
+  (graphical-set-attribute t (graphics-valign-var t)
                            (if down? "top" "bottom")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

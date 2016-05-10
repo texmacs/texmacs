@@ -72,7 +72,11 @@
 
 (tm-define (object_create tag x y)
   (:require (graphical-text-tag? tag))
-  (object-set! `(,tag "" (point ,x ,y)) 'new))
+  (with long? (graphical-long-text-tag? tag)
+    (object-set! `(,tag ,(if long? `(document "") "") (point ,x ,y)) 'new)
+    (and-with d (path->tree (cDr (cursor-path)))
+      (when (tree-func? d 'document)
+        (tree-go-to d 0 :start)))))
 
 (define (set-point-sub obj no x y)
   ;;(display* "set-point-sub " obj ", " no ", " x ", " y "\n")
@@ -354,7 +358,7 @@
   (and-with l (select-first (s2f current-x) (s2f current-y))
     (and-with p (and (nnull? l) (car l))
       (and-with t (path->tree (cDr p))
-	(not (tree-in? t '(text-at math-at)))))))
+	(not (tree-in? t '(text-at math-at document-at)))))))
 
 (tm-define (edit_left-button mode x y)
   (:require (== mode 'edit))

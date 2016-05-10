@@ -235,6 +235,7 @@ extern string GR_FILL_STYLE;
 extern string GR_TEXT_AT_HALIGN;
 extern string GR_TEXT_AT_VALIGN;
 extern string GR_TEXT_AT_MARGIN;
+extern string GR_DOC_AT_VALIGN;
 
 extern string GID;
 extern string ANIM_ID;
@@ -258,6 +259,7 @@ extern string FILL_STYLE;
 extern string TEXT_AT_HALIGN;
 extern string TEXT_AT_VALIGN;
 extern string TEXT_AT_MARGIN;
+extern string DOC_AT_VALIGN;
 
 extern string SRC_STYLE;
 extern string SRC_SPECIAL;

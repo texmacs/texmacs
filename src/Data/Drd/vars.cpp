@@ -257,6 +257,7 @@ string GR_FILL_STYLE ("gr-fill-style");
 string GR_TEXT_AT_HALIGN ("gr-text-at-halign");
 string GR_TEXT_AT_VALIGN ("gr-text-at-valign");
 string GR_TEXT_AT_MARGIN ("gr-text-at-margin");
+string GR_DOC_AT_VALIGN ("gr-doc-at-valign");
 
 string GID ("gid");
 string ANIM_ID ("anim-id");
@@ -280,6 +281,7 @@ string FILL_STYLE ("fill-style");
 string TEXT_AT_HALIGN ("text-at-halign");
 string TEXT_AT_VALIGN ("text-at-valign");
 string TEXT_AT_MARGIN ("text-at-margin");
+string DOC_AT_VALIGN ("doc-at-valign");
 
 /******************************************************************************
 * Environment variables for preamble mode

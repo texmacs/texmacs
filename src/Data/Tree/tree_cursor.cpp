@@ -100,6 +100,17 @@ highest_accessible_child (tree t) {
   return N(t) - 1;
 }
 
+static bool
+graphics_in_path (tree t, path p) {
+  // FIXME: when in the cursor is inside graphics,
+  // it cannot be at the start/end.  There should be
+  // a more robust way to ensure this.
+  if (is_nil (p) || is_atom (p)) return false;
+  if (is_atomic (t) || p->item < 0 || p->item >= N(t)) return false;
+  if (is_func (t, GRAPHICS)) return true;
+  return graphics_in_path (t[p->item], p->next);
+}
+
 bool
 is_accessible_cursor (tree t, path p) {
   if (is_atomic (t) || is_atom (p)) {
@@ -112,6 +123,7 @@ is_accessible_cursor (tree t, path p) {
   }
   else if (0 > p->item || p->item >= N(t)) return false;
   else if (the_drd->is_parent_enforcing (t) &&
+           !graphics_in_path (t, p) &&
 	   ((p->item == lowest_accessible_child (t) &&
              p->next == start (t[p->item])) ||
 	    (p->item == highest_accessible_child (t) &&
@@ -176,7 +188,8 @@ closest_accessible (tree t, path p) {
 	if (!is_nil (r)) {
 	  r= path (j, r);
 	  if (!is_concat (t) || !next_without_border (t, r)) {
-	    if (the_drd->is_parent_enforcing (t)) {
+	    if (the_drd->is_parent_enforcing (t) &&
+                !graphics_in_path (t, p)) {
 	      if (r->item == lowest_accessible_child (t) &&
                   !is_accessible_cursor (t, p))
 		return path (0);
@@ -252,6 +265,7 @@ valid_cursor (tree t, path p, bool start_flag) {
     return true;
   }
   if (the_drd->is_parent_enforcing (t) &&
+      !graphics_in_path (t, p) &&
       ((p->item == lowest_accessible_child (t) &&
         p->next == start (t[p->item])) ||
        (p->item == highest_accessible_child (t) &&
@@ -322,7 +336,8 @@ pre_correct (tree t, path p) {
       return path (1, 0, pre_correct (t[1][0], path (i)));
     }
   path r (p->item, pre_correct (t[p->item], p->next));
-  if (the_drd->is_parent_enforcing (t)) {
+  if (the_drd->is_parent_enforcing (t) &&
+      !graphics_in_path (t, p)) {
     if (r->item == lowest_accessible_child (t) &&
         !valid_cursor (t, p, false))
       return path (0);

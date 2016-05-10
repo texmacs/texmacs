@@ -252,6 +252,7 @@ initialize_default_env () {
   env (GR_TEXT_AT_HALIGN)  = "default";   // horiz. alignment for new text-ats
   env (GR_TEXT_AT_VALIGN)  = "default";   // vert. alignment for new text-ats
   env (GR_TEXT_AT_MARGIN)  = "default";   // margins for new text-ats
+  env (GR_DOC_AT_VALIGN)   = "default";   // vert. al. for new document-ats
 
   env (GID)              = "default";   // graphical identifier
   env (ANIM_ID)          = "";          // identifier inside animations
@@ -275,6 +276,7 @@ initialize_default_env () {
   env (TEXT_AT_HALIGN)   = "left";      // horizontal text-at alignment
   env (TEXT_AT_VALIGN)   = "base";      // vertical text-at alignment
   env (TEXT_AT_MARGIN)   = "1spc";      // margin for smart guides
+  env (DOC_AT_VALIGN)    = "top";       // vertical document-at alignment
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags

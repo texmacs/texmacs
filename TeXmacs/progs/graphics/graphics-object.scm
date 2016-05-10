@@ -182,7 +182,7 @@
   (let* ((o1 (with res (if (or (graphical-text-at-context? o)
                                (== (car o) 'gr-group))
                            `(with "text-at-halign" ,ha0
-                                  "text-at-valign" ,va0 ,o)
+                                  ,(graphics-valign-var o) ,va0 ,o)
 			   o)
                `(with "magnify" ,(if (== mag "default") "1" mag) ,res)))
 	 (info0 (cdr (box-info o1 "lbLB")))
@@ -212,10 +212,10 @@
 (tm-define (on-graphical-embedding-box? x y o eps)
   (set! eps (length-decode eps))
   (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
-	 (va (get-graphical-prop 'basic "text-at-valign"))
+	 (va (get-graphical-prop 'basic (graphics-valign-var o)))
 	 (o1 (if (graphical-text-at-context? o)
                  `(with "text-at-halign" ,ha
-                        "text-at-valign" ,va ,o)
+                        ,(graphics-valign-var o) ,va ,o)
 		 o))
 	 (info0 (cdr (box-info o1 "lbLB")))
 	 (info1 (cdr (box-info o1 "rtRT")))
@@ -243,7 +243,7 @@
          (cons o '()))
         ((graphical-text-at-context? o)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
-	        (va (get-graphical-prop 'basic "text-at-valign"))
+	        (va (get-graphical-prop 'basic (graphics-valign-var o)))
 	        (mag (get-graphical-prop 'basic "magnify")))
            (create-graphical-embedding-box o ha va ha va mag)))
         ((== (car o) 'gr-group)
@@ -367,8 +367,9 @@
                  (if (not curscol)
                      (set! curscol default-color-selected-points))
                  (set! t
-                       (let* ((ha (get-graphical-prop path0 "text-at-halign"))
-                              (va (get-graphical-prop path0 "text-at-valign"))
+                       (let* ((valign-var (graphics-valign-var o))
+                              (ha (get-graphical-prop path0 "text-at-halign"))
+                              (va (get-graphical-prop path0 valign-var))
                               (mag (get-graphical-prop path0 "magnify"))
 			      (gc (asc curscol #f
                                        (create-graphical-embedding-box
