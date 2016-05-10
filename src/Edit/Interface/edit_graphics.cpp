@@ -24,6 +24,7 @@ extern tree the_et;
 ******************************************************************************/
 
 edit_graphics_rep::edit_graphics_rep () {
+  p_x= p_y= 0.0;
   gr_x= gr_y= 0.0;
   graphical_object= tree();
 }
@@ -249,6 +250,10 @@ edit_graphics_rep::find_limits (point& lim1, point& lim2) {
   bool bp_found;
   path bp= eb->find_box_path (gp, bp_found);
   if (bp_found) eb->find_limits (path_up (bp), lim1, lim2);
+  if (N(lim1) >= 2 && fabs (lim1[0]) <= 0.001) lim1[0]= 0.0;
+  if (N(lim1) >= 2 && fabs (lim1[1]) <= 0.001) lim1[1]= 0.0;
+  if (N(lim2) >= 2 && fabs (lim2[0]) <= 0.001) lim2[0]= 0.0;
+  if (N(lim2) >= 2 && fabs (lim2[1]) <= 0.001) lim2[1]= 0.0;
 }
 
 bool
@@ -269,9 +274,12 @@ point
 edit_graphics_rep::adjust (point p) {
   frame f= find_frame ();
   grid g= find_grid ();
-  if (!is_nil (g) && !is_nil (gr0) && g != gr0) {
+  if (!is_nil (g) && !is_nil (gr0) &&
+      (g != gr0 || p[0] != p_x || p[1] != p_y)) {
     graphical_select (p[0], p[1]);
     g= gr0;
+    p[0]= p_x;
+    p[1]= p_y;
   }
   if (is_nil (g)) return p;
   point res;
@@ -329,7 +337,11 @@ edit_graphics_rep::graphical_select (double x, double y) {
   gr0= empty_grid ();
   grid g= find_grid ();
   frame f2= find_frame (true);
-  if (!is_nil (g) && !is_nil (f2)) gr0= g;
+  if (!is_nil (g) && !is_nil (f2)) {
+    gr0= g;
+    p_x= x;
+    p_y= y;
+  }
   return as_tree (sels);
 }
 
