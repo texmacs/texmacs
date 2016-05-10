@@ -314,16 +314,13 @@
   ;; path to innermost group
   (graphics-graphics-path))
 
-(tm-define (make-graphics . geom)
-  (when (null? geom)
-    (set! geom (list "1par" "0.6par")))
+(tm-define (make-graphics . init)
+  (when (null? init)
+    (set! init `("gr-mode" "point"
+                 "gr-frame" (tuple "scale" "1cm" (tuple "0.5gw" "0.5gh"))
+                 "gr-geometry" (tuple "geometry" "1par" "0.6par"))))
   (graphics-reset-context 'begin)
-  (insert-raw-go-to 
-   `(with "gr-mode" "point" 
-          "gr-frame" (tuple "scale" "1cm" (tuple "0.5gw" "0.5gh"))
-          "gr-geometry" (tuple "geometry" ,@geom)
-      (graphics ""))
-   '(6 1)))
+  (insert-raw-go-to `(with ,@init (graphics "")) `(,(length init) 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for accessing the properties of the graphics
