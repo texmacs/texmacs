@@ -350,7 +350,7 @@
         (set-message "Left click: new object" "")
         (graphics-decorations-reset))))
 
-(define (inside-graphical-text?)
+(define (pointer-inside-graphical-text?)
   (and-with l (select-first (s2f current-x) (s2f current-y))
     (and-with p (and (nnull? l) (car l))
       (and-with t (path->tree (cDr p))
@@ -368,7 +368,7 @@
               (== (car (graphics-mode)) 'edit)
               (graphical-contains-text-tag? (cadr (graphics-mode)))
               (not (graphical-contains-curve-tag? (cadr (graphics-mode))))
-	      (inside-graphical-text?))
+	      (pointer-inside-graphical-text?))
          (set-texmacs-pointer 'text-arrow)
          (go-to (car (select-first (s2f current-x) (s2f current-y)))))
         (else
