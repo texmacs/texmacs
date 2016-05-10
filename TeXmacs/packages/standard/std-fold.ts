@@ -555,11 +555,7 @@
 
   <assign|gpar-length|<macro|1par>>
 
-  <assign|gr-screen|<macro|body|<\surround|<assign|gpagbis-length|<gpag-length>>|<assign|gpag-length|<macro|1pag>>>
-    <\with|gpag-length|<macro|1gpagbis>>
-      <arg|body>
-    </with>
-  </surround>>>
+  <assign|gr-screen|<macro|body|<arg|body><assign|gpag-length|<macro|1pag>>>>
 
   <assign|gr-overlays|<macro|current|total|body|<with|overlay-nr|<arg|current>|<\surround||<right-flush>>
     <arg|body>
