@@ -55,3 +55,13 @@
   (dynamic (anim-now-icon "Now" t 4))
   //
   ("Play" (anim-commit t)))
+
+(tm-menu (focus-hidden-icons t)
+  (:require (tree-func? t 'gr-screen 1)
+            (tree-in? (tree-ref t 0) '(anim-static anim-dynamic)))
+  (dynamic (focus-hidden-icons (tree-ref t 0))))
+
+(tm-menu (animate-focus-icons t) 
+  (:require (tree-func? t 'gr-screen 1)
+            (tree-in? (tree-ref t 0) '(anim-static anim-dynamic)))
+  (dynamic (animate-focus-icons (tree-ref t 0))))

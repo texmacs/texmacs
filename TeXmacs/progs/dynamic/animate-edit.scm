@@ -21,9 +21,17 @@
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (checkout-animation t len)
+  (cond ((tm-func? t 'gr-screen 1)
+         (with (r p) (checkout-animation (tm-ref t 0) len)
+           (list `(gr-screen ,r) (cons 0 p))))
+        (else
+          (with r (animate-checkout `(anim-static ,t ,len "0.1s" "0s"))
+            (list r (cons 1 (path-start (tm-ref r 1) '())))))))
+
 (tm-define (make-animate t len)
-  (with r (animate-checkout `(anim-static ,t ,len "0.1s" "0s"))
-    (insert-go-to r (cons 1 (path-start (tm-ref r 1) '())))))
+  (with (r p) (checkout-animation t len)
+    (insert-go-to r p)))
 
 (tm-define (animate-selection len)
   (:argument len "Duration")

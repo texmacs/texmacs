@@ -115,7 +115,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-animation-menu
-  (when (selection-active-small?)
+  (when (or (selection-active-small?)
+            (and (selection-active-any?)
+                 (tm-func? (selection-tree) 'gr-screen)))
     ("Animate" (interactive animate-selection)))
   ---
   ("Fixed" (interactive make-anim-constant))
