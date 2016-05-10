@@ -37,9 +37,11 @@ public:
   // we have |p' - p| < delta => |f(p') - f(p)| < eps.
 
   inline double direct_scalar (double x) {
-    return norm (direct_transform (point (x, 0))); }
+    return norm (direct_transform (point (x, 0.0)) -
+                 direct_transform (point (0.0, 0.0))); }
   inline double inverse_scalar (double x) {
-    return norm (inverse_transform (point (x, 0))); }
+    return norm (inverse_transform (point (x, 0.0)) -
+                 inverse_transform (point (0.0, 0.0))); }
   // FIXME: used for grids, but error-prone. What is the idea?
 };
 
