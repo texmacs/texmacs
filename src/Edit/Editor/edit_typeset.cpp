@@ -687,6 +687,9 @@ edit_typeset_rep::exec_latex (tree t) {
 
 tree
 edit_typeset_rep::texmacs_exec (tree t) {
+  typeset_exec_until (tp);
+  env->write_env (cur[tp]);
+  env->update_frame ();
   return ::texmacs_exec (env, t);
 }
 

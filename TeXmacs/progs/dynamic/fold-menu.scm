@@ -333,7 +333,7 @@
     (tree-go-to u :last 0 0 0)
     (make-graphics
      "gr-mode" "point"
-     "gr-frame" `(tuple "scale" "0.05gpar" (tuple "0gw" "1gh"))
+     "gr-frame" `(tuple "scale" "1cm" (tuple "0gw" "1gh"))
      "gr-geometry" `(tuple "geometry" "1gpar" "1gpag" "axis"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
