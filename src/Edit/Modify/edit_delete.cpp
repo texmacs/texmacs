@@ -116,7 +116,9 @@ edit_text_rep::remove_text_sub (bool forward) {
 		 is_func (u, TFORMAT)) {
 	  if (t == tree (DOCUMENT, ""))
 	    back_in_table (u, p, forward);
-	} 
+	}
+        else if (is_func (u, DOCUMENT_AT))
+          back_in_text_at (u, p, forward);
       }
       return;
     }
