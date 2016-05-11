@@ -466,8 +466,7 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
       path p1= p * 0, p2= p * 1, q1, q2;
       if (is_script (subtree (et, p), right) ||
           is_func (st, TEXT_AT) ||
-          is_func (st, MATH_AT) ||
-          is_func (st, DOCUMENT_AT))
+          is_func (st, MATH_AT))
         {
           p1= start (et, p * 0);
           p2= end   (et, p * 0);
