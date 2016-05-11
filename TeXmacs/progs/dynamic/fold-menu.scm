@@ -388,6 +388,8 @@
 (tm-menu (focus-tag-menu t)
   (:require (screens-context? t))
   (inert ((eval (focus-tag-name (tree-label t))) (noop) (noop)))
+  (-> (eval (upcase-first (get-init "page-type")))
+      (link document-page-size-menu))
   (-> (eval (upcase-first (get-init-page-rendering)))
       (link page-rendering-menu))
   (-> "Preferences"
@@ -413,6 +415,9 @@
 (tm-menu (focus-tag-icons t)
   (:require (screens-context? t))
   (mini #t (inert ((eval (focus-tag-name (tree-label t))) (noop))))
+  (=> (balloon (eval (upcase-first (get-init "page-type")))
+               "Paper size")
+      (link document-page-size-menu))
   (=> (balloon (icon (eval (current-page-icon))) "Page layout")
       (link page-rendering-menu))
   (assuming (focus-has-preferences? t)
