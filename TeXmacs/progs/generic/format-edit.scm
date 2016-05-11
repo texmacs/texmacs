@@ -171,7 +171,7 @@
              (end (path-end selection '())))
         (clipboard-cut "nowhere")
         (insert-go-to ins (cons 0 end)))
-      (insert-go-to `(,(car args) "" ,(cdr args)) (list 0 0))))
+      (insert-go-to `(,(car args) "" ,@(cdr args)) (list 0 0))))
 
 (tm-define (toggle-with-like w back)
   (with t (if (and (selection-active-any?)

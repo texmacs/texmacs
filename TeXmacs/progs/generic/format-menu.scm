@@ -159,19 +159,20 @@
   ("Magnify vertically" (make-with-like '(hmagnify "2" ""))))
 
 (menu-bind text-effects-menu
-  ;;(group "Basic effects")
-  ;;(-> "Blur" (link text-blur-menu))
-  ;;(-> "Outline" (link text-outline-menu))
-  ;;(-> "Thicken" (link text-thicken-menu))
-  ;;(-> "Erode" (link text-erode-menu))
-  ;;---
-  ;;(group "Compound effects")
-  ;;("Engrave" (make-effect 'engrave "1ln" "0.5ln" "grey"))
-  ;;("Emboss" (make-effect 'emboss "1ln" "0.5ln" "grey"))
-  ;;("Shadow" (make-effect 'shadow "1ln" "0.5ln" "grey" "1ln"))
-  ;;("Burning" (make-effect 'burning))
-  ;;---
-  ;;(group "Font effects")
+  (assuming (== (get-preference "bitmap effects") "on")
+    (group "Basic effects")
+    (-> "Blur" (link text-blur-menu))
+    (-> "Outline" (link text-outline-menu))
+    (-> "Thicken" (link text-thicken-menu))
+    (-> "Erode" (link text-erode-menu))
+    ---
+    (group "Compound effects")
+    ("Engrave" (make-effect 'engrave "1ln" "0.5ln" "grey"))
+    ("Emboss" (make-effect 'emboss "1ln" "0.5ln" "grey"))
+    ("Shadow" (make-effect 'shadow "1ln" "0.5ln" "grey" "1ln"))
+    ;;("Burning" (make-effect 'burning))
+    ---
+    (group "Font effects"))
   (link text-font-effects-menu))
 
 (menu-bind specific-menu
