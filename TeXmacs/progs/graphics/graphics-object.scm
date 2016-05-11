@@ -171,7 +171,7 @@
 
 ;; Graphical contours
 ;;NOTE: This subsection is OK.
-(define (create-graphical-embedding-box o ha0 va0 halign valign mag)
+(define (create-graphical-embedding-box o ha0 va0 halign valign w hm pp mag)
   (define (create-text-at-handle o)
     (cond ((func? o 'with)
            (create-text-at-handle (cAr o)))
@@ -182,7 +182,10 @@
   (let* ((o1 (with res (if (or (graphical-text-at-context? o)
                                (== (car o) 'gr-group))
                            `(with "text-at-halign" ,ha0
-                                  ,(graphics-valign-var o) ,va0 ,o)
+                                  ,(graphics-valign-var o) ,va0
+                                  "doc-at-width" ,w
+                                  "doc-at-hmode" ,hm
+                                  "doc-at-ppsep" ,pp ,o)
 			   o)
                `(with "magnify" ,(if (== mag "default") "1" mag) ,res)))
 	 (info0 (cdr (box-info o1 "lbLB")))
@@ -244,14 +247,17 @@
         ((graphical-text-at-context? o)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic (graphics-valign-var o)))
+                (w  (get-graphical-prop 'basic "doc-at-width"))
+                (hm (get-graphical-prop 'basic "doc-at-hmode"))
+                (pp (get-graphical-prop 'basic "doc-at-ppsep"))
 	        (mag (get-graphical-prop 'basic "magnify")))
-           (create-graphical-embedding-box o ha va ha va mag)))
+           (create-graphical-embedding-box o ha va ha va w hm pp mag)))
         ((== (car o) 'gr-group)
          (let* ((ha (get-graphical-prop 'basic "text-at-halign"))
 	        (va (get-graphical-prop 'basic "text-at-valign"))
 	        (mag (get-graphical-prop 'basic "magnify")))
            (create-graphical-embedding-box
-            o ha va "center" "center" mag)))
+            o ha va "center" "center" "1par" "min" "0fn" mag)))
         ((integer? no)
          (let* ((l (list-tail (cdr o) no))
                 (ll (length l)))
@@ -370,10 +376,13 @@
                        (let* ((valign-var (graphics-valign-var o))
                               (ha (get-graphical-prop path0 "text-at-halign"))
                               (va (get-graphical-prop path0 valign-var))
+                              (w  (get-graphical-prop path0 "doc-at-width"))
+                              (hm (get-graphical-prop path0 "doc-at-hmode"))
+                              (pp (get-graphical-prop path0 "doc-at-ppsep"))
                               (mag (get-graphical-prop path0 "magnify"))
 			      (gc (asc curscol #f
                                        (create-graphical-embedding-box
-                                        o ha va ha va mag))))
+                                        o ha va ha va w hm pp mag))))
                          (if (== pts 'object-and-points)
                              (cons o gc)
                              (if (== pts 'object)
@@ -390,7 +399,8 @@
                                               (mag (get-graphical-prop
                                                     path0 "magnify")))
                                          (create-graphical-embedding-box
-                                          o ha va "center" "center" mag)))
+                                          o ha va "center" "center"
+                                          "1par" "min" "0fn" mag)))
                            (if (== pts 'object-and-points)
                                (cons o gc)
                                (if (== pts 'object)
