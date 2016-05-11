@@ -59,11 +59,20 @@
 (define-group graphical-over-under-tag
   draw-over draw-under)
 
+(tm-define (graphical-context? t)
+  (tm-in? t (graphical-tag-list)))
+
 (tm-define (graphical-text-context? t)
   (tm-in? t (graphical-text-tag-list)))
 
+(tm-define (graphical-long-text-context? t)
+  (tm-in? t (graphical-long-text-tag-list)))
+
 (tm-define (graphical-text-at-context? t)
   (and (graphical-text-context? t) (>= (tm-arity t) 2)))
+
+(tm-define (graphical-long-text-at-context? t)
+  (and (graphical-long-text-context? t) (>= (tm-arity t) 2)))
 
 (tm-define (graphical-text-arg-context? t)
   (and (graphical-text-context? t) (< (tm-arity t) 2)))
@@ -125,7 +134,12 @@
   ("text-at-halign" . "left")
   ("text-at-valign" . "base")
   ("text-at-margin" . "1spc")
-  ("doc-at-valign" . "top"))
+  ("doc-at-valign" . "top")
+  ("doc-at-width" . "1par")
+  ("doc-at-hmode" . "min")
+  ("doc-at-ppsep" . "0fn")
+  ("doc-at-border" . "0ln")
+  ("doc-at-padding" . "0spc"))
 
 (tm-define (graphics-attribute-default attr)
   (if (gr-prefixed? attr)
@@ -188,7 +202,8 @@
   (:require (graphical-long-text-tag? tag))
   (append (graphics-common-attributes)
           '("text-at-halign" "doc-at-valign" "text-at-margin"
-            "fill-color" "doc-at-width")))
+            "fill-color" "doc-at-width" "doc-at-hmode"
+            "doc-at-ppsep" "doc-at-border" "doc-at-padding")))
 
 (tm-define (graphics-attributes tag)
   (:require (graphical-group-tag? tag))

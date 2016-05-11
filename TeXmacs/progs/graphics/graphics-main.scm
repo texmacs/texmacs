@@ -929,6 +929,45 @@
   (:check-mark "*" (graphics-test-property? "gr-doc-at-valign"))
   (graphics-set-property "gr-doc-at-valign" val))
 
+(define (graphics-check-width? val)
+  (if (== val "1par") (set! val "default"))
+  (and (== (graphics-get-property "gr-doc-at-width") val)
+       (== (graphics-get-property "gr-doc-at-hmode") "exact")))
+(tm-define (graphics-set-doc-at-width val)
+  (:argument val "Document-at width")
+  (:check-mark "*" graphics-check-width?)
+  (graphics-set-property "gr-doc-at-width" val)
+  (graphics-set-property "gr-doc-at-hmode" "exact")
+  (graphics-set-property "gr-doc-at-ppsep" ""))
+
+(define (graphics-check-compact?)
+  (== (graphics-get-property "gr-doc-at-hmode") "default"))
+(tm-define (graphics-set-doc-at-compact)
+  (:check-mark "*" graphics-check-compact?)
+  (graphics-set-property "gr-doc-at-width" "default")
+  (graphics-set-property "gr-doc-at-hmode" "default")
+  (graphics-set-property "gr-doc-at-ppsep" "default"))
+
+(define (graphics-toggled-property? var)
+  (lambda ()
+    (!= (graphics-get-property var) "default")))
+
+(tm-define (graphics-toggle-doc-at-border)
+  (:check-mark "*" (graphics-toggled-property? "gr-doc-at-border"))
+  (if (== (graphics-get-property "gr-doc-at-border") "default")
+      (begin
+        (graphics-set-property "gr-doc-at-border" "1ln")
+        (graphics-set-property "gr-doc-at-padding" "1spc"))
+      (begin
+        (graphics-set-property "gr-doc-at-border" "default")
+        (graphics-set-property "gr-doc-at-padding" "default"))))
+
+(tm-define (graphics-toggle-doc-at-padded)
+  (:check-mark "*" (graphics-toggled-property? "gr-doc-at-padding"))
+  (if (== (graphics-get-property "gr-doc-at-padding") "default")
+      (graphics-set-property "gr-doc-at-padding" "1spc")
+      (graphics-set-property "gr-doc-at-padding" "default")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Snapping
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -994,3 +1033,97 @@
   (:argument val "Text padding for snapping")
   (:check-mark "*" (graphics-test-property? "gr-text-at-margin"))
   (graphics-set-property "gr-text-at-margin" val))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special routines for text-at boxes and its variants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (object-get-property-bis t var)
+  (tree->stree (get-env-tree var)))
+
+(define (with-set t var val i)
+  (cond ((>= i (- (tree-arity t) 1))
+         (when (!= val "default")
+           (tree-insert! t i (list var val))))
+        ((tm-equal? (tree-ref t i) var)
+         (if (!= val "default")
+             (tree-assign (tree-ref t (+ i 1)) val)
+             (tree-remove t i 2)))
+        (else (with-set t var val (+ i 2)))))
+
+(define (object-set-property-bis t var val)
+  (cond ((tree-is? t :up 'with)
+         (with-set (tree-up t) var val 0))
+        ((!= val "default")
+         (tree-set! t `(with ,var ,val ,t)))))
+
+(define (object-test-property? var)
+  (lambda (val)
+    (if (== val "default") (set! val (tree->stree (get-init-tree var))))
+    (== (object-get-property var) val)))
+
+(tm-define (object-get-property var)
+  (tree->stree (get-env-tree var)))
+
+(tm-define (object-set-property var val)
+  (and-with t (tree-innermost graphical-context?)
+    (object-set-property-bis t var val)))
+
+(tm-define (object-set-fill-color val)
+  (:argument val "Fill color")
+  (:check-mark "*" (object-test-property? "fill-color"))
+  (object-set-property "fill-color" val))
+
+(tm-define (object-set-text-at-halign val)
+  (:argument val "Horizontal alignment")
+  (:check-mark "*" (object-test-property? "text-at-halign"))
+  (object-set-property "text-at-halign" val))
+
+(tm-define (object-set-text-at-valign val)
+  (:argument val "Vertical alignment")
+  (:check-mark "*" (object-test-property? "text-at-valign"))
+  (object-set-property "text-at-valign" val))
+
+(tm-define (object-set-doc-at-valign val)
+  (:argument val "Vertical alignment")
+  (:check-mark "*" (object-test-property? "doc-at-valign"))
+  (object-set-property "doc-at-valign" val))
+
+(define (object-check-width? val)
+  (and (== (object-get-property "doc-at-width") val)
+       (== (object-get-property "doc-at-hmode") "exact")))
+(tm-define (object-set-doc-at-width val)
+  (:argument val "Document-at width")
+  (:check-mark "*" object-check-width?)
+  (if (== val "1par") (set! val "default"))
+  (object-set-property "doc-at-width" val)
+  (object-set-property "doc-at-hmode" "exact")
+  (object-set-property "doc-at-ppsep" ""))
+
+(define (object-check-compact?)
+  (== (object-get-property "doc-at-hmode") "min"))
+(tm-define (object-set-doc-at-compact)
+  (:check-mark "*" object-check-compact?)
+  (object-set-property "doc-at-width" "default")
+  (object-set-property "doc-at-hmode" "default")
+  (object-set-property "doc-at-ppsep" "default"))
+
+(define (object-toggled-property? var)
+  (lambda ()
+    (!= (object-get-property var) (get-init var))))
+
+(tm-define (object-toggle-doc-at-border)
+  (:check-mark "*" (object-toggled-property? "doc-at-border"))
+  (if (== (object-get-property "doc-at-border") "0ln")
+      (begin
+        (object-set-property "doc-at-border" "1ln")
+        (object-set-property "doc-at-padding" "1spc"))
+      (begin
+        (object-set-property "doc-at-border" "default")
+        (object-set-property "doc-at-padding" "default"))))
+
+(tm-define (object-toggle-doc-at-padded)
+  (:check-mark "*" (object-toggled-property? "doc-at-padding"))
+  (if (== (object-get-property "doc-at-padding") "0spc")
+      (object-set-property "doc-at-padding" "1spc")
+      (object-set-property "doc-at-padding" "default")))

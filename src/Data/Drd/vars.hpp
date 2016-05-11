@@ -236,6 +236,11 @@ extern string GR_TEXT_AT_HALIGN;
 extern string GR_TEXT_AT_VALIGN;
 extern string GR_TEXT_AT_MARGIN;
 extern string GR_DOC_AT_VALIGN;
+extern string GR_DOC_AT_WIDTH;
+extern string GR_DOC_AT_HMODE;
+extern string GR_DOC_AT_PPSEP;
+extern string GR_DOC_AT_BORDER;
+extern string GR_DOC_AT_PADDING;
 
 extern string GID;
 extern string ANIM_ID;
@@ -260,6 +265,11 @@ extern string TEXT_AT_HALIGN;
 extern string TEXT_AT_VALIGN;
 extern string TEXT_AT_MARGIN;
 extern string DOC_AT_VALIGN;
+extern string DOC_AT_WIDTH;
+extern string DOC_AT_HMODE;
+extern string DOC_AT_PPSEP;
+extern string DOC_AT_BORDER;
+extern string DOC_AT_PADDING;
 
 extern string SRC_STYLE;
 extern string SRC_SPECIAL;

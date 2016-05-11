@@ -258,6 +258,11 @@ string GR_TEXT_AT_HALIGN ("gr-text-at-halign");
 string GR_TEXT_AT_VALIGN ("gr-text-at-valign");
 string GR_TEXT_AT_MARGIN ("gr-text-at-margin");
 string GR_DOC_AT_VALIGN ("gr-doc-at-valign");
+string GR_DOC_AT_WIDTH ("gr-doc-at-width");
+string GR_DOC_AT_HMODE ("gr-doc-at-hmode");
+string GR_DOC_AT_PPSEP ("gr-doc-at-ppsep");
+string GR_DOC_AT_BORDER ("gr-doc-at-border");
+string GR_DOC_AT_PADDING ("gr-doc-at-padding");
 
 string GID ("gid");
 string ANIM_ID ("anim-id");
@@ -282,6 +287,11 @@ string TEXT_AT_HALIGN ("text-at-halign");
 string TEXT_AT_VALIGN ("text-at-valign");
 string TEXT_AT_MARGIN ("text-at-margin");
 string DOC_AT_VALIGN ("doc-at-valign");
+string DOC_AT_WIDTH ("doc-at-width");
+string DOC_AT_HMODE ("doc-at-hmode");
+string DOC_AT_PPSEP ("doc-at-ppsep");
+string DOC_AT_BORDER ("doc-at-border");
+string DOC_AT_PADDING ("doc-at-padding");
 
 /******************************************************************************
 * Environment variables for preamble mode

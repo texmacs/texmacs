@@ -253,6 +253,11 @@ initialize_default_env () {
   env (GR_TEXT_AT_VALIGN)  = "default";   // vert. alignment for new text-ats
   env (GR_TEXT_AT_MARGIN)  = "default";   // margins for new text-ats
   env (GR_DOC_AT_VALIGN)   = "default";   // vert. al. for new document-ats
+  env (GR_DOC_AT_WIDTH)    = "default";   // width of new document-ats
+  env (GR_DOC_AT_HMODE)    = "default";   // width mode for new document-ats
+  env (GR_DOC_AT_PPSEP)    = "default";   // par-par-sep for new document-ats
+  env (GR_DOC_AT_BORDER)   = "default";   // border of new document-ats
+  env (GR_DOC_AT_PADDING)  = "default";   // padding for new document-ats
 
   env (GID)              = "default";   // graphical identifier
   env (ANIM_ID)          = "";          // identifier inside animations
@@ -277,6 +282,11 @@ initialize_default_env () {
   env (TEXT_AT_VALIGN)   = "base";      // vertical text-at alignment
   env (TEXT_AT_MARGIN)   = "1spc";      // margin for smart guides
   env (DOC_AT_VALIGN)    = "top";       // vertical document-at alignment
+  env (DOC_AT_WIDTH)     = "1par";      // width of document-ats
+  env (DOC_AT_HMODE)     = "min";       // width mode for document-ats
+  env (DOC_AT_PPSEP)     = "0fn";       // par-par-sep for document-ats
+  env (DOC_AT_BORDER)    = "0ln";       // border of document-ats
+  env (DOC_AT_PADDING)   = "0spc";      // padding for document-ats
 
   env (SRC_STYLE)        = "angular";   // style for "source" tags
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags

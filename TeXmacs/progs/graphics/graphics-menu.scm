@@ -514,6 +514,23 @@
   ;;("Top" (graphics-set-text-at-valign "top"))
   ("Top" (graphics-set-doc-at-valign "default")))
 
+(define (doc-at-mode w m)
+  (if (nstring? w) (set! w "1par"))
+  (if (nstring? m) (set! m "min"))
+  (cond ((or (== m "min") (== m "default")) "compact")
+        ((and (== w "1par") (== m "exact")) "wide")
+        ((and (== w "1hpar") (== m "exact")) "half wide")
+        (else w)))
+
+(menu-bind graphics-doc-mode-menu
+  ("Compact" (graphics-set-doc-at-compact))
+  ("Wide" (graphics-set-doc-at-width "1par"))
+  ("Half wide" (graphics-set-doc-at-width "1hpar"))
+  ("Other" (interactive graphics-set-doc-at-width))
+  ---
+  ("Border" (graphics-toggle-doc-at-border))
+  ("Padded" (graphics-toggle-doc-at-padded)))
+
 (menu-bind graphics-snap-menu
   ("None" (graphics-set-snap "none"))
   ("All" (graphics-set-snap "all"))
@@ -598,7 +615,9 @@
       (-> "Vertical alignment" (link graphics-text-valign-menu)))
     (assuming (not (graphics-mode-attribute? (graphics-mode) "text-at-valign"))
       (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-valign")
-        (-> "Vertical alignment" (link graphics-doc-valign-menu)))))
+        (-> "Vertical alignment" (link graphics-doc-valign-menu))))
+    (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-width")
+      (-> "Text box style" (link graphics-doc-mode-menu))))
   ---
   (-> "Snap" (link graphics-snap-menu)))
 
@@ -655,9 +674,9 @@
   ((check (balloon (icon "tm_math.xpm") "Insert mathematics")
           "v" (== (graphics-mode) '(edit math-at)))
    (graphics-set-mode '(edit math-at)))
-  ;;((check (balloon (icon "tm_textat_mode.xpm") "Insert multiple paragraphs")
-  ;;        "v" (== (graphics-mode) '(edit document-at)))
-  ;; (graphics-set-mode '(edit document-at)))
+  ((check (balloon (icon "tm_document_at.xpm") "Insert multiple paragraphs")
+          "v" (== (graphics-mode) '(edit document-at)))
+   (graphics-set-mode '(edit document-at)))
   ((check (balloon (icon "tm_ink_mode.xpm") "Insert hand drawn curves")
           "v" (== (graphics-mode) '(hand-edit line)))
    (graphics-set-mode '(hand-edit line))))
@@ -791,7 +810,15 @@
           (let* ((al (graphics-get-property "gr-doc-at-valign"))
                  (s (if (== al "default") "top" al)))
             (=> (eval s)
-                (link graphics-doc-valign-menu))))))))
+                (link graphics-doc-valign-menu)))))))
+  (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-width")
+    /
+    (mini #t
+      (group "Style:")
+      (let* ((w (graphics-get-property "gr-doc-at-width"))
+             (m (graphics-get-property "gr-doc-at-hmode")))
+        (=> (eval (doc-at-mode w m))
+            (link graphics-doc-mode-menu))))))
 
 (tm-menu (graphics-snap-icons)
   (mini #t
@@ -890,3 +917,100 @@
    (graphics-enter))
   (assuming (hidden-child? t 2)
     (dynamic (string-input-icon t 2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Special menus for text-at and its variants
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (structured-horizontal? t)
+  (:require (graphical-text-at-context? t))
+  #f)
+
+(tm-menu (text-at-halign-menu)
+  ("Left" (object-set-text-at-halign "default"))
+  ("Center" (object-set-text-at-halign "center"))
+  ("Right" (object-set-text-at-halign "right")))
+
+(tm-menu (text-at-valign-menu)
+  ("Bottom" (object-set-text-at-valign "bottom"))
+  ("Base" (object-set-text-at-valign "default"))
+  ("Axis" (object-set-text-at-valign "axis"))
+  ("Center" (object-set-text-at-valign "center"))
+  ("Top" (object-set-text-at-valign "top")))
+
+(tm-menu (doc-at-valign-menu)
+  ("Bottom" (object-set-doc-at-valign "bottom"))
+  ("Base" (object-set-doc-at-valign "base"))
+  ("Axis" (object-set-doc-at-valign "axis"))
+  ("Center" (object-set-doc-at-valign "center"))
+  ("Top" (object-set-doc-at-valign "default")))
+
+(menu-bind doc-at-fill-color-menu
+  ("None" (object-set-fill-color "default"))
+  ---
+  (if (allow-pattern-colors?)
+      (pick-background "1gu" (object-set-fill-color answer)))
+  (if (not (allow-pattern-colors?))
+      (pick-color (object-set-fill-color answer)))
+  ---
+  ("Palette" (interactive-color (lambda (c) (object-set-fill-color c)) '()))
+  ("Pattern" (open-pattern-selector object-set-fill-color "1gu"))
+  ("Other" (interactive object-set-fill-color)))
+
+(tm-menu (doc-at-mode-menu)
+  ("Compact" (object-set-doc-at-compact))
+  ("Wide" (object-set-doc-at-width "1par"))
+  ("Half wide" (object-set-doc-at-width "1hpar"))
+  ---
+  ("Border" (object-toggle-doc-at-border))
+  ("Padded" (object-toggle-doc-at-padded)))
+
+(tm-menu (focus-hidden-menu t)
+  (:require (graphical-text-at-context? t))
+  ---
+  (-> "Horizontal alignment" (link text-at-halign-menu))
+  (-> "Vertical alignment" (link text-at-valign-menu)))
+
+(tm-menu (focus-hidden-menu t)
+  (:require (graphical-long-text-at-context? t))
+  ---
+  (-> "Fill color" (link doc-at-fill-color-menu))
+  (-> "Horizontal alignment" (link text-at-halign-menu))
+  (-> "Vertical alignment" (link doc-at-valign-menu))
+  (-> "Text box style" (link doc-at-mode-menu)))
+
+(tm-menu (focus-hidden-icons t)
+  (:require (graphical-text-at-context? t))
+  /
+  (mini #t
+    (group "Alignment:")
+    (with s (object-get-property "text-at-halign")
+      (=> (eval s) (link text-at-halign-menu)))
+    (with s (object-get-property "text-at-valign")
+      (=> (eval s) (link text-at-valign-menu)))))
+
+(tm-menu (focus-hidden-icons t)
+  (:require (graphical-long-text-at-context? t))
+  /
+  (mini #t
+    (group "Fill color:")
+    (with col (object-get-property "fill-color")
+      (assuming (in? col (list "" "none" "default"))
+        (=> "none"
+            (link doc-at-fill-color-menu)))
+      (assuming (nin? col (list "" "none" "default"))
+        (=> (color col #f #f 25 17)
+            (link doc-at-fill-color-menu)))))
+  /
+  (mini #t
+    (group "Alignment:")
+    (with s (object-get-property "text-at-halign")
+      (=> (eval s) (link text-at-halign-menu)))
+    (with s (object-get-property "doc-at-valign")
+      (=> (eval s) (link doc-at-valign-menu))))
+  /
+  (mini #t
+    (group "Style:")
+    (let* ((w (object-get-property "doc-at-width"))
+           (m (object-get-property "doc-at-hmode")))
+      (=> (eval (doc-at-mode w m)) (link doc-at-mode-menu)))))

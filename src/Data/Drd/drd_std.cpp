@@ -1069,6 +1069,10 @@ init_std_drd () {
   init_var (GR_TEXT_AT_VALIGN, TYPE_STRING);
   init_var (GR_TEXT_AT_MARGIN, TYPE_LENGTH);
   init_var (GR_DOC_AT_VALIGN, TYPE_STRING);
+  init_var (GR_DOC_AT_WIDTH, TYPE_LENGTH);
+  init_var (GR_DOC_AT_HMODE, TYPE_STRING);
+  init_var (GR_DOC_AT_BORDER, TYPE_LENGTH);
+  init_var (GR_DOC_AT_PADDING, TYPE_LENGTH);
 
   init_var (GID, TYPE_INTEGER);
   init_var (ANIM_ID, TYPE_INTEGER);
@@ -1093,6 +1097,10 @@ init_std_drd () {
   init_var (TEXT_AT_VALIGN, TYPE_STRING);
   init_var (TEXT_AT_MARGIN, TYPE_LENGTH);
   init_var (DOC_AT_VALIGN, TYPE_STRING);
+  init_var (DOC_AT_WIDTH, TYPE_LENGTH);
+  init_var (DOC_AT_HMODE, TYPE_STRING);
+  init_var (DOC_AT_BORDER, TYPE_LENGTH);
+  init_var (DOC_AT_PADDING, TYPE_LENGTH);
 
   init_var (SRC_STYLE, TYPE_STRING);
   init_var (SRC_SPECIAL, TYPE_STRING);

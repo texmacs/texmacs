@@ -46,10 +46,12 @@
     </src-comment>
   </active*>
 
-  <assign|doc-at-width|1par>
+  <assign|hpar-length|<macro|<over|<minus|1par|<value|par-columns-sep>>|2>>>
 
-  <assign|paragraph-box|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<twith|table-width|<value|doc-at-width>>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|fill-color>>|<table|<row|<\cell>
-    <arg|body>
+  <assign|paragraph-box|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-lsep|<value|doc-at-padding>>|<cwith|1|1|1|1|cell-rsep|<value|doc-at-padding>>|<cwith|1|1|1|1|cell-bsep|<value|doc-at-padding>>|<cwith|1|1|1|1|cell-tsep|<value|doc-at-padding>>|<twith|table-width|<value|doc-at-width>>|<twith|table-hmode|<value|doc-at-hmode>>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|fill-color>>|<cwith|1|1|1|1|cell-tborder|<value|doc-at-border>>|<cwith|1|1|1|1|cell-bborder|<value|doc-at-border>>|<cwith|1|1|1|1|cell-lborder|<value|doc-at-border>>|<cwith|1|1|1|1|cell-rborder|<value|doc-at-border>>|<table|<row|<\cell>
+    <\with|par-par-sep|<if|<equal|<value|doc-at-ppsep>|>|<value|par-par-sep>|<value|doc-at-ppsep>>>
+      <arg|body>
+    </with>
   </cell>>>>>>>
 
   <\active*>
