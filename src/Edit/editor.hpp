@@ -289,6 +289,7 @@ public:
   virtual tree     exec_latex (tree t, path p) = 0;
   virtual tree     exec_latex (tree t) = 0;
   virtual tree     texmacs_exec (tree t) = 0;
+  virtual tree     var_texmacs_exec (tree t) = 0;
   virtual tree     checkout_animation (tree t) = 0;
   virtual tree     commit_animation (tree t) = 0;
   virtual tree     get_style () = 0;

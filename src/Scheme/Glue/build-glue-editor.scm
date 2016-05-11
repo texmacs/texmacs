@@ -311,6 +311,7 @@
   (export-pages-postscript export_ps (void url string string))
   (footer-eval footer_eval (void string))
   (texmacs-exec texmacs_exec (tree content))
+  (texmacs-exec* var_texmacs_exec (tree content))
   (texmacs-expand exec_texmacs (tree content))
   (verbatim-expand exec_verbatim (tree content))
   (latex-expand exec_latex (tree content))

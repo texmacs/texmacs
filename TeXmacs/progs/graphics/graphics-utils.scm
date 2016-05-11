@@ -525,13 +525,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (box-info t cmd)
-  (tree->stree (texmacs-exec `(box-info ,t ,cmd))))
+  (tree->stree (texmacs-exec* `(box-info ,t ,cmd))))
 
 (tm-define (frame-direct p)
-  (tree->stree (texmacs-exec `(frame-direct ,p))))
+  (tree->stree (texmacs-exec* `(frame-direct ,p))))
 
 (tm-define (frame-inverse p)
-  (tree->stree (texmacs-exec `(frame-inverse ,p))))
+  (tree->stree (texmacs-exec* `(frame-inverse ,p))))
 
 (tm-define (interval-intersects i1 i2)
   (let* ((i1a (car i1))

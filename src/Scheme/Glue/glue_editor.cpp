@@ -3046,6 +3046,19 @@ tmg_texmacs_exec (tmscm arg1) {
 }
 
 tmscm
+tmg_texmacs_exec_dot (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "texmacs-exec*");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_current_editor()->var_texmacs_exec (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_texmacs_expand (tmscm arg1) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "texmacs-expand");
 
@@ -3493,6 +3506,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("export-pages-postscript",  tmg_export_pages_postscript, 3, 0, 0);
   tmscm_install_procedure ("footer-eval",  tmg_footer_eval, 1, 0, 0);
   tmscm_install_procedure ("texmacs-exec",  tmg_texmacs_exec, 1, 0, 0);
+  tmscm_install_procedure ("texmacs-exec*",  tmg_texmacs_exec_dot, 1, 0, 0);
   tmscm_install_procedure ("texmacs-expand",  tmg_texmacs_expand, 1, 0, 0);
   tmscm_install_procedure ("verbatim-expand",  tmg_verbatim_expand, 1, 0, 0);
   tmscm_install_procedure ("latex-expand",  tmg_latex_expand, 1, 0, 0);

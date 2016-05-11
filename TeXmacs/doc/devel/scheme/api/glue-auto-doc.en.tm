@@ -7819,6 +7819,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(texmacs-exec* <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|var_texmacs_exec> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(texmacs-expand <scm-arg|content>)>
 <explain-synopsis|no synopsis>
   <|explain>

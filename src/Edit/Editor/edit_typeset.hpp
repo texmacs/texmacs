@@ -89,6 +89,7 @@ public:
   tree     exec_latex (tree t, path p);
   tree     exec_latex (tree t);
   tree     texmacs_exec (tree t);
+  tree     var_texmacs_exec (tree t);
 
   tree     checkout_animation (tree t);
   tree     commit_animation (tree t);

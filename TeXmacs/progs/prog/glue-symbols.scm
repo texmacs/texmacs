@@ -1002,6 +1002,7 @@
 "export-pages-postscript"
 "footer-eval"
 "texmacs-exec"
+"texmacs-exec*"
 "texmacs-expand"
 "verbatim-expand"
 "latex-expand"
