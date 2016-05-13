@@ -481,7 +481,7 @@ find_best_approximation (tree ff) {
         if (N(best) == 0) best= ims[j];
         else if (N(best) == 3) {
           int old_sz= as_int (best[2]);
-          if (old_sz > ref_sz) best= ims[j];
+          if (old_sz > ref_sz + 2) best= ims[j];
         }
         break;
       }
