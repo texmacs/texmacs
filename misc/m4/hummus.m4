@@ -34,6 +34,7 @@ AC_DEFUN([LC_HUMMUS],[
   #        CONFIG_PDF="Pdf Pdf/PDFWriter"
           CONFIG_PDF="Pdf"
           PDF_CFLAGS="-DPDFHUMMUS_NO_TIFF -DPDFHUMMUS_NO_DCT"
+          SAVE_LIBS="$SAVE_LIBS -lz"
   ],[
           AC_MSG_RESULT(no)
           AC_MSG_ERROR([cannot find FreeType or your version is < 2.4.8.
