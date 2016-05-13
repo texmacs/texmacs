@@ -113,6 +113,7 @@ normalize_feature (string s) {
   if (s == "ultralight") s= "thin";
   if (s == "nonextended") s= "unextended";
   if (s == "extended") s= "wide";
+  if (s == "caption") s= "wide";
   return s;
 }
 
@@ -147,6 +148,8 @@ family_features (string f) {
   else if (occurs ("Condensed", f) ||
            occurs ("Narrow", f))
     r << string ("Condensed");
+  else if (occurs ("Caption", f))
+    r << string ("Wide");
   for (int i=0; i<N(r); i++)
     r[i]= normalize_feature (r[i]);
   return remove_duplicates (r);
@@ -170,6 +173,7 @@ style_features (string s) {
         v[i] == "Regular" &&
         (v[i+1] == "Thin" ||
          v[i+1] == "Light" ||
+         v[i+1] == "Heavy" ||
          v[i+1] == "Black"))
       continue;
     if (N(r) == 0 ||
@@ -300,6 +304,8 @@ family_to_master (string f) {
   f= Replace (f, "Condensed", "");
   f= replace (f, " Narrow", "");
   f= Replace (f, "Narrow", "");
+  f= replace (f, " Caption", "");
+  f= Replace (f, "Caption", "");
   f= replace (f, " Thin", "");
   f= Replace (f, "Thin", "");
   f= replace (f, " Light", "");
@@ -308,6 +314,8 @@ family_to_master (string f) {
   f= Replace (f, "Medium", "");
   f= replace (f, " Bold", "");
   f= Replace (f, "Bold", "");
+  f= replace (f, " Heavy", "");
+  f= Replace (f, "Heavy", "");
   f= replace (f, " Black", "");
   f= Replace (f, "Black", "");
   return f;
@@ -361,7 +369,8 @@ is_stretch (string s) {
   return
     ends (s, "condensed") ||
     ends (s, "unextended") ||
-    ends (s, "wide");
+    ends (s, "wide") ||
+    ends (s, "caption");
 }
 
 bool
@@ -372,6 +381,7 @@ is_weight (string s) {
     s == "regular" ||
     s == "medium" ||
     ends (s, "bold") ||
+    ends (s, "heavy") ||
     ends (s, "black");
 }
 
@@ -493,6 +503,7 @@ same_kind (string s1, string s2) {
 #define D_STRETCH         30
 #define S_WEIGHT          100
 #define S_SLANT           100
+#define N_WEIGHT          200
 #define Q_WEIGHT          300
 #define D_WEIGHT          1000
 #define D_SLANT           1000
@@ -519,6 +530,8 @@ distance (string s1, string s2, bool asym) {
     if (ends (s1, "condensed") && ends (s2, "condensed")) return S_STRETCH;
     if (ends (s1, "unextended") && ends (s2, "unextended")) return S_STRETCH;
     if (ends (s1, "wide") && ends (s2, "wide")) return S_STRETCH;
+    if (ends (s1, "wide") && ends (s2, "caption")) return S_STRETCH;
+    if (ends (s1, "caption") && ends (s2, "wide")) return S_STRETCH;
     return D_STRETCH;
   }
   if (is_weight (s1) || is_weight (s2)) {
@@ -528,6 +541,10 @@ distance (string s1, string s2, bool asym) {
     if (ends (s1, "black") && ends (s2, "black")) return S_WEIGHT;
     if (ends (s1, "light") && ends (s2, "thin")) return Q_WEIGHT;
     if (ends (s1, "thin") && ends (s2, "light") && !asym) return Q_WEIGHT;
+    if (ends (s1, "bold") && ends (s2, "heavy")) return N_WEIGHT;
+    if (ends (s1, "heavy") && ends (s2, "bold") && !asym) return N_WEIGHT;
+    if (ends (s1, "heavy") && ends (s2, "black")) return N_WEIGHT;
+    if (ends (s1, "black") && ends (s2, "heavy") && !asym) return N_WEIGHT;
     if (ends (s1, "bold") && ends (s2, "black")) return Q_WEIGHT;
     if (ends (s1, "black") && ends (s2, "bold") && !asym) return Q_WEIGHT;
     return D_WEIGHT;
