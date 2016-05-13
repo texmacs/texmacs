@@ -332,6 +332,9 @@ tt_font_name (url u) {
     // Some basic normalization of family name
     move_to_shape (fam, sh, "Narrow", "Narrow");
     move_to_shape (fam, sh, "Condensed", "Condensed");
+    move_to_shape (fam, sh, "Extended", "Extended");
+    move_to_shape (fam, sh, "Wide", "Wide");
+    move_to_shape (fam, sh, "Caption", "Caption");
     move_to_shape (fam, sh, "Ultra Light", "Thin");
     move_to_shape (fam, sh, "Light", "Light");
     move_to_shape (fam, sh, "Medium", "");
