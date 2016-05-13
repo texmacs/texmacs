@@ -487,7 +487,7 @@ find_best_approximation (tree ff) {
       }
     }
   }
-  cout << "Best " << ff << " ~> " << best << "\n";
+  cout << "TeXmacs] approximating font " << ff << " ~> " << best << "\n";
   if (N(best) >= 2) return best;
   return ff (0, 2);
 }
