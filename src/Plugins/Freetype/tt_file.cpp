@@ -59,6 +59,7 @@ tt_font_path () {
     search_sub_dirs ("$HOME/Library/Fonts") |
     search_sub_dirs ("/Library/Fonts") |
     search_sub_dirs ("/System/Library/Fonts") |
+    search_sub_dirs ("/opt/local/share/texmf-texlive/fonts/truetype") |
     search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts/truetype");
 #else
     search_sub_dirs ("$HOME/.fonts") |
