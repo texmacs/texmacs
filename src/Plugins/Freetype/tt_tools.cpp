@@ -316,8 +316,6 @@ move_to_shape (string& fam, string& shape, string what, string by) {
   if (N(by) == 0) return;
   if (shape == "Regular") shape= by;
   else shape= by * " " * shape;
-  if (starts (shape, "Bold Narrow"))
-    shape= "Narrow Bold" * shape (11, N(shape));
 }
 
 scheme_tree
@@ -330,22 +328,26 @@ tt_font_name (url u) {
     string nt = tt_table (tt, i, "name");
     string fam= name_record_family (nt);
     string sh = name_record_shape (nt);
+
+    // Some basic normalization of family name
     move_to_shape (fam, sh, "Narrow", "Narrow");
     move_to_shape (fam, sh, "Condensed", "Condensed");
     move_to_shape (fam, sh, "Ultra Light", "Thin");
     move_to_shape (fam, sh, "Light", "Light");
     move_to_shape (fam, sh, "Medium", "");
-    move_to_shape (fam, sh, "Demi Bold", "Bold");
+    move_to_shape (fam, sh, "Demi Bold", "DemiBold");
+    move_to_shape (fam, sh, "Bold", "Bold");
     move_to_shape (fam, sh, "Heavy", "Heavy");
     move_to_shape (fam, sh, "Black", "Black");
     move_to_shape (fam, sh, "Italic", "Italic");
     move_to_shape (fam, sh, "Oblique", "Oblique");
-    // Some basic normalization of family name
+
     while (fam != "" && !is_alpha (fam[0])) fam= fam (1, N(fam));
     if (upcase_all (fam) == fam) fam= locase_all (fam);
     fam= upcase_first (fam);
     if (starts (fam, "STIX")) fam= "Stix" * fam (4, N(fam));
     // End normalization of family name
+    
     r << tuple (fam, sh);
   }
   return r;
