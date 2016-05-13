@@ -308,6 +308,15 @@ tt_dump (url u) {
 * Get the font family and available shapes
 ******************************************************************************/
 
+void
+move_to_shape (string& fam, string& shape, string what, string by) {
+  int pos= search_forwards (" " * what, 0, fam);
+  if (pos < 0) return;
+  fam  = fam (0, pos) * fam (pos + N(what) + 1, N(fam));
+  if (N(by) == 0) return;
+  shape= by * " " * shape;
+}
+
 scheme_tree
 tt_font_name (url u) {
   string tt;
@@ -318,6 +327,16 @@ tt_font_name (url u) {
     string nt = tt_table (tt, i, "name");
     string fam= name_record_family (nt);
     string sh = name_record_shape (nt);
+    move_to_shape (fam, sh, "Narrow", "Narrow");
+    move_to_shape (fam, sh, "Condensed", "Condensed");
+    move_to_shape (fam, sh, "Ultra Light", "Thin");
+    move_to_shape (fam, sh, "Light", "Light");
+    move_to_shape (fam, sh, "Medium", "");
+    move_to_shape (fam, sh, "Demi Bold", "Bold");
+    move_to_shape (fam, sh, "Heavy", "Heavy");
+    move_to_shape (fam, sh, "Black", "Black");
+    move_to_shape (fam, sh, "Italic", "Italic");
+    move_to_shape (fam, sh, "Oblique", "Oblique");
     // Some basic normalization of family name
     while (fam != "" && !is_alpha (fam[0])) fam= fam (1, N(fam));
     if (upcase_all (fam) == fam) fam= locase_all (fam);
