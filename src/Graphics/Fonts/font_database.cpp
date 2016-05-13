@@ -301,8 +301,9 @@ font_database_build (url u) {
           is_atomic (t[i][0]) &&
           is_atomic (t[i][1]))
         {
+          int  sz = file_size (u);
           tree key= t[i];
-          tree im = tuple (as_string (tail (u)), as_string (i));
+          tree im = tuple (as_string (tail (u)), as_string (i), as_string (sz));
           tree all= tree (TUPLE);
           if (font_table->contains (key))
             all= font_table [key];
@@ -424,6 +425,15 @@ static hashmap<tree,tree> new_font_table (UNINIT);
 static hashmap<tree,tree> back_font_table (UNINIT);
 
 void
+build_back_entry (tree key, tree loc) {
+  tree names (TUPLE);
+  if (back_font_table->contains (loc))
+    names= back_font_table [loc];
+  tuple_insert (names, key);
+  back_font_table (loc)= names;
+}
+
+void
 build_back_table () {
   iterator<tree> it= iterate (font_table);
   while (it->busy ()) {
@@ -432,14 +442,53 @@ build_back_table () {
       tree im= font_table [key];
       for (int i=0; i<N(im); i++) {
         tree loc = im[i];
-        tree names (TUPLE);
-        if (back_font_table->contains (loc))
-          names= back_font_table [loc];
-        tuple_insert (names, key);
-        back_font_table (loc)= names;
+        build_back_entry (key, loc);
+        if (is_func (loc, TUPLE, 3))
+          build_back_entry (key, loc (0, 2));
       }
     }
-  }  
+  }
+}
+
+tree
+find_best_approximation (tree ff) {
+  int ref_sz= as_int (ff[2]);
+  tree best= tree (TUPLE);
+  tree keys= back_font_table [ff (0, 2)];
+  for (int i=0; i<N(keys); i++) {
+    tree key= keys[i];
+    tree ims= font_table [key];
+    if (!is_func (ims, TUPLE)) continue;
+    for (int j=0; j<N(ims); j++) {
+      if (is_tuple (ims[j]) && N(ims[j]) == 3 && ims[j] (0, 2) == ff (0, 2)) {
+        if (N(best) == 0) best= ims[j];
+        else {
+          int old_sz= as_int (best[2]);
+          int new_sz= as_int (ims[j][2]);
+          if (max (new_sz - ref_sz, ref_sz - new_sz) <
+              max (old_sz - ref_sz, ref_sz - old_sz))
+            best= ims[j];
+        }
+      }
+    }
+  }
+  for (int i=0; i<N(keys); i++) {
+    tree key= keys[i];
+    tree ims= font_table [key];
+    if (!is_func (ims, TUPLE)) continue;
+    for (int j=0; j<N(ims); j++) {
+      if (is_tuple (ims[j]) && N(ims[j]) == 2 && ims[j] == ff (0, 2)) {
+        if (N(best) == 0) best= ims[j];
+        else if (N(best) == 3) {
+          int old_sz= as_int (best[2]);
+          if (old_sz > ref_sz) best= ims[j];
+        }
+        break;
+      }
+    }
+  }
+  if (N(best) >= 2) return best;
+  return ff (0, 2);
 }
 
 void
@@ -459,7 +508,11 @@ font_database_collect (url u) {
             ends (a[i], ".otf") ||
             ends (a[i], ".tfm"))
           for (int j=0; j<65536; j++) {
-            tree ff= tuple (a[i], as_string (j));
+            int  sz= file_size (u * a[i]);
+            tree ff= tuple (a[i], as_string (j), as_string (sz));
+            if (!back_font_table->contains (ff) &&
+                 back_font_table->contains (ff (0, 2)))
+              ff= find_best_approximation (ff);
             if (back_font_table->contains (ff)) {
               tree keys= back_font_table [ff];
               for (int j=0; j<N(keys); j++) {
@@ -624,7 +677,7 @@ font_database_search (string family, string style) {
   if (font_table->contains (key)) {
     tree im= font_table [key];
     for (int i=0; i<N(im); i++)
-      if (is_func (im[i], TUPLE, 2)) {
+      if (is_func (im[i], TUPLE, 3) || is_func (im[i], TUPLE, 2)) {
         string name= im[i][0]->label;
         string nr  = im[i][1]->label;
         if (!ends (name, ".ttc")) r << name;
