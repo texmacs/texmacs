@@ -314,7 +314,10 @@ move_to_shape (string& fam, string& shape, string what, string by) {
   if (pos < 0) return;
   fam  = fam (0, pos) * fam (pos + N(what) + 1, N(fam));
   if (N(by) == 0) return;
-  shape= by * " " * shape;
+  if (shape == "Regular") shape= by;
+  else shape= by * " " * shape;
+  if (starts (shape, "Bold Narrow"))
+    shape= "Narrow Bold" * shape (11, N(shape));
 }
 
 scheme_tree
