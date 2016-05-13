@@ -487,6 +487,7 @@ find_best_approximation (tree ff) {
       }
     }
   }
+  cout << "Best " << ff << " ~> " << best << "\n";
   if (N(best) >= 2) return best;
   return ff (0, 2);
 }
@@ -601,6 +602,7 @@ font_database_build_characteristics (bool force) {
               name= name (0, N(name)-2);
             if (tt_font_exists (name)) {
               array<string> a= tt_analyze (name);
+              cout << name << " ~> " << a << "\n";
               tree t (TUPLE, N(a));
               for (int j=0; j<N(a); j++) t[j]= a[j];
               font_characteristics (key)= t;
