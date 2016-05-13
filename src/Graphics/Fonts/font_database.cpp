@@ -101,8 +101,11 @@ font_database_load_database (url u, hashmap<tree,tree>& ftab= font_table) {
   if (!load_string (u, s, false)) {
     tree t= block_to_scheme_tree (s);
     for (int i=0; i<N(t); i++)
-      if (is_func (t[i], TUPLE, 2))
+      if (is_func (t[i], TUPLE, 2)) {
+        //if (&ftab == &font_table)
+        //  cout << t[i][0] << " ~> " << t[i][1] << "\n";
         ftab (t[i][0])= t[i][1];
+      }
   }
 }
 
@@ -472,21 +475,6 @@ find_best_approximation (tree ff) {
       }
     }
   }
-  for (int i=0; i<N(keys); i++) {
-    tree key= keys[i];
-    tree ims= font_table [key];
-    if (!is_func (ims, TUPLE)) continue;
-    for (int j=0; j<N(ims); j++) {
-      if (is_tuple (ims[j]) && N(ims[j]) == 2 && ims[j] == ff (0, 2)) {
-        if (N(best) == 0) best= ims[j];
-        else if (N(best) == 3) {
-          int old_sz= as_int (best[2]);
-          if (old_sz > ref_sz + 2) best= ims[j];
-        }
-        break;
-      }
-    }
-  }
   cout << "TeXmacs] approximating font " << ff << " ~> " << best << "\n";
   if (N(best) >= 2) return best;
   return ff (0, 2);
@@ -588,7 +576,7 @@ font_database_build_characteristics (bool force) {
     cout << "Analyzing " << key[0] << " " << key[1] << "\n";
     for (int i=0; i<N(im); i++)
       if (force || !font_characteristics->contains (key))
-        if (is_func (im[i], TUPLE, 2)) {
+        if (is_func (im[i], TUPLE, 3)) {
           string name= as_string (im[i][0]);
           string nr  = as_string (im[i][1]);
           cout << "| Processing " << name << ", " << nr << "\n";
@@ -679,7 +667,7 @@ font_database_search (string family, string style) {
   if (font_table->contains (key)) {
     tree im= font_table [key];
     for (int i=0; i<N(im); i++)
-      if (is_func (im[i], TUPLE, 3) || is_func (im[i], TUPLE, 2)) {
+      if (is_func (im[i], TUPLE, 3)) {
         string name= im[i][0]->label;
         string nr  = im[i][1]->label;
         if (!ends (name, ".ttc")) r << name;
