@@ -6187,7 +6187,7 @@ fi
 
 
 
-  for LC_COMBINE_FLAGS_lib in guile
+  for LC_COMBINE_FLAGS_lib in
   do
   unset STRIP_ARG_memo
   if test "$GUILE_LIBS" = "-l$LC_COMBINE_FLAGS_lib"
@@ -6429,7 +6429,7 @@ fi
   unset ${!LC_MERGE_FLAGS_*}
 
   fi
-  if test -n "guile"
+  if test -n ""
   then
   LC_MERGE_FLAGS_list="$LNSTATIC $LC_COMBINE_FLAGS_libs"
   if [[ "GUILE_LIBS" =~ $(echo "(^|_)LIBS") ]]
