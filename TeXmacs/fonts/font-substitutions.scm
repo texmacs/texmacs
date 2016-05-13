@@ -31,3 +31,6 @@
 ((roman cjk) (SimSun))
 ((Stix cjk) (FandolSong))
 ((Stix cjk) (SimSun))
+
+((Bodoni\ 72 smallcaps) (Bodoni\ 72\ Smallcaps))
+((Bodoni\ 72\ Oldstyle smallcaps) (Bodoni\ 72\ Smallcaps))
