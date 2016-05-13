@@ -6427,6 +6427,19 @@ tmg_url_newerP (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_url_size (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-size");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= file_size (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_url_last_modified (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-last-modified");
 
@@ -9655,6 +9668,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-directory?",  tmg_url_directoryP, 1, 0, 0);
   tmscm_install_procedure ("url-link?",  tmg_url_linkP, 1, 0, 0);
   tmscm_install_procedure ("url-newer?",  tmg_url_newerP, 2, 0, 0);
+  tmscm_install_procedure ("url-size",  tmg_url_size, 1, 0, 0);
   tmscm_install_procedure ("url-last-modified",  tmg_url_last_modified, 1, 0, 0);
   tmscm_install_procedure ("url-temp",  tmg_url_temp, 0, 0, 0);
   tmscm_install_procedure ("url-scratch",  tmg_url_scratch, 3, 0, 0);

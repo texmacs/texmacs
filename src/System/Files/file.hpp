@@ -24,6 +24,7 @@ bool is_regular (url name);
 bool is_directory (url name);
 bool is_symbolic_link (url name);
 bool is_newer (url which, url than);
+int  file_size (url u);
 int  last_modified (url u, bool cache_flag= true);
 url  url_temp_dir ();
 url  url_temp (string suffix= "");

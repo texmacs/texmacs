@@ -504,6 +504,7 @@
 "url-directory?"
 "url-link?"
 "url-newer?"
+"url-size"
 "url-last-modified"
 "url-temp"
 "url-scratch"

@@ -278,9 +278,10 @@ get_attributes (url name, struct stat* buf,
       tree r= cache_get ("stat_cache.scm", name_s);
       // cout << "Cache : " << r << LF;
       if (r == "#f") return true;
-      if ((is_compound(r)) && (N(r)==2)) {
+      if ((is_compound(r)) && (N(r)==3)) {
         buf->st_mode = ((unsigned int) as_int (r[0]));
         buf->st_mtime= ((unsigned int) as_int (r[1]));
+        buf->st_size = ((unsigned int) as_int (r[2]));
         return false;
       } 
       std_warning << "Inconsistent value in stat_cache.scm for key "
@@ -316,7 +317,8 @@ get_attributes (url name, struct stat* buf,
       if (do_cache_stat (name_s)) {
         string s1= as_string ((int) buf->st_mode);
         string s2= as_string ((int) buf->st_mtime);
-	cache_set ("stat_cache.scm", name_s, tree (TUPLE, s1, s2));
+        string s3= as_string ((int) buf->st_size);
+	cache_set ("stat_cache.scm", name_s, tree (TUPLE, s1, s2, s3));
       }
     }
   }
@@ -429,6 +431,15 @@ is_of_type (url name, string filter) {
 bool is_regular (url name) { return is_of_type (name, "f"); }
 bool is_directory (url name) { return is_of_type (name, "d"); }
 bool is_symbolic_link (url name) { return is_of_type (name, "l"); }
+
+int
+file_size (url u) {
+  if (is_rooted_web (u)) return -1;
+  if (is_rooted_tmfs (u)) return -1;
+  struct stat u_stat;
+  if (get_attributes (u, &u_stat, true)) return -1;
+  return u_stat.st_size;
+}
 
 int
 last_modified (url u, bool cache_flag) {

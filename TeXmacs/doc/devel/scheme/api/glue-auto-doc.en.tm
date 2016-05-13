@@ -3835,6 +3835,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(url-size <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|file_size> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(url-last-modified <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>

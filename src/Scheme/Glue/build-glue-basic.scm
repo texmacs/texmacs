@@ -540,6 +540,7 @@
   (url-directory? is_directory (bool url))
   (url-link? is_symbolic_link (bool url))
   (url-newer? is_newer (bool url url))
+  (url-size file_size (int url))
   (url-last-modified last_modified (int url))
   (url-temp url_temp (url))
   (url-scratch url_scratch (url string string int))
