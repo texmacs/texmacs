@@ -274,7 +274,7 @@ qt_gui_rep::set_selection (string key, tree t,
   cb->clear (mode);
   
   c_string selection (s);
-  cb->setText (QString::fromAscii (selection), mode);
+  cb->setText (QString::fromLatin1 (selection), mode);
   QMimeData *md = new QMimeData;
   
   if (format == "verbatim" || format == "default") {
@@ -283,7 +283,7 @@ qt_gui_rep::set_selection (string key, tree t,
       
       QString pid_str;
       pid_str.setNum (QCoreApplication::applicationPid ());
-      md->setData ("application/x-texmacs-pid", pid_str.toAscii());
+      md->setData ("application/x-texmacs-pid", pid_str.toLatin1());
       
       (void) sh;
         //selection = c_string (sh);
@@ -302,10 +302,10 @@ qt_gui_rep::set_selection (string key, tree t,
     else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
       md->setText (QString::fromLatin1 (selection));
     else
-      md->setText (QString::fromAscii (selection));
+      md->setText (QString::fromLatin1 (selection));
   }
   else
-    md->setText (QString::fromAscii (selection));
+    md->setText (QString::fromLatin1 (selection));
   cb->setMimeData (md, mode);
     // according to the docs, ownership of mimedata is transferred to clipboard
     // so no memory leak here
@@ -910,7 +910,7 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
       (extension == "jpg") || (extension == "jpeg")) {
     QClipboard *clipboard = QApplication::clipboard();
     c_string tmp (concretize (file));
-    clipboard->setImage (QImage (tmp));
+    clipboard->setImage (QImage (QString (tmp)));
   }
   else {
       // vector formats

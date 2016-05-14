@@ -191,7 +191,7 @@ to_qkeysequence (string ks) {
   if (DEBUG_QT && N(r) > 0) {
     QKeySequence qks (to_qstring (r));
     debug_qt << "ks: " << ks << " --> " << r << " --> "
-             << qks.toString (QKeySequence::NativeText).toAscii().data() << LF;
+             << qks.toString (QKeySequence::NativeText).toLatin1().data() << LF;
     return qks;
   }
   return QKeySequence (to_qstring (r));
@@ -717,7 +717,7 @@ qt_translate (const string& s) {
 
 string
 qt_application_directory () {
-  return string (QCoreApplication::applicationDirPath().toAscii().constData());
+  return string (QCoreApplication::applicationDirPath().toLatin1().constData());
   // return from_qstring (QCoreApplication::applicationDirPath ());
 }
 

@@ -10,8 +10,13 @@
 ******************************************************************************/
 
 #if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#include <QtGlobal>
 #include <QtCore/Qstring>
+#if (QT_VERSION >= 0x050000)
+#include <QtWidgets>
+#else
 #include <QtGui>
+#endif
 #include "poppler/qt4/poppler-qt4.h"
 #include "WINPrint.hpp"
 #include "tm_ostream.hpp"

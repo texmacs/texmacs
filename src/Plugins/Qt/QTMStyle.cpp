@@ -43,6 +43,17 @@ inline  QStyle *QTMProxyStyle::baseStyle() const {
   return ( base ? base : qApp->style() );
 }
 
+#if (QT_VERSION >= 0x050000)
+int
+QTMProxyStyle::layoutSpacing (QSizePolicy::ControlType control1,
+                              QSizePolicy::ControlType control2,
+                              Qt::Orientation orientation,
+                              const QStyleOption *option,
+                              const QWidget *widget) const {
+  return baseStyle()->layoutSpacing(control1, control2, orientation, option, widget);
+}
+#endif
+
 void
 QTMProxyStyle::drawComplexControl (ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget) const {
   baseStyle()->drawComplexControl (control, option, painter, widget);

@@ -472,7 +472,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 
     if (DEBUG_QT && DEBUG_KEYBOARD) {
       debug_qt << "key  : " << key << LF;
-      debug_qt << "text : " << event->text().toAscii().data() << LF;
+      debug_qt << "text : " << event->text().toLatin1().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
 #ifdef __MINGW32__
       debug_qt << "nativeScanCode: " << event->nativeScanCode() << LF; 

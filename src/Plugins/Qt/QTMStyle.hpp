@@ -47,6 +47,14 @@ public:
   const QStyle * proxy () const { return this; }
 #endif  
   
+#if (QT_VERSION >= 0x050000)
+  int layoutSpacing(QSizePolicy::ControlType control1,
+                    QSizePolicy::ControlType control2,
+                    Qt::Orientation orientation,
+                    const QStyleOption *option = 0,
+                    const QWidget *widget = 0) const;
+#endif
+
   void drawComplexControl (ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget = 0) const;
   void drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0)  const;
   void drawItemPixmap (QPainter* painter, const QRect& rect, int alignment, const QPixmap& pixmap) const;

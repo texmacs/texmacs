@@ -22,8 +22,27 @@
 #ifndef UI_QTMPRINTDIALOG_H
 #define UI_QTMPRINTDIALOG_H
 
+#include <QtGlobal>
 #include <QtCore/QLocale>
 #include <QtCore/QVariant>
+#if (QT_VERSION >= 0x050000)
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QVBoxLayout>
+#else
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
@@ -40,6 +59,7 @@
 #include <QtGui/QRadioButton>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QVBoxLayout>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -363,6 +383,37 @@ public:
   
   void retranslateUi(QDialog *QTMPrintDialog)
   {
+#if (QT_VERSION >= 0x050000)
+    QTMPrintDialog->setWindowTitle(QApplication::translate("QTMPrintDialog", "Print", 0));
+    label_3->setText(QApplication::translate("QTMPrintDialog", "Copies:", 0));
+    copiesInput->setText(QApplication::translate("QTMPrintDialog", "1", 0));
+    collatedCheck->setText(QApplication::translate("QTMPrintDialog", "Collated", 0));
+    label_7->setText(QApplication::translate("QTMPrintDialog", "Pages:", 0));
+    allPagesRadio->setText(QApplication::translate("QTMPrintDialog", "All", 0));
+    rangePagesRadio->setText(QApplication::translate("QTMPrintDialog", "From:", 0));
+    fromPageInput->setText(QApplication::translate("QTMPrintDialog", "1", 0));
+    label_4->setText(QApplication::translate("QTMPrintDialog", "To:", 0));
+    toPageInput->setText(QApplication::translate("QTMPrintDialog", "1", 0));
+    evenPagesCheck->setText(QApplication::translate("QTMPrintDialog", "Even", 0));
+    oddPagesCheck->setText(QApplication::translate("QTMPrintDialog", "Odd", 0));
+    paperSizeLabel->setText(QApplication::translate("QTMPrintDialog", "Paper size:", 0));
+    label_2->setText(QApplication::translate("QTMPrintDialog", "Orientation:", 0));
+    resolutionLabel->setText(QApplication::translate("QTMPrintDialog", "Resolution:", 0));
+    duplexCheck->setText(QApplication::translate("QTMPrintDialog", "Print on both sides", 0));
+    fitToPageCheck->setText(QApplication::translate("QTMPrintDialog", "Fit to page", 0));
+    label_5->setText(QApplication::translate("QTMPrintDialog", "Pages per side:", 0));
+    pagesPerSideCombo->clear();
+    pagesPerSideCombo->insertItems(0, QStringList()
+                                   << QApplication::translate("QTMPrintDialog", "1", 0)
+                                   << QApplication::translate("QTMPrintDialog", "2", 0)
+                                   << QApplication::translate("QTMPrintDialog", "4", 0)
+                                   << QApplication::translate("QTMPrintDialog", "6", 0)
+                                   << QApplication::translate("QTMPrintDialog", "9", 0)
+                                   << QApplication::translate("QTMPrintDialog", "16", 0)
+                                   );
+    label_6->setText(QApplication::translate("QTMPrintDialog", "Order:", 0));
+    blackWhiteCheck->setText(QApplication::translate("QTMPrintDialog", "Print in black and white", 0));
+#else
     QTMPrintDialog->setWindowTitle(QApplication::translate("QTMPrintDialog", "Print", 0, QApplication::UnicodeUTF8));
     label_3->setText(QApplication::translate("QTMPrintDialog", "Copies:", 0, QApplication::UnicodeUTF8));
     copiesInput->setText(QApplication::translate("QTMPrintDialog", "1", 0, QApplication::UnicodeUTF8));
@@ -392,6 +443,7 @@ public:
                                    );
     label_6->setText(QApplication::translate("QTMPrintDialog", "Order:", 0, QApplication::UnicodeUTF8));
     blackWhiteCheck->setText(QApplication::translate("QTMPrintDialog", "Print in black and white", 0, QApplication::UnicodeUTF8));
+#endif
   } // retranslateUi
   
 };
