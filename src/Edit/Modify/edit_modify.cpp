@@ -21,6 +21,7 @@
 ******************************************************************************/
 
 edit_modify_rep::edit_modify_rep ():
+  editor_rep (), // NOTE: ignored by the compiler, but suppresses warning
   author (new_author ()),
   arch (author, rp) {}
 edit_modify_rep::~edit_modify_rep () {}

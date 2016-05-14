@@ -32,6 +32,7 @@ bool enable_fastenv= false;
 ******************************************************************************/
 
 edit_typeset_rep::edit_typeset_rep ():
+  editor_rep (), // NOTE: ignored by the compiler, but suppresses warning
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
   stydef (UNINIT), pre (UNINIT), init (UNINIT), fin (UNINIT), grefs (UNINIT),

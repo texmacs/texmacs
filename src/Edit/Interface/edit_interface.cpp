@@ -44,6 +44,7 @@ MODE_LANGUAGE (string mode) {
 ******************************************************************************/
 
 edit_interface_rep::edit_interface_rep ():
+  editor_rep (), // NOTE: ignored by the compiler, but suppresses warning
   env_change (0),
   last_change (texmacs_time()), last_update (last_change-1),
   anim_next (1.0e12),
