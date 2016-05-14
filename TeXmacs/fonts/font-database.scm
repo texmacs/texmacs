@@ -1188,7 +1188,7 @@
 ((TeXmacs\ Computer\ Modern\ Mono Regular) ((ectt10.tfm 0 1348)))
 ((TeXmacs\ Computer\ Modern\ Mono SmallCaps) ((ectc10.tfm 0 1352)))
 ((TeXmacs\ Computer\ Modern\ Sans Bold) ((ecsx10.tfm 0 3132)))
-((TeXmacs\ Computer\ Modern\ Sans Bold\ Condensed) ((ecssdc10.tfm 0 3140)))
+((TeXmacs\ Computer\ Modern\ Sans Bold\ Condensed) ((ecssdc10.tfm 0 3128)))
 ((TeXmacs\ Computer\ Modern\ Sans Bold\ Flat) ((eclb10.tfm 0 3584)))
 ((TeXmacs\ Computer\ Modern\ Sans Bold\ Italic\ Flat) ((eclo10.tfm 0 3584)))
 ((TeXmacs\ Computer\ Modern\ Sans Bold\ Oblique) ((ecso10.tfm 0 3352)))

@@ -500,8 +500,13 @@ font_database_collect (url u) {
             int  sz= file_size (u * a[i]);
             tree ff= tuple (a[i], as_string (j), as_string (sz));
             if (!back_font_table->contains (ff) &&
-                 back_font_table->contains (ff (0, 2)))
+                 back_font_table->contains (ff (0, 2))) {
               ff= find_best_approximation (ff);
+              if (j != 0 && N (tt_font_name (u * a[i])) <= j) {
+                cout << "TeXmacs] ignore " << ff << " and higher subfonts\n";
+                break;
+              }
+            }
             if (back_font_table->contains (ff)) {
               tree keys= back_font_table [ff];
               for (int j=0; j<N(keys); j++) {
