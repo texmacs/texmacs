@@ -32,16 +32,20 @@ then
         unset i_failure
         unset [$0]_LIBPATH
       ], [
-        AC_MSG_ERROR([you may have several versions of iconv installed,
-          use with-iconv=iconv_base_path (i.e /usr/local) to specify one location])
+        echo configure: warning, failed to link with iconv
+#       AC_MSG_ERROR([you may have several versions of iconv installed,
+#         use with-iconv=iconv_base_path (i.e /usr/local) to specify one location])
     ])],[
       LC_GET_ARG_VALUE([$0]_LIBPATHS, [-L], [$0]_LIBPATH)
       STRIP_ARG([[$0]_LIBPATHS], -L$[$0]_LIBPATH)
     ])
   done
   if [[ $i_failure ]]
-  then AC_MSG_ERROR([absence of iconv may crash HTML import or prevent the build
-        but it is possible to run configure --with-iconv=no])
+  then
+    echo configure: warning, iconv support does not seem to work
+    echo configure: warning, absence of iconv may crash HTML import among others
+#    AC_MSG_ERROR([absence of iconv may crash HTML import or prevent the build
+#      but it is possible to run configure --with-iconv=no])
   fi
 fi
 LC_SUBST([ICONV])

@@ -10293,8 +10293,9 @@ $as_echo "#define USE_ICONV 1" >>confdefs.h
 else
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-        as_fn_error $? "you may have several versions of iconv installed,
-          use with-iconv=iconv_base_path (i.e /usr/local) to specify one location" "$LINENO" 5
+        echo configure: warning, failed to link with iconv
+#       AC_MSG_ERROR([you may have several versions of iconv installed,
+#         use with-iconv=iconv_base_path (i.e /usr/local) to specify one location])
 
 
 fi
@@ -10329,8 +10330,11 @@ fi
 
   done
   if [ $i_failure ]
-  then as_fn_error $? "absence of iconv may crash HTML import or prevent the build
-        but it is possible to run configure --with-iconv=no" "$LINENO" 5
+  then
+    echo configure: warning, iconv support does not seem to work
+    echo configure: warning, absence of iconv may crash HTML import among others
+#    AC_MSG_ERROR([absence of iconv may crash HTML import or prevent the build
+#      but it is possible to run configure --with-iconv=no])
   fi
 fi
 
