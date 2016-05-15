@@ -11643,9 +11643,15 @@ then
      LIBS=""
 #     AX_HAVE_QT
      LIBS="$SAVE_LIBS"
-     if test x"$have_qt" = xno; then
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: Qt5 seems not present, trying Qt4..." >&5
-$as_echo "Qt5 seems not present, trying Qt4..." >&6; }
+     if test x"$have_qt" = xyes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: Qt5 found" >&5
+$as_echo "Qt5 found" >&6; }
+	at_cv_qt_build=ok
+        QMAKE="qmake"
+        MOC="moc"
+        QT5_AVAILABLE="yes"
+     else
+#        AC_MSG_RESULT([Qt5 seems not present, trying Qt4...])
 
 
 
@@ -12250,13 +12256,6 @@ $as_echo "$QT_LIBS" >&6; }
   cd "$my_configure_pwd" || echo 'WTF!'
   rm -rf "$my_tmpdir"
 
-     else
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: Qt5 found" >&5
-$as_echo "Qt5 found" >&6; }
-	at_cv_qt_build=ok
-        QMAKE="qmake"
-        MOC="moc"
-        QT5_AVAILABLE="yes"
      fi
      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
      QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
