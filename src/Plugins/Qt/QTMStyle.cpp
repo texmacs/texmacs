@@ -20,6 +20,10 @@
 #include <QPainter>
 #include <QMainWindow>
 
+#ifdef UNIFIED_TOOLBAR
+bool use_unified_toolbar= true;
+#endif
+
 int
 qt_zoom (int sz) {
   return (int) (retina_scale * ((double) sz));
@@ -426,7 +430,8 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
 
     case CE_ToolBar: {
 #ifdef UNIFIED_TOOLBAR
-      if ((widget) &&  (widget->windowTitle() == "mode toolbar"))  {
+      if (use_unified_toolbar &&
+          (widget) && (widget->windowTitle() == "mode toolbar")) {
 
           // For unified tool bars, draw nothing.
           if (QMainWindow * mainWindow = qobject_cast<QMainWindow *>(widget->window())) {

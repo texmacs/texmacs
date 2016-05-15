@@ -25,6 +25,7 @@ int qt_zoom (int sz);
 
 #ifdef Q_WS_MAC
 #define UNIFIED_TOOLBAR
+extern bool use_unified_toolbar;
   // enable the unified toolbar style on the mac. To work properly this requires
   // a modification of the widget hierarchy of the main window.
 #endif
