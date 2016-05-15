@@ -314,15 +314,15 @@ objc_incl  = $(call objc_flags,$(1) \
   $(CPPFLAGS) $(CXXFLAGS))
 
 $(system_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(system_incl) -I$(tmsrc)/include)
+	$(call cxx_incl,$(system_incl) -I$(tmsrc)/include $(CXXGUI))
 $(kernel_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(kernel_incl))
 $(data_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(data_incl) -I$(tmsrc)/include $(CXXGUILE))
 $(edit_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(edit_incl))
+	$(call cxx_incl,$(edit_incl) $(CXXGUI))
 $(scheme_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(scheme_incl) $(CXXGUILE))
+	$(call cxx_incl,$(scheme_incl) $(CXXGUILE) $(CXXGUI))
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp
@@ -342,15 +342,15 @@ $(gs_obj): Objects/%.o: %.cpp
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call objc_incl,$(cocoa_incl) $(CXXCOCOA))
 $(cocoa_mm_obj): Objects/%.o: %.mm
-	$(call objcxx_incl,$(cocoa_incl) $(CXXCOCOA) $(CXXSPARKLE))
+	$(call objcxx_incl,$(cocoa_incl) $(CXXCOCOA) $(CXXSPARKLE) $(CXXGUI))
 $(texmacs_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(texmacs_incl))
+	$(call cxx_incl,$(texmacs_incl) $(CXXGUI))
 $(typeset_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(typeset_incl))
 $(style_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(style_incl))
 $(pdf_obj): Objects/%.o: %.cpp
-	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE) $(CXXPDF))
+	$(call cxx_incl,$(pdf_incl) $(CXXFREETYPE) $(CXXPDF) $(CXXGUI))
 $(freetype_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(freetype_incl) $(CXXFREETYPE))
 $(texmacs_c_deps):   Objects/%.o: %.c
