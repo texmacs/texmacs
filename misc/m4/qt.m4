@@ -1,13 +1,30 @@
+
 #-------------------------------------------------------------------
 # Support for Qt
 #-------------------------------------------------------------------
 
 m4_include([misc/autotroll/autotroll.m4])
+m4_include([misc/m4/qt5.m4])
 
 AC_DEFUN([HACKED_AT_WITH_QT],[
 #QT has the install dir hard coded in library so we need to fix it manually for relocatable environment
 if test -z $TMBUILDENV
-then AT_WITH_QT
+then
+     QT5_AVAILABLE="no"
+     SAVE_LIBS="$LIBS"
+     LIBS=""
+#     AX_HAVE_QT
+     LIBS="$SAVE_LIBS"
+     if test x"$have_qt" = xno; then 
+        AC_MSG_RESULT([Qt5 seems not present, trying Qt4...])
+     	AT_WITH_QT
+     else
+        AC_MSG_RESULT([Qt5 found])
+	at_cv_qt_build=ok
+        QMAKE="qmake"
+        MOC="moc"
+        QT5_AVAILABLE="yes"
+     fi
      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
      QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
      QT_PLUGINS_PATH=`$QMAKE -query QT_INSTALL_PLUGINS`

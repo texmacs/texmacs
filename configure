@@ -1477,7 +1477,7 @@ Optional Features:
   --enable-console        enable windows console
   --disable-qt            replace Qt by X11 interface
   --enable-QtPlugins[=list]
-                          defauts plugins: imageformats,accessible
+                          defaults plugins: imageformats, and possibly more
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
   --enable-profile        enable gcc compilation flag for profiling with gprof
@@ -11638,6 +11638,15 @@ case "$enable_qt" in
 #QT has the install dir hard coded in library so we need to fix it manually for relocatable environment
 if test -z $TMBUILDENV
 then
+     QT5_AVAILABLE="no"
+     SAVE_LIBS="$LIBS"
+     LIBS=""
+#     AX_HAVE_QT
+     LIBS="$SAVE_LIBS"
+     if test x"$have_qt" = xno; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: Qt5 seems not present, trying Qt4..." >&5
+$as_echo "Qt5 seems not present, trying Qt4..." >&6; }
+
 
 
 
@@ -12241,6 +12250,14 @@ $as_echo "$QT_LIBS" >&6; }
   cd "$my_configure_pwd" || echo 'WTF!'
   rm -rf "$my_tmpdir"
 
+     else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: Qt5 found" >&5
+$as_echo "Qt5 found" >&6; }
+	at_cv_qt_build=ok
+        QMAKE="qmake"
+        MOC="moc"
+        QT5_AVAILABLE="yes"
+     fi
      # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
      QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
      QT_PLUGINS_PATH=`$QMAKE -query QT_INSTALL_PLUGINS`
@@ -12290,17 +12307,21 @@ $as_echo "enabling X11 port" >&6; }
 esac
 
 # Qt Plugins list
-
-QT_PLUGINS_LIST=imageformats,accessible
+PLUGINS_LIST="imageformats,accessible"
+if test "$QT5_AVAILABLE" = yes; then
+  PLUGINS_LIST="imageformats"
+fi
+#define([PLUGINS_LIST],[imageformats,accessible])
+QT_PLUGINS_LIST="$PLUGINS_LIST"
 # Check whether --enable-QtPlugins was given.
 if test "${enable_QtPlugins+set}" = set; then :
   enableval=$enable_QtPlugins; QT_PLUGINS_LIST=$enableval
 else
-  QT_PLUGINS_LIST=imageformats,accessible
+  QT_PLUGINS_LIST="$PLUGINS_LIST"
 fi
 
 case $QT_PLUGINS_LIST in
-yes) QT_PLUGINS_LIST=imageformats,accessible;;
+yes) QT_PLUGINS_LIST="$PLUGINS_LIST";;
 no) unset QT_PLUGINS_LIST
 esac
 
