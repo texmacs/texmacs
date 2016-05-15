@@ -178,7 +178,7 @@ load_picture (url u, int w, int h) {
 picture
 qt_load_xpm (url file_name) {
   string sss;
-  if (retina_scale > 1.5 && suffix (file_name) == "xpm") {
+  if (retina_scale >= 1.4 && suffix (file_name) == "xpm") {
     url png_equiv= glue (unglue (file_name, 4), "_x2.png");
     load_string ("$TEXMACS_PIXMAP_PATH" * png_equiv, sss, false);
   }
