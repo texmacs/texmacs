@@ -389,6 +389,7 @@
 		49DEED34170B110900332D9F /* x_picture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49DEED32170B110900332D9F /* x_picture.cpp */; };
 		49E5CC271B26C92E00A02C5A /* QTMSockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */; };
 		49E5CC2B1B26CE7800A02C5A /* QTMSockets.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E5CC261B26C92E00A02C5A /* QTMSockets.hpp */; };
+		49E861E11CE9EE2C0059B831 /* poor_extended.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E861E01CE9EE2C0059B831 /* poor_extended.cpp */; };
 		49EAD66C128AC177009919E5 /* QTMGuiHelper.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */; };
 		49F251D4151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
 		49F251D5151B70840091FF99 /* persistent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49F251D2151B70840091FF99 /* persistent.cpp */; };
@@ -1783,6 +1784,7 @@
 		49DEED33170B110900332D9F /* x_picture.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = x_picture.hpp; sourceTree = "<group>"; };
 		49E5CC251B26C92E00A02C5A /* QTMSockets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QTMSockets.cpp; sourceTree = "<group>"; };
 		49E5CC261B26C92E00A02C5A /* QTMSockets.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMSockets.hpp; sourceTree = "<group>"; };
+		49E861E01CE9EE2C0059B831 /* poor_extended.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = poor_extended.cpp; sourceTree = "<group>"; };
 		49EAD66B128AC168009919E5 /* QTMGuiHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMGuiHelper.hpp; sourceTree = "<group>"; };
 		49F251D2151B70840091FF99 /* persistent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = persistent.cpp; sourceTree = "<group>"; };
 		49F251D3151B70840091FF99 /* persistent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = persistent.hpp; sourceTree = "<group>"; };
@@ -3301,6 +3303,7 @@
 				9C0B47E010A8CC100097A335 /* math_font.cpp */,
 				4911B1781CCA191400F0AFFD /* poor_bbb.cpp */,
 				4911B1791CCA191400F0AFFD /* poor_bold.cpp */,
+				49E861E01CE9EE2C0059B831 /* poor_extended.cpp */,
 				4911B17A1CCA191400F0AFFD /* poor_italic.cpp */,
 				49FB1B021CB30D6000B983F3 /* poor_rubber.cpp */,
 				49FB1B031CB30D6000B983F3 /* poor_smallcaps.cpp */,
@@ -5166,6 +5169,7 @@
 				9CE18E83125E685D00641CFC /* tree_brackets.cpp in Sources */,
 				4911B1831CCA191400F0AFFD /* poor_italic.cpp in Sources */,
 				9CF78E0D125FBF9700CA5846 /* highlight_observer.cpp in Sources */,
+				49E861E11CE9EE2C0059B831 /* poor_extended.cpp in Sources */,
 				9CEDAA301264FF6C009630CC /* tree_analyze.cpp in Sources */,
 				9CEDAA361264FF88009630CC /* unicode_math_font.cpp in Sources */,
 				9CDA725E126CC926006E8028 /* tree_modify.cpp in Sources */,
