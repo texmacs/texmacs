@@ -210,7 +210,12 @@
         moveclick-tolerance)))
 
 (define (move-over)
-  (set-message "Left click: new object; Drag: edit object; Right click: remove" "")
+  (set-message (string-append "Left click: new object; "
+                              "Drag: edit object; "
+                              "Right click: remove; "
+                              "Return: apply properties; "
+                              "S-Return: fetch properties")
+               "Mouse over object")
   (graphics-decorations-update)
   (if current-path
       (with p2 (tm-upwards-path current-path
@@ -255,8 +260,10 @@
          (== (logand (get-keyboard-modifiers) ShiftMask) 0)))
       (begin
         (if leftclick-waiting
-            (set-message "Left click: finish; Right click: undo" "")
-            (set-message "Left click: add point; Right click: undo" ""))
+            (set-message "Left click: finish; Right click: undo"
+                         "Inserting control points")
+            (set-message "Left click: add point; Right click: undo"
+                         "Inserting control points"))
         (object_set-point current-point-no current-x current-y)))
   (graphics-decorations-update))
 
@@ -266,7 +273,8 @@
 
 (define (next-point)
   (cond ((not (hardly-moved?))
-         (set-message "Left click: finish; Right click: undo" "")
+         (set-message "Left click: finish; Right click: undo"
+                      "Inserting control points")
          (set! leftclick-waiting #t))
         (leftclick-waiting
          (last-point))
@@ -274,7 +282,8 @@
          (undo 0)
          (set! leftclick-waiting #f))
         (else
-         (set-message "Left click: finish; Right click: undo" "")
+          (set-message "Left click: finish; Right click: undo"
+                       "Inserting control points")
          (graphics-back-state #f)
          (graphics-move current-x current-y)
          (set! leftclick-waiting #t))))
@@ -351,7 +360,7 @@
             (move-point)
             (move-over)))
       (begin
-        (set-message "Left click: new object" "")
+        (set-message "Left click: new object" "Graphics")
         (graphics-decorations-reset))))
 
 (define (pointer-inside-graphical-text?)
@@ -413,7 +422,7 @@
   (:require (== mode 'edit))
   (:state graphics-state)
   (edit_move mode x y)
-  (set-message "Release left button: finish editing" ""))
+  (set-message "Release left button: finish editing" "Dragging"))
 
 (tm-define (edit_end-drag mode x y)
   (:require (== mode 'edit))

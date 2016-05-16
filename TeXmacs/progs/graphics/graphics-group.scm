@@ -172,14 +172,47 @@
     (graphics-remove p 'memoize-layer)
     (graphics-group-enrich-insert-table (stree-radical obj) tab #f)))
 
-(tm-define (graphics-copy-props p)
-  (let* ((t (path->tree p))
-         (attrs (graphical-relevant-attributes t))
-         (vars (list-difference attrs '("gid" "anim-id")))
-         (get-prop (lambda (var) (graphics-path-property p var)))
-         (gr-vars (map gr-prefix vars))
-         (vals (map get-prop vars)))
-    (for-each graphics-set-property gr-vars vals)))
+(tm-define (graphics-get-props p)
+  (and-with t (path->tree p)
+    (let* ((attrs (graphical-relevant-attributes t))
+           (vars (list-difference attrs '("gid" "anim-id")))
+           (get-prop (lambda (var) (graphics-path-property p var)))
+           (gr-vars (map gr-prefix vars))
+           (vals (map get-prop vars)))
+      (for-each graphics-set-property gr-vars vals))))
+
+(tm-define (graphics-get-props-at-mouse)
+  (and-with p current-path
+    (graphics-get-props p)))
+
+(define (with-list vars vals)
+  (cond ((or (null? vars) (null? vals)) (list))
+        ((== (car vals) "default") (with-list (cdr vars) (cdr vals)))
+        (else (cons* (car vars) (car vals)
+                     (with-list (cdr vars) (cdr vals))))))
+
+(define (graphics-tree-apply-props t vars vals)
+  (with l (with-list vars vals)
+    (and-with w (tree-up t)
+      (if (tree-is? w 'with)
+          (if (null? l)
+              (tree-set! w (tm-ref w :last))
+              (tree-set! w `(with ,@l ,(tm-ref w :last))))
+          (if (null? l)
+              (noop)
+              (tree-set! t `(with ,@l ,t)))))))
+
+(tm-define (graphics-apply-props p)
+  (and-with t (path->tree p)
+    (let* ((attrs (graphical-relevant-attributes t))
+           (vars (list-difference attrs '("gid" "anim-id")))
+           (gr-vars (map gr-prefix vars))
+           (vals (map graphics-get-property gr-vars)))
+      (graphics-tree-apply-props t vars vals))))
+
+(tm-define (graphics-apply-props-at-mouse)
+  (and-with p current-path
+    (graphics-apply-props p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remove
@@ -303,7 +336,7 @@
          (sketch-reset)
          (graphics-decorations-update))
         ((and p (not multiselecting) (== (cadr (graphics-mode)) 'props))
-         (graphics-copy-props p))))
+         (graphics-get-props p))))
 
 (tm-define (unselect-all p obj)
   (texmacs-error "unselect-all" "invalid context"))
@@ -346,11 +379,15 @@
                       (point ,selecting-x0 ,y)))))))
         (else
           (cond (current-path
-                 (set-message "Left click: operate; Right click: select/unselect" ""))
+                 (set-message (string-append "Left click: operate; "
+                                             "Right click: select/unselect")
+                              "Group of objects"))
                 ((nnull? (sketch-get))
-                 (set-message "Left click: operate" ""))
+                 (set-message "Left click: operate"
+                              "Group of objects"))
                 (else
-                  (set-message "Move over object on which to operate" "")))
+                  (set-message "Move over object on which to operate"
+                               "Edit groups of objects")))
           (graphics-decorations-update))))
 
 (tm-define (edit_move mode x y)

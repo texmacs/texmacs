@@ -116,6 +116,8 @@
   ("end" (graphics-zmove 'background))
   ("pageup" (graphics-zmove 'closer))
   ("pagedown" (graphics-zmove 'farther))
+  ("return" (graphics-apply-props-at-mouse))
+  ("S-return" (graphics-get-props-at-mouse))
   ("A-left" (graphics-decrease-hsize))
   ("A-right" (graphics-increase-hsize))
   ("A-down" (graphics-increase-vsize))
@@ -145,7 +147,8 @@
 (define graphics-keys
   '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
     "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
-    "backspace" "delete" "tab" "F1" "F2" "F3" "F4" "F9" "F10" "F11" "F12"))
+    "return" "backspace" "delete" "tab"
+    "F1" "F2" "F3" "F4" "F9" "F10" "F11" "F12"))
 
 (tm-define (keyboard-press key time)
   (:mode in-active-graphics?)
