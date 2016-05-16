@@ -305,7 +305,7 @@
              (import-from (graphics graphics-markup))
              (graphics-set-mode `(edit ,tag))))))))
   ---
-  ("Set properties" (graphics-set-mode '(group-edit props)))
+  ("Set properties" (graphics-set-mode '(group-edit edit-props)))
   ("Move objects" (graphics-set-mode '(group-edit move)))
   ("Resize objects" (graphics-set-mode '(group-edit zoom)))
   ("Rotate objects" (graphics-set-mode '(group-edit rotate)))
@@ -682,9 +682,9 @@
    (graphics-set-mode '(hand-edit line))))
 
 (tm-menu (graphics-group-property-icons)
-  ((check (balloon (icon "tm_edit_props.xpm") "Change objects properties")
-          "v" (== (graphics-mode) '(group-edit props)))
-   (graphics-set-mode '(group-edit props))))
+  ((check (balloon (icon "tm_edit_props.xpm") "Edit object properties")
+          "v" (== (graphics-mode) '(group-edit edit-props)))
+   (graphics-set-mode '(group-edit edit-props))))
 
 (tm-menu (graphics-group-icons)
   ((check (balloon (icon "tm_group_move.xpm") "Move objects")
@@ -709,10 +709,10 @@
         (assuming (== col "default")
           (=> (color "black" #f #f 25 17)
               (link graphics-color-menu)))
-        (assuming (== col "none")
-          (=> "none"
+        (assuming (in? col (list "none" "mixed"))
+          (=> (eval col)
               (link graphics-color-menu)))
-        (assuming (and (!= col "default") (!= col "none"))
+        (assuming (nin? col (list "default" "none" "mixed"))
           (=> (color col #f #f 25 17)
               (link graphics-color-menu))))))
   (assuming (graphics-mode-attribute? (graphics-mode) "fill-color")
@@ -723,10 +723,10 @@
         (assuming (== col "default")
           (=> "none"
               (link graphics-fill-color-menu)))
-        (assuming (== col "none")
-          (=> "none"
+        (assuming (in? col (list "none" "mixed"))
+          (=> (eval col)
               (link graphics-fill-color-menu)))
-        (assuming (and (!= col "default") (!= col "none"))
+        (assuming (nin? col (list "default" "none" "mixed"))
           (=> (color col #f #f 25 17)
               (link graphics-fill-color-menu))))))
   (assuming (== (get-preference "experimental alpha") "on")
@@ -870,6 +870,7 @@
         ((== s '(edit math-at)) "mathematics")
         ((== s '(edit document-at)) "long text")
         ((== s '(group-edit props)) "properties")
+        ((== s '(group-edit edit-props)) "properties")
         ((== s '(group-edit move)) "move")
         ((== s '(group-edit zoom)) "resize")
         ((== s '(group-edit rotate)) "rotate")
@@ -995,10 +996,10 @@
   (mini #t
     (group "Fill color:")
     (with col (object-get-property "fill-color")
-      (assuming (in? col (list "" "none" "default"))
-        (=> "none"
+      (assuming (in? col (list "" "none" "default" "mixed"))
+        (=> (eval (if (== "mixed") col "none"))
             (link doc-at-fill-color-menu)))
-      (assuming (nin? col (list "" "none" "default"))
+      (assuming (nin? col (list "" "none" "default" "mixed"))
         (=> (color col #f #f 25 17)
             (link doc-at-fill-color-menu)))))
   /

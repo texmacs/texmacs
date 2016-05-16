@@ -518,7 +518,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (proviso-name p)
-  (cond ((tm-func? p 'show-this 1) "=")
+  (cond ((== p "mixed") "mixed")
+        ((tm-func? p 'show-this 1) "=")
         ((tm-func? p 'show-from 1) ">=")
         ((tm-func? p 'show-until 1) "<=")
         (else "*")))

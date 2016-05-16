@@ -215,6 +215,84 @@
     (graphics-apply-props p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Edit properties
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (has-attribute? t var)
+  (cond ((not (tree? t)) #f)
+        ((tree-is? t 'with) (has-attribute? (tm-ref t :last) var))
+        ((tree-atomic? t) #f)
+        (else (graphics-attribute? (tree-label t) var))))
+
+(tm-define (graphics-mode-attribute? mode var)
+  (:require (== (graphics-mode) '(group-edit edit-props)))
+  (with v (if (string-starts? var "gr-") (string-drop var 3) var)
+    (with l (map (cut has-attribute? <> v) (sketch-get))
+      (list-or l))))
+
+(define (property-get t var i)
+  (cond ((not (tree? t)) "default")
+        ((not (tree-is? t 'with)) "default")
+        ((>= i (- (tree-arity t) 1)) "default")
+        ((tm-equal? (tree-ref t i) var) (tree->stree (tree-ref t (+ i 1))))
+        (else (property-get t var (+ i 2)))))
+
+(define (property-and p1 p2)
+  (if (== p1 p2) p1 "mixed"))
+
+(define (properties-and l)
+  (cond ((null? l) "default")
+        ((null? (cdr l)) (car l))
+        (else (property-and (car l) (properties-and (cdr l))))))
+
+(tm-define (graphics-get-property var)
+  (:require (and (== (graphics-mode) '(group-edit edit-props))
+                 (graphics-selection-active?)))
+  (with v (if (string-starts? var "gr-") (string-drop var 3) var)
+    (if (graphics-mode-attribute? (graphics-mode) v)
+        (with l (map (cut property-get <> v 0) (sketch-get))
+          (properties-and l))
+        (former var))))
+
+(define (property-remove t var i)
+  (cond ((>= i (- (tree-arity t) 1)) t)
+        ((tm-equal? (tree-ref t i) var)
+         (if (== (tree-arity t) 3)
+             (tree-remove-node! t 2)
+             (tree-remove! t i 2))
+         t)
+        (else (property-remove t var (+ i 2)))))
+
+(define (property-set-sub t var val i)
+  (cond ((>= i (- (tree-arity t) 1))
+         (tree-insert! t i (list var val))
+         t)
+        ((tm-equal? (tree-ref t i) var)
+         (tree-set (tree-ref t (+ i 1)) val)
+         t)
+        (else (property-set-sub t var val (+ i 2)))))
+
+(define (property-set t var val)
+  (cond ((not (tree? t)) t)
+        ((tree-is? t 'with)
+         (if (== val "default")
+             (property-remove t var 0)
+             (property-set-sub t var val 0)))
+        ((== val "default") t)
+        (else
+          (tree-set! t `(with ,var ,val ,t))
+          t)))
+
+(tm-define (graphics-set-property var val)
+  (:require (and (== (graphics-mode) '(group-edit edit-props))
+                 (graphics-selection-active?)))
+  (with v (if (string-starts? var "gr-") (string-drop var 3) var)
+    (if (graphics-mode-attribute? (graphics-mode) v)
+        (with r (map (cut property-set <> v val) (sketch-get))
+          (sketch-set! r))
+        (former var val))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remove
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -404,10 +482,21 @@
   (:state graphics-state)
   (start-operation 'move current-path current-obj))
 
+(tm-define (edit_left-button mode x y)
+  (:require (== (graphics-mode) '(group-edit edit-props)))
+  (:state graphics-state)
+  (if (and (not current-path) (graphics-selection-active?))
+      (unselect-all current-path current-obj)
+      (begin
+        (unselect-all current-path current-obj)
+        (toggle-select x y current-path current-obj))))
+
 (tm-define (edit_right-button mode x y)
   (:require (eq? mode 'group-edit))
   (:state graphics-state)
-  (toggle-select x y current-path current-obj))
+  (if (and (not current-path) (graphics-selection-active?))
+      (unselect-all current-path current-obj)
+      (toggle-select x y current-path current-obj)))
 
 (tm-define (edit_middle-button mode x y)
   (:require (eq? mode 'group-edit))
