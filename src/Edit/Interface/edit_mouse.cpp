@@ -475,7 +475,9 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
     popup_win= widget ();
   }
 
-  if (inside_graphics (false)) {
+  //if (inside_graphics (false)) {
+  //if (inside_graphics ()) {
+  if (inside_graphics (type != "release-left")) {
     if (mouse_graphics (type, x, y, mods, t)) return;
     if (!over_graphics (x, y))
       eval ("(graphics-reset-context 'text-cursor)");
