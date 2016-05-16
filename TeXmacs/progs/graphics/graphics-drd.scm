@@ -123,6 +123,7 @@
   ("line-join" . "normal")
   ("line-caps" . "normal")
   ("line-effects" . "normal")
+  ("line-portion" . "1")
   ("dash-style" . "none")
   ("dash-style-unit" . "5ln")
   ("arrow-begin" . "none")
@@ -189,7 +190,7 @@
   (:require (or (graphical-curve-tag? tag) (graphical-user-tag? tag)))
   (append (graphics-common-attributes)
           '("fill-color"
-            "line-width" "line-join" "line-caps" "line-effects"
+            "line-width" "line-join" "line-caps" "line-effects" "line-portion"
             "dash-style" "dash-style-unit"
             "arrow-begin" "arrow-end" "arrow-length" "arrow-height")))
 

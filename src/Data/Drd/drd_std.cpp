@@ -1057,6 +1057,7 @@ init_std_drd () {
   init_var (GR_LINE_JOIN, TYPE_STRING);
   init_var (GR_LINE_CAPS, TYPE_STRING);
   init_var (GR_LINE_EFFECTS, TYPE_ADHOC);
+  init_var (GR_LINE_PORTION, TYPE_NUMERIC);
   init_var (GR_DASH_STYLE, TYPE_ADHOC);
   init_var (GR_DASH_STYLE_UNIT, TYPE_LENGTH);
   init_var (GR_ARROW_BEGIN, TYPE_ADHOC);
@@ -1085,6 +1086,7 @@ init_std_drd () {
   init_var (LINE_JOIN, TYPE_STRING);
   init_var (LINE_CAPS, TYPE_STRING);
   init_var (LINE_EFFECTS, TYPE_ADHOC);
+  init_var (LINE_PORTION, TYPE_NUMERIC);
   init_var (DASH_STYLE, TYPE_ADHOC);
   init_var (DASH_STYLE_UNIT, TYPE_LENGTH);
   init_var (ARROW_BEGIN, TYPE_ADHOC);

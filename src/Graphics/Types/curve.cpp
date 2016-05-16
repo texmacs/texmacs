@@ -1209,3 +1209,103 @@ curve
 frame::operator [] (curve c) {
   return tm_new<transformed_curve_rep> (invert (*this), c);
 }
+
+/******************************************************************************
+* Portions of curves
+******************************************************************************/
+
+void
+poor_rectify_cumul (curve c, array<point>& a, double eps,
+                    array<double>& ts, double t0, double t1) {
+  int NUM= 5;
+  point p0= c->evaluate (t0);
+  point p1= c->evaluate (t1);
+  for (int i=1; i<NUM; i++) {
+    double u= ((double) i) / ((double) NUM);
+    point pi = c->evaluate (t0 + u * (t1 - t0));
+    point pi2= p0 + u * (p1 - p0);
+    if (norm (pi2 - pi) >= eps) {
+      poor_rectify_cumul (c, a, eps, ts, t0, (t0 + t1) / 2);
+      poor_rectify_cumul (c, a, eps, ts, (t0 + t1) / 2, t1);
+      return;
+    }
+  }
+  a  << p1;
+  ts << t1;
+}
+
+struct partial_curve_rep: public curve_rep {
+  curve c;
+  double t0, t1;
+  partial_curve_rep (curve c2, double t0b, double t1b):
+    c (c2), t0 (t0b), t1 (t1b) {}
+  int nr_components () { return c->nr_components (); }
+  point evaluate (double t) { return c (t0 + (t1 - t0) * t); }
+  void rectify_cumul (array<point>& a, double eps) {
+    array<double> ts;
+    poor_rectify_cumul (c, a, eps, ts, t0, t1); }
+  double bound (double t, double eps) {
+    return c->bound (t0 + (t1 - t0) * t, eps) / (t1 - t0); }
+  point grad (double t, bool& error) {
+    return (t1 - t0) * c->grad (t0 + (t1 - t0) * t, error); }
+  double curvature (double u1, double u2) {
+    return c->curvature (t0 + (t1 - t0) * u1, t0 + (t1 - t0) * u2); }
+  int get_control_points (
+    array<double>&abs, array<point>& pts, array<path>& cip);
+  array<double> find_closest_points (
+    double t1, double t2, point p, double eps);
+};
+
+int
+partial_curve_rep::get_control_points (
+  array<double>&abs, array<point>& pts, array<path>& cip)
+{
+  int res= c->get_control_points (abs, pts, cip);
+  int i;
+  abs= copy (abs);
+  for (i=0; i<res; i++)
+    abs[i]= (abs[i] - t0) / (t1 - t0);
+  return res;
+}
+
+
+array<double>
+partial_curve_rep::find_closest_points (
+  double t1, double t2, point p, double eps)
+{
+  if (t1 > t2) { double a= t1; t1= t2; t2= a; }
+  return curve_rep::find_closest_points (t1, t2, p, eps);
+}
+
+curve
+part (curve c, double start, double end) {
+  ASSERT (fabs (end - start) > 1.0e-6, "very small portions not supported");
+  return tm_new<partial_curve_rep> (c, start, end);
+}
+
+curve
+truncate (curve c, double portion, double eps) {
+  if (portion == 1.0) return c;
+  ASSERT (portion > 1.0e-6 && portion < 1, "invalid portion of curve");
+  array<point>  a;
+  array<double> ts;
+  a  << c->evaluate (0.0);
+  ts << 0.0;
+  poor_rectify_cumul (c, a, eps, ts, 0.0, 1.0);
+  double tot= 0.0;
+  for (int i=1; i<N(a); i++)
+    tot += norm (a[i] - a[i-1]);
+  double rem= portion * tot;
+  for (int i=1; i<N(a); i++) {
+    double d= norm (a[i] - a[i-1]);
+    if (d > rem) {
+      double t0= ts[i-1];
+      double t1= ts[i];
+      double a = rem / d;
+      double tt= t0 + a * (t1 - t0);
+      return part (c, 0.0, tt);
+    }
+    else rem -= d;
+  }
+  return c;
+}

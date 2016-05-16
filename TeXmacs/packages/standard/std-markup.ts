@@ -494,6 +494,22 @@
 
   <\active*>
     <\src-comment>
+      Animations.
+    </src-comment>
+  </active*>
+
+  <assign|anim-std-step|0.1s>
+
+  <assign|anim-nr-frames|25>
+
+  <assign|anim-edit|<macro|body|current|duration|step|now|<arg|current>>>
+
+  <assign|anim-fade-in|<macro|body|dur|<anim-static|<morph|<tuple|0|<with|opacity|0|<arg|body>>>|<tuple|1|<with|opacity|1|<arg|body>>>>|<arg|dur>|<min|<value|anim-std-step>|<over|<arg|dur>|<value|anim-nr-frames>>>|<arg|dur>>>>
+
+  <assign|anim-zoom-in|<macro|body|dur|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|0.1|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|1.0|<value|orig-magnification>>|<arg|body>>>>|<arg|dur>|<min|<value|anim-std-step>|<over|<arg|dur>|<value|anim-nr-frames>>>|<arg|dur>>>>>
+
+  <\active*>
+    <\src-comment>
       Miscellaneous.
     </src-comment>
   </active*>
@@ -503,8 +519,6 @@
   <assign|slink|<macro|body|<hlink|<with|font-family|tt|language|verbatim|<arg|body>>|<arg|body>>>>
 
   <assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>
-
-  <assign|anim-edit|<macro|body|current|duration|step|now|<arg|current>>>
 </body>
 
 <\initial>

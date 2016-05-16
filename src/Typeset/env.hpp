@@ -65,9 +65,10 @@
 #define Env_Dash_Style_Unit   32
 #define Env_Fill_Color        33
 #define Env_Line_Arrows       34
-#define Env_Text_At_Halign    35
-#define Env_Text_At_Valign    36
-#define Env_Doc_At_Valign     37
+#define Env_Line_Portion      35
+#define Env_Text_At_Halign    36
+#define Env_Text_At_Valign    37
+#define Env_Doc_At_Valign     38
 
 /******************************************************************************
 * For style file editing
@@ -197,6 +198,7 @@ public:
   double       dash_style_ratio;
   brush        fill_brush;
   array<tree>  line_arrows;
+  double       line_portion;
   string       text_at_halign;
   string       text_at_valign;
   string       doc_at_valign;

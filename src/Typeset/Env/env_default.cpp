@@ -241,6 +241,7 @@ initialize_default_env () {
   env (GR_LINE_JOIN)     = "default";   // line join for new objects
   env (GR_LINE_CAPS)     = "default";   // line caps for new objects
   env (GR_LINE_EFFECTS)    = "default";   // line effects for new objects
+  env (GR_LINE_PORTION)    = "default";   // curve portion for new objects
   env (GR_DASH_STYLE)      = "default";   // dash style for new objects
   env (GR_DASH_STYLE_UNIT) = "default";   // dash style unit for new objects
   env (GR_ARROW_BEGIN)     = "default";   // arrow begin for new objects
@@ -270,6 +271,7 @@ initialize_default_env () {
   env (LINE_JOIN)        = "normal";    // junctions in multilines
   env (LINE_CAPS)        = "normal";    // caps at ends
   env (LINE_EFFECTS)     = "none";      // effects to be applied on line
+  env (LINE_PORTION)     = "1";         // portion of curve to be drawn
   env (DASH_STYLE)       = "none";      // dash style
   env (DASH_STYLE_UNIT)  = "5ln";       // dash style unit
   env (ARROW_BEGIN)      = "none";      // arrow at beginning of line

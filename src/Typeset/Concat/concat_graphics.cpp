@@ -332,6 +332,8 @@ BEGIN_MAGNIFY
       cip << cip[0];
     }
     curve c= env->fr (poly_segment (a, cip));
+    if (env->line_portion < 1.0)
+      c= truncate (c, max (env->line_portion, 1.0e-5), PIXEL / 10.0);
     print (curve_box (ip, c, env->pen,
                       env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));
@@ -357,6 +359,8 @@ BEGIN_MAGNIFY
       typeset_line (t, ip, close);
     else {
       curve c= env->fr (arc (a, cip, close));
+      if (env->line_portion < 1.0)
+        c= truncate (c, max (env->line_portion, 1.0e-5), PIXEL / 10.0);
       print (curve_box (ip, c, env->pen,
                         env->dash_style, env->dash_motif, env->dash_style_unit,
                         env->fill_brush, typeset_line_arrows (ip)));
@@ -382,6 +386,8 @@ BEGIN_MAGNIFY
       cip << cip[0];
     }
     curve c= env->fr (N(a)>=3 ? spline (a, cip, close): poly_segment (a, cip));
+    if (env->line_portion < 1.0)
+      c= truncate (c, max (env->line_portion, 1.0e-5), PIXEL / 10.0);
     print (curve_box (ip, c, env->pen,
                       env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));
@@ -424,6 +430,8 @@ BEGIN_MAGNIFY
       c= poly_bezier (a, cip, simple, closed);
     }
     c= env->fr (c);
+    if (env->line_portion < 1.0)
+      c= truncate (c, max (env->line_portion, 1.0e-5), PIXEL / 10.0);
     print (curve_box (ip, c, env->pen,
                       env->dash_style, env->dash_motif, env->dash_style_unit,
                       env->fill_brush, typeset_line_arrows (ip)));

@@ -129,6 +129,7 @@ initialize_default_var_type () {
   var_type (ARROW_END)          = Env_Line_Arrows;
   var_type (ARROW_LENGTH)       = Env_Line_Arrows;
   var_type (ARROW_HEIGHT)       = Env_Line_Arrows;
+  var_type (LINE_PORTION)       = Env_Line_Portion;
   var_type (TEXT_AT_HALIGN)     = Env_Text_At_Halign;
   var_type (TEXT_AT_VALIGN)     = Env_Text_At_Valign;
   var_type (DOC_AT_VALIGN)      = Env_Doc_At_Valign;
@@ -775,6 +776,10 @@ edit_env_rep::update_line_arrows () {
   string h= get_string (ARROW_HEIGHT);
   line_arrows[0]= decode_arrow (env [ARROW_BEGIN], l, h);
   line_arrows[1]= decode_arrow (env [ARROW_END], l, h);
+  if (line_arrows[0] != "")
+    line_arrows[0]= tree (WITH, LINE_PORTION, "1", line_arrows[0]);
+  if (line_arrows[1] != "")
+    line_arrows[1]= tree (WITH, LINE_PORTION, "1", line_arrows[1]);
 }
 
 void
@@ -803,6 +808,7 @@ edit_env_rep::update () {
   update_dash_style ();
   update_dash_style_unit ();
   update_line_arrows ();
+  line_portion= get_double (LINE_PORTION);
   text_at_halign= get_string (TEXT_AT_HALIGN);
   text_at_valign= get_string (TEXT_AT_VALIGN);
   doc_at_valign= get_string (DOC_AT_VALIGN);
@@ -913,6 +919,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Line_Arrows:
     update_line_arrows();
+    break;
+  case Env_Line_Portion:
+    line_portion= get_double (LINE_PORTION);
     break;
   case Env_Text_At_Halign:
     text_at_halign= get_string (TEXT_AT_HALIGN);

@@ -899,6 +899,11 @@
   (:argument vu "Vertical dash style unit")
   (graphics-set-property "gr-dash-style-unit" `(tuple ,hu ,vu)))
 
+(tm-define (graphics-set-line-portion val)
+  (:argument val "Line portion")
+  (:check-mark "*" (graphics-test-property? "gr-line-portion"))
+  (graphics-set-property "gr-line-portion" val))
+
 (tm-define (graphics-set-fill-color val)
   (:argument val "Fill color")
   (:check-mark "*" (graphics-test-property? "gr-fill-color"))
