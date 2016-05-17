@@ -201,9 +201,9 @@ double
 anim_compose_box_rep::anim_next () {
   anim_resync ();
   double r= bs[current]->anim_next ();
-  if (pl->speed > 0 && current != N(bs)-1)
+  if (pl->get_speed () > 0 && current != N(bs)-1)
     return min (r, pl->get_refresh_time (offsets[current] - anim_time ()));
-  if (pl->speed < 0 && current != 0)
+  if (pl->get_speed () < 0 && current != 0)
     return min (r, pl->get_refresh_time (anim_time () - offsets[current-1]));
   return r;
 }
@@ -311,7 +311,7 @@ anim_repeat_box_rep::anim_next () {
   anim_resync ();
   double r= bs[0]->anim_next ();
   double t= anim_time ();
-  if (pl->speed > 0)
+  if (pl->get_speed () > 0)
     r= min (r, pl->get_refresh_time ((current_it + 1.0) * duration - t));
   else
     r= min (r, pl->get_refresh_time (t - current_it * duration));
@@ -377,9 +377,9 @@ double
 anim_effect_box_rep::anim_next () {
   anim_resync ();
   double r= bs[0]->anim_next ();
-  if (pl->speed > 0 && 1.0 > current_x)
+  if (pl->get_speed () > 0 && 1.0 > current_x)
     r= min (r, pl->get_refresh_time (0.0));
-  if (0 > pl->speed && 0.0 < current_x)
+  if (0 > pl->get_speed () && 0.0 < current_x)
     r= min (r, pl->get_refresh_time (0.0));
   return r;
 }
