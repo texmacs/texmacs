@@ -18,9 +18,6 @@ extern int player_count;
 
 class player_rep: public abstract_struct {
 public:
-  double started;
-  double speed;
-
   inline player_rep () { TM_DEBUG(player_count++); }
   inline virtual ~player_rep () { TM_DEBUG(player_count--); }
 
@@ -28,6 +25,8 @@ public:
   virtual double get_speed () = 0;
   virtual void   set_started (double t) = 0;
   virtual double get_started () = 0;
+  virtual void   set_duration (double l) = 0;
+  virtual double get_duration () = 0;
 
   virtual void   set_elapsed (double t) = 0;
   virtual double get_elapsed () = 0;
@@ -54,5 +53,11 @@ player copy (player spc);
 bool operator == (player p1, player p2);
 bool operator != (player p1, player p2);
 tm_ostream& operator << (tm_ostream& out, player p);
+
+player reverse_player (player base);
+player fade_in_player (player base);
+player fade_out_player (player base);
+player faded_player (player base);
+player bump_player (player base);
 
 #endif // defined PLAYER_H
