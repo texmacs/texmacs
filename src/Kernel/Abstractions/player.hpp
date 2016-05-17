@@ -13,29 +13,42 @@
 #define PLAYER_H
 #include "tree.hpp"
 
-class player_rep: concrete_struct {
+class player;
+extern int player_count;
+
+class player_rep: public abstract_struct {
 public:
   double started;
   double speed;
 
-  player_rep (double started, double speed);
+  inline player_rep () { TM_DEBUG(player_count++); }
+  inline virtual ~player_rep () { TM_DEBUG(player_count--); }
 
-  void   set_elapsed (double t);
-  double get_elapsed ();
-  void   set_speed (double s);
-  double get_speed ();
-  double get_refresh_time (double dt);
+  virtual void   set_speed (double s) = 0;
+  virtual double get_speed () = 0;
+  virtual void   set_started (double t) = 0;
+  virtual double get_started () = 0;
+
+  virtual void   set_elapsed (double t) = 0;
+  virtual double get_elapsed () = 0;
+  virtual double get_refresh_time (double dt) = 0;
+
+  virtual player duplicate () = 0;
+  virtual tree   expression () = 0;
+  virtual void   print (tm_ostream& out) = 0;
 
   friend class player;
 };
 
 class player {
-  CONCRETE(player);
+  ABSTRACT(player);
   player ();
   player (double started, double speed);
   operator tree ();
+  friend bool operator == (player p1, player p2);
+  friend bool operator != (player p1, player p2);
 };
-CONCRETE_CODE(player);
+ABSTRACT_CODE(player);
 
 player copy (player spc);
 bool operator == (player p1, player p2);

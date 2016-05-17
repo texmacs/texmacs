@@ -13,76 +13,123 @@
 #include "timer.hpp"
 
 /******************************************************************************
-* Constructors
+* Basic players
 ******************************************************************************/
 
-player_rep::player_rep (double started2, double speed2) {
+class basic_player_rep: public player_rep {
+public:
+  double started;
+  double speed;
+
+  basic_player_rep (double started, double speed);
+
+  void   set_started (double t);
+  double get_started ();
+  void   set_speed (double s);
+  double get_speed ();
+
+  void   set_elapsed (double t);
+  double get_elapsed ();
+  double get_refresh_time (double dt);
+
+  player duplicate ();
+  tree   expression ();
+  void   print (tm_ostream& out);
+
+  friend class player;
+};
+
+basic_player_rep::basic_player_rep (double started2, double speed2) {
   started= started2;
   speed  = speed2;
 }
 
-player::player () {
-  rep= tm_new<player_rep> ((double) texmacs_time (), 1.0);
-}
-
-player::player (double started, double speed) {
-  rep= tm_new<player_rep> (started, speed);
-}
-
-player::operator tree () {
-  return tree (TUPLE,
-	       as_string (rep->started),
-	       as_string (rep->speed));
-}
-
-player
-copy (player p) {
-  return player (p->started, p->speed);
-}
-
-/******************************************************************************
-* Functions on players
-******************************************************************************/
-
 void
-player_rep::set_elapsed (double t) {
-  started= ((double) texmacs_time ()) - (t / speed);
+basic_player_rep::set_started (double t) {
+  started= t;
 }
 
 double
-player_rep::get_elapsed () {
-  return (((double) texmacs_time ()) - started) * speed;
+basic_player_rep::get_started () {
+  return started;
 }
 
 void
-player_rep::set_speed (double s) {
+basic_player_rep::set_speed (double s) {
   double t= get_elapsed ();
   speed= s;
   set_elapsed (t);
 }
 
 double
-player_rep::get_speed () {
+basic_player_rep::get_speed () {
   return speed;
 }
 
+void
+basic_player_rep::set_elapsed (double t) {
+  started= ((double) texmacs_time ()) - (t / speed);
+}
+
 double
-player_rep::get_refresh_time (double dt) {
+basic_player_rep::get_elapsed () {
+  return (((double) texmacs_time ()) - started) * speed;
+}
+
+double
+basic_player_rep::get_refresh_time (double dt) {
   return texmacs_time () + fabs (dt / speed) + 1.0;
+}
+
+player
+basic_player_rep::duplicate () {
+  return player (started, speed);
+}
+
+tree
+basic_player_rep::expression () {
+  return tree (TUPLE, as_string (started), as_string (speed));
+}
+
+void
+basic_player_rep::print (tm_ostream& out) {
+  out << "player (" << started << ", " << speed << ")";
+}
+
+/******************************************************************************
+* Abstract players
+******************************************************************************/
+
+int player_count= 0;
+
+player::player ():
+  rep (tm_new<basic_player_rep> ((double) texmacs_time (), 1.0)) {
+    INC_COUNT (rep); }
+
+player::player (double started, double speed):
+  rep (tm_new<basic_player_rep> (started, speed)) { INC_COUNT (rep); }
+
+player::operator tree () {
+  return rep->expression ();
+}
+
+player
+copy (player p) {
+  return p->duplicate ();
 }
 
 bool
 operator == (player p1, player p2) {
-  return p1->started == p2->started && p1->speed == p2->speed;
+  return p1.rep == p2.rep;
 }
 
 bool
 operator != (player p1, player p2) {
-  return !(p1 == p2);
+  return p1.rep != p2.rep;
 }
 
 tm_ostream&
 operator << (tm_ostream& out, player p) {
-  out << "player (" << p->started << ", " << p->speed << ")";
+  p->print (out);
   return out;
 }

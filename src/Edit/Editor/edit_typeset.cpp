@@ -801,7 +801,7 @@ edit_typeset_rep::typeset_sub (SI& x1, SI& y1, SI& x2, SI& y2) {
 static void
 report_missing (hashmap<string,tree> missing) {
   array<string> a;
-  for (iterator<string> it= iterate (missing); it->busy(); a << it->next ());
+  for (iterator<string> it= iterate (missing); it->busy(); a << it->next ()) {}
   merge_sort (a);
   for (int i=0; i<N(a); i++)
     if (!starts (a[i], "bib-"))
