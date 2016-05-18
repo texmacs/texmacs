@@ -44,6 +44,7 @@ function bundle_all_libs_sub
 	local lib change cmdout libname file="$1" rpath="$2" d
 	[[ $(otool -DX "$file") == @executable_path/../$file ]] && return 0
 	echo "Process $file"
+    chmod +w "$file"  # Needed e.g. with homebrew (libraries are 622)
   install_name_tool -id "@executable_path/../$file" "$file" || return 31
 	cmdout="$(otool -LX "$file")" || return 41
 	# Add local Libs and Force bundling of (system) libltdl (changed in OSX 10.8)
