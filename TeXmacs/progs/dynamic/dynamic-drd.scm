@@ -128,3 +128,9 @@
 
 (define-group hidden-tag
   hidden-deleted hidden-invisible hidden-greyed)
+
+;; animation tags
+
+(define-group animation-tag
+  anim-constant anim-compose anim-repeat
+  anim-translate anim-progressive)

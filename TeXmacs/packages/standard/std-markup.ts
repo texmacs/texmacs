@@ -504,9 +504,9 @@
 
   <assign|anim-edit|<macro|body|current|duration|step|now|<arg|current>>>
 
-  <assign|anim-fade-in|<macro|body|dur|<anim-static|<morph|<tuple|0|<with|opacity|0|<arg|body>>>|<tuple|1|<with|opacity|1|<arg|body>>>>|<arg|dur>|<min|<value|anim-std-step>|<over|<arg|dur>|<value|anim-nr-frames>>>|<arg|dur>>>>
+  <assign|anim-fade-in|<macro|body|duration|<anim-static|<morph|<tuple|0|<with|opacity|0|<arg|body>>>|<tuple|1|<with|opacity|1|<arg|body>>>>|<arg|duration>|<min|<value|anim-std-step>|<over|<arg|duration>|<value|anim-nr-frames>>>|<arg|duration>>>>
 
-  <assign|anim-zoom-in|<macro|body|dur|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|0.1|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|1.0|<value|orig-magnification>>|<arg|body>>>>|<arg|dur>|<min|<value|anim-std-step>|<over|<arg|dur>|<value|anim-nr-frames>>>|<arg|dur>>>>>
+  <assign|anim-zoom-in|<macro|body|duration|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|0.1|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|1.0|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<min|<value|anim-std-step>|<over|<arg|duration>|<value|anim-nr-frames>>>|<arg|duration>>>>>
 
   <\active*>
     <\src-comment>

@@ -15,6 +15,39 @@
   (:use (dynamic animate-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Time bending
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (accelerate-icon type)
+  (cond ((== type "reverse") "tm_anim_reverse.xpm")
+        ((== type "fade-in") "tm_anim_fade_in.xpm")
+        ((== type "fade-out") "tm_anim_fade_out.xpm")
+        ((== type "faded") "tm_anim_faded.xpm")
+        ((== type "bump") "tm_anim_bump.xpm")
+        (else "tm_anim_normal.xpm")))
+
+(tm-menu (anim-acceleration-menu t)
+  ("Normal" (accelerate-set-type t "normal"))
+  ("Reverse" (accelerate-set-type t "reverse"))
+  ("Smooth start" (accelerate-set-type t "fade-in"))
+  ("Smooth end" (accelerate-set-type t "fade-out"))
+  ("Smooth extremities" (accelerate-set-type t "faded"))
+  ("Bump" (accelerate-set-type t "bump")))
+
+(tm-menu (focus-animate-menu t)
+  (:require (anim-get-accelerate t))
+  (with type (accelerate-get-type t)
+    (-> "Time evolution"
+        (dynamic (anim-acceleration-menu t)))))
+
+(tm-menu (focus-animate-icons t)
+  (:require (anim-get-accelerate t))
+  (with type (accelerate-get-type t)
+    (=> (balloon (icon (eval (accelerate-icon type)))
+                 "Time evolution")
+        (dynamic (anim-acceleration-menu t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -18,6 +18,37 @@
         (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Time bending
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (anim-get-accelerate t)
+  (cond ((not (tree? t)) #f)
+        ((tree-is? t 'anim-accelerate) t)
+        ((tree-is? t :up 'anim-accelerate) (tree-up t))
+        ((tree-in? t (animation-tag-list)) t)
+        (else #f)))
+
+(tm-define (accelerate-get-type t)
+  (and-with a (anim-get-accelerate t)
+    (or (and (tree-func? a 'anim-accelerate 2)
+             (tree->stree (tree-ref a 1)))
+        "normal")))
+
+(tm-define (accelerate-test-type? dummy new-type)
+  (with t (tree-innermost 'anim-accelerate #t)
+    (tm-equal? (accelerate-get-type t) new-type)))
+
+(tm-define (accelerate-set-type t new-type)
+  (:check-mark "*" accelerate-test-type?)
+  (and-with a (anim-get-accelerate t)
+    (if (tree-func? a 'anim-accelerate 2)
+        (if (== new-type "normal")
+            (tree-remove-node a 0)
+            (tree-set (tree-ref a 1) new-type))
+        (if (!= new-type "normal")
+            (tree-set a `(anim-accelerate ,a ,new-type))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
