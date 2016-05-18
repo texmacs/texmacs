@@ -306,7 +306,7 @@ public:
   virtual array<string> list_atts () = 0;
   virtual void     typeset_invalidate (path p) = 0;
   virtual void     typeset_invalidate_all () = 0;
-  virtual void     typeset_invalidate_players (path p) = 0;
+  virtual void     typeset_invalidate_players (path p, bool reattach) = 0;
 
   /* public routines from edit_modify */
   virtual void notify_assign (path p, tree u) = 0;

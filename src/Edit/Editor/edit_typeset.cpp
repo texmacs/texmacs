@@ -871,19 +871,19 @@ edit_typeset_rep::typeset_invalidate_all () {
 }
 
 void
-edit_typeset_rep::typeset_invalidate_players (path p) {
+edit_typeset_rep::typeset_invalidate_players (path p, bool reattach) {
   if (rp <= p) {
     tree t= subtree (et, p);
     blackbox bb;
     bool ok= t->obs->get_contents (ADDENDUM_PLAYER, bb);
     if (ok) {
-      tree_addendum_delete (t, ADDENDUM_PLAYER);
+      if (reattach) tree_addendum_delete (t, ADDENDUM_PLAYER);
       typeset_invalidate (p);
     }
-    else if (is_compound (t)) {
+    if (is_compound (t)) {
       int i, n= N(t);
       for (i=0; i<n; i++)
-        typeset_invalidate_players (p * i);
+        typeset_invalidate_players (p * i, reattach);
     }
   }
 }

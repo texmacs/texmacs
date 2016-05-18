@@ -295,7 +295,7 @@
   (refresh-window invalidate_all (void))
   (update-path typeset_invalidate (void path))
   (update-current-buffer typeset_invalidate_all (void))
-  (update-players typeset_invalidate_players (void path))
+  (update-players typeset_invalidate_players (void path bool))
   (generate-all-aux generate_aux (void))
   (generate-aux generate_aux (void string))
   (notify-page-change notify_page_change (void))

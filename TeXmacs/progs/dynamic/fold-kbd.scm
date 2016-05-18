@@ -17,7 +17,7 @@
 
 (define (reset-players)
   (players-set-elapsed (buffer-tree) -0.5)
-  (update-players (tree->path (buffer-tree))))
+  (update-players (tree->path (buffer-tree)) #t))
 
 (kbd-map
   ("ir-up" (screens-switch-to :previous))

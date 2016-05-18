@@ -2842,13 +2842,15 @@ tmg_update_current_buffer () {
 }
 
 tmscm
-tmg_update_players (tmscm arg1) {
+tmg_update_players (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "update-players");
+  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "update-players");
 
   path in1= tmscm_to_path (arg1);
+  bool in2= tmscm_to_bool (arg2);
 
   // TMSCM_DEFER_INTS;
-  get_current_editor()->typeset_invalidate_players (in1);
+  get_current_editor()->typeset_invalidate_players (in1, in2);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -3503,7 +3505,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("refresh-window",  tmg_refresh_window, 0, 0, 0);
   tmscm_install_procedure ("update-path",  tmg_update_path, 1, 0, 0);
   tmscm_install_procedure ("update-current-buffer",  tmg_update_current_buffer, 0, 0, 0);
-  tmscm_install_procedure ("update-players",  tmg_update_players, 1, 0, 0);
+  tmscm_install_procedure ("update-players",  tmg_update_players, 2, 0, 0);
   tmscm_install_procedure ("generate-all-aux",  tmg_generate_all_aux, 0, 0, 0);
   tmscm_install_procedure ("generate-aux",  tmg_generate_aux, 1, 0, 0);
   tmscm_install_procedure ("notify-page-change",  tmg_notify_page_change, 0, 0, 0);

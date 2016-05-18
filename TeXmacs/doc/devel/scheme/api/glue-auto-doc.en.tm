@@ -7699,7 +7699,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(update-players <scm-arg|path>)>
+    <scm|(update-players <scm-arg|path> <scm-arg|bool>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|typeset_invalidate_players> which returns
