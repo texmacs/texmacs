@@ -31,6 +31,7 @@ public:
   void   set_duration (double l);
   double get_duration ();
 
+  bool   is_progressing ();
   void   set_elapsed (double t);
   double get_elapsed ();
   double get_refresh_time (double dt);
@@ -77,6 +78,11 @@ basic_player_rep::set_duration (double l) {
 double
 basic_player_rep::get_duration () {
   return duration;
+}
+
+bool
+basic_player_rep::is_progressing () {
+  return speed > 0;
 }
 
 void
@@ -137,6 +143,7 @@ public:
   void   set_duration (double l) { duration= l; }
   double get_duration () { return duration; }
 
+  bool   is_progressing ();
   void   set_elapsed (double t) { base->set_elapsed (t); }
   double get_elapsed () { return accelerate (base->get_elapsed ()); }
   double get_refresh_time (double dt);
@@ -151,16 +158,25 @@ public:
   friend class player;
 };
 
+bool
+accelerated_player_rep::is_progressing () {
+  double a0= base->get_elapsed ();
+  return
+    (accelerate (a0 + 0.001) >= accelerate (a0)) ^
+    !base->is_progressing ();
+}
+
 double
 accelerated_player_rep::get_refresh_time (double dt) {
-  double a0= base->get_elapsed ();
-  if (accelerate (a0 + 0.001) >= accelerate (a0)) {
+  if (is_progressing ()) {
+    double a0= base->get_elapsed ();
     double t0= accelerate (a0);
     double t1= t0 + fabs (dt);
     double a1= decelerate (t1, a0);
     return base->get_refresh_time (a1 - a0);
   }
   else {
+    double a0= base->get_elapsed ();
     double t0= accelerate (a0);
     double t1= t0 - fabs (dt);
     double a1= decelerate (t1, a0);

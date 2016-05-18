@@ -28,6 +28,7 @@ public:
   virtual void   set_duration (double l) = 0;
   virtual double get_duration () = 0;
 
+  virtual bool   is_progressing () = 0;
   virtual void   set_elapsed (double t) = 0;
   virtual double get_elapsed () = 0;
   virtual double get_refresh_time (double dt) = 0;

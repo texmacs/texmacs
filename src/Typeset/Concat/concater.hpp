@@ -131,6 +131,7 @@ class concater_rep {
   void typeset_anim_compose (tree t, path ip);
   void typeset_anim_repeat (tree t, path ip);
   void typeset_anim_constant (tree t, path ip);
+  void typeset_anim_accelerate (tree t, path ip);
   void typeset_anim_translate (tree t, path ip);
   void typeset_anim_progressive (tree t, path ip);
   void typeset_video (tree t, path ip);

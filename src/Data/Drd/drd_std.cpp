@@ -588,6 +588,9 @@ init_std_drd () {
   init (ANIM_CONSTANT, "anim-constant",
 	fixed (1, 1, BIFORM) -> returns_animation () ->
 	accessible (0) -> duration (1));
+  init (ANIM_ACCELERATE, "anim-accelerate",
+	fixed (1, 1, BIFORM) -> returns_animation () ->
+	accessible (0) -> string_type (1));
   init (ANIM_TRANSLATE, "anim-translate",
 	fixed (1, 3, DETAILED) -> returns_animation () ->
 	accessible (0) -> animation (0) ->

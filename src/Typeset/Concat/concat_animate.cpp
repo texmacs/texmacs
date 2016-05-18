@@ -18,6 +18,15 @@ extern tree the_et;
 * Basic constructs for animations
 ******************************************************************************/
 
+bool
+has_player (path ip) {
+  path p= reverse (ip);
+  if (!has_subtree (the_et, p)) return false;
+  tree t= subtree (the_et, p);
+  blackbox bb;
+  return t->obs->get_contents (ADDENDUM_PLAYER, bb);
+}
+
 player
 get_player (path ip) {
   path p= reverse (ip);
@@ -51,11 +60,17 @@ search_longest_ip (path ip) {
 }
 
 path
-edit_env_rep::get_animation_ip (path ip) {
+undecorate (path ip) {
   if (!is_nil (ip) && ip->item < 0) {
-    if (ip->item == DECORATION && !is_nil (ip->next)) ip= ip->next->next;
-    else ip= ip->next;
+    if (ip->item == DECORATION && !is_nil (ip->next)) return ip->next->next;
+    else return ip->next;
   }
+  else return ip;
+}
+
+path
+edit_env_rep::get_animation_ip (path ip) {
+  ip= undecorate (ip);
   path aip= search_animation_ip (ip);
   if (!is_nil (aip)) return aip;
   aip= search_longest_ip (ip);
@@ -94,6 +109,37 @@ concater_rep::typeset_anim_constant (tree t, path ip) {
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   int l= env->as_length (env->exec (t[1]));
   print (anim_constant_box (ip, b, pl, l));
+}
+
+player
+accelerate (player pl, tree kind) {
+  if (kind == "reverse") return reverse_player (pl);
+  if (kind == "fade-in") return fade_in_player (pl);
+  if (kind == "fade-out") return fade_out_player (pl);
+  if (kind == "faded") return faded_player (pl);
+  if (kind == "bump") return bump_player (pl);
+  return pl;
+}
+
+void
+concater_rep::typeset_anim_accelerate (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  path uip= undecorate (ip);
+  while (!has_subtree (the_et, reverse (uip))) uip= uip->next;
+  player apl= get_player (uip);
+  if (!is_nil (uip) && !has_player (uip)) {
+    path aip= search_animation_ip (uip);
+    player pl = is_nil (aip)? player (): get_player (aip);
+    apl= accelerate (pl, t[1]);
+    tree st= subtree (the_et, reverse (uip));
+    blackbox bb= close_box<player> (apl);
+    (void) tree_addendum_new (st, ADDENDUM_PLAYER, bb, false);
+  }
+  box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  apl->set_duration (b->anim_duration ());
+  array<box> bs;
+  bs << b;
+  print (composite_box (ip, bs));
 }
 
 static void

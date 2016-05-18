@@ -690,6 +690,9 @@ concater_rep::typeset (tree t, path ip) {
   case ANIM_CONSTANT:
     typeset_anim_constant (t, ip);
     break;
+  case ANIM_ACCELERATE:
+    typeset_anim_accelerate (t, ip);
+    break;
   case ANIM_TRANSLATE:
     typeset_anim_translate (t, ip);
     break;

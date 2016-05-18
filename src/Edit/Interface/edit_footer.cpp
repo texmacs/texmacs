@@ -352,8 +352,10 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
   case SPECIFIC:
     return concat (up, "texmacs ");
   case ANIM_CONSTANT:
-    if (l == 0)
-      return concat (up, "anim-constant ");
+    if (l == 0) return concat (up, "anim-constant ");
+    else return up;
+  case ANIM_ACCELERATE:
+    if (l == 0 && N(st) == 2) return concat (up, as_string (st[1]) * " ");
     else return up;
   case ANIM_TRANSLATE:
     if (l == 0)
