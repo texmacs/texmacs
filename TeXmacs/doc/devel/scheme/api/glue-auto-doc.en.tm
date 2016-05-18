@@ -7699,6 +7699,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(update-players <scm-arg|path>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|typeset_invalidate_players> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(generate-all-aux)>
 <explain-synopsis|no synopsis>
   <|explain>

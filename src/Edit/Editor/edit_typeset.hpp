@@ -112,6 +112,7 @@ public:
   void     typeset_exec_until (path p);
   void     typeset_invalidate (path p);
   void     typeset_invalidate_all ();
+  void     typeset_invalidate_players (path p);
   void     typeset_sub (SI& x1, SI& y1, SI& x2, SI& y2);
   void     typeset (SI& x1, SI& y1, SI& x2, SI& y2);
 

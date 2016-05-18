@@ -987,6 +987,7 @@
 "refresh-window"
 "update-path"
 "update-current-buffer"
+"update-players"
 "generate-all-aux"
 "generate-aux"
 "notify-page-change"
