@@ -15,7 +15,7 @@
    id="svg3039"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="tm_anim_reverse_fade_in.svg"
+   sodipodi:docname="tm_anim_reverse_fade_out.svg"
    inkscape:export-filename="/Users/vdhoeven/magix/texmacs/icons/16x16/focus/tm_add.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -71,8 +71,8 @@
      inkscape:snap-grids="true"
      inkscape:window-width="1652"
      inkscape:window-height="1162"
-     inkscape:window-x="892"
-     inkscape:window-y="484"
+     inkscape:window-x="664"
+     inkscape:window-y="358"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:snap-global="true"
@@ -210,6 +210,6 @@
        id="path12171"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="sssssssss"
-       transform="matrix(-1,0,0,1,15.759089,0)" />
+       transform="matrix(1,0,0,-1,1.4190819e-8,16.157003)" />
   </g>
 </svg>
