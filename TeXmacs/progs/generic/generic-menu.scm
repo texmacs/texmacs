@@ -111,6 +111,9 @@
   (cond ((== type "length") (rich-length->tm s))
 	(else s)))
 
+(tm-define (focus-tree-modified t)
+  (noop))
+
 (tm-menu (string-input-icon t i)
   (let* ((name (tree-child-name* t i))
          (type (tree-child-type t i))
@@ -122,7 +125,8 @@
          (w (type->width type))
          (setter (lambda (x)
 		   (when x
-                     (tree-set (focus-tree) i (inputter-encode x type))))))
+                     (tree-set (focus-tree) i (inputter-encode x type))
+                     (focus-tree-modified (focus-tree))))))
     (assuming (== name "")
       //)
     (assuming (!= name "")
@@ -148,7 +152,8 @@
          (fm (type->format type))
          (setter (lambda (x)
 		   (when x
-		     (tree-set (focus-tree) i (inputter-encode x type))))))
+		     (tree-set (focus-tree) i (inputter-encode x type))
+                     (focus-tree-modified (focus-tree))))))
     (assuming (!= name "")
       (when (inputter-active? (tree-ref t i) type)
         ((eval s)

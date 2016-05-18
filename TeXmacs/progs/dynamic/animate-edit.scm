@@ -18,6 +18,14 @@
         (generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Useful subroutines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (reset-players t)
+  (players-set-elapsed t -0.5)
+  (update-players (tree->path t) #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time bending
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -43,10 +51,11 @@
   (and-with a (anim-get-accelerate t)
     (if (tree-func? a 'anim-accelerate 2)
         (if (== new-type "normal")
-            (tree-remove-node a 0)
+            (tree-remove-node! a 0)
             (tree-set (tree-ref a 1) new-type))
         (if (!= new-type "normal")
-            (tree-set a `(anim-accelerate ,a ,new-type))))))
+            (tree-set! a `(anim-accelerate ,a ,new-type))))
+    (reset-players a)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
