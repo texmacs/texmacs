@@ -188,3 +188,27 @@ tree_addendum_delete (observer obs) {
   tree ref= obtain_tree (obs);
   detach_observer (ref, obs);
 }
+
+bool
+tree_addendum_delete (observer o, int type) {
+  if (is_nil (o)) return false;
+  if (o->get_type () == OBSERVER_ADDENDUM) {
+    blackbox bb;
+    bool ok= o->get_contents (type, bb);
+    if (!ok) return false;
+    tree_addendum_delete (o);
+    return true;
+  }
+  if (o->get_type () == OBSERVER_LIST)
+    return
+      tree_addendum_delete (o->get_child (0), type) ||
+      tree_addendum_delete (o->get_child (1), type);
+  return false;
+}
+
+void
+tree_addendum_delete (tree t, int type) {
+  observer o= t->obs;
+  bool deleted= tree_addendum_delete (o, type);
+  if (deleted) tree_addendum_delete (t, type);
+}

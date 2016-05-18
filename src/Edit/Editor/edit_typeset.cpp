@@ -876,7 +876,10 @@ edit_typeset_rep::typeset_invalidate_players (path p) {
     tree t= subtree (et, p);
     blackbox bb;
     bool ok= t->obs->get_contents (ADDENDUM_PLAYER, bb);
-    if (ok) typeset_invalidate (p);
+    if (ok) {
+      tree_addendum_delete (t, ADDENDUM_PLAYER);
+      typeset_invalidate (p);
+    }
     else if (is_compound (t)) {
       int i, n= N(t);
       for (i=0; i<n; i++)

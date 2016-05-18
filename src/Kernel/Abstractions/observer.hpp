@@ -165,6 +165,7 @@ path obtain_position (observer o);
 
 observer tree_addendum_new (tree t, int kind, blackbox bb, bool keep= true);
 void tree_addendum_delete (observer o);
+void tree_addendum_delete (tree t, int type);
 
 observer search_observer (tree& ref, int type);
 bool admits_edit_observer (tree t);
