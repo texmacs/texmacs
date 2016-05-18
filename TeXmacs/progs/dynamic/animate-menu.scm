@@ -27,20 +27,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (accelerate-icon type)
-  (cond ((== type "reverse") "tm_anim_reverse.xpm")
-        ((== type "fade-in") "tm_anim_fade_in.xpm")
+  (cond ((== type "fade-in") "tm_anim_fade_in.xpm")
         ((== type "fade-out") "tm_anim_fade_out.xpm")
         ((== type "faded") "tm_anim_faded.xpm")
         ((== type "bump") "tm_anim_bump.xpm")
+        ((== type "reverse") "tm_anim_reverse.xpm")
+        ((== type "reverse-fade-in") "tm_anim_reverse_fade_in.xpm")
+        ((== type "reverse-fade-out") "tm_anim_reverse_fade_out.xpm")
+        ((== type "reverse-faded") "tm_anim_reverse_faded.xpm")
+        ((== type "reverse-bump") "tm_anim_reverse_bump.xpm")
         (else "tm_anim_normal.xpm")))
 
 (tm-menu (anim-acceleration-menu t)
-  ("Normal" (accelerate-set-type t "normal"))
-  ("Reverse" (accelerate-set-type t "reverse"))
-  ("Smooth start" (accelerate-set-type t "fade-in"))
-  ("Smooth end" (accelerate-set-type t "fade-out"))
-  ("Smooth extremities" (accelerate-set-type t "faded"))
-  ("Bump" (accelerate-set-type t "bump")))
+  ("Normal" (accelerate-set-type* t "normal"))
+  ("Smooth start" (accelerate-set-type* t "fade-in"))
+  ("Smooth end" (accelerate-set-type* t "fade-out"))
+  ("Smooth extremities" (accelerate-set-type* t "faded"))
+  ("Bump" (accelerate-set-type* t "bump"))
+  ---
+  ("Reverse" (accelerate-toggle-reverse? t)))
 
 (tm-menu (focus-animate-menu t)
   (:require (anim-get-accelerate t))

@@ -16,7 +16,7 @@
 	(dynamic fold-edit)))
 
 (define (reset-buffer-players)
-  (players-set-elapsed (buffer-tree) -0.5)
+  (players-set-elapsed (buffer-tree) 0.0)
   (update-players (tree->path (buffer-tree)) #f))
 
 (kbd-map

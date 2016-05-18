@@ -140,7 +140,7 @@ public:
   double get_started () { return base->get_started (); }
   void   set_speed (double s) { base->set_speed (s); }
   double get_speed () { return base->get_speed (); }
-  void   set_duration (double l) { duration= l; }
+  void   set_duration (double l) { duration= l; base->set_duration (l); }
   double get_duration () { return duration; }
 
   bool   is_progressing ();

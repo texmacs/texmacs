@@ -11,6 +11,7 @@
 
 #include "concater.hpp"
 #include "blackbox.hpp"
+#include "analyze.hpp"
 
 extern tree the_et;
 
@@ -118,6 +119,8 @@ accelerate (player pl, tree kind) {
   if (kind == "fade-out") return fade_out_player (pl);
   if (kind == "faded") return faded_player (pl);
   if (kind == "bump") return bump_player (pl);
+  if (is_atomic (kind) && starts (kind->label, "reverse-"))
+    return reverse_player (accelerate (pl, kind->label (8, N(kind->label))));
   return pl;
 }
 
