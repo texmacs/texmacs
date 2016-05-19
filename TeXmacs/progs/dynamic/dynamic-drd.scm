@@ -131,6 +131,20 @@
 
 ;; animation tags
 
+(define-group variant-tag (appear-tag) (disappear-tag) (smooth-tag))
+(define-group similar-tag (appear-tag) (disappear-tag) (smooth-tag))
+
+(define-group appear-tag
+  appear-translate appear-progressive appear-fade appear-zoom)
+
+(define-group disappear-tag
+  disappear-translate dis
+appear-progressive disappear-fade disappear-zoom)
+
+(define-group smooth-tag
+  smooth-translate smooth-progressive smooth-fade smooth-zoom)
+
 (define-group animation-tag
   anim-constant anim-compose anim-repeat
-  anim-translate anim-progressive)
+  anim-translate anim-progressive
+  (appear-tag) (disappear-tag) (smooth-tag))
