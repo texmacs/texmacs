@@ -331,6 +331,12 @@ morph (tree t0, tree t1, edit_env env) {
     return morph_with (t0, t1, env);
   else if (is_func (t0, TFORMAT) && is_func (t1, TFORMAT))
     return morph_tformat (t0, t1, env);
+  else if (is_func (t0, VALUE) && t1 == t0)
+    return t0;
+  else if (is_func (t0, VALUE, 1) && is_atomic (t0[0]))
+    return morph (env->read (t0[0]->label), t1, env);
+  else if (is_func (t1, VALUE, 1) && is_atomic (t1[0]))
+    return morph (t0, env->read (t1[0]->label), env);
   else if (is_atomic (t0) || is_atomic (t1))
     return morph_trivial (t0, t1, env);
   else if (is_func (t0, GRAPHICS) && is_func (t1, GRAPHICS))
