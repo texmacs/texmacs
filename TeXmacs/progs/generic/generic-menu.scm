@@ -111,9 +111,6 @@
   (cond ((== type "length") (rich-length->tm s))
 	(else s)))
 
-(tm-define (focus-tree-modified t)
-  (noop))
-
 (tm-menu (string-input-icon t i)
   (let* ((name (tree-child-name* t i))
          (type (tree-child-type t i))

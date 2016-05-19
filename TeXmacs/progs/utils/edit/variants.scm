@@ -219,10 +219,14 @@
 
 (define-group variant-tag)
 
+(tm-define (focus-tree-modified t)
+  (noop))
+
 (tm-define (variant-set t by)
   (with-focus-after t
     (with i (tree-down-index t)
       (tree-assign-node! t by)
+      (focus-tree-modified t)
       (when (and i (not (tree-accessible-child? t i)))
         (with ac (tree-accessible-children t)
           (when (nnull? ac)
