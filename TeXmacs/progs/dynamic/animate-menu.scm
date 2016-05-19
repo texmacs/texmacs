@@ -22,6 +22,12 @@
   (:require (anim-get-accelerate t))
   (reset-players (anim-get-accelerate t)))
 
+(tm-menu (focus-toggle-menu t)
+  (:require (anim-get-accelerate t)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (anim-get-accelerate t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time bending
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -59,6 +65,144 @@
     (=> (balloon (icon (eval (accelerate-icon type)))
                  "Time evolution")
         (dynamic (anim-acceleration-menu t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Direction menu for translations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (translate-icon x y)
+  (cond ((and (= x -1) (= y  0)) "tm_right.xpm")
+        ((and (= x  1) (= y  0)) "tm_left.xpm")
+        ((and (= x  0) (= y -1)) "tm_up.xpm")
+        ((and (= x  0) (= y  1)) "tm_down.xpm")
+        ((and (= x -1) (= y -1)) "tm_right_up.xpm")
+        ((and (= x -1) (= y  1)) "tm_right_down.xpm")
+        ((and (= x  1) (= y -1)) "tm_left_up.xpm")
+        ((and (= x  1) (= y  1)) "tm_left_down.xpm")
+        (else "tm_customized.xpm")))
+
+(define (translate-test? t x y inv?)
+  (set! inv? (inside? 'translate-out))
+  (let* ((xx (get-env (if inv? "translate-end-x" "translate-start-x")))
+         (yy (get-env (if inv? "translate-end-y" "translate-start-y"))))
+    (and (= (if inv? (- x) x) (string->number xx))
+         (= (if inv? (- y) y) (string->number yy)))))
+  
+(tm-define (translate-set t x y inv?)
+  (:check-mark "*" translate-test?)
+  (let* ((xx (number->string (if inv? (- x) x)))
+         (yy (number->string (if inv? (- y) y)))
+         (xn (if inv? "translate-end-x" "translate-start-x"))
+         (yn (if inv? "translate-end-y" "translate-start-y")))
+    (tree-with-set t xn xx yn yy)))
+
+(tm-menu (anim-translation-menu t inv?)
+  ("Right" (translate-set t -1 0 inv?))
+  ("Left" (translate-set t 1 0 inv?))
+  ("Up" (translate-set t 0 -1 inv?))
+  ("Down" (translate-set t 0 1 inv?))
+  ---
+  ("Right up" (translate-set t -1 -1 inv?))
+  ("Right down" (translate-set t -1 1 inv?))
+  ("Left up" (translate-set t 1 -1 inv?))
+  ("Left down" (translate-set t 1 1 inv?)))
+
+(tm-menu (focus-misc-icons t)
+  (:require (tree-in? t '(translate-in)))
+  (let* ((x (string->number (get-env "translate-start-x")))
+         (y (string->number (get-env "translate-start-y"))))
+    (=> (balloon (icon (eval (translate-icon x y)))
+                 "Direction of translation")
+        (dynamic (anim-translation-menu t #f)))))
+
+(tm-menu (focus-misc-icons t)
+  (:require (tree-in? t '(translate-out)))
+  (let* ((x (string->number (get-env "translate-end-x")))
+         (y (string->number (get-env "translate-end-y"))))
+    (=> (balloon (icon (eval (translate-icon (- x) (- y))))
+                 "Direction of translation")
+        (dynamic (anim-translation-menu t #t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Direction menu for progressive in/out
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (progressive-icon l b r t inv?)
+  (cond ((and (= l 0.5) (= r 0.5) (= b 0.5) (= t 0.5))
+         (if inv? "tm_customized.xpm" "tm_outwards.xpm"))
+        ((and (= l 0) (= r 0) (= b 0) (= t 0)) "tm_right_up.xpm")
+        ((and (= l 0) (= r 0) (= b 1) (= t 1)) "tm_right_down.xpm")
+        ((and (= l 1) (= r 1) (= b 0) (= t 0)) "tm_left_up.xpm")
+        ((and (= l 1) (= r 1) (= b 1) (= t 1)) "tm_left_down.xpm")
+        ((and (= l 0) (= r 0) (= b 0) (= t 1)) "tm_right.xpm")
+        ((and (= l 1) (= r 1) (= b 0) (= t 1)) "tm_left.xpm")
+        ((and (= b 0) (= t 0) (= l 0) (= r 1)) "tm_up.xpm")
+        ((and (= b 1) (= t 1) (= l 0) (= r 1)) "tm_down.xpm")
+        (else "tm_customized.xpm")))
+
+(define (progressive-test? ft l b r t inv?)
+  (set! inv? (inside? 'progressive-out))
+  (let* ((ll (get-env (if inv? "progressive-end-l" "progressive-start-l")))
+         (bb (get-env (if inv? "progressive-end-b" "progressive-start-b")))
+         (rr (get-env (if inv? "progressive-end-r" "progressive-start-r")))
+         (tt (get-env (if inv? "progressive-end-t" "progressive-start-t"))))
+    (and (= (if inv? (min (- 1 l) (- 1 r)) l) (string->number ll))
+         (= (if inv? (min (- 1 b) (- 1 t)) b) (string->number bb))
+         (= (if inv? (max (- 1 l) (- 1 r)) r) (string->number rr))
+         (= (if inv? (max (- 1 b) (- 1 t)) t) (string->number tt)))))
+  
+(tm-define (progressive-set ft l b r t inv?)
+  (:check-mark "*" progressive-test?)
+  (let* ((ll (number->string (if inv? (min (- 1 l) (- 1 r)) l)))
+         (bb (number->string (if inv? (min (- 1 b) (- 1 t)) b)))
+         (rr (number->string (if inv? (max (- 1 l) (- 1 r)) r)))
+         (tt (number->string (if inv? (max (- 1 b) (- 1 t)) t)))
+         (ln (if inv? "progressive-end-l" "progressive-start-l"))
+         (bn (if inv? "progressive-end-b" "progressive-start-b"))
+         (rn (if inv? "progressive-end-r" "progressive-start-r"))
+         (tn (if inv? "progressive-end-t" "progressive-start-t")))
+    (tree-with-set ft ln ll bn bb rn rr tn tt)))
+
+(tm-menu (anim-progressive-menu t inv?)
+  (assuming (not inv?)
+    ("Outwards" (progressive-set t 0.5 0.5 0.5 0.5 #f))
+    ---)
+  (assuming inv?
+    ("Inwards" (progressive-set t 0.5 0.5 0.5 0.5 #t))
+    ---)
+  ("Right" (progressive-set t 0 0 0 1 inv?))
+  ("Left" (progressive-set t 1 0 1 1 inv?))
+  ("Up" (progressive-set t 0 0 1 0 inv?))
+  ("Down" (progressive-set t 0 1 1 1 inv?))
+  ---
+  ("Right up" (progressive-set t 0 0 0 0 inv?))
+  ("Right down" (progressive-set t 0 1 0 1 inv?))
+  ("Left up" (progressive-set t 1 0 1 0 inv?))
+  ("Left down" (progressive-set t 1 1 1 1 inv?)))
+
+(tm-menu (focus-misc-icons ft)
+  (:require (tree-in? ft '(progressive-in)))
+  (let* ((l (string->number (get-env "progressive-start-l")))
+         (b (string->number (get-env "progressive-start-b")))
+         (r (string->number (get-env "progressive-start-r")))
+         (t (string->number (get-env "progressive-start-t"))))
+    (=> (balloon (icon (eval (progressive-icon l b r t #f)))
+                 "Direction of progression")
+        (dynamic (anim-progressive-menu ft #f)))))
+
+(tm-menu (focus-misc-icons ft)
+  (:require (tree-in? ft '(progressive-out)))
+  (let* ((l (string->number (get-env "progressive-end-l")))
+         (b (string->number (get-env "progressive-end-b")))
+         (r (string->number (get-env "progressive-end-r")))
+         (t (string->number (get-env "progressive-end-t")))
+         (cl (min (- 1 l) (- 1 r)))
+         (cr (max (- 1 l) (- 1 r)))
+         (cb (min (- 1 b) (- 1 t)))
+         (ct (max (- 1 b) (- 1 t))))
+    (=> (balloon (icon (eval (progressive-icon cl cb cr ct #t)))
+                 "Direction of progression")
+        (dynamic (anim-progressive-menu ft #t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utilities

@@ -220,9 +220,9 @@
 (tm-define (customizable-parameters t)
   (list))
 
-(tm-define (tree-with-set t var val)
+(tm-define (tree-with-set t . l)
   (focus-tree-modified t)
-  (tree-set! t `(with ,var ,val ,t))
+  (tree-set! t `(with ,@l ,t))
   (with-simplify t)
   (with-merge t))
 

@@ -42,7 +42,7 @@
 
   <assign|translate-start-y|0.0>
 
-  <assign|translate-end-x|0.0>
+  <assign|translate-end-x|1.0>
 
   <assign|translate-end-y|0.0>
 
@@ -58,21 +58,21 @@
     </src-comment>
   </active*>
 
-  <assign|progressive-start-l|0.5>
+  <assign|progressive-start-l|0>
 
-  <assign|progressive-start-r|0.5>
+  <assign|progressive-start-r|0>
 
-  <assign|progressive-start-b|0.5>
+  <assign|progressive-start-b|0>
 
-  <assign|progressive-start-t|0.5>
+  <assign|progressive-start-t|1>
 
-  <assign|progressive-end-l|0.0>
+  <assign|progressive-end-l|1>
 
-  <assign|progressive-end-r|1.0>
+  <assign|progressive-end-r|1>
 
-  <assign|progressive-end-b|0.0>
+  <assign|progressive-end-b|0>
 
-  <assign|progressive-end-t|1.0>
+  <assign|progressive-end-t|1>
 
   <assign|progressive-in|<macro|body|duration|<anim-progressive|<arg|body>|<arg|duration>|<tuple|<value|progressive-start-l>|<value|progressive-start-b>|<value|progressive-start-r>|<value|progressive-start-t>>|>>>
 
