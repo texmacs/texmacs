@@ -30,6 +30,8 @@
 
   <assign|anim-edit|<macro|body|current|duration|step|now|<arg|current>>>
 
+  <assign|invisible|<macro|body|<with|opacity|0|<arg|body>>>>
+
   <\active*>
     <\src-comment>
       Translations.
@@ -44,11 +46,11 @@
 
   <assign|translate-end-y|0.0>
 
-  <assign|appear-translate|<macro|body|duration|<anim-translate|<arg|body>|<arg|duration>|<tuple|<value|translate-start-x>|<value|translate-start-y>>|>>>
+  <assign|translate-in|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-translate|<arg|body>|<arg|duration>|<tuple|<value|translate-start-x>|<value|translate-start-y>>|>>>>
 
-  <assign|disappear-translate|<macro|body|duration|<anim-translate|<arg|body>|<arg|duration>||<tuple|<value|translate-end-x>|<value|translate-end-y>>>>>
+  <assign|translate-out|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-translate|<arg|body>|<arg|duration>||<tuple|<value|translate-end-x>|<value|translate-end-y>>>>>>
 
-  <assign|smooth-translate|<macro|body|duration|<anim-translate|<arg|body>|<arg|duration>|<tuple|<value|translate-start-x>|<value|translate-start-y>>|<tuple|<value|translate-end-x>|<value|translate-end-y>>>>>
+  <assign|translate-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-translate|<arg|body>|<arg|duration>|<tuple|<value|translate-start-x>|<value|translate-start-y>>|<tuple|<value|translate-end-x>|<value|translate-end-y>>>>>>
 
   <\active*>
     <\src-comment>
@@ -72,11 +74,11 @@
 
   <assign|progressive-end-t|1.0>
 
-  <assign|appear-progressive|<macro|body|duration|<anim-progressive|<arg|body>|<arg|duration>|<tuple|<value|progressive-start-l>|<value|progressive-start-b>|<value|progressive-start-r>|<value|progressive-start-t>>|>>>
+  <assign|progressive-in|<macro|body|duration|<anim-progressive|<arg|body>|<arg|duration>|<tuple|<value|progressive-start-l>|<value|progressive-start-b>|<value|progressive-start-r>|<value|progressive-start-t>>|>>>
 
-  <assign|disappear-progressive|<macro|body|duration|<anim-progressive|<arg|body>|<arg|duration>||<tuple|<value|progressive-end-l>|<value|progressive-end-b>|<value|progressive-end-r>|<value|progressive-end-t>>>>>
+  <assign|progressive-out|<macro|body|duration|<anim-progressive|<arg|body>|<arg|duration>||<tuple|<value|progressive-end-l>|<value|progressive-end-b>|<value|progressive-end-r>|<value|progressive-end-t>>>>>
 
-  <assign|smooth-progressive|<macro|body|duration|<anim-progressive|<arg|body>|<arg|duration>|<tuple|<value|progressive-start-l>|<value|progressive-start-b>|<value|progressive-start-r>|<value|progressive-start-t>>|<tuple|<value|progressive-end-l>|<value|progressive-end-b>|<value|progressive-end-r>|<value|progressive-end-t>>>>>
+  <assign|progressive-smooth|<macro|body|duration|<anim-progressive|<arg|body>|<arg|duration>|<tuple|<value|progressive-start-l>|<value|progressive-start-b>|<value|progressive-start-r>|<value|progressive-start-t>>|<tuple|<value|progressive-end-l>|<value|progressive-end-b>|<value|progressive-end-r>|<value|progressive-end-t>>>>>
 
   <\active*>
     <\src-comment>
@@ -88,11 +90,11 @@
 
   <assign|fade-end|1.0>
 
-  <assign|appear-fade|<macro|body|duration|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-start>|<arg|body>>>|<tuple|1|<with|opacity|1.0|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>
+  <assign|fade-in|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-start>|<arg|body>>>|<tuple|1|<with|opacity|1.0|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
 
-  <assign|disappear-fade|<macro|body|duration|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-end>|<arg|body>>>|<tuple|1|<with|opacity|0.0|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>
+  <assign|fade-out|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-end>|<arg|body>>>|<tuple|1|<with|opacity|0.0|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
 
-  <assign|smooth-fade|<macro|body|duration|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-start>|<arg|body>>>|<tuple|1|<with|opacity|<value|fade-end>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>
+  <assign|fade-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-start>|<arg|body>>>|<tuple|1|<with|opacity|<value|fade-end>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
 
   <\active*>
     <\src-comment>
@@ -104,11 +106,11 @@
 
   <assign|zoom-end|1.0>
 
-  <assign|appear-zoom|<macro|body|duration|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-start>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|1.0|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+  <assign|zoom-in|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-start>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|1.0|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
 
-  <assign|disappear-zoom|<macro|body|duration|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-end>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|0.1|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+  <assign|zoom-out|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-end>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|0.1|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
 
-  <assign|smooth-zoom|<macro|body|duration|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-start>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|<value|zoom-end>|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+  <assign|zoom-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-start>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|<value|zoom-end>|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
 </body>
 
 <\initial>

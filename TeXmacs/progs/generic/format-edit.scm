@@ -221,6 +221,7 @@
   (list))
 
 (tm-define (tree-with-set t var val)
+  (focus-tree-modified t)
   (tree-set! t `(with ,var ,val ,t))
   (with-simplify t)
   (with-merge t))

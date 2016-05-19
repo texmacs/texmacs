@@ -26,6 +26,78 @@
   (update-players (tree->path t) #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Parameters for various animation tags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'translate-in))
+  (list (list "translate-start-x" "Start x")
+        (list "translate-start-y" "Start y")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'translate-out))
+  (list (list "translate-end-x" "End x")
+        (list "translate-end-y" "End y")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'translate-smooth))
+  (list (list "translate-start-x" "Start x")
+        (list "translate-start-y" "Start y")
+        (list "translate-end-x" "End x")
+        (list "translate-end-y" "End y")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'progressive-in))
+  (list (list "progressive-start-l" "Start left")
+        (list "progressive-start-b" "Start bottom")
+        (list "progressive-start-r" "Start right")
+        (list "progressive-start-t" "Start top")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'progressive-out))
+  (list (list "progressive-end-l" "End left")
+        (list "progressive-end-b" "End bottom")
+        (list "progressive-end-r" "End right")
+        (list "progressive-end-t" "End top")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'progressive-smooth))
+  (list (list "progressive-start-l" "Start left")
+        (list "progressive-start-b" "Start bottom")
+        (list "progressive-start-r" "Start right")
+        (list "progressive-start-t" "Start top")
+        (list "progressive-end-l" "End left")
+        (list "progressive-end-b" "End bottom")
+        (list "progressive-end-r" "End right")
+        (list "progressive-end-t" "End top")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'fade-in))
+  (list (list "fade-start" "Start intensity")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'fade-out))
+  (list (list "fade-end" "End intensity")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'fade-smooth))
+  (list (list "fade-start" "Start intensity")
+        (list "fade-end" "End intensity")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'zoom-in))
+  (list (list "zoom-start" "Start magnification")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'zoom-out))
+  (list (list "zoom-end" "End magnification")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'zoom-smooth))
+  (list (list "zoom-start" "Start magnification")
+        (list "zoom-end" "End magnification")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time bending
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -33,6 +105,10 @@
   (cond ((not (tree? t)) #f)
         ((tree-is? t 'anim-accelerate) t)
         ((tree-is? t :up 'anim-accelerate) (tree-up t))
+        ((and (tree-is? t :up 'with) (tree-is? t :up :up 'anim-accelerate))
+         (tree-up (tree-up t)))
+        ((and (tree-is? t :up 'with) (tree-in? t (animation-tag-list)))
+         (tree-up t))
         ((tree-in? t (animation-tag-list)) t)
         (else #f)))
 

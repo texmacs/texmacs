@@ -135,14 +135,13 @@
 (define-group similar-tag (appear-tag) (disappear-tag) (smooth-tag))
 
 (define-group appear-tag
-  appear-translate appear-progressive appear-fade appear-zoom)
+  translate-in progressive-in fade-in zoom-in)
 
 (define-group disappear-tag
-  disappear-translate dis
-appear-progressive disappear-fade disappear-zoom)
+  translate-out progressive-out fade-out zoom-out)
 
 (define-group smooth-tag
-  smooth-translate smooth-progressive smooth-fade smooth-zoom)
+  translate-smooth progressive-smooth fade-smooth zoom-smooth)
 
 (define-group animation-tag
   anim-constant anim-compose anim-repeat
