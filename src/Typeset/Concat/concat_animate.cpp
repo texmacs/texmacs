@@ -158,7 +158,7 @@ concater_rep::typeset_anim_translate (tree t, path ip) {
   if (N(t) != 4) { typeset_error (t, ip); return; }
   player pl= get_player (env->get_animation_ip (ip));
   box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
-  int  len= env->as_length (t[1]);
+  int  len= env->as_length (env->exec (t[1]));
   tree t1 = env->exec (t[2]);
   tree t2 = env->exec (t[3]);
   SI x1= b->x1, y1= b->y1, x2= b->x1, y2= b->y1;
@@ -172,7 +172,7 @@ concater_rep::typeset_anim_progressive (tree t, path ip) {
   if (N(t) != 4) { typeset_error (t, ip); return; }
   player pl= get_player (env->get_animation_ip (ip));
   box  b  = typeset_as_concat (env, t[0], descend (ip, 0));
-  int  len= env->as_length (t[1]);
+  int  len= env->as_length (env->exec (t[1]));
   tree t1 = env->exec (t[2]);
   tree t2 = env->exec (t[3]);
   rectangle r1 (b->x1, b->y1, b->x2, b->y2);
@@ -226,9 +226,9 @@ concater_rep::typeset_video (tree t, path ip) {
     video= resolve (relative (env->base_file_name, video_u));
   }
   if (!is_none (video)) {
-    SI   w  = env->as_length (t[1]);
-    SI   h  = env->as_length (t[2]);
-    int  len= env->as_length (t[3]);
+    SI   w  = env->as_length (env->exec (t[1]));
+    SI   h  = env->as_length (env->exec (t[2]));
+    int  len= env->as_length (env->exec (t[3]));
     bool rep= env->exec (t[4]) != "false";
     print (video_box (ip, pl, video, w, h, env->alpha, len, rep, env->pixel));
   }
