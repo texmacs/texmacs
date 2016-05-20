@@ -120,6 +120,18 @@ needing_update (false)
   QObject::connect (updatetimer, SIGNAL (timeout()),
                     gui_helper, SLOT (doUpdate()));
     //  (void) default_font ();
+
+  if (!retina_manual) {
+    retina_manual= true;
+    SI w, h;
+    get_extents (w, h);
+    if (DEBUG_STD)
+      debug_boot << "Screen extents: " << w/PIXEL << " x " << h/PIXEL << "\n";
+    if (w >= 2304*PIXEL) {
+      retina_factor= 2;
+      retina_scale = 1.4;
+    }
+  }
 }
 
 /* important routines */
