@@ -90,11 +90,11 @@
 
   <assign|fade-end|1.0>
 
-  <assign|fade-in|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-start>|<arg|body>>>|<tuple|1|<with|opacity|1.0|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+  <assign|fade-in|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-opacity|<value|opacity>|<anim-static|<morph|<tuple|0|<with|opacity|<times|<value|fade-start>|<value|orig-opacity>>|<arg|body>>>|<tuple|1|<with|opacity|<times|1.0|<value|orig-opacity>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
 
-  <assign|fade-out|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-end>|<arg|body>>>|<tuple|1|<with|opacity|0.0|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+  <assign|fade-out|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-opacity|<value|opacity>|<anim-static|<morph|<tuple|0|<with|opacity|<times|<value|fade-end>|<value|orig-opacity>>|<arg|body>>>|<tuple|1|<with|opacity|<times|0.0|<value|orig-opacity>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
 
-  <assign|fade-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|opacity|<value|fade-start>|<arg|body>>>|<tuple|1|<with|opacity|<value|fade-end>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+  <assign|fade-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-opacity|<value|opacity>|<anim-static|<morph|<tuple|0|<with|opacity|<times|<value|fade-start>|<value|orig-opacity>>|<arg|body>>>|<tuple|1|<with|opacity|<times|<value|fade-end>|<value|orig-opacity>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
 
   <\active*>
     <\src-comment>

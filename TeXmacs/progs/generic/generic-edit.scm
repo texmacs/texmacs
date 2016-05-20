@@ -727,6 +727,15 @@
           (insert-go-to `(draw-over ,selection ,g "2cm") '(1 2 1)))
         (insert-go-to `(draw-over "" ,g "2cm") '(1 2 1)))))
 
+(tm-define (make-anim l)
+  (with duration "1s"
+    (if (selection-active-any?)
+        (with selection (selection-tree)
+          (clipboard-cut "graphics background")
+          (insert-go-to `(,l ,selection ,duration)
+                        (cons 0 (path-end selection (list)))))
+        (insert-go-to `(,l "" ,duration) (list 0 0)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Thumbnails facility
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
