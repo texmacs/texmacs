@@ -337,6 +337,7 @@ qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
   else if (sz.height () >= 16) {
     sz.setHeight (sz.height () + 2);
   }
+  //sz.setHeight ((int) floor (sz.height () * retina_scale + 0.5));
 }
 
 
