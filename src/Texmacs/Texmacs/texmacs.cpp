@@ -263,8 +263,10 @@ TeXmacs_main (int argc, char** argv) {
 	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
       else if ((s == "-r") || (s == "-reverse"))
 	set_reverse_colors (true);
-      else if ((s == "-R") || (s == "-retina"))
-	retina_scale= 1.4;
+      else if ((s == "-R") || (s == "-retina")) {
+        retina_factor= 2;
+	retina_scale = 1.4;
+      }
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;
 	if (i<argc) {

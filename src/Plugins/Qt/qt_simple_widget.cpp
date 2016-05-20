@@ -327,20 +327,22 @@ qt_simple_widget_rep::read (slot s, blackbox index) {
 * Tanslation into QAction for insertion in menus (i.e. for buttons)
 ******************************************************************************/
 
-  // Prints the current contents of the canvas onto a QPixmap
+// Prints the current contents of the canvas onto a QPixmap
 QPixmap
 impress (qt_simple_widget_rep* wid) {
   int width, height;
   wid->handle_get_size_hint (width, height);
   QSize s = to_qsize (width, height);
-  QPixmap pxm (s);
+  QSize phys_s = s; phys_s *= retina_factor;
+  QPixmap pxm (phys_s);
   if (DEBUG_QT)
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
   pxm.fill (Qt::transparent);
   {
     qt_renderer_rep *ren = the_qt_renderer();
     ren->begin (static_cast<QPaintDevice*>(&pxm));
-    rectangle r = rectangle (0, 0, s.width(), s.height());
+    rectangle r = rectangle (0, 0, retina_factor * s.width(),
+                                   retina_factor * s.height());
     ren->set_origin (0, 0);
     ren->encode (r->x1, r->y1);
     ren->encode (r->x2, r->y2);

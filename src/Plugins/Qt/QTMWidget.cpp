@@ -41,18 +41,12 @@ extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 #include <QMouseEvent>
 #include <QFocusEvent>
 
-#define PIXEL 256
-
 QSet<QTMWidget*> QTMWidget::all_widgets;
 
 
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
 
-inline void
-scale (QPoint& point) {
-  point.rx() *= PIXEL; point.ry() *= -PIXEL;
-}
 
 inline void
 map (int code, string name) {
@@ -227,7 +221,8 @@ QTMWidget::invalidate_all () {
  // QPoint pt = QAbstractScrollArea::viewport()->pos();
    //cout << "invalidate all " << LF;
   invalid_regions = rectangles();
-  invalidate_rect (0, 0, sz.width(), sz.height());
+  invalidate_rect (0, 0, retina_factor * sz.width(),
+                         retina_factor * sz.height());
 }
 
 bool
@@ -284,8 +279,8 @@ QTMWidget::repaint_invalid_regions () {
   // update backing store origin wrt. TeXmacs document
   if (backing_pos != origin()) {
 
-    int dx =  origin().x() - backing_pos.x();
-    int dy =  origin().y() - backing_pos.y();
+    int dx =  retina_factor * (origin().x() - backing_pos.x());
+    int dy =  retina_factor * (origin().y() - backing_pos.y());
     backing_pos = origin();
     
     QPixmap newBackingPixmap (backingPixmap.size());
@@ -296,7 +291,6 @@ QTMWidget::repaint_invalid_regions () {
     backingPixmap = newBackingPixmap;
     //cout << "SCROLL CONTENTS BY " << dx << " " << dy << LF;
     
-    QSize sz = backingPixmap.size();
     
     rectangles invalid;
     while (!is_nil (invalid_regions)) {
@@ -307,6 +301,9 @@ QTMWidget::repaint_invalid_regions () {
       //cout << r << " ---> " << q << LF;
       invalid_regions = invalid_regions->next;
     }
+      
+    QSize sz = backingPixmap.size();
+      
     invalid_regions= invalid & rectangles (rectangle (0,0,
                                                     sz.width(),sz.height()));
     
@@ -335,8 +332,10 @@ QTMWidget::repaint_invalid_regions () {
   // update backing store size
   {
     QSize _oldSize = backingPixmap.size();
-    QSize _newSize = surface()->size();
-    
+      QSize _new_logical_Size = surface()->size();
+    QSize _newSize = _new_logical_Size;
+    _newSize *= retina_factor;
+      
       //cout << "      surface size of " << _newSize.width() << " x " 
       // << _newSize.height() << LF;
     
@@ -370,8 +369,9 @@ QTMWidget::repaint_invalid_regions () {
       
       basic_renderer_rep* ren = getRenderer();
       
-      SI ox = -backing_pos.x()*PIXEL;  // Warning: this is NOT from_qpoint()
-      SI oy = backing_pos.y()*PIXEL;
+      coord2 pt_or = from_qpoint(backing_pos);
+      SI ox = -pt_or.x1;
+      SI oy = -pt_or.x2;
       
       rectangles rects = invalid_regions;
       invalid_regions = rectangles();
@@ -379,7 +379,9 @@ QTMWidget::repaint_invalid_regions () {
       while (!is_nil (rects)) {
         rectangle r = copy (rects->item);
         rectangle r0 = rects->item;
-        QRect qr = QRect (r0->x1, r0->y1, r0->x2 - r0->x1, r0->y2 - r0->y1);
+        QRect qr = QRect (r0->x1 / retina_factor, r0->y1 / retina_factor,
+                          (r0->x2 - r0->x1) / retina_factor,
+                          (r0->y2 - r0->y1) / retina_factor);
         //cout << "repainting " << r0 << "\n";
         ren->set_origin (ox, oy); 
         ren->encode (r->x1, r->y1);
@@ -452,7 +454,12 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
-    p.drawPixmap (qr, backingPixmap, qr);
+    p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
+                  backingPixmap,
+                  QRect (retina_factor * qr.x(),
+                         retina_factor * qr.y(),
+                         retina_factor * qr.width(),
+                         retina_factor * qr.height()));
   }
 }
 void
@@ -803,10 +810,10 @@ void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
-  scale (point);
+  coord2 pt = from_qpoint(point);
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
-  the_gui -> process_mouse (tm_widget(), s, point.x (), point.y (), 
+  the_gui -> process_mouse (tm_widget(), s, pt.x1, pt.x2,  
                             mstate, texmacs_time ());
   event->accept();
 }
@@ -815,10 +822,10 @@ void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
-  scale (point);
+  coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, true);
   string s = "release-" * mouse_decode (mstate);
-  the_gui->process_mouse (tm_widget(), s, point.x(), point.y(),
+  the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2,
                             mstate, texmacs_time());
   event->accept();
 }
@@ -827,10 +834,10 @@ void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
   QPoint point = event->pos() + origin();
-  scale (point);
+  coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, false);
   string s = "move";
-  the_gui->process_mouse (tm_widget(), s, point.x(), point.y(),
+  the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
                           mstate, texmacs_time ());
   event->accept();
 }

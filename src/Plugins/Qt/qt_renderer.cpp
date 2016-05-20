@@ -83,7 +83,8 @@ static hashmap<string,qt_pixmap> images;
 ******************************************************************************/
 
 qt_renderer_rep::qt_renderer_rep (QPainter *_painter, int w2, int h2):
-  basic_renderer_rep (true, w2, h2), painter(_painter) {}
+  basic_renderer_rep (true, w2, h2), painter(_painter) {
+    reset_zoom_factor(); }
 
 qt_renderer_rep::~qt_renderer_rep () {}
 
@@ -113,6 +114,11 @@ qt_renderer_rep::get_extents (int& w2, int& h2) {
   } else {
     w2 = w; h2 = h;
   }
+}
+
+void
+qt_renderer_rep::set_zoom_factor (double zoom) {
+  renderer_rep::set_zoom_factor (retina_factor * zoom);
 }
 
 /******************************************************************************

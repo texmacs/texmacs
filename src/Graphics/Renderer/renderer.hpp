@@ -60,7 +60,7 @@ public:
   /* coordinate system */
   void set_origin (SI x, SI y);
   void move_origin (SI dx, SI dy);
-  void set_zoom_factor (double zoom);
+  virtual void set_zoom_factor (double zoom);
   void reset_zoom_factor ();
   void set_shrinking_factor (int sf);
   virtual void set_transformation (frame fr);
@@ -150,6 +150,7 @@ void abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
 
 extern bool reverse_colors;
 void reverse (int& r, int& g, int& b);
+extern int    retina_factor;
 extern double retina_scale;
 
 #endif // defined RENDERER_H
