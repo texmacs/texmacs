@@ -138,6 +138,11 @@
       ("Progressive" (make-anim 'progressive-smooth))
       ("Fade" (make-anim 'fade-smooth))
       ("Zoom" (make-anim 'zoom-smooth)))
+  (assuming (== (get-preference "bitmap effects") "on")
+    (-> "Emphasize"
+        ("Shadowed" (make-anim 'shadowed-smooth))
+        ("Emboss" (make-anim 'emboss-smooth))
+        ("Outlined emboss" (make-anim 'outlined-emboss-smooth))))
   ---
   ("Animation" (choose-file make-animation "Load file" "animation"))
   ("Sound" (choose-file make-sound "Load file" "sound")))

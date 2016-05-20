@@ -111,6 +111,28 @@
   <assign|zoom-out|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-end>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|0.1|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
 
   <assign|zoom-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<with|orig-magnification|<value|magnification>|<anim-static|<morph|<tuple|0|<with|magnification|<times|<value|zoom-start>|<value|orig-magnification>>|<arg|body>>>|<tuple|1|<with|magnification|<times|<value|zoom-end>|<value|orig-magnification>>|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Emphasis animations
+    </src-comment>
+  </active*>
+
+  <assign|emboss-start-dx|0ln>
+
+  <assign|emboss-start-dy|0ln>
+
+  <assign|emboss-end-dx|-2ln>
+
+  <assign|emboss-end-dy|-2ln>
+
+  <assign|shadowed-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|shadow-dx|<value|emboss-start-dx>|shadow-dy|<value|emboss-start-dy>|<shadowed-raise|<arg|body>>>>|<tuple|1|<with|shadow-dx|<value|emboss-end-dx>|shadow-dy|<value|emboss-end-dy>|<shadowed-raise|<arg|body>>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+
+  <assign|emboss-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|emboss-dx|<value|emboss-start-dx>|emboss-dy|<value|emboss-start-dy>|<emboss|<arg|body>>>>|<tuple|1|<with|emboss-dx|<value|emboss-end-dx>|emboss-dy|<value|emboss-end-dy>|<emboss|<arg|body>>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+
+  <assign|outlined-emboss-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|emboss-dx|<value|emboss-start-dx>|emboss-dy|<value|emboss-start-dy>|<outlined-emboss|<arg|body>>>>|<tuple|1|<with|emboss-dx|<value|emboss-end-dx>|emboss-dy|<value|emboss-end-dy>|<outlined-emboss|<arg|body>>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+
+  \;
 </body>
 
 <\initial>

@@ -47,7 +47,9 @@
   eff-blur eff-outline eff-thicken eff-erode)
 
 (define-group basic-effect-tag
-  blur outline thicken erode)
+  blur outline thicken erode
+  shadow engrave emboss
+  shadowed-raise outlined-engrave outlined-emboss)
 
 (define-group gaussian-effect-tag
   gaussian-blur gaussian-outline gaussian-thicken gaussian-erode)

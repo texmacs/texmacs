@@ -200,13 +200,49 @@
     </src-comment>
   </active*>
 
-  <assign|engrave|<macro|body|dx|dy|col|<gr-effect|<arg|body>|<eff-superpose|0|<eff-monochrome|<eff-sub|0|<eff-erode|0|<eff-motion|<arg|dx>|<arg|dy>>>>|<arg|col>|1>>>>>
+  <assign|shadow-dx|-1ln>
 
-  <assign|emboss|<macro|body|dx|dy|col|<gr-effect|<arg|body>|<eff-superpose|<eff-monochrome|<eff-thicken|0|<eff-motion|<arg|dx>|<arg|dy>>>|<arg|col>|1>|0>>>>
+  <assign|shadow-dy|-1ln>
+
+  <assign|shadow-color|grey>
+
+  <assign|shadow-blur-radius|1ln>
 
   <assign|eff-shadow|<macro|eff|dx|dy|col|r|<eff-blur|<eff-monochrome|<eff-move|0|<arg|dx>|<arg|dy>>|<arg|col>|1>|<eff-gaussian|<arg|r>>>>>
 
-  <assign|shadow|<macro|body|dx|dy|col|r|<gr-effect|<arg|body>|<eff-superpose|<eff-shadow|0|<arg|dx>|<arg|dy>|<arg|col>|<arg|r>>|0>>>>
+  <assign|shadow|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-blur|<eff-monochrome|<eff-move|0|<minus|<value|shadow-dx>>|<minus|<value|shadow-dy>>>|<value|shadow-color>|1>|<eff-gaussian|<value|shadow-blur-radius>>>|0>>>>
+
+  <assign|shadowed-raise|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-blur|<eff-monochrome|0|<value|shadow-color>|1>|<eff-gaussian|<value|shadow-blur-radius>>>|<eff-move|0|<value|shadow-dx>|<value|shadow-dy>>>>>>
+
+  \;
+
+  <assign|engrave-dx|0.5ln>
+
+  <assign|engrave-dy|0.5ln>
+
+  <assign|engrave-color|grey>
+
+  <assign|engrave|<macro|body|<gr-effect|<arg|body>|<eff-superpose|0|<eff-monochrome|<eff-sub|0|<eff-erode|0|<eff-motion|<value|engrave-dx>|<value|engrave-dy>>>>|<value|engrave-color>|1>>>>>
+
+  <assign|outlined-engrave|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-outline|0|<eff-oval|<value|outline-pen-width>|<value|outline-pen-height>|<over|<value|outline-pen-angle>|57.2957795131>>>|<eff-erode|0|<eff-motion|<value|engrave-dx>|<value|engrave-dy>>>>>>>
+
+  \;
+
+  <assign|emboss-dx|-1.5ln>
+
+  <assign|emboss-dy|-1.5ln>
+
+  <assign|emboss-color|grey>
+
+  <assign|emboss|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-monochrome|<eff-thicken|0|<eff-motion|<value|emboss-dx>|<value|emboss-dy>>>|<value|emboss-color>|1>|<eff-move|0|<value|emboss-dx>|<value|emboss-dy>>>>>>
+
+  <assign|outlined-emboss|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-outline|<eff-thicken|0|<eff-motion|<value|emboss-dx>|<value|emboss-dy>>>|<eff-oval|<value|outline-pen-width>|<value|outline-pen-height>|<over|<value|outline-pen-angle>|57.2957795131>>>|<eff-move|0|<value|emboss-dx>|<value|emboss-dy>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Miscellaneous effects
+    </src-comment>
+  </active*>
 
   <assign|burning|<macro|body|<gr-effect|<arg|body>|<eff-superpose|<eff-shadow|0|0.1ex|0.9ex|#f20|0.9ex>|<eff-shadow|0|-0.1ex|0.75ex|#f80|0.55ex>|<eff-shadow|0|0.2ex|0.5ex|#fd3|0.3ex>|<eff-shadow|0|0ex|0.25ex|#ff3|0.2ex>|<eff-shadow|0|0ex|0ex|#ccc|0.2ex>|0>>>>
 

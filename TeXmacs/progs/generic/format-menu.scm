@@ -132,10 +132,14 @@
   ("Thicken" (make 'thicken))
   ("Erode" (make 'erode))
   ---
-  ("Engrave" (make-effect 'engrave "1ln" "0.5ln" "grey"))
-  ("Emboss" (make-effect 'emboss "1ln" "0.5ln" "grey"))
-  ("Shadow" (make-effect 'shadow "1ln" "0.5ln" "grey" "1ln"))
+  ("Shadow" (make 'shadow))
+  ("Engrave" (make 'engrave))
+  ("Emboss" (make 'emboss))
+  ("Shadowed raise" (make 'shadowed-raise))
+  ("Outlined engrave" (make 'outlined-engrave))
+  ("Outlined emboss" (make 'outlined-emboss))
   ;;("Burning" (make-effect 'burning))
+  ;;("Bubble" (make-effect 'bubble))
   )
 
 (menu-bind specific-menu

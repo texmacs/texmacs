@@ -97,6 +97,14 @@
   (list (list "zoom-start" "Start magnification")
         (list "zoom-end" "End magnification")))
 
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(shadowed-smooth emboss-smooth
+                          outlined-emboss-smooth)))
+  (list (list "emboss-start-dx" "Start dx")
+        (list "emboss-start-dy" "Start dy")
+        (list "emboss-end-dx" "End dx")
+        (list "emboss-end-dy" "End dy")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time bending
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
