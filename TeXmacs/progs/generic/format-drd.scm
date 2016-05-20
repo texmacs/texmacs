@@ -18,11 +18,13 @@
 
 (define-group variant-tag
   (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
-  (basic-effect-tag) (detailed-effect-tag) (motion-effect-tag))
+  (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
+  (rectangular-effect-tag) (motion-effect-tag))
 
 (define-group similar-tag
   (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
-  (basic-effect-tag) (detailed-effect-tag) (motion-effect-tag))
+  (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
+  (rectangular-effect-tag) (motion-effect-tag))
 
 ;; Various geometry adjustment tags
 
@@ -41,14 +43,20 @@
 (define-group reduce-by-tag
   reduce-by reduce-bottom-by reduce-top-by)
 
+(define-group eff-tag
+  eff-blur eff-outline eff-thicken eff-erode)
+
 (define-group basic-effect-tag
   blur outline thicken erode)
 
-(define-group detailed-effect-tag
-  gaussian-blur oval-blur rectangular-blur
-  gaussian-outline oval-outline rectangular-outline
-  gaussian-thicken oval-thicken rectangular-thicken
-  gaussian-erode oval-erode rectangular-erode)
+(define-group gaussian-effect-tag
+  gaussian-blur gaussian-outline gaussian-thicken gaussian-erode)
+
+(define-group oval-effect-tag
+  oval-blur oval-outline oval-thicken oval-erode)
+
+(define-group rectangular-effect-tag
+  rectangular-blur rectangular-outline rectangular-thicken rectangular-erode)
 
 (define-group motion-effect-tag
   motion-blur motion-outline motion-thicken motion-erode)

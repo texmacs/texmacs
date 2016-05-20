@@ -84,57 +84,121 @@
 
   <\active*>
     <\src-comment>
-      Effects
+      Blur effect
     </src-comment>
   </active*>
 
-  <assign|blur|<macro|body|r|<gr-effect|<arg|body>|<eff-blur|0|<eff-gaussian|<arg|r>>>>>>
+  <assign|blur-pen-width|1ln>
 
-  <assign|gaussian-blur|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-blur|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|blur-pen-height|1ln>
 
-  <assign|oval-blur|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-blur|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|blur-pen-angle|0>
 
-  <assign|rectangular-blur|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-blur|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|blur-pen-dx|1ln>
 
-  <assign|motion-blur|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-blur|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
-
-  \;
-
-  <assign|outline|<macro|body|r|<gr-effect|<arg|body>|<eff-outline|0|<eff-oval|<arg|r>>>>>>
-
-  <assign|gaussian-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
-
-  <assign|oval-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
-
-  <assign|rectangular-outline|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-outline|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
-
-  <assign|motion-outline|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-outline|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
+  <assign|blur-pen-dy|1ln>
 
   \;
 
-  <assign|thicken|<macro|body|rx|ry|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|0>>>>>
+  <assign|blur|<macro|body|<gaussian-blur|<arg|body>>>>
 
-  <assign|gaussian-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|gaussian-blur|<macro|body|<gr-effect|<arg|body>|<eff-blur|0|<eff-gaussian|<value|blur-pen-width>|<value|blur-pen-height>|<over|<value|blur-pen-angle>|57.2957795131>>>>>>
 
-  <assign|oval-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|oval-blur|<macro|body|<gr-effect|<arg|body>|<eff-blur|0|<eff-oval|<value|blur-pen-width>|<value|blur-pen-height>|<over|<value|blur-pen-angle>|57.2957795131>>>>>>
 
-  <assign|rectangular-thicken|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|rectangular-blur|<macro|body|<gr-effect|<arg|body>|<eff-blur|0|<eff-rectangular|<value|blur-pen-width>|<value|blur-pen-height>|<over|<value|blur-pen-angle>|57.2957795131>>>>>>
 
-  <assign|motion-thicken|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-thicken|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
+  <assign|motion-blur|<macro|body|<gr-effect|<arg|body>|<eff-blur|0|<eff-motion|<value|blur-pen-dx>|<value|blur-pen-dy>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Outline effect
+    </src-comment>
+  </active*>
+
+  <assign|outline-pen-width|0.5ln>
+
+  <assign|outline-pen-height|0.5ln>
+
+  <assign|outline-pen-angle|0>
+
+  <assign|outline-pen-dx|1ln>
+
+  <assign|outline-pen-dy|1ln>
 
   \;
 
-  <assign|erode|<macro|body|rx|ry|<gr-effect|<arg|body>|<eff-erode|0|<eff-rectangular|<arg|rx>|<arg|ry>|0>>>>>
+  <assign|outline|<macro|body|<oval-outline|<arg|body>>>>
 
-  <assign|gaussian-erode|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-erode|0|<eff-gaussian|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|gaussian-outline|<macro|body|<gr-effect|<arg|body>|<eff-outline|0|<eff-gaussian|<value|outline-pen-width>|<value|outline-pen-height>|<over|<value|outline-pen-angle>|57.2957795131>>>>>>
 
-  <assign|oval-erode|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-erode|0|<eff-oval|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|oval-outline|<macro|body|<gr-effect|<arg|body>|<eff-outline|0|<eff-oval|<value|outline-pen-width>|<value|outline-pen-height>|<over|<value|outline-pen-angle>|57.2957795131>>>>>>
 
-  <assign|rectangular-erode|<macro|body|rx|ry|phi|<gr-effect|<arg|body>|<eff-erode|0|<eff-rectangular|<arg|rx>|<arg|ry>|<arg|phi>>>>>>
+  <assign|rectangular-outline|<macro|body|<gr-effect|<arg|body>|<eff-outline|0|<eff-rectangular|<value|outline-pen-width>|<value|outline-pen-height>|<over|<value|outline-pen-angle>|57.2957795131>>>>>>
 
-  <assign|motion-erode|<macro|body|dx|dy|<gr-effect|<arg|body>|<eff-erode|0|<eff-motion|<arg|dx>|<arg|dy>>>>>>
+  <assign|motion-outline|<macro|body|<gr-effect|<arg|body>|<eff-outline|0|<eff-motion|<value|outline-pen-dx>|<value|outline-pen-dy>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Thicken effect
+    </src-comment>
+  </active*>
+
+  <assign|thicken-pen-width|1ln>
+
+  <assign|thicken-pen-height|1ln>
+
+  <assign|thicken-pen-angle|0>
+
+  <assign|thicken-pen-dx|1ln>
+
+  <assign|thicken-pen-dy|1ln>
 
   \;
+
+  <assign|thicken|<macro|body|<rectangular-thicken|<arg|body>>>>
+
+  <assign|gaussian-thicken|<macro|body|<gr-effect|<arg|body>|<eff-thicken|0|<eff-gaussian|<value|thicken-pen-width>|<value|thicken-pen-height>|<over|<value|thicken-pen-angle>|57.2957795131>>>>>>
+
+  <assign|oval-thicken|<macro|body|<gr-effect|<arg|body>|<eff-thicken|0|<eff-oval|<value|thicken-pen-width>|<value|thicken-pen-height>|<over|<value|thicken-pen-angle>|57.2957795131>>>>>>
+
+  <assign|rectangular-thicken|<macro|body|<gr-effect|<arg|body>|<eff-thicken|0|<eff-rectangular|<value|thicken-pen-width>|<value|thicken-pen-height>|<over|<value|thicken-pen-angle>|57.2957795131>>>>>>
+
+  <assign|motion-thicken|<macro|body|<gr-effect|<arg|body>|<eff-thicken|0|<eff-motion|<value|thicken-pen-dx>|<value|thicken-pen-dy>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Erode effect
+    </src-comment>
+  </active*>
+
+  <assign|erode-pen-width|0.5ln>
+
+  <assign|erode-pen-height|0.5ln>
+
+  <assign|erode-pen-angle|0>
+
+  <assign|erode-pen-dx|1ln>
+
+  <assign|erode-pen-dy|1ln>
+
+  \;
+
+  <assign|erode|<macro|body|<rectangular-erode|<arg|body>>>>
+
+  <assign|gaussian-erode|<macro|body|<gr-effect|<arg|body>|<eff-erode|0|<eff-gaussian|<value|erode-pen-width>|<value|erode-pen-height>|<over|<value|erode-pen-angle>|57.2957795131>>>>>>
+
+  <assign|oval-erode|<macro|body|<gr-effect|<arg|body>|<eff-erode|0|<eff-oval|<value|erode-pen-width>|<value|erode-pen-height>|<over|<value|erode-pen-angle>|57.2957795131>>>>>>
+
+  <assign|rectangular-erode|<macro|body|<gr-effect|<arg|body>|<eff-erode|0|<eff-rectangular|<value|erode-pen-width>|<value|erode-pen-height>|<over|<value|erode-pen-angle>|57.2957795131>>>>>>
+
+  <assign|motion-erode|<macro|body|<gr-effect|<arg|body>|<eff-erode|0|<eff-motion|<value|erode-pen-dx>|<value|erode-pen-dy>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Further effects
+    </src-comment>
+  </active*>
 
   <assign|engrave|<macro|body|dx|dy|col|<gr-effect|<arg|body>|<eff-superpose|0|<eff-monochrome|<eff-sub|0|<eff-erode|0|<eff-motion|<arg|dx>|<arg|dy>>>>|<arg|col>|1>>>>>
 

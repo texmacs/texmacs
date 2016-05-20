@@ -83,7 +83,9 @@
   (-> "Adjust" (link adjust-menu))
   (-> "Specific" (link specific-menu))
   (-> "Special" (link format-special-menu))
-  (-> "Effects" (link text-effects-menu)))
+  (-> "Font effects" (link text-font-effects-menu))
+  (assuming (== (get-preference "bitmap effects") "on")
+    (-> "Graphical effects" (link text-effects-menu))))
 
 (menu-bind math-format-menu
   (if (use-menus?)

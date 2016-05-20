@@ -265,3 +265,53 @@
 (tm-define (make-new-dpage)
   (make 'new-dpage)
   (insert-return))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Effects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(blur gaussian-blur oval-blur rectangular-blur)))
+  (list (list "blur-pen-width" "Pen width")
+        (list "blur-pen-height" "Pen height")
+        (list "blur-pen-angle" "Pen angle")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(motion-blur)))
+  (list (list "blur-pen-dx" "Pen dx")
+        (list "blur-pen-dy" "Pen dy")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(outline gaussian-outline
+                          oval-outline rectangular-outline)))
+  (list (list "outline-pen-width" "Pen width")
+        (list "outline-pen-height" "Pen height")
+        (list "outline-pen-angle" "Pen angle")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(motion-outline)))
+  (list (list "outline-pen-dx" "Pen dx")
+        (list "outline-pen-dy" "Pen dy")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(thicken gaussian-thicken
+                          oval-thicken rectangular-thicken)))
+  (list (list "thicken-pen-width" "Pen width")
+        (list "thicken-pen-height" "Pen height")
+        (list "thicken-pen-angle" "Pen angle")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(motion-thicken)))
+  (list (list "thicken-pen-dx" "Pen dx")
+        (list "thicken-pen-dy" "Pen dy")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(erode gaussian-erode oval-erode rectangular-erode)))
+  (list (list "erode-pen-width" "Pen width")
+        (list "erode-pen-height" "Pen height")
+        (list "erode-pen-angle" "Pen angle")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(motion-erode)))
+  (list (list "erode-pen-dx" "Pen dx")
+        (list "erode-pen-dy" "Pen dy")))
