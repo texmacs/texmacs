@@ -190,6 +190,10 @@
   ("Rectangular" (set-effect-pen t "rectangular"))
   ("Motion" (set-effect-pen t "motion")))
 
+(tm-menu (focus-misc-menu t)
+  (:require (pen-effect-context? t))
+  (-> "Effect pen" (dynamic (select-effect-pen-menu t))))
+
 (tm-menu (focus-misc-icons t)
   (:require (pen-effect-context? t))
   (=> (balloon (icon (eval (effect-pen-icon t))) "Select pen")
