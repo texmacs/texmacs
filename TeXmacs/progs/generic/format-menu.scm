@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic format-menu)
-  (:use (generic generic-edit)
+  (:use (generic generic-menu)
 	(generic format-edit)
 	(generic format-geometry-edit)))
 
@@ -173,6 +173,27 @@
   (-> "Font effects" (link text-font-effects-menu))
   (assuming (== (get-preference "bitmap effects") "on")
     (-> "Graphical effects" (link text-effects-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pen selection for graphical effects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (effect-pen-icon t)
+  (with p (get-effect-pen t)
+    (if (string? p)
+        (string-append "tm_pen_" p ".xpm")
+        "tm_customized.xpm")))
+
+(tm-menu (select-effect-pen-menu t)
+  ("Gaussian" (set-effect-pen t "gaussian"))
+  ("Oval" (set-effect-pen t "oval"))
+  ("Rectangular" (set-effect-pen t "rectangular"))
+  ("Motion" (set-effect-pen t "motion")))
+
+(tm-menu (focus-misc-icons t)
+  (:require (pen-effect-context? t))
+  (=> (balloon (icon (eval (effect-pen-icon t))) "Select pen")
+      (dynamic (select-effect-pen-menu t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Paragraph menu and submenus

@@ -51,6 +51,11 @@
   shadow engrave emboss
   shadowed-raise outlined-engrave outlined-emboss)
 
+(define-group pen-effect-tag
+  blur outline thicken erode
+  (gaussian-effect-tag) (oval-effect-tag)
+  (rectangular-effect-tag) (motion-effect-tag))
+  
 (define-group gaussian-effect-tag
   gaussian-blur gaussian-outline gaussian-thicken gaussian-erode)
 
