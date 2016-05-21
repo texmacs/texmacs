@@ -165,7 +165,7 @@ public:
         if (keyEvent->modifiers() & Qt::ShiftModifier)
           current = current - 1 < 0 ? N-1 : current - 1;
         else
-          current = ++current % N;
+          current = current + 1 >= N? 0 : current + 1;
         buttons[current]->setFocus (Qt::TabFocusReason);
         return true;
       }

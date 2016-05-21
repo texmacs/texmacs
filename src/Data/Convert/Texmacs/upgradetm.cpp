@@ -402,19 +402,19 @@ upgrade_textual (tree t, path& mode_stack) {
 	string ss= t->label (start, i);
 	if (t->label[i-1] != '>') ss << '>';
 	if (starts (ss, "<left-")) {
-	  if (s != "") r << s; s= "";
+	  if (s != "") { r << s; s= ""; }
 	  r << tree (LEFT, ss (6, N(ss)-1));
 	}
 	else if (starts (ss, "<mid-")) {
-	  if (s != "") r << s; s= "";
+	  if (s != "") { r << s; s= ""; }
 	  r << tree (MID, ss (5, N(ss)-1));
 	}
 	else if (starts (ss, "<right-")) {
-	  if (s != "") r << s; s= "";
+	  if (s != "") { r << s; s= ""; }
 	  r << tree (RIGHT, ss (7, N(ss)-1));
 	}
 	else if (starts (ss, "<big-")) {
-	  if (s != "") r << s; s= "";
+	  if (s != "") { r << s; s= ""; }
 	  r << tree (BIG, ss (5, N(ss)-1));
 	}
 	else s << ss;
@@ -424,7 +424,7 @@ upgrade_textual (tree t, path& mode_stack) {
 	{
 	  int start= i++;
 	  while ((i<n) && (t->label[i] == t->label[i-1])) i++;
-	  if (s != "") r << s; s= "";
+	  if (s != "") { r << s; s= ""; }
 	  tree_label op= t->label[start] == '`'? LPRIME: RPRIME;
 	  r << tree (op, t->label (start, i));
 	}
