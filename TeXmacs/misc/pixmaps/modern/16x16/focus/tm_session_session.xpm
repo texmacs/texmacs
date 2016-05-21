@@ -1,0 +1,34 @@
+/* XPM */
+static char *tm_session_session[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 12 1 ",
+"  c #6060FF",
+". c #ACACDF",
+"X c #BEBED7",
+"o c #B3B3DC",
+"O c #B3B3DD",
+"+ c #BBBBD8",
+"@ c #9E9EE5",
+"# c #9D9DE6",
+"$ c #8484F0",
+"% c #C5C5D4",
+"& c #C7C7D4",
+"* c None",
+/* pixels */
+"%OOOOOOOOOo&****",
+"$          $****",
+"%OOOOOOOOOo&****",
+"**%OOOOOOOOOOOo&",
+"**$            $",
+"**+#########@.o&",
+"**$          $**",
+"**%OOOOOOOOOo&**",
+"%OOOOOOOOOo&****",
+"$          $****",
+"%OOOOOOOOOo&****",
+"**%OOOOOOOOOOOo&",
+"**$            $",
+"**+###########@X",
+"**$            $",
+"**%OOOOOOOOOOOo&"
+};
