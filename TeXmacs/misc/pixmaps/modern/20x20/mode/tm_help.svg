@@ -37,7 +37,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="31.392433"
-     inkscape:cx="11.607551"
+     inkscape:cx="9.3653371"
      inkscape:cy="11.105133"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -46,8 +46,8 @@
      inkscape:snap-grids="true"
      inkscape:window-width="1581"
      inkscape:window-height="1042"
-     inkscape:window-x="454"
-     inkscape:window-y="260"
+     inkscape:window-x="88"
+     inkscape:window-y="187"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:snap-global="true">
@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -260,19 +260,19 @@
        sodipodi:nodetypes="ccscczc" />
     <path
        style="fill:#e0e0e0;fill-opacity:1;stroke:#808060;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
-       d="M 16.404436,14.710483 18.862904,1.7645155 18.213307,-3.0927405 15.277016,11.933466 Z"
+       d="M 16.404436,14.710483 18.990323,0.01250093 18.213307,-3.0927405 15.277016,11.933466 Z"
        id="path5342"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:25%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#f0f0f0;fill-opacity:1;stroke:#606060;stroke-width:0.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3957);"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;line-height:25%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#f0f0f0;fill-opacity:1;stroke:#606060;stroke-width:0.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3957)"
        x="12.598754"
        y="8.4696798"
        id="text3792"
        sodipodi:linespacing="25%"
-       transform="matrix(0.94107549,0,-0.39628164,1.062614,-0.82822505,1.6245953)"
-       inkscape:transform-center-x="-0.63709617"
+       transform="matrix(0.94107549,0,-0.21034828,1.062614,-1.7033103,1.5927405)"
+       inkscape:transform-center-x="-0.62037444"
        inkscape:transform-center-y="-0.095564938"><tspan
          sodipodi:role="line"
          id="tspan14636"
