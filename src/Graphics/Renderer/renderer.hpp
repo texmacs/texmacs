@@ -44,6 +44,7 @@ public:
   double zoomf;             // zoom factor
   int shrinkf;              // shrinking factor
   int pixel;                // size of a pixel on the screen
+  int retina_pixel;         // size of a pixel on a retina screen
   int brushpx;              // (hack) -1 or size of a pixel for patterns
   int thicken;              // extra thinkening when anti-aliasing characters
   renderer master;          // master renderer in case of shadow renderers

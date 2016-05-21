@@ -133,8 +133,9 @@ renderer_rep::set_zoom_factor (double zoom) {
   cy2= (SI) tm_round (cy2 * zoomf);
   zoomf  = zoom;
   shrinkf= (int) tm_round (std_shrinkf / zoomf);
-  pixel  = (SI)  tm_round ((std_shrinkf * PIXEL) / zoomf);
   thicken= (shrinkf >> 1) * PIXEL;
+  pixel       = (SI) tm_round ((std_shrinkf * PIXEL) / zoomf);
+  retina_pixel= pixel;
   ox = (SI) tm_round (ox  / zoomf);
   oy = (SI) tm_round (oy  / zoomf);
   //cx1= (SI) ::floor (cx1 / zoomf);
@@ -244,7 +245,7 @@ renderer_rep::decode (SI x, SI y, double& rx, double& ry) {
   ry= -(((double) (y + oy)) / pixel - 0.5);
 }
 
-#define RND(x) (((x)>=0)?(((x)/pixel)*pixel):((((x)-pixel+1)/pixel)*pixel))
+#define RND(x) (((x)>=0)?(((x)/retina_pixel)*retina_pixel):((((x)-retina_pixel+1)/retina_pixel)*retina_pixel))
 
 void
 renderer_rep::round (SI& x, SI& y) {
@@ -454,6 +455,7 @@ renderer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
   ren->zoomf= zoomf;
   ren->shrinkf= shrinkf;
   ren->pixel= pixel;
+  ren->retina_pixel= retina_pixel;
   ren->brushpx= brushpx;
   ren->thicken= thicken;
   

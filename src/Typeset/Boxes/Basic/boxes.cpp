@@ -538,7 +538,7 @@ void
 box_rep::redraw (renderer ren, path p, rectangles& l) {
   if ((nr_painted&15) == 15 && ren->is_screen && gui_interrupted (true)) return;
   ren->move_origin (x0, y0);
-  SI delta= ren->pixel; // adjust visibility to compensate truncation
+  SI delta= ren->retina_pixel; // adjust visibility to compensate truncation
   if (ren->is_visible (x3- delta, y3- delta, x4+ delta, y4+ delta)) {
     rectangles ll;
     l= rectangles();
@@ -564,7 +564,7 @@ box_rep::redraw (renderer ren, path p, rectangles& l) {
     
     if ((nr_painted&15) == 15 && ren->is_screen && gui_interrupted ()) {
       l= translate (l, -ren->ox, -ren->oy);
-      clear_incomplete (l, ren->pixel, item, i1, i2);
+      clear_incomplete (l, ren->retina_pixel, item, i1, i2);
       l= translate (l, ren->ox, ren->oy);
     }
     else {

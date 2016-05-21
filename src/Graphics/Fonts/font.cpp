@@ -90,8 +90,9 @@ font_rep::draw (renderer ren, string s, SI x, SI y, SI xk, bool ext) {
     SI     old_cy2    = ren->cy2;
     double old_zoomf  = ren->zoomf;
     int    old_shrinkf= ren->shrinkf;
-    SI     old_pixel  = ren->pixel;
     SI     old_thicken= ren->thicken;
+    SI     old_pixel       = ren->pixel;
+    SI     old_retina_pixel= ren->retina_pixel;
 
     ren->ox     = (SI) tm_round (old_ox  * old_zoomf);
     ren->oy     = (SI) tm_round (old_oy  * old_zoomf);
@@ -106,8 +107,9 @@ font_rep::draw (renderer ren, string s, SI x, SI y, SI xk, bool ext) {
     ren->zoomf  = 1.0;
     ren->shrinkf= std_shrinkf;
     ren->brushpx= ren->pixel;
-    ren->pixel  = std_shrinkf * PIXEL;
     ren->thicken= (std_shrinkf >> 1) * PIXEL;
+    ren->pixel       = std_shrinkf * PIXEL;
+    ren->retina_pixel= std_shrinkf * PIXEL;
 
     SI xx= (SI) tm_round (x * old_zoomf);
     SI yy= (SI) tm_round (y * old_zoomf);
@@ -126,8 +128,9 @@ font_rep::draw (renderer ren, string s, SI x, SI y, SI xk, bool ext) {
     ren->zoomf  = old_zoomf;
     ren->shrinkf= old_shrinkf;
     ren->brushpx= -1;
-    ren->pixel  = old_pixel;
     ren->thicken= old_thicken;
+    ren->pixel       = old_pixel;
+    ren->retina_pixel= old_retina_pixel;
   }
 }
 

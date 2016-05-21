@@ -119,6 +119,7 @@ qt_renderer_rep::get_extents (int& w2, int& h2) {
 void
 qt_renderer_rep::set_zoom_factor (double zoom) {
   renderer_rep::set_zoom_factor (retina_factor * zoom);
+  retina_pixel= pixel * retina_factor;
 }
 
 /******************************************************************************
