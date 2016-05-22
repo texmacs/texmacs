@@ -414,6 +414,12 @@ compute_wide_accent (path ip, box b, string s,
     }
     sep= above? -fn->yx: fn->sep;
   }
+  if (above && fn->type == FONT_TYPE_UNICODE) {
+    SI min_d= fn->yx / 8;
+    SI max_d= fn->yx / 3;
+    if (wideb->y1 + sep <  min_d) sep= min_d - wideb->y1;
+    if (wideb->y1 + sep >= max_d) sep= max_d - wideb->y1;
+  }
   return wide;
 }
 
