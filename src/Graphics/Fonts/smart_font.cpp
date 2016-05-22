@@ -704,6 +704,7 @@ void
 smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
   int* chv= sm->chv;
   hashmap<string,int>& cht (sm->cht);
+  int count= 0;
   int start= pos;
   nr= -1;
   while (pos < N(s)) {
@@ -724,10 +725,16 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
       tm_char_forwards (s, end);
       int next= cht[s (pos, end)];
       if (next == -1) next= resolve (s (pos, end));
-      if (next == nr) pos= end;
+      if (count == 1 && nr != -1 && next == nr) {
+        if (N(fn) <= nr || is_nil (fn[nr])) initialize_font (nr);
+        if (!fn[nr]->supports (s (start, end))) break;
+        pos= end;
+      }
+      else if (next == nr) pos= end;
       else if (nr == -1) { pos= end; nr= next; }
       else break;
     }
+    count++;
   }
   r= s (start, pos);
   if (nr < 0) return;
@@ -952,7 +959,7 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in italic prime\n";
       return sm->add_char (tuple ("italic-math"), c);      
     }
-    if (is_special (c)) {
+    if (is_special (c) && (c != "*" || !ends (variant, "-tt"))) {
       //cout << "Found " << c << " in special\n";
       return sm->add_char (tuple ("special"), c);
     }
