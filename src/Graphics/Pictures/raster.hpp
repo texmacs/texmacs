@@ -963,4 +963,20 @@ br_distances (raster<C> r) {
   return ret;
 }
 
+/******************************************************************************
+* Random Perlin noise
+******************************************************************************/
+
+class true_color;
+
+raster<double>
+turbulence (int w, int h, int ox, int oy, long seed, int channel,
+            double wavelen_x, double wavelen_y, 
+            int nNumOctaves, bool bFractalSum);
+
+raster<true_color>
+turbulence (int w, int h, int ox, int oy, long seed,
+            double wavelen_x, double wavelen_y,
+            int nNumOctaves, bool bFractalSum);
+
 #endif // defined RASTER_H

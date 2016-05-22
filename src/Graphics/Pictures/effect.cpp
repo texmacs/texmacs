@@ -66,6 +66,30 @@ effect argument_effect (int nr) {
   return tm_new<argument_effect_rep> (nr); }
 
 /******************************************************************************
+* Turbulence effect
+******************************************************************************/
+
+class turbulence_effect_rep: public effect_rep {
+  effect eff;
+  long seed;
+  double w, h;
+  int octaves;
+  bool frac_sum;
+public:
+  turbulence_effect_rep (long s, double w2, double h2, int o, bool f):
+    seed (s), w (w2), h (h2), octaves (o), frac_sum (f) {}
+  rectangle get_logical_extents (array<rectangle> rs) {
+    return eff->get_logical_extents (rs); }
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return eff->apply (pics, pixel); }
+};
+
+effect turbulence_effect (long s, double w, double h, int oct, bool f) {
+  return tm_new<turbulence_effect_rep> (s, w, h, oct, f); }
+
+/******************************************************************************
 * Coordinate transformations
 ******************************************************************************/
 
