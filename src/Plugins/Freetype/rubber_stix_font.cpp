@@ -193,6 +193,10 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew, string& ltype) {
     int pos= search_backwards ("-", N(s), s);
     if (pos > 6) ltype= s (6, pos);
   }
+  if (starts (s, "<left-.")) {
+    rew= "";
+    return 0;
+  }
   if (starts (s, "<left-|") || starts (s, "<left-interleave-")) {
     int nr= large_size (s);
     if (nr <= 0) {

@@ -40,6 +40,8 @@
   (rubber-rceil-#
     (glue-above (ver-take #23A5 0.5 # 0.25)
       #23A4))
+  (rubber-nosymbol-#
+    (ver-take nosymbol 0.5 # 0.25))
   (rubber-bar-#
     (ver-take | 0.5 # 0.25))
   (rubber-parallel-#

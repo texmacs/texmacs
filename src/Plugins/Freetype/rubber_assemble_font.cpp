@@ -103,6 +103,10 @@ rubber_assemble_font_rep::search_font (string s, string& r) {
         code= virt->dict ["<rubber-lceil-#>"];
       else if (r == "rceil")
         code= virt->dict ["<rubber-rceil-#>"];
+      else if (r == ".")
+        code= virt->dict ["<rubber-nosymbol-#>"];
+      else if (r == "nosymbol")
+        code= virt->dict ["<rubber-nosymbol-#>"];
       else if (r == "|")
         code= virt->dict ["<rubber-bar-#>"];
       else if (r == "||")
