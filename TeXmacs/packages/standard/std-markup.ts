@@ -492,6 +492,8 @@
 
   <assign|extended|<macro|val|body|<add-font-effect|hextended|<arg|val>|<arg|body>>>>
 
+  <assign|degraded|<macro|val|body|<add-font-effect|degraded|<arg|val>|<arg|body>>>>
+
   <\active*>
     <\src-comment>
       Miscellaneous.

@@ -970,6 +970,11 @@ br_distances (raster<C> r) {
 class true_color;
 
 raster<double>
+turbulence (int w, int h, int ox, int oy, long seed,
+            double wavelen_x, double wavelen_y, 
+            int nNumOctaves, bool bFractalSum);
+
+raster<double>
 turbulence (raster<double> ras, long seed,
             double wavelen_x, double wavelen_y, 
             int nNumOctaves, bool bFractalSum);

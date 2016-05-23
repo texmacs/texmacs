@@ -1471,6 +1471,13 @@ apply_effects (font fn, string effects) {
         fn= poor_vextended_font (fn, yf);
       }
       */
+      else if (b[0] == "degraded" && is_double (b[1])) {
+        double threshold= as_double (b[1]);
+        if (threshold < 0.01) threshold= 0.01;
+        if (threshold > 0.99) threshold= 0.99;
+        tree kind= tuple ("degraded", as_string (threshold));
+        fn= poor_distorted_font (fn, kind);
+      }
     }
   }
   return fn;
