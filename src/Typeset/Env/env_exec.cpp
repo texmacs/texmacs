@@ -463,6 +463,10 @@ edit_env_rep::exec (tree t) {
     return exec_eff_move (t);
   case EFF_BUBBLE:
     return exec_eff_bubble (t);
+  case EFF_TURBULENCE:
+    return exec_eff_turbulence (t);
+  case EFF_FRACTAL_NOISE:
+    return exec_eff_fractal_noise (t);
   case EFF_GAUSSIAN:
     return exec_eff_gaussian (t);
   case EFF_OVAL:
@@ -1816,6 +1820,28 @@ edit_env_rep::exec_eff_bubble (tree t) {
   tree r   = as_tree (as_length (exec (t[1])));
   tree a   = exec (t[2]);
   return tree (EFF_BUBBLE, body, r, a);
+}
+
+tree
+edit_env_rep::exec_eff_turbulence (tree t) {
+  if (N(t) != 5) return tree (ERROR, "bad eff-turbulence");
+  tree body= exec (t[0]);
+  tree s   = exec (t[1]);
+  tree w   = as_tree (as_length (exec (t[2])));
+  tree h   = as_tree (as_length (exec (t[3])));
+  tree o   = exec (t[4]);
+  return tree (EFF_TURBULENCE, body, s, w, h, o);
+}
+
+tree
+edit_env_rep::exec_eff_fractal_noise (tree t) {
+  if (N(t) != 5) return tree (ERROR, "bad eff-fractal-noise");
+  tree body= exec (t[0]);
+  tree s   = exec (t[1]);
+  tree w   = as_tree (as_length (exec (t[2])));
+  tree h   = as_tree (as_length (exec (t[3])));
+  tree o   = exec (t[4]);
+  return tree (EFF_FRACTAL_NOISE, body, s, w, h, o);
 }
 
 tree

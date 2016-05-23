@@ -76,18 +76,25 @@ class turbulence_effect_rep: public effect_rep {
   int octaves;
   bool frac_sum;
 public:
-  turbulence_effect_rep (long s, double w2, double h2, int o, bool f):
-    seed (s), w (w2), h (h2), octaves (o), frac_sum (f) {}
+  turbulence_effect_rep (effect e, long s, double w2, double h2, int o, bool f):
+    eff (e), seed (s), w (w2), h (h2), octaves (o), frac_sum (f) {}
   rectangle get_logical_extents (array<rectangle> rs) {
     return eff->get_logical_extents (rs); }
   rectangle get_extents (array<rectangle> rs) {
     return eff->get_extents (rs); }
   picture apply (array<picture> pics, SI pixel) {
-    return eff->apply (pics, pixel); }
+    if (frac_sum)
+      return fractal_noise (eff->apply (pics, pixel), seed,
+                            w / pixel, h / pixel, octaves);
+    else
+      return turbulence (eff->apply (pics, pixel), seed,
+                         w / pixel, h / pixel, octaves); }
 };
 
-effect turbulence_effect (long s, double w, double h, int oct, bool f) {
-  return tm_new<turbulence_effect_rep> (s, w, h, oct, f); }
+effect turbulence (effect e, long s, double w, double h, int oct) {
+  return tm_new<turbulence_effect_rep> (e, s, w, h, oct, false); }
+effect fractal_noise (effect e, long s, double w, double h, int oct) {
+  return tm_new<turbulence_effect_rep> (e, s, w, h, oct, true); }
 
 /******************************************************************************
 * Coordinate transformations
@@ -452,6 +459,22 @@ build_effect (tree t) {
   else if (is_func (t, EFF_GAUSSIAN, 1)) {
     double r= as_double (t[0]);
     return gaussian_pen_effect (r);
+  }
+  else if (is_func (t, EFF_TURBULENCE, 5)) {
+    effect e= build_effect (t[0]);
+    int    s= as_int (t[1]);
+    double w= as_double (t[2]);
+    double h= as_double (t[3]);
+    int    o= as_int (t[4]);
+    return turbulence (e, s, w, h, o);
+  }
+  else if (is_func (t, EFF_FRACTAL_NOISE, 5)) {
+    effect e= build_effect (t[0]);
+    int    s= as_int (t[1]);
+    double w= as_double (t[2]);
+    double h= as_double (t[3]);
+    int    o= as_int (t[4]);
+    return fractal_noise (e, s, w, h, o);
   }
   else if (is_func (t, EFF_GAUSSIAN, 3)) {
     double rx= as_double (t[0]);

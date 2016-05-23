@@ -244,14 +244,15 @@ perlin_rep::turbulence (int nColorChannel,
 ******************************************************************************/
 
 raster<double>
-turbulence (int w, int h, int ox, int oy, long seed, int channel,
+turbulence (raster<double> ras, long seed,
             double wavelen_x, double wavelen_y, 
             int nNumOctaves, bool bFractalSum) {
+  int w= ras->w, h= ras->h, ox= ras->ox, oy= ras->oy;
   perlin p= perlin_generator (seed);
   raster<double> ret (w, h, ox, oy);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++) {
-      double v= p->turbulence (channel, (double) x, (double) y,
+      double v= p->turbulence (3, (double) x, (double) y,
                                1.0 / wavelen_x, 1.0 / wavelen_y,
                                nNumOctaves, bFractalSum, false,
                                0.0, 0.0, wavelen_x, wavelen_y);
@@ -262,9 +263,10 @@ turbulence (int w, int h, int ox, int oy, long seed, int channel,
 }
 
 raster<true_color>
-turbulence (int w, int h, int ox, int oy, long seed,
+turbulence (raster<true_color> ras, long seed,
             double wavelen_x, double wavelen_y,
             int nNumOctaves, bool bFractalSum) {
+  int w= ras->w, h= ras->h, ox= ras->ox, oy= ras->oy;
   perlin p= perlin_generator (seed);
   raster<true_color> ret (w, h, ox, oy);
   for (int y=0; y<h; y++)

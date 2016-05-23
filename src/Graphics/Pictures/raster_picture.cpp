@@ -90,6 +90,18 @@ bubble (picture pic, double r, double a) {
   return raster_picture (bubble (ras, r, a));
 }
 
+picture
+turbulence (picture pic, long seed, double w, double h, int oct) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (turbulence (ras, seed, w, h, oct, false));  
+}
+
+picture
+fractal_noise (picture pic, long seed, double w, double h, int oct) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (turbulence (ras, seed, w, h, oct, true));
+}
+
 /******************************************************************************
 * Special effects
 ******************************************************************************/

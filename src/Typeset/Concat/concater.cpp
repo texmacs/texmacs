@@ -780,6 +780,8 @@ concater_rep::typeset (tree t, path ip) {
   case EFF_MOVE:
   case EFF_MAGNIFY:
   case EFF_BUBBLE:
+  case EFF_TURBULENCE:
+  case EFF_FRACTAL_NOISE:
   case EFF_GAUSSIAN:
   case EFF_OVAL:
   case EFF_RECTANGULAR:

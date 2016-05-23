@@ -118,6 +118,8 @@ picture mix (picture pic1, double a1, picture pic2, double a2);
 picture shift (picture pic, double dx, double dy);
 picture magnify (picture pic, double sx, double sy);
 picture bubble (picture pic, double r, double a);
+picture turbulence (picture pic, long seed, double w, double h, int oct);
+picture fractal_noise (picture pic, long seed, double w, double h, int oct);
 
 picture gaussian_pen_picture (double r);
 picture oval_pen_picture (double r);

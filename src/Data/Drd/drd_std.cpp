@@ -725,6 +725,20 @@ init_std_drd () {
         effect (0) -> name (0, "body") ->
         length (1) -> name (1, "radius") ->
         numeric (2) -> name (2, "amplitude"));
+  init (EFF_TURBULENCE, "eff-turbulence",
+        fixed (5, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        integer (1) -> name (1, "seed") ->
+        length (2) -> name (2, "wave width") ->
+        length (3) -> name (3, "wave height") ->
+        integer (4) -> name (4, "octaves"));
+  init (EFF_FRACTAL_NOISE, "eff-fractal-noise",
+        fixed (5, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        integer (1) -> name (1, "seed") ->
+        length (2) -> name (2, "wave width") ->
+        length (3) -> name (3, "wave height") ->
+        integer (4) -> name (4, "octaves"));
   init (EFF_GAUSSIAN, "eff-gaussian",
         options (1, 2, DETAILED) -> returns_effect () ->
         length (0) -> name (0, "rx") -> long_name (0, "blur x-radius") ->

@@ -43,11 +43,12 @@ ABSTRACT_NULL_CODE(effect);
 
 effect build_effect (tree description);
 effect argument_effect (int arg);
-effect turbulence_effect (long seed, double w, double h, int oct, bool frsum);
 
 effect move (effect eff, double dx, double dy);
 effect magnify (effect eff, double sx, double sy);
 effect bubble (effect eff, double r, double a);
+effect turbulence (effect e, long seed, double w, double h, int oct);
+effect fractal_noise (effect e, long seed, double w, double h, int oct);
 
 effect gaussian_pen (double r);
 effect oval_pen (double r);

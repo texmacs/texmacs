@@ -248,6 +248,10 @@
 
   <assign|bubble|<macro|body|r|lambda|<gr-effect|<arg|body>|<eff-bubble|0|<arg|r>|<arg|lambda>>>>>
 
+  <assign|turbulence|<macro|body|seed|w|h|octaves|<gr-effect|<arg|body>|<eff-turbulence|0|<arg|seed>|<arg|w>|<arg|h>|<arg|octaves>>>>>
+
+  <assign|fractal-noise|<macro|body|seed|w|h|octaves|<gr-effect|<arg|body>|<eff-fractal-noise|0|<arg|seed>|<arg|w>|<arg|h>|<arg|octaves>>>>>
+
   \;
 </body>
 
