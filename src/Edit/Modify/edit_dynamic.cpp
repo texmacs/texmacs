@@ -63,7 +63,7 @@ edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
     for (i=1; i<n; i++)
       if (is_multi_paragraph_macro (t[i]))
 	return true;
-    tree f= get_env_value (t[0]->label);
+    tree f= get_env_value (as_string (L(t)));
     return is_multi_paragraph_macro (f);
   }
   return false;
