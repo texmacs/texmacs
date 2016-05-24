@@ -205,24 +205,6 @@
         (dynamic (anim-progressive-menu ft #t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Utilities
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-menu (anim-input-icon name t i setter)
-  (with in (tree->string (tree-ref t i))
-    (mini #t
-      (group (eval (string-append name ":")))
-      (input (setter answer) "string" (list in) "5em"))))
-
-(tm-menu (anim-duration-icon name t i)
-  (with setter (lambda (x) (when x (tree-set t i x)))
-    (dynamic (anim-input-icon name t i setter))))
-
-(tm-menu (anim-now-icon name t i)
-  (with setter (lambda (x) (when x (anim-set-now t x)))
-    (dynamic (anim-input-icon name t i setter))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized focus icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -232,18 +214,9 @@
 (tm-menu (focus-hidden-icons t)
   (:require (tree-in? t '(anim-static anim-dynamic)))
   //
-  (dynamic (anim-duration-icon "Duration" t 1))
-  (dynamic (anim-duration-icon "Step" t 2))
-  (dynamic (anim-duration-icon "Now" t 3))
-  //
   ("Edit" (anim-checkout t)))
 
 (tm-menu (animate-focus-icons t)
-  //
-  (dynamic (anim-duration-icon "Duration" t 2))
-  (dynamic (anim-duration-icon "Step" t 3))
-  (dynamic (anim-now-icon "Now" t 4))
-  //
   ("Play" (anim-commit t)))
 
 (tm-menu (focus-hidden-icons t)
@@ -255,3 +228,51 @@
   (:require (tree-func? t 'gr-screen 1)
             (tree-in? (tree-ref t 0) '(anim-static anim-dynamic)))
   (dynamic (animate-focus-icons (tree-ref t 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Utilities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (anim-time-bar t)
+  (minibar
+    (for (i (.. 0 51))
+      ("-" (anim-set-portion t (* 0.02 i))))))
+
+(tm-menu (anim-input-field name t i setter)
+  (with in (tree->string (tree-ref t i))
+    (mini #t
+      (text (eval (string-append name ":")))
+      (input (setter answer) "string" (list in) "5em")
+      //)))
+
+(tm-menu (anim-duration-field name t i)
+  (with setter (lambda (x) (when x (tree-set t i x)))
+    (dynamic (anim-input-field name t i setter))))
+
+(tm-menu (anim-now-field name t i)
+  (with setter (lambda (x) (when x (anim-set-now t x)))
+    (dynamic (anim-input-field name t i setter))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Animation toolbar
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (animate-toolbar)
+  (with t (tree-innermost '(anim-static anim-dynamic anim-edit) #t)
+    (hlist
+      (assuming (not t)
+        (text "No animation"))
+      (assuming (tree-in? t '(anim-static anim-dynamic))
+        (dynamic (anim-duration-field "Duration" t 1))
+        (dynamic (anim-duration-field "Step" t 2))
+        //
+        (minibar ("Edit" (anim-checkout t))))
+      (assuming (tree-in? t '(anim-edit))
+        (dynamic (anim-time-bar t))
+        //
+        (dynamic (anim-now-field "Now" t 4))
+        //
+        (minibar ("Play" (anim-commit t))))
+      >>> >>> >>>
+      ((balloon (icon "tm_close_tool.xpm") "Close animation tool")
+       (set-bottom-bar "animate" #f)))))

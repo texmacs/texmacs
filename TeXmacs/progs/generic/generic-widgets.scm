@@ -381,13 +381,6 @@
   (when (in? key '("F3" "C-f" "A-f" "M-f" "C-g" "A-g" "M-g" "C-s" "A-s" "M-s"))
     (set! pending-key-strokes last-search)))
 
-(define (notify-bar-change)
-  ;; FIXME: not clear what is the most appriate setting here
-  ;; The value 127 is safest, but causes the whole document to be re-typeset
-  (if (style-has? "beamer-style")
-      (notify-change 127)
-      (notify-change 68)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search widget
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

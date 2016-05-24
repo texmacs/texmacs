@@ -18,6 +18,67 @@
     (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Extra toolbars at the bottom
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define toolbar-search-active? #f)
+(tm-define toolbar-replace-active? #f)
+(tm-define toolbar-db-active? #f)
+(tm-define toolbar-animate-active? #f)
+
+(tm-widget (texmacs-bottom-toolbars)
+  (if toolbar-search-active?
+      (link search-toolbar))
+  (if (and toolbar-replace-active?
+           (not toolbar-search-active?))
+      (link replace-toolbar))
+  (if (and toolbar-db-active?
+           (not toolbar-search-active?)
+           (not toolbar-replace-active?))
+      (link db-toolbar))
+  (if (and toolbar-animate-active?
+           (not toolbar-search-active?)
+           (not toolbar-replace-active?)
+           (not toolbar-db-active?))
+      (link animate-toolbar)))
+
+(define (test-bottom-bar? which)
+  (cond ((== which "search")
+         toolbar-search-active?)
+        ((== which "replace")
+         (and toolbar-replace-active?
+              (not toolbar-search-active?)))
+        ((== which "database")
+         (and toolbar-db-active?
+              (not toolbar-search-active?)
+              (not toolbar-replace-active?)))
+        ((== which "animate")
+         (and toolbar-animate-active?
+              (not toolbar-search-active?)
+              (not toolbar-replace-active?)
+              (not toolbar-db-active?)))
+        (else #f)))
+
+(tm-define (set-bottom-bar which val)
+  (set! toolbar-search-active? #f)
+  (set! toolbar-replace-active? #f)
+  (set! toolbar-db-active? #f)
+  (set! toolbar-animate-active? #f)
+  (cond ((== which "search")
+         (set! toolbar-search-active? val))
+        ((== which "replace")
+         (set! toolbar-replace-active? val))
+        ((== which "database")
+         (set! toolbar-db-active? val))
+        ((== which "animate")
+         (set! toolbar-animate-active? val)))
+  (show-bottom-tools 0 val))
+
+(tm-define (toggle-bottom-bar which)
+  (:check-mark "*" test-bottom-bar?)
+  (set-bottom-bar which (not (test-bottom-bar? which))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The View menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -55,4 +116,9 @@
   (if #f ; Side tools are for now (v1.99.2) disabled.
       ("Side tools" (toggle-visible-side-tools 0)))
   (if #f ; Search bar cannot be toggled from here, remove the menu item?
-      ("Bottom tools" (toggle-visible-bottom-tools 0))))
+      ("Bottom tools" (toggle-visible-bottom-tools 0)))
+  ---
+  ("Search toolbar" (toggle-bottom-bar "search"))
+  ("Replace toolbar" (toggle-bottom-bar "replace"))
+  ("Database toolbar" (toggle-bottom-bar "database"))
+  ("Animation toolbar" (toggle-bottom-bar "animate")))

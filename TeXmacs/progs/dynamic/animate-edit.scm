@@ -198,6 +198,43 @@
     (make-animate sel len)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Time manipulations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (get-ms t)
+  (cond ((and (tree? t) (tree-atomic? t)) (get-ms (tree->string t)))
+        ((not (string? t)) #f)
+        ((string-ends? t "sec") (get-ms (string-drop-right t 2)))
+        ((string-ends? t "ms") (string->number (string-drop-right t 2)))
+        (else (* 1000 (string->number (string-drop-right t 1))))))
+
+(tm-define (anim-duration-ms t)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (get-ms (tree-ref t 1)))
+        ((tree-in? t '(anim-edit))
+         (get-ms (tree-ref t 2)))
+        (else #f)))
+
+(tm-define (anim-step-ms t)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (get-ms (tree-ref t 2)))
+        ((tree-in? t '(anim-edit))
+         (get-ms (tree-ref t 3)))
+        (else #f)))
+
+(tm-define (anim-now-ms t)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (get-ms (tree-ref t 3)))
+        ((tree-in? t '(anim-edit))
+         (get-ms (tree-ref t 4)))
+        (else #f)))
+
+(tm-define (anim-portion t)
+  (let* ((n (anim-now-ms t))
+         (d (anim-duration-ms t)))
+    (and n d (/ (* 1.0 n) (* 1.0 d)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -206,14 +243,16 @@
     (tree-assign-node! t (tree-label r))
     (tree-set! t 0 (tree-ref r 0))
     (tree-insert! t 1 (list (tree-ref r 1)))
-    (tree-go-to t 1 :start)))
+    (tree-go-to t 1 :start)
+    (set-bottom-bar "animate" #t)))
 
 (tm-define (anim-commit t)
   (with r (animate-commit t)
     (tree-set! t 0 (tree-ref r 0))
     (tree-remove! t 1 1)
     (tree-assign-node! t (tree-label r))
-    (tree-go-to t :end)))
+    (tree-go-to t :end)
+    (reset-players t)))
 
 (tm-define (anim-set-now t now)
   (with r (animate-commit t)
@@ -224,3 +263,9 @@
     (tree-set! t 0 (tree-ref r 0))
     (tree-set! t 1 (tree-ref r 1))
     (tree-go-to t 1 :start)))
+
+(tm-define (anim-set-portion t x)
+  (and-with d (anim-duration-ms t)
+    (when (number? x)
+      (with n (inexact->exact (floor (+ (* x d) 0.5)))
+        (anim-set-now t (string-append (number->string n) "ms"))))))
