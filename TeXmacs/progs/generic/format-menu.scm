@@ -125,7 +125,9 @@
   ("Magnify vertically" (make 'vmagnified))
   ("Condensed" (make 'condensed))
   ("Extended" (make 'extended))
-  ("Degraded" (make 'degraded)))
+  ("Degraded" (make 'degraded))
+  ("Distorted" (make 'distorted))
+  ("Gnawed" (make 'gnawed)))
 
 (menu-bind text-effects-menu
   ("Blur" (make 'blur))

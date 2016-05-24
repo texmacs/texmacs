@@ -18,20 +18,16 @@ extern glyph error_glyph;
 extern metric error_metric;
 
 /******************************************************************************
-* distorted font glyphs
+* degraded font glyphs
 ******************************************************************************/
 
 glyph
-distorted (glyph gl, tree kind, SI em, int c) {
-  (void) kind;
+degraded (glyph gl, double threshold, SI em, int c) {
   int i, j;
   int ww= gl->width, hh= gl->height;
   glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
   double wl= 0.1 * (em / PIXEL);
   raster<double> ras= turbulence (ww, hh, 0, 0, c&31, wl, wl, 3, true);
-  double threshold= 0.5;
-  if (is_tuple (kind, "degraded") && N(kind) >= 2)
-    threshold= as_double (kind[1]);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++) {
       int old_val= gl->get_x (i, j);
@@ -41,6 +37,54 @@ distorted (glyph gl, tree kind, SI em, int c) {
     }
   bmr->lwidth= gl->lwidth;
   return simplify (bmr);
+}
+
+/******************************************************************************
+* degraded font glyphs
+******************************************************************************/
+
+glyph
+distorted (glyph gl, double strength, int gnaw, SI em, int c) {
+  double wl= 0.1 * (em / PIXEL);
+  double r= wl * strength;
+  int pad= (int) ceil (r);
+  if (gnaw >= 0) gl= padded (gl, pad, pad, pad, pad);
+  
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
+  raster<double> dx= turbulence (ww, hh, 0, 0, c&31, wl, wl, 3, true);
+  raster<double> dy= turbulence (ww, hh, 0, 0, (c&31) + 32, wl, wl, 3, true);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++) {
+      double di= r * (dx->internal_get_pixel (i, j) - 0.5);
+      double dj= r * (dy->internal_get_pixel (i, j) - 0.5);
+      int i2= i + (int) floor (di + 0.5);
+      int j2= j + (int) floor (dj + 0.5);
+      int val= 0;
+      if (i2 >= 0 && i2 < ww && j2 >= 0 && j2 < hh)
+        val= gl->get_x (i2, j2);
+      if (gnaw < 0) val= min (val, gl->get_x (i, j));
+      if (gnaw > 0) val= max (val, gl->get_x (i, j));
+      bmr->set_x (i, j, val);
+    }
+  bmr->lwidth= gl->lwidth;
+  return simplify (bmr);
+}
+
+/******************************************************************************
+* distorted font glyphs
+******************************************************************************/
+
+glyph
+distorted (glyph gl, tree kind, SI em, int c) {
+  if (is_tuple (kind, "degraded") && N(kind) >= 2)
+    return degraded (gl, as_double (kind[1]), em, c);
+  if (is_tuple (kind, "distorted") && N(kind) >= 2)
+    return distorted (gl, as_double (kind[1]), 0, em, c);
+  if (is_tuple (kind, "gnawed") && N(kind) >= 2)
+    return distorted (gl, as_double (kind[1]), -1, em, c);
+  return gl;
 }
 
 struct distorted_font_glyphs_rep: public font_glyphs_rep {

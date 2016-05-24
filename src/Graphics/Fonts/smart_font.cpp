@@ -1478,6 +1478,20 @@ apply_effects (font fn, string effects) {
         tree kind= tuple ("degraded", as_string (threshold));
         fn= poor_distorted_font (fn, kind);
       }
+      else if (b[0] == "distorted" && is_double (b[1])) {
+        double strength= as_double (b[1]);
+        if (strength < 0.1) strength= 0.1;
+        if (strength > 9.9) strength= 9.9;
+        tree kind= tuple ("distorted", as_string (strength));
+        fn= poor_distorted_font (fn, kind);
+      }
+      else if (b[0] == "gnawed" && is_double (b[1])) {
+        double strength= as_double (b[1]);
+        if (strength < 0.1) strength= 0.1;
+        if (strength > 9.9) strength= 9.9;
+        tree kind= tuple ("gnawed", as_string (strength));
+        fn= poor_distorted_font (fn, kind);
+      }
     }
   }
   return fn;

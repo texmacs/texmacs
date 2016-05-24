@@ -276,6 +276,21 @@ simplify (glyph gl) {
 }
 
 glyph
+padded (glyph gl, int l, int t, int r, int b) {
+  int i, j;
+  int ww= gl->width, hh= gl->height;
+  glyph bmr (ww+l+r, hh+t+b, gl->xoff+l, gl->yoff+t, gl->depth);
+  for (j=0; j<hh+t+b; j++)
+    for (i=0; i<ww+l+r; i++)
+      bmr->set_x (i, j, 0);
+  for (j=0; j<hh; j++)
+    for (i=0; i<ww; i++)
+      bmr->set_x (i + l, j + t, gl->get_x (i, j));
+  bmr->lwidth= gl->lwidth;
+  return bmr;
+}
+
+glyph
 move (glyph gl, SI x, SI y) {
   x += PIXEL/2; y += PIXEL/2; abs_round (x, y);
   int xx= x/PIXEL, yy= y/PIXEL;

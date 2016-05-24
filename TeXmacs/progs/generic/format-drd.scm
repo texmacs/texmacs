@@ -47,7 +47,7 @@
 
 (define-group font-effect-tag
   embold embbb slanted hmagnified vmagnified
-  condensed extended degraded)
+  condensed extended degraded distorted gnawed)
 
 (define-group eff-tag
   eff-blur eff-outline eff-thicken eff-erode)

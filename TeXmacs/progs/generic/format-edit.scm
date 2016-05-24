@@ -293,6 +293,14 @@
   (:require (tree-is? t 'degraded))
   (list (list "degraded-threshold" "Threshold")))
 
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'distorted))
+  (list (list "distorted-strength" "Strength")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'gnawed))
+  (list (list "gnawed-strength" "Strength")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Effects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
