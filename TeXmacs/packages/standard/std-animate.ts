@@ -139,6 +139,8 @@
   </active*>
 
   <assign|degrade-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|degraded-threshold|0|<degraded|<arg|body>>>>|<tuple|1|<with|degraded-threshold|1|<degraded|<arg|body>>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+
+  <assign|gnaw-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|gnawed-strength|0|<gnawed|<arg|body>>>>|<tuple|1|<with|gnawed-strength|10|<gnawed|<arg|body>>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
 </body>
 
 <\initial>
