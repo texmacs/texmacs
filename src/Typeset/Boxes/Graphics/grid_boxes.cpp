@@ -75,7 +75,7 @@ grid_box_rep::display (renderer ren) {
 
     for (i=0; i<N(grads); i++) {
       curve c= f (grads[i]->c);
-      bs << curve_box (decorate (ip), c,
+      bs << curve_box (decorate (ip), c, 1.0,
 		       pencil (named_color (grads[i]->col), ren->pixel),
 		       array<bool> (0), array<point> (0), 0,
                        brush (false), array<box> (0));

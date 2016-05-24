@@ -399,7 +399,7 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, pencil pen2,
 
 box
 curve_box_rep::transform (frame fr) {
-  return curve_box (ip, fr (c), pen, style, motif, style_unit,
+  return curve_box (ip, fr (c), 1.0, pen, style, motif, style_unit,
                     fill_br, arrows);
 }
 
@@ -767,10 +767,11 @@ point_box (path ip, point p, SI r, pencil pen, brush br, string style) {
 }
 
 box
-curve_box (path ip, curve c, pencil pen,
+curve_box (path ip, curve c, double portion, pencil pen,
            array<bool> style, array<point> motif, SI style_unit,
            brush fill_br, array<box> arrows)
 {
+  if (portion < 1.0) c= truncate (c, max (portion, 1.0e-5), PIXEL / 10.0);
   return tm_new<curve_box_rep> (ip, c, pen, style, motif, style_unit,
                                 fill_br, arrows);
 }
