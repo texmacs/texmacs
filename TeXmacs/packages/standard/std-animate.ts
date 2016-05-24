@@ -132,9 +132,13 @@
 
   <assign|outlined-emboss-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|emboss-dx|<value|emboss-start-dx>|emboss-dy|<value|emboss-start-dy>|<outlined-emboss|<arg|body>>>>|<tuple|1|<with|emboss-dx|<value|emboss-end-dx>|emboss-dy|<value|emboss-end-dy>|<outlined-emboss|<arg|body>>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Experimental animations
+    </src-comment>
+  </active*>
 
-  <assign|degrade-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<degraded|1|<arg|body>>>|<tuple|1|<degraded|0|<arg|body>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
+  <assign|degrade-smooth|<macro|body|duration|<superpose|<invisible|<arg|body>>|<anim-static|<morph|<tuple|0|<with|degraded-threshold|0|<degraded|<arg|body>>>>|<tuple|1|<with|degraded-threshold|1|<degraded|<arg|body>>>>>|<arg|duration>|<over|<arg|duration>|<value|anim-nr-frames>>|<arg|duration>>>>>
 </body>
 
 <\initial>

@@ -118,13 +118,14 @@
   (link format-special-menu))
 
 (menu-bind text-font-effects-menu
-  ("Embold" (make-with-like '(embold "2" "")))
-  ("Blackboard embold" (make-with-like '(embbb "3" "")))
-  ("Slant" (make-with-like '(slant "0.25" "")))
-  ("Condensed" (make-with-like '(extended "0.8" "")))
-  ("Extended" (make-with-like '(extended "1.2" "")))
-  ("Magnify horizontally" (make-with-like '(hmagnify "2" "")))
-  ("Magnify vertically" (make-with-like '(hmagnify "2" ""))))
+  ("Embold" (make 'embold))
+  ("Blackboard embold" (make 'embbb))
+  ("Slanted" (make 'slanted))
+  ("Magnify horizontally" (make 'hmagnified))
+  ("Magnify vertically" (make 'vmagnified))
+  ("Condensed" (make 'condensed))
+  ("Extended" (make 'extended))
+  ("Degraded" (make 'degraded)))
 
 (menu-bind text-effects-menu
   ("Blur" (make 'blur))

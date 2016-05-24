@@ -18,11 +18,13 @@
 
 (define-group variant-tag
   (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
+  (font-effect-tag)
   (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
 
 (define-group similar-tag
   (move-tag) (resize-tag) (smash-tag) (swell-tag) (reduce-by-tag)
+  (font-effect-tag)
   (eff-tag) (basic-effect-tag) (gaussian-effect-tag) (oval-effect-tag)
   (rectangular-effect-tag) (motion-effect-tag))
 
@@ -42,6 +44,10 @@
 
 (define-group reduce-by-tag
   reduce-by reduce-bottom-by reduce-top-by)
+
+(define-group font-effect-tag
+  embold embbb slanted hmagnified vmagnified
+  condensed extended degraded)
 
 (define-group eff-tag
   eff-blur eff-outline eff-thicken eff-erode)

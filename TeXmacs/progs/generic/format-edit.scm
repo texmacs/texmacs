@@ -258,6 +258,42 @@
   (insert-return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Font effects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'embold))
+  (list (list "embold-strength" "Strength")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'embbb))
+  (list (list "embbb-strength" "Strength")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'slanted))
+  (list (list "slanted-slope" "Slope")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'hmagnified))
+  (list (list "hmagnified-factor" "Factor")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'vmagnified))
+  (list (list "vmagnified-factor" "Factor")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'condensed))
+  (list (list "condensed-factor" "Factor")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'extended))
+  (list (list "extended-factor" "Factor")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-is? t 'degraded))
+  (list (list "degraded-threshold" "Threshold")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Effects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

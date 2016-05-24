@@ -480,19 +480,41 @@
 
   <assign|add-font-effect|<macro|prop|val|body|<with|font-effects|<merge|<value|font-effects>|<if|<equal|<value|font-effects>|>||,>|<arg|prop>|=|<arg|val>>|<arg|body>>>>
 
-  <assign|embold|<macro|val|body|<add-font-effect|bold|<arg|val>|<arg|body>>>>
+  \;
 
-  <assign|embbb|<macro|val|body|<add-font-effect|bbb|<arg|val>|<arg|body>>>>
+  <assign|embold-strength|2>
 
-  <assign|slant|<macro|val|body|<add-font-effect|slant|<arg|val>|<arg|body>>>>
+  <assign|embbb-strength|3>
 
-  <assign|hmagnify|<macro|val|body|<add-font-effect|hmagnify|<arg|val>|<arg|body>>>>
+  <assign|slanted-slope|0.25>
 
-  <assign|vmagnify|<macro|val|body|<add-font-effect|vmagnify|<arg|val>|<arg|body>>>>
+  <assign|hmagnified-factor|1.5>
 
-  <assign|extended|<macro|val|body|<add-font-effect|hextended|<arg|val>|<arg|body>>>>
+  <assign|vmagnified-factor|1.5>
 
-  <assign|degraded|<macro|val|body|<add-font-effect|degraded|<arg|val>|<arg|body>>>>
+  <assign|condensed-factor|0.8>
+
+  <assign|extended-factor|1.2>
+
+  <assign|degraded-threshold|0.667>
+
+  \;
+
+  <assign|embold|<macro|body|<add-font-effect|bold|<value|embold-strength>|<arg|body>>>>
+
+  <assign|embbb|<macro|body|<add-font-effect|bbb|<value|embbb-strength>|<arg|body>>>>
+
+  <assign|slanted|<macro|body|<add-font-effect|slant|<value|slanted-slope>|<arg|body>>>>
+
+  <assign|hmagnified|<macro|body|<add-font-effect|hmagnify|<value|hmagnified-factor>|<arg|body>>>>
+
+  <assign|vmagnified|<macro|body|<add-font-effect|vmagnify|<value|vmagnified-factor>|<arg|body>>>>
+
+  <assign|condensed|<macro|body|<add-font-effect|hextended|<value|condensed-factor>|<arg|body>>>>
+
+  <assign|extended|<macro|body|<add-font-effect|hextended|<value|extended-factor>|<arg|body>>>>
+
+  <assign|degraded|<macro|body|<add-font-effect|degraded|<value|degraded-threshold>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
