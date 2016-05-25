@@ -44,6 +44,7 @@
 #include <QLibraryInfo>
 #include <QImage>
 #include <QUrl>
+#include <QDesktopWidget>
 
 #include "QTMGuiHelper.hpp"
 #include "QTMWidget.hpp"
@@ -119,10 +120,22 @@ needing_update (false)
   updatetimer->setSingleShot (true);
   QObject::connect (updatetimer, SIGNAL (timeout()),
                     gui_helper, SLOT (doUpdate()));
-    //  (void) default_font ();
+  // (void) default_font ();
 
   if (!retina_manual) {
     retina_manual= true;
+#ifdef MACOSX_EXTENSIONS
+    double mac_hidpi = mac_screen_scale_factor();
+    if (DEBUG_STD)
+      debug_boot << "Mac Screen scaleFfactor: " << mac_hidpi <<  "\n";
+          
+    if (mac_hidpi == 2) {
+      if (DEBUG_STD) debug_boot << "Setting up HiDPI mode\n";
+      retina_factor= 2;
+      retina_scale = 1.4;
+    }
+#else
+    /*
     SI w, h;
     get_extents (w, h);
     if (DEBUG_STD)
@@ -131,6 +144,8 @@ needing_update (false)
       retina_factor= 2;
       retina_scale = 1.4;
     }
+    */
+#endif
   }
 }
 
