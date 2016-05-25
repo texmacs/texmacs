@@ -1219,7 +1219,7 @@
              (go-to-graphics))))))
 
 (tm-define (make-gr-overlays forwards?)
-  (and-with t (tree-innermost 'graphics)
+  (and-with t (tree-innermost 'graphics #t)
     (while (tree-is? t :up 'with)
       (set! t (tree-up t)))
     (when (not (overlays-context? t))
