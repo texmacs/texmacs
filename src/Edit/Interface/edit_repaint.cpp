@@ -265,7 +265,7 @@ edit_interface_rep::draw_with_stored (renderer win, rectangle r) {
   /* Verify whether the backing store is still valid */
   if (!is_nil (stored_rects)) {
     SI w1, h1, w2, h2;
-    win   -> get_extents (w1, h1);
+    win    -> get_extents (w1, h1);
     stored -> get_extents (w2, h2);
     if (stored->ox != win->ox || stored->oy != win->oy ||
 	w1 != w2 || h1 != h2) {

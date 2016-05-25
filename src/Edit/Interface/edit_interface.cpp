@@ -881,6 +881,7 @@ edit_interface_rep::animate () {
   if (((double) texmacs_time ()) >= anim_next) {
     rectangles rs= eb->anim_invalid ();
     invalidate (rs);
+    stored_rects= rectangles ();
   }
 }
 
