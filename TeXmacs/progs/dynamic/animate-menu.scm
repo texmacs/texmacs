@@ -208,26 +208,46 @@
 ;; Customized focus icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (focus-toggle-menu t)
+  (:require (tree-is? t 'anim-edit))
+  ("Play animation" (anim-commit*)))
+  
+(tm-menu (focus-toggle-menu t)
+  (:require (tree-in? t '(anim-static anim-dynamic)))
+  ("Edit animation" (anim-checkout*)))
+
+(tm-menu (focus-toggle-menu t)
+  (:require (tree-func? t 'gr-screen 1)
+            (user-anim-context? (tree-ref t 0)))
+  (dynamic (focus-toggle-menu (tree-ref t 0))))
+
+(tm-menu (focus-hidden-menu t)
+  (:require (user-anim-context? t)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-is? t 'anim-edit))
+  ((balloon (icon "tm_search_next.xpm") "Play animation")
+   (anim-commit*)))
+  
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-in? t '(anim-static anim-dynamic)))
+  ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
+   (anim-checkout*)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (tree-func? t 'gr-screen 1)
+            (user-anim-context? (tree-ref t 0)))
+  (dynamic (focus-toggle-icons (tree-ref t 0))))
+
 (tm-menu (focus-hidden-icons t)
   (:require (tree-is? t 'anim-edit)))
 
 (tm-menu (focus-hidden-icons t)
   (:require (tree-in? t '(anim-static anim-dynamic)))
-  //
-  ("Edit" (anim-checkout t)))
-
-(tm-menu (animate-focus-icons t)
-  ("Play" (anim-commit t)))
-
-(tm-menu (focus-hidden-icons t)
-  (:require (tree-func? t 'gr-screen 1)
-            (tree-in? (tree-ref t 0) '(anim-static anim-dynamic)))
-  (dynamic (focus-hidden-icons (tree-ref t 0))))
-
-(tm-menu (animate-focus-icons t) 
-  (:require (tree-func? t 'gr-screen 1)
-            (tree-in? (tree-ref t 0) '(anim-static anim-dynamic)))
-  (dynamic (animate-focus-icons (tree-ref t 0))))
+  (assuming (not (test-bottom-bar? "animate"))
+    //
+    (dynamic (anim-duration-field "Duration" t 1))
+    (dynamic (anim-step-field "Step" t 2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Timing parameters
@@ -278,7 +298,7 @@
         (text "No animation"))
       (assuming (tree-in? t '(anim-static anim-dynamic))
         ((balloon (icon "tm_search_next.xpm") "Play animation")
-         (reset-players t))
+         (anim-play*))
         ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
          (anim-checkout*)
          (notify-change 256))

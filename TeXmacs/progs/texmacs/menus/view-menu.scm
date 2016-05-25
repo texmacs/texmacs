@@ -42,7 +42,7 @@
            (not toolbar-db-active?))
       (link animate-toolbar)))
 
-(define (test-bottom-bar? which)
+(tm-define (test-bottom-bar? which)
   (cond ((== which "search")
          toolbar-search-active?)
         ((== which "replace")

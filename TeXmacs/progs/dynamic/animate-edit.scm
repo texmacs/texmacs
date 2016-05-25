@@ -25,6 +25,16 @@
   (players-set-elapsed t 0.0)
   (update-players (tree->path t) #t))
 
+(tm-define (anim-play t)
+  (when (tree? t)
+    (if (tree-is? t :up 'anim-accelerate)
+        (set! t (tree-up t)))
+    (reset-players t)))
+
+(tm-define (anim-play*)
+  (and-with t (tree-innermost user-anim-context? #t)
+    (anim-play t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Parameters for various animation tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -109,20 +119,25 @@
 ;; Time bending
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (animation-tag-list*)
+  (append '(anim-static anim-dynamic)
+          (animation-tag-list)))
+
 (tm-define (anim-get-accelerate t)
   (cond ((not (tree? t)) #f)
         ((tree-is? t 'anim-accelerate) t)
         ((tree-is? t :up 'anim-accelerate) (tree-up t))
         ((and (tree-is? t :up 'with) (tree-is? t :up :up 'anim-accelerate))
          (tree-up (tree-up t)))
-        ((and (tree-is? t :up 'with) (tree-in? t (animation-tag-list)))
+        ((and (tree-is? t :up 'with) (tree-in? t (animation-tag-list*)))
          (tree-up t))
-        ((tree-in? t (animation-tag-list)) t)
+        ((tree-in? t (animation-tag-list*)) t)
         (else #f)))
 
 (tm-define (accelerate-get-type t)
-  (and-with a (anim-get-accelerate t)
-    (or (and (tree-func? a 'anim-accelerate 2)
+  (with a (anim-get-accelerate t)
+    (or (and a
+             (tree-func? a 'anim-accelerate 2)
              (tree->stree (tree-ref a 1)))
         "normal")))
 
@@ -155,8 +170,8 @@
    t (accelerate-get-type* t) (not (accelerate-get-reverse? t))))
 
 (tm-define (accelerate-get-type* t)
-  (and-with s (accelerate-get-type t)
-    (cond ((== s "reverse") "normal")
+  (with s (accelerate-get-type t)
+    (cond ((or (not (string? s)) (== s "reverse")) "normal")
           ((string-starts? s "reverse-") (string-drop s 8))
           (else s))))
 
@@ -198,7 +213,8 @@
   (:argument len "Duration")
   (with sel (selection-tree)
     (clipboard-cut "primary")
-    (make-animate sel len)))
+    (make-animate sel len)
+    (set-bottom-bar "animate" #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global duration and step length
@@ -218,7 +234,7 @@
           ((tree-in? t '(anim-edit))
            (tree-set! t 2 d)))
     (anim-set-portion t x)
-    (reset-players t)))
+    (anim-play t)))
 
 (tm-define (anim-set-duration* d)
   (and-with t (tree-innermost user-anim-context? #t)
@@ -236,7 +252,7 @@
          (tree-set! t 2 d))
         ((tree-in? t '(anim-edit))
          (tree-set! t 3 d)))
-  (reset-players t))
+  (anim-play t))
 
 (tm-define (anim-set-step* d)
   (and-with t (tree-innermost user-anim-context? #t)
@@ -314,7 +330,7 @@
     (tree-remove! t 1 1)
     (tree-assign-node! t (tree-label r))
     (tree-go-to t :end)
-    (reset-players t)))
+    (anim-play t)))
 
 (tm-define (anim-commit*)
   (and-with t (tree-innermost user-anim-context? #t)

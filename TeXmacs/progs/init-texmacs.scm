@@ -146,7 +146,7 @@
 (lazy-menu (texmacs menus preferences-menu) preferences-menu page-setup-menu)
 (lazy-menu (texmacs menus preferences-widgets) open-preferences)
 (use-modules (texmacs menus main-menu))
-(lazy-define (texmacs menus view-menu) set-bottom-bar)
+(lazy-define (texmacs menus view-menu) set-bottom-bar test-bottom-bar?)
 (tm-define (notify-set-attachment name key val) (noop))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
@@ -282,8 +282,7 @@
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
            plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-menu (dynamic calc-menu) calc-table-menu calc-insert-menu)
-(lazy-menu (dynamic animate-menu)
-           animate-toolbar animate-focus-icons)
+(lazy-menu (dynamic animate-menu) animate-toolbar)
 (lazy-define (dynamic fold-edit)
              screens-switch-to dynamic-make-slides overlays-context?)
 (lazy-define (dynamic session-edit) scheme-eval)
