@@ -432,17 +432,22 @@ insert_anim_ids (tree t) {
 * Checking out one frame of an animation for editing
 ******************************************************************************/
 
+double
+round_portion (double portion) {
+  return 0.001 * floor (1000.0 * portion + 0.5);
+}
+
 tree
 edit_env_rep::checkout_animation (tree t) {
   if (N(t) < 4) return t;
   int tot= max (as_length (exec (t[1])), 1);
-  int cur= max (as_length (exec (t[3])), 1);
+  int cur= max (as_length (exec (t[3])), 0);
   double old_start  = anim_start;
   double old_end    = anim_end;
   double old_portion= anim_portion;
   anim_start  = 0.0;
   anim_end    = 0.001 * tot;
-  anim_portion= (1.0 * cur) / (1.0 * tot);
+  anim_portion= round_portion ((1.0 * cur) / (1.0 * tot));
   tree a= insert_anim_ids (t[0]);
   tree frame= animate (a);
   anim_start  = old_start;
@@ -487,8 +492,8 @@ edit_env_rep::commit_animation (tree t) {
   tree u= checkout_animation (a);
   if (u[1] == t[1]) return a;
   int tot= max (as_length (exec (t[2])), 1);
-  int cur= max (as_length (exec (t[4])), 1);
-  double portion= (1.0 * cur) / (1.0 * tot);
+  int cur= max (as_length (exec (t[4])), 0);
+  double portion= round_portion ((1.0 * cur) / (1.0 * tot));
   a[0]= insert_frame (a[0], insert_anim_ids (t[1]), portion);
   return a;
 }

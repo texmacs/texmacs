@@ -230,13 +230,23 @@
   (dynamic (animate-focus-icons (tree-ref t 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Utilities
+;; Timing parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (anim-time-bar t)
-  (minibar
-    (for (i (.. 0 51))
-      ("-" (anim-set-portion t (* 0.02 i))))))
+  (let* ((n 50)
+         (e (/ 1.0 n))
+         (h (/ e 2.0))
+         (c (or (anim-portion t) 0.0))
+         (a (anim-control-times t)))
+    (minibar
+      (text "[")
+      (for (i (... 0 n))
+        (let* ((x (exact->inexact (* e i)))
+               (now? (< (abs (- x c)) h))
+               (sym (if now? "*" (if (in? x a) "+" "-"))))
+          ((eval sym) (anim-set-portion t x))))
+      (text "]"))))
 
 (tm-menu (anim-input-field name t i setter)
   (with in (tree->string (tree-ref t i))
@@ -246,7 +256,11 @@
       //)))
 
 (tm-menu (anim-duration-field name t i)
-  (with setter (lambda (x) (when x (tree-set t i x)))
+  (with setter (lambda (x) (when x (anim-set-duration t x)))
+    (dynamic (anim-input-field name t i setter))))
+
+(tm-menu (anim-step-field name t i)
+  (with setter (lambda (x) (when x (anim-set-step t x)))
     (dynamic (anim-input-field name t i setter))))
 
 (tm-menu (anim-now-field name t i)
@@ -261,18 +275,25 @@
   (with t (tree-innermost '(anim-static anim-dynamic anim-edit) #t)
     (hlist
       (assuming (not t)
+        ((balloon (icon "tm_search_next.xpm") "Play all animations")
+         (reset-players (buffer-tree)))
+        // // //
         (text "No animation"))
       (assuming (tree-in? t '(anim-static anim-dynamic))
+        ((balloon (icon "tm_search_next.xpm") "Play animation")
+         (reset-players t))
+        ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
+         (anim-checkout t))
+        // // //
         (dynamic (anim-duration-field "Duration" t 1))
-        (dynamic (anim-duration-field "Step" t 2))
-        //
-        (minibar ("Edit" (anim-checkout t))))
+        (dynamic (anim-step-field "Step" t 2)))
       (assuming (tree-in? t '(anim-edit))
+        ((balloon (icon "tm_search_next.xpm") "Play animation")
+         (anim-commit t))
+        // // //
         (dynamic (anim-time-bar t))
         //
-        (dynamic (anim-now-field "Now" t 4))
-        //
-        (minibar ("Play" (anim-commit t))))
+        (dynamic (anim-now-field "Now" t 4)))
       >>> >>> >>>
       ((balloon (icon "tm_close_tool.xpm") "Close animation tool")
        (set-bottom-bar "animate" #f)))))

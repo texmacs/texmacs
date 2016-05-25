@@ -198,8 +198,60 @@
     (make-animate sel len)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Time manipulations
+;; Global duration and step length
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (anim-duration t)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (tree-ref t 1))
+        ((tree-in? t '(anim-edit))
+         (tree-ref t 2))
+        (else #f)))
+
+(tm-define (anim-set-duration t d)
+  (and-with x (anim-portion t)
+    (cond ((tree-in? t '(anim-static anim-dynamic))
+           (tree-set! t 1 d))
+          ((tree-in? t '(anim-edit))
+           (tree-set! t 2 d)))
+    (anim-set-portion t x)))
+
+(tm-define (anim-step t)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (tree-ref t 2))
+        ((tree-in? t '(anim-edit))
+         (tree-ref t 3))
+        (else #f)))
+
+(tm-define (anim-set-step t d)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (tree-set! t 2 d))
+        ((tree-in? t '(anim-edit))
+         (tree-set! t 3 d))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Current animation frame
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (anim-now t)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (tree-ref t 3))
+        ((tree-in? t '(anim-edit))
+         (tree-ref t 4))
+        (else #f)))
+
+(tm-define (anim-set-now t now)
+  (cond ((tree-in? t '(anim-static anim-dynamic))
+         (tree-set! t 3 now))
+        ((tree-in? t '(anim-edit))
+         (with r (animate-commit t)
+           (tree-set! t 0 (tree-ref r 0))
+           (tree-set! t 4 now))
+         (with r (animate-checkout `(anim-static ,(tree-ref t 0)
+                                                 ,@(cddr (tm-children t))))
+           (tree-set! t 0 (tree-ref r 0))
+           (tree-set! t 1 (tree-ref r 1))
+           (tree-go-to t 1 :start)))))
 
 (define (get-ms t)
   (cond ((and (tree? t) (tree-atomic? t)) (get-ms (tree->string t)))
@@ -208,31 +260,16 @@
         ((string-ends? t "ms") (string->number (string-drop-right t 2)))
         (else (* 1000 (string->number (string-drop-right t 1))))))
 
-(tm-define (anim-duration-ms t)
-  (cond ((tree-in? t '(anim-static anim-dynamic))
-         (get-ms (tree-ref t 1)))
-        ((tree-in? t '(anim-edit))
-         (get-ms (tree-ref t 2)))
-        (else #f)))
-
-(tm-define (anim-step-ms t)
-  (cond ((tree-in? t '(anim-static anim-dynamic))
-         (get-ms (tree-ref t 2)))
-        ((tree-in? t '(anim-edit))
-         (get-ms (tree-ref t 3)))
-        (else #f)))
-
-(tm-define (anim-now-ms t)
-  (cond ((tree-in? t '(anim-static anim-dynamic))
-         (get-ms (tree-ref t 3)))
-        ((tree-in? t '(anim-edit))
-         (get-ms (tree-ref t 4)))
-        (else #f)))
-
 (tm-define (anim-portion t)
-  (let* ((n (anim-now-ms t))
-         (d (anim-duration-ms t)))
+  (let* ((n (get-ms (anim-now t)))
+         (d (get-ms (anim-duration t))))
     (and n d (/ (* 1.0 n) (* 1.0 d)))))
+
+(tm-define (anim-set-portion t x)
+  (and-with d (get-ms (anim-duration t))
+    (when (number? x)
+      (with n (inexact->exact (floor (+ (* x d) 0.5)))
+        (anim-set-now t (string-append (number->string (* 0.001 n)) "s"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
@@ -253,19 +290,3 @@
     (tree-assign-node! t (tree-label r))
     (tree-go-to t :end)
     (reset-players t)))
-
-(tm-define (anim-set-now t now)
-  (with r (animate-commit t)
-    (tree-set! t 0 (tree-ref r 0))
-    (tree-set! t 4 now))
-  (with r (animate-checkout `(anim-static ,(tree-ref t 0)
-                                          ,@(cddr (tm-children t))))
-    (tree-set! t 0 (tree-ref r 0))
-    (tree-set! t 1 (tree-ref r 1))
-    (tree-go-to t 1 :start)))
-
-(tm-define (anim-set-portion t x)
-  (and-with d (anim-duration-ms t)
-    (when (number? x)
-      (with n (inexact->exact (floor (+ (* x d) 0.5)))
-        (anim-set-now t (string-append (number->string n) "ms"))))))
