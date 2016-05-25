@@ -565,21 +565,37 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (enhanced-tree? t)
-  (eq? (tree-label t) 'with))
+  (tree-in? t '(with anim-edit)))
 
 (tm-define (enhanced-tree->radical t)
-  (if (enhanced-tree? t)
-      (tree-ref t (- (tree-arity t) 1))
-      t))
+  (cond ((tree-is? t 'with)
+         (enhanced-tree->radical (tree-ref t :last)))
+        ((tree-is? t 'anim-edit)
+         (enhanced-tree->radical (tree-ref t 1)))
+        (else t)))
 
 (tm-define (radical->enhanced-tree r)
   (with t (tree-up r)
-     (if (enhanced-tree? t) t r)))
+    (if (enhanced-tree? t)
+        (radical->enhanced-tree t)
+        r)))
 
 (tm-define (stree-radical t)
-  (if (and (pair? t) (eq? (car t) 'with) (nnull? (cdr t)))
-      (cAr t)
-      t))
+  (cond ((tm-is? t 'with)
+         (stree-radical (tm-ref t :last)))
+        ((tm-is? t 'anim-edit)
+         (stree-radical (tm-ref t 1)))
+        (else t)))
+
+(tm-define (graphics-re-enhance obj compl)
+  (cond ((tm-is? compl 'anim-edit)
+         `(anim-edit ,(tm-ref compl 0)
+                     ,(graphics-re-enhance obj (tm-ref compl 1))
+                     ,@(cddr (tm-children compl))))
+        ((and (tm-is? compl 'with) (tm-is? (tm-ref compl :last) 'anim-edit))
+         `(with ,@(cDr (tm-children compl))
+            ,(graphics-re-enhance obj (tm-ref compl :last))))
+        (else obj)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; New style graphical attributes

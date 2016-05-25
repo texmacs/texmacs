@@ -220,6 +220,7 @@
 
 (define (has-attribute? t var)
   (cond ((not (tree? t)) #f)
+        ((tree-is? t 'anim-edit) (has-attribute? (tm-ref t 1) var))
         ((tree-is? t 'with) (has-attribute? (tm-ref t :last) var))
         ((tree-atomic? t) #f)
         (else (graphics-attribute? (tree-label t) var))))
@@ -232,6 +233,7 @@
 
 (define (property-get t var i)
   (cond ((not (tree? t)) "default")
+        ((tree-is? t 'anim-edit) (property-get (tm-ref t 1) var 0))
         ((not (tree-is? t 'with)) "default")
         ((>= i (- (tree-arity t) 1)) "default")
         ((tm-equal? (tree-ref t i) var) (tree->stree (tree-ref t (+ i 1))))
@@ -274,6 +276,8 @@
 
 (define (property-set t var val)
   (cond ((not (tree? t)) t)
+        ((tree-is? t 'anim-edit)
+         (property-set (tree-ref t 1) var val))
         ((tree-is? t 'with)
          (if (== val "default")
              (property-remove t var 0)
