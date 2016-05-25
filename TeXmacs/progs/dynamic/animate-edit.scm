@@ -216,6 +216,10 @@
            (tree-set! t 2 d)))
     (anim-set-portion t x)))
 
+(tm-define (anim-set-duration* d)
+  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+    (when d (anim-set-duration t d))))
+
 (tm-define (anim-step t)
   (cond ((tree-in? t '(anim-static anim-dynamic))
          (tree-ref t 2))
@@ -228,6 +232,10 @@
          (tree-set! t 2 d))
         ((tree-in? t '(anim-edit))
          (tree-set! t 3 d))))
+
+(tm-define (anim-set-step* d)
+  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+    (when d (anim-set-step t d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Current animation frame
@@ -253,6 +261,10 @@
            (tree-set! t 1 (tree-ref r 1))
            (tree-go-to t 1 :start)))))
 
+(tm-define (anim-set-now* x)
+  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+    (when x (anim-set-now t x))))
+
 (define (get-ms t)
   (cond ((and (tree? t) (tree-atomic? t)) (get-ms (tree->string t)))
         ((not (string? t)) #f)
@@ -270,6 +282,10 @@
     (when (number? x)
       (with n (inexact->exact (floor (+ (* x d) 0.5)))
         (anim-set-now t (string-append (number->string (* 0.001 n)) "s"))))))
+
+(tm-define (anim-set-portion* x)
+  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+    (when x (anim-set-portion t x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing

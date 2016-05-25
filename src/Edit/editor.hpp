@@ -39,6 +39,7 @@
 #define THE_DECORATIONS 32
 #define THE_EXTENTS 64
 #define THE_LOCUS 128
+#define THE_MENUS 256
 
 class tm_buffer_rep;
 class tm_view_rep;

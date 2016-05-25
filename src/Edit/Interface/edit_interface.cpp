@@ -518,6 +518,32 @@ edit_interface_rep::change_time () {
 }
 
 void
+edit_interface_rep::update_menus () {
+  SERVER (menu_main ("(horizontal (link texmacs-menu))"));
+  SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
+  SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
+  SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
+  SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
+  if (use_side_tools)
+    { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
+  SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
+  set_footer ();
+  if (has_current_window ()) {
+    array<url> ws= buffer_to_windows (
+                     window_to_buffer (
+                       abstract_window (concrete_window ())));
+    int n= N(ws);
+    bool ns= need_save ();
+    for (int i=0; i<n; i++)
+      concrete_window (ws[i])->set_modified (ns);
+  }
+  if (!gui_interrupted ()) drd_update ();
+  cache_memorize ();
+  last_update= last_change;
+  save_user_preferences ();
+}
+
+void
 edit_interface_rep::apply_changes () {
   //cout << "Apply changes\n";
   //cout << "et= " << et << "\n";
@@ -526,30 +552,7 @@ edit_interface_rep::apply_changes () {
   if (env_change == 0) {
     if (last_change-last_update > 0 &&
         idle_time (INTERRUPTED_EVENT) >= 1000/6)
-    {
-      SERVER (menu_main ("(horizontal (link texmacs-menu))"));
-      SERVER (menu_icons (0, "(horizontal (link texmacs-main-icons))"));
-      SERVER (menu_icons (1, "(horizontal (link texmacs-mode-icons))"));
-      SERVER (menu_icons (2, "(horizontal (link texmacs-focus-icons))"));
-      SERVER (menu_icons (3, "(horizontal (link texmacs-extra-icons))"));
-      if (use_side_tools)
-        { SERVER (side_tools (0, "(vertical (link texmacs-side-tools))")); }
-      SERVER (bottom_tools (0, "(vertical (link texmacs-bottom-tools))"));
-      set_footer ();
-      if (has_current_window ()) {
-        array<url> ws= buffer_to_windows (
-                         window_to_buffer (
-                           abstract_window (concrete_window ())));
-        int n= N(ws);
-        bool ns= need_save ();
-        for (int i=0; i<n; i++)
-          concrete_window (ws[i])->set_modified (ns);
-      }
-      if (!gui_interrupted ()) drd_update ();
-      cache_memorize ();
-      last_update= last_change;
-      save_user_preferences ();
-    }
+      update_menus ();
     return;
   }
   
@@ -855,7 +858,11 @@ edit_interface_rep::apply_changes () {
   // cout << "Handling environment changes\n";
   if (env_change & THE_ENVIRONMENT)
     send_invalidate_all (this);
-  
+
+  // cout << "Handling menus\n";
+  if (env_change & THE_MENUS)
+    update_menus ();
+
   // cout << "Applied changes\n";
   // time_t t2= texmacs_time ();
   // if (t2 - t1 >= 10) cout << "apply_changes took " << t2-t1 << "ms\n";

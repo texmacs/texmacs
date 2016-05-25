@@ -245,7 +245,7 @@
         (let* ((x (exact->inexact (* e i)))
                (now? (< (abs (- x c)) h))
                (sym (if now? "*" (if (in? x a) "+" "-"))))
-          ((eval sym) (anim-set-portion t x))))
+          ((eval sym) (anim-set-portion* x))))
       (text "]"))))
 
 (tm-menu (anim-input-field name t i setter)
@@ -256,16 +256,13 @@
       //)))
 
 (tm-menu (anim-duration-field name t i)
-  (with setter (lambda (x) (when x (anim-set-duration t x)))
-    (dynamic (anim-input-field name t i setter))))
+  (dynamic (anim-input-field name t i anim-set-duration*)))
 
 (tm-menu (anim-step-field name t i)
-  (with setter (lambda (x) (when x (anim-set-step t x)))
-    (dynamic (anim-input-field name t i setter))))
+  (dynamic (anim-input-field name t i anim-set-step*)))
 
 (tm-menu (anim-now-field name t i)
-  (with setter (lambda (x) (when x (anim-set-now t x)))
-    (dynamic (anim-input-field name t i setter))))
+  (dynamic (anim-input-field name t i anim-set-now*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Animation toolbar
@@ -283,7 +280,8 @@
         ((balloon (icon "tm_search_next.xpm") "Play animation")
          (reset-players t))
         ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
-         (anim-checkout t))
+         (anim-checkout t)
+         (notify-change 256))
         // // //
         (dynamic (anim-duration-field "Duration" t 1))
         (dynamic (anim-step-field "Step" t 2)))
