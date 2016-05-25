@@ -453,7 +453,7 @@ edit_env_rep::checkout_animation (tree t) {
   anim_start  = old_start;
   anim_end    = old_end;
   anim_portion= old_portion;
-  return compound ("anim-edit", a, frame, t[1], t[2], t[3]);
+  return compound ("anim-edit", a, copy (frame), t[1], t[2], t[3]);
 }
 
 /******************************************************************************

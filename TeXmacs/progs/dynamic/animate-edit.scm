@@ -291,7 +291,8 @@
         ((not (string? t)) #f)
         ((string-ends? t "sec") (get-ms (string-drop-right t 2)))
         ((string-ends? t "ms") (string->number (string-drop-right t 2)))
-        (else (* 1000 (string->number (string-drop-right t 1))))))
+        (else (and-with d (string->number (string-drop-right t 1))
+                (* 1000 d)))))
 
 (tm-define (anim-portion t)
   (let* ((n (get-ms (anim-now t)))

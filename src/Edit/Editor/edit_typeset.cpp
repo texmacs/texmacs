@@ -705,11 +705,25 @@ edit_typeset_rep::var_texmacs_exec (tree t) {
 
 tree
 edit_typeset_rep::checkout_animation (tree t) {
+  path p= search_upwards (ANIM_STATIC);
+  if (is_nil (p)) p= search_upwards (ANIM_DYNAMIC);
+  if (is_nil (p)) p= search_upwards ("anim-edit");
+  if (!is_nil (p)) {
+    typeset_exec_until (p);
+    env->write_env (cur[p]);
+  }
   return env->checkout_animation (t);
 }
 
 tree
 edit_typeset_rep::commit_animation (tree t) {
+  path p= search_upwards ("anim-edit");
+  if (is_nil (p)) p= search_upwards (ANIM_STATIC);
+  if (is_nil (p)) p= search_upwards (ANIM_DYNAMIC);
+  if (!is_nil (p)) {
+    typeset_exec_until (p);
+    env->write_env (cur[p]);
+  }
   return env->commit_animation (t);
 }
 
