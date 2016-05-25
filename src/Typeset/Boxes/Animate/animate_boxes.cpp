@@ -214,7 +214,7 @@ anim_compose_box_rep::anim_invalid () {
   anim_resync ();
   if (current != last_index) rs << box_rep::anim_invalid ();
   if (current != last_index || delay != last_delay)
-    rs << rectangle (x1, y1, x2, y2);
+    rs << rectangle (min (x1, x3), min (y1, y3), max (x2, x4), max (y2, y4));
   return rs;
 }
 
@@ -323,7 +323,7 @@ anim_repeat_box_rep::anim_invalid () {
   anim_resync ();
   rectangles rs= bs[0]->anim_invalid ();
   if (current_it != last_it)
-    rs << rectangle (x1, y1, x2, y2);
+    rs << rectangle (min (x1, x3), min (y1, y3), max (x2, x4), max (y2, y4));
   return rs;
 }
 
@@ -388,7 +388,8 @@ rectangles
 anim_effect_box_rep::anim_invalid () {
   rectangles rs= bs[0]->anim_invalid ();
   anim_resync ();
-  if (current_x != last_x) rs << rectangle (x1, y1, x2, y2);
+  if (current_x != last_x)
+    rs << rectangle (min (x1, x3), min (y1, y3), max (x2, x4), max (y2, y4));
   return rs;
 }
 
@@ -476,7 +477,7 @@ struct sound_box_rep: public anim_box_rep {
     rectangles rs;
     double t= anim_time ();
     if (last_played < 30.0 && t >= 30.0)
-      rs << rectangle (x1, y1, x2, y2);
+      rs << rectangle (min (x1, x3), min (y1, y3), max (x2, x4), max (y2, y4));
     return rs; }
 };
 
