@@ -179,6 +179,9 @@
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (user-anim-context? t)
+  (tree-in? t '(anim-static anim-dynamic anim-edit)))
+
 (define (checkout-animation t len)
   (cond ((tm-func? t 'gr-screen 1)
          (with (r p) (checkout-animation (tm-ref t 0) len)
@@ -214,10 +217,11 @@
            (tree-set! t 1 d))
           ((tree-in? t '(anim-edit))
            (tree-set! t 2 d)))
-    (anim-set-portion t x)))
+    (anim-set-portion t x)
+    (reset-players t)))
 
 (tm-define (anim-set-duration* d)
-  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+  (and-with t (tree-innermost user-anim-context? #t)
     (when d (anim-set-duration t d))))
 
 (tm-define (anim-step t)
@@ -231,10 +235,11 @@
   (cond ((tree-in? t '(anim-static anim-dynamic))
          (tree-set! t 2 d))
         ((tree-in? t '(anim-edit))
-         (tree-set! t 3 d))))
+         (tree-set! t 3 d)))
+  (reset-players t))
 
 (tm-define (anim-set-step* d)
-  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+  (and-with t (tree-innermost user-anim-context? #t)
     (when d (anim-set-step t d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -262,7 +267,7 @@
            (tree-go-to t 1 :start)))))
 
 (tm-define (anim-set-now* x)
-  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+  (and-with t (tree-innermost user-anim-context? #t)
     (when x (anim-set-now t x))))
 
 (define (get-ms t)
@@ -284,7 +289,7 @@
         (anim-set-now t (string-append (number->string (* 0.001 n)) "s"))))))
 
 (tm-define (anim-set-portion* x)
-  (and-with t (tree-innermost '(anim-static anim-dynamic anim-edit))
+  (and-with t (tree-innermost user-anim-context? #t)
     (when x (anim-set-portion t x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -299,6 +304,10 @@
     (tree-go-to t 1 :start)
     (set-bottom-bar "animate" #t)))
 
+(tm-define (anim-checkout*)
+  (and-with t (tree-innermost user-anim-context? #t)
+    (anim-checkout t)))
+
 (tm-define (anim-commit t)
   (with r (animate-commit t)
     (tree-set! t 0 (tree-ref r 0))
@@ -306,3 +315,7 @@
     (tree-assign-node! t (tree-label r))
     (tree-go-to t :end)
     (reset-players t)))
+
+(tm-define (anim-commit*)
+  (and-with t (tree-innermost user-anim-context? #t)
+    (anim-commit t)))

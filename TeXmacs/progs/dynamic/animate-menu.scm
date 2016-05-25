@@ -269,7 +269,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-menu (animate-toolbar)
-  (with t (tree-innermost '(anim-static anim-dynamic anim-edit) #t)
+  (with t (tree-innermost user-anim-context? #t)
     (hlist
       (assuming (not t)
         ((balloon (icon "tm_search_next.xpm") "Play all animations")
@@ -280,14 +280,15 @@
         ((balloon (icon "tm_search_next.xpm") "Play animation")
          (reset-players t))
         ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
-         (anim-checkout t)
+         (anim-checkout*)
          (notify-change 256))
         // // //
         (dynamic (anim-duration-field "Duration" t 1))
         (dynamic (anim-step-field "Step" t 2)))
       (assuming (tree-in? t '(anim-edit))
         ((balloon (icon "tm_search_next.xpm") "Play animation")
-         (anim-commit t))
+         (anim-commit*)
+         (notify-change 256))
         // // //
         (dynamic (anim-time-bar t))
         //
