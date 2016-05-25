@@ -153,8 +153,10 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //    trying to figure this out :)
   
   bar->setMinimumWidth (2);
-  int min_h= (int) floor (20 * retina_scale);
-  bar->setMinimumHeight (min_h); // Added for retina screens
+  if (retina_scale > 1.0) {
+    int min_h= (int) floor (20 * retina_scale);
+    bar->setMinimumHeight (min_h);
+  }
   mw->setStatusBar (bar);
  
   // toolbars
