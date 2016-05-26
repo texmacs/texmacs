@@ -524,7 +524,7 @@
                   (graphical-fetch-props 
                    (if (== (car current-obj) 'with)
                        current-obj `(with ,current-obj)))
-                  (set! current-obj (stree-radical current-obj))))
+                  (set! current-obj (stree-radical* current-obj #f))))
             (create-graphical-object
              current-obj
              mode

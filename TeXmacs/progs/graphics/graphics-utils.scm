@@ -587,6 +587,13 @@
          (stree-radical (tm-ref t 1)))
         (else t)))
 
+(tm-define (stree-radical* t anim?)
+  (cond ((and (tm-is? t 'with) (not anim?))
+         (stree-radical* (tm-ref t :last) anim?))
+        ((tm-is? t 'anim-edit)
+         (stree-radical* (tm-ref t 1) #t))
+        (else t)))
+
 (tm-define (graphics-re-enhance obj compl anim?)
   (cond ((tm-is? compl 'anim-edit)
          `(anim-edit ,(tm-ref compl 0)
