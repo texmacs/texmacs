@@ -27,7 +27,9 @@ double retina_scale = 1.0;
 renderer_rep::renderer_rep (bool screen_flag):
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
   is_screen (screen_flag),
-  zoomf (std_shrinkf), shrinkf (1), pixel (PIXEL), brushpx (-1), thicken (0),
+  zoomf (std_shrinkf), shrinkf (1),
+  pixel (PIXEL), retina_pixel (PIXEL),
+  brushpx (-1), thicken (0),
   master (NULL), cur_page (0) {}
 
 renderer_rep::~renderer_rep () {}
