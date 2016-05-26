@@ -223,8 +223,8 @@ shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo) {
     return glyph (0, 0, 0, 0, new_depth);
   }
 
-  int tx= xfactor/3;
-  int ty= yfactor/3;
+  int tx= ((xfactor/3) * (retina_factor+1)) / 2;
+  int ty= ((yfactor/3) * (retina_factor+1)) / 2;
   int dx=0, dy=0;
   if ((gl->status==0) && (xfactor>1)) dx= get_hor_shift (gl, xfactor, tx);
   // if ((gl->status==0) && (yfactor>1)) dy= get_ver_shift (gl, yfactor, ty);
