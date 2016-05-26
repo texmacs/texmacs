@@ -496,10 +496,16 @@
 (tm-define (graphics-path-property-1 p var)
   (graphics-path-property-bis-1 p var "default"))
 
+;;(tm-define (graphics-object-root-path p)
+;;  (let* ((q (tm-upwards-path p '(with) '()))
+;;	   (path (if (and q (== (+ (length q) 1) (length p))) q p)))
+;;    path))
+
 (tm-define (graphics-object-root-path p)
-  (let* ((q (tm-upwards-path p '(with) '()))
-	 (path (if (and q (== (+ (length q) 1) (length p))) q p)))
-    path))
+  (with t (path->tree p)
+    (cond ((tree-in? t :up '(with anim-edit))
+           (graphics-object-root-path (cDr p)))
+          (else p))))
 
 (tm-define (graphics-remove p . parms)
   (when p
