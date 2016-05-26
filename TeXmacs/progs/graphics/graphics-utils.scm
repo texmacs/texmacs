@@ -587,14 +587,15 @@
          (stree-radical (tm-ref t 1)))
         (else t)))
 
-(tm-define (graphics-re-enhance obj compl)
+(tm-define (graphics-re-enhance obj compl anim?)
   (cond ((tm-is? compl 'anim-edit)
          `(anim-edit ,(tm-ref compl 0)
-                     ,(graphics-re-enhance obj (tm-ref compl 1))
+                     ,(graphics-re-enhance obj (tm-ref compl 1) #t)
                      ,@(cddr (tm-children compl))))
-        ((and (tm-is? compl 'with) (tm-is? (tm-ref compl :last) 'anim-edit))
+        ((and (tm-is? compl 'with)
+	      (or anim? (tm-is? (tm-ref compl :last) 'anim-edit)))
          `(with ,@(cDr (tm-children compl))
-            ,(graphics-re-enhance obj (tm-ref compl :last))))
+	      ,(graphics-re-enhance obj (tm-ref compl :last) anim?)))
         (else obj)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
