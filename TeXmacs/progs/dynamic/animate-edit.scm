@@ -357,9 +357,36 @@
   (and-with t (tree-innermost user-anim-context? #t)
     (tree-set! t (anim-principal t))))
 
+(tm-define (anim-can-remove-frame? t)
+  (and (tree-is? t 'anim-edit)
+       (in? (anim-portion t) (anim-control-times t))
+       (> (length (anim-control-times t)) 1)))
+
+(define (morph-remove l x)
+  (cond ((null? l) l)
+        ((and (tree-func? (car l) 'tuple 2)
+              (tree-atomic? (tree-ref (car l) 0))
+              (= (tree->number (tree-ref (car l) 0)) x))
+         (morph-remove (cdr l) x))
+        (else (cons (car l) (morph-remove (cdr l) x)))))
+
+(define (anim-remove-frame-sub t x)
+  (cond ((tree-atomic? t) t)
+        ((user-anim-context? t) t)
+        ((tree-is? t 'morph)
+         `(morph ,@(morph-remove (tree-children t) x)))
+        (else `(,(tree-label t)
+                ,@(map (cut anim-remove-frame-sub <> x)
+                       (tree-children t))))))
+
 (tm-define (anim-remove-frame*)
   (and-with t (tree-innermost 'anim-edit #t)
-    (display* "Not yet implemented\n")))
+    (let* ((n (anim-remove-frame-sub (tree-ref t 0) (anim-portion t)))
+           (r (cddr (tree-children t)))
+           (a `(anim-static ,n ,@r))
+           (b (animate-checkout a)))
+      (tree-set! t 0 (tree-ref b 0))
+      (tree-set! t 1 (tree-ref b 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
