@@ -302,6 +302,8 @@
         ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
          (anim-checkout*)
          (notify-change 256))
+        ((balloon (icon "tm_focus_delete.xpm") "Remove animation")
+         (anim-remove*))
         // // //
         (dynamic (anim-duration-field "Duration" t 1))
         (dynamic (anim-step-field "Step" t 2)))
@@ -309,6 +311,8 @@
         ((balloon (icon "tm_search_next.xpm") "Play animation")
          (anim-commit*)
          (notify-change 256))
+        ((balloon (icon "tm_focus_delete.xpm") "Remove animation")
+         (anim-remove*))
         // // //
         (dynamic (anim-time-bar t))
         //

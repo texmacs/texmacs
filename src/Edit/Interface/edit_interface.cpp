@@ -418,6 +418,7 @@ correct_adjacent (rectangles& rs1, rectangles& rs2) {
 void
 edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
   if (p == rp) return;
+  tree pt= subtree (et, path_up (p));
   tree st= subtree (et, p);
   if ((is_func (st, TABLE) || is_func (st, SUBTABLE)) &&
       recurse && get_preference ("show table cells") == "on") {
@@ -453,9 +454,10 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
            is_graphical (st) ||
            (is_func (st, WITH) && is_graphical (st[N(st)-1])) ||
            (is_func (st, WITH) && is_graphical_text (st[N(st)-1])) ||
-           is_compound (st, "anim-edit") ||
-           is_compound (st, "anim-static") ||
-           is_compound (st, "anim-dynamic") ||
+           (is_func (pt, GRAPHICS) &&
+            (is_compound (st, "anim-edit") ||
+             is_compound (st, "anim-static") ||
+             is_compound (st, "anim-dynamic"))) ||
            is_compound (st, "shared", 3) ||
            (is_compound (st, "math", 1) &&
             is_compound (subtree (et, path_up (p)), "input")))

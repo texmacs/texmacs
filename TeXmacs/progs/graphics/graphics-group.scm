@@ -16,7 +16,8 @@
 (texmacs-module (graphics graphics-group)
   (:use (graphics graphics-env)
         (graphics graphics-single)
-        (kernel gui kbd-handlers)))
+        (kernel gui kbd-handlers)
+        (dynamic animate-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Group edit mode
@@ -337,28 +338,6 @@
         ((tm-func? t 'morph) "animated")
         (else "inanimated")))
 
-(define (remove-var l var)
-  (cond ((or (null? l) (null? (cdr l))) (list))
-        ((tm-equal? (car l) var) (remove-var (cddr l) var))
-        (else (cons* (car l) (cadr l) (remove-var (cddr l) var)))))
-
-(define (anim-principal t)
-  (cond ((tm-in? t '(anim-static anim-dynamic))
-         (anim-principal (tm-ref t 0)))
-        ((and (tm-is? t 'morph)
-              (tm-func? (tm-ref t 0) 'tuple 2))
-         (anim-principal (tm-ref t 0 1)))
-        ((tm-is? t 'anim-edit)
-         (anim-principal (tm-ref t 1)))
-        ((tm-is? t 'with)
-         (let* ((c (tm-children t))
-                (l (cDr c))
-                (r (anim-principal (cAr c))))
-           (set! l (remove-var l "line-portion"))
-           (set! l (remove-var l "opacity"))
-           (if (null? l) r `(with ,@l ,r))))
-        (else t)))
-
 (define (decode-anim-type val)
   (cond ((== val "ink in") '("line-portion" "0" "1"))
         ((== val "ink out") '("line-portion" "1" "0"))
@@ -411,6 +390,15 @@
   (:require (and (== (graphics-mode) '(group-edit animate))
                  (graphics-selection-active?)))
   (with r (map (cut anim-type-set <> val) (sketch-get))
+    (sketch-set! r)))
+
+(tm-define (anim-remove*)
+  (:require (and (== (car (graphics-mode)) 'group-edit)
+                 (graphics-selection-active?)))
+  (with r (map (lambda (t)
+                 (tree-set! t (anim-principal t))
+                 t)
+               (sketch-get))
     (sketch-set! r)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

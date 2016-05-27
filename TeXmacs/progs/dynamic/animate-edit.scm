@@ -328,6 +328,36 @@
     (when x (anim-set-portion t x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Removal of entire animations and specific frames
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (remove-var l var)
+  (cond ((or (null? l) (null? (cdr l))) (list))
+        ((tm-equal? (car l) var) (remove-var (cddr l) var))
+        (else (cons* (car l) (cadr l) (remove-var (cddr l) var)))))
+
+(tm-define (anim-principal t)
+  (cond ((tm-in? t '(anim-static anim-dynamic))
+         (anim-principal (tm-ref t 0)))
+        ((and (tm-is? t 'morph)
+              (tm-func? (tm-ref t :last) 'tuple 2))
+         (anim-principal (tm-ref t :last 1)))
+        ((tm-is? t 'anim-edit)
+         (anim-principal (tm-ref t 1)))
+        ((tm-is? t 'with)
+         (let* ((c (tm-children t))
+                (l (cDr c))
+                (r (anim-principal (cAr c))))
+           (set! l (remove-var l "line-portion"))
+           (set! l (remove-var l "opacity"))
+           (if (null? l) r `(with ,@l ,r))))
+        (else t)))
+
+(tm-define (anim-remove*)
+  (and-with t (tree-innermost user-anim-context? #t)
+    (tree-set! t (anim-principal t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
