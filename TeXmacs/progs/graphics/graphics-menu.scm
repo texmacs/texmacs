@@ -309,7 +309,8 @@
   ("Move objects" (graphics-set-mode '(group-edit move)))
   ("Resize objects" (graphics-set-mode '(group-edit zoom)))
   ("Rotate objects" (graphics-set-mode '(group-edit rotate)))
-  ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup))))
+  ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup)))
+  ("Animate objects" (graphics-set-mode '(group-edit animate))))
 
 (menu-bind graphics-opacity-menu
   ("0%" (graphics-set-opacity "0%"))
@@ -538,6 +539,15 @@
   ("Border" (graphics-toggle-doc-at-border))
   ("Padded" (graphics-toggle-doc-at-padded)))
 
+(menu-bind graphics-anim-type-menu
+  ("Inanimated" (graphics-set-anim-type "inanimated"))
+  ("Animated" (graphics-set-anim-type "animated"))
+  ---
+  ("Ink in" (graphics-set-anim-type "ink in"))
+  ("Ink out" (graphics-set-anim-type "ink out"))
+  ("Fade in" (graphics-set-anim-type "fade in"))
+  ("Fade out" (graphics-set-anim-type "fade out")))
+
 (menu-bind graphics-snap-menu
   ("None" (graphics-set-snap "none"))
   ("All" (graphics-set-snap "all"))
@@ -628,6 +638,8 @@
         (-> "Vertical alignment" (link graphics-doc-valign-menu))))
     (assuming (graphics-mode-attribute? (graphics-mode) "doc-at-width")
       (-> "Text box style" (link graphics-doc-mode-menu))))
+  (assuming (graphics-get-anim-type)
+    (-> "Status" (link graphics-anim-type-menu)))
   ---
   (-> "Snap" (link graphics-snap-menu)))
 
@@ -691,12 +703,10 @@
           "v" (== (graphics-mode) '(hand-edit line)))
    (graphics-set-mode '(hand-edit line))))
 
-(tm-menu (graphics-group-property-icons)
+(tm-menu (graphics-group-icons)
   ((check (balloon (icon "tm_edit_props.xpm") "Edit object properties")
           "v" (== (graphics-mode) '(group-edit edit-props)))
-   (graphics-set-mode '(group-edit edit-props))))
-
-(tm-menu (graphics-group-icons)
+   (graphics-set-mode '(group-edit edit-props)))
   ((check (balloon (icon "tm_group_move.xpm") "Move objects")
           "v" (== (graphics-mode) '(group-edit move)))
    (graphics-set-mode '(group-edit move)))
@@ -708,7 +718,10 @@
    (graphics-set-mode '(group-edit rotate)))
   ((check (balloon (icon "tm_group_group.xpm") "Group/ungroup objects")
           "v" (== (graphics-mode) '(group-edit group-ungroup)))
-   (graphics-set-mode '(group-edit group-ungroup))))
+   (graphics-set-mode '(group-edit group-ungroup)))
+  ((check (balloon (icon "tm_animate.xpm") "Animate object")
+          "v" (== (graphics-mode) '(group-edit animate)))
+   (graphics-set-mode '(group-edit animate))))
 
 (tm-menu (graphics-property-icons)
   (assuming (graphics-mode-attribute? (graphics-mode) "color")
@@ -890,6 +903,7 @@
         ((== s '(edit document-at)) "long text")
         ((== s '(group-edit props)) "properties")
         ((== s '(group-edit edit-props)) "properties")
+        ((== s '(group-edit animate)) "animate")
         ((== s '(group-edit move)) "move")
         ((== s '(group-edit zoom)) "resize")
         ((== s '(group-edit rotate)) "rotate")
@@ -904,7 +918,6 @@
   /
   (link graphics-insert-icons)
   /
-  (link graphics-group-property-icons)
   (link graphics-group-icons))
 
 (tm-menu (graphics-focus-icons)
@@ -916,6 +929,12 @@
     (link graphics-focus-overlays-icons))
   (assuming (nnull? (graphics-mode-attributes (graphics-mode)))
     (link graphics-property-icons))
+  (assuming (graphics-get-anim-type)
+    /
+    (mini #t
+      (group "Status:")
+      (=> (eval (graphics-get-anim-type))
+          (link graphics-anim-type-menu))))
   /
   (link graphics-snap-icons))
 

@@ -32,6 +32,8 @@
 
   <assign|invisible|<macro|body|<with|opacity|0|<arg|body>>>>
 
+  <drd-props|anim-edit|arity|5|hidden|0|accessible|1|duration|2|duration|3|duration|4>
+
   <\active*>
     <\src-comment>
       Translations.

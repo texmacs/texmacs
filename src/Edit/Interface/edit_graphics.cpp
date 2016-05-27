@@ -325,14 +325,32 @@ edit_graphics_rep::find_point (point p) {
   return tree (_POINT, as_string (p[0]), as_string (p[1]));
 }
 
+bool
+admissible_selection (gr_selection sel) {
+  if (sel->type != "box" || N(sel->cp) != 1) return true;
+  if (last_item (sel->cp[0]) < 0 || N(sel->cp[0]) <= 2) return true;
+  path p= path_up (sel->cp[0]);
+  if (!has_subtree (the_et, p)) return true;
+  tree st= subtree (the_et, p);
+  if (is_compound (st, "anim-edit")) return false;
+  tree pt= subtree (the_et, path_up (p));
+  if (is_func (st, WITH) && is_compound (pt, "anim-edit")) return false;
+  return true;
+}
+
 tree
 edit_graphics_rep::graphical_select (double x, double y) { 
   frame f= find_frame ();
   if (is_nil (f)) return tuple ();
-  gr_selections sels;
+  gr_selections pre_sels, sels;
   point p0 = point (x, y);
   point p = f (p0);
-  sels= eb->graphical_select ((SI)p[0], (SI)p[1], snap_distance);
+  pre_sels= eb->graphical_select ((SI)p[0], (SI)p[1], snap_distance);
+  for (int i=0; i<N(pre_sels); i++)
+    if (admissible_selection (pre_sels[i]))
+      sels << pre_sels[i];
+  //for (int i=0; i<N(sels); i++)
+  //  cout << i << ":\t" << sels[i] << "\n";
   gs= sels;
   gr0= empty_grid ();
   grid g= find_grid ();
