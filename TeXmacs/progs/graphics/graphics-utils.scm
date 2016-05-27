@@ -612,6 +612,21 @@
         (else obj)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Animations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (graphics-anim-frames t)
+  (and (tm-in? t '(anim-static anim-dynamic))
+       (tm-is? (tm-ref t 0) 'morph)
+       (with c (tm-children (tm-ref t 0))
+         (and (list-and (map (lambda (x) (tm-func? x 'tuple 2)) c))
+              (map (lambda (x) (tm-ref x 1)) c)))))
+
+(tm-define (graphics-anim-radicals t)
+  (and-with l (graphics-anim-frames t)
+    (map stree-radical l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; New style graphical attributes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
