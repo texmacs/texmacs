@@ -357,6 +357,10 @@
   (and-with t (tree-innermost user-anim-context? #t)
     (tree-set! t (anim-principal t))))
 
+(tm-define (anim-remove-frame*)
+  (and-with t (tree-innermost 'anim-edit #t)
+    (display* "Not yet implemented\n")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

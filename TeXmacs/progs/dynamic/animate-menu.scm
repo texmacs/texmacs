@@ -311,6 +311,8 @@
         ((balloon (icon "tm_search_next.xpm") "Play animation")
          (anim-commit*)
          (notify-change 256))
+        ((balloon (icon "tm_remove.xpm") "Remove this frame")
+         (anim-remove-frame*))
         ((balloon (icon "tm_focus_delete.xpm") "Remove animation")
          (anim-remove*))
         // // //
