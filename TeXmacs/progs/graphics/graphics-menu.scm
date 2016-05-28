@@ -310,7 +310,8 @@
   ("Resize objects" (graphics-set-mode '(group-edit zoom)))
   ("Rotate objects" (graphics-set-mode '(group-edit rotate)))
   ("Group/ungroup" (graphics-set-mode '(group-edit group-ungroup)))
-  ("Animate objects" (graphics-set-mode '(group-edit animate))))
+  (assuming (not (tree-innermost user-anim-context?))
+    ("Animate objects" (graphics-set-mode '(group-edit animate)))))
 
 (menu-bind graphics-opacity-menu
   ("0%" (graphics-set-opacity "0%"))
@@ -719,9 +720,10 @@
   ((check (balloon (icon "tm_group_group.xpm") "Group/ungroup objects")
           "v" (== (graphics-mode) '(group-edit group-ungroup)))
    (graphics-set-mode '(group-edit group-ungroup)))
-  ((check (balloon (icon "tm_animate.xpm") "Animate object")
-          "v" (== (graphics-mode) '(group-edit animate)))
-   (graphics-set-mode '(group-edit animate))))
+  (assuming (not (tree-innermost user-anim-context?))
+    ((check (balloon (icon "tm_animate.xpm") "Animate object")
+            "v" (== (graphics-mode) '(group-edit animate)))
+     (graphics-set-mode '(group-edit animate)))))
 
 (tm-menu (graphics-property-icons)
   (assuming (graphics-mode-attribute? (graphics-mode) "color")

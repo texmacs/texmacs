@@ -389,6 +389,17 @@
       (tree-set! t 1 (tree-ref b 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Managing objects with respect to frames
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (current-anim-can-copy?) #f)
+(tm-define (current-anim-copy-before) (noop))
+(tm-define (current-anim-copy-after) (noop))
+(tm-define (current-anim-copy-all) (noop))
+(tm-define (current-anim-delete-before) (noop))
+(tm-define (current-anim-delete-after) (noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -319,7 +319,22 @@
         // // //
         (dynamic (anim-time-bar t))
         //
-        (dynamic (anim-now-field "Now" t 4)))
+        (dynamic (anim-now-field "Now" t 4))
+        // // //
+        (assuming (current-anim-can-copy?)
+          ((balloon (icon "tm_copy_before.xpm") "Copy to all frames before")
+           (current-anim-copy-before))
+          ((balloon (icon "tm_copy_both.xpm") "Copy to all other frames")
+           (current-anim-copy-all))
+          ((balloon (icon "tm_copy_after.xpm") "Copy to all frames after")
+           (current-anim-copy-after))
+          // // //
+          ((balloon (icon "tm_delete_before.xpm")
+                    "Remove from previous frames")
+           (current-anim-delete-before))
+          ((balloon (icon "tm_delete_after.xpm")
+                    "Remove from subsequent frames")
+           (current-anim-delete-after))))
       >>> >>> >>>
       ((balloon (icon "tm_close_tool.xpm") "Close animation tool")
        (set-bottom-bar "animate" #f)))))
