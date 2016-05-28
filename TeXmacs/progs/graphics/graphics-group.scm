@@ -392,7 +392,7 @@
   (with r (map (cut anim-type-set <> val) (sketch-get))
     (sketch-set! r)))
 
-(tm-define (anim-remove-focus)
+(tm-define (current-anim-remove)
   (:require (and (== (car (graphics-mode)) 'group-edit)
                  (graphics-selection-active?)))
   (with r (map (lambda (t)
