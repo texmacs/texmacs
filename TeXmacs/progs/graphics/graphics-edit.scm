@@ -16,7 +16,8 @@
 (texmacs-module (graphics graphics-edit)
   (:use (graphics graphics-env)
         (graphics graphics-single)
-        (graphics graphics-group)))
+        (graphics graphics-group)
+        (graphics graphics-animate)))
 
 
 ;; TODO:
