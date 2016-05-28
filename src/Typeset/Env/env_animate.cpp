@@ -310,6 +310,90 @@ morph_graphics (tree t0, tree t1, edit_env env) {
   return r;
 }
 
+bool
+morphable_arity (tree_label l) {
+  return
+    (l >= LINE && l <= CSMOOTH) ||
+    l == CONCAT || l == DOCUMENT;
+}
+
+tree
+interpolate (tree t, int i, double x) {
+  if (N(t) == 1 || i >= N(t)-1) return t[i];
+  if (!is_func (t[i], _POINT) || !is_func (t[i+1], _POINT)) return "";
+  if (N(t[i]) != N(t[i+1])) return "";
+  tree r (_POINT, N(t[i]));
+  for (int j=0; j<N(t[i]); j++) {
+    double v= as_double (t[i  ][j]);
+    double w= as_double (t[i+1][j]);
+    r[j]= as_tree ((1-x) * v + x * w);
+  }
+  return r;
+}
+
+tree
+complete_sub (tree t0, tree t1) {
+  int n0= N(t0), n1= N(t1);
+  if (n0 == n1) return t0;
+  if (n0 == 0 ) return t1;
+  
+  int l=0, r=0;
+  while (l < n0 && t0[l] == t1[l]) l++;
+  if (l > 0) l--;
+  while (r < n0-l && t0[n0-1-r] == t1[n1-1-r]) r++;
+  if (r > 0) r--;
+  if (l > 0 || r > 0) {
+    tree c= complete_sub (t0 (l, n0-r), t1 (l, n1-r));
+    return t0 (0, l) * c * t0 (n0-r, n0);
+  }
+
+  int h= n0>>1, ha= max (h, 1), hb= min (h, n0-2);
+  for (int h0= ha; h0 <= hb; h0++)
+    for (int h1=h0; h1<=h0+n1-n0; h1++)
+      if (t0[h0] == t1[h1]) {
+        tree r0= complete_sub (t0 (0 , h0+1), t1 (0 , h1+1));
+        tree r1= complete_sub (t0 (h0, n0  ), t1 (h1, n1  ));
+        return r0 (0, N(r0)-1) * r1;
+      }
+  
+  tree r0 (L(t0), n1);
+  int i0=-1, nr=0, tot= (n0==1? n1: (n1+n0-3)/(n0-1));
+  for (int i1=0; i1<n1; i1++) {
+    int next= (i1 * (n0 - 1)) / (n1 - 1);
+    if (next != i0) {
+      i0= next;
+      nr= 0;
+      r0[i1]= t0[i0];
+    }
+    else {
+      nr++;
+      double x= ((double) nr) / ((double) tot);
+      r0[i1]= interpolate (t0, i0, x);
+    }
+  }
+  return r0;
+}
+
+tree
+complete (tree t0, tree t1) {
+  tree_label l= L(t0);
+  if (l == CLINE || l == CARC || l == CSPLINE ||
+      l == CBEZIER || l == CSMOOTH) {
+    tree r= complete_sub (t0 * t0 (0, 1), t1 * t1 (0, 1));
+    return r (0, N(r)-1);
+  }
+  return complete_sub (t0, t1);
+}
+
+tree
+morph_variable_arity (tree t0, tree t1, edit_env env) {
+  if (env->anim_portion < 0.001) return t0;
+  if (env->anim_portion > 0.999) return t1;
+  if (N(t0) < N(t1)) return morph (complete (t0, t1), t1, env);
+  if (N(t1) < N(t0)) return morph (t0, complete (t1, t0), env);
+  return morph (t0, t1, env);
+}
+
 tree
 morph (tree t0, tree t1, edit_env env) {
   //cout << "Morph " << t0 << ", " << t1 << ", " << env->anim_portion << "\n";
@@ -348,6 +432,8 @@ morph (tree t0, tree t1, edit_env env) {
       tt[i]= morph (t0[i], t1[i], env);
     return tt;
   }
+  else if (L(t0) == L(t1) && morphable_arity (L(t0)))
+    return morph_variable_arity (t0, t1, env);
   else if (env->is_anylen (t0) && env->is_anylen (t1))
     return morph_length (t0, t1, env);
   else
