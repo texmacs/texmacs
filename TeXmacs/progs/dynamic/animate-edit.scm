@@ -31,7 +31,7 @@
         (set! t (tree-up t)))
     (reset-players t)))
 
-(tm-define (anim-play*)
+(tm-define (anim-play-focus)
   (and-with t (tree-innermost user-anim-context? #t)
     (anim-play t)))
 
@@ -236,7 +236,7 @@
     (anim-set-portion t x)
     (anim-play t)))
 
-(tm-define (anim-set-duration* d)
+(tm-define (anim-set-duration-focus d)
   (and-with t (tree-innermost user-anim-context? #t)
     (when d (anim-set-duration t d))))
 
@@ -254,7 +254,7 @@
          (tree-set! t 3 d)))
   (anim-play t))
 
-(tm-define (anim-set-step* d)
+(tm-define (anim-set-step-focus d)
   (and-with t (tree-innermost user-anim-context? #t)
     (when d (anim-set-step t d))))
 
@@ -300,7 +300,7 @@
                    (apply tree-go-to (cons* t 1 p))
                    (tree-go-to t 1 :start))))))))
 
-(tm-define (anim-set-now* x)
+(tm-define (anim-set-now-focus x)
   (and-with t (tree-innermost user-anim-context? #t)
     (when x (anim-set-now t x))))
 
@@ -323,7 +323,7 @@
       (with n (inexact->exact (floor (+ (* x d) 0.5)))
         (anim-set-now t (string-append (number->string (* 0.001 n)) "s"))))))
 
-(tm-define (anim-set-portion* x)
+(tm-define (anim-set-portion-focus x)
   (and-with t (tree-innermost user-anim-context? #t)
     (when x (anim-set-portion t x))))
 
@@ -353,7 +353,7 @@
            (if (null? l) r `(with ,@l ,r))))
         (else t)))
 
-(tm-define (anim-remove*)
+(tm-define (anim-remove-focus)
   (and-with t (tree-innermost user-anim-context? #t)
     (tree-set! t (anim-principal t))))
 
@@ -379,7 +379,7 @@
                 ,@(map (cut anim-remove-frame-sub <> x)
                        (tree-children t))))))
 
-(tm-define (anim-remove-frame*)
+(tm-define (anim-remove-frame-focus)
   (and-with t (tree-innermost 'anim-edit #t)
     (let* ((n (anim-remove-frame-sub (tree-ref t 0) (anim-portion t)))
            (r (cddr (tree-children t)))
@@ -400,7 +400,7 @@
     (tree-go-to t 1 :start)
     (set-bottom-bar "animate" #t)))
 
-(tm-define (anim-checkout*)
+(tm-define (anim-checkout-focus)
   (and-with t (tree-innermost user-anim-context? #t)
     (anim-checkout t)))
 
@@ -412,6 +412,6 @@
     (tree-go-to t :end)
     (anim-play t)))
 
-(tm-define (anim-commit*)
+(tm-define (anim-commit-focus)
   (and-with t (tree-innermost user-anim-context? #t)
     (anim-commit t)))

@@ -210,11 +210,11 @@
 
 (tm-menu (focus-toggle-menu t)
   (:require (tree-is? t 'anim-edit))
-  ("Play animation" (anim-commit*)))
+  ("Play animation" (anim-commit-focus)))
   
 (tm-menu (focus-toggle-menu t)
   (:require (tree-in? t '(anim-static anim-dynamic)))
-  ("Edit animation" (anim-checkout*)))
+  ("Edit animation" (anim-checkout-focus)))
 
 (tm-menu (focus-toggle-menu t)
   (:require (tree-func? t 'gr-screen 1)
@@ -227,12 +227,12 @@
 (tm-menu (focus-toggle-icons t)
   (:require (tree-is? t 'anim-edit))
   ((balloon (icon "tm_search_next.xpm") "Play animation")
-   (anim-commit*)))
+   (anim-commit-focus)))
   
 (tm-menu (focus-toggle-icons t)
   (:require (tree-in? t '(anim-static anim-dynamic)))
   ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
-   (anim-checkout*)))
+   (anim-checkout-focus)))
 
 (tm-menu (focus-toggle-icons t)
   (:require (tree-func? t 'gr-screen 1)
@@ -265,7 +265,7 @@
         (let* ((x (exact->inexact (* e i)))
                (now? (< (abs (- x c)) h))
                (sym (if now? "*" (if (in? x a) "+" "-"))))
-          ((eval sym) (anim-set-portion* x))))
+          ((eval sym) (anim-set-portion-focus x))))
       (text "]"))))
 
 (tm-menu (anim-input-field name t i setter)
@@ -276,13 +276,13 @@
       //)))
 
 (tm-menu (anim-duration-field name t i)
-  (dynamic (anim-input-field name t i anim-set-duration*)))
+  (dynamic (anim-input-field name t i anim-set-duration-focus)))
 
 (tm-menu (anim-step-field name t i)
-  (dynamic (anim-input-field name t i anim-set-step*)))
+  (dynamic (anim-input-field name t i anim-set-step-focus)))
 
 (tm-menu (anim-now-field name t i)
-  (dynamic (anim-input-field name t i anim-set-now*)))
+  (dynamic (anim-input-field name t i anim-set-now-focus)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Animation toolbar
@@ -298,24 +298,24 @@
         (text "No animation"))
       (assuming (tree-in? t '(anim-static anim-dynamic))
         ((balloon (icon "tm_search_next.xpm") "Play animation")
-         (anim-play*))
+         (anim-play-focus))
         ((balloon (icon "tm_show_hidden.xpm") "Edit animation")
-         (anim-checkout*)
+         (anim-checkout-focus)
          (notify-change 256))
         ((balloon (icon "tm_focus_delete.xpm") "Remove animation")
-         (anim-remove*))
+         (anim-remove-focus))
         // // //
         (dynamic (anim-duration-field "Duration" t 1))
         (dynamic (anim-step-field "Step" t 2)))
       (assuming (tree-in? t '(anim-edit))
         ((balloon (icon "tm_search_next.xpm") "Play animation")
-         (anim-commit*)
+         (anim-commit-focus)
          (notify-change 256))
         (assuming (anim-can-remove-frame? t)
           ((balloon (icon "tm_remove.xpm") "Remove this frame")
-           (anim-remove-frame*)))
+           (anim-remove-frame-focus)))
         ((balloon (icon "tm_focus_delete.xpm") "Remove animation")
-         (anim-remove*))
+         (anim-remove-focus))
         // // //
         (dynamic (anim-time-bar t))
         //
