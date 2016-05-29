@@ -201,6 +201,10 @@
   (cond ((tm-func? t 'gr-screen 1)
          (with (r p) (checkout-animation (tm-ref t 0) len)
            (list `(gr-screen ,r) (cons 0 p))))
+        ((not (tm-func? t 'morph))
+         (checkout-animation
+          `(morph (tuple "0" ,(tm->stree t))
+                  (tuple "1" ,(tm->stree t))) len))
         (else
           (with r (animate-checkout `(anim-static ,t ,len "0.1s" "0s"))
             (list r (cons 1 (path-start (tm-ref r 1) '())))))))

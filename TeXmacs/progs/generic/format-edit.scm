@@ -33,9 +33,11 @@
 
 (tm-define (with-set t var val)
   (with old-val (with-ref t var)
-    (if old-val
-        (tree-set! old-val val)
-        (tree-insert! t (- (tree-arity t) 1) (list var val)))))
+    (cond (old-val (tree-set! old-val val))
+          ((tree-is? t 'with)
+           (tree-insert! t (- (tree-arity t) 1) (list var val)))
+          (else (tree-set! t `(with ,var ,val ,t))))
+    t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simplification

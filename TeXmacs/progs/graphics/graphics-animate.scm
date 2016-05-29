@@ -121,14 +121,14 @@
 ;; Removing global animations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (sketch-for-each! fun)
-  (with r (map (lambda (t) (fun t) t) (sketch-get))
-    (sketch-set! r)))
-
 (define (anim-id t)
   (and-with val (with-ref t "anim-id")
     (and (tree-atomic? val)
          (tree->string val))))
+
+(define (anim-attach-id t)
+  (if (anim-id t) t
+      (with-set t "anim-id" (create-unique-id))))
 
 (define (copy-to* t g i)
   (cond ((>= i (tree-arity g))
@@ -140,6 +140,16 @@
 (define (copy-to t g)
   (when (anim-id t)
     (copy-to* t g 0)))
+
+(define (delete-from* t g i)
+  (cond ((>= i (tree-arity g)) (noop))
+        ((== (anim-id (tree-ref g i)) (anim-id t))
+         (tree-remove g i 1))
+        (else (delete-from* t g (+ i 1)))))
+
+(define (delete-from t g)
+  (when (anim-id t)
+    (delete-from* t g 0)))
 
 (define (anim-operate*** t a op)
   (cond ((tree-atomic? a) (noop))
@@ -168,14 +178,36 @@
     (when (tree-inside? t a)
       (anim-operate* t (tree-ref a 0) (anim-portion a) op pred?))))
 
+(define (anim-copy-to t pred?)
+  (with u (anim-attach-id t)
+    (anim-operate u copy-to pred?)
+    u))
+
+(define (anim-delete-from t pred?)
+  (when (anim-id t)
+    (anim-operate t delete-from pred?)
+    t))
+
+(tm-define (current-anim-can-copy?)
+  (:require (graphics-group-selection?))
+  #t)
+
 (tm-define (current-anim-copy-after)
   (:require (graphics-group-selection?))
-  (sketch-for-each! (lambda (t) (anim-operate t copy-to >))))
+  (sketch-map! (lambda (t) (anim-copy-to t >=))))
 
 (tm-define (current-anim-copy-before)
   (:require (graphics-group-selection?))
-  (sketch-for-each! (lambda (t) (anim-operate t copy-to <))))
+  (sketch-map! (lambda (t) (anim-copy-to t <=))))
 
 (tm-define (current-anim-copy-all)
   (:require (graphics-group-selection?))
-  (sketch-for-each! (lambda (t) (anim-operate t copy-to always?))))
+  (sketch-map! (lambda (t) (anim-copy-to t always?))))
+
+(tm-define (current-anim-delete-after)
+  (:require (graphics-group-selection?))
+  (sketch-map! (lambda (t) (anim-delete-from t >))))
+
+(tm-define (current-anim-delete-before)
+  (:require (graphics-group-selection?))
+  (sketch-map! (lambda (t) (anim-delete-from t <))))
