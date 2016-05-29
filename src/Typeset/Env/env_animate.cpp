@@ -118,7 +118,8 @@ edit_env_rep::animate (tree t) {
 
 tree
 morph_trivial (tree t, tree u, edit_env env) {
-  if (env->anim_portion < 0.999) return t;
+  if (u == "" && env->anim_portion > 0.001) return u;
+  else if (env->anim_portion < 0.999) return t;
   else return u;
 }
 
@@ -255,20 +256,22 @@ morph_graphics (tree t0, tree t1, edit_env env) {
   hashset<string> done;
   done->insert ("");
   int i0=0, i1=0;
-  //cout << "Morphing " << env->anim_start << ", " << env->anim_end
-  //     << "; " << env->anim_portion << "\n" << HRULE << "\n";
-  //for (int k=0; k<N(t0); k++)
-  //  cout << k << ": " << t0[k] << "\n";
-  //cout << HRULE << "\n";
-  //for (int k=0; k<N(t1); k++)
-  //  cout << k << ": " << t1[k] << "\n";
-  //cout << HRULE << "\n";
+  /*
+  cout << "Morphing " << env->anim_start << ", " << env->anim_end
+       << "; " << env->anim_portion << LF << HRULE << LF;
+  for (int k=0; k<N(t0); k++)
+    cout << k << ": " << t0[k] << LF;
+  cout << HRULE << LF;
+  for (int k=0; k<N(t1); k++)
+    cout << k << ": " << t1[k] << LF;
+  cout << HRULE << LF;
+  */
   while (i0 < N(t0) && i1 < N(t1)) {
     string id0= get_anim_id (t0[i0]);
     string id1= get_anim_id (t1[i1]);
     if (done->contains (id0)) { i0++; continue; }
     if (done->contains (id1)) { i1++; continue; }
-    if (id0 == id1) {
+    if (id0 == id1 && id0 != "") {
       r << morph (t0[i0], t1[i1], env);
       done->insert (id0);
       done->insert (id1);
@@ -304,7 +307,7 @@ morph_graphics (tree t0, tree t1, edit_env env) {
   for (; i0 < N(t0); i0++)
     if (!done->contains (get_anim_id (t0[i0])))
       r << morph (t0[i0], "", env);
-  for (; i1 < N(t0); i1++)
+  for (; i1 < N(t1); i1++)
     if (!done->contains (get_anim_id (t1[i1])))
       r << morph ("", t1[i1], env);
   return r;
@@ -411,6 +414,8 @@ morph (tree t0, tree t1, edit_env env) {
       return morph_color (s0, s1, t);
     else return morph_trivial (t0, t1, env);
   }
+  else if (is_atomic (t0) || is_atomic (t1))
+    return morph_trivial (t0, t1, env);
   else if (is_func (t0, WITH) || is_func (t1, WITH))
     return morph_with (t0, t1, env);
   else if (is_func (t0, TFORMAT) && is_func (t1, TFORMAT))
