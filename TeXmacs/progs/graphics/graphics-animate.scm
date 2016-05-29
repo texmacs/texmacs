@@ -118,7 +118,7 @@
   (sketch-map! anim-principal))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Removing global animations
+;; Copying and removing objects to and from other frames
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (anim-id t)
@@ -211,3 +211,37 @@
 (tm-define (current-anim-delete-before)
   (:require (graphics-group-selection?))
   (sketch-map! (lambda (t) (anim-delete-from t <))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Automatic copying of new objects to other frames
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (anim-show-new-mode?)
+  (:require (and (inside? 'graphics)
+                 (!= (car (graphics-mode)) 'group-edit)))
+  #t)
+
+(define (tree-get-graphics t)
+  (cond ((tree-is? t 'graphics) t)
+        ((tree-is? t 'with) (tree-get-graphics (tm-ref t :last)))
+        (else #f)))
+
+(define (get-mode-pred)
+  (with mode (anim-get-new-mode)
+    (cond ((== mode "after") >=)
+          ((== mode "before") <=)
+          ((== mode "all") always?)
+          (else ==))))
+
+(define (commit-prepare a obj)
+  (when (and (tree-compound? obj) (not (anim-id obj)))
+    (with t (anim-attach-id obj)
+      (anim-operate* t (tree-ref a 0) (anim-portion a)
+                     copy-to (get-mode-pred)))))
+
+(tm-define (commit-animation t)
+  (:require (and (tree-is? t 'anim-edit)
+                 (tree-get-graphics (tree-ref t 1))))
+  (with g (tree-get-graphics (tree-ref t 1))
+    (for-each (cut commit-prepare t <>) (tree-children g))
+    (former t)))

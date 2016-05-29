@@ -220,6 +220,9 @@
     (make-animate sel len)
     (set-bottom-bar "animate" #t)))
 
+(tm-define (commit-animation t)
+  (animate-commit t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global duration and step length
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -292,7 +295,7 @@
         ((tree-in? t '(anim-edit))
          (let* ((p (cursor-path-in (tree-ref t 1)))
                 (l (label-list (tree-ref t 1) p)))
-           (with r (animate-commit t)
+           (with r (commit-animation t)
              (tree-set! t 0 (tree-ref r 0))
              (tree-set! t 4 now))
            (with r (animate-checkout `(anim-static ,(tree-ref t 0)
@@ -403,6 +406,14 @@
 (tm-define (current-anim-delete-before) (noop))
 (tm-define (current-anim-delete-after) (noop))
 
+(define anim-new-mode "after")
+(tm-define (anim-show-new-mode?) #f)
+(tm-define (anim-get-new-mode) anim-new-mode)
+(tm-define (anim-test-new-mode? s) (== anim-new-mode s))
+(tm-define (anim-set-new-mode s)
+  (:check-mark "*" anim-test-new-mode?)
+  (set! anim-new-mode s))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -420,7 +431,7 @@
     (anim-checkout t)))
 
 (tm-define (anim-commit t)
-  (with r (animate-commit t)
+  (with r (commit-animation t)
     (tree-set! t 0 (tree-ref r 0))
     (tree-remove! t 1 1)
     (tree-assign-node! t (tree-label r))

@@ -320,8 +320,8 @@
         (dynamic (anim-time-bar t))
         //
         (dynamic (anim-now-field "Now" t 4))
-        // // //
         (assuming (current-anim-can-copy?)
+          // // //
           ((balloon (icon "tm_copy_before.xpm") "Copy to all frames before")
            (current-anim-copy-before))
           ((balloon (icon "tm_copy_both.xpm") "Copy to all other frames")
@@ -334,7 +334,22 @@
            (current-anim-delete-before))
           ((balloon (icon "tm_delete_after.xpm")
                     "Remove from subsequent frames")
-           (current-anim-delete-after))))
+           (current-anim-delete-after)))
+        (assuming (and (not (current-anim-can-copy?))
+                       (anim-show-new-mode?))
+          // // //
+          ((check (balloon (icon "tm_copy_before.xpm")
+                           "Copy new objects to previous frames")
+                  "v" (anim-test-new-mode? "before"))
+           (anim-set-new-mode "before"))
+          ((check (balloon (icon "tm_copy_both.xpm")
+                           "Copy new objects to all frames")
+                  "v" (anim-test-new-mode? "all"))
+           (anim-set-new-mode "all"))
+          ((check (balloon (icon "tm_copy_after.xpm")
+                           "Copy new objects to subsequent frames")
+                  "v" (anim-test-new-mode? "after"))
+           (anim-set-new-mode "after"))))
       >>> >>> >>>
       ((balloon (icon "tm_close_tool.xpm") "Close animation tool")
        (set-bottom-bar "animate" #f)))))
