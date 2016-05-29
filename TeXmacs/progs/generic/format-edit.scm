@@ -18,6 +18,26 @@
 	(generic generic-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic with manipulations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (with-ref* t var i)
+  (and (<= i (- (tree-arity t) 3))
+       (or (and (tm-equal? (tree-ref t i) var)
+                (tree-ref t (+ i 1)))
+           (with-ref* t var (+ i 2)))))
+
+(tm-define (with-ref t var)
+  (and (tm-is? t 'with)
+       (with-ref* t var 0)))
+
+(tm-define (with-set t var val)
+  (with old-val (with-ref t var)
+    (if old-val
+        (tree-set! old-val val)
+        (tree-insert! t (- (tree-arity t) 1) (list var val)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simplification
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

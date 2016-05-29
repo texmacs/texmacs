@@ -13,6 +13,7 @@
 
 (texmacs-module (graphics graphics-animate)
   (:use (graphics graphics-group)
+        (generic format-edit)
         (dynamic animate-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -104,11 +105,77 @@
 ;; Removing global animations
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (current-anim-remove)
-  (:require (and (== (car (graphics-mode)) 'group-edit)
-                 (graphics-selection-active?)))
-  (with r (map (lambda (t)
-                 (tree-set! t (anim-principal t))
-                 t)
-               (sketch-get))
+(define (graphics-group-selection?)
+  (and (== (car (graphics-mode)) 'group-edit)
+       (graphics-selection-active?)))
+
+(define (sketch-map! fun)
+  (with r (map (lambda (t) (tree-set! t (fun t)) t) (sketch-get))
     (sketch-set! r)))
+
+(tm-define (current-anim-remove)
+  (:require (graphics-group-selection?))
+  (sketch-map! anim-principal))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Removing global animations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (sketch-for-each! fun)
+  (with r (map (lambda (t) (fun t) t) (sketch-get))
+    (sketch-set! r)))
+
+(define (anim-id t)
+  (and-with val (with-ref t "anim-id")
+    (and (tree-atomic? val)
+         (tree->string val))))
+
+(define (copy-to* t g i)
+  (cond ((>= i (tree-arity g))
+         (tree-insert! g i (list t)))
+        ((== (anim-id (tree-ref g i)) (anim-id t))
+         (tree-set g i t))
+        (else (copy-to* t g (+ i 1)))))
+
+(define (copy-to t g)
+  (when (anim-id t)
+    (copy-to* t g 0)))
+
+(define (anim-operate*** t a op)
+  (cond ((tree-atomic? a) (noop))
+        ((tree-is? a 'graphics) (op t a))
+        (else
+         (for-each (cut anim-operate*** t <> op)
+                   (tree-children a)))))
+
+(define (anim-operate** t a x op pred?)
+  (when (tree-func? a 'tuple 2)
+    (and-with y (tree->number (tree-ref a 0))
+      (when (pred? y x)
+        (anim-operate*** t (tree-ref a 1) op)))))
+
+(define (anim-operate* t a x op pred?)
+  (cond ((tree-atomic? a) (noop))
+        ((tree-is? a 'morph)
+         (for-each (cut anim-operate** t <> x op pred?)
+                   (tree-children a)))
+        (else
+         (for-each (cut anim-operate* t <> x op pred?)
+                   (tree-children a)))))
+
+(define (anim-operate t op pred?)
+  (and-with a (tree-innermost 'anim-edit)
+    (when (tree-inside? t a)
+      (anim-operate* t (tree-ref a 0) (anim-portion a) op pred?))))
+
+(tm-define (current-anim-copy-after)
+  (:require (graphics-group-selection?))
+  (sketch-for-each! (lambda (t) (anim-operate t copy-to >))))
+
+(tm-define (current-anim-copy-before)
+  (:require (graphics-group-selection?))
+  (sketch-for-each! (lambda (t) (anim-operate t copy-to <))))
+
+(tm-define (current-anim-copy-all)
+  (:require (graphics-group-selection?))
+  (sketch-for-each! (lambda (t) (anim-operate t copy-to always?))))
