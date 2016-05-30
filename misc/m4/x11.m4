@@ -1,63 +1,37 @@
 #-------------------------------------------------------------------
 # Modify the X include files to make them C++-compatible, if needed
 #-------------------------------------------------------------------
-
-AC_DEFUN(CPP_X_HEADERS,[
-AC_MSG_CHECKING(for C++-compatible X header files)
-ac_save_cppflags="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-AC_TRY_COMPILE([#include <X11/Xlib.h>
-#include <X11/Xutil.h>],,
-echo yes,
-[rm -rf X11
-mkdir X11
-for ac_dir in                \
-  /usr/X11/include           \
-  /usr/X11R6/include         \
-  /usr/X11R5/include         \
-  /usr/X11R4/include         \
-                             \
-  /usr/include/X11           \
-  /usr/include/X11R6         \
-  /usr/include/X11R5         \
-  /usr/include/X11R4         \
-                             \
-  /usr/local/X11/include     \
-  /usr/local/X11R6/include   \
-  /usr/local/X11R5/include   \
-  /usr/local/X11R4/include   \
-                             \
-  /usr/local/include/X11     \
-  /usr/local/include/X11R6   \
-  /usr/local/include/X11R5   \
-  /usr/local/include/X11R4   \
-                             \
-  /usr/X386/include          \
-  /usr/x386/include          \
-  /usr/XFree86/include/X11   \
-                             \
-  /usr/include               \
-  /usr/local/include         \
-  /usr/unsupported/include   \
-  /usr/athena/include        \
-  /usr/local/x11r5/include   \
-  /usr/lpp/Xamples/include   \
-                             \
-  /usr/openwin/include       \
-  /usr/openwin/share/include \
-  ; \
-do
-  if test -r "$ac_dir/X11/Xlib.h"; then
-    tm_x_includes=$ac_dir
-    break
+ 
+AC_DEFUN(LC_X_HEADERS,[
+  AX_SAVE_FLAGS
+  LC_CLEAR_FLAGS
+  AC_PATH_X
+# path building : the first two levels 
+  lstx=/{usr,opt}/{.,local,[xX]386,XFree86,athena,openwin,lpp,unsupported}
+# path building : the next two levels 
+  lstx=$lstx/{{.,[[Xx]]11*,share,Xamples}/include,include/[[Xx]]11*}
+  if [[[ $no_x != "yes" ]]] 
+  then [[[ -z $x_includes ]]] && x_includes="$(dirname $x_libraries)/include"
+    lstx="$x_includes $lstx"
   fi
-done
-sed 's/^extern \(X[[a-zA-Z0-9]]*(\)/extern int \1/' \
-  < "$tm_x_includes/X11/Xlib.h" > X11/Xlib.h
-sed 's/^extern \(X[[a-zA-Z0-9]]*(\)/extern int \1/' \
-  < "$tm_x_includes/X11/Xutil.h" > X11/Xutil.h
-X_CFLAGS="-I.. $X_CFLAGS"
-echo "no; fixing"])
-CPPFLAGS="$ac_save_cppflags"
+  no_x=yes
+  for x_includes in $(eval echo $lstx)
+  do if [[ -d $x_includes ]]
+      then CPPFLAGS="-I$x_includes"
+        AC_CHECK_HEADERS(X11/Xlib.h X11/Xutil.h, [
+          unset no_x
+        ],[
+          unset x_libraries #the AC_X_PATH path must be forgotten
+          no_x="yes"
+        ])
+        test $no_x || break 2 #found headers
+      fi
+  done
+  if test $no_x
+  then unset x_includes
+  else x_libraries=${x_includes/include/lib}
+  fi   AX_RESTORE_FLAGS
+  LC_SCATTER_FLAGS([-I$x_includes -L$x_libraries -lXext -lX11],[X11])
+  LC_SUBST(X11)
+  LC_COMBINE_FLAGS([X11])
 ])
-

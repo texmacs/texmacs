@@ -99,7 +99,7 @@ LC_GUILE
 # Checks for standard functionality
 #--------------------------------------------------------------------
 
-CPP_X_HEADERS
+LC_X_HEADERS
 AC_CHECK_TYPES(FILE)
 AC_CHECK_TYPES(intptr_t)
 AC_CHECK_TYPES(time_t)
@@ -596,8 +596,6 @@ esac
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(LIBS)
-AC_SUBST(X11_CFLAGS)
-AC_SUBST(X11_LDFLAGS)
 AC_SUBST(COCOA_CFLAGS)
 AC_SUBST(COCOA_LDFLAGS)
 AC_SUBST(PDF_CFLAGS)

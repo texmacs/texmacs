@@ -654,8 +654,6 @@ CONFIG_X11
 PDF_CFLAGS
 COCOA_LDFLAGS
 COCOA_CFLAGS
-X11_LDFLAGS
-X11_CFLAGS
 MACOSX_DEPLOYMENT_TARGET
 QT_LIBS
 QT_LFLAGS
@@ -700,6 +698,8 @@ X_EXTRA_LIBS
 X_LIBS
 X_PRE_LIBS
 X_CFLAGS
+X11_CPP
+X11_CXX
 XMKMF
 GUILE_CPP
 GUILE_CXX
@@ -7093,14 +7093,525 @@ fi
 #--------------------------------------------------------------------
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for C++-compatible X header files" >&5
-$as_echo_n "checking for C++-compatible X header files... " >&6; }
-ac_save_cppflags="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+
+
+  CFLAGS__ax_save_flags=$CFLAGS
+
+
+
+  CPPFLAGS__ax_save_flags=$CPPFLAGS
+
+
+
+  CXXFLAGS__ax_save_flags=$CXXFLAGS
+
+
+
+  LDFLAGS__ax_save_flags=$LDFLAGS
+
+
+
+  LIBS__ax_save_flags=$LIBS
+
+
+
+  OBJCFLAGS__ax_save_flags=$OBJCFLAGS
+
+
+
+  OBJCXXFLAGS__ax_save_flags=$OBJCXXFLAGS
+
+
+
+
+
+  unset CFLAGS;unset CXXFLAGS;unset CPPFLAGS;unset LDFLAGS;unset LIBS;
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X" >&5
+$as_echo_n "checking for X... " >&6; }
+
+
+# Check whether --with-x was given.
+if test "${with_x+set}" = set; then :
+  withval=$with_x;
+fi
+
+# $have_x is `yes', `no', `disabled', or empty when we do not yet know.
+if test "x$with_x" = xno; then
+  # The user explicitly disabled X.
+  have_x=disabled
+else
+  case $x_includes,$x_libraries in #(
+    *\'*) as_fn_error $? "cannot use X directory names containing '" "$LINENO" 5;; #(
+    *,NONE | NONE,*) if ${ac_cv_have_x+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  # One or both of the vars are not set, and there is no cached value.
+ac_x_includes=no ac_x_libraries=no
+rm -f -r conftest.dir
+if mkdir conftest.dir; then
+  cd conftest.dir
+  cat >Imakefile <<'_ACEOF'
+incroot:
+	@echo incroot='${INCROOT}'
+usrlibdir:
+	@echo usrlibdir='${USRLIBDIR}'
+libdir:
+	@echo libdir='${LIBDIR}'
+_ACEOF
+  if (export CC; ${XMKMF-xmkmf}) >/dev/null 2>/dev/null && test -f Makefile; then
+    # GNU make sometimes prints "make[1]: Entering ...", which would confuse us.
+    for ac_var in incroot usrlibdir libdir; do
+      eval "ac_im_$ac_var=\`\${MAKE-make} $ac_var 2>/dev/null | sed -n 's/^$ac_var=//p'\`"
+    done
+    # Open Windows xmkmf reportedly sets LIBDIR instead of USRLIBDIR.
+    for ac_extension in a so sl dylib la dll; do
+      if test ! -f "$ac_im_usrlibdir/libX11.$ac_extension" &&
+	 test -f "$ac_im_libdir/libX11.$ac_extension"; then
+	ac_im_usrlibdir=$ac_im_libdir; break
+      fi
+    done
+    # Screen out bogus values from the imake configuration.  They are
+    # bogus both because they are the default anyway, and because
+    # using them would break gcc on systems where it needs fixed includes.
+    case $ac_im_incroot in
+	/usr/include) ac_x_includes= ;;
+	*) test -f "$ac_im_incroot/X11/Xos.h" && ac_x_includes=$ac_im_incroot;;
+    esac
+    case $ac_im_usrlibdir in
+	/usr/lib | /usr/lib64 | /lib | /lib64) ;;
+	*) test -d "$ac_im_usrlibdir" && ac_x_libraries=$ac_im_usrlibdir ;;
+    esac
+  fi
+  cd ..
+  rm -f -r conftest.dir
+fi
+
+# Standard set of common directories for X headers.
+# Check X11 before X11Rn because it is often a symlink to the current release.
+ac_x_header_dirs='
+/usr/X11/include
+/usr/X11R7/include
+/usr/X11R6/include
+/usr/X11R5/include
+/usr/X11R4/include
+
+/usr/include/X11
+/usr/include/X11R7
+/usr/include/X11R6
+/usr/include/X11R5
+/usr/include/X11R4
+
+/usr/local/X11/include
+/usr/local/X11R7/include
+/usr/local/X11R6/include
+/usr/local/X11R5/include
+/usr/local/X11R4/include
+
+/usr/local/include/X11
+/usr/local/include/X11R7
+/usr/local/include/X11R6
+/usr/local/include/X11R5
+/usr/local/include/X11R4
+
+/usr/X386/include
+/usr/x386/include
+/usr/XFree86/include/X11
+
+/usr/include
+/usr/local/include
+/usr/unsupported/include
+/usr/athena/include
+/usr/local/x11r5/include
+/usr/lpp/Xamples/include
+
+/usr/openwin/include
+/usr/openwin/share/include'
+
+if test "$ac_x_includes" = no; then
+  # Guess where to find include files, by looking for Xlib.h.
+  # First, try using that file with no special directory specified.
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
+_ACEOF
+if ac_fn_cxx_try_cpp "$LINENO"; then :
+  # We can compile using X headers with no special include directory.
+ac_x_includes=
+else
+  for ac_dir in $ac_x_header_dirs; do
+  if test -r "$ac_dir/X11/Xlib.h"; then
+    ac_x_includes=$ac_dir
+    break
+  fi
+done
+fi
+rm -f conftest.err conftest.i conftest.$ac_ext
+fi # $ac_x_includes = no
+
+if test "$ac_x_libraries" = no; then
+  # Check for the libraries.
+  # See if we find them without any special options.
+  # Don't add to $LIBS permanently.
+  ac_save_LIBS=$LIBS
+  LIBS="-lX11 $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <X11/Xlib.h>
+int
+main ()
+{
+XrmInitialize ()
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  LIBS=$ac_save_LIBS
+# We can link X programs with no special library path.
+ac_x_libraries=
+else
+  LIBS=$ac_save_LIBS
+for ac_dir in `$as_echo "$ac_x_includes $ac_x_header_dirs" | sed s/include/lib/g`
+do
+  # Don't even attempt the hair of trying to link an X program!
+  for ac_extension in a so sl dylib la dll; do
+    if test -r "$ac_dir/libX11.$ac_extension"; then
+      ac_x_libraries=$ac_dir
+      break 2
+    fi
+  done
+done
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi # $ac_x_libraries = no
+
+case $ac_x_includes,$ac_x_libraries in #(
+  no,* | *,no | *\'*)
+    # Didn't find X, or a directory has "'" in its name.
+    ac_cv_have_x="have_x=no";; #(
+  *)
+    # Record where we found X for the cache.
+    ac_cv_have_x="have_x=yes\
+	ac_x_includes='$ac_x_includes'\
+	ac_x_libraries='$ac_x_libraries'"
+esac
+fi
+;; #(
+    *) have_x=yes;;
+  esac
+  eval "$ac_cv_have_x"
+fi # $with_x != no
+
+if test "$have_x" != yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_x" >&5
+$as_echo "$have_x" >&6; }
+  no_x=yes
+else
+  # If each of the values was on the command line, it overrides each guess.
+  test "x$x_includes" = xNONE && x_includes=$ac_x_includes
+  test "x$x_libraries" = xNONE && x_libraries=$ac_x_libraries
+  # Update the cache value to reflect the command line values.
+  ac_cv_have_x="have_x=yes\
+	ac_x_includes='$x_includes'\
+	ac_x_libraries='$x_libraries'"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: libraries $x_libraries, headers $x_includes" >&5
+$as_echo "libraries $x_libraries, headers $x_includes" >&6; }
+fi
+
+# path building : the first two levels
+  lstx=/{usr,opt}/{.,local,xX386,XFree86,athena,openwin,lpp,unsupported}
+# path building : the next two levels
+  lstx=$lstx/{{.,[Xx]11*,share,Xamples}/include,include/[Xx]11*}
+  if [[ $no_x != "yes" ]]
+  then [[ -z $x_includes ]] && x_includes="$(dirname $x_libraries)/include"
+    lstx="$x_includes $lstx"
+  fi
+  no_x=yes
+  for x_includes in $(eval echo $lstx)
+  do if [ -d $x_includes ]
+      then CPPFLAGS="-I$x_includes"
+        for ac_header in X11/Xlib.h X11/Xutil.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_cxx_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+          unset no_x
+
+else
+
+          unset x_libraries #the AC_X_PATH path must be forgotten
+          no_x="yes"
+
+fi
+
+done
+
+        test $no_x || break 2 #found headers
+      fi
+  done
+  if test $no_x
+  then unset x_includes
+  else x_libraries=${x_includes/include/lib}
+  fi
+  CFLAGS=$CFLAGS__ax_save_flags
+
+
+  CPPFLAGS=$CPPFLAGS__ax_save_flags
+
+
+  CXXFLAGS=$CXXFLAGS__ax_save_flags
+
+
+  LDFLAGS=$LDFLAGS__ax_save_flags
+
+
+  LIBS=$LIBS__ax_save_flags
+
+
+  OBJCFLAGS=$OBJCFLAGS__ax_save_flags
+
+
+  OBJCXXFLAGS=$OBJCXXFLAGS__ax_save_flags
+
+
+
+
+  LC_SCATTER_FLAGS_list="-I$x_includes -L$x_libraries -lXext -lX11"
+
+  while test -n "$LC_SCATTER_FLAGS_list" ;
+  do
+
+
+  [[ "$LC_SCATTER_FLAGS_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_SCATTER_FLAGS_list=${BASH_REMATCH[1]}
+  [[ "$LC_SCATTER_FLAGS_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_SCATTER_FLAGS_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list//\/\//\/}
+
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_list%% -*} # get flag
+  LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list#*$LC_SCATTER_FLAGS_flag} # remove flag
+
+
+  [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_SCATTER_FLAGS_flag=${BASH_REMATCH[1]}
+  [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_SCATTER_FLAGS_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_SCATTER_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_SCATTER_FLAGS_flag=${BASH_REMATCH[1]}
+  [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_SCATTER_FLAGS_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}
+
+    case "$LC_SCATTER_FLAGS_flag" in
+      -l*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_LIBS="$X11_LIBS $LC_SCATTER_FLAGS_flag"
+  else
+if ${X11_LIBS+:} false; then :
+
+  case " $X11_LIBS " in #(
+  *" $LC_SCATTER_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS already contains \$LC_SCATTER_FLAGS_flag"; } >&5
+  (: X11_LIBS already contains $LC_SCATTER_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_LIBS " $LC_SCATTER_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS=\"\$X11_LIBS\""; } >&5
+  (: X11_LIBS="$X11_LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_LIBS=$LC_SCATTER_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS=\"\$X11_LIBS\""; } >&5
+  (: X11_LIBS="$X11_LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+;;
+      -L*|-framework*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_LDFLAGS="$X11_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+if ${X11_LDFLAGS+:} false; then :
+
+  case " $X11_LDFLAGS " in #(
+  *" $LC_SCATTER_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LDFLAGS already contains \$LC_SCATTER_FLAGS_flag"; } >&5
+  (: X11_LDFLAGS already contains $LC_SCATTER_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_LDFLAGS " $LC_SCATTER_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LDFLAGS=\"\$X11_LDFLAGS\""; } >&5
+  (: X11_LDFLAGS="$X11_LDFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_LDFLAGS=$LC_SCATTER_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LDFLAGS=\"\$X11_LDFLAGS\""; } >&5
+  (: X11_LDFLAGS="$X11_LDFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+;;
+      -I*|-U*|-D*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_CPPFLAGS="$X11_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+if ${X11_CPPFLAGS+:} false; then :
+
+  case " $X11_CPPFLAGS " in #(
+  *" $LC_SCATTER_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CPPFLAGS already contains \$LC_SCATTER_FLAGS_flag"; } >&5
+  (: X11_CPPFLAGS already contains $LC_SCATTER_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_CPPFLAGS " $LC_SCATTER_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CPPFLAGS=\"\$X11_CPPFLAGS\""; } >&5
+  (: X11_CPPFLAGS="$X11_CPPFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_CPPFLAGS=$LC_SCATTER_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CPPFLAGS=\"\$X11_CPPFLAGS\""; } >&5
+  (: X11_CPPFLAGS="$X11_CPPFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+;;
+      -F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_CPPFLAGS="$X11_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+if ${X11_CPPFLAGS+:} false; then :
+
+  case " $X11_CPPFLAGS " in #(
+  *" $LC_SCATTER_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CPPFLAGS already contains \$LC_SCATTER_FLAGS_flag"; } >&5
+  (: X11_CPPFLAGS already contains $LC_SCATTER_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_CPPFLAGS " $LC_SCATTER_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CPPFLAGS=\"\$X11_CPPFLAGS\""; } >&5
+  (: X11_CPPFLAGS="$X11_CPPFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_CPPFLAGS=$LC_SCATTER_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CPPFLAGS=\"\$X11_CPPFLAGS\""; } >&5
+  (: X11_CPPFLAGS="$X11_CPPFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_LDFLAGS="$X11_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+if ${X11_LDFLAGS+:} false; then :
+
+  case " $X11_LDFLAGS " in #(
+  *" $LC_SCATTER_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LDFLAGS already contains \$LC_SCATTER_FLAGS_flag"; } >&5
+  (: X11_LDFLAGS already contains $LC_SCATTER_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_LDFLAGS " $LC_SCATTER_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LDFLAGS=\"\$X11_LDFLAGS\""; } >&5
+  (: X11_LDFLAGS="$X11_LDFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_LDFLAGS=$LC_SCATTER_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LDFLAGS=\"\$X11_LDFLAGS\""; } >&5
+  (: X11_LDFLAGS="$X11_LDFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+;;
+      -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib X11" >&5
+$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib X11" >&2;};;
+      -*)
+        as_CACHEVAR=`$as_echo "ax_cv_check_cxxflags__$LC_SCATTER_FLAGS_flag" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag" >&5
+$as_echo_n "checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag... " >&6; }
+if eval \${$as_CACHEVAR+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+  ax_check_save_flags=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS  $LC_SCATTER_FLAGS_flag"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
 int
 main ()
 {
@@ -7110,60 +7621,987 @@ main ()
 }
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
-  echo yes
+  eval "$as_CACHEVAR=yes"
 else
-  rm -rf X11
-mkdir X11
-for ac_dir in                \
-  /usr/X11/include           \
-  /usr/X11R6/include         \
-  /usr/X11R5/include         \
-  /usr/X11R4/include         \
-                             \
-  /usr/include/X11           \
-  /usr/include/X11R6         \
-  /usr/include/X11R5         \
-  /usr/include/X11R4         \
-                             \
-  /usr/local/X11/include     \
-  /usr/local/X11R6/include   \
-  /usr/local/X11R5/include   \
-  /usr/local/X11R4/include   \
-                             \
-  /usr/local/include/X11     \
-  /usr/local/include/X11R6   \
-  /usr/local/include/X11R5   \
-  /usr/local/include/X11R4   \
-                             \
-  /usr/X386/include          \
-  /usr/x386/include          \
-  /usr/XFree86/include/X11   \
-                             \
-  /usr/include               \
-  /usr/local/include         \
-  /usr/unsupported/include   \
-  /usr/athena/include        \
-  /usr/local/x11r5/include   \
-  /usr/lpp/Xamples/include   \
-                             \
-  /usr/openwin/include       \
-  /usr/openwin/share/include \
-  ; \
-do
-  if test -r "$ac_dir/X11/Xlib.h"; then
-    tm_x_includes=$ac_dir
-    break
-  fi
-done
-sed 's/^extern \(X[a-zA-Z0-9]*(\)/extern int \1/' \
-  < "$tm_x_includes/X11/Xlib.h" > X11/Xlib.h
-sed 's/^extern \(X[a-zA-Z0-9]*(\)/extern int \1/' \
-  < "$tm_x_includes/X11/Xutil.h" > X11/Xutil.h
-X_CFLAGS="-I.. $X_CFLAGS"
-echo "no; fixing"
+  eval "$as_CACHEVAR=no"
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-CPPFLAGS="$ac_save_cppflags"
+  CXXFLAGS=$ax_check_save_flags
+fi
+eval ac_res=\$$as_CACHEVAR
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_CXXFLAGS="$X11_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+if ${X11_CXXFLAGS+:} false; then :
+
+  case " $X11_CXXFLAGS " in #(
+  *" $LC_SCATTER_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CXXFLAGS already contains \$LC_SCATTER_FLAGS_flag"; } >&5
+  (: X11_CXXFLAGS already contains $LC_SCATTER_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_CXXFLAGS " $LC_SCATTER_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CXXFLAGS=\"\$X11_CXXFLAGS\""; } >&5
+  (: X11_CXXFLAGS="$X11_CXXFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_CXXFLAGS=$LC_SCATTER_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_CXXFLAGS=\"\$X11_CXXFLAGS\""; } >&5
+  (: X11_CXXFLAGS="$X11_CXXFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&5
+$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&2;}
+fi
+;;
+      *) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&5
+$as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
+    esac
+  done
+  unset ${!LC_SCATTER_FLAGS_*}
+
+
+  X11_CXX=$X11_CXXFLAGS
+
+  X11_CPP=$X11_CPPFLAGS
+
+
+  for LC_COMBINE_FLAGS_lib in
+  do
+  unset STRIP_ARG_memo
+  if test "$X11_LIBS" = "-l$LC_COMBINE_FLAGS_lib"
+  then X11_LIBS=
+  else  while test "$X11_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$X11_LIBS"
+        X11_LIBS="${X11_LIBS/#-l$LC_COMBINE_FLAGS_lib[[:space:]]/}" # at the beginning
+        X11_LIBS="${X11_LIBS/%[[:space:]]-l$LC_COMBINE_FLAGS_lib/}"    # at the end
+        X11_LIBS="${X11_LIBS//[[:space:]]-l$LC_COMBINE_FLAGS_lib[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  X11_LIBS=$(echo $X11_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      LC_COMBINE_FLAGS_libs="$LC_COMBINE_FLAGS_libs -l$LC_COMBINE_FLAGS_lib"
+  done
+  if test -n "$X11_LIBS"
+  then
+  LC_MERGE_FLAGS_list="$LNDYNAMIC"
+  if [[ "X11_LIBS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_list="$LNDYNAMIC"
+  #pop the old list
+  while [ "$X11_LIBS" ]
+  do
+
+  [[ "$X11_LIBS" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && X11_LIBS=${BASH_REMATCH[1]}
+  [[ "$X11_LIBS" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && X11_LIBS=${BASH_REMATCH[1]}
+# transform \\ in \
+  X11_LIBS=${X11_LIBS//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${X11_LIBS##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$X11_LIBS"
+  then X11_LIBS=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; X11_LIBS=${X11_LIBS%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  # append new list
+  while [ "$LC_PREPEND_LIST_list" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_list##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$LC_PREPEND_LIST_list"
+  then LC_PREPEND_LIST_list=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  X11_LIBS=
+  while [ "$LC_PREPEND_LIST_nlist" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_nlist%% *} # get flag
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist#*$LC_PREPEND_LIST_flag} # remove flag
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+      X11_LIBS="$LC_PREPEND_LIST_flag $X11_LIBS"
+  done
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list//\/\//\/}
+
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_list%% -*} # get flag
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#*$LC_MERGE_FLAGS_flag} # remove flag
+
+
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_LIBS="$X11_LIBS $LC_MERGE_FLAGS_flag"
+  else
+if ${X11_LIBS+:} false; then :
+
+  case " $X11_LIBS " in #(
+  *" $LC_MERGE_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS already contains \$LC_MERGE_FLAGS_flag"; } >&5
+  (: X11_LIBS already contains $LC_MERGE_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_LIBS " $LC_MERGE_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS=\"\$X11_LIBS\""; } >&5
+  (: X11_LIBS="$X11_LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_LIBS=$LC_MERGE_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS=\"\$X11_LIBS\""; } >&5
+  (: X11_LIBS="$X11_LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+  fi
+  if test -n ""
+  then
+  LC_MERGE_FLAGS_list="$LNSTATIC $LC_COMBINE_FLAGS_libs"
+  if [[ "X11_LIBS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_list="$LNSTATIC $LC_COMBINE_FLAGS_libs"
+  #pop the old list
+  while [ "$X11_LIBS" ]
+  do
+
+  [[ "$X11_LIBS" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && X11_LIBS=${BASH_REMATCH[1]}
+  [[ "$X11_LIBS" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && X11_LIBS=${BASH_REMATCH[1]}
+# transform \\ in \
+  X11_LIBS=${X11_LIBS//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${X11_LIBS##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$X11_LIBS"
+  then X11_LIBS=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; X11_LIBS=${X11_LIBS%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  # append new list
+  while [ "$LC_PREPEND_LIST_list" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_list##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$LC_PREPEND_LIST_list"
+  then LC_PREPEND_LIST_list=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  X11_LIBS=
+  while [ "$LC_PREPEND_LIST_nlist" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_nlist%% *} # get flag
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist#*$LC_PREPEND_LIST_flag} # remove flag
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+      X11_LIBS="$LC_PREPEND_LIST_flag $X11_LIBS"
+  done
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list//\/\//\/}
+
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_list%% -*} # get flag
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#*$LC_MERGE_FLAGS_flag} # remove flag
+
+
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then X11_LIBS="$X11_LIBS $LC_MERGE_FLAGS_flag"
+  else
+if ${X11_LIBS+:} false; then :
+
+  case " $X11_LIBS " in #(
+  *" $LC_MERGE_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS already contains \$LC_MERGE_FLAGS_flag"; } >&5
+  (: X11_LIBS already contains $LC_MERGE_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append X11_LIBS " $LC_MERGE_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS=\"\$X11_LIBS\""; } >&5
+  (: X11_LIBS="$X11_LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  X11_LIBS=$LC_MERGE_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : X11_LIBS=\"\$X11_LIBS\""; } >&5
+  (: X11_LIBS="$X11_LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+  fi
+
+
+  LC_MERGE_FLAGS_list="$X11_LDFLAGS"
+  if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_list="$X11_LDFLAGS"
+  #pop the old list
+  while [ "$LDFLAGS" ]
+  do
+
+  [[ "$LDFLAGS" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LDFLAGS=${BASH_REMATCH[1]}
+  [[ "$LDFLAGS" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LDFLAGS=${BASH_REMATCH[1]}
+# transform \\ in \
+  LDFLAGS=${LDFLAGS//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LDFLAGS##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$LDFLAGS"
+  then LDFLAGS=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; LDFLAGS=${LDFLAGS%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  # append new list
+  while [ "$LC_PREPEND_LIST_list" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_list##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$LC_PREPEND_LIST_list"
+  then LC_PREPEND_LIST_list=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  LDFLAGS=
+  while [ "$LC_PREPEND_LIST_nlist" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_nlist%% *} # get flag
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist#*$LC_PREPEND_LIST_flag} # remove flag
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+      LDFLAGS="$LC_PREPEND_LIST_flag $LDFLAGS"
+  done
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list//\/\//\/}
+
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_list%% -*} # get flag
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#*$LC_MERGE_FLAGS_flag} # remove flag
+
+
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  else
+if ${LDFLAGS+:} false; then :
+
+  case " $LDFLAGS " in #(
+  *" $LC_MERGE_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LDFLAGS already contains \$LC_MERGE_FLAGS_flag"; } >&5
+  (: LDFLAGS already contains $LC_MERGE_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LDFLAGS " $LC_MERGE_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LDFLAGS=\"\$LDFLAGS\""; } >&5
+  (: LDFLAGS="$LDFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LDFLAGS=$LC_MERGE_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LDFLAGS=\"\$LDFLAGS\""; } >&5
+  (: LDFLAGS="$LDFLAGS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+  LC_MERGE_FLAGS_list="$X11_LIBS"
+  if [[ "LIBS" =~ $(echo "(^|_)LIBS") ]]
+  then
+  LC_PREPEND_LIST_list="$X11_LIBS"
+  #pop the old list
+  while [ "$LIBS" ]
+  do
+
+  [[ "$LIBS" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LIBS=${BASH_REMATCH[1]}
+  [[ "$LIBS" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LIBS=${BASH_REMATCH[1]}
+# transform \\ in \
+  LIBS=${LIBS//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LIBS##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$LIBS"
+  then LIBS=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; LIBS=${LIBS%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  # append new list
+  while [ "$LC_PREPEND_LIST_list" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_list##* } # get flag
+  if test "$LC_PREPEND_LIST_flag" = "$LC_PREPEND_LIST_list"
+  then LC_PREPEND_LIST_list=
+  else LC_PREPEND_LIST_flag=" $LC_PREPEND_LIST_flag"; LC_PREPEND_LIST_list=${LC_PREPEND_LIST_list%$LC_PREPEND_LIST_flag} # remove flag
+  fi
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  else
+if ${LC_PREPEND_LIST_nlist+:} false; then :
+
+  case " $LC_PREPEND_LIST_nlist " in #(
+  *" $LC_PREPEND_LIST_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist already contains \$LC_PREPEND_LIST_flag"; } >&5
+  (: LC_PREPEND_LIST_nlist already contains $LC_PREPEND_LIST_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LC_PREPEND_LIST_nlist " $LC_PREPEND_LIST_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LC_PREPEND_LIST_nlist=$LC_PREPEND_LIST_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LC_PREPEND_LIST_nlist=\"\$LC_PREPEND_LIST_nlist\""; } >&5
+  (: LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+  done
+  LIBS=
+  while [ "$LC_PREPEND_LIST_nlist" ]
+  do
+
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_nlist=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist//\/\//\/}
+
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_nlist%% *} # get flag
+  LC_PREPEND_LIST_nlist=${LC_PREPEND_LIST_nlist#*$LC_PREPEND_LIST_flag} # remove flag
+
+
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+  [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_PREPEND_LIST_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_PREPEND_LIST_flag=${LC_PREPEND_LIST_flag//\/\//\/}
+
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_PREPEND_LIST_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+      LIBS="$LC_PREPEND_LIST_flag $LIBS"
+  done
+  unset ${!LC_PREPEND_LIST_*}
+
+  else  while [ "$LC_MERGE_FLAGS_list" ]
+        do
+
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_list" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_list=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list//\/\//\/}
+
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_list%% -*} # get flag
+  LC_MERGE_FLAGS_list=${LC_MERGE_FLAGS_list#*$LC_MERGE_FLAGS_flag} # remove flag
+
+
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^(.*[^[:space:]])[[:space:]]+$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+  [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[[:space:]]+([^[:space:]].*)$") ]] && LC_MERGE_FLAGS_flag=${BASH_REMATCH[1]}
+# transform \\ in \
+  LC_MERGE_FLAGS_flag=${LC_MERGE_FLAGS_flag//\/\//\/}
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_MERGE_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+
+
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo "^[:space:]*-Wl,.+") ]]
+  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  else
+if ${LIBS+:} false; then :
+
+  case " $LIBS " in #(
+  *" $LC_MERGE_FLAGS_flag "*) :
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: : LIBS already contains \$LC_MERGE_FLAGS_flag"; } >&5
+  (: LIBS already contains $LC_MERGE_FLAGS_flag) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } ;; #(
+  *) :
+
+     as_fn_append LIBS " $LC_MERGE_FLAGS_flag"
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: : LIBS=\"\$LIBS\""; } >&5
+  (: LIBS="$LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+     ;;
+esac
+
+else
+
+  LIBS=$LC_MERGE_FLAGS_flag
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: : LIBS=\"\$LIBS\""; } >&5
+  (: LIBS="$LIBS") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }
+
+fi
+
+  fi
+
+        done
+  fi
+  unset ${!LC_MERGE_FLAGS_*}
+
+
+  unset ${!LC_COMBINE_FLAGS_*}
+
 
 ac_fn_cxx_check_type "$LINENO" "FILE" "ac_cv_type_FILE" "$ac_includes_default"
 if test "x$ac_cv_type_FILE" = xyes; then :
@@ -12386,8 +13824,6 @@ case "$CONFIG_GUI" in
 #        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
 	;;
 esac
-
-
 
 
 

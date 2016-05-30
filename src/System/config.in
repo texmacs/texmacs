@@ -78,6 +78,12 @@
 /* Define to 1 if you have the <util.h> header file. */
 #undef HAVE_UTIL_H
 
+/* Define to 1 if you have the <X11/Xlib.h> header file. */
+#undef HAVE_X11_XLIB_H
+
+/* Define to 1 if you have the <X11/Xutil.h> header file. */
+#undef HAVE_X11_XUTIL_H
+
 /* Link axel library with TeXmacs */
 #undef LINKED_AXEL
 
