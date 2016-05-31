@@ -10,7 +10,7 @@ $(PKG)_CHECKSUM := 4f111a4d6bb90eaed024b857b1bd3d0731ace8a2
 $(PKG)_SUBDIR   := qt-everywhere-opensource-src-$($(PKG)_VERSION)
 $(PKG)_FILE     := qt-everywhere-opensource-src-$($(PKG)_VERSION).tar.gz
 $(PKG)_WEBSITE  := http://qt.nokia.com/
-$(PKG)_URL      := http://download.qt.io/archive/qt/5.6/5.6.0/single/$($(PKG)_FILE)
+$(PKG)_URL      := http://download.qt.io/official_releases/qt/5.6/5.6.0/single/$($(PKG)_FILE)
 $(PKG)_DEPS     := 
 #gcc libodbc++ postgresql freetds openssl libgcrypt zlib libpng jpeg libmng tiff sqlite libiconv
 
