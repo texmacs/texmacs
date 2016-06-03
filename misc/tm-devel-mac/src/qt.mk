@@ -5,12 +5,12 @@
 # Qt
 PKG             := qt
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 4.8.6
-$(PKG)_CHECKSUM := ddf9c20ca8309a116e0466c42984238009525da6
+$(PKG)_VERSION  := 4.8.7
+$(PKG)_CHECKSUM := 76aef40335c0701e5be7bb3a9101df5d22fe3666
 $(PKG)_SUBDIR   := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-everywhere-opensource-src-$($(PKG)_VERSION).tar.gz
 $(PKG)_WEBSITE  := http://qt.nokia.com/
-$(PKG)_URL      := http://download.qt.io/archive/qt/4.8/4.8.6/$($(PKG)_FILE)
+$(PKG)_URL      := http://download.qt.io/official_releases/qt/4.8/4.8.7/$($(PKG)_FILE)
 $(PKG)_DEPS     := 
 #gcc libodbc++ postgresql freetds openssl libgcrypt zlib libpng jpeg libmng tiff sqlite libiconv
 
