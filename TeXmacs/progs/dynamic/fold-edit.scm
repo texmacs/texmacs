@@ -423,6 +423,18 @@
                              (else #f)))))))
         (else (overlay-satisfies-proviso? t i (+ pos 2)))))
 
+(define (overlay-visible-sub? t i)
+  (cond ((tree-atomic? t) #t)
+	((or (overlay-context? t)
+	     (tree-in? t '(with anim-static anim-morph)))
+	 (overlay-visible? t i))
+	(else (forall? (cut overlay-visible-sub? <> i)
+		       (tree-children t)))))
+
+(define (overlay-frame-visible? f i)
+  (and (tree-func? f 'tuple 2)
+       (overlay-visible-sub? (tree-ref f 1) i)))
+
 (tm-define (overlay-visible? t i)
   (or (and (overlay-context? t)
            (with ref (tree->number (tree-ref t 0))
@@ -442,7 +454,11 @@
                    ((tree-is? t 'alternate-other) (!= i ref))
                    (else #f))))
       (and (tree-is? t 'with)
-           (overlay-satisfies-proviso? t i 0))))
+           (overlay-satisfies-proviso? t i 0))
+      (and (tree-in? t '(anim-static anim-dynamic))
+	   (tree-is? t 0 'morph)
+	   (list-and (map (cut overlay-frame-visible? <> i)
+			  (tree-children (tree-ref t 0)))))))
 
 (tm-define (dynamic-extremal t forwards?)
   (:require (overlays-context? t))

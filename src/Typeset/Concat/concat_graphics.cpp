@@ -540,6 +540,22 @@ typeset_gr_item (edit_env env, tree t, path ip, bool& ok) {
     ok= true;
     return b;
   }
+  else if ((L(t) == ANIM_STATIC || L(t) == ANIM_DYNAMIC) &&
+	   (N(t) >= 1 && is_func (t[0], MORPH))) {
+    ok= true;
+    for (int i=0; i<N(t[0]); i++)
+      if (is_func (t[0][i], TUPLE, 2) && is_func (t[0][i][1], WITH)) {
+	tree w= t[0][i][1];
+	for (int j=0; j+1<N(w); j++) {
+	  if (w[j] == PROVISO && env->exec (w[j+1]) == "false") {
+	    ok= false;
+	    break;
+	  }
+	}
+      }
+    if (!ok) return empty_box (ip);
+    return typeset_as_atomic (env, t, ip);
+  }
   else {
     ok= true;
     return typeset_as_atomic (env, t, ip);

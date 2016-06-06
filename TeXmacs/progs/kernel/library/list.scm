@@ -284,6 +284,16 @@
   "intersperse all keys and values in @l into a flat list"
   (append-map (lambda (x) (list (car x) (cdr x))) l))
 
+(define-public (forall? pred? l)
+  (cond ((null? l) #t)
+	((not (pred? (car l))) #f)
+	(else (forall? pred? (cdr l)))))
+
+(define-public (exists? pred? l)
+  (cond ((null? l) #f)
+	((pred? (car l)) #t)
+	(else (exists? pred? (cdr l)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
