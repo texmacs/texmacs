@@ -50,7 +50,7 @@ AC_DEFUN([LC_SUBST],[
   fi
 # adaptation layer remove when finished
   AC_SUBST([$1_CFLAGS],["$$1_CXXFLAGS $$1_CPPFLAGS"])
-  AC_SUBST([$1_LDFLAGS])
+  AC_SUBST([$1_LDFLAGS],[""])
 ])
 
 # remove unwanted space in well know flags
@@ -239,8 +239,8 @@ AC_DEFUN([LC_CLEAR_FLAGS],[
 # try to use the  $1 library
 # test only works for predefines libraries
 # If the library is unknown just a warning is issued
-m4_define([Lib_check_fail],[AC_MSG_ERROR(Compulsory library [$1] not found)])
-m4_define([Lib_check_nfound],[AC_MSG_NOTICE(Library [$1]  presence not tested link may fail)])
+m4_define([Lib_check_fail],[AC_MSG_ERROR(compulsory library [$1] not found)])
+m4_define([Lib_check_nfound],[AC_MSG_NOTICE(skipping presence test for the library [$1])])
 
 AC_DEFUN([LC_CHECK_LIB],[
 case $1 in

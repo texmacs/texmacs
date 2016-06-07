@@ -102,7 +102,7 @@
 /* Link cairo library with TeXmacs */
 #undef LINKED_CAIRO
 
-/* Link freetype library with TeXmacs */
+/* Freetype library available */
 #undef LINKED_FREETYPE
 
 /* Link imlib2 library with TeXmacs */
