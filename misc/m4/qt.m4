@@ -25,16 +25,18 @@ then
 #        AC_MSG_RESULT([Qt5 seems not present, trying Qt4...])
      	AT_WITH_QT
      fi
-     # MacOS specific: (FIXME! shouldn't we be using qmake -query everywhere?)
+     # clean and dispatch the collected flags
+     LC_COPY_FLAGS([QT],[TMP])
+     LC_CLEAR_FLAGS([QT])
+     LC_SCATTER_FLAGS([$TMP_CPPFLAGS $TMP_CXXFLAGS $TMP_LDFLAGS $TMP_LIBS $QT_DEFINES],[QT])
      QT_FRAMEWORKS_PATH=`$QMAKE -query QT_INSTALL_LIBS`
      QT_PLUGINS_PATH=`$QMAKE -query QT_INSTALL_PLUGINS`
-     if [[[ $QT_CFLAGS =~ mmacosx-version-min= ]]]
-     then MACOSX_DEPLOYMENT_TARGET="${QT_CFLAGS#*mmacosx-version-min=}" 
-        MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET%% *}
+     LC_GET_ARG_VALUE([QT_CXXFLAGS], [-mmacosx-version-min], [MACOSX_VERSION_MIN])
+     if [[[ -n $MACOSX_VERSION_MIN ]]]
+     then m4_foreach(_tmp1,[[QT_CXXFLAGS], [QT_CPPFLAGS], [QT_LDFLAGS]], [STRIP_ARG(_tmp1,[-mmacosx-version-min])])
      fi
-     AC_SUBST(MACOSX_DEPLOYMENT_TARGET)
 else
-    #windows part
+    # windows part
     QT_FRAMEWORKS_PATH=/Qt
     QT_PATH=$QT_FRAMEWORKS_PATH/bin
     QT_PLUGINS_PATH=$QT_FRAMEWORKS_PATH/plugins
