@@ -29,7 +29,7 @@ m4_include([misc/m4/dlopen.m4])
 AC_DEFUN([LC_DEFINE],[
   typeset $1="$2"
   AC_DEFINE($1,$2,$3)
-]) 
+])
 
 # checking function without extra display before result
 m4_define([LS_SAVE_DESC],[3])
