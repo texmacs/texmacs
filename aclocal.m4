@@ -25,21 +25,39 @@ m4_include([misc/m4/dlopen.m4])
 #-------------------------------------------------------------------
 # General functions
 #-------------------------------------------------------------------
+# Create local variable based on those located in config.h
+AC_DEFUN([LC_DEFINE],[
+  typeset $1="$2"
+  AC_DEFINE($1,$2,$3)
+]) 
+
+# checking function without extra display before result
+m4_define([LS_SAVE_DESC],[3])
+AC_DEFUN([LC_MSG_CHECKING],[
+  AC_MSG_CHECKING([$1])
+  exec LS_SAVE_DESC>&AS_MESSAGE_FD AS_MESSAGE_FD>/dev/null
+])
+AC_DEFUN([LC_MSG_RESULT],[
+  exec AS_MESSAGE_FD>&LS_SAVE_DESC
+  AC_MSG_RESULT([$1])
+])
+
 AC_DEFUN([LC_SUBST],[ 
   AC_SUBST([$1_CXX],[$$1_CXXFLAGS])
-  AC_SUBST([$1_CPP],[$$1_CPPFLAGS])])
-
-#remove leading and trailing
-AC_DEFUN([LC_STRIP],[
-  @<:@@<:@ "$$1" =~ [$(echo "^@{:@.*[^[:space:]])[[:space:]]+$"]) @:>@@:>@ && $1=${BASH_REMATCH[[1]]}
-  @<:@@<:@ "$$1" =~ [$(echo "^[[:space:]]+([^[:space:]].*)$"]) @:>@@:>@ && $1=${BASH_REMATCH[[1]]}
-# transform \\ in \
-  $1=${$1//\/\//\/}
-]) 
+  AC_SUBST([$1_CPP],[$$1_CPPFLAGS])
+  if [[[ $enable_dumpflags =~ (^|[[:space:]])$1($|[[:space:]]) ]]]
+  then LC_DUMP_FLAGS([$1])
+  fi
+# adaptation layer remove when finished
+  AC_SUBST([$1_CFLAGS],["$$1_CXXFLAGS $$1_CPPFLAGS"])
+  AC_SUBST([$1_LDFLAGS])
+])
 
 # remove unwanted space in well know flags
 AC_DEFUN([LC_NORMALIZE_FLAG], [
-  LC_STRIP([$1])
+  $1=$(echo $$1)    # normalize whitespaces
+  $1=${$1//\/\//\/}   # normalize path separator
+
   if @<:@@<:@ "$$1" =~ [$(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$"]) @:>@@:>@
   then $1=-${BASH_REMATCH[[1]]}${BASH_REMATCH[[2]]}
   fi
@@ -56,34 +74,34 @@ AC_DEFUN([LC_APPEND_FLAG],[
 ])
 
 #############################################################################
-# generic pop flag $2 from $1 line $3 line flag separator (right most element)
-AC_DEFUN([_LC_POP_FLAG],[
-  LC_STRIP([$1])
-  $2=${$1@%:@@%:@*$3} # get flag
-  if test "$$2" = "$$1"
-  then $1=
-  else $2="$3$$2"; $1=${$1%$$2} # remove flag
+# generic get flag $2 from $1 line $3 line flag separator
+AC_DEFUN([LC_GETPOP_FLAG],[
+  m4_ifblank([$3], [[$0]_sepa=-], [[$0]_sepa=[$3]])
+  [$0]_1=" $(echo $$1)" # remove unnecessary spaces and add a heading space 
+  $1=${[$0]_1@&t@GETPOP $[$0]_sepa*} # get heading
+  if test "$$1" = "$[$0]_1"
+  then $1=${$1@%:@}; unset $2     # flag not found
+  else 
+    [$0]_tail=${[$0]_1@%:@$$1 } # strip heading
+    $2=${[$0]_tail%% -*}        # get flag and data
+    if test "$$2" = "$[$0]_tail"  # is there someting after the flag
+    then $1=$(echo $$1)
+    else $1=$(echo $$1${[$0]_tail@%:@$$2})
+    fi
+    LC_NORMALIZE_FLAG([$2])
+    if [[ $$0_sepa != - ]]    # just return the value
+    then $2=${$2@%:@$[$0]_sepa}
+    fi
   fi
-  LC_NORMALIZE_FLAG([$2])
+  
+  unset ${![$0]_*}
 ])
 
 # generic get flag $2 from $1 line $3 line flag separator (left most element)
-AC_DEFUN([_LC_GET_FLAG],[
-  LC_STRIP([$1])
-  $2=${$1%%$3*} # get flag
-  $1=${$1@%:@*$$2} # remove flag
-  LC_NORMALIZE_FLAG([$2])
-])
+m4_define([LC_GET_FLAG],[m4_define([GETPOP],[%%]) LC_GETPOP_FLAG([$1],[$2],[$3])])
+# generic get flag $2 from $1 line $3 line flag separator (right most element)
+m4_define([LC_POP_FLAG],[m4_define([GETPOP],[%]) LC_GETPOP_FLAG([$1],[$2],[$3])])
 
-#get flag $2 from $1 line (GET:left most element POP:right most)
-AC_DEFUN([LC_GET_FLAG],[_LC_GET_FLAG([$1],[$2],[ -])])
-AC_DEFUN([LC_POP_FLAG],[_LC_POP_FLAG([$1],[$2],[ -])])
-
-#pop flag $2 from $1 line (GET:left most element POP:right most)
-# we can have file names with no -l before
-# line have been normalize  space is the separator
-AC_DEFUN([LC_GET_FLAG_LIBS],[_LC_GET_FLAG([$1],[$2],[ ])])
-AC_DEFUN([LC_POP_FLAG_LIBS],[_LC_POP_FLAG([$1],[$2],[ ])])
 #############################################################################
 
 #############################################################################
@@ -93,9 +111,9 @@ AC_DEFUN([LC_X_IFELSE],[
   AC_$1_IFELSE([$3], [ AC_MSG_RESULT(yes) $4
   ],[ AC_MSG_RESULT(no) $5
   ])])
-AC_DEFUN([LC_RUN_IFELSE],[LC_X_IFELSE([RUN],[$1],[$2],[$3],[$4])])
-AC_DEFUN([LC_LINK_IFELSE],[LC_X_IFELSE([LINK],[$1],[$2],[$3],[$4])])
-AC_DEFUN([LC_COMPILE_IFELSE],[LC_X_IFELSE([COMPILE],[$1],[$2],[$3],[$4])])
+AC_DEFUN([LC_RUN_IFELSE],[LC_X_IFELSE([RUN],[$1],[$2],[$3],[$4],[$5])])
+AC_DEFUN([LC_LINK_IFELSE],[LC_X_IFELSE([LINK],[$1],[$2],[$3],[$4],[$5])])
+AC_DEFUN([LC_COMPILE_IFELSE],[LC_X_IFELSE([COMPILE],[$1],[$2],[$3],[$4],[$5])])
 #############################################################################
 
 m4_define([lib_ext],[dylib])
@@ -113,30 +131,30 @@ fi
   
 
 #############################################################################
-# We use function here to avoid 'm4 local variable' conflict for embedded calls
-# Needed to define functions at main Level
-m4_define([f_lc_functions_list],[ f_lc_scatter_flags  ])
-
-#############################################################################
 # prepend a anonymous list into library FLAGS
 # LC_APPEND_FLAG is used to avoid duplicate flag
 # $1 anonymous list $2 destination
 AC_DEFUN([LC_PREPEND_LIST],[
   [$0]_list="$1"
   #pop the old list
-  while @<:@ "$$2" @:>@
-  do  LC_POP_FLAG_LIBS([$2],[[$0]_flag])
-    LC_APPEND_FLAG([$[$0]_flag],[[$0]_nlist])
+  LC_POP_FLAG([$2],[$0_flag])
+  while @<:@@<:@ $[$0]_flag @:>@@:>@
+  do  LC_APPEND_FLAG([$$0_flag],[$0_nlist])
+      LC_POP_FLAG([$2],[$0_flag])
+    
   done
   # append new list
-  while @<:@ "$[$0]_list" @:>@
-  do  LC_POP_FLAG_LIBS([[$0]_list],[[$0]_flag])
-    LC_APPEND_FLAG([$[$0]_flag],[[$0]_nlist])
+  LC_POP_FLAG([$0_list],[$0_flag])
+  while @<:@@<:@ $[$0]_flag @:>@@:>@
+  do  LC_APPEND_FLAG([$$0_flag],[$0_nlist])
+      LC_POP_FLAG([$0_list],[$0_flag])
+    
   done
   $2=
-  while @<:@ "$[$0]_nlist" @:>@
-  do  LC_GET_FLAG_LIBS([[$0]_nlist],[[$0]_flag])
-      $2="$[$0]_flag $$2"
+  LC_GET_FLAG([$0_nlist],[$0_flag])
+  while @<:@@<:@ $[$0]_flag @:>@@:>@
+  do  $2="$[$0]_flag $$2"
+      LC_GET_FLAG([$0_nlist],[$0_flag])
   done
   unset ${![$0]_*}
 ])
@@ -149,8 +167,8 @@ AC_DEFUN([LC_MERGE_FLAGS],[
   if @<:@@<:@ "$2" =~ $(echo "(^|_)LIBS") @:>@@:>@
   then LC_PREPEND_LIST([$1],[$2])
   else  while @<:@ "$[$0]_list" @:>@
-        do  LC_GET_FLAG([[$0]_list],[[$0]_flag])
-            LC_APPEND_FLAG([$[$0]_flag],[$2])
+        do  LC_GET_FLAG([$0_list],[$0_flag])
+            LC_APPEND_FLAG([$$0_flag],[$2])
         done
   fi
   unset ${![$0]_*}
@@ -172,26 +190,27 @@ AC_DEFUN([_LC_TRANSFERT_FLAGS],
 # set compile flags from the LIBRARY ($1) flags into standard flags
 # in order to test static linking set the -static if needed
 AC_DEFUN([LC_SET_FLAGS],[
-  _LC_TRANSFERT_FLAGS([$1],[superseded_flags],[merged_flags])
+  _LC_TRANSFERT_FLAGS([$1],[superseded_flags],[LDFLAGS])
   if test -n "$LNSTATIC"
   then LC_APPEND_FLAG([-static], [CFLAGS])
        LC_APPEND_FLAG([-static], [CXXFLAGS])
   fi
+# check the libs depencies
+  [$0]_libs=$$1_LIBS
+  LC_GET_FLAG([$0_libs], [$0_lib], [-l]) # the main lib
+  LC_POP_FLAG([$0_libs], [$0_dep], [-l]) # the dependency lib
+  while test -n "$[$0]_dep"
+  do  LC_CHECK_LIB([$$0_dep])
+      LC_POP_FLAG([$0_libs], [$0_dep], [-l]) # the dependency lib
+  done
+  LC_MERGE_FLAGS(-l$[$0_lib],[LIBS])
 ])
 
 # merge the LIBRARY ($1) flags into general compile flags
-# The libraries in ($2)  should be remove and read with the right linking option 
-# The remaining libs are merged in general compile flags with dynamic option
+# The Bstatic option is added if $2 is undef
 AC_DEFUN([LC_COMBINE_FLAGS],[
-  for [$0]_lib in $2
-  do  STRIP_ARG([$1_LIBS],[-l$[$0]_lib])
-      [$0]_libs="$[$0]_libs -l$[$0]_lib"
-  done
-  if test -n "$$1_LIBS"
-  then  LC_MERGE_FLAGS([$LNDYNAMIC],[$1_LIBS])
-  fi
-  if test -n "$2"
-  then  LC_MERGE_FLAGS([$LNSTATIC $[$0]_libs],[$1_LIBS])
+  if [[ -z "$2" -a -n "$SEMISTATIC" ]]
+  then  [$1]_LIBS="$SEMISTATIC $[$1]_LIBS $SEMIDYNAMIC"
   fi
   _LC_TRANSFERT_FLAGS([$1],[],[merged_flags])
   unset ${![$0]_*}
@@ -217,6 +236,22 @@ AC_DEFUN([LC_CLEAR_FLAGS],[
     ])
 
 #############################################################################
+# try to use the  $1 library
+# test only works for predefines libraries
+# If the library is unknown just a warning is issued
+m4_define([Lib_check_fail],[AC_MSG_ERROR(Compulsory library [$1] not found)])
+m4_define([Lib_check_nfound],[AC_MSG_NOTICE(Library [$1]  presence not tested link may fail)])
+
+AC_DEFUN([LC_CHECK_LIB],[
+case $1 in
+  z@:}@     AC_CHECK_LIB([z], [inflate], [], [Lib_check_fail($1)]);;
+  png@:}@   AC_CHECK_LIB([png], [png_read_init], [], [Lib_check_fail($1)]);;
+  png12@:}@ AC_CHECK_LIB([png12], [png_read_init], [], [Lib_check_fail($1)]);;
+  gmp@:}@   AC_CHECK_LIB([gmp], [__gmpf_init], [], [Lib_check_fail($1)]);;
+  *@:}@     Lib_check_nfound($1) LC_MERGE_FLAGS(-l[$1],[LIBS]);;
+esac
+])
+#############################################################################
 # build the lib name with a underscore if needed
 m4_define([lc_libname],[m4_ifblank([$1],[$2],[$1_$2])])
 #dispatch compil flags list $1 in a LIBRARY ($2) flags
@@ -224,20 +259,21 @@ m4_define([lc_libname],[m4_ifblank([$1],[$2],[$1_$2])])
 AC_DEFUN([LC_SCATTER_FLAGS],[
   [$0]_list="$1" 
   
-  while test -n "$[$0]_list" ; 
+  LC_GET_FLAG([$0_list], [$0_flag])
+  while test -n "$[$0]_flag"
   do
-    LC_GET_FLAG([[$0]_list], [[$0]_flag])
-    LC_STRIP([$0]_flag)
     case "$[$0]_flag" in
       -l*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LIBS])]);;
       -L*|-framework*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])]);;
       -I*|-U*|-D*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CPPFLAGS])]);;
-      -F*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CPPFLAGS])]) LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])]);;
+      -F*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CPPFLAGS])]);;
+      -Wl,-F*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])]);;
       -Wl,*@:}@ AC_MSG_WARN(Flag $[$0]_flag dropped for lib $2);;
       -*@:}@ 
         AX_CHECK_COMPILE_FLAG($[$0]_flag,[LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CXXFLAGS])])],[AC_MSG_WARN(Flag $[$0]_flag dropped)],[],[]);;
       *@:}@ AC_MSG_WARN(Flags $[$0]_flag NOT managed);;
     esac
+    LC_GET_FLAG([$0_list], [$0_flag])
   done
   unset ${![$0]_*}
 ])
