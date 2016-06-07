@@ -57,8 +57,6 @@ LDX11 =
 LDCOCOA = @COCOA_LDFLAGS@
 LDQT = @QT_LIBS@
 LDGUI = $(LD@CONFIG_GUI@)
-LDFREETYPE = @FREETYPE_LDFLAGS@
-#LDGUILE = @GUILE_LDFLAGS@
 
 AR = ar
 ARFLAGS = -r
@@ -419,7 +417,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  freetype windowsres)) $(texmacs_c_deps)
 
 link_options:=-L$(tmsrc)/lib $(LDRT) -lm $(LDPATH) $(LDGUI) $(LDICONV) \
-   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) $(LDFREETYPE) \
+   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) \
    $(LDSPARKLE)
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
