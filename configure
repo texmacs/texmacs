@@ -2112,6 +2112,35 @@ $as_echo "$ac_res" >&6; }
 
 } # ac_fn_cxx_check_func
 
+# ac_fn_cxx_check_header_preproc LINENO HEADER VAR
+# ------------------------------------------------
+# Tests whether HEADER is present, setting the cache variable VAR accordingly.
+ac_fn_cxx_check_header_preproc ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+$as_echo_n "checking for $2... " >&6; }
+if eval \${$3+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <$2>
+_ACEOF
+if ac_fn_cxx_try_cpp "$LINENO"; then :
+  eval "$3=yes"
+else
+  eval "$3=no"
+fi
+rm -f conftest.err conftest.i conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_cxx_check_header_preproc
+
 # ac_fn_c_try_link LINENO
 # -----------------------
 # Try to link conftest.$ac_ext, and return whether this succeeded.
@@ -9994,42 +10023,83 @@ fi
 
 if [[ "$withval" != no ]]
 then
-  i_failure=1
+  LC_ICONV_TEMP=$(mktemp -t texmacs)
 
-  LC_ICONV_LIBPATHS="$LDFLAGS $withval -L/opt/local/lib -L/sw/lib"
-
-
-    if [[ "$LC_ICONV_LIBPATHS" =~ $(echo "(^|[[:space:]]+)-L(=?|[[:space:]]*)(.*)$") ]]
-    then LC_ICONV_LIBPATH=${BASH_REMATCH[3]%% -*}
-         LC_ICONV_LIBPATH=${LC_ICONV_LIBPATH%% }  # strip tailing blanks
-    else unset LC_ICONV_LIBPATH
-    fi
+  LC_ICONV_PATH=$(echo ${LDFLAGS//\/lib/\/include})
 
 
-  unset STRIP_ARG_memo
-  if test "$LC_ICONV_LIBPATHS" = "-L$LC_ICONV_LIBPATH"
-  then LC_ICONV_LIBPATHS=
-  else  while test "$LC_ICONV_LIBPATHS" != "$STRIP_ARG_memo"
-      do STRIP_ARG_memo="$LC_ICONV_LIBPATHS"
-        LC_ICONV_LIBPATHS="${LC_ICONV_LIBPATHS/#-L$LC_ICONV_LIBPATH[[:space:]]/}" # at the beginning
-        LC_ICONV_LIBPATHS="${LC_ICONV_LIBPATHS/%[[:space:]]-L$LC_ICONV_LIBPATH/}"    # at the end
-        LC_ICONV_LIBPATHS="${LC_ICONV_LIBPATHS//[[:space:]]-L$LC_ICONV_LIBPATH[[:space:]]/ }"  # all in the middle no consecutive
-      done
-    fi
-  LC_ICONV_LIBPATHS=$(echo $LC_ICONV_LIBPATHS)  # wipe extra blank if any
-  unset ${!STRIP_ARG_*}
+  CFLAGS__ax_save_flags=$CFLAGS
 
 
-  while test -n "$LC_ICONV_LIBPATH"
-  do
+
+  CPPFLAGS__ax_save_flags=$CPPFLAGS
 
 
-  unset ICONV_CFLAGS;unset ICONV_CXXFLAGS;unset ICONV_CPPFLAGS;unset ICONV_LDFLAGS;unset ICONV_LIBS; # no external iconv definition allowed
 
-if [ "${LC_ICONV_LIBPATH%/lib}" ]
+  CXXFLAGS__ax_save_flags=$CXXFLAGS
+
+
+
+  LDFLAGS__ax_save_flags=$LDFLAGS
+
+
+
+  LIBS__ax_save_flags=$LIBS
+
+
+
+  OBJCFLAGS__ax_save_flags=$OBJCFLAGS
+
+
+
+  OBJCXXFLAGS__ax_save_flags=$OBJCXXFLAGS
+
+
+
+  CPPFLAGS="${LC_ICONV_PATH//-L/-I} -I$withval/include -I/opt/local/include -I/sw/include -MM -MF $LC_ICONV_TEMP"
+
+
+
+  unset ICONV_CFLAGS;unset ICONV_CXXFLAGS;unset ICONV_CPPFLAGS;unset ICONV_LDFLAGS;unset ICONV_LIBS; # no previous iconv definition allowed
+  ac_fn_cxx_check_header_preproc "$LINENO" "iconv.h" "ac_cv_header_iconv_h"
+if test "x$ac_cv_header_iconv_h" = xyes; then :
+
+    LC_ICONV_DEPEND=$(<$LC_ICONV_TEMP)
+    LC_ICONV_ICONV=${LC_ICONV_DEPEND%/include/iconv.h*}
+    if  [[ "$LC_ICONV_DEPEND" == "$LC_ICONV_ICONV" ]]
+    then
+  CFLAGS=$CFLAGS__ax_save_flags
+
+
+  CPPFLAGS=$CPPFLAGS__ax_save_flags
+
+
+  CXXFLAGS=$CXXFLAGS__ax_save_flags
+
+
+  LDFLAGS=$LDFLAGS__ax_save_flags
+
+
+  LIBS=$LIBS__ax_save_flags
+
+
+  OBJCFLAGS=$OBJCFLAGS__ax_save_flags
+
+
+  OBJCXXFLAGS=$OBJCXXFLAGS__ax_save_flags
+
+
+
+      { $as_echo "$as_me:${as_lineno-$LINENO}: iconv found in default compiler location" >&5
+$as_echo "$as_me: iconv found in default compiler location" >&6;}
+    else LC_ICONV_ICONV=${LC_ICONV_ICONV##* }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: iconv found in $LC_ICONV_ICONV" >&5
+$as_echo "$as_me: iconv found in $LC_ICONV_ICONV" >&6;}
+
+if [ "$LC_ICONV_ICONV" ]
 then
 
-  LC_SCATTER_FLAGS_list="-I${LC_ICONV_LIBPATH%/lib}/include -L${LC_ICONV_LIBPATH%/lib}/lib -liconv"
+  LC_SCATTER_FLAGS_list="-I$LC_ICONV_ICONV/include -L$LC_ICONV_ICONV/lib -liconv"
 
 
   LC_GETPOP_FLAG_sepa=-
@@ -10690,36 +10760,6 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
   unset ${!LC_SCATTER_FLAGS_*}
 
 fi
-
-
-
-  CFLAGS__ax_save_flags=$CFLAGS
-
-
-
-  CPPFLAGS__ax_save_flags=$CPPFLAGS
-
-
-
-  CXXFLAGS__ax_save_flags=$CXXFLAGS
-
-
-
-  LDFLAGS__ax_save_flags=$LDFLAGS
-
-
-
-  LIBS__ax_save_flags=$LIBS
-
-
-
-  OBJCFLAGS__ax_save_flags=$OBJCFLAGS
-
-
-
-  OBJCXXFLAGS__ax_save_flags=$OBJCXXFLAGS
-
-
 
 
    if [ "$ICONV_CFLAGS" ]; then CFLAGS=$ICONV_CFLAGS;fi; if [ "$ICONV_CXXFLAGS" ]; then CXXFLAGS=$ICONV_CXXFLAGS;fi; if [ "$ICONV_CPPFLAGS" ]; then CPPFLAGS=$ICONV_CPPFLAGS;fi;
@@ -12075,13 +12115,12 @@ fi
   unset ${!LC_MERGE_FLAGS_*}
 
 
+    fi
+    rm $LC_ICONV_TEMP
     ac_fn_cxx_check_header_mongrel "$LINENO" "iconv.h" "ac_cv_header_iconv_h" "$ac_includes_default"
 if test "x$ac_cv_header_iconv_h" = xyes; then :
 
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking iconv linking" >&5
-$as_echo_n "checking iconv linking... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <iconv.h>
 int
@@ -12091,11 +12130,11 @@ iconv_open("","");
   ;
   return 0;
 }
-
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
+  iconv
+else
+
 
   CFLAGS=$CFLAGS__ax_save_flags
 
@@ -12120,7 +12159,7 @@ $as_echo "yes" >&6; }
 
 
 
-  if [ -z "iconv" -a -n "$SEMISTATIC" ]
+  if [ -z "" -a -n "$SEMISTATIC" ]
   then  ICONV_LIBS="$SEMISTATIC $ICONV_LIBS $SEMIDYNAMIC"
   fi
 
@@ -12794,53 +12833,28 @@ $as_echo "#define USE_ICONV 1" >>confdefs.h
         unset i_failure
         unset LC_ICONV_LIBPATH
 
-
-else
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-        echo configure: warning, failed to link with iconv
-#       AC_MSG_ERROR([you may have several versions of iconv installed,
-#         use with-iconv=iconv_base_path (i.e /usr/local) to specify one location])
-
-
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
+
 else
 
-
-    if [[ "$LC_ICONV_LIBPATHS" =~ $(echo "(^|[[:space:]]+)-L(=?|[[:space:]]*)(.*)$") ]]
-    then LC_ICONV_LIBPATH=${BASH_REMATCH[3]%% -*}
-         LC_ICONV_LIBPATH=${LC_ICONV_LIBPATH%% }  # strip tailing blanks
-    else unset LC_ICONV_LIBPATH
-    fi
+      as_fn_error $? "libiconv does not match header." "$LINENO" 5
+fi
 
 
-  unset STRIP_ARG_memo
-  if test "$LC_ICONV_LIBPATHS" = "-L$LC_ICONV_LIBPATH"
-  then LC_ICONV_LIBPATHS=
-  else  while test "$LC_ICONV_LIBPATHS" != "$STRIP_ARG_memo"
-      do STRIP_ARG_memo="$LC_ICONV_LIBPATHS"
-        LC_ICONV_LIBPATHS="${LC_ICONV_LIBPATHS/#-L$LC_ICONV_LIBPATH[[:space:]]/}" # at the beginning
-        LC_ICONV_LIBPATHS="${LC_ICONV_LIBPATHS/%[[:space:]]-L$LC_ICONV_LIBPATH/}"    # at the end
-        LC_ICONV_LIBPATHS="${LC_ICONV_LIBPATHS//[[:space:]]-L$LC_ICONV_LIBPATH[[:space:]]/ }"  # all in the middle no consecutive
-      done
-    fi
-  LC_ICONV_LIBPATHS=$(echo $LC_ICONV_LIBPATHS)  # wipe extra blank if any
-  unset ${!STRIP_ARG_*}
 
+else
+
+    rm $LC_ICONV_TEMP
+    as_fn_error $? "use with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location.
+Use with-iconv=no to ignore iconv." "$LINENO" 5
 
 fi
 
 
-  done
-  if [ $i_failure ]
-  then
-    echo configure: warning, iconv support does not seem to work
-    echo configure: warning, absence of iconv may crash HTML import among others
-#    AC_MSG_ERROR([absence of iconv may crash HTML import or prevent the build
-#      but it is possible to run configure --with-iconv=no])
-  fi
+else { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: absence of iconv may crash HTML import or prevent the build" >&5
+$as_echo "$as_me: WARNING: absence of iconv may crash HTML import or prevent the build" >&2;}
 fi
 
   ICONV_CXX=$ICONV_CXXFLAGS

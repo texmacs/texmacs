@@ -9,44 +9,42 @@ AS_HELP_STRING([--with-iconv@<:@=DIR@:>@], [where to find iconv []]),
 
 if [[[ "$withval" != no ]]]
 then
-  i_failure=1
-  
-  [$0]_LIBPATHS="$LDFLAGS $withval -L/opt/local/lib -L/sw/lib"
-  
-  LC_GET_ARG_VALUE([$0]_LIBPATHS, [-L], [$0]_LIBPATH)
-  STRIP_ARG([[$0]_LIBPATHS], -L$[$0]_LIBPATH)
-  
-  while test -n "$[$0]_LIBPATH"
-  do
-    LC_CLEAR_FLAGS([ICONV]) # no external iconv definition allowed
-    LC_SET_TRIVIAL_FLAGS([ICONV],[${$0_LIBPATH]%/lib})
-    AX_SAVE_FLAGS	
-    LC_SET_FLAGS([ICONV])
+  [$0]_TEMP=$(mktemp -t texmacs)
+
+  [$0]_PATH=$(echo ${LDFLAGS//\/lib/\/include})
+  AX_SAVE_FLAGS
+  CPPFLAGS="${[$0]_PATH//-L/-I} -I$withval/include -I/opt/local/include -I/sw/include -MM -MF $[$0]_TEMP"
+
+  LC_CLEAR_FLAGS([ICONV]) # no previous iconv definition allowed
+  AC_CHECK_HEADER(iconv.h, [
+    [$0]_DEPEND=$(<$[$0]_TEMP)
+    [$0]_ICONV=${[$0]_DEPEND%/include/iconv.h*}
+    if  @<:@@<:@ "$[$0]_DEPEND" == "$[$0]_ICONV" @:>@@:>@
+    then  AX_RESTORE_FLAGS
+      AC_MSG_NOTICE([iconv found in default compiler location])
+    else [$0]_ICONV=${[$0]_ICONV##* }
+      AC_MSG_NOTICE([iconv found in $$0_ICONV])
+      LC_SET_TRIVIAL_FLAGS([ICONV],[$$0_ICONV])
+      LC_SET_FLAGS([ICONV])
+    fi
+    rm $[$0]_TEMP
     AC_CHECK_HEADER(iconv.h, [
-      LC_LINK_IFELSE([iconv], [AC_LANG_PROGRAM([[@%:@include <iconv.h>]],
-        [[iconv_open("",""); ]])
-      ], [
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[@%:@include <iconv.h>]],
+        [[iconv_open("",""); ]])],[iconv],[
         AX_RESTORE_FLAGS
-        LC_COMBINE_FLAGS([ICONV],[iconv])
+        LC_COMBINE_FLAGS([ICONV])
         AC_DEFINE(USE_ICONV, 1, [Use iconv library])
         unset i_failure
         unset [$0]_LIBPATH
-      ], [
-        echo configure: warning, failed to link with iconv
-#       AC_MSG_ERROR([you may have several versions of iconv installed,
-#         use with-iconv=iconv_base_path (i.e /usr/local) to specify one location])
-    ])],[
-      LC_GET_ARG_VALUE([$0]_LIBPATHS, [-L], [$0]_LIBPATH)
-      STRIP_ARG([[$0]_LIBPATHS], -L$[$0]_LIBPATH)
-    ])
-  done
-  if [[ $i_failure ]]
-  then
-    echo configure: warning, iconv support does not seem to work
-    echo configure: warning, absence of iconv may crash HTML import among others
-#    AC_MSG_ERROR([absence of iconv may crash HTML import or prevent the build
-#      but it is possible to run configure --with-iconv=no])
-  fi
+      ],[AC_MSG_ERROR([Cannot use iconv.h.])])
+    ],[
+      AC_MSG_ERROR([libiconv does not match header.])])
+  ],[
+    rm $[$0]_TEMP
+    AC_MSG_ERROR([use with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location.
+Use with-iconv=no to ignore iconv.])
+  ],[-])
+else AC_MSG_WARN([absence of iconv may crash HTML import or prevent the build])
 fi
 LC_SUBST([ICONV])
 ])
