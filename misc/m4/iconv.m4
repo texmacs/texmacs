@@ -20,13 +20,16 @@ then
     [$0]_DEPEND=$(<$[$0]_TEMP)
     [$0]_ICONV=${[$0]_DEPEND%/include/iconv.h*}
     if  @<:@@<:@ "$[$0]_DEPEND" == "$[$0]_ICONV" @:>@@:>@
-    then  AX_RESTORE_FLAGS
+    then
+      AX_RESTORE_FLAGS
       AC_MSG_NOTICE([iconv found in default compiler location])
-    else [$0]_ICONV=${[$0]_ICONV##* }
+      LC_MERGE_FLAGS([-liconv],[ICONV_LIBS])
+    else
+      [$0]_ICONV=${[$0]_ICONV##* }
       AC_MSG_NOTICE([iconv found in $$0_ICONV])
       LC_SET_TRIVIAL_FLAGS([ICONV],[$$0_ICONV])
-      LC_SET_FLAGS([ICONV])
     fi
+    LC_SET_FLAGS([ICONV])
     rm $[$0]_TEMP
     AC_CHECK_HEADER(iconv.h, [
       AC_LINK_IFELSE([AC_LANG_PROGRAM([[@%:@include <iconv.h>]],
