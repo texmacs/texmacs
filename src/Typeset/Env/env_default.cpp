@@ -265,8 +265,8 @@ initialize_default_env () {
   env (PROVISO)          = "true";      // visibility condition
   env (MAGNIFY)          = "1";         // magnification for graphical objects
   env (POINT_STYLE)      = "disk";      // point style (square, circle...)
-  env (POINT_SIZE)       = "4px";       // point size
-  env (POINT_BORDER)     = "1px";       // point border width
+  env (POINT_SIZE)       = "2.5ln";     // point size
+  env (POINT_BORDER)     = "1ln";       // point border width
   env (LINE_WIDTH)       = "1ln";       // line width in graphics
   env (LINE_JOIN)        = "normal";    // junctions in multilines
   env (LINE_CAPS)        = "normal";    // caps at ends

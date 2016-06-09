@@ -385,30 +385,34 @@
   ("Cross" (graphics-set-point-style "cross")))
 
 (menu-bind graphics-point-size-menu
-  ("1 px" (graphics-set-point-size "1px"))
-  ("2 px" (graphics-set-point-size "2px"))
-  ("4 px" (graphics-set-point-size "default"))
-  ("6 px" (graphics-set-point-size "6px"))
-  ("10 px" (graphics-set-point-size "10px"))
-  ---
   ("1 ln" (graphics-set-point-size "1ln"))
   ("2 ln" (graphics-set-point-size "2ln"))
+  ("2.5 ln" (graphics-set-point-size "default"))
   ("4 ln" (graphics-set-point-size "4ln"))
-  ("6 ln" (graphics-set-point-size "6ln"))
+  ("5 ln" (graphics-set-point-size "5ln"))
+  ("8 ln" (graphics-set-point-size "8ln"))
   ("10 ln" (graphics-set-point-size "10ln"))
+  ---
+  ("1 px" (graphics-set-point-size "1px"))
+  ("2 px" (graphics-set-point-size "2px"))
+  ("2.5 px" (graphics-set-point-size "2.5px"))
+  ("4 px" (graphics-set-point-size "4px"))
+  ("5 px" (graphics-set-point-size "5px"))
+  ("8 px" (graphics-set-point-size "8px"))
+  ("10 px" (graphics-set-point-size "10px"))
   ---
   ("Other" (interactive graphics-set-point-size)))
 
 (menu-bind graphics-point-border-menu
-  ("0.5 px" (graphics-set-point-border "0.5px"))
-  ("1 px" (graphics-set-point-border "default"))
-  ("2 px" (graphics-set-point-border "2px"))
-  ("5 px" (graphics-set-point-border "5px"))
-  ---
   ("0.5 ln" (graphics-set-point-border "0.5ln"))
-  ("1 ln" (graphics-set-point-border "1ln"))
+  ("1 ln" (graphics-set-point-border "default"))
   ("2 ln" (graphics-set-point-border "2ln"))
   ("5 ln" (graphics-set-point-border "5ln"))
+  ---
+  ("0.5 px" (graphics-set-point-border "0.5px"))
+  ("1 px" (graphics-set-point-border "1px"))
+  ("2 px" (graphics-set-point-border "2px"))
+  ("5 px" (graphics-set-point-border "5px"))
   ---
   ("Other" (interactive graphics-set-point-border)))
 
@@ -776,7 +780,7 @@
     (mini #t
       (group "Size:")
       (let* ((ps (graphics-get-property "gr-point-size"))
-             (s (if (== ps "default") "4px" ps)))
+             (s (if (== ps "default") "2.5ln" ps)))
 	(=> (eval s)
 	    (link graphics-point-size-menu)))))
   (assuming (graphics-mode-attribute? (graphics-mode) "point-border")
@@ -784,7 +788,7 @@
     (mini #t
       (group "Border:")
       (let* ((ps (graphics-get-property "gr-point-border"))
-             (s (if (== ps "default") "1px" ps)))
+             (s (if (== ps "default") "1ln" ps)))
 	(=> (eval s)
 	    (link graphics-point-border-menu)))))
   (assuming
