@@ -95,6 +95,10 @@
 
   <assign|if-ref*|<macro|lab|body|<with|warn-missing|false|<if|<unequal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>|<greyed|<arg|body>>>>>>
 
+  <assign|if-nref|<macro|lab|body|<with|warn-missing|false|<if|<equal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>>>>>
+
+  <assign|if-nref*|<macro|lab|body|<with|warn-missing|false|<if|<equal|<get-binding|<arg|lab>>|<uninit>>|<arg|body>|<greyed|<arg|body>>>>>>
+
   <assign|tmdoc-file|<macro|name|<or|<find-file|<arg|name>>|<find-file-upwards|<merge|<arg|name>|.|<language-suffix>|.tm>|doc|web|texmacs>|<find-file-upwards|<merge|<arg|name>|.en.tm>|doc|web|texmacs>|<arg|name>>>>
 
   <assign|tmdoc-image|<macro|name|<find-file|$TEXMACS_IMAGE_PATH|<arg|name>>>>

@@ -49,7 +49,7 @@
   big-focus big-envbox)
 
 (define-group tmdoc-if-ref-tag
-  tmdoc-if-ref tmdoc-if-ref*)
+  tmdoc-if-ref tmdoc-if-ref* tmdoc-if-nref tmdoc-if-nref*)
 
 (define-group tmdoc-link-tag
   tmdoc-link tmdoc-link*)

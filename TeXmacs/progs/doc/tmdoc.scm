@@ -63,6 +63,8 @@
            (list (car x) (cadr x) (url->unix u2))))
         ((tm-func? x 'if-ref*)
          (cons 'if-ref (tmdoc-substitute-sub (cdr x) root cur)))
+        ((tm-func? x 'if-nref*)
+         (cons 'if-nref (tmdoc-substitute-sub (cdr x) root cur)))
         ((tm-func? x 'tmdoc-link*)
          (cons 'tmdoc-link (tmdoc-substitute-sub (cdr x) root cur)))
         ((and (tm-in? x '(bibliography bibliography*))
