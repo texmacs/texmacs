@@ -47,7 +47,11 @@
 #endif
 #endif
 #else
+#ifdef GUILE_HEADER_16
+#include <guile16/gh.h>
+#else
 #include <guile/gh.h>
+#endif
 #endif
 
 #ifdef __MINGW32__
