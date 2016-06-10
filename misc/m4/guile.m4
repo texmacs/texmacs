@@ -1,6 +1,8 @@
+
 #--------------------------------------------------------------------
 # Various test programs definition
 #--------------------------------------------------------------------
+
 AC_DEFUN([LM_FUNC_CHECK],[AC_LANG_PROGRAM([
  /* Override any GCC internal prototype to avoid an error.
     Use char because int might match the return type of a GCC
@@ -41,15 +43,20 @@ void print_string (SCM s) {
 #-------------------------------------------------------------------
 
 AC_DEFUN([LC_WITH_GUILE],[
-	[guile_config=$1]
-  AC_CHECK_PROGS(guile_config, guile18-config guile-config guile20-config, [])
-  
+ [guile_config=$1]
+ # build the prefered guile version search line
+  AC_CHECK_PROGS(guile_config, guile18-config guile17-config guile16-config guile-config guile20-config, [])
+
   LC_WITH_GUILE_tmp1="$($guile_config link)" && dnl
   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" && dnl
   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" && dnl
-  GUILE_VERSION=$($guile_config info guileversion) && dnl
-  GUILE_VERSIONT=${GUILE_VERSION#*.*.} &&
-  GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSIONT} && dnl
+  # get th version with guile-config or guile. keep the same naming with guile version 
+  # ie: guile18-config -> guile18
+  { GUILE_VERSION=$($guile_config info guileversion) || dnl
+   GUILE_VERSION=$(${guile_config%%-*} -c '(display (version))'); } && dnl
+  GUILE_VERSION=${GUILE_VERSION:-0} && dnl
+  GUILE_VERSION_TAIL=${GUILE_VERSION@%:@*.*.} && dnl
+  GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSION_TAIL} && dnl
   GUILE_DATA_PATH=$($guile_config info pkgdatadir)/${GUILE_VERSION} || dnl
   AC_MSG_ERROR([cannot find guile-config; is Guile installed?])
   LC_SCATTER_FLAGS([$LC_WITH_GUILE_tmp1], [GUILE_TMP])
@@ -61,27 +68,9 @@ AC_DEFUN([LC_WITH_GUILE],[
   LC_GET_ARG_VALUE(GUILE_CPPFLAGS, [-I], [LC_WITH_GUILE_tmp2])
   LC_GET_ARG_VALUE(GUILE_LIBS, [-l], [GUILE_LIB])
   LC_APPEND_FLAG([-I$LC_WITH_GUILE_tmp2/$GUILE_LIB], [GUILE_CPPFLAGS])
-  # Get the lib name
-  GUILE_NUM=${GUILE_LIB@%:@guile}
-  GUILE_NUM=${GUILE_NUM:-0}
 
   AC_DEFUN([GUILE_LIB_NAME], [lib$GUILE_LIB])
   unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
-
-  GUILE_BIN="$GUILE_LIB"
-  GUILE_CONFIG="$guile_config"
-  GUILE_CFLAGS="$GUILE_CPPFLAGS"
-  AC_SUBST(GUILE_BIN)
-  AC_SUBST(GUILE_CFLAGS)
-
-  GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
-#  if [[ "$GUILE_VERSION" = "$GUILE_EFFECTIVE_VERSION" ]]
-#  then echo ok
-#  else
-#    echo not ok
-#    echo $GUILE_VERSION
-#    echo $GUILE_EFFECTIVE_VERSION
-#  fi
 ])
 
 #-------------------------------------------------------------------
@@ -120,23 +109,24 @@ AC_DEFUN([LC_GUILE],[
       [], [unset enableval])
 
     AC_MSG_NOTICE(Guile version $GUILE_VERSION)
-    AC_MSG_NOTICE(Guile effective version $GUILE_EFFECTIVE_VERSION)
 
     case "$GUILE_VERSION" in
-      1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*) AC_DEFINE([GUILE_A],[1],[Guile version]) ;;
-      1.6* | 1.7*) AC_DEFINE(GUILE_B,[1],[Guile version]) ;;
+      1.0 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5) AC_DEFINE([GUILE_A],[1],[Guile version]) ;;
+      1.6 | 1.7) AC_DEFINE(GUILE_B,[1],[Guile version]) ;;
+      1.8 | 1.9) AC_DEFINE(GUILE_C,[1],[Guile version]) ;;
       2.*) AC_DEFINE(GUILE_D,[1],[Guile version])
         if test "$enableval" != "no"; then
           AC_MSG_ERROR([TeXmacs is incompatible with Guile 2.
     If you know what you are doing, run configure with --enable-guile2])
         fi 
-      ;;
-      *) AC_DEFINE(GUILE_C,[1],[Guile version]) ;;
+        ;;
+      0) AC_MSG_ERROR([Cannot determine Guile version.]) ;;
+      *) AC_MSG_ERROR([Guile version unmanaged.]) ;;
     esac
 
     AC_MSG_NOTICE([Guile data path: $GUILE_DATA_PATH])
 
-    AC_DEFINE_UNQUOTED([GUILE_NUM], [$GUILE_NUM], [Guile library name])
+    AC_DEFINE_UNQUOTED([GUILE_VERSION], [$GUILE_VERSION], [Guile version])
     AC_SUBST(GUILE_DATA_PATH)
   else
     AC_MSG_ERROR([ cannot work without Guile])
@@ -148,6 +138,11 @@ AC_DEFUN([LC_GUILE],[
   unset g_success
   AC_CHECK_HEADER(gh.h, [
     AC_CHECK_HEADER(GUILE_LIB_NAME.h, [
+      case GUILE_LIB_NAME in
+        libguile) ;;
+        libguile18) AC_DEFINE(GUILE_HEADER_18, 1, [Guile 1.8 header]) ;;
+        *) AC_MSG_WARN([Strange guile header name GUILE_LIB_NAME.h]) ;;
+      esac
       LC_LINK_IFELSE([Guile],[LM_FUNC_CHECK([gh_scm2newstr])], [
         g_success=1
         LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
@@ -175,6 +170,6 @@ AC_DEFUN([LC_GUILE],[
   AC_SUBST(CONFIG_GUILE_SERIAL)
 
   AX_RESTORE_FLAGS
-  LC_COMBINE_FLAGS([GUILE],[])
   LC_SUBST([GUILE])
+  LC_COMBINE_FLAGS([GUILE],[])
 ])

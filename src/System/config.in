@@ -30,8 +30,11 @@
 /* Guile version */
 #undef GUILE_D
 
-/* Guile library name */
-#undef GUILE_NUM
+/* Guile 1.8 header */
+#undef GUILE_HEADER_18
+
+/* Guile version */
+#undef GUILE_VERSION
 
 /* Define to 1 if the system has the type `FILE'. */
 #undef HAVE_FILE

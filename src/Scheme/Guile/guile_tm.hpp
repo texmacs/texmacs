@@ -37,7 +37,7 @@
 #endif // __MINGW32__
 
 #if defined(GUILE_D) || defined(GUILE_C) 
-#ifdef GUILE_BIN_guile18
+#ifdef GUILE_HEADER_18
 #include <libguile18.h>
 #else
 #include <libguile.h>

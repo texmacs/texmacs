@@ -721,6 +721,7 @@ X11_CPP
 X11_CXX
 XMKMF
 GUILE_LDFLAGS
+GUILE_CFLAGS
 GUILE_CPP
 GUILE_CXX
 CONFIG_GUILE_SERIAL
@@ -728,8 +729,6 @@ EGREP
 GREP
 CXXCPP
 GUILE_DATA_PATH
-GUILE_CFLAGS
-GUILE_BIN
 guile_config
 ac_ct_OBJCXX
 OBJCXXFLAGS
@@ -5004,8 +5003,9 @@ fi
   if [[ "$withval" != no ]]
   then
 
-	guile_config=$withval
-  for ac_prog in guile18-config guile-config guile20-config
+ guile_config=$withval
+ # build the prefered guile version search line
+  for ac_prog in guile18-config guile17-config guile16-config guile-config guile20-config
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -5048,8 +5048,9 @@ fi
 done
 
 
-  LC_WITH_GUILE_tmp1="$($guile_config link)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" &&   GUILE_VERSION=$($guile_config info guileversion) &&   GUILE_VERSIONT=${GUILE_VERSION#*.*.} &&
-  GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSIONT} &&   GUILE_DATA_PATH=$($guile_config info pkgdatadir)/${GUILE_VERSION} ||   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
+  LC_WITH_GUILE_tmp1="$($guile_config link)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" &&   # get th version with guile-config or guile. keep the same naming with guile version
+  # ie: guile18-config -> guile18
+  { GUILE_VERSION=$($guile_config info guileversion) ||    GUILE_VERSION=$(${guile_config%%-*} -c '(display (version))'); } &&   GUILE_VERSION=${GUILE_VERSION:-0} &&   GUILE_VERSION_TAIL=${GUILE_VERSION#*.*.} &&   GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSION_TAIL} &&   GUILE_DATA_PATH=$($guile_config info pkgdatadir)/${GUILE_VERSION} ||   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
 
   LC_SCATTER_FLAGS_list="$LC_WITH_GUILE_tmp1"
 
@@ -5439,27 +5440,9 @@ fi
 
   fi
 
-  # Get the lib name
-  GUILE_NUM=${GUILE_LIB#guile}
-  GUILE_NUM=${GUILE_NUM:-0}
 
 
   unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
-
-  GUILE_BIN="$GUILE_LIB"
-  GUILE_CONFIG="$guile_config"
-  GUILE_CFLAGS="$GUILE_CPPFLAGS"
-
-
-
-  GUILE_EFFECTIVE_VERSION=`$GUILE_BIN -c '(display (version))'`
-#  if [[ "$GUILE_VERSION" = "$GUILE_EFFECTIVE_VERSION" ]]
-#  then echo ok
-#  else
-#    echo not ok
-#    echo $GUILE_VERSION
-#    echo $GUILE_EFFECTIVE_VERSION
-#  fi
 
 
     # Check whether --enable-guile2 was given.
@@ -5472,15 +5455,16 @@ fi
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: Guile version $GUILE_VERSION" >&5
 $as_echo "$as_me: Guile version $GUILE_VERSION" >&6;}
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Guile effective version $GUILE_EFFECTIVE_VERSION" >&5
-$as_echo "$as_me: Guile effective version $GUILE_EFFECTIVE_VERSION" >&6;}
 
     case "$GUILE_VERSION" in
-      1.0* | 1.1* | 1.2* | 1.3* | 1.4* | 1.5*)
+      1.0 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5)
 $as_echo "#define GUILE_A 1" >>confdefs.h
  ;;
-      1.6* | 1.7*)
+      1.6 | 1.7)
 $as_echo "#define GUILE_B 1" >>confdefs.h
+ ;;
+      1.8 | 1.9)
+$as_echo "#define GUILE_C 1" >>confdefs.h
  ;;
       2.*)
 $as_echo "#define GUILE_D 1" >>confdefs.h
@@ -5489,10 +5473,9 @@ $as_echo "#define GUILE_D 1" >>confdefs.h
           as_fn_error $? "TeXmacs is incompatible with Guile 2.
     If you know what you are doing, run configure with --enable-guile2" "$LINENO" 5
         fi
-      ;;
-      *)
-$as_echo "#define GUILE_C 1" >>confdefs.h
- ;;
+        ;;
+      0) as_fn_error $? "Cannot determine Guile version." "$LINENO" 5 ;;
+      *) as_fn_error $? "Guile version unmanaged." "$LINENO" 5 ;;
     esac
 
     { $as_echo "$as_me:${as_lineno-$LINENO}: Guile data path: $GUILE_DATA_PATH" >&5
@@ -5500,7 +5483,7 @@ $as_echo "$as_me: Guile data path: $GUILE_DATA_PATH" >&6;}
 
 
 cat >>confdefs.h <<_ACEOF
-#define GUILE_NUM $GUILE_NUM
+#define GUILE_VERSION $GUILE_VERSION
 _ACEOF
 
 
@@ -6901,6 +6884,14 @@ if test "x$ac_cv_header_gh_h" = xyes; then :
 ac_fn_cxx_check_header_mongrel "$LINENO" "lib$GUILE_LIB.h" "$as_ac_Header" "$ac_includes_default"
 if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
 
+      case lib$GUILE_LIB in
+        libguile) ;;
+        libguile18)
+$as_echo "#define GUILE_HEADER_18 1" >>confdefs.h
+ ;;
+        *) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Strange guile header name lib$GUILE_LIB.h" >&5
+$as_echo "$as_me: WARNING: Strange guile header name lib$GUILE_LIB.h" >&2;} ;;
+      esac
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile linking" >&5
 $as_echo_n "checking Guile linking... " >&6; }
@@ -7077,6 +7068,32 @@ fi
 
   OBJCXXFLAGS=$OBJCXXFLAGS__ax_save_flags
 
+
+
+
+  GUILE_CXX=$GUILE_CXXFLAGS
+
+  GUILE_CPP=$GUILE_CPPFLAGS
+
+  if [[ $enable_dumpflags =~ (^|[[:space:]])GUILE($|[[:space:]]) ]]
+  then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CFLAGS:$GUILE_CFLAGS" >&5
+$as_echo "$as_me: GUILE_CFLAGS:$GUILE_CFLAGS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&5
+$as_echo "$as_me: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&5
+$as_echo "$as_me: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LIBS:$GUILE_LIBS" >&5
+$as_echo "$as_me: GUILE_LIBS:$GUILE_LIBS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&5
+$as_echo "$as_me: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&6;}
+
+
+  fi
+# adaptation layer remove when finished
+  GUILE_CFLAGS="$GUILE_CXXFLAGS $GUILE_CPPFLAGS"
+
+  GUILE_LDFLAGS=""
 
 
 
@@ -7747,32 +7764,6 @@ fi
 
 
   unset ${!LC_COMBINE_FLAGS_*}
-
-
-  GUILE_CXX=$GUILE_CXXFLAGS
-
-  GUILE_CPP=$GUILE_CPPFLAGS
-
-  if [[ $enable_dumpflags =~ (^|[[:space:]])GUILE($|[[:space:]]) ]]
-  then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CFLAGS:$GUILE_CFLAGS" >&5
-$as_echo "$as_me: GUILE_CFLAGS:$GUILE_CFLAGS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&5
-$as_echo "$as_me: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&5
-$as_echo "$as_me: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LIBS:$GUILE_LIBS" >&5
-$as_echo "$as_me: GUILE_LIBS:$GUILE_LIBS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&5
-$as_echo "$as_me: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&6;}
-
-
-  fi
-# adaptation layer remove when finished
-  GUILE_CFLAGS="$GUILE_CXXFLAGS $GUILE_CPPFLAGS"
-
-  GUILE_LDFLAGS=""
-
 
 
 
