@@ -108,8 +108,12 @@ m4_define([LC_POP_FLAG],[m4_define([GETPOP],[%]) LC_GETPOP_FLAG([$1],[$2],[$3])]
 # wrapping AC_?_IFELSE for erro smg
 AC_DEFUN([LC_X_IFELSE],[
   AC_MSG_CHECKING([$2] linking)
-  AC_$1_IFELSE([$3], [ AC_MSG_RESULT(yes) $4
-  ],[ AC_MSG_RESULT(no) $5
+  AC_$1_IFELSE([$3], [ 
+    AC_MSG_RESULT(yes) 
+    $4
+  ],[ 
+    AC_MSG_RESULT(no) 
+    $5
   ])])
 AC_DEFUN([LC_RUN_IFELSE],[LC_X_IFELSE([RUN],[$1],[$2],[$3],[$4],[$5])])
 AC_DEFUN([LC_LINK_IFELSE],[LC_X_IFELSE([LINK],[$1],[$2],[$3],[$4],[$5])])
@@ -190,7 +194,7 @@ AC_DEFUN([_LC_TRANSFERT_FLAGS],
 # set compile flags from the LIBRARY ($1) flags into standard flags
 # in order to test static linking set the -static if needed
 AC_DEFUN([LC_SET_FLAGS],[
-  _LC_TRANSFERT_FLAGS([$1],[superseded_flags],[LDFLAGS])
+  _LC_TRANSFERT_FLAGS([$1],[superseded_flags,[LIBS]],[LDFLAGS])
   if test -n "$LNSTATIC"
   then LC_APPEND_FLAG([-static], [CFLAGS])
        LC_APPEND_FLAG([-static], [CXXFLAGS])
