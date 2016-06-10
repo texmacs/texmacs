@@ -43,21 +43,21 @@ void print_string (SCM s) {
 #-------------------------------------------------------------------
 
 AC_DEFUN([LC_WITH_GUILE],[
- [guile_config=$1]
+ [GUILE_CONFIG=$1]
  # build the prefered guile version search line
-  AC_CHECK_PROGS(guile_config, guile18-config guile17-config guile16-config guile-config guile20-config, [])
+  AC_CHECK_PROGS(GUILE_CONFIG, guile18-config guile17-config guile16-config guile-config guile20-config, [])
 
-  LC_WITH_GUILE_tmp1="$($guile_config link)" && dnl
-  LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($guile_config compile)" && dnl
-  LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($guile_config info pkgincludedir)" && dnl
+  LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)" && dnl
+  LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)" && dnl
+  LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info pkgincludedir)" && dnl
   # get th version with guile-config or guile. keep the same naming with guile version 
   # ie: guile18-config -> guile18
-  { GUILE_VERSION=$($guile_config info guileversion) || dnl
-   GUILE_VERSION=$(${guile_config%%-*} -c '(display (version))'); } && dnl
+  { GUILE_VERSION=$($GUILE_CONFIG info guileversion) || dnl
+   GUILE_VERSION=$(${GUILE_CONFIG%%-*} -c '(display (version))'); } && dnl
   GUILE_VERSION=${GUILE_VERSION:-0} && dnl
   GUILE_VERSION_TAIL=${GUILE_VERSION@%:@*.*.} && dnl
   GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSION_TAIL} && dnl
-  GUILE_DATA_PATH=$($guile_config info pkgdatadir)/${GUILE_VERSION} || dnl
+  GUILE_DATA_PATH=$($GUILE_CONFIG info pkgdatadir)/${GUILE_VERSION} || dnl
   AC_MSG_ERROR([cannot find guile-config; is Guile installed?])
   LC_SCATTER_FLAGS([$LC_WITH_GUILE_tmp1], [GUILE_TMP])
 

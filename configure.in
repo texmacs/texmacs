@@ -250,20 +250,19 @@ case "${host}" in
     CONFIG_BPATH=""
     CONFIG_SO="dylib"
     CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
-    GUILE_LDFLAGS=""
-    for l in $($GUILE_CONFIG link)
-    do if [[[ $l =~ ^-L ]]]
-       then GuileLibPath=${l#-L} 
-       elif [[[ $l =~ ^-l ]]]   
-       then lib="$GuileLibPath/lib${l#-l}.a"
-            [[[ -f $lib ]]] && GUILE_LDFLAGS+="$lib " || GUILE_LDFLAGS+="${l} " #try to use dynamic lib 
-       fi
-   done
-#        done
-# guile-config doesn't return the need of libnintl
-        [[[ -z $LibIntl ]]] && LibIntl="$GuileLibPath/libintl.a" && [[[ -f $LibIntl ]]] && GUILE_LDFLAGS+="$LibIntl "
-# We must also modify the iconv library, that should be in same place than guile's lib
-        [[[ -z $LibIconv ]]] && LibIconv="$GuileLibPath/libiconv.a" && [[[ -f $LibIconv ]]] && ICONV_LDFLAGS="$LibIconv "
+#    GUILE_LDFLAGS=""
+#    for l in $($GUILE_CONFIG link)
+#    do if [[[ $l =~ ^-L ]]]
+#       then GuileLibPath=${l#-L}
+#       elif [[[ $l =~ ^-l ]]]
+#       then lib="$GuileLibPath/lib${l#-l}.a"
+#            [[[ -f $lib ]]] && GUILE_LDFLAGS+="$lib " || GUILE_LDFLAGS+="${l} " #try to use dynamic lib
+#       fi
+#    done
+## guile-config doesn't return the need of libnintl
+#        [[[ -z $LibIntl ]]] && LibIntl="$GuileLibPath/libintl.a" && [[[ -f $LibIntl ]]] && GUILE_LDFLAGS+="$LibIntl "
+## We must also modify the iconv library, that should be in same place than guile's lib
+#        [[[ -z $LibIconv ]]] && LibIconv="$GuileLibPath/libiconv.a" && [[[ -f $LibIconv ]]] && ICONV_LDFLAGS="$LibIconv "
 ;;
   *darwin*)
     echo "$ac_t""final adjustments for a generic Darwin host" 1>&6
