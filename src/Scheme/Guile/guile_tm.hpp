@@ -40,11 +40,7 @@
 #ifdef GUILE_HEADER_18
 #include <libguile18.h>
 #else
-#ifdef GUILE_HEADER_16
-#include <libguile16.h>
-#else
 #include <libguile.h>
-#endif
 #endif
 #else
 #ifdef GUILE_HEADER_16
