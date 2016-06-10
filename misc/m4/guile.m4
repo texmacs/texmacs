@@ -140,6 +140,7 @@ AC_DEFUN([LC_GUILE],[
     AC_CHECK_HEADER(GUILE_LIB_NAME.h, [
       case GUILE_LIB_NAME in
         libguile) ;;
+        libguile16) AC_DEFINE(GUILE_HEADER_16, 1, [Guile 1.6 header]) ;;
         libguile18) AC_DEFINE(GUILE_HEADER_18, 1, [Guile 1.8 header]) ;;
         *) AC_MSG_WARN([Strange guile header name GUILE_LIB_NAME.h]) ;;
       esac

@@ -30,6 +30,9 @@
 /* Guile version */
 #undef GUILE_D
 
+/* Guile 1.6 header */
+#undef GUILE_HEADER_16
+
 /* Guile 1.8 header */
 #undef GUILE_HEADER_18
 

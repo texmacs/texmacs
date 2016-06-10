@@ -6886,6 +6886,9 @@ if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
 
       case lib$GUILE_LIB in
         libguile) ;;
+        libguile16)
+$as_echo "#define GUILE_HEADER_16 1" >>confdefs.h
+ ;;
         libguile18)
 $as_echo "#define GUILE_HEADER_18 1" >>confdefs.h
  ;;
