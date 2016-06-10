@@ -194,11 +194,9 @@ endif
 qt_moc_src = $(patsubst %.hpp, moc_%.cpp,$(qt_moc))
 qt_moc_paths = $(patsubst %,./Plugins/Qt/%,$(qt_moc_src))
 
-
 $(qt_moc_paths): ./Plugins/Qt/moc_%.cpp: ./Plugins/Qt/%.hpp
 	$(MOC) $(MOCFLAGS) $< -o $@
 
-  
 ###############################################################################
 # Windows resource file
 ###############################################################################
