@@ -15,7 +15,8 @@
   (:use (utils library tree)
         (utils library cursor)
         (dynamic dynamic-drd)
-        (generic generic-edit)))
+        (generic generic-edit)
+        (generic format-geometry-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -116,6 +117,73 @@
         (list "emboss-end-dy" "End dy")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Animations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (anim-context? t)
+  (tree-in? t (append (anim-tag-list)
+                      '(anim-constant anim-translate anim-progressive))))
+
+(tm-define (make-anim-constant duration)
+  (:argument duration "Duration")
+  (insert-go-to `(anim-constant "" ,duration) '(0 0)))
+
+(define (make-anim-translate duration start)
+  (insert-go-to `(anim-translate "" ,duration ,start "") '(0 0)))
+
+(tm-define (make-anim-translate-right duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "-1.0" "0.0")))
+
+(tm-define (make-anim-translate-left duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "1.0" "0.0")))
+
+(tm-define (make-anim-translate-up duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "0.0" "-1.0")))
+
+(tm-define (make-anim-translate-down duration)
+  (:argument duration "Duration")
+  (make-anim-translate duration '(tuple "0.0" "1.0")))
+
+(define (make-anim-progressive duration start)
+  (insert-go-to `(anim-progressive "" ,duration ,start "") '(0 0)))
+
+(tm-define (make-anim-progressive-right duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "0.0" "0.0" "1.0")))
+
+(tm-define (make-anim-progressive-left duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "1.0" "0.0" "1.0" "1.0")))
+
+(tm-define (make-anim-progressive-up duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "0.0" "1.0" "0.0")))
+
+(tm-define (make-anim-progressive-down duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.0" "1.0" "1.0" "1.0")))
+
+(tm-define (make-anim-progressive-center duration)
+  (:argument duration "Duration")
+  (make-anim-progressive duration '(tuple "0.5" "0.5" "0.5" "0.5")))
+
+(tm-define (geometry-speed t inc?)
+  (:require (anim-context? t))
+  (with inc (if inc? 1 -1)
+    (with-focus-after t
+      (length-increase-step (tree-ref t 1) inc))))
+
+(tm-define (geometry-horizontal t forward?)
+  (:require (anim-context? t))
+  (with inc (if forward? 1 -1)
+    (with-focus-after t
+      (replace-empty t 1 "1s")
+      (length-increase (tree-ref t 1) inc))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time bending
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -158,7 +226,7 @@
 
 (tm-define (accelerate-get-reverse? t)
   (and-with s (accelerate-get-type t)
-    (string-starts? s "reverse")))
+    (and (string? s) (string-starts? s "reverse"))))
 
 (tm-define (accelerate-test-reverse? dummy)
   (with t (tree-innermost 'anim-accelerate #t)
@@ -171,7 +239,8 @@
 
 (tm-define (accelerate-get-type* t)
   (with s (accelerate-get-type t)
-    (cond ((or (not (string? s)) (== s "reverse")) "normal")
+    (cond ((not (string? s)) s)
+          ((== s "reverse") "normal")
           ((string-starts? s "reverse-") (string-drop s 8))
           (else s))))
 
@@ -180,7 +249,7 @@
     (tm-equal? (accelerate-get-type* t) new-type)))
 
 (define (accelerate-set-type** t new-type reverse?)
-  (if reverse?
+  (if (and (string? new-type) reverse?)
       (if (== new-type "normal")
           (accelerate-set-type t "reverse")
           (accelerate-set-type t (string-append "reverse-" new-type)))

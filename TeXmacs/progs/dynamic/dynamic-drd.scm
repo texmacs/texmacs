@@ -137,6 +137,9 @@
 (define-group similar-tag
   (appear-tag) (disappear-tag) (smooth-tag) (anim-emphasize-tag))
 
+(define-group anim-tag
+  (appear-tag) (disappear-tag) (smooth-tag) (anim-emphasize-tag))
+
 (define-group appear-tag
   translate-in progressive-in fade-in zoom-in)
 
@@ -152,4 +155,4 @@
 (define-group animation-tag
   anim-constant anim-compose anim-repeat
   anim-translate anim-progressive
-  (appear-tag) (disappear-tag) (smooth-tag) (anim-emphasize-tag))
+  (anim-tag))

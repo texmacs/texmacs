@@ -121,6 +121,8 @@ accelerate (player pl, tree kind) {
   if (kind == "bump") return bump_player (pl);
   if (is_atomic (kind) && starts (kind->label, "reverse-"))
     return reverse_player (accelerate (pl, kind->label (8, N(kind->label))));
+  if (is_tuple (kind, "fixed", 1) && is_atomic (kind[1]))
+    return fixed_player (pl, as_double (kind[1]));
   return pl;
 }
 

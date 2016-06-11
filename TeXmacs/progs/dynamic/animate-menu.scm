@@ -44,6 +44,23 @@
         ((== type "reverse-bump") "tm_anim_reverse_bump.xpm")
         (else "tm_anim_normal.xpm")))
 
+(tm-menu (anim-fixed-menu t)
+  (with setter (lambda (portion)
+                 (accelerate-set-type* t `(tuple "fixed" ,portion)))
+    ("Start" (setter "0"))
+    ("10%" (setter "0.1"))
+    ("20%" (setter "0.2"))
+    ("30%" (setter "0.3"))
+    ("40%" (setter "0.4"))
+    ("50%" (setter "0.5"))
+    ("60%" (setter "0.6"))
+    ("70%" (setter "0.7"))
+    ("80%" (setter "0.8"))
+    ("90%" (setter "0.9"))
+    ("End" (setter "1"))
+    ---
+    ("Other" (interactive setter (list "Portion" "0")))))
+
 (tm-menu (anim-acceleration-menu t)
   ("Normal" (accelerate-set-type* t "normal"))
   ("Smooth start" (accelerate-set-type* t "fade-in"))
@@ -51,6 +68,7 @@
   ("Smooth extremities" (accelerate-set-type* t "faded"))
   ("Bump" (accelerate-set-type* t "bump"))
   ---
+  ;;(-> "Fixed" (dynamic (anim-fixed-menu t)))
   ("Reverse" (accelerate-toggle-reverse? t)))
 
 (tm-menu (focus-animate-menu t)

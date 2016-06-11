@@ -60,5 +60,6 @@ player fade_in_player (player base);
 player fade_out_player (player base);
 player faded_player (player base);
 player bump_player (player base);
+player fixed_player (player base, double position);
 
 #endif // defined PLAYER_H

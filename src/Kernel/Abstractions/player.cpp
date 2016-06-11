@@ -275,6 +275,26 @@ bump_player (player base) {
   return tm_new<bump_player_rep> (base);
 }
 
+class fixed_player_rep: public accelerated_player_rep {
+public:
+  double position;
+  fixed_player_rep (player base, double pos):
+    accelerated_player_rep (base), position (pos) {}
+  tree   get_name () { return tuple ("fixed", as_string (position)); }
+  double transform_direct (double t) {
+    (void) t;
+    return position; }
+  double transform_inverse (double t, double ref) {
+    if (t < position) return 0.0;
+    else return 1.0; }
+  player duplicate () { return fixed_player (copy (base), position); }
+};
+
+player
+fixed_player (player base, double position) {
+  return tm_new<fixed_player_rep> (base, position);
+}
+
 /******************************************************************************
 * Abstract players
 ******************************************************************************/
