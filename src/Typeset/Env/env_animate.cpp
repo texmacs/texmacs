@@ -414,8 +414,6 @@ morph (tree t0, tree t1, edit_env env) {
       return morph_color (s0, s1, t);
     else return morph_trivial (t0, t1, env);
   }
-  else if (is_atomic (t0) || is_atomic (t1))
-    return morph_trivial (t0, t1, env);
   else if (is_func (t0, WITH) || is_func (t1, WITH))
     return morph_with (t0, t1, env);
   else if (is_func (t0, TFORMAT) && is_func (t1, TFORMAT))
