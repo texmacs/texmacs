@@ -576,13 +576,13 @@ pdf_hummus_renderer_rep::select_fill_color (color c) {;
   b= ((b*1000)/255);
   a= ((a*1000)/255);
   rgb c1 = rgb(r,g,b);
-  if (fill_rgb != c1) {
+  //if (fill_rgb != c1) {
     double dr= ((double) r) / 1000.0;
     double dg= ((double) g) / 1000.0;
     double db= ((double) b) / 1000.0;
     contentContext->rg(dr, dg, db); // non-stroking color
     fill_rgb = c1;
-  }
+  //}
   select_alpha(a);
 }
 
