@@ -133,6 +133,11 @@ qt_image_renderer_rep::~qt_image_renderer_rep () {
   painter = NULL;
 }
 
+void
+qt_image_renderer_rep::set_zoom_factor (double zoom) {
+  renderer_rep::set_zoom_factor (zoom);
+}
+
 void*
 qt_image_renderer_rep::get_data_handle () {
   return (void*) this;
