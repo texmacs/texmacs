@@ -259,6 +259,13 @@
   (:check-mark "*" accelerate-test-type*?)
   (accelerate-set-type** t new-type (accelerate-get-reverse? t)))
 
+(tm-define (retime-selection type)
+  (:argument len "Duration")
+  (with sel (selection-tree)
+    (clipboard-cut "primary")
+    (insert-go-to `(anim-accelerate ,sel ,type)
+                  (cons 0 (path-end sel (list))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Start and end editing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

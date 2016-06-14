@@ -166,8 +166,7 @@
 (lazy-menu (generic document-part)
            preamble-menu document-part-menu project-manage-menu)
 (lazy-menu (generic insert-menu) insert-menu texmacs-insert-menu
-           texmacs-insert-icons
-           insert-link-menu insert-image-menu insert-animation-menu)
+           texmacs-insert-icons insert-link-menu insert-image-menu)
 (lazy-define (generic document-edit) update-document
              get-init-page-rendering init-page-rendering)
 (lazy-define (generic generic-edit) notify-activated notify-disactivated)
@@ -282,7 +281,7 @@
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
            plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
 (lazy-menu (dynamic calc-menu) calc-table-menu calc-insert-menu)
-(lazy-menu (dynamic animate-menu) animate-toolbar)
+(lazy-menu (dynamic animate-menu) insert-animation-menu animate-toolbar)
 (lazy-define (dynamic fold-edit)
              screens-switch-to dynamic-make-slides overlays-context?)
 (lazy-define (dynamic session-edit) scheme-eval)

@@ -111,43 +111,6 @@
       ("Commutative diagram" (make-cd))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Insert animations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind insert-animation-menu
-  (when (or (selection-active-small?)
-            (and (selection-active-any?)
-                 (tm-func? (selection-tree) 'gr-screen)))
-    ("Animate" (interactive animate-selection)))
-  ("Fixed" (interactive make-anim-constant))
-  ("Compose" (make 'anim-compose))
-  ("Repeat" (make 'anim-repeat))
-  ---
-  (-> "Appear"
-      ("Translate" (make-anim 'translate-in))
-      ("Progressive" (make-anim 'progressive-in))
-      ("Fade" (make-anim 'fade-in))
-      ("Zoom" (make-anim 'zoom-in)))
-  (-> "Vanish"
-      ("Translate" (make-anim 'translate-out))
-      ("Progressive" (make-anim 'progressive-out))
-      ("Fade" (make-anim 'fade-out))
-      ("Zoom" (make-anim 'zoom-out)))
-  (-> "Alter"
-      ("Translate" (make-anim 'translate-smooth))
-      ("Progressive" (make-anim 'progressive-smooth))
-      ("Fade" (make-anim 'fade-smooth))
-      ("Zoom" (make-anim 'zoom-smooth)))
-  (assuming (== (get-preference "bitmap effects") "on")
-    (-> "Emphasize"
-        ("Shadowed" (make-anim 'shadowed-smooth))
-        ("Emboss" (make-anim 'emboss-smooth))
-        ("Outlined emboss" (make-anim 'outlined-emboss-smooth))))
-  ---
-  ("Animation" (choose-file make-animation "Load file" "animation"))
-  ("Sound" (choose-file make-sound "Load file" "sound")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Insert menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
