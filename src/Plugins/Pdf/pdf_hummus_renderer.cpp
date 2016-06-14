@@ -515,8 +515,7 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
   outer_round (x1, y1, x2, y2);
   if (restore) {
     // debug_convert << "restore clipping\n";
-    contentContext->Q();
-    if (clip_level > 0) clip_level--;
+    if (clip_level > 0) { contentContext->Q(); clip_level--; }
     cfn= "";
   }
   else {
