@@ -626,7 +626,11 @@ pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
   lw= pen->get_width ();
   select_line_width (lw);
   //}
-
+  if (pen->get_cap () == cap_round)
+    contentContext->J(1); // round cap
+  else
+    contentContext->J(2); // square cap
+  contentContext->j(1); // round join
 }
 
 void
@@ -1181,11 +1185,19 @@ pdf_hummus_renderer_rep::lines (array<SI> x, array<SI> y) {
   end_text ();
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
+  contentContext->q();
+  if (pen->get_cap () == cap_round ||
+      (x[N(x)-1] == x[0] && y[N(y)-1] == y[0]))
+    contentContext->J(1); // round cap
+  else
+    contentContext->J(2); // square cap
+  contentContext->j(1); // round join
   contentContext->m(to_x (x[0]), to_y (y[0]));
   for (i=1; i<n; i++) {
     contentContext->l(to_x (x[i]), to_y (y[i]));
   }
   contentContext->S();
+  contentContext->Q();
 }
 
 void
