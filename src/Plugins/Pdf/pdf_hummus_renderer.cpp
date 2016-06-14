@@ -1968,6 +1968,7 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   url temp= url_temp (".eps");
   save_string(temp, eps);
   image (temp, w * pixel, h * pixel, x, y,  255);
+  //image (temp, w * 5 * PIXEL, h * 5 * PIXEL, x, y,  255);
   temp_images << temp;
 }
 
