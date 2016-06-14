@@ -94,6 +94,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   //hashmap<string,ObjectIDType> image_resources;
   hashmap<string,pdf_raw_image> pdf_glyphs;
   hashmap<tree,pdf_image> image_pool;
+  array<url> temp_images;
   
   hashmap<int,ObjectIDType> alpha_id;
   hashmap<int,ObjectIDType> page_id;
@@ -358,6 +359,11 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
   if (status != PDFHummus::eSuccess) {
     convert_error << "Failed in end PDF\n";
   }
+
+  // remove temporary pictures
+  for (int i=0; i<N(temp_images); i++)
+    if (!is_none (temp_images[i]))
+      remove (temp_images[i]);
 }
 
 bool
@@ -1951,7 +1957,7 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   url temp= url_temp (".eps");
   save_string(temp, eps);
   image (temp, w * pixel, h * pixel, x, y,  255);
-  remove(temp);
+  temp_images << temp;
 }
 
 void
