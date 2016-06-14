@@ -437,6 +437,8 @@ renderer_rep::draw_selection (rectangles rs) {
 
 renderer
 renderer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
+  //cout << "Shadow " << x1/PIXEL << ", " << y1/PIXEL
+  //     << "; " << x2/PIXEL << ", " << y2/PIXEL << "\n";
   SI x0= 0, y0= 0;
   decode (x0, y0);
   outer_round (x1, y1, x2, y2);

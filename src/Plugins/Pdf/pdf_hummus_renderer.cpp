@@ -2242,38 +2242,38 @@ pdf_hummus_renderer_rep::flush_metadata () {
 void
 pdf_hummus_renderer_rep::fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y) {
   // debug_convert << "fetch\n";
-  /* (void) x1; (void) y1; (void) x2; (void) y2;
-     (void) ren; (void) x; (void) y;*/
+  (void) x1; (void) y1; (void) x2; (void) y2;
+  (void) ren; (void) x; (void) y;
 }
 
 void
 pdf_hummus_renderer_rep::new_shadow (renderer& ren) {
   // debug_convert << "new_shadow\n";
-  // (void) ren;
+  (void) ren;
 }
 
 void
 pdf_hummus_renderer_rep::delete_shadow (renderer& ren) {
   // debug_convert << "delete_shadow\n";
-  // (void) ren;
+  (void) ren;
 }
 
 void
 pdf_hummus_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // debug_convert << "get_shadow\n";
-  // (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
+  (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 void
 pdf_hummus_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // debug_convert << "put_shadow\n";
-  // (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
+  (void) ren; (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 void
 pdf_hummus_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
   // debug_convert << "apply_shadow\n";
-  // (void) x1; (void) y1; (void) x2; (void) y2;
+   (void) x1; (void) y1; (void) x2; (void) y2;
 }
 
 renderer
