@@ -50,4 +50,5 @@ else
     MOC=$QT_PATH/moc
     QMAKE=$QT_PATH/qmake
 fi
+LC_COMBINE_FLAGS([QT])
 ])
