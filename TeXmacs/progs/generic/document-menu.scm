@@ -444,7 +444,7 @@
       ("Left aligned" (init-env "par-mode" "left"))
       ("Centered" (init-env "par-mode" "center"))
       ("Right aligned" (init-env "par-mode" "right")))
-  (-> "Hyphenation"
+  (-> "Line breaking"
       ("Default" (init-default "par-hyphen"))
       ---
       ("Normal" (init-env "par-hyphen" "normal"))

@@ -107,7 +107,7 @@
 
 (tm-widget (paragraph-formatter-advanced old new)
   (aligned
-    (item (text "Hyphenation quality:")
+    (item (text "Line breaking:")
       (enum (ahash-set! new "par-hyphen" answer)
             '("normal" "professional")
             (ahash-ref new "par-hyphen") "10em"))

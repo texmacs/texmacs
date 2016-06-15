@@ -251,7 +251,7 @@
       ("Interparagraph space" (make-interactive-line-with "par-par-sep"))
       ---
       (link vertical-space-menu))
-  (-> "Hyphenation"
+  (-> "Line breaking"
       ("Normal" (make-line-with "par-hyphen" "normal"))
       ("Professional"
        (make-line-with "par-hyphen" "professional"))
