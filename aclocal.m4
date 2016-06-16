@@ -45,7 +45,7 @@ AC_DEFUN([LC_MSG_RESULT],[
 AC_DEFUN([LC_SUBST],[ 
   AC_SUBST([$1_CXX],[$$1_CXXFLAGS])
   AC_SUBST([$1_CPP],[$$1_CPPFLAGS])
-  if [[[ $enable_dumpflags =~ (^|[[:space:]])$1($|[[:space:]]) ]]]
+  if [[[ $enable_dumpflags =~ (^|[[:space:]])($1|ALL)($|[[:space:]]) ]]]
   then LC_DUMP_FLAGS([$1])
   fi
 # adaptation layer remove when finished
