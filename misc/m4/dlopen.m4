@@ -11,7 +11,7 @@ AC_DEFUN([LC_DLOPEN],[
   AC_SEARCH_LIBS(dlopen, libdl libdld, [dyn_link_ok(dlopen)],[
     AC_SEARCH_LIBS(dld_link, libdl libdld, [dyn_link_ok(dld_link)],[
       AC_SEARCH_LIBS(shl_load, libdl libdld, [dyn_link_ok(shl_load)],[
-        echo configure: warning: dynamic linking using dlopen will not work
+        AC_MSG_WARN([dynamic linking using dlopen will not work])
       ])
     ])
   ])
