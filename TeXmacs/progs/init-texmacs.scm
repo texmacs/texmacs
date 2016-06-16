@@ -11,6 +11,13 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(cond ((os-mingw?)
+       (debug-set! stack 0))
+      ((os-macos?)
+       (debug-set! stack 2000000))
+      (else
+       (debug-set! stack 1000000)))
+
 (define boot-start (texmacs-time))
 (define remote-client-list (list))
 
