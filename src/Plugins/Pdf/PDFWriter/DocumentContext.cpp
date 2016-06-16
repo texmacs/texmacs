@@ -877,7 +877,7 @@ static const std::string scXObject = "XObject";
 static const std::string scSubType = "Subtype";
 static const std::string scForm = "Form";
 static const std::string scFormType = "FormType";
-PDFFormXObject* DocumentContext::StartFormXObject(const PDFRectangle& inBoundingBox,ObjectIDType inFormXObjectID,const double* inMatrix)
+PDFFormXObject* DocumentContext::StartFormXObject(const PDFRectangle& inBoundingBox,ObjectIDType inFormXObjectID,const double* inMatrix, const bool transparency)
 {
 	PDFFormXObject* aFormXObject = NULL;
 	do
@@ -910,6 +910,13 @@ PDFFormXObject* DocumentContext::StartFormXObject(const PDFRectangle& inBounding
 				mObjectsContext->WriteDouble(inMatrix[i]);
 			mObjectsContext->EndArray(eTokenSeparatorEndLine);
 		}
+
+		//// Patch for GNU TeXmacs to support transparency
+		if (transparency) {
+		  xobjectContext->WriteKey("Group");
+		  xobjectContext->WriteHexStringValue("</S /Transparency>");
+		}
+		//// End patch for GNU TeXmacs to support transparency
 
 		// Resource dict 
 		xobjectContext->WriteKey(scResources);	

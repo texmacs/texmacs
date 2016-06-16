@@ -147,7 +147,9 @@ namespace PDFHummus
 
 		// Form XObject creation and finalization
 		PDFFormXObject* StartFormXObject(const PDFRectangle& inBoundingBox,const double* inMatrix = NULL);
-		PDFFormXObject* StartFormXObject(const PDFRectangle& inBoundingBox,ObjectIDType inFormXObjectID,const double* inMatrix = NULL);
+		//// Patch for GNU TeXmacs to support transparency
+		PDFFormXObject* StartFormXObject(const PDFRectangle& inBoundingBox,ObjectIDType inFormXObjectID,const double* inMatrix = NULL,const bool transparency = false);
+		//// End patch for GNU TeXmacs to support transparency
 		PDFHummus::EStatusCode EndFormXObject(PDFFormXObject* inFormXObject);
 		PDFHummus::EStatusCode EndFormXObjectAndRelease(PDFFormXObject* inFormXObject);
 
