@@ -1382,8 +1382,8 @@ pdf_image_rep::flush (PDFWriter& pdfw)
 	
     double tMat[6] ={ 1,0, 0, 1, 0, 0} ;
     PDFRectangle cropBox (0,0,0,0);
-   	pdf_image_info (temp, w, h, cropBox, tMat, pageInput);
-	   PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat);
+    pdf_image_info (temp, w, h, cropBox, tMat, pageInput);
+    PDFFormXObject *form = dc.StartFormXObject(cropBox, id, tMat, true);
     status = copyingContext->MergePDFPageToFormXObject(form,0);
     if(status == eSuccess) pdfw.EndFormXObjectAndRelease(form);
     delete copyingContext;
@@ -1925,8 +1925,6 @@ pdf_hummus_renderer_rep::image (
   url u, SI w, SI h, SI x, SI y, int alpha)
 {
   // debug_convert << "image " << u << LF;
-  (void) alpha; // FIXME
-
   tree lookup= tuple (u->t);
   pdf_image im = ( image_pool->contains(lookup) ? image_pool[lookup] : pdf_image() );
   
@@ -1940,8 +1938,13 @@ pdf_hummus_renderer_rep::image (
   end_text();
   
   contentContext->q();
-  contentContext->cm(((double)w)/(pixel*(double)im->w), 0, 0, ((double)h)/(pixel*(double)im->h), to_x(x), to_y(y));
+  double ratio= ((double)h)/(pixel*(double)im->h);
+  contentContext->cm(((double)w)/(pixel*(double)im->w), 0, 0,
+		     ((double)h)/(pixel*(double)im->h),
+		     to_x(x - ((SI) (ratio*PIXEL))),
+		     to_y(y - ((SI) (ratio*PIXEL))));
   std::string pdfFormName = page->GetResourcesDictionary().AddFormXObjectMapping(im->id);
+  select_alpha((1000 * alpha) / 255);
   contentContext->Do(pdfFormName);
   //contentContext->re(0,0,im->w,im->h);
   contentContext->S();
@@ -1950,10 +1953,8 @@ pdf_hummus_renderer_rep::image (
 
 void
 pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
-  (void) alpha; // FIXME
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  //int pixel= 5*PIXEL;
   string name= "picture";
   string eps= picture_as_eps (p, 600);
 #if 0
@@ -1967,8 +1968,7 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   
   url temp= url_temp (".eps");
   save_string(temp, eps);
-  image (temp, w * pixel, h * pixel, x, y,  255);
-  //image (temp, w * 5 * PIXEL, h * 5 * PIXEL, x, y,  255);
+  image (temp, 5 * w * pixel, 5 * h * pixel, x, y,  alpha);
   temp_images << temp;
 }
 
