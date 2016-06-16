@@ -900,8 +900,10 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 
 renderer
 printer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
+  double old_zoomf= this->zoomf;
+  set_zoom_factor (1.0);
   renderer ren= renderer_rep::shadow (pic, x1, y1, x2, y2);
-  ren->set_zoom_factor (1.0);
+  set_zoom_factor (old_zoomf);
   return ren;
 }
 
@@ -913,13 +915,14 @@ printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   int pixel= 5*PIXEL;
   string name= "picture";
   string eps= picture_as_eps (p, 600);
-  int x1= -ox;
-  int y1= -oy;
-  int x2= w - ox;
-  int y2= h - oy;
-  x -= (int) 2.06 * ox * pixel; // FIXME: where does the magic 2.06 come from?
-  y -= (int) 2.06 * oy * pixel;
+  int x1= 0;
+  int y1= 0;
+  int x2= w;
+  int y2= h;
+  x -= (int) (1.2 * (ox * pixel)); // FIXME: why the magic 1.2?
+  y -= (int) (1.2 * (oy * pixel));
   image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
+  save_string ("~/Temp/hummus_aux.eps", eps);
 }
 
 void
