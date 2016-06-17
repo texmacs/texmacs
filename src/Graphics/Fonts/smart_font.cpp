@@ -1416,6 +1416,13 @@ smart_font (string family, string variant, string series, string shape,
   return smart_font (tfam, tvar, tser, tsh, sz, dpi);
 }
 
+static double
+get_parameter (string val, int i, double def) {
+  array<string> a= trimmed_tokenize (val, ";");
+  if (i < N(a) && is_double (a[i])) return as_double (a[i]);
+  return def;
+}
+
 font
 apply_effects (font fn, string effects) {
   if (N(effects) == 0) return fn;
@@ -1471,25 +1478,34 @@ apply_effects (font fn, string effects) {
         fn= poor_vextended_font (fn, yf);
       }
       */
-      else if (b[0] == "degraded" && is_double (b[1])) {
-        double threshold= as_double (b[1]);
+      else if (b[0] == "degraded") {
+        double threshold= get_parameter (b[1], 0, 0.666);
+        double freq     = get_parameter (b[1], 1, 1.0);
         if (threshold < 0.01) threshold= 0.01;
         if (threshold > 0.99) threshold= 0.99;
-        tree kind= tuple ("degraded", as_string (threshold));
+        if (freq < 0.10) freq= 0.10;
+        if (freq > 10.0) freq= 10.0;
+        tree kind= tuple ("degraded", as_string (threshold), as_string (freq));
         fn= poor_distorted_font (fn, kind);
       }
-      else if (b[0] == "distorted" && is_double (b[1])) {
-        double strength= as_double (b[1]);
+      else if (b[0] == "distorted") {
+        double strength= get_parameter (b[1], 0, 1.0);
+        double freq    = get_parameter (b[1], 1, 1.0);
         if (strength < 0.1) strength= 0.1;
         if (strength > 9.9) strength= 9.9;
-        tree kind= tuple ("distorted", as_string (strength));
+        if (freq < 0.10) freq= 0.10;
+        if (freq > 10.0) freq= 10.0;
+        tree kind= tuple ("distorted", as_string (strength), as_string (freq));
         fn= poor_distorted_font (fn, kind);
       }
-      else if (b[0] == "gnawed" && is_double (b[1])) {
-        double strength= as_double (b[1]);
+      else if (b[0] == "gnawed") {
+        double strength= get_parameter (b[1], 0, 1.0);
+        double freq    = get_parameter (b[1], 1, 1.0);
         if (strength < 0.1) strength= 0.1;
         if (strength > 9.9) strength= 9.9;
-        tree kind= tuple ("gnawed", as_string (strength));
+        if (freq < 0.10) freq= 0.10;
+        if (freq > 10.0) freq= 10.0;
+        tree kind= tuple ("gnawed", as_string (strength), as_string (freq));
         fn= poor_distorted_font (fn, kind);
       }
     }

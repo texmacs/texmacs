@@ -313,15 +313,18 @@
 
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'degraded))
-  (list (list "degraded-threshold" "Threshold")))
+  (list (list "degraded-threshold" "Threshold")
+        (list "degraded-frequency" "Frequency")))
 
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'distorted))
-  (list (list "distorted-strength" "Strength")))
+  (list (list "distorted-strength" "Strength")
+        (list "distorted-frequency" "Frequency")))
 
 (tm-define (customizable-parameters t)
   (:require (tree-is? t 'gnawed))
-  (list (list "gnawed-strength" "Strength")))
+  (list (list "gnawed-strength" "Strength")
+        (list "gnawed-frequency" "Frequency")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Effects

@@ -498,9 +498,15 @@
 
   <assign|degraded-threshold|0.667>
 
+  <assign|degraded-frequency|1.0>
+
   <assign|distorted-strength|0.5>
 
+  <assign|distorted-frequency|1.0>
+
   <assign|gnawed-strength|0.6>
+
+  <assign|gnawed-frequency|1.0>
 
   \;
 
@@ -518,11 +524,11 @@
 
   <assign|extended|<macro|body|<add-font-effect|hextended|<value|extended-factor>|<arg|body>>>>
 
-  <assign|degraded|<macro|body|<add-font-effect|degraded|<value|degraded-threshold>|<arg|body>>>>
+  <assign|degraded|<macro|body|<add-font-effect|degraded|<merge|<value|degraded-threshold>|;|<value|degraded-frequency>>|<arg|body>>>>
 
-  <assign|distorted|<macro|body|<add-font-effect|distorted|<value|distorted-strength>|<arg|body>>>>
+  <assign|distorted|<macro|body|<add-font-effect|distorted|<merge|<value|distorted-strength>|;|<value|distorted-frequency>>|<arg|body>>>>
 
-  <assign|gnawed|<macro|body|<add-font-effect|gnawed|<value|gnawed-strength>|<arg|body>>>>
+  <assign|gnawed|<macro|body|<add-font-effect|gnawed|<merge|<value|gnawed-strength>|;|<value|gnawed-frequency>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>

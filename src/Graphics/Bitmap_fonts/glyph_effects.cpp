@@ -22,11 +22,11 @@ extern metric error_metric;
 ******************************************************************************/
 
 glyph
-degraded (glyph gl, double threshold, SI em, int c) {
+degraded (glyph gl, double threshold, double freq, SI em, int c) {
   int i, j;
   int ww= gl->width, hh= gl->height;
   glyph bmr (ww, hh, gl->xoff, gl->yoff, gl->depth);
-  double wl= 0.1 * (em / PIXEL);
+  double wl= (0.1 / freq) * (em / PIXEL);
   raster<double> ras= turbulence (ww, hh, 0, 0, c&31, wl, wl, 3, true);
   for (j=0; j<hh; j++)
     for (i=0; i<ww; i++) {
@@ -44,8 +44,8 @@ degraded (glyph gl, double threshold, SI em, int c) {
 ******************************************************************************/
 
 glyph
-distorted (glyph gl, double strength, int gnaw, SI em, int c) {
-  double wl= 0.1 * (em / PIXEL);
+distorted (glyph gl, double strength, double freq, int gnaw, SI em, int c) {
+  double wl= (0.1 / freq) * (em / PIXEL);
   double r= wl * strength;
   int pad= (int) ceil (r);
   if (gnaw >= 0) gl= padded (gl, pad, pad, pad, pad);
@@ -78,12 +78,12 @@ distorted (glyph gl, double strength, int gnaw, SI em, int c) {
 
 glyph
 distorted (glyph gl, tree kind, SI em, int c) {
-  if (is_tuple (kind, "degraded") && N(kind) >= 2)
-    return degraded (gl, as_double (kind[1]), em, c);
-  if (is_tuple (kind, "distorted") && N(kind) >= 2)
-    return distorted (gl, as_double (kind[1]), 0, em, c);
-  if (is_tuple (kind, "gnawed") && N(kind) >= 2)
-    return distorted (gl, as_double (kind[1]), -1, em, c);
+  if (is_tuple (kind, "degraded") && N(kind) >= 3)
+    return degraded (gl, as_double (kind[1]), as_double (kind[2]), em, c);
+  if (is_tuple (kind, "distorted") && N(kind) >= 3)
+    return distorted (gl, as_double (kind[1]), as_double (kind[2]), 0, em, c);
+  if (is_tuple (kind, "gnawed") && N(kind) >= 3)
+    return distorted (gl, as_double (kind[1]), as_double (kind[2]), -1, em, c);
   return gl;
 }
 
