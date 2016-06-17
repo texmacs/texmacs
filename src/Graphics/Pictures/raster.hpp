@@ -116,6 +116,17 @@ trim_border (raster<C> r, int b) {
   return trim_border (r, b, b, b, b);
 }
 
+template<typename C> raster<C>
+extend_border (raster<C> r, int lb, int bb, int rb, int tb) {
+  return change_extents (r, r->w + lb + rb, r->h + bb + tb,
+                         r->ox + lb, r->oy + bb);
+}
+
+template<typename C> raster<C>
+extend_border (raster<C> r, int b) {
+  return extend_border (r, b, b, b, b);
+}
+
 /******************************************************************************
 * Mappers
 ******************************************************************************/
@@ -983,5 +994,43 @@ raster<true_color>
 turbulence (raster<true_color> ras, long seed,
             double wavelen_x, double wavelen_y,
             int nNumOctaves, bool bFractalSum);
+
+/******************************************************************************
+* Translations
+******************************************************************************/
+
+template<typename C> raster<C>
+translate (raster<C> r, raster<double> rdx, raster<double> rdy,
+           double rx, double ry) {
+  ASSERT (rdx->w == r->w && rdx->h == r->h, "incompatible dx dimensions");
+  ASSERT (rdy->w == r->w && rdy->h == r->h, "incompatible dy dimensions");
+  int w= r->w, h= r->h;
+  raster<C> ret (w, h, r->ox, r->oy);
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      double dx= rx * (rdx->a[y*w+x] - 0.5);
+      double dy= ry * (rdy->a[y*w+x] - 0.5);
+      int xx= x + (int) floor (dx + 0.5);
+      int yy= y + (int) floor (dy + 0.5);
+      // FIXME: we might wish to interpolate using the fractional parts
+      if (xx >= 0 && xx < w && yy >= 0 && yy < h)
+        ret->a[y*w+x]= r->a[yy*w+xx];
+      else
+        clear (ret->a[y*w+x]);
+    }
+  return ret;
+}
+
+template<typename C> raster<C>
+distort (raster<C> r, double wlx, double wly, double rx, double ry) {
+  int Rx= (int) ceil (fabs (rx));
+  int Ry= (int) ceil (fabs (rx));
+  r= extend_border (r, Rx, Ry, Rx, Ry);
+  raster<double> rdx= turbulence (r->w, r->h, r->ox, r->oy, 12345,
+                                  wlx, wly, 3, true);
+  raster<double> rdy= turbulence (r->w, r->h, r->ox, r->oy, 54321,
+                                  wlx, wly, 3, true);
+  return translate (r, rdx, rdy, rx, ry);
+}
 
 #endif // defined RASTER_H

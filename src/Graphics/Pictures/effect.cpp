@@ -299,6 +299,26 @@ effect erode (effect eff, effect pen) {
   return tm_new<erode_effect_rep> (eff, pen); }
 
 /******************************************************************************
+* Effects that depend on randomization
+******************************************************************************/
+
+class distort_effect_rep: public effect_rep {
+  effect eff;
+  double wx, wy, rx, ry;
+public:
+  distort_effect_rep (effect e2, double Wx, double Wy, double Rx, double Ry):
+    eff (e2), wx (Wx), wy (Wy), rx (Rx), ry (Ry) {}
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return distort (eff->apply (pics, pixel),
+                    wx / pixel, wy / pixel, rx / pixel, ry / pixel); }
+};
+
+effect distort (effect eff, double wx, double wy, double rx, double ry) {
+  return tm_new<distort_effect_rep> (eff, wx, wy, rx, ry); }
+
+/******************************************************************************
 * Composing various effects
 ******************************************************************************/
 
@@ -526,6 +546,14 @@ build_effect (tree t) {
     effect eff  = build_effect (t[0]);
     effect pen= build_effect (t[1]);
     return erode (eff, pen);
+  }
+  else if (is_func (t, EFF_DISTORT, 5)) {
+    effect eff= build_effect (t[0]);
+    double wx = as_double (t[1]);
+    double wy = as_double (t[2]);
+    double rx = as_double (t[3]);
+    double ry = as_double (t[4]);
+    return distort (eff, wx, wy, rx, ry);
   }
   else if (is_func (t, EFF_SUPERPOSE)) {
     array<effect> effs= build_effects (A(t));

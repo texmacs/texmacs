@@ -790,6 +790,9 @@ concater_rep::typeset (tree t, path ip) {
   case EFF_OUTLINE:
   case EFF_THICKEN:
   case EFF_ERODE:
+  case EFF_DEGRADE:
+  case EFF_DISTORT:
+  case EFF_GNAW:
   case EFF_SUPERPOSE:
   case EFF_ADD:
   case EFF_SUB:

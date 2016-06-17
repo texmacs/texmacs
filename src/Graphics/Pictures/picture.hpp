@@ -134,6 +134,8 @@ picture outline (picture pic, picture pen);
 picture thicken (picture pic, picture pen);
 picture erode (picture pic, picture pen);
 
+picture distort (picture pic, double wx, double wy, double rx, double ry);
+
 picture normalize (picture eff);
 picture color_matrix (picture eff, array<double> m);
 picture make_transparent (picture eff, color bgc);

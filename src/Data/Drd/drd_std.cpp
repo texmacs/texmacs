@@ -774,6 +774,26 @@ init_std_drd () {
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
         effect (1) -> name (1, "pen"));
+  init (EFF_DEGRADE, "eff-degrade",
+        fixed (4, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        length (1) -> name (1, "wx") -> long_name (1, "x-wave-length") ->
+        length (2) -> name (2, "wy") -> long_name (2, "y-wave-length") ->
+        numeric (3) -> name (3, "threshold") -> long_name (3, "threshold"));
+  init (EFF_DISTORT, "eff-distort",
+        fixed (5, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        length (1) -> name (1, "wx") -> long_name (1, "x-wave-length") ->
+        length (2) -> name (2, "wy") -> long_name (2, "y-wave-length") ->
+        length (3) -> name (3, "rx") -> long_name (3, "x-radius") ->
+        length (4) -> name (4, "ry") -> long_name (4, "y-radius"));
+  init (EFF_GNAW, "eff-gnaw",
+        fixed (5, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        length (1) -> name (1, "wx") -> long_name (1, "x-wave-length") ->
+        length (2) -> name (2, "wy") -> long_name (2, "y-wave-length") ->
+        length (3) -> name (3, "rx") -> long_name (3, "x-radius") ->
+        length (4) -> name (4, "ry") -> long_name (4, "y-radius"));
   init (EFF_SUPERPOSE, "eff-superpose",
 	repeat (1, 1) -> returns_effect () -> effect (0));
   init (EFF_ADD, "eff-add",

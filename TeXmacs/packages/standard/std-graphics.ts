@@ -240,6 +240,22 @@
 
   <\active*>
     <\src-comment>
+      Distortion
+    </src-comment>
+  </active*>
+
+  <assign|distort-wavelen-x|0.25fn>
+
+  <assign|distort-wavelen-y|0.25fn>
+
+  <assign|distort-radius-x|0.1fn>
+
+  <assign|distort-radius-y|0.1fn>
+
+  <assign|distort|<macro|body|<gr-effect|<arg|body>|<eff-distort|0|<value|distort-wavelen-x>|<value|distort-wavelen-y>|<value|distort-radius-x>|<value|distort-radius-y>>>>>
+
+  <\active*>
+    <\src-comment>
       Miscellaneous effects
     </src-comment>
   </active*>

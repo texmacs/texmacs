@@ -475,6 +475,12 @@ edit_env_rep::exec (tree t) {
     return exec_eff_rectangular (t);
   case EFF_MOTION:
     return exec_eff_motion (t);
+  case EFF_DEGRADE:
+    return exec_eff_degrade (t);
+  case EFF_DISTORT:
+    return exec_eff_distort (t);
+  case EFF_GNAW:
+    return exec_eff_gnaw (t);
 
   case BOX_INFO:
     return exec_box_info (t);
@@ -1880,6 +1886,38 @@ edit_env_rep::exec_eff_motion (tree t) {
   tree dx= as_tree (as_length (exec (t[0])));
   tree dy= as_tree (as_length (exec (t[1])));
   return tree (EFF_MOTION, dx, dy);
+}
+
+tree
+edit_env_rep::exec_eff_degrade (tree t) {
+  if (N(t) < 4) return tree (ERROR, "bad eff-degrade");
+  tree b = exec (t[0]);
+  tree wx= as_tree (as_length (exec (t[1])));
+  tree wy= as_tree (as_length (exec (t[2])));
+  tree th= as_tree (as_length (exec (t[3])));
+  return tree (EFF_DEGRADE, b, wx, wy, th);
+}
+
+tree
+edit_env_rep::exec_eff_distort (tree t) {
+  if (N(t) < 5) return tree (ERROR, "bad eff-distort");
+  tree b = exec (t[0]);
+  tree wx= as_tree (as_length (exec (t[1])));
+  tree wy= as_tree (as_length (exec (t[2])));
+  tree rx= as_tree (as_length (exec (t[3])));
+  tree ry= as_tree (as_length (exec (t[4])));
+  return tree (EFF_DISTORT, b, wx, wy, rx, ry);
+}
+
+tree
+edit_env_rep::exec_eff_gnaw (tree t) {
+  if (N(t) < 5) return tree (ERROR, "bad eff-gnaw");
+  tree b = exec (t[0]);
+  tree wx= as_tree (as_length (exec (t[1])));
+  tree wy= as_tree (as_length (exec (t[2])));
+  tree rx= as_tree (as_length (exec (t[3])));
+  tree ry= as_tree (as_length (exec (t[4])));
+  return tree (EFF_GNAW, b, wx, wy, rx, ry);
 }
 
 tree

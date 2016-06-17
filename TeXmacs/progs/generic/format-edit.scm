@@ -411,6 +411,13 @@
         (list "outline-pen-height" "Pen height")
         (list "outline-pen-angle" "Pen angle")))
 
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(distort)))
+  (list (list "distort-wavelen-x" "Wave length x")
+        (list "distort-wavelen-y" "Wave length y")
+        (list "distort-radius-x" "Radius x")
+        (list "distort-radius-y" "Radius y")))
+
 (tm-define (pen-effect-context? t)
   (tree-in? t (pen-effect-tag-list)))
 

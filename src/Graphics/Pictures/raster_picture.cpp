@@ -178,6 +178,16 @@ erode (picture pic, picture pen) {
 }
 
 /******************************************************************************
+* Effects that involve randomization
+******************************************************************************/
+
+picture
+distort (picture pic, double wx, double wy, double rx, double ry) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (distort (ras, wx, wy, rx, ry));
+}
+
+/******************************************************************************
 * Color effects
 ******************************************************************************/
 
