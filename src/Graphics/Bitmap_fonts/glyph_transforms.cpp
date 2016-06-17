@@ -339,6 +339,7 @@ bolden (font_metric fnm, SI dtot, SI dver) {
 
 glyph
 bolden (glyph gl, SI dpen, SI dver) {
+  if (dpen <= 0) return gl;
   double slope= ((double) dver) / ((double) dpen);
   int dw= (dpen + (PIXEL/2)) / PIXEL;
   int dh= 2 * (max (dver, -dver) / (2 * PIXEL) + 1);
