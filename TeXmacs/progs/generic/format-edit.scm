@@ -412,11 +412,25 @@
         (list "outline-pen-angle" "Pen angle")))
 
 (tm-define (customizable-parameters t)
+  (:require (tree-in? t '(degrade)))
+  (list (list "degrade-wavelen-x" "Wave length x")
+        (list "degrade-wavelen-y" "Wave length y")
+        (list "degrade-threshold" "Threshold")
+        (list "degrade-sharpness" "Sharpness")))
+
+(tm-define (customizable-parameters t)
   (:require (tree-in? t '(distort)))
   (list (list "distort-wavelen-x" "Wave length x")
         (list "distort-wavelen-y" "Wave length y")
         (list "distort-radius-x" "Radius x")
         (list "distort-radius-y" "Radius y")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t '(gnaw)))
+  (list (list "gnaw-wavelen-x" "Wave length x")
+        (list "gnaw-wavelen-y" "Wave length y")
+        (list "gnaw-radius-x" "Radius x")
+        (list "gnaw-radius-y" "Radius y")))
 
 (tm-define (pen-effect-context? t)
   (tree-in? t (pen-effect-tag-list)))

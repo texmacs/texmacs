@@ -302,6 +302,22 @@ effect erode (effect eff, effect pen) {
 * Effects that depend on randomization
 ******************************************************************************/
 
+class degrade_effect_rep: public effect_rep {
+  effect eff;
+  double wx, wy, th, sh;
+public:
+  degrade_effect_rep (effect e2, double Wx, double Wy, double Th, double Sh):
+    eff (e2), wx (Wx), wy (Wy), th (Th), sh (Sh) {}
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return degrade (eff->apply (pics, pixel),
+                    wx / pixel, wy / pixel, th, sh); }
+};
+
+effect degrade (effect eff, double wx, double wy, double th, double sh) {
+  return tm_new<degrade_effect_rep> (eff, wx, wy, th, sh); }
+
 class distort_effect_rep: public effect_rep {
   effect eff;
   double wx, wy, rx, ry;
@@ -317,6 +333,22 @@ public:
 
 effect distort (effect eff, double wx, double wy, double rx, double ry) {
   return tm_new<distort_effect_rep> (eff, wx, wy, rx, ry); }
+
+class gnaw_effect_rep: public effect_rep {
+  effect eff;
+  double wx, wy, rx, ry;
+public:
+  gnaw_effect_rep (effect e2, double Wx, double Wy, double Rx, double Ry):
+    eff (e2), wx (Wx), wy (Wy), rx (Rx), ry (Ry) {}
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return gnaw (eff->apply (pics, pixel),
+                 wx / pixel, wy / pixel, rx / pixel, ry / pixel); }
+};
+
+effect gnaw (effect eff, double wx, double wy, double rx, double ry) {
+  return tm_new<gnaw_effect_rep> (eff, wx, wy, rx, ry); }
 
 /******************************************************************************
 * Composing various effects
@@ -547,6 +579,14 @@ build_effect (tree t) {
     effect pen= build_effect (t[1]);
     return erode (eff, pen);
   }
+  else if (is_func (t, EFF_DEGRADE, 5)) {
+    effect eff= build_effect (t[0]);
+    double wx = as_double (t[1]);
+    double wy = as_double (t[2]);
+    double th = as_double (t[3]);
+    double sh = as_double (t[4]);
+    return degrade (eff, wx, wy, th, sh);
+  }
   else if (is_func (t, EFF_DISTORT, 5)) {
     effect eff= build_effect (t[0]);
     double wx = as_double (t[1]);
@@ -554,6 +594,14 @@ build_effect (tree t) {
     double rx = as_double (t[3]);
     double ry = as_double (t[4]);
     return distort (eff, wx, wy, rx, ry);
+  }
+  else if (is_func (t, EFF_GNAW, 5)) {
+    effect eff= build_effect (t[0]);
+    double wx = as_double (t[1]);
+    double wy = as_double (t[2]);
+    double rx = as_double (t[3]);
+    double ry = as_double (t[4]);
+    return gnaw (eff, wx, wy, rx, ry);
   }
   else if (is_func (t, EFF_SUPERPOSE)) {
     array<effect> effs= build_effects (A(t));

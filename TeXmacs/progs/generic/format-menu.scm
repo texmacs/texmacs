@@ -121,10 +121,12 @@
   ("Embold" (make 'embold))
   ("Blackboard embold" (make 'embbb))
   ("Slanted" (make 'slanted))
+  ---
   ("Magnify horizontally" (make 'hmagnified))
   ("Magnify vertically" (make 'vmagnified))
   ("Condensed" (make 'condensed))
   ("Extended" (make 'extended))
+  ---
   ("Degraded" (make 'degraded))
   ("Distorted" (make 'distorted))
   ("Gnawed" (make 'gnawed)))
@@ -143,7 +145,10 @@
   ("Outlined emboss" (make 'outlined-emboss))
   ;;("Burning" (make-effect 'burning))
   ;;("Bubble" (make-effect 'bubble))
-  )
+  ---
+  ("Degrade" (make 'degrade))
+  ("Distort" (make 'distort))
+  ("Gnaw" (make 'gnaw)))
 
 (menu-bind specific-menu
   ("TeXmacs" (make-specific "texmacs"))

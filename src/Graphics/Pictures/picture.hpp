@@ -134,7 +134,9 @@ picture outline (picture pic, picture pen);
 picture thicken (picture pic, picture pen);
 picture erode (picture pic, picture pen);
 
+picture degrade (picture pic, double wx, double wy, double th, double sh);
 picture distort (picture pic, double wx, double wy, double rx, double ry);
+picture gnaw (picture pic, double wx, double wy, double rx, double ry);
 
 picture normalize (picture eff);
 picture color_matrix (picture eff, array<double> m);

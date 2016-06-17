@@ -224,6 +224,9 @@ operator * (const S& sc, const raster<C>& r) {
 template<typename C, typename S> inline raster<C>
 operator / (const raster<C>& r, const S& sc) {
   return map_scalar<div_op> (r, sc); }
+template<typename C, typename S> inline raster<C>
+apply_alpha (const raster<C>& r1, const raster<S>& r2) {
+  return map<apply_alpha_op> (r1, r2); }
 
 template<typename C> inline raster<C>
 hypot (const raster<C>& r1, const raster<C>& r2) {
@@ -996,6 +999,28 @@ turbulence (raster<true_color> ras, long seed,
             int nNumOctaves, bool bFractalSum);
 
 /******************************************************************************
+* Degrading
+******************************************************************************/
+
+template<typename C> raster<C>
+degrade (raster<C> r, double wlx, double wly, double th, double sh) {
+  th= min (max (th, 1.0e-6), 1.0 - 1.0e-6);
+  double delta= 1.0 / (1.0 + max (10.0 * sh, 0.0));
+  double a1= max (th - delta, 0.0);
+  double a2= min (th + delta, 1.0);
+  raster<double> a= turbulence (r->w, r->h, r->ox, r->oy, 12321,
+                                wlx, wly, 3, true);
+  int n= r->w * r->h;
+  for (int i=0; i<n; i++) {
+    double v= a->a[i];
+    if (v <= a1) a->a[i]= 1.0;
+    else if (v >= a2) a->a[i]= 0.0;
+    else a->a[i]= (a2 - v) / (a2 - a1);
+  }
+  return apply_alpha (r, a);
+}
+
+/******************************************************************************
 * Translations
 ******************************************************************************/
 
@@ -1024,13 +1049,26 @@ translate (raster<C> r, raster<double> rdx, raster<double> rdy,
 template<typename C> raster<C>
 distort (raster<C> r, double wlx, double wly, double rx, double ry) {
   int Rx= (int) ceil (fabs (rx));
-  int Ry= (int) ceil (fabs (rx));
+  int Ry= (int) ceil (fabs (ry));
   r= extend_border (r, Rx, Ry, Rx, Ry);
   raster<double> rdx= turbulence (r->w, r->h, r->ox, r->oy, 12345,
                                   wlx, wly, 3, true);
   raster<double> rdy= turbulence (r->w, r->h, r->ox, r->oy, 54321,
                                   wlx, wly, 3, true);
   return translate (r, rdx, rdy, rx, ry);
+}
+
+template<typename C> raster<C>
+gnaw (raster<C> r, double wlx, double wly, double rx, double ry) {
+  int Rx= (int) ceil (fabs (rx));
+  int Ry= (int) ceil (fabs (ry));
+  r= extend_border (r, Rx, Ry, Rx, Ry);
+  raster<double> rdx= turbulence (r->w, r->h, r->ox, r->oy, 12345,
+                                  wlx, wly, 3, true);
+  raster<double> rdy= turbulence (r->w, r->h, r->ox, r->oy, 54321,
+                                  wlx, wly, 3, true);
+  raster<C> ret= translate (r, rdx, rdy, rx, ry);
+  return apply_alpha (ret, get_alpha (r));
 }
 
 #endif // defined RASTER_H

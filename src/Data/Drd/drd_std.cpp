@@ -775,11 +775,12 @@ init_std_drd () {
         effect (0) -> name (0, "body") ->
         effect (1) -> name (1, "pen"));
   init (EFF_DEGRADE, "eff-degrade",
-        fixed (4, 0, DETAILED) -> returns_effect () ->
+        fixed (5, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
         length (1) -> name (1, "wx") -> long_name (1, "x-wave-length") ->
         length (2) -> name (2, "wy") -> long_name (2, "y-wave-length") ->
-        numeric (3) -> name (3, "threshold") -> long_name (3, "threshold"));
+        numeric (3) -> name (3, "threshold") -> long_name (3, "threshold") ->
+        numeric (4) -> name (4, "sharpness") -> long_name (4, "sharpness"));
   init (EFF_DISTORT, "eff-distort",
         fixed (5, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->

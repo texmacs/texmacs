@@ -1894,8 +1894,9 @@ edit_env_rep::exec_eff_degrade (tree t) {
   tree b = exec (t[0]);
   tree wx= as_tree (as_length (exec (t[1])));
   tree wy= as_tree (as_length (exec (t[2])));
-  tree th= as_tree (as_length (exec (t[3])));
-  return tree (EFF_DEGRADE, b, wx, wy, th);
+  tree th= as_tree (as_double (exec (t[3])));
+  tree sh= as_tree (as_double (exec (t[4])));
+  return tree (EFF_DEGRADE, b, wx, wy, th, sh);
 }
 
 tree

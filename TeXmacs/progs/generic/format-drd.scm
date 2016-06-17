@@ -56,7 +56,7 @@
   blur outline thicken erode
   shadow engrave emboss
   shadowed-raise outlined-engrave outlined-emboss
-  distort)
+  degrade distort gnaw)
 
 (define-group pen-effect-tag
   blur outline thicken erode

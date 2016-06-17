@@ -240,9 +240,21 @@
 
   <\active*>
     <\src-comment>
-      Distortion
+      Degradation, distortion and gnawing
     </src-comment>
   </active*>
+
+  <assign|degrade-wavelen-x|0.25fn>
+
+  <assign|degrade-wavelen-y|0.25fn>
+
+  <assign|degrade-threshold|0.667>
+
+  <assign|degrade-sharpness|1.0>
+
+  <assign|degrade|<macro|body|<gr-effect|<arg|body>|<eff-degrade|0|<value|degrade-wavelen-x>|<value|degrade-wavelen-y>|<value|degrade-threshold>|<value|degrade-sharpness>>>>>
+
+  \;
 
   <assign|distort-wavelen-x|0.25fn>
 
@@ -253,6 +265,18 @@
   <assign|distort-radius-y|0.1fn>
 
   <assign|distort|<macro|body|<gr-effect|<arg|body>|<eff-distort|0|<value|distort-wavelen-x>|<value|distort-wavelen-y>|<value|distort-radius-x>|<value|distort-radius-y>>>>>
+
+  \;
+
+  <assign|gnaw-wavelen-x|0.25fn>
+
+  <assign|gnaw-wavelen-y|0.25fn>
+
+  <assign|gnaw-radius-x|0.1fn>
+
+  <assign|gnaw-radius-y|0.1fn>
+
+  <assign|gnaw|<macro|body|<gr-effect|<arg|body>|<eff-gnaw|0|<value|gnaw-wavelen-x>|<value|gnaw-wavelen-y>|<value|gnaw-radius-x>|<value|gnaw-radius-y>>>>>
 
   <\active*>
     <\src-comment>

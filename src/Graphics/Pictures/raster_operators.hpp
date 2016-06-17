@@ -25,6 +25,8 @@ template<typename C> inline C mul_alpha (const C& x) { return x; }
 template<typename C> inline C div_alpha (const C& x) { return x; }
 template<typename C> inline C alpha_distance (const C& x, const C& y) {
   return 2.0 * fabs (y - x); }
+template<typename C> inline C apply_alpha (const C& x, const C& y) {
+  return x * y; }
 
 template<typename C> inline C
 mix (const C& c1, double a1, const C& c2, double a2) {
@@ -103,6 +105,11 @@ struct min_op {
 struct max_op {
   template<typename C> static inline C
   op (const C& x, const C& y) { return max (x, y); }
+};
+
+struct apply_alpha_op {
+  template<typename C, typename S> static inline C
+  op (const C& x, const S& y) { return apply_alpha (x, y); }
 };
 
 /******************************************************************************

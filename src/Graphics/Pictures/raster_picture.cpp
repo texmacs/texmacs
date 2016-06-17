@@ -182,9 +182,21 @@ erode (picture pic, picture pen) {
 ******************************************************************************/
 
 picture
+degrade (picture pic, double wx, double wy, double th, double sh) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (degrade (ras, wx, wy, th, sh));
+}
+
+picture
 distort (picture pic, double wx, double wy, double rx, double ry) {
   raster<true_color> ras= as_raster<true_color> (pic);
   return raster_picture (distort (ras, wx, wy, rx, ry));
+}
+
+picture
+gnaw (picture pic, double wx, double wy, double rx, double ry) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (gnaw (ras, wx, wy, rx, ry));
 }
 
 /******************************************************************************

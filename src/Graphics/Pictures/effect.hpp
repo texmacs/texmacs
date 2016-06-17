@@ -63,7 +63,9 @@ effect outline (effect eff, effect pen);
 effect thicken (effect eff, effect pen);
 effect erode (effect eff, effect pen);
 
+effect degrade (effect eff, double wx, double wy, double th, double sh);
 effect distort (effect eff, double wx, double wy, double rx, double ry);
+effect gnaw (effect eff, double wx, double wy, double rx, double ry);
 
 effect compose (array<effect> effs, composition_mode mode);
 effect superpose (array<effect> effs);
