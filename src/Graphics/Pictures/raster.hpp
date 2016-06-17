@@ -1035,6 +1035,34 @@ translate (raster<C> r, raster<double> rdx, raster<double> rdy,
     for (int x=0; x<w; x++) {
       double dx= rx * (rdx->a[y*w+x] - 0.5);
       double dy= ry * (rdy->a[y*w+x] - 0.5);
+      double idx= floor (dx);
+      double idy= floor (dy);
+      double fdx= dx - idx;
+      double fdy= dy - idy;
+      int xx= x + (int) idx;
+      int yy= y + (int) idy;
+      C v00, v01, v10, v11;
+      if (xx >= 0 && xx+1 < w && yy >= 0 && yy+1 < h) {
+        v00= r->a[yy*w+xx];
+        v10= r->a[yy*w+xx+1];
+        v01= r->a[yy*w+xx+w];
+        v11= r->a[yy*w+xx+w+1];
+      }
+      else {
+        if (xx >= 0 && xx < w && yy >= 0 && yy < h) v00= r->a[yy*w+xx];
+        else clear (v00);
+        if (xx >= -1 && xx+1 < w && yy >= 0 && yy < h) v10= r->a[yy*w+xx+1];
+        else clear (v10);
+        if (xx >= 0 && xx < w && yy >= -1 && yy+1 < h) v10= r->a[yy*w+xx+w];
+        else clear (v01);
+        if (xx >= -1 && xx+1<w && yy >= -1 && yy+1<h) v10= r->a[yy*w+xx+w+1];
+        else clear (v11);
+      }
+      C v0= mix (v00, 1.0-fdx, v01, fdx);
+      C v1= mix (v10, 1.0-fdx, v11, fdx);
+      C v = mix (v0, 1.0-fdy, v1, fdy);
+      ret->a[y*w+x]= v;
+      /*
       int xx= x + (int) floor (dx + 0.5);
       int yy= y + (int) floor (dy + 0.5);
       // FIXME: we might wish to interpolate using the fractional parts
@@ -1042,6 +1070,7 @@ translate (raster<C> r, raster<double> rdx, raster<double> rdy,
         ret->a[y*w+x]= r->a[yy*w+xx];
       else
         clear (ret->a[y*w+x]);
+      */
     }
   return ret;
 }
