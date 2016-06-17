@@ -177,33 +177,14 @@ qt_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
 /******************************************************************************
 * Drawing 
 ******************************************************************************/
-
 bool is_percentage (tree t, string s= "%");
 double as_percentage (tree t);
 
 static QImage*
 get_pattern_image (brush br, SI pixel) {
-  tree pattern= br->get_pattern ();
-  url u= br->get_pattern_url ();
-  int imw_pt, imh_pt;
-  image_size (u, imw_pt, imh_pt);
-  double pt= ((double) 600*PIXEL) / 72.0;
-  SI imw= (SI) (((double) imw_pt) * pt);
-  SI imh= (SI) (((double) imh_pt) * pt);
-
-  SI w= imw, h= imh;
-  if (is_int (pattern[1])) w= as_int (pattern[1]);
-  else if (is_percentage (pattern[1]))
-    w= (SI) (as_percentage (pattern[1]) * ((double) w));
-  else if (is_percentage (pattern[1], "@"))
-    w= (SI) (as_percentage (pattern[1]) * ((double) h));
-  if (is_int (pattern[2])) h= as_int (pattern[2]);
-  else if (is_percentage (pattern[2]))
-    h= (SI) (as_percentage (pattern[2]) * ((double) h));
-  else if (is_percentage (pattern[2], "@"))
-    h= (SI) (as_percentage (pattern[2]) * ((double) w));
-  w= ((w + pixel - 1) / pixel);
-  h= ((h + pixel - 1) / pixel);
+  url u;
+  SI w, h;
+  get_pattern_data (u, w, h, br, pixel);
   QImage* pm= get_image (u, w, h);
   return pm;
 }

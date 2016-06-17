@@ -48,4 +48,6 @@ ABSTRACT_NULL_CODE(brush);
 bool operator == (const brush& a, const brush& b);
 inline bool operator != (const brush& a, const brush& b) { return !(a == b); }
 
+void get_pattern_data (url& u, SI& w, SI& h, brush br, SI pixel);
+
 #endif // defined BRUSH_H

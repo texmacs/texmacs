@@ -9,11 +9,13 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "brush.hpp"
+#include "renderer.hpp"
 #include "gui.hpp"
-#include "url.hpp"
+#include "image_files.hpp"
 
 url get_current_buffer_safe ();
+bool is_percentage (tree t, string s= "%");
+double as_percentage (tree t);
 
 /******************************************************************************
 * Equality
@@ -136,3 +138,32 @@ make_brush (tree p, int a) {
 brush::brush (color c): rep (make_brush (c)) { INC_COUNT (rep); }
 brush::brush (bool b): rep (make_brush (b)) { INC_COUNT (rep); }
 brush::brush (tree p, int a): rep (make_brush (p, a)) { INC_COUNT (rep); }
+
+/******************************************************************************
+* Unpacking pattern data
+******************************************************************************/
+
+void
+get_pattern_data (url& u, SI& w, SI& h, brush br, SI pixel) {
+  // FIXME << what's about ratio and percentages wrt paper lengths?
+  tree pattern= br->get_pattern ();
+  u= br->get_pattern_url ();
+  int imw_pt, imh_pt;
+  image_size (u, imw_pt, imh_pt);
+  double pt= ((double) 600*PIXEL) / 72.0;
+  SI imw= (SI) (((double) imw_pt) * pt);
+  SI imh= (SI) (((double) imh_pt) * pt);
+  w= imw, h= imh;
+  if (is_int (pattern[1])) w= as_int (pattern[1]);
+  else if (is_percentage (pattern[1]))
+    w= (SI) (as_percentage (pattern[1]) * ((double) w));
+  else if (is_percentage (pattern[1], "@"))
+    w= (SI) (as_percentage (pattern[1]) * ((double) h));
+  if (is_int (pattern[2])) h= as_int (pattern[2]);
+  else if (is_percentage (pattern[2]))
+    h= (SI) (as_percentage (pattern[2]) * ((double) h));
+  else if (is_percentage (pattern[2], "@"))
+    h= (SI) (as_percentage (pattern[2]) * ((double) w));
+  w= ((w + pixel - 1) / pixel);
+  h= ((h + pixel - 1) / pixel);
+}
