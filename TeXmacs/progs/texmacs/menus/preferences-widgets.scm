@@ -611,10 +611,7 @@
                 (get-boolean-preference "new style fonts")))
       (meti (hlist // (text "Advanced font customization"))
         (toggle (set-boolean-preference "advanced font customization" answer)
-                (get-boolean-preference "advanced font customization")))
-      (meti (hlist // (text "Bitmap based graphical effects"))
-        (toggle (set-boolean-preference "bitmap effects" answer)
-                (get-boolean-preference "bitmap effects"))))
+                (get-boolean-preference "advanced font customization"))))
     /// ///
     (vlist
       (aligned
