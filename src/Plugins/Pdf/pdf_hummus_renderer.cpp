@@ -44,7 +44,9 @@
 #include "PDFWriter/PDFFormXObject.h"
 #include "PDFWriter/InfoDictionary.h"
 #include "PDFWriter/PDFPageInput.h"
-
+#include "PDFWriter/PDFTiledPattern.h"
+#include "PDFWriter/TiledPatternContentContext.h"
+ 
 /******************************************************************************
  * pdf_hummus_renderer
  ******************************************************************************/
@@ -56,6 +58,7 @@ typedef quintuple<string,int,SI,SI,int> outline_data;
 class pdf_image;
 class pdf_raw_image;
 class t3font;
+class pdf_pattern;
 
 class pdf_hummus_renderer_rep : public renderer_rep {
   
@@ -80,7 +83,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   int       clip_level;
   
   pencil   pen;
-  brush    bgb;
+  brush    bgb, fgb;
 
   string    cfn;
   PDFUsedFont* cfid;
@@ -91,9 +94,10 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   
   
   hashmap<string,PDFUsedFont*> pdf_fonts;
-  //hashmap<string,ObjectIDType> image_resources;
   hashmap<string,pdf_raw_image> pdf_glyphs;
   hashmap<tree,pdf_image> image_pool;
+  hashmap<tree,pdf_image> pattern_image_pool;
+  hashmap<tree,pdf_pattern> pattern_pool;
   array<url> temp_images;
   
   hashmap<int,ObjectIDType> alpha_id;
@@ -138,6 +142,10 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   void select_fill_color (color c);
   void select_alpha (int a);
   
+  void register_pattern_image (brush br, SI pixel);
+  void select_stroke_pattern (brush br);
+  void select_fill_pattern (brush br);
+
   void select_line_width (SI w);
   void compile_glyph (scheme_tree t);
   void begin_text ();
@@ -159,6 +167,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   // various internal routines
   
   void flush_images();
+  void flush_patterns();
   void flush_glyphs();
   void flush_dests();
   void flush_outlines();
@@ -218,6 +227,7 @@ public:
   pencil get_pencil ();
   brush get_background ();
   void  set_pencil (pencil pen2);
+  void  set_brush (brush b2);
   void  set_background (brush b2);
 
   void  draw (int char_code, font_glyphs fn, SI x, SI y);
@@ -231,7 +241,6 @@ public:
   
   void draw_picture (picture p, SI x, SI y, int alpha);
   void draw_scalable (scalable im, SI x, SI y, int alpha);
-
   renderer shadow (picture& pic, SI x1, SI y1, SI x2, SI y2);
   void fetch (SI x1, SI y1, SI x2, SI y2, renderer ren, SI x, SI y);
   void new_shadow (renderer& ren);
@@ -321,6 +330,7 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
   end_page();
   
   flush_images();
+  flush_patterns();
   flush_glyphs();
   flush_dests();
   flush_outlines();
@@ -532,11 +542,138 @@ pdf_hummus_renderer_rep::set_clipping (SI x1, SI y1, SI x2, SI y2, bool restore)
 }
 
 /******************************************************************************
+ * Images
+ ******************************************************************************/
+
+class pdf_image_rep : public concrete_struct
+{
+public:
+  url u;
+  int w,h;
+  ObjectIDType id;
+  
+  pdf_image_rep(url _u, ObjectIDType _id)
+    : u(_u), id(_id)
+  { image_size (u, w, h); } 
+  ~pdf_image_rep() {}
+
+  bool flush_jpg (PDFWriter& pdfw, url image);
+  bool flush_raster (PDFWriter& pdfw, url image);
+  void flush (PDFWriter& pdfw);
+
+  bool flush_for_pattern (PDFWriter& pdfw);
+}; // class pdf_image_ref
+
+class pdf_image {
+  CONCRETE_NULL(pdf_image);
+  pdf_image (url _u, ObjectIDType _id):
+    rep (tm_new<pdf_image_rep> (_u,_id)) {};
+};
+
+CONCRETE_NULL_CODE(pdf_image);
+
+/******************************************************************************
+ * Tiled patterns
+ ******************************************************************************/
+
+class pdf_pattern_rep : public concrete_struct {
+public:
+  pdf_image im;
+  SI w, h, sx, sy;
+  double scale_x, scale_y;
+  ObjectIDType id;
+  
+  pdf_pattern_rep (pdf_image _im, SI _w, SI _h, SI _sx, SI _sy,
+		   double _scale_x, double _scale_y, ObjectIDType _id)
+    : im (_im), w (_w), h (_h), sx (_sx), sy (_sy),
+      scale_x (_scale_x), scale_y (_scale_y), id (_id) {}
+  ~pdf_pattern_rep () {}
+
+  void flush (PDFWriter& pdfw) {
+    const double matrix[]= { scale_x, 0, 0, scale_y, (double) sx, (double) sy };
+    DocumentContext& documentContext= pdfw.GetDocumentContext();
+    PDFTiledPattern* tiledPattern= documentContext.StartTiledPattern
+      (1, // int inPaintType,
+       2, // int inTilingType,
+       PDFRectangle(0, 0, w, h),
+       w, // double inXStep,
+       h, // double inYStep,
+       id,
+       matrix);
+    TiledPatternContentContext* tiledPatternContentContext =
+      tiledPattern->GetContentContext();
+    std::string imageName=
+      tiledPattern->GetResourcesDictionary().AddImageXObjectMapping (im->id);
+    tiledPatternContentContext->q();
+    tiledPatternContentContext->cm(w, 0, 0, h, 0, 0);
+    tiledPatternContentContext->Do(imageName);
+    tiledPatternContentContext->Q();
+    PDFHummus::EStatusCode st=
+      documentContext.EndTiledPatternAndRelease (tiledPattern);
+    if (st != PDFHummus::eSuccess)
+      convert_error << "Cannot flush tiled pattern "
+                    << im->u << "\n"; }
+};
+
+class pdf_pattern {
+  CONCRETE_NULL(pdf_pattern);
+  pdf_pattern (pdf_image _im,  SI _w, SI _h, SI _sx, SI _sy,
+	       double _scale_x, double _scale_y, ObjectIDType _id):
+    rep (tm_new<pdf_pattern_rep> (_im, _w, _h, _sx, _sy,
+				  _scale_x, _scale_y, _id)) {};
+};
+
+CONCRETE_NULL_CODE(pdf_pattern);
+
+void
+pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
+  // debug_convert << "register_pattern_image\n";
+  if (is_nil (br) || br->get_type () != brush_pattern) {
+    convert_warning << "register_pattern_image: "
+                    << "brush with pattern expected\n";
+    return;
+  }
+  tree p= br->get_pattern ();
+  // debug_convert << p << "\n";
+  if (pattern_pool->contains(p)) return;
+
+  url u;
+  SI w, h;
+  get_pattern_data (u, w, h, br, pixel);
+
+  pdf_image image_pdf;
+  tree u_tree= tuple (u->t);
+  if (pattern_image_pool->contains(u_tree))
+    image_pdf= pattern_image_pool[u_tree];
+  else {
+    // debug_convert << "  insert pattern image\n";
+    ObjectIDType image_id= pdfWriter.GetObjectsContext()
+      .GetInDirectObjectsRegistry().AllocateNewObjectID();
+    image_pdf= pdf_image (u, image_id);
+    pattern_image_pool(u_tree) = image_pdf;
+  }
+  // debug_convert << "  insert pattern\n";
+  ObjectIDType id= pdfWriter.GetObjectsContext()
+    .GetInDirectObjectsRegistry().AllocateNewObjectID();
+  // debug_convert << "pdf_pattern " << ox << ", " << oy
+  //  		   << ", " << pixel << ", " << shrinkf
+  //		   << ", " << zoomf << LF;
+  // debug_convert << "            " << to_x(0) << ", " << to_y(0) << LF;
+  // debug_convert << "            " << w << ", " << h << LF;
+  pdf_pattern p_pdf (image_pdf, w, h,
+		     width + to_x(0), height, // FIXME ???
+		     ((double) default_dpi) / dpi,
+		     ((double) default_dpi) / dpi, id);
+  pattern_pool(p) = p_pdf;
+}
+
+/******************************************************************************
  * Graphic state management
  ******************************************************************************/
 
 void
 pdf_hummus_renderer_rep::select_alpha (int a) {
+  draw_glyphs ();
   if (alpha != a) {
     alpha = a;
     if (!alpha_id->contains(a)) {
@@ -587,6 +724,41 @@ pdf_hummus_renderer_rep::select_fill_color (color c) {;
 }
 
 void
+pdf_hummus_renderer_rep::select_stroke_pattern (brush br) {
+  if (is_nil(br) || br->get_type () != brush_pattern) return;
+  tree p_tree= br->get_pattern ();
+  register_pattern_image (br, brushpx == -1 ? pixel : brushpx);
+  if (!pattern_pool->contains (p_tree)) {
+    convert_error << "select_stroke_pattern: "
+                  << "cannot find registered pattern\n";
+    return;
+  }
+  pdf_pattern p= pattern_pool[p_tree];
+  std::string patternName=
+    page->GetResourcesDictionary().AddPatternMapping(p->id);
+  contentContext->CS("Pattern");
+  contentContext->SCN((double*) NULL, 0, patternName);
+}
+
+void
+pdf_hummus_renderer_rep::select_fill_pattern (brush br) {
+  if (is_nil(br) || br->get_type () != brush_pattern) return;
+  tree p_tree= br->get_pattern ();
+  register_pattern_image (br, brushpx==-1? pixel: brushpx);
+  if (!pattern_pool->contains (p_tree)) {
+    convert_error << "select_fill_pattern: "
+                  << "cannot find registered pattern\n";
+    return;
+  }
+  pdf_pattern p= pattern_pool[p_tree];
+  std::string patternName=
+    page->GetResourcesDictionary().AddPatternMapping(p->id);
+  contentContext->cs("Pattern");
+  contentContext->scn((double*) NULL, 0, patternName);
+  select_alpha ((1000*br->get_alpha ())/255);
+}
+
+void
 pdf_hummus_renderer_rep::select_line_width (SI w) {
   double pw = w /pixel;
   //if (pw < 1) pw= 1;
@@ -610,22 +782,22 @@ pdf_hummus_renderer_rep::get_background () {
 
 void
 pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
-  // debug_convert << "set_color\n";
+  // debug_convert << "set_pencil\n";
+  draw_glyphs ();
   pen= pen2;
-  color c= pen->get_color ();
-  if (fg!=c) {
-    fg= c;
-    draw_glyphs();
-    select_fill_color (c);
-    select_stroke_color (c);
-  }
-  //if (pen->w != lw) {
-  // FIXME: apparently, the line width can be overidden by some of
-  // the graphical constructs (example file: newimpl.tm, in which
-  // the second dag was not printed using the right width)
   lw= pen->get_width ();
   select_line_width (lw);
-  //}
+  color c= pen->get_color ();
+  fg= c;
+  select_fill_color (c);
+  select_stroke_color (c);
+  if (pen->get_type () == pencil_brush) {
+    // debug_convert << "pencil has brush type" << LF;
+    brush br= pen->get_brush ();
+    fgb= br;
+    select_fill_pattern (br);
+    select_stroke_pattern (br);
+  }
   if (pen->get_cap () == cap_round)
     contentContext->J(1); // round cap
   else
@@ -633,6 +805,29 @@ pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
   contentContext->j(1); // round join
 }
 
+void
+pdf_hummus_renderer_rep::set_brush (brush br) {
+  // debug_convert << "set_brush\n";
+  draw_glyphs();
+  fgb= br;
+  pen= pencil (br);
+  set_pencil (pen);  // FIXME ???
+  if (is_nil (br)) return;
+  if (br->get_type () == brush_none) {
+    pen = pencil ();
+    fgb = brush ();
+  }
+  else {
+    select_fill_color (pen->get_color ());
+    select_stroke_color (pen->get_color ());
+  }
+  if (br->get_type () == brush_pattern) {
+    register_pattern_image (br, brushpx==-1? pixel: brushpx);
+    select_fill_pattern (br);
+    select_stroke_pattern (br);
+  }
+  //select_alpha (br->get_alpha ());
+}
 void
 pdf_hummus_renderer_rep::set_background (brush b) {
   // debug_convert << "set_background\n";
@@ -748,7 +943,7 @@ public:
     // debug_convert << "flushing :" << id << LF;
     create_pdf_image_raw (pdfw, data, w, h, id);
   }
-}; // pdf_raw_image_ref
+}; // pdf_raw_image_rep
 
 class pdf_raw_image {
   CONCRETE_NULL(pdf_raw_image);
@@ -1185,6 +1380,7 @@ pdf_hummus_renderer_rep::lines (array<SI> x, array<SI> y) {
   end_text ();
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
+  end_text ();
   contentContext->q();
   if (pen->get_cap () == cap_round ||
       (x[N(x)-1] == x[0] && y[N(y)-1] == y[0]))
@@ -1210,10 +1406,12 @@ pdf_hummus_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   // debug_convert << "clear" << xx1 << " " << yy1 << " " << xx2 << " " << yy2 << LF;
   contentContext->q();
   select_fill_color (bg);
+  select_fill_pattern (bgb);
   contentContext->re(xx1, yy1, xx2-xx1, yy2-yy1);
   contentContext->h();
   contentContext->f();
   select_fill_color (fg);
+  select_fill_pattern (fgb);
   contentContext->Q();
 }
 
@@ -1227,7 +1425,7 @@ pdf_hummus_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
     double yy2= to_y (max (y1, y2));
     contentContext->re(xx1, yy1, xx2-xx1, yy2-yy1);
     contentContext->h();
-    contentContext->f();
+    contentContext->f(); // FIXME Winding
   }
 }
 
@@ -1235,8 +1433,8 @@ void
 pdf_hummus_renderer_rep::bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta, bool filled)
 {
   // PDF can describe only cubic bezier paths, so we have to make up the arc with them
-  // Since this is not mathematically exact, we minimize errors by drawing beziers sub-arcs of at most 90°
-  
+  // Since this is not mathematically exact, we minimize errors by drawing beziers sub-arcs of at most 90??
+  end_text ();
   contentContext->q(); // save graphics state
 
     double xx1 = to_x(x1), yy1 = to_y(y1), xx2 = to_x(x2), yy2 = to_y(y2);
@@ -1246,7 +1444,7 @@ pdf_hummus_renderer_rep::bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int 
 	//we can't apply scale here because in pdf the pen is scaled too
 
 	int i=1+abs(delta)/(90*64); //number of sub-arcs needed 
-	if ((abs(delta)%(90*64))==0) i-- ; //correction needed if exact multiple of 90°
+	if ((abs(delta)%(90*64))==0) i-- ; //correction needed if exact multiple of 90??
 	double phi= 2.0*M_PI*(delta)/(i*360.0*64.0); //angular span of each sub-arc
 	double a = 2.0*M_PI*(alpha)/(360.0*64.0); //start angle in radians
 
@@ -1298,43 +1496,19 @@ pdf_hummus_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int de
 
 void
 pdf_hummus_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
-  end_text ();
   // debug_convert << "polygon\n";
   int i, n= N(x);
   if ((N(y) != n) || (n<1)) return;
+  end_text ();
   contentContext->m(to_x (x[0]), to_y (y[0]));
-  for (i=1; i<n; i++) {
+  for (i=1; i<n; i++)
     contentContext->l(to_x (x[i]), to_y (y[i]));
-  }
   contentContext->h();
-  contentContext->f();
+  if (convex)
+    contentContext->f(); // odd-even
+  else
+    contentContext->fStar(); // nonzero winding
 }
-
-class pdf_image_rep : public concrete_struct
-{
-public:
-  url u;
-  int w,h;
-  ObjectIDType id;
-  
-  pdf_image_rep(url _u, ObjectIDType _id)
-    : u(_u), id(_id)
-  { image_size (u, w, h); } 
-  ~pdf_image_rep() {}
-
-  bool flush_jpg (PDFWriter& pdfw, url image);
-  bool flush_raster (PDFWriter& pdfw, url image);
-  void flush (PDFWriter& pdfw);
-
-}; // class pdf_image_ref
-
-class pdf_image {
-  CONCRETE_NULL(pdf_image);
-  pdf_image (url _u, ObjectIDType _id):
-    rep (tm_new<pdf_image_rep> (_u,_id)) {};
-};
-
-CONCRETE_NULL_CODE(pdf_image);
 
 void
 pdf_image_rep::flush (PDFWriter& pdfw)
@@ -1590,6 +1764,59 @@ pdf_image_rep::flush_raster (PDFWriter& pdfw, url image) {
   return true;
 }
 */
+
+bool
+pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
+  string data, mask, palette;
+  int iw = 0, ih =0;
+  
+#ifdef QTTEXMACS
+  qt_image_data (u, iw, ih, data, palette, mask);
+#endif
+  
+  if ((iw==0)||(ih==0)) return false;
+  
+  ObjectsContext& objectsContext = pdfw.GetObjectsContext();
+  objectsContext.StartNewIndirectObject(id);
+
+  // write stream dictionary
+  DictionaryContext* imageContext = objectsContext.StartDictionary();
+  // type
+  imageContext->WriteKey(scType);
+  imageContext->WriteNameValue(scXObject);
+  // subtype
+  imageContext->WriteKey(scSubType);
+  imageContext->WriteNameValue(scImage);
+  // Width
+  imageContext->WriteKey(scWidth);
+  imageContext->WriteIntegerValue(iw);
+  // Height
+  imageContext->WriteKey(scHeight);
+  imageContext->WriteIntegerValue(ih);
+  // Bits Per Component
+  imageContext->WriteKey(scBitsPerComponent);
+  imageContext->WriteIntegerValue(8);
+  // Color Space and Decode Array if necessary
+  imageContext->WriteKey(scColorSpace);
+  imageContext->WriteNameValue(scDeviceRGB);
+  // Data stream
+  PDFStream* imageStream = objectsContext.StartPDFStream(imageContext, true);
+  
+  OutputStreamTraits outputTraits(imageStream->GetWriteStream());
+  c_string buf (data);
+  
+  InputByteArrayStream reader((IOBasicTypes::Byte*)(char *)buf, N(data));
+  EStatusCode status = outputTraits.CopyToOutputStream(&reader);
+  if(status != PDFHummus::eSuccess) {
+    delete imageStream;
+    return false;
+  }
+  objectsContext.EndPDFStream(imageStream);
+  delete imageStream;
+  objectsContext.EndIndirectObject();
+  return true;
+}
+
 bool
 pdf_image_rep::flush_jpg (PDFWriter& pdfw, url image) {
 
@@ -1919,6 +2146,22 @@ pdf_hummus_renderer_rep::flush_images ()
   }
 }
 
+void
+pdf_hummus_renderer_rep::flush_patterns ()
+{
+  // flush all pattern images
+  iterator<tree> it = iterate (pattern_image_pool);
+  while (it->busy()) {
+    pdf_image im = pattern_image_pool[it->next()];
+    im->flush_for_pattern(pdfWriter);
+  }
+  // flush all patterns
+  it = iterate (pattern_pool);
+  while (it->busy()) {
+    pdf_pattern pa = pattern_pool[it->next()];
+    pa->flush(pdfWriter);
+  }
+}
 
 void
 pdf_hummus_renderer_rep::image (
@@ -1947,7 +2190,7 @@ pdf_hummus_renderer_rep::image (
   select_alpha((1000 * alpha) / 255);
   contentContext->Do(pdfFormName);
   //contentContext->re(0,0,im->w,im->h);
-  contentContext->S();
+  //contentContext->S();
   contentContext->Q();
 }
 
@@ -1973,12 +2216,11 @@ pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
   else {
     url u= im->get_name ();
     rectangle r= im->get_logical_extents ();
-    SI w= r->x2, h= r->y2;
-    //string ps_image= ps_load (u);
-    //string imtext= is_ramdisc (u)? "inline image": as_string (u);
-    //int x1, y1, x2, y2;
-    //ps_bounding_box (u, x1, y1, x2, y2);
-    image (u,w, h, x, y, alpha);
+    SI w= r->x2 - r->x1, h= r->y2 - r->y1;
+    int _ox= r->x1, _oy= r->y1;
+    x -= (int) 2.06 * _ox * pixel; // FIXME: where does the magic 2.06 come from?
+    y -= (int) 2.06 * _oy * pixel;
+    image (u, w, h, x, y, alpha);
   }
 }
 
@@ -2294,6 +2536,7 @@ pdf_hummus_renderer (url pdf_file_name, int dpi, int nr_pages,
   return tm_new<pdf_hummus_renderer_rep> (pdf_file_name, dpi, nr_pages,
 			  page_type, landscape, paper_w, paper_h);
 }
+
 
 
 
