@@ -13,8 +13,6 @@
 #include "vpenalty.hpp"
 #include "skeleton.hpp"
 
-typedef array<int> ints;
-
 vpenalty as_vpenalty (SI diff);
 
 #define INVALID_BREAK  0
@@ -44,17 +42,17 @@ struct new_breaker_rep {
   array<space> foot_ht;    // the height of all footnotes for one page_ite,
   array<space> foot_tot;   // the cumulated footnote height until here
 
-  array<array<insertion> > ins_list;
+  array<array<insertion> > ins_list;   // all page insertions
 
-  hashmap<int,int>       best_prev;  // best previous break points
-  hashmap<int,vpenalty>  best_pens;  // corresponding penalties
+  hashmap<path,path>       best_prev;  // best previous break points
+  hashmap<path,vpenalty>   best_pens;  // corresponding penalties
 
   new_breaker_rep (array<page_item> l, space ph, int quality,
                    space fn_sep, space fnote_sep, space float_sep,
                    font fn, int fp);
 
   insertion make_insertion (lazy_vstream lvs, path p);
-  space compute_space (int i1, int i2);
+  space compute_space (path b1, path b2);
   void find_page_breaks (int i1, int& first_end);
   void find_page_breaks ();
   vpenalty format_insertion (insertion& ins, double stretch);
@@ -76,7 +74,7 @@ new_breaker_rep::new_breaker_rep (
     fn_sep (fn_sep2), fnote_sep (fnote_sep2), float_sep (float_sep2),
     fn (fn2), first_page (fp2), quality (quality2), last_page_flag (true),
     body_ht (), body_cor (), foot_ht (), foot_tot (), ins_list (),
-    best_prev (-1), best_pens (MAX_SI)
+    best_prev (path (-1)), best_pens (MAX_SI)
 {
   for (int i=0; i<N(l); i++) {
     SI   bot_cor= max (0, l[i]->b->y1- fn->y1);
@@ -104,7 +102,8 @@ new_breaker_rep::new_breaker_rep (
     foot_tot << (i==0? space(0): foot_tot[i-1] + foot_ht[i]);
   }
 
-  best_pens(0)= 0;
+  best_prev (path (0))= path (-2); 
+  best_pens (path (0))= 0;
 }
 
 /******************************************************************************
@@ -149,8 +148,9 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
 ******************************************************************************/
 
 space
-new_breaker_rep::compute_space (int i1, int i2) {
-  //cout << "    Compute space " << i1 << ", " << i2 << LF;
+new_breaker_rep::compute_space (path b1, path b2) {
+  //cout << "    Compute space " << b1 << ", " << b2 << LF;
+  int i1= b1[0], i2= b2[0];
   space spc;
   if (i1 == 0) { if (i2 > 1) spc= copy (body_tot[i2-2]); }
   else spc= body_tot[i2-2] - body_tot[i1-1];
@@ -175,7 +175,7 @@ new_breaker_rep::compute_space (int i1, int i2) {
 void
 new_breaker_rep::find_page_breaks (int i1, int& first_end) {
   //cout << "Find page breaks " << i1 << ", " << first_end << LF;
-  vpenalty prev_pen= best_pens[i1];
+  vpenalty prev_pen= best_pens [path (i1)];
   first_end= max (i1+1, first_end);
   bool ok= false;
   int i2= first_end, n= N(l);
@@ -184,7 +184,8 @@ new_breaker_rep::find_page_breaks (int i1, int& first_end) {
     int bpen= l[i2-1]->penalty;
     if (i2 >= n) bpen= 0;
     if (bpen < HYPH_INVALID) {
-      spc= compute_space (i1, i2);
+      path b1= i1, b2= i2;
+      spc= compute_space (b1, b2);
       ok= true;
       if (spc->max < height->min) first_end= i2;
       vpenalty pen= prev_pen + vpenalty (bpen);
@@ -210,9 +211,9 @@ new_breaker_rep::find_page_breaks (int i1, int& first_end) {
 	  pen= vpenalty ((int) (factor * TOO_LONG_PENALTY));
 	}
       }
-      if (pen < best_pens[i2]) {
-	best_prev(i2)= i1;
-	best_pens(i2)= pen;
+      if (pen < best_pens [path (i2)]) {
+	best_prev (path (i2))= path (i1);
+	best_pens (path (i2))= pen;
       }
     }
     if ((i2 >= n) || (ok && (spc->min > height->max))) break;
@@ -231,10 +232,9 @@ new_breaker_rep::find_page_breaks () {
   //  cout << "  " << i << ": \t" << l[i]
   //       << ", " << body_ht[i]
   //       << ", " << body_cor[i] << ", " << body_tot[i] << LF;
-  best_prev(0)= -2;  
   int first_end= 0;
   for (int i=0; i<N(l); i++)
-    if (best_prev[i] != -1)
+    if (best_prev [path (i)] != path (-1))
       find_page_breaks (i, first_end);
   //cout << "Found page breaks" << LF;
 }
@@ -365,13 +365,13 @@ new_breaker_rep::make_insertion (int i1, int i2, bool last_page) {
   ins->ht     = spc;
   ins->top_cor= top_cor;
   ins->bot_cor= bot_cor;
-  ins->pen    = best_pens[i2];
+  ins->pen    = best_pens [path (i2)];
   return ins;
 }
 
 void
 new_breaker_rep::assemble_skeleton (skeleton& sk, int end) {
-  int start= best_prev[end], n= N(l);
+  int start= best_prev [path (end)] -> item, n= N(l);
   //cout << "Assemble skeleton " << end << " previous " << start << LF;
   if (start < 0) return;
   assemble_skeleton (sk, start);
