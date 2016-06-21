@@ -487,6 +487,7 @@ void qt_image_to_eps(url image, url outfile, int w_pt, int h_pt, int dpi) {
   qt_image_to_pdf(image, outfile, w_pt, h_pt, dpi);};
 
 /* not in use anymore : now use a Qt printer that outputs ps.
+
 void
 qt_image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   if (DEBUG_CONVERT) debug_convert << "qt_image_to_eps " << image << " -> "<<eps<<LF;
@@ -594,55 +595,48 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
   }
   return r;
 }
+*/
 
 void
 qt_image_data (url image, int& w, int&h, string& data, string& palette, string& mask) {
-	debug_convert << "in qt_image_data"<<LF; 
+  // debug_convert << "in qt_image_data"<<LF; 
   (void) palette;
   QImage im (utf8_to_qstring (concretize (image)));
-  
-  
-  
-  if (im.isNull ())
+  if (im.isNull ()) {
     convert_error << "Cannot read image file '" << image << "'"
     << " in qt_image_data" << LF;
-  else {
-    bool alpha= im.hasAlphaChannel ();
-	if (alpha) im.fill( Qt::transparent );
-
-    w=  im.width ();
-    h=  im.height ();
-    
-    data = string ((w*h)*3);
-    
-    int v, i= 0, j= 0, k= 0, l= 0;
-    
-    for (j= 0; j < im.height (); j++) {
-      for (i=0; i < im.width (); i++) {
-        QRgb p= im.pixel (i, j);
-        data[l++] = qRed (p);
-        data[l++] = qGreen (p);
-        data[l++] = qBlue (p);
+    return;
+  }
+  bool alpha= im.hasAlphaChannel ();
+  if (alpha) im.fill( Qt::transparent );
+  w=  im.width ();
+  h=  im.height ();    
+  data = string ((w*h)*3);
+  int v, i= 0, j= 0, k= 0, l= 0;
+  for (j= 0; j < im.height (); j++) {
+    for (i=0; i < im.width (); i++) {
+      QRgb p= im.pixel (i, j);
+      data[l++] = qRed (p);
+      data[l++] = qGreen (p);
+      data[l++] = qBlue (p);
+    }
+  }
+  if (alpha) {
+    mask = string ((w*h+7)/8); 
+    v= 0;
+    for (i=0; i < im.width (); i++) {
+      v+= (qAlpha (im.pixel (i, j)) == 0) << (3 - i % 4);
+      if (i % 8 == 7 || i + 1 == im.width ()) {
+	mask[k++] = v;
+	v= 0;
+	// Padding of the image data mask
+	if (i + 1 == im.width () && k % 2 == 1) {
+	  mask[k++] = 0;
+	}
       }
-    if (alpha) {
-      mask = string ((w*h+7)/8);
-      
-      
-      v= 0;
-      for (i=0; i < im.width (); i++) {
-        v+= (qAlpha (im.pixel (i, j)) == 0) << (3 - i % 4);
-        if (i % 8 == 7 || i + 1 == im.width ()) {
-          mask[k++] = v;
-          v= 0;
-            // Padding of the image data mask
-          if (i + 1 == im.width () && k % 2 == 1) {
-            mask[k++] = 0;
-          }
-        }
-      }
+    }
   }
 }
-*/
 
 QPixmap
 as_pixmap (const QImage& im) {
