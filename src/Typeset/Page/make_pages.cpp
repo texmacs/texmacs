@@ -16,7 +16,6 @@ box format_stack (path ip, array<box> bx, array<space> ht, SI height,
 		  bool may_stretch);
 #include "Boxes/construct.hpp"
 array<page_item> sub (array<page_item> l, path p, path q);
-SI stretch_space (space spc, double stretch);
 page_item access (array<page_item> l, path p);
 skeleton break_pages (array<page_item> l, space ph, int qual,
 		      space fn_sep, space fnote_sep, space float_sep,

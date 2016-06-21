@@ -23,3 +23,10 @@ as_vpenalty (SI diff) {
   else if (diff < 0x100000) return vpenalty (0, (diff >> 8) * (diff >> 8));
   else return vpenalty (0, 0x1000000);
 }
+
+SI
+stretch_space (space spc, double stretch) {
+  if (stretch > 0.0) return (SI) (spc->def + stretch * (spc->max - spc->def));
+  if (stretch < 0.0) return (SI) (spc->def + stretch * (spc->def - spc->min));
+  return spc->def;
+}

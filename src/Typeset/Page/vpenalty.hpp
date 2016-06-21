@@ -25,7 +25,7 @@
 
 #ifndef VPENALTY_H
 #define VPENALTY_H
-#include "basic.hpp"
+#include "space.hpp"
 
 #define EXTEND_PAGE_PENALTY   33
 #define REDUCE_PAGE_PENALTY   33
@@ -63,5 +63,7 @@ class vpenalty {
 CONCRETE_CODE(vpenalty);
 
 tm_ostream& operator << (tm_ostream& out, vpenalty pen);
+
+SI stretch_space (space spc, double stretch);
 
 #endif // defined VPENALTY_H

@@ -905,13 +905,6 @@ page_breaker_rep::make_pagelet (int start, int end, path flb, int nr_cols) {
   return pg;
 }
 
-SI
-stretch_space (space spc, double stretch) {
-  if (stretch > 0.0) return (SI) (spc->def + stretch * (spc->max - spc->def));
-  if (stretch < 0.0) return (SI) (spc->def + stretch * (spc->def - spc->min));
-  return spc->def;
-}
-
 vpenalty
 page_breaker_rep::format_insertion (insertion& ins, double stretch) {
   // cout << "Stretch " << ins << ": " << stretch << LF;
