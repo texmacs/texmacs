@@ -105,6 +105,7 @@
 
 (menu-bind format-special-menu
   ("Group" (make-rigid))
+  ("Phantom" (make 'phantom))
   ("Superpose" (make 'superpose))
   ("Repeat object" (make 'repeat))
   ("Decorate atoms" (make 'datoms 2))
