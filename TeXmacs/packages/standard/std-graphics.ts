@@ -84,6 +84,22 @@
 
   <\active*>
     <\src-comment>
+      Transformations
+    </src-comment>
+  </active*>
+
+  <assign|rotate|<macro|angle|body|<gr-transform|<arg|body>|<tuple|rotation|<arg|angle>>>>>
+
+  <assign|rotate-at|<macro|angle|x|y|body|<gr-transform|<arg|body>|<tuple|rotation|<point|<over|<arg|x>|1tmpt>|<over|<arg|y>|1tmpt>>|<arg|angle>>>>>
+
+  <assign|dilate|<macro|x-factor|y-factor|body|<gr-transform|<arg|body>|<tuple|scaling|<arg|x-factor>|<arg|y-factor>>>>>
+
+  <assign|skew|<macro|slant|body|<gr-transform|<arg|body>|<tuple|slanting|<arg|slant>>>>>
+
+  <assign|linear-2d|<macro|a|b|c|d|body|<gr-transform|<arg|body>|<tuple|linear|<arg|a>|<arg|b>|<arg|c>|<arg|d>>>>>
+
+  <\active*>
+    <\src-comment>
       Blur effect
     </src-comment>
   </active*>

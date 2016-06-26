@@ -142,15 +142,41 @@ is_transformation (tree t) {
       is_double (t[1][1]) &&
       is_double (t[2]))
     return true;
+  if (is_tuple (t, "scaling", 2) &&
+      is_double (t[1]) &&
+      is_double (t[2]))
+    return true;
+  if (is_tuple (t, "slanting", 1) &&
+      is_double (t[1]))
+    return true;
+  if (is_tuple (t, "linear", 4) &&
+      is_double (t[1]) &&
+      is_double (t[2]) &&
+      is_double (t[3]) &&
+      is_double (t[4]))
+    return true;
   return false;
 }
 
 frame
 get_transformation (tree t) {
   if (is_tuple (t, "rotation", 1))
-    return rotation_2D (point (0.0, 0.0), as_double (t[1]));
+    return rotation_2D (point (0.0, 0.0), as_double (t[1]) / 57.2957795131);
   if (is_tuple (t, "rotation", 2))
-    return rotation_2D (as_point (t[1]), as_double (t[2]));
+    return rotation_2D (as_point (t[1]), as_double (t[2]) / 57.2957795131);
+  if (is_tuple (t, "scaling", 2))
+    return scaling (point (as_double (t[1]), as_double (t[2])),
+                    point (0.0, 0.0));
+  if (is_tuple (t, "slanting", 1))
+    return slanting (point (0.0, 0.0), as_double (t[1]));
+  if (is_tuple (t, "linear", 4)) {
+    matrix<double> m (0.0, 2, 2);
+    m (0, 0) = as_double (t[1]);
+    m (0, 1) = as_double (t[2]);
+    m (1, 0) = as_double (t[3]);
+    m (1, 1) = as_double (t[4]);
+    return linear_2D (m);
+  }
   failed_error << "t= " << t << LF;
   FAILED ("transformation expected");
   return frame ();

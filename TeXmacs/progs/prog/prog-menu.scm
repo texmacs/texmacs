@@ -60,6 +60,7 @@
 	  ---)
       (link color-menu))
   (-> "Adjust" (link adjust-menu))
+  (-> "Transform" (link linear-transform-menu))
   (-> "Specific" (link specific-menu))
   (-> "Special" (link format-special-menu))
   (-> "Font effects" (link text-font-effects-menu))
