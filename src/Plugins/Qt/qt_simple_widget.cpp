@@ -341,8 +341,7 @@ impress (qt_simple_widget_rep* wid) {
   {
     qt_renderer_rep *ren = the_qt_renderer();
     ren->begin (static_cast<QPaintDevice*>(&pxm));
-    rectangle r = rectangle (0, 0, retina_factor * s.width(),
-                                   retina_factor * s.height());
+    rectangle r = rectangle (0, 0,  phys_s.width(), phys_s.height());
     ren->set_origin (0, 0);
     ren->encode (r->x1, r->y1);
     ren->encode (r->x2, r->y2);
