@@ -42,24 +42,29 @@ int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
 
 static void
-replaceActions (QWidget* dest, QWidget* src) {
-    //NOTE: the parent hierarchy of the actions is not modified while installing
-    //      the menu in the GUI (see qt_menu.hpp for this memory management 
-    //      policy)
+replaceActions (QWidget* dest,  QList<QAction*>* src) {
+  //NOTE: the parent hierarchy of the actions is not modified while installing
+  //      the menu in the GUI (see qt_menu.hpp for this memory management
+  //      policy)
   if (src == NULL || dest == NULL)
     FAILED ("replaceActions expects valid objects");
   dest->setUpdatesEnabled (false);
   QList<QAction *> list = dest->actions();
-  while (!list.isEmpty()) dest->removeAction (list.takeFirst());
-  list = src->actions();
-  while (!list.isEmpty()) dest->addAction (list.takeFirst());
+  for (int i = 0; i < list.count(); i++) {
+    QAction* a = list[i];
+    dest->removeAction (a);
+  }
+  for (int i = 0; i < src->count(); i++) {
+    QAction* a = (*src)[i];
+    dest->addAction(a);
+  }
   dest->setUpdatesEnabled (true);
 }
 
 static void
-replaceButtons (QToolBar* dest, QWidget* src) {
-   if (src == NULL || dest == NULL)
-     FAILED ("replaceButtons expects valid objects");
+replaceButtons (QToolBar* dest, QList<QAction*>* src) {
+  if (src == NULL || dest == NULL)
+    FAILED ("replaceButtons expects valid objects");
   dest->setUpdatesEnabled (false);
   bool visible = dest->isVisible();
   if (visible) dest->hide(); //TRICK: to avoid flicker of the dest widget
@@ -726,48 +731,26 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
+  if (main_menu_widget == waiting_main_menu_widget) return;
   main_menu_widget = waiting_main_menu_widget;
-  QMenu* src = main_menu_widget->get_qmenu();
+  QList<QAction*>* src = main_menu_widget->get_qactionlist();
   if (!src) return;
-
-    // REMARK: We do not want the menubar shared across windows as suggested
-    // in http://doc.qt.nokia.com/4.7/qmainwindow.html#menuBar
-    // e.g. :
-    //
-    //     QMenuBar *dest = new QMenuBar(0);
-    //     mainwindow()->setMenuBar(dest);
-    //
-    // as the default behavior on MacOS. The main reason is that in TeXmacs
-    // different windows can have different main menus so that it is indeed
-    // appropriate to change the main menu as the window focus changes.
-    // So we kindly ask to each window to give us its own menu and we install
-    // there our actions.
-    // So we do:
-  
   QMenuBar* dest = mainwindow()->menuBar();
-  
-    // and everything is fine.
-  
-    // Also please note that we have to do the replacement and not simply
-    // install the menu returned by get_qmenu() since the main menu there
-    // could contain some default items appropriate for the given OS (like the
-    // service menu on MacOS) which are not present in our menu widget.
-    // UPDATE: But replaceActions() *does remove* all actions (!?)
-    // It looks more like the reason is that we have to "flatten out" the first
-    // level of the QMenu returned... ?
-  
-  replaceActions (dest, src);
-  QList<QAction*> list = dest->actions();
-  for (int i = 0; i < list.count(); i++) {
-    QAction* a = list[i];
+  dest->clear();
+  for (int i = 0; i < src->count(); i++) {
+    QAction* a = (*src)[i];
     if (a->menu()) {
+      //TRICK: Mac native QMenuBar accepts only menus which are already populated
+      // this will cause a problem for us, since menus are lazy and populated only after triggering
+      // this is the reason we add a dummy action before inserting the menu
+      a->menu()->addAction("native menubar trick");
+      dest->addAction(a->menu()->menuAction());
       QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
                         the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
       QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
                         the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
     }
   }
-
 }
 
 void
@@ -821,9 +804,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       main_icons_widget = concrete (w);
-      QMenu* m = main_icons_widget->get_qmenu();
-      if (m) {
-        replaceButtons (mainToolBar, m);
+      QList<QAction*>* list = main_icons_widget->get_qactionlist();
+      if (list) {
+        replaceButtons (mainToolBar, list);
         update_visibility();
       }
     }
@@ -833,9 +816,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       mode_icons_widget = concrete (w);
-      QMenu* m = mode_icons_widget->get_qmenu();
-      if (m) {
-        replaceButtons (modeToolBar, m);
+      QList<QAction*>* list = mode_icons_widget->get_qactionlist();
+      if (list) {
+        replaceButtons (modeToolBar, list);
         update_visibility();
       }
     }
@@ -845,9 +828,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       focus_icons_widget = concrete (w);
-      QMenu* m = focus_icons_widget->get_qmenu();
-      if (m) {
-        replaceButtons (focusToolBar, m);
+      QList<QAction*>* list = focus_icons_widget->get_qactionlist();
+      if (list) {
+        replaceButtons (focusToolBar, list);
         update_visibility();
       }
     }
@@ -857,9 +840,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {   
       user_icons_widget = concrete (w);
-      QMenu* m = user_icons_widget->get_qmenu();
-      if (m) {
-        replaceButtons (userToolBar, m);
+      QList<QAction*>* list = user_icons_widget->get_qactionlist();
+      if (list) {
+        replaceButtons (userToolBar, list);
         update_visibility();
       }
     }

@@ -53,7 +53,8 @@ class qt_ui_element_rep: public qt_widget_rep {
     // deletion of all the nested widgets within.
   blackbox                  load;
   QPointer<QAction> cachedAction;
-
+  QList<QAction*>* cachedActionList;
+    
 public:  
   qt_ui_element_rep (types _type, blackbox _load);
   virtual ~qt_ui_element_rep(); 
@@ -62,9 +63,9 @@ public:
   
   virtual QAction*         as_qaction ();
   virtual QWidget*         as_qwidget ();
-  virtual QLayoutItem* as_qlayoutitem ();
-  virtual QMenu*            get_qmenu ();
-  
+  virtual QLayoutItem*     as_qlayoutitem ();
+  virtual QList<QAction*>* get_qactionlist();
+
   operator tree ();
 
   template<class X1> static qt_widget create (types _type, X1 x1) {

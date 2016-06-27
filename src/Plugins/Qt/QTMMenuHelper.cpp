@@ -149,13 +149,6 @@ QTMTileAction::QTMTileAction (array<widget>& arr, int _cols, QObject* parent)
   };
 }
 
-/*!
- FIXME: QTMTileAction::createWidget is called twice:
- the first time when the action is added to the menu,
- the second when from the menu it is transferred to the toolbar.
- This is weird since the first widget does not ever use
- the widget so it results in a waste of time.
- */
 QWidget*
 QTMTileAction::createWidget (QWidget* parent)
 {
@@ -201,12 +194,6 @@ QTMMinibarAction::QTMMinibarAction (array<widget>& arr, QObject* parent)
   };
 }
 
-/*!
- FIXME: QTMMinibarAction::createWidget is called twice:
- the first time when the action is added to the menu, the second when from the
- menu it is transferred to the toolbar. This is weird since the first widget
- does not ever use the widget so it results in a waste of time.
- */
 QWidget*
 QTMMinibarAction::createWidget (QWidget* parent) {
   static QImage* pxm = xpm_image ("tm_add.xpm"); // See qt_tm_widget.cpp 
@@ -345,29 +332,25 @@ QTMLazyMenu::attachTo (QAction* a) {
 }
 
 void
-QTMLazyMenu::transferActions (QWidget* from) {
+QTMLazyMenu::transferActions (QList<QAction*>* from) {
   if (from == NULL) return;
   QList<QAction*> list = actions();
   while (!list.isEmpty()) {
     QAction* a = list.takeFirst();
     removeAction (a);
-    // For some reason, using deleteLater() leaks all the QActions
-    //a->deleteLater();
-    delete a;
   }
-  list = from->actions();
+  list = *from;
   while (!list.isEmpty()) {
     QAction* a = list.takeFirst();
     addAction (a);
-    a->setParent (this);
   }
 }
 
 void
 QTMLazyMenu::force () {
 BEGIN_SLOT
-  QMenu* m = concrete (promise_widget())->get_qmenu();
-  transferActions (m);
+  QList<QAction*>* list = concrete (promise_widget())->get_qactionlist();
+  transferActions (list);
 END_SLOT
 }
 

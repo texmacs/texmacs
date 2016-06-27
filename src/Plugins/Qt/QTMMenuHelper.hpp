@@ -99,7 +99,7 @@ public slots:
   void force ();
 
 protected:
-  void transferActions (QWidget* src);
+  void transferActions (QList<QAction*>* src);
 
 protected slots:
   void destroy (QObject* obj=0);

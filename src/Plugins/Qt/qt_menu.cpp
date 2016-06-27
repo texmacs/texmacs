@@ -25,15 +25,10 @@ qt_menu_rep::~qt_menu_rep () {
   delete qact;
 }
 
-QAction*
-qt_menu_rep::as_qaction() {
-  if (!qact) qact = content->as_qaction();
-  return qact;
-}
-
 QMenu*
 qt_menu_rep::get_qmenu() {
-  return as_qaction()->menu();
+  if (!qact) qact = content->as_qaction();
+  return qact->menu();
 }
 
 /*!

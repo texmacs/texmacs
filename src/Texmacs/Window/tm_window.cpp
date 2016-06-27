@@ -318,11 +318,7 @@ tm_window_rep::refresh () {
 * Menus
 ******************************************************************************/
 
-#ifdef QTTEXMACS
-bool menu_caching= false;
-#else
 bool menu_caching= true;
-#endif
 
 bool
 tm_window_rep::get_menu_widget (int which, string menu, widget& w) {

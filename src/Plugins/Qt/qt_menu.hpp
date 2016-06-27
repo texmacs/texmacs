@@ -52,8 +52,7 @@ public:
   virtual widget popup_window_widget (string s);
 
 private:
-  virtual QAction* as_qaction ();
-  virtual QMenu* get_qmenu();
+  QMenu* get_qmenu();
 };
 
 #endif // defined QT_MENU_HPP

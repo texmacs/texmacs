@@ -155,14 +155,8 @@ qt_widget_rep::as_qlayoutitem () {
 }
 
 
-/*! Returns the QMenu associated if any.
- 
- This method must not give ownership of the menu to the caller, thus
- allowing menu caching at the TeXmacs level. See the implementations in
- qt_ui_element_rep and qt_menu_rep.
- */
-QMenu*
-qt_widget_rep::get_qmenu () {
+QList<QAction*>*
+qt_widget_rep::get_qactionlist() {
   return NULL;
 }
 

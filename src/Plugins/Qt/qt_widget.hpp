@@ -127,9 +127,9 @@ public:
   
   virtual QAction*         as_qaction ();
   virtual QWidget*         as_qwidget ();
-  virtual QLayoutItem* as_qlayoutitem ();
-  virtual QMenu*            get_qmenu ();
-  
+  virtual QLayoutItem*     as_qlayoutitem ();
+  virtual QList<QAction*>* get_qactionlist();
+
 
   ////////////////////// Debugging
   

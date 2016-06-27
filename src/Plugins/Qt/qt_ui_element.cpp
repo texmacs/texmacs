@@ -187,16 +187,16 @@ qt_glue_widget_rep::as_qwidget() {
  ******************************************************************************/
 
 qt_ui_element_rep::qt_ui_element_rep (types _type, blackbox _load)
-: qt_widget_rep (_type), load (_load), cachedAction (NULL) {}
+: qt_widget_rep (_type), load (_load), cachedActionList (NULL) {}
 
-/*!
- NOTE: if we have a cachedAction, it means somebody promoted us to managers
- of a root menu which we have to delete. But we MUST ensure nobody calls
- get_qmenu() when they shouldn't.
- */
 qt_ui_element_rep::~qt_ui_element_rep() {
-  if (cachedAction) delete cachedAction->menu();
-  delete cachedAction;
+  if (cachedActionList) {
+    while (!cachedActionList->empty()) {
+      QAction *a = cachedActionList->takeFirst();
+      if (a) delete a;
+     }
+    delete cachedActionList;
+  }
 }
 
 blackbox
@@ -238,14 +238,33 @@ qt_ui_element_rep::make_popup_widget () {
     return qt_widget_rep::make_popup_widget();
 }
 
-/*! Returns a QMenu* to be installed in the menu bar.
- This method *DOES NOT* transfer ownership to the caller. On the contrary, it
- "promotes" this qt_ui_element_rep to responsible for its deletion.
- */
-QMenu*
-qt_ui_element_rep::get_qmenu() {
-  if (!cachedAction) cachedAction = as_qaction();
-  return cachedAction->menu();
+QList<QAction*>*
+qt_ui_element_rep::get_qactionlist() {
+    if (cachedActionList) return cachedActionList;
+    
+    QList<QAction*> *list = new QList<QAction *>();
+    
+    switch (type) {
+        case vertical_menu:
+        case horizontal_menu:
+        case vertical_list:
+        {
+            typedef array<widget> T;
+            array<widget> arr = open_box<T> (load);
+            
+            for (int i = 0; i < N(arr); i++) {
+                if (is_nil (arr[i])) break;
+                QAction* a = concrete (arr[i])->as_qaction ();
+                list->append(a);
+            }
+        }
+          break;
+            
+        default:
+          break;
+    }
+    cachedActionList = list;
+    return list;
 }
 
 /*! For the refresh_widget
@@ -390,7 +409,7 @@ qt_ui_element_rep::as_qaction () {
 
       act    = qtw->as_qaction ();
       QTMLazyMenu* lm = new QTMLazyMenu (pw);
-      lm->attachTo (act);  // lm deletes itself after cachedAction dies
+      lm->attachTo (act);  // lm deletes itself after action dies
       act->setEnabled (true);
     }
       break;
