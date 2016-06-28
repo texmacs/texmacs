@@ -199,12 +199,22 @@ new_breaker_rep::compute_space (path b1, path b2) {
 * Find page breaks for a given start
 ******************************************************************************/
 
+static bool
+float_property (tree t, char c) {
+  if (N(t) < 2) return false;
+  string s= as_string (t[1]);
+  for (int i=0; i<N(s); i++)
+    if (s[i] == c) return true;
+  return false;
+}
+
 void
 new_breaker_rep::find_page_breaks (path b1) {
   //cout << "Find page breaks " << b1 << LF;
   bool ok= false;
   vpenalty prev_pen= best_pens [b1];
   int n= N(l);
+  int float_status= 0;
   path floats;
   path b2= b1;
   while (true) {
@@ -218,8 +228,23 @@ new_breaker_rep::find_page_breaks (path b1) {
           float_tot[i]->def > (i==0? 0: float_tot[i-1]->def)) {
         for (int j=0; j<N(ins_list[i]); j++) {
           insertion ins= ins_list[i][j];
-          if (is_tuple (ins->type, "float"))
-            floats= floats * path (i, j);
+          if (is_tuple (ins->type, "float")) {
+            if (float_property (ins->type, 'f')) {
+              while (!is_nil (floats)) {
+                int i2= floats->item;
+                int j2= floats->next->item;
+                floats= floats->next->next;
+                insertion ins2= ins_list[i2][j2];
+                if (float_status == 0 && !float_property (ins2->type, 't'))
+                  float_status= 1;
+                if (float_status == 1 && !float_property (ins2->type, 'h'))
+                  float_status= 2;
+                if (float_status == 2 && !float_property (ins2->type, 'b'))
+                  float_status= 3;
+              }
+            }
+            else floats= floats * path (i, j);
+          }
         }
       }
       b2= path (i+1, floats);
@@ -229,6 +254,11 @@ new_breaker_rep::find_page_breaks (path b1) {
     space spc;
     int bpen= l[b2->item - 1]->penalty;
     if (b2->item == n && is_nil (b2->next)) bpen= 0;
+    if (b2->item == b1->item) bpen= 0;
+    if (float_status == 3) {
+      if (ok) break;
+      else bpen += BAD_FLOATS_PENALTY;
+    }
     if (bpen < HYPH_INVALID) {
       spc= compute_space (b1, b2);
       ok= true;
