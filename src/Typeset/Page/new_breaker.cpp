@@ -12,6 +12,7 @@
 #include "Line/lazy_vstream.hpp"
 #include "vpenalty.hpp"
 #include "skeleton.hpp"
+#include "iterator.hpp"
 
 vpenalty as_vpenalty (SI diff);
 
@@ -46,6 +47,8 @@ struct new_breaker_rep {
 
   hashmap<path,path>       best_prev;  // best previous break points
   hashmap<path,vpenalty>   best_pens;  // corresponding penalties
+  hashmap<path, bool>      todo_list;
+  hashmap<path, bool>      done_list;
 
   new_breaker_rep (array<page_item> l, space ph, int quality,
                    space fn_sep, space fnote_sep, space float_sep,
@@ -74,7 +77,8 @@ new_breaker_rep::new_breaker_rep (
     fn_sep (fn_sep2), fnote_sep (fnote_sep2), float_sep (float_sep2),
     fn (fn2), first_page (fp2), quality (quality2), last_page_flag (true),
     body_ht (), body_cor (), foot_ht (), foot_tot (), ins_list (),
-    best_prev (path (-1)), best_pens (MAX_SI)
+    best_prev (path (-1)), best_pens (MAX_SI),
+    todo_list (false), done_list (false)
 {
   for (int i=0; i<N(l); i++) {
     SI   bot_cor= max (0, l[i]->b->y1- fn->y1);
@@ -179,7 +183,7 @@ new_breaker_rep::find_page_breaks (path b1) {
   vpenalty prev_pen= best_pens [b1];
   path b2= path (b1->item + 1);
   int n= N(l);
-  while (true) {
+  while (b2->item <= n) {
     space spc;
     int bpen= l[b2->item - 1]->penalty;
     if (b2->item >= n) bpen= 0;
@@ -209,13 +213,15 @@ new_breaker_rep::find_page_breaks (path b1) {
 	  pen= vpenalty ((int) (factor * TOO_LONG_PENALTY));
 	}
       }
+      if (!best_pens->contains (b2) && !done_list->contains (b2))
+        todo_list (b2)= true;
       if (pen < best_pens [b2]) {
         //cout << b1 << ", " << b2 << " ~> " << pen << "\n";
 	best_prev (b2)= b1;
 	best_pens (b2)= pen;
       }
     }
-    if ((b2->item >= n) || (ok && (spc->min > height->max))) break;
+    if (ok && (spc->min > height->max)) break;
     b2= path (b2->item + 1);
   }
 }
@@ -231,9 +237,14 @@ new_breaker_rep::find_page_breaks () {
   //  cout << "  " << i << ": \t" << l[i]
   //       << ", " << body_ht[i]
   //       << ", " << body_cor[i] << ", " << body_tot[i] << LF;
-  for (int i=0; i<N(l); i++)
-    if (best_prev [path (i)] != path (-1))
-      find_page_breaks (path (i));
+  todo_list (path (0))= true;
+  while (N(todo_list) != 0) {
+    hashmap<path,bool> temp_list= todo_list;
+    todo_list= hashmap<path,bool> (false);
+    done_list->join (temp_list);
+    for (iterator<path> it= iterate (temp_list); it->busy (); )
+      find_page_breaks (it->next ());
+  }
   //cout << "Found page breaks" << LF;
 }
 
