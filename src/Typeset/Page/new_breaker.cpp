@@ -64,8 +64,27 @@ struct new_breaker_rep {
   vpenalty format_pagelet (pagelet& pg, double stretch);
   vpenalty format_pagelet (pagelet& pg, space ht, bool last_page);
   insertion make_insertion (int i1, int i2);
+  bool here_floats (path p);
   void assemble_skeleton (skeleton& sk, path end);
 };
+
+/******************************************************************************
+* Float placement subroutines
+******************************************************************************/
+
+static bool
+float_has (tree t, char c) {
+  if (N(t) < 2) return false;
+  string s= as_string (t[1]);
+  for (int i=0; i<N(s); i++)
+    if (s[i] == c) return true;
+  return false;
+}
+
+static bool
+float_here (tree t) {
+  return !float_has (t, 't') && !float_has (t, 'b');
+}
 
 /******************************************************************************
 * Constructor
@@ -102,8 +121,10 @@ new_breaker_rep::new_breaker_rep (
       ins_here << ins;
       if (is_tuple (lvs->channel, "footnote"))
         foot_spc += ins->ht + fn_sep;
-      else if (is_tuple (lvs->channel, "float"))
-        float_spc += ins->ht + float_sep;
+      else if (is_tuple (lvs->channel, "float")) {
+        if (float_here (lvs->channel)) float_spc += ins->ht + 2*float_sep;
+        else float_spc += ins->ht + float_sep;
+      }
     }
     ins_list << ins_here;
     foot_ht  << foot_spc;
@@ -168,7 +189,9 @@ new_breaker_rep::compute_space (path b1, path b2) {
     int  i0= nx->item;
     int  j0= nx->next->item;
     insertion fl= ins_list[i0][j0];
-    return fl->ht + float_sep + compute_space (q1, b2);
+    space sep= float_sep;
+    if (float_here (fl->type)) sep= 2*sep;
+    return fl->ht + sep + compute_space (q1, b2);
   }
   if (!is_nil (b2->next))
     return compute_space (b1, path (b2->item)) -
@@ -198,15 +221,6 @@ new_breaker_rep::compute_space (path b1, path b2) {
 /******************************************************************************
 * Find page breaks for a given start
 ******************************************************************************/
-
-static bool
-float_has (tree t, char c) {
-  if (N(t) < 2) return false;
-  string s= as_string (t[1]);
-  for (int i=0; i<N(s); i++)
-    if (s[i] == c) return true;
-  return false;
-}
 
 void
 new_breaker_rep::find_page_breaks (path b1) {
@@ -449,6 +463,17 @@ new_breaker_rep::make_insertion (int i1, int i2) {
   return ins;
 }
 
+bool
+new_breaker_rep::here_floats (path p) {
+  bool here_flag= true;
+  while (!is_nil (p)) {
+    int i= p->item, j= p->next->item;
+    p= p->next->next;
+    if (!float_has (ins_list[i][j]->type, 'h')) here_flag= false;
+  }
+  return here_flag;
+}
+
 void
 new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
   int n= N(l);
@@ -457,15 +482,8 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
   if (start->item < 0) return;
   assemble_skeleton (sk, start);
 
-  // Position all floats
-  path floats = start->next;
-  path avoid  = end->next;
-  path counter= floats;
-  while (!is_nil (counter)) {
-    int i= counter->item, j= counter->next->item;
-    counter= counter->next->next;
-    ins_list[i][j]->type= tuple ("float", "t");
-  }
+  // Position the floats
+  path floats, avoid= end->next;
   for (int i=start->item; i<end->item; i++)
     for (int j=0; j<N(ins_list[i]); j++)
       if (is_tuple (ins_list[i][j]->type, "float")) {
@@ -473,7 +491,7 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
           avoid= avoid->next->next;
         else floats= floats * path (i, j);
       }
-  path top, here, bottom;
+  path top= start->next, here, bottom;
   while (!is_nil (floats)) {
     bool ok= false;
     int i= floats->item, j= floats->next->item;
@@ -483,6 +501,10 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
       if (is_nil (floats)) break;
       ok= true;
     }
+    if (N(top) + N(bottom) >= (2 * N(floats)) && here_floats (floats)) {
+      here= floats;
+      break;
+    }
     int num= N(floats);
     i= floats[num-2]; j= floats[num-1];
     if (float_has (ins_list[i][j]->type, 'b')) {
@@ -491,12 +513,15 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
       if (is_nil (floats)) break;
       ok= true;
     }
+    if (N(top) + N(bottom) >= (2 * N(floats)) && here_floats (floats)) {
+      here= floats;
+      break;
+    }
     if (!ok) {
       here= floats;
       break;
     }
   }
-  top= top * here;
 
   // Add the page
   pagelet pg (0);
@@ -506,8 +531,27 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
     pg << ins_list[i][j];
     pg << float_sep;
   }
-  if (end->item > start->item) {
-    insertion ins= make_insertion (start->item, end->item);
+  int pos= start->item;
+  while (!is_nil (here)) {
+    int i= here->item, j= here->next->item;
+    here= here->next->next;
+    if (i >= end->item && i > pos) {
+      insertion ins= make_insertion (pos, i);
+      pg << ins;
+      pg << float_sep;
+      pos= i;
+    }
+    else if (i+1 > pos) {
+      insertion ins= make_insertion (pos, i+1);
+      pg << ins;
+      pg << float_sep;
+      pos= i+1;
+    }
+    pg << ins_list[i][j];
+    pg << float_sep;
+  }
+  if (end->item > pos) {
+    insertion ins= make_insertion (pos, end->item);
     pg << ins;
   }
   while (!is_nil (bottom)) {
