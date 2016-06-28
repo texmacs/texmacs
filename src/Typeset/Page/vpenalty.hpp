@@ -33,6 +33,7 @@
 #define TOO_LONG_PENALTY      100000
 #define UNBALANCED_COLUMNS    1000
 #define LONGER_LATTER_COLUMN  1000
+#define BAD_FLOATS_PENALTY    1000000
 
 struct vpenalty_rep: concrete_struct {
   int pen;   // main penalty
