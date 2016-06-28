@@ -40,8 +40,10 @@ struct new_breaker_rep {
   array<space> body_ht;    // the heights of these page_items
   array<space> body_cor;   // top and bottom corrections of page_items
   array<space> body_tot;   // total heights up to a certain index
-  array<space> foot_ht;    // the height of all footnotes for one page_ite,
+  array<space> foot_ht;    // the height of all footnotes for one page_item,
   array<space> foot_tot;   // the cumulated footnote height until here
+  array<space> float_ht;   // the height of all floats for one page_item,
+  array<space> float_tot;  // the cumulated float height until here
 
   array<array<insertion> > ins_list;   // all page insertions
 
@@ -61,8 +63,8 @@ struct new_breaker_rep {
   vpenalty format_insertion (insertion& ins, double stretch);
   vpenalty format_pagelet (pagelet& pg, double stretch);
   vpenalty format_pagelet (pagelet& pg, space ht, bool last_page);
-  insertion make_insertion (int i1, int i2, bool last_page);
-  void assemble_skeleton (skeleton& sk, int end);
+  insertion make_insertion (int i1, int i2);
+  void assemble_skeleton (skeleton& sk, path end);
 };
 
 /******************************************************************************
@@ -76,7 +78,8 @@ new_breaker_rep::new_breaker_rep (
     l (l2), papyrus_mode (ph == (MAX_SI >> 1)), height (ph),
     fn_sep (fn_sep2), fnote_sep (fnote_sep2), float_sep (float_sep2),
     fn (fn2), first_page (fp2), quality (quality2), last_page_flag (true),
-    body_ht (), body_cor (), foot_ht (), foot_tot (), ins_list (),
+    body_ht (), body_cor (), foot_ht (), foot_tot (),
+    float_ht (), float_tot (), ins_list (),
     best_prev (path (-1)), best_pens (MAX_SI),
     todo_list (false), done_list (false)
 {
@@ -91,6 +94,7 @@ new_breaker_rep::new_breaker_rep (
 
     int k= N (l[i]->fl);
     space foot_spc (0);
+    space float_spc (0);
     array<insertion> ins_here;
     for (int j=0; j<k; j++) {
       lazy_vstream lvs= (lazy_vstream) l[i]->fl[j];
@@ -98,12 +102,14 @@ new_breaker_rep::new_breaker_rep (
       ins_here << ins;
       if (is_tuple (lvs->channel, "footnote"))
         foot_spc += ins->ht + fn_sep;
-      else if (is_tuple (lvs->channel, "float")) {
-      }
+      else if (is_tuple (lvs->channel, "float"))
+        float_spc += ins->ht + float_sep;
     }
     ins_list << ins_here;
     foot_ht  << foot_spc;
     foot_tot << (i==0? space(0): foot_tot[i-1] + foot_ht[i]);
+    float_ht  << float_spc;
+    float_tot << (i==0? space(0): float_tot[i-1] + float_ht[i]);
   }
 
   best_prev (path (0))= path (-2); 
@@ -120,7 +126,7 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
   
   path p1= p * 0;
   path p2= p * N(lvs->l);
-  insertion ins (lvs->channel, p1, p2);
+  insertion ins (copy (lvs->channel), p1, p2);
   
   array<page_item> l= lvs->l;
   array<space> ins_ht;
@@ -154,7 +160,21 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
 space
 new_breaker_rep::compute_space (path b1, path b2) {
   //cout << "    Compute space " << b1 << ", " << b2 << LF;
-  int i1= b1[0], i2= b2[0];
+  int i1= b1->item, i2= b2->item;
+  if (!is_nil (b1->next)) {
+    if (b2 == b1) return space (0);
+    path nx= b1->next;
+    path q1= path (b1->item, nx->next->next);
+    int  i0= nx->item;
+    int  j0= nx->next->item;
+    insertion fl= ins_list[i0][j0];
+    return fl->ht + float_sep + compute_space (q1, b2);
+  }
+  if (!is_nil (b2->next))
+    return compute_space (b1, path (b2->item)) -
+           compute_space (b2, path (b2->item));
+  if (i1 == i2) return space (0);
+  
   space spc;
   if (i1 == 0) { if (i2 > 1) spc= copy (body_tot[i2-2]); }
   else spc= body_tot[i2-2] - body_tot[i1-1];
@@ -162,13 +182,16 @@ new_breaker_rep::compute_space (path b1, path b2) {
   SI bot_cor= body_cor[i2-1]->min;
   spc += space (top_cor + body_cor[i2-1]->def + bot_cor);
 
-  if (foot_tot[i2-1]->max > (i1==0? 0: foot_tot[i1-1]->min)) {
+  if (foot_tot[i2-1]->def > (i1==0? 0: foot_tot[i1-1]->def)) {
     space foot_spc= foot_tot[i2-1] - (i1==0? space(0): foot_tot[i1-1]);
     foot_spc += fnote_sep - fn_sep;
     spc += foot_spc;
   }
 
-  //cout << "    Computed space " << i1 << ", " << i2 << " ~> " << spc << LF;
+  if (float_tot[i2-1]->def > (i1==0? 0: float_tot[i1-1]->def))
+    spc += (float_tot[i2-1] - (i1==0? space(0): float_tot[i1-1]));
+
+  //cout << "    Computed space " << b1 << ", " << b2 << " ~> " << spc << LF;
   return spc;
 }
 
@@ -181,12 +204,31 @@ new_breaker_rep::find_page_breaks (path b1) {
   //cout << "Find page breaks " << b1 << LF;
   bool ok= false;
   vpenalty prev_pen= best_pens [b1];
-  path b2= path (b1->item + 1);
   int n= N(l);
-  while (b2->item <= n) {
+  path floats;
+  path b2= b1;
+  while (true) {
+    if (!is_nil (b2->next))
+      b2= path (b2->item, b2->next->next->next);
+    else if (b2->item >= n)
+      break;
+    else {
+      int i= b2->item;
+      if (N(ins_list[i]) != 0 &&
+          float_tot[i]->def > (i==0? 0: float_tot[i-1]->def)) {
+        for (int j=0; j<N(ins_list[i]); j++) {
+          insertion ins= ins_list[i][j];
+          if (is_tuple (ins->type, "float"))
+            floats= floats * path (i, j);
+        }
+      }
+      b2= path (i+1, floats);
+    }
+    if (b2->item > n) break;
+    
     space spc;
     int bpen= l[b2->item - 1]->penalty;
-    if (b2->item >= n) bpen= 0;
+    if (b2->item == n && is_nil (b2->next)) bpen= 0;
     if (bpen < HYPH_INVALID) {
       spc= compute_space (b1, b2);
       ok= true;
@@ -221,8 +263,7 @@ new_breaker_rep::find_page_breaks (path b1) {
 	best_pens (b2)= pen;
       }
     }
-    if (ok && (spc->min > height->max)) break;
-    b2= path (b2->item + 1);
+    if (ok && spc->min > height->max && is_nil (b2->next)) break;
   }
 }
 
@@ -360,8 +401,8 @@ new_breaker_rep::format_pagelet (pagelet& pg, space ht, bool last_page) {
 ******************************************************************************/
 
 insertion
-new_breaker_rep::make_insertion (int i1, int i2, bool last_page) {
-  //cout << "Make insertion " << i1 << ", " << i2 << ", " << last_page << LF;
+new_breaker_rep::make_insertion (int i1, int i2) {
+  //cout << "Make insertion " << i1 << ", " << i2 << LF;
   path p1= i1;
   path p2= i2;
   insertion ins ("", p1, p2);  
@@ -379,19 +420,46 @@ new_breaker_rep::make_insertion (int i1, int i2, bool last_page) {
 }
 
 void
-new_breaker_rep::assemble_skeleton (skeleton& sk, int end) {
-  int start= best_prev [path (end)] -> item, n= N(l);
-  //cout << "Assemble skeleton " << end << " previous " << start << LF;
-  if (start < 0) return;
+new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
+  int n= N(l);
+  path start= best_prev [end];
+  //cout << "Assemble skeleton " << start << " -- " << end << LF;
+  if (start->item < 0) return;
   assemble_skeleton (sk, start);
-  insertion ins= make_insertion (start, end, end == n);
-  pagelet pg (0);
-  pg << ins;
-  for (int i=start; i<end; i++)
+
+  // Position all floats
+  path floats= start->next;
+  path avoid = end->next;
+  for (int i=start->item; i<end->item; i++)
     for (int j=0; j<N(ins_list[i]); j++)
-      if (is_tuple (ins_list[i][j]->type, "footnote"))
+      if (is_tuple (ins_list[i][j]->type, "float")) {
+        if (!is_nil (avoid) && avoid->item == i && avoid->next->item == j)
+          avoid= avoid->next->next;
+        else floats= floats * path (i, j);
+      }
+
+  // Add the page
+  pagelet pg (0);
+  while (!is_nil (floats)) {
+    int i= floats->item, j= floats->next->item;
+    floats= floats->next->next;
+    pg << ins_list[i][j];
+    pg << float_sep;
+  }
+  if (end->item > start->item) {
+    insertion ins= make_insertion (start->item, end->item);
+    pg << ins;
+  }
+  bool has_footnotes= false;
+  for (int i=start->item; i<end->item; i++)
+    for (int j=0; j<N(ins_list[i]); j++)
+      if (is_tuple (ins_list[i][j]->type, "footnote")) {
         pg << ins_list[i][j];
-  bool last_page= last_page_flag && (end == n);
+        if (has_footnotes) pg << fn_sep;
+        else pg << fnote_sep;
+        has_footnotes= true;
+      }
+  bool last_page= last_page_flag && (end == path (n));
   format_pagelet (pg, height, last_page);
   sk << pg;
 }
@@ -412,7 +480,7 @@ new_break_pages (array<page_item> l, space ph, int qual,
   H->find_page_breaks ();
   //cout << HRULE << LF;
   skeleton sk;
-  H->assemble_skeleton (sk, N(l));
+  H->assemble_skeleton (sk, path (N(l)));
   //cout << HRULE << LF;
   tm_delete (H);
   return sk;
