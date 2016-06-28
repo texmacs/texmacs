@@ -53,7 +53,7 @@ struct new_breaker_rep {
 
   insertion make_insertion (lazy_vstream lvs, path p);
   space compute_space (path b1, path b2);
-  void find_page_breaks (path i1, path& first_end);
+  void find_page_breaks (path i1);
   void find_page_breaks ();
   vpenalty format_insertion (insertion& ins, double stretch);
   vpenalty format_pagelet (pagelet& pg, double stretch);
@@ -173,12 +173,11 @@ new_breaker_rep::compute_space (path b1, path b2) {
 ******************************************************************************/
 
 void
-new_breaker_rep::find_page_breaks (path b1, path& first_end) {
-  //cout << "Find page breaks " << b1 << ", " << first_end << LF;
-  vpenalty prev_pen= best_pens [b1];
-  if (b1->item + 1 >= first_end->item) first_end= path (b1->item + 1);
+new_breaker_rep::find_page_breaks (path b1) {
+  //cout << "Find page breaks " << b1 << LF;
   bool ok= false;
-  path b2= first_end;
+  vpenalty prev_pen= best_pens [b1];
+  path b2= path (b1->item + 1);
   int n= N(l);
   while (true) {
     space spc;
@@ -186,7 +185,6 @@ new_breaker_rep::find_page_breaks (path b1, path& first_end) {
     if (b2->item >= n) bpen= 0;
     if (bpen < HYPH_INVALID) {
       spc= compute_space (b1, b2);
-      if (!ok && spc->max < height->min) first_end= b2;
       ok= true;
       vpenalty pen= prev_pen + vpenalty (bpen);
       if ((b2->item < n) || (!last_page_flag))
@@ -212,6 +210,7 @@ new_breaker_rep::find_page_breaks (path b1, path& first_end) {
 	}
       }
       if (pen < best_pens [b2]) {
+        //cout << b1 << ", " << b2 << " ~> " << pen << "\n";
 	best_prev (b2)= b1;
 	best_pens (b2)= pen;
       }
@@ -232,10 +231,9 @@ new_breaker_rep::find_page_breaks () {
   //  cout << "  " << i << ": \t" << l[i]
   //       << ", " << body_ht[i]
   //       << ", " << body_cor[i] << ", " << body_tot[i] << LF;
-  path first_end= path (0);
   for (int i=0; i<N(l); i++)
     if (best_prev [path (i)] != path (-1))
-      find_page_breaks (path (i), first_end);
+      find_page_breaks (path (i));
   //cout << "Found page breaks" << LF;
 }
 
@@ -359,9 +357,9 @@ new_breaker_rep::make_insertion (int i1, int i2, bool last_page) {
   space spc;
   if (i1 == 0) { if (N(l) > 1) spc= copy (body_tot[i2-2]); }
   else { spc= body_tot[i2-2] - body_tot[i1-1]; }
-  SI top_cor= body_cor[0]->max;
-  SI bot_cor= body_cor[N(l)-1]->min;
-  spc += space (top_cor + body_cor[N(l)-1]->def + bot_cor);
+  SI top_cor= body_cor[i1]->max;
+  SI bot_cor= body_cor[i2-1]->min;
+  spc += space (top_cor + body_cor[i2-1]->def + bot_cor);
   ins->ht     = spc;
   ins->top_cor= top_cor;
   ins->bot_cor= bot_cor;

@@ -1226,7 +1226,7 @@ page_breaker_rep::fast_break_page (int i1, int& first_end) {
     SI top_cor= flow_cor[0][i1]->max;
     SI bot_cor= flow_cor[0][i2-1]->min;
     spc += space (top_cor + flow_cor[0][i2-1]->def + bot_cor);
-
+    
     int bpen= access (l, flow[0][i2-1])->penalty;
     if (i2 >= n) bpen= 0;
     if (bpen < HYPH_INVALID) {
@@ -1497,11 +1497,17 @@ page_breaker_rep::make_skeleton () {
 * The exported page breaking routine
 ******************************************************************************/
 
+skeleton new_break_pages (array<page_item> l, space ph, int qual,
+                          space fn_sep, space fnote_sep, space float_sep,
+                          font fn, int first_page);
+
 skeleton
 break_pages (array<page_item> l, space ph, int qual,
 	     space fn_sep, space fnote_sep, space float_sep,
              font fn, int first_page)
 {
+  //return new_break_pages (l, ph, qual, fn_sep, fnote_sep, float_sep,
+  //                        fn, first_page);
   page_breaker_rep* H=
     tm_new<page_breaker_rep> (l, ph, qual, fn_sep, fnote_sep, float_sep,
                               fn, first_page);

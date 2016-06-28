@@ -20,9 +20,6 @@ page_item access (array<page_item> l, path p);
 skeleton break_pages (array<page_item> l, space ph, int qual,
 		      space fn_sep, space fnote_sep, space float_sep,
                       font fn, int first_page);
-skeleton new_break_pages (array<page_item> l, space ph, int qual,
-                          space fn_sep, space fnote_sep, space float_sep,
-                          font fn, int first_page);
 box page_box (path ip, box b, tree page, int page_nr, brush bgc,
               SI width, SI height, SI left, SI top,
 	      SI bot, box header, box footer, SI head_sep, SI foot_sep);
