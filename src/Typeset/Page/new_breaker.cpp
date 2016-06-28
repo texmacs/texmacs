@@ -200,7 +200,7 @@ new_breaker_rep::compute_space (path b1, path b2) {
 ******************************************************************************/
 
 static bool
-float_property (tree t, char c) {
+float_has (tree t, char c) {
   if (N(t) < 2) return false;
   string s= as_string (t[1]);
   for (int i=0; i<N(s); i++)
@@ -229,17 +229,17 @@ new_breaker_rep::find_page_breaks (path b1) {
         for (int j=0; j<N(ins_list[i]); j++) {
           insertion ins= ins_list[i][j];
           if (is_tuple (ins->type, "float")) {
-            if (float_property (ins->type, 'f')) {
+            if (float_has (ins->type, 'f')) {
               while (!is_nil (floats)) {
                 int i2= floats->item;
                 int j2= floats->next->item;
                 floats= floats->next->next;
                 insertion ins2= ins_list[i2][j2];
-                if (float_status == 0 && !float_property (ins2->type, 't'))
+                if (float_status == 0 && !float_has (ins2->type, 't'))
                   float_status= 1;
-                if (float_status == 1 && !float_property (ins2->type, 'h'))
+                if (float_status == 1 && !float_has (ins2->type, 'h'))
                   float_status= 2;
-                if (float_status == 2 && !float_property (ins2->type, 'b'))
+                if (float_status == 2 && !float_has (ins2->type, 'b'))
                   float_status= 3;
               }
             }
@@ -458,8 +458,14 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
   assemble_skeleton (sk, start);
 
   // Position all floats
-  path floats= start->next;
-  path avoid = end->next;
+  path floats = start->next;
+  path avoid  = end->next;
+  path counter= floats;
+  while (!is_nil (counter)) {
+    int i= counter->item, j= counter->next->item;
+    counter= counter->next->next;
+    ins_list[i][j]->type= tuple ("float", "t");
+  }
   for (int i=start->item; i<end->item; i++)
     for (int j=0; j<N(ins_list[i]); j++)
       if (is_tuple (ins_list[i][j]->type, "float")) {
@@ -467,18 +473,48 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
           avoid= avoid->next->next;
         else floats= floats * path (i, j);
       }
+  path top, here, bottom;
+  while (!is_nil (floats)) {
+    bool ok= false;
+    int i= floats->item, j= floats->next->item;
+    if (float_has (ins_list[i][j]->type, 't')) {
+      top= top * path (i, j);
+      floats= floats->next->next;
+      if (is_nil (floats)) break;
+      ok= true;
+    }
+    int num= N(floats);
+    i= floats[num-2]; j= floats[num-1];
+    if (float_has (ins_list[i][j]->type, 'b')) {
+      bottom= path (i, j) * bottom;
+      floats= path_up (floats, 2);
+      if (is_nil (floats)) break;
+      ok= true;
+    }
+    if (!ok) {
+      here= floats;
+      break;
+    }
+  }
+  top= top * here;
 
   // Add the page
   pagelet pg (0);
-  while (!is_nil (floats)) {
-    int i= floats->item, j= floats->next->item;
-    floats= floats->next->next;
+  while (!is_nil (top)) {
+    int i= top->item, j= top->next->item;
+    top= top->next->next;
     pg << ins_list[i][j];
     pg << float_sep;
   }
   if (end->item > start->item) {
     insertion ins= make_insertion (start->item, end->item);
     pg << ins;
+  }
+  while (!is_nil (bottom)) {
+    int i= bottom->item, j= bottom->next->item;
+    bottom= bottom->next->next;
+    pg << ins_list[i][j];
+    pg << float_sep;
   }
   bool has_footnotes= false;
   for (int i=start->item; i<end->item; i++)
