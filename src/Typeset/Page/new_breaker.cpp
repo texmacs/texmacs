@@ -53,7 +53,7 @@ struct new_breaker_rep {
 
   insertion make_insertion (lazy_vstream lvs, path p);
   space compute_space (path b1, path b2);
-  void find_page_breaks (int i1, int& first_end);
+  void find_page_breaks (path i1, path& first_end);
   void find_page_breaks ();
   vpenalty format_insertion (insertion& ins, double stretch);
   vpenalty format_pagelet (pagelet& pg, double stretch);
@@ -173,25 +173,25 @@ new_breaker_rep::compute_space (path b1, path b2) {
 ******************************************************************************/
 
 void
-new_breaker_rep::find_page_breaks (int i1, int& first_end) {
-  //cout << "Find page breaks " << i1 << ", " << first_end << LF;
-  vpenalty prev_pen= best_pens [path (i1)];
-  first_end= max (i1+1, first_end);
+new_breaker_rep::find_page_breaks (path b1, path& first_end) {
+  //cout << "Find page breaks " << b1 << ", " << first_end << LF;
+  vpenalty prev_pen= best_pens [b1];
+  if (b1->item + 1 >= first_end->item) first_end= path (b1->item + 1);
   bool ok= false;
-  int i2= first_end, n= N(l);
+  path b2= first_end;
+  int n= N(l);
   while (true) {
     space spc;
-    int bpen= l[i2-1]->penalty;
-    if (i2 >= n) bpen= 0;
+    int bpen= l[b2->item - 1]->penalty;
+    if (b2->item >= n) bpen= 0;
     if (bpen < HYPH_INVALID) {
-      path b1= i1, b2= i2;
       spc= compute_space (b1, b2);
+      if (!ok && spc->max < height->min) first_end= b2;
       ok= true;
-      if (spc->max < height->min) first_end= i2;
       vpenalty pen= prev_pen + vpenalty (bpen);
-      if ((i2 < n) || (!last_page_flag))
+      if ((b2->item < n) || (!last_page_flag))
 	pen += as_vpenalty (spc->def - height->def);
-      if (((i2 < n) || (!last_page_flag)) && (spc->max < height->def)) {
+      if (((b2->item < n) || (!last_page_flag)) && (spc->max < height->def)) {
 	if (spc->max >= height->min) pen += EXTEND_PAGE_PENALTY;
 	else {
 	  double factor=
@@ -211,13 +211,13 @@ new_breaker_rep::find_page_breaks (int i1, int& first_end) {
 	  pen= vpenalty ((int) (factor * TOO_LONG_PENALTY));
 	}
       }
-      if (pen < best_pens [path (i2)]) {
-	best_prev (path (i2))= path (i1);
-	best_pens (path (i2))= pen;
+      if (pen < best_pens [b2]) {
+	best_prev (b2)= b1;
+	best_pens (b2)= pen;
       }
     }
-    if ((i2 >= n) || (ok && (spc->min > height->max))) break;
-    i2++;
+    if ((b2->item >= n) || (ok && (spc->min > height->max))) break;
+    b2= path (b2->item + 1);
   }
 }
 
@@ -232,10 +232,10 @@ new_breaker_rep::find_page_breaks () {
   //  cout << "  " << i << ": \t" << l[i]
   //       << ", " << body_ht[i]
   //       << ", " << body_cor[i] << ", " << body_tot[i] << LF;
-  int first_end= 0;
+  path first_end= path (0);
   for (int i=0; i<N(l); i++)
     if (best_prev [path (i)] != path (-1))
-      find_page_breaks (i, first_end);
+      find_page_breaks (path (i), first_end);
   //cout << "Found page breaks" << LF;
 }
 
