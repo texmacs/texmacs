@@ -669,6 +669,15 @@
 		9C4A740C1D22BEE900572468 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740A1D22BEE900572468 /* player.cpp */; };
 		9C4A740D1D22BEF500572468 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740A1D22BEE900572468 /* player.cpp */; };
 		9C4A740E1D22BEF600572468 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740A1D22BEE900572468 /* player.cpp */; };
+		9C4A74101D22C37400572468 /* glyph_effects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740F1D22C37400572468 /* glyph_effects.cpp */; };
+		9C4A74121D22C38200572468 /* raster_random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A74111D22C38200572468 /* raster_random.cpp */; };
+		9C4A74131D22C38900572468 /* raster_random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A74111D22C38200572468 /* raster_random.cpp */; };
+		9C4A74141D22C38900572468 /* raster_random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A74111D22C38200572468 /* raster_random.cpp */; };
+		9C4A74151D22C38D00572468 /* glyph_effects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740F1D22C37400572468 /* glyph_effects.cpp */; };
+		9C4A74161D22C38D00572468 /* glyph_effects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740F1D22C37400572468 /* glyph_effects.cpp */; };
+		9C4A74181D22C3A000572468 /* poor_distorted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A74171D22C3A000572468 /* poor_distorted.cpp */; };
+		9C4A74191D22C3A200572468 /* poor_distorted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A74171D22C3A000572468 /* poor_distorted.cpp */; };
+		9C4A741A1D22C3A300572468 /* poor_distorted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A74171D22C3A000572468 /* poor_distorted.cpp */; };
 		9C4B87A612AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
 		9C4B87A712AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
 		9C4B87A812AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
@@ -2338,6 +2347,9 @@
 		9C3DA71E12932990009617C4 /* extend_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = extend_widget.cpp; sourceTree = "<group>"; };
 		9C4A740A1D22BEE900572468 /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = player.cpp; sourceTree = "<group>"; };
 		9C4A740B1D22BEE900572468 /* player.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = player.hpp; sourceTree = "<group>"; };
+		9C4A740F1D22C37400572468 /* glyph_effects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glyph_effects.cpp; sourceTree = "<group>"; };
+		9C4A74111D22C38200572468 /* raster_random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = raster_random.cpp; sourceTree = "<group>"; };
+		9C4A74171D22C3A000572468 /* poor_distorted.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = poor_distorted.cpp; sourceTree = "<group>"; };
 		9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_serializer.cpp; sourceTree = "<group>"; };
 		9C4DE77A1475AA9A00F41E44 /* glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glue.cpp; sourceTree = "<group>"; };
 		9C4DE77B1475AA9A00F41E44 /* glue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = glue.hpp; sourceTree = "<group>"; };
@@ -2932,6 +2944,7 @@
 		49DEED1B170ACFB800332D9F /* Pictures */ = {
 			isa = PBXGroup;
 			children = (
+				9C4A74111D22C38200572468 /* raster_random.cpp */,
 				491BB5A21731186A00A755DF /* effect.cpp */,
 				491BB5A31731186A00A755DF /* effect.hpp */,
 				49DEED1C170ACFB800332D9F /* picture.cpp */,
@@ -3272,6 +3285,7 @@
 		9C0B47D310A8CC100097A335 /* Bitmap_fonts */ = {
 			isa = PBXGroup;
 			children = (
+				9C4A740F1D22C37400572468 /* glyph_effects.cpp */,
 				9C0B47D410A8CC100097A335 /* bitmap_font.cpp */,
 				9C0B47D510A8CC100097A335 /* bitmap_font.hpp */,
 				49FFB07816EDF83A004A2A32 /* glyph_analyze.cpp */,
@@ -3287,6 +3301,7 @@
 		9C0B47D910A8CC100097A335 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				9C4A74171D22C3A000572468 /* poor_distorted.cpp */,
 				9C0B47DA10A8CC100097A335 /* charmap.cpp */,
 				9C0B47DB10A8CC100097A335 /* charmap.hpp */,
 				9C0B47DC10A8CC100097A335 /* compound_font.cpp */,
@@ -4901,6 +4916,7 @@
 			files = (
 				9C0B49F010A8CC110097A335 /* generic.cpp in Sources */,
 				9C0B49F110A8CC110097A335 /* input.cpp in Sources */,
+				9C4A74101D22C37400572468 /* glyph_effects.cpp in Sources */,
 				4911B1801CCA191400F0AFFD /* poor_bold.cpp in Sources */,
 				9C0B49F210A8CC110097A335 /* from_scheme.cpp in Sources */,
 				9C0B49F310A8CC110097A335 /* to_scheme.cpp in Sources */,
@@ -4976,6 +4992,7 @@
 				9C0B4A3A10A8CC110097A335 /* virtual_font.cpp in Sources */,
 				9C0B4A3B10A8CC110097A335 /* widget.cpp in Sources */,
 				9C0B4A3C10A8CC110097A335 /* math_tree.cpp in Sources */,
+				9C4A74181D22C3A000572468 /* poor_distorted.cpp in Sources */,
 				9C0B4A3D10A8CC110097A335 /* test_math.cpp in Sources */,
 				9C0B4A3E10A8CC110097A335 /* basic_renderer.cpp in Sources */,
 				9C0B4A3F10A8CC110097A335 /* page_type.cpp in Sources */,
@@ -5053,6 +5070,7 @@
 				9C0B4AE410A8CC110097A335 /* mathemagix_language.cpp in Sources */,
 				9C0B4AE510A8CC110097A335 /* scheme_language.cpp in Sources */,
 				9C0B4AE610A8CC110097A335 /* text_language.cpp in Sources */,
+				9C4A74121D22C38200572468 /* raster_random.cpp in Sources */,
 				9C0B4AE710A8CC110097A335 /* verb_language.cpp in Sources */,
 				9C0B4AE810A8CC110097A335 /* connection.cpp in Sources */,
 				9C0B4AE910A8CC110097A335 /* dyn_link.cpp in Sources */,
@@ -5300,6 +5318,7 @@
 				9CCC740810D303D900E88D90 /* upgradetm.cpp in Sources */,
 				9CCC740910D303D900E88D90 /* verbatim.cpp in Sources */,
 				9CCC740A10D303D900E88D90 /* fromxml.cpp in Sources */,
+				9C4A741A1D22C3A300572468 /* poor_distorted.cpp in Sources */,
 				9CCC740B10D303D900E88D90 /* parsexml.cpp in Sources */,
 				9CCC740C10D303D900E88D90 /* drd_info.cpp in Sources */,
 				9CCC740D10D303D900E88D90 /* drd_mode.cpp in Sources */,
@@ -5321,6 +5340,7 @@
 				9CCC741A10D303D900E88D90 /* undo_observer.cpp in Sources */,
 				9CCC741B10D303D900E88D90 /* analyze.cpp in Sources */,
 				9CCC741C10D303D900E88D90 /* converter.cpp in Sources */,
+				9C4A74131D22C38900572468 /* raster_random.cpp in Sources */,
 				9CCC742810D303D900E88D90 /* tree_correct.cpp in Sources */,
 				9CCC742910D303D900E88D90 /* tree_cursor.cpp in Sources */,
 				9CCC742A10D303D900E88D90 /* tree_traverse.cpp in Sources */,
@@ -5492,6 +5512,7 @@
 				4934A46F18C5D00000BF1E6A /* tracked_fromtex.cpp in Sources */,
 				9CCC74DB10D303D900E88D90 /* bridge_rewrite.cpp in Sources */,
 				9CCC74DC10D303D900E88D90 /* bridge_surround.cpp in Sources */,
+				9C4A74161D22C38D00572468 /* glyph_effects.cpp in Sources */,
 				9CCC74DD10D303D900E88D90 /* bridge_with.cpp in Sources */,
 				9CCC74DE10D303D900E88D90 /* typesetter.cpp in Sources */,
 				9CCC74DF10D303D900E88D90 /* concat_active.cpp in Sources */,
@@ -5631,6 +5652,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C4A74141D22C38900572468 /* raster_random.cpp in Sources */,
 				9CD4E5F310B14AB300E0DD5C /* generic.cpp in Sources */,
 				9CD4E5F410B14AB300E0DD5C /* input.cpp in Sources */,
 				9CD4E5F510B14AB300E0DD5C /* from_scheme.cpp in Sources */,
@@ -5651,6 +5673,7 @@
 				9CD4E60210B14AB300E0DD5C /* drd_std.cpp in Sources */,
 				9CD4E60310B14AB300E0DD5C /* tag_info.cpp in Sources */,
 				9CD4E60410B14AB300E0DD5C /* vars.cpp in Sources */,
+				9C4A74151D22C38D00572468 /* glyph_effects.cpp in Sources */,
 				9CD4E60510B14AB300E0DD5C /* archiver.cpp in Sources */,
 				49C096121B0F945300E038BA /* database.cpp in Sources */,
 				9CD4E60610B14AB300E0DD5C /* commute.cpp in Sources */,
@@ -5894,6 +5917,7 @@
 				49C0961E1B0F945300E038BA /* db_sort.cpp in Sources */,
 				9CD4E71D10B14AEE00E0DD5C /* scroll_widget.cpp in Sources */,
 				9CD4E71E10B14AEE00E0DD5C /* scrollable_widget.cpp in Sources */,
+				9C4A74191D22C3A200572468 /* poor_distorted.cpp in Sources */,
 				9CD4E71F10B14AEE00E0DD5C /* scrollbar_widget.cpp in Sources */,
 				9CD4E72010B14AEE00E0DD5C /* separator_widget.cpp in Sources */,
 				9CD4E72110B14AEE00E0DD5C /* simple_wk_widget.cpp in Sources */,
@@ -6082,14 +6106,6 @@
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_CFLAGS = (
-					"$(TM_CPPFLAGS)",
-					"$(TM_CXXQT)",
-					"$(TM_CXXFREETYPE)",
-					"$(TM_CXXGUILE)",
-					"$(TM_CXXPDF)",
-					"-DQTTEXMACS",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SEPARATE_STRIP = NO;
 				SKIP_INSTALL = YES;
@@ -6116,14 +6132,6 @@
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_CFLAGS = (
-					"$(TM_CPPFLAGS)",
-					"$(TM_CXXQT)",
-					"$(TM_CXXFREETYPE)",
-					"$(TM_CXXGUILE)",
-					"$(TM_CXXPDF)",
-					"-DQTTEXMACS",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SEPARATE_STRIP = NO;
 				SKIP_INSTALL = YES;
@@ -6161,7 +6169,6 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -6176,7 +6183,6 @@
 			baseConfigurationReference = 4937B89A1521C59E00D87F22 /* MOCs.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_VERSION = "";
@@ -6244,6 +6250,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -6259,6 +6266,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C61B42F141A1B780035D78F /* TeXmacsQt.xcconfig */;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libstdc++";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_VERSION = "";
