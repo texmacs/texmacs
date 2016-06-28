@@ -312,9 +312,6 @@
 		49705A711CA3F4EB0081B937 /* TiledPatternContentContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A6A1CA3F4EB0081B937 /* TiledPatternContentContext.cpp */; };
 		49705A721CA3F4EB0081B937 /* TiledPatternContentContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49705A6B1CA3F4EB0081B937 /* TiledPatternContentContext.h */; };
 		49705A741CA3F5150081B937 /* smoothen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A731CA3F5150081B937 /* smoothen.cpp */; };
-		49705A771CA3F57B0081B937 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A751CA3F57B0081B937 /* player.cpp */; };
-		49705A781CA3F57B0081B937 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A751CA3F57B0081B937 /* player.cpp */; };
-		49705A791CA3F57B0081B937 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A751CA3F57B0081B937 /* player.cpp */; };
 		4973E9A118BC945F001F74F0 /* r_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4973E9A018BC945F001F74F0 /* r_language.cpp */; };
 		4973E9A218BC945F001F74F0 /* r_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4973E9A018BC945F001F74F0 /* r_language.cpp */; };
 		4973E9A318BC945F001F74F0 /* r_language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4973E9A018BC945F001F74F0 /* r_language.cpp */; };
@@ -669,6 +666,9 @@
 		9C3D2E5A12B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
 		9C3D2E5B12B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
 		9C3DA71F12932990009617C4 /* extend_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3DA71E12932990009617C4 /* extend_widget.cpp */; };
+		9C4A740C1D22BEE900572468 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740A1D22BEE900572468 /* player.cpp */; };
+		9C4A740D1D22BEF500572468 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740A1D22BEE900572468 /* player.cpp */; };
+		9C4A740E1D22BEF600572468 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4A740A1D22BEE900572468 /* player.cpp */; };
 		9C4B87A612AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
 		9C4B87A712AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
 		9C4B87A812AE5BD100F8571A /* packrat_serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */; };
@@ -1734,8 +1734,6 @@
 		49705A6A1CA3F4EB0081B937 /* TiledPatternContentContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TiledPatternContentContext.cpp; sourceTree = "<group>"; };
 		49705A6B1CA3F4EB0081B937 /* TiledPatternContentContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledPatternContentContext.h; sourceTree = "<group>"; };
 		49705A731CA3F5150081B937 /* smoothen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smoothen.cpp; sourceTree = "<group>"; };
-		49705A751CA3F57B0081B937 /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = player.cpp; sourceTree = "<group>"; };
-		49705A761CA3F57B0081B937 /* player.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = player.hpp; sourceTree = "<group>"; };
 		4973E9A018BC945F001F74F0 /* r_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = r_language.cpp; sourceTree = "<group>"; };
 		497822CA16EC86D40054F5BA /* tt_analyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tt_analyze.cpp; sourceTree = "<group>"; };
 		499CCC091B16242B0094E0A9 /* latex_recover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = latex_recover.cpp; sourceTree = "<group>"; };
@@ -2338,6 +2336,8 @@
 		9C3D2E5712B0D662009E33AD /* tree_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_select.cpp; sourceTree = "<group>"; };
 		9C3D2E5812B0D662009E33AD /* tree_select.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_select.hpp; sourceTree = "<group>"; };
 		9C3DA71E12932990009617C4 /* extend_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = extend_widget.cpp; sourceTree = "<group>"; };
+		9C4A740A1D22BEE900572468 /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = player.cpp; sourceTree = "<group>"; };
+		9C4A740B1D22BEE900572468 /* player.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = player.hpp; sourceTree = "<group>"; };
 		9C4B87A512AE5BD100F8571A /* packrat_serializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packrat_serializer.cpp; sourceTree = "<group>"; };
 		9C4DE77A1475AA9A00F41E44 /* glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glue.cpp; sourceTree = "<group>"; };
 		9C4DE77B1475AA9A00F41E44 /* glue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = glue.hpp; sourceTree = "<group>"; };
@@ -2353,9 +2353,7 @@
 		9C61B420141A1B780035D78F /* bundle-libs.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "bundle-libs.sh"; sourceTree = "<group>"; };
 		9C61B422141A1B780035D78F /* Info-Xcode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Xcode.plist"; sourceTree = "<group>"; };
 		9C61B423141A1B780035D78F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9C61B424141A1B780035D78F /* install_name_tool */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = install_name_tool; sourceTree = "<group>"; };
 		9C61B425141A1B780035D78F /* PkgInfo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PkgInfo; sourceTree = "<group>"; };
-		9C61B426141A1B780035D78F /* strip */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = strip; sourceTree = "<group>"; };
 		9C61B427141A1B780035D78F /* TeXmacs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = TeXmacs; sourceTree = "<group>"; };
 		9C61B428141A1B780035D78F /* TeXmacs-document.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "TeXmacs-document.icns"; sourceTree = "<group>"; };
 		9C61B429141A1B780035D78F /* TeXmacs-document.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TeXmacs-document.psd"; sourceTree = "<group>"; };
@@ -3381,6 +3379,8 @@
 		9C0B481610A8CC100097A335 /* Abstractions */ = {
 			isa = PBXGroup;
 			children = (
+				9C4A740A1D22BEE900572468 /* player.cpp */,
+				9C4A740B1D22BEE900572468 /* player.hpp */,
 				9C0B481710A8CC100097A335 /* basic.cpp */,
 				9C0B481810A8CC100097A335 /* basic.hpp */,
 				9C0B481910A8CC100097A335 /* blackbox.hpp */,
@@ -3430,8 +3430,6 @@
 				9C0B483810A8CC100097A335 /* parse_string.hpp */,
 				9C0B483910A8CC100097A335 /* path.cpp */,
 				9C0B483A10A8CC100097A335 /* path.hpp */,
-				49705A751CA3F57B0081B937 /* player.cpp */,
-				49705A761CA3F57B0081B937 /* player.hpp */,
 				9C0B483B10A8CC100097A335 /* rectangles.cpp */,
 				9C0B483C10A8CC100097A335 /* rectangles.hpp */,
 				9C0B483D10A8CC100097A335 /* space.cpp */,
@@ -4390,9 +4388,7 @@
 				9C61B420141A1B780035D78F /* bundle-libs.sh */,
 				9C61B422141A1B780035D78F /* Info-Xcode.plist */,
 				9C61B423141A1B780035D78F /* Info.plist */,
-				9C61B424141A1B780035D78F /* install_name_tool */,
 				9C61B425141A1B780035D78F /* PkgInfo */,
-				9C61B426141A1B780035D78F /* strip */,
 				9C61B427141A1B780035D78F /* TeXmacs */,
 				9C61B428141A1B780035D78F /* TeXmacs-document.icns */,
 				9C61B429141A1B780035D78F /* TeXmacs-document.psd */,
@@ -4959,6 +4955,7 @@
 				4934A46718C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */,
 				9C0B4A2810A8CC110097A335 /* edit_math.cpp in Sources */,
 				9C0B4A2910A8CC110097A335 /* edit_modify.cpp in Sources */,
+				9C4A740C1D22BEE900572468 /* player.cpp in Sources */,
 				9C0B4A2A10A8CC110097A335 /* edit_table.cpp in Sources */,
 				9C0B4A2B10A8CC110097A335 /* edit_text.cpp in Sources */,
 				9C0B4A2C10A8CC110097A335 /* edit_process.cpp in Sources */,
@@ -5051,7 +5048,6 @@
 				9C0B4ADE10A8CC110097A335 /* cpp_language.cpp in Sources */,
 				9C0B4ADF10A8CC110097A335 /* dictionary.cpp in Sources */,
 				9C0B4AE110A8CC110097A335 /* hyphenate.cpp in Sources */,
-				49705A771CA3F57B0081B937 /* player.cpp in Sources */,
 				9C0B4AE210A8CC110097A335 /* language.cpp in Sources */,
 				9C0B4AE310A8CC110097A335 /* math_language.cpp in Sources */,
 				9C0B4AE410A8CC110097A335 /* mathemagix_language.cpp in Sources */,
@@ -5396,6 +5392,7 @@
 				9CCC746510D303D900E88D90 /* tree_label.cpp in Sources */,
 				9CCC746610D303D900E88D90 /* bibtex.cpp in Sources */,
 				9CCC746710D303D900E88D90 /* TMButtonsController.m in Sources */,
+				9C4A740E1D22BEF600572468 /* player.cpp in Sources */,
 				9CCC746810D303D900E88D90 /* free_type.cpp in Sources */,
 				9CCC746910D303D900E88D90 /* tt_face.cpp in Sources */,
 				9CCC746A10D303D900E88D90 /* tt_file.cpp in Sources */,
@@ -5409,7 +5406,6 @@
 				493EAE321958CAE500F01CED /* python_language.cpp in Sources */,
 				9CCC747210D303D900E88D90 /* load_pk.cpp in Sources */,
 				9CCC747310D303D900E88D90 /* load_tex.cpp in Sources */,
-				49705A791CA3F57B0081B937 /* player.cpp in Sources */,
 				9CCC747410D303D900E88D90 /* load_tfm.cpp in Sources */,
 				49C096191B0F945300E038BA /* db_index.cpp in Sources */,
 				9CCC747510D303D900E88D90 /* tex_files.cpp in Sources */,
@@ -5671,6 +5667,7 @@
 				9CD4E61C10B14AB300E0DD5C /* tree_correct.cpp in Sources */,
 				9CD4E61D10B14AB300E0DD5C /* tree_cursor.cpp in Sources */,
 				4973E9A218BC945F001F74F0 /* r_language.cpp in Sources */,
+				9C4A740D1D22BEF500572468 /* player.cpp in Sources */,
 				9CD4E61E10B14AB300E0DD5C /* tree_traverse.cpp in Sources */,
 				9CD4E61F10B14AB300E0DD5C /* edit_main.cpp in Sources */,
 				9CD4E62010B14AB300E0DD5C /* edit_typeset.cpp in Sources */,
@@ -5851,7 +5848,6 @@
 				9CD4E6DD10B14AB300E0DD5C /* concater.cpp in Sources */,
 				9CD4E6DE10B14AB300E0DD5C /* env.cpp in Sources */,
 				9CD4E6DF10B14AB300E0DD5C /* env_default.cpp in Sources */,
-				49705A781CA3F57B0081B937 /* player.cpp in Sources */,
 				9CD4E6E010B14AB300E0DD5C /* env_exec.cpp in Sources */,
 				493EAE311958CAE500F01CED /* python_language.cpp in Sources */,
 				9CD4E6E110B14AB300E0DD5C /* env_inactive.cpp in Sources */,
@@ -6066,7 +6062,6 @@
 			baseConfigurationReference = 9C5A817C181DC97900B9C03D /* PDFWriter.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
@@ -6087,6 +6082,14 @@
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = (
+					"$(TM_CPPFLAGS)",
+					"$(TM_CXXQT)",
+					"$(TM_CXXFREETYPE)",
+					"$(TM_CXXGUILE)",
+					"$(TM_CXXPDF)",
+					"-DQTTEXMACS",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SEPARATE_STRIP = NO;
 				SKIP_INSTALL = YES;
@@ -6098,7 +6101,6 @@
 			baseConfigurationReference = 9C5A817C181DC97900B9C03D /* PDFWriter.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
@@ -6114,6 +6116,14 @@
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = (
+					"$(TM_CPPFLAGS)",
+					"$(TM_CXXQT)",
+					"$(TM_CXXFREETYPE)",
+					"$(TM_CXXGUILE)",
+					"$(TM_CXXPDF)",
+					"-DQTTEXMACS",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SEPARATE_STRIP = NO;
 				SKIP_INSTALL = YES;
