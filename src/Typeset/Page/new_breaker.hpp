@@ -63,6 +63,8 @@ struct new_breaker_rep {
 
   // Pages with multi-column content
   bool has_columns (path b1, path b2, int nr);
+  int number_columns (path b1, path b2);
+  bool is_uniform (path b1, path b2);
   array<path> break_uniform (path b1, path b2);
   int compute_penalty (path b);
   path postpone_floats (path b1, path b2);

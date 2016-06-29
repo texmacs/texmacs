@@ -33,14 +33,45 @@ new_breaker_rep::has_columns (path b1, path b2, int nr) {
   return col_number[i1] == nr;
 }
 
+int
+new_breaker_rep::number_columns (path b1, path b2) {
+  int i1= b1->item, i2= b2->item;
+  if (i1 < i2) return col_number[i2-1];
+  if (is_nil (b1->next) || b1 == b2) return 1;
+  int i= b1->next->item, j= b1->next->next->item;
+  return ins_list[i][j]->nr_cols;
+}
+
 /******************************************************************************
 * Breaking into portions with a uniform number of columns
 ******************************************************************************/
 
+bool
+new_breaker_rep::is_uniform (path b1, path b2) {
+  int nr= number_columns (b1, b2);
+  return has_columns (b1, b2, nr);
+}
+
 array<path>
 new_breaker_rep::break_uniform (path b1, path b2) {
-  array<path> r;
-  r << b1 << b2;
+  if (is_uniform (b1, b2)) {
+    array<path> r;
+    r << b1 << b2;
+    return r;
+  }
+  int i1= b1->item, i2= b2->item;
+  path bm;
+  if (i1 < i2 && i1 < col_same[i2])
+    bm= postpone_floats (path (col_same[i2]), b2);
+  else {
+    bm= b1;
+    while (!is_nil (bm->next) &&
+           is_uniform (b1, path (bm->item, bm->next->next->next)))
+      bm= path (bm->item, bm->next->next->next);
+  }
+  array<path> r= break_uniform (b1, bm);
+  r->resize (N(r) - 1);
+  r << break_uniform (bm, b2);
   return r;
 }
 
