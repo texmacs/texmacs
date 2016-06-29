@@ -242,6 +242,7 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
     started= true;
     string zero= "a"; zero[0]= '\0';
     string gkey= replace (key, zero, "<#0>");
+    if (gkey == "<#3000>") gkey= "space";
     call ("keyboard-press", object (gkey), object ((double) t));
     update_focus_loci ();
     if (!is_nil (focus_ids))
