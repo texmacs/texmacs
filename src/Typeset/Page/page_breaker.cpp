@@ -1242,7 +1242,7 @@ page_breaker_rep::fast_break_page (int i1, int& first_end) {
 	    ((double) max (spc->def, 1))/((double) max (height->def, 1));
 	  if (factor < 0.0 ) factor= 0.0;
 	  if (factor > 0.99) factor= 0.99;
-	  pen= vpenalty ((int) ((1.0 - factor) * TOO_SHORT_PENALTY));
+	  pen += vpenalty ((int) ((1.0 - factor) * TOO_SHORT_PENALTY));
 	}
       }
       else if (spc->min > height->def) {
@@ -1252,7 +1252,7 @@ page_breaker_rep::fast_break_page (int i1, int& first_end) {
 	    ((double) max (spc->def, 1))/((double) max (height->def, 1));
 	  if (factor < 1.0  ) factor= 1.0;
 	  if (factor > 100.0) factor= 100.0;
-	  pen= vpenalty ((int) (factor * TOO_LONG_PENALTY));
+	  pen += vpenalty ((int) (factor * TOO_LONG_PENALTY));
 	}
       }
       if (pen < best_pens[i2]) {
