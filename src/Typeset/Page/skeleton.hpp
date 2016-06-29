@@ -65,10 +65,11 @@ struct insertion_rep: concrete_struct {
   double    stretch;  // between -1 and 1 for determining final height
   SI        top_cor;  // top correction
   SI        bot_cor;  // bottom correction
-
+  int       nr_cols;  // number of columns
+  
   inline insertion_rep () {}
   inline insertion_rep (tree type2, path begin2, path end2):
-    type (type2), begin (begin2), end (end2) {}
+    type (type2), begin (begin2), end (end2), nr_cols (1) {}
   insertion_rep (tree type, skeleton sk);
 };
 CONCRETE_CODE(insertion);

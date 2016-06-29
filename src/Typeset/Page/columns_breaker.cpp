@@ -12,7 +12,40 @@
 #include "new_breaker.hpp"
 
 /******************************************************************************
-* Breaking pages with multicolumn text
+* Checking for multi-column content
+******************************************************************************/
+
+bool
+new_breaker_rep::has_columns (path b1, path b2, int nr) {
+  // FIXME: also check multi-column floats and footnotes
+  int i1= b1->item, i2= b2->item;
+  if (!is_nil (b1->next)) {
+    path floats= b1->next;
+    if (i1 == i2) floats= head (floats, N(b1) - N(b2));
+    while (!is_nil (floats)) {
+      int i= floats->item, j= floats->next->item;
+      floats= floats->next->next;
+      if (ins_list[i][j]->nr_cols != nr) return false;
+    }
+  }
+  if (i1 >= i2) return true;
+  if (col_same[i2] > i1) return false;
+  return col_number[i1] == nr;
+}
+
+/******************************************************************************
+* Breaking into portions with a uniform number of columns
+******************************************************************************/
+
+array<path>
+new_breaker_rep::break_uniform (path b1, path b2) {
+  array<path> r;
+  r << b1 << b2;
+  return r;
+}
+
+/******************************************************************************
+* Finding column breaks on a given page
 ******************************************************************************/
 
 static inline int iabs (int i) { return i>=0? i: -i; }

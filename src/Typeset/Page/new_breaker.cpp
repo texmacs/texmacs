@@ -120,6 +120,7 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
   ins->top_cor= top_cor;
   ins->bot_cor= bot_cor;
   ins->pen    = 0;
+  ins->nr_cols= (N(l) == 0? 1: l[0]->nr_cols);
   return ins;
 }
 
@@ -223,7 +224,12 @@ new_breaker_rep::find_page_breaks (path b1) {
       else bpen += BAD_FLOATS_PENALTY;
     }
     if (bpen < HYPH_INVALID) {
-      spc= compute_space (b1, b2);
+      if (has_columns (b1, b2, 1)) spc= compute_space (b1, b2);
+      else {
+        //array<path> bs= break_multicol (b1, b2);
+        //...;
+        spc= compute_space (b1, b2);
+      }
       ok= true;
       vpenalty pen= prev_pen + vpenalty (bpen);
       if ((b2->item < n) || (!last_page_flag))
@@ -235,7 +241,7 @@ new_breaker_rep::find_page_breaks (path b1) {
 	    ((double) max (spc->def, 1))/((double) max (height->def, 1));
 	  if (factor < 0.0 ) factor= 0.0;
 	  if (factor > 0.99) factor= 0.99;
-	  pen= vpenalty ((int) ((1.0 - factor) * TOO_SHORT_PENALTY));
+	  pen += vpenalty ((int) ((1.0 - factor) * TOO_SHORT_PENALTY));
 	}
       }
       else if (spc->min > height->def) {
@@ -245,7 +251,7 @@ new_breaker_rep::find_page_breaks (path b1) {
 	    ((double) max (spc->def, 1))/((double) max (height->def, 1));
 	  if (factor < 1.0  ) factor= 1.0;
 	  if (factor > 100.0) factor= 100.0;
-	  pen= vpenalty ((int) (factor * TOO_LONG_PENALTY));
+	  pen += vpenalty ((int) (factor * TOO_LONG_PENALTY));
 	}
       }
       if (!best_pens->contains (b2) && !done_list->contains (b2))

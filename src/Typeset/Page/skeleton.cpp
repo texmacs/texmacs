@@ -15,7 +15,7 @@ bool var_path_inf_eq (path p1, path p2);
 
 insertion_rep::insertion_rep (tree type2, skeleton sk2):
   type (type2), begin (sk2[0]->ins[0]->begin),
-  end (sk2[0]->ins[0]->end), sk (sk2)
+  end (sk2[0]->ins[0]->end), sk (sk2), nr_cols (1)
 {
   int i, n= N(sk);
   for (i=0; i<n; i++) {

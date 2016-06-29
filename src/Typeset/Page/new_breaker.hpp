@@ -62,6 +62,8 @@ struct new_breaker_rep {
   void assemble_skeleton (skeleton& sk, path end);
 
   // Pages with multi-column content
+  bool has_columns (path b1, path b2, int nr);
+  array<path> break_uniform (path b1, path b2);
   int compute_penalty (path b);
   path postpone_floats (path b1, path b2);
   path break_multicol_ansatz (path b0, path b1, path b2, SI h);
