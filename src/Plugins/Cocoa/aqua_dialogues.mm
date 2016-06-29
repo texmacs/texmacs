@@ -41,7 +41,7 @@ protected:
   string file;
 	
 public:
-  aqua_chooser_widget_rep (command, string, bool);
+  aqua_chooser_widget_rep (command, string, string);
   ~aqua_chooser_widget_rep ();
 	
   virtual void send (slot s, blackbox val);

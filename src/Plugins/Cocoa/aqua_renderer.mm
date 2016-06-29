@@ -29,15 +29,15 @@ struct aqua_image_rep: concrete_struct {
 	SI xo,yo;
 	int w,h;
 	aqua_image_rep (NSImage* img2, SI xo2, SI yo2, int w2, int h2) :
-  img (img2), xo (xo2), yo (yo2), w (w2), h (h2) { [img retain]; };
+      img (img2), xo (xo2), yo (yo2), w (w2), h (h2) { [img retain]; };
 	~aqua_image_rep()  {  [img release]; };
 	friend class aqua_image;
 };
 
 class aqua_image {
-	CONCRETE_NULL(aqua_image);
+  CONCRETE_NULL(aqua_image);
   aqua_image (NSImage* img2, SI xo2, SI yo2, int w2, int h2):
-  rep (tm_new <aqua_image_rep> (img2, xo2, yo2, w2, h2)) {}	
+    rep (tm_new <aqua_image_rep> (img2, xo2, yo2, w2, h2)) {}
 };
 
 CONCRETE_NULL_CODE(aqua_image);
@@ -51,7 +51,7 @@ struct cg_image_rep: concrete_struct {
 	SI xo,yo;
 	int w,h;
 	cg_image_rep (CGImageRef img2, SI xo2, SI yo2, int w2, int h2) :
-    img (img2), xo (xo2), yo (yo2), w (w2), h (h2) { CGImageRetain(img); };
+      img (img2), xo (xo2), yo (yo2), w (w2), h (h2) { CGImageRetain(img); };
 	~cg_image_rep()  {  CGImageRelease(img); };
 	friend class cg_image;
 };
@@ -59,32 +59,23 @@ struct cg_image_rep: concrete_struct {
 class cg_image {
 	CONCRETE_NULL(cg_image);
 	cg_image (CGImageRef img2, SI xo2, SI yo2, int w2, int h2):
-    rep (tm_new <cg_image_rep> (img2, xo2, yo2, w2, h2)) {}	
+      rep (tm_new <cg_image_rep> (img2, xo2, yo2, w2, h2)) {}
 };
 
 CONCRETE_NULL_CODE(cg_image);
-
 
 /******************************************************************************
  * Global support variables for all aqua_renderers
  ******************************************************************************/
 
-
-static hashmap<basic_character,cg_image> character_image;  // bitmaps of all characters
+// bitmaps of all characters
+static hashmap<basic_character,cg_image> character_image;
+// image cache
 static hashmap<string,aqua_image> images; 
-
-
 
 /******************************************************************************
  * aqua_renderer
  ******************************************************************************/
-
-void 
-aqua_set_color (color col) {
-  int r, g, b, a;
-  get_rgb_color (col, r, g, b, a);
-  [[NSColor colorWithDeviceRed: r/255.0 green:g/255.0 blue:b/255.0 alpha:a/255.0] set];
-}
 
 aqua_renderer_rep::aqua_renderer_rep (int w2, int h2) :
   basic_renderer_rep (true, w2, h2), context(NULL)
@@ -111,27 +102,58 @@ aqua_renderer_rep::end () {
 }
 
 void
+aqua_set_color (color col) {
+    int r, g, b, a;
+    get_rgb_color (col, r, g, b, a);
+    [[NSColor colorWithDeviceRed: r/255.0 green:g/255.0 blue:b/255.0 alpha:a/255.0] set];
+}
+
+
+void
 aqua_renderer_rep::set_pencil (pencil p) {
   basic_renderer_rep::set_pencil (p);
-  aqua_set_color (pen->c);
-  if (pen->w <= pixel) {
+  aqua_set_color (pen->get_color ());
+  double pw= (((double) pen->get_width ()) / ((double) pixel));
+#if 0
+  if (pw <= pixel) {
     [NSBezierPath setDefaultLineWidth:1.0];
   }
   else {
     [NSBezierPath setDefaultLineWidth: (pen->w+thicken)/(1.0*pixel)];
   }
-  [NSBezierPath setDefaultLineCapStyle: (pen_cap == cap_round ? NSRoundLineCapStyle : NSButtLineCapStyle)];
+#else
+  [NSBezierPath setDefaultLineWidth: pw];
+#endif
+    if (pen->get_type () == pencil_brush) {
+        brush br= pen->get_brush ();
+#if 0
+        //FIXME: brushes
+        QImage* pm= get_pattern_image (br, pixel);
+        int pattern_alpha= br->get_alpha ();
+        painter->setOpacity (qreal (pattern_alpha) / qreal (255));
+        if (pm != NULL) {
+            b= QBrush (*pm);
+            double pox, poy;
+            decode (0, 0, pox, poy);
+            QTransform tr;
+            tr.translate (pox, poy);
+            b.setTransform (tr);
+            p= QPen (b, pw);
+        }
+#endif
+    }
+  [NSBezierPath setDefaultLineCapStyle: ((pen->get_cap () == cap_round) ? NSRoundLineCapStyle : NSButtLineCapStyle)];
   [NSBezierPath setDefaultLineJoinStyle: NSRoundLineJoinStyle];
 }
 
 void
 aqua_renderer_rep::line (SI x1, SI y1, SI x2, SI y2) {
-  decode (x1, y1);
-  decode (x2, y2);
+    double rx1, ry1, rx2, ry2;
+    decode (x1, y1, rx1, ry1);
+    decode (x2, y2, rx2, ry2);
  // y1--; y2--; // top-left origin to bottom-left origin conversion
-  [NSBezierPath strokeLineFromPoint:NSMakePoint(x1,y1) toPoint:NSMakePoint(x2,y2)];
+  [NSBezierPath strokeLineFromPoint:NSMakePoint(rx1,ry1) toPoint:NSMakePoint(rx2,ry2)];
 }
-
 
 void
 aqua_renderer_rep::lines (array<SI> x, array<SI> y) {
@@ -139,16 +161,13 @@ aqua_renderer_rep::lines (array<SI> x, array<SI> y) {
   if ((N(y) != n) || (n<1)) return;
   STACK_NEW_ARRAY (pnt, NSPoint, n);
   for (i=0; i<n; i++) {
-    SI xx= x[i], yy= y[i];
-    decode (xx, yy);
-    pnt[i].x= xx;
-    pnt[i].y= yy;
+    double xx, yy;
+    decode (x[i], y[i], xx, yy);
+    pnt[i] = NSMakePoint (xx,yy);
     if (i>0) [NSBezierPath strokeLineFromPoint:pnt[i-1] toPoint:pnt[i]]; // FIX: hack
   }
- // XDrawLines (dpy, win, gc, pnt, n, CoordModeOrigin);
   STACK_DELETE_ARRAY (pnt);
 }
-
 
 void
 aqua_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
@@ -158,7 +177,7 @@ aqua_renderer_rep::clear (SI x1, SI y1, SI x2, SI y2) {
   decode (x1, y1);
   decode (x2, y2);
 	  if ((x1>=x2) || (y1<=y2)) return;
-	NSRect rect = NSMakeRect(x1,y2,x2-x1,y1-y2);
+	NSRect rect = NSMakeRect (x1, y2, x2-x1, y1-y2);
   aqua_set_color (bg_brush->get_color ());
   [NSBezierPath fillRect:rect];
   aqua_set_color (pen->get_color ());
@@ -190,16 +209,18 @@ aqua_renderer_rep::fill (SI x1, SI y1, SI x2, SI y2) {
 void
 aqua_renderer_rep::arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
-  decode (x1, y1);
-  decode (x2, y2);
+  double rx1, ry1, rx2, ry2;
+  decode (x1, y1, rx1, ry1);
+  decode (x2, y2, rx2, ry2);
   //FIXME: XDrawArc (dpy, win, gc, x1, y2, x2-x1, y1-y2, alpha, delta);
 }
 
 void
 aqua_renderer_rep::fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta) {
   if ((x1>=x2) || (y1>=y2)) return;
-  decode (x1, y1);
-  decode (x2, y2);
+  double rx1, ry1, rx2, ry2;
+  decode (x1, y1, rx1, ry1);
+  decode (x2, y2, rx2, ry2);
   //FIXME: XFillArc (dpy, win, gc, x1, y2, x2-x1, y1-y2, alpha, delta);
 }
 
@@ -209,8 +230,8 @@ aqua_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   if ((N(y) != n) || (n<1)) return;
   STACK_NEW_ARRAY (pnt, NSPoint, n);
   for (i=0; i<n; i++) {
-    SI xx= x[i], yy= y[i];
-    decode (xx, yy);
+    double xx,yy;
+    decode (x[i], y[i], xx, yy);
     pnt[i] = NSMakePoint(xx,yy);
   }
   
@@ -220,6 +241,27 @@ aqua_renderer_rep::polygon (array<SI> x, array<SI> y, bool convex) {
   [path fill];
   STACK_DELETE_ARRAY (pnt);
 }
+
+void
+aqua_renderer_rep::draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3) {
+    array<SI> x (3), y (3);
+    x[0]= x1; y[0]= y1;
+    x[1]= x2; y[1]= y2;
+    x[2]= x3; y[2]= y3;
+    NSPoint pnt[3];
+    int i, n= N(x);
+    if ((N(y) != n) || (n<1)) return;
+    for (i=0; i<n; i++) {
+        double xx,yy;
+        decode (x[i], y[i], xx, yy);
+        pnt[i] = NSMakePoint(xx,yy);
+    }
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path  appendBezierPathWithPoints:pnt count:n];
+    [path setWindingRule: NSEvenOddWindingRule];
+    [path fill];
+}
+
 
 /******************************************************************************
  * Image rendering
@@ -455,7 +497,7 @@ NSImage* xpm_init(url file_name)
       def= locase_all (s (j, i));
     }
 
-		pmcs(name)= xpm_to_color(def);
+		pmcs(name)= xpm_color(def);
   }
   NSImage *im = [[NSImage alloc] initWithSize:NSMakeSize(w,h)];
 	[im setFlipped:YES];

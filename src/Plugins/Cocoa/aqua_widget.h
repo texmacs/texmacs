@@ -39,6 +39,16 @@ public:
 };
 
 
+class aqua_widget {
+public:
+  ABSTRACT_NULL(aqua_widget);
+  inline bool operator == (aqua_widget w) { return rep == w.rep; }
+  inline bool operator != (aqua_widget w) { return rep != w.rep; }
+};
+ABSTRACT_NULL_CODE(aqua_widget);
+
+inline widget abstract (aqua_widget w) { return widget (w.rep); }
+inline aqua_widget concrete (widget w) { return aqua_widget ((aqua_widget_rep*) w.rep); }
 
 
 class aqua_view_widget_rep: public aqua_widget_rep {
@@ -68,17 +78,8 @@ public:
 
 };
 
-class aqua_widget {
-public:
-	ABSTRACT_NULL(aqua_widget);
-  inline bool operator == (aqua_widget w) { return rep == w.rep; }
-  inline bool operator != (aqua_widget w) { return rep != w.rep; }
-};
-ABSTRACT_NULL_CODE(aqua_widget);
-
-inline widget abstract (aqua_widget w) { return widget (w.rep); }
-inline aqua_widget concrete (widget w) { return aqua_widget ((aqua_widget_rep*) w.rep); }
 
 extern widget the_keyboard_focus;
+
 
 #endif // defined AQUA_WIDGET_H

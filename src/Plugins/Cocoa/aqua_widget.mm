@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "scheme.hpp"
 #include "mac_cocoa.h" 
 
 #include "aqua_widget.h"
@@ -136,7 +137,8 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
     break;
 	
   default:
-    debug_failed << "slot type= " << slot_name (s) << "\n";
+    if (DEBUG_AQUA_WIDGETS)
+       debug_widgets << "slot type= " << slot_name (s) << "\n";
     FAILED ("cannot handle slot type");
   }
 }
@@ -151,10 +153,12 @@ aqua_view_widget_rep::query (slot s, int type_id) {
   case SLOT_IDENTIFIER:
     TYPE_CHECK (type_id == type_helper<int>::id);
     return close_box<int> ([view window] ? 1 : 0);
+#if 0
   case SLOT_RENDERER:
     TYPE_CHECK (type_id == type_helper<renderer>::id);
     return close_box<renderer> ((renderer) the_aqua_renderer());
-  case SLOT_POSITION:  
+#endif
+  case SLOT_POSITION:
     {
       typedef pair<SI,SI> coord2;
       TYPE_CHECK (type_id == type_helper<coord2>::id);
@@ -612,11 +616,23 @@ aqua_tm_widget_rep::query (slot s, int type_id) {
 
 widget
 aqua_tm_widget_rep::read (slot s, blackbox index) {
+  widget ret;
   switch (s) {
+    case SLOT_CANVAS:
+      //FIXME: check_type_void (index, s);
+      ret= abstract (main_widget);
+      break;
+      
   default:
     return aqua_view_widget_rep::read(s,index);
   }
+  if (DEBUG_QT_WIDGETS)
+    debug_widgets << "qt_tm_widget_rep::read " << slot_name (s) << LF;
+  return ret;
 }
+
+
+
 
 
 
@@ -680,6 +696,7 @@ aqua_tm_widget_rep::write (slot s, blackbox index, widget w) {
   case SLOT_SCROLLABLE: 
     {
       check_type_void (index, "SLOT_SCROLLABLE");
+      main_widget = concrete(w);
       NSView *v = ((aqua_view_widget_rep*) w.rep)->view;
       [sv setDocumentView: v];
       [[sv window] makeFirstResponder:v];
@@ -708,6 +725,10 @@ aqua_tm_widget_rep::write (slot s, blackbox index, widget w) {
     check_type_void (index, "SLOT_USER_ICONS");
     [bc setMenu:to_nsmenu(w) forRow:3];
     layout();
+    break;
+  case SLOT_BOTTOM_TOOLS:
+    check_type_void (index, "SLOT_BOTTOM_TOOLS");
+    //FIXME: implement this
     break;
   case SLOT_INTERACTIVE_PROMPT:
     check_type_void (index, "SLOT_INTERACTIVE_PROMPT");
@@ -952,13 +973,13 @@ simple_widget_rep::send (slot s, blackbox val) {
       coord4 p= open_box<coord4> (val);
       if (DEBUG_AQUA)
         debug_aqua << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
-      aqua_renderer_rep* ren = (aqua_renderer_rep*)get_renderer (this);
+      aqua_renderer_rep* ren = the_aqua_renderer();
       if (ren) {
         SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
         ren->outer_round (x1, y1, x2, y2);
         ren->decode (x1, y1);
         ren->decode (x2, y2);
-        //tm_canvas()->invalidate_rect (x1,y2,x2,y1);
+        //tm_canvas()->invalidate_rect (x1, y2, x2, y1);
       }
     }
       break;
@@ -1145,7 +1166,7 @@ widget resize_widget (widget w, int style, string w1, string h1,
 widget hsplit_widget (widget l, widget r)  { return widget(); }
 widget vsplit_widget (widget t, widget b)  { return widget(); }
 widget refresh_widget (string tmwid, string kind)  { return widget(); }
-widget refreshable_widget (object promise, string kind)  { return widget(); }
+//widget refreshable_widget (object promise, string kind)  { return widget(); }
 //widget glue_widget (bool hx, bool vx, SI w, SI h)  { return widget(); }
 //widget glue_widget (tree col, bool hx, bool vx, SI w, SI h)  { return widget(); }
 //widget inputs_list_widget (command call_back, array<string> prompts)  { return widget(); }
@@ -1156,6 +1177,17 @@ widget refreshable_widget (object promise, string kind)  { return widget(); }
 //widget printer_widget (command cmd, url ps_pdf_file)  { return widget(); }
 //widget texmacs_widget (int mask, command quit)  { return widget(); }
 widget ink_widget (command cb)  { return widget(); }
+
+widget
+tree_view_widget (command cmd, tree data, tree data_roles) {
+    // FIXME: not implemented
+    return widget();
+}
+widget refreshable_widget (object promise, string kind) {
+    // FIXME: not implemented
+    return widget();
+}
+
 
 //// Widgets which are not strictly required by TeXmacs have void implementations
 

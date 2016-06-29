@@ -149,7 +149,7 @@ public:
     r -> encode (x1,y1);
     r -> encode (x2,y2);
     r -> set_clipping (x1,y1,x2,y2);
-    wid -> handle_repaint (x1,y1,x2,y2);
+    wid -> handle_repaint (r,x1,y1,x2,y2);
     r->end();
     [img unlockFocus];
     //[img setFlipped:YES];

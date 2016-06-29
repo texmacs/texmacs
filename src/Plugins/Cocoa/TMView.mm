@@ -296,7 +296,7 @@ void initkeymap()
     r -> encode (x2,y2);
  //   debug_events << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
     r -> set_clipping (x1,y1,x2,y2);
-    wid->handle_repaint (x1,y1,x2,y2);
+    wid->handle_repaint (r,x1,y1,x2,y2);
 		r->end();
     if (gui_interrupted())
       aqua_update_flag= true;

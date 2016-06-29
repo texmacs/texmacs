@@ -27,7 +27,7 @@ public:
 	TMWidgetHelper *wh;
 	NSToolbar *toolbar;
 	
-  
+  aqua_widget main_widget;
   aqua_widget int_prompt;
   aqua_widget int_input;
 

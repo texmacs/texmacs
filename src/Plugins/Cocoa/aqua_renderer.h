@@ -30,6 +30,8 @@ public:
   void  arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  fill_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta);
   void  polygon (array<SI> x, array<SI> y, bool convex=true);
+  void draw_triangle (SI x1, SI y1, SI x2, SI y2, SI x3, SI y3);
+
   void  image (url u, SI w, SI h, SI x, SI y, int alpha);
 
   /***** private section *****************************************************/
