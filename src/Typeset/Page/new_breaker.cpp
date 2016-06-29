@@ -9,70 +9,13 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "Line/lazy_vstream.hpp"
-#include "vpenalty.hpp"
-#include "skeleton.hpp"
-#include "iterator.hpp"
-
-vpenalty as_vpenalty (SI diff);
-
-#define INVALID_BREAK  0
-#define BAD_BREAK      1
-#define VALID_BREAK    2
-
-/******************************************************************************
-* The new_breaker class
-******************************************************************************/
-
-struct new_breaker_rep {
-  array<page_item> l;
-  int   papyrus_mode;
-  space height;
-  space fn_sep;            // inter-footnote separation
-  space fnote_sep;         // separation between footnote and main text
-  space float_sep;         // separation between text or floats and floats
-  font  fn;
-  int   first_page;
-  int   quality;
-
-  bool last_page_flag; // FIXME
-  
-  array<space> body_ht;    // the heights of these page_items
-  array<space> body_cor;   // top and bottom corrections of page_items
-  array<space> body_tot;   // total heights up to a certain index
-  array<space> foot_ht;    // the height of all footnotes for one page_item,
-  array<space> foot_tot;   // the cumulated footnote height until here
-  array<space> float_ht;   // the height of all floats for one page_item,
-  array<space> float_tot;  // the cumulated float height until here
-
-  array<array<insertion> > ins_list;   // all page insertions
-
-  hashmap<path,path>       best_prev;  // best previous break points
-  hashmap<path,vpenalty>   best_pens;  // corresponding penalties
-  hashmap<path, bool>      todo_list;
-  hashmap<path, bool>      done_list;
-
-  new_breaker_rep (array<page_item> l, space ph, int quality,
-                   space fn_sep, space fnote_sep, space float_sep,
-                   font fn, int fp);
-
-  insertion make_insertion (lazy_vstream lvs, path p);
-  space compute_space (path b1, path b2);
-  void find_page_breaks (path i1);
-  void find_page_breaks ();
-  vpenalty format_insertion (insertion& ins, double stretch);
-  vpenalty format_pagelet (pagelet& pg, double stretch);
-  vpenalty format_pagelet (pagelet& pg, space ht, bool last_page);
-  insertion make_insertion (int i1, int i2);
-  bool here_floats (path p);
-  void assemble_skeleton (skeleton& sk, path end);
-};
+#include "new_breaker.hpp"
 
 /******************************************************************************
 * Float placement subroutines
 ******************************************************************************/
 
-static bool
+bool
 float_has (tree t, char c) {
   if (N(t) < 2) return false;
   string s= as_string (t[1]);
@@ -81,7 +24,7 @@ float_has (tree t, char c) {
   return false;
 }
 
-static bool
+bool
 float_here (tree t) {
   return !float_has (t, 't') && !float_has (t, 'b');
 }
@@ -102,6 +45,7 @@ new_breaker_rep::new_breaker_rep (
     best_prev (path (-1)), best_pens (MAX_SI),
     todo_list (false), done_list (false)
 {
+  int same= 0;
   for (int i=0; i<N(l); i++) {
     SI   bot_cor= max (0, l[i]->b->y1- fn->y1);
     SI   bod_cor= l[i]->b->h ();
@@ -126,12 +70,17 @@ new_breaker_rep::new_breaker_rep (
         else float_spc += ins->ht + float_sep;
       }
     }
-    ins_list << ins_here;
-    foot_ht  << foot_spc;
-    foot_tot << (i==0? space(0): foot_tot[i-1] + foot_ht[i]);
+    ins_list  << ins_here;
+    foot_ht   << foot_spc;
+    foot_tot  << (i==0? space(0): foot_tot[i-1] + foot_ht[i]);
     float_ht  << float_spc;
     float_tot << (i==0? space(0): float_tot[i-1] + float_ht[i]);
+
+    if (i>0 && l[i]->nr_cols != l[i-1]->nr_cols) same= i;
+    col_number << l[i]->nr_cols;
+    col_same   << same;
   }
+  col_same << same;
 
   best_prev (path (0))= path (-2); 
   best_pens (path (0))= 0;
@@ -216,6 +165,144 @@ new_breaker_rep::compute_space (path b1, path b2) {
 
   //cout << "    Computed space " << b1 << ", " << b2 << " ~> " << spc << LF;
   return spc;
+}
+
+/******************************************************************************
+* Breaking pages with multicolumn text
+******************************************************************************/
+
+static inline int iabs (int i) { return i>=0? i: -i; }
+
+int
+new_breaker_rep::compute_penalty (path b) {
+  if (!is_nil (b->next) || b->item == 0) return 0;
+  return l[b->item - 1]->penalty;
+}
+
+path
+new_breaker_rep::postpone_floats (path b1, path b2) {
+  path floats= b2->next;
+  if (!is_nil (b1->next)) return b1;
+  while (!is_nil (floats)) {
+    int i= floats->item, j= floats->next->item;
+    floats= floats->next->next;
+    if (i < b1->item) b1= b1 * path (i, j);
+  }
+  return b1;
+}
+
+path
+new_breaker_rep::break_multicol_ansatz (path b0, path b1, path b2, SI h) {
+  if (b1 == b2) return b1;
+  path bm;
+  if (!is_nil (b1->next))
+    bm= path (b1->item, b1->next->next->next);
+  else if (!is_nil (b2->next))
+    bm= path (b2->item, b2->next->next->next);
+  else {
+    bm= path ((b1->item + b2->item) >> 1);
+    bm= postpone_floats (bm, b2);
+  }
+  if (bm == b1 || bm == b2) {
+    space spc1= compute_space (b0, b1);
+    space spc2= compute_space (b0, b2);
+    if (iabs (spc1->def - h) < iabs (spc2->def - h)) return b1;
+    else return b2;
+  }
+  else {
+    space spc= compute_space (b0, bm);
+    if (spc->def > h) return break_multicol_ansatz (b0, b1, bm, h);
+    else return break_multicol_ansatz (b0, bm, b1, h);
+  }
+}
+
+path
+new_breaker_rep::search_leftwards (path b1, path b2, path b, SI h) {
+  int pen= compute_penalty (b);
+  if (pen == 0 || b == b1) return b;
+  space spc= compute_space (b1, b);
+  if (pen < HYPH_INVALID && (h < spc->min || h > spc->max)) return b;
+  path next;
+  if (b1->item == b->item) {
+    int i= (N(b1->item) - N(b->item) + 1) - 2;
+    next= path (b1->item, tail (b1, i));
+  }
+  else {
+    next= path (b->item - 1);
+    next= postpone_floats (next, b);
+  }
+  path bx= search_leftwards (b1, b2, next, h);
+  int penx= compute_penalty (bx);
+  if (pen < penx) return b;
+  space spcx= compute_space (b1, bx);
+  if (h < spcx->min || h > spcx->max) return b;
+  if (penx < pen) return bx;
+  return b;
+}
+
+path
+new_breaker_rep::search_rightwards (path b1, path b2, path b, SI h) {
+  int pen= compute_penalty (b);
+  if (pen == 0 || b == b2) return b;
+  space spc= compute_space (b1, b);
+  if (pen < HYPH_INVALID && (h < spc->min || h > spc->max)) return b;
+  path next;
+  if (b->item == b2->item) {
+    int i= (N(b->item) - N(b2->item) + 1) - 2;
+    next= path (b->item, tail (b, i));
+  }
+  else {
+    next= path (b->item + 1);
+    next= postpone_floats (next, b2);
+  }
+  path bx= search_rightwards (b1, b2, next, h);
+  int penx= compute_penalty (bx);
+  if (pen < penx) return b;
+  space spcx= compute_space (b1, bx);
+  if (h < spcx->min || h > spcx->max) return b;
+  if (penx < pen) return bx;
+  return b;
+}
+
+path
+new_breaker_rep::break_multicol_at (path b1, path b2, SI h) {
+  if (b1 == b2) return b1;
+  path bm= break_multicol_ansatz (b1, b1, b2, h);
+  path bl= search_leftwards (b1, b2, bm, h);
+  path br= search_rightwards (b1, b2, bm, h);
+  int penl= compute_penalty (bl);
+  int penr= compute_penalty (br);
+  if (penl == HYPH_INVALID) return br;
+  if (penr == HYPH_INVALID) return bl;
+  space spcl= compute_space (b1, bl);
+  space spcr= compute_space (b1, br);
+  bool okl= h >= spcl->min || h <= spcl->max;
+  bool okr= h >= spcr->min || h <= spcr->max;
+  if (!okl &&  okr) return br;
+  if ( okl && !okr) return bl;
+  if (penr <= penl) return br;
+  return bl;
+}
+
+array<path>
+new_breaker_rep::break_multicol (path b1, path b2) {
+  int i1= b1->item, i2= b2->item;
+  if (col_same[i2] >= i1)
+    if (col_same[i2] > i1 || !is_nil (b1->next)) {
+      path bm= path (col_same[i2]);
+      array<path> r= break_multicol (b1, bm);
+      r->resize (N(r) - 1);
+      r << break_multicol (bm, b2);
+      return r;
+    }
+  int cols= col_number[i2];
+  space tot= compute_space (b1, b2);
+  array<path> r;
+  r << b1;
+  for (int k=1; k<cols; k++)
+    r << break_multicol_at (b1, b2, (k * tot->def) / cols);
+  r << b2;
+  return r;
 }
 
 /******************************************************************************
