@@ -97,7 +97,7 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
       string name = open_box<string> (val);
       NSWindow *win = [view window];
       if (win) {
-	[win setTitle:to_nsstring(name)];
+        [win setTitle:to_nsstring(name)];
       }
     }
     break;
@@ -135,6 +135,17 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
   case SLOT_KEYBOARD_FOCUS_ON:
     NOT_IMPLEMENTED;
     break;
+    case SLOT_MODIFIED:
+    {
+      check_type<bool> (val, "SLOT_MODIFIED");
+      bool flag = open_box<bool> (val);
+      NSWindow *win = [view window];
+      if (win) {
+        [win setDocumentEdited:flag];
+      }
+    }
+      break;
+
 	
   default:
     if (DEBUG_AQUA_WIDGETS)
@@ -819,6 +830,22 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
       }
     }	
     break;
+    case SLOT_MOUSE_GRAB:
+    {
+      //check_type<bool> (val, s);
+      bool flag = open_box<bool> (val);  // true= get grab, false= release grab
+      NSWindow *win = [wc window];
+      if (flag && win) [win makeKeyAndOrderFront:nil];
+#if 0
+      if (flag && qwid) {
+        qwid->setWindowFlags (Qt::Window);  // ok?
+        qwid->setWindowModality (Qt::WindowModal); //ok?
+        qwid->show();
+      }
+#endif
+    }
+      break;
+
   case SLOT_NAME:
     {	
       check_type<string> (val, "SLOT_NAME");
@@ -830,15 +857,14 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
       }
     }
     break;
-  case SLOT_FULL_SCREEN:
-    check_type<bool> (val, "SLOT_FULL_SCREEN");
-    //FIXME: Implement fullscreen mode
-    // win->set_full_screen (open_box<bool> (val));
-    break;
-  case SLOT_UPDATE:
-    NOT_IMPLEMENTED ;
-    // send_update (THIS, val);
-    break;
+    case SLOT_MODIFIED:
+    {
+      check_type<bool> (val, "SLOT_MODIFIED");
+      bool flag = open_box<bool> (val);
+      NSWindow *win = [wc window];
+      if (win) [win setDocumentEdited:flag];
+    }
+      break;
   case SLOT_REFRESH:
     NOT_IMPLEMENTED ;
     // send_refresh (THIS, val);
@@ -1009,6 +1035,58 @@ simple_widget_rep::send (slot s, blackbox val) {
 
 blackbox
 simple_widget_rep::query (slot s, int type_id) {
+  switch (s) {
+    case SLOT_INVALID:
+    {
+      return close_box<bool> (view ? [view needsDisplay] : false);
+    }
+    case SLOT_SIZE:
+    {
+      typedef pair<SI,SI> coord2;
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      NSRect frame = [view  frame];
+      return close_box<coord2> (from_nssize(frame.size));
+    }
+    case SLOT_SCROLL_POSITION:
+    {
+      TYPE_CHECK (type_id == type_helper<coord2>::id);
+      NSPoint pt = [view frame].origin;
+      if (DEBUG_EVENTS)
+        debug_events << "Position (" << pt.x << "," << pt.y << ")\n";
+      return close_box<coord2> (from_nspoint(pt));
+    }
+      
+    case SLOT_EXTENTS:
+    {
+      TYPE_CHECK (type_id == type_helper<coord4>::id);
+      NSRect rect= [view frame];
+      coord4 c= from_nsrect (rect);
+      if (DEBUG_EVENTS) debug_events << "Canvas geometry (" << rect.origin.x
+        << "," << rect.origin.y
+        << "," << rect.size.width
+        << "," << rect.size.height
+        << ")" << LF;
+      return close_box<coord4> (c);
+    }
+    
+      
+    case SLOT_VISIBLE_PART:
+    {
+      TYPE_CHECK (type_id == type_helper<coord4>::id);
+      NSRect rect= [view visibleRect];
+      coord4 c= from_nsrect (rect);
+      if (DEBUG_EVENTS) debug_events << "Visible region (" << rect.origin.x
+        << "," << rect.origin.y
+        << "," << rect.size.width
+        << "," << rect.size.height
+        << ")" << LF;
+      return close_box<coord4> (c);
+    }
+      
+    default:
+      return aqua_view_widget_rep::query(s, type_id);
+  }
+
   return aqua_view_widget_rep::query(s,type_id);
 }
 
