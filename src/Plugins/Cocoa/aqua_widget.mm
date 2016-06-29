@@ -522,7 +522,7 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     
   case SLOT_ZOOM_FACTOR:
     {
-      TYPE_CHECK (type_box (val) == type_helper<int>::id);
+      TYPE_CHECK (type_box (val) == type_helper<double>::id);
       simple_widget_rep *w = (simple_widget_rep *)[(TMView*)[sv documentView] widget];
       if (w) {
         double new_zoom = open_box<double> (val);

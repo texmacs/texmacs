@@ -14,7 +14,7 @@
 
 @interface TMView : NSView  <NSTextInput>
 {
-	simple_widget_rep *wid;
+  simple_widget_rep *wid;
   NSString *workingText;
   BOOL processingCompose;
   NSMutableArray *delayed_rects;

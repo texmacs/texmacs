@@ -168,9 +168,6 @@ void initkeymap()
     processingCompose = NO;
     workingText = nil;
     delayed_rects = [[NSMutableArray arrayWithCapacity:100] retain];
-    
-    
-    
   }
   return self;
 }
@@ -263,8 +260,6 @@ void initkeymap()
   [arr release];
 }
 
-
-
 - (void)drawRect:(NSRect)rect 
 {
   if (aqua_update_flag) {
@@ -284,7 +279,7 @@ void initkeymap()
 //	NSRect bounds = [self bounds];
 	
   {
-		basic_renderer r = the_aqua_renderer();
+    basic_renderer r = the_aqua_renderer();
     int x1 = rect.origin.x;
     int y1 = rect.origin.y+rect.size.height;
     int x2 = rect.origin.x+rect.size.width;
@@ -294,13 +289,13 @@ void initkeymap()
   //  r -> set_origin(0,0);
     r -> encode (x1,y1);
     r -> encode (x2,y2);
- //   debug_events << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
-    r -> set_clipping (x1,y1,x2,y2);
-    wid->handle_repaint (r,x1,y1,x2,y2);
-		r->end();
+ //    debug_events << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
+    r -> set_clipping (x1, y1, x2, y2);
+    wid->handle_repaint (r, x1, y1, x2, y2);
+    r->end();
     if (gui_interrupted())
       aqua_update_flag= true;
-	}
+  }
 //	debug_events << "END DRAWING" << "\n";
  
   if (aqua_update_flag) {
@@ -310,7 +305,6 @@ void initkeymap()
   }
   
 }
-
 
 #if 0
 - (void)keyDown:(NSEvent *)theEvent
@@ -383,8 +377,8 @@ void initkeymap()
   if (!fInit) {
     if (DEBUG_EVENTS)
       debug_events << "Initializing keymap\n";
-    initkeymap();
-    fInit= true;
+    initkeymap ();
+    fInit = true;
   }
   
   {
@@ -467,8 +461,6 @@ mouse_decode (unsigned int mstate) {
   return "unknown";
 }
 
-
-
 - (void)mouseDown:(NSEvent *)theEvent
 {
   if (wid) {
@@ -540,10 +532,9 @@ mouse_decode (unsigned int mstate) {
   [super resizeWithOldSuperviewSize:oldBoundsSize];
   if (wid)  {
     NSSize size = [self bounds].size;
-		scaleSize(size);
-		wid-> handle_notify_resize (size.width, size.height);
+    scaleSize (size);
+    wid-> handle_notify_resize (size.width, size.height);
   }
-	
 }
 
 - (BOOL)acceptsFirstResponder
@@ -553,17 +544,13 @@ mouse_decode (unsigned int mstate) {
 
 - (void) deleteWorkingText
 { 
-  if (workingText == nil)
-    return;
+  if (workingText == nil) return;
   [workingText release];
   workingText = nil;
   processingCompose = NO;
-  
-  
 }
 
 #pragma mark NSTextInput protocol implementation
-
 
 - (void) insertText:(id)aString
 // instead of keyDown: aString can be NSString or NSAttributedString
@@ -608,11 +595,13 @@ mouse_decode (unsigned int mstate) {
 {
   [self deleteWorkingText];  
 }
+
 - (BOOL) hasMarkedText
 {
   return workingText != nil;
   
 }
+
 - (NSInteger) conversationIdentifier
 {
   return (NSInteger)self;
