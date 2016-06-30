@@ -235,6 +235,10 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
       //  cout << ((int) (unsigned char) key[i]) << " ";
       //cout << "\n";
       debug_keyboard << "Pressed " << key << " at " << t << "\n";
+      debug_keyboard << "  Codes";
+      for (int i=0; i<N(key); i++)
+	debug_keyboard << " " << (unsigned int) (unsigned char) key[i];
+      debug_keyboard << "\n";      
     }
     //time_t t1= texmacs_time ();
     if (is_nil (eb)) apply_changes ();
