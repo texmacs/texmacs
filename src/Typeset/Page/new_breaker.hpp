@@ -62,6 +62,7 @@ struct new_breaker_rep {
   vpenalty format_pagelet (pagelet& pg, space ht, bool last_page);
   insertion make_insertion (int i1, int i2);
   bool here_floats (path p);
+  pagelet assemble (path start, path end);
   void assemble_skeleton (skeleton& sk, path end);
 
   // Pages with multi-column content
@@ -76,7 +77,11 @@ struct new_breaker_rep {
   path search_rightwards (path b1, path b2, path b, SI h);
   path break_columns_at (path b1, path b2, SI h);
   array<path> break_columns (path b1, path b2);
+  void compute_space (array<space> spcs, array<vpenalty> pens,
+                      space& spc, vpenalty& pen);
   space compute_space (path b1, path b2, vpenalty& pen);
+  insertion make_multi_column (skeleton sk, int real_nr_cols);
+  insertion make_multi_column (path b1, path b2);
 };
 
 vpenalty as_vpenalty (SI diff);

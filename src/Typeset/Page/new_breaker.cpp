@@ -432,14 +432,8 @@ new_breaker_rep::here_floats (path p) {
   return here_flag;
 }
 
-void
-new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
-  int n= N(l);
-  path start= best_prev [end];
-  //cout << "Assemble skeleton " << start << " -- " << end << LF;
-  if (start->item < 0) return;
-  assemble_skeleton (sk, start);
-
+pagelet
+new_breaker_rep::assemble (path start, path end) {
   // Position the floats
   path floats, avoid= end->next;
   for (int i=start->item; i<end->item; i++)
@@ -527,9 +521,27 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
         else pg << fnote_sep;
         has_footnotes= true;
       }
-  bool last_page= last_page_flag && (end == path (n));
-  format_pagelet (pg, height, last_page);
-  sk << pg;
+  return pg;
+}
+
+void
+new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
+  path start= best_prev [end];
+  //cout << "Assemble skeleton " << start << " -- " << end << LF;
+  if (start->item < 0) return;
+  assemble_skeleton (sk, start);
+  if (has_columns (start, end, 1)) {
+    pagelet pg= assemble (start, end);
+    bool last_page= last_page_flag && (end == path (N(l)));
+    format_pagelet (pg, height, last_page);
+    sk << pg;
+  }
+  else {
+    pagelet pg= assemble (start, end);
+    bool last_page= last_page_flag && (end == path (N(l)));
+    format_pagelet (pg, height, last_page);
+    sk << pg;
+  }
 }
 
 /******************************************************************************

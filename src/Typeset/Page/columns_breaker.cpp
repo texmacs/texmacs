@@ -225,6 +225,33 @@ new_breaker_rep::break_columns (path b1, path b2) {
 * Computing the space and penalty for column breaks
 ******************************************************************************/
 
+void
+new_breaker_rep::compute_space (array<space> spcs, array<vpenalty> pens,
+                                space& spc, vpenalty& pen) {
+  pen= 0;
+  int nr_cols= N(spcs);
+  SI ht_min= 0, ht_def= 0, ht_max= MAX_SI;  
+  for (int i=0; i<nr_cols; i++) {
+    ht_min= max (ht_min, spcs[i]->min);
+    ht_def += spcs[i]->def;
+    ht_max= min (ht_max, spcs[i]->max);
+    if (i != nr_cols - 1) pen += pens[i];
+  }
+  ht_def /= nr_cols;
+  if (ht_max < ht_min) {
+    ht_def= ht_max= ht_min;
+    pen += UNBALANCED_COLUMNS;
+    for (int i=1; i<nr_cols; i++)
+      if (spcs[i-1]->min < spcs[i]->min)
+	pen += LONGER_LATTER_COLUMN;
+  }
+  else {
+    if (ht_def < ht_min) ht_def= ht_min;
+    if (ht_def > ht_max) ht_def= ht_max;
+  }
+  spc= space (ht_min, ht_def, ht_max);
+}
+  
 space
 new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
   space spc= 0;
@@ -237,29 +264,69 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
     if (cols == 1)
       spc += compute_space (sb1, sb2);
     else {
-      space tot= compute_space (sb1, sb2);
-      SI min_inc= 0, def_sum= 0, max_inc= MAX_SI;
-      array<SI> def_spcs;
+      array<space> spcs;
+      array<vpenalty> pens;
       for (int si=1; si<=cols; si++) {
         path ssb1= sa[si-1], ssb2= sa[si];
-        space col_spc= compute_space (ssb1, ssb2);
-        min_inc= max (min_inc, col_spc->min);
-        def_sum += col_spc->def;
-        max_inc= min (max_inc, col_spc->max);
-        pen += (si == cols? 0: l[ssb2->item - 1]->penalty);
-        def_spcs << col_spc->def;
+        spcs << compute_space (ssb1, ssb2);
+        pens << vpenalty (compute_penalty (ssb2));
       }
-      if (max_inc < min_inc) {
-        max_inc= min_inc;
-        pen += vpenalty (UNBALANCED_COLUMNS);
-      }
-      SI def_inc= def_sum / cols;
-      def_inc= max (def_inc, min_inc);
-      def_inc= min (def_inc, max_inc);
-      spc += space (min_inc, def_inc, max_inc);
-      for (int j=0; j<N(def_spcs); j++)
-	pen += as_vpenalty (def_spcs[j] - def_inc);
+      compute_space (spcs, pens, spc, pen);
+      for (int j=0; j<N(spcs); j++)
+        pen += as_vpenalty (spcs[j]->def - spc->def);
     }
   }
   return spc;
+}
+
+/******************************************************************************
+* Assembling multi-column portion
+******************************************************************************/
+
+insertion
+new_breaker_rep::make_multi_column (skeleton sk, int real_nr_cols) {
+  int i;
+  array<space> spcs;
+  array<vpenalty> pens;
+  for (i=0; i<N(sk); i++) {
+    spcs << sk[i]->ht;
+    pens << sk[i]->pen;
+  }
+
+  for (; i<real_nr_cols; i++) {
+    spcs << space (0);
+    pens << vpenalty (0);
+  }
+  space spc;
+  vpenalty pen;
+  compute_space (spcs, pens, spc, pen);
+  insertion ins (tuple ("multi-column", as_string (real_nr_cols)), sk);
+  ins->ht     = spc;
+  ins->pen    = pen;
+  ins->top_cor= 0;
+  ins->bot_cor= 0;
+  return ins;
+}
+
+insertion
+new_breaker_rep::make_multi_column (path b1, path b2) {
+  array<path> a= break_columns (b1, b2);
+  int cols= N(a) - 1;
+  if (cols == 1) {
+    skeleton sk;
+    pagelet pg= assemble (b1, b2);
+    if (N(pg->ins) != 0) sk << pg;
+    return make_multi_column (sk, 1);
+  }
+  else {
+    skeleton sk;
+    for (int i=1; i<=cols; i++) {
+      path sb1= a[i-1], sb2= a[i];
+      if (sb2 != sb1) {
+        pagelet pg= assemble (b1, b2);
+        if (N(pg->ins) != 0) sk << pg;
+      }
+    }
+    return make_multi_column (sk, cols);
+  }
 }
