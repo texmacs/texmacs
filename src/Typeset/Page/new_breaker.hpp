@@ -45,7 +45,10 @@ struct new_breaker_rep {
   hashmap<path,vpenalty>   best_pens;  // corresponding penalties
   hashmap<path, bool>      todo_list;
   hashmap<path, bool>      done_list;
-
+ 
+  hashmap<path,array<path> > cache_uniform;
+  hashmap<path,array<path> > cache_colbreaks;
+ 
   new_breaker_rep (array<page_item> l, space ph, int quality,
                    space fn_sep, space fnote_sep, space float_sep,
                    font fn, int fp);
@@ -68,11 +71,12 @@ struct new_breaker_rep {
   array<path> break_uniform (path b1, path b2);
   int compute_penalty (path b);
   path postpone_floats (path b1, path b2);
-  path break_multicol_ansatz (path b0, path b1, path b2, SI h);
+  path break_columns_ansatz (path b0, path b1, path b2, SI h);
   path search_leftwards (path b1, path b2, path b, SI h);
   path search_rightwards (path b1, path b2, path b, SI h);
-  path break_multicol_at (path b1, path b2, SI h);
-  array<path> break_multicol (path b1, path b2);
+  path break_columns_at (path b1, path b2, SI h);
+  array<path> break_columns (path b1, path b2);
+  space compute_space (path b1, path b2, vpenalty& pen);
 };
 
 vpenalty as_vpenalty (SI diff);

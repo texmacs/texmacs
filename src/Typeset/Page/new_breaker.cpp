@@ -43,7 +43,9 @@ new_breaker_rep::new_breaker_rep (
     body_ht (), body_cor (), foot_ht (), foot_tot (),
     float_ht (), float_tot (), ins_list (),
     best_prev (path (-1)), best_pens (MAX_SI),
-    todo_list (false), done_list (false)
+    todo_list (false), done_list (false),
+    cache_uniform (array<path> ()),
+    cache_colbreaks (array<path> ())
 {
   int same= 0;
   for (int i=0; i<N(l); i++) {
@@ -224,14 +226,15 @@ new_breaker_rep::find_page_breaks (path b1) {
       else bpen += BAD_FLOATS_PENALTY;
     }
     if (bpen < HYPH_INVALID) {
-      if (has_columns (b1, b2, 1)) spc= compute_space (b1, b2);
-      else {
-        //array<path> bs= break_multicol (b1, b2);
-        //...;
-        spc= compute_space (b1, b2);
-      }
       ok= true;
       vpenalty pen= prev_pen + vpenalty (bpen);
+      if (has_columns (b1, b2, 1))
+        spc= compute_space (b1, b2);
+      else {
+        vpenalty mcpen;
+        spc= compute_space (b1, b2, mcpen);
+        pen += mcpen;
+      }
       if ((b2->item < n) || (!last_page_flag))
 	pen += as_vpenalty (spc->def - height->def);
       if (((b2->item < n) || (!last_page_flag)) && (spc->max < height->def)) {
