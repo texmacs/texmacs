@@ -17,6 +17,7 @@
 class aqua_renderer_rep:  public basic_renderer_rep {
 public:
   NSGraphicsContext *context;
+  NSView *view;
     
   aqua_renderer_rep (int w = 0, int h = 0);
   virtual ~aqua_renderer_rep ();
@@ -38,6 +39,8 @@ public:
   
   void draw_clipped (NSImage *im, int w, int h, SI x, SI y);
 
+  void set_view (NSView* _view) { view = _view };
+    
   void begin (void* c); // c must be a CGContextRef
   void end ();
 

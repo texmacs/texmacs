@@ -177,7 +177,10 @@ public:
 	forced = NO;
 	[self setDelegate:self];
 }
-- (void)dealloc { [self setPromise:NULL]; [super dealloc]; }
+- (void)dealloc {
+    if (pm) { DEC_COUNT_NULL(pm); pm = NULL; }
+    [super dealloc];
+}
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
 {
@@ -471,7 +474,10 @@ NSMenu* to_nsmenu(widget w)
 	[ww->item setSubmenu:nil];
 	return m;
   }
-  else return nil;
+  else {
+      debug_aqua << "unexpected type in to_nsmenu!\n";
+   return nil;
+  }
 }
 
 NSMenuItem* to_nsmenuitem(widget w)

@@ -78,7 +78,7 @@ static hashmap<string,aqua_image> images;
  ******************************************************************************/
 
 aqua_renderer_rep::aqua_renderer_rep (int w2, int h2) :
-  basic_renderer_rep (true, w2, h2), context(NULL)
+  basic_renderer_rep (true, w2, h2), context(nil), view(nil)
 {
 }
 
@@ -96,9 +96,10 @@ aqua_renderer_rep::begin (void * c) {
 void 
 aqua_renderer_rep::end () { 
 //  CGContextEndPage(context);
-  [context release];
+  [context release];    
 //  CGContextRelease(context); 
-  context = NULL;  
+  context = NULL;
+  view = nil;
 }
 
 void

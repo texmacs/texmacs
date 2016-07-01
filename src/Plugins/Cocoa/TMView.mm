@@ -279,21 +279,22 @@ void initkeymap()
 //	NSRect bounds = [self bounds];
 	
   {
-    basic_renderer r = the_aqua_renderer();
+    aqua_renderer_rep* r = the_aqua_renderer();
     int x1 = rect.origin.x;
     int y1 = rect.origin.y+rect.size.height;
     int x2 = rect.origin.x+rect.size.width;
     int y2 = rect.origin.y;
     
-    r -> begin([NSGraphicsContext currentContext]);
-  //  r -> set_origin(0,0);
+    r -> begin ([NSGraphicsContext currentContext]);
+    r -> set_view (self);
+    r -> set_origin (0,0);
     r -> encode (x1,y1);
     r -> encode (x2,y2);
  //    debug_events << "DRAWING RECT " << x1 << "," << y1 << "," << x2 << "," << y2 << LF;
     r -> set_clipping (x1, y1, x2, y2);
     wid->handle_repaint (r, x1, y1, x2, y2);
-    r->end();
-    if (gui_interrupted())
+    r -> end ();
+    if (gui_interrupted ())
       aqua_update_flag= true;
   }
 //	debug_events << "END DRAWING" << "\n";

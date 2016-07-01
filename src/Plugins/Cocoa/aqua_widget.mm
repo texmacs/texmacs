@@ -105,9 +105,16 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
       coord4 p= open_box<coord4> (val);
-      NSRect rect = to_nsrect(p);
-      if (DEBUG_EVENTS) NSLog(@"invalidating %@",NSStringFromRect(rect));
-      [view setNeedsDisplayInRect:rect];
+//      NSRect rect = to_nsrect(p);
+      if (DEBUG_AQUA)
+         debug_aqua << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
+      aqua_renderer_rep* ren = the_aqua_renderer();
+      ren->set_origin(0,0);
+      SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;
+      ren->outer_round (x1, y1, x2, y2);
+      ren->decode (x1, y1);
+      ren->decode (x2, y2);
+      [view setNeedsDisplayInRect:NSMakeRect(x1, y2, x2-x1, y1-y2)];
     }
     break;
   case SLOT_INVALIDATE_ALL:
@@ -993,39 +1000,15 @@ void
 simple_widget_rep::send (slot s, blackbox val) {
   if (DEBUG_AQUA) debug_aqua << "aqua_simple_widget_rep::send " << slot_name(s) << LF;
   switch (s) {
-    case SLOT_INVALIDATE:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      if (DEBUG_AQUA)
-        debug_aqua << "Invalidating rect " << rectangle(p.x1,p.x2,p.x3,p.x4) << LF;
-      aqua_renderer_rep* ren = the_aqua_renderer();
-      if (ren) {
-        SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;    
-        ren->outer_round (x1, y1, x2, y2);
-        ren->decode (x1, y1);
-        ren->decode (x2, y2);
-        //tm_canvas()->invalidate_rect (x1, y2, x2, y1);
-      }
-    }
-      break;
-    case SLOT_INVALIDATE_ALL:
-    {
-      ASSERT (is_nil (val), "type mismatch");
-      if (DEBUG_AQUA)
-        debug_aqua << "Invalidating all"<<  LF;
-      //tm_canvas()->invalidate_all ();
-    }
-      break;
     case SLOT_CURSOR:
     {
       TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
+      debug_aqua << "simple_widget_rep::send SLOT_POSITION - TO BE IMPLEMENTED\n";
       //QPoint pt = to_qpoint(p);
       //tm_canvas() -> setCursorPos(pt);
     }
       break;
-      
     default:
       if (DEBUG_AQUA) debug_aqua << "[aqua_simple_widget_rep] ";
       aqua_view_widget_rep::send (s, val);

@@ -53,11 +53,11 @@
   return ret; 
 }
 
-- (void)setMenu:(NSMenu *)menu forRow:(unsigned) idx
+- (void) setMenu:(NSMenu *)menu forRow:(unsigned) idx
 {
 	unsigned count = [menuArray count];
 	while (count <= idx) { 
-		[menuArray addObject:[[[NSMenu alloc] init] autorelease]];  
+      [menuArray addObject:[[[NSMenu alloc] init] autorelease]];
       NSMutableArray *arr =  [[NSMutableArray alloc] initWithCapacity:10];
       [barArray addObject:arr];  
 		count++; 
