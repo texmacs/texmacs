@@ -20,6 +20,30 @@
 #include <QPaintEvent>
 #include <QStyle>
 
+
+/*! Provide automatic centering of the working area inside the viewport.
+ 
+ The only purpose of this widget is to provide this centering. To support this
+ we "un-wired" the event redirection built-in in QAbstractScrollArea (from the
+ viewport widget to the QAbstractScrollArea) and re-wired event redirection
+ from the surface to the QTMScrollView (see event())
+ 
+ All relevant events like resize, I/O events and the like which are sent to the
+ surface are resent QTMScrollView::surfaceEvent() for handling. This allows to
+ concentrate all the logic in only one object.
+ */
+class QTMSurface : public QWidget {
+    
+    QTMScrollView* sv;
+public:
+    QTMSurface(QWidget* p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
+    
+protected:
+    virtual bool event(QEvent *event) {
+        return sv->surfaceEvent(event) ? true : QWidget::event(event);
+    }  
+};
+
 /*! Constructor.
  
  NOTE:
