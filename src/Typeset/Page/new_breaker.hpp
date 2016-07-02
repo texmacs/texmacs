@@ -82,6 +82,7 @@ struct new_breaker_rep {
   space compute_space (path b1, path b2, vpenalty& pen);
   insertion make_multi_column (skeleton sk, int real_nr_cols);
   insertion make_multi_column (path b1, path b2);
+  pagelet assemble_multi_columns (path b1, path b2);
 };
 
 vpenalty as_vpenalty (SI diff);

@@ -537,7 +537,7 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
     sk << pg;
   }
   else {
-    pagelet pg= assemble (start, end);
+    pagelet pg= assemble_multi_columns (start, end);
     bool last_page= last_page_flag && (end == path (N(l)));
     format_pagelet (pg, height, last_page);
     sk << pg;

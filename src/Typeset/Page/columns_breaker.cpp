@@ -280,7 +280,7 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
 }
 
 /******************************************************************************
-* Assembling multi-column portion
+* Assembling multi-column portions
 ******************************************************************************/
 
 insertion
@@ -329,4 +329,16 @@ new_breaker_rep::make_multi_column (path b1, path b2) {
     }
     return make_multi_column (sk, cols);
   }
+}
+
+pagelet
+new_breaker_rep::assemble_multi_columns (path b1, path b2) {
+  pagelet pg (0);
+  array<path> a= break_uniform (b1, b2);
+  for (int i=1; i<N(a); i++) {
+    path sb1= a[i-1], sb2= a[i];
+    insertion ins= make_multi_column (sb1, sb2);
+    pg << ins;
+  }
+  return pg;
 }
