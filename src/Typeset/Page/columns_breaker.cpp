@@ -29,7 +29,7 @@ new_breaker_rep::has_columns (path b1, path b2, int nr) {
     }
   }
   if (i1 >= i2) return true;
-  if (col_same[i2] > i1) return false;
+  if (col_same[i2-1] > i1) return false;
   return col_number[i1] == nr;
 }
 
@@ -63,20 +63,23 @@ new_breaker_rep::break_uniform (path b1, path b2) {
     path key= b1 * path (-1, b2);
     array<path> r= cache_uniform[key];
     if (N(r) != 0) return r;
+    //cout << "Break uniform " << b1 << ", " << b2 << LF;
     int i1= b1->item, i2= b2->item;
     path bm;
-    if (i1 < i2 && i1 < col_same[i2])
-      bm= postpone_floats (path (col_same[i2]), b2);
+    if (i1 < i2 && i1 < col_same[i2-1])
+      bm= postpone_floats (path (col_same[i2-1]), b2);
     else {
       bm= b1;
       while (!is_nil (bm->next) &&
              is_uniform (b1, path (bm->item, bm->next->next->next)))
         bm= path (bm->item, bm->next->next->next);
     }
-    r= break_uniform (b1, bm);
+    r= array<path> ();
+    r << break_uniform (b1, bm);
     r->resize (N(r) - 1);
     r << break_uniform (bm, b2);
     cache_uniform (key)= r;
+    //cout << "Break uniform " << b1 << ", " << b2 << " ~> " << r << LF;
     return r;
   }
 }
@@ -84,8 +87,6 @@ new_breaker_rep::break_uniform (path b1, path b2) {
 /******************************************************************************
 * Finding column breaks on a given page
 ******************************************************************************/
-
-static inline int iabs (int i) { return i>=0? i: -i; }
 
 int
 new_breaker_rep::compute_penalty (path b) {
@@ -106,92 +107,130 @@ new_breaker_rep::postpone_floats (path b1, path b2) {
 }
 
 path
-new_breaker_rep::break_columns_ansatz (path b0, path b1, path b2, SI h) {
-  if (b1 == b2) return b1;
+new_breaker_rep::break_columns_ansatz (path b1, path b2,
+                                       path ba, path bb, double fr) {
+  //if (b1 == path (0) && b2 == path (16))
+  //  cout << "Ansatz " << ba << ", " << bb << ", " << fr << LF;
+  if (ba == bb) return ba;
   path bm;
-  if (!is_nil (b1->next))
-    bm= path (b1->item, b1->next->next->next);
-  else if (!is_nil (b2->next))
-    bm= path (b2->item, b2->next->next->next);
+  if (!is_nil (ba->next))
+    bm= path (ba->item, ba->next->next->next);
+  else if (!is_nil (bb->next))
+    bm= path (bb->item, bb->next->next->next);
   else {
-    bm= path ((b1->item + b2->item) >> 1);
-    bm= postpone_floats (bm, b2);
+    bm= path ((ba->item + bb->item) >> 1);
+    bm= postpone_floats (bm, bb);
   }
-  if (bm == b1 || bm == b2) {
-    space spc1= compute_space (b0, b1);
-    space spc2= compute_space (b0, b2);
-    if (iabs (spc1->def - h) < iabs (spc2->def - h)) return b1;
-    else return b2;
+  if (bm == ba || bm == bb) {
+    space spca1= compute_space (b1, ba);
+    space spca2= compute_space (ba, b2);
+    space spcb1= compute_space (b1, bb);
+    space spcb2= compute_space (bb, b2);
+    double fa= spca1->def / (spca1->def + spca2->def + 0.001);
+    double fb= spcb1->def / (spcb1->def + spcb2->def + 0.001);
+    //if (b1 == path (0) && b2 == path (16))
+    //  cout << "Choose " << ba << " ~> " << fa << LF
+    //       << "Choose " << bb << " ~> " << fb << LF;
+    if (fabs (fa - fr) < fabs (fb - fr)) return ba;
+    else return bb;
   }
   else {
-    space spc= compute_space (b0, bm);
-    if (spc->def > h) return break_columns_ansatz (b0, b1, bm, h);
-    else return break_columns_ansatz (b0, bm, b1, h);
+    space spcm1= compute_space (b1, bm);
+    space spcm2= compute_space (bm, b2);
+    double fm= spcm1->def / (spcm1->def + spcm2->def + 0.001);
+    if (fm > fr) return break_columns_ansatz (b1, b2, ba, bm, fr);
+    else return break_columns_ansatz (b1, b2, bm, bb, fr);
   }
 }
 
 path
-new_breaker_rep::search_leftwards (path b1, path b2, path b, SI h) {
+new_breaker_rep::search_leftwards (path b1, path b2, path b, double fr) {
   int pen= compute_penalty (b);
   if (pen == 0 || b == b1) return b;
-  space spc= compute_space (b1, b);
-  if (pen < HYPH_INVALID && (h < spc->min || h > spc->max)) return b;
+  space spc1= compute_space (b1, b);
+  space spc2= compute_space (b, b2);
+  double fmin= spc1->min / (spc1->min + spc2->max + 0.001);
+  double fmax= spc1->max / (spc1->max + spc2->min + 0.001);
+  if (pen < HYPH_INVALID && (fr < fmin || fr > fmax)) return b;
   path next;
   if (b1->item == b->item) {
-    int i= (N(b1->item) - N(b->item) + 1) - 2;
-    next= path (b1->item, tail (b1, i));
+    int i= N(b1) - N(b) - 2;
+    next= path (b1->item, tail (b1, i + 1));
   }
   else {
     next= path (b->item - 1);
     next= postpone_floats (next, b);
   }
-  path bx= search_leftwards (b1, b2, next, h);
+  path bx= search_leftwards (b1, b2, next, fr);
   int penx= compute_penalty (bx);
   if (pen < penx) return b;
-  space spcx= compute_space (b1, bx);
-  if (h < spcx->min || h > spcx->max) return b;
+  space spcx1= compute_space (b1, bx);
+  space spcx2= compute_space (bx, b2);
+  double fxmin= spcx1->min / (spcx1->min + spcx2->max + 0.001);
+  double fxmax= spcx1->max / (spcx1->max + spcx2->min + 0.001);
+  if (fr < fxmin || fr > fxmax) return b;
   if (penx < pen) return bx;
   return b;
 }
 
 path
-new_breaker_rep::search_rightwards (path b1, path b2, path b, SI h) {
+new_breaker_rep::search_rightwards (path b1, path b2, path b, double fr) {
   int pen= compute_penalty (b);
-  if (pen == 0 || b == b2) return b;
-  space spc= compute_space (b1, b);
-  if (pen < HYPH_INVALID && (h < spc->min || h > spc->max)) return b;
+  if (pen == 0 || b == b1) return b;
+  space spc1= compute_space (b1, b);
+  space spc2= compute_space (b, b2);
+  double fmin= spc1->min / (spc1->min + spc2->max + 0.001);
+  double fmax= spc1->max / (spc1->max + spc2->min + 0.001);
+  if (pen < HYPH_INVALID && (fr < fmin || fr > fmax)) return b;
   path next;
   if (b->item == b2->item) {
-    int i= (N(b->item) - N(b2->item) + 1) - 2;
-    next= path (b->item, tail (b, i));
+    int i= N(b) - N(b2) - 2;
+    next= path (b->item, tail (b, i+1));
   }
   else {
     next= path (b->item + 1);
     next= postpone_floats (next, b2);
   }
-  path bx= search_rightwards (b1, b2, next, h);
+  path bx= search_rightwards (b1, b2, next, fr);
   int penx= compute_penalty (bx);
   if (pen < penx) return b;
-  space spcx= compute_space (b1, bx);
-  if (h < spcx->min || h > spcx->max) return b;
+  space spcx1= compute_space (b1, bx);
+  space spcx2= compute_space (bx, b2);
+  double fxmin= spcx1->min / (spcx1->min + spcx2->max + 0.001);
+  double fxmax= spcx1->max / (spcx1->max + spcx2->min + 0.001);
+  if (fr < fxmin || fr > fxmax) return b;
   if (penx < pen) return bx;
   return b;
 }
 
 path
-new_breaker_rep::break_columns_at (path b1, path b2, SI h) {
+new_breaker_rep::break_columns_at (path b1, path b2, double fr) {
   if (b1 == b2) return b1;
-  path bm= break_columns_ansatz (b1, b1, b2, h);
-  path bl= search_leftwards (b1, b2, bm, h);
-  path br= search_rightwards (b1, b2, bm, h);
+  //cout << "Break " << b1 << ", " << b2 << " at " << h << LF;
+  path bm= break_columns_ansatz (b1, b2, b1, b2, fr);
+  //cout << "Ansatz " << bm << LF;
+  //if (b1 == path (0) && b2 == path (16))
+  //  cout << "Ansatz ~> " << bm << LF;
+  path bl= search_leftwards (b1, b2, bm, fr);
+  //if (b1 == path (0) && b2 == path (16))
+  //  cout << "Left ~> " << bl << LF;
+  path br= search_rightwards (b1, b2, bm, fr);
+  //if (b1 == path (0) && b2 == path (16))
+  //  cout << "Right ~> " << br << LF;
   int penl= compute_penalty (bl);
   int penr= compute_penalty (br);
   if (penl == HYPH_INVALID) return br;
   if (penr == HYPH_INVALID) return bl;
-  space spcl= compute_space (b1, bl);
-  space spcr= compute_space (b1, br);
-  bool okl= h >= spcl->min || h <= spcl->max;
-  bool okr= h >= spcr->min || h <= spcr->max;
+  space spcl1= compute_space (b1, bl);
+  space spcl2= compute_space (bl, b2);
+  space spcr1= compute_space (b1, br);
+  space spcr2= compute_space (br, b2);
+  double flmin= spcl1->min / (spcl1->min + spcl2->max + 0.001);
+  double flmax= spcl1->max / (spcl1->max + spcl2->min + 0.001);
+  double frmin= spcr1->min / (spcr1->min + spcr2->max + 0.001);
+  double frmax= spcr1->max / (spcr1->max + spcr2->min + 0.001);
+  bool okl= fr >= flmin && fr <= flmax;
+  bool okr= fr >= frmin && fr <= frmax;
   if (!okl &&  okr) return br;
   if ( okl && !okr) return bl;
   if (penr <= penl) return br;
@@ -211,12 +250,14 @@ new_breaker_rep::break_columns (path b1, path b2) {
     path key= b1 * path (-1, b2);
     array<path> r= cache_colbreaks[key];
     if (N(r) != 0) return r;
-    space tot= compute_space (b1, b2);
+    r= array<path> ();
+    //cout << "Breaking " << b1 << ", " << b2 << LF << INDENT;
     r << b1;
     for (int k=1; k<cols; k++)
-      r << break_columns_at (b1, b2, (k * tot->def) / cols);
+      r << break_columns_at (b1, b2, (1.0 * k) / cols);
     r << b2;
     cache_colbreaks (key)= r;
+    //cout << UNINDENT << "Broke " << b1 << ", " << b2 << " ~> " << r << LF;
     return r;
   }
 }
@@ -259,11 +300,17 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
   array<path> a= break_uniform (b1, b2);
   for (int i=1; i<N(a); i++) {
     path sb1= a[i-1], sb2= a[i];
-    array<path> sa= break_columns (b1, b2);
+    if (i>1 && sb1->item > 0) {
+      //cout << "Add " << sb1 << LF;
+      spc += l[sb1->item - 1]->spc;
+    }
+    array<path> sa= break_columns (sb1, sb2);
     int cols= N(sa) - 1;
     if (cols == 1)
       spc += compute_space (sb1, sb2);
     else {
+      space sspc;
+      vpenalty spen;
       array<space> spcs;
       array<vpenalty> pens;
       for (int si=1; si<=cols; si++) {
@@ -271,9 +318,11 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
         spcs << compute_space (ssb1, ssb2);
         pens << vpenalty (compute_penalty (ssb2));
       }
-      compute_space (spcs, pens, spc, pen);
+      compute_space (spcs, pens, sspc, spen);
       for (int j=0; j<N(spcs); j++)
-        pen += as_vpenalty (spcs[j]->def - spc->def);
+        spen += as_vpenalty (spcs[j]->def - sspc->def);
+      spc += sspc;
+      pen += spen;
     }
   }
   return spc;
@@ -311,6 +360,7 @@ new_breaker_rep::make_multi_column (skeleton sk, int real_nr_cols) {
 insertion
 new_breaker_rep::make_multi_column (path b1, path b2) {
   array<path> a= break_columns (b1, b2);
+  //cout << "Break columns " << b1 << ", " << b2 << " ~> " << a << LF;
   int cols= N(a) - 1;
   if (cols == 1) {
     skeleton sk;
@@ -323,7 +373,7 @@ new_breaker_rep::make_multi_column (path b1, path b2) {
     for (int i=1; i<=cols; i++) {
       path sb1= a[i-1], sb2= a[i];
       if (sb2 != sb1) {
-        pagelet pg= assemble (b1, b2);
+        pagelet pg= assemble (sb1, sb2);
         if (N(pg->ins) != 0) sk << pg;
       }
     }
@@ -335,8 +385,11 @@ pagelet
 new_breaker_rep::assemble_multi_columns (path b1, path b2) {
   pagelet pg (0);
   array<path> a= break_uniform (b1, b2);
+  //cout << "Break uniform " << b1 << ", " << b2 << " ~> " << a << LF;
   for (int i=1; i<N(a); i++) {
     path sb1= a[i-1], sb2= a[i];
+    if (i>1 && sb1->item > 0)
+      pg << l[sb1->item - 1]->spc;
     insertion ins= make_multi_column (sb1, sb2);
     pg << ins;
   }

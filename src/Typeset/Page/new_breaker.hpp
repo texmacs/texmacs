@@ -55,6 +55,7 @@ struct new_breaker_rep {
 
   insertion make_insertion (lazy_vstream lvs, path p);
   space compute_space (path b1, path b2);
+  bool last_break (path b);
   void find_page_breaks (path i1);
   void find_page_breaks ();
   vpenalty format_insertion (insertion& ins, double stretch);
@@ -72,10 +73,10 @@ struct new_breaker_rep {
   array<path> break_uniform (path b1, path b2);
   int compute_penalty (path b);
   path postpone_floats (path b1, path b2);
-  path break_columns_ansatz (path b0, path b1, path b2, SI h);
-  path search_leftwards (path b1, path b2, path b, SI h);
-  path search_rightwards (path b1, path b2, path b, SI h);
-  path break_columns_at (path b1, path b2, SI h);
+  path break_columns_ansatz (path b1, path b2, path ba, path bb, double fr);
+  path search_leftwards (path b1, path b2, path b, double fr);
+  path search_rightwards (path b1, path b2, path b, double fr);
+  path break_columns_at (path b1, path b2, double fr);
   array<path> break_columns (path b1, path b2);
   void compute_space (array<space> spcs, array<vpenalty> pens,
                       space& spc, vpenalty& pen);

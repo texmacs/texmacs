@@ -86,6 +86,7 @@ new_breaker_rep::new_breaker_rep (
 
   best_prev (path (0))= path (-2); 
   best_pens (path (0))= 0;
+  //cout << HRULE;
 }
 
 /******************************************************************************
@@ -174,6 +175,11 @@ new_breaker_rep::compute_space (path b1, path b2) {
 * Find page breaks for a given start
 ******************************************************************************/
 
+bool
+new_breaker_rep::last_break (path b) {
+  return last_page_flag && b == path (N(l));
+}
+
 void
 new_breaker_rep::find_page_breaks (path b1) {
   //cout << "Find page breaks " << b1 << LF;
@@ -184,7 +190,9 @@ new_breaker_rep::find_page_breaks (path b1) {
   path floats;
   path b2= b1;
   while (true) {
-    if (!is_nil (b2->next))
+    if (height->def >= (1 << 28) && b2->item < n)
+      b2= path (n);
+    else if (!is_nil (b2->next))
       b2= path (b2->item, b2->next->next->next);
     else if (b2->item >= n)
       break;
@@ -233,11 +241,13 @@ new_breaker_rep::find_page_breaks (path b1) {
       else {
         vpenalty mcpen;
         spc= compute_space (b1, b2, mcpen);
+        //cout << "Space " << b1 << ", " << b2
+        //     << " ~> " << spc << ", " << mcpen << LF;
         pen += mcpen;
       }
-      if ((b2->item < n) || (!last_page_flag))
+      if (!last_break (b2))
 	pen += as_vpenalty (spc->def - height->def);
-      if (((b2->item < n) || (!last_page_flag)) && (spc->max < height->def)) {
+      if (!last_break (b2) && spc->max < height->def) {
 	if (spc->max >= height->min) pen += EXTEND_PAGE_PENALTY;
 	else {
 	  double factor=
@@ -409,7 +419,7 @@ new_breaker_rep::make_insertion (int i1, int i2) {
   path p2= i2;
   insertion ins ("", p1, p2);  
   space spc;
-  if (i1 == 0) { if (N(l) > 1) spc= copy (body_tot[i2-2]); }
+  if (i1 == 0) { if (i2 >= 2) spc= copy (body_tot[i2-2]); }
   else { spc= body_tot[i2-2] - body_tot[i1-1]; }
   SI top_cor= body_cor[i1]->max;
   SI bot_cor= body_cor[i2-1]->min;
@@ -434,6 +444,7 @@ new_breaker_rep::here_floats (path p) {
 
 pagelet
 new_breaker_rep::assemble (path start, path end) {
+  //cout << "Assemble " << start << ", " << end << LF;
   // Position the floats
   path floats, avoid= end->next;
   for (int i=start->item; i<end->item; i++)
@@ -532,13 +543,13 @@ new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
   assemble_skeleton (sk, start);
   if (has_columns (start, end, 1)) {
     pagelet pg= assemble (start, end);
-    bool last_page= last_page_flag && (end == path (N(l)));
+    bool last_page= last_break (end);
     format_pagelet (pg, height, last_page);
     sk << pg;
   }
   else {
     pagelet pg= assemble_multi_columns (start, end);
-    bool last_page= last_page_flag && (end == path (N(l)));
+    bool last_page= last_break (end);
     format_pagelet (pg, height, last_page);
     sk << pg;
   }
