@@ -12,6 +12,7 @@
 #include "Line/lazy_vstream.hpp"
 #include "vpenalty.hpp"
 #include "skeleton.hpp"
+#include "boot.hpp"
 
 #include "merge_sort.hpp"
 void sort (pagelet& pg);
@@ -1506,13 +1507,16 @@ break_pages (array<page_item> l, space ph, int qual,
 	     space fn_sep, space fnote_sep, space float_sep,
              font fn, int first_page)
 {
-  //return new_break_pages (l, ph, qual, fn_sep, fnote_sep, float_sep,
-  //                        fn, first_page);
-  page_breaker_rep* H=
-    tm_new<page_breaker_rep> (l, ph, qual, fn_sep, fnote_sep, float_sep,
-                              fn, first_page);
-  // cout << HRULE << LF;
-  skeleton sk= H->make_skeleton ();
-  tm_delete (H);
-  return sk;
+  if (get_user_preference ("new style page breaking") == "on")
+    return new_break_pages (l, ph, qual, fn_sep, fnote_sep, float_sep,
+                            fn, first_page);
+  else {
+    page_breaker_rep* H=
+      tm_new<page_breaker_rep> (l, ph, qual, fn_sep, fnote_sep, float_sep,
+                                fn, first_page);
+    // cout << HRULE << LF;
+    skeleton sk= H->make_skeleton ();
+    tm_delete (H);
+    return sk;
+  }
 }

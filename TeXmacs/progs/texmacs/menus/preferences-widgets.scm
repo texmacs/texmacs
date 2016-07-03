@@ -611,7 +611,10 @@
                 (get-boolean-preference "new style fonts")))
       (meti (hlist // (text "Advanced font customization"))
         (toggle (set-boolean-preference "advanced font customization" answer)
-                (get-boolean-preference "advanced font customization"))))
+                (get-boolean-preference "advanced font customization")))
+      (meti (hlist // (text "New style page breaking"))
+        (toggle (set-boolean-preference "new style page breaking" answer)
+                (get-boolean-preference "new style page breaking"))))
     /// ///
     (vlist
       (aligned
