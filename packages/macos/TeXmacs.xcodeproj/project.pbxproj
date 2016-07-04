@@ -661,6 +661,12 @@
 		9C25212B14FFC7BC00C62749 /* build-glue.scm in Resources */ = {isa = PBXBuildFile; fileRef = 9C19A57C14FD624700738BD2 /* build-glue.scm */; };
 		9C25212D14FFC7C000C62749 /* guile_tm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD46B11147429F900A7E2FC /* guile_tm.cpp */; };
 		9C25212E14FFC7C100C62749 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CD46A9214740A3F00A7E2FC /* object.cpp */; };
+		9C25EAB91D2A9ED400D7F2D5 /* columns_breaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C25EAB61D2A9ED400D7F2D5 /* columns_breaker.cpp */; };
+		9C25EABA1D2A9ED400D7F2D5 /* new_breaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C25EAB71D2A9ED400D7F2D5 /* new_breaker.cpp */; };
+		9C25EABB1D2A9EDC00D7F2D5 /* columns_breaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C25EAB61D2A9ED400D7F2D5 /* columns_breaker.cpp */; };
+		9C25EABC1D2A9EDD00D7F2D5 /* columns_breaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C25EAB61D2A9ED400D7F2D5 /* columns_breaker.cpp */; };
+		9C25EABD1D2A9EE800D7F2D5 /* new_breaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C25EAB71D2A9ED400D7F2D5 /* new_breaker.cpp */; };
+		9C25EABE1D2A9EE800D7F2D5 /* new_breaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C25EAB71D2A9ED400D7F2D5 /* new_breaker.cpp */; };
 		9C3D2E5912B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
 		9C3D2E5A12B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
 		9C3D2E5B12B0D662009E33AD /* tree_select.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C3D2E5712B0D662009E33AD /* tree_select.cpp */; };
@@ -1944,7 +1950,6 @@
 		9C0B47FC10A8CC100097A335 /* printer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = printer.hpp; sourceTree = "<group>"; };
 		9C0B47FD10A8CC100097A335 /* renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderer.cpp; sourceTree = "<group>"; };
 		9C0B47FE10A8CC100097A335 /* renderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = renderer.hpp; sourceTree = "<group>"; };
-		9C0B47FF10A8CC100097A335 /* rgb_colors.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rgb_colors.hpp; sourceTree = "<group>"; };
 		9C0B481710A8CC100097A335 /* basic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = basic.cpp; sourceTree = "<group>"; };
 		9C0B481810A8CC100097A335 /* basic.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = basic.hpp; sourceTree = "<group>"; };
 		9C0B481910A8CC100097A335 /* blackbox.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = blackbox.hpp; sourceTree = "<group>"; };
@@ -2344,6 +2349,9 @@
 		9C1D126710D102B300232476 /* QTMPipeLink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMPipeLink.hpp; sourceTree = "<group>"; };
 		9C225A63128B5EB00039258C /* qt_chooser_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_chooser_widget.cpp; sourceTree = "<group>"; };
 		9C225A64128B5EB00039258C /* qt_chooser_widget.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_chooser_widget.hpp; sourceTree = "<group>"; };
+		9C25EAB61D2A9ED400D7F2D5 /* columns_breaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = columns_breaker.cpp; sourceTree = "<group>"; };
+		9C25EAB71D2A9ED400D7F2D5 /* new_breaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_breaker.cpp; sourceTree = "<group>"; };
+		9C25EAB81D2A9ED400D7F2D5 /* new_breaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = new_breaker.hpp; sourceTree = "<group>"; };
 		9C3D2E5712B0D662009E33AD /* tree_select.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tree_select.cpp; sourceTree = "<group>"; };
 		9C3D2E5812B0D662009E33AD /* tree_select.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tree_select.hpp; sourceTree = "<group>"; };
 		9C3DA71E12932990009617C4 /* extend_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = extend_widget.cpp; sourceTree = "<group>"; };
@@ -3377,7 +3385,6 @@
 				9C0B47FC10A8CC100097A335 /* printer.hpp */,
 				9C0B47FD10A8CC100097A335 /* renderer.cpp */,
 				9C0B47FE10A8CC100097A335 /* renderer.hpp */,
-				9C0B47FF10A8CC100097A335 /* rgb_colors.hpp */,
 			);
 			path = Renderer;
 			sourceTree = "<group>";
@@ -4324,6 +4331,9 @@
 		9C0B49DF10A8CC110097A335 /* Page */ = {
 			isa = PBXGroup;
 			children = (
+				9C25EAB61D2A9ED400D7F2D5 /* columns_breaker.cpp */,
+				9C25EAB71D2A9ED400D7F2D5 /* new_breaker.cpp */,
+				9C25EAB81D2A9ED400D7F2D5 /* new_breaker.hpp */,
 				9C0B49E010A8CC110097A335 /* make_pages.cpp */,
 				9C0B49E110A8CC110097A335 /* page_breaker.cpp */,
 				9C0B49E210A8CC110097A335 /* pager.cpp */,
@@ -4968,6 +4978,7 @@
 				9C0B4A2310A8CC110097A335 /* edit_keyboard.cpp in Sources */,
 				9C0B4A2410A8CC110097A335 /* edit_mouse.cpp in Sources */,
 				9C0B4A2510A8CC110097A335 /* edit_repaint.cpp in Sources */,
+				9C25EAB91D2A9ED400D7F2D5 /* columns_breaker.cpp in Sources */,
 				9C0B4A2610A8CC110097A335 /* edit_delete.cpp in Sources */,
 				9C0B4A2710A8CC110097A335 /* edit_dynamic.cpp in Sources */,
 				4934A46718C5D00000BF1E6A /* conservative_fromtex.cpp in Sources */,
@@ -5142,6 +5153,7 @@
 				9C0B4B2710A8CC110097A335 /* concat_inactive.cpp in Sources */,
 				9C0B4B2810A8CC110097A335 /* concat_macro.cpp in Sources */,
 				9C0B4B2910A8CC110097A335 /* concat_math.cpp in Sources */,
+				9C25EABA1D2A9ED400D7F2D5 /* new_breaker.cpp in Sources */,
 				9C0B4B2A10A8CC110097A335 /* concat_post.cpp in Sources */,
 				9C0B4B2B10A8CC110097A335 /* concat_text.cpp in Sources */,
 				9C0B4B2C10A8CC110097A335 /* concater.cpp in Sources */,
@@ -5551,6 +5563,7 @@
 				9CCC74FD10D303D900E88D90 /* make_pages.cpp in Sources */,
 				4911B18F1CCA195A00F0AFFD /* glyph_transforms.cpp in Sources */,
 				9CCC74FE10D303D900E88D90 /* page_breaker.cpp in Sources */,
+				9C25EABE1D2A9EE800D7F2D5 /* new_breaker.cpp in Sources */,
 				9CCC74FF10D303D900E88D90 /* pager.cpp in Sources */,
 				9CCC750010D303D900E88D90 /* skeleton.cpp in Sources */,
 				9CCC750110D303D900E88D90 /* vpenalty.cpp in Sources */,
@@ -5638,6 +5651,7 @@
 				491BB5A91731186A00A755DF /* effect.cpp in Sources */,
 				491BB5AC1731186A00A755DF /* scalable.cpp in Sources */,
 				491BB5B4173118C700A755DF /* metadata-ieee.cpp in Sources */,
+				9C25EABC1D2A9EDD00D7F2D5 /* columns_breaker.cpp in Sources */,
 				491BB5B8173118F700A755DF /* rewrite_equation_number.cpp in Sources */,
 				490DBDAB176EEEBD001F362A /* scilab_language.cpp in Sources */,
 				491BF370178BFF4C00C69EEF /* tm_sparkle.mm in Sources */,
@@ -5721,6 +5735,7 @@
 				9CD4E63410B14AB300E0DD5C /* glyph.cpp in Sources */,
 				9CD4E63510B14AB300E0DD5C /* glyph_ops.cpp in Sources */,
 				9CD4E63610B14AB300E0DD5C /* glyph_shrink.cpp in Sources */,
+				9C25EABB1D2A9EDC00D7F2D5 /* columns_breaker.cpp in Sources */,
 				9CD4E63710B14AB300E0DD5C /* charmap.cpp in Sources */,
 				9CD4E63810B14AB300E0DD5C /* compound_font.cpp in Sources */,
 				9CD4E63910B14AB300E0DD5C /* find_font.cpp in Sources */,
@@ -5943,6 +5958,7 @@
 				9CD4E73110B14AEE00E0DD5C /* xpm_widget.cpp in Sources */,
 				9CD4E73F10B153E300E0DD5C /* ghostscript.cpp in Sources */,
 				9C722C1E10D2FBD300C41915 /* unix_sys_utils.cpp in Sources */,
+				9C25EABD1D2A9EE800D7F2D5 /* new_breaker.cpp in Sources */,
 				9C060A9D10FC6D8B00C51583 /* tm_ostream.cpp in Sources */,
 				9C6061EB112442BD00054149 /* gs_utilities.cpp in Sources */,
 				9CFEB3F911D79783005C12C4 /* bibtex_functions.cpp in Sources */,
