@@ -35,18 +35,21 @@ public:
 
   void  image (url u, SI w, SI h, SI x, SI y, int alpha);
 
+  void new_shadow (renderer& ren);
+  void delete_shadow (renderer& ren);
+  void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+  void put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+    
+  void apply_shadow (SI x1, SI y1, SI x2, SI y2);
+
   /***** private section *****************************************************/
   
   void draw_clipped (NSImage *im, int w, int h, SI x, SI y);
-
-  void set_view (NSView* _view) { view = _view };
     
   void begin (void* c); // c must be a CGContextRef
   void end ();
-
 	
   NSImage *xpm_image(url file_name);
-
 };
 
 aqua_renderer_rep *the_aqua_renderer();

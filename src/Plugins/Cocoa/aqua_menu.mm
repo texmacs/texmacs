@@ -472,6 +472,11 @@ NSMenu* to_nsmenu(widget w)
     aqua_menu_rep *ww = ((aqua_menu_rep*)w.rep);
 	NSMenu *m =[[[ww->item submenu] retain] autorelease];
 	[ww->item setSubmenu:nil];
+      if (!m) {
+        debug_aqua << "unexpected nil menu\n";
+        return [[NSMenu alloc] init];
+        //FIXME: something wrong going on here.
+      }
 	return m;
   }
   else {

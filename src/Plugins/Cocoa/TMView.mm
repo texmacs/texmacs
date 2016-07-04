@@ -286,7 +286,7 @@ void initkeymap()
     int y2 = rect.origin.y;
     
     r -> begin ([NSGraphicsContext currentContext]);
-    r -> set_view (self);
+    r -> view = self;
     r -> set_origin (0,0);
     r -> encode (x1,y1);
     r -> encode (x2,y2);

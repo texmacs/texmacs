@@ -557,3 +557,310 @@ the_aqua_renderer () {
 	return the_renderer;
 }
 
+
+
+/******************************************************************************
+ * Shadow management methods
+ ******************************************************************************/
+
+/* Shadows are auxiliary renderers which allow double buffering and caching of
+ * graphics. TeXmacs has explicit double buffering from the X11 port. Maybe
+ * it would be better to design a better API abstracting from the low level
+ * details but for the moment the following code and the aqua_proxy_renderer_rep
+ * is designed to avoid double buffering : when texmacs asks
+ * a aqua_renderer_rep for a shadow it is given a proxy of the original renderer
+ * texmacs uses this shadow for double buffering and the proxy will simply
+ * forward the drawing operations to the original surface and neglect all the
+ * syncronization operations
+ *
+ * to solve the second problem we do not draw directly on screen in QTMWidget.
+ * Instead we maintain an internal pixmap which represents the state of the pixels
+ * according to texmacs. When we are asked to initialize a aqua_shadow_renderer_rep
+ * we simply read the pixels form this backing store. At the Qt level then
+ * (in QTMWidget) we make sure that the state of the backing store is in sync
+ * with the screen via paintEvent/repaint mechanism.
+ *
+ */
+
+class aqua_shadow_renderer_rep: public aqua_renderer_rep {
+public:
+    NSBitmapImageRep *px;
+    aqua_renderer_rep *master;
+    
+public:
+    aqua_shadow_renderer_rep (int _w, int _h);
+    ~aqua_shadow_renderer_rep ();
+    
+    void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+};
+
+class aqua_proxy_renderer_rep: public aqua_renderer_rep {
+public:
+    aqua_renderer_rep *base;
+    
+public:
+    aqua_proxy_renderer_rep (aqua_renderer_rep *_base)
+    : aqua_renderer_rep(w, h), base(_base) { }
+    ~aqua_proxy_renderer_rep () { };
+    
+    void new_shadow (renderer& ren);
+    void get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2);
+};
+
+
+void
+aqua_renderer_rep::new_shadow (renderer& ren) {
+    SI mw, mh, sw, sh;
+    get_extents (mw, mh);
+    if (ren != NULL) {
+        ren->get_extents (sw, sh);
+        if (sw != mw || sh != mh) {
+            delete_shadow (ren);
+            ren= NULL;
+        } else
+            static_cast<aqua_shadow_renderer_rep*>(ren)->end();
+        // cout << "Old: " << sw << ", " << sh << "\n";
+    }
+
+    if (ren == NULL)  ren= (renderer) tm_new<aqua_proxy_renderer_rep> (this);
+  
+    if (ren) static_cast<aqua_renderer_rep*>(ren)->begin(context);
+
+    // cout << "Create " << mw << ", " << mh << "\n";
+}
+
+void
+aqua_renderer_rep::delete_shadow (renderer& ren)  {
+    if (ren != NULL) {
+        tm_delete (ren);
+        ren= NULL;
+    }
+}
+
+void
+aqua_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+    // FIXME: we should use the routine fetch later
+    ASSERT (ren != NULL, "invalid renderer");
+    if (ren->is_printer ()) return;
+    aqua_renderer_rep* shadow= static_cast<aqua_renderer_rep*>(ren);
+    outer_round (x1, y1, x2, y2);
+    x1= max (x1, cx1- ox);
+    y1= max (y1, cy1- oy);
+    x2= min (x2, cx2- ox);
+    y2= min (y2, cy2- oy);
+    shadow->ox= ox;
+    shadow->oy= oy;
+    shadow->master= this;
+    shadow->cx1= x1+ ox;
+    shadow->cy1= y1+ oy;
+    shadow->cx2= x2+ ox;
+    shadow->cy2= y2+ oy;
+    
+    decode (x1, y1);
+    decode (x2, y2);
+    if (x1<x2 && y2<y1) {
+        NSRect rect = NSMakeRect(x1, y2, x2-x1, y1-y2);
+        //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
+        NSGraphicsContext *old_context = [[NSGraphicsContext currentContext] retain];
+        [NSGraphicsContext setCurrentContext:context];
+        NSBezierPath* clipPath = [NSBezierPath bezierPath];
+        [clipPath appendBezierPathWithRect: rect];
+        [clipPath setClip];
+        [NSGraphicsContext setCurrentContext:old_context]; [old_context release];
+        //    shadow->painter->drawPixmap (rect, px, rect);
+        //    cout << "aqua_shadow_renderer_rep::get_shadow "
+        //         << rectangle(x1,y2,x2,y1) << LF;
+        //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+    } else {
+//        shadow->painter->setClipRect(QRect());
+    }
+}
+
+void
+aqua_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+    // FIXME: we should use the routine fetch later
+    ASSERT (ren != NULL, "invalid renderer");
+    if (ren->is_printer ()) return;
+    if (context == static_cast<aqua_renderer_rep*>(ren)->context) return;
+    aqua_shadow_renderer_rep* shadow= static_cast<aqua_shadow_renderer_rep*>(ren);
+    outer_round (x1, y1, x2, y2);
+    x1= max (x1, cx1- ox);
+    y1= max (y1, cy1- oy);
+    x2= min (x2, cx2- ox);
+    y2= min (y2, cy2- oy);
+    decode (x1, y1);
+    decode (x2, y2);
+    if (x1<x2 && y2<y1) {
+        NSRect rect = NSMakeRect(x1, y2, x2-x1, y1-y2);
+        //    cout << "aqua_shadow_renderer_rep::put_shadow "
+        //         << rectangle(x1,y2,x2,y1) << LF;
+        //    painter->setCompositionMode(QPainter::CompositionMode_Source);
+        NSGraphicsContext *old_context = [[NSGraphicsContext currentContext] retain];
+        [NSGraphicsContext setCurrentContext:context];
+        [shadow->px drawInRect: rect];
+        [NSGraphicsContext setCurrentContext:old_context]; [old_context release];
+//        painter->drawPixmap (rect, shadow->px, rect);
+        //  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+    }
+}
+
+
+void
+aqua_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2)  {
+    if (master == NULL) return;
+    if (context == static_cast<aqua_renderer_rep*>(master)->context) return;
+    outer_round (x1, y1, x2, y2);
+    decode (x1, y1);
+    decode (x2, y2);
+    static_cast<aqua_renderer_rep*>(master)->encode (x1, y1);
+    static_cast<aqua_renderer_rep*>(master)->encode (x2, y2);
+    master->put_shadow (this, x1, y1, x2, y2);
+}
+
+
+/******************************************************************************
+ * proxy qt renderer
+ ******************************************************************************/
+
+void
+aqua_proxy_renderer_rep::new_shadow (renderer& ren) {
+    SI mw, mh, sw, sh;
+    get_extents (mw, mh);
+    if (ren != NULL) {
+        ren->get_extents (sw, sh);
+        if (sw != mw || sh != mh) {
+            delete_shadow (ren);
+            ren= NULL;
+        }
+        else
+            static_cast<aqua_renderer_rep*>(ren)->end();
+        // cout << "Old: " << sw << ", " << sh << "\n";
+    }
+    if (ren == NULL) {
+//        NSBitmapImageRep *img = [[NSBitmapImageRep alloc] init];
+//        ren= (renderer) tm_new<aqua_shadow_renderer_rep> (QPixmap (mw, mh));
+        ren= (renderer) tm_new<aqua_shadow_renderer_rep> (mw, mh);
+    }
+    
+    // cout << "Create " << mw << ", " << mh << "\n";
+    static_cast<aqua_renderer_rep*>(ren)->begin(context);
+}
+
+void
+aqua_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+    // FIXME: we should use the routine fetch later
+    ASSERT (ren != NULL, "invalid renderer");
+    if (ren->is_printer ()) return;
+    aqua_renderer_rep* shadow= static_cast<aqua_renderer_rep*>(ren);
+    outer_round (x1, y1, x2, y2);
+    x1= max (x1, cx1- ox);
+    y1= max (y1, cy1- oy);
+    x2= min (x2, cx2- ox);
+    y2= min (y2, cy2- oy);
+    shadow->ox= ox;
+    shadow->oy= oy;
+    shadow->cx1= x1+ ox;
+    shadow->cy1= y1+ oy;
+    shadow->cx2= x2+ ox;
+    shadow->cy2= y2+ oy;
+    shadow->master= this;
+    decode (x1, y1);
+    decode (x2, y2);
+    
+    NSGraphicsContext *old_context = [[NSGraphicsContext currentContext] retain];
+    [NSGraphicsContext setCurrentContext:shadow->context];
+    if (x1<x2 && y2<y1) {
+        NSRect rect = NSMakeRect(x1, y2, x2-x1, y1-y2);
+
+        
+        NSBezierPath* clipPath = [NSBezierPath bezierPath];
+        [clipPath appendBezierPathWithRect: rect];
+        [clipPath setClip];
+
+        
+//        shadow->painter->setClipRect(rect);
+        
+        //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
+        NSBitmapImageRep *img = [view bitmapImageRepForCachingDisplayInRect:rect];
+//        QPixmap *_pixmap = static_cast<QPixmap*>(painter->device());
+        if (img) {
+            [img drawInRect:rect];
+//            shadow->painter->drawPixmap (rect, *_pixmap, rect);
+        }
+        //    cout << "aqua_shadow_renderer_rep::get_shadow "
+        //         << rectangle(x1,y2,x2,y1) << LF;
+        //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+
+    } else {
+        //shadow->painter->setClipRect(QRect());
+    }
+    [NSGraphicsContext setCurrentContext:old_context]; [old_context release];
+    
+}
+
+
+/******************************************************************************
+ * shadow qt renderer
+ ******************************************************************************/
+
+aqua_shadow_renderer_rep::aqua_shadow_renderer_rep (int _w, int _h)
+// : aqua_renderer_rep (_px.width(),_px.height()), px(_px)
+: aqua_renderer_rep (_w, _h), px(nil)
+{
+    px = [[NSBitmapImageRep alloc] init];
+    [px setSize: NSMakeSize(w,h)];
+    context = [[NSGraphicsContext graphicsContextWithBitmapImageRep: px] retain];
+    //cout << px.width() << "," << px.height() << " " << LF;
+    // painter->begin(&px);
+}
+
+aqua_shadow_renderer_rep::~aqua_shadow_renderer_rep ()
+{
+  [px release];
+  [context release];
+  context  = nil;
+}
+
+void
+aqua_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
+    // FIXME: we should use the routine fetch later
+    ASSERT (ren != NULL, "invalid renderer");
+    if (ren->is_printer ()) return;
+    aqua_shadow_renderer_rep* shadow= static_cast<aqua_shadow_renderer_rep*>(ren);
+    outer_round (x1, y1, x2, y2);
+    x1= max (x1, cx1- ox);
+    y1= max (y1, cy1- oy);
+    x2= min (x2, cx2- ox);
+    y2= min (y2, cy2- oy);
+    shadow->ox= ox;
+    shadow->oy= oy;
+    shadow->cx1= x1+ ox;
+    shadow->cy1= y1+ oy;
+    shadow->cx2= x2+ ox;
+    shadow->cy2= y2+ oy;
+    shadow->master= this;
+    decode (x1, y1);
+    decode (x2, y2);
+    NSGraphicsContext *old_context = [[NSGraphicsContext currentContext] retain];
+    [NSGraphicsContext setCurrentContext:shadow->context];
+    if (x1<x2 && y2<y1) {
+        NSRect rect = NSMakeRect(x1, y2, x2-x1, y1-y2);
+        
+        NSBezierPath* clipPath = [NSBezierPath bezierPath];
+        [clipPath appendBezierPathWithRect: rect];
+        [clipPath setClip];
+
+//        shadow->painter->setClipRect(rect);
+        [px drawInRect:rect];
+        
+        //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);   
+//        shadow->painter->drawPixmap (rect, px, rect);
+        //    cout << "aqua_shadow_renderer_rep::get_shadow " 
+        //         << rectangle(x1,y2,x2,y1) << LF;
+        //  XCopyArea (dpy, win, shadow->win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
+    } else {
+  //      shadow->painter->setClipRect(QRect());
+    }
+    [NSGraphicsContext setCurrentContext:old_context]; [old_context release];
+
+}
