@@ -153,7 +153,18 @@ aqua_view_widget_rep::send (slot s, blackbox val) {
     }
       break;
 
-	
+    case SLOT_SCROLL_POSITION:
+    {
+      //check_type<coord2>(val, s);
+      coord2  p = open_box<coord2> (val);
+      NSPoint qp = to_nspoint (p);
+      //QSize  sz = canvas()->surface()->size();
+      //qp -= QPoint (sz.width() / 2, sz.height() / 2);
+      // NOTE: adjust because child is centered
+      [view scrollPoint: qp];
+    }
+      break;
+        
   default:
     if (DEBUG_AQUA_WIDGETS)
        debug_widgets << "slot type= " << slot_name (s) << "\n";
@@ -397,11 +408,12 @@ void aqua_tm_widget_rep::layout()
   //	NSRect rh = [[bc bar] frame];
   NSRect rh = NSMakeRect(0,0,0,0);
   r.size.height -= rh.size.height;
-  r0.origin.y =+ r.size.height; r0.size.height = rh.size.height;
+  r0.origin.y += r.size.height; r0.size.height = rh.size.height;
   NSRect r1 = r; r1.origin.y += s.height; r1.size.height -= s.height;
   NSRect r2 = r; r2.size.height = s.height;
   NSRect r3 = r2; 
-  r2.size.width -= s.width; r3.origin.x =+ r2.size.width;
+  r2.size.width -= s.width;
+  r3.origin.x += r2.size.width;
   r3.size.width -= r2.size.width + 15.0;
   [sv setFrame:r1];
   [leftField setFrame:r2];
@@ -430,18 +442,14 @@ void aqua_tm_widget_rep::updateVisibility()
 void
 aqua_tm_widget_rep::send (slot s, blackbox val) {
   switch (s) {
-  case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
-      coord4 p= open_box<coord4> (val);
-      NSRect rect = to_nsrect(p);
-      NSSize ws = [sv contentSize];
-      NSSize sz = rect.size;
-      sz.height = max (sz.height, ws.height );
-      //			[[view window] setContentSize:rect.size];
-      [[sv documentView] setFrameSize: sz];
-    }
-    break;
+      case SLOT_INVALIDATE:
+      case SLOT_INVALIDATE_ALL:
+      case SLOT_EXTENTS:
+      case SLOT_SCROLL_POSITION:
+      case SLOT_ZOOM_FACTOR:
+      case SLOT_MOUSE_GRAB:
+          main_widget->send(s, val);
+          return;
  case SLOT_HEADER_VISIBILITY:
     {
       TYPE_CHECK (type_box (val) == type_helper<bool>::id);
@@ -500,18 +508,6 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     }
     break;
     
-  case SLOT_SCROLL_POSITION:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
-      coord2 p= open_box<coord2> (val);
-      NSPoint pt = to_nspoint(p);
-      NSSize sz = [[sv contentView] bounds].size;
-      if (DEBUG_EVENTS) debug_events << "Scroll position :" << pt.x << "," << pt.y << LF;
-      [[sv documentView] scrollPoint:pt];
- //     [[sv documentView] scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
-    }
-    break;
-    
   case SLOT_SCROLLBARS_VISIBILITY:
     // ignore this: cocoa handles scrollbars independently
     //			send_int (THIS, "scrollbars", val);
@@ -527,18 +523,6 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
     }
     break;
     
-  case SLOT_ZOOM_FACTOR:
-    {
-      TYPE_CHECK (type_box (val) == type_helper<double>::id);
-      simple_widget_rep *w = (simple_widget_rep *)[(TMView*)[sv documentView] widget];
-      if (w) {
-        double new_zoom = open_box<double> (val);
-        if (DEBUG_EVENTS) debug_events << "New zoom factor :" << new_zoom << LF;
-        w->handle_set_zoom_factor (new_zoom);
-      }
-      break;
-    }
-
   case SLOT_FILE:
     {
       TYPE_CHECK (type_box (val) == type_helper<string>::id);
@@ -557,43 +541,12 @@ aqua_tm_widget_rep::send (slot s, blackbox val) {
 blackbox
 aqua_tm_widget_rep::query (slot s, int type_id) {
   switch (s) {
-  case SLOT_SCROLL_POSITION:
-    {
-      TYPE_CHECK (type_id == type_helper<coord2>::id);
-      NSPoint pt = [[sv documentView] frame].origin;
-      if (DEBUG_EVENTS)
-        debug_events << "Position (" << pt.x << "," << pt.y << ")\n"; 
-      return close_box<coord2> (from_nspoint(pt));
-    }
-        
-  case SLOT_EXTENTS:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      NSRect rect= [[sv documentView] frame];
-      coord4 c= from_nsrect (rect);
-      if (DEBUG_EVENTS) debug_events << "Canvas geometry (" << rect.origin.x 
-        << "," << rect.origin.y
-        << "," << rect.size.width
-        << "," << rect.size.height
-        << ")" << LF;
-      return close_box<coord4> (c);
-    }
-        
-        
-  case SLOT_VISIBLE_PART:
-    {
-      TYPE_CHECK (type_id == type_helper<coord4>::id);
-      NSRect rect= [sv documentVisibleRect];
-      coord4 c= from_nsrect (rect);
-      if (DEBUG_EVENTS) debug_events << "Visible region (" << rect.origin.x 
-        << "," << rect.origin.y
-        << "," << rect.size.width
-        << "," << rect.size.height
-        << ")" << LF;
-      return close_box<coord4> (c);
-    }
+      case SLOT_SCROLL_POSITION:
+      case SLOT_EXTENTS:
+      case SLOT_VISIBLE_PART:
+      case SLOT_ZOOM_FACTOR:
+          return main_widget->query(s, type_id);
 
-        
   case SLOT_USER_ICONS_VISIBILITY:
     TYPE_CHECK (type_id == type_helper<bool>::id);
     return close_box<bool> (visibility[3]);
@@ -876,7 +829,7 @@ aqua_window_widget_rep::send (slot s, blackbox val) {
     NOT_IMPLEMENTED ;
     // send_refresh (THIS, val);
     break;
-    
+          
   default:
     FAILED ("cannot handle slot type");
   }
@@ -1004,11 +957,57 @@ simple_widget_rep::send (slot s, blackbox val) {
     {
       TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
       coord2 p= open_box<coord2> (val);
-      debug_aqua << "simple_widget_rep::send SLOT_POSITION - TO BE IMPLEMENTED\n";
+        NSPoint pt = to_nspoint(p);
+        
+        //FIXME: implement this!!!
+//      debug_aqua << "simple_widget_rep::send SLOT_POSITION - TO BE IMPLEMENTED (" << pt.x << "," << pt.y << ")\n";
+     // [view scrollPoint:to_nspoint(p)];
+
       //QPoint pt = to_qpoint(p);
       //tm_canvas() -> setCursorPos(pt);
     }
       break;
+          
+      case SLOT_SCROLL_POSITION:
+      {
+          TYPE_CHECK (type_box (val) == type_helper<coord2>::id);
+          coord2 p= open_box<coord2> (val);
+          NSPoint pt = to_nspoint(p);
+          NSSize sz = [view bounds].size;
+          if (DEBUG_EVENTS) debug_events << "Scroll position :" << pt.x << "," << pt.y << LF;
+          pt.y -= sz.height/2;
+          pt.x -= sz.width/2;
+          //[view scrollPoint:pt];
+          [view scrollRectToVisible:NSMakeRect(pt.x,pt.y,1.0,1.0)];
+      }
+          break;
+          
+          
+      case SLOT_EXTENTS:
+      {
+          TYPE_CHECK (type_box (val) == type_helper<coord4>::id);
+          coord4 p= open_box<coord4> (val);
+          NSRect rect = to_nsrect(p);
+//          NSSize ws = [sv contentSize];
+          NSSize sz = rect.size;
+ //         sz.height = max (sz.height, ws.height );
+          //			[[view window] setContentSize:rect.size];
+          [view setFrameSize: sz];
+      }
+          break;
+
+       
+      case SLOT_ZOOM_FACTOR:
+      {
+          TYPE_CHECK (type_box (val) == type_helper<double>::id);
+          double new_zoom = open_box<double> (val);
+          if (DEBUG_EVENTS) debug_events << "New zoom factor :" << new_zoom << LF;
+          handle_set_zoom_factor (new_zoom);
+          break;
+      }
+          
+
+
     default:
       if (DEBUG_AQUA) debug_aqua << "[aqua_simple_widget_rep] ";
       aqua_view_widget_rep::send (s, val);
@@ -1065,6 +1064,8 @@ simple_widget_rep::query (slot s, int type_id) {
         << ")" << LF;
       return close_box<coord4> (c);
     }
+          
+          
       
     default:
       return aqua_view_widget_rep::query(s, type_id);
