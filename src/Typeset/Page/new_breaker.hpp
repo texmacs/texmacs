@@ -36,6 +36,8 @@ struct new_breaker_rep {
   array<space> foot_tot;    // the cumulated footnote height until here
   array<space> float_ht;    // the height of all floats for one page_item,
   array<space> float_tot;   // the cumulated float height until here
+  array<space> wide_ht;     // height of wide floats/footnotes for page_item,
+  array<space> wide_tot;    // the cumulated wide float/footnote height
   array<int>   col_number;  // number of columns
   array<int>   col_same;    // last line with same number of columns
   

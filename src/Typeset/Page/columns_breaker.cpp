@@ -325,6 +325,19 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
       pen += spen;
     }
   }
+
+  int i1= b1->item, i2= b2->item;
+  if (i1 < i2 && wide_tot[i2] != wide_tot[i1]) {
+    spc += (wide_tot[i2] - wide_tot[i1]);
+    bool has_footnotes= false;
+    for (int i=i1; i<i2; i++)
+      for (int j=0; j<N(ins_list[i]); j++)
+        if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1)
+          if (is_tuple (ins_list[i][j]->type, "footnote"))
+            has_footnotes= true;
+    if (has_footnotes) spc += (fnote_sep - fn_sep);
+  }
+
   return spc;
 }
 
@@ -384,6 +397,18 @@ new_breaker_rep::make_multi_column (path b1, path b2) {
 pagelet
 new_breaker_rep::assemble_multi_columns (path b1, path b2) {
   pagelet pg (0);
+  int i1= b1->item, i2= b2->item;
+  bool wide_flag= (i1 < i2 && wide_tot[i2] != wide_tot[i1]);
+
+  if (wide_flag)
+    for (int i=i1; i<i2; i++)
+      for (int j=0; j<N(ins_list[i]); j++)
+        if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1)
+          if (float_has (ins_list[i][j]->type, 't')) {
+            pg << ins_list[i][j];
+            pg << float_sep;
+          }
+
   array<path> a= break_uniform (b1, b2);
   //cout << "Break uniform " << b1 << ", " << b2 << " ~> " << a << LF;
   for (int i=1; i<N(a); i++) {
@@ -393,5 +418,28 @@ new_breaker_rep::assemble_multi_columns (path b1, path b2) {
     insertion ins= make_multi_column (sb1, sb2);
     pg << ins;
   }
+
+  if (wide_flag) {
+    for (int i=i1; i<i2; i++)
+      for (int j=0; j<N(ins_list[i]); j++)
+        if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1)
+          if (is_tuple (ins_list[i][j]->type, "float"))
+            if (!float_has (ins_list[i][j]->type, 't')) {
+              pg << ins_list[i][j];
+              pg << fnote_sep;
+            }
+
+    bool has_footnotes= false;
+    for (int i=i1; i<i2; i++)
+      for (int j=0; j<N(ins_list[i]); j++)
+        if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1)
+          if (is_tuple (ins_list[i][j]->type, "footnote")) {
+            pg << ins_list[i][j];
+            if (has_footnotes) pg << fn_sep;
+            else pg << fnote_sep;
+            has_footnotes= true;
+          }
+  }
+  
   return pg;
 }

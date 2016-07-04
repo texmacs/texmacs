@@ -17,7 +17,7 @@
 
 bool
 float_has (tree t, char c) {
-  if (N(t) < 2) return false;
+  if (N(t) < 2 || t[0] != "float") return false;
   string s= as_string (t[1]);
   for (int i=0; i<N(s); i++)
     if (s[i] == c) return true;
@@ -60,16 +60,25 @@ new_breaker_rep::new_breaker_rep (
     int k= N (l[i]->fl);
     space foot_spc (0);
     space float_spc (0);
+    space wide_spc (0);
     array<insertion> ins_here;
     for (int j=0; j<k; j++) {
       lazy_vstream lvs= (lazy_vstream) l[i]->fl[j];
       insertion ins= make_insertion (lvs, path (i, j));
       ins_here << ins;
-      if (is_tuple (lvs->channel, "footnote"))
-        foot_spc += ins->ht + fn_sep;
-      else if (is_tuple (lvs->channel, "float")) {
-        if (float_here (lvs->channel)) float_spc += ins->ht + 2*float_sep;
-        else float_spc += ins->ht + float_sep;
+      if (ins->nr_cols == 1 && l[i]->nr_cols > 1) {
+        if (is_tuple (lvs->channel, "footnote"))
+          wide_spc += ins->ht + fn_sep;
+        else if (is_tuple (lvs->channel, "float"))
+          wide_spc += ins->ht + float_sep;
+      }
+      else {
+        if (is_tuple (lvs->channel, "footnote"))
+          foot_spc += ins->ht + fn_sep;
+        else if (is_tuple (lvs->channel, "float")) {
+          if (float_here (lvs->channel)) float_spc += ins->ht + 2*float_sep;
+          else float_spc += ins->ht + float_sep;
+        }
       }
     }
     ins_list  << ins_here;
@@ -77,6 +86,8 @@ new_breaker_rep::new_breaker_rep (
     foot_tot  << (i==0? space(0): foot_tot[i-1] + foot_ht[i]);
     float_ht  << float_spc;
     float_tot << (i==0? space(0): float_tot[i-1] + float_ht[i]);
+    wide_ht   << wide_spc;
+    wide_tot  << (i==0? space(0): wide_tot[i-1] + wide_ht[i]);
 
     if (i>0 && l[i]->nr_cols != l[i-1]->nr_cols) same= i;
     col_number << l[i]->nr_cols;
@@ -203,7 +214,8 @@ new_breaker_rep::find_page_breaks (path b1) {
         for (int j=0; j<N(ins_list[i]); j++) {
           insertion ins= ins_list[i][j];
           if (is_tuple (ins->type, "float")) {
-            if (float_has (ins->type, 'f')) {
+            if (ins->nr_cols == 1 && l[i]->nr_cols > 1);
+            else if (float_has (ins->type, 'f')) {
               while (!is_nil (floats)) {
                 int i2= floats->item;
                 int j2= floats->next->item;
@@ -450,7 +462,8 @@ new_breaker_rep::assemble (path start, path end) {
   for (int i=start->item; i<end->item; i++)
     for (int j=0; j<N(ins_list[i]); j++)
       if (is_tuple (ins_list[i][j]->type, "float")) {
-        if (!is_nil (avoid) && avoid->item == i && avoid->next->item == j)
+        if (ins_list[i][j]->nr_cols == 1 && l[i]->nr_cols > 1);
+        else if (!is_nil (avoid) && avoid->item == i && avoid->next->item == j)
           avoid= avoid->next->next;
         else floats= floats * path (i, j);
       }
@@ -526,12 +539,13 @@ new_breaker_rep::assemble (path start, path end) {
   bool has_footnotes= false;
   for (int i=start->item; i<end->item; i++)
     for (int j=0; j<N(ins_list[i]); j++)
-      if (is_tuple (ins_list[i][j]->type, "footnote")) {
-        pg << ins_list[i][j];
-        if (has_footnotes) pg << fn_sep;
-        else pg << fnote_sep;
-        has_footnotes= true;
-      }
+      if (is_tuple (ins_list[i][j]->type, "footnote"))
+        if (ins_list[i][j]->nr_cols != 1 || l[i]->nr_cols == 1) {
+          pg << ins_list[i][j];
+          if (has_footnotes) pg << fn_sep;
+          else pg << fnote_sep;
+          has_footnotes= true;
+        }
   return pg;
 }
 
