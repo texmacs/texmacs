@@ -327,8 +327,8 @@ new_breaker_rep::compute_space (path b1, path b2, vpenalty& pen) {
   }
 
   int i1= b1->item, i2= b2->item;
-  if (i1 < i2 && wide_tot[i2] != wide_tot[i1]) {
-    spc += (wide_tot[i2] - wide_tot[i1]);
+  if (i1 < i2 && wide_tot[i2-1] != (i1 == 0? space (0): wide_tot[i1-1])) {
+    spc += (wide_tot[i2-1] - (i1 == 0? space (0): wide_tot[i1]));
     bool has_footnotes= false;
     for (int i=i1; i<i2; i++)
       for (int j=0; j<N(ins_list[i]); j++)
@@ -398,8 +398,9 @@ pagelet
 new_breaker_rep::assemble_multi_columns (path b1, path b2) {
   pagelet pg (0);
   int i1= b1->item, i2= b2->item;
-  bool wide_flag= (i1 < i2 && wide_tot[i2] != wide_tot[i1]);
-
+  bool wide_flag= (i1 < i2 && wide_tot[i2-1] !=
+                   (i1 == 0? space (0): wide_tot[i1-1]));
+  
   if (wide_flag)
     for (int i=i1; i<i2; i++)
       for (int j=0; j<N(ins_list[i]); j++)

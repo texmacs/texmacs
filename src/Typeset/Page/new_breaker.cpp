@@ -66,6 +66,8 @@ new_breaker_rep::new_breaker_rep (
       lazy_vstream lvs= (lazy_vstream) l[i]->fl[j];
       insertion ins= make_insertion (lvs, path (i, j));
       ins_here << ins;
+      //cout << i << ", " << j << ", " << ins->type
+      //     << "; " << ins->nr_cols << ", " << l[i]->nr_cols << LF;
       if (ins->nr_cols == 1 && l[i]->nr_cols > 1) {
         if (is_tuple (lvs->channel, "footnote"))
           wide_spc += ins->ht + fn_sep;
