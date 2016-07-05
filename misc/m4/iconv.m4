@@ -1,11 +1,14 @@
 #--------------------------------------------------------------------
 # Checks for iconv library
 #--------------------------------------------------------------------
+m4_define([PROG_ICONV], [AC_LANG_PROGRAM([[@%:@include <iconv.h>]],
+        [[iconv_open("",""); ]])])
+
 
 AC_DEFUN([LC_ICONV],[
 AC_ARG_WITH(iconv,
 AS_HELP_STRING([--with-iconv@<:@=DIR@:>@], [where to find iconv []]),
-	[], [unset withval;])
+  [], [unset withval;])
 
 if [[[ "$withval" != no ]]]
 then _LC_ICONV([MM])
@@ -40,8 +43,7 @@ AC_DEFUN([_LC_ICONV],[
     LC_SET_FLAGS([ICONV])
     rm $[$0]_TEMP
     AC_CHECK_HEADER(iconv.h, [
-      LC_LINK_IFELSE([iconv],[AC_LANG_PROGRAM([[@%:@include <iconv.h>]],
-        [[iconv_open("",""); ]])],[
+      LC_LINK_IFELSE([iconv],[PROG_ICONV],[
         AX_RESTORE_FLAGS
         LC_COMBINE_FLAGS([ICONV])
         AC_DEFINE(USE_ICONV, 1, [Use iconv library])
@@ -52,13 +54,25 @@ AC_DEFUN([_LC_ICONV],[
           unset ac_cv_header_iconv_h  # clear the cache....
           AC_MSG_WARN([Try to force default location])
           _LC_ICONV([M])
-        ],[AC_MSG_ERROR([Cannot use iconv.h.])])
+        ],[
+          # iconv must be include in LIBC 
+          unset LIBS ICONV_LIBS
+          LC_LINK_IFELSE([toto],[PROG_ICONV],[
+            AX_RESTORE_FLAGS
+            LC_COMBINE_FLAGS([ICONV])
+            AC_DEFINE(USE_ICONV, 1, [Use iconv library])
+          ],[
+            #no iconv
+            LC_CLEAR_FLAGS([ICONV])
+            AC_MSG_WARN([Cannot use iconv.h.])
+          ])
+        ])
       ])
     ],[
       AC_MSG_ERROR([libiconv does not match header.])])
   ],[
     rm $[$0]_TEMP
-    AC_MSG_ERROR([Use with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location.  Use with-iconv=no to ignore iconv.])
+    AC_MSG_WARN([Use --with-iconv=iconv_base_path (i.e /usr/local) to specify your icon location])
   ],[-])
   unset ${![$0]_*}
 ])
