@@ -40,6 +40,8 @@ struct new_breaker_rep {
   array<space> wide_tot;    // the cumulated wide float/footnote height
   array<int>   col_number;  // number of columns
   array<int>   col_same;    // last line with same number of columns
+  array<bool>  must_new;    // compulsory new pages
+  array<bool>  must_break;  // compulsory new pages or page breaks
   
   array<array<insertion> > ins_list;   // all page insertions
 
@@ -66,7 +68,7 @@ struct new_breaker_rep {
   insertion make_insertion (int i1, int i2);
   bool here_floats (path p);
   pagelet assemble (path start, path end);
-  void assemble_skeleton (skeleton& sk, path end);
+  void assemble_skeleton (skeleton& sk, path end, int& offset);
 
   // Pages with multi-column content
   bool has_columns (path b1, path b2, int nr);

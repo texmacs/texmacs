@@ -94,8 +94,18 @@ new_breaker_rep::new_breaker_rep (
     if (i>0 && l[i]->nr_cols != l[i-1]->nr_cols) same= i;
     col_number << l[i]->nr_cols;
     col_same   << same;
+
+    bool np= false, pb= false;
+    if (!papyrus_mode && l[i]->type == PAGE_CONTROL_ITEM) {
+      if (l[i]->t == PAGE_BREAK) pb= true;
+      if (l[i]->t == NEW_PAGE || l[i]->t == NEW_DPAGE) np= pb= true;
+    }
+    must_new   << np;
+    must_break << pb;
   }
-  col_same << same;
+  col_same   << same;
+  must_new   << false;
+  must_break << false;
 
   best_prev (path (0))= path (-2); 
   best_pens (path (0))= 0;
@@ -190,11 +200,15 @@ new_breaker_rep::compute_space (path b1, path b2) {
 
 bool
 new_breaker_rep::last_break (path b) {
-  return last_page_flag && b == path (N(l));
+  return last_page_flag && (b == path (N(l)) ||
+                            (must_new[b->item] && is_nil (b->next)));
 }
 
 void
 new_breaker_rep::find_page_breaks (path b1) {
+  path b1x= b1;
+  if (must_break[b1x->item] && b1x->item < N(l))
+    b1x= path (b1x->item + 1, b1x->next);
   //cout << "Find page breaks " << b1 << LF;
   bool ok= false;
   vpenalty prev_pen= best_pens [b1];
@@ -238,6 +252,8 @@ new_breaker_rep::find_page_breaks (path b1) {
       b2= path (i+1, floats);
     }
     if (b2->item > n) break;
+    bool break_page= must_break[b2->item];
+    if (must_new[b2->item]) b2= path (b2->item);
     
     space spc;
     int bpen= l[b2->item - 1]->penalty;
@@ -250,18 +266,18 @@ new_breaker_rep::find_page_breaks (path b1) {
     if (bpen < HYPH_INVALID) {
       ok= true;
       vpenalty pen= prev_pen + vpenalty (bpen);
-      if (has_columns (b1, b2, 1))
-        spc= compute_space (b1, b2);
+      if (has_columns (b1x, b2, 1))
+        spc= compute_space (b1x, b2);
       else {
         vpenalty mcpen;
-        spc= compute_space (b1, b2, mcpen);
-        //cout << "Space " << b1 << ", " << b2
+        spc= compute_space (b1x, b2, mcpen);
+        //cout << "Space " << b1x << ", " << b2
         //     << " ~> " << spc << ", " << mcpen << LF;
         pen += mcpen;
       }
       if (!last_break (b2))
 	pen += as_vpenalty (spc->def - height->def);
-      if (!last_break (b2) && spc->max < height->def) {
+      if (!last_break (b2) && !break_page && spc->max < height->def) {
 	if (spc->max >= height->min) pen += EXTEND_PAGE_PENALTY;
 	else {
 	  double factor=
@@ -290,6 +306,7 @@ new_breaker_rep::find_page_breaks (path b1) {
       }
     }
     if (ok && spc->min > height->max && is_nil (b2->next)) break;
+    if (break_page && is_nil (b2->next)) break;
   }
 }
 
@@ -552,23 +569,34 @@ new_breaker_rep::assemble (path start, path end) {
 }
 
 void
-new_breaker_rep::assemble_skeleton (skeleton& sk, path end) {
+new_breaker_rep::assemble_skeleton (skeleton& sk, path end, int& offset) {
   path start= best_prev [end];
   //cout << "Assemble skeleton " << start << " -- " << end << LF;
   if (start->item < 0) return;
-  assemble_skeleton (sk, start);
-  if (has_columns (start, end, 1)) {
-    pagelet pg= assemble (start, end);
+  assemble_skeleton (sk, start, offset);
+  path begin= start;
+  if (must_break[begin->item] && begin->item < end->item) {
+    if (l[begin->item]->t == NEW_DPAGE)
+      if (((N(sk) + offset) & 1) == 1)
+        sk << pagelet (space (0));
+    begin= path (begin->item + 1, begin->next);
+  }
+  //cout << "Assemble page " << begin << ", " << end << "; " << offset << LF;
+  if (has_columns (begin, end, 1)) {
+    pagelet pg= assemble (begin, end);
     bool last_page= last_break (end);
     format_pagelet (pg, height, last_page);
     sk << pg;
   }
   else {
-    pagelet pg= assemble_multi_columns (start, end);
+    pagelet pg= assemble_multi_columns (begin, end);
     bool last_page= last_break (end);
     format_pagelet (pg, height, last_page);
     sk << pg;
   }
+  for (int i=begin->item; i<end->item; i++)
+    if (is_tuple (l[i]->t, "env_page") && l[i]->t[1] == PAGE_NR)
+      offset= as_int (l[i]->t[2]->label) - N(sk);
 }
 
 /******************************************************************************
@@ -587,7 +615,8 @@ new_break_pages (array<page_item> l, space ph, int qual,
   H->find_page_breaks ();
   //cout << HRULE << LF;
   skeleton sk;
-  H->assemble_skeleton (sk, path (N(l)));
+  int offset= first_page - 1;
+  H->assemble_skeleton (sk, path (N(l)), offset);
   //cout << HRULE << LF;
   tm_delete (H);
   return sk;
