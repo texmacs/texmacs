@@ -17,7 +17,12 @@
 * Transliteration
 ******************************************************************************/
 
-hashmap<string,string> translit_table ("");
+static hashmap<string,string>&
+get_translit_table () {
+  static hashmap<string,string> t ("");
+  return t;
+}
+hashmap<string,string> &translit_table = get_translit_table();
 extern char Cork_unaccented[128];
 
 static void
@@ -124,9 +129,19 @@ uni_translit (string s) {
 /******************************************************************************
 * Changing the case
 ******************************************************************************/
+static hashmap<string,string>&
+get_locase_tab () {
+  static hashmap<string,string> t ("");
+  return t;
+}
+static hashmap<string,string>&
+get_upcase_tab () {
+  static hashmap<string,string> t ("");
+  return t;
+}
 
-hashmap<string,string> locase_tab ("");
-hashmap<string,string> upcase_tab ("");
+hashmap<string,string> locase_tab = get_locase_tab ();
+hashmap<string,string> upcase_tab = get_upcase_tab ();
 
 static void
 add_greek (string sym) {

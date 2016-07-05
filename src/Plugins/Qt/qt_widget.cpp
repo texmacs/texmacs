@@ -223,7 +223,7 @@ qt_widget_rep::plain_window_widget (string name, command quit) {
  */
 widget
 qt_widget_rep::make_popup_widget () {
-  return tm_new<qt_popup_widget_rep> (this, command());
+  return tm_new<qt_popup_widget_rep> ((widget_rep*)this, command());
 }
 
 /*! Interface for the creation of popups.

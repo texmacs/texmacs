@@ -181,7 +181,7 @@ qt_inputs_list_widget_rep::qt_inputs_list_widget_rep (command _cmd,
   position (coord2 (0, 0)), win_title (""), style (0)
 {
   for (int i = 0; i < N(_prompts); i++)
-    add_child (tm_new<qt_field_widget_rep> (this, _prompts[i]));
+    add_child (tm_new<qt_field_widget_rep> ((qt_inputs_list_widget_rep*)this, _prompts[i]));
 }
 
 widget

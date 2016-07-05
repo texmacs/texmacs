@@ -305,8 +305,8 @@ STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
 GENERIC_PACKAGE: STATIC_TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
-	-find `guile-config info pkgdatadir` -type d -name ice-9 -exec ln -s {} $(tmdir)/progs \; && \
-	   ln -s $(tmdir) $(STATIC_QT) && \
+	-find `guile-config info pkgdatadir` -type d -name ice-9 -exec cp -R {} $(tmdir)/progs \; && \
+	   cp -R $(tmdir) $(STATIC_QT) && \
 	   tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
 	$(RM) $(tmdir)/progs/ice-9  $(STATIC_QT)
 
