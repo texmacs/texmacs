@@ -17,7 +17,9 @@
 
 int    std_shrinkf  = 5;
 bool   retina_manual= false;
+bool   retina_iman  = false;
 int    retina_factor= 1;
+int    retina_icons = 1;
 double retina_scale = 1.0;
 
 /******************************************************************************

@@ -266,12 +266,22 @@ TeXmacs_main (int argc, char** argv) {
       else if (s == "-no-retina") {
         retina_manual= true;
         retina_factor= 1;
+        retina_icons = 1;
 	retina_scale = 1.0;
       }
       else if ((s == "-R") || (s == "-retina")) {
         retina_manual= true;
         retina_factor= 2;
+        retina_icons = 2;
 	retina_scale = 1.4;
+      }
+      else if (s == "-no-retina-icons") {
+        retina_iman  = true;
+        retina_icons = 1;
+      }
+      else if (s == "-retina-icons") {
+        retina_iman  = true;
+        retina_icons = 2;
       }
       else if ((s == "-c") || (s == "-convert")) {
 	i+=2;

@@ -132,6 +132,11 @@ needing_update (false)
     if (mac_hidpi == 2) {
       if (DEBUG_STD) debug_boot << "Setting up HiDPI mode\n";
       retina_factor= 2;
+      if (!retina_iman) {
+        retina_iman  = true;
+        retina_icons = 1;
+        // retina_icons = 2;  // FIXME: why is this not better?
+      }
       retina_scale = 1.4;
     }
 #else
