@@ -334,6 +334,29 @@ TeXmacs_main (int argc, char** argv) {
     }
   if (flag) debug (DEBUG_FLAG_AUTO, true);
 
+  // Further options via environment variables
+  if (get_env ("TEXMACS_RETINA") == "off") {
+    retina_manual= true;
+    retina_factor= 1;
+    retina_icons = 1;
+    retina_scale = 1.0;
+  }
+  if (get_env ("TEXMACS_RETINA") == "on") {
+    retina_manual= true;
+    retina_factor= 2;
+    retina_icons = 2;
+    retina_scale = 1.4;
+  }
+  if (get_env ("TEXMACS_RETINA_ICONS") == "off") {
+    retina_iman  = true;
+    retina_icons = 1;
+  }
+  if (get_env ("TEXMACS_RETINA_ICONS") == "on") {
+    retina_iman  = true;
+    retina_icons = 2;
+  }
+  // End options via environment variables
+  
   if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";
   bench_start ("initialize plugins");
   init_plugins ();
