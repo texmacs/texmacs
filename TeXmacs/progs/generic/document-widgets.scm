@@ -281,7 +281,7 @@
       (aligned
         (item (text "Page breaking algorithm:")
           (enum (initial-set u "page-breaking" answer)
-                '("sloppy" "medium" "professional")
+                '("sloppy" "professional")
                 (initial-get u "page-breaking") "10em"))
         (item (text "Allowed page height reduction:")
           (enum (initial-set u "page-shrink" answer)
