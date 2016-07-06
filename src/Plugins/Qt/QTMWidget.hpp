@@ -36,7 +36,7 @@ class QTMWidget: public QTMScrollView {
   QPixmap      backingPixmap;
   QLabel*           imwidget;
   QPoint          cursor_pos;
-  long                    id;
+ // long                    id;
   
 public:
 

@@ -171,10 +171,9 @@ static long int QTMWcounter = 0; // debugging hack
   \param _tmwid the TeXmacs widget who owns this object.
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
-: QTMScrollView (_parent), tmwid (_tmwid), backingPixmap (1,1), imwidget (NULL),
-  id (QTMWcounter++)
+: QTMScrollView (_parent), tmwid (_tmwid), backingPixmap (1,1), imwidget (NULL)
 {
-  setObjectName (to_qstring ("QTMWidget" * as_string (id)));// What is this for?
+  setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
   all_widgets.insert (this);
@@ -183,13 +182,13 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   surface()->setMouseTracking (true);
   
   if (DEBUG_QT)
-    debug_qt << "Creating QTMWidget " << as_string (id) << " of widget "
+    debug_qt << "Creating " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
 }
 
 QTMWidget::~QTMWidget () {
   if (DEBUG_QT)
-    debug_qt << "Destroying QTMWidget " << as_string (id) << " of widget "
+    debug_qt << "Destroying " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
   
     // remove ourselves from the list of QWidgets to be repainted.
