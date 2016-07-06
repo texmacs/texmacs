@@ -8,6 +8,31 @@
   <section|Changes from version 1.99.1 to 1.99.5>
 
   <\itemize>
+    <item>Support for retina screens (1.99.5).
+
+    <item>Implementation of a better, still experimental, page breaking
+    algorithm (1.99.5).
+
+    <item>Various improvements for the laptop presentation mode (1.99.5).
+
+    <item>Simplified editor for graphical slides in laptop presentations
+    (1.99.5).
+
+    <item>Highly improved animations (1.99.5).
+
+    <item>An editing mode for simple animations based on morphing (1.99.5).
+
+    <item>Various graphical effects and font effects (1.99.5).
+
+    <item>Reorganizations in the configuration of <TeXmacs> (1.99.5).
+
+    <item>Improved rendering of pages, including a mode for double sided
+    rendering, and a panorama mode (1.99.5).
+
+    <item>High quality mathematical typesetting for many standard fonts
+    (1.99.5); see also the paper \PMathematical Font Art\Q presented at ICMS
+    2016.
+
     <item>Rudimentary support for inking (1.99.5).
 
     <item>Customizable snapping in graphics mode (1.99.5).

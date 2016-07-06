@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.4>
 
 <style|<tuple|tmdoc|english>>
 
@@ -20,17 +20,25 @@
     standard <c++> template system. He also made many other patches, bug
     reports and he did a lot of the administration of <TeXmacs>.
 
+    <item>Denis Raux maintains the website, the mailing lists and the
+    <name|Windows> version. He also works on <TeXmacs> packages for various
+    platforms.
+
+    <item>Grégoire Lecerf helped us with many issues: document encryption,
+    Pdf export, extensive testing, bug reports and fixes, etc.
+
     <item>Miguel de Benito Delgado works on the <name|Qt> port, the usage of
     <TeXmacs> to develop and browse its <name|Scheme> code and general
     improvements to the user experience.
 
-    <item>Denis Raux maintains the website, the mailing lists and the
-    <name|Windows> version.
-
     <item>Henri Lesourd developed a native mode for drawing technical
     pictures inside <TeXmacs>. He also fixed a bug in the presentation mode.
 
-    <item>Dan Martens made the <name|Windows> port.
+    <item>Philippe Joyez provided help concerning the support of various
+    image formats and the compatability with <name|Inkscape>.
+
+    <item>Dan Martens made a first <name|Windows> port that is no longer
+    maintained.
 
     <item>David Michel provided help concerning the <name|Qt>-based
     <name|Windows> port and several portability issues.
