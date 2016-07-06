@@ -35,7 +35,7 @@ class qt_simple_widget_rep: public qt_widget_rep {
     // We keep a pointer to ourselves to avoid accidental deletion by our own
     // QTMWidget, who keeps a smart pointer to us.
     // (not sure whether this works/is necessary, though)
-  qt_widget self;
+  //qt_widget self;
   
   typedef struct t_slot_entry {
     int seq;

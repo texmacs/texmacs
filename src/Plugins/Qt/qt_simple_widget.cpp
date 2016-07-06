@@ -37,7 +37,7 @@ extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
- : qt_widget_rep (simple_widget), self (this), sequencer (0) { }
+ : qt_widget_rep (simple_widget),  sequencer (0) { }
 
 qt_simple_widget_rep::~qt_simple_widget_rep () {
   all_widgets->remove ((pointer) this);
@@ -45,7 +45,7 @@ qt_simple_widget_rep::~qt_simple_widget_rep () {
 
 QWidget*
 qt_simple_widget_rep::as_qwidget () {
-  qwid = new QTMWidget (0, self);
+  qwid = new QTMWidget (0, this);
   reapply_sent_slots();
   SI width, height;
   handle_get_size_hint (width, height);
@@ -408,10 +408,7 @@ qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
   rectangle r = rectangle (x1, y1, x2, y2);
 #endif
   // cout << "invalidating " << r << LF;
-  invalid_regions = invalid_regions | rectangles (r);
-  
-  // queue for redrawing when needed
-  if (canvas()) all_widgets->insert((pointer) this);
+  invalid_regions = invalid_regions | rectangles (r);  
 }
 
 void
@@ -609,10 +606,6 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   
   // propagate immediately the changes to the screen
   canvas()->surface()->repaint (qrgn);
-  
-  // dequeue from redrawing list
-  all_widgets->remove ((pointer) this);
-
 }
 
 hashset<pointer> qt_simple_widget_rep::all_widgets;
@@ -622,6 +615,6 @@ qt_simple_widget_rep::repaint_all () {
   iterator<pointer> i = iterate(qt_simple_widget_rep::all_widgets);
   while (i->busy()) {
     qt_simple_widget_rep *w = static_cast<qt_simple_widget_rep*>(i->next());
-    if (w->canvas()->isVisible()) w->repaint_invalid_regions();
+    if (w->canvas() && w->canvas()->isVisible()) w->repaint_invalid_regions();
   }
 }

@@ -28,9 +28,9 @@ class qt_simple_widget_rep;
 class QTMWidget: public QTMScrollView {
   Q_OBJECT
 
-  mutable qt_widget    tmwid;
-  QLabel*           imwidget;
-  QPoint          cursor_pos;
+  qt_widget    tmwid;
+  QLabel*      imwidget;
+  QPoint       cursor_pos;
   
 public:
 
