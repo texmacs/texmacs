@@ -57,7 +57,7 @@ AC_DEFUN([_LC_ICONV],[
         ],[
           # iconv must be include in LIBC 
           unset LIBS ICONV_LIBS
-          LC_LINK_IFELSE([toto],[PROG_ICONV],[
+          LC_LINK_IFELSE([iconv in default libs],[PROG_ICONV],[
             AX_RESTORE_FLAGS
             LC_COMBINE_FLAGS([ICONV])
             AC_DEFINE(USE_ICONV, 1, [Use iconv library])
