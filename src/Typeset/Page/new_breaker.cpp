@@ -321,13 +321,28 @@ new_breaker_rep::find_page_breaks () {
   //  cout << "  " << i << ": \t" << l[i]
   //       << ", " << body_ht[i]
   //       << ", " << body_cor[i] << ", " << body_tot[i] << LF;
-  todo_list (path (0))= true;
+  todo_list (path (0))= true;  
   while (N(todo_list) != 0) {
     hashmap<path,bool> temp_list= todo_list;
     todo_list= hashmap<path,bool> (false);
     done_list->join (temp_list);
-    for (iterator<path> it= iterate (temp_list); it->busy (); )
-      find_page_breaks (it->next ());
+    if (quality>1) {
+      for (iterator<path> it= iterate (temp_list); it->busy (); )
+        find_page_breaks (it->next ());
+    }
+    else {
+      path best_start;
+      vpenalty best_pen= HYPH_INVALID;
+      for (iterator<path> it= iterate (temp_list); it->busy (); ) {
+        path here= it->next ();
+        if (is_nil (best_start) || best_pens[here] < best_pen) {
+          best_start= here;
+          best_pen= best_pens[here];
+        }
+      }
+      if (best_start == path (N(l))) break;
+      find_page_breaks (best_start);
+    }
   }
   //cout << "Found page breaks" << LF;
 }
