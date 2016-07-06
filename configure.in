@@ -38,9 +38,9 @@ AC_SUBST(SVNREV)
 
 PACKAGE="TeXmacs"
 DEBIAN_NAME="texmacs"
-DEVEL_VERSION="1.99.4"
+DEVEL_VERSION="1.99.5"
 DEVEL_RELEASE="1"         # I think we should use SVNREV here
-STABLE_VERSION="1.99.4"
+STABLE_VERSION="1.99.5"
 STABLE_RELEASE="1"
 
 DEVEL_VERSION_MAJOR="1"   #testing
@@ -523,7 +523,7 @@ esac
 for p in ${QT_PLUGINS_LIST//,/ }
 do [[ -d $QT_PLUGINS_PATH/$p ]] || AC_MSG_ERROR(QT plugins not found!)
 done
-    
+
 # Qt Pipes
 AC_ARG_ENABLE(qtpipes,
 [  --enable-qtpipes        replace UNIX pipes by Qt pipes],
