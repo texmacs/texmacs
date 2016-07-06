@@ -129,7 +129,6 @@ public:
     add_child (tmwid);
   }
   QWidget* as_qwidget () { return concrete(tmwid)->as_qwidget(); }
-  QLayoutItem* as_qlayoutitem () { return new QWidgetItem (as_qwidget()); }
   void send (slot s, blackbox val) {
     switch (s) {
       case SLOT_DESTROY:
@@ -137,9 +136,9 @@ public:
         quit = command();
         break;
       default:
-        qt_widget_rep::send (s, val);
         return;
     }
+    qt_widget_rep::send (s, val);
     if (DEBUG_QT_WIDGETS)
       cout << "qt_wrapped_widget_rep: sent " << slot_name (s)
            << "\t\tto widget\t" << type_as_string() << LF;
