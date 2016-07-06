@@ -128,3 +128,13 @@ QTMPopupWidget::keyPressEvent(QKeyEvent* event) {
   hide();
   emit closed();
 }
+
+void
+QTMPopupWidget::closeEvent (QCloseEvent* event)
+{
+  if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMPopupWidget" << LF;
+  // Tell QT not to close the window, qt_window_widget_rep will if need be.
+  event->ignore ();
+  emit closed();
+}
+
