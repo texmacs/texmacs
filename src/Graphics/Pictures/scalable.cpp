@@ -43,6 +43,11 @@ public:
   rectangle get_physical_extents () {
     return rectangle (0, 0, w, h); }
   void draw (renderer ren, SI x, SI y, int alpha) {
+    if (px != ren->pixel) {
+      picture_cache_release (u, w/px, h/px);
+      px= ren->pixel;
+      picture_cache_reserve (u, w/px, h/px);
+    }
     picture pict= cached_load_picture (u, w/ren->pixel, h/ren->pixel, false);
     ren->draw_picture (pict, x, y, alpha); }
 };
