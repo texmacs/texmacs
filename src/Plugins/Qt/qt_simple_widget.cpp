@@ -409,6 +409,9 @@ qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
 #endif
   // cout << "invalidating " << r << LF;
   invalid_regions = invalid_regions | rectangles (r);
+  
+  // queue for redrawing when needed
+  if (canvas()) all_widgets->insert((pointer) this);
 }
 
 void
@@ -606,6 +609,10 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   
   // propagate immediately the changes to the screen
   canvas()->surface()->repaint (qrgn);
+  
+  // dequeue from redrawing list
+  all_widgets->remove ((pointer) this);
+
 }
 
 hashset<pointer> qt_simple_widget_rep::all_widgets;
