@@ -1365,8 +1365,6 @@
 		490536B7184A2C69008B9ECE /* QTMApplication.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMApplication.hpp; sourceTree = "<group>"; };
 		4906929A151B743F006645F4 /* new_view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = new_view.cpp; sourceTree = "<group>"; };
 		4907D0D81812E2BC00D893B4 /* PDFWriter.o */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = PDFWriter.o; sourceTree = BUILT_PRODUCTS_DIR; };
-		490A039C1671601100611E4C /* qt_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_font.cpp; sourceTree = "<group>"; };
-		490A039D1671601100611E4C /* qt_font.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = qt_font.hpp; sourceTree = "<group>"; };
 		490A9D2516F8A5EC00EC29D5 /* metadata-revtex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "metadata-revtex.cpp"; sourceTree = "<group>"; };
 		490DBDA8176EEEBD001F362A /* scilab_language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scilab_language.cpp; sourceTree = "<group>"; };
 		4910FA7216EB3E2F0088B175 /* post_convert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = post_convert.cpp; sourceTree = "<group>"; };
@@ -3736,8 +3734,6 @@
 				9C0B48BE10A8CC100097A335 /* TODO */,
 				4918B5C917F83A7300130EA9 /* WINPrint.cpp */,
 				4918B5CA17F83A7300130EA9 /* WINPrint.hpp */,
-				490A039C1671601100611E4C /* qt_font.cpp */,
-				490A039D1671601100611E4C /* qt_font.hpp */,
 			);
 			path = Qt;
 			sourceTree = "<group>";
