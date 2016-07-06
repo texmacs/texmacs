@@ -396,16 +396,6 @@ qt_simple_widget_rep::as_qaction () {
  * Backing store management
  ******************************************************************************/
 
-hashset<pointer> qt_simple_widget_rep::all_widgets;
-
-void
-qt_simple_widget_rep::repaint_all () {
-  iterator<pointer> i = iterate(qt_simple_widget_rep::all_widgets);
-  while (i->busy()) {
-    qt_simple_widget_rep *w = static_cast<qt_simple_widget_rep*>(i->next());
-    if (w->canvas()->isVisible()) w->repaint_invalid_regions();
-  }
-}
 
 void
 qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
@@ -470,8 +460,8 @@ qt_simple_widget_rep::get_renderer() {
 }
 
 /*
- This function is called by the qt_gui::update method to keep the backing
- store in sync and propagate the changes to the surface on screen.
+ This function is called by the qt_gui::update method (via repaint_all) to keep
+ the backing store in sync and propagate the changes to the surface on screen.
  First we check that the backing store geometry is right and then we
  request to the texmacs canvas widget to repaint the regions which were
  marked invalid. Subsequently, for each succesfully repainted region, we
@@ -479,6 +469,7 @@ qt_simple_widget_rep::get_renderer() {
  If repaint has been interrupted we do not propagate the changes and proceed
  to mark the region invalid again.
  */
+
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
   
@@ -615,4 +606,15 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   
   // propagate immediately the changes to the screen
   canvas()->surface()->repaint (qrgn);
+}
+
+hashset<pointer> qt_simple_widget_rep::all_widgets;
+
+void
+qt_simple_widget_rep::repaint_all () {
+  iterator<pointer> i = iterate(qt_simple_widget_rep::all_widgets);
+  while (i->busy()) {
+    qt_simple_widget_rep *w = static_cast<qt_simple_widget_rep*>(i->next());
+    if (w->canvas()->isVisible()) w->repaint_invalid_regions();
+  }
 }

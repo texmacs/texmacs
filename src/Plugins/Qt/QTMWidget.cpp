@@ -168,8 +168,6 @@ QTMWidget::~QTMWidget () {
   if (DEBUG_QT)
     debug_qt << "Destroying " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
-  
-    // remove ourselves from the list of QWidgets to be repainted.
 }
 
 qt_simple_widget_rep*
