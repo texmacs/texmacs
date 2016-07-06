@@ -254,16 +254,20 @@
 (tm-menu (focus-float-menu t)
   (:require (float-context? t))
   (-> "Allowed positions" (link float-menu))
-  (if (cursor-at-anchor)
+  (if (cursor-at-anchor?)
       ("Go to float" (go-to-float)))
-  (if (not (cursor-at-anchor))
+  (if (not (cursor-at-anchor?))
       ("Go to anchor" (go-to-anchor))))
 
 (tm-menu (focus-float-menu t)
+  (:require (floatable-context? t))
+  ("Make floating" (turn-floating t)))
+
+(tm-menu (focus-float-menu t)
   (:require (tree-is? t 'footnote))
-  (if (cursor-at-anchor)
+  (if (cursor-at-anchor?)
       ("Go to footnote" (go-to-float)))
-  (if (not (cursor-at-anchor))
+  (if (not (cursor-at-anchor?))
       ("Go to anchor" (go-to-anchor))))
 
 (menu-bind position-balloon-menu
@@ -880,6 +884,12 @@
   ((balloon (icon "tm_anchor.xpm")
             "Go to anchor or float")
    (cursor-toggle-anchor)))
+
+(tm-menu (focus-float-icons t)
+  (:require (floatable-context? t))
+  ((balloon (icon "tm_position_float.xpm")
+            "Let the environment float")
+   (turn-floating t)))
 
 (tm-menu (focus-float-icons t)
   (:require (tree-is? t 'footnote))

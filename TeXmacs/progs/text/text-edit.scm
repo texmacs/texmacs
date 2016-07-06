@@ -676,6 +676,20 @@
          (and (tree-up t) (float-context? (tree-up t))))
         (else #f)))
 
+(tm-define (floatable-context? t)
+  (and (tree-in? t '(big-figure big-figure*
+                     big-table big-table*
+                     algorithm algorithm*))
+       (not (tree-innermost t 'float))
+       (tree-is? t :up 'document)))
+
+(tm-define (turn-floating t)
+  (when (floatable-context? t)
+    (with f `(float "float" "thb" ,t)
+      (tree-set! t f)
+      (tree-go-to t :start)
+      (remove-text #f))))
+
 (tm-define (cursor-at-anchor?)
   (with t (cursor-tree)
     (tree-in? t '(float footnote))))
