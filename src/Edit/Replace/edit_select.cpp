@@ -971,6 +971,8 @@ edit_select_rep::focus_get (bool skip_flag) {
     tree st= subtree (et, path_up (tp));
     if (is_compound (st, "draw-over")) skip_flag= false;
     if (is_compound (st, "draw-under")) skip_flag= false;
+    if (is_compound (st, "float")) skip_flag= false;
+    if (is_compound (st, "footnote")) skip_flag= false;
     return focus_search (path_up (tp), skip_flag, true);
   }
 }

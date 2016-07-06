@@ -662,3 +662,41 @@
         (list "ornament-border" "Border width")
         (list "ornament-hpadding" "Horizontal padding")
         (list "ornament-vpadding" "Vertical padding")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Floating objects and environments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (float-context? t)
+  (cond ((tree-is? t 'float) #t)
+        ((tree-in? t '(big-figure big-figure*
+                       big-table big-table*
+                       algorithm algorithm*
+                       document concat))
+         (and (tree-up t) (float-context? (tree-up t))))
+        (else #f)))
+
+(tm-define (cursor-at-anchor?)
+  (with t (cursor-tree)
+    (tree-in? t '(float footnote))))
+
+(tm-define (go-to-anchor)
+  (cond ((inside? 'float)
+         (with-innermost t 'float
+           (tree-go-to t :end)))
+        ((inside? 'footnote)
+         (with-innermost t 'footnote
+           (tree-go-to t :end)))))
+
+(tm-define (go-to-float)
+  (with t (cursor-tree)
+    (cond ((tree-is? t 'float)
+           (tree-go-to t 2 :start))
+          ((tree-is? t 'footnote)
+           (tree-go-to t 0 :start)))))
+
+(tm-define (cursor-toggle-anchor)
+  (:check-mark "v" cursor-at-anchor?)
+  (if (cursor-at-anchor?)
+      (go-to-float)
+      (go-to-anchor)))
