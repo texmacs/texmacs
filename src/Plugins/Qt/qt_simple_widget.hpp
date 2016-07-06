@@ -12,6 +12,9 @@
 #ifndef QT_SIMPLE_WIDGET_HPP
 #define QT_SIMPLE_WIDGET_HPP
 
+#include "hashset.hpp"
+#include "basic_renderer.hpp"
+
 #include "qt_widget.hpp"
 #include "QTMScrollView.hpp"
 #include "QTMWidget.hpp"
@@ -48,8 +51,10 @@ class qt_simple_widget_rep: public qt_widget_rep {
   
   int sequencer;
   
+  
 public:
   qt_simple_widget_rep ();
+  ~qt_simple_widget_rep ();
   
   virtual bool is_editor_widget ();
   virtual void handle_get_size_hint (SI& w, SI& h);
@@ -74,8 +79,31 @@ public:
   virtual QAction* as_qaction();
   virtual QWidget* as_qwidget();
   
+    ////////////////////// Qt widget counterparts
+
   QTMWidget*         canvas () { return qobject_cast<QTMWidget*> (qwid); }
   QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
+
+    ////////////////////// backing store management
+
+  static void repaint_all (); // called by qt_gui_rep::update()
+
+protected:
+  
+  static hashset<pointer> all_widgets;
+  rectangles   invalid_regions;
+  QPixmap      backingPixmap;  
+  QPoint       backing_pos;
+
+
+  void invalidate_rect (int x1, int y1, int x2, int y2);
+  void invalidate_all ();
+  bool is_invalid ();
+  void repaint_invalid_regions ();
+  basic_renderer get_renderer();
+  
+  
+  friend class QTMWidget;
 };
 
 inline qt_simple_widget_rep* concrete_simple_widget (qt_widget w) {

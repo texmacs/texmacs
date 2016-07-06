@@ -781,11 +781,7 @@ qt_gui_rep::update () {
   interrupted  = false;
   timeout_time = texmacs_time() + time_credit;
   
-  QSetIterator<QTMWidget*> i (QTMWidget::all_widgets);
-  while (i.hasNext()) {
-    QTMWidget* w = i.next();
-    if (w->isVisible()) w->repaint_invalid_regions();
-  }
+  qt_simple_widget_rep::repaint_all ();
   
   if (waiting_events.size() > 0) needing_update = true;
   if (interrupted)               needing_update = true;

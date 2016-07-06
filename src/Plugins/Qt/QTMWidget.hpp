@@ -14,12 +14,9 @@
 
 #include "qt_widget.hpp"
 #include "QTMScrollView.hpp"
-#include <QVariant>
-#include <QSet>
 #include <QLabel>
 
 class qt_simple_widget_rep;
-class basic_renderer_rep;
 
 /*! The underlying QWidget for a qt_simple_widget_rep handles drawing for a 
     texmacs canvas, as well as keypresses, international input methods, etc.
@@ -32,33 +29,24 @@ class QTMWidget: public QTMScrollView {
   Q_OBJECT
 
   mutable qt_widget    tmwid;
-  rectangles invalid_regions;
-  QPixmap      backingPixmap;
   QLabel*           imwidget;
   QPoint          cursor_pos;
- // long                    id;
   
 public:
-
-  static QSet<QTMWidget*> all_widgets;  // needed by qt_gui_rep::update()
-  QPoint                  backing_pos;
 
   QTMWidget (QWidget* _parent=0, qt_widget _tmwid=0);
   virtual ~QTMWidget ();
   
-  void invalidate_rect (int x1, int y1, int x2, int y2);
-  void invalidate_all ();
-  bool is_invalid ();
-  void repaint_invalid_regions ();
+  virtual QSize	sizeHint () const;
+  virtual void scrollContentsBy (int dx, int dy);
 
-  void scrollContentsBy (int dx, int dy);
   void setCursorPos (QPoint pos) { cursor_pos = pos; }
-
   qt_simple_widget_rep* tm_widget () const;
   
-  virtual QSize	sizeHint () const;
-
 protected:
+
+  virtual bool event (QEvent *event);
+
   virtual void paintEvent (QPaintEvent* event);
   virtual void focusInEvent (QFocusEvent* event);
   virtual void focusOutEvent (QFocusEvent* event);
@@ -67,14 +55,11 @@ protected:
   virtual void mousePressEvent (QMouseEvent* event);
   virtual void mouseReleaseEvent (QMouseEvent* event);
   virtual void mouseMoveEvent (QMouseEvent* event);
-  virtual bool event (QEvent *event);
   virtual void resizeEvent (QResizeEvent *event);
   virtual void resizeEventBis (QResizeEvent *e);
-
+  
   virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
 
-private:
-  basic_renderer_rep *getRenderer();
 };
 
 #endif // QTMWIDGET_HPP

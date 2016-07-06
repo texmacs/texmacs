@@ -10,48 +10,29 @@
 ******************************************************************************/
 
 #include "QTMWidget.hpp"
-#include "qt_widget.hpp"
-#include "qt_renderer.hpp"
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
 #include "qt_simple_widget.hpp"
 #include "converter.hpp"
 
 #include "config.h"
-#include "message.hpp" 
-
-#ifdef USE_CAIRO
-#include "Cairo/cairo_renderer.hpp"
-#include "Cairo/tm_cairo.hpp"
-
-#if defined (Q_WS_X11)
-#include <QX11Info>
-extern Drawable qt_x11Handle (const QPaintDevice *pd);
-extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
-#undef KeyPress  // conflict between QEvent::KeyPress and X11 defintion
-#endif // Q_WS_X11
-
-#endif // USE_CAIRO
 
 #include <QEvent>
-#include <QSet>
 #include <QResizeEvent>
 #include <QKeyEvent>
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QFocusEvent>
-
-QSet<QTMWidget*> QTMWidget::all_widgets;
-
+#include <QPainter>
 
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
-
 
 inline void
 map (int code, string name) {
   qtkeymap (code) = name;
 }
+
 inline void
 deadmap (int code, string name) {
   qtdeadmap (code) = name;
@@ -171,14 +152,11 @@ static long int QTMWcounter = 0; // debugging hack
   \param _tmwid the TeXmacs widget who owns this object.
  */
 QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
-: QTMScrollView (_parent), tmwid (_tmwid), backingPixmap (1,1), imwidget (NULL)
+: QTMScrollView (_parent), tmwid (_tmwid),  imwidget (NULL)
 {
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
-  all_widgets.insert (this);
-
-  backing_pos = origin ();
   surface()->setMouseTracking (true);
   
   if (DEBUG_QT)
@@ -192,218 +170,11 @@ QTMWidget::~QTMWidget () {
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
   
     // remove ourselves from the list of QWidgets to be repainted.
-  all_widgets.remove (this);
 }
 
 qt_simple_widget_rep*
 QTMWidget::tm_widget () const { 
   return concrete_simple_widget (tmwid); 
-}
-
-void 
-QTMWidget::invalidate_rect (int x1, int y1, int x2, int y2) {
-#ifdef Q_WS_MAC
-  //HACK: for unknown reasons we need to enlarge the invalid rect to prevent
-  //artifacts while moving the cursor (for example at the end of a formula like
-  // $a+f$. These artifacts seems present only on 64 bit Macs. 
-  rectangle r = rectangle (x1-10, y1-10, x2+10, y2+10);
-#else
-  rectangle r = rectangle (x1, y1, x2, y2);
-#endif
-  // cout << "invalidating " << r << LF;
-  invalid_regions = invalid_regions | rectangles (r);
-}
-
-void 
-QTMWidget::invalidate_all () {
-  QSize sz = surface()->size();
- // QPoint pt = QAbstractScrollArea::viewport()->pos();
-   //cout << "invalidate all " << LF;
-  invalid_regions = rectangles();
-  invalidate_rect (0, 0, retina_factor * sz.width(),
-                         retina_factor * sz.height());
-}
-
-bool
-QTMWidget::is_invalid () {
-  return !is_nil (invalid_regions);
-}
-
-basic_renderer_rep* 
-QTMWidget::getRenderer() {
-#ifdef USE_CAIRO
-  cairo_renderer_rep *ren = the_cairo_renderer ();
-  cairo_surface_t *surf;
-#ifdef Q_WS_X11
-  //const QX11Info & info = x11Info();//qt_x11Info (this);
-  //    Display *dpy = x11Info().display();
-  //backingPixmap = QPixmap (width(),height());
-  //cout << backingPixmap.width() << LF;
-  Display *dpy = QX11Info::display();
-  Drawable drawable = backingPixmap.handle();
-  Visual *visual = (Visual*)(backingPixmap.x11Info().visual());
-  surf = tm_cairo_xlib_surface_create (dpy, drawable, visual, 
-                            backingPixmap.width (), backingPixmap.height ());
-#elif defined (Q_WS_MAC)
-  surf = tm_cairo_quartz_surface_create_for_cg_context (
-                    (CGContextRef)(this->macCGHandle()), width(), height());
-#endif
-  cairo_t *ct = tm_cairo_create (surf);
-  ren->begin (ct);
-  tm_cairo_surface_destroy (surf);
-  tm_cairo_destroy (ct);
-#else
-  qt_renderer_rep * ren = the_qt_renderer();
-  ren->begin (&backingPixmap);
-#endif
-  return ren;
-}
-
-/*
- This function is called by the qt_gui::update method to keep the backing
- store in sync and propagate the changes to the surface on screen.
- First we check that the backing store geometry is right and then we
- request to the texmacs canvas widget to repaint the regions which were
- marked invalid. Subsequently, for each succesfully repainted region, we
- propagate its contents from the backing store to the onscreen surface.
- If repaint has been interrupted we do not propagate the changes and proceed
- to mark the region invalid again.
-*/
-void
-QTMWidget::repaint_invalid_regions () {
-
-  QRegion qrgn; 
-  // qrgn is to keep track of the area on the screen which needs to be updated 
-
-  // update backing store origin wrt. TeXmacs document
-  if (backing_pos != origin()) {
-
-    int dx =  retina_factor * (origin().x() - backing_pos.x());
-    int dy =  retina_factor * (origin().y() - backing_pos.y());
-    backing_pos = origin();
-    
-    QPixmap newBackingPixmap (backingPixmap.size());
-    QPainter p (&newBackingPixmap);
-    //newBackingPixmap.fill (Qt::black);
-    p.drawPixmap (-dx,-dy,backingPixmap);
-    p.end();
-    backingPixmap = newBackingPixmap;
-    //cout << "SCROLL CONTENTS BY " << dx << " " << dy << LF;
-    
-    
-    rectangles invalid;
-    while (!is_nil (invalid_regions)) {
-      rectangle r = invalid_regions->item ;
-      //      rectangle q = rectangle (r->x1+dx,r->y1-dy,r->x2+dx,r->y2-dy);
-      rectangle q = rectangle (r->x1-dx,r->y1-dy,r->x2-dx,r->y2-dy);
-      invalid = rectangles (q, invalid);
-      //cout << r << " ---> " << q << LF;
-      invalid_regions = invalid_regions->next;
-    }
-      
-    QSize sz = backingPixmap.size();
-      
-    invalid_regions= invalid & rectangles (rectangle (0,0,
-                                                    sz.width(),sz.height()));
-    
-    if (dy<0) 
-      invalidate_rect (0,0,sz.width(),min (sz.height(),-dy));
-    else if (dy>0)
-      invalidate_rect (0,max (0,sz.height()-dy),sz.width(),sz.height());
-    
-    if (dx<0) 
-      invalidate_rect (0,0,min (-dx,sz.width()),sz.height());
-    else if (dx>0)
-      invalidate_rect (max (0,sz.width()-dx),0,sz.width(),sz.height());
-    
-    // we call update now to allow repainting of invalid regions
-    // this cannot be done directly since interpose_handler needs
-    // to be run at least once in some situations
-    // (for example when scrolling is initiated by TeXmacs itself)
-    //the_gui->update();
-    //  QAbstractScrollArea::viewport()->scroll (-dx,-dy);
-   // QAbstractScrollArea::viewport()->update();
-    qrgn += QRect (QPoint (0,0),sz);
-  }
-  
-    //cout << "   repaint QPixmap of size " << backingPixmap.width() << " x " 
-    // << backingPixmap.height() << LF;
-  // update backing store size
-  {
-    QSize _oldSize = backingPixmap.size();
-      QSize _new_logical_Size = surface()->size();
-    QSize _newSize = _new_logical_Size;
-    _newSize *= retina_factor;
-      
-      //cout << "      surface size of " << _newSize.width() << " x " 
-      // << _newSize.height() << LF;
-    
-    
-    if (_newSize != _oldSize) {
-      // cout << "RESIZING BITMAP"<< LF;
-      QPixmap newBackingPixmap (_newSize);
-      QPainter p (&newBackingPixmap);
-      p.drawPixmap (0,0,backingPixmap);
-      //p.fillRect (0, 0, _newSize.width(), _newSize.height(), Qt::red);
-      if (_newSize.width() >= _oldSize.width()) {
-        invalidate_rect (_oldSize.width(), 0, _newSize.width(), _newSize.height());
-        p.fillRect (QRect (_oldSize.width(), 0, _newSize.width()-_oldSize.width(), _newSize.height()), Qt::gray);
-      }
-      if (_newSize.height() >= _oldSize.height()) {
-        invalidate_rect (0,_oldSize.height(), _newSize.width(), _newSize.height());
-        p.fillRect (QRect (0,_oldSize.height(), _newSize.width(), _newSize.height()-_oldSize.height()), Qt::gray);
-      }
-      p.end();
-      backingPixmap = newBackingPixmap;
-    }
-  }
-  
-  // repaint invalid rectangles
-  {
-    rectangles new_regions;
-    if (!is_nil (invalid_regions)) {
-      rectangle lub= least_upper_bound (invalid_regions);
-      if (area (lub) < 1.2 * area (invalid_regions))
-        invalid_regions= rectangles (lub);
-      
-      basic_renderer_rep* ren = getRenderer();
-      
-      coord2 pt_or = from_qpoint(backing_pos);
-      SI ox = -pt_or.x1;
-      SI oy = -pt_or.x2;
-      
-      rectangles rects = invalid_regions;
-      invalid_regions = rectangles();
-
-      while (!is_nil (rects)) {
-        rectangle r = copy (rects->item);
-        rectangle r0 = rects->item;
-        QRect qr = QRect (r0->x1 / retina_factor, r0->y1 / retina_factor,
-                          (r0->x2 - r0->x1) / retina_factor,
-                          (r0->y2 - r0->y1) / retina_factor);
-        //cout << "repainting " << r0 << "\n";
-        ren->set_origin (ox, oy); 
-        ren->encode (r->x1, r->y1);
-        ren->encode (r->x2, r->y2);
-        ren->set_clipping (r->x1, r->y2, r->x2, r->y1);
-        tm_widget()->handle_repaint (ren, r->x1, r->y2, r->x2, r->y1);
-        if (gui_interrupted ()) {
-          //cout << "interrupted repainting of  " << r0 << "\n";
-          //ren->set_pencil (green);
-          //ren->line (r->x1, r->y1, r->x2, r->y2);
-          //ren->line (r->x1, r->y2, r->x2, r->y1);
-          invalidate_rect (r0->x1, r0->y1, r0->x2, r0->y2);
-        } 
-        qrgn += qr;
-        rects = rects->next;
-      }
-      
-      ren->end();
-    } // !is_nil (invalid_regions)
-  }
-
-  // propagate immediately the changes to the screen
-  surface()->repaint (qrgn);
 }
 
 void 
@@ -454,13 +225,14 @@ QTMWidget::paintEvent (QPaintEvent* event) {
   for (int i = 0; i < rects.count(); ++i) {
     QRect qr = rects.at (i);
     p.drawPixmap (QRect (qr.x(), qr.y(), qr.width(), qr.height()),
-                  backingPixmap,
+                  tm_widget()->backingPixmap,
                   QRect (retina_factor * qr.x(),
                          retina_factor * qr.y(),
                          retina_factor * qr.width(),
                          retina_factor * qr.height()));
   }
 }
+
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
   if (is_nil (tmwid)) return;
