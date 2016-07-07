@@ -259,7 +259,7 @@
     </surround>
   </macro>>
 
-  <assign|contiguous|<\macro|body>
+  <assign|indivisible|<\macro|body>
     <\surround|<no-break-start>|<no-break-end><right-flush>>
       <arg|body>
     </surround>

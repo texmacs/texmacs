@@ -106,7 +106,7 @@
 
 (menu-bind format-special-menu
   ("Group" (make-rigid))
-  ("Contiguous" (make 'contiguous))
+  ("Indivisible" (make 'indivisible))
   ("Phantom" (make 'phantom))
   ("Superpose" (make 'superpose))
   ("Repeat object" (make 'repeat))
