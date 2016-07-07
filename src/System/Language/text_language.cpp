@@ -544,8 +544,10 @@ get_locale_language () {
 string
 get_locale_charset () {
 #if defined(__MINGW__) || defined(__MINGW32__)
-  return language_to_local_ISO_charset (get_locale_language ());
-  // for now we use 8-bit codepage stuff in windows; it would be nice to switch to unicode.
+  // in principle for now we use 8-bit codepage stuff in windows (at least for filenames);
+  // return language_to_local_ISO_charset (get_locale_language ());
+  return ("UTF-8"); // do not change this!
+  // otherwise there is a weird problem with page width shrinking on screen
 #else
   return nl_langinfo (CODESET);
 #endif
