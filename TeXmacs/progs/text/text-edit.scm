@@ -680,7 +680,7 @@
   (and (tree-in? t '(big-figure big-figure*
                      big-table big-table*
                      algorithm algorithm*))
-       (not (tree-innermost t 'float))
+       (not (float-context? t))
        (tree-is? t :up 'document)))
 
 (tm-define (turn-floating t)
