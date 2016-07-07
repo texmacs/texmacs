@@ -162,6 +162,7 @@
   ("Indent" (make 'indent))
   ("Jump in" (make 'jump-in))
   ("Compact" (make 'compact))
+  ("Contiguous" (make 'contiguous))
   ---
   ("Centered" (make 'center))
   ("Left aligned" (make 'left-aligned))

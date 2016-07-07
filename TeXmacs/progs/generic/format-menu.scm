@@ -309,13 +309,13 @@
   ("New page" (make 'new-page*))
   ("New double page" (make 'new-dpage*))
   ("Page break" (make 'page-break*))
-  ("No page break" (make 'no-page-break*))
+  ("No page break" (make 'no-break-here*))
   ---
   (group "Page break after")
   ("New page" (make-new-page))
   ("New double page" (make-new-dpage))
   ("Page break" (make-page-break))
-  ("No page break" (make 'no-page-break)))
+  ("No page break" (make 'no-break-here)))
 
 (menu-bind page-menu
   (-> "Header" (link page-header-menu))

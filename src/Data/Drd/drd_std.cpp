@@ -193,6 +193,14 @@ init_std_drd () {
   init (VAR_NO_PAGE_BREAK, "no-page-break*",
 	fixed (0) -> name ("no page break before"));
   init (NO_PAGE_BREAK, "no-page-break", fixed (0) -> name ("no page break"));
+  init (VAR_NO_BREAK_HERE, "no-break-here*",
+        fixed (0) -> name ("no page break before line"));
+  init (NO_BREAK_HERE, "no-break-here",
+        fixed (0) -> name ("no page break after line"));
+  init (NO_BREAK_START, "no-break-start",
+        fixed (0) -> name ("start no page breaks"));
+  init (NO_BREAK_END, "no-break-end",
+        fixed (0) -> name ("end no page breaks"));
   init (VAR_NEW_PAGE, "new-page*", fixed (0) -> name ("new page before"));
   init (NEW_PAGE, "new-page", fixed (0) -> name ("new page"));
   init (VAR_NEW_DPAGE, "new-dpage*",

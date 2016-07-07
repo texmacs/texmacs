@@ -114,6 +114,14 @@ lazy_paragraph_rep::line_print (line_item item) {
       sss->no_page_break_before ();
     else if (item->t == NO_PAGE_BREAK)
       sss->no_page_break_after ();
+    else if (item->t == VAR_NO_BREAK_HERE)
+      sss->no_break_before ();
+    else if (item->t == NO_BREAK_HERE)
+      sss->no_break_after ();
+    else if (item->t == NO_BREAK_START)
+      sss->no_break_start ();
+    else if (item->t == NO_BREAK_END)
+      sss->no_break_end ();
     else if (is_tuple (item->t, "env_page") ||
 	     (item->t == PAGE_BREAK) ||
 	     (item->t == NEW_PAGE) ||

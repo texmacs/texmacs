@@ -97,10 +97,7 @@ is_migratable (tree t) {
   return
     t == " " || is_compound (t, "mlx", 2) ||
     is_func (t, VAR_VSPACE) || is_func (t, VSPACE) ||
-    is_func (t, VAR_PAGE_BREAK) || is_func (t, PAGE_BREAK) ||
-    is_func (t, VAR_NO_PAGE_BREAK) || is_func (t, NO_PAGE_BREAK) ||
-    is_func (t, VAR_NEW_PAGE) || is_func (t, NEW_PAGE) ||
-    is_func (t, VAR_NEW_DPAGE) || is_func (t, NEW_DPAGE);
+    (is_compound (t) && L(t) >= VAR_PAGE_BREAK && L(t) <= NEW_DPAGE);
 }
 
 bool expand_needs_surrounding (string s); // defined in upgrade.cpp

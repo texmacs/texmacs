@@ -329,6 +329,10 @@ concater_rep::typeset (tree t, path ip) {
   case PAGE_BREAK:
   case VAR_NO_PAGE_BREAK:
   case NO_PAGE_BREAK:
+  case VAR_NO_BREAK_HERE:
+  case NO_BREAK_HERE:
+  case NO_BREAK_START:
+  case NO_BREAK_END:
   case VAR_NEW_PAGE:
   case NEW_PAGE:
   case VAR_NEW_DPAGE:

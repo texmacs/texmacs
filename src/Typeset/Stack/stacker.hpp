@@ -28,6 +28,9 @@ private:
   stack_border      unit_sb;        // border properties of last unit
   array<page_item>  unit_ctrl;      // control items
 
+  bool              no_break_flag;  // don't page break after next line
+  int               no_break_begin; // start of non breaking zone
+
 public:
   void set_env_vars (SI h, SI s, SI hs, SI vs, SI bot, SI top);
   void print (box b, array<lazy> fl= 0, int nr_cols= 1);
@@ -40,6 +43,10 @@ public:
   void vspace_after (space spc);
   void no_page_break_before ();
   void no_page_break_after ();
+  void no_break_before ();
+  void no_break_after ();
+  void no_break_start ();
+  void no_break_end ();
 
   stacker_rep ();
 };

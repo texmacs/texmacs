@@ -17,7 +17,8 @@
 ******************************************************************************/
 
 stacker_rep::stacker_rep ():
-  l (0), unit_flag (false), unit_start (0) {}
+  l (0), unit_flag (false), unit_start (0),
+  no_break_flag (false), no_break_begin (-1) {}
 
 void
 stacker_rep::set_env_vars (
@@ -325,6 +326,30 @@ stacker_rep::no_page_break_after () {
 }
 
 void
+stacker_rep::no_break_before () {
+  penalty (HYPH_INVALID);
+}
+
+void
+stacker_rep::no_break_after () {
+  no_break_flag= true;
+}
+
+void
+stacker_rep::no_break_start () {
+  no_break_begin= N(l);
+}
+
+void
+stacker_rep::no_break_end () {
+  if (no_break_begin >= 0)
+    for (int i=no_break_begin; i<N(l); i++)
+      if (l[i]->type != PAGE_CONTROL_ITEM)
+        l[i]->penalty= HYPH_INVALID;
+  no_break_begin= -1;
+}
+
+void
 stacker_rep::penalty (int pen) {
   int i= N(l)-1;
   while ((i>=0) && (l[i]->type == PAGE_CONTROL_ITEM)) i--;
@@ -334,6 +359,10 @@ stacker_rep::penalty (int pen) {
 
 void
 stacker_rep::flush () {
+  if (no_break_flag) {
+    penalty (HYPH_INVALID);
+    no_break_flag= false;
+  }
   l << unit_ctrl;
   unit_ctrl= array<page_item> (0);
 }
