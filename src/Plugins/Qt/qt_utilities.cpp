@@ -197,6 +197,18 @@ to_qkeysequence (string ks) {
   return QKeySequence (to_qstring (r));
 }
 
+
+tm_ostream& operator << (tm_ostream& out, coord4 c) {
+    out << "[" << c.x1 << "," << c.x2 << ","
+    << c.x3 << "," << c.x4 << "]";
+    return out;
+}
+
+tm_ostream& operator << (tm_ostream& out, coord2 c) {
+    out << "[" << c.x1 << "," << c.x2 << "]";
+    return out;
+}
+
 coord4
 from_qrect (const QRect & rect) {
   SI c1, c2, c3, c4;

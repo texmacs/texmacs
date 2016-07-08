@@ -142,6 +142,10 @@ extern int nr_windows;
  * Some debugging infrastucture
  ******************************************************************************/
 extern tm_ostream& operator << (tm_ostream& out, QRect rect);
+extern tm_ostream& operator << (tm_ostream& out, QSize size);
+
+tm_ostream& operator << (tm_ostream& out, coord4 c);
+tm_ostream& operator << (tm_ostream& out, coord2 c);
 
 // deprecated, use check_type<T>(bb, slot) instead
 //#define TYPE_CHECK(b) ASSERT (b, "type mismatch")   
