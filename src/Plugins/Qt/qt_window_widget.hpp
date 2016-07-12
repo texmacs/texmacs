@@ -39,7 +39,7 @@ class QWidget;
 */
 class qt_window_widget_rep: public qt_widget_rep {
 protected:
-  int win_id;        //!< Unique integer identifier, returned by SLOT_WINDOW.
+  int win_id;        //!< Unique integer identifier, returned by SLOT_IDENTIFIER.
   string orig_name;  //!< Unique name assigned to the window.
   command quit;      //!< Command to be executed when the window is closed.
   bool fake;         //!< Whether this truly is a window (or a docked widget).
