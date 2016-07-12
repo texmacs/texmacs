@@ -399,9 +399,7 @@ BEGIN_SLOT
 
     // HACK: restore focus to the main editor widget
   widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
-  if (win && concrete (win)->type == qt_widget_rep::texmacs_widget)
-    concrete (get_canvas (win))->qwid->setFocus();
-
+  if (win) send_keyboard_focus(win);
   if (win) apply();    // This is 0 inside a dialog => no command
 END_SLOT
 }
