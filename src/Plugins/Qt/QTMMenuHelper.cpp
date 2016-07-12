@@ -366,41 +366,22 @@ END_SLOT
  * QTMInputTextWidgetHelper
  ******************************************************************************/
 
-QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid,
-                                                    QTMLineEdit* le)
-: QObject (le), p_wid (_wid), done (false) {
+QTMInputTextWidgetHelper::QTMInputTextWidgetHelper (qt_widget _wid)
+: QObject (), p_wid (_wid) {
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(wid()->qwid);
+  setParent(le);
   ASSERT (le != NULL, "QTMInputTextWidgetHelper: expecting valid QTMLineEdit");
   QObject::connect (le, SIGNAL (returnPressed ()), this, SLOT (commit ()));
   QObject::connect (le, SIGNAL (focusOut (Qt::FocusReason)),
                     this, SLOT (leave (Qt::FocusReason)));
 }
 
-void
-QTMInputTextWidgetHelper::apply () {
-BEGIN_SLOT
-  if (done) return;
-  done = true;
-  the_gui->process_command (wid()->cmd, wid()->ok
-                            ? list_object (object (wid()->input))
-                            : list_object (object (false)));
-END_SLOT
-}
-
 /*! Executed when the enter key is pressed. */
 void
 QTMInputTextWidgetHelper::commit () {
 BEGIN_SLOT
-  QTMLineEdit* le = qobject_cast <QTMLineEdit*> (sender());
-  if (!le) return;
-
-  done         = false;
-  wid()->ok    = true;
-  wid()->input = from_qstring (le->text());
-
-    // HACK: restore focus to the main editor widget
-  widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
-  if (win) send_keyboard_focus(win);
-  if (win) apply();    // This is 0 inside a dialog => no command
+  if (sender() != wid()->qwid) return;
+  wid()->commit(true);
 END_SLOT
 }
 
@@ -408,22 +389,9 @@ END_SLOT
 void
 QTMInputTextWidgetHelper::leave (Qt::FocusReason reason) {
 BEGIN_SLOT
-  QTMLineEdit* le = qobject_cast <QTMLineEdit*> (sender());
-  if (!le) return;
-
-    // Don't autocommit if the user pressed the escape key
-    // (see QTMLineEdit::focusOut()).
-  if (reason != Qt::OtherFocusReason &&
-      get_preference ("gui:line-input:autocommit") == "#t") {
-    done         = false;
-    wid()->ok    = true;
-    wid()->input = from_qstring (le->text());
-  } else {
-    le->setText (to_qstring (wid()->input));
-  }
-
-  widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
-  if (win) apply();    // This is 0 inside a dialog => no command
+  if (sender() != wid()->qwid) return;
+  wid()->commit((reason != Qt::OtherFocusReason &&
+                 get_preference ("gui:line-input:autocommit") == "#t"));
 END_SLOT
 }
 

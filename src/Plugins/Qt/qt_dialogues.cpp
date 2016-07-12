@@ -363,7 +363,7 @@ qt_input_text_widget_rep::qt_input_text_widget_rep (command _cmd,
                                                     string _width)
 : qt_widget_rep (input_widget), cmd (_cmd), type (_type),
   proposals (_proposals), input (""), style (_style), width (_width),
-  ok (false)
+  ok (false), done (false)
 {
   if (type == "password") proposals = array<string> (0);
   if (N(proposals) > 0) input = proposals[0];
@@ -381,7 +381,8 @@ qt_input_text_widget_rep::as_qaction () {
 QWidget*
 qt_input_text_widget_rep::as_qwidget () {
   QTMLineEdit* le = new QTMLineEdit (NULL, type, width, style, cmd);
-  QTMInputTextWidgetHelper* helper = new QTMInputTextWidgetHelper (this, le);
+  qwid = le;
+  QTMInputTextWidgetHelper* helper = new QTMInputTextWidgetHelper (this);
   (void) helper;
   le->setText (to_qstring (input));
   le->setObjectName (to_qstring (type));
@@ -399,6 +400,29 @@ qt_input_text_widget_rep::as_qwidget () {
     completer->setCompletionMode (QCompleter::InlineCompletion);
     le->setCompleter (completer);
   }
-  qwid = le;
   return qwid;
+}
+
+void
+qt_input_text_widget_rep::commit(bool flag) {
+  QTMLineEdit* le = qobject_cast<QTMLineEdit*>(qwid);
+  widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
+
+  if (flag) {
+    done         = false;
+    ok    = true;
+    input = from_qstring (le->text());
+    // HACK: restore focus to the main editor widget
+    if (win) send_keyboard_focus(win);
+  } else {
+    le->setText (to_qstring (input));
+  }
+  if (win) // This is 0 inside a dialog => no command
+  {
+    if (done) return;
+    done = true;
+    the_gui->process_command (cmd, ok
+                              ? list_object (object (input))
+                              : list_object (object (false)));
+  }
 }

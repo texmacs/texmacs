@@ -31,12 +31,16 @@ protected:
   string            width;
   bool                 ok;
 
+  bool         done;  //!< Has the command been executed after a modification?
+
 public:
   qt_input_text_widget_rep (command _cmd, string _type, array<string> _proposals,
                             int _style, string _width);
 
   virtual QAction*  as_qaction ();
   virtual QWidget*  as_qwidget ();
+  
+  void commit(bool ok);
   
   friend class QTMInputTextWidgetHelper;
   friend class QTMInteractiveInputHelper;
