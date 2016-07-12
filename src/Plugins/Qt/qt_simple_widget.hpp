@@ -95,13 +95,20 @@ protected:
   QPixmap      backingPixmap;  
   QPoint       backing_pos;
 
+  QRect    p_extents;   // The size of the virtual area where things are drawn.
+  QPoint    p_origin;   // The offset into that area
+
 
   void invalidate_rect (int x1, int y1, int x2, int y2);
   void invalidate_all ();
   bool is_invalid ();
   void repaint_invalid_regions ();
-  basic_renderer get_renderer();
+
+  void scrollContentsBy ( int dx, int dy );
+  void updateScrollBars (void);
+  void setExtents ( QRect newExtents );
   
+  basic_renderer get_renderer();
   
   friend class QTMWidget;
 };
