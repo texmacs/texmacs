@@ -114,12 +114,6 @@ protected:
   QWidget* centralwidget () {
     return mainwindow()->centralWidget();
   }
-  QTMScrollView* scrollarea () {
-    return qobject_cast<QTMScrollView*> (main_widget->qwid);
-  }
-  QTMWidget* canvas () {
-    return qobject_cast<QTMWidget*> (main_widget->qwid);
-  }
 };
 
 

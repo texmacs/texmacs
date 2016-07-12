@@ -82,7 +82,6 @@ public:
     ////////////////////// Qt widget counterparts
 
   QTMWidget*         canvas () { return qobject_cast<QTMWidget*> (qwid); }
-  QTMScrollView* scrollarea () { return qobject_cast<QTMScrollView*> (qwid); }
 
     ////////////////////// backing store management
 
