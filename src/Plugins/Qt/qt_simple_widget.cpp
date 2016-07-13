@@ -18,12 +18,8 @@
 
 #include "QTMWidget.hpp"
 #include "QTMMenuHelper.hpp"
-#include "QTMApplication.hpp"
-
 #include <QPixmap>
 #include <QLayout>
-#include <QScrollBar>
-
 
 
 #ifdef USE_CAIRO
@@ -41,8 +37,7 @@ extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
-: qt_widget_rep (simple_widget),  sequencer (0),
-p_extents (QRect(0,0,0,0)) { }
+ : qt_widget_rep (simple_widget),  sequencer (0) { }
 
 qt_simple_widget_rep::~qt_simple_widget_rep () {
   all_widgets->remove ((pointer) this);
@@ -55,13 +50,13 @@ qt_simple_widget_rep::as_qwidget () {
   SI width, height;
   handle_get_size_hint (width, height);
   QSize sz = to_qsize (width, height);
-  setExtents (QRect (QPoint(0,0), sz));
+  scrollarea()->editor_flag= is_editor_widget ();
+  scrollarea()->setExtents (QRect (QPoint(0,0), sz));
   canvas()->resize (sz);
-  // Fix size to draw margins around.
-  canvas()->surface()->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-
+  
+  
   all_widgets->insert((pointer) this);
-  backing_pos = p_origin;
+  backing_pos = canvas()->origin ();
 
   return qwid;
 }
@@ -156,69 +151,6 @@ qt_simple_widget_rep::reapply_sent_slots () {
     debug_widgets << "<<<<<<<< reapply_sent_slots() for widget: " << type_as_string() << LF;
 }
 
-
-
-/*! Scrollbar stabilization */
-void
-qt_simple_widget_rep::updateScrollBars (void) {
-  QWidget *_viewport = canvas()->viewport();
-  QScrollBar *_hScrollBar = canvas()->horizontalScrollBar();
-  QScrollBar *_vScrollBar = canvas()->verticalScrollBar();
-  
-  int xw = p_extents.width();
-  int xh = p_extents.height();
-  int w  = _viewport->width() ; // -2
-  int h  = _viewport->height(); // -2
-  int sbw= qApp->style()->pixelMetric (QStyle::PM_ScrollBarExtent);
-  if (_hScrollBar->maximum() > _hScrollBar->minimum()) h += sbw;
-  if (_vScrollBar->maximum() > _vScrollBar->minimum()) w += sbw;
-  if (xw > w) h -= sbw;
-  if (xh > h) w -= sbw;
-  if (!is_editor_widget()) {
-    if (xw < w) xw= w;
-    if (xh < h) xh= h;
-  }
-  
-  int cw = (xw > w ? xw - w : 0);
-  if (_hScrollBar->sliderPosition() > cw)
-    _hScrollBar->setSliderPosition(cw);
-  _hScrollBar->setRange(0, cw);
-  _hScrollBar->setSingleStep((w >> 4) + 1);
-  _hScrollBar->setPageStep(w);
-  
-  int ch = (xh > h ? xh - h : 0);
-  if (_vScrollBar->sliderPosition() > ch)
-    _vScrollBar->setSliderPosition(ch);
-  _vScrollBar->setRange(0, ch);
-  _vScrollBar->setSingleStep((h >> 4) + 1);
-  _vScrollBar->setPageStep(h);
-  
-  canvas()->surface()->setMinimumWidth (w < xw? w: xw);
-  canvas()->surface()->setMinimumHeight(h < xh? h: xh);
-  
-  // we may need a relayout if the surface width is changed
-  canvas()->updateGeometry();
-}
-
-void
-qt_simple_widget_rep::scrollContentsBy ( int dx, int dy ) {
-  if (dx) p_origin.setX(p_origin.x() - dx);
-  if (dy) p_origin.setY(p_origin.y() - dy);
-}
-
-void
-qt_simple_widget_rep::setExtents ( QRect newExtents ) {
-  //QWidget *_viewport = QAbstractScrollArea::viewport();
-  //cout << "Inside  " << _viewport->width() << ", " << _viewport->height() << "\n";
-  //cout << "Extents " << newExtents.width() << ", " << newExtents.height() << "\n";
-  if (newExtents.width()  < 0) newExtents.setWidth (0);
-  if (newExtents.height() < 0) newExtents.setHeight(0);
-  if (p_extents != newExtents) {
-    p_extents = newExtents;
-    updateScrollBars();
-  }
-}
-
 void
 qt_simple_widget_rep::send (slot s, blackbox val) {
   save_send_slot (s, val);
@@ -258,7 +190,7 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord4>(val, s);
       coord4 p = open_box<coord4> (val);
-      setExtents (to_qrect (p));
+      scrollarea()->setExtents (to_qrect (p));
     }
       break;
       
@@ -278,11 +210,7 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
       QSize  sz = canvas()->surface()->size();
       qp -= QPoint (sz.width() / 2, sz.height() / 2);
         // NOTE: adjust because child is centered
-      if (qp.x() != p_origin.x())
-        canvas()->horizontalScrollBar()->setSliderPosition(qp.x());
-      if (qp.y() != p_origin.y())
-        canvas()->verticalScrollBar()->setSliderPosition(qp.y());
-
+      scrollarea()->setOrigin (qp);
     }
       break;
       
@@ -326,26 +254,6 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     }
       break;
       
-    case SLOT_KEYBOARD_FOCUS:
-    {
-      check_type<bool> (val, s);
-      bool focus = open_box<bool> (val);
-      if (focus && !canvas()->hasFocus())
-        canvas()->setFocus (Qt::OtherFocusReason);
-    }
-      break;
-
-    case SLOT_SCROLLBARS_VISIBILITY:
-    {
-      check_type<int>(val, s);
-      int flag= open_box<int> (val);
-      if (DEBUG_QT)
-        debug_qt << "scrollbars visibility :" << flag << LF;
-      canvas()->setHorizontalScrollBarPolicy(flag ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-      canvas()->setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
-    }
-      break;
-
     default:
       qt_widget_rep::send(s, val);
       return;
@@ -383,8 +291,8 @@ qt_simple_widget_rep::query (slot s, int type_id) {
       check_type_id<coord2> (type_id, s);
         // HACK: mapTo() does not work as we expect on the Mac, so we manually
         // calculate the global screen cordinates and substract
-      QPoint sg = canvas()->surface()->mapToGlobal (QPoint (0,0));
-      QRect  wg = canvas()->window()->frameGeometry();
+      QPoint sg = scrollarea()->surface()->mapToGlobal (QPoint (0,0));
+      QRect  wg = scrollarea()->window()->frameGeometry();
       sg.ry() -= wg.y();
       sg.rx() -= wg.x();
       return close_box<coord2> (from_qpoint (sg));
@@ -399,13 +307,13 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     case SLOT_SCROLL_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-      return close_box<coord2> (from_qpoint (p_origin));
+      return close_box<coord2> (from_qpoint (canvas()->origin()));
     }
       
     case SLOT_EXTENTS:
     {
       check_type_id<coord4> (type_id, s);
-      return close_box<coord4> (from_qrect (p_extents));
+      return close_box<coord4> (from_qrect (canvas()->extents()));
     }
       
     case SLOT_VISIBLE_PART:
@@ -566,7 +474,7 @@ void
 qt_simple_widget_rep::repaint_invalid_regions () {
   
   QRegion qrgn;
-  QPoint origin = p_origin;
+  QPoint origin = canvas()->origin();
   // qrgn is to keep track of the area on the screen which needs to be updated
   
   // update backing store origin wrt. TeXmacs document

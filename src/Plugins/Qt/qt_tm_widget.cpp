@@ -415,7 +415,7 @@ qt_tm_widget_rep::update_visibility () {
     // (actually only for main and mode toolbars, unifying focus is not
     // appropriate)
     
-    QBoxLayout *bl = qobject_cast<QBoxLayout*>(centralwidget()->layout());
+    QBoxLayout *bl = qobject_cast<QBoxLayout*>(mainwindow()->centralWidget()->layout());
     
     if (modeToolBarAction)
       modeToolBarAction->setVisible(modeToolBar->isVisible());
@@ -495,10 +495,16 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_SCROLL_POSITION:
     case SLOT_ZOOM_FACTOR:
     case SLOT_MOUSE_GRAB:
-    case SLOT_KEYBOARD_FOCUS:
-    case SLOT_SCROLLBARS_VISIBILITY:
       main_widget->send(s, val);
       return;
+    case SLOT_KEYBOARD_FOCUS:
+    {
+      check_type<bool> (val, s);
+      bool focus = open_box<bool> (val);
+      if (focus && canvas() && !canvas()->hasFocus())
+        canvas()->setFocus (Qt::OtherFocusReason);
+    }
+      break;
     case SLOT_HEADER_VISIBILITY:
     {
       check_type<bool>(val, s);
@@ -572,6 +578,10 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       rightLabel->setText (to_qstring (msg));
       rightLabel->update ();
     }
+      break;
+    case SLOT_SCROLLBARS_VISIBILITY:
+        // ignore this: qt handles scrollbars independently
+        //                send_int (THIS, "scrollbars", val);
       break;
     case SLOT_INTERACTIVE_MODE:
     {
@@ -770,6 +780,10 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
        the widget on which the layout is installed " */
       main_widget = concrete (w);
         // canvas() now returns the new QTMWidget (or 0)
+      
+      if (scrollarea())   // Fix size to draw margins around.
+        scrollarea()->surface()->setSizePolicy (QSizePolicy::Fixed,
+                                                QSizePolicy::Fixed);
       send_keyboard_focus (abstract (main_widget));
     }
       break;
@@ -887,7 +901,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
         //  the application will crash when we return to normal mode
         // (bug in Qt? present at least with 4.7.1)
         mainwindow()->setUnifiedTitleAndToolBarOnMac(false);
-        centralwidget()->layout()->setContentsMargins(0,0,0,0);
+        mainwindow()->centralWidget()->layout()->setContentsMargins(0,0,0,0);
       }
 #endif
 //      mainwindow()->window()->setContentsMargins(0,0,0,0);
@@ -904,7 +918,7 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
       update_visibility();
 #ifdef UNIFIED_TOOLBAR
       if (use_unified_toolbar) {
-        centralwidget()->layout()->setContentsMargins (0,1,0,0);
+        mainwindow()->centralWidget()->layout()->setContentsMargins (0,1,0,0);
         //HACK: we reenable unified toolbar (see above HACK) 
         //  the application will crash when we return to normal mode
         mainwindow()->setUnifiedTitleAndToolBarOnMac(true);
@@ -912,6 +926,9 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
 #endif
     }
   }
+  
+  scrollarea()->setHorizontalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+  scrollarea()->setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
 }
 
 

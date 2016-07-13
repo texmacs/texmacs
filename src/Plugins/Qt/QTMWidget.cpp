@@ -128,7 +128,6 @@ initkeymap () {
   // map (Qt::Key_Find        , "find" );
   // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );
 }
-
 #ifdef __MINGW32__
 enum WindowsNativeModifiers {
     ShiftLeft            = 0x00000001,
@@ -145,7 +144,6 @@ enum WindowsNativeModifiers {
     ExtendedKey          = 0x01000000,
 };
 #endif
-
 static long int QTMWcounter = 0; // debugging hack
 
 /*! Constructor.
@@ -177,51 +175,37 @@ QTMWidget::tm_widget () const {
   return concrete_simple_widget (tmwid); 
 }
 
-QSize
-QTMWidget::sizeHint () const {
-  SI w = 0, h = 0;
-  if (!is_nil (tmwid)) tm_widget()->handle_get_size_hint (w, h);
-  return to_qsize (w, h);
-}
-
 void 
 QTMWidget::scrollContentsBy (int dx, int dy) {
-  if (tm_widget()) tm_widget()->scrollContentsBy (dx,dy);
+  QTMScrollView::scrollContentsBy (dx,dy);
+
   the_gui->force_update();
   // we force an update of the internal state to be in sync with the moving
   // scrollbars
 }
 
-bool
-QTMWidget::event (QEvent* event) {
-  switch (event->type()) {
-    case QEvent::Resize:
-    {
-      bool res = QAbstractScrollArea::event(event);
-      QResizeEvent *re = static_cast<QResizeEvent*> (event);
-      coord2 s = from_qsize (re->size());
-      the_gui -> process_resize (tm_widget(), s.x1, s.x2);
-      return res;
-    }
-    case QEvent::KeyPress:
-    {
-      // Catch Keypresses to avoid default handling of (Shift+)Tab keys
-      QKeyEvent *ke = static_cast<QKeyEvent*> (event);
-      keyPressEvent (ke);
-      return true;
-    }
-    case QEvent::ShortcutOverride:
-    {
-      /* NOTE: we catch ShortcutOverride in order to disable the QKeySequences we
-       assigned to QActions while building menus, etc. In doing this, we keep the
-       shortcut text in the menus while relaying all keypresses through the editor*/
-      event->accept();
-      return true;
-    }
-    default:
-      break;
-  }
-  return QTMScrollView::event (event);
+void 
+QTMWidget::resizeEvent (QResizeEvent* event) {
+  (void) event;
+  // Is this ok?
+  //coord2 s = from_qsize (event->size());
+  //the_gui -> process_resize (tm_widget(), s.x1, s.x2);
+
+  // the_gui->force_update();
+
+  //FIXME: I would like to have a force_update here but this causes a failed
+  //assertion in TeXmacs since the at the boot not every internal structure is
+  //initialized at this point. It seems not too difficult to fix but I
+  //postpone this to discuss with Joris. 
+  //
+  //Not having a force_update results in some lack of sync of the surface
+  //while the user is actively resizing with the mouse.
+}
+
+void
+QTMWidget::resizeEventBis (QResizeEvent *event) {
+  coord2 s = from_qsize (event->size());
+  the_gui -> process_resize (tm_widget(), s.x1, s.x2);
 }
 
 /*!
@@ -594,7 +578,7 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = event->pos() + tm_widget()->p_origin;
+  QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate= mouse_state (event, false);
   string s= "press-" * mouse_decode (mstate);
@@ -606,7 +590,7 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
 void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = event->pos() + tm_widget()->p_origin;
+  QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, true);
   string s = "release-" * mouse_decode (mstate);
@@ -618,13 +602,32 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
 void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
   if (is_nil (tmwid)) return;
-  QPoint point = event->pos() + tm_widget()->p_origin;
+  QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, false);
   string s = "move";
   the_gui->process_mouse (tm_widget(), s, pt.x1, pt.x2, 
                           mstate, texmacs_time ());
   event->accept();
+}
+
+
+bool
+QTMWidget::event (QEvent* event) {
+    // Catch Keypresses to avoid default handling of (Shift+)Tab keys
+  if (event->type() == QEvent::KeyPress) {
+    QKeyEvent *ke = static_cast<QKeyEvent*> (event);
+    keyPressEvent (ke);
+    return true;
+  } 
+  /* NOTE: we catch ShortcutOverride in order to disable the QKeySequences we
+   assigned to QActions while building menus, etc. In doing this, we keep the
+   shortcut text in the menus while relaying all keypresses through the editor*/
+  if (event->type() == QEvent::ShortcutOverride) {
+    event->accept();
+    return true;
+  }
+  return QTMScrollView::event (event);
 }
 
 void
@@ -645,3 +648,9 @@ QTMWidget::focusOutEvent (QFocusEvent * event) {
   QTMScrollView::focusOutEvent (event);
 }
 
+QSize
+QTMWidget::sizeHint () const {
+  SI w = 0, h = 0;
+  if (!is_nil (tmwid)) tm_widget()->handle_get_size_hint (w, h);
+  return to_qsize (w, h);
+}
