@@ -10,6 +10,8 @@
 
 #include "impl_language.hpp"
 #include "packrat.hpp"
+#include "analyze.hpp"
+#include "hyphenate.hpp"
 
 RESOURCE_CODE(language);
 
@@ -287,4 +289,67 @@ decode_color (string lan_name, int c) {
   if (N(lan->color_decoding) == 0) initialize_color_decodings (lan_name);
   if (lan->color_decoding->contains (c)) return lan->color_decoding[c];
   else return "";
+}
+
+/******************************************************************************
+* Ad hoc hyphenation patterns
+******************************************************************************/
+
+struct ad_hoc_language_rep: language_rep {
+  language base;
+  hashmap<string,string> hyphens;
+
+  ad_hoc_language_rep (string lan_name, language lan, tree hyphs);
+  text_property advance (tree t, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+};
+
+ad_hoc_language_rep::ad_hoc_language_rep (string nm, language lan, tree hyphs):
+  language_rep (nm), base (lan), hyphens ("?")
+{
+  if (is_atomic (hyphs)) {
+    string h= hyphs->label;
+    string s= replace (h, "-", "");
+    hyphens (s)= h;
+  }
+}
+
+text_property
+ad_hoc_language_rep::advance (tree t, int& pos) {
+  return base->advance (t, pos);
+}
+
+array<int>
+ad_hoc_language_rep::get_hyphens (string s) {
+  if (hyphens->contains (s)) {
+    string h= hyphens[s];
+    array<int> penalty;
+    for (int i=0; i<N(h); tm_char_forwards (h, i))
+      if (h[i] != '-') penalty << HYPH_INVALID;
+      else if (N(penalty)>0) penalty[N(penalty)-1]= 0;
+    return penalty;
+  }
+  else return base->get_hyphens (s);
+}
+
+void
+ad_hoc_language_rep::hyphenate (
+  string s, int after, string& left, string& right)
+{
+  if (hyphens->contains (s)) {
+    array<int> penalty= get_hyphens (s);
+    std_hyphenate (s, after, left, right, penalty[after]);
+  }
+  else base->hyphenate (s, after, left, right);
+}
+
+language
+ad_hoc_language (language base, tree hyphs) {
+  static hashmap<tree,int> abbrevs;
+  if (!abbrevs->contains (hyphs))
+    abbrevs (hyphs)= N (abbrevs);
+  string name= base->res_name * "-" * as_string (abbrevs [hyphs]);
+  if (language::instances -> contains (name)) return language (name);
+  return tm_new<ad_hoc_language_rep> (name, base, hyphs);
 }

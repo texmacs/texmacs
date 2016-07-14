@@ -677,6 +677,9 @@ concater_rep::typeset (tree t, path ip) {
   case FLAG:
     typeset_flag (t, ip);
     break;
+  case HYPHENATE_AS:
+    typeset_hyphenate_as (t, ip);
+    break;
 
   case ANIM_STATIC:
   case ANIM_DYNAMIC:

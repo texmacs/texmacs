@@ -208,6 +208,9 @@ packrat_parser_rep::serialize (tree t, path p) {
       break;
     case FLAG:
       break;
+    case HYPHENATE_AS:
+      serialize (t[1], p * 1);
+      break;
 
     default:
       serialize_compound (t, p);

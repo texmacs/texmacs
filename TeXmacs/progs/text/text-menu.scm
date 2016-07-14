@@ -54,6 +54,8 @@
   (-> "Whitespace" (link space-menu))
   (-> "Indentation" (link indentation-menu))
   (-> "Break" (link break-menu))
+  (when (and (selection-active-small?) (tm-atomic? (selection-tree)))
+    ("Hyphenate as" (interactive hyphenate-selection-as)))
   ---
   (-> "Color"
       (if (== (get-preference "experimental alpha") "on")

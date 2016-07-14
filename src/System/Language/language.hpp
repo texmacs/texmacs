@@ -136,6 +136,7 @@ struct language_rep: rep<language> {
 language text_language (string s);
 language math_language (string s);
 language prog_language (string s);
+language ad_hoc_language (language base, tree hyphs);
 
 string locale_to_language (string s);
 string language_to_locale (string s);

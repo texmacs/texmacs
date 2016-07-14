@@ -574,6 +574,10 @@ init_std_drd () {
 	regular (0) -> name (0, "flag text") ->
 	color_type (1) -> name (1, "color") ->
 	argument (2) -> name (2, "source"));
+  init (HYPHENATE_AS, "hyphenate-as",
+	options (1, 1, BIFORM) ->
+	string_type (0) -> name (0, "hyphenation") ->
+	accessible (1) -> regular (1) -> name (1, "content"));
 
   init (ANIM_STATIC, "anim-static",
 	fixed (1, 3, BIFORM) -> returns_animation () ->

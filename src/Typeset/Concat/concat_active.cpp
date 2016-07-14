@@ -294,6 +294,20 @@ concater_rep::typeset_flag (tree t, path ip) {
   }
 }
 
+void
+concater_rep::typeset_hyphenate_as (tree t, path ip) {
+  if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); return; }
+  tree pat= env->exec (t[0]);
+  if (N(t) == 1 && !is_atomic (pat)) { typeset_error (t, ip); return; }
+  language old_lan= env->lan;
+  env->lan= ad_hoc_language (env->lan, pat);
+  marker (descend (ip, 0));
+  if (N(t) == 1) typeset (replace (pat->label, "-", ""), decorate_middle (ip));
+  else typeset (t[1], descend (ip, 1));
+  marker (descend (ip, 1));
+  env->lan= old_lan;
+}
+
 /******************************************************************************
 * Typesetting images
 ******************************************************************************/

@@ -126,6 +126,7 @@ class concater_rep {
   void typeset_toc_notify (tree t, path ip);
   void typeset_specific (tree t, path ip);
   void typeset_flag (tree t, path ip);
+  void typeset_hyphenate_as (tree t, path ip);
 
   // animations
   void typeset_anim_compose (tree t, path ip);
