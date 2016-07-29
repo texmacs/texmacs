@@ -102,6 +102,7 @@ math_font_rep::search_font (string& s, font& fn) {
     int i;
     for (i=N(s)-1; i>0; i--)
       if (s[i]=='-') break;
+    if (i>0 && s[i-1] == '-') i--;
     if (i>0) {
       string root= s(0,i) * ">";
       int c= rubber->dict [root];

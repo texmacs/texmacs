@@ -78,6 +78,7 @@ rubber_assemble_font_rep::search_font (string s, string& r) {
   if (starts (s, "<left-")) {
     int pos= search_backwards ("-", N(s), s);
     if (pos > 6) {
+      if (s[pos-1] == '-') pos--;
       r= s (6, pos);
       int num= as_int (s (pos+1, N(s)-1));
       int nr= num - 5;
@@ -135,6 +136,7 @@ rubber_assemble_font_rep::supports (string s) {
   if (starts (s, "<left-")) {
     int pos= search_backwards ("-", N(s), s);
     if (pos > 6) {
+      if (s[pos-1] == '-') pos--;
       string r= s (6, pos);
       return
 	r == "(" || r == ")" ||
