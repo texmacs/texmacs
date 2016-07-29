@@ -131,6 +131,7 @@ rubber_unicode_font_rep::search_font_sub (string s, string& rew) {
   if (starts (s, "<left-")) {
     int pos= search_backwards ("-", N(s), s);
     if (pos > 6) {
+      if (s[pos-1] == '-') pos--;
       string r= s (6, pos);
       if (r == ".") { rew= ""; return 0; }
       if ((r == "(" && base->supports ("<#239C>")) ||
@@ -191,6 +192,7 @@ rubber_unicode_font_rep::supports (string s) {
   if (starts (s, "<left-")) {
     int pos= search_backwards ("-", N(s), s);
     if (pos > 6) {
+      if (s[pos-1] == '-') pos--;
       string r= s (6, pos);
       if (r == ".") return true;
       if (N(r) > 1) r= "<" * r * ">";
