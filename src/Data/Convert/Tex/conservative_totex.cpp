@@ -239,7 +239,7 @@ texmacs_invarianted_merge (tree t, string src,
           int b1, e1, b2, e2;
           bool ok1= get_range (r[N(r)-1][0], b1, e1, src);
           bool ok2= get_range (t[j][0], b2, e2, src);
-          if (ok1 && ok2 && e1 <= b2) {
+          if (ok1 && ok2 && e1 <= b2 && i-1 < N(org)) {
             path p= h [org[i-1]];
             if (p != path (-1)) {
               tree pt= subtree (u, path_up (p));
