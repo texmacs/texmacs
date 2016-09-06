@@ -861,6 +861,7 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   ccc->typeset (t, ip);
   ccc->finish ();
   array<line_item> a= ccc->a;
+  tm_delete (ccc);
 
   int i, n=N(a);
   if (n == 0) return empty_box (ip); // FIXME: n=0 should never happen
@@ -876,7 +877,6 @@ typeset_as_concat (edit_env env, tree t, path ip) {
   }
   box b= concat_box (ip, items, spc);
 
-  tm_delete (ccc);
   return b;
 }
 
