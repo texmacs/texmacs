@@ -56,6 +56,9 @@ initialize_default_var_type () {
   var_type (MATH_DISPLAY)       = Env_Display_Style;
   var_type (MATH_CONDENSED)     = Env_Math_Condensed;
   var_type (MATH_VPOS)          = Env_Vertical_Pos;
+  var_type (MATH_FRAC_LIMIT)    = Env_Math_Width;
+  var_type (MATH_TABLE_LIMIT)   = Env_Math_Width;
+  var_type (MATH_FLATTEN_COLOR) = Env_Math_Width;
 
   var_type (PROG_LANGUAGE)      = Env_Language;
   var_type (PROG_FONT)          = Env_Font;
@@ -817,6 +820,10 @@ edit_env_rep::update () {
   update_src_special ();
   update_src_compact ();
   update_src_close ();
+
+  frac_max   = get_length (MATH_FRAC_LIMIT);
+  table_max  = get_length (MATH_TABLE_LIMIT);
+  flatten_pen= pencil (env[MATH_FLATTEN_COLOR], alpha, get_length (LINE_WIDTH));
 }
 
 /******************************************************************************
@@ -875,6 +882,11 @@ edit_env_rep::update (string s) {
     break;
   case Env_Vertical_Pos:
     vert_pos= get_int (MATH_VPOS);
+    break;
+  case Env_Math_Width:
+    frac_max= get_length (MATH_FRAC_LIMIT);
+    table_max= get_length (MATH_TABLE_LIMIT);
+    flatten_pen= pencil (env[MATH_FLATTEN_COLOR], alpha, get_length (LINE_WIDTH));
     break;
   case Env_Color:
     update_color ();

@@ -88,6 +88,9 @@ initialize_default_env () {
   env (MATH_VPOS)        = "0";         // used in fractions (-1, 0 or 1)
   env (MATH_NESTING_MODE)= "off";       // color nested brackets?
   env (MATH_NESTING_LEVEL)= "0";        // nesting level inside brackets
+  env (MATH_FRAC_LIMIT)  = "100par";    // maximal width of 2D fraction
+  env (MATH_TABLE_LIMIT) = "100par";    // maximal width of 2D math table
+  env (MATH_FLATTEN_COLOR)= "#448";     // bracket color when 2D width excess
 
   env (PROG_LANGUAGE)    = "scheme";    // the default programming language
   env (PROG_SCRIPTS)     = "scheme";    // the scripting language

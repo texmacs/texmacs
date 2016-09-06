@@ -69,6 +69,9 @@ string MATH_CONDENSED ("math-condensed");
 string MATH_VPOS ("math-vpos");
 string MATH_NESTING_MODE ("math-nesting-mode");
 string MATH_NESTING_LEVEL ("math-nesting-level");
+string MATH_FRAC_LIMIT ("math-frac-limit");
+string MATH_TABLE_LIMIT ("math-table-limit");
+string MATH_FLATTEN_COLOR ("math-flatten-color");
 
 string PROG_LANGUAGE ("prog-language");
 string PROG_SCRIPTS ("prog-scripts");

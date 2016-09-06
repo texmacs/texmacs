@@ -44,31 +44,32 @@
 #define Env_Display_Style     11
 #define Env_Math_Condensed    12
 #define Env_Vertical_Pos      13
-#define Env_Color             14
-#define Env_Pattern_Mode      15
-#define Env_Paragraph         16
-#define Env_Page              17
-#define Env_Page_Extents      18
-#define Env_Preamble          19
-#define Env_Geometry          20
-#define Env_Frame             21
-#define Env_Line_Width        22
-#define Env_Grid              23
-#define Env_Grid_Aspect       24
-#define Env_Src_Style         25
-#define Env_Src_Special       26
-#define Env_Src_Compact       27
-#define Env_Src_Close         28
-#define Env_Point_Style       29
-#define Env_Point_Size        30
-#define Env_Dash_Style        31
-#define Env_Dash_Style_Unit   32
-#define Env_Fill_Color        33
-#define Env_Line_Arrows       34
-#define Env_Line_Portion      35
-#define Env_Text_At_Halign    36
-#define Env_Text_At_Valign    37
-#define Env_Doc_At_Valign     38
+#define Env_Math_Width        14
+#define Env_Color             15
+#define Env_Pattern_Mode      16
+#define Env_Paragraph         17
+#define Env_Page              18
+#define Env_Page_Extents      19
+#define Env_Preamble          20
+#define Env_Geometry          21
+#define Env_Frame             22
+#define Env_Line_Width        23
+#define Env_Grid              24
+#define Env_Grid_Aspect       25
+#define Env_Src_Style         26
+#define Env_Src_Special       27
+#define Env_Src_Compact       28
+#define Env_Src_Close         29
+#define Env_Point_Style       30
+#define Env_Point_Size        31
+#define Env_Dash_Style        32
+#define Env_Dash_Style_Unit   33
+#define Env_Fill_Color        34
+#define Env_Line_Arrows       35
+#define Env_Line_Portion      36
+#define Env_Text_At_Halign    37
+#define Env_Text_At_Valign    38
+#define Env_Doc_At_Valign     39
 
 /******************************************************************************
 * For style file editing
@@ -166,6 +167,9 @@ public:
   bool         display_style;
   bool         math_condensed;
   int          vert_pos;
+  SI           frac_max;
+  SI           table_max;
+  pencil       flatten_pen;
   int          alpha;
   pencil       pen;
   bool         no_patterns;

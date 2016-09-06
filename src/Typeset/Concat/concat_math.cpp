@@ -11,6 +11,7 @@
 
 #include "concater.hpp"
 #include "analyze.hpp"
+#include "packrat.hpp"
 
 /******************************************************************************
 * Typesetting special mathematical symbols
@@ -286,6 +287,47 @@ concater_rep::typeset_script (tree t, path ip, bool right) {
 * Standard mathematical operations
 ******************************************************************************/
 
+static bool
+needs_brackets (tree t, string kind) {
+  if (is_func (t, AROUND)) return false;
+  return !packrat_correct ("std-math", kind, t);
+}
+
+void
+concater_rep::typeset_wide_frac (tree t, path ip) {
+  bool numb= needs_brackets (t[0], "Product");
+  bool denb= needs_brackets (t[1], "Power");
+  pencil old_pen= env->pen;
+  marker (descend (ip, 0));
+  typeset_large (tree (LEFT, "."), decorate_left (descend (ip, 0)),
+                 LEFT_BRACKET_ITEM, OP_OPENING_BRACKET, "<left-");
+  env->pen= env->flatten_pen;
+  if (numb)
+    typeset_large (tree (LEFT, "("), decorate_left (descend (ip, 0)),
+                   LEFT_BRACKET_ITEM, OP_OPENING_BRACKET, "<left-");
+  env->pen= old_pen;
+  typeset (t[0], descend (ip, 0));
+  env->pen= env->flatten_pen;
+  if (numb)
+    typeset_large (tree (RIGHT, ")"), decorate_right (descend (ip, 0)),
+                   RIGHT_BRACKET_ITEM, OP_CLOSING_BRACKET, "<right-");
+  typeset_large (tree (MID, "/"), decorate_middle (ip),
+                 MIDDLE_BRACKET_ITEM, OP_MIDDLE_BRACKET, "<mid-");
+  if (denb)
+    typeset_large (tree (LEFT, "("), decorate_left (descend (ip, 1)),
+                   LEFT_BRACKET_ITEM, OP_OPENING_BRACKET, "<left-");
+  env->pen= old_pen;
+  typeset (t[1], descend (ip, 1));
+  env->pen= env->flatten_pen;
+  if (denb)
+    typeset_large (tree (RIGHT, ")"), decorate_right (descend (ip, 1)),
+                   RIGHT_BRACKET_ITEM, OP_CLOSING_BRACKET, "<right-");
+  env->pen= old_pen;
+  typeset_large (tree (RIGHT, "."), decorate_right (descend (ip, 1)),
+                 RIGHT_BRACKET_ITEM, OP_CLOSING_BRACKET, "<right-");
+  marker (descend (ip, 1));
+}
+
 void
 concater_rep::typeset_frac (tree t, path ip) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
@@ -294,20 +336,68 @@ concater_rep::typeset_frac (tree t, path ip) {
   if (disp) old= env->local_begin (MATH_DISPLAY, "false");
   else old= env->local_begin_script ();
   tree old_vp= env->local_begin (MATH_VPOS, "1");
-  box nom= typeset_as_concat (env, t[0], descend (ip, 0));
+  box num= typeset_as_concat (env, t[0], descend (ip, 0));
   env->local_end (MATH_VPOS, "-1");
   box den= typeset_as_concat (env, t[1], descend (ip, 1));
   env->local_end (MATH_VPOS, old_vp);
   font sfn= env->fn;
   if (disp) env->local_end (MATH_DISPLAY, old);
   else env->local_end_script (old);
-  print (frac_box (ip, nom, den, env->fn, sfn, env->pen));
+  if (num->w() <= env->frac_max && den->w () <= env->frac_max)
+    print (frac_box (ip, num, den, env->fn, sfn, env->pen));
+  else typeset_wide_frac (t, ip);
+}
+
+void
+concater_rep::typeset_wide_sqrt (tree t, path ip) {
+  bool br= needs_brackets (t[0], "Postfixed");
+  pencil old_pen= env->pen;
+  marker (descend (ip, 0));
+  typeset_large (tree (LEFT, "."), decorate_left (descend (ip, 0)),
+                 LEFT_BRACKET_ITEM, OP_OPENING_BRACKET, "<left-");
+  env->pen= env->flatten_pen;
+  if (br)
+    typeset_large (tree (LEFT, "("), decorate_left (descend (ip, 0)),
+                   LEFT_BRACKET_ITEM, OP_OPENING_BRACKET, "<left-");
+  env->pen= old_pen;
+  typeset (t[0], descend (ip, 0));
+  env->pen= env->flatten_pen;
+  if (br)
+    typeset_large (tree (RIGHT, ")"), decorate_right (descend (ip, 0)),
+                   RIGHT_BRACKET_ITEM, OP_CLOSING_BRACKET, "<right-");
+  env->pen= old_pen;
+
+  bool disp= env->display_style;
+  tree old;
+  if (disp) old= env->local_begin (MATH_DISPLAY, "false");
+  tree old_il= env->local_begin_script ();
+  env->pen= env->flatten_pen;
+  box num= typeset_as_concat (env, "1", decorate_middle (ip));
+  box den;
+  if (N(t) >= 2) {
+    env->pen= old_pen;
+    den= typeset_as_concat (env, t[1], descend (ip, 1));
+    env->pen= env->flatten_pen;
+  }
+  else den= typeset_as_concat (env, "2", decorate_middle (ip));
+  box fr= frac_box (decorate_middle (ip), num, den, env->fn, env->fn, env->pen);
+  env->pen= old_pen;
+  env->local_end_script (old_il);
+  if (disp) env->local_end (MATH_DISPLAY, old);
+  penalty_max (HYPH_INVALID);
+  a << line_item (RSUP_ITEM, OP_SKIP,
+                  script_box (ip, box (), fr, env->fn), HYPH_INVALID);
+
+  typeset_large (tree (RIGHT, "."), decorate_right (descend (ip, 1)),
+                 RIGHT_BRACKET_ITEM, OP_CLOSING_BRACKET, "<right-");
+  marker (descend (ip, 1));
 }
 
 void
 concater_rep::typeset_sqrt (tree t, path ip) {
   if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); return; }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  if (b->w () > env->frac_max) { typeset_wide_sqrt (t, ip); return; }
   box ind;
   if (N(t)==2) {
     bool disp= env->display_style;

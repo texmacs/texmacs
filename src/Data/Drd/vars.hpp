@@ -67,6 +67,9 @@ extern string MATH_CONDENSED;
 extern string MATH_VPOS;
 extern string MATH_NESTING_MODE;
 extern string MATH_NESTING_LEVEL;
+extern string MATH_FRAC_LIMIT;
+extern string MATH_TABLE_LIMIT;
+extern string MATH_FLATTEN_COLOR;
 
 extern string PROG_LANGUAGE;
 extern string PROG_SCRIPTS;

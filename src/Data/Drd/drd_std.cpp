@@ -952,6 +952,9 @@ init_std_drd () {
   init_var (MATH_VPOS, TYPE_INTEGER);
   init_var (MATH_NESTING_MODE, TYPE_STRING);
   init_var (MATH_NESTING_LEVEL, TYPE_INTEGER);
+  init_var (MATH_FRAC_LIMIT, TYPE_LENGTH);
+  init_var (MATH_TABLE_LIMIT, TYPE_LENGTH);
+  init_var (MATH_FLATTEN_COLOR, TYPE_COLOR);
 
   init_var (PROG_LANGUAGE, TYPE_STRING);
   init_var (PROG_SCRIPTS, TYPE_STRING);

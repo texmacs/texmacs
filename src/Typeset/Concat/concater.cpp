@@ -881,6 +881,31 @@ typeset_as_concat (edit_env env, tree t, path ip) {
 }
 
 box
+typeset_as_concat (edit_env env, tree t, path ip, array<line_item>& a) {
+  concater ccc= tm_new<concater_rep> (env, true);
+  ccc->typeset (t, ip);
+  ccc->finish ();
+  a= ccc->a;
+  tm_delete (ccc);
+
+  int i, n=N(a);
+  if (n == 0) return empty_box (ip); // FIXME: n=0 should never happen
+  array<box> items (n);
+  array<SI>  spc (n);
+  if (n>0) {
+    spc[0]=0;
+    for (i=0; i<n-1; i++) {
+      items[i]  = a[i]->b;
+      spc  [i+1]= a[i]->spc->def;
+    }
+    items[i]= a[i]->b;
+  }
+  box b= concat_box (ip, items, spc);
+
+  return b;
+}
+
+box
 typeset_as_box (edit_env env, tree t, path ip) {
   box b= typeset_as_concat (env, t, ip);
 
