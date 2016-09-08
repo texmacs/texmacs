@@ -86,6 +86,7 @@ class concater_rep {
   void typeset_wide (tree t, path ip, bool above);
   void typeset_neg (tree t, path ip);
   void typeset_tree (tree t, path ip);
+  void typeset_wide_table (tree t, path ip);
   void typeset_table (tree t, path ip);
   void print_semantic (box b, tree sem);
   void typeset_syntax (tree t, path ip);

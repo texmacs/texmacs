@@ -548,5 +548,39 @@ concater_rep::typeset_tree (tree t, path ip) {
 void
 concater_rep::typeset_table (tree t, path ip) {
   box b= typeset_as_table (env, t, ip);
-  print (b);
+  if (b->w () <= env->table_max) { print (b); return; }
+  if (env->read (TABLE_WIDTH) != "") { print (b); return; }
+  path ip1= ip;
+  tree t1 = t;
+  while (is_func (t1, TFORMAT)) {
+    ip1= descend (ip1, N(t1)-1);
+    t1 = t1[N(t1)-1];
+  }
+  for (int i=0; i<N(t1); i++) {
+    tree t2= t1[i];
+    if (!is_func (t2, ROW)) { print (b); return; }
+    for (int j=0; j<N(t2); j++) {
+      tree t3= t2[j];
+      if (!is_func (t3, CELL, 1)) { print (b); return; }
+      if (is_func (t3[0], DOCUMENT)) { print (b); return; }
+    }
+  }
+
+  pencil old_pen= env->pen;
+  for (int i=0; i<N(t1); i++) {
+    path ip2= descend (ip1, i);
+    tree t2 = t1[i];
+    for (int j=0; j<N(t2); j++) {
+      path ip3= descend (descend (ip2, j), 0);
+      tree t3 = t2[j][0];
+      typeset (t3, ip3);
+      if (i < N(t1)-1 || j < N(t2)-1) {
+        string delim= ",";
+        if (j == N(t2)-1) delim= ";";
+        env->pen= env->flatten_pen;
+        typeset (delim, decorate_right (ip3));
+        env->pen= old_pen;
+      }
+    }
+  }
 }
