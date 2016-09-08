@@ -143,6 +143,9 @@
   (:require (alternate-standard-second? t))
   #t)
 
+(tm-define (pure-alternate-context? t)
+  (alternate-context? t))
+
 (tm-define alternate-table (make-ahash-table))
 
 (tm-define-macro (define-alternate first second)

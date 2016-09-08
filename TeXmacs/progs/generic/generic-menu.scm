@@ -357,7 +357,7 @@
         (dynamic (string-input-menu t i))))))
 
 (tm-menu (focus-hidden-menu t)
-  (:require (alternate-context? t)))
+  (:require (pure-alternate-context? t)))
 
 (tm-menu (standard-focus-menu t)
   (dynamic (focus-ancestor-menu t))
@@ -481,7 +481,7 @@
       (dynamic (string-input-icon t i)))))
 
 (tm-menu (focus-hidden-icons t)
-  (:require (alternate-context? t)))
+  (:require (pure-alternate-context? t)))
 
 (tm-menu (standard-focus-icons t)
   (dynamic (focus-ancestor-icons t))

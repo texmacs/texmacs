@@ -20,5 +20,13 @@
 
 (menu-bind calc-insert-menu
   ("Input field" (make-calc-inert))
-  ("Executable input field" (make-calc-input))
+  ("Evaluable field" (make-calc-input))
   ("Field reference" (make 'calc-ref)))
+
+(tm-define (pure-alternate-context? t)
+  (:require (tree-in? t '(calc-inert calc-input calc-output)))
+  #f)
+
+(tm-define (hidden-child? t i)
+  (:require (tree-in? t '(calc-inert calc-input calc-output)))
+  (or (== i 0) (and (== i 1) (tree-atomic? (tree-ref t 1)))))
