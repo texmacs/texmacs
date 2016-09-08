@@ -21,11 +21,20 @@
 (define-group calc-table-tag
   textual-table numeric-dot-table numeric-comma-table)
 
+(define-group calc-labeled-tag
+  calc-inert calc-input calc-output
+  calc-generate calc-generate-command
+  calc-answer calc-answer-command
+  calc-check calc-check-predicate calc-check-command)
+
 (define-group variant-tag (calc-table-tag))
 (define-group similar-tag (calc-table-tag))
 
 (define-toggle calc-input calc-output)
 (define-toggle cell-input cell-output)
+(define-toggle calc-generate calc-generate-command)
+(define-toggle calc-answer calc-answer-command)
+(define-toggle calc-check calc-check-predicate)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Contexts
@@ -52,6 +61,12 @@
 
 (tm-define (calc-toggle-context? t)
   (tree-in? t '(calc-input calc-output cell-input cell-output)))
+
+(tm-define (calc-generate-context? t)
+  (tree-in? t '(calc-generate-command calc-generate)))
+
+(tm-define (calc-answer-context? t)
+  (tree-in? t '(calc-answer-command calc-answer)))
 
 (tm-define (calc-ref-context? t)
   (tree-in? t '(calc-ref cell-ref)))

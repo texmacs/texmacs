@@ -505,6 +505,20 @@ edit_select_rep::selection_get_end () {
   return end (cur_sel);
 }
 
+path
+edit_select_rep::selection_var_get_start () {
+  path p1, p2;
+  selection_get (p1, p2);
+  return p1;
+}
+
+path
+edit_select_rep::selection_var_get_end () {
+  path p1, p2;
+  selection_get (p1, p2);
+  return p2;
+}
+
 tree
 edit_select_rep::selection_get () {
   if (!selection_active_any ()) return "";

@@ -213,6 +213,8 @@
   (selection-set-end selection_set_end (void))
   (selection-get-start selection_get_start (path))
   (selection-get-end selection_get_end (path))
+  (selection-get-start* selection_var_get_start (path))
+  (selection-get-end* selection_var_get_end (path))
   (selection-path selection_get_path (path))
   (selection-set selection_set_paths (void path path))
   (selection-set-range-set selection_set_range_set (void array_path))

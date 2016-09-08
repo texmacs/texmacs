@@ -915,6 +915,8 @@
 "selection-set-end"
 "selection-get-start"
 "selection-get-end"
+"selection-get-start*"
+"selection-get-end*"
 "selection-path"
 "selection-set"
 "selection-set-range-set"

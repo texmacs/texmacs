@@ -66,8 +66,8 @@
 	(else '())))
 
 (tm-define (selection-trees)
-  (let* ((p1 (selection-get-start))
-	 (p2 (selection-get-end)))
+  (let* ((p1 (selection-get-start*))
+	 (p2 (selection-get-end*)))
     (selection-subtrees (root-tree) p1 p2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

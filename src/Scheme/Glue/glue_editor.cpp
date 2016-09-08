@@ -2036,6 +2036,24 @@ tmg_selection_get_end () {
 }
 
 tmscm
+tmg_selection_get_start_dot () {
+  // TMSCM_DEFER_INTS;
+  path out= get_current_editor()->selection_var_get_start ();
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
+tmg_selection_get_end_dot () {
+  // TMSCM_DEFER_INTS;
+  path out= get_current_editor()->selection_var_get_end ();
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
 tmg_selection_path () {
   // TMSCM_DEFER_INTS;
   path out= get_current_editor()->selection_get_path ();
@@ -3433,6 +3451,8 @@ initialize_glue_editor () {
   tmscm_install_procedure ("selection-set-end",  tmg_selection_set_end, 0, 0, 0);
   tmscm_install_procedure ("selection-get-start",  tmg_selection_get_start, 0, 0, 0);
   tmscm_install_procedure ("selection-get-end",  tmg_selection_get_end, 0, 0, 0);
+  tmscm_install_procedure ("selection-get-start*",  tmg_selection_get_start_dot, 0, 0, 0);
+  tmscm_install_procedure ("selection-get-end*",  tmg_selection_get_end_dot, 0, 0, 0);
   tmscm_install_procedure ("selection-path",  tmg_selection_path, 0, 0, 0);
   tmscm_install_procedure ("selection-set",  tmg_selection_set, 2, 0, 0);
   tmscm_install_procedure ("selection-set-range-set",  tmg_selection_set_range_set, 1, 0, 0);

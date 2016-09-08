@@ -44,26 +44,34 @@
            (tm->tree `(calc-ref ,(string-append prefix name)))))
         (else (tree-map-children (cut calc-prefix-input prefix <>) t))))
 
+(define (calc-var t)
+  (let* ((raw-var (texmacs->string (tree-ref t 0)))
+         (pre (if (calc-cell-context? t) prefix ""))
+         (var (string-append pre raw-var)))
+    var))
+
 (tm-define (calc-update-inputs lan ses prefix t)
   (cond ((tree-atomic? t) (noop))
         ((calc-inert-context? t)
-         (let* ((raw-var (texmacs->string (tree-ref t 0)))
-                (pre (if (calc-cell-context? t) prefix ""))
-                (var (string-append pre raw-var))
+         (let* ((var (calc-var t))
                 (old-val (ahash-ref calc-output var))
                 (new-val (tree->stree (tree-ref t 1))))
            (when (!= new-val old-val)
              (ahash-set! calc-output var new-val)
              (ahash-set! calc-invalid var #t))))
-        ((calc-toggle-context? t)
-         (let* ((raw-var (texmacs->string (tree-ref t 0)))
-                (pre (if (calc-cell-context? t) prefix ""))
-                (var (string-append pre raw-var))
+        ((or (calc-toggle-context? t)
+             (calc-generate-context? t)
+             (calc-answer-context? t))
+         (let* ((var (calc-var t))
                 (in-tree (calc-prefix-input prefix (calc-get-input t)))
                 (in (tree->stree in-tree))
-                (out-tree (tree-ref t 2))
+                (out-index (if (calc-answer-context? t) 3 2))
+                (out-tree (tree-ref t out-index))
                 (out (tree->stree out-tree))
                 (todo (list lan ses var in-tree out-tree)))
+           (when (and (calc-generate-context? t) (!= out ""))
+             (ahash-set! calc-input var in)
+             (ahash-set! calc-output var out))             
            (when (or (!= (ahash-ref calc-input var) in)
                      (!= (ahash-ref calc-output var) out)
                      (not (calc-updated? in-tree)))
@@ -144,6 +152,29 @@
   (calc-reevaluate "scheme" "default" "" (buffer-tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regenerate icourse exercises
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (icourse-invalidate t)
+  (cond ((tree-in? t '(calc-generate calc-generate-command))
+         (with var (calc-var t)
+           (tree-set (tree-ref t 2) "")
+           (ahash-remove! calc-input var)
+           (ahash-remove! calc-output var)))
+        ((tree-compound? t)
+         (for-each icourse-invalidate (tree-children t)))))
+
+(tm-define (calc-regenerate)
+  ;; FIXME: don't regenerate when re-opening document
+  (if (selection-active-any?)
+      (with l (selection-trees)
+        ;; FIXME: selection-trees to be improved:
+        ;; correct selection paths before computing the trees
+        (for-each icourse-invalidate l))
+      (icourse-invalidate (buffer-tree)))
+  (calc))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Communication with the plug-in
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -216,13 +247,14 @@
   (insert-go-to `(calc-input ,(calc-auto) "" "") '(1 0)))
 
 (tm-define (alternate-toggle t)
-  (:require (tree-is? t 'calc-output))
-  (tree-assign-node t 'calc-input)
+  (:require (tree-in? t '(calc-output calc-generate calc-answer calc-check)))
+  (tree-assign-node! t (symbol-toggle-alternate (tree-label t)))
   (tree-go-to t 1 :end))
 
 (tm-define (alternate-toggle t)
-  (:require (tree-is? t 'calc-input))
-  (tree-assign-node t 'calc-output)
+  (:require (tree-in? t '(calc-input calc-generate-command
+                          calc-answer-command calc-check-predicate)))
+  (tree-assign-node! t (symbol-toggle-alternate (tree-label t)))
   (tree-go-to t 2 :end)
   (calc))
 
@@ -231,5 +263,8 @@
   (calc))
 
 (tm-define (kbd-enter t forwards?)
-  (:require (and (calc-toggle-context? t) (not (tree-is? t :up 'inactive))))
+  (:require (and (or (calc-toggle-context? t)
+                     (calc-generate-context? t)
+                     (calc-answer-context? t))
+                 (not (tree-is? t :up 'inactive))))
   (alternate-toggle t))

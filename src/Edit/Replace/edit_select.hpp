@@ -70,6 +70,8 @@ public:
   void selection_get (path& start, path& end);
   path selection_get_start ();
   path selection_get_end ();
+  path selection_var_get_start ();
+  path selection_var_get_end ();
   path selection_get_path ();
   path selection_get_cursor_path ();
   tree selection_get_env_value (string var);

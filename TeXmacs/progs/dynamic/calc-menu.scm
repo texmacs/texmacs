@@ -23,10 +23,13 @@
   ("Evaluable field" (make-calc-input))
   ("Field reference" (make 'calc-ref)))
 
+(tm-define (calc-labeled-context? t)
+  (tree-in? t (calc-labeled-tag-list)))
+
 (tm-define (pure-alternate-context? t)
-  (:require (tree-in? t '(calc-inert calc-input calc-output)))
+  (:require (calc-labeled-context? t))
   #f)
 
 (tm-define (hidden-child? t i)
-  (:require (tree-in? t '(calc-inert calc-input calc-output)))
-  (or (== i 0) (and (== i 1) (tree-atomic? (tree-ref t 1)))))
+  (:require (calc-labeled-context? t))
+  (== i 0))

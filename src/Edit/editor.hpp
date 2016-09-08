@@ -485,6 +485,8 @@ public:
   virtual void selection_get (path& start, path& end) = 0;
   virtual path selection_get_start () = 0;
   virtual path selection_get_end () = 0;
+  virtual path selection_var_get_start () = 0;
+  virtual path selection_var_get_end () = 0;
   virtual path selection_get_path () = 0;
   virtual path selection_get_cursor_path () = 0;
   virtual tree selection_get_env_value (string var) = 0;

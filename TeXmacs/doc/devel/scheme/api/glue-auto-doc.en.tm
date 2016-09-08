@@ -7123,6 +7123,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(selection-get-start*)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|selection_var_get_start> which returns
+    <scm|path>.
+  </explain>
+
+  <\explain>
+    <scm|(selection-get-end*)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|selection_var_get_end> which returns
+    <scm|path>.
+  </explain>
+
+  <\explain>
     <scm|(selection-path)>
 <explain-synopsis|no synopsis>
   <|explain>
