@@ -12,8 +12,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (dynamic calc-edit)
-  (:use (text text-structure)
+  (:use (text text-drd)
+        (text text-structure)
         (link locus-edit)
+        (version version-edit)
         (dynamic session-edit)
         (dynamic scripts-edit)
         (dynamic calc-drd)))
@@ -152,8 +154,14 @@
   (calc-reevaluate "scheme" "default" "" (buffer-tree)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Regenerate icourse exercises
+;; Regenerate icourse exercises and display solutions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (exercise-context? t)
+  (tree-in? t (exercise-tag-list)))
+
+(define (math-context? t)
+  (tree-in? t '(math equation equation* eqnarray eqnarray*)))
 
 (define (icourse-invalidate t)
   (cond ((tree-in? t '(calc-generate calc-generate-command))
@@ -161,18 +169,38 @@
            (tree-set (tree-ref t 2) "")
            (ahash-remove! calc-input var)
            (ahash-remove! calc-output var)))
+        ((tree-in? t '(calc-answer calc-answer-command))
+         (tree-set (tree-ref t 2) ""))
         ((tree-compound? t)
          (for-each icourse-invalidate (tree-children t)))))
 
 (tm-define (calc-regenerate)
-  ;; FIXME: don't regenerate when re-opening document
-  (if (selection-active-any?)
-      (with l (selection-trees)
-        ;; FIXME: selection-trees to be improved:
-        ;; correct selection paths before computing the trees
-        (for-each icourse-invalidate l))
-      (icourse-invalidate (buffer-tree)))
+  (cond ((selection-active-any?)
+         (with l (selection-trees)
+           (for-each icourse-invalidate l)))
+        ((nnot (tree-innermost exercise-context?))
+         (icourse-invalidate (tree-innermost exercise-context?)))
+        ((nnot (tree-innermost math-context?))
+         (icourse-invalidate (tree-innermost math-context?)))
+        (else (icourse-invalidate (buffer-tree))))
   (calc))
+
+(define (icourse-solutions t flag?)
+  (cond ((tree-in? t '(calc-answer calc-answer-command))
+         (tree-set (tree-ref t 2)
+                   (if flag? (tree->stree (tree-ref t 3)) "")))
+        ((tree-compound? t)
+         (for-each (cut icourse-solutions <> flag?) (tree-children t)))))
+
+(tm-define (calc-solutions flag?)
+  (cond ((selection-active-any?)
+         (with l (selection-trees)
+           (for-each (cut icourse-solutions <> flag?) l)))
+        ((nnot (tree-innermost exercise-context?))
+         (icourse-solutions (tree-innermost exercise-context?) flag?))
+        ((nnot (tree-innermost math-context?))
+         (icourse-solutions (tree-innermost math-context?) flag?))
+        (else (icourse-solutions (buffer-tree) flag?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Communication with the plug-in
@@ -245,6 +273,12 @@
 
 (tm-define (make-calc-input)
   (insert-go-to `(calc-input ,(calc-auto) "" "") '(1 0)))
+
+(tm-define (make-calc-generate)
+  (insert-go-to `(calc-generate-command ,(calc-auto) "" "") '(1 0)))
+
+(tm-define (make-calc-answer)
+  (insert-go-to `(calc-answer-command ,(calc-auto) "" "" "") '(1 0)))
 
 (tm-define (alternate-toggle t)
   (:require (tree-in? t '(calc-output calc-generate calc-answer calc-check)))

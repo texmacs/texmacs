@@ -287,7 +287,8 @@
 (lazy-menu (dynamic session-menu) insert-session-menu session-help-icons)
 (lazy-menu (dynamic scripts-menu) scripts-eval-menu scripts-plot-menu
            plugin-eval-menu plugin-eval-toggle-menu plugin-plot-menu)
-(lazy-menu (dynamic calc-menu) calc-table-menu calc-insert-menu)
+(lazy-menu (dynamic calc-menu) calc-table-menu calc-insert-menu
+           calc-icourse-menu)
 (lazy-menu (dynamic animate-menu) insert-animation-menu animate-toolbar)
 (lazy-define (dynamic fold-edit)
              screens-switch-to dynamic-make-slides overlays-context?)

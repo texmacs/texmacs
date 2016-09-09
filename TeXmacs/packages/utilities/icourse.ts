@@ -64,11 +64,11 @@
 
   <assign|calc-answer-command|<macro|ref|cmd|answer|expected|<with|color|<value|calc-input-color>|<arg|cmd>>>>
 
-  <assign|calc-check|<macro|ref|pred|answer|status|cmd|<if|<equal|<arg|status>|true>|<calc-correct|<arg|answer>>|<if|<equal|<arg|answer>|>|<calc-empty|<arg|answer>>|<calc-incorrect|<arg|answer>>>>>>
+  <assign|calc-check|<macro|ref|pred|answer|status|cmd|expected|<if|<equal|<arg|status>|true>|<calc-correct|<arg|answer>>|<if|<equal|<arg|answer>|>|<calc-empty|<arg|answer>>|<calc-incorrect|<arg|answer>>>>>>
 
-  <assign|calc-check-predicate|<macro|ref|pred|answer|status|cmd|<with|color|<value|calc-check-color>|<arg|pred>>>>
+  <assign|calc-check-predicate|<macro|ref|pred|answer|status|cmd|expected|<with|color|<value|calc-check-color>|<arg|pred>>>>
 
-  <assign|calc-check-command|<macro|ref|pred|answer|status|cmd|<with|color|<value|calc-input-color>|<arg|cmd>>>>
+  <assign|calc-check-command|<macro|ref|pred|answer|status|cmd|expected|<with|color|<value|calc-input-color>|<arg|cmd>>>>
 
   \;
 </body>

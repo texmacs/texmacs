@@ -23,6 +23,17 @@
   ("Evaluable field" (make-calc-input))
   ("Field reference" (make 'calc-ref)))
 
+(menu-bind calc-icourse-menu
+  (when (calc-ready?)
+    (link calc-insert-menu)
+    ---
+    ("Generated field" (make-calc-generate))
+    ("Answer field" (make-calc-answer))
+    ---
+    ("Regenerate" (calc-regenerate))
+    ("Clean slate" (calc-solutions #f))
+    ("Solutions" (calc-solutions #t))))
+
 (tm-define (calc-labeled-context? t)
   (tree-in? t (calc-labeled-tag-list)))
 
