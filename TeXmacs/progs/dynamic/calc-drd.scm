@@ -25,10 +25,15 @@
   calc-inert calc-input calc-output
   calc-generate calc-generate-command
   calc-answer calc-answer-command
+  calc-check calc-check-predicate calc-check-command calc-suggest)
+
+(define-group calc-check-tag
   calc-check calc-check-predicate calc-check-command)
 
 (define-group variant-tag (calc-table-tag))
 (define-group similar-tag (calc-table-tag))
+(define-group variant-tag (calc-check-tag))
+(define-group similar-tag (calc-check-tag))
 
 (define-toggle calc-input calc-output)
 (define-toggle cell-input cell-output)
@@ -67,6 +72,11 @@
 
 (tm-define (calc-answer-context? t)
   (tree-in? t '(calc-answer-command calc-answer)))
+
+(tm-define (calc-check-context? t)
+  (and (tree-in? t '(calc-check-command calc-check-predicate calc-check))
+       (== (tree-arity t) 5)
+       (tree-is? (tree-ref t 4) 'calc-suggest)))
 
 (tm-define (calc-ref-context? t)
   (tree-in? t '(calc-ref cell-ref)))

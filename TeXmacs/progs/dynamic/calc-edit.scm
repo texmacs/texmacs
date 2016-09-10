@@ -63,7 +63,8 @@
              (ahash-set! calc-invalid var #t))))
         ((or (calc-toggle-context? t)
              (calc-generate-context? t)
-             (calc-answer-context? t))
+             (calc-answer-context? t)
+             (tree-is? t 'calc-suggest))
          (let* ((var (calc-var t))
                 (in-tree (calc-prefix-input prefix (calc-get-input t)))
                 (in (tree->stree in-tree))
@@ -73,7 +74,27 @@
                 (todo (list lan ses var in-tree out-tree)))
            (when (and (calc-generate-context? t) (!= out ""))
              (ahash-set! calc-input var in)
-             (ahash-set! calc-output var out))             
+             (ahash-set! calc-output var out))
+           (when (or (!= (ahash-ref calc-input var) in)
+                     (!= (ahash-ref calc-output var) out)
+                     (not (calc-updated? in-tree)))
+             (ahash-set! calc-input var in)
+             (ahash-set! calc-invalid var #t)
+             (ahash-set! calc-todo var todo))))
+        ((calc-check-context? t)
+         (calc-update-inputs lan ses prefix (tree-ref t 4))
+         (let* ((var (calc-var t))
+                (old-val (ahash-ref calc-output var))
+                (new-val (tree->stree (tree-ref t 2))))
+           (when (!= new-val old-val)
+             (ahash-set! calc-output var new-val)
+             (ahash-set! calc-invalid var #t)))
+         (let* ((var (string-append (calc-var t) "?"))
+                (in-tree (calc-prefix-input prefix (calc-get-input t)))
+                (in (tree->stree in-tree))
+                (out-tree (tree-ref t 3))
+                (out (tree->stree out-tree))
+                (todo (list lan ses var in-tree out-tree)))
            (when (or (!= (ahash-ref calc-input var) in)
                      (!= (ahash-ref calc-output var) out)
                      (not (calc-updated? in-tree)))
@@ -153,6 +174,7 @@
 (tm-define (calc-scheme)
   (calc-reevaluate "scheme" "default" "" (buffer-tree)))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Regenerate icourse exercises and display solutions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -164,12 +186,14 @@
   (tree-in? t '(math equation equation* eqnarray eqnarray*)))
 
 (define (icourse-invalidate t)
-  (cond ((tree-in? t '(calc-generate calc-generate-command))
+  (cond ((tree-in? t '(calc-generate calc-generate-command calc-suggest))
          (with var (calc-var t)
            (tree-set (tree-ref t 2) "")
            (ahash-remove! calc-input var)
            (ahash-remove! calc-output var)))
-        ((tree-in? t '(calc-answer calc-answer-command))
+        ((calc-answer-context? t)
+         (tree-set (tree-ref t 2) ""))
+        ((calc-check-context? t)
          (tree-set (tree-ref t 2) ""))
         ((tree-compound? t)
          (for-each icourse-invalidate (tree-children t)))))
@@ -186,9 +210,12 @@
   (calc))
 
 (define (icourse-solutions t flag?)
-  (cond ((tree-in? t '(calc-answer calc-answer-command))
+  (cond ((calc-answer-context? t)
          (tree-set (tree-ref t 2)
                    (if flag? (tree->stree (tree-ref t 3)) "")))
+        ((calc-check-context? t)
+         (tree-set (tree-ref t 2)
+                   (if flag? (tree->stree (tm-ref t 4 2)) "")))
         ((tree-compound? t)
          (for-each (cut icourse-solutions <> flag?) (tree-children t)))))
 
@@ -201,6 +228,35 @@
         ((nnot (tree-innermost math-context?))
          (icourse-solutions (tree-innermost math-context?) flag?))
         (else (icourse-solutions (buffer-tree) flag?))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Continuous re-checking of answers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define check-busy? #f)
+(define check-answer-table (make-ahash-table))
+
+(define (calc-recheck-all)
+  (when (not check-busy?)
+    ;;(display* "Recalculate\n")
+    (set! check-busy? #t)
+    (delayed
+      (:idle 250)
+      (calc)
+      (set! check-busy? #f))))
+
+
+(tm-define (calc-lazy-recheck v)
+  (and-with t (tree-up v)
+    (when (calc-check-context? t)
+      (let* ((var (calc-var t))
+             (answer (tree->stree (tree-ref t 2))))
+        (when (not (ahash-ref check-answer-table var))
+          (ahash-set! check-answer-table var answer))
+        (when (!= (ahash-ref check-answer-table var) answer)
+          ;;(display* var " ~> " answer "\n")
+          (ahash-set! check-answer-table var answer)
+          (calc-recheck-all))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Communication with the plug-in
@@ -280,6 +336,10 @@
 (tm-define (make-calc-answer)
   (insert-go-to `(calc-answer-command ,(calc-auto) "" "" "") '(1 0)))
 
+(tm-define (make-calc-check)
+  (with sug `(calc-suggest ,(calc-auto) "" "")
+    (insert-go-to `(calc-check-predicate ,(calc-auto) "" "" "" ,sug) '(1 0))))
+
 (tm-define (alternate-toggle t)
   (:require (tree-in? t '(calc-output calc-generate calc-answer calc-check)))
   (tree-assign-node! t (symbol-toggle-alternate (tree-label t)))
@@ -292,6 +352,21 @@
   (tree-go-to t 2 :end)
   (calc))
 
+(tm-define (variant-circulate t forward?)
+  (:require (calc-check-context? t))
+  (cond ((or (and (tree-is? t 'calc-check-predicate) forward?)
+             (and (tree-is? t 'calc-check) (not forward?)))
+         (tree-assign-node! t 'calc-check-command)
+         (tree-go-to t 4 2 :end))
+        ((or (and (tree-is? t 'calc-check-command) forward?)
+             (and (tree-is? t 'calc-check-predicate) (not forward?)))
+         (tree-assign-node! t 'calc-check)
+         (tree-go-to t 2 :end))
+        ((or (and (tree-is? t 'calc-check) forward?)
+             (and (tree-is? t 'calc-check-command) (not forward?)))
+         (tree-assign-node! t 'calc-check-predicate)
+         (tree-go-to t 1 :end))))
+
 (tm-define (kbd-enter t forwards?)
   (:require (and (calc-inert-context? t) (not (tree-is? t :up 'inactive))))
   (calc))
@@ -302,3 +377,8 @@
                      (calc-answer-context? t))
                  (not (tree-is? t :up 'inactive))))
   (alternate-toggle t))
+
+(tm-define (kbd-enter t forwards?)
+  (:require (and (calc-check-context? t)
+                 (not (tree-is? t :up 'inactive))))
+  (variant-circulate t #t))

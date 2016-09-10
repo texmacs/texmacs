@@ -20,6 +20,8 @@
     </src-license>
   </src-title>>
 
+  <use-module|(dynamic calc-markup)>
+
   <\active*>
     <\src-comment>
       Style parameters
@@ -64,11 +66,15 @@
 
   <assign|calc-answer-command|<macro|ref|cmd|answer|expected|<with|color|<value|calc-input-color>|<arg|cmd>>>>
 
-  <assign|calc-check|<macro|ref|pred|answer|status|cmd|expected|<if|<equal|<arg|status>|true>|<calc-correct|<arg|answer>>|<if|<equal|<arg|answer>|>|<calc-empty|<arg|answer>>|<calc-incorrect|<arg|answer>>>>>>
+  <assign|calc-suggest|<macro|ref|in|out|<with|color|<value|calc-input-color>|<arg|in>>>>
 
-  <assign|calc-check-predicate|<macro|ref|pred|answer|status|cmd|expected|<with|color|<value|calc-check-color>|<arg|pred>>>>
+  <assign|calc-check|<macro|ref|pred|answer|status|sub|<with|mode|<value|mode>|<extern|calc-check-callback|<quote-arg|ref>>><if|<or|<equal|<arg|status>|true>|<equal|<arg|status>|<math|true>>>|<calc-correct|<arg|answer>>|<if|<equal|<arg|answer>|>|<calc-empty|<arg|answer>>|<calc-incorrect|<arg|answer>>>>>>
 
-  <assign|calc-check-command|<macro|ref|pred|answer|status|cmd|expected|<with|color|<value|calc-input-color>|<arg|cmd>>>>
+  <assign|calc-check-predicate|<macro|ref|pred|answer|status|sub|<with|color|<value|calc-check-color>|<arg|pred>>>>
+
+  <assign|calc-check-command|<macro|ref|pred|answer|status|sub|<arg|sub>>>
+
+  <drd-props|calc-check|syntax|<macro|ref|pred|answer|status|sub|<arg|answer>>>
 
   \;
 </body>

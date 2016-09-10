@@ -30,6 +30,7 @@
   (:require (and (calc-ready?) (style-has? "icourse-dtd")))
   ("\\ <" (make-calc-generate))
   ("\\ >" (make-calc-answer))
+  ("\\ ]" (make-calc-check))
   ("C-return" (calc-regenerate))
   ("C-*" (calc-regenerate))
   ("C-!" (calc-solutions #f))

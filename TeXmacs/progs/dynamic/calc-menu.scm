@@ -29,6 +29,9 @@
     ---
     ("Generated field" (make-calc-generate))
     ("Answer field" (make-calc-answer))
+    ("Checkable field" (make-calc-check))
+    (when (selection-active-any?)
+      ("Conceal" (make 'concealed)))
     ---
     ("Regenerate" (calc-regenerate))
     ("Clean slate" (calc-solutions #f))

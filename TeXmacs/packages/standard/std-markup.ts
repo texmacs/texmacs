@@ -323,6 +323,8 @@
 
   <assign|vphantom|<macro|body|<hresize|<phantom|<arg|body>>|0em|0em>>>
 
+  <assign|concealed|<macro|body|>>
+
   <\active*>
     <\src-comment>
       Adjusting the sizes of boxes.
