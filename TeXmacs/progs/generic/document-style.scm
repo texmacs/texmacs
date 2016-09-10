@@ -140,6 +140,7 @@
 
   ("framed-session"       "Framed input fields")
   ("ring-session"         "Ring binder notebook style")
+  ("large-formulas"       "Do not break up large formulas")
 
   ("centered-program"     "Centered programs")
   ("framed-program"       "Framed programs")
@@ -220,6 +221,7 @@
 
   ("framed-session"     "Render session inputs in frames")
   ("ring-session"       "Ring binder notebook style")
+  ("large-formulas"     "Do not break up large fractions and matrices")
 
   ("centered-program"   "Use a centered rendering style for algorithms")
   ("framed-program"     "Display algorithms inside frames and center")

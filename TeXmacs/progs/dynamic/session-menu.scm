@@ -158,7 +158,7 @@
 
 (tm-define (standard-options l)
   (:require (in? l field-tags))
-  (list "framed-session" "ring-session"))
+  (list "framed-session" "ring-session" "large-formulas"))
 
 (tm-menu (focus-tag-menu t)
   (:require (field-context? t))

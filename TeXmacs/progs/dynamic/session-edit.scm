@@ -23,7 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (style-category p)
-  (:require (in? p (list "framed-session" "ring-session")))
+  (:require (in? p (list "framed-session" "ring-session" "large-formulas")))
   :session-theme)
 
 (tm-define (style-category-precedes? x y)
