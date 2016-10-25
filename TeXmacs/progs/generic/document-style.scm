@@ -169,6 +169,7 @@
   ("source"         "Style for editing style files and packages")
 
   ("acmconf"        "ACM conference style")
+  ("acmsmall"       "Small ACM journal style")
   ("sig-alternate"  "Alternate ACM conference style")
   ("amsart"         "AMS article style")
   ("elsart"         "Elsevier article style")

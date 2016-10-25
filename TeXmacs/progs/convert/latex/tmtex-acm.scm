@@ -17,6 +17,7 @@
   (:mode acm-style?)
   (cond ((== x "acmconf") "acm_proc_article-sp")
         ((== x "sig-alternate") x)
+        ((== x "acmsmall") x)
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -24,7 +25,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-append-authors l)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (set! l (filter nnull? l))
   (if (null? l) l
     (let* ((n (number->string (length l)))
@@ -35,7 +36,7 @@
 
 (tm-define (tmtex-make-author names affiliations emails urls miscs notes
                               affs-l emails-l urls-l miscs-l notes-l)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (let* ((names (tmtex-concat-Sep (map cadr names)))
          (result `(,@names ,@urls ,@notes ,@miscs ,@affiliations ,@emails)))
     (if (null? result) '()
@@ -49,7 +50,7 @@
 
 (tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
                                 subtits-l dates-l miscs-l notes-l tr ar)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   `(!document
      ,@(tmtex-make-title titles notes miscs)
      ,@subtitles 
@@ -65,25 +66,25 @@
   `(!concat (!nextline) ,t))
 
 (tm-define (tmtex-doc-subtitle t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   `(subtitle ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-note t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (set! t (tmtex-remove-line-feeds t))
   `(titlenote ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-misc t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (set! t (tmtex-remove-line-feeds t))
   `(tmacmmisc ,(tmtex (cadr t))))
 
 (tm-define (tmtex-doc-date t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   `(date ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-affiliation t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
     (with aff-lines
       (if (list>0? (cadr t))
         (map (lambda (x)
@@ -95,22 +96,22 @@
     (acm-line-break `(!concat ,@aff-lines))))
 
 (tm-define (tmtex-author-email t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (set! t (tmtex-remove-line-feeds t))
   (acm-line-break `(email ,(tmtex (cadr t)))))
 
 (tm-define (tmtex-author-homepage t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (set! t (tmtex-remove-line-feeds t))
   `(tmacmhomepage ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-note t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (set! t (tmtex-remove-line-feeds t))
   `(titlenote ,(tmtex (cadr t))))
 
 (tm-define (tmtex-author-misc t)
-  (:mode acm-style?)
+  (:mode acm-conf-style?)
   (set! t (tmtex-remove-line-feeds t))
   `(tmacmmisc ,(tmtex (cadr t))))
 
@@ -171,3 +172,14 @@
   (:mode acm-style?)
   `(!concat ,(tex-apply 'cite (tmtex (car l)))
             " (" ,(tmtex (cadr l)) ")"))
+
+(smart-table latex-texmacs-env-preamble
+  (:mode acm-small-style?)
+  ("theorem" #f)
+  ("conjecture" #f)
+  ("proposition" #f)
+  ("lemma" #f)
+  ("corollary" #f)
+  ("definition" #f)
+  ("remark" #f)
+  ("example" #f))

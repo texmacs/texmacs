@@ -59,8 +59,11 @@
   (elsart-style%        (in? tmtex-style '("elsart"))     elsevier-style%)
   (ifac-style%          (in? tmtex-style '("ifac"))       elsevier-style%)
   (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate"
-                                           "acm_proc_article-sp")))
+                                           "acm_proc_article-sp" "acmsmall")))
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
+  (acm-conf-style%      (in? tmtex-style '("acmconf" "sig-alternate"
+                                           "acm_proc_article-sp")) acm-style%)
+  (acm-small-style%     (in? tmtex-style '("acmsmall")) acm-style%)
   (ams-style%           (in? tmtex-style '("amsart")))
   (revtex-style%        (in? tmtex-style '("aip" "aps")))
   (aip-style%           (in? tmtex-style '("aip")) revtex-style%)
