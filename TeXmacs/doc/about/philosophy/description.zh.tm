@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.5>
 
 <style|<tuple|tmdoc|chinese>>
 
@@ -12,7 +12,7 @@
   <TeXmacs>\<#53EF\>\<#4EE5\>\<#5728\>\<#6240\>\<#6709\>\<#4E3B\>\<#6D41\><name|Unix>\<#5E73\>\<#53F0\>\<#548C\><name|Windows>\<#4E0A\>\<#8FD0\>\<#884C\>\<#3002\>\<#5176\>\<#6587\>\<#6863\>\<#53EF\>\<#4EE5\>\<#4FDD\>\<#5B58\>\<#4E3A\><TeXmacs>\<#FF0C\><name|<text|>Xml>\<#6216\>\<#8005\><name|Scheme>\<#4E09\>\<#79CD\>\<#683C\>\<#5F0F\>\<#FF0C\>\<#4E5F\>\<#53EF\>\<#4EE5\>\<#5BFC\>\<#51FA\>\<#4E3A\><name|Postscript>\<#6216\>\<#8005\><name|Pdf>\<#6587\>\<#4EF6\>\<#3002\>\<#53E6\>\<#5916\>\<#6587\>\<#6863\>\<#8FD8\>\<#6709\>\<#8F6C\>\<#6362\>\<#4E3A\><TeX>/<LaTeX>\<#548C\><name|Html>/<name|Mathml>\<#683C\>\<#5F0F\>\<#3002\>
 
   GNU <TeXmacs>\<#9879\>\<#76EE\>\<#7531\><with|font|roman|<hlink|INRIA|http://www.inria.fr>,
-  Bâtiment Allan Turing, Palaiseau, France>\<#6258\>\<#7BA1\>\<#3002\>
+  Bâtiment Alan Turing, Palaiseau, France>\<#6258\>\<#7BA1\>\<#3002\>
 
   <tmdoc-copyright|1998--2013|Joris van der Hoeven>
 
@@ -23,3 +23,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

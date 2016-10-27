@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|A short description of GNU <TeXmacs>>
@@ -26,8 +26,8 @@
   printed as <name|Postscript> or <name|Pdf> files. Converters exist for
   <TeX>/<LaTeX> and <name|Html>/<name|Mathml>.
 
-  GNU <TeXmacs> is hosted by <hlink|INRIA|http://www.inria.fr>, Bâtiment
-  Allan Turing, Palaiseau, France.
+  GNU <TeXmacs> is hosted by <hlink|INRIA|http://www.inria.fr>, Bâtiment Alan
+  Turing, Palaiseau, France.
 
   <tmdoc-copyright|1998--2013|Joris van der Hoeven>
 
@@ -39,8 +39,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
