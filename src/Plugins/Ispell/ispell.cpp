@@ -42,25 +42,73 @@ RESOURCE_CODE(ispeller);
 
 ispeller_rep::ispeller_rep (string lan2): rep<ispeller> (lan2), lan (lan2) {}
 
+#if defined (__MINGW__) || defined (__MINGW32__)
+bool find_win_spell(string &cmd , string &name) {
+    url u;
+    u= url_system ("$PROGRAMFILES\\Aspell\\bin\\aspell.exe");
+    if (exists (u)) {
+          cmd= escape_sh (as_string (u));
+          name= "aspell";
+          return true;
+        }
+    u= url_system ("$PROGRAMFILES(x86)\\Aspell\\bin\\aspell.exe");
+    if (exists (u)) {
+          cmd= escape_sh (as_string (u));
+          name= "aspell";
+          return true;
+        }
+    u= url_system ("$PROGRAMFILES\\Hunspell\\bin\\hunspell.exe");
+    if (exists (u)){
+          cmd= escape_sh (as_string (u));
+          name= "hunspell";
+          return true;
+        }
+    u= url_system ("$PROGRAMFILES(x86)\\Hunspell\\bin\\hunspell.exe");
+    if (exists (u)) {
+          cmd= escape_sh (as_string (u));
+          name= "hunspell";
+          return true;
+        }
+    return false;
+}
+#endif
+
 string
 ispeller_rep::start () {
   if (is_nil (ln)) {
-    string cmd;
+    string cmd,lang_opt,enc_opt,name;
 #ifdef OS_WIN32
     string prg= "\"$TEXMACS_PATH/bin/aspell/aspell.exe\"";
     cmd= prg * " --data-dir=.%//data --dict-dir=.%//dict -a";
 #else
-    if (exists_in_path ("aspell")) cmd= "aspell";
-    else
+    if (exists_in_path ("aspell")) {
+      cmd= "aspell";
+      name = cmd;
+    }
+    else 
+      if (exists_in_path ("hunspell")) {
+        cmd= "hunspell";
+        name = cmd;
+      }
+      else 
 #if defined (__MINGW__) || defined (__MINGW32__)
-      if (exists (url_system ("C:\\Program Files\\Aspell\\bin\\aspell.exe")))
-        cmd= "\"C:\\Program Files\\Aspell\\bin\\aspell.exe\"";
-      else
+      if (!find_win_spell(cmd , name))
 #endif
-        return "Error: Aspell is not installed";
-    cmd << " -a --encoding=utf-8 ";
+        return "Error: Cannot find spellchecker (neither Aspell nor Hunspell) ";
+    
+    if (DEBUG_IO) debug_spell << "using "<< name <<"\n";
+    if (name == "hunspell") {
+      lang_opt= "-d ";
+      enc_opt= "-i ";
+    }
+    else {
+        lang_opt= "-l ";
+        enc_opt= "--encoding=";
+    }
+
+    cmd << " -a "<< enc_opt << "utf-8 ";
     if (language_to_locale (lan) != "")
-      cmd << "-l " << language_to_locale (lan);
+      cmd << lang_opt << language_to_locale (lan);
 #endif
     ln= make_pipe_link (cmd);
   }
