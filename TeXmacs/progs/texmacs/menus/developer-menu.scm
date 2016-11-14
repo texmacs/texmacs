@@ -18,6 +18,12 @@
              (doc apidoc) (doc apidoc-widgets)
              (language natural))
 
+(define (scm-load-buffer u)
+   (load-buffer u) 
+   (if (not (url-exists? u)) 
+;; save empty file & reload so that it is recognized as scheme code, not plain tm doc  
+      (begin (buffer-save u) (revert-buffer))))
+
 (menu-bind developer-menu
   (group "Scheme")
   (link scheme-menu)
@@ -30,11 +36,12 @@
   ---
   (group "Configuration")
   ((replace "Open %1" (verbatim "my-init-texmacs.scm"))
-   (load-buffer 
+   (scm-load-buffer 
     (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm")))
   ((replace "Open %1" (verbatim "my-init-buffer.scm"))
-   (load-buffer 
+   (scm-load-buffer
     (url-concretize "$TEXMACS_HOME_PATH/progs/my-init-buffer.scm")))
   ((replace "Open %1" (verbatim "preferences.scm"))
-   (load-buffer 
+   (scm-load-buffer
     (url-concretize "$TEXMACS_HOME_PATH/system/preferences.scm"))))
+
