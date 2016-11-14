@@ -6061,9 +6061,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng" >&5
-$as_echo_n "checking for png_read_init in -lpng... " >&6; }
-if ${ac_cv_lib_png_png_read_init+:} false; then :
+  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng" >&5
+$as_echo_n "checking for png_read_png in -lpng... " >&6; }
+if ${ac_cv_lib_png_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -6077,27 +6077,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png_png_read_init=yes
+  ac_cv_lib_png_png_read_png=yes
 else
-  ac_cv_lib_png_png_read_init=no
+  ac_cv_lib_png_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_init" >&5
-$as_echo "$ac_cv_lib_png_png_read_init" >&6; }
-if test "x$ac_cv_lib_png_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_png" >&5
+$as_echo "$ac_cv_lib_png_png_read_png" >&6; }
+if test "x$ac_cv_lib_png_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG 1
 _ACEOF
@@ -6108,9 +6108,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng12" >&5
-$as_echo_n "checking for png_read_init in -lpng12... " >&6; }
-if ${ac_cv_lib_png12_png_read_init+:} false; then :
+  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng12" >&5
+$as_echo_n "checking for png_read_png in -lpng12... " >&6; }
+if ${ac_cv_lib_png12_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -6124,27 +6124,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png12_png_read_init=yes
+  ac_cv_lib_png12_png_read_png=yes
 else
-  ac_cv_lib_png12_png_read_init=no
+  ac_cv_lib_png12_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_init" >&5
-$as_echo "$ac_cv_lib_png12_png_read_init" >&6; }
-if test "x$ac_cv_lib_png12_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_png" >&5
+$as_echo "$ac_cv_lib_png12_png_read_png" >&6; }
+if test "x$ac_cv_lib_png12_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG12 1
 _ACEOF
@@ -11646,9 +11646,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng" >&5
-$as_echo_n "checking for png_read_init in -lpng... " >&6; }
-if ${ac_cv_lib_png_png_read_init+:} false; then :
+  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng" >&5
+$as_echo_n "checking for png_read_png in -lpng... " >&6; }
+if ${ac_cv_lib_png_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -11662,27 +11662,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png_png_read_init=yes
+  ac_cv_lib_png_png_read_png=yes
 else
-  ac_cv_lib_png_png_read_init=no
+  ac_cv_lib_png_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_init" >&5
-$as_echo "$ac_cv_lib_png_png_read_init" >&6; }
-if test "x$ac_cv_lib_png_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_png" >&5
+$as_echo "$ac_cv_lib_png_png_read_png" >&6; }
+if test "x$ac_cv_lib_png_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG 1
 _ACEOF
@@ -11693,9 +11693,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng12" >&5
-$as_echo_n "checking for png_read_init in -lpng12... " >&6; }
-if ${ac_cv_lib_png12_png_read_init+:} false; then :
+  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng12" >&5
+$as_echo_n "checking for png_read_png in -lpng12... " >&6; }
+if ${ac_cv_lib_png12_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -11709,27 +11709,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png12_png_read_init=yes
+  ac_cv_lib_png12_png_read_png=yes
 else
-  ac_cv_lib_png12_png_read_init=no
+  ac_cv_lib_png12_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_init" >&5
-$as_echo "$ac_cv_lib_png12_png_read_init" >&6; }
-if test "x$ac_cv_lib_png12_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_png" >&5
+$as_echo "$ac_cv_lib_png12_png_read_png" >&6; }
+if test "x$ac_cv_lib_png12_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG12 1
 _ACEOF
@@ -14828,9 +14828,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng" >&5
-$as_echo_n "checking for png_read_init in -lpng... " >&6; }
-if ${ac_cv_lib_png_png_read_init+:} false; then :
+  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng" >&5
+$as_echo_n "checking for png_read_png in -lpng... " >&6; }
+if ${ac_cv_lib_png_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -14844,27 +14844,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png_png_read_init=yes
+  ac_cv_lib_png_png_read_png=yes
 else
-  ac_cv_lib_png_png_read_init=no
+  ac_cv_lib_png_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_init" >&5
-$as_echo "$ac_cv_lib_png_png_read_init" >&6; }
-if test "x$ac_cv_lib_png_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_png" >&5
+$as_echo "$ac_cv_lib_png_png_read_png" >&6; }
+if test "x$ac_cv_lib_png_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG 1
 _ACEOF
@@ -14875,9 +14875,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng12" >&5
-$as_echo_n "checking for png_read_init in -lpng12... " >&6; }
-if ${ac_cv_lib_png12_png_read_init+:} false; then :
+  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng12" >&5
+$as_echo_n "checking for png_read_png in -lpng12... " >&6; }
+if ${ac_cv_lib_png12_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -14891,27 +14891,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png12_png_read_init=yes
+  ac_cv_lib_png12_png_read_png=yes
 else
-  ac_cv_lib_png12_png_read_init=no
+  ac_cv_lib_png12_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_init" >&5
-$as_echo "$ac_cv_lib_png12_png_read_init" >&6; }
-if test "x$ac_cv_lib_png12_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_png" >&5
+$as_echo "$ac_cv_lib_png12_png_read_png" >&6; }
+if test "x$ac_cv_lib_png12_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG12 1
 _ACEOF
@@ -18151,9 +18151,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng" >&5
-$as_echo_n "checking for png_read_init in -lpng... " >&6; }
-if ${ac_cv_lib_png_png_read_init+:} false; then :
+  png)   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng" >&5
+$as_echo_n "checking for png_read_png in -lpng... " >&6; }
+if ${ac_cv_lib_png_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -18167,27 +18167,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png_png_read_init=yes
+  ac_cv_lib_png_png_read_png=yes
 else
-  ac_cv_lib_png_png_read_init=no
+  ac_cv_lib_png_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_init" >&5
-$as_echo "$ac_cv_lib_png_png_read_init" >&6; }
-if test "x$ac_cv_lib_png_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_png" >&5
+$as_echo "$ac_cv_lib_png_png_read_png" >&6; }
+if test "x$ac_cv_lib_png_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG 1
 _ACEOF
@@ -18198,9 +18198,9 @@ else
   as_fn_error $? "compulsory library $LC_SET_FLAGS_dep not found" "$LINENO" 5
 fi
 ;;
-  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_init in -lpng12" >&5
-$as_echo_n "checking for png_read_init in -lpng12... " >&6; }
-if ${ac_cv_lib_png12_png_read_init+:} false; then :
+  png12) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng12" >&5
+$as_echo_n "checking for png_read_png in -lpng12... " >&6; }
+if ${ac_cv_lib_png12_png_read_png+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -18214,27 +18214,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_read_init ();
+char png_read_png ();
 int
 main ()
 {
-return png_read_init ();
+return png_read_png ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_png12_png_read_init=yes
+  ac_cv_lib_png12_png_read_png=yes
 else
-  ac_cv_lib_png12_png_read_init=no
+  ac_cv_lib_png12_png_read_png=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_init" >&5
-$as_echo "$ac_cv_lib_png12_png_read_init" >&6; }
-if test "x$ac_cv_lib_png12_png_read_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png12_png_read_png" >&5
+$as_echo "$ac_cv_lib_png12_png_read_png" >&6; }
+if test "x$ac_cv_lib_png12_png_read_png" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBPNG12 1
 _ACEOF

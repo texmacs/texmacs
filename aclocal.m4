@@ -249,8 +249,8 @@ m4_define([Lib_check_nfound],[AC_MSG_NOTICE(skipping presence test for the libra
 AC_DEFUN([LC_CHECK_LIB],[
 case $1 in
   z@:}@     AC_CHECK_LIB([z], [inflate], [], [Lib_check_fail($1)]);;
-  png@:}@   AC_CHECK_LIB([png], [png_read_init], [], [Lib_check_fail($1)]);;
-  png12@:}@ AC_CHECK_LIB([png12], [png_read_init], [], [Lib_check_fail($1)]);;
+  png@:}@   AC_CHECK_LIB([png], [png_read_png], [], [Lib_check_fail($1)]);;
+  png12@:}@ AC_CHECK_LIB([png12], [png_read_png], [], [Lib_check_fail($1)]);;
   gmp@:}@   AC_CHECK_LIB([gmp], [__gmpf_init], [], [Lib_check_fail($1)]);;
   *@:}@     Lib_check_nfound($1) LC_MERGE_FLAGS(-l[$1],[LIBS]);;
 esac
