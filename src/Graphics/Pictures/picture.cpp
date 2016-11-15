@@ -17,6 +17,7 @@
 #include "colors.hpp"
 #include "iterator.hpp"
 #include "file.hpp"
+//#include "scheme.hpp"
 
 /******************************************************************************
 * Useful subroutines
@@ -167,7 +168,18 @@ picture_is_cached (url file_name, int w, int h) {
   if (!picture_cache->contains (key)) return false;
   int loaded= last_modified (file_name, false);
   int cached= picture_stamp [key];
-  return cached >= loaded;
+  if (cached >= loaded) 
+    return true;
+  else {
+    int ow,oh,nw,nh;
+    image_size (file_name, ow, oh);
+    clear_imgbox_cache (key[0]);
+    image_size (file_name, nw, nh);
+    // the new size will be displayed correctly only
+    // after the typesetter's image box is invalidated.
+    // if (nw!=ow || nh!=oh) call("update-current-buffer");
+    return false;
+  }
 }
 
 picture

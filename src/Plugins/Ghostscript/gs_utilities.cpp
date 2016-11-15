@@ -66,41 +66,44 @@ gs_supports (url image) {
   return false;
 }
 
-bool
-gs_image_size_sub (string buf, int& w_pt, int& h_pt) {
-  int x1,y1,x2,y2; 
-  if  (!ps_read_bbox (buf, x1, y1, x2,y2 )) return false;
-  w_pt= x2-x1;
-  h_pt= y2-y1;
-  return true;
-}
-
 void
 gs_image_size (url image, int& w_pt, int& h_pt) {
-  if ((suffix (image) == "pdf") && gs_PDFimage_size (image, w_pt, h_pt) ) return;
+  bool ok;
+  if (suffix (image) == "pdf") 
+    ok= gs_PDFimage_size (image, w_pt, h_pt);
   else {
+    if (DEBUG_CONVERT) debug_convert << "gs eps image size :"<<LF;
+    int x1,y1,x2,y2;
     string buf;
-    bool err= load_string (image, buf, false);
-    if (!err) {
-      if (DEBUG_CONVERT) debug_convert << "gs eps image size :"<<LF;
+    ok= !load_string (image, buf, false);
+    if (ok) {
       //try finding Bounding box in file:
-      if (gs_image_size_sub (buf, w_pt, h_pt)) return;
-      //if not found ask gs to compute one :
-      string cmd= gs_prefix ();
-      cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=bbox ";
-      //Note: bbox device does a "smart" job of finding the cropbox on its own removing blank margins (*even* on eps files)
-      //this is ok if we are reading a ps page
-      // real eps pages with proper bounding boxes have been recognized before this and will have their BoundingBox respected
-      cmd << sys_concretize (image);
-      buf= eval_system (cmd);
-      if (DEBUG_CONVERT) debug_convert << "gs cmd :"<<cmd<<LF
-        <<"answer :"<< buf ;
-      if (gs_image_size_sub (buf, w_pt, h_pt)) return;
+      ok= ps_read_bbox (buf, x1, y1, x2, y2);
+      if (!ok) {
+        // bbox not found ask gs to compute one :
+        string cmd= gs_prefix ();
+        cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=bbox ";
+        //Note: bbox device does a "smart" job of finding the cropbox on its own removing blank margins (*even* on eps files)
+        //this is ok if we are reading a ps page
+        // real eps pages with proper bounding boxes have been recognized before this and will have their BoundingBox respected
+        cmd << sys_concretize (image);
+        buf= eval_system (cmd);
+        if (DEBUG_CONVERT) debug_convert << "gs cmd :"<<cmd<<LF
+          <<"answer :"<< buf ;
+        ok= ps_read_bbox (buf, x1, y1, x2, y2);
+      }
+      if (ok) {
+        w_pt= x2-x1;
+        h_pt= y2-y1;
+        set_imgbox_cache(image->t, w_pt, h_pt, x1, y1);
+      }
     }
-  } 
+  }
+  if (!ok) { 
   convert_error << "Cannot read image file '" << image << "'"
                 << " in gs_image_size" << LF;
   w_pt= 0; h_pt= 0;
+  }
 }
 
 void 
@@ -112,19 +115,22 @@ gs_fix_bbox (url eps, int x1, int y1, int x2, int y2) {
   bool err = load_string (eps, buf, false);
   if (!err) {
     if (DEBUG_CONVERT) debug_convert<< "fix_bbox input bbox : ";
-    err = !ps_read_bbox (buf, inx1, iny1, inx2, iny2 );
-    if ( err || (inx1==x1 && iny1==y1 && inx2==x2 && iny2==y2)) return;
-    int pos= search_forwards ("%%BoundingBox:", buf);
-    pos += 14;
-    outbuf << buf(0, pos)
-      << " " << as_string(x1) << " " << as_string(y1) 
-      << " " << as_string(x2) << " " << as_string(y2) << "\n";
-    skip_line (buf, pos);
-    if (read (buf, pos, "%%HiResBoundingBox:")) skip_line (buf, pos);
-    outbuf << buf(pos, N(buf));
-    save_string (eps, outbuf, true);
-    if (DEBUG_CONVERT) 
-      debug_convert<< "restored bbox : " << ps_read_bbox (outbuf, x1, y1, x2, y2 )<<LF;
+    if ( !ps_read_bbox (buf, inx1, iny1, inx2, iny2 ) ) 
+      return; //bbox not found... should not occur
+    if (inx1!=x1 || iny1!=y1 || inx2!=x2 || iny2!=y2) {
+      int pos= search_forwards ("%%BoundingBox:", buf);
+      pos += 14;
+      outbuf << buf(0, pos)
+        << " " << as_string(x1) << " " << as_string(y1) 
+        << " " << as_string(x2) << " " << as_string(y2) << "\n";
+      skip_line (buf, pos);
+      if (read (buf, pos, "%%HiResBoundingBox:")) skip_line (buf, pos);
+      outbuf << buf(pos, N(buf));
+      save_string (eps, outbuf, true);
+      if (DEBUG_CONVERT) 
+        debug_convert<< "restored bbox : " << ps_read_bbox (outbuf, x1, y1, x2, y2 )<<LF;
+    }  
+    set_imgbox_cache(eps->t, x2-x1, y2-y1, x1, y1);
   } 
 }
 
@@ -216,8 +222,8 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
       bbw=bx2-bx1;
       bbh=by2-by1;
     }
-    rw=(int) ceil((double) (w*72)/bbw);
-    rh=(int) ceil((double) (h*72)/bbh);
+    rw=(w*72)/bbw;
+    rh=(h*72)/bbh;
     cmd << "-r" << as_string (rw) << "x" << as_string (rh) << " ";  
     
     if (DEBUG_CONVERT) debug_convert << "w="<<w<<" h="<<h<<LF
@@ -238,8 +244,8 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
       <<"answer :"<<ans <<LF;
     if (! exists(png)) {
       convert_error << "gs_to_png failed for "<< image <<LF;
-      image =  "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
-      gs_to_png (image, png, w, h);
+      //image =  "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
+      //gs_to_png (image, png, w, h);
     }
 }
 

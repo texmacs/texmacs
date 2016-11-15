@@ -54,10 +54,11 @@
 #ifdef PDF_RENDERER
 #include "Pdf/pdf_hummus_renderer.hpp"
 #endif
-typedef struct { int xmin; int ymin; int xmax; int ymax; } bbox ;
-hashmap<tree,bbox> ps_bbox;
-typedef struct { int wid; int hei;} imsize ;
-hashmap<tree,imsize> imagesize; //TODO : provide a way to reset this when "document update all"
+
+typedef struct { int w; int h; int xmin; int ymin;} imgbox ;
+hashmap<tree,imgbox> img_box;
+// cache for storing image sizes
+// (for ps/eps we also store the image offset so that we have the full bbox info)
 
 /******************************************************************************
 * Loading xpm pixmaps
@@ -174,7 +175,7 @@ xpm_hotspot (tree t) {
 ******************************************************************************/
 
 string
-ps_load (url image) {
+ps_load (url image, bool conv) {
   if (DEBUG_CONVERT) debug_convert << "ps_load " << image << LF;
 
   url name= resolve (image);
@@ -185,34 +186,42 @@ ps_load (url image) {
   if (is_ramdisc (name)) name= get_from_ramdisc (name);
 #endif
 
-  string s, suf= suffix (image);
+  string s = "", suf= suffix (image);
   if (suf == "ps" || suf == "eps") 
     load_string (image, s, false);
   else 
-    s= image_to_psdoc (image); // call converters, then load resulting ps
-
+    if (conv) s= image_to_psdoc (image); // call converters, then load resulting ps
+    
   if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/unknown.ps", s, true);
   return s;
 }
 
-void
-ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2) {
+// returns true when size could be determined either
+// from cache or reading it, or using default size
+bool  
+ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2, bool set_default) {
   tree lookup= image->t;
-  if (ps_bbox->contains (lookup)) {
-    bbox box= ps_bbox [lookup];
+  if (img_box->contains (lookup)) {
+    imgbox box= img_box [lookup];
     x1= box.xmin; y1= box.ymin;
-    x2= box.xmax; y2= box.ymax;
+    x2= box.xmin + box.w; y2= box.ymin + box.h;
+    if (DEBUG_CONVERT) debug_convert<< "bbox in cache for " << image <<LF
+      <<" : "<< x1<<" , "<<y1<<" , "<<x2<<" , "<<y2<< LF;
+    return true;
   }
   else {
-    string s= ps_load (image);// this would actually convert to eps if
-    // this function were called with a non-ps file suffix (which should not happen)
-    if (!ps_read_bbox (s,x1, y1, x2,y2 )) {
-      x1= y1= 0; x2= 596; y2= 842;
+    string s= ps_load (image, false);
+    if (!ps_read_bbox (s, x1, y1, x2, y2)) {
+      if (set_default) { 
+        x1= y1= 0; x2= 596; y2= 842;
       }
-    else {
-      ps_bbox (lookup)= (bbox) {x1,y1,x2,y2};
-      imagesize (lookup)= (imsize) {x2-x1,y2-y1};
-    }  
+      else {
+        if (DEBUG_CONVERT) debug_convert << "cannot read bbox for " << image <<LF;
+        return false;
+      }
+    }
+    set_imgbox_cache(lookup, x2-x1, y2-y1, x1, y1);
+    return true;
   }
 }
 
@@ -241,7 +250,15 @@ ps_read_bbox (string buf, int& x1, int& y1, int& x2, int& y2 ) {
   return true;
 }
 
+void
+set_imgbox_cache(tree t, int w, int h, int xmin, int ymin){
+    img_box (t)= (imgbox) {w, h, xmin, ymin};
+}
 
+void
+clear_imgbox_cache(tree t){
+    img_box->reset (t);
+}
 /******************************************************************************
 * Getting the original size of an image, using internal plug-ins if possible
 ******************************************************************************/
@@ -253,22 +270,25 @@ image_size (url image, int& w, int& h) {
 * otherwise actually fetch image size and cache it.
 * Caching is super important because the typesetter calls image_size */ 
   tree lookup= image->t;
-  if (imagesize->contains (lookup)) {
-    imsize s= imagesize [lookup];
-    w=s.wid;
-    h=s.hei;
+  if (img_box->contains (lookup)) {
+    imgbox box= img_box [lookup];
+    w= box.w;
+    h= box.h;
     if (DEBUG_CONVERT) debug_convert<< "image_size in cache for " << image <<LF
-        << w<<" x "<<h<<LF;;
+      << w << " x " << h << LF;
   }
   else {
-  w=h=0;
-  image_size_sub (image, w, h);
-  if ((w <= 0) || (h <= 0)) {
-    convert_error << "bad image size for '" << image << "'"
+    w=h=0;
+    image_size_sub (image, w, h);
+    if ((w <= 0) || (h <= 0)) {
+      convert_error << "bad image size for '" << image << "'"
         << " setting 35x35 " << LF;
       w= 35; h= 35;
-	   }
-  imagesize (lookup)= (imsize){w,h};
+    }
+    // for ps and eps images the imgbox should have been cached
+    // during the image_size_sub call
+    if (img_box->contains (lookup)) return;
+    set_imgbox_cache(lookup, w, h);
   }
 }
 
@@ -280,13 +300,14 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
     pdf_image_size (image, w, h);
     return;
     }
-  if (suf=="eps") {
+  if (suf=="eps" || suf=="ps") {
     int x1, y1, x2, y2;
-    ps_bounding_box (image, x1, y1, x2, y2);
-    w= x2 - x1;
-    h= y2 - y1;
-    if (DEBUG_CONVERT) debug_convert << "size from ps_bounding_box : " << w << " x " << h << "\n";
-    return;
+    if (ps_bounding_box (image, x1, y1, x2, y2, false)) {
+      w= x2 - x1;
+      h= y2 - y1;
+      if (DEBUG_CONVERT) debug_convert << "size from ps_bounding_box : " << w << " x " << h << "\n";
+      return;
+    }
   }
 #ifdef QTTEXMACS
   if (qt_supports (image)) { // native support by Qt : most bitmaps & svg  
@@ -308,7 +329,7 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
   }
 #endif
 #ifdef USE_GS
-  if (gs_supports (image)) {// this is for handling ps ; eps and pdf already treated above
+  if (gs_supports (image)) {// this is for handling ps without explicit bbox
     gs_image_size (image, w, h);
     return;
   }
