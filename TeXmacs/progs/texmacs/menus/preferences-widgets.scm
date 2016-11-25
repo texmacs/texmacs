@@ -473,20 +473,29 @@
 
 ;; Images ----------
 
-(define-preference-names "texmacs->graphics:format"
-  ("svg" "Svg")
-  ("eps" "Eps")
-  ("png" "Png"))
+(define (pretty-format-list)
+  (let* ((desired-image-format-list '(("svg" "Svg")  ("eps" "Eps")
+           ("png" "Png")("tif" "Tiff") ("jpg" "Jpeg")))
+         (valid-image-format-list 
+           (filter (lambda (x) (file-converter-exists? "x.pdf" (string-append "y." (car x)) ))
+             desired-image-format-list)))
+   (eval `(define-preference-names "texmacs->image:format" ,@ valid-image-format-list))
+   (cadr (apply map list valid-image-format-list))))
 
 (tm-widget (image-preferences-widget)
   ===
   (bold (text "TeXmacs -> Image"))
   ===
   (aligned
-    (item (text "Format:")
-      (enum (set-pretty-preference "texmacs->graphics:format" answer)
-            '("Svg" "Eps" "Png")
-            (get-pretty-preference "texmacs->graphics:format")
+      (item (text "Bitmap resolution (dpi):")
+        (enum (set-pretty-preference "texmacs->image:raster-resolution" answer)
+            '("600" "300" "150" "")
+            (get-pretty-preference "texmacs->image:raster-resolution")
+            "5em")) 
+      (item (text "Clipboard image format:")
+        (enum (set-pretty-preference "texmacs->image:format" answer)
+            (pretty-format-list)
+            (get-pretty-preference "texmacs->image:format")
             "5em"))))
 
 ;; All converters ----------

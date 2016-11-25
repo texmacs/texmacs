@@ -328,7 +328,7 @@
 (lazy-format (convert bibtex init-bibtex) bibtex)
 (lazy-format (convert images init-images)
              postscript pdf xfig xmgrace svg xpm jpeg ppm gif png pnm)
-(lazy-define (convert images tmimage) export-selection-as-pdf
+(lazy-define (convert images tmimage)
              export-selection-as-graphics clipboard-copy-image)
 (lazy-define (convert rewrite init-rewrite) texmacs->code texmacs->verbatim)
 (lazy-define (convert html tmhtml-expand) tmhtml-env-patch)

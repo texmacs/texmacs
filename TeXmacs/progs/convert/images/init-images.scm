@@ -71,9 +71,22 @@
   (:require (url-exists-in-path? "inkscape"))
   (:shell "inkscape" "-z" "-f" from "-A" to))
 
+(when (url-exists-in-path? "rsvg-convert")
+  (tm-define (rsvg-convert x opts)
+  (let* ((dest (assoc-ref opts 'dest))
+         (fm (url-format (url-concretize dest)))
+         (res (or (assoc-ref opts "texmacs->image:raster-resolution") (get-preference "texmacs->image:raster-resolution")))
+		 (cmd (if (or (os-win32?) (os-mingw?)) 
+                     (escape-shell (url-concretize (url-resolve-in-path "rsvg-convert"))) "rsvg-convert"))
+         )
+    (system-2 (string-append cmd " -f " fm " -d " res " -o ") dest x )
+	(if (url-exists? dest) dest #f)))
+
 (converter svg-file png-file
-  (:require (url-exists-in-path? "rsvg-convert"))
-  (:shell "rsvg-convert" "-f png -d 300" "-o " to from))
+    (:function-with-options rsvg-convert)
+    ;;(:option "texmacs->image:raster-resolution" "450") ;;if this is set it overrides the preference widget settings
+   ))
+  
 
 (define-format geogebra
   (:name "Geogebra")
@@ -86,7 +99,70 @@
 (converter geogebra-file svg-file
   (:require (url-exists-in-path? "geogebra"))
   (:shell "geogebra" "--export=" to "--dpi=600" from))
+  
+(cond
+ ((url-exists-in-path? "pdftocairo")
+  (tm-define (pdf-file->pdftocairo-raster x opts)
+  (let* ((dest (assoc-ref opts 'dest))
+         (fullname (url-concretize dest))
+         (fm (url-format fullname))
+         (suffix (url-suffix fullname))
+         (name (string-drop-right fullname (+ 1 (string-length suffix))))
+         (res (or (assoc-ref opts "texmacs->image:raster-resolution") (get-preference "texmacs->image:raster-resolution")))
+		 (cmd (if (or (os-win32?) (os-mingw?)) 
+                     (escape-shell (url-concretize (url-resolve-in-path "pdftocairo"))) "pdftocairo"))
+         )
+    ;;(display (string-append cmd " -singlefile -" fm " -r " res " " x " "  name))
+    (system-2 (string-append cmd " -singlefile -transp -" fm " -r " res) x name)
+	(if (url-exists? dest) dest #f)))
 
+  (converter pdf-file png-file
+    (:function-with-options pdf-file->pdftocairo-raster)
+    ;;(:option "texmacs->image:raster-resolution" "450") ;;if this is set it overrides the preference widget settings
+   )
+
+  (converter pdf-file jpeg-file
+    (:function-with-options pdf-file->pdftocairo-raster)
+    ;;(:option "texmacs->image:raster-resolution" "300")
+   )
+
+  (converter pdf-file postscript-document
+    (:shell "pdftocairo" "-eps" from to))
+
+  (converter pdf-file postscript-file
+    (:shell "pdftocairo" "-eps" from to))
+
+  (converter pdf-file svg-file
+    (:shell "pdftocairo" "-origpagesizes -nocrop -nocenter -svg" from to)))
+  
+ ((and (url-exists-in-path? "convert") (url-exists-in-path? "conjure"))
+  (tm-define (pdf-file->imagemagick-raster x opts)
+	  (let* ((dest (assoc-ref opts 'dest))
+			  (res (or (assoc-ref opts "texmacs->image:raster-resolution") (get-preference "texmacs->image:raster-resolution"))))
+		;;(display (string-append "convert -density " res " " x " "  dest))
+        (system-2 (string-append "convert -density " res) x dest)
+		(if (url-exists? dest) dest #f)))
+
+  (converter pdf-file png-file
+    (:function-with-options pdf-file->imagemagick-raster)
+    ;;(:option "texmacs->image:raster-resolution" "300")
+    )
+  
+  (converter pdf-file jpeg-file
+    (:function-with-options pdf-file->imagemagick-raster)
+    ;;(:option "texmacs->image:raster-resolution" "300")
+    )
+ 
+  (converter pdf-file tif-file
+    (:function-with-options pdf-file->imagemagick-raster)
+    ;;(:option "texmacs->image:raster-resolution" "300")
+  )
+))
+  
+(converter pdf-file svg-file
+  (:require (url-exists-in-path? "pdf2svg"))
+  (:shell "pdf2svg" from to))
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bitmap image formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
