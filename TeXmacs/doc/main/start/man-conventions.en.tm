@@ -1,4 +1,4 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.5>
 
 <style|<tuple|tmdoc|english>>
 
@@ -44,11 +44,13 @@
     <block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
     grey>|<table|<row|<cell|<small|<with|font-family|ss|Alt>>>>>>>
     (<math|\<dag\>>)>|<cell|<math|<block*|<tformat|<cwith|1|1|1|1|cell-valign|B>|<cwith|1|1|1|1|cell-bsep|1sep>|<cwith|1|1|1|1|cell-tsep|1sep>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|<image|<tuple|<#89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7AF40000000473424954080808087C0864880000000970485973000005120000051201887C28AB0000001974455874536F667477617265007777772E696E6B73636170652E6F72679BEE3C1A00000125494441545885EDD7314A04411005D037CBA888890A06060AEEAAAC8A1879082FA118987A172F60642E7804032F60BEA978005104770D6616749C19E9DD6647613E144D43FFAADF55DD1495980D96B08D9D7C1D5B2F891420C116BA25D6C372056F141A68017DA438C235EEF1943B0BB5615A089062B3E2265DACE4E7D6B087F3D01B1491E2CAF7F42D4EEB3454C0E52C0316D16932782B602C20F82FC616D028FE8480B6048D22C145BE16F186D70ADE9DACC31DFEE2FF05EF7507520C2A04D461983B1F04F24AF121BC8DAEE27402DE8F763CCD1B88F27B1A7F84FF5640A22D419B818633106BA0D1C10D1EF01CC88D928114675FF673D8503E94F465335E6398C72E4E6423DA316EF128EB9A13F58268B5948D6D65993BC07A05671453401DAAC4ED7F02B4F05CA282CD20DD0000000049454E44AE426082>|png>|15px|15px||-1px>>>>>>><math|>
+    grey>|<table|<row|<cell|<shift|<draw-over|<phantom|ihj>|<with|gr-frame|<tuple|scale|1cm|<tuple|0.5gw|0.380011gh>>|gr-mode|<tuple|group-edit|move>|gr-fill-color|black|gr-color|white|gr-snap|<tuple|control
+    point|grid point|grid curve point|curve-grid intersection|curve-curve
+    intersection|text border point|text border>|<graphics|<with|fill-color|black|<cline|<point|-0.190551|-0.0360167>|<point|0.149110332054505|-0.126306389734092>|<point|0.151690038364863|0.212495039026326>|<point|-0.190550998809366|0.148862283370816>>>|<with|color|white|fill-color|black|<with|color|white|fill-color|black|<line|<point|-0.193989980156105|0.049973520664109>|<point|0.145671135070777|0.0525532105172642>>>>|<with|color|white|fill-color|black|<line|<point|-0.0529667|0.176379>|<point|-0.0521067601534595|-0.072132557216563>>>>>|0cm>||2ln>>>>>>><math|>
     (<math|\<dag\>>)>>|<row|<cell|<name|Apple>>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
     grey>|<table|<row|<cell|<with|font-family|ss|<small|\<place of interest
     sign\> Command>>>>>>>>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
-    grey>|<table|<row|<cell|<small|<with|font-family|ss|\<option key\>
+    grey>|<table|<row|<cell|\<option key\><small|<with|font-family|ss|
     Option>>>>>>> (<math|\<dag\>>)>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
     grey>|<table|<row|<cell|<small|<with|font-family|ss|Ctrl>>>>>>>>>|<row|<cell|fallback
     combination>|<cell|<key*|escape escape escape>>|<cell|<key*|escape

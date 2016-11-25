@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.99.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|french>>
 
 <\body>
   <tmdoc-title|Conventions typographiques>
@@ -28,6 +28,42 @@
 
   Par exemple, <key*|M-S-x> correspond à l'action consistant à appuyer
   simultanément sur les touches <prefix|M->, <prefix|S-> et <key|x>.
+
+  Les véritables touches correspondantes aux modificateurs claviers dépendent
+  de votre système comme indiqué dans le tableau suivant
+
+  <\big-table>
+    \;
+
+    <descriptive-table|<tformat|<cwith|1|-1|3|3|cell-lborder|1ln>|<cwith|1|-1|1|-1|cell-row-span|1>|<cwith|1|-1|1|-1|cell-col-span|1>|<cwith|1|-1|1|-1|cell-bsep|3spc>|<cwith|1|-1|1|-1|cell-tsep|3sep>|<cwith|1|1|1|-1|cell-bsep|1spc>|<cwith|2|-1|1|-1|cell-bsep|2sep>|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-valign|c>|<cwith|1|-1|1|-1|cell-hyphen|n>|<table|<row|<cell|>|<cell|<key*|C->>|<cell|<key*|A->>|<cell|<key*|M->>>|<row|<\cell>
+      <name|Windows> ou <name|Linux>/<name|Unix>
+
+      \ avec un clavier <name|Windows>
+    </cell>|<cell|<math|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
+    grey>|<table|<row|<cell|<small|<with|font-family|ss|Ctrl>>>>>>>>>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
+    grey>|<table|<row|<cell|<small|<with|font-family|ss|Alt>>>>>>> gauche
+    (<math|\<dag\>>)>|<cell|<math|<block*|<tformat|<cwith|1|1|1|1|cell-valign|B>|<cwith|1|1|1|1|cell-bsep|1sep>|<cwith|1|1|1|1|cell-tsep|1sep>|<cwith|1|1|1|1|cell-background|pastel
+    grey>|<table|<row|<cell|<shift|<draw-over|<phantom|ihj>|<with|gr-frame|<tuple|scale|1cm|<tuple|0.5gw|0.380011gh>>|gr-mode|<tuple|group-edit|move>|gr-fill-color|black|gr-color|white|gr-snap|<tuple|control
+    point|grid point|grid curve point|curve-grid intersection|curve-curve
+    intersection|text border point|text border>|<graphics|<with|fill-color|black|<cline|<point|-0.190551|-0.0360167>|<point|0.149110332054505|-0.126306389734092>|<point|0.151690038364863|0.212495039026326>|<point|-0.190550998809366|0.148862283370816>>>|<with|color|white|fill-color|black|<with|color|white|fill-color|black|<line|<point|-0.193989980156105|0.049973520664109>|<point|0.145671135070777|0.0525532105172642>>>>|<with|color|white|fill-color|black|<line|<point|-0.0529667|0.176379>|<point|-0.0521067601534595|-0.072132557216563>>>>>|0cm>||2ln>>>>>>><math|>
+    (<math|\<dag\>>)>>|<row|<cell|<name|Apple>>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
+    grey>|<table|<row|<cell|<with|font-family|ss|<small|\<place of interest
+    sign\> Commande>>>>>>>>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
+    grey>|<table|<row|<cell|\<option key\><small|<with|font-family|ss|
+    Option>>>>>>> (<math|\<dag\>>)>|<cell|<block*|<tformat|<cwith|1|1|1|1|cell-tsep|2sep>|<cwith|1|1|1|1|cell-bsep|1pt>|<cwith|1|1|1|1|cell-background|pastel
+    grey>|<table|<row|<cell|<small|<with|font-family|ss|Ctrl>>>>>>>>>|<row|<cell|Combinaison
+    alternative>|<cell|<key*|escape escape escape>>|<cell|<key*|escape
+    escape>>|<cell|<key*|escape>>>>>>
+  <|big-table>
+    Modificateurs clavier sur les plateformes courantes.
+
+    <tabular|<tformat|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-width|10cm>|<cwith|1|1|1|1|cell-hmode|min>|<table|<row|<\cell>
+      <math|\<dag\>> Certaines combinaisons des modificateurs clavier sont
+      préemptées par le système opératif et donc indisponibles pour
+      <TeXmacs>. Le comportement peut être différent pour les modificateurs
+      droit et gauche.
+    </cell>>>>>
+  </big-table>
 
   <paragraph|Raccourcis clavier>
 
@@ -91,9 +127,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|french>
-  </collection>
-</initial>
