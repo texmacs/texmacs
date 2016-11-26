@@ -1557,7 +1557,7 @@ finalize_floats (tree t) {
 
 static bool
 is_hyper_link (string s) {
-  return starts (s, "http://") || starts (s, "ftp://");
+  return starts (s, "http://") || starts (s, "https://") || starts (s, "ftp://");
 }
 
 tree

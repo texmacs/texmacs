@@ -930,7 +930,7 @@ bib_latex_array (tree latex) {
 static bool
 is_hyper_link (string s) {
   if (occurs (" ", s)) return false;
-  return starts (s, "http://") || starts (s, "ftp://");
+  return starts (s, "http://") || starts (s, "https://") || starts (s, "ftp://");
 }
 
 void

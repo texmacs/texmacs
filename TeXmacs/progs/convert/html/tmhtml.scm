@@ -894,7 +894,9 @@
   ;; in order to disable this suffix change
   (let* ((sdir (string-rindex s #\/))
 	 (sep (string-rindex s #\#)))
-    (cond ((or (string-starts? s "http:") (string-starts? s "ftp:")) s)
+    (cond ((or (string-starts? s "http:")
+               (string-starts? s "https:")
+               (string-starts? s "ftp:")) s)
           ((and sep (or (not sdir) (< sdir sep)))
 	   (string-append (tmhtml-suffix (substring s 0 sep))
 			  (string-drop s sep)))

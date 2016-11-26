@@ -242,7 +242,7 @@
                (if (os-mingw?)
                    (string->url (string-append "/" (tmfs-cdr s)))
                    (url-append (root->url "default") file)))
-              ((in? protocol '("http" "ftp" "tmfs"))
+              ((in? protocol '("http" "https" "ftp" "tmfs"))
                (url-append (root->url protocol) file))
               (else (url-append (root->url "default") s))))))
 
