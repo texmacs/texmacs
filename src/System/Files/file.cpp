@@ -25,15 +25,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <dirent.h>
-#ifdef OS_WIN32
-#include <sys/misc.h>
-#include <sys/_stat.h>
-#include <X11/Xlib.h>
-#else
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <unistd.h>
-#endif
 #include <sys/types.h>
 #include <string.h>  // strerror
 
@@ -70,9 +64,7 @@ load_string (url u, string& s, bool fatal) {
     bench_start ("load file");
     c_string _name (name);
     // cout << "OPEN :" << _name << LF;
-#if defined (OS_WIN32)
-    FILE* fin= _fopen (_name, "rb");
-#elif defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
     FILE* fin= fopen (_name, "rb");
 #else
     FILE* fin= fopen (_name, "r");
@@ -152,9 +144,7 @@ save_string (url u, string s, bool fatal) {
     string name= concretize (r);
     {
       c_string _name (name);
-#if defined (OS_WIN32)
-      FILE* fout= _fopen (_name, "wb");
-#elif defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
       FILE* fout= fopen (_name, "wb");
 #else
       FILE* fout= fopen (_name, "r+");
@@ -216,9 +206,7 @@ append_string (url u, string s, bool fatal) {
     string name= concretize (r);
     {
       c_string _name (name);
-#if defined (OS_WIN32)
-      FILE* fout= _fopen (_name, "ab");
-#elif defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
       FILE* fout= fopen (_name, "ab");
 #else
       FILE* fout= fopen (_name, "a");
@@ -297,11 +285,7 @@ get_attributes (url name, struct stat* buf,
   bench_start ("stat");
   bool flag;
   c_string temp (name_s);
-#ifdef OS_WIN32
-  flag= _stat (temp, buf);
-#else
   flag= stat (temp, buf);
-#endif
   (void) link_flag;
   // FIXME: configure should test whether lstat works
   // flag= (link_flag? lstat (temp, buf): stat (temp, buf));
@@ -652,21 +636,6 @@ change_mode (url u, int mode) {
   string m2= as_string ((mode >> 3) & 7);
   string m3= as_string (mode & 7);
   system ("chmod -f " * m0 * m1 * m2 * m3, u);
-#endif
-}
-
-void
-ps2pdf (url u1, url u2) {
-#ifdef OS_WIN32
-  c_string _u1 (concretize (u1));
-  c_string _u2 (concretize (u2));
-  XPs2Pdf (_u1, _u2);
-#else
-#ifdef MACOSX_EXTENSIONS
-  mac_ps_to_pdf (u1, u2);
-#else
-  system ("ps2pdf", u1, u2);
-#endif
 #endif
 }
 
