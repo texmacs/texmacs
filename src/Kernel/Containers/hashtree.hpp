@@ -35,11 +35,7 @@ public:
   V get_label ();
   
   friend class hashtree<K,V>;  
-#ifdef OS_WIN32
-  friend int N (hashtree<K,V> tree);
-#else
   friend int N<K,V>(hashtree<K,V> tree);
-#endif
 };
 
 /******************************************************************************
@@ -123,13 +119,8 @@ public:
   inline hashtree<K,V> operator[] (K key);   // rw access
 
   friend class hashtree_rep<K,V>;
-#ifdef OS_WIN32
-  friend bool is_nil (hashtree<K,V> ht);
-  friend int N (hashtree<K,V> ht);
-#else
   friend bool is_nil<K,V> (hashtree<K,V> ht);
   friend int N<K,V>(hashtree<K,V> ht);
-#endif
 };
 
 #include "hashtree.cpp"

@@ -16,9 +16,6 @@
 #include "converter.hpp"
 #include "wencoding.hpp"
 
-#ifdef OS_WIN32
-#include <sys/misc.h>
-#endif
 
 static string bibtex_command= "bibtex";
 
@@ -157,7 +154,7 @@ bibtex_run (string bib, string style, url bib_file, tree bib_t) {
   bib_s << "\\bibdata{" << bib_name << "}\n";
   save_string ("$TEXMACS_HOME_PATH/system/bib/temp.aux", bib_s);
 
-#ifdef OS_WIN32
+#ifdef OS_WIN32_LATER
   c_string directory (dir);
   RunBibtex (directory, "$TEXMACS_HOME_PATH/system/bib", "temp");
 #else
