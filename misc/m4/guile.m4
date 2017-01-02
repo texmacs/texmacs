@@ -45,7 +45,7 @@ void print_string (SCM s) {
 AC_DEFUN([LC_WITH_GUILE],[
  [GUILE_CONFIG=$1]
  # build the prefered guile version search line
-  AC_CHECK_PROGS(GUILE_CONFIG, guile18-config guile17-config guile16-config guile-config guile20-config, [])
+  AC_CHECK_PROGS(GUILE_CONFIG, guile18-config guile17-config guile16-config guile-config guile1-config guile20-config, [])
 
   LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)" && dnl
   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)" && dnl
