@@ -9,9 +9,12 @@
  ******************************************************************************/
 
 #define TEXMACS_R_VERSION "0.15"
-
+#include "config.h"
 #include <stdio.h>
 #include <sys/select.h>
+#ifdef __FreeBSD__
+#include <libutil.h>
+#else
 #if HAVE_PTY_H
 #include <pty.h>
 #else
@@ -19,6 +22,7 @@
 #endif
 
 #include <utmp.h>
+#endif
 #include <unistd.h>
 #include <termios.h>
 #include <stdlib.h>

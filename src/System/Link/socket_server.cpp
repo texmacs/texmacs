@@ -21,6 +21,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#ifdef __FreeBSD__
+#include <sys/time.h>
+#include <sys/select.h>
+#endif
 #else
 namespace wsoc {
 #include <sys/types.h>

@@ -14,9 +14,13 @@
 #include "string.hpp"
 #include "tm_configure.hpp"
 
+#ifndef __FreeBSD__
 #ifndef HAVE_TIME_T
 #define HAVE_TIME_T
 typedef long time_t;
+#endif
+#else
+#include <time.h>
 #endif
 
 #ifdef OS_SUN

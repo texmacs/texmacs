@@ -9,12 +9,12 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#ifndef SQLITE3_H
-#define SQLITE3_H
+#ifndef TM_SQLITE3_H
+#define TM_SQLITE3_H
 #include "url.hpp"
 
 bool sqlite3_present ();
 tree sql_exec (url db_name, string cmd);
 string sql_quote (string s);
 
-#endif // SQLITE3_H
+#endif // TM_SQLITE3_H

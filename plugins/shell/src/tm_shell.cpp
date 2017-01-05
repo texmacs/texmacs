@@ -21,11 +21,17 @@
 #include <sys/wait.h>
 #include <termios.h>
 
+#ifdef __FreeBSD__
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <libutil.h>
+#else
 #if HAVE_PTY_H
 #include <pty.h>
 #endif
 #if HAVE_UTIL_H
 #include <util.h>
+#endif
 #endif
 
 using namespace std;
