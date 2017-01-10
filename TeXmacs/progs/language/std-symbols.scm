@@ -20,7 +20,8 @@
     (:type infix)
     (:penalty 3)
     (:spacing default default)
-    "<assign>" "<plusassign>" "<minusassign>" "<astassign>" "<overassign>")
+    "<assign>" "<backassign>"
+    "<plusassign>" "<minusassign>" "<astassign>" "<overassign>")
   
   (define Flux-symbol
     (:type infix)

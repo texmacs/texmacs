@@ -193,6 +193,7 @@
   (minusassign "-\\!\\!=")
   (timesassign "\times\\!\\!=")
   (overassign "/\\!\\!=")
+  (backassign "=:")
   (lflux "\\ll")
   (gflux "\\gg")
   (colons "\\,:\\,")

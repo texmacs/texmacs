@@ -58,7 +58,7 @@
   longhookrightarrow longhookleftarrow
   triangleup tmprecdot preceqdot
   llangle rrangle join um upl upm ump
-  assign plusassign minusassign timesassign overassign
+  assign plusassign minusassign timesassign overassign backassign
   lflux gflux colons transtype udots subsetsim supsetsim
   rightmap leftmap leftrightmap)
 

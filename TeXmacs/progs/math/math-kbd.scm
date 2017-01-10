@@ -1106,6 +1106,7 @@
   ("= var var var" "<asympasymp>")
   ("= var var var var" "<simsim>")
   ("= var var var var var" "<downequal>")
+  ("= :" "<backassign>")
   ("~" "<sim>")
   ("~ var" "<backsim>")
   ("~ ~" "<approx>")
