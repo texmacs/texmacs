@@ -1115,6 +1115,8 @@
   ("~ ~ - /" "<napproxeq>")
   ("~ ~ =" "<approxeq>")
   ("~ ~ = /" "<napproxeq>")
+  ("~ ~ ~" "<triplesim>")
+  ("~ ~ ~ /" "<ntriplesim>")
   ("~ -" "<simeq>")
   ("~ - var" "<backsimeq>")
   ("~ - var var" "<bumpeq>")

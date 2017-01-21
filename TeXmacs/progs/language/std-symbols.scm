@@ -95,6 +95,7 @@
     "<gg>" "<ggeq>" "<supset>" "<supseteq>"
     "<sqsupset>" "<sqsupseteq>" "<sqsupseteqq>"
     "<equiv>" "<nequiv>" "<sim>" "<simeq>" "<asymp>" "<approx>" "<cong>"
+    "<triplesim>" "<ntriplesim>"
     "<subsetsim>" "<supsetsim>" "<doteq>" "<propto>" "<varpropto>"
     "<perp>" "<bowtie>" "<Join>" "<smile>" "<frown>" "<signchange>"
     "<parallel>" "<shortparallel>" "<nparallel>" "<nshortparallel>"

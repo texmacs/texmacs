@@ -43,7 +43,7 @@
   nasymp asympasymp nasympasymp simsim nsimsim
   precprec precpreceq precprecprec precprecpreceq
   succsucc succsucceq succsuccsucc succsuccsucceq
-  lleq llleq ggeq gggeq
+  lleq llleq ggeq gggeq triplesim ntriplesim
 
   ;; extra literal symbols
   mathcatalan mathd mathD mathe matheuler mathlambda mathi mathpi
