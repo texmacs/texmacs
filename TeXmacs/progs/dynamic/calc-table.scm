@@ -224,7 +224,10 @@
         ((tree-is? t 'concat)
          (with l (map cell-input-encode (tree-children t))
            (tm->tree (apply tmconcat l))))
-        ((tree-is? t 'cell-ref) t)
+        ((and (tree-func? t 'cell-ref 1) (tree-atomic? (tree-ref t 0))
+              (string-occurs? "-" (tree->string (tree-ref t 0))))
+         (tm->tree `(calc-ref ,(tree-ref t 0))))
+        ((tree-in? t '(cell-ref calc-ref)) t)
         (else (tree-map-accessible-children cell-input-encode t))))
 
 (tm-define (cell-input-decode t)
