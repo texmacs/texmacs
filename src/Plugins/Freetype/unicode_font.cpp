@@ -183,8 +183,15 @@ static unsigned int
 read_unicode_char (string s, int& i) {
   if (s[i] == '<') {
     i++;
-    int start= i;
-    while (s[i] != '>') i++;
+    int start= i, n= N(i);
+    while (true) {
+      if (i == n) {
+	i= start + 1;
+	return (int) '<';
+      }
+      if (s[i] == '>') break;
+      i++;
+    }
     if (s[start] == '#') {
       start++;
       return (unsigned int) from_hexadecimal (s (start, i++));
