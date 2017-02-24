@@ -415,7 +415,9 @@ edit_graphics_rep::set_graphical_object (tree t) {
 void
 edit_graphics_rep::invalidate_graphical_object () {
   SI gx1, gy1, gx2, gy2;
-  if (find_graphical_region (gx1, gy1, gx2, gy2) && !is_nil (go_box)) {
+  if (!is_nil (eb) &&
+      find_graphical_region (gx1, gy1, gx2, gy2) &&
+      !is_nil (go_box)) {
     int i;
     rectangles rs;
     rectangle gr (gx1, gy1, gx2, gy2);
