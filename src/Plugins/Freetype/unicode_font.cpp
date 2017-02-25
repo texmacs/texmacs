@@ -183,7 +183,7 @@ static unsigned int
 read_unicode_char (string s, int& i) {
   if (s[i] == '<') {
     i++;
-    int start= i, n= N(i);
+    int start= i, n= N(s);
     while (true) {
       if (i == n) {
 	i= start + 1;
