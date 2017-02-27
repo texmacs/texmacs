@@ -186,7 +186,7 @@ read_unicode_char (string s, int& i) {
     int start= i, n= N(s);
     while (true) {
       if (i == n) {
-	i= start + 1;
+	i= start;
 	return (int) '<';
       }
       if (s[i] == '>') break;
