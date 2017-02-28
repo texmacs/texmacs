@@ -15,9 +15,9 @@ if (length(d) > 0)
         addpath ([prefix,"polynomial"], "-end");
         # NB: filesep() is used above for portability.
     else
-        LOADPATH=[LOADPATH,                              \
-                  [d,"/plugins/octave/octave/tm:"],      \
-                  [d,"/plugins/octave/octave/plot:"],    \
+        LOADPATH=[LOADPATH,                              
+                  [d,"/plugins/octave/octave/tm:"],      
+                  [d,"/plugins/octave/octave/plot:"],    
                   [d,"/plugins/octave/octave/polynomial:"]];
     endif
 
