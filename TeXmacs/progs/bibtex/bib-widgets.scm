@@ -116,7 +116,7 @@
       ///
       (text "Style:") // //
       (enum (bibwid-set-style answer)
-            '("tm-plain" "tm-alpha" "tm-acm" "tm-elsart-num"
+            '("tm-plain" "tm-abstract" "tm-acm" "tm-alpha" "tm-elsart-num"
               "tm-ieeetr" "tm-siam" "tm-unsrt")
             bibwid-style "10em"))
     === === ===

@@ -266,7 +266,7 @@
 
 (define (bib-compile-sub prefix style names . bib-files)
   (set! names (list-remove-duplicates names))
-  (if (in? style (list "tm-abbrv" "tm-acm" "tm-alpha" "tm-elsart-num"
+  (if (in? style (list "tm-abbrv" "tm-abstract" "tm-acm" "tm-alpha" "tm-elsart-num"
                        "tm-ieeetr" "tm-plain" "tm-siam" "tm-unsrt"))
       (let* ((all-files `(,@bib-files :default :attached))
              (l (apply bib-retrieve-entries (cons names all-files)))
