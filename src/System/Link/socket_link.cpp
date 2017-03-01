@@ -115,12 +115,12 @@ socket_link_rep::start () {
     }
   }
 #endif  
-	if (alive) return "busy";
+    if (alive) return "busy";
   if (DEBUG_AUTO)
     debug_io << "Connecting to '" << host << ":" << port << "'\n";
   
   // getting host
-  
+/*  
   c_string _host (host);
   struct hostent *hp = gethostbyname (_host);
   if (hp == NULL) return "Error: no connection for '" * host * "'";
@@ -129,7 +129,7 @@ socket_link_rep::start () {
   io= socket (AF_INET, SOCK_STREAM, 0);
   if (io < 0) return "Error: socket could not be created";
 
-  // connecting to socket
+   // connecting to socket
   struct sockaddr_in insock;
   string where= host * ":" * as_string (port);
   memset ((char*) &insock, 0, sizeof (insock));
@@ -138,6 +138,48 @@ socket_link_rep::start () {
   memcpy ((char*) &insock.sin_addr, hp->h_addr, hp->h_length);
   if (connect (io, (struct sockaddr*) &insock, sizeof (insock)) < 0)
     return "Error: refused connection to '" * where * "'";
+
+*/
+// the above original code used deprecated function gethostbyname.
+// this was signaled in the tracker (#34182, #46726)
+// Below the functionality is implemented using getaddrinfo,
+// (closely following the client example given in man pages)
+// same thing done also in QTMSockets.cpp
+  c_string _host (host);
+  c_string _port (as_string (port));
+  string where= host * ":" * as_string (port);
+  struct addrinfo hints;
+  struct addrinfo *result, *rp;
+  memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6, AF_INET for v4 only*/
+  hints.ai_socktype = SOCK_STREAM; /* stream socket */
+  hints.ai_flags = AI_PASSIVE;    /* For wildcard IP address */
+  hints.ai_protocol = 0;          /* Any protocol */
+  hints.ai_canonname = NULL;
+  hints.ai_addr = NULL;
+  hints.ai_next = NULL;
+
+  int x =  getaddrinfo(_host, _port, &hints, &result);
+  if (x != 0) return "Error: no address found for '" * host * "'";
+  // getaddrinfo may return several addresses
+  // trying them until we can connect
+  for (rp = result; rp != NULL; rp = rp->ai_next) {
+               io = socket(rp->ai_family, rp->ai_socktype,
+                            rp->ai_protocol);
+               if (io == -1)
+                   continue;
+
+               if (connect(io, rp->ai_addr, rp->ai_addrlen) != -1)
+                   break;                  /* Success */
+
+               close(io);
+  }
+
+  if (rp == NULL) {               /* No address succeeded */
+               return "Error: could not connect to '" * where * "'";
+  }
+
+  freeaddrinfo(result);           /* No longer needed */
 
   // testing whether it works
 #if defined(__MINGW__) || defined(__MINGW32__)

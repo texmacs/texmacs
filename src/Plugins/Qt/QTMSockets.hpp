@@ -30,6 +30,7 @@
 #else
 namespace wsoc {
 #include <winsock2.h>
+#include <ws2tcpip.h>
 }
 #define NMSPC(a) wsoc::a
 typedef ushort u_short;

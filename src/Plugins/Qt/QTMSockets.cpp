@@ -29,12 +29,18 @@
 #define WRITE(a, b, c) ::write(a, b, c)
 #define ERRNO errno
 #define ERRSOC(a) a 
+#define GETADDRINFO getaddrinfo
+#define FREEADDRINFO freeaddrinfo
+#define ADDRINFO addrinfo
 #else
 #define CONNECT wsoc::connect
 #define CLOSE(a) wsoc::closesocket(a)
 #define WRITE(a, b, c) wsoc::send(a, b, c, 0) 
 #define ERRNO wsoc::WSAGetLastError()
 #define ERRSOC(a) WSA##a 
+#define GETADDRINFO wsoc::getaddrinfo 
+#define FREEADDRINFO wsoc::freeaddrinfo
+#define ADDRINFO wsoc::addrinfo
 #endif
 
 unsigned dbg_cnt;
@@ -72,6 +78,7 @@ socket_basic::~socket_basic () {
 #endif
 };
 
+
 socket_link::socket_link (int s, struct SOCKADDR_IN *addr) {
   id++; sock= s; qsnr= NULL; qsnw= NULL;
   if (st != ST_VOID) return;
@@ -79,7 +86,7 @@ socket_link::socket_link (int s, struct SOCKADDR_IN *addr) {
   qsnr= tm_new <QSocketNotifier> (s, QSocketNotifier::Read);
   qsnw= tm_new <QSocketNotifier> (s, QSocketNotifier::Write);
 
-  if (!qsnr || !qsnw) { err=errno; st=ST_NOTIF; return; }
+  if (!qsnr || !qsnw) { err=ERRNO; st=ST_NOTIF; return; }
   QObject::connect (qsnr, SIGNAL(activated(int)),
 		    this, SLOT(data_set_ready(int)));
   QObject::connect (qsnw, SIGNAL(activated(int)),
@@ -92,6 +99,10 @@ socket_link::socket_link(string host, u_short port) {
   ++id; qsnr= NULL; qsnw= NULL;
   if (st != ST_VOID) return;
   id++;
+/* this original code used the deprecated function gethostbyname
+  this was signaled in the tracker (#34182, #46726) 
+  Below the functionality is implemented using getaddrinfo,
+
   //Create socket
   sock= NMSPC (socket (AF_INET , SOCK_STREAM , 0));
   if (sock == -1) { err= errno; st= ST_SOCKET; return; }
@@ -107,6 +118,41 @@ socket_link::socket_link(string host, u_short port) {
 
   if (CONNECT (sock, (struct SOCKADDR *) &add, sizeof (add))) {
     err= errno; st= ST_CONNECTION; return; }
+*/
+  c_string _host (host);
+  c_string _port (as_string (port));
+  struct ADDRINFO hints;
+  struct ADDRINFO *result, *rp;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6, AF_INET for v4 only*/
+  hints.ai_socktype = SOCK_STREAM; /* stream socket */
+  hints.ai_flags = AI_PASSIVE;    /* For wildcard IP address */
+  hints.ai_protocol = 0;          /* Any protocol */
+  hints.ai_canonname = NULL;
+  hints.ai_addr = NULL;
+  hints.ai_next = NULL;
+
+  int x =  GETADDRINFO(_host, _port, &hints, &result);
+  if (x != 0)  { err= ERRNO; st= ST_GETHOST; return; };
+
+  for (rp = result; rp != NULL; rp = rp->ai_next) {
+               sock= NMSPC ( socket(rp->ai_family, rp->ai_socktype,
+                            rp->ai_protocol));
+               if (sock == -1)
+                   continue;
+
+               if (CONNECT (sock, rp->ai_addr, rp->ai_addrlen) != -1)
+                   break;                  /* Success */
+
+               CLOSE(sock);
+  }
+
+  if (rp == NULL) {               /* No address succeeded */
+               err= ERRNO; st= ST_CONNECTION; return; 
+  }
+
+  FREEADDRINFO(result);           /* No longer needed */
+
  #ifndef __MINGW32__
   if (fcntl (sock, F_SETFL, O_NONBLOCK) == -1) {
     err= errno; st= ST_FCNTL; return; }
@@ -114,13 +160,13 @@ socket_link::socket_link(string host, u_short port) {
   {
     unsigned long flags = -1;
     if (wsoc::ioctlsocket (sock, FIONBIO, &flags) == SOCKET_ERROR) {
-      err= errno; st= ST_FCNTL; return; }
+      err= ERRNO; st= ST_FCNTL; return; }
   }
 #endif
   qsnr= tm_new <QSocketNotifier> (sock, QSocketNotifier::Read);
   qsnw= tm_new <QSocketNotifier> (sock, QSocketNotifier::Write);
  
-  if (!qsnr || !qsnw) { err= errno; st= ST_NOTIF; return; }
+  if (!qsnr || !qsnw) { err= ERRNO; st= ST_NOTIF; return; }
   QObject::connect (qsnr, SIGNAL (activated(int)),
 		    this, SLOT (data_set_ready(int)));
   qsnw->setEnabled (false);
@@ -224,7 +270,7 @@ socket_link::ready_to_send (int s) {
       if (sz) qsnw->setEnabled (true);
     }
     else if (ret <0) {
-      DBG_IO ("Sending error:" << strerror(errno));
+      DBG_IO ("Sending error:" << strerror(ERRNO));
       stop ();
     }
     else qsnw->setEnabled (true);
@@ -263,16 +309,16 @@ socket_server::socket_server (in_addr_t add, u_short port) {
 
   //Create socket
   sock= NMSPC (socket (AF_INET , SOCK_STREAM , 0));
-  if (sock == -1) { err= errno; st= ST_SOCKET; return;}
+  if (sock == -1) { err= ERRNO; st= ST_SOCKET; return;}
 
 #ifndef __MINGW32__
   if (fcntl (sock, F_SETFL, O_NONBLOCK) == -1) {
-    err= errno; st= ST_FCNTL; return; }
+    err= ERRNO; st= ST_FCNTL; return; }
 #else 
  {
    unsigned long flags = -1;
    if (wsoc::ioctlsocket (sock, FIONBIO, &flags) == SOCKET_ERROR) {
-     err= errno; st= ST_FCNTL; return; }
+     err= ERRNO; st= ST_FCNTL; return; }
  }
 #endif
  
@@ -282,8 +328,8 @@ socket_server::socket_server (in_addr_t add, u_short port) {
   server.sin_port= NMSPC(htons(port));
 
   if (NMSPC (bind (sock, (struct SOCKADDR *)&server, sizeof(server)))) {
-    err=errno; st=ST_BIND; return; }
-  if (NMSPC(listen (sock , 3))) { err= errno; st= ST_LISTEN; return; }
+    err=ERRNO; st=ST_BIND; return; }
+  if (NMSPC(listen (sock , 3))) { err= ERRNO; st= ST_LISTEN; return; }
   qsnc= new QSocketNotifier (sock, QSocketNotifier::Read);
 
   QObject::connect(qsnc, SIGNAL(activated(int)), this, SLOT(connection(int)));
@@ -315,7 +361,7 @@ socket_server::connection (int s) {
   else switch (ERRNO) {
     case ERRSOC (EWOULDBLOCK):
     case ERRSOC (ECONNABORTED): break;
-    default: err=errno; qsnc->setEnabled (false); st=ST_CONNECTION;
+    default: err=ERRNO; qsnc->setEnabled (false); st=ST_CONNECTION;
   }
 }
 
