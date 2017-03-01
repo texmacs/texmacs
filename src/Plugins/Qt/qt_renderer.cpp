@@ -274,7 +274,17 @@ qt_renderer_rep::lines (array<SI> x, array<SI> y) {
   if ((N(y) != n) || (n<2)) return;
   STACK_NEW_ARRAY (pnt, QPointF, n);
   for (i=0; i<n; i++)
+#ifdef __arm__
+// for compiling in Raspbian
+  {
+    double px = double (pnt[i].rx());//explicit conversion needed for ARM where qreal==float!=double
+    double py = double (pnt[i].ry());    
+    decode (x[i], y[i], px, py);
+    pnt[i].rx()=qreal(px); pnt[i].ry()=qreal(py);
+  }
+#else
     decode (x[i], y[i], pnt[i].rx(), pnt[i].ry());
+#endif
 
   QPen p= painter->pen();
   p.setCapStyle (pen->get_cap () == cap_round? Qt::RoundCap: Qt::SquareCap);
