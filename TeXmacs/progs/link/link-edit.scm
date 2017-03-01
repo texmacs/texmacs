@@ -154,7 +154,7 @@
 (define (link-remove-participant nr)
   (with p (ahash-ref link-participants nr)
     (ahash-remove! link-participants nr)
-    (when (oberver? p)
+    (when (observer? p)
       (tree-pointer-detach p))))
 
 (define (link-clean nr)
