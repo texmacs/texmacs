@@ -297,14 +297,20 @@
 ;; Other useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmfile-pair? t)
+  (and (tm-compound? t)
+       (nnull? (tm-children t))))
+
 (define-public (tmfile-get doc what)
   (and (tm-func? doc 'document)
+       (list-and (map tmfile-pair? (tm-children doc)))
        (with val (assoc-ref (map tm->list (tm-children doc)) what)
          (if (pair? val) (set! val (car val)))
          val)))
 
 (define-public (tmfile-set doc what val)
   (and (tm-func? doc 'document)
+       (list-and (map tmfile-pair? (tm-children doc)))
        (with l (reverse (map tm->list (tm-children doc)))
          (set! l (assoc-set! l what (list val)))
          (cons 'document (reverse l)))))
@@ -316,6 +322,7 @@
   ;; FIXME: use tmfile-get instead whenever possible
   (if (tree? doc) (set! doc (tree->stree doc)))
   (and (func? doc 'document)
+       (list-and (map tmfile-pair? (tm-children doc)))
        (with val (assoc-ref (cdr doc) what)
          (if (pair? val) (set! val (car val)))
          (if (tree? val) (set! val (tree->stree val)))
@@ -325,6 +332,7 @@
   ;; FIXME: use tmfile-set instead whenever possible
   (if (tree? doc) (set! doc (tree->stree doc)))
   (and (func? doc 'document)
+       (list-and (map tmfile-pair? (tm-children doc)))
        (with l (reverse (cdr doc))
          (set! l (assoc-set! l what (list (tm->tree val))))
          (cons 'document (reverse l)))))
