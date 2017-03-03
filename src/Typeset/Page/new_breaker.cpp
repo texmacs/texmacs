@@ -210,7 +210,7 @@ new_breaker_rep::find_page_breaks (path b1) {
   if (must_break[b1x->item] && b1x->item < N(l))
     b1x= path (b1x->item + 1, b1x->next);
   //cout << "Find page breaks " << b1 << LF;
-  bool ok= false;
+  bool ok= false, found_one= false;
   vpenalty prev_pen= best_pens [b1];
   int n= N(l);
   int float_status= 0;
@@ -303,8 +303,10 @@ new_breaker_rep::find_page_breaks (path b1) {
         //cout << b1 << ", " << b2 << " ~> " << pen << "\n";
 	best_prev (b2)= b1;
 	best_pens (b2)= pen;
+        found_one= true;
       }
     }
+    if (!found_one) continue;
     if (ok && spc->min > height->max && is_nil (b2->next)) break;
     if (break_page && is_nil (b2->next)) break;
   }
