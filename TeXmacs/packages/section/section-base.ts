@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.5>
 
 <style|source>
 
@@ -293,6 +293,10 @@
   <assign|bibliography*|<\macro|aux|style|file-name|name|body>
     <render-bibliography|<localize|<arg|name>>|<arg|body>>
   </macro>>
+
+  <drd-props|bibliography|arity|4|identifier|0|string|1|url|2>
+
+  <drd-props|bibliography*|arity|5|identifier|0|string|1|url|2>
 
   <assign|thebibliography|<\macro|largest|body>
     <render-bibliography|<bibliography-text>|<bib-list|<arg|largest>|<arg|body>>>

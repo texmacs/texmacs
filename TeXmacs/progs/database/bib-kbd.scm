@@ -20,7 +20,7 @@
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (supports-db?) (bib-cite-context? t)))
-  (with u (tree-down t)
+  (and-with u (if (tree-func? t 'cite-detail) (tree-ref t 0) (tree-down t))
     (and-with key (and (tree-atomic? u) (tree->string u))
       (with-database (bib-database)
         (with completions (sort (index-get-name-completions key) string<=?)

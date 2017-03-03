@@ -700,8 +700,8 @@ edit_env_rep::exec_drd_props (tree t) {
 	  }
 	}
       else if (prop == "normal-writability" ||
-	  prop == "disable-writability" ||
-	  prop == "enable-writability")
+               prop == "disable-writability" ||
+               prop == "enable-writability")
 	{
 	  int prop_code= WRITABILITY_NORMAL;
 	  if (prop == "disable-writability") prop_code= WRITABILITY_DISABLE;

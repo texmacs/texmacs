@@ -150,9 +150,7 @@
 
 (tm-define (bib-cite-context? t)
   (and (tree-in? t '(cite nocite cite-detail))
-       (cursor-inside? t)
-       (or (not (tree-is? t 'cite-detail))
-           (== (tree-index (tree-down t)) 0))))
+       (cursor-inside? t)))
 
 (tm-define (kbd-variant t forwards?)
   (:require (and (not (supports-db?)) (bib-cite-context? t)))

@@ -124,7 +124,7 @@
 
 (tm-define (focus-open-search-tool t)
   (:require (and (supports-db?) (bib-cite-context? t)))
-  (and-with u (tree-down t)
+  (and-with u (if (tree-func? t 'cite-detail) (tree-ref t 0) (tree-down t))
     (open-bib-chooser
      (lambda (key)
        (when (and (tree->path u)
