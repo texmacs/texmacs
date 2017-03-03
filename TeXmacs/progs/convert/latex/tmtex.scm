@@ -2401,6 +2401,10 @@
   (tex-apply 'citetext `(!concat (citealp ,(tmtex (car l))) ", "
 				 ,(tmtex (cadr l)))))
 
+(tm-define (tmtex-cite-detail-poor s l)
+  `(!concat ,(tex-apply 'cite (tmtex (car l)))
+            " (" ,(tmtex (cadr l)) ")"))
+
 (define (tmtex-cite-detail-hook s l)
   (tmtex-cite-detail s l))
 

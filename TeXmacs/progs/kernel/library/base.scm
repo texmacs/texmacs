@@ -94,6 +94,11 @@
   "Return the first @n chars of @s."
   (substring s 0 n))
 
+(provide-public (string-take-right s n)
+  "Return the first @n chars of @s."
+  (let ((l (string-length s)))
+    (substring s (- l n) l)))
+
 (provide-public (string-trim s)		; srfi-13 (subset)
   "Remove whitespace at start of @s."
   (list->string (list-drop-while (string->list s) char-whitespace?)))

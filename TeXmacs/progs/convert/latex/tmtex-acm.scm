@@ -170,8 +170,7 @@
 
 (tm-define (tmtex-cite-detail s l)
   (:mode acm-style?)
-  `(!concat ,(tex-apply 'cite (tmtex (car l)))
-            " (" ,(tmtex (cadr l)) ")"))
+  (tmtex-cite-detail-poor s l))
 
 (smart-table latex-texmacs-env-preamble
   (:mode acm-small-style?)

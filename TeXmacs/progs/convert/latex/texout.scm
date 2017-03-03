@@ -223,8 +223,12 @@
   (texout-row l))
 
 (define (texout-want-space x1 x2) ;; spacing rules
-  (and (not (or (in? x1 '("(" "[" ({) (nobreak)))
-		(in? x2 '("," ")" "]" (}) (nobreak)))
+  (and (not (or (and (string? x1) (!= x1 "")
+                     (in? (string-take-right x1 1) '("(" "[")))
+                (in? x1 '(({) (nobreak)))
+		(and (string? x2) (!= x2 "")
+                     (in? (string-take x2 1) '("," ")" "]")))
+                (in? x2 '((}) (nobreak)))
 		(== x1 " ") (== x2 " ")
 		(func? x2 '!nextline)
 		(== x2 "'") (func? x2 '!sub) (func? x2 '!sup)
