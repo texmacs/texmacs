@@ -109,6 +109,9 @@
 (define db-quit-search ignore)
 (define db-search-keypress-serial 0)
 
+(define (db-search-results-buffer)
+  (string->url "tmfs://aux/db-search-results"))
+
 (define (db-search-keypress db kind event old-query)
   (when (pair? event)
     (with (new-query key) event
@@ -142,7 +145,7 @@
 	(resize "750px" "500px"
 	  (texmacs-input `(document ,@(db-search-results db kind query))
 			 `(style (tuple ,(db-get-style kind)))
-			 "tmfs://aux/db-search-results"))))))
+			 (db-search-results-buffer)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Manage user identities
@@ -271,7 +274,7 @@
 		   (lambda args
 		     (set! db-quit-search ignore)
 		     (apply call-back args))
-		   name))
+		   name (db-search-results-buffer)))
 
 (tm-define (open-db-preferences)
   (:interactive #t)

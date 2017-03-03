@@ -20,6 +20,12 @@
 ;; The widget for examing LaTeX errors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (latex-error-buffer)
+  (string->url "tmfs://aux/latex-error"))
+
+(define (latex-source-buffer)
+  (string->url "tmfs://aux/latex-source"))
+
 (define (latex-error-digest err)
   (tree->string (tree-ref err 1)))
 
@@ -101,12 +107,12 @@
       (resize "800px" "150px"
         (texmacs-input (latex-error-doc (list-ref errs errnr))
                        `(style (tuple "generic"))
-                       "tmfs://aux/latex-error"))
+                       (latex-error-buffer)))
       ======
       (resize "800px" "450px"
         (texmacs-input (string->document doc)
                        `(style (tuple "verbatim-source"))
-                       "tmfs://aux/latex-source")))))
+                       (latex-source-buffer))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Convert, run pdflatex, and examine errors
@@ -148,7 +154,9 @@
                       (set-message "Generated LaTeX document contains no errors"
                                    "latex-run")
                       (dialogue-window (latex-errors-widget buf doc errs)
-                                       noop "LaTeX errors"))))))))
+                                       noop "LaTeX errors"
+                                       (latex-error-buffer)
+                                       (latex-source-buffer)))))))))
 
 (define (latex-preview)
   (let* ((tex (current-buffer-suffixed "tex"))

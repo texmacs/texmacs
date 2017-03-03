@@ -226,10 +226,14 @@
         (for (x l) (insert x))
         (refresh-window)))))
 
+(define (header-buffer)
+  (string->url "tmfs://aux/this-page-header"))
+
+(define (footer-buffer)
+  (string->url "tmfs://aux/this-page-footer"))
+
 (define (editing-headers?)
-  (in? (current-buffer)
-       (list (string->url "tmfs://aux/this-page-header")
-             (string->url "tmfs://aux/this-page-footer"))))
+  (in? (current-buffer) (list (header-buffer) (footer-buffer))))
 
 (define ((set-page-pattern settings) name)
   (when (pair? name) (set! name (car name)))
@@ -267,13 +271,13 @@
     ===
     (resize "600px" "60px"
       (texmacs-input `(document (unchanged))
-                     `(style (tuple ,@style)) "tmfs://aux/this-page-header"))
+                     `(style (tuple ,@style)) (header-buffer)))
     === ===
     (bold (text "This page footer"))
     ===
     (resize "600px" "60px"
       (texmacs-input `(document (unchanged))
-                     `(style (tuple ,@style)) "tmfs://aux/this-page-footer"))
+                     `(style (tuple ,@style)) (footer-buffer)))
     ======
     (explicit-buttons
       (hlist
@@ -291,7 +295,8 @@
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor")))
          (t  (make-ahash-table)))
     (dialogue-window (page-formatter u st t)
-                     noop "Page format")))
+                     noop "Page format"
+                     (header-buffer) (footer-buffer))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pattern selector

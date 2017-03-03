@@ -317,6 +317,12 @@
   (list "page-odd-header" "page-even-header"
         "page-odd-footer" "page-even-footer"))
 
+(define (header-buffer var)
+  (string->url (string-append "tmfs://aux/" var)))
+
+(define (header-buffers)
+  (map header-buffer header-parameters))
+
 (define (get-field-contents u)
   (and-with t (tm->stree (buffer-get-body u))
     (when (tm-func? t 'document 1)
@@ -348,7 +354,7 @@
         (resize "600px" "60px"
           (texmacs-input `(document ,(initial-get-tree u var))
                          `(style (tuple ,@style))
-                         (string-append "tmfs://aux/" var)))
+                         (header-buffer var)))
         ===)))
   === ===
   (explicit-buttons
@@ -389,8 +395,10 @@
   (:interactive #t)
   (let* ((u  (current-buffer))
          (st (list-remove-duplicates (rcons (get-style-list) "macro-editor"))))
-    (dialogue-window (document-page-formatter u st)
-                     noop "Document page format")))
+    (apply dialogue-window
+           (cons* (document-page-formatter u st)
+                  noop "Document page format"
+                  (header-buffers)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Metadata
