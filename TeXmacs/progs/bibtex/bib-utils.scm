@@ -127,6 +127,8 @@
   (cond ((bib-null? x) "")
         ((bib-null? (car x)) (new-list-rec s (cdr x)))
         ((null? (cdr x)) `(concat ,(car x)))
+        ((and (tm-func? (car x) 'concat) (== (cAr (car x)) `(newblock)))
+         `(concat ,(cDr (car x)) ,s (newblock) ,(new-list-rec s (cdr x))))
         (else `(concat ,(car x) ,s ,(new-list-rec s (cdr x))))))
 
 (tm-define (bib-new-list-spc x)
