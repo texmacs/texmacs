@@ -362,6 +362,12 @@ is_prime (tree t) {
 }
 
 bool
+is_left_script_prime (tree t) {
+  return is_func (t, LSUB, 1) || is_func (t, LSUP, 1) ||
+         is_func (t, LPRIME, 1);
+}
+
+bool
 is_right_script_prime (tree t) {
   return is_func (t, RSUB, 1) || is_func (t, RSUP, 1) ||
          is_func (t, RPRIME, 1);

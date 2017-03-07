@@ -93,29 +93,6 @@ edit_select_rep::semantic_active (path q) {
   return false;
 }
 
-static bool
-right_most_inside (path p, tree t) {
-  if (is_atomic (t)) return p == path (N(t->label));
-  else if (p == path (1)) return true;
-  if (is_nil (p) || is_nil (p->next)) return false;
-  if (N(t) == 1 && p->item == 0)
-    return right_most_inside (p->next, t[0]);
-  if (is_func (t, WIDE, 2))
-    return p->item == 0 && right_most_inside (p->next, t[0]);
-  if (is_func (t, CONCAT) || is_func (t, DOCUMENT))
-    return p->item == N(t) - 1 && right_most_inside (p->next, t[N(t) - 1]);
-  return false;
-}
-
-static path
-correct_right_most_inside (path p, tree t) {
-  if (is_nil (p) || is_nil (p->next) || is_atomic (t)) return p;
-  if (0 > p->item || p->item >= N(t)) return p;
-  p= path (p->item, correct_right_most_inside (p->next, t[p->item]));
-  if (right_most_inside (p, t)) return path (1);
-  else return p;
-}
-
 bool
 edit_select_rep::semantic_select (path p, path& q1, path& q2, int mode) {
   if (!semantic_active (p)) return false;

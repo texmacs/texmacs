@@ -14,6 +14,9 @@
 #include "tree_cursor.hpp"
 #include "tree_traverse.hpp"
 
+bool right_most_inside (path p, tree t);
+path correct_right_most_inside (path p, tree t);
+
 void selection_correct (tree t, path i1, path i2, path& o1, path& o2);
 tree selection_compute (tree t, path i1, path i2);
 

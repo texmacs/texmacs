@@ -14,6 +14,33 @@
 #include "analyze.hpp"
 
 /******************************************************************************
+* Useful subroutines
+******************************************************************************/
+
+bool
+right_most_inside (path p, tree t) {
+  if (is_atomic (t)) return p == path (N(t->label));
+  else if (p == path (1)) return true;
+  if (is_nil (p) || is_nil (p->next)) return false;
+  if (N(t) == 1 && p->item == 0)
+    return right_most_inside (p->next, t[0]);
+  if (is_func (t, WIDE, 2))
+    return p->item == 0 && right_most_inside (p->next, t[0]);
+  if (is_func (t, CONCAT) || is_func (t, DOCUMENT))
+    return p->item == N(t) - 1 && right_most_inside (p->next, t[N(t) - 1]);
+  return false;
+}
+
+path
+correct_right_most_inside (path p, tree t) {
+  if (is_nil (p) || is_nil (p->next) || is_atomic (t)) return p;
+  if (0 > p->item || p->item >= N(t)) return p;
+  p= path (p->item, correct_right_most_inside (p->next, t[p->item]));
+  if (right_most_inside (p, t)) return path (1);
+  else return p;
+}
+
+/******************************************************************************
 * Structural correction of the selection
 ******************************************************************************/
 
@@ -41,7 +68,7 @@ static void
 adjust_right_script (tree t, path& o1) {
   while (is_concat (t) && o1->item > 0 && o1->next == path (0)) {
     tree st= t[o1->item];
-    if (is_func (st, RSUB) || is_func (st, RSUP) || is_func (st, RPRIME)) {
+    if (is_right_script_prime (st)) {
       tree pt= t[o1->item-1];
       if (!is_atomic (pt))
         o1= path (o1->item-1, start (pt));
@@ -68,7 +95,7 @@ static void
 adjust_left_script (tree t, path& o2) {
   while (is_concat (t) && o2->item + 1 < N(t) && o2->next == path (1)) {
     tree st= t[o2->item];
-    if (is_func (st, LSUB) || is_func (st, LSUP) || is_func (st, LPRIME)) {
+    if (is_left_script_prime (st)) {
       tree nt= t[o2->item+1];
       if (!is_atomic (nt)) o2= path (o2->item+1, end (nt));
       else {
@@ -87,6 +114,28 @@ adjust_left_script (tree t, path& o2) {
       }
     }
     else break;
+  }
+}
+
+static void
+adjust_right_script (tree t, path& o1, path& o2) {
+  if (!is_concat (t)) return;
+  if (o1->item == o2->item) return;
+  if (is_right_script_prime (t[o2->item])) {
+    int i= o2->item;
+    while (i+1<N(t) && is_right_script_prime (t[i+1])) i++;
+    o2= path (i, 1);
+  }
+}
+
+static void
+adjust_left_script (tree t, path& o1, path& o2) {
+  if (!is_concat (t)) return;
+  if (o1->item == o2->item && o2->next != path (1)) return;
+  if (is_left_script_prime (t[o1->item])) {
+    int i= o1->item;
+    while (i>=1 && is_left_script_prime (t[i-1])) i--;
+    o1= path (i, 0);
   }
 }
 
@@ -113,6 +162,8 @@ selection_adjust (tree t, path i1, path i2, path& o1, path& o2) {
     o2= path (i2->item, o2);
     adjust_right_script (t, o1);
     adjust_left_script (t, o2);
+    adjust_right_script (t, o1, o2);
+    adjust_left_script (t, o1, o2);
   }
   else {
     tree_label l= L(t);
@@ -136,6 +187,8 @@ selection_adjust (tree t, path i1, path i2, path& o1, path& o2) {
       if (l == CONCAT) {
         adjust_right_script (t, o1);
         adjust_left_script (t, o2);
+        adjust_right_script (t, o1, o2);
+        adjust_left_script (t, o1, o2);
       }
     }
     else {
