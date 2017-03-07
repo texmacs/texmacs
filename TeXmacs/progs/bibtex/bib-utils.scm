@@ -124,11 +124,10 @@
 
 (tm-define (new-list-rec s x)
   ;; redefined in ieeetr.scm
-  (if (bib-null? x) ""
-      (if (bib-null? (car x))
-	  (new-list-rec s (cdr x))
-	  `(concat ,(car x) ,@(if (nnull? (cdr x))
-				  `(,s ,(new-list-rec s (cdr x))) `())))))
+  (cond ((bib-null? x) "")
+        ((bib-null? (car x)) (new-list-rec s (cdr x)))
+        ((null? (cdr x)) `(concat ,(car x)))
+        (else `(concat ,(car x) ,s ,(new-list-rec s (cdr x))))))
 
 (tm-define (bib-new-list-spc x)
   (new-list-rec " " (elim-empty x)))
