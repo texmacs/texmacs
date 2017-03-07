@@ -47,7 +47,7 @@
       (cons (cadar t) (bib-without-sort-key (cdr t)))))
 
 (define (bib-compare x y)
-  (string<? (car x) (car y)))
+  (tmstring-before? (car x) (car y)))
 
 (tm-define (bib-sorted-entries l)
   ;; redefine when (e.g.) sorting should be disabled

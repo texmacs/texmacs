@@ -430,6 +430,8 @@
   (tmstring-upcase-first uni_upcase_first (string string))
   (tmstring-locase-all uni_locase_all (string string))
   (tmstring-upcase-all uni_upcase_all (string string))
+  (tmstring-unaccent-all uni_unaccent_all (string string))
+  (tmstring-before? uni_before (bool string string))
 
   ;; Packrat grammar and parsing tools
   (packrat-define packrat_define (void string string tree))

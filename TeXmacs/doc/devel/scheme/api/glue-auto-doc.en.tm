@@ -3035,6 +3035,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tmstring-unaccent-all <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|uni_unaccent_all> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(tmstring-before? <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|uni_before> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(packrat-define <scm-arg|string> <scm-arg|string> <scm-arg|tree>)>
 <explain-synopsis|no synopsis>
   <|explain>

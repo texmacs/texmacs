@@ -129,6 +129,7 @@ uni_translit (string s) {
 /******************************************************************************
 * Changing the case
 ******************************************************************************/
+
 static hashmap<string,string>&
 get_locase_tab () {
   static hashmap<string,string> t ("");
@@ -342,4 +343,30 @@ uni_get_accent_char (string s) {
     <<   -1 << 0x060 << 0x0B4 << 0x2C6 << 0x0A8 << 0x0B4 <<    -1 << 0xA8;
   fill (a, 0xC0, 1);
   return get_accent_table[s];
+}
+
+string
+uni_unaccent_all (string s) {
+  (void) uni_unaccent_char ("a");
+  string r;
+  int i=0, n=N(s);
+  while (i<n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    string c= s (start, i);
+    if (unaccent_table->contains (c)) r << unaccent_table[c];
+    else r << c;
+  }
+  return r;
+}
+
+/******************************************************************************
+* String comparison for bibliographic sorting
+******************************************************************************/
+
+bool
+uni_before (string s1, string s2) {
+  s1= uni_locase_all (uni_unaccent_all (s1));
+  s2= uni_locase_all (uni_unaccent_all (s2));
+  return s1 <= s2;
 }

@@ -28,5 +28,8 @@ inline bool is_uni_upcase_char (string s) { return uni_upcase_char (s) == s; }
 array<string> get_accented_list ();
 string uni_unaccent_char (string s);
 string uni_get_accent_char (string s);
+string uni_unaccent_all (string s);
+
+bool uni_before (string s1, string s2);
 
 #endif // defined UNIVERSAL_H

@@ -66,8 +66,10 @@
   (lambda (c)
     (cond ((eq? c #\?) #\P)
 	  ((eq? c #\!) #\S)
+	  ((eq? c #\<) #\F)
 	  ((eq? c #\>) #\2)
 	  ((eq? c #\-) #\_)
+	  ((eq? c #\=) #\Q)
 	  (else c))))
 
 (define translate-name-sub

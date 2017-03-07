@@ -404,6 +404,8 @@
 "tmstring-upcase-first"
 "tmstring-locase-all"
 "tmstring-upcase-all"
+"tmstring-unaccent-all"
+"tmstring-before?"
 "packrat-define"
 "packrat-property"
 "packrat-inherit"

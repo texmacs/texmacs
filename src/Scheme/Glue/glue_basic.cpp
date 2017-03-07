@@ -5041,6 +5041,34 @@ tmg_tmstring_upcase_all (tmscm arg1) {
 }
 
 tmscm
+tmg_tmstring_unaccent_all (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-unaccent-all");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= uni_unaccent_all (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_tmstring_beforeP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-before?");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmstring-before?");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= uni_before (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_packrat_define (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "packrat-define");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "packrat-define");
@@ -9568,6 +9596,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tmstring-upcase-first",  tmg_tmstring_upcase_first, 1, 0, 0);
   tmscm_install_procedure ("tmstring-locase-all",  tmg_tmstring_locase_all, 1, 0, 0);
   tmscm_install_procedure ("tmstring-upcase-all",  tmg_tmstring_upcase_all, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-unaccent-all",  tmg_tmstring_unaccent_all, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-before?",  tmg_tmstring_beforeP, 2, 0, 0);
   tmscm_install_procedure ("packrat-define",  tmg_packrat_define, 3, 0, 0);
   tmscm_install_procedure ("packrat-property",  tmg_packrat_property, 4, 0, 0);
   tmscm_install_procedure ("packrat-inherit",  tmg_packrat_inherit, 2, 0, 0);
