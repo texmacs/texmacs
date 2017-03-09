@@ -101,6 +101,11 @@ tt_font_metric_rep::get (int i) {
     M->y3= dy - hh;
     M->x4= dx + ww;
     M->y4= dy;
+    //cout << "Glyph " << i << " of " << res_name << "\n";
+    //cout << "Logical : " << M->x1/PIXEL << ", " << M->y1/PIXEL
+    //     << "; " << M->x2/PIXEL << ", " << M->y2/PIXEL << "\n";
+    //cout << "Physical: " << M->x3/PIXEL << ", " << M->y3/PIXEL
+    //     << "; " << M->x4/PIXEL << ", " << M->y4/PIXEL << "\n";
   }
   return *((metric*) ((void*) fnm [i]));
 }
