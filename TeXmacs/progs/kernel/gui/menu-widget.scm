@@ -943,7 +943,7 @@
       (set! bufs (cons (car opts) bufs))
       (set! opts (cdr opts)))
     (when (pair? opts)
-      (set! qcmd (car opt-quit))
+      (set! qcmd (car opts))
       (set! opts (cdr opts)))
     (list bufs qcmd)))
 
