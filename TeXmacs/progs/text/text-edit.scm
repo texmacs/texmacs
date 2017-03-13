@@ -269,14 +269,41 @@
 	   (with sp (path-previous-section bt bp)
 	     (and (!= sp bp) (path->tree (append (tree->path bt) sp))))))))
 
+(define (selection-trim-ending)
+  (if (selection-active-any?)
+    (with st (selection-tree)
+      (if (and (not  (tree-atomic? st ))
+               (tree-empty? (tree-ref st :last)))             
+        (begin 
+          (selection-set 
+            (selection-get-start) 
+            (path-previous (root-tree) (selection-get-end)))
+          (selection-trim-ending))))))
+
+(define (make-section-aux l flag)
+  (if (selection-active-any?) 
+    (let 
+      ((cp (cursor-path))
+       (selstart (selection-get-start)))
+      (selection-trim-ending)
+      (if (tree-multi-paragraph? (selection-tree))
+        (set-message "make-section error" "invalid multi-paragraph selection")
+        (with selend  (selection-get-end)
+          (make l)
+          (if flag (make-return-before)
+            (if (or (path-less-eq? cp selstart) (path-less? selend cp))
+              ;; reposition cursor when its path still exists
+              (go-to cp))))))
+    (if (not (make-return-after))
+      (begin 
+        (make l)
+        (if flag (make-return-before))))))
+       
 (tm-define (make-section l)
-  (if (or (selection-active-any?) (not (make-return-after)))
-      (make l)))
+  (make-section-aux l #f))
 
 (tm-define (make-unnamed-section l)
-  (if (or (selection-active-any?) (not (make-return-after)))
-      (make l)
-      (make-return-before)))
+  (make-section-aux l #t))
 
 (tm-define (kbd-enter t shift?)
   (:require (section-context? t))
