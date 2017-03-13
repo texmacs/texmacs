@@ -96,8 +96,8 @@ load_hyphen_tables (string file_name,
   }
 }
 
-static string
-lower_case (string s) {
+static string 
+lower_case (string s) { //isn't this locase_all?
   int i;
   string r (N(s));
   for (i=0; i<N(s); i++) {
