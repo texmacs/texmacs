@@ -468,12 +468,15 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
 #ifdef USE_GS
   if (gs_supports (image)) {
     if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
-    gs_to_png (image, png, w, h);
-    return;
+    if (gs_to_png (image, png, w, h)) return;
   }
 #endif
   if (call_scm_converter(image, png)) return;
   call_imagemagick_convert (image, png, w, h);
+  if (! exists(png)) {
+    convert_error << image << " could not be converted to png" <<LF;
+    copy("$TEXMACS_PATH/misc/pixmaps/unknown.png",png);
+    } 
 }
 
 bool
