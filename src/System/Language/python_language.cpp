@@ -503,6 +503,10 @@ static void
 parse_number (string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
+  if (!is_number(s[i]) &&
+      !(s[i] == '.' && pos+1 < N(s) && is_number(s[pos+1])))
+    return;
+  i++;
   while (i<N(s) && (is_number (s[i]) || s[i] == '.'))
     i++;
   if (i == pos) return;
