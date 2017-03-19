@@ -2237,6 +2237,49 @@ std_string_to_string (std::string str) {
   return r;
 }
 
+// At least in outlines a single paren will break the PDF and no more
+// outlines will show up after it. Does it need this for other PDF
+// strings?
+//
+// Jim King, Document Management — Portable Document Format — Part 1:
+// PDF 1.7 (Adobe Sys. Inc., First ed. 2008),
+// §7.3.4.2, Literal Strings, Table 3, Escape sequences in literal strings
+//
+// Fixme? This does not handle octal character sequences \nnn. Does it
+// ever need to?
+//
+string
+escape_string (string s) {
+    int i, n= N(s);
+  string r;
+  for (i=0; i<n; i++)
+    switch (s[i]) {
+    case '\n':
+      r << '\\' << 'n';
+      break;
+    case '\r':
+      r << '\\' << 'r';
+      break;
+    case '\t':
+      r << '\\' << 't';
+      break;
+    case '\b':
+      r << '\\' << 'b';
+      break;
+    case '\f':
+      r << '\\' << 'f';
+      break;
+    case '(':
+    case ')':
+    case '\\':
+      r << '\\' << s[i];
+      break;
+    default:
+      r << s[i];
+    }
+  return r;
+}
+
 static PDFTextString
 as_hummus_string (string s) {
   s= cork_to_utf8 (s);
@@ -2360,7 +2403,8 @@ pdf_hummus_renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   if (kind == "toc-4") ls= 6;
   if (kind == "toc-5") ls= 7;
 
-  outlines << outline_data(title, page_num, to_x(x), to_y(y+20*pixel), ls);
+  // Use escape_string here. Should it be part of prepare_text instead?
+  outlines << outline_data(escape_string (title), page_num, to_x(x), to_y(y+20*pixel), ls);
 }
 
 void pdf_hummus_renderer_rep::recurse (ObjectsContext& objectsContext, list<outline_data>& it, ObjectIDType parentId,
