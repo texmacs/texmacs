@@ -2281,12 +2281,16 @@ escape_string (string s) {
 }
 
 static PDFTextString
-as_hummus_string (string s) {
-  s= cork_to_utf8 (s);
+utf8_as_hummus_string (string s) {
   c_string u (s);
   PDFTextString r;
   std::string stds ((char*) u);
   return r.FromUTF8 (stds);
+}
+
+static PDFTextString
+as_hummus_string (string s) {
+  return utf8_as_hummus_string(cork_to_utf8 (s));
 }
 
 static string
@@ -2505,15 +2509,15 @@ pdf_hummus_renderer_rep::flush_metadata () {
   TrailerInformation& trailerInfo= documentContext.GetTrailerInformation();
   InfoDictionary& info= trailerInfo.GetInfo();
   if (metadata->contains ("title"))
-    info.Title= as_hummus_string (metadata ["title"]);
+    info.Title= utf8_as_hummus_string (metadata ["title"]);
   if (metadata->contains ("author"))
-    info.Author= as_hummus_string (metadata ["author"]);
+    info.Author= utf8_as_hummus_string (metadata ["author"]);
   if (metadata->contains ("subject"))
-    info.Subject= as_hummus_string (metadata ["subject"]);
+    info.Subject= utf8_as_hummus_string (metadata ["subject"]);
   string creator= "TeXmacs " * string (TEXMACS_VERSION);
   string producer= creator * " + Hummus" ;
-  info.Creator= as_hummus_string (creator);
-  info.Producer= as_hummus_string (producer);
+  info.Creator= utf8_as_hummus_string (creator);
+  info.Producer= utf8_as_hummus_string (producer);
 }
 
 /******************************************************************************
