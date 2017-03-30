@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.5>
 
 <style|<tuple|source|std>>
 
@@ -27,6 +27,12 @@
   <assign|cite-raw|<xmacro|keys|<cite-sort|<map-args|cite-arg|tuple|keys>>>>
 
   <assign|cite|<xmacro|keys|<render-cite|<cite-sort|<map-args|cite-arg|tuple|keys>>>>>
+
+  <drd-props|cite|arity|<tuple|repeat|1|1>|accessible|none|identifier|all>
+
+  <drd-props|nocite|arity|<tuple|repeat|1|1>|accessible|none|identifier|all>
+
+  <drd-props|cite-detail|arity|2|unaccessible|0|identifier|0>
 </body>
 
 <initial|<\collection>
