@@ -165,6 +165,7 @@ child() {
   t.c_lflag &= ~ECHO;
   tcsetattr(STDIN, TCSANOW, &t);
   setenv ("PS1", prompt, true);
+  setenv ("TEXMACS_MODE", "shell", true);
   const charp argv[] = {
     const_cast<charp> ("sh"),
     const_cast<charp> ("-i"),
