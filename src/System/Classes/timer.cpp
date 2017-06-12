@@ -10,9 +10,6 @@
 ******************************************************************************/
 
 #include "timer.hpp"
-#ifdef OS_WIN32
-#include <sys/misc.h>
-#endif
 #include "iterator.hpp"
 #include "merge_sort.hpp"
 
