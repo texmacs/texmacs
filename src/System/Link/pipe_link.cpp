@@ -11,7 +11,7 @@
 
 #include "basic.hpp"
 
-#if !(defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__) || defined (QTPIPES)))
+#if !(defined (QTTEXMACS) && (defined (OS_MINGW) || defined (QTPIPES)))
 
 #include "tm_link.hpp"
 #include "socket_notifier.hpp"
@@ -21,7 +21,7 @@
 #include "timer.hpp"
 #include <stdio.h>
 #include <string.h>
-#ifdef __MINGW32__
+#ifdef OS_MINGW
 //#define PATTERN WIN_PATTERN
 //#include <winsock.h>
 //#undef PATTERN
@@ -101,7 +101,7 @@ make_pipe_link (string cmd) {
 
 void
 close_all_pipes () {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   iterator<pointer> it= iterate (pipe_link_set);
   while (it->busy()) {
     pipe_link_rep* con= (pipe_link_rep*) it->next();
@@ -129,7 +129,7 @@ process_all_pipes () {
 * Routines for pipe_links
 ******************************************************************************/
 
-#ifndef __MINGW32__
+#ifndef OS_MINGW
 void
 execute_shell (string s) {
   c_string _s (s);
@@ -144,7 +144,7 @@ execute_shell (string s) {
 
 string
 pipe_link_rep::start () {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if (alive) return "busy";
   if (DEBUG_AUTO) debug_io << "Launching '" << cmd << "'\n";
 
@@ -204,7 +204,7 @@ pipe_link_rep::start () {
 #endif
 }
 
-#ifndef __MINGW32__
+#ifndef OS_MINGW
 static string
 debug_io_string (string s) {
   int i, n= N(s);
@@ -224,7 +224,7 @@ debug_io_string (string s) {
 
 void
 pipe_link_rep::write (string s, int channel) {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if ((!alive) || (channel != LINK_IN)) return;
   if (DEBUG_IO) debug_io << "[INPUT]" << debug_io_string (s);
   c_string _s (s);
@@ -235,7 +235,7 @@ pipe_link_rep::write (string s, int channel) {
 
 void
 pipe_link_rep::feed (int channel) {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if ((!alive) || ((channel != LINK_OUT) && (channel != LINK_ERR))) return;
   int r;
   char tempout[1024];
@@ -307,7 +307,7 @@ pipe_link_rep::listen (int msecs) {
 
 void
 pipe_link_rep::interrupt () {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if (!alive) return;
   killpg (pid, SIGINT);
 #endif
@@ -315,7 +315,7 @@ pipe_link_rep::interrupt () {
 
 void
 pipe_link_rep::stop () {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if (!alive) return;
   if (-1 != killpg(pid,SIGTERM)) {
     sleep(2);
@@ -336,7 +336,7 @@ pipe_link_rep::stop () {
 ******************************************************************************/
 
 void pipe_callback (void *obj, void *info) {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   (void) info;
   pipe_link_rep* con= (pipe_link_rep*) obj;  
   bool busy= true;
@@ -375,4 +375,4 @@ void pipe_callback (void *obj, void *info) {
 #endif
 }
 
-#endif // !(defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__)))
+#endif // !(defined (QTTEXMACS) && defined (OS_MINGW))

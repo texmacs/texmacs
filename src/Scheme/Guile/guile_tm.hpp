@@ -17,7 +17,7 @@
 #include "array.hpp"
 
 
-#ifdef __MINGW32__
+#ifdef OS_MINGW
 // we redefine some symbols to avoid name clashes with Windows headers (included by Guile)
 #define PATTERN WIN_PATTERN
 #define STRING WIN_STRING
@@ -34,7 +34,7 @@
 #define MY_MENU_EVENT MENU_EVENT
 #undef MENU_EVENT
 #endif
-#endif // __MINGW32__
+#endif // OS_MINGW
 
 #if defined(GUILE_D) || defined(GUILE_C) 
 #ifdef GUILE_HEADER_18
@@ -50,7 +50,7 @@
 #endif
 #endif
 
-#ifdef __MINGW32__
+#ifdef OS_MINGW
 // put things back
 #undef STRING
 #undef ERROR
@@ -71,7 +71,7 @@
 #define OUT MY_OUT
 #undef MY_OUT
 #endif
-#endif // __MINGW32__
+#endif // OS_MINGW
 
 #ifdef GUILE_D
 

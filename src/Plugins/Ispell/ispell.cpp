@@ -42,7 +42,7 @@ RESOURCE_CODE(ispeller);
 
 ispeller_rep::ispeller_rep (string lan2): rep<ispeller> (lan2), lan (lan2) {}
 
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
 bool find_win_spell(string &cmd , string &name) {
     url u;
     u= url_system ("$PROGRAMFILES\\Aspell\\bin\\aspell.exe");
@@ -91,7 +91,7 @@ ispeller_rep::start () {
         name = cmd;
       }
       else 
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
       if (!find_win_spell(cmd , name))
 #endif
         return "Error: Cannot find spellchecker (neither Aspell nor Hunspell) ";
@@ -133,7 +133,7 @@ ispeller_rep::start () {
 string
 ispeller_rep::retrieve () {
   string ret;
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
   while ((ret != "\r\n") && (!ends (ret, "\r\n\r\n")) &&
 	 ((!ends (ret, "\r\n")) || (!starts (ret, "@(#)"))))
 #else
@@ -181,7 +181,7 @@ ispell_decode (string lan, string s) {
 
 static tree
 parse_ispell (string s) {
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
   while (ends (s, "\r\n")) s= s (0, N(s)-2);
 #else
   while (ends (s, "\n")) s= s (0, N(s)-1);

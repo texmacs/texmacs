@@ -15,7 +15,7 @@
 #include "iterator.hpp"
 #include <stdlib.h>
 #include <string.h>
-#ifndef __MINGW32__
+#ifndef OS_MINGW
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -83,7 +83,7 @@ string
 socket_server_rep::start () {
   // get the server
 
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
   {
     WSAData data;
@@ -99,7 +99,7 @@ socket_server_rep::start () {
 #endif
   if ((server = socket (PF_INET, SOCK_STREAM, 0)) == -1) {
     string ret="Error: call to 'socket' failed";
-#ifdef __MINGW32__
+#ifdef OS_MINGW
     char buf[32];
     ret <<" code:"<<itoa(WSAGetLastError(),buf,10);
 #endif
@@ -108,7 +108,7 @@ socket_server_rep::start () {
 
   // lose the pesky "address already in use" error message
   int yes= 1;
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if (setsockopt (server, SOL_SOCKET, SO_REUSEADDR,
     &yes, sizeof (int)) == -1)
 #else
@@ -128,7 +128,7 @@ socket_server_rep::start () {
     return "Error: call to 'bind' failed";
 
   // listen
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   if (wsoc::listen (server, 10) == -1)
 #else
   if (::listen (server, 10) == -1)
@@ -146,7 +146,7 @@ socket_server_rep::start () {
 
 void
 socket_server_rep::start_client () {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   struct sockaddr_in remote_address;
@@ -193,7 +193,7 @@ socket_server_rep::interrupt () {
 
 void
 socket_server_rep::stop () {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   // FIXME: close children
@@ -202,7 +202,7 @@ socket_server_rep::stop () {
   alive= false;
   remove_notifier (sn);
   sn= socket_notifier ();
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   closesocket (server);
   WSACleanup();
 #else
@@ -217,7 +217,7 @@ socket_server_rep::stop () {
 
 void 
 socket_server_callback (void *obj, void *info) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   (void) info;

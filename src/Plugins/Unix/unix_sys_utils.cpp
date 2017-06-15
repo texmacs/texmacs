@@ -43,7 +43,7 @@ unix_system (string cmd, string& result) {
 * Evaluation via specified file descriptors
 ******************************************************************************/
 
-#if !defined(__MINGW__) && !defined(__MINGW32__)
+#ifndef OS_MINGW
 
 extern char **environ;
 

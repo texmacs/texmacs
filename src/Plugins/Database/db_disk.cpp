@@ -16,7 +16,7 @@
 #define DB_CREATE_FIELD  2
 #define DB_REMOVE_FIELD  3
 
-#ifdef __MINGW32__
+#ifdef OS_MINGW
 #define random rand
 #endif
 

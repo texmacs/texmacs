@@ -11,7 +11,7 @@
 
 #include "basic.hpp"
 
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__) || defined (QTPIPES))
+#if defined (QTTEXMACS) && (defined (OS_MINGW) || defined (QTPIPES))
 
 #include "tm_link.hpp"
 #include "QTMPipeLink.hpp"
@@ -21,7 +21,7 @@
 
 #include <sys/types.h>
 #include <signal.h>
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
 #else
 #  include <sys/wait.h>
 #endif
@@ -142,7 +142,7 @@ qt_pipe_link_rep::is_readable (int channel) {
 void
 qt_pipe_link_rep::interrupt () {
   if (!alive) return;
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
   // Not implemented
 #else
   ::killpg(PipeLink.pid (), SIGINT);
@@ -186,4 +186,4 @@ process_all_pipes () {
   }
 }
 
-#endif // defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#endif // defined (QTTEXMACS) && defined (OS_MINGW)

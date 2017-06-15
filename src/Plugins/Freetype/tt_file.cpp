@@ -53,7 +53,7 @@ tt_font_path () {
     xu |
     search_sub_dirs ("$TEXMACS_HOME_PATH/fonts/truetype") |
     search_sub_dirs ("$TEXMACS_PATH/fonts/truetype") |
-#if defined __MINGW32__
+#if defined OS_MINGW
     search_sub_dirs ("$windir/Fonts");
 #elif defined OS_MACOS
     search_sub_dirs ("$HOME/Library/Fonts") |

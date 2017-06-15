@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   //FIXME: if this include is not here we have compilation problems on mingw32
   //       (probably name clashes with Windows headers)
   //#include "tree.hpp"

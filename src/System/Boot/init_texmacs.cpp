@@ -18,7 +18,7 @@
 #include "drd_std.hpp"
 #include "language.hpp"
 #include <unistd.h>
-#ifdef __MINGW32__
+#ifdef OS_MINGW
 #include <time.h>
 #endif
 
@@ -85,7 +85,7 @@ plugin_list () {
 
 static void
 init_main_paths () {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   if (is_none (get_env_path ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "/TeXmacs"))) {
 #else
   if (is_none (get_env_path ("TEXMACS_HOME_PATH", "~/.TeXmacs"))) {
@@ -116,7 +116,7 @@ make_dir (url which) {
 
 static url
 url_temp_dir_sub () {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   static url tmp_dir=
     url_system (main_tmp_dir) * url_system (as_string (time (NULL)));
 #else
@@ -147,7 +147,7 @@ static void
 clean_temp_dirs () {
   bool err= false;
   array<string> a= read_directory (main_tmp_dir, err);
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   for (int i=0; i<N(a); i++)
     if (is_int (a[i]))
       if (!process_running (as_int (a[i])))
@@ -348,7 +348,7 @@ init_env_vars () {
 static void
 init_misc () {
   // Test whether 'which' works
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
   use_which = false;
 #else
   use_which = (var_eval_system ("which texmacs 2> /dev/null") != "");
@@ -368,7 +368,7 @@ init_misc () {
 static void
 setup_inkscape_extension () {
 debug_boot << "attempt install of inkscape extension \n ";
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
   url ink_ext = url ("$APPDATA/inkscape/extensions");
 #else
   url ink_ext = "~/.config/inkscape/extensions/";

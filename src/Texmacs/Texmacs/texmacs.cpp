@@ -143,7 +143,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // system("set");
 #endif
 
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   // Win bundle environment initialization
   // TEXMACS_PATH is set by assuming that the executable is in TeXmacs/bin/
   // HOME is set to USERPROFILE
@@ -492,7 +492,7 @@ boot_hacks () {
 void
 immediate_options (int argc, char** argv) {
   if (get_env ("TEXMACS_HOME_PATH") == "")
-#ifdef __MINGW32__
+#ifdef OS_MINGW
     if (get_env ("HOME") == "")
         set_env ("HOME", get_env("USERPROFILE"));
     set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "\\TeXmacs");

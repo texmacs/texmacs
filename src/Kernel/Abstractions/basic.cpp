@@ -276,7 +276,7 @@ os_win32 () {
 
 bool
 os_mingw () {
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
   return true;
 #else
   return false;

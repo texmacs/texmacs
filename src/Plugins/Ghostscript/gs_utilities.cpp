@@ -19,7 +19,7 @@
 
 static string
 gs_executable () {
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
   static string cmd; // no need to resolve each time
   if (cmd == "") {
     url gs= resolve_in_path ("gswin32c");

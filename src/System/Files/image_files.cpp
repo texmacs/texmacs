@@ -501,7 +501,7 @@ call_scm_converter(url image, url dest) {
 
 bool
 has_image_magick (){
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
   static bool has_imagemagick = exists_in_path ("conjure"); 
   // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
   // better test for "conjure" for the presence of imagemagick
@@ -514,7 +514,7 @@ has_image_magick (){
 string
 imagemagick_cmd () {
   if (has_image_magick()) {
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
     static string image_magick_cmd=
       sys_concretize (resolve_in_path ("convert"));
 #else
@@ -550,7 +550,7 @@ imagemagick_image_size(url image, int& w, int& h, bool pt_units) {
   if (!has_image_magick()) return false;
   else {		
     string cmd= "identify"; //ImageMagick utility
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
     cmd = sys_concretize(resolve_in_path(cmd));
 #endif
     cmd << " -ping -format \"%w %h %x\\n%y\""; 

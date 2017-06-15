@@ -306,7 +306,7 @@ as_string (long int i) {
 string
 as_string (long long int i) {
   char buf[64];
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
   sprintf (buf, "%I64d", i);
 #else
   sprintf (buf, "%lli", i);

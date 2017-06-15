@@ -35,7 +35,7 @@
 #include "Qt/qt_utilities.hpp"
 #endif
 
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#if defined (QTTEXMACS) && defined (OS_MINGW)
 #include "Qt/WINPrint.hpp"
 #endif
 
@@ -165,7 +165,7 @@ edit_main_rep::get_metadata (string kind) {
   val= search_metadata (subtree (et, rp), kind);
   if (val != "") return val;
   if (kind == "title") return as_string (tail (get_name ()));
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if (kind == "author" &&
       !is_none (resolve_in_path ("finger")) &&
       !is_none (resolve_in_path ("sed"))) {
@@ -316,7 +316,7 @@ edit_main_rep::print_to_file (url name, string first, string last) {
 void
 edit_main_rep::print_buffer (string first, string last) {
    url target;
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#if defined (QTTEXMACS) && defined (OS_MINGW)
    {
      target= url_temp (".pdf"); 
      WINPrint wprt(to_qstring(as_string(target)),env->page_landscape);

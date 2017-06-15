@@ -128,7 +128,7 @@ initkeymap () {
   // map (Qt::Key_Find        , "find" );
   // map (Qt::Key_ModeSwitchFunctionKey, "modeswitch" );
 }
-#ifdef __MINGW32__
+#ifdef OS_MINGW
 enum WindowsNativeModifiers {
     ShiftLeft            = 0x00000001,
     ControlLeft          = 0x00000002,
@@ -250,7 +250,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       debug_qt << "key  : " << key << LF;
       debug_qt << "text : " << event->text().toLatin1().data() << LF;
       debug_qt << "count: " << event->text().count() << LF;
-#ifdef __MINGW32__
+#ifdef OS_MINGW
       debug_qt << "nativeScanCode: " << event->nativeScanCode() << LF; 
       debug_qt << "nativeVirtualKey: " << event->nativeVirtualKey() << LF;
       debug_qt << "nativeModifiers: " << event->nativeModifiers() << LF;
@@ -263,7 +263,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     }
 
     string r;
-#ifdef __MINGW32__ 
+#ifdef OS_MINGW 
 /* "Qt::Key_AltGr On Windows, when the KeyDown event for this key is sent,
 * the Ctrl+Alt modifiers are also set." (excerpt from Qt doc)
 * However the AltGr key is used to obtain many symbols 

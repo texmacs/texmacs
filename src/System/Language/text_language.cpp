@@ -13,7 +13,7 @@
 #include <locale.h>
 #endif
 
-#if !defined(__MINGW__) && !defined(__MINGW32__)
+#ifndef OS_MINGW
 #include <langinfo.h>
 #endif
 
@@ -543,7 +543,7 @@ get_locale_language () {
 
 string
 get_locale_charset () {
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
   // in principle for now we use 8-bit codepage stuff in windows (at least for filenames);
   // return language_to_local_ISO_charset (get_locale_language ());
   return ("UTF-8"); // do not change this!
@@ -591,7 +591,7 @@ simplify_date (string s) {
 
 string
 get_date (string lan, string fm) {
-//#if defined(__MINGW__) || defined(__MINGW32__)
+//#ifdef OS_MINGW
 //  return win32::get_date(lan, fm);
   if (invalid_format (fm)) {
     if ((lan == "british") || (lan == "english") || (lan == "american"))

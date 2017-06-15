@@ -13,7 +13,7 @@
 #include "scheme.hpp"
 #include "iterator.hpp"
 
-#ifndef __MINGW32__
+#ifndef OS_MINGW
 
 #include <errno.h>
 #include <unistd.h>
@@ -46,7 +46,7 @@
 unsigned dbg_cnt;
 int socket_link::id= 0;
 int socket_basic::count= 0;
-#ifdef __MINGW32__
+#ifdef OS_MINGW
 wsoc::WSADATA socket_basic::wsadata;
 #endif
 
@@ -61,7 +61,7 @@ show_addr (unsigned long a) {
 }
 
 socket_basic::socket_basic (): st (ST_VOID) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   if (!count) {
     using namespace wsoc;
     err=wsoc::WSAStartup (MAKEWORD (2,0), &wsadata);
@@ -73,7 +73,7 @@ socket_basic::socket_basic (): st (ST_VOID) {
 
 socket_basic::~socket_basic () {
   if (count > 0) --count;
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   if (!count) wsoc::WSACleanup ();
 #endif
 };
@@ -153,7 +153,7 @@ socket_link::socket_link(string host, u_short port) {
 
   FREEADDRINFO(result);           /* No longer needed */
 
- #ifndef __MINGW32__
+ #ifndef OS_MINGW
   if (fcntl (sock, F_SETFL, O_NONBLOCK) == -1) {
     err= errno; st= ST_FCNTL; return; }
  #else
@@ -255,7 +255,7 @@ socket_link::data_set_ready (int s) {
 
 void
 socket_link::ready_to_send (int s) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   qsnw->setEnabled (false);
@@ -279,7 +279,7 @@ socket_link::ready_to_send (int s) {
 
 void
 socket_link::listen (int msecs) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   if (!alive ()) return;
@@ -311,7 +311,7 @@ socket_server::socket_server (in_addr_t add, u_short port) {
   sock= NMSPC (socket (AF_INET , SOCK_STREAM , 0));
   if (sock == -1) { err= ERRNO; st= ST_SOCKET; return;}
 
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   if (fcntl (sock, F_SETFL, O_NONBLOCK) == -1) {
     err= ERRNO; st= ST_FCNTL; return; }
 #else 

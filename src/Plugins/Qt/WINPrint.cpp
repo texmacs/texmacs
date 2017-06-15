@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#if defined (QTTEXMACS) && defined (OS_MINGW)
 #include <QtGlobal>
 #include <QtCore/Qstring>
 #if (QT_VERSION >= 0x050000)

@@ -19,7 +19,7 @@
 #include "new_document.hpp"
 #include "drd_std.hpp"
 
-#if defined(__MINGW32__)
+#ifdef OS_MINGW
 #define WINPATHS
 #endif
 

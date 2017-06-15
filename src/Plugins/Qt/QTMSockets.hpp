@@ -19,7 +19,7 @@
 #include "string.hpp"
 #include "tm_link.hpp"
 
-#ifndef __MINGW32__
+#ifndef OS_MINGW
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -63,7 +63,7 @@ protected:
   enum state st;
 private:
   static int count;
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   static wsoc::WSADATA wsadata;
 #endif
 };

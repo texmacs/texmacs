@@ -25,6 +25,9 @@
 typedef long intptr_t;
 #endif
 
+#if (defined (__MINGW__) || defined (__MINGW32__))
+#define OS_MINGW
+#endif
 #ifdef OS_WIN32
 #define LESSGTR
 #else

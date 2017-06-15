@@ -11,7 +11,7 @@
 ******************************************************************************/
 
 
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#if defined (QTTEXMACS) && defined (OS_MINGW)
 
 class WINPrint {
 public:

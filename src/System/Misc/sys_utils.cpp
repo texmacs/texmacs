@@ -13,7 +13,7 @@
 #include "file.hpp"
 #include "tree.hpp"
 
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#if defined (QTTEXMACS) && defined (OS_MINGW)
 # include "Qt/qt_sys_utils.hpp"
 #include "Windows/mingw_sys_utils.hpp"
 #else
@@ -28,7 +28,7 @@ int script_status = 1;
 
 int
 system (string s, string& result) {
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#if defined (QTTEXMACS) && defined (OS_MINGW)
   int r= qt_system (s, result);
 #else
   int r= unix_system (s, result);
@@ -46,7 +46,7 @@ system (string s) {
     return r;
   }
   else {
-#if defined (QTTEXMACS) && (defined (__MINGW__) || defined (__MINGW32__))
+#if defined (QTTEXMACS) && defined (OS_MINGW)
     // if (starts (s, "convert ")) return 1;
     return qt_system (s);
 #else
@@ -84,7 +84,7 @@ get_env (string var) {
 
 void
 set_env (string var, string with) {
-#if defined(STD_SETENV) && !defined(__MINGW32__)
+#if defined(STD_SETENV) && !defined(OS_MINGW)
   c_string _var  (var);
   c_string _with (with);
   setenv (_var, _with, 1);
@@ -120,7 +120,7 @@ evaluate_system (array<string> arg,
   array<string> out (N(fd_out));
   array<string*> ptr (N(fd_out));
   for (int i= 0; i < N(fd_out); i++) ptr[i]= &(out[i]);
-#if (defined (__MINGW__) || defined (__MINGW32__))
+#ifdef OS_MINGW
   int ret= mingw_system (arg, fd_in, in, fd_out, ptr);
 #else
   int ret= unix_system (arg, fd_in, in, fd_out, ptr);

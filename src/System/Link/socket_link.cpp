@@ -21,7 +21,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
-#ifndef __MINGW32__
+#ifndef OS_MINGW
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -83,7 +83,7 @@ find_socket_link (int fd) {
 
 void
 close_all_sockets () {
-#ifndef __MINGW32__
+#ifndef OS_MINGW
   iterator<pointer> it= iterate (socket_link_set);
   while (it->busy()) {
     socket_link_rep* con= (socket_link_rep*) it->next();
@@ -101,7 +101,7 @@ close_all_sockets () {
 
 string
 socket_link_rep::start () {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
   {
     WSAData data;
@@ -182,7 +182,7 @@ socket_link_rep::start () {
   freeaddrinfo(result);           /* No longer needed */
 
   // testing whether it works
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
   unsigned long flags = -1;
   if (ioctlsocket (io, FIONBIO, &flags) == SOCKET_ERROR)
     return "non working connection to '" * where * "'";
@@ -214,7 +214,7 @@ debug_io_string (string s) {
 
 static int
 send_all (int s, char *buf, int *len) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   int total= 0;          // how many bytes we've sent
@@ -246,7 +246,7 @@ socket_link_rep::write (string s, int channel) {
 
 void
 socket_link_rep::feed (int channel) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   if ((!alive) || (channel != LINK_OUT)) return;
@@ -286,7 +286,7 @@ socket_link_rep::read (int channel) {
 
 void
 socket_link_rep::listen (int msecs) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   if (!alive) return;
@@ -306,7 +306,7 @@ socket_link_rep::interrupt () {
 
 void
 socket_link_rep::stop () {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   if (!alive) return;
@@ -317,7 +317,7 @@ socket_link_rep::stop () {
   alive= false;
   remove_notifier (sn);
   sn = socket_notifier ();
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   closesocket (io);
   WSACleanup();
 #else
@@ -333,7 +333,7 @@ socket_link_rep::stop () {
 
 void
 socket_callback (void *obj, void* info) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   using namespace wsoc;
 #endif
   (void) info;

@@ -64,7 +64,7 @@ load_string (url u, string& s, bool fatal) {
     bench_start ("load file");
     c_string _name (name);
     // cout << "OPEN :" << _name << LF;
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
     FILE* fin= fopen (_name, "rb");
 #else
     FILE* fin= fopen (_name, "r");
@@ -92,7 +92,7 @@ load_string (url u, string& s, bool fatal) {
       }
       if (err) {
         std_warning << "Seek failed for " << as_string (u) << "\n";
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
 #else
         flock (fd, LOCK_UN);
 #endif
@@ -104,7 +104,7 @@ load_string (url u, string& s, bool fatal) {
       s->resize (size);
       int read= fread (&(s[0]), 1, size, fin);
       if (read < size) s->resize (read);
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
 #else
       flock (fd, LOCK_UN);
 #endif
@@ -144,7 +144,7 @@ save_string (url u, string s, bool fatal) {
     string name= concretize (r);
     {
       c_string _name (name);
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
       FILE* fout= fopen (_name, "wb");
 #else
       FILE* fout= fopen (_name, "r+");
@@ -169,7 +169,7 @@ save_string (url u, string s, bool fatal) {
         int i, n= N(s);
         for (i=0; i<n; i++)
           fputc (s[i], fout);
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
 #else
         flock (fd, LOCK_UN);
 #endif
@@ -206,7 +206,7 @@ append_string (url u, string s, bool fatal) {
     string name= concretize (r);
     {
       c_string _name (name);
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
       FILE* fout= fopen (_name, "ab");
 #else
       FILE* fout= fopen (_name, "a");
@@ -228,7 +228,7 @@ append_string (url u, string s, bool fatal) {
         int i, n= N(s);
         for (i=0; i<n; i++)
           fputc (s[i], fout);
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
 #else
         flock (fd, LOCK_UN);
 #endif
@@ -356,7 +356,7 @@ is_of_type (url name, string filter) {
     return true;
 
   // Normal files
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
   if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
     name = glue (name, ".exe");
 #endif
@@ -375,7 +375,7 @@ is_of_type (url name, string filter) {
       if (err || !S_ISDIR (buf.st_mode)) return false;
       break;
     case 'l':
-#ifdef __MINGW32__
+#ifdef OS_MINGW
       return false;
 #else
       if (err || !S_ISLNK (buf.st_mode)) return false;
@@ -383,7 +383,7 @@ is_of_type (url name, string filter) {
       break;
     case 'r':
       if (err) return false;
-#ifndef __MINGW32__
+#ifndef OS_MINGW
       if ((buf.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)) == 0) return false;
 #else
       if ((buf.st_mode & 292) == 0) return false;
@@ -391,7 +391,7 @@ is_of_type (url name, string filter) {
       break;
     case 'w':
       if (err) return false;
-#ifndef __MINGW32__
+#ifndef OS_MINGW
       if ((buf.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) return false;
 #else
       if ((buf.st_mode & 146) == 0) return false;
@@ -399,10 +399,10 @@ is_of_type (url name, string filter) {
       break;
     case 'x':
       if (err) return false;
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
       if (suffix(name) == "bat") break;
 #endif
-#ifndef __MINGW32__
+#ifndef OS_MINGW
       if ((buf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0) return false;
 #else
       if ((buf.st_mode & 73) == 0) return false;
@@ -452,7 +452,7 @@ is_newer (url which, url than) {
 
 url
 url_temp (string suffix) {
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   unsigned int rnd= raw_time ();
 #else
   static bool initialized= false;
@@ -610,14 +610,14 @@ mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   if (!exists (u)) {
     c_string _u (concretize (u));
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
     (void) ::mkdir (_u);
 #else
     (void) ::mkdir (_u, S_IRWXU + S_IRGRP + S_IROTH);
 #endif
   }
 #else
-#if defined(__MINGW__) || defined(__MINGW32__)
+#ifdef OS_MINGW
   system ("mkdir", u);
 #else
   system ("mkdir -p", u);

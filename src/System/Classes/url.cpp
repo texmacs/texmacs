@@ -67,7 +67,7 @@
 
 #include <ctype.h>
 
-#if defined(__MINGW32__)
+#ifdef OS_MINGW
 #define WINPATHS
 #endif
 
@@ -968,7 +968,7 @@ resolve_in_path (url u) {
 	     (!starts (which, "no ")))
       cout << "TeXmacs] " << which << "\n";
   }
-#ifdef __MINGW32__
+#ifdef OS_MINGW
   return resolve ((url_path ("$TEXMACS_PATH/bin") | url_path ("$PATH")) * u, "x");
 #else
   return resolve (url_path ("$PATH") * u, "x");
@@ -982,7 +982,7 @@ exists (url u) {
 
 bool
 exists_in_path (url u) {
-#if defined (__MINGW__) || defined (__MINGW32__)
+#ifdef OS_MINGW
   return !is_none (resolve_in_path (url (as_string (u) * ".bat"))) ||\
   	 !is_none (resolve_in_path (url (as_string (u) * ".exe"))) ||\
 	 !is_none (resolve_in_path (url (as_string (u) * ".com")));
