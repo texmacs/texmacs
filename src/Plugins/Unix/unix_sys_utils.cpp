@@ -43,7 +43,7 @@ unix_system (string cmd, string& result) {
 * Evaluation via specified file descriptors
 ******************************************************************************/
 
-#if !defined(__MINGW__) && !defined(__MINGW32__) && !defined(OS_WIN32)
+#if !defined(__MINGW__) && !defined(__MINGW32__)
 
 extern char **environ;
 
@@ -323,4 +323,3 @@ unix_system (array<string> arg,
 }
 
 #endif
-

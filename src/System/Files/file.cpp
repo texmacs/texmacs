@@ -92,7 +92,7 @@ load_string (url u, string& s, bool fatal) {
       }
       if (err) {
         std_warning << "Seek failed for " << as_string (u) << "\n";
-#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
 #else
         flock (fd, LOCK_UN);
 #endif
@@ -104,7 +104,7 @@ load_string (url u, string& s, bool fatal) {
       s->resize (size);
       int read= fread (&(s[0]), 1, size, fin);
       if (read < size) s->resize (read);
-#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
 #else
       flock (fd, LOCK_UN);
 #endif
@@ -228,7 +228,7 @@ append_string (url u, string s, bool fatal) {
         int i, n= N(s);
         for (i=0; i<n; i++)
           fputc (s[i], fout);
-#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
 #else
         flock (fd, LOCK_UN);
 #endif
@@ -356,7 +356,7 @@ is_of_type (url name, string filter) {
     return true;
 
   // Normal files
-#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
   if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
     name = glue (name, ".exe");
 #endif
@@ -399,7 +399,7 @@ is_of_type (url name, string filter) {
       break;
     case 'x':
       if (err) return false;
-#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
       if (suffix(name) == "bat") break;
 #endif
 #ifndef __MINGW32__

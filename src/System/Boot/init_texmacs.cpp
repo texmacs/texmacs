@@ -348,7 +348,7 @@ init_env_vars () {
 static void
 init_misc () {
   // Test whether 'which' works
-#if defined(__MINGW__) || defined(__MINGW32__) || defined (OS_WIN32)
+#if defined(__MINGW__) || defined(__MINGW32__)
   use_which = false;
 #else
   use_which = (var_eval_system ("which texmacs 2> /dev/null") != "");
@@ -368,7 +368,7 @@ init_misc () {
 static void
 setup_inkscape_extension () {
 debug_boot << "attempt install of inkscape extension \n ";
-#if defined(__MINGW__) || defined(__MINGW32__) || defined (OS_WIN32)
+#if defined(__MINGW__) || defined(__MINGW32__)
   url ink_ext = url ("$APPDATA/inkscape/extensions");
 #else
   url ink_ext = "~/.config/inkscape/extensions/";

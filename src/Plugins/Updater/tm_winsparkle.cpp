@@ -11,7 +11,7 @@
 #include "tm_configure.hpp"
 
   // HACK, should be fixed with autotools
-#if (defined (OS_MINGW) || defined (OS_WIN32))  && defined (USE_SPARKLE) 
+#if defined (OS_MINGW) && defined (USE_SPARKLE) 
 
 #include "tm_winsparkle.hpp"
 #include "string.hpp"
@@ -87,4 +87,4 @@ bool tm_winsparkle::checkInForeground ()
   return true;
 }
 
-#endif  // (defined (OS_MINGW) || defined (OS_WIN32)) && defined (USE_SPARKLE)
+#endif  // defined (OS_MINGW) && defined (USE_SPARKLE)

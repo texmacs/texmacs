@@ -591,7 +591,7 @@ simplify_date (string s) {
 
 string
 get_date (string lan, string fm) {
-//#if defined(__MINGW__) || defined(__MINGW32__) || defined(OS_WIN32)
+//#if defined(__MINGW__) || defined(__MINGW32__)
 //  return win32::get_date(lan, fm);
   if (invalid_format (fm)) {
     if ((lan == "british") || (lan == "english") || (lan == "american"))

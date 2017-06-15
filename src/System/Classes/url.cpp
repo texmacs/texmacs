@@ -67,7 +67,7 @@
 
 #include <ctype.h>
 
-#if defined(OS_WIN32)  || defined(__MINGW32__)
+#if defined(__MINGW32__)
 #define WINPATHS
 #endif
 
@@ -982,7 +982,7 @@ exists (url u) {
 
 bool
 exists_in_path (url u) {
-#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
   return !is_none (resolve_in_path (url (as_string (u) * ".bat"))) ||\
   	 !is_none (resolve_in_path (url (as_string (u) * ".exe"))) ||\
 	 !is_none (resolve_in_path (url (as_string (u) * ".com")));
