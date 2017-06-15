@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : qt_sys_utils.hpp
 * DESCRIPTION: external command handling
-* COPYRIGHT  : (C) 2009  David MICHEL
+* COPYRIGHT  : (C) 2009-2016  David MICHEL, Denis RAUX
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -22,6 +22,7 @@
  */
 int qt_system (string);
 int qt_system (string, string&);
+int qt_system (string, string&, string&);
 
 #endif // defined QT_SYS_UTILS_H
 

@@ -39,6 +39,23 @@ unix_system (string cmd, string& result) {
   return ret;
 }
 
+int
+unix_system (string cmd, string& result, string& error) {
+  url temps= url_temp ();
+  url tempe= url_temp ();
+  string temp_s= escape_sh (concretize (temps));
+  string temp_e= escape_sh (concretize (tempe));
+  c_string _cmd (cmd * " > " * temp_s * " 2> " * temp_e);
+  int ret= system (_cmd);
+  bool flag= load_string (temps, result, false);
+  remove (temps);
+  if (flag) result= "";
+  flag= load_string (tempe, error, false);
+  remove (tempe);
+  if (flag) error= "";
+  return ret;
+}
+
 /******************************************************************************
 * Evaluation via specified file descriptors
 ******************************************************************************/

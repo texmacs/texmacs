@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : sys_utils.hpp
 * DESCRIPTION: system utilities
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* COPYRIGHT  : (C) 1999-2016  Joris van der Hoeven, Denis Raux
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -19,6 +19,7 @@ extern int script_status; // 0: never accept, 1: prompt, 2: always accept
 
 int    system (string s);
 int    system (string s, string &r);
+int    system (string s, string &r, string& e);
 string eval_system (string s);
 string var_eval_system (string s);
 string get_env (string var);

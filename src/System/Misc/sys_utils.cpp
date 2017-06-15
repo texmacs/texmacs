@@ -2,7 +2,7 @@
 /******************************************************************************
 * MODULE     : sys_utils.cpp
 * DESCRIPTION: file handling
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
+* COPYRIGHT  : (C) 1999-2016  Joris van der Hoeven, Denis Raux
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -13,12 +13,13 @@
 #include "file.hpp"
 #include "tree.hpp"
 
-#if defined (QTTEXMACS) && defined (OS_MINGW)
-# include "Qt/qt_sys_utils.hpp"
-#include "Windows/mingw_sys_utils.hpp"
-#else
-#  include "Unix/unix_sys_utils.hpp"
+#if defined (QTTEXMACS)
+#include "Qt/qt_sys_utils.hpp"
 #endif
+#ifdef OS_MINGW
+#include "Windows/mingw_sys_utils.hpp"
+#endif
+#include "Unix/unix_sys_utils.hpp"
 
 int script_status = 1;
 
@@ -27,8 +28,18 @@ int script_status = 1;
 ******************************************************************************/
 
 int
+system (string s, string& result, string& error) {
+#if defined (QTTEXMACS)
+  int r= qt_system (s, result, error);
+#else
+  int r= unix_system (s, result, error);
+#endif  
+  return r;
+}
+
+int
 system (string s, string& result) {
-#if defined (QTTEXMACS) && defined (OS_MINGW)
+#if defined (QTTEXMACS)
   int r= qt_system (s, result);
 #else
   int r= unix_system (s, result);
@@ -46,7 +57,7 @@ system (string s) {
     return r;
   }
   else {
-#if defined (QTTEXMACS) && defined (OS_MINGW)
+#if defined (QTTEXMACS)
     // if (starts (s, "convert ")) return 1;
     return qt_system (s);
 #else

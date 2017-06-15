@@ -17,6 +17,7 @@
 
 int unix_system (string);
 int unix_system (string, string&);
+int unix_system (string, string&, string&);
 
 int unix_system (array<string> arg,
 		 array<int> fd_in, array<string> str_in,
