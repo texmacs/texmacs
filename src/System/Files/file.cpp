@@ -169,7 +169,7 @@ save_string (url u, string s, bool fatal) {
         int i, n= N(s);
         for (i=0; i<n; i++)
           fputc (s[i], fout);
-#if defined (OS_WIN32) || defined (__MINGW__) || defined (__MINGW32__)
+#if defined (__MINGW__) || defined (__MINGW32__)
 #else
         flock (fd, LOCK_UN);
 #endif

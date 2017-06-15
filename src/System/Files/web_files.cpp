@@ -76,7 +76,6 @@ get_from_web (url name) {
   url res= get_cache (name);
   if (!is_none (res)) return res;
 
-
   string test= var_eval_system ("which wget");
   if (!ends (test, "wget")) return url_none ();
   url tmp= url_temp ();
@@ -92,7 +91,6 @@ get_from_web (url name) {
     return url_none ();
   }
   else return set_cache (name, tmp);
-
 }
 
 /******************************************************************************
