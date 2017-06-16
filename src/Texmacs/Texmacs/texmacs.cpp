@@ -470,7 +470,7 @@ boot_hacks () {
   //printf ("cur: %i\n", lims.rlim_cur);
   //printf ("max: %i\n", lims.rlim_max);
 #if defined(MAC_OS_X_VERSION_10_10)
-  mac_fix_yosemite_bug();
+  if (release - 4 >= 10) mac_fix_yosemite_bug();
 #endif
 
 #ifdef QTTEXMACS
