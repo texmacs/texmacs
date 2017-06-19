@@ -24410,23 +24410,24 @@ $as_echo "$as_me: PDF_LDFLAGS:$PDF_LDFLAGS" >&6;}
 # Debugging options
 #--------------------------------------------------------------------
 
-#STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
-#if test "$enable_cocoa" = "yes"; then
-#    STD_DEBUG_FLAGS="-fno-exceptions"
-#fi
 
-STD_DEBUG_FLAGS="-fno-rtti"
-if test "$enable_cocoa" = "yes"; then
-    STD_DEBUG_FLAGS=""
-fi
+  #STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
+  #if test "$enable_cocoa" = "yes"; then
+  #    STD_DEBUG_FLAGS="-fno-exceptions"
+  #fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if compiler supports $STD_DEBUG_FLAGS" >&5
+  STD_DEBUG_FLAGS="-fno-rtti"
+  if test "$enable_cocoa" = "yes"; then
+      STD_DEBUG_FLAGS=""
+  fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking if compiler supports $STD_DEBUG_FLAGS" >&5
 $as_echo_n "checking if compiler supports $STD_DEBUG_FLAGS... " >&6; }
-CXXFLAGS="$STD_DEBUG_FLAGS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  CXXFLAGS="$STD_DEBUG_FLAGS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-  int some_variable = 0;
+    int some_variable = 0;
 
 int
 main ()
@@ -24439,22 +24440,24 @@ main ()
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
 
-    CONFIG_CXXDIALECT="$STD_DEBUG_FLAGS"
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+      CONFIG_CXXDIALECT="$STD_DEBUG_FLAGS"
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 else
 
-    CONFIG_CXXDIALECT=""
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+      CONFIG_CXXDIALECT=""
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-CXXFLAGS=""
+  CXXFLAGS=""
 
 
-# Check whether --enable-profile was given.
+  #--- Profiling
+
+  # Check whether --enable-profile was given.
 if test "${enable_profile+set}" = set; then :
   enableval=$enable_profile;
 else
@@ -24462,31 +24465,33 @@ else
 fi
 
 
-if test "$enable_profile" = "yes"; then
-    if test "$GXX" = "yes"; then
-        enable_profile="yes"
-    else
-        enable_profile="none"
-    fi
-fi
+  if test "$enable_profile" = "yes"; then
+      if test "$GXX" = "yes"; then
+	  enable_profile="yes"
+      else
+	  enable_profile="none"
+      fi
+  fi
 
-case "$enable_profile" in
-    yes)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling gcc profiling compilation flag -pg" >&5
+  case "$enable_profile" in
+      yes)
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling gcc profiling compilation flag -pg" >&5
 $as_echo "enabling gcc profiling compilation flag -pg" >&6; }
-        CONFIG_CXXPROFILE="-pg"
-        ;;
-    none)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling gcc profiling compilation flag" >&5
+	  CONFIG_CXXPROFILE="-pg"
+	  ;;
+      none)
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling gcc profiling compilation flag" >&5
 $as_echo "disabling gcc profiling compilation flag" >&6; }
-        CONFIG_CXXPROFILE=""
-	;;
-    *)
-        CONFIG_CXXPROFILE=""
-	;;
-esac
+	  CONFIG_CXXPROFILE=""
+	  ;;
+      *)
+	  CONFIG_CXXPROFILE=""
+	  ;;
+  esac
 
-# Check whether --enable-debug was given.
+  #--- Debugging
+
+  # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
   enableval=$enable_debug;
 else
@@ -24494,29 +24499,31 @@ else
 fi
 
 
-if test "$enable_debug" = "yes"; then
-    if test "$GXX" = "yes"; then
-        enable_debug="-ggdb"
-    else
-        enable_debug="-g3"
-    fi
-fi
+  if test "$enable_debug" = "yes"; then
+      if test "$GXX" = "yes"; then
+	  enable_debug="-ggdb"
+      else
+	  enable_debug="-g3"
+      fi
+  fi
 
-if test "$enable_debug" = "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling debugging" >&5
+  if test "$enable_debug" = "no"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling debugging" >&5
 $as_echo "disabling debugging" >&6; }
-    CONFIG_STRIP="strip"
-    CONFIG_CXXDEBUG=""
-    optimize_default="yes"
-else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling debugging, $enable_debug" >&5
+      CONFIG_STRIP="strip"
+      CONFIG_CXXDEBUG=""
+      optimize_default="yes"
+  else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling debugging, $enable_debug" >&5
 $as_echo "enabling debugging, $enable_debug" >&6; }
-    CONFIG_STRIP="true"
-    CONFIG_CXXDEBUG="$enable_debug"
-    optimize_default="no"
-fi
+      CONFIG_STRIP="true"
+      CONFIG_CXXDEBUG="$enable_debug"
+      optimize_default="no"
+  fi
 
-# Check whether --enable-assert was given.
+  #--- Assert
+
+  # Check whether --enable-assert was given.
 if test "${enable_assert+set}" = set; then :
   enableval=$enable_assert;
 else
@@ -24524,50 +24531,49 @@ else
 fi
 
 
-if test "$enable_assert" = "no"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling assertion checking" >&5
+  if test "$enable_assert" = "no"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling assertion checking" >&5
 $as_echo "disabling assertion checking" >&6; }
-else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling assertion checking" >&5
+  else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling assertion checking" >&5
 $as_echo "enabling assertion checking" >&6; }
 
 $as_echo "#define DEBUG_ASSERT 1" >>confdefs.h
 
-fi
+  fi
 
-#--------------------------------------------------------------------
-# Warning options
-#--------------------------------------------------------------------
+  #--- Warnings
 
-case "$GXX_VERSION" in
-  none)
-    CONFIG_CXXWARNING="";
-  ;;
-  *)
-    CONFIG_CXXWARNING="-Wall -Wno-return-type"
-  ;;
-esac
+  case "$GXX_VERSION" in
+    none)
+      CONFIG_CXXWARNING="";
+    ;;
+    *)
+      CONFIG_CXXWARNING="-Wall -Wno-return-type"
+    ;;
+  esac
 
-# Check whether --enable-warnings was given.
+  # Check whether --enable-warnings was given.
 if test "${enable_warnings+set}" = set; then :
   enableval=$enable_warnings;
 else
   enable_warnings="yes"
 fi
 
-case "$enable_warnings" in
-    yes)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling warning flags $CONFIG_CXXWARNING" >&5
+  case "$enable_warnings" in
+      yes)
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling warning flags $CONFIG_CXXWARNING" >&5
 $as_echo "enabling warning flags $CONFIG_CXXWARNING" >&6; } ;;
-    no)
-        CONFIG_CXXWARNING=""
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling warning flags" >&5
+      no)
+	  CONFIG_CXXWARNING=""
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling warning flags" >&5
 $as_echo "disabling warning flags" >&6; } ;;
-    *)
-        CONFIG_CXXWARNING="$enable_warnings"
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling warning flags $CONFIG_CXXWARNING" >&5
+      *)
+	  CONFIG_CXXWARNING="$enable_warnings"
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling warning flags $CONFIG_CXXWARNING" >&5
 $as_echo "enabling warning flags $CONFIG_CXXWARNING" >&6; } ;;
-esac
+  esac
+
 
 #--------------------------------------------------------------------
 # Optimization options
