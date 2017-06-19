@@ -24579,28 +24579,29 @@ $as_echo "enabling warning flags $CONFIG_CXXWARNING" >&6; } ;;
 # Optimization options
 #--------------------------------------------------------------------
 
-if test "$optimize_default" = "yes"; then
-  case "$GXX_VERSION" in
-    3.3.3 | 3.3.4 | 4.*)
-      ;;
-    2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
-      case "${host}" in
-	i*86-*-linux-gnu* | i*86-*-freebsd*)
-	  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using g++ 3.*, optimize without inline by default" >&5
-$as_echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
-	  optimize_default="no-inline"
-	;;
-	*)
-	  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using g++ 3.*, optimize without inline by default" >&5
-$as_echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
-	  optimize_default="no-inline"
-	;;
-      esac
-    ;;
-  esac
-fi
 
-# Check whether --enable-optimize was given.
+  if test "$optimize_default" = "yes"; then
+    case "$GXX_VERSION" in
+      3.3.3 | 3.3.4 | 4.*)
+	;;
+      2.96 | 3.0 | 3.0.* | 3.1 | 3.1.* | 3.2 | 3.2.* | 3.3 | 3.3.*)
+	case "${host}" in
+	  i*86-*-linux-gnu* | i*86-*-freebsd*)
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using g++ 3.*, optimize without inline by default" >&5
+$as_echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
+	    optimize_default="no-inline"
+	  ;;
+	  *)
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using g++ 3.*, optimize without inline by default" >&5
+$as_echo "$as_me: WARNING: using g++ 3.*, optimize without inline by default" >&2;}
+	    optimize_default="no-inline"
+	  ;;
+	esac
+      ;;
+    esac
+  fi
+
+  # Check whether --enable-optimize was given.
 if test "${enable_optimize+set}" = set; then :
   enableval=$enable_optimize;
 else
@@ -24608,25 +24609,26 @@ else
 fi
 
 
-case "$enable_optimize" in
-    yes)
-	# keep optimization options
-  	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling optimizations, $CONFIG_CXXOPTIMIZE" >&5
+  case "$enable_optimize" in
+      yes)
+	  # keep optimization options
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling optimizations, $CONFIG_CXXOPTIMIZE" >&5
 $as_echo "enabling optimizations, $CONFIG_CXXOPTIMIZE" >&6; } ;;
-    no-inline)
-	optimize_no_inline="-fno-default-inline -fno-inline"
-	CONFIG_CXXOPTIMIZE="$CONFIG_CXXOPTIMIZE $optimize_no_inline"
-  	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling optimizations, $CONFIG_CXXOPTIMIZE" >&5
+      no-inline)
+	  optimize_no_inline="-fno-default-inline -fno-inline"
+	  CONFIG_CXXOPTIMIZE="$CONFIG_CXXOPTIMIZE $optimize_no_inline"
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling optimizations, $CONFIG_CXXOPTIMIZE" >&5
 $as_echo "enabling optimizations, $CONFIG_CXXOPTIMIZE" >&6; } ;;
-    no)
-	CONFIG_CXXOPTIMIZE=""
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling optimizations" >&5
+      no)
+	  CONFIG_CXXOPTIMIZE=""
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling optimizations" >&5
 $as_echo "disabling optimizations" >&6; } ;;
-    *)
-	CONFIG_CXXOPTIMIZE="$enable_optimize"
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: customizing optimizations, $enable_optimize" >&5
+      *)
+	  CONFIG_CXXOPTIMIZE="$enable_optimize"
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: customizing optimizations, $enable_optimize" >&5
 $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
-esac
+  esac
+
 
 #--------------------------------------------------------------------
 # Fix for Mac OS X with genuine GCC and Qt framework
