@@ -21,6 +21,7 @@ m4_include([misc/m4/hummus.m4])
 m4_include([misc/m4/iconv.m4])
 m4_include([misc/m4/freetype.m4])
 m4_include([misc/m4/dlopen.m4])
+m4_include([misc/m4/tm_platform.m4])
 
 #-------------------------------------------------------------------
 # General functions
