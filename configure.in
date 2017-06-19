@@ -79,12 +79,9 @@ AC_CPLUSPLUS_STACK
 # Checks for standard functionality
 #--------------------------------------------------------------------
 
-LC_X_HEADERS
 AC_CHECK_TYPES(FILE)
 AC_CHECK_TYPES(intptr_t)
 AC_CHECK_TYPES(time_t)
-AC_PATH_X
-AC_PATH_XTRA
 AC_CHECK_HEADERS(pty.h util.h)
 AC_CHECK_FUNCS(gettimeofday)
 

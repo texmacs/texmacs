@@ -12,6 +12,10 @@
 #--------------------------------------------------------------------
 
 AC_DEFUN([TM_GUI],[
+  LC_X_HEADERS
+  AC_PATH_X
+  AC_PATH_XTRA
+
   CONFIG_X11=""
   CONFIG_COCOA=""
   CONFIG_GUI="X11"
