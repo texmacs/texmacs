@@ -21,12 +21,15 @@ m4_include([misc/m4/hummus.m4])
 m4_include([misc/m4/iconv.m4])
 m4_include([misc/m4/freetype.m4])
 m4_include([misc/m4/dlopen.m4])
+m4_include([misc/m4/tm_subversion.m4])
 m4_include([misc/m4/tm_platform.m4])
 m4_include([misc/m4/tm_debug.m4])
 m4_include([misc/m4/tm_optimize.m4])
 m4_include([misc/m4/tm_gui.m4])
 m4_include([misc/m4/tm_macos.m4])
 m4_include([misc/m4/tm_windows.m4])
+m4_include([misc/m4/tm_fastalloc.m4])
+m4_include([misc/m4/tm_install.m4])
 
 #-------------------------------------------------------------------
 # General functions

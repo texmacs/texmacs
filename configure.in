@@ -16,25 +16,10 @@ AC_CONFIG_HEADERS([src/System/config.h:src/System/config.in])
 AC_CANONICAL_HOST
 
 #--------------------------------------------------------------------
-# Retrieve SVN revision number from working dir or fallback file
-#--------------------------------------------------------------------
-
-AC_MSG_CHECKING(current Subversion revision number)
-SVNREV=`svnversion -n . 2>/dev/null`
-SVNREV=${SVNREV/:/_}
-if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then 
-  SVNREV=`cat $srcdir/SVNREV`
-  AC_MSG_RESULT($SVNREV, read from $srcdir/SVNREV)
-else 
-  echo "$SVNREV" > $srcdir/SVNREV
-  AC_MSG_RESULT($SVNREV)
-fi
-
-AC_SUBST(SVNREV)
-
-#--------------------------------------------------------------------
 # Export version and package name 
 #--------------------------------------------------------------------
+
+TM_SUBVERSION
 
 PACKAGE="TeXmacs"
 DEBIAN_NAME="texmacs"
@@ -158,41 +143,10 @@ LC_SPARKLE
 TM_PLATFORM
 
 #--------------------------------------------------------------------
-# Temporary fix for link problem
-#--------------------------------------------------------------------
-
-case "$GXX_VERSION" in
-     3.* | 4.*)
-#	 CONFIG_BSTATIC="-static"
-	 CONFIG_BSHARED="-dynamic"
-     ;;
-esac
-
-#--------------------------------------------------------------------
-# Check for expat and xcb libraries which exist only on certain OS
-#--------------------------------------------------------------------
-
-AC_CHECK_LIB(expat,XML_ParserCreate,[CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC";CONFIG_STYPE=A])
-AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
-
-#--------------------------------------------------------------------
 # Memory allocation options
 #--------------------------------------------------------------------
 
-AC_ARG_ENABLE(fastalloc,
-[  --disable-fastalloc     omit fast allocator for small objects],
-    [], [enable_fastalloc="yes"])
-case "$enable_fastalloc" in
-    yes)
-        ;;
-    no)
-	AC_MSG_RESULT([disabling fast allocator for small objects])
-        AC_DEFINE(NO_FAST_ALLOC, 1, [Disable fast memory allocator])
-	;;
-    *)
-	AC_MSG_ERROR([bad option --enable-fastalloc=$enable_fastalloc])
-	;;
-esac
+TM_FASTALLOC
 
 #--------------------------------------------------------------------
 # MacOS X extensions (spellchecker, image loading)
@@ -234,122 +188,7 @@ TM_OPTIMIZE
 # Default paths for installation
 #--------------------------------------------------------------------
 
-if test "$prefix" = ""; then
-  prefix=/usr/local
-fi
-if test "$prefix" = "NONE"; then
-  prefix=/usr/local
-fi
-if test "$exec_prefix" = ""; then
-  exec_prefix='${prefix}'
-fi
-if test "$exec_prefix" = "NONE"; then
-  exec_prefix='${prefix}'
-fi
-if test "$exec_prefix" = '${prefix}'; then
-  exec_prefix='${prefix}'
-fi
-if test "$includedir" = ""; then
-  includedir='${prefix}/include'
-fi
-if test "$includedir" = "NONE"; then
-  includedir='${prefix}/include'
-fi
-if test "$includedir" = '${prefix}/include'; then
-  includedir='${prefix}/include'
-fi
-if test "$libdir" = ""; then
-  libdir='${exec_prefix}/lib'
-fi
-if test "$libdir" = "NONE"; then
-  libdir='${exec_prefix}/lib'
-fi
-if test "$libdir" = '${exec_prefix}/lib'; then
-  libdir='${exec_prefix}/lib'
-fi
-if test "$bindir" = ""; then
-  bindir='${exec_prefix}/bin'
-fi
-if test "$bindir" = "NONE"; then
-  bindir=${exec_prefix}/bin
-fi
-if test "$bindir" = '${exec_prefix}/bin'; then
-  bindir='${exec_prefix}/bin'
-fi
-if test "$datarootdir" = ""; then
-  datarootdir='${prefix}/share'
-fi
-if test "$datarootdir" = "NONE"; then
-  datarootdir='${prefix}/share'
-fi
-if test "$datarootdir" = '${prefix}/share'; then
-  datarootdir='${prefix}/share'
-fi
-if test "$datadir" = ""; then
-  datadir='${prefix}/share'
-fi
-if test "$datadir" = "NONE"; then
-  datadir='${prefix}/share'
-fi
-if test "$datadir" = '${prefix}/share'; then
-  datadir='${prefix}/share'
-fi
-if test "$mandir" = ""; then
-  mandir='${datarootdir}/man'
-fi
-if test "$mandir" = "NONE"; then
-  mandir='${datarootdir}/man'
-fi
-if test "$mandir" = '${datarootdir}/man'; then
-  mandir='${datarootdir}/man'
-fi
-if test "$libexecdir" = ""; then
-  libexecdir='${exec_prefix}/libexec'
-fi
-if test "$libexecdir" = "NONE"; then
-  libexecdir='${exec_prefix}/libexec'
-fi
-if test "$libexecdir" = '${exec_prefix}/libexec'; then
-  libexecdir='${exec_prefix}/libexec'
-fi
-
-curdir="`pwd`"
-tmorig=${curdir}
-tmdir=${PACKAGE}
-tmsrc=${curdir}/${tmdir}
-tmbin=${libexecdir}/${tmdir}
-tmdata=${datadir}/${tmdir}
-AC_SUBST(tmorig)
-AC_SUBST(tmdir)
-AC_SUBST(tmsrc)
-AC_SUBST(tmbin)
-AC_SUBST(tmdata)
-
-if test "$DEVEL_RELEASE" = "1"; then
-  tm_devel=${PACKAGE}-${DEVEL_VERSION}
-else
-  tm_devel=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
-fi
-tm_devel_release=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
-tm_underscore_devel=${PACKAGE}_${DEVEL_VERSION}
-tm_debian_name_devel=${DEBIAN_NAME}_${DEVEL_VERSION}
-
-AC_SUBST(tm_devel)
-AC_SUBST(tm_devel_release)
-AC_SUBST(tm_underscore_devel)
-AC_SUBST(tm_debian_name_devel)
-
-if test "$STABLE_RELEASE" = "1"; then
-  tm_stable=${PACKAGE}-${STABLE_VERSION}
-else
-  tm_stable=${PACKAGE}-${STABLE_VERSION}-R${STABLE_RELEASE}
-fi
-tm_stable_release=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
-tm_underscore_stable=${PACKAGE}_${STABLE_VERSION}
-
-AC_SUBST(tm_stable)
-AC_SUBST(tm_stable_release)
-AC_SUBST(tm_underscore_stable)
+TM_INSTALL
 
 #--------------------------------------------------------------------
 # Done

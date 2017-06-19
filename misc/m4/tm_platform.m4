@@ -213,6 +213,16 @@ AC_DEFUN([TM_PLATFORM],[
     ;;
   esac
 
+  case "$GXX_VERSION" in
+    3.* | 4.*)
+#     CONFIG_BSTATIC="-static"
+      CONFIG_BSHARED="-dynamic"
+    ;;
+  esac
+
+  AC_CHECK_LIB(expat,XML_ParserCreate,[CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC";CONFIG_STYPE=A])
+  AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
+
   AC_SUBST(CONFIG_OS)
   AC_SUBST(CONFIG_OS_SUFFIX)
   AC_SUBST(CONFIG_OS_COMPAT)
