@@ -21083,11 +21083,12 @@ fi
 # Gui selection
 #--------------------------------------------------------------------
 
-CONFIG_X11=""
-CONFIG_COCOA=""
-CONFIG_GUI="X11"
 
-# Check whether --enable-qt was given.
+  CONFIG_X11=""
+  CONFIG_COCOA=""
+  CONFIG_GUI="X11"
+
+  # Check whether --enable-qt was given.
 if test "${enable_qt+set}" = set; then :
   enableval=$enable_qt;
 else
@@ -21095,8 +21096,8 @@ else
 fi
 
 
-case "$enable_qt" in
-    yes)
+  case "$enable_qt" in
+      yes)
 
 #QT has the install dir hard coded in library so we need to fix it manually for relocatable environment
 if test -z $TMBUILDENV
@@ -22792,56 +22793,56 @@ fi
   unset ${!LC_COMBINE_FLAGS_*}
 
 
-	if test x"$at_cv_qt_build" = xko; then
-	   as_fn_error $? "cannot find Qt!" "$LINENO" 5
-	else
-	   { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Qt port" >&5
+	  if test x"$at_cv_qt_build" = xko; then
+	     as_fn_error $? "cannot find Qt!" "$LINENO" 5
+	  else
+	     { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Qt port" >&5
 $as_echo "enabling Qt port" >&6; }
-           CONFIG_GUI="QT"
-           if test x"$CONFIG_OS" = xMACOS; then
-              # on Mac we rely on some ObjC code contained in
-              # src/Plugins/MacOS
-              CONFIG_MACOS="MacOS"
-           fi
-        fi
-        ;;
-    no)
-	CONFIG_QTPIPES="no"
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling X11 port" >&5
+	     CONFIG_GUI="QT"
+	     if test x"$CONFIG_OS" = xMACOS; then
+		# on Mac we rely on some ObjC code contained in
+		# src/Plugins/MacOS
+		CONFIG_MACOS="MacOS"
+	     fi
+	  fi
+	  ;;
+      no)
+	  CONFIG_QTPIPES="no"
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling X11 port" >&5
 $as_echo "enabling X11 port" >&6; }
-	;;
-    *)
-	CONFIG_QTPIPES="no"
-	as_fn_error $? "bad option --enable-qt=$enable_qt" "$LINENO" 5
-	;;
-esac
+	  ;;
+      *)
+	  CONFIG_QTPIPES="no"
+	  as_fn_error $? "bad option --enable-qt=$enable_qt" "$LINENO" 5
+	  ;;
+  esac
 
-# Qt Plugins list
-PLUGINS_LIST="imageformats,accessible"
-if test "$QT5_AVAILABLE" = yes; then
-  PLUGINS_LIST="imageformats"
-fi
-#define([PLUGINS_LIST],[imageformats,accessible])
-QT_PLUGINS_LIST="$PLUGINS_LIST"
-# Check whether --enable-QtPlugins was given.
+  # Qt Plugins list
+  PLUGINS_LIST="imageformats,accessible"
+  if test "$QT5_AVAILABLE" = yes; then
+    PLUGINS_LIST="imageformats"
+  fi
+  #define([PLUGINS_LIST],[imageformats,accessible])
+  QT_PLUGINS_LIST="$PLUGINS_LIST"
+  # Check whether --enable-QtPlugins was given.
 if test "${enable_QtPlugins+set}" = set; then :
   enableval=$enable_QtPlugins; QT_PLUGINS_LIST=$enableval
 else
   QT_PLUGINS_LIST="$PLUGINS_LIST"
 fi
 
-case $QT_PLUGINS_LIST in
-yes) QT_PLUGINS_LIST="$PLUGINS_LIST";;
-no) unset QT_PLUGINS_LIST
-esac
+  case $QT_PLUGINS_LIST in
+  yes) QT_PLUGINS_LIST="$PLUGINS_LIST";;
+  no) unset QT_PLUGINS_LIST
+  esac
 
-[[ $enable_qt == no ]] &&  unset QT_PLUGINS_LIST
-for p in ${QT_PLUGINS_LIST//,/ }
-do [ -d $QT_PLUGINS_PATH/$p ] || as_fn_error $? "QT plugins not found!" "$LINENO" 5
-done
+  [[ $enable_qt == no ]] &&  unset QT_PLUGINS_LIST
+  for p in ${QT_PLUGINS_LIST//,/ }
+  do [ -d $QT_PLUGINS_PATH/$p ] || as_fn_error $? "QT plugins not found!" "$LINENO" 5
+  done
 
-# Qt Pipes
-# Check whether --enable-qtpipes was given.
+  # Qt Pipes
+  # Check whether --enable-qtpipes was given.
 if test "${enable_qtpipes+set}" = set; then :
   enableval=$enable_qtpipes;
 else
@@ -22849,73 +22850,74 @@ else
 fi
 
 
-case "$enable_qtpipes" in
-    yes)
-        if test x"$CONFIG_GUI" = xQT; then
+  case "$enable_qtpipes" in
+      yes)
+	  if test x"$CONFIG_GUI" = xQT; then
 
 $as_echo "#define QTPIPES 1" >>confdefs.h
 
-           { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Qt pipes" >&5
+	     { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Qt pipes" >&5
 $as_echo "enabling Qt pipes" >&6; }
-        else
-           as_fn_error $? "QT not enabled!" "$LINENO" 5
-        fi
-        ;;
-    no)
-        if test x"$CONFIG_GUI" = xQT; then
-           { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Qt pipes" >&5
+	  else
+	     as_fn_error $? "QT not enabled!" "$LINENO" 5
+	  fi
+	  ;;
+      no)
+	  if test x"$CONFIG_GUI" = xQT; then
+	     { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Qt pipes" >&5
 $as_echo "disabling Qt pipes" >&6; }
-        fi
-	;;
-    *)
-	as_fn_error $? "bad option --enable-qtpipes=$enable_qtpipes" "$LINENO" 5
-	;;
-esac
+	  fi
+	  ;;
+      *)
+	  as_fn_error $? "bad option --enable-qtpipes=$enable_qtpipes" "$LINENO" 5
+	  ;;
+  esac
 
-# Check whether --enable-cocoa was given.
+  # Check whether --enable-cocoa was given.
 if test "${enable_cocoa+set}" = set; then :
   enableval=$enable_cocoa;
 else
   enable_cocoa="no"
 fi
 
-case "$enable_cocoa" in
-    yes)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental Cocoa port" >&5
+  case "$enable_cocoa" in
+      yes)
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental Cocoa port" >&5
 $as_echo "enabling experimental Cocoa port" >&6; }
-	COCOA_CFLAGS=""
-	COCOA_LDFLAGS="-framework Cocoa"
-        CONFIG_GUI="COCOA"
-        ;;
-    no)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental Cocoa port" >&5
+	  COCOA_CFLAGS=""
+	  COCOA_LDFLAGS="-framework Cocoa"
+	  CONFIG_GUI="COCOA"
+	  ;;
+      no)
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental Cocoa port" >&5
 $as_echo "disabling experimental Cocoa port" >&6; }
-	;;
-    *)
-	as_fn_error $? "bad option --enable-cocoa=$enable_cocoa" "$LINENO" 5
-	;;
-esac
+	  ;;
+      *)
+	  as_fn_error $? "bad option --enable-cocoa=$enable_cocoa" "$LINENO" 5
+	  ;;
+  esac
 
-case "$CONFIG_GUI" in
-    X11)
-	CONFIG_X11="X11 Widkit"
-        if test "x${CONFIG_GS}" != "xGhostscript"; then
-          CONFIG_X11="$CONFIG_X11 Ghostscript"
-        fi
-        CONFIG_GUI_DEFINE="X11TEXMACS"
-#        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
-	;;
-    COCOA)
-        CONFIG_COCOA="Cocoa"
-        CONFIG_GUI_DEFINE="AQUATEXMACS"
-#        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
-	;;
-    QT)
-        CONFIG_QT="Qt"
-        CONFIG_GUI_DEFINE="QTTEXMACS"
-#        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
-	;;
-esac
+  case "$CONFIG_GUI" in
+      X11)
+	  CONFIG_X11="X11 Widkit"
+	  if test "x${CONFIG_GS}" != "xGhostscript"; then
+	    CONFIG_X11="$CONFIG_X11 Ghostscript"
+	  fi
+	  CONFIG_GUI_DEFINE="X11TEXMACS"
+  #        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
+	  ;;
+      COCOA)
+	  CONFIG_COCOA="Cocoa"
+	  CONFIG_GUI_DEFINE="AQUATEXMACS"
+  #        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
+	  ;;
+      QT)
+	  CONFIG_QT="Qt"
+	  CONFIG_GUI_DEFINE="QTTEXMACS"
+  #        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
+	  ;;
+  esac
+
 
 
 
