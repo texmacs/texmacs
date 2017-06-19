@@ -25,6 +25,7 @@ m4_include([misc/m4/tm_platform.m4])
 m4_include([misc/m4/tm_debug.m4])
 m4_include([misc/m4/tm_optimize.m4])
 m4_include([misc/m4/tm_gui.m4])
+m4_include([misc/m4/tm_macos.m4])
 
 #-------------------------------------------------------------------
 # General functions
