@@ -130,4 +130,25 @@ AC_DEFUN([TM_DEBUG],[
 	  CONFIG_CXXWARNING="$enable_warnings"
 	  AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
   esac
+
+  #--- Experimental mode
+
+  AC_ARG_ENABLE(experimental,
+  [  --enable-experimental   support new style rewriting code],
+      [], [enable_experimental="no"])
+  case "$enable_experimental" in
+      yes)
+	  AC_MSG_RESULT([enabling experimental style rewriting code])
+	  AC_DEFINE(EXPERIMENTAL, 1, [Enable experimental style rewriting code])
+	  CONFIG_EXPERIMENTAL="Memorizer Environment Evaluate"
+	  ;;
+      no)
+	  AC_MSG_RESULT([disabling experimental style rewriting code])
+	  CONFIG_EXPERIMENTAL=""
+	  ;;
+      *)
+	  AC_MSG_ERROR([bad option --enable-experimental=$enable_experimental])
+	  ;;
+  esac
+  AC_SUBST(CONFIG_EXPERIMENTAL)
 ])

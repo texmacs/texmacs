@@ -612,6 +612,7 @@ tmbin
 tmsrc
 tmdir
 tmorig
+CONFIG_EXPERIMENTAL
 CONFIG_CXXDIALECT
 PDF_LDFLAGS
 PDF_CFLAGS
@@ -644,7 +645,6 @@ UIC
 MOC
 QMAKE
 CONFIG_MACOS
-CONFIG_EXPERIMENTAL
 CONFIG_ARCHS
 CONFIG_DATE
 CONFIG_USER
@@ -815,7 +815,6 @@ with_gs
 with_sqlite3
 with_sparkle
 enable_fastalloc
-enable_experimental
 enable_macosx_extensions
 enable_console
 enable_qt
@@ -828,6 +827,7 @@ enable_profile
 enable_debug
 enable_assert
 enable_warnings
+enable_experimental
 enable_optimize
 '
       ac_precious_vars='build_alias
@@ -1468,7 +1468,6 @@ Optional Features:
   --disable-guile2=yes    enable compilation with Guile 2, for development
                           purposes
   --disable-fastalloc     omit fast allocator for small objects
-  --enable-experimental   support new style rewriting code
   --disable-macosx-extensions
                           do not use Mac specific services (spellchecker,
                           image handling, ...)
@@ -1484,6 +1483,7 @@ Optional Features:
   --enable-debug[=ARG]    install a debugging enable executable [-ggdb]
   --enable-assert         exit on failed assertions in code
   --enable-warnings       print warning messages during compilation
+  --enable-experimental   support new style rewriting code
   --enable-optimize[=ARG] compile with optimizations [guessed]
 
 Optional Packages:
@@ -20988,37 +20988,6 @@ $as_echo "#define NO_FAST_ALLOC 1" >>confdefs.h
 esac
 
 #--------------------------------------------------------------------
-# Experimental options
-#--------------------------------------------------------------------
-
-# Check whether --enable-experimental was given.
-if test "${enable_experimental+set}" = set; then :
-  enableval=$enable_experimental;
-else
-  enable_experimental="no"
-fi
-
-case "$enable_experimental" in
-    yes)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental style rewriting code" >&5
-$as_echo "enabling experimental style rewriting code" >&6; }
-
-$as_echo "#define EXPERIMENTAL 1" >>confdefs.h
-
-        CONFIG_EXPERIMENTAL="Memorizer Environment Evaluate"
-        ;;
-    no)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental style rewriting code" >&5
-$as_echo "disabling experimental style rewriting code" >&6; }
-        CONFIG_EXPERIMENTAL=""
-	;;
-    *)
-	as_fn_error $? "bad option --enable-experimental=$enable_experimental" "$LINENO" 5
-	;;
-esac
-
-
-#--------------------------------------------------------------------
 # MacOS X extensions (spellchecker, image loading)
 #--------------------------------------------------------------------
 
@@ -21166,26 +21135,26 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 # Windows console
 #--------------------------------------------------------------------
 
-if test x"$CONFIG_OS" = xMINGW; then
 
-# Check whether --enable-console was given.
+  if test x"$CONFIG_OS" = xMINGW; then
+    # Check whether --enable-console was given.
 if test "${enable_console+set}" = set; then :
   enableval=$enable_console;
 fi
 
-case "$enable_console" in
-    yes)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Windows console" >&5
+    case "$enable_console" in
+	yes)
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Windows console" >&5
 $as_echo "enabling Windows console" >&6; }
-        ;;
-    *)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Windows console" >&5
+	    ;;
+	*)
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Windows console" >&5
 $as_echo "disabling Windows console" >&6; }
-	CONFIG_LDRT="$CONFIG_LDRT -mwindows"
-	;;
-esac
+	    CONFIG_LDRT="$CONFIG_LDRT -mwindows"
+	    ;;
+    esac
+  fi
 
-fi
 
 #--------------------------------------------------------------------
 # Gui selection
@@ -24680,6 +24649,35 @@ $as_echo "disabling warning flags" >&6; } ;;
 	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling warning flags $CONFIG_CXXWARNING" >&5
 $as_echo "enabling warning flags $CONFIG_CXXWARNING" >&6; } ;;
   esac
+
+  #--- Experimental mode
+
+  # Check whether --enable-experimental was given.
+if test "${enable_experimental+set}" = set; then :
+  enableval=$enable_experimental;
+else
+  enable_experimental="no"
+fi
+
+  case "$enable_experimental" in
+      yes)
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling experimental style rewriting code" >&5
+$as_echo "enabling experimental style rewriting code" >&6; }
+
+$as_echo "#define EXPERIMENTAL 1" >>confdefs.h
+
+	  CONFIG_EXPERIMENTAL="Memorizer Environment Evaluate"
+	  ;;
+      no)
+	  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling experimental style rewriting code" >&5
+$as_echo "disabling experimental style rewriting code" >&6; }
+	  CONFIG_EXPERIMENTAL=""
+	  ;;
+      *)
+	  as_fn_error $? "bad option --enable-experimental=$enable_experimental" "$LINENO" 5
+	  ;;
+  esac
+
 
 
 #--------------------------------------------------------------------
