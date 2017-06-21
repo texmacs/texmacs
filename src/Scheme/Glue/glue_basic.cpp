@@ -2446,6 +2446,59 @@ tmg_tree_search_tree_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm a
 }
 
 tmscm
+tmg_previous_search_hit (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_ARRAY_PATH (arg1, TMSCM_ARG1, "previous-search-hit");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "previous-search-hit");
+  TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "previous-search-hit");
+
+  array_path in1= tmscm_to_array_path (arg1);
+  path in2= tmscm_to_path (arg2);
+  bool in3= tmscm_to_bool (arg3);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= previous_search_hit (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
+tmg_next_search_hit (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_ARRAY_PATH (arg1, TMSCM_ARG1, "next-search-hit");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "next-search-hit");
+  TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "next-search-hit");
+
+  array_path in1= tmscm_to_array_path (arg1);
+  path in2= tmscm_to_path (arg2);
+  bool in3= tmscm_to_bool (arg3);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= next_search_hit (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
+tmg_navigate_search_hit (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "navigate-search-hit");
+  TMSCM_ASSERT_BOOL (arg2, TMSCM_ARG2, "navigate-search-hit");
+  TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "navigate-search-hit");
+  TMSCM_ASSERT_BOOL (arg4, TMSCM_ARG4, "navigate-search-hit");
+
+  path in1= tmscm_to_path (arg1);
+  bool in2= tmscm_to_bool (arg2);
+  bool in3= tmscm_to_bool (arg3);
+  bool in4= tmscm_to_bool (arg4);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= navigate_search_hit (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
 tmg_tag_minimal_arity (tmscm arg1) {
   TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tag-minimal-arity");
 
@@ -9432,6 +9485,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-search-sections",  tmg_tree_search_sections, 1, 0, 0);
   tmscm_install_procedure ("tree-search-tree",  tmg_tree_search_tree, 4, 0, 0);
   tmscm_install_procedure ("tree-search-tree-at",  tmg_tree_search_tree_at, 5, 0, 0);
+  tmscm_install_procedure ("previous-search-hit",  tmg_previous_search_hit, 3, 0, 0);
+  tmscm_install_procedure ("next-search-hit",  tmg_next_search_hit, 3, 0, 0);
+  tmscm_install_procedure ("navigate-search-hit",  tmg_navigate_search_hit, 4, 0, 0);
   tmscm_install_procedure ("tag-minimal-arity",  tmg_tag_minimal_arity, 1, 0, 0);
   tmscm_install_procedure ("tag-maximal-arity",  tmg_tag_maximal_arity, 1, 0, 0);
   tmscm_install_procedure ("tag-possible-arity?",  tmg_tag_possible_arityP, 2, 0, 0);

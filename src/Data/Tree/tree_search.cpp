@@ -463,3 +463,35 @@ search (tree t, tree what, path p, path pos, int limit) {
   search_max_hits= 1000000;
   return sel;
 }
+
+range_set
+previous_search_hit (range_set sels, path cur, bool strict) {
+  int i= (N(sels) >> 1) << 1;
+  while (i >= 2 && !path_less_eq (sels[i-2], cur)) i -= 2;
+  if (strict && i >= 2 && !path_less (sels[i-1], cur)) i -= 2;
+  if (i >= 2) return range (sels, i-2, i);
+  return range_set ();
+}
+
+range_set
+next_search_hit (range_set sels, path cur, bool strict) {
+  int i=0, n=N(sels);
+  while (i+2 <= n && !path_less_eq (cur, sels[i+1])) i += 2;
+  while (i+4 <= n && sels[i+1] == sels[i+2] && sels[i+1] == cur) i += 2;
+  if (strict && i+2 <= n) i += 2;
+  if (i+2 <= n) return range (sels, i, i+2);
+  return range_set ();
+}
+
+range_set current_alt_selection (string name);
+
+range_set
+navigate_search_hit (path cur, bool forward, bool extreme, bool strict) {
+  range_set sels= current_alt_selection ("alternate");
+  if ((N(sels) & 1) == 1) sels= range (sels, 0, N(sels) - 1);
+  if (N(sels) < 2) return range_set ();
+  if (extreme && !forward) return range (sels, 0, 2);
+  if (extreme && forward) return range (sels, N(sels)-2, N(sels));
+  if (!forward) return previous_search_hit (sels, cur, strict);
+  else return next_search_hit (sels, cur, strict);
+}

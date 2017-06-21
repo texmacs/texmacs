@@ -985,6 +985,11 @@ edit_select_rep::get_alt_selection (string name) {
   return alt_sels[name];
 }
 
+range_set
+current_alt_selection (string name) {
+  return get_current_editor()->get_alt_selection (name);
+}
+
 void
 edit_select_rep::cancel_alt_selection (string name) {
   if (alt_sels->contains (name)) {

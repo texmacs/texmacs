@@ -1555,6 +1555,30 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(previous-search-hit <scm-arg|array_path> <scm-arg|path> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|previous_search_hit> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
+    <scm|(next-search-hit <scm-arg|array_path> <scm-arg|path> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|next_search_hit> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
+    <scm|(navigate-search-hit <scm-arg|path> <scm-arg|bool> <scm-arg|bool> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|navigate_search_hit> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
     <scm|(tag-minimal-arity <scm-arg|tree_label>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -6951,6 +6975,30 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|search> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
+    <scm|(previous-search-hit <scm-arg|array_path> <scm-arg|path> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|previous_search_hit> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
+    <scm|(next-search-hit <scm-arg|array_path> <scm-arg|path> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|next_search_hit> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
+    <scm|(navigate-search-hit <scm-arg|path> <scm-arg|bool> <scm-arg|bool> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|navigate_search_hit> which returns
     <scm|array_path>.
   </explain>
 
