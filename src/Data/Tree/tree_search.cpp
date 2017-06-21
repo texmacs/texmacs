@@ -343,6 +343,35 @@ search (range_set& sel, tree t, tree what, path p) {
     search_compound (sel, t, what, p);
 }
 
+void
+search (range_set& sel, tree t, tree what, path p, path pos) {
+  if (is_format (what) || is_atomic (t))
+    search (sel, t, what, p);
+  else {
+    if (is_nil (pos)) search (sel, t, what, p);
+    else {
+      int hits= 0;
+      array<range_set> sub (N(t));
+      if (pos->item >= 0 && pos->item < N(t))
+        if (is_accessible_for_search (t, pos->item)) {
+          search (sub[pos->item], t[pos->item], what, p * pos->item);
+          hits += N(sub[pos->item]);
+        }
+      for (int d=1; d<N(t); d++)
+        for (int e=0; e<=1; e++) {
+          if (hits > search_max_hits) break;
+          int i= (e==0? pos->item + d: pos->item - d);
+          if (i >= 0 && i < N(t))
+            if (is_accessible_for_search (t, i)) {
+              search (sub[i], t[i], what, p * i);
+              hits += N(sub[i]);
+            }
+        }
+      for (int i=0; i<N(t); i++) sel << sub[i];
+    }
+  }
+}
+
 /******************************************************************************
 * Selections inside specified contexts
 ******************************************************************************/
@@ -417,6 +446,19 @@ search (tree t, tree what, path p, int limit) {
   //cout << "Search " << what << ", " << contains_select_region (what) << "\n";
   if (contains_select_region (what)) select (sel, t, what, p);
   else search (sel, t, what, p);
+  //cout << "Selected " << sel << "\n";
+  search_max_hits= 1000000;
+  return sel;
+}
+
+range_set
+search (tree t, tree what, path p, path pos, int limit) {
+  search_max_hits= limit;
+  initialize_search ();
+  range_set sel;
+  //cout << "Search " << what << ", " << contains_select_region (what) << "\n";
+  if (contains_select_region (what)) select (sel, t, what, p);
+  else search (sel, t, what, p, pos);
   //cout << "Selected " << sel << "\n";
   search_max_hits= 1000000;
   return sel;

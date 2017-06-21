@@ -2425,6 +2425,27 @@ tmg_tree_search_tree (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_tree_search_tree_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-search-tree-at");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "tree-search-tree-at");
+  TMSCM_ASSERT_PATH (arg3, TMSCM_ARG3, "tree-search-tree-at");
+  TMSCM_ASSERT_PATH (arg4, TMSCM_ARG4, "tree-search-tree-at");
+  TMSCM_ASSERT_INT (arg5, TMSCM_ARG5, "tree-search-tree-at");
+
+  content in1= tmscm_to_content (arg1);
+  content in2= tmscm_to_content (arg2);
+  path in3= tmscm_to_path (arg3);
+  path in4= tmscm_to_path (arg4);
+  int in5= tmscm_to_int (arg5);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= search (in1, in2, in3, in4, in5);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
 tmg_tag_minimal_arity (tmscm arg1) {
   TMSCM_ASSERT_TREE_LABEL (arg1, TMSCM_ARG1, "tag-minimal-arity");
 
@@ -9410,6 +9431,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-is-buffer?",  tmg_tree_is_bufferP, 1, 0, 0);
   tmscm_install_procedure ("tree-search-sections",  tmg_tree_search_sections, 1, 0, 0);
   tmscm_install_procedure ("tree-search-tree",  tmg_tree_search_tree, 4, 0, 0);
+  tmscm_install_procedure ("tree-search-tree-at",  tmg_tree_search_tree_at, 5, 0, 0);
   tmscm_install_procedure ("tag-minimal-arity",  tmg_tag_minimal_arity, 1, 0, 0);
   tmscm_install_procedure ("tag-maximal-arity",  tmg_tag_maximal_arity, 1, 0, 0);
   tmscm_install_procedure ("tag-possible-arity?",  tmg_tag_possible_arityP, 2, 0, 0);

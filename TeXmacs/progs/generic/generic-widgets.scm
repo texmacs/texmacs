@@ -121,7 +121,9 @@
          (old-mode (get-access-mode))
          (new-mode (if (== (get-init "mode") "src") source-mode old-mode)))
     (set-access-mode new-mode)
-    (with r (tree-search-tree t what p limit)
+    (let* ((cp (cDr (cursor-path)))
+           (pos (if (list-starts? cp p) (list-tail cp (length p)) (list)))
+           (r (tree-search-tree-at t what p pos limit)))
       (set-access-mode old-mode)
       r)))
 
@@ -158,7 +160,8 @@
 	    ;;(display* "sels= " sels "\n")
 	    (cond ((>= (length sels*) limit)
 		   (set-alt-selection "alternate" sels)
-		   (set! too-many-matches? #t))
+		   (set! too-many-matches? #t)
+		   (next-search-result #t #f))
 		  ((null? sels)
 		   (selection-cancel)
 		   (cancel-alt-selection "alternate")
@@ -674,7 +677,7 @@
     (stop-waiting-for-toolbar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Hiding paragraphs which do not match
+;; Hiding paragraphs that do not match
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (show-only-sub u what)
