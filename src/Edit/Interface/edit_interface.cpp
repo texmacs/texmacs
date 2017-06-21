@@ -108,6 +108,11 @@ edit_interface_rep::resume () {
     notify_change (THE_CURSOR);
     tp= new_tp;
   }
+#ifdef QTTEXMACS
+  // FIXME: dirty hack in order to correct a bug introduced
+  // after a bugfix by Massimiliano during summer 2016
+  exec_delayed (scheme_cmd ("(refresh-window)"));
+#endif
 }
 
 void
@@ -560,7 +565,7 @@ edit_interface_rep::apply_changes () {
       update_menus ();
     return;
   }
-  
+
   // cout << "Applying changes " << env_change << " to " << get_name() << "\n";
   // time_t t1= texmacs_time ();
   
