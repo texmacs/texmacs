@@ -55,6 +55,7 @@ protected:
   int           mouse_adjusting;  // mask with active key modifiers upon click
   rectangles    selection_rects;
   array<rectangles> alt_selection_rects;
+  rectangle     last_visible;
   rectangles    env_rects;
   rectangles    foc_rects;
   rectangles    sem_rects;
@@ -118,6 +119,7 @@ public:
   int  idle_time (int event_type= ANY_EVENT);
   int  change_time ();
   void update_menus ();
+  int  find_alt_selection_index (range_set alt_sel, SI y, int b, int e);
   void apply_changes ();
   void animate ();
 

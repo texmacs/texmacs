@@ -553,24 +553,45 @@ edit_interface_rep::update_menus () {
   save_user_preferences ();
 }
 
+int
+edit_interface_rep::find_alt_selection_index
+  (range_set alt_sel, SI y, int b, int e) {
+  if (e - b <= 2) return b;
+  int half= ((b + e) >> 2) << 1;
+  int h= half;
+  SI sy;
+  while (h < e) {
+    range_set sub_sel= simple_range (alt_sel[h], alt_sel[h+1]);
+    selection sel= compute_selection (sub_sel);
+    if (is_nil (sel->rs)) { h += 2; continue; }
+    sy= (sel->rs->item->y1 + sel->rs->item->y2) >> 1;
+    break;
+  }
+  if (h >= e || y > sy)
+    return find_alt_selection_index (alt_sel, y, b, half);
+  else
+    return find_alt_selection_index (alt_sel, y, h, e);
+}
+
 void
 edit_interface_rep::apply_changes () {
   //cout << "Apply changes\n";
   //cout << "et= " << et << "\n";
   //cout << "tp= " << tp << "\n";
   //cout << HRULE << "\n";
+
+  update_visible ();
+  rectangle new_visible= rectangle (vx1, vy1, vx2, vy2);  
+
   if (env_change == 0) {
     if (last_change-last_update > 0 &&
         idle_time (INTERRUPTED_EVENT) >= 1000/6)
       update_menus ();
-    return;
+    if (new_visible == last_visible) return;
   }
 
   // cout << "Applying changes " << env_change << " to " << get_name() << "\n";
   // time_t t1= texmacs_time ();
-  
-  // cout << "Always\n";
-  update_visible ();
   
   // cout << "Handling automatic resizing\n";
   int sb= 1;
@@ -811,11 +832,19 @@ edit_interface_rep::apply_changes () {
       selection_rects= rs;
       invalidate (selection_rects);
     }
+  }
+
+  // cout << "Handling alternative selection\n";
+  if ((env_change & THE_SELECTION) || new_visible != last_visible) {
     range_set alt_sel= append (get_alt_selection ("alternate"),
                                get_alt_selection ("brackets"));
     if (!is_empty (alt_sel)) {
-      alt_selection_rects= array<rectangles> ();
-      for (int i=0; i+1<N(alt_sel); i+=2) {
+      alt_selection_rects= array<rectangles> (); int b= 0, e= N(alt_sel);
+      if (e - b >= 200) {
+        b= max (find_alt_selection_index (alt_sel, vy2, b, e) - 100, b);
+        e= min (find_alt_selection_index (alt_sel, vy1, b, e) + 100, e);
+      }
+      for (int i=b; i+1<e; i+=2) {
         range_set sub_sel= simple_range (alt_sel[i], alt_sel[i+1]);
         selection sel= compute_selection (sub_sel);
         rectangles rs= thicken (sel->rs, pixel, 3*pixel);
@@ -824,7 +853,7 @@ edit_interface_rep::apply_changes () {
 #endif
         if (N(rs) != 0) alt_selection_rects << rs;
       }
-      rectangles visible (rectangle (vx1, vy1, vx2, vy2));
+      rectangles visible (new_visible);
       for (int i=0; i<N(alt_selection_rects); i++)
         invalidate (alt_selection_rects[i] & visible);
     }
@@ -879,6 +908,7 @@ edit_interface_rep::apply_changes () {
   env_change  = 0;
   last_change = texmacs_time ();
   last_update = last_change-1;
+  last_visible= new_visible;
   manual_focus_release ();
 }
 
