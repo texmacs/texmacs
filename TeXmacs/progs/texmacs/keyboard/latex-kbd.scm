@@ -112,7 +112,7 @@
   "lessdot" "gtrdot" "ltimes" "rtimes" "shortmid"
   "shortparallel" "smallsetminus" "thicksim" "thickapprox"
   "approxeq" "succapprox" "precapprox" "curvearrowleft"
-  "curvearrowright" "digamma" "varkappa" "" "hslash"
+  "curvearrowright" "digamma" "varkappa" "hslash"
   "hbar" "backepsilon"
   
   "mapsto" "longmapsto" "longrightarrow" "longleftarrow"
@@ -243,7 +243,11 @@
   ("prod" "Insert big product" (math-big-operator "prod"))
   ("coprod" "Insert big coproduct" (math-big-operator "amalg"))
   ("int" "Insert big integral" (math-big-operator "int"))
+  ("iint" "Insert big integrals" (math-big-operator "iint"))
+  ("iiint" "Insert big integrals" (math-big-operator "iiint"))
   ("oint" "Insert big contour integral" (math-big-operator "oint"))
+  ("oiint" "Insert big contour integrals" (math-big-operator "oiint"))
+  ("oiiint" "Insert big contour integrals" (math-big-operator "oiiint"))
   ("bigcap" "Insert big intersection" (math-big-operator "cap"))
   ("bigcup" "Insert big union" (math-big-operator "cup"))
   ("bigsqcup" "Insert big square union" (math-big-operator "sqcup"))
