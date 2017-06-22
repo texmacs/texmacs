@@ -54,9 +54,7 @@ path previous_tag_same_argument (tree t, path p, scheme_tree labs);
 path next_argument (tree t, path p);
 path previous_argument (tree t, path p);
 
-bool inside_same (tree t, path p, path q, tree_label which);
-bool more_inside (tree t, path p, path q, tree_label which);
-bool var_inside_same (tree t, path p, path q, tree_label which);
+bool inside_same (tree t, path p, path q, tree_label which, bool more);
 
 array<tree> search_sections (tree t);
 path previous_section (tree t, path p);

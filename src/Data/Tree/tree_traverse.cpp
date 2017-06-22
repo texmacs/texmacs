@@ -497,48 +497,36 @@ path previous_argument (tree t, path p) {
 * Other routines
 ******************************************************************************/
 
-static path
-search_upwards (tree t, path p, tree_label which) {
-  if (is_nil (p) || L (subtree (t, p)) == which) return p;
-  else return search_upwards (t, path_up (p), which);
+path
+search_common (tree t, path p, path q, tree_label which) {
+  if (is_nil (p) || is_nil (q) || p->item != q->item) return path ();
+  if (0 > p->item || p->item >= N(t)) return path ();
+  path c= search_common (t[p->item], p->next, q->next, which);
+  if (L(subtree (t[p->item], c)) == which) return path (p->item, c);
+  return path ();
 }
 
 bool
-inside_same (tree t, path p, path q, tree_label which) {
-  return
-    search_upwards (t, path_up (p), which) ==
-    search_upwards (t, path_up (q), which);
+no_other (tree t, path p, tree_label which) {
+  if (L(t) == which) return false;
+  if (is_nil (p)) return true;
+  if (0 > p->item || p->item >= N(t)) return false;
+  return no_other (t[p->item], p->next, which);
 }
 
 bool
-more_inside (tree t, path p, path q, tree_label which) {
-  return
-    search_upwards (t, path_up (q), which) <=
-    search_upwards (t, path_up (p), which);
-}
-
-bool
-var_inside_same_sub (tree t, path p, path q, tree_label which) {
-  path pq= search_upwards (t, path_up (q), which);
-  path pp= search_upwards (t, path_up (p), which);
-  if (!(pq <= pp)) return false;
-  path c= common (p, q);
-  tree st= subtree (t, c);
-  path sp= p / c;
-  path sq= q / c;
-  if (N(sp) == 0 || N(sq) == 0) return false;
-  if (sp == path (0) || sp == path (1)) return true;
-  if (sq == path (0) || sq == path (1)) return true;
-  // TODO: maybe further adjustments will be necessary in the future
-  return false;
-}
-
-bool
-var_inside_same (tree t, path p, path q, tree_label which) {
-  return
-    inside_same (t, p, q, which) ||
-    var_inside_same_sub (t, p, q, which) ||
-    var_inside_same_sub (t, q, p, which);
+inside_same (tree t, path p, path q, tree_label which, bool allow_more) {
+  path d= search_common (t, path_up (p), path_up (q), which);
+  if (L(subtree (t, d)) != which) return true;
+  path sp= p / d;
+  path sq= q / d;
+  if (is_atom (sp) || is_atom (sq)) return false;
+  if (sp->item != sq->item) return false;
+  if (0 > sp->item || sp->item >= N(subtree (t, d))) return false;
+  tree st= subtree (t, d) [sp->item];
+  if (!no_other (st, path_up (sq->next), which)) return false;
+  if (allow_more) return true;
+  return no_other (st, path_up (sp->next), which);
 }
 
 /******************************************************************************
