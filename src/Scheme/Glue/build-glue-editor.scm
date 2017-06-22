@@ -200,6 +200,7 @@
   (select-all select_all (void))
   (select-line select_line (void))
   (select-from-cursor select_from_cursor (void))
+  (select-from-cursor-if-active select_from_cursor_if_active (void))
   (select-from-keyboard select_from_keyboard (void bool))
   (select-from-shift-keyboard select_from_shift_keyboard (void))
   (select-enlarge select_enlarge (void))

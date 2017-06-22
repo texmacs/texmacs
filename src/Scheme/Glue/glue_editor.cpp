@@ -1915,6 +1915,15 @@ tmg_select_from_cursor () {
 }
 
 tmscm
+tmg_select_from_cursor_if_active () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->select_from_cursor_if_active ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_select_from_keyboard (tmscm arg1) {
   TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "select-from-keyboard");
 
@@ -3438,6 +3447,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("select-all",  tmg_select_all, 0, 0, 0);
   tmscm_install_procedure ("select-line",  tmg_select_line, 0, 0, 0);
   tmscm_install_procedure ("select-from-cursor",  tmg_select_from_cursor, 0, 0, 0);
+  tmscm_install_procedure ("select-from-cursor-if-active",  tmg_select_from_cursor_if_active, 0, 0, 0);
   tmscm_install_procedure ("select-from-keyboard",  tmg_select_from_keyboard, 1, 0, 0);
   tmscm_install_procedure ("select-from-shift-keyboard",  tmg_select_from_shift_keyboard, 0, 0, 0);
   tmscm_install_procedure ("select-enlarge",  tmg_select_enlarge, 0, 0, 0);
