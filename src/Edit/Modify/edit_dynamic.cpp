@@ -115,6 +115,12 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
     if (selection_active_small () ||
 	(block_macro && selection_active_normal ()))
       sel= selection_get_cut ();
+    else if (is_with_like (t) && selection_active_normal ()) {
+      sel= selection_get_cut ();
+      t[n-1]= sel;
+      insert_tree (t, p);
+      return;
+    }
     if ((block_macro && (!table_macro)) ||
 	(l == make_tree_label ("footnote")))
       {
