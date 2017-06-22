@@ -94,4 +94,7 @@
 
 (menu-bind prog-icons
   (link prog-format-icons)
-  (link texmacs-insert-icons))
+  (link texmacs-insert-icons)
+  (if (and (in-presentation?) (not (visible-icon-bar? 0)))
+    /
+    (link dynamic-icons)))

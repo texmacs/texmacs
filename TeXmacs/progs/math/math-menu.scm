@@ -1259,7 +1259,10 @@
 
 (menu-bind math-icons
   (link math-insert-icons)
-  (link texmacs-insert-icons))
+  (link texmacs-insert-icons)
+  (if (and (in-presentation?) (not (visible-icon-bar? 0)))
+    /
+    (link dynamic-icons)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Math focus menus
