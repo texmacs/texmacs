@@ -48,7 +48,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (svn-history-item s)
-  (let* ((lines (remove-empty-strings (string-decompose s "\n")))
+  (let* ((decoded (utf8->cork s))
+         (lines (remove-empty-strings (string-decompose decoded "\n")))
          (data (string-decompose (car lines) " | "))
          (date-info (string-decompose (caddr data) " "))
          (msg (string-recompose (cdr lines) " ")))
@@ -104,7 +105,8 @@
   (:require (== (version-tool name) "svn"))
   (let* ((name-s (url->string name))
          (msg-s (string-replace msg "\"" "\\\""))
-         (cmd (string-append "svn commit -m \"" msg-s "\" " name-s))
+         (encoded (cork->utf8 msg-s))
+         (cmd (string-append "svn commit -m \"" encoded "\" " name-s))
          (ret (eval-system cmd))
          (l (remove-empty-strings (string-decompose ret "\n"))))
     (if (null? l) "" (cAr l))))
