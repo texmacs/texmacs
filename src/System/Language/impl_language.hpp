@@ -26,6 +26,7 @@ extern text_property_rep tp_shortop_rep;
 extern text_property_rep tp_cjk_normal_rep;
 extern text_property_rep tp_cjk_no_break_rep;
 extern text_property_rep tp_cjk_period_rep;
+extern text_property_rep tp_cjk_wide_period_rep;
 extern text_property_rep tp_cjk_no_break_period_rep;
 
 struct verb_language_rep: language_rep {

@@ -79,6 +79,9 @@ concater_rep::typeset_colored_substring
   case SPC_CJK_PERIOD: \
     print (space (-(spc->min>>2), 0, spc->max>>1)); \
     break; \
+  case SPC_CJK_WIDE_PERIOD: \
+    print (spc + extra); \
+    break; \
   }
 
 #define PRINT_CONDENSED_SPACE(spc_type) \
@@ -111,6 +114,9 @@ concater_rep::typeset_colored_substring
     break; \
   case SPC_CJK_PERIOD: \
     print (space (-(spc->min>>2), 0, spc->max>>1)); \
+    break; \
+  case SPC_CJK_WIDE_PERIOD: \
+    print (spc + extra); \
     break; \
   }
 

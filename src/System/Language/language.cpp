@@ -47,6 +47,8 @@ text_property_rep tp_cjk_no_break_rep
   (TP_CJK_NO_BREAK, SPC_NONE, SPC_CJK_NORMAL, 0, HYPH_INVALID);
 text_property_rep tp_cjk_period_rep
   (TP_CJK_PERIOD, SPC_NONE, SPC_CJK_PERIOD, HYPH_INVALID, 0);
+text_property_rep tp_cjk_wide_period_rep
+  (TP_CJK_PERIOD, SPC_NONE, SPC_CJK_WIDE_PERIOD, HYPH_INVALID, 0);
 text_property_rep tp_cjk_no_break_period_rep
   (TP_CJK_PERIOD, SPC_NONE, SPC_CJK_PERIOD, HYPH_INVALID, HYPH_INVALID);
 
