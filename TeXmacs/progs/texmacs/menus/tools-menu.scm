@@ -43,6 +43,11 @@
   (if (url-exists-in-path? "pdflatex")
       (-> "LaTeX"
           (link tmtex-menu)))
+  (-> "Fonts"
+      ("Look for more fonts"
+       (system-wait "Full search for more fonts on your system"
+                    "(can be long)")
+       (font-database-build-local)))
   (-> "Web"
       ("Create web site" (tmweb-interactive-build))
       ("Update web site" (tmweb-interactive-update)))
