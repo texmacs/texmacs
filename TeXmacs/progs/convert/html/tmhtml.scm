@@ -1091,7 +1091,7 @@
       (if (not cached)
 	  (receive (name-url name-string) (tmhtml-image-names "png")
 	    ;;(display* x " -> " name-url ", " name-string "\n")
-	    (let* ((extents (print-snippet name-url x))
+	    (let* ((extents (print-snippet name-url x #t))
                    (dpi (string->number (get-preference "printer dpi")))
                    (den (/ (* dpi 2200.0) 600.0))
                    ;;(den (/ (* dpi 2000.0) 600.0))

@@ -285,7 +285,7 @@
 	;;not depend on the printer dpi
 	;;We need to set this weird dpi value so that the size of the svg
 	;;produced is about twice that of direct pdf or ps output. Why??
-	(print-snippet temp0 tm-fragment-enforce-pagewidth)
+	(print-snippet temp0 tm-fragment-enforce-pagewidth #t)
 	;;typeset fragment to ps as starting point
 	(set-printer-dpi dpi-pref)
 	;; revert to preference dpi

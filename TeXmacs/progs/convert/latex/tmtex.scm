@@ -1532,7 +1532,7 @@
 (define (tmtex-eps x)
   (if (tmtex-math-mode?) (set! x `(with "mode" "math" ,x)))
   (receive (name-url name-string) (tmtex-eps-names)
-    (let* ((extents (print-snippet name-url x))
+    (let* ((extents (print-snippet name-url x #t))
            (y1 (* 1.0 (second extents)))
            (y2 (* 1.0 (fourth extents)))
            (rat (/ y1 (- y2 y1)))

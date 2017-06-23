@@ -359,7 +359,12 @@ edit_main_rep::export_ps (url name, string first, string last) {
 }
 
 array<int>
-edit_main_rep::print_snippet (url name, tree t) {
+edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
+  tree buft= subtree (et, rp);
+  if (conserve_preamble)
+    if (is_document (buft) && is_compound (buft[0], "hide-preamble"))
+      t= tree (SURROUND, buft[0], "", t);
+
   string s= suffix (name);
   bool ps= (s == "ps" || s == "eps");
   if (use_pdf ()) ps= (ps || s == "pdf");
