@@ -52,7 +52,7 @@
      (math $ecrm $cmr $cmmi cmsy msam msbm stmary wasy line
 	   cmsy eufm bbm grmn cmbx cmmib cmbsy cmex $s $d))
     ((bold-math-std $ecrm $cmr $cmmi $s $d)
-     (math $ecrm $cmr $cmmi cmbsy msam msbm stmaryb wasyb linew
+     (math $ecrm $cmr $cmmi cmbsy msam msbm stmary wasyb linew
 	   cmbsy eufb bbmbx grxn cmbx cmmib cmbsy cmex $s $d))
     ((math-conc $ecrm $cmr $cmmi $s $d)
      (math $ecrm $cmr $cmmi xccsy xccam xccbm stmary wasy line
@@ -126,7 +126,7 @@
      (math $ecrm $cmr $cmmi cmsy msam msbm stmary wasy line
 	   cmsy eufm bbm grmn cmbx cmmib cmbsy cmex $s $d))
     ((bold-math-std $ecrm $cmr $cmmi $s $d)
-     (math $ecrm $cmr $cmmi cmbsy msam msbm stmaryb wasyb linew
+     (math $ecrm $cmr $cmmi cmbsy msam msbm stmary wasyb linew
 	   cmbsy eufb bbmbx grxn cmbx cmmib cmbsy cmex $s $d))
     ((math-conc $ecrm $cmr $cmmi $s $d)
      (math $ecrm $cmr $cmmi xccsy xccam xccbm stmary wasy line
@@ -152,7 +152,7 @@
      (alt-math $ecrm $ecti $cmr $cmmi cmsy msam msbm stmary wasy line
                cmsy eufm bbm grmn cmbx cmmib cmbsy cmex $s $d))
     ((bold-math-alt $ecrm $ecti $cmr $cmmi $s $d)
-     (alt-math $ecrm $ecti $cmr $cmmi cmbsy msam msbm stmaryb wasyb linew
+     (alt-math $ecrm $ecti $cmr $cmmi cmbsy msam msbm stmary wasyb linew
                cmbsy eufb bbmbx grxn cmbx cmmib cmbsy cmex $s $d))
     ((math-conc-alt $ecrm $ecti $cmr $cmmi $s $d)
      (alt-math $ecrm $ecti $cmr $cmmi xccsy xccam xccbm stmary wasy line
@@ -244,7 +244,7 @@
      (capital-math $name ecrm cmr cmmi cmsy msam msbm stmary wasy line
 		   cmsy eufm bbm grmn cmbx cmmib cmbsy cmex $s $d))
     ((bold-math-capital $name $s $d)
-     (capital-math $name ecbx cmbx cmmib cmbsy msam msbm stmaryb wasyb linew
+     (capital-math $name ecbx cmbx cmmib cmbsy msam msbm stmary wasyb linew
 		   cmbsy eufb bbmbx grxn cmbx cmmib cmbsy cmex $s $d))
 
     ((cal mr medium $a $s $d) (math-capital cmsy $s $d))
@@ -293,7 +293,7 @@
      (alphanum-math $name ecrm cmr cmmi cmsy msam msbm stmary wasy line
 		    cmsy eufm bbm grmn cmbx cmmib cmbsy cmex $s $d))
     ((bold-math-alphanum $name $s $d)
-     (alphanum-math $name ecbx cmbx cmmib cmbsy msam msbm stmaryb wasyb linew
+     (alphanum-math $name ecbx cmbx cmmib cmbsy msam msbm stmary wasyb linew
 		    cmbsy eufb bbmbx grxn cmbx cmmib cmbsy cmex $s $d))
 
     ((Duerer mr medium slanted $s $d) (math-alphanum cdsl $s $d))
@@ -356,7 +356,7 @@
      (enr-math $name ecrm cmr cmmi cmsy msam msbm stmary wasy line
 	       cmsy eufm bbm grmn eurb eurb cmbsy cmex $s $d))
     ((bold-math-enr $name $s $d)
-     (enr-math $name ecbx cmbx cmmib cmbsy msam msbm stmaryb wasyb linew
+     (enr-math $name ecbx cmbx cmmib cmbsy msam msbm stmary wasyb linew
 	       cmbsy eufb bbmbx grxn eurb eurb cmbsy cmex $s $d))
 
     ((ENR mr medium $a $s $d) (math-enr eurm $s $d))
