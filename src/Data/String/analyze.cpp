@@ -508,7 +508,7 @@ tm_to_xml_cdata (string s) {
       string ss= s (start, i+1);
       string rr= cork_to_utf8 (ss);
       string qq= utf8_to_cork (rr);
-      if (rr != ss && qq == ss) r << rr;
+      if (rr != ss && qq == ss && ss != "<less>" && ss != "<gtr>") r << rr;
       else {
 	if (r != "") a << object (r);
 	a << cons (symbol_object ("tm-sym"),
