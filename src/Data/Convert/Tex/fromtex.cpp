@@ -2060,6 +2060,26 @@ latex_command_to_tree (tree t) {
     return tree (WIDE, l2e (t[1]), "<bar>");
   if (is_tuple (t, "\\underline", 1))
     return tree (VAR_WIDE, l2e (t[1]), "<bar>");
+  if (is_tuple (t, "\\overrightarrow", 1))
+    return tree (WIDE, l2e (t[1]), "<wide-varrightarrow>");
+  if (is_tuple (t, "\\underrightarrow", 1))
+    return tree (VAR_WIDE, l2e (t[1]), "<wide-varrightarrow>");
+  if (is_tuple (t, "\\overleftarrow", 1))
+    return tree (WIDE, l2e (t[1]), "<wide-varleftarrow>");
+  if (is_tuple (t, "\\underleftarrow", 1))
+    return tree (VAR_WIDE, l2e (t[1]), "<wide-varleftarrow>");
+  if (is_tuple (t, "\\overleftrightarrow", 1))
+    return tree (WIDE, l2e (t[1]), "<wide-varleftrightarrow>");
+  if (is_tuple (t, "\\underleftrightarrow", 1))
+    return tree (VAR_WIDE, l2e (t[1]), "<wide-varleftrightarrow>");
+  if (is_tuple (t, "\\Overrightarrow", 1))
+    return tree (WIDE, l2e (t[1]), "<wide-Rightarrow>");
+  if (is_tuple (t, "\\Underrightarrow", 1))
+    return tree (VAR_WIDE, l2e (t[1]), "<wide-Rightarrow>");
+  if (is_tuple (t, "\\Overleftarrow", 1))
+    return tree (WIDE, l2e (t[1]), "<wide-Leftarrow>");
+  if (is_tuple (t, "\\Underleftarrow", 1))
+    return tree (VAR_WIDE, l2e (t[1]), "<wide-Leftarrow>");
   if (is_tuple (t, "\\hat", 1) || is_tuple (t, "\\Hat", 1))
     return tree (WIDE, l2e (t[1]), "^");
   if (is_tuple (t, "\\tilde", 1) || is_tuple (t, "\\Tilde", 1))
