@@ -86,7 +86,7 @@ edit_text_rep::remove_text_sub (bool forward) {
 	tree u= subtree (et, path_up (p));
 	if (is_func (u, _FLOAT) || is_func (u, WITH) ||
 	    is_func (u, STYLE_WITH) || is_func (u, VAR_STYLE_WITH) ||
-	    is_func (u, LOCUS) ||
+	    is_func (u, LOCUS) || is_func (u, INCLUDE) ||
 	    is_extension (u))
 	  {
 	    if (is_extension (u) && (N(u) > 1)) {
@@ -108,6 +108,8 @@ edit_text_rep::remove_text_sub (bool forward) {
 	      else if (is_document (subtree (et, path_up (p, 2))))
 		assign (path_up (p), "");
 	      else assign (path_up (p), tree (DOCUMENT, ""));
+              if (is_func (subtree (et, path_up (p, 2)), INACTIVE))
+                remove_structure (forward);
 	    }
 	    else go_to_border (path_up (p), !forward);
 	  }
