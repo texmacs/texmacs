@@ -122,8 +122,20 @@
         db))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Importing and exporting BibTeX files
+;; Importing BibTeX files or entries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (bib-entry? t)
+  (or (tm-func? t 'bib-entry 3)
+      (and (db-entry-any? t)
+           (tm-atomic? (tm-ref t 1))
+           (in? (tm->string (tm-ref t 1)) bib-types-list))))
+
+(define (bib-import-tree doc)
+  (with-database (bib-database)
+    (bib-save doc))
+  (when (buffer-exists? "tmfs://db/bib/global")
+    (revert-buffer "tmfs://db/bib/global")))
 
 (tm-define (bib-import-bibtex f)
   (with imported (bib-cache-bibtex f)
@@ -131,12 +143,29 @@
       (let* ((tm-doc (string-load imported))
              (t (convert tm-doc "texmacs-document" "texmacs-stree"))
              (body (tmfile-extract t 'body)))
-        (with-database (bib-database)
-	  (bib-save body))
-        (when (buffer-exists? "tmfs://db/bib/global")
-          (revert-buffer "tmfs://db/bib/global"))
+        (bib-import-tree body)
         (set-message "Imported bibliographic entries" "import bibliography")
         (db-confirm-imported f)))))
+
+(tm-define (bib-import-selection)
+  (when (selection-active-any?)
+    (bib-import-tree (selection-tree))
+    (selection-cancel)))
+
+(tm-define (bib-importable-tree? t)
+  (or (bib-entry? t)
+      (and (tm-func? t 'document)
+           (list-or (map bib-importable-tree? (tm-children t))))))
+
+(tm-define (bib-importable?)
+  (cond ((selection-active-any?)
+         (bib-importable-tree? (selection-tree)))
+        ((in-bib?) (db-url? (current-buffer)))
+        (else #f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Exporting BibTeX files or entries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (bib-export-global f)
   (with-database (bib-database)
@@ -145,12 +174,6 @@
         (let* ((doc `(document ,@(map db->bib (cdr all))))
                (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
           (string-save bibtex-doc f))))))
-
-(define (bib-entry? t)
-  (or (tm-func? t 'bib-entry 3)
-      (and (db-entry-any? t)
-           (tm-atomic? (tm-ref t 1))
-           (in? (tm->string (tm-ref t 1)) bib-types-list))))
 
 (define (bib-export-save new-body f)
   (with s (or (and (url-exists? f)
@@ -380,8 +403,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (db-importable?)
-  (:require (in-bib?))
-  (db-url? (current-buffer)))
+  (:require (bib-importable?))
+  #t)
 
 (tm-define (db-exportable?)
   (:require (bib-exportable?))
@@ -402,6 +425,10 @@
 (tm-define (db-export-select)
   (:require (in-bib?))
   (choose-file bib-export-bibtex "Export to BibTeX file" "tmbib"))
+
+(tm-define (db-import-selection)
+  (:require (bib-importable?))
+  (bib-import-selection))
 
 (tm-define (open-bib-chooser cb)
   (open-db-chooser (bib-database) "bib" "Search bibliographic reference" cb))

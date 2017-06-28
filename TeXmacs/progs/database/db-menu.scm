@@ -236,9 +236,9 @@
             ---)
         ("Other" (choose-file use-database "Select database" "generic"))))
   (when (db-importable?)
-    (if (null? (db-recent-imports))
+    (if (and (not (selection-active-any?)) (null? (db-recent-imports)))
         ("Import" (db-import-select)))
-    (if (nnull? (db-recent-imports))
+    (if (and (not (selection-active-any?)) (nnull? (db-recent-imports)))
         (=> "Import"
             (for (name (db-recent-imports))
               (let* ((short-name `(verbatim ,(url->system (url-tail name))))
@@ -246,7 +246,9 @@
                 ((balloon (eval short-name) (eval long-name))
                  (db-import-file name))))
             ---
-            ("Other" (db-import-select)))))
+            ("Other" (db-import-select))))
+    (if (selection-active-any?)
+        ("Import selected entries" (db-import-selection))))
   (when (db-exportable?)
     (if (and (not (selection-active-any?)) (null? (db-recent-exports)))
         ("Export" (db-export-select)))
