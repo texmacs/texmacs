@@ -177,6 +177,7 @@
   (noop))
 
 (tm-define (db-import-selection) (noop))
+(tm-define (db-import-current-buffer) (noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Subroutines for syncing

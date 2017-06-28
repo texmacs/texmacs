@@ -152,6 +152,10 @@
     (bib-import-tree (selection-tree))
     (selection-cancel)))
 
+(tm-define (bib-import-current-buffer)
+  (when (and (in-bib?) (not (db-url? (current-buffer))))
+    (bib-import-tree (buffer-tree))))
+
 (tm-define (bib-importable-tree? t)
   (or (bib-entry? t)
       (and (tm-func? t 'document)
@@ -160,7 +164,9 @@
 (tm-define (bib-importable?)
   (cond ((selection-active-any?)
          (bib-importable-tree? (selection-tree)))
-        ((in-bib?) (db-url? (current-buffer)))
+        ((and (in-bib?) (db-url? (current-buffer))) #t)
+        ((and (in-bib?) (not (db-url? (current-buffer))))
+         (bib-importable-tree? (buffer-tree)))
         (else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -429,6 +435,10 @@
 (tm-define (db-import-selection)
   (:require (bib-importable?))
   (bib-import-selection))
+
+(tm-define (db-import-current-buffer)
+  (:require (bib-importable?))
+  (bib-import-current-buffer))
 
 (tm-define (open-bib-chooser cb)
   (open-db-chooser (bib-database) "bib" "Search bibliographic reference" cb))
