@@ -89,7 +89,7 @@
     (file-list-menu l)))
 
 (tm-define (linked-file-menu)
-  (file-list-menu (linked-file-list)))
+  (file-list-menu (list-remove-duplicates (linked-file-list))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus for formats
