@@ -131,6 +131,11 @@
            (tm-atomic? (tm-ref t 1))
            (in? (tm->string (tm-ref t 1)) bib-types-list))))
 
+(tm-define (contains-bib-entry? t)
+  (or (bib-entry? t)
+      (and (tm-func? t 'document)
+           (list-or (map contains-bib-entry? (tm-children t))))))
+
 (define (bib-import-tree doc)
   (with-database (bib-database)
     (bib-save doc))
@@ -156,17 +161,12 @@
   (when (and (in-bib?) (not (db-url? (current-buffer))))
     (bib-import-tree (buffer-tree))))
 
-(tm-define (bib-importable-tree? t)
-  (or (bib-entry? t)
-      (and (tm-func? t 'document)
-           (list-or (map bib-importable-tree? (tm-children t))))))
-
 (tm-define (bib-importable?)
   (cond ((selection-active-any?)
-         (bib-importable-tree? (selection-tree)))
+         (contains-bib-entry? (selection-tree)))
         ((and (in-bib?) (db-url? (current-buffer))) #t)
         ((and (in-bib?) (not (db-url? (current-buffer))))
-         (bib-importable-tree? (buffer-tree)))
+         (contains-bib-entry? (buffer-tree)))
         (else #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -212,16 +212,23 @@
       (db-confirm-exported f))))
 
 (tm-define (bib-exportable?)
-  (or (nnull? (bib-attachments))
-      (and (tm-func? (buffer-tree) 'document)
-           (list-or (map bib-entry? (tm-children (buffer-tree)))))))
+  (cond ((selection-active-any?)
+         (contains-bib-entry? (selection-tree)))
+        ((and (in-bib?) (db-url? (current-buffer))) #t)
+        ((and (in-bib?) (not (db-url? (current-buffer))))
+         (contains-bib-entry? (buffer-tree)))
+        ((nnull? (bib-attachments)) #t)
+        (else #f)))
 
 (tm-define (bib-export-bibtex f)
-  (cond ((nnull? (bib-attachments))
-         (bib-export-attachments f))
-        ((selection-active-any?)
+  (cond ((selection-active-any?)
          (bib-export-tree f (tm->stree (selection-tree))))
-        (else (bib-export-all f))))
+        ((and (in-bib?) (db-url? (current-buffer)))
+         (bib-export-all f))
+        ((and (in-bib?) (not (db-url? (current-buffer))))
+         (bib-export-tree f (tm->stree (buffer-tree))))
+        ((nnull? (bib-attachments))
+         (bib-export-attachments f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Retrieving entries
@@ -414,7 +421,7 @@
 
 (tm-define (db-exportable?)
   (:require (bib-exportable?))
-  (db-url? (current-buffer)))
+  #t)
 
 (tm-define (db-import-file name)
   (:require (in-bib?))
@@ -429,7 +436,7 @@
   (choose-file bib-import-bibtex "Import from BibTeX file" "tmbib"))
 
 (tm-define (db-export-select)
-  (:require (in-bib?))
+  (:require (bib-exportable?))
   (choose-file bib-export-bibtex "Export to BibTeX file" "tmbib"))
 
 (tm-define (db-import-selection)
