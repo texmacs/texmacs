@@ -67,7 +67,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (db-toolbar-on?)
-  (with r (in-database?)
+  (with r (db-url? (current-buffer))
     (when (not r)
       (set! toolbar-db-active? #f)
       (show-bottom-tools 0 #f)
