@@ -11,7 +11,7 @@
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN([TM_OPTIMIZE],[
+AC_DEFUN([TM_FASTALLOC],[
   AC_ARG_ENABLE(fastalloc,
   [  --disable-fastalloc     omit fast allocator for small objects],
       [], [enable_fastalloc="yes"])
