@@ -552,6 +552,27 @@
   (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Important files to which the buffer is linked (e.g. bibliographies)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (linked-files-inside t)
+  (cond ((tree-atomic? t) (list))
+        ((tree-is? t 'document)
+         (append-map linked-files-inside (tree-children t)))
+        ((tree-is? t 'with)
+         (linked-files-inside (tm-ref t :last)))
+        ((tree-func? t 'bibliography 4)
+         (with name (tm->stree (tm-ref t 2))
+           (if (or (== name "") (nstring? name)) (list)
+               (with s (if (string-ends? name ".bib") name
+                           (string-append name ".bib"))
+                 (list (url-relative (current-buffer) s))))))
+        (else (list))))
+
+(tm-define (linked-file-list)
+  (linked-files-inside (buffer-tree)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Deprecated functionality
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

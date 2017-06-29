@@ -46,7 +46,8 @@
     (sublist l2 0 (min (length l2) nr))))
 
 (tm-define (buffer-go-menu)
-  (buffer-list-menu (buffer-menu-list 15)))
+  (with l (list-difference (buffer-menu-list 15) (linked-file-list))
+    (buffer-list-menu l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menu for recent files
@@ -84,7 +85,11 @@
   (file-list-menu (recent-file-list 25)))
 
 (tm-define (recent-unloaded-file-menu)
-  (file-list-menu (recent-unloaded-file-list 15)))
+  (with l (list-difference (recent-unloaded-file-list 15) (linked-file-list))
+    (file-list-menu l)))
+
+(tm-define (linked-file-menu)
+  (file-list-menu (linked-file-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus for formats
@@ -217,6 +222,9 @@
     ("Forward" (cursor-history-forward)))
   ---
   (link buffer-go-menu)
+  (if (nnull? (linked-file-list))
+      ---
+      (link linked-file-menu))
   (if (nnull? (recent-unloaded-file-list 1))
       ---
       (link recent-unloaded-file-menu))
