@@ -561,7 +561,8 @@
          (append-map linked-files-inside (tree-children t)))
         ((tree-is? t 'with)
          (linked-files-inside (tm-ref t :last)))
-        ((tree-func? t 'bibliography 4)
+        ((or (tree-func? t 'bibliography 4)
+	     (tree-func? t 'bibliography* 5))
          (with name (tm->stree (tm-ref t 2))
            (if (or (== name "") (nstring? name)) (list)
                (with s (if (string-ends? name ".bib") name
