@@ -108,6 +108,19 @@
   (biblio-sort (biblio-append (biblio-automatic-entries base bib)
 			      (biblio-local-entries base bib))))
 
+(define (entries-inside t)
+  (cond ((tm-atomic? t) (list))
+        ((db-entry-any? t) (list t))
+	(else (append-map entries-inside (tm-children t)))))
+
+(tm-define (biblio-confirm base bib doc)
+  (let* ((old-l (biblio-automatic-entries base bib))
+	 (new-l (entries-inside doc))
+	 (l (biblio-diffs old-l new-l))
+	 (doc `(document ,@l)))
+    (with-buffer base
+      (set-attachment (string-append bib "-biblio") doc))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handlers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -126,10 +139,14 @@
        (style (tuple "database-bib"))
        (body (document ,@l)))))
 
-;;(tmfs-permission-handler (biblio name type)
-;;  (in? type (list "read" "write")))
-;;(tmfs-save-handler (biblio name doc)
-;;  (db-confirm-entries-in (tm->tree doc)))
+(tmfs-permission-handler (biblio name type)
+  (in? type (list "read" "write")))
+
+(tmfs-save-handler (biblio name doc)
+  (let* ((b (tmfs-car name))
+         (f (tmfs-string->url (tmfs-cdr name))))
+    (biblio-confirm f b doc)
+    #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Opening the bibliography

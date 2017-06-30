@@ -191,8 +191,9 @@
           ((cannot-write? name "Save file")
            (noop))
           ((and (url-test? name "fr")
-                (> (url-last-modified name)
-                   (buffer-last-save name)))
+		(and-with mod-t (url-last-modified name)
+		  (and-with save-t (buffer-last-save name)
+		    (> mod-t save-t))))
            (user-confirm "The file has changed on disk. Really save?" #f
              (lambda (answ)
                (when answ
