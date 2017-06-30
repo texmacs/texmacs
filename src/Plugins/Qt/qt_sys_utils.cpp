@@ -30,7 +30,13 @@ ReadOutputs(QProcess& p, string& o, string& e) {
 static int
 qt_system (QProcess& proc, string& cmd, string& cmdout, string& cmderr) {
   c_string _cmd (cmd);
+#ifdef OS_MINGW
   QString qcmd = QString::fromLocal8Bit (_cmd);
+#else
+  QString qcmd = "sh -c \"";
+  qcmd += _cmd;
+  qcmd += "\"";
+#endif
 
   proc.start (qcmd);
   if (! proc.waitForStarted ()) {
