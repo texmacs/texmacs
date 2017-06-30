@@ -386,7 +386,7 @@
              (doc `(document ,@(map cdr l))))
         (set-attachment (string-append prefix "-bibliography") doc)))))
 
-(define (bib-attachments)
+(tm-define (bib-attachments)
   (with l (list-attachments)
     (list-filter l (cut string-ends? <> "-bibliography"))))
 

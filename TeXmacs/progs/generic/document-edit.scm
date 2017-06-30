@@ -135,6 +135,11 @@
         (get-metadata kind))
       ""))
 
+(tm-define (buffer-has-biblio? u)
+  (with-buffer u
+    (with l (list-attachments)
+      (nnull? (list-filter l (cut string-ends? <> "-bibliography"))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text and paragraph properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
