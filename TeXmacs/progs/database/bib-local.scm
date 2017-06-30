@@ -24,7 +24,7 @@
       (tree-func? t 'bibliography* 5)))
 
 (define (biblio-tag)
-  (with l (bib-attachments)
+  (with l (bib-attachments #f)
     (with t (tree-innermost biblio-context?)
       (cond ((and t (tm-atomic? (tm-ref t 0)))
 	     (tm->stree (tm-ref t 0)))

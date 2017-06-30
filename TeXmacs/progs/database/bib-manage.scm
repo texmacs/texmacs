@@ -217,7 +217,7 @@
         ((and (in-bib?) (db-url? (current-buffer))) #t)
         ((and (in-bib?) (not (db-url? (current-buffer))))
          (contains-bib-entry? (buffer-tree)))
-        ((nnull? (bib-attachments)) #t)
+        ((nnull? (bib-attachments #f)) #t)
         (else #f)))
 
 (tm-define (bib-export-bibtex f)
@@ -227,7 +227,7 @@
          (bib-export-all f))
         ((and (in-bib?) (not (db-url? (current-buffer))))
          (bib-export-tree f (tm->stree (buffer-tree))))
-        ((nnull? (bib-attachments))
+        ((nnull? (bib-attachments #f))
          (bib-export-attachments f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -250,8 +250,8 @@
              (tail (bib-retrieve-several (cdr names))))
         (if head (cons head tail) tail))))
 
-(define (bib-retrieve-attached names)
-  (let* ((l (bib-attached-entries))
+(define (bib-retrieve-attached names local?)
+  (let* ((l (bib-attached-entries local?))
          (t (make-ahash-table))
          (get (lambda (name)
                 (and-with val (ahash-ref t name)
@@ -260,10 +260,10 @@
     (list-filter (map get names) identity)))
 
 (define (bib-retrieve-entries-from-one names db)
-  (if (== db :attached)
-      (bib-retrieve-attached names)
-      (with-database db
-        (bib-retrieve-several names))))
+  (cond ((== db :local) (bib-retrieve-attached names #t))
+	((== db :attached) (bib-retrieve-attached names #f))
+	(else (with-database db
+		(bib-retrieve-several names)))))
 
 (define (bib-retrieve-entries-from names dbs)
   (if (null? dbs) (list)
@@ -274,6 +274,7 @@
 
 (define (bib-get-db bib-file names)
   (cond ((== bib-file :default) (bib-database))
+        ((== bib-file :local) :local)
         ((== bib-file :attached) :attached)
         ((== (url-suffix bib-file) "tmdb") (url->url bib-file))
         (else (bib-cache-database bib-file names))))
@@ -304,12 +305,12 @@
   (set! names (list-remove-duplicates names))
   (if (in? style (list "tm-abbrv" "tm-abstract" "tm-acm" "tm-alpha" "tm-elsart-num"
                        "tm-ieeetr" "tm-plain" "tm-siam" "tm-unsrt"))
-      (let* ((all-files `(,@bib-files :default :attached))
+      (let* ((all-files `(:local ,@bib-files :default :attached))
              (l (apply bib-retrieve-entries (cons names all-files)))
              (bl (map db->bib (map cdr l)))
              (doc `(document ,@bl)))
         (bib-generate prefix (string-drop style 3) doc))
-      (receive (b1 b2) (list-partition `(,@bib-files :default :attached)
+      (receive (b1 b2) (list-partition `(:local ,@bib-files :default :attached)
                                        bib-file?)
         (let* ((l1 (apply bib-retrieve-entries (cons names b1)))
                (names2 (list-difference names (map car l1)))
@@ -381,22 +382,23 @@
       (set! names (tm-children (tm->stree names))))
     (when (and (list? names) (list-and (map string? names)))
       (set! names (list-remove-duplicates names))
-      (let* ((all-files `(,@bib-files :default :attached))
+      (let* ((all-files `(:local ,@bib-files :default :attached))
              (l (apply bib-retrieve-entries (cons names all-files)))
              (doc `(document ,@(map cdr l))))
         (set-attachment (string-append prefix "-bibliography") doc)))))
 
-(tm-define (bib-attachments)
-  (with l (list-attachments)
-    (list-filter l (cut string-ends? <> "-bibliography"))))
+(tm-define (bib-attachments local?)
+  (with suffix (if local? "-biblio" "-bibliography")
+    (with l (list-attachments)
+      (list-filter l (cut string-ends? <> suffix)))))
 
-(define (bib-attached-entries)
-  (let* ((l (bib-attachments))
+(define (bib-attached-entries local?)
+  (let* ((l (bib-attachments local?))
          (bibs (map tm->stree (map get-attachment l))))
     (append-map (lambda (x) (if (string? x) (list) (tm-children x))) bibs)))
 
 (tm-define (bib-export-attachments f)
-  (let* ((b (bib-attached-entries))
+  (let* ((b (bib-attached-entries #f))
          (doc `(document ,@(map db->bib b)))
          (bibtex-doc (convert doc "texmacs-stree" "bibtex-document")))
     (string-save bibtex-doc f)
