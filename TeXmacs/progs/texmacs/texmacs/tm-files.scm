@@ -560,7 +560,7 @@
   (cond ((tree-atomic? t) (list))
         ((tree-is? t 'document)
          (append-map linked-files-inside (tree-children t)))
-        ((tree-is? t 'with)
+        ((tree-in? t '(with with-bib))
          (linked-files-inside (tm-ref t :last)))
         ((or (tree-func? t 'bibliography 4)
 	     (tree-func? t 'bibliography* 5))
