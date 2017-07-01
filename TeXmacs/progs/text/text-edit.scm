@@ -423,13 +423,25 @@
   (if (not (make-return-after))
       (insert (list (string->symbol env) aux name '(document "")))))
 
-(tm-define (make-bib style file-name)
-  (:argument style "Bibliography style")
-  (:proposals style (bib-standard-styles))
+(define (normalized-bib-name f)
+  (if (string? f) f
+      (let* ((r (url-delta (current-buffer) f))
+             (n (if (== (url-suffix r) "bib") (url-unglue r 4) r)))
+        (url->string n))))
+
+(tm-define (make-bib file-name)
   (:argument file-name "Bibliography file")
+  (let* ((name (normalized-bib-name file-name))
+         (aux (if (context-has? "bib-prefix") (get-env "bib-prefix") "bib")))
+    (if (not (make-return-after))
+        (insert-go-to `(bibliography ,aux "tm-plain" ,name (document ""))
+                      '(3 0 0)))))
+
+(tm-define (make-database-bib)
   (with aux (if (context-has? "bib-prefix") (get-env "bib-prefix") "bib")
     (if (not (make-return-after))
-        (insert (list 'bibliography aux style file-name '(document ""))))))
+        (insert-go-to `(bibliography ,aux "tm-plain" "" (document ""))
+                      '(3 0 0)))))
 
 (tm-define (automatic-section-context? t)
   (tree-in? t (automatic-section-tag-list)))
