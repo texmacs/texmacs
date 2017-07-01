@@ -802,6 +802,10 @@
     (=> (eval (tm/section-get-title-string t))
         (link focus-section-menu))))
 
+(tm-define (child-proposals t i)
+  (:require (and (tree-in? t '(bibliography bibliography*)) (== i 1)))
+  (bib-standard-styles))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menu for lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

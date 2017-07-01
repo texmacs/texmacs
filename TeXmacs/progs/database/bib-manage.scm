@@ -303,8 +303,7 @@
 
 (define (bib-compile-sub prefix style names . bib-files)
   (set! names (list-remove-duplicates names))
-  (if (in? style (list "tm-abbrv" "tm-abstract" "tm-acm" "tm-alpha" "tm-elsart-num"
-                       "tm-ieeetr" "tm-plain" "tm-siam" "tm-unsrt"))
+  (if (in? style (bib-standard-styles))
       (let* ((all-files `(:local ,@bib-files :default :attached))
              (l (apply bib-retrieve-entries (cons names all-files)))
              (bl (map db->bib (map cdr l)))

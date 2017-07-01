@@ -52,6 +52,9 @@
        (not (string-variable-name? t i))
        (!= (type->format (tree-child-type t i)) "n.a.")))
 
+(tm-define (child-proposals t i)
+  #f)
+
 (define (hidden-children t)
   (with fun (lambda (i) (if (hidden-child? t i) (list (tree-ref t i)) (list)))
     (append-map fun (.. 0 (tree-arity t)))))
@@ -116,8 +119,10 @@
          (type (tree-child-type t i))
          (s (string-append (upcase-first name) ":"))
          (active? (inputter-active? (tree-ref t i) type))
+         (props (child-proposals t i))
 	 (in (if active? (inputter-decode (tree-ref t i) type) "n.a."))
          (in* (if active? in ""))
+         (ins (if props (cons in props) (list in)))
          (fm (type->format type))
          (w (type->width type))
          (setter (lambda (x)
@@ -128,11 +133,17 @@
       //)
     (assuming (!= name "")
       (glue #f #f 3 0)
-      (mini #t (group (eval s))))
+      (mini #t
+        (if (and (!= type "color") props)
+            (=> (eval s)
+                (for (prop props)
+                  ((eval prop) (setter prop)))))
+        (if (or (== type "color") (not props))
+            (group (eval s)))))
     (if (!= type "color")
         (when active?
           (mini #t
-            (input (setter answer) fm (list in) w))))
+            (input (setter answer) fm ins w))))
     (if (== type "color")
         (=> (color (tree->stree (tree-ref t i)) #f #f 24 16)
             (pick-background "" (setter answer))

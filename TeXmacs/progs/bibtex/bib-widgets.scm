@@ -115,9 +115,7 @@
               bibwid-update-buffer?)
       ///
       (text "Style:") // //
-      (enum (bibwid-set-style answer)
-            '("tm-plain" "tm-abstract" "tm-acm" "tm-alpha" "tm-elsart-num"
-              "tm-ieeetr" "tm-siam" "tm-unsrt")
+      (enum (bibwid-set-style answer) (bib-standard-styles)
             bibwid-style "10em"))
     === === ===
     (hlist // (dynamic (bibwid-preview)) //)
