@@ -659,6 +659,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(debug-message <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|debug_message> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(get-debug-messages <scm-arg|string> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -6080,6 +6088,14 @@ source code.
   <|explain>
     Calls the <c++> function <cpp|debug_get> which returns
     <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(debug-message <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|debug_message> which returns
+    <scm|void>.
   </explain>
 
   <\explain>

@@ -15,6 +15,16 @@
   (:use (database db-users)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Warnings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (db-warning . l)
+  (with msg (string-append (apply string-append l) "\n")
+    (debug-message "database-warning" msg)
+    ;;(display* msg)
+    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Creating a new version of an entry
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -82,15 +92,15 @@
     (cond ((nnull? (db-get-entry id)) ;; new entries must have new identifiers
            (when (and db-duplicate-warning?
                       (not (db-same-entries? l (db-get-entry id))))
-             (display* "Ignored entry " name " with existing identifier\n")))
+             (db-warning "Ignored entry " name " with existing identifier")))
           ((nnull? (db-find-entry l)) ;; find exact matches
            ;;(when (and db-duplicate-warning? (not exact?))
-           ;;(display* "Existing entry " name "\n"))
+           ;;(db-warning "Existing entry " name))
            (for (xid (db-find-entry l))
              (db-declare-supersedes xid (list id))))
           ((nnull? (db-search (list (list "newer" id))))
            (when db-duplicate-warning?
-             (display* "Newer version of " name " already available\n")))
+             (db-warning "Newer version of " name " already available")))
           ((begin
              (for (oid his)
                (db-declare-superseded oid))
@@ -109,14 +119,14 @@
              (cond ((and (== xmodus "manual") (!= modus "manual"))
                     (db-declare-supersedes xid (cons id his))
                     (when db-duplicate-warning?
-                      (display* "Kept existing version of entry " name "\n")))
+                      (db-warning "Kept existing version of entry " name)))
                    ((and (== modus "manual") (!= xmodus "manual"))
                     (with newer (list-remove-duplicates (cons xid his))
                       (set! l (assoc-set! l "newer" newer)))
                     (db-set-entry id l)
                     (db-declare-superseded xid)
                     (when db-duplicate-warning?
-                      (display* "Updated the entry " name "\n")))
+                      (db-warning "Updated the entry " name)))
                    ((and (string? xdate)
                          (string->number xdate)
                          (or (not (string? date))
@@ -125,12 +135,12 @@
                                  (string->number date))))
                     (db-declare-supersedes xid (cons id his))
                     (when db-duplicate-warning?
-                      (display* "Kept existing version of entry " name "\n")))
+                      (db-warning "Kept existing version of entry " name)))
                    (else
                      (with newer (list-remove-duplicates (cons xid his))
                        (set! l (assoc-set! l "newer" newer)))
                      (db-set-entry id l)
                      (db-declare-superseded xid)
                      (when db-duplicate-warning?
-                       (display* "Updated the entry " name "\n"))))))
+                       (db-warning "Updated the entry " name))))))
           (else (db-set-entry id l)))))

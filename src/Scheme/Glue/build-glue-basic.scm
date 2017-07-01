@@ -98,6 +98,7 @@
   (get-author get_author (double))
   (debug-set debug_set (void string bool))
   (debug-get debug_get (bool string))
+  (debug-message debug_message (void string string))
   (get-debug-messages get_debug_messages (tree string int))
   (clear-debug-messages clear_debug_messages (void))
   (cout-buffer cout_buffer (void))
