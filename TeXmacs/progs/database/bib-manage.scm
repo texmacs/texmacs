@@ -139,8 +139,8 @@
 (define (bib-import-tree doc)
   (with-database (bib-database)
     (bib-save doc))
-  (when (buffer-exists? "tmfs://db/bib/global")
-    (revert-buffer "tmfs://db/bib/global")))
+  (when (db-url? (current-buffer))
+    (revert-buffer)))
 
 (tm-define (bib-import-bibtex f)
   (with imported (bib-cache-bibtex f)
@@ -444,6 +444,11 @@
 (tm-define (db-import-selection)
   (:require (bib-importable?))
   (bib-import-selection))
+
+(tm-define (db-import-this-entry)
+  (:require (bib-importable?))
+  (and-with t (tree-innermost db-entry-any?)
+    (bib-import-tree t)))
 
 (tm-define (db-import-current-buffer)
   (:require (bib-importable?))

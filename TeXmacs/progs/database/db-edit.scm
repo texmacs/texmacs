@@ -451,9 +451,10 @@
            (db-complete-fields res opt?)
            (and-with f (db-first-empty-field res #t)
              (tree-go-to f :end))))
-        (else (and-with res (tree-search-upwards t db-entry-any?)
-                (detach-buffer-entries)
-                (confirm-entry res)))))
+        ((db-url? (current-buffer))
+         (and-with res (tree-search-upwards t db-entry-any?)
+           (detach-buffer-entries)
+           (confirm-entry res)))))
 
 (define (confirm-entries l)
   (detach-buffer-entries)
@@ -557,7 +558,8 @@
 
 (tm-define (kbd-alternate-enter t shift?)
   (:require (and (in-database?) (pair? (selected-entries))))
-  (confirm-entries (selected-entries)))
+  (when (db-url? (current-buffer))
+    (confirm-entries (selected-entries))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The delete keys in databases

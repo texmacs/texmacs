@@ -146,6 +146,7 @@
   (let* ((b (tmfs-car name))
          (f (tmfs-string->url (tmfs-cdr name))))
     (biblio-confirm f b doc)
+    (buffer-pretend-modified f)
     #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
