@@ -1,4 +1,4 @@
-<TeXmacs|1.99.3>
+<TeXmacs|1.99.5>
 
 <style|<tuple|source|std|english>>
 
@@ -57,6 +57,8 @@
   <assign|menu-item|<macro|body|<with|font-family|ss|<localize|<arg|body>>>>>
 
   <assign|menu-extra|<macro|body|<active*|<with|mode|math|\<rightarrow\>>><menu-item|<arg|body>>>>
+
+  <assign|render-menu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|0>><map-args|menu-extra|concat|x|1>>>>
 
   <assign|menu|<xmacro|x|<style-with|src-compact|none|<menu-item|<arg|x|0>><map-args|menu-extra|concat|x|1><index-write|<map-args|menu-item|tuple|x>>>>>
 
