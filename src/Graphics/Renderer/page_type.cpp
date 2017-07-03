@@ -172,6 +172,9 @@ INIT_ALL () {
   INIT ("Monarch", "98mm",  "190mm", "yes",
         "75mm", "15mm", "15mm",
         "118mm", "15mm", "15mm");
+  INIT ("Royal", "15.59cm",  "23.39cm", "yes",
+        "151.9mm", "20mm", "20mm",
+        "193.9mm", "20mm", "20mm");
   INIT ("note",  "216mm", "279mm", "yes",
         "150mm",  "30mm",  "30mm",
         "237mm",  "30mm",  "30mm");
