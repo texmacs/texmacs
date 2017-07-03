@@ -111,7 +111,7 @@ edit_interface_rep::resume () {
 #ifdef QTTEXMACS
   // FIXME: dirty hack in order to correct a bug introduced
   // after a bugfix by Massimiliano during summer 2016
-  exec_delayed (scheme_cmd ("(refresh-window)"));
+  eval ("(delayed (:idle 1) (refresh-window))");
 #endif
 }
 
