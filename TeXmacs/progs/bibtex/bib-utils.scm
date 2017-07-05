@@ -74,7 +74,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (bib-standard-styles)
-  (list "tm-plain" "tm-abstract" "tm-acm" "tm-alpha" "tm-elsart-num"
+  (list "tm-plain" "tm-abbrv" "tm-abstract" "tm-acm" "tm-alpha" "tm-elsart-num"
         "tm-ieeetr" "tm-siam" "tm-unsrt"))
 
 (tm-define-macro (bib-define-style s d)
