@@ -901,7 +901,7 @@
   (:require (floatable-context? t))
   ((balloon (icon "tm_position_float.xpm")
             "Let the environment float")
-   (turn-floating t)))
+   (turn-floating (tree-innermost floatable-context?))))
 
 (tm-menu (focus-float-icons t)
   (:require (tree-is? t 'footnote))
