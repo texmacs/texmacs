@@ -157,6 +157,24 @@
       <arg|body>
     </quote-env>
   </macro>>
+
+  <assign|left-quote-env|<\macro|body>
+    <\padded>
+      <\indent-both|<value|quote-left-indentation>|0fn>
+        <with|par-first|0fn|par-par-sep|<value|quote-interparagraph>|<arg|body>>
+      </indent-both>
+    </padded>
+  </macro>>
+
+  <assign|padded-indent|<\macro|body>
+    <\padded>
+      <\with|par-first|0fn|par-par-sep|<value|quote-interparagraph>>
+        <\indent>
+          <arg|body>
+        </indent>
+      </with>
+    </padded>
+  </macro>>
 </body>
 
 <\initial>
