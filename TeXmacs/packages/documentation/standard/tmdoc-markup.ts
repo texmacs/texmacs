@@ -150,7 +150,7 @@
     </with>
   </macro>>
 
-  <assign|wide-fragment|<macro|body|<arg|body>>>
+  <assign|wide-fragment|<macro|body|<with|wpar-length|<plus|1par|0cm>|<arg|body>>>>
 
   <assign|wide-quote-env|<\macro|body>
     <\quote-env>
