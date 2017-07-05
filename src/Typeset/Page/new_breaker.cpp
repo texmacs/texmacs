@@ -491,6 +491,15 @@ new_breaker_rep::here_floats (path p) {
   return here_flag;
 }
 
+static path
+filter_subsequent (path floats, path avoid) {
+  if (is_nil (floats) || is_nil (avoid)) return floats;
+  if (floats->item == avoid->item && floats->next->item == avoid->next->item)
+    return filter_subsequent (floats->next->next, avoid->next->next);
+  return path (floats->item, floats->next->item) *
+         filter_subsequent (floats->next->next, avoid);
+}
+
 pagelet
 new_breaker_rep::assemble (path start, path end) {
   //cout << "Assemble " << start << ", " << end << LF;
@@ -504,7 +513,7 @@ new_breaker_rep::assemble (path start, path end) {
           avoid= avoid->next->next;
         else floats= floats * path (i, j);
       }
-  path top= start->next, here, bottom;
+  path top= filter_subsequent (start->next, avoid), here, bottom;
   while (!is_nil (floats)) {
     bool ok= false;
     int i= floats->item, j= floats->next->item;
