@@ -17,10 +17,8 @@
   </enumerate>
 
   Most keyboard shortcuts for structured cursor movements can be used in
-  combination with the<nbsp><prefix|S->-key so as to similtaneously select
-  text while moving around.
-
-  <todo|customizing the behaviour>
+  combination with the<nbsp><prefix|S-><nbhyph>key so as to similtaneously
+  select text while moving around.
 
   <paragraph*|Structured traversal of the document>
 
@@ -31,13 +29,13 @@
   structured traversal of the entire document. Inside plain text,
   <shortcut|(kbd-select-if-active traverse-left)> and
   <shortcut|(kbd-select-if-active traverse-right)> allow you to move in a
-  word-by-word manner, while <shortcut|(kbd-select-if-active traverse-up)>
+  word-by-word manner, whereas <shortcut|(kbd-select-if-active traverse-up)>
   and <shortcut|(kbd-select-if-active traverse-down)> correspond to
   paragraph-by-paragraph motion.
 
   In the presence of other markup, the <shortcut|(kbd-select-if-active
   traverse-left)> and <shortcut|(kbd-select-if-active traverse-right)> keys
-  allow you to visit all accessible cursor positions of the document, except
+  allow you to visit all accessible cursor positions in the document, except
   that we keep moving in a word-by-word manner inside plain text. The
   behaviour of the <shortcut|(kbd-select-if-active traverse-up)> and
   <shortcut|(kbd-select-if-active traverse-down)> keys is more
@@ -58,7 +56,8 @@
   previous sectional title using <shortcut|(kbd-select-if-active
   traverse-previous)>. Subsection and chapter titles are in particular
   understood to be \Psimilar\Q to section titles. Notice that you may use
-  <key|C-Ÿ> to jump to the previous section title.
+  <shortcut|(traverse-previous-section-title)> to jump to the previous
+  section title.
 
   <paragraph*|Movements inside the innermost tag>
 

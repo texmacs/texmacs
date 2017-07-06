@@ -20,16 +20,17 @@
   allow you to insert new rows and columns (see
   figure<nbsp><reference|matrix-insert-fig>). Inside trees, they correspond
   to the insertion of new nodes (see figure<nbsp><reference|tree-insert-fig>).
-  Whenever you inside a<nbsp>tree inside a table, then the innermost tag is a
+  If you are inside a<nbsp>tree inside a table, then the innermost tag is a
   tree, and node insertions will take precedence over the insertion of new
   rows and columns.
 
   For most editing operations, a \Pdefault particular behaviour\Q has been
-  defined, which may next be overridden for a few exceptional tags. In our
-  example of structured insertion, the default behaviour of
+  defined. This behaviour may potentially be overridden for a few exceptional
+  tags. In our example of structured insertion, the default behaviour of
   <shortcut|(structured-insert-left)> and
   <shortcut|(structured-insert-right)> is to insert a new argument to the tag
-  at the left or at the right (when allowed).
+  at the left or at the right of the cursor (when allowed). Inside tables,
+  this behaviour is overridden so as to insert entire columns.
 
   <\big-figure>
     <\equation*>
@@ -55,17 +56,17 @@
     below<nbsp>(<shortcut|(structured-insert-down)>).
   </big-figure>
 
-  Similarly, in the case of matrices, the keys
+  Similarly, still in the case of matrices, the keys
   <shortcut|(structured-insert-start)>, <shortcut|(structured-insert-end)>,
   <shortcut|(structured-insert-top)> and <shortcut|(structured-insert-bottom)>
   can be used for inserting a new first or last column, <abbr|resp.> a new
   first or last row. The keys <shortcut|(structured-remove-left)> and
   <shortcut|(structured-remove-right)> are mapped to the commands for
-  backward <abbr|resp.> forward <em|structured deletion>. In the case of
-  matrices, this will result in the removal of the column before or after the
-  cursor (see figure<nbsp><reference|matrix-remove-fig>). In order to remove
-  the enclosing environment you may use <shortcut|(remove-structure-upwards)>
-  or <shortcut|(remove-structure-upwards)>.
+  backward <abbr|resp.> forward <em|structured deletion>. For matrices, this
+  will result in the removal of the column before or after the cursor (see
+  figure<nbsp><reference|matrix-remove-fig>). In order to remove the
+  enclosing environment you may use <shortcut|(remove-structure-upwards)> or
+  <shortcut|(remove-structure-upwards)>.
 
   <\big-figure>
     <\equation*>
