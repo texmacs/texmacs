@@ -41,7 +41,8 @@
     alignment) to the defaults.
 
     <item*|<shortcut|(geometry-circulate #t)>, <shortcut|(geometry-circulate
-    #f)>>Circulate among available length units for specifying the geometry.
+    #f)>>Circulate among the available length units for specifying the
+    geometry.
 
     <item*|<shortcut|(geometry-slower)>, <shortcut|(geometry-faster)>>Decrease
     or increase the step size when positioning or resizing.

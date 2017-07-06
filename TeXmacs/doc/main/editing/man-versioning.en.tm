@@ -31,7 +31,7 @@
   still be named <verbatim|new.tm>, and the changes between both versions
   will be indicated by special markup. If there are any changes, then the
   cursor will be positioned at the first difference. In a similar way, you
-  may compare the current buffer to a<nbsp>newer version on disk using
+  may compare the current buffer with a<nbsp>newer version on disk using
   <menu|Version|Compare|With newer version>.
 
   It is possible to go through all the differences between the old and new
@@ -114,8 +114,8 @@
   a lemma. Nevertheless, if we want to compare the inside texts, we may turn
   the old theorem into a lemma and then reactualize.
 
-  <paragraph*|Using external programs for version control such as
-  <name|Subversion>>
+  <paragraph*|Using external programs such as <name|Subversion> for version
+  control>
 
   If the file you are editing belongs to a directory that is under version
   control (only <name|Subversion> is currently supported, although other
@@ -136,7 +136,7 @@
   a small explanatory message about the changes that you have made. A file
   that is not yet under version control can be added to the version control
   system using <menu|Version|Register>. Registering a file does <em|not>
-  commit it to the repository; you still have to use <menu|Version|Commit> in
+  commit it to the repository: you still have to use <menu|Version|Commit> in
   order to do so.
 
   If, while you were editing, changes to the file were made in the

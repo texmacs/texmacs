@@ -1,6 +1,6 @@
 <TeXmacs|1.99.5>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|pari>>
 
 <\body>
   <tmdoc-title|Structured variants>
@@ -41,6 +41,25 @@
   enumeration and <em|vice versa>, whereas <shortcut|(variant-circulate
   (focus-tree) #t)> allows you to cycle between the available kinds of list
   items (bullets, dashes, arrows, <abbr|etc.>).
+
+  Folding and unfolding provides yet another example of an interesting way to
+  toggle between several environments. Inside a computer algebra session such
+  as
+
+  <\session|pari|default>
+    <\unfolded-io|Pari] >
+      factor (x^15 - 1)
+    <|unfolded-io>
+      <with|color|magenta|%1 = <math|<with|color|blue|<matrix|<tformat|<table|<row|<cell|x-1>|<cell|1>>|<row|<cell|x<rsup|2>+x+1>|<cell|1>>|<row|<cell|x<rsup|4>+x<rsup|3>+x<rsup|2>+x+1>|<cell|1>>|<row|<cell|x<rsup|8>-x<rsup|7>+x<rsup|5>-x<rsup|4>+x<rsup|3>-x+1>|<cell|1>>>>>>>>
+    </unfolded-io>
+  </session>
+
+  you may click on \P<verbatim|<with|color|dark brown|Pari]>>\Q in order to
+  fold the output (only the input remains visible) and click once again in
+  order to unfold back to the original state. The <shortcut|(alternate-toggle
+  (focus-tree))> shortcut achieves the same effect. There various other
+  foldable environments, most of which are available through
+  <menu|Insert|Fold>.
 
   <tmdoc-copyright|1998--2005|Joris van der Hoeven>
 
