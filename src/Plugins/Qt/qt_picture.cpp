@@ -27,7 +27,7 @@
 * Abstract Qt pictures
 ******************************************************************************/
 
-qt_picture_rep::qt_picture_rep (const QImage& im, int ox2, int oy2):
+qt_picture_rep::qt_picture_rep (const QImage& im, const int& ox2, const int& oy2):
   pict (im), w (im.width ()), h (im.height ()), ox (ox2), oy (oy2) {}
 
 picture_kind qt_picture_rep::get_type () { return picture_native; }
