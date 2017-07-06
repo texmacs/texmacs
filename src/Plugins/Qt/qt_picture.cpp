@@ -51,7 +51,7 @@ qt_picture_rep::internal_set_pixel (int x, int y, color c) {
 
 picture
 qt_picture (const QImage& im, int ox, int oy) {
-  return (picture) tm_new<qt_picture_rep> (im, (const int&) ox, (const int&) oy);
+  return (picture) tm_new<qt_picture_rep,QImage,int,int> (im, ox, oy);
 }
 
 picture
