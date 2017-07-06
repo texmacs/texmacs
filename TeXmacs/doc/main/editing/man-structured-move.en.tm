@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.99.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Structured cursor movement>
@@ -11,7 +11,7 @@
   <\enumerate>
     <item>Traversal of the entire structure of the document.
 
-    <item>Traversal of tags which are similar to the innermost tag.
+    <item>Traversal of tags that are similar to the innermost tag.
 
     <item>Movements inside the innermost tag.
   </enumerate>
@@ -24,33 +24,41 @@
 
   <paragraph*|Structured traversal of the document>
 
-  The <shortcut|(traverse-left)>, <shortcut|(traverse-right)>,
-  <shortcut|(traverse-up)> and <shortcut|(traverse-down)> keys are used for
-  the structured traversal of the entire document. Inside plain text,
-  <shortcut|(traverse-left)> and <shortcut|(traverse-right)> allow you to
-  move in a word-by-word manner, while <shortcut|(traverse-up)> and
-  <shortcut|(traverse-down)> correspond to paragraph-by-paragraph motion.
+  The <shortcut|(kbd-select-if-active traverse-left)>,
+  <shortcut|(kbd-select-if-active traverse-right)>,
+  <shortcut|(kbd-select-if-active traverse-up)> and
+  <shortcut|(kbd-select-if-active traverse-down)> keys are used for the
+  structured traversal of the entire document. Inside plain text,
+  <shortcut|(kbd-select-if-active traverse-left)> and
+  <shortcut|(kbd-select-if-active traverse-right)> allow you to move in a
+  word-by-word manner, while <shortcut|(kbd-select-if-active traverse-up)>
+  and <shortcut|(kbd-select-if-active traverse-down)> correspond to
+  paragraph-by-paragraph motion.
 
-  In the presence of other markup, the <shortcut|(traverse-left)> and
-  <shortcut|(traverse-right)> keys allow you to visit all accessible cursor
-  positions of the document, except that we keep moving in a word-by-word
-  manner inside plain text. The behaviour of the <shortcut|(traverse-up)> and
-  <shortcut|(traverse-down)> keys is more context-dependent. Inside matrices,
-  they typically allow you to move one row up or down.
+  In the presence of other markup, the <shortcut|(kbd-select-if-active
+  traverse-left)> and <shortcut|(kbd-select-if-active traverse-right)> keys
+  allow you to visit all accessible cursor positions of the document, except
+  that we keep moving in a word-by-word manner inside plain text. The
+  behaviour of the <shortcut|(kbd-select-if-active traverse-up)> and
+  <shortcut|(kbd-select-if-active traverse-down)> keys is more
+  context-dependent. Inside matrices, they typically allow you to move one
+  row up or down.
 
-  <paragraph*|Traversal of tags which are similar to the innermost tag>
+  <paragraph*|Traversal of tags that are similar to the innermost tag>
 
   This type of cursor movement allows you to quickly visit all other tags in
-  the document which are <em|similar> to the innermost tag. The
-  <shortcut|(traverse-previous)> and <shortcut|(traverse-next)> keys allow
-  you move to the previous or next similar tags, whereas
-  <shortcut|(traverse-first)> and <shortcut|(traverse-last)> directly jump to
-  the first or last similar tags.
+  the document that are <em|similar> to the innermost tag. The
+  <shortcut|(kbd-select-if-active traverse-previous)> and
+  <shortcut|(kbd-select-if-active traverse-next)> keys allow you move to the
+  previous or next similar tags, whereas <shortcut|(kbd-select-if-active
+  traverse-first)> and <shortcut|(kbd-select-if-active traverse-last)>
+  directly jump to the first or last similar tags.
 
-  For instance, when you are inside a section title, you may move to the
-  previous sectional title (which could also be the title of a subsection or
-  a chapter, for instance) using <shortcut|(traverse-previous)>. Notice that
-  you may use <key|C-Ÿ> to jump to the previous section title.
+  For instance, if you are inside a section title, then you may move to the
+  previous sectional title using <shortcut|(kbd-select-if-active
+  traverse-previous)>. Subsection and chapter titles are in particular
+  understood to be \Psimilar\Q to section titles. Notice that you may use
+  <key|C-Ÿ> to jump to the previous section title.
 
   <paragraph*|Movements inside the innermost tag>
 
@@ -79,8 +87,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

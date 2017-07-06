@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.5>
 
 <style|<tuple|tmdoc|english>>
 
@@ -6,10 +6,10 @@
   <tmdoc-title|Search and replace>
 
   You can start searching text by pressing <key|C-s> or <menu|Edit|Search>.
-  Doing this, a new special ``search toolbar'' will appear below the main
+  Doing this, a new special \Psearch toolbar\Q will appear below the main
   text, just above the footer. When typing text in the search field of the
   toolbar, all occurrences of this text will be highlighted in the main
-  document. Moreover, one ``principal'' occurrence will be highlighted in red
+  document. Moreover, one \Pprincipal\Q occurrence will be highlighted in red
   and you may navigate through all occurrences using <key|pageup> and
   <key|pagedown> (or <key|up> and <key|down>, or <key|return>). Using
   <key|home> and <key|end>, you may jump to the first and last occurrences
@@ -17,16 +17,16 @@
   toolbar will be closed, searching stops and focus returns to the main
   document.
 
-  During a search, only text in the same mode and the same language will be
-  found, as those which are active at the position where you started your
-  search. In other words, when searching an <math|x> in math-mode, you will
-  not find any x's in the ordinary text. As a current limitation, the search
-  string can only contain ordinary text and no math-symbols or more
-  complicated structured text.
+  During a search, <TeXmacs> only looks for text in the same mode and
+  language as at the position where you started your search. In other words,
+  when searching an <math|x> in math-mode, you will not find any x's in the
+  ordinary text. As a current limitation, the search string on the search
+  toolbar can only contain ordinary text and no math-symbols or more
+  complicated structured text. More complex searches will be discussed below.
 
   In order to replace text, you should use <menu|Edit|Replace> or press
-  <key|C-=>. This will cause a special ``replace toolbar'' to appear below
-  the main text, just above the footer. You are prompted for a string which
+  <key|C-=>. This will cause a special \Preplace toolbar\Q to appear below
+  the main text, just above the footer. You are prompted for the string that
   is to be replaced and the string by which to replace. Again, you may use
   the <key|pageup> and <key|pagedown> keys in order to navigate through the
   occurrences of the search string. When pressing <key|tab> or <key|return>
@@ -43,7 +43,7 @@
   they only allow for searching and replacing plain text. By pressing the
   <icon|tm_expand_tool.xpm> icon on either of these toolbars, you may expand
   the toolbar into a full blown widget with larger search and replace fields
-  which may contain arbitrary markup. Searching and replacing can be done
+  that may contain arbitrary markup. Searching and replacing can be done
   using more or less the same keyboard shortcuts as in the case of the
   toolbars, but you may now search and replace arbitrary content.
 
@@ -51,14 +51,14 @@
   somewhat released. For instance, assume that you are just starting a new
   search with an empty search field. Then typing<nbsp><key|F6> inserts the
   <markup|strong> tag with no text inside yet. Instead of looking only for
-  ``strong empty strings'', <TeXmacs> will rather look for all strong markup
-  in your document. If you next enter the letter ``a'', then <TeXmacs> will
-  look for all strong text which contains the letter ``a''. In a<nbsp>similar
+  \Pstrong empty strings\Q, <TeXmacs> will rather look for all strong markup
+  in your document. If you next enter the letter \Pa\Q, then <TeXmacs> will
+  look for all strong text that contains the letter \Pa\Q. In a<nbsp>similar
   way, when searching for the formula <math|<frac|x|>>, <TeXmacs> will
   highlight all fractions in which the numerator contains the variable
   <math|x>. Yet another example: a search for <math|<frac||<sqrt|x>>> will
-  highlight all formulas in which the denominator contains a square root
-  which contains the variable <math|x>. For instance, the fraction
+  highlight all formulas in which the denominator contains a square root that
+  contains the variable <math|x>. For instance, the fraction
   <math|<frac|a+b|c+<sqrt|x+y>>> will be highlighted, but not
   <math|<frac|<sqrt|x+y>|a+<sqrt|y>>>.
 
@@ -66,15 +66,15 @@
   implements a few additional special tags for enhancing structured
   searching. First of all, it can happen that you would like to search for
   certain content <em|inside> a special context. For instance, you might want
-  to search for all occurrences of the letter ``a'' inside a <markup|strong>
+  to search for all occurrences of the letter \Pa\Q inside a <markup|strong>
   tag. When searching for <strong|a>, as above, <TeXmacs> will highlight all
-  <markup|strong> tags which contain the letter ``a''. In order to highlight
-  the letters ``a'' themselves, you should first enter the <markup|strong>
+  <markup|strong> tags that contain the letter \Pa\Q. In order to highlight
+  the letters \Pa\Q themselves, you should first enter the <markup|strong>
   tag inside an empty search field using <key|F6>. You next enter a special
   <markup|select-region> tag using <key|std ?>, and finally insert the letter
-  ``a'' inside this tag. Other special markup which can be used inside search
-  fields are the ``wildcards'' <math|x>, <math|y> and <math|z> which are
-  entered using <key|std 1>, <key|std 2> and <key|std 3>.
+  \Pa\Q inside this tag. Other special markup that can be used inside search
+  fields are the \Pwildcards\Q <math|x>, <math|y> and <math|z>, which are
+  entered using <key|std 1>,<nbsp><key|std 2> and<nbsp><key|std 3>.
 
   As soon as you start using the structured text and replace widgets instead
   of the toolbars, this will be remembered as a user preference: any
@@ -91,3 +91,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

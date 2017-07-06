@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Versioning tools>
@@ -38,9 +38,10 @@
   versions either from the items in the submenu <menu|Version|Move>, or using
   the keyboard shortcuts <shortcut|(version-previous-difference)> and
   <shortcut|(version-next-difference)>. One may also use the more general
-  structured navigation shortcuts <shortcut|(traverse-first)>,
-  <shortcut|(traverse-last)>, <shortcut|(traverse-previous)> and
-  <shortcut|(traverse-next)>.
+  structured navigation shortcuts <shortcut|(kbd-select-if-active
+  traverse-first)>, <shortcut|(kbd-select-if-active traverse-last)>,
+  <shortcut|(kbd-select-if-active traverse-previous)> and
+  <shortcut|(kbd-select-if-active traverse-next)>.
 
   <paragraph*|Visualization of the differences>
 
@@ -68,11 +69,11 @@
   difference, this can be done from entries in the submenu
   <menu|Version|Retain>. Alternatively, one may use the shortcuts
   <shortcut|(version-retain 0)>, <shortcut|(version-retain 1)> and
-  <shortcut|(version-retain 'current)> to retain the old, new and currently
+  <shortcut|(kbd-control-return)> to retain the old, new and currently
   displayed version, respectively. If both versions are displayed, then
-  <shortcut|(version-retain 'current)> retains the new version. After
-  retaining one of the versions, we automatically jump to the next
-  difference, which can then be processed.
+  <shortcut|(kbd-control-return)> retains the new version. After retaining
+  one of the versions, we automatically jump to the next difference, which
+  can then be processed.
 
   If you selected some text, then any of the above action will retain the
   appropriate version for each of the differences in the selection. This
@@ -102,7 +103,7 @@
   applied on the entire buffer. Similarly, if you change the grain inside a
   difference, then the difference will be recomputed using the new grain.
 
-  Notice that you may also ``change'' the grain to the current grain. This
+  Notice that you may also \Pchange\Q the grain to the current grain. This
   has the effect of reactualizing the differences of a selected portion or of
   the current difference at the cursor position. This may be useful, if you
   made some changes to one of the versions. For instance, assume that the old
@@ -116,7 +117,7 @@
   <paragraph*|Using external programs for version control such as
   <name|Subversion>>
 
-  If the file you are editing belongs to a directory which is under version
+  If the file you are editing belongs to a directory that is under version
   control (only <name|Subversion> is currently supported, although other
   systems might follow), then the first part of the <menu|Version> menu will
   contain some clickable entries.
@@ -133,7 +134,7 @@
   repository. Using<nbsp><menu|Version|Commit>, the current user's version
   can be committed to the repository. When doing so, you will be prompted for
   a small explanatory message about the changes that you have made. A file
-  which is not yet under version control can be added to the version control
+  that is not yet under version control can be added to the version control
   system using <menu|Version|Register>. Registering a file does <em|not>
   commit it to the repository; you still have to use <menu|Version|Commit> in
   order to do so.
@@ -153,8 +154,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

@@ -1,14 +1,14 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.99.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Structured editing>
 
   As a general rule, the behaviour of most structured editing operations is
   conditioned by the <em|<rigid|current focus>>. By default, the innermost
-  tag which contains the cursor. Whenever some selection is active, the
-  current focus is the innermost tag which contains the selection. During
+  tag that contains the cursor. Whenever some selection is active, the
+  current focus is the innermost tag that contains the selection. During
   structured operations, such as navigating among similar tags, the current
   focus may temporarily be set to something else. The current focus is
   visually indicated by the innermost cyan box around the cursor.
@@ -24,7 +24,7 @@
   tree, and node insertions will take precedence over the insertion of new
   rows and columns.
 
-  In many cases, a ``default particular behaviour'' has been defined for all
+  In many cases, a \Pdefault particular behaviour\Q has been defined for all
   tags minus some exceptional ones. In our example of structured insertion,
   the default behaviour of <shortcut|(structured-insert-left)> and
   <shortcut|(structured-insert-right)> is to insert a new argument to the tag
@@ -32,11 +32,11 @@
 
   <\big-figure>
     <\equation*>
-      <matrix|<tformat|<table|<row|<cell|a>|<cell|b<value|cursor>>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|f>>>>><space|5em><matrix|<tformat|<table|<row|<cell|a>|<cell|b>|<cell|<value|cursor>>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|a>|<cell|<value|cursor>>|<cell|b>|<cell|c>>|<row|<cell|d>|<cell|>|<cell|e>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|a>|<cell|b>|<cell|c>>|<row|<cell|>|<cell|<value|cursor>>|<cell|>>|<row|<cell|d>|<cell|e>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|>|<cell|<value|cursor>>|<cell|>>|<row|<cell|a>|<cell|b>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|f>>>>>
+      <matrix|<tformat|<table|<row|<cell|a>|<cell|b<cursor>>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|f>>>>><space|5em><matrix|<tformat|<table|<row|<cell|a>|<cell|b>|<cell|<cursor>>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|a>|<cell|<cursor>>|<cell|b>|<cell|c>>|<row|<cell|d>|<cell|>|<cell|e>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|a>|<cell|b>|<cell|c>>|<row|<cell|>|<cell|<cursor>>|<cell|>>|<row|<cell|d>|<cell|e>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|>|<cell|<cursor>>|<cell|>>|<row|<cell|a>|<cell|b>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|f>>>>>
     </equation*>
   <|big-figure>
     <label|matrix-insert-fig>Assume that the cursor is at the position of
-    <value|cursor> inside the left-most matrix. Then the four other matrices
+    <cursor> inside the left-most matrix. Then the four other matrices
     respectively correspond to the insertion of a new column at the
     left<nbsp>(<shortcut|(structured-insert-left)>) or
     right<nbsp>(<shortcut|(structured-insert-right)>), <abbr|resp.> a new row
@@ -44,9 +44,9 @@
     below<nbsp>(<shortcut|(structured-insert-down)>).
   </big-figure>
 
-  <\big-figure|<tree|a|b|c<value|cursor>|d><space|3em><space|3em><tree|a|b|<value|cursor>|c|d><space|3em><tree|a|b|c|<value|cursor>|d><space|3em><tree|a|b|<tree|<value|cursor>|c>|d><space|3em><tree|a|b|<tree|c|<value|cursor>>|d>>
+  <\big-figure|<tree|a|b|c<cursor>|d><space|3em><space|3em><tree|a|b|<cursor>|c|d><space|3em><tree|a|b|c|<cursor>|d><space|3em><tree|a|b|<tree|<cursor>|c>|d><space|3em><tree|a|b|<tree|c|<cursor>>|d>>
     <label|tree-insert-fig>Assume that the cursor is at the position of
-    <value|cursor> inside the left-most tree. Then the four other trees
+    <cursor> inside the left-most tree. Then the four other trees
     respectively correspond to the insertion of a new node at the
     left<nbsp>(<shortcut|(structured-insert-left)>), at the
     right<nbsp>(<shortcut|(structured-insert-right)>),
@@ -68,11 +68,11 @@
 
   <\big-figure>
     <\equation*>
-      <matrix|<tformat|<table|<row|<cell|a>|<cell|b<value|cursor>>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|f>>>>><space|5em><matrix|<tformat|<table|<row|<cell|b<value|cursor>>|<cell|c>>|<row|<cell|e>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|a>|<cell|<value|cursor>c>>|<row|<cell|d>|<cell|f>>>>><space|2em>b<value|cursor>
+      <matrix|<tformat|<table|<row|<cell|a>|<cell|b<cursor>>|<cell|c>>|<row|<cell|d>|<cell|e>|<cell|f>>>>><space|5em><matrix|<tformat|<table|<row|<cell|b<cursor>>|<cell|c>>|<row|<cell|e>|<cell|f>>>>><space|2em><matrix|<tformat|<table|<row|<cell|a>|<cell|<cursor>c>>|<row|<cell|d>|<cell|f>>>>><space|2em>b<cursor>
     </equation*>
   <|big-figure>
     <label|matrix-remove-fig>Assume that the cursor is at the position of
-    <value|cursor> inside the left-most matrix. Then pressing the
+    <cursor> inside the left-most matrix. Then pressing the
     keys<nbsp><shortcut|(structured-remove-left)> and
     <shortcut|(structured-remove-right)> respectively result in the next two
     matrices. Pressing either<nbsp><shortcut|(remove-structure-upwards)> or
@@ -91,8 +91,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.99.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Positioning and resizing objects>
@@ -47,7 +47,7 @@
     or increase the step size when positioning or resizing.
   </description>
 
-  Particular tags to which the shortcuts apply are the following
+  Particular tags to which the shortcuts apply are the following:
 
   <\description>
     <item*|Spaces>Both horizontal and vertical spaces from the
@@ -74,8 +74,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
