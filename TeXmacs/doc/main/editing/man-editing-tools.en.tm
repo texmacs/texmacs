@@ -1,18 +1,20 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.99.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|Editing tools>
 
-  In this chapter, we discuss the general editing facilities present in
-  <TeXmacs>. Besides classical features, like ``cut and paste'', ``search and
-  replace'', <abbr|etc.>, <TeXmacs> also supports additional functionality
-  which exploits the document structure. Examples of such features are
-  \ ``structured cursor movement'' and ``structured variants''. It should be
-  noticed that more traditional functions like ``search and replace'' also
-  attempt to exploit the structure. For instance, when searching <math|x> in
-  math mode, you will only find matches which are also in math mode.
+  In this chapter, we discuss some of the general editing facilities that are
+  implemented in <TeXmacs>. Of course, this includes basic operations that
+  can also be found in other editors: \Pcut and paste\Q, \Psearch and
+  replace\Q, etc. But, more interestingly, some of these facilities take
+  advantage of the additional structure of <TeXmacs> documents. Typical
+  examples of \Pstructured editing features\Q are \Pstructured cursor
+  movement\Q and \Pstructured variants\Q. Traditional operations such as
+  \Psearch and replace\Q also attempt to exploit the document structure. For
+  instance, when searching <math|x> in math mode, you will only find matches
+  that are also in math mode.
 
   <\traverse>
     <branch|Cut and paste|man-cut-and-paste.en.tm>
@@ -44,8 +46,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

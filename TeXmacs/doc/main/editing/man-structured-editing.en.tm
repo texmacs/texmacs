@@ -6,12 +6,12 @@
   <tmdoc-title|Structured editing>
 
   As a general rule, the behaviour of most structured editing operations is
-  conditioned by the <em|<rigid|current focus>>. By default, the innermost
-  tag that contains the cursor. Whenever some selection is active, the
-  current focus is the innermost tag that contains the selection. During
-  structured operations, such as navigating among similar tags, the current
-  focus may temporarily be set to something else. The current focus is
-  visually indicated by the innermost cyan box around the cursor.
+  conditioned by the <em|<rigid|current focus>>. By default, the focus is on
+  the innermost tag that contains the cursor. Whenever some selection is
+  active, the focus is rather on the innermost tag that contains the
+  selection. During structured operations, such as navigating among similar
+  tags, the focus may temporarily be set to something else. The current focus
+  is visually indicated by the innermost cyan box around the cursor.
 
   For instance, the <em|structured insertion> commands
   <shortcut|(structured-insert-left)>, <shortcut|(structured-insert-right)>,
@@ -20,13 +20,14 @@
   allow you to insert new rows and columns (see
   figure<nbsp><reference|matrix-insert-fig>). Inside trees, they correspond
   to the insertion of new nodes (see figure<nbsp><reference|tree-insert-fig>).
-  Whenever you inside a tree inside a table, then the innermost tag is a
+  Whenever you inside a<nbsp>tree inside a table, then the innermost tag is a
   tree, and node insertions will take precedence over the insertion of new
   rows and columns.
 
-  In many cases, a \Pdefault particular behaviour\Q has been defined for all
-  tags minus some exceptional ones. In our example of structured insertion,
-  the default behaviour of <shortcut|(structured-insert-left)> and
+  For most editing operations, a \Pdefault particular behaviour\Q has been
+  defined, which may next be overridden for a few exceptional tags. In our
+  example of structured insertion, the default behaviour of
+  <shortcut|(structured-insert-left)> and
   <shortcut|(structured-insert-right)> is to insert a new argument to the tag
   at the left or at the right (when allowed).
 

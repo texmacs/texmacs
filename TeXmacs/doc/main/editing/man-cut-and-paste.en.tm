@@ -6,32 +6,42 @@
   <tmdoc-title|Cut and paste>
 
   You can select text and formulas by maintaining the left mouse button. In
-  order to delete the selected region, use <menu|Edit|Cut>. In order to copy
-  the selected region, first click on <menu|Edit|Copy>. Next, paste it as
-  many times as you want to the location of your cursor, using
-  <menu|Edit|Paste>. Alternatively, you may copy a selected region using the
-  middle mouse button.
+  order to delete the selected region, use <menu|Edit|Cut> or
+  <shortcut|(clipboard-cut "primary")>. In order to copy the selected region,
+  first click on <menu|Edit|Copy> or hit<nbsp><shortcut|(clipboard-copy
+  "primary")>. Next, paste it as many times as you want to the location of
+  your cursor, using <menu|Edit|Paste> or<nbsp><shortcut|(clipboard-paste
+  "primary")>. Alternatively, you may copy a selected region using the middle
+  mouse button.
 
-  It is also possible to the change text properties of a selected region. For
+  It is also possible to change the text properties of a selected region. For
   instance, in order to transform some black text in red, you select it using
-  the left mouse button and click on <menu|Format|Color|Red>. Similarly, if
-  you select a formula and you click on <menu|Insert|Fraction>, then the
-  formula becomes the numerator of some fraction.
+  the left mouse button and click on <render-menu|Format|<rigid|<render-menu|Color|<tabular*|<tformat|<cwith|1|1|1|1|cell-vcorrect|n>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<cwith|1|1|1|1|cell-width|1.5em>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-background|red>|<table|<row|<cell|>>>>>>>>.
+  Similarly, if you select a formula and you click on <menu|Insert|Fraction>,
+  then the formula becomes the numerator of the newly created fraction.
 
   When using the copy and paste mechanism to communicate with other
   applications, text is copied and pasted using the <TeXmacs> data format.
-  You may specify other import and export formats using <menu|Edit|Import>
-  resp. <menu|Edit|Export>. By default, copying and pasting uses the primary
-  text buffer. Using <menu|Edit|Copy to> and <menu|Edit|Paste from>, you may
-  specify as many other buffers as you like.
+  You may specify other import and export formats using
+  <menu|Tools|Miscellaneous|Import selections as> <abbr|resp.>
+  <menu|Tools|Miscellaneous|Export selections as>. Alternatively, you may
+  directly copy to or paste from an external format using the first group of
+  entries in the <menu|Edit|Copy to> and <menu|Edit|Paste from> submenus. For
+  instance, a <LaTeX> formula can be pasted inside a <TeXmacs> formula using
+  <menu|Edit|Paste from|LaTeX>.
+
+  By default, copying and pasting uses the \Pprimary clipboard\Q. Using the
+  remaining entries in the <menu|Edit|Copy to> and <menu|Edit|Paste from>
+  menus, you may specify as many other clipboards as you like. This allows
+  you to keep multiple selections in memory, ready to be pasted.
 
   There are two ways to make selections using the keyboard. When using the
-  cursor keys <key|left>, <key|right>, <abbr|etc.> while holding down the
-  <prefix|S-> button, you may select text while moving around the cursor.
+  cursor keys<nbsp><key|left>, <key|right>, <abbr|etc.> while holding down
+  the <prefix|S-> button, you may select text while moving around the cursor.
   Alternatively, you may press <shortcut|(kbd-select-enlarge)> once to fix a
   starting position. When moving around using the cursor keys, the text
   between the starting position and the current position keeps being
-  selected. The selection gets cleared when pressing
+  selected. The selection gets cleared by pressing
   <shortcut|(selection-cancel)>.
 
   Notice that the <shortcut|(kbd-select-enlarge)> shortcut also allows you to

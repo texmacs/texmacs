@@ -12,15 +12,16 @@
   your texts have been written have been installed on your system; this is
   usually the case for English.
 
-  When you launch the spell checker (either on the whole text or a selected
-  region), you will be prompted at each misspelled word and the footer
-  displays the available options:
+  When you launch the spell checker (either on the whole text or on a
+  selected region), you will be prompted at each misspelled word and the
+  footer displays the available options:
 
   <\description>
     <item*|a)>Accepts the misspelled word and all its future occurrences in
     the text.
 
-    <item*|r)>Replace the misspelled word by a correction you have to enter.
+    <item*|r)>Replace the misspelled word by a correction that you have to
+    enter.
 
     <item*|i)>Indicate that the \Pmisspelled\Q word is actually correct and
     that it has to be inserted in your personal dictionary.
