@@ -11,13 +11,12 @@
 #
 #--------------------------------------------------------------------
 
-# NOTE: due to compatibilty problem with regex in bash before 3.2, 
+# NOTE: due to compatibilty problem with regex in bash before 3.2,
 # always rely on 'echo' when using pattern strings
 
-#-------------------------------------------------------------------
+------------------------------------------------------------------
 # General functions
 #-------------------------------------------------------------------
-
 # Create local variable based on those located in config.h
 AC_DEFUN([LC_DEFINE],[
   typeset $1="$2"
@@ -30,7 +29,6 @@ AC_DEFUN([LC_MSG_CHECKING],[
   AC_MSG_CHECKING([$1])
   exec LS_SAVE_DESC>&AS_MESSAGE_FD AS_MESSAGE_FD>/dev/null
 ])
-
 AC_DEFUN([LC_MSG_RESULT],[
   exec AS_MESSAGE_FD>&LS_SAVE_DESC
   AC_MSG_RESULT([$1])
@@ -39,7 +37,7 @@ AC_DEFUN([LC_MSG_RESULT],[
 AC_DEFUN([LC_SUBST],[ 
   AC_SUBST([$1_CXX],[$$1_CXXFLAGS])
   AC_SUBST([$1_CPP],[$$1_CPPFLAGS])
-  if [[[ $enable_dumpflags =~ (^|[[:space:]])($1|ALL)($|[[:space:]]) ]]]
+  if [[[ $enable_dumpflags =~ $(echo "(^|[[:space:]])($1|ALL)($|[[:space:]])") ]]]
   then LC_DUMP_FLAGS([$1])
   fi
 # adaptation layer remove when finished
@@ -51,11 +49,13 @@ AC_DEFUN([LC_SUBST],[
 AC_DEFUN([LC_NORMALIZE_FLAG], [
   $1=$(echo $$1)    # normalize whitespaces
   $1=${$1//\/\//\/}   # normalize path separator
+  $1=${$1//\'}   # remove quote
 
   if @<:@@<:@ "$$1" =~ [$(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$"]) @:>@@:>@
   then $1=-${BASH_REMATCH[[1]]}${BASH_REMATCH[[2]]}
   fi
 ])
+
 
 # append flag ($1) to ($2)
 # authorize some duplicate according to the pattern
@@ -65,6 +65,16 @@ AC_DEFUN([LC_APPEND_FLAG],[
   else AX_APPEND_FLAG([$1],[$2])
   fi
 ])
+
+# power set construction for libs combinaison
+#lc_power_set([A,B,C]) gives[A],[A B],[A B C],[A C],[B],[B C],[C]
+#
+m4_define([lc_list_add],[[[$1 $2]]])
+m4_define([prodset],[m4_quote([[$1]],m4_foreach(ms,[$2],[lc_list_add($1,m4_quote(ms)),])[$2])])
+m4_define([lc_power_set],[dnl
+m4_cond(m4_count($1),1,m4_dquote([$1]),[prodset(m4_car($1),lc_power_set(m4_cdr($1)))])])
+
+
 
 #############################################################################
 # generic get flag $2 from $1 line $3 line flag separator
@@ -126,6 +136,7 @@ else
 fi
 ])
   
+
 #############################################################################
 # prepend a anonymous list into library FLAGS
 # LC_APPEND_FLAG is used to avoid duplicate flag
@@ -179,7 +190,9 @@ m4_define([all_flags],[superseded_flags, merged_flags])
 
 # generic transfert flag $1 within the superseded list $2 and the merged list $3
 AC_DEFUN([_LC_TRANSFERT_FLAGS],
-  [m4_foreach([_tmp1], [$2], [ if @<:@ "$$1_[]_tmp1" @:>@; then _tmp1=$$1_[]_tmp1;fi;])]
+  [m4_foreach([_tmp1], [$2], [ 
+    _tmp1="$BASE_[]_tmp1 $$1_[]_tmp1"
+  ])]
   [m4_foreach([_tmp1], [$3], [LC_MERGE_FLAGS([$$1_[]_tmp1], [_tmp1])])]
 )
 
@@ -187,27 +200,10 @@ AC_DEFUN([_LC_TRANSFERT_FLAGS],
 # in order to test static linking set the -static if needed
 AC_DEFUN([LC_SET_FLAGS],[
   _LC_TRANSFERT_FLAGS([$1],[superseded_flags,[LIBS]],[LDFLAGS])
-  if test -n "$LNSTATIC"
-  then LC_APPEND_FLAG([-static], [CFLAGS])
-       LC_APPEND_FLAG([-static], [CXXFLAGS])
-  fi
-# check the libs depencies
-  [$0]_libs=$$1_LIBS
-  LC_GET_FLAG([$0_libs], [$0_lib], [-l]) # the main lib
-  LC_POP_FLAG([$0_libs], [$0_dep], [-l]) # the dependency lib
-  while test -n "$[$0]_dep"
-  do  LC_CHECK_LIB([$$0_dep])
-      LC_POP_FLAG([$0_libs], [$0_dep], [-l]) # the dependency lib
-  done
-  LC_MERGE_FLAGS(-l$[$0_lib],[LIBS])
 ])
 
 # merge the LIBRARY ($1) flags into general compile flags
-# The Bstatic option is added if $2 is undef
 AC_DEFUN([LC_COMBINE_FLAGS],[
-  if [[ -z "$2" -a -n "$SEMISTATIC" ]]
-  then  [$1]_LIBS="$SEMISTATIC $[$1]_LIBS $SEMIDYNAMIC"
-  fi
   _LC_TRANSFERT_FLAGS([$1],[],[merged_flags])
   unset ${![$0]_*}
 ])
@@ -225,33 +221,41 @@ AC_DEFUN([LC_CLEAR_FLAGS],[
   m4_ifblank([$1],[m4_define([_tmp2])],[m4_define([_tmp2],[_])])
   m4_foreach([_tmp1], [all_flags],[unset $1[]_tmp2[]_tmp1;])])
 
-# raw compare flags in $1 and $2
-AC_DEFUN([LC_EQ_FLAGS],[@<:@ dnl
-  m4_foreach([_tmp1], [all_flags], ["${$2_[]_tmp1}" == "${$1_[]_tmp1}" -a ])dnl
-  : @:>@
-  ])
 
 #############################################################################
-# try to use the  $1 library
-# test only works for predefines libraries
-# If the library is unknown just a warning is issued
-m4_define([Lib_check_fail],[AC_MSG_ERROR(compulsory library [$1] not found)])
-m4_define([Lib_check_nfound],[AC_MSG_NOTICE(skipping presence test for the library [$1])])
+# It is an improved version of AC_CHECK_LIB
+# Can find a suitable combinaison of extra LIBS and return it in $6
+AC_DEFUN([_LC_CHECK_LIB],[
+  m4_ifblank([$5],[$4],[
+    unset ac_cv_lib_$1_$2
+    AC_MSG_NOTICE([check $1 with extra libs m4_car($5)])
+    [$0]_libs=$LIBS
+    LIBS+=" m4_car($5)"
+    AC_CHECK_LIB([$1],[$2],[
+      LIBS=$[$0]_libs
+      m4_ifnblank([$6],[$6="m4_car($5)"])
+      $3
+    ],[
+      LIBS=$[$0]_libs
+      _LC_CHECK_LIB([$1],[$2],[$3],[$4],m4_cdr($5),[$6])
+    ])
+    unset ${![$0]_*}
+  ])
+])
 
 AC_DEFUN([LC_CHECK_LIB],[
-case $1 in
-  z@:}@     AC_CHECK_LIB([z], [inflate], [], [Lib_check_fail($1)]);;
-  png@:}@   AC_CHECK_LIB([png], [png_read_png], [], [Lib_check_fail($1)]);;
-  png12@:}@ AC_CHECK_LIB([png12], [png_read_png], [], [Lib_check_fail($1)]);;
-  gmp@:}@   AC_CHECK_LIB([gmp], [__gmpf_init], [], [Lib_check_fail($1)]);;
-  *@:}@     Lib_check_nfound($1) LC_MERGE_FLAGS(-l[$1],[LIBS]);;
-esac
+  AC_CHECK_LIB([$1],[$2],[$3],[
+    _LC_CHECK_LIB([$1],[$2],[$3],[$4],lc_power_set([$5]),[$6])
+  ])
 ])
 
 #############################################################################
 # build the lib name with a underscore if needed
 m4_define([lc_libname],[m4_ifblank([$1],[$2],[$1_$2])])
-#dispatch compil flags list $1 in a LIBRARY ($2) flags
+
+# mainly used to parse aguments returned by individuals configure maodule m4
+# dispatch compil flags list $1 in a LIBRARY ($2) flags
+# in case of libs will search for dependancies according the build mode
 #
 AC_DEFUN([LC_SCATTER_FLAGS],[
   [$0]_list="$1" 
@@ -276,6 +280,7 @@ AC_DEFUN([LC_SCATTER_FLAGS],[
 ])
 
 #############################################################################
+
 # Dump flags
  AC_DEFUN([_LC_DUMP_FLAGS], [
   m4_foreach([_tmp1], [[CFLAGS], [CXXFLAGS], [CPPFLAGS], [LIBS], [LDFLAGS]], 
