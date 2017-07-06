@@ -1,3 +1,16 @@
+
+#--------------------------------------------------------------------
+#
+# MODULE      : imlib2.m4
+# DESCRIPTION : TeXmacs configuration options for imlib2 library
+# COPYRIGHT   : (C) 2016 Joris van der Hoeven, Denis RAUX
+#
+# This software falls under the GNU general public license version 3 or later.
+# It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+# in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+#
+#--------------------------------------------------------------------
+
 AC_DEFUN([LC_IMLIB2],[
   AC_ARG_WITH(imlib2,
   AS_HELP_STRING([--with-imlib2@<:@=ARG@:>@],
