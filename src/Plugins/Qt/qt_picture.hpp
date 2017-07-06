@@ -25,7 +25,7 @@ protected:
   void internal_set_pixel (int x, int y, color c);
 
 public:
-  qt_picture_rep (const QImage& im, int ox2, int oy2);
+  qt_picture_rep (const QImage& im, const int& ox2, const int& oy2);
   picture_kind get_type ();
   void* get_handle ();
   int get_width ();
