@@ -234,6 +234,7 @@ system_kbd_initialize (hashmap<string,tree>& h) {
     h ("end")= "<#2198>";
     h ("pageup")= "<#21DE>";
     h ("pagedown")= "<#21DF>";
+    h ("section")= "\237";
     h ("<less>")= "<#3C>";
     h ("<gtr>")= "<#3E>";
   }
@@ -260,6 +261,7 @@ system_kbd_initialize (hashmap<string,tree>& h) {
     h ("end")= localize ("End");
     h ("pageup")= localize ("PageUp");
     h ("pagedown")= localize ("PageDown");
+    h ("section")= "\237";
   }
   else {
     h ("S-")= "S-";
@@ -284,6 +286,7 @@ system_kbd_initialize (hashmap<string,tree>& h) {
     h ("end")= localize ("end");
     h ("pageup")= localize ("pageup");
     h ("pagedown")= localize ("pagedown");
+    h ("section")= "\237";
   }
 }
 

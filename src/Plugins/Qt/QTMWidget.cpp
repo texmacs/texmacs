@@ -101,6 +101,7 @@ initkeymap () {
   map (Qt::Key_Select    , "select" );
   map (Qt::Key_Execute   , "execute" );
   map (Qt::Key_Help      , "help" );
+  map (Qt::Key_section   , "section" );
 
   deadmap (Qt::Key_Dead_Acute     , "acute");
   deadmap (Qt::Key_Dead_Grave     , "grave");
