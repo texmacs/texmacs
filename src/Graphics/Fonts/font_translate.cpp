@@ -283,7 +283,7 @@ find_closest (string& family, string& variant, string& series, string& shape,
     array<string> pfn= search_font (lfn, attempt);
     array<string> nfn= logical_font (pfn[0], pfn[1]);
     array<string> gfn= guessed_features (pfn[0], pfn[1]);
-    //cout << lfn << " -> " << nfn << ", " << gfn << "\n";
+    //cout << lfn << " -> " << pfn << ", " << nfn << ", " << gfn << "\n";
     gfn << nfn;
     family= get_family (nfn);
     variant= get_variant (nfn);
@@ -321,6 +321,7 @@ closest_font (string family, string variant, string series, string shape,
   if (font::instances->contains (s)) return font (s);
   find_closest (family, variant, series, shape, attempt);
   font fn= find_font (family, variant, series, shape, sz, dpi);
+  //cout << "Found " << fn->res_name << "\n";
   font::instances (s)= (pointer) fn.rep;
   return fn;
 }
