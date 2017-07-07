@@ -48,9 +48,14 @@ pager_rep::pages_format (array<page_item> l, SI ht, SI tcor, SI bcor) {
       spc << item->spc;
     }
   }
-  ASSERT (N(bs) != 0, "zero lines in insertion");
-  box b= format_stack (ip, bs, spc, ht, true);
-  return vcorrect_box (b->ip, b, tcor, bcor);
+  if (N(bs) == 0) {
+    box b= empty_box (decorate_middle (ip), 0, -ht, 0, 0);
+    return vcorrect_box (b->ip, b, tcor, bcor);
+  }
+  else {
+    box b= format_stack (ip, bs, spc, ht, true);
+    return vcorrect_box (b->ip, b, tcor, bcor);
+  }
 }
 
 box
@@ -73,7 +78,9 @@ pager_rep::pages_format (insertion ins) {
   else {
     array<page_item> sub_l= sub (l, ins->begin, ins->end);
     SI ht= stretch_space (ins->ht, ins->stretch);
-    return pages_format (sub_l, ht, ins->top_cor, ins->bot_cor);
+    box b= pages_format (sub_l, ht, ins->top_cor, ins->bot_cor);
+    if (b->h() + PIXEL >= ht) return b;
+    return vresize_box (b->ip, b, b->y2 - ht, b->y2);
   }
 }
 
