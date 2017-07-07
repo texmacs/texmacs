@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.5>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <\active*>
@@ -36,6 +36,8 @@
 
   <assign|save-aux|false>
 
+  <assign|page-float-enable|false>
+
   <assign|html-css|http://www.texmacs.org/css/tmdoc.css>
 
   <assign|html-head-javascript-src|http://www.texmacs.org/javascript/texmacs_functions.js>
@@ -45,7 +47,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|true>
   </collection>
 </initial>

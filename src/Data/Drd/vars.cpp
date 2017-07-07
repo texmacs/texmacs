@@ -158,6 +158,7 @@ string PAGE_SHOW_HF ("page-show-hf");
 string PAGE_FNOTE_SEP ("page-fnote-sep");
 string PAGE_FNOTE_BARLEN ("page-fnote-barlen");
 string PAGE_FLOAT_SEP ("page-float-sep");
+string PAGE_FLOAT_ENABLE ("page-float-enable");
 string PAGE_MNOTE_SEP ("page-mnote-sep");
 string PAGE_MNOTE_WIDTH ("page-mnote-width");
 

@@ -404,6 +404,7 @@ concater_rep::typeset_float (tree t, path ip) {
   if (N(t) != 3) { typeset_error (t, ip); return; }
   tree t1= env->exec (t[0]);
   tree t2= env->exec (t[1]);
+  if (!env->page_floats) t2= "h";
   tree ch= tuple (t1, t2);
   lazy lz= make_lazy_vstream (env, t[2], descend (ip, 2), ch);
   marker (descend (ip, 0));

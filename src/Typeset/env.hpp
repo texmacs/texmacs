@@ -214,6 +214,7 @@ public:
   bool         page_landscape;
   bool         page_automatic;
   bool         page_single;
+  bool         page_floats;
   int          page_packet;
   int          page_offset;
   tree         page_border;
