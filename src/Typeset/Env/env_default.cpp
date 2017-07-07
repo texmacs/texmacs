@@ -399,6 +399,11 @@ initialize_default_env () {
     tree (MACRO, "body", tree (WITH, COLOR, "#4040c0", tree (ARG, "body")));
   env ("mutator")=
     tree (MACRO, "body", "y", tree (ARG, "body"));
+  env ("phantom-float")=
+    tree (MACRO, "type", "pos",
+          tree (CONCAT, tree (FLAG, "float", "brown"),
+                tree (_FLOAT,  tree (ARG, "type"), tree (ARG, "pos"),
+                      tree (DOCUMENT))));
 
   /* syntactic highlighting */
   env ("src-regular")=
