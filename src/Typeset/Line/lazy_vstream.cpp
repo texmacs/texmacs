@@ -33,10 +33,12 @@ make_lazy_vstream (edit_env env, tree t, path ip, tree channel) {
   lazy_vstream lwvs= (lazy_vstream) lz;
   lwvs->channel= channel;
   /* Direct modification of y1 and y2 limits should be avoided */
-  box& tb= lwvs->l[0]->b;
-  if (tb->y2 < env->fn->y2) tb->y2= env->fn->y2;
-  box& bb= lwvs->l[N(lwvs->l)-1]->b;
-  if (bb->y1 > env->fn->y1) bb->y1= env->fn->y1;
+  if (N(lwvs->l) > 0) {
+    box& tb= lwvs->l[0]->b;
+    if (tb->y2 < env->fn->y2) tb->y2= env->fn->y2;
+    box& bb= lwvs->l[N(lwvs->l)-1]->b;
+    if (bb->y1 > env->fn->y1) bb->y1= env->fn->y1;
+  }
   /*************************************************************/
   return lwvs;
 }
