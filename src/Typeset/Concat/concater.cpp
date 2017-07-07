@@ -48,7 +48,7 @@ concater_rep::marker (path ip) {
 
 void
 concater_rep::ghost (string s, path ip) {
-  ghost (s, ip, blue);
+  ghost (s, ip, env->src_tag_col);
 }
 
 void

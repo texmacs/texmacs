@@ -147,6 +147,7 @@ initialize_default_var_type () {
   var_type (SRC_SPECIAL)        = Env_Src_Special;
   var_type (SRC_COMPACT)        = Env_Src_Compact;
   var_type (SRC_CLOSE)          = Env_Src_Close;
+  var_type (SRC_TAG_COLOR)      = Env_Src_Color;
 }
 
 /******************************************************************************
@@ -820,6 +821,8 @@ edit_env_rep::update () {
   update_src_special ();
   update_src_compact ();
   update_src_close ();
+  src_tag_color= get_string (SRC_TAG_COLOR);
+  src_tag_col= named_color (src_tag_color);
 
   frac_max   = get_length (MATH_FRAC_LIMIT);
   table_max  = get_length (MATH_TABLE_LIMIT);
@@ -955,6 +958,10 @@ edit_env_rep::update (string s) {
     break;
   case Env_Src_Close:
     update_src_close ();
+    break;
+  case Env_Src_Color:
+    src_tag_color= get_string (SRC_TAG_COLOR);
+    src_tag_col= named_color (src_tag_color);
     break;
   }
 }

@@ -297,6 +297,7 @@ initialize_default_env () {
   env (SRC_SPECIAL)      = "normal";    // special treatment of certain tags
   env (SRC_COMPACT)      = "normal";    // compact inline/multi-paragraph tags?
   env (SRC_CLOSE)        = "compact";   // how to close long tags
+  env (SRC_TAG_COLOR)    = "blue";      // default source tag color
 
   env (CANVAS_TYPE)           = "plain";        // which kind of scrollbars
   env (CANVAS_COLOR)          = "white";        // canvas colour
@@ -402,7 +403,8 @@ initialize_default_env () {
   env ("src-regular")=
     tree (MACRO, "body", tree (WITH, COLOR, "black", tree (ARG, "body")));
   env ("src-macro")=
-    tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "blue",
+    tree (MACRO, "body", tree (WITH, MODE, "src",
+                               COLOR, tree (VALUE, SRC_TAG_COLOR),
                                FONT_FAMILY, "ss", tree (ARG, "body")));
   env ("src-var")=
     tree (MACRO, "body", tree (WITH, MODE, "src", COLOR, "dark green",

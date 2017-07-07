@@ -60,16 +60,17 @@
 #define Env_Src_Special       27
 #define Env_Src_Compact       28
 #define Env_Src_Close         29
-#define Env_Point_Style       30
-#define Env_Point_Size        31
-#define Env_Dash_Style        32
-#define Env_Dash_Style_Unit   33
-#define Env_Fill_Color        34
-#define Env_Line_Arrows       35
-#define Env_Line_Portion      36
-#define Env_Text_At_Halign    37
-#define Env_Text_At_Valign    38
-#define Env_Doc_At_Valign     39
+#define Env_Src_Color         30
+#define Env_Point_Style       31
+#define Env_Point_Size        32
+#define Env_Dash_Style        33
+#define Env_Dash_Style_Unit   34
+#define Env_Fill_Color        35
+#define Env_Line_Arrows       36
+#define Env_Line_Portion      37
+#define Env_Text_At_Halign    38
+#define Env_Text_At_Valign    39
+#define Env_Doc_At_Valign     40
 
 /******************************************************************************
 * For style file editing
@@ -180,6 +181,8 @@ public:
   int          src_special;
   int          src_compact;
   int          src_close;
+  string       src_tag_color;
+  color        src_tag_col;
   int          inactive_mode;
   tree         recover_env;
 

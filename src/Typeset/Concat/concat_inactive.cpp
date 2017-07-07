@@ -19,7 +19,7 @@
 void
 concater_rep::typeset_blue (tree t, path ip) {
   tree old_mode= env->local_begin (MODE, "src");
-  tree old_col = env->local_begin (COLOR, "blue");
+  tree old_col = env->local_begin (COLOR, env->src_tag_color);
   tree old_fam = env->local_begin (FONT_FAMILY, "ss");
   typeset (t, ip);
   env->local_end (FONT_FAMILY, old_fam);

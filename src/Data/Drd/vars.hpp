@@ -280,6 +280,7 @@ extern string SRC_STYLE;
 extern string SRC_SPECIAL;
 extern string SRC_COMPACT;
 extern string SRC_CLOSE;
+extern string SRC_TAG_COLOR;
 
 extern string CANVAS_TYPE;
 extern string CANVAS_COLOR;

@@ -306,6 +306,7 @@ string SRC_STYLE ("src-style");
 string SRC_SPECIAL ("src-special");
 string SRC_COMPACT ("src-compact");
 string SRC_CLOSE ("src-close");
+string SRC_TAG_COLOR ("src-tag-color");
 
 /******************************************************************************
 * Environment variables for the graphical user interface

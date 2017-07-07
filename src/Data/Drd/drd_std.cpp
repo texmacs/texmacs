@@ -1161,6 +1161,7 @@ init_std_drd () {
   init_var (SRC_SPECIAL, TYPE_STRING);
   init_var (SRC_COMPACT, TYPE_STRING);
   init_var (SRC_CLOSE, TYPE_STRING);
+  init_var (SRC_TAG_COLOR, TYPE_COLOR);
 
   init_var (CANVAS_TYPE, TYPE_STRING);
   init_var (CANVAS_COLOR, TYPE_COLOR);
