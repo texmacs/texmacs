@@ -78,9 +78,8 @@ pager_rep::pages_format (insertion ins) {
   else {
     array<page_item> sub_l= sub (l, ins->begin, ins->end);
     SI ht= stretch_space (ins->ht, ins->stretch);
-    box b= pages_format (sub_l, ht, ins->top_cor, ins->bot_cor);
-    if (b->h() + PIXEL >= ht) return b;
-    return vresize_box (b->ip, b, b->y2 - ht, b->y2);
+    SI xh= stretch_space (ins->xh, ins->stretch);
+    return pages_format (sub_l, ht, ins->top_cor, ins->bot_cor + xh);
   }
 }
 

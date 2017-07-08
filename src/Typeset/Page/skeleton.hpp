@@ -61,6 +61,7 @@ struct insertion_rep: concrete_struct {
   path      end;      // end location in array of page_items
   skeleton  sk;       // or possible subpagelets (used for multicolumns)
   space     ht;       // height of pagelet
+  space     xh;       // extra stretchable height (used for certain floats)
   vpenalty  pen;      // penalty associated to pagelet
   double    stretch;  // between -1 and 1 for determining final height
   SI        top_cor;  // top correction
