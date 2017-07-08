@@ -726,6 +726,9 @@
          (and (tree-up t) (float-context? (tree-up t))))
         (else #f)))
 
+(tm-define (phantom-float-context? t)
+  (tree-is? t 'phantom-float))
+
 (tm-define (floatable-context? t)
   (and (tree-in? t '(big-figure big-figure*
                      big-table big-table*

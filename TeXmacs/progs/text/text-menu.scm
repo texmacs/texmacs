@@ -219,6 +219,7 @@
     ;;("Balloon" (make-balloon))
     ---
     ("Floating object" (make-insertion "float"))
+    ("Floating phantom" (insert '(phantom-float "float" "hf")))
     ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
     ("Floating table" (begin (make-insertion "float")
                              (insert-go-to '(big-table "" "") '(0 0))
@@ -260,6 +261,10 @@
       ("Go to float" (go-to-float)))
   (if (not (cursor-at-anchor?))
       ("Go to anchor" (go-to-anchor))))
+
+(tm-menu (focus-float-menu t)
+  (:require (phantom-float-context? t))
+  (-> "Allowed positions" (link float-menu)))
 
 (tm-menu (focus-float-menu t)
   (:require (floatable-context? t))
@@ -896,6 +901,12 @@
   ((balloon (icon "tm_anchor.xpm")
             "Go to anchor or float")
    (cursor-toggle-anchor)))
+
+(tm-menu (focus-float-icons t)
+  (:require (phantom-float-context? t))
+  (=> (balloon (icon "tm_position_float.xpm")
+               "Allowed positions of floating object")
+      (link float-menu)))
 
 (tm-menu (focus-float-icons t)
   (:require (floatable-context? t))

@@ -810,15 +810,18 @@
     (insert-go-to (list 'float s pos (list 'document ""))
                   (list 2 0 0))))
 
+(define (any-float? t)
+  (tree-in? t '(float phantom-float)))
+
 (tm-define (insertion-positioning what flag)
   (:synopsis "Allow/disallow the position @what for innermost float.")
-  (and-with t (tree-innermost 'float #t)
+  (and-with t (tree-innermost any-float? #t)
     (let ((op (if flag string-union string-minus))
           (st (tree-ref t 1)))
       (tree-set! st (op (tree->string st) what)))))
 
 (define (test-insertion-positioning? what)
-  (and-with t (tree-innermost 'float #t)
+  (and-with t (tree-innermost any-float? #t)
     (with c (string-ref what 0)
       (char-in-string? c (tree->string (tree-ref t 1))))))
 
