@@ -2540,6 +2540,7 @@
   (clipped tmtex-first)
   (repeat tmtex-noop)
   (float tmtex-float)
+  (phantom-float tmtex-noop)
   ((:or marginal-note marginal-normal-note) tmtex-marginal-note)
   ((:or marginal-left-note marginal-even-left-note) tmtex-marginal-left-note)
   ((:or marginal-right-note marginal-even-right-note)tmtex-marginal-right-note)
