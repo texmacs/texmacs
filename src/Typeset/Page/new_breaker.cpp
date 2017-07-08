@@ -68,6 +68,7 @@ new_breaker_rep::new_breaker_rep (
       ins_here << ins;
       //cout << i << ", " << j << ", " << ins->type
       //     << "; " << ins->nr_cols << ", " << l[i]->nr_cols << LF;
+      if (ins->ht->def <= 0) continue;
       if (ins->nr_cols == 1 && l[i]->nr_cols > 1) {
         if (is_tuple (lvs->channel, "footnote"))
           wide_spc += ins->ht + fn_sep;
@@ -175,6 +176,7 @@ new_breaker_rep::compute_space (path b1, path b2) {
     int  j0= nx->next->item;
     insertion fl= ins_list[i0][j0];
     space sep= float_sep;
+    if (fl->ht->def <= 0) return compute_space (q1, b2);
     if (float_here (fl->type)) sep= 2*sep;
     return fl->ht + sep + compute_space (q1, b2);
   }
@@ -568,8 +570,10 @@ new_breaker_rep::assemble (path start, path end) {
   while (!is_nil (top)) {
     int i= top->item, j= top->next->item;
     top= top->next->next;
-    pg << ins_list[i][j];
-    pg << float_sep;
+    if (ins_list[i][j]->ht->def > 0) {
+      pg << ins_list[i][j];
+      pg << float_sep;
+    }
   }
   int pos= start->item;
   while (!is_nil (here)) {
@@ -587,8 +591,10 @@ new_breaker_rep::assemble (path start, path end) {
       pg << float_sep;
       pos= i+1;
     }
-    pg << ins_list[i][j];
-    pg << float_sep;
+    if (ins_list[i][j]->ht->def > 0) {
+      pg << ins_list[i][j];
+      pg << float_sep;
+    }
   }
   if (end->item > pos) {
     insertion ins= make_insertion (pos, end->item);
@@ -597,18 +603,22 @@ new_breaker_rep::assemble (path start, path end) {
   while (!is_nil (bottom)) {
     int i= bottom->item, j= bottom->next->item;
     bottom= bottom->next->next;
-    pg << ins_list[i][j];
-    pg << float_sep;
+    if (ins_list[i][j]->ht->def > 0) {
+      pg << ins_list[i][j];
+      pg << float_sep;
+    }
   }
   bool has_footnotes= false;
   for (int i=start->item; i<end->item; i++)
     for (int j=0; j<N(ins_list[i]); j++)
       if (is_tuple (ins_list[i][j]->type, "footnote"))
         if (ins_list[i][j]->nr_cols != 1 || l[i]->nr_cols == 1) {
-          pg << ins_list[i][j];
-          if (has_footnotes) pg << fn_sep;
-          else pg << fnote_sep;
-          has_footnotes= true;
+          if (ins_list[i][j]->ht->def > 0) {
+            pg << ins_list[i][j];
+            if (has_footnotes) pg << fn_sep;
+            else pg << fnote_sep;
+            has_footnotes= true;
+          }
         }
   return pg;
 }
