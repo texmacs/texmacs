@@ -129,6 +129,19 @@
       (remove-style-package pack)
       (add-style-package pack)))
 
+(tm-define (edit-package-source name)
+  (let* ((style-name (string-append name ".ts"))
+         (style-url (url-append "$TEXMACS_STYLE_PATH" style-name))
+         (file-name (url-resolve style-url "r")))
+    (cursor-history-add (cursor-path))
+    (load-buffer file-name)
+    (cursor-history-add (cursor-path))))
+
+(tm-define (edit-style-source)
+  (with l (get-style-list)
+    (when (and (nnull? l) (string? (car l)))
+      (edit-package-source (car l)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with menu names for style packages which are used as style options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
