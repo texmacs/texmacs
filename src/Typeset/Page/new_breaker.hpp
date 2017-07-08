@@ -67,7 +67,7 @@ struct new_breaker_rep {
   vpenalty format_pagelet (pagelet& pg, space ht, bool last_page);
   insertion make_insertion (int i1, int i2);
   bool here_floats (path p);
-  //void lengthen_previous (pagelet& pg, int pos);
+  void lengthen_previous (pagelet& pg, int pos, space done);
   pagelet assemble (path start, path end);
   void assemble_skeleton (skeleton& sk, path end, int& offset);
 

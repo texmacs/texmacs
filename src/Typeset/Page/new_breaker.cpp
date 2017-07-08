@@ -500,6 +500,15 @@ filter_subsequent (path floats, path avoid) {
          filter_subsequent (floats->next->next, avoid);
 }
 
+void
+new_breaker_rep::lengthen_previous (pagelet& pg, int pos, space done) {
+  if (pos == 0 || N(pg->ins) == 0) return;
+  space spc= body_ht[pos-1] - l[pos-1]->b->h();
+  spc= max (spc - done, space (0));
+  pg->ins[N(pg->ins)-1]->xh += spc;
+  pg->ht += spc;
+}
+
 pagelet
 new_breaker_rep::assemble (path start, path end) {
   //cout << "Assemble " << start << ", " << end << LF;
