@@ -164,10 +164,13 @@ edit_env_rep::update_page_pars () {
   page_type         = get_string (PAGE_TYPE);
   page_landscape    = (get_string (PAGE_ORIENTATION) == "landscape");
   page_automatic    = (get_string (PAGE_MEDIUM) == "automatic");
-  page_floats       = (get_string (PAGE_FLOAT_ENABLE) == "true");
   string width_flag = get_string (PAGE_WIDTH_MARGIN);
   string height_flag= get_string (PAGE_HEIGHT_MARGIN);
   bool   screen_flag= get_bool   (PAGE_SCREEN_MARGIN);
+
+  page_floats       = (get_string (PAGE_FLOAT_ENABLE) == "true");
+  if (get_string (PAGE_FLOAT_ENABLE) == get_string (PAGE_MEDIUM))
+    page_floats= true;
 
   if (page_automatic) {
     page_width        = get_length (PAGE_SCREEN_WIDTH);
