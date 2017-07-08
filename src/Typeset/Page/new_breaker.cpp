@@ -582,6 +582,7 @@ new_breaker_rep::assemble (path start, path end) {
     int i= here->item, j= here->next->item;
     here= here->next->next;
     if (i >= end->item && i > pos) {
+      if (several) lengthen_previous (pg, pos, done);
       insertion ins= make_insertion (pos, i);
       pg << ins;
       if (ins_list[i][j]->ht->def > 0) pg << float_sep;
@@ -589,6 +590,7 @@ new_breaker_rep::assemble (path start, path end) {
       several= true;
     }
     else if (i+1 > pos) {
+      if (several) lengthen_previous (pg, pos, done);
       insertion ins= make_insertion (pos, i+1);
       pg << ins;
       if (ins_list[i][j]->ht->def > 0) pg << float_sep;
@@ -603,6 +605,7 @@ new_breaker_rep::assemble (path start, path end) {
     else done= space (0);
   }
   if (end->item > pos) {
+    if (several) lengthen_previous (pg, pos, done);
     insertion ins= make_insertion (pos, end->item);
     pg << ins;
   }
