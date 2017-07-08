@@ -576,25 +576,31 @@ new_breaker_rep::assemble (path start, path end) {
     }
   }
   int pos= start->item;
+  bool several= false;
+  space done= space (0);
   while (!is_nil (here)) {
     int i= here->item, j= here->next->item;
     here= here->next->next;
     if (i >= end->item && i > pos) {
       insertion ins= make_insertion (pos, i);
       pg << ins;
-      pg << float_sep;
+      if (ins_list[i][j]->ht->def > 0) pg << float_sep;
       pos= i;
+      several= true;
     }
     else if (i+1 > pos) {
       insertion ins= make_insertion (pos, i+1);
       pg << ins;
-      pg << float_sep;
+      if (ins_list[i][j]->ht->def > 0) pg << float_sep;
       pos= i+1;
+      several= true;
     }
     if (ins_list[i][j]->ht->def > 0) {
       pg << ins_list[i][j];
       pg << float_sep;
+      done= float_sep;
     }
+    else done= space (0);
   }
   if (end->item > pos) {
     insertion ins= make_insertion (pos, end->item);
