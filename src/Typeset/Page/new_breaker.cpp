@@ -125,6 +125,15 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
   insertion ins (copy (lvs->channel), p1, p2);
   
   array<page_item> l= lvs->l;
+  if (N(l) == 0) {
+    ins->ht     = space (0);
+    ins->top_cor= 0;
+    ins->bot_cor= 0;
+    ins->pen    = 0;
+    ins->nr_cols= 1;
+    return ins;
+  }
+  
   array<space> ins_ht;
   array<space> ins_cor;
   array<space> ins_tot;
@@ -146,7 +155,7 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
   ins->top_cor= top_cor;
   ins->bot_cor= bot_cor;
   ins->pen    = 0;
-  ins->nr_cols= (N(l) == 0? 1: l[0]->nr_cols);
+  ins->nr_cols= l[0]->nr_cols;
   return ins;
 }
 
