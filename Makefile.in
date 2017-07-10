@@ -303,7 +303,7 @@ GENERIC_PACKAGE_DIR = ../distr/generic
 STATIC_QT = $(tm_devel)-$(svnrev)-$(tm_suffix)
 STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
-GENERIC_PACKAGE: STATIC_TEXMACS STRIP
+GENERIC_PACKAGE: TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
 	-find `guile-config info pkgdatadir` -type d -name ice-9 -exec cp -R {} $(tmdir)/progs \; && \
 	   cp -R $(tmdir) $(STATIC_QT) && \
