@@ -33,7 +33,7 @@ system (string s, string& result, string& error) {
   int r= qt_system (s, result, error);
 #else
   int r= unix_system (s, result, error);
-#endif  
+#endif
   return r;
 }
 
@@ -43,7 +43,7 @@ system (string s, string& result) {
   int r= qt_system (s, result);
 #else
   int r= unix_system (s, result);
-#endif  
+#endif
   return r;
 }
 
