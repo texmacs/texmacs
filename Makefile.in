@@ -308,7 +308,7 @@ GENERIC_PACKAGE: STATIC_TEXMACS STRIP
 	-find `guile-config info pkgdatadir` -type d -name ice-9 -exec cp -R {} $(tmdir)/progs \; && \
 	   cp -R $(tmdir) $(STATIC_QT) && \
 	   tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
-	$(RM) $(tmdir)/progs/ice-9  $(STATIC_QT)
+	$(RM) -r $(tmdir)/progs/ice-9 $(STATIC_QT)
 
 GENERIC_X11_PACKAGE: COPY_SOURCES COPY_GUILE
 	cd $(BUILD_DIR); ./configure --disable-qt --disable-pdf-renderer
