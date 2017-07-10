@@ -772,7 +772,12 @@
                       (list (tree 'hidden '(document ""))))
         (dynamic-operate-on-buffer :first)
         ;; Notice that we don't process the last (fake) screen
-        (list->tree 'screens (map f (cDr (tree-children t)))))))
+	(list->tree 'screens (map f (cDr (tree-children t)))))))
+
+(define (transform-last-slide doc)
+  (cond ((tree-is? doc 'screens) (transform-last-slide (tm-ref doc :last)))
+	((tree-is? doc 'document) (transform-last-slide (tm-ref doc :last)))
+	((tree-func? doc 'slide 1) (tree-set! doc (tm-ref doc 0)))))
 
 (tm-define (dynamic-make-slides)
   (init-default "page-medium" "page-type" "page-width" "page-height"
@@ -789,12 +794,14 @@
           (tree-assign-node (cAr c) 'document)
           (tree-set! t `(document ,@(cDr c) ,@(tree-children (cAr c))))
           ;; (system-wait "Generating slides" "please wait") ;crashes if printing
-          (for-each dynamic-make-slide (tree-children t))))
+          (for-each dynamic-make-slide (tree-children t))
+	  (transform-last-slide t)))
       (with l (select (buffer-tree) '(screens))
         (and (nnull? l)
              (let* ((scrns (car l))
                     (slides (screens->slides scrns)))
-               (tree-set! scrns slides))))))
+               (tree-set! scrns slides)
+	       (transform-last-slide scrns))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global filtering of switches
