@@ -49,10 +49,10 @@ supports_big_operators (string res_name) {
   if (occurs (" Math", res_name))
     return occurs ("TeX Gyre ", res_name);
   if (occurs ("mathitalic", res_name))
-    return starts (res_name, "bonum") ||
-           starts (res_name, "pagella") ||
-           starts (res_name, "schola") ||
-           starts (res_name, "termes");
+    return occurs ("bonum", res_name) ||
+           occurs ("pagella", res_name) ||
+           occurs ("schola", res_name) ||
+           occurs ("termes", res_name);
   return false;
 }
 

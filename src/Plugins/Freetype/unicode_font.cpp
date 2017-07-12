@@ -46,8 +46,11 @@ struct unicode_font_rep: font_rep {
   font_glyphs fng;
   int         ligs;
 
+  hashmap<string,int> native; // additional native (non unicode) characters
+  
   unicode_font_rep (string name, string family, int size, int hdpi, int vdpi);
 
+  unsigned int read_unicode_char (string s, int& i);
   unsigned int ligature_replace (unsigned int c, string s, int& i);
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
@@ -71,7 +74,8 @@ struct unicode_font_rep: font_rep {
 
 unicode_font_rep::unicode_font_rep (string name,
   string family2, int size2, int hdpi2, int vdpi2):
-    font_rep (name), family (family2), hdpi (hdpi2), vdpi (vdpi2), ligs (0)
+    font_rep (name), family (family2), hdpi (hdpi2), vdpi (vdpi2), ligs (0),
+    native (0)
 {
   type= FONT_TYPE_UNICODE;
   size= size2;
@@ -173,14 +177,37 @@ unicode_font_rep::unicode_font_rep (string name,
   if (family == "Zapfino")
     ligs= LIGATURE_FF + LIGATURE_FI + LIGATURE_FL + LIGATURE_FFI;
   //cout << "ligs= " << ligs << ", " << family << ", " << size << "\n";
+
+  // direct translations for certain characters without Unicode names
+  if (starts (family, "texgyre") && ends (family, "-math")) {
+    native ("<big-prod-2>")= 4215;
+    native ("<big-amalg-2>")= 4216;
+    native ("<big-sum-2>")= 4217;
+    native ("<big-int-2>")= 4149;
+    native ("<big-iint-2>")= 4150;
+    native ("<big-iiint-2>")= 4151;
+    native ("<big-oint-2>")= 4153;
+    native ("<big-oiint-2>")= 4154;
+    native ("<big-oiiint-2>")= 4155;
+    native ("<big-wedge-2>")= 3833;
+    native ("<big-vee-2>")= 3835;
+    native ("<big-cap-2>")= 3827;
+    native ("<big-cup-2>")= 3829;
+    native ("<big-odot-2>")= 3864;
+    native ("<big-oplus-2>")= 3868;
+    native ("<big-otimes-2>")= 3873;
+    native ("<big-pluscup-2>")= 3861;
+    native ("<big-sqcap-2>")= 3852;
+    native ("<big-sqcup-2>")= 3854;
+  }
 }
 
 /******************************************************************************
 * Routines for font
 ******************************************************************************/
 
-static unsigned int
-read_unicode_char (string s, int& i) {
+unsigned int
+unicode_font_rep::read_unicode_char (string s, int& i) {
   if (s[i] == '<') {
     i++;
     int start= i, n= N(s);
@@ -199,7 +226,10 @@ read_unicode_char (string s, int& i) {
     else {
       string ss= s (start-1, ++i);
       string uu= strict_cork_to_utf8 (ss);
-      if (uu == ss) return 0;
+      if (uu == ss) {
+        if (native->contains (ss)) return 0xc000000 + native[ss];
+        return 0;
+      }
       int j= 0;
       return decode_from_utf8 (uu, j);
     }

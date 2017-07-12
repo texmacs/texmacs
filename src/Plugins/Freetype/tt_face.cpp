@@ -18,8 +18,18 @@
 
 RESOURCE_CODE(tt_face);
 
+/******************************************************************************
+* Utilities
+******************************************************************************/
+
 inline int tt_round (int l) { return ((l+0x400020) >> 6) - 0x10000; }
 inline SI tt_si (int l) { return l<<2; }
+
+inline FT_UInt
+decode_index (FT_Face face, int i) {
+  if (i < 0xc000000) return ft_get_char_index (face, i);
+  return i - 0xc000000;  
+}
 
 /******************************************************************************
 * Freetype faces
@@ -71,7 +81,7 @@ bool
 tt_font_metric_rep::exists (int i) {
   if (face->bad_face) return false;
   if (fnm->contains (i)) return true;
-  FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
+  FT_UInt glyph_index= decode_index (face->ft_face, i);
   return glyph_index != 0;
 }
 
@@ -79,7 +89,7 @@ metric&
 tt_font_metric_rep::get (int i) {
   if (!face->bad_face && !fnm->contains(i)) {
     ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
-    FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
+    FT_UInt glyph_index= decode_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
       return error_metric;
     FT_GlyphSlot slot= face->ft_face->glyph;
@@ -114,8 +124,8 @@ SI
 tt_font_metric_rep::kerning (int left, int right) {
   if (face->bad_face || !FT_HAS_KERNING (face->ft_face)) return 0;
   FT_Vector k;
-  FT_UInt l= ft_get_char_index (face->ft_face, left);
-  FT_UInt r= ft_get_char_index (face->ft_face, right);
+  FT_UInt l= decode_index (face->ft_face, left);
+  FT_UInt r= decode_index (face->ft_face, right);
   ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
   if (ft_get_kerning (face->ft_face, l, r, FT_KERNING_DEFAULT, &k)) return 0;
   return tt_si (k.x);
@@ -150,7 +160,7 @@ glyph&
 tt_font_glyphs_rep::get (int i) {
   if (!face->bad_face && !fng->contains(i)) {
     ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
-    FT_UInt glyph_index= ft_get_char_index (face->ft_face, i);
+    FT_UInt glyph_index= decode_index (face->ft_face, i);
     if (ft_load_glyph (face->ft_face, glyph_index, FT_LOAD_DEFAULT))
       return error_glyph;
     FT_GlyphSlot slot= face->ft_face->glyph;

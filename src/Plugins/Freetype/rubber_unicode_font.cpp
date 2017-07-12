@@ -118,6 +118,10 @@ rubber_unicode_font_rep::search_font_sub (string s, string& rew) {
     }
   }
   if (starts (s, "<big-") && ends (s, "-2>")) {
+    if (big_flag && base->supports (s)) {
+      rew= s;
+      return 0;
+    }
     string r= s (5, N(s) - 3);
     if (ends (r, "lim")) r= r (0, N(r) - 3);
     if (starts (r, "up")) r= r (2, N(r));
