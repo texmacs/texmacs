@@ -19,6 +19,7 @@
 
 struct poor_rubber_font_rep: font_rep {
   font base;
+  bool big_flag;
   array<bool> initialized;
   array<font> larger;
   translator virt;
@@ -43,8 +44,21 @@ struct poor_rubber_font_rep: font_rep {
 #define MAGNIFIED_NUMBER 4
 #define HUGE_ADJUST      1
 
+bool
+supports_big_operators (string res_name) {
+  if (occurs (" Math", res_name))
+    return occurs ("TeX Gyre ", res_name);
+  if (occurs ("mathitalic", res_name))
+    return starts (res_name, "bonum") ||
+           starts (res_name, "pagella") ||
+           starts (res_name, "schola") ||
+           starts (res_name, "termes");
+  return false;
+}
+
 poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
-  font_rep (name, base2), base (base2)
+  font_rep (name, base2), base (base2),
+  big_flag (supports_big_operators (base2->res_name))
 {
   this->copy_math_pars (base);
   initialized << true;
@@ -106,6 +120,7 @@ int
 poor_rubber_font_rep::search_font (string s, string& r) {
   if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
     r= s;
+    if (big_flag && ends (s, "-1>") && base->supports (s)) return 0;
     return 2*MAGNIFIED_NUMBER + 4;
   }
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
@@ -195,6 +210,7 @@ poor_rubber_font_rep::search_font (string s, string& r) {
 bool
 poor_rubber_font_rep::supports (string s) {
   if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
+    if (big_flag && ends (s, "-1>") && base->supports (s)) return true;
     string r= s (5, N(s) - 3);
     if (ends (r, "lim")) r= r (0, N(r) - 3);
     if (starts (r, "up")) r= r (2, N(r));

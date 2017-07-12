@@ -14,12 +14,15 @@
 
 #ifdef USE_FREETYPE
 
+bool supports_big_operators (string res_name); // from poor_rubber.cpp
+
 /******************************************************************************
 * True Type fonts
 ******************************************************************************/
 
 struct rubber_unicode_font_rep: font_rep {
   font base;
+  bool big_flag;
   array<bool> initialized;
   array<font> subfn;
   bool big_sums;
@@ -54,7 +57,8 @@ struct rubber_unicode_font_rep: font_rep {
 ******************************************************************************/
 
 rubber_unicode_font_rep::rubber_unicode_font_rep (string name, font base2):
-  font_rep (name, base2), base (base2)
+  font_rep (name, base2), base (base2),
+  big_flag (supports_big_operators (base2->res_name))
 {
   this->copy_math_pars (base);
   big_sums= false;
@@ -117,6 +121,10 @@ rubber_unicode_font_rep::search_font_sub (string s, string& rew) {
     string r= s (5, N(s) - 3);
     if (ends (r, "lim")) r= r (0, N(r) - 3);
     if (starts (r, "up")) r= r (2, N(r));
+    if (big_flag && base->supports ("<big-" * r * "-1>")) {
+      rew= "<big-" * r * "-1>";
+      return 2;
+    }
     r= "<" * r * ">";
     if (base->supports (r)) {
       rew= r;

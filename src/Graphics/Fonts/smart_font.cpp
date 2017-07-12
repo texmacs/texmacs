@@ -959,7 +959,9 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in italic prime\n";
       return sm->add_char (tuple ("italic-math"), c);      
     }
-    if (is_special (c) && (c != "*" || !ends (variant, "-tt"))) {
+    if (is_special (c) && (c != "*" || !ends (variant, "-tt")) &&
+        (!starts (c, "<big") ||
+         !starts (mfam, "TeX Gyre") || !ends (mfam, " Math"))) {
       //cout << "Found " << c << " in special\n";
       return sm->add_char (tuple ("special"), c);
     }
