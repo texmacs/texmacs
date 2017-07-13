@@ -26,7 +26,7 @@ AC_DEFUN([TM_GUI],[
 
   case "$enable_qt" in
       yes)
-	  HACKED_AT_WITH_QT
+	  LC_WITH_QT
 	  if test x"$at_cv_qt_build" = xko; then 
 	     AC_MSG_ERROR([cannot find Qt!])
 	  else
