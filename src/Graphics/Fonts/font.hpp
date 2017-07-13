@@ -44,6 +44,7 @@ struct font_glyphs;
 
 struct font_rep: rep<font> {
   int      type;             // font type
+  bool     math_flag;        // For TeX Gyre math fonts and Stix
   SI       size;             // requested size
   SI       design_size;      // design size in points/256
   SI       display_size;     // display size in points/PIXEL

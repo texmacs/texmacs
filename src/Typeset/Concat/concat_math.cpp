@@ -138,7 +138,7 @@ concater_rep::typeset_lprime (tree t, path ip) {
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');
-    if (env->fn->type == FONT_TYPE_TEX)
+    if (env->fn->type == FONT_TYPE_TEX || env->fn->math_flag)
       s= replace_primes (s);
     tree old_il;
     if (!flag) old_il= env->local_begin_script ();
@@ -164,7 +164,7 @@ concater_rep::typeset_rprime (tree t, path ip) {
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');
-    if (env->fn->type == FONT_TYPE_TEX)
+    if (env->fn->type == FONT_TYPE_TEX || env->fn->math_flag)
       s= replace_primes (s);
     tree old_il;
     if (!flag) old_il= env->local_begin_script ();

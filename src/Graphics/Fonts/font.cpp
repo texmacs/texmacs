@@ -22,9 +22,23 @@ RESOURCE_CODE(font);
 * Constructors for fonts
 ******************************************************************************/
 
+static bool
+get_math_flag (string s) {
+  s= locase_all (s);
+  if (starts (s, "unicode:")) s= s (8, N(s));
+  if (starts (s, "texgyre")) s= s (7, N(s));
+  if (starts (s, "stix-"))
+    return true;
+  if (starts (s, "bonum-") || starts (s, "pagella-") ||
+      starts (s, "schola-") ||starts (s, "termes-"))
+    return true;
+  return false;
+}
+
 font_rep::font_rep (string s):
   rep<font> (s),
   type      (FONT_TYPE_TEX),
+  math_flag (get_math_flag (s)),
   spc       (0),
   extra     (0),
   last_zoom (0.0),
@@ -36,6 +50,7 @@ font_rep::font_rep (string s):
 font_rep::font_rep (string s, font fn):
   rep<font>    (s),
   type         (fn->type),
+  math_flag    (fn->math_flag),
   size         (fn->size),
   design_size  (fn->design_size),
   display_size (fn->display_size),
