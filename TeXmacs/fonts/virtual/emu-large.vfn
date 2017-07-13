@@ -1,5 +1,59 @@
 
 (virtual-font
+  (big-iint-1 (glue big-int-1 big-int-1))
+  (big-iint-2 (glue big-int-2 big-int-2))
+  (big-iiint-1 (glue big-int-1 big-iint-1))
+  (big-iiint-2 (glue big-int-2 big-iint-2))
+  (big-idotsint-1 (glue (align big-int-1 cdots * 0.5)
+                        (glue cdots (align big-int-1 cdots * 0.5))))
+  (big-idotsint-2 (glue (align big-int-2 cdots * 0.5)
+                        (glue cdots (align big-int-2 cdots * 0.5))))
+  (big-oint-1 (add (align big-int-1 (magnify circ 1.5 1.5) * 0.5)
+                   (magnify circ 1.5 1.5)))
+  (big-oint-2 (add (align big-int-2 (magnify circ 2 2) * 0.5)
+                   (magnify circ 2 2)))
+  (big-oiint-1 (with w (width big-int-1)
+    (add (align big-iint-1 (magnify circ 1.5 1.5) * 0.5)
+         (hor-extend (magnify circ 1.5 1.5) 0.5 w))))
+  (big-oiint-2 (with w (width big-int-2)
+    (add (align big-iint-2 (magnify circ 2 2) * 0.5)
+         (hor-extend (magnify circ 2 2) 0.5 w))))
+  (big-amalg-1 (hor-flip (ver-flip big-prod-1)))
+  (big-amalg-2 (hor-flip (ver-flip big-prod-2)))
+  (big-pluscup-1 (add (align big-cup-1 + * 0.75) +))
+  (big-pluscup-2 (add (align big-cup-2 + * 0.75) +))
+  (big-triangleup-1 (hor-flip (ver-flip big-triangledown-1)))
+  (big-triangleup-2 (hor-flip (ver-flip big-triangledown-2)))
+  (big-parallel-1
+    (with mx 1.5
+    (with my (/ (height big-wedge-1) (height (crop #7C)))
+    (with s 0.75
+      (glue (hor-pretend (align (magnify (crop #7C) mx my)
+                                (magnify + s s) 0.5 *) (magnify + s s))
+            (hor-pretend (align (magnify (crop #7C) mx my)
+                                (magnify + s s) 0.5 *) (magnify + s s)))))))
+  (big-parallel-2
+    (with mx 2
+    (with my (/ (height big-wedge-2) (height (crop #7C)))
+      (glue (hor-pretend (align (magnify (crop #7C) mx my) + 0.5 *) +)
+            (hor-pretend (align (magnify (crop #7C) mx my) + 0.5 *) +)))))
+  (big-interleave-1
+    (with mx 1.5
+    (with my (/ (height big-wedge-1) (height (crop #7C)))
+    (with s 0.75
+      (glue (hor-pretend (align (magnify (crop #7C) mx my)
+                                (magnify + s s) 0.5 *) (magnify + s s))
+      (glue (hor-pretend (align (magnify (crop #7C) mx my)
+                                (magnify + s s) 0.5 *) (magnify + s s))
+            (hor-pretend (align (magnify (crop #7C) mx my)
+                                (magnify + s s) 0.5 *) (magnify + s s))))))))
+  (big-interleave-2
+    (with mx 2
+    (with my (/ (height big-wedge-2) (height (crop #7C)))
+      (glue (hor-pretend (align (magnify (crop #7C) mx my) + 0.5 *) +)
+      (glue (hor-pretend (align (magnify (crop #7C) mx my) + 0.5 *) +)
+            (hor-pretend (align (magnify (crop #7C) mx my) + 0.5 *) +))))))
+
   (rubber-lparenthesis-# (ver-extend #28 0.5 # 0.1))
   (rubber-rparenthesis-# (ver-extend #29 0.5 # 0.1))
   (rubber-lbracket-# (ver-extend [ 0.5 # 0.1))

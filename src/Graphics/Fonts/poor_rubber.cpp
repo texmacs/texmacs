@@ -63,7 +63,7 @@ poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
   this->copy_math_pars (base);
   initialized << true;
   larger << base;
-  for (int i=1; i<=2*MAGNIFIED_NUMBER+4; i++) {
+  for (int i=1; i<=2*MAGNIFIED_NUMBER+5; i++) {
     initialized << false;
     larger << base;
   }
@@ -93,6 +93,12 @@ poor_rubber_font_rep::get_font (int nr) {
     larger[nr]= poor_stretched_font (vfn, zoomx, zoomy);
     //larger[nr]= vfn->magnify (zoomx, zoomy);
   }
+  else if (nr == 2*MAGNIFIED_NUMBER + 5) {
+    int hdpi= (72 * this->wpt + (PIXEL/2)) / PIXEL;
+    int vdpi= (72 * this->hpt + (PIXEL/2)) / PIXEL;
+    font vfn= virtual_font (this, "emu-large", this->size, hdpi, vdpi, false);
+    larger[nr]= vfn;
+  }
   else
     larger[nr]= rubber_unicode_font (base);
   return larger[nr];
@@ -121,6 +127,12 @@ poor_rubber_font_rep::search_font (string s, string& r) {
   if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
     r= s;
     if (big_flag && ends (s, "-1>") && base->supports (s)) return 0;
+    if (starts (s, "<big-iint") || starts (s, "<big-iiint") ||
+	starts (s, "<big-idotsint") ||
+	starts (s, "<big-oint") || starts (s, "<big-oiint") ||
+	starts (s, "<big-amalg") || starts (s, "<big-pluscup") ||
+	starts (s, "<big-triangleup") || starts (s, "<big-parallel") ||
+	starts (s, "<big-interleave")) return 2*MAGNIFIED_NUMBER + 5;
     return 2*MAGNIFIED_NUMBER + 4;
   }
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));
