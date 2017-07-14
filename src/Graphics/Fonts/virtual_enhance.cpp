@@ -37,6 +37,10 @@ struct virtual_enhance_font_rep: font_rep {
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
   SI     get_right_correction (string s);
+  SI     get_lsub_correction  (string s);
+  SI     get_lsup_correction  (string s);
+  SI     get_rsub_correction  (string s);
+  SI     get_rsup_correction  (string s);
 };
 
 virtual_enhance_font_rep::virtual_enhance_font_rep (
@@ -147,6 +151,30 @@ SI
 virtual_enhance_font_rep::get_right_correction (string s) {
   if (is_basic (s)) return base->get_right_correction (s);
   else return extra->get_right_correction (s);
+}
+
+SI
+virtual_enhance_font_rep::get_lsub_correction  (string s) {
+  if (is_basic (s)) return base->get_lsub_correction (s);
+  else return extra->get_lsub_correction (s);
+}
+
+SI
+virtual_enhance_font_rep::get_lsup_correction  (string s) {
+  if (is_basic (s)) return base->get_lsup_correction (s);
+  else return extra->get_lsup_correction (s);
+}
+
+SI
+virtual_enhance_font_rep::get_rsub_correction  (string s) {
+  if (is_basic (s)) return base->get_rsub_correction (s);
+  else return extra->get_rsub_correction (s);
+}
+
+SI
+virtual_enhance_font_rep::get_rsup_correction  (string s) {
+  if (is_basic (s)) return base->get_rsup_correction (s);
+  else return extra->get_rsup_correction (s);
 }
 
 /******************************************************************************

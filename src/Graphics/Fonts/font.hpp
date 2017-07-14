@@ -20,12 +20,16 @@ struct glyph;
 struct font_metric;
 struct font_glyphs;
 
-#define FONT_ATTEMPTS  20
+#define FONT_ATTEMPTS        20
 
-#define FONT_TYPE_TEX      0
-#define FONT_TYPE_UNICODE  1
-#define FONT_TYPE_QT       2
-#define FONT_TYPE_OTHER    3
+#define FONT_TYPE_TEX         0
+#define FONT_TYPE_UNICODE     1
+#define FONT_TYPE_QT          2
+#define FONT_TYPE_OTHER       3
+
+#define MATH_TYPE_NORMAL      0
+#define MATH_TYPE_STIX        1
+#define MATH_TYPE_TEX_GYRE    2
 
 #define START_OF_LINE         1
 #define END_OF_LINE           2
@@ -44,7 +48,7 @@ struct font_glyphs;
 
 struct font_rep: rep<font> {
   int      type;             // font type
-  bool     math_flag;        // For TeX Gyre math fonts and Stix
+  int      math_type;        // For TeX Gyre math fonts and Stix
   SI       size;             // requested size
   SI       design_size;      // design size in points/256
   SI       display_size;     // display size in points/PIXEL
@@ -100,6 +104,10 @@ struct font_rep: rep<font> {
   virtual double get_right_slope (string s);
   virtual SI     get_left_correction  (string s);
   virtual SI     get_right_correction (string s);
+  virtual SI     get_lsub_correction  (string s);
+  virtual SI     get_lsup_correction  (string s);
+  virtual SI     get_rsub_correction  (string s);
+  virtual SI     get_rsup_correction  (string s);
   virtual SI     get_left_protrusion  (string s, int mode);
   virtual SI     get_right_protrusion (string s, int mode);
 

@@ -142,13 +142,13 @@ SI text_box_rep::left_correction () {
 SI text_box_rep::right_correction () {
   return fn->get_right_correction (str); }
 SI text_box_rep::lsub_correction () {
-  return -left_correction (); }
+  return fn->get_lsub_correction (str); }
 SI text_box_rep::lsup_correction () {
-  return right_correction (); }
+  return fn->get_lsup_correction (str); }
 SI text_box_rep::rsub_correction () {
-  return 0; }
+  return fn->get_rsub_correction (str); }
 SI text_box_rep::rsup_correction () {
-  return right_correction (); }
+  return fn->get_rsup_correction (str); }
 
 SI
 text_box_rep::sub_lo_base (int level) {

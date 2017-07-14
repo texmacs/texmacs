@@ -42,6 +42,10 @@ struct poor_extended_font_rep: font_rep {
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
   SI     get_right_correction  (string s);
+  SI     get_lsub_correction  (string s);
+  SI     get_lsup_correction  (string s);
+  SI     get_rsub_correction  (string s);
+  SI     get_rsup_correction  (string s);
 };
 
 /******************************************************************************
@@ -191,6 +195,26 @@ poor_extended_font_rep::get_left_correction (string s) {
 SI
 poor_extended_font_rep::get_right_correction (string s) {
   return (SI) floor (base->get_right_correction (s) * xf + 0.5);
+}
+
+SI
+poor_extended_font_rep::get_lsub_correction (string s) {
+  return (SI) floor (base->get_lsub_correction (s) * xf + 0.5);
+}
+
+SI
+poor_extended_font_rep::get_lsup_correction (string s) {
+  return (SI) floor (base->get_lsup_correction (s) * xf + 0.5);
+}
+
+SI
+poor_extended_font_rep::get_rsub_correction (string s) {
+  return (SI) floor (base->get_rsub_correction (s) * xf + 0.5);
+}
+
+SI
+poor_extended_font_rep::get_rsup_correction (string s) {
+  return (SI) floor (base->get_rsup_correction (s) * xf + 0.5);
 }
 
 /******************************************************************************

@@ -54,6 +54,10 @@ struct math_font_rep: font_rep {
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
   SI     get_right_correction (string s);
+  SI     get_lsub_correction  (string s);
+  SI     get_lsup_correction  (string s);
+  SI     get_rsub_correction  (string s);
+  SI     get_rsup_correction  (string s);
 };
 
 math_font_rep::math_font_rep (
@@ -266,6 +270,34 @@ math_font_rep::get_right_correction (string s) {
   font fn;
   search_font (s, fn);
   return fn->get_right_correction (s);
+}
+
+SI
+math_font_rep::get_lsub_correction  (string s) {
+  font fn;
+  search_font (s, fn);
+  return fn->get_lsub_correction (s);
+}
+
+SI
+math_font_rep::get_lsup_correction  (string s) {
+  font fn;
+  search_font (s, fn);
+  return fn->get_lsup_correction (s);
+}
+
+SI
+math_font_rep::get_rsub_correction (string s) {
+  font fn;
+  search_font (s, fn);
+  return fn->get_rsub_correction (s);
+}
+
+SI
+math_font_rep::get_rsup_correction (string s) {
+  font fn;
+  search_font (s, fn);
+  return fn->get_rsup_correction (s);
 }
 
 /******************************************************************************

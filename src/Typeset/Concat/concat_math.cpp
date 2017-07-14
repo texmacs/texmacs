@@ -92,7 +92,6 @@ concater_rep::typeset_bigop (tree t, path ip) {
     string l= t[0]->label;
     string s= "<big-" * l * ">";
     bool flag= (!env->math_condensed) && (l != ".");
-    bool stix= starts (env->fn->res_name, "stix-");
     box b;
     if (env->fn->type == FONT_TYPE_UNICODE) {
       font mfn= rubber_font (env->fn);
@@ -108,8 +107,12 @@ concater_rep::typeset_bigop (tree t, path ip) {
     if (lim_flag) with_limits (LIMITS_DISPLAY);
     if (flag) {
       if (int_flag) {
-        if (stix) print (env->display_style? (spc / 2): (spc / 4));
-        else if (it_flag) print (env->display_style? 0: (spc / 4));
+        if (env->fn->math_type == MATH_TYPE_STIX)
+          print (env->display_style? (spc / 2): (spc / 4));
+        else if (env->fn->math_type == MATH_TYPE_TEX_GYRE)
+          print (env->display_style? (spc / 2): (spc / 4));
+        else if (it_flag)
+          print (env->display_style? 0: (spc / 4));
         else print (spc / 4);
       }
       else print (env->display_style? spc: (spc / 2));
@@ -138,7 +141,8 @@ concater_rep::typeset_lprime (tree t, path ip) {
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');
-    if (env->fn->type == FONT_TYPE_TEX || env->fn->math_flag)
+    if (env->fn->type == FONT_TYPE_TEX ||
+        env->fn->math_type != MATH_TYPE_NORMAL)
       s= replace_primes (s);
     tree old_il;
     if (!flag) old_il= env->local_begin_script ();
@@ -164,7 +168,8 @@ concater_rep::typeset_rprime (tree t, path ip) {
     if (flag)
       for (int i=0; i<N(s); i++)
 	flag= flag && (s[i] == '\'' || s[i] == '`');
-    if (env->fn->type == FONT_TYPE_TEX || env->fn->math_flag)
+    if (env->fn->type == FONT_TYPE_TEX ||
+        env->fn->math_type != MATH_TYPE_NORMAL)
       s= replace_primes (s);
     tree old_il;
     if (!flag) old_il= env->local_begin_script ();

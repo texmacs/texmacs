@@ -66,6 +66,8 @@ struct unicode_font_rep: font_rep {
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
   SI     get_right_correction  (string s);
+  SI     get_lsup_correction  (string s);
+  SI     get_rsub_correction  (string s);
 };
 
 /******************************************************************************
@@ -466,6 +468,16 @@ is_math_italic (string c) {
   return false;
 }
 
+static bool
+is_integral (string s) {
+  if (!starts (s, "<big-")) return false;
+  int pos= 5, n= N(s);
+  if (pos+1 < n && s[pos] == 'u' && s[pos+1] == 'p') pos += 2;
+  if (pos < n && s[pos] == 'o') pos++;
+  while (pos+1 < n && s[pos] == 'i' && s[pos+1] == 'i') pos++;
+  return test (s, pos, "int-") || test (s, pos, "idotsint");
+}
+
 double
 unicode_font_rep::get_left_slope (string s) {
   if (N(s) == 0) return slope;
@@ -474,8 +486,12 @@ unicode_font_rep::get_left_slope (string s) {
   if (pos == 1) return slope;
   metric ex;
   string c= s (pos, N(s));
-  if (N(c) >= 3 && is_math_italic (c))
-    return max (slope, 0.2); // FIXME: should be determined more reliably
+  if (N(c) >= 3) {
+    if (is_math_italic (c))
+      return max (slope, 0.2); // FIXME: should be determined more reliably
+    else if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s))
+      return 0.1;
+  }
   get_extents (c, ex);
   if (ex->y3 >= 0) return slope;
   double sl= ((double) (ex->x3 - ex->x1)) / ((double) ex->y3);
@@ -491,8 +507,12 @@ unicode_font_rep::get_right_slope (string s) {
   if (pos == N(s) - 1) return slope;
   metric ex;
   string c= s (pos, N(s));
-  if (N(c) >= 3 && is_math_italic (c))
-    return max (slope, 0.2); // FIXME: should be determined more reliably
+  if (N(c) >= 3) {
+    if (is_math_italic (c))
+      return max (slope, 0.2); // FIXME: should be determined more reliably
+    else if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s))
+      return 0.1;
+  }
   get_extents (c, ex);
   if (ex->y4 <= 0) return slope;
   double sl= ((double) (ex->x4 - ex->x2)) / ((double) ex->y4);
@@ -504,7 +524,10 @@ SI
 unicode_font_rep::get_left_correction  (string s) {
   metric ex;
   get_extents (s, ex);
-  if (ex->x3 < ex->x1) return ex->x1 - ex->x3;
+  if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s))
+    return - (((ex->x2 - ex->x1) / 16));
+  else if (ex->x3 < ex->x1)
+    return ex->x1 - ex->x3;
   return 0;
 }
 
@@ -512,7 +535,30 @@ SI
 unicode_font_rep::get_right_correction (string s) {
   metric ex;
   get_extents (s, ex);
-  if (ex->x4 > ex->x2) return ex->x4 - ex->x2;
+  if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s))
+    return (ex->x2 - ex->x1) / 16;
+  else if (ex->x4 > ex->x2)
+    return ex->x4 - ex->x2;
+  return 0;
+}
+
+SI
+unicode_font_rep::get_lsup_correction (string s) {
+  if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s)) {
+    metric ex;
+    get_extents (s, ex);
+    return ((ex->x2 - ex->x1) / 8);
+  }
+  return 0;
+}
+
+SI
+unicode_font_rep::get_rsub_correction (string s) {
+  if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s)) {
+    metric ex;
+    get_extents (s, ex);
+    return - ((ex->x2 - ex->x1) / 8);
+  }
   return 0;
 }
 

@@ -22,23 +22,23 @@ RESOURCE_CODE(font);
 * Constructors for fonts
 ******************************************************************************/
 
-static bool
-get_math_flag (string s) {
+static int
+get_math_type (string s) {
   s= locase_all (s);
   if (starts (s, "unicode:")) s= s (8, N(s));
   if (starts (s, "texgyre")) s= s (7, N(s));
   if (starts (s, "stix-"))
-    return true;
+    return MATH_TYPE_STIX;
   if (starts (s, "bonum-") || starts (s, "pagella-") ||
       starts (s, "schola-") ||starts (s, "termes-"))
-    return true;
-  return false;
+    return MATH_TYPE_TEX_GYRE;
+  return MATH_TYPE_NORMAL;
 }
 
 font_rep::font_rep (string s):
   rep<font> (s),
   type      (FONT_TYPE_TEX),
-  math_flag (get_math_flag (s)),
+  math_type (get_math_type (s)),
   spc       (0),
   extra     (0),
   last_zoom (0.0),
@@ -50,7 +50,7 @@ font_rep::font_rep (string s):
 font_rep::font_rep (string s, font fn):
   rep<font>    (s),
   type         (fn->type),
-  math_flag    (fn->math_flag),
+  math_type    (fn->math_type),
   size         (fn->size),
   design_size  (fn->design_size),
   display_size (fn->display_size),
@@ -182,6 +182,15 @@ double font_rep::get_left_slope  (string s) { (void) s; return slope; }
 double font_rep::get_right_slope (string s) { (void) s; return slope; }
 SI     font_rep::get_left_correction  (string s) { (void) s; return 0; }
 SI     font_rep::get_right_correction (string s) { (void) s; return 0; }
+
+SI font_rep::get_lsub_correction (string s) {
+  return -get_left_correction (s); }
+SI font_rep::get_lsup_correction (string s) {
+  return get_right_correction (s); }
+SI font_rep::get_rsub_correction (string s) {
+  return 0; }
+SI font_rep::get_rsup_correction (string s) {
+  return get_right_correction (s); }
 
 void
 font_rep::get_extents (string s, metric& ex, bool ligf) {

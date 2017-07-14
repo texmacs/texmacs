@@ -35,6 +35,10 @@ struct poor_smallcaps_font_rep: font_rep {
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
   SI     get_right_correction (string s);
+  SI     get_lsub_correction  (string s);
+  SI     get_lsup_correction  (string s);
+  SI     get_rsub_correction  (string s);
+  SI     get_rsup_correction  (string s);
 };
 
 poor_smallcaps_font_rep::poor_smallcaps_font_rep (
@@ -248,6 +252,46 @@ poor_smallcaps_font_rep::get_right_correction (string s) {
   while (i<n) advance (s, i, r, nr);
   nr= max (nr, 0);
   return subfn[nr]->get_right_correction (r);
+}
+
+SI
+poor_smallcaps_font_rep::get_lsub_correction  (string s) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return subfn[0]->get_lsub_correction (s);
+  string r= s;
+  advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return subfn[nr]->get_lsub_correction (r);
+}
+
+SI
+poor_smallcaps_font_rep::get_lsup_correction  (string s) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return subfn[0]->get_lsup_correction (s);
+  string r= s;
+  advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return subfn[nr]->get_lsup_correction (r);
+}
+
+SI
+poor_smallcaps_font_rep::get_rsub_correction (string s) {
+  int i=0, n= N(s), nr=0;
+  if (n == 0) return subfn[0]->get_rsub_correction (s);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return subfn[nr]->get_rsub_correction (r);
+}
+
+SI
+poor_smallcaps_font_rep::get_rsup_correction (string s) {
+  int i=0, n= N(s), nr=0;
+  if (n == 0) return subfn[0]->get_rsup_correction (s);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return subfn[nr]->get_rsup_correction (r);
 }
 
 /******************************************************************************

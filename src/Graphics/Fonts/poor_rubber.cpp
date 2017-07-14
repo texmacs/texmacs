@@ -25,16 +25,24 @@ struct poor_rubber_font_rep: font_rep {
   translator virt;
 
   poor_rubber_font_rep (string name, font base);
-  font get_font (int nr);
-  int search_font (string s, string& r);
+  font   get_font (int nr);
+  int    search_font (string s, string& r);
 
-  bool  supports (string c);
-  void  get_extents (string s, metric& ex);
-  void  draw_fixed (renderer ren, string s, SI x, SI y);
-  void  draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
-  font  magnify (double zoomx, double zoomy);
-  glyph get_glyph (string s);
-  int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
+  bool   supports (string c);
+  void   get_extents (string s, metric& ex);
+  void   draw_fixed (renderer ren, string s, SI x, SI y);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
+  font   magnify (double zoomx, double zoomy);
+  glyph  get_glyph (string s);
+  int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
+  double get_left_slope  (string s);
+  double get_right_slope (string s);
+  SI     get_left_correction  (string s);
+  SI     get_right_correction (string s);
+  SI     get_lsub_correction  (string s);
+  SI     get_lsup_correction  (string s);
+  SI     get_rsub_correction  (string s);
+  SI     get_rsup_correction  (string s);
 };
 
 /******************************************************************************
@@ -312,6 +320,66 @@ poor_rubber_font_rep::index_glyph (string s, font_metric& fnm,
   string name;
   int num= search_font (s, name);
   return get_font (num) -> index_glyph (name, fnm, fng);
+}
+
+/******************************************************************************
+* Italic correction
+******************************************************************************/
+
+double
+poor_rubber_font_rep::get_left_slope (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_left_slope (name);
+}
+
+double
+poor_rubber_font_rep::get_right_slope (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_right_slope (name);
+}
+
+SI
+poor_rubber_font_rep::get_left_correction (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_left_correction (name);
+}
+
+SI
+poor_rubber_font_rep::get_right_correction (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_right_correction (name);
+}
+
+SI
+poor_rubber_font_rep::get_lsub_correction (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_lsub_correction (name);
+}
+
+SI
+poor_rubber_font_rep::get_lsup_correction (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_lsup_correction (name);
+}
+
+SI
+poor_rubber_font_rep::get_rsub_correction (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_rsub_correction (name);
+}
+
+SI
+poor_rubber_font_rep::get_rsup_correction (string s) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_rsup_correction (name);
 }
 
 /******************************************************************************
