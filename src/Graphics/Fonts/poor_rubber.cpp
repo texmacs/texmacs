@@ -126,13 +126,19 @@ int
 poor_rubber_font_rep::search_font (string s, string& r) {
   if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
     r= s;
-    if (big_flag && ends (s, "-1>") && base->supports (s)) return 0;
     if (starts (s, "<big-iint") || starts (s, "<big-iiint") ||
-	starts (s, "<big-idotsint") ||
-	starts (s, "<big-oint") || starts (s, "<big-oiint") ||
-	starts (s, "<big-amalg") || starts (s, "<big-pluscup") ||
-	starts (s, "<big-triangleup") || starts (s, "<big-parallel") ||
-	starts (s, "<big-interleave")) return 2*MAGNIFIED_NUMBER + 5;
+	starts (s, "<big-iiiint") || starts (s, "<big-oint") ||
+        starts (s, "<big-oiint") || starts (s, "<big-oiiint") ||
+	starts (s, "<big-upiint") || starts (s, "<big-upiiint") ||
+	starts (s, "<big-upiiiint") || starts (s, "<big-upoint") ||
+        starts (s, "<big-upoiint") || starts (s, "<big-upoiiint") ||
+	starts (s, "<big-amalg") || starts (s, "<big-pluscup"))
+      if (!big_flag) return 2*MAGNIFIED_NUMBER + 5;
+    if (starts (s, "<big-idotsint") || starts (s, "<big-upidotsint") ||
+        starts (s, "<big-triangleup") || starts (s, "<big-box") ||
+        starts (s, "<big-parallel") || starts (s, "<big-interleave"))
+      return 2*MAGNIFIED_NUMBER + 5;
+    if (big_flag && ends (s, "-1>") && base->supports (s)) return 0;
     return 2*MAGNIFIED_NUMBER + 4;
   }
   if (starts (s, "<mid-")) s= "<left-" * s (5, N(s));

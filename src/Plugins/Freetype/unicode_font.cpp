@@ -186,6 +186,7 @@ unicode_font_rep::unicode_font_rep (string name,
     native ("<big-int-2>")= 4149;
     native ("<big-iint-2>")= 4150;
     native ("<big-iiint-2>")= 4151;
+    native ("<big-iiiint-2>")= 4152;
     native ("<big-oint-2>")= 4153;
     native ("<big-oiint-2>")= 4154;
     native ("<big-oiiint-2>")= 4155;
@@ -202,9 +203,24 @@ unicode_font_rep::unicode_font_rep (string name,
     native ("<big-intlim-2>")= 4149;
     native ("<big-iintlim-2>")= 4150;
     native ("<big-iiintlim-2>")= 4151;
+    native ("<big-iiiintlim-2>")= 4152;
     native ("<big-ointlim-2>")= 4153;
     native ("<big-oiintlim-2>")= 4154;
     native ("<big-oiiintlim-2>")= 4155;
+    native ("<big-upint-2>")= 4149;
+    native ("<big-upiint-2>")= 4150;
+    native ("<big-upiiint-2>")= 4151;
+    native ("<big-upiiiint-2>")= 4152;
+    native ("<big-upoint-2>")= 4153;
+    native ("<big-upoiint-2>")= 4154;
+    native ("<big-upoiiint-2>")= 4155;
+    native ("<big-upintlim-2>")= 4149;
+    native ("<big-upiintlim-2>")= 4150;
+    native ("<big-upiiintlim-2>")= 4151;
+    native ("<big-upiiiintlim-2>")= 4152;
+    native ("<big-upointlim-2>")= 4153;
+    native ("<big-upoiintlim-2>")= 4154;
+    native ("<big-upoiiintlim-2>")= 4155;
   }
 }
 
