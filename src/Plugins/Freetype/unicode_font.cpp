@@ -199,6 +199,12 @@ unicode_font_rep::unicode_font_rep (string name,
     native ("<big-pluscup-2>")= 3861;
     native ("<big-sqcap-2>")= 3852;
     native ("<big-sqcup-2>")= 3854;
+    native ("<big-intlim-2>")= 4149;
+    native ("<big-iintlim-2>")= 4150;
+    native ("<big-iiintlim-2>")= 4151;
+    native ("<big-ointlim-2>")= 4153;
+    native ("<big-oiintlim-2>")= 4154;
+    native ("<big-oiiintlim-2>")= 4155;
   }
 }
 
