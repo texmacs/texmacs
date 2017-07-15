@@ -432,7 +432,7 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   string s= env->exec_string (t[1]);
   if (s == "^") s= "<hat>";
   if (s == "~") s= "<tilde>";
-  bool request_wide= is_func (t, VAR_WIDE);
+  bool request_wide= false;
   if (starts (s, "<wide-")) {
     s= "<" * s (6, N(s));
     request_wide= true;

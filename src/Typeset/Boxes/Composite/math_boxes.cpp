@@ -320,7 +320,8 @@ bool
 compute_wide_accent (path ip, box b, string s,
                      font fn, pencil pen, bool request_wide, bool above,
                      box& wideb, SI& sep) {
-  bool stix= starts (fn->res_name, "stix-");
+  bool stix= (fn->math_type == MATH_TYPE_STIX);
+  bool tex_gyre= (fn->math_type == MATH_TYPE_TEX_GYRE);
   bool wide= (b->w() >= (fn->wfn)) || request_wide;
   if (ends (s, "dot>") || (s == "<acute>") ||
       (s == "<grave>") || (s == "<abovering>")) wide= false;
@@ -408,7 +409,8 @@ compute_wide_accent (path ip, box b, string s,
   else {
     wideb= text_box (decorate_middle (ip), 0, s, fn, pen);
     if (fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0) {
-      double factor= (stix? 0.2: 0.5);
+      bool times= stix || (tex_gyre && occurs ("ermes", fn->res_name));
+      double factor= ((times || !above)? 0.2: 0.5);
       wideb= shift_box (decorate_middle (ip), wideb,
                         (SI) (-factor * b->right_slope () * fn->yx), 0);
     }
@@ -420,6 +422,14 @@ compute_wide_accent (path ip, box b, string s,
     if (wideb->y1 + sep <  min_d) sep= min_d - wideb->y1;
     if (wideb->y1 + sep >= max_d) sep= max_d - wideb->y1;
   }
+  if (fn->type == FONT_TYPE_TEX && !wide && !above)
+    wideb= vresize_box (wideb->ip, wideb, wideb->y1 + fn->yx, wideb->y2);
+  else if (fn->type == FONT_TYPE_UNICODE && s == "<vect>") {
+    if (wide);
+    else if (above) sep -= fn->yx + (fn->sep >> 1);
+    else wideb= vresize_box (wideb->ip, wideb, wideb->y1 + fn->yx, wideb->y2);
+  }
+  else if (stix || tex_gyre) sep += fn->sep >> 1;
   return wide;
 }
 
