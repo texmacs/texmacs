@@ -47,8 +47,20 @@ struct unicode_font_rep: font_rep {
   int         ligs;
 
   hashmap<string,int> native; // additional native (non unicode) characters
+  hashmap<string,double> rsub_correct;
+  hashmap<string,double> rsup_correct;
+  SI global_rsub_correct;
+  SI global_rsup_correct;
   
   unicode_font_rep (string name, string family, int size, int hdpi, int vdpi);
+  void tex_gyre_operators ();
+  void rsub_adjust_char (string c, double delta);
+  void rsub_adjust_pair (string c, double delta);
+  void rsup_adjust_char (string c, double delta);
+  void rsup_adjust_pair (string c, double delta);
+  void script_adjust_std ();
+  void script_adjust_stix ();
+  void script_adjust_pagella ();
 
   unsigned int read_unicode_char (string s, int& i);
   unsigned int ligature_replace (unsigned int c, string s, int& i);
@@ -68,6 +80,7 @@ struct unicode_font_rep: font_rep {
   SI     get_right_correction  (string s);
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
+  SI     get_rsup_correction  (string s);
 };
 
 /******************************************************************************
@@ -77,7 +90,8 @@ struct unicode_font_rep: font_rep {
 unicode_font_rep::unicode_font_rep (string name,
   string family2, int size2, int hdpi2, int vdpi2):
     font_rep (name), family (family2), hdpi (hdpi2), vdpi (vdpi2), ligs (0),
-    native (0)
+    native (0), rsub_correct (0.0), rsup_correct (0.0),
+    global_rsub_correct (0), global_rsup_correct (0)
 {
   type= FONT_TYPE_UNICODE;
   size= size2;
@@ -181,7 +195,28 @@ unicode_font_rep::unicode_font_rep (string name,
   //cout << "ligs= " << ligs << ", " << family << ", " << size << "\n";
 
   // direct translations for certain characters without Unicode names
-  if (starts (family, "texgyre") && ends (family, "-math")) {
+  if (starts (family, "texgyre") && ends (family, "-math"))
+    tex_gyre_operators ();
+
+  script_adjust_std ();
+  if (starts (family, "texgyretermes-") || starts (family, "STIX-")) {
+    global_rsub_correct= (SI) (0.04 * wfn);
+    global_rsup_correct= (SI) (0.04 * wfn);
+    script_adjust_stix ();
+  }
+  if (starts (family, "texgyrepagella-")) {
+    global_rsub_correct= (SI) (0.05 * wfn);
+    global_rsup_correct= (SI) (0.05 * wfn);
+    script_adjust_pagella ();
+  }
+}
+
+/******************************************************************************
+* Big operators in TeX Gyre fonts
+******************************************************************************/
+
+void
+unicode_font_rep::tex_gyre_operators () {
     native ("<big-prod-2>")= 4215;
     native ("<big-amalg-2>")= 4216;
     native ("<big-sum-2>")= 4217;
@@ -223,7 +258,376 @@ unicode_font_rep::unicode_font_rep (string name,
     native ("<big-upointlim-2>")= 4153;
     native ("<big-upoiintlim-2>")= 4154;
     native ("<big-upoiiintlim-2>")= 4155;
-  }
+}
+
+/******************************************************************************
+* Adjustments
+******************************************************************************/
+
+void
+unicode_font_rep::rsub_adjust_char (string c, double delta) {
+  rsub_correct (c) += delta;
+}
+
+void
+unicode_font_rep::rsub_adjust_pair (string c, double delta) {
+  rsub_adjust_char (c, delta);
+  if (N(c) == 1) c= "<b-" * c * ">";
+  else c= "<b-" * c (1, N(c));
+  rsub_adjust_char (c, delta);
+}
+
+void
+unicode_font_rep::rsup_adjust_char (string c, double delta) {
+  rsup_correct (c) += delta;
+}
+
+void
+unicode_font_rep::rsup_adjust_pair (string c, double delta) {
+  rsup_adjust_char (c, delta);
+  if (N(c) == 1) c= "<b-" * c * ">";
+  else c= "<b-" * c (1, N(c));
+  rsup_adjust_char (c, delta);
+}
+
+void
+unicode_font_rep::script_adjust_std () {
+  rsub_adjust_pair ("1", -0.02);
+  rsub_adjust_pair ("J", -0.01);
+  rsub_adjust_pair ("P", -0.02);
+  rsub_adjust_pair ("T", -0.03);
+  rsub_adjust_pair ("V", -0.05);
+  rsub_adjust_pair ("W", -0.05);
+  rsub_adjust_pair ("Y", -0.07);
+  rsub_adjust_pair ("<Gamma>", -0.1);
+  rsub_adjust_pair ("<Tau>", -0.05);
+  rsub_adjust_pair ("<Upsilon>", -0.05);
+  rsub_adjust_pair ("<Psi>", -0.03);
+  rsub_adjust_pair ("<gamma>", -0.02);
+
+  rsup_adjust_pair ("1", -0.05);
+  rsup_adjust_pair ("A", -0.05);
+  rsup_adjust_pair ("L", -0.05);
+  rsup_adjust_pair ("<Alpha>", -0.1);
+  rsup_adjust_pair ("<Delta>", -0.1);
+  rsup_adjust_pair ("<Lambda>", -0.1);
+  rsup_adjust_pair ("<bbb-A>", -0.05);
+  rsup_adjust_pair ("<bbb-L>", -0.05);
+}
+
+void
+unicode_font_rep::script_adjust_stix () {
+  rsub_adjust_pair ("!", 0.05);
+  rsub_adjust_pair ("/", -0.02);
+  rsub_adjust_pair ("N", -0.02);
+  rsub_adjust_pair ("O", -0.01);
+  rsub_adjust_pair ("P", -0.02);
+  rsub_adjust_pair ("T", -0.02);
+  rsub_adjust_pair ("U", -0.02);
+  rsub_adjust_pair ("<Alpha>", 0.02);
+  rsub_adjust_pair ("<Delta>", 0.01);
+  rsub_adjust_pair ("<Eta>", 0.02);
+  rsub_adjust_pair ("<Theta>", -0.02);
+  rsub_adjust_pair ("<Iota>", 0.02);
+  rsub_adjust_pair ("<Kappa>", 0.02);
+  rsub_adjust_pair ("<Lambda>", 0.02);
+  rsub_adjust_pair ("<Omicron>", -0.02);
+  rsub_adjust_pair ("<Backepsilon>", 0.05);
+  rsub_adjust_char ("<#1D714>", -0.01);
+  rsub_adjust_char ("<b-omega>", -0.01);
+  rsub_adjust_pair ("<cal-A>", -0.05);
+  rsub_adjust_pair ("<cal-B>", -0.03);
+  rsub_adjust_pair ("<cal-C>", -0.05);
+  rsub_adjust_pair ("<cal-D>", -0.03);
+  rsub_adjust_pair ("<cal-E>", -0.05);
+  rsub_adjust_pair ("<cal-F>", -0.05);
+  rsub_adjust_pair ("<cal-G>", -0.05);
+  rsub_adjust_pair ("<cal-H>", -0.1);
+  rsub_adjust_pair ("<cal-I>", -0.1);
+  rsub_adjust_pair ("<cal-J>", -0.05);
+  rsub_adjust_pair ("<cal-K>", -0.1);
+  rsub_adjust_pair ("<cal-L>", -0.1);
+  rsub_adjust_pair ("<cal-M>", -0.05);
+  rsub_adjust_pair ("<cal-N>", -0.15);
+  rsub_adjust_pair ("<cal-S>", -0.1);
+  rsub_adjust_pair ("<cal-T>", -0.25);
+  rsub_adjust_pair ("<cal-U>", -0.05);
+  rsub_adjust_pair ("<cal-V>", -0.25);
+  rsub_adjust_pair ("<cal-W>", -0.25);
+  rsub_adjust_pair ("<cal-X>", -0.15);
+  rsub_adjust_pair ("<cal-Y>", -0.15);
+  rsub_adjust_pair ("<cal-Z>", -0.1);
+  rsub_adjust_pair ("<cal-a>", -0.05);
+  rsub_adjust_pair ("<cal-c>", -0.05);
+  rsub_adjust_pair ("<cal-d>", -0.05);
+  rsub_adjust_pair ("<cal-e>", -0.05);
+  rsub_adjust_pair ("<cal-f>", -0.1);
+  rsub_adjust_pair ("<cal-g>", -0.05);
+  rsub_adjust_pair ("<cal-h>", -0.05);
+  rsub_adjust_pair ("<cal-i>", -0.03);
+  rsub_adjust_pair ("<cal-j>", -0.05);
+  rsub_adjust_pair ("<cal-k>", -0.03);
+  rsub_adjust_pair ("<cal-l>", -0.08);
+  rsub_adjust_pair ("<cal-p>", -0.03);
+  rsub_adjust_pair ("<cal-q>", -0.02);
+  rsub_adjust_pair ("<cal-s>", -0.03);
+  rsub_adjust_pair ("<cal-t>", -0.07);
+  rsub_adjust_pair ("<cal-u>", -0.03);
+  rsub_adjust_pair ("<cal-x>", -0.05);
+  rsub_adjust_pair ("<cal-y>", -0.05);
+  rsub_adjust_pair ("<cal-z>", -0.07);
+  rsub_adjust_pair ("<bbb-D>", -0.02);
+  rsub_adjust_pair ("<bbb-F>", 0.05);
+  rsub_adjust_pair ("<bbb-I>", 0.03);
+  rsub_adjust_pair ("<bbb-J>", 0.05);
+  rsub_adjust_pair ("<bbb-M>", 0.03);
+  rsub_adjust_pair ("<bbb-N>", 0.02);
+  rsub_adjust_pair ("<bbb-Q>", 0.02);
+  rsub_adjust_pair ("<bbb-T>", 0.05);
+  rsub_adjust_pair ("<bbb-V>", 0.07);
+  rsub_adjust_pair ("<bbb-W>", 0.07);
+  rsub_adjust_pair ("<bbb-Y>", 0.05);
+  rsub_adjust_pair ("<bbb-Z>", -0.03);
+
+  rsup_adjust_pair ("!", 0.05);
+  rsup_adjust_pair ("?", 0.05);
+  rsup_adjust_pair ("/", 0.05);
+  rsup_adjust_pair ("B", 0.03);
+  rsup_adjust_pair ("D", 0.01);
+  rsup_adjust_pair ("P", 0.03);
+  rsup_adjust_pair ("Q", 0.01);
+  rsup_adjust_pair ("R", 0.03);
+  rsup_adjust_pair ("W", 0.02);
+  rsup_adjust_pair ("a", 0.01);
+  rsup_adjust_pair ("b", 0.02);
+  rsup_adjust_pair ("c", 0.02);
+  rsup_adjust_pair ("d", 0.01);
+  rsup_adjust_pair ("e", 0.02);
+  rsup_adjust_pair ("i", 0.02);
+  rsup_adjust_pair ("l", 0.02);
+  rsup_adjust_pair ("q", 0.01);
+  rsup_adjust_pair ("r", 0.02);
+  rsup_adjust_pair ("s", 0.02);
+  rsup_adjust_pair ("t", 0.02);
+  rsup_adjust_pair ("x", 0.02);
+  rsup_adjust_pair ("<Gamma>", 0.02);
+  rsup_adjust_pair ("<Theta>", 0.02);
+  rsup_adjust_pair ("<Rho>", 0.02);
+  rsup_adjust_pair ("<Phi>", 0.02);
+  rsup_adjust_pair ("<Psi>", 0.01);
+  rsup_adjust_pair ("<Tau>", 0.02);
+  rsup_adjust_pair ("<Backepsilon>", 0.04);
+  rsup_adjust_pair ("<Mho>", 0.02);
+  rsup_adjust_char ("<#1D6FD>", 0.02);
+  rsup_adjust_char ("<b-beta>", 0.02);
+  rsup_adjust_char ("<#1D701>", 0.04);
+  rsup_adjust_char ("<b-zeta>", 0.03);
+  rsup_adjust_char ("<#1D703>", 0.05);
+  rsup_adjust_char ("<b-theta>", 0.05);
+  rsup_adjust_char ("<#1D709>", 0.04);
+  rsup_adjust_char ("<b-xi>", 0.03);
+  rsup_adjust_char ("<#1D717>", 0.02);
+  rsup_adjust_char ("<b-vartheta>", 0.02);
+  rsup_adjust_char ("<#1D70D>", 0.02);
+  rsup_adjust_char ("<b-varsigma>", 0.02);
+  rsup_adjust_pair ("<mho>", 0.02);
+  rsup_adjust_char ("<zeta>", -0.03);
+  rsup_adjust_char ("<b-up-zeta>", -0.03);
+  rsup_adjust_char ("<xi>", -0.01);
+  rsup_adjust_char ("<b-up-xi>", -0.01);
+  rsup_adjust_char ("<psi>", -0.02);
+  rsup_adjust_char ("<b-up-psi>", -0.02);
+  rsup_adjust_pair ("<bbb-A>", -0.02);
+  rsup_adjust_pair ("<bbb-D>", 0.02);
+  rsup_adjust_pair ("<bbb-H>", 0.02);
+  rsup_adjust_pair ("<bbb-J>", 0.01);
+  rsup_adjust_pair ("<bbb-L>", -0.02);
+  rsup_adjust_pair ("<bbb-M>", 0.01);
+  rsup_adjust_pair ("<bbb-P>", 0.02);
+  rsup_adjust_pair ("<frak-a>", -0.02);
+  rsup_adjust_pair ("<frak-i>", -0.02);
+  rsup_adjust_pair ("<frak-j>", 0.01);
+  rsup_adjust_pair ("<frak-l>", -0.01);
+  rsup_adjust_pair ("<frak-p>", 0.02);
+  rsup_adjust_pair ("<frak-r>", 0.01);
+  rsup_adjust_pair ("<frak-t>", 0.01);
+  rsup_adjust_pair ("<frak-u>", -0.01);
+}
+
+void
+unicode_font_rep::script_adjust_pagella () {
+  rsub_adjust_pair ("!", 0.05);
+  rsub_adjust_pair ("/", -0.05);
+  rsub_adjust_pair ("D", -0.02);
+  rsub_adjust_pair ("N", -0.02);
+  rsub_adjust_pair ("O", -0.02);
+  rsub_adjust_pair ("P", -0.03);
+  rsub_adjust_pair ("T", -0.03);
+  rsub_adjust_pair ("V", -0.03);
+  rsub_adjust_pair ("Y", -0.02);
+  rsub_adjust_pair ("<Alpha>", 0.02);
+  rsub_adjust_pair ("<Delta>", 0.02);
+  rsub_adjust_pair ("<Epsilon>", 0.02);
+  rsub_adjust_pair ("<Zeta>", 0.02);
+  rsub_adjust_pair ("<Eta>", 0.02);
+  rsub_adjust_pair ("<Theta>", -0.01);
+  rsub_adjust_pair ("<Iota>", 0.02);
+  rsub_adjust_pair ("<Kappa>", 0.03);
+  rsub_adjust_pair ("<Lambda>", 0.02);
+  rsub_adjust_pair ("<Mu>", 0.02);
+  rsub_adjust_pair ("<Pi>", 0.02);
+  rsub_adjust_pair ("<Sigma>", 0.02);
+  rsub_adjust_pair ("<Omega>", 0.02);
+  rsub_adjust_pair ("<Backepsilon>", 0.05);
+  rsub_adjust_pair ("<Mho>", 0.02);
+  rsub_adjust_char ("<#1D701>", 0.02);
+  rsub_adjust_char ("<b-zeta>", 0.02);
+  rsub_adjust_char ("<#1D709>", 0.02);
+  rsub_adjust_char ("<b-xi>", 0.02);
+  for (char c= 'A'; c <= 'Z'; c++)
+    rsub_adjust_pair ("<cal-" * string (c) * ">", 0.07);
+  for (char c= 'a'; c <= 'z'; c++)
+    rsub_adjust_pair ("<cal-" * string (c) * ">", 0.05);
+  rsub_adjust_char ("<bbb-A>", -0.05);
+  rsub_adjust_char ("<bbb-F>", -0.05);
+  rsub_adjust_char ("<bbb-H>", -0.03);
+  rsub_adjust_char ("<bbb-J>", -0.05);
+  rsub_adjust_char ("<bbb-K>", -0.02);
+  rsub_adjust_char ("<bbb-L>", -0.03);
+  rsub_adjust_char ("<bbb-N>", -0.03);
+  rsub_adjust_char ("<bbb-O>", -0.03);
+  rsub_adjust_char ("<bbb-P>", -0.05);
+  rsub_adjust_char ("<bbb-R>", -0.03);
+  rsub_adjust_char ("<bbb-T>", -0.1);
+  rsub_adjust_char ("<bbb-U>", -0.05);
+  rsub_adjust_char ("<bbb-V>", -0.1);
+  rsub_adjust_char ("<bbb-W>", -0.1);
+  rsub_adjust_char ("<bbb-Y>", -0.1);
+
+  rsup_adjust_pair ("!", 0.05);
+  rsup_adjust_pair ("?", 0.05);
+  rsup_adjust_pair ("/", 0.05);
+  for (char c= 'A'; c <= 'Z'; c++)
+    rsup_adjust_pair (string (c), 0.03);
+  for (char c= 'a'; c <= 'z'; c++)
+    rsup_adjust_pair (string (c), 0.02);
+  rsup_adjust_pair ("H", -0.02);
+  rsup_adjust_pair ("B", 0.02);
+  rsup_adjust_pair ("D", 0.01);
+  rsup_adjust_pair ("I", 0.02);
+  rsup_adjust_pair ("J", 0.02);
+  rsup_adjust_pair ("b", 0.02);
+  rsup_adjust_pair ("l", 0.02);
+  rsup_adjust_pair ("p", 0.02);
+  rsup_adjust_pair ("q", 0.02);
+  rsup_adjust_pair ("r", 0.02);
+  rsup_adjust_pair ("s", 0.02);
+  rsup_adjust_pair ("t", 0.02);
+  rsup_adjust_pair ("<Beta>", 0.03);
+  rsup_adjust_pair ("<Gamma>", 0.03);
+  rsup_adjust_pair ("<Delta>", 0.03);
+  rsup_adjust_pair ("<Epsilon>", 0.03);
+  rsup_adjust_pair ("<Zeta>", 0.03);
+  rsup_adjust_pair ("<Eta>", 0.03);
+  rsup_adjust_pair ("<Theta>", 0.03);
+  rsup_adjust_pair ("<Iota>", 0.03);
+  rsup_adjust_pair ("<Kappa>", 0.03);
+  rsup_adjust_pair ("<Lambda>", 0.03);
+  rsup_adjust_pair ("<Mu>", 0.03);
+  rsup_adjust_pair ("<Nu>", 0.03);
+  rsup_adjust_pair ("<Xi>", 0.03);
+  rsup_adjust_pair ("<Omicron>", 0.03);
+  rsup_adjust_pair ("<Pi>", 0.03);
+  rsup_adjust_pair ("<Rho>", 0.08);
+  rsup_adjust_pair ("<Sigma>", 0.03);
+  rsup_adjust_pair ("<Tau>", 0.03);
+  rsup_adjust_pair ("<Upsilon>", 0.03);
+  rsup_adjust_pair ("<Phi>", 0.03);
+  rsup_adjust_pair ("<Psi>", 0.03);
+  rsup_adjust_pair ("<Chi>", 0.03);
+  rsup_adjust_pair ("<Omega>", 0.03);
+  rsup_adjust_pair ("<Backepsilon>", 0.03);
+  rsup_adjust_pair ("<Mho>", 0.03);
+  rsup_adjust_char ("<#1D6FC>", 0.03);
+  rsup_adjust_char ("<b-alpha>", 0.03);
+  rsup_adjust_char ("<#1D6FD>", 0.03);
+  rsup_adjust_char ("<b-beta>", 0.03);
+  rsup_adjust_char ("<#1D6FE>", 0.05);
+  rsup_adjust_char ("<b-gamma>", 0.05);
+  rsup_adjust_char ("<#1D6FF>", 0.05);
+  rsup_adjust_char ("<b-delta>", 0.05);
+  rsup_adjust_char ("<#1D700>", 0.03);
+  rsup_adjust_char ("<b-epsilon>", 0.03);
+  rsup_adjust_char ("<#1D701>", 0.05);
+  rsup_adjust_char ("<b-zeta>", 0.05);
+  rsup_adjust_char ("<#1D702>", 0.05);
+  rsup_adjust_char ("<b-eta>", 0.05);
+  rsup_adjust_char ("<#1D703>", 0.03);
+  rsup_adjust_char ("<b-theta>", 0.03);
+  rsup_adjust_char ("<#1D704>", 0.03);
+  rsup_adjust_char ("<b-ita>", 0.03);
+  rsup_adjust_char ("<#1D705>", 0.05);
+  rsup_adjust_char ("<b-kappa>", 0.05);
+  rsup_adjust_char ("<#1D706>", -0.03);
+  rsup_adjust_char ("<b-lambda>", -0.03);
+  rsup_adjust_char ("<#1D708>", 0.05);
+  rsup_adjust_char ("<b-nu>", 0.05);
+  rsup_adjust_char ("<#1D709>", 0.05);
+  rsup_adjust_char ("<b-xi>", 0.05);
+  rsup_adjust_char ("<#1D70A>", 0.03);
+  rsup_adjust_char ("<b-omicron>", 0.03);
+  rsup_adjust_char ("<#1D70B>", 0.03);
+  rsup_adjust_char ("<b-pi>", 0.03);
+  rsup_adjust_char ("<#1D70C>", 0.03);
+  rsup_adjust_char ("<b-rho>", 0.03);
+  rsup_adjust_char ("<#1D70D>", 0.03);
+  rsup_adjust_char ("<b-varsigma>", 0.03);
+  rsup_adjust_char ("<#1D70E>", 0.03);
+  rsup_adjust_char ("<b-sigma>", 0.03);
+  rsup_adjust_char ("<#1D70F>", 0.03);
+  rsup_adjust_char ("<b-tau>", 0.03);
+  rsup_adjust_char ("<#1D710>", 0.03);
+  rsup_adjust_char ("<b-upsilon>", 0.03);
+  rsup_adjust_char ("<#1D711>", 0.03);
+  rsup_adjust_char ("<b-varphi>", 0.03);
+  rsup_adjust_char ("<#1D712>", 0.03);
+  rsup_adjust_char ("<b-psi>", 0.03);
+  rsup_adjust_char ("<#1D713>", 0.03);
+  rsup_adjust_char ("<b-chi>", 0.03);
+  rsup_adjust_char ("<#1D714>", 0.03);
+  rsup_adjust_char ("<b-omega>", 0.03);
+  rsup_adjust_char ("<#1D716>", 0.03);
+  rsup_adjust_char ("<b-varepsilon>", 0.03);
+  rsup_adjust_char ("<#1D717>", 0.07);
+  rsup_adjust_char ("<b-vartheta>", 0.07);
+  rsup_adjust_char ("<#1D718>", 0.02);
+  rsup_adjust_char ("<b-varkappa>", 0.02);
+  rsup_adjust_char ("<#1D719>", 0.03);
+  rsup_adjust_char ("<b-phi>", 0.03);
+  rsup_adjust_char ("<#1D71A>", 0.03);
+  rsup_adjust_char ("<b-varrho>", 0.03);
+  rsup_adjust_char ("<#1D71B>", 0.03);
+  rsup_adjust_char ("<b-varpi>", 0.03);
+  for (char c= 'A'; c <= 'Z'; c++)
+    rsup_adjust_pair ("<cal-" * string (c) * ">", 0.02);
+  rsup_adjust_pair ("<cal-A>", -0.05);
+  rsup_adjust_pair ("<cal-B>", -0.03);
+  rsup_adjust_pair ("<cal-f>", 0.05);
+  rsup_adjust_pair ("<cal-l>", 0.03);
+  rsup_adjust_pair ("<cal-t>", 0.03);
+  for (char c= 'A'; c <= 'Z'; c++)
+    rsup_adjust_pair ("<bbb-" * string (c) * ">", -0.02);
+  rsup_adjust_pair ("<bbb-A>", -0.07);
+  rsup_adjust_pair ("<bbb-B>", 0.02);
+  rsup_adjust_pair ("<bbb-D>", 0.02);
+  rsup_adjust_pair ("<bbb-E>", 0.02);
+  rsup_adjust_pair ("<bbb-F>", 0.02);
+  rsup_adjust_pair ("<bbb-K>", -0.07);
+  rsup_adjust_pair ("<bbb-L>", -0.03);
+  rsup_adjust_pair ("<bbb-M>", 0.02);
+  rsup_adjust_pair ("<bbb-R>", -0.07);
+  rsup_adjust_pair ("<bbb-X>", -0.03);
+  rsup_adjust_pair ("<frak-a>", -0.03);
 }
 
 /******************************************************************************
@@ -559,7 +963,17 @@ unicode_font_rep::get_rsub_correction (string s) {
     get_extents (s, ex);
     return - ((ex->x2 - ex->x1) / 8);
   }
-  return 0;
+  SI r= global_rsub_correct;
+  if (rsub_correct->contains (s)) r += (SI) (rsub_correct[s] * wfn);
+  return r;
+}
+
+SI
+unicode_font_rep::get_rsup_correction (string s) {
+  //cout << "Check " << s << ", " << rsup_correct[s] << ", " << this->res_name << LF;
+  SI r= get_right_correction (s) + global_rsup_correct;
+  if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
+  return r;
 }
 
 /******************************************************************************
