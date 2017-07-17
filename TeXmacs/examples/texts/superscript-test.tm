@@ -34,8 +34,8 @@
 
 <\initial>
   <\collection>
-    <associate|font|Chalkboard>
-    <associate|math-font|math-bonum>
+    <associate|font|Papyrus>
+    <associate|math-font|math-dejavu>
   </collection>
 </initial>
 
