@@ -34,8 +34,8 @@
 
 <\initial>
   <\collection>
-    <associate|font|termes>
-    <associate|math-font|math-termes>
+    <associate|font|schola>
+    <associate|math-font|math-schola>
   </collection>
 </initial>
 
