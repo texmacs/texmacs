@@ -32,12 +32,8 @@
   </equation*>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|font|Papyrus>
-    <associate|math-font|math-dejavu>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
 
 <\references>
   <\collection>

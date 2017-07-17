@@ -25,6 +25,13 @@
 static void special_initialize ();
 font_metric tfm_font_metric (tex_font_metric tfm, font_glyphs pk, double unit);
 
+hashmap<string,double> rsub_cmr_table ();
+hashmap<string,double> rsup_cmr_table ();
+hashmap<string,double> rsub_cmmi_table ();
+hashmap<string,double> rsup_cmmi_table ();
+hashmap<string,double> rsub_bbm_table ();
+hashmap<string,double> rsup_bbm_table ();
+
 /******************************************************************************
 * TeX text fonts
 ******************************************************************************/
@@ -51,6 +58,8 @@ struct tex_font_rep: font_rep {
   font  magnify (double zoomx, double zoomy);
   SI    get_left_correction (string s);
   SI    get_right_correction (string s);
+  SI    get_rsub_correction  (string s);
+  SI    get_rsup_correction  (string s);
   void  advance_glyph (string s, int& pos);
   glyph get_glyph (string s);
   int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
@@ -125,6 +134,23 @@ tex_font_rep::tex_font_rep (string name, int status2,
   }
 
   special_initialize ();
+
+  if (family == "cmr" || family == "cmbx") {
+    rsub_correct= rsub_cmr_table ();
+    rsup_correct= rsup_cmr_table ();
+  }
+  else if (family == "cmmi" || family == "cmmib") {
+    rsub_correct= rsub_cmmi_table ();
+    rsup_correct= rsup_cmmi_table ();
+  }
+  else if (family == "bbm" || family == "bbmbx") {
+    rsub_correct= rsub_bbm_table ();
+    rsup_correct= rsup_bbm_table ();
+  }
+  else {
+    rsub_correct= hashmap<string,double> (0.0);
+    rsup_correct= hashmap<string,double> (0.0);
+  }
 }
 
 /******************************************************************************
@@ -780,6 +806,20 @@ tex_font_rep::get_right_correction (string s) {
     }
   }
   return conv (tfm->i ((QN) s[N(s)-1]));
+}
+
+SI
+tex_font_rep::get_rsub_correction (string s) {
+  SI r= 0;
+  if (rsub_correct->contains (s)) r += (SI) (rsub_correct[s] * wfn);
+  return r;
+}
+
+SI
+tex_font_rep::get_rsup_correction (string s) {
+  SI r= get_right_correction (s);
+  if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
+  return r;
 }
 
 void
