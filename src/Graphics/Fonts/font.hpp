@@ -77,7 +77,12 @@ struct font_rep: rep<font> {
   double   last_zoom;        // last rendered zoom
   font     zoomed_fn;        // zoomed font for last_zoom (or nil)
 
-  hashmap<int,int> protrusion_maps;  // tables for protrusion
+  // Microtypography
+  SI   global_rsub_correct;  // global right subscript correction
+  SI   global_rsup_correct;  // global right superscript correction
+  hashmap<string,double> rsub_correct;     // right subscript adjustments
+  hashmap<string,double> rsup_correct;     // right superscript adjustments
+  hashmap<int,int>       protrusion_maps;  // tables for protrusion
 
   font_rep (string name);
   font_rep (string name, font fn);
@@ -178,6 +183,12 @@ font smart_font (string family, string variant, string series, string shape,
 font apply_effects (font fn, string effects);
 
 int  script (int sz, int level);
+
+// Microtypography
+void adjust_char (hashmap<string,double>& t, string c, double delta);
+void adjust_pair (hashmap<string,double>& t, string c, double delta);
+void rsub_adjust_std (hashmap<string,double>& t);
+void rsup_adjust_std (hashmap<string,double>& t);
 
 // Font database
 extern bool new_fonts;

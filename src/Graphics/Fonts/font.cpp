@@ -43,6 +43,10 @@ font_rep::font_rep (string s):
   extra     (0),
   last_zoom (0.0),
   zoomed_fn (NULL),
+  global_rsub_correct (0),
+  global_rsup_correct (0),
+  rsub_correct (0.0),
+  rsup_correct (0.0),
   protrusion_maps (-1)
 {
 }
@@ -60,6 +64,10 @@ font_rep::font_rep (string s, font fn):
   sep          (fn->sep),
   last_zoom    (0.0),
   zoomed_fn    (NULL),
+  global_rsub_correct (0),
+  global_rsup_correct (0),
+  rsub_correct (0.0),
+  rsup_correct (0.0),
   protrusion_maps (-1)
 {
   copy_math_pars (fn);
