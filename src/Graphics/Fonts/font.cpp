@@ -18,6 +18,9 @@
 
 RESOURCE_CODE(font);
 
+hashmap<string,double> rsub_guessed_table ();
+hashmap<string,double> rsup_guessed_table ();
+
 /******************************************************************************
 * Constructors for fonts
 ******************************************************************************/
@@ -49,6 +52,8 @@ font_rep::font_rep (string s):
   rsup_correct (0.0),
   protrusion_maps (-1)
 {
+  rsub_correct= rsub_guessed_table ();
+  rsup_correct= rsup_guessed_table ();
 }
 
 font_rep::font_rep (string s, font fn):
@@ -70,6 +75,8 @@ font_rep::font_rep (string s, font fn):
   rsup_correct (0.0),
   protrusion_maps (-1)
 {
+  rsub_correct= rsub_guessed_table ();
+  rsup_correct= rsup_guessed_table ();
   copy_math_pars (fn);
 }
 

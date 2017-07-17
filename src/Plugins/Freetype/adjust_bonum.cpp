@@ -219,9 +219,9 @@ rsub_bonum_table () {
 
 hashmap<string,double>
 rsup_bonum_table () {
-  if (N (rsub_bonum) == 0) {
-    rsup_adjust_std (rsub_bonum);
-    rsup_adjust_bonum (rsub_bonum);
+  if (N (rsup_bonum) == 0) {
+    rsup_adjust_std (rsup_bonum);
+    rsup_adjust_bonum (rsup_bonum);
   }
   return rsup_bonum;
 }

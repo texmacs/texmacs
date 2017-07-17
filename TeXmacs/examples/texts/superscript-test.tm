@@ -34,7 +34,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|bonum>
+    <associate|font|Chalkboard>
     <associate|math-font|math-bonum>
   </collection>
 </initial>

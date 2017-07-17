@@ -34,8 +34,8 @@
 
 <\initial>
   <\collection>
-    <associate|font|bonum>
-    <associate|math-font|math-bonum>
+    <associate|font|American Typewriter>
+    <associate|math-font|math-dejavu>
   </collection>
 </initial>
 

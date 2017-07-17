@@ -228,9 +228,9 @@ rsub_schola_table () {
 
 hashmap<string,double>
 rsup_schola_table () {
-  if (N (rsub_schola) == 0) {
-    rsup_adjust_std (rsub_schola);
-    rsup_adjust_schola (rsub_schola);
+  if (N (rsup_schola) == 0) {
+    rsup_adjust_std (rsup_schola);
+    rsup_adjust_schola (rsup_schola);
   }
   return rsup_schola;
 }

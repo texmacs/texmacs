@@ -44,8 +44,6 @@ hashmap<string,double> rsub_schola_table ();
 hashmap<string,double> rsup_schola_table ();
 hashmap<string,double> rsub_bonum_table ();
 hashmap<string,double> rsup_bonum_table ();
-hashmap<string,double> rsub_guessed_table ();
-hashmap<string,double> rsup_guessed_table ();
 
 /******************************************************************************
 * True Type fonts
@@ -223,10 +221,6 @@ unicode_font_rep::unicode_font_rep (string name,
   else if (starts (family, "texgyrebonum-")) {
     rsub_correct= rsub_bonum_table ();
     rsup_correct= rsup_bonum_table ();
-  }
-  else {
-    rsub_correct= rsub_guessed_table ();
-    rsup_correct= rsup_guessed_table ();
   }
 }
 

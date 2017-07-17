@@ -184,9 +184,9 @@ rsub_stix_table () {
 
 hashmap<string,double>
 rsup_stix_table () {
-  if (N (rsub_stix) == 0) {
-    rsup_adjust_std (rsub_stix);
-    rsup_adjust_stix (rsub_stix);
+  if (N (rsup_stix) == 0) {
+    rsup_adjust_std (rsup_stix);
+    rsup_adjust_stix (rsup_stix);
   }
   return rsup_stix;
 }

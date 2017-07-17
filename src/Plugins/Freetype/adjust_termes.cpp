@@ -266,9 +266,9 @@ rsub_termes_table () {
 
 hashmap<string,double>
 rsup_termes_table () {
-  if (N (rsub_termes) == 0) {
-    rsup_adjust_std (rsub_termes);
-    rsup_adjust_termes (rsub_termes);
+  if (N (rsup_termes) == 0) {
+    rsup_adjust_std (rsup_termes);
+    rsup_adjust_termes (rsup_termes);
   }
   return rsup_termes;
 }

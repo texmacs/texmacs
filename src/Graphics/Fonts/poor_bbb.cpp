@@ -231,7 +231,14 @@ poor_bbb_font_rep::get_lsup_correction (string s) {
 
 SI
 poor_bbb_font_rep::get_rsub_correction (string s) {
-  return base->get_rsub_correction (s);
+  SI r= base->get_rsub_correction (s);
+  if (N(s) == 1) {
+    char c= s[0];
+    if (c == 'T') r -= (SI) (0.04 * wfn);
+    if (c == 'P') r -= (SI) (0.08 * wfn);
+    if (c == 'F') r -= (SI) (0.12 * wfn);
+  }
+  return r;
 }
 
 SI

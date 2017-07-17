@@ -229,9 +229,9 @@ rsub_pagella_table () {
 
 hashmap<string,double>
 rsup_pagella_table () {
-  if (N (rsub_pagella) == 0) {
-    rsup_adjust_std (rsub_pagella);
-    rsup_adjust_pagella (rsub_pagella);
+  if (N (rsup_pagella) == 0) {
+    rsup_adjust_std (rsup_pagella);
+    rsup_adjust_pagella (rsup_pagella);
   }
   return rsup_pagella;
 }
