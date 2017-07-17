@@ -301,7 +301,8 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   }
   if (ps || pdf)
     if (get_preference ("texmacs->pdf:check", "off") == "on") {
-      system_wait ("Checking exported file for correctness", "please wait");
+      //system_wait ("Checking exported file for correctness", "please wait");
+      // FIXME: the wait message often causes a crash, currently
       gs_check (orig);
     }
 #endif
