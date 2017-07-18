@@ -97,8 +97,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
   case QUASI:
     return bridge_eval (ttt, st, ip);
   case EXTERN:
-    return bridge_rewrite (ttt, st, ip);
   case VAR_INCLUDE:
+  case WITH_PACKAGE:
     return bridge_rewrite (ttt, st, ip);
   case INCLUDE:
     return bridge_compound (ttt, st, ip);

@@ -137,6 +137,11 @@ rewrite_impl (tree t) {
       url file_name= url_system (evaluate_string (t[0]));
       return load_inclusion (relative (base_file_name, file_name));
     }
+  case WITH_PACKAGE:
+    {
+      string file_name= exec_string (t[0]);
+      return with_package_definitions (file_name, t[1]);
+    }
   case REWRITE_INACTIVE:
     {
 #ifdef CLASSICAL_MACRO_EXPANSION      

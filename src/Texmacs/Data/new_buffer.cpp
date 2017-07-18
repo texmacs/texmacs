@@ -489,6 +489,21 @@ load_style_tree (string package) {
   return "";
 }
 
+tree
+with_package_definitions (string package, tree body) {
+  // FIXME: it would be more robust to execute the package
+  // yet an alternative idea is to fetch the complete environment of
+  // a style using get_style_env.
+  tree w (WITH);
+  tree doc= load_style_tree (package);
+  if (!is_func (doc, DOCUMENT)) return body;
+  for (int i=0; i<N(doc); i++)
+    if (is_func (doc[i], ASSIGN, 2))
+      w << doc[i][0] << doc[i][1];
+  w << body;
+  return w;
+}
+
 /******************************************************************************
 * Saving
 ******************************************************************************/

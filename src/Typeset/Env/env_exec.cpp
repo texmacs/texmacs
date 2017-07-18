@@ -20,6 +20,7 @@
 #include "dictionary.hpp"
 
 extern int script_status;
+extern tree with_package_definitions (string package, tree body);
 
 /******************************************************************************
 * Subroutines
@@ -103,6 +104,12 @@ edit_env_rep::rewrite (tree t) {
       url file_name= url_unix (exec_string (t[0]));
       //cout << "file_name= " << as_tree (file_name) << LF;
       return load_inclusion (relative (base_file_name, file_name));
+    }
+  case WITH_PACKAGE:
+    {
+      if (N(t) != 2) return tree (ERROR, "invalid with-package");
+      string file_name= exec_string (t[0]);
+      return with_package_definitions (file_name, t[1]);
     }
   case REWRITE_INACTIVE:
     {
@@ -262,6 +269,8 @@ edit_env_rep::exec (tree t) {
   case EXTERN:
     return exec_rewrite (t);
   case VAR_INCLUDE:
+    return exec_rewrite (t);
+  case WITH_PACKAGE:
     return exec_rewrite (t);
   case USE_PACKAGE:
     return exec_use_package (t);
@@ -2197,6 +2206,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
     return false;
   case EXTERN:
   case VAR_INCLUDE:
+  case WITH_PACKAGE:
     return exec_until_rewrite (t, p, var, level);
   case USE_PACKAGE:
   case USE_MODULE:

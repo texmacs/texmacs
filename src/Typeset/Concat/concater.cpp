@@ -511,6 +511,9 @@ concater_rep::typeset (tree t, path ip) {
   case INCLUDE:
     typeset_compound (t, ip);
     break;
+  case WITH_PACKAGE:
+    typeset_rewrite (t, ip);
+    break;
   case USE_PACKAGE:
   case USE_MODULE:
     typeset_executable (t, ip);
