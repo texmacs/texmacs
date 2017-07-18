@@ -20,10 +20,6 @@
 #include <QPainter>
 #include <QMainWindow>
 
-#ifdef UNIFIED_TOOLBAR
-bool use_unified_toolbar= true;
-#endif
-
 int
 qt_zoom (int sz) {
   return (int) (retina_scale * ((double) sz));

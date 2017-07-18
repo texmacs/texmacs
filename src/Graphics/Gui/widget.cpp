@@ -237,3 +237,5 @@ get_widget_size (widget w) {
   get_size (w, width, height);
   return array<SI> (width, height);
 }
+
+bool use_unified_toolbar= true;

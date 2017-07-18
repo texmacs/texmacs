@@ -356,7 +356,11 @@ TeXmacs_main (int argc, char** argv) {
     retina_icons = 2;
   }
   // End options via environment variables
-  
+
+  // Further user preferences
+  use_unified_toolbar= get_preference ("use unified toolbar", "on") == "on";
+  // End user preferences
+
   if (DEBUG_STD) debug_boot << "Installing internal plug-ins...\n";
   bench_start ("initialize plugins");
   init_plugins ();

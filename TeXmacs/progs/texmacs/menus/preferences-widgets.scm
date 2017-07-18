@@ -643,7 +643,11 @@
         (assuming (qt-gui?)  ; TODO: recode the dialogue in scheme
           (meti (hlist // (text "Use print dialogue"))
             (toggle (set-boolean-preference "gui:print dialogue" answer)
-                    (get-boolean-preference "gui:print dialogue")))))
+                    (get-boolean-preference "gui:print dialogue"))))
+        (assuming (os-macos?)
+          (meti (hlist // (text "Use unified toolbars"))
+            (toggle (set-boolean-preference "use unified toolbar" answer)
+                    (get-boolean-preference "use unified toolbar")))))
       (glue #f #t 0 0))))
 
 (tm-widget (other-preferences-widget)

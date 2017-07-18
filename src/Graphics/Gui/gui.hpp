@@ -118,4 +118,7 @@ bool gui_interrupted (bool check = false);
   // Probe whether external events are waiting to be handled
   // Useful to stop lengthy repainting operations
 
+extern bool use_unified_toolbar;
+  // MacOS toolbar style option
+
 #endif // defined GUI_H
