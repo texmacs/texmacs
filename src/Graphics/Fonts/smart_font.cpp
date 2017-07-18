@@ -459,6 +459,10 @@ get_unicode_range (string c) {
 
 string
 tex_gyre_fix (string family, string series, string shape) {
+  for (int i=N(family)-1; i>=0; i--)
+    if (family[i] == ',')
+      return family (0, i+1) *
+             tex_gyre_fix (family (i+1, N(family)), series, shape);
   if (family == "bonum") family= "TeX Gyre Bonum";
   if (family == "pagella") family= "TeX Gyre Pagella";
   if (family == "schola") family= "TeX Gyre Schola";
