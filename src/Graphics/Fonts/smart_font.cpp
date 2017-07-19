@@ -1116,7 +1116,7 @@ smart_font_rep::adjusted_dpi (string fam, string var, string ser, string sh,
   if (ex1 != 0 && ex2 != 0) zoom= ((double) ex1) / ((double) ex2);
   if (zoom > 0.975 && zoom < 1.025) zoom= 1;
   if (starts (fam, "TeX Gyre Cursor") && starts (mfam, "TeX Gyre Pagella"))
-    zoom= 0.9; // FIXME: temporary hack for new manual
+    zoom *= 0.9; // FIXME: temporary hack for new manual
   //cout << mfam << ", " << fam << " -> "
   //     << ex1 << ", " << ex2 << ", " << zoom << "\n";
   return (int) tm_round (dpi * zoom);
