@@ -45,6 +45,7 @@ extern bool   char_clip;
 extern url    tm_init_file;
 extern url    tm_init_buffer_file;
 extern string my_init_cmds;
+extern string original_path;
 
 extern int geometry_w, geometry_h;
 extern int geometry_x, geometry_y;
@@ -563,6 +564,7 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
+  original_path= get_env ("PATH");
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);

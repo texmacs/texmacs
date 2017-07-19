@@ -124,6 +124,15 @@ tmg_updater_set_automatic (tmscm arg1) {
 }
 
 tmscm
+tmg_get_original_path () {
+  // TMSCM_DEFER_INTS;
+  string out= get_original_path ();
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_os_win32P () {
   // TMSCM_DEFER_INTS;
   bool out= os_win32 ();
@@ -9318,6 +9327,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("updater-set-appcast",  tmg_updater_set_appcast, 1, 0, 0);
   tmscm_install_procedure ("updater-set-interval",  tmg_updater_set_interval, 1, 0, 0);
   tmscm_install_procedure ("updater-set-automatic",  tmg_updater_set_automatic, 1, 0, 0);
+  tmscm_install_procedure ("get-original-path",  tmg_get_original_path, 0, 0, 0);
   tmscm_install_procedure ("os-win32?",  tmg_os_win32P, 0, 0, 0);
   tmscm_install_procedure ("os-mingw?",  tmg_os_mingwP, 0, 0, 0);
   tmscm_install_procedure ("os-macos?",  tmg_os_macosP, 0, 0, 0);

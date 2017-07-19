@@ -27,6 +27,7 @@
   (updater-set-appcast updater_set_appcast (bool url))
   (updater-set-interval updater_set_interval (bool int))
   (updater-set-automatic updater_set_automatic (bool bool))
+  (get-original-path get_original_path (string))
   (os-win32? os_win32 (bool))
   (os-mingw? os_mingw (bool))
   (os-macos? os_macos (bool))

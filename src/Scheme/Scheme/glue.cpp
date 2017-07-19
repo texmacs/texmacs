@@ -53,6 +53,13 @@ template<class T> tmscm boxP (tmscm t) {
 * Miscellaneous routines for use by glue only
 ******************************************************************************/
 
+string original_path;
+
+string
+get_original_path () {
+  return original_path;
+}
+
 string
 texmacs_version (string which) {
   if (which == "tgz") return TM_DEVEL;

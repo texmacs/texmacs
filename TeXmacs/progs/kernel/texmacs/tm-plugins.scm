@@ -331,6 +331,7 @@
 (define plugin-loaded-setup? #f)
 (define plugin-cache "$TEXMACS_HOME_PATH/system/cache/plugin_cache.scm")
 
+(define plugin-check-path "")
 (define check-dir-table (make-ahash-table))
 (define-public plugin-data-table (make-ahash-table))
 
@@ -339,7 +340,9 @@
     (set! plugin-loaded-setup? #t)
     (when (url-exists? plugin-cache)
       (with cached (load-object plugin-cache)
-	(with (t1 t2) cached
+        (if (== (length cached) 2) (set! cached (cons "" cached)))
+	(with (p t1 t2) cached
+          (set! plugin-check-path p)
 	  (set! plugin-data-table (list->ahash-table t1))
 	  (set! check-dir-table (list->ahash-table t2))
 	  (when (path-up-to-date?)
@@ -353,7 +356,8 @@
 (define (plugin-save-setup)
   (when reconfigure-flag?
     (save-object plugin-cache
-		 (list (ahash-table->list plugin-data-table)
+		 (list (get-original-path)
+                       (ahash-table->list plugin-data-table)
 		       (ahash-table->list check-dir-table)))))
 
 (define-public (plugin-versions name)
@@ -413,7 +417,7 @@
     (add-macos-program-path (url-append rad rel) after?)))
 
 (define (path-up-to-date?)
-  (with ok? #t
+  (with ok? (== plugin-check-path (get-original-path))
     (for (p (ahash-table->list check-dir-table))
       (with modified? (!= (url-last-modified (system->url (car p))) (cdr p))
         (if modified? (set! ok? #f))))
