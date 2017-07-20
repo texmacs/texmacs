@@ -26,6 +26,7 @@ rsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "G", 0.03);
   adjust_pair (t, "I", 0.03);
   adjust_pair (t, "J", 0.02);
+  adjust_pair (t, "L", 0.01);
   adjust_pair (t, "N", -0.02);
   adjust_pair (t, "O", 0.01);
   adjust_pair (t, "P", -0.02);
@@ -46,11 +47,11 @@ rsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<Alpha>", 0.02);
   adjust_pair (t, "<Delta>", 0.01);
   adjust_pair (t, "<Gamma>", -0.02);
-  adjust_pair (t, "<Theta>", -0.02);
+  adjust_pair (t, "<Theta>", -0.04);
   adjust_pair (t, "<Iota>", 0.02);
   adjust_pair (t, "<Kappa>", 0.02);
   adjust_pair (t, "<Lambda>", 0.02);
-  adjust_pair (t, "<Nu>", -0.02);
+  adjust_pair (t, "<Nu>", -0.03);
   adjust_pair (t, "<Omicron>", -0.02);
   adjust_pair (t, "<Pi>", 0.02);
   adjust_pair (t, "<Rho>", -0.02);

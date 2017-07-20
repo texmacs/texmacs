@@ -28,6 +28,7 @@ rsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "V", -0.03);
   adjust_pair (t, "Y", -0.02);
   adjust_pair (t, "<Alpha>", 0.02);
+  adjust_pair (t, "<Gamma>", -0.02);
   adjust_pair (t, "<Delta>", 0.02);
   adjust_pair (t, "<Epsilon>", 0.02);
   adjust_pair (t, "<Zeta>", 0.02);
@@ -38,7 +39,10 @@ rsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<Lambda>", 0.02);
   adjust_pair (t, "<Mu>", 0.02);
   adjust_pair (t, "<Pi>", 0.02);
+  adjust_pair (t, "<Rho>", -0.02);
   adjust_pair (t, "<Sigma>", 0.02);
+  adjust_pair (t, "<Phi>", -0.03);
+  adjust_pair (t, "<Psi>", -0.05);
   adjust_pair (t, "<Omega>", 0.02);
   adjust_pair (t, "<Backepsilon>", 0.05);
   adjust_pair (t, "<Mho>", 0.02);

@@ -32,8 +32,12 @@
   </equation*>
 </body>
 
-<initial|<\collection>
-</collection>>
+<\initial>
+  <\collection>
+    <associate|font|bonum>
+    <associate|math-font|math-bonum>
+  </collection>
+</initial>
 
 <\references>
   <\collection>

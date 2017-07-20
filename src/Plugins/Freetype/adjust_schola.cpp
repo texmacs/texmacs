@@ -40,6 +40,7 @@ rsub_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "l", 0.01);
   adjust_pair (t, "<Gamma>", -0.05);
   adjust_pair (t, "<Theta>", -0.02);
+  adjust_pair (t, "<Nu>", -0.02);
   adjust_pair (t, "<Xi>", 0.03);
   adjust_pair (t, "<Rho>", -0.05);
   adjust_pair (t, "<Tau>", -0.02);
@@ -71,7 +72,7 @@ rsub_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-A>", 0.01);
   adjust_pair (t, "<bbb-F>", -0.15);
   adjust_pair (t, "<bbb-I>", 0.02);
-  adjust_pair (t, "<bbb-J>", -0.02);
+  adjust_pair (t, "<bbb-J>", -0.03);
   adjust_pair (t, "<bbb-K>", 0.01);
   adjust_pair (t, "<bbb-P>", -0.07);
   adjust_pair (t, "<bbb-U>", -0.07);

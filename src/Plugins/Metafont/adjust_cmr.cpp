@@ -18,7 +18,7 @@
 void
 rsub_adjust_cmr (hashmap<string,double>& t) {
   string empty= "a"; empty[0]= '\0';
-  adjust_char (t, empty, -0.12);
+  adjust_char (t, empty, -0.15);
   adjust_char (t, "\2", -0.02);
   adjust_char (t, "\3", 0.03);
   adjust_char (t, "\7", -0.1);
@@ -26,6 +26,7 @@ rsub_adjust_cmr (hashmap<string,double>& t) {
   adjust_char (t, "!", 0.05);
   adjust_char (t, "/", -0.1);
   adjust_char (t, "7", -0.07);
+  adjust_char (t, "B", -0.02);
   adjust_char (t, "I", 0.04);
   adjust_char (t, "K", 0.02);
   adjust_char (t, "M", 0.02);
