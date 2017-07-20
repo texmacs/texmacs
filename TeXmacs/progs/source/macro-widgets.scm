@@ -235,7 +235,7 @@
             (refreshable "macros-editor-documentation"
               (texmacs-output
                `(document
-                  (paragraph-box "480px" ,(macros-editor-current-help)))
+                  (mini-paragraph "480px" ,(macros-editor-current-help)))
                '(style "tmdoc"))))
           (glue #t #f 0 0))))
     ======
