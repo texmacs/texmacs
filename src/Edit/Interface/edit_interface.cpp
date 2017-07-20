@@ -43,6 +43,11 @@ MODE_LANGUAGE (string mode) {
 * Main edit_interface routines
 ******************************************************************************/
 
+static bool
+no_zoom (tm_buffer buf) {
+  return !is_nil (buf) && buf->data->init->contains ("no-zoom");
+}
+
 edit_interface_rep::edit_interface_rep ():
   editor_rep (), // NOTE: ignored by the compiler, but suppresses warning
   env_change (0),
@@ -52,7 +57,7 @@ edit_interface_rep::edit_interface_rep ():
   sh_s (""), sh_mark (0), pre_edit_s (""), pre_edit_mark (0),
   popup_win (),
   message_l (""), message_r (""), last_l (""), last_r (""),
-  zoomf (sv->get_default_zoom_factor ()),
+  zoomf (no_zoom (buf)? 1.0: sv->get_default_zoom_factor ()),
   magf (zoomf / std_shrinkf),
   pixel ((SI) tm_round ((std_shrinkf * PIXEL) / zoomf)), copy_always (),
   last_x (0), last_y (0), last_t (0),

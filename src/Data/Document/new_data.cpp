@@ -29,7 +29,7 @@ attach_data (tree body, new_data data, bool no_aux) {
     hashmap<string,tree> init= copy (data->init);
     init->reset (PAGE_SCREEN_WIDTH);
     init->reset (PAGE_SCREEN_HEIGHT);
-    init->reset (ZOOM_FACTOR);
+    if (!init->contains ("no-zoom")) init->reset (ZOOM_FACTOR);
     doc << compound ("initial", make_collection (init));
   }
   if (N (data->fin) != 0)
