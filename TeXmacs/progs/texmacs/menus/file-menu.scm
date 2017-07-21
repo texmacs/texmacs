@@ -29,7 +29,8 @@
            (mod? (buffer-modified? name))
            (short-name `(verbatim ,(string-append abbr* (if mod? " *" ""))))
            (long-name `(verbatim ,(url->system name))))
-      ((balloon (eval short-name) (eval long-name))
+      ((check (balloon (eval short-name) (eval long-name)) "v"
+              (== (current-buffer) name))
        (switch-to-buffer name)))))
 
 (tm-define (buffer-more-recent? b1 b2)
