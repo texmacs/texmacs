@@ -34,13 +34,18 @@
         (include-list prj t))
       (list)))
 
+(tm-define (main-project-entry)
+  (buffer-list-menu (list (project-get))))
+
 (tm-define (project-list-menu)
   (buffer-list-menu (project-file-list)))
 
 (menu-bind project-menu
   (if (== (project-get) (current-buffer))
-      (link preamble-menu)
-      ---)
+      (link preamble-menu))
+  (if (!= (project-get) (current-buffer))
+      (link main-project-entry))
+  ---    
   (link project-list-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
