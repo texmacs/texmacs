@@ -451,6 +451,7 @@ extract (tree doc, string attr) {
 tree
 extract_document (tree doc) {
   if (is_func (doc, ERROR)) return doc;
+  bool prj = (extract (doc, "project") != "");
   tree body= extract (doc, "body");
   tree init= extract (doc, "initial");
   if (is_func (init, COLLECTION)) {
@@ -482,7 +483,12 @@ extract_document (tree doc) {
 	    (l == PAGE_SCREEN_RIGHT) ||
 	    (l == PAGE_SCREEN_TOP) ||
 	    (l == PAGE_SCREEN_BOT) ||
-	    (l == PAGE_SHOW_HF)) continue;
+	    (l == PAGE_SHOW_HF) ||
+            (l == PAGE_FIRST && prj) ||
+            (l == "chapter-nr" && prj) ||
+            (l == "section-nr" && prj) ||
+            (l == "subsection-nr" && prj) ||
+            (l == "subsubsection-nr" && prj)) continue;
 	w << l << r;
       }
     if (N(w)>0) {
