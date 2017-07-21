@@ -255,8 +255,8 @@ enrich_embedded_document (tree body, tree style) {
     for (int i=0; i+2<N(orig); i+=2)
       if (is_atomic (orig[i]))
         initial (orig[i]->label)= orig[i+1];
-  initial (DPI)= "600";
-  initial (ZOOM_FACTOR)= "1";
+  initial (DPI)= "720";
+  initial (ZOOM_FACTOR)= "1.2";
   initial ("no-zoom")= "true";
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
