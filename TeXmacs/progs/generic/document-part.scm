@@ -329,9 +329,9 @@
   (link document-master-menu))
 
 (menu-bind project-manage-menu
+  (if (!= (url-suffix (current-buffer)) "tp")
+      ("Use as master" (buffer-toggle-master)))
   (when (buffer-contains-includes?)
-    (if (!= (url-suffix (current-buffer)) "tp")
-        ("Use as master" (buffer-toggle-master)))
     ("Expand inclusions" (buffer-expand-includes)))
   ---
   (when (not (project-attached?))

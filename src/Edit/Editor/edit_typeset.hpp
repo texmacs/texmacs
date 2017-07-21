@@ -54,6 +54,7 @@ public:
   bool     is_length (string s);
   double   divide_lengths (string l1, string l2);
 
+  void     init_update ();
   void     drd_update ();
 #ifdef EXPERIMENTAL
   void     environment_update ();

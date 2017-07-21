@@ -41,33 +41,7 @@ edit_typeset_rep::edit_typeset_rep ():
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux),
        buf->data->att, (buf->prj==NULL? buf->data->att: buf->prj->data->att)),
   ttt (new_typesetter (env, subtree (et, rp), reverse (rp))) {
-  if (buf->prj != NULL) {
-    string id= as_string (delta (buf->prj->buf->name, buf->buf->name));
-    string lab= "part:" * id;
-    hashmap<string,tree> aux= env->global_aux;
-    hashmap<string,tree> ref= env->global_ref;
-    if (aux->contains ("parts")) {
-      tree parts= aux ["parts"];
-      if (is_func (parts, DOCUMENT))
-        for (int i=0; i<N(parts); i++)
-          if (is_tuple (parts[i]) && N(parts[i]) >= 1)
-            if (parts[i][0] == id)
-              for (int j=1; j+1 < N(parts[i]); j+=2)
-                if (is_atomic (parts[i][j])) {
-                  buf->data->init (parts[i][j]->label)= copy (parts[i][j+1]);
-                  init (parts[i][j]->label)= copy (parts[i][j+1]);
-                }      
-    }
-    if (ref->contains (lab)) {
-      tree val= ref [lab];
-      if (is_tuple (val) && N(val) >= 2 && val[1] != tree (UNINIT)) {
-        buf->data->init (PAGE_FIRST)= copy (val[1]);
-        init (PAGE_FIRST)= copy (val[1]);
-      }
-    }
-  }
-  else if (buf->data->init ["part-flag"] == "true")
-    grefs= copy (buf->data->ref);
+    init_update ();
 }
 
 edit_typeset_rep::~edit_typeset_rep () { delete_typesetter (ttt); }
@@ -235,6 +209,37 @@ edit_typeset_rep::typeset_prepare () {
   env->patch_env (pre);
   env->style_init_env ();
   env->update ();
+}
+
+void
+edit_typeset_rep::init_update () {
+  if (buf->prj != NULL) {
+    string id= as_string (delta (buf->prj->buf->name, buf->buf->name));
+    string lab= "part:" * id;
+    hashmap<string,tree> aux= env->global_aux;
+    hashmap<string,tree> ref= env->global_ref;
+    if (aux->contains ("parts")) {
+      tree parts= aux ["parts"];
+      if (is_func (parts, DOCUMENT))
+        for (int i=0; i<N(parts); i++)
+          if (is_tuple (parts[i]) && N(parts[i]) >= 1)
+            if (parts[i][0] == id)
+              for (int j=1; j+1 < N(parts[i]); j+=2)
+                if (is_atomic (parts[i][j])) {
+                  buf->data->init (parts[i][j]->label)= copy (parts[i][j+1]);
+                  init (parts[i][j]->label)= copy (parts[i][j+1]);
+                }      
+    }
+    if (ref->contains (lab)) {
+      tree val= ref [lab];
+      if (is_tuple (val) && N(val) >= 2 && val[1] != tree (UNINIT)) {
+        buf->data->init (PAGE_FIRST)= copy (val[1]);
+        init (PAGE_FIRST)= copy (val[1]);
+      }
+    }
+  }
+  else if (buf->data->init ["part-flag"] == "true")
+    grefs= copy (buf->data->ref);
 }
 
 void

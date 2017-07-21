@@ -30,6 +30,7 @@ project_attach (string prj_name) {
   array<url> vs= buffer_to_views (name);
   for (int i=0; i<N(vs); i++) {
     editor ed= view_to_editor (vs[i]);
+    ed->init_update ();
     ed->notify_change (THE_DECORATIONS);
     ed->require_save ();
   }

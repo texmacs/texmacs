@@ -246,8 +246,10 @@ set_title_buffer (url name, string title) {
 void
 set_buffer_data (url name, new_data data) {
   array<url> vs= buffer_to_views (name);
-  for (int i=0; i<N(vs); i++)
+  for (int i=0; i<N(vs); i++) {
     view_to_editor (vs[i]) -> set_data (data);
+    view_to_editor (vs[i]) -> init_update ();
+  }
 }
 
 void
