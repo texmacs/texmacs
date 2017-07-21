@@ -462,6 +462,7 @@ void
 edit_process_rep::generate_aux (string which) {
   // path saved_path= tp;
   generate_aux_recursively (which, subtree (et, rp), rp);
+  init_update ();
   // if (which == "") go_to (saved_path);
   // ... may be problematic if cursor was inside regenerated content
 }
