@@ -163,7 +163,7 @@ clean_temp_dirs () {
         url cur = url (main_tmp_dir) * url (a[i]);
         array<string> f= read_directory (cur, err);
         for (int j=0; j<N(f); j++) remove (cur * url (f[j]));
-					rmdir (as_charp (as_string (cur)));
+	rmdir (as_charp (as_string (cur)));
       }
     }
 #endif
