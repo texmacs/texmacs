@@ -9,10 +9,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#if defined(_WIN32) || defined(__WIN32__)
-#include <locale.h>
-#endif
-
 #ifndef OS_MINGW
 #include <langinfo.h>
 #endif
