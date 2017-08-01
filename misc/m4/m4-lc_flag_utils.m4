@@ -60,20 +60,54 @@ AC_DEFUN([LC_NORMALIZE_FLAG], [
 # append flag ($1) to ($2)
 # authorize some duplicate according to the pattern
 AC_DEFUN([LC_APPEND_FLAG],[
-  if @<:@@<:@ "$1" =~ $(echo "^[[:space:]]*-Wl,.+") @:>@@:>@
+  if @<:@@<:@ "$1" =~ $(echo '^-Wl,.+') @:>@@:>@
   then $2="$$2 $1"
-  else AX_APPEND_FLAG([$1],[$2])
+  else 
+    if @<:@@<:@ "$$2" =~ $(echo '(^|.*[[[:space:]]]+)$1($$|[[[:space:]]]+.*)') @:>@@:>@
+    then AC_MSG_WARN($1 Duplicate flag)
+    else $2+=" $1"
+    fi
   fi
 ])
 
+# Generic tools for set manipulation
+
+# Transform a comma separated set to a blank separated one
+m4_define([unlist],[m4_map_sep([m4_unquote],[ ],[$@])])
+m4_define([lib_powerset],[m4_dquote(m4_map_sep([unlist],[,],[$1]))])
+
+# deal with quotted set
+define([q_car],[m4_car(m4_unquote([$1]))])
+define([q_cdr],[m4_cdr(m4_unquote([$1]))])
+# give the dimension of the quoted list first item 
+define([q_count],[m4_count(m4_unquote(q_car([$1])))])
+# give the maximal dimension of s set
+m4_define([get_dim],[m4_ifnblank([$1], 
+  [m4_max(q_count([$1]),get_dim(q_cdr([$1])))], [0])])
+
+# if $1 == $2 then $3 else $4
+m4_define([lc_a_eq],[m4_if([0],m4_cmp([$1],[$2]),[$3],[$4])])
+
+# sort a set list according to the set dimension
+m4_define([_order_lst], [lc_a_eq([0],[$3],[],[m4_ifnblank([$1],
+[lc_a_eq(q_count([$1]),$3,
+[_order_lst(q_cdr([$1]),[$2],[$3]),q_car([$1])],
+[_order_lst(q_cdr([$1]),[$2],[$3])])],
+[_order_lst([$2],[$2],m4_decr([$3]))])])])
+m4_define([order_lst],
+[m4_define([rlst], [m4_reverse(m4_unquote([$1]))])dnl
+m4_cdr(_order_lst([rlst],[rlst],get_dim([$1])))])
+
 # power set construction for libs combinaison
-#lc_power_set([A,B,C]) gives[A],[A B],[A B C],[A C],[B],[B C],[C]
+#lc_power_set([A,B,C]) gives[A],[A,B],[A,B,C],[A,C],[B],[B,C],[C]
 #
-m4_define([lc_list_add],[[[$1 $2]]])
+m4_define([lc_list_add],[[[$1,$2]]])
 m4_define([prodset],[m4_quote([[$1]],m4_foreach(ms,[$2],[lc_list_add($1,m4_quote(ms)),])[$2])])
 m4_define([lc_power_set],[dnl
 m4_cond(m4_count($1),1,m4_dquote([$1]),[prodset(m4_car($1),lc_power_set(m4_cdr($1)))])])
 
+# return a sort libraries list 
+m4_define([lc_slib_powerset],[lib_powerset(order_lst(lc_power_set([$1])))])
 
 
 #############################################################################
@@ -245,7 +279,7 @@ AC_DEFUN([_LC_CHECK_LIB],[
 
 AC_DEFUN([LC_CHECK_LIB],[
   AC_CHECK_LIB([$1],[$2],[$3],[
-    _LC_CHECK_LIB([$1],[$2],[$3],[$4],lc_power_set([$5]),[$6])
+    _LC_CHECK_LIB([$1],[$2],[$3],[$4],lc_slib_powerset([$5]),[$6])
   ])
 ])
 
@@ -271,7 +305,10 @@ AC_DEFUN([LC_SCATTER_FLAGS],[
       -Wl,-F*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])]);;
       -Wl,*@:}@ AC_MSG_WARN(Flag $[$0]_flag dropped for lib $2);;
       -*@:}@ 
-        AX_CHECK_COMPILE_FLAG($[$0]_flag,[LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CXXFLAGS])])],[AC_MSG_WARN(Flag $[$0]_flag dropped)],[],[]);;
+        AX_CHECK_COMPILE_FLAG($[$0]_flag,[
+          LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CXXFLAGS])])
+          LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CFLAGS])])
+        ],[AC_MSG_WARN(Flag $[$0]_flag dropped)],[],[]);;
       *@:}@ AC_MSG_WARN(Flags $[$0]_flag NOT managed);;
     esac
     LC_GET_FLAG([$0_list], [$0_flag])
