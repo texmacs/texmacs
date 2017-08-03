@@ -725,6 +725,7 @@ GUILE_CPP
 GUILE_CXX
 CONFIG_GUILE_SERIAL
 GUILE_DATA_PATH
+GUILE_EXE
 GUILE_CONFIG
 EGREP
 GREP
@@ -5070,9 +5071,11 @@ fi
   if [[ "$withval" != no ]]
   then
 
- GUILE_CONFIG=$withval
- # build the prefered guile version search line
-  for ac_prog in guile18-config guile17-config guile16-config guile-config guile1-config guile20-config
+  if test -z $withval
+  then
+    # build the prefered guile version search line
+
+    for ac_prog in guile18-config guile1.8-config guile16-config guile1.6-config guile1-config guile-config guile20-config guile2.0-config guile2-config
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -5114,10 +5117,18 @@ fi
   test -n "$GUILE_CONFIG" && break
 done
 
+  else GUILE_CONFIG=$withval
+  fi
+  GUILE_CONFIG=$(type -p $GUILE_CONFIG)
+  GUILE_EXE=${GUILE_CONFIG%-config}
 
-  LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info pkgincludedir)" &&   # get th version with guile-config or guile. keep the same naming with guile version
+
+  LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info includedir)" &&   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info pkgincludedir)" &&   # get th version with guile-config or guile. keep the same naming with guile version
   # ie: guile18-config -> guile18
   { GUILE_VERSION=$($GUILE_CONFIG info guileversion) ||    GUILE_VERSION=$(${GUILE_CONFIG%%-*} -c '(display (version))'); } &&   GUILE_VERSION=${GUILE_VERSION:-0} &&   GUILE_VERSION_TAIL=${GUILE_VERSION#*.*.} &&   GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSION_TAIL} &&   GUILE_DATA_PATH=$($GUILE_CONFIG info pkgdatadir)/${GUILE_VERSION} ||   as_fn_error $? "cannot find guile-config; is Guile installed?" "$LINENO" 5
+
+
+  unset GUILE_CFLAGS;unset GUILE_CXXFLAGS;unset GUILE_CPPFLAGS;unset GUILE_LDFLAGS;unset GUILE_LIBS;
 
   LC_SCATTER_FLAGS_list="$LC_WITH_GUILE_tmp1"
 
@@ -5155,61 +5166,61 @@ done
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_TMP_LIBS="$GUILE_TMP_LIBS $LC_SCATTER_FLAGS_flag"
+  then GUILE_LIBS="$GUILE_LIBS $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_TMP_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    if [[ "$GUILE_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
 $as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
-    else GUILE_TMP_LIBS+=" $LC_SCATTER_FLAGS_flag"
+    else GUILE_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_TMP_LDFLAGS="$GUILE_TMP_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_TMP_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
 $as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
-    else GUILE_TMP_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_TMP_CPPFLAGS="$GUILE_TMP_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_TMP_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
 $as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
-    else GUILE_TMP_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_TMP_CPPFLAGS="$GUILE_TMP_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_TMP_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
 $as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
-    else GUILE_TMP_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_TMP_LDFLAGS="$GUILE_TMP_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_TMP_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
 $as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
-    else GUILE_TMP_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
-      -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib GUILE_TMP" >&5
-$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib GUILE_TMP" >&2;};;
+      -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib GUILE" >&5
+$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib GUILE" >&2;};;
       -*)
         as_CACHEVAR=`$as_echo "ax_cv_check_cxxflags__$LC_SCATTER_FLAGS_flag" | $as_tr_sh`
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag" >&5
@@ -5246,23 +5257,23 @@ if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_TMP_CXXFLAGS="$GUILE_TMP_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  then GUILE_CXXFLAGS="$GUILE_CXXFLAGS $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_TMP_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    if [[ "$GUILE_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
 $as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
-    else GUILE_TMP_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    else GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
   if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_TMP_CFLAGS="$GUILE_TMP_CFLAGS $LC_SCATTER_FLAGS_flag"
+  then GUILE_CFLAGS="$GUILE_CFLAGS $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_TMP_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    if [[ "$GUILE_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
 $as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
-    else GUILE_TMP_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    else GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
@@ -5308,20 +5319,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
   unset ${!LC_SCATTER_FLAGS_*}
 
 
-
-  GUILE_CFLAGS=${GUILE_CFLAGS:-${GUILE_TMP_CFLAGS}};GUILE_CXXFLAGS=${GUILE_CXXFLAGS:-${GUILE_TMP_CXXFLAGS}};GUILE_CPPFLAGS=${GUILE_CPPFLAGS:-${GUILE_TMP_CPPFLAGS}};GUILE_LDFLAGS=${GUILE_LDFLAGS:-${GUILE_TMP_LDFLAGS}};GUILE_LIBS=${GUILE_LIBS:-${GUILE_TMP_LIBS}};
-
-
-  unset GUILE_TMP_CFLAGS;unset GUILE_TMP_CXXFLAGS;unset GUILE_TMP_CPPFLAGS;unset GUILE_TMP_LDFLAGS;unset GUILE_TMP_LIBS;
-
   # complete include path according the library name
-
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]]+)-I(=?|[[:space:]]*)(.*)$") ]]
-    then LC_WITH_GUILE_tmp2=${BASH_REMATCH[3]%% -*}
-         LC_WITH_GUILE_tmp2=${LC_WITH_GUILE_tmp2%% }  # strip tailing blanks
-    else unset LC_WITH_GUILE_tmp2
-    fi
-
 
     if [[ "$GUILE_LIBS" =~ $(echo "(^|[[:space:]]+)-l(=?|[[:space:]]*)(.*)$") ]]
     then GUILE_LIB=${BASH_REMATCH[3]%% -*}
@@ -5330,19 +5328,8 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     fi
 
 
-  if [[ "-I$LC_WITH_GUILE_tmp2/$GUILE_LIB" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS -I$LC_WITH_GUILE_tmp2/$GUILE_LIB"
-  else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)-I$LC_WITH_GUILE_tmp2/$GUILE_LIB($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: -I$LC_WITH_GUILE_tmp2/$GUILE_LIB Duplicate flag" >&5
-$as_echo "$as_me: WARNING: -I$LC_WITH_GUILE_tmp2/$GUILE_LIB Duplicate flag" >&2;}
-    else GUILE_CPPFLAGS+=" -I$LC_WITH_GUILE_tmp2/$GUILE_LIB"
-    fi
-  fi
 
-
-
-  unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
+  unset LC_WITH_GUILE_tmp1
 
 
     # Check whether --enable-guile2 was given.
@@ -5714,33 +5701,43 @@ $as_echo "#define GUILE_HEADER_18 1" >>confdefs.h
 $as_echo "$as_me: WARNING: Strange guile header name lib$GUILE_LIB.h" >&2;} ;;
       esac
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile linking" >&5
-$as_echo_n "checking Guile linking... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
- /* Override any GCC internal prototype to avoid an error.
-    Use char because int might match the return type of a GCC
-    builtin and then its argument prototype would still apply.  */
- #ifdef __cplusplus
- extern "C"
- #endif
- char gh_scm2newstr ();
-
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
 int
 main ()
 {
-
- return gh_scm2newstr ();
-
+return gh_scm2newstr ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
 
         g_success=1
 
@@ -5846,22 +5843,1335 @@ fi
 
 else
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
 
 
+    unset ac_cv_lib_guile_gh_scm2newstr
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check guile with extra libs -lintl" >&5
+$as_echo "$as_me: check guile with extra libs -lintl" >&6;}
+    _LC_CHECK_LIB_libs=$LIBS
+    LIBS+=" -lintl"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
+int
+main ()
+{
+return gh_scm2newstr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
+
+      LIBS=$_LC_CHECK_LIB_libs
+      LC_GUILE_extralibs="-lintl"
+
+        g_success=1
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
+$as_echo_n "checking Guile DOTS linking... " >&6; }
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+
+$as_echo "#define DOTS_OK 1" >>confdefs.h
+
+
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+        if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+
+$as_echo "#define guile_str_size_t int" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... int" >&5
+$as_echo "checking for Guile size type... int" >&6; }
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... size_t" >&5
+$as_echo "checking for Guile size type... size_t" >&6; }
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
 
+
+else
+
+      LIBS=$_LC_CHECK_LIB_libs
+
+
+    unset ac_cv_lib_guile_gh_scm2newstr
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check guile with extra libs -liconv" >&5
+$as_echo "$as_me: check guile with extra libs -liconv" >&6;}
+    _LC_CHECK_LIB_libs=$LIBS
+    LIBS+=" -liconv"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
+int
+main ()
+{
+return gh_scm2newstr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
+
+      LIBS=$_LC_CHECK_LIB_libs
+      LC_GUILE_extralibs="-liconv"
+
+        g_success=1
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
+$as_echo_n "checking Guile DOTS linking... " >&6; }
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+
+$as_echo "#define DOTS_OK 1" >>confdefs.h
+
+
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+        if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+
+$as_echo "#define guile_str_size_t int" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... int" >&5
+$as_echo "checking for Guile size type... int" >&6; }
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... size_t" >&5
+$as_echo "checking for Guile size type... size_t" >&6; }
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
 
-    if [ ! $g_success ];then
-      as_fn_error $? "It seems that guile-config does not provide the right parameters.
-      Consult the config.log for error details and check your guile installation" "$LINENO" 5
+
+else
+
+      LIBS=$_LC_CHECK_LIB_libs
+
+
+    unset ac_cv_lib_guile_gh_scm2newstr
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check guile with extra libs -ltre" >&5
+$as_echo "$as_me: check guile with extra libs -ltre" >&6;}
+    _LC_CHECK_LIB_libs=$LIBS
+    LIBS+=" -ltre"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
+int
+main ()
+{
+return gh_scm2newstr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
+
+      LIBS=$_LC_CHECK_LIB_libs
+      LC_GUILE_extralibs="-ltre"
+
+        g_success=1
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
+$as_echo_n "checking Guile DOTS linking... " >&6; }
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+
+$as_echo "#define DOTS_OK 1" >>confdefs.h
+
+
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+        if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+
+$as_echo "#define guile_str_size_t int" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... int" >&5
+$as_echo "checking for Guile size type... int" >&6; }
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... size_t" >&5
+$as_echo "checking for Guile size type... size_t" >&6; }
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+
+
+else
+
+      LIBS=$_LC_CHECK_LIB_libs
+
+
+    unset ac_cv_lib_guile_gh_scm2newstr
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check guile with extra libs -lintl -liconv" >&5
+$as_echo "$as_me: check guile with extra libs -lintl -liconv" >&6;}
+    _LC_CHECK_LIB_libs=$LIBS
+    LIBS+=" -lintl -liconv"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
+int
+main ()
+{
+return gh_scm2newstr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
+
+      LIBS=$_LC_CHECK_LIB_libs
+      LC_GUILE_extralibs="-lintl -liconv"
+
+        g_success=1
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
+$as_echo_n "checking Guile DOTS linking... " >&6; }
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+
+$as_echo "#define DOTS_OK 1" >>confdefs.h
+
+
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+        if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+
+$as_echo "#define guile_str_size_t int" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... int" >&5
+$as_echo "checking for Guile size type... int" >&6; }
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... size_t" >&5
+$as_echo "checking for Guile size type... size_t" >&6; }
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+
+
+else
+
+      LIBS=$_LC_CHECK_LIB_libs
+
+
+    unset ac_cv_lib_guile_gh_scm2newstr
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check guile with extra libs -lintl -ltre" >&5
+$as_echo "$as_me: check guile with extra libs -lintl -ltre" >&6;}
+    _LC_CHECK_LIB_libs=$LIBS
+    LIBS+=" -lintl -ltre"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
+int
+main ()
+{
+return gh_scm2newstr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
+
+      LIBS=$_LC_CHECK_LIB_libs
+      LC_GUILE_extralibs="-lintl -ltre"
+
+        g_success=1
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
+$as_echo_n "checking Guile DOTS linking... " >&6; }
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+
+$as_echo "#define DOTS_OK 1" >>confdefs.h
+
+
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+        if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+
+$as_echo "#define guile_str_size_t int" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... int" >&5
+$as_echo "checking for Guile size type... int" >&6; }
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... size_t" >&5
+$as_echo "checking for Guile size type... size_t" >&6; }
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+
+
+else
+
+      LIBS=$_LC_CHECK_LIB_libs
+
+
+    unset ac_cv_lib_guile_gh_scm2newstr
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check guile with extra libs -liconv -ltre" >&5
+$as_echo "$as_me: check guile with extra libs -liconv -ltre" >&6;}
+    _LC_CHECK_LIB_libs=$LIBS
+    LIBS+=" -liconv -ltre"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
+int
+main ()
+{
+return gh_scm2newstr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
+
+      LIBS=$_LC_CHECK_LIB_libs
+      LC_GUILE_extralibs="-liconv -ltre"
+
+        g_success=1
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
+$as_echo_n "checking Guile DOTS linking... " >&6; }
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+
+$as_echo "#define DOTS_OK 1" >>confdefs.h
+
+
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+        if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+
+$as_echo "#define guile_str_size_t int" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... int" >&5
+$as_echo "checking for Guile size type... int" >&6; }
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... size_t" >&5
+$as_echo "checking for Guile size type... size_t" >&6; }
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+
+
+else
+
+      LIBS=$_LC_CHECK_LIB_libs
+
+
+    unset ac_cv_lib_guile_gh_scm2newstr
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check guile with extra libs -lintl -liconv -ltre" >&5
+$as_echo "$as_me: check guile with extra libs -lintl -liconv -ltre" >&6;}
+    _LC_CHECK_LIB_libs=$LIBS
+    LIBS+=" -lintl -liconv -ltre"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -lguile" >&5
+$as_echo_n "checking for gh_scm2newstr in -lguile... " >&6; }
+if ${ac_cv_lib_guile_gh_scm2newstr+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lguile  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gh_scm2newstr ();
+int
+main ()
+{
+return gh_scm2newstr ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_guile_gh_scm2newstr=yes
+else
+  ac_cv_lib_guile_gh_scm2newstr=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_guile_gh_scm2newstr" >&5
+$as_echo "$ac_cv_lib_guile_gh_scm2newstr" >&6; }
+if test "x$ac_cv_lib_guile_gh_scm2newstr" = xyes; then :
+
+      LIBS=$_LC_CHECK_LIB_libs
+      LC_GUILE_extralibs="-lintl -liconv -ltre"
+
+        g_success=1
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Guile DOTS linking" >&5
+$as_echo_n "checking Guile DOTS linking... " >&6; }
+  if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+typedef SCM (*FN)(...);
+
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure ("identity", (FN) identity, 1, 0, 0); }
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+
+$as_echo "#define DOTS_OK 1" >>confdefs.h
+
+
+
+else
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
+#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
+#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
+#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
+
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+        if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <gh.h>
+#include <lib$GUILE_LIB.h>
+
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_run "$LINENO"; then :
+
+
+$as_echo "#define guile_str_size_t int" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... int" >&5
+$as_echo "checking for Guile size type... int" >&6; }
+
+else
+
+
+$as_echo "#define guile_str_size_t size_t" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: checking for Guile size type... size_t" >&5
+$as_echo "checking for Guile size type... size_t" >&6; }
+
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+
+
+else
+
+      LIBS=$_LC_CHECK_LIB_libs
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Cannot use guile" >&5
+$as_echo "$as_me: WARNING: Cannot use guile" >&2;}
+
+
+fi
+
+    unset ${!_LC_CHECK_LIB_*}
+
+
+
+fi
+
+    unset ${!_LC_CHECK_LIB_*}
+
+
+
+fi
+
+    unset ${!_LC_CHECK_LIB_*}
+
+
+
+fi
+
+    unset ${!_LC_CHECK_LIB_*}
+
+
+
+fi
+
+    unset ${!_LC_CHECK_LIB_*}
+
+
+
+fi
+
+    unset ${!_LC_CHECK_LIB_*}
+
+
+
+fi
+
+    unset ${!_LC_CHECK_LIB_*}
+
+
+
+fi
+
+
+
+fi
+
+
+
+fi
+
+
+  # AC_CHECK_LIB might have completed LIBS we need to complete GUILE_LIBS
+
+  LC_SCATTER_FLAGS_list="-lguile ${LC_GUILE_extralibs}"
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_SCATTER_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_SCATTER_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_SCATTER_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list#}; unset LC_SCATTER_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_SCATTER_FLAGS_list } # strip heading
+    LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    fi
+
+  LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_SCATTER_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while test -n "$LC_SCATTER_FLAGS_flag"
+  do
+    case "$LC_SCATTER_FLAGS_flag" in
+      -l*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
+  then GUILE_LIBS="$GUILE_LIBS $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
+$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    else GUILE_LIBS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -L*|-framework*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
+  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
+$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -I*|-U*|-D*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
+  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
+$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
+  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
+$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
+  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
+$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib GUILE" >&5
+$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib GUILE" >&2;};;
+      -*)
+        as_CACHEVAR=`$as_echo "ax_cv_check_cxxflags__$LC_SCATTER_FLAGS_flag" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag" >&5
+$as_echo_n "checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag... " >&6; }
+if eval \${$as_CACHEVAR+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+  ax_check_save_flags=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS  $LC_SCATTER_FLAGS_flag"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  eval "$as_CACHEVAR=yes"
+else
+  eval "$as_CACHEVAR=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  CXXFLAGS=$ax_check_save_flags
+fi
+eval ac_res=\$$as_CACHEVAR
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
+
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
+  then GUILE_CXXFLAGS="$GUILE_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
+$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    else GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
+  then GUILE_CFLAGS="$GUILE_CFLAGS $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$GUILE_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
+$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    else GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&5
+$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&2;}
+fi
+;;
+      *) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&5
+$as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
+    esac
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_SCATTER_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_SCATTER_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_SCATTER_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list#}; unset LC_SCATTER_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_SCATTER_FLAGS_list } # strip heading
+    LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    fi
+
+  LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_SCATTER_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  done
+  unset ${!LC_SCATTER_FLAGS_*}
+
+  if [ ! $g_success ];then
+    as_fn_error $? "It seems that guile-config does not provide the right parameters.
+    Consult the config.log for error details and check your guile installation" "$LINENO" 5
     unset g_success
   fi
 
@@ -5889,32 +7199,6 @@ fi
 
   OBJCXXFLAGS=$OBJCXXFLAGS__ax_save_flags
 
-
-
-
-  GUILE_CXX=$GUILE_CXXFLAGS
-
-  GUILE_CPP=$GUILE_CPPFLAGS
-
-  if [[ $enable_dumpflags =~ $(echo "(^|[[:space:]])(GUILE|ALL)($|[[:space:]])") ]]
-  then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CFLAGS:$GUILE_CFLAGS" >&5
-$as_echo "$as_me: GUILE_CFLAGS:$GUILE_CFLAGS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&5
-$as_echo "$as_me: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&5
-$as_echo "$as_me: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LIBS:$GUILE_LIBS" >&5
-$as_echo "$as_me: GUILE_LIBS:$GUILE_LIBS" >&6;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&5
-$as_echo "$as_me: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&6;}
-
-
-  fi
-# adaptation layer remove when finished
-  GUILE_CFLAGS="$GUILE_CXXFLAGS $GUILE_CPPFLAGS"
-
-  GUILE_LDFLAGS=""
 
 
 
@@ -6441,6 +7725,33 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   unset ${!LC_COMBINE_FLAGS_*}
 
+
+  GUILE_CXX=$GUILE_CXXFLAGS
+
+  GUILE_CPP=$GUILE_CPPFLAGS
+
+  if [[ $enable_dumpflags =~ $(echo "(^|[[:space:]])(GUILE|ALL)($|[[:space:]])") ]]
+  then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CFLAGS:$GUILE_CFLAGS" >&5
+$as_echo "$as_me: GUILE_CFLAGS:$GUILE_CFLAGS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&5
+$as_echo "$as_me: GUILE_CXXFLAGS:$GUILE_CXXFLAGS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&5
+$as_echo "$as_me: GUILE_CPPFLAGS:$GUILE_CPPFLAGS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LIBS:$GUILE_LIBS" >&5
+$as_echo "$as_me: GUILE_LIBS:$GUILE_LIBS" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&5
+$as_echo "$as_me: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&6;}
+
+
+  fi
+# adaptation layer remove when finished
+  GUILE_CFLAGS="$GUILE_CXXFLAGS $GUILE_CPPFLAGS"
+
+  GUILE_LDFLAGS=""
+
+
+  unset ${!LC_GUILE_*}
 
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing dlopen" >&5

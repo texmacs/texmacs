@@ -1,5 +1,17 @@
 
 #--------------------------------------------------------------------
+#
+# MODULE      : guile.m4
+# DESCRIPTION : TeXmacs configuration options for Guile
+# COPYRIGHT   : (C) 2016 Joris van der Hoeven, Denis RAUX
+#
+# This software falls under the GNU general public license version 3 or later.
+# It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+# in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+#
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
 # Various test programs definition
 #--------------------------------------------------------------------
 
@@ -43,12 +55,20 @@ void print_string (SCM s) {
 #-------------------------------------------------------------------
 
 AC_DEFUN([LC_WITH_GUILE],[
- [GUILE_CONFIG=$1]
- # build the prefered guile version search line
-  AC_CHECK_PROGS(GUILE_CONFIG, guile18-config guile17-config guile16-config guile-config guile1-config guile20-config, [])
-
+  if test -z $1
+  then
+    # build the prefered guile version search line
+    m4_define(configlist, m4_split(m4_combine([ ],[guile],[],[18],[1.8],[16],[1.6],[1],[],[20],[2.0],[2])))
+    AC_CHECK_PROGS(GUILE_CONFIG, m4_combine([ ],[configlist],[-],[config]))
+  else GUILE_CONFIG=$1
+  fi
+  GUILE_CONFIG=$(type -p $GUILE_CONFIG)
+  GUILE_EXE=${GUILE_CONFIG%-config}
+  AC_SUBST(GUILE_CONFIG)
+  AC_SUBST(GUILE_EXE)
   LC_WITH_GUILE_tmp1="$($GUILE_CONFIG link)" && dnl
   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 $($GUILE_CONFIG compile)" && dnl
+  LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info includedir)" && dnl
   LC_WITH_GUILE_tmp1="$LC_WITH_GUILE_tmp1 -I$($GUILE_CONFIG info pkgincludedir)" && dnl
   # get th version with guile-config or guile. keep the same naming with guile version 
   # ie: guile18-config -> guile18
@@ -59,18 +79,14 @@ AC_DEFUN([LC_WITH_GUILE],[
   GUILE_VERSION=${GUILE_VERSION%.$GUILE_VERSION_TAIL} && dnl
   GUILE_DATA_PATH=$($GUILE_CONFIG info pkgdatadir)/${GUILE_VERSION} || dnl
   AC_MSG_ERROR([cannot find guile-config; is Guile installed?])
-  LC_SCATTER_FLAGS([$LC_WITH_GUILE_tmp1], [GUILE_TMP])
-
-  LC_SET_EMPTY_FLAGS([GUILE_TMP],[GUILE])
-  LC_CLEAR_FLAGS([GUILE_TMP])
+  LC_CLEAR_FLAGS([GUILE])
+  LC_SCATTER_FLAGS([$LC_WITH_GUILE_tmp1], [GUILE])
 
   # complete include path according the library name
-  LC_GET_ARG_VALUE(GUILE_CPPFLAGS, [-I], [LC_WITH_GUILE_tmp2])
-  LC_GET_ARG_VALUE(GUILE_LIBS, [-l], [GUILE_LIB])
-  LC_APPEND_FLAG([-I$LC_WITH_GUILE_tmp2/$GUILE_LIB], [GUILE_CPPFLAGS])
+   LC_GET_ARG_VALUE(GUILE_LIBS, [-l], [GUILE_LIB])
 
   AC_DEFUN([GUILE_LIB_NAME], [lib$GUILE_LIB])
-  unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
+  unset LC_WITH_GUILE_tmp1
 ])
 
 #-------------------------------------------------------------------
@@ -144,7 +160,7 @@ AC_DEFUN([LC_GUILE],[
         libguile18) AC_DEFINE(GUILE_HEADER_18, 1, [Guile 1.8 header]) ;;
         *) AC_MSG_WARN([Strange guile header name GUILE_LIB_NAME.h]) ;;
       esac
-      LC_LINK_IFELSE([Guile],[LM_FUNC_CHECK([gh_scm2newstr])], [
+      LC_CHECK_LIB([guile],[gh_scm2newstr],[
         g_success=1
         LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
@@ -160,10 +176,15 @@ AC_DEFUN([LC_GUILE],[
         ],[
           AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
           AC_MSG_RESULT(checking for Guile size type... size_t)
-    ])])])])
-    if [[ ! $g_success ]];then 
-      AC_MSG_ERROR([It seems that guile-config does not provide the right parameters.
-      Consult the config.log for error details and check your guile installation])
+        ])
+      ],[AC_MSG_WARN([Cannot use guile])],[-lintl,-liconv,-ltre],[$0_extralibs])
+    ])
+  ])
+  # AC_CHECK_LIB might have completed LIBS we need to complete GUILE_LIBS
+  LC_SCATTER_FLAGS([-lguile ${$0_extralibs}],[GUILE])
+  if [[ ! $g_success ]];then 
+    AC_MSG_ERROR([It seems that guile-config does not provide the right parameters.
+    Consult the config.log for error details and check your guile installation])
     unset g_success
   fi
 
@@ -171,6 +192,7 @@ AC_DEFUN([LC_GUILE],[
   AC_SUBST(CONFIG_GUILE_SERIAL)
 
   AX_RESTORE_FLAGS
+  LC_COMBINE_FLAGS([GUILE])
   LC_SUBST([GUILE])
-  LC_COMBINE_FLAGS([GUILE],[])
+  unset ${![$0]_*}
 ])
