@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "tm_configure.hpp"
 #if defined (QTTEXMACS) && defined (OS_MINGW)
 #include <QtGlobal>
 #include <QtCore/Qstring>

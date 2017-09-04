@@ -86,7 +86,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
-      CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"
+      CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex -lpoppler-qt4"
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
     ;;
     *-*-cygwin)
