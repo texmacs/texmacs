@@ -83,10 +83,12 @@ AC_DEFUN([LC_WITH_GUILE],[
   LC_SCATTER_FLAGS([$LC_WITH_GUILE_tmp1], [GUILE])
 
   # complete include path according the library name
-   LC_GET_ARG_VALUE(GUILE_LIBS, [-l], [GUILE_LIB])
-
+  LC_GET_ARG_VALUE(GUILE_CPPFLAGS, [-I], [LC_WITH_GUILE_tmp2])
+  LC_GET_ARG_VALUE(GUILE_LIBS, [-l], [GUILE_LIB])
+  LC_APPEND_FLAG([-I$LC_WITH_GUILE_tmp2/$GUILE_LIB], [GUILE_CPPFLAGS])
+	
   AC_DEFUN([GUILE_LIB_NAME], [lib$GUILE_LIB])
-  unset LC_WITH_GUILE_tmp1
+  unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
 ])
 
 #-------------------------------------------------------------------
