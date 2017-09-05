@@ -4,6 +4,7 @@ AC_DEFUN([LC_SPARKLE],[
   [with (Win)Sparkle autoupdater [ARG=no]]))
 
   SAVE_OBJCFLAGS="$OBJCFLAGS"
+  SAVE_CFLAGS="$CFLAGS"
   SAVE_LDFLAGS="$LDFLAGS"
   SAVE_LIBS="$LIBS"
   if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
@@ -19,13 +20,12 @@ AC_DEFUN([LC_SPARKLE],[
       AC_TRY_LINK(
   [
   #include <winsparkle.h>
-  #include <winsparkle.h>
   ],[
   win_sparkle_init();
   ],[
       AC_MSG_RESULT(yes)
       AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
-      SPARKLE_CFLAGS="$CFLAGS"
+      SPARKLE_CXXFLAGS="$CFLAGS"
       SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
       WINSPARKLE_PATH="$with_sparkle"
       WINSPARKLE_DLL="WinSparkle*.dll"
@@ -59,9 +59,10 @@ AC_DEFUN([LC_SPARKLE],[
     esac
   fi
 
-  OBJFLAGS="$SAVE_CPPFLAGS"
-  LDFLAGS="$SAVE_LDFLAGS"
-  LIBS="$SAVE_LIBS"
+  OBJFLAGS="$SAVE_OBJCFLAGS"
+  CFLAGS="$SAVE_CFLAGS"
+  LDFLAGS="$LDFLAGS $SAVE_LDFLAGS"
+  LIBS="$LIBS $SAVE_LIBS"
 
   LC_SUBST(SPARKLE)
   AC_SUBST(SPARKLE_FRAMEWORK_PATH)
