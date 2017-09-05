@@ -37,7 +37,7 @@ AC_DEFUN([LC_MSG_RESULT],[
 AC_DEFUN([LC_SUBST],[ 
   AC_SUBST([$1_CXX],[$$1_CXXFLAGS])
   AC_SUBST([$1_CPP],[$$1_CPPFLAGS])
-  if [[[ $enable_dumpflags =~ $(echo "(^|[[:space:]])($1|ALL)($|[[:space:]])") ]]]
+  if @<:@@<:@ $enable_dumpflags =~ $(echo "(^|@<:@@<:@:space:@:>@@:>@)($1|ALL)($|@<:@@<:@:space:@:>@@:>@)") @:>@@:>@
   then LC_DUMP_FLAGS([$1])
   fi
 # adaptation layer remove when finished
@@ -60,11 +60,11 @@ AC_DEFUN([LC_NORMALIZE_FLAG], [
 # append flag ($1) to ($2)
 # authorize some duplicate according to the pattern
 AC_DEFUN([LC_APPEND_FLAG],[
-  if @<:@@<:@ "$1" =~ $(echo '^-Wl,.+') @:>@@:>@
-  then $2="$$2 $1"
+  if @<:@@<:@ "$1" =~ $(echo '^(-Wl,|-l)') @:>@@:>@
+  then $2+=" $1"
   else 
-    if @<:@@<:@ "$$2" =~ $(echo '(^|.*[[[:space:]]]+)$1($$|[[[:space:]]]+.*)') @:>@@:>@
-    then AC_MSG_WARN($1 Duplicate flag)
+    if @<:@@<:@ "$$2" =~ $(echo "(^|@<:@@<:@:space:@:>@@:>@)$1($|@<:@@<:@:space:@:>@@:>@)") @:>@@:>@
+    then AC_MSG_WARN(Drop duplicate flag $1)
     else $2+=" $1"
     fi
   fi
@@ -330,7 +330,7 @@ AC_DEFUN([LC_DUMP_FLAGS], [m4_ifblank([$1],[_LC_DUMP_FLAGS],[_LC_DUMP_FLAGS([$1_
 # get arg value from a args list
 # $1 args list $2 arg $3 arg value
 AC_DEFUN([LC_GET_ARG_VALUE], [
-    if @<:@@<:@ "$$1" =~ $(echo "(^|[[[:space:]]]+)$2(=?|[[[:space:]]]*)(.*)$") @:>@@:>@
+    if @<:@@<:@ "$$1" =~ $(echo "(^|@<:@@<:@:space:@:>@@:>@+)$2(=?|@<:@@<:@:space:@:>@@:>@*)(.*)$") @:>@@:>@
     then $3=${BASH_REMATCH[[3]]%% -*}
          $3=${$3%% }  # strip tailing blanks
     else unset $3
