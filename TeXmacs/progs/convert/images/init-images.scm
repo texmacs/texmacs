@@ -106,14 +106,15 @@
   (let* ((dest (assoc-ref opts 'dest))
          (fullname (url-concretize dest))
          (fm (url-format fullname))
+         (transp (if (== fm "png") "-transp " ""))
          (suffix (url-suffix fullname))
          (name (string-drop-right fullname (+ 1 (string-length suffix))))
          (res (or (assoc-ref opts "texmacs->image:raster-resolution") (get-preference "texmacs->image:raster-resolution")))
 		 (cmd (if (or (os-win32?) (os-mingw?)) 
                      (escape-shell (url-concretize (url-resolve-in-path "pdftocairo"))) "pdftocairo"))
          )
-    ;;(display (string-append cmd " -singlefile -" fm " -r " res " " x " "  name))
-    (system-2 (string-append cmd " -singlefile -transp -" fm " -r " res) x name)
+    ;;(display (string-append cmd " -singlefile " transp "-" fm " -r " res " " x " "  name))
+    (system-2 (string-append cmd " -singlefile " transp "-" fm " -r " res) x name)
 	(if (url-exists? dest) dest #f)))
 
   (converter pdf-file png-file
