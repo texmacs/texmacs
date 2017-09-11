@@ -13,10 +13,8 @@
 #include "file.hpp"
 #include "tree.hpp"
 
-#if defined (QTTEXMACS)
-#include "Qt/qt_sys_utils.hpp"
-#endif
 #ifdef OS_MINGW
+#include "Qt/qt_sys_utils.hpp"
 #include "Windows/mingw_sys_utils.hpp"
 #else
 #include "Unix/unix_sys_utils.hpp"
@@ -30,7 +28,7 @@ int script_status = 1;
 
 int
 system (string s, string& result, string& error) {
-#if defined (OS_MINGW) || defined (disactivate_QTTEXMACS)
+#if defined (OS_MINGW)
   int r= qt_system (s, result, error);
 #else
   int r= unix_system (s, result, error);
@@ -40,7 +38,7 @@ system (string s, string& result, string& error) {
 
 int
 system (string s, string& result) {
-#if defined (OS_MINGW) || defined (disactivate_QTTEXMACS)
+#if defined (OS_MINGW)
   int r= qt_system (s, result);
 #else
   int r= unix_system (s, result);
@@ -58,7 +56,7 @@ system (string s) {
     return r;
   }
   else {
-#if defined (OS_MINGW) || defined (disactivate_QTTEXMACS)
+#if defined (OS_MINGW)
     // if (starts (s, "convert ")) return 1;
     return qt_system (s);
 #else
