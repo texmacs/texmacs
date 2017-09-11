@@ -53,7 +53,7 @@ AC_DEFUN([LC_GS],[
       AC_DEFINE_UNQUOTED([GS_LIB],
         ["../share/ghostscript${GS_LIB##*ghostscript}:${GS_ELIB:+${GS_ELIB}:}${TMREPO}${GS_LIB##*$TMREPObase}"],[gs lib])
       AC_DEFINE_UNQUOTED([GS_FONTS],
-      ["../share/ghostscript${GS_FONTS##*ghostscript}:${GS_EFONTS:+${GS_EFONTS}:}${TMREPO}${GS_FONTS##*$TMREPObase}"],[gs fonts])
+      ["../share/ghostscript${GS_FONTS##*ghostscript}:${TMREPO}${GS_FONTS##*$TMREPObase}"],[gs fonts])
     fi  
   else AC_MSG_RESULT([disabling ghostscript support])
   fi

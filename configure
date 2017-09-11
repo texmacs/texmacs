@@ -15008,7 +15008,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define GS_FONTS "../share/ghostscript${GS_FONTS##*ghostscript}:${GS_EFONTS:+${GS_EFONTS}:}${TMREPO}${GS_FONTS##*$TMREPObase}"
+#define GS_FONTS "../share/ghostscript${GS_FONTS##*ghostscript}:${TMREPO}${GS_FONTS##*$TMREPObase}"
 _ACEOF
 
     fi
