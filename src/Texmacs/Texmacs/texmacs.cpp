@@ -19,7 +19,7 @@
 #include "boot.hpp"
 #include "file.hpp"
 #include "server.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "data_cache.hpp"
 #include "tm_window.hpp"
 #ifdef AQUATEXMACS

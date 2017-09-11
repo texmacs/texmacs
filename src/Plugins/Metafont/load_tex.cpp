@@ -14,7 +14,7 @@
 #include "path.hpp"
 #include "boot.hpp"
 #include "Freetype/tt_file.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "data_cache.hpp"
 
 #ifdef OS_WIN32

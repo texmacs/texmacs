@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "dictionary.hpp"
 #include "X11/x_gui.hpp"
 #include "X11/x_drawable.hpp"

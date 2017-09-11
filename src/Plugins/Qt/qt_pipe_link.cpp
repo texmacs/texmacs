@@ -17,7 +17,7 @@
 #include "QTMPipeLink.hpp"
 #include "hashset.hpp"
 #include "iterator.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 
 #include <sys/types.h>
 #include <signal.h>

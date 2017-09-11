@@ -18,7 +18,7 @@
 #include "sys_utils.hpp"
 #include "hashset.hpp"
 #include "iterator.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include <stdio.h>
 #include <string.h>
 #ifdef OS_MINGW

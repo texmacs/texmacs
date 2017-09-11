@@ -16,7 +16,7 @@
 #include "path.hpp"
 #include "hashmap.hpp"
 #include "analyze.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "data_cache.hpp"
 
 static url the_tfm_path= url_none ();

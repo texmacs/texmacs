@@ -11,7 +11,7 @@
 
 #include "mingw_sys_utils.hpp"
 #include "analyze.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "spawn.hpp"
 
 static void

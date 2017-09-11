@@ -12,7 +12,7 @@
 #ifndef EDIT_INTERFACE_H
 #define EDIT_INTERFACE_H
 #include "editor.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "widget.hpp"
 
 #define INPUT_NORMAL      0

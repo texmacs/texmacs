@@ -20,7 +20,7 @@
 #define GUI_H
 #include "tree.hpp"
 #include "bitmap_font.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "colors.hpp"
 
 struct font;

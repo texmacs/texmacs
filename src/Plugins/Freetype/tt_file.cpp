@@ -16,7 +16,7 @@
 #include "analyze.hpp"
 #include "hashmap.hpp"
 #include "Metafont/tex_files.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "data_cache.hpp"
 #include "scheme.hpp"
 

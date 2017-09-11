@@ -11,7 +11,7 @@
 
 #include "edit_interface.hpp"
 #include "tm_buffer.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "link.hpp"
 #include "analyze.hpp"
 #include "drd_mode.hpp"

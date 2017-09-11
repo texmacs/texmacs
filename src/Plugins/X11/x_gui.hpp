@@ -11,7 +11,7 @@
 
 #ifndef X_GUI_H
 #define X_GUI_H
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "gui.hpp"
 #include "widget.hpp"
 #include "array.hpp"

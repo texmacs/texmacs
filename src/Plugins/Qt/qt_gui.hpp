@@ -18,7 +18,7 @@
 #include <QList>
 
 #include "qt_simple_widget.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "gui.hpp"
 #include "font.hpp"
 #include "widget.hpp"

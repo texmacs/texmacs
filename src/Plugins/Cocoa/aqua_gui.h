@@ -12,7 +12,7 @@
 #ifndef AQUA_GUI_H
 #define AQUA_GUI_H
 #include "mac_cocoa.h"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "gui.hpp"
 #include "font.hpp"
 #include "widget.hpp" 

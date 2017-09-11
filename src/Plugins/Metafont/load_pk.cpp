@@ -13,7 +13,7 @@
 ******************************************************************************/
 
 #include "load_tex.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "renderer.hpp" // for PIXEL
 
 typedef short HI;

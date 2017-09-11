@@ -15,7 +15,7 @@
 #include "convert.hpp"
 #include "file.hpp"
 #include "analyze.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "Bridge/impl_typesetter.hpp"
 #include "new_style.hpp"
 #include "iterator.hpp"

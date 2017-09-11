@@ -9,7 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "iterator.hpp"
 #include "merge_sort.hpp"
 

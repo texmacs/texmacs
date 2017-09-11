@@ -1180,7 +1180,7 @@ tmscm_to_list_tree (tmscm p) {
 #include "tm_frame.hpp"
 #include "Concat/concater.hpp"
 #include "converter.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "Metafont/tex_files.hpp"
 #include "Freetype/tt_file.hpp"
 #include "LaTeX_Preview/latex_preview.hpp"

@@ -14,7 +14,7 @@
 #include "tree.hpp"
 #include "hashmap.hpp"
 #include "url.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 
 /******************************************************************************
 * The buffer class

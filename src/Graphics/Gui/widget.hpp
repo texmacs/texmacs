@@ -15,7 +15,7 @@
 #include "tree.hpp"
 #include "blackbox.hpp"
 #include "command.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 #include "renderer.hpp" // for PIXEL
 
 class window_rep;

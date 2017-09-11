@@ -12,7 +12,7 @@
 #ifndef EDIT_GRAPHICS_H
 #define EDIT_GRAPHICS_H
 #include "editor.hpp"
-#include "timer.hpp"
+#include "tm_timer.hpp"
 
 class edit_graphics_rep: virtual public editor_rep {
 private:
