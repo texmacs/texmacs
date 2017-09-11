@@ -20,7 +20,7 @@ AC_DEFUN([LM_POPPLER],[
 
 AC_DEFUN([LC_POPPLER],[
  if @<:@@<:@ $CONFIG_GUI != QT || $CONFIG_OS != MINGW @:>@@:>@ 
-  then LC_MSG_RESULT([disabled: needs Qt and MinGW])
+  then LC_MSG_RESULT([disabled poppler: needs Qt and MinGW])
   else
     AX_SAVE_FLAGS
     LC_MERGE_FLAGS([PopplerLibs],[QT_LIBS])

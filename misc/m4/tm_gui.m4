@@ -50,11 +50,11 @@ AC_DEFUN([TM_GUI],[
   esac
 
   # Qt Plugins list
-  PLUGINS_LIST="imageformats,accessible"
+  PLUGINS_LIST="imageformats"
   if test "$QT5_AVAILABLE" = yes; then
     PLUGINS_LIST="imageformats"
   fi
-  #define([PLUGINS_LIST],[imageformats,accessible])
+  #define([PLUGINS_LIST],[imageformats])
   QT_PLUGINS_LIST="$PLUGINS_LIST"
   AC_ARG_ENABLE(QtPlugins,
         AS_HELP_STRING([--enable-QtPlugins@<:@=list@:>@],
