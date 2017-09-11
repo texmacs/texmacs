@@ -3,7 +3,7 @@
 #
 # MODULE      : tm_windows.m4
 # DESCRIPTION : Windows specific settings
-# COPYRIGHT   : (C) 2000, 2017  Joris van der Hoeven
+# COPYRIGHT   : (C) 2000, 2017  Joris van der Hoeven, Denis Raux
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -12,17 +12,13 @@
 #--------------------------------------------------------------------
 
 AC_DEFUN([TM_WINDOWS],[
-  if test x"$CONFIG_OS" = xMINGW; then
+  if test "$CONFIG_OS" = MINGW; then
     AC_ARG_ENABLE(console,
-    [  --enable-console        enable windows console], [], [])
-    case "$enable_console" in
-	yes)
-	    AC_MSG_RESULT([enabling Windows console])
-	    ;;
-	*)
-	    AC_MSG_RESULT([disabling Windows console])
-	    CONFIG_LDRT="$CONFIG_LDRT -mwindows"
-	    ;;
-    esac
+      AS_HELP_STRING([--enable-console], [enable windows console]))
+    if test "$enableval" = yes
+    then  AC_MSG_RESULT([enabling Windows console])
+    else  AC_MSG_RESULT([disabling Windows console])
+          LC_SCATTER_FLAGS([-mwindows])
+    fi
   fi
 ])

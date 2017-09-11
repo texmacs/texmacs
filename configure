@@ -656,7 +656,6 @@ CONFIG_MACOS
 CONFIG_ARCHS
 CONFIG_DATE
 CONFIG_USER
-CONFIG_HOST_CPU
 CONFIG_HOST_VENDOR
 CONFIG_HOST_OS
 CONFIG_LDRT
@@ -5165,56 +5164,56 @@ done
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_LIBS="$GUILE_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -5256,23 +5255,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CXXFLAGS="$GUILE_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CFLAGS="$GUILE_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -5321,6 +5320,13 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
 
   # complete include path according the library name
 
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]]+)-I(=?|[[:space:]]*)(.*)$") ]]
+    then LC_WITH_GUILE_tmp2=${BASH_REMATCH[3]%% -*}
+         LC_WITH_GUILE_tmp2=${LC_WITH_GUILE_tmp2%% }  # strip tailing blanks
+    else unset LC_WITH_GUILE_tmp2
+    fi
+
+
     if [[ "$GUILE_LIBS" =~ $(echo "(^|[[:space:]]+)-l(=?|[[:space:]]*)(.*)$") ]]
     then GUILE_LIB=${BASH_REMATCH[3]%% -*}
          GUILE_LIB=${GUILE_LIB%% }  # strip tailing blanks
@@ -5328,8 +5334,19 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     fi
 
 
+  if [[ "-I$LC_WITH_GUILE_tmp2/$GUILE_LIB" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CPPFLAGS+=" -I$LC_WITH_GUILE_tmp2/$GUILE_LIB"
+  else
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$LC_WITH_GUILE_tmp2/$GUILE_LIB($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$LC_WITH_GUILE_tmp2/$GUILE_LIB" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -I$LC_WITH_GUILE_tmp2/$GUILE_LIB" >&2;}
+    else GUILE_CPPFLAGS+=" -I$LC_WITH_GUILE_tmp2/$GUILE_LIB"
+    fi
+  fi
 
-  unset LC_WITH_GUILE_tmp1
+
+
+  unset LC_WITH_GUILE_tmp1 LC_WITH_GUILE_tmp2
 
 
     # Check whether --enable-guile2 was given.
@@ -5455,12 +5472,12 @@ _ACEOF
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -5528,12 +5545,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -5664,12 +5681,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -7016,56 +7033,56 @@ fi
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_LIBS="$GUILE_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CPPFLAGS="$GUILE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_LDFLAGS="$GUILE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -7107,23 +7124,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CXXFLAGS="$GUILE_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then GUILE_CFLAGS="$GUILE_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$GUILE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -7240,12 +7257,12 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -7313,12 +7330,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -7449,12 +7466,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -7499,12 +7516,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -7572,12 +7589,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -7708,12 +7725,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -8038,12 +8055,12 @@ $as_echo "$as_me: iconv found in default compiler location" >&6;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -8111,12 +8128,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -8247,12 +8264,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LIBS="$ICONV_LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -8304,56 +8321,56 @@ then
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LIBS="$ICONV_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -8395,23 +8412,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CXXFLAGS="$ICONV_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CFLAGS="$ICONV_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -8494,56 +8511,56 @@ else
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LIBS="$ICONV_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -8585,23 +8602,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CXXFLAGS="$ICONV_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CFLAGS="$ICONV_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -8720,12 +8737,12 @@ fi
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -8793,12 +8810,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -8929,12 +8946,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -9030,12 +9047,12 @@ $as_echo "yes" >&6; }
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -9103,12 +9120,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -9239,12 +9256,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -9289,12 +9306,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -9362,12 +9379,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -9498,12 +9515,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -9640,12 +9657,12 @@ $as_echo "$as_me: iconv found in default compiler location" >&6;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -9713,12 +9730,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -9849,12 +9866,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LIBS="$ICONV_LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -9906,56 +9923,56 @@ then
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LIBS="$ICONV_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -9997,23 +10014,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CXXFLAGS="$ICONV_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CFLAGS="$ICONV_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -10096,56 +10113,56 @@ else
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LIBS="$ICONV_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CPPFLAGS="$ICONV_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_LDFLAGS="$ICONV_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -10187,23 +10204,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CXXFLAGS="$ICONV_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then ICONV_CFLAGS="$ICONV_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -10322,12 +10339,12 @@ fi
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -10395,12 +10412,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -10531,12 +10548,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -10632,12 +10649,12 @@ $as_echo "yes" >&6; }
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -10705,12 +10722,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -10841,12 +10858,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -10891,12 +10908,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -10964,12 +10981,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -11100,12 +11117,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -11212,12 +11229,12 @@ $as_echo "yes" >&6; }
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -11285,12 +11302,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -11421,12 +11438,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -11471,12 +11488,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -11544,12 +11561,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -11680,12 +11697,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -11892,56 +11909,56 @@ fi
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_LIBS="$FREETYPE_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_LDFLAGS="$FREETYPE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CPPFLAGS="$FREETYPE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CPPFLAGS="$FREETYPE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_LDFLAGS="$FREETYPE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -11983,23 +12000,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CXXFLAGS="$FREETYPE_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CFLAGS="$FREETYPE_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -12128,12 +12145,12 @@ $as_echo "$as_me: WARNING: freetype-config not found" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -12201,12 +12218,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -12337,12 +12354,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -13852,56 +13869,56 @@ fi
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_LIBS="$FREETYPE_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_LDFLAGS="$FREETYPE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CPPFLAGS="$FREETYPE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CPPFLAGS="$FREETYPE_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_LDFLAGS="$FREETYPE_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -13943,23 +13960,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CXXFLAGS="$FREETYPE_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then FREETYPE_CFLAGS="$FREETYPE_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$FREETYPE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -14044,12 +14061,12 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -14117,12 +14134,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -14253,12 +14270,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -14303,12 +14320,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -14376,12 +14393,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -14512,12 +14529,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -15108,6 +15125,7 @@ fi
 
 
   SAVE_OBJCFLAGS="$OBJCFLAGS"
+  SAVE_CFLAGS="$CFLAGS"
   SAVE_LDFLAGS="$LDFLAGS"
   SAVE_LIBS="$LIBS"
   if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
@@ -15131,7 +15149,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 /* end confdefs.h.  */
 
   #include <winsparkle.h>
-  #include <winsparkle.h>
 
 int
 main ()
@@ -15150,7 +15167,7 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define USE_SPARKLE 1" >>confdefs.h
 
-      SPARKLE_CFLAGS="$CFLAGS"
+      SPARKLE_CXXFLAGS="$CFLAGS"
       SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
       WINSPARKLE_PATH="$with_sparkle"
       WINSPARKLE_DLL="WinSparkle*.dll"
@@ -15226,9 +15243,10 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     esac
   fi
 
-  OBJFLAGS="$SAVE_CPPFLAGS"
-  LDFLAGS="$SAVE_LDFLAGS"
-  LIBS="$SAVE_LIBS"
+  OBJFLAGS="$SAVE_OBJCFLAGS"
+  CFLAGS="$SAVE_CFLAGS"
+  LDFLAGS="$LDFLAGS $SAVE_LDFLAGS"
+  LIBS="$LIBS $SAVE_LIBS"
 
 
   SPARKLE_CXX=$SPARKLE_CXXFLAGS
@@ -15282,7 +15300,6 @@ $as_echo "$as_me: SPARKLE_LDFLAGS:$SPARKLE_LDFLAGS" >&6;}
   CONFIG_BSHARED="-Wl,-Bdynamic"
   CONFIG_BFLAGS=""
   CONFIG_BPATH="-Wl,-rpath,"
-  CONFIG_LDRT=""
   CONFIG_WORD_LENGTH="4"
   CONFIG_WORD_LENGTH_INC="3"
   CONFIG_WORD_MASK="0xfffffffc"
@@ -15381,7 +15398,6 @@ $as_echo "final adjustments for mingw host" >&6; }
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
-      CONFIG_LDRT="-L/mingw/lib -lmingw32 -lmingwex"
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
     ;;
     *-*-cygwin)
@@ -15639,7 +15655,6 @@ fi
 
 
 
-
   # Check whether --enable-fastalloc was given.
 if test "${enable_fastalloc+set}" = set; then :
   enableval=$enable_fastalloc;
@@ -15802,23 +15817,207 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   esac
 
 
-  if test x"$CONFIG_OS" = xMINGW; then
+  if test "$CONFIG_OS" = MINGW; then
     # Check whether --enable-console was given.
 if test "${enable_console+set}" = set; then :
   enableval=$enable_console;
 fi
 
-    case "$enable_console" in
-	yes)
-	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Windows console" >&5
+    if test "$enableval" = yes
+    then  { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling Windows console" >&5
 $as_echo "enabling Windows console" >&6; }
-	    ;;
-	*)
-	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Windows console" >&5
+    else  { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Windows console" >&5
 $as_echo "disabling Windows console" >&6; }
-	    CONFIG_LDRT="$CONFIG_LDRT -mwindows"
-	    ;;
+
+  LC_SCATTER_FLAGS_list="-mwindows"
+
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_SCATTER_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_SCATTER_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_SCATTER_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list#}; unset LC_SCATTER_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_SCATTER_FLAGS_list } # strip heading
+    LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    fi
+
+  LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_SCATTER_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  while test -n "$LC_SCATTER_FLAGS_flag"
+  do
+    case "$LC_SCATTER_FLAGS_flag" in
+      -l*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LIBS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -L*|-framework*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -I*|-U*|-D*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,-F*)
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+;;
+      -Wl,*) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib " >&5
+$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped for lib " >&2;};;
+      -*)
+        as_CACHEVAR=`$as_echo "ax_cv_check_cxxflags__$LC_SCATTER_FLAGS_flag" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag" >&5
+$as_echo_n "checking whether C++ compiler accepts $LC_SCATTER_FLAGS_flag... " >&6; }
+if eval \${$as_CACHEVAR+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+  ax_check_save_flags=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS  $LC_SCATTER_FLAGS_flag"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  eval "$as_CACHEVAR=yes"
+else
+  eval "$as_CACHEVAR=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  CXXFLAGS=$ax_check_save_flags
+fi
+eval ac_res=\$$as_CACHEVAR
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
+
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then CFLAGS+=" $LC_SCATTER_FLAGS_flag"
+  else
+    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
+    else CFLAGS+=" $LC_SCATTER_FLAGS_flag"
+    fi
+  fi
+
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&5
+$as_echo "$as_me: WARNING: Flag $LC_SCATTER_FLAGS_flag dropped" >&2;}
+fi
+;;
+      *) { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&5
+$as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
     esac
+
+  LC_GETPOP_FLAG_sepa=-
+  LC_GETPOP_FLAG_1=" $(echo $LC_SCATTER_FLAGS_list)" # remove unnecessary spaces and add a heading space
+  LC_SCATTER_FLAGS_list=${LC_GETPOP_FLAG_1%% $LC_GETPOP_FLAG_sepa*} # get heading
+  if test "$LC_SCATTER_FLAGS_list" = "$LC_GETPOP_FLAG_1"
+  then LC_SCATTER_FLAGS_list=${LC_SCATTER_FLAGS_list#}; unset LC_SCATTER_FLAGS_flag     # flag not found
+  else
+    LC_GETPOP_FLAG_tail=${LC_GETPOP_FLAG_1#$LC_SCATTER_FLAGS_list } # strip heading
+    LC_SCATTER_FLAGS_flag=${LC_GETPOP_FLAG_tail%% -*}        # get flag and data
+    if test "$LC_SCATTER_FLAGS_flag" = "$LC_GETPOP_FLAG_tail"  # is there someting after the flag
+    then LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list)
+    else LC_SCATTER_FLAGS_list=$(echo $LC_SCATTER_FLAGS_list${LC_GETPOP_FLAG_tail#$LC_SCATTER_FLAGS_flag})
+    fi
+
+  LC_SCATTER_FLAGS_flag=$(echo $LC_SCATTER_FLAGS_flag)    # normalize whitespaces
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\/\//\/}   # normalize path separator
+  LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag//\'}   # remove quote
+
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo "^-(l|L|D)[[:space:]]+([^[:space:]].*)$") ]]
+  then LC_SCATTER_FLAGS_flag=-${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+  fi
+
+    if [ $LC_GETPOP_FLAG_sepa != - ]    # just return the value
+    then LC_SCATTER_FLAGS_flag=${LC_SCATTER_FLAGS_flag#$LC_GETPOP_FLAG_sepa}
+    fi
+  fi
+
+  unset ${!LC_GETPOP_FLAG_*}
+
+  done
+  unset ${!LC_SCATTER_FLAGS_*}
+
+    fi
   fi
 
 
@@ -16110,7 +16309,8 @@ done
 
 
 
-
+  if [[ $no_x != "yes" ]]
+  then
   LC_SCATTER_FLAGS_list="-I$x_includes -L$x_libraries -lXext -lX11"
 
 
@@ -16146,56 +16346,56 @@ done
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then X11_LIBS="$X11_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then X11_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$X11_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then X11_LDFLAGS="$X11_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$X11_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then X11_CPPFLAGS="$X11_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$X11_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then X11_CPPFLAGS="$X11_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$X11_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then X11_LDFLAGS="$X11_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$X11_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -16237,23 +16437,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then X11_CXXFLAGS="$X11_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then X11_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$X11_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then X11_CFLAGS="$X11_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then X11_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$X11_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -16299,6 +16499,7 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
   done
   unset ${!LC_SCATTER_FLAGS_*}
 
+  fi
 
   X11_CXX=$X11_CXXFLAGS
 
@@ -16364,12 +16565,12 @@ $as_echo "$as_me: X11_LDFLAGS:$X11_LDFLAGS" >&6;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -16437,12 +16638,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -16573,12 +16774,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -16623,12 +16824,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -16696,12 +16897,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -16832,12 +17033,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -18515,56 +18716,56 @@ fi
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then QT_LIBS="$QT_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then QT_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$QT_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$QT_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else QT_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then QT_LDFLAGS="$QT_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$QT_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then QT_CPPFLAGS="$QT_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$QT_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$QT_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then QT_CPPFLAGS="$QT_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$QT_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$QT_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else QT_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then QT_LDFLAGS="$QT_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$QT_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else QT_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -18606,23 +18807,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then QT_CXXFLAGS="$QT_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then QT_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$QT_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else QT_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then QT_CFLAGS="$QT_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then QT_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$QT_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$QT_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else QT_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -18758,12 +18959,12 @@ fi
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -18831,12 +19032,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -18967,12 +19168,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -19017,12 +19218,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -19090,12 +19291,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -19226,12 +19427,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -19289,7 +19490,7 @@ fi
 
   [[ $enable_qt == no ]] &&  unset QT_PLUGINS_LIST
   for p in ${QT_PLUGINS_LIST//,/ }
-  do [ -d $QT_PLUGINS_PATH/$p ] || as_fn_error $? "QT plugins not found!" "$LINENO" 5
+  do [ -d $QT_PLUGINS_PATH/$p ] || as_fn_error $? "QT plugins <$p> not found! Use enable-QtPlugins option to select them" "$LINENO" 5
   done
 
   # Qt Pipes
@@ -19483,12 +19684,12 @@ if test "x$ac_cv_lib_z_deflate" = xyes; then :
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -19556,12 +19757,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -19692,12 +19893,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_LIBS="$PDF_LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$PDF_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else PDF_LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -19747,56 +19948,56 @@ $as_echo "#define PDF_RENDERER 1" >>confdefs.h
   do
     case "$LC_SCATTER_FLAGS_flag" in
       -l*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_LIBS="$PDF_LIBS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$PDF_LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else PDF_LIBS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -L*|-framework*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_LDFLAGS="$PDF_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$PDF_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else PDF_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -I*|-U*|-D*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_CPPFLAGS="$PDF_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$PDF_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else PDF_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_CPPFLAGS="$PDF_CPPFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$PDF_CPPFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else PDF_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 ;;
       -Wl,-F*)
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_LDFLAGS="$PDF_LDFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$PDF_LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else PDF_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -19838,23 +20039,23 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_CACHEVAR"\" = x"yes"; then :
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_CXXFLAGS="$PDF_CXXFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$PDF_CXXFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else PDF_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
 
 
-  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then PDF_CFLAGS="$PDF_CFLAGS $LC_SCATTER_FLAGS_flag"
+  if [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then PDF_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$PDF_CFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_SCATTER_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_SCATTER_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$PDF_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else PDF_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
     fi
   fi
@@ -19939,12 +20140,12 @@ $as_echo "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};;
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -20012,12 +20213,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -20148,12 +20349,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LDFLAGS="$LDFLAGS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
@@ -20198,12 +20399,12 @@ $as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -20271,12 +20472,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
 
   while [[ $LC_PREPEND_LIST_flag ]]
   do
-  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^-Wl,.+') ]]
-  then LC_PREPEND_LIST_nlist="$LC_PREPEND_LIST_nlist $LC_PREPEND_LIST_flag"
+  if [[ "$LC_PREPEND_LIST_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo '(^|.*[[:space:]]+)$LC_PREPEND_LIST_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
+    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
     fi
   fi
@@ -20407,12 +20608,12 @@ $as_echo "$as_me: WARNING: $LC_PREPEND_LIST_flag Duplicate flag" >&2;}
   unset ${!LC_GETPOP_FLAG_*}
 
 
-  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^-Wl,.+') ]]
-  then LIBS="$LIBS $LC_MERGE_FLAGS_flag"
+  if [[ "$LC_MERGE_FLAGS_flag" =~ $(echo '^(-Wl,|-l)') ]]
+  then LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo '(^|.*[[:space:]]+)$LC_MERGE_FLAGS_flag($$|[[:space:]]+.*)') ]]
-    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&5
-$as_echo "$as_me: WARNING: $LC_MERGE_FLAGS_flag Duplicate flag" >&2;}
+    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
     fi
   fi
