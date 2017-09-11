@@ -138,6 +138,12 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Disable DCT */
+#undef PDFHUMMUS_NO_DCT
+
+/* Disable Tiff Format */
+#undef PDFHUMMUS_NO_TIFF
+
 /* Enabling native PDF renderer */
 #undef PDF_RENDERER
 

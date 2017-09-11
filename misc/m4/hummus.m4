@@ -13,7 +13,7 @@
 
 AC_DEFUN([LC_HUMMUS],[
 AC_ARG_ENABLE(pdf-renderer,
-  AS_HELP_STRING([--enable-pdf-renderer[=yes]],
+  AS_HELP_STRING([--disable-pdf-renderer],
   [use hummus support for native pdf exports]), [], [unset enableval])
 
   LC_MSG_CHECKING([hummus support for native pdf exports])
@@ -26,9 +26,10 @@ AC_ARG_ENABLE(pdf-renderer,
           if @<:@@<:@ $USE_FREETYPE -eq 3 @:>@@:>@
           then LC_MERGE_FLAGS([-lz],[PDF_LIBS])
             AC_DEFINE(PDF_RENDERER, 1, [Enabling native PDF renderer])
+            AC_DEFINE(PDFHUMMUS_NO_TIFF, 1, [Disable Tiff Format])
+            AC_DEFINE(PDFHUMMUS_NO_DCT, 1, [Disable DCT])
             CONFIG_PDF="Pdf"
             AC_SUBST(CONFIG_PDF)
-            LC_SCATTER_FLAGS([-DPDFHUMMUS_NO_TIFF -DPDFHUMMUS_NO_DCT],[PDF])
             LC_COMBINE_FLAGS(PDF)
             LC_MSG_RESULT([enabled])
           else
