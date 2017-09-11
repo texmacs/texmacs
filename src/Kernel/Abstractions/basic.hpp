@@ -25,14 +25,7 @@
 typedef long intptr_t;
 #endif
 
-#if (defined (__MINGW__) || defined (__MINGW32__))
-#define OS_MINGW
-#endif
-#ifdef OS_WIN32
-#define LESSGTR
-#else
 #define LESSGTR <>
-#endif
 
 #define TM_DEBUG(x)
 typedef int SI;
@@ -41,13 +34,8 @@ typedef short HI;
 typedef unsigned short HN;
 typedef char QI;
 typedef unsigned char QN;
-#ifdef OS_WIN32
-typedef __int64 DI;
-typedef unsigned __int64 DN;
-#else
 typedef long long int DI;
 typedef unsigned long long int DN;
-#endif
 typedef void* pointer;
 typedef unsigned int color;
 #define MAX_SI 0x7fffffff

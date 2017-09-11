@@ -15399,6 +15399,9 @@ $as_echo "final adjustments for mingw host" >&6; }
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
+
+$as_echo "#define OS_MINGW (defined (__MINGW__) || defined (__MINGW32__))" >>confdefs.h
+
     ;;
     *-*-cygwin)
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for cygwin host" >&5
@@ -21055,6 +21058,11 @@ $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
 
 
 
+
+#--------------------------------------------------------------------
+# final adjustement for Texmacs compile
+#--------------------------------------------------------------------
+CPPFLAGS="$CPPFLAGS -include config.h"
 
 #--------------------------------------------------------------------
 # Done

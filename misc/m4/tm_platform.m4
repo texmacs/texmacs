@@ -86,6 +86,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
+      AC_DEFINE([OS_MINGW],[(defined (__MINGW__) || defined (__MINGW32__))],[OS type])
     ;;
     *-*-cygwin)
       AC_MSG_RESULT(final adjustments for cygwin host)

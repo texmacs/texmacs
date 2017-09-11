@@ -117,6 +117,9 @@
 /* Use g++ strictly prior to g++ 3.0 */
 #undef OLD_GNU_COMPILER
 
+/* OS type */
+#undef OS_MINGW
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
