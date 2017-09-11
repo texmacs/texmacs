@@ -20514,6 +20514,7 @@ $as_echo "$as_me: PDF_LDFLAGS:$PDF_LDFLAGS" >&6;}
 
 
 
+LC_POPPLER
 
   #STD_DEBUG_FLAGS="-fno-rtti -fno-exceptions"
   #if test "$enable_cocoa" = "yes"; then
