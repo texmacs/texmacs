@@ -12,9 +12,6 @@
 #--------------------------------------------------------------------
 
 AC_DEFUN([TM_GUI],[
-  LC_X_HEADERS
-  AC_PATH_X
-  AC_PATH_XTRA
 
   CONFIG_X11=""
   CONFIG_COCOA=""
@@ -26,27 +23,30 @@ AC_DEFUN([TM_GUI],[
 
   case "$enable_qt" in
       yes)
-	  LC_WITH_QT
-	  if test x"$at_cv_qt_build" = xko; then 
-	     AC_MSG_ERROR([cannot find Qt!])
-	  else
-	     AC_MSG_RESULT([enabling Qt port])
-	     CONFIG_GUI="QT"
-	     if test x"$CONFIG_OS" = xMACOS; then
-		# on Mac we rely on some ObjC code contained in 
-		# src/Plugins/MacOS    
-		CONFIG_MACOS="MacOS"
-	     fi
-	  fi
-	  ;;
+         LC_WITH_QT
+         if test x"$at_cv_qt_build" = xko; then 
+            AC_MSG_ERROR([cannot find Qt!])
+         else
+            AC_MSG_RESULT([enabling Qt port])
+            CONFIG_GUI="QT"
+            if test x"$CONFIG_OS" = xMACOS; then
+               # on Mac we rely on some ObjC code contained in 
+               # src/Plugins/MacOS    
+               CONFIG_MACOS="MacOS"
+            fi
+         fi
+         ;;
       no)
-	  CONFIG_QTPIPES="no"
-	  AC_MSG_RESULT([enabling X11 port])
-	  ;;
+         CONFIG_QTPIPES="no"
+         AC_MSG_RESULT([enabling X11 port])
+         LC_X_HEADERS
+         AC_PATH_X
+         AC_PATH_XTRA
+         ;;
       *)
-	  CONFIG_QTPIPES="no"
-	  AC_MSG_ERROR([bad option --enable-qt=$enable_qt])
-	  ;;
+         CONFIG_QTPIPES="no"
+         AC_MSG_ERROR([bad option --enable-qt=$enable_qt])
+         ;;
   esac
 
   # Qt Plugins list
@@ -57,8 +57,8 @@ AC_DEFUN([TM_GUI],[
   #define([PLUGINS_LIST],[imageformats,accessible])
   QT_PLUGINS_LIST="$PLUGINS_LIST"
   AC_ARG_ENABLE(QtPlugins,
-	 AS_HELP_STRING([--enable-QtPlugins@<:@=list@:>@],
-		  [defaults plugins: imageformats, and possibly more]),
+        AS_HELP_STRING([--enable-QtPlugins@<:@=list@:>@],
+                 [defaults plugins: imageformats, and possibly more]),
     [QT_PLUGINS_LIST=$enableval],[QT_PLUGINS_LIST="$PLUGINS_LIST"])
   case $QT_PLUGINS_LIST in
   yes) QT_PLUGINS_LIST="$PLUGINS_LIST";;
@@ -77,21 +77,21 @@ AC_DEFUN([TM_GUI],[
 
   case "$enable_qtpipes" in
       yes)
-	  if test x"$CONFIG_GUI" = xQT; then
-	     AC_DEFINE(QTPIPES, 1, [Enabling Qt pipes])
-	     AC_MSG_RESULT([enabling Qt pipes])
-	  else
-	     AC_MSG_ERROR([QT not enabled!])
-	  fi
-	  ;;
+         if test x"$CONFIG_GUI" = xQT; then
+            AC_DEFINE(QTPIPES, 1, [Enabling Qt pipes])
+            AC_MSG_RESULT([enabling Qt pipes])
+         else
+            AC_MSG_ERROR([QT not enabled!])
+         fi
+         ;;
       no)
-	  if test x"$CONFIG_GUI" = xQT; then
-	     AC_MSG_RESULT([disabling Qt pipes])
-	  fi
-	  ;;
+         if test x"$CONFIG_GUI" = xQT; then
+            AC_MSG_RESULT([disabling Qt pipes])
+         fi
+         ;;
       *)
-	  AC_MSG_ERROR([bad option --enable-qtpipes=$enable_qtpipes])
-	  ;;
+         AC_MSG_ERROR([bad option --enable-qtpipes=$enable_qtpipes])
+         ;;
   esac
 
   AC_ARG_ENABLE(cocoa,
@@ -99,38 +99,38 @@ AC_DEFUN([TM_GUI],[
       [], [enable_cocoa="no"])
   case "$enable_cocoa" in
       yes)
-	  AC_MSG_RESULT([enabling experimental Cocoa port])
-	  COCOA_CFLAGS=""
-	  COCOA_LDFLAGS="-framework Cocoa"
-	  CONFIG_GUI="COCOA"
-	  ;;
+         AC_MSG_RESULT([enabling experimental Cocoa port])
+         COCOA_CFLAGS=""
+         COCOA_LDFLAGS="-framework Cocoa"
+         CONFIG_GUI="COCOA"
+         ;;
       no)
-	  AC_MSG_RESULT([disabling experimental Cocoa port])
-	  ;;
+         AC_MSG_RESULT([disabling experimental Cocoa port])
+         ;;
       *)
-	  AC_MSG_ERROR([bad option --enable-cocoa=$enable_cocoa])
-	  ;;
+         AC_MSG_ERROR([bad option --enable-cocoa=$enable_cocoa])
+         ;;
   esac
 
   case "$CONFIG_GUI" in
       X11)
-	  CONFIG_X11="X11 Widkit"
-	  if test "x${CONFIG_GS}" != "xGhostscript"; then
-	    CONFIG_X11="$CONFIG_X11 Ghostscript"
-	  fi
-	  CONFIG_GUI_DEFINE="X11TEXMACS"
+         CONFIG_X11="X11 Widkit"
+         if test "x${CONFIG_GS}" != "xGhostscript"; then
+           CONFIG_X11="$CONFIG_X11 Ghostscript"
+         fi
+         CONFIG_GUI_DEFINE="X11TEXMACS"
   #        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
-	  ;;
+         ;;
       COCOA)
-	  CONFIG_COCOA="Cocoa"
-	  CONFIG_GUI_DEFINE="AQUATEXMACS"
+         CONFIG_COCOA="Cocoa"
+         CONFIG_GUI_DEFINE="AQUATEXMACS"
   #        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
-	  ;;
+         ;;
       QT)
-	  CONFIG_QT="Qt"
-	  CONFIG_GUI_DEFINE="QTTEXMACS"
+         CONFIG_QT="Qt"
+         CONFIG_GUI_DEFINE="QTTEXMACS"
   #        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
-	  ;;
+         ;;
   esac
 
   AC_SUBST(COCOA_CFLAGS)
