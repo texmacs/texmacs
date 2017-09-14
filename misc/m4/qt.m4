@@ -28,9 +28,12 @@ if test x"$have_qt" = xyes; then
   MOC="moc"
   QT5_AVAILABLE="yes"
 else
-LC_DUMP_FLAGS
 # AC_MSG_RESULT([Qt5 seems not present, trying Qt4...])
-  AT_WITH_QT([],[+exceptions],[LIBS += $LDFLAGS])
+  typeset xtralibs
+	case $CONFIG_OS in
+	MINGW) xtralibs="+xml";;
+	esac
+  AT_WITH_QT([$xtralibs],[+exceptions],[LIBS += $LDFLAGS],AC_MSG_ERROR([Cannot find a working Qt library]))
 fi
 # clean and dispatch the collected flags
 LC_COPY_FLAGS([QT],[TMP])
