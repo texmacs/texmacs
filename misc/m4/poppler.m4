@@ -11,7 +11,7 @@
 #
 #--------------------------------------------------------------------
 
-m4_define([PopplerLibs],[-lpoppler-qt4 -lpoppler -lQtXml])
+m4_define([PopplerLibs],[-lpoppler-qt4 -lpoppler])
 AC_DEFUN([LM_POPPLER],[
   AC_LANG_PROGRAM([[#include "poppler/qt4/poppler-qt4.h"]],[[
     Poppler::Document::load("Dummy");
@@ -19,11 +19,13 @@ AC_DEFUN([LM_POPPLER],[
 ])
 
 AC_DEFUN([LC_POPPLER],[
+	AC_MSG_NOTICE(FLAGS:$CPPFLAGS:[CPPFLAGS])
  if @<:@@<:@ $CONFIG_GUI != QT || $CONFIG_OS != MINGW @:>@@:>@ 
   then LC_MSG_RESULT([disabled poppler: needs Qt and MinGW])
   else
     AX_SAVE_FLAGS
     LC_MERGE_FLAGS([PopplerLibs],[QT_LIBS])
+    LC_MERGE_FLAGS($CPPFLAGS,[QT_CPPFLAGS])
     LC_SET_FLAGS([QT])
     AC_CHECK_HEADER(poppler/qt4/poppler-qt4.h, [
       AC_LINK_IFELSE([
