@@ -12,6 +12,7 @@ then
 # with for we have one parameter per loop
 # windows backslash need to be converted to slash in order being able be compared
 	ntldd -R $1 |while read -r lib sign  full trash
-	do [[ ! -x $dest/$lib && ${full//\\/\/} =~ ${mingwbase} ]] && cp $full $dest
+	do [[ ! -x $dest/$lib && ${full//\\/\/} =~ ${mingwbase} ]] && { cp $full $dest || exit $?; }
 	done
 fi
+exit 0
