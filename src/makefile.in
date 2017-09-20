@@ -413,7 +413,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf\
  freetype windowsres)) $(texmacs_c_deps)
 
-link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) \
+link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
    $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) \
    $(LDSPARKLE)
 

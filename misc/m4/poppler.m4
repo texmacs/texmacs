@@ -19,7 +19,6 @@ AC_DEFUN([LM_POPPLER],[
 ])
 
 AC_DEFUN([LC_POPPLER],[
-	AC_MSG_NOTICE(FLAGS:$CPPFLAGS:[CPPFLAGS])
  if @<:@@<:@ $CONFIG_GUI != QT || $CONFIG_OS != MINGW @:>@@:>@ 
   then LC_MSG_RESULT([disabled poppler: needs Qt and MinGW])
   else
@@ -32,7 +31,7 @@ AC_DEFUN([LC_POPPLER],[
         LM_POPPLER
       ],[
         AX_RESTORE_FLAGS
-        LC_MERGE_FLAGS([PopplerLibs],[LIBS])
+        LC_SCATTER_FLAGS([PopplerLibs],[LIBS])
       ],[
         AC_MSG_ERROR(Cannot find poppler library)
       ])
