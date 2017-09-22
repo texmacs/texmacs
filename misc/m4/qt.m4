@@ -30,9 +30,9 @@ if test x"$have_qt" = xyes; then
 else
 # AC_MSG_RESULT([Qt5 seems not present, trying Qt4...])
   typeset xtralibs
-	case $CONFIG_OS in
-	MINGW) xtralibs="+xml";;
-	esac
+  case $CONFIG_OS in
+    MINGW) xtralibs="+xml";;
+  esac
   AT_WITH_QT([$xtralibs],[+exceptions],[LIBS += $LDFLAGS],AC_MSG_ERROR([Cannot find a working Qt library]))
 fi
 # clean and dispatch the collected flags
