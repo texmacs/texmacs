@@ -453,7 +453,7 @@ MACOS_PACKAGE_SRC = packages/macos
 MACOS_PACKAGE_DIR = ../distr/macos
 
 MACOS_PACKAGE_APP = ../distr/$(tm_devel).app
-MACOS_PACKAGE_DMG = ../distr/$(tm_devel)-r$(svnrev)-os@MACOSX_DEPLOYMENT_TARGET@.dmg
+MACOS_PACKAGE_DMG = ../distr/$(tm_devel).dmg
 MACOS_PACKAGE_ZIP = ../distr/$(tm_devel).zip
 
 MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
