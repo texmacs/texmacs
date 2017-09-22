@@ -1,4 +1,4 @@
-#!/bin/bash -O extglob -O nocasematch -O nocaseglob
+#!/bin/bash -O extglob -O nocasematch -O nocaseglob -O nullglob
 #
 # denis RAUX  CNRS/LIX 2015
 #
