@@ -281,19 +281,6 @@ COPY_GUILE:
 	$(CHMOD) -R go=rX $(BUILD_DIR)/TeXmacs/progs/ice-9
 
 ###############################################################################
-# General functions
-###############################################################################
-define bundle_gs
-if [[  @GS_EXE@ =~ @TMREPO@ ]] ; then \
-  echo packing gs;$(CP) @GS_EXE@ $1 && \
-  mkdir $2/ghostscript && \
-  for r in @GS_LIB@ @GS_FONTS@; \
-  do $(CP) "$$r" $2/ghostscript; \
-  done; \
-fi
-endef
-
-###############################################################################
 # Make a source package
 ###############################################################################
 
@@ -522,7 +509,17 @@ BUNDLE: MACOS_BUNDLE
 ###############################################################################
 # Make a Windows installer
 ###############################################################################
-ifeq (@CONFIG_OS@,MINGW)
+
+define bundle_gs
+if [[  @GS_EXE@ =~ @TMREPO@ ]] ; then \
+  echo packing gs;$(CP) @GS_EXE@ $1 && \
+  mkdir $2/ghostscript && \
+  for r in @GS_LIB@ @GS_FONTS@; \
+  do $(CP) "$$r" $2/ghostscript; \
+  done; \
+fi
+endef
+
 WINSPARKLE_DLL = @WINSPARKLE_DLL@
 WINSPARKLE_PATH = @WINSPARKLE_PATH@
 
@@ -532,7 +529,7 @@ WINDOWS_PACKAGE_DIR = ../distr/windows
 WINDOWS_BUILD_DIR = ../distr/TeXmacs-Windows
 WINDOWS_BUILD_BIN_DIR = $(WINDOWS_BUILD_DIR)/bin
 
-BUNDLE WINDOWS_BUNDLE: TEXMACS
+WINDOWS_BUNDLE: TEXMACS
 	$(MKDIR) ../distr
 	$(MKDIR) $(WINDOWS_BUILD_DIR)
 	$(RM) -r $(WINDOWS_BUILD_BIN_DIR)/{texmacs,texmacs.bin,texmacs.exe}
@@ -555,7 +552,7 @@ PACKAGE WINDOWS_PACKAGE: WINDOWS_BUNDLE $(WINDOWS_PACKAGE_DIR)/@tm_devel@.@SVNRE
 #	$(RM) -r $(WINDOWS_BUILD_DIR)
 
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
-endif
+
 ###############################################################################
 # Cleaning and backups
 ###############################################################################
