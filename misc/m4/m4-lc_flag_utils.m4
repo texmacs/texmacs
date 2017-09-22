@@ -366,3 +366,7 @@ AC_DEFUN([STRIP_ALL_ARGS], [
   done
   unset ${![$0]_*}
 ])
+
+AC_ARG_ENABLE(dumpflags,
+  AS_HELP_STRING([--enable-dumpflags@<:@=no@:>@], 
+  [list of flags to dump (i.e QT ICONV GUILE ...)]),[],[])
