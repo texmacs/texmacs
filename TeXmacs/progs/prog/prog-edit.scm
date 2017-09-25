@@ -111,6 +111,16 @@
   (:synopsis "find next bracket @br with inverse @ibr in @s at @pos")
   (string-bracket-find s pos -1 br ibr 0))
 
+(define (program-bracket-find row col inc br ibr level)
+  (and-with s (program-row row)
+    (with ret (string-bracket-find* s col inc br ibr level)   
+      (if (>= ret 0) (cons row ret)
+	  (with level* (- -1 ret)
+	    (and-with s* (program-row (+ row inc))
+	      (with col* (if (> inc 0) 0 (- (string-length s*) 1))
+		(program-bracket-find (+ row inc) col* inc
+				      br ibr level*))))))))
+
 (tm-define (program-previous-match row br ibr)
   (:synopsis "find matching opening row for @row and bracket @br")
   (let* ((s (program-row row))

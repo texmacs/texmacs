@@ -384,7 +384,7 @@ gs_check (url doc) {
   cmd << gs_executable ();
   cmd << string ("-dNOPAUSE"); cmd << string ("-dBATCH");
   cmd << string ("-dDEBUG"); cmd << string ("-sDEVICE=nullpage");
-  cmd << sys_concretize (doc);
+  cmd << concretize (doc);
   array<int> out; out << 1; out << 2;
   //cout << "cmd= " << cmd << LF;
   array<string> ret= evaluate_system (cmd, array<int> (), array<string> (), out);
