@@ -50,25 +50,11 @@ AC_DEFUN([TM_GUI],[
   esac
 
   # Qt Plugins list
-  PLUGINS_LIST="imageformats"
   if test "$QT5_AVAILABLE" = yes; then
-    PLUGINS_LIST="imageformats"
+    QT_PLUGINS_LIST="imageformats"
+  else
+    QT_PLUGINS_LIST="accessible,imageformats"
   fi
-  #define([PLUGINS_LIST],[imageformats])
-  QT_PLUGINS_LIST="$PLUGINS_LIST"
-  AC_ARG_ENABLE(QtPlugins,
-        AS_HELP_STRING([--enable-QtPlugins@<:@=list@:>@],
-                 [defaults plugins: imageformats, and possibly more]),
-    [QT_PLUGINS_LIST=$enableval],[QT_PLUGINS_LIST="$PLUGINS_LIST"])
-  case $QT_PLUGINS_LIST in
-  yes) QT_PLUGINS_LIST="$PLUGINS_LIST";;
-  no) unset QT_PLUGINS_LIST
-  esac
-
-  [[[ $enable_qt == no ]]] &&  unset QT_PLUGINS_LIST
-  for p in ${QT_PLUGINS_LIST//,/ }
-  do [[ -d $QT_PLUGINS_PATH/$p ]] || AC_MSG_ERROR(QT plugins <$p> not found! Use enable-QtPlugins option to select them)
-  done
 
   # Qt Pipes
   AC_ARG_ENABLE(qtpipes,

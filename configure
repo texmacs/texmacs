@@ -822,7 +822,6 @@ enable_console
 enable_qt
 with_qt
 with_x
-enable_QtPlugins
 enable_qtpipes
 enable_cocoa
 enable_pdf_renderer
@@ -1482,8 +1481,6 @@ if test -n "$ac_init_help"; then
                           image handling, ...)
   --enable-console        enable windows console
   --disable-qt            replace Qt by X11 interface
-  --enable-QtPlugins[=list]
-                          defaults plugins: imageformats, and possibly more
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
   --disable-pdf-renderer  use hummus support for native pdf exports
@@ -20484,28 +20481,11 @@ fi
   esac
 
   # Qt Plugins list
-  PLUGINS_LIST="imageformats"
   if test "$QT5_AVAILABLE" = yes; then
-    PLUGINS_LIST="imageformats"
+    QT_PLUGINS_LIST="imageformats"
+  else
+    QT_PLUGINS_LIST="accessible,imageformats"
   fi
-  #define([PLUGINS_LIST],[imageformats])
-  QT_PLUGINS_LIST="$PLUGINS_LIST"
-  # Check whether --enable-QtPlugins was given.
-if test "${enable_QtPlugins+set}" = set; then :
-  enableval=$enable_QtPlugins; QT_PLUGINS_LIST=$enableval
-else
-  QT_PLUGINS_LIST="$PLUGINS_LIST"
-fi
-
-  case $QT_PLUGINS_LIST in
-  yes) QT_PLUGINS_LIST="$PLUGINS_LIST";;
-  no) unset QT_PLUGINS_LIST
-  esac
-
-  [[ $enable_qt == no ]] &&  unset QT_PLUGINS_LIST
-  for p in ${QT_PLUGINS_LIST//,/ }
-  do [ -d $QT_PLUGINS_PATH/$p ] || as_fn_error $? "QT plugins <$p> not found! Use enable-QtPlugins option to select them" "$LINENO" 5
-  done
 
   # Qt Pipes
   # Check whether --enable-qtpipes was given.
