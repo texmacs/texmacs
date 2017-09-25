@@ -18,9 +18,9 @@
 ;; Specific conversion routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (gnuplot-rsup r)
+(define (gnuplot-rsup args)
   (display "**")
-  (plugin-input (car r)))
+  (plugin-input-arg (car args)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization
