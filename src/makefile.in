@@ -113,6 +113,7 @@ edit_src     := $(call findsrc,Edit)
 texmacs_src  := $(call findsrc,Texmacs)
 scheme_src   := $(call findsrc_in,Scheme,Scheme Guile)
 pdf_src      := $(call findsrc_in,Plugins,@CONFIG_PDF@)
+pdf_c_src    := $(call findc_in,Plugins,@CONFIG_PDF@/LibAesgm)
 freetype_src := $(call findsrc_in,Plugins,Freetype)
 
 # Each makefile will have its own Deps directory. Okay that is a bit
@@ -135,8 +136,9 @@ texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 texmacs_c_deps := $(call make_c_deps, $(call findc_in,System,Misc))
+texmacs_c_deps += $(call make_c_deps, $(pdf_c_src))
 
-deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
+deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps) $(texmacs_c_deps)
 
 ###############################################################################
 # Include files
@@ -170,7 +172,8 @@ scheme_incl    := $(typeset_incl) $(call incl_flags,Plugins Texmacs)
 edit_incl     := $(scheme_incl) \
   $(call incl_flags,Edit/Editor Edit/Interface Edit/Modify)
 texmacs_incl  := $(scheme_incl)
-pdf_incl      := $(system_incl)
+pdf_incl      := $(system_incl) \
+  $(call incl_flags,Plugins/Pdf/LibAesgm)
 freetype_incl := $(system_incl)
 
 ###############################################################################

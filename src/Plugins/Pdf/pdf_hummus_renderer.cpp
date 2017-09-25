@@ -2515,7 +2515,7 @@ pdf_hummus_renderer_rep::flush_metadata () {
   if (metadata->contains ("subject"))
     info.Subject= utf8_as_hummus_string (metadata ["subject"]);
   string creator= "TeXmacs " * string (TEXMACS_VERSION);
-  string producer= creator * " + Hummus" ;
+  string producer= creator * " + Hummus 3.9";
   info.Creator= utf8_as_hummus_string (creator);
   info.Producer= utf8_as_hummus_string (producer);
 }
