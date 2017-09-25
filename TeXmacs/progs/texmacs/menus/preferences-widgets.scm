@@ -488,15 +488,15 @@
   ===
   (aligned
       (item (text "Bitmap resolution (dpi):")
-        (enum (set-pretty-preference "texmacs->image:raster-resolution" answer)
-            '("600" "300" "150" "")
-            (get-pretty-preference "texmacs->image:raster-resolution")
-            "5em")) 
+        (enum (set-preference "texmacs->image:raster-resolution" answer)
+	      '("1200" "600" "300" "150" "")
+	      (get-preference "texmacs->image:raster-resolution")
+	      "5em"))
       (item (text "Clipboard image format:")
         (enum (set-pretty-preference "texmacs->image:format" answer)
-            (pretty-format-list)
-            (get-pretty-preference "texmacs->image:format")
-            "5em"))))
+	      (pretty-format-list)
+	      (get-pretty-preference "texmacs->image:format")
+	      "5em"))))
 
 ;; All converters ----------
 
