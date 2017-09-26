@@ -113,7 +113,6 @@ LC_SPARKLE
 # Further TeXmacs settings
 #--------------------------------------------------------------------
 
-TM_PLATFORM
 TM_FASTALLOC
 TM_MACOS
 TM_WINDOWS
