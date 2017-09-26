@@ -107,7 +107,10 @@ function bundle_qt_plugins
 		oplug="$2/$1"
 		dplug="Plugins/$1/*dylib"
 	fi
-  cp -R $oplug Plugins/. || return 51
+  for d in $oplug
+  do test -d $d && mkdir Plugins/$(basename $d) && \
+    test -n "$(echo $d/*dylib)" && cp $d/*dylib Plugins/$(basename $d)/
+  done
   for p in $dplug
   do bundle_all_libs $p || return $?
   done
