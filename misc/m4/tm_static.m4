@@ -14,7 +14,7 @@
 AC_DEFUN([TM_STATIC],[
   AC_ARG_ENABLE(static,
   AS_HELP_STRING([--enable-static@<:@=no@:>@], [statically link libraries]),
-    [],[enableval="no"])
+    [AC_MSG_NOTICE([Link with static librairies enabled])],[enableval="no"])
 
   unset LNSTATIC SEMISTATIC SEMIDYNAMIC MAC
   if [[[ "$enableval" != no ]]]

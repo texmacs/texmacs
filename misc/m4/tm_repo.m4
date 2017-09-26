@@ -16,6 +16,7 @@ AC_DEFUN([TM_REPO],[
     AS_HELP_STRING([--with-tmrepo@<:@=no@:>@],[absolute texmacs sdk path]),[
       [[ -d $withval ]] || AC_MSG_ERROR([tmrepo path not found])
       TMREPO=${withval%%/}
+      AC_MSG_NOTICE([Using TeXmacs SDK at $TMREPO])
     ],[])
 
   if test -n "$TMREPO"
