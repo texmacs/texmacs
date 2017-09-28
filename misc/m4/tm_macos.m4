@@ -56,13 +56,11 @@ AC_DEFUN([TM_MACOS],[
 	    ;;
 	no)
 	    AC_MSG_RESULT([disabling Mac OSX extensions])
-	    CONFIG_MACOS=""
 	    ;;
 	*)
 	    AC_MSG_ERROR([bad option --enable-macosx-extensions=$enable_macosx_extensions])
 	    ;;
     esac
-    AC_SUBST(CONFIG_MACOS)
   fi
 
   case "${host}" in

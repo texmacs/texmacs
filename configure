@@ -652,7 +652,6 @@ UIC
 MOC
 QMAKE
 QT_PATH
-CONFIG_MACOS
 WINSPARKLE_PATH
 WINSPARKLE_DLL
 CONFIG_SPARKLE
@@ -723,6 +722,7 @@ CONFIG_CXXDEBUG
 CONFIG_CXXOPTIMIZE
 CONFIG_CXXTEMPLATE
 CONFIG_CXXWARNING
+CONFIG_MACOS
 CONFIG_OS_COMPAT
 CONFIG_OS_SUFFIX
 CONFIG_OS
@@ -6023,6 +6023,7 @@ $as_echo "$ac_cv_lib_xcb_xcb_disconnect" >&6; }
 if test "x$ac_cv_lib_xcb_xcb_disconnect" = xyes; then :
   CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B
 fi
+
 
 
 
@@ -16390,13 +16391,11 @@ $as_echo "#define MACOSX_EXTENSIONS 1" >>confdefs.h
 	no)
 	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling Mac OSX extensions" >&5
 $as_echo "disabling Mac OSX extensions" >&6; }
-	    CONFIG_MACOS=""
 	    ;;
 	*)
 	    as_fn_error $? "bad option --enable-macosx-extensions=$enable_macosx_extensions" "$LINENO" 5
 	    ;;
     esac
-
   fi
 
   case "${host}" in
