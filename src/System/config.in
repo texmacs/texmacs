@@ -118,7 +118,34 @@
 #undef OLD_GNU_COMPILER
 
 /* OS type */
+#undef OS_CYGWIN
+
+/* OS type */
+#undef OS_DARWIN
+
+/* OS type */
+#undef OS_FREEBSD
+
+/* OS type */
+#undef OS_GNU_LINUX
+
+/* OS type */
+#undef OS_IRIX
+
+/* OS type */
+#undef OS_MACOS
+
+/* OS type */
 #undef OS_MINGW
+
+/* OS type */
+#undef OS_POWERPC_GNU_LINUX
+
+/* OS type */
+#undef OS_SOLARIS
+
+/* OS type */
+#undef OS_SUN
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT

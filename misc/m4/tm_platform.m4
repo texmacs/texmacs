@@ -12,7 +12,6 @@
 #--------------------------------------------------------------------
 
 AC_DEFUN([TM_PLATFORM],[
-  CONFIG_OS="GNU_LINUX"
   CONFIG_OS_SUFFIX="${host}"
   CONFIG_OS_COMPAT="Unix"
   CONFIG_MACOS=""
@@ -65,31 +64,38 @@ AC_DEFUN([TM_PLATFORM],[
   case "${host}" in
     i*86-*-linux* | x86_64-*-linux*)
       AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/Linux host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
     ;;
     i*86-*-freebsd* | x86_64-*-freebsd*)
       AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/BSD host)
+      AC_DEFINE([OS_FREEBSD],[1],[OS type])
+      CONFIG_OS="FREEBSD"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     ;;
     i*86-*-solaris*)
       AC_MSG_RESULT(final adjustments for an Intel or AMS Solaris host)
+      AC_DEFINE([OS_SOLARIS],[1],[OS type])
+      CONFIG_OS="SOLARIS"
       CONFIG_CXXOPTIMIZE="-O3"
       CONFIG_BPATH="-Wl,-R,"
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     ;;
     *mingw*)
       AC_MSG_RESULT([final adjustments for mingw host])
+      AC_DEFINE([OS_MINGW],[(defined (__MINGW__) || defined (__MINGW32__))],[OS type])
       CONFIG_OS=MINGW
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
-      AC_DEFINE([OS_MINGW],[(defined (__MINGW__) || defined (__MINGW32__))],[OS type])
     ;;
     *-*-cygwin)
       AC_MSG_RESULT(final adjustments for cygwin host)
+      AC_DEFINE([OS_CYGWIN],[1],[OS type])
       CONFIG_OS="CYGWIN"
       CONFIG_BFLAGS="-Wl,-stack,8388608"
   #    CXX="export CYGWIN=check_case:strict; $CXX"
@@ -97,6 +103,7 @@ AC_DEFUN([TM_PLATFORM],[
     ;;
     *apple*darwin*)
       echo "$ac_t""final adjustments for a MacOS host" 1>&6
+      AC_DEFINE([OS_MACOS],[1],[OS type])
       CONFIG_OS="MACOS"
       CONFIG_QTPIPES="yes"
       CONFIG_CXXFLAGS="-I${prefix}/include"
@@ -121,6 +128,8 @@ AC_DEFUN([TM_PLATFORM],[
   ;;
     *darwin*)
       echo "$ac_t""final adjustments for a generic Darwin host" 1>&6
+      AC_DEFINE([OS_DARWIN],[1],[OS type])
+      CONFIG_OS="DARWIN"
       CONFIG_CXXFLAGS="-I${prefix}/include"
       CONFIG_BSHARED=""
       CONFIG_BPATH=""
@@ -129,11 +138,13 @@ AC_DEFUN([TM_PLATFORM],[
     ;;
     powerpc-*-linux*)
       AC_MSG_RESULT(final adjustments for a PowerPC/GNU-linux host)
+      AC_DEFINE([OS_POWERPC_GNU_LINUX],[1],[OS type])
       CONFIG_OS="POWERPC_GNU_LINUX"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     ;;
     *sun*)
       AC_MSG_RESULT(final adjustments for a SUN/solaris host)
+      AC_DEFINE([OS_SUN],[1],[OS type])
       CONFIG_OS="SUN"
       CONFIG_BSTATIC=""
       CONFIG_BSHARED=""
@@ -147,6 +158,8 @@ AC_DEFUN([TM_PLATFORM],[
     ;;
     sparc*-*-linux*)
       AC_MSG_RESULT(final adjustments for a Sparc host running GNU/Linux)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_WORD_LENGTH="8"
       CONFIG_WORD_LENGTH_INC="7"
@@ -156,32 +169,43 @@ AC_DEFUN([TM_PLATFORM],[
     ;;
     *dec*)
       AC_MSG_RESULT(final adjustments for a DEC/alpha host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
       CONFIG_BSTATIC=""
       CONFIG_BSHARED="-shared"
       CONFIG_STD_SETENV=""
     ;;
     *alpha*-*-linux*)
       AC_MSG_RESULT(final adjustments for an Alpha GNU/Linux host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
       CONFIG_BSTATIC=""
       CONFIG_BSHARED="-shared"
     ;;
     s390-*-linux*)
       AC_MSG_RESULT(final adjustments for an IBM S/390 GNU/Linux host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
       CONFIG_STD_SETENV=""
     ;;
     ia64-*-linux*)
       AC_MSG_RESULT(final adjustments for an Itanium GNU/Linux host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
       CONFIG_BSTATIC=""
       CONFIG_BSHARED="-shared"
     ;;
     hppa*-*-linux*)
       AC_MSG_RESULT(final adjustments for an HP PA_RISC GNU/Linux host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
       CONFIG_CXXFLAGS="$CONFIG_CXXFLAGS -fPIC"
       CONFIG_BSTATIC=""
       CONFIG_BSHARED="-shared"
     ;;
     *sgi-irix*)
       echo "$ac_t""final adjustments for a SGI/Irix host" 1>&6
+      AC_DEFINE([OS_IRIX],[1],[OS type])
       CONFIG_OS="IRIX"
       CONFIG_CXXFLAGS=""
       X_LIBS=-L/usr/lib32
@@ -196,12 +220,18 @@ AC_DEFUN([TM_PLATFORM],[
     ;;
     m68k-*-linux* | mips-*-linux* | mipsel-*-linux* | arm*-*-linux*)
       AC_MSG_RESULT(final adjustments for a supported GNU/Linux host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
     ;;
     *-linux*)
       AC_MSG_RESULT(final adjustments for a generic GNU/Linux host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
     ;;
     *)
       AC_MSG_RESULT(final adjustments for a generic host)
+      AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      CONFIG_OS="GNU_LINUX"
     ;;
   esac
 
