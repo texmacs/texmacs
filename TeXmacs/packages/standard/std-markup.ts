@@ -159,6 +159,8 @@
 
   <assign|english|<macro|body|<with|language|english|<arg|body>>>>
 
+  <assign|esperanto|<macro|body|<with|language|esperanto|<arg|body>>>>
+
   <assign|finnish|<macro|body|<with|language|finnish|<arg|body>>>>
 
   <assign|french|<macro|body|<with|language|french|<arg|body>>>>

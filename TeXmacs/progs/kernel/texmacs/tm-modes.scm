@@ -149,7 +149,7 @@
 
 (define-public supported-languages
   '("british" "bulgarian" "chinese" "croatian" "czech"
-    "danish" "dutch" "english" "finnish" "french" "german" "greek"
+    "danish" "dutch" "english" "esperanto" "finnish" "french" "german" "greek"
     "hungarian" "italian" "japanese" "korean" "polish"
     "portuguese" "romanian" "russian" "slovene" "spanish"
     "swedish" "taiwanese" "ukrainian"))
@@ -175,6 +175,7 @@
   (in-danish% (== (get-env "language") "danish") in-text%)
   (in-dutch% (== (get-env "language") "dutch") in-text%)
   (in-english% (== (get-env "language") "english") in-text%)
+  (in-esperanto% (== (get-env "language") "esperanto") in-text%)
   (in-finnish% (== (get-env "language") "finnish") in-text%)
   (in-french% (== (get-env "language") "french") in-text%)
   (in-german% (== (get-env "language") "german") in-text%)

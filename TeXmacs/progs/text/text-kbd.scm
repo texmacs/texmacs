@@ -277,6 +277,21 @@
 ;  ("ÿ" "¸"))
 
 (kbd-map
+  (:mode in-esperanto?)
+  ("c var" "<#109>")
+  ("g var" "<#11D>")
+  ("h var" "<#125>")
+  ("j var" "<#135>")
+  ("s var" "<#15D>")
+  ("u var" "<#16D>")
+  ("C var" "<#108>")
+  ("G var" "<#11C>")
+  ("H var" "<#124>")
+  ("J var" "<#134>")
+  ("S var" "<#15C>")
+  ("U var" "<#16C>"))
+
+(kbd-map
   (:mode in-hungarian?)
   ("text:symbol O" "")
   ("text:symbol U" "–")
