@@ -174,7 +174,7 @@
     (for (key (map car (ahash-table->list t)))
       (let* ((l (tm-children (tm->stree (ahash-ref t key))))
              (c (map (lambda (x)
-                       (convert x "texmacs-stree" "verbatim-document")) l))
+                       (texmacs->code x "SourceCode")) l))
              (i (map (cut string-append <> "\n") c)))
         (ahash-set! r key (apply string-append i))))
     r))
