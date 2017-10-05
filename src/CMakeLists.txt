@@ -7,38 +7,50 @@
 ### --------------------------------------------------------------------
 
 SET(TeXmacs_Include_Dirs
-    ./System
-    ./System/Boot
-    ./System/Classes
-    ./System/Files
-    ./System/Link
-    ./System/Misc
-    ./System/Language
-    ./Kernel/Abstractions
-    ./Kernel/Containers
-    ./Kernel/Types
     ./Data/Convert
+    ./Data/Document
     ./Data/Drd
+    ./Data/History
     ./Data/Observers
     ./Data/String
-    ./Data/Tmfs
     ./Data/Tree
-    ./Guile
-    ./Graphics/Bitmap_fonts
-    ./Graphics/Fonts
-    ./Graphics/Gui
-    ./Graphics/Mathematics
-    ./Graphics/Renderer
-    ./Plugins
-    ./Typeset
-    ./Typeset/Bridge
-    ./Typeset/Concat
-    ./Typeset/Page
-    ./Texmacs
     ./Edit
     ./Edit/Editor
     ./Edit/Interface
     ./Edit/Modify
+    ./Edit/Process
+    ./Edit/Replace
+    ./Graphics/Bitmap_fonts
+    ./Graphics/Colors
+    ./Graphics/Fonts
+    ./Graphics/Gui
+    ./Graphics/Handwriting
+    ./Graphics/Mathematics
+    ./Graphics/Pictures
+    ./Graphics/Renderer
+    ./Graphics/Spacial
+    ./Graphics/Types
+    ./Kernel/Abstractions
+    ./Kernel/Containers
+    ./Kernel/Types
+    ./Plugins
+    ./Plugins/Pdf/LibAesgm
+    ./Scheme
+    ./Scheme/Guile
+    ./Scheme/Scheme
+    ./System
+    ./System/Boot
+    ./System/Classes
+    ./System/Files
+    ./System/Language
+    ./System/Link
+    ./System/Misc
+    ./Texmacs
+    ./Texmacs/Data
+    ./Typeset
+    ./Typeset/Bridge
+    ./Typeset/Concat
+    ./Typeset/Page
     ${TEXMACS_SOURCE_DIR}/TeXmacs/include 
     ${TEXMACS_BINARY_DIR}/src/System/ 
 )
@@ -50,44 +62,73 @@ SET(TeXmacs_Include_Dirs
 
 
 SET(TeXmacs_Base_SRCS 
+    ./Data/Convert/BibTeX/conservative_bib.cpp
+    ./Data/Convert/BibTeX/parsebib.cpp
+    ./Data/Convert/Coq/parse_vernac.cpp
     ./Data/Convert/Generic/generic.cpp
+    ./Data/Convert/Generic/indexation.cpp
     ./Data/Convert/Generic/input.cpp
+    ./Data/Convert/Generic/post_convert.cpp
     ./Data/Convert/Scheme/from_scheme.cpp
     ./Data/Convert/Scheme/to_scheme.cpp
+    ./Data/Convert/Tex/conservative_fromtex.cpp
+    ./Data/Convert/Tex/conservative_totex.cpp
+    ./Data/Convert/Tex/fromcls.cpp
     ./Data/Convert/Tex/fromtex.cpp
+    ./Data/Convert/Tex/fromtex_post.cpp
     ./Data/Convert/Tex/inittex.cpp
+    ./Data/Convert/Tex/latex_recover.cpp
+    ./Data/Convert/Tex/latex_tools.cpp
+    ./Data/Convert/Tex/metadata-acm.cpp
+    ./Data/Convert/Tex/metadata-ams.cpp
+    ./Data/Convert/Tex/metadata-elsevier.cpp
+    ./Data/Convert/Tex/metadata-ieee.cpp
+    ./Data/Convert/Tex/metadata-revtex.cpp
+    ./Data/Convert/Tex/metadata-springer.cpp
+    ./Data/Convert/Tex/metadata.cpp
     ./Data/Convert/Tex/parsetex.cpp
+    ./Data/Convert/Tex/tracked_fromtex.cpp
+    ./Data/Convert/Tex/tracked_totex.cpp
     ./Data/Convert/Texmacs/fromtm.cpp
+    ./Data/Convert/Texmacs/rewrite_equation_number.cpp
     ./Data/Convert/Texmacs/totm.cpp
     ./Data/Convert/Texmacs/upgradetm.cpp
     ./Data/Convert/Verbatim/verbatim.cpp
     ./Data/Convert/Xml/fromxml.cpp
     ./Data/Convert/Xml/parsexml.cpp
+    ./Data/Document/new_data.cpp
+    ./Data/Document/new_document.cpp
+    ./Data/Document/new_style.cpp
     ./Data/Drd/drd_info.cpp
     ./Data/Drd/drd_mode.cpp
     ./Data/Drd/drd_std.cpp
     ./Data/Drd/tag_info.cpp
     ./Data/Drd/vars.cpp
+    ./Data/History/archiver.cpp
+    ./Data/History/commute.cpp
+    ./Data/History/patch.cpp
+    ./Data/Observers/edit_observer.cpp
+    ./Data/Observers/highlight_observer.cpp
     ./Data/Observers/ip_observer.cpp
     ./Data/Observers/link.cpp
     ./Data/Observers/list_observer.cpp
+    ./Data/Observers/tree_addendum.cpp
     ./Data/Observers/tree_pointer.cpp
     ./Data/Observers/tree_position.cpp
+    ./Data/Observers/undo_observer.cpp
     ./Data/String/analyze.cpp
+    ./Data/String/base64.cpp
     ./Data/String/converter.cpp
-    ./Data/Tmfs/collection.cpp
-    ./Data/Tmfs/disk_table.cpp
-    ./Data/Tmfs/properties.cpp
-    ./Data/Tmfs/solutions.cpp
-    ./Data/Tmfs/tmfs_convert.cpp
-    ./Data/Tmfs/tmfs_file.cpp
-    ./Data/Tmfs/tmfs_permissions.cpp
-    ./Data/Tmfs/tmfs_properties.cpp
-    ./Data/Tmfs/tmfs_table.cpp
-    ./Data/Tmfs/tmfs_versioning.cpp
-    ./Data/Tmfs/transaction.cpp
+    ./Data/String/fast_search.cpp
+    ./Data/String/universal.cpp
+    ./Data/String/wencoding.cpp
+    ./Data/Tree/tree_analyze.cpp
+    ./Data/Tree/tree_brackets.cpp
     ./Data/Tree/tree_correct.cpp
     ./Data/Tree/tree_cursor.cpp
+    ./Data/Tree/tree_modify.cpp
+    ./Data/Tree/tree_search.cpp
+    ./Data/Tree/tree_select.cpp
     ./Data/Tree/tree_traverse.cpp
     ./Edit/Editor/edit_main.cpp
     ./Edit/Editor/edit_typeset.cpp
@@ -111,32 +152,67 @@ SET(TeXmacs_Base_SRCS
     ./Edit/Replace/edit_spell.cpp
     ./Graphics/Bitmap_fonts/bitmap_font.cpp
     ./Graphics/Bitmap_fonts/glyph.cpp
+    ./Graphics/Bitmap_fonts/glyph_analyze.cpp
+    ./Graphics/Bitmap_fonts/glyph_effects.cpp
     ./Graphics/Bitmap_fonts/glyph_ops.cpp
     ./Graphics/Bitmap_fonts/glyph_shrink.cpp
+    ./Graphics/Bitmap_fonts/glyph_transforms.cpp
+    ./Graphics/Bitmap_fonts/glyph_unserif.cpp
+    ./Graphics/Colors/colors.cpp
+    ./Graphics/Colors/true_color.cpp
     ./Graphics/Fonts/charmap.cpp
     ./Graphics/Fonts/compound_font.cpp
     ./Graphics/Fonts/find_font.cpp
     ./Graphics/Fonts/font.cpp
+    ./Graphics/Fonts/font_database.cpp
+    ./Graphics/Fonts/font_guess.cpp
+    ./Graphics/Fonts/font_protrusion.cpp
+    ./Graphics/Fonts/font_select.cpp
+    ./Graphics/Fonts/font_translate.cpp
+    ./Graphics/Fonts/font_scripts.cpp
     ./Graphics/Fonts/math_font.cpp
+    ./Graphics/Fonts/poor_bbb.cpp
+    ./Graphics/Fonts/poor_bold.cpp
+    ./Graphics/Fonts/poor_distorted.cpp
+    ./Graphics/Fonts/poor_extended.cpp
+    ./Graphics/Fonts/poor_italic.cpp
+    ./Graphics/Fonts/poor_rubber.cpp
+    ./Graphics/Fonts/poor_smallcaps.cpp
+    ./Graphics/Fonts/poor_stretched.cpp
+    ./Graphics/Fonts/smart_font.cpp
     ./Graphics/Fonts/translator.cpp
+    ./Graphics/Fonts/virtual_enhance.cpp
     ./Graphics/Fonts/virtual_font.cpp
     ./Graphics/Gui/widget.cpp
+    ./Graphics/Handwriting/learn_handwriting.cpp
+    ./Graphics/Handwriting/poly_line.cpp
+    ./Graphics/Handwriting/recognize_handwriting.cpp
+    ./Graphics/Handwriting/smoothen.cpp
     ./Graphics/Mathematics/math_tree.cpp
     ./Graphics/Mathematics/test_math.cpp
+    ./Graphics/Pictures/effect.cpp
+    ./Graphics/Pictures/picture.cpp
+    ./Graphics/Pictures/raster_picture.cpp
+    ./Graphics/Pictures/raster_random.cpp
+    ./Graphics/Pictures/scalable.cpp
     ./Graphics/Renderer/basic_renderer.cpp
+    ./Graphics/Renderer/brush.cpp
     ./Graphics/Renderer/page_type.cpp
+    ./Graphics/Renderer/pencil.cpp
     ./Graphics/Renderer/printer.cpp
     ./Graphics/Renderer/renderer.cpp
-#    ./Guile/Glue/glue.cpp
-    ./Guile/Glue/glue_all.cpp
-#    ./Guile/Glue/glue_basic.cpp
-#    ./Guile/Glue/glue_editor.cpp
-#    ./Guile/Glue/glue_server.cpp
-    ./Guile/Scheme/evaluate.cpp
-    ./Guile/Scheme/object.cpp
+    ./Graphics/Spacial/enlightened.cpp
+    ./Graphics/Spacial/transformed.cpp
+    ./Graphics/Spacial/triangulated.cpp
+    ./Graphics/Types/curve.cpp
+    ./Graphics/Types/equations.cpp
+    ./Graphics/Types/frame.cpp
+    ./Graphics/Types/grid.cpp
+    ./Graphics/Types/point.cpp
     ./Kernel/Abstractions/basic.cpp
     ./Kernel/Abstractions/command.cpp
     ./Kernel/Abstractions/observer.cpp
+    ./Kernel/Abstractions/player.cpp
     ./Kernel/Containers/array.cpp
     ./Kernel/Containers/hashfunc.cpp
     ./Kernel/Containers/hashmap.cpp
@@ -146,6 +222,7 @@ SET(TeXmacs_Base_SRCS
     ./Kernel/Containers/iterator.cpp
     ./Kernel/Containers/list.cpp
     ./Kernel/Containers/rel_hashmap.cpp
+    ./Kernel/Types/modification.cpp
     ./Kernel/Types/parse_string.cpp
     ./Kernel/Types/path.cpp
     ./Kernel/Types/rectangles.cpp
@@ -154,12 +231,17 @@ SET(TeXmacs_Base_SRCS
     ./Kernel/Types/tab.cpp
     ./Kernel/Types/tree.cpp
     ./Kernel/Types/tree_label.cpp
+    ./Scheme/Guile/guile_tm.cpp
+    ./Scheme/Scheme/glue.cpp
+    ./Scheme/Scheme/object.cpp
     ./System/Boot/init_texmacs.cpp
     ./System/Boot/init_upgrade.cpp
-    ./System/Classes/timer.cpp
+    ./System/Boot/preferences.cpp
+    ./System/Classes/tm_timer.cpp
     ./System/Classes/url.cpp
     ./System/Files/file.cpp
     ./System/Files/image_files.cpp
+    ./System/Files/tm_ostream.cpp
     ./System/Files/web_files.cpp
     ./System/Language/cpp_language.cpp
     ./System/Language/dictionary.cpp
@@ -167,11 +249,18 @@ SET(TeXmacs_Base_SRCS
     ./System/Language/language.cpp
     ./System/Language/math_language.cpp
     ./System/Language/mathemagix_language.cpp
+    ./System/Language/packrat_grammar.cpp
+    ./System/Language/packrat_parser.cpp
+    ./System/Language/packrat_serializer.cpp
+    ./System/Language/python_language.cpp
+    ./System/Language/r_language.cpp
     ./System/Language/scheme_language.cpp
+    ./System/Language/scilab_language.cpp
     ./System/Language/text_language.cpp
     ./System/Language/verb_language.cpp
     ./System/Link/connection.cpp
     ./System/Link/dyn_link.cpp
+    ./System/Link/socket_notifier.cpp
     ./System/Link/pipe_link.cpp
     ./System/Link/socket_link.cpp
     ./System/Link/socket_server.cpp
@@ -180,10 +269,15 @@ SET(TeXmacs_Base_SRCS
     ./System/Link/tm_link.cpp
     ./System/Misc/data_cache.cpp
     ./System/Misc/fast_alloc.cpp
+    ./System/Misc/persistent.cpp
+    ./System/Misc/stack_trace.cpp
     ./System/Misc/sys_utils.cpp
-    ./Texmacs/Data/tm_data.cpp
-    ./Texmacs/Data/tm_file.cpp
+    ./Texmacs/Data/new_buffer.cpp
+    ./Texmacs/Data/new_project.cpp
+    ./Texmacs/Data/new_view.cpp
+    ./Texmacs/Data/new_window.cpp
     ./Texmacs/Server/tm_config.cpp
+    ./Texmacs/Server/tm_debug.cpp
     ./Texmacs/Server/tm_server.cpp
     ./Texmacs/Texmacs/texmacs.cpp
     ./Texmacs/Window/tm_button.cpp
@@ -207,6 +301,7 @@ SET(TeXmacs_Base_SRCS
     ./Typeset/Boxes/Graphics/graphics_boxes.cpp
     ./Typeset/Boxes/Graphics/grid_boxes.cpp
     ./Typeset/Boxes/Modifier/change_boxes.cpp
+    ./Typeset/Boxes/Modifier/highlight_boxes.cpp
     ./Typeset/Boxes/Modifier/modifier_boxes.cpp
     ./Typeset/Bridge/bridge.cpp
     ./Typeset/Bridge/bridge_argument.cpp
@@ -237,6 +332,7 @@ SET(TeXmacs_Base_SRCS
     ./Typeset/Concat/concat_text.cpp
     ./Typeset/Concat/concater.cpp
     ./Typeset/Env/env.cpp
+    ./Typeset/Env/env_animate.cpp
     ./Typeset/Env/env_default.cpp
     ./Typeset/Env/env_exec.cpp
     ./Typeset/Env/env_inactive.cpp
@@ -246,16 +342,13 @@ SET(TeXmacs_Base_SRCS
     ./Typeset/Format/formatter.cpp
     ./Typeset/Format/line_item.cpp
     ./Typeset/Format/page_item.cpp
-    ./Typeset/Graphics/curve.cpp
-    ./Typeset/Graphics/equations.cpp
-    ./Typeset/Graphics/frame.cpp
-    ./Typeset/Graphics/grid.cpp
-    ./Typeset/Graphics/point.cpp
     ./Typeset/Line/lazy_gui.cpp
     ./Typeset/Line/lazy_paragraph.cpp
     ./Typeset/Line/lazy_typeset.cpp
     ./Typeset/Line/lazy_vstream.cpp
     ./Typeset/Line/line_breaker.cpp
+    ./Typeset/Page/columns_breaker.cpp
+    ./Typeset/Page/new_breaker.cpp
     ./Typeset/Page/make_pages.cpp
     ./Typeset/Page/page_breaker.cpp
     ./Typeset/Page/pager.cpp
@@ -269,15 +362,36 @@ SET(TeXmacs_Base_SRCS
 SET(TeXmacs_Std_Plugins_SRCS
     ./Plugins/Axel/axel.cpp
     ./Plugins/Bibtex/bibtex.cpp
+    ./Plugins/Bibtex/bibtex_functions.cpp
     ./Plugins/Cairo/cairo_renderer.cpp
     ./Plugins/Cairo/tm_cairo.cpp
+    ./Plugins/Database/database.cpp
+    ./Plugins/Database/db_disk.cpp
+    ./Plugins/Database/db_index.cpp
+    ./Plugins/Database/db_query.cpp
+    ./Plugins/Database/db_sort.cpp
+    ./Plugins/Freetype/adjust_bonum.cpp
+    ./Plugins/Freetype/adjust_pagella.cpp
+    ./Plugins/Freetype/adjust_schola.cpp
+    ./Plugins/Freetype/adjust_termes.cpp
+    ./Plugins/Freetype/adjust_stix.cpp
     ./Plugins/Freetype/free_type.cpp
+    ./Plugins/Freetype/rubber_assemble_font.cpp
+    ./Plugins/Freetype/rubber_stix_font.cpp
+    ./Plugins/Freetype/rubber_unicode_font.cpp
+    ./Plugins/Freetype/tt_analyze.cpp
     ./Plugins/Freetype/tt_face.cpp
     ./Plugins/Freetype/tt_file.cpp
     ./Plugins/Freetype/tt_font.cpp
+    ./Plugins/Freetype/tt_tools.cpp
     ./Plugins/Freetype/unicode_font.cpp
+    ./Plugins/Freetype/unicode_math_font.cpp
+    ./Plugins/Ghostscript/ghostscript.cpp
+    ./Plugins/Ghostscript/gs_utilities.cpp
     ./Plugins/Imlib2/imlib2.cpp
     ./Plugins/Ispell/ispell.cpp
+    ./Plugins/LaTeX_Preview/latex_preview.cpp
+    ./Plugins/Metafont/adjust_cmr.cpp
     ./Plugins/Metafont/load_pk.cpp
     ./Plugins/Metafont/load_tex.cpp
     ./Plugins/Metafont/load_tfm.cpp
@@ -287,6 +401,161 @@ SET(TeXmacs_Std_Plugins_SRCS
     ./Plugins/Metafont/tex_rubber_font.cpp
     ./Plugins/Mplayer/mplayer.cpp
     ./Plugins/Openssl/openssl.cpp
+    ./Plugins/Pdf/pdf_hummus_renderer.cpp
+    ./Plugins/Pdf/LibAesgm/aes_modes.c
+    ./Plugins/Pdf/LibAesgm/aes_ni.c
+    ./Plugins/Pdf/LibAesgm/aeskey.c
+    ./Plugins/Pdf/LibAesgm/aestab.c
+    ./Plugins/Pdf/LibAesgm/aescrypt.c
+    ./Plugins/Pdf/PDFWriter/DocumentContext.cpp
+    ./Plugins/Pdf/PDFWriter/PDFDocumentHandler.cpp
+    ./Plugins/Pdf/PDFWriter/PDFParser.cpp
+    ./Plugins/Pdf/PDFWriter/CFFFileInput.cpp
+    ./Plugins/Pdf/PDFWriter/AbstractContentContext.cpp
+    ./Plugins/Pdf/PDFWriter/CFFEmbeddedFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/Type1ToCFFEmbeddedFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/PDFWriter.cpp
+    ./Plugins/Pdf/PDFWriter/CharStringType2Interpreter.cpp
+    ./Plugins/Pdf/PDFWriter/Type1ToType2Converter.cpp
+    ./Plugins/Pdf/PDFWriter/OpenTypeFileInput.cpp
+    ./Plugins/Pdf/PDFWriter/ObjectsContext.cpp
+    ./Plugins/Pdf/PDFWriter/FreeTypeFaceWrapper.cpp
+    ./Plugins/Pdf/PDFWriter/TrueTypeEmbeddedFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/Type1Input.cpp
+    ./Plugins/Pdf/PDFWriter/JPEGImageHandler.cpp
+    ./Plugins/Pdf/PDFWriter/PDFObjectParser.cpp
+    ./Plugins/Pdf/PDFWriter/JPEGImageParser.cpp
+    ./Plugins/Pdf/PDFWriter/DecryptionHelper.cpp
+    ./Plugins/Pdf/PDFWriter/AbstractWrittenFont.cpp
+    ./Plugins/Pdf/PDFWriter/PNGImageHandler.cpp
+    ./Plugins/Pdf/PDFWriter/PDFModifiedPage.cpp
+    ./Plugins/Pdf/PDFWriter/EncryptionHelper.cpp
+    ./Plugins/Pdf/PDFWriter/CharStringType1Interpreter.cpp
+    ./Plugins/Pdf/PDFWriter/InputPFBDecodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/CharStringType2Flattener.cpp
+    ./Plugins/Pdf/PDFWriter/ANSIFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/MD5Generator.cpp
+    ./Plugins/Pdf/PDFWriter/UnicodeString.cpp
+    ./Plugins/Pdf/PDFWriter/IndirectObjectsReferenceRegistry.cpp
+    ./Plugins/Pdf/PDFWriter/WrittenFontCFF.cpp
+    ./Plugins/Pdf/PDFWriter/ResourcesDictionary.cpp
+    ./Plugins/Pdf/PDFWriter/PDFUsedFont.cpp
+    ./Plugins/Pdf/PDFWriter/CharStringType2Tracer.cpp
+    ./Plugins/Pdf/PDFWriter/XCryptionCommon.cpp
+    ./Plugins/Pdf/PDFWriter/CFFPrimitiveWriter.cpp
+    ./Plugins/Pdf/PDFWriter/PDFParserTokenizer.cpp
+    ./Plugins/Pdf/PDFWriter/WrittenFontTrueType.cpp
+    ./Plugins/Pdf/PDFWriter/UsedFontsRepository.cpp
+    ./Plugins/Pdf/PDFWriter/CIDFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/DescendentFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/InputDCTDecodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/CFFPrimitiveReader.cpp
+    ./Plugins/Pdf/PDFWriter/PDFDocEncoding.cpp
+    ./Plugins/Pdf/PDFWriter/PrimitiveObjectsWriter.cpp
+    ./Plugins/Pdf/PDFWriter/PDFDate.cpp
+    ./Plugins/Pdf/PDFWriter/FreeTypeOpenTypeWrapper.cpp
+    ./Plugins/Pdf/PDFWriter/FreeTypeWrapper.cpp
+    ./Plugins/Pdf/PDFWriter/FontDescriptorWriter.cpp
+    ./Plugins/Pdf/PDFWriter/CharStringType1Tracer.cpp
+    ./Plugins/Pdf/PDFWriter/PDFDocumentCopyingContext.cpp
+    ./Plugins/Pdf/PDFWriter/OpenTypePrimitiveReader.cpp
+    ./Plugins/Pdf/PDFWriter/PFMFileReader.cpp
+    ./Plugins/Pdf/PDFWriter/WinAnsiEncoding.cpp
+    ./Plugins/Pdf/PDFWriter/PDFPageInput.cpp
+    ./Plugins/Pdf/PDFWriter/InputPredictorTIFFSubStream.cpp
+    ./Plugins/Pdf/PDFWriter/InputPredictorPNGOptimumStream.cpp
+    ./Plugins/Pdf/PDFWriter/OutputFlateEncodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/PDFStream.cpp
+    ./Plugins/Pdf/PDFWriter/InputFlateDecodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/CFFANSIFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/InputBufferedStream.cpp
+    ./Plugins/Pdf/PDFWriter/CFFDescendentFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/OutputFlateDecodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/Log.cpp
+    ./Plugins/Pdf/PDFWriter/InputAESDecodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/FreeTypeType1Wrapper.cpp
+    ./Plugins/Pdf/PDFWriter/DictionaryContext.cpp
+    ./Plugins/Pdf/PDFWriter/OutputAESEncodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/PDFTextString.cpp
+    ./Plugins/Pdf/PDFWriter/PageTree.cpp
+    ./Plugins/Pdf/PDFWriter/PageContentContext.cpp
+    ./Plugins/Pdf/PDFWriter/TrueTypeANSIFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/StandardEncoding.cpp
+    ./Plugins/Pdf/PDFWriter/InputAscii85DecodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/ParsedPrimitiveHelper.cpp
+    ./Plugins/Pdf/PDFWriter/StateWriter.cpp
+    ./Plugins/Pdf/PDFWriter/Type2CharStringWriter.cpp
+    ./Plugins/Pdf/PDFWriter/TrueTypeDescendentFontWriter.cpp
+    ./Plugins/Pdf/PDFWriter/OutputBufferedStream.cpp
+    ./Plugins/Pdf/PDFWriter/PDFPage.cpp
+    ./Plugins/Pdf/PDFWriter/TrueTypePrimitiveWriter.cpp
+    ./Plugins/Pdf/PDFWriter/InputFileStream.cpp
+    ./Plugins/Pdf/PDFWriter/PDFDictionaryIterator.cpp
+    ./Plugins/Pdf/PDFWriter/TimersRegistry.cpp
+    ./Plugins/Pdf/PDFWriter/TiledPatternContentContext.cpp
+    ./Plugins/Pdf/PDFWriter/InfoDictionary.cpp
+    ./Plugins/Pdf/PDFWriter/XObjectContentContext.cpp
+    ./Plugins/Pdf/PDFWriter/ArrayOfInputStreamsStream.cpp
+    ./Plugins/Pdf/PDFWriter/InputByteArrayStream.cpp
+    ./Plugins/Pdf/PDFWriter/InputFile.cpp
+    ./Plugins/Pdf/PDFWriter/InputCharStringDecodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/Trace.cpp
+    ./Plugins/Pdf/PDFWriter/InputStringStream.cpp
+    ./Plugins/Pdf/PDFWriter/OutputFile.cpp
+    ./Plugins/Pdf/PDFWriter/PDFPageMergingHelper.cpp
+    ./Plugins/Pdf/PDFWriter/InputStreamSkipperStream.cpp
+    ./Plugins/Pdf/PDFWriter/PDFObject.cpp
+    ./Plugins/Pdf/PDFWriter/CatalogInformation.cpp
+    ./Plugins/Pdf/PDFWriter/OutputStringBufferStream.cpp
+    ./Plugins/Pdf/PDFWriter/TrailerInformation.cpp
+    ./Plugins/Pdf/PDFWriter/OutputStreamTraits.cpp
+    ./Plugins/Pdf/PDFWriter/InputStringBufferStream.cpp
+    ./Plugins/Pdf/PDFWriter/OutputFileStream.cpp
+    ./Plugins/Pdf/PDFWriter/RC4.cpp
+    ./Plugins/Pdf/PDFWriter/PDFRectangle.cpp
+    ./Plugins/Pdf/PDFWriter/StateReader.cpp
+    ./Plugins/Pdf/PDFWriter/CMYKRGBColor.cpp
+    ./Plugins/Pdf/PDFWriter/InputLimitedStream.cpp
+    ./Plugins/Pdf/PDFWriter/PDFFormXObject.cpp
+    ./Plugins/Pdf/PDFWriter/TiffUsageParameters.cpp
+    ./Plugins/Pdf/PDFWriter/PDFTiledPattern.cpp
+    ./Plugins/Pdf/PDFWriter/PDFDictionary.cpp
+    ./Plugins/Pdf/PDFWriter/OutputRC4XcodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/InputRC4XcodeStream.cpp
+    ./Plugins/Pdf/PDFWriter/UppercaseSequance.cpp
+    ./Plugins/Pdf/PDFWriter/GraphicStateStack.cpp
+    ./Plugins/Pdf/PDFWriter/PDFImageXObject.cpp
+    ./Plugins/Pdf/PDFWriter/PDFArray.cpp
+    ./Plugins/Pdf/PDFWriter/Ascii7Encoding.cpp
+    ./Plugins/Pdf/PDFWriter/PSBool.cpp
+    ./Plugins/Pdf/PDFWriter/PDFStreamInput.cpp
+    ./Plugins/Pdf/PDFWriter/GraphicState.cpp
+    ./Plugins/Pdf/PDFWriter/PDFCosDict.cpp
+    ./Plugins/Pdf/PDFWriter/JPEGImageInformation.cpp
+    ./Plugins/Pdf/PDFWriter/Timer.cpp
+    ./Plugins/Pdf/PDFWriter/PDFLiteralString.cpp
+    ./Plugins/Pdf/PDFWriter/RefCountObject.cpp
+    ./Plugins/Pdf/PDFWriter/PDFArrayIterator.cpp
+    ./Plugins/Pdf/PDFWriter/PDFHexString.cpp
+    ./Plugins/Pdf/PDFWriter/PDFIndirectObjectReference.cpp
+    ./Plugins/Pdf/PDFWriter/PDFInteger.cpp
+    ./Plugins/Pdf/PDFWriter/PDFName.cpp
+    ./Plugins/Pdf/PDFWriter/PDFBoolean.cpp
+    ./Plugins/Pdf/PDFWriter/PDFReal.cpp
+    ./Plugins/Pdf/PDFWriter/PDFSymbol.cpp
+    ./Plugins/Pdf/PDFWriter/EncryptionOptions.cpp
+    ./Plugins/Pdf/PDFWriter/PDFParsingOptions.cpp
+    ./Plugins/Pdf/PDFWriter/PDFCosArray.cpp
+    ./Plugins/Pdf/PDFWriter/PDFNull.cpp
+    ./Plugins/MacOS/HIDRemote.m
+    #./Plugins/MacOS/mac_app.mm
+    ./Plugins/MacOS/mac_images.mm
+    ./Plugins/MacOS/mac_spellservice.mm
+    ./Plugins/MacOS/mac_utilities.mm
+    ./Plugins/Unix/unix_sys_utils.cpp
+    ./Plugins/Sqlite3/sqlite3.cpp
+    ./Plugins/Updater/tm_updater.cpp
+    ./Plugins/Updater/tm_winsparkle.cpp
 )
 
 ### --------------------------------------------------------------------
@@ -330,19 +599,30 @@ SET(TeXmacs_Widkit_SRCS
     ./Plugins/Widkit/Button/button_widget.cpp
     ./Plugins/Widkit/Button/popup_button.cpp
     ./Plugins/Widkit/Button/popup_widget.cpp
+    ./Plugins/Widkit/Button/toggle_widget.cpp
+    ./Plugins/Widkit/Composite/aligned_widget.cpp
     ./Plugins/Widkit/Composite/array_widget.cpp
     ./Plugins/Widkit/Composite/composite_widget.cpp
+    ./Plugins/Widkit/Composite/extend_widget.cpp
     ./Plugins/Widkit/Composite/list_widget.cpp
+    ./Plugins/Widkit/Composite/minibar_widget.cpp
+    ./Plugins/Widkit/Composite/split_widget.cpp
     ./Plugins/Widkit/Composite/switch_widget.cpp
+    ./Plugins/Widkit/Composite/tabs_widget.cpp
     ./Plugins/Widkit/Composite/tile_widget.cpp
     ./Plugins/Widkit/Event/attribute_event.cpp
     ./Plugins/Widkit/Event/basic_event.cpp
     ./Plugins/Widkit/Event/composite_event.cpp
     ./Plugins/Widkit/Event/scroll_event.cpp
+    ./Plugins/Widkit/Input/choice_widget.cpp
+    ./Plugins/Widkit/Input/enum_widget.cpp
     ./Plugins/Widkit/Input/input_widget.cpp
     ./Plugins/Widkit/Input/inputs_list_widget.cpp
     ./Plugins/Widkit/Misc/balloon_widget.cpp
+    ./Plugins/Widkit/Misc/color_picker_widget.cpp
     ./Plugins/Widkit/Misc/file_chooser_widget.cpp
+    ./Plugins/Widkit/Misc/ink_widget.cpp
+    ./Plugins/Widkit/Misc/refresh_widget.cpp
     ./Plugins/Widkit/Misc/texmacs_widget.cpp
     ./Plugins/Widkit/Misc/wait_widget.cpp
     ./Plugins/Widkit/Output/glue_widget.cpp
@@ -363,8 +643,13 @@ SET(TeXmacs_X11_SRCS
     ./Plugins/X11/x_loop.cpp
     ./Plugins/X11/x_shadow.cpp
     ./Plugins/X11/x_window.cpp
+    ./Plugins/X11/x_picture.cpp
     ./Plugins/Ghostscript/ghostscript.cpp
 )
+
+# Windows support
+# ./Plugins/Windows/mingw_sys_utils.cpp
+# ./Plugins/Windows/spawn.cpp
 
 
 ### --------------------------------------------------------------------
@@ -372,24 +657,56 @@ SET(TeXmacs_X11_SRCS
 ### --------------------------------------------------------------------
 
 SET(TeXmacs_Qt_SRCS
+    ./Plugins/Qt/qt_chooser_widget.cpp
+    ./Plugins/Qt/qt_color_picker_widget.cpp
     ./Plugins/Qt/qt_dialogues.cpp
+    ./Plugins/Qt/qt_font.cpp
     ./Plugins/Qt/qt_gui.cpp
     ./Plugins/Qt/qt_menu.cpp
+    ./Plugins/Qt/qt_picture.cpp
+    ./Plugins/Qt/qt_pipe_link.cpp
+    ./Plugins/Qt/qt_printer_widget.cpp
     ./Plugins/Qt/qt_renderer.cpp
+    ./Plugins/Qt/qt_simple_widget.cpp
+    ./Plugins/Qt/qt_sys_utils.cpp
+    ./Plugins/Qt/qt_tm_widget.cpp
+    ./Plugins/Qt/qt_ui_element.cpp
     ./Plugins/Qt/qt_utilities.cpp
     ./Plugins/Qt/qt_widget.cpp
+    ./Plugins/Qt/qt_window_widget.cpp
+    ./Plugins/Qt/QTMFileDialog.cpp
+    ./Plugins/Qt/QTMGuiHelper.cpp
+    ./Plugins/Qt/QTMInteractivePrompt.cpp
     ./Plugins/Qt/QTMMenuHelper.cpp
+    ./Plugins/Qt/QTMPipeLink.cpp
+    ./Plugins/Qt/QTMPrintDialog.cpp
+    ./Plugins/Qt/QTMPrinterSettings.cpp
+    ./Plugins/Qt/QTMScrollView.cpp
+    ./Plugins/Qt/QTMSockets.cpp
     ./Plugins/Qt/QTMStyle.cpp
+    ./Plugins/Qt/QTMTreeModel.cpp
     ./Plugins/Qt/QTMWidget.cpp
+    ./Plugins/Qt/QTMWindow.cpp
+    ./Plugins/Qt/WINPrint.cpp
 )
 
 SET(TeXmacs_Qt_Moc_HDRS
+    ./Plugins/Qt/QTMApplication.hpp
+    ./Plugins/Qt/QTMFileDialog.hpp
     ./Plugins/Qt/QTMGuiHelper.hpp
     ./Plugins/Qt/QTMInteractiveInputHelper.hpp
+    ./Plugins/Qt/QTMInteractivePrompt.hpp
     ./Plugins/Qt/QTMMenuHelper.hpp
+    ./Plugins/Qt/QTMPipeLink.hpp
+    ./Plugins/Qt/QTMPrintDialog.hpp
+    ./Plugins/Qt/QTMPrinterSettings.hpp
+    ./Plugins/Qt/QTMScrollView.hpp
+    ./Plugins/Qt/QTMSockets.hpp
     ./Plugins/Qt/QTMStyle.hpp
+    ./Plugins/Qt/QTMTreeModel.hpp
     ./Plugins/Qt/QTMWidget.hpp
-    ./Plugins/Qt/QTMApplication.hpp
+    ./Plugins/Qt/QTMWindow.hpp
+    ./Plugins/Qt/WINPrint.hpp
 )
 
 
@@ -419,10 +736,10 @@ SET(TeXmacs_Cocoa_SRCS
 
 SET(TeXmacs_All_SRCS ${TeXmacs_Base_SRCS} ${TeXmacs_Std_Plugins_SRCS})
 
-SET(TeXmacs_Libraries ${Guile_LIBRARIES} ${FREETYPE_LIBRARIES})
+SET(TeXmacs_Libraries ${Guile_LIBRARIES} ${FREETYPE_LIBRARIES} ${ZLIB_LIBRARIES} ${JPEG_LIBRARIES} -lpng -lpthread)
 
 SET(TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs} 
-  ${Guile_INCLUDE_DIRS} ${Freetype_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
+  ${Guile_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
   ${IMLIB2_INCLUDE_DIR}
 )
 
@@ -440,12 +757,11 @@ IF(TEXMACS_GUI STREQUAL "Qt")
   ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")
 
   # After this call, TeXmacs_Qt_Moc_SRCS = moc_QTMWidget.cpp ...
-  QT4_WRAP_CPP(TeXmacs_Qt_Moc_SRCS ${TeXmacs_Qt_Moc_HDRS})
+  QT5_WRAP_CPP(TeXmacs_Qt_Moc_SRCS ${TeXmacs_Qt_Moc_HDRS})
 
   SET(TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Qt_SRCS} ${TeXmacs_Qt_Moc_SRCS})
   SET(TeXmacs_Libraries ${TeXmacs_Libraries}  ${QT_LIBRARIES})
   SET(TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs} ${QT_INCLUDES})
-
 
 ELSEIF(TEXMACS_GUI STREQUAL "Aqua")
 
@@ -465,12 +781,19 @@ ELSE(TEXMACS_GUI STREQUAL "Qt")
 
 ENDIF(TEXMACS_GUI STREQUAL "Qt")
 
+if (APPLE)
+  SET(TeXmacs_Libraries ${TeXmacs_Libraries} "-framework Carbon -framework Foundation -framework IOKit -framework Cocoa -framework AppKit -framework CoreData")
+endif (APPLE)
+
+if (LINKED_SQLITE3)
+  SET(TeXmacs_Libraries ${TeXmacs_Libraries} "-lsqlite3")
+endif (LINKED_SQLITE3)
+
 
 
 ### --------------------------------------------------------------------
 ### initialize executable target with all the infos collected so far
 ### --------------------------------------------------------------------
-
 
 INCLUDE_DIRECTORIES(${TeXmacs_Include_Dirs}) 
 
@@ -489,5 +812,4 @@ SET_TARGET_PROPERTIES(${TeXmacs_binary_name}
     RUNTIME_OUTPUT_DIRECTORY ${TEXMACS_BINARY_DIR}
 )
 
-
-
+install(TARGETS ${TeXmacs_binary_name} DESTINATION lib/texmacs/TeXmacs/bin)

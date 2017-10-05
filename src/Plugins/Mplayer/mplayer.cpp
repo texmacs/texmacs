@@ -11,8 +11,6 @@
 
 #include "Mplayer/mplayer.hpp"
 #include "file.hpp"
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
 
 bool
 supports_mplayer () {

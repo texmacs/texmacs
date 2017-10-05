@@ -19,7 +19,7 @@ IF(GUILECONFIG_EXECUTABLE)
 
     EXECUTE_PROCESS(COMMAND ${GUILECONFIG_EXECUTABLE}  link 
       OUTPUT_VARIABLE _guileconfig_link )
-
+    
     EXECUTE_PROCESS(COMMAND ${GUILECONFIG_EXECUTABLE}  compile 
       OUTPUT_VARIABLE _guileconfig_compile )
 
@@ -33,7 +33,6 @@ IF(GUILECONFIG_EXECUTABLE)
   
     
     ## parsing  
-          
             
     STRING(REGEX MATCHALL "[-][L]([^ ;])+" _guile_libdirs_with_prefix "${_guileconfig_link}" )
     STRING(REGEX MATCHALL "[-][l]([^ ;])+" _guile_libraries_with_prefix "${_guileconfig_link}" )
@@ -41,7 +40,7 @@ IF(GUILECONFIG_EXECUTABLE)
     STRING(REGEX MATCHALL "[-][D]([^ ;])+" _guile_definitions_with_prefix "${_guileconfig_compile}" )
     STRING(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" Guile_VERSION_STRING "${_guileconfig_version}")
       
-    STRING(REPLACE "-L" " " _guile_libdirs ${_guile_libdirs_with_prefix} )
+    STRING(REPLACE "-L" " " _guile_libdirs ${_guile_libdirs_with_prefix} "")
     STRING(REPLACE "-l" " " _guile_lib_list "${_guile_libraries_with_prefix}" )
     STRING(REPLACE "-I" " " _guile_includes "${_guile_includes_with_prefix}" )
 #    SEPARATE_ARGUMENTS(_guile_libdirs)
