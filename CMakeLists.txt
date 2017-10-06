@@ -375,8 +375,6 @@ if (APPLE)
   set(OS_MACOS 1)
 endif (APPLE)
 configure_file(${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
-set(CMAKE_CXX_FLAGS "-Wno-deprecated-register -include config.h")
-
 
 set(CONFIG_STD_SETENV "#define STD_SETENV")
 set(tm_orig ${TEXMACS_SOURCE_DIR})
@@ -397,16 +395,12 @@ set(datarootdir ${prefix}/share)
 set(datadir ${datarootdir})
 set(tmdata ${datarootdir}/TeXmacs)
 set(tmbin ${exec_prefix}/lib/texmacs/TeXmacs)
-configure_file(misc/scripts/texmacs.in ${TEXMACS_BINARY_DIR}/misc/script/texmacs @ONLY)
-configure_file(misc/scripts/fig2ps.in ${TEXMACS_BINARY_DIR}/misc/scripts/fig2ps @ONLY)
-
-configure_file(misc/man/texmacs.1.in ${TEXMACS_SOURCE_DIR}/misc/man/texmacs.1 @ONLY)
 
 ### --------------------------------------------------------------------
 ### Set the executable target name and other stuff
 ### --------------------------------------------------------------------
 
-SET(TeXmacs_binary_name "texmacs.bin")
+set(TeXmacs_binary_name "texmacs.bin")
 
 # If we are build a "Debug" version then put that on the built Application
 # SET (EXE_DEBUG_EXTENSION "_debug")
@@ -415,7 +409,9 @@ SET(TeXmacs_binary_name "texmacs.bin")
 ### Compile sources
 ### --------------------------------------------------------------------
 
-ADD_SUBDIRECTORY(src)
+add_subdirectory(src)
+add_subdirectory(plugins)
+add_subdirectory(misc)
 
 ### --------------------------------------------------------------------
 ### Complete bundle if MacOSX
@@ -471,19 +467,3 @@ install(FILES TeXmacs/misc/images/TeXmacs.svg DESTINATION share/icons/gnome/scal
 install(FILES TeXmacs/misc/images/text-texmacs.svg DESTINATION share/icons/gnome/scalable/mimetypes)
 install(FILES TeXmacs/misc/mime/texmacs.xml DESTINATION share/mime/packages)
 install(FILES TeXmacs/misc/pixmaps/TeXmacs.xpm DESTINATION share/pixmaps)
-### share/man
-set(TOOLS "texmacs" "fig2ps")
-set(MAN_SECTION "1")
-foreach(TOOL ${TOOLS})
-  set(TOOL_MANFILE ${CMAKE_CURRENT_SOURCE_DIR}/misc/man/${TOOL}.${MAN_SECTION})
-  set(TOOL_MANFILE_GZ ${CMAKE_CURRENT_BINARY_DIR}/${TOOL}.${MAN_SECTION}.gz)
-  add_custom_command(
-    OUTPUT ${TOOL_MANFILE_GZ}
-    COMMAND gzip -c ${TOOL_MANFILE} > ${TOOL_MANFILE_GZ}
-    MAIN_DEPENDENCY ${TOOL_MANFILE}
-    COMMENT "Building ${TOOL} man page"
-    VERBATIM
-  )
-  add_custom_target(${TOOL}.${MAN_SECTION} ALL DEPENDS ${TOOL_MANFILE_GZ})
-  install(FILES ${TOOL_MANFILE_GZ} DESTINATION share/man/man${MAN_SECTION})
-endforeach(TOOL)

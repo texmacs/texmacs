@@ -1,0 +1,5 @@
+add_subdirectory(axiom)
+add_subdirectory(graphviz)
+add_subdirectory(maple)
+add_subdirectory(r)
+add_subdirectory(shell)

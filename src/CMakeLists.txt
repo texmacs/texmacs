@@ -1,12 +1,10 @@
-
-
 # set some variables containing source file lists and project include dirs (excluding external libraries)
 
 ### --------------------------------------------------------------------
 ### the include dirs
 ### --------------------------------------------------------------------
 
-SET(TeXmacs_Include_Dirs
+set (TeXmacs_Include_Dirs
     ./Data/Convert
     ./Data/Document
     ./Data/Drd
@@ -55,13 +53,16 @@ SET(TeXmacs_Include_Dirs
     ${TEXMACS_BINARY_DIR}/src/System/ 
 )
 
+set (CMAKE_CXX_FLAGS "-Wno-deprecated-register -include config.h")
+
+
 
 ### --------------------------------------------------------------------
 ### the main sources
 ### --------------------------------------------------------------------
 
 
-SET(TeXmacs_Base_SRCS 
+set (TeXmacs_Base_SRCS
     ./Data/Convert/BibTeX/conservative_bib.cpp
     ./Data/Convert/BibTeX/parsebib.cpp
     ./Data/Convert/Coq/parse_vernac.cpp
