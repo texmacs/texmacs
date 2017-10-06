@@ -13,6 +13,7 @@
 #define IMLIB2_X11TEXMACS
 #endif
 
+#include "config.h"
 #include "Imlib2/imlib2.hpp"
 #include "dyn_link.hpp"
 #include "hashmap.hpp"

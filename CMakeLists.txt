@@ -41,6 +41,46 @@ SET(STABLE_RELEASE "1")
 
 set(CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
 
+
+### --------------------------------------------------------------------
+### Options
+### --------------------------------------------------------------------
+option (QTPIPES "use Qt pipes" ON)
+
+option (USE_SQLITE3 "Use SQLite3" ON)
+if (USE_SQLITE3)
+    find_package (SQLite3)
+    option (LINKED_SQLITE3 "Use Linked SQLite3" ON)
+endif (USE_SQLITE3)
+
+option (USE_FREETYPE "use Freetype" ON)
+if (USE_FREETYPE)
+    find_package (Freetype)
+    option (LINKED_FREETYPE "linked Freetype" ON)
+endif (USE_FREETYPE)
+
+option (USE_CAIRO "use Cairo" OFF)
+if (USE_CAIRO)
+    find_package(Cairo)
+    option (LINKED_CAIRO "linked Cairo" ON)
+endif (USE_CAIRO)
+
+option (USE_IMLIB2 "use Imlib2" OFF)
+if (USE_IMLIB2)
+    find_package(Imlib2)
+    option (LINKED_IMLIB2 "linked Imlib2" ON)
+endif (USE_IMLIB2)
+
+option (USE_SPARKLE "use Sparkle" OFF)
+
+option(PDFHUMMUS_NO_TIFF "Disable TIFF in PDF Hummus" ON)
+
+if (APPLE)
+  set(MACOSX_EXTENSIONS 1)
+  set(OS_MACOS 1)
+endif (APPLE)
+
+
 ### --------------------------------------------------------------------
 ### Include standard modules
 ### --------------------------------------------------------------------
@@ -194,14 +234,10 @@ set(PACKAGE_VERSION 1)
 ### --------------------------------------------------------------------
 
 find_package(Guile REQUIRED)
+find_package(PNG)
 find_package(Iconv)
-find_package(Freetype)
-set(LINKED_FREETYPE 1)
-set(USE_FREETYPE 1)
 find_package(ZLIB)
 find_package(JPEG)
-#FIND_PACKAGE(Cairo)
-#FIND_PACKAGE(Imlib2)
 #FIND_PACKAGE(Axel)
 
 
@@ -360,20 +396,6 @@ set(PDF_RENDERER 1)
 set(SIZEOF_VOID_P 8)
 set(STDC_HEADERS 1)
 set(USE_STACK_TRACE 1)
-
-option(QTPIPES "use Qt pipes" ON)
-
-option(USE_SQLITE3 "Use SQLite3" ON)
-if (USE_SQLITE3)
-  option(LINKED_SQLITE3 "Use Linked SQLite3" ON)
-endif (USE_SQLITE3)
-
-option(PDFHUMMUS_NO_TIFF "Disable TIFF in PDF Hummus" ON)
-
-if (APPLE)
-  set(MACOSX_EXTENSIONS 1)
-  set(OS_MACOS 1)
-endif (APPLE)
 configure_file(${TEXMACS_SOURCE_DIR}/src/System/config.h.cmake ${TEXMACS_BINARY_DIR}/src/System/config.h)
 
 set(CONFIG_STD_SETENV "#define STD_SETENV")

@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "config.h"
 #include "free_type.hpp"
 #include "dyn_link.hpp"
 

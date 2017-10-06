@@ -13,6 +13,7 @@
 #include "dyn_link.hpp"
 #include "hashmap.hpp"
 #include "analyze.hpp"
+#include "config.h"
 
 #ifdef USE_SQLITE3
 

@@ -10,6 +10,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "config.h"
 #include "load_tex.hpp"
 #include "path.hpp"
 #include "boot.hpp"
