@@ -93,7 +93,9 @@ prog_language (string s) {
     return make (language, s, tm_new<scilab_language_rep> (s));
   if (s == "python")
     return make (language, s, tm_new<python_language_rep> (s));
-  if ( s== "r")
+  if (s == "scala")
+    return make (language, s, tm_new<scala_language_rep> (s));
+  if (s == "r")
     return make (language, s, tm_new<r_language_rep> (s));
   return make (language, s, tm_new<verb_language_rep> (s));
 }

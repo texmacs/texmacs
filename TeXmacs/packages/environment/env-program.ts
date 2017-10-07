@@ -146,6 +146,10 @@
 
   <assign|python|<macro|<name|Python>>>
 
+  <assign|scala|<macro|<name|Scala>>>
+
+  <assign|r|<macro|<name|R>>>
+
   <assign|shell|<macro|body|<with|mode|prog|prog-language|shell|font-family|rm|<arg|body>>>>
 
   <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|font-family|rm|<arg|body>>>>
@@ -153,6 +157,10 @@
   <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|font-family|rm|<arg|body>>>>
 
   <assign|python|<macro|body|<with|mode|prog|prog-language|python|font-family|rm|<arg|body>>>>
+
+  <assign|scala|<macro|body|<with|mode|prog|prog-language|scala|font-family|rm|<arg|body>>>>
+
+  <assign|r|<macro|body|<with|mode|prog|prog-language|r|font-family|rm|<arg|body>>>>
 
   <assign|scilab|<macro|body|<with|mode|prog|prog-language|scilab|font-family|rm|<arg|body>>>>
 
@@ -203,6 +211,18 @@
   <assign|python-code|<\macro|body>
     <\pseudo-code>
       <python|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|scala-code|<\macro|body>
+    <\pseudo-code>
+      <scala|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|r-code|<\macro|body>
+    <\pseudo-code>
+      <r|<arg|body>>
     </pseudo-code>
   </macro>>
 
