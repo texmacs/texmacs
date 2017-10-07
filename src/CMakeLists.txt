@@ -256,6 +256,7 @@ set (TeXmacs_Base_SRCS
     ./System/Language/python_language.cpp
     ./System/Language/r_language.cpp
     ./System/Language/scheme_language.cpp
+    ./System/Language/scala_language.cpp
     ./System/Language/scilab_language.cpp
     ./System/Language/text_language.cpp
     ./System/Language/verb_language.cpp
