@@ -45,6 +45,10 @@ set(CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
 ### --------------------------------------------------------------------
 ### Options
 ### --------------------------------------------------------------------
+IF(NOT TEXMACS_GUI)
+  SET(TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+ENDIF(NOT TEXMACS_GUI)
+
 option (QTPIPES "use Qt pipes" ON)
 
 option (USE_SQLITE3 "Use SQLite3" ON)
@@ -311,14 +315,10 @@ ENDIF(_guile_dots_test)
 
 SET(GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 
-IF(NOT TEXMACS_GUI)
-  SET(TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
-ENDIF(NOT TEXMACS_GUI)
+if (TEXMACS_GUI STREQUAL "Qt")
 
-IF(TEXMACS_GUI STREQUAL "Qt")
-
-  FIND_PACKAGE(Qt5 5.9.1 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
-  SET(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+  find_package (Qt5 5.9.1 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
+  set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
 
   IF(WIN32)
    SET(GUI_TYPE WIN32)
@@ -330,13 +330,13 @@ IF(TEXMACS_GUI STREQUAL "Qt")
     ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5PrintSupport_INCLUDE_DIRS}
   )
+
   add_definitions("-DQTTEXMACS")
-  SET(QTTEXMACS 1)
-  #SET(NO_FAST_ALLOC 1)
+  set (QTTEXMACS 1)
+
   SET(CONFIG_GUI "QT")
   SET(CONFIG_QT "Qt")
   MESSAGE(STATUS "Enabling experimental  Qt port")
-
 ELSEIF(TEXMACS_GUI STREQUAL "Aqua")
 
   IF (APPLE)
@@ -357,9 +357,16 @@ ELSEIF(TEXMACS_GUI STREQUAL "Aqua")
     
   ENDIF (APPLE)
 
-ELSE(TEXMACS_GUI STREQUAL "Qt")
+else (TEXMACS_GUI STREQUAL "Qt")
 
-  FIND_PACKAGE(X11)
+  find_package (X11)
+
+  include_directories(
+    ${X11_INCLUDE_DIR}
+  )
+
+  add_definitions("-DX11TEXMACS")
+  set (X11TEXMACS 1)
 
   SET(CONFIG_X11 "X11 Widkit Ghostscript")
   SET(CONFIG_GUI "X11")
@@ -367,7 +374,7 @@ ELSE(TEXMACS_GUI STREQUAL "Qt")
 
   MESSAGE(STATUS "Enabling standard X11 interface")
 
-ENDIF(TEXMACS_GUI STREQUAL "Qt")
+endif (TEXMACS_GUI STREQUAL "Qt")
 
 ### --------------------------------------------------------------------
 ### Debugging options
