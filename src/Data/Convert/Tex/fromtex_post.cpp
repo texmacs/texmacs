@@ -1785,7 +1785,7 @@ is_verbatim (tree t) {
   return is_compound (t, "cpp-code") || is_compound (t, "mmx-code")   ||
          is_compound (t, "scm-code") || is_compound (t, "shell-code") ||
          is_compound (t, "code")     || is_compound (t, "verbatim")   ||
-         is_compound (t, "scilab-code") ||
+         is_compound (t, "scilab-code") || is_compound (t, "scala-code") ||
          is_compound (t, "latex_preview") ||
          is_compound (t, "picture-mixed");
 }

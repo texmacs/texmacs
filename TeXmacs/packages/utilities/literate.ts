@@ -115,6 +115,12 @@
     </python>>
   </macro>>
 
+  <assign|scala-chunk|<\macro|name|prev|next|body>
+    <generic-chunk|<arg|name>|<arg|prev>|<arg|next>|<\scala>
+      <arg|body>
+    </scala>>
+  </macro>>
+
   <assign|scilab-chunk|<\macro|name|prev|next|body>
     <generic-chunk|<arg|name>|<arg|prev>|<arg|next>|<\scilab>
       <arg|body>
