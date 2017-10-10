@@ -1929,6 +1929,10 @@
          (begin
            (display* "TeXmacs] lost <with> in verbatim content: " (cDr x) "\n")
            (tmtex-tt (cAr x))))
+        ((func? x 'math)
+         (begin
+           (display* "TeXmacs] lost <math> in verbatim content: " (cDr x) "\n")
+           (tmtex-tt (cAr x))))
 	(else
           (begin
 	    (display* "TeXmacs] non converted verbatim content: " x "\n")
