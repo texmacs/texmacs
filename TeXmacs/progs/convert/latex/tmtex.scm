@@ -2721,6 +2721,7 @@
   ((:or script-input script-output) (,tmtex-script-inout 4))
   (really-tiny (,tmtex-tiny 1))
   (very-tiny (,tmtex-tiny 1))
+  (tiny (,tmtex-tiny 1))
   (really-small (,tmtex-scriptsize 1))
   (very-small (,tmtex-scriptsize 1))
   (smaller (,tmtex-footnotesize 1))
