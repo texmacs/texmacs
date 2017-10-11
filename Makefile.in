@@ -536,7 +536,7 @@ WINDOWS_BUNDLE: TEXMACS
 	$(CP) -u TeXmacs/* $(WINDOWS_BUILD_DIR)/.
 	$(RM) -r $(WINDOWS_BUILD_BIN_DIR)/texmacs
 	$(MV) $(WINDOWS_BUILD_BIN_DIR)/texmacs.bin $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe
-	$(CP) -u $(WINDOWS_PACKAGE_SRC)/*.{exe,dll} $(WINDOWS_BUILD_BIN_DIR)/
+	[[ -n "@TMREPO@" ]] && cp @TMREPO@/windows/* $(WINDOWS_BUILD_BIN_DIR) || :
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
 	find $$(@GUILE_CONFIG@ info pkgdatadir) -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
