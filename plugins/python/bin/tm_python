@@ -21,7 +21,7 @@ import csv   # Used to parse scheme forms
 from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
 from io        import open
-from cStringIO import StringIO
+from io        import StringIO
 
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
@@ -51,7 +51,7 @@ def texmacs_out(out_str):
     Output results back to TeXmacs, with the DATA_BEGIN,
     DATA_END control characters."""
 
-    print DATA_BEGIN + out_str + DATA_END
+    print(DATA_BEGIN + out_str + DATA_END)
 
 def compose_output(data):
     """Do some parsing on the output according to its type.
@@ -313,7 +313,7 @@ def compile_help (text):
     except Exception as e:
         out["file"] = 'Unable to access the code for "%s": %s' % (text, e)
 
-    return dict (map (lambda (k, v): (k, as_scm_string (v)), out.iteritems()))
+    return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.iteritems()))
 
 ###############################################################################
 ## Session start
@@ -336,7 +336,10 @@ else:
 CaptureStdout.capture (text, my_globals)
 
 # Reopen stdout unbufferd (flush after each stdout.write() and print)
-sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
+if py_ver == 3:
+    sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
+else:
+    sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 texmacs_out ("verbatim:Python " + sys.version + 
              "\nPython plugin for TeXmacs.\n" +
