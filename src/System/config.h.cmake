@@ -99,6 +99,8 @@
 
 #cmakedefine OS_MACOS 1
 
+#cmakedefine MACOS_QT_MENU 1
+
 #cmakedefine PDFHUMMUS_NO_TIFF 1
 
 /* Disable fast memory allocator */

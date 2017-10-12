@@ -82,6 +82,7 @@ option(PDFHUMMUS_NO_TIFF "Disable TIFF in PDF Hummus" ON)
 if (APPLE)
   set(MACOSX_EXTENSIONS 1)
   set(OS_MACOS 1)
+  option(MACOS_QT_MENU "Disable MacOS native menu" ON)
 endif (APPLE)
 
 
