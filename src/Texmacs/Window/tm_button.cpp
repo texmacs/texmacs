@@ -64,6 +64,8 @@ initialize_environment (edit_env& env, tree doc, drd_info& drd) {
   for (int i=0; i<N(init); i++)
     if (is_func (init[i], ASSOCIATE, 2) && is_atomic (init[i][0]))
       env->write (init[i][0]->label, init[i][1]);
+  // env->write (DPI, "720");
+  // env->write (ZOOM_FACTOR, "1.2");
   // env->write (PAGE_TYPE, "a5");
   env->update ();
 }
@@ -100,10 +102,10 @@ class box_widget_rep: public simple_widget_rep {
   bool   transparent;
   double zoomf;
   double magf;
-  int    dw, dh;
+  SI     dw, dh;
 
 public:
-  box_widget_rep (box b, color bg, bool trans, double zoom, int dw, int dh);
+  box_widget_rep (box b, color bg, bool trans, double zoom, SI dw, SI dh);
   operator tree ();
 
   void handle_get_size_hint (SI& w, SI& h);
@@ -111,7 +113,7 @@ public:
 };
 
 box_widget_rep::box_widget_rep
-  (box b2, color bg2, bool trans2, double zoom, int dw2, int dh2):
+  (box b2, color bg2, bool trans2, double zoom, SI dw2, SI dh2):
     simple_widget_rep (), b (b2),
     bg (bg2), transparent (trans2),
     zoomf (zoom), magf (zoom / std_shrinkf),
@@ -216,5 +218,5 @@ texmacs_output_widget (tree doc, tree style) {
 #else
     col= light_grey;
 #endif
-  return widget (tm_new<box_widget_rep> (b, col, false, 1.0, 0, 0));
+  return widget (tm_new<box_widget_rep> (b, col, false, 1.2, 0, 0));
 }
