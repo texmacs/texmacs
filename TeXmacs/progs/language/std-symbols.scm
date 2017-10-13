@@ -654,8 +654,8 @@
   ;;  (:penalty invalid)
   ;;  (:spacing none default)
   ;;  "arccos" "arcsin" "arctan" "cos" "cosh" "cot" "coth" "csc"
-  ;;  "deg" "det" "dim" "exp" "gcd" "hom" "ker" "Pr"
-  ;;  "lg" "ln" "log" "sec" "sin" "sinh" "tan" "tanh")
+  ;;  "deg" "det" "dim" "exp" "hom" "ker" "lg" "ln" "log"
+  ;;  "Pr" "sec" "sin" "sinh" "tan" "tanh")
 
   (define Unary-operator-symbol
     Unary-operator-glyph-symbol
@@ -672,7 +672,8 @@
     (:penalty invalid)
     (:spacing none default)
     (:limits display)
-    "inf" "lim" "liminf" "limsup" "max" "min" "sup")
+    "gcd" "gcrd" "inf" "lclm" "lcm" "lim"
+    "liminf" "limsup" "max" "min" "statlim" "sup")
 
   (define Prefix-symbol
     Not-symbol
