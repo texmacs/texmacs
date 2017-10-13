@@ -31,7 +31,7 @@
   language.
 
   For the first two features, the simplicity of the parenthesized notation
-  used by <value|scheme> \ is also an advantage. Indeed, consider the
+  used by <value|scheme> is also an advantage. Indeed, consider the
   following fragment of the definition of the <menu|File> menu:
 
   <\scheme-fragment>

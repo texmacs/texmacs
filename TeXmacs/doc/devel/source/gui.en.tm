@@ -12,7 +12,7 @@
   The graphical toolkit used by Edit has two main components: an abstract
   window interface, which is very similar to X Window, and the actual
   toolkit. At this moment an abstract window interface for X Window has been
-  implemented, but others might be added in the feature.
+  implemented, but others might be added in the future.
 
   The abstract window interface consists of two main classes:
   <verbatim|display> and <verbatim|window>. The <verbatim|display> class is

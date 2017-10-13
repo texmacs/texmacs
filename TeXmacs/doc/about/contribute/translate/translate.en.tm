@@ -8,7 +8,7 @@
   The support of a maximal number of foreign languages is another major
   challenge in which your help would be appreciated. Making the translations
   to support a new language usually requires several days of work. We
-  therefore recommend you to find some friends or collegues who are willing
+  therefore recommend you to find some friends or colleagues who are willing
   to help you.
 
   The procedure for adding a new language is as follows

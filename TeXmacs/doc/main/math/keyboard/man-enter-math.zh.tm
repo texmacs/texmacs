@@ -43,9 +43,9 @@
       <tformat|<table|<row|<cell|<around*|(|e<rsup|sin x>+sin<rsup|>
       e<rsup|x>|)><rprime|'>>|<cell|=>|<cell|<around*|(|e<rsup|sin
       x>|)><rprime|'>+<around*|(|sin e<rsup|x>|)><rprime|'>>>|<row|<cell|>|<cell|=>|<cell|<around*|(|sin
-      x|)><rprime|'>e<rsup|sin x>+<around*|(|e<rsup|x>|)><rprime|'>sin
+      x|)><rprime|'>e<rsup|sin x>+<around*|(|e<rsup|x>|)><rprime|'>cos
       e<rsup|x>>>|<row|<cell|>|<cell|=>|<cell|e<rsup|sin x> cos
-      x\<noplus\>+e<rsup|x> sin e<rsup|x>,>>>>
+      x\<noplus\>+e<rsup|x> cos e<rsup|x>,>>>>
     </eqnarray*>
 
     \<#5728\>\<#8FD9\>\<#4E2A\>\<#4F8B\>\<#5B50\>\<#4E2D\>\<#FF0C\>\<#5927\>\<#591A\>\<#6570\>\<#884C\>\<#7684\>\<#7B2C\>\<#4E00\>\<#5217\>\<#662F\>\<#7A7A\>\<#7740\>\<#7684\>\<#3002\>

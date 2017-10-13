@@ -6,7 +6,7 @@
   <expand|tmdoc-title|Use <TeXmacs>>
 
   One of the best ways to contribute to GNU <apply|TeXmacs> is by using it a
-  lot, talk about it to friends and collegues, and to report me about bugs or
+  lot, talk about it to friends and colleagues, and to report me about bugs or
   other unnatural behaviour. Please mention the fact that you wrote articles
   using <TeXmacs> when submitting them. You can do this by putting the
   <markup|made-by-TeXmacs> tag somewhere inside your title using

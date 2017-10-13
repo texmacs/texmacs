@@ -16,7 +16,7 @@
     that formulas are typeset specially so they do not take too much vertical
     space. For example, limits are always displayed on the right. Limits can
     be displayed below in formulas with <menu|Format|Display style|on>. In
-    formulas, formula style is off by default.
+    formulas, display style is off by default.
 
     <item*|<menu|Insert|Mathematics|Displayed formula> or
     <shortcut|(make-equation*)>>
@@ -46,16 +46,16 @@
     </eqnarray*>
 
     The first column is centered to the right, the second one at the middle
-    and the last one at the left. An other typical use of the
+    and the last one at the left. Another typical use of the
     <markup|eqnarray*> environment is a step by step computation
 
     <\eqnarray*>
       <tformat|<table|<row|<cell|<around*|(|\<mathe\><rsup|sin x>+sin
       \<mathe\><rsup|x>|)><rprime|'>>|<cell|=>|<cell|<around*|(|\<mathe\><rsup|sin
       x>|)><rprime|'>+<around*|(|sin \<mathe\><rsup|x>|)><rprime|'>>>|<row|<cell|>|<cell|=>|<cell|<around|(|sin
-      x|)><rprime|'>*\<mathe\><rsup|sin x>+<around*|(|\<mathe\><rsup|x>|)><rprime|'>*sin
+      x|)><rprime|'>*\<mathe\><rsup|sin x>+<around*|(|\<mathe\><rsup|x>|)><rprime|'>*cos
       \<mathe\><rsup|x>>>|<row|<cell|>|<cell|=>|<cell|\<mathe\><rsup|sin
-      x>*cos x+\<mathe\><rsup|x>*sin \<mathe\><rsup|x>,>>>>
+      x>*cos x+\<mathe\><rsup|x>*cos \<mathe\><rsup|x>,>>>>
     </eqnarray*>
 
     in which many entries of the left column are left open.

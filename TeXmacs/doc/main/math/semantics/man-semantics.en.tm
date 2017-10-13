@@ -41,7 +41,7 @@
     difficult to understand for potential readers of your work.
   </itemize>
 
-  Furthermore, other semantic facilities might be integrated in the feature,
+  Furthermore, other semantic facilities might be integrated in the future,
   such as semantic search and replace, or semantic search on the web.
 
   In order to activate the semantic editing facilities, please toggle

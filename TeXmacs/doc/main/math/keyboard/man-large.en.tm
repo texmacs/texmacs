@@ -10,7 +10,7 @@
   the matching closing bracket ``<math|>)''. You may disable this feature
   using <menu|Edit|Preferences|Keyboard|Automatic brackets|Disable>.
   Attention (see also below): brackets in old documents will be automatically
-  be upgraded to matching brackets.
+  upgraded to matching brackets.
 
   Sometimes, you do not want the closing bracket, or you may want to replace
   it by another closing bracket. No problem: if your cursor is just before

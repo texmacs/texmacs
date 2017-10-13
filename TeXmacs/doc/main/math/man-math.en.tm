@@ -22,7 +22,7 @@
   useful when using formulas as inputs for a computer algebra system. Such
   documents are also less likely to contain ``typos''. Other interesting
   features, such as semantic search and replace, should be developed in the
-  feature.
+  future.
 
   <\traverse>
     <branch|Incorporating mathematical formulas into

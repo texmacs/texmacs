@@ -13,7 +13,7 @@
   Notice that the <tmstyle|tmdoc> style inherits from the <tmstyle|generic>
   style, so you should use macros like <markup|em>, <markup|verbatim>,
   <markup|itemize>, <abbr|etc.> from this style whenever appropriate. In
-  particular, when documentating program code, you should use
+  particular, when documenting program code, you should use
   <menu|Insert|Program|Inline code> and <menu|Insert|Program|Block of code>
   in order to mark such pieces of code.
 

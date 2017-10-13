@@ -100,7 +100,7 @@
   </scm-code>
 
   You can read more about the tags which depend on <scheme> scripts in
-  ``<hlink|Invoking <scheme> scrips from <TeXmacs>
+  ``<hlink|Invoking <scheme> scripts from <TeXmacs>
   markup|overview-start.en.tm#markup-scripts>''.\ 
 
   In the future, the number of options for entering meta-information is
