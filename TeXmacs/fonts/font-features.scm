@@ -450,6 +450,7 @@
 (Snell\ Roundhand Snell\ Roundhand ArtPen Handwritten Italic)
 (Songti\ SC Songti\ SC)
 (Songti\ TC Songti\ TC)
+(Source\ Han\ Sans\ SC Source\ Han\ Sans\ SC)
 (STFangsong STFangsong)
 (STHeiti STHeiti SansSerif)
 (Stix Stix)

@@ -442,6 +442,7 @@ set(TeXmacs_binary_name "texmacs.bin")
 add_subdirectory(src)
 add_subdirectory(plugins)
 add_subdirectory(misc)
+add_subdirectory(TeXmacs)
 
 ### --------------------------------------------------------------------
 ### Complete bundle if MacOSX
@@ -478,8 +479,6 @@ install(FILES  DESTINATION share/TeXmacs/bin
 ### include/
 install(DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 ### share/
-install(DIRECTORY TeXmacs DESTINATION share
-  PATTERN "include" EXCLUDE)
 install(DIRECTORY plugins DESTINATION share/TeXmacs
   PATTERN "bin" EXCLUDE)
 install(FILES TeXmacs/misc/mime/texmacs.applications DESTINATION share/application_registry)
