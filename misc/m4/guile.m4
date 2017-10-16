@@ -162,7 +162,7 @@ AC_DEFUN([LC_GUILE],[
         libguile18) AC_DEFINE(GUILE_HEADER_18, 1, [Guile 1.8 header]) ;;
         *) AC_MSG_WARN([Strange guile header name GUILE_LIB_NAME.h]) ;;
       esac
-      LC_CHECK_LIB([guile],[gh_scm2newstr],[
+      LC_CHECK_LIB([$GUILE_LIB],[gh_scm2newstr],[
         g_success=1
         LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
@@ -183,7 +183,7 @@ AC_DEFUN([LC_GUILE],[
     ])
   ])
   # AC_CHECK_LIB might have completed LIBS we need to complete GUILE_LIBS
-  LC_SCATTER_FLAGS([-lguile ${$0_extralibs}],[GUILE])
+  LC_SCATTER_FLAGS([-l$GUILE_LIB ${$0_extralibs}],[GUILE])
   if [[ ! $g_success ]];then 
     AC_MSG_ERROR([It seems that guile-config does not provide the right parameters.
     Consult the config.log for error details and check your guile installation])
