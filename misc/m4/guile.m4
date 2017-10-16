@@ -95,25 +95,6 @@ AC_DEFUN([LC_WITH_GUILE],[
 # For autodetection of flags required to link statically with Guile
 #-------------------------------------------------------------------
 
-AC_DEFUN(TEXMACS_LINK_GUILE,
-[AC_TRY_LINK([
-#include <guile/gh.h>
-$CONFIG_DOTS
-],[
-  struct dummy {
-    static void my_main (int argc, char** argv) {}
-    static void install_guile () {
-#ifdef DOTS_OK
-      gh_enter (0, NULL, (void (*)(...)) ((void*) my_main));
-#else
-      gh_enter (0, NULL, my_main);
-#endif
-    }
-  };
-  dummy::install_guile ();
-], $1, $2)
-])
-
 AC_DEFUN([LC_GUILE],[
   AC_ARG_WITH(guile,
   AS_HELP_STRING([--with-guile@<:@=DIR@:>@],
@@ -166,18 +147,14 @@ AC_DEFUN([LC_GUILE],[
         g_success=1
         LC_RUN_IFELSE([Guile DOTS], [LM_GUILE_DOTS],[
           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])
-        ],[
-#         LC_MERGE_FLAGS([-fpermissive],[CXXFLAGS])
-#         LC_RUN_IFELSE([Guile DOTS with -fpermissive], [LM_GUILE_DOTS],[
-#         LC_MERGE_FLAGS([-fpermissive],[GUILE_CXXFLAGS])
-#           AC_DEFINE(DOTS_OK, 1, [Defined if ...-style argument passing works])])
         ])
+        AC_MSG_CHECKING(Guile size type)
         AC_RUN_IFELSE([LM_GUILE_SIZE], [
           AC_DEFINE(guile_str_size_t, int, [Guile string size type])
-          AC_MSG_RESULT(checking for Guile size type... int)
+          AC_MSG_RESULT(int)
         ],[
           AC_DEFINE(guile_str_size_t, size_t, [Guile string size type])
-          AC_MSG_RESULT(checking for Guile size type... size_t)
+          AC_MSG_RESULT(size_t)
         ])
       ],[AC_MSG_WARN([Cannot use guile])],[-lintl,-liconv,-ltre],[$0_extralibs])
     ])
