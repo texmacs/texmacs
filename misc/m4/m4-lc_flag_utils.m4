@@ -60,9 +60,12 @@ AC_DEFUN([LC_NORMALIZE_FLAG], [
 # append flag ($1) to ($2)
 # authorize some duplicate according to the pattern
 AC_DEFUN([LC_APPEND_FLAG],[
-  if @<:@@<:@ "$1" =~ $(echo '^(-Wl,|-l)') @:>@@:>@
+  if @<:@@<:@ "$1" =~ $(echo '^-Wl,') @:>@@:>@
   then $2+=" $1"
-  else 
+  elif @<:@@<:@ "$1" =~ $(echo '^-l') @:>@@:>@
+  then STRIP_ALL_ARGS([$2],[$1])
+       $2+=" $1"
+  else
     if @<:@@<:@ "$$2" =~ $(echo "(^|@<:@@<:@:space:@:>@@:>@)$1($|@<:@@<:@:space:@:>@@:>@)") @:>@@:>@
     then AC_MSG_WARN(Drop duplicate flag $1)
     else $2+=" $1"
