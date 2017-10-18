@@ -19,17 +19,31 @@
 
 static string
 gs_executable () {
-#ifdef OS_MINGW
+#ifdef GS_EXE
   static string cmd; // no need to resolve each time
+  
   if (cmd == "") {
-    url gs= resolve_in_path ("gswin32c");
-    if (is_none (gs))
-      gs= url_system (get_env ("TEXMACS_PATH")) * "bin" * "gswin32c";
-    cmd= sys_concretize (gs);
+    url tmp= url_system (get_env ("TEXMACS_PATH"));
+    url gs= tmp * "bin" * tail (url_system (GS_EXE));
+   
+    if (exists (gs)) {
+      putenv (as_charp ("GS_LIB=" * as_string (tmp * GS_LIB | tmp * GS_FONTS, URL_STANDARD)));
+      cmd= sys_concretize (gs);
+    } else {
+      #ifdef OS_MINGW
+       cmd= "gswin32c";
+      #else
+       cmd= "gs";
+      #endif
+    }
   }
   return copy (cmd);
 #else
-  return "gs";
+  #ifdef OS_MINGW
+   return "gswin32c";
+  #else
+   return "gs";
+  #endif
 #endif
 }
 
@@ -379,7 +393,7 @@ tm_gs (url image) {
 
 bool
 gs_check (url doc) {
-  if (!exists_in_path (gs_executable ())) return true;
+  if (!exists (gs_executable ()) && !exists_in_path (gs_executable ())) return true;
   array<string> cmd;
   cmd << gs_executable ();
   cmd << string ("-dNOPAUSE"); cmd << string ("-dBATCH");

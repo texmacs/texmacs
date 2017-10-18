@@ -12,10 +12,10 @@
 /* gs path relative to TEXMACS_PATH */
 #undef GS_EXE
 
-/* gs fonts */
+/* gs fonts relative to TEXMACS_PATH */
 #undef GS_FONTS
 
-/* gs lib */
+/* gs lib path relative to TEXMACS_PATH */
 #undef GS_LIB
 
 /* Guile version */

@@ -11,53 +11,38 @@
 #
 #-------------------------------------------------------------------
 
-AC_DEFUN([LC_WITH_GS],[ 
-AC_PATH_PROGS([GS_EXE], gs gswin32c.exe, [], [${$1:-$PATH}])
-if [[[ "$GS_EXE" == *.exe ]]]
-then AC_PATH_PROG([GS_DLL], gsdll32.dll, [], [${$1:-$PATH}])
-  [[ "$GS_DLL" ]] || unset GS_EXE
-fi
-
-if [[ "$GS_EXE" ]]
-then while read -r l sep p # default path, separator, extra path
-    do
-      case $l in
-      (/*/ghostscript*/lib) GS_LIB=$l; GS_ELIB=$p;;
-      (/*/ghostscript*/fonts) GS_FONTS=$l; GS_EFONTS=$p;;
-      esac
-    done <<< "$($GS_EXE -h)"
-fi
-])
+# if we are using TMREPO with a embedded gs then it will be packed in TeXmacs
 
 AC_DEFUN([LC_GS],[ 
-  AC_ARG_WITH(gs,
-  AS_HELP_STRING([--with-gs@<:@=DIR@:>@],
-  [with ghostscript support []]), [], [unset withval])
-
-  if [[[ $withval != no ]]]
-  then
-    LC_WITH_GS([withval])
-  else unset GS_EXE
-  fi    
-
-  if [[ "$GS_EXE" ]]
-  then 
-    AC_DEFINE([USE_GS], [1], [Use ghostscript])
-    CONFIG_GS="Ghostscript"
-    # need to adjust path to the relocated tm SDK
-    # add also relative path for BUNDLE
-    if [[[ "$GS_EXE" =~ $TMREPO ]]]; then # it is comming from tm SDK
-      # try to change path to match the bundle if any
-      TMREPObase=$(basename $TMREPO)
-      AC_DEFINE_UNQUOTED([GS_EXE],["../../bin/$(basename $GS_EXE)"],[gs path relative to TEXMACS_PATH])
-      AC_DEFINE_UNQUOTED([GS_LIB],
-        ["../share/ghostscript${GS_LIB##*ghostscript}:${GS_ELIB:+${GS_ELIB}:}${TMREPO}${GS_LIB##*$TMREPObase}"],[gs lib])
-      AC_DEFINE_UNQUOTED([GS_FONTS],
-      ["../share/ghostscript${GS_FONTS##*ghostscript}:${TMREPO}${GS_FONTS##*$TMREPObase}"],[gs fonts])
-    fi  
-  else AC_MSG_RESULT([disabling ghostscript support])
-  fi
-  AC_SUBST([CONFIG_GS])
-  AC_SUBST([GS_EXE])
-  AC_SUBST([GS_DLL])
+  AC_ARG_ENABLE(gs,
+  AS_HELP_STRING([--disable-gs@<:@=DIR@:>@],[disable ghostscript support]),
+    [AC_MSG_WARN([Compilation may fail])], [
+      AC_DEFINE([USE_GS], [1], [Use ghostscript])   
+      AC_SUBST([CONFIG_GS],["Ghostscript"])
+      if @<:@@<:@ -n $TMREPO @:>@@:>@ 
+      then # it is comming from tm SDK
+        AC_PATH_PROGS([GS_EXE],gs gs.exe, [], [$TMREPO/bin])
+        if @<:@@<:@ -x "$GS_EXE" @:>@@:>@ 
+        then
+          #get needed gs fonts and libs paths
+          while read -r l sep p # default path, separator, extra path
+          do
+            case $l in
+            (/*/ghostscript*/lib) GS_LIB=$l;;
+            (/*/ghostscript*/fonts) GS_FONTS=$l;;
+            esac
+          done <<< "$($GS_EXE -h)"    # try to change path to match the bundle if any
+        
+          AC_DEFINE_UNQUOTED([GS_EXE],["bin/$(basename $GS_EXE)"],[gs path relative to TEXMACS_PATH])
+          AC_DEFINE_UNQUOTED([GS_LIB],["share/ghostscript/lib"],[gs lib path relative to TEXMACS_PATH])
+          AC_DEFINE_UNQUOTED([GS_FONTS],["share/ghostscript/fonts"],[gs fonts relative to TEXMACS_PATH])
+          AC_SUBST([GS_EXE])
+          AC_SUBST([GS_LIB])
+          AC_SUBST([GS_FONTS])
+          AC_MSG_NOTICE([Ghostscript found  in TMREPO, it will be embedded in Package for Macos or Windows])
+        else AC_MSG_WARN([Ghostscript not detected in TMREPO, won't be embedded in Package])
+        fi
+      fi
+    ]
+  )
 ])
