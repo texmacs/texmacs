@@ -179,27 +179,15 @@ fi
 # LC_APPEND_FLAG is used to avoid duplicate flag
 # $1 anonymous list $2 destination
 AC_DEFUN([LC_PREPEND_LIST],[
-  [$0]_list="$1"
+  [$0]_nlist="$1"
   #pop the old list
-  LC_POP_FLAG([$2],[$0_flag])
+  LC_GET_FLAG([$2],[$0_flag])
   while @<:@@<:@ $[$0]_flag @:>@@:>@
   do  LC_APPEND_FLAG([$$0_flag],[$0_nlist])
-      LC_POP_FLAG([$2],[$0_flag])
+      LC_GET_FLAG([$2],[$0_flag])
     
   done
-  # append new list
-  LC_POP_FLAG([$0_list],[$0_flag])
-  while @<:@@<:@ $[$0]_flag @:>@@:>@
-  do  LC_APPEND_FLAG([$$0_flag],[$0_nlist])
-      LC_POP_FLAG([$0_list],[$0_flag])
-    
-  done
-  $2=
-  LC_GET_FLAG([$0_nlist],[$0_flag])
-  while @<:@@<:@ $[$0]_flag @:>@@:>@
-  do  $2="$[$0]_flag $$2"
-      LC_GET_FLAG([$0_nlist],[$0_flag])
-  done
+  $2="$[$0]_nlist"
   unset ${![$0]_*}
 ])
 
@@ -301,7 +289,7 @@ AC_DEFUN([LC_SCATTER_FLAGS],[
   while test -n "$[$0]_flag"
   do
     case "$[$0]_flag" in
-      -l*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LIBS])]);;
+      -l*@:}@ LC_APPEND_FLAG([$[$0]_flag],[[$0]_LIBS]);;
       -L*|-framework*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[LDFLAGS])]);;
       -I*|-U*|-D*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CPPFLAGS])]);;
       -F*@:}@ LC_APPEND_FLAG([$[$0]_flag],[lc_libname([$2],[CPPFLAGS])]);;
@@ -316,6 +304,7 @@ AC_DEFUN([LC_SCATTER_FLAGS],[
     esac
     LC_GET_FLAG([$0_list], [$0_flag])
   done
+  LC_PREPEND_LIST([$[$0]_LIBS],[lc_libname([$2],[LIBS])])
   unset ${![$0]_*}
 ])
 
