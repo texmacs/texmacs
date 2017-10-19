@@ -138,7 +138,7 @@ texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 texmacs_c_deps := $(call make_c_deps, $(call findc_in,System,Misc))
 texmacs_c_deps += $(call make_c_deps, $(pdf_c_src))
 
-deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps) $(texmacs_c_deps)
+deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 
 ###############################################################################
 # Include files
