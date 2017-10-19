@@ -31,7 +31,7 @@ AC_DEFUN([LC_POPPLER],[
         LM_POPPLER
       ],[
         AX_RESTORE_FLAGS
-        LC_SCATTER_FLAGS([PopplerLibs],[LIBS])
+        LC_SCATTER_FLAGS([PopplerLibs])
       ],[
         AC_MSG_ERROR(Cannot find poppler library)
       ])
