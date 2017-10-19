@@ -65,6 +65,7 @@ AC_DEFUN([TM_PLATFORM],[
     i*86-*-linux* | x86_64-*-linux*)
       AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/Linux host)
       AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
+      AC_SUBST([CONFIG_PACKAGE],[GENERIC_PACKAGE])
       CONFIG_OS="GNU_LINUX"
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
@@ -87,6 +88,8 @@ AC_DEFUN([TM_PLATFORM],[
     *mingw*)
       AC_MSG_RESULT([final adjustments for mingw host])
       AC_DEFINE([OS_MINGW],[(defined (__MINGW__) || defined (__MINGW32__))],[OS type])
+      AC_SUBST([CONFIG_BUNDLE],[WINDOWS_BUNDLE])
+      AC_SUBST([CONFIG_PACKAGE],[WINDOWS_PACKAGE])
       CONFIG_OS=MINGW
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
@@ -104,6 +107,8 @@ AC_DEFUN([TM_PLATFORM],[
     *apple*darwin*)
       echo "$ac_t""final adjustments for a MacOS host" 1>&6
       AC_DEFINE([OS_MACOS],[1],[OS type])
+      AC_SUBST([CONFIG_BUNDLE],[MACOS_BUNDLE])
+      AC_SUBST([CONFIG_PACKAGE],[MACOS_PACKAGE])
       CONFIG_OS="MACOS"
       CONFIG_QTPIPES="yes"
       CONFIG_CXXFLAGS="-I${prefix}/include"

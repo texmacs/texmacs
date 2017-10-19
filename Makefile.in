@@ -299,6 +299,12 @@ SRC_PACKAGE: COPY_SOURCES
 # Make generic static binary packages
 ###############################################################################
 
+PACKAGE: @CONFIG_PACKAGE@
+
+BUNDLE: @CONFIG_BUNDLE@
+
+.PHONY: PACKAGE BUNDLE
+
 GENERIC_PACKAGE_DIR = ../distr/generic
 STATIC_QT = $(tm_devel)-$(svnrev)-$(tm_suffix)
 STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
@@ -506,9 +512,7 @@ MACOS_RELEASE: MACOS_BUNDLE
 	(cd ../distr; zip -r9Tq $(tm_devel).zip $(tm_devel).app)
 	$(SIGN) $(MACOS_PACKAGE_ZIP) $(svnrev) $(tm_devel_version)
 
-BUNDLE: MACOS_BUNDLE
-
-.PHONY: BUNDLE MACOS_BUNDLE MACOS_PACKAGE MACOS_RELEASE
+.PHONY: MACOS_BUNDLE MACOS_PACKAGE MACOS_RELEASE
 
 ###############################################################################
 # Make a Windows installer
