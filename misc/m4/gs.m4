@@ -21,7 +21,7 @@ AC_DEFUN([LC_GS],[
       AC_SUBST([CONFIG_GS],["Ghostscript"])
       if @<:@@<:@ -n $TMREPO @:>@@:>@ 
       then # it is comming from tm SDK
-        AC_PATH_PROGS([GS_EXE],gs gs.exe, [], [$TMREPO/bin])
+        AC_PATH_PROGS([GS_EXE],gs.exe gs, [], [$TMREPO/bin])
         if @<:@@<:@ -x "$GS_EXE" @:>@@:>@ 
         then
           #get needed gs fonts and libs paths
