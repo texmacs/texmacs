@@ -559,8 +559,14 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
     
     r = r * as_string (pos) * ":" * from_qstring (preedit_string);
   }
+  
+#if (QT_VERSION < 0x050000)
+  // hack for fixing #47338 [CJK] input disappears immediately
+  // see http://lists.gnu.org/archive/html/texmacs-dev/2017-09/msg00000.html
   if (!is_nil (tmwid))
     the_gui->process_keypress (tm_widget(), r, texmacs_time());
+#endif 
+  
   event->accept();
 }  
 
@@ -568,7 +574,7 @@ QVariant
 QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
   switch (query) {
     case Qt::ImMicroFocus :
-      return QVariant (QRect (cursor_pos, QSize (5,5)));
+      return QVariant (QRect (cursor_pos - tm_widget()->backing_pos, QSize (5,5)));
     default:
       return QWidget::inputMethodQuery (query);
   }
