@@ -141,9 +141,9 @@ AC_DEFUN([TM_DEBUG],[
 
   if test "$enable_debug" = "yes"; then
       if test "$GXX" = "yes"; then
-	  enable_debug="-ggdb"
+	  enable_debug="-O0 -ggdb"
       else
-	  enable_debug="-g3"
+	  enable_debug="-O0 -g3"
       fi
   fi
 
