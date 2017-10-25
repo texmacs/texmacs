@@ -65,7 +65,7 @@ server_write (int fd, string s) {
 
 int
 number_of_servers () {
-  return the_server->srv_count();
+  return the_server?the_server->srv_count():0;
 }
 
 
