@@ -17,8 +17,12 @@ AC_DEFUN([TM_WINDOWS],[
       AS_HELP_STRING([--enable-console], [enable windows console]))
     if test "$enableval" = yes
     then  AC_MSG_RESULT([enabling Windows console])
+          LC_SCATTER_FLAGS([-mconsole])
     else  AC_MSG_RESULT([disabling Windows console])
           LC_SCATTER_FLAGS([-mwindows])
+    fi
+    if test -n "$TMREPO"; then
+      AC_SUBST([XTRA_CMD],[$TMREPO/windows])
     fi
   fi
 ])

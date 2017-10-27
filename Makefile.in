@@ -532,9 +532,9 @@ WINDOWS_BUNDLE: TEXMACS
 	$(MKDIR) $(WINDOWS_BUILD_DIR)
 	$(RM) -r $(WINDOWS_BUILD_BIN_DIR)/{texmacs,texmacs.bin,texmacs.exe}
 	$(CP) -u TeXmacs/* $(WINDOWS_BUILD_DIR)/.
-	$(RM) -r $(WINDOWS_BUILD_BIN_DIR)/texmacs
+	$(RM) $(WINDOWS_BUILD_BIN_DIR)/texmacs
 	$(MV) $(WINDOWS_BUILD_BIN_DIR)/texmacs.bin $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe
-	$(CP) -u $(WINDOWS_PACKAGE_SRC)/*.exe $(WINDOWS_BUILD_BIN_DIR)/
+	if test -n "@XTRA_CMD@"; then cp -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
 	if test -x "@GS_EXE@"; then cp @GS_EXE@ $(WINDOWS_BUILD_BIN_DIR)/;fi
 	if test -x "@GS_EXE@"; then $(MKDIR) -p $(WINDOWS_BUILD_DIR)/share/Ghostscript;fi
 	if test -d "@GS_LIB@"; then cp -r @GS_LIB@ $(WINDOWS_BUILD_DIR)/share/Ghostscript/;fi
@@ -542,7 +542,7 @@ WINDOWS_BUNDLE: TEXMACS
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
 	find $$(@GUILE_CONFIG@ info pkgdatadir) -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
-	-[ -d $(WINDOWS_BUILD_BIN_DIR) -a -d "$(QT_PLUGINS_PATH)" ] && $(CP) -u $(QT_PLUGINS_PATH)/* $(WINDOWS_BUILD_BIN_DIR)
+	if test -d "$(QT_PLUGINS_PATH)";then $(CP) -u $(QT_PLUGINS_PATH)/* $(WINDOWS_BUILD_BIN_DIR);fi
 
 $(WINDOWS_PACKAGE_DIR)/@tm_devel@.@SVNREV@-win-x86.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
 	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
