@@ -105,17 +105,17 @@ AC_DEFUN([TM_GUI],[
            CONFIG_X11="$CONFIG_X11 Ghostscript"
          fi
          CONFIG_GUI_DEFINE="X11TEXMACS"
-  #        AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
+          AC_DEFINE(X11TEXMACS, 1, [Use standard X11 port])
          ;;
       COCOA)
          CONFIG_COCOA="Cocoa"
          CONFIG_GUI_DEFINE="AQUATEXMACS"
-  #        AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
+          AC_DEFINE(AQUATEXMACS, 1, [Enable experimental Cocoa port])
          ;;
       QT)
          CONFIG_QT="Qt"
          CONFIG_GUI_DEFINE="QTTEXMACS"
-  #        AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
+          AC_DEFINE(QTTEXMACS, 1, [Enable experimental Qt port])
          ;;
   esac
 
