@@ -78,6 +78,16 @@ static hashmap<basic_character,qt_image> character_image;
 // image cache
 static hashmap<string,qt_pixmap> images;
 
+/*
+** hash contents must be removed because 
+** the underlying objects are destroyed during 
+** Qt exit function
+*/
+void del_obj_qt_renderer(void)  {
+  character_image= hashmap<basic_character,qt_image> ();  
+  images= hashmap<string,qt_pixmap>() ;
+}
+
 /******************************************************************************
 * qt_renderer
 ******************************************************************************/

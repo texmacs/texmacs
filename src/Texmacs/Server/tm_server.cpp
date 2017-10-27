@@ -38,7 +38,7 @@ extern string printing_dpi;
 extern string printing_cmd;
 extern string printing_on;
 extern int nr_windows;
-
+void del_obj_qt_renderer(void);
 /******************************************************************************
 * Texmacs server constructor and destructor
 ******************************************************************************/
@@ -246,6 +246,7 @@ tm_server_rep::quit () {
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");
   clear_pending_commands ();
+  del_obj_qt_renderer ();
   exit (0);
 }
 
