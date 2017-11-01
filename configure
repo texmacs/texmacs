@@ -6942,14 +6942,14 @@ $as_echo "#define GUILE_HEADER_18 1" >>confdefs.h
 $as_echo "$as_me: WARNING: Strange guile header name lib$GUILE_LIB.h" >&2;} ;;
       esac
 
-  as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+  as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7085,19 +7085,22 @@ else
 
 
 
-    unset ac_cv_lib_$GUILE_LIB_gh_scm2newstr
-    { $as_echo "$as_me:${as_lineno-$LINENO}: check $GUILE_LIB with extra libs -lintl" >&5
-$as_echo "$as_me: check $GUILE_LIB with extra libs -lintl" >&6;}
+    unset ac_cv_lib_${GUILE_LIB}_gh_scm2newstr
+# For system variable in ${GUILE_LIB}
+    unset ac_cv_lib_${GUILE_LIB}___gh_scm2newstr
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check ${GUILE_LIB} with extra libs -lintl" >&5
+$as_echo "$as_me: check ${GUILE_LIB} with extra libs -lintl" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
     LIBS+=" -lintl"
-    as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+    as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7238,19 +7241,22 @@ else
       LIBS=$_LC_CHECK_LIB_libs
 
 
-    unset ac_cv_lib_$GUILE_LIB_gh_scm2newstr
-    { $as_echo "$as_me:${as_lineno-$LINENO}: check $GUILE_LIB with extra libs -liconv" >&5
-$as_echo "$as_me: check $GUILE_LIB with extra libs -liconv" >&6;}
+    unset ac_cv_lib_${GUILE_LIB}_gh_scm2newstr
+# For system variable in ${GUILE_LIB}
+    unset ac_cv_lib_${GUILE_LIB}___gh_scm2newstr
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check ${GUILE_LIB} with extra libs -liconv" >&5
+$as_echo "$as_me: check ${GUILE_LIB} with extra libs -liconv" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
     LIBS+=" -liconv"
-    as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+    as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7391,19 +7397,22 @@ else
       LIBS=$_LC_CHECK_LIB_libs
 
 
-    unset ac_cv_lib_$GUILE_LIB_gh_scm2newstr
-    { $as_echo "$as_me:${as_lineno-$LINENO}: check $GUILE_LIB with extra libs -ltre" >&5
-$as_echo "$as_me: check $GUILE_LIB with extra libs -ltre" >&6;}
+    unset ac_cv_lib_${GUILE_LIB}_gh_scm2newstr
+# For system variable in ${GUILE_LIB}
+    unset ac_cv_lib_${GUILE_LIB}___gh_scm2newstr
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check ${GUILE_LIB} with extra libs -ltre" >&5
+$as_echo "$as_me: check ${GUILE_LIB} with extra libs -ltre" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
     LIBS+=" -ltre"
-    as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+    as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7544,19 +7553,22 @@ else
       LIBS=$_LC_CHECK_LIB_libs
 
 
-    unset ac_cv_lib_$GUILE_LIB_gh_scm2newstr
-    { $as_echo "$as_me:${as_lineno-$LINENO}: check $GUILE_LIB with extra libs -lintl -liconv" >&5
-$as_echo "$as_me: check $GUILE_LIB with extra libs -lintl -liconv" >&6;}
+    unset ac_cv_lib_${GUILE_LIB}_gh_scm2newstr
+# For system variable in ${GUILE_LIB}
+    unset ac_cv_lib_${GUILE_LIB}___gh_scm2newstr
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check ${GUILE_LIB} with extra libs -lintl -liconv" >&5
+$as_echo "$as_me: check ${GUILE_LIB} with extra libs -lintl -liconv" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
     LIBS+=" -lintl -liconv"
-    as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+    as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7697,19 +7709,22 @@ else
       LIBS=$_LC_CHECK_LIB_libs
 
 
-    unset ac_cv_lib_$GUILE_LIB_gh_scm2newstr
-    { $as_echo "$as_me:${as_lineno-$LINENO}: check $GUILE_LIB with extra libs -lintl -ltre" >&5
-$as_echo "$as_me: check $GUILE_LIB with extra libs -lintl -ltre" >&6;}
+    unset ac_cv_lib_${GUILE_LIB}_gh_scm2newstr
+# For system variable in ${GUILE_LIB}
+    unset ac_cv_lib_${GUILE_LIB}___gh_scm2newstr
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check ${GUILE_LIB} with extra libs -lintl -ltre" >&5
+$as_echo "$as_me: check ${GUILE_LIB} with extra libs -lintl -ltre" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
     LIBS+=" -lintl -ltre"
-    as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+    as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7850,19 +7865,22 @@ else
       LIBS=$_LC_CHECK_LIB_libs
 
 
-    unset ac_cv_lib_$GUILE_LIB_gh_scm2newstr
-    { $as_echo "$as_me:${as_lineno-$LINENO}: check $GUILE_LIB with extra libs -liconv -ltre" >&5
-$as_echo "$as_me: check $GUILE_LIB with extra libs -liconv -ltre" >&6;}
+    unset ac_cv_lib_${GUILE_LIB}_gh_scm2newstr
+# For system variable in ${GUILE_LIB}
+    unset ac_cv_lib_${GUILE_LIB}___gh_scm2newstr
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check ${GUILE_LIB} with extra libs -liconv -ltre" >&5
+$as_echo "$as_me: check ${GUILE_LIB} with extra libs -liconv -ltre" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
     LIBS+=" -liconv -ltre"
-    as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+    as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8003,19 +8021,22 @@ else
       LIBS=$_LC_CHECK_LIB_libs
 
 
-    unset ac_cv_lib_$GUILE_LIB_gh_scm2newstr
-    { $as_echo "$as_me:${as_lineno-$LINENO}: check $GUILE_LIB with extra libs -lintl -liconv -ltre" >&5
-$as_echo "$as_me: check $GUILE_LIB with extra libs -lintl -liconv -ltre" >&6;}
+    unset ac_cv_lib_${GUILE_LIB}_gh_scm2newstr
+# For system variable in ${GUILE_LIB}
+    unset ac_cv_lib_${GUILE_LIB}___gh_scm2newstr
+
+    { $as_echo "$as_me:${as_lineno-$LINENO}: check ${GUILE_LIB} with extra libs -lintl -liconv -ltre" >&5
+$as_echo "$as_me: check ${GUILE_LIB} with extra libs -lintl -liconv -ltre" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
     LIBS+=" -lintl -liconv -ltre"
-    as_ac_Lib=`$as_echo "ac_cv_lib_$GUILE_LIB''_gh_scm2newstr" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l$GUILE_LIB" >&5
-$as_echo_n "checking for gh_scm2newstr in -l$GUILE_LIB... " >&6; }
+    as_ac_Lib=`$as_echo "ac_cv_lib_${GUILE_LIB}''_gh_scm2newstr" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gh_scm2newstr in -l${GUILE_LIB}" >&5
+$as_echo_n "checking for gh_scm2newstr in -l${GUILE_LIB}... " >&6; }
 if eval \${$as_ac_Lib+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-l$GUILE_LIB  $LIBS"
+LIBS="-l${GUILE_LIB}  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -14267,6 +14288,9 @@ else
 
 
     unset ac_cv_lib_freetype_FT_Init_FreeType
+# For system variable in freetype
+    unset ac_cv_lib_freetype___FT_Init_FreeType
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -14376,6 +14400,9 @@ else
 
 
     unset ac_cv_lib_freetype_FT_Init_FreeType
+# For system variable in freetype
+    unset ac_cv_lib_freetype___FT_Init_FreeType
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng16" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng16" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -14485,6 +14512,9 @@ else
 
 
     unset ac_cv_lib_freetype_FT_Init_FreeType
+# For system variable in freetype
+    unset ac_cv_lib_freetype___FT_Init_FreeType
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -14594,6 +14624,9 @@ else
 
 
     unset ac_cv_lib_freetype_FT_Init_FreeType
+# For system variable in freetype
+    unset ac_cv_lib_freetype___FT_Init_FreeType
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng -lpng16" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng -lpng16" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -14703,6 +14736,9 @@ else
 
 
     unset ac_cv_lib_freetype_FT_Init_FreeType
+# For system variable in freetype
+    unset ac_cv_lib_freetype___FT_Init_FreeType
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -14812,6 +14848,9 @@ else
 
 
     unset ac_cv_lib_freetype_FT_Init_FreeType
+# For system variable in freetype
+    unset ac_cv_lib_freetype___FT_Init_FreeType
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng16 -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng16 -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -14921,6 +14960,9 @@ else
 
 
     unset ac_cv_lib_freetype_FT_Init_FreeType
+# For system variable in freetype
+    unset ac_cv_lib_freetype___FT_Init_FreeType
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng -lpng16 -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng -lpng16 -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -15133,6 +15175,9 @@ else
 
 
     unset ac_cv_lib_freetype_ft_init_freetype
+# For system variable in freetype
+    unset ac_cv_lib_freetype___ft_init_freetype
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -15192,6 +15237,9 @@ else
 
 
     unset ac_cv_lib_freetype_ft_init_freetype
+# For system variable in freetype
+    unset ac_cv_lib_freetype___ft_init_freetype
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng16" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng16" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -15251,6 +15299,9 @@ else
 
 
     unset ac_cv_lib_freetype_ft_init_freetype
+# For system variable in freetype
+    unset ac_cv_lib_freetype___ft_init_freetype
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -15310,6 +15361,9 @@ else
 
 
     unset ac_cv_lib_freetype_ft_init_freetype
+# For system variable in freetype
+    unset ac_cv_lib_freetype___ft_init_freetype
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng -lpng16" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng -lpng16" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -15369,6 +15423,9 @@ else
 
 
     unset ac_cv_lib_freetype_ft_init_freetype
+# For system variable in freetype
+    unset ac_cv_lib_freetype___ft_init_freetype
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -15428,6 +15485,9 @@ else
 
 
     unset ac_cv_lib_freetype_ft_init_freetype
+# For system variable in freetype
+    unset ac_cv_lib_freetype___ft_init_freetype
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng16 -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng16 -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -15487,6 +15547,9 @@ else
 
 
     unset ac_cv_lib_freetype_ft_init_freetype
+# For system variable in freetype
+    unset ac_cv_lib_freetype___ft_init_freetype
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: check freetype with extra libs -lpng -lpng16 -lz" >&5
 $as_echo "$as_me: check freetype with extra libs -lpng -lpng16 -lz" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
@@ -24029,9 +24092,9 @@ fi
 
   if test "$enable_debug" = "yes"; then
       if test "$GXX" = "yes"; then
-	  enable_debug="-ggdb"
+	  enable_debug="-O0 -ggdb"
       else
-	  enable_debug="-g3"
+	  enable_debug="-O0 -g3"
       fi
   fi
 

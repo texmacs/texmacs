@@ -253,6 +253,9 @@ AC_DEFUN([LC_CLEAR_FLAGS],[
 AC_DEFUN([_LC_CHECK_LIB],[
   m4_ifblank([$5],[$4],[
     unset ac_cv_lib_$1_$2
+# For system variable in $1
+    unset ac_cv_lib_$1___$2
+
     AC_MSG_NOTICE([check $1 with extra libs m4_car($5)])
     [$0]_libs=$LIBS
     LIBS+=" m4_car($5)"
