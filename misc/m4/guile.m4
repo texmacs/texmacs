@@ -160,7 +160,7 @@ AC_DEFUN([LC_GUILE],[
     ])
   ])
   # AC_CHECK_LIB might have completed LIBS we need to complete GUILE_LIBS
-  LC_SCATTER_FLAGS([-l$GUILE_LIB ${$0_extralibs}],[GUILE])
+  GUILE_LIBS+=${$0_extralibs:+ ${$0_extralibs}}
   if [[ ! $g_success ]];then 
     AC_MSG_ERROR([It seems that guile-config does not provide the right parameters.
     Consult the config.log for error details and check your guile installation])
