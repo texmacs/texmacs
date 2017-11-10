@@ -12,6 +12,7 @@
 #include "sys_utils.hpp"
 #include "file.hpp"
 #include "tree.hpp"
+#include "parse_string.hpp"
 
 #ifdef OS_MINGW
 #include "Qt/qt_sys_utils.hpp"
@@ -136,4 +137,46 @@ evaluate_system (array<string> arg,
   int ret= unix_system (arg, fd_in, in, fd_out, ptr);
 #endif
   return append (as_string (ret), out);
+}
+
+
+string 
+get_printing_default () {
+#if defined (OS_MINGW)
+	url embedded ("$TEXMACS_PATH/bin/sumatra");
+	if(exists (embedded)) return concretize (embedded);
+	else return "";
+#else
+	return "lpr";
+#endif
+}
+
+class  {
+private:
+	string prt_cmd;
+	bool blank= true;
+public:	
+	friend string get_printing_cmd ();
+	friend void set_printing_cmd (const string&);
+} print_cap;
+
+string 
+get_printing_cmd () {
+	if(print_cap.blank) {
+		print_cap.prt_cmd= get_printing_default ();
+		print_cap.blank= false;
+	}
+	return print_cap.prt_cmd;
+}
+
+void
+set_printing_cmd (const string &cmd) {
+		print_cap.prt_cmd= cmd;
+		print_cap.blank= false;
+}
+
+bool
+has_printing_cmd () {
+		static bool has= get_printing_cmd () != "";
+		return has;
 }

@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "edit_main.hpp"
+#include "parse_string.hpp"
 #include "tm_buffer.hpp"
 #include "file.hpp"
 #include "sys_utils.hpp"
@@ -33,10 +34,6 @@
 #ifdef QTTEXMACS
 #include "Qt/qt_gui.hpp"
 #include "Qt/qt_utilities.hpp"
-#endif
-
-#if defined (QTTEXMACS) && defined (OS_MINGW)
-#include "Qt/WINPrint.hpp"
 #endif
 
 /******************************************************************************
@@ -314,21 +311,44 @@ edit_main_rep::print_to_file (url name, string first, string last) {
   set_message ("Done printing", "print to file");
 }
 
+
 void
 edit_main_rep::print_buffer (string first, string last) {
-   url target;
-#if defined (QTTEXMACS) && defined (OS_MINGW)
-   {
-     target= url_temp (".pdf"); 
-     WINPrint wprt(to_qstring(as_string(target)),env->page_landscape);
-     if(wprt.doit) print_doc (target, false,wprt.first_page,wprt.last_page);
-   }
+  url target;
+//	static string printing_cmd= get_printing_cmd ();
+#if defined (OS_MINGW)
+  target= url_temp (".pdf"); 
 #else
   target= url_temp (".ps"); 
+#endif
   print_doc (target, false, as_int (first), as_int (last));
-  system (printing_cmd, target);  // Send the document to the printer
-  set_message ("Done printing", "print buffer");
- #endif
+	cout<<"CMD:"<<get_printing_cmd ()<<":"<<target<<"\n";
+  //system (printing_cmd, target);  // Send the document to the printer
+  
+	
+	array<string> cmd;
+	cmd << string("cmd"); 
+	cmd  << string("/c");
+  cmd << '"' * get_printing_cmd () * '"';
+#ifdef OS_MINGW
+  cmd << string ("/P");
+#endif
+  cmd << concretize (target);
+  array<int> out; //out << 1; out << 2;
+  //cout << "cmd= " << cmd << LF;
+  array<string> ret= evaluate_system (cmd, array<int> (), array<string> (), out);
+  //cout << "ret= " << ret << LF;
+	/*
+  if (ret [0] != "0" || ret[2] != "") {
+    //convert_error << ret[1] << LF;
+    convert_error << "for file " << target << LF;
+    convert_error << ret[2] << LF;
+    return ;
+	}
+	*/
+	
+	
+	set_message ("Done printing", "print buffer");
   ::remove (target);
 }
 
