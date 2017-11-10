@@ -35,7 +35,7 @@
   
 ;; many options for pdf->ps/eps see http://tex.stackexchange.com/a/20884
 ;; this one does a better rendering than pdf2ps (also based on gs):
-(with gs (url->system (url-resolve-in-path (if (os-mingw?) "$TEXMACS_PATH\\bin\\gs.exe;c:\\Program File*\\gs\\gs*\\gswin*c.exe" "gs")))
+(with gs (url->system (url-resolve-in-path (if (os-mingw?) "$TEXMACS_PATH\\bin\\gs.exe;c:\\Program File*\\gs\\gs*\\gswin*c.exe" "$TEXMACS_PATH\\bin\\gs:gs")))
   (converter pdf-file postscript-file
   ;;(:require (url-exists-in-path? gs )) ;; gs IS a dependency
   (:shell ,gs "-q -dNOCACHE -dUseCropBox -dNOPAUSE -dBATCH -dSAFER -sDEVICE=eps2write -sOutputFile=" to from)))  
