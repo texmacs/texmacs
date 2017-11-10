@@ -502,9 +502,8 @@ call_scm_converter(url image, url dest) {
 bool
 has_image_magick (){
 #ifdef OS_MINGW
-  static bool has_imagemagick = exists_in_path ("conjure"); 
-  // testing for "convert" would be ambiguous because it is also a WINDOWS filesystem utility
-  // better test for "conjure" for the presence of imagemagick
+	// Qt is used for converion on Windows
+  static bool has_imagemagick = false;
 #else
   static bool has_imagemagick= exists_in_path ("convert");
 #endif
