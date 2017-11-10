@@ -475,11 +475,11 @@
 
 (define (pretty-format-list)
   (let* ((desired-image-format-list '(("svg" "Svg")  ("eps" "Eps")
-           ("png" "Png")("tif" "Tiff") ("jpg" "Jpeg")))
+           ("png" "Png")("tif" "Tiff") ("jpg" "Jpeg") ("pdf" "Pdf")))
          (valid-image-format-list 
-           (filter (lambda (x) (file-converter-exists? "x.pdf" (string-append "y." (car x)) ))
+           (filter (lambda (x) (file-converter-exists? "x.pdf" (string-append "x." (car x))))
              desired-image-format-list)))
-   (eval `(define-preference-names "texmacs->image:format" ,@ valid-image-format-list))
+   (eval `(define-preference-names "texmacs->image:format" ,@valid-image-format-list))
    (cadr (apply map list valid-image-format-list))))
 
 (tm-widget (image-preferences-widget)
