@@ -17,39 +17,47 @@
 #include "file.hpp"
 #include "image_files.hpp"
 
-static string
-gs_executable () {
-#ifdef GS_EXE
-  static string cmd; // no need to resolve each time
-  
-  if (cmd == "") {
-    url tmp= url_system (get_env ("TEXMACS_PATH"));
-    url gs= tmp * "bin" * tail (url_system (GS_EXE));
-   
-    if (exists (gs)) {
-      putenv (as_charp ("GS_LIB=" * as_string (tmp * GS_LIB | tmp * GS_FONTS, URL_STANDARD)));
-      cmd= sys_concretize (gs);
-    } else {
-      #ifdef OS_MINGW
-       cmd= "gswin32c";
-      #else
-       cmd= "gs";
-      #endif
-    }
-  }
-  return copy (cmd);
+string
+gs_system () {
+#ifdef OS_MINGW
+	url gs= url_system ("C:\\") * url_wildcard ("Program Files*") * url_system ("gs") * url_wildcard ("gs*")* url_system ("bin") * url_wildcard ("gswin*c.exe");
+	cout <<"URLGS:"<<gs<<"\n";
+	return materialize (gs);
 #else
-  #ifdef OS_MINGW
-   return "gswin32c";
-  #else
    return "gs";
-  #endif
 #endif
 }
 
 string
+gs_embedded () {
+  string cmd; // no need to resolve each time
+  
+  url tmp= url_system (get_env ("TEXMACS_PATH"));
+  url gs= tmp * "bin" * tail (url_system (GS_EXE));
+   
+  if (exists (gs)) {
+    putenv (as_charp ("GS_LIB=" * as_string (tmp * GS_LIB | tmp * GS_FONTS, URL_STANDARD)));
+    cmd= sys_concretize (gs);
+  } else {
+		cmd= gs_system ();
+  }
+  return cmd;
+}
+
+static string
+gs_executable () {
+#ifdef GS_EXE
+  static string cmd= gs_embedded ();
+#else
+  static string cmd= gs_system ();
+#endif
+cout << "Gs:"<<cmd<<"\n";
+  return cmd;
+}
+
+string
 gs_prefix () {
-  return gs_executable () * string (" ");
+  return string ("\"") * gs_executable () * string ("\"") * string (" ");
 }
 
  // eps2write available starting with gs  9.14 (2014-03-26)
