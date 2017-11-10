@@ -25,6 +25,7 @@
 /******************************************************************************
  * Installation of guile and initialization of guile
  ******************************************************************************/
+bool scm_busy= false;
 
 #if (defined(GUILE_C) || defined(GUILE_D))
 static void (*old_call_back) (int, char**)= NULL;
@@ -81,18 +82,24 @@ TeXmacs_catcher (void *data, SCM tag, SCM args) {
  * Evaluation of files
  ******************************************************************************/
 
+#ifndef DEBUG_ON
 static SCM
 TeXmacs_lazy_eval_file (char *file) {
   return scm_internal_lazy_catch (SCM_BOOL_T,
                                   (scm_t_catch_body) scm_c_primitive_load, file,
                                   (scm_t_catch_handler) TeXmacs_lazy_catcher, file);
 }
+#endif
 
 static SCM
 TeXmacs_eval_file (char *file) {
+#ifndef DEBUG_ON
   return scm_internal_catch (SCM_BOOL_T,
                              (scm_t_catch_body) TeXmacs_lazy_eval_file, file,
                              (scm_t_catch_handler) TeXmacs_catcher, file);
+#else
+  return 	scm_c_primitive_load (file);										 
+#endif
 }
 
 SCM
@@ -111,26 +118,38 @@ eval_scheme_file (string file) {
  * Evaluation of strings
  ******************************************************************************/
 
+#ifdef DEBUG_ON
 static SCM
 TeXmacs_lazy_eval_string (char *s) {
   return scm_internal_lazy_catch (SCM_BOOL_T,
                                   (scm_t_catch_body) scm_c_eval_string, s,
                                   (scm_t_catch_handler) TeXmacs_lazy_catcher, s);
 }
+#endif
 
 static SCM
 TeXmacs_eval_string (char *s) {
+#ifndef DEBUG_ON
   return scm_internal_catch (SCM_BOOL_T,
                              (scm_t_catch_body) TeXmacs_lazy_eval_string, s,
                              (scm_t_catch_handler) TeXmacs_catcher, s);
+#else
+  return  scm_c_eval_string(s);
+#endif
 }
 
 SCM
 eval_scheme (string s) {
     // cout << "Eval] " << s << "\n";
+#ifdef DEBUG_ON
+if ( ! scm_busy) {
+#endif
   c_string _s (s);
   SCM result= TeXmacs_eval_string (_s);
   return result;
+#ifdef DEBUG_ON
+  } else return SCM_BOOL_F;
+#endif
 }
 
 /******************************************************************************
@@ -158,18 +177,24 @@ TeXmacs_call (arg_list* args) {
   }
 }
 
+#ifndef DEBUG_ON
 static SCM
 TeXmacs_lazy_call_scm (arg_list* args) {
   return scm_internal_lazy_catch (SCM_BOOL_T,
                                   (scm_t_catch_body) TeXmacs_call, (void*) args,
                                   (scm_t_catch_handler) TeXmacs_lazy_catcher, (void*) args);
 }
+#endif
 
 static SCM
 TeXmacs_call_scm (arg_list *args) {
+#ifndef DEBUG_ON
   return scm_internal_catch (SCM_BOOL_T,
                              (scm_t_catch_body) TeXmacs_lazy_call_scm, (void*) args,
                              (scm_t_catch_handler) TeXmacs_catcher, (void*) args);
+#else
+  return TeXmacs_call(args);
+#endif
 }
 
 SCM
@@ -324,8 +349,14 @@ scm_to_double (SCM i) {
 tmscm
 string_to_tmscm (string s) {
   c_string _s (s);
+#ifdef DEBUG_ON
+  if (! scm_busy) {
+#endif
   SCM r= scm_str2scm (_s, N(s));
   return r;
+#ifdef DEBUG_ON
+  } else return SCM_BOOL_F;
+#endif
 }
 
 string
@@ -406,7 +437,13 @@ mark_blackbox (SCM blackbox_smob) {
 static scm_sizet
 free_blackbox (SCM blackbox_smob) {
   blackbox *ptr = (blackbox *) SCM_CDR (blackbox_smob);
+#ifdef DEBUG_ON
+  scm_busy= true;
+#endif
   tm_delete (ptr);
+#ifdef DEBUG_ON
+  scm_busy= false;
+#endif
   return 0;
 }
 
@@ -490,7 +527,9 @@ initialize_scheme () {
   "(read-set! keywords 'prefix)\n"
   "(read-enable 'positions)\n"
   "(debug-enable 'debug)\n"
-  ";(debug-enable 'backtrace)\n"
+#ifdef DEBUG_ON
+  "(debug-enable 'backtrace)\n"
+#endif
   "\n"
   "(define (display-to-string obj)\n"
   "  (call-with-output-string\n"
