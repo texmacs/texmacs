@@ -41,6 +41,7 @@
 "os-win32?"
 "os-mingw?"
 "os-macos?"
+"has-printing-cmd?"
 "x-gui?"
 "qt-gui?"
 "default-look-and-feel"

@@ -158,8 +158,7 @@
 (menu-bind print-menu
   ("Preview" (preview-buffer))
   ---
-  (if (os-mingw?) ("Print" (print-buffer)))
-  (if (not (os-mingw?)) 
+  (if (has-printing-cmd?) 
      ("Print all" (print-buffer))
      ("Print page selection" (interactive print-pages)))
   ("Print all to file"

@@ -131,6 +131,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(has-printing-cmd?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|has_printing_cmd> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(x-gui?)>
 <explain-synopsis|no synopsis>
   <|explain>

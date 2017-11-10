@@ -160,6 +160,15 @@ tmg_os_macosP () {
 }
 
 tmscm
+tmg_has_printing_cmdP () {
+  // TMSCM_DEFER_INTS;
+  bool out= has_printing_cmd ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_x_guiP () {
   // TMSCM_DEFER_INTS;
   bool out= gui_is_x ();
@@ -9331,6 +9340,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("os-win32?",  tmg_os_win32P, 0, 0, 0);
   tmscm_install_procedure ("os-mingw?",  tmg_os_mingwP, 0, 0, 0);
   tmscm_install_procedure ("os-macos?",  tmg_os_macosP, 0, 0, 0);
+  tmscm_install_procedure ("has-printing-cmd?",  tmg_has_printing_cmdP, 0, 0, 0);
   tmscm_install_procedure ("x-gui?",  tmg_x_guiP, 0, 0, 0);
   tmscm_install_procedure ("qt-gui?",  tmg_qt_guiP, 0, 0, 0);
   tmscm_install_procedure ("default-look-and-feel",  tmg_default_look_and_feel, 0, 0, 0);

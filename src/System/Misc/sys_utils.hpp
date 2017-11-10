@@ -24,6 +24,7 @@ string eval_system (string s);
 string var_eval_system (string s);
 string get_env (string var);
 void   set_env (string var, string with);
+int    os_version ();
 string get_stacktrace (unsigned int max_frames= 127);
 
 url get_texmacs_path ();
@@ -32,5 +33,6 @@ url get_texmacs_home_path ();
 array<string> evaluate_system (array<string> arg,
 			       array<int> fd_in, array<string> in,
 			       array<int> fd_out);
-
+bool has_printing_cmd (void);
+string get_printing_cmd (void);
 #endif // defined SYS_UTILS_H
