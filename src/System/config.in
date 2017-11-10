@@ -1,7 +1,13 @@
 /* src/System/config.in.  Generated from configure.in by autoheader.  */
 
+/* Enable experimental Cocoa port */
+#undef AQUATEXMACS
+
 /* check assertions in code */
 #undef DEBUG_ASSERT
+
+/* debugging built */
+#undef DEBUG_ON
 
 /* Defined if ...-style argument passing works */
 #undef DOTS_OK
@@ -177,6 +183,9 @@
 /* Enabling Qt pipes */
 #undef QTPIPES
 
+/* Enable experimental Qt port */
+#undef QTTEXMACS
+
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
@@ -212,6 +221,9 @@
 
 /* Use C++ stack backtraces */
 #undef USE_STACK_TRACE
+
+/* Use standard X11 port */
+#undef X11TEXMACS
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
