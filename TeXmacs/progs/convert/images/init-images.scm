@@ -13,6 +13,10 @@
 
 (texmacs-module (convert images init-images))
 
+;; avoid name collision regarding Windows native commands
+(define has-convert?
+ ( and (not (os-mingw?)) (url-exists-in-path? "convert")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Graphical document and geometric image formats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -31,7 +35,7 @@
   
 ;; many options for pdf->ps/eps see http://tex.stackexchange.com/a/20884
 ;; this one does a better rendering than pdf2ps (also based on gs):
-(with gs (if (or (os-win32?) (os-mingw?)) "gswin32c" "gs")
+(with gs (url->system (url-resolve-in-path (if (os-mingw?) "$TEXMACS_PATH\\bin\\gs.exe;c:\\Program File*\\gs\\gs*\\gswin*c.exe" "gs")))
   (converter pdf-file postscript-file
   ;;(:require (url-exists-in-path? gs )) ;; gs IS a dependency
   (:shell ,gs "-q -dNOCACHE -dUseCropBox -dNOPAUSE -dBATCH -dSAFER -sDEVICE=eps2write -sOutputFile=" to from)))  
@@ -136,7 +140,7 @@
   (converter pdf-file svg-file
     (:shell "pdftocairo" "-origpagesizes -nocrop -nocenter -svg" from to)))
   
- ((and (url-exists-in-path? "convert") (url-exists-in-path? "conjure"))
+ ((and has-convert? (url-exists-in-path? "conjure"))
   (tm-define (pdf-file->imagemagick-raster x opts)
 	  (let* ((dest (assoc-ref opts 'dest))
 			  (res (or (assoc-ref opts "texmacs->image:raster-resolution") (get-preference "texmacs->image:raster-resolution"))))
@@ -173,7 +177,7 @@
   (:suffix "xpm"))
 
 (converter xpm-file ppm-file
-  (:require (url-exists-in-path? "convert"))
+	(:require  has-convert?)
   (:shell "convert" from to))
 
 (define-format jpeg
@@ -184,7 +188,7 @@
   (:function image->psdoc))
 
 (converter jpeg-file pnm-file
-  (:require (url-exists-in-path? "convert"))
+	(:require  has-convert?)
   (:shell "convert" from to))
 
 (define-format tif
@@ -199,7 +203,7 @@
   (:suffix "ppm"))
 
 (converter ppm-file gif-file
-  (:require (url-exists-in-path? "convert"))
+	(:require  has-convert?)
   (:shell "convert" from to))
 
 (define-format gif
@@ -210,7 +214,7 @@
   (:function image->psdoc))
 
 (converter gif-file pnm-file
-  (:require (url-exists-in-path? "convert"))
+	(:require  has-convert?)
   (:shell "convert" from to))
 
 (define-format png
@@ -221,7 +225,7 @@
   (:function image->psdoc))
 
 (converter png-file pnm-file
-  (:require (url-exists-in-path? "convert"))
+	(:require  has-convert?)
   (:shell "convert" from to))
 
 (converter geogebra-file png-file
