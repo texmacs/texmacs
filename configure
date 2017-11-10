@@ -4636,6 +4636,117 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C++ compiler accepts -stdlib=libstdc++" >&5
+$as_echo_n "checking whether C++ compiler accepts -stdlib=libstdc++... " >&6; }
+if ${ax_cv_check_cxxflags___stdlib_libstdcpp+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+  ax_check_save_flags=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS  -stdlib=libstdc++"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  ax_cv_check_cxxflags___stdlib_libstdcpp=yes
+else
+  ax_cv_check_cxxflags___stdlib_libstdcpp=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  CXXFLAGS=$ax_check_save_flags
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_cv_check_cxxflags___stdlib_libstdcpp" >&5
+$as_echo "$ax_cv_check_cxxflags___stdlib_libstdcpp" >&6; }
+if test "x$ax_cv_check_cxxflags___stdlib_libstdcpp" = xyes; then :
+
+
+  if [[ "-stdlib=libstdc++" =~ $(echo '^-Wl,') ]]
+  then CXXFLAGS+=" -stdlib=libstdc++"
+  elif [[ "-stdlib=libstdc++" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-stdlib=libstdc++"
+  do  while [[ $CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CXXFLAGS=
+  else  while test "$CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CXXFLAGS"
+        CXXFLAGS="${CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CXXFLAGS="${CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CXXFLAGS="${CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CXXFLAGS=$(echo $CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CXXFLAGS+=" -stdlib=libstdc++"
+  else
+    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-stdlib=libstdc++($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -stdlib=libstdc++" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -stdlib=libstdc++" >&2;}
+    else CXXFLAGS+=" -stdlib=libstdc++"
+    fi
+  fi
+
+
+  if [[ "-stdlib=libstdc++" =~ $(echo '^-Wl,') ]]
+  then CFLAGS+=" -stdlib=libstdc++"
+  elif [[ "-stdlib=libstdc++" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-stdlib=libstdc++"
+  do  while [[ $CFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$CFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$CFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then CFLAGS=
+  else  while test "$CFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$CFLAGS"
+        CFLAGS="${CFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        CFLAGS="${CFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        CFLAGS="${CFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  CFLAGS=$(echo $CFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       CFLAGS+=" -stdlib=libstdc++"
+  else
+    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])-stdlib=libstdc++($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -stdlib=libstdc++" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -stdlib=libstdc++" >&2;}
+    else CFLAGS+=" -stdlib=libstdc++"
+    fi
+  fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: added libstdc++ in compile flags" >&5
+$as_echo "$as_me: added libstdc++ in compile flags" >&6;}
+
+else
+  :
+fi
+
+
 
 #--------------------------------------------------------------------
 # Checks for standard functionality
@@ -5117,7 +5228,7 @@ fi
 $as_echo "$as_me: WARNING: pkg-config not found : configuration may fail" >&2;}
     fi
 
-    PKG_CONFIG_PATH="$TMREPO/lib/pkgconfig:$PKG_CONFIG_PATH:$oldpkgconfig"
+    export PKG_CONFIG_PATH="$TMREPO/lib/pkgconfig:$PKG_CONFIG_PATH:$oldpkgconfig"
 
   LC_MERGE_FLAGS_list="-I$TMREPO/include"
   if [[ "CPPFLAGS" =~ $(echo "(^|_)LIBS") ]]
@@ -23644,6 +23755,9 @@ $as_echo "enabling debugging, $enable_debug" >&6; }
       CONFIG_STRIP="true"
       CONFIG_CXXDEBUG="$enable_debug"
       optimize_default="no"
+
+$as_echo "#define DEBUG_ON 1" >>confdefs.h
+
   fi
 
   #--- Assert

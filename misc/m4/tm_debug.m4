@@ -157,6 +157,7 @@ AC_DEFUN([TM_DEBUG],[
       CONFIG_STRIP="true"
       CONFIG_CXXDEBUG="$enable_debug"
       optimize_default="no"
+      AC_DEFINE([DEBUG_ON], 1, [debugging built])
   fi
 
   #--- Assert

@@ -33,7 +33,7 @@ AC_DEFUN([TM_REPO],[
     else AC_MSG_WARN([pkg-config not found : configuration may fail])
     fi
 	
-    PKG_CONFIG_PATH="$TMREPO/lib/pkgconfig:$PKG_CONFIG_PATH:$oldpkgconfig"
+    export PKG_CONFIG_PATH="$TMREPO/lib/pkgconfig:$PKG_CONFIG_PATH:$oldpkgconfig"
     LC_MERGE_FLAGS([-I$TMREPO/include],[CPPFLAGS])
     # LC_SCATTER_FLAGS([-I$TMREPO/include],[BASE])
     LC_MERGE_FLAGS([-L$TMREPO/lib],[LDFLAGS])
