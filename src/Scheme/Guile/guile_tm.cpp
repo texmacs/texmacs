@@ -118,7 +118,7 @@ eval_scheme_file (string file) {
  * Evaluation of strings
  ******************************************************************************/
 
-#ifdef DEBUG_ON
+#ifndef DEBUG_ON
 static SCM
 TeXmacs_lazy_eval_string (char *s) {
   return scm_internal_lazy_catch (SCM_BOOL_T,

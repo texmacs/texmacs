@@ -28,6 +28,7 @@ gs_system () {
 #endif
 }
 
+#ifdef GS_EXE
 string
 gs_embedded () {
   string cmd; // no need to resolve each time
@@ -43,6 +44,7 @@ gs_embedded () {
   }
   return cmd;
 }
+#endif
 
 static string
 gs_executable () {
