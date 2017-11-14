@@ -199,6 +199,15 @@ TeXmacs_call_scm (arg_list *args) {
 
 SCM
 call_scheme (SCM fun) {
+// uncomment block to display scheme call
+/*
+  SCM ENDLscm= scm_from_locale_string ("\n");
+  SCM source=scm_procedure_source(fun);
+  scm_call_2(scm_c_eval_string("display*"), source, ENDLscm);
+  scm_call_2(scm_c_eval_string("display*"),  scm_procedure_environment(fun), ENDLscm);
+  scm_call_2(scm_c_eval_string("display*"),  scm_procedure_properties(fun), ENDLscm);
+  //DBGFMT1(debug_tmwidgets, source);
+*/
   SCM a[]= { fun }; arg_list args= { 0, a };
   return TeXmacs_call_scm (&args);
 }
