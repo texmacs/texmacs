@@ -11,21 +11,6 @@
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN([AC_QT_CXXFLAG_stdlib], [
-  AC_REQUIRE([AC_PROG_CXX])
-  AC_LANG_PUSH([C++])
-  OLDCXXFLAGS=$CXXFLAGS
-  CXXFLAGS="$CXXFLAGS -stdlib=libc++"
-  AC_COMPILE_CHECK([whether C++ compiler supports -stdlib],[],[], [
-    AC_MSG_RESULT(yes)
-    Stdlib="yes"
-  ], [
-    AC_MSG_RESULT(no)
-    Stdlib="no"])
-  CXXFLAGS=$OLDCXXFLAGS
-  AC_LANG_POP([C++])
-])
-
 AC_DEFUN([TM_MACOS],[
   if test x"$CONFIG_OS" = xMACOS; then
     AC_ARG_ENABLE(macosx-extensions,
@@ -48,13 +33,4 @@ AC_DEFUN([TM_MACOS],[
     esac
   fi
 
-  case "${host}" in
-    *apple*darwin*)
-      AC_QT_CXXFLAG_stdlib
-      if test "$Stdlib" = "no"; then
-	QT_CXXFLAGS=`echo $QT_CXXFLAGS | sed 's/ -stdlib=@<:@^@<:@:space:@:>@@:>@*//g'`
-	QT_LDFLAGS=`echo $QT_LDFLAGS | sed 's/ -stdlib=@<:@^@<:@:space:@:>@@:>@*//g'`
-      fi
-   ;;
-  esac
 ])
