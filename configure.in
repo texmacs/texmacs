@@ -84,6 +84,24 @@ AC_CPLUSPLUS_STACK
 # Checks for standard functionality
 #--------------------------------------------------------------------
 
+# Standard C++ library
+m4_define([PROG_STDLIB], [AC_LANG_PROGRAM([[
+@%:@include <string>
+@%:@include <iostream>
+]],[[
+std::string t="CompileMe";
+std::cout <<t; ]])])
+
+LC_LINK_IFELSE([stdlibc++], [PROG_STDLIB],[
+	AC_MSG_NOTICE([compiler has stdlibc++ support])  
+],[
+  AX_CHECK_COMPILE_FLAG([if compiler supports -stdlib option],[
+    LC_APPEND_FLAG([-stdlib=libstdc++],[CXXFLAGS])
+    LC_APPEND_FLAG([-stdlib=libstdc++],[CFLAGS])
+    AC_MSG_NOTICE([added libstdc++ in compile flags])
+  ],[AC_MSG_ERROR([Not able to link with libstdc++])]) 
+])
+
 AC_CHECK_TYPES(FILE)
 AC_CHECK_TYPES(intptr_t)
 AC_CHECK_TYPES(time_t)
@@ -127,6 +145,7 @@ TM_INSTALL
 #--------------------------------------------------------------------
 
 CPPFLAGS="$CPPFLAGS -include config.h"
+LDFLAGS+=" -Wl,-stack_size,0x1000000"
 
 #--------------------------------------------------------------------
 # Done
