@@ -23381,11 +23381,16 @@ $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
 
 
 #--------------------------------------------------------------------
-# final adjustement for Texmacs compile
+# final adjustement for Texmacs compile and run
 #--------------------------------------------------------------------
 
 CPPFLAGS="$CPPFLAGS -include config.h"
-LDFLAGS+=" -Wl,-stack_size,0x1000000"
+if test $CONFIG_OS = OS_MINGW -o $CONFIG_OS = MACOS
+then LDFLAGS+=" -Wl,-stack_size,0x1000000"
+else
+$as_echo "#define STACK_SIZE 0x1000000" >>confdefs.h
+
+fi
 
 #--------------------------------------------------------------------
 # Done

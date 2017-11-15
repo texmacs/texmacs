@@ -189,6 +189,9 @@
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
+/* If not set during link */
+#undef STACK_SIZE
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 

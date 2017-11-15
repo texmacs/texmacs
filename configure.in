@@ -141,11 +141,14 @@ TM_OPTIMIZE
 TM_INSTALL
 
 #--------------------------------------------------------------------
-# final adjustement for Texmacs compile
+# final adjustement for Texmacs compile and run
 #--------------------------------------------------------------------
 
 CPPFLAGS="$CPPFLAGS -include config.h"
-LDFLAGS+=" -Wl,-stack_size,0x1000000"
+if test $CONFIG_OS = OS_MINGW -o $CONFIG_OS = MACOS
+then LDFLAGS+=" -Wl,-stack_size,0x1000000"
+else AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
+fi
 
 #--------------------------------------------------------------------
 # Done
