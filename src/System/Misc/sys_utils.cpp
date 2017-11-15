@@ -151,11 +151,12 @@ get_printing_default () {
 #endif
 }
 
-class  {
+class  PrintCap{
 private:
 	string prt_cmd;
-	bool blank= true;
+	bool blank;
 public:	
+  PrintCap():blank(true) {};
 	friend string get_printing_cmd ();
 	friend void set_printing_cmd (const string&);
 } print_cap;
