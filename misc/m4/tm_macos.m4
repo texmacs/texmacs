@@ -11,21 +11,6 @@
 #
 #--------------------------------------------------------------------
 
-AC_DEFUN([AC_TEXMACS_CXXFLAG_Xarch_x86_64], [
-  AC_REQUIRE([AC_PROG_CXX])
-  AC_LANG_PUSH([C++])
-  OLDCXXFLAGS=$CXXFLAGS
-  CXXFLAGS="$CXXFLAGS -arch x86_64 -Xarch_x86_64 -mmacosx-version-min=10.8"
-  AC_COMPILE_CHECK([whether C++ compiler supports -Xarch_x86_64],[],[], [
-    AC_MSG_RESULT(yes)
-    Xarch_x86_64="yes"
-  ], [
-    AC_MSG_RESULT(no)
-    Xarch_x86_64="no"])
-  CXXFLAGS=$OLDCXXFLAGS
-  AC_LANG_POP([C++])
-])
-
 AC_DEFUN([AC_QT_CXXFLAG_stdlib], [
   AC_REQUIRE([AC_PROG_CXX])
   AC_LANG_PUSH([C++])
@@ -62,16 +47,6 @@ AC_DEFUN([TM_MACOS],[
 	    ;;
     esac
   fi
-
-  case "${host}" in
-    *apple*darwin*)
-      AC_TEXMACS_CXXFLAG_Xarch_x86_64
-      if test "$Xarch_x86_64" = "no"; then
-	QT_CXXFLAGS=`echo $QT_CXXFLAGS | sed "s/ -Xarch_x86_64//g"`
-	QT_LDFLAGS=`echo $QT_LDFLAGS | sed "s/ -Xarch_x86_64//g"`
-      fi
-    ;;
-  esac
 
   case "${host}" in
     *apple*darwin*)
