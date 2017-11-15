@@ -13,6 +13,7 @@
 
 AC_DEFUN([TM_MACOS],[
   if test x"$CONFIG_OS" = xMACOS; then
+
     AC_ARG_ENABLE(macosx-extensions,
     AS_HELP_STRING([--disable-macosx-extensions],
     [do not use Mac specific services (spellchecker, image handling, ...)]),
@@ -31,6 +32,18 @@ AC_DEFUN([TM_MACOS],[
 	    AC_MSG_ERROR([bad option --enable-macosx-extensions=$enable_macosx_extensions])
 	    ;;
     esac
-  fi
 
+    AC_ARG_WITH(osx,
+       AS_HELP_STRING([--with-osx@<:@=none@:>@],
+       [targeted configuration (i.e 10.6)]),[
+         MACOSX_TARGET=-os$withval
+         sdk=/Developer/SDKs/MacOSX$withval.sdk
+         [[ -d $sdk ]] || AC_MSG_ERROR([Apple SDK not found in $sdk])
+         LC_MERGE_FLAGS([-isysroot $sdk -mmacosx-version-min=$withval],[CFLAGS])
+         LC_MERGE_FLAGS([-isysroot $sdk -mmacosx-version-min=$withval],[CXXFLAGS])
+         LC_MERGE_FLAGS([-Wl,-syslibroot,$sdk -Wl,-macosx_version_min,$withval],[LDFLAGS])
+       ],[]
+    )
+   AC_SUBST(MACOSX_TARGET)
+fi
 ])
