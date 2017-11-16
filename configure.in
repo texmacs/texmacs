@@ -48,8 +48,8 @@ AC_SUBST(STABLE_RELEASE)
 CFLAGS=${CFLAGS:=""}
 CXXFLAGS=${CXXFLAGS:=""}
 
-AC_PROG_CC
-AC_PROG_CXX
+AC_PROG_CC([clang gcc])
+AC_PROG_CXX([clang++ g++])
 AC_PROG_OBJC([clang gcc])
 AC_PROG_OBJCXX([clang++ g++])
 AC_LANG_CPLUSPLUS
@@ -90,17 +90,16 @@ m4_define([PROG_STDLIB], [AC_LANG_PROGRAM([[
 @%:@include <iostream>
 ]],[[
 std::string t="CompileMe";
-std::cout <<t; ]])])
+std::cout <<t.size(); ]])])
 
+AX_CHECK_COMPILE_FLAG([-stdlib=libstdc++],[
+	LC_APPEND_FLAG([-stdlib=libstdc++],[CXXFLAGS])
+	LC_APPEND_FLAG([-stdlib=libstdc++],[CFLAGS])
+	AC_MSG_NOTICE([added libstdc++ in compile flags])])
+  
 LC_LINK_IFELSE([stdlibc++], [PROG_STDLIB],[
 	AC_MSG_NOTICE([compiler has stdlibc++ support])  
-],[
-  AX_CHECK_COMPILE_FLAG([if compiler supports -stdlib option],[
-    LC_APPEND_FLAG([-stdlib=libstdc++],[CXXFLAGS])
-    LC_APPEND_FLAG([-stdlib=libstdc++],[CFLAGS])
-    AC_MSG_NOTICE([added libstdc++ in compile flags])
-  ],[AC_MSG_ERROR([Not able to link with libstdc++])]) 
-])
+],[AC_MSG_ERROR([Not able to link with libstdc++])])
 
 AC_CHECK_TYPES(FILE)
 AC_CHECK_TYPES(intptr_t)
