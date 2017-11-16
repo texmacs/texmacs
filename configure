@@ -23197,7 +23197,7 @@ $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
 #--------------------------------------------------------------------
 
 CPPFLAGS="$CPPFLAGS -include config.h"
-if test $CONFIG_OS = OS_MINGW -o $CONFIG_OS = MACOS
+if test $CONFIG_OS = MACOS
 then LDFLAGS+=" -Wl,-stack_size,0x1000000"
 else
 $as_echo "#define STACK_SIZE 0x1000000" >>confdefs.h

@@ -144,7 +144,7 @@ TM_INSTALL
 #--------------------------------------------------------------------
 
 CPPFLAGS="$CPPFLAGS -include config.h"
-if test $CONFIG_OS = OS_MINGW -o $CONFIG_OS = MACOS
+if test $CONFIG_OS = MACOS
 then LDFLAGS+=" -Wl,-stack_size,0x1000000"
 else AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
 fi
