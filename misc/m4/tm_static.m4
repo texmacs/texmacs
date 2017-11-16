@@ -14,7 +14,12 @@
 AC_DEFUN([TM_STATIC],[
   AC_ARG_ENABLE(static,
   AS_HELP_STRING([--enable-static@<:@=no@:>@], [statically link libraries]),
-    [AC_MSG_NOTICE([Link with static librairies enabled])],[enableval="no"])
+    [AC_MSG_NOTICE([Link with static librairies enabled])],[
+    if test -n "$TMREPO" -a $CONFIFG_OS == MAC_OS
+      then enableval="yes"
+      else enableval="no"
+    fi
+    ])
 
   unset LNSTATIC SEMISTATIC SEMIDYNAMIC MAC
   if [[[ "$enableval" != no ]]]
@@ -27,7 +32,7 @@ AC_DEFUN([TM_STATIC],[
       ;;
     MACOS)
       LC_APPEND_FLAG([-Wl,-search_paths_first],[LDFLAGS])
-      AC_MSG_WARN([statically link main libraries for MacOS X])
+      AC_MSG_NOTICE([statically link main libraries for MacOS X])
       ;;
     *) AC_MSG_ERROR(static link not supported);;
     esac
