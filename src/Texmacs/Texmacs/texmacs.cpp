@@ -564,20 +564,6 @@ immediate_options (int argc, char** argv) {
 
 int
 main (int argc, char** argv) {
-
-#ifdef STACK_SIZE
-  struct rlimit limit;
-
-  if(getrlimit(RLIMIT_STACK, &limit)) {
-    if (limit.rlim_max <  STACK_SIZE) {
-      cerr << "Max stack allowed value : " << limit.r_lim_max << "\n";
-      rl.rlim_cur= limit.rlim_max;
-    } else rl.rlim_cur= STACK_SIZE;
-    if(setrlimit(RLIMIT_STACK, &limit)) cerr << "Cannot set stack value\n";
-  } else cerr << "Cannot get stack value\n";
-#endif
-
-
   original_path= get_env ("PATH");
   boot_hacks ();
   windows_delayed_refresh (1000000000);
