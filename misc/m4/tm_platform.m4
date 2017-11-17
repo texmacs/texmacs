@@ -70,7 +70,8 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
-    ;;
+      AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
+   ;;
     i*86-*-freebsd* | x86_64-*-freebsd*)
       AC_MSG_RESULT(final adjustments for an Intel or AMD GNU/BSD host)
       AC_DEFINE([OS_FREEBSD],[1],[OS type])
@@ -95,6 +96,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
+      LC_APPEND_FLAG([-Wl,--stack=16777216],[LDFLAGS])
     ;;
     *-*-cygwin)
       AC_MSG_RESULT(final adjustments for cygwin host)
@@ -117,6 +119,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_BPATH=""
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
+      LC_APPEND_FLAG([-Wl,-stack_size,0x1000000],[LDFLAGS])
   #    GUILE_LDFLAGS=""
   #    for l in $($GUILE_CONFIG link)
   #    do if [[[ $l =~ ^-L ]]]

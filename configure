@@ -5535,7 +5535,10 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
-    ;;
+
+$as_echo "#define STACK_SIZE 0x1000000" >>confdefs.h
+
+   ;;
     i*86-*-freebsd* | x86_64-*-freebsd*)
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Intel or AMD GNU/BSD host" >&5
 $as_echo "final adjustments for an Intel or AMD GNU/BSD host" >&6; }
@@ -5571,6 +5574,42 @@ $as_echo "#define OS_MINGW (defined (__MINGW__) || defined (__MINGW32__))" >>con
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
+
+  if [[ "-Wl,--stack=16777216" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -Wl,--stack=16777216"
+  elif [[ "-Wl,--stack=16777216" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-Wl,--stack=16777216"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -Wl,--stack=16777216"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,--stack=16777216($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
+    else LDFLAGS+=" -Wl,--stack=16777216"
+    fi
+  fi
+
     ;;
     *-*-cygwin)
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for cygwin host" >&5
@@ -5600,6 +5639,42 @@ $as_echo "#define OS_MACOS 1" >>confdefs.h
       CONFIG_BPATH=""
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
+
+  if [[ "-Wl,-stack_size,0x1000000" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -Wl,-stack_size,0x1000000"
+  elif [[ "-Wl,-stack_size,0x1000000" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-Wl,-stack_size,0x1000000"
+  do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LDFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$LDFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then LDFLAGS=
+  else  while test "$LDFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LDFLAGS"
+        LDFLAGS="${LDFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LDFLAGS="${LDFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LDFLAGS="${LDFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LDFLAGS=$(echo $LDFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LDFLAGS+=" -Wl,-stack_size,0x1000000"
+  else
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-stack_size,0x1000000($|[[:space:]])") ]]
+    then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
+$as_echo "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
+    else LDFLAGS+=" -Wl,-stack_size,0x1000000"
+    fi
+  fi
+
   #    GUILE_LDFLAGS=""
   #    for l in $($GUILE_CONFIG link)
   #    do if [[[ $l =~ ^-L ]]]
@@ -23197,12 +23272,6 @@ $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
 #--------------------------------------------------------------------
 
 CPPFLAGS="$CPPFLAGS -include config.h"
-if test $CONFIG_OS = MACOS
-then LDFLAGS+=" -Wl,-stack_size,0x1000000"
-else
-$as_echo "#define STACK_SIZE 0x1000000" >>confdefs.h
-
-fi
 
 #--------------------------------------------------------------------
 # Done
