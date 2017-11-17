@@ -67,7 +67,7 @@
   (set! preview-command val))
 
 (define (notify-printing-command var val)
-  (set-printing-command val))
+  (if (not (os-mingw?)) (set-printing-command val))) ; Fix me for windows use get-printing-cmd ?
 
 (define (notify-paper-type var val)
   (set-printer-paper-type (locase-first val)))

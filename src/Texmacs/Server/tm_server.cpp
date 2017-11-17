@@ -35,7 +35,6 @@ string my_init_cmds= "";
 
 void reset_inclusions ();
 extern string printing_dpi;
-extern string printing_cmd;
 extern string printing_on;
 extern int nr_windows;
 void del_obj_qt_renderer(void);
@@ -182,7 +181,7 @@ tm_server_rep::set_script_status (int i) {
 
 void
 tm_server_rep::set_printing_command (string cmd) {
-  printing_cmd= cmd;
+  set_printing_cmd (cmd);
 }
 
 void
