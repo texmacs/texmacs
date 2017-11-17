@@ -21,7 +21,6 @@ string
 gs_system () {
 #ifdef OS_MINGW
 	url gs= url_system ("C:\\") * url_wildcard ("Program Files*") * url_system ("gs") * url_wildcard ("gs*")* url_system ("bin") * url_wildcard ("gswin*c.exe");
-	cout <<"URLGS:"<<gs<<"\n";
 	return materialize (gs);
 #else
    return "gs";
@@ -53,7 +52,6 @@ gs_executable () {
 #else
   static string cmd= gs_system ();
 #endif
-cout << "Gs:"<<cmd<<"\n";
   return cmd;
 }
 
