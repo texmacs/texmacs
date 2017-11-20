@@ -33,11 +33,11 @@ gs_embedded () {
   string cmd; // no need to resolve each time
   
   url tmp= url_system (get_env ("TEXMACS_PATH"));
-  url gs= tmp * "bin" * tail (url_system (GS_EXE));
+  url gs= tmp * url_system (GS_EXE);
    
   if (exists (gs)) {
     putenv (as_charp ("GS_LIB=" * as_string (tmp * GS_LIB | tmp * GS_FONTS, URL_STANDARD)));
-    cmd= sys_concretize (gs);
+    cmd= concretize (gs);
   } else {
 		cmd= gs_system ();
   }
@@ -48,7 +48,8 @@ gs_embedded () {
 static string
 gs_executable () {
 #ifdef GS_EXE
-  static string cmd= gs_embedded ();
+  static string cmd;
+	if(N (cmd) == 0) cmd= gs_embedded (); // init had to be postponed because of TEXMACS_PATH initialization
 #else
   static string cmd= gs_system ();
 #endif
