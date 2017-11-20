@@ -20,7 +20,7 @@
 (define (system-security-error cmd out err)
   (report-system-error "Windows security command failed" cmd out err))
 
-(define wallet-cmd (url-concretize (url-resolve-in-path "winwallet")))
+(define wallet-cmd (url-concretize (url-resolve-in-path ""$TEXMACS_PATH/bin/winwallet")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Add generic password
