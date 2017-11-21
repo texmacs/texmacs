@@ -5522,10 +5522,12 @@ $as_echo "yes" >&6; }
 $as_echo "no" >&6; }
   fi
 
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking final adjustments for" >&5
+$as_echo_n "checking final adjustments for... " >&6; }
   case "${host}" in
     i*86-*-linux* | x86_64-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Intel or AMD GNU/Linux host" >&5
-$as_echo "final adjustments for an Intel or AMD GNU/Linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: an Intel or AMD GNU/Linux host" >&5
+$as_echo "an Intel or AMD GNU/Linux host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5540,8 +5542,8 @@ $as_echo "#define STACK_SIZE 0x1000000" >>confdefs.h
 
    ;;
     i*86-*-freebsd* | x86_64-*-freebsd*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Intel or AMD GNU/BSD host" >&5
-$as_echo "final adjustments for an Intel or AMD GNU/BSD host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: an Intel or AMD GNU/BSD host" >&5
+$as_echo "an Intel or AMD GNU/BSD host" >&6; }
 
 $as_echo "#define OS_FREEBSD 1" >>confdefs.h
 
@@ -5549,8 +5551,8 @@ $as_echo "#define OS_FREEBSD 1" >>confdefs.h
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     ;;
     i*86-*-solaris*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Intel or AMS Solaris host" >&5
-$as_echo "final adjustments for an Intel or AMS Solaris host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: an Intel or AMS Solaris host" >&5
+$as_echo "an Intel or AMS Solaris host" >&6; }
 
 $as_echo "#define OS_SOLARIS 1" >>confdefs.h
 
@@ -5560,8 +5562,8 @@ $as_echo "#define OS_SOLARIS 1" >>confdefs.h
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
     ;;
     *mingw*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for mingw host" >&5
-$as_echo "final adjustments for mingw host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: for mingw host" >&5
+$as_echo "for mingw host" >&6; }
 
 $as_echo "#define OS_MINGW (defined (__MINGW__) || defined (__MINGW32__))" >>confdefs.h
 
@@ -5612,18 +5614,16 @@ $as_echo "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
 
     ;;
     *-*-cygwin)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for cygwin host" >&5
-$as_echo "final adjustments for cygwin host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: cygwin host" >&5
+$as_echo "cygwin host" >&6; }
 
 $as_echo "#define OS_CYGWIN 1" >>confdefs.h
 
       CONFIG_OS="CYGWIN"
       CONFIG_BFLAGS="-Wl,-stack,8388608"
-  #    CXX="export CYGWIN=check_case:strict; $CXX"
-  #    AC_SUBST(CXX)
     ;;
     *apple*darwin*)
-      echo "$ac_t""final adjustments for a MacOS host" 1>&6
+      echo "$ac_t""for a MacOS host" 1>&6
 
 $as_echo "#define OS_MACOS 1" >>confdefs.h
 
@@ -5675,22 +5675,9 @@ $as_echo "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     fi
   fi
 
-  #    GUILE_LDFLAGS=""
-  #    for l in $($GUILE_CONFIG link)
-  #    do if [[[ $l =~ ^-L ]]]
-  #       then GuileLibPath=${l#-L}
-  #       elif [[[ $l =~ ^-l ]]]
-  #       then lib="$GuileLibPath/lib${l#-l}.a"
-  #            [[[ -f $lib ]]] && GUILE_LDFLAGS+="$lib " || GUILE_LDFLAGS+="${l} " #try to use dynamic lib
-  #       fi
-  #    done
-  ## guile-config doesn't return the need of libnintl
-  #        [[[ -z $LibIntl ]]] && LibIntl="$GuileLibPath/libintl.a" && [[[ -f $LibIntl ]]] && GUILE_LDFLAGS+="$LibIntl "
-  ## We must also modify the iconv library, that should be in same place than guile's lib
-  #        [[[ -z $LibIconv ]]] && LibIconv="$GuileLibPath/libiconv.a" && [[[ -f $LibIconv ]]] && ICONV_LDFLAGS="$LibIconv "
   ;;
     *darwin*)
-      echo "$ac_t""final adjustments for a generic Darwin host" 1>&6
+      echo "$ac_t""for a generic Darwin host" 1>&6
 
 $as_echo "#define OS_DARWIN 1" >>confdefs.h
 
@@ -5702,8 +5689,8 @@ $as_echo "#define OS_DARWIN 1" >>confdefs.h
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
     ;;
     powerpc-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for a PowerPC/GNU-linux host" >&5
-$as_echo "final adjustments for a PowerPC/GNU-linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a PowerPC/GNU-linux host" >&5
+$as_echo "a PowerPC/GNU-linux host" >&6; }
 
 $as_echo "#define OS_POWERPC_GNU_LINUX 1" >>confdefs.h
 
@@ -5711,8 +5698,8 @@ $as_echo "#define OS_POWERPC_GNU_LINUX 1" >>confdefs.h
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     ;;
     *sun*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for a SUN/solaris host" >&5
-$as_echo "final adjustments for a SUN/solaris host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a SUN/solaris host" >&5
+$as_echo "a SUN/solaris host" >&6; }
 
 $as_echo "#define OS_SUN 1" >>confdefs.h
 
@@ -5728,8 +5715,8 @@ $as_echo "#define OS_SUN 1" >>confdefs.h
       CONFIG_STD_SETENV=""
     ;;
     sparc*-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for a Sparc host running GNU/Linux" >&5
-$as_echo "final adjustments for a Sparc host running GNU/Linux" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a Sparc host running GNU/Linux" >&5
+$as_echo "a Sparc host running GNU/Linux" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5742,8 +5729,8 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_STD_SETENV=""
     ;;
     *dec*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for a DEC/alpha host" >&5
-$as_echo "final adjustments for a DEC/alpha host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a DEC/alpha host" >&5
+$as_echo "a DEC/alpha host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5753,8 +5740,8 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_STD_SETENV=""
     ;;
     *alpha*-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Alpha GNU/Linux host" >&5
-$as_echo "final adjustments for an Alpha GNU/Linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: an Alpha GNU/Linux host" >&5
+$as_echo "an Alpha GNU/Linux host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5763,8 +5750,8 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_BSHARED="-shared"
     ;;
     s390-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an IBM S/390 GNU/Linux host" >&5
-$as_echo "final adjustments for an IBM S/390 GNU/Linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: an IBM S/390 GNU/Linux host" >&5
+$as_echo "an IBM S/390 GNU/Linux host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5772,8 +5759,8 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_STD_SETENV=""
     ;;
     ia64-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an Itanium GNU/Linux host" >&5
-$as_echo "final adjustments for an Itanium GNU/Linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: an Itanium GNU/Linux host" >&5
+$as_echo "an Itanium GNU/Linux host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5782,8 +5769,8 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_BSHARED="-shared"
     ;;
     hppa*-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for an HP PA_RISC GNU/Linux host" >&5
-$as_echo "final adjustments for an HP PA_RISC GNU/Linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: an HP PA_RISC GNU/Linux host" >&5
+$as_echo "an HP PA_RISC GNU/Linux host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5793,7 +5780,7 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_BSHARED="-shared"
     ;;
     *sgi-irix*)
-      echo "$ac_t""final adjustments for a SGI/Irix host" 1>&6
+      echo "$ac_t""for a SGI/Irix host" 1>&6
 
 $as_echo "#define OS_IRIX 1" >>confdefs.h
 
@@ -5810,24 +5797,24 @@ $as_echo "#define OS_IRIX 1" >>confdefs.h
       CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
     ;;
     m68k-*-linux* | mips-*-linux* | mipsel-*-linux* | arm*-*-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for a supported GNU/Linux host" >&5
-$as_echo "final adjustments for a supported GNU/Linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a supported GNU/Linux host" >&5
+$as_echo "a supported GNU/Linux host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
       CONFIG_OS="GNU_LINUX"
     ;;
     *-linux*)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for a generic GNU/Linux host" >&5
-$as_echo "final adjustments for a generic GNU/Linux host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a generic GNU/Linux host" >&5
+$as_echo "a generic GNU/Linux host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
       CONFIG_OS="GNU_LINUX"
     ;;
     *)
-      { $as_echo "$as_me:${as_lineno-$LINENO}: result: final adjustments for a generic host" >&5
-$as_echo "final adjustments for a generic host" >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: a generic host" >&5
+$as_echo "a generic host" >&6; }
 
 $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
@@ -5968,7 +5955,7 @@ if test "${enable_static+set}" = set; then :
 $as_echo "$as_me: Link with static librairies enabled" >&6;}
 else
 
-    if test -n "$TMREPO" -a $CONFIFG_OS == MAC_OS
+    if test -n "$TMREPO" -a $CONFIG_OS == MACOS
       then enableval="yes"
       else enableval="no"
     fi
