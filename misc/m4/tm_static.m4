@@ -15,7 +15,7 @@ AC_DEFUN([TM_STATIC],[
   AC_ARG_ENABLE(static,
   AS_HELP_STRING([--enable-static@<:@=no@:>@], [statically link libraries]),
     [AC_MSG_NOTICE([Link with static librairies enabled])],[
-    if test -n "$TMREPO" -a $CONFIFG_OS == MAC_OS
+    if test -n "$TMREPO" -a $CONFIG_OS == MACOS
       then enableval="yes"
       else enableval="no"
     fi
