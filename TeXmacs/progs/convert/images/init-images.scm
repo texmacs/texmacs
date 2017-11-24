@@ -17,22 +17,19 @@
 ;; Helper functions for testing available converters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (has-pdftocairo?)
-  (url-exists-in-path? "pdftocairo"))
-
 (tm-define (has-convert?)
   (and (not (os-mingw?)) ;; avoid name collision wrt Windows native command
        (url-exists-in-path? "convert")))
 
-(tm-define (has-convert-bis?)
-  (and (not (has-pdftocairo?))
-       (has-convert?)
-       ;;(url-exists-in-path? "conjure")
-       ))
+(tm-define (has-pdftocairo?)
+  (url-exists-in-path? "pdftocairo"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for conversions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-preferences
+  ("texmacs->image:raster-resolution" "300" noop))
 
 (define (get-raster-resolution opts)
   (or (assoc-ref opts "texmacs->image:raster-resolution")
@@ -82,7 +79,11 @@
   (let* ((dest (assoc-ref opts 'dest))
          (res (get-raster-resolution opts)))
     ;;(display (string-append "convert -density " res " " x " "  dest))
-    (system-2 (string-append "convert -density " res) x dest)
+    ;;(system-2 (string-append "convert -density " res) x dest)
+    ;; NOTE: changing the resolution to 300 (the default) causes a problem
+    ;; when converting TeXmacs documents to Html with formulas as images:
+    ;; the formulas appear way too large...
+    (system-2 (string-append "convert ") x dest)
     (if (url-exists? dest) dest #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -156,44 +157,44 @@
   (:shell "geogebra" "--export=" to "--dpi=600" from))
 
 (converter pdf-file png-file
-  (:require (has-pdftocairo?))
+  (:require (and (has-pdftocairo?) (not (has-convert?))))
   (:function-with-options pdf-file->pdftocairo-raster)
   ;;(:option "texmacs->image:raster-resolution" "450")
   ;;if this is set it overrides the preference widget settings
   )
 
 (converter pdf-file jpeg-file
-  (:require (has-pdftocairo?))
+  (:require (and (has-pdftocairo?) (not (has-convert?))))
   (:function-with-options pdf-file->pdftocairo-raster)
   ;;(:option "texmacs->image:raster-resolution" "300")
   )
 
-(converter pdf-file postscript-document
-  (:require (has-pdftocairo?))
-  (:shell "pdftocairo" "-eps" from to))
-
-(converter pdf-file postscript-file
-  (:require (has-pdftocairo?))
-  (:shell "pdftocairo" "-eps" from to))
+;;(converter pdf-file postscript-document
+;;  (:require (has-pdftocairo?))
+;;  (:shell "pdftocairo" "-eps" from to))
+;;
+;;(converter pdf-file postscript-file
+;;  (:require (has-pdftocairo?))
+;;  (:shell "pdftocairo" "-eps" from to))
 
 (converter pdf-file svg-file
   (:require (has-pdftocairo?))
   (:shell "pdftocairo" "-origpagesizes -nocrop -nocenter -svg" from to))
 
 (converter pdf-file png-file
-  (:require (has-convert-bis?))
+  (:require (has-convert?))
   (:function-with-options pdf-file->imagemagick-raster)
   ;;(:option "texmacs->image:raster-resolution" "300")
   )
   
 (converter pdf-file jpeg-file
-  (:require (has-convert-bis?))
+  (:require (has-convert?))
   (:function-with-options pdf-file->imagemagick-raster)
   ;;(:option "texmacs->image:raster-resolution" "300")
   )
  
 (converter pdf-file tif-file
-  (:require (has-convert-bis?))
+  (:require (has-convert?))
   (:function-with-options pdf-file->imagemagick-raster)
   ;;(:option "texmacs->image:raster-resolution" "300")
   )
