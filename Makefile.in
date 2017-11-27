@@ -19,7 +19,6 @@ mandir = @mandir@
 tmdir = @tmdir@
 tmbin = @tmbin@
 tmdata = @tmdata@
-svnrev = @SVNREV@
 verinfo = ${tmdir}/verinfo.txt
 tm_devel_version = @DEVEL_VERSION@
 tm_devel = @tm_devel@
@@ -306,7 +305,7 @@ BUNDLE: @CONFIG_BUNDLE@
 .PHONY: PACKAGE BUNDLE
 
 GENERIC_PACKAGE_DIR = ../distr/generic
-STATIC_QT = $(tm_devel)-$(svnrev)-$(tm_suffix)
+STATIC_QT = $(tm_devel)-@SVNREV@-$(tm_suffix)
 STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
 GENERIC_PACKAGE: TEXMACS STRIP
@@ -459,7 +458,7 @@ MACOS_PACKAGE_SRC = packages/macos
 MACOS_PACKAGE_DIR = ../distr/macos
 
 MACOS_PACKAGE_APP = ../distr/$(tm_devel).app
-MACOS_PACKAGE_DMG = ../distr/$(tm_devel).dmg
+MACOS_PACKAGE_DMG = ../distr/$(tm_devel)-r@SVNREV@@MACOSX_TARGET@.dmg
 MACOS_PACKAGE_ZIP = ../distr/$(tm_devel).zip
 
 MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
@@ -510,7 +509,7 @@ MACOS_PACKAGE: MACOS_BUNDLE
 MACOS_RELEASE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_ZIP)
 	(cd ../distr; zip -r9Tq $(tm_devel).zip $(tm_devel).app)
-	$(SIGN) $(MACOS_PACKAGE_ZIP) $(svnrev) $(tm_devel_version)
+	$(SIGN) $(MACOS_PACKAGE_ZIP) @SVNREV@ $(tm_devel_version)
 
 .PHONY: MACOS_BUNDLE MACOS_PACKAGE MACOS_RELEASE
 
@@ -637,7 +636,7 @@ ACCESS_FLAGS:
 	$(CHMOD) -R go+x $(tmdir)/lib
 
 VERINFO:
-	@{ date; uname -srvn ; printf "\nRevision  ${svnrev}  "; \
+	@{ date; uname -srvn ; printf "\nRevision  $SVNREV@  "; \
 	egrep '\$$.+configure' config.log; \
 	gcc --version; \
 	svn -v st | misc/admin/verinfo.sh; \
