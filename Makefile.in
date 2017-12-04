@@ -31,6 +31,10 @@ tm_underscore_stable = @tm_underscore_stable@
 tm_suffix = @CONFIG_OS_SUFFIX@
 so = @CONFIG_SO@
 
+#new path and pkg location if tmsdk is used
+@REPOPATH@
+@PKGPATH@
+
 DESTDIR =
 
 MKDIR = mkdir -p
@@ -271,9 +275,7 @@ COPY_SOURCES_TGZ: COPY_SOURCES
 	cd ../distr/build; tar -czf $(tm_devel).tar.gz $(tm_devel) 
 
 COPY_GUILE:
-	GUILE_DATA_PATH=`guile-config info pkgdatadir`; \
-	export GUILE_DATA_PATH; \
-	GUILE_LOAD_PATH=`find $$GUILE_DATA_PATH -type d | grep ice-9`; \
+	GUILE_LOAD_PATH=`find @GUILE_DATA_PATH@ -type d | grep ice-9`; \
 	export GUILE_LOAD_PATH; \
 	for I in $$GUILE_LOAD_PATH ; \
 	do $(CP) $$I $(BUILD_DIR)/TeXmacs/progs/ ; done
@@ -310,7 +312,7 @@ STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
 GENERIC_PACKAGE: TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
-	-find `guile-config info pkgdatadir` -type d -name ice-9 -exec cp -R {} $(tmdir)/progs \; && \
+	-find @GUILE_DATA_PATH@ -type d -name ice-9 -exec cp -R {} $(tmdir)/progs \; && \
 	   cp -R $(tmdir) $(STATIC_QT) && \
 	   tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
 	$(RM) -r $(tmdir)/progs/ice-9 $(STATIC_QT)
@@ -540,7 +542,7 @@ WINDOWS_BUNDLE: TEXMACS
 	if test -d "@GS_FONTS@";then cp -r @GS_FONTS@ $(WINDOWS_BUILD_DIR)/share/Ghostscript/;fi
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
-	find $$(@GUILE_CONFIG@ info pkgdatadir) -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
+	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
 	if test -d "$(QT_PLUGINS_PATH)";then $(CP) -u $(QT_PLUGINS_PATH)/* $(WINDOWS_BUILD_BIN_DIR);fi
 
 $(WINDOWS_PACKAGE_DIR)/@tm_devel@.@SVNREV@-win-x86.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
