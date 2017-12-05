@@ -751,6 +751,8 @@ CONFIG_OS_SUFFIX
 CONFIG_OS
 CONFIG_BUNDLE
 CONFIG_PACKAGE
+PKGPATH
+REPOPATH
 TMREPO
 EGREP
 GREP
@@ -5433,6 +5435,10 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   fi
   unset ${!LC_MERGE_FLAGS_*}
 
+
+    REPOPATH="export PATH=$PATH"
+
+    PKGPATH="export PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
 
   fi
 
