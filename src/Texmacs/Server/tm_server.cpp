@@ -181,7 +181,7 @@ tm_server_rep::set_script_status (int i) {
 
 void
 tm_server_rep::set_printing_command (string cmd) {
-  set_printing_cmd (cmd);
+  ::set_printing_cmd (cmd);
 }
 
 void
