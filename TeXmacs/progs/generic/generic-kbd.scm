@@ -369,6 +369,7 @@
 
   ("C-<" (cursor-history-backward))
   ("C->" (cursor-history-forward))
+  ("C-!" (cursor-history-add (cursor-path)))
   ("C-#" (numbered-toggle (focus-tree)))
   ("C-*" (alternate-toggle (focus-tree)))
   ("C-+" (zoom-in (sqrt (sqrt 2.0))))

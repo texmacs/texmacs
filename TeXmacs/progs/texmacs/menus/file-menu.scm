@@ -220,6 +220,7 @@
     ("Back" (cursor-history-backward)))
   (when (cursor-has-future?)
     ("Forward" (cursor-history-forward)))
+  ("Save position" (cursor-history-add (cursor-path)))
   ---
   (link buffer-go-menu)
   (if (nnull? (linked-file-list))
