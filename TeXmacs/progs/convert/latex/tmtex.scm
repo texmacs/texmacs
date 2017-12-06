@@ -835,7 +835,7 @@
 	  ((string-ends? s "pag")  (string-replace s "pag"  "\\textheight"))
 	  (else s))))
 
-(define (tmtex-hrule l) (list 'tmhrule))
+(define (tmtex-hrule s l) (list 'hrulefill))
 
 (define (tmtex-hspace l)
   (let ((s (if (= (length l) 1) (car l) (cadr l))))
@@ -2532,7 +2532,6 @@
   (concat tmtex-concat)
   (rigid tmtex-rigid)
   (hidden tmtex-noop)
-  (hrule tmtex-hrule)
   (hspace tmtex-hspace)
   (vspace* tmtex-noop)
   (vspace tmtex-vspace)
@@ -2802,6 +2801,7 @@
   (render-proof (,tmtex-render-proof 2))
   (nbsp (,tmtex-nbsp 0))
   (nbhyph (,tmtex-nbhyph 0))
+  (hrule (,tmtex-hrule 0))
   (frac* (,tmtex-frac* 2))
   (hlink (,tmtex-hlink 2))
   (action (,tmtex-action -1))

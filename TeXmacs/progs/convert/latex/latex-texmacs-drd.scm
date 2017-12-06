@@ -50,7 +50,8 @@
   Alpha Beta Epsilon Eta Iota Kappa Mu Nu Omicron Chi Rho Tau Zeta
 
   ;; other extra symbols
-  exterior Exists bigintwl bigointwl asterisk point cdummy comma copyright
+  exterior Exists bigintwl bigointwl
+  of asterisk point cdummy comma copyright
   bignone nobracket nospace nocomma noplus nosymbol
   nin nni notni nequiv nleadsto
   dotminus dotpm dotmp dotamalg dottimes dotoplus dototimes dotast
@@ -73,7 +74,7 @@
 (logic-group latex-texmacs-0%
   tmunsc emdash tmhrule tmat tmbsl tmdummy
   TeXmacs madebyTeXmacs withTeXmacstext
-  scheme tmsep tmSep pari qed)
+  scheme tmsep tmSep pari qed hrule)
 
 (logic-group latex-texmacs-1%
   key tmrsub tmrsup keepcase

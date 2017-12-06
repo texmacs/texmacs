@@ -154,6 +154,7 @@
   (Exists "\\exists")
   (bigintwl "\\int")
   (bigointwl "\\oint")
+  (of ":")
   (point ".")
   (cdummy "\\cdot")
   (comma "{,}")
@@ -216,7 +217,6 @@
   ;; Nullary macros
   (tmunsc "\\_")
   (emdash "---")
-  (tmhrule "\\noindent\\rule[0.3\\baselineskip]{\\textwidth}{0.4pt}")
   (tmat "\\symbol{\"40}")
   (tmbsl "\\ensuremath{\\backslash}")
   (tmdummy "$\\mbox{}$")

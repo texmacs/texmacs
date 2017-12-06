@@ -85,20 +85,22 @@
 		(>= j j2) (<= j j2))))))
 
 (define (tmtable-format-on-row? t f i)
-  (and (tmformat-cell? f)
-       (with (sym I1 I2 J1 J2 var val) f
-	 (and (== 1 J1) (== -1 J2)
-	      (let ((i1 (decode-row t I1))
-		    (i2 (decode-row t I2)))
-		(and (>= i i1) (<= i i2)))))))
+  (with nc (tmtable-ncols t)
+    (and (tmformat-cell? f)
+         (with (sym I1 I2 J1 J2 var val) f
+           (and (== 1 J1) (or (== -1 J2) (== nc J2))
+                (let ((i1 (decode-row t I1))
+                      (i2 (decode-row t I2)))
+                  (and (>= i i1) (<= i i2))))))))
 
 (define (tmtable-format-on-column? t f j)
-  (and (tmformat-cell? f)
-       (with (sym I1 I2 J1 J2 var val) f
-	 (and (== 1 I1) (== -1 I2)
-	      (let ((j1 (decode-column t J1))
-		    (j2 (decode-column t J2)))
-		(and (>= j j1) (<= j j2)))))))
+  (with nr (tmtable-nrows t)
+    (and (tmformat-cell? f)
+         (with (sym I1 I2 J1 J2 var val) f
+           (and (== 1 I1) (or (== -1 I2) (== nr I2))
+                (let ((j1 (decode-column t J1))
+                      (j2 (decode-column t J2)))
+                  (and (>= j j1) (<= j j2))))))))
 
 (define (decode i n) (cond ((< i 0) (+ i n)) ((> i 0) (1- i)) (else 0)))
 (define (decode-row t i) (decode i (tmtable-nrows t)))
