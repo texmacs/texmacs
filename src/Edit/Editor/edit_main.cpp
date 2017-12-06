@@ -470,9 +470,11 @@ edit_main_rep::show_path () {
 void
 edit_main_rep::show_cursor () {
   cout << "Principal cursor: "
-       << cu->ox << ", " << cu->oy << " [" << cu->delta << "]\n";
+       << cu->ox << ", " << cu->oy << " [" << cu->delta << "], "
+       << cu->y1 << " : " << cu->y2 << ", " << cu->slope << "\n";
   cout << "Ghost cursor    : "
-       << mv->ox << ", " << mv->oy << " [" << mv->delta << "]\n";
+       << mv->ox << ", " << mv->oy << " [" << mv->delta << "], "
+       << mv->y1 << " : " << mv->y2 << ", " << mv->slope << "\n";
 }
 
 void

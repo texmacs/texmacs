@@ -150,8 +150,10 @@ edit_cursor_rep::adjust_ghost_cursor (int status) {
       mv->ox   = cu->ox;
       mv->delta= cu->delta;
     }
-    if (status!=VERTICAL)
-      mv->oy= cu->oy;
+    if (status!=VERTICAL) {
+      SI dy= (cu->y1 + cu->y2) >> 1;
+      mv->oy= cu->oy + dy;
+    }
   }
 }
 
