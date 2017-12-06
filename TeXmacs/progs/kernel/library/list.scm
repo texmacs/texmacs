@@ -228,10 +228,7 @@
 
 (define-public (list-filter l pred?)
   "Return the list of elements from @l which match @pred?."
-  (let rec ((l l))
-    (cond ((null? l) l)
-	  ((pred? (car l)) (cons (car l) (rec (cdr l))))
-	  (else (rec (cdr l))))))
+  (apply append (map (lambda (x) (if (pred? x) (list x) (list))) l)))
 
 (provide-public (filter-map fun . args)
   "Composition of @map and @list-filter."
