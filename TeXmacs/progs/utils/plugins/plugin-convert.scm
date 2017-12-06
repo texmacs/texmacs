@@ -45,7 +45,7 @@
             (cond ((!= im #f) (im args))
                   (else (noop)))))))
 
-(define (plugin-input-arg t)
+(tm-define (plugin-input-arg t)
   (if (and (string? t)
 	   (= (length (string->tmtokens t 0 (string-length t))) 1))
       (plugin-input t)
