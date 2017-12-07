@@ -454,22 +454,28 @@
 ;; Pdf ----------
 
 (tm-widget (pdf-preferences-widget)
-  ===
-  (bold (text "TeXmacs -> Pdf/Postscript"))
-  ===
-  (aligned
-    (meti (hlist // (text "Produce Pdf using native export filter"))
-      (toggle (set-boolean-preference "native pdf" answer)
-              (get-boolean-preference "native pdf")))
-    (meti (hlist // (text "Produce Postscript using native export filter"))
-      (toggle (set-boolean-preference "native postscript" answer)
-              (get-boolean-preference "native postscript")))
-    (meti (hlist // (text "Expand beamer slides"))
-      (toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
-              (get-boolean-preference "texmacs->pdf:expand slides")))
-    (meti (hlist // (text "Check exported files for correctness"))
-      (toggle (set-boolean-preference "texmacs->pdf:check" answer)
-              (get-boolean-preference "texmacs->pdf:check")))))
+  (assuming (supports-native-pdf?)
+    ===
+    (bold (text "TeXmacs -> Pdf"))
+    ===
+    (aligned
+      (meti (hlist // (text "Produce Pdf using native export filter"))
+	(toggle (set-boolean-preference "native pdf" answer)
+		(get-boolean-preference "native pdf")))
+      (meti (hlist // (text "Expand beamer slides"))
+	(toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
+		(get-boolean-preference "texmacs->pdf:expand slides")))
+      (meti (hlist // (text "Check exported files for correctness"))
+	(toggle (set-boolean-preference "texmacs->pdf:check" answer)
+		(get-boolean-preference "texmacs->pdf:check")))))
+  (assuming (supports-ghostscript?)
+    ===
+    (bold (text "TeXmacs -> Postscript"))
+    ===
+    (aligned
+      (meti (hlist // (text "Produce Postscript using native export filter"))
+	(toggle (set-boolean-preference "native postscript" answer)
+		(get-boolean-preference "native postscript"))))))
 
 ;; Images ----------
 
@@ -516,7 +522,7 @@
       (tab (text "Verbatim")
         (centered
           (dynamic (verbatim-preferences-widget))))
-      (assuming (and (supports-native-pdf?) (supports-ghostscript?))
+      (assuming (or (supports-native-pdf?) (supports-ghostscript?))
         (tab (text "Pdf")
           (centered
             (dynamic (pdf-preferences-widget)))))
