@@ -113,6 +113,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_OS="MACOS"
       CONFIG_QTPIPES="yes"
       CONFIG_CXXFLAGS="-I${prefix}/include"
+      CONFIG_CXXOPTIMIZE="-O2 -mfpmath=sse -msse2"
       CONFIG_BSHARED=""
       CONFIG_BFLAGS="-framework Cocoa -framework IOKit"
       CONFIG_BPATH=""
