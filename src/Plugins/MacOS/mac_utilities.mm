@@ -44,6 +44,7 @@ mac_alternate_startup () {
 }
 
 
+#ifdef AQUATEXMACS
 void 
 mac_fix_paths () {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -67,6 +68,7 @@ mac_fix_paths () {
   system("printenv");
   [pool release];  
 }
+#endif
 
 
 
