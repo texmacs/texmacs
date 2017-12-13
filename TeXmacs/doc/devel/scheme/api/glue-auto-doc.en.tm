@@ -187,6 +187,54 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-retina-factor)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_retina_factor> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-retina-icons)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_retina_icons> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(get-retina-scale)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_retina_scale> which returns
+    <scm|double>.
+  </explain>
+
+  <\explain>
+    <scm|(set-retina-factor <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_retina_factor> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(set-retina-icons <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_retina_icons> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(set-retina-scale <scm-arg|double>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_retina_scale> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(tm-output <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

@@ -22,6 +22,13 @@ int    retina_factor= 1;
 int    retina_icons = 1;
 double retina_scale = 1.0;
 
+int    get_retina_factor () { return retina_factor; }
+int    get_retina_icons () { return retina_icons; }
+double get_retina_scale () { return retina_scale; }
+void   set_retina_factor (int f) { retina_factor= f; }
+void   set_retina_icons (int i) { retina_icons= i; }
+void   set_retina_scale (double s) { retina_scale= s; }
+
 /******************************************************************************
 * Constructors and handles
 ******************************************************************************/

@@ -21,6 +21,7 @@
 #include "scheme.hpp"
 #include "tm_window.hpp"
 #include "new_window.hpp"
+#include "boot.hpp"
 
 #include "qt_gui.hpp"
 #include "qt_utilities.hpp"
@@ -152,6 +153,8 @@ needing_update (false)
     */
 #endif
   }
+  if (has_user_preference ("retina-scale"))
+    retina_scale= as_double (get_user_preference ("retina-scale"));
 }
 
 /* important routines */

@@ -223,6 +223,72 @@ tmg_default_korean_font () {
 }
 
 tmscm
+tmg_get_retina_factor () {
+  // TMSCM_DEFER_INTS;
+  int out= get_retina_factor ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_retina_icons () {
+  // TMSCM_DEFER_INTS;
+  int out= get_retina_icons ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_get_retina_scale () {
+  // TMSCM_DEFER_INTS;
+  double out= get_retina_scale ();
+  // TMSCM_ALLOW_INTS;
+
+  return double_to_tmscm (out);
+}
+
+tmscm
+tmg_set_retina_factor (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "set-retina-factor");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_retina_factor (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_set_retina_icons (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "set-retina-icons");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_retina_icons (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_set_retina_scale (tmscm arg1) {
+  TMSCM_ASSERT_DOUBLE (arg1, TMSCM_ARG1, "set-retina-scale");
+
+  double in1= tmscm_to_double (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_retina_scale (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_tm_output (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tm-output");
 
@@ -9347,6 +9413,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("default-chinese-font",  tmg_default_chinese_font, 0, 0, 0);
   tmscm_install_procedure ("default-japanese-font",  tmg_default_japanese_font, 0, 0, 0);
   tmscm_install_procedure ("default-korean-font",  tmg_default_korean_font, 0, 0, 0);
+  tmscm_install_procedure ("get-retina-factor",  tmg_get_retina_factor, 0, 0, 0);
+  tmscm_install_procedure ("get-retina-icons",  tmg_get_retina_icons, 0, 0, 0);
+  tmscm_install_procedure ("get-retina-scale",  tmg_get_retina_scale, 0, 0, 0);
+  tmscm_install_procedure ("set-retina-factor",  tmg_set_retina_factor, 1, 0, 0);
+  tmscm_install_procedure ("set-retina-icons",  tmg_set_retina_icons, 1, 0, 0);
+  tmscm_install_procedure ("set-retina-scale",  tmg_set_retina_scale, 1, 0, 0);
   tmscm_install_procedure ("tm-output",  tmg_tm_output, 1, 0, 0);
   tmscm_install_procedure ("tm-errput",  tmg_tm_errput, 1, 0, 0);
   tmscm_install_procedure ("win32-display",  tmg_win32_display, 1, 0, 0);

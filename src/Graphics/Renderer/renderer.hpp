@@ -151,10 +151,17 @@ void abs_outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
 
 extern bool reverse_colors;
 void reverse (int& r, int& g, int& b);
+
 extern bool   retina_manual;
 extern bool   retina_iman;
 extern int    retina_factor;
 extern int    retina_icons;
 extern double retina_scale;
+int    get_retina_factor ();
+int    get_retina_icons ();
+double get_retina_scale ();
+void   set_retina_factor (int f);
+void   set_retina_icons (int i);
+void   set_retina_scale (double s);
 
 #endif // defined RENDERER_H

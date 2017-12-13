@@ -15,7 +15,8 @@
   (:use
     (texmacs texmacs tm-view)
     (texmacs texmacs tm-server)
-    (texmacs texmacs tm-files)))
+    (texmacs texmacs tm-files)
+    (texmacs menus view-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra toolbars at the bottom
@@ -92,6 +93,8 @@
   ("Show panorama" (toggle-panorama-mode))
   ("Remote control" (toggle-remote-control-mode))
   ---
+  ;;(assuming (os-macos?)
+  ;;  ("Retina settings" (open-retina-settings)))
   ("Fit to screen" (fit-to-screen))
   ("Fit to screen width" (fit-to-screen-width))
   ;;("Fit to screen height" (fit-to-screen-height))
