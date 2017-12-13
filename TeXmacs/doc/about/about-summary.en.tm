@@ -9,14 +9,16 @@
   <TeXmacs>>|<cell|>>|<row|<cell|Installed
   version>|<cell|<TeXmacs-version>>>|<row|<cell|Supported systems>|<cell|Most
   GNU/<name|Linux> systems>>|<row|<cell|Copyright>|<cell|<copyright>
-  1998\U2002 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
+  1998\U2017 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
   General Public License|$TEXMACS_PATH/LICENSE>>>|<row|<cell|Web
   sites>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|http://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|Contact>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|Regular
-  mail>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<abbr|Dr.>
-  Joris van der Hoeven>>|<row|<cell|<abbr|Dépt.> de Mathématiques
-  (<abbr|Bât.> 425)>>|<row|<cell|Université Paris-Sud>>|<row|<cell|91405
-  Orsay Cedex>>|<row|<cell|France>>>>>>>>>>|Summary of the principal
-  information about GNU <TeXmacs>.>
+  mail>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<abbr|Prof.>
+  <abbr|dr.> Joris van der Hoeven>>|<row|<cell|Laboratoire d'informatique de
+  l'École polytechnique>>|<row|<cell|LIX, UMR 7161 CNRS>>|<row|<cell|Campus
+  de l'École polytechnique>>|<row|<cell|1, rue Honoré d'Estienne
+  d'Orves>>|<row|<cell|Bâtiment Alan Turing, CS35003>>|<row|<cell|91120
+  Palaiseau, France>>>>>>>>>>|Summary of the principal information about GNU
+  <TeXmacs>.>
 
   <paragraph*|Disclaimers>
 
