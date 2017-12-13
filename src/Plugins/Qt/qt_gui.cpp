@@ -135,7 +135,8 @@ needing_update (false)
       retina_factor= 2;
       if (!retina_iman) {
         retina_iman  = true;
-        retina_icons = 1;
+        retina_icons = 2;
+        // retina_icons = 1;
         // retina_icons = 2;  // FIXME: why is this not better?
       }
       retina_scale = 1.4;
@@ -153,6 +154,10 @@ needing_update (false)
     */
 #endif
   }
+  if (has_user_preference ("retina-factor"))
+    retina_factor= get_user_preference ("retina-factor") == "on"? 2: 1;
+  if (has_user_preference ("retina-icons"))
+    retina_icons= get_user_preference ("retina-icons") == "on"? 2: 1;
   if (has_user_preference ("retina-scale"))
     retina_scale= as_double (get_user_preference ("retina-scale"));
 }

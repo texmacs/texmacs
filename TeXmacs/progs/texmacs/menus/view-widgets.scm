@@ -17,26 +17,60 @@
 ;; Retina settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-widget (retina-settings-widget)
+(tm-define (get-retina-preference which)
+  (if (cpp-has-preference? which)
+      (get-preference which)
+      (cond ((== which "retina-scale") (number->string (get-retina-scale)))
+            (else ""))))
+
+(tm-define (set-retina-preference which val)
+  (set-preference which val))
+
+(tm-define (get-retina-boolean-preference which)
+  (if (cpp-has-preference? which)
+      (preference-on? which)
+      (cond ((== which "retina-factor") (== (get-retina-factor) 2))
+            ((== which "retina-icons") (== (get-retina-icons) 2))
+            (else #f))))
+
+(tm-define (set-retina-boolean-preference which on?)
+  (set-retina-preference which (if on? "on" "off")))
+
+(tm-define (reset-retina-preferences)
+  (reset-preference "retina-factor")
+  (reset-preference "retina-icons")
+  (reset-preference "retina-scale"))
+
+(tm-widget (retina-settings-widget cmd)
   (centered
     (centered
       (aligned
         (meti (hlist // (text "Use retina fonts"))
-          (toggle (set-retina-factor (if answer 2 1))
-                  (== (get-retina-factor) 2)))
+          (toggle (set-retina-boolean-preference "retina-factor" answer)
+                  (get-retina-boolean-preference "retina-factor")))
         (meti (hlist // (text "Use retina icons"))
-          (toggle (set-retina-icons (if answer 2 1))
-                  (== (get-retina-icons) 2)))))
+          (toggle (set-retina-boolean-preference "retina-icons" answer)
+                  (get-retina-boolean-preference "retina-icons")))))
     ===
     (aligned
       (item (text "Graphical interface font scale:")
-        (enum (begin
-                (set-preference "retina-scale" answer)
-                (set-retina-scale (string->number answer)))
+        (enum (set-retina-preference "retina-scale" answer)
               '("1" "1.2" "1.4" "1.6" "1.8" "")
-              (number->string (get-retina-scale))
-              "5em")))))
-
+              (get-retina-preference "retina-scale")
+              "5em")))
+    ===
+    (bottom-buttons
+      ("Cancel" (cmd "cancel")) >>
+      ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) //
+      ("Ok" (cmd "ok")))))
+    
 (tm-define (open-retina-settings)
   (:interactive #t)
-  (top-window retina-settings-widget "Retina screen settings"))
+  (dialogue-window retina-settings-widget
+    (lambda (answer)
+      (when (== answer "ok")
+        (delayed
+          (:idle 1)
+          (set-message "Reboot TeXmacs in order to let the changes take effect"
+                       "Modified retina settings"))))
+    "Retina screen settings"))
