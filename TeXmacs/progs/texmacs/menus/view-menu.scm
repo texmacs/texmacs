@@ -92,9 +92,9 @@
   ("Presentation mode" (toggle-full-screen-mode))
   ("Show panorama" (toggle-panorama-mode))
   ("Remote control" (toggle-remote-control-mode))
-  ---
   (assuming (os-macos?)
     ("Retina settings" (open-retina-settings)))
+  ---
   ("Fit to screen" (fit-to-screen))
   ("Fit to screen width" (fit-to-screen-width))
   ;;("Fit to screen height" (fit-to-screen-height))
