@@ -486,9 +486,6 @@ MACOS_BUNDLE: TEXMACS
 	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
 	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
 	if test -n "@GS_EXE@";then  cp @GS_EXE@ $(MACOS_PACKAGE_TEXMACS)/bin/;fi
-	if test -n "@GS_EXE@";then  $(MKDIR) -p $(MACOS_PACKAGE_TEXMACS)/share/Ghostscript;fi
-	if test -n "@GS_LIB@";then  cp -r @GS_LIB@ $(MACOS_PACKAGE_TEXMACS)/share/Ghostscript/;fi
-	if test -n "@GS_FONTS@";then  cp -r @GS_FONTS@ $(MACOS_PACKAGE_TEXMACS)/share/Ghostscript/;fi
 	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec cp -R {} $(MACOS_PACKAGE_TEXMACS)/progs/ \;
 	$(CHMOD) -R go=rX $(MACOS_PACKAGE_TEXMACS)/progs/ice-9
 	find -d $(MACOS_PACKAGE_TEXMACS) -name .svn -exec rm -rf {} \;
@@ -537,9 +534,6 @@ WINDOWS_BUNDLE: TEXMACS
 	$(MV) $(WINDOWS_BUILD_BIN_DIR)/texmacs.bin $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe
 	if test -n "@XTRA_CMD@"; then cp -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
 	if test -x "@GS_EXE@"; then cp @GS_EXE@ $(WINDOWS_BUILD_BIN_DIR)/;fi
-	if test -x "@GS_EXE@"; then $(MKDIR) -p $(WINDOWS_BUILD_DIR)/share/Ghostscript;fi
-	if test -d "@GS_LIB@"; then cp -r @GS_LIB@ $(WINDOWS_BUILD_DIR)/share/Ghostscript/;fi
-	if test -d "@GS_FONTS@";then cp -r @GS_FONTS@ $(WINDOWS_BUILD_DIR)/share/Ghostscript/;fi
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
 	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;

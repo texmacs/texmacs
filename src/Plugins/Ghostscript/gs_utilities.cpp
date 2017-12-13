@@ -36,7 +36,6 @@ gs_embedded () {
   url gs= tmp * url_system (GS_EXE);
    
   if (exists (gs)) {
-    putenv (as_charp ("GS_LIB=" * as_string (tmp * GS_LIB | tmp * GS_FONTS, URL_STANDARD)));
     cmd= concretize (gs);
   } else {
 		cmd= gs_system ();
