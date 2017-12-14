@@ -11,6 +11,7 @@
 
 #include "QTMPrinterSettings.hpp"
 #include "qt_utilities.hpp"
+#include "sys_utils.hpp"
 
 #include <QPrinter>
 #include <QPrinterInfo>
@@ -228,8 +229,11 @@ CupsQTMPrinterSettings::systemCommandFinished(int exitCode,
 QString
 CupsQTMPrinterSettings::toSystemCommand() const {
   QString _cmd;
+
+  if (from_qstring (printProgram) == "lp ")
+    _cmd += to_qstring (get_printing_cmd ()) + " ";
   
-  if (! printProgram.isEmpty())
+  else if (! printProgram.isEmpty())
     _cmd += printProgram;
   
   if (! printerName.isEmpty())

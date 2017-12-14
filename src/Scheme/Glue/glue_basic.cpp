@@ -800,6 +800,15 @@ tmg_save_preferences () {
 }
 
 tmscm
+tmg_get_default_printing_command () {
+  // TMSCM_DEFER_INTS;
+  string out= get_printing_default ();
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_set_input_language (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-input-language");
 
@@ -9462,6 +9471,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("cpp-set-preference",  tmg_cpp_set_preference, 2, 0, 0);
   tmscm_install_procedure ("cpp-reset-preference",  tmg_cpp_reset_preference, 1, 0, 0);
   tmscm_install_procedure ("save-preferences",  tmg_save_preferences, 0, 0, 0);
+  tmscm_install_procedure ("get-default-printing-command",  tmg_get_default_printing_command, 0, 0, 0);
   tmscm_install_procedure ("set-input-language",  tmg_set_input_language, 1, 0, 0);
   tmscm_install_procedure ("get-input-language",  tmg_get_input_language, 0, 0, 0);
   tmscm_install_procedure ("set-output-language",  tmg_set_output_language, 1, 0, 0);

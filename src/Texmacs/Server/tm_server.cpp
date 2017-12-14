@@ -38,6 +38,7 @@ extern string printing_dpi;
 extern string printing_on;
 extern int nr_windows;
 void del_obj_qt_renderer(void);
+
 /******************************************************************************
 * Texmacs server constructor and destructor
 ******************************************************************************/

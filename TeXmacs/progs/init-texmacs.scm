@@ -146,7 +146,8 @@
 (lazy-keyboard (texmacs keyboard prefix-kbd) always?)
 (lazy-keyboard (texmacs keyboard latex-kbd) always?)
 (lazy-menu (texmacs menus file-menu) file-menu go-menu
-           new-file-menu load-menu save-menu print-menu close-menu)
+           new-file-menu load-menu save-menu
+           print-menu print-menu-inline close-menu)
 (lazy-menu (texmacs menus edit-menu) edit-menu)
 (lazy-menu (texmacs menus view-menu) view-menu texmacs-bottom-toolbars)
 (lazy-menu (texmacs menus tools-menu) tools-menu)

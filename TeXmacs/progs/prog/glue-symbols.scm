@@ -97,6 +97,7 @@
 "cpp-set-preference"
 "cpp-reset-preference"
 "save-preferences"
+"get-default-printing-command"
 "set-input-language"
 "get-input-language"
 "set-output-language"

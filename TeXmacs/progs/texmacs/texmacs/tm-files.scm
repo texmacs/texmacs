@@ -537,20 +537,27 @@
 ;; Printing buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (print-buffer)
-  (:synopsis "Print the current buffer")
-  (print))
-
 (tm-define (interactive-page-setup)
   (:synopsis "Specify the page setup")
   (:interactive #t)
   (set-message "Not yet implemented" "Printer setup"))
+
+(tm-define (direct-print-buffer)
+  (:synopsis "Print the current buffer")
+  (print))
 
 (tm-define (interactive-print-buffer)
   (:synopsis "Print the current buffer")
   (:interactive #t)
   (print-to-file "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps")
   (interactive-print '() "$TEXMACS_HOME_PATH/system/tmp/tmpprint.ps"))
+
+(tm-define (print-buffer)
+  (:synopsis "Print the current buffer")
+  (:interactive (use-print-dialog?))
+  (if (use-print-dialog?)
+      (interactive-print-buffer)
+      (direct-print-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Important files to which the buffer is linked (e.g. bibliographies)

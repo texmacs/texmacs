@@ -579,6 +579,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-default-printing-command)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_printing_default> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(set-input-language <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

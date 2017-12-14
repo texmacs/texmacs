@@ -148,7 +148,7 @@ get_printing_default () {
     return concretize (embedded) * " -print-dialog -exit-when-done";
   else return "";
 #else
-  return "lpr";
+  return "lp";
 #endif
 }
 

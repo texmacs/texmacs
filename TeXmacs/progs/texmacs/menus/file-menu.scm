@@ -16,7 +16,7 @@
     (utils library cursor)
     (texmacs texmacs tm-server)
     (texmacs texmacs tm-files)
-    (texmacs texmacs tm-print)))
+    (texmacs menus print-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menu for existing buffers
@@ -155,16 +155,42 @@
      (choose-file export-selection-as-graphics
                   "Select export file with extension" ""))))
 
-(menu-bind print-menu
-  ("Preview" (preview-buffer))
-  ---
-  (if (has-printing-cmd?) 
-     ("Print all" (print-buffer))
-     ("Print page selection" (interactive print-pages)))
-  ("Print all to file"
+(menu-bind print-menu-sub
+  (if (has-printing-cmd?)
+      ("Print buffer" (print-buffer))
+      ("Print page selection" (interactive print-pages)))
+  ("Print buffer to file"
    (choose-file print-to-file "Print all to file" "postscript"))
   ("Print page selection to file"
    (interactive choose-file-and-print-page-selection)))
+
+(menu-bind print-menu
+  ("Preview" (preview-buffer))
+  (if (use-print-dialog?)
+      (if (has-printing-cmd?) ("Print" (print-buffer)))
+      ("Print to file"
+       (choose-file print-to-file "Print all to file" "postscript")))
+  (if (not (use-print-dialog?))
+      (-> "Print" (link print-menu-sub)))
+  (if (use-menus?)
+      (-> "Page setup" (link page-setup-menu)))
+  (if (use-popups?)
+      ("Page setup" (open-page-setup))))
+
+(menu-bind print-menu-inline
+  ("Preview" (preview-buffer))
+  (if (use-print-dialog?)
+      (if (has-printing-cmd?) ("Print" (print-buffer)))
+      ("Print to file"
+       (choose-file print-to-file "Print all to file" "postscript")))
+  (if (not (use-print-dialog?))
+      ---
+      (link print-menu-sub)
+      ---)
+  (if (use-menus?)
+      (-> "Page setup" (link page-setup-menu)))
+  (if (use-popups?)
+      ("Page setup" (open-page-setup))))
 
 (menu-bind close-menu
   ("Close document" (safely-kill-buffer))
@@ -188,12 +214,8 @@
   ("Save" (save-buffer))
   ("Save as" (choose-file save-buffer-as "Save TeXmacs file" "texmacs"))
   ---
-  (if (use-print-dialog?)
-      ("Preview" (preview-buffer))
-      ("Print" (interactive-print-buffer)))
-  (if (not (use-print-dialog?))
-      (-> "Print" (link print-menu)))
-  (if (not (os-mingw?)) (-> "Page setup" (link page-setup-menu)))
+  (link print-menu)
+  ---
   (-> "Import"
       (link import-import-menu))
   (-> "Export"

@@ -88,6 +88,7 @@
   (cpp-set-preference set_user_preference (void string string))
   (cpp-reset-preference reset_user_preference (void string))
   (save-preferences save_user_preferences (void))
+  (get-default-printing-command get_printing_default (string))
   (set-input-language set_input_language (void string))
   (get-input-language get_input_language (string))
   (set-output-language gui_set_output_language (void string))
