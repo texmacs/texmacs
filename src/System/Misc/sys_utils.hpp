@@ -35,5 +35,6 @@ array<string> evaluate_system (array<string> arg,
 			       array<int> fd_out);
 bool has_printing_cmd (void);
 string get_printing_cmd (void);
-void set_printing_cmd (const string &cmd);
+void set_printing_cmd (string cmd);
+
 #endif // defined SYS_UTILS_H

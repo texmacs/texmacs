@@ -311,10 +311,10 @@ edit_main_rep::print_to_file (url name, string first, string last) {
 
 void
 edit_main_rep::print_buffer (string first, string last) {
-   url target;
+  url target;
   target= url_temp (".ps"); 
   print_doc (target, false, as_int (first), as_int (last));
-  system (get_printing_cmd(), target);  // Send the document to the printer
+  system (get_printing_cmd (), target);  // Send the document to the printer
   set_message ("Done printing", "print buffer");
   ::remove (target);
 }

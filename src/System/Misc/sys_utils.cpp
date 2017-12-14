@@ -143,41 +143,42 @@ evaluate_system (array<string> arg,
 string 
 get_printing_default () {
 #if defined (OS_MINGW)
-	url embedded ("$TEXMACS_PATH/bin/SumatraPDF.exe");
-	if(exists (embedded)) return concretize (embedded) * " -print-dialog -exit-when-done";
-	else return "";
+  url embedded ("$TEXMACS_PATH/bin/SumatraPDF.exe");
+  if (exists (embedded))
+    return concretize (embedded) * " -print-dialog -exit-when-done";
+  else return "";
 #else
-	return "lpr";
+  return "lpr";
 #endif
 }
 
-class  PrintCap{
+class PrintCap {
 private:
-	string prt_cmd;
-	bool blank;
+  string prt_cmd;
+  bool blank;
 public:	
-  PrintCap():blank(true) {};
-	friend string get_printing_cmd ();
-	friend void set_printing_cmd (const string&);
+  PrintCap (): blank (true) {};
+  friend string get_printing_cmd ();
+  friend void set_printing_cmd (string);
 } print_cap;
 
-string 
+string
 get_printing_cmd () {
-	if(print_cap.blank) {
-		print_cap.prt_cmd= get_printing_default ();
-		print_cap.blank= false;
-	}
-	return print_cap.prt_cmd;
+  if (print_cap.blank) {
+    print_cap.prt_cmd= get_printing_default ();
+    print_cap.blank= false;
+  }
+  return print_cap.prt_cmd;
 }
 
 void
-set_printing_cmd (const string &cmd) {
-		print_cap.prt_cmd= cmd;
-		print_cap.blank= false;
+set_printing_cmd (string cmd) {
+  print_cap.prt_cmd= cmd;
+  print_cap.blank= false;
 }
 
 bool
 has_printing_cmd () {
-		static bool has= get_printing_cmd () != "";
-		return has;
+  static bool has= get_printing_cmd () != "";
+  return has;
 }
