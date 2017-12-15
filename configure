@@ -5578,6 +5578,7 @@ $as_echo "#define OS_MINGW (defined (__MINGW__) || defined (__MINGW32__))" >>con
       CONFIG_PACKAGE=WINDOWS_PACKAGE
 
       CONFIG_OS=MINGW
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."

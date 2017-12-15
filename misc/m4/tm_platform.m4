@@ -93,6 +93,7 @@ AC_DEFUN([TM_PLATFORM],[
       AC_SUBST([CONFIG_BUNDLE],[WINDOWS_BUNDLE])
       AC_SUBST([CONFIG_PACKAGE],[WINDOWS_PACKAGE])
       CONFIG_OS=MINGW
+      CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
       CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
