@@ -139,8 +139,16 @@ sqrt_box_rep::sqrt_box_rep (
     SI Y = sqrtb->y1;
     SI bw= sqrtb->w();
     SI bh= sqrtb->h();
-    if (bh < 3*bw) Y += bh >> 1;
-    else Y += (bw*3) >> 1;
+    if (fn->math_type == MATH_TYPE_TEX_GYRE) {
+      if (2*bh < 9*bw) Y += bh >> 1;
+      else if (occurs ("termes", fn->res_name)) Y += (19*bw) >> 3;
+      else if (occurs ("pagella", fn->res_name)) Y += (16*bw) >> 3;
+      else Y += (15*bw) >> 3;
+    }
+    else {
+      if (bh < 3*bw) Y += bh >> 1;
+      else Y += (bw*3) >> 1;
+    }
     insert (b2, min (X, M- b2->x2), Y- b2->y1+ sep);
   }
   insert (sqrtb, -sqrtb->x2, 0);
