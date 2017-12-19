@@ -331,6 +331,18 @@ tex_gyre_native () {
   wide (native, "check", 1, 6, 3382, 10);
   wide (native, "hat", 1, 6, 3384, 10);
   wide (native, "tilde", 1, 6, 3386, 10);
+  wide (native, "overbrace", 0, 5, 3453, 22);
+  wide (native, "overbrace*", 0, 5, 3453, 22);
+  wide (native, "underbrace", 0, 5, 3454, 22);
+  wide (native, "underbrace*", 0, 5, 3454, 22);
+  wide (native, "poverbrace", 0, 5, 3455, 22);
+  wide (native, "poverbrace*", 0, 5, 3455, 22);
+  wide (native, "punderbrace", 0, 5, 3456, 22);
+  wide (native, "punderbrace*", 0, 5, 3456, 22);
+  wide (native, "sqoverbrace", 0, 5, 3457, 22);
+  wide (native, "sqoverbrace*", 0, 5, 3457, 22);
+  wide (native, "squnderbrace", 0, 5, 3458, 22);
+  wide (native, "squnderbrace*", 0, 5, 3458, 22);
   return native;
 }
 

@@ -342,6 +342,11 @@ compute_wide_accent (path ip, box b, string s,
           s == "~" || s == "<tilde>" ||
           s == "<check>")
         very_wide= (b->w() >= ((9*fn->wfn) >> 2));
+      else if (ends (s, "brace>") || ends (s, "brace*>")) {
+        if (starts (s, "<sq"))
+          very_wide= (b->w() >= ((12*fn->wfn) >> 2));
+        else very_wide= (b->w() >= ((16*fn->wfn) >> 2));
+      }
       else very_wide= true;
     }
     else if (true || stix) very_wide= true;
