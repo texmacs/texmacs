@@ -322,11 +322,15 @@ tex_gyre_native () {
   bracket (native, "|", 1, 6, 3745, 7);
   bracket (native, "||", 1, 6, 3746, 7);
 
+  native ("<wide-hat-0>")= 125;
+  native ("<wide-tilde-0>")= 126;
+  native ("<wide-breve-0>")= 128;
+  native ("<wide-check-0>")= 135;
   wide (native, "breve", 1, 6, 3378, 10);
   wide (native, "invbreve", 1, 6, 3380, 10);
   wide (native, "check", 1, 6, 3382, 10);
-  wide (native, "^", 1, 6, 3384, 10);
-  wide (native, "~", 1, 6, 3386, 10);
+  wide (native, "hat", 1, 6, 3384, 10);
+  wide (native, "tilde", 1, 6, 3386, 10);
   return native;
 }
 

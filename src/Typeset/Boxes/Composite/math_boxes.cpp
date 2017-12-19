@@ -141,8 +141,8 @@ sqrt_box_rep::sqrt_box_rep (
     SI bh= sqrtb->h();
     if (fn->math_type == MATH_TYPE_TEX_GYRE) {
       if (2*bh < 9*bw) Y += bh >> 1;
-      else if (occurs ("termes", fn->res_name)) Y += (19*bw) >> 3;
-      else if (occurs ("pagella", fn->res_name)) Y += (16*bw) >> 3;
+      else if (occurs ("ermes", fn->res_name)) Y += (19*bw) >> 3;
+      else if (occurs ("agella", fn->res_name)) Y += (16*bw) >> 3;
       else Y += (15*bw) >> 3;
     }
     else {
@@ -337,7 +337,14 @@ compute_wide_accent (path ip, box b, string s,
   bool very_wide= false;
   SI   accw= fn->wfn;
   if (wide) {
-    if (true || stix) very_wide= true;
+    if (tex_gyre) {
+      if (s == "^" || s == "<hat>" ||
+          s == "~" || s == "<tilde>" ||
+          s == "<check>")
+        very_wide= (b->w() >= ((9*fn->wfn) >> 2));
+      else very_wide= true;
+    }
+    else if (true || stix) very_wide= true;
     else if (s == "^" || s == "<hat>" || s == "~" || s == "<tilde>" ||
              s == "<bar>" || s == "<vect>" || s == "<check>" ||
              s == "<breve>" || s == "<invbreve>") {
@@ -397,6 +404,18 @@ compute_wide_accent (path ip, box b, string s,
                           fn, pen, b->x2- b->x1);
     sep= fn->sep;
     if (stix) sep= (SI) (1.5 * sep);
+  }
+  else if (wide && tex_gyre) {
+    string ws= "<wide-" * s (1, N(s)-1) * ">";
+    SI width= b->x2- b->x1 - fn->wfn/2;
+    wideb= wide_box (decorate_middle (ip), ws, fn, pen, width);
+    if (b->right_slope () != 0) {
+      bool times= stix || (tex_gyre && occurs ("ermes", fn->res_name));
+      double factor= ((times || !above)? 0.2: 0.5);
+      wideb= shift_box (decorate_middle (ip), wideb,
+                        (SI) (-factor * b->right_slope () * fn->yx), 0);
+    }
+    sep= above? -fn->yx: fn->sep;
   }
   else if (wide) {
     SI pad= fn->wfn - accw;

@@ -997,6 +997,10 @@ smart_font_rep::resolve (string c) {
           return nr;
         }
       }
+      if (starts (c, "<wide-")) {
+        if (fn[SUBFONT_MAIN]->supports (c))
+          return sm->add_char (tuple ("main"), c);
+      }
     }
   }
 
