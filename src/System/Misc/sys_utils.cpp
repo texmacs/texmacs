@@ -145,7 +145,7 @@ get_printing_default () {
 #if defined (OS_MINGW)
   url embedded ("$TEXMACS_PATH/bin/SumatraPDF.exe");
   if (exists (embedded))
-    return concretize (embedded) * " -print-dialog -exit-when-done";
+    return sys_concretize (embedded) * " -print-dialog -exit-when-done";
   else return "";
 #else
   return "lp";
