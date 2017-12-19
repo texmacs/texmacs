@@ -229,8 +229,25 @@ unicode_font_rep::unicode_font_rep (string name,
 * Big operators in TeX Gyre fonts
 ******************************************************************************/
 
-void
-unicode_font_rep::tex_gyre_operators () {
+static void
+bracket (hashmap<string,int>& h, string c, int n, int im) {
+  string s= c * "-" * as_string (n) * ">";
+  h ("<large-" * s)= im;
+  h ("<left-" * s)= im;
+  h ("<mid-" * s)= im;
+  h ("<right-" * s)= im;
+}
+
+static void
+bracket (hashmap<string,int>& h, string c, int n1, int n2, int im, int d) {
+  for (int n= n1; n <= n2; n++, im += d)
+    bracket (h, c, n, im);
+}
+
+static hashmap<string,int>
+tex_gyre_native () {
+  static hashmap<string,int> native;
+  if (N(native) != 0) return native;
   native ("<big-prod-2>")= 4215;
   native ("<big-amalg-2>")= 4216;
   native ("<big-sum-2>")= 4217;
@@ -279,6 +296,33 @@ unicode_font_rep::tex_gyre_operators () {
   native ("<large-sqrt-4>")= 4172;
   native ("<large-sqrt-5>")= 4184;
   native ("<large-sqrt-6>")= 4196;
+
+  bracket (native, "(", 1, 5, 3461, 22);
+  bracket (native, ")", 1, 5, 3462, 22);
+  bracket (native, "{", 1, 5, 3465, 22);
+  bracket (native, "}", 1, 5, 3466, 22);
+  bracket (native, "[", 1, 5, 3467, 22);
+  bracket (native, "]", 1, 5, 3468, 22);
+  bracket (native, "lceil", 1, 5, 3469, 22);
+  bracket (native, "rceil", 1, 5, 3470, 22);
+  bracket (native, "lfloor", 1, 5, 3471, 22);
+  bracket (native, "rfloor", 1, 5, 3472, 22);
+  bracket (native, "llbracket", 1, 5, 3473, 22);
+  bracket (native, "rrbracket", 1, 5, 3474, 22);
+  bracket (native, "langle", 1, 6, 3655, 4);
+  bracket (native, "rangle", 1, 6, 3656, 4);
+  bracket (native, "llangle", 1, 6, 3657, 4);
+  bracket (native, "rrangle", 1, 6, 3658, 4);
+  bracket (native, "/", 1, 6, 3742, 7);
+  bracket (native, "\\", 1, 6, 3743, 7);
+  bracket (native, "|", 1, 6, 3745, 7);
+  bracket (native, "||", 1, 6, 3746, 7);
+  return native;
+}
+
+void
+unicode_font_rep::tex_gyre_operators () {
+  native= tex_gyre_native ();
 }
 
 /******************************************************************************
