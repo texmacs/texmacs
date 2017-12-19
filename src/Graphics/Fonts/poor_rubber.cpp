@@ -219,6 +219,11 @@ poor_rubber_font_rep::search_font (string s, string& r) {
              r == "tlfloor" || r == "trfloor" ||
              r == "tlceil" || r == "trceil")
       code= virt->dict ["<rubber-" * r * "-#>"];
+    else if (r == "sqrt") {
+      code= virt->dict ["<rubber-sqrt-#>"];
+      r= string ((char) code) * as_string (nr + HUGE_ADJUST) * ">";
+      return 2*MAGNIFIED_NUMBER + 5;
+    }
     else
       code= virt->dict ["<rubber-lparenthesis-#>"];
     
@@ -277,6 +282,8 @@ poor_rubber_font_rep::supports (string s) {
       if (base->supports ("<" * r * ">")) return true;
       //return base->supports ("<less>") && base->supports ("<gtr>");
     }
+    if (r == "sqrt")
+      if (base->supports ("<#23B7>")) return true;      
   }
   return false;
 }

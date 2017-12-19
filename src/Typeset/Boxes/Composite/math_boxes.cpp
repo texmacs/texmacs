@@ -129,7 +129,8 @@ sqrt_box_rep::sqrt_box_rep (
   SI wline= fn->wline;
   SI dx   = -fn->wfn/36, dy= -fn->wfn/36; // correction
   SI by   = sqrtb->y2+ dy;
-
+  if (sqrtb->x2 - sqrtb->x4 > wline) dx -= (sqrtb->x2 - sqrtb->x4);
+  
   pencil rpen= pen->set_width (wline);
   insert (b1, 0, 0);
   if (!is_nil (b2)) {

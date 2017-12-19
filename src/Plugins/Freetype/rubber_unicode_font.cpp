@@ -155,7 +155,8 @@ rubber_unicode_font_rep::search_font_sub (string s, string& rew) {
           (r == ")" && base->supports ("<#239F>")) ||
           (r == "[" && base->supports ("<#23A2>")) ||
           (r == "]" && base->supports ("<#23A5>")) ||
-          ((r == "{" || r == "}") && base->supports ("<#23AA>"))) {
+          ((r == "{" || r == "}") && base->supports ("<#23AA>")) ||
+          (r == "sqrt" && base->supports ("<#23B7>"))) {
         rew= s;
         return 4;
       }
@@ -212,6 +213,7 @@ rubber_unicode_font_rep::supports (string s) {
       if (s[pos-1] == '-') pos--;
       string r= s (6, pos);
       if (r == ".") return true;
+      if (r == "sqrt") return base->supports ("<#23B7>");
       if (N(r) > 1) r= "<" * r * ">";
       if (!base->supports (r)) return false;
       if (ends (s, "-0>")) return true;

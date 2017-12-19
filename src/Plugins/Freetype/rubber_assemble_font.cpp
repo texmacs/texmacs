@@ -115,6 +115,8 @@ rubber_assemble_font_rep::search_font (string s, string& r) {
         code= virt->dict ["<rubber-parallel-#>"];
       else if (r == "interleave")
         code= virt->dict ["<rubber-interleave-#>"];
+      else if (r == "sqrt")
+        code= virt->dict ["<rubber-sqrt-#>"];
       else
         code= virt->dict ["<rubber-lparenthesis-#>"];
       r= string ((char) code) * as_string (nr) * ">";

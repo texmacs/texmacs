@@ -915,6 +915,7 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   string goal= ss;
   if (N(goal) != 1) goal= "<" * goal * ">";
   if (has_poor_rubber) {
+    if (goal == "<sqrt>") goal= "|"; // FIXME: better goal?
     if (goal == "<||>" || goal == "<interleave>") goal= "|";
     if (goal == "<lfloor>" || goal == "<lceil>" ||
         goal == "<llbracket>" || goal == "<dlfloor>" || goal == "<dlceil>" ||

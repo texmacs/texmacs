@@ -144,4 +144,7 @@
   (rubber-tlfloor-# (ver-extend emu-tlfloor 0.6 # 0.1))
   (rubber-trfloor-# (ver-extend emu-trfloor 0.6 # 0.1))
   (rubber-tlceil-# (ver-extend emu-tlceil 0.4 # 0.1))
-  (rubber-trceil-# (ver-extend emu-trceil 0.4 # 0.1)))
+  (rubber-trceil-# (ver-extend emu-trceil 0.4 # 0.1))
+  (rubber-sqrt-#
+    (glue-above #23B7
+      (ver-take (clip #23B7 0.45 * * *) 0.7 # 0.1))))
