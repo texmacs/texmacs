@@ -990,10 +990,12 @@ smart_font_rep::resolve (string c) {
         //cout << "Found " << c << " in " << fn[nr]->res_name << "\n";
         return nr;
       }
-      if (is_rubber (c)) nr= resolve_rubber (c, a[i], attempt);
-      if (nr >= 0) {
-        //cout << "Found " << c << " in poor-rubber\n";
-        return nr;
+      if (is_rubber (c)) {
+        nr= resolve_rubber (c, a[i], attempt);
+        if (nr >= 0) {
+          //cout << "Found " << c << " in poor-rubber\n";
+          return nr;
+        }
       }
     }
   }

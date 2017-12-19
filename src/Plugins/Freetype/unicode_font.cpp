@@ -230,18 +230,22 @@ unicode_font_rep::unicode_font_rep (string name,
 ******************************************************************************/
 
 static void
-bracket (hashmap<string,int>& h, string c, int n, int im) {
-  string s= c * "-" * as_string (n) * ">";
-  h ("<large-" * s)= im;
-  h ("<left-" * s)= im;
-  h ("<mid-" * s)= im;
-  h ("<right-" * s)= im;
+bracket (hashmap<string,int>& h, string c, int n1, int n2, int im, int d) {
+  for (int n= n1; n <= n2; n++, im += d) {
+    string s= c * "-" * as_string (n) * ">";
+    h ("<large-" * s)= im;
+    h ("<left-" * s)= im;
+    h ("<mid-" * s)= im;
+    h ("<right-" * s)= im;
+  }
 }
 
 static void
-bracket (hashmap<string,int>& h, string c, int n1, int n2, int im, int d) {
-  for (int n= n1; n <= n2; n++, im += d)
-    bracket (h, c, n, im);
+wide (hashmap<string,int>& h, string c, int n1, int n2, int im, int d) {
+  for (int n= n1; n <= n2; n++, im += d) {
+    string s= c * "-" * as_string (n) * ">";
+    h ("<wide-" * s)= im;
+  }
 }
 
 static hashmap<string,int>
@@ -317,6 +321,12 @@ tex_gyre_native () {
   bracket (native, "\\", 1, 6, 3743, 7);
   bracket (native, "|", 1, 6, 3745, 7);
   bracket (native, "||", 1, 6, 3746, 7);
+
+  wide (native, "breve", 1, 6, 3378, 10);
+  wide (native, "invbreve", 1, 6, 3380, 10);
+  wide (native, "check", 1, 6, 3382, 10);
+  wide (native, "^", 1, 6, 3384, 10);
+  wide (native, "~", 1, 6, 3386, 10);
   return native;
 }
 
