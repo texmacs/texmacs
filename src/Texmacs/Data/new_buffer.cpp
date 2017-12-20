@@ -513,16 +513,18 @@ with_package_definitions (string package, tree body) {
 
 bool
 export_tree (tree doc, url u, string fm) {
+  tree aux= doc;
   // NOTE: hook for encryption
-  tree init= extract (doc, "initial");
+  tree init= extract (aux, "initial");
   if (fm == "texmacs")
     for (int i=0; i<N(init); i++)
-      if (is_func (init[i], ASSOCIATE, 2) && init[i][0] == "encryption")
-	doc= as_tree (call ("tree-export-encrypted",
-			    object (u), object (doc)));
+      if (is_func (init[i], ASSOCIATE, 2) && init[i][0] == "encryption") {
+	aux= as_tree (call ("tree-export-encrypted", u, aux));
+	break;
+      }
   // END hook
   if (fm == "generic") fm= "verbatim";
-  string s= tree_to_generic (doc, fm * "-document");
+  string s= tree_to_generic (aux, fm * "-document");
   if (s == "* error: unknown format *") return true;
   return save_string (u, s);
 }

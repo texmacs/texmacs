@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (security gpg gpg-edit)
-  (:use (security gpg gpg-widgets)
+  (:use (texmacs texmacs tm-files)
+	(security gpg gpg-widgets)
 	(utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -443,10 +444,13 @@
 (define gpg-buffer-passphrase-table (make-ahash-table))
 
 (tm-define (gpg-set-buffer-passphrase url passphrase)
-  (with var (url-concretize url)
+  (let* ((var (url-concretize url))
+	 (bck (url-concretize (url-autosave var "~"))))
     (ahash-set! gpg-buffer-passphrase-table var passphrase)
+    (ahash-set! gpg-buffer-passphrase-table bck passphrase)
     (with-wallet
-      (wallet-set `(gpg-buffer-passphrase ,var) passphrase))))
+      (wallet-set `(gpg-buffer-passphrase ,var) passphrase)
+      (wallet-set `(gpg-buffer-passphrase ,bck) passphrase))))
 
 (tm-define (gpg-delete-buffer-passphrase url)
   (with var (url-concretize url)
@@ -501,8 +505,6 @@
 
 ;; Encrypt before saving
 (tm-define (tree-export-encrypted name t)
-  (:require (== (with-buffer name (get-init "encryption"))
-		"gpg-passphrase"))
   (let* ((err (lambda ()
 		(set-message `(concat "Could not save " ,(url->system name))
 			     "Save file")
@@ -511,7 +513,7 @@
 		 noop "Encryption error")))
 	 (dec (serialize-texmacs t))
 	 (passphrase (gpg-get-buffer-passphrase name)))
-    (if (and dec passphrase)
+    (if (and passphrase dec)
       (with enc (gpg-passphrase-encrypt dec passphrase)
 	(if enc
 	    (stree->tree
@@ -529,28 +531,48 @@
 	 (tm-func? (tm-ref b 0) 'gpg-passphrase-encrypted-buffer))))
 
 ;; Decrypt after loading
+(tm-widget ((gpg-widget-error-decrypt-setup-message name) cmd)
+  (centered
+    (text "ERROR")
+    (text "")
+    (text "You are attempting to open an encrypted file while")
+    (text "encryption facilities have not been enabled for TeXmacs.")
+    (text "")
+    (text "You might consider enabling the experimental")
+    (text "\"Encryption\" features from the preference panel.")
+    (text "")
+    (text "You should also make sure that GnuPG is installed")
+    (text "on your system and set it up from the \"Security\" tab."))
+  (bottom-buttons
+    >>
+    ("Close" (cmd))))
+
 (tm-define (tm-gpg-dialogue-passphrase-decrypt-buffer name)
-  (with b (buffer-get name)
-    (when (encrypted-buffer? b)
-      (let* ((t (tree-ref (tmfile-get b 'body) 0))
-	     (enc (tree->string (tree-ref t 0)))
-	     (decryptable? (lambda (x) (gpg-decryptable? enc x)))
-	     (decrypt (lambda (x)
-			(and-with dec (gpg-passphrase-decrypt enc x)
-			  (buffer-set name (parse-texmacs-snippet dec))
-			  (gpg-set-buffer-passphrase name x)))))
-	(with-wallet
-	  (with passphrase (wallet-get `(gpg-buffer-passphrase
-					 ,(url-concretize name)))
-	    (if (and passphrase (decryptable? passphrase))
-		(decrypt passphrase)
-		(dialogue-window 
-		 (gpg-widget-ask-standalone-passphrase decryptable?)
-		 (lambda (action)
-		   (when (and (list? action) (nnull? action)
-			      (== (first action) "Ok"))
-		     (decrypt (second action))))
-		 "Passphrase decryption"))))))))
+  (if (not (supports-gpg?))
+      (dialogue-window
+       (gpg-widget-error-decrypt-setup-message name)
+       noop (url->string name))
+      (with b (buffer-get name)
+	(when (encrypted-buffer? b)
+	  (let* ((t (tree-ref (tmfile-get b 'body) 0))
+		 (enc (tree->string (tree-ref t 0)))
+		 (decryptable? (lambda (x) (gpg-decryptable? enc x)))
+		 (decrypt (lambda (x)
+			    (and-with dec (gpg-passphrase-decrypt enc x)
+			      (buffer-set name (parse-texmacs-snippet dec))
+			      (gpg-set-buffer-passphrase name x)))))
+	    (with-wallet
+	      (with passphrase (wallet-get `(gpg-buffer-passphrase
+					     ,(url-concretize name)))
+		(if (and passphrase (decryptable? passphrase))
+		    (decrypt passphrase)
+		    (dialogue-window 
+		     (gpg-widget-ask-standalone-passphrase decryptable?)
+		     (lambda (action)
+		       (when (and (list? action) (nnull? action)
+				  (== (first action) "Ok"))
+			 (decrypt (second action))))
+		     "Passphrase decryption")))))))))
 
 ;; Save as
 (tm-define (save-buffer-as-main new-name . args)

@@ -65,8 +65,9 @@
       (system-1 "chmod og-rwx" (gpg-homedir))))
   (evaluate-system (list (gpg-get-executable) "--list-keys"
 			 "--homedir" (url->system (gpg-homedir)))
-			 '() '() '(1 2))
-  (url-exists? (url-append (gpg-homedir) "pubring.gpg")))
+                   '() '() '(1 2))
+  (or (url-exists? (url-append (gpg-homedir) "pubring.gpg"))
+      (url-exists? (url-append (gpg-homedir) "pubring.kbx"))))
 
 (tm-define (gpg-get-executable)
   (:synopsis "GnuPG executable")
@@ -85,6 +86,7 @@
        (!= gpg-executable "")
        (url-exists-in-path? gpg-executable)
        (or (url-exists? (url-append (gpg-homedir) "pubring.gpg"))
+	   (url-exists? (url-append (gpg-homedir) "pubring.kbx"))
 	   (gpg-make-homedir))))
 
 (define (gpg-notify-experimental-encryption var val)
