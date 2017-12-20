@@ -329,6 +329,7 @@ bool
 compute_wide_accent (path ip, box b, string s,
                      font fn, pencil pen, bool request_wide, bool above,
                      box& wideb, SI& sep) {
+  bool unicode= (fn->type == FONT_TYPE_UNICODE);
   bool stix= (fn->math_type == MATH_TYPE_STIX);
   bool tex_gyre= (fn->math_type == MATH_TYPE_TEX_GYRE);
   bool wide= (b->w() >= (fn->wfn)) || request_wide;
@@ -349,7 +350,13 @@ compute_wide_accent (path ip, box b, string s,
       }
       else very_wide= true;
     }
-    else if (true || stix) very_wide= true;
+    else if (!unicode) {
+      if (s == "^" || s == "<hat>" || s == "~" || s == "<tilde>")
+        very_wide= (b->w() >= ((9*fn->wfn) >> 2));
+      else very_wide= true;
+    }
+    else if (stix) very_wide= true;
+    /*
     else if (s == "^" || s == "<hat>" || s == "~" || s == "<tilde>" ||
              s == "<bar>" || s == "<vect>" || s == "<check>" ||
              s == "<breve>" || s == "<invbreve>") {
@@ -357,6 +364,7 @@ compute_wide_accent (path ip, box b, string s,
       accw= wb->x4 - wb->x3;
       if (b->w() >= 16*accw) very_wide= true;
     }
+    */
     else very_wide= true;
   }
   if (wide && stix) {
@@ -408,7 +416,7 @@ compute_wide_accent (path ip, box b, string s,
                           "<rubber-" * s (1, N(s)-1) * ">",
                           fn, pen, b->x2- b->x1);
     sep= fn->sep;
-    if (stix) sep= (SI) (1.5 * sep);
+    if (stix || !unicode) sep= (SI) (1.5 * sep);
   }
   else if (wide && tex_gyre) {
     string ws= "<wide-" * s (1, N(s)-1) * ">";
@@ -417,6 +425,20 @@ compute_wide_accent (path ip, box b, string s,
     if (b->right_slope () != 0) {
       bool times= stix || (tex_gyre && occurs ("ermes", fn->res_name));
       double factor= ((times || !above)? 0.2: 0.5);
+      wideb= shift_box (decorate_middle (ip), wideb,
+                        (SI) (-factor * b->right_slope () * fn->yx), 0);
+    }
+    sep= above? -fn->yx: fn->sep;
+  }
+  else if (wide && !unicode) {
+    string ss= s (1, N(s)-1);
+    if (ss == "^") ss= "hat";
+    if (ss == "~") ss= "tilde";
+    string ws= "<wide-" * ss * ">";
+    SI width= b->x2- b->x1 - fn->wfn/2;
+    wideb= wide_box (decorate_middle (ip), ws, fn, pen, width);
+    if (b->right_slope () != 0) {
+      double factor= (above? 0.5: 0.2);
       wideb= shift_box (decorate_middle (ip), wideb,
                         (SI) (-factor * b->right_slope () * fn->yx), 0);
     }
@@ -433,7 +455,7 @@ compute_wide_accent (path ip, box b, string s,
     wideb= resize_box (decorate_middle (ip), wideb,
                        max (wideb->x1, wideb->x3), wideb->y1,
                        min (wideb->x2, wideb->x4), wideb->y2);
-    if (fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0)
+    if (unicode && b->right_slope () != 0)
       wideb= shift_box (decorate_middle (ip), wideb,
                         (SI) (-0.5 * b->right_slope () * fn->yx), 0);
     sep= above? -fn->yx: fn->sep;
@@ -441,7 +463,7 @@ compute_wide_accent (path ip, box b, string s,
   }
   else {
     wideb= text_box (decorate_middle (ip), 0, s, fn, pen);
-    if (fn->type == FONT_TYPE_UNICODE && b->right_slope () != 0) {
+    if (unicode && b->right_slope () != 0) {
       bool times= stix || (tex_gyre && occurs ("ermes", fn->res_name));
       double factor= ((times || !above)? 0.2: 0.5);
       wideb= shift_box (decorate_middle (ip), wideb,
@@ -449,15 +471,15 @@ compute_wide_accent (path ip, box b, string s,
     }
     sep= above? -fn->yx: fn->sep;
   }
-  if (above && fn->type == FONT_TYPE_UNICODE) {
+  if (above && unicode) {
     SI min_d= fn->yx / 8;
     SI max_d= fn->yx / 3;
     if (wideb->y1 + sep <  min_d) sep= min_d - wideb->y1;
     if (wideb->y1 + sep >= max_d) sep= max_d - wideb->y1;
   }
-  if (fn->type == FONT_TYPE_TEX && !wide && !above)
+  if (!unicode && !wide && !above)
     wideb= vresize_box (wideb->ip, wideb, wideb->y1 + fn->yx, wideb->y2);
-  else if (fn->type == FONT_TYPE_UNICODE && s == "<vect>") {
+  else if (unicode && s == "<vect>") {
     if (wide);
     else if (above) sep -= fn->yx + (fn->sep >> 1);
     else wideb= vresize_box (wideb->ip, wideb, wideb->y1 + fn->yx, wideb->y2);

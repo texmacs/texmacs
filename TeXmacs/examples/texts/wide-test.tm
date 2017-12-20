@@ -31,6 +31,8 @@
     <wide|a|\<invbreve\>>,<wide|w|\<invbreve\>>,<wide|12|\<invbreve\>>,<wide|a!!|\<invbreve\>>,<wide|a!!!|\<invbreve\>>,<wide|a!!!!|\<invbreve\>>,<wide|a!!!!!|\<invbreve\>>,<wide|a!!!!!!|\<invbreve\>>,<wide|a!!!!!!!|\<invbreve\>>,<wide|aaaaaaaaaa|\<invbreve\>>
   </equation*>
 
+  \;
+
   <\equation*>
     <wide|a|\<wide-overbrace\>>,<wide|w|\<wide-overbrace\>>,<wide|12|\<wide-overbrace\>>,<wide|a!!|\<wide-overbrace\>>,<wide|a!!!|\<wide-overbrace\>>,<wide|a!!!!|\<wide-overbrace\>>,<wide|a!!!!!|\<wide-overbrace\>>,<wide|a!!!!!!|\<wide-overbrace\>>,<wide|a!!!!!!!|\<wide-overbrace\>>,<wide|a!!!!!!!!|\<wide-overbrace\>>,<wide|a!!!!!!!!!|\<wide-overbrace\>>,<wide|a!!!!!!!!!!|\<wide-overbrace\>>,<wide|a!!!!!!!!!!!!|\<wide-overbrace\>>
   </equation*>
