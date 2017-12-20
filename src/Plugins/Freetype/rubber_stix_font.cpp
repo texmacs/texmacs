@@ -69,7 +69,7 @@ rubber_stix_font_rep::rubber_stix_font_rep (string name, font base2):
   this->copy_math_pars (base);
   dpi= (72 * base->wpt + (PIXEL/2)) / PIXEL;
   reg= !occurs ("-bold-", base->res_name);
-  for (int i=0; i<18; i++) {
+  for (int i=0; i<19; i++) {
     initialized << false;
     subfn << base;
   }
@@ -112,6 +112,7 @@ rubber_stix_font_rep::get_font_sub (int nr) {
   case 15: return unicode_font ("STIXSizeFiveSym-Regular", base->size, dpi);
   case 16: return rubber_assemble_font (base);
   case 17: return rubber_assemble_font (get_font (11));
+  case 18: return unicode_font ("STIXMath-Regular", base->size, dpi);
   default: return base;
   }
 }
@@ -219,6 +220,16 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew, string& ltype) {
   if (starts (s, "<left-") && ends (s, "-0>")) {
     rew= s;
     return 0;
+  }
+  if (starts (s, "<left-sqrt-")) {
+    string r= s (6, N(s) - 3);
+    if (N(r) > 1) r= "<" * r * ">";
+    rew= r;
+    if (s == "<left-sqrt-1>") return 18;
+    if (s == "<left-sqrt-2>") return 7;
+    if (s == "<left-sqrt-3>") return 8;
+    if (s == "<left-sqrt-4>") return 9;
+    if (s == "<left-sqrt-5>") return 10;
   }
   if (starts (s, "<left-") && ends (s, "-1>")) {
     string r= s (6, N(s) - 3);
