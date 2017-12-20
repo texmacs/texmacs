@@ -466,8 +466,8 @@
     "<mathe>" "<mathi>" "<mathlambda>" "<mathpi>"
     "<matheuler>" "<mathcatalan>" "<mathGamma>"
     "<aleph>" "<beth>" "<gimel>" "<daleth>"
-    "<hbar>" "<hslash>" "<imath>" "<jmath>"
-    "<ell>" "<b-ell>" "<wp>" "<digamma>"
+    "<hbar>" "<hslash>" "<wp>" "<digamma>"
+    "<imath>" "<b-imath>" "<jmath>" "<b-jmath>" "<ell>" "<b-ell>"
 
     "<alpha>" "<beta>" "<gamma>" "<delta>" "<epsilon>"
     "<varepsilon>" "<zeta>" "<eta>" "<theta>" "<vartheta>"

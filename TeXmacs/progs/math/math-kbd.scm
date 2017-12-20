@@ -1704,7 +1704,7 @@
   ("math:bold:cal g" "<b-cal-g>")
   ("math:bold:cal h" "<b-cal-h>")
   ("math:bold:cal i" "<b-cal-i>")
-  ("math:bold:cal h" "<b-cal-j>")
+  ("math:bold:cal j" "<b-cal-j>")
   ("math:bold:cal k" "<b-cal-k>")
   ("math:bold:cal l" "<b-cal-l>")
   ("math:bold:cal m" "<b-cal-m>")
