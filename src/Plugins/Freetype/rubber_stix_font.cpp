@@ -274,6 +274,10 @@ rubber_stix_font_rep::search_font_sub (string s, string& rew, string& ltype) {
         rew= "<left-" * r * "-" * as_string (nr + 9) * ">";
         return 17;
       }
+      if (r == "sqrt") {
+        rew= "<large-" * r * "-" * as_string (nr + 9) * ">";
+        return 17;
+      }
       if (r == "/" || r == "\\" ||
           r == "langle" || r == "rangle") {
         if (N(r) == 1) rew= r;

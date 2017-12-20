@@ -147,4 +147,4 @@
   (rubber-trceil-# (ver-extend emu-trceil 0.4 # 0.1))
   (rubber-sqrt-#
     (glue-above #23B7
-      (ver-take (clip #23B7 0.45 * * *) 0.7 # 0.1))))
+      (ver-take (clip #23B7 0.45 * * *) 0.8 # 0.1))))

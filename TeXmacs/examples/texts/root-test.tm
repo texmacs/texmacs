@@ -76,8 +76,22 @@
   </equation*>
 
   <\equation*>
-    <sqrt|a>+<sqrt|d>+<sqrt|.>+<sqrt|x>+<sqrt|y>+<sqrt|k>+<sqrt|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|x>>>>>+<sqrt|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a>>>>>>>>
+    <sqrt|a>+<sqrt|d>+<sqrt|.>+<sqrt|x>+<sqrt|y>+<sqrt|k>+<sqrt|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|x>>>>>+<sqrt|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a>>>>>>>>+<sqrt|<frac|1|2>>
   </equation*>
+
+  <strong|<\equation*>
+    <sqrt|a>+<sqrt|d>+<sqrt|.>+<sqrt|x>+<sqrt|y>+<sqrt|k>+<sqrt|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|x>>>>>+<sqrt|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a>>>>>>>>+<sqrt|<frac|1|2>>
+  </equation*>>
+
+  <\equation*>
+    <sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+x>>>>>>>>
+  </equation*>
+
+  <\strong>
+    <\equation*>
+      <sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+<sqrt|1+x>>>>>>>>
+    </equation*>
+  </strong>
 </body>
 
 <\initial>

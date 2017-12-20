@@ -50,4 +50,4 @@
     (ver-take interleave 0.5 # 0.25))
   (rubber-sqrt-#
     (glue-above #23B7
-      (ver-take (clip #23B7 0.45 * * *) 0.7 # 0.1))))
+      (ver-take (clip #23B7 0.45 * * *) 0.8 # 0.1))))
