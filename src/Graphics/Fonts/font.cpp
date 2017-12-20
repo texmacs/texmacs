@@ -20,6 +20,8 @@ RESOURCE_CODE(font);
 
 hashmap<string,double> rsub_guessed_table ();
 hashmap<string,double> rsup_guessed_table ();
+hashmap<string,double> above_guessed_table ();
+hashmap<string,double> below_guessed_table ();
 
 /******************************************************************************
 * Constructors for fonts
@@ -50,10 +52,14 @@ font_rep::font_rep (string s):
   global_rsup_correct (0),
   rsub_correct (0.0),
   rsup_correct (0.0),
+  above_correct (0.0),
+  below_correct (0.0),
   protrusion_maps (-1)
 {
-  rsub_correct= rsub_guessed_table ();
-  rsup_correct= rsup_guessed_table ();
+  rsub_correct = rsub_guessed_table ();
+  rsup_correct = rsup_guessed_table ();
+  above_correct= above_guessed_table ();
+  below_correct= below_guessed_table ();
 }
 
 font_rep::font_rep (string s, font fn):
@@ -75,8 +81,10 @@ font_rep::font_rep (string s, font fn):
   rsup_correct (0.0),
   protrusion_maps (-1)
 {
-  rsub_correct= rsub_guessed_table ();
-  rsup_correct= rsup_guessed_table ();
+  rsub_correct = rsub_guessed_table ();
+  rsup_correct = rsup_guessed_table ();
+  above_correct= above_guessed_table ();
+  below_correct= below_guessed_table ();
   copy_math_pars (fn);
 }
 

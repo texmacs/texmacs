@@ -567,6 +567,7 @@ struct smart_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 smart_font_rep::smart_font_rep (
@@ -1406,6 +1407,16 @@ smart_font_rep::get_rsup_correction (string s) {
   while (i<n) advance (s, i, r, nr);
   nr= max (nr, 0);
   return fn[nr]->get_rsup_correction (r);
+}
+
+SI
+smart_font_rep::get_wide_correction (string s, int mode) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_wide_correction (s, mode);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_wide_correction (r, mode);
 }
 
 /******************************************************************************

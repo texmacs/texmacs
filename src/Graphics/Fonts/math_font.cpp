@@ -58,6 +58,7 @@ struct math_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 math_font_rep::math_font_rep (
@@ -298,6 +299,13 @@ math_font_rep::get_rsup_correction (string s) {
   font fn;
   search_font (s, fn);
   return fn->get_rsup_correction (s);
+}
+
+SI
+math_font_rep::get_wide_correction (string s, int mode) {
+  font fn;
+  search_font (s, fn);
+  return fn->get_wide_correction (s, mode);
 }
 
 /******************************************************************************

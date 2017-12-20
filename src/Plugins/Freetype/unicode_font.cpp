@@ -78,10 +78,11 @@ struct unicode_font_rep: font_rep {
   double get_left_slope  (string s);
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
-  SI     get_right_correction  (string s);
+  SI     get_right_correction (string s);
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 /******************************************************************************
@@ -695,6 +696,15 @@ unicode_font_rep::get_rsup_correction (string s) {
   SI r= get_right_correction (s) + global_rsup_correct;
   if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
   return r;
+}
+
+SI
+unicode_font_rep::get_wide_correction (string s, int mode) {
+  if (mode > 0 && above_correct->contains (s))
+    return (SI) (above_correct[s] * wfn);
+  else if (mode < 0 && below_correct->contains (s))
+    return (SI) (below_correct[s] * wfn);
+  else return 0;
 }
 
 /******************************************************************************

@@ -82,6 +82,8 @@ struct font_rep: rep<font> {
   SI   global_rsup_correct;  // global right superscript correction
   hashmap<string,double> rsub_correct;     // right subscript adjustments
   hashmap<string,double> rsup_correct;     // right superscript adjustments
+  hashmap<string,double> above_correct;    // wide accent above adjustments
+  hashmap<string,double> below_correct;    // wide accent above adjustments
   hashmap<int,int>       protrusion_maps;  // tables for protrusion
 
   font_rep (string name);

@@ -44,6 +44,7 @@ struct poor_stretched_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 /******************************************************************************
@@ -226,6 +227,11 @@ poor_stretched_font_rep::get_rsub_correction (string s) {
 SI
 poor_stretched_font_rep::get_rsup_correction (string s) {
   return base->get_rsup_correction (s);
+}
+
+SI
+poor_stretched_font_rep::get_wide_correction (string s, int mode) {
+  return base->get_wide_correction (s, mode);
 }
 
 /******************************************************************************

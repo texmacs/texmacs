@@ -43,6 +43,7 @@ struct poor_rubber_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 /******************************************************************************
@@ -387,6 +388,13 @@ poor_rubber_font_rep::get_rsup_correction (string s) {
   string name;
   int num= search_font (s, name);
   return get_font (num) -> get_rsup_correction (name);
+}
+
+SI
+poor_rubber_font_rep::get_wide_correction (string s, int mode) {
+  string name;
+  int num= search_font (s, name);
+  return get_font (num) -> get_wide_correction (name, mode);
 }
 
 /******************************************************************************

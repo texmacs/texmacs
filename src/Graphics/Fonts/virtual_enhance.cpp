@@ -41,6 +41,7 @@ struct virtual_enhance_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 virtual_enhance_font_rep::virtual_enhance_font_rep (
@@ -175,6 +176,12 @@ SI
 virtual_enhance_font_rep::get_rsup_correction  (string s) {
   if (is_basic (s)) return base->get_rsup_correction (s);
   else return extra->get_rsup_correction (s);
+}
+
+SI
+virtual_enhance_font_rep::get_wide_correction  (string s, int mode) {
+  if (is_basic (s)) return base->get_wide_correction (s, mode);
+  else return extra->get_wide_correction (s, mode);
 }
 
 /******************************************************************************

@@ -51,6 +51,7 @@ struct poor_bbb_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 /******************************************************************************
@@ -249,6 +250,12 @@ poor_bbb_font_rep::get_rsup_correction (string s) {
     if (c == 'A') r -= (SI) (0.04 * wfn);
     if (c == 'L') r -= (SI) (0.08 * wfn);
   }
+  return r;
+}
+
+SI
+poor_bbb_font_rep::get_wide_correction (string s, int mode) {
+  SI r= base->get_wide_correction (s, mode);
   return r;
 }
 

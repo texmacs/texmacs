@@ -39,6 +39,7 @@ struct poor_smallcaps_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 poor_smallcaps_font_rep::poor_smallcaps_font_rep (
@@ -292,6 +293,16 @@ poor_smallcaps_font_rep::get_rsup_correction (string s) {
   while (i<n) advance (s, i, r, nr);
   nr= max (nr, 0);
   return subfn[nr]->get_rsup_correction (r);
+}
+
+SI
+poor_smallcaps_font_rep::get_wide_correction (string s, int mode) {
+  int i=0, n= N(s), nr=0;
+  if (n == 0) return subfn[0]->get_wide_correction (s, mode);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return subfn[nr]->get_wide_correction (r, mode);
 }
 
 /******************************************************************************

@@ -572,12 +572,14 @@ wide_box_rep::wide_box_rep (
     X= m;
     if (ref->right_slope () != 0)
       X += ref->rsup_correction() + ((SI) (ref->right_slope() * fn->yx * 0.5));
+    X += ref->wide_correction (1);
     //X= ((SI) (ref->right_slope () * (Y - fn->yx))) + m;
     insert (hi, X- ((hi->x1 + hi->x2)>>1), Y+ sep);
   }
   else {
     Y= ref->y1 - hi->y2;
     X= m - ((SI) (ref->right_slope () * sep));
+    X += ref->wide_correction (-1);
     //X= ((SI) (ref->right_slope () * (Y - sep))) + m;
     insert (hi, X- ((hi->x1 + hi->x2)>>1), Y- sep);
   }

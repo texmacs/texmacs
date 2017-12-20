@@ -4,7 +4,7 @@
 
 <\body>
   <\equation*>
-    <wide|a|^>,<wide|b|^>,<wide|c|^>,<wide|d|^>,<wide|e|^>,<wide|f|^>,<wide|g|^>,<wide|h|^>,<wide|i|^>,<wide|j|^>,<wide|k|^>,<wide|l|^>,<wide|m|^>,<wide|n|^>,<wide|o|^>,<wide|p|^>,<wide|q|^>,<wide|r|^>,<wide|s|^>,<wide|t|^>,<wide|u|^>,<wide|v|^>,<wide|w|^>,<wide|x|^>,<wide|y|^>,<wide|z|^><separating-space|2em><wide|\<imath\>|^>,<wide|\<jmath\>|^>,<wide|\<ell\>|^>,<wide|\<wp\>|^>,<wide|\<partial\>|^>
+    <wide|a|^>,<wide|b|^>,<wide|c|^>,<wide|d|^>,<wide|e|^>,<wide|f|^>,<wide|g|^>,<wide|h|^>,<wide|i|^>,<wide|j|^>,<wide|k|^>,<wide|l|^>,<wide|m|^>,<wide|n|^>,<wide|o|^>,<wide|p|^>,<wide|q|^>,<wide|r|^>,<wide|s|^>,<wide|t|^>,<wide|u|^>,<wide|v|^>,<wide|w|^>,<wide|x|^>,<wide|y|^>,<wide|z|^><separating-space|2em><wide|\<hbar\>|^>,<wide|\<imath\>|^>,<wide|\<jmath\>|^>,<wide|\<ell\>|^>,<wide|\<wp\>|^>,<wide|\<partial\>|^>
   </equation*>
 
   <\equation*>

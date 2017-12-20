@@ -56,10 +56,11 @@ struct tex_font_rep: font_rep {
   void  get_xpositions (string s, SI* xpos);
   void  draw_fixed (renderer ren, string s, SI x, SI y);
   font  magnify (double zoomx, double zoomy);
-  SI    get_left_correction (string s);
+  SI    get_left_correction  (string s);
   SI    get_right_correction (string s);
   SI    get_rsub_correction  (string s);
   SI    get_rsup_correction  (string s);
+  SI    get_wide_correction  (string s, int mode);
   void  advance_glyph (string s, int& pos);
   glyph get_glyph (string s);
   int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
@@ -820,6 +821,15 @@ tex_font_rep::get_rsup_correction (string s) {
   SI r= get_right_correction (s);
   if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
   return r;
+}
+
+SI
+tex_font_rep::get_wide_correction (string s, int mode) {
+  if (mode > 0 && above_correct->contains (s))
+    return (SI) (above_correct[s] * wfn);
+  else if (mode < 0 && below_correct->contains (s))
+    return (SI) (below_correct[s] * wfn);
+  else return 0;
 }
 
 void

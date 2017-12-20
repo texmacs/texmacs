@@ -72,6 +72,7 @@ struct virtual_font_rep: font_rep {
   SI     get_right_correction (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_wide_correction  (string s, int mode);
 };
 
 virtual_font_rep::virtual_font_rep (
@@ -1954,6 +1955,17 @@ virtual_font_rep::get_rsup_correction (string s) {
   SI r= get_right_correction (s);
   if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
   return r;
+}
+
+SI
+virtual_font_rep::get_wide_correction (string s, int mode) {
+  if (extend && base_fn->supports (s))
+    return base_fn->get_wide_correction (s, mode);
+  if (mode > 0 && above_correct->contains (s))
+    return (SI) (above_correct[s] * wfn);
+  else if (mode < 0 && below_correct->contains (s))
+    return (SI) (below_correct[s] * wfn);
+  else return 0;
 }
 
 /******************************************************************************
