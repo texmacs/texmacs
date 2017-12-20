@@ -332,7 +332,7 @@ compute_wide_accent (path ip, box b, string s,
   bool unicode= (fn->type == FONT_TYPE_UNICODE);
   bool stix= (fn->math_type == MATH_TYPE_STIX);
   bool tex_gyre= (fn->math_type == MATH_TYPE_TEX_GYRE);
-  bool wide= (b->w() >= (fn->wfn)) || request_wide;
+  bool wide= (b->w() > (fn->wquad)) || request_wide;
   if (ends (s, "dot>") || (s == "<acute>") ||
       (s == "<grave>") || (s == "<abovering>")) wide= false;
   bool very_wide= false;
@@ -342,11 +342,11 @@ compute_wide_accent (path ip, box b, string s,
       if (s == "^" || s == "<hat>" ||
           s == "~" || s == "<tilde>" ||
           s == "<check>")
-        very_wide= (b->w() >= ((9*fn->wfn) >> 2));
+        very_wide= (b->w() >= ((8*fn->wfn) >> 2));
       else if (ends (s, "brace>") || ends (s, "brace*>")) {
         if (starts (s, "<sq"))
-          very_wide= (b->w() >= ((12*fn->wfn) >> 2));
-        else very_wide= (b->w() >= ((16*fn->wfn) >> 2));
+          very_wide= (b->w() >= ((11*fn->wfn) >> 2));
+        else very_wide= (b->w() >= ((15*fn->wfn) >> 2));
       }
       else very_wide= true;
     }
@@ -372,11 +372,11 @@ compute_wide_accent (path ip, box b, string s,
     if (s == "~") s= "<tilde>";
     if (s == "<hat>" || s == "<tilde>" || s == "<check>" ||
         ends (s, "brace>") || ends (s, "brace*>")) {
-      font wfn= rubber_font (fn);
-      SI width= b->x2- b->x1 - fn->wfn/2;
+      font rfn= rubber_font (fn);
+      SI width= b->x2- b->x1 - fn->wfn/4;
       wideb= wide_stix_box (decorate_middle (ip),
                             "<rubber-" * s (1, N(s)-1) * ">",
-                            wfn, pen, width);
+                            rfn, pen, width);
       if (wideb->w() >= width) {
         if (b->right_slope () != 0)
           wideb= shift_box (decorate_middle (ip), wideb,
@@ -420,7 +420,7 @@ compute_wide_accent (path ip, box b, string s,
   }
   else if (wide && tex_gyre) {
     string ws= "<wide-" * s (1, N(s)-1) * ">";
-    SI width= b->x2- b->x1 - fn->wfn/2;
+    SI width= b->x2- b->x1 - fn->wfn/4;
     wideb= wide_box (decorate_middle (ip), ws, fn, pen, width);
     if (b->right_slope () != 0) {
       bool times= stix || (tex_gyre && occurs ("ermes", fn->res_name));
@@ -435,7 +435,7 @@ compute_wide_accent (path ip, box b, string s,
     if (ss == "^") ss= "hat";
     if (ss == "~") ss= "tilde";
     string ws= "<wide-" * ss * ">";
-    SI width= b->x2- b->x1 - fn->wfn/2;
+    SI width= b->x2- b->x1 - fn->wfn/4;
     wideb= wide_box (decorate_middle (ip), ws, fn, pen, width);
     if (b->right_slope () != 0) {
       double factor= (above? 0.5: 0.2);
@@ -566,7 +566,9 @@ wide_box_rep::wide_box_rep (
   insert (ref, 0, 0);
   if (above) {
     Y= ref->y2;
-    X= m + ref->rsup_correction () + ((SI) (ref->right_slope () * fn->yx * 0.5));
+    X= m;
+    if (ref->right_slope () != 0)
+      X += ref->rsup_correction() + ((SI) (ref->right_slope() * fn->yx * 0.5));
     //X= ((SI) (ref->right_slope () * (Y - fn->yx))) + m;
     insert (hi, X- ((hi->x1 + hi->x2)>>1), Y+ sep);
   }
