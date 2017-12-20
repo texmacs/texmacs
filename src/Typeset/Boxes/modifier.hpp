@@ -56,6 +56,7 @@ public:
   SI        sup_lo_lim  (int level);
   SI        sup_lo_base (int level);
   SI        sup_hi_lim  (int level);
+  SI        wide_correction (int mode);
   void      get_bracket_extents (SI& lo, SI& hi);
 
   virtual player     anim_player ();

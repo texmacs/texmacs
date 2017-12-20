@@ -64,6 +64,7 @@ struct text_box_rep: public box_rep {
   SI        sup_lo_lim  (int level);
   SI        sup_lo_base (int level);
   SI        sup_hi_lim  (int level);
+  SI        wide_correction (int mode);
 
   path      find_box_path (SI x, SI y, SI delta, bool force, bool& found);
   path      find_lip ();
@@ -178,6 +179,12 @@ SI
 text_box_rep::sup_hi_lim  (int level) {
   (void) level;
   return fn->ysup_hi_lim;
+}
+
+SI
+text_box_rep::wide_correction (int mode) {
+  if (mode == 0) return tm_string_length (str) <= 1;
+  else return fn->get_wide_correction (str, mode);
 }
 
 /******************************************************************************

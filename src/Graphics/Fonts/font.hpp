@@ -115,6 +115,7 @@ struct font_rep: rep<font> {
   virtual SI     get_rsup_correction  (string s);
   virtual SI     get_left_protrusion  (string s, int mode);
   virtual SI     get_right_protrusion (string s, int mode);
+  virtual SI     get_wide_correction (string s, int mode);
 
   void var_get_extents (string s, metric& ex);
   void var_get_xpositions (string s, SI* xpos);

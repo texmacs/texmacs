@@ -206,6 +206,8 @@ SI font_rep::get_rsub_correction (string s) {
   return 0; }
 SI font_rep::get_rsup_correction (string s) {
   return get_right_correction (s); }
+SI font_rep::get_wide_correction (string s, int mode) {
+  (void) mode; return 0; }
 
 void
 font_rep::get_extents (string s, metric& ex, bool ligf) {

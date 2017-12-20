@@ -335,6 +335,7 @@ compute_wide_accent (path ip, box b, string s,
   bool wide= (b->w() > (fn->wquad)) || request_wide;
   if (ends (s, "dot>") || (s == "<acute>") ||
       (s == "<grave>") || (s == "<abovering>")) wide= false;
+  if (wide && !request_wide && b->wide_correction (0) != 0) wide= false;
   bool very_wide= false;
   SI   accw= fn->wfn;
   if (wide) {
@@ -549,6 +550,8 @@ struct wide_box_rep: public composite_box_rep {
     if (above)
       return min (ref->sup_hi_lim (level) + dh, box_rep::sup_hi_lim (level));
     return ref->sup_hi_lim (level); }
+  SI wide_correction (int mode) {
+    return ref->wide_correction (mode); }
   void get_bracket_extents (SI& lo, SI& hi);
 };
 

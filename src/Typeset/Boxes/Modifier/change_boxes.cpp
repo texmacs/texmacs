@@ -71,6 +71,8 @@ SI change_box_rep::sup_lo_base (int l) {
   return big_flag? bs[0]->sup_lo_base (l): box_rep::sup_lo_base (l); }
 SI change_box_rep::sup_hi_lim  (int l) {
   return big_flag? bs[0]->sup_hi_lim (l): box_rep::sup_hi_lim (l); }
+SI change_box_rep::wide_correction (int mode) {
+  return bs[0]->wide_correction (mode); }
 
 void change_box_rep::get_bracket_extents (SI& lo, SI& hi) {
   if (sx(0) == 0 && sy(0) == 0) bs[0]->get_bracket_extents (lo, hi);

@@ -215,6 +215,7 @@ public:
   virtual SI        sup_lo_lim  (int level);
   virtual SI        sup_lo_base (int level);
   virtual SI        sup_hi_lim  (int level);
+  virtual SI        wide_correction (int mode);
   virtual void      get_bracket_extents (SI& lo, SI& hi);
 
   /*************************** for graphical boxes ***************************/

@@ -40,6 +40,7 @@ SI box_rep::sub_hi_lim  (int level) { (void) level; return y1 + ((y2-y1)/3); }
 SI box_rep::sup_lo_lim  (int level) { (void) level; return (y1 + y2) >> 1; }
 SI box_rep::sup_lo_base (int level) { (void) level; return y2 - ((y2-y1)/3); }
 SI box_rep::sup_hi_lim  (int level) { (void) level; return y2; }
+SI box_rep::wide_correction (int mode) { (void) mode; return 0; }
 void box_rep::get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 
 /******************************************************************************

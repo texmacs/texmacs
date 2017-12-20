@@ -92,6 +92,8 @@ SI modifier_box_rep::sup_lo_base (int level) {
   return b->sup_lo_base (level); }
 SI modifier_box_rep::sup_hi_lim  (int level) {
   return b->sup_hi_lim (level); }
+SI modifier_box_rep::wide_correction (int mode) {
+  return b->wide_correction (mode); }
 void modifier_box_rep::get_bracket_extents (SI& lo, SI& hi) {
   b->get_bracket_extents (lo, hi); }
 
@@ -371,6 +373,7 @@ struct macro_box_rep: public composite_box_rep {
     SI syx= big_fn->yx * script (big_fn->size, 1) / big_fn->size;
     if ((y2-y1) <= 3*big_fn->yx) syx -= (l<0? 0: big_fn->yshift);
     return y2- syx; }
+  SI wide_correction (int mode) { return bs[0]->wide_correction (mode); }
 };
 
 macro_box_rep::macro_box_rep (path ip, box b, font fn, int bt):
