@@ -998,8 +998,14 @@ smart_font_rep::resolve (string c) {
         }
       }
       if (starts (c, "<wide-")) {
-        if (fn[SUBFONT_MAIN]->supports (c))
+        if (fn[SUBFONT_MAIN]->supports (c)) {
+          //cout << "Found " << c << " in main\n";
           return sm->add_char (tuple ("main"), c);
+        }
+        if (series == "bold") {
+          //cout << "Found " << c << " in poor-bold\n";
+          return sm->add_char (tuple ("poor-bold"), c);
+        }
       }
     }
   }
@@ -1081,6 +1087,11 @@ smart_font_rep::initialize_font (int nr) {
       vfn= virtual_font (vfn, "emu-fundamental", sz, dpi, dpi, true);
     fn[nr]= virtual_font (vfn, a[1], sz, dpi, dpi, true);
   }
+  else if (a[0] == "poor-bold" && N(a) == 1) {
+    font sfn= smart_font_bis (family, variant, "medium", shape, sz, dpi);
+    double emb= 5.0/3.0;
+    double fat= ((emb - 1.0) * sfn->wline) / sfn->wfn;
+    fn[nr]= poor_bold_font (sfn, fat, fat); }
   else if (a[0] == "poor-bbb" && N(a) == 3) {
     double pw= as_double (a[1]);
     double ph= as_double (a[2]);
