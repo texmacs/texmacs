@@ -75,7 +75,9 @@
     <sqrt|<frac|d|2+<sqrt|<frac|d|2+<sqrt|<frac|d|2>|4>>|4>>|4>,<sqrt|<frac|k|2+<sqrt|<frac|k|2+<sqrt|<frac|k|2>|4>>|4>>|4>,<sqrt|<frac|X|2+<sqrt|<frac|X|2+<sqrt|<frac|X|2>|4>>|4>>|4>
   </equation*>
 
-  \;
+  <\equation*>
+    <sqrt|a>+<sqrt|d>+<sqrt|.>+<sqrt|x>+<sqrt|y>+<sqrt|k>+<sqrt|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|\<mathe\><rsup|x>>>>>+<sqrt|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a<rsub|a>>>>>>>>
+  </equation*>
 </body>
 
 <\initial>

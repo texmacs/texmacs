@@ -491,6 +491,17 @@ delimiter_box (path ip, string s, font fn, pencil pen, SI bot, SI top) {
   box b= text_box (ip, 0, r, fn, pen);
   SI x= -b->x1;
   SI y= (top + bot - b->y1 - b->y2) >> 1;
+  if (s == "<large-sqrt>") {
+    SI sep= fn->sep, Y= y + ((b->y1 + b->y2) >> 1);
+    if (Y > fn->yfrac) {
+      SI d= min (min (Y - fn->yfrac, y + b->y2 - top), 2*sep);
+      if (d > 0) y -= d;
+    }
+    else if (Y < fn->yfrac) {
+      SI d= min (min (fn->yfrac - Y, bot - (y + b->y1)), 2*sep);
+      if (d > 0) y += d;
+    }
+  }
   //cout << s << ", " << bot/PIXEL << " -- " << top/PIXEL
   //     << " -> " << r << "; " << x/PIXEL << ", " << y/PIXEL << "\n";
   //cout << "  extents: " << b->x1/PIXEL << ", " << b->y1/PIXEL
