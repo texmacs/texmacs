@@ -32,7 +32,7 @@
   </equation*>
 
   <\equation*>
-    <wide|\<b-alpha\>|^>,<wide|\<b-beta\>|^>,<wide|\<b-gamma\>|^>,<wide|\<b-delta\>|^>,<wide|\<b-varepsilon\>|^>,<wide|\<b-zeta\>|^>,<wide|\<b-eta\>|^>,<wide|\<b-iota\>|^>,<wide|\<b-kappa\>|^>,<wide|\<b-lambda\>|^>,<wide|\<b-mu\>|^>,<wide|\<b-nu\>|^>,<wide|\<b-xi\>|^>,<wide|\<b-omicron\>|^>,<wide|\<b-pi\>|^>,<wide|\<b-rho\>|^>,<wide|\<b-sigma\>|^>,<wide|\<b-tau\>|^>,<wide|\<b-upsilon\>|^>,<wide|\<b-varphi\>|^>,<wide|\<b-psi\>|^>,<wide|\<b-chi\>|^>,<wide|\<b-omega\>|^><separating-space|2em><wide|\<b-epsilon\>|^>,<wide|\<b-vartheta\>|^>,<wide|\<b-varkappa\>|^>,<wide|\<b-varpi\>|^>,<wide|\<b-varrho\>|^>,<wide|\<b-varsigma\>|^>,<wide|\<b-phi\>|^>,<wide|\<b-backepsilon\>|^>,<wide|\<b-mho\>|^>
+    <wide|\<b-alpha\>|^>,<wide|\<b-beta\>|^>,<wide|\<b-gamma\>|^>,<wide|\<b-delta\>|^>,<wide|\<b-varepsilon\>|^>,<wide|\<b-zeta\>|^>,<wide|\<b-eta\>|^>,<wide|\<b-theta\>|^>,<wide|\<b-iota\>|^>,<wide|\<b-kappa\>|^>,<wide|\<b-lambda\>|^>,<wide|\<b-mu\>|^>,<wide|\<b-nu\>|^>,<wide|\<b-xi\>|^>,<wide|\<b-omicron\>|^>,<wide|\<b-pi\>|^>,<wide|\<b-rho\>|^>,<wide|\<b-sigma\>|^>,<wide|\<b-tau\>|^>,<wide|\<b-upsilon\>|^>,<wide|\<b-varphi\>|^>,<wide|\<b-psi\>|^>,<wide|\<b-chi\>|^>,<wide|\<b-omega\>|^><separating-space|2em><wide|\<b-epsilon\>|^>,<wide|\<b-vartheta\>|^>,<wide|\<b-varkappa\>|^>,<wide|\<b-varpi\>|^>,<wide|\<b-varrho\>|^>,<wide|\<b-varsigma\>|^>,<wide|\<b-phi\>|^>,<wide|\<b-backepsilon\>|^>,<wide|\<b-mho\>|^>
   </equation*>
 
   <\equation*>
@@ -48,7 +48,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|pagella>
-    <associate|math-font|math-pagella>
+    <associate|font|schola>
+    <associate|math-font|math-schola>
   </collection>
 </initial>

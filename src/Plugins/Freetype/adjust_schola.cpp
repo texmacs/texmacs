@@ -213,6 +213,81 @@ rsup_adjust_schola (hashmap<string,double>& t) {
 
 void
 above_adjust_schola (hashmap<string,double>& t) {
+  adjust_pair (t, "c", 0.02);
+  adjust_pair (t, "d", 0.1);
+  adjust_pair (t, "e", 0.02);
+  adjust_pair (t, "l", 0.04);
+  adjust_pair (t, "m", 0.04);
+  adjust_pair (t, "n", 0.02);
+  adjust_pair (t, "t", 0.02);
+  adjust_pair (t, "w", 0.02);
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, string (c), 0.04);
+  adjust_pair (t, "A", 0.1);
+  adjust_pair (t, "I", -0.02);
+  adjust_pair (t, "J", 0.06);
+  adjust_pair (t, "N", -0.02);
+  adjust_pair (t, "O", 0.02);
+  adjust_pair (t, "T", 0.04);
+  adjust_pair (t, "U", -0.02);
+  adjust_pair (t, "V", -0.04);
+  adjust_pair (t, "W", -0.06);
+  adjust_pair (t, "X", -0.02);
+  adjust_pair (t, "Y", -0.04);
+  adjust_pair (t, "<alpha>", 0.1);
+  adjust_pair (t, "<beta>", 0.1);
+  adjust_pair (t, "<delta>", 0.1);
+  adjust_pair (t, "<zeta>", 0.1);
+  adjust_pair (t, "<eta>", 0.1);
+  adjust_pair (t, "<theta>", 0.08);
+  adjust_pair (t, "<vartheta>", 0.1);
+  adjust_pair (t, "<iota>", 0.1);
+  adjust_pair (t, "<kappa>", 0.06);
+  adjust_char (t, "<lambda>", 0.26);
+  adjust_char (t, "<b-lambda>", 0.1);
+  adjust_char (t, "<mu>", 0.18);
+  adjust_char (t, "<b-mu>", 0.08);
+  adjust_pair (t, "<nu>", 0.1);
+  adjust_pair (t, "<xi>", 0.1);
+  adjust_pair (t, "<omicron>", 0.1);
+  adjust_pair (t, "<pi>", 0.04);
+  adjust_pair (t, "<rho>", 0.08);
+  adjust_pair (t, "<varrho>", 0.08);
+  adjust_pair (t, "<tau>", 0.04);
+  adjust_pair (t, "<upsilon>", 0.04);
+  adjust_pair (t, "<varphi>", 0.08);
+  adjust_pair (t, "<phi>", 0.14);
+  adjust_pair (t, "<psi>", 0.14);
+  adjust_pair (t, "<chi>", 0.14);
+  adjust_pair (t, "<omega>", 0.08);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.08);
+  adjust_pair (t, "<cal-b>", 0.04);
+  adjust_pair (t, "<cal-d>", 0.16);
+  adjust_pair (t, "<cal-f>", 0.16);
+  adjust_pair (t, "<cal-h>", 0.04);
+  adjust_pair (t, "<cal-i>", 0.06);
+  adjust_pair (t, "<cal-j>", 0.16);
+  adjust_pair (t, "<cal-k>", 0.04);
+  adjust_pair (t, "<cal-l>", 0.06);
+  adjust_pair (t, "<cal-m>", 0.04);
+  adjust_pair (t, "<cal-o>", -0.04);
+  adjust_pair (t, "<cal-t>", 0.04);
+  adjust_pair (t, "<cal-u>", -0.02);
+  adjust_pair (t, "<cal-w>", -0.02);
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.14);
+  adjust_pair (t, "<cal-A>", 0.1);
+  adjust_pair (t, "<cal-B>", 0.06);
+  adjust_pair (t, "<cal-D>", 0.04);
+  adjust_pair (t, "<cal-H>", 0.04);
+  adjust_pair (t, "<cal-I>", -0.04);
+  adjust_pair (t, "<cal-M>", 0.1);
+  adjust_pair (t, "<cal-N>", 0.04);
+  adjust_pair (t, "<cal-Q>", -0.04);
+  adjust_pair (t, "<cal-U>", 0.04);
+  adjust_pair (t, "<cal-Y>", 0.06);
+  adjust_pair (t, "<cal-Z>", -0.04);
 }
 
 /******************************************************************************
