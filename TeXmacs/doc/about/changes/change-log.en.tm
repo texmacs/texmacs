@@ -5,17 +5,20 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.6>
+  <section|Changes from version 1.99.1 to 1.99.7>
 
   <\itemize>
+    <item>Several new algorithms for micro typography: roots, mathematical
+    accents, etc. (1.99.7).
+
     <item>New page breaker with better support for floating objects and
     footnotes (1.99.6).
 
     <item>Improved native <name|Pdf> generation based on <name|Hummus>
     (1.99.6).
 
-    <item>Several new algorithms for micro typography: mathematical accents,
-    scripts, etc. (1.99.6).
+    <item>Several new algorithms for micro typography: subscripts,
+    superscripts, etc. (1.99.6).
 
     <item>Improved support for <TeX> <name|Gyre> fonts (1.99.6).
 
