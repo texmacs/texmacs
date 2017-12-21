@@ -1,13 +1,26 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.6>
 
 <style|<tuple|tmdoc|english>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.5>
+  <section|Changes from version 1.99.1 to 1.99.6>
 
   <\itemize>
+    <item>New page breaker with better support for floating objects and
+    footnotes (1.99.6).
+
+    <item>Improved native <name|Pdf> generation based on <name|Hummus>
+    (1.99.6).
+
+    <item>Several new algorithms for micro typography: mathematical accents,
+    scripts, etc. (1.99.6).
+
+    <item>Improved support for <TeX> <name|Gyre> fonts (1.99.6).
+
+    <item>Various bug fixes (1.99.6).
+
     <item>Support for retina screens (1.99.5).
 
     <item>Implementation of a better, still experimental, page breaking
