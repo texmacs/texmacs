@@ -215,12 +215,74 @@ rsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-a>", -0.03);
 }
 
+void
+above_adjust_pagella (hashmap<string,double>& t) {
+  adjust_pair (t, "b", -0.02);
+  adjust_pair (t, "d", 0.06);
+  adjust_pair (t, "e", -0.02);
+  adjust_pair (t, "f", -0.04);
+  adjust_pair (t, "h", -0.04);
+  adjust_pair (t, "k", -0.04);
+  adjust_pair (t, "m", -0.02);
+  adjust_pair (t, "n", -0.02);
+  adjust_pair (t, "o", -0.02);
+  adjust_pair (t, "p", -0.04);
+  adjust_pair (t, "q", -0.02);
+  adjust_pair (t, "r", -0.04);
+  adjust_pair (t, "t", -0.04);
+  adjust_pair (t, "y", -0.04);
+  adjust_pair (t, "z", -0.02);
+  adjust_pair (t, "A", 0.1);
+  adjust_pair (t, "B", -0.04);
+  adjust_pair (t, "D", -0.04);
+  adjust_pair (t, "F", -0.04);
+  adjust_pair (t, "H", -0.04);
+  adjust_pair (t, "I", -0.02);
+  adjust_pair (t, "J", -0.02);
+  adjust_pair (t, "K", -0.02);
+  adjust_pair (t, "M", -0.02);
+  adjust_pair (t, "N", -0.06);
+  adjust_pair (t, "R", -0.04);
+  adjust_pair (t, "T", -0.04);
+  adjust_pair (t, "U", -0.06);
+  adjust_pair (t, "V", -0.1);
+  adjust_pair (t, "W", -0.06);
+  adjust_pair (t, "Y", -0.1);
+  adjust_char (t, "<gamma>", -0.02);
+  adjust_char (t, "<vartheta>", -0.06);
+  adjust_char (t, "<lambda>", 0.1);
+  adjust_char (t, "<mu>", 0.04);
+  adjust_pair (t, "<nu>", -0.02);
+  adjust_pair (t, "<rho>", -0.02);
+  adjust_pair (t, "<sigma>", -0.06);
+  adjust_pair (t, "<psi>", 0.04);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, "<cal-" * string (c) * ">", -0.06);
+  adjust_pair (t, "<cal-a>", -0.04);
+  adjust_pair (t, "<cal-b>", -0.06);
+  adjust_pair (t, "<cal-d>", 0.06);
+  adjust_pair (t, "<cal-h>", -0.06);
+  adjust_pair (t, "<cal-k>", -0.06);
+  adjust_pair (t, "<cal-m>", -0.04);
+  adjust_pair (t, "<cal-n>", -0.04);
+  adjust_pair (t, "<cal-x>", 0.02);
+  adjust_pair (t, "<cal-z>", 0.02);
+  adjust_pair (t, "<cal-L>", 0.04);
+  adjust_pair (t, "<cal-M>", -0.02);
+  adjust_pair (t, "<cal-T>", -0.24);
+  adjust_pair (t, "<cal-U>", -0.04);
+  adjust_pair (t, "<cal-V>", -0.04);
+  adjust_pair (t, "<cal-W>", -0.04);
+  adjust_pair (t, "<cal-Y>", -0.04);
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
 
 static hashmap<string,double> rsub_pagella (0.0);
 static hashmap<string,double> rsup_pagella (0.0);
+static hashmap<string,double> above_pagella (0.0);
 
 hashmap<string,double>
 rsub_pagella_table () {
@@ -238,4 +300,12 @@ rsup_pagella_table () {
     rsup_adjust_pagella (rsup_pagella);
   }
   return rsup_pagella;
+}
+
+hashmap<string,double>
+above_pagella_table () {
+  if (N (above_pagella) == 0) {
+    above_adjust_pagella (above_pagella);
+  }
+  return above_pagella;
 }

@@ -249,12 +249,73 @@ rsup_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-y>", -0.01);
 }
 
+void
+above_adjust_termes (hashmap<string,double>& t) {
+  adjust_pair (t, "b", -0.02);
+  adjust_pair (t, "d", 0.06);
+  adjust_pair (t, "f", -0.04);
+  adjust_pair (t, "h", -0.02);
+  adjust_pair (t, "k", -0.02);
+  adjust_pair (t, "m", -0.02);
+  adjust_pair (t, "n", -0.02);
+  adjust_pair (t, "r", -0.04);
+  adjust_pair (t, "s", -0.04);
+  adjust_pair (t, "x", -0.04);
+  adjust_pair (t, "z", -0.04);
+  adjust_pair (t, "A", 0.04);
+  adjust_pair (t, "I", -0.02);
+  adjust_pair (t, "J", 0.06);
+  adjust_pair (t, "M", -0.04);
+  adjust_pair (t, "N", -0.04);
+  adjust_pair (t, "T", -0.04);
+  adjust_pair (t, "U", -0.02);
+  adjust_pair (t, "V", -0.08);
+  adjust_pair (t, "W", -0.06);
+  adjust_pair (t, "Y", -0.08);
+  adjust_pair (t, "<beta>", 0.1);
+  adjust_pair (t, "<gamma>", -0.04);
+  adjust_pair (t, "<varepsilon>", 0.02);
+  adjust_pair (t, "<zeta>", 0.02);
+  adjust_pair (t, "<kappa>", -0.02);
+  adjust_char (t, "<lambda>", 0.14);
+  adjust_pair (t, "<mu>", 0.06);
+  adjust_pair (t, "<phi>", 0.04);
+  adjust_pair (t, "<omicron>", 0.04);
+  adjust_pair (t, "<rho>", 0.04);
+  adjust_pair (t, "<sigma>", -0.06);
+  adjust_pair (t, "<tau>", -0.02);
+  adjust_pair (t, "<psi>", -0.04);
+  adjust_pair (t, "<chi>", 0.06);
+  adjust_pair (t, "<cal-d>", 0.16);
+  adjust_pair (t, "<cal-f>", 0.16);
+  adjust_pair (t, "<cal-h>", 0.1);
+  adjust_pair (t, "<cal-i>", 0.06);
+  adjust_pair (t, "<cal-j>", 0.14);
+  adjust_pair (t, "<cal-k>", 0.1);
+  adjust_pair (t, "<cal-l>", 0.1);
+  adjust_pair (t, "<cal-t>", 0.06);
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.08);
+  adjust_pair (t, "<cal-A>", 0.1);
+  adjust_pair (t, "<cal-B>", 0.04);
+  adjust_pair (t, "<cal-D>", 0.04);
+  adjust_pair (t, "<cal-I>", 0.02);
+  adjust_pair (t, "<cal-J>", -0.02);
+  adjust_pair (t, "<cal-L>", 0.06);
+  adjust_pair (t, "<cal-M>", 0.1);
+  adjust_pair (t, "<cal-N>", 0.04);
+  adjust_pair (t, "<cal-P>", 0.04);
+  adjust_pair (t, "<cal-R>", 0.04);
+  adjust_pair (t, "<cal-S>", 0.06);
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
 
 static hashmap<string,double> rsub_termes (0.0);
 static hashmap<string,double> rsup_termes (0.0);
+static hashmap<string,double> above_termes (0.0);
 
 hashmap<string,double>
 rsub_termes_table () {
@@ -272,4 +333,11 @@ rsup_termes_table () {
     rsup_adjust_termes (rsup_termes);
   }
   return rsup_termes;
+}
+
+hashmap<string,double>
+above_termes_table () {
+  if (N (above_termes) == 0)
+    above_adjust_termes (above_termes);
+  return above_termes;
 }

@@ -16,9 +16,26 @@
 * Helper routines for script correction tables
 ******************************************************************************/
 
+int get_utf8_code (string c);
+
 void
 adjust_char (hashmap<string,double>& t, string c, double delta) {
   t (c) += delta;
+  int code= get_utf8_code (c);
+  if (code >= 0x3b1 && code <= 0x3f5) {
+    if (code <= 0x3c9) code += 0x1d6fc - 0x3b1;
+    else if (code == 0x3f5) code= 0x1d716; // varepsilon
+    else if (code == 0x3d1) code= 0x1d717; // vartheta
+    else if (code == 0x3f0) code= 0x1d718; // varkappa
+    else if (code == 0x3d5) code= 0x1d719; // phi
+    else if (code == 0x3f1) code= 0x1d71a; // varrho
+    else if (code == 0x3d6) code= 0x1d71b; // varpi
+    else code= 0;
+    if (code != 0) {
+      string nc= "<#" * upcase_all (as_hexadecimal (code)) * ">";
+      if (nc != c) t (nc) += delta;
+    }
+  }
 }
 
 void

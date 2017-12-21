@@ -37,10 +37,13 @@ font unicode_font (string family, int size, int hdpi, int vdpi);
 
 hashmap<string,double> rsub_stix_table ();
 hashmap<string,double> rsup_stix_table ();
+hashmap<string,double> above_stix_table ();
 hashmap<string,double> rsub_termes_table ();
 hashmap<string,double> rsup_termes_table ();
+hashmap<string,double> above_termes_table ();
 hashmap<string,double> rsub_pagella_table ();
 hashmap<string,double> rsup_pagella_table ();
+hashmap<string,double> above_pagella_table ();
 hashmap<string,double> rsub_schola_table ();
 hashmap<string,double> rsup_schola_table ();
 hashmap<string,double> rsub_bonum_table ();
@@ -204,17 +207,20 @@ unicode_font_rep::unicode_font_rep (string name,
     global_rsup_correct= (SI) (0.04 * wfn);
     rsub_correct= rsub_stix_table ();
     rsup_correct= rsup_stix_table ();
+    above_correct= above_stix_table ();
   }
   else if (starts (family, "texgyretermes-")) {
     global_rsup_correct= (SI) (0.04 * wfn);
     rsub_correct= rsub_termes_table ();
     rsup_correct= rsup_termes_table ();
+    above_correct= above_termes_table ();
   }
   else if (starts (family, "texgyrepagella-")) {
     global_rsub_correct= (SI) (0.05 * wfn);
     global_rsup_correct= (SI) (0.05 * wfn);
     rsub_correct= rsub_pagella_table ();
     rsup_correct= rsup_pagella_table ();
+    above_correct= above_pagella_table ();
   }
   else if (starts (family, "texgyreschola-")) {
     rsub_correct= rsub_schola_table ();
@@ -700,8 +706,10 @@ unicode_font_rep::get_rsup_correction (string s) {
 
 SI
 unicode_font_rep::get_wide_correction (string s, int mode) {
-  if (mode > 0 && above_correct->contains (s))
+  if (mode > 0 && above_correct->contains (s)) {
+    //cout << s << " ~> " << ((SI) (above_correct[s] * wfn)) << LF;
     return (SI) (above_correct[s] * wfn);
+  }
   else if (mode < 0 && below_correct->contains (s))
     return (SI) (below_correct[s] * wfn);
   else return 0;

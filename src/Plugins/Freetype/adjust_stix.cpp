@@ -172,12 +172,54 @@ rsup_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-u>", -0.01);
 }
 
+void
+above_adjust_stix (hashmap<string,double>& t) {
+  adjust_pair (t, "b", -0.02);
+  adjust_pair (t, "d", 0.06);
+  adjust_pair (t, "f", -0.04);
+  adjust_pair (t, "h", -0.02);
+  adjust_pair (t, "k", -0.02);
+  adjust_pair (t, "<ell>", 0.04);
+  adjust_pair (t, "r", -0.04);
+  adjust_pair (t, "x", -0.04);
+  adjust_pair (t, "z", -0.04);
+  adjust_pair (t, "A", 0.04);
+  adjust_pair (t, "I", -0.02);
+  adjust_pair (t, "J", 0.06);
+  adjust_pair (t, "M", -0.04);
+  adjust_pair (t, "N", -0.04);
+  adjust_pair (t, "T", -0.04);
+  adjust_pair (t, "U", -0.02);
+  adjust_pair (t, "V", -0.08);
+  adjust_pair (t, "W", -0.06);
+  adjust_pair (t, "Y", -0.08);
+  adjust_pair (t, "<phi>", 0.04);
+  adjust_pair (t, "<omicron>", 0.04);
+  adjust_pair (t, "<rho>", 0.04);
+  adjust_pair (t, "<sigma>", -0.08);
+  adjust_pair (t, "<tau>", -0.04);
+  adjust_pair (t, "<psi>", -0.04);
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.1);
+  adjust_pair (t, "<cal-A>", 0.1);
+  adjust_pair (t, "<cal-B>", 0.04);
+  adjust_pair (t, "<cal-D>", 0.04);
+  adjust_pair (t, "<cal-I>", 0.06);
+  adjust_pair (t, "<cal-L>", 0.06);
+  adjust_pair (t, "<cal-M>", 0.1);
+  adjust_pair (t, "<cal-N>", 0.04);
+  adjust_pair (t, "<cal-P>", 0.04);
+  adjust_pair (t, "<cal-R>", 0.04);
+  adjust_pair (t, "<cal-S>", 0.06);
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
 
 static hashmap<string,double> rsub_stix (0.0);
 static hashmap<string,double> rsup_stix (0.0);
+static hashmap<string,double> above_stix (0.0);
 
 hashmap<string,double>
 rsub_stix_table () {
@@ -195,4 +237,11 @@ rsup_stix_table () {
     rsup_adjust_stix (rsup_stix);
   }
   return rsup_stix;
+}
+
+hashmap<string,double>
+above_stix_table () {
+  if (N (above_stix) == 0)
+    above_adjust_stix (above_stix);
+  return above_stix;
 }

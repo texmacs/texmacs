@@ -67,6 +67,46 @@ rsup_adjust_cmmi (hashmap<string,double>& t) {
 }
 
 void
+above_adjust_cmmi (hashmap<string,double>& t) {
+  adjust_pair (t, "d", 0.1);
+  adjust_pair (t, "f", 0.02);
+  adjust_pair (t, "h", -0.02);
+  adjust_pair (t, "`", 0.04); // ell
+  adjust_pair (t, "r", -0.04);
+  adjust_pair (t, "A", 0.12);
+  adjust_pair (t, "J", 0.06);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "T", -0.04);
+  adjust_pair (t, "U", -0.04);
+  adjust_pair (t, "V", -0.1);
+  adjust_pair (t, "W", -0.06);
+  adjust_pair (t, "Y", -0.1);
+  adjust_pair (t, "\36", 0.06); // varphi
+  adjust_pair (t, "\32", 0.04); // rho
+  adjust_pair (t, "\33", -0.06); // sigma
+  adjust_pair (t, "\34", -0.06); // tau
+  adjust_pair (t, "\40", 0.06); // psi
+}
+
+void
+above_adjust_cmsy (hashmap<string,double>& t) {
+  adjust_pair (t, "A", 0.18);
+  adjust_pair (t, "F", 0.04);
+  adjust_pair (t, "H", 0.04);
+  adjust_pair (t, "I", 0.04);
+  adjust_pair (t, "J", 0.06);
+  adjust_pair (t, "L", 0.1);
+  adjust_pair (t, "M", 0.06);
+  adjust_pair (t, "Q", 0.04);
+  adjust_pair (t, "S", 0.02);
+  adjust_pair (t, "T", -0.08);
+  adjust_pair (t, "U", -0.04);
+  adjust_pair (t, "V", -0.06);
+  adjust_pair (t, "W", -0.04);
+  adjust_pair (t, "Y", -0.06);
+}
+
+void
 rsub_adjust_bbm (hashmap<string,double>& t) {
   adjust_char (t, "E", 0.02);
   adjust_char (t, "F", -0.1);
@@ -95,23 +135,28 @@ static hashmap<string,double> rsub_cmr (0.0);
 static hashmap<string,double> rsup_cmr (0.0);
 static hashmap<string,double> rsub_cmmi (0.0);
 static hashmap<string,double> rsup_cmmi (0.0);
+static hashmap<string,double> above_cmmi (0.0);
+static hashmap<string,double> above_cmsy (0.0);
 static hashmap<string,double> rsub_bbm (0.0);
 static hashmap<string,double> rsup_bbm (0.0);
 
 hashmap<string,double>
 rsub_cmr_table () {
+  static hashmap<string,double> rsub_cmr (0.0);
   if (N (rsub_cmr) == 0) rsub_adjust_cmr (rsub_cmr);
   return rsub_cmr;
 }
 
 hashmap<string,double>
 rsup_cmr_table () {
+  static hashmap<string,double> rsup_cmr (0.0);
   if (N (rsup_cmr) == 0) rsup_adjust_cmr (rsup_cmr);
   return rsup_cmr;
 }
 
 hashmap<string,double>
 rsub_cmmi_table () {
+  static hashmap<string,double> rsub_cmmi (0.0);
   if (N (rsub_cmmi) == 0) rsub_adjust_cmmi (rsub_cmmi);
   return rsub_cmmi;
 }
@@ -120,6 +165,18 @@ hashmap<string,double>
 rsup_cmmi_table () {
   if (N (rsup_cmmi) == 0) rsup_adjust_cmmi (rsup_cmmi);
   return rsup_cmmi;
+}
+
+hashmap<string,double>
+above_cmmi_table () {
+  if (N (above_cmmi) == 0) above_adjust_cmmi (above_cmmi);
+  return above_cmmi;
+}
+
+hashmap<string,double>
+above_cmsy_table () {
+  if (N (above_cmsy) == 0) above_adjust_cmsy (above_cmsy);
+  return above_cmsy;
 }
 
 hashmap<string,double>
