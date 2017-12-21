@@ -242,9 +242,25 @@ above_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<varrho>", 0.06);
   adjust_pair (t, "<phi>", 0.14);
   for (char c= 'a'; c <= 'z'; c++)
-    adjust_pair (t, "<cal-" * string (c) * ">", 0.06);
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.08);
+  adjust_pair (t, "<cal-b>", 0.04);
+  adjust_pair (t, "<cal-d>", 0.1);
+  adjust_pair (t, "<cal-f>", 0.1);
+  adjust_pair (t, "<cal-h>", 0.04);
+  adjust_pair (t, "<cal-k>", 0.04);
+  adjust_pair (t, "<cal-l>", 0.06);
+  adjust_pair (t, "<cal-o>", -0.04);
+  adjust_pair (t, "<cal-t>", 0.04);
+  adjust_pair (t, "<cal-u>", -0.02);
+  adjust_pair (t, "<cal-w>", -0.02);
   for (char c= 'A'; c <= 'Z'; c++)
-    adjust_pair (t, "<cal-" * string (c) * ">", 0.06);
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.14);
+  adjust_pair (t, "<cal-A>", 0.1);
+  adjust_pair (t, "<cal-B>", 0.04);
+  adjust_pair (t, "<cal-M>", 0.1);
+  adjust_pair (t, "<cal-N>", 0.06);
+  adjust_pair (t, "<cal-U>", 0.04);
+  adjust_pair (t, "<cal-Y>", 0.06);
 }
 
 /******************************************************************************
