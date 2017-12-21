@@ -19,18 +19,18 @@
 
 function set_rpath
 { # $1 = returned value
-	local args rpath value cmdout file=$1  retval=$2
-	cmdout="$(otool -lX $file)" || return 42
-	while read rpath value
-	do
-		[[ $rpath == path ]] && args+=" -delete_rpath $value"
-	done <<< "$cmdout"
-	eval $retval+=$args
+  local args rpath value cmdout file=$1  retval=$2
+  cmdout="$(otool -lX $file)" || return 42
+  while read rpath value
+  do
+    [[ $rpath == path ]] && args+=" -delete_rpath $value"
+  done <<< "$cmdout"
+  eval $retval+=$args
 }
-	
+  
 function bundle_all_libs
 {
-#	$1   executable  or library path (relative to Contents directory)
+# $1   executable  or library path (relative to Contents directory)
   local libdest="Resources/lib"
 
   echo "Bundling all libraries for [$1]"
@@ -41,21 +41,22 @@ function bundle_all_libs_sub
 {
 # $file is library to process with path relative to Contents directory
 
-	local lib change cmdout libname file="$1" rpath="$2" d
-	[[ $(otool -DX "$file") == @executable_path/../$file ]] && return 0
-	echo "Process $file"
+  local lib change cmdout libname file="$1" rpath="$2" d
+  [[ $(otool -DX "$file") == @executable_path/../$file ]] && return 0
+  echo "Process $file"
     chmod +w "$file"  # Needed e.g. with homebrew (libraries are 622)
   install_name_tool -id "@executable_path/../$file" "$file" || return 31
-	cmdout="$(otool -LX "$file")" || return 41
-	# Add local Libs and Force bundling of (system) libltdl (changed in OSX 10.8)
+  cmdout="$(otool -LX "$file")" || return 41
+  # Add local Libs and Force bundling of (system) libltdl (changed in OSX 10.8)
   while read -r lib version
   do
-  	case $lib in
-  	@executable_path/../$file) ;;
-  	/System*) ;;
-  	/+(opt/local|sw|Users|usr/local)/*/lib*.dylib|/usr/lib/libltdl.*.dylib)
+    case $lib in
+    @executable_path/../$file) ;;
+    *:) ;;
+    /System*) ;;
+    /+(opt/local|sw|Users|usr/local)/*/lib*.dylib|/usr/lib/libltdl.*.dylib)
     local blib="$(basename $lib)"
-   	[ -f "$libdest/$blib" ] || cp "$lib" "$libdest" && chmod u+w "$libdest/$blib" || return 11
+    [ -f "$libdest/$blib" ] || cp "$lib" "$libdest" && chmod u+w "$libdest/$blib" || return 11
     bundle_all_libs_sub "$libdest/$blib" || return $?
     change="$change -change $lib  @executable_path/../Resources/lib/$blib"
     ;; 
@@ -82,9 +83,9 @@ function bundle_all_libs_sub
     [ -f "$fwbase/$blib" ] || cp "$fwloc/${lib#*.framework}" "$fwbase" || return 14
     bundle_all_libs_sub "$fwbase/$blib" || return $?
     change="$change -change $lib  @executable_path/../$fwbase/$blib"
-		;;
-		esac
-	done <<< "$cmdout"
+    ;;
+    esac
+  done <<< "$cmdout"
   set_rpath "$file" change || return $?
   [ "$rpath" ] && change+=" -add_rpath $rpath"
   [ -z "$change" ] && return 0
@@ -97,16 +98,16 @@ function bundle_qt_plugins
 { 
 # $2 Qt plugin path $1 subdir list
 # Plugins is the directory where we store them
-	[ -z $1 ] && return 0
+  [ -z $1 ] && return 0
   local oplug dplug
   if [[ $1 =~ , ]]
   then 
-		oplug="$(eval echo $2/{$1})"
-		dplug="$(eval echo Plugins/{$1}/*dylib)"
-	else
-		oplug="$2/$1"
-		dplug="Plugins/$1/*dylib"
-	fi
+    oplug="$(eval echo $2/{$1})"
+    dplug="$(eval echo Plugins/{$1}/*dylib)"
+  else
+    oplug="$2/$1"
+    dplug="Plugins/$1/*dylib"
+  fi
   for d in $oplug
   do test -d $d && mkdir Plugins/$(basename $d) && \
     test -n "$(echo $d/*dylib)" && cp $d/*dylib Plugins/$(basename $d)/
