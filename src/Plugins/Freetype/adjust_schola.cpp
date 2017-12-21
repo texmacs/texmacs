@@ -211,12 +211,17 @@ rsup_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-u>", -0.04);
 }
 
+void
+above_adjust_schola (hashmap<string,double>& t) {
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
 
 static hashmap<string,double> rsub_schola (0.0);
 static hashmap<string,double> rsup_schola (0.0);
+static hashmap<string,double> above_schola (0.0);
 
 hashmap<string,double>
 rsub_schola_table () {
@@ -234,4 +239,12 @@ rsup_schola_table () {
     rsup_adjust_schola (rsup_schola);
   }
   return rsup_schola;
+}
+
+hashmap<string,double>
+above_schola_table () {
+  if (N (above_schola) == 0) {
+    above_adjust_schola (above_schola);
+  }
+  return above_schola;
 }

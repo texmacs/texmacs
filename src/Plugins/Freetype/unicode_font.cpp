@@ -46,8 +46,10 @@ hashmap<string,double> rsup_pagella_table ();
 hashmap<string,double> above_pagella_table ();
 hashmap<string,double> rsub_schola_table ();
 hashmap<string,double> rsup_schola_table ();
+hashmap<string,double> above_schola_table ();
 hashmap<string,double> rsub_bonum_table ();
 hashmap<string,double> rsup_bonum_table ();
+hashmap<string,double> above_bonum_table ();
 
 /******************************************************************************
 * True Type fonts
@@ -225,10 +227,12 @@ unicode_font_rep::unicode_font_rep (string name,
   else if (starts (family, "texgyreschola-")) {
     rsub_correct= rsub_schola_table ();
     rsup_correct= rsup_schola_table ();
+    above_correct= above_schola_table ();
   }
   else if (starts (family, "texgyrebonum-")) {
     rsub_correct= rsub_bonum_table ();
     rsup_correct= rsup_bonum_table ();
+    above_correct= above_bonum_table ();
   }
 }
 
