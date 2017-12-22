@@ -27,12 +27,15 @@ font_metric tfm_font_metric (tex_font_metric tfm, font_glyphs pk, double unit);
 
 hashmap<string,double> rsub_cmr_table ();
 hashmap<string,double> rsup_cmr_table ();
+hashmap<string,double> above_cmr_table ();
 hashmap<string,double> rsub_cmmi_table ();
 hashmap<string,double> rsup_cmmi_table ();
 hashmap<string,double> above_cmmi_table ();
 hashmap<string,double> above_cmsy_table ();
 hashmap<string,double> rsub_bbm_table ();
 hashmap<string,double> rsup_bbm_table ();
+hashmap<string,double> above_bbm_table ();
+hashmap<string,double> above_eufm_table ();
 
 /******************************************************************************
 * TeX text fonts
@@ -141,7 +144,7 @@ tex_font_rep::tex_font_rep (string name, int status2,
   if (family == "cmr" || family == "cmbx") {
     rsub_correct= rsub_cmr_table ();
     rsup_correct= rsup_cmr_table ();
-    above_correct= hashmap<string,double> (0.0);
+    above_correct= above_cmr_table ();
   }
   else if (family == "cmmi" || family == "cmmib") {
     rsub_correct= rsub_cmmi_table ();
@@ -156,7 +159,12 @@ tex_font_rep::tex_font_rep (string name, int status2,
   else if (family == "bbm" || family == "bbmbx") {
     rsub_correct= rsub_bbm_table ();
     rsup_correct= rsup_bbm_table ();
-    above_correct= hashmap<string,double> (0.0);
+    above_correct= above_bbm_table ();
+  }
+  else if (family == "eufm" || family == "eufb") {
+    rsub_correct= hashmap<string,double> (0.0);
+    rsup_correct= hashmap<string,double> (0.0);
+    above_correct= above_eufm_table ();
   }
   else {
     rsub_correct= hashmap<string,double> (0.0);

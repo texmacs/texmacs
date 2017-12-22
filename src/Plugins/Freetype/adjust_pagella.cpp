@@ -284,6 +284,36 @@ above_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-V>", -0.04);
   adjust_pair (t, "<cal-W>", -0.04);
   adjust_pair (t, "<cal-Y>", -0.04);
+  above_adjust_frak (t, 1.0);
+  adjust_pair (t, "<frak-d>", -0.06);
+  adjust_pair (t, "<frak-f>", 0.04);
+  adjust_pair (t, "<frak-l>", 0.06);
+  adjust_pair (t, "<frak-m>", -0.01);
+  adjust_pair (t, "<frak-n>", -0.015);
+  adjust_pair (t, "<frak-t>", 0.04);
+  adjust_pair (t, "<frak-z>", -0.02);
+  adjust_pair (t, "<frak-C>", 0.03);
+  adjust_pair (t, "<frak-E>", 0.04);
+  adjust_pair (t, "<frak-M>", 0.02);
+  adjust_pair (t, "<frak-N>", 0.04);
+  adjust_pair (t, "<frak-T>", 0.02);
+  adjust_pair (t, "<frak-X>", 0.02);
+  above_adjust_bbb (t, 1.0);
+  adjust_pair (t, "<bbb-f>", 0.03);
+  adjust_pair (t, "<bbb-j>", -0.03);
+  adjust_pair (t, "<bbb-jmath>", -0.03);
+  adjust_pair (t, "<bbb-B>", -0.02);
+  adjust_pair (t, "<bbb-C>", 0.01);
+  adjust_pair (t, "<bbb-D>", -0.03);
+  adjust_pair (t, "<bbb-J>", -0.04);
+  adjust_pair (t, "<bbb-M>", -0.04);
+  adjust_pair (t, "<bbb-N>", -0.02);
+  adjust_pair (t, "<bbb-R>", -0.04);
+  adjust_pair (t, "0", -0.01);
+  adjust_pair (t, "1", -0.01);
+  adjust_pair (t, "3", -0.01);
+  adjust_pair (t, "4", 0.005);
+  adjust_pair (t, "9", -0.01);
 }
 
 /******************************************************************************

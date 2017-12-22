@@ -468,6 +468,8 @@
     "<aleph>" "<beth>" "<gimel>" "<daleth>"
     "<hbar>" "<hslash>" "<wp>" "<digamma>"
     "<imath>" "<b-imath>" "<jmath>" "<b-jmath>" "<ell>" "<b-ell>"
+    "<cal-imath>" "<b-cal-imath>" "<cal-jmath>" "<b-cal-jmath>"
+    "<frak-imath>" "<frak-jmath>" "<bbb-imath>" "<bbb-jmath>"
 
     "<alpha>" "<beta>" "<gamma>" "<delta>" "<epsilon>"
     "<varepsilon>" "<zeta>" "<eta>" "<theta>" "<vartheta>"

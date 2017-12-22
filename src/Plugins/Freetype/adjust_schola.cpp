@@ -267,7 +267,9 @@ above_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-f>", 0.16);
   adjust_pair (t, "<cal-h>", 0.04);
   adjust_pair (t, "<cal-i>", 0.06);
+  adjust_pair (t, "<cal-imath>", 0.04);
   adjust_pair (t, "<cal-j>", 0.16);
+  adjust_pair (t, "<cal-jmath>", 0.12);
   adjust_pair (t, "<cal-k>", 0.04);
   adjust_pair (t, "<cal-l>", 0.06);
   adjust_pair (t, "<cal-m>", 0.04);
@@ -288,6 +290,10 @@ above_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-U>", 0.04);
   adjust_pair (t, "<cal-Y>", 0.06);
   adjust_pair (t, "<cal-Z>", -0.04);
+  above_adjust_frak (t, 1.0);
+  above_adjust_bbb (t, 1.0);
+  adjust_pair (t, "4", 0.06);
+  adjust_pair (t, "6", 0.04);
 }
 
 /******************************************************************************

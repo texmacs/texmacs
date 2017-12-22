@@ -307,6 +307,34 @@ above_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-P>", 0.04);
   adjust_pair (t, "<cal-R>", 0.04);
   adjust_pair (t, "<cal-S>", 0.06);
+  above_adjust_frak (t, 1.0);
+  adjust_pair (t, "<frak-d>", -0.04);
+  adjust_pair (t, "<frak-t>", 0.005);
+  adjust_pair (t, "<frak-L>", -0.02);
+  adjust_pair (t, "<frak-M>", 0.02);
+  adjust_pair (t, "<frak-N>", 0.02);
+  above_adjust_bbb (t, 1.0);
+  adjust_pair (t, "<bbb-f>", 0.04);
+  adjust_pair (t, "<bbb-g>", 0.02);
+  adjust_pair (t, "<bbb-h>", -0.02);
+  adjust_pair (t, "<bbb-k>", -0.02);
+  adjust_pair (t, "<bbb-l>", 0.02);
+  adjust_pair (t, "<bbb-m>", -0.01);
+  adjust_pair (t, "<bbb-n>", -0.02);
+  adjust_pair (t, "<bbb-o>", 0.01);
+  adjust_pair (t, "<bbb-t>", 0.01);
+  adjust_pair (t, "<bbb-C>", 0.04);
+  adjust_pair (t, "<bbb-J>", -0.02);
+  adjust_pair (t, "<bbb-K>", -0.02);
+  adjust_pair (t, "<bbb-L>", -0.01);
+  adjust_pair (t, "<bbb-R>", -0.04);
+  adjust_pair (t, "1", -0.01);
+  adjust_pair (t, "2", -0.02);
+  adjust_pair (t, "3", -0.01);
+  adjust_pair (t, "4", 0.02);
+  adjust_pair (t, "5", 0.02);
+  adjust_pair (t, "6", 0.02);
+  adjust_pair (t, "9", -0.015);
 }
 
 /******************************************************************************

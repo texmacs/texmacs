@@ -283,6 +283,25 @@ above_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-U>", 0.04);
   adjust_pair (t, "<cal-Y>", 0.06);
   adjust_pair (t, "<cal-Z>", -0.04);
+  above_adjust_frak (t, 1.0);
+  adjust_pair (t, "<frak-d>", -0.04);
+  adjust_pair (t, "<frak-t>", 0.005);
+  adjust_pair (t, "<frak-L>", -0.02);
+  adjust_pair (t, "<frak-M>", 0.02);
+  adjust_pair (t, "<frak-N>", 0.02);
+  above_adjust_bbb (t, 1.0);
+  adjust_pair (t, "<bbb-f>", 0.01);
+  adjust_pair (t, "<bbb-l>", 0.02);
+  adjust_pair (t, "<bbb-m>", -0.02);
+  adjust_pair (t, "<bbb-n>", -0.02);
+  adjust_pair (t, "<bbb-J>", -0.02);
+  adjust_pair (t, "<bbb-C>", 0.02);
+  adjust_pair (t, "<bbb-K>", -0.05);
+  adjust_pair (t, "<bbb-L>", -0.05);
+  adjust_pair (t, "<bbb-M>", -0.04);
+  adjust_pair (t, "<bbb-R>", -0.05);
+  adjust_pair (t, "4", 0.03);
+  adjust_pair (t, "6", 0.02);
 }
 
 /******************************************************************************

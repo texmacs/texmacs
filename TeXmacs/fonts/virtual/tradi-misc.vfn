@@ -115,6 +115,12 @@
 
   (frak-imath (clip frak-i * * * 0.47))
   (frak-jmath (clip frak-j * * * 0.47))
+  (bbb-imath (clip bbb-i * * * 0.47))
+  (bbb-jmath (clip bbb-j * * * 0.47))
+  (cal-imath (clip cal-i * * * 0.47))
+  (cal-jmath (clip cal-j * * * 0.47))
+  (b-cal-imath (clip b-cal-i * * * 0.47))
+  (b-cal-jmath (clip b-cal-j * * * 0.47))
   (short-underscore (enlarge (clip _ 0.05 0.4 * *) 0 -0.15 0 0))
 
   (venus (join (0 0.1 female)))

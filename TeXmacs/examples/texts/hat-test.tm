@@ -94,7 +94,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|schola>
-    <associate|math-font|math-schola>
+    <associate|font|pagella>
+    <associate|math-font|math-pagella>
   </collection>
 </initial>

@@ -192,6 +192,10 @@ void adjust_char (hashmap<string,double>& t, string c, double delta);
 void adjust_pair (hashmap<string,double>& t, string c, double delta);
 void rsub_adjust_std (hashmap<string,double>& t);
 void rsup_adjust_std (hashmap<string,double>& t);
+void above_adjust_std (hashmap<string,double>& t);
+void below_adjust_std (hashmap<string,double>& t);
+void above_adjust_frak (hashmap<string,double>& t, double force);
+void above_adjust_bbb (hashmap<string,double>& t, double force);
 
 // Font database
 extern bool new_fonts;

@@ -199,6 +199,23 @@ above_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<sigma>", -0.08);
   adjust_pair (t, "<tau>", -0.04);
   adjust_pair (t, "<psi>", -0.04);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.02);
+  adjust_pair (t, "<cal-b>", 0.04);
+  adjust_pair (t, "<cal-c>", 0.04);
+  adjust_pair (t, "<cal-d>", 0.2);
+  adjust_pair (t, "<cal-f>", 0.1);
+  adjust_pair (t, "<cal-g>", 0.04);
+  adjust_pair (t, "<cal-h>", 0.04);
+  adjust_pair (t, "<cal-i>", 0.1);
+  adjust_pair (t, "<cal-imath>", 0.08);
+  adjust_pair (t, "<cal-j>", 0.16);
+  adjust_pair (t, "<cal-jmath>", 0.12);
+  adjust_pair (t, "<cal-k>", 0.04);
+  adjust_pair (t, "<cal-l>", 0.04);
+  adjust_pair (t, "<cal-t>", 0.04);
+  adjust_pair (t, "<cal-x>", 0.02);
+  adjust_pair (t, "<cal-y>", 0.02);
   for (char c= 'A'; c <= 'Z'; c++)
     adjust_pair (t, "<cal-" * string (c) * ">", 0.1);
   adjust_pair (t, "<cal-A>", 0.1);
@@ -211,6 +228,30 @@ above_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-P>", 0.04);
   adjust_pair (t, "<cal-R>", 0.04);
   adjust_pair (t, "<cal-S>", 0.06);
+  above_adjust_frak (t, 1.0);
+  adjust_pair (t, "<frak-f>", 0.04);
+  above_adjust_bbb (t, 1.5);
+  adjust_pair (t, "<bbb-f>", -0.06);
+  adjust_pair (t, "<bbb-j>", -0.08);
+  adjust_pair (t, "<bbb-jmath>", -0.08);
+  adjust_pair (t, "<bbb-f>", -0.06);
+  adjust_pair (t, "<bbb-v>", -0.06);
+  adjust_pair (t, "<bbb-w>", -0.08);
+  adjust_pair (t, "<bbb-y>", -0.08);
+  adjust_pair (t, "<bbb-E>", 0.02);
+  adjust_pair (t, "<bbb-F>", -0.12);
+  adjust_pair (t, "<bbb-K>", -0.08);
+  adjust_pair (t, "<bbb-L>", 0.02);
+  adjust_pair (t, "<bbb-T>", -0.14);
+  adjust_pair (t, "<bbb-V>", -0.08);
+  adjust_pair (t, "<bbb-Y>", -0.1);
+  adjust_pair (t, "1", -0.02);
+  adjust_pair (t, "2", -0.04);
+  adjust_pair (t, "3", -0.02);
+  adjust_pair (t, "4", 0.04);
+  adjust_pair (t, "5", 0.04);
+  adjust_pair (t, "6", 0.04);
+  adjust_pair (t, "9", -0.02);
 }
 
 /******************************************************************************
