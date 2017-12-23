@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.5>
 
 <style|source>
 
@@ -76,7 +76,7 @@
     <\surround|<if|<arg|prev>|<chunk-inc|<arg|name>>|<assign|<merge|<arg|name>|-nr>|1>>|>
       <\bothlined-named>
         <\compact>
-          <surround|<chunk-label|<arg|name>>||<arg|body>>
+          <surround|<chunk-label|<arg|name>>||<yes-indent*><arg|body>>
         </compact>
       </bothlined-named|<small|<chunk-this|<arg|name>>
       <chunk-assign|<arg|prev>|<arg|next>><htab|5mm><if|<arg|prev>|<chunk-up|<arg|name>>|<phantom|<math|\<vartriangle\>>>>
