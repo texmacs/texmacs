@@ -169,8 +169,9 @@ set (TeXmacs_Base_SRCS
     ./Graphics/Fonts/font_guess.cpp
     ./Graphics/Fonts/font_protrusion.cpp
     ./Graphics/Fonts/font_select.cpp
-    ./Graphics/Fonts/font_translate.cpp
     ./Graphics/Fonts/font_scripts.cpp
+    ./Graphics/Fonts/font_translate.cpp
+    ./Graphics/Fonts/font_wide.cpp
     ./Graphics/Fonts/math_font.cpp
     ./Graphics/Fonts/poor_bbb.cpp
     ./Graphics/Fonts/poor_bold.cpp
