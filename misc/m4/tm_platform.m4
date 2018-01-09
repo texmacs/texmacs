@@ -61,18 +61,28 @@ AC_DEFUN([TM_PLATFORM],[
     AC_MSG_RESULT([no])
   fi
 
-  AC_MSG_CHECKING(final adjustments for)
-  case "${host}" in
-    i*86-*-linux* | x86_64-*-linux*)
+  AC_DEFUN([LINUX_COMMON],[
       AC_MSG_RESULT(an Intel or AMD GNU/Linux host)
       AC_DEFINE([OS_GNU_LINUX],[1],[OS type])
       AC_SUBST([CONFIG_PACKAGE],[GENERIC_PACKAGE])
       CONFIG_OS="GNU_LINUX"
-      CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
       AC_DEFINE([STACK_SIZE], 0x1000000, [If not set during link])
-   ;;
+      AC_CHECK_LIB(expat,XML_ParserCreate,[CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC";CONFIG_STYPE=A])
+      AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
+  ])
+  
+  AC_MSG_CHECKING(final adjustments for)
+  case "${host}" in
+    x86_64-*-linux*)
+      CONFIG_OS_SUFFIX="x86_64-pc-linux-gnu"
+      LINUX_COMMON
+    ;;
+    i*86-*-linux*)
+      CONFIG_OS_SUFFIX="i386-pc-linux-gnu"
+      LINUX_COMMON
+    ;;
     i*86-*-freebsd* | x86_64-*-freebsd*)
       AC_MSG_RESULT(an Intel or AMD GNU/BSD host)
       AC_DEFINE([OS_FREEBSD],[1],[OS type])
@@ -245,8 +255,6 @@ AC_DEFUN([TM_PLATFORM],[
     ;;
   esac
 
-  AC_CHECK_LIB(expat,XML_ParserCreate,[CONFIG_BSTATIC="-lexpat $CONFIG_BSTATIC";CONFIG_STYPE=A])
-  AC_CHECK_LIB(xcb,xcb_disconnect,[CONFIG_BSTATIC="-lxcb $CONFIG_BSTATIC";CONFIG_STYPE=B])
 
   AC_SUBST(CONFIG_OS)
   AC_SUBST(CONFIG_OS_SUFFIX)
