@@ -10,9 +10,9 @@ $(PKG)_CHECKSUM := 2968220e1988eabb61f921d11e5d2db5431e0a35
 $(PKG)_SUBDIR   := gmp-$($(PKG)_VERSION)
 $(PKG)_FILE     := gmp-$($(PKG)_VERSION).tar.bz2
 $(PKG)_WEBSITE  := http://www.gmplib.org/
-$(PKG)_URL      := ftp://ftp.gmplib.org/pub/gmp-$($(PKG)_VERSION)/$($(PKG)_FILE)
+$(PKG)_URL      := https://gmplib.org/download/gmp/$($(PKG)_FILE)
 $(PKG)_URL_2    := ftp://ftp.cs.tu-berlin.de/pub/gnu/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := 
+$(PKG)_DEPS     :=
 
 GMP_ABI_i386    := 32
 GMP_ABI_ppc     := 32
@@ -42,7 +42,7 @@ define $(PKG)_BUILD_ARCH
         CPP='gcc -E $(BASE_FLAGS)' CXXCPP='g++ -E $(BASE_FLAGS)' \
         CFLAGS='$(BASE_CFLAGS)' LDFLAGS='$(BASE_LDFLAGS)' \
         NM='$(DEVTOOLS)/usr/bin/nm -p' \
-        ABI='$(GMP_ABI_$(3))' 
+        ABI='$(GMP_ABI_$(3))'
     $(MAKE) -C '$(1)' -j '$(JOBS)'
     $(MAKE) -C '$(1)' -j 1 install
 endef
