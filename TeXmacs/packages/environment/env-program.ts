@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std>>
 
@@ -50,9 +50,9 @@
         <surround||<vspace|0.5fn>|<algorithm-name|<arg|name>>>
 
         <\surround||<yes-indent*>>
-          <\indent>
+          <\algorithm-indent>
             <arg|body>
-          </indent>
+          </algorithm-indent>
         </surround>
       </with>
     </padded*>
@@ -68,9 +68,9 @@
         </surround>
 
         <\surround||<yes-indent*>>
-          <\indent>
+          <\algorithm-indent>
             <arg|body>
-          </indent>
+          </algorithm-indent>
         </surround>
       </with>
     </padded*>
@@ -110,7 +110,17 @@
     </src-comment>
   </active*>
 
+  <assign|algorithm-indentation|1tab>
+
   <assign|indent-indentation|1tab>
+
+  <assign|algorithm-indent|<\macro|body>
+    <\surround||<right-flush>>
+      <\with|par-left|<plus|<value|par-left>|<value|algorithm-indentation>>>
+        <arg|body>
+      </with>
+    </surround>
+  </macro>>
 
   <assign|indent*|<\macro|body>
     <\with|par-left|<plus|<value|par-left>|<value|indent-indentation>>>
