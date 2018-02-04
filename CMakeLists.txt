@@ -318,7 +318,7 @@ SET(GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 
 if (TEXMACS_GUI STREQUAL "Qt")
 
-  find_package (Qt5 5.9.1 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
+  find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
   set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
 
   IF(WIN32)
