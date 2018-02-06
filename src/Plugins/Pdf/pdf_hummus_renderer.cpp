@@ -51,6 +51,8 @@
  * pdf_hummus_renderer
  ******************************************************************************/
 
+static EPDFVersion ePDFVersion= ePDFVersion14;
+
 typedef triple<int,int,int> rgb;
 typedef quartet<string,int,SI,SI> dest_data;
 typedef quintuple<string,int,SI,SI,int> outline_data;
@@ -303,15 +305,20 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   // setup library
 
   EStatusCode status;
+  ePDFVersion= ePDFVersion14; // PDF 1.4 for alpha
+  string version= pdf_version ();
+  if (version == "1.5") ePDFVersion= ePDFVersion15;
+  if (version == "1.6") ePDFVersion= ePDFVersion16;
+  if (version == "1.7") ePDFVersion= ePDFVersion17;
+  LogConfiguration log= LogConfiguration::DefaultLogConfiguration();
+  PDFCreationSettings settings (true, true); //, EncryptionOptions("user", 4, "owner"));
 #if (defined (__MINGW__) || defined (__MINGW32__))
     // WIN is using 8bit encodings, but pdfwriter expects UTF8
     // if path or file contains non-ascii characters we need an extra conversion step. 
-    status = pdfWriter.StartPDF(as_charp(western_to_utf8(concretize (pdf_file_name))), ePDFVersion14 ); // PDF 1.4 for alpha
+    status = pdfWriter.StartPDF(as_charp(western_to_utf8(concretize (pdf_file_name))), ePDFVersion, log, settings);
 #else
-	status = pdfWriter.StartPDF(as_charp(concretize (pdf_file_name)), ePDFVersion14 ); // PDF 1.4 for alpha
+    status = pdfWriter.StartPDF(as_charp(concretize (pdf_file_name)), ePDFVersion, log, settings);
 #endif  
-	//   , LogConfiguration(true, true, "/Users/mgubi/Desktop/pdfwriter-x.log")
-	//   , PDFCreationSettings(false) ); // true = compression on
 	if (status != PDFHummus::eSuccess) {
 		convert_error << "failed to start PDF\n";
 		started=false;
@@ -1521,8 +1528,23 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   string s= suffix (name);
   // debug_convert << "flushing :" << fname << LF;
   if (s == "pdf") {
-    temp=name;
-    name=url_none();
+    // double v= as_double (pdf_version (name));
+    // if (10 * v > ((double) ePDFVersion))
+    //   convert_warning << "\"" << concretize (name) << "\" has version "
+    // 		      << v << "." << LF
+    // 		      << "But current PDF version has been set to " << ((double) ePDFVersion)/10
+    // 		      << " (see the preference menu)." << LF;
+    if (get_preference ("texmacs->pdf:distill inclusion") == "on") {
+      temp= url_temp (".pdf");
+      if (!gs_PDF_EmbedAllFonts (name, temp)) {
+	temp= name;
+	name= url_none ();
+      }
+    }
+    else {
+      temp= name;
+      name= url_none ();
+    }
   } 
   else {
     temp= url_temp (".pdf");
@@ -1530,30 +1552,35 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     // note that we have to return since flush_raster and flush_jpg
     // already build the appopriate Form XObject into the PDF
   
-  if ((s == "jpg") || (s == "jpeg")) 
-    if (flush_jpg(pdfw, name)) return;
+    if ((s == "jpg") || (s == "jpeg")) 
+      if (flush_jpg(pdfw, name)) return;
           
-  // other formats we generate a pdf (with available converters) that we'll embbed
-  image_to_pdf (name, temp, w, h, 300);
-  // the 300 dpi setting is the maximum dpi of raster images that will be generated:
-  // images that are to dense will de downsampled to keep file small
-  // (other are not up-sampled) 
-  // dpi DOES NOT apply for vector images that we know how to handle : eps, svg(if inkscape present)
-  // 
-  // TODO: make the max dpi setting smarter (printer resolution, preference ...)
+    // other formats we generate a pdf (with available converters) that we'll embbed
+    image_to_pdf (name, temp, w, h, 300);
+    // the 300 dpi setting is the maximum dpi of raster images that will be generated:
+    // images that are to dense will de downsampled to keep file small
+    // (other are not up-sampled) 
+    // dpi DOES NOT apply for vector images that we know how to handle : eps, svg(if inkscape present)
+    // 
+    // TODO: make the max dpi setting smarter (printer resolution, preference ...)
   }
   EStatusCode status = PDFHummus::eFailure;
   DocumentContext& dc = pdfw.GetDocumentContext();
-  
-#if (defined (__MINGW__) || defined (__MINGW32__))
-  PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(western_to_utf8(concretize(temp))));
+
+#if (defined (__MINGW__) || defined (__MINGW32__))  
+  char* _temp= as_charp(western_to_utf8(concretize(temp)));
 #else
-  PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(as_charp(concretize(temp)));
-#endif  
+  char* _temp= as_charp(concretize(temp));
+#endif
+  PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(_temp);
   if(copyingContext) {
-	  PDFPageInput pageInput(copyingContext->GetSourceDocumentParser(),
-                                       copyingContext->GetSourceDocumentParser()->ParsePage(0));
-	
+    PDFPageInput pageInput(copyingContext->GetSourceDocumentParser(),
+			   copyingContext->GetSourceDocumentParser()->ParsePage(0));
+    EPDFVersion version= (EPDFVersion)(int)(copyingContext->GetSourceDocumentParser()->GetPDFLevel() * 10);
+    if (version > ePDFVersion)
+      convert_warning << "\"" << _temp << "\" has version " << ((double) version)/10 << "." << LF
+		      << "But current PDF version has been set to " << ((double) ePDFVersion)/10
+		      << " (see the preference menu)." << LF;
     double tMat[6] ={ 1,0, 0, 1, 0, 0} ;
     PDFRectangle cropBox (0,0,0,0);
     pdf_image_info (temp, w, h, cropBox, tMat, pageInput);
@@ -2509,15 +2536,17 @@ pdf_hummus_renderer_rep::flush_metadata () {
   TrailerInformation& trailerInfo= documentContext.GetTrailerInformation();
   InfoDictionary& info= trailerInfo.GetInfo();
   if (metadata->contains ("title"))
-    info.Title= utf8_as_hummus_string (metadata ["title"]);
+    info.Title= as_hummus_string (metadata ["title"]);
   if (metadata->contains ("author"))
-    info.Author= utf8_as_hummus_string (metadata ["author"]);
+    info.Author= as_hummus_string (metadata ["author"]);
   if (metadata->contains ("subject"))
-    info.Subject= utf8_as_hummus_string (metadata ["subject"]);
+    info.Subject= as_hummus_string (metadata ["subject"]);
   string creator= "TeXmacs " * string (TEXMACS_VERSION);
   string producer= creator * " + Hummus 3.9";
   info.Creator= utf8_as_hummus_string (creator);
   info.Producer= utf8_as_hummus_string (producer);
+  PDFDate date; date.SetToCurrentTime ();
+  info.CreationDate= date;
 }
 
 /******************************************************************************

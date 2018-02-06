@@ -16,6 +16,7 @@
 #include "analyze.hpp"
 #include "file.hpp"
 #include "image_files.hpp"
+#include "scheme.hpp" 
 
 string
 gs_system () {
@@ -156,6 +157,39 @@ gs_fix_bbox (url eps, int x1, int y1, int x2, int y2) {
   } 
 }
 
+string
+default_pdf_version () {
+  return "1.4";
+}
+
+string
+pdf_version () {
+  string version= get_preference ("texmacs->pdf:version");
+  if (version == "1.4" || version == "1.5" ||
+      version == "1.6" || version == "1.7") return version;
+  return default_pdf_version ();
+}
+
+string
+pdf_version (url image) {
+  string buf;
+  bool ok= !load_string (image, buf, false);
+  int n= N(buf);
+  if (!ok || n < 5 || buf(0,5) != "%PDF-") {
+    std_error << "Cannot determine PDF version of \"" << image << "\"." << LF;
+    return default_pdf_version ();
+  }
+  int pos= 5;
+  while (n > pos && is_numeric (buf[pos])) pos++;
+  string v= buf(5,pos);
+  if (!is_double(v)) {
+    std_error << "Cannot determine PDF version of \"" << image << "\"." << LF;
+    return default_pdf_version ();;
+  }
+  //cout << "PDF version found for \"" << image << "\": " << v << LF;
+  return v;
+}
+
 bool
 gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
   if (DEBUG_CONVERT) debug_convert << "gs PDF image size :"<<LF;
@@ -220,6 +254,33 @@ gs_PDFimage_size (url image, int& w_pt, int& h_pt) {
     }
   }
   if (DEBUG_CONVERT) debug_convert << type<< " size ="<<w_pt<<" x "<< h_pt <<LF;
+  return true;
+}
+
+bool
+gs_PDF_EmbedAllFonts (url image, url pdf) {
+  if (DEBUG_CONVERT) debug_convert << "gs_PDF_EmbedAllFonts" << LF;
+  if (!exists (image)) return false;
+  array<string> cmd;
+  cmd << gs_executable ();
+  cmd << string ("-dNOPAUSE"); cmd << string ("-dBATCH");
+  cmd << string ("-dQUIET"); cmd << string ("-dSAFER");
+  cmd << string ("-sDEVICE=pdfwrite");
+  cmd << string ("-dPDFSETTINGS=/prepress");
+  cmd << string ("-dEmbedAllFonts=true");
+  cmd << string ("-dCompatibilityLevel=") * pdf_version ();
+  cmd << string ("-sOutputFile=") * concretize (pdf);
+  cmd << concretize (image);
+  // cout << cmd << LF;
+  array<int> out; out << 1; out << 2;
+  array<string> ret= evaluate_system (cmd, array<int> (), array<string> (), out);
+  // cout << "ret= " << ret << LF;
+  if (ret [0] != "0" || ret[2] != "") {
+    convert_warning << "cannot embed all fonts for file " << image << LF;
+    convert_warning << ret[1] << LF;
+    convert_warning << ret[2] << LF;
+    return false;
+  }
   return true;
 }
 
@@ -325,6 +386,7 @@ gs_to_pdf (url image, url pdf, int w, int h) {
 
   cmd= gs_prefix();
   cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+  cmd << "-dCompatibilityLevel=" << pdf_version () << " ";
   cmd << " -sOutputFile=" << sys_concretize(pdf) << " ";
   cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
     << " ] >> setpagedevice gsave  "
@@ -344,6 +406,7 @@ gs_to_pdf (url doc, url pdf, bool landscape, double paper_h, double paper_w) {
   if (DEBUG_CONVERT) debug_convert << "(ps page) gs_to_pdf"<<LF;
   string cmd= gs_prefix ();
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+  cmd << "-dCompatibilityLevel=" << pdf_version () << " ";
   if (landscape)
     cmd << "-dDEVICEWIDTHPOINTS=" << as_string ((int) (28.36*paper_h+ 0.5))
       << " -dDEVICEHEIGHTPOINTS=" << as_string ((int) (28.36*paper_w+ 0.5));

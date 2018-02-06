@@ -452,6 +452,12 @@
             "5em"))))
 
 ;; Pdf ----------
+(define-preference-names "texmacs->pdf:version"
+  ("Default" "default")
+  ("1.4" "1.4")
+  ("1.5" "1.5")
+  ("1.6" "1.6")
+  ("1.7" "1.7"))
 
 (tm-widget (pdf-preferences-widget)
   ===
@@ -466,13 +472,20 @@
       (meti (hlist // (text "Produce Postscript using native export filter"))
 	(toggle (set-boolean-preference "native postscript" answer)
 		(get-boolean-preference "native postscript"))))
-    (meti (hlist // (text "Expand beamer slides"))
+   (meti (hlist // (text "Expand beamer slides"))
       (toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
-	      (get-boolean-preference "texmacs->pdf:expand slides")))
+	      (get-boolean-preference "texmacs->pdf:expand slides"))))
     (assuming (supports-native-pdf?)
-      (meti (hlist // (text "Check exported Pdf files for correctness"))
+      (aligned (meti (hlist // (text "Distill encapsulated Pdf files"))
+	(toggle (set-boolean-preference "texmacs->pdf:distill inclusion" answer)
+		(get-boolean-preference "texmacs->pdf:distill inclusion"))))
+      (aligned (meti (hlist // (text "Check exported Pdf files for correctness"))
 	(toggle (set-boolean-preference "texmacs->pdf:check" answer)
-		(get-boolean-preference "texmacs->pdf:check"))))))
+		(get-boolean-preference "texmacs->pdf:check"))))
+      (aligned (item (text "Pdf version number:")
+        (enum (set-preference "texmacs->pdf:version" answer)
+	      '("default" "1.4" "1.5" "1.6" "1.7")
+	      (get-preference "texmacs->pdf:version") "8em")))))
 
 ;; Images ----------
 

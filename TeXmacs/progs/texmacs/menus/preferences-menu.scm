@@ -191,7 +191,14 @@
               (toggle ("Produce native Pdf" "native pdf"))
               (toggle ("Produce native Postscript" "native postscript"))
               (toggle ("Expand beamer slides" "texmacs->pdf:expand slides"))
-	      (toggle ("Check exported files" "texmacs->pdf:check")))))
+	      (toggle ("Distill encapsulated Pdf files" "texmacs->pdf:distill inclusion"))
+	      (toggle ("Check exported files" "texmacs->pdf:check"))
+	      (enum ("Pdf version" "texmacs->pdf:version")
+		    ("Default" "default")
+		    ("1.4" "1.4")
+		    ("1.5" "1.5")
+		    ("1.6" "1.6")
+		    ("1.7" "1.7")))))
     (-> "Mathematics"
         (-> "Keyboard"
             (item ("Enforce brackets to match" (toggle-matching-brackets)))
