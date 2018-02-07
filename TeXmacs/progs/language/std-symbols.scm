@@ -429,9 +429,17 @@
     "<left-lfloor>" "<left-lceil>" "<left-rfloor>" "<left-rceil>"
     "<left-langle>" "<left-rangle>")
   
-  (define Middle-symbol
+  (define Middle-bracket-symbol
     (:type middle-bracket)
     "|" "<||>" "<nobracket>" "<mid-|>" "<mid-||>" "<mid-.>")
+  
+  (define Middle-separator-symbol
+    (:type middle-bracket)
+    (:spacing default default)
+    "<suchthat>" "<varsuchthat>")
+
+  (define Middle-symbol
+    Middle-bracket-symbol Middle-separator-symbol)
 
   (define Close-symbol
     (:type closing-bracket)

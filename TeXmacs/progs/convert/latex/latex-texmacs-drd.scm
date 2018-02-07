@@ -51,7 +51,7 @@
 
   ;; other extra symbols
   exterior Exists bigintwl bigointwl
-  of asterisk point cdummy comma copyright
+  of suchthat varsuchthat asterisk point cdummy comma copyright
   bignone nobracket nospace nocomma noplus nosymbol
   nin nni notni nequiv nleadsto
   dotminus dotpm dotmp dotamalg dottimes dotoplus dototimes dotast

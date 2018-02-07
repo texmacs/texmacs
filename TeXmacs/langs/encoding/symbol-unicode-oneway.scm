@@ -106,6 +106,9 @@
 ("<Bbbk>"		"#1D55C") ; variant of <bb-k>
 ("<triangle>"	        "#25B3") ; variant of <bigtriangleup>
 ("<nshortmid>"		"#2224") ; variant of <nmid>
+("<of>"		        ":")     ; variant of : for "of type"
+("<suchthat>"		":")     ; variant of : for { a in ZZ : a > 5 }
+("<varsuchthat>"	"|")     ; variant of | for { a in ZZ | a > 5 }
 
 ;;; Big delimiters
 

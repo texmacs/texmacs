@@ -153,6 +153,8 @@
   (boxbar (join boxempty (align* vminus boxempty 0.5 0.5)))
   (blacksquare (flood-fill boxempty 0.5 0.5))
 
+  (suchthat \:)
+  (varsuchthat |)
   (assign (glue (align \: = * 0.5) (0.2 0 =)))
   (plusassign (glue (align + = * 0.5) (0.2 0 =)))
   (minusassign (glue (align minus = * 0.5) (0.2 0 =)))
