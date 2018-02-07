@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -144,6 +144,8 @@
 
   <drd-props|qed|macro-parameter|regular>
 
+  <drd-props|proof-qed|macro-parameter|regular>
+
   \;
 
   <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
@@ -163,6 +165,14 @@
 
   <assign|proof-of|<\macro|what|body>
     <render-proof|<proof-text> <arg|what>|<arg|body>>
+  </macro>>
+
+  <assign|proof*|<\macro|body>
+    <render-remark|<proof-text>|<arg|body>>
+  </macro>>
+
+  <assign|proof-of*|<\macro|what|body>
+    <render-remark|<proof-text> <arg|what>|<arg|body>>
   </macro>>
 
   \;
