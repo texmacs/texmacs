@@ -39,7 +39,7 @@ DESTDIR =
 
 MKDIR = mkdir -p
 RM = rm -f
-CP = cp -r -f
+CP = @CONFIG_CP@
 MV = mv -f
 LN = ln -f
 CHMOD = @CONFIG_CHMOD@
@@ -267,7 +267,7 @@ COPY_SOURCES:
 	$(RM) -r ../distr/build
 	$(MKDIR) ../distr/build
 	$(MKDIR) $(BUILD_DIR)
-	$(CP) -p * $(BUILD_DIR)/.
+	$(CP) * $(BUILD_DIR)/.
 	cd $(BUILD_DIR); make ACCESS_FLAGS
 	cd $(BUILD_DIR); make DISTR_CLEAN
 
@@ -312,8 +312,8 @@ STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
 GENERIC_PACKAGE: TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
-	-find @GUILE_DATA_PATH@ -type d -name ice-9 -exec cp -R {} $(tmdir)/progs \; && \
-	   cp -R $(tmdir) $(STATIC_QT) && \
+	-find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(tmdir)/progs \; && \
+	   $(CP) $(tmdir) $(STATIC_QT) && \
 	   tar -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT) --exclude .svn --mode go=rX
 	$(RM) -r $(tmdir)/progs/ice-9 $(STATIC_QT)
 
@@ -358,9 +358,9 @@ DEBIAN_PACKAGE_SRC = packages/debian
 DEBIAN_PACKAGE_DIR = ../distr/debian
 
 DEBIAN_PACKAGE: COPY_SOURCES_TGZ
-	$(CP) -p $(BUILD_TGZ) ../distr/build/$(tm_debian_name_devel).orig.tar.gz
+	$(CP) $(BUILD_TGZ) ../distr/build/$(tm_debian_name_devel).orig.tar.gz
 	$(MKDIR) $(BUILD_DIR)/debian ;
-	$(CP) -p $(DEBIAN_PACKAGE_SRC)/* $(BUILD_DIR)/debian
+	$(CP) $(DEBIAN_PACKAGE_SRC)/* $(BUILD_DIR)/debian
 	cd $(BUILD_DIR) && dh_shlibdeps;debuild -us -uc
 	cd $(CURDIR)
 	$(MKDIR) $(DEBIAN_PACKAGE_DIR)
@@ -442,7 +442,7 @@ UBUNTU_PACKAGE: COPY_SOURCES_TGZ
 	$(MKDIR) $(BUILD_DIR)/debian ;
 	$(CP) $(UBUNTU_PACKAGE_SRC)/* $(BUILD_DIR)/debian
 	cd $(BUILD_DIR); debuild -us -uc
-	$(CP) -p ../distr/build/*.deb $(UBUNTU_PACKAGE_DIR)
+	$(CP) ../distr/build/*.deb $(UBUNTU_PACKAGE_DIR)
 	$(RM) -r ../distr/build
 
 .PHONY: UBUNTU_PACKAGE
@@ -485,8 +485,8 @@ MACOS_BUNDLE: TEXMACS
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(MACOS_PACKAGE_RESOURCES)
 	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
 	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
-	if test -n "@GS_EXE@";then  cp @GS_EXE@ $(MACOS_PACKAGE_TEXMACS)/bin/;fi
-	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec cp -R {} $(MACOS_PACKAGE_TEXMACS)/progs/ \;
+	if test -n "@GS_EXE@";then  $(CP) @GS_EXE@ $(MACOS_PACKAGE_TEXMACS)/bin/;fi
+	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(MACOS_PACKAGE_TEXMACS)/progs/ \;
 	$(CHMOD) -R go=rX $(MACOS_PACKAGE_TEXMACS)/progs/ice-9
 	find -d $(MACOS_PACKAGE_TEXMACS) -name .svn -exec rm -rf {} \;
 
@@ -532,8 +532,8 @@ WINDOWS_BUNDLE: TEXMACS
 	$(CP) -u TeXmacs/* $(WINDOWS_BUILD_DIR)/.
 	$(RM) $(WINDOWS_BUILD_BIN_DIR)/texmacs
 	$(MV) $(WINDOWS_BUILD_BIN_DIR)/texmacs.bin $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe
-	if test -n "@XTRA_CMD@"; then cp -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
-	if test -x "@GS_EXE@"; then cp @GS_EXE@ $(WINDOWS_BUILD_BIN_DIR)/;fi
+	if test -n "@XTRA_CMD@"; then $(CP) -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
+	if test -x "@GS_EXE@"; then $(CP) @GS_EXE@ $(WINDOWS_BUILD_BIN_DIR)/;fi
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
 	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;

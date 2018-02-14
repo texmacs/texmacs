@@ -36,6 +36,7 @@ AC_DEFUN([TM_PLATFORM],[
   CONFIG_USER="$USER"
   CONFIG_DATE="`date`"
   CONFIG_QTPIPES="no"
+  type rsync && CONFIG_CP="rsync -a --exclude='.*'" || CONFIG_CP="cp -f -R -p"
   # tweak for XCode project
   CONFIG_ARCHS='$(NATIVE_ARCH)'
 
@@ -288,4 +289,5 @@ AC_DEFUN([TM_PLATFORM],[
   AC_SUBST(CONFIG_USER)
   AC_SUBST(CONFIG_DATE)
   AC_SUBST(CONFIG_ARCHS)
+  AC_SUBST(CONFIG_CP)
 ])

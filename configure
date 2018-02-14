@@ -719,6 +719,7 @@ CONFIG_GUILE_SERIAL
 GUILE_DATA_PATH
 GUILE_EXE
 GUILE_CONFIG
+CONFIG_CP
 CONFIG_ARCHS
 CONFIG_DATE
 CONFIG_USER
@@ -5467,6 +5468,7 @@ $as_echo "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
   CONFIG_USER="$USER"
   CONFIG_DATE="`date`"
   CONFIG_QTPIPES="no"
+  type rsync && CONFIG_CP="rsync -a --exclude='.*'" || CONFIG_CP="cp -f -R -p"
   # tweak for XCode project
   CONFIG_ARCHS='$(NATIVE_ARCH)'
 
@@ -6959,6 +6961,7 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
       CONFIG_BSHARED="-dynamic"
     ;;
   esac
+
 
 
 
