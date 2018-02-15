@@ -65,7 +65,7 @@ TEXMACS: EMPTY_DIRS
 	$(CHMOD) 755 $(tmdir)/bin/*
 	$(CHMOD) 755 plugins/*/bin/*
 	$(RM) -r $(tmdir)/plugins
-	$(CP) plugins $(tmdir)/plugins
+	$(CP) plugins $(tmdir)/
 	@echo ----------------------------------------------------
 	@echo dynamic TeXmacs has been successfully compiled
 
