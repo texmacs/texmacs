@@ -20,6 +20,7 @@ AC_DEFUN([TM_SUBVERSION],[
     AC_MSG_RESULT($SVNREV, read from $srcdir/SVNREV)
   else 
     echo "$SVNREV" > $srcdir/SVNREV
+    echo "$SVNREV" > $srcdir/TeXmacs/SVNREV
     AC_MSG_RESULT($SVNREV)
   fi
 

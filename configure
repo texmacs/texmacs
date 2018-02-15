@@ -2928,6 +2928,7 @@ $as_echo_n "checking current Subversion revision number... " >&6; }
 $as_echo "$SVNREV" >&6; }
   else
     echo "$SVNREV" > $srcdir/SVNREV
+    echo "$SVNREV" > $srcdir/TeXmacs/SVNREV
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SVNREV" >&5
 $as_echo "$SVNREV" >&6; }
   fi
