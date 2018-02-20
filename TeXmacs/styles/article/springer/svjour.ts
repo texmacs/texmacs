@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -75,6 +75,8 @@
   </src-comment>>
 
   <assign|font-base-size|10>
+
+  <assign|par-sep|0.2em>
 
   <assign|par-first|15pt>
 
@@ -334,15 +336,15 @@
 
   <assign|long-compact-space-item|<macro|x|<item-long|<compact-space-item|<arg|x>>>>>
 
-  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-compact|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-aligned|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-dash|<value|compact-dash-item>|<macro|x|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-long|<value|long-compact-space-item>|<macro|x|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description|<value|compact-space-item>|<macro|x|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   <\active*>
     <\src-comment>
