@@ -164,20 +164,26 @@
 
   <group-common-counter|theorem-env>
 
+  <assign|enunciation-sep|<macro|<space|1spc>>>
+
+  <assign|env-number|<macro|num|<arg|num>>>
+
   <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
+
+  <assign|smart-qed|<macro|>>
 
   \;
 
   <assign|render-enunciation|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
+    <padded-normal|1fn|1fn|<surround|<arg|which>||<arg|body>>>
   </macro>>
 
   <assign|render-exercise|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<exercise-name|<arg|which><theorem-sep>>||<arg|body>>>
+    <padded-normal|1fn|1fn|<surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>>
   </macro>>
 
   <assign|render-proof|<\macro|which|body>
-    <\surround||<space|0.5fn><qed>>
+    <\surround||<smart-qed>>
       <\render-remark|<arg|which>>
         <arg|body>
       </render-remark>

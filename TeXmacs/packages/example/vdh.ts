@@ -1,4 +1,4 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -290,6 +290,8 @@
   <assign|correct|<macro|old|new|<active*|<with|color|brown|[>><with|color|dark
   blue|<arg|old>><active*|<with|color|brown|<with|mode|math|\<rightarrow\>>>><with|color|dark
   blue|<arg|new>><active*|<with|color|brown|]>>>>
+
+  <assign|smart-qed|<macro|<htab|0.5fn|0><qed>>>
 
   \;
 
