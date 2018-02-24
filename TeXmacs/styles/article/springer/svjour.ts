@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env-base|env-math|env-float|env-program|header-article|title-base|section-article|std-latex>
+  <use-package|std|env-base|env-math|env-enunciation|env-float|env-program|header-article|title-base|section-article|std-latex>
 
   <assign|env-theorem-dtd|1.0>
 
@@ -164,21 +164,7 @@
 
   <group-common-counter|theorem-env>
 
-  <assign|enunciation-name|<macro|name|<with|font-series|bold|<arg|name>>>>
-
-  <assign|enunciation-sep|<macro|. >>
-
-  <assign|theorem-name|<macro|name|<enunciation-name|<arg|name>>>>
-
-  <assign|theorem-sep|<macro|<enunciation-sep>>>
-
   <assign|remark-name|<macro|name|<with|font-shape|italic|<arg|name>>>>
-
-  <assign|remark-sep|<macro|<enunciation-sep>>>
-
-  <assign|exercise-name|<macro|name|<enunciation-name|<arg|name>>>>
-
-  <assign|exercise-sep|<macro|<enunciation-sep>>>
 
   \;
 
@@ -186,33 +172,16 @@
     <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
   </macro>>
 
-  <assign|render-remark|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<remark-name|<arg|which><theorem-sep>>||<arg|body>>>
-  </macro>>
-
-  <assign|render-theorem|<\macro|which|body>
-    <padded-normal|1fn|1fn|<surround|<theorem-name|<arg|which><theorem-sep>>||<with|font-shape|italic|<arg|body>>>>
-  </macro>>
-
   <assign|render-exercise|<\macro|which|body>
     <padded-normal|1fn|1fn|<surround|<exercise-name|<arg|which><theorem-sep>>||<arg|body>>>
   </macro>>
 
-  \;
-
-  <assign|proof-text|<macro|<localize|Proof>>>
-
-  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
-  >>>>
-
   <assign|render-proof|<\macro|which|body>
-    <\surround||<space|0.5fn><active*|<with|mode|math|\<box\>>>>
-      <render-remark|<arg|which>|<arg|body>>
+    <\surround||<space|0.5fn><qed>>
+      <\render-remark|<arg|which>>
+        <arg|body>
+      </render-remark>
     </surround>
-  </macro>>
-
-  <assign|proof|<\macro|body>
-    <render-proof|<proof-text>|<arg|body>>
   </macro>>
 
   <active*|<\src-comment>
