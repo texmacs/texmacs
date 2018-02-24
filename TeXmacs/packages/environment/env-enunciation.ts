@@ -90,7 +90,12 @@
     </src-comment>
   </active*>
 
-  <assign|qed|<active*|<with|mode|math|\<box\>>>>
+  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
+  >>>>
+
+  <assign|qed|<macro|<math-ignore|<active*|<with|mode|math|\<box\>>>>>>
+
+  \;
 
   <assign|proof-text|<macro|<localize|Proof>>>
 
@@ -98,17 +103,10 @@
 
   <assign|answer-text|<macro|<localize|Answer>>>
 
-  <drd-props|qed|macro-parameter|regular>
-
-  <drd-props|proof-qed|macro-parameter|regular>
-
   \;
 
-  <assign|dueto|<macro|name|<with|font-shape|right|<theorem-name|(<arg|name>)
-  >>>>
-
   <assign|render-proof|<\macro|which|body>
-    <\surround||<htab|0.5fn|0><qed>>
+    <\surround||<if|<occurs-inside|<quote|<qed>>|body>||<htab|0.5fn|0><qed>>>
       <\render-remark|<arg|which>>
         <arg|body>
       </render-remark>
@@ -121,14 +119,6 @@
 
   <assign|proof-of|<\macro|what|body>
     <render-proof|<proof-text> <arg|what>|<arg|body>>
-  </macro>>
-
-  <assign|proof*|<\macro|body>
-    <render-remark|<proof-text>|<arg|body>>
-  </macro>>
-
-  <assign|proof-of*|<\macro|what|body>
-    <render-remark|<proof-text> <arg|what>|<arg|body>>
   </macro>>
 
   \;

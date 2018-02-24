@@ -4026,6 +4026,24 @@ upgrade_draw_over_under (tree t) {
 }
 
 /******************************************************************************
+* Upgrade qed
+******************************************************************************/
+
+tree
+upgrade_qed (tree t) {
+  if (is_atomic (t)) return t;
+  else if (t == tree (VALUE, "qed"))
+    return compound ("qed");
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_qed (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -4212,6 +4230,8 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.99.4"))
     t= upgrade_draw_over_under (t);
+  if (version_inf_eq (version, "1.99.6"))
+    t= upgrade_qed (t);
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

@@ -295,6 +295,8 @@ private:
   tree exec_find_file_upwards (tree t);
   tree exec_is_tuple (tree t);
   tree exec_lookup (tree t);
+  tree exec_arg_recursive (tree t);
+  tree exec_occurs_inside (tree t);
   tree exec_equal (tree t);
   tree exec_unequal (tree t);
   tree exec_less (tree t);

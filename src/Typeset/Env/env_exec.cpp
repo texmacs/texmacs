@@ -334,6 +334,8 @@ edit_env_rep::exec (tree t) {
     return exec_is_tuple (t);
   case LOOK_UP:
     return exec_lookup (t);
+  case OCCURS_INSIDE:
+    return exec_occurs_inside (t);
   case EQUAL:
     return exec_equal (t);
   case UNEQUAL:
@@ -1528,6 +1530,43 @@ edit_env_rep::exec_lookup (tree t) {
   return t1[i];
 }
 
+static bool
+occurs_inside (tree w, tree t) {
+  if (t == w) return true;
+  if (is_atomic (t)) return false;
+  for (int i=0; i<N(t); i++)
+    if (occurs_inside (w, t[i])) return true;
+  return false;
+}
+
+tree
+edit_env_rep::exec_arg_recursive (tree t) {
+  if (N(t)<1) return tree (ERROR, "bad arg");
+  tree r= t[0];
+  if (is_compound (r))
+    return tree (ERROR, "bad arg");
+  if (is_nil (macro_arg) || (!macro_arg->item->contains (r->label)))
+    return tree (ERROR, "arg " * r->label);
+  r= macro_arg->item [r->label];
+  list<hashmap<string,tree> > old_var= macro_arg;
+  list<hashmap<string,path> > old_src= macro_src;
+  if (!is_nil (macro_arg)) macro_arg= macro_arg->next;
+  if (!is_nil (macro_src)) macro_src= macro_src->next;
+  if (is_func (r, ARG, 1)) r= exec_arg_recursive (r);
+  macro_arg= old_var;
+  macro_src= old_src;
+  return r;
+}
+
+tree
+edit_env_rep::exec_occurs_inside (tree t) {
+  if (N(t)!=2) return tree (ERROR, "bad look up");
+  tree t1= exec (t[0]);
+  tree t2= exec_arg_recursive (tree (ARG, t[1]));
+  if (occurs_inside (t1, t2)) return "true";
+  else return "false";
+}
+
 tree
 edit_env_rep::exec_equal (tree t) {
   if (N(t)!=2) return tree (ERROR, "bad equal");
@@ -2230,6 +2269,7 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case FIND_FILE_UPWARDS:
   case IS_TUPLE:
   case LOOK_UP:
+  case OCCURS_INSIDE:
   case EQUAL:
   case UNEQUAL:
   case LESS:

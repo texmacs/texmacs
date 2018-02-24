@@ -394,6 +394,9 @@ init_std_drd () {
 	fixed (1) -> returns_boolean () -> regular (0) -> name ("tuple?"));
   init (LOOK_UP, "look-up",
 	fixed (1, 1, BIFORM) -> regular (0) -> integer (1));
+  init (OCCURS_INSIDE, "occurs-inside",
+	fixed (1, 1, BIFORM) -> returns_boolean () ->
+        regular (0) -> argument (1));
   init (EQUAL, "equal",
 	fixed (2) -> returns_boolean () -> regular (0));
   init (UNEQUAL, "unequal",
