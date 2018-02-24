@@ -245,9 +245,9 @@ above_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "R", -0.04);
   adjust_pair (t, "T", -0.04);
   adjust_pair (t, "U", -0.06);
-  adjust_pair (t, "V", -0.1);
+  adjust_pair (t, "V", -0.06);
   adjust_pair (t, "W", -0.08);
-  adjust_pair (t, "Y", -0.1);
+  adjust_pair (t, "Y", -0.06);
   adjust_char (t, "<gamma>", -0.02);
   adjust_char (t, "<vartheta>", -0.06);
   adjust_char (t, "<lambda>", 0.1);
