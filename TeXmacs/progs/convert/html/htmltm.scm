@@ -436,12 +436,12 @@
   (span (handler :collapse :inline htmltm-wikipedia-span))
 
   ;; Headings
-  (h1 (handler :mixed :block "chapter"))
-  (h2 (handler :mixed :block "section"))
-  (h3 (handler :mixed :block "subsection"))
-  (h4 (handler :mixed :block "subsubsection"))
-  (h5 (handler :mixed :block "paragraph"))
-  (h6 (handler :mixed :block "subparagraph"))
+  (h1 (handler :mixed :block "chapter*"))
+  (h2 (handler :mixed :block "section*"))
+  (h3 (handler :mixed :block "subsection*"))
+  (h4 (handler :mixed :block "subsubsection*"))
+  (h5 (handler :mixed :block "paragraph*"))
+  (h6 (handler :mixed :block "subparagraph*"))
 
   ;; Address and text direction
   (address (handler :mixed :block htmltm-pass))
