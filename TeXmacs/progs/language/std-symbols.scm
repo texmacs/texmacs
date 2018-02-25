@@ -436,10 +436,15 @@
   (define Middle-separator-symbol
     (:type middle-bracket)
     (:spacing default default)
-    "<suchthat>" "<varsuchthat>")
+    "<suchthat>")
+  
+  (define Middle-bar-symbol
+    (:type middle-bracket)
+    (:spacing half half)
+    "<barsuchthat>")
 
   (define Middle-symbol
-    Middle-bracket-symbol Middle-separator-symbol)
+    Middle-bracket-symbol Middle-separator-symbol Middle-bar-symbol)
 
   (define Close-symbol
     (:type closing-bracket)
