@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std>>
 
@@ -19,8 +19,6 @@
       which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
-
-  <assign|par-hyphen|professional>
 
   <active*|<\src-comment>
     TeX-like lengths.
