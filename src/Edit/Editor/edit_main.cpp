@@ -223,8 +223,12 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   
   string medium = env->get_string (PAGE_MEDIUM);
   if (conform && (medium != "paper")) conform= false;
-  // FIXME: better command for conform printing
+    // FIXME: better command for conform printing
 
+  typeset_preamble ();
+    // FIXME: when printing several files via aux buffers,
+    // it seems that the style can be corrupted.  Why?
+  
   // Set environment variables for printing
 
   typeset_prepare ();
