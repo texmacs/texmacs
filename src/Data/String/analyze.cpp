@@ -1637,3 +1637,91 @@ strip_completions (array<string> a, string prefix) {
       b << a[i] (N(prefix), N(a[i]));
   return b;
 }
+
+/******************************************************************************
+* Differences between two strings
+******************************************************************************/
+
+static int
+find_longest (string s1, string s2, int& c1, int& c2) {
+  int n1= N(s1), n2= N(s2), bc= 0, bl= 0, br= 0;
+  for (c2=0; c2<n2; c2++)
+    if (s1[c1] == s2[c2]) {
+      int l=0, r=0;
+      while (c1+r<n1 && c2+r<n2 && s1[c1+r] == s2[c2+r]) r++;
+      while (l<c1 && l<c2 && s1[c1-l-1] == s2[c2-l-1]) l++;
+      if (l+r > bl+br) {
+        bc= c2;
+        bl= l;
+        br= r;
+      }
+    }
+  if (bl + br > 0) {
+    c1= c1 - bl;
+    c2= bc - bl;
+  }
+  return bl + br;
+}
+
+static void
+find_common (string s1, string s2, int& c1, int& c2) {
+  int best_len= 0;
+  c1= c2= 0;
+  int n1= N(s1), n2= N(s2);
+  if (n1 == 0 || n2 == 0) return;
+  int t= min (min (n1, n2), 6);
+  for (int k=1; k<t; k++) {
+    int a1= (k*n1)/t, a2= (k*n2)/t;
+    int len= find_longest (s1, s2, a1, a2);
+    if (len > best_len) { best_len= len; c1= a1; c2= a2; }
+  }
+}
+
+array<int>
+differences (string s1, string s2) {
+  int n1= N(s1), n2= N(s2);
+  int i1= 0, i2= 0, j1= n1, j2= n2;
+  while (i1<j1 && i2<j2 && s1[i1] == s2[i2]) { i1++; i2++; }
+  while (i1<j1 && i2<j2 && s1[j1-1] == s2[j2-1]) { j1--; j2--; }
+  if (i1 == i2 && j1 == j2) return array<int> ();
+  if (i1 > 0 || i2 > 0 || j1 < n1 || j2 < n2) {
+    array<int> r= differences (s1 (i1, j1), s2 (i2, j2));
+    for (int k=0; k<N(r); k+=4) {
+      r[k  ] += i1;
+      r[k+1] += i1;
+      r[k+2] += i2;
+      r[k+3] += i2;
+    }
+    return r;
+  }
+  else {
+    int c1, c2;
+    find_common (s1, s2, c1, c2);
+    if (c1 == 0 && c2 == 0) {
+      array<int> r;
+      r << i1 << j1 << i2 << j2;
+      return r;
+    }
+    else {
+      array<int> r1= differences (s1 (0 , c1), s2 (0 , c2));
+      array<int> r2= differences (s1 (c1, n1), s2 (c2, n2));
+      for (int k=0; k<N(r2); k+=4) {
+        r2[k  ] += c1;
+        r2[k+1] += c1;
+        r2[k+2] += c2;
+        r2[k+3] += c2;
+      }
+      r1 << r2;
+      return r1;
+    }
+  }
+}
+
+int
+distance (string s1, string s2) {
+  int d= 0;
+  array<int> r= differences (s1, s2);
+  for (int k=0; k<N(r); k+=4)
+    d += max (r[k+1] - r[k], r[k+3] - r[k+2]);
+  return d;
+}

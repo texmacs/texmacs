@@ -401,6 +401,8 @@
 "hexadecimal->integer"
 "cpp-string-tokenize"
 "cpp-string-recompose"
+"string-differences"
+"string-distance"
 "find-left-bracket"
 "find-right-bracket"
 "string->tmstring"

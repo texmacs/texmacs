@@ -4986,6 +4986,36 @@ tmg_cpp_string_recompose (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_string_differences (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-differences");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "string-differences");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  array_int out= differences (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return array_int_to_tmscm (out);
+}
+
+tmscm
+tmg_string_distance (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-distance");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "string-distance");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  int out= distance (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_find_left_bracket (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "find-left-bracket");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "find-left-bracket");
@@ -9775,6 +9805,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("hexadecimal->integer",  tmg_hexadecimal_2integer, 1, 0, 0);
   tmscm_install_procedure ("cpp-string-tokenize",  tmg_cpp_string_tokenize, 2, 0, 0);
   tmscm_install_procedure ("cpp-string-recompose",  tmg_cpp_string_recompose, 2, 0, 0);
+  tmscm_install_procedure ("string-differences",  tmg_string_differences, 2, 0, 0);
+  tmscm_install_procedure ("string-distance",  tmg_string_distance, 2, 0, 0);
   tmscm_install_procedure ("find-left-bracket",  tmg_find_left_bracket, 3, 0, 0);
   tmscm_install_procedure ("find-right-bracket",  tmg_find_right_bracket, 3, 0, 0);
   tmscm_install_procedure ("string->tmstring",  tmg_string_2tmstring, 1, 0, 0);

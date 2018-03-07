@@ -156,4 +156,7 @@ array<string> as_completions (hashset<string> h);
 array<string> close_completions (array<string> a);
 array<string> strip_completions (array<string> a, string prefix);
 
+array<int> differences (string s1, string s2);
+int distance (string s1, string s2);
+
 #endif // defined ANALYZE_H
