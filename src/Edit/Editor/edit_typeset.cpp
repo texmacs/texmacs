@@ -873,6 +873,13 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
 }
 
 void
+edit_typeset_rep::typeset_forced () {
+  //cout << "Typeset forced\n";
+  SI x1, y1, x2, y2;
+  typeset (x1, y1, x2, y2);
+}
+
+void
 edit_typeset_rep::typeset_invalidate (path p) {
   if (rp <= p) {
     //cout << "Invalidate " << p << "\n";

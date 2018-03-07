@@ -306,6 +306,7 @@ public:
   virtual void     set_att (string key, tree im) = 0;
   virtual void     reset_att (string key) = 0;
   virtual array<string> list_atts () = 0;
+  virtual void     typeset_forced () = 0;
   virtual void     typeset_invalidate (path p) = 0;
   virtual void     typeset_invalidate_all () = 0;
   virtual void     typeset_invalidate_players (path p, bool reattach) = 0;

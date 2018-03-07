@@ -2847,6 +2847,15 @@ tmg_refresh_window () {
 }
 
 tmscm
+tmg_update_forced () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->typeset_forced ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_update_path (tmscm arg1) {
   TMSCM_ASSERT_PATH (arg1, TMSCM_ARG1, "update-path");
 
@@ -3535,6 +3544,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("tex-buffer",  tmg_tex_buffer, 0, 0, 0);
   tmscm_install_procedure ("clear-local-info",  tmg_clear_local_info, 0, 0, 0);
   tmscm_install_procedure ("refresh-window",  tmg_refresh_window, 0, 0, 0);
+  tmscm_install_procedure ("update-forced",  tmg_update_forced, 0, 0, 0);
   tmscm_install_procedure ("update-path",  tmg_update_path, 1, 0, 0);
   tmscm_install_procedure ("update-current-buffer",  tmg_update_current_buffer, 0, 0, 0);
   tmscm_install_procedure ("update-players",  tmg_update_players, 2, 0, 0);

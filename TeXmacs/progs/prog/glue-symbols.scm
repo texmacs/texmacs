@@ -1004,6 +1004,7 @@
 "tex-buffer"
 "clear-local-info"
 "refresh-window"
+"update-forced"
 "update-path"
 "update-current-buffer"
 "update-players"

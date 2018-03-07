@@ -146,6 +146,9 @@
           (display* "TeXmacs]   Importing " x "\n")
           (convert-to-file tex-file "latex-file" "texmacs-file" tm-file)
           (with-aux tm-file
+            (generate-all-aux)
+            (update-current-buffer)
+            (update-forced)
             (display* "TeXmacs]   Exporting " x " to Pdf\n")
             (set! current-save-target pdf-file)
             (export-buffer-main (current-buffer) pdf-file "pdf" opts)))))))

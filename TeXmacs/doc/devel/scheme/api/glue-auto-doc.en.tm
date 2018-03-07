@@ -7835,6 +7835,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(update-forced)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|typeset_forced> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(update-path <scm-arg|path>)>
 <explain-synopsis|no synopsis>
   <|explain>

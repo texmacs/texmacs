@@ -116,6 +116,7 @@ public:
   void     typeset_invalidate_players (path p, bool reattach);
   void     typeset_sub (SI& x1, SI& y1, SI& x2, SI& y2);
   void     typeset (SI& x1, SI& y1, SI& x2, SI& y2);
+  void     typeset_forced ();
 
   friend class tm_window_rep;
   friend class tm_server_rep;

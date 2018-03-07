@@ -296,6 +296,7 @@
   (tex-buffer tex_buffer (void))
   (clear-local-info clear_local_info (void))
   (refresh-window invalidate_all (void))
+  (update-forced typeset_forced (void))
   (update-path typeset_invalidate (void path))
   (update-current-buffer typeset_invalidate_all (void))
   (update-players typeset_invalidate_players (void path bool))
