@@ -117,6 +117,58 @@
         (for-each (lambda (x) (unpack-file x src-dir dest-dir type)) u5)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Building manuals
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (build-manual* dir name lan next)
+  ;;(display* "-- build-manual " dir ", " name ", " lan "\n")
+  (let* ((root (cond ((== name "texmacs-user-manual")
+                      (string-append "main/man-manual." lan ".tm"))
+                     ((== name "texmacs-reference-manual")
+                      (string-append "main/man-reference." lan ".tm"))
+                     ((== name "texmacs-scheme-manual")
+                      (string-append "devel/scheme/scheme." lan ".tm"))
+                     (else "unknown.en.tm")))
+         (doc-dir "$TEXMACS_DOC_PATH"))
+    (if (url-exists? (url-unix doc-dir root))
+        (let* ((old-lan (get-output-language))
+               (u (url-resolve (url-unix doc-dir root) "r"))
+               (pdf (url-append dir (string-append name "." lan ".pdf")))
+               (cont (lambda ()
+                       (export-buffer-main (current-buffer) pdf "pdf" (list))
+                       (set-output-language old-lan)
+                       (user-delayed next))))
+          (when (not (url-exists? pdf))
+            (set-output-language (locale-to-language lan))
+            (tmdoc-expand-help-manual* u cont)))
+        (user-delayed next))))
+
+(define (build-manuals-sub* dir l next)
+  ;;(display* "-- build-manuals-sub " dir ", " l "\n")
+  (if (null? l) (user-delayed next)
+      (let* ((pdf (car l))
+             (man (if (== (url-suffix pdf) "pdf") (strip-suffix pdf) pdf))
+             (name (strip-suffix man))
+             (lan (url-suffix man))
+             (cont (lambda ()
+                     (build-manuals-sub* dir (cdr l) next))))
+        (build-manual* dir name lan cont))))
+
+(define (build-manuals* orig-dir dest-dir next)
+  ;;(display* "-- build-manuals " orig-dir ", " dest-dir "\n")
+  (let* ((u1 (url-append orig-dir "manual"))
+         (u2 (url-append dest-dir "manual"))
+         (u3 (url-append u1 (url-wildcard "*")))
+         (u4 (url->list (url-expand (url-complete u3 "fr"))))
+         (u5 (map url->string (map url-tail u4))))
+    (when (url-exists? u1)
+      (when (not (url-exists? u2))
+        (display* "TeXmacs] Creating directory " u2 "\n")
+        (system-mkdir (url-expand u2))
+        (system-1 "chmod a+x" u2))
+      (build-manuals-sub* u2 u5 next))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test file conversions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -269,15 +321,21 @@
         ((string-ends? x ".pdf")
          (compare-pdf-file x dir ref))))
 
+(define (compare-manual-file x dir ref)
+  ;;(display* "-- compare-manual-file " x ", " dir ", " ref "\n")
+  (cond ((string-ends? x ".pdf")
+         (compare-pdf-file x dir ref))))
+
 (define (compare-file x dir ref type)
   ;;(display* "-- compare-file " x ", " dir ", " ref ", " type "\n")
   (cond ((== type "texmacs") (compare-texmacs-file x dir ref))
-        ((== type "arxiv") (compare-arxiv-file x dir ref))))
+        ((== type "arxiv") (compare-arxiv-file x dir ref))
+        ((== type "manual") (compare-manual-file x dir ref))))
 
 (define (compare-dir dir ref type)
   ;;(display* "-- compare-dir " dir ", " ref ", " type "\n")
   (let* ((last (url->string (url-tail dir)))
-         (accept (list "texmacs" "arxiv")))
+         (accept (list "texmacs" "arxiv" "manual")))
     (set! type (or type (and (in? last accept) last)))
     (when (and (not (url-exists? dir)) (url-exists? ref))
       (display* "TeXmacs] Missing directory " (url->system dir) "\n")
@@ -337,58 +395,6 @@
                (t (stree->tree doc))
                (d (convert t "texmacs-tree" "texmacs-document")))
           (string-save d u)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Building manuals
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (build-manual* dir name lan next)
-  ;;(display* "-- build-manual " dir ", " name ", " lan "\n")
-  (let* ((root (cond ((== name "texmacs-user-manual")
-                      (string-append "main/man-manual." lan ".tm"))
-                     ((== name "texmacs-reference-manual")
-                      (string-append "main/man-reference." lan ".tm"))
-                     ((== name "texmacs-scheme-manual")
-                      (string-append "devel/scheme/scheme." lan ".tm"))
-                     (else "unknown.en.tm")))
-         (doc-dir "$TEXMACS_DOC_PATH"))
-    (if (url-exists? (url-unix doc-dir root))
-        (let* ((old-lan (get-output-language))
-               (u (url-resolve (url-unix doc-dir root) "r"))
-               (pdf (url-append dir (string-append name "." lan ".pdf")))
-               (cont (lambda ()
-                       (export-buffer-main (current-buffer) pdf "pdf" (list))
-                       (set-output-language old-lan)
-                       (user-delayed next))))
-          (when (not (url-exists? pdf))
-            (set-output-language (locale-to-language lan))
-            (tmdoc-expand-help-manual* u cont)))
-        (user-delayed next))))
-
-(define (build-manuals-sub* dir l next)
-  ;;(display* "-- build-manuals-sub " dir ", " l "\n")
-  (if (null? l) (user-delayed next)
-      (let* ((pdf (car l))
-             (man (if (== (url-suffix pdf) "pdf") (strip-suffix pdf) pdf))
-             (name (strip-suffix man))
-             (lan (url-suffix man))
-             (cont (lambda ()
-                     (build-manuals-sub* dir (cdr l) next))))
-        (build-manual* dir name lan cont))))
-
-(define (build-manuals* orig-dir dest-dir next)
-  ;;(display* "-- build-manuals " orig-dir ", " dest-dir "\n")
-  (let* ((u1 (url-append orig-dir "manual"))
-         (u2 (url-append dest-dir "manual"))
-         (u3 (url-append u1 (url-wildcard "*")))
-         (u4 (url->list (url-expand (url-complete u3 "fr"))))
-         (u5 (map url->string (map url-tail u4))))
-    (when (url-exists? u1)
-      (when (not (url-exists? u2))
-        (display* "TeXmacs] Creating directory " u2 "\n")
-        (system-mkdir (url-expand u2))
-        (system-1 "chmod a+x" u2))
-      (build-manuals-sub* u2 u5 next))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Running the test suite
