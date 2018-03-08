@@ -34,6 +34,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (tmdoc-relative cur name)
+  ;;(display* "tmdoc-relative " cur ", " name "\n")
   (with rel (url-relative cur name)
     (if (url-regular? rel) rel
         (let* ((nname (string-append name "." (ext-language-suffix) ".tm"))
@@ -228,7 +229,7 @@
   (update-current-buffer)
   (user-delayed cont))
 
-(tm-define (tmdoc-expand-help-manual root)
+(tm-define (tmdoc-expand-help-manual* root next)
   (system-wait "Generating manual" "(can be long)")
   (tmdoc-expand-help root "book")
   (user-delayed
@@ -240,9 +241,13 @@
               (delayed-update "(pass 3/3)"
                 (lambda ()
                   (buffer-pretend-saved (current-buffer))
-                  (system-wait "Finishing manual" "(soon ready)"))))))))))
+                  (next))))))))))
 
-(tm-define (tmdoc-expand-this type)
+(tm-define (tmdoc-expand-help-manual root)
+  (tmdoc-expand-help-manual*
+   root (lambda () (system-wait "Finishing manual" "(soon ready)"))))
+
+(tm-define (tmdoc-expand-this* type next)
   (system-wait (string-append "Generating " type) "(can be long)")
   (with mmx? (style-has? "mmxdoc-style")
     (tmdoc-expand-help (current-buffer) type)
@@ -256,7 +261,11 @@
                 (delayed-update "(pass 3/3)"
                   (lambda ()
                     (buffer-pretend-saved (current-buffer))
-                    (system-wait "Finishing" "(soon ready)")))))))))))
+                    (next)))))))))))
+
+(tm-define (tmdoc-expand-this type)
+  (tmdoc-expand-this*
+   type (lambda () (system-wait "Finishing manual" "(soon ready)"))))
 
 (define (tmdoc-remove-hyper-links l)
   (cond ((npair? l) l)

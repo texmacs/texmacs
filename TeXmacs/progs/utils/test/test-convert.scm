@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (utils test test-convert)
-  (:use (texmacs texmacs tm-files)))
+  (:use (texmacs texmacs tm-files)
+        (doc tmdoc)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utilities
@@ -47,6 +48,12 @@
 (define (should-update? src-file dest-file)
   (or (not (url-exists? dest-file))
       (url-newer? src-file dest-file)))
+
+(define (strip-suffix u)
+  (with suffix (url-suffix u)
+    (if (== suffix "") u
+        (with r (url-unglue u (+ (string-length suffix) 1))
+          (if (string? u) (url->string r) r)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unpacking test suite
@@ -172,6 +179,15 @@
              (u5 (map url->string (map url-tail u4))))
         (for-each (lambda (x) (test-dir (url-append dir x) type)) u3)
         (for-each (lambda (x) (test-file x dir type)) u5)))))
+
+(define (test-suite* orig-dir suffix next)
+  (let* ((dir (url-expand (url-complete orig-dir "dr")))
+         (head (url-head dir))
+         (tail (url->string (url-tail dir)))
+         (dest-dir (url-append head (string-append tail suffix))))
+    (unpack-dir dir dest-dir #f)
+    (test-dir dest-dir #f)
+    (build-manuals* dir dest-dir next)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking the test suite against a reference build
@@ -323,26 +339,83 @@
           (string-save d u)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Building manuals
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (build-manual* dir name lan next)
+  ;;(display* "-- build-manual " dir ", " name ", " lan "\n")
+  (let* ((root (cond ((== name "texmacs-user-manual")
+                      (string-append "main/man-manual." lan ".tm"))
+                     ((== name "texmacs-reference-manual")
+                      (string-append "main/man-reference." lan ".tm"))
+                     ((== name "texmacs-scheme-manual")
+                      (string-append "devel/scheme/scheme." lan ".tm"))
+                     (else "unknown.en.tm")))
+         (doc-dir "$TEXMACS_DOC_PATH"))
+    (if (url-exists? (url-unix doc-dir root))
+        (let* ((old-lan (get-output-language))
+               (u (url-resolve (url-unix doc-dir root) "r"))
+               (pdf (url-append dir (string-append name "." lan ".pdf")))
+               (cont (lambda ()
+                       (export-buffer-main (current-buffer) pdf "pdf" (list))
+                       (set-output-language old-lan)
+                       (user-delayed next))))
+          (when (not (url-exists? pdf))
+            (set-output-language (locale-to-language lan))
+            (tmdoc-expand-help-manual* u cont)))
+        (user-delayed next))))
+
+(define (build-manuals-sub* dir l next)
+  ;;(display* "-- build-manuals-sub " dir ", " l "\n")
+  (if (null? l) (user-delayed next)
+      (let* ((pdf (car l))
+             (man (if (== (url-suffix pdf) "pdf") (strip-suffix pdf) pdf))
+             (name (strip-suffix man))
+             (lan (url-suffix man))
+             (cont (lambda ()
+                     (build-manuals-sub* dir (cdr l) next))))
+        (build-manual* dir name lan cont))))
+
+(define (build-manuals* orig-dir dest-dir next)
+  ;;(display* "-- build-manuals " orig-dir ", " dest-dir "\n")
+  (let* ((u1 (url-append orig-dir "manual"))
+         (u2 (url-append dest-dir "manual"))
+         (u3 (url-append u1 (url-wildcard "*")))
+         (u4 (url->list (url-expand (url-complete u3 "fr"))))
+         (u5 (map url->string (map url-tail u4))))
+    (when (url-exists? u1)
+      (when (not (url-exists? u2))
+        (display* "TeXmacs] Creating directory " u2 "\n")
+        (system-mkdir (url-expand u2))
+        (system-1 "chmod a+x" u2))
+      (build-manuals-sub* u2 u5 next))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Running the test suite
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (build-ref-suite orig-dir)
-  (let* ((dir (url-expand (url-complete orig-dir "dr")))
-         (head (url-head dir))
-         (tail (url->string (url-tail dir)))
-         (ref-dir (url-append head (string-append tail "-ref"))))
-    (unpack-dir dir ref-dir #f)
-    (test-dir ref-dir #f)))
+(tm-define (build-manual man-file)
+  (let* ((dir (url-head man-file))
+         (pdf (url->system (url-tail man-file)))
+         (man (if (== (url-suffix pdf) "pdf") (strip-suffix pdf) pdf))
+         (name (strip-suffix man))
+         (lan (url-suffix man))
+         (cur (current-buffer))
+         (back (lambda () (switch-to-buffer cur))))
+    (build-manual* dir name lan back)))
 
-(tm-define (run-test-suite orig-dir)
+(tm-define (build-ref-suite orig-dir)
+  (let* ((cur (current-buffer))
+         (back (lambda () (switch-to-buffer cur))))
+    (test-suite* orig-dir "-ref" back)))
+
+(define (run-test-suite-next orig-dir)
   (let* ((dir (url-expand (url-complete orig-dir "dr")))
          (head (url-head dir))
          (tail (url->string (url-tail dir)))
          (ref-dir (url-append head (string-append tail "-ref")))
          (check-dir (url-append head (string-append tail "-check"))))
     (when (url-exists? ref-dir)
-      (unpack-dir dir check-dir #f)
-      (test-dir check-dir #f)
       (set! missing-dirs (list))
       (set! missing-files (list))
       (set! changed-files (list))
@@ -350,3 +423,9 @@
       (set! changed-properties (list))
       (compare-dir check-dir ref-dir #f)
       (status-report check-dir))))
+
+(tm-define (run-test-suite orig-dir)
+  (let* ((cur (current-buffer))
+         (next (lambda () (run-test-suite-next orig-dir)))
+         (cont (lambda () (switch-to-buffer cur) (user-delayed next))))
+    (test-suite* orig-dir "-check" cont)))
