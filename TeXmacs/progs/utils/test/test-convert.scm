@@ -138,9 +138,11 @@
                        (export-buffer-main (current-buffer) pdf "pdf" (list))
                        (set-output-language old-lan)
                        (user-delayed next))))
-          (when (not (url-exists? pdf))
-            (set-output-language (locale-to-language lan))
-            (tmdoc-expand-help-manual* u cont)))
+          (if (url-exists? pdf)
+              (user-delayed next)
+              (begin
+                (set-output-language (locale-to-language lan))
+                (tmdoc-expand-help-manual* u cont))))
         (user-delayed next))))
 
 (define (build-manuals-sub* dir l next)
@@ -161,12 +163,14 @@
          (u3 (url-append u1 (url-wildcard "*")))
          (u4 (url->list (url-expand (url-complete u3 "fr"))))
          (u5 (map url->string (map url-tail u4))))
-    (when (url-exists? u1)
-      (when (not (url-exists? u2))
-        (display* "TeXmacs] Creating directory " u2 "\n")
-        (system-mkdir (url-expand u2))
-        (system-1 "chmod a+x" u2))
-      (build-manuals-sub* u2 u5 next))))
+    (if (url-exists? u1)
+        (begin
+          (when (not (url-exists? u2))
+            (display* "TeXmacs] Creating directory " u2 "\n")
+            (system-mkdir (url-expand u2))
+            (system-1 "chmod a+x" u2))
+          (build-manuals-sub* u2 u5 next))
+        (user-delayed next))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test file conversions
@@ -400,19 +404,29 @@
 ;; Running the test suite
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (build-manual man-file)
+(tm-define (delayed-quit)
+  (user-delayed quit-TeXmacs))
+
+(define (continue opts)
+  (when (nnull? opts)
+    (for-each (lambda (opt) (opt)) opts)))
+
+(tm-define (build-manual man-file . opts)
+  (when (not (url-rooted? man-file))
+    (with pwd (getenv "PWD")
+      (set! man-file (url-append pwd man-file))))
   (let* ((dir (url-head man-file))
          (pdf (url->system (url-tail man-file)))
          (man (if (== (url-suffix pdf) "pdf") (strip-suffix pdf) pdf))
          (name (strip-suffix man))
          (lan (url-suffix man))
          (cur (current-buffer))
-         (back (lambda () (switch-to-buffer cur))))
+         (back (lambda () (switch-to-buffer cur) (continue opts))))
     (build-manual* dir name lan back)))
 
-(tm-define (build-ref-suite orig-dir)
+(tm-define (build-ref-suite orig-dir . opts)
   (let* ((cur (current-buffer))
-         (back (lambda () (switch-to-buffer cur))))
+         (back (lambda () (switch-to-buffer cur) (continue opts))))
     (test-suite* orig-dir "-ref" back)))
 
 (define (run-test-suite-next orig-dir)
@@ -430,8 +444,8 @@
       (compare-dir check-dir ref-dir #f)
       (status-report check-dir))))
 
-(tm-define (run-test-suite orig-dir)
+(tm-define (run-test-suite orig-dir . opts)
   (let* ((cur (current-buffer))
-         (next (lambda () (run-test-suite-next orig-dir)))
+         (next (lambda () (run-test-suite-next orig-dir) (continue opts)))
          (cont (lambda () (switch-to-buffer cur) (user-delayed next))))
     (test-suite* orig-dir "-check" cont)))

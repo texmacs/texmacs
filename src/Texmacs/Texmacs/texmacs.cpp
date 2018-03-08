@@ -58,6 +58,7 @@ extern bool texmacs_started;
 
 bool disable_error_recovery= false;
 bool start_server_flag= false;
+string extra_init_cmd;
 void server_start ();
 
 tm_ostream& cout= tm_ostream::cout;
@@ -310,6 +311,21 @@ TeXmacs_main (int argc, char** argv) {
 	       (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
 	       (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
 	       (s == "-delete-server-data") || (s == "-delete-databases"));
+      else if (s == "-build-manual") {
+	if ((++i)<argc)
+          extra_init_cmd << "(build-manual "
+                         << scm_quote (argv[i]) << " delayed-quit)";
+      }
+      else if (s == "-reference-suite") {
+	if ((++i)<argc)
+          extra_init_cmd << "(build-ref-suite "
+                         << scm_quote (argv[i]) << " delayed-quit)";
+      }
+      else if (s == "-test-suite") {
+	if ((++i)<argc)
+          extra_init_cmd << "(run-test-suite "
+                         << scm_quote (argv[i]) << "delayed-quit)";
+      }
       else if (starts (s, "-psn"));
       else {
 	cout << "\n";
@@ -407,7 +423,9 @@ TeXmacs_main (int argc, char** argv) {
              (s == "-i") || (s == "-initialize") ||
              (s == "-g") || (s == "-geometry") ||
              (s == "-x") || (s == "-execute") ||
-             (s == "-log-file")) i++;
+             (s == "-log-file") ||
+             (s == "-build-manual") ||
+             (s == "-reference-suite") || (s == "-test-suite")) i++;
   }
   if (install_status == 1) {
     if (DEBUG_STD) debug_boot << "Loading welcome message...\n";
@@ -439,6 +457,7 @@ TeXmacs_main (int argc, char** argv) {
   texmacs_started= true;
   if (!disable_error_recovery) signal (SIGSEGV, clean_exit_on_segfault);
   if (start_server_flag) server_start ();
+  if (N(extra_init_cmd) > 0) exec_delayed (scheme_cmd (extra_init_cmd));
   gui_start_loop ();
 
   if (DEBUG_STD) debug_boot << "Stopping server...\n";

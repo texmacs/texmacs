@@ -123,6 +123,8 @@
 (lazy-define (utils library cursor) notify-cursor-moved)
 (lazy-define (utils cas cas-out) cas->stree)
 (lazy-define (utils plugins plugin-cmd) pre-serialize verbatim-serialize)
+(lazy-define (utils test test-convert) delayed-quit
+             build-manual build-ref-suite run-test-suite)
 (use-modules (utils library smart-table))
 (use-modules (utils plugins plugin-convert))
 (use-modules (utils misc markup-funcs))
