@@ -83,10 +83,17 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   else contraction= 0.0;
 
   string ef= as_string (env->read (PAR_EXPANSION));
-  if (ef == "auto") expansion= 0.7 / 40.0;
+  if (ef == "auto") {
+    double cpl= min (max (((double) width) / max (env->fn->wfn, 1), 10.0), 40.0);
+    expansion= 0.7 / cpl;
+  }
+  else if (ef == "tolerant") {
+    double cpl= min (max (((double) width) / max (env->fn->wfn, 1), 10.0), 40.0);
+    expansion= 1.75 / cpl;
+  }
   else if (is_double (ef)) expansion= as_double (ef);
   else expansion= 0.0;
-  
+
   string sm= as_string (env->read (PAR_SPACING));
   if (sm == "plain");
   else if (sm == "quanjiao") protrusion += QUANJIAO;
@@ -275,6 +282,29 @@ lazy_paragraph_rep::adjust_kerning (SI dw, SI the_width) {
   }
 }
 
+
+void
+lazy_paragraph_rep::expand_glyphs (SI dw, SI the_width) {
+  // attempt to add dw space by expanding the glyphs of the current line unit
+  if (expansion <= 0.0) return;
+  SI tot_spc= 0;
+  for (int i=cur_start; i<N(items)-1; i++)
+    tot_spc += spcs[i]->max;
+  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+  SI xdw= (SI) (dw * (expansion / (kstretch + expansion)));
+  SI mdw= (SI) (expansion * the_width);
+  int stages= 5;
+  int stage = min ((3 * stages * xdw + 1) / (3 * mdw), stages);
+  if (stage <= 0) return;
+  double expansion_factor= (expansion * stage) / stages;
+  array<box> bs;
+  for (int i=cur_start; i<N(items); i++) {
+    box b= items[i]->expand_glyphs (0, expansion_factor);
+    cur_w += b->w() - items[i]->w();
+    items[cur_start + i]= b;
+  }
+}
+
 /******************************************************************************
 * Typesetting a line
 ******************************************************************************/
@@ -336,10 +366,11 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
     if (cur_w->max > cur_w->def)
       f= ((double) (the_width - cur_w->def)) /
          ((double) (cur_w->max - cur_w->def));
-    if (f > 1.0 && kstretch > 0.0) {
+    if (f > 1.0 && (kstretch + expansion) > 0.0) {
       space backup_cur_w= cur_w;
       double backup_f= f;
       array<box> backup= range (items, cur_start, N(items));
+      expand_glyphs (the_width - cur_w->max, the_width);
       adjust_kerning (the_width - cur_w->max, the_width);
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
