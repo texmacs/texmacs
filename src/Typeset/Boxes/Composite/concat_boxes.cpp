@@ -22,6 +22,7 @@ struct concat_box_rep: public composite_box_rep {
   concat_box_rep (path ip, array<box> bs, array<SI> spc, bool indent);
   operator tree ();
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
 
   void      finalize ();
   void      clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
@@ -137,6 +138,18 @@ concat_box_rep::adjust_kerning (int mode, double factor) {
     if (sx2(i) < x2) smode= smode & (~END_OF_LINE);
     adj[i]= bs[i]->adjust_kerning (smode, factor);
     spa[i]= (SI) tm_round ((1 + 4*factor) * spc[i]);
+  }
+  return concat_box (ip, adj, spa, indent);
+}
+
+box
+concat_box_rep::expand_glyphs (int mode, double factor) {
+  int n= N(bs);
+  array<box> adj (n);
+  array<SI > spa (n);
+  for (int i=0; i<n; i++) {
+    adj[i]= bs[i]->expand_glyphs (mode, factor);
+    spa[i]= (SI) tm_round ((1 + factor) * spc[i]);
   }
   return concat_box (ip, adj, spa, indent);
 }

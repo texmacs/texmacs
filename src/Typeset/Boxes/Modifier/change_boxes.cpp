@@ -109,6 +109,7 @@ struct move_box_rep: public change_box_rep {
   move_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2);
   int get_type () { return MOVE_BOX; }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   operator tree () { return tree (TUPLE, "move", (tree) bs[0]); }
 };
 
@@ -126,11 +127,18 @@ move_box_rep::adjust_kerning (int mode, double factor) {
   return move_box (ip, body, dx, dy, child_flag, big_flag);
 }
 
+box
+move_box_rep::expand_glyphs (int mode, double factor) {
+  box body= bs[0]->expand_glyphs (mode, factor);
+  return move_box (ip, body, dx, dy, child_flag, big_flag);
+}
+
 struct shift_box_rep: public change_box_rep {
   SI dx, dy;
   shift_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2);
   int get_type () { return MOVE_BOX; }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   operator tree () { return tree (TUPLE, "shift", (tree) bs[0]); }
   void get_bracket_extents (SI& lo, SI& hi);
 };
@@ -148,6 +156,12 @@ shift_box_rep::shift_box_rep (path ip, box b, SI x, SI y, bool fl1, bool fl2):
 box
 shift_box_rep::adjust_kerning (int mode, double factor) {
   box body= bs[0]->adjust_kerning (mode, factor);
+  return move_box (ip, body, dx, dy, child_flag, big_flag);
+}
+
+box
+shift_box_rep::expand_glyphs (int mode, double factor) {
+  box body= bs[0]->expand_glyphs (mode, factor);
   return move_box (ip, body, dx, dy, child_flag, big_flag);
 }
 
@@ -198,6 +212,7 @@ struct vresize_box_rep: public change_box_rep {
   vresize_box_rep (path ip, box b, SI y1, SI y2);
   operator tree () { return tree (TUPLE, "vresize", (tree) bs[0]); }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
@@ -217,11 +232,18 @@ vresize_box_rep::adjust_kerning (int mode, double factor) {
   return vresize_box (ip, body, y1, y2);
 }
 
+box
+vresize_box_rep::expand_glyphs (int mode, double factor) {
+  box body= bs[0]->expand_glyphs (mode, factor);
+  return vresize_box (ip, body, y1, y2);
+}
+
 struct vcorrect_box_rep: public change_box_rep {
   SI top_cor, bot_cor;
   vcorrect_box_rep (path ip, box b, SI top_cor, SI bot_cor);
   operator tree () { return tree (TUPLE, "vcorrect", (tree) bs[0]); }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
 
@@ -238,6 +260,12 @@ vcorrect_box_rep::vcorrect_box_rep (path ip, box b, SI top_cor2, SI bot_cor2):
 box
 vcorrect_box_rep::adjust_kerning (int mode, double factor) {
   box body= bs[0]->adjust_kerning (mode, factor);
+  return vcorrect_box (ip, body, top_cor, bot_cor);
+}
+
+box
+vcorrect_box_rep::expand_glyphs (int mode, double factor) {
+  box body= bs[0]->expand_glyphs (mode, factor);
   return vcorrect_box (ip, body, top_cor, bot_cor);
 }
 
@@ -303,6 +331,7 @@ public:
   effect_box_rep (path ip, array<box> bs, tree eff);
   operator tree () { return tree (TUPLE, "effect", eff_t); }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   void redraw (renderer ren, path p, rectangles& l);
   void get_bracket_extents (SI& lo, SI& hi) { lo= y1; hi= y2; }
 };
@@ -337,6 +366,15 @@ effect_box_rep::adjust_kerning (int mode, double factor) {
   array<box> adj (n);
   for (int i=0; i<n; i++)
     adj[i]= bs[i]->adjust_kerning (mode, factor);
+  return effect_box (ip, adj, eff_t);
+}
+
+box
+effect_box_rep::expand_glyphs (int mode, double factor) {
+  int n= N(bs);
+  array<box> adj (n);
+  for (int i=0; i<n; i++)
+    adj[i]= bs[i]->expand_glyphs (mode, factor);
   return effect_box (ip, adj, eff_t);
 }
 
@@ -429,6 +467,7 @@ struct repeat_box_rep: public change_box_rep {
   repeat_box_rep (path ip, box b, box repeat, SI xoff);
   operator tree () { return tree (TUPLE, "repeat", (tree) bs[0]); }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
 };
 
 repeat_box_rep::repeat_box_rep (path ip, box b, box repeat2, SI xoff2):
@@ -461,6 +500,12 @@ repeat_box_rep::adjust_kerning (int mode, double factor) {
   return repeat_box (ip, body, repeat, xoff);
 }
 
+box
+repeat_box_rep::expand_glyphs (int mode, double factor) {
+  box body= bs[0]->expand_glyphs (mode, factor);
+  return repeat_box (ip, body, repeat, xoff);
+}
+
 /******************************************************************************
 * cell boxes for tables
 ******************************************************************************/
@@ -473,6 +518,7 @@ struct cell_box_rep: public change_box_rep {
 		SI bl, SI br, SI bb, SI bt, brush fg, brush bg);
   operator tree () { return tree (TUPLE, "cell", (tree) bs[0]); }
   box  adjust_kerning (int mode, double factor);
+  box  expand_glyphs (int mode, double factor);
   void get_cell_extents (SI& l, SI& r);
   box  adjust_cell_geometry (SI dx, SI dl, SI dr);
   void pre_display (renderer &ren);
@@ -504,6 +550,15 @@ cell_box_rep::cell_box_rep (
 box
 cell_box_rep::adjust_kerning (int mode, double factor) {
   box nb= bs[0]->adjust_kerning (mode & (~TABLE_CELL), factor);
+  SI  d = nb->w() - bs[0]->w();
+  if ((mode & TABLE_CELL) != 0) d= 0;
+  return cell_box (ip, nb, X0, Y0, x1, y1, x2 + d, y2,
+                   bl>>1, br>>1, bb>>1, bt>>1, fg, bg);
+}
+
+box
+cell_box_rep::expand_glyphs (int mode, double factor) {
+  box nb= bs[0]->expand_glyphs (mode & (~TABLE_CELL), factor);
   SI  d = nb->w() - bs[0]->w();
   if ((mode & TABLE_CELL) != 0) d= 0;
   return cell_box (ip, nb, X0, Y0, x1, y1, x2 + d, y2,
@@ -611,6 +666,7 @@ struct locus_box_rep: public change_box_rep {
   locus_box_rep (path ip, box b, list<string> ids, SI pixel, string _rep, string _anchor);
   operator tree () { return tree (TUPLE, "locus"); }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   void loci (SI x, SI y, SI delta, list<string>& ids2, rectangles& rs);
   void post_display (renderer &ren);
 };
@@ -643,6 +699,12 @@ locus_box_rep::adjust_kerning (int mode, double factor) {
   return locus_box (ip, body, ids, pixel, ref, anchor);
 }
 
+box
+locus_box_rep::expand_glyphs (int mode, double factor) {
+  box body= bs[0]->expand_glyphs (mode, factor);
+  return locus_box (ip, body, ids, pixel, ref, anchor);
+}
+
 void
 locus_box_rep::loci (SI x, SI y, SI delta, list<string>& l, rectangles& rs) {
   bs[0]->loci (x, y, delta, l, rs);
@@ -666,6 +728,7 @@ struct tag_box_rep: public change_box_rep {
   tag_box_rep (path ip, path tip, box b, tree keys);
   operator tree () { return tree (TUPLE, "tag", bs[0]); }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   tree tag (tree t, SI x, SI y, SI delta);
   void collect_page_numbers (hashmap<string,tree>& h, tree page);
   path find_tag (string name);
@@ -683,6 +746,12 @@ tag_box_rep::tag_box_rep (path ip, path tip2, box b, tree keys2):
 box
 tag_box_rep::adjust_kerning (int mode, double factor) {
   box body= bs[0]->adjust_kerning (mode, factor);
+  return tag_box (ip, tip, body, keys);
+}
+
+box
+tag_box_rep::expand_glyphs (int mode, double factor) {
+  box body= bs[0]->expand_glyphs (mode, factor);
   return tag_box (ip, tip, body, keys);
 }
 

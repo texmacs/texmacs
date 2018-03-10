@@ -56,6 +56,11 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   par_sep    = env->get_vspace (PAR_PAR_SEP);
   nr_cols    = env->get_int (PAR_COLUMNS);
 
+  string kr= as_string (env->read (PAR_KERNING_REDUCE));
+  if (kr == "auto") kreduce= 1.0 / 40.0;
+  else if (is_double (kr)) kreduce= as_double (kr);
+  else kreduce= 0.0;
+
   string ks= as_string (env->read (PAR_KERNING_STRETCH));
   if (ks == "auto") {
     double cpl= min (max (((double) width) / max (env->fn->wfn, 1), 10.0), 40.0);
@@ -72,6 +77,16 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   if (ps == "true") protrusion= WESTERN_PROTRUSION;
   else protrusion= 0;
 
+  string cf= as_string (env->read (PAR_CONTRACTION));
+  if (cf == "auto") contraction= 0.7 / 40.0;
+  else if (is_double (cf)) contraction= as_double (cf);
+  else contraction= 0.0;
+
+  string ef= as_string (env->read (PAR_EXPANSION));
+  if (ef == "auto") expansion= 0.7 / 40.0;
+  else if (is_double (ef)) expansion= as_double (ef);
+  else expansion= 0.0;
+  
   string sm= as_string (env->read (PAR_SPACING));
   if (sm == "plain");
   else if (sm == "quanjiao") protrusion += QUANJIAO;

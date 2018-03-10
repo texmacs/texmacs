@@ -402,6 +402,7 @@ struct table_box_rep: public concrete_composite_box_rep {
       x (x2), y (y2), halign (halign2) { finalize (); }
   operator tree () { return tree ("table"); }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
 };
 
 box
@@ -413,6 +414,44 @@ table_box_rep::adjust_kerning (int mode, double factor) {
   for (i=0; i<n; i++) {
     SI l, r;
     adj[i]= bs[i]->adjust_kerning (TABLE_CELL, factor);
+    bs[i]->get_cell_extents (l, r);
+    SI w1= r - l;
+    adj[i]->get_cell_extents (l, r);
+    SI w2= r - l;
+    cdw[i]= w2 - w1;
+  }
+  SI dx= 0;
+  array<SI> nx (n);
+  for (j=0; j<cols; j++) {
+    for (i=0; i<rows; i++)
+      nx[i*cols+j]= x[i*cols+j] + dx;
+    SI dw= MINUS_INFINITY;
+    for (i=0; i<rows; i++)
+      dw= max (dw, cdw[i*cols+j]);
+    dx += dw;
+    for (i=0; i<rows; i++) {
+      int k= i*cols + j;
+      string ha= halign[k];
+      SI d= dw - cdw[k];
+      SI cdx= 0;
+      if (ha[0] == 'l') cdx= 0;
+      if (ha[0] == 'r') cdx= d;
+      if (ha[0] == 'c') cdx= d >> 1;
+      adj[k]= adj[k]->adjust_cell_geometry (cdx, 0, dw);
+    }
+  }
+  return table_box (ip, adj, nx, y, halign, cols);
+}
+
+box
+table_box_rep::expand_glyphs (int mode, double factor) {
+  (void) mode;
+  int n= N(bs), i, j;
+  array<box> adj (n);
+  array<SI>  cdw (n);
+  for (i=0; i<n; i++) {
+    SI l, r;
+    adj[i]= bs[i]->expand_glyphs (TABLE_CELL, factor);
     bs[i]->get_cell_extents (l, r);
     SI w1= r - l;
     adj[i]->get_cell_extents (l, r);

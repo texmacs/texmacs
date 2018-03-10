@@ -70,8 +70,11 @@ initialize_default_var_type () {
   var_type (PAR_FLEXIBILITY)    = Env_Paragraph;
   var_type (PAR_HYPHEN)         = Env_Paragraph;
   var_type (PAR_SPACING)        = Env_Paragraph;
+  var_type (PAR_KERNING_REDUCE) = Env_Paragraph;
   var_type (PAR_KERNING_STRETCH)= Env_Paragraph;
   var_type (PAR_KERNING_MARGIN) = Env_Paragraph;
+  var_type (PAR_CONTRACTION)    = Env_Paragraph;
+  var_type (PAR_EXPANSION)      = Env_Paragraph;
   var_type (PAR_HYPHEN)         = Env_Paragraph;
   var_type (PAR_WIDTH)          = Env_Paragraph;
   var_type (PAR_LEFT)           = Env_Paragraph;

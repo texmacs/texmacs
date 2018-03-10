@@ -22,6 +22,7 @@ struct superpose_box_rep: public concrete_composite_box_rep {
   operator tree ();
   int reindex (int i, int item, int n);
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
   gr_selections graphical_select (SI x, SI y, SI dist);
 };
 
@@ -45,6 +46,15 @@ superpose_box_rep::adjust_kerning (int mode, double factor) {
   array<box> adj (n);
   for (i=0; i<n; i++)
     adj[i]= bs[i]->adjust_kerning (mode, factor);
+  return superpose_box (ip, adj, border_flag);
+}
+
+box
+superpose_box_rep::expand_glyphs (int mode, double factor) {
+  int i, n= N(bs);
+  array<box> adj (n);
+  for (i=0; i<n; i++)
+    adj[i]= bs[i]->expand_glyphs (mode, factor);
   return superpose_box (ip, adj, border_flag);
 }
 

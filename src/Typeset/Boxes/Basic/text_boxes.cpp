@@ -49,6 +49,7 @@ struct text_box_rep: public box_rep {
   text_box_rep (path ip, int pos, string s, font fn, pencil pen, xkerning xk);
   operator tree () { return str; }
   box adjust_kerning (int mode, double factor);
+  box expand_glyphs (int mode, double factor);
 
   void      display (renderer ren);
   double    left_slope ();
@@ -125,6 +126,13 @@ text_box_rep::adjust_kerning (int mode, double factor) {
   if ((mode & START_OF_LINE) != 0) nxk->left  -= pad;
   if ((mode & END_OF_LINE  ) != 0) nxk->right -= pad;
   return tm_new<text_box_rep> (ip, pos, str, fn, pen, nxk);
+}
+
+box
+text_box_rep::expand_glyphs (int mode, double factor) {
+  if (N(str) == 0) return this;
+  font nfn= fn->magnify (1.0 + factor, 1.0);
+  return tm_new<text_box_rep> (ip, pos, str, nfn, pen, xk);
 }
 
 void

@@ -93,6 +93,12 @@ box_rep::adjust_kerning (int mode, double factor) {
   return this;
 }
 
+box
+box_rep::expand_glyphs (int mode, double factor) {
+  (void) mode; (void) factor;
+  return this;
+}
+
 void
 box_rep::get_cell_extents (SI& l, SI& r) {
   (void) l; (void) r;
