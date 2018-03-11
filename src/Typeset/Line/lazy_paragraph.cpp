@@ -21,7 +21,8 @@ array<line_item> typeset_concat (edit_env env, tree t, path ip);
 void hyphenate (line_item item, int pos, line_item& item1, line_item& item2);
 array<path>
 line_breaks (array<line_item> a, int start, int end,
-	     SI line_width, SI first_spc, SI last_spc, bool ragged);
+	     SI line_width, SI large_width,
+             SI first_spc, SI last_spc, bool ragged);
 
 /******************************************************************************
 * Constructor
@@ -81,6 +82,8 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   if (cf == "auto") contraction= 0.7 / 40.0;
   else if (is_double (cf)) contraction= as_double (cf);
   else contraction= 0.0;
+
+  contraction= kreduce= 0.0; // FIXME
 
   string ef= as_string (env->read (PAR_EXPANSION));
   if (ef == "auto") {
@@ -258,8 +261,8 @@ total_width (array<box> bs) {
 }
 
 void
-lazy_paragraph_rep::adjust_kerning (SI dw, SI the_width) {
-  // attempt to add dw space by adjusting the kerning of the current line unit
+lazy_paragraph_rep::increase_kerning (SI dw, SI the_width) {
+  // attempt to add dw space by increasing the kerning of the current line unit
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->max;
@@ -282,6 +285,30 @@ lazy_paragraph_rep::adjust_kerning (SI dw, SI the_width) {
   }
 }
 
+void
+lazy_paragraph_rep::decrease_kerning (SI dw, SI the_width) {
+  // try to subtract dw space by reducing the kerning of the current line unit
+  SI tot_spc= 0;
+  for (int i=cur_start; i<N(items)-1; i++)
+    tot_spc += spcs[i]->min;
+  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+
+  int first, last;
+  find_first_last_text (first, last);
+  SI ref_w= total_width (range (items, cur_start, N(items)));
+  SI obj_w= ref_w + dw;
+  SI def_w= total_width (adjusted (0.0, first, last));
+  SI min_w= total_width (adjusted (-kreduce, first, last));
+  if (obj_w >= def_w && min_w < def_w) {
+    double ratio= ((double) (obj_w - def_w)) / ((double) (def_w - min_w));
+    ratio= min (ratio, 1.0);
+    array<box> bs= adjusted (-kreduce * ratio, first, last);
+    for (int i=0; i<N(bs); i++) {
+      cur_w += bs[i]->w() - items[cur_start + i]->w();
+      items[cur_start + i]= bs[i];
+    }
+  }
+}
 
 void
 lazy_paragraph_rep::expand_glyphs (SI dw, SI the_width) {
@@ -300,6 +327,28 @@ lazy_paragraph_rep::expand_glyphs (SI dw, SI the_width) {
   array<box> bs;
   for (int i=cur_start; i<N(items); i++) {
     box b= items[i]->expand_glyphs (0, expansion_factor);
+    cur_w += b->w() - items[i]->w();
+    items[cur_start + i]= b;
+  }
+}
+
+void
+lazy_paragraph_rep::contract_glyphs (SI dw, SI the_width) {
+  // try to subtract dw space by glyph contraction for the current line unit
+  if (contraction <= 0.0) return;
+  SI tot_spc= 0;
+  for (int i=cur_start; i<N(items)-1; i++)
+    tot_spc += spcs[i]->min;
+  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+  SI xdw= (SI) (dw * (contraction / (kreduce + contraction)));
+  SI mdw= (SI) (contraction * the_width);
+  int stages= 5;
+  int stage = min ((3 * stages * xdw + 1) / (3 * mdw), stages);
+  if (stage <= 0) return;
+  double contraction_factor= (contraction * stage) / stages;
+  array<box> bs;
+  for (int i=cur_start; i<N(items); i++) {
+    box b= items[i]->expand_glyphs (0, -contraction_factor);
     cur_w += b->w() - items[i]->w();
     items[cur_start + i]= b;
   }
@@ -371,7 +420,8 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
       double backup_f= f;
       array<box> backup= range (items, cur_start, N(items));
       expand_glyphs (the_width - cur_w->max, the_width);
-      adjust_kerning (the_width - cur_w->max, the_width);
+      if (the_width > cur_w->max)
+        increase_kerning (the_width - cur_w->max, the_width);
       if (cur_w->max > cur_w->def)
         f= ((double) (the_width - cur_w->def)) /
            ((double) (cur_w->max - cur_w->def));
@@ -398,7 +448,26 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
     double f=
       ((double) (cur_w->def - the_width)) /
       ((double) (cur_w->def - cur_w->min));
-    if (f>1.0) f=1.0;
+    if (f > 1.0 && (kreduce + contraction) > 0.0) {
+      space backup_cur_w= cur_w;
+      double backup_f= f;
+      array<box> backup= range (items, cur_start, N(items));
+      contract_glyphs (cur_w->min - the_width, the_width);
+      if (cur_w->min > the_width)
+        decrease_kerning (cur_w->min - the_width, the_width);
+      if (cur_w->def > cur_w->min)
+        f= ((double) (cur_w->def - the_width)) /
+           ((double) (cur_w->def - cur_w->min));
+      else if (cur_w->min <= the_width + PIXEL)
+        f= 1.0;
+      if (f < 0) {
+        cur_w= backup_cur_w;
+        f= backup_f;
+        for (i=0; i<N(backup); i++)
+          items[cur_start + i]= backup[i];
+      }
+    }
+    if (f > 1.0) f= 1.0;
     for (i=cur_start; i<N(items)-1; i++)
       items_sp <<
 	(spcs[i]->def- ((SI) (f*((double) spcs[i]->def- spcs[i]->min))));
@@ -578,7 +647,9 @@ lazy_paragraph_rep::line_units (
 
   int i;
   bool ragged= (hyphen == "normal");
-  array<path> hyphs= line_breaks (a, start, end, the_right-the_left,
+  SI line_width= the_right - the_left;
+  SI large_width= (SI) (line_width / (1.0 - kreduce - contraction));
+  array<path> hyphs= line_breaks (a, start, end, line_width, large_width,
 				  the_first, the_last, ragged);
   for (i=0; i<N(hyphs)-1; i++) {
     if (i>0) line_start ();

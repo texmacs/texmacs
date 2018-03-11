@@ -70,8 +70,10 @@ protected:
   void find_first_last_text (int& first, int& last);
   void protrude (bool lf, bool rf);
   array<box> adjusted (double factor, int first, int last);
-  void adjust_kerning (SI dw, SI the_width);
+  void increase_kerning (SI dw, SI the_width);
+  void decrease_kerning (SI dw, SI the_width);
   void expand_glyphs (SI dw, SI the_width);
+  void contract_glyphs (SI dw, SI the_width);
 
   void handle_decoration (int& i, int& j, SI& xoff, box& b, SI& b_sp);
   void handle_decorations (int& i, int& j, SI& xoff,
