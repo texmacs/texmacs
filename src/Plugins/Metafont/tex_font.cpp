@@ -66,7 +66,7 @@ struct tex_font_rep: font_rep {
   SI    get_rsub_correction  (string s);
   SI    get_rsup_correction  (string s);
   SI    get_wide_correction  (string s, int mode);
-  void  advance_glyph (string s, int& pos);
+  void  advance_glyph (string s, int& pos, bool ligf);
   glyph get_glyph (string s);
   int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   int   get_ligature_code (string s);
@@ -852,9 +852,9 @@ tex_font_rep::get_wide_correction (string s, int mode) {
 }
 
 void
-tex_font_rep::advance_glyph (string s, int& pos) {
+tex_font_rep::advance_glyph (string s, int& pos, bool ligf) {
   if (pos >= N(s)) return;
-  if (!exec || (status != TEX_ANY && s[pos] == '<'))
+  if (!exec || (status != TEX_ANY && s[pos] == '<') || !ligf)
     tm_char_forwards (s, pos);
   else {
     int c= -1;

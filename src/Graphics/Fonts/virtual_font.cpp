@@ -53,7 +53,7 @@ struct virtual_font_rep: font_rep {
   void   draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
                        SI x1, SI y1, SI x2, SI y2);
   void   draw_transformed (renderer ren, scheme_tree t, SI x, SI y, frame f);
-  void   advance_glyph (string s, int& pos);
+  void   advance_glyph (string s, int& pos, bool ligf);
   int    get_char (string s, font_metric& fnm, font_glyphs& fng);
   glyph  get_glyph (string s);
   int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
@@ -1883,7 +1883,7 @@ virtual_font_rep::magnify (double zoomx, double zoomy) {
 }
 
 void
-virtual_font_rep::advance_glyph (string s, int& pos) {
+virtual_font_rep::advance_glyph (string s, int& pos, bool ligf) {
   pos= N(s);
 }
 

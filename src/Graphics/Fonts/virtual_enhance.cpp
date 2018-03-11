@@ -30,7 +30,7 @@ struct virtual_enhance_font_rep: font_rep {
   void   draw_fixed (renderer ren, string s, SI x, SI y);
   void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font   magnify (double zoomx, double zoomy);
-  void   advance_glyph (string s, int& pos);
+  void   advance_glyph (string s, int& pos, bool ligf);
   glyph  get_glyph (string s);
   int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   double get_left_slope  (string s);
@@ -112,9 +112,9 @@ virtual_enhance_font_rep::magnify (double zoomx, double zoomy) {
 ******************************************************************************/
 
 void
-virtual_enhance_font_rep::advance_glyph (string s, int& pos) {
-  if (is_basic (s)) base->advance_glyph (s, pos);
-  else extra->advance_glyph (s, pos);
+virtual_enhance_font_rep::advance_glyph (string s, int& pos, bool ligf) {
+  if (is_basic (s)) base->advance_glyph (s, pos, ligf);
+  else extra->advance_glyph (s, pos, ligf);
 }
 
 glyph

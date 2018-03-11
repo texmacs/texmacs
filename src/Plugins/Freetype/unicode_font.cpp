@@ -77,7 +77,7 @@ struct unicode_font_rep: font_rep {
   void   draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
   font   magnify (double zoomx, double zoomy);
-  void   advance_glyph (string s, int& pos);
+  void   advance_glyph (string s, int& pos, bool ligf);
   glyph  get_glyph (string s);
   int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   double get_left_slope  (string s);
@@ -548,10 +548,10 @@ unicode_font_rep::magnify (double zoomx, double zoomy) {
 }
 
 void
-unicode_font_rep::advance_glyph (string s, int& pos) {
+unicode_font_rep::advance_glyph (string s, int& pos, bool ligf) {
   if (pos >= N(s)) return;
   unsigned int uc= read_unicode_char (s, pos);
-  if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
+  if (ligs > 0 && ligf && (((char) uc) == 'f' || ((char) uc) == 's'))
     uc= ligature_replace (uc, s, pos);
 }
 

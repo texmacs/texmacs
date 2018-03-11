@@ -336,7 +336,8 @@ font_rep::var_draw (renderer ren, string s, SI x, SI y) {
 bool get_glyph_fatal= false;
 
 void
-font_rep::advance_glyph (string s, int& pos) {
+font_rep::advance_glyph (string s, int& pos, bool ligf) {
+  (void) ligf;
   tm_char_forwards (s, pos);
 }
 

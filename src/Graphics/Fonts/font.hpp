@@ -123,7 +123,7 @@ struct font_rep: rep<font> {
   void var_get_xpositions (string s, SI* xpos);
   void var_draw (renderer ren, string s, SI x, SI y);
 
-  virtual void  advance_glyph (string s, int& pos);
+  virtual void  advance_glyph (string s, int& pos, bool ligf);
   virtual glyph get_glyph (string s);
   virtual int   index_glyph (string s, font_metric& fnm, font_glyphs& fng);
 };

@@ -29,12 +29,12 @@ struct poor_italic_font_rep: font_rep {
   void   get_xpositions (string s, SI* xpos);
   void   get_xpositions (string s, SI* xpos, bool lig);
   void   get_xpositions (string s, SI* xpos, SI xk);
-  void   draw_fixed (renderer ren, string s, SI x, SI y, SI* xpos);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI* xpos, bool ligf);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
-  void   draw_fixed (renderer ren, string s, SI x, SI y, bool lig);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
   void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font   magnify (double zoomx, double zoomy);
-  void   advance_glyph (string s, int& pos);
+  void   advance_glyph (string s, int& pos, bool ligf);
   glyph  get_glyph (string s);
   int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   double get_left_slope  (string s);
@@ -93,11 +93,11 @@ poor_italic_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
 
 void
 poor_italic_font_rep::draw_fixed (renderer ren, string s,
-                                  SI x, SI y, SI* xpos) {
+                                  SI x, SI y, SI* xpos, bool ligf) {
   int i=0;
   while (i < N(s)) {
     int start= i;
-    base->advance_glyph (s, i);
+    base->advance_glyph (s, i, ligf);
     string ss= s (start, i);
     font_metric fnm;
     font_glyphs fng;
@@ -111,7 +111,7 @@ poor_italic_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   if (ren->is_screen) {
     STACK_NEW_ARRAY (xpos, SI, N(s)+1);
     get_xpositions (s, xpos);
-    draw_fixed (ren, s, x, y, xpos);
+    draw_fixed (ren, s, x, y, xpos, true);
     STACK_DELETE_ARRAY (xpos);
   }
   else {
@@ -122,16 +122,16 @@ poor_italic_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
 }
 
 void
-poor_italic_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, bool l) {
+poor_italic_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, bool ligf) {
   if (ren->is_screen) {
     STACK_NEW_ARRAY (xpos, SI, N(s)+1);
-    get_xpositions (s, xpos, l);
-    draw_fixed (ren, s, x, y, xpos);
+    get_xpositions (s, xpos, ligf);
+    draw_fixed (ren, s, x, y, xpos, ligf);
     STACK_DELETE_ARRAY (xpos);
   }
   else {
     ren->set_transformation (slanting (point (0.0, 0.0), xslant));
-    base->draw_fixed (ren, s, x, y, l);
+    base->draw_fixed (ren, s, x, y, ligf);
     ren->reset_transformation ();
   }
 }
@@ -141,7 +141,7 @@ poor_italic_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
   if (ren->is_screen) {
     STACK_NEW_ARRAY (xpos, SI, N(s)+1);
     get_xpositions (s, xpos, xk);
-    draw_fixed (ren, s, x, y, xpos);
+    draw_fixed (ren, s, x, y, xpos, false);
     STACK_DELETE_ARRAY (xpos);
   }
   else {
@@ -162,8 +162,8 @@ poor_italic_font_rep::magnify (double zoomx, double zoomy) {
 ******************************************************************************/
 
 void
-poor_italic_font_rep::advance_glyph (string s, int& pos) {
-  base->advance_glyph (s, pos);
+poor_italic_font_rep::advance_glyph (string s, int& pos, bool ligf) {
+  base->advance_glyph (s, pos, ligf);
 }
 
 glyph

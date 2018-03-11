@@ -34,12 +34,12 @@ struct poor_bold_font_rep: font_rep {
   void   get_xpositions (string s, SI* xpos);
   void   get_xpositions (string s, SI* xpos, bool lig);
   void   get_xpositions (string s, SI* xpos, SI xk);
-  void   draw_fixed (renderer ren, string s, SI x, SI y, SI* xpos);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, SI* xpos, bool ligf);
   void   draw_fixed (renderer ren, string s, SI x, SI y);
-  void   draw_fixed (renderer ren, string s, SI x, SI y, bool lig);
+  void   draw_fixed (renderer ren, string s, SI x, SI y, bool ligf);
   void   draw_fixed (renderer ren, string s, SI x, SI y, SI xk);
   font   magnify (double zoomx, double zoomy);
-  void   advance_glyph (string s, int& pos);
+  void   advance_glyph (string s, int& pos, bool ligf);
   glyph  get_glyph (string s);
   int    index_glyph (string s, font_metric& fnm, font_glyphs& fng);
   double get_left_slope  (string s);
@@ -135,13 +135,12 @@ poor_bold_font_rep::get_extents (string s, metric& ex) {
 }
 
 void
-poor_bold_font_rep::adjust_xpositions (string s, SI* xpos, bool lig) {
+poor_bold_font_rep::adjust_xpositions (string s, SI* xpos, bool ligf) {
   SI dx= 0;
   int i=0;
   while (i < N(s)) {
     int start= i;
-    if (lig) base->advance_glyph (s, i);
-    else tm_char_forwards (s, i);
+    base->advance_glyph (s, i, ligf);
     int j= start;
     SI delta= 0;
     while (j < i) {
@@ -177,11 +176,11 @@ poor_bold_font_rep::get_xpositions (string s, SI* xpos, SI xk) {
 
 void
 poor_bold_font_rep::draw_fixed (renderer ren, string s,
-                                SI x, SI y, SI* xpos) {
+                                SI x, SI y, SI* xpos, bool ligf) {
   int i=0;
   while (i < N(s)) {
     int start= i;
-    base->advance_glyph (s, i);
+    base->advance_glyph (s, i, ligf);
     string ss= s (start, i);
     if (ren->is_screen) {
       font_metric fnm;
@@ -224,15 +223,15 @@ void
 poor_bold_font_rep::draw_fixed (renderer ren, string s, SI x, SI y) {
   STACK_NEW_ARRAY (xpos, SI, N(s)+1);
   get_xpositions (s, xpos);
-  draw_fixed (ren, s, x, y, xpos);
+  draw_fixed (ren, s, x, y, xpos, true);
   STACK_DELETE_ARRAY (xpos);
 }
 
 void
-poor_bold_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, bool l) {
+poor_bold_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, bool ligf) {
   STACK_NEW_ARRAY (xpos, SI, N(s)+1);
-  get_xpositions (s, xpos, l);
-  draw_fixed (ren, s, x, y, xpos);
+  get_xpositions (s, xpos, ligf);
+  draw_fixed (ren, s, x, y, xpos, ligf);
   STACK_DELETE_ARRAY (xpos);
 }
 
@@ -240,7 +239,7 @@ void
 poor_bold_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
   STACK_NEW_ARRAY (xpos, SI, N(s)+1);
   get_xpositions (s, xpos, xk);
-  draw_fixed (ren, s, x, y, xpos);
+  draw_fixed (ren, s, x, y, xpos, false);
   STACK_DELETE_ARRAY (xpos);
 }
 
@@ -254,8 +253,8 @@ poor_bold_font_rep::magnify (double zoomx, double zoomy) {
 ******************************************************************************/
 
 void
-poor_bold_font_rep::advance_glyph (string s, int& pos) {
-  base->advance_glyph (s, pos);
+poor_bold_font_rep::advance_glyph (string s, int& pos, bool ligf) {
+  base->advance_glyph (s, pos, ligf);
 }
 
 glyph
