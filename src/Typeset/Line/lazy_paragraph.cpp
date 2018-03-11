@@ -96,6 +96,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   else expansion= 0.0;
 
   expansion= contraction= kreduce= 0.0; // FIXME
+  //contraction= kreduce= 0.0; // FIXME
   //expansion= contraction= 0.0; // FIXME
 
   string sm= as_string (env->read (PAR_SPACING));

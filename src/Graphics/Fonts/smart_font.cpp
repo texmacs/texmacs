@@ -1305,7 +1305,8 @@ smart_font_rep::advance_glyph (string s, int& pos, bool ligf) {
   if (nr < 0) { tm_char_forwards (s, pos); return; }
   int pos2= 0;
   fn[nr]->advance_glyph (r, pos2, ligf);
-  if (pos + pos2 <= N(s) && r (0, pos2) == s (pos, pos+pos2)) pos += pos2;
+  if (pos + pos2 <= N(s) && r (0, pos2) == s (pos, pos+pos2) && pos2 > 0)
+    pos += pos2;
   else tm_char_forwards (s, pos);
 }
 
