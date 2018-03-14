@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : adjust_cmr.cpp
-* DESCRIPTION: Microtypography for the TeX Gyre Cmr font
+* DESCRIPTION: Microtypography for the Computer Modern Roman font
 * COPYRIGHT  : (C) 2017  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
