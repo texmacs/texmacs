@@ -409,19 +409,21 @@ side_box_rep::side_box_rep (
   }
 
   if (!is_nil (l1)) {
-    SI dx= l1->right_correction () + ref->lsub_correction ();
+    SI dx= l1->rsup_correction () + ref->lsub_correction ();
     insert (l1, -l1->x2- dx, lsub);
   }
   if (!is_nil (l2)) {
-    SI dx= l2->right_correction () - ref->lsup_correction ();
+    SI dx= l2->rsub_correction () - ref->lsup_correction ();
     insert (l2, -l2->x2- dx, lsup);
   }
   if (!is_nil (r1)) {
-    SI dx= r1->left_correction () + ref->rsub_correction ();
+    SI dx= -r1->lsup_correction () + ref->rsub_correction ();
+    //SI dx= r1->left_correction () + ref->rsub_correction ();
     insert (r1, ref->x2+ dx, rsub);
   }
   if (!is_nil (r2)) {
-    SI dx= r2->left_correction () + ref->rsup_correction ();
+    SI dx= -r2->lsub_correction () + ref->rsup_correction ();
+    //SI dx= r2->left_correction () + ref->rsup_correction ();
     insert (r2, ref->x2+ dx, rsup);
   }
 
