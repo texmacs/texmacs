@@ -16,7 +16,8 @@
 #include "translator.hpp"
 
 bool virtually_defined (string c, string name);
-font smart_font_bis (string f, string v, string s, string sh, int sz, int d);
+font smart_font_bis (string f, string v, string s, string sh, int sz,
+                     int hdpi, int vdpi);
 
 /******************************************************************************
 * Efficient computation of the appropriate subfont
@@ -527,6 +528,7 @@ struct smart_font_rep: font_rep {
   string shape;
   string rshape;
   int    sz;
+  int    hdpi;
   int    dpi;
   int    math_kind;
   int    italic_nr;
@@ -536,7 +538,8 @@ struct smart_font_rep: font_rep {
 
   smart_font_rep (string name, font base_fn, font err_fn,
                   string family, string variant,
-                  string series, string shape, int sz, int dpi);
+                  string series, string shape, int sz, int hdpi, int vdpi);
+  font   adjust_subfont (font fn);
   font   get_math_font (string fam, string var, string ser, string sh);
   font   get_cyrillic_font (string fam, string var, string ser, string sh);
   font   get_greek_font (string fam, string var, string ser, string sh);
@@ -572,16 +575,16 @@ struct smart_font_rep: font_rep {
 
 smart_font_rep::smart_font_rep (
   string name, font base_fn, font err_fn, string family2, string variant2,
-  string series2, string shape2, int sz2, int dpi2):
+  string series2, string shape2, int sz2, int hdpi2, int vdpi2):
     font_rep (name, base_fn), mfam (main_family (family2)),
     family (family2), variant (variant2),
     series (series2), shape (shape2), rshape (shape2),
-    sz (sz2), dpi (dpi2),
+    sz (sz2), hdpi (hdpi2), dpi (vdpi2),
     math_kind (0), italic_nr (-1),
     fn (2), sm (get_smart_map (tuple (family2, variant2, series2, shape2)))
 {
-  fn[SUBFONT_MAIN ]= base_fn;
-  fn[SUBFONT_ERROR]= err_fn;
+  fn[SUBFONT_MAIN ]= adjust_subfont (base_fn);
+  fn[SUBFONT_ERROR]= adjust_subfont (err_fn);
   if (shape == "mathitalic" || shape == "mathupright" || shape == "mathshape") {
     if (is_math_family (mfam)) {
       rshape= "right";
@@ -625,6 +628,13 @@ smart_font_rep::smart_font_rep (
       (void) sm->add_font (tuple ("bold-italic-ss"), REWRITE_LETTERS);
     }
   }
+}
+
+font
+smart_font_rep::adjust_subfont (font fn) {
+  if (hdpi == dpi) return fn;
+  double zoomx= ((double) hdpi) / ((double) dpi);
+  return fn->magnify (zoomx, 1.0);
 }
 
 /******************************************************************************
@@ -1037,75 +1047,80 @@ smart_font_rep::initialize_font (int nr) {
   if (!is_nil (fn[nr])) return;
   array<string> a= tuple_as_array (sm->fn_spec[nr]);
   if (a[0] == "math")
-    fn[nr]= get_math_font (a[1], a[2], a[3], a[4]);
+    fn[nr]= adjust_subfont (get_math_font (a[1], a[2], a[3], a[4]));
   else if (a[0] == "cyrillic")
-    fn[nr]= get_cyrillic_font (a[1], a[2], a[3], a[4]);
+    fn[nr]= adjust_subfont (get_cyrillic_font (a[1], a[2], a[3], a[4]));
   else if (a[0] == "greek")
-    fn[nr]= get_greek_font (a[1], a[2], a[3], a[4]);
+    fn[nr]= adjust_subfont (get_greek_font (a[1], a[2], a[3], a[4]));
   else if (a[0] == "special")
-    fn[nr]= smart_font_bis (family, variant, series, "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, variant, series, "right", sz, hdpi, dpi);
   else if (a[0] == "other") {
-    int ndpi= adjusted_dpi ("roman", variant, series, "mathitalic", 1);
-    fn[nr]= smart_font_bis ("roman", variant, series, "mathitalic", sz, ndpi);
+    int nvdpi= adjusted_dpi ("roman", variant, series, "mathitalic", 1);
+    int nhdpi= (hdpi * nvdpi + (dpi>>1)) / dpi;
+    fn[nr]= smart_font_bis ("roman", variant, series, "mathitalic", sz,
+                            nhdpi, nvdpi);
   }
   else if (a[0] == "bold-math")
-    fn[nr]= smart_font_bis (family, variant, "bold", "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, variant, "bold", "right", sz, hdpi, dpi);
   else if (a[0] == "fast-italic")
-    fn[nr]= smart_font_bis (family, variant, series, "italic", sz, dpi);
+    fn[nr]= smart_font_bis (family, variant, series, "italic", sz, hdpi, dpi);
   else if (a[0] == "italic-math")
-    fn[nr]= smart_font_bis (family, variant, series, "italic", sz, dpi);
+    fn[nr]= smart_font_bis (family, variant, series, "italic", sz, hdpi, dpi);
   else if (a[0] == "bold-italic-math")
-    fn[nr]= smart_font_bis (family, variant, "bold", "italic", sz, dpi);
+    fn[nr]= smart_font_bis (family, variant, "bold", "italic", sz, hdpi, dpi);
   else if (a[0] == "italic-greek")
     fn[nr]= fn[SUBFONT_MAIN];
   else if (a[0] == "upright-greek")
     fn[nr]= fn[SUBFONT_MAIN];
   else if (a[0] == "tt")
-    fn[nr]= smart_font_bis (family, "tt", series, "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, "tt", series, "right", sz, hdpi, dpi);
   else if (a[0] == "ss")
-    fn[nr]= smart_font_bis (family, "tt", series, "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, "tt", series, "right", sz, hdpi, dpi);
   else if (a[0] == "bold-ss")
-    fn[nr]= smart_font_bis (family, "tt", "bold", "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, "tt", "bold", "right", sz, hdpi, dpi);
   else if (a[0] == "italic-ss")
-    fn[nr]= smart_font_bis (family, "tt", series, "italic", sz, dpi);
+    fn[nr]= smart_font_bis (family, "tt", series, "italic", sz, hdpi, dpi);
   else if (a[0] == "bold-italic-ss")
-    fn[nr]= smart_font_bis (family, "tt", "bold", "italic", sz, dpi);
+    fn[nr]= smart_font_bis (family, "tt", "bold", "italic", sz, hdpi, dpi);
   else if (a[0] == "cal" && N(a) == 1)
-    fn[nr]= smart_font_bis (family, "calligraphic", series, "italic", sz, dpi);
+    fn[nr]= smart_font_bis (family, "calligraphic", series, "italic", sz,
+                            hdpi, dpi);
   else if (a[0] == "bold-cal")
-    fn[nr]= smart_font_bis (family, "calligraphic", "bold", "italic", sz, dpi);
+    fn[nr]= smart_font_bis (family, "calligraphic", "bold", "italic", sz,
+                            hdpi, dpi);
   else if (a[0] == "frak")
-    fn[nr]= smart_font_bis (family, "gothic", series, "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, "gothic", series, "right", sz, hdpi, dpi);
   else if (a[0] == "bold-frak")
-    fn[nr]= smart_font_bis (family, "gothic", "bold", "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, "gothic", "bold", "right", sz, hdpi, dpi);
   else if (a[0] == "bbb" && N(a) == 1)
-    fn[nr]= smart_font_bis (family, "outline", series, "right", sz, dpi);
+    fn[nr]= smart_font_bis (family, "outline", series, "right", sz, hdpi, dpi);
   else if (a[0] == "virtual")
-    fn[nr]= virtual_font (this, a[1], sz, dpi, dpi, false);
+    fn[nr]= virtual_font (this, a[1], sz, hdpi, dpi, false);
   else if (a[0] == "emulate") {
     font vfn= fn[SUBFONT_MAIN];
     if (a[1] != "emu-fundamental")
-      vfn= virtual_font (vfn, "emu-fundamental", sz, dpi, dpi, true);
-    fn[nr]= virtual_font (vfn, a[1], sz, dpi, dpi, true);
+      vfn= virtual_font (vfn, "emu-fundamental", sz, hdpi, dpi, true);
+    fn[nr]= virtual_font (vfn, a[1], sz, hdpi, dpi, true);
   }
   else if (a[0] == "poor-bold" && N(a) == 1) {
-    font sfn= smart_font_bis (family, variant, "medium", shape, sz, dpi);
+    font sfn= smart_font_bis (family, variant, "medium", shape, sz, hdpi, dpi);
     double emb= 5.0/3.0;
     double fat= ((emb - 1.0) * sfn->wline) / sfn->wfn;
     fn[nr]= poor_bold_font (sfn, fat, fat); }
   else if (a[0] == "poor-bbb" && N(a) == 3) {
     double pw= as_double (a[1]);
     double ph= as_double (a[2]);
-    font sfn= smart_font_bis (family, variant, series, "right", sz, dpi);
+    font sfn= smart_font_bis (family, variant, series, "right", sz, hdpi, dpi);
     fn[nr]= poor_bbb_font (sfn, pw, ph, 1.5*pw); }
   else if (a[0] == "rubber" && N(a) == 2 && is_int (a[1])) {
     initialize_font (as_int (a[1]));
-    fn[nr]= rubber_font (fn[as_int (a[1])]);
-    //fn[nr]= rubber_unicode_font (fn[as_int (a[1])]);
+    fn[nr]= adjust_subfont (rubber_font (fn[as_int (a[1])]));
+    //fn[nr]= adjust_subfont (rubber_unicode_font (fn[as_int (a[1])]));
   }
   else {
-    int ndpi= adjusted_dpi (a[0], a[1], a[2], a[3], as_int (a[4]));
-    fn[nr]= closest_font (a[0], a[1], a[2], a[3], sz, ndpi, as_int (a[4]));
+    int  ndpi= adjusted_dpi (a[0], a[1], a[2], a[3], as_int (a[4]));
+    font cfn = closest_font (a[0], a[1], a[2], a[3], sz, ndpi, as_int (a[4]));
+    fn[nr]= adjust_subfont (cfn);
   }
   //cout << "Font " << nr << ", " << a << " -> " << fn[nr]->res_name << "\n";
   if (fn[nr]->res_name == res_name) {
@@ -1287,9 +1302,10 @@ smart_font_rep::draw_fixed (renderer ren, string s, SI x, SI y, SI xk) {
 
 font
 smart_font_rep::magnify (double zoomx, double zoomy) {
-  if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
+  //if (zoomx != zoomy) return poor_magnify (zoomx, zoomy);
   return smart_font_bis (family, variant, series, shape, sz,
-                         (int) tm_round (dpi * zoomx));
+                         (int) tm_round (hdpi * zoomx),
+                         (int) tm_round (dpi * zoomy));
 }
 
 /******************************************************************************
@@ -1426,16 +1442,28 @@ smart_font_rep::get_wide_correction (string s, int mode) {
 
 font
 smart_font_bis (string family, string variant, string series, string shape,
-                int sz, int dpi) {
-  if (!new_fonts) return find_font (family, variant, series, shape, sz, dpi);
+                int sz, int hdpi, int vdpi) {
+  if (!new_fonts) {
+    font fn= find_font (family, variant, series, shape, sz, vdpi);
+    if (hdpi == vdpi) return fn;
+    return fn->magnify (((double) hdpi) / ((double) vdpi), 1.0);
+  }
   string name=
     family * "-" * variant * "-" *
     series * "-" * shape * "-" *
-    as_string (sz) * "-" * as_string (dpi) * "-smart";
+    as_string (sz) * "-" * as_string (vdpi) * "-smart";
+  if (hdpi != vdpi)
+    name=
+      family * "-" * variant * "-" *
+      series * "-" * shape * "-" * as_string (sz) * "-" *
+      as_string (hdpi) * "-" * as_string (vdpi) * "-smart";
   if (font::instances->contains (name)) return font (name);
-  if (starts (family, "tc"))
+  if (starts (family, "tc")) {
     // FIXME: temporary hack for symbols from std-symbol.ts
-    return find_font (family, variant, series, shape, sz, dpi);
+    font fn= find_font (family, variant, series, shape, sz, vdpi);
+    if (hdpi == vdpi) return fn;
+    return fn->magnify (((double) hdpi) / ((double) vdpi), 1.0);
+  }
   if (starts (family, "sys-")) {
     if (family == "sys-chinese") {
       string name= default_chinese_font_name ();
@@ -1456,28 +1484,28 @@ smart_font_bis (string family, string variant, string series, string shape,
   string sh= shape;
   if (shape == "mathitalic" || shape == "mathshape") sh= "right";
   string mfam= main_family (family);
-  font base_fn= closest_font (mfam, variant, series, sh, sz, dpi);
+  font base_fn= closest_font (mfam, variant, series, sh, sz, vdpi);
   if (is_nil (base_fn)) return font ();
-  font sec_fn= closest_font ("roman", "ss", "medium", "right", sz, dpi);
+  font sec_fn= closest_font ("roman", "ss", "medium", "right", sz, vdpi);
   font err_fn= error_font (sec_fn);
   return make (font, name,
                tm_new<smart_font_rep> (name, base_fn, err_fn, family, variant,
-                                       series, shape, sz, dpi));
+                                       series, shape, sz, hdpi, vdpi));
 }
 
 font
 smart_font (string family, string variant, string series, string shape,
             int sz, int dpi) {
   if (variant == "rm")
-    return smart_font_bis (family, variant, series, shape, sz, dpi);
+    return smart_font_bis (family, variant, series, shape, sz, dpi, dpi);
   array<string> lfn1= logical_font (family, "rm", series, shape);
   array<string> lfn2= logical_font (family, variant, series, shape);
   array<string> pfn1= search_font (lfn1, 1);
   array<string> pfn2= search_font (lfn2, 1);
   if (N(pfn1) > 0 && N(pfn2) > 0 && pfn1[0] == pfn2[0])
-    return smart_font_bis (family, variant, series, shape, sz, dpi);
-  font fn1= smart_font_bis (family, "rm", series, shape, sz, dpi);
-  font fn2= smart_font_bis (family, variant, series, shape, sz, dpi);
+    return smart_font_bis (family, variant, series, shape, sz, dpi, dpi);
+  font fn1= smart_font_bis (family, "rm", series, shape, sz, dpi, dpi);
+  font fn2= smart_font_bis (family, variant, series, shape, sz, dpi, dpi);
   double zoom= ((double) fn1->yx) / max (((double) fn2->yx), 1.0);
   if (fn1->yx < PIXEL || fn2->yx < PIXEL) zoom= 1.0;
   if (zoom > 0.975 && zoom < 1.025) return fn2;
