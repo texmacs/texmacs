@@ -780,8 +780,9 @@
 	((tree-func? doc 'slide 1) (tree-set! doc (tm-ref doc 0)))))
 
 (tm-define (dynamic-make-slides)
-  (init-default "page-medium" "page-type" "page-width" "page-height"
-                "page-width-margin" "page-height-margin"
+  (init-default "page-medium"
+                ;;"page-type" "page-width" "page-height"
+                ;;"page-width-margin" "page-height-margin"
                 ;;"page-odd" "page-even" "page-right"
                 ;;"par-width" "page-odd-shift" "page-even-shift"
                 ;;"page-top" "page-bot"
