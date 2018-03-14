@@ -58,7 +58,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   nr_cols    = env->get_int (PAR_COLUMNS);
 
   string kr= as_string (env->read (PAR_KERNING_REDUCE));
-  if (kr == "auto") kreduce= 1.0 / 40.0;
+  if (kr == "auto") kreduce= 0.7 / 40.0;
   else if (is_double (kr)) kreduce= as_double (kr);
   else kreduce= 0.0;
 
@@ -79,7 +79,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   else protrusion= 0;
 
   string cf= as_string (env->read (PAR_CONTRACTION));
-  if (cf == "auto") contraction= 0.7 / 40.0;
+  if (cf == "auto") contraction= 1.0 / 40.0;
   else if (is_double (cf)) contraction= as_double (cf);
   else contraction= 0.0;
 
@@ -95,8 +95,9 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   else if (is_double (ef)) expansion= as_double (ef);
   else expansion= 0.0;
 
-  expansion= contraction= kreduce= 0.0; // FIXME
-  //contraction= kreduce= 0.0; // FIXME
+  //expansion= contraction= kstretch= kreduce= 0.0; // FIXME
+  //expansion= contraction= kreduce= 0.0; // FIXME
+  contraction= kreduce= 0.0; // FIXME
   //expansion= contraction= 0.0; // FIXME
 
   string sm= as_string (env->read (PAR_SPACING));
@@ -298,11 +299,11 @@ lazy_paragraph_rep::decrease_kerning (SI dw, SI the_width) {
   int first, last;
   find_first_last_text (first, last);
   SI ref_w= total_width (range (items, cur_start, N(items)));
-  SI obj_w= ref_w + dw;
+  SI obj_w= ref_w - dw;
   SI def_w= total_width (adjusted (0.0, first, last));
   SI min_w= total_width (adjusted (-kreduce, first, last));
-  if (obj_w >= def_w && min_w < def_w) {
-    double ratio= ((double) (obj_w - def_w)) / ((double) (def_w - min_w));
+  if (obj_w <= def_w && min_w < def_w) {
+    double ratio= ((double) (def_w - obj_w)) / ((double) (def_w - min_w));
     ratio= min (ratio, 1.0);
     array<box> bs= adjusted (-kreduce * ratio, first, last);
     for (int i=0; i<N(bs); i++) {
@@ -322,8 +323,8 @@ lazy_paragraph_rep::expand_glyphs (SI dw, SI the_width) {
   dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
   SI xdw= (SI) (dw * (expansion / (kstretch + expansion)));
   SI mdw= (SI) (expansion * the_width);
-  int stages= 5;
-  int stage = min ((3 * stages * xdw + 1) / (3 * mdw), stages);
+  int stages= 8;
+  int stage = min (((3 * stages + 1) * xdw) / (3 * mdw), stages);
   if (stage <= 0) return;
   double expansion_factor= (expansion * stage) / stages;
   array<box> bs;
@@ -338,14 +339,23 @@ void
 lazy_paragraph_rep::contract_glyphs (SI dw, SI the_width) {
   // try to subtract dw space by glyph contraction for the current line unit
   if (contraction <= 0.0) return;
+
+  // NOTE: adjust dw in presence of ligatures
+  int first, last;
+  find_first_last_text (first, last);
+  SI ref_w= total_width (range (items, cur_start, N(items)));
+  SI def_w= total_width (adjusted (0.0, first, last));
+  dw += (def_w - ref_w);
+  // END NOTE
+
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->min;
   dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
   SI xdw= (SI) (dw * (contraction / (kreduce + contraction)));
   SI mdw= (SI) (contraction * the_width);
-  int stages= 5;
-  int stage = min ((3 * stages * xdw + 1) / (3 * mdw), stages);
+  int stages= 8;
+  int stage = min (((3 * stages + 2) * xdw) / (3 * mdw), stages);
   if (stage <= 0) return;
   double contraction_factor= (contraction * stage) / stages;
   array<box> bs;
@@ -650,7 +660,10 @@ lazy_paragraph_rep::line_units (
   int i;
   bool ragged= (hyphen == "normal");
   SI line_width= the_right - the_left;
-  SI large_width= (SI) (line_width / (1.0 - kreduce - contraction));
+  SI large_width= (SI) (line_width / (1.0 - 0.5 * (kreduce + contraction)));
+  // FIXME: the factor 0.5 is somewhat arbitrary and should be taken small
+  // enough so as to compensate for content that cannot be contracted
+  // on the line such as whitespace, images, and other miscellaneous objects.
   array<path> hyphs= line_breaks (a, start, end, line_width, large_width,
 				  the_first, the_last, ragged);
   for (i=0; i<N(hyphs)-1; i++) {
