@@ -84,6 +84,7 @@ struct unicode_font_rep: font_rep {
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
   SI     get_right_correction (string s);
+  SI     get_lsub_correction  (string s);
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
@@ -679,13 +680,22 @@ unicode_font_rep::get_right_correction (string s) {
 }
 
 SI
+unicode_font_rep::get_lsub_correction (string s) {
+  SI r= -get_left_correction (s) + global_lsub_correct;
+  if (lsub_correct->contains (s)) r += (SI) (lsub_correct[s] * wfn);
+  return r;
+}
+
+SI
 unicode_font_rep::get_lsup_correction (string s) {
   if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s)) {
     metric ex;
     get_extents (s, ex);
     return ((ex->x2 - ex->x1) / 8);
   }
-  return 0;
+  SI r= global_lsup_correct;
+  if (lsup_correct->contains (s)) r += (SI) (lsup_correct[s] * wfn);
+  return r;
 }
 
 SI

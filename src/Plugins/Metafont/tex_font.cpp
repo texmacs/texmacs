@@ -63,6 +63,8 @@ struct tex_font_rep: font_rep {
   font  magnify (double zoomx, double zoomy);
   SI    get_left_correction  (string s);
   SI    get_right_correction (string s);
+  SI    get_lsub_correction  (string s);
+  SI    get_lsup_correction  (string s);
   SI    get_rsub_correction  (string s);
   SI    get_rsup_correction  (string s);
   SI    get_wide_correction  (string s, int mode);
@@ -826,6 +828,20 @@ tex_font_rep::get_right_correction (string s) {
     }
   }
   return conv (tfm->i ((QN) s[N(s)-1]));
+}
+
+SI
+tex_font_rep::get_lsub_correction (string s) {
+  SI r= -get_left_correction (s);
+  if (lsub_correct->contains (s)) r += (SI) (lsub_correct[s] * wfn);
+  return r;
+}
+
+SI
+tex_font_rep::get_lsup_correction (string s) {
+  SI r= get_right_correction (s);
+  if (lsup_correct->contains (s)) r += (SI) (lsup_correct[s] * wfn);
+  return r;
 }
 
 SI

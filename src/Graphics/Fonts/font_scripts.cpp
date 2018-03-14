@@ -51,6 +51,16 @@ adjust_pair (hashmap<string,double>& t, string c, double delta) {
 ******************************************************************************/
 
 void
+lsub_adjust_std (hashmap<string,double>& t) {
+  (void) t;
+}
+
+void
+lsup_adjust_std (hashmap<string,double>& t) {
+  (void) t;
+}
+
+void
 rsub_adjust_std (hashmap<string,double>& t) {
   adjust_pair (t, "1", -0.02);
   adjust_pair (t, "J", -0.01);
@@ -81,6 +91,16 @@ rsup_adjust_std (hashmap<string,double>& t) {
 /******************************************************************************
 * Guessing further adjustments
 ******************************************************************************/
+
+void
+lsub_adjust_guessed (hashmap<string,double>& t) {
+  (void) t;
+}
+
+void
+lsup_adjust_guessed (hashmap<string,double>& t) {
+  (void) t;
+}
 
 void
 rsub_adjust_guessed (hashmap<string,double>& t) {
@@ -115,8 +135,28 @@ rsup_adjust_guessed (hashmap<string,double>& t) {
 * Interface
 ******************************************************************************/
 
+static hashmap<string,double> lsub_guessed (0.0);
+static hashmap<string,double> lsup_guessed (0.0);
 static hashmap<string,double> rsub_guessed (0.0);
 static hashmap<string,double> rsup_guessed (0.0);
+
+hashmap<string,double>
+lsub_guessed_table () {
+  if (N (lsub_guessed) == 0) {
+    lsub_adjust_std (lsub_guessed);
+    lsub_adjust_guessed (lsub_guessed);
+  }
+  return lsub_guessed;
+}
+
+hashmap<string,double>
+lsup_guessed_table () {
+  if (N (lsup_guessed) == 0) {
+    lsup_adjust_std (lsup_guessed);
+    lsup_adjust_guessed (lsup_guessed);
+  }
+  return lsup_guessed;
+}
 
 hashmap<string,double>
 rsub_guessed_table () {

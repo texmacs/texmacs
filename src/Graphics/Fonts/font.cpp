@@ -18,6 +18,8 @@
 
 RESOURCE_CODE(font);
 
+hashmap<string,double> lsub_guessed_table ();
+hashmap<string,double> lsup_guessed_table ();
 hashmap<string,double> rsub_guessed_table ();
 hashmap<string,double> rsup_guessed_table ();
 hashmap<string,double> above_guessed_table ();
@@ -48,14 +50,20 @@ font_rep::font_rep (string s):
   extra     (0),
   last_zoom (0.0),
   zoomed_fn (NULL),
+  global_lsub_correct (0),
+  global_lsup_correct (0),
   global_rsub_correct (0),
   global_rsup_correct (0),
+  lsub_correct (0.0),
+  lsup_correct (0.0),
   rsub_correct (0.0),
   rsup_correct (0.0),
   above_correct (0.0),
   below_correct (0.0),
   protrusion_maps (-1)
 {
+  lsub_correct = lsub_guessed_table ();
+  lsup_correct = lsup_guessed_table ();
   rsub_correct = rsub_guessed_table ();
   rsup_correct = rsup_guessed_table ();
   above_correct= above_guessed_table ();
@@ -75,12 +83,18 @@ font_rep::font_rep (string s, font fn):
   sep          (fn->sep),
   last_zoom    (0.0),
   zoomed_fn    (NULL),
+  global_lsub_correct (0),
+  global_lsup_correct (0),
   global_rsub_correct (0),
   global_rsup_correct (0),
+  lsub_correct (0.0),
+  lsup_correct (0.0),
   rsub_correct (0.0),
   rsup_correct (0.0),
   protrusion_maps (-1)
 {
+  lsub_correct = lsub_guessed_table ();
+  lsup_correct = lsup_guessed_table ();
   rsub_correct = rsub_guessed_table ();
   rsup_correct = rsup_guessed_table ();
   above_correct= above_guessed_table ();
