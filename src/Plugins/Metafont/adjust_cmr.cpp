@@ -117,6 +117,10 @@ rsub_adjust_cmmi (hashmap<string,double>& t) {
 void
 rsup_adjust_cmmi (hashmap<string,double>& t) {
   adjust_char (t, "\25", -0.04);  // lambda
+  adjust_char (t, "b", 0.02);
+  adjust_char (t, "c", 0.03);
+  adjust_char (t, "d", 0.03);
+  adjust_char (t, "t", 0.02);
   adjust_char (t, "A", -0.03);
 }
 
