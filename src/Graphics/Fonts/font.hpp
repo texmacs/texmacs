@@ -194,6 +194,8 @@ int  script (int sz, int level);
 // Microtypography
 void adjust_char (hashmap<string,double>& t, string c, double delta);
 void adjust_pair (hashmap<string,double>& t, string c, double delta);
+void lsub_adjust_std (hashmap<string,double>& t);
+void lsup_adjust_std (hashmap<string,double>& t);
 void rsub_adjust_std (hashmap<string,double>& t);
 void rsup_adjust_std (hashmap<string,double>& t);
 void above_adjust_std (hashmap<string,double>& t);

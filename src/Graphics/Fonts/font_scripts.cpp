@@ -57,7 +57,7 @@ lsub_adjust_std (hashmap<string,double>& t) {
 
 void
 lsup_adjust_std (hashmap<string,double>& t) {
-  (void) t;
+  adjust_pair (t, "a", 0.05);
 }
 
 void

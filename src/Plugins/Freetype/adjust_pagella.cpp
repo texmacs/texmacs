@@ -320,9 +320,19 @@ above_adjust_pagella (hashmap<string,double>& t) {
 * Interface
 ******************************************************************************/
 
+static hashmap<string,double> lsup_pagella (0.0);
 static hashmap<string,double> rsub_pagella (0.0);
 static hashmap<string,double> rsup_pagella (0.0);
 static hashmap<string,double> above_pagella (0.0);
+
+hashmap<string,double>
+lsup_pagella_table () {
+  if (N (lsup_pagella) == 0) {
+    lsup_adjust_std (lsup_pagella);
+    //lsup_adjust_pagella (lsup_pagella);
+  }
+  return lsup_pagella;
+}
 
 hashmap<string,double>
 rsub_pagella_table () {
