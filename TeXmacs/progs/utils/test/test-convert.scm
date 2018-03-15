@@ -98,7 +98,7 @@
   ;;(display* "-- unpack-dir " src-dir ", " dest-dir ", " type "\n")
   (let* ((last (url->string (url-tail src-dir)))
          (accept (list "texmacs" "arxiv"))
-         (ignore (list "CVS" ".svn" "prop-base" "text-base")))
+         (ignore (list "CVS" ".svn" "prop-base" "text-base" ".DS_Store")))
     (set! type (or type (and (in? last accept) last)))
     (when (nin? last ignore)
       (when (url-exists? dest-dir)
