@@ -41,6 +41,7 @@ hashmap<string,double> above_stix_table ();
 hashmap<string,double> rsub_termes_table ();
 hashmap<string,double> rsup_termes_table ();
 hashmap<string,double> above_termes_table ();
+hashmap<string,double> lsub_pagella_table ();
 hashmap<string,double> lsup_pagella_table ();
 hashmap<string,double> rsub_pagella_table ();
 hashmap<string,double> rsup_pagella_table ();
@@ -222,6 +223,7 @@ unicode_font_rep::unicode_font_rep (string name,
   else if (starts (family, "texgyrepagella-")) {
     global_rsub_correct= (SI) (0.05 * wfn);
     global_rsup_correct= (SI) (0.05 * wfn);
+    lsub_correct= lsub_pagella_table ();
     lsup_correct= lsup_pagella_table ();
     rsub_correct= rsub_pagella_table ();
     rsup_correct= rsup_pagella_table ();

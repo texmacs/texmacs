@@ -67,8 +67,12 @@
   </session>
 </body>
 
-<initial|<\collection>
-</collection>>
+<\initial>
+  <\collection>
+    <associate|font|pagella>
+    <associate|math-font|math-pagella>
+  </collection>
+</initial>
 
 <\references>
   <\collection>
