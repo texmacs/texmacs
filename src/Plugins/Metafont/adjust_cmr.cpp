@@ -16,6 +16,11 @@
 ******************************************************************************/
 
 void
+lsub_adjust_cmr (hashmap<string,double>& t) {
+  (void) t;
+}
+
+void
 lsup_adjust_cmr (hashmap<string,double>& t) {
   adjust_char (t, "\1", 0.1); // Delta
   adjust_char (t, "\3", 0.1); // Lambda
@@ -63,6 +68,24 @@ above_adjust_cmr (hashmap<string,double>& t) {
   adjust_char (t, "2", -0.02);
   adjust_char (t, "4", 0.03);
   adjust_char (t, "9", -0.02);
+}
+
+void
+lsub_adjust_cmmi (hashmap<string,double>& t) {
+  adjust_char (t, "f", 0.05);
+  adjust_char (t, "i", -0.02);
+  adjust_char (t, "l", -0.02);
+  adjust_char (t, "m", -0.02);
+  adjust_char (t, "n", -0.02);
+  adjust_char (t, "r", -0.02);
+  adjust_char (t, "t", -0.02);
+  adjust_char (t, "u", -0.02);
+  adjust_char (t, "v", -0.02);
+  adjust_char (t, "w", -0.02);
+  adjust_char (t, "x", -0.02);
+  adjust_char (t, "V", 0.05);
+  adjust_char (t, "Y", 0.05);
+  adjust_char (t, "\41", -0.03);  // omega
 }
 
 void
@@ -129,7 +152,7 @@ above_adjust_cmmi (hashmap<string,double>& t) {
   adjust_char (t, "d", 0.1);
   adjust_char (t, "f", 0.02);
   adjust_char (t, "h", -0.02);
-  adjust_char (t, "`", 0.04); // ell
+  adjust_char (t, "`", 0.04);   // ell
   adjust_char (t, "r", -0.04);
   adjust_char (t, "A", 0.12);
   adjust_char (t, "J", 0.06);
@@ -139,11 +162,26 @@ above_adjust_cmmi (hashmap<string,double>& t) {
   adjust_char (t, "V", -0.1);
   adjust_char (t, "W", -0.06);
   adjust_char (t, "Y", -0.1);
-  adjust_char (t, "\36", 0.06); // varphi
-  adjust_char (t, "\32", 0.04); // rho
+  adjust_char (t, "\36", 0.06);  // varphi
+  adjust_char (t, "\32", 0.04);  // rho
   adjust_char (t, "\33", -0.06); // sigma
   adjust_char (t, "\34", -0.06); // tau
-  adjust_char (t, "\40", 0.06); // psi
+  adjust_char (t, "\40", 0.06);  // psi
+}
+
+void
+lsub_adjust_cmsy (hashmap<string,double>& t) {
+  adjust_char (t, "D", 0.03);
+  adjust_char (t, "H", 0.03);
+  adjust_char (t, "I", -0.03);
+  adjust_char (t, "P", 0.03);
+  adjust_char (t, "Q", 0.03);
+  adjust_char (t, "R", 0.03);
+  adjust_char (t, "T", 0.03);
+  adjust_char (t, "U", -0.03);
+  adjust_char (t, "V", 0.05);
+  adjust_char (t, "W", 0.05);
+  adjust_char (t, "r", 0.1);   // nabla
 }
 
 void
@@ -177,6 +215,13 @@ above_adjust_cmsy (hashmap<string,double>& t) {
   adjust_char (t, "V", -0.06);
   adjust_char (t, "W", -0.04);
   adjust_char (t, "Y", -0.06);
+}
+
+void
+lsub_adjust_bbm (hashmap<string,double>& t) {
+  adjust_char (t, "V", 0.05);
+  adjust_char (t, "W", 0.05);
+  adjust_char (t, "Y", 0.05);
 }
 
 void
@@ -243,21 +288,12 @@ above_adjust_eufm (hashmap<string,double>& t) {
 * Interface
 ******************************************************************************/
 
-static hashmap<string,double> lsup_cmr (0.0);
-static hashmap<string,double> rsub_cmr (0.0);
-static hashmap<string,double> rsup_cmr (0.0);
-static hashmap<string,double> above_cmr (0.0);
-static hashmap<string,double> lsup_cmmi (0.0);
-static hashmap<string,double> rsub_cmmi (0.0);
-static hashmap<string,double> rsup_cmmi (0.0);
-static hashmap<string,double> above_cmmi (0.0);
-static hashmap<string,double> lsup_cmsy (0.0);
-static hashmap<string,double> above_cmsy (0.0);
-static hashmap<string,double> lsup_bbm (0.0);
-static hashmap<string,double> rsub_bbm (0.0);
-static hashmap<string,double> rsup_bbm (0.0);
-static hashmap<string,double> above_bbm (0.0);
-static hashmap<string,double> above_eufm (0.0);
+hashmap<string,double>
+lsub_cmr_table () {
+  static hashmap<string,double> lsub_cmr (0.0);
+  if (N (lsub_cmr) == 0) lsub_adjust_cmr (lsub_cmr);
+  return lsub_cmr;
+}
 
 hashmap<string,double>
 lsup_cmr_table () {
@@ -282,12 +318,21 @@ rsup_cmr_table () {
 
 hashmap<string,double>
 above_cmr_table () {
+  static hashmap<string,double> above_cmr (0.0);
   if (N (above_cmr) == 0) above_adjust_cmr (above_cmr);
   return above_cmr;
 }
 
 hashmap<string,double>
+lsub_cmmi_table () {
+  static hashmap<string,double> lsub_cmmi (0.0);
+  if (N (lsub_cmmi) == 0) lsub_adjust_cmmi (lsub_cmmi);
+  return lsub_cmmi;
+}
+
+hashmap<string,double>
 lsup_cmmi_table () {
+  static hashmap<string,double> lsup_cmmi (0.0);
   if (N (lsup_cmmi) == 0) lsup_adjust_cmmi (lsup_cmmi);
   return lsup_cmmi;
 }
@@ -301,14 +346,23 @@ rsub_cmmi_table () {
 
 hashmap<string,double>
 rsup_cmmi_table () {
+  static hashmap<string,double> rsup_cmmi (0.0);
   if (N (rsup_cmmi) == 0) rsup_adjust_cmmi (rsup_cmmi);
   return rsup_cmmi;
 }
 
 hashmap<string,double>
 above_cmmi_table () {
+  static hashmap<string,double> above_cmmi (0.0);
   if (N (above_cmmi) == 0) above_adjust_cmmi (above_cmmi);
   return above_cmmi;
+}
+
+hashmap<string,double>
+lsub_cmsy_table () {
+  static hashmap<string,double> lsub_cmsy (0.0);
+  if (N (lsub_cmsy) == 0) lsub_adjust_cmsy (lsub_cmsy);
+  return lsub_cmsy;
 }
 
 hashmap<string,double>
@@ -320,36 +374,49 @@ lsup_cmsy_table () {
 
 hashmap<string,double>
 above_cmsy_table () {
+  static hashmap<string,double> above_cmsy (0.0);
   if (N (above_cmsy) == 0) above_adjust_cmsy (above_cmsy);
   return above_cmsy;
 }
 
 hashmap<string,double>
+lsub_bbm_table () {
+  static hashmap<string,double> lsub_bbm (0.0);
+  if (N (lsub_bbm) == 0) lsub_adjust_bbm (lsub_bbm);
+  return lsub_bbm;
+}
+
+hashmap<string,double>
 lsup_bbm_table () {
+  static hashmap<string,double> lsup_bbm (0.0);
   if (N (lsup_bbm) == 0) lsup_adjust_bbm (lsup_bbm);
   return lsup_bbm;
 }
 
 hashmap<string,double>
 rsub_bbm_table () {
+  static hashmap<string,double> rsub_bbm (0.0);
   if (N (rsub_bbm) == 0) rsub_adjust_bbm (rsub_bbm);
   return rsub_bbm;
 }
 
 hashmap<string,double>
 rsup_bbm_table () {
+  static hashmap<string,double> rsup_bbm (0.0);
   if (N (rsup_bbm) == 0) rsup_adjust_bbm (rsup_bbm);
   return rsup_bbm;
 }
 
 hashmap<string,double>
 above_bbm_table () {
+  static hashmap<string,double> above_bbm (0.0);
   if (N (above_bbm) == 0) above_adjust_bbm (above_bbm);
   return above_bbm;
 }
 
 hashmap<string,double>
 above_eufm_table () {
+  static hashmap<string,double> above_eufm (0.0);
   if (N (above_eufm) == 0) above_adjust_eufm (above_eufm);
   return above_eufm;
 }

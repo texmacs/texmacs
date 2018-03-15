@@ -25,16 +25,20 @@
 static void special_initialize ();
 font_metric tfm_font_metric (tex_font_metric tfm, font_glyphs pk, double unit);
 
+hashmap<string,double> lsub_cmr_table ();
 hashmap<string,double> lsup_cmr_table ();
 hashmap<string,double> rsub_cmr_table ();
 hashmap<string,double> rsup_cmr_table ();
 hashmap<string,double> above_cmr_table ();
+hashmap<string,double> lsub_cmmi_table ();
 hashmap<string,double> lsup_cmmi_table ();
 hashmap<string,double> rsub_cmmi_table ();
 hashmap<string,double> rsup_cmmi_table ();
 hashmap<string,double> above_cmmi_table ();
+hashmap<string,double> lsub_cmsy_table ();
 hashmap<string,double> lsup_cmsy_table ();
 hashmap<string,double> above_cmsy_table ();
+hashmap<string,double> lsub_bbm_table ();
 hashmap<string,double> lsup_bbm_table ();
 hashmap<string,double> rsub_bbm_table ();
 hashmap<string,double> rsup_bbm_table ();
@@ -148,28 +152,28 @@ tex_font_rep::tex_font_rep (string name, int status2,
   special_initialize ();
 
   if (family == "cmr" || family == "cmbx") {
-    lsub_correct= hashmap<string,double> (0.0);
+    lsub_correct= lsub_cmr_table ();
     lsup_correct= lsup_cmr_table ();
     rsub_correct= rsub_cmr_table ();
     rsup_correct= rsup_cmr_table ();
     above_correct= above_cmr_table ();
   }
   else if (family == "cmmi" || family == "cmmib") {
-    lsub_correct= hashmap<string,double> (0.0);
+    lsub_correct= lsub_cmmi_table ();
     lsup_correct= lsup_cmmi_table ();
     rsub_correct= rsub_cmmi_table ();
     rsup_correct= rsup_cmmi_table ();
     above_correct= above_cmmi_table ();
   }
   else if (family == "cmsy" || family == "cmbsy") {
-    lsub_correct= hashmap<string,double> (0.0);
+    lsub_correct= lsub_cmsy_table ();
     lsup_correct= lsup_cmsy_table ();
     rsub_correct= hashmap<string,double> (0.0);
     rsup_correct= hashmap<string,double> (0.0);
     above_correct= above_cmsy_table ();
   }
   else if (family == "bbm" || family == "bbmbx") {
-    lsub_correct= hashmap<string,double> (0.0);
+    lsub_correct= lsub_bbm_table ();
     lsup_correct= lsup_bbm_table ();
     rsub_correct= rsub_bbm_table ();
     rsup_correct= rsup_bbm_table ();
