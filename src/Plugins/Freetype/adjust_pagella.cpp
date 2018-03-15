@@ -44,7 +44,31 @@ lsub_adjust_pagella (hashmap<string,double>& t) {
 
 void
 lsup_adjust_pagella (hashmap<string,double>& t) {
-  (void) t;
+  adjust_pair (t, "b", 0.02);
+  adjust_pair (t, "A", 0.02);
+  adjust_pair (t, "B", 0.02);
+  adjust_pair (t, "D", 0.02);
+  adjust_pair (t, "E", 0.02);
+  adjust_pair (t, "F", 0.02);
+  adjust_pair (t, "K", 0.02);
+  adjust_pair (t, "L", 0.02);
+  adjust_pair (t, "M", 0.02);
+  adjust_pair (t, "N", 0.02);
+  adjust_pair (t, "P", 0.02);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "S", 0.02);
+  adjust_pair (t, "<beta>", 0.02);
+  adjust_pair (t, "<pi>", 0.02);
+  adjust_pair (t, "<chi>", 0.02);
+  adjust_pair (t, "<omega>", 0.02);
+  adjust_pair (t, "<Alpha>", 0.02);
+  adjust_pair (t, "<Lambda>", 0.02);
+  adjust_pair (t, "<cal-A>", 0.05);
+  adjust_pair (t, "<cal-M>", 0.05);
+  adjust_pair (t, "<cal-N>", 0.05);
+  adjust_pair (t, "<cal-P>", 0.08);
+  adjust_pair (t, "<cal-Z>", 0.05);
+  adjust_pair (t, "<bbb-A>", 0.1);
 }
 
 void

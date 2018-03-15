@@ -48,7 +48,74 @@ lsub_adjust_schola (hashmap<string,double>& t) {
 
 void
 lsup_adjust_schola (hashmap<string,double>& t) {
-  (void) t;
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), -0.03);
+  adjust_pair (t, "a", -0.02);
+  adjust_pair (t, "b", 0.04);
+  adjust_pair (t, "c", -0.02);
+  adjust_pair (t, "d", -0.02);
+  adjust_pair (t, "e", -0.03);
+  adjust_pair (t, "g", -0.01);
+  adjust_pair (t, "h", 0.04);
+  adjust_pair (t, "j", 0.02);
+  adjust_pair (t, "k", 0.02);
+  adjust_pair (t, "l", 0.02);
+  adjust_pair (t, "o", -0.02);
+  adjust_pair (t, "q", -0.02);
+  adjust_pair (t, "s", 0.02);
+  adjust_pair (t, "B", 0.02);
+  adjust_pair (t, "D", 0.02);
+  adjust_pair (t, "E", 0.02);
+  adjust_pair (t, "F", 0.02);
+  adjust_pair (t, "H", 0.02);
+  adjust_pair (t, "I", 0.02);
+  adjust_pair (t, "K", 0.02);
+  adjust_pair (t, "L", 0.02);
+  adjust_pair (t, "M", 0.02);
+  adjust_pair (t, "N", 0.02);
+  adjust_pair (t, "P", 0.02);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "U", 0.02);
+  adjust_pair (t, "<alpha>", 0.02);
+  adjust_pair (t, "<beta>", 0.02);
+  adjust_pair (t, "<delta>", 0.05);
+  adjust_pair (t, "<varepsilon>", 0.02);
+  adjust_pair (t, "<zeta>", 0.05);
+  adjust_pair (t, "<theta>", 0.02);
+  adjust_pair (t, "<iota>", 0.02);
+  adjust_pair (t, "<kappa>", 0.02);
+  adjust_pair (t, "<lambda>", 0.02);
+  adjust_pair (t, "<mu>", 0.07);
+  adjust_pair (t, "<xi>", 0.07);
+  adjust_pair (t, "<rho>", 0.02);
+  adjust_pair (t, "<varphi>", 0.02);
+  adjust_pair (t, "<chi>", 0.05);
+  adjust_pair (t, "<vartheta>", 0.12);
+  adjust_pair (t, "<varkappa>", 0.03);
+  adjust_pair (t, "<varpi>", -0.03);
+  adjust_pair (t, "<varrho>", 0.02);
+  adjust_pair (t, "<varsigma>", -0.03);
+  adjust_pair (t, "<phi>", 0.02);
+  adjust_pair (t, "<Alpha>", 0.08);
+  adjust_pair (t, "<Delta>", 0.05);
+  adjust_pair (t, "<Lambda>", 0.08);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, "<cal-" * string (c) * ">", 0.05);
+  adjust_pair (t, "<cal-f>", 0.1);
+  adjust_pair (t, "<cal-h>", 0.05);
+  adjust_pair (t, "<cal-j>", 0.12);
+  adjust_pair (t, "<cal-m>", 0.03);
+  adjust_pair (t, "<cal-n>", 0.03);
+  adjust_pair (t, "<cal-p>", 0.15);
+  adjust_pair (t, "<cal-A>", 0.15);
+  adjust_pair (t, "<cal-M>", 0.2);
+  adjust_pair (t, "<cal-N>", 0.2);
+  adjust_pair (t, "<cal-S>", 0.15);
+  adjust_pair (t, "<bbb-A>", 0.12);
+  adjust_pair (t, "<frak-H>", 0.1);
+  adjust_pair (t, "<frak-K>", 0.1);
+  adjust_pair (t, "<frak-L>", 0.1);
+  adjust_pair (t, "<frak-U>", 0.05);
 }
 
 void

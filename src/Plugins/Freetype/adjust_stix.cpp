@@ -30,7 +30,39 @@ lsub_adjust_stix (hashmap<string,double>& t) {
 
 void
 lsup_adjust_stix (hashmap<string,double>& t) {
-  (void) t;
+  adjust_pair (t, "b", 0.02);
+  adjust_pair (t, "B", 0.02);
+  adjust_pair (t, "D", 0.02);
+  adjust_pair (t, "E", 0.02);
+  adjust_pair (t, "F", 0.02);
+  adjust_pair (t, "H", 0.02);
+  adjust_pair (t, "I", 0.02);
+  adjust_pair (t, "J", 0.02);
+  adjust_pair (t, "K", 0.02);
+  adjust_pair (t, "L", 0.02);
+  adjust_pair (t, "M", 0.02);
+  adjust_pair (t, "N", 0.02);
+  adjust_pair (t, "P", 0.02);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "S", 0.02);
+  adjust_pair (t, "U", 0.02);
+  adjust_pair (t, "V", 0.02);
+  adjust_pair (t, "W", 0.02);
+  adjust_pair (t, "<beta>", 0.02);
+  adjust_pair (t, "<rho>", 0.02);
+  adjust_pair (t, "<chi>", 0.1);
+  adjust_pair (t, "<omega>", 0.02);
+  adjust_pair (t, "<Alpha>", 0.02);
+  adjust_pair (t, "<Delta>", 0.02);
+  adjust_pair (t, "<Lambda>", 0.02);
+  adjust_pair (t, "<cal-A>", 0.02);
+  adjust_pair (t, "<cal-I>", 0.08);
+  adjust_pair (t, "<cal-J>", 0.1);
+  adjust_pair (t, "<cal-M>", 0.1);
+  adjust_pair (t, "<cal-N>", 0.1);
+  adjust_pair (t, "<cal-S>", 0.03);
+  adjust_pair (t, "<cal-X>", 0.02);
+  adjust_pair (t, "<bbb-A>", 0.05);
 }
 
 void
