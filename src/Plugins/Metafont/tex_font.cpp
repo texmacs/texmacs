@@ -33,6 +33,7 @@ hashmap<string,double> lsup_cmmi_table ();
 hashmap<string,double> rsub_cmmi_table ();
 hashmap<string,double> rsup_cmmi_table ();
 hashmap<string,double> above_cmmi_table ();
+hashmap<string,double> lsup_cmsy_table ();
 hashmap<string,double> above_cmsy_table ();
 hashmap<string,double> lsup_bbm_table ();
 hashmap<string,double> rsub_bbm_table ();
@@ -162,7 +163,7 @@ tex_font_rep::tex_font_rep (string name, int status2,
   }
   else if (family == "cmsy" || family == "cmbsy") {
     lsub_correct= hashmap<string,double> (0.0);
-    lsup_correct= hashmap<string,double> (0.0);
+    lsup_correct= lsup_cmsy_table ();
     rsub_correct= hashmap<string,double> (0.0);
     rsup_correct= hashmap<string,double> (0.0);
     above_correct= above_cmsy_table ();

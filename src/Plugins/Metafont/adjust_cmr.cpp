@@ -147,6 +147,21 @@ above_adjust_cmmi (hashmap<string,double>& t) {
 }
 
 void
+lsup_adjust_cmsy (hashmap<string,double>& t) {
+  adjust_char (t, "A", 0.1);
+  adjust_char (t, "C", -0.03);
+  adjust_char (t, "F", 0.07);
+  adjust_char (t, "J", 0.05);
+  adjust_char (t, "L", 0.05);
+  adjust_char (t, "M", 0.1);
+  adjust_char (t, "N", 0.05);
+  adjust_char (t, "Q", 0.03);
+  adjust_char (t, "U", -0.05);
+  adjust_char (t, "X", 0.05);
+  adjust_char (t, "Z", 0.05);
+}
+
+void
 above_adjust_cmsy (hashmap<string,double>& t) {
   adjust_char (t, "A", 0.18);
   adjust_char (t, "F", 0.04);
@@ -236,6 +251,7 @@ static hashmap<string,double> lsup_cmmi (0.0);
 static hashmap<string,double> rsub_cmmi (0.0);
 static hashmap<string,double> rsup_cmmi (0.0);
 static hashmap<string,double> above_cmmi (0.0);
+static hashmap<string,double> lsup_cmsy (0.0);
 static hashmap<string,double> above_cmsy (0.0);
 static hashmap<string,double> lsup_bbm (0.0);
 static hashmap<string,double> rsub_bbm (0.0);
@@ -293,6 +309,13 @@ hashmap<string,double>
 above_cmmi_table () {
   if (N (above_cmmi) == 0) above_adjust_cmmi (above_cmmi);
   return above_cmmi;
+}
+
+hashmap<string,double>
+lsup_cmsy_table () {
+  static hashmap<string,double> lsup_cmsy (0.0);
+  if (N (lsup_cmsy) == 0) lsup_adjust_cmsy (lsup_cmsy);
+  return lsup_cmsy;
 }
 
 hashmap<string,double>
