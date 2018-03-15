@@ -35,9 +35,13 @@
 
 font unicode_font (string family, int size, int hdpi, int vdpi);
 
+hashmap<string,double> lsub_stix_table ();
+hashmap<string,double> lsup_stix_table ();
 hashmap<string,double> rsub_stix_table ();
 hashmap<string,double> rsup_stix_table ();
 hashmap<string,double> above_stix_table ();
+hashmap<string,double> lsub_termes_table ();
+hashmap<string,double> lsup_termes_table ();
 hashmap<string,double> rsub_termes_table ();
 hashmap<string,double> rsup_termes_table ();
 hashmap<string,double> above_termes_table ();
@@ -46,9 +50,13 @@ hashmap<string,double> lsup_pagella_table ();
 hashmap<string,double> rsub_pagella_table ();
 hashmap<string,double> rsup_pagella_table ();
 hashmap<string,double> above_pagella_table ();
+hashmap<string,double> lsub_schola_table ();
+hashmap<string,double> lsup_schola_table ();
 hashmap<string,double> rsub_schola_table ();
 hashmap<string,double> rsup_schola_table ();
 hashmap<string,double> above_schola_table ();
+hashmap<string,double> lsub_bonum_table ();
+hashmap<string,double> lsup_bonum_table ();
 hashmap<string,double> rsub_bonum_table ();
 hashmap<string,double> rsup_bonum_table ();
 hashmap<string,double> above_bonum_table ();
@@ -210,12 +218,16 @@ unicode_font_rep::unicode_font_rep (string name,
   if (starts (family, "STIX-")) {
     global_rsub_correct= (SI) (0.04 * wfn);
     global_rsup_correct= (SI) (0.04 * wfn);
+    lsub_correct= lsub_stix_table ();
+    lsup_correct= lsup_stix_table ();
     rsub_correct= rsub_stix_table ();
     rsup_correct= rsup_stix_table ();
     above_correct= above_stix_table ();
   }
   else if (starts (family, "texgyretermes-")) {
     global_rsup_correct= (SI) (0.04 * wfn);
+    lsub_correct= lsub_termes_table ();
+    lsup_correct= lsup_termes_table ();
     rsub_correct= rsub_termes_table ();
     rsup_correct= rsup_termes_table ();
     above_correct= above_termes_table ();
@@ -230,11 +242,15 @@ unicode_font_rep::unicode_font_rep (string name,
     above_correct= above_pagella_table ();
   }
   else if (starts (family, "texgyreschola-")) {
+    lsub_correct= lsub_schola_table ();
+    lsup_correct= lsup_schola_table ();
     rsub_correct= rsub_schola_table ();
     rsup_correct= rsup_schola_table ();
     above_correct= above_schola_table ();
   }
   else if (starts (family, "texgyrebonum-")) {
+    lsub_correct= lsub_bonum_table ();
+    lsup_correct= lsup_bonum_table ();
     rsub_correct= rsub_bonum_table ();
     rsup_correct= rsup_bonum_table ();
     above_correct= above_bonum_table ();

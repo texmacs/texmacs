@@ -7273,6 +7273,31 @@ done
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $GUILE_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$GUILE_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$GUILE_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then GUILE_LIBS=
+  else  while test "$GUILE_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$GUILE_LIBS"
+        GUILE_LIBS="${GUILE_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        GUILE_LIBS="${GUILE_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        GUILE_LIBS="${GUILE_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  GUILE_LIBS=$(echo $GUILE_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       GUILE_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -10222,6 +10247,31 @@ then
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LIBS=
+  else  while test "$ICONV_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LIBS"
+        ICONV_LIBS="${ICONV_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LIBS="${ICONV_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LIBS="${ICONV_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LIBS=$(echo $ICONV_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -10690,6 +10740,31 @@ else
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LIBS=
+  else  while test "$ICONV_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LIBS"
+        ICONV_LIBS="${ICONV_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LIBS="${ICONV_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LIBS="${ICONV_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LIBS=$(echo $ICONV_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -12044,6 +12119,31 @@ then
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LIBS=
+  else  while test "$ICONV_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LIBS"
+        ICONV_LIBS="${ICONV_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LIBS="${ICONV_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LIBS="${ICONV_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LIBS=$(echo $ICONV_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -12512,6 +12612,31 @@ else
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $ICONV_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$ICONV_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$ICONV_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then ICONV_LIBS=
+  else  while test "$ICONV_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$ICONV_LIBS"
+        ICONV_LIBS="${ICONV_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        ICONV_LIBS="${ICONV_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        ICONV_LIBS="${ICONV_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  ICONV_LIBS=$(echo $ICONV_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       ICONV_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -14166,6 +14291,31 @@ fi
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $FREETYPE_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$FREETYPE_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$FREETYPE_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then FREETYPE_LIBS=
+  else  while test "$FREETYPE_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$FREETYPE_LIBS"
+        FREETYPE_LIBS="${FREETYPE_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        FREETYPE_LIBS="${FREETYPE_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        FREETYPE_LIBS="${FREETYPE_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  FREETYPE_LIBS=$(echo $FREETYPE_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       FREETYPE_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -16362,6 +16512,31 @@ fi
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $FREETYPE_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$FREETYPE_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$FREETYPE_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then FREETYPE_LIBS=
+  else  while test "$FREETYPE_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$FREETYPE_LIBS"
+        FREETYPE_LIBS="${FREETYPE_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        FREETYPE_LIBS="${FREETYPE_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        FREETYPE_LIBS="${FREETYPE_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  FREETYPE_LIBS=$(echo $FREETYPE_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       FREETYPE_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -18943,6 +19118,31 @@ $as_echo "disabling Windows console" >&6; }
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$LIBS
+
+  unset STRIP_ARG_memo
+  if test "$LIBS" = "$STRIP_ALL_ARGS_arg"
+  then LIBS=
+  else  while test "$LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$LIBS"
+        LIBS="${LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        LIBS="${LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        LIBS="${LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  LIBS=$(echo $LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -20379,6 +20579,31 @@ fi
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $QT_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$QT_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then QT_LIBS=
+  else  while test "$QT_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_LIBS"
+        QT_LIBS="${QT_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_LIBS="${QT_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_LIBS="${QT_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_LIBS=$(echo $QT_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
@@ -21561,6 +21786,31 @@ done
   unset ${!STRIP_ALL_ARGS_*}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
+  elif [[ "$LC_SCATTER_FLAGS_flag" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "$LC_SCATTER_FLAGS_flag"
+  do  while [[ $X11_LIBS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$X11_LIBS
+
+  unset STRIP_ARG_memo
+  if test "$X11_LIBS" = "$STRIP_ALL_ARGS_arg"
+  then X11_LIBS=
+  else  while test "$X11_LIBS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$X11_LIBS"
+        X11_LIBS="${X11_LIBS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        X11_LIBS="${X11_LIBS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        X11_LIBS="${X11_LIBS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  X11_LIBS=$(echo $X11_LIBS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       X11_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
     if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5

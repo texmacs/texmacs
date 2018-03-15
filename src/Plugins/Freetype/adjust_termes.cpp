@@ -16,6 +16,30 @@
 ******************************************************************************/
 
 void
+lsub_adjust_termes (hashmap<string,double>& t) {
+  adjust_pair (t, "p", 0.03);
+  adjust_pair (t, "U", 0.03);
+  adjust_pair (t, "<tau>", 0.03);
+  adjust_pair (t, "<chi>", 0.1);
+  adjust_pair (t, "<Upsilon>", 0.03);
+  adjust_pair (t, "<Phi>", -0.03);
+  adjust_pair (t, "<bbb-A>", 0.03);
+  adjust_pair (t, "<bbb-T>", 0.08);
+  adjust_pair (t, "<bbb-U>", 0.05);
+  adjust_pair (t, "<bbb-V>", 0.08);
+  adjust_pair (t, "<bbb-W>", 0.08);
+  adjust_pair (t, "<bbb-Y>", 0.08);
+  adjust_pair (t, "<bbb-X>", 0.03);
+  adjust_pair (t, "<vee>", -0.05);
+  adjust_pair (t, "<curlyvee>", -0.07);
+}
+
+void
+lsup_adjust_termes (hashmap<string,double>& t) {
+  (void) t;
+}
+
+void
 rsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "!", 0.05);
   adjust_pair (t, "/", -0.02);
@@ -341,9 +365,29 @@ above_adjust_termes (hashmap<string,double>& t) {
 * Interface
 ******************************************************************************/
 
+static hashmap<string,double> lsub_termes (0.0);
+static hashmap<string,double> lsup_termes (0.0);
 static hashmap<string,double> rsub_termes (0.0);
 static hashmap<string,double> rsup_termes (0.0);
 static hashmap<string,double> above_termes (0.0);
+
+hashmap<string,double>
+lsub_termes_table () {
+  if (N (lsub_termes) == 0) {
+    lsub_adjust_std (lsub_termes);
+    lsub_adjust_termes (lsub_termes);
+  }
+  return lsub_termes;
+}
+
+hashmap<string,double>
+lsup_termes_table () {
+  if (N (lsup_termes) == 0) {
+    lsup_adjust_std (lsup_termes);
+    lsup_adjust_termes (lsup_termes);
+  }
+  return lsup_termes;
+}
 
 hashmap<string,double>
 rsub_termes_table () {

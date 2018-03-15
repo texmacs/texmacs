@@ -22,13 +22,24 @@ lsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "U", 0.03);
   adjust_pair (t, "V", 0.05);
   adjust_pair (t, "Y", 0.03);
+  adjust_pair (t, "<tau>", 0.03);
   adjust_pair (t, "<Epsilon>", 0.05);
   adjust_pair (t, "<Tau>", 0.03);
   adjust_pair (t, "<Psi>", 0.03);
-  adjust_pair (t, "<bbb-T>", 0.03);
-  adjust_pair (t, "<bbb-V>", 0.05);
-  adjust_pair (t, "<bbb-W>", 0.05);
-  adjust_pair (t, "<bbb-Y>", 0.05);
+  adjust_pair (t, "<backepsilon>", 0.05);
+  adjust_pair (t, "<partial>", 0.05);
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, "<bbb-" * string (c) * ">", 0.05);
+  adjust_pair (t, "<bbb-A>", 0.02);
+  adjust_pair (t, "<bbb-T>", 0.05);
+  adjust_pair (t, "<bbb-U>", 0.03);
+  adjust_pair (t, "<bbb-V>", 0.07);
+  adjust_pair (t, "<bbb-W>", 0.07);
+  adjust_pair (t, "<bbb-Y>", 0.07);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, "<frak-" * string (c) * ">", 0.02);
+  adjust_pair (t, "<wedge>", 0.02);
+  adjust_pair (t, "<curlywedge>", 0.05);
 }
 
 void

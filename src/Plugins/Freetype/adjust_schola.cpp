@@ -16,6 +16,42 @@
 ******************************************************************************/
 
 void
+lsub_adjust_schola (hashmap<string,double>& t) {
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), -0.03);
+  adjust_pair (t, "f", -0.02);
+  adjust_pair (t, "i", -0.02);
+  adjust_pair (t, "j", 0.03);
+  adjust_pair (t, "k", -0.02);
+  adjust_pair (t, "l", -0.02);
+  adjust_pair (t, "p", 0.05);
+  adjust_pair (t, "z", -0.02);
+  adjust_pair (t, "<theta>", -0.03);
+  adjust_pair (t, "<Alpha", 0.05);
+  adjust_pair (t, "<Lambda", 0.05);
+  adjust_pair (t, "<Phi>", -0.03);
+  adjust_pair (t, "<cal-A>", 0.05);
+  adjust_pair (t, "<cal-M>", 0.05);
+  adjust_pair (t, "<cal-N>", 0.05);
+  adjust_pair (t, "<cal-S>", 0.03);
+  adjust_pair (t, "<bbb-A>", 0.02);
+  adjust_pair (t, "<bbb-U>", 0.03);
+  adjust_pair (t, "<bbb-V>", 0.07);
+  adjust_pair (t, "<bbb-W>", 0.07);
+  adjust_pair (t, "<bbb-X>", 0.03);
+  adjust_pair (t, "<bbb-Y>", 0.07);
+  adjust_pair (t, "<wedge>", 0.02);
+  adjust_pair (t, "<vee>", -0.06);
+  adjust_pair (t, "<curlywedge>", 0.02);
+  adjust_pair (t, "<curlyvee>", -0.06);
+}
+
+void
+lsup_adjust_schola (hashmap<string,double>& t) {
+  (void) t;
+}
+
+void
 rsub_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "!", 0.05);
   adjust_pair (t, "/", -0.05);
@@ -300,9 +336,29 @@ above_adjust_schola (hashmap<string,double>& t) {
 * Interface
 ******************************************************************************/
 
+static hashmap<string,double> lsub_schola (0.0);
+static hashmap<string,double> lsup_schola (0.0);
 static hashmap<string,double> rsub_schola (0.0);
 static hashmap<string,double> rsup_schola (0.0);
 static hashmap<string,double> above_schola (0.0);
+
+hashmap<string,double>
+lsub_schola_table () {
+  if (N (lsub_schola) == 0) {
+    lsub_adjust_std (lsub_schola);
+    lsub_adjust_schola (lsub_schola);
+  }
+  return lsub_schola;
+}
+
+hashmap<string,double>
+lsup_schola_table () {
+  if (N (lsup_schola) == 0) {
+    lsup_adjust_std (lsup_schola);
+    lsup_adjust_schola (lsup_schola);
+  }
+  return lsup_schola;
+}
 
 hashmap<string,double>
 rsub_schola_table () {

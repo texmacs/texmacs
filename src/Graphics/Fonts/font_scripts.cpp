@@ -59,6 +59,8 @@ lsub_adjust_std (hashmap<string,double>& t) {
   adjust_pair (t, "<Phi>", 0.05);
   adjust_pair (t, "<Psi>", 0.05);
   adjust_pair (t, "<nabla>", 0.05);
+  adjust_pair (t, "<vee>", 0.1);
+  adjust_pair (t, "<curlyvee>", 0.15);
 }
 
 void
@@ -89,8 +91,8 @@ lsup_adjust_std (hashmap<string,double>& t) {
   adjust_pair (t, "<Alpha>", 0.05);
   adjust_pair (t, "<Delta>", 0.05);
   adjust_pair (t, "<Lambda>", 0.05);
-  adjust_pair (t, "<wedge>", 0.1);
-  adjust_pair (t, "<curlywedge>", 0.15);
+  adjust_pair (t, "<wedge>", 0.05);
+  adjust_pair (t, "<curlywedge>", 0.1);
 }
 
 void

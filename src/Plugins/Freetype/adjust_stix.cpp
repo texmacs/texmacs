@@ -16,6 +16,24 @@
 ******************************************************************************/
 
 void
+lsub_adjust_stix (hashmap<string,double>& t) {
+  adjust_pair (t, "p", 0.03);
+  adjust_pair (t, "U", 0.03);
+  adjust_pair (t, "<chi>", 0.05);
+  adjust_pair (t, "<Upsilon>", 0.03);
+  adjust_pair (t, "<Phi>", -0.03);
+  adjust_pair (t, "<bbb-T>", 0.05);
+  adjust_pair (t, "<bbb-Y>", 0.05);
+  adjust_pair (t, "<vee>", -0.05);
+  adjust_pair (t, "<curlyvee>", -0.05);
+}
+
+void
+lsup_adjust_stix (hashmap<string,double>& t) {
+  (void) t;
+}
+
+void
 rsub_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "!", 0.05);
   adjust_pair (t, "/", -0.02);
@@ -258,9 +276,29 @@ above_adjust_stix (hashmap<string,double>& t) {
 * Interface
 ******************************************************************************/
 
+static hashmap<string,double> lsub_stix (0.0);
+static hashmap<string,double> lsup_stix (0.0);
 static hashmap<string,double> rsub_stix (0.0);
 static hashmap<string,double> rsup_stix (0.0);
 static hashmap<string,double> above_stix (0.0);
+
+hashmap<string,double>
+lsub_stix_table () {
+  if (N (lsub_stix) == 0) {
+    lsub_adjust_std (lsub_stix);
+    lsub_adjust_stix (lsub_stix);
+  }
+  return lsub_stix;
+}
+
+hashmap<string,double>
+lsup_stix_table () {
+  if (N (lsup_stix) == 0) {
+    lsup_adjust_std (lsup_stix);
+    lsup_adjust_stix (lsup_stix);
+  }
+  return lsup_stix;
+}
 
 hashmap<string,double>
 rsub_stix_table () {

@@ -69,8 +69,8 @@
 
 <\initial>
   <\collection>
-    <associate|font|pagella>
-    <associate|math-font|math-pagella>
+    <associate|font|bonum>
+    <associate|math-font|math-bonum>
   </collection>
 </initial>
 
