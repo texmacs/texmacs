@@ -186,6 +186,7 @@ rsub_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-V>", -0.03);
   adjust_pair (t, "<frak-W>", -0.03);
   adjust_pair (t, "<frak-f>", -0.03);
+  adjust_pair (t, "<partial>", -0.04);
 }
 
 void
@@ -312,6 +313,7 @@ rsup_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-m>", -0.02);
   adjust_pair (t, "<frak-n>", -0.02);
   adjust_pair (t, "<frak-u>", -0.04);
+  adjust_pair (t, "<partial>", -0.03);
 }
 
 void

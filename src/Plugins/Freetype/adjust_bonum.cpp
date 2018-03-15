@@ -199,6 +199,7 @@ rsub_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-V>", -0.15);
   adjust_pair (t, "<bbb-W>", -0.15);
   adjust_pair (t, "<bbb-Y>", -0.12);
+  adjust_pair (t, "<partial>", -0.05);
 }
 
 void
@@ -282,6 +283,7 @@ rsup_adjust_bonum (hashmap<string,double>& t) {
   for (char c= 'A'; c <= 'Z'; c++)
     adjust_pair (t, "<frak-" * string (c) * ">", 0.02);
   adjust_pair (t, "<frak-U>", -0.03);
+  adjust_pair (t, "<partial>", -0.05);
 }
 
 void

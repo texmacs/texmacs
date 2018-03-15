@@ -233,8 +233,8 @@ unicode_font_rep::unicode_font_rep (string name,
     above_correct= above_termes_table ();
   }
   else if (starts (family, "texgyrepagella-")) {
-    global_rsub_correct= (SI) (0.05 * wfn);
-    global_rsup_correct= (SI) (0.05 * wfn);
+    global_rsub_correct= (SI) (0.03 * wfn);
+    global_rsup_correct= (SI) (0.03 * wfn);
     lsub_correct= lsub_pagella_table ();
     lsup_correct= lsup_pagella_table ();
     rsub_correct= rsub_pagella_table ();

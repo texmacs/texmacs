@@ -129,6 +129,7 @@ rsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-V>", -0.1);
   adjust_pair (t, "<bbb-W>", -0.1);
   adjust_pair (t, "<bbb-Y>", -0.1);
+  adjust_pair (t, "<partial>", -0.04);
 }
 
 void
@@ -269,6 +270,7 @@ rsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-R>", -0.07);
   adjust_pair (t, "<bbb-X>", -0.03);
   adjust_pair (t, "<frak-a>", -0.03);
+  adjust_pair (t, "<partial>", -0.02);
 }
 
 void

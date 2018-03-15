@@ -198,6 +198,7 @@ rsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-W>", -0.12);
   adjust_pair (t, "<bbb-Y>", -0.15);
   adjust_pair (t, "<bbb-Z>", 0.03);
+  adjust_pair (t, "<partial>", -0.03);
 }
   
 void
@@ -300,6 +301,7 @@ rsup_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-v>", -0.02);
   adjust_pair (t, "<frak-w>", -0.02);
   adjust_pair (t, "<frak-y>", -0.01);
+  adjust_pair (t, "<partial>", -0.03);
 }
 
 void

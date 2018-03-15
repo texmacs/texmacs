@@ -153,6 +153,7 @@ rsub_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-W>", 0.07);
   adjust_pair (t, "<bbb-Y>", 0.05);
   adjust_pair (t, "<bbb-Z>", -0.03);
+  adjust_pair (t, "<partial>", -0.03);
 }
   
 void
@@ -220,6 +221,7 @@ rsup_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<frak-r>", 0.01);
   adjust_pair (t, "<frak-t>", 0.01);
   adjust_pair (t, "<frak-u>", -0.01);
+  adjust_pair (t, "<partial>", 0.02);
 }
 
 void
