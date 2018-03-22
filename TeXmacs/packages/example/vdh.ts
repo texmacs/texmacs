@@ -63,6 +63,12 @@
 
     <drd-props|\<downarrow\>|syntax|\<postdown\>>
 
+    <drd-props|\<updownarrow\>|syntax|\<postupdown\>>
+
+    <drd-props|\<mapsup\>|syntax|\<postmapsup\>>
+
+    <drd-props|\<mapsdown\>|syntax|\<postmapsdown\>>
+
     \;
 
     <assign|rsA|<with|math-font|cal*|A>>
