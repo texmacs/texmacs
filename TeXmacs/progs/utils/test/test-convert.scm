@@ -132,17 +132,20 @@
          (doc-dir "$TEXMACS_DOC_PATH"))
     (if (url-exists? (url-unix doc-dir root))
         (let* ((old-lan (get-output-language))
+               (new-lan (locale-to-language lan))
                (u (url-resolve (url-unix doc-dir root) "r"))
                (pdf (url-append dir (string-append name "." lan ".pdf")))
                (cont (lambda ()
                        (export-buffer-main (current-buffer) pdf "pdf" (list))
                        (set-output-language old-lan)
                        (user-delayed next))))
-          (if (url-exists? pdf)
-              (user-delayed next)
-              (begin
-                (set-output-language (locale-to-language lan))
-                (tmdoc-expand-help-manual* u cont))))
+          (cond ((url-exists? pdf) (user-delayed next))
+		((== new-lan old-lan) (tmdoc-expand-help-manual* u cont))
+                (else
+		  (set-output-language new-lan)
+		  (delayed
+		    (:idle 3000)
+		    (tmdoc-expand-help-manual* u cont)))))
         (user-delayed next))))
 
 (define (build-manuals-sub* dir l next)
