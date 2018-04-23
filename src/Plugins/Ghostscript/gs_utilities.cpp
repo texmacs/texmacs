@@ -386,6 +386,7 @@ gs_to_pdf (url image, url pdf, int w, int h) {
 
   cmd= gs_prefix();
   cmd << " -dQUIET -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite ";
+  cmd << "-dAutoRotatePages=/None ";
   cmd << "-dCompatibilityLevel=" << pdf_version () << " ";
   cmd << " -sOutputFile=" << sys_concretize(pdf) << " ";
   cmd << " -c \" << /PageSize [ " << as_string(bx2-bx1) << " " << as_string(by2-by1)
@@ -396,12 +397,12 @@ gs_to_pdf (url image, url pdf, int w, int h) {
   cmd << " -c \" grestore \"  ";
   // debug_convert << cmd << LF;
   system(cmd);
-  if (DEBUG_CONVERT) debug_convert << cmd <<LF
-    <<"pdf generated? "<< exists(pdf)<<LF;
+  if (DEBUG_CONVERT)
+    debug_convert << cmd << LF << "pdf generated? " << exists(pdf) << LF;
 }
 
 // This conversion is appropriate for printed pages
-void  
+void
 gs_to_pdf (url doc, url pdf, bool landscape, double paper_h, double paper_w) {
   if (DEBUG_CONVERT) debug_convert << "(ps page) gs_to_pdf"<<LF;
   string cmd= gs_prefix ();
