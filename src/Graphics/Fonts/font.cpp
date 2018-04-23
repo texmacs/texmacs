@@ -259,7 +259,7 @@ font_rep::get_xpositions (string s, SI* xpos) {
 	i++;
 	xpos[i]= x;
       }
-    i++;
+    if (i < N(s)) i++;
     get_extents (s (0, i), ex);
     x= ex->x2;
     xpos[i]= x;
@@ -286,7 +286,7 @@ font_rep::get_xpositions (string s, SI* xpos, SI xk) {
 	i++;
 	xpos[i] += dx;
       }
-    i++;
+    if (i < N(s)) i++;
     count++;
     if (i == N(s)) dx= 2 * count * xk;
     else dx= (2*count + 1) * xk;
