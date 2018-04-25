@@ -9,8 +9,8 @@
   (Exists (join (0 0 exists) (0.25 -0.01 urcorner) (0.25 0.02 lrcorner)))
   (mapmulti (hor-flip multimap))
   (invbreve (ver-flip breve))
-  (oempty (join (part odot * 0.3 * *) (part odot 0.7 * * *)
-                (part odot * * * 0.3) (part odot * * 0.7 *)))
+  (oempty (join (part odot * 0.35 * *) (part odot 0.65 * * *)
+                (part odot * * * 0.35) (part odot * * 0.65 *)))
   
   (ldots (join (0 0 .) (0.3 0 .) (0.6 0 .)))
   (cdots (join (0 0 cdot) (0.3 0 cdot) (0.6 0 cdot)))
