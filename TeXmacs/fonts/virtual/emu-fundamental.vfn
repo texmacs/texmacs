@@ -126,6 +126,8 @@
   (osubset (or (font osubset2 xChalkduster xPapyrus)
                osubset1))
 
+  (oempty0 (join (part odot * 0.35 * *) (part odot 0.65 * * *)
+                 (part odot * * * 0.35) (part odot * * 0.65 *)))
   (oempty1 (with rad (/ (max (width (crop +)) (height (crop +))) 2)
              (with penw (frac-width)
                (with d (/ penw 2)
@@ -140,7 +142,8 @@
                    (unindent (enlarge
                      (pretend (align* (magnify o mx my) + 0.5 0.5) +)
                      d d)))))))
-  (oempty (or (font oempty2 Chalkduster Papyrus)
+  (oempty (or oempty0
+              (font oempty2 Chalkduster Papyrus)
               oempty1))
   (small+ (magnify + 0.5 1))
   (osmall1 (with rad (/ (max (width (crop +)) (height (crop +))) 4)

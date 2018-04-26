@@ -118,6 +118,10 @@
   (varocircle (join oempty (align* osmall oempty 0.5 0.5)))
   (circledast (join oempty (align* ast oempty 0.5 0.5)))
   (obar (join oempty (align* vminus oempty 0.5 0.5)))
+  (oequal (join oempty (align* (magnify = 0.7 0.7) oempty 0.5 0.5)))
+  (osim (join oempty (align* (magnify ~ 0.9 0.9) oempty 0.5 0.5)))
+  (oless (join oempty (align* (magnify less 0.7 0.7) oempty 0.5 0.5)))
+  (ogtr (join oempty (align* (magnify gtr 0.7 0.7) oempty 0.5 0.5)))
 
   (hbarplus (with sz (+ (max (width (crop +)) (height (crop +)))
                         (width (crop vminus)))
@@ -151,6 +155,10 @@
   (boxbox (join boxempty smallbox))
   (boxast (join boxempty (align* ast boxempty 0.5 0.5)))
   (boxbar (join boxempty (align* vminus boxempty 0.5 0.5)))
+  (boxequal (join boxempty (align* (magnify = 0.7 0.7) boxempty 0.5 0.5)))
+  (boxsim (join boxempty (align* (magnify ~ 0.9 0.9) boxempty 0.5 0.5)))
+  (boxless (join boxempty (align* (magnify less 0.7 0.7) boxempty 0.5 0.5)))
+  (boxgtr (join boxempty (align* (magnify gtr 0.7 0.7) boxempty 0.5 0.5)))
   (blacksquare (flood-fill boxempty 0.5 0.5))
 
   (suchthat \:)
