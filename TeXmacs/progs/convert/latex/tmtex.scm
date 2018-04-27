@@ -390,6 +390,7 @@
   ("less"          #\<)
   ("gtr"           #\>)
   ("box"           (Box))
+  ("over"          #\:)
   ("||"            (|)) ;; |
   ("precdot"       (tmprecdot)))
 
@@ -991,6 +992,8 @@
         ((in? s '("(" ")" "[" "]" "|" "/" ".")) s)
 	((== s "||") "\\|")
 	((== s "\\") "\\backslash")
+	((and (string-starts? s "<") (string-ends? s ">"))
+	 (string-append "\\" (substring s 1 (- (string-length s) 1))))
 	(else (string-append "\\" s))))
 
 (define (tmtex-left l)
