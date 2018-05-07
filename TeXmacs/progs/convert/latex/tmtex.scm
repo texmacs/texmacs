@@ -717,7 +717,9 @@
 (define (tmtex-default s l) (cons (string->symbol s) (tmtex-list l)))
 (define (tmtex-id l) (tmtex (car l)))
 (define (tmtex-first l) (tmtex (car l)))
+(define (tmtex-style-first s l) (tmtex (car l)))
 (define (tmtex-second l) (tmtex (cadr l)))
+(define (tmtex-style-second s l) (tmtex (cadr l)))
 (define (tmtex-hide-part s l) "")
 (define (tmtex-show-part s l) (tmtex (cadr l)))
 
@@ -2796,7 +2798,7 @@
   ((:or table-of-contents) (,tmtex-toc 2))
   (bibliography (,tmtex-bib 4))
   (thebibliography (,tmtex-thebibliography 2))
-  (bib-list (,tmtex-second 2))
+  (bib-list (,tmtex-style-second 2))
   (bibitem* (,tmtex-bibitem* -1))
   ((:or small-figure big-figure small-table big-table) (,tmtex-figure 2))
   (item (,tmtex-item 0))
