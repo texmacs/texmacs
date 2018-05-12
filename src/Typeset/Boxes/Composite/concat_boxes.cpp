@@ -270,45 +270,50 @@ concat_box_rep::rsup_correction () {
 SI
 concat_box_rep::sub_lo_base (int level) {
   int i=0, n=N(bs);
-  SI  y=y1;
+  SI  y= y2;
   for (i=0; i<n; i++)
     y= min (y, bs[i]->sub_lo_base (level));
+  if (y == y2) y= y1;
   return y;
 }
 
 SI
 concat_box_rep::sub_hi_lim  (int level) {
   int i=0, n=N(bs);
-  SI  y= y1 + (y2-y1)/4;
+  SI  y= y1;
   for (i=0; i<n; i++)
     y= max (y, bs[i]->sub_hi_lim (level));
+  if (y == y1) y= y1 + (y2-y1)/4;
   return y;
 }
 
 SI
 concat_box_rep::sup_lo_lim  (int level) {
   int i=0, n=N(bs);
-  SI  y=y2 - (y2-y1)/4;
+  SI  y= y2;
   for (i=0; i<n; i++)
     y= min (y, bs[i]->sup_lo_lim (level));
+  if (y == y2) y= y2 - (y2-y1)/4;
   return y;
 }
 
 SI
 concat_box_rep::sup_lo_base (int level) {
   int i=0, n=N(bs);
-  SI  y=y2 - (y2-y1)/4;
+  SI  y= y2;
   for (i=0; i<n; i++)
     y= min (y, bs[i]->sup_lo_base (level));
+  if (y == y2) y= y2 - (y2-y1)/4;
   return y;
 }
 
 SI
 concat_box_rep::sup_hi_lim  (int level) {
   int i=0, n=N(bs);
-  SI  y=y2;
+  SI  y= y1;
   for (i=0; i<n; i++)
     y= max (y, bs[i]->sup_hi_lim (level));
+  if (y == y1) y= y2;
   return y;
 }
 

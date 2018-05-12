@@ -171,6 +171,8 @@ class concater_rep {
   int  prec (int i);
   int  succ (int i);
   void pre_glue ();
+  box  glue_left_markers (box b, int ref, int arg);
+  box  glue_right_markers (box b, int ref, int arg, bool flag);
   void glue (box b, int ref, int arg);
   void glue (box b, int ref, int arg1, int arg2);
   void clean_and_correct ();

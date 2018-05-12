@@ -21,13 +21,15 @@ SI italic_correction (box, box);
 
 int
 concater_rep::prec (int i) {
-  do i--; while ((i>=0) && (a[i]->type==OBSOLETE_ITEM));
+  do i--; while ((i>=0) && (a[i]->type==OBSOLETE_ITEM ||
+                            a[i]->type==MARKER_ITEM));
   return i;
 }
 
 int
 concater_rep::succ (int i) {
-  do i++; while ((i<N(a)) && (a[i]->type==OBSOLETE_ITEM));
+  do i++; while ((i<N(a)) && (a[i]->type==OBSOLETE_ITEM ||
+                              a[i]->type==MARKER_ITEM));
   return i;
 }
 
@@ -37,10 +39,12 @@ concater_rep::succ (int i) {
 
 void
 concater_rep::pre_glue () {
-  int i;
-  for (i=0; i<N(a)-1; i++) {
+  int i=0;
+  while (true) {
+    int j= succ(i);
+    if (j >= N(a)) break;
     line_item item1= a[i];
-    line_item item2= a[i+1];
+    line_item item2= a[j];
     int t1= item1->type;
     int t2= item2->type;
     if (((t1 == RSUB_ITEM) && (t2 == RSUP_ITEM)) ||
@@ -59,9 +63,61 @@ concater_rep::pre_glue () {
 
 	a[i]= line_item (type, OP_SKIP, b, pen);
 	a[i]->spc = spc;
-	a[i+1]= line_item (OBSOLETE_ITEM, OP_SKIP, item2->b, pen);
+        for (int k=i+1; k<j; k++)
+          if (a[k]->type == MARKER_ITEM)
+            a[k]= line_item (OBSOLETE_ITEM, OP_SKIP, a[k]->b, a[k]->penalty);
+	a[j]= line_item (OBSOLETE_ITEM, OP_SKIP, item2->b, pen);
       }
+    i++;
   }
+}
+
+box
+concater_rep::glue_left_markers (box b, int ref, int arg) {
+  int i= arg+1;
+  while (i < ref && a[i]->type == OBSOLETE_ITEM) i++;
+  if (i >= ref) return b;
+  array<box> bs;
+  array<SI>  spc;
+  while (i < ref) {
+    if (a[i]->type == MARKER_ITEM) {
+      bs  << a[i]->b;
+      spc << 0;
+      a[i]->type= OBSOLETE_ITEM;
+    }
+    i++;
+  }
+  bs  << b;
+  spc << 0;
+  return concat_box (b->ip, bs, spc);
+}
+
+box
+concater_rep::glue_right_markers (box b, int ref, int arg, bool flag) {
+  int i= ref+1;
+  while (i < arg && a[i]->type == OBSOLETE_ITEM) i++;
+  if (i >= arg) return b;
+  array<box> bs;
+  array<SI>  spc;
+  if (flag) {
+    for (int j=0; j<N(b); j++) {
+      bs  << b[j];
+      spc << 0;
+    }
+  }
+  else {
+    bs  << b;
+    spc << 0;
+  }
+  while (i < arg) {
+    if (a[i]->type == MARKER_ITEM) {
+      bs  << a[i]->b;
+      spc << 0;
+      a[i]->type= OBSOLETE_ITEM;
+    }
+    i++;
+  }
+  return concat_box (b->ip, bs, spc);
 }
 
 void
@@ -143,21 +199,28 @@ concater_rep::handle_scripts (int start, int end) {
     }
 
     box b;
-    if ((l==-1) && (r==N(a))) { i++; continue; }
-    if ((l!=-1) && (r==N(a))) {
-      b= left_script_box (sip, a[i]->b, lb1, lb2, env->fn, env->vert_pos);
-      glue (b, i, l);
+    if (l==-1) {
+      if (r==N(a)) { i++; continue; }
+      else {
+        box mb= glue_right_markers (a[i]->b, i, r, false);
+        if (a[i]->limits)
+          b= limit_box (sip, mb, rb1, rb2, env->fn, true);
+        else
+          b= right_script_box (sip, mb, rb1, rb2, env->fn, env->vert_pos);
+        glue (b, i, r);
+      }
     }
-    if ((l==-1) && (r!=N(a))) {
-      if (a[i]->limits)
-	b= limit_box (sip, a[i]->b, rb1, rb2, env->fn, true);
-      else
-	b= right_script_box (sip, a[i]->b, rb1, rb2, env->fn, env->vert_pos);
-      glue (b, i, r);
-    }
-    if ((l!=-1) && (r!=N(a))) {
-      b= side_box (sip, a[i]->b, lb1, lb2, rb1, rb2, env->fn, env->vert_pos);
-      glue (b, i, l, r);
+    else {
+      box mb= glue_left_markers (a[i]->b, i, l);
+      if (r==N(a)) {
+        b= left_script_box (sip, mb, lb1, lb2, env->fn, env->vert_pos);
+        glue (b, i, l);
+      }
+      else {
+        box mb= glue_right_markers (mb, i, r, true);
+        b= side_box (sip, a[i]->b, lb1, lb2, rb1, rb2, env->fn, env->vert_pos);
+        glue (b, i, l, r);
+      }
     }
   }
 }
