@@ -217,8 +217,8 @@ concater_rep::handle_scripts (int start, int end) {
         glue (b, i, l);
       }
       else {
-        box mb= glue_right_markers (mb, i, r, true);
-        b= side_box (sip, a[i]->b, lb1, lb2, rb1, rb2, env->fn, env->vert_pos);
+        mb= glue_right_markers (mb, i, r, true);
+        b = side_box (sip, mb, lb1, lb2, rb1, rb2, env->fn, env->vert_pos);
         glue (b, i, l, r);
       }
     }
