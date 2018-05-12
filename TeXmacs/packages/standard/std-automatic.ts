@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std>>
 
@@ -103,8 +103,7 @@
   <assign|bibitem-hsep|<macro|<value|bibitem-width>>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|bibitem-width|<minimum|<box-info|<transform-bibitem|<arg|largest>
-    >|w.>|3em>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0|par-flexibility|2.0>
+    <\with|bibitem-width|<minimum|<box-info|<transform-bibitem|<arg|largest>>.|w.>|3em>|item-hsep|<value|bibitem-hsep>|bibitem-nr|0|par-flexibility|2.0>
       <\description>
         <arg|body>
       </description>
