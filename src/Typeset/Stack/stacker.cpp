@@ -353,8 +353,8 @@ void
 stacker_rep::penalty (int pen) {
   int i= N(l)-1;
   while ((i>=0) && (l[i]->type == PAGE_CONTROL_ITEM)) i--;
-  if (i<0) return;
-  l[i]->penalty = pen;  
+  if (i >= 0) l[i]->penalty = pen;
+  else if (pen >= HYPH_INVALID) unit_sb->nobr_before= true;
 }
 
 void
