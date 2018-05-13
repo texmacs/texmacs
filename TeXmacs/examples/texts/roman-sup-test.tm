@@ -166,7 +166,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|stix>
-    <associate|math-font|math-stix>
+    <associate|font|schola>
+    <associate|math-font|math-schola>
   </collection>
 </initial>

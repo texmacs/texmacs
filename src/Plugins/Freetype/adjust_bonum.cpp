@@ -17,6 +17,11 @@
 
 void
 lsub_adjust_bonum (hashmap<string,double>& t) {
+  adjust_pair (t, "T", 0.05);
+  adjust_pair (t, "U", 0.03);
+  adjust_pair (t, "V", 0.03);
+  adjust_pair (t, "W", 0.03);
+  adjust_pair (t, "Y", 0.05);
   adjust_pair (t, "<pi>", 0.03);
   adjust_pair (t, "<chi>", 0.03);
   adjust_pair (t, "<Alpha", 0.05);
@@ -47,6 +52,10 @@ lsub_adjust_bonum (hashmap<string,double>& t) {
 
 void
 lsup_adjust_bonum (hashmap<string,double>& t) {
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, string (c), -0.03);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), -0.03);
   adjust_pair (t, "<alpha>", -0.02);
   adjust_pair (t, "<beta>", -0.02);
   adjust_pair (t, "<delta>", -0.02);
@@ -81,6 +90,38 @@ lsup_adjust_bonum (hashmap<string,double>& t) {
 
 void
 rsub_adjust_bonum (hashmap<string,double>& t) {
+  adjust_pair (t, "A", 0.03);
+  adjust_pair (t, "F", -0.08);
+  adjust_pair (t, "J", -0.03);
+  adjust_pair (t, "K", 0.03);
+  adjust_pair (t, "L", 0.02);
+  adjust_pair (t, "M", 0.03);
+  adjust_pair (t, "N", -0.03);
+  adjust_pair (t, "O", -0.02);
+  adjust_pair (t, "P", -0.03);
+  adjust_pair (t, "Q", 0.03);
+  adjust_pair (t, "R", 0.03);
+  adjust_pair (t, "S", 0.03);
+  adjust_pair (t, "T", -0.05);
+  adjust_pair (t, "U", -0.05);
+  adjust_pair (t, "V", -0.05);
+  adjust_pair (t, "W", -0.05);
+  adjust_pair (t, "X", 0.03);
+  adjust_pair (t, "Y", -0.05);
+  adjust_pair (t, "Z", 0.02);
+  adjust_pair (t, "d", 0.02);
+  adjust_pair (t, "g", 0.05);
+  adjust_pair (t, "h", 0.02);
+  adjust_pair (t, "i", 0.02);
+  adjust_pair (t, "l", 0.02);
+  adjust_pair (t, "m", 0.02);
+  adjust_pair (t, "n", 0.02);
+  adjust_pair (t, "q", 0.05);
+  adjust_pair (t, "u", 0.02);
+  adjust_pair (t, "v", -0.05);
+  adjust_pair (t, "w", -0.05);
+  adjust_pair (t, "x", 0.02);
+  adjust_pair (t, "y", -0.05);
   adjust_pair (t, "!", 0.05);
   adjust_pair (t, "/", -0.05);
   adjust_pair (t, "1", -0.02);
@@ -157,6 +198,22 @@ rsub_adjust_bonum (hashmap<string,double>& t) {
 
 void
 rsup_adjust_bonum (hashmap<string,double>& t) {
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, string (c), 0.03);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), 0.02);
+  adjust_pair (t, "A", -0.05);
+  adjust_pair (t, "L", -0.15);
+  adjust_pair (t, "c", 0.02);
+  adjust_pair (t, "f", 0.04);
+  adjust_pair (t, "g", 0.06);
+  adjust_pair (t, "r", 0.02);
+  adjust_pair (t, "t", 0.02);
+  adjust_pair (t, "v", 0.03);
+  adjust_pair (t, "w", 0.03);
+  adjust_pair (t, "x", 0.03);
+  adjust_pair (t, "y", 0.03);
+  adjust_pair (t, "z", 0.03);
   adjust_pair (t, "!", 0.05);
   adjust_pair (t, "?", 0.05);
   adjust_pair (t, "1", -0.05);

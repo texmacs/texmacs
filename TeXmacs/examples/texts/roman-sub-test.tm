@@ -142,7 +142,7 @@
 
 <\initial>
   <\collection>
-    <associate|font|bonum>
-    <associate|math-font|math-bonum>
+    <associate|font|schola>
+    <associate|math-font|math-schola>
   </collection>
 </initial>
