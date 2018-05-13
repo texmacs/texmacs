@@ -16,6 +16,75 @@
 ******************************************************************************/
 
 void
+lsub_adjust_ecrm (hashmap<string,double>& t) {
+  adjust_char (t, "T", 0.03);
+  adjust_char (t, "V", 0.05);
+  adjust_char (t, "W", 0.05);
+  adjust_char (t, "Y", 0.05);
+}
+
+void
+lsup_adjust_ecrm (hashmap<string,double>& t) {
+  adjust_char (t, "A", 0.1);
+  adjust_char (t, "O", -0.02);
+  adjust_char (t, "Q", -0.02);
+}
+
+void
+rsub_adjust_ecrm (hashmap<string,double>& t) {
+  adjust_char (t, "A", 0.02);
+  adjust_char (t, "B", -0.02);
+  adjust_char (t, "C", -0.02);
+  adjust_char (t, "D", -0.02);
+  adjust_char (t, "F", -0.07);
+  adjust_char (t, "I", 0.04);
+  adjust_char (t, "H", 0.02);
+  adjust_char (t, "J", -0.02);
+  adjust_char (t, "K", 0.02);
+  adjust_char (t, "M", 0.02);
+  adjust_char (t, "N", -0.04);
+  adjust_char (t, "O", -0.02);
+  adjust_char (t, "P", -0.1);
+  adjust_char (t, "Q", 0.04);
+  adjust_char (t, "R", 0.02);
+  adjust_char (t, "T", -0.07);
+  adjust_char (t, "U", -0.04);
+  adjust_char (t, "V", -0.1);
+  adjust_char (t, "W", -0.1);
+  adjust_char (t, "X", 0.02);
+  adjust_char (t, "Y", -0.1);
+  adjust_char (t, "a", 0.03);
+  adjust_char (t, "d", 0.03);
+  adjust_char (t, "f", 0.03);
+  adjust_char (t, "g", 0.08);
+  adjust_char (t, "h", 0.03);
+  adjust_char (t, "i", 0.03);
+  adjust_char (t, "j", 0.04);
+  adjust_char (t, "k", 0.03);
+  adjust_char (t, "l", 0.03);
+  adjust_char (t, "m", 0.03);
+  adjust_char (t, "n", 0.03);
+  adjust_char (t, "q", 0.08);
+  adjust_char (t, "u", 0.03);
+  adjust_char (t, "v", -0.05);
+  adjust_char (t, "w", -0.05);
+  adjust_char (t, "x", 0.03);
+  adjust_char (t, "y", -0.05);
+  adjust_char (t, "z", 0.03);
+}
+  
+void
+rsup_adjust_ecrm (hashmap<string,double>& t) {
+  adjust_char (t, "A", -0.08);
+  adjust_char (t, "D", 0.02);
+  adjust_char (t, "I", 0.04);
+  adjust_char (t, "L", -0.08);
+  adjust_char (t, "O", -0.02);
+  adjust_char (t, "f", 0.02);
+  adjust_char (t, "g", 0.02);
+}
+
+void
 lsub_adjust_cmr (hashmap<string,double>& t) {
   (void) t;
 }
@@ -39,6 +108,7 @@ rsub_adjust_cmr (hashmap<string,double>& t) {
   adjust_char (t, "!", 0.05);
   adjust_char (t, "/", -0.1);
   adjust_char (t, "7", -0.07);
+  adjust_char (t, "A", 0.02);
   adjust_char (t, "B", -0.02);
   adjust_char (t, "I", 0.04);
   adjust_char (t, "K", 0.02);
@@ -287,6 +357,34 @@ above_adjust_eufm (hashmap<string,double>& t) {
 /******************************************************************************
 * Interface
 ******************************************************************************/
+
+hashmap<string,double>
+lsub_ecrm_table () {
+  static hashmap<string,double> lsub_ecrm (0.0);
+  if (N (lsub_ecrm) == 0) lsub_adjust_ecrm (lsub_ecrm);
+  return lsub_ecrm;
+}
+
+hashmap<string,double>
+lsup_ecrm_table () {
+  static hashmap<string,double> lsup_ecrm (0.0);
+  if (N (lsup_ecrm) == 0) lsup_adjust_ecrm (lsup_ecrm);
+  return lsup_ecrm;
+}
+
+hashmap<string,double>
+rsub_ecrm_table () {
+  static hashmap<string,double> rsub_ecrm (0.0);
+  if (N (rsub_ecrm) == 0) rsub_adjust_ecrm (rsub_ecrm);
+  return rsub_ecrm;
+}
+
+hashmap<string,double>
+rsup_ecrm_table () {
+  static hashmap<string,double> rsup_ecrm (0.0);
+  if (N (rsup_ecrm) == 0) rsup_adjust_ecrm (rsup_ecrm);
+  return rsup_ecrm;
+}
 
 hashmap<string,double>
 lsub_cmr_table () {
