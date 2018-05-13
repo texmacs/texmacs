@@ -232,8 +232,14 @@ concater_rep::clean_and_correct () {
   for (i=0; i<N(a); i++)
     if (a[i]->type!=OBSOLETE_ITEM) {
       if (a[i]->b->w () != 0) {
-	if (prev != -1)
-	  a[prev]->spc += space (::italic_correction (a[prev]->b, a[i]->b));
+	if (prev != -1) {
+          SI cor= ::italic_correction (a[prev]->b, a[i]->b);
+          if (cor != 0) {
+            if (a[prev]->b->right_correction () != 0)
+              a[prev]->spc += space (cor);
+            else a[i-1]->spc += space (cor);
+          }
+        }
 	prev= i;
       }
       new_a << a[i];
