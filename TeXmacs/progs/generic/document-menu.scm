@@ -360,17 +360,8 @@
 (menu-bind document-short-font-menu
   ("Default" (init-default-font))
   ---
-  ("Concrete" (init-font "concrete" "concrete"))
   ("Roman" (init-font "roman" "roman"))
   ("Stix" (init-font "stix" "math-stix"))
-  ;;---
-  ;;("Avant Garde" (init-env "font" "avant-garde"))
-  ;;("Bookman" (init-env "font" "bookman"))
-  ;;("Courier" (init-env "font" "courier"))
-  ;;("Helvetica" (init-env "font" "helvetica"))
-  ;;("NC Schoolbook" (init-env "font" "new-century-schoolbook"))
-  ;;("Palatino" (init-env "font" "palatino"))
-  ;;("Times" (init-env "font" "times"))
   (if (or (font-exists-in-tt? "texgyrebonum-math")
           (font-exists-in-tt? "texgyrepagella-math")
           (font-exists-in-tt? "texgyreschola-math")
