@@ -36,6 +36,9 @@ lsub_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-W>", 0.1);
   adjust_pair (t, "<bbb-X>", 0.03);
   adjust_pair (t, "<bbb-Y>", 0.1);
+  adjust_pair (t, "<bbb-u>", 0.03);
+  adjust_pair (t, "<bbb-v>", 0.07);
+  adjust_pair (t, "<bbb-w>", 0.05);
   adjust_pair (t, "<wedge>", 0.02);
   adjust_pair (t, "<vee>", -0.03);
   adjust_pair (t, "<curlywedge>", 0.02);
@@ -95,6 +98,7 @@ lsup_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-N>", 0.2);
   adjust_pair (t, "<cal-S>", 0.15);
   adjust_pair (t, "<bbb-A>", 0.12);
+  adjust_pair (t, "<bbb-j>", 0.02);
 }
 
 void
@@ -199,6 +203,11 @@ rsub_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-V>", -0.15);
   adjust_pair (t, "<bbb-W>", -0.15);
   adjust_pair (t, "<bbb-Y>", -0.12);
+  adjust_pair (t, "<bbb-f>", -0.03);
+  adjust_pair (t, "<bbb-j>", 0.03);
+  adjust_pair (t, "<bbb-v>", -0.05);
+  adjust_pair (t, "<bbb-w>", -0.05);
+  adjust_pair (t, "<bbb-y>", -0.05);
   adjust_pair (t, "<partial>", -0.05);
 }
 
@@ -280,6 +289,11 @@ rsup_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-L>", -0.1);
   adjust_pair (t, "<bbb-O>", 0.02);
   adjust_pair (t, "<bbb-R>", -0.05);
+  adjust_pair (t, "<bbb-a>", -0.03);
+  adjust_pair (t, "<bbb-h>", -0.03);
+  adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_pair (t, "<bbb-m>", -0.03);
+  adjust_pair (t, "<bbb-n>", -0.03);
   for (char c= 'A'; c <= 'Z'; c++)
     adjust_pair (t, "<frak-" * string (c) * ">", 0.02);
   adjust_pair (t, "<frak-U>", -0.03);

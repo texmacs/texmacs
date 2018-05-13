@@ -112,6 +112,7 @@ lsup_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-N>", 0.2);
   adjust_pair (t, "<cal-S>", 0.15);
   adjust_pair (t, "<bbb-A>", 0.12);
+  adjust_pair (t, "<bbb-j>", 0.05);
   adjust_pair (t, "<frak-H>", 0.1);
   adjust_pair (t, "<frak-K>", 0.1);
   adjust_pair (t, "<frak-L>", 0.1);
@@ -183,6 +184,10 @@ rsub_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-W>", -0.1);
   adjust_pair (t, "<bbb-X>", 0.01);
   adjust_pair (t, "<bbb-Y>", -0.15);
+  adjust_pair (t, "<bbb-f>", -0.05);
+  adjust_pair (t, "<bbb-v>", -0.05);
+  adjust_pair (t, "<bbb-w>", -0.05);
+  adjust_pair (t, "<bbb-y>", -0.05);
   adjust_pair (t, "<frak-V>", -0.03);
   adjust_pair (t, "<frak-W>", -0.03);
   adjust_pair (t, "<frak-f>", -0.03);
@@ -305,6 +310,12 @@ rsup_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-L>", -0.07);
   adjust_pair (t, "<bbb-P>", 0.01);
   adjust_pair (t, "<bbb-X>", -0.02);
+  adjust_pair (t, "<bbb-a>", -0.02);
+  adjust_pair (t, "<bbb-h>", -0.02);
+  adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_pair (t, "<bbb-k>", -0.02);
+  adjust_pair (t, "<bbb-m>", -0.02);
+  adjust_pair (t, "<bbb-n>", -0.02);
   adjust_pair (t, "<frak-A>", -0.04);
   adjust_pair (t, "<frak-U>", -0.04);
   adjust_pair (t, "<frak-a>", -0.04);

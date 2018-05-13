@@ -157,6 +157,9 @@ rsub_adjust_guessed (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-V>", -0.05);
   adjust_pair (t, "<bbb-W>", -0.05);
   adjust_pair (t, "<bbb-Y>", -0.05);
+  adjust_pair (t, "<bbb-v>", -0.05);
+  adjust_pair (t, "<bbb-w>", -0.05);
+  adjust_pair (t, "<bbb-y>", -0.05);
 }
 
 void

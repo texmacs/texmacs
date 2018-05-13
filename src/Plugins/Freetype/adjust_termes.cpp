@@ -30,6 +30,9 @@ lsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-W>", 0.08);
   adjust_pair (t, "<bbb-Y>", 0.08);
   adjust_pair (t, "<bbb-X>", 0.03);
+  adjust_pair (t, "<bbb-u>", 0.02);
+  adjust_pair (t, "<bbb-v>", 0.05);
+  adjust_pair (t, "<bbb-w>", 0.03);
   adjust_pair (t, "<vee>", -0.05);
   adjust_pair (t, "<curlyvee>", -0.07);
 }
@@ -66,6 +69,7 @@ lsup_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-N>", 0.08);
   adjust_pair (t, "<cal-S>", 0.05);
   adjust_pair (t, "<bbb-A>", 0.05);
+  adjust_pair (t, "<bbb-j>", 0.03);
 }
 
 void
@@ -198,6 +202,11 @@ rsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-W>", -0.12);
   adjust_pair (t, "<bbb-Y>", -0.15);
   adjust_pair (t, "<bbb-Z>", 0.03);
+  adjust_pair (t, "<bbb-f>", -0.03);
+  adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_pair (t, "<bbb-v>", -0.05);
+  adjust_pair (t, "<bbb-w>", -0.05);
+  adjust_pair (t, "<bbb-y>", -0.05);
   adjust_pair (t, "<partial>", -0.03);
 }
   
@@ -289,6 +298,16 @@ rsup_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-M>", 0.01);
   adjust_pair (t, "<bbb-P>", 0.02);
   adjust_pair (t, "<bbb-R>", -0.03);
+  adjust_pair (t, "<bbb-a>", -0.03);
+  adjust_pair (t, "<bbb-d>", -0.03);
+  adjust_pair (t, "<bbb-h>", -0.03);
+  adjust_pair (t, "<bbb-i>", -0.02);
+  adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_pair (t, "<bbb-k>", -0.03);
+  adjust_pair (t, "<bbb-l>", -0.03);
+  adjust_pair (t, "<bbb-m>", -0.03);
+  adjust_pair (t, "<bbb-n>", -0.03);
+  adjust_pair (t, "<bbb-q>", -0.03);
   adjust_pair (t, "<frak-Q>", -0.02);
   adjust_pair (t, "<frak-U>", -0.03);
   adjust_pair (t, "<frak-a>", -0.03);

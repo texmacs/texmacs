@@ -63,6 +63,7 @@ lsup_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-S>", 0.03);
   adjust_pair (t, "<cal-X>", 0.02);
   adjust_pair (t, "<bbb-A>", 0.05);
+  adjust_pair (t, "<bbb-j>", 0.02);
 }
 
 void
@@ -153,6 +154,8 @@ rsub_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-W>", 0.07);
   adjust_pair (t, "<bbb-Y>", 0.05);
   adjust_pair (t, "<bbb-Z>", -0.03);
+  adjust_pair (t, "<bbb-f>", -0.03);
+  adjust_pair (t, "<bbb-j>", 0.03);
   adjust_pair (t, "<partial>", -0.03);
 }
   
@@ -213,6 +216,10 @@ rsup_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-L>", -0.02);
   adjust_pair (t, "<bbb-M>", 0.01);
   adjust_pair (t, "<bbb-P>", 0.02);
+  string bbs= "bceghijlmnopqstuvwyz";
+  for (int i=0; i<N(bbs); i++)
+    adjust_pair (t, "<bbb-" * bbs (i, i+1) * ">", 0.02);
+  adjust_pair (t, "<bbb-j>", 0.02);
   adjust_pair (t, "<frak-a>", -0.02);
   adjust_pair (t, "<frak-i>", -0.02);
   adjust_pair (t, "<frak-j>", 0.01);

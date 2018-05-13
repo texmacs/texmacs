@@ -36,6 +36,9 @@ lsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-V>", 0.07);
   adjust_pair (t, "<bbb-W>", 0.07);
   adjust_pair (t, "<bbb-Y>", 0.07);
+  adjust_pair (t, "<bbb-u>", 0.02);
+  adjust_pair (t, "<bbb-v>", 0.03);
+  adjust_pair (t, "<bbb-w>", 0.03);
   for (char c= 'a'; c <= 'z'; c++)
     adjust_pair (t, "<frak-" * string (c) * ">", 0.02);
   adjust_pair (t, "<wedge>", 0.02);
@@ -69,6 +72,7 @@ lsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-P>", 0.08);
   adjust_pair (t, "<cal-Z>", 0.05);
   adjust_pair (t, "<bbb-A>", 0.1);
+  adjust_pair (t, "<bbb-j>", 0.02);
 }
 
 void
@@ -129,6 +133,11 @@ rsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-V>", -0.1);
   adjust_pair (t, "<bbb-W>", -0.1);
   adjust_pair (t, "<bbb-Y>", -0.1);
+  adjust_pair (t, "<bbb-f>", -0.02);
+  adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_pair (t, "<bbb-v>", -0.05);
+  adjust_pair (t, "<bbb-w>", -0.05);
+  adjust_pair (t, "<bbb-y>", -0.05);
   adjust_pair (t, "<partial>", -0.04);
 }
 
@@ -269,6 +278,12 @@ rsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-M>", 0.02);
   adjust_pair (t, "<bbb-R>", -0.07);
   adjust_pair (t, "<bbb-X>", -0.03);
+  adjust_pair (t, "<bbb-a>", -0.03);
+  adjust_pair (t, "<bbb-h>", -0.03);
+  adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_pair (t, "<bbb-k>", -0.05);
+  adjust_pair (t, "<bbb-m>", -0.03);
+  adjust_pair (t, "<bbb-n>", -0.03);
   adjust_pair (t, "<frak-a>", -0.03);
   adjust_pair (t, "<partial>", -0.02);
 }
