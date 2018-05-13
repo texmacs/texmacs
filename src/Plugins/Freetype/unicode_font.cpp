@@ -61,6 +61,32 @@ hashmap<string,double> rsub_bonum_table ();
 hashmap<string,double> rsup_bonum_table ();
 hashmap<string,double> above_bonum_table ();
 
+hashmap<string,double> lsub_stix_italic_table ();
+hashmap<string,double> lsup_stix_italic_table ();
+hashmap<string,double> rsub_stix_italic_table ();
+hashmap<string,double> rsup_stix_italic_table ();
+hashmap<string,double> above_stix_italic_table ();
+hashmap<string,double> lsub_termes_italic_table ();
+hashmap<string,double> lsup_termes_italic_table ();
+hashmap<string,double> rsub_termes_italic_table ();
+hashmap<string,double> rsup_termes_italic_table ();
+hashmap<string,double> above_termes_italic_table ();
+hashmap<string,double> lsub_pagella_italic_table ();
+hashmap<string,double> lsup_pagella_italic_table ();
+hashmap<string,double> rsub_pagella_italic_table ();
+hashmap<string,double> rsup_pagella_italic_table ();
+hashmap<string,double> above_pagella_italic_table ();
+hashmap<string,double> lsub_schola_italic_table ();
+hashmap<string,double> lsup_schola_italic_table ();
+hashmap<string,double> rsub_schola_italic_table ();
+hashmap<string,double> rsup_schola_italic_table ();
+hashmap<string,double> above_schola_italic_table ();
+hashmap<string,double> lsub_bonum_italic_table ();
+hashmap<string,double> lsup_bonum_italic_table ();
+hashmap<string,double> rsub_bonum_italic_table ();
+hashmap<string,double> rsup_bonum_italic_table ();
+hashmap<string,double> above_bonum_italic_table ();
+
 /******************************************************************************
 * True Type fonts
 ******************************************************************************/
@@ -216,44 +242,93 @@ unicode_font_rep::unicode_font_rep (string name,
     tex_gyre_operators ();
 
   if (starts (family, "STIX-")) {
-    global_rsub_correct= (SI) (0.04 * wfn);
-    global_rsup_correct= (SI) (0.04 * wfn);
-    lsub_correct= lsub_stix_table ();
-    lsup_correct= lsup_stix_table ();
-    rsub_correct= rsub_stix_table ();
-    rsup_correct= rsup_stix_table ();
-    above_correct= above_stix_table ();
+    if (!ends (family, "italic")) {
+      global_rsub_correct= (SI) (0.04 * wfn);
+      global_rsup_correct= (SI) (0.04 * wfn);
+      lsub_correct= lsub_stix_table ();
+      lsup_correct= lsup_stix_table ();
+      rsub_correct= rsub_stix_table ();
+      rsup_correct= rsup_stix_table ();
+      above_correct= above_stix_table ();
+    }
+    else {
+      global_rsub_correct= (SI) (0.04 * wfn);
+      global_rsup_correct= (SI) (0.04 * wfn);
+      lsub_correct= lsub_stix_italic_table ();
+      lsup_correct= lsup_stix_italic_table ();
+      rsub_correct= rsub_stix_italic_table ();
+      rsup_correct= rsup_stix_italic_table ();
+      above_correct= above_stix_italic_table ();
+    }
   }
-  else if (starts (family, "texgyretermes-")) {
-    global_rsup_correct= (SI) (0.04 * wfn);
-    lsub_correct= lsub_termes_table ();
-    lsup_correct= lsup_termes_table ();
-    rsub_correct= rsub_termes_table ();
-    rsup_correct= rsup_termes_table ();
-    above_correct= above_termes_table ();
-  }
-  else if (starts (family, "texgyrepagella-")) {
-    global_rsub_correct= (SI) (0.03 * wfn);
-    global_rsup_correct= (SI) (0.03 * wfn);
-    lsub_correct= lsub_pagella_table ();
-    lsup_correct= lsup_pagella_table ();
-    rsub_correct= rsub_pagella_table ();
-    rsup_correct= rsup_pagella_table ();
-    above_correct= above_pagella_table ();
-  }
-  else if (starts (family, "texgyreschola-")) {
-    lsub_correct= lsub_schola_table ();
-    lsup_correct= lsup_schola_table ();
-    rsub_correct= rsub_schola_table ();
-    rsup_correct= rsup_schola_table ();
-    above_correct= above_schola_table ();
-  }
-  else if (starts (family, "texgyrebonum-")) {
-    lsub_correct= lsub_bonum_table ();
-    lsup_correct= lsup_bonum_table ();
-    rsub_correct= rsub_bonum_table ();
-    rsup_correct= rsup_bonum_table ();
-    above_correct= above_bonum_table ();
+
+  else if (starts (family, "texgyre")) {
+    if (!ends (family, "italic")) {
+      if (starts (family, "texgyretermes-")) {
+        global_rsup_correct= (SI) (0.04 * wfn);
+        lsub_correct= lsub_termes_table ();
+        lsup_correct= lsup_termes_table ();
+        rsub_correct= rsub_termes_table ();
+        rsup_correct= rsup_termes_table ();
+        above_correct= above_termes_table ();
+      }
+      else if (starts (family, "texgyrepagella-")) {
+        global_rsub_correct= (SI) (0.03 * wfn);
+        global_rsup_correct= (SI) (0.03 * wfn);
+        lsub_correct= lsub_pagella_table ();
+        lsup_correct= lsup_pagella_table ();
+        rsub_correct= rsub_pagella_table ();
+        rsup_correct= rsup_pagella_table ();
+        above_correct= above_pagella_table ();
+      }
+      else if (starts (family, "texgyreschola-")) {
+        lsub_correct= lsub_schola_table ();
+        lsup_correct= lsup_schola_table ();
+        rsub_correct= rsub_schola_table ();
+        rsup_correct= rsup_schola_table ();
+        above_correct= above_schola_table ();
+      }
+      else if (starts (family, "texgyrebonum-")) {
+        lsub_correct= lsub_bonum_table ();
+        lsup_correct= lsup_bonum_table ();
+        rsub_correct= rsub_bonum_table ();
+        rsup_correct= rsup_bonum_table ();
+        above_correct= above_bonum_table ();
+      }
+    }
+    else {
+      if (starts (family, "texgyretermes-")) {
+        global_rsup_correct= (SI) (0.04 * wfn);
+        lsub_correct= lsub_termes_italic_table ();
+        lsup_correct= lsup_termes_italic_table ();
+        rsub_correct= rsub_termes_italic_table ();
+        rsup_correct= rsup_termes_italic_table ();
+        above_correct= above_termes_italic_table ();
+      }
+      else if (starts (family, "texgyrepagella-")) {
+        global_rsub_correct= (SI) (0.03 * wfn);
+        global_rsup_correct= (SI) (0.03 * wfn);
+        lsub_correct= lsub_pagella_italic_table ();
+        lsup_correct= lsup_pagella_italic_table ();
+        rsub_correct= rsub_pagella_italic_table ();
+        rsup_correct= rsup_pagella_italic_table ();
+        above_correct= above_pagella_italic_table ();
+      }
+      else if (starts (family, "texgyreschola-")) {
+        lsub_correct= lsub_schola_italic_table ();
+        lsup_correct= lsup_schola_italic_table ();
+        rsub_correct= rsub_schola_italic_table ();
+        rsup_correct= rsup_schola_italic_table ();
+        above_correct= above_schola_italic_table ();
+      }
+      else if (starts (family, "texgyrebonum-")) {
+        lsub_correct= lsub_bonum_italic_table ();
+        lsup_correct= lsup_bonum_italic_table ();
+        rsub_correct= rsub_bonum_italic_table ();
+        rsup_correct= rsup_bonum_italic_table ();
+        above_correct= above_bonum_italic_table ();
+      }
+    }
   }
 }
 
@@ -703,6 +778,9 @@ SI
 unicode_font_rep::get_lsub_correction (string s) {
   SI r= -get_left_correction (s) + global_lsub_correct;
   if (lsub_correct->contains (s)) r += (SI) (lsub_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[0]) &&
+           lsub_correct->contains (s (0, 1)))
+    r += (SI) (lsub_correct[s (0, 1)] * wfn);
   return r;
 }
 
@@ -715,6 +793,9 @@ unicode_font_rep::get_lsup_correction (string s) {
   }
   SI r= global_lsup_correct;
   if (lsup_correct->contains (s)) r += (SI) (lsup_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[0]) &&
+           lsup_correct->contains (s (0, 1)))
+    r += (SI) (lsup_correct[s (0, 1)] * wfn);
   return r;
 }
 
@@ -727,6 +808,9 @@ unicode_font_rep::get_rsub_correction (string s) {
   }
   SI r= global_rsub_correct;
   if (rsub_correct->contains (s)) r += (SI) (rsub_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[N(s)-1]) &&
+           rsub_correct->contains (s (N(s)-1, N(s))))
+    r += (SI) (rsub_correct[s (N(s)-1, N(s))] * wfn);
   return r;
 }
 
@@ -735,6 +819,9 @@ unicode_font_rep::get_rsup_correction (string s) {
   //cout << "Check " << s << ", " << rsup_correct[s] << ", " << this->res_name << LF;
   SI r= get_right_correction (s) + global_rsup_correct;
   if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[N(s)-1]) &&
+           rsup_correct->contains (s (N(s)-1, N(s))))
+    r += (SI) (rsup_correct[s (N(s)-1, N(s))] * wfn);
   return r;
 }
 

@@ -47,28 +47,6 @@ lsub_adjust_bonum (hashmap<string,double>& t) {
 
 void
 lsup_adjust_bonum (hashmap<string,double>& t) {
-  adjust_pair (t, "a", -0.02);
-  adjust_pair (t, "b", 0.02);
-  adjust_pair (t, "c", -0.02);
-  adjust_pair (t, "d", -0.02);
-  adjust_pair (t, "e", -0.03);
-  adjust_pair (t, "g", -0.02);
-  adjust_pair (t, "h", 0.04);
-  adjust_pair (t, "o", -0.02);
-  adjust_pair (t, "q", -0.03);
-  adjust_pair (t, "B", 0.02);
-  adjust_pair (t, "D", 0.02);
-  adjust_pair (t, "E", 0.02);
-  adjust_pair (t, "F", 0.02);
-  adjust_pair (t, "H", 0.02);
-  adjust_pair (t, "I", 0.02);
-  adjust_pair (t, "K", 0.02);
-  adjust_pair (t, "L", 0.02);
-  adjust_pair (t, "M", 0.02);
-  adjust_pair (t, "N", 0.02);
-  adjust_pair (t, "P", 0.02);
-  adjust_pair (t, "R", 0.02);
-  adjust_pair (t, "U", 0.02);
   adjust_pair (t, "<alpha>", -0.02);
   adjust_pair (t, "<beta>", -0.02);
   adjust_pair (t, "<delta>", -0.02);
@@ -109,40 +87,6 @@ rsub_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "4", 0.02);
   adjust_pair (t, "7", -0.08);
   adjust_pair (t, "|", 0.05);
-  for (char c= 'A'; c <= 'Z'; c++)
-    adjust_pair (t, string (c), 0.03);
-  for (char c= 'a'; c <= 'z'; c++)
-    adjust_pair (t, string (c), 0.03);
-  adjust_pair (t, "A", 0.02);
-  adjust_pair (t, "E", 0.01);
-  adjust_pair (t, "F", -0.03);
-  adjust_pair (t, "G", 0.02);
-  adjust_pair (t, "K", 0.03);
-  adjust_pair (t, "L", 0.05);
-  adjust_pair (t, "S", 0.02);
-  adjust_pair (t, "T", -0.03);
-  adjust_pair (t, "U", -0.02);
-  adjust_pair (t, "V", -0.04);
-  adjust_pair (t, "W", -0.04);
-  adjust_pair (t, "X", 0.03);
-  adjust_pair (t, "Y", -0.03);
-  adjust_pair (t, "Z", 0.05);
-  adjust_pair (t, "a", 0.05);
-  adjust_pair (t, "b", 0.02);
-  adjust_pair (t, "d", 0.05);
-  adjust_pair (t, "h", 0.05);
-  adjust_pair (t, "i", 0.05);
-  adjust_pair (t, "k", 0.05);
-  adjust_pair (t, "l", 0.08);
-  adjust_pair (t, "m", 0.05);
-  adjust_pair (t, "n", 0.05);
-  adjust_pair (t, "o", 0.03);
-  adjust_pair (t, "p", 0.02);
-  adjust_pair (t, "q", 0.02);
-  adjust_pair (t, "t", 0.05);
-  adjust_pair (t, "u", 0.05);
-  adjust_pair (t, "x", 0.05);
-  adjust_pair (t, "z", 0.02);
   adjust_pair (t, "<Gamma>", -0.15);
   adjust_pair (t, "<Nu>", -0.04);
   adjust_pair (t, "<Rho>", -0.08);
@@ -218,46 +162,6 @@ rsup_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "1", -0.05);
   adjust_pair (t, "|", 0.05);
   adjust_pair (t, "\\", -0.05);
-  for (char c= 'A'; c <= 'Z'; c++)
-    adjust_pair (t, string (c), 0.03);
-  for (char c= 'a'; c <= 'z'; c++)
-    adjust_pair (t, string (c), 0.05);
-  adjust_pair (t, "B", 0.05);
-  adjust_pair (t, "C", 0.02);
-  adjust_pair (t, "D", 0.05);
-  adjust_pair (t, "E", 0.02);
-  adjust_pair (t, "F", 0.02);
-  adjust_pair (t, "G", 0.02);
-  adjust_pair (t, "I", 0.02);
-  adjust_pair (t, "K", 0.02);
-  adjust_pair (t, "L", -0.07);
-  adjust_pair (t, "O", 0.05);
-  adjust_pair (t, "R", 0.02);
-  adjust_pair (t, "S", 0.05);
-  adjust_pair (t, "T", 0.02);
-  adjust_pair (t, "U", 0.02);
-  adjust_pair (t, "V", 0.02);
-  adjust_pair (t, "W", 0.02);
-  adjust_pair (t, "X", 0.02);
-  adjust_pair (t, "Y", 0.02);
-  adjust_pair (t, "a", -0.03);
-  adjust_pair (t, "f", 0.02);
-  adjust_pair (t, "g", 0.02);
-  adjust_pair (t, "h", -0.03);
-  adjust_pair (t, "i", 0.02);
-  adjust_pair (t, "j", 0.04);
-  adjust_pair (t, "l", 0.03);
-  adjust_pair (t, "m", -0.03);
-  adjust_pair (t, "n", -0.04);
-  adjust_pair (t, "q", 0.02);
-  adjust_pair (t, "r", 0.02);
-  adjust_pair (t, "s", 0.02);
-  adjust_pair (t, "t", 0.02);
-  adjust_pair (t, "u", -0.03);
-  adjust_pair (t, "v", 0.02);
-  adjust_pair (t, "w", 0.02);
-  adjust_pair (t, "x", 0.02);
-  adjust_pair (t, "y", 0.02);
   adjust_pair (t, "<Chi>", -0.03);
   adjust_char (t, "<#1D706>", -0.12);
   adjust_char (t, "<b-lambda>", -0.12);
@@ -454,4 +358,202 @@ above_bonum_table () {
     above_adjust_bonum (above_bonum);
   }
   return above_bonum;
+}
+
+/******************************************************************************
+* Table initialization
+******************************************************************************/
+
+void
+lsub_adjust_bonum_italic (hashmap<string,double>& t) {
+}
+
+void
+lsup_adjust_bonum_italic (hashmap<string,double>& t) {
+  adjust_pair (t, "a", -0.02);
+  adjust_pair (t, "b", 0.02);
+  adjust_pair (t, "c", -0.02);
+  adjust_pair (t, "d", -0.02);
+  adjust_pair (t, "e", -0.03);
+  adjust_pair (t, "g", -0.02);
+  adjust_pair (t, "h", 0.04);
+  adjust_pair (t, "o", -0.02);
+  adjust_pair (t, "q", -0.03);
+  adjust_pair (t, "B", 0.02);
+  adjust_pair (t, "D", 0.02);
+  adjust_pair (t, "E", 0.02);
+  adjust_pair (t, "F", 0.02);
+  adjust_pair (t, "H", 0.02);
+  adjust_pair (t, "I", 0.02);
+  adjust_pair (t, "K", 0.02);
+  adjust_pair (t, "L", 0.02);
+  adjust_pair (t, "M", 0.02);
+  adjust_pair (t, "N", 0.02);
+  adjust_pair (t, "P", 0.02);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "U", 0.02);
+}
+
+void
+rsub_adjust_bonum_italic (hashmap<string,double>& t) {
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, string (c), 0.03);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), 0.03);
+  adjust_pair (t, "A", 0.02);
+  adjust_pair (t, "E", 0.01);
+  adjust_pair (t, "F", -0.03);
+  adjust_pair (t, "G", 0.02);
+  adjust_pair (t, "K", 0.03);
+  adjust_pair (t, "L", 0.05);
+  adjust_pair (t, "S", 0.02);
+  adjust_pair (t, "T", -0.03);
+  adjust_pair (t, "U", -0.02);
+  adjust_pair (t, "V", -0.04);
+  adjust_pair (t, "W", -0.04);
+  adjust_pair (t, "X", 0.03);
+  adjust_pair (t, "Y", -0.03);
+  adjust_pair (t, "Z", 0.05);
+  adjust_pair (t, "a", 0.05);
+  adjust_pair (t, "b", 0.02);
+  adjust_pair (t, "d", 0.05);
+  adjust_pair (t, "h", 0.05);
+  adjust_pair (t, "i", 0.05);
+  adjust_pair (t, "k", 0.05);
+  adjust_pair (t, "l", 0.08);
+  adjust_pair (t, "m", 0.05);
+  adjust_pair (t, "n", 0.05);
+  adjust_pair (t, "o", 0.03);
+  adjust_pair (t, "p", 0.02);
+  adjust_pair (t, "q", 0.02);
+  adjust_pair (t, "t", 0.05);
+  adjust_pair (t, "u", 0.05);
+  adjust_pair (t, "x", 0.05);
+  adjust_pair (t, "z", 0.02);
+}
+
+void
+rsup_adjust_bonum_italic (hashmap<string,double>& t) {
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, string (c), 0.03);
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), 0.05);
+  adjust_pair (t, "B", 0.05);
+  adjust_pair (t, "C", 0.02);
+  adjust_pair (t, "D", 0.05);
+  adjust_pair (t, "E", 0.02);
+  adjust_pair (t, "F", 0.02);
+  adjust_pair (t, "G", 0.02);
+  adjust_pair (t, "I", 0.02);
+  adjust_pair (t, "K", 0.02);
+  adjust_pair (t, "L", -0.07);
+  adjust_pair (t, "O", 0.05);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "S", 0.05);
+  adjust_pair (t, "T", 0.02);
+  adjust_pair (t, "U", 0.02);
+  adjust_pair (t, "V", 0.02);
+  adjust_pair (t, "W", 0.02);
+  adjust_pair (t, "X", 0.02);
+  adjust_pair (t, "Y", 0.02);
+  adjust_pair (t, "a", -0.03);
+  adjust_pair (t, "f", 0.02);
+  adjust_pair (t, "g", 0.02);
+  adjust_pair (t, "h", -0.03);
+  adjust_pair (t, "i", 0.02);
+  adjust_pair (t, "j", 0.04);
+  adjust_pair (t, "l", 0.03);
+  adjust_pair (t, "m", -0.03);
+  adjust_pair (t, "n", -0.04);
+  adjust_pair (t, "q", 0.02);
+  adjust_pair (t, "r", 0.02);
+  adjust_pair (t, "s", 0.02);
+  adjust_pair (t, "t", 0.02);
+  adjust_pair (t, "u", -0.03);
+  adjust_pair (t, "v", 0.02);
+  adjust_pair (t, "w", 0.02);
+  adjust_pair (t, "x", 0.02);
+  adjust_pair (t, "y", 0.02);
+}
+
+void
+above_adjust_bonum_italic (hashmap<string,double>& t) {
+  adjust_pair (t, "b", -0.04);
+  adjust_pair (t, "d", 0.04);
+  adjust_pair (t, "f", -0.06);
+  adjust_pair (t, "h", -0.04);
+  adjust_pair (t, "k", -0.02);
+  adjust_pair (t, "m", -0.02);
+  adjust_pair (t, "n", -0.02);
+  adjust_pair (t, "t", -0.02);
+  adjust_pair (t, "u", -0.02);
+  adjust_pair (t, "v", -0.02);
+  adjust_pair (t, "x", -0.04);
+  adjust_pair (t, "z", -0.02);
+  adjust_pair (t, "A", 0.1);
+  adjust_pair (t, "F", -0.04);
+  adjust_pair (t, "J", 0.1);
+  adjust_pair (t, "K", -0.04);
+  adjust_pair (t, "L", 0.02);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "S", -0.02);
+  adjust_pair (t, "T", -0.06);
+  adjust_pair (t, "V", -0.06);
+  adjust_pair (t, "W", -0.08);
+  adjust_pair (t, "X", -0.06);
+  adjust_pair (t, "Y", -0.06);
+}
+
+/******************************************************************************
+* Interface
+******************************************************************************/
+
+static hashmap<string,double> lsub_bonum_italic (0.0);
+static hashmap<string,double> lsup_bonum_italic (0.0);
+static hashmap<string,double> rsub_bonum_italic (0.0);
+static hashmap<string,double> rsup_bonum_italic (0.0);
+static hashmap<string,double> above_bonum_italic (0.0);
+
+hashmap<string,double>
+lsub_bonum_italic_table () {
+  if (N (lsub_bonum_italic) == 0) {
+    lsub_adjust_std (lsub_bonum_italic);
+    lsub_adjust_bonum_italic (lsub_bonum_italic);
+  }
+  return lsub_bonum_italic;
+}
+
+hashmap<string,double>
+lsup_bonum_italic_table () {
+  if (N (lsup_bonum_italic) == 0) {
+    lsup_adjust_std (lsup_bonum_italic);
+    lsup_adjust_bonum_italic (lsup_bonum_italic);
+  }
+  return lsup_bonum_italic;
+}
+
+hashmap<string,double>
+rsub_bonum_italic_table () {
+  if (N (rsub_bonum_italic) == 0) {
+    rsub_adjust_std (rsub_bonum_italic);
+    rsub_adjust_bonum_italic (rsub_bonum_italic);
+  }
+  return rsub_bonum_italic;
+}
+
+hashmap<string,double>
+rsup_bonum_italic_table () {
+  if (N (rsup_bonum_italic) == 0) {
+    rsup_adjust_std (rsup_bonum_italic);
+    rsup_adjust_bonum_italic (rsup_bonum_italic);
+  }
+  return rsup_bonum_italic;
+}
+
+hashmap<string,double>
+above_bonum_italic_table () {
+  if (N (above_bonum_italic) == 0) {
+    above_adjust_bonum_italic (above_bonum_italic);
+  }
+  return above_bonum_italic;
 }

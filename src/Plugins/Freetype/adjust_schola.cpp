@@ -17,15 +17,6 @@
 
 void
 lsub_adjust_schola (hashmap<string,double>& t) {
-  for (char c= 'a'; c <= 'z'; c++)
-    adjust_pair (t, string (c), -0.03);
-  adjust_pair (t, "f", -0.02);
-  adjust_pair (t, "i", -0.02);
-  adjust_pair (t, "j", 0.03);
-  adjust_pair (t, "k", -0.02);
-  adjust_pair (t, "l", -0.02);
-  adjust_pair (t, "p", 0.05);
-  adjust_pair (t, "z", -0.02);
   adjust_pair (t, "<theta>", -0.03);
   adjust_pair (t, "<Alpha", 0.05);
   adjust_pair (t, "<Lambda", 0.05);
@@ -48,34 +39,6 @@ lsub_adjust_schola (hashmap<string,double>& t) {
 
 void
 lsup_adjust_schola (hashmap<string,double>& t) {
-  for (char c= 'a'; c <= 'z'; c++)
-    adjust_pair (t, string (c), -0.03);
-  adjust_pair (t, "a", -0.02);
-  adjust_pair (t, "b", 0.04);
-  adjust_pair (t, "c", -0.02);
-  adjust_pair (t, "d", -0.02);
-  adjust_pair (t, "e", -0.03);
-  adjust_pair (t, "g", -0.01);
-  adjust_pair (t, "h", 0.04);
-  adjust_pair (t, "j", 0.02);
-  adjust_pair (t, "k", 0.02);
-  adjust_pair (t, "l", 0.02);
-  adjust_pair (t, "o", -0.02);
-  adjust_pair (t, "q", -0.02);
-  adjust_pair (t, "s", 0.02);
-  adjust_pair (t, "B", 0.02);
-  adjust_pair (t, "D", 0.02);
-  adjust_pair (t, "E", 0.02);
-  adjust_pair (t, "F", 0.02);
-  adjust_pair (t, "H", 0.02);
-  adjust_pair (t, "I", 0.02);
-  adjust_pair (t, "K", 0.02);
-  adjust_pair (t, "L", 0.02);
-  adjust_pair (t, "M", 0.02);
-  adjust_pair (t, "N", 0.02);
-  adjust_pair (t, "P", 0.02);
-  adjust_pair (t, "R", 0.02);
-  adjust_pair (t, "U", 0.02);
   adjust_pair (t, "<alpha>", 0.02);
   adjust_pair (t, "<beta>", 0.02);
   adjust_pair (t, "<delta>", 0.05);
@@ -125,23 +88,6 @@ rsub_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "/", -0.05);
   adjust_pair (t, "1", 0.02);
   adjust_pair (t, "4", 0.02);
-  adjust_pair (t, "A", 0.03);
-  adjust_pair (t, "D", -0.05);
-  adjust_pair (t, "F", -0.05);
-  adjust_pair (t, "G", 0.02);
-  adjust_pair (t, "J", -0.02);
-  adjust_pair (t, "K", 0.02);
-  adjust_pair (t, "N", -0.05);
-  adjust_pair (t, "O", -0.02);
-  adjust_pair (t, "P", -0.03);
-  adjust_pair (t, "Q", 0.02);
-  adjust_pair (t, "U", -0.03);
-  adjust_pair (t, "V", -0.03);
-  adjust_pair (t, "W", -0.03);
-  adjust_pair (t, "X", 0.03);
-  adjust_pair (t, "e", 0.01);
-  adjust_pair (t, "f", -0.01);
-  adjust_pair (t, "l", 0.01);
   adjust_pair (t, "<Gamma>", -0.05);
   adjust_pair (t, "<Theta>", -0.02);
   adjust_pair (t, "<Nu>", -0.02);
@@ -205,34 +151,6 @@ rsup_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "9", 0.05);
   adjust_pair (t, "\\", -0.05);
   adjust_pair (t, "|", 0.05);
-  adjust_pair (t, "A", -0.05);
-  adjust_pair (t, "C", 0.03);
-  adjust_pair (t, "D", 0.02);
-  adjust_pair (t, "G", 0.02);
-  adjust_pair (t, "J", 0.02);
-  adjust_pair (t, "M", 0.03);
-  adjust_pair (t, "P", 0.03);
-  adjust_pair (t, "Q", 0.02);
-  adjust_pair (t, "V", 0.02);
-  adjust_pair (t, "X", 0.01);
-  adjust_pair (t, "Y", 0.01);
-  adjust_pair (t, "Z", 0.03);
-  adjust_pair (t, "f", 0.02);
-  adjust_pair (t, "g", 0.03);
-  adjust_pair (t, "h", -0.03);
-  adjust_pair (t, "i", 0.02);
-  adjust_pair (t, "j", 0.03);
-  adjust_pair (t, "l", 0.03);
-  adjust_pair (t, "m", -0.02);
-  adjust_pair (t, "n", -0.02);
-  adjust_pair (t, "o", 0.01);
-  adjust_pair (t, "q", 0.02);
-  adjust_pair (t, "r", 0.03);
-  adjust_pair (t, "s", 0.02);
-  adjust_pair (t, "t", 0.02);
-  adjust_pair (t, "x", 0.01);
-  adjust_pair (t, "y", 0.01);
-  adjust_pair (t, "z", 0.01);
   adjust_char (t, "<b-A>", 0.02);
   adjust_char (t, "<b-L>", 0.02);
   adjust_pair (t, "<Alpha>", -0.05);
@@ -464,4 +382,187 @@ above_schola_table () {
     above_adjust_schola (above_schola);
   }
   return above_schola;
+}
+
+/******************************************************************************
+* Table initialization
+******************************************************************************/
+
+void
+lsub_adjust_schola_italic (hashmap<string,double>& t) {
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), -0.03);
+  adjust_pair (t, "f", -0.02);
+  adjust_pair (t, "i", -0.02);
+  adjust_pair (t, "j", 0.03);
+  adjust_pair (t, "k", -0.02);
+  adjust_pair (t, "l", -0.02);
+  adjust_pair (t, "p", 0.05);
+  adjust_pair (t, "z", -0.02);
+}
+
+void
+lsup_adjust_schola_italic (hashmap<string,double>& t) {
+  for (char c= 'a'; c <= 'z'; c++)
+    adjust_pair (t, string (c), -0.03);
+  adjust_pair (t, "a", -0.02);
+  adjust_pair (t, "b", 0.04);
+  adjust_pair (t, "c", -0.02);
+  adjust_pair (t, "d", -0.02);
+  adjust_pair (t, "e", -0.03);
+  adjust_pair (t, "g", -0.01);
+  adjust_pair (t, "h", 0.04);
+  adjust_pair (t, "j", 0.02);
+  adjust_pair (t, "k", 0.02);
+  adjust_pair (t, "l", 0.02);
+  adjust_pair (t, "o", -0.02);
+  adjust_pair (t, "q", -0.02);
+  adjust_pair (t, "s", 0.02);
+  adjust_pair (t, "B", 0.02);
+  adjust_pair (t, "D", 0.02);
+  adjust_pair (t, "E", 0.02);
+  adjust_pair (t, "F", 0.02);
+  adjust_pair (t, "H", 0.02);
+  adjust_pair (t, "I", 0.02);
+  adjust_pair (t, "K", 0.02);
+  adjust_pair (t, "L", 0.02);
+  adjust_pair (t, "M", 0.02);
+  adjust_pair (t, "N", 0.02);
+  adjust_pair (t, "P", 0.02);
+  adjust_pair (t, "R", 0.02);
+  adjust_pair (t, "U", 0.02);
+}
+
+void
+rsub_adjust_schola_italic (hashmap<string,double>& t) {
+  adjust_pair (t, "A", 0.03);
+  adjust_pair (t, "D", -0.05);
+  adjust_pair (t, "F", -0.05);
+  adjust_pair (t, "G", 0.02);
+  adjust_pair (t, "J", -0.02);
+  adjust_pair (t, "K", 0.02);
+  adjust_pair (t, "N", -0.05);
+  adjust_pair (t, "O", -0.02);
+  adjust_pair (t, "P", -0.03);
+  adjust_pair (t, "Q", 0.02);
+  adjust_pair (t, "U", -0.03);
+  adjust_pair (t, "V", -0.03);
+  adjust_pair (t, "W", -0.03);
+  adjust_pair (t, "X", 0.03);
+  adjust_pair (t, "e", 0.01);
+  adjust_pair (t, "f", -0.01);
+  adjust_pair (t, "l", 0.01);
+}
+
+void
+rsup_adjust_schola_italic (hashmap<string,double>& t) {
+  adjust_pair (t, "A", -0.05);
+  adjust_pair (t, "C", 0.03);
+  adjust_pair (t, "D", 0.02);
+  adjust_pair (t, "G", 0.02);
+  adjust_pair (t, "J", 0.02);
+  adjust_pair (t, "M", 0.03);
+  adjust_pair (t, "P", 0.03);
+  adjust_pair (t, "Q", 0.02);
+  adjust_pair (t, "V", 0.02);
+  adjust_pair (t, "X", 0.01);
+  adjust_pair (t, "Y", 0.01);
+  adjust_pair (t, "Z", 0.03);
+  adjust_pair (t, "f", 0.02);
+  adjust_pair (t, "g", 0.03);
+  adjust_pair (t, "h", -0.03);
+  adjust_pair (t, "i", 0.02);
+  adjust_pair (t, "j", 0.03);
+  adjust_pair (t, "l", 0.03);
+  adjust_pair (t, "m", -0.02);
+  adjust_pair (t, "n", -0.02);
+  adjust_pair (t, "o", 0.01);
+  adjust_pair (t, "q", 0.02);
+  adjust_pair (t, "r", 0.03);
+  adjust_pair (t, "s", 0.02);
+  adjust_pair (t, "t", 0.02);
+  adjust_pair (t, "x", 0.01);
+  adjust_pair (t, "y", 0.01);
+  adjust_pair (t, "z", 0.01);
+  adjust_char (t, "<b-A>", 0.02);
+  adjust_char (t, "<b-L>", 0.02);
+}
+
+void
+above_adjust_schola_italic (hashmap<string,double>& t) {
+  adjust_pair (t, "c", 0.02);
+  adjust_pair (t, "d", 0.1);
+  adjust_pair (t, "e", 0.02);
+  adjust_pair (t, "l", 0.04);
+  adjust_pair (t, "m", 0.04);
+  adjust_pair (t, "n", 0.02);
+  adjust_pair (t, "t", 0.02);
+  adjust_pair (t, "w", 0.02);
+  for (char c= 'A'; c <= 'Z'; c++)
+    adjust_pair (t, string (c), 0.04);
+  adjust_pair (t, "A", 0.1);
+  adjust_pair (t, "I", -0.02);
+  adjust_pair (t, "J", 0.06);
+  adjust_pair (t, "N", -0.02);
+  adjust_pair (t, "O", 0.02);
+  adjust_pair (t, "T", 0.04);
+  adjust_pair (t, "U", -0.02);
+  adjust_pair (t, "V", -0.04);
+  adjust_pair (t, "W", -0.06);
+  adjust_pair (t, "X", -0.02);
+  adjust_pair (t, "Y", -0.04);
+}
+
+/******************************************************************************
+* Interface
+******************************************************************************/
+
+static hashmap<string,double> lsub_schola_italic (0.0);
+static hashmap<string,double> lsup_schola_italic (0.0);
+static hashmap<string,double> rsub_schola_italic (0.0);
+static hashmap<string,double> rsup_schola_italic (0.0);
+static hashmap<string,double> above_schola_italic (0.0);
+
+hashmap<string,double>
+lsub_schola_italic_table () {
+  if (N (lsub_schola_italic) == 0) {
+    lsub_adjust_std (lsub_schola_italic);
+    lsub_adjust_schola_italic (lsub_schola_italic);
+  }
+  return lsub_schola_italic;
+}
+
+hashmap<string,double>
+lsup_schola_italic_table () {
+  if (N (lsup_schola_italic) == 0) {
+    lsup_adjust_std (lsup_schola_italic);
+    lsup_adjust_schola_italic (lsup_schola_italic);
+  }
+  return lsup_schola_italic;
+}
+
+hashmap<string,double>
+rsub_schola_italic_table () {
+  if (N (rsub_schola_italic) == 0) {
+    rsub_adjust_std (rsub_schola_italic);
+    rsub_adjust_schola_italic (rsub_schola_italic);
+  }
+  return rsub_schola_italic;
+}
+
+hashmap<string,double>
+rsup_schola_italic_table () {
+  if (N (rsup_schola_italic) == 0) {
+    rsup_adjust_std (rsup_schola_italic);
+    rsup_adjust_schola_italic (rsup_schola_italic);
+  }
+  return rsup_schola_italic;
+}
+
+hashmap<string,double>
+above_schola_italic_table () {
+  if (N (above_schola_italic) == 0) {
+    above_adjust_schola_italic (above_schola_italic);
+  }
+  return above_schola_italic;
 }

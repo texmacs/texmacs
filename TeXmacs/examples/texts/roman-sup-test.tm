@@ -114,27 +114,27 @@
   \;
 
   <\equation*>
-    R<rsup|aa>+R<rsup|bb>+R<rsup|cc>+R<rsup|dd>+R<rsup|ee>+R<rsup|ff>+R<rsup|gg>+R<rsup|hh>+R<rsup|ii>+R<rsup|jj>
+    X<rsup|aa>+X<rsup|bb>+X<rsup|cc>+X<rsup|dd>+X<rsup|ee>+X<rsup|ff>+X<rsup|gg>+X<rsup|hh>+X<rsup|ii>+X<rsup|jj>
   </equation*>
 
   <\equation*>
-    R<rsup|kk>+R<rsup|ll>+R<rsup|mm>+R<rsup|nn>+R<rsup|oo>+R<rsup|pp>+R<rsup|qq>+R<rsup|rr>+R<rsup|ss>+R<rsup|tt>
+    X<rsup|kk>+X<rsup|ll>+X<rsup|mm>+X<rsup|nn>+X<rsup|oo>+X<rsup|pp>+X<rsup|qq>+X<rsup|rr>+X<rsup|ss>+X<rsup|tt>
   </equation*>
 
   <\equation*>
-    R<rsup|uu>+R<rsup|vv>+R<rsup|ww>+R<rsup|xx>+R<rsup|yy>+R<rsup|zz>
+    X<rsup|uu>+X<rsup|vv>+X<rsup|ww>+X<rsup|xx>+X<rsup|yy>+X<rsup|zz>
   </equation*>
 
   <\equation*>
-    R<rsup|AA>+R<rsup|BB>+R<rsup|CC>+R<rsup|DD>+R<rsup|EE>+R<rsup|FF>+R<rsup|GG>+R<rsup|HH>+R<rsup|II>+R<rsup|JJ>
+    X<rsup|AA>+X<rsup|BB>+X<rsup|CC>+X<rsup|DD>+X<rsup|EE>+X<rsup|FF>+X<rsup|GG>+X<rsup|HH>+X<rsup|II>+X<rsup|JJ>
   </equation*>
 
   <\equation*>
-    R<rsup|KK>+R<rsup|LL>+R<rsup|MM>+R<rsup|NN>+R<rsup|OO>+R<rsup|PP>+R<rsup|QQ>+R<rsup|RR>+R<rsup|SS>+R<rsup|TT>
+    X<rsup|KK>+X<rsup|LL>+X<rsup|MM>+X<rsup|NN>+X<rsup|OO>+X<rsup|PP>+X<rsup|QQ>+X<rsup|RR>+X<rsup|SS>+X<rsup|TT>
   </equation*>
 
   <\equation*>
-    R<rsup|UU>+R<rsup|VV>+R<rsup|WW>+R<rsup|XX>+R<rsup|YY>+R<rsup|ZZ>
+    X<rsup|UU>+X<rsup|VV>+X<rsup|WW>+X<rsup|XX>+X<rsup|YY>+X<rsup|ZZ>
   </equation*>
 
   <\session|scheme|default>
@@ -164,5 +164,9 @@
   </session>
 </body>
 
-<initial|<\collection>
-</collection>>
+<\initial>
+  <\collection>
+    <associate|font|stix>
+    <associate|math-font|math-stix>
+  </collection>
+</initial>
