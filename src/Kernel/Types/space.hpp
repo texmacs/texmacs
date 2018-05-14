@@ -44,7 +44,9 @@ space copy (space spc);
 space operator + (space spc1, space spc2);
 space operator - (space spc1, space spc2);
 space operator * (int i, space spc);
+space operator * (double x, space spc);
 space operator / (space spc, int i);
+space operator / (space spc, double x);
 space max (space spc1, space spc2);
 
 #endif // defined SPACE_H

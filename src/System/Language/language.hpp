@@ -53,6 +53,7 @@ RESOURCE(language);
 #define SPC_CJK_NORMAL        9
 #define SPC_CJK_PERIOD       10
 #define SPC_CJK_WIDE_PERIOD  11
+#define SPC_END_MARKER       12
 
 #define HYPH_STD       10000
 #define HYPH_PANIC     1000000

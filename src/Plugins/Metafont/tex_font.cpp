@@ -122,6 +122,7 @@ tex_font_rep::tex_font_rep (string name, int status2,
   extra        = conv (tfm->spc_extra ());
   extra->min   = extra->min >> 1;
   extra->max   = extra->min << 1;
+  math_spc     = spc;
   sep          = ((((dpi*PIXEL)/72)*design_size) >> 8) / 10;
   exec         = !ends (family, "tt");
 

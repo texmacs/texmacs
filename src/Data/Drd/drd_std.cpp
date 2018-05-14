@@ -941,6 +941,7 @@ init_std_drd () {
   init_var (VISITED_COLOR, TYPE_COLOR);
   init_var (NO_PATTERNS, TYPE_COLOR);
   init_var (LANGUAGE, TYPE_STRING);
+  init_var (SPACING_POLICY, TYPE_ADHOC);
   init_var (ATOM_DECORATIONS, TYPE_ADHOC);
   init_var (LINE_DECORATIONS, TYPE_ADHOC);
   init_var (PAGE_DECORATIONS, TYPE_ADHOC);

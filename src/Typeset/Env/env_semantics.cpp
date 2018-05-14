@@ -46,6 +46,7 @@ initialize_default_var_type () {
   var_type (OPACITY)            = Env_Color;
   var_type (NO_PATTERNS)        = Env_Pattern_Mode;
   var_type (LANGUAGE)           = Env_Language;
+  var_type (SPACING_POLICY)     = Env_Spacing;
 
   var_type (MATH_LANGUAGE)      = Env_Language;
   var_type (MATH_FONT)          = Env_Font;
@@ -803,6 +804,7 @@ edit_env_rep::update () {
   math_condensed = get_bool (MATH_CONDENSED);
   vert_pos       = get_int (MATH_VPOS);
   preamble       = get_bool (PREAMBLE);
+  spacing_policy = get_spacing_id (env[SPACING_POLICY]);
 
   update_mode ();
   update_info_level ();
@@ -903,6 +905,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Pattern_Mode:
     update_pattern_mode ();
+    break;
+  case Env_Spacing:
+    spacing_policy= get_spacing_id (env[SPACING_POLICY]);
     break;
   case Env_Paragraph:
     break;

@@ -50,6 +50,7 @@ extern string LOCUS_COLOR;
 extern string VISITED_COLOR;
 extern string NO_PATTERNS;
 extern string LANGUAGE;
+extern string SPACING_POLICY;
 extern string ATOM_DECORATIONS;
 extern string LINE_DECORATIONS;
 extern string PAGE_DECORATIONS;

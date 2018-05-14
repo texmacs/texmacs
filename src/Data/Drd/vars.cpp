@@ -52,6 +52,7 @@ string LOCUS_COLOR ("locus-color");
 string VISITED_COLOR ("visited-color");
 string NO_PATTERNS ("no-patterns");
 string LANGUAGE ("language");
+string SPACING_POLICY ("spacing-policy");
 string ATOM_DECORATIONS ("atom-decorations");
 string LINE_DECORATIONS ("line-decorations");
 string PAGE_DECORATIONS ("page-decorations");

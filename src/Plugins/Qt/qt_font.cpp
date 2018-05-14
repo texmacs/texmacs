@@ -66,9 +66,10 @@ qt_font_rep::qt_font_rep (string name, string family2, int size2, int dpi2):
 
   // get space length
   get_extents (" ", ex);
-  spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (ex->x2-ex->x1)<<1);
-  extra= spc;
-  sep  = wfn/10;
+  spc= space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (ex->x2-ex->x1)<<1);
+  extra   = spc;
+  math_spc= spc;
+  sep     = wfn/10;
 
   // get_italic space
   get_extents ("f", ex);

@@ -91,8 +91,18 @@ operator * (int i, space spc) {
 }
 
 space
+operator * (double x, space spc) {
+  return space ((SI) (x*spc->min), (SI) (x*spc->def), (SI) (x*spc->max));
+}
+
+space
 operator / (space spc, int i) {
   return space (spc->min/i, spc->def/i, spc->max/i);
+}
+
+space
+operator / (space spc, double x) {
+  return space ((SI) (spc->min/x), (SI) (spc->def/x), (SI) (spc->max/x));
 }
 
 space
