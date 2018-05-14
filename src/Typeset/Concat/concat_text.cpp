@@ -46,90 +46,13 @@ concater_rep::typeset_colored_substring
 }
 
 #define PRINT_SPACE(spc_type) \
-  switch (spc_type) { \
-  case SPC_NONE: \
-    break; \
-  case SPC_THIN_SPACE: \
-    print ((6 * spc) / 10); \
-    break; \
-  case SPC_SPACE: \
-    print (spc); \
-    break; \
-  case SPC_DSPACE: \
-    print (space (spc->min << 1, spc->def << 1, spc->max << 1)); \
-    break; \
-  case SPC_PERIOD: \
-    print (spc+ extra); \
-    break; \
-  case SPC_TINY: \
-    print (space (spc->min>>2, spc->def>>2, spc->max>>2)); \
-    break; \
-  case SPC_HALF: \
-    print (space (spc->min>>1, spc->def>>2, spc->max>>1)); \
-    break; \
-  case SPC_OPERATOR: \
-    print (space (spc->min>>1, spc->def>>1, spc->max)); \
-    break; \
-  case SPC_BIGOP: \
-    print (spc); \
-    break; \
-  case SPC_CJK_NORMAL: \
-    print (space (-(spc->min>>5), 0, spc->max>>5)); \
-    break; \
-  case SPC_CJK_PERIOD: \
-    print (space (-(spc->min>>2), 0, spc->max>>1)); \
-    break; \
-  case SPC_CJK_WIDE_PERIOD: \
-    print (spc + extra); \
-    break; \
-  }
-
-#define PRINT_CONDENSED_SPACE(spc_type) \
-  switch (spc_type) { \
-  case SPC_NONE: \
-    break; \
-  case SPC_THIN_SPACE: \
-    print ((6 * spc) / 10); \
-    break; \
-  case SPC_SPACE: \
-    print (spc); \
-    break; \
-  case SPC_PERIOD: \
-    print (spc+ extra); \
-    break; \
-  case SPC_TINY: \
-    print (space (spc->min>>4, spc->def>>4, spc->max>>4)); \
-    break; \
-  case SPC_HALF: \
-    print (space (spc->min>>3, spc->def>>4, spc->max>>3)); \
-    break; \
-  case SPC_OPERATOR: \
-    print (space (spc->min>>3, spc->def>>3, spc->max>>2)); \
-    break; \
-  case SPC_BIGOP: \
-    print (space (spc->min>>2, spc->def>>2, spc->max>>2)); \
-    break; \
-  case SPC_CJK_NORMAL: \
-    print (space (-(spc->min>>5), 0, spc->max>>5)); \
-    break; \
-  case SPC_CJK_PERIOD: \
-    print (space (-(spc->min>>2), 0, spc->max>>1)); \
-    break; \
-  case SPC_CJK_WIDE_PERIOD: \
-    print (spc + extra); \
-    break; \
-  }
-
-#define NEW_PRINT_SPACE(spc_type) \
   if (spc_type != SPC_NONE) print (spc_tab[spc_type]);
 
 void
 concater_rep::typeset_text_string (tree t, path ip, int pos, int end) {
+  array<space> spc_tab= env->fn->get_normal_spacing (env->spacing_policy);
   string s= t->label;
   int    start;
-  //space  spc= env->fn->spc;
-  //space  extra= env->fn->extra;
-  array<space> spc_tab= env->fn->get_normal_spacing (env->spacing_policy);
 
   do {
     start= pos;
@@ -138,35 +61,28 @@ concater_rep::typeset_text_string (tree t, path ip, int pos, int end) {
     if ((pos > start) && (s[start] == ' ')) { // spaces
       if (start == 0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
-      //PRINT_SPACE (tp->spc_before);
-      //PRINT_SPACE (tp->spc_after);
-      NEW_PRINT_SPACE (tp->spc_before);
-      NEW_PRINT_SPACE (tp->spc_after);
+      PRINT_SPACE (tp->spc_before);
+      PRINT_SPACE (tp->spc_after);
       if ((pos==end) || (s[pos]==' '))
 	typeset_substring ("", ip, pos);
     }
     else { // strings
       penalty_max (tp->pen_before);
-      //PRINT_SPACE (tp->spc_before)
-      NEW_PRINT_SPACE (tp->spc_before)
+      PRINT_SPACE (tp->spc_before)
       typeset_substring (s (start, pos), ip, start);
       penalty_min (tp->pen_after);
-      //PRINT_SPACE (tp->spc_after)
-      NEW_PRINT_SPACE (tp->spc_after)
+      PRINT_SPACE (tp->spc_after)
     }
   } while (pos<end);
 }
 
 void
 concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
+  array<space> spc_tab=
+    (env->math_condensed? env->fn->get_narrow_spacing (env->spacing_policy):
+                          env->fn->get_normal_spacing (env->spacing_policy));
   string s= t->label;
   int    start;
-  //space  spc= env->fn->spc;
-  //space  extra= env->fn->extra;
-  bool   condensed= env->math_condensed;
-  array<space> spc_tab=
-    (condensed? env->fn->get_narrow_spacing (env->spacing_policy):
-                env->fn->get_normal_spacing (env->spacing_policy));
 
   do {
     start= pos;
@@ -186,21 +102,15 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
       penalty_max (HYPH_INVALID);
       //penalty_min (tp->pen_after);
       if (spc_ok) {
-        //PRINT_SPACE (tp->spc_before);
-        //PRINT_SPACE (tp->spc_after);
-        NEW_PRINT_SPACE (tp->spc_before);
-        NEW_PRINT_SPACE (tp->spc_after);
+        PRINT_SPACE (tp->spc_before);
+        PRINT_SPACE (tp->spc_after);
       }
       //if ((pos==end) || (s[pos]==' '))
       typeset_math_substring ("", ip, pos, OP_APPLY);
     }
     else { // strings
       penalty_max (tp->pen_before);
-      if (spc_ok) {
-        //if (condensed) PRINT_CONDENSED_SPACE (tp->spc_before)
-        //else PRINT_SPACE (tp->spc_before)
-        NEW_PRINT_SPACE (tp->spc_before)
-      }
+      if (spc_ok) { PRINT_SPACE (tp->spc_before); }
       if (pos > start && s[start] == '*' && env->info_level >= INFO_SHORT) {
         color c = rgb_color (160, 160, 255);
         box   tb= text_box (decorate (ip), 0, "<cdot>", env->fn, c);
@@ -212,22 +122,16 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
       typeset_math_substring (s (start, pos), ip, start, tp->op_type);
       penalty_min (tp->pen_after);
       if (tp->limits != LIMITS_NONE) with_limits (tp->limits);
-      if (spc_ok) {
-        //if (condensed) PRINT_CONDENSED_SPACE (tp->spc_after)
-        //else PRINT_SPACE (tp->spc_after)
-        NEW_PRINT_SPACE (tp->spc_after)
-      }
+      if (spc_ok) { PRINT_SPACE (tp->spc_after); }
     }
   } while (pos<end);
 }
 
 void
 concater_rep::typeset_prog_string (tree t, path ip, int pos, int end) {
+  array<space> spc_tab= env->fn->get_normal_spacing (env->spacing_policy);
   string s= t->label;
   int    start;
-  //space  spc= env->fn->spc;
-  //space  extra= env->fn->extra;
-  array<space> spc_tab= env->fn->get_normal_spacing (env->spacing_policy);
 
   do {
     start= pos;
@@ -236,22 +140,18 @@ concater_rep::typeset_prog_string (tree t, path ip, int pos, int end) {
     if ((pos>start) && (s[start]==' ')) { // spaces
       if (start == 0) typeset_substring ("", ip, 0);
       penalty_min (tp->pen_after);
-      //PRINT_SPACE (tp->spc_before);
-      //PRINT_SPACE (tp->spc_after);
-      NEW_PRINT_SPACE (tp->spc_before);
-      NEW_PRINT_SPACE (tp->spc_after);
+      PRINT_SPACE (tp->spc_before);
+      PRINT_SPACE (tp->spc_after);
       if ((pos==end) || (s[pos]==' '))
 	typeset_substring ("", ip, pos);
     }
     else { // strings
       penalty_max (tp->pen_before);
-      //PRINT_SPACE (tp->spc_before)
-      NEW_PRINT_SPACE (tp->spc_before)
+      PRINT_SPACE (tp->spc_before)
       typeset_colored_substring (s (start, pos), ip, start,
 				 env->lan->get_color (t, start, pos));
       penalty_min (tp->pen_after);
-      //PRINT_SPACE (tp->spc_after)
-      NEW_PRINT_SPACE (tp->spc_after)
+      PRINT_SPACE (tp->spc_after)
     }
   } while (pos<end);
 }
@@ -298,12 +198,9 @@ concater_rep::typeset_rigid (tree t, path ip) {
 void
 concater_rep::print_semantic (box b, tree sem) {
   if (is_atomic (sem) && tm_string_length (sem->label) == 1) {
-    //space  spc= env->fn->spc;
-    //space  extra= env->fn->extra;
-    bool   condensed= env->math_condensed;
     array<space> spc_tab=
-      (condensed? env->fn->get_narrow_spacing (env->spacing_policy):
-                  env->fn->get_normal_spacing (env->spacing_policy));
+      (env->math_condensed? env->fn->get_narrow_spacing (env->spacing_policy):
+                            env->fn->get_normal_spacing (env->spacing_policy));
     int    pos= 0;
     string s= sem->label;
     text_property tp= env->lan->advance (s, pos);
@@ -314,19 +211,11 @@ concater_rep::print_semantic (box b, tree sem) {
     if ((succ_status & 1) != 0 && k > 0) a[k-1]->spc= space (0);
     bool spc_ok= (succ_status <= 1);
     penalty_max (tp->pen_before);
-    if (spc_ok) {
-      //if (condensed) PRINT_CONDENSED_SPACE (tp->spc_before)
-      //else PRINT_SPACE (tp->spc_before)
-      NEW_PRINT_SPACE (tp->spc_before)
-    }
+    if (spc_ok) { PRINT_SPACE (tp->spc_before); }
     print (STD_ITEM, tp->op_type, b);
     penalty_min (tp->pen_after);
     if (tp->limits != LIMITS_NONE) with_limits (tp->limits);
-    if (spc_ok) {
-      //if (condensed) PRINT_CONDENSED_SPACE (tp->spc_after)
-      //else PRINT_SPACE (tp->spc_after)
-      NEW_PRINT_SPACE (tp->spc_after)
-    }
+    if (spc_ok) { PRINT_SPACE (tp->spc_after); }
   }
   else print (b);  
 }
