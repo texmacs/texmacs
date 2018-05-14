@@ -1,5 +1,8 @@
 /* src/System/config.in.  Generated from configure.in by autoheader.  */
 
+/* The normal alignment of `void *', in bytes. */
+#undef ALIGNOF_VOID_P
+
 /* Enable experimental Cocoa port */
 #undef AQUATEXMACS
 
@@ -117,6 +120,9 @@
 /* Enabling Mac OSX extensions */
 #undef MACOSX_EXTENSIONS
 
+/* Max fast alloc // WORD_LENGTH more than power of 2 */
+#undef MAX_FAST
+
 /* Disable fast memory allocator */
 #undef NO_FAST_ALLOC
 
@@ -224,6 +230,15 @@
 
 /* Use C++ stack backtraces */
 #undef USE_STACK_TRACE
+
+/* Pointer size */
+#undef WORD_LENGTH
+
+/* Pointer increment */
+#undef WORD_LENGTH_INC
+
+/* Word Mask */
+#undef WORD_MASK
 
 /* Use standard X11 port */
 #undef X11TEXMACS

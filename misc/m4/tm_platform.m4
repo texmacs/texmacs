@@ -26,10 +26,6 @@ AC_DEFUN([TM_PLATFORM],[
   CONFIG_BSHARED="-Wl,-Bdynamic"
   CONFIG_BFLAGS=""
   CONFIG_BPATH="-Wl,-rpath,"
-  CONFIG_WORD_LENGTH="4"
-  CONFIG_WORD_LENGTH_INC="3"
-  CONFIG_WORD_MASK="0xfffffffc"
-  CONFIG_MAX_FAST="260 // WORD_LENGTH more than power of 2"
   CONFIG_HOST_OS="$host_os"
   CONFIG_HOST_VENDOR="$host_vendor"
   CONFIG_HOST_CPU="$host_cpu"
@@ -43,24 +39,20 @@ AC_DEFUN([TM_PLATFORM],[
   X11_CFLAGS="$X_CFLAGS"
   X11_LDFLAGS="$X_LIBS -lXext -lX11"
 
+  AX_SAVE_FLAGS
+  LC_CLEAR_FLAGS
   AC_CHECK_SIZEOF(void *)
-
-  AC_MSG_CHECKING(if we are on a 64-bits computer)
-  if test "$ac_cv_sizeof_void_p" = "8"; then
-    AC_MSG_RESULT([yes])
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
-  elif test "$ac_cv_sizeof_void_p" = "0"; then
-    AC_MSG_RESULT([yes])
-    CONFIG_WORD_LENGTH="8"
-    CONFIG_WORD_LENGTH_INC="7"
-    CONFIG_WORD_MASK="0xfffffffffffffff8"
-    CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
-  else
-    AC_MSG_RESULT([no])
+  AC_CHECK_ALIGNOF(void *)
+  if [[[ $ac_cv_sizeof_void_p -eq 0 || $ac_cv_alignof_void_p -eq 0 ]]]
+  then AC_MSG_ERROR([Cannot determine the machine size])
   fi
+  AC_DEFINE_UNQUOTED([WORD_LENGTH],[$ac_cv_sizeof_void_p],[Pointer  size])
+  AC_DEFINE_UNQUOTED([WORD_LENGTH_INC],[$(($ac_cv_sizeof_void_p - 1))],[Pointer increment])
+
+  AC_MSG_NOTICE([Sizeof integer: $ac_cv_sizeof_void_p])
+  AC_DEFINE_UNQUOTED([WORD_MASK],[$( printf "0x%x" $((~ $(($ac_cv_alignof_void_p - 1)))))],[Word Mask])
+  AC_DEFINE([MAX_FAST],[264] ,[Max fast alloc // WORD_LENGTH more than power of 2])
+  AX_RESTORE_FLAGS
 
   AC_DEFUN([LINUX_COMMON],[
       AC_MSG_RESULT(an Intel or AMD GNU/Linux host)
@@ -273,10 +265,6 @@ AC_DEFUN([TM_PLATFORM],[
   AC_SUBST(CONFIG_STYPE)
   AC_SUBST(CONFIG_BSHARED)
   AC_SUBST(CONFIG_BPATH)
-  AC_SUBST(CONFIG_WORD_LENGTH)
-  AC_SUBST(CONFIG_WORD_LENGTH_INC)
-  AC_SUBST(CONFIG_WORD_MASK)
-  AC_SUBST(CONFIG_MAX_FAST)
   AC_SUBST(CONFIG_CXXFLAGS)
   AC_SUBST(CONFIG_STD_SETENV)
   AC_SUBST(CONFIG_SO)
