@@ -17,7 +17,8 @@
 * Cells
 ******************************************************************************/
 
-cell_rep::cell_rep (edit_env env2): var (""), env (env2) {}
+cell_rep::cell_rep (edit_env env2):
+  var (""), env (env2), border_flags (0) {}
 
 void
 cell_rep::typeset (tree fm, tree t, path iq) {
@@ -44,6 +45,7 @@ cell_rep::typeset (tree fm, tree t, path iq) {
 	if ((vcorrect == "a") || (vcorrect == "t")) y2= max (y2, env->fn->y2);
 	b= vresize_box (iq, b, y1, y2);
       }
+      if (swell > 0) swell_padding ();
     }
     else {
       b= empty_box (iq);
@@ -234,6 +236,9 @@ cell_rep::format_cell (tree fm) {
   if (var->contains (CELL_COL_SPAN))
     col_span= as_int (env->exec (var[CELL_COL_SPAN]));
   else col_span= 1;
+  if (var->contains (CELL_SWELL))
+    swell= env->as_length (env->exec (var[CELL_SWELL])) >> 1;
+  else swell= 0;
 }
 
 void
@@ -377,12 +382,35 @@ cell_rep::position_vertically (SI offset, SI mh, SI bh, SI th) {
 ******************************************************************************/
 
 void
+cell_rep::swell_padding () {
+  if (row_span > 1) return;
+  SI swt= env->get_length (MATH_TOP_SWELL_START);
+  SI swb= env->get_length (MATH_BOT_SWELL_START);
+  if (b->y2 > swt && (border_flags & 1) == 0) {
+    SI swT= env->get_length (MATH_TOP_SWELL_END);
+    double exceed= b->y2 - swt;
+    double unit  = max (swT - swt, 1);
+    double ratio = min (exceed / unit, 1.0);
+    tsep += (SI) (ratio * swell);
+  }
+  if (b->y1 < swb && (border_flags & 2) == 0) {
+    SI swB= env->get_length (MATH_BOT_SWELL_END);
+    double exceed= swb - b->y1;
+    double unit  = max (swb - swB, 1);
+    double ratio = min (exceed / unit, 1.0);
+    bsep += (SI) (ratio * swell);
+  }
+  swell= 0;
+}
+
+void
 cell_rep::finish_horizontal () {
   SI  w= width- lsep- lborder- rsep- rborder;
   int v= hyphen == "t"? 1: (hyphen == "c"? 0: -1);
   SI  d= ((vcorrect == "b") || (vcorrect == "a"))? -env->fn->y1: 0;
   SI  h= ((vcorrect == "t") || (vcorrect == "a"))?  env->fn->y2: 0;
   b= (box) lz->produce (LAZY_BOX, make_format_cell (w, v, d, h));
+  if (swell > 0) swell_padding ();
 }
 
 void

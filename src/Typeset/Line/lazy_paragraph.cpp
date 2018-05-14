@@ -56,6 +56,15 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   line_sep   = env->get_vspace (PAR_LINE_SEP);
   par_sep    = env->get_vspace (PAR_PAR_SEP);
   nr_cols    = env->get_int (PAR_COLUMNS);
+  swell      = array<SI> ();
+
+  SI sw= env->get_length (PAR_SWELL);
+  if (sw > 0)
+    swell << sw
+          << env->get_length (MATH_TOP_SWELL_START)
+          << env->get_length (MATH_TOP_SWELL_END)
+          << env->get_length (MATH_BOT_SWELL_START)
+          << env->get_length (MATH_BOT_SWELL_END);
 
   string kr= as_string (env->read (PAR_KERNING_REDUCE));
   if (kr == "auto") kreduce= 0.7 / 40.0;
@@ -733,7 +742,7 @@ lazy_paragraph_rep::format_paragraph () {
     if (no_first) env->monitored_write_update (PAR_NO_FIRST, "true");
     if (mode == "center") first= 0;
     else first= env->as_length (style [PAR_FIRST]);
-    sss->set_env_vars (height, sep, hor_sep, ver_sep, bot, top);
+    sss->set_env_vars (height, sep, hor_sep, ver_sep, bot, top, swell);
 
     // typeset paragraph unit
     format_paragraph_unit (start, i);

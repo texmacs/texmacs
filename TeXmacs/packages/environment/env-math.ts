@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -103,7 +103,7 @@
   </active*>
 
   <assign|equations-base|<\macro|body>
-    <\with|mode|math|math-display|true|par-mode|center|par-sep|<eqn-row-sep>|par-first|0em>
+    <\with|mode|math|math-display|true|par-mode|center|par-sep|<eqn-row-sep>|par-first|0em|par-swell|<value|math-swell>>
       <style-with|src-compact|none|<surround|<no-page-break*><vspace*|<eqn-long-above>>|<vspace|<eqn-long-below>><no-indent*>|<arg|body>>>
     </with>
   </macro>>

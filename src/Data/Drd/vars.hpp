@@ -70,6 +70,10 @@ extern string MATH_NESTING_LEVEL;
 extern string MATH_FRAC_LIMIT;
 extern string MATH_TABLE_LIMIT;
 extern string MATH_FLATTEN_COLOR;
+extern string MATH_TOP_SWELL_START;
+extern string MATH_TOP_SWELL_END;
+extern string MATH_BOT_SWELL_START;
+extern string MATH_BOT_SWELL_END;
 
 extern string PROG_LANGUAGE;
 extern string PROG_SCRIPTS;
@@ -101,6 +105,7 @@ extern string PAR_PAR_SEP;
 extern string PAR_FNOTE_SEP;
 extern string PAR_COLUMNS;
 extern string PAR_COLUMNS_SEP;
+extern string PAR_SWELL;
 
 extern string PAGE_MEDIUM;
 extern string PAGE_PRINTED;
@@ -205,6 +210,7 @@ extern string CELL_HYPHEN;
 extern string CELL_BLOCK;
 extern string CELL_ROW_NR;
 extern string CELL_COL_NR;
+extern string CELL_SWELL;
 
 extern string GR_GEOMETRY;
 extern string GR_FRAME;

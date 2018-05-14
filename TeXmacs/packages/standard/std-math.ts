@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std>>
 
@@ -19,6 +19,16 @@
       which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
     </src-license>
   </src-title>>
+
+  <\active*>
+    <\src-comment>
+      Extra style parameters
+    </src-comment>
+  </active*>
+
+  <assign|math-swell|0.6666ex>
+
+  <assign|table-math-swell|0.9ex>
 
   <\active*>
     <\src-comment>
@@ -166,15 +176,19 @@
     </src-comment>
   </active*>
 
-  <assign|matrix*|<macro|x|<shrink-inline|<style-with|src-compact|none|<tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>>>>>>
+  <assign|math-table-base|<macro|x|<style-with|src-compact|none|<if|<equal|<value|math-display>|false>|<with|math-level|<plus|<value|math-level>|1>|math-top-swell-start|1.6ex|math-top-swell-end|2.5ex|math-bot-swell-start|-0.6ex|math-bot-swell-end|-1.5ex|<arg|x>>|<with|math-display|false|math-top-swell-start|1.6ex|math-top-swell-end|2.5ex|math-bot-swell-start|-0.6ex|math-bot-swell-end|-1.5ex|<arg|x>>>>>>
 
-  <assign|matrix|<macro|x|<shrink-inline|<style-with|src-compact|none|<left|(><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>><right|)>>>>>
+  <drd-props|math-table-base|arity|1|accessible|all|syntax|<macro|x|<arg|x>>>
 
-  <assign|bmatrix|<macro|x|<shrink-inline|<style-with|src-compact|none|<left|[><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>><right|]>>>>>
+  <assign|matrix*|<macro|x|<math-table-base|<style-with|src-compact|none|<tformat|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>>>>>>
 
-  <assign|det|<macro|x|<shrink-inline|<style-with|src-compact|none|<left|\|><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<arg|x>><right|\|>>>>>
+  <assign|matrix|<macro|x|<math-table-base|<style-with|src-compact|none|||||<left|(><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|)>>>>>
 
-  <assign|choice|<macro|x|<shrink-inline|<style-with|src-compact|none|<left|{><tformat|<arg|x>><right|.>>>>>
+  <assign|bmatrix|<macro|x|<math-table-base|<style-with|src-compact|none|<left|[><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|]>>>>>
+
+  <assign|det|<macro|x|<math-table-base|<style-with|src-compact|none|<left|\|><tformat|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|\|>>>>>
+
+  <assign|choice|<macro|x|<math-table-base|<style-with|src-compact|none|<left|{><tformat|<cwith|1|-1|1|-1|cell-swell|<value|table-math-swell>>|<arg|x>><right|.>>>>>
 
   <assign|stack|<macro|x|<tformat|<twith|table-valign|C>|<cwith|1|-1|1|-1|cell-halign|c>|<cwith|1|-1|1|1|cell-lsep|0spc>|<cwith|1|-1|-1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0.5sep>|<cwith|1|-1|1|-1|cell-tsep|0.5sep>|<cwith|1|1|1|-1|cell-tsep|0sep>|<cwith|-1|-1|1|-1|cell-bsep|0sep>|<arg|x>>>>
 

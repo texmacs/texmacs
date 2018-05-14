@@ -135,6 +135,8 @@ public:
   string   hyphen;            // horizontal hyphenation
   int      row_span;          // row span
   int      col_span;          // column span
+  SI       swell;             // amount of swell for cells of large height
+  int      border_flags;      // 1: top row, 2: bottom row
   table    D;                 // potential decoration
   table    T;                 // potential subtable
 
@@ -149,6 +151,7 @@ public:
   void compute_height (SI& mh, SI& bh, SI& th);
   void position_horizontally (SI offset, SI mw, SI lw, SI rw);
   void position_vertically (SI offset, SI mh, SI bh, SI th);
+  void swell_padding ();
   void finish_horizontal ();
   void finish ();
 };

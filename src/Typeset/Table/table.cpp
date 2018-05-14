@@ -114,6 +114,8 @@ table_rep::typeset_row (int i, tree fm, tree t, path ip) {
   for (j=0; j<nr_cols; j++) {
     cell& C= T[i][j];
     C= cell (env);
+    if (i == 0) C->border_flags += 1;
+    if (i == nr_rows-1) C->border_flags += 2;
     tree old= env->local_begin (CELL_COL_NR, as_string (j));
     C->typeset (subformat[j], t[j], descend (ip, j));
     env->local_end (CELL_COL_NR, old);

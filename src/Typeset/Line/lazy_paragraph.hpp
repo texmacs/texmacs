@@ -62,6 +62,7 @@ protected:
   SI            top;         // previous line will not descend lower than this
   SI            tab_sep;     // separation between columns in tabular
   int           nr_cols;     // number of columns
+  array<SI>     swell;       // swell properties for lines with large height
 
   void line_print (line_item item);
   void line_print (line_item item, path start, path end);

@@ -21,6 +21,7 @@ struct stacker_rep {
   path              ip;      // source location of the stacker
   array<page_item>  l;       // the vertically formatted paragraph(s)
   stack_border      sb;      // the border properties
+  array<SI>         swell;   // swell properties for lines with large height
 
 private:
   bool              unit_flag;      // did we just start a new unit ?
@@ -32,7 +33,7 @@ private:
   int               no_break_begin; // start of non breaking zone
 
 public:
-  void set_env_vars (SI h, SI s, SI hs, SI vs, SI bot, SI top);
+  void set_env_vars (SI h, SI s, SI hs, SI vs, SI bot, SI top, array<SI> sw);
   void print (box b, array<lazy> fl= 0, int nr_cols= 1);
   void print (tree t, int nr_cols= 1, bool before= false);
   void print (space spc);

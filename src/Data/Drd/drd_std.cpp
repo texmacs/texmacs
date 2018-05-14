@@ -961,6 +961,10 @@ init_std_drd () {
   init_var (MATH_FRAC_LIMIT, TYPE_LENGTH);
   init_var (MATH_TABLE_LIMIT, TYPE_LENGTH);
   init_var (MATH_FLATTEN_COLOR, TYPE_COLOR);
+  init_var (MATH_TOP_SWELL_START, TYPE_LENGTH);
+  init_var (MATH_TOP_SWELL_END, TYPE_LENGTH);
+  init_var (MATH_BOT_SWELL_START, TYPE_LENGTH);
+  init_var (MATH_BOT_SWELL_END, TYPE_LENGTH);
 
   init_var (PROG_LANGUAGE, TYPE_STRING);
   init_var (PROG_SCRIPTS, TYPE_STRING);
@@ -992,6 +996,7 @@ init_std_drd () {
   init_var (PAR_FNOTE_SEP, TYPE_LENGTH);
   init_var (PAR_COLUMNS, TYPE_INTEGER);
   init_var (PAR_COLUMNS_SEP, TYPE_LENGTH);
+  init_var (PAR_SWELL, TYPE_LENGTH);
 
   init_var (PAGE_MEDIUM, TYPE_STRING);
   init_var (PAGE_PRINTED, TYPE_BOOLEAN);
@@ -1095,6 +1100,7 @@ init_std_drd () {
   init_var (CELL_BLOCK, TYPE_STRING);
   init_var (CELL_ROW_NR, TYPE_INTEGER);
   init_var (CELL_COL_NR, TYPE_INTEGER);
+  init_var (CELL_SWELL, TYPE_LENGTH);
 
   init_var (GR_GEOMETRY, TYPE_ADHOC);
   init_var (GR_FRAME, TYPE_ADHOC);
