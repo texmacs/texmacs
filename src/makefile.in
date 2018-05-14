@@ -424,7 +424,7 @@ link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@
 
-Objects/texmacs-$(link).bin: $(TEXMACS_objects)
+Objects/texmacs-$(link).bin: Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
 	$(call link_bin,$(link_options))
 
 all: $(tmsrc)/bin/texmacs.bin
