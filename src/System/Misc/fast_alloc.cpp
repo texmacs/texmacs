@@ -16,8 +16,12 @@
 
 #include "fast_alloc.hpp"
 
-char   alloc_table[MAX_FAST]; // Static declaration initializes with NULL's
+void*   alloc_table[MAX_FAST]; // Static declaration initializes with NULL's
 char*  alloc_mem=NULL;
+#ifdef DEBUG_ON
+char*  alloc_mem_top=NULL;
+char*  alloc_mem_bottom=(char*)((unsigned long long)-1);
+#endif
 size_t alloc_remains=0;
 int    allocated=0;
 int    fast_chunks=0;
@@ -43,6 +47,10 @@ void*
 enlarge_malloc (register size_t sz) {
   if (alloc_remains<sz) {
     alloc_mem    = (char *) safe_malloc (BLOCK_SIZE);
+    #ifdef DEBUG_ON
+    alloc_mem_top=alloc_mem_top>=alloc_mem+BLOCK_SIZE?alloc_mem_top:(alloc_mem +BLOCK_SIZE);
+    alloc_mem_bottom=alloc_mem_bottom>alloc_mem?alloc_mem:alloc_mem_bottom;
+    #endif
     alloc_remains= BLOCK_SIZE;
     fast_chunks++;
   }
@@ -59,6 +67,9 @@ fast_alloc (register size_t sz) {
     register void *ptr= alloc_ptr (sz);
     if (ptr==NULL) return enlarge_malloc (sz);
     alloc_ptr (sz)= ind (ptr);
+    #ifdef DEBUG_ON
+    break_stub(ptr);
+    #endif
     return ptr;
   }
   else {
@@ -73,6 +84,10 @@ void
 fast_free (register void* ptr, register size_t sz) {
   sz=(sz+WORD_LENGTH_INC)&WORD_MASK;
   if (sz<MAX_FAST) {
+    #ifdef DEBUG_ON
+    break_stub(ptr);
+    break_stub(alloc_ptr (sz));
+    #endif
     ind (ptr)     = alloc_ptr (sz);
     alloc_ptr (sz)= ptr;
   }
@@ -84,56 +99,21 @@ fast_free (register void* ptr, register size_t sz) {
   }
 }
 
-/*
-void*
-fast_alloc (register size_t s) {
-  register void* ptr;
-  s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
-  if (s<MAX_FAST) {
-    ptr= alloc_ptr(s);
-    if (ptr==NULL) ptr= enlarge_malloc (s);
-    else alloc_ptr(s)= ind(ptr);
-  }
-  else {
-    if (MEM_DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
-    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
-    ptr= safe_malloc (s);
-    large_uses += s;
-  }
-  *((size_t *) ptr)=s;
-  return (void*) (((char*) ptr)+ WORD_LENGTH);
-}
-
-void
-fast_free (register void* ptr, register size_t sz) {
-  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
-  register size_t s= *((size_t *) ptr);
-  sz= (sz+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
-  if (s != sz) {
-    cerr << "At " << ptr << ": " << sz << " -> " << s << "\n";
-    assert (s == sz);
-  }
-  if (s<MAX_FAST) {
-    ind(ptr)    = alloc_ptr(s);
-    alloc_ptr(s)= ptr;
-  }
-  else {
-    if (MEM_DEBUG>=3) cout << "Big free of " << s << " bytes\n";
-    free (ptr);
-    large_uses -= s;
-    if (MEM_DEBUG>=3) cout << "Memory used: " << mem_used () << " bytes\n";
-  }
-}
-*/
-
 void*
 fast_new (register size_t s) {
   register void* ptr;
+  #ifdef DEBUG_ON
+  s= (s+ (4 * WORD_LENGTH) + WORD_LENGTH_INC)&WORD_MASK;
+  #else
   s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
+  #endif
   if (s<MAX_FAST) {
     ptr= alloc_ptr(s);
     if (ptr==NULL) ptr= enlarge_malloc (s);
     else alloc_ptr(s)= ind(ptr);
+    #ifdef DEBUG_ON
+    break_stub(ptr);
+    #endif
   }
   else {
     if (MEM_DEBUG>=3) cout << "Big alloc of " << s << " bytes\n";
@@ -142,15 +122,57 @@ fast_new (register size_t s) {
     //if ((((int) ptr) & 15) != 0) cout << "Unaligned new " << ptr << "\n";
     large_uses += s;
   }
+  #ifdef DEBUG_ON
+  char *mem=(char *)ptr;
+  *((size_t *) ptr)=s;
+  ptr= ((char*) ptr)+ WORD_LENGTH;
+  *((size_t *) ptr)=s;
+  ptr= ((char*) ptr)+ WORD_LENGTH;
+  *((size_t *) ptr)=~s;
+  ptr= ((char*) ptr)+ WORD_LENGTH;
+  *((int*)(mem+s-WORD_LENGTH))=0x55aa;
+  return (void*) ptr;
+  #else
   *((size_t *) ptr)=s;
   return (void*) (((char*) ptr)+ WORD_LENGTH);
+  #endif
 }
+
+#ifdef DEBUG_ON
+void* alloc_check(const char *msg,void *ptr,size_t* sp) {
+	void *mem=ptr;
+  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
+  register size_t comp= *((size_t *) ptr);
+  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
+  register size_t s1= *((size_t *) ptr);
+  ptr= (void*) (((char*) ptr)- WORD_LENGTH);
+  register size_t s= *((size_t *) ptr);
+  if((s1 + comp) != -1 || (s + comp) != -1) {
+    printf("%s %p size mismatch at %p %lu:%lu :%lu:%lu\n",msg,mem, ptr,s,s+comp,s1,s1+comp);
+    if(break_stub (ptr)) s=s1<s?s1:s;
+  } //else printf("fast_delete %p size %lu at %p\n",mem,s,ptr);
+  if(*((int*)((char*)ptr+s-WORD_LENGTH))!=0x55AA) {
+     printf("%s buffer overflow %x\n",msg,*((int*)((char*)ptr+s-1)));
+  }
+  if(sp) *sp=s;
+  return(ptr);
+}
+#endif
 
 void
 fast_delete (register void* ptr) {
+  #ifdef DEBUG_ON
+  size_t s;
+  ptr=alloc_check("fast_delete",ptr,&s);
+  #else
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
   register size_t s= *((size_t *) ptr);
+  #endif
   if (s<MAX_FAST) {
+    #ifdef DEBUG_ON
+    break_stub(ptr);
+    break_stub(alloc_ptr(s));
+    #endif
     ind(ptr)    = alloc_ptr(s);
     alloc_ptr(s)= ptr;
   }
@@ -231,6 +253,16 @@ mem_info () {
   cout << "Small mallocs : "
        << ((100*((float) small_uses))/((float) total_uses)) << "%\n";
 }
+
+#ifdef DEBUG_ON
+bool break_stub(void *ptr) {
+  if(ptr && (ptr > (void*)alloc_mem_top || ptr < (void*)alloc_mem_bottom)) {
+    printf("Bad pointer in fast_alloc:%p %p:%p\n",ptr,alloc_mem_bottom,alloc_mem_top);
+    return true;
+  }
+  return false;
+}
+#endif
 
 /******************************************************************************
 * Redefine standard new and delete

@@ -22,13 +22,18 @@
 * Globals
 ******************************************************************************/
 
-extern char   alloc_table[MAX_FAST];
+extern void*   alloc_table[MAX_FAST]; // Static declaration initializes with NULL's
 extern char*  alloc_mem;
+#ifdef DEBUG_ON
+extern char*  alloc_mem_top;
+extern char*  alloc_mem_bottom;
+#endif
+bool break_stub(void* ptr);
 extern size_t alloc_remains;
 extern int    allocated;
 extern int    large_uses;
 
-#define alloc_ptr(i) (*((void **) (alloc_table+i)))
+#define alloc_ptr(i) alloc_table[i]
 #define ind(ptr) (*((void **) ptr))
 
 /******************************************************************************
@@ -44,6 +49,7 @@ extern void  fast_delete (register void* ptr);
 
 extern int   mem_used ();
 extern void  mem_info ();
+void* alloc_check(const char *msg,void *ptr,size_t* sp);
 
 /******************************************************************************
 * Fast new and delete
@@ -57,6 +63,9 @@ inline void* operator new[] (register size_t s, void* loc) { return loc; }
 #else
 #include <new>
 #endif
+
+class widget_rep;
+void tm_delete (widget_rep* ptr);
 
 template<typename C> inline C*
 tm_new () {
@@ -349,6 +358,45 @@ tm_delete (C* ptr) {
   fast_delete ((void*) ptr);
 }
 
+#ifdef DEBUG_ON
+template<typename C>  C*
+tm_new_array (int n) {
+  void* ptr= fast_alloc (n * sizeof (C) + (4 * WORD_LENGTH));
+  *((int*) ptr)= n;
+  ptr= (void*) (((char*) ptr) + WORD_LENGTH);
+  *((int*) ptr)= n;
+  ptr= (void*) (((char*) ptr) + WORD_LENGTH);
+  *((int*) ptr)= ~n;
+  ptr= (void*) (((char*) ptr) + WORD_LENGTH);
+  C* ctr= (C*) ptr;
+  for (int i=0; i<n; i++, ctr++)
+    (void) new ((void*) ctr) C ();
+  *((int*)ctr)=0x55AA;
+  return (C*) ptr;
+}
+
+template<typename C>  void
+tm_delete_array (C* Ptr) {
+  void* ptr= (void*) Ptr;
+  ptr= (void*) (((char*) ptr) - WORD_LENGTH);
+  int comp= *((int*) ptr);
+  ptr= (void*) (((char*) ptr) - WORD_LENGTH);
+  int n1= *((int*) ptr);
+  ptr= (void*) (((char*) ptr) - WORD_LENGTH);
+  int n= *((int*) ptr);
+  if((n1 + comp) != -1 || (n + comp) != -1) {
+    printf("tm_delete_array size mismatch: %d:%d vs %d:%d\n",n,n+comp,n1,n1+comp);
+  }
+  
+  C* ctr= Ptr+n;
+  if(*((int*)ctr)!=0x55AA) {
+     printf("tm_delete_array buffer overflow\n");
+  }
+  ctr--;
+  for (int i=0; i<n; i++, ctr--) ctr -> ~C();
+  fast_free (ptr, n * sizeof (C) + (4 * WORD_LENGTH));
+}
+#else
 template<typename C> inline C*
 tm_new_array (int n) {
   void* ptr= fast_alloc (n * sizeof (C) + WORD_LENGTH);
@@ -369,6 +417,8 @@ tm_delete_array (C* Ptr) {
   for (int i=0; i<n; i++, ctr--) ctr -> ~C();
   fast_free (ptr, n * sizeof (C) + WORD_LENGTH);
 }
+#endif
+
 
 #endif // (!defined(NO_FAST_ALLOC)) && (!defined(X11TEXMACS))
 
