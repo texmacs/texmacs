@@ -5587,7 +5587,7 @@ _ACEOF
 $as_echo "$as_me: Sizeof integer: $ac_cv_sizeof_void_p" >&6;}
 
 cat >>confdefs.h <<_ACEOF
-#define WORD_MASK $( printf "0x%x" $((~ $(($ac_cv_alignof_void_p - 1)))))
+#define WORD_MASK $( printf "0x%x" $(( (~($ac_cv_alignof_void_p - 1)) & ((256 ** ac_cv_sizeof_void_p) -1) )))
 _ACEOF
 
 
@@ -6921,9 +6921,21 @@ $as_echo "#define OS_SUN 1" >>confdefs.h
       CONFIG_BSHARED=""
       CONFIG_BPATH="-Wl,-R,"
       X11_LDFLAGS="$X_LIBS -lXext -lX11 -lsocket"
-      CONFIG_WORD_LENGTH="8"
-      CONFIG_WORD_LENGTH_INC="7"
-      CONFIG_WORD_MASK="0xfffffff8"
+
+cat >>confdefs.h <<_ACEOF
+#define WORD_LENGTH 8
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define WORD_LENGTH_INC 7
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+_ACEOF
+
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
       CONFIG_STD_SETENV=""
     ;;
@@ -6935,9 +6947,21 @@ $as_echo "#define OS_GNU_LINUX 1" >>confdefs.h
 
       CONFIG_OS="GNU_LINUX"
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
-      CONFIG_WORD_LENGTH="8"
-      CONFIG_WORD_LENGTH_INC="7"
-      CONFIG_WORD_MASK="0xfffffff8"
+
+cat >>confdefs.h <<_ACEOF
+#define WORD_LENGTH 8
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define WORD_LENGTH_INC 7
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+_ACEOF
+
       CONFIG_MAX_FAST="264 // WORD_LENGTH more than power of 2"
       CONFIG_STD_SETENV=""
     ;;
@@ -7004,7 +7028,11 @@ $as_echo "#define OS_IRIX 1" >>confdefs.h
       CONFIG_BSHARED=""
       CONFIG_BPATH=""
       X11_LDFLAGS="$X_LIBS -lX11"
-      CONFIG_WORD_MASK="0xfffffff8"
+
+cat >>confdefs.h <<_ACEOF
+#define WORD_MASK $( printf "0x%x" 0xfffffff8)
+_ACEOF
+
       CONFIG_STD_SETENV=""
       CONFIG_CHMOD="chmod"
       CONFIG_LIB_PATH="LD_LIBRARYN32_PATH"
