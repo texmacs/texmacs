@@ -58,67 +58,100 @@ font_rep::get_spacing_entry (int mode, tree t, int i) {
   case SPC_NONE:
     return space (0);
   case SPC_THIN_SPACE:
-    if (t == "default") return (6 * spc) / 10;
+    if (t == "default" || t == "old" || t == "wide")
+      return (6 * spc) / 10;
     return get_spacing_entry (mode, t, i, "thin-space");
   case SPC_SPACE:
-    if (t == "default") return spc;
+    if (t == "default" || t == "old" || t == "wide")
+      return spc;
     return get_spacing_entry (mode, t, i, "space");
   case SPC_DSPACE:
-    if (t == "default") return space (spc->min<<1, spc->def<<1, spc->max<<1);
+    if (t == "default" || t == "old" || t == "wide")
+      return space (spc->min<<1, spc->def<<1, spc->max<<1);
     return get_spacing_entry (mode, t, i, "dspace");
   case SPC_PERIOD:
-    if (t == "default") return spc + extra;
+    if (t == "default" || t == "old" || t == "wide")
+      return spc + extra;
     return get_spacing_entry (mode, t, i, "period");
   case SPC_TINY:
-    if (t == "default") return space (spc->min>>2, spc->def>>2, spc->max>>2);
+    if (t == "default" || t == "old" || t == "wide")
+      return space (spc->min>>2, spc->def>>2, spc->max>>2);
     return get_spacing_entry (mode, t, i, "tiny");
   case SPC_CJK_NORMAL:
-    if (t == "default") return space (-(spc->min>>5), 0, spc->max>>5);
+    if (t == "default" || t == "old" || t == "wide")
+      return space (-(spc->min>>5), 0, spc->max>>5);
     return get_spacing_entry (mode, t, i, "cjk-normal");
   case SPC_CJK_PERIOD:
-    if (t == "default") return space (-(spc->min>>2), 0, spc->max>>1);
+    if (t == "default" || t == "old" || t == "wide")
+      return space (-(spc->min>>2), 0, spc->max>>1);
     return get_spacing_entry (mode, t, i, "cjk-period");
   case SPC_CJK_WIDE_PERIOD:
-    if (t == "default") return spc + extra;
+    if (t == "default" || t == "old" || t == "wide")
+      return spc + extra;
     return get_spacing_entry (mode, t, i, "cjk-wide-period");
   case SPC_HALF:
-    if (t == "default") {
+    if (t == "default" || t == "wide") {
+      if (mode >= 0) return space (spc->min>>2, spc->def>>2, spc->max>>2);
+      else return space (spc->min>>4, spc->def>>4, spc->max>>4);
+    }
+    else if (t == "old") {
       if (mode >= 0) return space (spc->min>>1, spc->def>>2, spc->max>>1);
       else return space (spc->min>>3, spc->def>>4, spc->max>>3);
     }
     return get_spacing_entry (mode, t, i, "half");
   case SPC_OPERATOR:
-    if (t == "default") {
+    if (t == "default" || t == "wide") {
+      if (mode >= 0) return space (spc->min>>1, spc->def>>1, spc->max>>1);
+      else return space (spc->min>>3, spc->def>>3, spc->max>>3);
+    }
+    else if (t == "old") {
       if (mode >= 0) return space (spc->min>>1, spc->def>>1, spc->max);
       else return space (spc->min>>3, spc->def>>3, spc->max>>2);
     }
     return get_spacing_entry (mode, t, i, "operator");
   case SPC_WIDEOP:
     if (t == "default") {
+      if (mode >= 0) return space (spc->min>>1, spc->def>>1, spc->max>>1);
+      else return space (spc->min>>3, spc->def>>3, spc->max>>3);
+    }
+    else if (t == "wide") {
+      if (mode == 0) return spc;
+      else if (mode > 0) return space (spc->min<<1, spc->def<<1, spc->max<<1);
+      else return space (spc->min>>2, spc->def>>2, spc->max>>2);
+    }
+    else if (t == "old") {
       if (mode >= 0) return space (spc->min>>1, spc->def>>1, spc->max);
       else return space (spc->min>>3, spc->def>>3, spc->max>>2);
     }
     return get_spacing_entry (mode, t, i, "wideop");
   case SPC_BIGOP:
-    if (t == "default") {
+    if (t == "default" || t == "old" || t == "wide") {
       if (mode >= 0) return spc;
       else return space (spc->min>>2, spc->def>>2, spc->max>>2);;
     }
     return get_spacing_entry (mode, t, i, "bigop");
   case SPC_SHORT_APPLY:
-    if (t == "default") {
+    if (t == "default" || t == "old" || t == "wide") {
       if (mode >= 0) return space (mspc->min>>2, mspc->def>>2, mspc->max>>2);
       else return space (mspc->min>>2, mspc->def>>2, mspc->max>>2);
     }
     return get_spacing_entry (mode, t, i, "short-apply");
   case SPC_APPLY:
-    if (t == "default") {
+    if (t == "default" || t == "wide") {
+      if (mode >= 0) return space (mspc->min>>1, mspc->def>>1, mspc->max>>1);
+      else return space (mspc->min>>3, mspc->def>>3, mspc->max>>3);
+    }
+    else if (t == "old") {
       if (mode >= 0) return space (mspc->min>>1, mspc->def>>1, mspc->max);
       else return space (mspc->min>>3, mspc->def>>3, mspc->max>>2);
     }
     return get_spacing_entry (mode, t, i, "apply");
   case SPC_MULTIPLY:
-    if (t == "default") {
+    if (t == "default" || t == "wide") {
+      if (mode >= 0) return space (spc->min>>2, spc->def>>2, spc->max>>2);
+      else return space (spc->min>>4, spc->def>>4, spc->max>>4);
+    }
+    else if (t == "old") {
       if (mode >= 0) return space (spc->min>>1, spc->def>>2, spc->max>>1);
       else return space (spc->min>>3, spc->def>>4, spc->max>>3);
     }

@@ -71,7 +71,7 @@ initialize_default_env () {
   env (VISITED_COLOR)    = "global";    // the color of visited loci
   env (NO_PATTERNS)      = "false";     // disable background patterns
   env (LANGUAGE)         = "english";   // the language
-  env (SPACING_POLICY)   = "default";   // the spacing policy
+  env (SPACING_POLICY)   = "old";       // the spacing policy
   env (ATOM_DECORATIONS) = DATOMS;      // dots, underline, hyperlinks?, etc.
   env (LINE_DECORATIONS) = DLINES;      // boxed pars, nested envs, etc.
   env (PAGE_DECORATIONS) = DPAGES;      // future headers, footers, etc.
