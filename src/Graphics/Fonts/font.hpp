@@ -55,7 +55,7 @@ struct font_rep: rep<font> {
   double   slope;            // italic slope
   space    spc;              // usual space between words
   space    extra;            // extra space at end of words
-  space    math_spc;         // space after mathematical operator, e.g. log x
+  space    mspc;             // space after mathematical operator, e.g. log x
   SI       sep;              // separation space between close components
 
   SI       y1;               // bottom y position

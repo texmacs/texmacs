@@ -92,10 +92,12 @@ math_language_rep::set_right_penalty (string cl, string s) {
 
 void
 math_language_rep::set_left_spacing (string cl, string s) {
-  if      (s == "none")    tpr_class(cl).spc_before= SPC_NONE;
-  else if (s == "half")    tpr_class(cl).spc_before= SPC_HALF;
-  else if (s == "default") tpr_class(cl).spc_before= SPC_OPERATOR;
-  else if (s == "big")     tpr_class(cl).spc_before= SPC_BIGOP;
+  if      (s == "none")     tpr_class(cl).spc_before= SPC_NONE;
+  else if (s == "half")     tpr_class(cl).spc_before= SPC_HALF;
+  else if (s == "default")  tpr_class(cl).spc_before= SPC_OPERATOR;
+  else if (s == "wide")     tpr_class(cl).spc_before= SPC_WIDEOP;
+  else if (s == "big")      tpr_class(cl).spc_before= SPC_BIGOP;
+  else if (s == "multiply") tpr_class(cl).spc_before= SPC_MULTIPLY;
   else {
     failed_error << "Attempt to associate left spacing " << s
                  << " to " << cl << "\n";
@@ -105,10 +107,12 @@ math_language_rep::set_left_spacing (string cl, string s) {
 
 void
 math_language_rep::set_right_spacing (string cl, string s) {
-  if      (s == "none")    tpr_class(cl).spc_after= SPC_NONE;
-  else if (s == "half")    tpr_class(cl).spc_after= SPC_HALF;
-  else if (s == "default") tpr_class(cl).spc_after= SPC_OPERATOR;
-  else if (s == "big")     tpr_class(cl).spc_after= SPC_BIGOP;
+  if      (s == "none")     tpr_class(cl).spc_after= SPC_NONE;
+  else if (s == "half")     tpr_class(cl).spc_after= SPC_HALF;
+  else if (s == "default")  tpr_class(cl).spc_after= SPC_OPERATOR;
+  else if (s == "wide")     tpr_class(cl).spc_after= SPC_WIDEOP;
+  else if (s == "big")      tpr_class(cl).spc_after= SPC_BIGOP;
+  else if (s == "multiply") tpr_class(cl).spc_after= SPC_MULTIPLY;
   else {
     failed_error << "Attempt to associate right spacing " << s
                  << " to " << cl << "\n";
@@ -214,8 +218,8 @@ math_language_rep::advance (tree t, int& pos) {
     bool op_flag2=
       (pos==N(s)) ||
       (((pos+2)<N(s)) && is_alpha (s[pos]) && is_alpha (s[pos+1]));
-    if (op_flag1 || op_flag2) return &tp_operator_rep;
-    else return &tp_shortop_rep;
+    if (op_flag1 || op_flag2) return &tp_apply_rep;
+    else return &tp_short_apply_rep;
   }
   return &tpr_member(r);
 

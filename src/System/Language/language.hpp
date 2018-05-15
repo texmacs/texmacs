@@ -33,13 +33,13 @@ RESOURCE(language);
 #define TP_NB_SPACE           6
 #define TP_NB_DSPACE          7
 #define TP_PERIOD             8
-#define TP_OPERATOR           9
-#define TP_SHORTOP           10
-#define TP_OTHER             11
-#define TP_CJK_NORMAL        12
-#define TP_CJK_NO_BREAK      13
-#define TP_CJK_PERIOD        14
-#define TP_CJK_WIDE_PERIOD   15
+#define TP_CJK_NORMAL         9
+#define TP_CJK_NO_BREAK      10
+#define TP_CJK_PERIOD        11
+#define TP_CJK_WIDE_PERIOD   12
+#define TP_OPERATOR          13
+#define TP_SHORTOP           14
+#define TP_OTHER             15
 
 #define SPC_NONE              0
 #define SPC_THIN_SPACE        1
@@ -47,13 +47,17 @@ RESOURCE(language);
 #define SPC_DSPACE            3
 #define SPC_PERIOD            4
 #define SPC_TINY              5
-#define SPC_HALF              6
-#define SPC_OPERATOR          7
-#define SPC_BIGOP             8
-#define SPC_CJK_NORMAL        9
-#define SPC_CJK_PERIOD       10
-#define SPC_CJK_WIDE_PERIOD  11
-#define SPC_END_MARKER       12
+#define SPC_CJK_NORMAL        6
+#define SPC_CJK_PERIOD        7
+#define SPC_CJK_WIDE_PERIOD   8
+#define SPC_HALF              9
+#define SPC_OPERATOR         10
+#define SPC_WIDEOP           11
+#define SPC_BIGOP            12
+#define SPC_SHORT_APPLY      13
+#define SPC_APPLY            14
+#define SPC_MULTIPLY         15
+#define SPC_END_MARKER       16
 
 #define HYPH_STD       10000
 #define HYPH_PANIC     1000000

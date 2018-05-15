@@ -204,10 +204,10 @@ unicode_font_rep::unicode_font_rep (string name,
 
   // get space length
   get_extents (" ", ex);
-  spc= space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (3*(ex->x2-ex->x1))>>1);
-  extra   = spc/2;
-  math_spc= spc;
-  sep     = wfn/10;
+  spc  = space ((3*(ex->x2-ex->x1))>>2, ex->x2-ex->x1, (3*(ex->x2-ex->x1))>>1);
+  extra= spc/2;
+  mspc = spc;
+  sep  = wfn/10;
 
   // get_italic space
   get_extents ("f", ex);
@@ -330,6 +330,10 @@ unicode_font_rep::unicode_font_rep (string name,
         above_correct= above_bonum_italic_table ();
       }
     }
+    if (starts (family, "texgyrebonum-")) mspc= 1 * spc;
+    if (starts (family, "texgyrepagella-")) mspc= 1.5 * spc;
+    if (starts (family, "texgyreschola-")) mspc= 1 * spc;
+    if (starts (family, "texgyretermes-")) mspc= 1 * spc;
   }
 }
 

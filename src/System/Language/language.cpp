@@ -35,12 +35,6 @@ text_property_rep tp_nb_dspace_rep
   (TP_NB_DSPACE, SPC_NONE, SPC_DSPACE, 0, HYPH_INVALID);
 text_property_rep tp_period_rep
   (TP_PERIOD, SPC_NONE, SPC_PERIOD, 0, 0);
-text_property_rep tp_half_rep
-  (TP_OPERATOR, SPC_NONE, SPC_HALF, 0, HYPH_INVALID);
-text_property_rep tp_operator_rep
-  (TP_OPERATOR, SPC_NONE, SPC_OPERATOR, 0, HYPH_INVALID);
-text_property_rep tp_shortop_rep
-  (TP_SHORTOP, SPC_NONE, SPC_TINY, 0, HYPH_INVALID);
 text_property_rep tp_cjk_normal_rep
   (TP_CJK_NORMAL, SPC_NONE, SPC_CJK_NORMAL, 0, 0);
 text_property_rep tp_cjk_no_break_rep
@@ -51,6 +45,14 @@ text_property_rep tp_cjk_wide_period_rep
   (TP_CJK_PERIOD, SPC_NONE, SPC_CJK_WIDE_PERIOD, HYPH_INVALID, 0);
 text_property_rep tp_cjk_no_break_period_rep
   (TP_CJK_PERIOD, SPC_NONE, SPC_CJK_PERIOD, HYPH_INVALID, HYPH_INVALID);
+text_property_rep tp_half_rep
+  (TP_OPERATOR, SPC_NONE, SPC_HALF, 0, HYPH_INVALID);
+text_property_rep tp_operator_rep
+  (TP_OPERATOR, SPC_NONE, SPC_OPERATOR, 0, HYPH_INVALID);
+text_property_rep tp_short_apply_rep
+  (TP_OPERATOR, SPC_NONE, SPC_SHORT_APPLY, 0, HYPH_INVALID);
+text_property_rep tp_apply_rep
+  (TP_OPERATOR, SPC_NONE, SPC_APPLY, 0, HYPH_INVALID);
 
 /******************************************************************************
 * Text properties
