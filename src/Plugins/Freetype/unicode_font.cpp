@@ -330,10 +330,8 @@ unicode_font_rep::unicode_font_rep (string name,
         above_correct= above_bonum_italic_table ();
       }
     }
-    if (starts (family, "texgyrebonum-")) mspc= 1 * spc;
-    if (starts (family, "texgyrepagella-")) mspc= 1.5 * spc;
-    if (starts (family, "texgyreschola-")) mspc= 1 * spc;
-    if (starts (family, "texgyretermes-")) mspc= 1 * spc;
+    if (starts (family, "texgyrepagella-"))
+      mspc= spc + 0.5 * space (spc->def);
   }
 }
 
