@@ -138,7 +138,7 @@ struct font_rep: rep<font> {
   array<space> get_spacing_table (int mode, int id, array<array<space> >& t);
   space        get_spacing_entry (int mode, tree t, int i);
   space        get_spacing_entry (int mode, tree t, int i, string kind);
-  space        get_spacing_val (tree t);
+  space        get_spacing_val   (int mode, tree t);
   inline array<space> get_narrow_spacing (int id) {
     if (id < N(narrow_spacing)) return narrow_spacing[id];
     return get_spacing_table (-1, id, narrow_spacing); }

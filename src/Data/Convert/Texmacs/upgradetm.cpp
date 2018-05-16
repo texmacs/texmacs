@@ -4055,6 +4055,12 @@ preserve_spacing (tree t) {
   if (style == tree (TUPLE)) style= tuple ("generic");
   for (int i=0; i<N(style); i++)
     if (style[i] == "source") return t;
+    else if (style[i] == "old-spacing") return t;
+    else if (style[i] == "default-spacing") return t;
+    else if (style[i] == "wide-spacing") return t;
+    else if (style[i] == "invisible-multiply") return t;
+    else if (style[i] == "narrow-multiply") return t;
+    else if (style[i] == "regular-multiply") return t;
   style << "old-spacing";
   return change_doc_attr (t, "style", style);
 }

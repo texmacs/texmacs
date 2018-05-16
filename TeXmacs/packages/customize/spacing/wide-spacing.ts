@@ -20,7 +20,9 @@
     </src-license>
   </src-title>>
 
-  <assign|spacing-policy|wide>
+  <style-with|src-compact|none|<if|<equal|<get-label|<value|spacing-policy>>|tuple>|<assign|spacing-policy|<merge|<range|<value|spacing-policy>|0|<minus|<length|<value|spacing-policy>>|1>>|<tuple|wide>>>|<assign|spacing-policy|wide>>>
+
+  \;
 
   <assign|par-kerning-reduce|auto>
 

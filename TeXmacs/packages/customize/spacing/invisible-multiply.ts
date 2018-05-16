@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|normal-spacing|1.0|normal-spacing|1.0>
+    <src-package-dtd|invisible-multiply|1.0|invisible-multiply|1.0>
 
     <\src-purpose>
-      Default TeXmacs spacing rules.
+      Suppress spacing around multiplication.
     </src-purpose>
 
     <src-copyright|2018|Joris van der Hoeven>
@@ -20,13 +20,9 @@
     </src-license>
   </src-title>>
 
-  <style-with|src-compact|none|<if|<equal|<get-label|<value|spacing-policy>>|tuple>|<assign|spacing-policy|<merge|<range|<value|spacing-policy>|0|<minus|<length|<value|spacing-policy>>|1>>|<tuple|default>>>|<assign|spacing-policy|default>>>
+  <if|<equal|<get-label|<value|spacing-policy>>|tuple>||<assign|spacing-policy|<tuple|<value|spacing-policy>>>>
 
-  \;
-
-  <assign|par-kerning-reduce|auto>
-
-  <assign|par-kerning-contract|auto>
+  <assign|spacing-policy|<merge|<tuple|multiply|0spc>|<value|spacing-policy>>>
 
   \;
 </body>

@@ -132,8 +132,8 @@ font_rep::get_spacing_entry (int mode, tree t, int i) {
     return get_spacing_entry (mode, t, i, "bigop");
   case SPC_SHORT_APPLY:
     if (t == "default" || t == "old" || t == "wide") {
-      if (mode >= 0) return space (mspc->min>>2, mspc->def>>2, mspc->max>>2);
-      else return space (mspc->min>>2, mspc->def>>2, mspc->max>>2);
+      if (mode >= 0) return space (spc->min>>2, spc->def>>2, spc->max>>2);
+      else return space (spc->min>>4, spc->def>>4, spc->max>>4);
     }
     return get_spacing_entry (mode, t, i, "short-apply");
   case SPC_APPLY:
@@ -164,17 +164,17 @@ font_rep::get_spacing_entry (int mode, tree t, int i) {
 space
 font_rep::get_spacing_entry (int mode, tree t, int i, string kind) {
   if (is_tuple (t)) {
-    for (int i=0; i<N(t); i+=2)
-      if (i == N(t)-1)
-        return get_spacing_entry (mode, t[i], i);
-      else if (t[i] == kind)
-        return get_spacing_val (t[i+1]);
+    for (int k=0; k<N(t); k+=2)
+      if (k == N(t)-1)
+        return get_spacing_entry (mode, t[k], i);
+      else if (t[k] == kind)
+        return get_spacing_val (mode, t[k+1]);
   }
   return get_spacing_entry (mode, "default", i);
 }
 
 space
-font_rep::get_spacing_val (tree t) {
+font_rep::get_spacing_val (int mode, tree t) {
   if (is_atomic (t)) {
     string s= t->label;
     int i;
@@ -190,10 +190,15 @@ font_rep::get_spacing_val (tree t) {
     if (unit == "ex") return val * space (yx);
   }
   else if (is_func (t, TMLEN, 3)) {
-    space s1= get_spacing_val (t[0]);
-    space s2= get_spacing_val (t[1]);
-    space s3= get_spacing_val (t[2]);
+    space s1= get_spacing_val (mode, t[0]);
+    space s2= get_spacing_val (mode, t[1]);
+    space s3= get_spacing_val (mode, t[2]);
     return space (s1->min, s2->def, s3->max);
+  }
+  else if (is_func (t, TUPLE, 3)) {
+    if (mode <  0) return get_spacing_val (mode, t[0]);
+    if (mode == 0) return get_spacing_val (mode, t[1]);
+    if (mode >  0) return get_spacing_val (mode, t[2]);
   }
   FAILED ("invalid font spacing");
   return space (0);
