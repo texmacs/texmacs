@@ -67,7 +67,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
           << env->get_length (MATH_BOT_SWELL_END);
 
   string kr= as_string (env->read (PAR_KERNING_REDUCE));
-  if (kr == "auto") kreduce= 0.7 / 40.0;
+  if (kr == "auto") kreduce= 0.4 / 40.0;
   else if (is_double (kr)) kreduce= as_double (kr);
   else kreduce= 0.0;
 
@@ -106,7 +106,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
 
   //expansion= contraction= kstretch= kreduce= 0.0; // FIXME
   //expansion= contraction= kreduce= 0.0; // FIXME
-  contraction= kreduce= 0.0; // FIXME
+  //contraction= kreduce= 0.0; // FIXME
   //expansion= contraction= 0.0; // FIXME
 
   string sm= as_string (env->read (PAR_SPACING));

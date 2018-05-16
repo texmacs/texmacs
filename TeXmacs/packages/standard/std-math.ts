@@ -170,6 +170,12 @@
 
   <assign|explicit-space|<macro|<syntax|\<short-underscore\>| >>>
 
+  <assign|old-spacing|<macro|body|<with|spacing-policy|old|<arg|body>>>>
+
+  <assign|normal-spacing|<macro|body|<with|spacing-policy|default|<arg|body>>>>
+
+  <assign|wide-spacing|<macro|body|<with|spacing-policy|wide|<arg|body>>>>
+
   <\active*>
     <\src-comment>
       Mathematical tabular structures.

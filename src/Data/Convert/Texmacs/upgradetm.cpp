@@ -4044,6 +4044,22 @@ upgrade_qed (tree t) {
 }
 
 /******************************************************************************
+* Preserve spacing of older documents
+******************************************************************************/
+
+tree
+preserve_spacing (tree t) {
+  if (!is_non_style_document (t)) return t;
+  tree style= copy (extract (t, "style"));
+  if (is_atomic (style)) style= tuple (style);
+  if (style == tree (TUPLE)) style= tuple ("generic");
+  for (int i=0; i<N(style); i++)
+    if (style[i] == "source") return t;
+  style << "old-spacing";
+  return change_doc_attr (t, "style", style);
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -4230,8 +4246,11 @@ upgrade (tree t, string version) {
   }
   if (version_inf_eq (version, "1.99.4"))
     t= upgrade_draw_over_under (t);
-  if (version_inf_eq (version, "1.99.6"))
+  if (version_inf_eq (version, "1.99.6")) {
     t= upgrade_qed (t);
+    if (is_non_style_document (t))
+      t= preserve_spacing (t);
+  }
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);
