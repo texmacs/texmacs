@@ -165,7 +165,17 @@
   ("number-europe"        "European numbering style")
   ("number-us"            "US numbering style")
   ("number-long-article"  "Prefix by section number")
-  ("captions-above"       "Captions above"))
+  ("captions-above"       "Captions above")
+
+  ("normal-spacing"       "Default spacing")
+  ("old-spacing"          "Old style spacing")
+  ("wide-spacing"         "Wide spacing")
+  ("invisible-multiply"   "Invisible multiplications")
+  ("narrow-multiply"      "Narrow multiplications")
+  ("regular-multiply"     "Regular multiplications")
+  ("invisible-apply"      "Invisible function applications")
+  ("narrow-apply"         "Narrow function applications")
+  ("regular-apply"        "Regular function applications"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with brief descriptions for common styles and style packages
@@ -262,4 +272,14 @@
 
   ("graphical-macros"   "Collection of extra primitives for graphical mode")
   ("structured-list"    "Making item bodies part of item tags")
-  ("structured-section" "Making section bodies part of section tags"))
+  ("structured-section" "Making section bodies part of section tags")
+
+  ("normal-spacing"     "Default spacing")
+  ("old-spacing"        "Old style spacing")
+  ("wide-spacing"       "Wide spacing")
+  ("invisible-multiply" "Use invisible space for multiplications")
+  ("narrow-multiply"    "Use narrow space for multiplications")
+  ("regular-multiply"   "Use regular space for multiplications")
+  ("invisible-apply"    "Use invisible space for function applications")
+  ("narrow-apply"       "Use narrow space for function applications")
+  ("regular-apply"      "Use regular space for function applications"))

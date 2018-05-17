@@ -51,7 +51,8 @@
 
 (tm-define paragraph-parameters
   (list "par-mode" "par-flexibility" "par-hyphen" "par-spacing"
-        "par-kerning-stretch" "par-kerning-margin" "par-width"
+        "par-kerning-stretch" "par-kerning-reduce" "par-expansion"
+        "par-contraction" "par-kerning-margin" "par-width"
         "par-left" "par-right" "par-first" "par-no-first"
         "par-sep" "par-hor-sep" "par-ver-sep" "par-line-sep" "par-par-sep"
         "par-fnote-sep" "par-columns" "par-columns-sep"))
@@ -135,16 +136,35 @@
             (cons-new (ahash-ref new "par-flexibility")
                       '("1" "2" "4" "1000" ""))
             (ahash-ref new "par-flexibility") "10em"))
+    (item (text "CJK spacing:")
+      (enum (ahash-set! new "par-spacing" answer)
+            '("plain" "quanjiao" "banjiao" "hangmobanjiao" "kaiming")
+            (ahash-ref new "par-spacing") "10em"))
+    (item ====== ======)
     (item (text "Intercharacter stretching:")
       (enum (ahash-set! new "par-kerning-stretch" answer)
             (cons-new (ahash-ref new "par-kerning-stretch")
                       '("auto" "tolerant"
                         "0" "0.02" "0.05" "0.1" "0.2" "0.5" "1" ""))
             (ahash-ref new "par-kerning-stretch") "10em"))
-    (item (text "CJK spacing:")
-      (enum (ahash-set! new "par-spacing" answer)
-            '("plain" "quanjiao" "banjiao" "hangmobanjiao" "kaiming")
-            (ahash-ref new "par-spacing") "10em")))
+    (item (text "Intercharacter compression:")
+      (enum (ahash-set! new "par-kerning-reduce" answer)
+            (cons-new (ahash-ref new "par-kerning-reduce")
+                      '("auto"
+                        "0" "0.01" "0.02" "0.03" "0.05" "0.1" "0.2" ""))
+            (ahash-ref new "par-kerning-reduce") "10em"))
+    (item (text "Character expansion:")
+      (enum (ahash-set! new "par-expansion" answer)
+            (cons-new (ahash-ref new "par-expansion")
+                      '("auto" "tolerant"
+                        "0" "0.01" "0.02" "0.05" "0.1" "0.2" ""))
+            (ahash-ref new "par-expansion") "10em"))
+    (item (text "Character contraction:")
+      (enum (ahash-set! new "par-contraction" answer)
+            (cons-new (ahash-ref new "par-contraction")
+                      '("auto" "tolerant"
+                        "0" "0.01" "0.02" "0.05" "0.1" "0.2" ""))
+            (ahash-ref new "par-contraction") "10em")))
   ======
   (centered
     (aligned
