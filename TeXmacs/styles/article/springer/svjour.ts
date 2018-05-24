@@ -238,6 +238,8 @@
 
   <new-remark|warning|Warning>
 
+  <new-remark|acknowledgments|Acknowledgments>
+
   <\active*>
     <\src-comment>
       Customization of other environments.
