@@ -283,6 +283,16 @@
     </padded-normal>
   </macro>>
 
+  <assign|bib-list-nosvjour|<value|bib-list>>
+
+  <assign|bib-list|<\macro|largest|body>
+    <\bib-list-nosvjour|<arg|largest>>
+      <\with|par-left|<plus|<value|par-left>|10pt>>
+        <arg|body>
+      </with>
+    </bib-list-nosvjour>
+  </macro>>
+
   \;
 
   <new-list|itemize-1|<value|aligned-item>|<macro|x|<active*|<with|mode|math|<rigid|->>>>>
