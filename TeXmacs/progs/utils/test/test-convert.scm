@@ -41,7 +41,7 @@
   (let* ((p (url-expand (url-append tar-file (url-parent))))
          (d (string-append "cd " (url->system p)))
          (u (string-append "tar -xvf " (url->system tar-file)))
-         (c (string-append d "; " u)))         
+         (c (string-append d "&& " u)))         
     ;;(display* "-- " c "\n")
     (system c)))
 
