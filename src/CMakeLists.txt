@@ -170,6 +170,7 @@ set (TeXmacs_Base_SRCS
     ./Graphics/Fonts/font_protrusion.cpp
     ./Graphics/Fonts/font_select.cpp
     ./Graphics/Fonts/font_scripts.cpp
+    ./Graphics/Fonts/font_spacing.cpp
     ./Graphics/Fonts/font_translate.cpp
     ./Graphics/Fonts/font_wide.cpp
     ./Graphics/Fonts/math_font.cpp

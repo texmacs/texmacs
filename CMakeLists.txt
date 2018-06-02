@@ -417,7 +417,7 @@ set(tm_devel TeXmacs-${DEVEL_VERSION})
 set(tm_stable TeXmacs-${STABLE_VERSION})
 set(tm_devel_release ${tm_devel}-${DEVEL_RELEASE})
 set(tm_stable_release ${tm_stable}-${STABLE_RELEASE})
-configure_file(${TEXMACS_SOURCE_DIR}/src/System/tm_configure.in ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)
+configure_file(${TEXMACS_SOURCE_DIR}/src/System/tm_configure.hpp.cmake ${TEXMACS_BINARY_DIR}/src/System/tm_configure.hpp)
 
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix ${prefix})

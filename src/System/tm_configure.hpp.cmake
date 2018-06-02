@@ -11,18 +11,22 @@
 
 #ifndef TM_CONFIGURE_H
 #define TM_CONFIGURE_H
-#include "config.h"
 
 @CONFIG_STD_SETENV@
 
 #define TEXMACS_VERSION "@DEVEL_VERSION@"
 #define TEXMACS_SOURCES "@tmorig@"
 #define OS_@CONFIG_OS@
-#define GUILE_@CONFIG_GUILE_SERIAL@
 #define WORD_LENGTH @CONFIG_WORD_LENGTH@
 #define WORD_LENGTH_INC @CONFIG_WORD_LENGTH_INC@
 #define WORD_MASK @CONFIG_WORD_MASK@
 #define MAX_FAST @CONFIG_MAX_FAST@
+
+#define HOST_OS "@CONFIG_HOST_OS@"
+#define HOST_VENDOR "@CONFIG_HOST_VENDOR@"
+#define HOST_CPU "@CONFIG_HOST_CPU@"
+#define BUILD_USER "@CONFIG_USER@"
+#define BUILD_DATE "@CONFIG_DATE@"
 
 #define TM_DEVEL "@tm_devel@"
 #define TM_DEVEL_RELEASE "@tm_devel_release@"
