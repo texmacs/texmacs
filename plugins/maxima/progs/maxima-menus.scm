@@ -67,7 +67,7 @@
   ;;(display* "Simplify output " t "\n")
   (if (func? t 'document)
       (with u (list-find (cdr t) maxima-contains-prompt?)
-	(if u (maxima-output-simplify u) ""))
+	(if u (maxima-output-simplify u) (maxima-output-simplify t)))
       (maxima-output-simplify t)))
 
 (define maxima-apply script-apply)
