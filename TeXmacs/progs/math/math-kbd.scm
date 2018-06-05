@@ -841,6 +841,9 @@
   ("< < var var var" (math-bracket-open "<llangle>" "<rrangle>" 'default))
   ("> > var var var" (math-bracket-close "<rrangle>" "<llangle>" 'default))
 
+  ("- < var" "<lebar>")
+  ("> - var" "<gebar>")
+  
   ("- >" "<rightarrow>")
   ("- > var" "<downarrow>")
   ("- > var var" "<uparrow>")
@@ -2130,6 +2133,10 @@
   ("W var var" "<Mho>")
   ("X var" "<Xi>")
   ("Y var" "<Psi>")
+  ("Y var var" "<Ydown>")
+  ("Y var var var" "<Yup>")
+  ("Y var var var var" "<Yleft>")
+  ("Y var var var var var" "<Yright>")
   ("Z var" "<Zeta>"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

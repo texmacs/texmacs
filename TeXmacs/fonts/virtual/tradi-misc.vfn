@@ -112,6 +112,8 @@
   (ndashV (ver-flip (hor-flip nVdash)))
   (nDashv (ver-flip (hor-flip nvDash)))
   (nDashV (ver-flip (hor-flip nVDash)))
+  (lebar Yleft)
+  (gebar Yright)
 
   (frak-imath (clip frak-i * * * 0.47))
   (frak-jmath (clip frak-j * * * 0.47))

@@ -60,7 +60,8 @@
   triangleup tmprecdot preceqdot
   llangle rrangle join um upl upm ump
   assign plusassign minusassign timesassign overassign backassign
-  lflux gflux colons transtype udots subsetsim supsetsim
+  lflux gflux colons transtype
+  lebar gebar udots subsetsim supsetsim
   rightmap leftmap leftrightmap)
 
 (logic-rules
