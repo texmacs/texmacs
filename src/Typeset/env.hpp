@@ -44,34 +44,35 @@
 #define Env_Display_Style     11
 #define Env_Math_Condensed    12
 #define Env_Vertical_Pos      13
-#define Env_Math_Width        14
-#define Env_Color             15
-#define Env_Pattern_Mode      16
-#define Env_Spacing           17
-#define Env_Paragraph         18
-#define Env_Page              19
-#define Env_Page_Extents      20
-#define Env_Preamble          21
-#define Env_Geometry          22
-#define Env_Frame             23
-#define Env_Line_Width        24
-#define Env_Grid              25
-#define Env_Grid_Aspect       26
-#define Env_Src_Style         27
-#define Env_Src_Special       28
-#define Env_Src_Compact       29
-#define Env_Src_Close         30
-#define Env_Src_Color         31
-#define Env_Point_Style       32
-#define Env_Point_Size        33
-#define Env_Dash_Style        34
-#define Env_Dash_Style_Unit   35
-#define Env_Fill_Color        36
-#define Env_Line_Arrows       37
-#define Env_Line_Portion      38
-#define Env_Text_At_Halign    39
-#define Env_Text_At_Valign    40
-#define Env_Doc_At_Valign     41
+#define Env_Math_Nesting      14
+#define Env_Math_Width        15
+#define Env_Color             16
+#define Env_Pattern_Mode      17
+#define Env_Spacing           18
+#define Env_Paragraph         19
+#define Env_Page              20
+#define Env_Page_Extents      21
+#define Env_Preamble          22
+#define Env_Geometry          23
+#define Env_Frame             24
+#define Env_Line_Width        25
+#define Env_Grid              26
+#define Env_Grid_Aspect       27
+#define Env_Src_Style         28
+#define Env_Src_Special       29
+#define Env_Src_Compact       30
+#define Env_Src_Close         31
+#define Env_Src_Color         32
+#define Env_Point_Style       33
+#define Env_Point_Size        34
+#define Env_Dash_Style        35
+#define Env_Dash_Style_Unit   36
+#define Env_Fill_Color        37
+#define Env_Line_Arrows       38
+#define Env_Line_Portion      39
+#define Env_Text_At_Halign    40
+#define Env_Text_At_Valign    41
+#define Env_Doc_At_Valign     42
 
 /******************************************************************************
 * For style file editing
@@ -177,6 +178,7 @@ public:
   bool         no_patterns;
   bool         preamble;
   int          spacing_policy;
+  int          nesting_level;
 
   int          info_level;
   int          src_style;

@@ -57,6 +57,7 @@ initialize_default_var_type () {
   var_type (MATH_DISPLAY)       = Env_Display_Style;
   var_type (MATH_CONDENSED)     = Env_Math_Condensed;
   var_type (MATH_VPOS)          = Env_Vertical_Pos;
+  var_type (MATH_NESTING_LEVEL) = Env_Math_Nesting;
   var_type (MATH_FRAC_LIMIT)    = Env_Math_Width;
   var_type (MATH_TABLE_LIMIT)   = Env_Math_Width;
   var_type (MATH_FLATTEN_COLOR) = Env_Math_Width;
@@ -803,6 +804,7 @@ edit_env_rep::update () {
   display_style  = get_bool (MATH_DISPLAY);
   math_condensed = get_bool (MATH_CONDENSED);
   vert_pos       = get_int (MATH_VPOS);
+  nesting_level  = get_int (MATH_NESTING_LEVEL);
   preamble       = get_bool (PREAMBLE);
   spacing_policy = get_spacing_id (env[SPACING_POLICY]);
 
@@ -894,6 +896,9 @@ edit_env_rep::update (string s) {
     break;
   case Env_Vertical_Pos:
     vert_pos= get_int (MATH_VPOS);
+    break;
+  case Env_Math_Nesting:
+    nesting_level= get_int (MATH_NESTING_LEVEL);
     break;
   case Env_Math_Width:
     frac_max= get_length (MATH_FRAC_LIMIT);

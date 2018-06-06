@@ -486,12 +486,11 @@ make_large (tree_label l, tree t) {
 
 void
 concater_rep::typeset_around (tree t, path ip, bool colored) {
+  tree old_nl=
+    env->local_begin (MATH_NESTING_LEVEL, as_string (env->nesting_level + 1));
   if (colored) {
-    int nl= env->get_int (MATH_NESTING_LEVEL);
-    tree old_col= env->local_begin (COLOR, bracket_color (nl));
-    tree old_nl = env->local_begin (MATH_NESTING_LEVEL, as_string (nl+1));
+    tree old_col= env->local_begin (COLOR, bracket_color (env->nesting_level));
     typeset_around (t, ip, false);
-    env->local_end (MATH_NESTING_LEVEL, old_nl);
     env->local_end (COLOR, old_col);
   }
   else {
@@ -539,6 +538,7 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
     }
     marker (descend (ip, 1));
   }
+  env->local_end (MATH_NESTING_LEVEL, old_nl);
 }
 
 void

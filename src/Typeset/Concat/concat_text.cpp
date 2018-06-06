@@ -86,8 +86,8 @@ get_spacing (font fn, int id, bool condensed, bool display) {
 void
 concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
   array<space> spc_tab=
-    get_spacing (env->fn, env->spacing_policy,
-                 env->math_condensed, env->display_style);
+    get_spacing (env->fn, env->spacing_policy, env->math_condensed,
+                 env->display_style && env->nesting_level == 0);
   string s= t->label;
   int    start;
 
@@ -206,8 +206,8 @@ void
 concater_rep::print_semantic (box b, tree sem) {
   if (is_atomic (sem) && tm_string_length (sem->label) == 1) {
     array<space> spc_tab=
-      get_spacing (env->fn, env->spacing_policy,
-                   env->math_condensed, env->display_style);
+      get_spacing (env->fn, env->spacing_policy, env->math_condensed,
+                   env->display_style && env->nesting_level == 0);
     int    pos= 0;
     string s= sem->label;
     text_property tp= env->lan->advance (s, pos);

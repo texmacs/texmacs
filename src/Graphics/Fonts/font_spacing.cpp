@@ -115,7 +115,7 @@ font_rep::get_spacing_entry (int mode, tree t, int i) {
       else return space (spc->min>>3, spc->def>>3, spc->max>>3);
     }
     else if (t == "wide") {
-      if (mode == 0) return spc;
+      if (mode == 0) return space (spc->min>>1, spc->def>>1, spc->max>>1);
       else if (mode > 0) return space (spc->min<<1, spc->def<<1, spc->max<<1);
       else return space (spc->min>>2, spc->def>>2, spc->max>>2);
     }
