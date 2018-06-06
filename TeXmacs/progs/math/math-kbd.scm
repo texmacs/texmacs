@@ -836,8 +836,13 @@
   ("< < var var . ." "<Subset><cdots><Subset>")
   ("> > var var . ." "<Supset><cdots><Supset>")
 
-  ("< var var var var var" (math-bracket-open "<langle>" "<rangle>" 'default))
-  ("> var var var var var" (math-bracket-close "<rangle>" "<langle>" 'default))
+  ("< var var var var var" "<leangle>")
+  ("> var var var var var" "<geangle>")
+  ("< var var var var var =" "<leqangle>")
+  ("> var var var var var =" "<geqangle>")
+  
+  ("< var var var var var var" (math-bracket-open "<langle>" "<rangle>" 'default))
+  ("> var var var var var var" (math-bracket-close "<rangle>" "<langle>" 'default))
   ("< < var var var" (math-bracket-open "<llangle>" "<rrangle>" 'default))
   ("> > var var var" (math-bracket-close "<rrangle>" "<llangle>" 'default))
 

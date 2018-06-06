@@ -114,6 +114,11 @@
   (nDashV (ver-flip (hor-flip nVDash)))
   (lebar Yleft)
   (gebar Yright)
+  (maltesetimes (pretend (align (crop (rotate maltese 0.7854)) + 0.5 0.5) maltese))
+  (leangle angle)
+  (geangle (hor-flip angle))
+  (leqangle (stack-less leangle (hor-scale minus leangle)))
+  (geqangle (stack-less geangle (hor-scale minus geangle)))
 
   (frak-imath (clip frak-i * * * 0.47))
   (frak-jmath (clip frak-j * * * 0.47))

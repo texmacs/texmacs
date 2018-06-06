@@ -34,7 +34,8 @@
   ("dsfont" 110)
   ("euscript" 120)
   ("multicol" 130)
-  ("hyperref" 140))
+  ("hyperref" 140)
+  ("mathtools" 150))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dependencies between style files and packages
@@ -58,6 +59,7 @@
   (epsfig "epsfig")
   (includegraphics "graphicx")
   (rotatebox "graphicx")
+  (scalebox "graphicx")
   (reflectbox "graphicx")
 
   (mathscr "mathrsfs")
@@ -68,6 +70,7 @@
   (mathfrak "amssymb")
   (mathbb "amssymb")
   (theorembodyfont "theorem")
+  (substack "mathtools")
 
   (begin-align "amsmath")
   (begin-align* "amsmath")
