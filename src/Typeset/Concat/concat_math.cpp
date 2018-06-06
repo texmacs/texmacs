@@ -65,6 +65,24 @@ concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
   env->fn= old_fn;
 }
 
+inline array<space>
+get_spacing (font fn, int id, bool condensed, bool display) {
+  if (condensed) return fn->get_narrow_spacing (id);
+  if (display) return fn->get_wide_spacing (id);
+  return fn->get_normal_spacing (id);
+}
+
+void
+concater_rep::typeset_wide_middle (tree t, path ip) {
+  array<space> spc_tab=
+    get_spacing (env->fn, env->spacing_policy, env->math_condensed,
+                 env->display_style && env->nesting_level == 0);
+  space spc= spc_tab[SPC_MIDDLE];
+  if (spc->max > 0) print (spc);
+  typeset_large (t, ip, MIDDLE_BRACKET_ITEM, OP_MIDDLE_BRACKET, "<mid-");
+  if (spc->max > 0) print (spc);
+}
+
 static void
 get_big_flags (string l, bool& int_flag, bool& it_flag, bool& lim_flag) {
   int n= N(l);

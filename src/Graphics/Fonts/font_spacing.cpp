@@ -156,6 +156,13 @@ font_rep::get_spacing_entry (int mode, tree t, int i) {
       else return space (spc->min>>3, spc->def>>4, spc->max>>3);
     }
     return get_spacing_entry (mode, t, i, "multiply");
+  case SPC_MIDDLE:
+    if (t == "wide") {
+      if (mode >= 0) return space (spc->min>>1, spc->def>>1, spc->max>>1);
+      else return space (spc->min>>3, spc->def>>3, spc->max>>3);
+    }
+    else if (t == "default" || t == "old") return space (0);
+    return get_spacing_entry (mode, t, i, "middle");
   default:
     FAILED ("unimplemented type of space");
   }

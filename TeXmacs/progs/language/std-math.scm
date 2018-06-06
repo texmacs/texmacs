@@ -224,6 +224,8 @@
 
   (define Middle
     (:operator associative)
+    ;;(Middle Post)
+    ;;(Pre Middle)
     Middle-symbol
     (:<mid :args :>))
 

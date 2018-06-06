@@ -69,6 +69,7 @@ class concater_rep {
   // mathematical markup
   void typeset_around (tree t, path ip, bool colored);
   void typeset_large (tree t, path ip, int type, int op_type, string prefix);
+  void typeset_wide_middle (tree t, path ip);
   //void typeset_left (tree t, path ip);
   //void typeset_middle (tree t, path ip);
   //void typeset_right (tree t, path ip);

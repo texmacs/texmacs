@@ -353,7 +353,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_large (t, ip, LEFT_BRACKET_ITEM, OP_OPENING_BRACKET, "<left-");
     break;
   case MID:
-    typeset_large (t, ip, MIDDLE_BRACKET_ITEM, OP_MIDDLE_BRACKET, "<mid-");
+    typeset_wide_middle (t, ip);
     break;
   case RIGHT:
     typeset_large (t, ip, RIGHT_BRACKET_ITEM, OP_CLOSING_BRACKET, "<right-");

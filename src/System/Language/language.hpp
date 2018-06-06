@@ -57,7 +57,8 @@ RESOURCE(language);
 #define SPC_SHORT_APPLY      13
 #define SPC_APPLY            14
 #define SPC_MULTIPLY         15
-#define SPC_END_MARKER       16
+#define SPC_MIDDLE           16
+#define SPC_END_MARKER       17
 
 #define HYPH_STD       10000
 #define HYPH_PANIC     1000000

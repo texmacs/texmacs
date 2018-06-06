@@ -98,6 +98,7 @@ math_language_rep::set_left_spacing (string cl, string s) {
   else if (s == "wide")     tpr_class(cl).spc_before= SPC_WIDEOP;
   else if (s == "big")      tpr_class(cl).spc_before= SPC_BIGOP;
   else if (s == "multiply") tpr_class(cl).spc_before= SPC_MULTIPLY;
+  else if (s == "middle")   tpr_class(cl).spc_before= SPC_MIDDLE;
   else {
     failed_error << "Attempt to associate left spacing " << s
                  << " to " << cl << "\n";
@@ -113,6 +114,7 @@ math_language_rep::set_right_spacing (string cl, string s) {
   else if (s == "wide")     tpr_class(cl).spc_after= SPC_WIDEOP;
   else if (s == "big")      tpr_class(cl).spc_after= SPC_BIGOP;
   else if (s == "multiply") tpr_class(cl).spc_after= SPC_MULTIPLY;
+  else if (s == "middle")   tpr_class(cl).spc_after= SPC_MIDDLE;
   else {
     failed_error << "Attempt to associate right spacing " << s
                  << " to " << cl << "\n";
