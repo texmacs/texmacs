@@ -340,7 +340,8 @@ concater_rep::handle_matching (int start, int end) {
 	if (a[j]->type == MARKER_ITEM) {
 	  SI Y1= a[i]->b->y1;
 	  SI Y2= a[i]->b->y2;
-	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
+	  //a[j]->b = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
+	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[i]->b);
 	  a[j]->type= STD_ITEM;
 	}
 	else if (a[j]->type != CONTROL_ITEM) break;
@@ -350,7 +351,8 @@ concater_rep::handle_matching (int start, int end) {
 	if (a[j]->type == MARKER_ITEM) {
 	  SI Y1= a[i]->b->y1;
 	  SI Y2= a[i]->b->y2;
-	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
+	  //a[j]->b = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
+	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[i]->b);
 	  a[j]->type= STD_ITEM;
 	}
 	else if (a[j]->type != CONTROL_ITEM) break;

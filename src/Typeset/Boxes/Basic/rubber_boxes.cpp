@@ -81,11 +81,13 @@ struct marker_box_rep: public box_rep {
   selection find_selection (path lbp, path rbp) {
     return selection (rectangles (),
 		      find_tree_path (lbp), find_tree_path (rbp)); }
-  SI sub_lo_base (int level) { return min (y1, ref->sub_lo_base (level)); }
+  SI sub_lo_base (int level) { return ref->sub_lo_base (level); }
+  //SI sub_lo_base (int level) { return min (y1, ref->sub_lo_base (level)); }
   SI sub_hi_lim (int level) { return ref->sub_hi_lim (level); }
   SI sup_lo_lim (int level) { return ref->sup_lo_lim (level); }
   SI sup_lo_base (int level) { return ref->sup_lo_base (level); }
-  SI sup_hi_lim (int level) { return max (y2, ref->sup_hi_lim (level)); }
+  SI sup_hi_lim (int level) { return ref->sup_hi_lim (level); }
+  //SI sup_hi_lim (int level) { return max (y2, ref->sup_hi_lim (level)); }
 };
 
 /*****************************************************************************/
