@@ -685,7 +685,7 @@
 ((Linux\ Biolinum Italic) ((LinBiolinum_RI.ttf 0 838996)))
 ((Linux\ Biolinum Regular) ((LinBiolinum_R.ttf 0 763168)))
 ((Linux\ Biolinum\ Capitals Bold) ((LinBiolinum_aSB.ttf 0 752004)))
-((Linux\ Biolinum\ Capitals Italic\ Samll\ Caps) ((LinBiolinum_aSI.ttf 0 834824)))
+((Linux\ Biolinum\ Capitals Italic) ((LinBiolinum_aSI.ttf 0 834824)))
 ((Linux\ Biolinum\ Capitals Regular) ((LinBiolinum_aS.ttf 0 760200)))
 ((Linux\ Biolinum\ Keyboard Regular) ((LinBiolinum_K.ttf 0 260632)))
 ((Linux\ Biolinum\ Outline Bold) ((LinBiolinum_aUB.ttf 0 1556244)))
