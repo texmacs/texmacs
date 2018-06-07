@@ -68,9 +68,12 @@
   (revtex-style%        (in? tmtex-style '("aip" "aps")))
   (aip-style%           (in? tmtex-style '("aip")) revtex-style%)
   (aps-style%           (in? tmtex-style '("aps")) revtex-style%)
-  (sv-style%            (in? tmtex-style '("svjour" "llncs" "svmono")))
-  (springer-style%      (in? tmtex-style '("svjour" "llncs" sv-style%)))
-  (svjour-style%        (in? tmtex-style '("svjour")) springer-style%)
+  (sv-style%            (in? tmtex-style '("svjour" "svjour3"
+                                           "llncs" "svmono")))
+  (springer-style%      (in? tmtex-style '("svjour" "svjour3"
+                                           "llncs" sv-style%)))
+  (svjour-style%        (in? tmtex-style '("svjour"
+                                           "svjour3")) springer-style%)
   (llncs-style%         (in? tmtex-style '("llncs"))  springer-style%)
   (svmono-style%        (in? tmtex-style '("svmono")) sv-style%)
   (ieee-style%          (in? tmtex-style '("ieeeconf" "ieeetran")))

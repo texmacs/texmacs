@@ -393,5 +393,9 @@
   ("proof" #f))
 
 (smart-table latex-texmacs-macro
+  (:mode sv-style?)
+  (qed #f))
+
+(smart-table latex-texmacs-macro
   (:mode svmono-style?)
   (chapter #f))
