@@ -1532,6 +1532,11 @@ is_with (tree t, string var, string val) {
 }
 
 static bool
+is_var_with (tree t, string var, string val) {
+  return is_with (t, var, val) || is_with (t, replace (var, " ", "-"), val);
+}
+
+static bool
 is_alpha (tree t) {
   if (is_compound (t)) return false;
   string s= t->label;
@@ -1581,19 +1586,29 @@ upgrade_mod_symbol (string prefix, string s) {
 static tree
 upgrade_mod_symbols (tree t) {
   if (is_atomic (t)) return t;
-  if (is_with (t, "math font series", "bold") && is_bold (t[2]))
+  if (is_func (t, WITH) && N(t) > 3 &&
+      (t[0] == "mode" || is_atomic (t[0]) && starts (t[0]->label, "math")) &&
+      is_atomic (t[2]) && starts (t[2]->label, "math")) {
+    tree u (WITH, t[0], t[1], t (2, N(t)));
+    tree r= upgrade_mod_symbols (u);
+    if (is_atomic (r)) return r;
+    if (is_with (r, "mode", "math") && is_atomic (r[2])) return r;
+  }
+  if (is_var_with (t, "math font series", "bold") && is_bold (t[2]))
     return upgrade_mod_symbol ("b-", t[2]->label);
-  else if (is_with (t, "math font", "cal") && is_upper (t[2]))
+  else if (is_var_with (t, "math font", "cal") && is_upper (t[2]))
     return upgrade_mod_symbol ("cal-", t[2]->label);
-  else if (is_with (t, "math font", "Euler") && is_alpha (t[2]))
+  else if (is_var_with (t, "math font", "Euler") && is_alpha (t[2]))
     return upgrade_mod_symbol ("frak-", t[2]->label);
-  else if (is_with (t, "math font", "Bbb*") && is_alpha (t[2]))
+  else if (is_var_with (t, "math font", "Bbb") && is_alpha (t[2]))
     return upgrade_mod_symbol ("bbb-", t[2]->label);
-  else if (is_with (t, "math font series", "bold") &&
-	   is_with (t[2], "math font", "cal") && is_upper (t[2][2]))
+  else if (is_var_with (t, "math font", "Bbb*") && is_alpha (t[2]))
+    return upgrade_mod_symbol ("bbb-", t[2]->label);
+  else if (is_var_with (t, "math font series", "bold") &&
+	   is_var_with (t[2], "math font", "cal") && is_upper (t[2][2]))
     return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
-  else if (is_with (t, "math font", "cal") &&
-	   is_with (t[2], "math font series", "bold") && is_upper (t[2][2]))
+  else if (is_var_with (t, "math font", "cal") &&
+	   is_var_with (t[2], "math font series", "bold") && is_upper (t[2][2]))
     return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
   //else if ((is_func (t, VALUE, 1) || is_func (t, EXPAND, 1) ||
   //         is_func (t, APPLY, 1)) && (is_atomic (t[0]))) {
