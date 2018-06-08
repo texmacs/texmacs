@@ -17,11 +17,110 @@
   (:mode acm-style?)
   (cond ((== x "acmconf") "acm_proc_article-sp")
         ((== x "sig-alternate") x)
-        ((== x "acmsmall") x)
+	((== x "acmsmall") `("format=acmsmall" "acmart"))
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; ACM metadata presentation
+;;; New ACM metadata presentation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (tmtex-make-acm-art-title titles subtitles notes miscs tr)
+  (let* ((titles (tmtex-concat-Sep (map cadr titles)))
+         (content `(,@titles ,@subtitles ,@notes ,@miscs)))
+    (if (null? content) '()
+      `((title (!indent (!paragraph ,@content)))))))
+
+(define (rewrite-author a)
+  (cond ((not (func? a 'author 1)) (list a))
+        ((not (func? (cadr a) '!paragraph)) (list a))
+        (else (cons `(author ,(cadr (cadr a))) (cddr (cadr a))))))
+
+(tm-define (tmtex-append-authors l)
+  (:mode acm-art-style?)
+  (set! l (filter nnull? l))
+  (with r (append-map rewrite-author l)
+    `((!document ,@r))))
+
+(tm-define (tmtex-make-doc-data titles subtitles authors dates miscs notes
+                                subtits-l dates-l miscs-l notes-l tr ar)
+  (:mode acm-art-style?)
+  `(!document
+     ,@(tmtex-make-acm-art-title titles subtitles notes miscs tr)
+     ,@(tmtex-append-authors authors)
+     ,@dates
+     (maketitle)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; New ACM specific titlemarkup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tmtex-doc-subtitle t)
+  (:mode acm-art-style?)
+  `(subtitle ,(tmtex (cadr t))))
+
+(tm-define (tmtex-doc-note t)
+  (:mode acm-art-style?)
+  (set! t (tmtex-remove-line-feeds t))
+  `(titlenote ,(tmtex (cadr t))))
+
+(tm-define (tmtex-doc-misc t)
+  (:mode acm-art-style?)
+  (set! t (tmtex-remove-line-feeds t))
+  `(tmacmmisc ,(tmtex (cadr t))))
+
+(tm-define (tmtex-doc-date t)
+  (:mode acm-art-style?)
+  `(date ,(tmtex (cadr t))))
+
+(tm-define (tmtex-author-name t)
+  (:mode acm-art-style?)
+  `(author ,(tmtex-inline (cadr t))))
+
+(define (get-affiliation-lines aff)
+  (if (func? aff 'concat)
+      (list-filter (cdr aff) (lambda (x) (!= x '(next-line))))
+      (list aff)))
+
+(tm-define (tmtex-author-affiliation t)
+  (:mode acm-art-style?)
+  (let* ((l (if (null? (cdr t)) '() (get-affiliation-lines (cadr t))))
+         (r (list)))
+    (when (nnull? l)
+      (set! r (rcons r `(institution ,(tmtex (car l)))))
+      (set! l (cdr l)))
+    (when (nnull? l)
+      (set! r (rcons r `(streetaddress ,(tmtex (car l)))))
+      (set! l (cdr l)))
+    (when (nnull? l)
+      (set! r (rcons r `(city ,(tmtex (car l)))))
+      (set! l (cdr l)))
+    (when (nnull? l)
+      (set! r (rcons r `(country ,(tmtex (car l)))))
+      (set! l (cdr l)))
+    `(affiliation (!paragraph ,@r))))
+
+(tm-define (tmtex-author-email t)
+  (:mode acm-art-style?)
+  (set! t (tmtex-remove-line-feeds t))
+  `(email ,(tmtex (cadr t))))
+
+(tm-define (tmtex-author-homepage t)
+  (:mode acm-art-style?)
+  (set! t (tmtex-remove-line-feeds t))
+  `(tmacmhomepage ,(tmtex (cadr t))))
+
+(tm-define (tmtex-author-note t)
+  (:mode acm-art-style?)
+  (set! t (tmtex-remove-line-feeds t))
+  `(authornote ,(tmtex (cadr t))))
+
+(tm-define (tmtex-author-misc t)
+  (:mode acm-art-style?)
+  (set! t (tmtex-remove-line-feeds t))
+  `(tmacmmisc ,(tmtex (cadr t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Old ACM metadata presentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-append-authors l)
@@ -42,7 +141,7 @@
     (if (null? result) '()
       `(author (!concat ,@result)))))
 
-(define (tmtex-make-title titles notes miscs)
+(define (tmtex-make-acm-conf-title titles notes miscs)
   (let* ((titles (tmtex-concat-Sep (map cadr titles)))
          (result `(,@titles ,@notes ,@miscs)))
     (if (null? result) '()
@@ -52,14 +151,14 @@
                                 subtits-l dates-l miscs-l notes-l tr ar)
   (:mode acm-conf-style?)
   `(!document
-     ,@(tmtex-make-title titles notes miscs)
+     ,@(tmtex-make-acm-conf-title titles notes miscs)
      ,@subtitles 
      ,@(tmtex-append-authors authors)
      ,@dates
      (maketitle)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; ACM specific titlemarkup
+;;; Old ACM specific titlemarkup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (acm-line-break t)
@@ -173,7 +272,7 @@
   (tmtex-cite-detail-poor s l))
 
 (smart-table latex-texmacs-env-preamble
-  (:mode acm-small-style?)
+  (:mode acm-art-style?)
   ("theorem" #f)
   ("conjecture" #f)
   ("proposition" #f)

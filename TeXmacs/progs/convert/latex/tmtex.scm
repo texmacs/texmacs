@@ -52,33 +52,50 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-modes
+  ;;; Elsevier styles
   (elsevier-style%      (in? tmtex-style '("elsart" "jsc" "elsarticle"
                                            "ifac")))
   (jsc-style%           (in? tmtex-style '("jsc"))        elsevier-style%)
   (elsarticle-style%    (in? tmtex-style '("elsarticle")) elsevier-style%)
   (elsart-style%        (in? tmtex-style '("elsart"))     elsevier-style%)
   (ifac-style%          (in? tmtex-style '("ifac"))       elsevier-style%)
+
+  ;;; ACM styles
   (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate"
-                                           "acm_proc_article-sp" "acmsmall")))
+                                           "acm_proc_article-sp"
+                                           "acmsmall" "acmlarge"
+                                           "acmart")))
+  (acm-art-style%       (in? tmtex-style '("acmsmall" "acmlarge"
+                                           "acmart")) acm-style%)
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
   (acm-conf-style%      (in? tmtex-style '("acmconf" "sig-alternate"
                                            "acm_proc_article-sp")) acm-style%)
-  (acm-small-style%     (in? tmtex-style '("acmsmall")) acm-style%)
+  (acm-small-style%     (in? tmtex-style '("acmsmall")) acm-art-style%)
+
+  ;; AMS styles
   (ams-style%           (in? tmtex-style '("amsart")))
+
+  ;; Revtex styles
   (revtex-style%        (in? tmtex-style '("aip" "aps")))
   (aip-style%           (in? tmtex-style '("aip")) revtex-style%)
   (aps-style%           (in? tmtex-style '("aps")) revtex-style%)
   (sv-style%            (in? tmtex-style '("svjour" "svjour3"
                                            "llncs" "svmono")))
+
+  ;; Springer styles
   (springer-style%      (in? tmtex-style '("svjour" "svjour3"
                                            "llncs" sv-style%)))
   (svjour-style%        (in? tmtex-style '("svjour"
                                            "svjour3")) springer-style%)
   (llncs-style%         (in? tmtex-style '("llncs"))  springer-style%)
   (svmono-style%        (in? tmtex-style '("svmono")) sv-style%)
+
+  ;; IEEE styles
   (ieee-style%          (in? tmtex-style '("ieeeconf" "ieeetran")))
   (ieee-conf-style%     (in? tmtex-style '("ieeeconf")) ieee-style%)
   (ieee-tran-style%     (in? tmtex-style '("ieeetran")) ieee-style%)
+
+  ;; Other styles
   (beamer-style%        (in? tmtex-style '("beamer" "old-beamer")))
   (natbib-package%      (in? "cite-author-year" tmtex-packages)))
 
