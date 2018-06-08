@@ -63,14 +63,15 @@
   ;;; ACM styles
   (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate"
                                            "acm_proc_article-sp"
-                                           "acmsmall" "acmlarge"
+                                           "acmsmall" "acmlarge" "sigconf"
                                            "acmart")))
-  (acm-art-style%       (in? tmtex-style '("acmsmall" "acmlarge"
+  (acm-art-style%       (in? tmtex-style '("acmsmall" "acmlarge" "sigconf"
                                            "acmart")) acm-style%)
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
   (acm-conf-style%      (in? tmtex-style '("acmconf" "sig-alternate"
                                            "acm_proc_article-sp")) acm-style%)
   (acm-small-style%     (in? tmtex-style '("acmsmall")) acm-art-style%)
+  (acm-sigconf-style%   (in? tmtex-style '("sigconf")) acm-art-style%)
 
   ;; AMS styles
   (ams-style%           (in? tmtex-style '("amsart")))

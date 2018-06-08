@@ -11,7 +11,7 @@
         The acmsmall style.
       </src-purpose>
 
-      <\src-copyright|2016>
+      <\src-copyright|2018>
         Joris van der Hoeven
       </src-copyright>
 
@@ -27,12 +27,6 @@
   <use-package|acmart>
 
   \;
-
-  <assign|font|roman>
-
-  <\active*>
-    <src-short-comment|Linux Libertine not yet included by default>
-  </active*>
 </body>
 
 <\initial>

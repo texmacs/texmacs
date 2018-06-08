@@ -194,6 +194,7 @@
   ("acmconf"        "ACM conference style")
   ("acmsmall"       "Small ACM journal style")
   ("sig-alternate"  "Alternate ACM conference style")
+  ("sigconf"        "ACM SIGSAM conference style")
   ("amsart"         "AMS article style")
   ("elsart"         "Elsevier article style")
   ("elsarticle"     "Elsevier article style")

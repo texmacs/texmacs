@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|doc>>
 
@@ -12,7 +12,7 @@
       </src-purpose>
 
       <\src-copyright|2011>
-        Joris van der Hoeven, 2015 by Gr?goire Lecerf
+        Joris van der Hoeven, 2015 by Grégoire Lecerf
       </src-copyright>
 
       <\src-license>

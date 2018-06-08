@@ -18,6 +18,7 @@
   (cond ((== x "acmconf") "acm_proc_article-sp")
         ((== x "sig-alternate") x)
 	((== x "acmsmall") `("format=acmsmall" "acmart"))
+	((== x "sigconf") `("format=sigconf" "acmart"))
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

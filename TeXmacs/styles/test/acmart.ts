@@ -70,9 +70,9 @@
 
   <assign|very-small|<macro|x|<with|font-base-size|7|par-sep|1pt|<arg|x>>>>
 
-  <assign|small|<macro|x|<style-with|src-compact|none|<with|font-base-size|9|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|5pt|2pt|1pt>>|tex-below-display-skip|<macro|<tex-len|5pt|2pt|1pt>>|tex-above-display-short-skip|<macro|<tex-len|5pt|0pt|2pt>>|tex-below-display-short-skip|<macro|<tex-len|5pt|0pt|2pt>>|<arg|x>>>>>
+  <assign|small|<macro|x|<with|font-base-size|9|par-sep|1pt|<arg|x>>>>
 
-  <assign|normal-size|<macro|x|<style-with|src-compact|none|<with|font-base-size|10|par-sep|1pt|tex-above-display-skip|<macro|<tex-len|5.5pt|2pt|1pt>>|tex-below-display-skip|<macro|<tex-len|5.5pt|2pt|1pt>>|tex-above-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|texs-below-display-short-skip|<macro|<tex-len|6pt|0pt|3pt>>|<arg|x>>>>>
+  <assign|normal-size|<macro|x|<with|font-base-size|10|par-sep|1pt|<arg|x>>>>
 
   <assign|large|<macro|x|<with|font-base-size|12|par-sep|2pt|<arg|x>>>>
 
@@ -86,7 +86,7 @@
 
   <active*|<src-comment|Sectional macros>>
 
-  <assign|sectional-sep|<macro|<space|3spc>>>
+  <assign|sectional-sep|<macro|<space|4spc>>>
 
   <assign|section-font|<macro|name|<normal-size|<with|font-family|ss|<change-case|<arg|name>|UPCASE>>>>>
 
@@ -165,10 +165,6 @@
       Title information.
     </src-comment>
   </active*>
-
-  <assign|doc-title-block|<macro|body|<tabular|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
-    <arg|body>
-  </cell>>>>>>>
 
   <assign|doc-block|<\macro|body>
     <\wide-tabular>

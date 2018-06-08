@@ -374,6 +374,7 @@ get_latex_style (tree t) {
   array<string> opts= trim_spaces (tokenize (opt, ","));
   if (N(t) == 3 && occurs ("acmart", s)) {
     if (occurs ("acmsmall", opt)) return "acmsmall";
+    if (occurs ("sigconf", opt)) return "sigconf";
   }
   if (N(t) == 3 && occurs ("revtex", s)) {
     if (contains (string ("aip"), opts)) return "aip";

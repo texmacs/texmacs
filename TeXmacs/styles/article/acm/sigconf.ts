@@ -76,7 +76,7 @@
 
   <assign|normal-size|<macro|x|<with|font-base-size|9|par-sep|1.5pt|<arg|x>>>>
 
-  <assign|sharp-size|<macro|x|<with|font-base-size|10|par-sep|1.5pt|<arg|x>>>>
+  <assign|sharp-size|<macro|x|<with|font-base-size|11|par-sep|1.5pt|<arg|x>>>>
 
   <assign|large|<macro|x|<with|font-base-size|12|par-sep|2pt|<arg|x>>>>
 
