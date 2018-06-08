@@ -196,7 +196,8 @@
 (tm-define (init-page-type s)
   (:check-mark "*" test-page-type?)
   (init-env "page-type" s)
-  (init-default "page-width" "page-height")
+  (init-env "page-width" "auto")
+  (init-env "page-height" "auto")
   (notify-page-change))
 
 (tm-define (init-page-size w h)
@@ -204,7 +205,8 @@
   (:argument h "Page height")
   (init-env "page-type" "user")
   (init-env "page-width" w)
-  (init-env "page-height" h))
+  (init-env "page-height" h)
+  (notify-page-change))
 
 (define (test-default-page-orientation?) (test-default? "page-orientation"))
 (tm-define (init-default-page-orientation)
