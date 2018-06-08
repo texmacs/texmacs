@@ -36,12 +36,6 @@
 
   <assign|font|Linux Libertine>
 
-  <assign|page-width|6.75in>
-
-  <assign|page-height|10in>
-
-  <assign|page-type|user>
-
   \;
 
   <assign|page-odd|46pt>

@@ -26,6 +26,14 @@
 
   <use-package|acmart>
 
+  <active*|<src-comment|Global layout parameters>>
+
+  <assign|page-width|6.75in>
+
+  <assign|page-height|10in>
+
+  <assign|page-type|user>
+
   \;
 </body>
 
