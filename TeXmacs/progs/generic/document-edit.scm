@@ -192,6 +192,13 @@
   (init-env "page-medium" s)
   (notify-page-change))
 
+(define (test-default-page-type?)
+  (test-default? "page-type" "page-width" "page-height"))
+(tm-define (default-page-type)
+  (:check-mark "*" test-default-page-type?)
+  (init-default "page-type" "page-width" "page-height")
+  (notify-page-change))
+
 (define (test-page-type? s) (== (get-init "page-type") s))
 (tm-define (init-page-type s)
   (:check-mark "*" test-page-type?)

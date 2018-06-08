@@ -516,9 +516,7 @@
   ("Standard 5:4" (init-page-type "5:4")))
 
 (tm-menu (document-page-size-menu)
-  ("Default"
-   (init-default "page-type" "page-width" "page-height")
-   (notify-page-change))
+  ("Default" (default-page-type))
   ---
   (if (not (style-has? "beamer-style"))
       (group "Common formats")
