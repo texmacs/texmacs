@@ -342,7 +342,8 @@ collect_metadata (tree t, tree latex_class) {
     s = latex_verbarg_to_string (latex_class[2]);
 
   if (s == "acm_proc_article-sp" ||
-      s == "sig-alternate" || s == "sig-alt-full")
+      s == "sig-alternate" || s == "sig-alt-full" ||
+      s == "acmart")
     r= collect_metadata_acm (t);
   else if (s == "elsarticle" || s == "elsart" || s == "ifacconf")
     r= collect_metadata_elsevier (t);
@@ -367,10 +368,14 @@ collect_metadata (tree t, tree latex_class) {
 
 string
 get_latex_style (tree t) {
-  if (N(t) != 3 && N(t) != 2)  return "";
+  if (N(t) != 3 && N(t) != 2) return "";
   string s= trim_spaces (string_arg (t[N(t)-1]));
+  string opt= N(t)==3? trim_spaces (string_arg (t[1])): string ("");
+  array<string> opts= trim_spaces (tokenize (opt, ","));
+  if (N(t) == 3 && occurs ("acmart", s)) {
+    if (occurs ("acmsmall", opt)) return "acmsmall";
+  }
   if (N(t) == 3 && occurs ("revtex", s)) {
-    array<string> opts= trim_spaces (tokenize (string_arg (t[1]), ","));
     if (contains (string ("aip"), opts)) return "aip";
     if (contains (string ("aps"), opts)) return "aps";
   }
