@@ -24,37 +24,11 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-article|section-base>
-
-  <active*|<\src-comment>
-    TeX-like lengths.
-  </src-comment>>
-
-  <assign|tex-len|<macro|default|increase|decrease|<style-with|src-compact|none|<tmlen|<minus|<arg|default>|<arg|decrease>>|<arg|default>|<plus|<arg|default>|<arg|increase>>>>>>
+  <use-package|std|env|title-generic|header-article|section-base|std-latex-base>
 
   <active*|<src-comment|Global layout parameters>>
 
   <assign|font|Linux Libertine>
-
-  \;
-
-  <assign|page-odd|46pt>
-
-  <assign|page-even|46pt>
-
-  <assign|page-right|46pt>
-
-  <assign|page-top|<plus|58pt|13pt|12pt>>
-
-  <assign|page-bot|<plus|44pt|2pc|-5pt>>
-
-  \;
-
-  <assign|page-head-sep|13pt>
-
-  <assign|page-foot-sep|2pc>
-
-  \;
 
   <assign|par-first|<macro|10pt>>
 

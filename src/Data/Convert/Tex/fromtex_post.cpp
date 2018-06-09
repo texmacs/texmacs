@@ -2147,7 +2147,8 @@ latex_to_tree (tree t0) {
     tree the_body   = compound ("body", t13);
     if (textm_natbib)
       the_style= compound ("style", tuple (style, "cite-author-year"));
-    the_style[0] << "std-latex";
+    if (style != "acmart" && style != "acmsmall" && style != "sigconf")
+      the_style[0] << "std-latex";
     tree r= tree (DOCUMENT, the_version, the_style, the_body);
     if (N (initial) > 0) r << compound ("initial", initial);
     // cout << "\n\nr= " << r << "\n\n";

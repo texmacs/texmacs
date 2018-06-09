@@ -36,6 +36,8 @@
 
   <assign|page-height|auto>
 
+  <assign|font-base-size|9>
+
   \;
 
   <assign|page-odd|54pt>
@@ -53,12 +55,6 @@
   <assign|page-head-sep|13pt>
 
   <assign|page-foot-sep|2pc>
-
-  \;
-
-  <assign|font-base-size|9>
-
-  <assign|par-first|<macro|10pt>>
 
   <active*|<\src-comment>
     Sizes.

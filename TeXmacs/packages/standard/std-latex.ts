@@ -20,11 +20,7 @@
     </src-license>
   </src-title>>
 
-  <active*|<\src-comment>
-    TeX-like lengths.
-  </src-comment>>
-
-  <assign|tex-len|<macro|default|increase|decrease|<style-with|src-compact|none|<tmlen|<minus|<arg|default>|<arg|decrease>>|<arg|default>|<plus|<arg|default>|<arg|increase>>>>>>
+  <use-package|std-latex-base>
 
   <active*|<\src-comment>
     Default values of TeX page layout parameters.
@@ -143,40 +139,6 @@
   <assign|eqn-row-sep|<macro|<plus|<value|par-sep>|<tex-jot>>>>
 
   <assign|eqn-ver-sep|<macro|<style-with|src-compact|none|<over|<style-with|src-compact|none|<minus|<tex-above-display-skip>|<tex-below-display-skip>|<plus|<tex-above-display-short-skip>|<tex-below-display-short-skip>>>>|2>>>>
-
-  <active*|<\src-comment>
-    TeX style lists.
-  </src-comment>>
-
-  <assign|itemize-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
-
-  <assign|enumerate-reduce|<macro|nr|<minimum|<arg|nr>|4>>>
-
-  <active*|<\src-comment>
-    LaTeX boxes.
-  </src-comment>>
-
-  <assign|minipage|<macro|pos|width|body|<tabular|<tformat|<cwith|1|1|1|1|cell-width|<arg|width>>|<cwith|1|1|1|1|cell-hmode|exact>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|<arg|pos>>|<table|<row|<cell|<arg|body>>>>>>>>
-
-  <assign|fcolorbox|<\macro|border|background|body>
-    <with|text-color|<value|color>|<with|color|<arg|border>|<colored-frame|<arg|background>|<with|color|<value|text-color>|<arg|body>>>>>
-  </macro>>
-
-  <active*|<\src-comment>
-    <LaTeX> preview
-  </src-comment>>
-
-  <assign|latex_preview|<macro|pic|src|<verbatim|<arg|src>>>>
-
-  <\active*>
-    <\src-comment>
-      Footnotes.
-    </src-comment>
-  </active*>
-
-  <assign|footnotemark|<macro|<rsup|<with|font-shape|right|<next-footnote><reference|<merge|footnote-|<the-footnote>>>>>>>
-
-  <assign|footnotemark*|<macro|num|<rsup|<with|font-shape|right|<reference|<merge|footnote-|<arg|num>>>>>>>
 </body>
 
 <\initial>
