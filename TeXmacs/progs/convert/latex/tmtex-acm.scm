@@ -21,6 +21,8 @@
 	((== x "acmlarge") `("format=acmlarge" "acmart"))
 	((== x "acmtog") `("format=acmtog" "acmart"))
 	((== x "sigconf") `("format=sigconf" "acmart"))
+	((== x "sigchi") `("format=sigchi" "acmart"))
+	((== x "sigplan") `("format=sigplan" "acmart"))
         (else x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

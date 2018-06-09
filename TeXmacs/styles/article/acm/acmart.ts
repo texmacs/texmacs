@@ -40,7 +40,11 @@
 
   <assign|small|<macro|x|<with|font-base-size|9|par-sep|1pt|<arg|x>>>>
 
+  <assign|flat-size|<macro|x|<with|font-base-size|9|par-sep|1pt|<arg|x>>>>
+
   <assign|normal-size|<macro|x|<with|font-base-size|10|par-sep|1pt|<arg|x>>>>
+
+  <assign|sharp-size|<macro|x|<with|font-base-size|11|par-sep|1.5pt|<arg|x>>>>
 
   <assign|large|<macro|x|<with|font-base-size|12|par-sep|2pt|<arg|x>>>>
 
@@ -169,6 +173,20 @@
   <assign|author-by|<macro|body|<arg|body>>>
 
   <assign|author-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<with|font-family|ss|<author-by|<change-case|<arg|author>|UPCASE>>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Abstracts.
+    </src-comment>
+  </active*>
+
+  <assign|render-abstract|<\macro|body>
+    <\surround|<no-indent>|>
+      <\small>
+        <arg|body>
+      </small>
+    </surround>
+  </macro>>
 </body>
 
 <\initial>

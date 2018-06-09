@@ -377,6 +377,8 @@ get_latex_style (tree t) {
     if (occurs ("acmlarge", opt)) return "acmlarge";
     if (occurs ("acmtog", opt)) return "acmtog";
     if (occurs ("sigconf", opt)) return "sigconf";
+    if (occurs ("sigchi", opt)) return "sigchi";
+    if (occurs ("sigplan", opt)) return "sigplan";
   }
   if (N(t) == 3 && occurs ("revtex", s)) {
     if (contains (string ("aip"), opts)) return "aip";

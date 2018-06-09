@@ -197,6 +197,8 @@
   ("acmtog"         "Two column ACM journal style")
   ("sig-alternate"  "Alternate ACM conference style")
   ("sigconf"        "ACM SIGSAM conference style")
+  ("sigchi"         "ACM SIGSAM abstract style")
+  ("sigplan"        "ACM SIGSAM proceedings style")
   ("amsart"         "AMS article style")
   ("elsart"         "Elsevier article style")
   ("elsarticle"     "Elsevier article style")

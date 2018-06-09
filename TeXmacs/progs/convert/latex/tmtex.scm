@@ -64,10 +64,10 @@
   (acm-style%           (in? tmtex-style '("acmconf" "sig-alternate"
                                            "acm_proc_article-sp"
                                            "acmsmall" "acmlarge" "acmtog"
-                                           "sigconf"
+                                           "sigconf" "sigchi" "sigplan"
                                            "acmart")))
   (acm-art-style%       (in? tmtex-style '("acmsmall" "acmlarge" "acmtog"
-                                           "sigconf"
+                                           "sigconf" "sigchi" "sigplan"
                                            "acmart")) acm-style%)
   (sig-alternate-style% (in? tmtex-style '("sig-alternate")) acm-style%)
   (acm-conf-style%      (in? tmtex-style '("acmconf" "sig-alternate"
@@ -76,6 +76,8 @@
   (acm-large-style%     (in? tmtex-style '("acmlarge")) acm-art-style%)
   (acm-tog-style%       (in? tmtex-style '("acmtog")) acm-art-style%)
   (acm-sigconf-style%   (in? tmtex-style '("sigconf")) acm-art-style%)
+  (acm-sigchi-style%    (in? tmtex-style '("sigchi")) acm-art-style%)
+  (acm-sigplan-style%   (in? tmtex-style '("sigplan")) acm-art-style%)
 
   ;; AMS styles
   (ams-style%           (in? tmtex-style '("amsart")))
