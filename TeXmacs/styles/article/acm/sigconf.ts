@@ -50,11 +50,17 @@
 
   <assign|page-bot|<plus|75pt|2pc|-18pt>>
 
-  \;
-
   <assign|page-head-sep|13pt>
 
   <assign|page-foot-sep|2pc>
+
+  \;
+
+  <assign|par-columns-sep|2pc>
+
+  <assign|marginal-note-width|2pc>
+
+  <assign|marginal-note-sep|11pt>
 
   <active*|<\src-comment>
     Sizes.

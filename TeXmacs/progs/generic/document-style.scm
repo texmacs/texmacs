@@ -193,6 +193,8 @@
 
   ("acmconf"        "ACM conference style")
   ("acmsmall"       "Small ACM journal style")
+  ("acmlarge"       "Large ACM journal style")
+  ("acmtog"         "Two column ACM journal style")
   ("sig-alternate"  "Alternate ACM conference style")
   ("sigconf"        "ACM SIGSAM conference style")
   ("amsart"         "AMS article style")

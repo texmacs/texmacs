@@ -5,10 +5,10 @@
 <\body>
   <\active*>
     <\src-title>
-      <src-style-file|acmsmall|1.0>
+      <src-style-file|acmlarge|1.0>
 
       <\src-purpose>
-        The acmsmall style.
+        The acmlarge style.
       </src-purpose>
 
       <\src-copyright|2018>
@@ -28,23 +28,23 @@
 
   <active*|<src-comment|Global layout parameters>>
 
-  <assign|page-width|6.75in>
+  <assign|page-width|8.5in>
 
-  <assign|page-height|10in>
+  <assign|page-height|11in>
 
   <assign|page-type|user>
 
   \;
 
-  <assign|page-odd|46pt>
+  <assign|page-odd|81pt>
 
-  <assign|page-even|46pt>
+  <assign|page-even|81pt>
 
-  <assign|page-right|46pt>
+  <assign|page-right|81pt>
 
-  <assign|page-top|<plus|58pt|13pt|12pt>>
+  <assign|page-top|<plus|78pt|13pt|12pt>>
 
-  <assign|page-bot|<plus|44pt|2pc|-5pt>>
+  <assign|page-bot|<plus|114pt|2pc|-5pt>>
 
   <assign|page-head-sep|13pt>
 
@@ -52,7 +52,7 @@
 
   \;
 
-  <assign|marginal-note-width|2pc>
+  <assign|marginal-note-width|4pc>
 
   <assign|marginal-note-sep|11pt>
 </body>
