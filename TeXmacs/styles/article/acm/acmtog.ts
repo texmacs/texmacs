@@ -48,7 +48,7 @@
 
   <assign|page-bot|<plus|73pt|30pt|-5pt>>
 
-  <assign|page-head-sep|13pt>
+  <assign|page-head-sep|<plus|13pt|6pt>>
 
   <assign|page-foot-sep|30pt>
 
@@ -76,7 +76,7 @@
 
   <assign|normal-size|<macro|x|<with|font-base-size|9|par-sep|1.5pt|<arg|x>>>>
 
-  <assign|sharp-size|<macro|x|<with|font-base-size|11|par-sep|1.5pt|<arg|x>>>>
+  <assign|sharp-size|<macro|x|<with|font-base-size|10|par-sep|1.5pt|<arg|x>>>>
 
   <assign|large|<macro|x|<with|font-base-size|12|par-sep|2pt|<arg|x>>>>
 
@@ -90,9 +90,19 @@
 
   <active*|<src-comment|Sectional macros>>
 
+  <assign|section-font|<macro|name|<sharp-size|<with|font-family|ss|<change-case|<arg|name>|UPCASE>>>>>
+
+  <assign|subsection-font|<macro|name|<sharp-size|<with|font-family|ss|<arg|name>>>>>
+
   <assign|section-title|<macro|name|<style-with|src-compact|none|<sectional-normal|<vspace*|<tmlen|0.75bls|0.55bls|0.95bls>><section-font|<arg|name>><vspace|0.25bls>>>>>
 
   <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal|<vspace*|<tmlen|0.75bls|0.55bls|0.55bls>><subsection-font|<arg|name>><vspace|0.25bls>>>>>
+
+  <active*|<src-comment|Title information>>
+
+  <assign|doc-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+    <doc-title-block|<font-magnify|1.9|<with|font-family|ss|<arg|x>>>>
+  </surround>>>
 </body>
 
 <\initial>

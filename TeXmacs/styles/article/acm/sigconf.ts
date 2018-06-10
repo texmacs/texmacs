@@ -46,11 +46,11 @@
 
   <assign|page-right|54pt>
 
-  <assign|page-top|<plus|52pt|13pt|18pt>>
+  <assign|page-top|<plus|52pt|13pt|21pt>>
 
   <assign|page-bot|<plus|75pt|2pc|-18pt>>
 
-  <assign|page-head-sep|13pt>
+  <assign|page-head-sep|<plus|13pt|3pt>>
 
   <assign|page-foot-sep|2pc>
 
@@ -184,10 +184,14 @@
   \;
 
   <assign|doc-title|<\macro|x>
-    <\surround|<new-line><vspace*|<minus|2em|10pt>>|<vspace|1.5em>>
+    <\surround|<new-line><vspace*|<minus|2em|10pt>>|<vspace|1em>>
       <doc-title-block|<with|font-family|ss|font-series|bold|font-base-size|18|<arg|x>>>
     </surround>
   </macro>>
+
+  <assign|doc-subtitle|<macro|x|<\surround|<vspace*|0.25fn>|<vspace|0.25fn>>
+    <doc-title-block|<font-magnify|1.297|<with|font-family|ss|<arg|x>>>>
+  </surround>>>
 
   <assign|doc-authors|<\xmacro|data>
     <\style-with|src-compact|none>

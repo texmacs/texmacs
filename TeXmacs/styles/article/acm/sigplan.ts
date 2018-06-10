@@ -40,11 +40,11 @@
 
   <assign|page-right|0.75in>
 
-  <assign|page-top|<plus|1in|13pt|18pt>>
+  <assign|page-top|<plus|1in|13pt|-12pt>>
 
-  <assign|page-bot|<plus|1in|30pt|-18pt>>
+  <assign|page-bot|<plus|1in|30pt|-20pt>>
 
-  <assign|page-head-sep|13pt>
+  <assign|page-head-sep|<plus|13pt|4pt>>
 
   <assign|page-foot-sep|30pt>
 

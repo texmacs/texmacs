@@ -140,8 +140,8 @@
 
   <assign|doc-block|<\macro|body>
     <\wide-tabular>
-      <tformat|<table|<row|<\cell>
-        <\with|par-first|0fn>
+      <tformat|<cwith|1|1|1|1|cell-vcorrect|n>|<table|<row|<\cell>
+        <\with|par-first|0fn|par-sep|0fn|par-par-sep|0fn>
           <arg|body>
         </with>
       </cell>>>>
@@ -172,7 +172,29 @@
 
   <assign|author-by|<macro|body|<arg|body>>>
 
-  <assign|author-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<with|font-family|ss|<author-by|<change-case|<arg|author>|UPCASE>>>>>>>
+  <assign|author-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<large|<with|font-family|ss|<author-by|<change-case|<arg|author>|UPCASE>>>>>>>>
+
+  <assign|vertical-author|<\macro|data>
+    <arg|data>
+  </macro>>
+
+  <assign|doc-authors|<\xmacro|data>
+    <\style-with|src-compact|none>
+      <\quasi>
+        <\doc-author>
+          <\with|doc-author|<value|doc-author*>>
+            <unquote*|<map|vertical-author|<quote-arg|data>>>
+          </with>
+        </doc-author>
+      </quasi>
+    </style-with>
+  </xmacro>>
+
+  <assign|doc-make-title|<macro|body|<\surround||<vspace|0.5fn>>
+    <\compact>
+      <doc-title-block|<arg|body>>
+    </compact>
+  </surround>>>
 
   <\active*>
     <\src-comment>

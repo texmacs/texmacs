@@ -42,11 +42,11 @@
 
   <assign|page-right|46pt>
 
-  <assign|page-top|<plus|58pt|13pt|12pt>>
+  <assign|page-top|<plus|58pt|13pt|16pt>>
 
   <assign|page-bot|<plus|44pt|2pc|-5pt>>
 
-  <assign|page-head-sep|13pt>
+  <assign|page-head-sep|<plus|13pt|4pt>>
 
   <assign|page-foot-sep|2pc>
 

@@ -40,9 +40,9 @@
 
   <assign|page-right|54pt>
 
-  <assign|page-top|<plus|66pt|13pt|18pt>>
+  <assign|page-top|<plus|66pt|13pt|12pt>>
 
-  <assign|page-bot|<plus|73pt|30pt|-18pt>>
+  <assign|page-bot|<plus|73pt|30pt|-24pt>>
 
   <assign|page-head-sep|13pt>
 
