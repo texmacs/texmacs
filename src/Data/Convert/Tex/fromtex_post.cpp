@@ -1422,31 +1422,36 @@ reopen_envs (tree t, array< array<tree> > &envs) {
   int i, n= N(t), m= N(envs);
   tree r (CONCAT);
   array<tree> done;
+  int direct_level= 0;
   for (i=0; i<n; i++) {
     if (is_apply (t[i], "begingroup")) {
       array<tree> tmp;
       if (m > 0) tmp= envs[m-1];
       envs << copy (tmp);
       m= N(envs);
+      direct_level++;
     }
     else if (is_apply (t[i], "endgroup")) {
-      if (m > 0)
-        envs= range (envs, 0, m-1);
+      if (m > 0) envs= range (envs, 0, m-1);
       m= N(envs);
-      r << get_envs (envs, array<tree> ());
+      if (direct_level == 0) r << get_envs (envs, array<tree> ());
+      direct_level= max (direct_level-1, 0);
     }
     else if (is_func (t[i], SET, 2) && repeat_envs (t[i][0])) {
       r << t[i];
       done << t[i][0];
       set_envs (t[i], envs);
+      direct_level= 0;
     }
     else if (is_func (t[i], SET, 2) && t[i][0] == MODE && t[i][1] == "text") {
       r << t[i];
       r << get_envs (envs, array<tree> ());
+      direct_level= 0;
     }
     else if (is_func (t[i], RESET, 1)) {
       r << t[i];
       reset_envs (t[i], envs);
+      direct_level= 0;
     }
     else if (begin) {
       r << get_envs (envs, done);

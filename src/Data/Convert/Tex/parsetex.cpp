@@ -71,6 +71,7 @@ struct latex_parser {
   tree parse_verbatim    (string s, int& i, string end, string env);
   tree parse_alltt       (string s, int& i, string end, string env,
                           tree opt= tree (CONCAT));
+  tree parse_char_code   (string s, int& i);
 
   tree parse             (string s, int change);
 };
@@ -240,7 +241,7 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       break;
     case '\\':
       // TODO: move this in parse_command
-      if (s (i+1, i+6) == "hskip" || s (i+1, i+6) == "vskip"){
+      if ((i+6)<n && (s (i+1, i+6) == "hskip" || s (i+1, i+6) == "vskip")) {
         string skip = s (i+1, i+6);
         i+=7;
         bool tmp_textm_class_flag = textm_class_flag;
@@ -253,14 +254,16 @@ latex_parser::parse (string s, int& i, string stop, int change) {
         }
         textm_class_flag = tmp_textm_class_flag;
       }
+      else if ((i+6)<n && s (i+1, i+5) == "char")
+        t << parse_char_code (s, i);
       // end of move
       else if (((i+7)<n && !is_tex_alpha (s (i+5, i+7)) &&
 	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop")) ||
 	  ((i+9)<n && !is_tex_alpha (s (i+7, i+9)) && s (i, i+7) == "\\choose"))
 	{
-    int start = i;
+          int start = i;
 	  i++;
-    while (i<n && is_alpha (s[i])) i++;
+          while (i<n && is_alpha (s[i])) i++;
 	  string fr_cmd= s(start, i);
 	  if (fr_cmd == "\\over") fr_cmd= "\\frac";
 	  if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
@@ -1476,6 +1479,48 @@ latex_parser::parse_alltt (string s, int& i, string end, string env, tree opt)
   r << "\n";
   i+=e;
   return r;
+}
+
+/******************************************************************************
+* Parse characters by number
+******************************************************************************/
+
+static tree
+from_char_code (int i) {
+  if (i == ((int) '<')) return tree (TUPLE, "\\<less>");
+  if (i == ((int) '>')) return tree (TUPLE, "\\<gtr>");
+  if (i == ((int) '\\')) return tree (TUPLE, "\\textbackslash");
+  string s ("?");
+  s[0]= (unsigned char) i;
+  return s;
+}
+
+tree
+latex_parser::parse_char_code (string s, int& i) {
+  if (s (i, i+5) == "\\char") {
+    i += 5;
+    while (i<N(s) && s[i] == ' ') i++;
+    if (i<N(s) && is_numeric (s[i])) {
+      int code= 0;
+      while (i<N(s) && is_numeric (s[i])) {
+        code= 10*code + ((int) (s[i] - '0'));
+        i++;
+      }
+      return from_char_code (code);
+    }
+    if (i<N(s) && s[i] == '\'') {
+      i++;
+      int code= 0;
+      while (i<N(s) && is_numeric (s[i])) {
+        code= 8*code + ((int) (s[i] - '0'));
+        i++;
+      }
+      return from_char_code (code);
+    }
+    //if (s[i] == '`') {}
+    //if (s[i] == '\"') {}
+  }
+  return "";
 }
 
 /******************************************************************************

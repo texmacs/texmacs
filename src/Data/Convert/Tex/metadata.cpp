@@ -51,7 +51,6 @@ is_metadata (tree u) {
          is_tuple (u, "\\authornote")        ||
          is_tuple (u, "\\authorrunning")     ||
          is_tuple (u, "\\author*")           ||
-         is_tuple (u, "\\begin-CCSXML")      ||
          is_tuple (u, "\\category")          ||
          is_tuple (u, "\\category*")         ||
          is_tuple (u, "\\ccsdesc")           ||
