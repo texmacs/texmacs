@@ -17,6 +17,7 @@
 tree        collect_abstract_data (tree u);
 array<tree> collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree));
 array<tree> collect_metadata_latex (tree t);
+tree        collect_metadata_acm_old (tree t);
 tree        collect_metadata_acm (tree t);
 tree        collect_metadata_ams (tree t);
 tree        collect_metadata_elsevier (tree t);

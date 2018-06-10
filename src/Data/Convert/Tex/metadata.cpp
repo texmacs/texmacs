@@ -48,10 +48,15 @@ is_metadata (tree u) {
          is_tuple (u, "\\altaffiliation")    ||
          is_tuple (u, "\\altaffiliation*")   ||
          is_tuple (u, "\\author")            ||
+         is_tuple (u, "\\authornote")        ||
          is_tuple (u, "\\authorrunning")     ||
          is_tuple (u, "\\author*")           ||
+         is_tuple (u, "\\begin-CCSXML")      ||
          is_tuple (u, "\\category")          ||
          is_tuple (u, "\\category*")         ||
+         is_tuple (u, "\\ccsdesc")           ||
+         is_tuple (u, "\\ccsdesc*")          ||
+         is_tuple (u, "\\CCSXML")            ||
          is_tuple (u, "\\classification")    ||
          is_tuple (u, "\\contrib")           ||
          is_tuple (u, "\\contrib*")          ||
@@ -73,6 +78,7 @@ is_metadata (tree u) {
          is_tuple (u, "\\maketitle")         ||
          is_tuple (u, "\\noaffiliation")     ||
          is_tuple (u, "\\numberofauthors")   ||
+         is_tuple (u, "\\orcid")             ||
          is_tuple (u, "\\pacs")              ||
          is_tuple (u, "\\preprint")          ||
          is_tuple (u, "\\pagenumbering")     ||
@@ -82,8 +88,10 @@ is_metadata (tree u) {
          is_tuple (u, "\\subjclass")         ||
          is_tuple (u, "\\subjclass*")        ||
          is_tuple (u, "\\subtitle")          ||
+         is_tuple (u, "\\subtitlenote")      ||
          is_tuple (u, "\\terms")             ||
          is_tuple (u, "\\title")             ||
+         is_tuple (u, "\\titlenote")         ||
          is_tuple (u, "\\titlerunning")      ||
          is_tuple (u, "\\title*")            ||
          is_tuple (u, "\\thanks")            ||
@@ -342,8 +350,10 @@ collect_metadata (tree t, tree latex_class) {
     s = latex_verbarg_to_string (latex_class[2]);
 
   if (s == "acm_proc_article-sp" ||
-      s == "sig-alternate" || s == "sig-alt-full" ||
-      s == "acmart")
+      s == "sig-alternate" || s == "sig-alt-full")
+    r= collect_metadata_acm_old (t);
+  else if (s == "acmart" || s == "acmsmall" || s == "acmlarge" ||
+           s == "acmtog" || s == "sigconf" || s == "sigchi" || s == "sigplan")
     r= collect_metadata_acm (t);
   else if (s == "elsarticle" || s == "elsart" || s == "ifacconf")
     r= collect_metadata_elsevier (t);

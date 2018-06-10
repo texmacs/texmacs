@@ -1035,6 +1035,8 @@ latex_symbol_to_tree (string s) {
       else return tree (BIG, s);
     }
 
+    if (s == "begin-acks") return tree (BEGIN, "acknowledgments");
+    if (s == "end-acks") return tree (END, "acknowledgments");
     if ((N(s) > 6) && (s(0,6) == "begin-"))
       return tree (BEGIN, s(6,N(s)));
     if ((N(s) > 4) && (s(0,4) == "end-"))
@@ -1681,7 +1683,7 @@ latex_command_to_tree (tree t) {
       is_tuple (t, "\\end-subsubparagraph")||
       is_tuple (t, "\\end-subsubparagraph*")) {
     return "";
-  }
+  }  
 
   if (is_tuple (t, "\\begin-tmpadded*", 1)     ||
       is_tuple (t, "\\begin-tmunderlined*", 1) ||

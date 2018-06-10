@@ -205,7 +205,7 @@
     </style-with>
   </xmacro>>
 
-  <assign|author-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font-base-size|12|<arg|author>>>>>>
+  <assign|author-name|<macro|author|<surround|<vspace*|0.25fn>|<vspace|0.5fn>|<doc-author-block|<with|font-base-size|12|<arg|author>>>>>>
 
   <assign|author-affiliation|<\macro|address>
     <surround|<vspace*|0.25fn>|<vspace|0.25fn>|<doc-author-block|<with|font-base-size|10|<arg|address>>>>
