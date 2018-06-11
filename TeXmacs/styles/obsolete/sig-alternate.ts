@@ -345,7 +345,19 @@
 
   <assign|render-bibitem|<macro|text|<with|item-hsep|<macro|1fn>|<aligned-item-bis|<arg|text>>>>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Big figures.
+    </src-comment>
+  </active*>
+
+  <assign|render-big-figure-2col|<value|render-big-figure>>
+
+  <assign|render-big-figure|<\macro|type|name|fig|cap>
+    <\with|par-columns|1>
+      <render-big-figure-2col|<arg|type>|<arg|name>|<arg|fig>|<arg|cap>>
+    </with>
+  </macro>>
 </body>
 
 <\initial>

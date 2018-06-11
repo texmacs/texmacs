@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -137,6 +137,20 @@
   <assign|subsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1.5fn><arg|name><vspace|0.75fn>>>>>
 
   <assign|subsubsection-title|<macro|name|<style-with|src-compact|none|<sectional-normal-bold|<vspace*|1fn><arg|name><vspace|0.5fn>>>>>
+
+  <\active*>
+    <\src-comment>
+      Big figures.
+    </src-comment>
+  </active*>
+
+  <assign|render-big-figure-2col|<value|render-big-figure>>
+
+  <assign|render-big-figure|<\macro|type|name|fig|cap>
+    <\with|par-columns|1>
+      <render-big-figure-2col|<arg|type>|<arg|name>|<arg|fig>|<arg|cap>>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>

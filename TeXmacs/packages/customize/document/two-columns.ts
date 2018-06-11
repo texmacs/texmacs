@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std-pattern>>
 
@@ -37,20 +37,6 @@
       </custom-note-text>
     </with>>
   </float>>>>
-
-  <\active*>
-    <\src-comment>
-      Big figures.
-    </src-comment>
-  </active*>
-
-  <assign|render-big-figure-2col|<value|render-big-figure>>
-
-  <assign|render-big-figure|<\macro|type|name|fig|cap>
-    <\with|par-columns|1>
-      <render-big-figure-2col|<arg|type>|<arg|name>|<arg|fig>|<arg|cap>>
-    </with>
-  </macro>>
 
   \;
 </body>

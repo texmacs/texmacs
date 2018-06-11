@@ -1,4 +1,4 @@
-<TeXmacs|1.0.4.7>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -16,11 +16,10 @@
       </src-copyright>
 
       <\src-license>
-        This software falls under the <hlink|GNU general public
-        license, version 3 or later|$TEXMACS_PATH/LICENSE>.
-        It comes WITHOUT ANY WARRANTY WHATSOEVER.
-        You should have received a copy of the license which the software.
-        If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
+        This software falls under the <hlink|GNU general public license,
+        version 3 or later|$TEXMACS_PATH/LICENSE>. It comes WITHOUT ANY
+        WARRANTY WHATSOEVER. You should have received a copy of the license
+        which the software. If not, see <hlink|http://www.gnu.org/licenses/gpl-3.0.html|http://www.gnu.org/licenses/gpl-3.0.html>.
       </src-license>
     </src-title>
   </active*>
@@ -166,7 +165,7 @@
     List environments.
   </src-comment>>
 
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<arg|x>|r-2.3fn||r-0.2fn|>>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|0.5fn><with|par-first|-3fn|<yes-indent>><resize|<arg|x>|<minus|1r|2.3fn>||<minus|1r|0.2fn>|>>>>
 
   <assign|render-list|<macro|body|<padded-normal|0.0fn|1em|<with|par-sep|-0.8em|<arg|body>>>>>
 
@@ -174,7 +173,7 @@
     Rendering of floating objects.
   </src-comment>>
 
-  <assign|render-big-figure-2col|<\macro|type|name|fig|cap>
+  <assign|render-big-figure|<\macro|type|name|fig|cap>
     <padded-normal|1fn|1fn|<style-with|src-compact|none|<tabular*|<tformat|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-valign|b>|<table|<row|<\cell>
       <\with|par-left|<plus|<value|par-left>|4em>>
         \;
