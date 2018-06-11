@@ -804,6 +804,10 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
     //fam= stix_fix (fam, series, shape);
   }
 
+  if (N(c) == 1 && is_alpha (c[0]) && ends (fam, " Math") && shape == "italic")
+    if (starts (fam, "TeX Gyre ") || starts (fam, "Stix "))
+      fam= fam (0, N(fam) - 5);
+  
   if (attempt == 1) {
     bool ok= true;
     if (fam == "cal" || fam == "cal*" ||
