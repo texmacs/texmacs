@@ -140,7 +140,7 @@
 
 (define (save-buffer-save name opts)
   ;;(display* "save-buffer-save " name "\n")
-  (with vname `(verbatim ,(url->system name))
+  (with vname `(verbatim ,(utf8->cork (url->system name)))
     (if (buffer-save name)
         (begin
           (buffer-pretend-modified name)
