@@ -83,6 +83,7 @@ initialize_default_env () {
   env (MATH_FONT_FAMILY) = "mr";        // the font family in math mode
   env (MATH_FONT_SERIES) = "medium";    // the font series in math mode
   env (MATH_FONT_SHAPE)  = "normal";    // the font shape in math mode
+  env (MATH_FONT_SIZES)  = "default";   // various script sizes
   env (MATH_LEVEL)       = "0";         // the index level (0, 1 or 2)
   env (MATH_DISPLAY)     = "false";     // true if we are in display style
   env (MATH_CONDENSED)   = "false";     // ignore spaces between operators ?

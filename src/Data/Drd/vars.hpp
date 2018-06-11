@@ -62,6 +62,7 @@ extern string MATH_FONT;
 extern string MATH_FONT_FAMILY;
 extern string MATH_FONT_SERIES;
 extern string MATH_FONT_SHAPE;
+extern string MATH_FONT_SIZES;
 extern string MATH_LEVEL;
 extern string MATH_DISPLAY;
 extern string MATH_CONDENSED;

@@ -953,6 +953,7 @@ init_std_drd () {
   init_var (MATH_FONT_FAMILY, TYPE_STRING);
   init_var (MATH_FONT_SERIES, TYPE_STRING);
   init_var (MATH_FONT_SHAPE, TYPE_STRING);
+  init_var (MATH_FONT_SIZES, TYPE_ADHOC);
   init_var (MATH_LEVEL, TYPE_INTEGER);
   init_var (MATH_DISPLAY, TYPE_BOOLEAN);
   init_var (MATH_CONDENSED, TYPE_BOOLEAN);

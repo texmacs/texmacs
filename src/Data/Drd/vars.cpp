@@ -64,6 +64,7 @@ string MATH_FONT ("math-font");
 string MATH_FONT_FAMILY ("math-font-family");
 string MATH_FONT_SERIES ("math-font-series");
 string MATH_FONT_SHAPE ("math-font-shape");
+string MATH_FONT_SIZES ("math-font-sizes");
 string MATH_LEVEL ("math-level");
 string MATH_DISPLAY ("math-display");
 string MATH_CONDENSED ("math-condensed");

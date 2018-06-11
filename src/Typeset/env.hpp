@@ -40,39 +40,40 @@
 #define Env_Info_Level         7
 #define Env_Font               8
 #define Env_Font_Size          9
-#define Env_Index_Level       10
-#define Env_Display_Style     11
-#define Env_Math_Condensed    12
-#define Env_Vertical_Pos      13
-#define Env_Math_Nesting      14
-#define Env_Math_Width        15
-#define Env_Color             16
-#define Env_Pattern_Mode      17
-#define Env_Spacing           18
-#define Env_Paragraph         19
-#define Env_Page              20
-#define Env_Page_Extents      21
-#define Env_Preamble          22
-#define Env_Geometry          23
-#define Env_Frame             24
-#define Env_Line_Width        25
-#define Env_Grid              26
-#define Env_Grid_Aspect       27
-#define Env_Src_Style         28
-#define Env_Src_Special       29
-#define Env_Src_Compact       30
-#define Env_Src_Close         31
-#define Env_Src_Color         32
-#define Env_Point_Style       33
-#define Env_Point_Size        34
-#define Env_Dash_Style        35
-#define Env_Dash_Style_Unit   36
-#define Env_Fill_Color        37
-#define Env_Line_Arrows       38
-#define Env_Line_Portion      39
-#define Env_Text_At_Halign    40
-#define Env_Text_At_Valign    41
-#define Env_Doc_At_Valign     42
+#define Env_Font_Sizes        10
+#define Env_Index_Level       11
+#define Env_Display_Style     12
+#define Env_Math_Condensed    13
+#define Env_Vertical_Pos      14
+#define Env_Math_Nesting      15
+#define Env_Math_Width        16
+#define Env_Color             17
+#define Env_Pattern_Mode      18
+#define Env_Spacing           19
+#define Env_Paragraph         20
+#define Env_Page              21
+#define Env_Page_Extents      22
+#define Env_Preamble          23
+#define Env_Geometry          24
+#define Env_Frame             25
+#define Env_Line_Width        26
+#define Env_Grid              27
+#define Env_Grid_Aspect       28
+#define Env_Src_Style         29
+#define Env_Src_Special       30
+#define Env_Src_Compact       31
+#define Env_Src_Close         32
+#define Env_Src_Color         33
+#define Env_Point_Style       34
+#define Env_Point_Size        35
+#define Env_Dash_Style        36
+#define Env_Dash_Style_Unit   37
+#define Env_Fill_Color        38
+#define Env_Line_Arrows       39
+#define Env_Line_Portion      40
+#define Env_Text_At_Halign    41
+#define Env_Text_At_Valign    42
+#define Env_Doc_At_Valign     43
 
 /******************************************************************************
 * For style file editing
@@ -150,7 +151,8 @@ public:
   hashmap<string,tree>         missing;     // missing refs
   array<tree>                  redefined;   // redefined labels
   hashmap<string,bool>         touched;     // touched refs
-  link_repository              link_env;
+  link_repository              link_env;    // current links
+  array<array<int> >           size_cache;  // math font size cache
 
   int          dpi;
   double       inch;
@@ -178,6 +180,7 @@ public:
   bool         no_patterns;
   bool         preamble;
   int          spacing_policy;
+  tree         math_font_sizes;
   int          nesting_level;
 
   int          info_level;
@@ -461,6 +464,7 @@ public:
   SI     get_pages_width (bool deco);
   SI     get_page_height (bool deco);
   tree   decode_arrow (tree t, string l, string h);
+  int    get_script_size (int sz, int level);
   void   update_font ();
   void   update_color ();
   void   update_pattern_mode ();

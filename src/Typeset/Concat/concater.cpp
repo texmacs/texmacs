@@ -40,7 +40,7 @@ void
 concater_rep::marker (path ip) {
   if (is_decoration (ip)) ip= path (0, ip);
   string fn_name= "cmr";
-  int sz= script (env->fn_size, env->index_level);
+  int sz= env->get_script_size (env->fn_size, env->index_level);
   font gfn (tex_font (fn_name, sz, (int) (env->magn*env->dpi)));
   box b= text_box (ip->next, ip->item, "", gfn, blue);
   a << line_item (MARKER_ITEM, OP_SKIP, b, HYPH_INVALID);
@@ -69,7 +69,7 @@ concater_rep::ghost (string s, path ip, color col) {
     else if (s[0] == '{') { fn_name= "cmsy"; s= "f"; }
     else if (s[0] == '}') { fn_name= "cmsy"; s= "g"; }
   }
-  int sz= script (env->fn_size, env->index_level);
+  int sz= env->get_script_size (env->fn_size, env->index_level);
   font gfn (tex_font (fn_name, sz, (int) (env->magn*env->dpi)));
   box b= text_box (decorate (ip), 0, s, gfn, col);
   array<box> bs (1);
@@ -102,7 +102,7 @@ concater_rep::flag_ok (string s, path ip, color col) {
     }
   }
   else if (info == INFO_DETAILED || info == INFO_PAPER) {
-    int sz= script (env->fn_size, env->index_level+2);
+    int sz= env->get_script_size (env->fn_size, env->index_level+2);
     font gfn (tex_font ("ecrm", sz, (int) (env->magn*env->dpi)));
     box textb= text_box (decorate (ip), 0, s, gfn, col);
     box flagb= flag_box (dip, textb, h, pencil (col, env->fn->wline), light);
