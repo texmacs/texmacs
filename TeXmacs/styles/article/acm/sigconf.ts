@@ -136,7 +136,7 @@
 
   <assign|conference-permission-par-line-sep|0pt>
 
-  <assign|conference-permission-font-base-size|9>
+  <assign|conference-permission-font-base-size|7>
 
   <assign|make-conference-permissions|<macro|<with|par-par-sep|0pt|par-line-sep|<value|conference-permission-par-line-sep>|par-sep|1pt|font-base-size|<value|conference-permission-font-base-size>|<no-indent><value|conference-boilerplate><new-line><no-indent><with|font-shape|italic|<value|conference-name>>,
   <value|conference-info><new-line><no-indent><value|conference-copyrightetc>>>>
