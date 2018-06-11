@@ -271,6 +271,102 @@
      // //
      ("Ok" (quit)))))
 
+(tm-widget (page-formatter-margins u quit)
+  (:require (style-has? "std-latex-dtd"))
+  (padded
+    (centered
+      (text "This style specifies page margins in the TeX way"))
+    ===
+    (refreshable "page-margin-toggles"
+      (centered
+        (aligned
+          (meti (hlist // (text "Same screen margins as on paper"))
+            (toggle (begin
+                      (initial-set u "page-screen-margin"
+                                   (if answer "false" "true"))
+                      (refresh-now "page-screen-margin-settings"))
+                    (!= (initial-get u "page-screen-margin") "true"))))))
+    ======
+    (hlist
+      (refreshable "page-tex-hor-margins"
+        (hlist (bold (text "Horizontal margins")))
+        === ===
+	(aligned
+	  (item (text "oddsidemargin:")
+	    (input (initial-set u "tex-odd-side-margin" answer) "string"
+		   (list (initial-get u "tex-odd-side-margin")) "6em"))
+	  (item (text "evensidemargin:")
+	    (input (initial-set u "tex-even-side-margin" answer) "string"
+		   (list (initial-get u "tex-even-side-margin")) "6em"))
+	  (item (text "textwidth:")
+	    (input (initial-set u "tex-text-width" answer) "string"
+		   (list (initial-get u "tex-text-width")) "6em"))
+	  (item (text "linewidth:")
+	    (input (initial-set u "tex-line-width" answer) "string"
+		   (list (initial-get u "tex-line-width")) "6em"))
+	  (item (text "columnwidth:")
+	    (input (initial-set u "tex-column-width" answer) "string"
+		   (list (initial-get u "tex-column-width")) "6em")))
+        (glue #f #t 0 0))
+      /// ///
+      (refreshable "page-tex-ver-margins"
+        (hlist (bold (text "Vertical margins")))
+        === ===
+	(aligned
+	  (item (text "topmargin:")
+	    (input (initial-set u "tex-top-margin" answer) "string"
+		   (list (initial-get u "tex-top-margin")) "6em"))
+	  (item (text "headheight:")
+	    (input (initial-set u "tex-head-height" answer) "string"
+		   (list (initial-get u "tex-head-height")) "6em"))
+	  (item (text "headsep:")
+	    (input (initial-set u "tex-head-sep" answer) "string"
+		   (list (initial-get u "tex-head-sep")) "6em"))
+	  (item (text "textheight:")
+	    (input (initial-set u "tex-text-height" answer) "string"
+		   (list (initial-get u "tex-text-height")) "6em"))
+	  (item (text "footskip:")
+	    (input (initial-set u "tex-foot-skip" answer) "string"
+		   (list (initial-get u "tex-foot-skip")) "6em")))
+        (glue #f #t 0 0))
+      /// ///
+      (refreshable "page-screen-margin-settings"
+        (when (== (initial-get u "page-screen-margin") "true")
+          (hlist (bold (text "Margins on screen")))
+          === ===
+          (aligned
+            (item (text "Left:")
+              (input (initial-set u "page-screen-left" answer) "string"
+                     (list (initial-get u "page-screen-left")) "6em"))
+            (item (text "Right:")
+              (input (initial-set u "page-screen-right" answer) "string"
+                     (list (initial-get u "page-screen-right")) "6em"))
+            (item (text "Top:")
+              (input (initial-set u "page-screen-top" answer) "string"
+                     (list (initial-get u "page-screen-top")) "6em"))
+            (item (text "Bottom:")
+              (input (initial-set u "page-screen-bot" answer) "string"
+                     (list (initial-get u "page-screen-bot")) "6em")))
+          (glue #f #t 0 0)))))
+  ======
+  (explicit-buttons
+   (hlist
+     >>>
+     ("Reset"
+      (initial-default u "tex-odd-side-margin" "tex-even-side-margin"
+		         "tex-text-width" "tex-line-width" "tex-column-width"
+                         "tex-top-margin" "tex-head-height" "tex-head-sep"
+                         "tex-text-height" "tex-foot-skip"
+                         "page-screen-left" "page-screen-right"
+                         "page-screen-top" "page-screen-bot"
+                         "page-width-margin" "page-screen-margin")
+      (refresh-now "page-margin-toggles")
+      (refresh-now "page-tex-hor-margins")
+      (refresh-now "page-tex-ver-margins")
+      (refresh-now "page-screen-margin-settings"))
+     // //
+     ("Ok" (quit)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document -> Page / Breaking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
