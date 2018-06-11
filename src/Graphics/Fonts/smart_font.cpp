@@ -499,16 +499,28 @@ stix_fix (string family, string series, string shape) {
 string
 math_fix (string family, string series, string shape) {
   if (starts (shape, "math")) {
-    array<string> a= trimmed_tokenize (family, ","), b;
-    for (int i=0; i<N(a); i++)
-      if (starts (a[i], "math=")) {
-        string mathfn= a[i] (5, N(a[i]));
-        mathfn= tex_gyre_fix (mathfn, series, shape);
-        //mathfn= stix_fix (mathfn, series, shape);
-        b << mathfn;
+    array<string> a= trimmed_tokenize (family, ","), r;
+    for (int i=0; i<N(a); i++) {
+      array<string> b= trimmed_tokenize (a[i], "=");
+      if (N(b) == 2) {
+        array<string> c= trimmed_tokenize (b[0], " ");
+        if (contains (string ("math"), c)) {
+          for (int j=0; j<N(c); j++)
+            if (c[j] == "math") {
+              c= append (range (c, 0, j), range (c, j+1, N(c)));
+              break;
+            }
+          string conds = recompose (c, " ");
+          string base  = tex_gyre_fix (b[1], series, shape);
+          //base= stix_fix (base, series, shape);
+          string mathfn= (N(c)==0? base: conds * "=" * base);
+          r << mathfn;
+        }
+        else r << a[i];
       }
-      else b << a[i];
-    family= recompose (b, ",");
+      else r << a[i];
+    }
+    family= recompose (r, ",");
   }
   return family;
 }
