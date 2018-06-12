@@ -231,22 +231,18 @@ collect_metadata_acm (tree t) {
     u= t[i];
     if (is_tuple (u, "\\date", 1))
       doc_data << tree (APPLY, "\\doc-date", u[1]);
-    else if (is_tuple (u, "\\title", 1)) {
-      //get_acm_title_notes (u[1], doc_notes);
+    else if (is_tuple (u, "\\title", 1))
       doc_data << tree (APPLY, "\\doc-title", u[1]);
+    else if (is_tuple (u, "\\title*", 2)) {
+      doc_data << tree (APPLY, "\\doc-running-title", u[1]);
+      doc_data << tree (APPLY, "\\doc-title", u[2]);
     }
-    else if (is_tuple (u, "\\subtitle", 1)) {
-      //get_acm_title_notes (u[1], doc_notes);
+    else if (is_tuple (u, "\\subtitle", 1))
       doc_data << tree (APPLY, "\\doc-subtitle", u[1]);
-    }
-    else if (is_tuple (u, "\\titlenote", 1)) {
-      //get_acm_title_notes (u[1], doc_notes);
+    else if (is_tuple (u, "\\titlenote", 1))
       doc_data << tree (APPLY, "\\doc-note", u[1]);
-    }
-    else if (is_tuple (u, "\\subtitlenote", 1)) {
-      //get_acm_title_notes (u[1], doc_notes);
+    else if (is_tuple (u, "\\subtitlenote", 1))
       doc_data << tree (APPLY, "\\doc-note", u[1]);
-    }
     else if (is_tuple (u, "\\author", 1)) {
       array<tree> authors;
       while (i<n && is_tuple (t[i], "\\author", 1))
