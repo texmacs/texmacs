@@ -196,11 +196,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols from mathabx package
+;; NOTE: we avoid using the mathabx package because it tends
+;; to be badly installed and incompatible with certain styles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-group latex-mathabx-symbol%
-  divides ndivides npreccurlyeq asterisk
-  dottimes nequiv precdot)
+;;(logic-group latex-mathabx-symbol%
+;;  divides ndivides npreccurlyeq asterisk
+;;  dottimes nequiv precdot)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Symbols from textcomp package
@@ -246,8 +248,8 @@
   ((latex-needs% 'x "stmaryrd") (latex-stmary-symbol% 'x))
   ((latex-big-symbol% 'x) (latex-stmary-big-symbol% 'x))
   ((latex-needs% 'x "stmaryrd") (latex-stmary-big-symbol% 'x))
-  ((latex-symbol% 'x) (latex-mathabx-symbol% 'x))
-  ((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x))
+  ;;((latex-symbol% 'x) (latex-mathabx-symbol% 'x))
+  ;;((latex-needs% 'x "mathabx") (latex-mathabx-symbol% 'x))
   ((latex-symbol% 'x) (latex-textcomp-symbol% 'x))
   ((latex-needs% 'x "textcomp") (latex-textcomp-symbol% 'x))
   ((latex-symbol% 'x) (latex-upgreek-symbol% 'x))

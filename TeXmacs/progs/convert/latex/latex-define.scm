@@ -149,6 +149,17 @@
   (Tau "\\mathrm{T}")
   (Zeta "\\mathrm{Z}")
 
+  ;; symbols from mathabx
+  ;; NOTE: we avoid using the mathabx package because it tends
+  ;; to be badly installed and incompatible with certain styles
+  (divides "\\mathrel{|}")
+  (ndivides "\\mathrel{\\nmid}")
+  (asterisk "\\mathord{*}")
+  (npreccurlyeq (!annotate "\\mathrel{\\not\\preccurlyeq}" (preccurlyeq)))
+  (dottimes "\\mathbin{\\dot{\\times}}")
+  (nequiv "\\mathrel{\\not\\equiv}")
+  (precdot "\\mathrel{\\prec\\!\\!\\cdot")
+  
   ;; other extra symbols
   (exterior "\\wedge")
   (Exists "\\exists")

@@ -45,6 +45,9 @@
   succsucc succsucceq succsuccsucc succsuccsucceq
   lleq llleq ggeq gggeq triplesim ntriplesim
 
+  ;; replacements for symbols from mathabx
+  divides ndivides asterisk npreccurlyeq dottimes nequiv precdot
+
   ;; extra literal symbols
   mathcatalan mathd mathD mathe matheuler mathlambda mathi mathpi
   Alpha Beta Epsilon Eta Iota Kappa Mu Nu Omicron Chi Rho Tau Zeta
