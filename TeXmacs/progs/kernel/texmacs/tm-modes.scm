@@ -119,6 +119,7 @@
   (not-in-session% (not (inside? 'session)))
   (in-math-in-session% #t in-math% in-session%)
   (in-math-not-in-session% #t in-math% not-in-session%)
+  (in-multicol-style% (!= (get-init "par-columns") "1"))
   (in-std% (style-has? "std-dtd"))
   (in-std-text% #t in-text% in-std%)
   (in-tmdoc% (style-has? "tmdoc-style"))

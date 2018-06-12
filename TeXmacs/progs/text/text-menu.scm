@@ -260,6 +260,8 @@
 
 (tm-menu (focus-float-menu t)
   (:require (float-context? t))
+  (if (in-multicol-style?)
+      ("Wide float" (float-toggle-wide t)))
   (-> "Allowed positions" (link float-menu))
   (if (cursor-at-anchor?)
       ("Go to float" (go-to-float)))
@@ -276,6 +278,8 @@
 
 (tm-menu (focus-float-menu t)
   (:require (tree-is? t 'footnote))
+  (if (in-multicol-style?)
+      ("Wide footnote" (float-toggle-wide t)))
   (if (cursor-at-anchor?)
       ("Go to footnote" (go-to-float)))
   (if (not (cursor-at-anchor?))
@@ -899,6 +903,10 @@
 
 (tm-menu (focus-float-icons t)
   (:require (float-context? t))
+  (if (in-multicol-style?)
+      ((check (balloon (icon "tm_wide_float.xpm") "Make float wide") "v"
+              (float-wide? (focus-tree)))
+       (float-toggle-wide t)))
   (=> (balloon (icon "tm_position_float.xpm")
                "Allowed positions of floating object")
       (link float-menu))
@@ -920,6 +928,10 @@
 
 (tm-menu (focus-float-icons t)
   (:require (tree-is? t 'footnote))
+  (if (in-multicol-style?)
+      ((check (balloon (icon "tm_wide_float.xpm") "Make footnote wide") "v"
+              (float-wide? (focus-tree)))
+       (float-toggle-wide t)))
   ((balloon (icon "tm_anchor.xpm")
             "Go to anchor or footnote")
    (cursor-toggle-anchor)))

@@ -743,6 +743,27 @@
       (tree-go-to t :start)
       (remove-text #f))))
 
+(define (float-or-footnote? t)
+  (tree-in? t '(float footnote)))
+
+(tm-define (float-wide? t)
+  (and-with f (tree-search-upwards t float-or-footnote?)
+    (and-with w (tree-up f)
+      (and (tree-is? w 'with)
+           (== (tree-arity w) 3)
+           (tm-equal? (tree-ref w 0) "par-columns")
+           (tm-equal? (tree-ref w 1) "1")))))
+
+(tm-define (test-float-wide? . args)
+  (float-wide? (focus-tree)))
+(tm-define (float-toggle-wide t)
+  (:check-mark "v" test-float-wide?)
+  (and-with f (tree-search-upwards t float-or-footnote?)
+    (and-with w (tree-up f)
+      (if (float-wide? t)
+          (tree-set w (tree-ref w 2))
+          (tree-set f `(with "par-columns" "1" ,f))))))
+
 (tm-define (cursor-at-anchor?)
   (with t (cursor-tree)
     (tree-in? t '(float footnote))))
