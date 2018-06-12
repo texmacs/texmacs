@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std-pattern>>
 
@@ -122,6 +122,14 @@
   </cell>>>>>>>
 
   <assign|doc-make-title|<macro|body|<surround||<vspace|2fn>|<doc-title-block|<arg|body>>>>>
+
+  <assign|doc-make-rich-title|<\macro|notes|body>
+    <\surround||<arg|notes>>
+      <\doc-make-title>
+        <arg|body>
+      </doc-make-title>
+    </surround>
+  </macro>>
 
   <assign|doc-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
     <doc-title-block|<font-magnify|1.682|<with|math-font-series|bold|font-series|bold|<arg|x>>>>

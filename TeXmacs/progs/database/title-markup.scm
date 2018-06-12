@@ -149,6 +149,15 @@
        (doc-make-title
          ,(doc-data-main t)))))
 
+(tm-define (xdoc-data-sub t)
+  (display* "--------------------------------------------------\n")
+  (display* "hidden= " (doc-data-hidden t) "\n")
+  (display* "--------------------------------------------------\n")
+  (display* "main  = " (doc-data-main t) "\n")
+  `(doc-make-rich-title
+    ,(doc-data-hidden t)
+    (document ,(doc-data-main t))))
+
 (tm-define (doc-data t)
   (:secure #t)
   (with opts (map tree->stree (select t '(doc-title-options :%1)))
