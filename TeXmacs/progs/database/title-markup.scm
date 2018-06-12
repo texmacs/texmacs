@@ -142,18 +142,20 @@
      ,@(select t '(doc-misc))
      ,@(select t '(doc-inactive))))
 
-(tm-define (doc-data-sub t)
+(tm-define (xdoc-data-sub t)
   `(surround
      ,(doc-data-hidden t) (concat)
      (document
        (doc-make-title
          ,(doc-data-main t)))))
 
-(tm-define (xdoc-data-sub t)
-  (display* "--------------------------------------------------\n")
-  (display* "hidden= " (doc-data-hidden t) "\n")
-  (display* "--------------------------------------------------\n")
-  (display* "main  = " (doc-data-main t) "\n")
+(tm-define (doc-data-sub t)
+  ;;(display* "--------------------------------------------------\n")
+  ;;(display* "source= " t "\n")
+  ;;(display* "--------------------------------------------------\n")
+  ;;(display* "hidden= " (doc-data-hidden t) "\n")
+  ;;(display* "--------------------------------------------------\n")
+  ;;(display* "main  = " (doc-data-main t) "\n")
   `(doc-make-rich-title
     ,(doc-data-hidden t)
     (document ,(doc-data-main t))))
