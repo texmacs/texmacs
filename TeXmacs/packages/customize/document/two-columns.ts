@@ -28,17 +28,37 @@
     </src-comment>
   </active*>
 
-  <assign|doc-make-title|<macro|body|<with|par-columns|1|<surround||<vspace|2fn>|<doc-title-block|<arg|body>>>>>>
+  <assign|doc-make-title|<\macro|body>
+    <\with|par-columns|1>
+      <doc-title-block|<arg|body>>
 
-  <assign|custom-footnote-text|<macro|sym|id|body|<style-with|src-compact|none|<\float|footnote|>
-    <smaller|<\with|par-mode|justify|par-left|0cm|par-right|0cm|par-columns|1>
-      <\custom-note-text|<arg|sym>|<arg|id>>
+      \;
+    </with>
+  </macro>>
+
+  <assign|doc-make-rich-title|<\macro|notes|body>
+    <\surround||<arg|notes>>
+      <\doc-make-title>
         <arg|body>
-      </custom-note-text>
-    </with>>
-  </float>>>>
+      </doc-make-title>
+    </surround>
+  </macro>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Temporary hack.
+    </src-comment>
+  </active*>
+
+  <assign|xcustom-footnote-text|<macro|sym|id|body|<custom-note-text|<arg|sym>|<arg|id>|<arg|body>><new-line>>>
+
+  <assign|doc-make-rich-title|<\macro|notes|body>
+    <\doc-make-title>
+      <arg|body>
+    </doc-make-title>
+
+    <smaller|<arg|notes>>
+  </macro>>
 </body>
 
 <\initial>

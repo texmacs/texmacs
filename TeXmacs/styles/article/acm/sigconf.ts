@@ -147,16 +147,6 @@
     </src-comment>
   </active*>
 
-  <assign|doc-make-title|<\macro|body>
-    <\with|par-columns|1>
-      <\surround||<vspace|2fn>>
-        <doc-title-block|<arg|body>>
-
-        \;
-      </surround>
-    </with>
-  </macro>>
-
   <assign|doc-title-block|<\macro|body>
     <tabular*|<tformat|<twith|table-width|1par>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<cwith|1|1|1|1|cell-hyphen|t>|<table|<row|<\cell>
       <\with|par-mode|center>
@@ -218,7 +208,7 @@
   <assign|render-abstract|<\macro|body>
     <section*|<abstract-text>>
 
-    <surround|<no-indent>|<float|footnote|bf|<smaller|<make-conference-permissions>>>|<arg|body>>
+    <surround|<no-indent>|<float|footnote||<smaller|<make-conference-permissions>>>|<arg|body>>
   </macro>>
 
   <assign|abstract-category-item|<macro|ind|cat|sub|det|<arg|ind><if|<unequal|<arg|cat>|<uninit>>|
