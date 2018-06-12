@@ -284,5 +284,36 @@
   ("lemma" #f)
   ("corollary" #f)
   ("definition" #f)
-  ("remark" #f)
   ("example" #f))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Missing theorem types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (acm-thmenv prim name before after)
+  `(smart-table latex-texmacs-env-preamble
+     (:mode acm-art-style?)
+     (,prim (!append ,@before
+                     (newtheorem ,prim (!translate ,name)) "\n"
+		     ,@after))))
+
+(define-macro (acm-theorem prim name)
+  `(acm-thmenv ,prim ,name () ()))
+
+(define-macro (acm-remark prim name)
+  `(acm-thmenv ,prim ,name
+               ("\\theoremstyle{acmdefinition}\n")
+               ("\\theoremstyle{acmplain}\n")))
+
+(acm-theorem "axiom" "Axiom")
+(acm-theorem "notation" "Notation")
+(acm-remark "remark" "Remark")
+(acm-remark "note" "Note")
+(acm-remark "convention" "Convention")
+(acm-remark "warning" "Warning")
+(acm-remark "acknowledgments" "Acknowledgments")
+(acm-remark "answer" "Answer")
+(acm-remark "question" "Question")
+(acm-remark "remark" "Remark")
+(acm-remark "problem" "Problem")
+(acm-remark "solution" "Solution")
