@@ -256,7 +256,11 @@
   ("Top" (toggle-insertion-positioning "t"))
   ("Here" (toggle-insertion-positioning "h"))
   ("Bottom" (toggle-insertion-positioning "b"))
-  ("Other pages" (toggle-insertion-positioning-not "f")))
+  ("Other pages" (toggle-insertion-positioning-not "f"))
+  (if (tree-innermost float-context? #t)
+      ---
+      ("Make non floating"
+       (turn-non-floating (tree-innermost float-context? #t)))))
 
 (tm-menu (focus-float-menu t)
   (:require (rich-float-context? t))
@@ -274,7 +278,9 @@
 
 (tm-menu (focus-float-menu t)
   (:require (floatable-context? t))
-  ("Make floating" (turn-floating t)))
+  (if (in-multicol-style?)
+      ("Span over all columns" (floatable-toggle-wide t)))
+  ("Make floating" (turn-floating (tree-innermost floatable-context?))))
 
 (tm-menu (focus-float-menu t)
   (:require (tree-is? t 'footnote))
@@ -906,7 +912,7 @@
   (if (in-multicol-style?)
       ((check (balloon (icon "tm_wide_float.xpm") "Make float wide") "v"
               (float-wide? (focus-tree)))
-       (float-toggle-wide t)))
+       (float-toggle-wide (focus-tree))))
   (=> (balloon (icon "tm_position_float.xpm")
                "Allowed positions of floating object")
       (link float-menu))
@@ -922,6 +928,10 @@
 
 (tm-menu (focus-float-icons t)
   (:require (floatable-context? t))
+  (if (in-multicol-style?)
+      ((check (balloon (icon "tm_wide_float.xpm") "Make wide") "v"
+              (floatable-wide? (focus-tree)))
+       (floatable-toggle-wide (focus-tree))))
   ((balloon (icon "tm_position_float.xpm")
             "Let the environment float")
    (turn-floating (tree-innermost floatable-context?))))

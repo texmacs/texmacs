@@ -625,7 +625,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (tmtex-transform-style x)
-  (cond ((in? x '("generic" "exam" "old-generic" "old-article"
+  (cond ((in? x '("generic" "exam"
+                  "old-generic" "old-article"
                   "tmarticle" "tmdoc" "mmxdoc"))           "article")
         ((in? x '("book" "old-book" "tmbook" "tmmanual"))  "book")
         ((in? x '("letter"  "old-letter"))                 "letter")
@@ -714,11 +715,15 @@
       (set! doc-preamble '()))
     (if (null? styles) (tmtex doc)
       (let* ((styles* (tmtex-filter-styles styles))
+             (styles** (if (and (== styles* (list "article"))
+                                (in? `(associate "par-columns" "2") init))
+                           (list `("twocolumn" "article"))
+                           styles*))
              (preamble* (ahash-with tmtex-env :preamble #t
                                     (map-in-order tmtex-pre doc-preamble)))
              (body* (tmtex doc-body))
              (needs (list tmtex-languages tmtex-colors tmtex-colormaps)))
-        (list '!file body* styles* needs init preamble*)))))
+        (list '!file body* styles** needs init preamble*)))))
 
 (define (convert-charset t)
   (cond ((string? t) (unescape-angles (utf8->cork t)))
@@ -1467,6 +1472,15 @@
 		(let ((r (tmtex-with-one var val (tmtex-with next))))
 		  (tmtex-env-reset var)
 		  r)))))
+
+(define (tmtex-with-wrapped l)
+  (if (and (== (length l) 3)
+           (== (car l) "par-columns")
+           (== (cadr l) "1")
+           (tm-in? (caddr l) '(small-figure big-figure
+                               small-table big-table)))
+      (tmtex-float-sub #t "h" (caddr l))
+      (tmtex-with l)))
 
 (define (tmtex-var-name-sub l)
   (if (null? l) l
@@ -2644,7 +2658,7 @@
   ((:or row cell subtable) tmtex-noop)
 
   (assign tmtex-assign)
-  (with tmtex-with)
+  (with tmtex-with-wrapped)
   (provides tmtex-noop)
   (value tmtex-compound)
   (quote-value tmtex-noop)
