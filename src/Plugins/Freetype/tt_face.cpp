@@ -101,11 +101,14 @@ tt_font_metric_rep::get (int i) {
     int h= slot->bitmap.rows;
     SI ww= w * PIXEL;
     SI hh= h * PIXEL;
+    SI xw= tt_si (slot->metrics.width);
+    SI xh= tt_si (slot->metrics.height);
     SI dx= tt_si (slot->metrics.horiBearingX);
     SI dy= tt_si (slot->metrics.horiBearingY);
     SI ll= tt_si (slot->metrics.horiAdvance);
+    (void) xw;
     M->x1= 0;
-    M->y1= dy - hh;
+    M->y1= dy - xh;
     M->x2= ll;
     M->y2= dy;
     M->x3= dx;

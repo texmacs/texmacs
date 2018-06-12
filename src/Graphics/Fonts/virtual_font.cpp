@@ -1680,7 +1680,7 @@ virtual_font_rep::draw_tree (renderer ren, scheme_tree t, SI x, SI y) {
 void
 virtual_font_rep::draw_clipped (renderer ren, scheme_tree t, SI x, SI y,
                                 SI x1, SI y1, SI x2, SI y2) {
-  ren->clip (x + x1, y + y1, x + x2, y + y2);
+  ren->clip (x + x1, y + y1 - 5*PIXEL, x + x2, y + y2 + 2*PIXEL);
   draw_tree (ren, t, x, y);
   ren->unclip ();  
 }
