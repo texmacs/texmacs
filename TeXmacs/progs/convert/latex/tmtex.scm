@@ -1626,16 +1626,18 @@
 	  (else #f))))
 
 (define (tmtex-image l)
-  (let* ((fig (tmtex-as-eps (force-string (car l))))
-	 (hor (tmtex-image-length (cadr l)))
-	 (ver (tmtex-image-length (caddr l)))
-	 (mhor (tmtex-image-mag (cadr l)))
-	 (mver (tmtex-image-mag (caddr l))))
-    (cond ((or (not mhor) (not mver)) (list 'resizebox hor ver fig))
-	  ((and (== mhor 0.0) (== mver 0.0)) fig)
-	  ((or (== mhor 1.0) (== mver 1.0)) fig)
-	  ((== mhor 0.0) (list 'scalebox (number->string mver) fig))
-	  (else (list 'scalebox (number->string mhor) fig)))))
+  (if (nstring? (car l))
+      (tmtex-eps (cons 'image l))
+      (let* ((fig (tmtex-as-eps (force-string (car l))))
+             (hor (tmtex-image-length (cadr l)))
+             (ver (tmtex-image-length (caddr l)))
+             (mhor (tmtex-image-mag (cadr l)))
+             (mver (tmtex-image-mag (caddr l))))
+        (cond ((or (not mhor) (not mver)) (list 'resizebox hor ver fig))
+              ((and (== mhor 0.0) (== mver 0.0)) fig)
+              ((or (== mhor 1.0) (== mver 1.0)) fig)
+              ((== mhor 0.0) (list 'scalebox (number->string mver) fig))
+              (else (list 'scalebox (number->string mhor) fig))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Metadata for documents
@@ -2841,6 +2843,7 @@
   (frame    (,tmtex-frame 1))
   (colored-frame (,tmtex-colored-frame 2))
   (fcolorbox (,tmtex-fcolorbox 3))
+  (condensed (,tmtex-style-first 1))
   (translate (,tmtex-translate 3))
   (localize (,tmtex-localize 1))
   (render-key (,tmtex-render-key 1))
@@ -3035,6 +3038,11 @@
 (define (tmtex-env-macro name)
   `(associate ,name (xmacro "x" (eval-args "x"))))
 
+(define tmtex-always-expand
+  ;; FIXME: find a cleaner way to handle these environments
+  (list "render-theorem" "render-remark" "render-exercise" "render-proof"
+        "specified-algorithm"))
+
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))
          (l0 (logic-first-list 'tmtex-primitives%))
@@ -3045,7 +3053,8 @@
 	 (l5 (list-difference l3 l4))
 	 (l6 (map as-string (collect-user-defs st)))
 	 (l7 (if (preference-on? "texmacs->latex:expand-user-macros") '() l6))
-         (l8 (list-difference (collect-user-macros st) (list-union l0 l6)))
+         (l8 (list-difference (collect-user-macros st)
+                              (list-union l0 l6 tmtex-always-expand)))
 	 (l9 (list-difference (list-union l1 l2 l5 l7 l8) l0))
          (l10 (list-filter l0 (lambda (s) (and (string? s)
                                                (<= (string-length s) 2)))))
