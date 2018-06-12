@@ -1610,6 +1610,7 @@
   (equation* ,tmhtml-equation*)
   (equation-lab ,tmhtml-equation-lab)
   (equations-base ,tmhtml-equation*)
+  (wide-float tmhtml-float)
   ;; tags for customized html generation
   (html-div ,tmhtml-html-div)
   (html-style ,tmhtml-html-style)

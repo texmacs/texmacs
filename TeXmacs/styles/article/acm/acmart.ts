@@ -172,9 +172,7 @@
     <doc-title-block|<font-magnify|1.412|<with|font-family|ss|font-series|bold|<arg|x>>>>
   </surround>>>
 
-  <assign|author-by|<macro|body|<arg|body>>>
-
-  <assign|author-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<large|<with|font-family|ss|<author-by|<change-case|<arg|author>|UPCASE>>>>>>>>
+  <assign|author-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<large|<with|font-family|ss|<change-case|<arg|author>|UPCASE>>>>>>>
 
   <assign|vertical-author|<\macro|data>
     <arg|data>

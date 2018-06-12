@@ -718,22 +718,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (float-context? t)
-  (cond ((tree-is? t 'float) #t)
+  (tree-in? t '(float wide-float)))
+
+(tm-define (footnote-context? t)
+  (tree-in? t '(footnote wide-footnote)))
+
+(tm-define (float-or-footnote-context? t)
+  (tree-in? t '(float wide-float footnote wide-footnote)))
+
+(tm-define (phantom-float-context? t)
+  (tree-is? t 'phantom-float))
+
+(tm-define (rich-float-context? t)
+  (cond ((tree-in? t '(float wide-float)) #t)
         ((tree-in? t '(big-figure big-figure*
                        big-table big-table*
                        algorithm algorithm*
                        document concat))
-         (and (tree-up t) (float-context? (tree-up t))))
+         (and (tree-up t) (rich-float-context? (tree-up t))))
         (else #f)))
-
-(tm-define (phantom-float-context? t)
-  (tree-is? t 'phantom-float))
 
 (tm-define (floatable-context? t)
   (and (tree-in? t '(big-figure big-figure*
                      big-table big-table*
                      algorithm algorithm*))
-       (not (float-context? t))
+       (not (rich-float-context? t))
        (tree-is? t :up 'document)))
 
 (tm-define (turn-floating t)
@@ -743,44 +752,37 @@
       (tree-go-to t :start)
       (remove-text #f))))
 
-(define (float-or-footnote? t)
-  (tree-in? t '(float footnote)))
-
 (tm-define (float-wide? t)
-  (and-with f (tree-search-upwards t float-or-footnote?)
-    (and-with w (tree-up f)
-      (and (tree-is? w 'with)
-           (== (tree-arity w) 3)
-           (tm-equal? (tree-ref w 0) "par-columns")
-           (tm-equal? (tree-ref w 1) "1")))))
+  (and-with f (tree-search-upwards t float-or-footnote-context?)
+    (tree-in? f '(wide-float wide-footnote))))
 
 (tm-define (test-float-wide? . args)
   (float-wide? (focus-tree)))
 (tm-define (float-toggle-wide t)
   (:check-mark "v" test-float-wide?)
-  (and-with f (tree-search-upwards t float-or-footnote?)
-    (and-with w (tree-up f)
-      (if (float-wide? t)
-          (tree-set w (tree-ref w 2))
-          (tree-set f `(with "par-columns" "1" ,f))))))
+  (and-with f (tree-search-upwards t float-or-footnote-context?)
+    (cond ((tree-is? f 'float) (tree-assign-node f 'wide-float))
+          ((tree-is? f 'wide-float) (tree-assign-node f 'float))
+          ((tree-is? f 'footnote) (tree-assign-node f 'wide-footnote))
+          ((tree-is? f 'wide-footnote) (tree-assign-node f 'footnote)))))
 
 (tm-define (cursor-at-anchor?)
   (with t (cursor-tree)
-    (tree-in? t '(float footnote))))
+    (float-or-footnote-context? t)))
 
 (tm-define (go-to-anchor)
-  (cond ((inside? 'float)
-         (with-innermost t 'float
+  (cond ((or (inside? 'float) (inside? 'wide-float))
+         (with-innermost t float-context?
            (tree-go-to t :end)))
-        ((inside? 'footnote)
-         (with-innermost t 'footnote
+        ((or (inside? 'footnote) (inside? 'wide-footnote))
+         (with-innermost t footnote-context?
            (tree-go-to t :end)))))
 
 (tm-define (go-to-float)
   (with t (cursor-tree)
-    (cond ((tree-is? t 'float)
+    (cond ((float-context? t)
            (tree-go-to t 2 :start))
-          ((tree-is? t 'footnote)
+          ((footnote-context? t)
            (tree-go-to t 0 :start)))))
 
 (tm-define (cursor-toggle-anchor)

@@ -910,15 +910,16 @@
                         (lambda (x) `(para ,@(cdr x)))))
   t)
 
-(define (tmtex-float-make size type position x capt)
-  (let* ((body (tmtex x))
+(define (tmtex-float-make wide? size type position x capt)
+  (let* ((type* (if wide? (string-append type "*") type))
+         (body (tmtex x))
 	 (caption (tmtex (into-single-paragraph capt)))
 	 (body* `(!paragraph ,body (caption ,caption))))
     (cond ((and (== size "big") (== type "figure"))
-	   `((!begin "figure" (!option ,position)) ,body*))
+	   `((!begin ,type* (!option ,position)) ,body*))
 	  ((and (== size "big") (== type "table"))
-	   `((!begin "table" (!option ,position)) ,body*))
-	  (else (list 'tmfloat position size type body caption)))))
+	   `((!begin ,type* (!option ,position)) ,body*))
+	  (else (list 'tmfloat position size type* body caption)))))
 
 (define (tmtex-float-table? x)
   (or (func? x 'small-table 2) (func? x 'big-table 2)))
@@ -931,18 +932,24 @@
       (if (or (func? l 'small-table) (func? l 'small-figure)) "small" "big")
       "big"))
 
-(define (tmtex-float-sub position l)
-  (cond ((func? l 'document 1) (tmtex-float-sub position (cadr l)))
+(define (tmtex-float-sub wide? position l)
+  (cond ((func? l 'document 1)
+         (tmtex-float-sub wide? position (cadr l)))
 	((tmtex-float-figure? l)
-	 (tmtex-float-make (tmtex-float-size l) "figure" position (cadr l)
-	   (caddr l)))
+	 (tmtex-float-make wide? (tmtex-float-size l) "figure"
+                           position (cadr l) (caddr l)))
 	((tmtex-float-table? l)
-	 (tmtex-float-make (tmtex-float-size l) "table" position (cadr l)
-	   (caddr l)))
-	(else (tmtex-float-make "big" "figure" position l ""))))
+	 (tmtex-float-make wide? (tmtex-float-size l) "table"
+                           position (cadr l) (caddr l)))
+	(else
+         (tmtex-float-make wide? "big" "figure"
+                           position l ""))))
 
 (define (tmtex-float l)
-  (tmtex-float-sub (force-string (cadr l)) (caddr l)))
+  (tmtex-float-sub #f (force-string (cadr l)) (caddr l)))
+
+(define (tmtex-wide-float l)
+  (tmtex-float-sub #t (force-string (cadr l)) (caddr l)))
 
 (define (tmtex-htab l)
   (tex-apply 'hspace* (list 'fill)))
@@ -1910,6 +1917,9 @@
   (if (== s "quote-env") (set! s "quote"))
   (list (list '!begin s) (tmtex (car l))))
 
+(define (tmtex-footnote s l)
+  `(footnote ,(tmtex (car l))))
+
 (define (tmtex-footnotemark s l)
   `(footnotemark (!option ,(tmtex (car l)))))
 
@@ -2269,7 +2279,7 @@
             ""))))
 
 (define (tmtex-figure s l)
-  (tmtex-float-sub "h" (cons (string->symbol s) l)))
+  (tmtex-float-sub #f "h" (cons (string->symbol s) l)))
 
 (define (tmtex-item s l)
   (tex-concat (list (list 'item) " ")))
@@ -2557,7 +2567,7 @@
 ;; Dispatching
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(logic-dispatcher tmtex-methods%
+(logic-dispatcher tmtex-primitives%
   ((:or unknown uninit error raw-data) tmtex-error)
   (document tmtex-document)
   (para tmtex-para)
@@ -2576,10 +2586,6 @@
   (clipped tmtex-first)
   (repeat tmtex-noop)
   (float tmtex-float)
-  (phantom-float tmtex-noop)
-  ((:or marginal-note marginal-normal-note) tmtex-marginal-note)
-  ((:or marginal-left-note marginal-even-left-note) tmtex-marginal-left-note)
-  ((:or marginal-right-note marginal-even-right-note)tmtex-marginal-right-note)
   ((:or datoms dlines dpages dbox) tmtex-noop)
 
   (number tmtex-number)
@@ -2698,10 +2704,22 @@
 	apply begin end func env) tmtex-noop)
 
   (shown tmtex-id)
-  (!ilx tmtex-ilx)
   (mtm tmtex-mtm)
   (!file tmtex-file)
   (!arg tmtex-tex-arg))
+
+
+(logic-dispatcher tmtex-extra-methods%
+  (wide-float tmtex-wide-float)
+  (phantom-float tmtex-noop)
+  ((:or marginal-note marginal-normal-note) tmtex-marginal-note)
+  ((:or marginal-left-note marginal-even-left-note) tmtex-marginal-left-note)
+  ((:or marginal-right-note marginal-even-right-note)tmtex-marginal-right-note)
+  (!ilx tmtex-ilx))
+
+(logic-rules
+  ((tmtex-methods% 'x 'y) (tmtex-primitives% 'x 'y))
+  ((tmtex-methods% 'x 'y) (tmtex-extra-methods% 'x 'y)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Expansion of all macros which are not recognized by LaTeX
@@ -2725,7 +2743,7 @@
   (verbatim (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
   (indent (,tmtex-indent 1))
-  (footnote (,tmtex-default 1))
+  ((:or footnote wide-footnote) (,tmtex-footnote 1))
   (footnotemark (,tmtex-default 0))
   (footnotemark* (,tmtex-footnotemark 1))
   ((:or description description-compact description-aligned
@@ -3005,7 +3023,8 @@
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))
-         (l1 (list-difference (logic-first-list 'tmtex-methods%) '("!ilx")))
+         (l0 (logic-first-list 'tmtex-primitives%))
+         (l1 (logic-first-list 'tmtex-extra-methods%))
 	 (l2 (logic-first-list 'tmtex-tmstyle%))
 	 (l3 (map as-string (logic-apply-list '(latex-tag%))))
 	 (l4 (map as-string (logic-apply-list '(latex-symbol%))))
@@ -3013,7 +3032,7 @@
 	 (l6 (map as-string (collect-user-defs st)))
 	 (l7 (if (preference-on? "texmacs->latex:expand-user-macros") '() l6))
          (l8 (list-difference (collect-user-macros st) (list-union l0 l6)))
-	 (l9 (list-difference (list-union l2 l5 l7 l8) l1))
+	 (l9 (list-difference (list-union l1 l2 l5 l7 l8) l0))
          (l10 (list-filter l0 (lambda (s) (and (string? s)
                                                (<= (string-length s) 2)))))
          (l11 (list-difference l10 (list "tt" "em" "op")))

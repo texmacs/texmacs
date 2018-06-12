@@ -814,7 +814,7 @@
                   (list 2 0 0))))
 
 (define (any-float? t)
-  (tree-in? t '(float phantom-float)))
+  (tree-in? t '(float wide-float phantom-float)))
 
 (tm-define (insertion-positioning what flag)
   (:synopsis "Allow/disallow the position @what for innermost float.")

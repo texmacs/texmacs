@@ -259,7 +259,7 @@
   ("Other pages" (toggle-insertion-positioning-not "f")))
 
 (tm-menu (focus-float-menu t)
-  (:require (float-context? t))
+  (:require (rich-float-context? t))
   (if (in-multicol-style?)
       ("Wide float" (float-toggle-wide t)))
   (-> "Allowed positions" (link float-menu))
@@ -902,7 +902,7 @@
       (link position-marginal-note-menu)))
 
 (tm-menu (focus-float-icons t)
-  (:require (float-context? t))
+  (:require (rich-float-context? t))
   (if (in-multicol-style?)
       ((check (balloon (icon "tm_wide_float.xpm") "Make float wide") "v"
               (float-wide? (focus-tree)))
@@ -927,7 +927,7 @@
    (turn-floating (tree-innermost floatable-context?))))
 
 (tm-menu (focus-float-icons t)
-  (:require (tree-is? t 'footnote))
+  (:require (footnote-context? t))
   (if (in-multicol-style?)
       ((check (balloon (icon "tm_wide_float.xpm") "Make footnote wide") "v"
               (float-wide? (focus-tree)))

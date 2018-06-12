@@ -963,7 +963,9 @@ edit_select_rep::focus_get (bool skip_flag) {
     if (is_compound (st, "draw-over")) skip_flag= false;
     if (is_compound (st, "draw-under")) skip_flag= false;
     if (is_compound (st, "float")) skip_flag= false;
+    if (is_compound (st, "wide-float")) skip_flag= false;
     if (is_compound (st, "footnote")) skip_flag= false;
+    if (is_compound (st, "wide-footnote")) skip_flag= false;
     return focus_search (path_up (tp), skip_flag, true);
   }
 }

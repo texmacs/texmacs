@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -147,6 +147,17 @@
   </float>>>>
 
   <assign|custom-note-ref|<macro|sym|sep|id|body|<style-with|src-compact|none|<with|locus-color|preserve|visited-color|preserve|<locus|<id|<merge|source-|<arg|id>>>|<arg|body>>><rsup|<locus|<id|<merge|source-abbr-|<arg|id>>>|<link|footnote-text|<id|<merge|source-abbr-|<arg|id>>>|<id|<merge|dest-|<arg|id>>>>|<arg|sep><arg|sym>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Wide variants.
+    </src-comment>
+  </active*>
+
+  <assign|wide-footnote|<macro|body|<with|par-columns|1|<footnote|<arg|body>>>>>
+
+  <assign|wide-float|<macro|type|pos|body|<flag|wide float|dark
+  brown><with|par-columns|1|<float|<arg|type>|<arg|pos>|<arg|body>>>>>
 </body>
 
 <\initial>
