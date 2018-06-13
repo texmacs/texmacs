@@ -47,6 +47,30 @@ new_breaker_rep::new_breaker_rep (
     cache_uniform (array<path> ()),
     cache_colbreaks (array<path> ())
 {
+  // HACK: migrate double column footnotes in single column text
+  for (int i=0; i+1<N(l); i++)
+    if (l[i]->nr_cols == 1 && N(l[i]->fl)>0) {
+      array<lazy> ofl, nfl;
+      for (int j=0; j<N(l[i]->fl); j++) {
+        lazy_vstream lvs= (lazy_vstream) l[i]->fl[j];
+        if (is_tuple (lvs->channel, "footnote") &&
+            N(lvs->l) > 0 && lvs->l[0]->nr_cols == 2)
+          nfl << l[i]->fl[j];
+        else ofl << l[i]->fl[j];
+      }
+      if (N(nfl) != 0)
+        for (int j=i+1; j<N(l); j++)
+          if (l[j]->nr_cols == 2) {
+            nfl << l[j]->fl;
+            l[i]= copy (l[i]);
+            l[j]= copy (l[j]);
+            l[i]->fl= ofl;
+            l[j]->fl= nfl;
+            break;
+          }
+    }
+  // END HACK
+
   int same= 0;
   for (int i=0; i<N(l); i++) {
     SI   bot_cor= max (0, l[i]->b->y1- fn->y1);
