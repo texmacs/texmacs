@@ -172,7 +172,24 @@
     <doc-title-block|<font-magnify|1.412|<with|font-family|ss|font-series|bold|<arg|x>>>>
   </surround>>>
 
+  <assign|doc-make-title|<macro|body|<\surround||<vspace|0.5fn>>
+    <\compact>
+      <doc-title-block|<arg|body>>
+    </compact>
+  </surround>>>
+
+  <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>|<tuple|abbreviate-authors>>>>
+
+  <\active*>
+    <\src-comment>
+      Author information.
+    </src-comment>
+  </active*>
+
   <assign|author-name|<macro|author|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<large|<with|font-family|ss|<change-case|<arg|author>|UPCASE>>>>>>>
+
+  <assign|author-name-affiliation|<macro|author|address|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<large|<with|font-family|ss|<change-case|<arg|author>|UPCASE>,
+  >><arg|address>>>>>
 
   <assign|vertical-author|<\macro|data>
     <arg|data>
@@ -189,12 +206,6 @@
       </quasi>
     </style-with>
   </xmacro>>
-
-  <assign|doc-make-title|<macro|body|<\surround||<vspace|0.5fn>>
-    <\compact>
-      <doc-title-block|<arg|body>>
-    </compact>
-  </surround>>>
 
   <\active*>
     <\src-comment>

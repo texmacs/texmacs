@@ -87,6 +87,8 @@
 
   <drd-props|author-affiliation|border|no>
 
+  <drd-props|author-name-affiliation|border|no>
+
   <drd-props|author-email|border|no>
 
   <drd-props|author-homepage|border|no>
@@ -157,7 +159,7 @@
 
   <assign|doc-footnote-text|<macro|sym|id|body|<custom-footnote-text|<arg|sym>|<arg|id>|<arg|body>>>>
 
-  <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>>>>
+  <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>|>>>
 
   <\active*>
     <\src-comment>
@@ -180,6 +182,9 @@
   <assign|author-affiliation|<\macro|address>
     <surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<arg|address>>>
   </macro>>
+
+  <assign|author-name-affiliation|<macro|author|address|<surround|<vspace*|0.5fn>|<vspace|0.5fn>|<doc-author-block|<name|<arg|author>>,
+  <arg|address>>>>>
 
   <assign|author-affiliation-note|<\macro|sym|id|address>
     <author-affiliation|<\doc-note-text|<arg|sym>|<arg|id>>

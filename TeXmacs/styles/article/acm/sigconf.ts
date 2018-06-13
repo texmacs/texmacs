@@ -183,6 +183,14 @@
     <doc-title-block|<font-magnify|1.297|<with|font-family|ss|<arg|x>>>>
   </surround>>>
 
+  <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>|>>>
+
+  <\active*>
+    <\src-comment>
+      Author information.
+    </src-comment>
+  </active*>
+
   <assign|doc-authors|<\xmacro|data>
     <\style-with|src-compact|none>
       <\quasi>
@@ -204,6 +212,12 @@
   <assign|author-email|<macro|email|<doc-author-block|<arg|email>>>>
 
   <assign|author-homepage|<macro|homepage|<doc-author-block|<arg|homepage>>>>
+
+  <\active*>
+    <\src-comment>
+      Abstract information.
+    </src-comment>
+  </active*>
 
   <assign|render-abstract|<\macro|body>
     <section*|<abstract-text>>

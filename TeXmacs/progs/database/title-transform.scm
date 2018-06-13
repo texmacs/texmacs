@@ -131,3 +131,50 @@
                    (new-authors (map (rewrite-by-affiliation data) groups))
                    (fnotes (reverse (ahash-ref data :footnotes))))
               `(,(tm-label t) ,@other ,@new-authors ,@fnotes)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Abbreviated authors (only mention first line of affiliation)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (make-single l)
+  (cond ((null? l) "")
+        ((null? (cdr l)) (car l))
+        (else `(comma-separated ,@l))))
+
+(define (abbreviate-author t)
+  (let* ((name (select t '(author-name 0)))
+         (institute (select t '(author-affiliation document 0)))
+         (affiliation (select t '(author-affiliation document :%1)))
+         (email (select t '(author-email 0)))
+         (webpage (select t '(author-webpage 0)))
+         (note (select t '(author-note 0)))
+         (misc (select t '(author-misc 0)))
+         (other (append affiliation email webpage note misc)))
+    `(doc-author
+      (,(tm-label t)
+       (author-name ,(make-single name))
+       (author-affiliation (document ,(make-single institute)))
+       (author-note ,(make-single other))))))
+
+(tm-define (abbreviate-authors t)
+  (with authors (select t '(doc-author author-data))
+    (let* ((other (select t '((:exclude doc-author))))
+           (new-authors (map abbreviate-author authors)))
+      `(,(tm-label t) ,@other ,@new-authors))))
+
+(define (abbreviate-author-bis t)
+  (let* ((name (select t '(author-name 0)))
+         (affiliation (select t '(author-affiliation document :%1)))
+         (new-name (if (null? affiliation)
+                       `(author-name ,(make-single name))
+                       `(author-name-affiliation
+                         ,(make-single name)
+                         ,(make-single affiliation))))
+         (other (select t '((:exclude author-name author-affiliation)))))
+    `(doc-author (,(tm-label t) ,new-name ,@other))))
+
+(tm-define (abbreviate-authors-bis t)
+  (with authors (select t '(doc-author author-data))
+    (let* ((other (select t '((:exclude doc-author))))
+           (new-authors (map abbreviate-author-bis authors)))
+      `(,(tm-label t) ,@other ,@new-authors))))

@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -376,7 +376,7 @@
     </with>
   </macro>>
 
-  <assign|doc-data|<xmacro|args|<with|par-columns|1|<extern|doc-data|<quote-arg|args>>>>>
+  <assign|doc-data|<xmacro|args|<with|par-columns|1|<extern|doc-data|<quote-arg|args>|>>>>
 
   \ <assign|doc-render-title|<macro|x|<\surround|<vspace*|0.5fn>|>
     <doc-title-block|<font-magnify|1.682|<with|math-font-series|bold|font-series|bold|font-family|ss|<arg|x>>>>
