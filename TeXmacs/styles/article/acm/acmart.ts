@@ -30,6 +30,9 @@
 
   <assign|font|Linux Libertine>
 
+  <assign|font|math basic-letters=Linux Libertine,math=termes,Linux
+  Libertine>
+
   <assign|math-font-sizes|<tuple|<tuple|all|*0.8|*0.6|*0.5>>>
 
   <assign|par-first|<macro|10pt>>

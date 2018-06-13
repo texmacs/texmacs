@@ -6,7 +6,7 @@
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
-* in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+* in the root directory or <tp://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
 #include "font.hpp"
@@ -14,6 +14,7 @@
 #include "converter.hpp"
 #include "Freetype/tt_tools.hpp"
 #include "translator.hpp"
+#include "iterator.hpp"
 
 bool virtually_defined (string c, string name);
 font smart_font_bis (string f, string v, string s, string sh, int sz,
@@ -455,6 +456,84 @@ get_unicode_range (string c) {
 }
 
 /******************************************************************************
+* Further character collections
+******************************************************************************/
+
+static hashmap<string,hashset<string> > char_collections;
+
+static void
+collection_insert (string name, string c) {
+  if (c == "") return;
+  if (!char_collections->contains (name))
+    char_collections (name)= hashset<string> ();
+  char_collections (name) -> insert (c);
+  int code= get_utf8_code (c);
+  if (code >= 0) {
+    string uc= "<#" * upcase_all (as_hexadecimal (code)) * ">";
+    if (uc != c) char_collections (name) -> insert (uc);
+  }
+}
+
+static void
+collection_inherit (string name, string base) {
+  hashset<string> h= char_collections [base];
+  iterator<string> it= iterate (h);
+  while (it->busy ())
+    collection_insert (name, it->next ());
+}
+
+static void
+init_collections () {
+  if (N(char_collections) > 0) return;
+  for (char c='0'; c <= '9'; c++)
+    collection_insert ("digit", string (c));
+  for (char c='a'; c <= 'z'; c++) {
+    collection_insert ("lowercase-latin", string (c));
+    collection_insert ("lowercase-latin-bold", "<b-" * string (c) * ">");
+  }
+  for (char c='A'; c <= 'Z'; c++) {
+    collection_insert ("uppercase-latin", string (c));
+    collection_insert ("uppercase-latin-bold", "<b-" * string (c) * ">");
+  }
+  collection_inherit ("latin", "lowercase-latin");
+  collection_inherit ("latin", "uppercase-latin");
+  collection_inherit ("latin-bold", "lowercase-latin-bold");
+  collection_inherit ("latin-bold", "uppercase-latin-bold");
+  for (int code= 0x380; code <= 0x3ff; code++) {
+    string uc= upcase_all ("<#" * as_hexadecimal (code) * ">");
+    string gc= rewrite_math (uc);
+    if (gc != uc) {
+      string bgc= "<b-" * gc (1, N(gc));
+      if (is_locase (gc[1])) {
+        collection_insert ("lowercase-greek", gc);
+        collection_insert ("lowercase-greek", substitute_italic_greek (gc));
+        collection_insert ("lowercase-greek-bold", bgc);
+      }
+      if (is_upcase (gc[1])) {
+        collection_insert ("uppercase-greek", gc);
+        collection_insert ("uppercase-greek", substitute_italic_greek (gc));
+        collection_insert ("uppercase-greek-bold", bgc);
+      }
+      collection_insert ("greek", gc);
+      collection_insert ("greek", substitute_italic_greek (gc));
+      collection_insert ("greek-bold", bgc);
+    }
+  }
+  collection_inherit ("basic-letters", "digit");
+  collection_inherit ("basic-letters", "latin");
+  collection_inherit ("basic-letters", "latin-bold");
+  collection_inherit ("basic-letters", "greek");
+  collection_inherit ("basic-letters", "greek-bold");
+}
+
+static bool
+in_collection (string c, string name) {
+  init_collections ();
+  return char_collections->contains (name) &&
+         char_collections [name] -> contains (c);
+}
+
+/******************************************************************************
 * Font substitutions
 ******************************************************************************/
 
@@ -799,6 +878,9 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
         else if (wanted == get_unicode_range (c)) ok= true;
         else if (wanted == substitute_math_letter (c, 2)) ok= true;
         else if (wanted == c) ok= true;
+        else if (in_collection (c, wanted)) ok= true;
+        else if (N(wanted) > 0 && wanted[0] == '!' &&
+                 !in_collection (c, wanted)) ok= true;
         else {
           array<string> w= tokenize (v[j], ":");
           if (N(w) == 1) w << w[0];
@@ -814,6 +896,18 @@ smart_font_rep::resolve (string c, string fam, int attempt) {
     }
     fam= tex_gyre_fix (fam, series, shape);
     //fam= stix_fix (fam, series, shape);
+
+    if (math_kind != 0 && shape == "mathitalic" &&
+        (get_unicode_range (c) == "greek" ||
+         (starts (c, "<b-") && ends (c, ">")))) {
+      font cfn= smart_font_bis (fam, variant, series, shape, sz, hdpi, dpi);
+      if (cfn->supports (c)) {
+        tree key= tuple ("subfont", fam);
+        int nr= sm->add_font (key, REWRITE_NONE);
+        initialize_font (nr);
+        return sm->add_char (key, c);
+      }
+    }
   }
 
   if (N(c) == 1 && is_alpha (c[0]) && ends (fam, " Math") && shape == "italic")
@@ -972,6 +1066,8 @@ smart_font_rep::resolve (string c) {
   //     << " for " << mfam << ", " << family << ", " << variant
   //     << ", " << series << ", " << shape << ", " << rshape
   //     << "; " << fn[SUBFONT_MAIN]->res_name << "\n";
+  array<string> a= trimmed_tokenize (family, ",");
+
   if (math_kind != 0) {
     string ugc= substitute_upright_greek (c);
     if (ugc != "" && fn[SUBFONT_MAIN]->supports (ugc)) {
@@ -980,7 +1076,7 @@ smart_font_rep::resolve (string c) {
       initialize_font (nr);
       return sm->add_char (key, c);
     }
-    if (is_greek (c)) {
+    if (N(a) == 1 && is_greek (c)) {
       string gc= substitute_italic_greek (c);
       if (gc != "" && fn[SUBFONT_MAIN]->supports (gc)) {
         tree key= tuple ("italic-greek");
@@ -1007,7 +1103,6 @@ smart_font_rep::resolve (string c) {
     }
   }
 
-  array<string> a= trimmed_tokenize (family, ",");
   for (int attempt= 1; attempt <= FONT_ATTEMPTS; attempt++) {
     if (attempt > 1 && substitute_math_letter (c, math_kind) != "") break;
     for (int i= 0; i < N(a); i++) {
@@ -1068,6 +1163,8 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= adjust_subfont (get_cyrillic_font (a[1], a[2], a[3], a[4]));
   else if (a[0] == "greek")
     fn[nr]= adjust_subfont (get_greek_font (a[1], a[2], a[3], a[4]));
+  else if (a[0] == "subfont")
+    fn[nr]= smart_font_bis (a[1], variant, series, shape, sz, hdpi, dpi);
   else if (a[0] == "special")
     fn[nr]= smart_font_bis (family, variant, series, "right", sz, hdpi, dpi);
   else if (a[0] == "other") {
