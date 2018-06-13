@@ -149,7 +149,7 @@
 
   <assign|doc-running-title|<macro|body|<header-title|<arg|body>>>>
 
-  <assign|doc-running-author|<macro|body|<header-author|<with|author-name|<macro|x|<arg|x>>|<arg|body>>>>>
+  <assign|doc-running-author|<macro|body|<header-author|<arg|body>>>>
 
   <assign|doc-note-text|<macro|sym|id|body|<custom-note-text|<arg|sym>|<arg|id>|<arg|body>>>>
 

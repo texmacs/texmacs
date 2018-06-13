@@ -246,7 +246,7 @@ collect_metadata_acm (tree t) {
     else if (is_tuple (u, "\\author", 1)) {
       array<tree> authors;
       while (i<n && is_tuple (t[i], "\\author", 1))
-        authors << tree (APPLY, "\\author-name", t[i++][1]);
+        authors << t[i++][1];
       array<tree> author_datas;
       while (i<n) {
         if (is_tuple (t[i], "\\affiliation", 1)) {
