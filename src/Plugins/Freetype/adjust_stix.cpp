@@ -47,6 +47,10 @@ lsup_adjust_stix (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-X>", 0.02);
   adjust_pair (t, "<bbb-A>", 0.05);
   adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_integral (t, "1", 0.1);
+  adjust_integral (t, "2", 0.2);
+  adjust_contour_integral (t, "1", 0.1);
+  adjust_contour_integral (t, "2", 0.2);
 }
 
 void

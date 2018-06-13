@@ -42,6 +42,10 @@ lsub_adjust_pagella (hashmap<string,double>& t) {
     adjust_pair (t, "<frak-" * string (c) * ">", 0.02);
   adjust_pair (t, "<wedge>", 0.02);
   adjust_pair (t, "<curlywedge>", 0.05);
+  adjust_integral (t, "1", -0.07);
+  adjust_integral (t, "2", -0.1);
+  adjust_contour_integral (t, "1", -0.1);
+  adjust_contour_integral (t, "2", -0.07);
 }
 
 void
@@ -72,6 +76,10 @@ lsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-Z>", 0.05);
   adjust_pair (t, "<bbb-A>", 0.1);
   adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_integral (t, "1", 0.15);
+  adjust_integral (t, "2", 0.15);
+  adjust_contour_integral (t, "1", 0.07);
+  adjust_contour_integral (t, "2", 0.13);
 }
 
 void
@@ -157,6 +165,10 @@ rsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-w>", -0.05);
   adjust_pair (t, "<bbb-y>", -0.05);
   adjust_pair (t, "<partial>", -0.04);
+  adjust_integral (t, "1", -0.17);
+  adjust_integral (t, "2", -0.17);
+  adjust_contour_integral (t, "1", -0.03);
+  adjust_contour_integral (t, "2", -0.13);
 }
 
 void
@@ -304,6 +316,10 @@ rsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-n>", -0.03);
   adjust_pair (t, "<frak-a>", -0.03);
   adjust_pair (t, "<partial>", -0.02);
+  adjust_integral (t, "1", -0.02);
+  adjust_integral (t, "2", -0.02);
+  adjust_contour_integral (t, "1", -0.03);
+  adjust_contour_integral (t, "2", -0.03);
 }
 
 void

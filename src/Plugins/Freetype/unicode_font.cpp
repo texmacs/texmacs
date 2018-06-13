@@ -35,6 +35,9 @@
 
 font unicode_font (string family, int size, int hdpi, int vdpi);
 
+hashmap<string,double> lsup_guessed_table ();
+hashmap<string,double> rsub_guessed_table ();
+
 hashmap<string,double> lsub_stix_table ();
 hashmap<string,double> lsup_stix_table ();
 hashmap<string,double> rsub_stix_table ();
@@ -332,6 +335,15 @@ unicode_font_rep::unicode_font_rep (string name,
     }
     if (starts (family, "texgyrepagella-"))
       mspc= spc + 0.5 * space (spc->def);
+  }
+
+  else if (starts (family, "Papyrus")) {
+    lsup_correct= copy (lsup_guessed_table ());
+    rsub_correct= copy (rsub_guessed_table ());
+    adjust_integral (lsup_correct, "1", -0.15);
+    adjust_integral (lsup_correct, "2", -0.15);
+    adjust_integral (rsub_correct, "1", 0.15);
+    adjust_integral (rsub_correct, "2", 0.15);
   }
 }
 
@@ -710,7 +722,19 @@ is_integral (string s) {
   if (pos+1 < n && s[pos] == 'u' && s[pos+1] == 'p') pos += 2;
   if (pos < n && s[pos] == 'o') pos++;
   while (pos+1 < n && s[pos] == 'i' && s[pos+1] == 'i') pos++;
-  return test (s, pos, "int-") || test (s, pos, "idotsint");
+  return test (s, pos, "int-") ||
+         test (s, pos, "int>") ||
+         test (s, pos, "idotsint");
+}
+
+static bool
+is_alt_integral (string s) {
+  if (!starts (s, "<")) return false;
+  int pos= 1, n= N(s);
+  if (pos+1 < n && s[pos] == 'u' && s[pos+1] == 'p') pos += 2;
+  if (pos < n && s[pos] == 'o') pos++;
+  while (pos+1 < n && s[pos] == 'i' && s[pos+1] == 'i') pos++;
+  return test (s, pos, "int>") || test (s, pos, "idotsint");
 }
 
 double
@@ -780,7 +804,9 @@ unicode_font_rep::get_right_correction (string s) {
 SI
 unicode_font_rep::get_lsub_correction (string s) {
   SI r= -get_left_correction (s) + global_lsub_correct;
-  if (lsub_correct->contains (s)) r += (SI) (lsub_correct[s] * wfn);
+  if (math_type == MATH_TYPE_STIX &&
+      (is_integral (s) || is_alt_integral (s)));
+  else if (lsub_correct->contains (s)) r += (SI) (lsub_correct[s] * wfn);
   else if (N(s) > 1 && is_alpha (s[0]) &&
            lsub_correct->contains (s (0, 1)))
     r += (SI) (lsub_correct[s (0, 1)] * wfn);
@@ -789,13 +815,11 @@ unicode_font_rep::get_lsub_correction (string s) {
 
 SI
 unicode_font_rep::get_lsup_correction (string s) {
-  if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s)) {
-    metric ex;
-    get_extents (s, ex);
-    return ((ex->x2 - ex->x1) / 8);
-  }
   SI r= global_lsup_correct;
-  if (lsup_correct->contains (s)) r += (SI) (lsup_correct[s] * wfn);
+  if (math_type == MATH_TYPE_STIX &&
+      (is_integral (s) || is_alt_integral (s)))
+    r += get_right_correction (s);
+  else if (lsup_correct->contains (s)) r += (SI) (lsup_correct[s] * wfn);
   else if (N(s) > 1 && is_alpha (s[0]) &&
            lsup_correct->contains (s (0, 1)))
     r += (SI) (lsup_correct[s (0, 1)] * wfn);
@@ -804,13 +828,10 @@ unicode_font_rep::get_lsup_correction (string s) {
 
 SI
 unicode_font_rep::get_rsub_correction (string s) {
-  if (math_type == MATH_TYPE_TEX_GYRE && is_integral (s)) {
-    metric ex;
-    get_extents (s, ex);
-    return - ((ex->x2 - ex->x1) / 8);
-  }
   SI r= global_rsub_correct;
-  if (rsub_correct->contains (s)) r += (SI) (rsub_correct[s] * wfn);
+  if (math_type == MATH_TYPE_STIX &&
+      (is_integral (s) || is_alt_integral (s)));
+  else if (rsub_correct->contains (s)) r += (SI) (rsub_correct[s] * wfn);
   else if (N(s) > 1 && is_alpha (s[N(s)-1]) &&
            rsub_correct->contains (s (N(s)-1, N(s))))
     r += (SI) (rsub_correct[s (N(s)-1, N(s))] * wfn);
@@ -821,7 +842,9 @@ SI
 unicode_font_rep::get_rsup_correction (string s) {
   //cout << "Check " << s << ", " << rsup_correct[s] << ", " << this->res_name << LF;
   SI r= get_right_correction (s) + global_rsup_correct;
-  if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
+  if (math_type == MATH_TYPE_STIX &&
+      (is_integral (s) || is_alt_integral (s)));
+  else if (rsup_correct->contains (s)) r += (SI) (rsup_correct[s] * wfn);
   else if (N(s) > 1 && is_alpha (s[N(s)-1]) &&
            rsup_correct->contains (s (N(s)-1, N(s))))
     r += (SI) (rsup_correct[s (N(s)-1, N(s))] * wfn);

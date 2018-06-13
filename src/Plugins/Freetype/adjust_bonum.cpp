@@ -48,6 +48,10 @@ lsub_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<vee>", -0.03);
   adjust_pair (t, "<curlywedge>", 0.02);
   adjust_pair (t, "<curlyvee>", -0.03);
+  adjust_integral (t, "1", -0.1);
+  adjust_integral (t, "2", -0.13);
+  adjust_contour_integral (t, "1", -0.1);
+  adjust_contour_integral (t, "2", -0.1);
 }
 
 void
@@ -86,6 +90,10 @@ lsup_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<cal-S>", 0.15);
   adjust_pair (t, "<bbb-A>", 0.12);
   adjust_pair (t, "<bbb-j>", 0.02);
+  adjust_integral (t, "1", 0.13);
+  adjust_integral (t, "2", 0.17);
+  adjust_contour_integral (t, "1", 0.07);
+  adjust_contour_integral (t, "2", 0.13);
 }
 
 void
@@ -194,6 +202,10 @@ rsub_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-w>", -0.05);
   adjust_pair (t, "<bbb-y>", -0.05);
   adjust_pair (t, "<partial>", -0.05);
+  adjust_integral (t, "1", -0.17);
+  adjust_integral (t, "2", -0.2);
+  adjust_contour_integral (t, "1", -0.07);
+  adjust_contour_integral (t, "2", -0.17);
 }
 
 void
@@ -259,6 +271,10 @@ rsup_adjust_bonum (hashmap<string,double>& t) {
     adjust_pair (t, "<frak-" * string (c) * ">", 0.02);
   adjust_pair (t, "<frak-U>", -0.03);
   adjust_pair (t, "<partial>", -0.05);
+  adjust_integral (t, "1", -0.03);
+  adjust_integral (t, "2", -0.03);
+  adjust_contour_integral (t, "1", -0.03);
+  adjust_contour_integral (t, "2", -0.03);
 }
 
 void

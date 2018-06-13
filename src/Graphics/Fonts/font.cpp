@@ -34,7 +34,7 @@ get_math_type (string s) {
   s= locase_all (s);
   if (starts (s, "unicode:")) s= s (8, N(s));
   if (starts (s, "texgyre")) s= s (7, N(s));
-  if (starts (s, "stix-"))
+  if (starts (s, "stix-") || starts (s, "stixintegrals"))
     return MATH_TYPE_STIX;
   if (starts (s, "bonum-") || starts (s, "pagella-") ||
       starts (s, "schola-") ||starts (s, "termes-"))

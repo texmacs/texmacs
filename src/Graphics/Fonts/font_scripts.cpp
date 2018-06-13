@@ -46,6 +46,43 @@ adjust_pair (hashmap<string,double>& t, string c, double delta) {
   adjust_char (t, c, delta);
 }
 
+void
+adjust_integral_sub (hashmap<string,double>& t,
+                     string c, string suf, double delta) {
+  adjust_char (t, "<big-" * c * "-" * suf * ">", delta);
+  adjust_char (t, "<big-up" * c * "-" * suf * ">", delta);
+  adjust_char (t, "<big-" * c * "lim-" * suf * ">", delta);
+  adjust_char (t, "<big-up" * c * "lim-" * suf * ">", delta);
+  if (suf == "1") {
+    adjust_char (t, "<" * c * ">", delta);
+    adjust_char (t, "<up" * c * ">", delta);
+    adjust_char (t, "<" * c * "lim>", delta);
+    adjust_char (t, "<up" * c * "lim>", delta);
+  }
+  if (suf == "2") {
+    adjust_char (t, "<big-" * c * ">", delta);
+    adjust_char (t, "<big-up" * c * ">", delta);
+    adjust_char (t, "<big-" * c * "lim>", delta);
+    adjust_char (t, "<big-up" * c * "lim>", delta);
+  }
+}
+
+void
+adjust_integral (hashmap<string,double>& t, string suf, double delta) {
+  adjust_integral_sub (t, "int", suf, delta);
+  adjust_integral_sub (t, "iint", suf, delta);
+  adjust_integral_sub (t, "iiint", suf, delta);
+  adjust_integral_sub (t, "iiiint", suf, delta);
+  adjust_integral_sub (t, "idotsint", suf, delta);
+}
+
+void
+adjust_contour_integral (hashmap<string,double>& t, string suf, double delta) {
+  adjust_integral_sub (t, "oint", suf, delta);
+  adjust_integral_sub (t, "oiint", suf, delta);
+  adjust_integral_sub (t, "oiiint", suf, delta);
+}
+
 /******************************************************************************
 * Standard corrections
 ******************************************************************************/
@@ -135,7 +172,8 @@ lsub_adjust_guessed (hashmap<string,double>& t) {
 
 void
 lsup_adjust_guessed (hashmap<string,double>& t) {
-  (void) t;
+  adjust_integral (t, "1", 0.1);
+  adjust_integral (t, "2", 0.1);
 }
 
 void
@@ -160,6 +198,8 @@ rsub_adjust_guessed (hashmap<string,double>& t) {
   adjust_pair (t, "<bbb-v>", -0.05);
   adjust_pair (t, "<bbb-w>", -0.05);
   adjust_pair (t, "<bbb-y>", -0.05);
+  adjust_integral (t, "1", -0.1);
+  adjust_integral (t, "2", -0.1);
 }
 
 void
