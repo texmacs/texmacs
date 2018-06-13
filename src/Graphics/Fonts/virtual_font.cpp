@@ -70,6 +70,8 @@ struct virtual_font_rep: font_rep {
   double get_left_slope (string s);
   double get_right_slope (string s);
   SI     get_right_correction (string s);
+  SI     get_lsub_correction  (string s);
+  SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
   SI     get_wide_correction  (string s, int mode);
@@ -1938,6 +1940,24 @@ virtual_font_rep::get_right_correction (string s) {
   if (is_tuple (t, "italic", 3))
     return (SI) (as_double (t[3]) * hunit);
   return font_rep::get_right_correction (s);
+}
+
+SI
+virtual_font_rep::get_lsub_correction (string s) {
+  if (extend && base_fn->supports (s))
+    return base_fn->get_lsub_correction (s);
+  SI r= -get_left_correction (s);
+  if (lsub_correct->contains (s)) r += (SI) (lsub_correct[s] * wfn);
+  return r;
+}
+
+SI
+virtual_font_rep::get_lsup_correction (string s) {
+  if (extend && base_fn->supports (s))
+    return base_fn->get_lsup_correction (s);
+  SI r= get_right_correction (s);
+  if (lsup_correct->contains (s)) r += (SI) (lsup_correct[s] * wfn);
+  return r;
 }
 
 SI
