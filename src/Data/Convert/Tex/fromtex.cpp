@@ -180,6 +180,7 @@ is_block_environnement (tree t) {
     ends (s, "sloppypar")        ||
     ends (s, "table")            ||
     ends (s, "tabularx")         ||
+    ends (s, "teaserfigure")     ||
     ends (s, "thebibliography")  ||
     ends (s, "theindex")         ||
     ends (s, "titlepage")        ||
@@ -1426,6 +1427,7 @@ latex_eps_get (tree t, string var) {
       if (j < k && v == var) {
 	string val= ss (j+1, N(ss));
 	while (starts (val, " ")) val= val (1, N(val));
+        if (var == "width" && val == "tex-text-width") val= "1par";
 	return val;
       }
       start= i+1;
