@@ -178,7 +178,7 @@
     </compact>
   </surround>>>
 
-  <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>|<tuple|abbreviate-authors>>>>
+  <assign|doc-data|<xmacro|args|<extern|doc-data|<quote-arg|args>|<tuple|abbreviate-authors|cluster-by-affiliation>>>>
 
   <\active*>
     <\src-comment>
