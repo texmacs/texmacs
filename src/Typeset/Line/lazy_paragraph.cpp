@@ -275,6 +275,7 @@ total_width (array<box> bs) {
 void
 lazy_paragraph_rep::increase_kerning (SI dw, SI the_width) {
   // attempt to add dw space by increasing the kerning of the current line unit
+  if (the_width <= 0) return;
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->max;
@@ -300,6 +301,7 @@ lazy_paragraph_rep::increase_kerning (SI dw, SI the_width) {
 void
 lazy_paragraph_rep::decrease_kerning (SI dw, SI the_width) {
   // try to subtract dw space by reducing the kerning of the current line unit
+  if (the_width <= 0) return;
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->min;
@@ -325,7 +327,7 @@ lazy_paragraph_rep::decrease_kerning (SI dw, SI the_width) {
 void
 lazy_paragraph_rep::expand_glyphs (SI dw, SI the_width) {
   // attempt to add dw space by expanding the glyphs of the current line unit
-  if (expansion <= 0.0) return;
+  if (expansion <= 0.0 || the_width <= 0) return;
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->max;
@@ -347,7 +349,7 @@ lazy_paragraph_rep::expand_glyphs (SI dw, SI the_width) {
 void
 lazy_paragraph_rep::contract_glyphs (SI dw, SI the_width) {
   // try to subtract dw space by glyph contraction for the current line unit
-  if (contraction <= 0.0) return;
+  if (contraction <= 0.0 || the_width <= 0) return;
 
   // NOTE: adjust dw in presence of ligatures
   int first, last;
