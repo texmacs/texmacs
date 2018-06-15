@@ -604,7 +604,9 @@ main (int argc, char** argv) {
   boot_hacks ();
   windows_delayed_refresh (1000000000);
   immediate_options (argc, argv);
+#ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
+#endif
 #ifdef MACOSX_EXTENSIONS
   // Reset TeXmacs if Alt is pressed during startup
   if (mac_alternate_startup()) {
