@@ -37,6 +37,7 @@ RESOURCE(smart_map);
 #define REWRITE_POOR_BBB       5
 #define REWRITE_ITALIC_GREEK   6
 #define REWRITE_UPRIGHT_GREEK  7
+#define REWRITE_IGNORE         8
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -801,6 +802,8 @@ rewrite (string s, int kind) {
     return substitute_italic_greek (s);
   case REWRITE_UPRIGHT_GREEK:
     return substitute_upright_greek (s);
+  case REWRITE_IGNORE:
+    return "";
   default:
     return s;
   }
@@ -1035,6 +1038,12 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   string ss= c (l, r);
   string goal= ss;
   if (N(goal) != 1) goal= "<" * goal * ">";
+  if (goal == ".") {
+    tree key= tuple ("ignore");
+    int nr= sm->add_font (key, REWRITE_IGNORE);
+    initialize_font (nr);
+    return sm->add_char (key, c);
+  }
   if (has_poor_rubber) {
     if (goal == "<sqrt>") goal= "|"; // FIXME: better goal?
     if (goal == "<||>" || goal == "<interleave>") goal= "|";
@@ -1230,6 +1239,8 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= adjust_subfont (rubber_font (fn[as_int (a[1])]));
     //fn[nr]= adjust_subfont (rubber_unicode_font (fn[as_int (a[1])]));
   }
+  else if (a[0] == "ignore")
+    fn[nr]= fn[SUBFONT_MAIN];
   else {
     int  ndpi= adjusted_dpi (a[0], a[1], a[2], a[3], as_int (a[4]));
     font cfn = closest_font (a[0], a[1], a[2], a[3], sz, ndpi, as_int (a[4]));
