@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std>>
 
@@ -311,7 +311,7 @@
 
   <assign|blanc-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|>>>>
 
-  <assign|simple-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|<htab|5mm><page-number><htab|5mm>>>>>
+  <assign|simple-page|<macro|<style-with|src-compact|none|<assign|page-this-header|><assign|page-this-footer|<no-indent><htab|5mm><page-number><htab|5mm>>>>>
 
   <\active*>
     <\src-comment>
