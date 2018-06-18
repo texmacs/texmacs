@@ -12,6 +12,8 @@
 #include "tm_configure.hpp"
 #ifndef OS_MINGW
 #include <langinfo.h>
+#else
+#include <winnls.h>
 #endif
 
 #include "analyze.hpp"
@@ -420,41 +422,48 @@ oriental_language_rep::hyphenate (
 * Locales
 ******************************************************************************/
 
-string
-windows_locale_to_language (string s) {
-  if (s == "Bulgarian_Bulgaria.1251") return "bulgarian";
-  if (s == "Chinese_People's Republic of China.936")
-    return "chinese"; // for windows xp
-  if (s == "Chinese (Simplified)_People's Republic of China.936")
-    return "chinese"; // for windows 7
-  if (s == "Chinese_Taiwan.950")
-    return "taiwanese"; // for windows xp
-  if (s == "Chinese (Traditional)_Taiwan.950")
-    return "taiwanese"; // for windows 7
-  if (s == "Croatian_Croatia.1250") return "croatian";
-  if (s == "Czech_Czech Republic.1250") return "czech";
-  if (s == "Danish_Denmark.1252") return "danish";
-  if (s == "Dutch_Netherlands.1252") return "dutch";
-  if (s == "English_United States.1252") return "english";
-  if (s == "English_United Kingdom.1252") return "british";
-  if (s == "Finnish_Finland.1252") return "finnish";
-  if (s == "French_France.1252") return "french";
-  if (s == "German_Germany.1252") return "german";
-  if (s == "Greek_Greece.1253") return "greek";
-  if (s == "Hungarian_Hungary.1250") return "hungarian";
-  if (s == "Italian_Italy.1252") return "italian";
-  if (s == "Japanese_Japan.932") return "japanese";
-  if (s == "Korean_Korea.949") return "korean";
-  if (s == "Polish_Poland.1250") return "polish";
-  if (s == "Portuguese_Portugal.1252") return "portuguese";
-  if (s == "Romanian_Romania.1250") return "romanian";
-  if (s == "Russian_Russia.1251") return "russian";
-  if (s == "Slovenian_Slovenia.1250") return "slovene";
-  if (s == "Spanish_Spain.1252") return "spanish";
-  if (s == "Swedish_Sweden.1252") return "swedish";
-  if (s == "Ukrainian_Ukraine.1251") return "ukrainian";
-  return "english";
+#ifdef OS_MINGW
+const string
+windows_locale_to_language () {
+  static string language;
+
+  if (N(language) == 0) {
+    LANGID lid= GetUserDefaultUILanguage();
+    switch(PRIMARYLANGID(lid)) {
+    case LANG_BULGARIAN:  language= "bulgarian"; break;
+    case LANG_CHINESE:	   language= "chinese"; break;
+    case LANG_CHINESE_TRADITIONAL: language= "taiwanese"; break;
+    case LANG_CROATIAN:   language= "croatian"; break;
+    case LANG_CZECH:      language= "czech"; break;
+    case LANG_DANISH:     language= "danish"; break;
+    case LANG_DUTCH:      language= "dutch"; break;
+    case LANG_ENGLISH:
+      switch(SUBLANGID(lid)) {
+      case SUBLANG_ENGLISH_UK: language= "british"; break;
+      default:            language= "english"; break;
+      }
+      break;
+    case LANG_FRENCH:     language= "french"; break;
+    case LANG_GERMAN:     language= "german"; break;
+    case LANG_GREEK:      language= "greek"; break;
+    case LANG_HUNGARIAN:  language= "hungarian"; break;
+    case LANG_ITALIAN:    language= "italian"; break;
+    case LANG_JAPANESE:   language= "japanese"; break;
+    case LANG_KOREAN:     language= "korean"; break;
+    case LANG_POLISH:     language= "polish"; break;
+    case LANG_PORTUGUESE: language= "portuguese"; break;
+    case LANG_ROMANIAN:   language= "romanian"; break;
+    case LANG_RUSSIAN:    language= "russian"; break;
+    case LANG_SLOVENIAN:  language= "slovene"; break;
+    case LANG_SPANISH:    language= "spanish"; break;
+    case LANG_SWEDISH:    language= "swedish"; break;
+    case LANG_UKRAINIAN:  language= "ukrainian"; break;
+    default:              language= "english"; break;
+    }
+  }
+  return language;
 }
+#endif
 
 string
 locale_to_language (string s) {
@@ -542,8 +551,8 @@ language_to_local_ISO_charset (string s) {
 
 string
 get_locale_language () {
-#if defined(_WIN32) || defined(__WIN32__)
-  return windows_locale_to_language (setlocale (LC_ALL, ""));
+#if OS_MINGW
+  return windows_locale_to_language ();
 #else
   string env_lan= get_env ("LC_ALL");
   if (env_lan != "") return locale_to_language (env_lan);
