@@ -515,20 +515,14 @@
   ("Standard 4:3" (init-page-type "4:3"))
   ("Standard 5:4" (init-page-type "5:4")))
 
-(tm-menu (document-page-size-menu)
-  ("Default" (default-page-type))
-  ---
-  (if (not (style-has? "beamer-style"))
-      (group "Common formats")
-      (link document-common-page-size-menu))
-  (if (style-has? "beamer-style")
-      (group "Beamer formats")
-      (link document-beamer-page-size-menu))
-  ---
-  (group "Standard formats")
-  (if (style-has? "beamer-style")
-      (-> "Common"
-          (link document-common-page-size-menu)))
+(tm-menu (document-poster-page-size-menu)
+  ("A0" (init-page-type "a0"))
+  ("A1" (init-page-type "a1"))
+  ("A2" (init-page-type "a2"))
+  ("A3" (init-page-type "a3"))
+  ("A4" (init-page-type "a4")))
+
+(tm-menu (document-standard-page-formats)
   (-> "A series"
       ("A0" (init-page-type "a0"))
       ("A1" (init-page-type "a1"))
@@ -581,10 +575,44 @@
       ("Note" (init-page-type "note"))
       ("Quarto" (init-page-type "quarto"))
       ("Statement" (init-page-type "statement"))
-      ("Tabloid" (init-page-type "tabloid")))
-  (if (not (style-has? "beamer-style"))
-      (-> "Beamer"
-          (link document-beamer-page-size-menu)))
+      ("Tabloid" (init-page-type "tabloid"))))
+
+(tm-menu (document-page-size-menu)
+  ("Default" (default-page-type))
+  ---
+  (group "Common formats")
+  (link document-common-page-size-menu)
+  ---
+  (group "Standard formats")
+  (link document-standard-page-formats)
+  (-> "Beamer"
+      (link document-beamer-page-size-menu))
+  ---
+  ("Other" (interactive init-page-size)))
+
+(tm-menu (document-page-size-menu)
+  (:require (style-has? "beamer-style"))
+  ("Default" (default-page-type))
+  ---
+  (group "Beamer formats")
+  (link document-beamer-page-size-menu)
+  ---
+  (group "Standard formats")
+  (-> "Common"
+      (link document-common-page-size-menu))
+  (link document-standard-page-formats)
+  ---
+  ("Other" (interactive init-page-size)))
+
+(tm-menu (document-page-size-menu)
+  (:require (style-has? "poster-style"))
+  ("Default" (default-page-type))
+  ---
+  (group "Poster formats")
+  (link document-poster-page-size-menu)
+  ---
+  (group "Standard formats")
+  (link document-standard-page-formats)
   ---
   ("Other" (interactive init-page-size)))
 

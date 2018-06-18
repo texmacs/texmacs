@@ -188,6 +188,7 @@
   ("browser"        "Style for using TeXmacs as a web browser")
   ("generic"        "Default document style")
   ("letter"         "Default style for writing letters")
+  ("poster"         "Style for posters")
   ("seminar"        "Style for presentations using an overhead projector")
   ("source"         "Style for editing style files and packages")
 
@@ -248,6 +249,14 @@
   ("title-bar"          "Put titles of slides in bar at extreme top of screen")
   ("math-ss"            "Use sans serif font for mathematical formulas")
 
+  ("a0-poster"          "A0 page size for posters")
+  ("a1-poster"          "A1 page size for posters")
+  ("a2-poster"          "A2 page size for posters")
+  ("a3-poster"          "A3 page size for posters")
+  ("a4-poster"          "A4 page size for posters")
+  ("landscape-poster"   "Landscape orientation for posters")
+  ("portrait-poster"    "Portrait orientation for posters")
+  
   ("framed-session"     "Render session inputs in frames")
   ("ring-session"       "Ring binder notebook style")
   ("large-formulas"     "Do not break up large fractions and matrices")
