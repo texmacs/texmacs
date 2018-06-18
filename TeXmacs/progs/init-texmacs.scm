@@ -416,6 +416,11 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
+;(display "Booting editing modes for various special styles\n")
+(lazy-menu (various poster-menu) poster-block-menu)
+;(display* "time: " (- (texmacs-time) boot-start) "\n")
+;(display* "memory: " (texmacs-memory) " bytes\n")
+
 ;(display "Booting plugins\n")
 (for-each lazy-plugin-initialize (plugin-list))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

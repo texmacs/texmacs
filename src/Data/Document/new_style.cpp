@@ -276,6 +276,7 @@ ignore_dir (string dir) {
     (dir == "Latex") ||
     (dir == "Miscellaneous") ||
     (dir == "Obsolete") ||
+    (dir == "Poster") ||
     (dir == "Section") ||
     (dir == "Session") ||
     (dir == "Standard") ||

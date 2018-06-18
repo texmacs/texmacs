@@ -460,9 +460,7 @@
   (-> "Number of columns"
       ("Default" (init-default "par-columns"))
       ---
-      ("1" (init-env "par-columns" "1"))
-      ("2" (init-env "par-columns" "2"))
-      ("3" (init-env "par-columns" "3")))
+      (link document-columns-menu))
   (-> "Advanced"
       (-> "Space stretchability"
           ("Default" (init-default "par-flexibility"))
@@ -514,13 +512,6 @@
   ;;("Widescreen 3:2" (init-page-type "3:2"))
   ("Standard 4:3" (init-page-type "4:3"))
   ("Standard 5:4" (init-page-type "5:4")))
-
-(tm-menu (document-poster-page-size-menu)
-  ("A0" (init-page-type "a0"))
-  ("A1" (init-page-type "a1"))
-  ("A2" (init-page-type "a2"))
-  ("A3" (init-page-type "a3"))
-  ("A4" (init-page-type "a4")))
 
 (tm-menu (document-standard-page-formats)
   (-> "A series"
@@ -604,18 +595,14 @@
   ---
   ("Other" (interactive init-page-size)))
 
-(tm-menu (document-page-size-menu)
-  (:require (style-has? "poster-style"))
-  ("Default" (default-page-type))
-  ---
-  (group "Poster formats")
-  (link document-poster-page-size-menu)
-  ---
-  (group "Standard formats")
-  (link document-standard-page-formats)
-  ---
-  ("Other" (interactive init-page-size)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Number of columns
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (document-columns-menu)
+  ("One column" (init-env "par-columns" "1"))
+  ("Two columns" (init-env "par-columns" "2")))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Document -> Page menu
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -931,6 +918,8 @@
         ((== s "1") "One column")
         ((== s "2") "Two columns")
         ((== s "3") "Three columns")
+        ((== s "4") "Four columns")
+        ((== s "5") "Five columns")
         (else (string-append s " columns"))))
 
 (tm-menu (focus-document-menu t)
@@ -945,8 +934,7 @@
       ("Portrait" (init-page-orientation "portrait"))
       ("Landscape" (init-page-orientation "landscape")))
   (-> (eval (number-columns-text (get-init "par-columns")))
-      ("One column" (init-env "par-columns" "1"))
-      ("Two columns" (init-env "par-columns" "2")))
+      (link document-columns-menu))
   (if (and (== (get-preference "experimental encryption") "on")
 	   (!= (get-init "encryption") ""))
       (-> "Encryption" (link document-encryption-menu)))
@@ -1016,8 +1004,7 @@
         ("Portrait" (init-page-orientation "portrait"))
         ("Landscape" (init-page-orientation "landscape"))
         ---
-        ("One column" (init-env "par-columns" "1"))
-        ("Two columns" (init-env "par-columns" "2"))
+        (link document-columns-menu)
         ---
 	(link page-rendering-menu))
     (if (and (== (get-preference "experimental encryption") "on")

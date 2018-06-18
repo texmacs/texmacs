@@ -131,6 +131,8 @@
   (in-plugin-with-converters%
    (plugin-supports-math-input-ref (get-env "prog-language")))
   (in-screens% (inside? 'screens))
+  (in-beamer% (style-has? "beamer-style"))
+  (in-poster% (style-has? "poster-style"))
   (with-any-selection% (selection-active-any?))
   (with-active-selection% (selection-active-normal?))
   (in-cpp% (== (get-env "prog-language") "cpp"))
@@ -224,7 +226,7 @@
   (with-versioning-tool% (== (get-preference "versioning tool") "on"))
   (in-presentation% (or (style-has? "beamer-style")
                         (== (get-preference "presentation tool") "on")
-                        (inside? 'screens)))
+                        (inside? 'screens)) in-beamer%)
   (search-mode% (== (get-input-mode) 1))
   (replace-mode% (== (get-input-mode) 2))
   (spell-mode% (== (get-input-mode) 3))
