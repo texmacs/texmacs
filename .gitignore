@@ -1,0 +1,7 @@
+build
+CMakeLists.txt.user
+texmacs.1
+*.o
+*.kdev4
+.kdev4
+.vscode
