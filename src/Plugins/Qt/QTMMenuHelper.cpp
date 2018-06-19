@@ -241,8 +241,6 @@ QTMMinibarAction::createWidget (QWidget* parent) {
  ******************************************************************************/
 
 QTMMenuButton::QTMMenuButton (QWidget* parent) : QToolButton (parent) {
-  QTMAuxMenu m;
-  m.myInitStyleOption (&option);
   setAttribute (Qt::WA_Hover);
 }
 
@@ -267,11 +265,13 @@ QTMMenuButton::mouseReleaseEvent (QMouseEvent* e) {
 void
 QTMMenuButton::paintEvent (QPaintEvent* e) {
   (void) e;
-  QPainter p (this);
   
     // initialize the options
   QStyleOptionToolButton opt;
   initStyleOption (&opt);
+
+  QPainter p (this);
+  QStyleOptionToolButton option;
   QRect r = rect();
   option.rect = r;
   option.state = QStyle::State_Enabled | (opt.state & QStyle::State_MouseOver
@@ -289,14 +289,13 @@ QTMMenuButton::paintEvent (QPaintEvent* e) {
  ******************************************************************************/
 
 QTMMenuWidget::QTMMenuWidget (QWidget* parent) : QWidget (parent) {
-  QTMAuxMenu m;
-  m.myInitStyleOption (&option);
 }
 
 void
 QTMMenuWidget::paintEvent(QPaintEvent* e) {
   QPainter p (this);
-  option.rect = rect ();
+  QStyleOptionMenuItem option;
+  option.rect = rect();
   style()->drawControl (QStyle::CE_MenuEmptyArea, &option, &p, this);
   QWidget::paintEvent (e);
 }

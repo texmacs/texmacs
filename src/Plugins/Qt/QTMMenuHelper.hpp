@@ -188,23 +188,6 @@ public:
 };
 
 
-/*!
- We use this class to properly initialize style options for our QWidgets
- which have to blend into QMenus. See #QTBUG-1993 and #QTBUG-7707.
- */
-class QTMAuxMenu : public QMenu {
-  Q_OBJECT
-
-public:
-  QTMAuxMenu() : QMenu() { }
-  
-  void myInitStyleOption (QStyleOptionMenuItem* option) const {
-    QAction action (NULL);
-    initStyleOption (option, &action);
-  }
-};
-
-
 /*! QTMMenuButton is a custom button appropriate for menus.
  
  We need to subclass QToolButton for two reasons:
@@ -215,8 +198,6 @@ public:
 class QTMMenuButton: public QToolButton {
   Q_OBJECT
 
-  QStyleOptionMenuItem option;
-  
 public:
   QTMMenuButton (QWidget* parent = NULL);
  
@@ -231,8 +212,6 @@ public:
 class QTMMenuWidget: public QWidget {
   Q_OBJECT
 
-  QStyleOptionMenuItem option;
-  
 public:
   QTMMenuWidget (QWidget* parent = NULL);
   void paintEvent(QPaintEvent *event);
