@@ -149,7 +149,8 @@
                      "tab"))))
 
 (tm-define (kbd-variant t forwards?)
-  (:require (and (tree-in? t '(label reference pageref)) (cursor-inside? t)))
+  (:require (and (tree-in? t '(label reference pageref eqref))
+                 (cursor-inside? t)))
   (if (complete-try?) (noop)))
 
 (tm-define (bib-cite-context? t)
@@ -269,7 +270,7 @@
   (and (tree-compound? t) (tree-label-extension? (tree-label t))))
 
 (tm-define (focus-has-preferences? t)
-  (:require (tree-in? t '(reference pageref hlink locus ornament)))
+  (:require (tree-in? t '(reference pageref eqref hlink locus ornament)))
   #t)
 
 (tm-define (focus-can-search? t)
@@ -666,12 +667,12 @@
 	"ornament-sunny-color" "ornament-shadow-color"))
 
 (tm-define (standard-parameters l)
-  (:require (in? l '("reference" "pageref" "label" "tag")))
+  (:require (in? l '("reference" "pageref" "eqref" "label" "tag")))
   (list))
 
 (tm-define (search-parameters l)
   (:require (in? (if (string? l) l (symbol->string l))
-                 '("reference" "pageref" "hlink")))
+                 '("reference" "pageref" "eqref" "hlink")))
   (standard-parameters "locus"))
 
 (tm-define (parameter-choice-list l)

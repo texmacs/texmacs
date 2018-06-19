@@ -160,6 +160,8 @@
   ("altcmd /" (make 'no-break))
   ("altcmd !" (make-label))
   ("altcmd ?" (make 'reference))
+  ("altcmd ? var" (make 'eqref))
+  ("altcmd ? var var" (make 'pageref))
   ("altcmd P" (make 'pageref))
 
   ("accent:hat" "^")
