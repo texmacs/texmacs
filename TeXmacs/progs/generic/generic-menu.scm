@@ -149,6 +149,7 @@
             (pick-background "" (setter answer))
             ---
             ("Palette" (interactive-color setter '()))
+            ("Pattern" (open-pattern-selector setter "1cm"))
             ("Other" (interactive setter
                        (list (upcase-first name) "color" in*)))))))
 
@@ -220,15 +221,17 @@
   (:require (and (tree-label-parameter? (string->symbol l))
                  (== (tree-label-type (string->symbol l)) "color")))
   (-> (eval (focus-tag-name (string->symbol l)))
-      ((check "Default" "*" (test-default? l)) (init-default l))
-      ---
-      (pick-background "" (init-env-tree l answer))
-      ---
-      (if (in? l (list "locus-color" "visited-color"))
-          ((check "Preserve" "*" (test-init? l "preserve"))
-           (set-init-env l "preserve")))
-      ("Palette" (interactive-color (lambda (col) (init-env l col)) '()))
-      ("Other" (init-interactive-env l))))
+      (with setter (lambda (col) (init-env-tree l col))
+        ((check "Default" "*" (test-default? l)) (init-default l))
+        ---
+        (pick-background "" (setter answer))
+        ---
+        (if (in? l (list "locus-color" "visited-color"))
+            ((check "Preserve" "*" (test-init? l "preserve"))
+             (set-init-env l "preserve")))
+        ("Palette" (interactive-color setter '()))
+        ("Pattern" (open-pattern-selector setter "1cm"))
+        ("Other" (init-interactive-env l)))))
 
 (tm-menu (focus-parameter-menu-item l)
   (:require (parameter-choice-list l))
@@ -532,6 +535,7 @@
       (pick-background "" (setter answer))
       ---
       ("Palette" (interactive-color setter '()))
+      ("Pattern" (open-pattern-selector setter "1cm"))
       ("Other" (interactive setter (list name "string" (get-env var))))))
 
 (tm-menu (focus-extra-menu t)
@@ -561,6 +565,7 @@
       (pick-background "" (setter answer))
       ---
       ("Palette" (interactive-color setter '()))
+      ("Pattern" (open-pattern-selector setter "1cm"))
       ("Other" (interactive setter (list name "string" (get-env var))))))
 
 (tm-menu (focus-extra-icons t)
