@@ -297,6 +297,18 @@ rounded (array<SI>& xs, array<SI>& ys,
 }
 
 void
+render_mixed (renderer ren, brush b1, brush b2,
+              array<SI> xs, array<SI> ys) {
+  SI n= min (N(xs), N(ys)) - 1;
+  for (int i=0; i < n; i++) {
+    double a= (2.0 * i + 1.0) / (2.0 * n);
+    brush mb= mix (b1, 1.0 - a, b2, a);
+    ren->set_brush (mb);
+    ren->line (xs[i], ys[i], xs[i+1], ys[i+1]);    
+  }
+}
+
+void
 highlight_box_rep::display_rounded (renderer& ren, int style) {
   SI W   = max (max (lw, rw), max (bw, tw));
   SI xpad= min (lpad, rpad);
@@ -350,6 +362,34 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
     if (N(bs)>1 && bc[0] == bc[1]) {
       SI m= (sy2(0) + sy1(1)) >> 1;
       ren->line (l1, m, r1, m);
+    }
+    if (N(bc) == 4 && bc[1] != bc[0]) {
+      ren->set_brush (bc[1]);
+      ren->line (l2, b1, r2, b1);
+      array<SI> cxs, cys;
+      rounded (cxs, cys, l2, b2, l1, b2, l2, b1, true, true, style);
+      render_mixed (ren, bc[0], bc[1], cxs, cys);
+    }
+    if (N(bc) == 4 && bc[2] != bc[0]) {
+      ren->set_brush (bc[2]);
+      ren->line (r1, b2, r1, t2);
+    }
+    if (N(bc) == 4 && (bc[1] != bc[0] || bc[2] != bc[0])) {
+      array<SI> cxs, cys;
+      rounded (cxs, cys, r2, b2, r2, b1, r1, b2, true, true, style);
+      render_mixed (ren, bc[1], bc[2], cxs, cys);
+    }
+    if (N(bc) == 4 && (bc[2] != bc[0] || bc[3] != bc[0])) {
+      array<SI> cxs, cys;
+      rounded (cxs, cys, r2, t2, r1, t2, r2, t1, true, true, style);
+      render_mixed (ren, bc[2], bc[3], cxs, cys);
+    }
+    if (N(bc) == 4 && bc[3] != bc[0]) {
+      ren->set_brush (bc[3]);
+      ren->line (l2, t1, r2, t1);
+      array<SI> cxs, cys;
+      rounded (cxs, cys, l2, t2, l2, t1, l1, t2, true, true, style);
+      render_mixed (ren, bc[3], bc[0], cxs, cys);
     }
   }
 }

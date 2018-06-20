@@ -12,6 +12,7 @@
 #include "renderer.hpp"
 #include "gui.hpp"
 #include "image_files.hpp"
+#include "true_color.hpp"
 
 url get_current_buffer_safe ();
 bool is_percentage (tree t, string s= "%");
@@ -138,6 +139,17 @@ make_brush (tree p, int a) {
 brush::brush (color c): rep (make_brush (c)) { INC_COUNT (rep); }
 brush::brush (bool b): rep (make_brush (b)) { INC_COUNT (rep); }
 brush::brush (tree p, int a): rep (make_brush (p, a)) { INC_COUNT (rep); }
+
+brush
+mix (brush b1, double a1, brush b2, double a2) {
+  if (b1 == b2) return b1;
+  if (b1->get_type () == brush_pattern) return b1;
+  if (b2->get_type () == brush_pattern) return b2;
+  true_color c1= true_color (b1->get_color ());
+  true_color c2= true_color (b2->get_color ());
+  true_color mc= mix (c1, a1, c2, a2);
+  return brush ((color) mc);
+}
 
 /******************************************************************************
 * Unpacking pattern data
