@@ -24,38 +24,37 @@
          (s2 (string-replace s1 "poster title" "title")))
     (upcase-first s2)))
 
+(menu-bind poster-theme-menu
+  (for (theme (poster-themes))
+    ((check (eval (theme-name theme)) "v" (has-style-package? theme))
+     (add-style-package theme)))
+  ---
+  ((check "Alternative colors" "v" (has-style-package? "alt-colors"))
+   (toggle-style-package "alt-colors"))
+  ((check "Framed theorems" "v" (has-style-package? "framed-theorems"))
+   (toggle-style-package "framed-theorems")))
+
+(menu-bind poster-title-style-menu
+  (for (theme (poster-title-styles))
+    ((check (eval (theme-name theme)) "v" (has-style-package? theme))
+     (add-style-package theme))))
+
 (menu-bind document-style-extra-menu
   (:require (in-poster?))
-  (=> "Poster theme"
-      (for (theme (poster-themes))
-        ((check (eval (theme-name theme)) "v" (has-style-package? theme))
-         (add-style-package theme))))
-  (=> "Title style"
-      (for (theme (poster-title-styles))
-        ((check (eval (theme-name theme)) "v" (has-style-package? theme))
-         (add-style-package theme)))))
+  (=> "Poster theme" (link poster-theme-menu))
+  (=> "Title style"  (link poster-title-style-menu)))
 
 (tm-menu (focus-style-extra-menu t)
   (:require (in-poster?))
-  (=> "Poster theme"
-      (for (theme (poster-themes))
-        ((check (eval (theme-name theme)) "v" (has-style-package? theme))
-         (add-style-package theme))))
-  (=> "Title style"
-      (for (theme (poster-title-styles))
-        ((check (eval (theme-name theme)) "v" (has-style-package? theme))
-         (add-style-package theme)))))
+  (=> "Poster theme" (link poster-theme-menu))
+  (=> "Title style"  (link poster-title-style-menu)))
 
 (tm-menu (focus-style-extra-icons t)
   (:require (in-poster?))
   (=> (balloon (eval (theme-name (current-poster-theme))) "Poster theme")
-      (for (theme (poster-themes))
-        ((check (eval (theme-name theme)) "v" (has-style-package? theme))
-         (add-style-package theme))))
+      (link poster-theme-menu))
   (=> (balloon (eval (theme-name (current-poster-title-style))) "Title style")
-      (for (theme (poster-title-styles))
-        ((check (eval (theme-name theme)) "v" (has-style-package? theme))
-         (add-style-package theme)))))
+      (link poster-title-style-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page sizes
@@ -96,13 +95,13 @@
 (tm-menu (focus-document-extra-menu t)
   (:mode in-poster?)
   (:require (document-propose-title?))
-  ("Title" (make 'poster-title)))
+  ("Title" (make-poster-title)))
 
 (tm-menu (focus-document-extra-icons t)
   (:mode in-poster?)
   (:require (document-propose-title?))
   (minibar
-    ((balloon "Title" "Insert title") (make 'poster-title))))
+    ((balloon "Title" "Insert title") (make-poster-title))))
 
 (tm-menu (poster-block-menu)
   (group "Titled block")

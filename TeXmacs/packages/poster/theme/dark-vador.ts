@@ -30,6 +30,22 @@
 
   <assign|color|white>
 
+  <assign|math-color|pastel red>
+
+  <assign|strong-color|pastel yellow>
+
+  <assign|ornament-shape|angular>
+
+  <assign|ornament-extra-color|black>
+
+  <assign|ornament-title-color|white>
+
+  <assign|ornament-color|black>
+
+  <assign|ornament-sunny-color|#804040>
+
+  <assign|ornament-shadow-color|#402020>
+
   <\active*>
     <\src-comment>
       Title blocks.
@@ -63,6 +79,10 @@
   <assign|plain-body-bg-color|none>
 
   <assign|plain-body-color|#e0e0e0>
+
+  <assign|plain-body-math-color|pastel red>
+
+  <assign|plain-body-strong-color|pastel yellow>
 
   <assign|plain-shape|angular>
 

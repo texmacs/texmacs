@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -46,7 +46,7 @@
     </ornament>>
   </macro>>
 
-  <assign|enunciation-title-color|<macro|<if|<equal|<value|ornament-extra-color>|white>|<value|color>|<value|bg-color>>>>
+  <assign|enunciation-title-color|<macro|<if|<provides|ornament-title-color>|<value|ornament-title-color>|<if|<equal|<value|ornament-extra-color>|white>|<value|color>|<value|bg-color>>>>>
 
   <assign|enunciation-title-name|<macro|which|<with|color|<enunciation-title-color>|strong-color|<enunciation-title-color>|<enunciation-name|<arg|which>>>>>
 

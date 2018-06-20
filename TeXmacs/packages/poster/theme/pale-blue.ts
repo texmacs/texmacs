@@ -22,6 +22,18 @@
 
   <assign|bg-color|#f0f0ff>
 
+  <assign|ornament-shape|rounded>
+
+  <assign|title-shape|rounded>
+
+  <assign|plain-shape|rounded>
+
+  <assign|framed-shape|rounded>
+
+  <assign|alternate-shape|rounded>
+
+  \;
+
   \;
 </body>
 

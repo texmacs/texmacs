@@ -111,6 +111,10 @@
   (:require (in? l (list "framed-title-style" "alternate-title-style")))
   (parameter-choice-list "ornament-title-style"))
 
+(tm-define (make-poster-title)
+  (make 'poster-title)
+  (make 'with-title-font))
+
 (tm-define (insert-same-block t below?)
   (tree-go-to t (if below? :end :start))
   (cond ((== (tree-arity t) 1)

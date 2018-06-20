@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -75,6 +75,24 @@
   </macro>>
 
   <assign|strong|<macro|x|<with|color|<value|strong-color>|<uncolored-strong|<arg|x>>>>>
+
+  <\active*>
+    <\src-comment>
+      Extra customizations in poster style
+    </src-comment>
+  </active*>
+
+  <assign|framed-colored|<\macro|body>
+    <\with|color|<value|framed-body-color>|math-color|<value|framed-body-math-color>|strong-color|<value|framed-body-strong-color>>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <assign|alternate-colored|<\macro|body>
+    <\with|color|<value|alternate-body-color>|math-color|<value|alternate-body-math-color>|strong-color|<value|alternate-body-strong-color>>
+      <arg|body>
+    </with>
+  </macro>>
 
   <\active*>
     <\src-comment>

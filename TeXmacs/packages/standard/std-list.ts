@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.6>
 
 <style|<tuple|source|std|english>>
 
@@ -40,17 +40,19 @@
     </src-comment>
   </active*>
 
+  <assign|item-spc|<macro|>>
+
   <assign|item-strong|<macro|name|<with|font-series|bold|math-font-series|bold|<arg|name>>>>
 
   <assign|item-long|<macro|name|<arg|name><next-line>>>
 
   <assign|aligned-space-item|<macro|name|<aligned-item|<arg|name> \ >>>
 
-  <assign|aligned-dot-item|<macro|name|<aligned-item|<arg|name>.>>>
+  <assign|aligned-dot-item|<macro|name|<aligned-item|<arg|name>.<item-spc>>>>
 
-  <assign|aligned-bracket-item|<macro|name|<aligned-item|<arg|name><with|font-shape|right|)>>>>
+  <assign|aligned-bracket-item|<macro|name|<aligned-item|<arg|name><with|font-shape|right|)><item-spc>>>>
 
-  <assign|aligned-strong-dot-item|<macro|name|<aligned-item|<item-strong|<arg|name>.>>>>
+  <assign|aligned-strong-dot-item|<macro|name|<aligned-item|<item-strong|<arg|name>.<item-spc>>>>>
 
   <assign|compact-space-item|<macro|name|<compact-item|<arg|name> \ >>>
 
@@ -76,11 +78,11 @@
 
   <new-counter|item>
 
-  <assign|last-item|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>
+  <assign|last-item|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>
 
   <assign|current-item|<value|aligned-space-item>>
 
-  <assign|transform-item|<macro|name|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <assign|transform-item|<macro|name|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   <assign|the-item|<macro|<transform-item|<value|<counter-item>>>>>
 
@@ -222,15 +224,18 @@
 
   <new-list|enumerate-Alpha|<value|aligned-bracket-item>|<macro|name|<number|<arg|name>|Alpha>>>
 
-  <new-list|description-compact|<value|compact-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-compact|<value|compact-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-aligned|<value|aligned-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-aligned|<value|aligned-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-dash|<value|compact-strong-dash-item>|<macro|name|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-dash|<value|compact-strong-dash-item>|<macro|name|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description-long|<value|long-compact-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description-long|<value|long-compact-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
-  <new-list|description|<value|compact-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|math-font-series|bold|<rigid|\<ast\>>>>>>>
+  <new-list|description|<value|compact-strong-dot-item>|<macro|name|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
 
   \;
 </body>
+
+<initial|<\collection>
+</collection>>

@@ -839,7 +839,7 @@
 
 (tm-define (standard-options l)
   (:require (in? l (list-tag-list)))
-  (list "compact-list"))
+  (list "compact-list" "triangle-list"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menu for theorems and proofs

@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.6>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <active*|<\src-title>
@@ -21,11 +21,13 @@
     </src-license>
   </src-title>>
 
+  <assign|item-spc|<macro| >>
+
   <assign|item-hsep|<macro|1tab>>
 
   <assign|item-vsep|<macro|0.25fn>>
 
-  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|x>|<minus|1r|<minus|<item-hsep>|0.25fn>>||<plus|1r|0.25fn>|>>>>
+  <assign|aligned-item|<macro|x|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|x>|<minus|1r|<minus|<item-hsep>|0fn>>||<plus|1r|0fn>|>>>>
 
   <assign|compact-item|<macro|x|<style-with|src-compact|none|<vspace*|<item-vsep>><with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|x>|||<maximum|1r|0fn>|>>>>
 
@@ -42,7 +44,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|sfactor|7>
   </collection>
 </initial>

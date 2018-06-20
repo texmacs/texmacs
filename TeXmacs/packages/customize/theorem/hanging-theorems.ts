@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.6>
 
 <style|source>
 
@@ -38,7 +38,7 @@
 
   <assign|enunciation-sep|>
 
-  <assign|enunciation-name|<macro|which|<with|color|<value|bg-color>|font-series|bold|<arg|which>>>>
+  <assign|enunciation-name|<macro|which|<with|color|<if|<provides|ornament-title-color>|<value|ornament-title-color>|<value|bg-color>>|font-series|bold|<arg|which>>>>
 
   <assign|unframed-render-enunciation|<value|render-enunciation>>
 
