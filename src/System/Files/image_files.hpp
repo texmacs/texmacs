@@ -33,6 +33,6 @@ void          call_imagemagick_convert(url image, url dest, int w_pt=0, int h_pt
 bool          imagemagick_image_size(url image, int& w, int& h, bool pt_units=true);
 bool          has_image_magick();
 string        imagemagick_cmd();
-
+void          apply_effect (tree eff, array<url> src, url dest, int w, int h);
 
 #endif // defined IMAGE_FILES_H

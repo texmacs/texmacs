@@ -590,3 +590,18 @@ imagemagick_image_size(url image, int& w, int& h, bool pt_units) {
       }
   }
 }
+
+/******************************************************************************
+* Applying a TeXmacs effect to a picture
+******************************************************************************/
+
+#ifdef QTTEXMACS
+void qt_apply_effect (tree eff, array<url> src, url dest, int w, int h);
+#endif
+
+void
+apply_effect (tree eff, array<url> src, url dest, int w, int h) {
+#ifdef QTTEXMACS
+  qt_apply_effect (eff, src, dest, w, h);
+#endif
+}

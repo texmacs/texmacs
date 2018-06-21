@@ -121,7 +121,8 @@
   (busy-versioning? is_busy_versioning (bool))
   (players-set-elapsed players_set_elapsed (void tree double))
   (players-set-speed players_set_speed (void tree double))
-
+  (apply-effect apply_effect (void content array_url url int int))
+  
   ;; routines for the font database
   (tt-exists? tt_font_exists (bool string))
   (tt-dump tt_dump (void url))

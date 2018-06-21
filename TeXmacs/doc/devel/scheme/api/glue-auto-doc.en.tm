@@ -843,6 +843,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(apply-effect <scm-arg|content> <scm-arg|array_url> <scm-arg|url> <scm-arg|int> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|apply_effect> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(tt-exists? <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

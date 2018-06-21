@@ -17,6 +17,7 @@
 #include "image_files.hpp"
 #include "scheme.hpp"
 #include "frame.hpp"
+#include "effect.hpp"
 
 #include <QObject>
 #include <QWidget>
@@ -156,7 +157,7 @@ QImage*
 get_image (url u, int w, int h) {
   QImage *pm = NULL;
   if (qt_supports (u))
-    pm= new QImage (os8bits_to_qstring (concretize (u))); 
+    pm= new QImage (os8bits_to_qstring (concretize (u)));
   else {
     url temp= url_temp (".png");
     image_to_png (u, temp, w, h);
@@ -199,4 +200,20 @@ qt_load_xpm (url file_name) {
   QImage pm;
   pm.loadFromData ((uchar*) (char*) buf, N(sss));
   return qt_picture (pm, 0, 0);
+}
+
+/******************************************************************************
+* Applying effects to existing pictures
+******************************************************************************/
+
+void
+qt_apply_effect (tree eff, array<url> src, url dest, int w, int h) {
+  array<picture> a;
+  for (int i=0; i<N(src); i++)
+    a << load_picture (src[i], w, h);
+  effect  e= build_effect (eff);
+  picture t= e->apply (a, PIXEL);
+  picture q= as_qt_picture (t);
+  qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
+  pict->pict.save (os8bits_to_qstring (concretize (dest)));
 }

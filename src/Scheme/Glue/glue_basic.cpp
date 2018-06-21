@@ -1207,6 +1207,27 @@ tmg_players_set_speed (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_apply_effect (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "apply-effect");
+  TMSCM_ASSERT_ARRAY_URL (arg2, TMSCM_ARG2, "apply-effect");
+  TMSCM_ASSERT_URL (arg3, TMSCM_ARG3, "apply-effect");
+  TMSCM_ASSERT_INT (arg4, TMSCM_ARG4, "apply-effect");
+  TMSCM_ASSERT_INT (arg5, TMSCM_ARG5, "apply-effect");
+
+  content in1= tmscm_to_content (arg1);
+  array_url in2= tmscm_to_array_url (arg2);
+  url in3= tmscm_to_url (arg3);
+  int in4= tmscm_to_int (arg4);
+  int in5= tmscm_to_int (arg5);
+
+  // TMSCM_DEFER_INTS;
+  apply_effect (in1, in2, in3, in4, in5);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_tt_existsP (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tt-exists?");
 
@@ -9534,6 +9555,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("busy-versioning?",  tmg_busy_versioningP, 0, 0, 0);
   tmscm_install_procedure ("players-set-elapsed",  tmg_players_set_elapsed, 2, 0, 0);
   tmscm_install_procedure ("players-set-speed",  tmg_players_set_speed, 2, 0, 0);
+  tmscm_install_procedure ("apply-effect",  tmg_apply_effect, 5, 0, 0);
   tmscm_install_procedure ("tt-exists?",  tmg_tt_existsP, 1, 0, 0);
   tmscm_install_procedure ("tt-dump",  tmg_tt_dump, 1, 0, 0);
   tmscm_install_procedure ("tt-font-name",  tmg_tt_font_name, 1, 0, 0);

@@ -130,6 +130,7 @@
 "busy-versioning?"
 "players-set-elapsed"
 "players-set-speed"
+"apply-effect"
 "tt-exists?"
 "tt-dump"
 "tt-font-name"
