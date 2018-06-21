@@ -253,7 +253,7 @@ turbulence (int w, int h, int ox, int oy, long seed,
     for (int x=0; x<w; x++) {
       double v= p->turbulence (3, (double) x, (double) y,
                                1.0 / wavelen_x, 1.0 / wavelen_y,
-                               nNumOctaves, bFractalSum, false,
+                               nNumOctaves, bFractalSum, seed<0,
                                0.0, 0.0, wavelen_x, wavelen_y);
       if (bFractalSum) v= (v + 1.0) / 2.0;
       ret->a[y*w+x]= v;
@@ -282,7 +282,7 @@ turbulence (raster<true_color> ras, long seed,
       for (int ch=0; ch<4; ch++) {
         v[ch]= p->turbulence (ch, (double) x, (double) y,
                               1.0 / wavelen_x, 1.0 / wavelen_y,
-                              nNumOctaves, bFractalSum, false,
+                              nNumOctaves, bFractalSum, seed<0,
                               0.0, 0.0, wavelen_x, wavelen_y);
         if (bFractalSum) v[ch]= (v[ch] + 1.0) / 2.0;
       }
