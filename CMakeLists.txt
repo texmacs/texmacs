@@ -17,7 +17,6 @@ set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
 set (CMAKE_CXX_FLAGS "-Wno-deprecated-register -fPIC")
-set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE Debug CACHE STRING
@@ -42,21 +41,19 @@ endif (CCACHE_FOUND)
 project (TEXMACS CXX C) # check for C/C++ compiler
 
 set (PACKAGE TeXmacs)
+set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
 set (DEVEL_VERSION "1.99.6")
 set (DEVEL_RELEASE "1")
 set (STABLE_VERSION "1.99.6")
 set (STABLE_RELEASE "1")
 
-#INCLUDE_DIRECTORIES(${TEXMACS_SOURCE_DIR}/cmake/)
-#MESSAGE( ${TEXMACS_SOURCE_DIR}/cmake )
-
 
 ### --------------------------------------------------------------------
 ### Options
 ### --------------------------------------------------------------------
-IF(NOT TEXMACS_GUI)
-  SET(TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
-ENDIF(NOT TEXMACS_GUI)
+if (NOT TEXMACS_GUI)
+  set (TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+endif (NOT TEXMACS_GUI)
 
 option (QTPIPES "use Qt pipes" ON)
 
@@ -525,7 +522,8 @@ set(GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 if (TEXMACS_GUI STREQUAL "Qt")
 
   find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
-  include_directories(
+  set (TeXmacs_Include_Dirs
+    ${TeXmacs_Include_Dirs}
     ${Qt5Core_INCLUDE_DIRS}
     ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5Widgets_INCLUDE_DIRS}
@@ -548,7 +546,10 @@ if (TEXMACS_GUI STREQUAL "Qt")
 elseif(TEXMACS_GUI STREQUAL "Aqua")
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
   FIND_PATH(COCOA_INCLUDE_DIR Cocoa/Cocoa.h)
-  include_directories(${COCOA_INCLUDE_DIR})
+  set (TeXmacs_Include_Dirs
+    ${TeXmacs_Include_Dirs}
+    ${COCOA_INCLUDE_DIR}
+  )
   set (TeXmacs_Libraries ${TeXmacs_Libraries} ${COCOA_LIBRARY})
 
   if (APPLE)
@@ -569,10 +570,11 @@ elseif(TEXMACS_GUI STREQUAL "Aqua")
 else (TEXMACS_GUI STREQUAL "Qt")
   find_package (X11)
 
-  include_directories(
+  set (TeXmacs_Include_Dirs
+    ${TeXmacs_Include_Dirs}
     ${X11_INCLUDE_DIR}
   )
-  set(TeXmacs_Libraries ${TeXmacs_Libraries} ${X11_LIBRARIES})
+  set (TeXmacs_Libraries ${TeXmacs_Libraries} ${X11_LIBRARIES})
 
   add_definitions("-DX11TEXMACS")
   set (X11TEXMACS 1)
@@ -629,6 +631,7 @@ if (APPLE)
     set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_MacOS_SRCS})
 endif (APPLE)
 
+include_directories (${TeXmacs_Include_Dirs}) 
 
 ### --------------------------------------------------------------------
 ### Debugging options
@@ -721,3 +724,13 @@ find_package (GTest REQUIRED)
 enable_testing()
 
 add_subdirectory(tests)
+
+### ---------------------------------------------------------------------
+### VSCode Support
+### ---------------------------------------------------------------------
+foreach(DIR ${TeXmacs_Include_Dirs})
+  set (VSCODE_INCLUDE_DIRS "${VSCODE_INCLUDE_DIRS}\"${DIR}\",\n                ")
+endforeach(DIR ${TeXmacs_Include_Dirs})
+
+configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
+  ${TEXMACS_SOURCE_DIR}/.vscode/c_cpp_properties.json)

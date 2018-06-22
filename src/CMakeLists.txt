@@ -1,4 +1,3 @@
-include_directories (${TeXmacs_Include_Dirs}) 
 
 add_executable (${TeXmacs_binary_name} ${GUI_TYPE}
   ${TeXmacs_All_SRCS}
