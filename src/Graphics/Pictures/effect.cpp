@@ -481,19 +481,20 @@ class hatch_effect_rep: public effect_rep {
   effect eff;
   int sx, sy;
   double fp;
+  double de;
 public:
-  hatch_effect_rep (effect e, int sx2, int sy2, double fp2):
-    eff (e), sx (sx2), sy (sy2), fp (fp2) {}
+  hatch_effect_rep (effect e, int sx2, int sy2, double fp2, double de2):
+    eff (e), sx (sx2), sy (sy2), fp (fp2), de (de2) {}
   rectangle get_logical_extents (array<rectangle> rs) {
     return eff->get_logical_extents (rs); }
   rectangle get_extents (array<rectangle> rs) {
     return eff->get_extents (rs); }
   picture apply (array<picture> pics, SI pixel) {
-    return hatch (eff->apply (pics, pixel), sx, sy, fp); }
+    return hatch (eff->apply (pics, pixel), sx, sy, fp, de); }
 };
 
-effect hatch (effect e, int sx, int sy, double fp) {
-  return tm_new<hatch_effect_rep> (e, sx, sy, fp); }
+effect hatch (effect e, int sx, int sy, double fp, double de) {
+  return tm_new<hatch_effect_rep> (e, sx, sy, fp, de); }
 
 /******************************************************************************
 * Building effects from tree description
@@ -550,12 +551,13 @@ build_effect (tree t) {
     int    o= as_int (t[4]);
     return fractal_noise (e, s, w, h, o);
   }
-  else if (is_compound (t, "eff-hatch", 4)) {
+  else if (is_compound (t, "eff-hatch", 5)) {
     effect e = build_effect (t[0]);
     int    sx= as_int (t[1]);
     int    sy= as_int (t[2]);
     double fp= as_double (t[3]);
-    return hatch (e, sx, sy, fp);
+    double de= as_double (t[4]);
+    return hatch (e, sx, sy, fp, de);
   }
   else if (is_func (t, EFF_GAUSSIAN, 3)) {
     double rx= as_double (t[0]);

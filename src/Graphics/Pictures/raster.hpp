@@ -1026,7 +1026,7 @@ degrade (raster<C> r, double wlx, double wly, double th, double sh) {
 
 template<typename C> raster<C>
 translate (raster<C> r, raster<double> rdx, raster<double> rdy,
-           double rx, double ry) {
+           double rx, double ry, bool tiled= false) {
   ASSERT (rdx->w == r->w && rdx->h == r->h, "incompatible dx dimensions");
   ASSERT (rdy->w == r->w && rdy->h == r->h, "incompatible dy dimensions");
   int w= r->w, h= r->h;
@@ -1047,6 +1047,18 @@ translate (raster<C> r, raster<double> rdx, raster<double> rdy,
         v10= r->a[yy*w+xx+1];
         v01= r->a[yy*w+xx+w];
         v11= r->a[yy*w+xx+w+1];
+      }
+      else if (tiled) {
+        while (xx < 0) xx += w;
+        if (xx >= w) xx= xx % w;
+        while (yy < 0) yy += h;
+        if (yy >= h) yy= yy % h;
+        int xx1= (xx+1<w? xx+1: 0);
+        int yy1= (yy+1<h? yy+1: 0);
+        v00= r->a[yy  * w + xx ];
+        v10= r->a[yy  * w + xx1];
+        v01= r->a[yy1 * w + xx ];
+        v11= r->a[yy1 * w + xx1];
       }
       else {
         if (xx >= 0 && xx < w && yy >= 0 && yy < h) v00= r->a[yy*w+xx];
@@ -1085,6 +1097,15 @@ distort (raster<C> r, double wlx, double wly, double rx, double ry) {
   raster<double> rdy= turbulence (r->w, r->h, r->ox, r->oy, 54321,
                                   wlx, wly, 3, true);
   return translate (r, rdx, rdy, rx, ry);
+}
+
+template<typename C> raster<C>
+tiled_distort (raster<C> r, double rx, double ry) {
+  raster<double> rdx= turbulence (r->w, r->h, r->ox, r->oy, -12345,
+                                  r->w, r->h, 3, true);
+  raster<double> rdy= turbulence (r->w, r->h, r->ox, r->oy, -54321,
+                                  r->w, r->h, 3, true);
+  return translate (r, rdx, rdy, rx, ry, true);
 }
 
 template<typename C> raster<C>

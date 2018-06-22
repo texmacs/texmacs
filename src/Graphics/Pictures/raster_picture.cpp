@@ -292,7 +292,7 @@ engrave (picture pic, double a0, color tlc, color brc, double tlw, double brw) {
 ******************************************************************************/
 
 raster<true_color>
-hatch (int w, int h, int sx, int sy, double fill_prop) {
+hatch (int w, int h, int sx, int sy, double fill_prop, double deform) {
   raster<true_color> ret (w, h, 0, 0);
   for (int y=0; y<h; y++)
     for (int x=0; x<w; x++) {
@@ -306,8 +306,14 @@ hatch (int w, int h, int sx, int sy, double fill_prop) {
 }
 
 picture
-hatch (picture pic, int sx, int sy, double fill_prop) {
+hatch (picture pic, int sx, int sy, double fp, double deform) {
+  double f= (deform > 0.0? 4.0: 8.0);
   raster<true_color> ras= as_raster<true_color> (pic);
-  raster<true_color> hat= hatch (8*ras->w, 8*ras->h, sx, sy, fill_prop);
-  return raster_picture (magnify (hat, 0.125, 0.125));
+  raster<true_color> hat= hatch (f*ras->w, f*ras->h, sx, sy, fp, deform);
+  if (deform > 0.0) {
+    double rx= hat->w * deform;
+    double ry= hat->h * deform;
+    hat= tiled_distort (hat, rx, ry);
+  }
+  return raster_picture (magnify (hat, 1.0/f, 1.0/f));
 }

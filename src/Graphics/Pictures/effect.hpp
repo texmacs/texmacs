@@ -49,7 +49,7 @@ effect magnify (effect eff, double sx, double sy);
 effect bubble (effect eff, double r, double a);
 effect turbulence (effect e, long seed, double w, double h, int oct);
 effect fractal_noise (effect e, long seed, double w, double h, int oct);
-effect hatch (effect eff, int sx, int sy, double fill_prop);
+effect hatch (effect eff, int sx, int sy, double fill_prop, double deform);
 
 effect gaussian_pen (double r);
 effect oval_pen (double r);
