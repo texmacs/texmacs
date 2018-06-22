@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "TeXmacs",
+            "cppStandard": "c++11",
+            "includePath": [
+                @VSCODE_INCLUDE_DIRS@
+                "/usr/include"
+            ]
+        }
+    ],
+    "version": 4
+}
