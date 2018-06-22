@@ -120,6 +120,7 @@ picture magnify (picture pic, double sx, double sy);
 picture bubble (picture pic, double r, double a);
 picture turbulence (picture pic, long seed, double w, double h, int oct);
 picture fractal_noise (picture pic, long seed, double w, double h, int oct);
+picture hatch (picture pic, int sx, int sy, double fill_prop);
 
 picture gaussian_pen_picture (double r);
 picture oval_pen_picture (double r);

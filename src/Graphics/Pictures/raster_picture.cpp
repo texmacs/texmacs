@@ -286,3 +286,28 @@ engrave (picture pic, double a0, color tlc, color brc, double tlw, double brw) {
     }
   return raster_picture (ret);
 }
+
+/******************************************************************************
+* Hatches
+******************************************************************************/
+
+raster<true_color>
+hatch (int w, int h, int sx, int sy, double fill_prop) {
+  raster<true_color> ret (w, h, 0, 0);
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      double t= ((double) (sx * y)) / ((double) h) -
+                ((double) (sy * x)) / ((double) w);
+      double d= t - floor (t) + 0.000001;
+      double v= (min (d, 1.0-d) < fill_prop / 2.0 ? 0.0: 1.0);
+      ret->a[y*w+x]= true_color (v, v, v, 1.0);
+    }
+  return ret;
+}
+
+picture
+hatch (picture pic, int sx, int sy, double fill_prop) {
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<true_color> hat= hatch (8*ras->w, 8*ras->h, sx, sy, fill_prop);
+  return raster_picture (magnify (hat, 0.125, 0.125));
+}
