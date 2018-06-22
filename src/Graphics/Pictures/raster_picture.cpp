@@ -299,8 +299,8 @@ hatch (int w, int h, int sx, int sy, double fill_prop) {
       double t= ((double) (sx * y)) / ((double) h) -
                 ((double) (sy * x)) / ((double) w);
       double d= t - floor (t) + 0.000001;
-      double v= (min (d, 1.0-d) < fill_prop / 2.0 ? 0.0: 1.0);
-      ret->a[y*w+x]= true_color (v, v, v, 1.0);
+      double v= (min (d, 1.0-d) < fill_prop / 2.0 ? 1.0: 0.0);
+      ret->a[y*w+x]= true_color (0.0, 0.0, 0.0, v);
     }
   return ret;
 }
