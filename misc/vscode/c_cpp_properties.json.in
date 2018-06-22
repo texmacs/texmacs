@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "TeXmacs",
+            "cppStandard": "c++11",
+            "includePath": [
+                @VSCODE_INCLUDE_DIRS@
+                "${workspaceRoot}/3rdparty/googletest/googletest/include"
+            ]
+        }
+    ],
+    "version": 4
+}
