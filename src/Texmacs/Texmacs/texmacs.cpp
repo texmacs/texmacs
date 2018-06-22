@@ -19,6 +19,7 @@
 #include <sys/resource.h>
 #endif
 
+#include "tm_ostream.hpp"
 #include "boot.hpp"
 #include "file.hpp"
 #include "server.hpp"
@@ -60,9 +61,6 @@ bool disable_error_recovery= false;
 bool start_server_flag= false;
 string extra_init_cmd;
 void server_start ();
-
-tm_ostream& cout= tm_ostream::cout;
-tm_ostream& cerr= tm_ostream::cerr;
 
 /******************************************************************************
 * For testing

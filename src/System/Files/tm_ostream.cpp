@@ -359,8 +359,8 @@ tm_ostream::operator << (formatted f) {
 tm_ostream  tm_ostream::private_cout (stdout);
 tm_ostream  tm_ostream::private_cerr (stderr);
 
-tm_ostream& tm_ostream::cout= private_cout;
-tm_ostream& tm_ostream::cerr= private_cerr;
+tm_ostream& cout= tm_ostream::private_cout;
+tm_ostream& cerr= tm_ostream::private_cerr;
 
 tm_ostream std_error       = debug_ostream ("std-error");
 tm_ostream failed_error    = debug_ostream ("failed-error");
