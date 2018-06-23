@@ -108,6 +108,8 @@ static string main_tmp_dir= "$TEXMACS_HOME_PATH/system/tmp";
 
 static void
 make_dir (url which) {
+  if (is_none(which))
+    return ;
   if (!is_directory (which)) {
     make_dir (head (which));
     mkdir (which);

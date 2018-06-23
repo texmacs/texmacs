@@ -61,9 +61,13 @@ texmacs_wait_handler (string message, string arg, int level) {
     cout << "TeXmacs] Please wait: " << message << " " << arg << "\n";
 }
 
+bool is_server_started () {
+  return the_server != NULL;
+}
+
 server
 get_server () {
-  ASSERT (the_server != NULL, "TeXmacs server not yet started");
+  ASSERT (is_server_started (), "TeXmacs server not yet started");
   return *the_server;
 }
 
