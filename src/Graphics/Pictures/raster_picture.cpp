@@ -298,7 +298,8 @@ hatch (int w, int h, int sx, int sy, double fill_prop, double deform) {
     for (int x=0; x<w; x++) {
       double t= ((double) (sx * y)) / ((double) h) -
                 ((double) (sy * x)) / ((double) w);
-      double d= t - floor (t) + 0.000001;
+      t += 0.5;
+      double d= t - floor (t);
       double v= (min (d, 1.0-d) < fill_prop / 2.0 ? 1.0: 0.0);
       ret->a[y*w+x]= true_color (0.0, 0.0, 0.0, v);
     }
