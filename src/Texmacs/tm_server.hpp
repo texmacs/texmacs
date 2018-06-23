@@ -17,6 +17,8 @@
 #include "tm_frame.hpp"
 #include "tm_data.hpp"
 
+bool is_server_started ();
+
 class tm_server_rep:
   public tm_config_rep,
   public tm_frame_rep

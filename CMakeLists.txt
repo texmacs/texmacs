@@ -733,4 +733,6 @@ foreach(DIR ${TeXmacs_Include_Dirs})
 endforeach(DIR ${TeXmacs_Include_Dirs})
 
 configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
-  ${TEXMACS_SOURCE_DIR}/.vscode/c_cpp_properties.json)
+  ${TEXMACS_SOURCE_DIR}/.vscode/c_cpp_properties.json
+  @ONLY
+)

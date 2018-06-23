@@ -1,10 +1,14 @@
 
-add_executable (${TeXmacs_binary_name} ${GUI_TYPE}
-  ${TeXmacs_All_SRCS}
+add_library(texmacs_body ${TeXmacs_All_SRCS})
+
+add_executable (${TeXmacs_binary_name}
   ./Texmacs/Texmacs/texmacs.cpp
 )
 
-target_link_libraries (${TeXmacs_binary_name} ${TeXmacs_Libraries})
+target_link_libraries (${TeXmacs_binary_name}
+  ${TeXmacs_Libraries}
+  texmacs_body
+)
 
 #--------------------------------------------------------------------------------
 #-- Set the Debug and Release names for the libraries

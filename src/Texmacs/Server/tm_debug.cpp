@@ -59,8 +59,14 @@ path_as_string (path p) {
 string
 get_editor_status_report () {
   string r;
-  r << "Editor status:\n";
+
+  if (!is_server_started ()) {
+    r << "TeXmacs server not yet started";
+    return r;
+  }
+
   server sv= get_server ();
+  r << "Editor status:\n";
   editor ed= get_current_editor ();
   path start_p, end_p;
   ed->get_selection (start_p, end_p);

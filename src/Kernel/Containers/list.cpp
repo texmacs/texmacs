@@ -163,14 +163,14 @@ operator * (list<T> l1, list<T> l2) {
 template<class T> list<T>
 head (list<T> l, int n) {
   if (n==0) return list<T> ();
-  ASSERT (!is_nil (l), "list too short");
+  ASSERT (!is_nil (l), "list too short to get the head");
   return list<T> (l->item, head (l->next, n-1));
 }
 
 template<class T> list<T>
 tail (list<T> l, int n) {
   for (; n>0; n--) {
-    ASSERT (!is_nil (l), "list too short");
+    ASSERT (!is_nil (l), "list too short to get the tail");
     l=l->next;
   }
   return l;
