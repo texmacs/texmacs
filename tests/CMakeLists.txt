@@ -1,5 +1,3 @@
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
-
 file(GLOB_RECURSE TEST_SRC_FILES "*.cpp")
 
 # from list of files we'll create tests test_name.cpp -> test_name
