@@ -540,9 +540,19 @@
           ((color col2 #f #f 32 32)
            (cmd col)))))))
 
+(tm-menu (big-pattern-menu cmd dir scale)
+  (tile 6
+    (for (col (standard-pattern-list dir scale))
+      (with col2 (tm-pattern (cadr col) "100%" "100@")
+        (explicit-buttons
+          ((color col2 #f #f 90 90)
+           (cmd col)))))))
+
 (define-public (clipart-list)
   (list-filter
-   (list (list "Hatch" "/opt/local/share/openclipart/special/patterns")
+   (list (list "Line hatches" "$TEXMACS_PATH/misc/patterns/lines-default")
+         (list "Artistic hatches" "$TEXMACS_PATH/misc/patterns/lines-artistic")
+         (list "Hatch" "/opt/local/share/openclipart/special/patterns")
          (list "Personal" "~/patterns")
          (list "Simple" "~/simple-tiles"))
    (lambda (p) (url-exists? (cadr p)))))
@@ -550,7 +560,7 @@
 (tm-menu (clipart-pattern-menu cmd scale)
   (for (p (clipart-list))
     (-> (eval (car p))
-        (dynamic (standard-pattern-menu cmd (cadr p) scale)))))
+        (dynamic (big-pattern-menu cmd (cadr p) scale)))))
 
 (define (gui-make-pick-background x)
   `(menu-dynamic
