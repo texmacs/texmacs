@@ -1635,7 +1635,7 @@
 ("there are unsaved files" "还有文件尚未保存")
 ("this buffer has not been saved" "现工作的暂存区信息尚未保存")
 ("this column" "此列")
-("this document has been produced using" "此文档由制作")
+("this document has been produced using" "此文档撰写于")
 ("this line" "")
 ("this page" "")
 ("this page footer" "当前页页脚")
