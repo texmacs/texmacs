@@ -443,6 +443,7 @@ file (GLOB_RECURSE TeXmacs_Style_SRCS
   "${TEXMACS_SOURCE_DIR}/src/Style/*.cpp"
 )
 
+set (TeXmacs_All_SRCS ${TeXmacs_Base_SRCS}  ${TeXmacs_Std_Plugins_SRCS})
 
 ### --------------------------------------------------------------------
 ### GUI Interfaces
@@ -517,7 +518,7 @@ endif (LINKED_FREETYPE)
 ### GUI selection
 ### --------------------------------------------------------------------
 
-set(GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
+set (GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 
 if (TEXMACS_GUI STREQUAL "Qt")
 
@@ -530,43 +531,37 @@ if (TEXMACS_GUI STREQUAL "Qt")
     ${Qt5PrintSupport_INCLUDE_DIRS}
   )
   set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+  add_definitions (${QT_DEFINITIONS})
+  add_definitions ("-DQTTEXMACS")
 
-  IF(WIN32)
-   SET(GUI_TYPE WIN32)
-  ENDIF(WIN32)
+  if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions ("-DQT_NO_DEBUG")
+  endif (CMAKE_BUILD_TYPE STREQUAL "Release")
 
-  add_definitions("-DQTTEXMACS")
+  set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Qt_SRCS} ${TeXmacs_Qt_Moc_HDRS})
+  set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs} ${QT_INCLUDES})
+  set (TeXmacs_Libraries ${TeXmacs_Libraries}  ${QT_LIBRARIES})
+
+  if (WIN32)
+    set (GUI_TYPE WIN32)
+  endif (WIN32)
+
   set (QTTEXMACS 1)
-
-  SET(TeXmacs_Libraries ${TeXmacs_Libraries}  ${QT_LIBRARIES})
-
-  SET(CONFIG_GUI "QT")
-  SET(CONFIG_QT "Qt")
-  MESSAGE(STATUS "Enabling experimental  Qt port")
-elseif(TEXMACS_GUI STREQUAL "Aqua")
-  FIND_LIBRARY(COCOA_LIBRARY Cocoa)
-  FIND_PATH(COCOA_INCLUDE_DIR Cocoa/Cocoa.h)
+  set (CONFIG_GUI "QT")
+  set (CONFIG_QT "Qt")
+  message (STATUS "Enabling experimental  Qt port")
+elseif (TEXMACS_GUI STREQUAL "Aqua")
+  find_library (COCOA_LIBRARY Cocoa)
+  find_path (COCOA_INCLUDE_DIR Cocoa/Cocoa.h)
   set (TeXmacs_Include_Dirs
     ${TeXmacs_Include_Dirs}
     ${COCOA_INCLUDE_DIR}
   )
+  set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Cocoa_SRCS})
   set (TeXmacs_Libraries ${TeXmacs_Libraries} ${COCOA_LIBRARY})
 
-  if (APPLE)
-    set (TeXmacs_Libraries ${TeXmacs_Libraries} "-framework Carbon -framework Foundation -framework IOKit -framework Cocoa -framework AppKit -framework CoreData")
-    set(GUI_TYPE MACOSX_BUNDLE)
-
-    set(NO_FAST_ALLOC 1)
-    set(AQUATEXMACS 1)
-    set(COCOA_CFLAGS "")
-    set(COCOA_LDFLAGS "-framework COCOA")
-    set(CONFIG_GUI "COCOA")
-    set(CONFIG_COCOA "Cocoa")
-
-    MESSAGE(STATUS "Enabling experimental Cocoa port")
-  else (APPLE)
-    MESSAGE( ERROR "Aqua GUI is not supported on this system")
-  endif (APPLE)
+  MARK_AS_ADVANCED(COCOA_LIBRARY)
+  MARK_AS_ADVANCED(COCOA_INCLUDE_DIR)
 else (TEXMACS_GUI STREQUAL "Qt")
   find_package (X11)
 
@@ -574,6 +569,7 @@ else (TEXMACS_GUI STREQUAL "Qt")
     ${TeXmacs_Include_Dirs}
     ${X11_INCLUDE_DIR}
   )
+  set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Widkit_SRCS} ${TeXmacs_X11_SRCS})
   set (TeXmacs_Libraries ${TeXmacs_Libraries} ${X11_LIBRARIES})
 
   add_definitions("-DX11TEXMACS")
@@ -586,52 +582,50 @@ else (TEXMACS_GUI STREQUAL "Qt")
 endif (TEXMACS_GUI STREQUAL "Qt")
 
 if (APPLE AND TEXMACS_GUI STREQUAL "X11")
-    set (TeXmacs_MacOS_SRCS ${TeXmacs_MacOS_SRCS} ./Plugins/MacOS/mac_app.mm)
+  set (TeXmacs_MacOS_SRCS
+    ${TeXmacs_MacOS_SRCS}
+    ${TEXMACS_SOURCE_DIR}/src/Plugins/MacOS/mac_app.mm
+  )
 endif (APPLE AND TEXMACS_GUI STREQUAL "X11")
 
 if (APPLE AND USE_SPARKLE)
-    set (TeXmacs_MacOS_SRCS ${TeXmacs_MacOS_SRCS} ./Plugins/Updater/tm_sparkle.mm)
+  set (TeXmacs_MacOS_SRCS
+    ${TeXmacs_MacOS_SRCS}
+    ${TEXMACS_SOURCE_DIR}/src/Plugins/Updater/tm_sparkle.mm
+  )
 endif (APPLE AND USE_SPARKLE)
 
-
-### --------------------------------------------------------------------
-### Set variables related to the executable target
-### --------------------------------------------------------------------
-
-## setup base source list, library dependencies, include dirs
-set (TeXmacs_All_SRCS ${TeXmacs_Base_SRCS} ${TeXmacs_Std_Plugins_SRCS})
-
-### --------------------------------------------------------------------
-### perform gui related operations
-### --------------------------------------------------------------------
-if (TEXMACS_GUI STREQUAL "Qt")
-
-  ADD_DEFINITIONS(${QT_DEFINITIONS})
-  IF(CMAKE_BUILD_TYPE STREQUAL "Release")
-    ADD_DEFINITIONS(-DQT_NO_DEBUG)
-  ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")
-
-  set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Qt_SRCS} ${TeXmacs_Qt_Moc_HDRS})
-  set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs} ${QT_INCLUDES})
-
-elseif (TEXMACS_GUI STREQUAL "Aqua")
-
-  set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Cocoa_SRCS})
-
-  MARK_AS_ADVANCED(COCOA_LIBRARY)
-  MARK_AS_ADVANCED(COCOA_INCLUDE_DIR)
-
-else (TEXMACS_GUI STREQUAL "Qt")
-
-  SET(TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Widkit_SRCS} ${TeXmacs_X11_SRCS})
-
-endif (TEXMACS_GUI STREQUAL "Qt")
-
 if (APPLE)
-    set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_MacOS_SRCS})
+  set (TeXmacs_Libraries
+    ${TeXmacs_Libraries}
+    "-framework ApplicationServices"
+    "-framework CoreFoundation"
+    "-framework Security"
+    "-framework Carbon"
+    "-framework AppKit"
+    "-framework Cocoa"
+    "-framework IOKit"
+    "-framework CoreGraphics"
+    "-framework CoreServices"
+    "-framework CoreText"
+    "-framework Foundation"
+    "-framework ImageIO")
+  set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_MacOS_SRCS})
+
+  set(GUI_TYPE MACOSX_BUNDLE)
+  set(NO_FAST_ALLOC 1)
+  set(AQUATEXMACS 1)
+  set(COCOA_CFLAGS "")
+  set(COCOA_LDFLAGS "-framework COCOA")
+  set(CONFIG_GUI "COCOA")
+  set(CONFIG_COCOA "Cocoa")
+
+  message (STATUS "Enabling experimental Cocoa port")
+else (APPLE)
+  message (ERROR "Aqua GUI is not supported on this system")
 endif (APPLE)
 
-include_directories (${TeXmacs_Include_Dirs}) 
+include_directories(${TeXmacs_Include_Dirs})
 
 ### --------------------------------------------------------------------
 ### Debugging options
@@ -721,16 +715,16 @@ set (GTEST_LIBRARY gtest)
 add_subdirectory (${GTEST_ROOT} EXCLUDE_FROM_ALL)
 find_package (GTest REQUIRED)
 
-enable_testing()
+enable_testing ()
 
-add_subdirectory(tests)
+add_subdirectory (tests)
 
 ### ---------------------------------------------------------------------
 ### VSCode Support
 ### ---------------------------------------------------------------------
-foreach(DIR ${TeXmacs_Include_Dirs})
+foreach (DIR ${TeXmacs_Include_Dirs})
   set (VSCODE_INCLUDE_DIRS "${VSCODE_INCLUDE_DIRS}\"${DIR}\",\n                ")
-endforeach(DIR ${TeXmacs_Include_Dirs})
+endforeach (DIR ${TeXmacs_Include_Dirs})
 
 configure_file (${TEXMACS_SOURCE_DIR}/misc/vscode/c_cpp_properties.json.in
   ${TEXMACS_SOURCE_DIR}/.vscode/c_cpp_properties.json
