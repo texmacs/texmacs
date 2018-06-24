@@ -119,7 +119,11 @@ string::operator != (string a) {
 
 string
 string::operator () (int begin, int end) {
+  if (end <= begin) return string();
+
   register int i;
+  begin = max(min(rep->n, begin), 0);
+  end = max(min(rep->n, end), 0);
   string r (end-begin);
   for (i=begin; i<end; i++) r[i-begin]=rep->a[i];
   return r;
