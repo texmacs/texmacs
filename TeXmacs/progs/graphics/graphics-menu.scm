@@ -67,6 +67,7 @@
 (menu-bind graphics-frame-unit-menu
   ("1 cm" (graphics-set-unit "1cm"))
   ("1 inch" (graphics-set-unit "1in"))
+  ("0.1 par" (graphics-set-unit "0.1par"))
   ;;("5 em" (graphics-set-unit "5em"))
   ---
   ("Other" (interactive graphics-set-unit)))

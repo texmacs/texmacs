@@ -314,10 +314,14 @@
   ;; path to innermost group
   (graphics-graphics-path))
 
+(tm-define (graphics-default-unit)
+  (if (in-poster?) "0.1par" "1cm"))
+
 (tm-define (make-graphics . init)
   (when (null? init)
     (set! init `("gr-mode" "point"
-                 "gr-frame" (tuple "scale" "1cm" (tuple "0.5gw" "0.5gh"))
+                 "gr-frame" (tuple "scale" ,(graphics-default-unit)
+                                   (tuple "0.5gw" "0.5gh"))
                  "gr-geometry" (tuple "geometry" "1par" "0.6par"))))
   (graphics-reset-context 'begin)
   (insert-raw-go-to `(with ,@init (graphics "")) `(,(length init) 1)))

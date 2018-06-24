@@ -125,7 +125,8 @@
   (with frame (tree->stree (get-env-tree "gr-frame"))
     (if (match? frame '(tuple "scale" :%2))
 	frame
-	'(tuple "scale" "1cm" (tuple "0.5par" "0cm")))))
+        `(tuple "scale" ,(graphics-default-unit)
+                (tuple "0.5par" "0cm")))))
 
 (define (graphics-unit-has-value? val)
   (let* ((fr (graphics-cartesian-frame))
