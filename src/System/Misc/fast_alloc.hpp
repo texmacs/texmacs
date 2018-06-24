@@ -11,6 +11,8 @@
 
 #ifndef FAST_ALLOC_H
 #define FAST_ALLOC_H
+
+#include "config.h"
 #include "tm_configure.hpp"
 #include <stdlib.h>
 
