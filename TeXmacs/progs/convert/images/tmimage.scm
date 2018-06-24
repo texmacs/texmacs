@@ -256,53 +256,54 @@
 
   (if (not (selection-active-any?))
       (set-message "no selection!" "")
-      (let* (;; step 1 prepare and typeset selection
-	     ;;if selection is part of math need to re-encapsulate
-	     ;; it with math to obtain proper typesetting :
-	     (tm-fragment
-	      (if (tree-multi-paragraph? (selection-tree))
-	          (selection-tree)
-	          (if (in-math?)
-		      (stree->tree `(equation* (document ,(selection-tree))))
-		      (selection-tree))))
-	     ;; also if selection spans several lines of text,
-	     ;; need to encapsulate it in a fixed-width table
-	     ;;to enforce pagewidth :
-	     (tm-fragment-enforce-pagewidth
-	      (stree->tree
-	       `(tabular
-		 (tformat (twith "table-width" "1par")
-			  (twith "table-hmode" "exact")
-			  (cwith "1" "1" "1" "1" "cell-hyphen" "t")
-			  (table (row (cell (document ,tm-fragment))))))))
-         (temp0 (url-temp-ext "pdf"))
-	     (dpi-pref (get-preference "printer dpi"))
-	     (suffix (url-suffix myurl)))
+      (let* (
+        ;; step 1 prepare and typeset selection
+        ;; if selection is part of math need to re-encapsulate
+        ;; it with math to obtain proper typesetting :
+        (tm-fragment
+          (if (in-math?)
+              (stree->tree `(equation* (document ,(selection-tree))))
+  	          (selection-tree)))
+        ;; also if selection spans several lines of text,
+        ;; need to encapsulate it in a fixed-width table
+        ;;to enforce pagewidth :
+        (tm-fragment-enforce-pagewidth
+          (if (tree-multi-paragraph? (selection-tree))
+              (stree->tree
+                `(tabular
+                   (tformat (twith "table-width" "1par")
+			               (twith "table-hmode" "exact")
+			               (cwith "1" "1" "1" "1" "cell-hyphen" "t")
+                     (table (row (cell (document ,tm-fragment)))))))
+              (selection-tree)))
+        (temp0 (url-temp-ext "pdf"))
+        (dpi-pref (get-preference "printer dpi"))
+        (suffix (url-suffix myurl)))
 
-        (set-printer-dpi "236") ; 472 is ~ exact size
-	;;set to a fixed value so our graphics does
-	;;not depend on the printer dpi
-	;;We need to set this weird dpi value so that the size of the svg
-	;;produced is about twice that of direct pdf or ps output. Why??
-	(print-snippet temp0 tm-fragment-enforce-pagewidth #t)
-	;;typeset fragment to ps as starting point
-	(set-printer-dpi dpi-pref)
-	;; revert to preference dpi
-	;; step 2 generate output according to desired output format
+       (set-printer-dpi "236") ; 472 is ~ exact size
+       ;;set to a fixed value so our graphics does
+       ;;not depend on the printer dpi
+       ;;We need to set this weird dpi value so that the size of the svg
+       ;;produced is about twice that of direct pdf or ps output. Why??
+       (print-snippet temp0 tm-fragment-enforce-pagewidth #t)
+       ;;typeset fragment to ps as starting point
+       (set-printer-dpi dpi-pref)
+       ;; revert to preference dpi
+       ;; step 2 generate output according to desired output format
 
-	  (cond 
-	    ((== suffix "pdf") (system-copy temp0 myurl))
-	    ((== suffix "svg")
-	       ;; assume target is inkscape
-		   (file-convert temp0 myurl)
-		 ;; using either pdf2svg or pdf2cairo converters is crucial
-		 ;; for svg inport in inkscape:
-		 ;; fonts are properly passed as vector outlines
-		 ;; file converters are defined in init-images.scm
+       (cond
+        ((== suffix "pdf") (system-copy temp0 myurl))
+        ((== suffix "svg")
+         ;; assume target is inkscape
+         (file-convert temp0 myurl)
+         ;; using either pdf2svg or pdf2cairo converters is crucial
+         ;; for svg inport in inkscape:
+         ;; fonts are properly passed as vector outlines
+         ;; file converters are defined in init-images.scm
          (refactor-svg myurl tm-fragment))
-		 ;; modify svg, embedding texmacs code
-	    (else
-            (file-convert temp0 myurl)))
+         ;; modify svg, embedding texmacs code
+        (else
+         (file-convert temp0 myurl)))
 
-	  (system-remove temp0) ;; temp pdf file not needed anymore
-	)))
+       (system-remove temp0) ;; temp pdf file not needed anymore
+  )))
