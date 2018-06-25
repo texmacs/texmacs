@@ -77,8 +77,15 @@ public:
     //cout << "Add " << c << " to " << fn << "\n";
     add_font (fn, REWRITE_NONE);
     int nr= fn_nr [fn];
-    if (starts (c, "<")) cht (c)= nr;
-    else chv [(int) (unsigned char) c[0]]= nr;
+    if (starts (c, "<")) {
+      if (!cht->contains (c)) cht (c)= nr;
+      else cht (c)= min (nr, cht [c]);
+    }
+    else {
+      int code= (int) (unsigned char) c[0];
+      if (chv[code] == -1) chv [code]= nr;
+      else chv[code]= min (nr, chv [code]);
+    }
     return nr;
   }
 };
@@ -1148,16 +1155,20 @@ smart_font_rep::resolve (string c) {
   }
 
   string virt= find_in_virtual (c);
-  if (math_kind != 0 && !unicode_provides (c) && virt == "") {
-    //cout << "Found " << c << " in other\n";
-    return sm->add_char (tuple ("other"), c);
-  }
+  if (math_kind != 0 && !unicode_provides (c) && virt == "")
+    if (!starts (c, "<left-") &&
+	!starts (c, "<right-") &&
+	!starts (c, "<mid-")) {
+      //cout << "Found " << c << " in other\n";
+      return sm->add_char (tuple ("other"), c);
+    }
 
   if (virt != "") {
     //cout << "Found " << c << " in " << virt << "\n";
     return sm->add_char (tuple ("virtual", virt), c);
   }
 
+  //cout << "Error " << c << "\n";
   return sm->add_char (tuple ("error"), c);
 }
 
