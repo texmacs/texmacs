@@ -55,8 +55,9 @@
 
 (define (generate-dots-hatch num fp)
   (let* ((name (list-ref (list "A" "B" "C") num))
+         (fps  (string-append (if (< fp 10) "0" "") (number->string fp)))
          (dest (string-append pattern-path "/dots-hatches/dots-"
-                              name "-" (number->string fp) ".png"))
+                              name "-" fps ".png"))
          (fact (if (== num 1) 0.6 0.55))
          (fill (number->string (* fact (sqrt (* 0.01 fp)))))
          (eff1 `(eff-dots "0" "12" "0" "6" "10" ,fill "0"))
