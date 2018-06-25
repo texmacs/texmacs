@@ -43,14 +43,24 @@
 
 (tm-widget (retina-settings-widget cmd)
   (centered
-    (centered
-      (aligned
-        (meti (hlist // (text "Use retina fonts"))
-          (toggle (set-retina-boolean-preference "retina-factor" answer)
-                  (get-retina-boolean-preference "retina-factor")))
-        (meti (hlist // (text "Use retina icons"))
-          (toggle (set-retina-boolean-preference "retina-icons" answer)
-                  (get-retina-boolean-preference "retina-icons")))))
+    (assuming (os-macos?)
+      (centered
+	(aligned
+	  (meti (hlist // (text "Use retina fonts"))
+	    (toggle (set-retina-boolean-preference "retina-factor" answer)
+		    (get-retina-boolean-preference "retina-factor")))
+	  (meti (hlist // (text "Use retina icons"))
+	    (toggle (set-retina-boolean-preference "retina-icons" answer)
+		    (get-retina-boolean-preference "retina-icons"))))))
+    (assuming (not (os-macos?))
+      (centered
+	(aligned
+	  (meti (hlist // (text "Use high resolution fonts"))
+	    (toggle (set-retina-boolean-preference "retina-factor" answer)
+		    (get-retina-boolean-preference "retina-factor")))
+	  (meti (hlist // (text "Use high resolution icons"))
+	    (toggle (set-retina-boolean-preference "retina-icons" answer)
+		    (get-retina-boolean-preference "retina-icons"))))))
     ===
     (aligned
       (item (text "Graphical interface font scale:")
@@ -72,5 +82,9 @@
         (delayed
           (:idle 1)
           (set-message "Reboot TeXmacs in order to let the changes take effect"
-                       "Modified retina settings"))))
-    "Retina screen settings"))
+                       (if (os-macos?)
+			   "Modified retina settings"
+			   "Modified high resolution screen settings")))))
+    (if (os-macos?)
+	"Retina screen settings"
+	"High resolution screen settings")))

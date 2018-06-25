@@ -94,6 +94,8 @@
   ("Remote control" (toggle-remote-control-mode))
   (assuming (os-macos?)
     ("Retina settings" (open-retina-settings)))
+  (assuming (not (os-macos?))
+    ("High resolution settings" (open-retina-settings)))
   ---
   ("Fit to screen" (fit-to-screen))
   ("Fit to screen width" (fit-to-screen-width))
