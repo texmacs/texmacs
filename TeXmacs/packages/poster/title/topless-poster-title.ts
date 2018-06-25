@@ -30,9 +30,7 @@
     <\with|par-columns|1|ornament-color|<value|title-body-bg-color>|color|<value|title-body-color>|ornament-shape|<value|title-shape>|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>|ornament-border|0em|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|ornament-sunny-color|<value|title-sunny-color>|ornament-shadow-color|<value|title-shadow-color>>
       <\ornament>
         <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
-          <\title-render-title>
-            <arg|body>
-          </title-render-title>
+          <arg|body>
         </surround>
       </ornament>
     </with>

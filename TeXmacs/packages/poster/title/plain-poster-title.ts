@@ -23,9 +23,7 @@
   <assign|poster-title|<\macro|body|ldeco|rdeco>
     <\with|par-columns|1|color|<value|title-body-color>>
       <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
-        <\title-render-title>
-          <arg|body>
-        </title-render-title>
+        <arg|body>
       </surround>
     </with>
   </macro>>
