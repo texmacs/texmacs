@@ -53,6 +53,25 @@
     (for (perc (list "05" "10" "15" "20" "25" "50"))
       (generate-line-hatch nums perc #f))))
 
+(define (generate-dots-hatch num fp)
+  (let* ((name (list-ref (list "A" "B" "C") num))
+         (dest (string-append pattern-path "/dots-hatches/dots-"
+                              name "-" (number->string fp) ".png"))
+         (fact (if (== num 1) 0.6 0.55))
+         (fill (number->string (* fact (sqrt (* 0.01 fp)))))
+         (eff1 `(eff-dots "0" "12" "0" "6" "10" ,fill "0"))
+         (eff2 `(eff-dots "0" "12" "0" "0" "12" ,fill "0"))
+         (eff3 `(eff-dots "0" "12" "0" "6" "10" ,fill "0.15"))
+         (effl (list eff1 eff2 eff3))
+         (eff  (list-ref effl num)))
+    (display* "Generating " dest "\n")
+    (apply-effect eff (list dummy-pattern) dest 360 360)))
+
+(define (generate-dots-hatches)
+  (for (num '(0 1 2))
+    (for (fp '(5 10 15 20 25 30 40 50 60 70 80 90))
+      (generate-dots-hatch num fp))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routine
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,4 +83,7 @@
     (system-mkdir (string-append pattern-path "/lines-basic")))
   (when (not (url-exists? (string-append pattern-path "/lines-default")))
     (system-mkdir (string-append pattern-path "/lines-default")))
-  (generate-line-hatches))
+  (when (not (url-exists? (string-append pattern-path "/dots-hatches")))
+    (system-mkdir (string-append pattern-path "/dots-hatches")))
+  ;;(generate-line-hatches)
+  (generate-dots-hatches))

@@ -318,3 +318,43 @@ hatch (picture pic, int sx, int sy, double fp, double deform) {
   }
   return raster_picture (magnify (hat, 1.0/f, 1.0/f));
 }
+
+raster<true_color>
+dots (int w, int h, int a, int b, int c, int d, double fp, double deform) {
+  raster<true_color> ret (w, h, 0, 0);
+  double det= a*d - b*c;
+  double A= d/det, B= -b/det, C= -c/det, D= a/det;
+  for (int y=0; y<h; y++)
+    for (int x=0; x<w; x++) {
+      double X = ((double) x) / w, Y = ((double) y) / h;
+      double px= a*X + b*Y, py= c*X + d*Y;
+      double fx= floor (px), fy= floor (py);
+      double cx= ceil  (px), cy= ceil  (py);
+      double x1= A*fx + B*fy, y1= C*fx + D*fy;
+      double x2= A*fx + B*cy, y2= C*fx + D*cy;
+      double x3= A*cx + B*fy, y3= C*cx + D*fy;
+      double x4= A*cx + B*cy, y4= C*cx + D*cy;
+      double d1= sqrt ((x1-X)*(x1-X) + (y1-Y)*(y1-Y));
+      double d2= sqrt ((x2-X)*(x2-X) + (y2-Y)*(y2-Y));
+      double d3= sqrt ((x3-X)*(x3-X) + (y3-Y)*(y3-Y));
+      double d4= sqrt ((x4-X)*(x4-X) + (y4-Y)*(y4-Y));
+      double d = min (min (d1, d2), min (d3, d4));
+      double nd= d * sqrt (fabs (det));
+      double v= (nd < fp ? 1.0: 0.0);
+      ret->a[y*w+x]= true_color (0.0, 0.0, 0.0, v);
+    }
+  return ret;
+}
+
+picture
+dots (picture pic, int a, int b, int c, int d, double fp, double deform) {
+  double f= 4.0;
+  raster<true_color> ras= as_raster<true_color> (pic);
+  raster<true_color> hat= dots (f*ras->w, f*ras->h, a, b, c, d, fp, deform);
+  if (deform > 0.0) {
+    double rx= hat->w * deform;
+    double ry= hat->h * deform;
+    hat= tiled_distort (hat, rx, ry);
+  }
+  return raster_picture (magnify (hat, 1.0/f, 1.0/f));
+}

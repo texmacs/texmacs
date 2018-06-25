@@ -121,6 +121,7 @@ picture bubble (picture pic, double r, double a);
 picture turbulence (picture pic, long seed, double w, double h, int oct);
 picture fractal_noise (picture pic, long seed, double w, double h, int oct);
 picture hatch (picture pic, int sx, int sy, double fill_prop, double deform);
+picture dots (picture pic, int a, int b, int c, int d, double fp, double de);
 
 picture gaussian_pen_picture (double r);
 picture oval_pen_picture (double r);

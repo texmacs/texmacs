@@ -496,6 +496,26 @@ public:
 effect hatch (effect e, int sx, int sy, double fp, double de) {
   return tm_new<hatch_effect_rep> (e, sx, sy, fp, de); }
 
+class dots_effect_rep: public effect_rep {
+  effect eff;
+  int a, b, c, d;
+  double fp;
+  double de;
+public:
+  dots_effect_rep (effect e, int a2, int b2, int c2, int d2,
+                   double fp2, double de2):
+    eff (e), a (a2), b (b2), c (c2), d (d2), fp (fp2), de (de2) {}
+  rectangle get_logical_extents (array<rectangle> rs) {
+    return eff->get_logical_extents (rs); }
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return dots (eff->apply (pics, pixel), a, b, c, d, fp, de); }
+};
+
+effect dots (effect e, int a, int b, int c, int d, double fp, double de) {
+  return tm_new<dots_effect_rep> (e, a, b, c, d, fp, de); }
+
 /******************************************************************************
 * Building effects from tree description
 ******************************************************************************/
@@ -558,6 +578,16 @@ build_effect (tree t) {
     double fp= as_double (t[3]);
     double de= as_double (t[4]);
     return hatch (e, sx, sy, fp, de);
+  }
+  else if (is_compound (t, "eff-dots", 7)) {
+    effect e = build_effect (t[0]);
+    int    a = as_int (t[1]);
+    int    b = as_int (t[2]);
+    int    c = as_int (t[3]);
+    int    d = as_int (t[4]);
+    double fp= as_double (t[5]);
+    double de= as_double (t[6]);
+    return dots (e, a, b, c, d, fp, de);
   }
   else if (is_func (t, EFF_GAUSSIAN, 3)) {
     double rx= as_double (t[0]);
