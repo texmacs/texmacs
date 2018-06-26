@@ -647,7 +647,7 @@ pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
   url u;
   SI w, h;
   get_pattern_data (u, w, h, br, pixel);
-
+  // cout << "get_pattern_data " << u << ", " << w << " x " << h << LF;
   pdf_image image_pdf;
   tree u_tree= tuple (u->t);
   if (pattern_image_pool->contains(u_tree))
@@ -1794,44 +1794,38 @@ pdf_image_rep::flush_raster (PDFWriter& pdfw, url image) {
 
 bool
 pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
-  string data, mask, palette;
+  string data, smask, palette;
   int iw = 0, ih =0;
-  
 #ifdef QTTEXMACS
-  qt_image_data (u, iw, ih, data, palette, mask);
+  qt_image_data (u, iw, ih, data, palette, smask);
+#elif
+  convert_error << "pdf_image_rep::flush_for_pattern: cannot export pattern "
+		<< u << "  to PDF" << LF;
 #endif
-  
   if ((iw==0)||(ih==0)) return false;
   
   ObjectsContext& objectsContext = pdfw.GetObjectsContext();
   objectsContext.StartNewIndirectObject(id);
 
-  // write stream dictionary
   DictionaryContext* imageContext = objectsContext.StartDictionary();
-  // type
   imageContext->WriteKey(scType);
   imageContext->WriteNameValue(scXObject);
-  // subtype
   imageContext->WriteKey(scSubType);
   imageContext->WriteNameValue(scImage);
-  // Width
   imageContext->WriteKey(scWidth);
   imageContext->WriteIntegerValue(iw);
-  // Height
   imageContext->WriteKey(scHeight);
   imageContext->WriteIntegerValue(ih);
-  // Bits Per Component
   imageContext->WriteKey(scBitsPerComponent);
   imageContext->WriteIntegerValue(8);
-  // Color Space and Decode Array if necessary
   imageContext->WriteKey(scColorSpace);
   imageContext->WriteNameValue(scDeviceRGB);
-  // Data stream
+  ObjectIDType smaskId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
+  imageContext->WriteKey("SMask");
+  imageContext->WriteNewObjectReferenceValue(smaskId);
   PDFStream* imageStream = objectsContext.StartPDFStream(imageContext, true);
-  
   OutputStreamTraits outputTraits(imageStream->GetWriteStream());
   c_string buf (data);
-  
   InputByteArrayStream reader((IOBasicTypes::Byte*)(char *)buf, N(data));
   EStatusCode status = outputTraits.CopyToOutputStream(&reader);
   if(status != PDFHummus::eSuccess) {
@@ -1840,6 +1834,33 @@ pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
   }
   objectsContext.EndPDFStream(imageStream);
   delete imageStream;
+  objectsContext.EndIndirectObject();
+
+  objectsContext.StartNewIndirectObject(smaskId);
+  DictionaryContext* smaskContext = objectsContext.StartDictionary();
+  smaskContext->WriteKey(scType);
+  smaskContext->WriteNameValue(scXObject);
+  smaskContext->WriteKey(scSubType);
+  smaskContext->WriteNameValue(scImage);
+  smaskContext->WriteKey(scWidth);
+  smaskContext->WriteIntegerValue(iw);
+  smaskContext->WriteKey(scHeight);
+  smaskContext->WriteIntegerValue(ih);
+  smaskContext->WriteKey(scBitsPerComponent);
+  smaskContext->WriteIntegerValue(8);
+  smaskContext->WriteKey(scColorSpace);
+  smaskContext->WriteNameValue(scDeviceGray);
+  PDFStream* smaskStream = objectsContext.StartPDFStream(smaskContext, true);
+  OutputStreamTraits smaskOutputTraits (smaskStream->GetWriteStream());
+  c_string buf_smask (smask);
+  InputByteArrayStream smaskReader ((IOBasicTypes::Byte*)(char *)buf_smask, N(smask));
+  status = smaskOutputTraits.CopyToOutputStream(&smaskReader);
+  if(status != PDFHummus::eSuccess) {
+    delete smaskStream;
+    return false;
+  }
+  objectsContext.EndPDFStream(smaskStream);
+  delete smaskStream;
   objectsContext.EndIndirectObject();
   return true;
 }
