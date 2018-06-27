@@ -108,11 +108,11 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // and add the most useful (gif, jpeg, svg converters)
   // to the bundle package. I still do not have a reliable solution
   // so just allow everything that is reachable.
-	
-  // plugins need to be installed in TeXmacs.app/Contents/Plugins	
-	QCoreApplication::addLibraryPath( QDir::cleanPath(QCoreApplication::applicationDirPath().append("/../Plugins")) );
+        
+  // plugins need to be installed in TeXmacs.app/Contents/Plugins        
+  QCoreApplication::addLibraryPath( QDir::cleanPath(QCoreApplication::applicationDirPath().append("/../Plugins")) );
   // cout << from_qstring ( QCoreApplication::libraryPaths () .join("\n") ) << LF;
-	{
+  {
     // ensure that private versions of the Qt frameworks have priority on
     // other instances.
     // in the event that we load qt plugins which could possibly link to
@@ -155,8 +155,8 @@ TeXmacs_init_paths (int& argc, char** argv) {
   
   if (get_env ("TEXMACS_PATH") == "")
     set_env ("TEXMACS_PATH", as_string (exedir * ".."));
-//  if (get_env ("HOME") == "") //now set in immediate_options otherwise --setup option fails
-//    set_env ("HOME", get_env("USERPROFILE"));
+  // if (get_env ("HOME") == "") //now set in immediate_options otherwise --setup option fails
+  //   set_env ("HOME", get_env("USERPROFILE"));
   // HACK
   // In WINE the variable PWD is already in the outer Unix environment 
   // so we need to override it to have a correct behaviour
@@ -180,7 +180,7 @@ TeXmacs_main (int argc, char** argv) {
   for (i=1; i<argc; i++)
     if (argv[i][0] == '\0') argc= i;
     else if (((argv[i][0] == '-') ||
-	      (argv[i][0] == '+')) && (argv[i][1] != '\0'))
+              (argv[i][0] == '+')) && (argv[i][1] != '\0'))
     {
       string s= argv[i];
       if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
@@ -210,73 +210,73 @@ TeXmacs_main (int argc, char** argv) {
       }
       else if (s == "-disable-error-recovery") disable_error_recovery= true;
       else if ((s == "-fn") || (s == "-font")) {
-	i++;
-	if (i<argc) the_default_font= argv[i];
+        i++;
+        if (i<argc) the_default_font= argv[i];
       }
       else if ((s == "-g") || (s == "-geometry")) {
-	i++;
-	if (i<argc) {
-	  string g= argv[i];
-	  int j=0, j1, j2, j3;
-	  for (j=0; j<N(g); j++)
-	    if (g[j] == 'x') break;
-	  j1=j; if (j<N(g)) j++;
-	  for (; j<N(g); j++)
-	    if ((g[j] == '+') || (g[j] == '-')) break;
-	  j2=j; if (j<N(g)) j++;
-	  for (; j<N(g); j++)
-	    if ((g[j] == '+') || (g[j] == '-')) break;
-	  j3=j;
-	  if (j1<N(g)) {
-	    geometry_w= max (as_int (g (0, j1)), 320);
-	    geometry_h= max (as_int (g (j1+1, j2)), 200);
-	  }
-	  if (j3<N(g)) {
-	    if (g[j2] == '-') geometry_x= as_int (g (j2, j3)) - 1;
-	    else geometry_x= as_int (g (j2+1, j3));
-	    if (g[j3] == '-') geometry_y= as_int (g (j3, N(g))) - 1;
-	    else geometry_y= as_int (g (j3+1, N(g)));
-	  }
-	}
+        i++;
+        if (i<argc) {
+          string g= argv[i];
+          int j=0, j1, j2, j3;
+          for (j=0; j<N(g); j++)
+            if (g[j] == 'x') break;
+          j1=j; if (j<N(g)) j++;
+          for (; j<N(g); j++)
+            if ((g[j] == '+') || (g[j] == '-')) break;
+          j2=j; if (j<N(g)) j++;
+          for (; j<N(g); j++)
+            if ((g[j] == '+') || (g[j] == '-')) break;
+          j3=j;
+          if (j1<N(g)) {
+            geometry_w= max (as_int (g (0, j1)), 320);
+            geometry_h= max (as_int (g (j1+1, j2)), 200);
+          }
+          if (j3<N(g)) {
+            if (g[j2] == '-') geometry_x= as_int (g (j2, j3)) - 1;
+            else geometry_x= as_int (g (j2+1, j3));
+            if (g[j3] == '-') geometry_y= as_int (g (j3, N(g))) - 1;
+            else geometry_y= as_int (g (j3+1, N(g)));
+          }
+        }
       }
       else if ((s == "-b") || (s == "-initialize-buffer")) {
-	i++;
-	if (i<argc) tm_init_buffer_file= url_system (argv[i]);
+        i++;
+        if (i<argc) tm_init_buffer_file= url_system (argv[i]);
       }
       else if ((s == "-i") || (s == "-initialize")) {
-	i++;
-	if (i<argc) tm_init_file= url_system (argv[i]);
+        i++;
+        if (i<argc) tm_init_file= url_system (argv[i]);
       }
       else if ((s == "-v") || (s == "-version")) {
-	cout << "\n";
-	cout << "TeXmacs version " << TEXMACS_VERSION << "\n";
-	cout << TEXMACS_COPYRIGHT << "\n";
-	cout << "\n";
-	exit (0);
+        cout << "\n";
+        cout << "TeXmacs version " << TEXMACS_VERSION << "\n";
+        cout << TEXMACS_COPYRIGHT << "\n";
+        cout << "\n";
+        exit (0);
       }
       else if ((s == "-p") || (s == "-path")) {
-	cout << get_env ("TEXMACS_PATH") << "\n";
-	exit (0);
+        cout << get_env ("TEXMACS_PATH") << "\n";
+        exit (0);
       }
       else if ((s == "-bp") || (s == "-binpath")) {
-	cout << get_env ("TEXMACS_BIN_PATH") << "\n";
-	exit (0);
+        cout << get_env ("TEXMACS_BIN_PATH") << "\n";
+        exit (0);
       }
       else if ((s == "-q") || (s == "-quit"))
-	my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
+        my_init_cmds= my_init_cmds * " (quit-TeXmacs)";
       else if ((s == "-r") || (s == "-reverse"))
-	set_reverse_colors (true);
+        set_reverse_colors (true);
       else if (s == "-no-retina") {
         retina_manual= true;
         retina_factor= 1;
         retina_icons = 1;
-	retina_scale = 1.0;
+        retina_scale = 1.0;
       }
       else if ((s == "-R") || (s == "-retina")) {
         retina_manual= true;
         retina_factor= 2;
         retina_icons = 2;
-	retina_scale = 1.4;
+        retina_scale = 1.4;
       }
       else if (s == "-no-retina-icons") {
         retina_iman  = true;
@@ -287,67 +287,67 @@ TeXmacs_main (int argc, char** argv) {
         retina_icons = 2;
       }
       else if ((s == "-c") || (s == "-convert")) {
-	i+=2;
-	if (i<argc) {
-	  url in  ("$PWD", argv[i-1]);
-	  url out ("$PWD", argv[ i ]);
-	  my_init_cmds= my_init_cmds * " " *
-	    "(load-buffer " * scm_quote (as_string (in)) * " :strict) " *
-	    "(export-buffer " * scm_quote (as_string (out)) * ")";
-	}
+        i+=2;
+        if (i<argc) {
+          url in  ("$PWD", argv[i-1]);
+          url out ("$PWD", argv[ i ]);
+          my_init_cmds= my_init_cmds * " " *
+            "(load-buffer " * scm_quote (as_string (in)) * " :strict) " *
+            "(export-buffer " * scm_quote (as_string (out)) * ")";
+        }
       }
       else if ((s == "-x") || (s == "-execute")) {
-	i++;
-	if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
+        i++;
+        if (i<argc) my_init_cmds= (my_init_cmds * " ") * argv[i];
       }
       else if (s == "-server") start_server_flag= true;
       else if (s == "-log-file") i++;
       else if ((s == "-Oc") || (s == "-no-char-clipping")) char_clip= false;
       else if ((s == "+Oc") || (s == "-char-clipping")) char_clip= true;
       else if ((s == "-S") || (s == "-setup") ||
-	       (s == "-delete-cache") || (s == "-delete-font-cache") ||
-	       (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
-	       (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
-	       (s == "-delete-server-data") || (s == "-delete-databases"));
+               (s == "-delete-cache") || (s == "-delete-font-cache") ||
+               (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
+               (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
+               (s == "-delete-server-data") || (s == "-delete-databases"));
       else if (s == "-build-manual") {
-	if ((++i)<argc)
+        if ((++i)<argc)
           extra_init_cmd << "(build-manual "
                          << scm_quote (argv[i]) << " delayed-quit)";
       }
       else if (s == "-reference-suite") {
-	if ((++i)<argc)
+        if ((++i)<argc)
           extra_init_cmd << "(build-ref-suite "
                          << scm_quote (argv[i]) << " delayed-quit)";
       }
       else if (s == "-test-suite") {
-	if ((++i)<argc)
+        if ((++i)<argc)
           extra_init_cmd << "(run-test-suite "
                          << scm_quote (argv[i]) << "delayed-quit)";
       }
       else if (starts (s, "-psn"));
       else {
-	cout << "\n";
-	cout << "Options for TeXmacs:\n\n";
-	cout << "  -b [file]  Specify scheme buffers initialization file\n";
-	cout << "  -c [i] [o] Convert file 'i' into file 'o'\n";
-	cout << "  -d         For debugging purposes\n";
-	cout << "  -fn [font] Set the default TeX font\n";
-	cout << "  -g [geom]  Set geometry of window in pixels\n";
-	cout << "  -h         Display this help message\n";
-	cout << "  -i [file]  Specify scheme initialization file\n";
-	cout << "  -p         Get the TeXmacs path\n";
-	cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
-	cout << "  -r         Reverse video mode\n";
-	cout << "  -s         Suppress information messages\n";
-	cout << "  -S         Rerun TeXmacs setup program before starting\n";
-	cout << "  -v         Display current TeXmacs version\n";
-	cout << "  -V         Show some informative messages\n";
-	cout << "  -x [cmd]   Execute scheme command\n";
-	cout << "  -Oc        TeX characters bitmap clipping off\n";
-	cout << "  +Oc        TeX characters bitmap clipping on (default)\n";
-	cout << "\nPlease report bugs to <bugs@texmacs.org>\n";
-	cout << "\n";
-	exit (0);
+        cout << "\n";
+        cout << "Options for TeXmacs:\n\n";
+        cout << "  -b [file]  Specify scheme buffers initialization file\n";
+        cout << "  -c [i] [o] Convert file 'i' into file 'o'\n";
+        cout << "  -d         For debugging purposes\n";
+        cout << "  -fn [font] Set the default TeX font\n";
+        cout << "  -g [geom]  Set geometry of window in pixels\n";
+        cout << "  -h         Display this help message\n";
+        cout << "  -i [file]  Specify scheme initialization file\n";
+        cout << "  -p         Get the TeXmacs path\n";
+        cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
+        cout << "  -r         Reverse video mode\n";
+        cout << "  -s         Suppress information messages\n";
+        cout << "  -S         Rerun TeXmacs setup program before starting\n";
+        cout << "  -v         Display current TeXmacs version\n";
+        cout << "  -V         Show some informative messages\n";
+        cout << "  -x [cmd]   Execute scheme command\n";
+        cout << "  -Oc        TeX characters bitmap clipping off\n";
+        cout << "  +Oc        TeX characters bitmap clipping on (default)\n";
+        cout << "\nPlease report bugs to <bugs@texmacs.org>\n";
+        cout << "\n";
+        exit (0);
       }
     }
   if (flag) debug (DEBUG_FLAG_AUTO, true);
