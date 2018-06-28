@@ -1363,9 +1363,10 @@ EStatusCodeAndObjectIDTypeList DocumentContext::CreateFormXObjectsFromPDF(const 
 																			const PDFPageRange& inPageRange,
 																			EPDFPageBox inPageBoxToUseAsFormBox,
 																			const double* inTransformationMatrix,
-																			const ObjectIDTypeList& inCopyAdditionalObjects)
+																			const ObjectIDTypeList& inCopyAdditionalObjects,
+																			const ObjectIDTypeList& inPredefinedFormIDs)
 {
-	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFFilePath,inParsingOptions,inPageRange,inPageBoxToUseAsFormBox,inTransformationMatrix,inCopyAdditionalObjects);	
+	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFFilePath,inParsingOptions,inPageRange,inPageBoxToUseAsFormBox,inTransformationMatrix,inCopyAdditionalObjects,inPredefinedFormIDs);	
 
 }
 
@@ -1374,9 +1375,10 @@ EStatusCodeAndObjectIDTypeList DocumentContext::CreateFormXObjectsFromPDF(const 
 																			const PDFPageRange& inPageRange,
 																			const PDFRectangle& inCropBox,
 																			const double* inTransformationMatrix,
-																			const ObjectIDTypeList& inCopyAdditionalObjects)
+																			const ObjectIDTypeList& inCopyAdditionalObjects,
+																			const ObjectIDTypeList& inPredefinedFormIDs)
 {
-	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFFilePath,inParsingOptions,inPageRange,inCropBox,inTransformationMatrix,inCopyAdditionalObjects);	
+	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFFilePath,inParsingOptions,inPageRange,inCropBox,inTransformationMatrix,inCopyAdditionalObjects, inPredefinedFormIDs);	
 
 }
 EStatusCodeAndObjectIDTypeList DocumentContext::AppendPDFPagesFromPDF(const std::string& inPDFFilePath,
@@ -2020,9 +2022,10 @@ EStatusCodeAndObjectIDTypeList DocumentContext::CreateFormXObjectsFromPDF(IByteR
 																	const PDFPageRange& inPageRange,
 																	EPDFPageBox inPageBoxToUseAsFormBox,
 																	const double* inTransformationMatrix,
-																	const ObjectIDTypeList& inCopyAdditionalObjects)
+																	const ObjectIDTypeList& inCopyAdditionalObjects,
+																	const ObjectIDTypeList& inPredefinedFormIDs)
 {
-	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFStream, inParsingOptions,inPageRange,inPageBoxToUseAsFormBox,inTransformationMatrix,inCopyAdditionalObjects);
+	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFStream, inParsingOptions,inPageRange,inPageBoxToUseAsFormBox,inTransformationMatrix,inCopyAdditionalObjects, inPredefinedFormIDs);
 }
 
 EStatusCodeAndObjectIDTypeList DocumentContext::CreateFormXObjectsFromPDF(IByteReaderWithPosition* inPDFStream,
@@ -2030,9 +2033,10 @@ EStatusCodeAndObjectIDTypeList DocumentContext::CreateFormXObjectsFromPDF(IByteR
 																	const PDFPageRange& inPageRange,
 																	const PDFRectangle& inCropBox,
 																	const double* inTransformationMatrix,
-																	const ObjectIDTypeList& inCopyAdditionalObjects)
+																	const ObjectIDTypeList& inCopyAdditionalObjects,
+																	const ObjectIDTypeList& inPredefinedFormIDs)
 {
-	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFStream,inParsingOptions,inPageRange,inCropBox,inTransformationMatrix,inCopyAdditionalObjects);
+	return mPDFDocumentHandler.CreateFormXObjectsFromPDF(inPDFStream,inParsingOptions,inPageRange,inCropBox,inTransformationMatrix,inCopyAdditionalObjects, inPredefinedFormIDs);
 }
 
 EStatusCodeAndObjectIDTypeList DocumentContext::AppendPDFPagesFromPDF(IByteReaderWithPosition* inPDFStream,
@@ -2941,36 +2945,11 @@ EStatusCode DocumentContext::WriteFormForImage(
     {
         case ePDF:
         {
-            PDFDocumentCopyingContext* copyingContext = NULL;
-            PDFFormXObject* formXObject = NULL;
-            do {
-                // hmm...pdf merging doesn't have an innate method to force an object id. so i'll create a form, and merge into it
-                copyingContext = CreatePDFCopyingContext(inImagePath, inParsingOptions);
-                if(!copyingContext)
-                {
-                    status = eFailure;
-                    break;
-                }
-                
-                PDFPageInput pageInput(copyingContext->GetSourceDocumentParser(),
-                                       copyingContext->GetSourceDocumentParser()->ParsePage(inImageIndex));
-                
-                formXObject = StartFormXObject(pageInput.GetMediaBox(),inObjectID);
-                if(!formXObject)
-                {
-                    status = eFailure;
-                    break;
-                }
-                
-                status = copyingContext->MergePDFPageToFormXObject(formXObject,inImageIndex);
-                if(status != eSuccess)
-                    break;
-                
-                status = EndFormXObject(formXObject);
-            }while(false);
+			PDFPageRange singlePageRange;
+			singlePageRange.mType = PDFPageRange::eRangeTypeSpecific;
+			singlePageRange.mSpecificRanges.push_back(ULongAndULong(inImageIndex, inImageIndex));
 
-            delete formXObject;
-            delete copyingContext;
+			status = CreateFormXObjectsFromPDF(inImagePath, inParsingOptions, singlePageRange, ePDFPageBoxMediaBox, NULL, ObjectIDTypeList(), ObjectIDTypeList(1, inObjectID)).first;
             break;
         }
         case eJPG:

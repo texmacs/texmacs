@@ -26,6 +26,9 @@
 #include "TrailerInformation.h"
 #include "CatalogInformation.h"
 #include "JPEGImageHandler.h"
+#ifndef PDFHUMMUS_NO_TIFF
+#include "TIFFImageHandler.h"
+#endif
 #include "TiffUsageParameters.h"
 #include "UsedFontsRepository.h"
 #include "PDFEmbedParameterTypes.h"
@@ -217,20 +220,22 @@ namespace PDFHummus
 
 		// PDF
 		// CreateFormXObjectsFromPDF is for using input PDF pages as objects in one page or more. you can used the returned IDs to place the 
-		// created form xobjects
+		// created form xobjects (note that you can provide your own as the inPredefinedFormIds...just make sure the list is same size as pages list)
 		EStatusCodeAndObjectIDTypeList CreateFormXObjectsFromPDF(const std::string& inPDFFilePath,
 																 const PDFParsingOptions& inParsingOptions,
 																 const PDFPageRange& inPageRange,
 																 EPDFPageBox inPageBoxToUseAsFormBox,
 																 const double* inTransformationMatrix = NULL,
-																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList());
+																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList(),
+																 const ObjectIDTypeList& inPredefinedFormIDs = ObjectIDTypeList());
 
 		EStatusCodeAndObjectIDTypeList CreateFormXObjectsFromPDF(IByteReaderWithPosition* inPDFStream,
 																const PDFParsingOptions& inParsingOptions,
 																const PDFPageRange& inPageRange,
 																 EPDFPageBox inPageBoxToUseAsFormBox,
 																 const double* inTransformationMatrix = NULL,
-																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList());
+																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList(),
+																 const ObjectIDTypeList& inPredefinedFormIDs = ObjectIDTypeList());
 		
 		// CreateFormXObjectsFromPDF is an override to allow you to determine a custom crop for the page embed
 		EStatusCodeAndObjectIDTypeList CreateFormXObjectsFromPDF(const std::string& inPDFFilePath,
@@ -238,14 +243,16 @@ namespace PDFHummus
 																const PDFPageRange& inPageRange,
 																 const PDFRectangle& inCropBox,
 																 const double* inTransformationMatrix = NULL,
-																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList());
+																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList(),
+																 const ObjectIDTypeList& inPredefinedFormIDs = ObjectIDTypeList());
 
 		EStatusCodeAndObjectIDTypeList CreateFormXObjectsFromPDF(IByteReaderWithPosition* inPDFStream,
 																const PDFParsingOptions& inParsingOptions,
 																const PDFPageRange& inPageRange,
 																 const PDFRectangle& inCropBox,
 																 const double* inTransformationMatrix = NULL,
-																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList());
+																 const ObjectIDTypeList& inCopyAdditionalObjects = ObjectIDTypeList(),
+																 const ObjectIDTypeList& inPredefinedFormIDs = ObjectIDTypeList());
 
 		// AppendPDFPagesFromPDF is for simple appending of the input PDF pages
 		EStatusCodeAndObjectIDTypeList AppendPDFPagesFromPDF(const std::string& inPDFFilePath,
