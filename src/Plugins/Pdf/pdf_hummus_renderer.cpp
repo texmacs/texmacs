@@ -1798,7 +1798,7 @@ pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
   int iw = 0, ih =0;
 #ifdef QTTEXMACS
   qt_image_data (u, iw, ih, data, palette, smask);
-#elif
+#else
   convert_error << "pdf_image_rep::flush_for_pattern: cannot export pattern "
 		<< u << "  to PDF" << LF;
 #endif
