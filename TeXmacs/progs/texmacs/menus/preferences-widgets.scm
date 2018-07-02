@@ -656,6 +656,9 @@
         (meti (hlist // (text "Program bracket selections"))
           (toggle (set-boolean-preference "prog:select brackets" answer)
                   (get-boolean-preference "prog:select brackets")))
+        (meti (hlist // (text "Case-insensitive search"))
+          (toggle (set-boolean-preference "case-insensitive-match" answer)
+                  (get-boolean-preference "case-insensitive-match")))
         (assuming (qt-gui?)  ; TODO: recode the dialogue in scheme
           (meti (hlist // (text "Use print dialogue"))
             (toggle (set-boolean-preference "gui:print dialogue" answer)

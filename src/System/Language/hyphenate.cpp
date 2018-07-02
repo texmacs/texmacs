@@ -96,18 +96,6 @@ load_hyphen_tables (string file_name,
   }
 }
 
-static string 
-lower_case (string s) { //isn't this locase_all?
-  int i;
-  string r (N(s));
-  for (i=0; i<N(s); i++) {
-    if ((s[i]>='A') && (s[i]<='Z'))
-      r[i]= (char) (((int) s[i])+ ((int) 'a')- ((int) 'A'));
-    else r[i]=s[i];
-  }
-  return r;
-}
-
 array<int>
 get_hyphens (string s,
              hashmap<string,string> patterns,
@@ -168,7 +156,7 @@ get_hyphens (string s,
     return penalty;
   }
   else {
-    s= "." * lower_case (s) * ".";
+    s= "." * to_lower (s) * ".";
     // cout << s << "\n";
     int i, j, k, l, m, len;
     array<int> T (str_length (s, utf8)+1);

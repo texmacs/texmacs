@@ -13,6 +13,7 @@
 #include "analyze.hpp"
 #include "boot.hpp"
 #include "drd_mode.hpp"
+#include <locale>
 
 int  search_max_hits= 1000000;
 bool blank_match_flag= false;
@@ -20,6 +21,7 @@ bool initial_match_flag= false;
 bool partial_match_flag= false;
 bool injective_match_flag= false;
 bool cascaded_match_flag= false;
+bool case_insensitive_match_flag= false;
 
 void search (range_set& sel, tree t, tree what, path p);
 bool match (tree t, tree what);
@@ -46,6 +48,8 @@ initialize_search () {
     (get_user_preference ("allow-injective-match", "on") == "on");
   cascaded_match_flag=
     (get_user_preference ("allow-cascaded-match", "on") == "on");
+  case_insensitive_match_flag=
+    (get_user_preference ("case-insensitive-match", "off") == "on");
 }
 
 static void
@@ -234,11 +238,13 @@ search_concat (tree t, tree what, int pos, int i,
 
 void
 search_string (range_set& sel, string s, tree what, path p) {
+  string source = (case_insensitive_match_flag)? to_lower(s) : s;
+
   if (is_atomic (what)) {
     string w= what->label;
     int pos= 0;
     while (pos < N(s)) {
-      int next= tm_search_forwards (w, pos, s);
+      int next= tm_search_forwards (w, pos, source);
       if (next < 0 || next >= N(s)) break;
       merge (sel, simple_range (p * next, p * (next + N(w))));
       pos= next + N(w);

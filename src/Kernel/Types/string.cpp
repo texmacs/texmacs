@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <locale>
 
 /******************************************************************************
 * Low level routines and constructors
@@ -209,6 +210,28 @@ hash (string s) {
     h=h+((int) s[i]);
   }
   return h;
+}
+
+string
+to_lower (string s) {
+  int n= N(s);
+  string l(n);
+
+  for (int i=0; i<n; i++) {
+    l[i]= std::tolower(s[i]);
+  }
+  return l;
+}
+
+string
+to_upper (string s) {
+  int n= N(s);
+  string u(n);
+
+  for (int i=0; i<n; i++) {
+    u[i]= std::toupper(s[i]);
+  }
+  return u;
 }
 
 /******************************************************************************

@@ -482,10 +482,13 @@
 
 (define (search-toolbar-search what)
   (let* ((u (current-buffer))
-         (aux (search-buffer)))
+         (aux (search-buffer))
+         (what-case (if (get-boolean-preference "case-insensitive-match")
+                        (string-downcase what) what)))
+
     (set-search-reference (cursor-path))
     (set-search-filter)
-    (buffer-set-body aux `(document ,what))
+    (buffer-set-body aux `(document ,what-case))
     (buffer-set-master aux u)
     (set! search-window (current-window))
     (perform-search)))
