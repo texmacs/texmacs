@@ -42,9 +42,9 @@ project (TEXMACS CXX C) # check for C/C++ compiler
 
 set (PACKAGE TeXmacs)
 set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
-set (DEVEL_VERSION "1.99.6")
+set (DEVEL_VERSION "1.99.7")
 set (DEVEL_RELEASE "1")
-set (STABLE_VERSION "1.99.6")
+set (STABLE_VERSION "1.99.7")
 set (STABLE_RELEASE "1")
 
 
