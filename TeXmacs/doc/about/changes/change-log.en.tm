@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.7>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
@@ -14,6 +14,8 @@
     <item>New style for posters (1.99.7).
 
     <item>Support for new ACM styles (1.99.7).
+
+    <item>Various bug fixes (1.99.7).
 
     <item>New page breaker with better support for floating objects and
     footnotes (1.99.6).
