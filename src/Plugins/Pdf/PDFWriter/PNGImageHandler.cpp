@@ -275,7 +275,9 @@ void HandlePngError(png_structp png_ptr, png_const_charp error_message) {
 		if (error_message)
 			TRACE_LOG1("LibPNG Error: %s", error_message);
 	}
+#if (PNG_LIBPNG_VER_SONUM > 14)
 	png_longjmp(png_ptr, 1);
+#endif
 }
 
 void HandlePngWarning(png_structp png_ptr, png_const_charp warning_message) {
