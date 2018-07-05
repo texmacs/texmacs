@@ -338,9 +338,8 @@ QTMLazyMenu::transferActions (QList<QAction*>* from) {
     QAction* a = list.takeFirst();
     removeAction (a);
   }
-  list = *from;
-  while (!list.isEmpty()) {
-    QAction* a = list.takeFirst();
+  while (!from->isEmpty()) {
+    QAction* a = from->takeFirst();
     addAction (a);
   }
 }
