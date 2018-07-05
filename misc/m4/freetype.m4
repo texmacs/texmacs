@@ -52,8 +52,8 @@ AC_DEFUN([LC_FREETYPE],[
     AX_RESTORE_FLAGS
     if [[[ $USE_FREETYPE ]]]
     then
-      LC_SCATTER_FLAGS([${[$0]_extralibs}],[FREETYPE])
-      LC_COMBINE_FLAGS([FREETYPE],[freetype])
+      FREETYPE_LIBS+=" ${[$0]_extralibs}"
+      LC_COMBINE_FLAGS([FREETYPE])
       AC_DEFINE(LINKED_FREETYPE, 1, [Freetype library available])
     else
       AC_MSG_ERROR([Cannot find a working freetype library.])
