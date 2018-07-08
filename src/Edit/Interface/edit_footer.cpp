@@ -340,10 +340,15 @@ edit_interface_rep::compute_compound_footer (tree t, path p) {
     else
       return concat (up, "compound ");
   case HLINK:
-    if (N(st) >= 2)
-      return concat (up, "hyperlink(" * as_string (st[1]) * ") ");
-    else
+    if (N(st) >= 2) {
+      if (l == 0) {
+        return concat (up, "hyperlink(text) ");
+      } else {
+        return concat (up, "hyperlink(destination) ");
+      }
+    } else {
       return concat (up, "hyperlink ");
+    }
   case TUPLE:
     return concat (up, "tuple(" * as_string (l+1) * ") ");
   case ATTR:
