@@ -1,6 +1,6 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.7>
 
-<style|<tuple|source|chinese>>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
   <tmdoc-title|\<#914D\>\<#7F6E\><TeXmacs>>
