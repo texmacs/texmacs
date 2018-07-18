@@ -462,7 +462,7 @@
                 ,@(map (cut anim-remove-frame-sub <> x)
                        (tree-children t))))))
 
-(tm-define (current-anim-remove-frame)
+(tm-define (anim-current-remove-frame)
   (and-with t (tree-innermost 'anim-edit #t)
     (let* ((n (anim-remove-frame-sub (tree-ref t 0) (anim-portion t)))
            (r (cddr (tree-children t)))
