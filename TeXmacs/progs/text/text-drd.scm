@@ -164,7 +164,7 @@
   pastel greyed light)
 
 (define-group decorated-tag
-  deleted marked underline* fill-out fill-out*)
+  deleted marked stressed fill-out fill-out*)
 
 ;; Figures and tables
 

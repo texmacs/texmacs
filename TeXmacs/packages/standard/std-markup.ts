@@ -398,13 +398,13 @@
 
   <drd-props|underline|with-like|yes|arity|1|accessible|all>
 
-  <assign|underline-color|black>
+  <assign|stressed-color|black>
 
-  <assign|underline-distance|0.2fn>
+  <assign|stressed-distance|0.2fn>
 
-  <assign|underline*|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<value|underline-color>|<repeat|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|underline-distance>>>>>>|<arg|body>>>>>>
+  <assign|stressed|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<value|stressed-color>|<repeat|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|stressed-distance>>>>>>|<arg|body>>>>>>
 
-  <drd-props|underline*|with-like|yes|arity|1|accessible|all>
+  <drd-props|stressed|with-like|yes|arity|1|accessible|all>
 
   <assign|strike-through|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<repeat|<arg|x>|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>>>>|<arg|body>>>>>>
 
