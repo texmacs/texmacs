@@ -163,11 +163,17 @@
   ---
   ("Indent" (make 'indent))
   ("Jump in" (make 'jump-in))
-  ("Compact" (make 'compact))
   ---
   ("Centered" (make 'center))
   ("Left aligned" (make 'left-aligned))
   ("Right aligned" (make 'right-aligned))
+  (with s (get-env "par-par-sep")
+    (assuming (and (not (string-ends? s "fns"))
+                   (not (string-starts? s "0fn")))
+      ---
+      ("Compact" (make 'compact))
+      ("Compressed" (make 'compressed))
+      ("Amplified" (make 'amplified))))
   ---
   ("Padded" (make 'padded))
   ("Overlined" (make 'overlined))

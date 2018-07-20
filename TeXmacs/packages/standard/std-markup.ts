@@ -245,6 +245,14 @@
     </surround>
   </macro>>
 
+  <assign|ultra-compact|<\macro|body>
+    <\surround||<right-flush>>
+      <\with|par-sep|0fn|par-ver-sep|0fn|par-line-sep|0fn|par-par-sep|0fn>
+        <arg|body>
+      </with>
+    </surround>
+  </macro>>
+
   <assign|compact|<\macro|body>
     <\surround||<right-flush>>
       <\with|par-par-sep|0fn>
@@ -253,9 +261,17 @@
     </surround>
   </macro>>
 
-  <assign|ultra-compact|<\macro|body>
+  <assign|compressed|<\macro|body>
     <\surround||<right-flush>>
-      <\with|par-sep|0fn|par-ver-sep|0fn|par-line-sep|0fn|par-par-sep|0fn>
+      <\with|par-par-sep|<times|0.5|<value|par-par-sep>>>
+        <arg|body>
+      </with>
+    </surround>
+  </macro>>
+
+  <assign|amplified|<\macro|body>
+    <\surround||<right-flush>>
+      <\with|par-par-sep|<times|1.5|<value|par-par-sep>>>
         <arg|body>
       </with>
     </surround>

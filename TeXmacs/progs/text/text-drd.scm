@@ -18,12 +18,14 @@
 
 (define-group variant-tag
   (section-tag) (list-tag) (figure-tag)
-  (enunciation-tag) (prominent-tag) (frame-tag) (frame-titled-tag)
+  (enunciation-tag) (prominent-tag) (compression-tag)
+  (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag) (ornament-tag) (balloon-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)
-  (enunciation-tag) (prominent-tag) (frame-tag) (frame-titled-tag)
+  (enunciation-tag) (prominent-tag) (compression-tag)
+  (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag) (equation-tag) (ornament-tag) (balloon-tag))
 
 (define-group numbered-tag
@@ -133,6 +135,9 @@
 
 (define-group prominent-tag
   quote-env quotation verse)
+
+(define-group compression-tag
+  ultra-compact compact compressed amplified)
 
 (define-group frame-tag
   padded overlined underlined bothlined framed ornamented)
