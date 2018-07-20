@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.7>
 
 <style|<tuple|source|std>>
 
@@ -175,6 +175,26 @@
   <assign|normal-spacing|<macro|body|<with|spacing-policy|default|<arg|body>>>>
 
   <assign|wide-spacing|<macro|body|<with|spacing-policy|wide|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
+      Dots.
+    </src-comment>
+  </active*>
+
+  <assign|math-dots-sep|0.5spc>
+
+  <assign|math-dots-spc|<macro|<hspace|<value|math-dots-sep>>>>
+
+  <assign|bottom-dots|<macro|<math-dots-spc><math-ignore|.><math-dots-spc><math-ignore|.><math-dots-spc><math-ignore|.><math-dots-spc><syntax||x>>>
+
+  <assign|center-dots|<macro|<math-dots-spc><math-ignore|\<cdot\>><math-dots-spc><math-ignore|\<cdot\>><math-dots-spc><math-ignore|\<cdot\>><math-dots-spc><syntax||x>>>
+
+  <assign|comma-dots|<macro|<rigid|,><bottom-dots>,>>
+
+  <assign|colon-dots|<macro|<rigid|:><bottom-dots>:>>
+
+  <assign|semicolon-dots|<macro|<rigid|;><bottom-dots>;>>
 
   <\active*>
     <\src-comment>

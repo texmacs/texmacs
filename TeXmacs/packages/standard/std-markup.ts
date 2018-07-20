@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.7>
 
 <style|<tuple|source|std>>
 
@@ -46,7 +46,7 @@
 
   <assign|BibTeX|<macro|<active*|<with|font-shape|small-caps|Bib>T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn>|0fn|-0.1fn>><space|-0.4spc>X>>>
 
-  <assign|hrule|<macro|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>>
+  <assign|old-hrule|<macro|<no-indent><tabular|<tformat|<cwith|1|-1|1|-1|cell-tborder|1ln>|<twith|table-width|1par>|<cwith|1|-1|1|-1|cell-vmode|exact>|<cwith|1|-1|1|-1|cell-height|1ln>|<cwith|1|-1|1|-1|cell-lsep|0fn>|<cwith|1|-1|1|-1|cell-rsep|0fn>|<cwith|1|-1|1|-1|cell-bsep|0fn>|<cwith|1|-1|1|-1|cell-tsep|0fn>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<space|1fn|0ln|1ln>>>>>>>>
 
   <assign|pre-edit|<macro|body|<with|ornament-color|#ffffc0|ornament-sunny-color|#fff0e0|ornament-shadow-color|#ffc080|ornament-border|1px|ornament-hpadding|2px|ornament-vpadding|2px|<smash|<ornament|<with|color|#4040c0|<arg|body>>>>>>>
 
@@ -398,13 +398,25 @@
 
   <drd-props|underline|with-like|yes|arity|1|accessible|all>
 
-  <assign|strike-through|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<repeat|<arg|x>|<resize|-|<plus|1l|0.1fn>||<plus|1r|-0.1fn>|>>>>|<arg|body>>>>>>
+  <assign|underline-color|black>
+
+  <assign|underline-distance|0.2fn>
+
+  <assign|underline*|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<value|underline-color>|<repeat|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|underline-distance>>>>>>|<arg|body>>>>>>
+
+  <drd-props|underline*|with-like|yes|arity|1|accessible|all>
+
+  <assign|strike-through|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<unquote|<value|color>>|<repeat|<arg|x>|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>>>>|<arg|body>>>>>>
 
   <drd-props|strike-through|with-like|yes|arity|1|accessible|all>
+
+  <assign|hrule|<macro|<strike-through|<htab|5mm>>>>
 
   <assign|repeat-through|<macro|what|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<repeat|<arg|x>|<unquote|<arg|what>>>>|<arg|body>>>>>>
 
   <drd-props|repeat-through|arity|2|accessible|1>
+
+  \;
 
   <assign|deleted-color|red>
 
@@ -414,13 +426,21 @@
 
   <assign|fill-out-distance|0.2fn>
 
-  <assign|fill-out|<macro|body|<repeat-through|<with|color|<value|fill-out-color>|<move|.||<minus|<value|fill-out-distance>>>>|<arg|body>>>>
+  <assign|fill-out-hspace|0fn>
+
+  <assign|fill-out|<macro|body|<repeat-through|<with|color|<value|fill-out-color>|<move|.||<minus|<value|fill-out-distance>>><hspace|<value|fill-out-hspace>>>|<arg|body>>>>
+
+  <assign|fill-out*|<macro|body|<fill-out|<arg|body><htab|5mm>>>>
+
+  <assign|fill-dots|<macro|<fill-out|<htab|5mm>>>>
 
   <assign|marked-color|yellow>
 
   <assign|marked-padding|0.2fn>
 
   <assign|marked|<macro|body|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<value|marked-color>>|<cwith|1|1|1|1|cell-lsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-rsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|<value|marked-padding>>|<plus|1b|<value|marked-padding>>|<minus|1r|<value|marked-padding>>|<minus|1t|<value|marked-padding>>>>|<arg|body>>>>>
+
+  \;
 
   <assign|todo|<macro|body|<with|color|dark
   red|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|pastel
@@ -555,6 +575,12 @@
   <assign|slink|<macro|body|<hlink|<with|font-family|tt|language|verbatim|<arg|body>>|<arg|body>>>>
 
   <assign|square|<macro|x|<times|<arg|x>|<arg|x>>>>
+
+  <assign|text-dots-sep|0.3333spc>
+
+  <assign|text-spc|<macro|<hspace|<value|text-dots-sep>>>>
+
+  <assign|text-dots|<macro|<text-spc>.<text-spc>.<text-spc>.<text-spc>>>
 </body>
 
 <\initial>

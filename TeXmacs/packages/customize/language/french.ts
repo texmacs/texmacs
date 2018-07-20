@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.7>
 
 <style|source>
 
@@ -21,6 +21,12 @@
   </src-title>>
 
   <assign|language|french>
+
+  \;
+
+  <assign|text-dots-sep|0.25spc>
+
+  <assign|text-dots|<macro|.<text-spc>.<text-spc>.<text-spc>>>
 </body>
 
 <\initial>

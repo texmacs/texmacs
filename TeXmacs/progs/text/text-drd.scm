@@ -144,7 +144,8 @@
 ;; Textual markup tags
 
 (define-group textual-tag
-  (strong-tag) (name-tag) (monospaced-tag) (size-tag) (opacity-tag))
+  (strong-tag) (name-tag) (monospaced-tag) (size-tag)
+  (opacity-tag) (decorated-tag))
 
 (define-group strong-tag
   strong em dfn underline)
@@ -161,6 +162,9 @@
 
 (define-group opacity-tag
   pastel greyed light)
+
+(define-group decorated-tag
+  deleted marked underline* fill-out fill-out*)
 
 ;; Figures and tables
 
