@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.7>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing>>
 
 <\body>
   <tmdoc-title|\<#6570\>\<#5B66\>\<#516C\>\<#5F0F\>>
@@ -25,14 +25,14 @@
 
     <branch|\<#8BED\>\<#4E49\>\<#7F16\>\<#8F91\>\<#5DE5\>\<#5177\>|semantics/man-semantics.zh.tm>
 
-    <branch|\<#5E38\>\<#89C1\>\<#9519\>\<#8BEF\>\<#548C\>\<#8BED\>\<#6CD5\>\<#7EA0\>\<#6B63\>|semantics/man-syntax-correction.en.tm>
+    <branch|\<#5E38\>\<#89C1\>\<#9519\>\<#8BEF\>\<#548C\>\<#8BED\>\<#6CD5\>\<#7EA0\>\<#6B63\>|semantics/man-syntax-correction.zh.tm>
 
-    <branch|\<#6570\>\<#5B66\>\<#7B26\>\<#53F7\>\<#7684\>\<#8BED\>\<#4E49\>|semantics/man-semantics-symbols.en.tm>
+    <branch|\<#6570\>\<#5B66\>\<#7B26\>\<#53F7\>\<#7684\>\<#8BED\>\<#4E49\>|semantics/man-semantics-symbols.zh.tm>
 
     <branch|\<#5B9A\>\<#5236\>\<#6570\>\<#5B66\>\<#8BED\>\<#4E49\>|semantics/man-customized-semantics.zh.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2011|Joris van der Hoeven>
+  <tmdoc-copyright|2018|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
