@@ -92,6 +92,7 @@ m4_define([PROG_STDLIB], [AC_LANG_PROGRAM([[
 std::string t="CompileMe";
 std::cout <<t.size(); ]])])
 
+if test -n "$STDC_HEADERS";then
 AX_CHECK_COMPILE_FLAG([-stdlib=libstdc++],[
 	LC_APPEND_FLAG([-stdlib=libstdc++],[CXXFLAGS])
 	LC_APPEND_FLAG([-stdlib=libstdc++],[CFLAGS])
@@ -100,6 +101,7 @@ AX_CHECK_COMPILE_FLAG([-stdlib=libstdc++],[
 LC_LINK_IFELSE([stdlibc++], [PROG_STDLIB],[
 	AC_MSG_NOTICE([compiler has stdlibc++ support])  
 ],[AC_MSG_ERROR([Not able to link with libstdc++])])
+fi
 
 AC_CHECK_TYPES(FILE)
 AC_CHECK_TYPES(intptr_t)

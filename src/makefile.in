@@ -372,6 +372,8 @@ $(texmacs_c_deps):   Objects/%.o: %.c
 ifeq "$(link)" "shared"
 ifeq "$(CONFIG_OS)" "DEC"
 link_bin = $(strip $(LD) $(LDFLAGS) -lstdc++ $(LDSHARED) $^ $(1) $(LIBS) -o $@)
+else ifeq "$(CONFIG_OS)" "FREEBSD"
+link_bin = $(strip $(LD) $(LDFLAGS) $(LDSHARED) $^ $(1) $(LIBS) -lthr -o $@)
 else
 link_bin = $(strip $(LD) $(LDFLAGS) $(LDSHARED) $^ $(1) $(LIBS) -o $@)
 endif

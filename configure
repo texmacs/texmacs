@@ -4455,6 +4455,7 @@ fi
 # Standard C++ library
 
 
+if test -n "$STDC_HEADERS";then
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C++ compiler accepts -stdlib=libstdc++" >&5
 $as_echo_n "checking whether C++ compiler accepts -stdlib=libstdc++... " >&6; }
 if ${ax_cv_check_cxxflags___stdlib_libstdcpp+:} false; then :
@@ -4602,6 +4603,7 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
+fi
 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -5825,6 +5827,8 @@ $as_echo "an Intel or AMD GNU/BSD host" >&6; }
 $as_echo "#define OS_FREEBSD 1" >>confdefs.h
 
       CONFIG_OS="FREEBSD"
+      CONFIG_QTPIPES="yes"
+      CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     ;;
     i*86-*-solaris*)

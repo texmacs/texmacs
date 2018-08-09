@@ -80,6 +80,8 @@ AC_DEFUN([TM_PLATFORM],[
       AC_MSG_RESULT(an Intel or AMD GNU/BSD host)
       AC_DEFINE([OS_FREEBSD],[1],[OS type])
       CONFIG_OS="FREEBSD"
+      CONFIG_QTPIPES="yes"
+      CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
     ;;
     i*86-*-solaris*)
