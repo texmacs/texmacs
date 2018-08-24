@@ -20,7 +20,8 @@
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (compression-tag)
   (frame-tag) (frame-titled-tag)
-  (textual-tag) (code-tag) (ornament-tag) (balloon-tag))
+  (textual-tag) (code-tag) (ornament-tag) (balloon-tag)
+  (reference-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)

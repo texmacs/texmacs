@@ -335,4 +335,4 @@
   equal unequal less lesseq greater greatereq)
 
 (define-group reference-tag
-  ref eqref pageref)
+  reference eqref pageref)
