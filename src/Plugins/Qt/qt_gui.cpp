@@ -535,7 +535,8 @@ gui_refresh () {
  Likewise this function is just a hack to get things working properly.
  */
 
-static int keyboard_events= 0;
+static int keyboard_events = 0;
+static int keyboard_special= 0;
 
 void
 qt_gui_rep::process_queued_events (int max) {
@@ -559,6 +560,7 @@ qt_gui_rep::process_queued_events (int max) {
         if (!is_nil (x.x1)) {
           concrete_simple_widget (x.x1)->handle_keypress (x.x2, x.x3);
           keyboard_events++;
+          if (N(x.x2) > 1) keyboard_special++;
         }
       }
         break;
@@ -789,9 +791,10 @@ qt_gui_rep::update () {
     //if (the_interpose_handler) the_interpose_handler();
   }
   // Repaint invalid regions and redraw
-  bool postpone_treatment= (keyboard_events > 0);
-  keyboard_events= 0;
-  count_events = 0;
+  bool postpone_treatment= (keyboard_events > 0 && keyboard_special == 0);
+  keyboard_events = 0;
+  keyboard_special= 0;
+  count_events    = 0;
   
   interrupted  = false;
   timeout_time = texmacs_time() + time_credit;
