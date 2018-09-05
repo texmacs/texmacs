@@ -535,6 +535,8 @@ gui_refresh () {
  Likewise this function is just a hack to get things working properly.
  */
 
+static int keyboard_events= 0;
+
 void
 qt_gui_rep::process_queued_events (int max) {
   int count = 0;
@@ -554,8 +556,10 @@ qt_gui_rep::process_queued_events (int max) {
       {
         typedef triple<widget, string, time_t > T;
         T x = open_box <T> (ev.x2);
-        if (!is_nil (x.x1))
+        if (!is_nil (x.x1)) {
           concrete_simple_widget (x.x1)->handle_keypress (x.x2, x.x3);
+          keyboard_events++;
+        }
       }
         break;
       case qp_type::QP_KEYBOARD_FOCUS :
@@ -740,7 +744,7 @@ qt_gui_rep::update () {
   updating = true;
   
   static int count_events    = 0;
-  static int max_proc_events = 10;
+  static int max_proc_events = 100;
   
   time_t     now = texmacs_time();
   needing_update = false;
@@ -777,19 +781,25 @@ qt_gui_rep::update () {
   
   if (waiting_events.size() == 0) {
       // If there are no waiting events call the interpose handler at least once
-    if (the_interpose_handler) the_interpose_handler();
-  } else while (waiting_events.size() > 0 && count_events < max_proc_events) {
+    //if (the_interpose_handler) the_interpose_handler();
+  }
+  else while (waiting_events.size() > 0 && count_events < max_proc_events) {
     process_queued_events (1);
     count_events++;
-    if (the_interpose_handler) the_interpose_handler();
+    //if (the_interpose_handler) the_interpose_handler();
   }
-    // Repaint invalid regions and redraw
+  // Repaint invalid regions and redraw
+  bool postpone_treatment= (keyboard_events > 0);
+  keyboard_events= 0;
   count_events = 0;
   
   interrupted  = false;
   timeout_time = texmacs_time() + time_credit;
-  
-  qt_simple_widget_rep::repaint_all ();
+
+  if (!postpone_treatment) {
+    if (the_interpose_handler) the_interpose_handler();
+    qt_simple_widget_rep::repaint_all ();
+  }
   
   if (waiting_events.size() > 0) needing_update = true;
   if (interrupted)               needing_update = true;
@@ -798,6 +808,7 @@ qt_gui_rep::update () {
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
   else                delay = max (0, min (std_delay, delay));
+  if (postpone_treatment) delay= 100;
   
   updatetimer->start (delay);
   updating = false;
