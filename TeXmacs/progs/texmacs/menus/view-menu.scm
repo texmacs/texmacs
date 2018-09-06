@@ -85,7 +85,7 @@
 
 (menu-bind view-menu
   ("Open new window" (open-window))
-  ("Clone window" (clone-window))
+  ;;("Clone window" (clone-window))
   ("Close window" (safely-kill-window))
   ---
   ("Full screen mode"  (toggle-full-screen-edit-mode))

@@ -128,7 +128,8 @@
 (menu-bind new-file-menu
   ("New document" (new-buffer))
   ("Open new window" (open-window))
-  ("Clone window" (clone-window)))
+  ;;("Clone window" (clone-window))
+  )
 
 (menu-bind load-menu
   ("Load" (open-buffer))

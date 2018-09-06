@@ -351,7 +351,7 @@
   ("C-F2" (revert-buffer))
   ("M-F2" (new-buffer))
   ("M-S-F2" (open-window))
-  ("M-C-F2" (clone-window))
+  ;;("M-C-F2" (clone-window))
   ("F3" (save-buffer))
   ("S-F3" (choose-file save-buffer-as "Save TeXmacs file" "texmacs"))
   ("F4" (preview-buffer))
