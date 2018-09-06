@@ -37,14 +37,19 @@
 ;; Quotes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (close-quotes?)
+(define (open-quotes-on lan)
+  (with l (list #\space #\( #\[ #\{ #\- #\/ #\\)
+    (if (in? lan (list "british" "english")) l
+        (cons #\' l))))
+
+(define (close-quotes? lan)
   (let* ((p (cursor-path))
-	 (t (tree->stree (path->tree (cDr p)))))
+	 (t (tree->stree (path->tree (cDr p))))
+         (l (open-quotes-on lan)))
     (if (string? t)
 	(and (!= t "")
 	     (!= (cAr p) 0)
-	     (nin? (string-ref t (- (cAr p) 1))
-                   '(#\space #\( #\[ #\{ #\' #\- #\/ #\\)))
+	     (nin? (string-ref t (- (cAr p) 1)) l))
 	(> (cAr p) 0))))
 
 (define (open-quotes lan)
@@ -82,7 +87,7 @@
 
 (define (insert-quote-sub lan)
   (cond (auto-close-brackets? (insert-quote-both lan))
-	((close-quotes?) (close-quotes lan))
+	((close-quotes? lan) (close-quotes lan))
 	(else (open-quotes lan))))
 
 (tm-define (insert-quote)
