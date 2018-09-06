@@ -43,7 +43,8 @@
     (if (string? t)
 	(and (!= t "")
 	     (!= (cAr p) 0)
-	     (nin? (string-ref t (- (cAr p) 1)) '(#\space #\( #\[ #\{)))
+	     (nin? (string-ref t (- (cAr p) 1))
+                   '(#\space #\( #\[ #\{ #\' #\- #\/ #\\)))
 	(> (cAr p) 0))))
 
 (define (open-quotes lan)
