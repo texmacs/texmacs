@@ -438,6 +438,10 @@
 
   <assign|deleted|<macro|body|<repeat-through|<with|color|<value|deleted-color>|/>|<arg|body>>>>
 
+  <drd-props|deleted|with-like|yes|arity|1|accessible|all>
+
+  \;
+
   <assign|fill-out-color|black>
 
   <assign|fill-out-distance|0.2fn>
@@ -450,11 +454,17 @@
 
   <assign|fill-dots|<macro|<fill-out|<htab|5mm>>>>
 
+  <drd-props|fill-out|with-like|yes|arity|1|accessible|all>
+
+  \;
+
   <assign|marked-color|yellow>
 
   <assign|marked-padding|0.2fn>
 
   <assign|marked|<macro|body|<style-with|src-compact|none|<datoms|<macro|x|<resize|<tabular|<tformat|<cwith|1|1|1|1|cell-background|<value|marked-color>>|<cwith|1|1|1|1|cell-lsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-rsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-bsep|<value|marked-padding>>|<cwith|1|1|1|1|cell-tsep|<value|marked-padding>>|<table|<row|<cell|<arg|x>>>>>>|<plus|1l|<value|marked-padding>>|<plus|1b|<value|marked-padding>>|<minus|1r|<value|marked-padding>>|<minus|1t|<value|marked-padding>>>>|<arg|body>>>>>
+
+  <drd-props|marked|with-like|yes|arity|1|accessible|all>
 
   \;
 
