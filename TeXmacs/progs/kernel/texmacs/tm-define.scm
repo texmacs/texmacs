@@ -123,8 +123,15 @@
     `(lambda ,(cdadr decl) ,(car opt))
     decl))
 
+(define (define-option-applicable opt decl)
+  (with prop `(',(ca*adr decl) :applicable (list (lambda args ,@opt)))
+    (set! cur-props (cons prop cur-props))
+    ;;(define-option-require opt decl)
+    decl))
+
 (hash-set! define-option-table :mode define-option-mode)
 (hash-set! define-option-table :require define-option-require)
+(hash-set! define-option-table :applicable define-option-applicable)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of overloaded functions
@@ -257,13 +264,16 @@
            ;;(display* "Defined " ',var "\n")
            ;;(if (nnull? cur-conds) (display* "   " ',nval "\n"))
            (set! temp-module ,(current-module))
-           (set! temp-value ,nval)
+           (set! temp-value
+                 (if (null? cur-conds) ,nval
+                     ,(list 'let '((former (lambda args (noop)))) nval)))
            (set-current-module texmacs-user)
            (define-public ,var temp-value)
            (set-current-module temp-module)
            (ahash-set! tm-defined-table ',var (list ',nval))
            (ahash-set! tm-defined-name ,var ',var)
-	   (ahash-set! tm-defined-module ',var (list (module-name temp-module)))
+	   (ahash-set! tm-defined-module ',var
+                       (list (module-name temp-module)))
            ,@(map property-rewrite cur-props)))))
 
 (define-public (tm-define-sub head body)

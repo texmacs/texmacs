@@ -40,7 +40,7 @@
     (shortcut :menu-wide-label :string?)))
   (:menu-item (:or
     ---
-    |
+    | ;; |
     (group :%1)
     (text :%1)
     (glue :boolean? :boolean? :integer? :integer?)
@@ -362,6 +362,13 @@
         (menu-label-add-dots label)
         label)))
 
+(define (make-menu-entry-style style action)
+  (with source (promise-source action)
+    (with prop (property (car source) :applicable)
+      (if (or (not prop) (apply (car prop) (list)))
+          style
+          (logior style (+ widget-style-inert widget-style-grey))))))
+
 (define (make-menu-entry-attrs label action opt-key opt-check)
   (cond ((match? label '(shortcut :%1 :string?))
          (make-menu-entry-attrs (cadr label) action (caddr label) opt-check))
@@ -374,7 +381,9 @@
       (label action opt-key opt-check)
       (make-menu-entry-attrs (car p) (cAr p) #f #f)
     (make-menu-entry-button
-     style bar? (tuple? (car p) 'balloon 2)
+     (make-menu-entry-style style action)
+     bar?
+     (tuple? (car p) 'balloon 2)
      (make-menu-entry-check opt-check action)
      (make-menu-entry-dots label action)
      (make-menu-entry-shortcut label action opt-key)

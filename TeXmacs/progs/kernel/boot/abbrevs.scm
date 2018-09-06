@@ -167,6 +167,12 @@
 ;; Small rewritings on top of C++ interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public selection-active? selection-active-any?)
+  
+(define-public (selection-active-large?)
+  (and (selection-active?)
+       (not (selection-active-small?))))
+
 (define-public (go-to p)
   (let* ((r (buffer-path))
          (lp (length p))
