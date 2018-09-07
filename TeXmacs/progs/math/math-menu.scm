@@ -72,9 +72,8 @@
   ---
   (link math-special-format-menu)
   ---
-  (when (not (selection-active?))
-    (-> "Whitespace" (link horizontal-space-menu))
-    (-> "Line break" (link line-break-menu)))
+  (-> "Whitespace" (link horizontal-space-menu))
+  (-> "Line break" (link line-break-menu))
   ---
   (-> "Color"
       (if (== (get-preference "experimental alpha") "on")

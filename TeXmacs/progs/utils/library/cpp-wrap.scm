@@ -50,7 +50,7 @@
         (else (cpp-make-with var val))))
 
 (tm-define (make-small lab)
-  (:applicable (not (selection-active-large?)))
+  (:applicable (not (selection-active-non-small?)))
   (make lab))
 
 (tm-define (make-inline lab)

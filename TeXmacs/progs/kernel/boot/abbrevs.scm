@@ -168,10 +168,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-public selection-active? selection-active-any?)
-  
-(define-public (selection-active-large?)
+
+(define-public (selection-active-non-small?)
   (and (selection-active?)
        (not (selection-active-small?))))
+
+(define-public (selection-active-large?)
+  (and (selection-active?)
+       (not (selection-active-small?))
+       (not (selection-active-table?))))
 
 (define-public (go-to p)
   (let* ((r (buffer-path))

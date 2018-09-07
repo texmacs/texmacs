@@ -300,7 +300,7 @@
         (if flag (make-return-before))))))
 
 (tm-define (make-section l)
-  (:applicable (not (selection-active-large?)))
+  (:applicable (not (selection-active-non-small?)))
   (make-section-aux l #f))
 
 (tm-define (make-unnamed-section l)

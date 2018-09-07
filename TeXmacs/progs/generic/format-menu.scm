@@ -83,40 +83,44 @@
     ("Other" (make-interactive-with "color"))))
 
 (menu-bind horizontal-space-menu
-  ("Stretchable" (interactive make-hspace))
-  ("Rigid" (interactive make-space))
-  ("Rigid box" (interactive make-var-space))
-  ("Tab" (make-htab "5mm"))
-  ("Custom tab" (interactive make-htab)))
+  (when (not (selection-active?))
+    ("Stretchable" (interactive make-hspace))
+    ("Rigid" (interactive make-space))
+    ("Rigid box" (interactive make-var-space))
+    ("Tab" (make-htab "5mm"))
+    ("Custom tab" (interactive make-htab))))
 
 (menu-bind adjust-menu
-  ("Move" (make-move "" ""))
-  ("Shift" (make-shift "" ""))
-  ---
-  ("Resize" (make-resize "" "" "" ""))
-  ("Extend" (make-extend "" "" "" ""))
-  ("Clip" (make-clipped "" "" "" ""))
-  ---
-  ("Smash" (make 'smash))
-  ("Reduce" (make-reduce-by "0.5ex"))
-  ("Swell" (make 'swell)))
+  (when (not (selection-active-large?))
+    ("Move" (make-move "" ""))
+    ("Shift" (make-shift "" ""))
+    ---
+    ("Resize" (make-resize "" "" "" ""))
+    ("Extend" (make-extend "" "" "" ""))
+    ("Clip" (make-clipped "" "" "" ""))
+    ---
+    ("Smash" (make 'smash))
+    ("Reduce" (make-reduce-by "0.5ex"))
+    ("Swell" (make 'swell))))
 
 (menu-bind linear-transform-menu
-  ("Rotate" (make-with-like `(rotate "45" "")))
-  ("Dilate" (make-with-like `(dilate "1.2" "0.9" "")))
-  ("Skew" (make-with-like `(skew "0.333" "")))
-  ("Linear 2D" (make-with-like `(linear-2d "1.2" "0.2" "0.2" "1.2" ""))))
+  (when (not (selection-active-large?))
+    ("Rotate" (make-with-like `(rotate "45" "")))
+    ("Dilate" (make-with-like `(dilate "1.2" "0.9" "")))
+    ("Skew" (make-with-like `(skew "0.333" "")))
+    ("Linear 2D" (make-with-like `(linear-2d "1.2" "0.2" "0.2" "1.2" "")))))
 
 (menu-bind format-special-menu
-  ("Group" (make-rigid))
-  ("Indivisible" (make 'indivisible))
-  ("Phantom" (make 'phantom))
-  ("Superpose" (make 'superpose))
-  ("Repeat object" (make 'repeat))
-  ("Decorate atoms" (make 'datoms 2))
-  ;;("Decorate lines" (make 'dlines 2))
-  ;;("Decorate pages" (make 'dpages 2))
-  )
+  (when (not (selection-active-non-small?))
+    ("Group" (make-rigid))
+    ("Indivisible" (make 'indivisible))
+    ("Phantom" (make 'phantom))
+    ("Superpose" (make 'superpose))
+    ("Repeat object" (make 'repeat))
+    ("Decorate atoms" (make 'datoms 2))
+    ;;("Decorate lines" (make 'dlines 2))
+    ;;("Decorate pages" (make 'dpages 2))
+    ))
 
 (menu-bind transform-menu
   (link adjust-menu)
@@ -157,14 +161,15 @@
   ("Gnaw" (make-inline 'gnaw)))
 
 (menu-bind specific-menu
-  ("TeXmacs" (make-specific "texmacs"))
-  ("LaTeX" (make-specific "latex"))
-  ("HTML" (make-specific "html"))
-  ("Screen" (make-specific "screen"))
-  ("Printer" (make-specific "printer"))
-  ("Image" (make-specific "image"))
-  ("Even pages" (make-specific "even"))
-  ("Odd pages" (make-specific "odd")))
+  (when (not (selection-active-large?))
+    ("TeXmacs" (make-specific "texmacs"))
+    ("LaTeX" (make-specific "latex"))
+    ("HTML" (make-specific "html"))
+    ("Screen" (make-specific "screen"))
+    ("Printer" (make-specific "printer"))
+    ("Image" (make-specific "image"))
+    ("Even pages" (make-specific "even"))
+    ("Odd pages" (make-specific "odd"))))
 
 (menu-bind text-properties-menu
   (-> "Color" (link color-menu))
@@ -218,29 +223,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind vertical-space-menu
-  (group "Vertical space before")
-  ("Small skip" (make-vspace-before "0.5fn"))
-  ("Medium skip" (make-vspace-before "1fn"))
-  ("Big skip" (make-vspace-before "2fn"))
-  ("Other" (interactive make-vspace-before))
-  ---
-  (group "Vertical space after")
-  ("Small skip" (make-vspace-after "0.5fn"))
-  ("Medium skip" (make-vspace-after "1fn"))
-  ("Big skip" (make-vspace-after "2fn"))
-  ("Other" (interactive make-vspace-after)))
+  (when (not (selection-active?))
+    (group "Vertical space before")
+    ("Small skip" (make-vspace-before "0.5fn"))
+    ("Medium skip" (make-vspace-before "1fn"))
+    ("Big skip" (make-vspace-before "2fn"))
+    ("Other" (interactive make-vspace-before))
+    ---
+    (group "Vertical space after")
+    ("Small skip" (make-vspace-after "0.5fn"))
+    ("Medium skip" (make-vspace-after "1fn"))
+    ("Big skip" (make-vspace-after "2fn"))
+    ("Other" (interactive make-vspace-after))))
 
 (menu-bind indentation-menu
-  ("Disable indentation before" (make 'no-indent))
-  ("Enable indentation before" (make 'yes-indent))
-  ("Disable indentation after" (make 'no-indent*))
-  ("Enable indentation after" (make 'yes-indent*)))
+  (when (not (selection-active?))
+    ("Disable indentation before" (make 'no-indent))
+    ("Enable indentation before" (make 'yes-indent))
+    ("Disable indentation after" (make 'no-indent*))
+    ("Enable indentation after" (make 'yes-indent*))))
 
 (menu-bind line-break-menu
-  ("New line" (make 'next-line))
-  ("Line break" (make 'line-break))
-  ("No line break" (make 'no-break))
-  ("New paragraph" (make 'new-line)))
+  (when (not (selection-active?))
+    ("New line" (make 'next-line))
+    ("Line break" (make 'line-break))
+    ("No line break" (make 'no-break))
+    ("New paragraph" (make 'new-line))))
 
 (menu-bind paragraph-menu
   (-> "Alignment"
@@ -293,33 +301,37 @@
   (refresh-window))
 
 (menu-bind page-header-menu
-  ("This page header" (make 'set-this-page-header))
-  ("Permanent header" (make 'set-header))
-  ("Odd page header" (make 'set-odd-page-header))
-  ("Even page header" (make 'set-even-page-header)))
+  (when (not (selection-active?))
+    ("This page header" (make 'set-this-page-header))
+    ("Permanent header" (make 'set-header))
+    ("Odd page header" (make 'set-odd-page-header))
+    ("Even page header" (make 'set-even-page-header))))
 
 (menu-bind page-footer-menu
-  ("This page footer" (make 'set-this-page-footer))
-  ("Permanent footer" (make 'set-footer))
-  ("Odd page footer" (make 'set-odd-page-footer))
-  ("Even page footer" (make 'set-even-page-footer)))
+  (when (not (selection-active?))
+    ("This page footer" (make 'set-this-page-footer))
+    ("Permanent footer" (make 'set-footer))
+    ("Odd page footer" (make 'set-odd-page-footer))
+    ("Even page footer" (make 'set-even-page-footer))))
 
 (menu-bind page-numbering-menu
-  ("Renumber this page" (make 'set-page-number))
-  ("Page number text" (make 'set-page-number-macro)))
+  (when (not (selection-active?))
+    ("Renumber this page" (make 'set-page-number))
+    ("Page number text" (make 'set-page-number-macro))))
 
 (menu-bind page-break-menu
-  (group "Page break before")
-  ("New page" (make 'new-page*))
-  ("New double page" (make 'new-dpage*))
-  ("Page break" (make 'page-break*))
-  ("No page break" (make 'no-break-here*))
-  ---
-  (group "Page break after")
-  ("New page" (make-new-page))
-  ("New double page" (make-new-dpage))
-  ("Page break" (make-page-break))
-  ("No page break" (make 'no-break-here)))
+  (when (not (selection-active?))
+    (group "Page break before")
+    ("New page" (make 'new-page*))
+    ("New double page" (make 'new-dpage*))
+    ("Page break" (make 'page-break*))
+    ("No page break" (make 'no-break-here*))
+    ---
+    (group "Page break after")
+    ("New page" (make-new-page))
+    ("New double page" (make-new-dpage))
+    ("Page break" (make-page-break))
+    ("No page break" (make 'no-break-here))))
 
 (menu-bind page-menu
   (-> "Header" (link page-header-menu))

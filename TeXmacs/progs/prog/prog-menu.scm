@@ -45,16 +45,14 @@
   (if (not (new-fonts?))
       (-> "Font" (link prog-font-menu)))
   ("Paragraph" (open-paragraph-format))
-  (when (not (selection-active?))
-    ("Page" (open-page-format)))
+  ("Page" (open-page-format))
   (when (inside? 'table)
     ("Cell" (open-cell-properties))
     ("Table" (open-table-properties)))
   ---
-  (when (not (selection-active?))
-    (-> "Whitespace" (link space-menu))
-    (-> "Indentation" (link indentation-menu))
-    (-> "Break" (link break-menu)))
+  (-> "Whitespace" (link space-menu))
+  (-> "Indentation" (link indentation-menu))
+  (-> "Break" (link break-menu))
   ---
   (-> "Color"
       (if (== (get-preference "experimental alpha") "on")
