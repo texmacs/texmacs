@@ -53,6 +53,18 @@
   (:applicable (not (selection-active-large?)))
   (make lab))
 
+(tm-define (make-inline lab)
+  (if (selection-active-large?)
+      (with sel `(par-block ,(selection-tree))
+	(clipboard-cut "wrapbuf")
+	(make-return-after)
+	(make lab)
+	(tree-set (cursor-tree) sel)
+	(with-innermost t lab
+	  (tree-go-to t :end)
+	  (make-return-before)))
+      (make lab)))
+
 (tm-define (insert-go-to t p) (cpp-insert-go-to t p))
 (tm-define (make-hybrid) (cpp-make-hybrid))
 

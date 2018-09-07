@@ -1643,11 +1643,11 @@
 ;; Metadata for documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (make-inline t)
+(define (tmtex-make-inline t)
   (tm-replace t '(new-line) '(next-line)))
 
 (tm-define (tmtex-inline t)
-  (tmtex (make-inline t)))
+  (tmtex (tmtex-make-inline t)))
 
 (tm-define (tmtex-doc-title t)
   `(title ,(tmtex-inline (cadr t))))

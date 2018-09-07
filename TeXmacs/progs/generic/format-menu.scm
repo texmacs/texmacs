@@ -138,23 +138,23 @@
   ("Gnawed" (make 'gnawed)))
 
 (menu-bind text-effects-menu
-  ("Blur" (make 'blur))
-  ("Outline" (make 'outline))
-  ("Thicken" (make 'thicken))
-  ("Erode" (make 'erode))
+  ("Blur" (make-inline 'blur))
+  ("Outline" (make-inline 'outline))
+  ("Thicken" (make-inline 'thicken))
+  ("Erode" (make-inline 'erode))
   ---
-  ("Shadow" (make 'shadow))
-  ("Engrave" (make 'engrave))
-  ("Emboss" (make 'emboss))
-  ("Shadowed raise" (make 'shadowed-raise))
-  ("Outlined engrave" (make 'outlined-engrave))
-  ("Outlined emboss" (make 'outlined-emboss))
+  ("Shadow" (make-inline 'shadow))
+  ("Engrave" (make-inline 'engrave))
+  ("Emboss" (make-inline 'emboss))
+  ("Shadowed raise" (make-inline 'shadowed-raise))
+  ("Outlined engrave" (make-inline 'outlined-engrave))
+  ("Outlined emboss" (make-inline 'outlined-emboss))
   ;;("Burning" (make-effect 'burning))
   ;;("Bubble" (make-effect 'bubble))
   ---
-  ("Degrade" (make 'degrade))
-  ("Distort" (make 'distort))
-  ("Gnaw" (make 'gnaw)))
+  ("Degrade" (make-inline 'degrade))
+  ("Distort" (make-inline 'distort))
+  ("Gnaw" (make-inline 'gnaw)))
 
 (menu-bind specific-menu
   ("TeXmacs" (make-specific "texmacs"))
