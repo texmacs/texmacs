@@ -21,54 +21,58 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-link-menu
-  ("Label" (make-label))
-  ("Reference" (make 'reference))
-  ("Page reference" (make 'pageref))
+  (when (not (selection-active-non-small?))
+    ("Label" (make-label))
+    ("Reference" (make 'reference))
+    ("Page reference" (make 'pageref)))
   ---
-  (if (detailed-menus?)
-      ("Include" (choose-file make-include "Include file" "")))
-  ("Hyperlink" (make 'hlink))
-  (if (detailed-menus?)
-      ("Action" (make 'action)))
+  (when (not (selection-active?))
+    (if (detailed-menus?)
+        ("Include" (choose-file make-include "Include file" ""))))
+  (when (not (selection-active-non-small?))
+    ("Hyperlink" (make 'hlink))
+    (if (detailed-menus?)
+        ("Action" (make 'action))))
   (if (simple-menus?)
       ("Footnote" (make 'footnote)))
   (if (and (style-has? "std-dtd") (in-text?))
       ---
-      (-> "Citation"
-	  (if (not (style-has? "cite-author-year-dtd"))
-	      ("Visible" (make 'cite))
-	      ("Invisible" (make 'nocite))
-	      ("Detailed" (make 'cite-detail)))
-	  (if (style-has? "cite-author-year-dtd")
-	      (group "Abbreviated authors")
-	      ("Raw" (make 'cite-raw))
-	      ("Textual" (make 'cite-textual))
-	      ("Parenthesized" (make 'cite-parenthesized))
-	      ---
-	      (group "Full author list")
-	      ("Raw" (make 'cite-raw*))
-	      ("Textual" (make 'cite-textual*))
-	      ("Parenthesized" (make 'cite-parenthesized*))
-	      ---
-	      (group "Decomposed")
-	      ("Parenthesis" (make 'render-cite))
-	      ("Abreviated authors" (make 'cite-author-link))
-	      ("Full author list" (make 'cite-author*-link))
-	      ("Year" (make 'cite-year-link))
-	      ("Invisible" (make 'nocite))))
-      (-> "Index entry"
-	  ("Main" (make 'index))
-	  ("Sub" (make 'subindex))
-	  ("Subsub" (make 'subsubindex))
-	  ("Complex" (make 'index-complex))
-	  ---
-	  ("Interjection" (make 'index-line)))
-      (-> "Glossary entry"
-	  ("Regular" (make 'glossary))
-	  ("Explained" (make 'glossary-explain))
-	  ("Duplicate" (make 'glossary-dup))
-	  ---
-	  ("Interjection" (make 'glossary-line)))
+      (when (not (selection-active-non-small?))
+        (-> "Citation"
+            (if (not (style-has? "cite-author-year-dtd"))
+                ("Visible" (make 'cite))
+                ("Invisible" (make 'nocite))
+                ("Detailed" (make 'cite-detail)))
+            (if (style-has? "cite-author-year-dtd")
+                (group "Abbreviated authors")
+                ("Raw" (make 'cite-raw))
+                ("Textual" (make 'cite-textual))
+                ("Parenthesized" (make 'cite-parenthesized))
+                ---
+                (group "Full author list")
+                ("Raw" (make 'cite-raw*))
+                ("Textual" (make 'cite-textual*))
+                ("Parenthesized" (make 'cite-parenthesized*))
+                ---
+                (group "Decomposed")
+                ("Parenthesis" (make 'render-cite))
+                ("Abreviated authors" (make 'cite-author-link))
+                ("Full author list" (make 'cite-author*-link))
+                ("Year" (make 'cite-year-link))
+                ("Invisible" (make 'nocite))))
+        (-> "Index entry"
+            ("Main" (make 'index))
+            ("Sub" (make 'subindex))
+            ("Subsub" (make 'subsubindex))
+            ("Complex" (make 'index-complex))
+            ---
+            ("Interjection" (make 'index-line)))
+        (-> "Glossary entry"
+            ("Regular" (make 'glossary))
+            ("Explained" (make 'glossary-explain))
+            ("Duplicate" (make 'glossary-dup))
+            ---
+            ("Interjection" (make 'glossary-line))))
       (-> "Alternate"
           ("Bibliography"
            (make-alternate "Name of bibliography" "bib" 'with-bib))

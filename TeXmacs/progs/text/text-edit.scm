@@ -65,6 +65,7 @@
   (doc-title-inactive-tag-list))
 
 (tm-define (make-doc-data)
+  (:applicable (not (selection-active-non-small?)))
   (insert-go-to '(doc-data (doc-title "")) '(0 0 0)))
 
 (tm-define (make-doc-data-element l)
