@@ -95,10 +95,10 @@
         ("Screens" (make-screens)))
       ("Tiny" (make-switch 'tiny-switch)))
   (-> "Unroll"
-      ("Default" (make-switch 'unroll))
-      ("Compressed" (make-switch 'unroll-compressed)) 
-      ("Phantoms" (make-switch 'unroll-phantoms))
-      ("Greyed" (make-switch 'unroll-greyed))
+      ("Default" (make-unroll 'unroll))
+      ("Compressed" (make-unroll 'unroll-compressed))
+      ("Phantoms" (make-unroll 'unroll-phantoms))
+      ("Greyed" (make-unroll 'unroll-greyed))
       ---
       ("Itemize" (make-switch-list 'unroll 'itemize))
       ("Enumerate" (make-switch-list 'unroll 'enumerate))
