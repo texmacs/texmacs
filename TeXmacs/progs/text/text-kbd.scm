@@ -546,7 +546,7 @@
   ("text $" (make-equation*))
   ("text &" (make-eqnarray*))
 
-  ("text a" (make 'abbr))
+  ("text a" (make-small 'abbr))
   ("text d" (make-tmlist 'description))
   ("text e" (make-tmlist 'enumerate))
   ("text i" (make-tmlist 'itemize))

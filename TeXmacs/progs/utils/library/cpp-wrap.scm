@@ -49,6 +49,10 @@
         ((nstring? val) (insert-go-to `(with ,var ,val "") '(2 0)))
         (else (cpp-make-with var val))))
 
+(tm-define (make-small lab)
+  (:applicable (not (selection-active-large?)))
+  (make lab))
+
 (tm-define (insert-go-to t p) (cpp-insert-go-to t p))
 (tm-define (make-hybrid) (cpp-make-hybrid))
 

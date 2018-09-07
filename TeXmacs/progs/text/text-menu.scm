@@ -331,7 +331,7 @@
   ("Name" (make 'name))
   ("Person" (make 'person))
   ("Cite" (make 'cite*))
-  ("Abbreviation" (make 'abbr))
+  ("Abbreviation" (make-small 'abbr))
   ("Acronym" (make 'acronym))
   ---
   ("Verbatim" (make 'verbatim))

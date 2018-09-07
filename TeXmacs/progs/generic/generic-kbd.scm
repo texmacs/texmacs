@@ -628,7 +628,7 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
 
-  ;("C-a" (kbd-start-line)) ; conflict with ("text a" (make 'abbr))
+  ;("C-a" (kbd-start-line)) ; conflict with ("text a" (make-small 'abbr))
   ;("C-e" (kbd-end-line))   ; conflict with ("text e" (make-tmlist 'enumerate))
   ("C-g" (selection-cancel))
   ("C-k" (kill-paragraph))
