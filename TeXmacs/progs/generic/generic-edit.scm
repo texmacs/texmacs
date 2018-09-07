@@ -735,11 +735,14 @@
 
 (tm-define (make-anim l)
   (with duration "1s"
-    (if (selection-active-any?)
-        (with selection (selection-tree)
+    (if (selection-active?)
+        (let* ((selection (selection-tree))
+	       (p (path-end selection (list))))
+	  (when (selection-active-large?)
+	    (set! selection `(par-block ,selection))
+	    (set! p (cons 0 p)))
           (clipboard-cut "graphics background")
-          (insert-go-to `(,l ,selection ,duration)
-                        (cons 0 (path-end selection (list)))))
+          (insert-go-to `(,l ,selection ,duration) (cons 0 p)))
         (insert-go-to `(,l "" ,duration) (list 0 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
