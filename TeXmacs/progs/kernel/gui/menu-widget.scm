@@ -364,10 +364,11 @@
 
 (define (make-menu-entry-style style action)
   (with source (promise-source action)
-    (with prop (property (car source) :applicable)
-      (if (or (not prop) (apply (car prop) (list)))
-          style
-          (logior style (+ widget-style-inert widget-style-grey))))))
+    (if (not (pair? source)) style
+	(with prop (property (car source) :applicable)
+	  (if (or (not prop) (apply (car prop) (list)))
+	      style
+	      (logior style (+ widget-style-inert widget-style-grey)))))))
 
 (define (make-menu-entry-attrs label action opt-key opt-check)
   (cond ((match? label '(shortcut :%1 :string?))
