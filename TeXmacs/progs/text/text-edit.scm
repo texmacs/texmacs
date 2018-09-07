@@ -14,6 +14,7 @@
 (texmacs-module (text text-edit)
   (:use (utils library tree)
 	(utils edit variants)
+	(utils edit selections)
 	(text text-drd)
 	(generic format-edit)))
 
@@ -334,8 +335,11 @@
       (tree-in? t (enumerate-tag-list))))
 
 (tm-define (make-tmlist l)
-  (make l)
-  (make-item))
+  (with flag? (and (selection-active-non-small?)
+                   (in? l (description-tag-list)))
+    (wrap-selection-any
+      (make l)
+      (if flag? (insert '(item* "")) (make-item)))))
 
 (tm-define (make-item)
   (if (not (make-return-after))
