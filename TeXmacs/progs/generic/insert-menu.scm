@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic insert-menu)
-  (:use (generic generic-edit)
+  (:use (utils edit selections)
+	(generic generic-edit)
 	(generic format-edit)
 	(generic format-geometry-edit)))
 
@@ -34,7 +35,7 @@
     (if (detailed-menus?)
         ("Action" (make 'action))))
   (if (simple-menus?)
-      ("Footnote" (make 'footnote)))
+      ("Footnote" (make-wrapped 'footnote)))
   (if (and (style-has? "std-dtd") (in-text?))
       ---
       (when (not (selection-active-non-small?))
@@ -98,9 +99,14 @@
 
 (menu-bind insert-image-menu
   (if (and (style-has? "env-float-dtd") (in-text?))
-      ("Small figure" (make 'small-figure))
-      ("Big figure" (make 'big-figure))
-      ---)
+      (when (not (selection-active-non-small?))
+        ("Small figure"
+         (wrap-selection-small
+           (make 'small-figure)))
+        ("Big figure"
+         (wrap-selection-small
+           (insert-go-to '(big-figure "" (document "")) '(0 0))))
+        ---))
   ("Link image" (choose-file make-link-image "Load image" "image"))
   ("Insert image" (choose-file make-inline-image "Load image" "image"))
   (if (detailed-menus?)

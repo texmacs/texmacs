@@ -13,6 +13,7 @@
 
 (texmacs-module (generic generic-menu)
   (:use (utils edit variants)
+	(utils edit selections)
 	(generic generic-edit)
 	(generic format-edit)
 	(generic format-geometry-edit)

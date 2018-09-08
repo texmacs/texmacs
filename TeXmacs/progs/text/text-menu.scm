@@ -224,17 +224,28 @@
 
 (menu-bind note-menu
   (when (not (or (inside? 'float) (inside? 'footnote)))
-    ("Footnote" (make 'footnote))
-    ("Marginal note" (make-marginal-note))
+    ("Footnote" (make-wrapped 'footnote))
+    (when (not (selection-active-non-small?))
+      ("Marginal note" (make-marginal-note)))
     ;;("Balloon" (make-balloon))
     ---
     ("Floating object" (make-insertion "float"))
-    ("Floating phantom" (insert '(phantom-float "float" "hf")))
-    ("Floating figure" (begin (make-insertion "float") (make 'big-figure)))
-    ("Floating table" (begin (make-insertion "float")
-                             (insert-go-to '(big-table "" "") '(0 0))
-                             (make 'tabular)))
-    ("Floating algorithm" (begin (make-insertion "float") (make 'algorithm)))))
+    (when (not (selection-active-non-small?))
+      ("Floating phantom" (insert '(phantom-float "float" "hf"))))
+    (when (not (selection-active-non-small?))
+      ("Floating figure"
+       (wrap-selection-small
+         (make-insertion "float")
+         (insert-go-to '(big-figure "" (document "")) '(0 0))))
+      ("Floating table"
+       (wrap-selection-small
+         (make-insertion "float")
+         (insert-go-to '(big-table "" (document "")) '(0 0))
+         (make 'tabular))))
+    ("Floating algorithm"
+     (wrap-selection-any
+       (make-insertion "float")
+       (make 'algorithm)))))
 
 (menu-bind position-marginal-note-menu
   (group "Horizontal position")

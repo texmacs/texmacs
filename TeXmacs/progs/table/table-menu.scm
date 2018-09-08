@@ -20,8 +20,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-table-menu
-  (when (not (selection-active-non-small?))
-    (if (and (style-has? "std-dtd") (in-text?) (style-has? "env-float-dtd"))
+  (if (and (style-has? "std-dtd") (in-text?) (style-has? "env-float-dtd"))
+      (when (not (selection-active-non-small?))
         ("Small table"
          (wrap-selection-small
            (insert-go-to '(small-table "" "") '(0 0))
