@@ -21,37 +21,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind source-define-menu
-  ("Assign" (make 'assign))
-  ("With" (make 'with 3))
-  ("Value" (make 'value)))
+  (when (not (selection-active-non-small?))
+    ("Assign" (make 'assign))
+    ("With" (make 'with 3))
+    ("Value" (make 'value))))
 
 (menu-bind source-macro-menu
-  ("Macro" (make 'macro))
-  ("Argument" (make 'arg))
-  ("Compound" (make 'compound))
-  ("Extern" (make 'extern))
-  ---
-  ("Long macro" (make 'xmacro))
-  ("Get label" (make 'get-label))
-  ("Get arity" (make 'get-arity))
-  ("Map arguments" (make 'map-args)))
+  (when (not (selection-active-non-small?))
+    ("Macro" (make 'macro))
+    ("Argument" (make 'arg))
+    ("Compound" (make 'compound))
+    ("Extern" (make 'extern))
+    ---
+    ("Long macro" (make 'xmacro))
+    ("Get label" (make 'get-label))
+    ("Get arity" (make 'get-arity))
+    ("Map arguments" (make 'map-args))))
 
 (menu-bind source-quote-menu
-  ("Evaluate" (make 'eval))
-  ---
-  ("Quote" (make 'quote))
-  ("Quasi" (make 'quasi))
-  ("Quasiquote" (make 'quasi-quote))
-  ("Unquote" (make 'unquote))
-  ---
-  ("Unevaluated value" (make 'quote-value))
-  ("Unevaluated argument" (make 'quote-arg)))
+  (when (not (selection-active-non-small?))
+    ("Evaluate" (make 'eval))
+    ---
+    ("Quote" (make 'quote))
+    ("Quasi" (make 'quasi))
+    ("Quasiquote" (make 'quasi-quote))
+    ("Unquote" (make 'unquote))
+    ---
+    ("Unevaluated value" (make 'quote-value))
+    ("Unevaluated argument" (make 'quote-arg))))
 
 (menu-bind source-flow-menu
-  ("If" (make 'if))
-  ("Case" (make 'case))
-  ("While" (make 'while))
-  ("For each" (make 'for-each)))
+  (when (not (selection-active-non-small?))
+    ("If" (make 'if))
+    ("Case" (make 'case))
+    ("While" (make 'while))
+    ("For each" (make 'for-each))))
 
 (menu-bind source-transformational-menu
   (-> "Definition" (link source-define-menu))
@@ -64,42 +68,46 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind source-arithmetic-menu
-  ("Plus" (make 'plus))
-  ("Minus" (make 'minus))
-  ("Times" (make 'times))
-  ("Over" (make 'over))
-  ("Div" (make 'div))
-  ("Mod" (make 'mod)))
+  (when (not (selection-active-non-small?))
+    ("Plus" (make 'plus))
+    ("Minus" (make 'minus))
+    ("Times" (make 'times))
+    ("Over" (make 'over))
+    ("Div" (make 'div))
+    ("Mod" (make 'mod))))
 
 (menu-bind source-text-menu
-  ("Merge" (make 'merge))
-  ("Length" (make 'length))
-  ("Range" (make 'range))
-  ("Number" (make 'number))
-  ("Today" (make 'date 0))
-  ("Formatted date" (make 'date))
-  ("Translate" (make 'translate))
-  ("Find file" (make 'find-file)))
+  (when (not (selection-active-non-small?))
+    ("Merge" (make 'merge))
+    ("Length" (make 'length))
+    ("Range" (make 'range))
+    ("Number" (make 'number))
+    ("Today" (make 'date 0))
+    ("Formatted date" (make 'date))
+    ("Translate" (make 'translate))
+    ("Find file" (make 'find-file))))
 
 (menu-bind source-tuple-menu
-  ("Tuple?" (make 'is-tuple))
-  ("Merge" (make 'merge))
-  ("Length" (make 'length))
-  ("Range" (make 'range))
-  ("Look up" (make 'look-up)))
+  (when (not (selection-active-non-small?))
+    ("Tuple?" (make 'is-tuple))
+    ("Merge" (make 'merge))
+    ("Length" (make 'length))
+    ("Range" (make 'range))
+    ("Look up" (make 'look-up))))
 
 (menu-bind source-condition-menu
-  ("Not" (make 'not))
-  ("And" (make 'and))
-  ("Or" (make 'or))
-  ("Exclusive or" (make 'xor))
-  ---
-  ("Equal" (make 'equal))
-  ("Not equal" (make 'unequal))
-  ("Less" (make 'less))
-  ("Less or equal" (make 'lesseq))
-  ("Greater" (make 'greater))
-  ("Greater or equal" (make 'greatereq)))
+  (when (not (selection-active-non-small?))
+    ("Not" (make 'not))
+    ("And" (make 'and))
+    ("Or" (make 'or))
+    ("Exclusive or" (make 'xor))
+    ---
+    ("Equal" (make 'equal))
+    ("Not equal" (make 'unequal))
+    ("Less" (make 'less))
+    ("Less or equal" (make 'lesseq))
+    ("Greater" (make 'greater))
+    ("Greater or equal" (make 'greatereq))))
 
 (menu-bind source-executable-menu
   (-> "Arithmetic" (link source-arithmetic-menu))
