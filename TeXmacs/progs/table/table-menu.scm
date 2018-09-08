@@ -20,31 +20,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind insert-table-menu
-  (if (and (style-has? "std-dtd") (in-text?) (style-has? "env-float-dtd"))
-      ("Small table" (begin
-                       (insert-go-to '(small-table "" "") '(0 0))
-                       (make 'tabular)))
-      ("Big table"   (begin
-                       (insert-go-to '(big-table "" "") '(0 0))
-                       (make 'tabular)))
-      ---)
+  (when (not (selection-active-non-small?))
+    (if (and (style-has? "std-dtd") (in-text?) (style-has? "env-float-dtd"))
+        ("Small table"
+         (wrap-selection-small
+           (insert-go-to '(small-table "" "") '(0 0))
+           (make-small 'tabular)))
+        ("Big table"
+         (wrap-selection-small
+           (insert-go-to '(big-table "" (document "")) '(0 0))
+           (make-small 'tabular)))
+        ---))
   (if (and (style-has? "calc-dtd") (calc-ready?))
       (link calc-table-menu)
       ---)
   (if (not (in-math?))
-      ("Wide tabular" (make 'wide-tabular)))
-  ("Plain tabular" (make 'tabular))
-  ("Centered tabular" (make 'tabular*))
+      ("Wide tabular" (make-large 'wide-tabular)))
+  ("Plain tabular" (make-small 'tabular))
+  ("Centered tabular" (make-small 'tabular*))
   (if (not (in-math?))
-      ("Wide block" (make 'wide-block)))
-  ("Plain block" (make 'block))
-  ("Centered block" (make 'block*))
+      ("Wide block" (make-large 'wide-block)))
+  ("Plain block" (make-small 'block))
+  ("Centered block" (make-small 'block*))
   (if (and (style-has? "std-dtd") (in-math?))
       ---
-      ("Matrix" (make 'matrix))
-      ("Determinant" (make 'det))
-      ("Choice" (make 'choice))
-      ("Stack" (make 'stack))))
+      ("Matrix" (make-small 'matrix))
+      ("Determinant" (make-small 'det))
+      ("Choice" (make-small 'choice))
+      ("Stack" (make-small 'stack))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Submenus of the Table menu

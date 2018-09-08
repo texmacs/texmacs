@@ -216,12 +216,12 @@
   ("pastefrom r" (clipboard-paste "replace"))
   ("pastefrom *" (interactive clipboard-paste))
 
-  ("table N t" (make 'tabular))
-  ("table N T" (make 'tabular*))
-  ("table N w" (make 'wide-tabular))
-  ("table N b" (make 'block))
-  ("table N B" (make 'block*))
-  ("table N W" (make 'wide-block)))
+  ("table N t" (make-small 'tabular))
+  ("table N T" (make-small 'tabular*))
+  ("table N w" (make-large 'wide-tabular))
+  ("table N b" (make-small 'block))
+  ("table N B" (make-small 'block*))
+  ("table N W" (make-large 'wide-block)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs keymap

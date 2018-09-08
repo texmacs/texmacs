@@ -65,6 +65,11 @@
 	  (make-return-before)))
       (make lab)))
 
+(tm-define (make-large lab)
+  (clipboard-cut "wrapbuf")
+  (make lab)
+  (clipboard-paste "wrapbuf"))
+
 (tm-define (insert-go-to t p) (cpp-insert-go-to t p))
 (tm-define (make-hybrid) (cpp-make-hybrid))
 

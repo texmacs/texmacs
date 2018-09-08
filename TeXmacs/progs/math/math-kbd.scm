@@ -38,18 +38,18 @@
     ("\xd8" (make 'op)) ;; Alt-O
     ("\xff" (make-sqrt)) ;; Alt-s
     ("\xff var" (make-var-sqrt))
-    ("dagger" (make 'tabular*)) ;; Alt-t
-    ("dagger var" (make 'matrix))
-    ("dagger var var" (make 'det))
-    ("dagger var var var" (make 'bmatrix))
-    ("dagger var var var var" (make 'choice))
-    ("dagger var var var var var" (make 'stack))
-    ("\xfe" (make 'tabular*)) ;; Alt-t
-    ("\xfe var" (make 'matrix))
-    ("\xfe var var" (make 'det))
-    ("\xfe var var var" (make 'bmatrix))
-    ("\xfe var var var var" (make 'choice))
-    ("\xfe var var var var var" (make 'stack))
+    ("dagger" (make-small 'tabular*)) ;; Alt-t
+    ("dagger var" (make-small 'matrix))
+    ("dagger var var" (make-small 'det))
+    ("dagger var var var" (make-small 'bmatrix))
+    ("dagger var var var var" (make-small 'choice))
+    ("dagger var var var var var" (make-small 'stack))
+    ("\xfe" (make-small 'tabular*)) ;; Alt-t
+    ("\xfe var" (make-small 'matrix))
+    ("\xfe var var" (make-small 'det))
+    ("\xfe var var var" (make-small 'bmatrix))
+    ("\xfe var var var var" (make-small 'choice))
+    ("\xfe var var var var var" (make-small 'stack))
     ("lozenge" (make-wide "<vect>")) ;; Alt-V
 
     ("geq" (make-wide "<dot>")) ;; Alt-.
@@ -64,14 +64,14 @@
     ("\x15" (make-wide "<wide-bar>")) ;; Alt--
     ("\x16" (make-wide-under "<wide-bar>")) ;; Alt-_
 
-    ("{ dagger" (make 'choice)) ;; { Alt-t
-    ("( dagger" (make 'matrix))
-    ("[ dagger" (make 'bmatrix))
-    ("| dagger" (make 'det))
-    ("{ \xfe" (make 'choice)) ;; { Alt-t
-    ("( \xfe" (make 'matrix))
-    ("[ \xfe" (make 'bmatrix))
-    ("| \xfe" (make 'det))))
+    ("{ dagger" (make-small 'choice)) ;; { Alt-t
+    ("( dagger" (make-small 'matrix))
+    ("[ dagger" (make-small 'bmatrix))
+    ("| dagger" (make-small 'det))
+    ("{ \xfe" (make-small 'choice)) ;; { Alt-t
+    ("( \xfe" (make-small 'matrix))
+    ("[ \xfe" (make-small 'bmatrix))
+    ("| \xfe" (make-small 'det))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main keyboard shortcuts
@@ -235,21 +235,21 @@
   ("math:under >" (make-wide-under "<wide-varrightarrow>"))
   ("math:under < >" (make-wide-under "<wide-varleftrightarrow>"))
 
-  ("table N c" (make 'choice))
-  ("table N m" (make 'matrix))
-  ("table N M" (make 'bmatrix))
-  ("table N d" (make 'det))
-  ("table N s" (make 'stack))
-  ("{ math t" (make 'choice))
-  ("( math t" (make 'matrix))
-  ("[ math t" (make 'bmatrix))
-  ("| math t" (make 'det))
-  ("math t" (make 'tabular*))
-  ("math t var" (make 'matrix))
-  ("math t var var" (make 'det))
-  ("math t var var var" (make 'bmatrix))
-  ("math t var var var var" (make 'choice))
-  ("math t var var var var var" (make 'stack))
+  ("table N c" (make-small 'choice))
+  ("table N m" (make-small 'matrix))
+  ("table N M" (make-small 'bmatrix))
+  ("table N d" (make-small 'det))
+  ("table N s" (make-small 'stack))
+  ("{ math t" (make-small 'choice))
+  ("( math t" (make-small 'matrix))
+  ("[ math t" (make-small 'bmatrix))
+  ("| math t" (make-small 'det))
+  ("math t" (make-small 'tabular*))
+  ("math t var" (make-small 'matrix))
+  ("math t var var" (make-small 'det))
+  ("math t var var var" (make-small 'bmatrix))
+  ("math t var var var var" (make-small 'choice))
+  ("math t var var var var var" (make-small 'stack))
 
   ("font R" (make-with "math-font" "roman"))
   ("font K" (make-with "math-font" "concrete"))
@@ -2156,9 +2156,9 @@
 (when (os-macos?)
   (kbd-map
     (:mode in-math?)
-    ("table N T" (make 'tabular*))
-    ("table N c" (make 'choice))
-    ("table N m" (make 'matrix))
-    ("table N M" (make 'bmatrix))
-    ("table N d" (make 'det))
-    ("table N s" (make 'stack))))
+    ("table N T" (make-small 'tabular*))
+    ("table N c" (make-small 'choice))
+    ("table N m" (make-small 'matrix))
+    ("table N M" (make-small 'bmatrix))
+    ("table N d" (make-small 'det))
+    ("table N s" (make-small 'stack))))
