@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.8>
 
 <style|<tuple|source|std>>
 
@@ -139,6 +139,8 @@
   <assign|tabbed|<macro|body|<tformat|<twith|table-valign|T>|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-2|1|-1|cell-bsep|<plus|<value|par-sep>|<value|par-line-sep>>>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|body>>>>
 
   <assign|tabbed*|<macro|body|<tformat|<twith|table-valign|T>|<twith|table-width|1par>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-1|1|-1|cell-bsep|0spc>|<cwith|1|-1|1|-1|cell-tsep|0spc>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<cwith|1|-1|-1|-1|cell-vcorrect|n>|<arg|body>>>>
+
+  <assign|wide-tabbed|<macro|body|<tformat|<twith|table-valign|T>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|-1|1|-1|cell-halign|l>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<cwith|1|-2|1|-1|cell-bsep|<plus|<value|par-sep>|<value|par-line-sep>>>|<cwith|1|-1|-1|-1|cell-hpart|1>|<cwith|1|-1|-1|-1|cell-hyphen|t>|<arg|body>>>>
 
   <\active*>
     <\src-comment>

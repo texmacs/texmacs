@@ -195,7 +195,8 @@
   ("Pseudo code" (make 'render-code))
   ---
   ("Indent" (make 'indent))
-  ("Tabbed" (make 'tabbed))
+  (when (not (selection-active?))
+    ("Tabbed" (make 'wide-tabbed)))
   ---
   (-> "Inline code"
       ("C++" (make 'cpp))
