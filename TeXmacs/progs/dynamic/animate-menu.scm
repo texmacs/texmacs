@@ -24,10 +24,11 @@
                  (tm-func? (selection-tree) 'gr-screen)))
     ("Animate" (interactive animate-selection))
     ---)
-  ("Fixed" (interactive make-anim-constant))
-  ("Compose" (make 'anim-compose))
-  ("Repeat" (make 'anim-repeat))
-  ("Retime" (retime-selection "normal"))
+  (when (not (selection-active-non-small?))
+    ("Fixed" (interactive make-anim-constant))
+    ("Compose" (make 'anim-compose))
+    ("Repeat" (make 'anim-repeat))
+    ("Retime" (retime-selection "normal")))
   ---
   (-> "Appear"
       ("Translate" (make-anim 'translate-in))
