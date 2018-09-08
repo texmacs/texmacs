@@ -507,11 +507,11 @@
 (define (deleted? t i)
   (== (tm->stree (tree-ref t i)) "<nobracket>"))
 
-(define (make-small s)
-  (cond ((nstring? s) "<nobracket>")
-	((== s ".") "<nobracket>")
-	((<= (string-length s) 1) s)
-	(else (string-append "<" s ">"))))
+;;(define (make-small s)
+;;  (cond ((nstring? s) "<nobracket>")
+;;	  ((== s ".") "<nobracket>")
+;;	  ((<= (string-length s) 1) s)
+;;	  (else (string-append "<" s ">"))))
 
 (define (find-adjacent-around del?)
   (let* ((ret #f)

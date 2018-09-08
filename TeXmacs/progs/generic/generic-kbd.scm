@@ -216,12 +216,12 @@
   ("pastefrom r" (clipboard-paste "replace"))
   ("pastefrom *" (interactive clipboard-paste))
 
-  ("table N t" (make-small 'tabular))
-  ("table N T" (make-small 'tabular*))
-  ("table N w" (make-large 'wide-tabular))
-  ("table N b" (make-small 'block))
-  ("table N B" (make-small 'block*))
-  ("table N W" (make-large 'wide-block)))
+  ("table N t" (make 'tabular))
+  ("table N T" (make 'tabular*))
+  ("table N w" (make-wrapped 'wide-tabular))
+  ("table N b" (make 'block))
+  ("table N B" (make 'block*))
+  ("table N W" (make-wrapped 'wide-block)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs keymap
@@ -628,7 +628,7 @@
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
 
-  ;("C-a" (kbd-start-line)) ; conflict with ("text a" (make-small 'abbr))
+  ;("C-a" (kbd-start-line)) ; conflict with ("text a" (make 'abbr))
   ;("C-e" (kbd-end-line))   ; conflict with ("text e" (make-tmlist 'enumerate))
   ("C-g" (selection-cancel))
   ("C-k" (kill-paragraph))

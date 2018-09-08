@@ -49,10 +49,6 @@
         ((nstring? val) (insert-go-to `(with ,var ,val "") '(2 0)))
         (else (cpp-make-with var val))))
 
-(tm-define (make-small lab)
-  (:applicable (not (selection-active-non-small?)))
-  (make lab))
-
 (tm-define (make-inline lab)
   (if (selection-active-large?)
       (with sel `(par-block ,(selection-tree))
@@ -65,7 +61,7 @@
 	  (make-return-before)))
       (make lab)))
 
-(tm-define (make-large lab)
+(tm-define (make-wrapped lab)
   (clipboard-cut "wrapbuf")
   (make lab)
   (clipboard-paste "wrapbuf"))
