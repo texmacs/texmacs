@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -25,6 +25,12 @@
   </active*>
 
   <use-package|std|env|title-generic|header-exam|section-generic>
+
+  \;
+
+  <assign|par-first|0tab>
+
+  <assign|par-par-sep|0.6666fn>
 
   \;
 

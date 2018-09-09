@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -55,6 +55,12 @@
 
   \;
 
+  <assign|par-first|0tab>
+
+  <assign|par-par-sep|0.5fn>
+
+  \;
+
   <assign|padding-above|0.25fn>
 
   <assign|padding-below|0.25fn>
@@ -62,6 +68,8 @@
   <assign|large-padding-above|0.5fn>
 
   <assign|large-padding-below|0.5fn>
+
+  <assign|item-vspace|0fn>
 
   \;
 

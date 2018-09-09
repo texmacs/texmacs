@@ -4081,6 +4081,34 @@ preserve_spacing (tree t) {
 }
 
 /******************************************************************************
+* Rename educational styles
+******************************************************************************/
+
+tree
+upgrade_educ_styles (tree t) {
+  int i;
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "style") || is_func (t, TUPLE)) {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++) {
+      if (t[i] == "exam") r[i]= "old-exam";
+      else if (t[i] == "compact") r[i]= "old-compact";
+      else r[i]= upgrade_educ_styles (t[i]);
+    }
+    return r;
+  }
+  else if (is_func (t, DOCUMENT)) {
+    int n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= upgrade_educ_styles (t[i]);
+    return r;
+  }
+  else return t;
+}
+
+/******************************************************************************
 * Upgrade from previous versions
 ******************************************************************************/
 
@@ -4271,6 +4299,10 @@ upgrade (tree t, string version) {
     t= upgrade_qed (t);
     if (is_non_style_document (t))
       t= preserve_spacing (t);
+  }
+  if (version_inf_eq (version, "1.99.8")) {
+    if (is_non_style_document (t))
+      t= upgrade_educ_styles (t);
   }
   
   if (is_non_style_document (t))
