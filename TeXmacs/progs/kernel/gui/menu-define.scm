@@ -518,7 +518,7 @@
   (cond ((url-exists? (url-append "$TEXMACS_PATTERN_PATH" (url-tail name)))
          `(pattern ,(url->unix (url-tail name)) ,w ,h))
         ((string-starts? (url->unix (url->delta-unix name)) "../")
-         (when (url? name) (set! name (url->unix name)))
+         (when (url? name) (set! name (url->system name)))
          `(pattern ,name ,w ,h))         
         (else
          `(pattern ,(url->unix (url->delta-unix name)) ,w ,h))))
