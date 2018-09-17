@@ -92,7 +92,7 @@ url
 brush_rep::get_pattern_url () {
   tree t= get_pattern ();
   if (is_atomic (t) || N(t) == 0 || !is_atomic (t[0])) return url ();
-  url u= as_string (t[0]);
+  url u= url_system (as_string (t[0]));
   url r= resolve (url ("$TEXMACS_PATTERN_PATH") * u);
   if (!is_none (r)) return r;
   url base= get_current_buffer_safe ();
