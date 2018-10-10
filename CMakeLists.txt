@@ -42,9 +42,9 @@ project (TEXMACS CXX C) # check for C/C++ compiler
 
 set (PACKAGE TeXmacs)
 set (CMAKE_MODULE_PATH ${TEXMACS_SOURCE_DIR}/cmake)
-set (DEVEL_VERSION "1.99.7")
+set (DEVEL_VERSION "1.99.8")
 set (DEVEL_RELEASE "1")
-set (STABLE_VERSION "1.99.7")
+set (STABLE_VERSION "1.99.8")
 set (STABLE_RELEASE "1")
 
 
@@ -84,6 +84,11 @@ endif (USE_IMLIB2)
 option (USE_SPARKLE "use Sparkle" OFF)
 
 option (PDFHUMMUS_NO_TIFF "Disable TIFF in PDF Hummus" ON)
+
+option (USE_GMP "use GMP" ON)
+if (USE_GMP)
+    find_package(GMP)
+endif (USE_GMP)
 
 if (APPLE)
   set(MACOSX_EXTENSIONS 1)
@@ -399,7 +404,7 @@ set (TeXmacs_Include_Dirs
 
 set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}
   ${Guile_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
-  ${IMLIB2_INCLUDE_DIR}
+  ${IMLIB2_INCLUDE_DIR} ${GMP_INCLUDES}
 )
 
 ### --------------------------------------------------------------------
