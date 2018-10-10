@@ -15,7 +15,7 @@
 (plugin-configure sage
   (:macpath "Sage*" "Contents/Resources/sage")
   (:require (url-exists-in-path? "sage"))
-  (:launch "sage -python `which tm_sage`")
+  (:launch "tm_sage")
   (:tab-completion #t)
   (:session "Sage")
   (:scripts "Sage"))
