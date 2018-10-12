@@ -41,7 +41,7 @@ operator << (tm_ostream& out, lb_info hi) {
 	     << hi->pen << ", " << hi->pen_spc << " ]";
 }
 
-// FIXME: explicit instanciation for broken g++
+// FIXME: explicit instantiation for broken g++
 #include "hashmap.hpp"
 template lb_info& hashmap_rep<list<int>, lb_info>::bracket_rw(list<int>);
 
