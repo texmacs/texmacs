@@ -1,12 +1,14 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|The <name|Sage> plug-in>
 
   <\traverse>
     <branch|Short description|sage-abstract.en.tm>
+
+    <branch|A Tour of Sage|sage-tour.en.tm>
   </traverse>
 
   <tmdoc-copyright|2011|Joris van der Hoeven>
