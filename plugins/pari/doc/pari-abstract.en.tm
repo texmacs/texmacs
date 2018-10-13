@@ -1,17 +1,17 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|The <name|Pari> system>
 
-  <hlink|<name|Pari-gp>|http://www.parigp-home.de> is a software package for
-  computer-aided number theory. It consists of a C library, <code*|libpari>
-  (with optional assembler cores for some popular architectures), and of the
-  programmable interactive <kbd|gp> calculator. While you can write your own
-  <code*|libpari>-based programs, many people just start up a <kbd|gp>
-  session, or have <kbd|gp> execute their scripts. Pari sessions can now be
-  started inside <TeXmacs>.
+  <hlink|<name|Pari-gp>|http://pari.math.u-bordeaux.fr> is a software package
+  for computer-aided number theory. It consists of a C library,
+  <code*|libpari> (with optional assembler cores for some popular
+  architectures), and of the programmable interactive <kbd|gp> calculator.
+  While you can write your own <code*|libpari>-based programs, many people
+  just start up a <kbd|gp> session, or have <kbd|gp> execute their scripts.
+  Pari sessions can now be started inside <TeXmacs>.
 
   Originally developed at <hlink|Bordeaux|http://www.cribx1.u-bordeaux.fr/>
   by a team led by <hlink|<name|Henri Cohen>|http://www.math.u-bordeaux.fr/~cohen/>,
@@ -28,9 +28,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
