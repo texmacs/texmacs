@@ -1,99 +1,92 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|maxima>>
+<style|<tuple|tmdoc|maxima|english|old-spacing|macaulay2>>
 
 <\body>
   <\tmdoc-title>
     Example <name|Macaulay 2> session
   </tmdoc-title>
 
-  Using <menu|Insert|Session|Macaulay2>, you may insert a new
-  <name|Macaulay2> session. Here follows a sample session.
+  Using <menu|Insert|Session|Macaulay2>, you may insert a new <name|Macaulay
+  2> session. Here follows a sample session.
 
   <\session|macaulay2|default>
     <\output>
-      Macaulay 2, version 0.9.2
+      <\errput>
+        Macaulay2, version 1.12
 
-      --Copyright 1993-2001, D. R. Grayson and M. E. Stillman
+        with packages: ConwayPolynomials, Elimination, IntegralClosure,
+        InverseSystems,
 
-      --Singular-Factory 1.3b, copyright 1993-2001, G.-M. Greuel, et al.
-
-      --Singular-Libfac 0.3.2, copyright 1996-2001, M. Messollen
-
-      \ Macaulay 2 starting up\ 
-
-      \;
+        \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LLLBases,
+        PrimaryDecomposition, ReesAlgebra, TangentCone
+      </errput>
     </output>
 
-    <\unfolded-io|macaulay2] >
+    <\unfolded-io>
+      i1 :\ 
+    <|unfolded-io>
       R=QQ[x_1..x_4]
     <|unfolded-io>
-      <\leqnarray*>
-        <tformat|<table|<row|<cell|<text|o2>>|<cell|=>|<cell|R>>|<row|<cell|<text|o2>>|<cell|:>|<cell|<text|PolynomialRing>>>>>
-      </leqnarray*>
+      <html-text|<math|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|l>|<table|<row|<cell|<with|color|red|o1>>|<cell|<with|color|red|=>>|<cell|R>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|color|red|o1>>|<cell|<with|color|red|:>>|<cell|PolynomialRing>>>>>>>
     </unfolded-io>
 
-    <\unfolded-io|macaulay2] >
+    <\unfolded-io>
+      i2 :\ 
+    <|unfolded-io>
       M=matrix{{x_1,x_2},{x_3,x_4}}
     <|unfolded-io>
-      <\leqnarray*>
-        <tformat|<table|<row|<cell|<text|o3>>|<cell|=>|<cell|<around*|(|<tabular*|<tformat|<table|<row|<cell|x<rsub|1>>|<cell|
-        x<rsub|2>>>|<row|<cell|x<rsub|3>>|<cell|
-        x<rsub|4>>>>>>|)>>>|<row|<cell|<text|o3>>|<cell|:>|<cell|<text|Matrix>>>>>
-      </leqnarray*>
+      <html-text|<math|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|l>|<table|<row|<cell|<with|color|red|o2>>|<cell|<with|color|red|=>>|<cell|<around*|(|<tabular|<table|<row|<cell|x<rsub|1>>|<cell|x<rsub|2>>>|<row|<cell|x<rsub|3>>|<cell|x<rsub|4>>>>>|)>>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|color|red|o2>>|<cell|<with|color|red|:>>|<cell|Matrix>>>>>>>
     </unfolded-io>
 
-    <\unfolded-io|macaulay2] >
+    <\unfolded-io>
+      i3 :\ 
+    <|unfolded-io>
       D=det M
     <|unfolded-io>
-      <\leqnarray*>
-        <tformat|<table|<row|<cell|<text|o4>>|<cell|=>|<cell|-x<rsub|2>
-        x<rsub|3>+x<rsub|1> x<rsub|4>>>|<row|<cell|<text|o4>>|<cell|:>|<cell|R>>>>
-      </leqnarray*>
+      <html-text|<math|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|l>|<table|<row|<cell|<with|color|red|o3>>|<cell|<with|color|red|=>>|<cell|-x<rsub|2>x<rsub|3>+x<rsub|1>x<rsub|4>>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|color|red|o3>>|<cell|<with|color|red|:>>|<cell|R>>>>>>>
     </unfolded-io>
 
-    <\unfolded-io|macaulay2] >
+    <\unfolded-io>
+      i4 :\ 
+    <|unfolded-io>
       T=trace M
     <|unfolded-io>
-      <\leqnarray*>
-        <tformat|<table|<row|<cell|<text|o5>>|<cell|=>|<cell|x<rsub|1>+x<rsub|4>>>|<row|<cell|<text|o5>>|<cell|:>|<cell|R>>>>
-      </leqnarray*>
+      <html-text|<math|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|l>|<table|<row|<cell|<with|color|red|o4>>|<cell|<with|color|red|=>>|<cell|x<rsub|1>+x<rsub|4>>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|color|red|o4>>|<cell|<with|color|red|:>>|<cell|R>>>>>>>
     </unfolded-io>
 
-    <\unfolded-io|macaulay2] >
+    <\unfolded-io>
+      i5 :\ 
+    <|unfolded-io>
       I=ideal{D,T}
     <|unfolded-io>
-      <\leqnarray*>
-        <tformat|<table|<row|<cell|<text|o6>>|<cell|=>|<cell|<text|--Function-->
-        (-x<rsub|2> x<rsub|3>+x<rsub|1> x<rsub|4>,x<rsub|1>+x<rsub|4>)>>|<row|<cell|<text|o6>>|<cell|:>|<cell|<text|Ideal>>>>>
-      </leqnarray*>
+      <html-text|<math|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|l>|<table|<row|<cell|<with|color|red|o5>>|<cell|<with|color|red|=>>|<cell|ideal<around*|(|-x<rsub|2>x<rsub|3>+x<rsub|1>x<rsub|4>,x<rsub|1>+x<rsub|4>|)>>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|color|red|o5>>|<cell|<with|color|red|:>>|<cell|Ideal>>>>>>>
     </unfolded-io>
 
-    <\unfolded-io|macaulay2] >
+    <\unfolded-io>
+      i6 :\ 
+    <|unfolded-io>
       J=ideal M^2
     <|unfolded-io>
-      <\leqnarray*>
-        <tformat|<table|<row|<cell|<text|o7>>|<cell|=>|<cell|<text|--Function-->
-        <around|(|x<rsub|1><rsup|2>+x<rsub|2> x<rsub|3>,x<rsub|1>
-        x<rsub|3>+x<rsub|3> x<rsub|4>,x<rsub|1> x<rsub|2>+x<rsub|2>
-        x<rsub|4>,x<rsub|2> x<rsub|3>+x<rsub|4><rsup|2>|)>>>|<row|<cell|<text|o7>>|<cell|:>|<cell|<text|Ideal>>>>>
-      </leqnarray*>
+      <html-text|<math|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|l>|<table|<row|<cell|<with|color|red|o6>>|<cell|<with|color|red|=>>|<cell|ideal<around*|(|x<rsub|1><rsup|2>+x<rsub|2>x<rsub|3>,x<rsub|1>x<rsub|3>+x<rsub|3>x<rsub|4>,x<rsub|1>x<rsub|2>+x<rsub|2>x<rsub|4>,x<rsub|2>x<rsub|3>+x<rsub|4><rsup|2>|)>>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|color|red|o6>>|<cell|<with|color|red|:>>|<cell|Ideal>>>>>>>
     </unfolded-io>
 
-    <\unfolded-io|macaulay2] >
+    <\unfolded-io>
+      i7 :\ 
+    <|unfolded-io>
       radical I== radical J
     <|unfolded-io>
-      <\leqnarray*>
-        <tformat|<table|<row|<cell|<text|o8>>|<cell|=>|<cell|<text|true>>>|<row|<cell|<text|o8>>|<cell|:>|<cell|<text|Boolean>>>>>
-      </leqnarray*>
+      <html-text|<math|<tabular|<tformat|<cwith|1|-1|1|1|cell-halign|r>|<cwith|1|-1|2|2|cell-halign|c>|<cwith|1|-1|3|3|cell-halign|l>|<table|<row|<cell|<with|color|red|o7>>|<cell|<with|color|red|=>>|<cell|true>>|<row|<cell|>|<cell|>|<cell|>>|<row|<cell|<with|color|red|o7>>|<cell|<with|color|red|:>>|<cell|Boolean>>>>>>>
     </unfolded-io>
 
-    <\input|macaulay2] >
+    <\input>
+      i8 :\ 
+    <|input>
       \;
     </input>
   </session>
 
-  <tmdoc-copyright|2003|Chu-Ching Huang>
+  <tmdoc-copyright|2018|Chu-Ching Huang, Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -103,8 +96,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
