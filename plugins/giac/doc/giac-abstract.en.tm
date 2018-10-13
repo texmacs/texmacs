@@ -1,11 +1,11 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|The <name|Giac> system>
 
-  <hlink|<name|Giac>|http://www-fourier.ujf-grenoble.fr/~parisse/english.html>
+  <hlink|<name|Giac>|http://www-fourier.ujf-grenoble.fr/~parisse/giac.html>
   Is A Computer algebra system. The system has been designed by <name|Bernard
   Parisse> and is under active development.
 
@@ -18,9 +18,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
