@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : fricas-menus.scm
-;; DESCRIPTION : Fricas menus
+;; DESCRIPTION : FriCAS menus
 ;; COPYRIGHT   : (C) 1999, 2012  Joris van der Hoeven and Andrey Grozin
 ;;
 ;; This software falls under the GNU general public license version 3 or later.

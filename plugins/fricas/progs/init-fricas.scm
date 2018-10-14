@@ -8,15 +8,15 @@
 ;; This software falls under the GNU general public license and comes WITHOUT
 ;; ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for details.
 ;; If you don't have this file, write to the Free Software Foundation, Inc.,
-;; 51 Franklin Street, Fifth Floor - Boston, MA 02110-1335, USA.
+;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure fricas
   (:require (url-exists-in-path? "fricas"))
   (:launch "fricas -texmacs")
-  (:session "Fricas")
-  (:scripts "Fricas"))
+  (:session "FriCAS")
+  (:scripts "FriCAS"))
 
 (when (supports-fricas?)
   (import-from (fricas-kbd))

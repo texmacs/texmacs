@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; MODULE      : fricas-kbd.scm
-;; DESCRIPTION : Keyboard shortcuts for Fricas
+;; DESCRIPTION : Keyboard shortcuts for FriCAS
 ;; COPYRIGHT   : (C) 2005  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
