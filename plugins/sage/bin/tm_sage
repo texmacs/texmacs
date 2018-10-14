@@ -4,7 +4,5 @@ BRIDGE=plugins/sage/bin/bridge.py
 USER_SAGE_PY=$HOME/.TeXmacs/${BRIDGE}
 SYS_SAGE_PY=$TEXMACS_PATH/${BRIDGE}
 
-echo $SYS_SAGE_PY
-
 [ -e $USER_SAGE_PY ] && /usr/bin/env sage -python $USER_SAGE_PY && exit 0
 [ -e $SYS_SAGE_PY ] && /usr/bin/env sage -python $SYS_SAGE_PY && exit 0
