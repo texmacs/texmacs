@@ -1,23 +1,26 @@
 # Status of Plugins for GNU TeXmacs
 
-| Plugin | Status | Last Checker | Date |
+| Plugin | MacOS | GNU/Linux | Windows | Last Checker | Date |
 |--------|--------|-----------------|------|
-| asymptote | Asymptote 2.44 on GNU/Linux | @sadhen | 2018-10-14 |
-| axiom  | broken    | @sadhen         | 2018-10-14 |
-| cadabra | Cadabra 1.46 on GNU/Linux | @sadhen | 2018-10-14 |
-| dratex | It works fine, documentation needed | @sadhen | 2018-10-14 |
-| eukleides | Eukleides 1.5.4 on GNU/Linux gstopng failed for ramdisc://image.ps | @sadhen | 2018-10-14 |
-| feynmf | broken | @sadhen | 2018-10-14 |
-| fricas | FriCAS 1.3.4 on MacOS and GNU/Linux | @sadhen         | 2018-10-14 |
-| gnuplot | Gnuplot 5.2.2 on GNU/Linux | @sadhen | 2018-10-14 |
-| giac | Giac 1.2.3.57 on GNU/Linux | @sadhen | 2018-10-14 |
-| graphviz | broken | @sadhen | 2018-10-14 |
-| macaulay2 | Macaulay 2 v1.12 on MacOS | @sadhen        | 2018-10-14 |
-| maxima    | Maxima 5.41 on GNU/Linux and MacOS| @sadhen        | 2018-10-14 |
-| pari      | PARI/GP 2.9.5 on GNU/Linux, PARI/GP 2.11.0 on MacOS | @sadhen        | 2018-10-14 |
-| sage  | SageMath 8.3 on MacOS, SageMath 8.1 on GNU/Linux | @sadhen | 2018-10-14 |
-| scilab | broken | @sadhen | 2018-10-14 |
-| xypic | It works fine on GNU/Linux | @sadhen | 2018-10-14 |
-| yacas | Yacas 1.3.6 on GNU/Linux | @sadhen        | 2018-10-14 |
+| asymptote | | 2.44 on GNU/Linux |  | @sadhen | 2018-10-14 |
+| axiom  |  | broken |   | @sadhen         | 2018-10-14 |
+| cadabra |  | 1.46  | | @sadhen | 2018-10-14 |
+| dratex | | works | not work | Pedro | 2018-10-14 |
+| eukleides | |Eukleides 1.5.4 on GNU/Linux gstopng failed for ramdisc://image.ps | not work | Pedro | 2018-10-14 |
+| feynmf | |broken| | @sadhen | 2018-10-14 |
+| fricas | 1.3.4 | 1.3.4 | | @sadhen         | 2018-10-14 |
+| gnuplot | | 5.2.2 | broken| Pedro | 2018-10-14 |
+| giac | | 1.2.3.57 | | @sadhen | 2018-10-14 |
+| graphviz | | broken| not work | Pedro | 2018-10-14 |
+| macaulay2 | 1.12 | | | @sadhen        | 2018-10-14 |
+| maxima    | 5.41 | 5.41 | 5.42.0 | @sadhen        | 2018-10-14 |
+| octave    |  | | 4.2.2| Pedro |
+| pari      | 2.11.0 | 2.9.5 | 2.11.0 | @sadhen        | 2018-10-14 |
+| python | works | works | works | Pedro | 2018-10-14 |
+| sage  | 8.3 | 8.1 | | @sadhen | 2018-10-14 |
+| scheme | builtin | builtin| | @sadhen | 2018-10-14 |
+| scilab | | broken | 6.0.1 | @sadhen | 2018-10-14 |
+| shell | work | work | | @sadhen | 2018-10-14 |
+| xypic | | works | broken | @sadhen | 2018-10-14 |
+| yacas | | 1.3.6|  1.3.6 | @sadhen        | 2018-10-14 |
 
-Python, Shell, Scheme should always work.
