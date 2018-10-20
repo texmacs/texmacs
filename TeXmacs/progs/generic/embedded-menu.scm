@@ -25,12 +25,13 @@
       ("Save image as" (save-embedded-image-as))
       ("Link image as" (link-embedded-image-as))
       ("Link image and copies as" (link-embedded-image-copies-as))
-      ---
-      ("Save all embedded images" (noop))
-      ("Link all embedded images" (noop))))
+      ;;---
+      ;;("Save all embedded images" (noop))
+      ;;("Link all embedded images" (noop))
+      ))
 
-(tm-menu (focus-misc-menu t)
-  (:require (linked-image-context? t))
-  (-> "Embed image"
-      ("Embed this image" (noop))
-      ("Embed all linked images" (noop))))
+;;(tm-menu (focus-misc-menu t)
+;;  (:require (linked-image-context? t))
+;;  (-> "Embed image"
+;;      ("Embed this image" (noop))
+;;      ("Embed all linked images" (noop))))
