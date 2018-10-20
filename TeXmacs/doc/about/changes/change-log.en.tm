@@ -1,13 +1,17 @@
-<TeXmacs|1.99.7>
+<TeXmacs|1.99.8>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.8>
+  <section|Changes from version 1.99.1 to 1.99.9>
 
   <\itemize>
+    <item>Import improvements from the FriCAS project (1.99.9).
+
+    <item>Fixes and documentations on the Sage plugin (1.99.9).
+
     <item>Several bug fixes (1.99.8).
 
     <item>Support of binary packages for various GNU/<name|Linux>
