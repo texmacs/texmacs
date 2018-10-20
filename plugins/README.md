@@ -2,7 +2,7 @@
 ## Status of Plugins for GNU TeXmacs
 
 | Plugin | MacOS | GNU/Linux | Windows | Last Checker | Date |
-|--------|--------|-----------------|------|
+|--------|--------|-----------------|------|---|---|
 | asymptote | | 2.44 on GNU/Linux |  | @sadhen | 2018-10-14 |
 | axiom  |  | broken |   | @sadhen         | 2018-10-14 |
 | cadabra |  | 1.46  | | @sadhen | 2018-10-14 |
