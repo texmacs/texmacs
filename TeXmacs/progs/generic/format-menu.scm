@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (generic format-menu)
-  (:use (generic generic-menu)
+  (:use (generic embedded-menu)
 	(generic format-edit)
 	(generic format-geometry-edit)))
 

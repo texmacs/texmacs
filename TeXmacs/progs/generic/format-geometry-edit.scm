@@ -13,7 +13,7 @@
 
 (texmacs-module (generic format-geometry-edit)
   (:use (utils edit selections)
-	(generic generic-edit)
+        (generic embedded-edit)
         (generic format-drd)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -423,9 +423,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Images
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (image-context? t)
-  (tm-func? t 'image 5))
 
 (tm-define (geometry-speed t inc?)
   (:require (image-context? t))
