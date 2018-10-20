@@ -6,7 +6,8 @@
 | asymptote  |        | 2.44      |         |               | @sadhen      | 2018-10-14 |
 | axiom      |        | :x:       |         |               | @sadhen      | 2018-10-14 |
 | cadabra    |        | 1.46      |         |               | @sadhen      | 2018-10-14 |
-| dratex     |        | :100:     | :x:     |               | Pedro        | 2018-10-14 |
+| coq        | :x:    |           |         |               | @sadhen      | 2018-10-20 |
+| dratex     | :100:  | :100:     | :x:     | simple demo   | Pedro        | 2018-10-20 |
 | eukleides  |        | :x:       | :x:     |               | Pedro        | 2018-10-14 |
 | feynmf     |        | :x:       |         |               | @sadhen      | 2018-10-14 |
 | fricas     | 1.3.4  | 1.3.4     |         |               | @sadhen      | 2018-10-14 |
@@ -15,15 +16,15 @@
 | graphviz   | :x:    | :x:       | :x:     |               | Pedro        | 2018-10-14 |
 | macaulay2  | 1.12   |           |         |               | @sadhen      | 2018-10-14 |
 | maxima     | 5.41   | 5.41      | 5.42.0  |               | @sadhen      | 2018-10-14 |
-| octave     |        |           | 4.2.2   |               | Pedro        | 2018-10-14 |
+| octave     | :x:    |           | 4.2.2   |               | Pedro        | 2018-10-20 |
 | pari       | 2.11.0 | 2.9.5     | 2.11.0  |               | @sadhen      | 2018-10-14 |
 | python     | :100:  | :100:     | :100:   |               | Pedro        | 2018-10-14 |
-| sage       | 8.3    | 8.1       |         |               | @sadhen      | 2018-10-14 |
+| sage       | 8.3    | 8.1       |         | :100:         | @sadhen      | 2018-10-14 |
 | scheme     | :100:  | :100:     | :100:   |               | @sadhen      | 2018-10-14 |
 | scilab     |        | :x:       | 6.0.1   |               | @sadhen      | 2018-10-14 |
 | shell      | :100:  | :100:     |         |               | @sadhen      | 2018-10-14 |
-| xypic      |        | :100:     | :x:     |               | @sadhen      | 2018-10-14 |
-| yacas      |        | 1.3.6     |  1.3.6  |               | @sadhen      | 2018-10-14 |
+| xypic      | :100:  | :100:     | :x:     | none          | @sadhen      | 2018-10-20 |
+| yacas      | 1.6.1  | 1.3.6     |  1.3.6  | simple demo   | @sadhen      | 2018-10-20 |
 
 ## Contribute
 1. Report plugin status
