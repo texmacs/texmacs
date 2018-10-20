@@ -1,4 +1,5 @@
-# Status of Plugins for GNU TeXmacs
+# Collection of GNU TeXmacs plugins
+## Status of Plugins for GNU TeXmacs
 
 | Plugin | MacOS | GNU/Linux | Windows | Last Checker | Date |
 |--------|--------|-----------------|------|
@@ -24,3 +25,11 @@
 | xypic | | works | broken | @sadhen | 2018-10-14 |
 | yacas | | 1.3.6|  1.3.6 | @sadhen        | 2018-10-14 |
 
+## Contribute
+1. Report plugin status
+2. Improve documents
+3. Add new plugins
+4. Improve this README.md
+
+## Github Pull Request
+Submit your Pull Request, and someone will review and commit it to the SVN repository. Idealy, someone should be robot. Well, currently, doing it mannually does not hurt my fingers.
