@@ -733,11 +733,9 @@ qt_get_date (string lan, string fm) {
       string y = as_string(localtime.date().year());
       string m = as_string(localtime.date().month());
       string d = as_string(localtime.date().day());
-      if (lan == "japanese")
-        return y * "<#5e74>" * m * "<#6708>" * d * "<#65e5>";
       if (lan == "korean")
         return y * "<#b144> " * m * "<#c6d4> " * d * "<#c77c>";
-      return y * "," * m * "," * d;
+      return y * "<#5e74>" * m * "<#6708>" * d * "<#65e5>";
     }
     else fm = "d MMMM yyyy";
   }

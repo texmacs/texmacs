@@ -626,12 +626,12 @@ get_date (string lan, string fm) {
     else if (lan == "chinese" || lan == "japanese" ||
 	     lan == "korean" || lan == "taiwanese")
       {
-	string y= simplify_date (var_eval_system ("date +\"%Y\""));
-	string m= simplify_date (var_eval_system ("date +\"%m\""));
-	string d= simplify_date (var_eval_system ("date +\"%d\""));
-	if (lan == "korean")
-	  return y * "<#b144> " * m * "<#c6d4> " * d * "<#c77c>";
-	return y * "<#5e74>" * m * "<#6708>" * d * "<#65e5>";
+        string y= simplify_date (var_eval_system ("date +\"%Y\""));
+        string m= simplify_date (var_eval_system ("date +\"%m\""));
+        string d= simplify_date (var_eval_system ("date +\"%d\""));
+        if (lan == "korean")
+          return y * "<#b144> " * m * "<#c6d4> " * d * "<#c77c>";
+	      return y * "<#5e74>" * m * "<#6708>" * d * "<#65e5>";
       }
     else fm= "%d %B %Y";
   }
