@@ -36,6 +36,7 @@ DATA_COMMAND = chr(16)
 py_ver       = sys.version_info[0];
 __version__  = '1.14'
 __author__   = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
+__metaclass__ = type
 
 my_globals   = {}
 
@@ -320,27 +321,35 @@ def compile_help (text):
 class Graph:
     name = ""
     message = ""
-    def greet():
-        return self.message
 
-    def available():
-        return len(message) == 0
+    def greet(self):
+        for x in self.message.split("\n"):
+            if len(x) == 0:
+                pass
+            else:
+                texmacs_out("verbatim:" + x + DATA_BEGIN + "prompt#" + self.name + "] " + DATA_END)
+        os.sys.stdout.flush()
+
+    def available(self):
+        return len(self.message) > 0
 
     def evaluate(self, code):
         pass
 
 class Graphviz(Graph):
     def __init__(self, name):
+        super(Graphviz, self).__init__()
         self.name = name
-        p = Popen([self.name, "-V"], stdout=PIPE)
+        p = Popen([self.name, "-V"], stderr=PIPE)
         ret, err = p.communicate()
+        # WARN: The Version Info is in stderr
         if (p.returncode == 0):
-            self.message = ret
+            self.message = str(err)
 
     def evaluate(self, code):
         png = os.getenv("HOME") + "/.TeXmacs/system/tmp/graph.png"
         f = open(png, 'wb')
-        p = Popen([self.name, "-Tpng", "-Gsize=1,5","-Gdpi=400"], stdout=f, stdin=PIPE, stderr=PIPE)
+        p = Popen([self.name, "-Tpng", "-Gsize=1,1","-Gdpi=400"], stdout=f, stdin=PIPE, stderr=PIPE)
         out, err = p.communicate(input=code)
         if (p.returncode == 0):
           texmacs_out ("file:" + png)
@@ -374,8 +383,20 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 texmacs_out ("verbatim:Generate Graph with your favorite tools in GNU TeXmacs")
-texmacs_out ("prompt#>>> ");    
+texmacs_out ("verbatim:Created by Darcy Shen, Implemented in Python, dot by default")
+texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plugins")
+texmacs_out ("prompt#dot] ")
 
+grapvizs = map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"])
+graphs = filter(lambda x: x.available(), grapvizs)
+graph_names = map(lambda x: x.name, graphs)
+
+if len(graphs) == 0:
+    texmacs_out ("verbatim:Sorry, please check your installation of Graphviz or TeX(TikZ, ...)")
+    exit(0)
+
+current = graphs[0]
+current.greet()
 
 # Main session loop.
 while 1:
@@ -403,6 +424,12 @@ while 1:
                 continue
             lines.append(line)
         text='\n'.join(lines[:-1])
-        
-        dot = Graphviz("dot")
-        dot.evaluate(text)
+
+        if text == "help":
+            texmacs_out("verbatim:[help, " + ", ".join(str(x) for x in graph_names) + "]")
+            current.greet()
+        elif text in graph_names:
+            current = graphs[graph_names.index(text)]
+            current.greet()
+        else:
+            current.evaluate(text)
