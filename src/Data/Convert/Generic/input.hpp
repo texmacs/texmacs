@@ -47,6 +47,7 @@ struct texmacs_input_rep: concrete_struct {
   void channel_flush (bool force= false);
   void command_flush (bool force= false);
   void xformat_flush (bool force= false);
+  void file_flush (bool force= false);
 };
 
 class texmacs_input {

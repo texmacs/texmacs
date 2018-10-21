@@ -328,7 +328,7 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
   if (! exists(png)) {
     convert_error << "gs_to_png failed for "<< image <<LF;
     return false;
-    }
+  }
   return true;
 }
 
