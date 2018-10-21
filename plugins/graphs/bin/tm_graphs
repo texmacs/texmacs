@@ -374,10 +374,11 @@ while 1:
             lines.append(line)
         text='\n'.join(lines[:-1])
         
-        f = open('/Users/rendong/.TeXmacs/system/tmp/graph.png', 'wb')
+        png = os.getenv("HOME") + "/.TeXmacs/system/tmp/graph.png"
+        f = open(png, 'wb')
         p = Popen(["dot", "-Tpng"], stdout=f, stdin=PIPE, stderr=PIPE)
         out, err = p.communicate(input=text)
         if (p.returncode == 0):
-          texmacs_out ("file:/Users/rendong/.TeXmacs/system/tmp/graph.png")
+          texmacs_out ("file:" + png)
         else:
           texmacs_out ("verbatim:" + err)
