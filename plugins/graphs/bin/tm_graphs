@@ -317,6 +317,36 @@ def compile_help (text):
 
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.iteritems()))
 
+class Graph:
+    name = ""
+    message = ""
+    def greet():
+        return self.message
+
+    def available():
+        return len(message) == 0
+
+    def evaluate(self, code):
+        pass
+
+class Graphviz(Graph):
+    def __init__(self, name):
+        self.name = name
+        p = Popen([self.name, "-V"], stdout=PIPE)
+        ret, err = p.communicate()
+        if (p.returncode == 0):
+            self.message = ret
+
+    def evaluate(self, code):
+        png = os.getenv("HOME") + "/.TeXmacs/system/tmp/graph.png"
+        f = open(png, 'wb')
+        p = Popen([self.name, "-Tpng", "-Gsize=1,5","-Gdpi=400"], stdout=f, stdin=PIPE, stderr=PIPE)
+        out, err = p.communicate(input=code)
+        if (p.returncode == 0):
+          texmacs_out ("file:" + png)
+        else:
+          texmacs_out ("verbatim:" + err)
+
 ###############################################################################
 ## Session start
 ###############################################################################
@@ -374,11 +404,5 @@ while 1:
             lines.append(line)
         text='\n'.join(lines[:-1])
         
-        png = os.getenv("HOME") + "/.TeXmacs/system/tmp/graph.png"
-        f = open(png, 'wb')
-        p = Popen(["dot", "-Tpng"], stdout=f, stdin=PIPE, stderr=PIPE)
-        out, err = p.communicate(input=text)
-        if (p.returncode == 0):
-          texmacs_out ("file:" + png)
-        else:
-          texmacs_out ("verbatim:" + err)
+        dot = Graphviz("dot")
+        dot.evaluate(text)

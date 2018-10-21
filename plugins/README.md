@@ -1,6 +1,6 @@
 # Collection of GNU TeXmacs plugins
 ## Status of Plugins for GNU TeXmacs
-
+### General Plugins
 | Plugin     | MacOS  | GNU/Linux | Windows | Documentation | Last Checker | Date       |
 |------------|--------|-----------|---------|---------------|--------------|------------|
 | asymptote  |        | 2.44      |         |               | @sadhen      | 2018-10-14 |
@@ -13,7 +13,6 @@
 | fricas     | 1.3.4  | 1.3.4     |         |               | @sadhen      | 2018-10-14 |
 | gnuplot    | 5.2.2  | 5.2.2     | :x:     |               | Pedro        | 2018-10-14 |
 | giac       |        | 1.2.3.57  |         |               | @sadhen      | 2018-10-14 |
-| graphviz   | :x:    | :x:       | :x:     |               | Pedro        | 2018-10-14 |
 | macaulay2  | 1.12   |           |         |               | @sadhen      | 2018-10-14 |
 | maxima     | 5.41   | 5.41      | 5.42.0  |               | @sadhen      | 2018-10-14 |
 | octave     | :x:    |           | 4.2.2   |               | Pedro        | 2018-10-20 |
@@ -25,6 +24,12 @@
 | shell      | :100:  | :100:     |         |               | @sadhen      | 2018-10-14 |
 | xypic      | :100:  | :100:     | :x:     | none          | @sadhen      | 2018-10-20 |
 | yacas      | 1.6.1  | 1.3.6     |  1.3.6  | simple demo   | @sadhen      | 2018-10-20 |
+
+### Graph Plugins
+
+| Plugin     | MacOS  | GNU/Linux | Windows | Documentation | Last Checker | Date       |
+|------------|--------|-----------|---------|---------------|--------------|------------|
+| graphviz   | :100:  | :?:       | :?:     |               | @sadhen      | 2018-10-20 |
 
 ## Contribute
 1. Report plugin status
