@@ -109,6 +109,7 @@ AC_DEFUN([TM_PLATFORM],[
       AC_MSG_RESULT(cygwin host)
       AC_DEFINE([OS_CYGWIN],[1],[OS type])
       CONFIG_OS="CYGWIN"
+      CONFIG_QTPIPES="yes"
       CONFIG_BFLAGS="-Wl,-stack,8388608"
     ;;
     *apple*darwin*)
