@@ -344,9 +344,7 @@ texmacs_input_rep::file_flush (bool force) {
         load_string (file, s, false);
         tree t (IMAGE);
         t << tuple (tree (RAW_DATA, s), type);
-        int w(0), h(0);
-        imagemagick_image_size(file, w, h, true);
-        t << tree(w) << tree(h) << tree("") << tree("");
+        t << tree("") << tree("") << tree("") << tree("");
         write (t);
       } else {
         string err_msg = "Do not support file type with suffix: [" * type * "]";
