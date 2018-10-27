@@ -34,8 +34,8 @@ DATA_ESCAPE  = chr(27)
 DATA_COMMAND = chr(16)
 
 py_ver       = sys.version_info[0];
-__version__  = '1.14'
-__author__   = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
+__version__  = '1.0'
+__author__   = 'Darcy Shen'
 __metaclass__ = type
 
 my_globals   = {}
@@ -336,6 +336,12 @@ class Graph:
     def evaluate(self, code):
         pass
 
+    def get_png_path(self):
+        png = os.getenv("HOME") + "/.TeXmacs/system/tmp/" + self.name + ".png"
+        if os.path.isfile(png):
+            os.remove(png)
+        return png
+
 class Graphviz(Graph):
     def __init__(self, name):
         super(Graphviz, self).__init__()
@@ -347,9 +353,28 @@ class Graphviz(Graph):
             self.message = str(err)
 
     def evaluate(self, code):
-        png = os.getenv("HOME") + "/.TeXmacs/system/tmp/graph.png"
+        png = self.get_png_path()
         f = open(png, 'wb')
         p = Popen([self.name, "-Tpng", "-Gsize=1,1","-Gdpi=400"], stdout=f, stdin=PIPE, stderr=PIPE)
+        out, err = p.communicate(input=code)
+        if (p.returncode == 0):
+          texmacs_out ("file:" + png)
+        else:
+          texmacs_out ("verbatim:" + err)
+
+class Asymptote(Graph):
+    def __init__(self, name):
+        super(Asymptote, self).__init__()
+        self.name = name
+        p = Popen([self.name, "-version"], stderr=PIPE)
+        ret, err = p.communicate()
+        # WARN: The Version Info is in stderr
+        if (p.returncode == 0):
+            self.message = str(err)
+
+    def evaluate(self, code):
+        png = self.get_png_path()
+        p = Popen([self.name, "-fpng", "-o", png], stdin=PIPE, stderr=PIPE)
         out, err = p.communicate(input=code)
         if (p.returncode == 0):
           texmacs_out ("file:" + png)
@@ -388,7 +413,8 @@ texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plug
 texmacs_out ("prompt#dot] ")
 
 grapvizs = map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"])
-graphs = filter(lambda x: x.available(), grapvizs)
+others = [Asymptote("asy")]
+graphs = filter(lambda x: x.available(), grapvizs + others)
 graph_names = map(lambda x: x.name, graphs)
 
 if len(graphs) == 0:
