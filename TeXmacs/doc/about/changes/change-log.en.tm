@@ -8,6 +8,8 @@
   <section|Changes from version 1.99.1 to 1.99.9>
 
   <\itemize>
+    <item>A unified Graph plugin for Graphviz, Asymptote (1.99.9).
+
     <item>Import improvements from the FriCAS project (1.99.9).
 
     <item>Fixes and documentations on the Sage plugin (1.99.9).
