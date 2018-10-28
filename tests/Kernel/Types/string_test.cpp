@@ -103,3 +103,19 @@ TEST (string, is_bool) {
   ASSERT_FALSE (is_bool ("100"));
   ASSERT_FALSE (is_bool ("nil"));
 }
+
+TEST (string, is_quoted) {
+  ASSERT_TRUE (is_quoted ("\"\""));
+  ASSERT_TRUE (is_quoted ("\"Hello TeXmacs\""));
+  // is_quoted only checks if a string starts with a double quote
+  // and ends with another double quote, regardless the validity
+  // of the raw string
+  ASSERT_TRUE (is_quoted ("\"Hello\"TeXmacs\""));
+
+  ASSERT_FALSE (is_quoted ("\""));
+  ASSERT_FALSE (is_quoted ("A"));
+  ASSERT_FALSE (is_quoted ("9"));
+  ASSERT_FALSE (is_quoted ("Hello TeXmacs"));
+  ASSERT_FALSE (is_quoted ("\"Hello TeXmac\"s"));
+  ASSERT_FALSE (is_quoted ("H\"ello TeXmacs\""));
+}

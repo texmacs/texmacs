@@ -218,7 +218,7 @@ to_lower (string s) {
   string l(n);
 
   for (int i=0; i<n; i++) {
-    l[i]= std::tolower(s[i]);
+    l[i]= (char) std::tolower(s[i]);
   }
   return l;
 }
@@ -229,7 +229,7 @@ to_upper (string s) {
   string u(n);
 
   for (int i=0; i<n; i++) {
-    u[i]= std::toupper(s[i]);
+    u[i]= (char) std::toupper(s[i]);
   }
   return u;
 }
