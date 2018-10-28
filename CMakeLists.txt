@@ -717,7 +717,7 @@ set (GTEST_LIBRARIES gtest gtest_main)
 set (GTEST_MAIN_LIBRARY gtest_main)
 set (GTEST_LIBRARY gtest)
 
-add_subdirectory (3rdparty/benchmark)
+add_subdirectory (3rdparty/benchmark EXCLUDE_FROM_ALL)
 add_subdirectory (${GTEST_ROOT} EXCLUDE_FROM_ALL)
 find_package (GTest REQUIRED)
 
