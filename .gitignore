@@ -5,3 +5,7 @@ texmacs.1
 *.kdev4
 .kdev4
 .vscode
+*~
+Testing
+.idea
+cmake-build-debug
