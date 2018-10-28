@@ -139,7 +139,19 @@ operator <= (list<T> l1, list<T> l2) {
 template<class T> int
 N (list<T> l) {
   if (is_nil (l)) return 0;
-  else return N (l->next) + 1;
+  else if (is_nil (l->next)) return 1;
+  else if (is_nil (l->next->next)) return 2;
+  else if (is_nil (l->next->next->next)) return 3;
+  else if (is_nil (l->next->next->next->next)) return 4;
+  else {
+    register int i= 4;
+    list<T> iter = l->next->next->next->next->next;
+    while (!is_nil (iter)) {
+      iter= iter->next;
+      i= i+1;
+    }
+    return i;
+  }
 }
 
 template<class T> list<T>
