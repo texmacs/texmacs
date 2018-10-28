@@ -11,6 +11,13 @@
 
 #include "list.hpp"
 
+static list<long> gen(int64_t n) {
+  auto normal = list<long>();
+  for (long i=0; i<n; i++)
+    normal << i;
+  return normal;
+}
+
 auto the_nil_list = list<string>();
 auto the_atom_list = list<long>(1);
 auto normal = list<long>(1, 2, 3, list<long>());
@@ -67,9 +74,13 @@ TEST (list, operate_on_the_last) {
 * tests on computations with list<T> structures
 ******************************************************************************/
 TEST (list, size) {
-  EXPECT_EQ (N(the_nil_list), 0);
-  EXPECT_EQ (N(the_atom_list), 1);
-  EXPECT_EQ (N(normal), 3);
+  EXPECT_EQ (N (the_nil_list), 0);
+  EXPECT_EQ (N (the_atom_list), 1);
+  EXPECT_EQ (N (normal), 3);
+  for (auto i=4; i<=100; i++) {
+    auto list = gen (i);
+    EXPECT_EQ (N (list), i);
+  }
 }
 
 TEST (list, copy) {

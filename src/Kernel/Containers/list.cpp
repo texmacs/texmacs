@@ -145,7 +145,7 @@ N (list<T> l) {
   else if (is_nil (l->next->next->next->next)) return 4;
   else {
     register int i= 4;
-    list<T> iter = l->next->next->next->next->next;
+    list<T> iter = l->next->next->next->next;
     while (!is_nil (iter)) {
       iter= iter->next;
       i= i+1;
