@@ -104,6 +104,28 @@ TEST (string, is_bool) {
   ASSERT_FALSE (is_bool ("nil"));
 }
 
+TEST (string, is_int) {
+  // Empty string is not an int
+  ASSERT_FALSE (is_int (""));
+
+  // Only 0-9 in chars are int
+  for (auto i= 0; i<256; i++) {
+    char iter= (char) i;
+    if (iter >= '0' && iter <= '9')
+      ASSERT_TRUE (is_int (iter));
+    else
+      ASSERT_FALSE (is_int (iter));
+  }
+
+  // Random tests
+  ASSERT_TRUE (is_int ("-100"));
+  ASSERT_TRUE (is_int ("+100"));
+  ASSERT_TRUE (is_int ("100"));
+
+  ASSERT_FALSE (is_int(".0"));
+  ASSERT_FALSE (is_int("0x09"));
+}
+
 TEST (string, is_quoted) {
   ASSERT_TRUE (is_quoted ("\"\""));
   ASSERT_TRUE (is_quoted ("\"Hello TeXmacs\""));
