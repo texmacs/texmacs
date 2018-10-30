@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -22,7 +22,7 @@
 
   <if|<equal|<get-label|<value|spacing-policy>>|tuple>||<assign|spacing-policy|<tuple|<value|spacing-policy>>>>
 
-  <assign|xspacing-policy|<merge|<tuple|middle|<tuple|0.25spc|1spc|1spc>>|<value|spacing-policy>>>
+  <assign|spacing-policy|<merge|<tuple|middle|<tuple|0.25spc|1spc|1spc>>|<value|spacing-policy>>>
 
   \;
 </body>
