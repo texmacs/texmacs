@@ -1,4 +1,6 @@
 # Collection of GNU TeXmacs plugins
+[![Join the chat at https://gitter.im/texmacs/Lobby](https://badges.gitter.im/texmacs/Lobby.svg)](https://gitter.im/texmacs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Status of Plugins for GNU TeXmacs
 ### General Plugins
 | Plugin     | MacOS  | GNU/Linux | Windows | Documentation | Last Checker | Date       |
