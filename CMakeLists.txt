@@ -52,7 +52,11 @@ set (STABLE_RELEASE "1")
 ### Options
 ### --------------------------------------------------------------------
 if (NOT TEXMACS_GUI)
-  set (TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+  if (APPLE)
+    set (TEXMACS_GUI "Qt4" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+  else (APPLE)
+    set (TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+  endif (APPLE)
 endif (NOT TEXMACS_GUI)
 
 option (QTPIPES "use Qt pipes" ON)
@@ -525,17 +529,27 @@ endif (LINKED_FREETYPE)
 
 set (GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 
-if (TEXMACS_GUI STREQUAL "Qt")
+if (TEXMACS_GUI MATCHES "Qt.*")
 
-  find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
-  set (TeXmacs_Include_Dirs
-    ${TeXmacs_Include_Dirs}
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Gui_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-    ${Qt5PrintSupport_INCLUDE_DIRS}
-  )
-  set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+  if (TEXMACS_GUI STREQUAL "Qt4")
+    find_package (Qt4 REQUIRED)
+    set (TeXmacs_Include_Dirs
+      ${TeXmacs_Include_Dirs}
+      ${QT_INCLUDE_DIR}
+    )
+    include (${QT_USE_FILE})
+  else (TEXMACS_GUI STREQUAL "Qt4")
+    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
+    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+    set (TeXmacs_Include_Dirs
+      ${TeXmacs_Include_Dirs}
+      ${Qt5Core_INCLUDE_DIRS}
+      ${Qt5Gui_INCLUDE_DIRS}
+      ${Qt5Widgets_INCLUDE_DIRS}
+      ${Qt5PrintSupport_INCLUDE_DIRS}
+    )
+  endif (TEXMACS_GUI STREQUAL "Qt4")
+
   add_definitions (${QT_DEFINITIONS})
   add_definitions ("-DQTTEXMACS")
 
@@ -584,7 +598,7 @@ else (TEXMACS_GUI STREQUAL "Qt")
   set(CONFIG_GUI "X11")
 
   MESSAGE(STATUS "Enabling standard X11 interface")
-endif (TEXMACS_GUI STREQUAL "Qt")
+endif (TEXMACS_GUI MATCHES "Qt.*")
 
 if (APPLE AND TEXMACS_GUI STREQUAL "X11")
   set (TeXmacs_MacOS_SRCS
