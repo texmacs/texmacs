@@ -665,8 +665,7 @@ include_directories(${TeXmacs_Include_Dirs})
 ### Set the executable target name and other stuff
 ### --------------------------------------------------------------------
 
-set(TeXmacs_binary_name "texmacs.bin")
-
+set(TeXmacs_binary_name "TeXmacs")
 
 ### --------------------------------------------------------------------
 ### Compile sources
@@ -676,26 +675,6 @@ add_subdirectory (src)
 add_subdirectory (plugins)
 add_subdirectory (misc)
 add_subdirectory (TeXmacs)
-
-### --------------------------------------------------------------------
-### Complete bundle if MacOSX
-### --------------------------------------------------------------------
-
-IF (APPLE AND NOT TEXMACS_GUI STREQUAL X11)
-  SET(BUNDLE_DEBUG_EXTENSION)
-  IF (DEBUG)
-    SET(BUNDLE_DEBUG_EXTENSION "_debug")
-  ENDIF (DEBUG)  
-  SET(APP_BUNDLE_NAME ${TeXmacs_binary_name}${BUNDLE_DEBUG_EXTENSION}".app")
-  ADD_CUSTOM_TARGET ( bundle
-            mkdir -p  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS 
-    COMMAND mkdir -p  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/Resources
-    COMMAND cp ${TEXMACS_SOURCE_DIR}/misc/bundle/Info.plist ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/Resources
-    COMMAND cp ${TEXMACS_SOURCE_DIR}/misc/bundle/TeXmacs ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS
-    COMMAND chmod a+x  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS/TeXmacs
-  )
-ENDIF (APPLE AND NOT TEXMACS_GUI STREQUAL X11)
-
 
 ### --------------------------------------------------------------------
 ### Installation
@@ -712,8 +691,12 @@ install (FILES  DESTINATION share/TeXmacs/bin
 ### include/
 install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 ### share/
-install (DIRECTORY plugins DESTINATION share/TeXmacs
-  PATTERN "bin" EXCLUDE)
+if (APPLE)
+  install (DIRECTORY plugins DESTINATION share/TeXmacs)
+else (APPLE)
+  install (DIRECTORY plugins DESTINATION share/TeXmacs
+    PATTERN "bin" EXCLUDE)
+endif (APPLE)
 install (FILES TeXmacs/misc/mime/texmacs.applications DESTINATION share/application_registry)
 install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
 install (FILES TeXmacs/misc/images/TeXmacs.svg DESTINATION share/icons/gnome/scalable/apps)
