@@ -692,7 +692,7 @@ install (FILES  DESTINATION share/TeXmacs/bin
 install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 ### share/
 if (APPLE)
-  install (DIRECTORY plugins DESTINATION share/TeXmacs)
+  install (DIRECTORY plugins DESTINATION share/TeXmacs USE_SOURCE_PERMISSIONS)
 else (APPLE)
   install (DIRECTORY plugins DESTINATION share/TeXmacs
     PATTERN "bin" EXCLUDE)
