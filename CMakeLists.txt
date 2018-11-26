@@ -665,7 +665,11 @@ include_directories(${TeXmacs_Include_Dirs})
 ### Set the executable target name and other stuff
 ### --------------------------------------------------------------------
 
-set(TeXmacs_binary_name "TeXmacs")
+if (APPLE)
+  set(TeXmacs_binary_name "TeXmacs")
+else (APPLE)
+  set(TeXmacs_binary_name "texmacs.bin")
+endif (APPLE)
 
 ### --------------------------------------------------------------------
 ### Compile sources
