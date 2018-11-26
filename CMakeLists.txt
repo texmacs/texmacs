@@ -52,7 +52,11 @@ set (STABLE_RELEASE "1")
 ### Options
 ### --------------------------------------------------------------------
 if (NOT TEXMACS_GUI)
-  set (TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+  if (APPLE)
+    set (TEXMACS_GUI "Qt4" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+  else (APPLE)
+    set (TEXMACS_GUI "Qt" CACHE STRING "TeXmacs Gui (Qt, X11, Aqua)")
+  endif (APPLE)
 endif (NOT TEXMACS_GUI)
 
 option (QTPIPES "use Qt pipes" ON)
@@ -525,17 +529,27 @@ endif (LINKED_FREETYPE)
 
 set (GUI_TYPE) # nothing or WIN32, MACOSX bundles are treated independetly
 
-if (TEXMACS_GUI STREQUAL "Qt")
+if (TEXMACS_GUI MATCHES "Qt.*")
 
-  find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
-  set (TeXmacs_Include_Dirs
-    ${TeXmacs_Include_Dirs}
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Gui_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-    ${Qt5PrintSupport_INCLUDE_DIRS}
-  )
-  set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+  if (TEXMACS_GUI STREQUAL "Qt4")
+    find_package (Qt4 REQUIRED)
+    set (TeXmacs_Include_Dirs
+      ${TeXmacs_Include_Dirs}
+      ${QT_INCLUDE_DIR}
+    )
+    include (${QT_USE_FILE})
+  else (TEXMACS_GUI STREQUAL "Qt4")
+    find_package (Qt5 COMPONENTS Core Gui Widgets PrintSupport REQUIRED)
+    set (QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport)
+    set (TeXmacs_Include_Dirs
+      ${TeXmacs_Include_Dirs}
+      ${Qt5Core_INCLUDE_DIRS}
+      ${Qt5Gui_INCLUDE_DIRS}
+      ${Qt5Widgets_INCLUDE_DIRS}
+      ${Qt5PrintSupport_INCLUDE_DIRS}
+    )
+  endif (TEXMACS_GUI STREQUAL "Qt4")
+
   add_definitions (${QT_DEFINITIONS})
   add_definitions ("-DQTTEXMACS")
 
@@ -584,7 +598,7 @@ else (TEXMACS_GUI STREQUAL "Qt")
   set(CONFIG_GUI "X11")
 
   MESSAGE(STATUS "Enabling standard X11 interface")
-endif (TEXMACS_GUI STREQUAL "Qt")
+endif (TEXMACS_GUI MATCHES "Qt.*")
 
 if (APPLE AND TEXMACS_GUI STREQUAL "X11")
   set (TeXmacs_MacOS_SRCS
@@ -651,8 +665,11 @@ include_directories(${TeXmacs_Include_Dirs})
 ### Set the executable target name and other stuff
 ### --------------------------------------------------------------------
 
-set(TeXmacs_binary_name "texmacs.bin")
-
+if (APPLE)
+  set(TeXmacs_binary_name "TeXmacs")
+else (APPLE)
+  set(TeXmacs_binary_name "texmacs.bin")
+endif (APPLE)
 
 ### --------------------------------------------------------------------
 ### Compile sources
@@ -662,26 +679,6 @@ add_subdirectory (src)
 add_subdirectory (plugins)
 add_subdirectory (misc)
 add_subdirectory (TeXmacs)
-
-### --------------------------------------------------------------------
-### Complete bundle if MacOSX
-### --------------------------------------------------------------------
-
-IF (APPLE AND NOT TEXMACS_GUI STREQUAL X11)
-  SET(BUNDLE_DEBUG_EXTENSION)
-  IF (DEBUG)
-    SET(BUNDLE_DEBUG_EXTENSION "_debug")
-  ENDIF (DEBUG)  
-  SET(APP_BUNDLE_NAME ${TeXmacs_binary_name}${BUNDLE_DEBUG_EXTENSION}".app")
-  ADD_CUSTOM_TARGET ( bundle
-            mkdir -p  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS 
-    COMMAND mkdir -p  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/Resources
-    COMMAND cp ${TEXMACS_SOURCE_DIR}/misc/bundle/Info.plist ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/Resources
-    COMMAND cp ${TEXMACS_SOURCE_DIR}/misc/bundle/TeXmacs ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS
-    COMMAND chmod a+x  ${TEXMACS_BINARY_DIR}/${APP_BUNDLE_NAME}/Contents/MacOS/TeXmacs
-  )
-ENDIF (APPLE AND NOT TEXMACS_GUI STREQUAL X11)
-
 
 ### --------------------------------------------------------------------
 ### Installation
@@ -698,8 +695,12 @@ install (FILES  DESTINATION share/TeXmacs/bin
 ### include/
 install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 ### share/
-install (DIRECTORY plugins DESTINATION share/TeXmacs
-  PATTERN "bin" EXCLUDE)
+if (APPLE)
+  install (DIRECTORY plugins DESTINATION share/TeXmacs USE_SOURCE_PERMISSIONS)
+else (APPLE)
+  install (DIRECTORY plugins DESTINATION share/TeXmacs
+    PATTERN "bin" EXCLUDE)
+endif (APPLE)
 install (FILES TeXmacs/misc/mime/texmacs.applications DESTINATION share/application_registry)
 install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
 install (FILES TeXmacs/misc/images/TeXmacs.svg DESTINATION share/icons/gnome/scalable/apps)
