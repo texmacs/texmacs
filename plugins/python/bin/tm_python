@@ -21,7 +21,7 @@ import csv   # Used to parse scheme forms
 from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
 from io        import open
-from io        import StringIO
+from io        import BytesIO
 
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
@@ -114,7 +114,7 @@ def ps_out(out):
     by Mark Arrasmith.
     """
     if 'savefig' in dir(out):
-        str_out = StringIO()
+        str_out = BytesIO()
         out.savefig(str_out, format='eps')
         data = str_out.getvalue()
         str_out.close()
