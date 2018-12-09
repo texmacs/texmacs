@@ -66,11 +66,12 @@
   ("/ / var" (make 'deleted))
 
   ;; Markdown Style Shortcuts
-  ("# var" (make 'title))
   ("# # var" (make 'section))
   ("# # # var" (make 'subsection))
   ("# # # # var" (make 'subsubsection))
   ("` ` ` var" (make 'verbatim-code))
+  ("* * var" (make 'strong))
+  ("* var" (make 'em))
 
   ("space var" (make 'nbsp))
   ("space var var" (make-space "1em"))
