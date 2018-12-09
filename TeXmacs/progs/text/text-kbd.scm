@@ -70,8 +70,10 @@
   ("# # # var" (make 'subsection))
   ("# # # # var" (make 'subsubsection))
   ("` ` ` var" (make 'verbatim-code))
-  ("* * var" (make 'strong))
-  ("* var" (make 'em))
+  ("* * var" (make-with "font-series" "bold"))
+  ("* var" (make-with "font-shape" "italic"))
+  ("+ var" (make-tmlist 'itemize))
+  ("1 . var" (make-tmlist 'enumerate))
 
   ("space var" (make 'nbsp))
   ("space var var" (make-space "1em"))
