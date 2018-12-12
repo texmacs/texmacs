@@ -141,11 +141,17 @@ qt_pipe_link_rep::is_readable (int channel) {
 
 void
 qt_pipe_link_rep::interrupt () {
+  extern int errno;
   if (!alive) return;
 #ifdef OS_MINGW
   // Not implemented
+  qt_error << "SIGINT not implemented on Windows\n";
 #else
-  ::killpg(PipeLink.pid (), SIGINT);
+  Q_PID pid = PipeLink.pid ();
+  int ret =  ::killpg (pid, SIGINT);
+  if (ret == -1) {
+    qt_error << "Interrupt not successful, pid: " << pid << " return code: " << errno << "\n";
+  }
 #endif
 }
 
