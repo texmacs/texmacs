@@ -148,7 +148,11 @@ qt_pipe_link_rep::interrupt () {
   qt_error << "SIGINT not implemented on Windows\n";
 #else
   Q_PID pid = PipeLink.pid ();
-  int ret =  ::killpg (pid, SIGINT);
+  
+  // REMARK: previously there were here below a call to ::killpg which does not seems to work on MacOS
+  // I (mgubi) replaced it with ::kill which does the job. But I do not undestand the difference.
+  
+  int ret =  ::kill (pid, SIGINT);
   if (ret == -1) {
     qt_error << "Interrupt not successful, pid: " << pid << " return code: " << errno << "\n";
   }
