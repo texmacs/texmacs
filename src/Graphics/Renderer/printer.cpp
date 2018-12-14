@@ -1019,11 +1019,6 @@ structure_toc (tree t, int& i, tree& out, string level) {
   out << next;
 }
 
-static string
-to_hex_string (string s) {
-  return "<FEFF" * utf8_to_hex_string (cork_to_utf8 (s)) * ">";  
-}
-
 void
 printer_rep::generate_toc_item (tree t) {
   string title= t[0][0]->label;
@@ -1031,7 +1026,7 @@ printer_rep::generate_toc_item (tree t) {
   string page = t[0][2]->label;
   string x    = t[0][3]->label;
   string y    = t[0][4]->label;
-  string htit = to_hex_string (title);
+  string htit = utf8_to_pdf_hex_string (title);
   print ("[");
   if (N(t) > 1) {
     print ("/Count");
@@ -1071,11 +1066,11 @@ printer_rep::generate_metadata () {
   if (N(metadata) == 0) return;
   print ("[");
   if (metadata->contains ("title"))
-    print ("/Title " * to_hex_string (metadata ["title"]));
+    print ("/Title " * utf8_to_pdf_hex_string (metadata ["title"]));
   if (metadata->contains ("author"))
-    print ("/Author " * to_hex_string (metadata ["author"]));
+    print ("/Author " * utf8_to_pdf_hex_string (metadata ["author"]));
   if (metadata->contains ("subject"))
-    print ("/Subject " * to_hex_string (metadata ["subject"]));
+    print ("/Subject " * utf8_to_pdf_hex_string (metadata ["subject"]));
   print ("/DOCINFO pdfmark");
 }
 

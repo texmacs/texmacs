@@ -20,6 +20,7 @@
 #include "scheme.hpp"
 #include "sys_utils.hpp"
 #include "convert.hpp"
+#include "converter.hpp"
 #include "ntuple.hpp"
 #include "link.hpp"
 #include "frame.hpp"
@@ -2203,7 +2204,7 @@ void pdf_hummus_renderer_rep::recurse (ObjectsContext& objectsContext, list<outl
       // write current outline item dictionary
       string dict;
       dict << "<<\r\n"
-           << "\t/Title (" << prepare_text((oitem).x1) << ")\r\n"
+           << "\t/Title " << utf8_to_pdf_hex_string((oitem).x1) << "\r\n"
            << "\t/Parent " << as_string(parentId) << " 0 R \r\n";
       if (prevId != 0) dict << "\t/Prev " << as_string(prevId) << " 0 R \r\n";
       if (nextId  != 0)  dict << "\t/Next " << as_string(nextId) << " 0 R \r\n";

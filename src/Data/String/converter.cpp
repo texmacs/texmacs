@@ -905,3 +905,8 @@ utf8_to_hex_string (string s) {
   }
   return result;
 }
+
+string
+utf8_to_pdf_hex_string (string s) {
+  return "<FEFF" * utf8_to_hex_string (cork_to_utf8 (s)) * ">";
+}
