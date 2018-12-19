@@ -53,10 +53,10 @@
   width height
 
   ;; Algorithms
-  AND BlankLine Ensure ENSURE FALSE GLOBALS NOT OR PRINT Require REQUIRE RETURN
-  State STATE TO KwTo TRUE XOR Else ENDBODY EndFor ENDFOR EndFunction EndIf
-  ENDIF ENDINPUTS EndLoop ENDLOOP ENDOUTPUTS EndProcedure ENDWHILE EndWhile
-  Loop)
+  AND BlankLine Ensure ENSURE FALSE GLOBALS NOT OR PRINT Require REQUIRE
+  Repeat RETURN State STATE TO KwTo TRUE XOR Else ENDBODY EndFor ENDFOR
+  EndFunction EndIf ENDIF ENDINPUTS EndLoop ENDLOOP ENDOUTPUTS
+  EndProcedure ENDWHILE EndWhile Loop)
 
 (logic-group latex-command-1%
   part* chapter* section* subsection* subsubsection* paragraph* subparagraph*
@@ -82,7 +82,7 @@
   enlargethispage
   newlength newdimen newskip
   Comment COMMENT For ForAll If Input KwData KwResult KwRet lnl nllabel
-  lElse uElse Output Repeat Until UNTIL While
+  lElse uElse Output Until UNTIL While
   etalchar MR listpart)
 
 (logic-group latex-command-1% ;; . needs a special treatment

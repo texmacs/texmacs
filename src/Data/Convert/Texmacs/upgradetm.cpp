@@ -532,8 +532,12 @@ static bool
 matching (tree open, tree close) {
   if (is_func (open, SET, 2))
     return is_func (close, RESET, 1) && (open[0] == close[0]);
-  if (is_func (open, BEGIN))
-    return is_func (close, END, 1) && (open[0] == close[0]);
+  if (is_func (open, BEGIN)) {
+    if (is_func (close, END, 1))
+      return open[0] == close[0];
+    if (is_func (close, END, 2))
+      return open[0] == "algo-repeat" && open[0] == close[0];
+  }
   return false;
 }
 
@@ -551,10 +555,11 @@ with_replace (tree var, tree val, tree body) {
 }
 
 static tree
-expand_replace (tree begin, tree body) {
-  int i, k= N(begin);
-  tree expand (EXPAND, k+1);
+expand_replace (tree begin, tree end, tree body) {
+  int i, j, k= N(begin), l= N(end);
+  tree expand (EXPAND, k + l);
   for (i=0; i<k; i++) expand[i]= begin[i];
+  for (j=1; j<l; i++, j++) expand[i]= end[j];
   expand[i]= body;
   return expand;
 }
@@ -569,6 +574,8 @@ concat_search (tree t, int& i, tree open= "") {
     if (set_reset && is_func (t[i], RESET, 1)) return;
     if (begin_end && is_func (t[i], BEGIN)) return;
     if (begin_end && is_func (t[i], END, 1)) return;
+    if (begin_end && is_func (t[i], END, 2) &&
+        t[i][0] == "algo-repeat") return;
     i++;
   }
 }
@@ -582,7 +589,7 @@ concat_replace (tree t, int i1, int i2) {
   else if (N(v)==1) v= v[0];
   if (is_func (t[i1], SET))
     return with_replace (t[i1][0], t[i1][1], v);
-  else return expand_replace (t[i1], v);
+  else return expand_replace (t[i1], t[i2], v);
 }
 
 static tree
@@ -618,6 +625,8 @@ document_search (tree t, int& i, int& j, tree open= "") {
       if (set_reset && is_func (t[i][j], RESET, 1)) return;
       if (begin_end && is_func (t[i][j], BEGIN)) return;
       if (begin_end && is_func (t[i][j], END, 1)) return;
+      if (begin_end && is_func (t[i][j], END, 2) &&
+          t[i][j][0] == "algo-repeat") return;
       j++;
     }
     i++;
@@ -674,7 +683,10 @@ document_replace (tree doc_t, int doc_1, int con_1, int doc_2, int con_2) {
     return with_replace (doc_t[doc_1][con_1][0],
 			 doc_t[doc_1][con_1][1],
 			 doc_b);
-  else return expand_replace (doc_t[doc_1][con_1], doc_b);
+  else
+    return expand_replace (doc_t[doc_1][con_1],
+                           doc_t[doc_2][con_2],
+                           doc_b);
 }
 
 /******************************************************************************
