@@ -29,10 +29,18 @@ TEST (string, equality) {
   EXPECT_EQ (string("abc") == string(), false);
   EXPECT_EQ (string("abc") != string("abc"), false);
   EXPECT_EQ (string("abc") != string(), true);
+
+  EXPECT_EQ (string() == string(), true);
 }
 
-TEST (string, ltr) {
+TEST (string, compare) {
+  ASSERT_TRUE (string("ab") < string("b"));
+  ASSERT_TRUE (string() < string("0"));
 
+  ASSERT_TRUE (string("a") <= string("a"));
+  ASSERT_TRUE (string("ab") <= string("b"));
+  ASSERT_TRUE (string() <= string());
+  ASSERT_TRUE (string() <= string("0"));
 }
 
 TEST (string, slice) {
@@ -46,7 +54,7 @@ TEST (string, slice) {
   ASSERT_TRUE (string("abcde")(-3, -2) == string());
 }
 
-TEST (string, append) {
+TEST (string, concat) {
   ASSERT_TRUE (string("abc") * "de" == string("abcde"));
   ASSERT_TRUE (string("abc") * string("de") == string("abcde"));
   ASSERT_TRUE ("abc" * string("de") == string("abcde"));
@@ -55,7 +63,13 @@ TEST (string, append) {
 /******************************************************************************
 * Modifications
 ******************************************************************************/
-
+TEST (string, append) {
+  auto str = string();
+  str << 'x';
+  ASSERT_TRUE (str == string("x"));
+  str << string("yz");
+  ASSERT_TRUE (str == string("xyz"));
+}
 
 /******************************************************************************
 * Conversions
