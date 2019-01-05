@@ -58,8 +58,6 @@ bool     operator < (string a, string b);
 bool     operator <= (string a, string b);
 int      hash (string s);
 
-string   to_lower  (string s);
-string   to_upper  (string s);
 bool     as_bool   (string s);
 int      as_int    (string s);
 long int as_long_int (string s);

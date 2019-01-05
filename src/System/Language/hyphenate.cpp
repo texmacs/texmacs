@@ -156,7 +156,7 @@ get_hyphens (string s,
     return penalty;
   }
   else {
-    s= "." * to_lower (s) * ".";
+    s= "." * locase_all (s) * ".";
     // cout << s << "\n";
     int i, j, k, l, m, len;
     array<int> T (str_length (s, utf8)+1);

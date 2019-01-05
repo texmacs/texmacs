@@ -238,7 +238,7 @@ search_concat (tree t, tree what, int pos, int i,
 
 void
 search_string (range_set& sel, string s, tree what, path p) {
-  string source = (case_insensitive_match_flag)? to_lower(s) : s;
+  string source= (case_insensitive_match_flag)? locase_all (s): s;
 
   if (is_atomic (what)) {
     string w= what->label;
