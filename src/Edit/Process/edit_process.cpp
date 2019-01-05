@@ -247,7 +247,7 @@ insert_recursively (array<string>& a, string s, hashmap<string,tree>& h) {
 }
 
 static void
-make_entry (tree& D, tree t) {
+make_entry (tree& D, tree t, hashmap<string,tree> refs) {
   // cout << "Make entry " << t << "\n";
   int i, j, n= N(t);
   for (i=0; i<n; i++)
@@ -265,22 +265,43 @@ make_entry (tree& D, tree t) {
       for (j=i+1; j<n; j++)
 	if (is_func (t[j], TUPLE, 2) && is_tuple (t[j][1], "range", 2))
 	  if ((t[i][0] == t[j][0]) && (t[i][1][1] == t[j][1][1])) {
-	    t[i][1]= tree (CONCAT, t[i][1][2], "--", t[j][1][2]);
+	    t[i][1]= tree (CONCAT, t[i][1][2], "\25", t[j][1][2]);
 	    t[j]= "";
 	    flag= false;
 	    break;
 	  }
-      if (flag) t[i][1]= tree (CONCAT, t[i][1][2], "--?");
+      if (flag) t[i][1]= tree (CONCAT, t[i][1][2], "\25?");
     }
 
   hashmap<tree,tree> h ("");
+  hashmap<tree,string> last ("");
   for (i=0; i<n; i++)
     if (is_func (t[i], TUPLE, 2)) {
       tree l= t[i][0], r= t[i][1];
+      string prev= "", next= "";
+      if (is_func (r, PAGEREF, 1) &&
+          is_atomic (r[0]) &&
+          refs->contains (r[0]->label) &&
+          is_func (refs[r[0]->label], TUPLE, 2) &&
+          is_atomic (refs[r[0]->label][1])) {
+        if (last->contains (l)) prev= last[l];
+        next= refs[r[0]->label][1]->label;
+        last (l)= next;
+      }
       if (!h->contains (l)) h (l)= r;
       else {
 	tree rr= h[l];
 	if (rr == "") rr= r;
+        else if (prev != "" && next == prev);
+        else if (is_int (prev) && is_int (next) &&
+                 as_int (next) == as_int (prev) + 1) {
+	  if (!is_concat (rr))
+            rr= tree (CONCAT, rr, "\25", r);
+          else if (is_concat (rr) && N(rr) >= 2 && rr[N(rr)-2] == "\25")
+            rr[N(rr)-1]= r;
+          else
+            rr << "\25" << r;
+        }
 	else if (r != "") {
 	  if (!is_concat (rr)) rr= tree (CONCAT, rr);
 	  rr << ", " << r;
@@ -309,7 +330,11 @@ edit_process_rep::generate_index (string idx) {
   if (DEBUG_AUTO)
     debug_automatic << "Generating index [" << idx << "]\n";
   tree I= copy (buf->data->aux[idx]);
-  if (buf->prj != NULL) I= copy (buf->prj->data->aux[idx]);
+  hashmap<string,tree> R= buf->data->ref;
+  if (buf->prj != NULL) {
+    I= copy (buf->prj->data->aux[idx]);
+    R= buf->prj->data->ref;
+  }
   if (N(I)>0) {
     followup= hashmap<string,tree> (TUPLE);
     int i, n= N(I);
@@ -336,7 +361,7 @@ edit_process_rep::generate_index (string idx) {
 
     tree D (DOCUMENT);
     for (i=0; i<n; i++)
-      make_entry (D, h (entry[i]));
+      make_entry (D, h (entry[i]), R);
     insert_tree (remove_labels (D));
   }
 }
