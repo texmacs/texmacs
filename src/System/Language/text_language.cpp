@@ -659,6 +659,39 @@ pretty_time (int t) {
 * Main interface
 ******************************************************************************/
 
+array<string>
+get_supported_languages () {
+  array<string> r;
+  r << string ("american")
+    << string ("british")
+    << string ("bulgarian")
+    << string ("chinese")
+    << string ("croatian")
+    << string ("czech")
+    << string ("danish")
+    << string ("dutch")
+    << string ("english")
+    << string ("esperanto")
+    << string ("finnish")
+    << string ("french")
+    << string ("german")
+    << string ("greek")
+    << string ("hungarian")
+    << string ("italian")
+    << string ("japanese")
+    << string ("korean")
+    << string ("polish")
+    << string ("portuguese")
+    << string ("romanian")
+    << string ("russian")
+    << string ("slovene")
+    << string ("spanish")
+    << string ("swedish")
+    << string ("taiwanese")
+    << string ("ukrainian");
+  return r;
+}
+
 typedef const char* const_char_ptr;
 
 static language

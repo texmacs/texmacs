@@ -141,6 +141,7 @@ struct language_rep: rep<language> {
   virtual string get_color (tree t, int start, int end);
 };
 
+array<string> get_supported_languages ();
 language text_language (string s);
 language math_language (string s);
 language prog_language (string s);
