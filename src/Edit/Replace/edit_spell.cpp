@@ -48,6 +48,7 @@ edit_replace_rep::spell_start () {
   string message= ispell_start (search_lan);
   if (starts (message, "Error: ")) {
     spell_end ();
+    std_error << message (7, N(message)) << LF;
     set_message (message, "correct text");
     return;
   }
