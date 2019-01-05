@@ -811,7 +811,8 @@ qt_gui_rep::update () {
   time_t delay = delayed_commands.lapse - texmacs_time();
   if (needing_update) delay = 0;
   else                delay = max (0, min (std_delay, delay));
-  
+  if (postpone_treatment) delay= 100; // NOTE: force occasional display
+ 
   updatetimer->start (delay);
   updating = false;
   
