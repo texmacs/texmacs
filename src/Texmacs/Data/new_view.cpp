@@ -62,7 +62,7 @@ decode_url (string s) {
   if (s (0, i) == "here") return url (s (i+1, N(s)));
   if (s (0, i) == "default") return url (s (i, N(s)));
 #endif
-  return url_root (s (0, i)) * url (s (i+1, N(s)));
+  return url_root (s (0, i)) * url_general (s (i+1, N(s)), URL_CLEAN_UNIX);
 }
 
 url
@@ -264,7 +264,7 @@ get_new_view (url name) {
   if (exists (my_init_buffer_file)) exec_file (my_init_buffer_file);
   set_current_view (temp);
 
-  //cout << "View created\n";
+  //cout << "View created " << abstract_view (vw) << "\n";
   return abstract_view (vw);
 }
 
@@ -403,7 +403,7 @@ switch_to_buffer (url name) {
   tm_window nwin= vw->win;
   if (nwin != NULL)
     nwin->set_window_zoom_factor (nwin->get_window_zoom_factor ());
-  //cout << "Switched to buffer " << new_vw->buf->buf->name << "\n";
+  //cout << "Switched to buffer " << vw->buf->buf->name << "\n";
 }
 
 void

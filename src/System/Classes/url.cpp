@@ -270,8 +270,10 @@ url_general (string name, int type= URL_SYSTEM) {
   if (heuristic_is_path (name, type)) return url_path (name, type);
   if (heuristic_is_default (name, type)) return url_default (name, type);
   if (heuristic_is_mingw_default (name, type)) return url_mingw_default (name, type);
-  if (heuristic_is_http (name)) return url_http (name);
-  if (heuristic_is_ftp (name)) return url_ftp (name);
+  if (type != URL_CLEAN_UNIX) {
+    if (heuristic_is_http (name)) return url_http (name);
+    if (heuristic_is_ftp (name)) return url_ftp (name);
+  }
   return url_get_name (name, type);
 }
 

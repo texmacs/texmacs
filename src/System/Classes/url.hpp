@@ -16,6 +16,7 @@
 #define URL_SYSTEM 0
 #define URL_UNIX 1
 #define URL_STANDARD 2
+#define URL_CLEAN_UNIX 3
 
 /******************************************************************************
 * The url data type
