@@ -81,6 +81,7 @@ get_from_web (url name) {
   url tmp= url_temp ();
   string tmp_s= escape_sh (concretize (tmp));
   string cmd= "wget --header='User-Agent: TeXmacs-" TEXMACS_VERSION "' -q";
+  cmd << " --no-check-certificate --tries=1";
   cmd << " -O " << tmp_s << " " << escape_sh (web_encode (as_string (name)));
   // cout << cmd << "\n";
   system (cmd);

@@ -57,6 +57,7 @@ preprocess_style (tree st, url name) {
   if (is_rooted_tmfs (name)) return st;
   if (is_atomic (st)) st= tree (TUPLE, st);
   if (!is_tuple (st)) return st;
+  if (is_rooted_web (name)) return st;
   tree r (TUPLE, N(st));
   for (int i=0; i<N(st); i++) {
     r[i]= st[i];

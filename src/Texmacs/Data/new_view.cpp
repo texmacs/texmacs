@@ -412,7 +412,7 @@ focus_on_editor (editor ed) {
   for (int i=0; i<N(bufs); i++) {
     array<url> vs= buffer_to_views (bufs[i]);
     for (int j=0; j<N(vs); j++)
-      if (view_to_editor (vs[j]) == ed) {
+      if (concrete_view (vs[j]) != NULL && view_to_editor (vs[j]) == ed) {
 	set_current_view (vs[j]);
 	return;
       }
