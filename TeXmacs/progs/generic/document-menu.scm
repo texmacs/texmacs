@@ -306,16 +306,6 @@
   (init-default "math-font")
   (init-default "font-family"))
 
-(tm-define (test-init-font? val . opts)
-  (== (get-init "font") val))
-
-(tm-define (init-font val . opts)
-  (:check-mark "*" test-init-font?)
-  (init-env "font" val)
-  (when (nnull? opts)
-    (init-env "math-font" (car opts)))
-  (init-env "font-family" "rm"))
-
 (menu-bind document-short-chinese-font-menu
   (if (font-exists-in-tt? "AppleGothic")
       ("Apple Gothic" (init-font "apple-gothic")))

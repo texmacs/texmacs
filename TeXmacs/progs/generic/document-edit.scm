@@ -88,10 +88,38 @@
       (when (!= new (get-init-env var))
         (set-init-env var new)))))
 
-(tm-define (init-multi l)
+(define (init-multi* l)
   (when (and (nnull? l) (nnull? (cdr l)))
     (init-env (car l) (cadr l))
-    (init-multi (cddr l))))
+    (init-multi* (cddr l))))
+
+(tm-define (init-multi l)
+  (if (and (list-2? l) (== (car l) "font"))
+      (init-font (cadr l))
+      (init-multi* l)))
+
+(tm-define (test-init-font? val . opts)
+  (== (get-init "font") val))
+
+(tm-define (init-font val . opts)
+  (:check-mark "*" test-init-font?)
+  (cond ((or (== val "TeXmacs Computer Modern") (== val "roman"))
+         (init-font "roman" "roman"))
+        ((string-starts? val "Stix")
+         (init-font "stix" "math-stix"))
+        ((string-starts? val "TeX Gyre Bonum")
+         (init-font "bonum" "math-bonum"))
+        ((string-starts? val "TeX Gyre Pagella")
+         (init-font "pagella" "math-pagella"))
+        ((string-starts? val "TeX Gyre Schola")
+         (init-font "schola" "math-schola"))
+        ((string-starts? val "TeX Gyre Termes")
+         (init-font "termes" "math-termes"))
+        (else
+          (init-env "font" val)
+          (when (nnull? opts)
+            (init-env "math-font" (car opts)))
+          (init-env "font-family" "rm"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initial environment management in specific buffers
