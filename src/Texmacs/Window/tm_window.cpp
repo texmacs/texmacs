@@ -343,7 +343,9 @@ tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
   //cout << "Compute " << menu << "\n";
   object umenu= eval ("'" * menu);
   w= make_menu_widget (umenu);
-  if (menu_caching) menu_cache (xmenu)= w;
+  if (menu_caching)
+    if (as_bool (call ("cache-menu?", xmenu)))
+      menu_cache (xmenu)= w;
   return true;
 }
 
