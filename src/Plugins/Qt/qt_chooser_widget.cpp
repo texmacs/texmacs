@@ -280,11 +280,9 @@ qt_chooser_widget_rep::perform_dialog () {
         int ww = get_current_editor()->get_page_width (false) / PIXEL;
         int  w = pic.width ();
         int  h = pic.height ();
-        string unit= "px";
-        if (w == 0) {
+        string unit= "pt";
+        if (w == 0)
           image_size (url_system (imname), w, h);
-          unit= "pt";
-        }
         if (w >= ww) {
           h= (int) ((((double) h) / ((double) w)) * ((double) ww));
           w= ww;
