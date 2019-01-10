@@ -95,6 +95,9 @@
   (with l (get-style-list)
     (and (nnull? l) (== (car l) style))))
 
+(tm-define (notify-new-style style)
+  (noop))
+
 (tm-define (set-main-style style)
   (:argument style "Main document style")
   (:default  style "generic")
@@ -102,7 +105,10 @@
   (:balloon style-get-documentation)
   (let* ((old (get-style-list))
          (new (if (null? old) (list style) (cons style (cdr old)))))
-    (set-style-list new)))
+    (set-style-list new))
+  (delayed
+    (:idle 1)
+    (notify-new-style style)))
 
 (tm-define (has-style-package? pack)
   (or (in? pack (get-style-list))

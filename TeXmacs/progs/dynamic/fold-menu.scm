@@ -252,11 +252,25 @@
         (begin
           (tree-assign! t `(document ,(tree-ref t 0)
                                      (screens (shown (document ,@(cdr l))))))
-          (if (!= (car p) 0)
+          (if (and p (!= (car p) 0))
               (apply tree-go-to `(,t 1 0 0 ,(- (car p) 1) ,@(cdr p)))))
         (begin
           (tree-assign! t `(document (screens (shown (document ,@l)))))
-          (apply tree-go-to `(,t 0 0 0 ,@p))))))
+          (if p (apply tree-go-to `(,t 0 0 0 ,@p)))))))
+
+(tm-define (remove-single-screens)
+  (let* ((t (buffer-tree))
+         (l (tree-children t)))
+    (when (tree-func? (cAr l) 'screens 1)
+      (when (tree-func? (tree-ref (cAr l) 0) 'shown 1)
+        (let* ((d (tree-ref (tree-ref (cAr l) 0) 0))
+               (b (tree->path t))
+               (p (cursor-inside? d)))
+          (when (tree-func? d 'document)
+            (with q (and (pair? p)
+                         (cons (+ (car p) (length (cDr l))) (cdr p)))
+              (tree-assign! t `(document ,@(cDr l) ,@(tree-children d)))
+              (if q (delayed (:idle 1) (go-to-path (append b q)))))))))))
 
 (tm-define (document-propose-screens?)
   (and (style-has? "beamer-style")
@@ -264,13 +278,19 @@
 
 (tm-menu (focus-document-extra-menu t)
   (:require (document-propose-screens?))
-  ("Screens" (make-switch 'screens)))
+  ("Screens" (make-screens)))
 
 (tm-menu (focus-document-extra-icons t)
   (:require (document-propose-screens?))
   (minibar
     ((balloon "Screens" "Make a multi-slide presentation")
      (make-screens))))
+
+(tm-define (notify-new-style style)
+  (former style)
+  (if (style-has? "beamer-style")
+      (if (not (screens-buffer?)) (make-screens))
+      (if (screens-buffer?) (remove-single-screens))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Slide titles
