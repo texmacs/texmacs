@@ -373,6 +373,8 @@
 
   <assign|extend|<macro|body|left|bottom|right|top|<style-with|src-compact|none|<resize|<arg|body>|<if|<equal|<arg|left>|>|1l|<minimum|1l|<arg|left>>>|<if|<equal|<arg|bottom>|>|1b|<minimum|1b|<arg|bottom>>>|<if|<equal|<arg|right>|>|1r|<maximum|1r|<arg|right>>>|<if|<equal|<arg|top>|>|1t|<maximum|1t|<arg|top>>>>>>>
 
+  <drd-props|extend|arity|5|accessible|0|length|1|length|2|length|3|length|4>
+
   <assign|extend-right|<macro|body|right|<resize|<arg|body>|||<maximum|1r|<arg|right>>|>>>
 
   <assign|swell|<macro|body|<resize|<arg|body>||<minimum|1b|1fnbot>||<maximum|1t|1fntop>>>>
