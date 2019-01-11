@@ -277,11 +277,15 @@
     </surround>
   </macro>>
 
-  <assign|indivisible|<\macro|body>
+  <assign|vgroup|<\macro|body>
     <\surround|<no-break-start>|<no-break-end><right-flush>>
-      <arg|body>
+      <\with|par-min-penalty|100000000>
+        <arg|body>
+      </with>
     </surround>
   </macro>>
+
+  <assign|indivisible|<value|vgroup>>
 
   \;
 

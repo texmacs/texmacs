@@ -109,6 +109,7 @@ initialize_default_env () {
   env (PAR_MODE)         = "justify";   // outline method
   env (PAR_FLEXIBILITY)  = "1000";      // threshold for switching to ragged
   env (PAR_HYPHEN)       = "professional"; // quality of hyphenation
+  env (PAR_MIN_PENALTY)  = "0";         // minimal page break penalty
   env (PAR_SPACING)      = "plain";     // spacing mode (for CJK)
   env (PAR_KERNING_REDUCE) = "auto";    // reduced kerning around characters
   env (PAR_KERNING_STRETCH)= "auto";    // extra kerning around characters

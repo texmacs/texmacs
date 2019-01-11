@@ -43,6 +43,7 @@ protected:
   string        mode;        // justified, left, center or right
   double        flexibility; // threshold for switching to ragged mode
   string        hyphen;      // hyphenation quality
+  int           min_pen;     // minimal page break penalty
   double        kreduce;     // maximal kerning reduction
   double        kstretch;    // maximal kerning stretching
   int           protrusion;  // marginal kerning mode

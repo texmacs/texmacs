@@ -88,6 +88,7 @@ extern string PROG_SESSION;
 extern string PAR_MODE;
 extern string PAR_FLEXIBILITY;
 extern string PAR_HYPHEN;
+extern string PAR_MIN_PENALTY;
 extern string PAR_SPACING;
 extern string PAR_KERNING_REDUCE;
 extern string PAR_KERNING_STRETCH;

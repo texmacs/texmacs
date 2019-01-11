@@ -210,9 +210,6 @@ concater_rep::typeset (tree t, path ip) {
   case HGROUP:
     typeset_hgroup (t, ip);
     break;
-  case VGROUP:
-    typeset_vgroup (t, ip);
-    break;
   case HIDDEN:
     //(void) env->exec (t);
     if (N(t) != 1) typeset_error (t, ip);

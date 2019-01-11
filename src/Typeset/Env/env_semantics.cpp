@@ -72,6 +72,7 @@ initialize_default_var_type () {
   var_type (PAR_MODE)           = Env_Paragraph;
   var_type (PAR_FLEXIBILITY)    = Env_Paragraph;
   var_type (PAR_HYPHEN)         = Env_Paragraph;
+  var_type (PAR_MIN_PENALTY)    = Env_Paragraph;
   var_type (PAR_SPACING)        = Env_Paragraph;
   var_type (PAR_KERNING_REDUCE) = Env_Paragraph;
   var_type (PAR_KERNING_STRETCH)= Env_Paragraph;

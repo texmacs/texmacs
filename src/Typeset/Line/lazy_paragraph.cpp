@@ -44,6 +44,7 @@ lazy_paragraph_rep::lazy_paragraph_rep (edit_env env2, path ip):
   mode       = as_string (env->read (PAR_MODE));
   flexibility= as_double (env->read (PAR_FLEXIBILITY));
   hyphen     = as_string (env->read (PAR_HYPHEN));
+  min_pen    = as_double (env->read (PAR_MIN_PENALTY));
   left       = env->get_length (PAR_LEFT);
   right      = env->get_length (PAR_RIGHT);
   bot        = 0;
@@ -157,8 +158,8 @@ lazy_paragraph_rep::line_print (line_item item) {
       sss->no_break_after ();
     else if (item->t == NO_BREAK_START)
       sss->no_break_start ();
-    else if (item->t == NO_BREAK_END)
-      sss->no_break_end ();
+    else if (item->t == NO_BREAK_END) {
+      sss->no_break_end (); min_pen= 0; }
     else if (is_tuple (item->t, "env_page") ||
 	     (item->t == PAGE_BREAK) ||
 	     (item->t == NEW_PAGE) ||
@@ -650,7 +651,7 @@ lazy_paragraph_rep::line_end (space spc, int penalty) {
   box b= phrase_box (sss->ip, items, items_sp);
   sss->print (b, fl, nr_cols);
   sss->print (spc);
-  sss->penalty (penalty);
+  sss->penalty (max (penalty, min_pen));
   sss->flush ();
 }
 

@@ -113,7 +113,6 @@
 (menu-bind format-special-menu
   (when (not (selection-active-non-small?))
     ("Group" (make-rigid))
-    ("Indivisible" (make 'indivisible))
     ("Phantom" (make 'phantom))
     ("Superpose" (make 'superpose))
     ("Repeat object" (make 'repeat))
@@ -353,7 +352,11 @@
   (group "Line break")
   (link line-break-menu)
   ---
-  (link page-break-menu))
+  (link page-break-menu)
+  ---
+  (group "Group")
+  ("Horizontal" (make 'hgroup))
+  ("Vertical" (make 'vgroup)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The main Format menu

@@ -215,13 +215,6 @@ concater_rep::typeset_hgroup (tree t, path ip) {
 }
 
 void
-concater_rep::typeset_vgroup (tree t, path ip) {
-  if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); return; }
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
-  print (move_box (ip, b, 0, 0, true));
-}
-
-void
 concater_rep::print_semantic (box b, tree sem) {
   if (is_atomic (sem) && tm_string_length (sem->label) == 1) {
     array<space> spc_tab=
