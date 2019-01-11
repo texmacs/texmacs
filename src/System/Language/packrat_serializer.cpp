@@ -106,6 +106,8 @@ packrat_parser_rep::serialize (tree t, path p) {
         serialize (t[i], p * i);
       break;
     case RIGID:
+    case HGROUP:
+    case VGROUP:
       serialize (t[0], p * 0);
       break;
     case HIDDEN:

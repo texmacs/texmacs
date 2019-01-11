@@ -119,6 +119,8 @@ init_std_drd () {
   init (SURROUND, "surround", fixed (3) -> accessible (0));
   init (CONCAT, "concat", repeat (1, 1) -> inner_border () -> accessible (0));
   init (RIGID, "rigid", fixed (1) -> accessible (0));
+  init (HGROUP, "hgroup", options (1, 1) -> accessible (0));
+  init (VGROUP, "vgroup", options (1, 1) -> accessible (0));
   init (HIDDEN, "hidden", fixed (1) -> inner_border () -> hidden (0));
   init (FREEZE, "freeze",
 	fixed (1) -> inner_border () -> regular (0));
