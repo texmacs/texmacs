@@ -162,27 +162,205 @@
 
 ;; == Inline plots
 
+;; delete a previous temporary file (ps or eps)
+(let ((p-path) (pname))
+  (defun tm-delete-file (path)
+    (cond ((null p-path)
+           (setq p-path path))
+          ((not (string= p-path path))
+           (setq pname (probe-file p-path))
+           (if pname (delete-file pname))
+           (setq p-path path)))))
+
 ;; create an inline figure, based on raw ps code
-(defun tm_out (raw_data)
+(defun tm-out (raw_data)
  (let ((beg (string (code-char 2)))
         (end (string (code-char 5))))
    (concatenate 'string beg "ps:" raw_data end)))
 
-;; create an inline figure, based on a .ps filename
+;; create an inline figure, based on a .ps/.eps filename
 (defmfun $ps_out (filename)
+  ;; wait for the completion of the ps file
+  (let ((len1) (len2 -1))
+    (with-open-file (stream filename)
+                    (setq len1 (file-length stream)))
+    (loop while (/= len1 len2)
+          do (sleep 0.1)
+          (setq len2 len1)
+          (with-open-file (stream filename)
+                          (setq len1 (file-length stream)))))
+  ;; delete a previous temporary file
+  (tm-delete-file filename)
+  ;; create an inline figure
   (with-open-file (stream filename)
                   (let ((contents (make-string (file-length stream))))
                     (read-sequence contents stream)
                     ;; princ does not enclose the string in quotes
-                    (princ (tm_out contents))
+                    (princ (tm-out contents))
                     (princ ""))))
+
+;; a predefined interval of time
+(defvar tm-time-out 10.0)  ; 10.0 second
+
+;; make a name of a temporary file
+(defun make-tm-temp-name ()
+  (string (gensym (format nil "tm_temp_plot_~A_" (getpid)))))
+
+;; get a float value of a internal real time
+(defun get-tm-internal-real-time ()
+  (float (/ (get-internal-real-time) INTERNAL-TIME-UNITS-PER-SECOND)))
+
+;; create an inline figure with a ps file
+(defun tm-plot (fun args)
+  (block nil
+    (let ((tmp-name (concatenate 'string (make-tm-temp-name) ".ps"))
+          (d-time 0.0)
+          (s-time (get-tm-internal-real-time))
+          (p-format ($get_plot_option '$plot_format))
+          (gp-term ($get_plot_option '$gnuplot_term))
+          (gp-file ($get_plot_option '$gnuplot_out_file))
+          (a-win) (ret))
+      (if (boundp '*autoconf-windows*)
+          (setq a-win (symbol-value '*autoconf-windows*))
+        (setq a-win (symbol-value '*autoconf-win32*)))
+      (if (null gp-term)
+          (setq gp-term (append '((mlist) $gnuplot_term)
+                                (list (getf *plot-options* :GNUPLOT_TERM)))))
+      ;; set necessary options
+      ($set_plot_option (append '((mlist) $plot_format)
+                                (list (if (string= a-win "true")
+                                          '$gnuplot
+                                        '$gnuplot_pipes))))
+      ($set_plot_option '((mlist) $gnuplot_term $ps))
+      ($set_plot_option (append '((mlist) $gnuplot_out_file) (list tmp-name)))
+      ;; create a ps file
+      (setq ret (meval1 (cons '$errcatch
+                             (list (cons fun
+                                         (remove-if #'(lambda (x) ; remove unnecessary options if they exist
+                                                        (and (listp x)
+                                                             (listp (car x)) (eq 'mlist (caar x))
+                                                             (listp (cdr x)) (member (cadr x)
+                                                                                     '($plot_format
+                                                                                       $gnuplot_term
+                                                                                       $gnuplot_out_file))))
+                                                    args))))))
+      (if gp-file                       ; restore $gnuplot_out_file
+          ($set_plot_option gp-file)
+        ($remove_plot_option '$gnuplot_out_file))
+      ($set_plot_option gp-term)        ; restore $gnuplot_term
+      ($set_plot_option p-format)       ; restore $plot_format
+      ;; return if an error occurs
+      (if ($emptyp ret) (return-from nil)) 
+      ;; try to read the ps file again if it does not exist
+      (tagbody
+       start
+       (setq d-time (- (get-tm-internal-real-time) s-time))
+       (handler-bind ((file-error #'(lambda (condition)
+                                      (cond ((> d-time tm-time-out)
+                                             (format t "~A~%" condition)
+                                             (go finish))
+                                            (t
+                                             (sleep 0.1)
+                                             (go start))))))
+         (funcall '$ps_out (plot-file-path tmp-name)))
+       (return-from nil t)
+       finish))))
 
 ;; same as plot2d, but also create an inline figure
 (defmfun $tm_plot2d (&rest args)
-  #$set_plot_option([gnuplot_term, ps])$
-  #$set_plot_option([gnuplot_out_file, "tm_temp_plot.ps"])$
-  (apply '$plot2d args)
-  #$remove_plot_option(gnuplot_out_file)$
-  #$set_plot_option([gnuplot_term, default])$
-  (apply '$plot2d args)
-  (funcall '$ps_out (concatenate 'string $maxima_tempdir "/tm_temp_plot.ps")))
+  (tm-plot '$plot2d args))
+
+;; same as plot3d, but also create an inline figure
+(defmfun $tm_plot3d (&rest args)
+  (tm-plot '$plot3d args))
+
+;; same as contour_plot, but also create an inline figure
+(defmfun $tm_contour_plot (&rest args)
+  (tm-plot '$contour_plot args))
+
+;; same as implicit_plot, but also create an inline figure
+(defmfun $tm_implicit_plot (&rest args)
+  (let ((fun '$implicit_plot))
+    (if (not (functionp fun))
+        ($load "implicit_plot"))
+    (tm-plot fun args)))
+
+;; same as julia, but also create an inline figure
+(defmfun $tm_julia (&rest args)
+  (let ((fun '$julia))
+    (if (not (functionp fun))
+        ($load "dynamics"))
+    (tm-plot fun args)))
+
+;; same as mandelbrot, but also create an inline figure
+(defmfun $tm_mandelbrot (&rest args)
+  (let ((fun '$mandelbrot))
+    (if (not (functionp fun))
+        ($load "dynamics"))
+    (tm-plot fun args)))
+
+;; remove unnecessary equations ($terminal and $file_name) if they exist
+(defun get-tm-draw-args (args)
+  (remove-if #'(lambda (x)
+                 (and (listp x)
+                      (listp (car x)) (eq 'mequal (caar x))
+                      (member (cadr x)
+                              '($terminal $file_name))))
+             args))
+
+;; create an inline figure with a eps file
+(defun tm-draw (fun args)
+  (block nil
+    (let ((tmp-name (plot-file-path (make-tm-temp-name)))
+          (d-time 0.0)
+          (s-time (get-tm-internal-real-time))
+          (options nil)
+          (renderer nil)
+          (ret))
+      (if (not (boundp '*user-gr-default-options*))
+          ($load "draw"))
+      ;; save options
+      (setq options (copy-list (symbol-value '*user-gr-default-options*)))
+      ;; save renderer
+      (setq renderer (symbol-value '$draw_renderer))
+      ;; set renderer
+      (setf (symbol-value '$draw_renderer) '$gnuplot_pipes)
+      ;; set necessary options
+      (apply '$set_draw_defaults
+             (append (get-tm-draw-args options)
+                     (list '((mequal) $terminal $eps_color)
+                           (append '((mequal) $file_name) (list tmp-name)))))
+      ;; create a eps file
+      (setq ret (meval1 (cons '$errcatch (list (cons fun (get-tm-draw-args args))))))
+      ;; restore options
+      (setf (symbol-value '*user-gr-default-options*) options)
+      ;; restore renderer
+      (setf (symbol-value '$draw_renderer) renderer)
+      ;; return if an error occurs
+      (if ($emptyp ret) (return-from nil))
+      ;; try to read the eps file again if it does not exist
+      (tagbody
+       start
+       (setq d-time (- (get-tm-internal-real-time) s-time))
+       (handler-bind ((file-error #'(lambda (condition)
+                                      (cond ((> d-time tm-time-out)
+                                             (format t "~A~%" condition)
+                                             (go finish))
+                                            (t
+                                             (sleep 0.1)
+                                             (go start))))))
+         (funcall '$ps_out (concatenate 'string tmp-name ".eps")))
+       (return-from nil t)
+       finish))))
+
+;; same as draw, but also create an inline figure
+(defmfun $tm_draw (&rest args)
+  (tm-draw '$draw args))
+
+;; same as draw2d, but also create an inline figure
+(defmfun $tm_draw2d (&rest args)
+  (tm-draw '$draw2d args))
+
+;; same as draw3d, but also create an inline figure
+(defmfun $tm_draw3d (&rest args)
+  (tm-draw '$draw3d args))
