@@ -58,7 +58,9 @@ edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
       is_func (t, LOCUS) ||
       is_func (t, CANVAS) || is_func (t, ORNAMENT))
     return is_multi_paragraph_macro (t [n-1]);
-  if (is_extension (t) && (!is_compound (t, "footnote"))) {
+  if (is_extension (t) &&
+      !is_compound (t, "footnote") &&
+      !is_compound (t, "footnote-anchor")) {
     int i;
     for (i=1; i<n; i++)
       if (is_multi_paragraph_macro (t[i]))
@@ -122,7 +124,8 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
       return;
     }
     if ((block_macro && (!table_macro)) ||
-	(l == make_tree_label ("footnote")))
+	(l == make_tree_label ("footnote")) ||
+        (l == make_tree_label ("footnote-anchor")))
       {
 	t[0]= tree (DOCUMENT, "");
 	p   = path (0, 0, 0);

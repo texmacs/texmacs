@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -119,6 +119,10 @@
   <assign|render-footnote|<macro|nr|body|<render-footnote*|<arg|nr>|<arg|nr>|<arg|body>>>>
 
   <assign|footnote|<macro|body|<style-with|src-compact|none|<next-footnote><render-footnote|<the-footnote>|<arg|body>><space|0spc><label|<merge|footnr-|<the-footnote>>><rsup|<with|font-shape|right|<reference|<merge|footnote-|<the-footnote>>>>>>>>
+
+  <assign|footnote-anchor|<macro|body|var|<flag|Footnote|brown><next-footnote><render-footnote|<the-footnote>|<arg|body>><assign|<merge|fnote-|<arg|var>>|<the-footnote>>>>
+
+  <assign|footnote-show|<macro|var|<space|0spc><label|<merge|footnr-|<value|<merge|fnote-|<arg|var>>>>><rsup|<with|font-shape|right|<reference|<merge|footnote-|<value|<merge|fnote-|<arg|var>>>>>>>>>
 
   <\active*>
     <\src-comment>
