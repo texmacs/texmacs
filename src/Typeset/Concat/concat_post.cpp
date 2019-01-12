@@ -122,6 +122,13 @@ concater_rep::glue_right_markers (box b, int ref, int arg, bool flag) {
 
 void
 concater_rep::glue (box b, int ref, int arg) {
+  if (a[ref]->op_type == OP_BIG && arg >= ref && !a[ref]->limits)
+    if (env->fn->math_type != MATH_TYPE_NORMAL)
+      if (a[ref]->spc->def > 0) {
+        space spc= env->fn->spc;
+        a[ref]->spc += space (spc->min/3, spc->def/3, spc->def/3);
+      }
+  
   space spc = max (a[ref]->spc, a[arg]->spc);
 
   a[arg]  = line_item (OBSOLETE_ITEM, OP_SKIP, a[arg]->b, a[arg]->penalty);
@@ -133,6 +140,13 @@ concater_rep::glue (box b, int ref, int arg) {
 
 void
 concater_rep::glue (box b, int ref, int arg1, int arg2) {
+  if (a[ref]->op_type == OP_BIG && !a[ref]->limits)
+    if (env->fn->math_type != MATH_TYPE_NORMAL)
+      if (a[ref]->spc->def > 0) {
+        space spc= env->fn->spc;
+        a[ref]->spc += space (spc->min/3, spc->def/3, spc->def/3);
+      }
+
   space spc = max (a[ref]->spc, max (a[arg1]->spc, a[arg2]->spc));
   int   pen = min (a[ref]->penalty, min (a[arg1]->penalty, a[arg2]->penalty));
 
