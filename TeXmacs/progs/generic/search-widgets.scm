@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : generic-widgets.scm
+;; MODULE      : search-widgets.scm
 ;; DESCRIPTION : widgets for general purpose editing
 ;; COPYRIGHT   : (C) 2013  Joris van der Hoeven
 ;;
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (generic generic-widgets)
+(texmacs-module (generic search-widgets)
   (:use (generic generic-edit)
         (utils library cursor)))
 

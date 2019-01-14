@@ -181,7 +181,7 @@
              get-init-page-rendering init-page-rendering)
 (lazy-define (generic generic-edit) notify-activated notify-disactivated)
 (lazy-define (generic generic-doc) focus-help)
-(lazy-define (generic generic-widgets) search-toolbar replace-toolbar
+(lazy-define (generic search-widgets) search-toolbar replace-toolbar
              open-search toolbar-search-start interactive-search
              open-replace toolbar-replace-start interactive-replace
              search-next-match)
