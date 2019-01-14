@@ -548,6 +548,9 @@ if (TEXMACS_GUI MATCHES "Qt.*")
       ${Qt5Widgets_INCLUDE_DIRS}
       ${Qt5PrintSupport_INCLUDE_DIRS}
     )
+    if (Qt5_POSITION_INDEPENDENT_CODE)
+      set (CMAKE_POSITION_INDEPENDENT_CODE ON)
+    endif (Qt5_POSITION_INDEPENDENT_CODE)
   endif (TEXMACS_GUI STREQUAL "Qt4")
 
   add_definitions (${QT_DEFINITIONS})
