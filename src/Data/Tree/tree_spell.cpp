@@ -81,32 +81,33 @@ spell_string (tree lan, range_set& sel, string s, path p) {
 }
 
 void
-spell (tree lan, range_set& sel, tree t, path p) {
+spell (tree mode, tree lan, range_set& sel, tree t, path p) {
   if (N(sel) > spell_max_hits) return;
-  if (is_atomic (t))
-    spell_string (lan, sel, t->label, p);
+  if (is_atomic (t)) {
+    if (mode == "text") spell_string (lan, sel, t->label, p); }
   else
     for (int i=0; i<N(t); i++)
       if (is_accessible_for_spell (t, i)) {
-        tree slan= the_drd->get_env_child (t, i, LANGUAGE, lan);
-        spell (slan, sel, t[i], p * i);
+        tree smode= the_drd->get_env_child (t, i, MODE, mode);
+        tree slan = the_drd->get_env_child (t, i, LANGUAGE, lan);
+        spell (smode, slan, sel, t[i], p * i);
       }
 }
 
 void
-spell (tree lan, range_set& sel, tree t, path p, path pos) {
-  if (is_atomic (t))
-    spell (lan, sel, t, p);
+spell (tree mode, tree lan, range_set& sel, tree t, path p, path pos) {
+  if (is_atomic (t)) spell (mode, lan, sel, t, p);
   else {
-    if (is_nil (pos)) spell (lan, sel, t, p);
+    if (is_nil (pos)) spell (mode, lan, sel, t, p);
     else {
       int hits= 0;
       array<range_set> sub (N(t));
       if (pos->item >= 0 && pos->item < N(t))
         if (is_accessible_for_spell (t, pos->item)) {
           int i= pos->item;
-          tree slan= the_drd->get_env_child (t, i, LANGUAGE, lan);
-          spell (slan, sub[i], t[i], p * i);
+          tree smode= the_drd->get_env_child (t, i, MODE, mode);
+          tree slan = the_drd->get_env_child (t, i, LANGUAGE, lan);
+          spell (smode, slan, sub[i], t[i], p * i);
           hits += N(sub[i]);
         }
       for (int d=1; d<N(t); d++)
@@ -115,8 +116,9 @@ spell (tree lan, range_set& sel, tree t, path p, path pos) {
           int i= (e==0? pos->item + d: pos->item - d);
           if (i >= 0 && i < N(t))
             if (is_accessible_for_spell (t, i)) {
-              tree slan= the_drd->get_env_child (t, i, LANGUAGE, lan);
-              spell (slan, sub[i], t[i], p * i);
+              tree smode= the_drd->get_env_child (t, i, MODE, mode);
+              tree slan = the_drd->get_env_child (t, i, LANGUAGE, lan);
+              spell (smode, slan, sub[i], t[i], p * i);
               hits += N(sub[i]);
             }
         }
@@ -134,7 +136,7 @@ spell (string lan, tree t, path p, int limit) {
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
-  spell (lan, sel, t, p);
+  spell ("text", lan, sel, t, p);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;
@@ -145,7 +147,7 @@ spell (string lan, tree t, path p, path pos, int limit) {
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
-  spell (lan, sel, t, p, pos);
+  spell ("text", lan, sel, t, p, pos);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;

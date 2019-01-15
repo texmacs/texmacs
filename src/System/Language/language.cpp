@@ -444,6 +444,8 @@ spell_check (string lan, string s) {
 bool
 check_word (string lan, string s) {
   string key= lan * ":" * s;
+  string l= locase_all (s);
+  if (s != l && s != upcase_first (l)) key= lan * ":" * l;
   int val= spell_cache[key];
   if (val == 0) {
     tree t= spell_check (lan, s);

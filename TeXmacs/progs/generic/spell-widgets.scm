@@ -256,15 +256,15 @@
 (tm-define (spell-statistics)
   (delayed
     (:idle 100)
-    (cond ((> spell-inserted 0)
-           (set-message "Personal dictionary modified" "spell check"))
-          ((== spell-corrected 1)
-           (set-message "One error corrected" "spell check"))
-          ((> spell-corrected 1)
-           (with nr (number->string spell-corrected)
-             (set-message (string-append nr " errors corrected")
-                          "spell check")))
-          (else (set-message "No errors corrected" "spell check")))))
+    (with r "spell check"
+      (cond ((> spell-inserted 0)
+             (set-message "Your personal dictionary has been modified" r))
+            ((== spell-corrected 1)
+             (set-message "One error has been corrected" r))
+            ((> spell-corrected 1)
+             (with n (number->string spell-corrected)
+               (set-message (string-append n " errors have been corrected") r)))
+            (else (set-message "No errors have been corrected" r))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customized keyboard shortcuts in spell mode
