@@ -148,6 +148,7 @@ input_widget_rep::continuous () {
   return
     starts (type, "search") ||
     starts (type, "replace-") ||
+    starts (type, "spell") ||
     starts (serial, "form-");
 }
 
@@ -295,7 +296,9 @@ input_widget_rep::handle_keypress (keypress_event ev) {
        key == "pagedown" ||
        key == "tab" ||
        key == "S-tab" ||
-       key == "escape"));
+       key == "escape" ||
+       (starts (type, "spell") && key >= "1" && key <= "9") ||
+       (starts (type, "spell") && key == "+")));
   else if (key == "return") commit ();
   else if ((key == "escape") || (key == "C-c") ||
 	   (key == "C-g")) cancel ();

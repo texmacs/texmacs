@@ -168,4 +168,13 @@ void   initialize_color_decodings (string lan_name);
 int    encode_color (string s);
 string decode_color (string lan, int c);
 
+void spell_start ();
+void spell_done ();
+string spell_start (string lan);
+void spell_done (string lan);
+tree spell_check (string lan, string s);
+bool check_word (string lan, string s);
+void spell_accept (string lan, string s);
+void spell_insert (string lan, string s);
+
 #endif // defined LANGUAGE_H

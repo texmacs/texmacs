@@ -1643,6 +1643,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-spell <scm-arg|content> <scm-arg|path> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-spell-at <scm-arg|content> <scm-arg|path> <scm-arg|path> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
     <scm|(previous-search-hit <scm-arg|array_path> <scm-arg|path> <scm-arg|bool>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -3184,6 +3200,70 @@ source code.
   <|explain>
     Calls the <c++> function <cpp|uni_before> which returns
     <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(multi-spell-start)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_start> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(multi-spell-done)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_done> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(spell-start <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_start> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(spell-done <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_done> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(spell-check <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_check> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(spell-check? <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|check_word> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(spell-accept <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_accept> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(spell-insert <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_insert> which returns
+    <scm|void>.
   </explain>
 
   <\explain>
@@ -8103,6 +8183,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|after_menu_action> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(update-menus)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|update_menus> which returns
     <scm|void>.
   </explain>
 

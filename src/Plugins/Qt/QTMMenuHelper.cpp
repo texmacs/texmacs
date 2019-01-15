@@ -464,6 +464,7 @@ QTMLineEdit::continuous () {
   return
     starts (type, "search") ||
     starts (type, "replace-") ||
+    starts (type, "spell") ||
     starts (serial, "form-");
 }
 
@@ -502,6 +503,8 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
         last_key != Qt::Key_Enter &&
         last_key != Qt::Key_Return &&
         last_key != Qt::Key_Escape &&
+        (!starts (type, "spell") || last_key < 49 || last_key >= 58) &&
+        (!starts (type, "spell") || last_key != 43) &&
         (ev->modifiers() & Qt::ControlModifier) == 0 &&
         (ev->modifiers() & Qt::MetaModifier) == 0)
       QLineEdit::keyPressEvent (ev);

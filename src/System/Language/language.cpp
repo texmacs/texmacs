@@ -12,6 +12,7 @@
 #include "packrat.hpp"
 #include "analyze.hpp"
 #include "hyphenate.hpp"
+#include "iterator.hpp"
 
 RESOURCE_CODE(language);
 
@@ -356,4 +357,116 @@ ad_hoc_language (language base, tree hyphs) {
   string name= base->res_name * "-" * as_string (abbrevs [hyphs]);
   if (language::instances -> contains (name)) return language (name);
   return tm_new<ad_hoc_language_rep> (name, base, hyphs);
+}
+
+/******************************************************************************
+* Interface with spell engines and cache
+******************************************************************************/
+
+#ifdef MACOSX_EXTENSIONS
+#include "MacOS/mac_spellservice.h"
+#define ispell_start mac_spell_start
+#define ispell_check mac_spell_check
+#define ispell_accept mac_spell_accept
+#define ispell_insert mac_spell_insert
+#define ispell_done mac_spell_done
+#else
+#include "Ispell/ispell.hpp"
+#endif
+
+static bool spell_active= false;
+static hashmap<string,bool> spell_busy (false);
+static hashmap<string,int > spell_cache (0);
+static hashmap<string,bool> spell_temp (false);
+
+void
+spell_start () {
+  spell_active= true;
+}
+
+void
+spell_done () {
+  spell_active= false;
+  hashmap<string,bool> h= copy (spell_busy);
+  for (iterator<string> it= iterate (h); it->busy (); )
+    spell_done (it->next ());
+}
+
+string
+spell_start (string lan) {
+  if (spell_busy->contains (lan)) return "ok";
+  spell_busy (lan)= true;
+  return ispell_start (lan);
+}
+
+void
+spell_done (string lan) {
+  if (spell_active) return;
+  spell_busy->reset (lan);
+  ispell_done (lan);
+  hashmap<string,bool> aux (false);
+  for (iterator<string> it= iterate (spell_temp); it->busy (); ) {
+    string key= it->next ();
+    if (starts (key, lan * ":")) aux (key)= true;
+  }
+  for (iterator<string> it= iterate (aux); it->busy (); ) {
+    string key= it->next ();
+    spell_cache->reset (key);
+    spell_temp ->reset (key);
+  }
+}
+
+tree
+spell_check (string lan, string s) {
+  if (spell_busy->contains (lan)) {
+    if (N(s) == 0 || is_locase_alpha (s (1, N(s))))
+      return ispell_check (lan, s);
+    else {
+      string l= locase_all (s);
+      tree r= ispell_check (lan, l);
+      if (s == upcase_all (s) && is_tuple (r))
+        for (int i=1; i<N(r); i++)
+          if (is_atomic (r[i]))
+            r[i]= upcase_all (r[i]->label);
+      return r;
+    }
+  }
+  else {
+    spell_start (lan);
+    tree r= spell_check (lan, s);
+    spell_done (lan);
+    return r;
+  }
+}
+
+bool
+check_word (string lan, string s) {
+  string key= lan * ":" * s;
+  int val= spell_cache[key];
+  if (val == 0) {
+    tree t= spell_check (lan, s);
+    if (t == "ok") val= 1;
+    else val= -1;
+    spell_cache (key)= val;
+  }
+  return val == 1;
+}
+
+void
+spell_accept (string lan, string s) {
+  string l= locase_all (s);
+  if (s != upcase_first (l)) s= l;
+  string key= lan * ":" * s;
+  spell_cache (key) = 1;
+  spell_temp (key)= 1;
+  ispell_accept (lan, s);
+}
+
+void
+spell_insert (string lan, string s) {
+  string l= locase_all (s);
+  if (s != upcase_first (l)) s= l;
+  string key= lan * ":" * s;
+  spell_cache (key) = 1;
+  ispell_insert (lan, s);
 }

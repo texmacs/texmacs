@@ -2575,6 +2575,42 @@ tmg_tree_search_tree_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm a
 }
 
 tmscm
+tmg_tree_spell (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-spell");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-spell");
+  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "tree-spell");
+
+  content in1= tmscm_to_content (arg1);
+  path in2= tmscm_to_path (arg2);
+  int in3= tmscm_to_int (arg3);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= spell (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_spell_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-spell-at");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-spell-at");
+  TMSCM_ASSERT_PATH (arg3, TMSCM_ARG3, "tree-spell-at");
+  TMSCM_ASSERT_INT (arg4, TMSCM_ARG4, "tree-spell-at");
+
+  content in1= tmscm_to_content (arg1);
+  path in2= tmscm_to_path (arg2);
+  path in3= tmscm_to_path (arg3);
+  int in4= tmscm_to_int (arg4);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= spell (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
 tmg_previous_search_hit (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_ARRAY_PATH (arg1, TMSCM_ARG1, "previous-search-hit");
   TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "previous-search-hit");
@@ -5299,6 +5335,110 @@ tmg_tmstring_beforeP (tmscm arg1, tmscm arg2) {
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_multi_spell_start () {
+  // TMSCM_DEFER_INTS;
+  spell_start ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_multi_spell_done () {
+  // TMSCM_DEFER_INTS;
+  spell_done ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_spell_start (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-start");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= spell_start (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_spell_done (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-done");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  spell_done (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_spell_check (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-check");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "spell-check");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= spell_check (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_spell_checkP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-check?");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "spell-check?");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= check_word (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_spell_accept (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-accept");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "spell-accept");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  spell_accept (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_spell_insert (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-insert");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "spell-insert");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  spell_insert (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
 }
 
 tmscm
@@ -9655,6 +9795,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-search-sections",  tmg_tree_search_sections, 1, 0, 0);
   tmscm_install_procedure ("tree-search-tree",  tmg_tree_search_tree, 4, 0, 0);
   tmscm_install_procedure ("tree-search-tree-at",  tmg_tree_search_tree_at, 5, 0, 0);
+  tmscm_install_procedure ("tree-spell",  tmg_tree_spell, 3, 0, 0);
+  tmscm_install_procedure ("tree-spell-at",  tmg_tree_spell_at, 4, 0, 0);
   tmscm_install_procedure ("previous-search-hit",  tmg_previous_search_hit, 3, 0, 0);
   tmscm_install_procedure ("next-search-hit",  tmg_next_search_hit, 3, 0, 0);
   tmscm_install_procedure ("navigate-search-hit",  tmg_navigate_search_hit, 4, 0, 0);
@@ -9848,6 +9990,14 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tmstring-upcase-all",  tmg_tmstring_upcase_all, 1, 0, 0);
   tmscm_install_procedure ("tmstring-unaccent-all",  tmg_tmstring_unaccent_all, 1, 0, 0);
   tmscm_install_procedure ("tmstring-before?",  tmg_tmstring_beforeP, 2, 0, 0);
+  tmscm_install_procedure ("multi-spell-start",  tmg_multi_spell_start, 0, 0, 0);
+  tmscm_install_procedure ("multi-spell-done",  tmg_multi_spell_done, 0, 0, 0);
+  tmscm_install_procedure ("spell-start",  tmg_spell_start, 1, 0, 0);
+  tmscm_install_procedure ("spell-done",  tmg_spell_done, 1, 0, 0);
+  tmscm_install_procedure ("spell-check",  tmg_spell_check, 2, 0, 0);
+  tmscm_install_procedure ("spell-check?",  tmg_spell_checkP, 2, 0, 0);
+  tmscm_install_procedure ("spell-accept",  tmg_spell_accept, 2, 0, 0);
+  tmscm_install_procedure ("spell-insert",  tmg_spell_insert, 2, 0, 0);
   tmscm_install_procedure ("packrat-define",  tmg_packrat_define, 3, 0, 0);
   tmscm_install_procedure ("packrat-property",  tmg_packrat_property, 4, 0, 0);
   tmscm_install_procedure ("packrat-inherit",  tmg_packrat_inherit, 2, 0, 0);

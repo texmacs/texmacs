@@ -232,6 +232,8 @@
   (tree-search-sections search_sections (array_tree tree))
   (tree-search-tree search (array_path content content path int))
   (tree-search-tree-at search (array_path content content path path int))
+  (tree-spell spell (array_path content path int))
+  (tree-spell-at spell (array_path content path path int))
   (previous-search-hit previous_search_hit (array_path array_path path bool))
   (next-search-hit next_search_hit (array_path array_path path bool))
   (navigate-search-hit navigate_search_hit (array_path path bool bool bool))
@@ -449,6 +451,16 @@
   (tmstring-upcase-all uni_upcase_all (string string))
   (tmstring-unaccent-all uni_unaccent_all (string string))
   (tmstring-before? uni_before (bool string string))
+
+  ;; Spell checking
+  (multi-spell-start spell_start (void))
+  (multi-spell-done spell_done (void))
+  (spell-start spell_start (string string))
+  (spell-done spell_done (void string))
+  (spell-check spell_check (tree string string))
+  (spell-check? check_word (bool string string))
+  (spell-accept spell_accept (void string string))
+  (spell-insert spell_insert (void string string))
 
   ;; Packrat grammar and parsing tools
   (packrat-define packrat_define (void string string tree))

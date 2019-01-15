@@ -613,7 +613,7 @@
     (input (search-toolbar-keypress answer #t) "replace-what"
            (list pending-key-strokes) "15em")
     //
-    (text "by: ")
+    (text " by: ")
     (input (replace-toolbar-keypress answer) "replace-by"
            (list "") "15em")
     //

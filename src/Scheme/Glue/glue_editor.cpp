@@ -3226,6 +3226,15 @@ tmg_menu_after_action () {
 }
 
 tmscm
+tmg_update_menus () {
+  // TMSCM_DEFER_INTS;
+  get_current_editor()->update_menus ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_show_tree () {
   // TMSCM_DEFER_INTS;
   get_current_editor()->show_tree ();
@@ -3575,6 +3584,7 @@ initialize_glue_editor () {
   tmscm_install_procedure ("change-time",  tmg_change_time, 0, 0, 0);
   tmscm_install_procedure ("menu-before-action",  tmg_menu_before_action, 0, 0, 0);
   tmscm_install_procedure ("menu-after-action",  tmg_menu_after_action, 0, 0, 0);
+  tmscm_install_procedure ("update-menus",  tmg_update_menus, 0, 0, 0);
   tmscm_install_procedure ("show-tree",  tmg_show_tree, 0, 0, 0);
   tmscm_install_procedure ("show-env",  tmg_show_env, 0, 0, 0);
   tmscm_install_procedure ("show-path",  tmg_show_path, 0, 0, 0);
