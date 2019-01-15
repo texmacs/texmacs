@@ -13,7 +13,9 @@
 #include "analyze.hpp"
 #include "boot.hpp"
 #include "drd_mode.hpp"
+#include "drd_std.hpp"
 #include "language.hpp"
+#include "vars.hpp"
 
 int  spell_max_hits= 1000000;
 void spell (range_set& sel, tree t, tree what, path p);
@@ -43,12 +45,13 @@ is_accessible_for_spell (tree t, int i) {
 ******************************************************************************/
 
 bool
-spell_string (string s) {
-  return check_word ("english", s);
+spell_string (tree lan, string s) {
+  if (is_atomic (lan)) return check_word (lan->label, s);
+  else return true;
 }
 
 void
-spell_string (range_set& sel, string s, path p) {
+spell_string (tree lan, range_set& sel, string s, path p) {
   int pos= 0;
   while (pos < N(s) && s[pos] == ' ') pos++;
   while (pos < N(s)) {
@@ -56,50 +59,55 @@ spell_string (range_set& sel, string s, path p) {
     int start= pos;
     while (pos < N(s) && s[pos] != ' ') pos++;
     int end= pos;
-    if (!spell_string (s (start, end))) {
+    if (!spell_string (lan, s (start, end))) {
       int start2= start, end2= end;
       while (start < end && !is_iso_alpha (s[start]))
         tm_char_forwards (s, start);
       while (start < end && !is_iso_alpha (s[end-1]))
         tm_char_backwards (s, end);
       if ((start == start2 && end == end2) ||
-          !spell_string (s (start, end))) {
-        int begin= start;
-        while (start < end && is_iso_alpha (s[start])) start++;
-        if ((begin == start2 && start == end2) ||
-            !spell_string (s (begin, start)))
-          merge (sel, simple_range (p * begin, p * start));
-        while (start < end && !is_iso_alpha (s[start]))
-          tm_char_forwards (s, start);
-      }
+          !spell_string (lan, s (start, end)))
+        while (start < end) {
+          int begin= start;
+          while (start < end && is_iso_alpha (s[start])) start++;
+          if ((begin == start2 && start == end2) ||
+              !spell_string (lan, s (begin, start)))
+            merge (sel, simple_range (p * begin, p * start));
+          while (start < end && !is_iso_alpha (s[start]))
+            tm_char_forwards (s, start);
+        }
     }
   }
 }
 
 void
-spell (range_set& sel, tree t, path p) {
+spell (tree lan, range_set& sel, tree t, path p) {
   if (N(sel) > spell_max_hits) return;
   if (is_atomic (t))
-    spell_string (sel, t->label, p);
+    spell_string (lan, sel, t->label, p);
   else
     for (int i=0; i<N(t); i++)
-      if (is_accessible_for_spell (t, i))
-        spell (sel, t[i], p * i);
+      if (is_accessible_for_spell (t, i)) {
+        tree slan= the_drd->get_env_child (t, i, LANGUAGE, lan);
+        spell (slan, sel, t[i], p * i);
+      }
 }
 
 void
-spell (range_set& sel, tree t, path p, path pos) {
+spell (tree lan, range_set& sel, tree t, path p, path pos) {
   if (is_atomic (t))
-    spell (sel, t, p);
+    spell (lan, sel, t, p);
   else {
-    if (is_nil (pos)) spell (sel, t, p);
+    if (is_nil (pos)) spell (lan, sel, t, p);
     else {
       int hits= 0;
       array<range_set> sub (N(t));
       if (pos->item >= 0 && pos->item < N(t))
         if (is_accessible_for_spell (t, pos->item)) {
-          spell (sub[pos->item], t[pos->item], p * pos->item);
-          hits += N(sub[pos->item]);
+          int i= pos->item;
+          tree slan= the_drd->get_env_child (t, i, LANGUAGE, lan);
+          spell (slan, sub[i], t[i], p * i);
+          hits += N(sub[i]);
         }
       for (int d=1; d<N(t); d++)
         for (int e=0; e<=1; e++) {
@@ -107,7 +115,8 @@ spell (range_set& sel, tree t, path p, path pos) {
           int i= (e==0? pos->item + d: pos->item - d);
           if (i >= 0 && i < N(t))
             if (is_accessible_for_spell (t, i)) {
-              spell (sub[i], t[i], p * i);
+              tree slan= the_drd->get_env_child (t, i, LANGUAGE, lan);
+              spell (slan, sub[i], t[i], p * i);
               hits += N(sub[i]);
             }
         }
@@ -121,22 +130,22 @@ spell (range_set& sel, tree t, path p, path pos) {
 ******************************************************************************/
 
 range_set
-spell (tree t, path p, int limit) {
+spell (string lan, tree t, path p, int limit) {
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
-  spell (sel, t, p);
+  spell (lan, sel, t, p);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;
 }
 
 range_set
-spell (tree t, path p, path pos, int limit) {
+spell (string lan, tree t, path p, path pos, int limit) {
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
-  spell (sel, t, p, pos);
+  spell (lan, sel, t, p, pos);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;

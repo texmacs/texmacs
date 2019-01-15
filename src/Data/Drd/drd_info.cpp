@@ -763,6 +763,16 @@ drd_info_rep::get_env_descendant (tree t, path p, tree env) {
   return "";
 }
 
+tree
+drd_info_rep::get_env_descendant (tree t, path p, string var, tree val) {
+  if (is_nil (p)) return val;
+  int  i= p->item;
+  path q= p->next;
+  if (is_compound (t) && i >= 0 && i < N(t))
+    return get_env_descendant (t[i], q, var, get_env_child (t, i, var, val));
+  return val;
+}
+
 /******************************************************************************
 * Heuristic initialization of DRD
 ******************************************************************************/

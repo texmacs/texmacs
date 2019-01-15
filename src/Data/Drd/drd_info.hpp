@@ -108,6 +108,7 @@ public:
   tree get_env_child (tree t, int child, tree env);
   tree get_env_child (tree t, int child, string var, tree val);
   tree get_env_descendant (tree t, path p, tree env);
+  tree get_env_descendant (tree t, path p, string var, tree val);
 
   void set_child_name (tree_label tag, int nr, string val);
   void set_child_long_name (tree_label tag, int nr, string val);

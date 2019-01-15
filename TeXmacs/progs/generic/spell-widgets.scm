@@ -49,13 +49,14 @@
 
 (define spell-serial 0)
 (define spell-buffer-cache #f)
+(define spell-language "english")
 
 (define (spell-buffer-tree)
   (let* ((t (buffer-tree))
          (p (tree->path t))
          (cp (cDr (cursor-path)))
          (pos (if (list-starts? cp p) (list-tail cp (length p)) (list))))
-    (tree-spell-at t p pos 1000)))
+    (tree-spell-at spell-language t p pos 1000)))
 
 (define (cached-spell-buffer-tree)
   (with sels spell-buffer-cache
@@ -110,10 +111,21 @@
                 (and (>= i1 0) (> i2 i1) (>= n i2)
                      (substring s i1 i2)))))))
 
+(define (spell-get-language sel)
+  (with-buffer (spell-master-buffer)
+    (let* ((bt (buffer-tree))
+           (rp (tree->path bt))
+           (sp (car sel))
+           (p (and (list-starts? sp rp)(sublist sp (length rp) (length sp))))
+           (lan spell-language))
+      (if (not p) lan
+          (tm->stree (tree-descendant-env bt (cDr p) "language" lan))))))
+
 (define (spell-focus-on sel)
   (selection-set-range-set sel)
   (and-with ss (selection->string sel)
-    (let* ((st (tm->stree (spell-check "english" ss)))
+    (let* ((lan (spell-get-language sel))
+           (st (tm->stree (spell-check lan ss)))
            (l0 (if (tm-func? st 'tuple) (cdr st) (list)))
            (l1 (if (null? l0) l0 (cdr l0)))
            (l (if (<= (length l1) 9) l1 (sublist l1 0 9)))
@@ -228,16 +240,18 @@
 (tm-define (spell-accept-word)
   (and-with sel (spell-current-selection)
     (and-with ss (selection->string sel)
-      (set! spell-accepted (+ spell-accepted 1))
-      (spell-accept "english" ss)
-      (perform-spell))))
+      (with lan (spell-get-language sel)
+        (set! spell-accepted (+ spell-accepted 1))
+        (spell-accept lan ss)
+        (perform-spell)))))
 
 (tm-define (spell-insert-word)
   (and-with sel (spell-current-selection)
     (and-with ss (selection->string sel)
-      (set! spell-inserted (+ spell-inserted 1))
-      (spell-insert "english" ss)
-      (perform-spell))))
+      (with lan (spell-get-language sel)
+        (set! spell-inserted (+ spell-inserted 1))
+        (spell-insert lan ss)
+        (perform-spell)))))
 
 (tm-define (spell-statistics)
   (delayed
@@ -476,6 +490,7 @@
 
 (tm-define (interactive-spell)
   (:interactive #t)
+  (set! spell-language (get-init "language"))
   (with sels (spell-buffer-tree)
     (if (null? sels)
         (delayed

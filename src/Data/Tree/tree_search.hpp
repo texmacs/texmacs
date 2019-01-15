@@ -19,7 +19,7 @@ range_set previous_search_hit (range_set sel, path cur, bool strict);
 range_set next_search_hit (range_set sel, path cur, bool strict);
 range_set navigate_search_hit (path cur, bool fw, bool extreme, bool strict);
 
-range_set spell (tree t, path p, int limit= 1000000);
-range_set spell (tree t, path p, path pos, int limit);
+range_set spell (string lan, tree t, path p, int limit= 1000000);
+range_set spell (string lan, tree t, path p, path pos, int limit);
 
 #endif // defined TREE_SEARCH_H

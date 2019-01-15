@@ -154,7 +154,12 @@ get_env_child (tree t, int i, tree env) {
 
 tree
 get_env_descendant (tree t, path p, tree env) {
-  return the_drd->get_env_descendant (t, p, env);  
+  return the_drd->get_env_descendant (t, p, env);
+}
+
+tree
+get_env_descendant (tree t, path p, string var, tree val) {
+  return the_drd->get_env_descendant (t, p, var, val);
 }
 
 /******************************************************************************

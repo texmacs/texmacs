@@ -31,6 +31,7 @@ bool none_accessible (tree t);
 bool exists_accessible_inside (tree t);
 tree get_env_child (tree t, int i, tree env);
 tree get_env_descendant (tree t, path p, tree env);
+tree get_env_descendant (tree t, path p, string var, tree val);
 
 string get_name (tree t);
 string get_long_name (tree t);

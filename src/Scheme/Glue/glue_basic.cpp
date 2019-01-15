@@ -2421,6 +2421,23 @@ tmg_tree_child_type (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_tree_child_env_dot (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-child-env*");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "tree-child-env*");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "tree-child-env*");
+
+  content in1= tmscm_to_content (arg1);
+  int in2= tmscm_to_int (arg2);
+  content in3= tmscm_to_content (arg3);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_env_child (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_child_env (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-child-env");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "tree-child-env");
@@ -2440,10 +2457,10 @@ tmg_tree_child_env (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
-tmg_tree_descendant_env (tmscm arg1, tmscm arg2, tmscm arg3) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-descendant-env");
-  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-descendant-env");
-  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "tree-descendant-env");
+tmg_tree_descendant_env_dot (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-descendant-env*");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-descendant-env*");
+  TMSCM_ASSERT_CONTENT (arg3, TMSCM_ARG3, "tree-descendant-env*");
 
   content in1= tmscm_to_content (arg1);
   path in2= tmscm_to_path (arg2);
@@ -2451,6 +2468,25 @@ tmg_tree_descendant_env (tmscm arg1, tmscm arg2, tmscm arg3) {
 
   // TMSCM_DEFER_INTS;
   tree out= get_env_descendant (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_descendant_env (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-descendant-env");
+  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-descendant-env");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "tree-descendant-env");
+  TMSCM_ASSERT_CONTENT (arg4, TMSCM_ARG4, "tree-descendant-env");
+
+  content in1= tmscm_to_content (arg1);
+  path in2= tmscm_to_path (arg2);
+  string in3= tmscm_to_string (arg3);
+  content in4= tmscm_to_content (arg4);
+
+  // TMSCM_DEFER_INTS;
+  tree out= get_env_descendant (in1, in2, in3, in4);
   // TMSCM_ALLOW_INTS;
 
   return tree_to_tmscm (out);
@@ -2575,36 +2611,40 @@ tmg_tree_search_tree_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm a
 }
 
 tmscm
-tmg_tree_spell (tmscm arg1, tmscm arg2, tmscm arg3) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-spell");
-  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-spell");
-  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "tree-spell");
+tmg_tree_spell (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-spell");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "tree-spell");
+  TMSCM_ASSERT_PATH (arg3, TMSCM_ARG3, "tree-spell");
+  TMSCM_ASSERT_INT (arg4, TMSCM_ARG4, "tree-spell");
 
-  content in1= tmscm_to_content (arg1);
-  path in2= tmscm_to_path (arg2);
-  int in3= tmscm_to_int (arg3);
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+  path in3= tmscm_to_path (arg3);
+  int in4= tmscm_to_int (arg4);
 
   // TMSCM_DEFER_INTS;
-  array_path out= spell (in1, in2, in3);
+  array_path out= spell (in1, in2, in3, in4);
   // TMSCM_ALLOW_INTS;
 
   return array_path_to_tmscm (out);
 }
 
 tmscm
-tmg_tree_spell_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
-  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-spell-at");
-  TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "tree-spell-at");
+tmg_tree_spell_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-spell-at");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "tree-spell-at");
   TMSCM_ASSERT_PATH (arg3, TMSCM_ARG3, "tree-spell-at");
-  TMSCM_ASSERT_INT (arg4, TMSCM_ARG4, "tree-spell-at");
+  TMSCM_ASSERT_PATH (arg4, TMSCM_ARG4, "tree-spell-at");
+  TMSCM_ASSERT_INT (arg5, TMSCM_ARG5, "tree-spell-at");
 
-  content in1= tmscm_to_content (arg1);
-  path in2= tmscm_to_path (arg2);
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
   path in3= tmscm_to_path (arg3);
-  int in4= tmscm_to_int (arg4);
+  path in4= tmscm_to_path (arg4);
+  int in5= tmscm_to_int (arg5);
 
   // TMSCM_DEFER_INTS;
-  array_path out= spell (in1, in2, in3, in4);
+  array_path out= spell (in1, in2, in3, in4, in5);
   // TMSCM_ALLOW_INTS;
 
   return array_path_to_tmscm (out);
@@ -9785,8 +9825,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-child-name",  tmg_tree_child_name, 2, 0, 0);
   tmscm_install_procedure ("tree-child-long-name",  tmg_tree_child_long_name, 2, 0, 0);
   tmscm_install_procedure ("tree-child-type",  tmg_tree_child_type, 2, 0, 0);
+  tmscm_install_procedure ("tree-child-env*",  tmg_tree_child_env_dot, 3, 0, 0);
   tmscm_install_procedure ("tree-child-env",  tmg_tree_child_env, 4, 0, 0);
-  tmscm_install_procedure ("tree-descendant-env",  tmg_tree_descendant_env, 3, 0, 0);
+  tmscm_install_procedure ("tree-descendant-env*",  tmg_tree_descendant_env_dot, 3, 0, 0);
+  tmscm_install_procedure ("tree-descendant-env",  tmg_tree_descendant_env, 4, 0, 0);
   tmscm_install_procedure ("tree-load-inclusion",  tmg_tree_load_inclusion, 1, 0, 0);
   tmscm_install_procedure ("tree-as-string",  tmg_tree_as_string, 1, 0, 0);
   tmscm_install_procedure ("tree-extents",  tmg_tree_extents, 1, 0, 0);
@@ -9795,8 +9837,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-search-sections",  tmg_tree_search_sections, 1, 0, 0);
   tmscm_install_procedure ("tree-search-tree",  tmg_tree_search_tree, 4, 0, 0);
   tmscm_install_procedure ("tree-search-tree-at",  tmg_tree_search_tree_at, 5, 0, 0);
-  tmscm_install_procedure ("tree-spell",  tmg_tree_spell, 3, 0, 0);
-  tmscm_install_procedure ("tree-spell-at",  tmg_tree_spell_at, 4, 0, 0);
+  tmscm_install_procedure ("tree-spell",  tmg_tree_spell, 4, 0, 0);
+  tmscm_install_procedure ("tree-spell-at",  tmg_tree_spell_at, 5, 0, 0);
   tmscm_install_procedure ("previous-search-hit",  tmg_previous_search_hit, 3, 0, 0);
   tmscm_install_procedure ("next-search-hit",  tmg_next_search_hit, 3, 0, 0);
   tmscm_install_procedure ("navigate-search-hit",  tmg_navigate_search_hit, 4, 0, 0);

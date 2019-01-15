@@ -1563,6 +1563,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-child-env* <scm-arg|content> <scm-arg|int> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_env_child> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(tree-child-env <scm-arg|content> <scm-arg|int> <scm-arg|string> <scm-arg|content>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -1571,7 +1579,15 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(tree-descendant-env <scm-arg|content> <scm-arg|path> <scm-arg|content>)>
+    <scm|(tree-descendant-env* <scm-arg|content> <scm-arg|path> <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_env_descendant> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-descendant-env <scm-arg|content> <scm-arg|path> <scm-arg|string> <scm-arg|content>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|get_env_descendant> which returns
@@ -1643,7 +1659,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(tree-spell <scm-arg|content> <scm-arg|path> <scm-arg|int>)>
+    <scm|(tree-spell <scm-arg|string> <scm-arg|content> <scm-arg|path> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|spell> which returns
@@ -1651,7 +1667,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(tree-spell-at <scm-arg|content> <scm-arg|path> <scm-arg|path> <scm-arg|int>)>
+    <scm|(tree-spell-at <scm-arg|string> <scm-arg|content> <scm-arg|path> <scm-arg|path> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|spell> which returns

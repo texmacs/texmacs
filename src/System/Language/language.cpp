@@ -419,8 +419,10 @@ spell_done (string lan) {
 tree
 spell_check (string lan, string s) {
   if (spell_busy->contains (lan)) {
-    if (N(s) == 0 || is_locase_alpha (s (1, N(s))))
-      return ispell_check (lan, s);
+    if (N(s) == 0 || is_locase_alpha (s (1, N(s)))) {
+      tree r= ispell_check (lan, s);
+      return r;
+    }
     else {
       string l= locase_all (s);
       tree r= ispell_check (lan, l);

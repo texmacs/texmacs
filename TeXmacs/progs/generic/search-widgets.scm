@@ -98,7 +98,7 @@
              (rel (path-strip (cDr p) (tree->path buf)))
              (initial (cons 'attr (get-main-attrs get-init)))
              (old-env (get-search-filter))
-             (new-env (tree-descendant-env buf rel initial)))
+             (new-env (tree-descendant-env* buf rel initial)))
         ;;(display* p " ~> " new-env "\n")
         (check-same? (tm-children new-env) (tm-children old-env)))))
 
