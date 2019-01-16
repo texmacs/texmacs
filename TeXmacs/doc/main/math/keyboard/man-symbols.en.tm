@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Typing mathematical symbols>
@@ -15,7 +15,7 @@
   yields<nbsp><math|\<bbb-R\>> and <shortcut|\<b-cal-Z\>> yields
   <math|\<b-cal-Z\>>.
 
-  Greek characters can also be obtained as ``variants'' of Latin characters
+  Greek characters can also be obtained as \Pvariants\Q of Latin characters
   using the <key|var>-key. For instance, <key|p var> yields <math|\<pi\>>.
   The <key|var>-key is also used for obtaining variants of the Greek letters
   themselves. For instance, both <key|math:greek p var> and <key|p var var>
@@ -26,11 +26,11 @@
   Some symbols admit many variants. For instance, <key|\<less\>> yields
   <math|\<less\>>, <key|\<less\> var> yields <math|\<in\>>, <key|\<less\> var
   var> yields <math|\<subset\>>, <key|\<less\> var var var> yields
-  <math|\<prec\>>, and so on. You may ``cycle back'' among the variants
+  <math|\<prec\>>, and so on. You may \Pcycle back\Q among the variants
   using<nbsp><key|S-var>. For instance, <key|\<less\> var var S-var> is
   equivalent to <key|\<less\> var>.
 
-  Many other mathematical symbols are obtained by ``natural''
+  Many other mathematical symbols are obtained by \Pnatural\Q
   key-combinations. For instance, <key|- \<gtr\>> yields
   <math|<op|\<rightarrow\>>>, <key|- - \<gtr\>> yields
   <math|<op|\<longrightarrow\>>> and <key|\<gtr\> => yields
@@ -68,13 +68,13 @@
   The logical relations <math|\<wedge\>> and <math|\<vee\>> are obtained
   using <key|&> and <key|%>. The operators <math|\<cap\>> and <math|\<cup\>>
   are natural variants <key|& var> and <key|% var>. Various miscellaneous
-  symbols can be optained using the <prefix|math:symbol> prefix.
+  symbols can be obtained using the <prefix|math:symbol> prefix.
 
   Notice that certain symbols with a different mathematical meaning are
   sometimes denoted in a<nbsp>similar way; such symbols are called
   <em|homoglyphs>. For instance, the vertical bar <math|\|> can be used as
   a<nbsp>separator for defining sets <math|R<rsup|\<gtr\>>=<around*|{|x\<in\>R\|x\<gtr\>0|}>>,
-  but also as the binary relation ``divides''<nbsp><rigid|<math|11\<divides\>1001>>.
+  but also as the binary relation \Pdivides\Q<nbsp><rigid|<math|11\<divides\>1001>>.
   Often, but not always, homoglyphs admit a different spacing. The most
   annoying ambiguity is between invisible multiplication <math|x*y> and
   function application <math|sin x>, which are entered using the shortcuts
@@ -97,8 +97,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

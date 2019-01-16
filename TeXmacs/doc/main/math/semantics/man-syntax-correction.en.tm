@@ -1,11 +1,11 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Common errors and syntax correction>
 
-  By default, the semantic editing mode ``understands'' most classical
+  By default, the semantic editing mode \Punderstands\Q most classical
   mathematical notations. This is achieved through the use of a carefully
   designed grammar for mainstream mathematics. Obviously, the use of a fixed
   grammar may cause the following problems:
@@ -26,7 +26,7 @@
   </itemize>
 
   Besides these intrinsically hard to avoid problems, the following common
-  and ``easy-to-make'' mistakes are a further source of trouble for
+  and \Peasy-to-make\Q mistakes are a further source of trouble for
   associating semantics to mathematical formulas:
 
   <\itemize>
@@ -45,8 +45,8 @@
     multiplications using <key|*> and spaces using <key|space>. The
     multiply/apply ambiguity is one of the main sources of syntax errors,
     since many users do not pay attention to invisible differences.
-    Similarly, the <math|\<wedge\>> glyph could be the ``logical and'' or the
-    ``wedge product''. This ``homoglyph'' issue will be adressed in more
+    Similarly, the <math|\<wedge\>> glyph could be the \Plogical and\Q or the
+    \Pwedge product\Q. This \Phomoglyph\Q issue will be addressed in more
     detail in the section on the <hlink|semantics of mathematical
     symbols|man-semantics-symbols.en.tm>.\ 
 
@@ -70,7 +70,7 @@
   formulas>, in which all incorrect formulas are highlighted inside red
   boxes.
 
-  For the second kind of ``easy-to-make'' errors, <TeXmacs> includes an
+  For the second kind of \Peasy-to-make\Q errors, <TeXmacs> includes an
   automatic syntax corrector. Assuming that your cursor is inside a formula,
   you may use <menu|Edit|Correct|Correct all> for the correction of all
   formulas in your document, or the correction of the current selection. If
@@ -87,7 +87,7 @@
     used in order to remove any superfluous function applications or
     multiplications. For instance, users who are accustomed to editing ASCII
     files often type spaces around binary infixes such as addition. Such
-    ``function applications'' will be removed by this algorithm.
+    \Pfunction applications\Q will be removed by this algorithm.
 
     <item*|<menu|Insert missing invisible operators>>In <LaTeX>,
     multiplications and function applications are never entered explicitly.
@@ -108,7 +108,7 @@
 
   After syntax correction, the remaining errors indicate genuine typos at
   worst or non standard or non supported notations at best. We also notice
-  that ``correct'' formulas do not necessarily have the intended meaning. In
+  that \Pcorrect\Q formulas do not necessarily have the intended meaning. In
   order to check whether the operators indeed apply to the intended
   arguments, you should keep an eye on the current focus while typing your
   formulas.\ 
@@ -123,8 +123,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

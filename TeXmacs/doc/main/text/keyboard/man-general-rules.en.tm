@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|General prefix rules>
@@ -9,7 +9,7 @@
   of classifying them in several categories, in order to make it easier to
   memorize them. As a general rule, keyboard shortcuts which fall in the same
   category are identified by a common prefix. The active prefixes heavily
-  depend on the selected ``look and feel'' in <menu|Edit|Preferences>. In the
+  depend on the selected \Plook and feel\Q in <menu|Edit|Preferences>. In the
   current look and feel of your <TeXmacs> system,<space|0.4spc>the main
   common prefixes are as follows:
 
@@ -26,7 +26,7 @@
     <item*|<prefix|altcmd>>Compound <TeXmacs> shortcuts. Usually, these
     shortcuts first indicate the kind of markup to which the command will
     apply and then specify the specific command. For instance, the
-    <key|executable> prefix is used for insering executable markup, which is
+    <key|executable> prefix is used for inserting executable markup, which is
     useful for <hlink|writing style files|../../../devel/style/style.en.tm>.
     One example is the shortcut <key|executable +> for the insertion of an
     addition.
@@ -40,14 +40,14 @@
     movements|../../editing/man-structured-move.en.tm>.
 
     <item*|<prefix|special>>This prefix is occasionally used in combination
-    with letters and ponctuation symbols for creating some additional easy to
+    with letters and punctuation symbols for creating some additional easy to
     remind shortcuts.
 
     <item*|<prefix|symbol>>This prefix can be used in combination with normal
     letters for the insertion of special symbols. For instance,
     <key|text:symbol s> yields ÿ and <key|math:symbol a> yields
     <math|<op|\<amalg\>>>. The <prefix|symbol> prefix is also used for the
-    insertion of ``literal characters''. For instance, <key|symbol \\> will
+    insertion of \Pliteral characters\Q. For instance, <key|symbol \\> will
     always produce the \\ character, whereas the <key|\\> key is used for
     entering <hlink|hybrid commands|man-hybrid.en.tm>.
   </description>
@@ -69,8 +69,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

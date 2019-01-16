@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Semantics of mathematical symbols>
@@ -79,7 +79,7 @@
   point>>|<row|<cell|<key|. var>>|<cell|.>|<cell|<math|\<mathlambda\>x\<point\>x<rsup|2>>>|<cell|Dot
   connector>>|<row|<cell|<key|* var var var>>|<cell|<math|\<cdot\>>>|<cell|<math|\<b-v\>\<cdot\>\<b-w\>>>|<cell|Dot
   multiplication>>|<row|<cell|<key|. var var>>|<cell|<math|\<cdummy\>>>|<cell|<math|\<cdummy\>+1>>|<cell|Dummy
-  widcard>>|<row|<cell|<key|:>>|<cell|<math|:>>|<cell|<math|<around*|{|x\<in\>E:P<around*|(|x|)>|}>>>|<cell|Separator>>|<row|<cell|<shortcut|\<of\>>>|<cell|<math|\<of\>>>|<cell|<math|x\<of\><math-ss|Int>>>|<cell|Type
+  wildcard>>|<row|<cell|<key|:>>|<cell|<math|:>>|<cell|<math|<around*|{|x\<in\>E:P<around*|(|x|)>|}>>>|<cell|Separator>>|<row|<cell|<shortcut|\<of\>>>|<cell|<math|\<of\>>>|<cell|<math|x\<of\><math-ss|Int>>>|<cell|Type
   satisfaction>>|<row|<cell|<shortcut|\<over\>>>|<cell|<math|\<over\>>>|<cell|<math|121\<over\>11=11>>|<cell|Division>>|<row|<cell|<key|\\
   var>>|<cell|<math|\\>>|<cell|<math|\\x>>|<cell|Backslash>>|<row|<cell|<key|\\
   var var>>|<cell|<math|\\>>|<cell|<math|\<bbb-N\><rsup|\<gtr\>>=\<bbb-N\>\<setminus\><around*|{|0|}>>>|<cell|Set
@@ -96,3 +96,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

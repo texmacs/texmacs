@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Wide mathematical accents>
@@ -22,7 +22,7 @@
     ">>|<cell|<math|<wide|x|\<ddot\>>>>>|<row|<cell|<key|math
     C>>|<cell|<math|<wide|x|\<check\>>>>|<cell|<math|<wide|x+y|\<check\>>>>|<cell|>|<cell|>>|<row|<cell|<key|math
     U>>|<cell|<math|<wide|x|\<breve\>>>>|<cell|<math|<wide|x+y|\<breve\>>>>|<cell|>|<cell|>>>>>
-  </big-table|Keyboard shortcuts for wide mathemarical accents.>
+  </big-table|Keyboard shortcuts for wide mathematical accents.>
 
   The same accents may be inserted below the expressions using the
   <prefix|math:under> prefix. For instance, <key|math:under B x + y> can be
@@ -38,8 +38,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

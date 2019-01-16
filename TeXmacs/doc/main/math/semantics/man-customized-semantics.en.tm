@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Customized mathematical semantics>
@@ -22,7 +22,7 @@
   <math|\<less\>> as the second one, then the <math|\<cal-R\>> will be
   interpreted as a binary relation, exactly in the same way as
   <math|\<less\>>. Moreover, the spacing around <math|\<cal-R\>> will be
-  adapted, so as to mimick the spacing around <math|\<less\>>. In this
+  adapted, so as to mimic the spacing around <math|\<less\>>. In this
   particular example, we might have obtained the same result by using the
   <markup|math-relation> primitive, which is equivalent to <markup|syntax>
   with<nbsp><math|\<less\>> as its second argument. Most standard operator
@@ -30,12 +30,12 @@
   <prefix|math:syntax> keyboard prefix. In particular, you may use
   <shortcut|(make 'math-ignore)> to simply ignore a formula and
   <shortcut|(make 'math-ordinary)> in order to make the formula behave as an
-  ordinary symbol (such as the letter ``o'').
+  ordinary symbol (such as the letter \Po\Q).
 
   The <markup|syntax> primitive is especially powerful when used in
   combination with the <TeXmacs> macro language. For instance, consider the
-  formula <math|C=1/2*\<mathpi\>*\<mathi\>*<big-around|\<oint\>|f<around*|(|z|)>*\<mathd\>
-  z>>. It is likely that the inteded interpretation of
+  formula <math|C=1/2*\<mathpi\>*\<mathi\>*<big|oint>f<around*|(|z|)>*\<mathd\>
+  z>. It is likely that the intended interpretation of
   <math|1/2*\<mathpi\>*\<mathi\>> is <math|1/<around*|(|2*\<mathpi\>*\<mathi\>|)>>
   and not <math|<around*|(|1/2|)>*\<mathpi\>*\<mathi\>>. Therefore, if we
   often use the constant <math|2*\<mathpi\>*\<mathi\>>, then we might want to
@@ -85,8 +85,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
