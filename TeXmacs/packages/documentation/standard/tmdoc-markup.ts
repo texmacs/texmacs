@@ -31,11 +31,11 @@
 
   <assign|markup|<macro|body|<src-macro|<arg|body>>>>
 
-  <assign|tmstyle|<macro|body|<indexed|<with|font-family|tt|color|brown|<arg|body>>>>>
+  <assign|tmstyle|<macro|body|<indexed|<with|font-family|tt|language|verbatim|color|brown|<arg|body>>>>>
 
-  <assign|tmpackage|<macro|body|<indexed|<with|font-family|tt|color|brown|<arg|body>>>>>
+  <assign|tmpackage|<macro|body|<indexed|<with|font-family|tt|language|verbatim|color|brown|<arg|body>>>>>
 
-  <assign|tmdtd|<macro|body|<indexed|<with|font-family|tt|color|dark
+  <assign|tmdtd|<macro|body|<indexed|<with|font-family|tt|language|verbatim|color|dark
   magenta|<arg|body>>>>>
 
   <\active*>

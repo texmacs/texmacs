@@ -462,6 +462,7 @@
   (spell-check spell_check (tree string string))
   (spell-check? check_word (bool string string))
   (spell-accept spell_accept (void string string))
+  (spell-var-accept spell_accept (void string string bool))
   (spell-insert spell_insert (void string string))
 
   ;; Packrat grammar and parsing tools

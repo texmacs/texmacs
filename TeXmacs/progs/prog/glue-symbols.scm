@@ -434,6 +434,7 @@
 "spell-check"
 "spell-check?"
 "spell-accept"
+"spell-var-accept"
 "spell-insert"
 "packrat-define"
 "packrat-property"

@@ -458,12 +458,12 @@ check_word (string lan, string s) {
 }
 
 void
-spell_accept (string lan, string s) {
+spell_accept (string lan, string s, bool permanent) {
   string l= locase_all (s);
   if (s != upcase_first (l)) s= l;
   string key= lan * ":" * s;
   spell_cache (key) = 1;
-  spell_temp (key)= 1;
+  if (!permanent) spell_temp (key)= 1;
   ispell_accept (lan, s);
 }
 

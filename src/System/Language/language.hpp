@@ -174,7 +174,7 @@ string spell_start (string lan);
 void spell_done (string lan);
 tree spell_check (string lan, string s);
 bool check_word (string lan, string s);
-void spell_accept (string lan, string s);
+void spell_accept (string lan, string s, bool permanent= false);
 void spell_insert (string lan, string s);
 
 #endif // defined LANGUAGE_H

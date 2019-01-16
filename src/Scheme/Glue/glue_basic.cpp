@@ -5467,6 +5467,23 @@ tmg_spell_accept (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_spell_var_accept (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-var-accept");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "spell-var-accept");
+  TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "spell-var-accept");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+  bool in3= tmscm_to_bool (arg3);
+
+  // TMSCM_DEFER_INTS;
+  spell_accept (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_spell_insert (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-insert");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "spell-insert");
@@ -10039,6 +10056,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("spell-check",  tmg_spell_check, 2, 0, 0);
   tmscm_install_procedure ("spell-check?",  tmg_spell_checkP, 2, 0, 0);
   tmscm_install_procedure ("spell-accept",  tmg_spell_accept, 2, 0, 0);
+  tmscm_install_procedure ("spell-var-accept",  tmg_spell_var_accept, 3, 0, 0);
   tmscm_install_procedure ("spell-insert",  tmg_spell_insert, 2, 0, 0);
   tmscm_install_procedure ("packrat-define",  tmg_packrat_define, 3, 0, 0);
   tmscm_install_procedure ("packrat-property",  tmg_packrat_property, 4, 0, 0);

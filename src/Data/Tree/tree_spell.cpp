@@ -16,13 +16,24 @@
 #include "drd_std.hpp"
 #include "language.hpp"
 #include "vars.hpp"
+#include "hashset.hpp"
 
 int  spell_max_hits= 1000000;
 void spell (range_set& sel, tree t, tree what, path p);
+hashset<tree_label> spell_ignore;
 
 /******************************************************************************
 * Useful subroutines
 ******************************************************************************/
+
+static void
+spell_initialize () {
+  if (N(spell_ignore) > 0) return;
+  spell_ignore->insert (make_tree_label ("abbr"));
+  spell_ignore->insert (make_tree_label ("name"));
+  spell_ignore->insert (make_tree_label ("bib-list"));
+  spell_ignore->insert (make_tree_label ("explain-macro"));
+}
 
 static void
 merge (range_set& sel, range_set ssel) {
@@ -33,7 +44,7 @@ merge (range_set& sel, range_set ssel) {
 
 static bool
 is_accessible_for_spell (tree t, int i) {
-  if (is_compound (t, "bib-list")) return false;
+  if (spell_ignore->contains (L(t))) return false;
   if (is_accessible_child (t, i)) return true;
   if (is_func (t, HIDDEN)) return true;
   if (get_access_mode () != DRD_ACCESS_SOURCE) return false;
@@ -141,6 +152,7 @@ spell (tree mode, tree lan, range_set& sel, tree t, path p, path pos) {
 
 range_set
 spell (string lan, tree t, path p, int limit) {
+  spell_initialize ();
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
@@ -152,6 +164,7 @@ spell (string lan, tree t, path p, int limit) {
 
 range_set
 spell (string lan, tree t, path p, path pos, int limit) {
+  spell_initialize ();
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
