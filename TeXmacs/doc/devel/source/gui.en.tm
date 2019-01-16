@@ -1,9 +1,9 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
-  <expand|tmdoc-title|The graphical user interface>
+  <tmdoc-title|The graphical user interface>
 
   <section|Introduction>
 
@@ -62,18 +62,18 @@
   </itemize>
 
   Later a special widget-style manager will be implemented, which will be
-  able to present widgets according to different ``styles''.
+  able to present widgets according to different \Pstyles\Q.
 
   <subsubsection|A simple example>
 
-  In order to create a window ``Test'' with the text ``Hello world'' in it,
+  In order to create a window \PTest\Q with the text \PHello world\Q in it,
   one first opens the display, then create the widget with the text and
   finally the window, with the widget attached to it\ 
 
   <\verbatim>
-    \ \ \ \ display dis= open_display ();<format|next line> \ \ \ widget
-    \ wid= text_widget ("Hello world");<format|next line> \ \ \ window \ win=
-    plain_window (wid, dis, "Test");
+    \ \ \ \ display dis= open_display ();<next-line> \ \ \ widget \ wid=
+    text_widget ("Hello world");<next-line> \ \ \ window \ win= plain_window
+    (wid, dis, "Test");
   </verbatim>
 
   Technically speaking, the window creation amounts to several actions:
@@ -84,9 +84,9 @@
 
     <item>The window is created.
 
-    <item>The widget is ``attached'' to the window.
+    <item>The widget is \Pattached\Q to the window.
 
-    <item>The subwidgets are ``positioned'' at their appropriate places and
+    <item>The subwidgets are \Ppositioned\Q at their appropriate places and
     they are given appropriate sizes within their parents.
   </itemize>
 
@@ -113,7 +113,7 @@
   destroy the display by\ 
 
   <\verbatim>
-    \ \ \ \ close_display (dis)<format|next line> \ \ \ delete dis;
+    \ \ \ \ close_display (dis)<next-line> \ \ \ delete dis;
   </verbatim>
 
   The user only has to bother about destroying window and displays; widgets
@@ -159,11 +159,11 @@
   keyboard and repaint handlers:\ 
 
   <\verbatim>
-    \ \ \ \ class track_widget_rep: basic_widget_rep {<format|next line>
-    \ \ \ \ \ string last_key;<format|next line> \ \ \ \ \ track_widget_rep
-    ();<format|next line> \ \ \ \ \ void handle_keypress (keypress_event
-    ev);<format|next line> \ \ \ \ \ void handle_repaint (repaint_event
-    ev);<format|next line> \ \ \ };
+    \ \ \ \ class track_widget_rep: basic_widget_rep {<next-line>
+    \ \ \ \ \ string last_key;<next-line> \ \ \ \ \ track_widget_rep
+    ();<next-line> \ \ \ \ \ void handle_keypress (keypress_event
+    ev);<next-line> \ \ \ \ \ void handle_repaint (repaint_event
+    ev);<next-line> \ \ \ };
   </verbatim>
 
   The constructor is taken to be empty and places the origin at the center of
@@ -177,8 +177,8 @@
   also define the function\ 
 
   <\verbatim>
-    \ \ \ \ void<format|next line> \ \ \ track_widget () {<format|next line>
-    \ \ \ \ \ return new track_widget_rep ();<format|next line> \ \ \ }
+    \ \ \ \ void<next-line> \ \ \ track_widget () {<next-line>
+    \ \ \ \ \ return new track_widget_rep ();<next-line> \ \ \ }
   </verbatim>
 
   in order to create an instance of a <verbatim|track_widget>.
@@ -187,10 +187,10 @@
   <verbatim|last_key> and invalidate the entire widget region.\ 
 
   <\verbatim>
-    \ \ \ \ void<format|next line> \ \ \ track_widget_rep::handle_keypress
-    (keypress_event ev) {<format|next line> \ \ \ \ \ last_key=
-    ev-\<gtr\>key;<format|next line> \ \ \ \ \ this \<less\>\<less\>
-    emit_invalidate_all ();<format|next line> \ \ \ }
+    \ \ \ \ void<next-line> \ \ \ track_widget_rep::handle_keypress
+    (keypress_event ev) {<next-line> \ \ \ \ \ last_key=
+    ev-\<gtr\>key;<next-line> \ \ \ \ \ this \<less\>\<less\>
+    emit_invalidate_all ();<next-line> \ \ \ }
   </verbatim>
 
   The event handler for repainting first determines the string to be
@@ -198,17 +198,16 @@
   repaints it at the center.\ 
 
   <\verbatim>
-    \ \ \ \ void<format|next line> \ \ \ track_widget_rep::handle_repaint
-    (repaint_event ev) {<format|next line> \ \ \ \ \ string s= (last_key ==
-    ""? "No key pressed": "Pressed " * last_key);<format|next
-    line><format|next line> \ \ \ \ \ SI x1, y1, x2, y2;<format|next line>
-    \ \ \ \ \ win-\<gtr\>get_extents (s, x1, y1, x2, y2); // CHECK
-    THIS<format|next line><format|next line> \ \ \ \ \ win-\<gtr\>set_color
-    (black);<format|next line> \ \ \ \ \ win-\<gtr\>fill (ev-\<gtr\>x1,
-    ev-\<gtr\>y1, ev-\<gtr\>x2, ev-\<gtr\>y2);<format|next line>
-    \ \ \ \ \ win-\<gtr\>set_color (white);<format|next line>
-    \ \ \ \ \ win-\<gtr\>draw_string (s, -(x1+x2)\<gtr\>\<gtr\>1,
-    -(y1+y2)\<gtr\>\<gtr\>1);<format|next line> \ \ \ }
+    \ \ \ \ void<next-line> \ \ \ track_widget_rep::handle_repaint
+    (repaint_event ev) {<next-line> \ \ \ \ \ string s= (last_key == ""? "No
+    key pressed": "Pressed " * last_key);<next-line><next-line> \ \ \ \ \ SI
+    x1, y1, x2, y2;<next-line> \ \ \ \ \ win-\<gtr\>get_extents (s, x1, y1,
+    x2, y2); // CHECK THIS<next-line><next-line>
+    \ \ \ \ \ win-\<gtr\>set_color (black);<next-line>
+    \ \ \ \ \ win-\<gtr\>fill (ev-\<gtr\>x1, ev-\<gtr\>y1, ev-\<gtr\>x2,
+    ev-\<gtr\>y2);<next-line> \ \ \ \ \ win-\<gtr\>set_color
+    (white);<next-line> \ \ \ \ \ win-\<gtr\>draw_string (s,
+    -(x1+x2)\<gtr\>\<gtr\>1, -(y1+y2)\<gtr\>\<gtr\>1);<next-line> \ \ \ }
   </verbatim>
 
   \;
@@ -232,29 +231,26 @@
   The definition of the <verbatim|widget_rep> class goes as follows:\ 
 
   <\verbatim>
-    \ \ \ \ struct widget_rep: rep_struct {<format|next line>
-    \ \ \ \ \ window \ \ \ \ \ \ \ win; \ \ \ \ \ \ \ \ \ \ // underlying
-    window<format|next line> \ \ \ \ \ SI \ \ \ \ \ \ \ \ \ \ \ ox, oy;
-    \ \ \ \ \ \ \ // origin of widget in window<format|next line>
-    \ \ \ \ \ SI \ \ \ \ \ \ \ \ \ \ \ w, h; \ \ \ \ \ \ \ \ \ // width and
-    height of widget<format|next line> \ \ \ \ \ gravity \ \ \ \ \ \ grav;
-    \ \ \ \ \ \ \ \ \ // position of the origin in the widget<format|next
-    line> \ \ \ \ \ array\<less\>widget\<gtr\> a; \ \ \ \ \ \ \ \ \ \ \ \ //
-    children of widget<format|next line> \ \ \ \ \ array\<less\>string\<gtr\>
-    name; \ \ \ \ \ \ \ \ \ // names for the children<format|next
-    line><format|next line> \ \ \ \ \ widget_rep (array\<less\>widget\<gtr\>
-    a, array\<less\>string\<gtr\> name, gravity grav);<format|next line>
-    \ \ \ \ \ virtual ~widget_rep ();<format|next line><format|next line>
-    \ \ \ \ \ virtual operator tree () = 0;<format|next line>
-    \ \ \ \ \ virtual bool handle (event ev) = 0;<format|next
-    line><format|next line> \ \ \ \ \ SI \ \ \ \ \ \ x1 (); SI y1 (); //
-    lower left window coordinates of widget<format|next line> \ \ \ \ \ SI
-    \ \ \ \ \ \ x2 (); SI y2 (); // upper right window coordinates of
-    widget<format|next line> \ \ \ \ \ bool \ \ \ \ attached (); \ \ \ \ //
-    tests whether (win != NULL)<format|next line> \ \ \ \ \ volatile void
-    fatal_error (string mess, string rout="", string fname="");<format|next
-    line> \ \ \ <format|next line> \ \ \ \ \ friend class widget;<format|next
-    line> \ \ \ };
+    \ \ \ \ struct widget_rep: rep_struct {<next-line> \ \ \ \ \ window
+    \ \ \ \ \ \ \ win; \ \ \ \ \ \ \ \ \ \ // underlying window<next-line>
+    \ \ \ \ \ SI \ \ \ \ \ \ \ \ \ \ \ ox, oy; \ \ \ \ \ \ \ // origin of
+    widget in window<next-line> \ \ \ \ \ SI \ \ \ \ \ \ \ \ \ \ \ w, h;
+    \ \ \ \ \ \ \ \ \ // width and height of widget<next-line>
+    \ \ \ \ \ gravity \ \ \ \ \ \ grav; \ \ \ \ \ \ \ \ \ // position of the
+    origin in the widget<next-line> \ \ \ \ \ array\<less\>widget\<gtr\> a;
+    \ \ \ \ \ \ \ \ \ \ \ \ // children of widget<next-line>
+    \ \ \ \ \ array\<less\>string\<gtr\> name; \ \ \ \ \ \ \ \ \ // names for
+    the children<next-line><next-line> \ \ \ \ \ widget_rep
+    (array\<less\>widget\<gtr\> a, array\<less\>string\<gtr\> name, gravity
+    grav);<next-line> \ \ \ \ \ virtual ~widget_rep ();<next-line><next-line>
+    \ \ \ \ \ virtual operator tree () = 0;<next-line> \ \ \ \ \ virtual bool
+    handle (event ev) = 0;<next-line><next-line> \ \ \ \ \ SI \ \ \ \ \ \ x1
+    (); SI y1 (); // lower left window coordinates of widget<next-line>
+    \ \ \ \ \ SI \ \ \ \ \ \ x2 (); SI y2 (); // upper right window
+    coordinates of widget<next-line> \ \ \ \ \ bool \ \ \ \ attached ();
+    \ \ \ \ // tests whether (win != NULL)<next-line> \ \ \ \ \ volatile void
+    fatal_error (string mess, string rout="", string fname="");<next-line>
+    \ \ \ <next-line> \ \ \ \ \ friend class widget;<next-line> \ \ \ };
   </verbatim>
 
   \;
@@ -281,23 +277,22 @@
   The definition of the <verbatim|widget> class goes as follows:\ 
 
   <\verbatim>
-    \ \ \ \ struct widget {<format|next line> \ \ \ #import null_indirect_h
-    (widget, widget_rep)<format|next line> \ \ \ \ \ inline widget
-    (widget_rep* rep2): rep (rep2) {<format|next line> \ \ \ \ \ \ \ if
-    (rep!=NULL) rep-\<gtr\>ref_count++; }<format|next line> \ \ \ \ \ inline
-    widget operator [] (int i) { return rep-\<gtr\>a[i]; }<format|next line>
-    \ \ \ \ \ \ \ \ \ \ \ \ widget operator [] (string s);<format|next line>
-    \ \ \ \ \ inline operator tree () { return (tree) (*rep); }<format|next
-    line> \ \ \ \ \ inline bool operator == (widget w) { return rep == w.rep;
-    }<format|next line> \ \ \ \ \ inline bool operator != (widget w) { return
-    rep != w.rep; }<format|next line> \ \ \ };
+    \ \ \ \ struct widget {<next-line> \ \ \ #import null_indirect_h (widget,
+    widget_rep)<next-line> \ \ \ \ \ inline widget (widget_rep* rep2): rep
+    (rep2) {<next-line> \ \ \ \ \ \ \ if (rep!=NULL) rep-\<gtr\>ref_count++;
+    }<next-line> \ \ \ \ \ inline widget operator [] (int i) { return
+    rep-\<gtr\>a[i]; }<next-line> \ \ \ \ \ \ \ \ \ \ \ \ widget operator []
+    (string s);<next-line> \ \ \ \ \ inline operator tree () { return (tree)
+    (*rep); }<next-line> \ \ \ \ \ inline bool operator == (widget w) {
+    return rep == w.rep; }<next-line> \ \ \ \ \ inline bool operator !=
+    (widget w) { return rep != w.rep; }<next-line> \ \ \ };
   </verbatim>
 
   \;
 
   Widgets may be constructed in two ways. First, we may construct a symbolic
-  ``nil'' widget by <verbatim|widget ()>. The function <verbatim|bool nil
-  (widget)> is provided in order to test whether a widget is ``nil''.
+  \Pnil\Q widget by <verbatim|widget ()>. The function <verbatim|bool nil
+  (widget)> is provided in order to test whether a widget is \Pnil\Q.
   Secondly, we may construct a widget from a pointer of type
   <verbatim|widget_rep*>.
 
@@ -305,7 +300,7 @@
   are no longer pointed to. An important exception is when two widgets point
   one to each other, which fools the reference counter (for instance a
   scrollbar and the widget which is scrolled need to point one to each
-  other). In order to deal with such ``circular dependencies'', one works
+  other). In order to deal with such \Pcircular dependencies\Q, one works
   directly with <verbatim|widget_rep*> pointers if one does not want to the
   pointer to be taken into account in the reference counter.
 
@@ -330,12 +325,11 @@
   The definition of the <verbatim|event_rep> structure is as follows:\ 
 
   <\verbatim>
-    \ \ \ \ struct event_rep: public rep_struct {<format|next line>
-    \ \ \ \ \ int \ \ \ type; \ // the event type<format|next line>
-    \ \ \ \ \ inline event_rep (int type2): rep_struct (0), type (type2)
-    {}<format|next line> \ \ \ \ \ inline virtual ~event_rep ()
-    {}<format|next line> \ \ \ \ \ virtual operator tree () = 0; \ \ // for
-    displaying events (debugging)<format|next line> \ \ \ };
+    \ \ \ \ struct event_rep: public rep_struct {<next-line> \ \ \ \ \ int
+    \ \ \ type; \ // the event type<next-line> \ \ \ \ \ inline event_rep
+    (int type2): rep_struct (0), type (type2) {}<next-line> \ \ \ \ \ inline
+    virtual ~event_rep () {}<next-line> \ \ \ \ \ virtual operator tree () =
+    0; \ \ // for displaying events (debugging)<next-line> \ \ \ };
   </verbatim>
 
   \;
@@ -357,12 +351,12 @@
   The <verbatim|event> structure is defined by\ 
 
   <\verbatim>
-    \ \ \ \ struct event {<format|next line> \ \ \ #import indirect_h (event,
-    event_rep) \ \ \ \ \ \ \ \ \ \ \ <format|next line> \ \ \ \ \ inline
-    event (event_rep* rep2): rep (rep2) {<format|next line> \ \ \ \ \ \ \ if
-    (rep!=NULL) rep-\<gtr\>ref_count++; }<format|next line> \ \ \ \ \ inline
-    operator tree () { return (tree) (*rep); }<format|next line>
-    \ \ \ };<format|next line> \ \ \ #import indirect_cc (event, event_rep)
+    \ \ \ \ struct event {<next-line> \ \ \ #import indirect_h (event,
+    event_rep) \ \ \ \ \ \ \ \ \ \ \ <next-line> \ \ \ \ \ inline event
+    (event_rep* rep2): rep (rep2) {<next-line> \ \ \ \ \ \ \ if (rep!=NULL)
+    rep-\<gtr\>ref_count++; }<next-line> \ \ \ \ \ inline operator tree () {
+    return (tree) (*rep); }<next-line> \ \ \ };<next-line> \ \ \ #import
+    indirect_cc (event, event_rep)
   </verbatim>
 
   \;
@@ -374,10 +368,10 @@
   <verbatim|get_widget> events is defined by\ 
 
   <\verbatim>
-    \ \ \ \ struct get_widget_event_rep: public event_rep {<format|next line>
-    \ \ \ \ \ string which; widget& w;<format|next line>
-    \ \ \ \ \ get_widget_event_rep (string which, widget& w);<format|next
-    line> \ \ \ \ \ operator tree ();<format|next line> \ \ \ };
+    \ \ \ \ struct get_widget_event_rep: public event_rep {<next-line>
+    \ \ \ \ \ string which; widget& w;<next-line>
+    \ \ \ \ \ get_widget_event_rep (string which, widget& w);<next-line>
+    \ \ \ \ \ operator tree ();<next-line> \ \ \ };
   </verbatim>
 
   The corresponding <verbatim|get_widget_event> class is defined by\ 
@@ -391,12 +385,11 @@
   The module <verbatim|event> with two parameters is defined by\ 
 
   <\verbatim>
-    \ \ \ \ #module event (T, R)<format|next line> \ \ \ struct T
-    {<format|next line> \ \ \ \ \ R* rep;<format|next line> \ \ \ \ \ T (T&
-    ev);<format|next line> \ \ \ \ \ ~T ();<format|next line> \ \ \ \ \ T
-    (event& ev);<format|next line> \ \ \ \ \ operator event ();<format|next
-    line> \ \ \ \ \ R* operator -\<gtr\> ();<format|next line> \ \ \ \ \ T&
-    operator = (T ev);<format|next line> \ \ \ };<format|next line>
+    \ \ \ \ #module event (T, R)<next-line> \ \ \ struct T {<next-line>
+    \ \ \ \ \ R* rep;<next-line> \ \ \ \ \ T (T& ev);<next-line> \ \ \ \ \ ~T
+    ();<next-line> \ \ \ \ \ T (event& ev);<next-line> \ \ \ \ \ operator
+    event ();<next-line> \ \ \ \ \ R* operator -\<gtr\> ();<next-line>
+    \ \ \ \ \ T& operator = (T ev);<next-line> \ \ \ };<next-line>
     \ \ \ #endmodule // event (T, R)
   </verbatim>
 
@@ -410,17 +403,17 @@
 
   <\verbatim>
     \ \ \ \ get_widget_event_rep::get_widget_event_rep (string ww, widget&
-    w2):<format|next line> \ \ \ \ \ event_rep (GET_WIDGET_EVENT), which
-    (ww), w (w2) {}<format|next line> \ \ \ get_widget_event_rep::operator
-    tree () {<format|next line> \ \ \ \ \ return tree ("get_widget_event",
-    which); }<format|next line> \ \ \ #import code_event (get_widget_event,
+    w2):<next-line> \ \ \ \ \ event_rep (GET_WIDGET_EVENT), which (ww), w
+    (w2) {}<next-line> \ \ \ get_widget_event_rep::operator tree ()
+    {<next-line> \ \ \ \ \ return tree ("get_widget_event", which);
+    }<next-line> \ \ \ #import code_event (get_widget_event,
     get_widget_event_rep)
   </verbatim>
 
   The actual events are created by\ 
 
   <\verbatim>
-    \ \ \ \ event get_widget (string which, widget& w) {<format|next line>
+    \ \ \ \ event get_widget (string which, widget& w) {<next-line>
     \ \ \ \ \ return new get_widget_event_rep (which, w); }
   </verbatim>
 
@@ -444,25 +437,24 @@
   For instance, the event handler for composite widgets is as follows:\ 
 
   <\verbatim>
-    \ \ \ \ bool<format|next line> \ \ \ composite_widget_rep::handle (event
-    ev) {<format|next line> \ \ \ \ \ switch (ev-\<gtr\>type) {<format|next
-    line> \ \ \ \ \ case CLEAN_EVENT:<format|next line>
-    \ \ \ \ \ \ \ handle_clean (ev);<format|next line> \ \ \ \ \ \ \ return
-    TRUE;<format|next line> \ \ \ \ \ case INSERT_EVENT:<format|next line>
-    \ \ \ \ \ \ \ handle_insert (ev);<format|next line> \ \ \ \ \ \ \ return
-    TRUE;<format|next line> \ \ \ \ \ case REMOVE_EVENT:<format|next line>
-    \ \ \ \ \ \ \ handle_remove (ev);<format|next line> \ \ \ \ \ \ \ return
-    TRUE;<format|next line> \ \ \ \ \ }<format|next line> \ \ \ \ \ return
-    basic_widget_rep::handle (ev);<format|next line> \ \ \ }
+    \ \ \ \ bool<next-line> \ \ \ composite_widget_rep::handle (event ev)
+    {<next-line> \ \ \ \ \ switch (ev-\<gtr\>type) {<next-line>
+    \ \ \ \ \ case CLEAN_EVENT:<next-line> \ \ \ \ \ \ \ handle_clean
+    (ev);<next-line> \ \ \ \ \ \ \ return TRUE;<next-line> \ \ \ \ \ case
+    INSERT_EVENT:<next-line> \ \ \ \ \ \ \ handle_insert (ev);<next-line>
+    \ \ \ \ \ \ \ return TRUE;<next-line> \ \ \ \ \ case
+    REMOVE_EVENT:<next-line> \ \ \ \ \ \ \ handle_remove (ev);<next-line>
+    \ \ \ \ \ \ \ return TRUE;<next-line> \ \ \ \ \ }<next-line>
+    \ \ \ \ \ return basic_widget_rep::handle (ev);<next-line> \ \ \ }
   </verbatim>
 
   The member function <verbatim|handle_insert> is implemented as follows:\ 
 
   <\verbatim>
-    \ \ \ \ void<format|next line> \ \ \ composite_widget_rep::handle_insert
-    (insert_event ev) {<format|next line> \ \ \ \ \ a \<less\>\<less\>
-    ev-\<gtr\>w;<format|next line> \ \ \ \ \ name \<less\>\<less\>
-    ev-\<gtr\>s;<format|next line> \ \ \ }
+    \ \ \ \ void<next-line> \ \ \ composite_widget_rep::handle_insert
+    (insert_event ev) {<next-line> \ \ \ \ \ a \<less\>\<less\>
+    ev-\<gtr\>w;<next-line> \ \ \ \ \ name \<less\>\<less\>
+    ev-\<gtr\>s;<next-line> \ \ \ }
   </verbatim>
 
   In particular, we can retrieve the fields <verbatim|w> and <verbatim|s>
@@ -502,7 +494,7 @@
     each window. This is useful for complex applications, where regions of
     the window may be invalidated during this phase. Indeed, the event
     handling phase may consist of many complex actions, so that the regions
-    to invalidate may be determined easier <with|font shape|italic|a
+    to invalidate may be determined easier <with|font-shape|italic|a
     posteriori>.
 
     <item>Requests are emitted in order to repaint the regions which have
@@ -526,19 +518,19 @@
   of <verbatim|PIXEL>. Furthermore, the <verbatim|window> member functions\ 
 
   <\verbatim>
-    \ \ \ \ void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);<format|next
-    line> \ \ \ void outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
+    \ \ \ \ void inner_round (SI& x1, SI& y1, SI& x2, SI& y2);<next-line>
+    \ \ \ void outer_round (SI& x1, SI& y1, SI& x2, SI& y2);
   </verbatim>
 
   transform a rectangle into a new one with integer multiple of
-  <verbatim|PIXEL> coordinates, which is enclosed resp. encloses the original
-  rectangle.
+  <verbatim|PIXEL> coordinates, which is enclosed <abbr|resp.> encloses the
+  original rectangle.
 
   <subsubsection|Local and global coordinates>
 
   Each widget has an origin <verbatim|(ox,oy)> with respect to the window to
-  which it has been attached. This is the origin of the ``local
-  coordinates''. The origin of the ``global coordinates'' is the origin of
+  which it has been attached. This is the origin of the \Plocal
+  coordinates\Q. The origin of the \Pglobal coordinates\Q is the origin of
   the window. The location of the local origin in the widget is determined by
   the widget's gravity, which is either one of <verbatim|north_west>,
   <verbatim|north>, <verbatim|north_east>, <verbatim|west>,
@@ -591,12 +583,12 @@
   window, such as:
 
   <\itemize>
-    <item>``get size'' events, which determine the default, minimal and
+    <item>\Pget size\Q events, which determine the default, minimal and
     maximal size of a widget. Such an event is generated before the creation
     of the window to which the widget will be attached in order to determine
     the size of the window.
 
-    <item>``attach window'' events, in order to attach (or detach) a window.
+    <item>\Pattach window\Q events, in order to attach (or detach) a window.
 
     <item>Events for setting (and getting) attributes: after the creation of
     a widget some attributes of the widget may be given some default value.
@@ -620,7 +612,7 @@
   <subsubsection|Positioning widgets>
 
   When an appropriate size <verbatim|(w,h)> has been determined for a widget
-  (using ``get size'' events) and when a widget has been attached to some
+  (using \Pget size\Q events) and when a widget has been attached to some
   window, the widget is positioned in the main window. By default, all
   children are recursively positioned at the top left of the window at sizes
   <verbatim|(w,h)>. But for complex widgets with children, a specific
@@ -638,7 +630,7 @@
   <verbatim|a[i]> is at position <verbatim|(x[i], y[i])> w.r.t. the local
   coordinates of <verbatim|this> and such that the origin is situated in the
   center of <verbatim|a[i]>. The width and height of <verbatim|a[i]> are set
-  to <verbatim|w[i]> resp. <verbatim|h[i]>.
+  to <verbatim|w[i]> <abbr|resp.> <verbatim|h[i]>.
 
   <subsubsection|Repositioning widgets>
 
@@ -700,8 +692,7 @@
   window lost focus.
 
   The keyboard focus widget <verbatim|win-\<gtr\>kbd_focus> associated to a
-  window can be changed by calling the <verbatim|window_rep> member function\
-  \ 
+  window can be changed by calling the <verbatim|window_rep> member function\ 
 
   <\verbatim>
     \ \ \ \ void window_rep::set_keyboard_focus (widget);
@@ -727,22 +718,23 @@
 
   <\verbatim>
     \ \ \ \ "\<less\>F1\<gtr\>", "\<less\>F2\<gtr\>", "\<less\>F3\<gtr\>",
-    "\<less\>F4\<gtr\>", "\<less\>F5\<gtr\>",
-    "\<less\>F6\<gtr\>",<format|next line> \ \ \ "\<less\>F7\<gtr\>",
-    "\<less\>F8\<gtr\>", "\<less\>F9\<gtr\>", "\<less\>F10\<gtr\>",
-    "\<less\>F11\<gtr\>", "\<less\>F12\<gtr\>",<format|next line>
-    \ \ \ "\<less\>esc\<gtr\>", "\<less\>tab\<gtr\>", "\<less\>less\<gtr\>",
-    "\<less\>gtr\<gtr\>", "\<less\>del\<gtr\>",
-    "\<less\>return\<gtr\>",<format|next line> \ \ \ "\<less\>ins\<gtr\>",
-    "\<less\>home\<gtr\>", "\<less\>end\<gtr\>", "\<less\>page-down\<gtr\>",
-    "\<less\>page-up\<gtr\>",<format|next line> \ \ \ "\<less\>left\<gtr\>",
-    "\<less\>up\<gtr\>", "\<less\>down\<gtr\>", "\<less\>right\<gtr\>"
+    "\<less\>F4\<gtr\>", "\<less\>F5\<gtr\>", "\<less\>F6\<gtr\>",<next-line>
+    \ \ \ "\<less\>F7\<gtr\>", "\<less\>F8\<gtr\>", "\<less\>F9\<gtr\>",
+    "\<less\>F10\<gtr\>", "\<less\>F11\<gtr\>",
+    "\<less\>F12\<gtr\>",<next-line> \ \ \ "\<less\>esc\<gtr\>",
+    "\<less\>tab\<gtr\>", "\<less\>less\<gtr\>", "\<less\>gtr\<gtr\>",
+    "\<less\>del\<gtr\>", "\<less\>return\<gtr\>",<next-line>
+    \ \ \ "\<less\>ins\<gtr\>", "\<less\>home\<gtr\>", "\<less\>end\<gtr\>",
+    "\<less\>page-down\<gtr\>", "\<less\>page-up\<gtr\>",<next-line>
+    \ \ \ "\<less\>left\<gtr\>", "\<less\>up\<gtr\>", "\<less\>down\<gtr\>",
+    "\<less\>right\<gtr\>"
   </verbatim>
 
   The keys <verbatim|"\<less\>less\<gtr\>"> and
-  <verbatim|"\<less\>gtr\<gtr\>"> correspond resp. to <verbatim|"\<less\>">
-  and <verbatim|"\<gtr\>">. The allowed modifiers are <verbatim|"shift">,
-  <verbatim|"ctrl"> and <verbatim|"meta"> or combinations of these.
+  <verbatim|"\<less\>gtr\<gtr\>"> correspond <abbr|resp.> to
+  <verbatim|"\<less\>"> and <verbatim|"\<gtr\>">. The allowed modifiers are
+  <verbatim|"shift">, <verbatim|"ctrl"> and <verbatim|"meta"> or combinations
+  of these.
 
   <subsection|The mouse>
 
@@ -758,7 +750,7 @@
   are the following:\ 
 
   <\verbatim>
-    \ \ \ \ "press-left", "press-middle", "press-right",<format|next line>
+    \ \ \ \ "press-left", "press-middle", "press-right",<next-line>
     \ \ \ "release-left", "release-middle", "release-right"
   </verbatim>
 
@@ -769,13 +761,12 @@
   </verbatim>
 
   The <verbatim|"enter"> and <verbatim|"leave"> events occur when the mouse
-  enters resp. leaves the widget. Finally, the states of the left, middle and
-  right mouse buttons can respectively be obtained using the calls\ 
+  enters <abbr|resp.> leaves the widget. Finally, the states of the left,
+  middle and right mouse buttons can respectively be obtained using the calls\ 
 
   <\verbatim>
-    \ \ \ \ ev-\<gtr\>pressed ("left")<format|next line>
-    \ \ \ ev-\<gtr\>pressed ("middle")<format|next line>
-    \ \ \ ev-\<gtr\>pressed ("right")<format|next line>\ 
+    \ \ \ \ ev-\<gtr\>pressed ("left")<next-line> \ \ \ ev-\<gtr\>pressed
+    ("middle")<next-line> \ \ \ ev-\<gtr\>pressed ("right")<next-line>\ 
   </verbatim>
 
   <subsubsection|Grabbing the mouse>
@@ -851,7 +842,7 @@
   may also invalidate a rectangle by using either one of the routines\ 
 
   <\verbatim>
-    \ \ \ \ event emit_invalidate_all ();<format|next line> \ \ \ event
+    \ \ \ \ event emit_invalidate_all ();<next-line> \ \ \ event
     emit_invalidate (SI x1, SI y1, SI x2, SI y2);
   </verbatim>
 
@@ -888,8 +879,8 @@
   </verbatim>
 
   The first two arguments determine whether the widget is extensible
-  horizontally resp. vertically. The last two elements determine the default
-  and minimal size of the widget.
+  horizontally <abbr|resp.> vertically. The last two elements determine the
+  default and minimal size of the widget.
 
   <subsubsection|Text widgets>
 
@@ -915,7 +906,7 @@
   window when pressed. Popup buttons are created by one of\ 
 
   <\verbatim>
-    \ \ \ \ widget pulldown_button (string s, widget m);<format|next line>
+    \ \ \ \ widget pulldown_button (string s, widget m);<next-line>
     \ \ \ widget pullright_button (string s, widget m);
   </verbatim>
 
@@ -935,8 +926,8 @@
   Horizontal and vertical menus are created using\ 
 
   <\verbatim>
-    \ \ \ \ widget horizontal_menu ();<format|next line> \ \ \ widget
-    vertical_menu ();
+    \ \ \ \ widget horizontal_menu ();<next-line> \ \ \ widget vertical_menu
+    ();
   </verbatim>
 
   By default, they are empty. Subsequently, they can be modified as composite
@@ -954,11 +945,11 @@
   scrollbars, which enable to scroll <verbatim|w>. The events\ 
 
   <\verbatim>
-    \ \ \ \ event set_scrollable (widget w);<format|next line> \ \ \ event
-    set_extents \ \ \ (SI ew, SI ey);<format|next line> \ \ \ event
-    set_scroll_pos (SI x, SI y);<format|next line> \ \ \ event get_extents
-    \ \ \ (SI& ew, SI& eh);<format|next line> \ \ \ event get_visible
-    \ \ \ (SI& x1, SI& y1, SI& x2, SI& y2);
+    \ \ \ \ event set_scrollable (widget w);<next-line> \ \ \ event
+    set_extents \ \ \ (SI ew, SI ey);<next-line> \ \ \ event set_scroll_pos
+    (SI x, SI y);<next-line> \ \ \ event get_extents \ \ \ (SI& ew, SI&
+    eh);<next-line> \ \ \ event get_visible \ \ \ (SI& x1, SI& y1, SI& x2,
+    SI& y2);
   </verbatim>
 
   enable to change <verbatim|w>, to set the extents of <verbatim|w>, to set
@@ -991,219 +982,15 @@
   Usually, the returned <verbatim|s> is a string enclosed between quotes. If
   typing was aborted, <verbatim|s> contains the string <verbatim|"cancel">.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
-    <associate|language|english>
-  </collection>
-</initial>
-
-<\references>
-  <\collection>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-10|<tuple|<uninit>|?>>
-    <associate|toc-40|<tuple|<uninit>|?>>
-    <associate|toc-20|<tuple|<uninit>|?>>
-    <associate|toc-30|<tuple|<uninit>|?>>
-    <associate|toc-21|<tuple|<uninit>|?>>
-    <associate|toc-11|<tuple|<uninit>|?>>
-    <associate|toc-41|<tuple|<uninit>|?>>
-    <associate|toc-31|<tuple|<uninit>|?>>
-    <associate|toc-22|<tuple|<uninit>|?>>
-    <associate|toc-12|<tuple|<uninit>|?>>
-    <associate|toc-32|<tuple|<uninit>|?>>
-    <associate|toc-42|<tuple|<uninit>|?>>
-    <associate|toc-33|<tuple|<uninit>|?>>
-    <associate|toc-43|<tuple|<uninit>|?>>
-    <associate|toc-13|<tuple|<uninit>|?>>
-    <associate|toc-23|<tuple|<uninit>|?>>
-    <associate|toc-44|<tuple|<uninit>|?>>
-    <associate|toc-34|<tuple|<uninit>|?>>
-    <associate|toc-14|<tuple|<uninit>|?>>
-    <associate|toc-24|<tuple|<uninit>|?>>
-    <associate|toc-45|<tuple|<uninit>|?>>
-    <associate|toc-35|<tuple|<uninit>|?>>
-    <associate|toc-15|<tuple|<uninit>|?>>
-    <associate|toc-25|<tuple|<uninit>|?>>
-    <associate|toc-46|<tuple|<uninit>|?>>
-    <associate|toc-36|<tuple|<uninit>|?>>
-    <associate|toc-16|<tuple|<uninit>|?>>
-    <associate|toc-26|<tuple|<uninit>|?>>
-    <associate|toc-27|<tuple|<uninit>|?>>
-    <associate|toc-37|<tuple|<uninit>|?>>
-    <associate|toc-17|<tuple|<uninit>|?>>
-    <associate|toc-28|<tuple|<uninit>|?>>
-    <associate|toc-18|<tuple|<uninit>|?>>
-    <associate|toc-38|<tuple|<uninit>|?>>
-    <associate|toc-29|<tuple|<uninit>|?>>
-    <associate|toc-19|<tuple|<uninit>|?>>
-    <associate|toc-39|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|<uninit>|?>>
-    <associate|toc-4|<tuple|<uninit>|?>>
-    <associate|toc-5|<tuple|<uninit>|?>>
-    <associate|toc-6|<tuple|<uninit>|?>>
-    <associate|toc-7|<tuple|<uninit>|?>>
-    <associate|toc-8|<tuple|<uninit>|?>>
-    <associate|toc-9|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      Introduction<value|toc-dots><pageref|toc-1>
-
-      <with|left margin|<quote|1.5fn>|Main
-      architecture<value|toc-dots><pageref|toc-2>>
-
-      <with|left margin|<quote|3fn>|A simple
-      example<value|toc-dots><pageref|toc-3>>
-
-      <with|left margin|<quote|1.5fn>|Widgets and event
-      processing<value|toc-dots><pageref|toc-4>>
-
-      <with|left margin|<quote|3fn>|A simple
-      example<value|toc-dots><pageref|toc-5>>
-
-      The abstract window interface<value|toc-dots><pageref|toc-6>
-
-      <with|left margin|<quote|1.5fn>|Displays<value|toc-dots><pageref|toc-7>\
-      >
-
-      Widget principles<value|toc-dots><pageref|toc-8>
-
-      <with|left margin|<quote|1.5fn>|The widget
-      class<value|toc-dots><pageref|toc-9>>
-
-      <with|left margin|<quote|3fn>|The widget representation
-      class<value|toc-dots><pageref|toc-10>>
-
-      <with|left margin|<quote|3fn>|The widget
-      class<value|toc-dots><pageref|toc-11>>
-
-      <with|left margin|<quote|1.5fn>|The event
-      class<value|toc-dots><pageref|toc-12>>
-
-      <with|left margin|<quote|3fn>|The event representation
-      class<value|toc-dots><pageref|toc-13>>
-
-      <with|left margin|<quote|3fn>|The event
-      class<value|toc-dots><pageref|toc-14>>
-
-      <with|left margin|<quote|3fn>|Concrete event
-      classes<value|toc-dots><pageref|toc-15>>
-
-      <with|left margin|<quote|3fn>|Event
-      handlers<value|toc-dots><pageref|toc-16>>
-
-      <with|left margin|<quote|3fn>|Adding your own event
-      classes<value|toc-dots><pageref|toc-17>>
-
-      <with|left margin|<quote|1.5fn>|The main event
-      loop<value|toc-dots><pageref|toc-18>>
-
-      <with|left margin|<quote|1.5fn>|Coordinates<value|toc-dots><pageref|toc\
-      -19>>
-
-      <with|left margin|<quote|3fn>|Coordinates, pixels and
-      rounding<value|toc-dots><pageref|toc-20>>
-
-      <with|left margin|<quote|3fn>|Local and global
-      coordinates<value|toc-dots><pageref|toc-21>>
-
-      <with|left margin|<quote|3fn>|Screen
-      coordinates<value|toc-dots><pageref|toc-22>>
-
-      <with|left margin|<quote|1.5fn>|Attaching and positioning
-      widgets<value|toc-dots><pageref|toc-23>>
-
-      <with|left margin|<quote|3fn>|Attaching
-      widgets<value|toc-dots><pageref|toc-24>>
-
-      <with|left margin|<quote|3fn>|Positioning
-      widgets<value|toc-dots><pageref|toc-25>>
-
-      <with|left margin|<quote|3fn>|Repositioning
-      widgets<value|toc-dots><pageref|toc-26>>
-
-      <with|left margin|<quote|1.5fn>|The
-      keyboard<value|toc-dots><pageref|toc-27>>
-
-      <with|left margin|<quote|3fn>|Keyboard
-      focus<value|toc-dots><pageref|toc-28>>
-
-      <with|left margin|<quote|3fn>|Keyboard
-      events<value|toc-dots><pageref|toc-29>>
-
-      <with|left margin|<quote|1.5fn>|The
-      mouse<value|toc-dots><pageref|toc-30>>
-
-      <with|left margin|<quote|3fn>|Mouse
-      events<value|toc-dots><pageref|toc-31>>
-
-      <with|left margin|<quote|3fn>|Grabbing the
-      mouse<value|toc-dots><pageref|toc-32>>
-
-      <with|left margin|<quote|1.5fn>|The
-      screen<value|toc-dots><pageref|toc-33>>
-
-      <with|left margin|<quote|3fn>|Repainting
-      rectangles<value|toc-dots><pageref|toc-34>>
-
-      <with|left margin|<quote|3fn>|Invalidation of
-      rectangles<value|toc-dots><pageref|toc-35>>
-
-      <with|left margin|<quote|1.5fn>|The
-      toolkit<value|toc-dots><pageref|toc-36>>
-
-      <with|left margin|<quote|3fn>|Other standard widget
-      classes<value|toc-dots><pageref|toc-37>>
-
-      <with|left margin|<quote|3fn>|Composite
-      widgets<value|toc-dots><pageref|toc-38>>
-
-      <with|left margin|<quote|3fn>|Attribute
-      widgets<value|toc-dots><pageref|toc-39>>
-
-      <with|left margin|<quote|3fn>|Glue widgets<value|toc-dots><pageref|toc-\
-      40>>
-
-      <with|left margin|<quote|3fn>|Text widgets<value|toc-dots><pageref|toc-\
-      41>>
-
-      <with|left margin|<quote|3fn>|Buttons<value|toc-dots><pageref|toc-42>>
-
-      <with|left margin|<quote|3fn>|Menus<value|toc-dots><pageref|toc-43>>
-
-      <with|left margin|<quote|3fn>|Canvas
-      widgets<value|toc-dots><pageref|toc-44>>
-
-      <with|left margin|<quote|3fn>|Input
-      widgets<value|toc-dots><pageref|toc-45>>
-    </associate>
-  </collection>
-</auxiliary>
+<initial|<\collection>
+</collection>>

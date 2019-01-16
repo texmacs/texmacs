@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.4>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Writing <TeXmacs> bibliography styles>
@@ -10,7 +10,7 @@
   <TeXmacs> admits support both for <BibTeX> and a native tool for managing
   bibliographies. <BibTeX> styles are denoted by their usual names. <TeXmacs>
   styles are prefixed by <verbatim|tm->. For example, the <TeXmacs>
-  <verbatim|<group|tm-plain>> style is the replacement for the <BibTeX>
+  <verbatim|<rigid|tm-plain>> style is the replacement for the <BibTeX>
   <verbatim|plain> style. Equivalents for the following <BibTeX> styles have
   been implemented: <verbatim|abbrv>, <verbatim|alpha>, <verbatim|ieeetr>,
   <verbatim|plain> et <verbatim|siam>. These styles can therefore be used
@@ -25,7 +25,7 @@
   simple example and give a detailed lists of available <scheme> functions
   which facilitate the creation of new styles.
 
-  <section|Example of a simple blibliography style>
+  <section|Example of a simple bibliography style>
 
   Bibliographic style files are stored in directory
   <verbatim|$TEXMACS_PATH/progs/bibtex>. They have the name of the style
@@ -36,18 +36,18 @@
 
   All style files must be declared as a module as follows:
 
-  <\scm-fragment>
+  <\scm-code>
     (texmacs-module (bibtex example)
 
     \ \ (:use (bibtex bib-utils)))
-  </scm-fragment>
+  </scm-code>
 
-  The module <verbatim|bib-utils> contains all usefull fonctions needed to
+  The module <verbatim|bib-utils> contains all useful functions needed to
   write bibliographic styles.
 
   All style files must me declared as a bibliographic style as follows:
 
-  <scm-fragment|(bib-define-style "example" "plain")>
+  <scm-code|(bib-define-style "example" "plain")>
 
   The first argument to <scm|bib-define-style> is the name of the current
   style. The second argument is the name of a fall-back style,
@@ -56,7 +56,7 @@
   following minimalistic style file behaves in an identical way as the
   <verbatim|plain> style:
 
-  <\scm-fragment>
+  <\scm-code>
     (texmacs-module (bibtex example)
 
     \ \ (:use (bibtex bib-utils)))
@@ -64,20 +64,20 @@
     \;
 
     (bib-define-style "example" "plain")
-  </scm-fragment>
+  </scm-code>
 
   Each formatting function defined in the default style can be overloaded in
   the current style. For example, the function <scm|bib-format-date> is used
   to format the date in the <verbatim|plain> style. It is redefinable in our
   example style as follows:
 
-  <\scm-fragment>
+  <\scm-code>
     (tm-define (bib-format-date e)
 
     \ \ (:mode bib-example?)
 
     \ \ (bib-format-field e "year"))
-  </scm-fragment>
+  </scm-code>
 
   All exported functions must be prefixed with <verbatim|bib->. Overloaded
   functions must be followed with directive <scm|(:mode bib-example?)>, in
@@ -85,7 +85,7 @@
 
   Our complete example file <verbatim|example.scm> is as follows:
 
-  <\scm-fragment>
+  <\scm-code>
     (texmacs-module (bibtex example)
 
     \ \ (:use (bibtex bib-utils)))
@@ -101,7 +101,7 @@
     \ \ (:mode bib-example?)
 
     \ \ (bib-format-field e "year"))
-  </scm-fragment>
+  </scm-code>
 
   It behaves in a similar way as the <verbatim|plain> style, except that all
   dates are formatted according to our custom routine.
@@ -191,7 +191,7 @@
   <\explain>
     <scm|(bib-new-list-spc ltm)><explain-synopsis|blank separated list>
   <|explain>
-    This function is equivalent to the evaluaton of <scm|(bib-new-list " "
+    This function is equivalent to the evaluation of <scm|(bib-new-list " "
     ltm)>.
   </explain>
 
@@ -305,7 +305,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|false>
   </collection>
 </initial>

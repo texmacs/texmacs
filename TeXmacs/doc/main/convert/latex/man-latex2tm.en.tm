@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Conversion from <LaTeX> to <TeXmacs>>
@@ -13,7 +13,7 @@
   <TeXmacs> is more problematic than conversions the other way around. As
   long as you restrict yourself to using the most common <LaTeX> commands,
   the conversion process should not give rise to any major difficulties.
-  However, as soon as your documents contain ``weird <TeX> primitives''
+  However, as soon as your documents contain \Pweird <TeX> primitives\Q
   (think about <verbatim|\\csname>...), then the converter may get confused.
   We also notice that <TeXmacs> is currently unable to convert <LaTeX> style
   files and no plans exist to enhance the converter in this direction.
@@ -24,8 +24,8 @@
   construct. This typically happens in presence of catcodes or uncommon
   styles of macro definitions. Sometimes, the parser may also be mistaken
   about the current mode, in which case text gets parsed as a mathematical
-  formula or <em|vice cersa>. In both cases, the imported document usually
-  becomes ``weird'' at a certain point. In order to solve the problem, we
+  formula or <em|vice versa>. In both cases, the imported document usually
+  becomes \Pweird\Q at a certain point. In order to solve the problem, we
   suggest you to identify the corresponding point in the <LaTeX> source file
   and to make an appropriate change which avoids the parser of getting
   confused.

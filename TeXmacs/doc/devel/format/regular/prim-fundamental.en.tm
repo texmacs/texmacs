@@ -1,11 +1,11 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Fundamental primitives>
 
-  <\explain|<explain-macro|document|par-1|<with|mode|math|\<cdots\>>|par-n><explain-synopsis|vertical
+  <\explain|<explain-macro|document|par-1|<math|\<cdots\>>|par-n><explain-synopsis|vertical
   sequence of paragraphs>>
     This primitive is used for sequences of logical paragraphs. A simple,
     plain text document is made of a sequence of paragraphs. For instance,
@@ -39,7 +39,7 @@
     least one argument are called ``block environments''.
   </explain>
 
-  <\explain|<explain-macro|paragraph|unit-1|<with|mode|math|\<cdots\>>|unit-n><explain-synopsis|vertical
+  <\explain|<explain-macro|paragraph|unit-1|<math|\<cdots\>>|unit-n><explain-synopsis|vertical
   sequence of paragraph units>>
     This not yet implemented primitive is a variant of <markup|document>.
     While a document is made up of logical paragraphs, a paragraph is made up
@@ -49,7 +49,7 @@
     equations are also paragraph units in a larger paragraph.
   </explain>
 
-  <\explain|<explain-macro|concat|item-1|<with|mode|math|\<cdots\>>|item-n><explain-synopsis|horizontal
+  <\explain|<explain-macro|concat|item-1|<math|\<cdots\>>|item-n><explain-synopsis|horizontal
   sequence of inline markup>>
     This primitive is used for sequences of line items, also called ``inline
     content''. For instance,
@@ -75,7 +75,7 @@
     </tm-fragment>
 
     In this example, we need the <markup|concat> tag in order to indicate
-    that ``Some <em|emphasized> text.'' correponds to a single paragraph:
+    that ``Some <em|emphasized> text.'' corresponds to a single paragraph:
 
     <\tm-fragment>
       <with|src-special|raw|<\inactive*>
@@ -104,13 +104,12 @@
 
     <\tm-fragment>
       <\inactive*>
-        <\surround|<active*|<with|mode|math|<with|color|red|\<lightning\>>>
-        >|>
+        <\surround|<active*|<math|<with|color|red|\<lightning\>>> >|>
           <\theorem>
-            <active*|Given <with|mode|math|P\<in\>\<bbb-T\>{F}> and
-            <with|mode|math|f\<less\>g\<in\>\<bbb-T\>> with
-            <with|mode|math|P(f)*P(g)\<less\>0>, there exists an
-            <with|mode|math|h\<in\>\<bbb-T\>> with <with|mode|math|P(h)=0>.>
+            <active*|Given <math|P\<in\>\<bbb-T\><around|{|F|}>> and
+            <math|f\<less\>g\<in\>\<bbb-T\>> with
+            <math|P<around|(|f|)>*P<around|(|g|)>\<less\>0>, there exists an
+            <math|h\<in\>\<bbb-T\>> with <math|P<around|(|h|)>=0>.>
           </theorem>
         </surround>
       </inactive*>
@@ -119,12 +118,12 @@
     produces
 
     <\tm-fragment>
-      <\surround|<with|mode|math|<with|color|red|\<lightning\>>> |>
+      <\surround|<math|<with|color|red|\<lightning\>>> |>
         <\theorem>
-          Given <with|mode|math|P\<in\>\<bbb-T\>{F}> and
-          <with|mode|math|f\<less\>g\<in\>\<bbb-T\>> with
-          <with|mode|math|P(f)*P(g)\<less\>0>, there exists an
-          <with|mode|math|h\<in\>\<bbb-T\>> with <with|mode|math|P(h)=0>.
+          Given <math|P\<in\>\<bbb-T\><around|{|F|}>> and
+          <math|f\<less\>g\<in\>\<bbb-T\>> with
+          <math|P<around|(|f|)>*P<around|(|g|)>\<less\>0>, there exists an
+          <math|h\<in\>\<bbb-T\>> with <math|P<around|(|h|)>=0>.
         </theorem>
       </surround>
     </tm-fragment>

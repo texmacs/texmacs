@@ -1,6 +1,6 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english|pari>>
+<style|<tuple|tmdoc|english|pari|old-spacing>>
 
 <\body>
   <tmdoc-title|Structured variants>
@@ -18,7 +18,7 @@
   finally back into a theorem. The <shortcut|(variant-circulate (focus-tree)
   #f)> key allows you to cycle in the reverse direction:
   theorem<nbsp><math|<op|\<rightarrow\>>>
-  conjectur<nbsp><math|<op|\<rightarrow\>>>
+  conjecture<nbsp><math|<op|\<rightarrow\>>>
   corollary<nbsp><math|<op|\<rightarrow\>>>
   lemma<nbsp><math|<op|\<rightarrow\>>> proposition<nbsp><math|<op|\<rightarrow\>>>
   theorem.

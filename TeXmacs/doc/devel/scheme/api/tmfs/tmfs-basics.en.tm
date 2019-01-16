@@ -1,38 +1,38 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
-  <tmdoc-title|A <tt|tmfs> primer>
+  <tmdoc-title|A <verbatim|tmfs> primer>
 
   <subsection|The <TeXmacs> filesystem>
 
   Many things in <TeXmacs> can be referenced through a <abbr|URI> with
-  <tt|tmfs> as schema. Examples of entities in this system are buffers, views
-  and windows or at a higher level help buffers and search results. A
+  <verbatim|tmfs> as schema. Examples of entities in this system are buffers,
+  views and windows or at a higher level help buffers and search results. A
   <TeXmacs> <abbr|URI> follows the format:
 
-  <center|<tt|tmfs://handler[/query]>>
+  <center|<verbatim|tmfs://handler[/query]>>
 
   Requests to open <abbr|URI>s such as these are sent to a <em|handler>,
   which actually is a set of procedures implementing the basic operations
   related to the type of content they handle: loading the content, saving it
   (if possible or necessary), setting the window title and establishing
   access permissions are the basic operations. Predefined handlers which the
-  user usually encounters are <tt|grep>, <tt|help>, <tt|history>,
-  <tt|revision> and <tt|apidoc>: they accept a query representing search
-  strings, files or help pages and render results in the appropriate language
-  into a new buffer. The <em|query> is a string in the usual format
-  <tt|variable1=value1&variable2=value2>. Its parsing can be done using
-  <scm|query-ref>.
+  user usually encounters are <verbatim|grep>, <verbatim|help>,
+  <verbatim|history>, <verbatim|revision> and <verbatim|apidoc>: they accept
+  a query representing search strings, files or help pages and render results
+  in the appropriate language into a new buffer. The <em|query> is a string
+  in the usual format <tt|variable1=value1&variable2=value2>. Its parsing can
+  be done using <scm|query-ref>.
 
   Situations where using this system makes more sense than regular documents
   are for instance documentation, which must be chosen from several languages
   and possibly be compiled on the fly from various sources (see module
-  <tt|<hlink|doc.apidoc|tmfs://apidoc/type=module&what=doc.apidoc>> and
+  <verbatim|<hlink|doc.apidoc|tmfs://apidoc/type=module&what=doc.apidoc>> and
   related modules) and automatically generated content, like that resulting
   from interacting from an external system for version control of documents
-  (see handler <tt|version> in module <tt|<hlink|version.version-tmfs|tmfs://apidoc/type=module&what=version.version-tmfs>>).
+  (see handler <tt|version> in module <verbatim|<hlink|version.version-tmfs|tmfs://apidoc/type=module&what=version.version-tmfs>>).
 
   <subsection|Implementing a handler>
 
@@ -131,9 +131,9 @@
   <|explain>
     A <em|load handler> for <scm-arg|name> is invoked when <TeXmacs> receives
     a request to open a <abbr|URI> of type
-    <tt|tmfs://<scm-arg|name>/<scm-arg|qry>>. The <scm-arg|body> of the
-    handler is passed <tt|qry> as parameter (see <scm|query-ref>) and must
-    return a complete <TeXmacs> buffer. Consider the following example:
+    <verbatim|tmfs://<scm-arg|name>/<scm-arg|qry>>. The <scm-arg|body> of the
+    handler is passed <verbatim|qry> as parameter (see <scm|query-ref>) and
+    must return a complete <TeXmacs> buffer. Consider the following example:
 
     <\scm-code>
       (tmfs-load-handler (id qry)
@@ -148,43 +148,43 @@
     </scm-code>
 
     This will open <abbr|URI>s with the format
-    <tt|tmfs://id/whatever_arguments>.
+    <verbatim|tmfs://id/whatever_arguments>.
 
     Creation of the buffer contents may be simplified using the procedures
-    defined in module <tt|<hlink|kernel.gui.gui-markup|tmfs://sapi/type=module&what=kernel.gui.gui-markup>>.
+    defined in module <verbatim|<hlink|kernel.gui.gui-markup|tmfs://sapi/type=module&what=kernel.gui.gui-markup>>.
   </explain>
 
   <\explain>
     <scm|(tmfs-save-handler (<scm-arg|name> <scm-arg|qry> <scm-arg|doc>)
-    <scm-arg|body>)><explain-synopsis|define save handler for @name>
+    <scm-arg|body>)><explain-synopsis|define save handler for <scm-arg|name>>
   </explain|A <em|save handler> is invoked when the user tries to save a
-  buffer of type <tt|tmfs://<scm-arg|name>/...> See also
+  buffer of type <verbatim|tmfs://<scm-arg|name>/...> See also
   <scm|tmfs-load-handler> and others.>
 
   <\explain>
     <scm|(tmfs-title-handler (<scm-arg|name> <scm-arg|qry> <scm-arg|doc>)
-    <scm-arg|body>)><explain-synopsis|define title handler @name>
+    <scm-arg|body>)><explain-synopsis|define title handler <scm-arg|name>>
   </explain|A <em|title handler> is invoked to build the title for a window
-  displaying a buffer of type <tt|tmfs://<scm-arg|name>/...> It is expected
-  to return a simple string in the right language for the user.>
+  displaying a buffer of type <verbatim|tmfs://<scm-arg|name>/...> It is
+  expected to return a simple string in the right language for the user.>
 
   <\explain>
     <scm|(tmfs-permission-handler (<scm-arg|name> <scm-arg|qry>
     <scm-arg|kind>) <scm-arg|body>)><explain-synopsis|define master handler
-    @name>
+    <scm-arg|name>>
   </explain|A <em|permissions handler> decides whether the buffer
   corresponding to the query made to the handler may be loaded/saved, etc.
   <scm-arg|kind> may take one of the values <scm|"load">, (...)>
 
   <\explain>
     <scm|(tmfs-master-handler (<scm-arg|name> <scm-arg|qry> <scm-arg|doc>)
-    <scm-arg|body>)><explain-synopsis|define title handler @name>
+    <scm-arg|body>)><explain-synopsis|define title handler <scm-arg|name>>
   </explain|A <em|master handler> is... (possibly related to the concept of
   master document in a project, but this needs checking)>
 
   <\explain>
     <scm|(query-ref <scm-arg|qry> <scm-arg|arg>)><explain-synopsis|return
-    value of parameter @arg in query @qry>
+    value of parameter <scm-arg|arg> in query <scm-arg|qry>>
   </explain|Given a <scm-arg|qry> string of type
   <tt|variable1=value1&variable2=value2>, <scm|query-ref> will return
   <tt|value1> for an <scm-arg|arg> value of <scm|value1>, etc.>
@@ -193,9 +193,9 @@
 
   In order to make your handler available from any menu item or document upon
   startup, you must add it to the initialization process, that is to
-  <tt|init-texmacs.scm> or <tt|my-init-texmacs.scm>, using the macro
-  <scm|lazy-tmfs-handler>. This will delay loading of your code either until
-  it is required or <TeXmacs> is idle waiting for user input.
+  <verbatim|init-texmacs.scm> or <verbatim|my-init-texmacs.scm>, using the
+  macro <scm|lazy-tmfs-handler>. This will delay loading of your code either
+  until it is required or <TeXmacs> is idle waiting for user input.
 
   <\remark>
     \ The keywords <tt|buffer>, <tt|view> and <tt|window> may not be used as
@@ -204,11 +204,12 @@
 
   <\explain>
     <scm|(lazy-tmfs-handler <scm-arg|module>
-    <scm-arg|handler>)><explain-synopsis|lazily install a tmfs handler>
+    <scm-arg|handler>)><explain-synopsis|lazily install a <verbatim|tmfs>
+    handler>
   <|explain>
     Inform <TeXmacs> that <scm-arg|handler> is available in module
     <scm-arg|module>. <scm-arg|module> must be a list of symbols (like
-    <scm|(kernel gui gui-markup)>) representing the <scheme> modle wher
+    <scm|(kernel gui gui-markup)>) representing the <scheme> module where
     you'll have defined your handler using <scm|tmfs-handler> or with the
     convenience macros <scm|tmfs-load-handler>, <scm|tmfs-save-handler>,
     <scm|tmfs-permission-handler> and <scm|tmfs-title-handler>.

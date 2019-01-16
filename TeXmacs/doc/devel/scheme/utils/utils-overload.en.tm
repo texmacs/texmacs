@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Function definition and contextual overloading>
@@ -156,7 +156,7 @@
     <scm|(:synopsis <scm-arg|short-help>)><explain-synopsis|short
     description>
   <|explain>
-    This option gives a short discription of the function or macro, in the
+    This option gives a short description of the function or macro, in the
     form of a string <scm-arg|short-help>. As a convention, <scheme>
     expressions may be encoded inside this string by using the
     <verbatim|@>-prefix. For instance:

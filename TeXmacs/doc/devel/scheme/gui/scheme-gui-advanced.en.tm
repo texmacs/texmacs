@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Containers, glue, refresh and co.>
@@ -98,7 +98,7 @@
     <scm|centered>, the effect is achieved by means of several widgets into
     which this macro expands. These are actually the same as in the example
     there, but the <scm|glue> widgets are all fixed (i.e. have all their
-    expansion paramenters set to <scm|#f>).
+    expansion parameters set to <scm|#f>).
   </explain>
 
   <subsection|Container or layout widgets>
@@ -106,8 +106,9 @@
   You can arrange widgets horizontally or vertically, or in two column mode
   as in forms. When running the QT version the latter will default to the OS
   standard for arranging labels and their associated input widgets in
-  dialogs. Other possibilites are splitters and tabbed widgets. A very useful
-  macro is <scm|dynamic>, which allows you to embed one widget into another.
+  dialogs. Other possibilities are splitters and tabbed widgets. A very
+  useful macro is <scm|dynamic>, which allows you to embed one widget into
+  another.
 
   <\explain>
     <scm|(aligned <scm-arg|items-list>)><explain-synopsis|arranges items in a
@@ -153,7 +154,7 @@
 
   <subsection|Glue widgets>
 
-  Besides laying out widgets in containers, you will often want to specifiy
+  Besides laying out widgets in containers, you will often want to specify
   how they eat up space around them when the user resizes the window. By
   default (most?) widgets take up as much space as they can (i.e. they always
   expand) unless you used <scm|resize> with them or they can have their size

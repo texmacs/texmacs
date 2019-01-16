@@ -1,13 +1,13 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Transient markup>
 
   The tags described in this section are used to control the rendering of
   style files and style file elements. It both contains markup for activation
-  and disactivation of content and for the rendering of tags.
+  and deactivation of content and for the rendering of tags.
 
   <\explain>
     <explain-macro|active|content>
@@ -16,7 +16,7 @@
 
     <explain-macro|inactive|content>
 
-    <explain-macro|inactive*|content><explain-synopsis|activation/disactivation
+    <explain-macro|inactive*|content><explain-synopsis|activation/deactivation
     of content>
   <|explain>
     These tags can be used to temporarily or permanently change the
@@ -26,10 +26,10 @@
     deactivated, it is rendered as <inactive*|<frac|1|2>>.
 
     The <markup|active> and <markup|inactive> tags only activate or
-    desactivate the root tag of the <src-arg|content>. Typically, a tag which
+    deactivate the root tag of the <src-arg|content>. Typically, a tag which
     contains hidden information (like <markup|hlink>) can be deactivated by
-    positioning the cursor just behind it and pressing <key|backspace>.
-    This action just deactivates the hyperlink, but not the potentially
+    positioning the cursor just behind it and pressing <key|backspace>. This
+    action just deactivates the hyperlink, but not the potentially
     complicated body of the hyperlink. Therefore, the hyperlink is
     transformed into an inactive tag of the form
     <explain-macro|inactive|<with|font-shape|right|<explain-macro|hlink|body|ref>>>.
@@ -42,17 +42,17 @@
     Nevertheless, it is sometimes desirable to reactivate certain subtrees
     inside deactivated content. For instance, the following piece of
     deactivated code (using <markup|disactive*>) contains the reactivated
-    subexpression <with|mode|math|<with|color|red|\<heartsuit\>\<heartsuit\>\<heartsuit\>>>
+    subexpression <math|<with|color|red|\<heartsuit\>\<heartsuit\>\<heartsuit\>>>
     (using <markup|active*>):
 
     <\tm-fragment>
-      <inactive*|<assign|love|<macro|from|<active*|<with|mode|math|<with|color|red|\<heartsuit\>\<heartsuit\>\<heartsuit\>>>>
+      <inactive*|<assign|love|<macro|from|<active*|<math|<with|color|red|\<heartsuit\>\<heartsuit\>\<heartsuit\>>>>
       from <arg|from>.>>>
     </tm-fragment>
   </explain>
 
   <\explain>
-    <explain-macro|inline-tag|name|arg-1|<with|mode|math|\<cdots\>>|arg-n><explain-synopsis|rendering
+    <explain-macro|inline-tag|name|arg-1|<math|\<cdots\>>|arg-n><explain-synopsis|rendering
     of inline tags>
   <|explain>
     This tag is used for the default inline rendering of an inactive tag with
@@ -65,11 +65,11 @@
   </explain>
 
   <\explain>
-    <explain-macro|open-tag|name|arg-1|<with|mode|math|\<cdots\>>|arg-n>
+    <explain-macro|open-tag|name|arg-1|<math|\<cdots\>>|arg-n>
 
-    <explain-macro|middle-tag|name|arg-1|<with|mode|math|\<cdots\>>|arg-n>
+    <explain-macro|middle-tag|name|arg-1|<math|\<cdots\>>|arg-n>
 
-    <explain-macro|close-tag|name|arg-1|<with|mode|math|\<cdots\>>|arg-n><explain-synopsis|rendering
+    <explain-macro|close-tag|name|arg-1|<math|\<cdots\>>|arg-n><explain-synopsis|rendering
     of multi-line tags>
   <|explain>
     These tags are similar to <markup|inline-tag>, when some of the arguments
@@ -106,9 +106,9 @@
   </explain>
 
   <\explain>
-    <explain-macro|style-with|var-1|val-1|<with|mode|math|\<cdots\>>|var-n|val-n|body>
+    <explain-macro|style-with|var-1|val-1|<math|\<cdots\>>|var-n|val-n|body>
 
-    <explain-macro|style-with*|var-1|val-1|<with|mode|math|\<cdots\>>|var-n|val-n|body><explain-synopsis|alter
+    <explain-macro|style-with*|var-1|val-1|<math|\<cdots\>>|var-n|val-n|body><explain-synopsis|alter
     presentation in style files only>
   <|explain>
     This tag may be used in order to temporarily modify the rendering of
@@ -148,10 +148,11 @@
   <|explain>
     These tags are used only temporarily when entering special content.
 
-    When pressing <shortcut|(make 'symbol)>, a <markup|symbol> tag is created. After entering
-    the name of the symbol, or the ASCII-code of the symbol and pressing
-    return, the <markup|symbol> tag is replaced by the corresponding symbol
-    (usually a string enclosed in <verbatim|\<less\>\<gtr\>>).
+    When pressing <shortcut|(make 'symbol)>, a <markup|symbol> tag is
+    created. After entering the name of the symbol, or the ASCII-code of the
+    symbol and pressing return, the <markup|symbol> tag is replaced by the
+    corresponding symbol (usually a string enclosed in
+    <verbatim|\<less\>\<gtr\>>).
 
     When pressing <key|\\>, a <markup|hybrid> tag is created. After entering
     a string and pressing return, it is determined whether the string
@@ -244,3 +245,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

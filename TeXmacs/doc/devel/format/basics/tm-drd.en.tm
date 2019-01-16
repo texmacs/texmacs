@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Data relation descriptions>
@@ -17,12 +17,12 @@
   In XML, one uses Data Type Definitions (<abbr|D.T.D.>s) in order to
   formally specify a subset of the generic XML format. Such a <abbr|D.T.D.>
   specifies when a given document is valid for a particular purpose. For
-  instance, one has <abbr|D.T.D.>s for documents on the web (XHTML), for
-  mathematics <no-break>(MathML), for two-dimensional graphics (SVG) and so
-  on. Moreover, up to a cetain extent, XML provides mechanisms for combining
-  such <abbr|D.T.D.>s. Finally, a precise description of a <abbr|D.T.D.>
-  usually also provides some kind of reference manual for documents of a
-  certain type.
+  instance, one has <abbr|D.T.D.>s for documents on the web (<name|XHTML>),
+  for mathematics <no-break>(<name|MathML>), for two-dimensional graphics
+  (<name|SVG>) and so on. Moreover, up to a certain extent, XML provides
+  mechanisms for combining such <abbr|D.T.D.>s. Finally, a precise
+  description of a <abbr|D.T.D.> usually also provides some kind of reference
+  manual for documents of a certain type.
 
   In <TeXmacs>, we have started to go one step further than <abbr|D.T.D.>s:
   besides being able to decide whether a given document is valid or not, it
@@ -51,10 +51,10 @@
   One major advantage of the use of <abbr|D.R.D.>s is that it is not
   necessary to establish rigid hierarchies of object classes like in object
   oriented programming. This is particularly useful in our context, since
-  properties like accessability, inline-ness, <abbr|etc.> are quite
+  properties like accessibility, inline-ness, <abbr|etc.> are quite
   independent one from another. In fact, where <abbr|D.T.D.>s may be good
   enough for the description of passive documents, more fine-grained
-  properties are often usefull when manipulating documents in a more
+  properties are often useful when manipulating documents in a more
   interactive way.
 
   <paragraph*|Current <abbr|D.R.D.> properties and applications>
@@ -65,7 +65,7 @@
   <\itemize>
     <item>The possible arities of a tag.
 
-    <item>The accessability of a tag and its children.
+    <item>The accessibility of a tag and its children.
   </itemize>
 
   In the near future, the following properties will be added:
@@ -109,8 +109,8 @@
   </tm-fragment>
 
   <TeXmacs> automatically notices that <markup|hi> is a macro with one
-  element, so it considers <with|mode|math|1> to be the only possible arity
-  of the <markup|hi> tag. Notice that the heuristic determination of the
+  element, so it considers <math|1> to be the only possible arity of the
+  <markup|hi> tag. Notice that the heuristic determination of the
   <abbr|D.R.D.> is done interactively: when defining a macro inside your
   document, its properties will automatically be put into the <abbr|D.R.D.>
   (assuming that you give <TeXmacs> a small amount of free time of the order
@@ -119,7 +119,7 @@
 
   Sometimes the heuristically defined properties are inadequate. For this
   case, <TeXmacs> provides the <markup|drd-props> tag in order to
-  <hyper-link|manually override|../stylesheet/prim-macro.en.tm> the default
+  <hlink|manually override|../stylesheet/prim-macro.en.tm> the default
   properties.
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
@@ -132,8 +132,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

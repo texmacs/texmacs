@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Mathematical primitives>
@@ -12,16 +12,16 @@
 
     <explain-macro|left|large-delimiter|bottom|top>
 
-    <explain-macro|mid|large-delimiter|<with|mode|math|\<cdots\>>>
+    <explain-macro|mid|large-delimiter|<math|\<cdots\>>>
 
-    <explain-macro|right|large-delimiter|<with|mode|math|\<cdots\>>><explain-synopsis|large
+    <explain-macro|right|large-delimiter|<math|\<cdots\>>><explain-synopsis|large
     delimiters>
   <|explain>
     These primitives are used for producing large delimiters, like in the
     formula
 
     <\equation*>
-      <left|langle><frac|1|a<rsub|1>><mid|\|><frac|1|a<rsub|2>><mid|\|>\<cdots\><mid|\|><frac|1|a<rsub|n>><right|rangle>.
+      <around*|\<langle\>|<frac|1|a<rsub|1>><mid|\|><frac|1|a<rsub|2>><mid|\|>\<cdots\><mid|\|><frac|1|a<rsub|n>>|\<rangle\>>.
     </equation*>
 
     Matching left and right delimiters are automatically sized so as contain
@@ -32,7 +32,7 @@
     formulas like
 
     <\equation*>
-      f<left|(><frac|1|x+<frac|1|y+<frac|1|z>>><right|)>
+      f<around*|(|<frac|1|x+<frac|1|y+<frac|1|z>>>|)>
     </equation*>
 
     The user may override the automatically determined size by specifying
@@ -46,12 +46,11 @@
     is rendered as
 
     <\equation*>
-      f<left|(|-8mm|4mm>x<mid|\||8mm>y<right|)|-4mm|8mm>
+      f<around*|(|x<mid|\||8mm>y|)>
     </equation*>
 
-    The <src-arg|size> may also be a number <with|mode|math|n>, in which case
-    the <with|mode|math|n>-th available size for the delimiter is taken. For
-    instance,
+    The <src-arg|size> may also be a number <math|n>, in which case the
+    <math|n>-th available size for the delimiter is taken. For instance,
 
     <\tm-fragment>
       <inactive*|g<left|(|0><left|(|1><left|(|2><left|(|3>z<right|)|3><right|)|2><right|)|1><right|)|0>>
@@ -60,7 +59,7 @@
     is rendered as
 
     <\equation*>
-      g<left|(|0><left|(|1><left|(|2><left|(|3>z<right|)|3><right|)|2><right|)|1><right|)|0>
+      g<around*|(|<around*|(|<around*|(|<around*|(|z|)>|)>|)>|)>
     </equation*>
   </explain>
 
@@ -72,16 +71,15 @@
     This primitive is used in order to produce big operators as in
 
     <\equation>
-      <label|big-example><big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i><big|.>
+      <label|big-example><big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i>
     </equation>
 
     The size of the operator depends on whether the formula is rendered in
     ``display style'' or not. Formulas in separate equations, like
     (<reference|big-example>), are said to be rendered in display style,
     contrary to formulas which occur in the main text, like
-    <with|mode|math|<big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i><big|.>>.
-    The user may use <menu|Format|Display style> to override the current
-    settings.
+    <math|<big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i>>. The user
+    may use <menu|Format|Display style> to override the current settings.
 
     Notice that the formula (<reference|big-example>) is internally
     represented as
@@ -98,11 +96,11 @@
     <explain-macro|frac|num|den><explain-synopsis|fractions>
   <|explain>
     The <markup|frac> primitive is used in order to render fractions like
-    <with|mode|math|<frac|x|y>>. In display style, the numerator
-    <src-arg|num> and denominator <src-arg|den> are rendered in the normal
-    size, but display style is turned of when typesetting <src-arg|num> and
-    <src-arg|den>. When the display style is turned of, then the arguments
-    are rendered in script size. For instance, the content
+    <math|<frac|x|y>>. In display style, the numerator <src-arg|num> and
+    denominator <src-arg|den> are rendered in the normal size, but display
+    style is turned of when typesetting <src-arg|num> and <src-arg|den>. When
+    the display style is turned of, then the arguments are rendered in script
+    size. For instance, the content
 
     <\tm-fragment>
       <inactive*|<frac|1|a<rsub|0>+<frac|1|a<rsub|1>+<frac|1|a<rsub|2>+\<ddots\>>>>>
@@ -121,12 +119,11 @@
     <explain-macro|sqrt|content|n><explain-synopsis|roots>
   <|explain>
     The <markup|sqrt> primitive is used in order to render square roots like
-    <with|mode|math|<sqrt|x>> or <src-arg|n>-th roots like
-    <with|mode|math|<sqrt|x|3>>. The root symbol is automatically sized so as
-    to encapsulate the <src-arg|content>:
+    <math|<sqrt|x>> or <src-arg|n>-th roots like <math|<sqrt|x|3>>. The root
+    symbol is automatically sized so as to encapsulate the <src-arg|content>:
 
     <\equation*>
-      <sqrt|<frac|f(x)|y<rsup|2>+z<rsup|2>>|i+j>
+      <sqrt|<frac|f<around|(|x|)>|y<rsup|2>+z<rsup|2>>|i+j>
     </equation*>
   </explain>
 
@@ -140,7 +137,7 @@
     <explain-macro|rsup|script><explain-synopsis|scripts>
   <|explain>
     These primitives are used in order to attach a <src-arg|script> to the
-    preceeding box in a horizontal concatenation (in the case of right
+    preceding box in a horizontal concatenation (in the case of right
     scripts) or the next one (in the case of left scripts). When there is no
     such box, then the script is attached to an empty box. Moreover, when
     both a subscript and a superscript are specified on the same side, then
@@ -161,7 +158,7 @@
     operator:
 
     <\equation*>
-      lim<rsub|n\<rightarrow\>\<infty\>>a<rsub|n><big|.>
+      lim<rsub|n\<rightarrow\>\<infty\>>a<rsub|n>
     </equation*>
 
     Scripts are rendered in a smaller font in non-display style.
@@ -176,13 +173,13 @@
   <|explain>
     Left and right primes are similar to left and right superscripts, except
     that they behave in a different way when being edited. For instance, when
-    your cursor is behind the prime symbol in <with|mode|math|f<rprime|'>>
-    and you press backspace, then the prime is removed. If you are behind
-    <with|mode|math|f<rsup|n>> and you press backspace several times, then
-    you first enter the superscript, next remove <with|mode|math|n> and
-    finally remove the superscript. Notice also that <src-arg|prime-symbols>
-    is necessarily a string of concatenated prime symbols. For instance,
-    <with|mode|math|f<rprime|'\<dag\>>> is represented by
+    your cursor is behind the prime symbol in <math|f<rprime|'>> and you
+    press backspace, then the prime is removed. If you are behind
+    <math|f<rsup|n>> and you press backspace several times, then you first
+    enter the superscript, next remove <math|n> and finally remove the
+    superscript. Notice also that <src-arg|prime-symbols> is necessarily a
+    string of concatenated prime symbols. For instance,
+    <math|f<rprime|'\<dag\>>> is represented by
     <inactive*|f<rprime|'\<dag\>>>.
   </explain>
 
@@ -214,7 +211,7 @@
   <|explain>
     These primitives can be used in order to produce wide accents above or
     below some mathematical <src-arg|content>. For instance
-    <with|mode|math|<wide|x+y|\<bar\>>> corresponds to the markup
+    <math|<wide|x+y|\<bar\>>> corresponds to the markup
     <inactive*|<wide|x+y|\<bar\>>>.
   </explain>
 
@@ -222,12 +219,11 @@
     <explain-macro|neg|content><explain-synopsis|negations>
   <|explain>
     This primitive is mainly used for producing negated symbols or
-    expressions, such as <with|mode|math|<neg|\<rightarrowtail\>>> or
-    <with|mode|math|<neg|a>>.
+    expressions, such as <math|<neg|\<rightarrowtail\>>> or <math|<neg|a>>.
   </explain>
 
   <\explain>
-    <explain-macro|tree|root|child-1|<with|mode|math|\<cdots\>>|child-n><explain-synopsis|trees>
+    <explain-macro|tree|root|child-1|<math|\<cdots\>>|child-n><explain-synopsis|trees>
   <|explain>
     This primitive is used to produce a tree with a given <src-arg|root> and
     children <src-arg|child-1> until <src-arg|child-n>. The primitive should
@@ -256,3 +252,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

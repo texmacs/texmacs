@@ -1,6 +1,6 @@
-<TeXmacs|1.0.6>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Notes for users of oriental languages>
@@ -8,9 +8,9 @@
   In order to type oriental languages, you first have to start a conversion
   server which can be used in combination with the X input method and set the
   environment variables accordingly. For instance, in the case of Japanese,
-  one typically has to execute the folowing shell commands:
+  one typically has to execute the following shell commands:
 
-  <\shell-fragment>
+  <\shell-code>
     kinput2 &
 
     export LANG="ja_JP.eucJP"
@@ -18,19 +18,20 @@
     export LC_ALL="ja_JP.eucJP"
 
     export XMODIFIERS="@im=kinput2"
-  </shell-fragment>
+  </shell-code>
 
   You also have to install Japanese fonts. For instance, you may download the
-  ipag fonts <verbatim|ipam.ttf>, <verbatim|ipag.ttf>, <verbatim|ipamp.ttf>,
-  <verbatim|ipagm.ttf> and <verbatim|ipagui.ttf> and copy them to
+  <name|Ipag> fonts <verbatim|ipam.ttf>, <verbatim|ipag.ttf>,
+  <verbatim|ipamp.ttf>, <verbatim|ipagm.ttf> and <verbatim|ipagui.ttf> and
+  copy them to
 
   <verbatim| \ \ \ ~/.TeXmacs/fonts/truetype>
 
   After doing this, you may launch <TeXmacs> using
 
-  <\shell-fragment>
+  <\shell-code>
     texmacs --delete-font-cache
-  </shell-fragment>
+  </shell-code>
 
   and select <menu|Japanese> from the <icon|tm_language.xpm> icon on the
   first icon bar. If everything went allright, the menus should now show up
@@ -41,12 +42,12 @@
   <menu|Format|Language|Japanese>.
 
   Inside a Japanese portion of text, and depending on your input method, you
-  usually have to type<nbsp><key|S-space> in order to start Kana to
-  Kanji conversion. A small window shows up where you can type phonetic
-  characters and use <key|space> in order to start conversion to Kanji
-  characters. When pressing <shortcut|(kbd-return)>, the text is inserted into the
-  main <TeXmacs> window. Pressing <key|S-space> once again returns to
-  the classical <TeXmacs> input method.
+  usually have to type<nbsp><key|S-space> in order to start Kana to Kanji
+  conversion. A small window shows up where you can type phonetic characters
+  and use <key|space> in order to start conversion to Kanji characters. When
+  pressing <shortcut|(kbd-return)>, the text is inserted into the main
+  <TeXmacs> window. Pressing <key|S-space> once again returns to the
+  classical <TeXmacs> input method.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -58,8 +59,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

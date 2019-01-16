@@ -1,6 +1,6 @@
-<TeXmacs|1.99.3>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Floating objects>
@@ -11,10 +11,10 @@
   <menu|Insert|Note|Floating object>.
 
   You may also create a floating object and directly insert a figure or table
-  inside it using <menu|Insert|Note|Floating figure> resp.
+  inside it using <menu|Insert|Note|Floating figure> <abbr|resp.>
   <menu|Insert|Note|Floating table>. However, sometimes you might want to
   insert several smaller figures or tables inside one floating object. You
-  may do this using <menu|Insert|Image|Small figure> resp.
+  may do this using <menu|Insert|Image|Small figure> <abbr|resp.>
   <menu|Insert|Table|Small table>.
 
   After creating a floating object, you may control its position using

@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <with|font-shape|italic|><tmdoc-title|Adding new data formats and
@@ -12,7 +12,7 @@
   <verbatim|~/.TeXmacs/progs/my-init-texmacs.scm> or a dedicated plug-in.
   Some examples may be found in the directory
   <verbatim|$TEXMACS_PATH/progs/convert>, like
-  <hlink|init-html.scm|$TEXMACS_PATH/progs/convert/html/init-html.scm>.
+  <hlink|<verbatim|init-html.scm>|$TEXMACS_PATH/progs/convert/html/init-html.scm>.
 
   <paragraph*|Declaring new formats>
 
@@ -101,7 +101,7 @@
   using a shortest path algorithm. In other words, if you have a converter
   from <math|x> to <math|y> and a converter from <math|y> to <math|z>, then
   you will automatically have a converter from <math|x> to <math|z>. A
-  ``distance between two formats via a given converter'' may be specified
+  \Pdistance between two formats via a given converter\Q may be specified
   using
 
   <\scm-code>

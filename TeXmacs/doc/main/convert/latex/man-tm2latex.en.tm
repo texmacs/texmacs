@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Conversion from <TeXmacs> to <LaTeX>>
@@ -107,7 +107,7 @@
       don't need the <verbatim|inputenc> package).
 
       <item*|Ascii>This will generate pure <name|ascii> characters, using
-      plain <TeX> sequencies to compose non-<name|ascii> symbols.
+      plain <TeX> sequences to compose non-<name|ascii> symbols.
     </description>
   </description-long>
 
@@ -122,15 +122,15 @@
   <menu|Format|Specific|Latex>, you may force certain document fragments to
   appear only in the source file or the <LaTeX> target.
 
-  For instance, assume that the word ``blauwbilgorgel'' is hyphenated
+  For instance, assume that the word \Pblauwbilgorgel\Q is hyphenated
   correctly in the <TeXmacs> source, but not in the <LaTeX> conversion. Then
   you may proceed as follows:
 
   <\enumerate>
-    <item>Select ``blauwbilgorgel''.
+    <item>Select \Pblauwbilgorgel\Q.
 
     <item>Click on <menu|Format|Specific|Texmacs> to make the text
-    ``blauwbilgorgel'' <TeXmacs>-specific.
+    \Pblauwbilgorgel\Q <TeXmacs>-specific.
 
     <item>Click on <menu|Format|Specific|Latex>.
 

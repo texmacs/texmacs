@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Displaying lists and trees>
@@ -214,8 +214,8 @@
     format with e.g. <scm|tree-\<gtr\>stree>)
 
     <paragraph|Examples>See <scm|widget10> in
-    <hlink|menu-test.scm|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm> and
-    ``<hlink|Displaying lists and trees|$TEXMACS_PATH/doc/devel/scheme/gui/scheme-gui-lists-trees.scm>''.
+    <hlink|<verbatim|menu-test.scm>|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>
+    and ``<hlink|Displaying lists and trees|$TEXMACS_PATH/doc/devel/scheme/gui/scheme-gui-lists-trees.scm>''.
   </explain>
 
   <paragraph|An example using data roles>

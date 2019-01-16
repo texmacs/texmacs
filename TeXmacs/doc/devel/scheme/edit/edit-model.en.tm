@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|The <TeXmacs> editing model>
@@ -73,7 +73,7 @@
   its location. Of course, the location of <scm|t> may be lost when <scm|t>
   or one of its parents is modified. Nevertheless, the modification routines
   are designed in such a way that we try hard to remember locations. For
-  instance, if ``<math|a<rsub|0>+>'' is inserted in front of the formula
+  instance, if \P<math|a<rsub|0>+>\Q is inserted in front of the formula
   (<reference|example-edit-formula>) using the routine <scm|tree-insert!>,
   then <scm|t> keeps its value <em|and> its location, even though one of its
   ancestors was altered.
@@ -109,7 +109,7 @@
 
   It should be noticed that paths do not necessarily correspond to <em|valid>
   subtrees or cursor positions. Clearly, some of the elements in the path may
-  be ``out of range''. However, certain <em|a priori> possible cursor
+  be \Pout of range\Q. However, certain <em|a priori> possible cursor
   positions may correspond to invisible parts of the document (like a cursor
   position inside a folded argument or an attribute of <markup|with>).
   Moreover, two possible cursor positions may actually coincide, like the
@@ -130,9 +130,9 @@
   using object of type <verbatim|tree>, <abbr|i.e.> by considering the
   subtrees themselves. The persistent analogue of a cursor path is a
   <em|persistent position>, which corresponds to an object of <scheme> type
-  <verbatim|position>. One particularity of persitent positions is that, even
-  when a tree into which they point is removed, they keep indicating a valid
-  close position in the remaining document. For instance, assume that
+  <verbatim|position>. One particularity of persistent positions is that,
+  even when a tree into which they point is removed, they keep indicating a
+  valid close position in the remaining document. For instance, assume that
   <scm|pos> stands for the cursor position <scm|(1 0 1)> in the
   expression<nbsp>(<reference|example-edit-formula>). If we remove
   <math|a<rsub|1>+\<cdots\>+>, then the tree corresponding to the remaining
@@ -169,7 +169,7 @@
     (select t '(:up :next))
   </scm-code>
 
-  returns the list with one element ``<math|+\<cdots\>+a>''. The routine
+  returns the list with one element \P<math|+\<cdots\>+a>\Q. The routine
   <scm|select> is implicitly called by many routines which operate on trees.
   For instance, with <scm|t> as above,
 
@@ -177,9 +177,9 @@
     (tree-ref t :up :next)
   </scm-code>
 
-  directly returns the tree ``<math|+\<cdots\>+a>''.
+  directly returns the tree \P<math|+\<cdots\>+a>\Q.
 
-  Besides simpler access to subtrees of a tree or other ``close trees'',
+  Besides simpler access to subtrees of a tree or other \Pclose trees\Q,
   <TeXmacs> also provides several other useful mechanisms for writing editing
   routines. For instance, the routine <scm|tree-innermost> and the macro
   <scm|with-innermost> may be used to retrieve the innermost supertree of a
@@ -213,9 +213,9 @@
   whenever no innermost fraction is found.
 
   The above implementation has the disadvantage that we loose the current
-  cursor position inside the numerator or denominator (whereever we were).
-  The following refined implementation allows us to remain at the ``same
-  position'' modulo the exchange numerator/denominator:
+  cursor position inside the numerator or denominator (wherever we were). The
+  following refined implementation allows us to remain at the \Psame
+  position\Q modulo the exchange numerator/denominator:
 
   <\scm-code>
     (define (swap-numerator-denominator)
@@ -307,3 +307,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

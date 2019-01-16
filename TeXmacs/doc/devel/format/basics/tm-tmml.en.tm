@@ -1,11 +1,11 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|XML serialization>
 
-  For compatability reasons with the XML technology, <TeXmacs> also supports
+  For compatibility reasons with the XML technology, <TeXmacs> also supports
   the serialization of <TeXmacs> documents in the XML format. However, the
   XML format is generally more verbose and less readable than the default
   <TeXmacs> format. In order to save or load a file in the XML format (using
@@ -76,9 +76,11 @@
   instance, the quotation
 
   <\quote-env>
-    Ik ben de blauwbilgorgel.
+    <\dutch>
+      Ik ben de blauwbilgorgel.
 
-    Als ik niet wok of worgel,
+      Als ik niet wok of worgel,
+    </dutch>
   </quote-env>
 
   is represented as
@@ -113,7 +115,7 @@
     </verbatim>>
   </quote-env>
 
-  Conversily, <TeXmacs> provides the <markup|attr> primitive in order to
+  Conversely, <TeXmacs> provides the <markup|attr> primitive in order to
   represent attributes of XML tags. For instance, the XML fragment
 
   <\quote-env>

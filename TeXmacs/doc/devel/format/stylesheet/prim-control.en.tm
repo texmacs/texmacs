@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Flow control primitives>
@@ -18,7 +18,7 @@
 
     <\remark>
       It should be noticed that the use of conditional markup can be a bit
-      tricky due to the fact that the accessability of arguments cannot
+      tricky due to the fact that the accessibility of arguments cannot
       necessarily be checked beforehand. For instance, in the macro
       definition
 
@@ -30,7 +30,7 @@
       <inactive*|<visibility-flag>> evaluates to true. This condition cannot
       necessarily be checked <em|a priori>. For certain editing operations,
       like searches or spell checking, the incorrect determination of the
-      accessability may lead to the positioning of the cursor at unaccessible
+      accessibility may lead to the positioning of the cursor at unaccessible
       places, or to the ignorance of certain markup. In the future, we plan
       to improve this aspect of the editor, but it is better to avoid
       conditional markup whenever another solution can be found.
@@ -53,17 +53,17 @@
   </explain>
 
   <\explain>
-    <explain-macro|case|cond-1|body-1|<with|mode|math|\<cdots\>>|cond-n|body-n>
+    <explain-macro|case|cond-1|body-1|<math|\<cdots\>>|cond-n|body-n>
 
-    <explain-macro|case|cond-1|body-1|<with|mode|math|\<cdots\>>|cond-n|body-n|else-body><explain-synopsis|case
+    <explain-macro|case|cond-1|body-1|<math|\<cdots\>>|cond-n|body-n|else-body><explain-synopsis|case
     distinction>
   <|explain>
     These commands are respectively equivalent to
 
     <\tm-fragment>
-      <inactive*|<if|<arg|cond-1>|<arg|body-1>|<active*|<with|mode|math|\<cdots\>>><if|<arg|cond-n>|<arg|body-n>>>>
+      <inactive*|<if|<arg|cond-1>|<arg|body-1>|<active*|<math|\<cdots\>>><if|<arg|cond-n>|<arg|body-n>>>>
 
-      <inactive*|<if|<arg|cond-1>|<arg|body-1>|<active*|<with|mode|math|\<cdots\>>><if|<arg|cond-n>|<arg|body-n>|<arg|else-body>>>>
+      <inactive*|<if|<arg|cond-1>|<arg|body-1>|<active*|<math|\<cdots\>>><if|<arg|cond-n>|<arg|body-n>|<arg|else-body>>>>
     </tm-fragment>
   </explain>
 
@@ -71,7 +71,7 @@
     <explain-macro|while|condition|body><explain-synopsis|repeated
     evaluation>
   <|explain>
-    This construct maybe used in order to repeatly execute a given
+    This construct maybe used in order to repeatedly execute a given
     <src-arg|body> while a given <src-arg|condition> is satisfied. For
     instance, when declaring
 
@@ -97,3 +97,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

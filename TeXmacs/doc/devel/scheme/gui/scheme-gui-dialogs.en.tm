@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Dialogs and composite widgets>
@@ -18,7 +18,7 @@
   <scm|dynamic>: it allows you to embed one widget into another.
 
   Let's see how you create a dialog. To get started here is one little
-  example taken from <hlink|menu-test.scm|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>:
+  example taken from <hlink|<verbatim|menu-test.scm>|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>:
 
   <\session|scheme|default>
     <\unfolded-io|Scheme] >
@@ -103,7 +103,7 @@
 
   If you want to add the usual buttons you use <scm|bottom-buttons> like in
   the following example. Notice that the widget now accepts one parameter
-  <scm|cmd> which will be called when the user clicks the ``Ok'' button.
+  <scm|cmd> which will be called when the user clicks the \POk\Q button.
 
   <\session|scheme|default>
     <\unfolded-io|Scheme] >

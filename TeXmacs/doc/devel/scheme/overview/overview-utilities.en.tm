@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Standard utilities>
@@ -15,7 +15,7 @@
   <paragraph*|Regular expressions>
 
   <TeXmacs> implements the routines <scm|match?> and <scm|select> for
-  matching regular expressions and selecting subexpressions along a ``path''.
+  matching regular expressions and selecting subexpressions along a \Ppath\Q.
   These routines both work for the <verbatim|content> type. For instance, in
   order to search all expressions of the form
 
@@ -90,7 +90,7 @@
   converted from or into <TeXmacs>, then it will automatically appear into
   the <menu|File|Export> and <menu|File|Import> menus. Similarly, when a
   format can be converted to <name|Postscript>, then it also becomes a valid
-  format for images. <TeXmacs> also attempts to combine explictly declared
+  format for images. <TeXmacs> also attempts to combine explicitly declared
   converters into new ones.
 
   Typically, the declaration of a new format and a converter would look like:
@@ -120,3 +120,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

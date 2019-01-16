@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Miscellaneous style-sheet primitives>
@@ -25,7 +25,7 @@
       (x y) `(frac ,x (concat "1+" ,y)))|<quote-arg|x>|<quote-arg|y>>>>>>
     </tm-fragment>
 
-    It has been foreseen that the accessability of the macro arguments
+    It has been foreseen that the accessibility of the macro arguments
     <src-arg|x> and <src-arg|y> is preserved for this kind of definitions.
     However, since <TeXmacs> does not heuristically analyze your <scheme>
     code, you will have to manually set the <abbr|D.R.D.> properties using

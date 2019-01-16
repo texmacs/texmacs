@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Entering titles and abstracts>
@@ -95,7 +95,7 @@
   </explain>
 
   <\explain|<explain-macro|author-note|note>>
-    A miscellanous <src-arg|note> attached to the author, like a thank-word.
+    A miscellaneous <src-arg|note> attached to the author, like a thank-word.
   </explain>
 
   As a general rule, the use of any of the subtags of <markup|doc-data> or
@@ -116,3 +116,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

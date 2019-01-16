@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Manipulating <TeXmacs> views>
@@ -9,8 +9,8 @@
     <scm|(view-list)><explain-synopsis|list of all views>
   <|explain>
     This routine returns the list of all available views, sorted by inverse
-    chronologial order. That is, views which were selected more recently will
-    occur earlier in the list.
+    chronological order. That is, views which were selected more recently
+    will occur earlier in the list.
   </explain>
 
   <\explain>
@@ -61,3 +61,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

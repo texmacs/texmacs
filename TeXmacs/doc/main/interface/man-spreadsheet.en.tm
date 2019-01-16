@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Spreadsheets>
@@ -83,7 +83,7 @@
   Inversely, each spreadsheet also carries an invisible <samp|Ref> field
   which can be edited by deactivating the spreadsheet or from the focus bar
   (when selecting the entire spreadsheet). The <samp|Ref> field of the
-  spreadsheet is used as a prefix for refering to the contents of cells
+  spreadsheet is used as a prefix for referring to the contents of cells
   outside the table or from within other spreadsheets. For instance, if
   <samp|Ref> equals <samp|sheet>, then <samp|sheet-c4> will refer to the
   field <samp|c4> inside the spreadsheet.
@@ -98,8 +98,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

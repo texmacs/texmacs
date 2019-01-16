@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|The <TeXmacs> format>
@@ -14,7 +14,7 @@
 
     <branch|XML serialization|tm-tmml.en.tm>
 
-    <branch|<value|scheme> serialization|tm-scm.en.tm>
+    <branch|<scheme> serialization|tm-scm.en.tm>
 
     <branch|The typesetting process|typesetting.en.tm>
 
@@ -33,8 +33,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

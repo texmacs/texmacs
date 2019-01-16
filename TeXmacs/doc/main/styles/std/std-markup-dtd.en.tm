@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Standard markup>
@@ -196,7 +196,7 @@
     Centered tables with a border of standard <verbatim|1ln> width.
   </explain>
 
-  The folowing tags are used to adjust the typesetting of content whenever
+  The following tags are used to adjust the typesetting of content whenever
   necessary:
 
   <\explain>

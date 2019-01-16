@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Internal primitives>
@@ -10,15 +10,15 @@
   use them if you really know what you are doing.
 
   <\explain|<explain-macro|uninit><explain-synopsis|unknown content or
-  unintialized data>>
-    This primitive is mainly used for default uninialized value of
+  uninitialized data>>
+    This primitive is mainly used for default uninitialized value of
     environment variables; the main advantage of this tag is to be distinct
     from the empty string.
   </explain>
 
   <\explain|<explain-macro|unknown><explain-synopsis|unknown content or
-  unintialized data>>
-    This primitive is mainly used for default uninialized value of
+  uninitialized data>>
+    This primitive is mainly used for default uninitialized value of
     environment variables; the main advantage of this tag is to be distinct
     from the empty string.
 
@@ -32,19 +32,19 @@
   </explain>
 
   <\explain>
-    <explain-macro|collection|binding-1|<with|mode|math|\<cdots\>>|binding-n>
+    <explain-macro|collection|binding-1|<math|\<cdots\>>|binding-n>
 
     <explain-macro|associate|key|value><explain-synopsis|collections of
     bindings>
   <|explain>
-    The <markup|collection> tag is used to represent hashtables with bindings
-    <src-arg|binding-1> until <src-arg|binding-n>. Each binding is of the
-    form <explain-macro|associate|key|value>, with a <src-arg|key> and an
-    associated <src-arg|value>.
+    The <markup|collection> tag is used to represent hash tables with
+    bindings <src-arg|binding-1> until <src-arg|binding-n>. Each binding is
+    of the form <explain-macro|associate|key|value>, with a <src-arg|key> and
+    an associated <src-arg|value>.
   </explain>
 
   <\explain>
-    <explain-macro|attr|key-1|val-1|<with|mode|math|\<cdots\>>|key-n|val-n><explain-synopsis|XML-like
+    <explain-macro|attr|key-1|val-1|<math|\<cdots\>>|key-n|val-n><explain-synopsis|XML-like
     attributes>
   <|explain>
     This tag is included for future compatibility with XML. It is used for
@@ -142,3 +142,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

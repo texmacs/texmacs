@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Extending the graphical user interface>
@@ -12,10 +12,10 @@
 
   Imagine you want to implement some feature which requires interaction with
   the user. One possible approach is to use the facility <scm|interactive>,
-  which according to the user's preferences will either popoup a dialog or
-  ask in the footer bar, based in metadata you provide inside your
-  <scm|tm-define>'d function. See ``<hlink|Meta information and logical
-  programming|../overview/overview-meta.en.tm>'' for more on this topic.
+  which according to the user's preferences will either popup a dialog or ask
+  in the footer bar, based in metadata you provide inside your
+  <scm|tm-define>'d function. See \P<hlink|Meta information and logical
+  programming|../overview/overview-meta.en.tm>\Q for more on this topic.
   However, automatically generated content is not always the best approach,
   so you might want to explicitly design your interface placing it inside a
   complicated dialog. The following sections should help you with this.

@@ -1,6 +1,6 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|About the API documentation>
@@ -14,7 +14,7 @@
   are very sketchy pages for:
 
   <\traverse>
-    <branch|<tt|tmfs>: the <TeXmacs> file system.|tmfs/tmfs.en.tm>
+    <branch|<verbatim|tmfs>: the <TeXmacs> file system.|tmfs/tmfs.en.tm>
 
     <branch|The URL system.|url.en.tm>
 

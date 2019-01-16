@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Selecting the input method>
@@ -23,8 +23,8 @@
   <subsubmenu|Session|Input|Mathematical input> mode: for instance the key
   <key|$> is usually redefined inside math mode, so if you want to input it
   you'll have to type <key|S-F5><key|$>. You can read more about the prefix
-  key <key|S-F5> in ``<hlink|Keyboard shortcuts fot text
-  mode|../text/keyboard/man-text-kbd.en.tm>''.
+  key <key|S-F5> in \P<hlink|Keyboard shortcuts for text
+  mode|../text/keyboard/man-text-kbd.en.tm>\Q.
 
   <\example>
     Below, you will find the <hlink|previous example
@@ -86,8 +86,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

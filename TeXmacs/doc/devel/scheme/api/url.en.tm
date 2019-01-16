@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|The URL system>
@@ -21,14 +21,14 @@
     parameters. The second, optional argument, is an optional path for the
     cursor history.
 
-    You can pass paramenters in <scm-arg|u> in two ways: appending a hash
-    <tt|#> and some text, like in <tt|some/path/some-file.tm#blah> will open
-    the file and jump to the first label of name <tt|blah> found, if any. The
-    other possibility is the usual way in the web: append a question mark
-    <tt|?> followed by pairs <tt|parameter=value>. Currently the parameters
-    <tt|line>, <tt|column> and <tt|select>, which respectively jump to the
-    chosen location and select the given text at that line, are supported by
-    default for any file of format <scm|generic-file>. (see
+    You can pass parameters in <scm-arg|u> in two ways: appending a hash
+    <tt|#> and some text, like in <verbatim|some/path/some-file.tm#blah> will
+    open the file and jump to the first label of name <tt|blah> found, if
+    any. The other possibility is the usual way in the web: append a question
+    mark <tt|?> followed by pairs <tt|parameter=value>. Currently the
+    parameters <tt|line>, <tt|column> and <tt|select>, which respectively
+    jump to the chosen location and select the given text at that line, are
+    supported by default for any file of format <scm|generic-file>. (see
     <scm|define-format>).
   </explain>
 
@@ -52,9 +52,9 @@
   <|explain>
     Return <scm|#t> if the url is absolute. Absolute urls may be for instance
     full paths in the file system or internet <abbr|URL>s starting with a
-    protocol specification like <tt|ftp> or <tt|http>. The <tt|tmfs> urls are
-    also understood to be rooted. See also <scm|url-rooted-tmfs?>,
-    <scm|url-rooted-web?> and .
+    protocol specification like <verbatim|ftp> or <verbatim|http>. The
+    <verbatim|tmfs> urls are also understood to be rooted. See also
+    <scm|url-rooted-tmfs?>, <scm|url-rooted-web?> and .
   </explain>
 
   <\explain>

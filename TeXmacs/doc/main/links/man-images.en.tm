@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Inserting images>
@@ -9,9 +9,9 @@
   Currently, <TeXmacs> recognizes the <verbatim|ps>, <verbatim|eps>,
   <verbatim|tif>, <verbatim|pdf>, <verbatim|pdm>, <verbatim|gif>,
   <verbatim|ppm>, <verbatim|xpm> and <verbatim|fig> file formats. Here,
-  <verbatim|gs> (i.e. ghostscript) is used to render postscript images. If
-  ghostscript has not yet been installed on your system, you can download
-  this package from\ 
+  <verbatim|gs> (i.e. <name|Ghostscript>) is used to render postscript
+  images. If <name|Ghostscript> has not yet been installed on your system,
+  you can download this package from\ 
 
   <\verbatim>
     \ \ \ \ www.cs.wisc.edu/~ghost/index.html
@@ -61,8 +61,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

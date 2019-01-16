@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|An introduction to widgets>
@@ -29,7 +29,7 @@
   examples in the other subsections of "<hlink|Extending the graphical user
   interface|scheme-gui.en.tm>". If you'd rather see the sources, the whole
   list of keywords is in the table <scm|gui-make-table> inside
-  <hlink|menu-define.scm|$TEXMACS_PATH/progs/kernel/gui/menu-define.scm>.
+  <hlink|<verbatim|menu-define.scm>|$TEXMACS_PATH/progs/kernel/gui/menu-define.scm>.
 
   To create a widget, you'll first need to use <scm|tm-widget> to define a
   new one. The call to this function uses its particular syntax, with many
@@ -37,7 +37,7 @@
   labels.\ 
 
   Execute the following two lines to get the unavoidable example and leave
-  your mouse over the ``Hello'' button.
+  your mouse over the \PHello\Q button.
 
   <\session|scheme|default>
     <\input|Scheme] >
@@ -150,9 +150,9 @@
     </input>
   </session>
 
-  From here you can go on reading ``<hlink|Extending the graphical user
-  interface|scheme-gui.en.tm>'' or see the sample widgets in
-  <hlink|menu-test.scm|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>.
+  From here you can go on reading \P<hlink|Extending the graphical user
+  interface|scheme-gui.en.tm>\Q or see the sample widgets in
+  <hlink|<verbatim|menu-test.scm>|$TEXMACS_PATH/progs/kernel/gui/menu-test.scm>.
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 

@@ -1,6 +1,6 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|The module system and lazy definitions>
@@ -47,7 +47,7 @@
   Because the number of <TeXmacs> modules and plug-ins keeps on growing, it
   is inefficient to load all modules when booting. Instead, initialization
   files are assumed to declare the provided functionality in a <em|lazy> way:
-  whenever the functionality is explictly needed, <TeXmacs> is triggered to
+  whenever the functionality is explicitly needed, <TeXmacs> is triggered to
   load the corresponding modules (if this was not already done). In addition,
   <TeXmacs> may load some of these modules during spare time, when the
   computer is waiting for user input. Indeed, this helps increasing the
@@ -84,7 +84,7 @@
   to force a particular module to be loaded. Similarly, the commands
   <scm|lazy-keyboard-force>, <scm|lazy-plugin-force>, <abbr|etc.> may be used
   to force all lazy keyboard definitions <abbr|resp.> plug-ins to be loaded.
-  In other words, the use of lazyness forces to make implicit dependencies
+  In other words, the use of laziness forces to make implicit dependencies
   between modules more explicit.
 
   In the case when you want to redefine keyboard shortcuts, the

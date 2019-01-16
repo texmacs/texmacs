@@ -1,6 +1,6 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Structured cursor movement>
@@ -17,7 +17,7 @@
   </enumerate>
 
   Most keyboard shortcuts for structured cursor movements can be used in
-  combination with the<nbsp><prefix|S-><nbhyph>key so as to similtaneously
+  combination with the<nbsp><prefix|S-><nbhyph>key so as to simultaneously
   select text while moving around.
 
   <paragraph*|Structured traversal of the document>

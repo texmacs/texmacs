@@ -1,6 +1,6 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Default serialization>
@@ -106,9 +106,11 @@
   by double newline characters. For instance, the quotation
 
   <\quote-env>
-    Ik ben de blauwbilgorgel.
+    <\dutch>
+      Ik ben de blauwbilgorgel.
 
-    Als ik niet wok of worgel,
+      Als ik niet wok of worgel,
+    </dutch>
   </quote-env>
 
   is serialized as

@@ -1,13 +1,13 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Plug-ins as scripting languages>
 
   <TeXmacs> provides a few other kinds of additional interfaces to external
   systems in addition to shell-like interfaces. First of all, it is possible
-  to insert a so called ``executable switch'' anywhere in the document using
+  to insert a so called \Pexecutable switch\Q anywhere in the document using
   <menu|Insert|Fold|Executable>.
 
   For instance, if <name|Maxima> is installed on your system, then
@@ -41,7 +41,7 @@
   the input by pressing <key|return> once more.
 
   Contrary to executable switches, you may attach an identifier to the
-  executable input field by disactivating the field or by editing the
+  executable input field by deactivating the field or by editing the
   <samp|Ref> field in the focus bar. Inside other executable input fields,
   you may then refer to the value of the field by inserting a <em|field
   reference> using <shortcut|(make 'calc-ref)> or <menu|Insert|Link|Field
@@ -52,7 +52,7 @@
   other fields which depend on it.
 
   <\example>
-    The excutable input fields may for instance be nice in pedagogic
+    The executable input fields may for instance be nice in pedagogic
     documents in which parts of the document may be modified and recomputed
     by the reader. For instance, evaluation of the input fragment
 

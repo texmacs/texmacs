@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|The boxes produced by the typesetter>
@@ -36,7 +36,7 @@
 
   In order to position the cursor or when making a selection, it is necessary
   to have a correspondence between logical positions in the source tree and
-  physical positions in the typesetted boxes. More precisely, boxes and their
+  physical positions in the typeset boxes. More precisely, boxes and their
   subboxes are logically organized as a tree. Boxes provide routines to
   translate between paths in the box tree and the source tree and to find the
   path which is associated to a graphical point.
@@ -55,7 +55,7 @@
     <item>The correspondence has to be reasonably time and space efficient.
 
     <item>Some boxes, such header and footers, or certain results of macro
-    expansions, may not be ``accessible''. Although one should be able to
+    expansions, may not be \Paccessible\Q. Although one should be able to
     find a reasonable cursor position when clicking on them, the contents of
     this box can not be edited directly.
 
@@ -92,8 +92,8 @@
     tails), with an optional negative head. A negative head indicates that
     the tree path is not accessible, i.e. the corresponding subtree does not
     correspond to editable content. If the negative value is <math|-2>,
-    <math|-3> or <math|-4>, then a zero or one has to be put behind the tree
-    path, depending on the value and the cursor position.
+    <math|-3> or <hgroup|<math|-4>>, then a zero or one has to be put behind
+    the tree path, depending on the value and the cursor position.
 
     <item*|Box paths>These paths correspond to logical paths in the box tree.
     Again, the path minus its last item points to a subbox of the main box,
@@ -101,7 +101,7 @@
     corresponds to a text box it is a position in this text. Otherwise a zero
     indicates a position before the subbox and a one a position after it. In
     the case of side boxes, a two and a three may also indicate the position
-    after the left script resp. before the right script.
+    after the left script <abbr|resp.> before the right script.
   </description>
 
   <subsection|The conversion routines>
@@ -109,8 +109,9 @@
   In order to implement the conversion between the three kinds of paths,
   every box comes with a reference inverse path <verbatim|ip> in the source
   tree. Composite boxes also come with a left and a right inverse path
-  <verbatim|lip> resp. <verbatim|rip>, which correspond to the left-most and
-  right-most accessible paths in its subboxes (if there are such subboxes).
+  <verbatim|lip> <abbr|resp.> <verbatim|rip>, which correspond to the
+  left-most and right-most accessible paths in its subboxes (if there are
+  such subboxes).
 
   The routine:
 
@@ -136,10 +137,10 @@
 
   <section|The cursor and selections>
 
-  In order to fulfill the requirement of being a ``structured editor'',
+  In order to fulfill the requirement of being a \Pstructured editor\Q,
   <TeXmacs> needs to provide a (reasonably) complete correspondence between
   logical tree paths and physical cursor positions. This yields an additional
-  difficulty in the case of ``environment changes'', such as a change in font
+  difficulty in the case of \Penvironment changes\Q, such as a change in font
   or color. Indeed, when you are on the border of such a change, it is not
   clear <with|font-shape|italic|a priori> which environment you are in.
 
@@ -188,8 +189,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

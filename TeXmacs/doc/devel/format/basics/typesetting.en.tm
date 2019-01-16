@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|The typesetting process>
@@ -31,7 +31,7 @@
 
   The <hlink|stylesheet language|../stylesheet/stylesheet.en.tm> allows the
   user to write new primitives (macros) on top of the built-in primitives. It
-  contains primitives for definining macros, conditional statements,
+  contains primitives for defining macros, conditional statements,
   computations, delayed execution, <abbr|etc.> The stylesheet language also
   provides a special <markup|extern> tag which offers you the full power of
   the <scheme> extension language in order to write macros.
@@ -57,7 +57,7 @@
   </tm-fragment>
 
   serves an exclusively computational purpose. As a general rule, synthetic
-  macros are sometimes easier to write, but the more accessability is
+  macros are sometimes easier to write, but the more accessibility is
   preserved, the more natural it becomes for the user to edit the markup.
 
   It should be noticed that <TeXmacs> also produces some auxiliary data as a
@@ -80,3 +80,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Mathematical typesetting>
@@ -19,11 +19,11 @@
   often stressed that good typesetting allows the reader to concentrate on
   what he reads, without being distracted by ugly typesetting details. Such
   distracting details arise when distinct, though similar parts of text are
-  typesetted in a non uniform way:
+  typeset in a non uniform way:
 
   <\description>
     <item*|Different base lines>The eye expects text of a similar nature to
-    be typesetted with respect to a same base line. For instance, in
+    be typeset with respect to a same base line. For instance, in
     <math|x+y+z>, the bottoms of the <math|x> and <math|z> should be at the
     same height as the bottom of the <math|u>-part in the <math|y>. This
     should again be the case in <math|2<rsup|x>+2<rsup|y>+2<rsup|z>>.
@@ -34,7 +34,7 @@
     hangover of the <math|f>. This should again be the case in
     <math|e<rsup|a>+e<rsup|f>+e<rsup|x>>. Similarly, the distance between the
     baselines of the <math|a> and the <math|i> in <math|a<rsub|i>> should not
-    be disproportially large with respect to the height of an <math|x>.
+    be disproportionally large with respect to the height of an <math|x>.
   </description>
 
   Additional difficulties may arise when considering automatically generated
@@ -45,11 +45,11 @@
   each other. For instance, consider the formula
   <math|x<rsub|p>+x<rsub|p><rsup|2>>. On the one hand, the baselines of the
   scripts should be the same, but the other hand, the first subscript should
-  not be ``disproportionally low'' with respect to the <math|x>.
+  not be \Pdisproportionally low\Q with respect to the <math|x>.
   Unfortunately, this dilemma can not been solved in a completely
   satisfactory way without the help of a human for the simple reason that the
   computer has no way to know whether the <math|x<rsub|p>> and
-  <math|x<rsub|p><rsup|i>> are ``related''. Indeed, if the <math|x<rsub|p>>
+  <math|x<rsub|p><rsup|i>> are \Prelated\Q. Indeed, if the <math|x<rsub|p>>
   and <math|x<rsub|p><rsup|i>> are close (like in
   <math|x<rsub|p>+x<rsub|p><rsup|i>>), then it is natural to opt for a common
   base line. However, if they are further away from each other (like in
@@ -73,7 +73,7 @@
   the bottoms of both the <math|i> and <math|j> subscripts to (say)
   <verbatim|-0.3fn>. For easier adjustments you may use
   <menu|Format|Adjust|Smash> and <menu|Format|Adjust|Swell> to automatically
-  adjust the size of the contents to the height of the character ``x'' and
+  adjust the size of the contents to the height of the character \Px\Q and
   the largest one in the font respectively.
 
   Notice that one should adjust by preference in a structural and not visual
@@ -81,7 +81,7 @@
   in the above example, because the second option disallows you to switch to
   another font size for your document. Similarly, you should try not change
   the semantics of the formula. For instance, in the above example, you might
-  have added a ``dummy subscript'' to the <math|i> subscript of the sum.
+  have added a \Pdummy subscript\Q to the <math|i> subscript of the sum.
   However, this would alter the meaning of the formula (whence make it non
   suitable as input to a computer algebra system) In the future, we plan to
   provide additional constructs in order to facilitate structural adjusting.
@@ -159,13 +159,14 @@
     <item>The horizontal middles of the numerator and the denominator are
     taken to be the same.
 
-    <item>The vertical spaces between the numerator resp. denominator and the
-    fraction bar is at least <verbatim|sep>.
+    <item>The vertical spaces between the numerator <abbr|resp.> denominator
+    and the fraction bar is at least <verbatim|sep>.
 
-    <item>The depth (resp. height) of the numerator (resp. denominator) is
-    descended (resp. increased) to <verbatim|y1> (resp. <verbatim|y2>) if
-    necessary. This forces the base lines of not too large numerators resp.
-    denominators to be the same in presence of multiple fractions.
+    <item>The depth (<abbr|resp.> height) of the numerator (<abbr|resp.>
+    denominator) is descended (<abbr|resp.> increased) to <verbatim|y1>
+    (<abbr|resp.> <verbatim|y2>) if necessary. This forces the base lines of
+    not too large numerators <abbr|resp.> denominators to be the same in
+    presence of multiple fractions.
 
     <item>The fraction bar has a overhang of <verbatim|sep/2> to both sides
     and the logical limits of the fraction are another <verbatim|sep/2>
@@ -187,9 +188,9 @@
     <item>The vertical space between the main argument and the upper bar is
     at least <verbatim|sep>.
 
-    <item>The root itself is typesetted like a large delimiter. The
-    positioning of a potential script works only is very dependent on the
-    usage of <TeX> fonts.
+    <item>The root itself is typeset like a large delimiter. The positioning
+    of a potential script works only is very dependent on the usage of <TeX>
+    fonts.
 
     <item>The upper bar has a overhang of <verbatim|sep/2> at the right and
     the logical right limit of the root is situated another <verbatim|sep/2>
@@ -224,7 +225,7 @@
     <verbatim|sep> (or a distance which depends on the <TeX> font for small
     accents).
 
-    <item>The accent is positioned horizintally according to the right slope
+    <item>The accent is positioned horizontally according to the right slope
     of the main argument.
 
     <item>The slopes for the accented box are inherited from those of the
@@ -300,7 +301,7 @@
   for large delimiters. This is an advantage from the point of view that it
   favorites delimiters around slightly different expressions to have the same
   baselines. However, it has the disadvantage that delimiters are easily made
-  ``one size to large''. For this reason, we actually diminish the height and
+  \Pone size to large\Q. For this reason, we actually diminish the height and
   the depth of the delimited expression by the small amount <verbatim|sep>,
   before computing the sizes of the delimiters.
 

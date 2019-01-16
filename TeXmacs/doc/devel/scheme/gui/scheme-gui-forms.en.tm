@@ -1,12 +1,12 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Forms>
 
-  As explained in ``<hlink|Dialogs and composite
-  widgets|scheme-gui-dialogs.en.tm>'' the available widgets can be used to
+  As explained in \P<hlink|Dialogs and composite
+  widgets|scheme-gui-dialogs.en.tm>\Q the available widgets can be used to
   compose dialog windows which perform one simple task. But sometimes one
   needs to read complex input from the user and forms provide one mechanism
   to do this. They allow you to define multiple named fields of several
@@ -80,7 +80,7 @@
   </session>
 
   A complete list of the widgets you can embed in a form is in the table
-  <scm|gui-make-table> inside <hlink|menu-define.scm|$TEXMACS_PATH/progs/kernel/gui/menu-define.scm>.
+  <scm|gui-make-table> inside <hlink|<verbatim|menu-define.scm>|$TEXMACS_PATH/progs/kernel/gui/menu-define.scm>.
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
 

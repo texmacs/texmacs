@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.17>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Contextual overloading>
@@ -23,7 +23,7 @@
   <scm|kbd-enter> several times in distinct modules.
 
   For instance, assume that we want to define a function <scm|hello> which
-  inserts ``Hello'' by default, but ``<math|hello<around|(||)>>'' in mode
+  inserts \PHello\Q by default, but \P<math|hello<around|(||)>>\Q in mode
   math, while positioning the cursor between the brackets. Using contextual
   overloading, this may be done as follows:
 
@@ -79,7 +79,7 @@
   Besides <scm|tm-define>, several other added language primitives support
   the contextual overloading mechanism. For instance, <scm|kbd-map> and
   <scm|menu-bind> support overloading on mode. The <scm|tm-define-macro> and
-  <scm|tm-property> primitives are analoguous to <scm|tm-define>.
+  <scm|tm-property> primitives are analogous to <scm|tm-define>.
 
   <tmdoc-copyright|2005|Joris van der Hoeven>
 

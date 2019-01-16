@@ -1,24 +1,24 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
-  <expand|tmdoc-title|Basic data types>
+  <tmdoc-title|Basic data types>
 
-  In this chapter, we give a rough description of <apply|TeXmacs>'s basic
-  data types in <verbatim|Basic>. The description of the exported functions
-  is non exhaustive and we refer to the corresponding header files for more
+  In this chapter, we give a rough description of <TeXmacs>'s basic data
+  types in <verbatim|Basic>. The description of the exported functions is non
+  exhaustive and we refer to the corresponding header files for more
   precision.
 
   <section|Memory allocation and data structures in TeXmacs>
 
-  The file <verbatim|fast_alloc.hpp> declares the <apply|TeXmacs> memory
-  allocation routines. These routines are very fast for small sizes, since
-  for each such size, <apply|TeXmacs> maintains a linked list of freed
-  objects of that size. No garbage collection has been implemented yet.
+  The file <verbatim|fast_alloc.hpp> declares the <TeXmacs> memory allocation
+  routines. These routines are very fast for small sizes, since for each such
+  size, <TeXmacs> maintains a linked list of freed objects of that size. No
+  garbage collection has been implemented yet.
 
-  Modulo a few exceptions, all <apply|TeXmacs> composite data structures are
-  based on the modules <verbatim|concrete>, <verbatim|abstract>,
+  Modulo a few exceptions, all <TeXmacs> composite data structures are based
+  on the modules <verbatim|concrete>, <verbatim|abstract>,
   <verbatim|concrete_null> and <verbatim|abstract_null>. Consequently, these
   data structures are pointers to representation classes, which may be
   abstract in the case of <verbatim|abstract> and <verbatim|abstract_null>,
@@ -36,7 +36,7 @@
 
   <section|Array-like structures>
 
-  <apply|TeXmacs> implements three ``array-like'' structures:
+  <TeXmacs> implements three \Parray-like\Q structures:
 
   <\itemize>
     <item><verbatim|string> is the string type, which may contain '0'
@@ -75,7 +75,7 @@
   <section|Lists>
 
   Generic lists are implemented by the class <verbatim|list\<less\>T\<gtr\>>.
-  The ``nil'' list is created using <verbatim|list\<less\>T\<gtr\>()>, an
+  The \Pnil\Q list is created using <verbatim|list\<less\>T\<gtr\>()>, an
   atom using <verbatim|list\<less\>T\<gtr\>(T x)> and a general list using
   <verbatim|list\<less\>T\<gtr\>(T x, list\<less\>T\<gtr\> next)>. If
   <verbatim|l> is a list, <verbatim|l-\<gtr\>item> and
@@ -86,7 +86,7 @@
 
   The type <verbatim|list\<less\>T\<gtr\>> is also denoted by
   <verbatim|path>, because some additional functions are defined for it.
-  Indeed, paths are used for accessing descendents in tree like structures.
+  Indeed, paths are used for accessing descendants in tree like structures.
   For instance, we implemented the function <verbatim|tree subtree (tree t,
   path p)>.
 
@@ -128,59 +128,15 @@
     <item><verbatim|timer> implements timers.
   </itemize>
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
-    <associate|language|english>
-  </collection>
-</initial>
-
-<\references>
-  <\collection>
-    <associate|toc-5|<tuple|<uninit>|?>>
-    <associate|toc-1|<tuple|<uninit>|?>>
-    <associate|idx-1|<tuple|<uninit>|?>>
-    <associate|idx-2|<tuple|<uninit>|?>>
-    <associate|toc-2|<tuple|<uninit>|?>>
-    <associate|toc-3|<tuple|<uninit>|?>>
-    <associate|toc-4|<tuple|<uninit>|?>>
-  </collection>
-</references>
-
-<\auxiliary>
-  <\collection>
-    <\associate|toc>
-      Memory allocation and data structures in
-      TeXmacs<value|toc-dots><pageref|toc-1>
-
-      Array-like structures<value|toc-dots><pageref|toc-2>
-
-      Lists<value|toc-dots><pageref|toc-3>
-
-      Hash tables<value|toc-dots><pageref|toc-4>
-
-      Other data structures<value|toc-dots><pageref|toc-5>
-    </associate>
-  </collection>
-</auxiliary>
+<initial|<\collection>
+</collection>>

@@ -3275,6 +3275,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(spell-var-accept <scm-arg|string> <scm-arg|string> <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_accept> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(spell-insert <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

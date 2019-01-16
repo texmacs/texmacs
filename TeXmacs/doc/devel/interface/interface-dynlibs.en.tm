@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.7>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Dynamic libraries>
@@ -21,7 +21,7 @@
   In this file it is specified that your application should export a data
   structure
 
-  <\cpp-fragment>
+  <\cpp-code>
     typedef struct package_exports_1 {
 
     \ \ char* version_protocol; /* "TeXmacs communication protocol 1" */
@@ -35,13 +35,13 @@
     \ \ char* (*evaluate) (char* what, char* session, char** errors);
 
     } package_exports_1;
-  </cpp-fragment>
+  </cpp-code>
 
   which contains an installation routine for your application, as well as an
   evaluation routine for further input (for more information, see the header
   file). <TeXmacs> will on its turn export a structure
 
-  <\cpp-fragment>
+  <\cpp-code>
     typedef struct TeXmacs_exports_1 {
 
     \ \ char* version_protocol; /* "TeXmacs communication protocol 1" */
@@ -49,7 +49,7 @@
     \ \ char* version_TeXmacs;
 
     } TeXmacs_exports_1;
-  </cpp-fragment>
+  </cpp-code>
 
   It is assumed that each application takes care of its own memory
   management. Hence, strings created by <TeXmacs> will be destroyed by
@@ -62,8 +62,7 @@
   by <TeXmacs> in order to initialize your system with options
   <verbatim|options>. It communicates the routines exported by <TeXmacs> to
   your system in the form of a pointer to a structure of type
-  <cpp-code|TeXmacs_exports_1>. The routine should return a status message
-  like
+  <cpp|TeXmacs_exports_1>. The routine should return a status message like
 
   <\verbatim>
     \ \ \ \ "yourcas-version successfully linked to TeXmacs"
@@ -82,7 +81,7 @@
   Finally, the configuration file of your plug-in should contain something as
   follows:
 
-  <\scheme-fragment>
+  <\scm-code>
     (plugin-configure <em|myplugin>
 
     \ \ (:require (url-exists? (url "$LD_LIBRARY_PATH"
@@ -91,10 +90,10 @@
     \ \ (:link "lib<em|myplugin>.so" "<em|myplugin>_exports" "")
 
     \ \ <em|further-configuration>)
-  </scheme-fragment>
+  </scm-code>
 
   Here <verbatim|<em|myplugin>_exports> is a pointer to a structure of the
-  type <cpp-code|package_exports_1>.
+  type <cpp|package_exports_1>.
 
   <\remark>
     It is possible that the communication protocol changes in the future. In
@@ -125,7 +124,7 @@
   <\quotation>
     <\framed-fragment>
       <\with|par-par-sep|0fn>
-        <\with|font-family|tt>
+        <\verbatim>
           tmsrc = /home/vdhoeven/texmacs/src/TeXmacs
 
           CXX = g++
@@ -140,7 +139,7 @@
           src/dynlink.o
 
           \ \ \ \ \ \ \ \ $(LD) -shared -o lib/libtmdynlink.so src/dynlink.o
-        </with>
+        </verbatim>
       </with>
     </framed-fragment>
   </quotation>
@@ -151,7 +150,7 @@
   find the include file <verbatim|TeXmacs.h>. The configuration file
   <verbatim|init-dynlink.scm> simply contains
 
-  <\scheme-fragment>
+  <\scm-code>
     (plugin-configure dynlink
 
     \ \ (:require (url-exists? (url "$LD_LIBRARY_PATH"
@@ -161,17 +160,17 @@
     \ \ (:link "libtmdynlink.so" "dynlink_exports" "")
 
     \ \ (:session "Dynlink"))
-  </scheme-fragment>
+  </scm-code>
 
-  As to the <value|cpp> file <verbatim|dynlink.cpp>, it contains a string
+  As to the <c++> file <verbatim|dynlink.cpp>, it contains a string
 
-  <\cpp-fragment>
+  <\cpp-code>
     static char* output= NULL;
-  </cpp-fragment>
+  </cpp-code>
 
   with the last output, the initialization routine
 
-  <\cpp-fragment>
+  <\cpp-code>
     char*
 
     dynlink_install (TeXmacs_exports_1* TM, char* opts, char** errs) {
@@ -183,11 +182,11 @@
     \ \ return output;
 
     }
-  </cpp-fragment>
+  </cpp-code>
 
   the evaluation routine
 
-  <\cpp-fragment>
+  <\cpp-code>
     char*
 
     dynlink_eval (char* what, char* session, char** errors) {
@@ -205,11 +204,11 @@
     \ \ return output;
 
     }
-  </cpp-fragment>
+  </cpp-code>
 
   and the data structure with the public exports:
 
-  <\cpp-fragment>
+  <\cpp-code>
     package_exports_1 dynlink_exports= {
 
     \ \ "TeXmacs communication protocol 1",
@@ -221,10 +220,10 @@
     \ \ dynlink_eval
 
     };
-  </cpp-fragment>
+  </cpp-code>
 
   Notice that the application takes care of the memory allocation and
-  deallocation of <cpp-code|output>.
+  deallocation of <cpp|output>.
 
   <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
@@ -236,20 +235,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-    <associate|page-bot|30mm>
-    <associate|page-even|30mm>
-    <associate|page-odd|30mm>
-    <associate|page-reduce-bot|15mm>
-    <associate|page-reduce-left|25mm>
-    <associate|page-reduce-right|25mm>
-    <associate|page-reduce-top|15mm>
-    <associate|page-right|30mm>
-    <associate|page-top|30mm>
-    <associate|page-type|a4>
-    <associate|par-width|150mm>
-    <associate|sfactor|4>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

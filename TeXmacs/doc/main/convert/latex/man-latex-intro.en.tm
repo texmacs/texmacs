@@ -1,6 +1,6 @@
-<TeXmacs|1.0.5.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Introduction>
@@ -36,7 +36,7 @@
   is already true that many features in <TeXmacs> admit no direct analogues
   in <TeX>/<LaTeX> or one of its packages. This is for instance the case for
   computer algebra sessions, folding, actions, graphics and presentations,
-  but also for certain typsetting constructs, like vertical alignment and
+  but also for certain typesetting constructs, like vertical alignment and
   background filling in tables. When using such additional features, you
   should be prepared that they will not be converted correctly to <LaTeX>.
 
@@ -56,8 +56,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

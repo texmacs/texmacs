@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Notification and download of updates>
@@ -26,14 +26,15 @@
   <subsection|Operating system specifics>
 
   Under <name|MacOS> the process of creation of the appcast is partially
-  automated through the <name|make> build rule <tt|MACOS_RELEASE>. Calling
-  <tt|make MACOS_RELEASE> will compile and bundle <TeXmacs>, then zip and
-  finally digitally sign the resulting <tt|TeXmacs-*.app.zip> with the script
-  <tt|admin/misc/sign_update>. In order for this to work, one has to set the
-  environment variable <tt|TEXMACS_PRIVATE_DSA> to point to the location of
-  the private <name|DSA> key used to sign releases. At the end of the build
-  process a chunk of <name|XML> is printed that can be pasted in the
-  <tt|appcast.xml> file.
+  automated through the <name|make> build rule <verbatim|MACOS_RELEASE>.
+  Calling <verbatim|make MACOS_RELEASE> will compile and bundle <TeXmacs>,
+  then zip and finally digitally sign the resulting
+  <verbatim|TeXmacs-*.app.zip> with the script
+  <verbatim|admin/misc/sign_update>. In order for this to work, one has to
+  set the environment variable <verbatim|TEXMACS_PRIVATE_DSA> to point to the
+  location of the private <name|DSA> key used to sign releases. At the end of
+  the build process a chunk of <name|XML> is printed that can be pasted in
+  the <verbatim|appcast.xml> file.
 
   Under <name|Windows> digital signatures are not yet supported by
   <name|WinSparkle> and as such will be ignored (Aug. 2013).
@@ -115,8 +116,9 @@
     The file with the public <name|DSA> key to use to verify the digital
     signature of releases. This feature is currently (Aug. 2013) only
     supported under <name|MacOS>, but the preference value is ignored:
-    <name|Sparkle> will use the value set in the <tt|SUPublicDSAKeyFile> key
-    in the application bundle's <tt|Info.plist> dictionary.
+    <name|Sparkle> will use the value set in the
+    <verbatim|SUPublicDSAKeyFile> key in the application bundle's
+    <tt|Info.plist> dictionary.
   </explain>
 
   <tmdoc-copyright|2013|the <TeXmacs> team>

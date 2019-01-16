@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.18>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Summary of the configuration options for plug-ins>
@@ -26,8 +26,8 @@
     relative to the <verbatim|<em|package-path>>.
 
     <item*|<verbatim|<with|font-series|medium|(:winpath <em|package-path>
-    <em|inner-bin-path>)>>>Analoguous to <verbatim|:winpath>, but under
-    MacOS.
+    <em|inner-bin-path>)>>>Analogous to <verbatim|:winpath>, but under
+    <name|MacOS>.
 
     <item*|<verbatim|<with|font-series|medium|(:require
     <em|condition>)>>>This option specifies a sanity
@@ -106,8 +106,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

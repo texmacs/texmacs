@@ -1,9 +1,9 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
-  <tmdoc-title|Converters for Html and MathML>
+  <tmdoc-title|Converters for <name|Html> and <name|MathML>>
 
   <paragraph|<name|Html generation>>
 
@@ -103,8 +103,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

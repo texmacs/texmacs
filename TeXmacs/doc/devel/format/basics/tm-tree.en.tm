@@ -1,6 +1,6 @@
-<TeXmacs|1.0.4>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|<TeXmacs> trees>
@@ -9,7 +9,7 @@
   <em|trees>. For instance, the tree
 
   <\equation*>
-    <tree|<with|mode|text|<markup|with>>|mode|math|<tree|<with|mode|text|<markup|concat>>|x+y+|<tree|<with|mode|text|<markup|frac>>|1|2>|+|<tree|<with|mode|text|<markup|sqrt>>|y+z>>>
+    <tree|<text|<markup|with>>|mode|math|<tree|<text|<markup|concat>>|x+y+|<tree|<text|<markup|frac>>|1|2>|+|<tree|<text|<markup|sqrt>>|y+z>>>
   </equation*>
 
   typically represents the formula
@@ -30,15 +30,15 @@
 
   Currently, all strings are represented using the <em|universal <TeXmacs>
   encoding>. This encoding coincides with the Cork font encoding for all
-  characters except ``<verbatim|\<less\>>'' and ``<verbatim|\<gtr\>>''.
-  Character sequences starting with ``<verbatim|\<less\>>'' and ending with
-  ``<verbatim|\<gtr\>>'' are interpreted as special extension characters. For
+  characters except \P<verbatim|\<less\>>\Q and \P<verbatim|\<gtr\>>\Q.
+  Character sequences starting with \P<verbatim|\<less\>>\Q and ending with
+  \P<verbatim|\<gtr\>>\Q are interpreted as special extension characters. For
   example, <verbatim|\<less\>alpha\<gtr\>> stands for the letter
-  <with|mode|math|\<alpha\>>. The semantics of characters in the universal
-  <TeXmacs> encoding does not depend on the context (currently, cyrillic
-  characters are an exception, but this should change soon). In other words,
-  the universal <TeXmacs> encoding may be seen as an analogue of Unicode. In
-  the future, we might actually switch to Unicode.
+  <math|\<alpha\>>. The semantics of characters in the universal <TeXmacs>
+  encoding does not depend on the context (currently, cyrillic characters are
+  an exception, but this should change soon). In other words, the universal
+  <TeXmacs> encoding may be seen as an analogue of Unicode. In the future, we
+  might actually switch to Unicode.
 
   The string leafs either contain ordinary text or special data. <TeXmacs>
   supports the following atomic data types:
@@ -52,20 +52,20 @@
     <item*|Floating point numbers>Specified using the usual scientific
     notation.
 
-    <item*|Lengths>Floating point numbers followed by a <hyper-link|length
+    <item*|Lengths>Floating point numbers followed by a <hlink|length
     unit|lengths.en.tm>, like <verbatim|29.7cm> or <verbatim|2fn>.
   </description>
 
   <paragraph*|Serialization and preferred syntax for editing>
 
-  When storing a document as a file on your harddisk or when copying a
+  When storing a document as a file on your hard disk or when copying a
   document fragment to the clipboard, <TeXmacs> trees have to be represented
   as strings. The conversion without loss of information of abstract
   <TeXmacs> trees into strings is called <em|serialization> and the inverse
   process <em|parsing>. <TeXmacs> provides three ways to serialize trees,
-  which correspond to the standard <hyper-link|<TeXmacs> format|tm-tm.en.tm>,
-  the <hyper-link|XML format|tm-tmml.en.tm> and the
-  <hyper-link|<value|scheme> format|tm-scm.en.tm>.
+  which correspond to the standard <hlink|<TeXmacs> format|tm-tm.en.tm>, the
+  <hlink|XML format|tm-tmml.en.tm> and the <hlink|<scheme>
+  format|tm-scm.en.tm>.
 
   However, it should be emphasized that the preferred syntax for modifying
   <TeXmacs> documents is the screen display inside the editor. If that seems
@@ -74,7 +74,7 @@
   representation of a document, together with its interactive behaviour, is a
   particularly concrete syntax. Moreover, in the <menu|Document|Source> menu,
   you may find different ways to customize the way documents are viewed, such
-  as different levels of informative flags and a <hyper-link|``source tree''
+  as different levels of informative flags and a <hlink|\Psource tree\Q
   mode|../../style/presentation/src-present.en.tm> for editing style files.
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
@@ -87,8 +87,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

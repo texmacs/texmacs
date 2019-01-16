@@ -1,16 +1,16 @@
-<TeXmacs|1.0.3.11>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Evaluation control primitives>
 
   This section describes several primitives for controlling the way
   expressions in the style-sheet language are evaluated. The primitives are
-  analoguous to the <value|scheme> primitives <verbatim|eval>,
-  <verbatim|quote>, <verbatim|quasiquote>, <abbr|etc.>, although the
-  <TeXmacs> conventions are slightly <hlink|different|../../style/design/style-eval.en.tm>
-  than those used by conventional functional languages like <name|Scheme>.
+  analogous to the <scheme> primitives <verbatim|eval>, <verbatim|quote>,
+  <verbatim|quasiquote>, <abbr|etc.>, although the <TeXmacs> conventions are
+  slightly <hlink|different|../../style/design/style-eval.en.tm> than those
+  used by conventional functional languages like <name|Scheme>.
 
   <\explain>
     <explain-macro|eval|expr><explain-synopsis|force evaluation>
@@ -114,21 +114,20 @@
     don't evaluate>
   <|explain>
     When retrieving an environment variable <src-arg|var>, one is usually
-    interested in its typesetted value, as given by
-    <explain-macro|value|var>. In some cases, it may be useful to access the
-    real, non-typesetted value. This can be done with
-    <explain-macro|quote-value|var>.
+    interested in its typeset value, as given by <explain-macro|value|var>.
+    In some cases, it may be useful to access the real, non-typeset value.
+    This can be done with <explain-macro|quote-value|var>.
   </explain>
 
   <\explain>
-    <explain-macro|quote-arg|var|index-1|<with|mode|math|\<cdots\>>|index-n><explain-synopsis|retrieve
+    <explain-macro|quote-arg|var|index-1|<math|\<cdots\>>|index-n><explain-synopsis|retrieve
     an argument but don't evaluate>
   <|explain>
     When retrieving (a subexpression of) a macro argument <src-arg|var>, one
-    is usually interested in its typesetted value, as given by
-    <explain-macro|arg|var|index-1|<with|mode|math|\<cdots\>>|index-n>. In
-    some cases, it may be useful to access the real, non-typesetted value.
-    This can be done with <explain-macro|quote-arg|var|index-1|<with|mode|math|\<cdots\>>|index-n>.
+    is usually interested in its typeset value, as given by
+    <explain-macro|arg|var|index-1|<math|\<cdots\>>|index-n>. In some cases,
+    it may be useful to access the real, non-typeset value. This can be done
+    with <explain-macro|quote-arg|var|index-1|<math|\<cdots\>>|index-n>.
   </explain>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
@@ -140,3 +139,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

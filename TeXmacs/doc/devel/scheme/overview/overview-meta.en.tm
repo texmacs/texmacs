@@ -1,13 +1,13 @@
-<TeXmacs|1.0.7.16>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Meta information and logical programming>
 
   Small software projects usually consist of a collection of routines and
   data. In a large software project, where a typical contributor has no
-  complete overview of the program, it is a good practive to associate
+  complete overview of the program, it is a good practice to associate
   additional <em|meta-information> to the individual routines and data. This
   meta-information typically serves documentation purposes, but becomes even
   more interesting if it can be used in an automated fashion to implement
@@ -36,9 +36,9 @@
   square)>. More interestingly, assuming that we defined <scm|square> as
   above, typing <shortcut|(interactive exec-interactive-command)> followed by
   <scm|square> and <shortcut|(kbd-return)> allows you to execute <scm|square>
-  in an interactive way: you will be prompted for ``A number'' on the footer.
+  in an interactive way: you will be prompted for \PA number\Q on the footer.
   Moreover, after typing <shortcut|(interactive exec-interactive-command)>,
-  you will be able to use ``tab-completion'' in order to enter <scm|square>:
+  you will be able to use \Ptab-completion\Q in order to enter <scm|square>:
   typing <key|s q u tab> will usually complete into<nbsp><scm|square>.
 
   In a similar vein, the <scm|:interactive> and <scm|:check-mark> options
@@ -53,7 +53,7 @@
   </scm-code>
 
   in the source code of <TeXmacs> states that <scm|choose-file> is an
-  interactive command. As a consquence, the <menu|File|Load> entry, which is
+  interactive command. As a consequence, the <menu|File|Load> entry, which is
   defined by
 
   <\scm-code>
@@ -82,10 +82,9 @@
   given routine can be used inside <TeXmacs> documents, in particular inside
   <markup|extern> and <markup|action> macros. For instance, the default
   implementation of the <markup|fold> tag allows the user to click on the
-  ``<math|<op|\<circ\>>>'' before the folded text so as to unfold the tag.
-  When doing this, the scheme script <scm|mouse-unfold> is launched.
-  However, for this to work, the <scm|mouse-unfold> function needs to be
-  secure:
+  \P<math|<op|\<circ\>>>\Q before the folded text so as to unfold the tag.
+  When doing this, the scheme script <scm|mouse-unfold> is launched. However,
+  for this to work, the <scm|mouse-unfold> function needs to be secure:
 
   <\scm-code>
     (tm-define mouse-unfold
@@ -100,8 +99,8 @@
   </scm-code>
 
   You can read more about the tags which depend on <scheme> scripts in
-  ``<hlink|Invoking <scheme> scripts from <TeXmacs>
-  markup|overview-start.en.tm#markup-scripts>''.\ 
+  \P<hlink|Invoking <scheme> scripts from <TeXmacs>
+  markup|overview-start.en.tm#markup-scripts>\Q.\ 
 
   In the future, the number of options for entering meta-information is
   likely to increase. <TeXmacs> also supports an additional mechanism for the
@@ -119,3 +118,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

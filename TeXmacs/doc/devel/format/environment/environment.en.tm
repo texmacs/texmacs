@@ -1,23 +1,23 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Built-in environment variables>
 
-  The way <TeXmacs> <hyper-link|typesets|../basics/typesetting.en.tm>
-  documents is influenced by so called <em|environment variables>. The
-  <hyper-link|style-sheet language|../stylesheet/stylesheet.en.tm> uses a so
-  called <em|environment> (or context) to store both environment variables
-  and <hyper-link|macros|../stylesheet/prim-macro.en.tm>. The environment
-  variables are subdivided into two catagories: built-in variables and
-  additional variables provided by style files. Built-in variables usually
-  affect the layout, while additional variables mostly serve computational
-  purposes. In the next sections of this chapter, we will describe all
-  built-in environment variables.
+  The way <TeXmacs> <hlink|typesets|../basics/typesetting.en.tm> documents is
+  influenced by so called <em|environment variables>. The <hlink|style-sheet
+  language|../stylesheet/stylesheet.en.tm> uses a so called <em|environment>
+  (or context) to store both environment variables and
+  <hlink|macros|../stylesheet/prim-macro.en.tm>. The environment variables
+  are subdivided into two categories: built-in variables and additional
+  variables provided by style files. Built-in variables usually affect the
+  layout, while additional variables mostly serve computational purposes. In
+  the next sections of this chapter, we will describe all built-in
+  environment variables.
 
   A typical built-in environment variable is <src-var|color>. The value of an
-  environment variable may be <hyper-link|changed|../stylesheet/prim-env.en.tm>
+  environment variable may be <hlink|changed|../stylesheet/prim-env.en.tm>
   permanently using <markup|assign> and temporarily using the <markup|with>
   primitive:
 
@@ -50,12 +50,12 @@
   The typesetting language uses <def-index|dynamic scoping> of variables.
   That means that macros can access and modify variables in their calling
   context. In the previous example, the <markup|enumerate> macro locally
-  initializes <src-var|item-nr> to <with|mode|math|0> (uses <markup|with>)
-  and the <markup|item> macro increments it by one and shows its value. Since
+  initializes <src-var|item-nr> to <math|0> (uses <markup|with>) and the
+  <markup|item> macro increments it by one and shows its value. Since
   <markup|enumerate> locally redefines <src-var|item-nr>, the original value
   of <src-var|item-nr> is restored on exit.
 
-  Each document comes with an <hyper-link|initial
+  Each document comes with an <hlink|initial
   environment|../basics/tm-docs.en.tm#init-env> with the initial values of
   environment values, <abbr|i.e.> their values just before we typeset the
   document. If an environment variable does not occur in the initial
@@ -96,8 +96,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

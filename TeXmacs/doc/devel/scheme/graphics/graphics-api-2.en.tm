@@ -1,29 +1,29 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
-  <tmdoc-title|Graphics interface between C++ and <value|scheme>>
+  <tmdoc-title|Graphics interface between C++ and <scheme>>
 
   <paragraph*|Rationale>
 
   <TeXmacs> both implements a low-level part of the graphics in C++ and the
-  high-level user interface in <value|scheme>. This API describes how both
-  parts interact.
+  high-level user interface in <scheme>. This API describes how both parts
+  interact.
 
   The low-level C++ mainly takes care of transforming the graphical markup in
-  a typesetted box. It also provides routines for translating between
-  physical coordinates (relative to the window) into logical coordinates (the
-  local coordinate system of the graphics) and routines for interacting with
-  the typesetted boxes (finding the closest objects to a given point or
-  region or projecting a point on a grid).
+  a typeset box. It also provides routines for translating between physical
+  coordinates (relative to the window) into logical coordinates (the local
+  coordinate system of the graphics) and routines for interacting with the
+  typeset boxes (finding the closest objects to a given point or region or
+  projecting a point on a grid).
 
   <paragraph*|Definitions>
 
   <\description>
-    <item*|Editor coordinates>The coordinates of the outermost typesetted
-    box. Mouse events are typically passed in these coordinates. The
-    corresponding data type is <verbatim|SI>.
+    <item*|Editor coordinates>The coordinates of the outermost typeset box.
+    Mouse events are typically passed in these coordinates. The corresponding
+    data type is <verbatim|SI>.
 
     <item*|Graphics coordinates>The coordinates of the innermost graphics
     corresponding to the current cursor position.
@@ -40,7 +40,7 @@
     graphics coordinates, <scm-arg|distance> its distance to the point which
     was projected on the grid (see <verbatim|grid-project> below) and
     <scm-arg|type> the type of grid point with a potential origin. For
-    instance, <scm-arg|type> can be <verbatim|plain> or someting like
+    instance, <scm-arg|type> can be <verbatim|plain> or something like
     <verbatim|(control t)> for a control point corresponding to the tree
     <scm|t> in the document.
   </description>
@@ -133,3 +133,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

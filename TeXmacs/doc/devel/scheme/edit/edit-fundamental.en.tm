@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Fundamental tree modification routines>
@@ -14,10 +14,10 @@
   occasionally be useful as well.
 
   It should be emphasized that the fundamental tree modification routines are
-  <em|not> checked for their correctness. It is the responsability of the
+  <em|not> checked for their correctness. It is the responsibility of the
   user to verify that the operations are valid and that they lead to a
   correct new edit tree. Although it is sometimes possible to leave the edit
-  tree in a temporarily incorrect or ``unsimplified'' state (for instance, by
+  tree in a temporarily incorrect or \Punsimplified\Q state (for instance, by
   allowing subtrees of the form <rigid|<scm|(concat "")>>), this practice is
   not generally recommended, and may lead to severe bugs.
 
@@ -167,7 +167,7 @@
     Each of the macros <scm|tree-assign!>, <scm|tree-insert!>, <abbr|etc.>
     has a functional counterpart <verbatim|<scm|tree-assign>>,
     <verbatim|<scm|tree-insert>>, etc. The first parameter of these
-    counterparts can be an arbitrary ``l-<no-break>value'' and does not have
+    counterparts can be an arbitrary \Pl-<no-break>value\Q and does not have
     to be a scheme variable. However, in the case when a <scheme> variable is
     passed as the first parameter, these variants do not necessarily update
     its contents with the return value.

@@ -1,6 +1,6 @@
-<TeXmacs|1.0.6.10>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|Low level graphics manipulation>
@@ -115,7 +115,7 @@
     <scm|(enhanced-tree-properties-set! <scm-arg|t>
     <scm-arg|l>)><explain-synopsis|set properties>
   <|explain>
-    Given an enhanced tree <scm-arg|t>, overide its properties with the
+    Given an enhanced tree <scm-arg|t>, override its properties with the
     elements in the association list <scm-arg|l>.
   </explain>
 
@@ -162,7 +162,7 @@
     <scm|(sketch-set <scm-arg|t>)><explain-synopsis|set sketch tree>
   <|explain>
     Assign the sketch which a tree <scm-arg|t> which is part of the document
-    (and maintain the correspondance between <scm-arg|t> and the sketch).
+    (and maintain the correspondence between <scm-arg|t> and the sketch).
     This routine is typically called when editing an enhanced shape.
   </explain>
 
@@ -179,7 +179,7 @@
   <|explain>
     When the sketch is an enhanced group, this routine toggles whether a tree
     t in the document belongs to the group (and we maintain the
-    correspondance between t and the corresponding subtree in the sketch).
+    correspondence between t and the corresponding subtree in the sketch).
     This routine is typically called when selecting a group of objects.
   </explain>
 
@@ -204,13 +204,13 @@
     state of the document before the call of sketch-checkout.
   </explain>
 
-  <paragraph*|Misscelaneous>
+  <paragraph*|Miscellaneous>
 
   <\explain>
     <scm|(sketch-controls-set <scm-arg|l>)><explain-synopsis|set controls>
   <|explain>
     Assign a list of markup objects with control ornaments to the current
-    sketch. The ornaments are rendered on top of the sketch as a visial aid
+    sketch. The ornaments are rendered on top of the sketch as a visual aid
     for the user. Typically, when editing a polyline, <scm-arg|l> consists of
     a list of control points.
   </explain>
@@ -224,3 +224,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>

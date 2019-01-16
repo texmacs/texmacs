@@ -1,57 +1,40 @@
-<TeXmacs|1.0.0.17>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
-  <expand|tmdoc-title|Specifying the cell and table alignment>
+  <tmdoc-title|Specifying the cell and table alignment>
 
   The most frequent formatting operation is the horizontal or vertical
   alignment of a block of cells. You may use the
-  <shortcut|(positioning-left)>,
-  <shortcut|(positioning-right)>,
-  <shortcut|(positioning-up)> and
-  <shortcut|(positioning-down)> keystrokes to quickly align more to
-  the left, right, top or bottom.
+  <shortcut|(positioning-left)>, <shortcut|(positioning-right)>,
+  <shortcut|(positioning-up)> and <shortcut|(positioning-down)> keystrokes to
+  quickly align more to the left, right, top or bottom.
 
-  A specific alignment can also be selected in the
-  <apply|menu|Table|Horizontal cell alignment> and <apply|menu|Table|Vertical
-  cell alignment> menus. Alternatively, you may use keyboard shorthands of
-  the types <key|table h><render-key|<with|mode|math|x>> and <key|table v
- ><render-key|<with|mode|math|x>> for horizontal resp. vertical alignment.
+  A specific alignment can also be selected in the <menu|Table|Horizontal
+  cell alignment> and <menu|Table|Vertical cell alignment> menus.
+  Alternatively, you may use keyboard shorthands of the types <key|table
+  h><render-key|<math|x>> and <key|table v ><render-key|<math|x>> for
+  horizontal <abbr|resp.> vertical alignment.
 
   Similarly, you may specify how the table itself should be aligned with
   respect to the surrounding text. This is either done via the
-  <apply|menu|Table|Horizontal table alignment> and
-  <apply|menu|Table|Vertical table alignment> submenus, or using keyboard
-  shorthands of the form <key|table H><render-key|<with|mode|math|x>> or
-  <key|table V><render-key|<with|mode|math|x>>. Here <render-key|<with|mode|math|x>>
-  represents <key|l> for ``left'', <key|c> for ``centered'', <key|r> for
-  ``right'', <key|b> for ``bottom'' and <key|t> for ``top''.
+  <menu|Table|Horizontal table alignment> and <menu|Table|Vertical table
+  alignment> submenus, or using keyboard shorthands of the form <key|table
+  H><render-key|<math|x>> or <key|table V><render-key|<math|x>>. Here
+  <render-key|<math|x>> represents <key|l> for \Pleft\Q, <key|c> for
+  \Pcentered\Q, <key|r> for \Pright\Q, <key|b> for \Pbottom\Q and <key|t> for
+  \Ptop\Q.
 
-  <apply|tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
 
-  <expand|tmdoc-license|Permission is granted to copy, distribute and/or
-  modify this document under the terms of the GNU Free Documentation License,
-  Version 1.1 or any later version published by the Free Software Foundation;
-  with no Invariant Sections, with no Front-Cover Texts, and with no
-  Back-Cover Texts. A copy of the license is included in the section entitled
-  "GNU Free Documentation License".>
+  <tmdoc-license|Permission is granted to copy, distribute and/or modify this
+  document under the terms of the GNU Free Documentation License, Version 1.1
+  or any later version published by the Free Software Foundation; with no
+  Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+  Texts. A copy of the license is included in the section entitled "GNU Free
+  Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|paragraph width|150mm>
-    <associate|odd page margin|30mm>
-    <associate|shrinking factor|4>
-    <associate|page right margin|30mm>
-    <associate|page top margin|30mm>
-    <associate|reduction page right margin|25mm>
-    <associate|page type|a4>
-    <associate|reduction page bottom margin|15mm>
-    <associate|even page margin|30mm>
-    <associate|reduction page left margin|25mm>
-    <associate|page bottom margin|30mm>
-    <associate|reduction page top margin|15mm>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

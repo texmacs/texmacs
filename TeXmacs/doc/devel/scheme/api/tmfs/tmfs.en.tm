@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.8>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
   <tmdoc-title|The <TeXmacs> file system>
@@ -11,7 +11,7 @@
   the following:
 
   <\traverse>
-    <branch|A <tt|tmfs> primer.|tmfs-basics.en.tm>
+    <branch|A <verbatim|tmfs> primer.|tmfs-basics.en.tm>
   </traverse>
 
   <tmdoc-copyright|2012|the <TeXmacs> team.>
@@ -23,3 +23,6 @@
   with no Back-Cover Texts. A copy of\nthe license is included in the section
   entitled "GNU Free Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
