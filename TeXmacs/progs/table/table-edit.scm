@@ -741,6 +741,19 @@
   (:argument b "Top border width")
   (cell-set-borders b #f #f #f b #f #f #f))
 
+(define cell-current-pen-width "1ln")
+
+(define (cell-test-pen-width? pen)
+  (== cell-current-pen-width pen))
+
+(tm-define (cell-get-pen-width)
+  cell-current-pen-width)
+
+(tm-define (cell-set-pen-width pen)
+  (:argument pen "Pen width")
+  (:check-mark "*" cell-test-pen-width?)
+  (set! cell-current-pen-width pen))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special commands for full width math tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
