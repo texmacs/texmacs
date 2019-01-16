@@ -196,11 +196,8 @@
 
 (tm-define (kbd-extremal t forwards?)
   (:require (graphical-text-context? t))
-  (with-define (move) ((if forwards? go-right go-left))
-    (with-define (next) (go-to-next-inside move inside-graphics-context?)
-      (with-define (action)
-          (go-to-next-such-that next inside-graphical-text-context?)
-        (go-to-repeat action)))))
+  (and-with c (tree-down t)
+    (tree-go-to c (if forwards? :end :start))))
 
 (tm-define (geometry-horizontal t forwards?)
   (:require (graphical-text-context? t))
