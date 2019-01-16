@@ -1,6 +1,6 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|The font selection system>
@@ -24,13 +24,13 @@
   browser, which also displays some sample text for the selected font.
 
   The font browser also provides a way to quickly select fonts based on
-  desirable font properties. For instance, by filtering on a ``bold weight''
-  and ``sans serif'', one may find a bold sans serif font which mixes as well
+  desirable font properties. For instance, by filtering on a \Pbold weight\Q
+  and \Psans serif\Q, one may find a bold sans serif font which mixes as well
   as possible with the main font. <TeXmacs> allows you to filter on the
   following criteria:
 
   <\description>
-    <item*|Weight>The font <em|weight> corresponds to the ``thickness'' of
+    <item*|Weight>The font <em|weight> corresponds to the \Pthickness\Q of
     the font:
 
     <center|<block|<tformat|<table|<row|<cell|<with|font-series|thin|Thin>>|<cell|<with|font-series|light|Light>>|<cell|Medium>|<cell|<with|font-series|bold|Bold>>|<cell|<with|font-series|black|Black>>>>>>>
@@ -51,7 +51,7 @@
     capitals>>>>>>>
 
     <item*|Serif>This feature corresponds to the projecting features called
-    ``serifs'' at the end of strokes:
+    \Pserifs\Q at the end of strokes:
 
     <center|<block|<tformat|<table|<row|<cell|<with|font-family|rm|Serif>>|<cell|<with|font-family|ss|Sans
     Serif>>>>>>>
@@ -61,15 +61,15 @@
 
     <center|<block|<tformat|<table|<row|<cell|<with|font-family|rm|Proportional>>|<cell|<with|font-family|tt|Monospaced>>>>>>>
 
-    <item*|Device>This property can be used to immitate specific ``writing
-    devices'':
+    <item*|Device>This property can be used to imitate specific \Pwriting
+    devices\Q:
 
     <center|<block|<tformat|<table|<row|<cell|<with|font-family|rm|Print>>|<cell|<with|font-family|tt|Typewriter>>|<cell|<with|font-family|digital|Digital>>|<cell|<with|font-family|pen|Pen>>|<cell|<with|font-family|artpen|Art
     pen>>|<cell|<with|font-family|chalk|Chalk>>|<cell|<with|font-family|marker|Marker>>>>>>>
 
     <item*|Category>Various other font features:
 
-    <htab|5mm><block|<tformat|<table|<row|<cell|<with|font-family|ancient|Ancient>>|<cell|<with|font-family|attached|Attached>>|<cell|<with|font-family|calligraphic|Calligraphic>>|<cell|<with|font-family|comic|Comic>>|<cell|<with|font-family|decorative|Decorative>>>|<row|<cell|<with|font-family|distorted|Distorted>>|<cell|<with|font-family|gothic|Gothic>>|<cell|<with|font-family|handwritten|Handwritten>>|<cell|<with|font-family|initials|Initials>>|<cell|<with|font-family|medieval|Medieval>>>|<row|<cell|<with|font-family|miscellaneous|Misscellaneous>>|<cell|<with|font-family|outline|Outline>>|<cell|<with|font-family|retro|Retro>>|<cell|<with|font-family|scifi|Scifi>>|<cell|<with|font-family|title|Title>>>>>><htab|5mm>
+    <htab|5mm><block|<tformat|<table|<row|<cell|<with|font-family|ancient|Ancient>>|<cell|<with|font-family|attached|Attached>>|<cell|<with|font-family|calligraphic|Calligraphic>>|<cell|<with|font-family|comic|Comic>>|<cell|<with|font-family|decorative|Decorative>>>|<row|<cell|<with|font-family|distorted|Distorted>>|<cell|<with|font-family|gothic|Gothic>>|<cell|<with|font-family|handwritten|Handwritten>>|<cell|<with|font-family|initials|Initials>>|<cell|<with|font-family|medieval|Medieval>>>|<row|<cell|<with|font-family|miscellaneous|Miscellaneous>>|<cell|<with|font-family|outline|Outline>>|<cell|<with|font-family|retro|Retro>>|<cell|<with|font-family|scifi|Scifi>>|<cell|<with|font-family|title|Title>>>>>><htab|5mm>
   </description>
 
   Each of the above properties really constitutes a <em|hint> on how the kind
@@ -85,7 +85,7 @@
 
   It should be noticed that <TeXmacs> comes with a limited number of
   preinstalled fonts, such as the <with|font|Stix|Stix> fonts and several
-  fonts prefixed by ``TeXmacs''. Documents which only use these fonts will be
+  fonts prefixed by \PTeXmacs\Q. Documents which only use these fonts will be
   rendered the same on different systems (assuming the same version of
   <TeXmacs>). When your documents contain other fonts as well, then these
   fonts may be replaced by closest matches when opening your document under a
@@ -100,3 +100,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
