@@ -419,6 +419,7 @@ spell_done (string lan) {
 tree
 spell_check (string lan, string s) {
   if (spell_busy->contains (lan)) {
+    if (lan == "verbatim") return "ok";
     if (N(s) == 0 || is_locase_alpha (s (1, N(s)))) {
       tree r= ispell_check (lan, s);
       return r;

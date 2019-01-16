@@ -135,18 +135,27 @@
       (set! spell-suggestions l)
       (refresh-now "spell-suggestions")
       (when toolbar-spell-active?
+        ;; FIXME: the following is quite a dirty hack to get the focus right
+        (when (qt-gui?)
+          (show-bottom-tools 0 #f)
+          (show-bottom-tools 0 #t))
         (update-menus)
         (delayed
           (:idle 1)
           (when toolbar-spell-active?
             (keyboard-focus-on "spell")
-            (when spell-focus-hack?
+            (when (and spell-focus-hack? (qt-gui?))
               (set! spell-focus-hack? #f)
               (delayed
                 (:idle 100)
                 (when toolbar-spell-active?
                   (keyboard-focus-on "spell")
                   (set! spell-focus-hack? #t))))))))))
+
+(tm-define (keyboard-press key time)
+  (:require toolbar-spell-active?)
+  (when (nin? key (list "pageup" "pagedown" "home" "end"))
+    (former key time)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Highlighting a particular next or previous spell result
@@ -356,7 +365,8 @@
   (list "mode" (getter "mode")
         "language" (getter "language")
         "math-language" (getter "math-language")
-        "prog-language" (getter "prog-language")))
+        "prog-language" (getter "prog-language")
+        "par-first" "0tab"))
 
 (tm-define (spell-cancel . args)
   (set! spell-quit #f)

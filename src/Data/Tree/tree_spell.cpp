@@ -33,6 +33,7 @@ merge (range_set& sel, range_set ssel) {
 
 static bool
 is_accessible_for_spell (tree t, int i) {
+  if (is_compound (t, "bib-list")) return false;
   if (is_accessible_child (t, i)) return true;
   if (is_func (t, HIDDEN)) return true;
   if (get_access_mode () != DRD_ACCESS_SOURCE) return false;
@@ -61,12 +62,19 @@ spell_string (tree lan, range_set& sel, string s, path p) {
     int end= pos;
     if (!spell_string (lan, s (start, end))) {
       int start2= start, end2= end;
+      if (start < end && is_numeric (s[start]) || is_numeric (s[end-1])) {
+        // NOTE: always accept postal codes; could be a user preference
+        bool ok= true;
+        for (int i=start; i<end; i++)
+          ok= ok && (is_numeric (s[i]) || is_upcase (s[i]));
+        if (ok) start= end;
+      }
       while (start < end && !is_iso_alpha (s[start]))
         tm_char_forwards (s, start);
       while (start < end && !is_iso_alpha (s[end-1]))
         tm_char_backwards (s, end);
       if ((start == start2 && end == end2) ||
-          !spell_string (lan, s (start, end)))
+          (start < end && !spell_string (lan, s (start, end))))
         while (start < end) {
           int begin= start;
           while (start < end && is_iso_alpha (s[start])) start++;
