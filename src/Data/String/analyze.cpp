@@ -1240,6 +1240,27 @@ convert_tabs_to_spaces (string s, int tw) {
   return r;
 }
 
+string
+downgrade_math_letters (string s) {
+  string r= "";
+  for (int i=0; i<N(s); ) {
+    int start= i;
+    tm_char_forwards (s, i);
+    if (i == start + 1) r << s[start];
+    else {
+      string ss= s (start, i);
+      if (starts (ss, "<b-")) ss= "<" * ss (3, N(ss));
+      if (starts (ss, "<up-")) ss= "<" * ss (4, N(ss));
+      if (starts (ss, "<cal-")) ss= "<" * ss (5, N(ss));
+      if (starts (ss, "<bbb-")) ss= "<" * ss (5, N(ss));
+      if (starts (ss, "<frak-")) ss= "<" * ss (6, N(ss));
+      if (N(ss) == 3) ss= ss (1, 2);
+      r << ss;
+    }
+  }
+  return r;
+}
+
 /******************************************************************************
 * Parsing binary data
 ******************************************************************************/

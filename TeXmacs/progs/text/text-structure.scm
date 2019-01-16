@@ -41,10 +41,13 @@
 (tm-define (texmacs->string x)
   (texmacs->code (verbatim-expand x) "cork"))
 
+(tm-define (texmacs->title-string x)
+  (downgrade-math-letters (texmacs->string x)))
+
 (tm-define (tm/section-get-title-string t)
   (cond ((tm-atomic? t) "no title")
 	((or (section-tag? (tm-car t)) (section*-tag? (tm-car t)))
-         (texmacs->string (tm-ref t 0)))
+         (texmacs->title-string (tm-ref t 0)))
 	((tree-is? (tm-car t) 'the-index) "Index")
 	((tree-is? (tm-car t) 'the-glossary) "Glossary")
 	((or (special-section-tag? (tm-car t))

@@ -62,6 +62,7 @@ string xml_unspace (string s, bool first, bool last);
 bool   contains_unicode_char (string s);
 tree   convert_OTS1_symbols_to_universal_encoding (tree t);
 string convert_tabs_to_spaces (string s, int w);
+string downgrade_math_letters (string s);
 
 string roman_nr (int nr);
 string Roman_nr (int nr);

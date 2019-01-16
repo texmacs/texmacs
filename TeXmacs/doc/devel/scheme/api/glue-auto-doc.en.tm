@@ -2875,6 +2875,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(downgrade-math-letters <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|downgrade_math_letters> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(string-convert <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

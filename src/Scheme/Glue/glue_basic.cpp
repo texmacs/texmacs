@@ -4783,6 +4783,19 @@ tmg_string_unquote (tmscm arg1) {
 }
 
 tmscm
+tmg_downgrade_math_letters (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "downgrade-math-letters");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= downgrade_math_letters (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_string_convert (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-convert");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "string-convert");
@@ -10006,6 +10019,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("unescape-guile",  tmg_unescape_guile, 1, 0, 0);
   tmscm_install_procedure ("string-quote",  tmg_string_quote, 1, 0, 0);
   tmscm_install_procedure ("string-unquote",  tmg_string_unquote, 1, 0, 0);
+  tmscm_install_procedure ("downgrade-math-letters",  tmg_downgrade_math_letters, 1, 0, 0);
   tmscm_install_procedure ("string-convert",  tmg_string_convert, 3, 0, 0);
   tmscm_install_procedure ("encode-base64",  tmg_encode_base64, 1, 0, 0);
   tmscm_install_procedure ("decode-base64",  tmg_decode_base64, 1, 0, 0);

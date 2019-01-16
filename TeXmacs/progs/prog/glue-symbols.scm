@@ -384,6 +384,7 @@
 "unescape-guile"
 "string-quote"
 "string-unquote"
+"downgrade-math-letters"
 "string-convert"
 "encode-base64"
 "decode-base64"

@@ -405,6 +405,7 @@
   (unescape-guile unescape_guile (string string))
   (string-quote scm_quote (string string))
   (string-unquote scm_unquote (string string))
+  (downgrade-math-letters downgrade_math_letters (string string))
   (string-convert convert (string string string string))
   (encode-base64 encode_base64 (string string))
   (decode-base64 decode_base64 (string string))
