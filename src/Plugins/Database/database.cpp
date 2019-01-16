@@ -77,8 +77,9 @@ database_rep::extend_field (db_atom id, db_atom attr, db_atom val, db_time t) {
     ids_set->insert (id);
     ids_list << id;
   }
-  indexate (val);
-  if (atom_decode[attr] == "name") indexate_name (val);
+  string dec= atom_decode[attr];
+  if (dec != "contributor") indexate (val);
+  if (dec == "name") indexate_name (val);
   //cout << "l. " << nr << ":\t" << id << ", " << attr << ", " << val << LF;
   //cout << "l. " << nr << ":\t" << from_atom (id) << ", " << from_atom (attr) << ", " << from_atom (val) << LF;
   return nr;
