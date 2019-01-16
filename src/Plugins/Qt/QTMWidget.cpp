@@ -40,6 +40,10 @@ deadmap (int code, string name) {
 
 void
 initkeymap () {
+  static bool fInit= false;
+  if (fInit) return;
+  fInit= true;
+  if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "Initializing keymap\n";
   map (Qt::Key_Space     , "space");
   map (Qt::Key_Return    , "return");
   map (Qt::Key_Tab       , "tab");
@@ -235,12 +239,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
 void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
   if (is_nil (tmwid)) return;
-  static bool fInit = false;
-  if (!fInit) {
-    if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "Initializing keymap\n";
-    initkeymap();
-    fInit= true;
-  }
+  initkeymap();
 
   if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "keypressed\n";
   {

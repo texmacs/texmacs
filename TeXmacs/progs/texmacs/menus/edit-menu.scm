@@ -64,7 +64,7 @@
   ("Search" (interactive-search))
   ("Replace" (interactive-replace))
   (if (not (in-math?))
-      ("Spell" (spell-start)))
+      ("Spell" (interactive-spell)))
   (if (in-math?)
       (=> "Correct" (link math-correct-menu)))
   (if (detailed-menus?)

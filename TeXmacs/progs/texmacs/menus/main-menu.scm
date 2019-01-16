@@ -174,7 +174,7 @@
    (interactive-replace))
   (if (not (in-math?))
       ((balloon (icon "tm_spell.xpm") "Check text for spelling errors")
-       (spell-start)))
+       (interactive-spell)))
   (if (in-math?)
       (=> (balloon (icon "tm_spell.xpm") "Correct mathematical formulas")
           (link math-correct-menu)))

@@ -5396,8 +5396,8 @@ tmg_multi_spell_done () {
 }
 
 tmscm
-tmg_spell_start (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-start");
+tmg_single_spell_start (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "single-spell-start");
 
   string in1= tmscm_to_string (arg1);
 
@@ -5409,8 +5409,8 @@ tmg_spell_start (tmscm arg1) {
 }
 
 tmscm
-tmg_spell_done (tmscm arg1) {
-  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-done");
+tmg_single_spell_done (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "single-spell-done");
 
   string in1= tmscm_to_string (arg1);
 
@@ -10034,8 +10034,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tmstring-before?",  tmg_tmstring_beforeP, 2, 0, 0);
   tmscm_install_procedure ("multi-spell-start",  tmg_multi_spell_start, 0, 0, 0);
   tmscm_install_procedure ("multi-spell-done",  tmg_multi_spell_done, 0, 0, 0);
-  tmscm_install_procedure ("spell-start",  tmg_spell_start, 1, 0, 0);
-  tmscm_install_procedure ("spell-done",  tmg_spell_done, 1, 0, 0);
+  tmscm_install_procedure ("single-spell-start",  tmg_single_spell_start, 1, 0, 0);
+  tmscm_install_procedure ("single-spell-done",  tmg_single_spell_done, 1, 0, 0);
   tmscm_install_procedure ("spell-check",  tmg_spell_check, 2, 0, 0);
   tmscm_install_procedure ("spell-check?",  tmg_spell_checkP, 2, 0, 0);
   tmscm_install_procedure ("spell-accept",  tmg_spell_accept, 2, 0, 0);

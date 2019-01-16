@@ -154,6 +154,8 @@
   ("altcmd \\" (make-hybrid))
   ("altcmd a" (make-tree))
   ("altcmd R" (make-rigid))
+  ("altcmd =" (make 'hgroup))
+  ("altcmd |" (make 'vgroup))
   ("altcmd :" (make 'line-break))
   ("altcmd ;" (make 'new-line))
   ("altcmd return" (make 'next-line))
@@ -260,7 +262,7 @@
   ("emacs:meta X" (interactive footer-eval))
   ("emacs:meta <" (go-start))
   ("emacs:meta >" (go-end))
-  ("emacs:meta $" (spell-start))
+  ("emacs:meta $" (interactive-spell))
   ("emacs:meta %" (interactive-replace))
 
   ("emacs:prefix tab" (make 'indent))
@@ -485,7 +487,7 @@
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
-  ("altcmd $" (spell-start))
+  ("altcmd $" (interactive-spell))
 
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
@@ -549,7 +551,7 @@
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
-  ("altcmd $" (spell-start))
+  ("altcmd $" (interactive-spell))
 
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))
@@ -572,7 +574,7 @@
   (:profile macos)
 
   ;; standard Mac OS keyboard shortcuts
-  ("macos ;" (spell-start))
+  ("macos ;" (interactive-spell))
   ("macos ?" (interactive docgrep-in-doc))
   ("macos ," (interactive open-preferences))
   ("macos [" (cursor-history-backward))
@@ -763,7 +765,7 @@
   ("altcmd q" (make 'symbol))
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
-  ("altcmd $" (spell-start))
+  ("altcmd $" (interactive-spell))
 
   ("M-A-C-home" (traverse-first))
   ("M-A-C-end" (traverse-last))

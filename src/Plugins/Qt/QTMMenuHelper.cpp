@@ -482,11 +482,12 @@ QTMLineEdit::event (QEvent* ev) {
 }
 
 extern hashmap<int,string> qtkeymap;
+void initkeymap ();
 
 /*
  FIXME: This is a hideous mess...
  */
-void 
+void
 QTMLineEdit::keyPressEvent (QKeyEvent* ev)
 {
   QCompleter* c = completer();
@@ -496,6 +497,7 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
             : ev->key();
 
   if (continuous ()) {
+    initkeymap ();
     if ((last_key != Qt::Key_Tab || type == "replace-what") &&
         (last_key != Qt::Key_Backtab || type == "replace-by") &&
         last_key != Qt::Key_Down &&

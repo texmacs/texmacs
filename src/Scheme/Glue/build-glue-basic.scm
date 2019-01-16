@@ -457,8 +457,8 @@
   ;; Spell checking
   (multi-spell-start spell_start (void))
   (multi-spell-done spell_done (void))
-  (spell-start spell_start (string string))
-  (spell-done spell_done (void string))
+  (single-spell-start spell_start (string string))
+  (single-spell-done spell_done (void string))
   (spell-check spell_check (tree string string))
   (spell-check? check_word (bool string string))
   (spell-accept spell_accept (void string string))

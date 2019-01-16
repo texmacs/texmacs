@@ -3235,7 +3235,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(spell-start <scm-arg|string>)>
+    <scm|(single-spell-start <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|spell_start> which returns
@@ -3243,7 +3243,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(spell-done <scm-arg|string>)>
+    <scm|(single-spell-done <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|spell_done> which returns
