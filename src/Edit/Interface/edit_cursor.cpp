@@ -509,9 +509,9 @@ edit_cursor_rep::show_cursor_if_hidden () {
 
 void
 edit_cursor_rep::go_to_label (string s) {
-  path p= search_label (et, s);
+  path p= search_label (subtree (et, rp), s);
   if (!is_nil (p)) {
-    go_to (p);
+    go_to (rp * p);
     show_cursor_if_hidden ();
     return;
   }
