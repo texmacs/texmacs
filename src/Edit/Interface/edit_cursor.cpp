@@ -260,7 +260,7 @@ edit_cursor_rep::go_left () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   path old_tp= copy (tp);
   go_left_physical ();
-  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT, false)) return;
+  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
   path p= previous_valid (et, old_tp);
   if (rp < p) go_to (p);
   select_from_cursor_if_active ();
@@ -271,7 +271,7 @@ edit_cursor_rep::go_right () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
   path old_tp= copy (tp);
   go_right_physical ();
-  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT, false)) return;
+  if (tp != old_tp && inside_same (et, old_tp, tp, DOCUMENT)) return;
   path p= next_valid (et, old_tp);
   if (rp < p) go_to (p);
   select_from_cursor_if_active ();
@@ -286,7 +286,7 @@ edit_cursor_rep::go_start_line () {
     cursor old_mv= copy (mv);
     path   old_tp= copy (tp);
     go_left_physical ();
-    if (tp == old_tp || !inside_same (et, tp, orig_tp, DOCUMENT, true)) {
+    if (tp == old_tp || !inside_same_or_more (et, tp, orig_tp, DOCUMENT)) {
       notify_cursor_moved (HORIZONTAL);
       cu= old_cu;
       mv= old_mv;
@@ -306,7 +306,7 @@ edit_cursor_rep::go_end_line () {
     cursor old_mv= copy (mv);
     path   old_tp= copy (tp);
     go_right_physical ();
-    if (tp == old_tp || !inside_same (et, tp, orig_tp, DOCUMENT, true)) {
+    if (tp == old_tp || !inside_same_or_more (et, tp, orig_tp, DOCUMENT)) {
       notify_cursor_moved (HORIZONTAL);
       cu= old_cu;
       mv= old_mv;

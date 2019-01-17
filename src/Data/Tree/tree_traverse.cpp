@@ -504,6 +504,7 @@ path previous_argument (tree t, path p) {
 
 path
 search_common (tree t, path p, path q, tree_label which) {
+  if (is_atomic (t)) return path ();
   if (is_nil (p) || is_nil (q) || p->item != q->item) return path ();
   if (0 > p->item || p->item >= N(t)) return path ();
   path c= search_common (t[p->item], p->next, q->next, which);
@@ -520,7 +521,7 @@ no_other (tree t, path p, tree_label which) {
 }
 
 bool
-inside_same (tree t, path p, path q, tree_label which, bool allow_more) {
+inside_same (tree t, path p, path q, tree_label which) {
   path d= search_common (t, path_up (p), path_up (q), which);
   if (L(subtree (t, d)) != which) return true;
   path sp= p / d;
@@ -529,9 +530,21 @@ inside_same (tree t, path p, path q, tree_label which, bool allow_more) {
   if (sp->item != sq->item) return false;
   if (0 > sp->item || sp->item >= N(subtree (t, d))) return false;
   tree st= subtree (t, d) [sp->item];
-  if (!no_other (st, path_up (sq->next), which)) return false;
-  if (allow_more) return true;
-  return no_other (st, path_up (sp->next), which);
+  return no_other (st, path_up (sq->next), which) ||
+         no_other (st, path_up (sp->next), which);
+}
+
+bool
+inside_same_or_more (tree t, path p, path q, tree_label which) {
+  path d= search_common (t, path_up (p), path_up (q), which);
+  if (L(subtree (t, d)) != which) return true;
+  path sp= p / d;
+  path sq= q / d;
+  if (is_atom (sp) || is_atom (sq)) return false;
+  if (sp->item != sq->item) return false;
+  if (0 > sp->item || sp->item >= N(subtree (t, d))) return false;
+  tree st= subtree (t, d) [sp->item];
+  return no_other (st, path_up (sq->next), which);
 }
 
 /******************************************************************************
