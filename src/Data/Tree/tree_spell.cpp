@@ -17,6 +17,7 @@
 #include "language.hpp"
 #include "vars.hpp"
 #include "hashset.hpp"
+#include "universal.hpp"
 
 int  spell_max_hits= 1000000;
 void spell (range_set& sel, tree t, tree what, path p);
@@ -76,24 +77,41 @@ spell_string (tree lan, range_set& sel, string s, path p) {
       if (start < end && is_numeric (s[start]) || is_numeric (s[end-1])) {
         // NOTE: always accept postal codes; could be a user preference
         bool ok= true;
-        for (int i=start; i<end; i++)
-          ok= ok && (is_numeric (s[i]) || is_upcase (s[i]));
+        for (int i= start; i<end; ) {
+          int save= i;
+          tm_char_forwards (s, i);
+          string ss= s (save, i);
+          ok= ok && ss == uni_upcase_char (ss);
+        }
         if (ok) start= end;
       }
-      while (start < end && !is_iso_alpha (s[start]))
+      while (start < end) {
+        int save= start;
         tm_char_forwards (s, start);
-      while (start < end && !is_iso_alpha (s[end-1]))
+        if (uni_is_letter (s (save, start))) { start= save; break; }
+      }
+      while (start < end) {
+        int save= end;
         tm_char_backwards (s, end);
+        if (uni_is_letter (s (end, save))) { end= save; break; }
+      }
       if ((start == start2 && end == end2) ||
           (start < end && !spell_string (lan, s (start, end))))
         while (start < end) {
           int begin= start;
-          while (start < end && is_iso_alpha (s[start])) start++;
+          while (start < end) {
+            int save= start;
+            tm_char_forwards (s, start);
+            if (!uni_is_letter (s (save, start))) { start= save; break; }
+          }
           if ((begin == start2 && start == end2) ||
               !spell_string (lan, s (begin, start)))
             merge (sel, simple_range (p * begin, p * start));
-          while (start < end && !is_iso_alpha (s[start]))
+          while (start < end) {
+            int save= start;
             tm_char_forwards (s, start);
+            if (uni_is_letter (s (save, start))) { start= save; break; }
+          }
         }
     }
   }

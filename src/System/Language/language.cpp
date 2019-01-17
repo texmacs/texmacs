@@ -13,6 +13,7 @@
 #include "analyze.hpp"
 #include "hyphenate.hpp"
 #include "iterator.hpp"
+#include "universal.hpp"
 
 RESOURCE_CODE(language);
 
@@ -420,17 +421,18 @@ tree
 spell_check (string lan, string s) {
   if (spell_busy->contains (lan)) {
     if (lan == "verbatim") return "ok";
-    if (N(s) == 0 || is_locase_alpha (s (1, N(s)))) {
+    string f= uni_Locase_all (s);
+    if (f == s) {
       tree r= ispell_check (lan, s);
       return r;
     }
     else {
-      string l= locase_all (s);
+      string l= uni_locase_all (s);
       tree r= ispell_check (lan, l);
-      if (s == upcase_all (s) && is_tuple (r))
+      if (s == uni_upcase_all (s) && is_tuple (r))
         for (int i=1; i<N(r); i++)
           if (is_atomic (r[i]))
-            r[i]= upcase_all (r[i]->label);
+            r[i]= uni_upcase_all (r[i]->label);
       return r;
     }
   }
@@ -445,8 +447,9 @@ spell_check (string lan, string s) {
 bool
 check_word (string lan, string s) {
   string key= lan * ":" * s;
-  string l= locase_all (s);
-  if (s != l && s != upcase_first (l)) key= lan * ":" * l;
+  string f= uni_Locase_all (s);
+  string l= uni_locase_first (f);
+  if (s != l && s != f) key= lan * ":" * l;
   int val= spell_cache[key];
   if (val == 0) {
     tree t= spell_check (lan, s);
@@ -459,8 +462,9 @@ check_word (string lan, string s) {
 
 void
 spell_accept (string lan, string s, bool permanent) {
-  string l= locase_all (s);
-  if (s != upcase_first (l)) s= l;
+  string f= uni_Locase_all (s);
+  string l= uni_locase_first (f);
+  if (s != f) s= l;
   string key= lan * ":" * s;
   spell_cache (key) = 1;
   if (!permanent) spell_temp (key)= 1;
@@ -469,8 +473,9 @@ spell_accept (string lan, string s, bool permanent) {
 
 void
 spell_insert (string lan, string s) {
-  string l= locase_all (s);
-  if (s != upcase_first (l)) s= l;
+  string f= uni_Locase_all (s);
+  string l= uni_locase_first (f);
+  if (s != f) s= l;
   string key= lan * ":" * s;
   spell_cache (key) = 1;
   ispell_insert (lan, s);

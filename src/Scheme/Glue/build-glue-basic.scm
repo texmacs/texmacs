@@ -453,6 +453,7 @@
   (tmstring-locase-all uni_locase_all (string string))
   (tmstring-upcase-all uni_upcase_all (string string))
   (tmstring-unaccent-all uni_unaccent_all (string string))
+  (tmstring-letter? uni_is_letter (bool string))
   (tmstring-before? uni_before (bool string string))
 
   ;; Spell checking

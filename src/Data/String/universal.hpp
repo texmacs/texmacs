@@ -20,6 +20,7 @@ string uni_upcase_char (string s);
 string uni_locase_first (string s);
 string uni_upcase_first (string s);
 string uni_locase_all (string s);
+string uni_Locase_all (string s);
 string uni_upcase_all (string s);
 
 inline bool is_uni_locase_char (string s) { return uni_locase_char (s) == s; }
@@ -30,6 +31,7 @@ string uni_unaccent_char (string s);
 string uni_get_accent_char (string s);
 string uni_unaccent_all (string s);
 
+bool uni_is_letter (string s);
 bool uni_before (string s1, string s2);
 
 #endif // defined UNIVERSAL_H

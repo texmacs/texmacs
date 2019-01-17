@@ -135,20 +135,31 @@ get_locase_tab () {
   static hashmap<string,string> t ("");
   return t;
 }
+
 static hashmap<string,string>&
 get_upcase_tab () {
   static hashmap<string,string> t ("");
   return t;
 }
 
+static hashmap<string,bool>&
+get_letter_tab () {
+  static hashmap<string,bool> t (false);
+  return t;
+}
+
 hashmap<string,string> locase_tab = get_locase_tab ();
 hashmap<string,string> upcase_tab = get_upcase_tab ();
+hashmap<string,bool  > letter_tab = get_letter_tab ();
 
 static void
 add_greek (string sym) {
   locase_tab ("<" * upcase_first (sym) * ">")= "<" * sym * ">";
   upcase_tab ("<" * sym * ">")= "<" * upcase_first (sym) * ">";
   upcase_tab ("<var" * sym * ">")= "<" * upcase_first (sym) * ">";
+  letter_tab ("<" * upcase_first (sym) * ">")= true;
+  letter_tab ("<" * sym * ">")= true;
+  letter_tab ("<var" * sym * ">")= true;
 }
 
 static void
@@ -275,6 +286,23 @@ uni_locase_all (string s) {
 }
 
 string
+uni_Locase_all (string s) {
+  string r;
+  int i=0, n=N(s);
+  if (i<n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    r << s (start, i);
+  }
+  while (i<n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    r << uni_locase_char (s (start, i));
+  }
+  return r;
+}
+
+string
 uni_upcase_all (string s) {
   string r;
   int i=0, n=N(s);
@@ -358,6 +386,32 @@ uni_unaccent_all (string s) {
     else r << c;
   }
   return r;
+}
+
+/******************************************************************************
+* Separate letters from punctuation
+******************************************************************************/
+
+bool
+uni_is_letter (string s) {
+  if (N(s) == 1) {
+    unsigned char c= s[0];
+    return
+      (c >= 'A' && c <= 'Z') ||
+      (c >= 'a' && c <= 'z') ||
+      (((unsigned int) c) >= 128 && (((unsigned int) c) & 97) != 31);
+  }
+  else if (starts (s, "<#") && ends (s, ">")) {
+    int code= from_hexadecimal (s (2, N(s) - 1));
+    return
+      (code >= 0x3AC && code <= 0x3CE) ||
+      (code >= 0x400 && code <= 0x481) ||
+      (code >= 0x48A && code <= 0x4FF);
+  }
+  else {
+    init_case_tables ();
+    return letter_tab->contains (s);
+  }
 }
 
 /******************************************************************************
