@@ -74,20 +74,6 @@ TEST (string, append) {
 /******************************************************************************
 * Conversions
 ******************************************************************************/
-TEST (string, to_lower) {
-  ASSERT_TRUE (to_lower(string("true")) == string("true"));
-  ASSERT_TRUE (to_lower(string("TRue")) == string("true"));
-  ASSERT_TRUE (to_lower(string("TRUE")) == string("true"));
-  ASSERT_TRUE (to_lower(string("123TRUE")) == string("123true"));
-}
-
-TEST (string, to_upper) {
-  ASSERT_TRUE (to_upper(string("true")) == string("TRUE"));
-  ASSERT_TRUE (to_upper(string("TRue")) == string("TRUE"));
-  ASSERT_TRUE (to_upper(string("TRUE")) == string("TRUE"));
-  ASSERT_TRUE (to_upper(string("123true")) == string("123TRUE"));
-}
-
 TEST (string, as_bool) {
   EXPECT_EQ (as_bool(string("true")), true);
   EXPECT_EQ (as_bool(string("#t")), true);
