@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.8>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing>>
 
 <\body>
   <tmdoc-title|GNU <TeXmacs> \<#7528\>\<#6237\>\<#624B\>\<#518C\>>
@@ -24,16 +24,16 @@
 
     <branch|\<#5E7B\>\<#706F\>\<#7247\>|beamer/man-beamer.en.tm>
 
-    <branch|<TeXmacs>\<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
+    <branch|<TeXmacs>\<#7684\>\<#4EA4\>\<#4E92\>\<#5F0F\>\<#754C\>\<#9762\>|interface/man-itf.en.tm>
 
     <branch|\<#64B0\>\<#5199\>\<#6837\>\<#5F0F\>|../devel/style/style.en.tm>
 
     <branch|\<#5B9A\>\<#5236\> <TeXmacs>|scheme/man-scheme.zh.tm>
 
-    <branch|<TeXmacs> \<#63D2\>\<#4EF6\>\<#7CFB\>\<#7EDF\>|../devel/plugin/plugins.en.tm>
+    <branch|<TeXmacs>\<#7684\>\<#63D2\>\<#4EF6\>\<#7CFB\>\<#7EDF\>|../devel/plugin/plugins.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2019|Joris van der Hoeven and Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -42,6 +42,3 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
-
-<initial|<\collection>
-</collection>>
