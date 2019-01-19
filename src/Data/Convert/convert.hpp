@@ -93,6 +93,13 @@ tree   get_latex_errors (url log);
 int    number_latex_pages (url log);
 
 /*** Xml / Html / Mathml ***/
+string old_tm_to_xml_cdata (string s);
+object tm_to_xml_cdata (string s);
+string old_xml_cdata_to_tm (string s);
+string tm_to_xml_name (string s);
+string xml_name_to_tm (string s);
+string xml_unspace (string s, bool first, bool last);
+
 tree   parse_xml (string s);
 tree   parse_html (string s);
 tree   tmml_upgrade (scheme_tree t);
