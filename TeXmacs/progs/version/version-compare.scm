@@ -175,6 +175,22 @@
          #t)
         (else (== t1 t2))))
 
+(define (bib-list-register t c)
+  (when (and (pair? c) (== (car c) 'concat)
+             (pair? (cdr c)) (tm-func? (cadr c) 'bibitem*))
+    (ahash-set! t (cddr c) c)))
+
+(define (bib-list-substitute t c)
+  (if (and (pair? c) (== (car c) 'concat)
+           (pair? (cdr c)) (tm-func? (cadr c) 'bibitem*))
+      (or (ahash-ref t (cddr c)) c)
+      c))
+
+(define (bib-list-adjust d1 d2)
+  (with t (make-ahash-table)
+    (for-each (cut bib-list-register t <>) d2)
+    (map (cut bib-list-substitute t <>) d1)))
+
 (define (compare-versions-list tag l1 l2)
   ;;(display* "compare-versions-list " tag ", " l1 ", " l2 "\n\n")
   (cond ((and (null? l1) (null? l2)) '())
@@ -249,6 +265,13 @@
 		(diff t1 t2))
                ((in? (car t1) '(shared mirror))
                 (rcons (cDr t2) (compare-versions (cAr t1) (cAr t2))))
+               ((and (in? (car t1) '(bib-list))
+                     (= (length t1) 3)
+                     (tm-func? (caddr t1) 'document)
+                     (tm-func? (caddr t2) 'document))
+                (let* ((d2 (caddr t2))
+                       (d1 (bib-list-adjust (caddr t1) d2)))
+                  (list (car t1) (cadr t1) (compare-versions d1 d2))))
 	       (else
 		 (let* ((tt1 (tm->tree t1))
 			(tt2 (tm->tree t2)))
