@@ -25,6 +25,9 @@
 #else
 #  include <sys/wait.h>
 #endif
+#ifdef OS_GNU_LINUX
+#include <errno.h>
+#endif
 
 hashset<pointer> pipe_link_set;
 
