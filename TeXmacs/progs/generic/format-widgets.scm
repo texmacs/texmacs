@@ -357,6 +357,14 @@
                           (when (and (pair? c) (url? (car c)))
                             (set! col `(pattern ,(url->unix (car c)) ,w ,h)))
                           (refresh-now "pattern-sample"))
+                        "Background pattern" "image"
+                        "" "$TEXMACS_PATH/misc/patterns/pine.png")) >>)
+          (hlist
+            ("Picture" (choose-file
+                        (lambda (c)
+                          (when (and (pair? c) (url? (car c)))
+                            (set! col `(pattern ,(url->unix (car c)) ,w ,h)))
+                          (refresh-now "pattern-sample"))
                         "Background pattern" "image")) >>)
           ======
           (aligned
