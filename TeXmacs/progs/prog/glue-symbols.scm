@@ -228,6 +228,7 @@
 "tree-as-string"
 "tree-extents"
 "tree-empty?"
+"tree-multi-line?"
 "tree-is-buffer?"
 "tree-search-sections"
 "tree-search-tree"

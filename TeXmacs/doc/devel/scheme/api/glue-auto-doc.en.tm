@@ -1627,6 +1627,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-multi-line? <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|is_multi_line> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(tree-is-buffer? <scm-arg|tree>)>
 <explain-synopsis|no synopsis>
   <|explain>

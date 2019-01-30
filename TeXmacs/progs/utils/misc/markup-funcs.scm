@@ -75,7 +75,42 @@
     (if (>= (string-length s) 2) (substring s 0 2) "en")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Listings
+;; Line numbering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ext-numbered-root #f)
+
+(define (ext-mark r t var rew)
+  (let* ((rp (tree->path r))
+         (tp (tree->path t)))
+    (if (and rp tp (list-starts? tp rp))
+        (let* ((p (list-drop tp (length rp)))
+               (ss (map number->string p)))
+          `(mark (arg ,var ,@ss) ,rew))
+        rew)))
+
+(define (ext-numbered-sub t)
+  (cond ((tree-is? t 'document)
+         `(document ,@(map ext-numbered-line (tm-children t))))
+        ((tree-multi-line? t)
+         (with rew (cons (tm-label t) (map ext-numbered-sub (tm-children t)))
+           (ext-mark ext-numbered-root t "body" rew)))
+        (else t)))
+
+(define (ext-numbered-line t)
+  (if (tree-multi-line? t)
+      (ext-numbered-sub t)
+      `(numbered-line ,t)))
+
+(tm-define (ext-numbered body)
+  (:secure #t)
+  (set! ext-numbered-root body)
+  (if (tm-func? body 'document)
+      `(numbered-block (document ,@(map ext-numbered-line (tm-children body))))
+      body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Fancy listings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (ext-listing-row body row)

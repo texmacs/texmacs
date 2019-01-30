@@ -407,6 +407,19 @@ is_empty (tree t) {
   return is_compound (t, "suppressed");
 }
 
+bool
+is_multi_line (tree t) {
+  if (is_atomic (t)) return false;
+  else if (is_func (t, DOCUMENT)) return true;
+  else if (is_func (t, CONCAT) || is_func (t, TABLE)) return false;
+  else {
+    int i, n= N(t);
+    for (i=0; i<n; i++)
+      if (is_multi_line (t[i])) return true;
+    return false;
+  }
+}
+
 /******************************************************************************
 * Compound trees
 ******************************************************************************/

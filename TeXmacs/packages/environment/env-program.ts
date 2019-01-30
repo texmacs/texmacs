@@ -24,6 +24,26 @@
 
   <\active*>
     <\src-comment>
+      Code environments
+    </src-comment>
+  </active*>
+
+  <assign|code-numbered-offset|0.5tab>
+
+  <assign|render-code|<\macro|body>
+    <\surround||<no-indent*>>
+      <\padded*>
+        <\indent>
+          <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>|numbered-offset|<value|code-numbered-offset>>
+            <arg|body>
+          </with>
+        </indent>
+      </padded*>
+    </surround>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Algorithmic environments
     </src-comment>
   </active*>
@@ -32,21 +52,11 @@
 
   <assign|algorithm-sep|<macro|<enunciation-sep>>>
 
-  <assign|render-code|<\macro|body>
-    <\surround||<no-indent*>>
-      <\padded*>
-        <\indent>
-          <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
-            <arg|body>
-          </with>
-        </indent>
-      </padded*>
-    </surround>
-  </macro>>
+  <assign|algorithm-numbered-offset|0.5tab>
 
   <assign|render-algorithm|<\macro|name|body>
     <\padded*>
-      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>|numbered-offset|<value|algorithm-numbered-offset>>
         <surround||<vspace|0.5fn>|<algorithm-name|<arg|name>>>
 
         <\surround||<yes-indent*>>
@@ -60,7 +70,7 @@
 
   <assign|render-specified-algorithm|<\macro|name|intro|body>
     <\padded*>
-      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>>
+      <\with|par-first|0fn|par-par-sep|0fn|item-hsep|<macro|1tab>|numbered-offset|<value|algorithm-numbered-offset>>
         <\surround||<vspace|0.5fn>>
           <algorithm-name|<arg|name>>
 
@@ -261,7 +271,32 @@
 
   <\active*>
     <\src-comment>
-      Experimental listings
+      Line numbered listings
+    </src-comment>
+  </active*>
+
+  <assign|numbered-offset|-1spc>
+
+  <assign|numbered-block|<\macro|body>
+    <\surround||<right-flush>>
+      <\with|line-nr|0>
+        <arg|body>
+      </with>
+    </surround>
+  </macro>>
+
+  <assign|numbered-line|<macro|body|<assign|line-nr|<plus|<value|line-nr>|1>><set-binding|<value|line-nr>><line-note|<with|color|dark
+  grey|font-size|0.841|font-shape|upright|font-series|medium|<move|<value|line-nr>|-1r|>>|<value|numbered-offset>|0cm><arg|body>>>
+
+  <assign|numbered|<\macro|body>
+    <extern|ext-numbered|<quote-arg|body>>
+  </macro>>
+
+  <drd-props|numbered|arity|1|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Fancy listings using stripes
     </src-comment>
   </active*>
 

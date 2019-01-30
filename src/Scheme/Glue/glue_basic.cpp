@@ -2545,6 +2545,19 @@ tmg_tree_emptyP (tmscm arg1) {
 }
 
 tmscm
+tmg_tree_multi_lineP (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "tree-multi-line?");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_multi_line (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_is_bufferP (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree-is-buffer?");
 
@@ -9902,6 +9915,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-as-string",  tmg_tree_as_string, 1, 0, 0);
   tmscm_install_procedure ("tree-extents",  tmg_tree_extents, 1, 0, 0);
   tmscm_install_procedure ("tree-empty?",  tmg_tree_emptyP, 1, 0, 0);
+  tmscm_install_procedure ("tree-multi-line?",  tmg_tree_multi_lineP, 1, 0, 0);
   tmscm_install_procedure ("tree-is-buffer?",  tmg_tree_is_bufferP, 1, 0, 0);
   tmscm_install_procedure ("tree-search-sections",  tmg_tree_search_sections, 1, 0, 0);
   tmscm_install_procedure ("tree-search-tree",  tmg_tree_search_tree, 4, 0, 0);

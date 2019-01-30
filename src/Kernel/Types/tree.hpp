@@ -278,6 +278,7 @@ bool is_mod_active (tree t);
 bool is_mod_active_once (tree t);
 bool is_graphical_text (tree t);
 bool is_empty (tree t);
+bool is_multi_line (tree t);
 
 inline bool
 is_applicable (tree t) {
