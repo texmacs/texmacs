@@ -149,6 +149,11 @@
              (when answ (buffer-close (current-buffer))))))
         (else (buffer-close (current-buffer)))))
 
+(define (do-kill-window)
+  (with buf (current-buffer)
+    (kill-window (current-window))
+    (delayed (:idle 100) (buffer-close buf))))
+
 (tm-define (safely-kill-window . opt-name)
   (cond ((and (buffer-embedded? (current-buffer)) (null? opt-name))
          (alt-windows-delete (alt-window-search (current-buffer))))
@@ -156,7 +161,11 @@
          (safely-quit-TeXmacs))
         ((nnull? opt-name)
          (kill-window (car opt-name)))
-        (else (kill-window (current-window)))))
+        ((buffer-modified? (current-buffer))
+         (user-confirm "The buffer has not been saved. Really close it?" #f  
+           (lambda (answ)
+             (when answ (do-kill-window)))))
+        (else (do-kill-window))))
 
 (tm-define (safely-quit-TeXmacs)
   (if (not (buffers-modified?)) (quit-TeXmacs)
