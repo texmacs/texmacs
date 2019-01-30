@@ -150,10 +150,13 @@
         (else (buffer-close (current-buffer)))))
 
 (tm-define (safely-kill-window . opt-name)
-  (with name (if (null? opt-name) (current-window) (car opt-name))
-    (if (<= (windows-number) 1)
-        (safely-quit-TeXmacs)
-        (kill-window name))))
+  (cond ((and (buffer-embedded? (current-buffer)) (null? opt-name))
+         (alt-windows-delete (alt-window-search (current-buffer))))
+        ((<= (windows-number) 1)
+         (safely-quit-TeXmacs))
+        ((nnull? opt-name)
+         (kill-window (car opt-name)))
+        (else (kill-window (current-window)))))
 
 (tm-define (safely-quit-TeXmacs)
   (if (not (buffers-modified?)) (quit-TeXmacs)
