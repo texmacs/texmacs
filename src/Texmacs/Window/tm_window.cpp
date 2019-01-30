@@ -24,6 +24,11 @@ widget texmacs_window_widget (widget wid, tree geom);
 widget make_menu_widget (object menu);
 void refresh_size (widget wid, bool exact);
 
+static int last_window_handle= 0;
+static hashmap<int,widget> window_table (NULL);
+static hashmap<tree,path> window_by_name;
+static time_t refresh_time= 0;
+
 /******************************************************************************
 * User preference management concerning the geometry of windows
 ******************************************************************************/
@@ -195,8 +200,12 @@ texmacs_window_widget (widget wid, tree geom) {
 
 class close_embedded_command_rep: public command_rep {
   tm_view vw;
+  url name;
+  int win_id;
 public:
-  close_embedded_command_rep (tm_view vw2): vw (vw2) {}
+  close_embedded_command_rep (tm_view vw2, url n2, int win2):
+    vw (vw2), name (n2), win_id (win2) {
+      window_by_name(name->t)= path (win_id, window_by_name[name->t]); }
   void apply ();
   tm_ostream& print (tm_ostream& out) {
     return out << "Close_Embedded widget command"; }
@@ -217,6 +226,7 @@ close_embedded_command_rep::apply () {
   tm_window win= vw->win;
   ASSERT (N (buffer_to_views (vw->buf->buf->name)) == 1,
           "invalid cloned embedded TeXmacs widget");
+  window_by_name(name->t)= remove<int> (window_by_name[name->t], win_id);
   remove_buffer (vw->buf->buf->name);
   //cout << "Deleted buffer\n";
   tm_delete (win);
@@ -224,8 +234,26 @@ close_embedded_command_rep::apply () {
 }
 
 command
-close_embedded_command (tm_view vw) {
-  return tm_new<close_embedded_command_rep> (vw);
+close_embedded_command (tm_view vw, url name, int win) {
+  return tm_new<close_embedded_command_rep> (vw, name, win);
+}
+
+static path
+filter_existing (path wins) {
+  if (is_nil (wins)) return wins;
+  if (window_table->contains (wins->item))
+    return path (wins->item, filter_existing (wins->next));
+  return filter_existing (wins->next);
+}
+
+path
+window_search (url name) {
+  return filter_existing (window_by_name[name->t]);
+}
+
+bool
+is_embedded_buffer (url name) {
+  return !is_nil (window_search (name));
 }
 
 /******************************************************************************
@@ -281,7 +309,8 @@ texmacs_input_widget (tree doc, tree style, url wname) {
   set_scrollable (win->wid, vw->ed);
   vw->ed->cvw= win->wid.rep;
   vw->ed->mvw= curvw;
-  return wrapped_widget (win->wid, close_embedded_command (vw));
+  command close_cmd= close_embedded_command (vw, name, last_window_handle);
+  return wrapped_widget (win->wid, close_cmd);
 }
 
 /******************************************************************************
@@ -554,12 +583,10 @@ tm_window_rep::interactive_return () {
 * Other top level windows
 ******************************************************************************/
 
-static hashmap<int,widget> window_table (NULL);
-static time_t refresh_time= 0;
-
 int
 window_handle () {
   static int window_next= 1;
+  last_window_handle= window_next;
   return window_next++;
 }
 

@@ -5376,6 +5376,19 @@ tmg_tmstring_unaccent_all (tmscm arg1) {
 }
 
 tmscm
+tmg_tmstring_letterP (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-letter?");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= uni_is_letter (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_tmstring_beforeP (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tmstring-before?");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tmstring-before?");
@@ -8817,6 +8830,19 @@ tmg_buffer_auxP (tmscm arg1) {
 }
 
 tmscm
+tmg_buffer_embeddedP (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-embedded?");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= is_embedded_buffer (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_buffer_import (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "buffer-import");
   TMSCM_ASSERT_URL (arg2, TMSCM_ARG2, "buffer-import");
@@ -9463,6 +9489,19 @@ tmg_alt_window_set_position (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_alt_window_search (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "alt-window-search");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  path out= window_search (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return path_to_tmscm (out);
+}
+
+tmscm
 tmg_bibtex_run (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "bibtex-run");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "bibtex-run");
@@ -10062,6 +10101,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tmstring-locase-all",  tmg_tmstring_locase_all, 1, 0, 0);
   tmscm_install_procedure ("tmstring-upcase-all",  tmg_tmstring_upcase_all, 1, 0, 0);
   tmscm_install_procedure ("tmstring-unaccent-all",  tmg_tmstring_unaccent_all, 1, 0, 0);
+  tmscm_install_procedure ("tmstring-letter?",  tmg_tmstring_letterP, 1, 0, 0);
   tmscm_install_procedure ("tmstring-before?",  tmg_tmstring_beforeP, 2, 0, 0);
   tmscm_install_procedure ("multi-spell-start",  tmg_multi_spell_start, 0, 0, 0);
   tmscm_install_procedure ("multi-spell-done",  tmg_multi_spell_done, 0, 0, 0);
@@ -10303,6 +10343,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("buffer-attach-notifier",  tmg_buffer_attach_notifier, 1, 0, 0);
   tmscm_install_procedure ("buffer-has-name?",  tmg_buffer_has_nameP, 1, 0, 0);
   tmscm_install_procedure ("buffer-aux?",  tmg_buffer_auxP, 1, 0, 0);
+  tmscm_install_procedure ("buffer-embedded?",  tmg_buffer_embeddedP, 1, 0, 0);
   tmscm_install_procedure ("buffer-import",  tmg_buffer_import, 3, 0, 0);
   tmscm_install_procedure ("buffer-load",  tmg_buffer_load, 1, 0, 0);
   tmscm_install_procedure ("buffer-export",  tmg_buffer_export, 3, 0, 0);
@@ -10353,6 +10394,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("alt-window-set-size",  tmg_alt_window_set_size, 3, 0, 0);
   tmscm_install_procedure ("alt-window-get-position",  tmg_alt_window_get_position, 1, 0, 0);
   tmscm_install_procedure ("alt-window-set-position",  tmg_alt_window_set_position, 3, 0, 0);
+  tmscm_install_procedure ("alt-window-search",  tmg_alt_window_search, 1, 0, 0);
   tmscm_install_procedure ("bibtex-run",  tmg_bibtex_run, 4, 0, 0);
   tmscm_install_procedure ("bib-add-period",  tmg_bib_add_period, 1, 0, 0);
   tmscm_install_procedure ("bib-locase-first",  tmg_bib_locase_first, 1, 0, 0);

@@ -725,6 +725,7 @@
   (buffer-attach-notifier attach_buffer_notifier (void url))
   (buffer-has-name? buffer_has_name (bool url))
   (buffer-aux? is_aux_buffer (bool url))
+  (buffer-embedded? is_embedded_buffer (bool url))
   (buffer-import buffer_import (bool url url string))
   (buffer-load buffer_load (bool url))
   (buffer-export buffer_export (bool url url string))
@@ -781,6 +782,7 @@
   (alt-window-set-size window_set_size (void int int int))
   (alt-window-get-position window_get_position (scheme_tree int))
   (alt-window-set-position window_set_position (void int int int))
+  (alt-window-search window_search (path url))
 
   ;; routines for BibTeX
   (bibtex-run bibtex_run (tree string string url array_string))

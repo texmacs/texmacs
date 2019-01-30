@@ -96,6 +96,7 @@ typedef tm_window_rep* tm_window;
 
 widget texmacs_output_widget (tree doc, tree style);
 widget texmacs_input_widget (tree doc, tree style, url wname);
+bool is_embedded_buffer (url name);
 
 int window_handle ();
 void window_create (int win, widget wid, string name, bool plain);
@@ -109,5 +110,6 @@ scheme_tree window_get_position (int win);
 void window_set_position (int win, int x, int y);
 void windows_delayed_refresh (int ms);
 void windows_refresh (string kind= "auto");
+path window_search (url name);
 
 #endif // defined TM_WINDOW_H

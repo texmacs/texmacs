@@ -141,11 +141,13 @@
   (list-or (map buffer-modified? (buffer-list))))
 
 (tm-define (safely-kill-buffer)
-  (if (not (buffer-modified? (current-buffer)))
-      (buffer-close (current-buffer))
-      (user-confirm "The buffer has not been saved. Really close it?" #f  
-        (lambda (answ)
-          (when answ (buffer-close (current-buffer)))))))
+  (cond ((buffer-embedded? (current-buffer))
+         (alt-windows-delete (alt-window-search (current-buffer))))
+        ((buffer-modified? (current-buffer))
+         (user-confirm "The buffer has not been saved. Really close it?" #f  
+           (lambda (answ)
+             (when answ (buffer-close (current-buffer))))))
+        (else (buffer-close (current-buffer)))))
 
 (tm-define (safely-kill-window . opt-name)
   (with name (if (null? opt-name) (current-window) (car opt-name))
@@ -157,4 +159,3 @@
   (if (not (buffers-modified?)) (quit-TeXmacs)
       (user-confirm "There are unsaved files. Really quit?" #f  
         (lambda (answ) (when answ (quit-TeXmacs))))))
-

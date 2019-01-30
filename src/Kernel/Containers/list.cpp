@@ -189,8 +189,8 @@ reverse (list<T> l) {
 template<class T> list<T>
 remove (list<T> l, T what) {
   if (is_nil (l)) return l;
-  else if (l->item == what) return remove (l->next, what);
-  else return list<T> (l->item, remove (l->next, what));
+  else if (l->item == what) return remove<T> (l->next, what);
+  else return list<T> (l->item, remove<T> (l->next, what));
 }
 
 template<class T> bool

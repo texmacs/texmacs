@@ -3219,6 +3219,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tmstring-letter? <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|uni_is_letter> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(tmstring-before? <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -5147,6 +5155,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(buffer-embedded? <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|is_embedded_buffer> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(buffer-import <scm-arg|url> <scm-arg|url> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -5544,6 +5560,14 @@ source code.
   <|explain>
     Calls the <c++> function <cpp|window_set_position> which returns
     <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(alt-window-search <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|window_search> which returns
+    <scm|path>.
   </explain>
 
   <\explain>

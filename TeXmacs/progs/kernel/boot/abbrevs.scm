@@ -198,3 +198,6 @@
     (with u (buffer-get-master (current-buffer))
       (set! opts (list (car opts) u))))
   (cpp-choose-file fun title type (car opts) (cadr opts)))
+
+(define-public (alt-windows-delete l)
+  (for-each alt-window-delete l))

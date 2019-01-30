@@ -666,7 +666,7 @@
             (else
              (make-menu-items-list p style bar?)))
       (cond ((== p '---) (list (make-menu-hsep)))
-            ((== p '|) (list (make-menu-vsep)))
+            ((== p '|) (list (make-menu-vsep))) ;; '|
             ((== p '()) p)
             (else (list (make-menu-bad-format p style))))))
 
