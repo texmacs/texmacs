@@ -31,6 +31,7 @@
     (if (detailed-menus?)
         ("Include" (choose-file make-include "Include file" ""))))
   (when (not (selection-active-non-small?))
+    ("Link to URL" (make 'slink))
     ("Hyperlink" (make 'hlink))
     (if (detailed-menus?)
         ("Action" (make 'action))))
