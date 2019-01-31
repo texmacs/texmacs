@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.8>
 
 <style|<tuple|source|std>>
 
@@ -29,11 +29,11 @@
 
   <assign|hflush|<macro|<htab|0fn|0>>>
 
-  <assign|right-flush|<macro|<htab|0fn|first>>>
+  <assign|right-flush|<macro|<specific|texmacs|<htab|0fn|first>>>>
 
   <assign|left-flush|<macro|<htab|0fn|last>>>
 
-  <assign|wide-normal|<macro|body|<surround|<no-indent>|<htab|0fn|first>|<arg|body>>>>
+  <assign|wide-normal|<macro|body|<surround|<no-indent>|<specific|texmacs|<htab|0fn|first>>|<arg|body>>>>
 
   <assign|wide-centered|<macro|body|<surround|<no-indent><htab|0fn|last>|<htab|0fn|first>|<arg|body>>>>
 
@@ -51,7 +51,7 @@
 
   <assign|large-padding-below|1fn>
 
-  <assign|padded-normal|<macro|before|after|body|<surround|<vspace*|<arg|before>><no-indent>|<htab|0fn|first><vspace|<arg|after>>|<arg|body>>>>
+  <assign|padded-normal|<macro|before|after|body|<surround|<vspace*|<arg|before>><no-indent>|<specific|texmacs|<htab|0fn|first>><vspace|<arg|after>>|<arg|body>>>>
 
   <assign|padded-centered|<macro|before|after|body|<surround|<vspace*|<arg|before>><no-indent><htab|0fn|last>|<htab|0fn|first><vspace|<arg|after>>|<arg|body>>>>
 
@@ -60,7 +60,7 @@
       <arg|title>
     </surround>
 
-    <\surround|<no-indent>|<htab|0fn|first><vspace|<arg|after>>>
+    <\surround|<no-indent>|<specific|texmacs|<htab|0fn|first>><vspace|<arg|after>>>
       <arg|body>
     </surround>
   </macro>>

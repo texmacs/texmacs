@@ -386,10 +386,14 @@
     (if (string? what) what (string-append "\\" (symbol->string what))))
   (texout-args args))
 
+(define (texout-protect? env)
+  (in? env (list "tmparmod" "tmparsep")))
+
 (define (texout-begin* what args inside)
   (set! what (tex-env-name what))
   (output-tex (string-append "\\begin{" what "}"))
   (texout-args args)
+  (if (texout-protect? what) (output-tex "%"))
   (output-lf)
   (texout inside)
   (output-lf)
@@ -399,6 +403,7 @@
   (set! what (tex-env-name what))
   (output-tex (string-append "\\begin{" what "}"))
   (texout-args args)
+  (if (texout-protect? what) (output-tex "%"))
   (output-indent 2)
   (output-lf)
   (texout inside)

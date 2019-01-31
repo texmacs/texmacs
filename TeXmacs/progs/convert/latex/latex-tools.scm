@@ -349,6 +349,8 @@
         (set! option (string-append "[" option "]"))
         (set! body (cadr body))))
     (set! body (serialize-latex (latex-expand-def body #f)))
+    (set! body (string-replace body "%\n#-#-#" "#-#-#"))
+    (set! body (string-replace body "%\n  #-#-#" "#-#-#"))
     (set! body (string-replace body "\n\n" "*/!!/*"))
     (set! body (string-replace body "\n  " " "))
     (set! body (string-replace body "\n" " "))
