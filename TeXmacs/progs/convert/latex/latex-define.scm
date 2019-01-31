@@ -572,6 +572,13 @@
   (mho
    (!append
     "\\renewcommand{\\mho}{\\mbox{\\rotatebox[origin=c]{180}{$\\omega$}}}"))
+  (custombinding
+   (!append
+    "\\newcounter{tmcounter}\n"
+    "\\newcommand{\\custombinding}[1]{%\n"
+    "  \\setcounter{tmcounter}{#1}%\n"
+    "  \\addtocounter{tmcounter}{-1}%\n"
+    "  \\refstepcounter{tmcounter}}\n"))
   (tmfloat
    (!append
     (!ignore (ifthenelse) (captionof) (widthof))

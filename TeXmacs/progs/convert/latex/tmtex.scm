@@ -1561,8 +1561,9 @@
   (tmtex (car l)))
 
 (define (tmtex-hidden-binding l)
-  ;;(display* "Hidden binding] " l "\n")
-  "")
+  (if (and (== (length l) 2) (string->number (force-string (cAr l))))
+      (list 'custombinding (force-string (cAr l)))
+      ""))
 
 (define (tmtex-label l)
   (list 'label (force-string (car l))))
