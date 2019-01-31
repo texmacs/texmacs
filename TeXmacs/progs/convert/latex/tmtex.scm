@@ -1560,6 +1560,10 @@
 (define (tmtex-quote l)
   (tmtex (car l)))
 
+(define (tmtex-hidden-binding l)
+  ;;(display* "Hidden binding] " l "\n")
+  "")
+
 (define (tmtex-label l)
   (list 'label (force-string (car l))))
 
@@ -2591,6 +2595,8 @@
   (surround tmtex-surround)
   (concat tmtex-concat)
   (rigid tmtex-rigid)
+  (hgroup tmtex-rigid)
+  (vgroup tmtex-id)
   (hidden tmtex-noop)
   (hspace tmtex-hspace)
   (vspace* tmtex-noop)
@@ -2698,6 +2704,9 @@
 	symbol latex hybrid) tmtex-noop)
 
   ((:or tuple attr tmlen collection associate backup) tmtex-noop)
+  (set-binding tmtex-noop)
+  (get-binding tmtex-noop)
+  (hidden-binding tmtex-hidden-binding)
   (label tmtex-label)
   (reference tmtex-reference)
   (pageref tmtex-pageref)

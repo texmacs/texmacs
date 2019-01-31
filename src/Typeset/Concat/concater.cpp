@@ -649,6 +649,8 @@ concater_rep::typeset (tree t, path ip) {
   case GET_BINDING:
     typeset_executable (t, ip);
     break;
+  case HIDDEN_BINDING:
+    break;
   case LABEL:
   case REFERENCE:
   case PAGEREF:

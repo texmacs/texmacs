@@ -532,6 +532,8 @@ init_std_drd () {
 	options (1, 1, BIFORM) ->
 	identifier (0) -> name (0, "key") ->
 	integer (1) -> name (0, "kind"));
+  init (HIDDEN_BINDING, "hidden-binding",
+	fixed (2));
   init (LABEL, "label",
 	fixed (1) ->
         identifier (0) -> name (0, "id") -> long_name (0, "identifier"));

@@ -1769,7 +1769,7 @@ edit_env_rep::exec_set_binding (tree t) {
       }
     }
   }
-  return tree (HIDDEN, keys);
+  return tree (HIDDEN_BINDING, keys, value);
 }
 
 tree
