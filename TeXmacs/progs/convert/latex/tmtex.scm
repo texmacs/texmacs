@@ -2258,7 +2258,7 @@
   (tmtex (car l)))
 
 (define (tmtex-theindex s l)
-    (list 'printindex))
+  (list 'printindex))
 
 (define (tmtex-toc s l)
   (tex-apply 'tableofcontents))
@@ -2284,8 +2284,13 @@
       (tex-concat (list (list 'bibliographystyle (force-string (cadr l)))
 			(list 'bibliography (force-string (caddr l)))))
       (let* ((doc (tmtex-bib-sub (cadddr l)))
-	     (max (tmtex-bib-max doc)))
-	(tmtex (list 'thebibliography max doc)))))
+	     (max (tmtex-bib-max doc))
+             (tls tmtex-languages)
+             (lan (or (and (pair? tls) (car tls)) "english"))
+             (txt (translate-from-to "References" "english" lan)))
+        `(!document
+          (section* ,(tmtex txt))
+          ,(tmtex (list 'thebibliography max doc))))))
 
 (define (tmtex-thebibliography s l)
   (list (list '!begin s (car l)) (tmtex (cadr l))))
