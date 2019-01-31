@@ -277,6 +277,10 @@
 
   <assign|numbered-offset|-1spc>
 
+  <assign|numbered-color|dark grey>
+
+  <assign|numbered-font-size|0.841>
+
   <assign|numbered-block|<\macro|body>
     <\surround||<right-flush>>
       <\with|line-nr|0>
@@ -285,11 +289,14 @@
     </surround>
   </macro>>
 
-  <assign|numbered-line|<macro|body|<assign|line-nr|<plus|<value|line-nr>|1>><set-binding|<value|line-nr>><line-note|<with|color|dark
-  grey|font-size|0.841|font-shape|upright|font-series|medium|<move|<value|line-nr>|-1r|>>|<value|numbered-offset>|0cm><arg|body>>>
+  <assign|render-line-number|<macro|nr|offset|<set-binding|<arg|nr>><line-note|<with|color|<value|numbered-color>|font-size|<value|numbered-font-size>|font-shape|upright|font-series|medium|<move|<arg|nr>|-1r|>>|<arg|offset>|0cm>>>
+
+  <assign|numbered-line|<macro|body|<assign|line-nr|<plus|<value|line-nr>|1>><render-line-number|<value|line-nr>|<value|numbered-offset>><arg|body>>>
 
   <assign|numbered|<\macro|body>
-    <extern|ext-numbered|<quote-arg|body>>
+    <\with|dummy1|<value|numbered-offset>|dummy2|<value|numbered-color>|dummy3|<value|numbered-font-size>>
+      <extern|ext-numbered|<quote-arg|body>>
+    </with>
   </macro>>
 
   <drd-props|numbered|arity|1|accessible|all>
