@@ -384,6 +384,8 @@
   (ontop (genfrac "" "" "0pt" "" 1 2))
   (subindex (index (!append 1 "!" 2)))
   (renderfootnote (footnotetext (!append (tmrsup 1) " " 2)))
+  (tmlinenumber (!append (custombinding 1)
+                         (tmlinenote (footnotesize 1) 2 "0cm")))
 
   ;; Ternary macros
   (tmsession (!group (!append (tt) 3)))
@@ -401,6 +403,12 @@
    (trivlist (!append (item (!option (!append (color "rgb:black,10;red,9;green,4;yellow,2") 1)))
 		      (mbox "") (!group (!append (color "blue!50!black") 2))
 		      (item (!option "")) (mbox "") 3)))
+  (tmlinenote
+   (!append (tmdummy)
+            (marginpar (adjustbox
+                        (!append "right=0cm, lap=" 2
+                                 "-\\textwidth-\\marginparsep, raise=" 3)
+                        1))))
   (subsubindex (index (!append 1 "!" 2 "!" 3)))
   (tmref 1)
   (glossaryentry (!append (item (!option (!append 1 (hfill)))) 2 (dotfill) 3))

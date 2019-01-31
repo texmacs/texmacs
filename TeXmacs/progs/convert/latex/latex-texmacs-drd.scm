@@ -110,11 +110,11 @@
   tmfoldedplain tmunfoldedplain tmfoldedenv tmunfoldedenv
   tmfoldedstd tmunfoldedstd tmfolded tmunfolded
   tminput tminputmath tmhlink tmaction ontop subindex
-  renderfootnote)
+  renderfootnote tmlinenumber)
 
 (logic-group latex-texmacs-3%
   tmsession tmfoldedio tmunfoldedio tmfoldediomath tmunfoldediomath
-  subsubindex tmref glossaryentry)
+  tmlinenote subsubindex tmref glossaryentry)
 
 (logic-group latex-texmacs-4%
   tmscriptinput tmscriptoutput tmconverterinput tmconverteroutput

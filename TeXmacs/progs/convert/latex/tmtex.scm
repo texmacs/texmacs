@@ -763,6 +763,11 @@
   (display* "TeXmacs] error in conversion: " l "\n")
   (if tmtex-debug-mode? "(error)" ""))
 
+(define (tmtex-line-note l)
+  `(tmlinenote ,(tmtex (car l))
+               ,(tmtex-decode-length (cadr l))
+               ,(tmtex-decode-length (caddr l))))
+
 (define (tmtex-marginal-left-note l)
   `(marginpar (!option ,(tmtex (cAr l))) ,(tmtex '())))
 
@@ -866,6 +871,7 @@
   ;; FIXME: should be completed
   (with s (force-string len)
     (cond ((string-ends? s "fn")   (string-replace s "fn"   "em"))
+	  ((string-ends? s "tab")  (string-replace s "tab"  "em"))
 	  ((string-ends? s "spc")  (string-replace s "spc"  "em"))
 	  ((string-ends? s "sep")  (string-replace s "sep"  "ex"))
 	  ((string-ends? s "par")  (string-replace s "par"  "\\columnwidth"))
@@ -2433,6 +2439,9 @@
 (define (tmtex-modifier s l)
   (tex-apply (string->symbol (string-append "tm" s)) (tmtex (car l))))
 
+(define (tmtex-render-line-number s l)
+  (list 'tmlinenumber (tmtex (car l)) (tmtex-decode-length (tmtex (cadr l)))))
+
 (define (tmtex-menu-one x)
   (tmtex (list 'samp x)))
 
@@ -2617,9 +2626,8 @@
   (repeat tmtex-noop)
   (float tmtex-float)
   ((:or datoms dlines dpages dbox) tmtex-noop)
+  (line-note tmtex-line-note)
 
-  (number tmtex-number)
-  (change-case tmtex-change-case)
   (with-limits tmtex-noop)
   (line-break tmtex-line-break)
   (new-line tmtex-new-line)
@@ -2672,7 +2680,7 @@
   ((:or twith cwith tmarker) tmtex-noop)
   (table tmtex-table)
   ((:or row cell subtable) tmtex-noop)
-
+  
   (assign tmtex-assign)
   (with tmtex-with-wrapped)
   (provides tmtex-noop)
@@ -2695,6 +2703,8 @@
 	is-tuple look-up
 	equal unequal less lesseq greater greatereq) tmtex-noop)
 
+  (number tmtex-number)
+  (change-case tmtex-change-case)
   (date tmtex-date)
 
   ((:or cm-length mm-length in-length pt-length
@@ -2776,6 +2786,7 @@
   (verbatim (,tmtex-verbatim 1))
   (center (,tmtex-std-env 1))
   (indent (,tmtex-indent 1))
+  (algorithm-indent (,tmtex-indent 1))
   ((:or footnote wide-footnote) (,tmtex-footnote 1))
   (footnotemark (,tmtex-default 0))
   (footnotemark* (,tmtex-footnotemark 1))
@@ -2896,6 +2907,7 @@
   (tt (,tmtex-text-tt 1))
   ((:or strong em name samp abbr dfn kbd var acronym person)
    (,tmtex-modifier 1))
+  (render-line-number (,tmtex-render-line-number 2))
   (menu (,tmtex-menu -1))
   (with-TeXmacs-text (,(tmtex-rename 'withTeXmacstext) 0))
   (made-by-TeXmacs (,(tmtex-rename 'madebyTeXmacs) 0))
@@ -3058,7 +3070,9 @@
 (define tmtex-always-expand
   ;; FIXME: find a cleaner way to handle these environments
   (list "render-theorem" "render-remark" "render-exercise" "render-proof"
-        "specified-algorithm"))
+        "algorithm" "algorithm*" "named-algorithm"
+        "specified-algorithm" "specified-algorithm*"
+        "named-specified-algorithm" "numbered"))
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))
@@ -3067,7 +3081,7 @@
 	 (l2 (logic-first-list 'tmtex-tmstyle%))
 	 (l3 (map as-string (logic-apply-list '(latex-tag%))))
 	 (l4 (map as-string (logic-apply-list '(latex-symbol%))))
-	 (l5 (list-difference l3 l4))
+	 (l5 (list-difference l3 (list-union l4 tmtex-always-expand)))
 	 (l6 (map as-string (collect-user-defs st)))
 	 (l7 (if (preference-on? "texmacs->latex:expand-user-macros") '() l6))
          (l8 (list-difference (collect-user-macros st)

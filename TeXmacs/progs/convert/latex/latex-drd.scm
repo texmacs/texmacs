@@ -61,6 +61,7 @@
   (rotatebox "graphicx")
   (scalebox "graphicx")
   (reflectbox "graphicx")
+  (adjustbox "adjustbox")
 
   (mathscr "mathrsfs")
   (EuScript "euscript")
