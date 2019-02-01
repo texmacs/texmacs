@@ -247,7 +247,9 @@
   (det ((left|) "c" (right|) #f))
   (bmatrix ((,(string->symbol "left[")) "c" (,(string->symbol "right]")) #f))
   (stack ("" "c" "" #f))
-  (choice ((left\{) "l" (right.) #f)))
+  (choice ((left\{) "l" (right.) #f))
+  (tabbed ("" "l" "" #f))
+  (tabbed* ("" "l" "" #f)))
 
 (logic-table tex-with-cmd%
   (("font-family" "rm") tmtextrm)
@@ -2285,7 +2287,7 @@
 		     (s2 (tmtex-bib-max (cdr l))))
 		(if (< (string-length s1) (string-length s2)) s2 s1)))))
 
-(define (tmtex-bib s l)
+(tm-define (tmtex-biblio s l titled?)
   (if tmtex-indirect-bib?
       (tex-concat (list (list 'bibliographystyle (force-string (cadr l)))
 			(list 'bibliography (force-string (caddr l)))))
@@ -2293,10 +2295,14 @@
 	     (max (tmtex-bib-max doc))
              (tls tmtex-languages)
              (lan (or (and (pair? tls) (car tls)) "english"))
-             (txt (translate-from-to "References" "english" lan)))
-        `(!document
-          (section* ,(tmtex txt))
-          ,(tmtex (list 'thebibliography max doc))))))
+             (txt (translate-from-to "References" "english" lan))
+             (bib (tmtex (list 'thebibliography max doc))))
+        (if titled?
+            `(!document (section* ,(tmtex txt)) ,bib)
+            bib))))
+
+(tm-define (tmtex-bib t)
+  (tmtex-biblio (car t) (cdr t) #f))
 
 (define (tmtex-thebibliography s l)
   (list (list '!begin s (car l)) (tmtex (cadr l))))
@@ -2887,7 +2893,6 @@
   (glossary-2 (,tmtex-glossary-entry 3))
   (the-glossary (,tmtex-the-glossary 2))
   ((:or table-of-contents) (,tmtex-toc 2))
-  (bibliography (,tmtex-bib 4))
   (thebibliography (,tmtex-thebibliography 2))
   (bib-list (,tmtex-style-second 2))
   (bibitem* (,tmtex-bibitem* -1))
@@ -3004,6 +3009,7 @@
   (author-misc-label        tmtex-author-misc-label 2)
   ;; misc
   ((:or equation equation*) tmtex-equation 2)
+  (bibliography             tmtex-bib 4)
   (elsevier-frontmatter     tmtex-elsevier-frontmatter 2)
   (conferenceinfo           tmtex-acm-conferenceinfo 2)
   (CopyrightYear            tmtex-acm-copyright-year 2)
