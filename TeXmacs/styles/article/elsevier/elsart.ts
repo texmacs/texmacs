@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.19>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -224,6 +224,10 @@
     </src-comment>
   </active*>
 
+  <assign|bibitem-width|2em>
+
+  <assign|elsart-bibitem*|<macro|text|<style-with|src-compact|none|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><render-bibitem|<transform-bibitem|<value|bibitem-nr>>><set-binding|<value|bibitem-nr>>>>>
+
   <assign|render-bibliography|<\macro|name|body>
     <principal-section*|<arg|name>><yes-indent*>
 
@@ -231,7 +235,7 @@
   </macro>>
 
   <assign|bib-list|<\macro|largest|body>
-    <\with|par-left|1em|par-first|-1em|font-size|1|bibitem-nr|0|bibitem*|<macro|text|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><set-binding|<arg|text>>>>
+    <\with|par-left|2em|par-first|0em|font-size|1|bibitem-nr|0|xbibitem*|<value|elsart-bibitem*>>
       <arg|body>
     </with>
   </macro>>

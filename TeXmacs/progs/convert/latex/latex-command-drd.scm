@@ -51,7 +51,7 @@
   ;; for (e.g.) includegraphics
   width height
   ;; miscellaneous
-  null
+  null unskip
 
   ;; Algorithms
   AND BlankLine Ensure ENSURE FALSE GLOBALS NOT OR PRINT Require REQUIRE
@@ -78,7 +78,7 @@
   phantom hphantom vphantom smash date terms
   newcounter stepcounter refstepcounter value
   citealt citealt* citealp*
-  citetext citeauthor citeauthor* citeyear onlinecite
+  citetext citeauthor citeauthor* citeyear onlinecite citeN
   epsfig url penalty centerline fbox framebox cline cmidrule
   enlargethispage
   newlength newdimen newskip
@@ -91,7 +91,7 @@
 
 (logic-group latex-command-2%
   binom tbinom dbinom cfrac tfrac equal href
-  sideset stackrel citeauthoryear
+  sideset stackrel
   setcounter addtocounter setlength addtolength
   colorbox scalebox texorpdfstring raisebox foreignlanguage
   Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut

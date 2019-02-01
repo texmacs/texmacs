@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -35,6 +35,9 @@
 
   \;
 
+  <assign|natbib-triple|<macro|full|short|year|<arg|short>
+  (<arg|year>)<arg|full>>>
+
   <assign|natbib-author|<macro|text|<extern|natbib-get|<arg|text>|author>>>
 
   <assign|natbib-year|<macro|text|<extern|natbib-get|<arg|text>|year>>>
@@ -51,15 +54,30 @@
 
   <\active*>
     <\src-comment>
-      Main commands for citations
+      Default presentation
     </src-comment>
   </active*>
 
-  <assign|render-cite|<macro|x|(<arg|x>)>>
+  <assign|render-cite|<macro|x|[<arg|x>]>>
+
+  <active*|<src-short-comment|The LaTeX standard actually uses brackets ( )
+  instead>>
 
   <assign|cite-sep|<macro|; >>
 
-  \;
+  <assign|natbib-show|<macro|nr|text|<natbib-author*|<arg|text>><if|<equal|<natbib-year|<cite-data|<arg|key>>>|?>||,
+  <natbib-year|<arg|text>>>>>
+
+  <assign|natbib-bind|<macro|nr|text|<arg|text>>>
+
+  <active*|<src-short-comment|Use nr argument instead for short style
+  references>>
+
+  <\active*>
+    <\src-comment>
+      Main commands for citations
+    </src-comment>
+  </active*>
 
   <assign|cite-author|<macro|key|<cite-add|<arg|key>><natbib-author|<cite-data|<arg|key>>>>>
 
@@ -67,17 +85,17 @@
 
   <assign|cite-author*|<macro|key|<cite-add|<arg|key>><natbib-author*|<cite-data|<arg|key>>>>>
 
-  <assign|cite-author-year|<macro|key|<cite-author|<arg|key>>,
-  <cite-year|<arg|key>>>>
+  <assign|cite-author-year|<macro|key|<cite-author|<arg|key>><if|<equal|<natbib-year|<cite-data|<arg|key>>>|?>||,
+  <cite-year|<arg|key>>>>>
 
-  <assign|cite-author*-year|<macro|key|<cite-author*|<arg|key>>,
-  <cite-year|<arg|key>>>>
+  <assign|cite-author*-year|<macro|key|<cite-author*|<arg|key>><if|<equal|<natbib-year|<cite-data|<arg|key>>>|?>||,
+  <cite-year|<arg|key>>>>>
 
-  <assign|cite-author-year*|<macro|key|<cite-author|<arg|key>>
-  <render-cite|<cite-year|<arg|key>>>>>
+  <assign|cite-author-year*|<macro|key|<cite-author|<arg|key>><if|<equal|<natbib-year|<cite-data|<arg|key>>>|?>||
+  <render-cite|<cite-year|<arg|key>>>>>>
 
-  <assign|cite-author*-year*|<macro|key|<cite-author*|<arg|key>>
-  <render-cite|<cite-year|<arg|key>>>>>
+  <assign|cite-author*-year*|<macro|key|<cite-author*|<arg|key>><if|<equal|<natbib-year|<cite-data|<arg|key>>>|?>||
+  <render-cite|<cite-year|<arg|key>>>>>>
 
   \;
 
@@ -119,28 +137,17 @@
 
   <assign|cite|<xmacro|x|<render-cite|<cite-raw-1|<arg|x|0>><map-args|cite-raw+|concat|x|1>>>>
 
-  <assign|cite*|<xmacro|x|<render-cite|<cite-raw-1|<arg|x|0>><map-args|cite-raw*+|concat|x|1>>>>
+  <assign|cite*|<xmacro|x|<render-cite|<cite-raw*-1|<arg|x|0>><map-args|cite-raw*+|concat|x|1>>>>
+
+  <assign|cite-detail|<macro|key|details|<render-cite-detail|<cite-raw-1|<arg|key>>|<arg|details>>>>
 
   <assign|cite-parenthesized|<value|cite>>
 
   <assign|cite-parenthesized*|<value|cite*>>
 
-  <assign|cite-detail|<macro|key|details|<render-cite-detail|<cite-raw-1|<arg|key>>|<arg|details>>>>
-
-  <drd-props|cite|arity|<tuple|repeat|1|1>|accessible|none|identifier|all>
-
-  <drd-props|nocite|arity|<tuple|repeat|1|1>|accessible|none|identifier|all>
-
-  <drd-props|cite-detail|arity|2|unaccessible|0|identifier|0>
-
   \;
 
-  <assign|transform-natbibitem|<macro|text|<transform-bibitem|<value|bibitem-nr>>>>
-
-  <assign|render-natbibitem|<macro|text|<render-bibitem|<arg|text>>>>
-
-  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><render-natbibitem|<transform-natbibitem|<natbib-author*|<arg|text>>,
-  <natbib-year|<arg|text>>>><set-binding|<arg|text>>>>>
+  <assign|bibitem*|<macro|text|<style-with|src-compact|none|<assign|bibitem-nr|<plus|<value|bibitem-nr>|1>><render-bibitem|<transform-bibitem|<natbib-show|<value|bibitem-nr>|<arg|text>>>><set-binding|<natbib-bind|<value|bibitem-nr>|<arg|text>>>>>>
 
   <\active*>
     <\src-comment>

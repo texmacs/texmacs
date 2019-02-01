@@ -2528,6 +2528,9 @@
 (define (tmtex-cite-year s l)
   (tex-apply 'citeyear (tmtex (car l))))
 
+(define (tmtex-natbib-triple s l)
+  `(protect (citeauthoryear ,@(map tmtex l))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Glossaries
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2928,7 +2931,8 @@
   (render-cite (,tmtex-render-cite 1))
   ((:or cite-author cite-author-link) (,tmtex-cite-author 1))
   ((:or cite-author* cite-author*-link) (,tmtex-cite-author* 1))
-  ((:or cite-year cite-year-link) (,tmtex-cite-year 1)))
+  ((:or cite-year cite-year-link) (,tmtex-cite-year 1))
+  (natbib-triple (,tmtex-natbib-triple 3)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags which are customized in particular style files

@@ -114,7 +114,7 @@
 
 (logic-group latex-texmacs-3%
   tmsession tmfoldedio tmunfoldedio tmfoldediomath tmunfoldediomath
-  tmlinenote subsubindex tmref glossaryentry)
+  tmlinenote subsubindex tmref glossaryentry natbib-triple)
 
 (logic-group latex-texmacs-4%
   tmscriptinput tmscriptoutput tmconverterinput tmconverteroutput

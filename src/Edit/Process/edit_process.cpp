@@ -81,6 +81,15 @@ supports_db () {
   return get_preference ("database tool") == "on";
 }
 
+bool
+uses_natbib (tree t) {
+  if (is_atomic (t)) return false;
+  if (is_compound (t, "natbib-triple")) return true;
+  for (int i=0; i<N(t); i++)
+    if (uses_natbib (t[i])) return true;
+  return false;
+}
+
 void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
@@ -138,10 +147,20 @@ edit_process_rep::generate_bibliography (
       t= stree_to_tree (call (string ("bib-process"),
                               bib, style (3, N(style)), ot));
     }
-    else
-      t= bibtex_run (bib, style, bib_file, bib_t);
+    else t= bibtex_run (bib, style, bib_file, bib_t);
     if (supports_db ())
       (void) call (string ("bib-attach"), bib, bib_t, bib_file);
+    if (uses_natbib (t) && !defined_at_init ("cite-author-year-package")) {
+      tree st= get_style ();
+      if (is_atomic (st)) st= tuple (st);
+      bool missing= true;
+      for (int i=0; i<N(st); i++)
+        if (st[i] == "cite-author-year") missing= false;
+      if (missing) {
+        st << "cite-author-year";
+        change_style (st);
+      }
+    }
   }
   if (is_atomic (t) && starts (t->label, "Error:"))
     set_message (t->label, "compile bibliography");

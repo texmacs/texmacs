@@ -2883,6 +2883,30 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(string-trim-spaces-left <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|trim_spaces_left> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(string-trim-spaces-right <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|trim_spaces_right> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(string-trim-spaces <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|trim_spaces> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(downgrade-math-letters <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

@@ -4796,6 +4796,45 @@ tmg_string_unquote (tmscm arg1) {
 }
 
 tmscm
+tmg_string_trim_spaces_left (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-trim-spaces-left");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= trim_spaces_left (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_string_trim_spaces_right (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-trim-spaces-right");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= trim_spaces_right (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_string_trim_spaces (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "string-trim-spaces");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= trim_spaces (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_downgrade_math_letters (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "downgrade-math-letters");
 
@@ -10072,6 +10111,9 @@ initialize_glue_basic () {
   tmscm_install_procedure ("unescape-guile",  tmg_unescape_guile, 1, 0, 0);
   tmscm_install_procedure ("string-quote",  tmg_string_quote, 1, 0, 0);
   tmscm_install_procedure ("string-unquote",  tmg_string_unquote, 1, 0, 0);
+  tmscm_install_procedure ("string-trim-spaces-left",  tmg_string_trim_spaces_left, 1, 0, 0);
+  tmscm_install_procedure ("string-trim-spaces-right",  tmg_string_trim_spaces_right, 1, 0, 0);
+  tmscm_install_procedure ("string-trim-spaces",  tmg_string_trim_spaces, 1, 0, 0);
   tmscm_install_procedure ("downgrade-math-letters",  tmg_downgrade_math_letters, 1, 0, 0);
   tmscm_install_procedure ("string-convert",  tmg_string_convert, 3, 0, 0);
   tmscm_install_procedure ("encode-base64",  tmg_encode_base64, 1, 0, 0);
