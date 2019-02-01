@@ -1421,7 +1421,14 @@ edit_env_rep::exec_translate (tree t) {
 
 tree
 edit_env_rep::exec_change_case (tree t, tree nc, bool exec_flag, bool first) {
-  if (is_atomic (t)) {
+  if (is_atomic (t) && nc == "first") {
+    string s= t->label;
+    if (s == "") return s;
+    int pos= 0;
+    tm_char_forwards (s, pos);
+    return s (0, pos);
+  }
+  else if (is_atomic (t)) {
     string s= t->label;
     tree   r= copy (s);
     int i, n= N(s);

@@ -48,9 +48,10 @@
   infin rang
   ;; bibtex
   bysame
-
   ;; for (e.g.) includegraphics
   width height
+  ;; miscellaneous
+  null
 
   ;; Algorithms
   AND BlankLine Ensure ENSURE FALSE GLOBALS NOT OR PRINT Require REQUIRE
@@ -83,7 +84,7 @@
   newlength newdimen newskip
   Comment COMMENT For ForAll If Input KwData KwResult KwRet lnl nllabel
   lElse uElse Output Until UNTIL While
-  etalchar MR listpart)
+  etalchar MR listpart custombinding cref Cref)
 
 (logic-group latex-command-1% ;; . needs a special treatment
   ,(string->symbol "."))
@@ -94,7 +95,7 @@
   setcounter addtocounter setlength addtolength
   colorbox scalebox texorpdfstring raisebox foreignlanguage
   Call Function Procedure SetKw SetKwData SetKwFunction SetKwInOut
-  ifthispageodd)
+  ifthispageodd adjustbox)
 
 (logic-group latex-command-3%
   ifthenelse resizebox fcolorbox @setfontsize eIf multicolumn)
@@ -125,7 +126,8 @@
 
 (logic-group latex-command-0*%
   item ,(string->symbol "\\")
-  BODY ELSE INPUTS LOOP OUTPUTS REPEAT)
+  BODY ELSE INPUTS LOOP OUTPUTS REPEAT
+  hdashline)
 
 (logic-group latex-command-1*%
   usepackage documentclass documentstyle sqrt bibitem cite caption  

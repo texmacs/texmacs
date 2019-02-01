@@ -190,7 +190,10 @@ is_block_environnement (tree t) {
     ends (s, "multicols")        ||
     ends (s, "part")             ||
     ends (s, "chapter")          ||
-    ends (s, "section");
+    ends (s, "section")          ||
+    ends (s, "indent")           ||
+    ends (s, "tmparsep")         ||
+    ends (s, "tmparmod");
 }
 
 bool
@@ -769,6 +772,7 @@ latex_symbol_to_tree (string s) {
       if (s == "midrule")    return tree (APPLY, "hline");
       if (s == "bottomrule") return tree (APPLY, "hline");
       if (s == "hrulefill")  return tree (APPLY, "hrule");
+      if (s == "hdashline")  return "";
       if (s == "appendix") { textm_appendices= true; return ""; }
       if (s == "limits")   return ""; // tree (FORMAT, "with limits");
       if (s == "nolimits") return ""; // temporarily
@@ -784,6 +788,7 @@ latex_symbol_to_tree (string s) {
       if (s == "today")    return compound ("date", "");
       if (s == "tableofcontents")
 	return compound ("table-of-contents", "toc", tree (DOCUMENT, ""));
+      if (s == "null")       return "";
       if (s == "bgroup")     return "";
       if (s == "egroup")     return "";
       if (s == "colon")      return ":";
@@ -1344,6 +1349,70 @@ latex_cite_to_tree (string cite_type, string s) {
   return r;
 }
 
+static array<string> cref_table;
+
+tree
+latex_cref_to_tree (string s) {
+  if (N(cref_table) == 0)
+    cref_table << string ("fig") << string ("Figure")
+               << string ("tab") << string ("Table")
+               << string ("alg") << string ("Algorithm")
+               << string ("subsec") << string ("Subsection")
+               << string ("ssec") << string ("Subsection")
+               << string ("sec") << string ("Section")
+               << string ("thm") << string ("Theorem")
+               << string ("prop") << string ("Proposition")
+               << string ("lem") << string ("Lemma")
+               << string ("cor") << string ("Corollary")
+               << string ("note") << string ("Note")
+               << string ("rem") << string ("Remark")
+               << string ("def") << string ("Definition")
+               << string ("dfn") << string ("Definition")
+               << string ("conv") << string ("Convention")
+               << string ("war") << string ("Warning")
+               << string ("exa") << string ("Example")
+               << string ("not") << string ("Notation")
+               << string ("prob") << string ("Problem")
+               << string ("prb") << string ("Problem")
+               << string ("exe") << string ("Exercise")
+               << string ("exc") << string ("Exercise")
+               << string ("sol") << string ("Solution")
+               << string ("eqn") << string ("Equation")
+               << string ("ch") << string ("Chapter")
+               << string ("th") << string ("Theorem")
+               << string ("lm") << string ("Lemma")
+               << string ("ax") << string ("Axiom")
+               << string ("ex") << string ("Example")
+               << string ("eq") << string ("Equation");
+  tree t (CONCAT);
+  string type= "";
+  for (int i=0; i<N(cref_table); i+=2)
+    if (type == "" && starts (s, cref_table[i]))
+      type= cref_table[i+1];
+  for (int i=0; i<N(cref_table); i+=2)
+    if (type == "" && ends (s, cref_table[i]))
+      type= cref_table[i+1];
+  for (int i=0; i<N(cref_table); i+=2)
+    if (type == "" && occurs (cref_table[i], s))
+      type= cref_table[i+1];
+  array<string> a= tokenize (s, ",");
+  if (type != "") {
+    if (N(a) == 1) t << compound ("localize", type);
+    else t << compound ("localize", type * "s");
+  }
+  for (int i=0; i<N(a); i++) {
+    string ss= trim_spaces (a[i]);
+    if (i == 0) t << compound ("nbsp");
+    else if (i == 1 && N(a) == 2) t << " and" << compound ("nbsp");
+    else if (i == N(a) - 1) t << ", and" << compound ("nbsp");
+    else t << ", ";
+    if (type == "Equation") t << "(";
+    t << tree (REFERENCE, ss);
+    if (type == "Equation") t << ")";
+  }
+  return t;
+}
+
 tree
 latex_index_to_tree (string s) {
   int i, start, n= N(s);
@@ -1867,6 +1936,8 @@ latex_command_to_tree (tree t) {
     return tree (CHANGE_CASE, l2e (t[1]), "locase");
   if (is_tuple (t, "\\uppercase", 1) || is_tuple (t, "\\MakeUppercase", 1))
     return tree (CHANGE_CASE, l2e (t[1]), "UPCASE");
+  if (is_tuple (t, "\\ExtractFirstChar", 1))
+    return tree (CHANGE_CASE, l2e (t[1]), "first");
   if (is_tuple (t, "\\selectlanguage", 1)) {
     string lang= string_arg (t[1]);
     return tree (SET, "language", latex_to_texmacs_languages (lang));
@@ -2134,6 +2205,8 @@ latex_command_to_tree (tree t) {
     return compound (string_arg (t[1]), v2e (t[2]));
   if (is_tuple (t, "\\label", 1)) return tree (LABEL, t2e (t[1]));
   if (is_tuple (t, "\\ref", 1)) return tree (REFERENCE, t2e (t[1]));
+  if (is_tuple (t, "\\cref", 1) || is_tuple (t, "\\Cref", 1))
+    return latex_cref_to_tree (v2e (t[1]));
   if (is_tuple (t, "\\newcounter", 1))
     return compound ("new-counter", v2e (t[1]));
   if (is_tuple (t, "\\value", 1))
@@ -2153,6 +2226,10 @@ latex_command_to_tree (tree t) {
     return tree (ASSIGN, v2e (t[1]) * "-nr",
         tree (PLUS, v2e (t[1]) * "-nr", v2e (t[2])));
   }
+  if (is_tuple (t, "\\custombinding", 1))
+    return tree (SET_BINDING, v2e (t[1]));
+  if (is_tuple (t, "\\tmlinenumber", 2))
+    return compound ("render-line-number", l2e (t[1]), l2e (t[2]));
   if (is_tuple (t, "\\setlength", 2)) {
     if (!textm_class_flag) return "";
     else {
@@ -2384,6 +2461,9 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\fbox", 1)) return compound ("frame", l2e (t[1]));
   if (is_tuple (t, "\\framebox", 1)) return compound ("frame", l2e (t[1]));
   if (is_tuple (t, "\\centerline", 1)) return compound ("center", l2e (t[1]));
+  if (is_tuple (t, "\\hline")) return tree (APPLY, "hline");
+  if (is_tuple (t, "\\hdashline")) return "";
+  if (is_tuple (t, "\\hdashline*")) return "";
   if (is_tuple (t, "\\noalign", 1))
     return ""; // FIXME: for larger space in maple matrices
   if (is_tuple (t, "\\etalchar", 1)) return t2e (t[1]);

@@ -85,8 +85,8 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
 	string halign= copy (CELL_HALIGN);
 	string how   = s (i, i+1);
 	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
-  if (col_flag && col == 1)
-    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
+        if (col_flag && col == 1)
+          tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
 	col_flag= true;
 	col++;
 	break;
@@ -99,22 +99,22 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
 	string col_s = as_string (col);
 	string halign= copy (CELL_HYPHEN);
 	char how_c   = s[i];
-  string how = (how_c == 'm')? 'c' :
-              ((how_c == 'b')? 'b' : 't');
+        string how = (how_c == 'm')? 'c' :
+          ((how_c == 'b')? 'b' : 't');
 	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
-  if (how_c != 'X') {
-    int start= ++i;
-    while (i<n && (s[i] != ' ') && (s[i] != '|')
-        && (s[i] != '<') && (s[i] != '*')) i++;
-    string width= s(start, i);
-    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HMODE, "exact");
-    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_WIDTH, width);
-  }
-  else {
-    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HALIGN, "l");
-  }
-  if (col_flag && col == 1)
-    tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
+        if (how_c != 'X') {
+          int start= ++i;
+          while (i<n && (s[i] != ' ') && (s[i] != '|')
+                 && (s[i] != '<') && (s[i] != '*')) i++;
+          string width= s(start, i);
+          tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HMODE, "exact");
+          tformat << tree (CWITH, tr, br, col_s, col_s, CELL_WIDTH, width);
+        }
+        else {
+          tformat << tree (CWITH, tr, br, col_s, col_s, CELL_HALIGN, "l");
+        }
+        if (col_flag && col == 1)
+          tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
 	col_flag= true;
 	col++;
 	break;
@@ -129,11 +129,22 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
 	col_flag= false;
 	string col_s= col==1? as_string (col): as_string (col-1);
 	string hbor = col==1? copy (CELL_LBORDER): copy (CELL_RBORDER);
-  int howmany=1;
-  while (i+1 < n && s[i+1] == '|') { howmany++; i++; }
+        int howmany=1;
+        while (i+1 < n && s[i+1] == '|') { howmany++; i++; }
 	string how  = as_string (howmany) * "ln";
 	tformat << tree (CWITH, tr, br, col_s, col_s, hbor, how);
 	break;
+      }
+    case ';':
+      {
+        // TODO: for the moment, we ignore dashed lines        
+        break;
+      }
+    case '{':
+      {
+        for (int j=i; j<n; j++)
+          if (s[j] == '}') { i= j; }
+        break;
       }
     case '@':
       // FIXME: emergency exit; parameters of @ no longer between {}
@@ -618,6 +629,17 @@ finalize_layout (tree t) {
 
       if (is_func (v, END, 1) && (v[0] == "tmparsep")) {
 	r << tree (RESET, "par-par-sep");
+	continue;
+      }
+
+      if (is_func (v, BEGIN, 3) && v[0] == "tmparmod") {
+        // TODO: deal with par-left and par-right as well
+        r << tree (SET, "par-first", v[3]);
+	continue;
+      }
+
+      if (is_func (v, END) && (v[0] == "tmparmod")) {
+	r << tree (RESET, "par-first");
 	continue;
       }
 
