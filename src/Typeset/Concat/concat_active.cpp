@@ -358,6 +358,7 @@ concater_rep::typeset_image (tree t, path ip) {
     imw= (SI) ((iw * ((double) imh)) / ih);
   if (t[1] != "" && t[2] == "" && iw != 0)
     imh= (SI) ((ih * ((double) imw)) / iw);
+  if (imw <= 0 || imh <= 0) { imw= w / 4; imh= h / 4; }
   if (imw <= 0 || imh <= 0)
     error_image (tree (WITH, "color", "red", "null box"));
   env->local_end ("w-length", old_w);

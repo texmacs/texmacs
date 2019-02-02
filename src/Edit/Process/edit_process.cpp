@@ -90,6 +90,19 @@ uses_natbib (tree t) {
   return false;
 }
 
+tree
+arrange_bib (tree t) {
+  if (is_atomic (t))
+    return replace (t->label, "--", "\25");
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++)
+      r[i]= arrange_bib (t[i]);
+    return r;
+  }
+}
+
 void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
@@ -148,6 +161,7 @@ edit_process_rep::generate_bibliography (
                               bib, style (3, N(style)), ot));
     }
     else t= bibtex_run (bib, style, bib_file, bib_t);
+    t= arrange_bib (t);
     if (supports_db ())
       (void) call (string ("bib-attach"), bib, bib_t, bib_file);
     if (uses_natbib (t) && !defined_at_init ("cite-author-year-package")) {

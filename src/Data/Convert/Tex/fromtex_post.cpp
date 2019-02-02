@@ -34,6 +34,7 @@ tree latex_command_to_tree (tree t);
 bool is_var_compound (tree t, string s);
 bool is_var_compound (tree t, string s, int n);
 string latex_to_texmacs_languages (string s);
+string textm_normalize_length (string len);
 
 /******************************************************************************
 * Final modifications to the converted tree
@@ -1630,6 +1631,8 @@ finalize_misc (tree t) {
         finalize_misc (t[N(t)-2]), finalize_misc (t[N(t)-1]));
   }
   else if (is_compound (t, "minipage", 3)) {
+    if (is_atomic (t[1]))
+      t[1]= textm_normalize_length (t[1]->label);
     if (is_document (t[2]) && N(t[2]) == 1)
       t[2]= t[2][0];
     return t;

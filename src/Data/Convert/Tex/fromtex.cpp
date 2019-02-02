@@ -1480,6 +1480,16 @@ is_negative_length(tree t) {
   return false;
 }
 
+string
+textm_normalize_length (string len) {
+  len= trim_spaces (len);
+  len= replace (len, "tex-text-width", "par");
+  len= replace (len, "tex-line-width", "par");
+  len= replace (len, "tex-column-width", "par");
+  if (len == "par") len= "1par";
+  return len;  
+}
+
 tree
 latex_eps_get (tree t, string var) {
   if (!is_atomic (t)) return "";
@@ -1497,9 +1507,7 @@ latex_eps_get (tree t, string var) {
       while (ends (v, " ")) v= v (0, N(v) - 1);
       if (j < k && v == var) {
 	string val= ss (j+1, N(ss));
-	while (starts (val, " ")) val= val (1, N(val));
-        if (var == "width" && val == "tex-text-width") val= "1par";
-	return val;
+        return textm_normalize_length (val);
       }
       start= i+1;
     }
@@ -2408,7 +2416,7 @@ latex_command_to_tree (tree t) {
     return compound ("cite-year-link", t2e (t[1])); }
   if (is_tuple (t, "\\citeauthoryear", 3)) {
     textm_natbib= true;
-    return compound ("natbib-triple", t2e (t[1]), t2e (t[2]), t2e (t[3])); }
+    return compound ("natbib-triple", l2e (t[1]), l2e (t[2]), t2e (t[3])); }
   if (is_tuple (t, "\\bibitem", 1))
     return compound ("bibitem", v2e (t[1]));
   if (is_tuple (t, "\\bibitem*", 2)) {

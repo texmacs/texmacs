@@ -1,4 +1,4 @@
-<TeXmacs|1.99.1>
+<TeXmacs|1.99.8>
 
 <style|<tuple|source|std>>
 
@@ -330,6 +330,9 @@
 
   <assign|algo-comment|<macro|body|<with|font-shape|italic|color|dark
   grey|{<arg|body>}>>>
+
+  <assign|algo-comment|<macro|body|<with|color|dark
+  grey|{<with|font-shape|italic|<arg|body>>}>>>
 
   <assign|algo-state|<macro|body|<arg|body>>>
 
