@@ -824,7 +824,6 @@ box_rep::display_links (renderer ren) {
   if (!is_nil (ip) && ip->item >= 0) {
     path p= reverse (ip);
     while (N(p) > 1) {
-      // FIXME: we might also look for links in the parents
       // FIXME: we might want to sort out overlapping and adjacent links
       if (has_subtree (the_et, p)) {
         tree t= subtree (the_et, p);
