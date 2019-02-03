@@ -171,3 +171,22 @@
   (if (not (buffers-modified?)) (quit-TeXmacs)
       (user-confirm "There are unsaved files. Really quit?" #f  
         (lambda (answ) (when answ (quit-TeXmacs))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; System dependent conventions for buffer management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (window-per-buffer?)
+  (like-macos?))
+
+(tm-define (new-document)
+  (if (window-per-buffer?) (open-window) (new-buffer)))
+
+(tm-define (new-document*)
+  (if (window-per-buffer?) (new-buffer) (open-window)))
+
+(tm-define (close-document)
+  (if (window-per-buffer?) (safely-kill-window) (safely-kill-buffer)))
+
+(tm-define (close-document*)
+  (if (window-per-buffer?) (safely-kill-buffer) (safely-kill-window)))

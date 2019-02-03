@@ -221,7 +221,7 @@
     (when (string-starts? name "tmfs/help/")
       (set! name (string-drop name 10))
       (set! name (tmfs-cdr name)))
-    (load-buffer (string-append "tmfs://help/" type "/" name))))
+    (load-document (string-append "tmfs://help/" type "/" name))))
 
 (tm-define (delayed-update nr cont)
   (system-wait "Generating automatic content" nr)

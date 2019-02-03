@@ -534,6 +534,25 @@
   (lambda (s) (import-buffer s fm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; System dependent conventions for buffer management
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (open-in-window)
+  (choose-file load-buffer-in-new-window "Load file" ""))
+
+(tm-define (open-document)
+  (if (window-per-buffer?) (open-in-window) (open-buffer)))
+
+(tm-define (open-document*)
+  (if (window-per-buffer?) (open-buffer) (open-in-window)))
+
+(tm-define (load-document u)
+  (if (window-per-buffer?) (load-buffer-in-new-window u) (load-buffer u)))
+
+(tm-define (load-document* u)
+  (if (window-per-buffer?) (load-buffer u) (load-buffer-in-new-window u)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -62,12 +62,12 @@
 (define (long-menu-name u)
   (url->system u))
 
-(tm-menu (file-list-menu l)
+(tm-menu (file-list-menu l win?)
   (for (name l)
     (let* ((short-name `(verbatim ,(short-menu-name name)))
            (long-name `(verbatim ,(long-menu-name name))))
       ((balloon (eval short-name) (eval long-name))
-       (load-buffer name)))))
+       (if win? (load-document name) (load-buffer name))))))
 
 (tm-define (recent-file-list nr)
   (let* ((l1 (map cdar (learned-interactive "recent-buffer")))
@@ -83,14 +83,14 @@
     (sublist dl 0 (min (length dl) nr))))
 
 (tm-define (recent-file-menu)
-  (file-list-menu (recent-file-list 25)))
+  (file-list-menu (recent-file-list 25) #t))
 
 (tm-define (recent-unloaded-file-menu)
   (with l (list-difference (recent-unloaded-file-list 15) (linked-file-list))
-    (file-list-menu l)))
+    (file-list-menu l #f)))
 
 (tm-define (linked-file-menu)
-  (file-list-menu (list-remove-duplicates (linked-file-list))))
+  (file-list-menu (list-remove-duplicates (linked-file-list)) #f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menus for formats
@@ -126,15 +126,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind new-file-menu
-  ("New document" (new-buffer))
-  ("Open new window" (open-window))
+  (if (window-per-buffer?)
+      ("New window" (new-document))
+      ("New document" (new-document*)))
+  (if (not (window-per-buffer?))
+      ("New document" (new-document))
+      ("New window" (new-document*)))
   ;;("Clone window" (clone-window))
   )
 
 (menu-bind load-menu
-  ("Load" (open-buffer))
+  ("Load" (open-document))
   ("Revert" (revert-buffer))
-  ("Load in new window" (choose-file load-buffer-in-new-window "Load file" ""))
+  (if (window-per-buffer?)
+      ("Load in same window" (open-document*)))
+  (if (not (window-per-buffer?))
+      ("Load in new window" (open-document*)))
   ---
   (link import-top-menu)
   (if (nnull? (recent-file-list 1))
@@ -194,8 +201,12 @@
       ("Page setup" (open-page-setup))))
 
 (menu-bind close-menu
-  ("Close document" (safely-kill-buffer))
-  ("Close window" (safely-kill-window))
+  (if (window-per-buffer?)
+      ("Close window" (close-document))
+      ("Close document" (close-document*)))
+  (if (not (window-per-buffer?))
+      ("Close document" (close-document))
+      ("Close window" (close-document*)))
   ("Close TeXmacs" (safely-quit-TeXmacs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -203,8 +214,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind file-menu
-  ("New" (new-buffer))
-  ("Load" (open-buffer))
+  ("New" (new-document))
+  ("Load" (open-document))
   ("Revert" (revert-buffer))
   (-> "Recent"
       (link recent-file-menu)
@@ -231,7 +242,10 @@
           export-selection-as-graphics 
           "Save image file" ""))))
   ---
-  ("Close document" (safely-kill-buffer))
+  (if (window-per-buffer?)
+      ("Close window" (close-document)))
+  (if (not (window-per-buffer?))
+      ("Close document" (close-document)))
   ("Close TeXmacs" (safely-quit-TeXmacs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
