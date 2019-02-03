@@ -823,23 +823,25 @@ void
 box_rep::display_links (renderer ren) {
   if (!is_nil (ip) && ip->item >= 0) {
     path p= reverse (ip);
-    // FIXME: we might also look for links in the parents
-    // FIXME: we might want to sort out overlapping and adjacent links
-    if (has_subtree (the_et, p)) {
-      tree t= subtree (the_et, p);
-      list<string> ids= get_ids (t);
-      for (int i=0; i<N(ids); i++) {
-        list<tree> lns= get_links (compound ("id", ids[i]));
-        for (int j=0; j<N(lns); j++)
-          if (is_compound (lns[j], "link", 4) &&
-              lns[j][0] == "hyperlink" &&
-              is_compound (lns[j][3], "url", 1) &&
-              is_atomic (lns[j][3][0])) {
-            string dest= lns[j][3][0]->label;
-            ren->href (dest, x1, y1, x2, y2);
-            //cout << "Found link to " << dest << "\n";
-         }
+    while (N(p) > 1) {
+      // FIXME: we might also look for links in the parents
+      // FIXME: we might want to sort out overlapping and adjacent links
+      if (has_subtree (the_et, p)) {
+        tree t= subtree (the_et, p);
+        list<string> ids= get_ids (t);
+        for (int i=0; i<N(ids); i++) {
+          list<tree> lns= get_links (compound ("id", ids[i]));
+          for (int j=0; j<N(lns); j++)
+            if (is_compound (lns[j], "link", 4) &&
+                lns[j][0] == "hyperlink" &&
+                is_compound (lns[j][3], "url", 1) &&
+                is_atomic (lns[j][3][0])) {
+              string dest= lns[j][3][0]->label;
+              ren->href (dest, x1, y1, x2, y2);
+            }
+        }
       }
+      p= path_up (p);
     }
   }
 }
