@@ -157,6 +157,8 @@ highlight (tree t, tree orig, int kind) {
     return compound ("src-regular", t);
   case TYPE_DURATION:
     return compound ("src-length", t);
+  case TYPE_FONT_SIZE:
+    return compound ("src-numeric", t);
   case TYPE_OBSOLETE:
     return compound ("src-unknown", t);
   case TYPE_UNKNOWN:

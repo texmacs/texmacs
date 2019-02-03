@@ -36,9 +36,10 @@
 #define TYPE_EFFECT          19
 #define TYPE_ANIMATION       20
 #define TYPE_DURATION        21
-#define TYPE_OBSOLETE        22
-#define TYPE_UNKNOWN         23
-#define TYPE_ERROR           24
+#define TYPE_FONT_SIZE       22
+#define TYPE_OBSOLETE        23
+#define TYPE_UNKNOWN         24
+#define TYPE_ERROR           25
 
 int    drd_encode (tree t);
 tree   drd_decode (int i);

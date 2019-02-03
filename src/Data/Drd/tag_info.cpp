@@ -66,6 +66,7 @@ drd_decode_type (int i) {
   case TYPE_EFFECT: return "effect";
   case TYPE_ANIMATION: return "animation";
   case TYPE_DURATION: return "duration";
+  case TYPE_FONT_SIZE: return "font-size";
   case TYPE_OBSOLETE: return "obsolete";
   case TYPE_UNKNOWN: return "unknown";
   case TYPE_ERROR: return "error";
@@ -95,6 +96,7 @@ drd_encode_type (string s) {
   else if (s == "effect") return TYPE_EFFECT;
   else if (s == "animation") return TYPE_ANIMATION;
   else if (s == "duration") return TYPE_DURATION;
+  else if (s == "font-size") return TYPE_FONT_SIZE;
   else if (s == "unknown") return TYPE_UNKNOWN;
   else if (s == "error") return TYPE_ERROR;
   else return -1;

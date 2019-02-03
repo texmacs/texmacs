@@ -235,6 +235,21 @@
         ("Other" (init-interactive-env l)))))
 
 (tm-menu (focus-parameter-menu-item l)
+  (:require (and (tree-label-parameter? (string->symbol l))
+                 (== (tree-label-type (string->symbol l)) "font-size")))
+  (-> (eval (focus-tag-name (string->symbol l)))
+      (with setter (lambda (col) (init-env-tree l col))
+        ((check "Default" "*" (test-default? l)) (init-default l))
+        ---
+        ((check "Small" "*" (test-init? l "0.841")) (init-env l "0.841"))
+        ((check "Normal" "*" (test-init? l "1")) (init-env l "1"))
+        ((check "Large" "*" (test-init? l "1.189")) (init-env l "1.189"))
+        ((check "Very large" "*" (test-init? l "1.414")) (init-env l "1.414"))
+        ((check "Huge" "*" (test-init? l "1.682")) (init-env l "1.682"))
+        ---
+        ("Other" (init-interactive-env l)))))
+
+(tm-menu (focus-parameter-menu-item l)
   (:require (parameter-choice-list l))
   (with cs (parameter-choice-list l)
     (-> (eval (focus-tag-name (string->symbol l)))

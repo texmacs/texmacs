@@ -1,4 +1,4 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.8>
 
 <style|<tuple|source|std>>
 
@@ -92,6 +92,12 @@
 
   <assign|title-theme|title-bar>
 
+  <assign|title-vpadding|1spc>
+
+  <assign|title-font-size|1.414>
+
+  <assign|title-old-style|false>
+
   <assign|title-bar-color|<macro|dark blue>>
 
   <assign|title-color|<macro|white>>
@@ -103,6 +109,12 @@
   <assign|title-left|<macro|body|<phantom|<screens-summary|<quote-arg|body>>>>>
 
   <assign|title-right|<macro|body|<screens-summary|<quote-arg|body>>>>
+
+  <drd-props|title-vpadding|macro-parameter|length>
+
+  <drd-props|title-font-size|macro-parameter|font-size>
+
+  <drd-props|title-old-style|macro-parameter|boolean>
 
   <drd-props|title-bar-color|macro-parameter|color>
 
