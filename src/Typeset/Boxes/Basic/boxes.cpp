@@ -821,7 +821,7 @@ box_rep::loci (SI x, SI y, SI delta, list<string>& ids, rectangles& rs) {
 
 void
 box_rep::display_links (renderer ren) {
-  if (!is_nil (ip) && ip->item >= 0) {
+  if (!is_nil (ip) && ip->item >= 0 && x2 > x1 && y2 > y1) {
     path p= reverse (ip);
     while (N(p) > 1) {
       // FIXME: we might want to sort out overlapping and adjacent links
