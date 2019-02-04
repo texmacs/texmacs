@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.8>
 
 <style|<tuple|source|english>>
 
@@ -33,6 +33,10 @@
   <assign|par-par-sep|0.5fn>
 
   <assign|par-first|0fn>
+
+  <assign|padded-par-par-sep|0.5fn>
+
+  <assign|indent-par-first|1.5fn>
 
   <assign|save-aux|false>
 

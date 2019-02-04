@@ -5,7 +5,7 @@
 <\body>
   <\active*>
     <\src-title>
-      <src-style-file|compact|1.0>
+      <src-package|edu-compact|1.0>
 
       <\src-purpose>
         A compact text style for fitting a maximal amount of text on every
@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-exam|section-generic|compact-list|reduced-margins|padded-paragraphs>
+  <use-package|compact-list|reduced-margins|padded-paragraphs>
 
   \;
 
@@ -47,12 +47,6 @@
     <\with|par-mode|center>
       <surround|<vspace*|0.5fn>|<vspace|0.5fn><no-indent*>|<title*|<arg|body>>>
     </with>
-  </macro>>
-
-  <assign|render-exercise|<\macro|which|body>
-    <\padded*>
-      <surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>
-    </padded*>
   </macro>>
 </body>
 

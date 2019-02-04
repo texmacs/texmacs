@@ -1033,3 +1033,26 @@
   (dynamic (former t))
   ((balloon (icon "tm_small_textual.xpm") "Rename section")
    (interactive automatic-section-rename)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Educational menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (current-edu-options)
+  (if (has-style-package? "edu-compact") "Compact" "Regular"))
+
+(menu-bind edu-style-options-menu
+  ("Regular" (remove-style-package "edu-compact"))
+  ("Compact" (add-style-package "edu-compact"))
+  ---
+  (link page-layout-menu))
+
+(tm-menu (focus-style-extra-menu t)
+  (:require (style-has? "std-edu-dtd"))
+  (=> (eval (current-edu-options))
+      (link edu-style-options-menu)))
+
+(tm-menu (focus-style-extra-icons t)
+  (:require (style-has? "std-edu-dtd"))
+  (=> (balloon (eval (current-edu-options)) "Style options")
+      (link edu-style-options-menu)))

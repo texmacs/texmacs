@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -74,11 +74,15 @@
 
   <assign|font-base-size|10>
 
+  <assign|par-columns|2>
+
   <assign|par-par-sep|5pt>
 
   <assign|par-first|0fn>
 
-  <assign|par-columns|2>
+  <assign|padded-par-par-sep|5pt>
+
+  <assign|indent-par-first|1.5fn>
 
   \;
 

@@ -24,23 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-exam|section-generic>
-
-  \;
-
-  <assign|par-first|0tab>
-
-  <assign|par-par-sep|0.6666fn>
-
-  \;
-
-  <assign|render-exercise|<\macro|which|body>
-    <\padded*>
-      <surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>
-    </padded*>
-  </macro>>
-
-  \;
+  <use-package|std|env|title-generic|header-exam|section-generic|padded-paragraphs|std-edu>
 </body>
 
 <\initial>

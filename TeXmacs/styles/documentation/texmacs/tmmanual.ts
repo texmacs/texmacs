@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.8>
 
-<style|source>
+<style|<tuple|source|english>>
 
 <\body>
   <\active*>
@@ -34,6 +34,10 @@
 
   <assign|par-first|0fn>
 
+  <assign|padded-par-par-sep|0.5fn>
+
+  <assign|indent-par-first|1.5fn>
+
   <assign|font-base-size|11>
 
   \;
@@ -57,7 +61,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|english>
     <associate|preamble|true>
   </collection>
 </initial>

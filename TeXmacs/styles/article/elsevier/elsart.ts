@@ -76,6 +76,10 @@
 
   <assign|par-first|0fn>
 
+  <assign|padded-par-par-sep|14.5pt>
+
+  <assign|indent-par-first|1.5fn>
+
   \;
 
   <assign|tex-jot|<macro|2pt>>

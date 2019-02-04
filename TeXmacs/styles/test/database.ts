@@ -1,4 +1,4 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -28,11 +28,19 @@
 
   <use-module|(database db-markup)>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Environment variables
+    </src-comment>
+  </active*>
+
+  <assign|par-par-sep|0.25fn>
 
   <assign|par-first|0fn>
 
-  <assign|par-par-sep|0.25fn>
+  <assign|padded-par-par-sep|0.25fn>
+
+  <assign|indent-par-first|1.5fn>
 
   <\active*>
     <\src-comment>

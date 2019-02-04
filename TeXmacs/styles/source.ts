@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.6>
+<TeXmacs|1.99.8>
 
 <style|source>
 
@@ -40,13 +40,17 @@
 
   <assign|par-par-sep|0.5fn>
 
+  <assign|padded-par-par-sep|0.5fn>
+
+  <assign|indent-par-first|1.5fn>
+
   <\active*>
     <\src-comment>
       Copy a few environments from std-markup.
     </src-comment>
   </active*>
 
-  <assign|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn|>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn|>|0fn|-0.1fn>>>>>
+  <assign|TeXmacs|<macro|<active*|T<rsub|<space|-0.4spc><move|<resize|<with|math-level|0|E>||||0.5fn>|0fn|-0.1fn>><space|-0.4spc>X<rsub|<space|-0.4spc><move|<resize|M<space|-0.2spc>A<space|-0.4spc>CS||||0.5fn>|0fn|-0.1fn>>>>>
 
   <assign|right-flush|<macro|<htab|0fn|first>>>
 
