@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <assign|par-first|1tab>
+  <assign|par-first|<value|indent-par-first>>
 
   <assign|par-par-sep|0.5fns>
 </body>

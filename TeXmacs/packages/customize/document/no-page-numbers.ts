@@ -4,13 +4,13 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|reduced-margins|1.0|reduced-margins|1.0>
+    <src-package-dtd|no-page-numbers|1.0|no-page-numbers|1.0>
 
     <\src-purpose>
-      Reduce margins to 1cm in order to waste as less paper as possible
+      Remove headers and footers
     </src-purpose>
 
-    <src-copyright|1998--2018|Joris van der Hoeven>
+    <src-copyright|2019|Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -20,23 +20,29 @@
     </src-license>
   </src-title>>
 
-  <use-package|no-page-numbers>
+  <assign|no-page-numbers|true>
+
+  <assign|normal-page-head-sep|<value|page-head-sep>>
+
+  <assign|normal-page-foot-sep|<value|page-foot-sep>>
+
+  <assign|normal-page-odd-header|<value|page-odd-header>>
+
+  <assign|normal-page-even-header|<value|page-even-header>>
+
+  <assign|normal-page-odd-footer|<value|page-odd-footer>>
+
+  <assign|normal-page-even-footer|<value|page-even-footer>>
 
   \;
 
-  <assign|page-screen-margin|false>
+  <assign|page-head-sep|2mm>
 
-  <assign|page-width-margin|false>
+  <assign|page-foot-sep|2mm>
 
-  <assign|page-odd|1cm>
+  <set-header|>
 
-  <assign|page-even|1cm>
-
-  <assign|page-right|1cm>
-
-  <assign|page-top|1cm>
-
-  <assign|page-bot|1cm>
+  <set-footer|>
 </body>
 
 <\initial>

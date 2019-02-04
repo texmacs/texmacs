@@ -25,39 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-exam|section-beamer|compact-list>
-
-  \;
-
-  <assign|page-screen-margin|false>
-
-  <assign|page-width-margin|false>
-
-  <assign|page-odd|1cm>
-
-  <assign|page-even|1cm>
-
-  <assign|page-right|1cm>
-
-  <assign|page-top|1cm>
-
-  <assign|page-bot|1cm>
-
-  \;
-
-  <assign|page-show-hf|true>
-
-  <assign|page-head-sep|2mm>
-
-  <assign|page-foot-sep|2mm>
-
-  <set-footer|>
-
-  \;
-
-  <assign|par-first|0tab>
-
-  <assign|par-par-sep|0.5fn>
+  <use-package|std|env|title-generic|header-exam|section-beamer|compact-list|reduced-margins|padded-paragraphs>
 
   \;
 

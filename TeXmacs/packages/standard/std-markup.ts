@@ -617,6 +617,10 @@
   <assign|text-spc|<macro|<hspace|<value|text-dots-sep>>>>
 
   <assign|text-dots|<macro|<text-spc>.<text-spc>.<text-spc>.<text-spc>>>
+
+  <assign|indent-par-first|1.5fn>
+
+  <assign|padded-par-par-sep|0.6666fn>
 </body>
 
 <\initial>

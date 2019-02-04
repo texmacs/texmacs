@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|padded-paragraphs|1.0|padded-paragraphs|1.0>
+    <src-package-dtd|reduced-margins|1.0|reduced-margins|1.0>
 
     <\src-purpose>
-      Use vertical space to separate successive paragraphs
+      Revert to usual margins for styles that use reduced default margins
     </src-purpose>
 
     <src-copyright|1998--2018|Joris van der Hoeven>
@@ -20,9 +20,23 @@
     </src-license>
   </src-title>>
 
-  <assign|par-first|0tab>
+  <use-package|page-numbers>
 
-  <assign|par-par-sep|<value|padded-par-par-sep>>
+  \;
+
+  <assign|page-screen-margin|true>
+
+  <assign|page-width-margin|false>
+
+  <assign|page-odd|auto>
+
+  <assign|page-even|auto>
+
+  <assign|page-right|auto>
+
+  <assign|page-top|auto>
+
+  <assign|page-bot|auto>
 </body>
 
 <\initial>
