@@ -22,7 +22,7 @@
 
   <\active*>
     <\src-comment>
-      Customuzations of standard environments.
+      Same rendering for exercise, problem and question
     </src-comment>
   </active*>
 
@@ -30,6 +30,26 @@
     <\padded*>
       <surround|<exercise-name|<arg|which><exercise-sep>>||<arg|body>>
     </padded*>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
+      Folding
+    </src-comment>
+  </active*>
+
+  <assign|folded|<\macro|x|y>
+    <\surround||<right-flush><action|<with|color|#336666|<strong|<math|<op|\<Downarrow\>>>>>|mouse-unfold|<arg|x>>>
+      <arg|x>
+    </surround>
+
+    <hidden|<arg|y>>
+  </macro>>
+
+  <assign|unfolded|<\macro|x|y>
+    <surround||<right-flush><action|<with|color|#336666|<strong|<math|<op|\<Uparrow\>>>>>|mouse-fold|<arg|x>>|<arg|x>>
+
+    <arg|y>
   </macro>>
 </body>
 
