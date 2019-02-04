@@ -51,6 +51,117 @@
 
     <arg|y>
   </macro>>
+
+  <\active*>
+    <\src-comment>
+      Buttons
+    </src-comment>
+  </active*>
+
+  <assign|box-off|<xmacro|x|<with|locus-color|preserve|<action|<move|\<box\>||<plus|0.6666ex|-0.5h>>|mouse-unfold|<arg|x>>>>>
+
+  <assign|box-on|<xmacro|x|<with|locus-color|preserve|<action|<move|\<blacksquare\>||<plus|0.6666ex|-0.5h>>|mouse-fold|<arg|x>>>>>
+
+  <assign|cross-off|<xmacro|x|<with|locus-color|preserve|<action|<move|\<box\>||<plus|0.6666ex|-0.5h>>|mouse-unfold|<arg|x>>>>>
+
+  <assign|cross-on|<xmacro|x|<with|locus-color|preserve|<action|<move|\<boxtimes\>||<plus|0.6666ex|-0.5h>>|mouse-fold|<arg|x>>>>>
+
+  <assign|circle-off|<xmacro|x|<with|locus-color|preserve|<action|<move|<huge|\<circ\>>||<plus|0.6ex|-0.5h>>|mouse-unfold|<arg|x>>>>>
+
+  <assign|circle-on|<xmacro|x|<with|locus-color|preserve|<action|<move|<huge|\<bullet\>>||<plus|0.6ex|-0.5h>>|mouse-fold|<arg|x>>>>>
+
+  <drd-props|box-off|arity|0>
+
+  <drd-props|box-on|arity|0>
+
+  <drd-props|cross-off|arity|0>
+
+  <drd-props|cross-on|arity|0>
+
+  <drd-props|circle-off|arity|0>
+
+  <drd-props|circle-on|arity|0>
+
+  \;
+
+  <assign|button-nr|0>
+
+  <assign|inc-button-nr|<macro|<assign|button-nr|<plus|<value|button-nr>|1>>>>
+
+  <assign|numeric-sep|>
+
+  <assign|numeric-off|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|0ln|<resize|<ornament|<value|button-nr>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-unfold|<arg|x>>>>>
+
+  <assign|numeric-on|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|1ln|<resize|<ornament|<value|button-nr>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-fold|<arg|x>>>>>
+
+  <assign|alpha-sep|>
+
+  <assign|alpha-off|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|0ln|<resize|<ornament|<with|font-shape|italic|<number|<value|button-nr>|alpha>>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-unfold|<arg|x>>>>>
+
+  <assign|alpha-on|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|1ln|<resize|<ornament|<with|font-shape|italic|<number|<value|button-nr>|alpha>>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-fold|<arg|x>>>>>
+
+  <drd-props|numeric-off|arity|0>
+
+  <drd-props|numeric-on|arity|0>
+
+  <drd-props|alpha-off|arity|0>
+
+  <drd-props|alpha-on|arity|0>
+
+  <\active*>
+    <\src-comment>
+      Multiple choice environments
+    </src-comment>
+  </active*>
+
+  <assign|mc-item|<macro|but|text|<arg|but> <arg|text>>>
+
+  <assign|mc-wide-item|<macro|but|text|<with|par-left|<plus|<value|par-left>|<value|item-hsep>>|<surround|<with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|but>|<minus|1r|<minus|<item-hsep>|0.5fn>>||<plus|1r|0.5fn>|>||<arg|text>>>>>
+
+  <drd-props|mc-item|arity|2|accessible|all|border|no>
+
+  \;
+
+  <assign|mc-basic-sep|2em>
+
+  <assign|mc-basic-one|<macro|a|<hgroup|<arg|a>><space|<value|mc-basic-sep>>
+  >>
+
+  <assign|mc-basic|<xmacro|args|<with|dummy|<value|mc-basic-sep>|button-nr|0|<map-args|mc-basic-one|concat|args>>>>
+
+  <assign|mcs-basic|<xmacro|args|<with|dummy|<value|mc-basic-sep>|button-nr|0|<map-args|mc-basic-one|concat|args>>>>
+
+  <drd-props|mc-basic|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|mcs-basic|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|mc-std-cols|5>
+
+  <assign|mc-std-one|<macro|a|nr|<resize|<arg|a>|||<over|0.9999par|<value|mc-std-cols>>|><if|<equal|<mod|<plus|<arg|nr>|1>|<value|mc-std-cols>>|0>|<line-break>>>>
+
+  <assign|mc-std|<xmacro|args|<with|dummy|<value|mc-std-cols>|button-nr|0|<map-args|mc-std-one|concat|args>>>>
+
+  <assign|mcs-std|<xmacro|args|<with|dummy|<value|mc-std-cols>|button-nr|0|<map-args|mc-std-one|concat|args>>>>
+
+  <drd-props|mc-std|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|mcs-std|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|mc-list-one|<macro|a|<with|mc-item|<value|mc-wide-item>|<arg|a>>>>
+
+  <assign|mc-list|<xmacro|args|<surround||<right-flush>|<with|button-nr|0|<map-args|mc-list-one|document|args>>>>>
+
+  <assign|mcs-list|<xmacro|args|<surround||<right-flush>|<with|button-nr|0|<map-args|mc-list-one|document|args>>>>>
+
+  <drd-props|mc-list|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|mcs-list|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
 </body>
 
 <\initial>
