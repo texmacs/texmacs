@@ -25,7 +25,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-exam|section-beamer|compact-list|reduced-margins|padded-paragraphs>
+  <use-package|std|env|title-generic|header-exam|section-generic|compact-list|reduced-margins|padded-paragraphs>
 
   \;
 
