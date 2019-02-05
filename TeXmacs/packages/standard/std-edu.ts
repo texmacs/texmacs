@@ -20,6 +20,8 @@
     </src-license>
   </src-title>>
 
+  <use-module|(education edu-edit)>
+
   <\active*>
     <\src-comment>
       Same rendering for exercise, problem and question
@@ -54,59 +56,97 @@
 
   <\active*>
     <\src-comment>
-      Buttons
+      Unnumbered buttons
     </src-comment>
   </active*>
 
-  <assign|box-off|<xmacro|x|<with|locus-color|preserve|<action|\<box\>|mouse-unfold|<arg|x>>>>>
-
-  <assign|box-on|<xmacro|x|<with|locus-color|preserve|<action|\<blacksquare\>|mouse-fold|<arg|x>>>>>
-
-  <assign|cross-off|<xmacro|x|<with|locus-color|preserve|<action|\<box\>|mouse-unfold|<arg|x>>>>>
-
-  <assign|cross-on|<xmacro|x|<with|locus-color|preserve|<action|\<boxtimes\>|mouse-fold|<arg|x>>>>>
-
-  <assign|circle-off|<xmacro|x|<with|locus-color|preserve|<action|\<#25CB\>|mouse-unfold|<arg|x>>>>>
-
-  <assign|circle-on|<xmacro|x|<with|locus-color|preserve|<action|\<#25CF\>|mouse-fold|<arg|x>>>>>
-
-  <drd-props|box-off|arity|0>
-
-  <drd-props|box-on|arity|0>
-
-  <drd-props|cross-off|arity|0>
-
-  <drd-props|cross-on|arity|0>
-
-  <drd-props|circle-off|arity|0>
-
-  <drd-props|circle-on|arity|0>
+  <assign|render-button|<macro|state|off|on|<with|locus-color|preserve|<action|<if|<arg|state>|<arg|on>|<arg|off>>|mouse-toggle-button|<arg|state>>>>>
 
   \;
 
+  <assign|button-box-off|\<box\>>
+
+  <assign|button-box-on|\<blacksquare\>>
+
+  <assign|button-box-cross|\<boxtimes\>>
+
+  <assign|button-box|<macro|state|<render-button|<arg|state>|<value|button-box-off>|<value|button-box-on>>>>
+
+  <assign|button-box*|<macro|state|<render-button|<arg|state>|<value|button-box-off>|<value|button-box-cross>>>>
+
+  \;
+
+  <assign|button-circle-off|\<#25CB\>>
+
+  <assign|button-circle-on|\<#25CF\>>
+
+  <assign|button-circle-off*|\<oempty\>>
+
+  <assign|button-circle-cross|\<otimes\>>
+
+  <assign|button-circle|<macro|state|<render-button|<arg|state>|<value|button-circle-off>|<value|button-circle-on>>>>
+
+  <assign|button-circle*|<macro|state|<render-button|<arg|state>|<value|button-circle-off*>|<value|button-circle-cross>>>>
+
+  <\active*>
+    <\src-comment>
+      Numbered buttons
+    </src-comment>
+  </active*>
+
   <assign|button-nr|0>
 
-  <assign|inc-button-nr|<macro|<assign|button-nr|<plus|<value|button-nr>|1>>>>
+  <assign|circled-button-padding|0.5spc>
 
-  <assign|numeric-sep|>
+  <assign|render-circled-button|<macro|state|text|sep|<with|ornament-shape|rounded|ornament-border|<if|<arg|state>|1ln|0ln>|ornament-hpadding|<value|circled-button-padding>|ornament-vpadding|<value|circled-button-padding>|locus-color|preserve|<resize|<ornament|<action|<arg|text>|mouse-toggle-button|<arg|state>>><shift|<arg|sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>><assign|button-nr|<plus|<value|button-nr>|1>>>>
 
-  <assign|numeric-off|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|0ln|<resize|<ornament|<value|button-nr>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-unfold|<arg|x>>>>>
+  \;
 
-  <assign|numeric-on|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|1ln|<resize|<ornament|<value|button-nr>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-fold|<arg|x>>>>>
+  <assign|button-arabic-sep|>
 
-  <assign|alpha-sep|>
+  <assign|button-alpha-sep|>
 
-  <assign|alpha-off|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|0ln|<resize|<ornament|<with|font-shape|italic|<number|<value|button-nr>|alpha>>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-unfold|<arg|x>>>>>
+  <assign|button-Alpha-sep|>
 
-  <assign|alpha-on|<xmacro|x|<inc-button-nr><with|locus-color|preserve|<action|<with|ornament-shape|rounded|ornament-border|1ln|<resize|<ornament|<with|font-shape|italic|<number|<value|button-nr>|alpha>>><shift|<value|numeric-sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>>|mouse-fold|<arg|x>>>>>
+  <assign|button-roman-sep|>
 
-  <drd-props|numeric-off|arity|0>
+  <assign|button-Roman-sep|>
 
-  <drd-props|numeric-on|arity|0>
+  <assign|button-arabic|<macro|state|<render-circled-button|<arg|state>|<number|<plus|<value|button-nr>|1>|arabic>|<value|button-arabic-sep>>>>
 
-  <drd-props|alpha-off|arity|0>
+  <assign|button-alpha|<macro|state|<render-circled-button|<arg|state>|<with|font-shape|italic|<number|<plus|<value|button-nr>|1>|alpha><value|button-alpha-sep>><resize|<phantom|.>|||0.001em|>|>>>
 
-  <drd-props|alpha-on|arity|0>
+  <assign|button-Alpha|<macro|state|<render-circled-button|<arg|state>|<with|font-shape|italic|<number|<plus|<value|button-nr>|1>|Alpha><value|button-Alpha-sep>><resize|<phantom|.>|||0.001em|>|>>>
+
+  <assign|button-roman|<macro|state|<render-circled-button|<arg|state>|<number|<plus|<value|button-nr>|1>|roman>|<value|button-roman-sep>>>>
+
+  <assign|button-Roman|<macro|state|<render-circled-button|<arg|state>|<number|<plus|<value|button-nr>|1>|Roman>|<value|button-Roman-sep>>>>
+
+  <\active*>
+    <\src-comment>
+      Button themes
+    </src-comment>
+  </active*>
+
+  <assign|button|<value|button-box>>
+
+  <assign|with-button-box|<macro|body|<with|button|<value|button-box>|<arg|body>>>>
+
+  <assign|with-button-box*|<macro|body|<with|button|<value|button-box*>|<arg|body>>>>
+
+  <assign|with-button-circle|<macro|body|<with|button|<value|button-circle>|<arg|body>>>>
+
+  <assign|with-button-circle*|<macro|body|<with|button|<value|button-circle*>|<arg|body>>>>
+
+  <assign|with-button-arabic|<macro|body|<with|button|<value|button-arabic>|<arg|body>>>>
+
+  <assign|with-button-alpha|<macro|body|<with|button|<value|button-alpha>|<arg|body>>>>
+
+  <assign|with-button-Alpha|<macro|body|<with|button|<value|button-Alpha>|<arg|body>>>>
+
+  <assign|with-button-roman|<macro|body|<with|button|<value|button-roman>|<arg|body>>>>
+
+  <assign|with-button-Roman|<macro|body|<with|button|<value|button-Roman>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
@@ -114,11 +154,13 @@
     </src-comment>
   </active*>
 
-  <assign|mc-item|<macro|but|text|<arg|but> <arg|text>>>
+  <assign|mc-field-sep| >
 
-  <assign|mc-wide-item|<macro|but|text|<with|par-left|<plus|<value|par-left>|<value|item-hsep>>|<surround|<with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|but>|<minus|1r|<minus|<item-hsep>|0.5fn>>||<plus|1r|0.5fn>|>||<arg|text>>>>>
+  <assign|mc-field|<macro|state|text|<button|<arg|state>><value|mc-field-sep><arg|text>>>
 
-  <drd-props|mc-item|arity|2|accessible|all|border|no>
+  <assign|mc-wide-field|<macro|state|text|<with|par-left|<plus|<value|par-left>|<value|item-hsep>>|<surround|<with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<button|<arg|state>>|<minus|1r|<minus|<item-hsep>|0.5fn>>||<plus|1r|0.5fn>|>||<arg|text>>>>>
+
+  <drd-props|mc-field|arity|2|accessible|1|border|no>
 
   \;
 
@@ -151,7 +193,7 @@
 
   \;
 
-  <assign|mc-list-one|<macro|a|<with|mc-item|<value|mc-wide-item>|<arg|a>>>>
+  <assign|mc-list-one|<macro|a|<with|mc-field|<value|mc-wide-field>|<arg|a>>>>
 
   <assign|mc-list|<xmacro|args|<surround||<right-flush>|<with|button-nr|0|<map-args|mc-list-one|document|args>>>>>
 

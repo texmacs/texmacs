@@ -64,3 +64,14 @@
 
 (tm-define (edu-set-mode mode)
   (edu-operate (buffer-tree) mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Toggling buttons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (mouse-toggle-button t)
+  (:type (-> void))
+  (:synopsis "Toggle a button using the mouse")
+  (:secure #t)
+  (cond ((tm-equal? t "true" ) (tree-set! t "false"))	
+	((tm-equal? t "false") (tree-set! t "true" ))))

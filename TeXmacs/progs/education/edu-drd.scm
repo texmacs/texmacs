@@ -23,23 +23,24 @@
 ;;  solution answer)
 
 
-;; Toggle buttons
+;; Buttons
 
-(define-group button-tag (button-off-tag) (button-on-tag))
-(define-group variant-tag (button-off-tag) (button-on-tag))
-(define-group similar-tag (button-off-tag) (button-on-tag))
+(define-group button-tag
+  button-box button-box* button-circle button-circle*
+  button-arabic button-alpha button-Alpha button-roman button-Roman)
 
-(tm-define-macro (define-button folded unfolded)
-  `(begin
-     (define-group button-off-tag ,folded)
-     (define-group button-on-tag ,unfolded)
-     (define-alternate ,folded ,unfolded)))
+(define-group variant-tag (button-tag))
+(define-group similar-tag (button-tag))
 
-(define-button box-off box-on)
-(define-button cross-off cross-on)
-(define-button circle-off circle-on)
-(define-button numeric-off numeric-on)
-(define-button alpha-off alpha-on)
+;; Buttons themes
+
+(define-group with-button-tag
+  with-button-box with-button-box* with-button-circle with-button-circle*
+  with-button-arabic with-button-alpha with-button-Alpha
+  with-button-roman with-button-Roman)
+
+(define-group variant-tag (with-button-tag))
+(define-group similar-tag (with-button-tag))
 
 ;; Multiple choice environments
 
