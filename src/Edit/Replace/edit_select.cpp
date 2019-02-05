@@ -946,7 +946,7 @@ edit_select_rep::focus_search (path p, bool skip_flag, bool up_flag) {
       is_compound (st, "shared") ||
       is_compound (st, "slide") ||
       is_compound (st, "with-screen-color") ||
-      is_compound (st, "mc-item") ||
+      is_compound (st, "mc-field") ||
       up_flag)
     return focus_search (path_up (p), skip_flag, false);
   return p;

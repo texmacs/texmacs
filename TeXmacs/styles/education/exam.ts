@@ -26,7 +26,7 @@
 
   <use-package|std|env|title-generic|header-generic|section-generic|std-edu|padded-paragraphs>
 
-  <use-module|(education edu-edit)>
+  <use-module|(education edu-markup)>
 
   <\active*>
     <\src-comment>

@@ -25,6 +25,18 @@
 (tm-define (solution-context? t)
   (solution-tag? (tree-label t)))
 
+(tm-define (mc-context? t)
+  (mc-tag? (tree-label t)))
+
+(tm-define (mc-exclusive-context? t)
+  (mc-exclusive-tag? (tree-label t)))
+
+(tm-define (mc-plural-context? t)
+  (mc-plural-tag? (tree-label t)))
+
+(tm-define (with-button-context? t)
+  (with-button-tag? (tree-label t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operating on a tree
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -66,39 +78,106 @@
   (edu-operate (buffer-tree) mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic editing of multiple choice lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (make-mc env)
+  (insert-go-to `(document (,env (mc-field "false" ""))) '(0 0 1 0)))
+
+(tm-define (structured-horizontal? t)
+  (:require (mc-context? t))
+  #t)
+
+(tm-define (focus-can-insert? t)
+  (:require (mc-context? t))
+  #t)
+
+(tm-define (focus-can-remove? t)
+  (:require (mc-context? t))
+  #t)
+
+(define (insert-mc-field t forwards?)
+  (let* ((p (tree->path t))
+	 (i (tree-down-index t))
+	 (d (if forwards? 1 0)))
+    (tree-insert! t (+ i d) '((mc-field "false" "")))
+    (go-to (append p (list (+ i d) 1 0)))))
+
+(tm-define (kbd-enter t shift?)
+  (:require (mc-context? t))
+  (if shift? (former t shift?) (insert-mc-field #t)))
+
+(tm-define (structured-insert-horizontal t forwards?)
+  (:require (mc-context? t))
+  (insert-mc-field t forwards?))
+
+(tm-define (structured-insert-vertical t downwards?)
+  (:require (mc-context? t))
+  (insert-mc-field t forwards?))
+
+(define (remove-mc-field t forwards? structured?)
+  (let* ((i (tree-down-index t))
+	 (n (tree-arity t)))
+    (cond ((> n 1)
+	   (cond ((and structured? (not forwards?) (> i 0))
+		  (set! i (- i 1)))
+		 ((and forwards? (< i (- n 1)))
+		  (tree-go-to t (+ i 1) :start))
+		 ((and forwards? (== i (- n 1)))
+		  (tree-go-to t (+ i -) :end))
+		 ((and (not forwards?) (> i 0))
+		  (tree-go-to t (- i 1) :end))
+		 ((and (not forwards?) (== i 0))
+		  (tree-go-to t (+ i 1) :start)))
+	   (tree-remove t i 1))
+	  ((with-button-context? (tree-up t))
+	   (tree-cut (tree-up t)))
+	  (else (tree-cut t)))))
+
+(tm-define (kbd-backspace)
+  (:require (and (== (cursor-tree) (tree ""))
+		 (tree-is? (tree-up (cursor-tree)) 'mc-field)
+		 (mc-context? (tree-up (tree-up (cursor-tree))))))
+  (remove-mc-field (tree-up (tree-up (cursor-tree))) #f #f))
+
+(tm-define (kbd-delete)
+  (:require (and (== (cursor-tree) (tree ""))
+		 (tree-is? (tree-up (cursor-tree)) 'mc-field)
+		 (mc-context? (tree-up (tree-up (cursor-tree))))))
+  (remove-mc-field (tree-up (tree-up (cursor-tree))) #t #f))
+
+(tm-define (structured-remove-horizontal t forwards?)
+  (:require (mc-context? t))
+  (remove-mc-field t forwards? #t))
+
+(tm-define (structured-remove-vertical t downwards?)
+  (:require (mc-context? t))
+  (remove-mc-field t forwards? #t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Toggling buttons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (clear-buttons t)
+  (cond ((tree-func? t 'mc-field 2)
+	 (tree-set (tree-ref t 0) (tree "false")))
+	((tree-atomic? t) (noop))
+	(else (for-each clear-buttons (tree-children t)))))
+
+(define (handle-exclusive p i)
+  (with t (path->tree p)
+    (cond ((tree-atomic? t) (handle-exclusive (cDr p) (cAr p)))
+	  ((tree-is? t 'mc-field) (handle-exclusive (cDr p) (cAr p)))
+	  ((mc-exclusive-context? t)
+	   (let* ((l (tree-children t))
+		  (n (tree-arity t))
+		  (x (append (sublist l 0 i) (sublist l (+ i 1) n))))
+	     (for-each clear-buttons x))))))
 
 (tm-define (mouse-toggle-button t)
   (:type (-> void))
   (:synopsis "Toggle a button using the mouse")
   (:secure #t)
+  (if (tree->path t) (handle-exclusive (tree->path t) #f))
   (cond ((tm-equal? t "true" ) (tree-set! t "false"))	
 	((tm-equal? t "false") (tree-set! t "true" ))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Customization of titles
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define (title-prefix pre tit)
-  (cond ((tm-is? tit 'doc-make-rich-title)
-	 (with l (tm-children tit)
-	   `(doc-make-rich-title ,@(cDr l) ,(title-prefix pre (cAr l)))))
-	((tm-is? tit 'document)
-	 `(document ,pre ,@(tm-children tit)))
-	(else tit)))
-
-(tm-define (doc-data-exam t xopts)
-  (:secure #t)
-  (let* ((doc   (doc-data t xopts))
-	 (class (select t '(doc-exam-class :%1)))
-	 (date  (select t '(doc-exam-date :%1))))
-    (cond ((and (null? class) (null? date))
-	   doc)
-	  ((and (nnull? class) (null? date))
-	   (title-prefix `(doc-exam-class ,(car class)) doc))
-	  ((and (null? class) (nnull? date))
-	   (title-prefix `(doc-exam-date ,(car date)) doc))
-	  ((and (nnull? class) (nnull? date))
-	   (title-prefix
-	    `(doc-exam-class-date ,(car class) ,(car date)) doc)))))

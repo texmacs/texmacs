@@ -44,14 +44,14 @@
 
 ;; Multiple choice environments
 
-(define-group mc-tag (multiple-choice-tag) (multiple-choices-tag))
-(define-group variant-tag (multiple-choice-tag) (multiple-choices-tag))
-(define-group similar-tag (multiple-choice-tag) (multiple-choices-tag))
+(define-group mc-tag (mc-exclusive-tag) (mc-plural-tag))
+(define-group variant-tag (mc-exclusive-tag) (mc-plural-tag))
+(define-group similar-tag (mc-exclusive-tag) (mc-plural-tag))
 
 (tm-define-macro (define-mc mc mcs)
   `(begin
-     (define-group multiple-choice-tag ,mc)
-     (define-group multiple-choices-tag ,mcs)
+     (define-group mc-exclusive-tag ,mc)
+     (define-group mc-plural-tag ,mcs)
      (define-alternate ,mc ,mcs)))
 
 (define-mc mc-basic mcs-basic)
