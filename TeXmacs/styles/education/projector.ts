@@ -5,10 +5,10 @@
 <\body>
   <\active*>
     <\src-title>
-      <src-style-file|course|1.0>
+      <src-style-file|projector|1.0>
 
       <\src-purpose>
-        The course style.
+        Beamer style with extra features for educational purposes.
       </src-purpose>
 
       <\src-copyright|2019>
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-generic|section-generic|std-edu|padded-paragraphs>
+  <use-package|beamer|std-edu>
 </body>
 
 <\initial>

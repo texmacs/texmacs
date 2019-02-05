@@ -115,6 +115,9 @@
       (and (list-find (get-style-list) (cut style-includes? <> pack))
            (not (list-find (get-style-list) (cut style-overrides? <> pack))))))
 
+(tm-define (not-has-style-package? pack)
+  (not (has-style-package? pack)))
+
 (tm-define (add-style-package pack)
   (:argument pack "Add package")
   (:check-mark "v" has-style-package?)
@@ -126,6 +129,11 @@
   (:proposals pack (with l (get-style-list) (if (null? l) l (cdr l))))
   (:balloon style-get-documentation)
   (set-style-list (list-difference (get-style-list) (list pack))))
+
+(tm-define (remove-style-package* pack)
+  (:argument pack "Remove package")
+  (:check-mark "v" not-has-style-package?)
+  (remove-style-package pack))
 
 (tm-define (toggle-style-package pack)
   (:argument pack "Toggle package")

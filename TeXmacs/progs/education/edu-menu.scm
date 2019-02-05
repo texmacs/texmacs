@@ -39,17 +39,19 @@
   (if (has-style-package? "edu-compact") "Compact" "Regular"))
 
 (menu-bind edu-style-options-menu
-  ("Regular" (remove-style-package "edu-compact"))
+  ("Regular" (remove-style-package* "edu-compact"))
   ("Compact" (add-style-package "edu-compact"))
   ---
   (link page-layout-menu))
 
 (tm-menu (focus-style-extra-menu t)
-  (:require (style-has? "std-edu-dtd"))
+  (:require (and (style-has? "std-edu-dtd")
+                 (not (style-has? "beamer-style"))))
   (=> (eval (current-edu-options))
       (link edu-style-options-menu)))
 
 (tm-menu (focus-style-extra-icons t)
-  (:require (style-has? "std-edu-dtd"))
+  (:require (and (style-has? "std-edu-dtd")
+                 (not (style-has? "beamer-style"))))
   (=> (balloon (eval (current-edu-options)) "Style options")
       (link edu-style-options-menu)))

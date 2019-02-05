@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-exam|section-generic|padded-paragraphs|std-edu>
+  <use-package|std|env|title-generic|header-exam|section-generic|std-edu|padded-paragraphs>
 
   <\active*>
     <\src-comment>
