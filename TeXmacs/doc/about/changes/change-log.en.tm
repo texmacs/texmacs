@@ -12,11 +12,15 @@
 
     <item>Similar spell checking widgets as for search and replace (1.99.9).
 
+    <item>Improved educational styles (1.99.9).
+
+    <item>Multiple choice lists (1.99.9).
+
     <item>A unified Graph plugin for Graphviz, Asymptote (1.99.9).
 
     <item>Import improvements from the FriCAS project (1.99.9).
 
-    <item>Fixes and documentations on the Sage plugin (1.99.9).
+    <item>Fixes and documentation for the Sage plugin (1.99.9).
 
     <item>Several bug fixes (1.99.8).
 
