@@ -144,7 +144,6 @@ qt_pipe_link_rep::is_readable (int channel) {
 
 void
 qt_pipe_link_rep::interrupt () {
-  extern int errno;
   if (!alive) return;
 #ifdef OS_MINGW
   // Not implemented
