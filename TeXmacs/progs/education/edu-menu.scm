@@ -55,3 +55,18 @@
                  (not (style-has? "beamer-style"))))
   (=> (balloon (eval (current-edu-options)) "Style options")
       (link edu-style-options-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customized titles
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-title-menu)
+  (:require (style-has? "exam-style"))
+  ("Class" (make-doc-data-element 'doc-exam-class))
+  ("Date" (make-doc-data-element 'doc-exam-date))
+  ("Miscellanous" (make-doc-data-element 'doc-misc))
+  ("Note" (make-doc-data-element 'doc-note)))
+
+(tm-menu (focus-title-hidden-menu)
+  (:require (style-has? "exam-style"))
+  ("Running title" (make-doc-data-element 'doc-running-title)))

@@ -24,7 +24,43 @@
     </src-title>
   </active*>
 
-  <use-package|std|env|title-generic|header-exam|section-generic|std-edu|padded-paragraphs>
+  <use-package|std|env|title-generic|header-generic|section-generic|std-edu|padded-paragraphs>
+
+  <use-module|(education edu-edit)>
+
+  <\active*>
+    <\src-comment>
+      Specific title information
+    </src-comment>
+  </active*>
+
+  <drd-props|doc-exam-class|border|no>
+
+  <drd-props|doc-exam-date|border|no>
+
+  <assign|doc-exam-class|<\macro|body>
+    <\surround||<vspace|0.5fn>>
+      <doc-title-block|<right-flush><arg|body>>
+    </surround>
+  </macro>>
+
+  <assign|doc-exam-date|<\macro|body>
+    <\surround||<vspace|0.5fn>>
+      <doc-title-block|<right-flush><arg|body>>
+    </surround>
+  </macro>>
+
+  <assign|doc-exam-class-date|<\macro|cl|da>
+    <\surround||<vspace|0.5fn>>
+      <doc-title-block|<arg|cl><right-flush><arg|da>>
+    </surround>
+  </macro>>
+
+  <assign|doc-title|<macro|x|<\surround|<vspace*|0.5fn>|<vspace|0.5fn>>
+    <doc-title-block|<with|math-font-series|bold|font-series|bold|font-size|1.189|font-shape|small-caps|<arg|x>>>
+  </surround>>>
+
+  <assign|doc-data|<xmacro|args|<extern|doc-data-exam|<quote-arg|args>|>>>
 
   <\active*>
     <\src-comment>
