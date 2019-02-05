@@ -58,17 +58,17 @@
     </src-comment>
   </active*>
 
-  <assign|box-off|<xmacro|x|<with|locus-color|preserve|<action|<move|\<box\>||<plus|0.6666ex|-0.5h>>|mouse-unfold|<arg|x>>>>>
+  <assign|box-off|<xmacro|x|<with|locus-color|preserve|<action|\<box\>|mouse-unfold|<arg|x>>>>>
 
-  <assign|box-on|<xmacro|x|<with|locus-color|preserve|<action|<move|\<blacksquare\>||<plus|0.6666ex|-0.5h>>|mouse-fold|<arg|x>>>>>
+  <assign|box-on|<xmacro|x|<with|locus-color|preserve|<action|\<blacksquare\>|mouse-fold|<arg|x>>>>>
 
-  <assign|cross-off|<xmacro|x|<with|locus-color|preserve|<action|<move|\<box\>||<plus|0.6666ex|-0.5h>>|mouse-unfold|<arg|x>>>>>
+  <assign|cross-off|<xmacro|x|<with|locus-color|preserve|<action|\<box\>|mouse-unfold|<arg|x>>>>>
 
-  <assign|cross-on|<xmacro|x|<with|locus-color|preserve|<action|<move|\<boxtimes\>||<plus|0.6666ex|-0.5h>>|mouse-fold|<arg|x>>>>>
+  <assign|cross-on|<xmacro|x|<with|locus-color|preserve|<action|\<boxtimes\>|mouse-fold|<arg|x>>>>>
 
-  <assign|circle-off|<xmacro|x|<with|locus-color|preserve|<action|<move|<huge|\<circ\>>||<plus|0.6ex|-0.5h>>|mouse-unfold|<arg|x>>>>>
+  <assign|circle-off|<xmacro|x|<with|locus-color|preserve|<action|\<#25CB\>|mouse-unfold|<arg|x>>>>>
 
-  <assign|circle-on|<xmacro|x|<with|locus-color|preserve|<action|<move|<huge|\<bullet\>>||<plus|0.6ex|-0.5h>>|mouse-fold|<arg|x>>>>>
+  <assign|circle-on|<xmacro|x|<with|locus-color|preserve|<action|\<#25CF\>|mouse-fold|<arg|x>>>>>
 
   <drd-props|box-off|arity|0>
 
