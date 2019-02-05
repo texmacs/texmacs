@@ -84,6 +84,19 @@
 (tm-define (make-mc env)
   (insert-go-to `(document (,env (mc-field "false" ""))) '(0 0 1 0)))
 
+(define (mc-test-select? plural?)
+  (with-innermost t mc-context?
+    (and t (xor plural? (mc-exclusive-context? t)))))
+
+(tm-define (mc-select plural?)
+  (:check-mark "*" mc-test-select?)
+  (with-innermost t mc-context?
+    (cond ((and plural? (mc-exclusive-context? t))
+	   (alternate-toggle t))
+	  ((and (not plural?) (mc-plural-context? t))
+	   (clear-buttons t)
+	   (alternate-toggle t)))))
+
 (tm-define (structured-horizontal? t)
   (:require (mc-context? t))
   #t)

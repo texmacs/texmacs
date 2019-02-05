@@ -70,3 +70,34 @@
 (tm-menu (focus-title-hidden-menu)
   (:require (style-has? "exam-style"))
   ("Running title" (make-doc-data-element 'doc-running-title)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Multiple choice menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind mc-select-menu
+  ("Exclusive" (mc-select #f))
+  ("Plural" (mc-select #t)))
+
+(tm-menu (focus-toggle-menu t)
+  (:require (mc-context? t)))
+
+(tm-menu (focus-extra-menu t)
+  (:require (mc-context? t))
+  ---
+  (if (mc-exclusive-context? t)
+      (-> "Exclusive" (link mc-select-menu)))
+  (if (mc-plural-context? t)
+      (-> "Plural" (link mc-select-menu))))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (mc-context? t)))
+
+(tm-menu (focus-extra-icons t)
+  (:require (mc-context? t))
+  //
+  (mini #t
+    (if (mc-exclusive-context? t)
+	(=> "Exclusive" (link mc-select-menu)))
+    (if (mc-plural-context? t)
+	(=> "Plural" (link mc-select-menu)))))
