@@ -49,6 +49,10 @@
     </src-comment>
   </active*>
 
+  <assign|doc-exam-block-sep|0fn>
+
+  <assign|doc-exam-title-sep|1fn>
+
   <assign|title*|<macro|body|<with|math-font-series|bold|font-series|bold|font-shape|small-caps|<large|<arg|body>>>>>
 
   <assign|title|<\macro|body>
