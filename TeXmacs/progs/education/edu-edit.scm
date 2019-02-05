@@ -78,11 +78,16 @@
   (edu-operate (buffer-tree) mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Basic editing of multiple choice lists
+;; Multiple choice lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (make-mc env)
   (insert-go-to `(document (,env (mc-field "false" ""))) '(0 0 1 0)))
+
+(tm-define (make env)
+  (if (in? env (mc-tag-list))
+      (make-mc env)
+      (former env)))
 
 (define (mc-test-select? plural?)
   (with-innermost t mc-context?
@@ -96,6 +101,45 @@
 	  ((and (not plural?) (mc-plural-context? t))
 	   (clear-buttons t)
 	   (alternate-toggle t)))))
+
+(tm-define (mc-get-button-theme)
+  (with t (tree-innermost with-button-context?)
+    (and t (tree-label t))))
+
+(tm-define (mc-get-pretty-button-theme)
+  (with th (mc-get-button-theme)
+    (cond ((== th #f) "Default")
+          ((== th 'with-button-box) "Plain boxes")
+          ((== th 'with-button-box*) "Crossed boxes")
+          ((== th 'with-button-circle) "Plain circles")
+          ((== th 'with-button-circle*) "Crossed circles")
+          ((== th 'with-button-arabic) "1, 2, 3")
+          ((== th 'with-button-alpha) "a, b, c")
+          ((== th 'with-button-Alpha) "A, B, C")
+          ((== th 'with-button-roman) "i, ii, iii")
+          ((== th 'with-button-Roman) "I, II, III")
+          (else "Unknown"))))
+
+(define (mc-test-button-theme? th)
+  (if (and (list-2? th) (== (car th) 'quote)) (set! th (cadr th)))
+  (== (mc-get-button-theme) th))
+
+(tm-define (mc-set-button-theme th)
+  (:check-mark "*" mc-test-button-theme?)
+  (with t (tree-innermost with-button-context?)
+    (cond ((and t th)
+           (tree-assign-node! t th))
+          ((and t (not th))
+           (tree-remove-node! t 0)
+           (when (tree-func? t 'document 1)
+             (tree-remove-node! t 0)))
+          ((and (not t) th)
+           (with-innermost mc mc-context?
+             (tree-set! mc `(,th ,mc)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing entries of multiple choice lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (structured-horizontal? t)
   (:require (mc-context? t))
@@ -118,7 +162,7 @@
 
 (tm-define (kbd-enter t shift?)
   (:require (mc-context? t))
-  (if shift? (former t shift?) (insert-mc-field #t)))
+  (if shift? (former t shift?) (insert-mc-field t #t)))
 
 (tm-define (structured-insert-horizontal t forwards?)
   (:require (mc-context? t))

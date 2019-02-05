@@ -98,7 +98,7 @@
 
   <assign|circled-button-padding|0.5spc>
 
-  <assign|render-circled-button|<macro|state|text|sep|<with|ornament-shape|rounded|ornament-border|<if|<arg|state>|1ln|0ln>|ornament-hpadding|<value|circled-button-padding>|ornament-vpadding|<value|circled-button-padding>|locus-color|preserve|<resize|<ornament|<action|<arg|text>|mouse-toggle-button|<arg|state>>><shift|<arg|sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>><assign|button-nr|<plus|<value|button-nr>|1>>>>
+  <assign|render-circled-button|<macro|state|text|sep|<with|ornament-shape|rounded|ornament-color||ornament-border|<if|<arg|state>|1ln|0ln>|ornament-hpadding|<value|circled-button-padding>|ornament-vpadding|<value|circled-button-padding>|locus-color|preserve|<resize|<ornament|<action|<arg|text>|mouse-toggle-button|<arg|state>>><shift|<arg|sep>|<minus|<value|ornament-hpadding>>|>|<plus|1r|-1tab>|||>><assign|button-nr|<plus|<value|button-nr>|1>>>>
 
   \;
 
@@ -164,46 +164,54 @@
 
   \;
 
-  <assign|mc-basic-sep|2em>
+  <assign|mc-monospaced-cols|5>
 
-  <assign|mc-basic-one|<macro|a|<hgroup|<arg|a>><space|<value|mc-basic-sep>>
+  <assign|mc-monospaced-one|<macro|a|nr|<resize|<arg|a>|||<over|0.9999par|<value|mc-monospaced-cols>>|><if|<equal|<mod|<plus|<arg|nr>|1>|<value|mc-monospaced-cols>>|0>|<line-break>>>>
+
+  <assign|mc-monospaced|<xmacro|args|<with|dummy|<value|mc-monospaced-cols>|button-nr|0|<map-args|mc-monospaced-one|concat|args>>>>
+
+  <assign|mcs-monospaced|<xmacro|args|<with|dummy|<value|mc-monospaced-cols>|button-nr|0|<map-args|mc-monospaced-one|concat|args>>>>
+
+  <drd-props|mc-monospaced|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|mcs-monospaced|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|mc-horizontal-sep|2em>
+
+  <assign|mc-horizontal-one|<macro|a|<hgroup|<arg|a>><space|<value|mc-horizontal-sep>>
   >>
 
-  <assign|mc-basic|<xmacro|args|<with|dummy|<value|mc-basic-sep>|button-nr|0|<map-args|mc-basic-one|concat|args>>>>
+  <assign|mc-horizontal|<xmacro|args|<with|dummy|<value|mc-horizontal-sep>|button-nr|0|<map-args|mc-horizontal-one|concat|args>>>>
 
-  <assign|mcs-basic|<xmacro|args|<with|dummy|<value|mc-basic-sep>|button-nr|0|<map-args|mc-basic-one|concat|args>>>>
+  <assign|mcs-horizontal|<xmacro|args|<with|dummy|<value|mc-horizontal-sep>|button-nr|0|<map-args|mc-horizontal-one|concat|args>>>>
 
-  <drd-props|mc-basic|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|mc-horizontal|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <drd-props|mcs-basic|arity|<tuple|repeat|1|1>|accessible|all>
-
-  \;
-
-  <assign|mc-std-cols|5>
-
-  <assign|mc-std-one|<macro|a|nr|<resize|<arg|a>|||<over|0.9999par|<value|mc-std-cols>>|><if|<equal|<mod|<plus|<arg|nr>|1>|<value|mc-std-cols>>|0>|<line-break>>>>
-
-  <assign|mc-std|<xmacro|args|<with|dummy|<value|mc-std-cols>|button-nr|0|<map-args|mc-std-one|concat|args>>>>
-
-  <assign|mcs-std|<xmacro|args|<with|dummy|<value|mc-std-cols>|button-nr|0|<map-args|mc-std-one|concat|args>>>>
-
-  <drd-props|mc-std|arity|<tuple|repeat|1|1>|accessible|all>
-
-  <drd-props|mcs-std|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|mcs-horizontal|arity|<tuple|repeat|1|1>|accessible|all>
 
   \;
 
-  <assign|mc-list-one|<macro|a|<with|mc-field|<value|mc-wide-field>|<arg|a>>>>
+  <assign|mc-vertical-one|<macro|a|<with|mc-field|<value|mc-wide-field>|<arg|a>>>>
 
-  <assign|mc-list|<xmacro|args|<surround||<right-flush>|<with|button-nr|0|<map-args|mc-list-one|document|args>>>>>
+  <assign|mc-vertical|<xmacro|args|<surround||<right-flush>|<with|button-nr|0|<map-args|mc-vertical-one|document|args>>>>>
 
-  <assign|mcs-list|<xmacro|args|<surround||<right-flush>|<with|button-nr|0|<map-args|mc-list-one|document|args>>>>>
+  <assign|mcs-vertical|<xmacro|args|<surround||<right-flush>|<with|button-nr|0|<map-args|mc-vertical-one|document|args>>>>>
 
-  <drd-props|mc-list|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|mc-vertical|arity|<tuple|repeat|1|1>|accessible|all>
 
-  <drd-props|mcs-list|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|mcs-vertical|arity|<tuple|repeat|1|1>|accessible|all>
 
   \;
+
+  <assign|mc|<value|mc-monospaced>>
+
+  <assign|mcs|<value|mcs-monospaced>>
+
+  <drd-props|mc|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|mcs|arity|<tuple|repeat|1|1>|accessible|all>
 </body>
 
 <\initial>

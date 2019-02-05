@@ -447,6 +447,11 @@
   ("Long" (make-tmlist 'description-long))
   ("Paragraphs" (make-tmlist 'description-paragraphs)))
 
+(menu-bind lists-menu
+  (-> "Itemize" (link itemize-menu))
+  (-> "Enumerate" (link enumerate-menu))
+  (-> "Description" (link description-menu)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatically generated content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -499,9 +504,7 @@
       (-> "Automatic" (link automatic-menu)))
   (if (style-has? "std-list-dtd")
       ---
-      (-> "Itemize" (link itemize-menu))
-      (-> "Enumerate" (link enumerate-menu))
-      (-> "Description" (link description-menu))))
+      (link lists-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text menus for inserting inline content

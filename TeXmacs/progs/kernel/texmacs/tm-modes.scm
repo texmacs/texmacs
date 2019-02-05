@@ -133,6 +133,8 @@
   (in-screens% (inside? 'screens))
   (in-beamer% (style-has? "beamer-style"))
   (in-poster% (style-has? "poster-style"))
+  (in-edu% (style-has? "std-edu-dtd"))
+  (in-edu-text% #t in-text% in-edu%)
   (with-any-selection% (selection-active-any?))
   (with-active-selection% (selection-active-normal?))
   (in-cpp% (== (get-env "prog-language") "cpp"))

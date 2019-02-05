@@ -72,12 +72,52 @@
   ("Running title" (make-doc-data-element 'doc-running-title)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Multiple choice menus
+;; Inserting multiple choice lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind mc-menu
+  ("Default" (make-tmlist 'mc))
+  ---
+  ("Monospaced" (make-mc 'mc-monospaced))
+  ("Horizontal" (make-mc 'mc-horizontal))
+  ("Vertical" (make-mc 'mc-vertical)))
+
+(menu-bind list-menu
+  (:require (style-has? "std-edu-dtd"))
+  (former)
+  ---
+  ("Multiple choice" (make-mc 'mc))
+  ---
+  ("Monospaced" (make-mc 'mc-monospaced))
+  ("Horizontal" (make-mc 'mc-horizontal))
+  ("Vertical" (make-mc 'mc-vertical)))
+
+(menu-bind lists-menu
+  (:require (style-has? "std-edu-dtd"))
+  (former)
+  (-> "Multiple choice" (link mc-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customizing multiple choice lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind mc-select-menu
   ("Exclusive" (mc-select #f))
   ("Plural" (mc-select #t)))
+
+(menu-bind mc-button-theme-menu
+  ("Default" (mc-set-button-theme #f))
+  ---
+  ("Plain boxes" (mc-set-button-theme 'with-button-box))
+  ("Crossed boxes" (mc-set-button-theme 'with-button-box*))
+  ("Plain circles" (mc-set-button-theme 'with-button-circle))
+  ("Crossed circles" (mc-set-button-theme 'with-button-circle*))
+  ---
+  ("1, 2, 3" (mc-set-button-theme 'with-button-arabic))
+  ("a, b, c" (mc-set-button-theme 'with-button-alpha))
+  ("A, B, C" (mc-set-button-theme 'with-button-Alpha))
+  ("i, ii, iii" (mc-set-button-theme 'with-button-roman))
+  ("I, II, III" (mc-set-button-theme 'with-button-Roman)))
 
 (tm-menu (focus-toggle-menu t)
   (:require (mc-context? t)))
@@ -88,7 +128,9 @@
   (if (mc-exclusive-context? t)
       (-> "Exclusive" (link mc-select-menu)))
   (if (mc-plural-context? t)
-      (-> "Plural" (link mc-select-menu))))
+      (-> "Plural" (link mc-select-menu)))
+  (-> (eval (mc-get-pretty-button-theme))
+      (link mc-button-theme-menu)))
 
 (tm-menu (focus-toggle-icons t)
   (:require (mc-context? t)))
@@ -100,4 +142,8 @@
     (if (mc-exclusive-context? t)
 	(=> "Exclusive" (link mc-select-menu)))
     (if (mc-plural-context? t)
-	(=> "Plural" (link mc-select-menu)))))
+	(=> "Plural" (link mc-select-menu))))
+  //
+  (mini #t
+    (=> (eval (mc-get-pretty-button-theme))
+        (link mc-button-theme-menu))))

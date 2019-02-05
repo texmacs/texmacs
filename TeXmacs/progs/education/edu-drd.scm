@@ -54,6 +54,7 @@
      (define-group mc-plural-tag ,mcs)
      (define-alternate ,mc ,mcs)))
 
-(define-mc mc-basic mcs-basic)
-(define-mc mc-std mcs-std)
-(define-mc mc-list mcs-list)
+(define-mc mc mcs)
+(define-mc mc-monospaced mcs-monospaced)
+(define-mc mc-horizontal mcs-horizontal)
+(define-mc mc-vertical mcs-vertical)
