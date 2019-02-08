@@ -25,7 +25,7 @@
     <item>Several bug fixes (1.99.8).
 
     <item>Support of binary packages for various GNU/<name|Linux>
-    distributions, cosntructed using <name|Suse> <name|OpenBuild> services
+    distributions, constructed using <name|Suse> <name|OpenBuild> services
     (1.99.8).
 
     <item>Several new algorithms for micro typography: roots, mathematical
