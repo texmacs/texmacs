@@ -155,7 +155,7 @@ def do_module_hierarchy(mod, attr):
 	options.
 	"""
 	dot = attr.find('.')
- 	if dot>0:
+	if dot>0:
 		if hasattr(mod, attr[:dot]):
 			next = getattr(mod, attr[:dot])
 			return do_module_hierarchy(next, attr[dot+1:])
@@ -272,7 +272,10 @@ my_globals['__doc__'] = """TeXmacs SAGE plugin.
 capt = Capture()
 os.chdir( os.environ['HOME'] + '/.TeXmacs/system/tmp')
 stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
-co = compile('import __builtin__ as __builtins__', 'tm_sage', 'exec')
+if os.sys.version[0] == '2':
+	co = compile('import __builtin__ as __builtins__', 'tm_sage', 'exec')
+else:
+	co = compile('import builtins', 'tm_sage', 'exec')
 eval(co, my_globals)
 os.sys.stdout = stdout_saved
 co = compile('from sage.all import *', 'tm_sage', 'exec')
