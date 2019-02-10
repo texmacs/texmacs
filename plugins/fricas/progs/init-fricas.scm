@@ -13,6 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (plugin-configure fricas
+  (:macpath "FriCAS*" "Contents/Resources/bin")
   (:require (url-exists-in-path? "fricas"))
   (:launch "fricas -texmacs")
   (:session "FriCAS")

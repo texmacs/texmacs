@@ -84,10 +84,10 @@
 (tm-define (make-mc env)
   (insert-go-to `(document (,env (mc-field "false" ""))) '(0 0 1 0)))
 
-(tm-define (make env)
-  (if (in? env (mc-tag-list))
-      (make-mc env)
-      (former env)))
+(tm-define (make tag . opt-arity)
+  (if (in? tag (mc-tag-list))
+      (make-mc tag)
+      (apply former (cons tag opt-arity))))
 
 (define (mc-test-select? plural?)
   (with-innermost t mc-context?
