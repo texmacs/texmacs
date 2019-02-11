@@ -1,5 +1,17 @@
 
 (virtual-font
+  (emu2-tslash (unindent (crop (part (crop /) * * 0.5 *))))
+  (emu2-tbackslash (hor-flip emu-tslash))
+  (emu2-bslash (unindent (crop (part (crop /) * * * 0.5))))
+  (emu2-bbackslash (hor-flip emu-bslash))
+  (emu2-langle-pre (unindent (join (unindent emu-bbackslash)
+                                  (unindent emu-tslash))))
+  (emu2-rangle-pre (unindent (join (unindent* emu-bslash)
+                                  (unindent* emu-tbackslash))))
+  (emu2-langle (with sc (/ (height (crop [)) (height emu-langle-pre))
+                (align* (magnify emu-langle-pre * sc) [ * 0.5)))
+  (emu2-rangle (with sc (/ (height (crop ])) (height emu-rangle-pre))
+                (align* (magnify emu-rangle-pre * sc) ] * 0.5)))
   (big-iint-1 (glue big-int-1 big-int-1))
   (big-iint-2 (glue big-int-2 big-int-2))
   (big-iiint-1 (glue big-int-1 big-iint-1))

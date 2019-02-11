@@ -34,10 +34,11 @@ RESOURCE(smart_map);
 #define REWRITE_CYRILLIC       2
 #define REWRITE_LETTERS        3
 #define REWRITE_SPECIAL        4
-#define REWRITE_POOR_BBB       5
-#define REWRITE_ITALIC_GREEK   6
-#define REWRITE_UPRIGHT_GREEK  7
-#define REWRITE_IGNORE         8
+#define REWRITE_EMULATE        5
+#define REWRITE_POOR_BBB       6
+#define REWRITE_ITALIC_GREEK   7
+#define REWRITE_UPRIGHT_GREEK  8
+#define REWRITE_IGNORE         9
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -710,6 +711,7 @@ smart_font_rep::smart_font_rep (
         this->copy_math_pars (fn[italic_nr]);
       }
       (void) sm->add_font (tuple ("special"), REWRITE_SPECIAL);
+      (void) sm->add_font (tuple ("emu-bracket"), REWRITE_EMULATE);
       (void) sm->add_font (tuple ("other"), REWRITE_NONE);
       (void) sm->add_font (tuple ("regular"), REWRITE_LETTERS);
       (void) sm->add_font (tuple ("bold-math"), REWRITE_LETTERS);
@@ -803,6 +805,8 @@ rewrite (string s, int kind) {
     return rewrite_letters (s);
   case REWRITE_SPECIAL:
     return special_table [s];
+  case REWRITE_EMULATE:
+    return (N(s) <= 1? s: string ("<emu-") * s(1, N(s)));
   case REWRITE_POOR_BBB:
     return s (N(s)-2, N(s)-1);
   case REWRITE_ITALIC_GREEK:
@@ -1054,6 +1058,7 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   if (has_poor_rubber) {
     if (goal == "<sqrt>") goal= "|"; // FIXME: better goal?
     if (goal == "<||>" || goal == "<interleave>") goal= "|";
+    if (goal == "<langle>" || goal == "<rangle>") goal= "/";
     if (goal == "<lfloor>" || goal == "<lceil>" ||
         goal == "<llbracket>" || goal == "<dlfloor>" || goal == "<dlceil>" ||
         goal == "<tlbracket>" || goal == "<tlfloor>" || goal == "<tlceil>")
@@ -1114,9 +1119,14 @@ smart_font_rep::resolve (string c) {
       return sm->add_char (tuple ("special"), c);
     }
     if (find_in_emu_bracket (c) && !is_italic_font (mfam)) {
-      //cout << "Found " << c << " in emu-bracket\n";
+      //cout << "Found " << c << " in virtual emu-bracket\n";
       return sm->add_char (tuple ("virtual", "emu-bracket"), c);
     }
+    if (c == "<langle>" || c == "<rangle>")
+      if (!is_italic_font (mfam) && fn[SUBFONT_MAIN]->supports ("/")) {
+        //cout << "Found " << c << " in emu-bracket\n";
+        return sm->add_char (tuple ("emu-bracket"), c);
+      }
   }
 
   for (int attempt= 1; attempt <= FONT_ATTEMPTS; attempt++) {
@@ -1187,6 +1197,8 @@ smart_font_rep::initialize_font (int nr) {
     fn[nr]= smart_font_bis (a[1], variant, series, shape, sz, hdpi, dpi);
   else if (a[0] == "special")
     fn[nr]= smart_font_bis (family, variant, series, "right", sz, hdpi, dpi);
+  else if (a[0] == "emu-bracket")
+    fn[nr]= virtual_font (this, "emu-bracket", sz, hdpi, dpi, false);
   else if (a[0] == "other") {
     int nvdpi= adjusted_dpi ("roman", variant, series, "mathitalic", 1);
     int nhdpi= (hdpi * nvdpi + (dpi>>1)) / dpi;

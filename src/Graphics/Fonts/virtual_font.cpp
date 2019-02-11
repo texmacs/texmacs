@@ -307,6 +307,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
       is_tuple (t, "widen", 3) ||
       is_tuple (t, "enlarge") ||
       is_tuple (t, "unindent", 1) ||
+      is_tuple (t, "unindent*", 1) ||
       is_tuple (t, "crop", 1) ||
       is_tuple (t, "hor-crop", 1) ||
       is_tuple (t, "left-crop", 1) ||
@@ -714,6 +715,13 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
   if (is_tuple (t, "unindent", 1)) {
     glyph gl= compile (t[1], ex);
     SI dx= -ex->x1;
+    move (ex, dx, 0);
+    return move (gl, dx, 0);
+  }
+
+  if (is_tuple (t, "unindent*", 1)) {
+    glyph gl= compile (t[1], ex);
+    SI dx= -ex->x2;
     move (ex, dx, 0);
     return move (gl, dx, 0);
   }
@@ -1343,6 +1351,13 @@ virtual_font_rep::draw_tree (renderer ren, scheme_tree t, SI x, SI y) {
     metric ex;
     get_metric (t[1], ex);
     draw_tree (ren, t[1], x - ex->x1, y);
+    return;
+  }
+
+  if (is_tuple (t, "unindent*", 1)) {
+    metric ex;
+    get_metric (t[1], ex);
+    draw_tree (ren, t[1], x - ex->x2, y);
     return;
   }
 

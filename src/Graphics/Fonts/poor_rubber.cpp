@@ -264,6 +264,10 @@ poor_rubber_font_rep::supports (string s) {
         r == "{" || r == "}" ||
         r == "/" || r == "\\" || r == "|")
       return base->supports (r);
+    if (r == "langle" || r == "rangle") {
+      if (base->supports ("<" * r * ">")) return true;
+      return base->supports ("/");
+    }
     if (r == "||" || r == "interleave") {
       if (base->supports ("<" * r * ">")) return true;
       return base->supports ("|");
@@ -278,10 +282,6 @@ poor_rubber_font_rep::supports (string s) {
         r == "tlceil" || r == "trceil") {
       if (base->supports ("<" * r * ">")) return true;
       return base->supports ("[") && base->supports ("]");
-    }
-    if (r == "langle" || r == "rangle") {
-      if (base->supports ("<" * r * ">")) return true;
-      //return base->supports ("<less>") && base->supports ("<gtr>");
     }
     if (r == "sqrt")
       if (base->supports ("<#23B7>")) return true;      
