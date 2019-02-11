@@ -15,6 +15,8 @@
                     (align* (magnify emu-rangle-pre * sc) ] * 0.5)))
   (emu-langle (unindent (enlarge emu-langle-bis 0.1 0.1 0 0)))
   (emu-rangle (unindent (enlarge emu-rangle-bis 0.1 0.1 0 0)))
+  (emu-llangle (join (0 0 emu-langle) (0.2 0 emu-langle)))
+  (emu-rrangle (join (0 0 emu-rangle) (0.2 0 emu-rangle)))
   (emu-lfloor (join (part [ * * * 0.5) (part [ * * 0.25 0.75 0  0.25)))
   (emu-rfloor (join (part ] * * * 0.5) (part ] * * 0.25 0.75 0  0.25)))
   (emu-lceil  (join (part [ * * 0.5 *) (part [ * * 0.25 0.75 0 -0.25)))

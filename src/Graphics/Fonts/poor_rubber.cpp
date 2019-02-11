@@ -163,7 +163,9 @@ poor_rubber_font_rep::search_font (string s, string& r) {
     int thin= (is_thin (r)? 1: 0);
     int code;
     if (num <= MAGNIFIED_NUMBER ||
-        r == "/" || r == "\\" || r == "langle" || r == "rangle") {
+        r == "/" || r == "\\" ||
+        r == "langle" || r == "rangle" ||
+        r == "llangle" || r == "rrangle") {
       num= min (num, MAGNIFIED_NUMBER);
       if (N(r) > 1) r= "<" * r * ">";
       if (N(r)>1 && !base->supports (r)) {
@@ -264,7 +266,8 @@ poor_rubber_font_rep::supports (string s) {
         r == "{" || r == "}" ||
         r == "/" || r == "\\" || r == "|")
       return base->supports (r);
-    if (r == "langle" || r == "rangle") {
+    if (r == "langle" || r == "rangle" ||
+        r == "llangle" || r == "rrangle") {
       if (base->supports ("<" * r * ">")) return true;
       return base->supports ("/");
     }
