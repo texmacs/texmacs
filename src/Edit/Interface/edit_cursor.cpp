@@ -34,6 +34,9 @@ cursor& edit_cursor_rep::the_ghost_cursor () { return mv; }
 
 static bool searching_forwards;
 
+//#define old_cursor_accessible
+
+#ifdef old_cursor_accessible
 path
 edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
   //time_t t1= texmacs_time ();
@@ -61,6 +64,42 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
   //if (t2-t1 >= 1) cout << "made_cursor_accessible took " << t2-t1 << "ms\n";
   return p;
 }
+#else
+path
+edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
+  //time_t t1= texmacs_time ();
+  path start_p= p;
+  bool inverse= false;
+  int old_mode= get_access_mode ();
+  if (get_init_string (MODE) == "src")
+    set_access_mode (DRD_ACCESS_SOURCE);
+  while (!is_accessible_cursor (et, p) && !in_source ()) {
+    ASSERT (rp <= p, "path outside document");
+    tree st = subtree (et, rp);
+    path sp = p / rp;    
+    path pp = sp;
+    int  dir= (forwards ^ inverse)? 1: -1;
+    path cp = closest_accessible_inside (st, sp, dir);
+    if (cp != sp) sp= cp;
+    else {
+      if (dir > 0) sp= next_valid (st, cp);
+      else sp= previous_valid (st, cp);
+    }
+    if ((dir > 0 && !path_inf (pp, sp)) ||
+        (dir < 0 && !path_inf (sp, pp))) {
+      if (inverse) {
+        p= closest_accessible_inside (st, sp, forwards? 1: -1); break; }
+      else {
+        p= start_p; inverse= true; }
+    }
+    else p= rp * sp;
+  }
+  set_access_mode (old_mode);
+  //time_t t2= texmacs_time ();
+  //if (t2-t1 >= 1) cout << "made_cursor_accessible took " << t2-t1 << "ms\n";
+  return p;
+}
+#endif
 
 path
 edit_cursor_rep::tree_path (path sp, SI x, SI y, SI delta) {
