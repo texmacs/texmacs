@@ -166,25 +166,32 @@ is_accessible_cursor (tree t, path p) {
 }
 
 path
-closest_accessible (tree t, path p) {
+closest_accessible (tree t, path p, int dir) {
   // Given a path p inside t, the path may be unaccessible
   // This routine returns the closest path to p inside t which is accessible
+  // dir in {-1, 0, 1} specifies the search direction
   // The routine returns nil if there exists no accessible path inside t
   if (is_atomic (t)) return p;
+  else if (is_nil (p)) return closest_accessible (t, path (0), dir);
   else if (is_atom (p) && !the_drd->is_child_enforcing (t)) return p;
   else {
     int i, k= p->item, n= N(t);
-    if (p == 1) k= max (0, n-1);
+    if (p == path (1)) k= max (0, n-1);
     for (i=0; i<n; i++) {
-      int j= ((i&1) == 0? (k+(i>>1) % n): (k+n-((i+1)>>1) % n));
+      int j;
+      if (dir == 0) j= ((i&1) == 0? (k+(i>>1) % n): (k+n-((i+1)>>1) % n));
+      else if (dir == 1) j= ((k+i) < n? (k+i): (n-i-1));
+      else j= (k >= i? (k-i): i);
       if (the_drd->is_accessible_child (t, j)) {
 	// FIXME: certain tags modify source accessability props
 	// FIXME: cells with non-trivial span may lead to unaccessability
 	// FIXME: very dynamic markup should be treated after typesetting
 	if (is_atom (p) && is_atomic (t[j]))
 	  return path (j, p->item * (j < k? N (t[j]->label): 0));
-	path sp= (is_atom (p)? (j < k? path (1): path (0)): p->next);
-	path r= closest_accessible (t[j], sp);
+	path sp  = (j == k? p->next: (j < k? path (1): path (0)));
+        int  sdir= (j == k? dir: (j < k? -1: 1));
+        path sp2 = (is_nil (sp)? path (0): sp);
+	path r   = closest_accessible (t[j], sp2, sdir);
 	if (!is_nil (r)) {
 	  r= path (j, r);
 	  if (!is_concat (t) || !next_without_border (t, r)) {
@@ -204,6 +211,14 @@ closest_accessible (tree t, path p) {
     }
     return path ();
   }
+}
+
+path
+closest_accessible_inside (tree t, path p, int dir) {
+  path q= closest_accessible (t, p, dir);
+  if (!is_nil (q)) return q;
+  if (dir <= 0) return path (0);
+  else return path (right_index (t));
 }
 
 /******************************************************************************
