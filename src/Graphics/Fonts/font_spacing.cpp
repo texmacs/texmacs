@@ -139,7 +139,7 @@ font_rep::get_spacing_entry (int mode, tree t, int i) {
   case SPC_APPLY:
     if (t == "default" || t == "wide") {
       if (mode >= 0) return space (mspc->min>>1, mspc->def>>1, mspc->max>>1);
-      else return space (mspc->min>>3, mspc->def>>3, mspc->max>>3);
+      else return space (mspc->min>>2, mspc->def>>2, mspc->max>>2);
     }
     else if (t == "old") {
       if (mode >= 0) return space (mspc->min>>1, mspc->def>>1, mspc->max);
