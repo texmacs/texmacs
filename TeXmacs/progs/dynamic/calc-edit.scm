@@ -116,14 +116,19 @@
                       (ses3 (texmacs->string ses2)))
                  (calc-update-inputs lan3 ses3 prefix (tree-ref t i))))
            (for-each update (.. 0 (tree-arity t)))))
-         (else
-           (for-each (cut calc-update-inputs lan ses prefix <>)
-                     (tree-children t)))))
+        ((and (tree-is? t 'hidden)
+              (tree-up t)
+              (tree-is? (tree-up t) 'screens))
+         (noop))
+        (else
+          (for-each (cut calc-update-inputs lan ses prefix <>)
+                    (tree-children t)))))
 
 (tm-define (calc-repeat-update-inputs lan ses prefix t)
   (with n (ahash-size calc-invalid)
     ;;(display* "  Update inputs " n "\n")
     (calc-update-inputs lan ses prefix t)
+    ;;(display* "  Update inputs " n " (bis)\n")
     (when (!= n (ahash-size calc-invalid))
       (calc-repeat-update-inputs lan ses prefix t))))
 
@@ -236,15 +241,14 @@
 (define check-busy? #f)
 (define check-answer-table (make-ahash-table))
 
-(define (calc-recheck-all)
+(tm-define (calc)
   (when (not check-busy?)
     ;;(display* "Recalculate\n")
     (set! check-busy? #t)
     (delayed
       (:idle 250)
-      (calc)
+      (calc-now)
       (set! check-busy? #f))))
-
 
 (tm-define (calc-lazy-recheck v)
   (and-with t (tree-up v)
@@ -256,7 +260,7 @@
         (when (!= (ahash-ref check-answer-table var) answer)
           ;;(display* var " ~> " answer "\n")
           (ahash-set! check-answer-table var answer)
-          (calc-recheck-all))))))
+          (calc))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Communication with the plug-in
@@ -306,7 +310,7 @@
         (set! calc-invalid (make-ahash-table))
         (calc-continue-first (ahash-table->list calc-todo)))))
 
-(tm-define (calc)
+(tm-define (calc-now)
   (let* ((lan (get-init "prog-scripts"))
 	 (ses (get-init "prog-session")))
     ;;(display* "Dependencies...\n")
