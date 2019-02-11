@@ -309,8 +309,14 @@ static path
 pre_correct (tree t, path p) {
   //cout << "Precorrect " << p << " in " << t << "\n";
   if ((!is_nil (p)) && (!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
-    failed_error << "Precorrecting " << p << " in " << t << "\n";
-    FAILED ("bad path");
+    if (is_func (t, GRAPHICS)) {
+      std_warning << "Precorrecting " << p << " in " << t << "\n";
+      p= path (1);
+    }
+    else {
+      failed_error << "Precorrecting " << p << " in " << t << "\n";
+      FAILED ("bad path");
+    }
   }
 
   if (is_nil (p)) return pre_correct (t, path(0));
