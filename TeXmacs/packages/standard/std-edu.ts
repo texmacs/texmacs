@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|std>>
 
@@ -212,6 +212,28 @@
   <drd-props|mc|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|mcs|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Hidden and shown answers
+    </src-comment>
+  </active*>
+
+  <assign|inline-answer-font|>
+
+  <assign|inline-answer-font-size|1>
+
+  <assign|inline-answer|<macro|body|<with|font|<if|<unequal|<value|inline-answer-font>|>|<value|inline-answer-font>|<value|font>>|font-size|<value|inline-answer-font-size>|<arg|body>>>>
+
+  <assign|hide-answer|<macro|user|answer|<inline-answer|<superpose|<phantom|<arg|answer>>|<arg|user>>>>>
+
+  <assign|hide-answer|<macro|user|answer|<inline-answer|<extend|<arg|user>|||<times|<look-up|<box-info|<arg|answer>|w>|0>|1tmpt>|>>>>
+
+  <assign|show-answer|<macro|user|answer|<inline-answer|<arg|answer>>>>
+
+  <drd-props|hide-answer|arity|2|accessible|0>
+
+  <drd-props|show-answer|arity|2|accessible|1>
 </body>
 
 <\initial>

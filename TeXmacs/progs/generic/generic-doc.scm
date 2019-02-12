@@ -224,22 +224,22 @@
       "menu entries, or icons on the focus toolbar: ")
     ($description-long
       ($describe-item
-          ($inline ($shortcut (traverse-first)) ", "
+          ($inline ($shortcut (kbd-select-if-active traverse-first)) ", "
                    ($menu "Focus" "First similar") ", "
                    ($tmdoc-icon "tm_similar_first.xpm"))
         "Jump to the first " (focus-doc-similar t) ".")
       ($describe-item
-          ($inline ($shortcut (traverse-previous)) ", "
+          ($inline ($shortcut (kbd-select-if-active traverse-previous)) ", "
                    ($menu "Focus" "Previous similar") ", "
                    ($tmdoc-icon "tm_similar_previous.xpm"))
         "Jump to the previous " (focus-doc-similar t) ".")
       ($describe-item
-          ($inline ($shortcut (traverse-next)) ", "
+          ($inline ($shortcut (kbd-select-if-active traverse-next)) ", "
                    ($menu "Focus" "Next similar") ", "
                    ($tmdoc-icon "tm_similar_next.xpm"))
         "Jump to the next " (focus-doc-similar t) ".")
       ($describe-item
-          ($inline ($shortcut (traverse-last)) ", "
+          ($inline ($shortcut (kbd-select-if-active traverse-last)) ", "
                    ($menu "Focus" "Last similar") ", "
                    ($tmdoc-icon "tm_similar_last.xpm"))
         "Jump to the last " (focus-doc-similar t) "."))

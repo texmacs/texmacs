@@ -1,4 +1,4 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|std>>
 
@@ -75,7 +75,7 @@
   </macro>>
 
   <assign|render-folded-documentation|<\macro|button|body1|body2>
-    <\surround||<right-flush><arg|button><vspace|0.5fn>>
+    <\surround|<vspace*|1fn>|<right-flush><arg|button><vspace|0.25fn>>
       <arg|body1>
     </surround>
 
@@ -83,7 +83,7 @@
   </macro>>
 
   <assign|render-unfolded-documentation|<\macro|button|body1|body2>
-    <\surround||<right-flush><arg|button><vspace|0.5fn>>
+    <\surround|<vspace*|1fn>|<right-flush><arg|button><vspace|0.25fn>>
       <arg|body1>
     </surround>
 
