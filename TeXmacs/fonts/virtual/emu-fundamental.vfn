@@ -126,8 +126,8 @@
   (osubset (or (font osubset2 xChalkduster xPapyrus)
                osubset1))
 
-  (oempty0 (join (part odot * 0.3 * *) (part odot 0.7 * * *)
-                 (part odot * * * 0.3) (part odot * * 0.7 *)))
+  (oempty0 (join (part odot * 0.27 * *) (part odot 0.73 * * *)
+                 (part odot * * * 0.27) (part odot * * 0.73 *)))
   (oempty1 (with rad (/ (max (width (crop +)) (height (crop +))) 2)
              (with penw (frac-width)
                (with d (/ penw 2)
