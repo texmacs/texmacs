@@ -179,9 +179,22 @@ closest_accessible (tree t, path p, int dir) {
     if (p == path (1)) k= max (0, n-1);
     for (i=0; i<n; i++) {
       int j;
-      if (dir == 0) j= ((i&1) == 0? (k+(i>>1) % n): (k+n-((i+1)>>1) % n));
-      else if (dir == 1) j= ((k+i) < n? (k+i): (n-i-1));
-      else j= (k >= i? (k-i): i);
+      if (dir == 0)
+        j= ((i&1) == 0? (k+(i>>1) % n): (k+n-((i+1)>>1) % n));
+      else if (dir == 1) {
+        j= k+i;
+        if (j >= n) {
+          if (the_drd->is_child_enforcing (t)) break;
+          return path (1);
+        }
+      }
+      else {
+        j= k-i;
+        if (j < 0) {
+          if (the_drd->is_child_enforcing (t)) break;
+          return path (0);
+        }
+      }
       if (the_drd->is_accessible_child (t, j)) {
 	// FIXME: certain tags modify source accessability props
 	// FIXME: cells with non-trivial span may lead to unaccessability
@@ -190,19 +203,17 @@ closest_accessible (tree t, path p, int dir) {
 	  return path (j, p->item * (j < k? N (t[j]->label): 0));
 	path sp  = (j == k? p->next: (j < k? path (1): path (0)));
         int  sdir= (j == k? dir: (j < k? -1: 1));
-        path sp2 = (is_nil (sp)? path (0): sp);
+        path prop= (p == path (0)? : path (right_index (t[j])));
+        path sp2 = (is_nil (sp)? prop: sp);
 	path r   = closest_accessible (t[j], sp2, sdir);
 	if (!is_nil (r)) {
 	  r= path (j, r);
 	  if (!is_concat (t) || !next_without_border (t, r)) {
 	    if (the_drd->is_parent_enforcing (t) &&
-                !graphics_in_path (t, p)) {
-	      if (r->item == lowest_accessible_child (t) &&
-                  !is_accessible_cursor (t, p))
-		return path (0);
-	      if (r->item == highest_accessible_child (t) &&
-                  !is_accessible_cursor (t, p))
-		return path (1);	    
+                !graphics_in_path (t, p) &&
+                !is_accessible_cursor (t, p)) {
+	      if (r->item == lowest_accessible_child (t)) return path (0);
+	      if (r->item == highest_accessible_child (t)) return path (1);
 	    }
 	    return r;
 	  }

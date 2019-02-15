@@ -80,13 +80,23 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
     path pp = sp;
     int  dir= (forwards ^ inverse)? 1: -1;
     path cp = closest_accessible_inside (st, sp, dir);
-    if (cp != sp) sp= cp;
+    if (cp != sp) {
+      /*
+      if (( forwards && path_less (cp, sp)) ||
+          (!forwards && path_less (sp, cp)))
+        cout << "Warning: " << sp << LF
+             << "  ->   : " << cp << LF
+             << "Tree   : " << subtree (st, path_up (sp)) << LF
+             << "  ->   : " << subtree (st, path_up (cp)) << LF;
+      */
+      sp= cp;
+    }
     else {
       if (dir > 0) sp= next_valid (st, cp);
       else sp= previous_valid (st, cp);
     }
-    if ((dir > 0 && !path_inf (pp, sp)) ||
-        (dir < 0 && !path_inf (sp, pp))) {
+    if ((dir > 0 && !path_less (pp, sp)) ||
+        (dir < 0 && !path_less (sp, pp))) {
       if (inverse) {
         p= closest_accessible_inside (st, sp, forwards? 1: -1); break; }
       else {
@@ -116,8 +126,17 @@ edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
   int i,d;
   path ref_p= tree_path (sp, x0, y0, d0);
   if (ref_p != tp) {
+#ifdef old_cursor_accessible
     tp= ref_p;
     return true;
+#else
+    if (!searching_forwards && path_less (tp, ref_p));
+    else if (searching_forwards && path_less (ref_p, tp));
+    else {
+      tp= ref_p;
+      return true;
+    }
+#endif
   }
   
   // cout << "ref_p = " << ref_p << "\n";
