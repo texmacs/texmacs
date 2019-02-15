@@ -203,7 +203,7 @@ closest_accessible (tree t, path p, int dir) {
 	  return path (j, p->item * (j < k? N (t[j]->label): 0));
 	path sp  = (j == k? p->next: (j < k? path (1): path (0)));
         int  sdir= (j == k? dir: (j < k? -1: 1));
-        path prop= (p == path (0)? : path (right_index (t[j])));
+        path prop= (p == path (0)? p: path (right_index (t[j])));
         path sp2 = (is_nil (sp)? prop: sp);
 	path r   = closest_accessible (t[j], sp2, sdir);
 	if (!is_nil (r)) {
