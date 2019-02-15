@@ -57,6 +57,7 @@ path previous_argument (tree t, path p);
 
 bool inside_same (tree t, path p, path q, tree_label which);
 bool inside_same_or_more (tree t, path p, path q, tree_label which);
+bool inside_contiguous_document (tree t, path op, path oq);
 
 array<tree> search_sections (tree t);
 path previous_section (tree t, path p);

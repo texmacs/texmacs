@@ -547,6 +547,21 @@ inside_same_or_more (tree t, path p, path q, tree_label which) {
   return no_other (st, path_up (sq->next), which);
 }
 
+bool
+inside_contiguous_document (tree t, path op, path oq) {
+  if (!inside_same (t, op, oq, DOCUMENT)) return false;
+  path p= path_up (op), q= path_up (oq);
+  while (!is_nil (p) && !is_func (subtree (t, p), DOCUMENT)) p= path_up (p);
+  while (!is_nil (q) && !is_func (subtree (t, q), DOCUMENT)) q= path_up (q);
+  if (p == q) return true;
+  if (q <= p) return inside_contiguous_document (t, oq, op);
+  if (!(p <= q)) return false;
+  if (path_less (op, oq))
+    return (oq / q) == start (subtree (t, q));
+  else
+    return (oq / q) == end (subtree (t, q));
+}
+
 /******************************************************************************
 * Find sections in document
 ******************************************************************************/
