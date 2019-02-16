@@ -263,7 +263,7 @@
 
   <assign|gap-dots-long|<\macro|body>
     <\with|par-par-sep|0fn>
-      <map-args|gap-dots*|document|body>
+      <extern|ext-apply-on-paragraphs|gap-dots*|<quote-arg|body>>
     </with>
   </macro>>
 
@@ -294,6 +294,12 @@
   <assign|gap-underlined-long|<\macro|body>
     <\with|par-par-sep|0fn>
       <map-args|gap-underlined*|document|body>
+    </with>
+  </macro>>
+
+  <assign|gap-underlined-long|<\macro|body>
+    <\with|par-par-sep|0fn>
+      <extern|ext-apply-on-paragraphs|gap-underlined*|<quote-arg|body>>
     </with>
   </macro>>
 

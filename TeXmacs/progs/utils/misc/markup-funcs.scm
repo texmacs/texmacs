@@ -75,10 +75,10 @@
     (if (>= (string-length s) 2) (substring s 0 2) "en")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Line numbering
+;; Applying a macro recursively to paragraphs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define ext-numbered-root #f)
+(define ext-apply-on-paragraphs-root #f)
 
 (define (ext-mark r t var rew)
   (let* ((rp (tree->path r))
@@ -88,6 +88,31 @@
                (ss (map number->string p)))
           `(mark (arg ,var ,@ss) ,rew))
         rew)))
+
+(define (ext-apply-on-paragraphs-sub macro-name t)
+  (cond ((tree-is? t 'document)
+         (with fun (cut ext-apply-on-paragraphs macro-name <>)
+           `(document ,@(map fun (tm-children t)))))
+        ((tree-multi-line? t)
+         (with fun (cut ext-apply-on-paragraphs-sub macro-name <>)
+           (with rew (cons (tm-label t) (map fun (tm-children t)))
+             (ext-mark ext-apply-on-paragraphs-root t "body" rew))))
+        (else t)))
+
+(tm-define (ext-apply-on-paragraphs macro-name t)
+  (:secure #t)
+  (set! ext-apply-on-paragraphs-root t)
+  (cond ((tree-multi-line? t)
+         (ext-apply-on-paragraphs-sub macro-name t))
+        ((tree-atomic? macro-name)
+         `(,(string->symbol (tree->string macro-name)) ,t))
+        (else t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Line numbering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define ext-numbered-root #f)
 
 (define (ext-numbered-sub t)
   (cond ((tree-is? t 'document)
