@@ -25,6 +25,7 @@ from io        import open
 from io        import StringIO
 from subprocess import Popen, PIPE, STDOUT
 from utils.protocol import *
+from utils.graph    import Graph
 
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
@@ -32,7 +33,6 @@ from utils.protocol import *
 py_ver       = sys.version_info[0];
 __version__  = '1.0'
 __author__   = 'Darcy Shen'
-__metaclass__ = type
 
 my_globals   = {}
 
@@ -61,70 +61,6 @@ def compose_output(data):
         data = ''
     return 'verbatim:%s' % str(data).strip()
 
-class PSOutDummy:
-    """ Dummy class for use with ps_out.
-
-    We return an instance of this class to avoid output after 
-    evaluation in the TeXmacs plugin of ps_out."""
-    
-    def __str__(self):
-        """Return an empty string for compose_output()"""
-        return ''
-    def __repr__(self):
-        return 'PSOutDummy'
-
-def ps_out(out):
-    """Outputs PostScript within TeXmacs.
-
-    According the the type of the argument the following
-    scenarios can take place:    
-
-    If the argument is an instance of matplotlib.pyplot.Figure
-    then its method savefig() will be used to produce an EPS
-    figure. Note that you need to be using a backend which
-    supports this format.
-
-    If the argument is a string and has more than one line, it
-    will be processed as raw Postscript data.
-    
-    If the argument is a string with no line breaks, it is assumed
-    to contain the filename of a Postscript file which will be
-    read (if the file  has no extension, the defaults .eps and .ps
-    will be tried in this order).
-    
-    If the argument is a file or any other object which provides
-    a 'read'  method, data will be obtained by calling such
-    method.
-    
-    Implemented from suggestion by Alvaro Tejero Cantero.
-    Implementation partially based on information provided
-    by Mark Arrasmith.
-    """
-    if 'savefig' in dir(out):
-        str_out = StringIO()
-        out.savefig(str_out, format='eps')
-        data = str_out.getvalue()
-        str_out.close()
-    elif isinstance(out, str):
-        if out.find('\n') > 0:
-            data = out
-        else:
-            ext_list = ['', '.eps', '.ps']
-        for ext in ext_list:
-            if os.path.exists(out+ext): 
-                fd = open(out+ext, 'rb')
-                data = fd.read()
-                fd.close()
-                break
-            else:
-                raise IOError('File "%s%s" not found.' %
-                              (out, str(ext_lis)))
-    elif 'read' in dir(out):
-        data = out.read()
-
-    texmacs_out('ps:' + texmacs_escape(data))
-    return PSOutDummy();
-    
 def do_module_hierarchy(mod, attr):
     """Explore an object's hierarchy.
     
@@ -302,30 +238,6 @@ def compile_help (text):
 
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.iteritems()))
 
-class Graph:
-    name = ""
-    message = ""
-
-    def greet(self):
-        for x in self.message.split("\n"):
-            if len(x) == 0:
-                pass
-            else:
-                texmacs_out("verbatim:" + x + DATA_BEGIN + "prompt#" + self.name + "] " + DATA_END)
-        os.sys.stdout.flush()
-
-    def available(self):
-        return len(self.message) > 0
-
-    def evaluate(self, code):
-        pass
-
-    def get_png_path(self):
-        png = os.getenv("HOME") + "/.TeXmacs/system/tmp/" + self.name + ".png"
-        if os.path.isfile(png):
-            os.remove(png)
-        return png
-
 class Graphviz(Graph):
     def __init__(self, name):
         super(Graphviz, self).__init__()
@@ -374,9 +286,6 @@ class Asymptote(Graph):
 ###############################################################################
 ## Session start
 ###############################################################################
-
-# We insert into the session's namespace the 'ps_out' method.
-my_globals['ps_out'] = ps_out
 
 # As well as some documentation.
 my_globals['__doc__'] = """A Python plugin for TeXmacs.
