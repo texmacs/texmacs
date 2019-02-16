@@ -55,8 +55,17 @@
   (let* ((t (buffer-tree))
          (p (tree->path t))
          (cp (cDr (cursor-path)))
-         (pos (if (list-starts? cp p) (list-tail cp (length p)) (list))))
-    (tree-spell-at spell-language t p pos 1000)))
+         (pos (if (list-starts? cp p) (list-tail cp (length p)) (list)))
+         (sel (get-alt-selection "spell-region")))
+    (if (null? sel)
+        (tree-spell-at spell-language t p pos 1000)
+        (and-let* ((pos1 (car sel))
+                   (pos2 (cadr sel))
+                   (pos1* (and (list-starts? pos1 p)
+                               (list-tail pos1 (length p))))
+                   (pos2* (and (list-starts? pos2 p)
+                               (list-tail pos2 (length p)))))
+          (tree-spell-selection spell-language t p pos1* pos2* 1000)))))
 
 (define (cached-spell-buffer-tree)
   (with sels spell-buffer-cache
@@ -161,6 +170,13 @@
 ;; Highlighting a particular next or previous spell result
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (set-spell-region)
+  (if (selection-active-any?)
+      (set-alt-selection "spell-region"
+                         (list (selection-get-start*)
+                               (selection-get-end*)))
+      (set-alt-selection "spell-region" (list))))
+
 (define (set-spell-reference cur)
   (set-alt-selection "spell-reference" (list cur cur)))
 
@@ -221,13 +237,29 @@
                (with cur (get-spell-reference #f)
                  (spell-previous sels cur #f)))))))
 
-(define (spell-replace-one by)
+(define (spell-replace-one* by)
   (and-with sel (spell-current-selection)
     (go-to* (car sel))
     (selection-set-range-set sel)
     (clipboard-cut "dummy")
     (insert-go-to by (list (string-length by)))
     #t))
+
+(define (spell-replace-one by)
+  (with sel (get-alt-selection "spell-region")
+    (if (null? sel)
+        (spell-replace-one* by)
+        (let* ((pos1 (position-new))
+               (pos2 (position-new)))
+          (position-set pos1 (car sel))
+          (position-set pos2 (cadr sel))
+          (let* ((ret (spell-replace-one* by))
+                 (npos1 (position-get pos1))
+                 (npos2 (position-get pos2)))
+            (position-delete pos1)
+            (position-delete pos2)
+            (set-alt-selection "spell-region" (list npos1 npos2))
+            ret)))))
 
 (tm-define (spell-replace-by by)
   (with-buffer (spell-master-buffer)
@@ -512,6 +544,7 @@
 
 (tm-define (interactive-spell)
   (:interactive #t)
+  (set-spell-region)
   (set! spell-language (get-init "language"))
   (with sels (spell-buffer-tree)
     (if (null? sels)

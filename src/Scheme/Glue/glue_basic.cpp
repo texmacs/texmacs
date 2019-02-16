@@ -2664,6 +2664,29 @@ tmg_tree_spell_at (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
 }
 
 tmscm
+tmg_tree_spell_selection (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5, tmscm arg6) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-spell-selection");
+  TMSCM_ASSERT_CONTENT (arg2, TMSCM_ARG2, "tree-spell-selection");
+  TMSCM_ASSERT_PATH (arg3, TMSCM_ARG3, "tree-spell-selection");
+  TMSCM_ASSERT_PATH (arg4, TMSCM_ARG4, "tree-spell-selection");
+  TMSCM_ASSERT_PATH (arg5, TMSCM_ARG5, "tree-spell-selection");
+  TMSCM_ASSERT_INT (arg6, TMSCM_ARG6, "tree-spell-selection");
+
+  string in1= tmscm_to_string (arg1);
+  content in2= tmscm_to_content (arg2);
+  path in3= tmscm_to_path (arg3);
+  path in4= tmscm_to_path (arg4);
+  path in5= tmscm_to_path (arg5);
+  int in6= tmscm_to_int (arg6);
+
+  // TMSCM_DEFER_INTS;
+  array_path out= spell (in1, in2, in3, in4, in5, in6);
+  // TMSCM_ALLOW_INTS;
+
+  return array_path_to_tmscm (out);
+}
+
+tmscm
 tmg_previous_search_hit (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_ARRAY_PATH (arg1, TMSCM_ARG1, "previous-search-hit");
   TMSCM_ASSERT_PATH (arg2, TMSCM_ARG2, "previous-search-hit");
@@ -9961,6 +9984,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-search-tree-at",  tmg_tree_search_tree_at, 5, 0, 0);
   tmscm_install_procedure ("tree-spell",  tmg_tree_spell, 4, 0, 0);
   tmscm_install_procedure ("tree-spell-at",  tmg_tree_spell_at, 5, 0, 0);
+  tmscm_install_procedure ("tree-spell-selection",  tmg_tree_spell_selection, 6, 0, 0);
   tmscm_install_procedure ("previous-search-hit",  tmg_previous_search_hit, 3, 0, 0);
   tmscm_install_procedure ("next-search-hit",  tmg_next_search_hit, 3, 0, 0);
   tmscm_install_procedure ("navigate-search-hit",  tmg_navigate_search_hit, 4, 0, 0);

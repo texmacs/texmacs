@@ -235,6 +235,7 @@
 "tree-search-tree-at"
 "tree-spell"
 "tree-spell-at"
+"tree-spell-selection"
 "previous-search-hit"
 "next-search-hit"
 "navigate-search-hit"

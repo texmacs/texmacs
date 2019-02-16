@@ -64,17 +64,18 @@ spell_string (tree lan, string s) {
 }
 
 void
-spell_string (tree lan, range_set& sel, string s, path p) {
-  int pos= 0;
-  while (pos < N(s) && s[pos] == ' ') pos++;
-  while (pos < N(s)) {
-    while (pos < N(s) && s[pos] == ' ') pos++;
+spell_string (tree lan, range_set& sel, string s,
+              path p, int pos1, int pos2) {
+  int pos= pos1;
+  while (pos < pos2 && s[pos] == ' ') pos++;
+  while (pos < pos2) {
+    while (pos < pos2 && s[pos] == ' ') pos++;
     int start= pos;
-    while (pos < N(s) && s[pos] != ' ') pos++;
+    while (pos < pos2 && s[pos] != ' ') pos++;
     int end= pos;
     if (!spell_string (lan, s (start, end))) {
       int start2= start, end2= end;
-      if (start < end && is_numeric (s[start]) || is_numeric (s[end-1])) {
+      if (start < end && (is_numeric (s[start]) || is_numeric (s[end-1]))) {
         // NOTE: always accept postal codes; could be a user preference
         bool ok= true;
         for (int i= start; i<end; ) {
@@ -121,7 +122,8 @@ void
 spell (tree mode, tree lan, range_set& sel, tree t, path p) {
   if (N(sel) > spell_max_hits) return;
   if (is_atomic (t)) {
-    if (mode == "text") spell_string (lan, sel, t->label, p); }
+    if (mode == "text")
+      spell_string (lan, sel, t->label, p, 0, N(t->label)); }
   else
     for (int i=0; i<N(t); i++)
       if (is_accessible_for_spell (t, i)) {
@@ -164,6 +166,46 @@ spell (tree mode, tree lan, range_set& sel, tree t, path p, path pos) {
   }
 }
 
+void
+spell (tree mode, tree lan, range_set& sel, tree t,
+       path p, path pos1, path pos2) {
+  cout << "Spell " << p << ", " << (is_atomic (t)? -1: N(t))
+       << "; " << pos1 << " -- " << pos2 << LF;
+  if (is_nil (pos1) || is_nil (pos2));
+  else if (is_atomic (t))
+    spell_string (lan, sel, t->label,
+                  p, max (pos1->item, 0), min (pos2->item, N(t->label)));
+  else if (pos1 == path (0) && pos2 == path (1))
+    spell (mode, lan, sel, t, p);
+  else if (!is_atom (pos1) && !is_atom (pos2) && pos1->item == pos2->item)
+    spell (mode, lan, sel, t[pos1->item],
+           p * pos1->item, pos1->next, pos2->next);
+  else {
+    int i1= 0, i2= N(t);
+    if (!is_atom (pos1)) i1= max (pos1->item, i1);
+    if (!is_atom (pos2)) i2= min (pos2->item + 1, i2);
+    int hits= 0;
+    array<range_set> sub (N(t));
+    for (int i=i1; i<i2; i++) {
+      if (hits > spell_max_hits) break;
+      if (is_accessible_for_spell (t, i)) {
+        tree smode= the_drd->get_env_child (t, i, MODE, mode);
+        tree slan = the_drd->get_env_child (t, i, LANGUAGE, lan);
+        if (i == i1 && !is_atom (pos1) && i1 + 1 < i2)
+          spell (smode, slan, sub[i], t[i],
+                 p * i, pos1->next, path (right_index (t[i])));
+        else if (i == i2 - 1 && !is_atom (pos2) && i1 + 1 < i2)
+          spell (smode, slan, sub[i], t[i],
+                 p * i, path (0), pos2->next);
+        else
+          spell (smode, slan, sub[i], t[i], p * i);
+        hits += N(sub[i]);
+      }
+    }
+    for (int i=i1; i<i2; i++) sel << sub[i];
+  }
+}
+
 /******************************************************************************
 * Front end
 ******************************************************************************/
@@ -187,6 +229,18 @@ spell (string lan, tree t, path p, path pos, int limit) {
   range_set sel;
   //cout << "Spell " << what << "\n";
   spell ("text", lan, sel, t, p, pos);
+  //cout << "Selected " << sel << "\n";
+  spell_max_hits= 1000000;
+  return sel;
+}
+
+range_set
+spell (string lan, tree t, path p, path pos1, path pos2, int limit) {
+  spell_initialize ();
+  spell_max_hits= limit;
+  range_set sel;
+  //cout << "Spell " << what << "\n";
+  spell ("text", lan, sel, t, p, pos1, pos2);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;

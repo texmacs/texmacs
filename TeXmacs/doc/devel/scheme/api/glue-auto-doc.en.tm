@@ -1683,6 +1683,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-spell-selection <scm-arg|string> <scm-arg|content> <scm-arg|path> <scm-arg|path> <scm-arg|path> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
     <scm|(previous-search-hit <scm-arg|array_path> <scm-arg|path> <scm-arg|bool>)>
 <explain-synopsis|no synopsis>
   <|explain>
