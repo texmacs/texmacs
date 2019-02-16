@@ -151,7 +151,7 @@ match (tree t, tree what) {
       if (match_cascaded (t[i], what[cur])) cur++;
       if (cur >= N(what)) return true;
     }
-    return false;
+    return cur >= N(what);
   }
   else {
     if (L(t) != L(what) || N(t) != N(what)) return false;
