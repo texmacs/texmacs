@@ -10,3 +10,4 @@ Testing
 .idea
 cmake-build-debug
 .DS_Store
+*.pyc

@@ -22,14 +22,10 @@ from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
 from io        import open
 from io        import BytesIO
+from utils.protocol import *
 
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
-
-DATA_BEGIN   = chr(2)
-DATA_END     = chr(5)
-DATA_ESCAPE  = chr(27)
-DATA_COMMAND = chr(16)
 
 py_ver       = sys.version_info[0];
 __version__  = '1.14'
@@ -40,18 +36,6 @@ my_globals   = {}
 if py_ver == 3: _input = input
 else:           _input = raw_input
 
-
-def texmacs_escape(data):
-    return data.replace (DATA_BEGIN,DATA_ESCAPE +
-                         DATA_BEGIN).replace (DATA_END, DATA_ESCAPE + DATA_END)
-
-def texmacs_out(out_str):
-    """Feed data back to TeXmacs.
-    
-    Output results back to TeXmacs, with the DATA_BEGIN,
-    DATA_END control characters."""
-
-    print(DATA_BEGIN + out_str + DATA_END)
 
 def compose_output(data):
     """Do some parsing on the output according to its type.
