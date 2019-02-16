@@ -58,3 +58,19 @@
 (define-mc mc-monospaced mcs-monospaced)
 (define-mc mc-horizontal mcs-horizontal)
 (define-mc mc-vertical mcs-vertical)
+
+;; Textual fill out tags
+
+(define-group fill-out-tag (fill-out-short-tag) (fill-out-tab-tag))
+(define-group variant-tag (fill-out-short-tag) (fill-out-tab-tag))
+(define-group similar-tag (fill-out-short-tag) (fill-out-tab-tag))
+
+(tm-define-macro (define-fill-out fo fo*)
+  `(begin
+     (define-group fill-out-short-tag ,fo)
+     (define-group fill-out-tab-tag ,fo*)
+     (define-alternate ,fo ,fo*)))
+
+(define-fill-out fill-out-dots fill-out-dots*)
+(define-fill-out fill-out-underlined fill-out-underlined*)
+(define-fill-out fill-out-box fill-out-box*)
