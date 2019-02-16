@@ -61,6 +61,8 @@
 
 ;; Tags for text with gaps
 
+(define-alternate hide-reply show-reply)
+
 (define-group gap-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
 (define-group variant-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
 (define-group similar-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))

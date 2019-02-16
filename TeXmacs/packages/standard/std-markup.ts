@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|std>>
 
@@ -428,7 +428,7 @@
 
   <assign|stressed-distance|0.2fn>
 
-  <assign|stressed|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<value|stressed-color>|<repeat|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|stressed-distance>>>>>>|<arg|body>>>>>>
+  <assign|stressed|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<value|stressed-color>|<repeat*|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|-|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|stressed-distance>>>>>>|<arg|body>>>>>>
 
   <drd-props|stressed|with-like|yes|arity|1|accessible|all>
 

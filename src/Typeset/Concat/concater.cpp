@@ -261,7 +261,10 @@ concater_rep::typeset (tree t, path ip) {
     typeset_clipped (t, ip);
     break;
   case REPEAT:
-    typeset_repeat (t, ip);
+    typeset_repeat (t, ip, false);
+    break;
+  case VAR_REPEAT:
+    typeset_repeat (t, ip, true);
     break;
   case _FLOAT:
     typeset_float (t, ip);

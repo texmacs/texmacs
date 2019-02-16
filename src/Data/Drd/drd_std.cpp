@@ -160,6 +160,7 @@ init_std_drd () {
         length (3) -> name (3, "right") ->
         length (4) -> name (4, "top"));
   init (REPEAT, "repeat", fixed (1, 1, BIFORM) -> accessible (0));
+  init (VAR_REPEAT, "repeat*", fixed (1, 1, BIFORM) -> accessible (0));
   init (_FLOAT, "float", fixed (2, 1, BIFORM) -> accessible (1));
   init (DATOMS, "datoms",
 	var_repeat (1, 1, BIFORM) -> accessible (1) ->

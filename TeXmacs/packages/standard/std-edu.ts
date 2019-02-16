@@ -283,7 +283,7 @@
 
   <assign|gap-underlined-min-width|2em>
 
-  <assign|gap-underlined-short|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<if|<equal|<value|gap-underlined-color>|>|<value|color>|<value|gap-underlined-color>>|<repeat|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|--|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|gap-underlined-vsep>>>>>>|<render-gap-text|<arg|body>>>>>>>
+  <assign|gap-underlined-short|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<if|<equal|<value|gap-underlined-color>|>|<value|color>|<value|gap-underlined-color>>|<repeat*|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|--|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|gap-underlined-vsep>>>>>>|<render-gap-text|<arg|body>>>>>>>
 
   <assign|gap-underlined|<macro|body|<gap-underlined-short|<hspace|<value|gap-underlined-hpadding>><extend|<arg|body>|||<value|gap-underlined-min-width>|><hspace|<value|gap-underlined-hpadding>>>>>
 

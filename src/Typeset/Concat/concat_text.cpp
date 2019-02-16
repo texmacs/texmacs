@@ -352,12 +352,12 @@ concater_rep::typeset_float (tree t, path ip) {
 ******************************************************************************/
 
 void
-concater_rep::typeset_repeat (tree t, path ip) {
+concater_rep::typeset_repeat (tree t, path ip, bool under) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
   box b1  = typeset_as_concat (env, t[0], descend (ip, 0));
   box b2  = typeset_as_concat (env, t[1], descend (ip, 1));
   SI  xoff= env->get_length (XOFF_DECORATIONS);
-  print (repeat_box (ip, b1, b2, xoff));
+  print (repeat_box (ip, b1, b2, xoff, under));
 }
 
 /******************************************************************************

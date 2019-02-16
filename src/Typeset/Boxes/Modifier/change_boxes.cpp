@@ -464,14 +464,16 @@ clip_box_rep::find_selection (path lbp, path rbp) {
 struct repeat_box_rep: public change_box_rep {
   box repeat;
   SI xoff;
-  repeat_box_rep (path ip, box b, box repeat, SI xoff);
+  bool under;
+  repeat_box_rep (path ip, box b, box repeat, SI xoff, bool under);
   operator tree () { return tree (TUPLE, "repeat", (tree) bs[0]); }
+  int reindex (int i, int item, int n);
   box adjust_kerning (int mode, double factor);
   box expand_glyphs (int mode, double factor);
 };
 
-repeat_box_rep::repeat_box_rep (path ip, box b, box repeat2, SI xoff2):
-  change_box_rep (ip, false), repeat (repeat2), xoff (xoff2)
+repeat_box_rep::repeat_box_rep (path ip, box b, box r2, SI xoff2, bool u2):
+  change_box_rep (ip, false), repeat (r2), xoff (xoff2), under (u2)
 {
   insert (b, 0, 0);
   position ();
@@ -494,16 +496,22 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box repeat2, SI xoff2):
   x2= b->x2; y2= b->y2;
 }
 
+int
+repeat_box_rep::reindex (int i, int item, int n) {
+  if (under) return (i<n? i+1: 0);
+  else return change_box_rep::reindex (i, item, n);
+}
+
 box
 repeat_box_rep::adjust_kerning (int mode, double factor) {
   box body= bs[0]->adjust_kerning (mode, factor);
-  return repeat_box (ip, body, repeat, xoff);
+  return repeat_box (ip, body, repeat, xoff, under);
 }
 
 box
 repeat_box_rep::expand_glyphs (int mode, double factor) {
   box body= bs[0]->expand_glyphs (mode, factor);
-  return repeat_box (ip, body, repeat, xoff);
+  return repeat_box (ip, body, repeat, xoff, under);
 }
 
 /******************************************************************************
@@ -936,8 +944,8 @@ vcorrect_box (path ip, box b, SI top_cor, SI bot_cor) {
 }
 
 box
-repeat_box (path ip, box ref, box repeat, SI xoff) {
-  return tm_new<repeat_box_rep> (ip, ref, repeat, xoff);
+repeat_box (path ip, box ref, box repeat, SI xoff, bool under) {
+  return tm_new<repeat_box_rep> (ip, ref, repeat, xoff, under);
 }
 
 box
