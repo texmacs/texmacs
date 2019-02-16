@@ -169,8 +169,6 @@ spell (tree mode, tree lan, range_set& sel, tree t, path p, path pos) {
 void
 spell (tree mode, tree lan, range_set& sel, tree t,
        path p, path pos1, path pos2) {
-  cout << "Spell " << p << ", " << (is_atomic (t)? -1: N(t))
-       << "; " << pos1 << " -- " << pos2 << LF;
   if (is_nil (pos1) || is_nil (pos2));
   else if (is_atomic (t))
     spell_string (lan, sel, t->label,
