@@ -346,11 +346,14 @@ class Graphviz(Graph):
     def __init__(self, name):
         super(Graphviz, self).__init__()
         self.name = name
-        p = Popen([self.name, "-V"], stderr=PIPE)
-        ret, err = p.communicate()
-        # WARN: The Version Info is in stderr
-        if (p.returncode == 0):
-            self.message = str(err)
+        try:
+            p = Popen([self.name, "-V"], stderr=PIPE)
+            ret, err = p.communicate()
+            # WARN: The Version Info is in stderr
+            if (p.returncode == 0):
+                self.message = str(err)
+        except OSError:
+            pass
 
     def evaluate(self, code):
         png = self.get_png_path()
@@ -366,11 +369,14 @@ class Asymptote(Graph):
     def __init__(self, name):
         super(Asymptote, self).__init__()
         self.name = name
-        p = Popen([self.name, "-version"], stderr=PIPE)
-        ret, err = p.communicate()
-        # WARN: The Version Info is in stderr
-        if (p.returncode == 0):
-            self.message = str(err)
+        try:
+            p = Popen([self.name, "-version"], stderr=PIPE)
+            ret, err = p.communicate()
+            # WARN: The Version Info is in stderr
+            if (p.returncode == 0):
+                self.message = str(err)
+        except OSError:
+            pass
 
     def evaluate(self, code):
         png = self.get_png_path()
@@ -407,22 +413,23 @@ if py_ver == 3:
 else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
-texmacs_out ("verbatim:Generate Graph with your favorite tools in GNU TeXmacs")
-texmacs_out ("verbatim:Created by Darcy Shen, Implemented in Python, dot by default")
-texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plugins")
-texmacs_out ("prompt#dot] ")
-
 grapvizs = map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"])
 others = [Asymptote("asy")]
 graphs = filter(lambda x: x.available(), grapvizs + others)
 graph_names = map(lambda x: x.name, graphs)
 
 if len(graphs) == 0:
-    texmacs_out ("verbatim:Sorry, please check your installation of Graphviz or TeX(TikZ, ...)")
+    texmacs_out ("verbatim:\nSorry, please check your installation of Graphviz/Asymptote")
+    texmacs_out ("prompt#dead] ")
     exit(0)
 
 current = graphs[0]
-current.greet()
+
+texmacs_out ("verbatim:Generate Graph with your favorite tools in GNU TeXmacs")
+texmacs_out ("verbatim:Created by Darcy Shen, Implemented in Python, " + current.name +  " by default")
+texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plugins")
+texmacs_out ("prompt#" + current.name + "] ")
+
 
 # Main session loop.
 while 1:
