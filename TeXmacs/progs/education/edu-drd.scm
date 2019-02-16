@@ -59,18 +59,20 @@
 (define-mc mc-horizontal mcs-horizontal)
 (define-mc mc-vertical mcs-vertical)
 
-;; Textual fill out tags
+;; Tags for text with gaps
 
-(define-group fill-out-tag (fill-out-short-tag) (fill-out-tab-tag))
-(define-group variant-tag (fill-out-short-tag) (fill-out-tab-tag))
-(define-group similar-tag (fill-out-short-tag) (fill-out-tab-tag))
+(define-group gap-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
+(define-group variant-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
+(define-group similar-tag (gap-short-tag) (gap-wide-tag) (gap-long-tag))
 
-(tm-define-macro (define-fill-out fo fo*)
+(tm-define-macro (define-gap gt gt-wide gt-long)
   `(begin
-     (define-group fill-out-short-tag ,fo)
-     (define-group fill-out-tab-tag ,fo*)
-     (define-alternate ,fo ,fo*)))
+     (define-group gap-short-tag ,gt)
+     (define-group gap-wide-tag ,gt-wide)
+     (define-group gap-long-tag ,gt-long)
+     (define-alternate ,gt ,gt-wide)))
 
-(define-fill-out fill-out-dots fill-out-dots*)
-(define-fill-out fill-out-underlined fill-out-underlined*)
-(define-fill-out fill-out-box fill-out-box*)
+(define-gap gap gap-wide gap-long)
+(define-gap gap-dots gap-dots-wide gap-dots-long)
+(define-gap gap-underlined gap-underlined-wide gap-underlined-long)
+(define-gap gap-box gap-box-wide gap-box-long)

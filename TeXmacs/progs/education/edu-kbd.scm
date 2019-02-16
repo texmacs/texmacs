@@ -16,4 +16,12 @@
 
 (kbd-map
   (:mode in-edu-text?)
-  ("text c" (make-mc 'mc)))
+  ("text c" (make-mc 'mc))
+
+  (". . ." (make 'gap))
+  (". . . var" "...")
+  (". . . ." (make 'gap-wide))
+  (". . . . var" "....")
+  (". . . . ." (make 'gap-long))
+  (". . . . . var" ".....")
+  (". . . . . ." "......"))

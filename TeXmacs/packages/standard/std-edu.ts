@@ -215,21 +215,23 @@
 
   <\active*>
     <\src-comment>
-      Hidden and shown replies
+      Possibly hidden text in gaps
     </src-comment>
   </active*>
 
-  <assign|reply-font|>
+  <assign|gap-font|>
 
-  <assign|reply-font-size|1>
+  <assign|gap-font-size|1>
 
-  <assign|render-reply|<macro|body|<with|font|<if|<unequal|<value|reply-font>|>|<value|reply-font>|<value|font>>|font-size|<value|reply-font-size>|<arg|body>>>>
+  <assign|render-gap-text|<macro|body|<with|font|<if|<unequal|<value|gap-font>|>|<value|gap-font>|<value|font>>|font-size|<value|gap-font-size>|<arg|body>>>>
 
-  <assign|hide-reply|<macro|user|answer|<inline-answer|<superpose|<phantom|<arg|answer>>|<arg|user>>>>>
+  \;
 
-  <assign|hide-reply|<macro|user|answer|<inline-answer|<extend|<arg|user>|||<times|<look-up|<box-info|<arg|answer>|w>|0>|1tmpt>|>>>>
+  <assign|hide-reply|<macro|user|answer|<superpose|<phantom|<arg|answer>>|<arg|user>>>>
 
-  <assign|show-reply|<macro|user|answer|<inline-answer|<arg|answer>>>>
+  <assign|hide-reply|<macro|user|answer|<extend|<arg|user>|||<times|<look-up|<box-info|<arg|answer>|w>|0>|1tmpt>|>>>
+
+  <assign|show-reply|<macro|user|answer|<arg|answer>>>
 
   <drd-props|hide-reply|arity|2|accessible|0>
 
@@ -237,69 +239,119 @@
 
   <\active*>
     <\src-comment>
-      Filled out reply fields
+      Text with gaps
     </src-comment>
   </active*>
 
-  <assign|fill-out-dots-color|>
+  <assign|gap-dots-color|>
 
-  <assign|fill-out-dots-vsep|0.2fn>
+  <assign|gap-dots-vsep|0.2fn>
 
-  <assign|fill-out-dots-hsep|0fn>
+  <assign|gap-dots-hsep|0fn>
 
-  <assign|fill-out-dots|<macro|body|<repeat-through|<with|color|<if|<equal|<value|fill-out-dots-color>|>|<value|color>|<value|fill-out-dots-color>>|<move|.||<minus|<value|fill-out-dots-vsep>>><hspace|<value|fill-out-dots-hsep>>>|<arg|body>>>>
+  <assign|gap-dots-hpadding|0.5spc>
 
-  <assign|fill-out-dots*|<macro|body|<fill-out-dots|<arg|body><htab|5mm>>>>
+  <assign|gap-dots-min-width|2em>
 
-  <drd-props|fill-out-dots|with-like|yes|arity|1|accessible|all>
+  <assign|gap-dots-short|<macro|body|<repeat-through|<with|color|<if|<equal|<value|gap-dots-color>|>|<value|color>|<value|gap-dots-color>>|<move|.||<minus|<value|gap-dots-vsep>>><hspace|<value|gap-dots-hsep>>>|<render-gap-text|<arg|body>>>>>
 
-  <drd-props|fill-out-dots*|with-like|yes|arity|1|accessible|all>
+  <assign|gap-dots|<macro|body|<gap-dots-short|<hspace|<value|gap-dots-hpadding>><extend|<arg|body>|||<value|gap-dots-min-width>|><hspace|<value|gap-dots-hpadding>>>>>
 
-  \;
+  <assign|gap-dots*|<macro|body|<gap-dots-short|<arg|body><htab|5mm>>>>
 
-  <assign|fill-out|<value|fill-out-dots>>
+  <assign|gap-dots-wide|<macro|body|<gap-dots-short|<hspace|<value|gap-dots-hpadding>><arg|body><htab|5mm>>>>
 
-  <assign|fill-out*|<value|fill-out-dots*>>
+  <assign|gap-dots-long|<\macro|body>
+    <\with|par-par-sep|0fn>
+      <map-args|gap-dots*|document|body>
+    </with>
+  </macro>>
 
-  <drd-props|fill-out|with-like|yes|arity|1|accessible|all>
+  <drd-props|gap-dots|with-like|yes|arity|1|accessible|all>
 
-  <drd-props|fill-out*|with-like|yes|arity|1|accessible|all>
+  <drd-props|gap-dots-wide|with-like|yes|arity|1|accessible|all>
 
-  \;
-
-  <assign|fill-out-underlined-color|#88c>
-
-  <assign|fill-out-underlined-vsep|0.2fn>
-
-  <assign|fill-out-underlined|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<if|<equal|<value|fill-out-underlined-color>|>|<value|color>|<value|fill-out-underlined-color>>|<repeat|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|--|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|fill-out-underlined-vsep>>>>>>|<arg|body>>>>>>
-
-  <assign|fill-out-underlined*|<macro|body|<fill-out-underlined|<arg|body><htab|5mm>>>>
-
-  <drd-props|fill-out-underlined|with-like|yes|arity|1|accessible|all>
-
-  <drd-props|fill-out-underlined*|with-like|yes|arity|1|accessible|all>
+  <drd-props|gap-dots-long|with-like|yes|arity|1|accessible|all>
 
   \;
 
-  <assign|fill-out-box-color|#f0e8e0>
+  <assign|gap-underlined-color|#c0f0f0>
 
-  <assign|fill-out-box-shadow-color|#f8f4f0>
+  <assign|gap-underlined-vsep|0.2fn>
 
-  <assign|fill-out-box-sunny-color|#e0d0c0>
+  <assign|gap-underlined-hpadding|0.5spc>
 
-  <assign|fill-out-box-hpadding|0.5spc>
+  <assign|gap-underlined-min-width|2em>
 
-  <assign|fill-out-box-vpadding|0.5spc>
+  <assign|gap-underlined-short|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<if|<equal|<value|gap-underlined-color>|>|<value|color>|<value|gap-underlined-color>>|<repeat|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|--|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|gap-underlined-vsep>>>>>>|<render-gap-text|<arg|body>>>>>>>
 
-  <assign|fill-out-box|<macro|body|<quasi|<datoms|<macro|x|<with|ornament-color|<value|fill-out-box-color>|ornament-shadow-color|<value|fill-out-box-shadow-color>|ornament-sunny-color|<value|fill-out-box-sunny-color>|ornament-hpadding|<value|fill-out-box-hpadding>|ornament-vpadding|<value|fill-out-box-vpadding>|<ornament|<arg|x>>>>|<arg|body>>>>>
+  <assign|gap-underlined|<macro|body|<gap-underlined-short|<hspace|<value|gap-underlined-hpadding>><extend|<arg|body>|||<value|gap-underlined-min-width>|><hspace|<value|gap-underlined-hpadding>>>>>
 
-  <assign|fill-out-box*|<macro|body|<fill-out-box|<arg|body><htab|5mm>>>>
+  <assign|gap-underlined*|<macro|body|<gap-underlined-short|<arg|body><htab|5mm>>>>
 
-  <drd-props|fill-out-box|with-like|yes|arity|1|accessible|all>
+  <assign|gap-underlined-wide|<macro|body|<gap-underlined-short|<hspace|<value|gap-underlined-hpadding>><arg|body><htab|5mm>>>>
 
-  <drd-props|fill-out-box*|with-like|yes|arity|1|accessible|all>
+  <assign|gap-underlined-long|<\macro|body>
+    <\with|par-par-sep|0fn>
+      <map-args|gap-underlined*|document|body>
+    </with>
+  </macro>>
+
+  <drd-props|gap-underlined|with-like|yes|arity|1|accessible|all>
+
+  <drd-props|gap-underlined-wide|with-like|yes|arity|1|accessible|all>
+
+  <drd-props|gap-underlined-long|with-like|yes|arity|1|accessible|all>
 
   \;
+
+  <assign|gap-box-color|#f0e8e0>
+
+  <assign|gap-box-shadow-color|#f8f4f0>
+
+  <assign|gap-box-sunny-color|#e0d0c0>
+
+  <assign|gap-box-hpadding|0.5spc>
+
+  <assign|gap-box-vpadding|0.5spc>
+
+  <assign|gap-box-min-width|2em>
+
+  <assign|gap-box|<macro|body|<quasi|<datoms|<macro|x|<with|ornament-color|<value|gap-box-color>|ornament-shadow-color|<value|gap-box-shadow-color>|ornament-sunny-color|<value|gap-box-sunny-color>|ornament-hpadding|<value|gap-box-hpadding>|ornament-vpadding|<value|gap-box-vpadding>|<ornament|<extend|<arg|x>|||<value|gap-box-min-width>|>>>>|<render-gap-text|<arg|body>>>>>>
+
+  <assign|gap-box-wide|<macro|body|<gap-box|<arg|body><htab|5mm>>>>
+
+  <assign|gap-box-long|<\macro|body>
+    <\with|par-par-sep|0fn|ornament-color|<value|gap-box-color>|ornament-shadow-color|<value|gap-box-shadow-color>|ornament-sunny-color|<value|gap-box-sunny-color>|ornament-hpadding|<value|gap-box-hpadding>|ornament-vpadding|<value|gap-box-vpadding>>
+      <\ornament>
+        <\surround||<right-flush>>
+          <\render-gap-text>
+            <arg|body>
+          </render-gap-text>
+        </surround>
+      </ornament>
+    </with>
+  </macro>>
+
+  <drd-props|gap-box|with-like|yes|arity|1|accessible|all>
+
+  <drd-props|gap-box-wide|with-like|yes|arity|1|accessible|all>
+
+  <drd-props|gap-box-long|with-like|yes|arity|1|accessible|all>
+
+  \;
+
+  <assign|gap|<value|gap-dots>>
+
+  <assign|gap-wide|<value|gap-dots-wide>>
+
+  <assign|gap-long|<value|gap-dots-long>>
+
+  <drd-props|gap|with-like|yes|arity|1|accessible|all>
+
+  <drd-props|gap-wide|with-like|yes|arity|1|accessible|all>
+
+  <drd-props|gap-long|with-like|yes|arity|1|accessible|all>
 </body>
 
 <\initial>
