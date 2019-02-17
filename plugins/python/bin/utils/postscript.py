@@ -1,7 +1,7 @@
 import os
 from io import BytesIO
 from io import open
-from protocol import *
+from .protocol import *
 
 class PSOutDummy:
   """ Dummy class for use with ps_out.
@@ -63,5 +63,5 @@ def ps_out(out):
   elif 'read' in dir(out):
     data = out.read()
 
-  texmacs_out('ps:' + texmacs_escape(data))
+  texmacs_out('ps:' + texmacs_escape(data).decode())
   return PSOutDummy()

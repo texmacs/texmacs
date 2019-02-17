@@ -17,8 +17,8 @@ DATA_ESCAPE  = chr(27)
 DATA_COMMAND = chr(16)
 
 def texmacs_escape(data):
-  return data.replace(DATA_BEGIN, DATA_ESCAPE + DATA_BEGIN)
-             .replace(DATA_END, DATA_ESCAPE + DATA_END)
+  return data.replace(DATA_BEGIN.encode(), (DATA_ESCAPE + DATA_BEGIN).encode()) \
+             .replace(DATA_END.encode(), (DATA_ESCAPE + DATA_END).encode())
 
 def texmacs_out(out_str):
   """Feed data back to TeXmacs.
