@@ -13,15 +13,13 @@ add_subdirectory(maple)
 add_subdirectory(r)
 add_subdirectory(shell)
 
-### lib/
-if (APPLE)
-else (APPLE)
-  file(GLOB PLUGIN_DIRS *)
-  foreach(PLUGIN ${PLUGIN_DIRS})
-    if (EXISTS ${PLUGIN}/bin/)
-      install(DIRECTORY ${PLUGIN}/bin/ DESTINATION lib/texmacs/TeXmacs/bin
-        PATTERN "*"
-        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-    endif(EXISTS ${PLUGIN}/bin/)
-  endforeach(PLUGIN)
-endif (APPLE)
+# Install the binaries for plugin
+file(GLOB PLUGIN_DIRS LIST_DIRECTORIES true *)
+foreach(PLUGIN ${PLUGIN_DIRS})
+  if (EXISTS ${PLUGIN}/bin/)
+    file(RELATIVE_PATH PLUGIN_NAME ${TEXMACS_SOURCE_DIR}/plugins ${PLUGIN})
+    install(DIRECTORY ${PLUGIN}/bin/ DESTINATION share/TeXmacs/plugins/${PLUGIN_NAME}/bin
+      PATTERN "*"
+      PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+  endif(EXISTS ${PLUGIN}/bin/)
+endforeach(PLUGIN)

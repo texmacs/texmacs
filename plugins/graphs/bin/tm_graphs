@@ -13,19 +13,22 @@
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 import os
+import sys
+sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
+
+import os
 import traceback
 import keyword
 import re
 import string
-import sys
 import csv   # Used to parse scheme forms
 from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
 from io        import open
 from io        import StringIO
 from subprocess import Popen, PIPE, STDOUT
-from utils.protocol import *
-from utils.graph    import Graph
+from tmpy.protocol import *
+from tmpy.graph    import Graph
 
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
