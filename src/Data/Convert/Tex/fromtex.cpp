@@ -2249,7 +2249,7 @@ latex_command_to_tree (tree t) {
     }
   }
 
-  if (is_tuple (t, "\\@startsection")) {
+  if (is_tuple (t, "\\@startsection") && N(t) >= 7) {
     tree name, indent, spa, spb, style, r, indentafter;
     name = l2e(t[1]);
     indent = l2e(t[3]);
@@ -2259,11 +2259,12 @@ latex_command_to_tree (tree t) {
     r = concat();
     bool inserted = false, center = false;
 
-    for (int i = 0 ; i < N(t[6]) ; i++){
-      if (is_tuple(t[6][i], "\\centering", 0)) center = true;
-      else if (is_tuple(t[6][i], "\\normalfont", 0)) ;
-      else style << t[6][i];
-    }
+    if (is_compound (t[6]))
+      for (int i = 0 ; i < N(t[6]) ; i++) {
+        if (is_tuple(t[6][i], "\\centering", 0)) center = true;
+        else if (is_tuple(t[6][i], "\\normalfont", 0)) ;
+        else style << t[6][i];
+      }
     style = l2e(style);
 
     if (is_negative_length(spb)) indentafter = tree();
