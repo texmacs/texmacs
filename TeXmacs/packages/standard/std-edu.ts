@@ -22,6 +22,8 @@
 
   <use-module|(education edu-edit)>
 
+  <use-module|(education edu-markup)>
+
   <\active*>
     <\src-comment>
       Same rendering for exercise, problem and question
@@ -150,6 +152,40 @@
 
   <\active*>
     <\src-comment>
+      Wide buttons based on ornaments
+    </src-comment>
+  </active*>
+
+  <assign|button-ornament-on-color|dark blue>
+
+  <assign|button-ornament-off-color|>
+
+  <assign|button-ornament-shadow-on-color|#00c>
+
+  <assign|button-ornament-shadow-off-color|#ccc>
+
+  <assign|button-ornament-sunny-on-color|#002>
+
+  <assign|button-ornament-sunny-off-color|#eee>
+
+  <assign|button-on-color|white>
+
+  <assign|button-off-color|>
+
+  <assign|button-ornament-off-color|>
+
+  <assign|button-ornament-border|0ln>
+
+  <assign|button-ornament|<macro|state|text|<with|locus-color|preserve|ornament-color|<if|<arg|state>|<value|button-ornament-on-color>|<value|button-ornament-off-color>>|ornament-shadow-color|<if|<arg|state>|<value|button-ornament-shadow-on-color>|<value|button-ornament-shadow-off-color>>|ornament-sunny-color|<if|<arg|state>|<value|button-ornament-sunny-on-color>|<value|button-ornament-sunny-off-color>>|color|<if|<arg|state>|<value|button-on-color>|<if|<equal|<value|button-off-color>|>|<value|color>|<value|button-off-color>>>|ornament-border|<value|button-ornament-border>|<action|<ornament|<arg|text>>|mouse-toggle-button|<arg|state>>>>>
+
+  \;
+
+  <assign|button-ornament-narrow|<macro|state|text|<button-ornament|<arg|state>|<surround|<resize|<phantom|dp>|||0em|>||<arg|text>>>>>
+
+  <assign|button-ornament-wide|<macro|state|text|<button-ornament|<arg|state>|<surround|<resize|<phantom|dp>|||0em|>|<right-flush>|<arg|text>>>>>
+
+  <\active*>
+    <\src-comment>
       Multiple choice environments
     </src-comment>
   </active*>
@@ -180,12 +216,14 @@
 
   <assign|mc-horizontal-sep|2em>
 
-  <assign|mc-horizontal-one|<macro|a|<hgroup|<arg|a>><space|<value|mc-horizontal-sep>>
-  >>
+  <assign|mc-horizontal-one|<macro|a|<hgroup|<arg|a>>>>
 
-  <assign|mc-horizontal|<xmacro|args|<with|dummy|<value|mc-horizontal-sep>|button-nr|0|<map-args|mc-horizontal-one|concat|args>>>>
+  <assign|mc-horizontal-extra|<macro|a|<space|<value|mc-horizontal-sep>>
+  <hgroup|<arg|a>>>>
 
-  <assign|mcs-horizontal|<xmacro|args|<with|dummy|<value|mc-horizontal-sep>|button-nr|0|<map-args|mc-horizontal-one|concat|args>>>>
+  <assign|mc-horizontal|<xmacro|args|<with|dummy|<value|mc-horizontal-sep>|button-nr|0|<mc-horizontal-one|<arg|args|0>><map-args|mc-horizontal-extra|concat|args|1>>>>
+
+  <assign|mcs-horizontal|<xmacro|args|<with|dummy|<value|mc-horizontal-sep>|button-nr|0|<mc-horizontal-one|<arg|args|0>><map-args|mc-horizontal-extra|concat|args|1>>>>
 
   <drd-props|mc-horizontal|arity|<tuple|repeat|1|1>|accessible|all>
 
@@ -212,6 +250,42 @@
   <drd-props|mc|arity|<tuple|repeat|1|1>|accessible|all>
 
   <drd-props|mcs|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Multiple choice customizations for wide buttons
+    </src-comment>
+  </active*>
+
+  <assign|horizontal-items-border|1ln>
+
+  <assign|horizontal-items-sep|1em>
+
+  <assign|horizontal-items|<xmacro|args|<with|mc-field|<value|button-ornament-narrow>|button-ornament-border|<value|horizontal-items-border>|mc-horizontal-sep|<value|horizontal-items-sep>|<mc-horizontal-one|<arg|args|0>><map-args|mc-horizontal-extra|concat|args|1>>>>
+
+  <drd-props|horizontal-items|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|tiled-items-border|1ln>
+
+  <assign|tiled-items|<xmacro|items|<with|mc-field|<value|button-ornament-wide>|button-ornament-border|<value|tiled-items-border>|<extern|ext-tiled-items|<quote-arg|items>|<quote-value|mc-monospaced-cols>>>>>
+
+  <drd-props|tiled-items|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|vertical-items-outer-border|1ln>
+
+  <assign|vertical-items-inner-border|0ln>
+
+  <assign|vertical-items|<xmacro|items|<with|mc-field|<value|button-ornament-wide>|<extern|ext-vertical-items|<quote-arg|items>|<quote-value|vertical-items-outer-border>|<quote-value|vertical-items-inner-border>>>>>
+
+  <drd-props|vertical-items|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
+
+  <assign|with-button-ornament|<macro|body|<with|mc|<value|tiled-items>|mcs|<value|tiled-items>|mc-monospaced|<value|tiled-items>|mcs-monospaced|<value|tiled-items>|mc-horizontal|<value|horizontal-items>|mcs-horizontal|<value|horizontal-items>|mc-vertical|<value|vertical-items>|mcs-vertical|<value|vertical-items>|<arg|body>>>>
 
   <\active*>
     <\src-comment>

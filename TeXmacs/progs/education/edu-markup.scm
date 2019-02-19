@@ -40,3 +40,59 @@
 	  ((and (nnull? class) (nnull? date))
 	   (title-prefix
 	    `(doc-exam-class-date ,(car class) ,(car date)) doc)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Table like
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (ext-tile-item t)
+  `(cell (document ,t)))
+
+(define (ext-tiled-row l cols)
+  (let* ((r (map (lambda (x) "") (.. (length l) cols)))
+         (a (append l r)))
+    `(row ,@(map ext-tile-item a))))
+  
+(define (ext-tiled-rows l cols)
+  (if (> (length l) cols)
+      (cons (ext-tiled-row (sublist l 0 cols) cols)
+            (ext-tiled-rows (sublist l cols (length l)) cols))
+      (list (ext-tiled-row l cols))))
+
+(tm-define (ext-tiled-items t c)
+  (:secure #t)
+  (let* ((cols (or (string->number (tree->string c)) 5))
+         (w (string-append (number->string (/ 0.999999 cols)) "par")))
+    `(tformat
+      (twith "table-valign" "T")
+      (twith "table-hmode" "min")
+      (twith "table-width" "1par")
+      (cwith "1" "-1" "1" "-1" "cell-hmode" "exact")
+      (cwith "1" "-1" "1" "-1" "cell-width" ,w)
+      (cwith "1" "-1" "1" "-1" "cell-hyphen" "t")
+      (cwith "1" "-1" "1" "-1" "cell-lsep" "-0.2ln")
+      (cwith "1" "-1" "1" "-1" "cell-rsep" "-0.2ln")
+      (cwith "1" "-1" "1" "-1" "cell-bsep" "0ln")
+      (cwith "1" "-1" "1" "-1" "cell-tsep" "0ln")
+      (table ,@(ext-tiled-rows (tree-children t) cols)))))
+
+(define (ext-vertical-item t)
+  `(row (cell (document ,t))))
+
+(tm-define (ext-vertical-items t out inn)
+  (:secure #t)
+  `(tformat
+    (twith "table-valign" "T")
+    (twith "table-hmode" "min")
+    (twith "table-width" "1par")
+    (twith "table-lborder" ,(tree-copy out))
+    (twith "table-rborder" ,(tree-copy out))
+    (twith "table-tborder" ,(tree-copy out))
+    (twith "table-bborder" ,(tree-copy out))
+    (cwith "1" "-1" "1" "-1" "cell-hyphen" "t")
+    (cwith "1" "-1" "1" "-1" "cell-lsep" "0ln")
+    (cwith "1" "-1" "1" "-1" "cell-rsep" "0ln")
+    (cwith "1" "-1" "1" "-1" "cell-bsep" "-0.2ln")
+    (cwith "1" "-1" "1" "-1" "cell-tsep" "-0.2ln")
+    (cwith "2" "-1" "1" "-1" "cell-tborder" ,inn)
+    (table ,@(map ext-vertical-item (tree-children t)))))

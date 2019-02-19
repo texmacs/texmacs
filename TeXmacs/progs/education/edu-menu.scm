@@ -117,7 +117,9 @@
   ("a, b, c" (mc-set-button-theme 'with-button-alpha))
   ("A, B, C" (mc-set-button-theme 'with-button-Alpha))
   ("i, ii, iii" (mc-set-button-theme 'with-button-roman))
-  ("I, II, III" (mc-set-button-theme 'with-button-Roman)))
+  ("I, II, III" (mc-set-button-theme 'with-button-Roman))
+  ---
+  ("Wide colored"  (mc-set-button-theme 'with-button-ornament)))
 
 (tm-menu (focus-toggle-menu t)
   (:require (mc-context? t)))

@@ -37,7 +37,7 @@
 (define-group with-button-tag
   with-button-box with-button-box* with-button-circle with-button-circle*
   with-button-arabic with-button-alpha with-button-Alpha
-  with-button-roman with-button-Roman)
+  with-button-roman with-button-Roman with-button-ornament)
 
 (define-group variant-tag (with-button-tag))
 (define-group similar-tag (with-button-tag))

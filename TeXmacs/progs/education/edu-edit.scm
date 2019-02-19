@@ -118,6 +118,7 @@
           ((== th 'with-button-Alpha) "A, B, C")
           ((== th 'with-button-roman) "i, ii, iii")
           ((== th 'with-button-Roman) "I, II, III")
+          ((== th 'with-button-ornament) "Wide colored")
           (else "Unknown"))))
 
 (define (mc-test-button-theme? th)
