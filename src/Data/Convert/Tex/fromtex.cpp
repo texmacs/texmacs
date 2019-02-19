@@ -1938,6 +1938,7 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\textit", 1)) return m2e (t, FONT_SHAPE, "italic");
   if (is_tuple (t, "\\textsl", 1)) return m2e (t, FONT_SHAPE, "slanted");
   if (is_tuple (t, "\\textsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
+  if (is_tuple (t, "\\bsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
   if (is_tuple (t, "\\tmrsub", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\tmrsup", 1)) return tree (RSUP, l2e (t[1]));
   if (is_tuple (t, "\\textsubscript", 1)) return tree (RSUB, l2e (t[1]));
