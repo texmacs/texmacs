@@ -1036,8 +1036,10 @@ latex_symbol_to_tree (string s) {
 
     if (latex_type (s) == "operator" || latex_type (s) == "control") return s;
     if (s == "bignone") return tree (BIG, ".");
-    if (s == "Return")  return tree (APPLY, "algo-return");
-    if (s == "tmhrule")  return tree (APPLY, "hrule");
+    if (s == "Return") return tree (APPLY, "algo-return");
+    if (s == "tmhrule") return tree (APPLY, "hrule");
+    if (s == "og") return "\x13 "; // open guillemets (French)
+    if (s == "fg") return "\x14"; // close guillemets (French)
     if (latex_type (s) == "big-symbol") {
       if (s(0,3)=="big") return tree (BIG, s(3,N(s)));
       else return tree (BIG, s);
@@ -2488,7 +2490,6 @@ latex_command_to_tree (tree t) {
       g[1]= width;
       g[2]= height;
       return g;
-
     }
   }
   if (is_tuple (t, "\\fbox", 1)) return compound ("frame", l2e (t[1]));
@@ -2513,6 +2514,10 @@ latex_command_to_tree (tree t) {
     return tree (APPLY, "verbatim", url_arg_to_string (t[1]));
   if (is_tuple (t, "\\href", 2))
     return tree (APPLY, "hlink", l2e (t[2]), url_arg_to_string (t[1]));
+  if (is_tuple (t, "\\og", 1) && t[1] == "")
+    return "\x13"; // open guillemets (French)
+  if (is_tuple (t, "\\fg", 1) && t[1] == "")
+    return "\x14"; // close guillemets (French)
 
   if (is_tuple (t, "\\xminus", 1))
     return tree (LONG_ARROW, "<rubber-minus>", l2e (t[1]));

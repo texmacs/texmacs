@@ -62,6 +62,8 @@
   ("inactive ," (make 'unquote))
   ("inactive ?" (make 'if))
   ("inactive C-?" (make 'if*))
+  ("inactive delete" (remove-unary-document))
+  ("inactive backspace" (remove-unary-document))
 
   ("executable d" (make 'div))
   ("executable f" (make 'find-file))

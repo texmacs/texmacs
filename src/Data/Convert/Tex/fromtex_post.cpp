@@ -1711,6 +1711,8 @@ modernize_newlines (tree t, bool skip) {
   tree r= tree (L(t));
   for (int i=0; i<N(t); i++)
     r << modernize_newlines (t[i], skip);
+  if (is_func (r, ASSIGN, 2) && is_func (r[1], DOCUMENT, 1))
+    r= tree (ASSIGN, r[0], r[1][0]);
   if (is_concat (r)) {
     if (contains_newline (r)) {
       array<tree> tmp=

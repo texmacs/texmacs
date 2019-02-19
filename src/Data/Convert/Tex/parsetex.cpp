@@ -1786,8 +1786,9 @@ get_latex_language (string s) {
         << "slovene" << "spanish" << "swedish" << "taiwanese" << "ukrainian";
 
   for (int i = 0 ; i < N(langs) ; i++)
-    if (test(r, 0 , as_string(langs[i])))
-      return as_string(langs[i]);
+    if (test (r, 0, as_string (langs[i])))
+      return as_string (langs[i]);
+  if (r == "francais") return "french";
   if (r == "ngermanb") return "german";
   if (r == "magyar") return "hungarian";
   return "";

@@ -87,6 +87,12 @@
   (:require (and (tree-is? t 'symbol) (tree-is? t :up 'inactive)))
   (activate-symbol))
 
+(tm-define (remove-unary-document)
+  (with-innermost doc 'document
+    (when (and (== (tree-arity doc) 1)
+               (> (length (tree->path doc)) 1))
+      (tree-remove-node! doc 0))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extracting a style file or package from the current file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
