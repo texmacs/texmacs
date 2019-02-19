@@ -438,6 +438,7 @@
   
   (define Middle-separator-symbol
     (:type middle-bracket)
+    (:penalty 0)
     (:spacing default default)
     "<suchthat>" "<barsuchthat>")
 
