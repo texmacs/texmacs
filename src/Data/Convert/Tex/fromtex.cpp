@@ -1045,13 +1045,57 @@ latex_symbol_to_tree (string s) {
       else return tree (BIG, s);
     }
 
-    if (s == "begin-acks") return tree (BEGIN, "acknowledgments");
-    if (s == "end-acks") return tree (END, "acknowledgments");
-    if ((N(s) > 6) && (s(0,6) == "begin-"))
+    if ((N(s) > 6) && (s(0,6) == "begin-")) {
+      if (s == "begin-th") return tree (BEGIN, "theorem");
+      if (s == "begin-thm") return tree (BEGIN, "theorem");
+      if (s == "begin-prop") return tree (BEGIN, "proposition");
+      if (s == "begin-lem") return tree (BEGIN, "lemma");
+      if (s == "begin-cor") return tree (BEGIN, "corollary");
+      if (s == "begin-ax") return tree (BEGIN, "axiom");
+      if (s == "begin-def") return tree (BEGIN, "definition");
+      if (s == "begin-dfn") return tree (BEGIN, "definition");
+      if (s == "begin-defn") return tree (BEGIN, "definition");
+      if (s == "begin-not") return tree (BEGIN, "notation");
+      if (s == "begin-ex") return tree (BEGIN, "example");
+      if (s == "begin-exa") return tree (BEGIN, "example");
+      if (s == "begin-rem") return tree (BEGIN, "remark");
+      if (s == "begin-war") return tree (BEGIN, "warning");
+      if (s == "begin-conv") return tree (BEGIN, "convention");
+      if (s == "begin-exe") return tree (BEGIN, "exercise");
+      if (s == "begin-exc") return tree (BEGIN, "exercise");
+      if (s == "begin-exo") return tree (BEGIN, "exercise");
+      if (s == "begin-prob") return tree (BEGIN, "problem");
+      if (s == "begin-sol") return tree (BEGIN, "solution");
+      if (s == "begin-ans") return tree (BEGIN, "answer");
+      if (s == "begin-acks") return tree (BEGIN, "acknowledgments");
       return tree (BEGIN, s(6,N(s)));
-    if ((N(s) > 4) && (s(0,4) == "end-"))
+    }
+    if ((N(s) > 4) && (s(0,4) == "end-")) {
+      if (s == "end-th") return tree (END, "theorem");
+      if (s == "end-thm") return tree (END, "theorem");
+      if (s == "end-prop") return tree (END, "proposition");
+      if (s == "end-lem") return tree (END, "lemma");
+      if (s == "end-cor") return tree (END, "corollary");
+      if (s == "end-ax") return tree (END, "axiom");
+      if (s == "end-def") return tree (END, "definition");
+      if (s == "end-dfn") return tree (END, "definition");
+      if (s == "end-defn") return tree (END, "definition");
+      if (s == "end-not") return tree (END, "notation");
+      if (s == "end-ex") return tree (END, "example");
+      if (s == "end-exa") return tree (END, "example");
+      if (s == "end-rem") return tree (END, "remark");
+      if (s == "end-war") return tree (END, "warning");
+      if (s == "end-conv") return tree (END, "convention");
+      if (s == "end-exe") return tree (END, "exercise");
+      if (s == "end-exc") return tree (END, "exercise");
+      if (s == "end-exo") return tree (END, "exercise");
+      if (s == "end-prob") return tree (END, "problem");
+      if (s == "end-sol") return tree (END, "solution");
+      if (s == "end-ans") return tree (END, "answer");
+      if (s == "end-acks") return tree (END, "acknowledgments");
       return tree (END, s(4,N(s)));
-
+    }
+    
     if (starts (s, "#") && s != "#") {
       textm_unicode= true;
       return "<" * s * ">";
