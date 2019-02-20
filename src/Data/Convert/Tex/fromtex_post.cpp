@@ -2110,6 +2110,65 @@ filter_geometry (tree t) {
 }
 
 /******************************************************************************
+* Guess frequent missing macros
+******************************************************************************/
+
+static void
+collect (hashmap<tree_label,bool>& def,
+         hashmap<tree_label,bool>& use,
+         tree t) {
+  if (is_atomic (t)) return;
+  if (L(t) >= START_EXTENSIONS) use (L(t))= true;
+  if (is_func (t, ASSIGN, 2) && is_atomic (t[0]))
+    def (make_tree_label (t[0]->label))= true;
+  for (int i=0; i<N(t); i++)
+    collect (def, use, t[i]);
+}
+
+static void
+add_missing (tree& doc, string name, tree val,
+             hashmap<tree_label,bool> def,
+             hashmap<tree_label,bool> use) {
+  tree_label l= make_tree_label (name);
+  if (use->contains (l) && !def->contains (l))
+    doc << tree (ASSIGN, name, val);
+}
+
+static tree
+guess_missing (tree t) {
+  hashmap<tree_label,bool> def, use;
+  collect (def, use, t);
+  tree d (DOCUMENT);
+  add_missing (d, "C", tree (MACRO, "<bbb-C>"), def, use);
+  add_missing (d, "F", tree (MACRO, "<bbb-F>"), def, use);
+  add_missing (d, "N", tree (MACRO, "<bbb-N>"), def, use);
+  add_missing (d, "Q", tree (MACRO, "<bbb-Q>"), def, use);
+  add_missing (d, "R", tree (MACRO, "<bbb-R>"), def, use);
+  add_missing (d, "Z", tree (MACRO, "<bbb-Z>"), def, use);
+  add_missing (d, "CC", tree (MACRO, "<bbb-C>"), def, use);
+  add_missing (d, "FF", tree (MACRO, "<bbb-F>"), def, use);
+  add_missing (d, "NN", tree (MACRO, "<bbb-N>"), def, use);
+  add_missing (d, "QQ", tree (MACRO, "<bbb-Q>"), def, use);
+  add_missing (d, "RR", tree (MACRO, "<bbb-R>"), def, use);
+  add_missing (d, "ZZ", tree (MACRO, "<bbb-Z>"), def, use);
+  if (N(d) == 0) return t;
+  if (is_func (t, DOCUMENT) && N(t) >= 1) {
+    if (is_compound (t[0], "hide-preamble", 1) &&
+        is_func (t[0][0], DOCUMENT)) {
+      tree r= copy (t);
+      r[0][0] << A(d);
+      return r;
+    }
+    else {
+      tree r= tree (DOCUMENT, compound ("hide-preamble", d));
+      r << A(t);
+      return r;
+    }
+  }
+  return t;
+}
+
+/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -2183,11 +2242,13 @@ latex_to_tree (tree t0) {
   // cout << "\n\nt12= " << t12 << "\n\n";
   tree t13= latex_correct (t12);
   // cout << "\n\nt13= " << t13 << "\n\n";
+  tree t14= guess_missing (t13);
+  // cout << "\n\nt14= " << t14 << "\n\n";
 
   if (is_document) {
     tree the_version= compound ("TeXmacs", TEXMACS_VERSION);
     tree the_style  = compound ("style", tuple (style));
-    tree the_body   = compound ("body", t13);
+    tree the_body   = compound ("body", t14);
     if (textm_natbib)
       the_style= compound ("style", tuple (style, "cite-author-year"));
     if (style != "acmart" && style != "acmsmall" && style != "acmlarge" &&
@@ -2199,7 +2260,7 @@ latex_to_tree (tree t0) {
     // cout << "\n\nr= " << r << "\n\n";
     return r;
   }
-  else return t13;
+  else return t14;
 }
 
 tree
