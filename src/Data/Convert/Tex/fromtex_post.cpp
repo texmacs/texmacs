@@ -2069,6 +2069,73 @@ remove_geometry (tree t) {
   return r;
 }
 
+/************************** Clean vertical spacing ***************************/
+
+static bool
+auto_vspace (tree t) {
+  if (is_atomic (t) || L(t) < START_EXTENSIONS) return false;
+  string s= as_string (L(t));
+  if (starts (s, "equation") ||
+      starts (s, "eqnarray") ||
+      starts (s, "itemize") ||
+      starts (s, "enumerate") ||
+      starts (s, "description") ||
+      starts (s, "solution")) return true;
+  return latex_type ("\\begin-" * s) == "enunciation";
+}
+
+static bool
+is_vspace (tree t, bool eat) {
+  if (is_func (t, LINE_BREAK, 0) ||
+      is_func (t, NEW_LINE, 0) ||
+      is_func (t, NEXT_LINE, 0))
+    return true;
+  if (!eat) return false;
+  if (!is_func (t, VSPACE, 1) &&
+      !is_func (t, VAR_VSPACE, 1))
+    return false;
+  return
+    t[0] == "0.25fn" || t[0] == "0.5fn" || t[0] == "1fn" ||
+    t[0] == "0.25em" || t[0] == "0.5em" || t[0] == "1em";
+}
+
+static tree
+clean_space_right (tree c) {
+  if (is_atomic (c[N(c)-1]))
+    c[N(c)-1]= trim_spaces_right (c[N(c)-1]->label);
+  if (c[N(c)-1] == "")
+    c= c (0, N(c)-1);
+  if (N(c) == 0) return "";
+  else if (N(c) == 1) return c[0];
+  else return c;
+}
+
+static tree
+clean_vspace (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_func (t, DOCUMENT)) {
+    int i, n= N(t);
+    tree r (DOCUMENT);
+    for (i=0; i<n; i++) {
+      bool eat= (i == n-1 || auto_vspace (t[i+1]));
+      if (is_atomic (t[i])) r << t[i];
+      else if (is_vspace (t[i], eat));
+      else if (is_concat (t[i]) && is_vspace (t[i][N(t[i])-1], eat)) {
+        tree c= t[i] (0, N(t[i]) - 1);
+        r << clean_space_right (c);
+      }
+      else r << t[i];
+    }
+    return r;
+  }
+  else {
+    int i, n= N(t);
+    tree r (t, n);
+    for (i=0; i<n; i++) r[i]= clean_vspace (t[i]);
+    return r;
+  }
+}
+
 /****************************** Finalize textm *******************************/
 
 tree
@@ -2084,6 +2151,7 @@ finalize_textm (tree t) {
   t= concat_document_correct (t);
   t= remove_labels_from_sections (t);
   t= concat_sections_and_labels (t);
+  t= clean_vspace (t);
   return simplify_correct (t);
 }
 
