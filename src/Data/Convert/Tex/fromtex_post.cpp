@@ -2117,14 +2117,15 @@ clean_vspace (tree t) {
     int i, n= N(t);
     tree r (DOCUMENT);
     for (i=0; i<n; i++) {
+      tree cur= clean_vspace (t[i]);
       bool eat= (i == n-1 || auto_vspace (t[i+1]));
-      if (is_atomic (t[i])) r << t[i];
-      else if (is_vspace (t[i], eat));
-      else if (is_concat (t[i]) && is_vspace (t[i][N(t[i])-1], eat)) {
-        tree c= t[i] (0, N(t[i]) - 1);
+      if (is_atomic (cur)) r << cur;
+      else if (is_vspace (cur, true));
+      else if (is_concat (cur) && is_vspace (cur[N(cur)-1], eat)) {
+        tree c= cur (0, N(cur) - 1);
         r << clean_space_right (c);
       }
-      else r << t[i];
+      else r << cur;
     }
     return r;
   }
