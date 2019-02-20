@@ -202,6 +202,13 @@ latex_parser::parse (string s, int& i, string stop, int change) {
 	   (i+2>n || s(i,i+2) != "\\)") &&
 	   (i+4>n || s(i,i+4) != "\\end"))) &&
 	 (stop != "\\egroup" || i+7>n || s(i,i+7) != "\\egroup")) {
+    if (N(stop) != 0 && stop[0] == '$' && test (s, i, "\\begin{")) {
+      // Emergency break from math mode on certain text environments
+      int j= i+7, start= j;
+      while (j < n && s[j] != '}') j++;
+      string cmd= "\\begin-" * s(start, j);
+      if (latex_type (cmd) == "enunciation") break;
+    }
     if (lf == 'N' && s[i] != '\n') lf= 'M';
     switch (s[i]) {
     case '~':
