@@ -201,9 +201,10 @@ closest_accessible (tree t, path p, int dir) {
 	// FIXME: very dynamic markup should be treated after typesetting
 	if (is_atom (p) && is_atomic (t[j]))
 	  return path (j, p->item * (j < k? N (t[j]->label): 0));
-	path sp  = (j == k? p->next: (j < k? path (1): path (0)));
+        int  ind = right_index (t[j]);
+	path sp  = (j == k? p->next: (j < k? path (ind): path (0)));
         int  sdir= (j == k? dir: (j < k? -1: 1));
-        path prop= (p == path (0)? p: path (right_index (t[j])));
+        path prop= (p == path (0)? p: path (ind));
         path sp2 = (is_nil (sp)? prop: sp);
 	path r   = closest_accessible (t[j], sp2, sdir);
 	if (!is_nil (r)) {
@@ -454,7 +455,7 @@ keep_positive (path p) {
 
 path
 correct_cursor (tree t, path p, bool forwards) {
-  //cout << "Correct cursor " << p << " in " << t << "\n";
+  //cout << "Correct cursor " << p << " in " << t << ", " << forwards << "\n";
   p= keep_positive (p);
   path pp= pre_correct (t, p);
   if (forwards) return right_correct (t, pp);
