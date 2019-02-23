@@ -306,9 +306,7 @@ hidden_package (url u, string name, bool hidden) {
 
 bool
 hidden_package (string name) {
-  if (name == "reduced-margins" ||
-      name == "indent-paragraphs" ||
-      name == "padded-paragraphs") return false;
+  if (name == "std-latex") return false;
   if (!hidden_packages->contains (name)) {
     url pck_u= descendance ("$TEXMACS_PACKAGE_ROOT");
     hidden_packages (name)= hidden_package (pck_u, name, false);
