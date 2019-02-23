@@ -2240,6 +2240,16 @@ finalize_textm (tree t) {
 ******************************************************************************/
 
 static array<tree>
+filter_init (tree t) {
+  array<tree> r;
+  if (!is_func (t, CONCAT)) return r;
+  for (int i=0; i<N(t); i++)
+    if (is_tuple (t[i], "\\env-init", 2))
+      r << compound ("associate", t[i][1], t[i][2]);
+  return r;
+}
+
+static array<tree>
 filter_geometry (tree t) {
   array<tree> r;
   if (is_atomic (t));
@@ -2357,7 +2367,10 @@ latex_to_tree (tree t0) {
   // cout << "\n\nt9= " << t9 << "\n\n";
 
   tree initial (COLLECTION), mods (WITH);
-  if (is_document) initial << filter_geometry (t9);
+  if (is_document) {
+    initial << filter_init (t2);
+    initial << filter_geometry (t9);
+  }
 
   tree t10= finalize_textm (t9);
   // cout << "\n\nt10= " << t10 << "\n\n";

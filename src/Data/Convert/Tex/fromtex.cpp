@@ -454,6 +454,9 @@ set_special_fonts (tree t, string lan) {
 * Preprocess preamble
 ******************************************************************************/
 
+tree latex_symbol_to_tree (string s);
+tree parsed_latex_to_tree (tree t);
+
 static bool
 is_declaration (tree u) {
   return (is_tuple (u, "\\def") ||
@@ -492,6 +495,19 @@ filter_preamble (tree t) {
 	       is_tuple (u, "\\documentstyle*")) {
         doc << u;
         latex_class = u;
+        if (is_tuple (u, "\\documentstyle*", 2) ||
+            is_tuple (u, "\\documentclass*", 2)) {
+          tree opt= parsed_latex_to_tree (u[1]);
+          if (is_atomic (opt) && occurs ("11pt", opt->label))
+            preamble << tuple ("\\env-init", "font-base-size", "11");
+          if (is_atomic (opt) && occurs ("12pt", opt->label))
+            preamble << tuple ("\\env-init", "font-base-size", "12");
+        }
+      }
+      else if (is_tuple (u, "\\usepackage", 1)) {
+        tree opt= parsed_latex_to_tree (u[1]);
+        if (is_atomic (opt) && occurs ("palatino", opt->label))
+          preamble << tuple ("\\env-init", "font", "pagella");
       }
       else if (is_tuple (u, "\\geometry", 1))
         preamble << u << "\n" << "\n";
@@ -524,6 +540,38 @@ filter_preamble (tree t) {
         preamble << A(t(i,i+7)) << "\n" << "\n"; i += 6; continue; }
       else if (is_tuple (u, "\\itm"))
         preamble << u << "\n" << "\n";
+      else if (is_tuple (u, "\\abovedisplayshortskip") ||
+               is_tuple (u, "\\abovedisplayskip") ||
+               is_tuple (u, "\\belowdisplayshortskip") ||
+               is_tuple (u, "\\belowdisplayskip") ||
+               is_tuple (u, "\\columnsep") ||
+               is_tuple (u, "\\evensidemargin") ||
+               is_tuple (u, "\\footnotesep") ||
+               is_tuple (u, "\\footskip") ||
+               is_tuple (u, "\\headheight") ||
+               is_tuple (u, "\\headsep") ||
+               is_tuple (u, "\\jot") ||
+               is_tuple (u, "\\marginparwidth") ||
+               is_tuple (u, "\\mathindent") ||
+               is_tuple (u, "\\oddsidemargin") ||
+               is_tuple (u, "\\parindent") ||
+               is_tuple (u, "\\textheight") ||
+               is_tuple (u, "\\textwidth") ||
+               is_tuple (u, "\\columnwidth") ||
+               is_tuple (u, "\\linewidth") ||
+               is_tuple (u, "\\topmargin") ||
+               is_tuple (u, "\\topskip")) {
+        i++;
+        tree var= latex_symbol_to_tree (u[0]->label);
+        string val;
+        while (i<n && is_atomic (t[i]) && N(t[i]->label) == 1 &&
+               (is_alpha (t[i]->label[0]) ||
+                is_numeric (t[i]->label[0]) ||
+                t[i]->label[0] == '-' ||
+                t[i]->label[0] == '.'))
+          val << t[i++]->label;
+        preamble << tuple ("\\env-init", var, val) << "\n" << "\n";
+      }
     }
     else if (is_metadata_env (t[i])) {
       string s= as_string (t[i][0]);
@@ -1855,6 +1903,8 @@ latex_command_to_tree (tree t) {
         tree keys= translate_keys (decode_keys_vals (t[1]), dic);
         return tree (BEGIN, env, keys);
   }
+
+  if (is_tuple (t, "\\env-init", 2)) return "";
 
   if (is_tuple (t, "\\geometry", 1)) {
     array< array<tree> > l= tokenize_keys_vals (t[1]);
