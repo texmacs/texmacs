@@ -570,7 +570,10 @@ filter_preamble (tree t) {
                 t[i]->label[0] == '-' ||
                 t[i]->label[0] == '.'))
           val << t[i++]->label;
-        preamble << tuple ("\\env-init", var, val) << "\n" << "\n";
+        if (ends (val, "mm") || ends (val, "cm") || ends (val, "in") ||
+            ends (val, "dd") || ends (val, "dc") || ends (val, "pc") ||
+            ends (val, "pt") || ends (val, "em"))
+          preamble << tuple ("\\env-init", var, val) << "\n" << "\n";
       }
     }
     else if (is_metadata_env (t[i])) {
