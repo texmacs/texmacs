@@ -469,6 +469,27 @@ is_declaration (tree u) {
           is_tuple (u, "\\newtheorem*"));
 }
 
+static bool
+is_custom_maketitle (tree t) {
+  if (!is_concat (t)) return false;
+  bool flag1= false, flag2= false;
+  for (int i=0; i<N(t); i++) {
+    flag1= flag1 || is_tuple (t[i], "\\newpage");
+    flag2= flag2 || is_tuple (t[i], "\\maketitle");
+  }
+  return flag1 && flag2;
+}
+
+static bool
+is_doc_data (tree t) {
+  if (is_func (t, APPLY) && N(t) > 0 && t[0] == "\\doc-data") return true;
+  if (!is_concat (t)) return false;
+  for (int i=0; i<N(t); i++) {
+    if (is_doc_data (t[i])) return true;
+    return false;
+  }
+}
+
 tree
 filter_preamble (tree t) {
   int i, n=N(t);
@@ -576,10 +597,12 @@ filter_preamble (tree t) {
           preamble << tuple ("\\env-init", var, val) << "\n" << "\n";
       }
     }
-    else if (is_metadata_env (t[i])) {
-      string s= as_string (t[i][0]);
+    else if (is_custom_maketitle (u))
+      doc << tuple ("\\custom-maketitle");
+    else if (is_metadata_env (u)) {
+      string s= as_string (u[0]);
       s= "\\end-" * s(7,N(s));
-      while (i<n && !is_tuple (t[i], s)) i++;
+      while (i<n && !is_tuple (u, s)) i++;
     }
     else if (!is_metadata (u))
       doc << u;
@@ -589,6 +612,15 @@ filter_preamble (tree t) {
   // cout << "Parsed metadatas: " << metadata << "\n\n";
   r << A(metadata);
   r << A(doc);
+  for (i=0; i<N(r); i++)
+    if (is_tuple (r[i], "\\custom-maketitle")) {
+      for (int j=0; j<i; j++)
+        if (is_doc_data (r[j])) {
+          r= r (0, j) * r (j+1, i) * r (j, j+1) * r (i+1, N(r));
+          break;
+        }
+      break;
+    }
   return r;
 }
 
