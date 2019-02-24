@@ -1521,13 +1521,13 @@ reset_envs (tree e, array< array<tree> > &envs) {
 
 static tree
 reopen_envs (tree t, array< array<tree> > &envs) {
-  if (is_atomic (t)) {
+  //if (is_atomic (t)) {
+  if (!is_concat (t)) {
     tree r (CONCAT);
     r << get_envs (envs, array<tree> ());
-    if (r != concat ()) {
-      r << t;
-      return r;
-    }
+    if (r == concat ()) return t;
+    r << t;
+    return r;
   }
   if (!is_concat (t)) return t;
   bool begin= true;
@@ -1591,7 +1591,7 @@ reopen_long_matches (tree t) {
 
 static tree
 handle_matches (tree t) {
-  t= close_improper_matches (t);
+  //t= close_improper_matches (t);
   t= reopen_long_matches (t);
   t= handle_improper_matches (t);
   return t;
