@@ -13,7 +13,8 @@
 
 (texmacs-module (education edu-menu)
   (:use (education edu-edit)
-        (generic document-menu)))
+        (generic document-menu)
+        (text text-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Education menus
@@ -96,6 +97,38 @@
   (:require (style-has? "std-edu-dtd"))
   (former)
   (-> "Multiple choice" (link mc-menu)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Icon menus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind question-menu
+  ("Question" (make 'question))
+  ("Exercise" (make 'exercise))
+  ("Problem" (make 'problem)))
+
+(menu-bind answer-menu
+  ("Answer" (make 'answer))
+  ("Solution" (make 'solution)))
+
+(menu-bind gap-menu
+  ("Dots" (make 'gap)))
+
+(menu-bind edu-icons
+  (=> (balloon (icon "tm_question.xpm") "Insert a question")
+      (link question-menu))
+  (=> (balloon (icon "tm_answer.xpm") "Insert an answer")
+      (link answer-menu))
+  (=> (balloon (icon "tm_gap.xpm") "Insert a gap")
+      (link gap-menu))
+  (=> (balloon (icon "tm_mc.xpm") "Insert a multiple choice")
+      (link mc-menu)))
+
+;;(menu-bind text-extra-icons
+;;  (:require (style-has? "std-edu-dtd"))
+;;  (former)
+;;  /
+;;  (link edu-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizing multiple choice lists

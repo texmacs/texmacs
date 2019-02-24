@@ -581,6 +581,8 @@
                    "Insert automatically generated content")
           (link automatic-menu))))
 
+(menu-bind text-extra-icons)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Icons for modifying text properties
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -641,14 +643,15 @@
   ;;("Goedenmiddag" (display* "Hi there\n"))
   ;;(mini #t (input (display* answer "\n") "string" '("Hello" "Bonjour") "0.5w"))
   (link text-block-icons)
+  (link text-extra-icons)
   (if (style-has? "std-markup-dtd")
       /)
   (link text-inline-icons)
   (if (in-manual?) (link tmdoc-icons))
   (link texmacs-insert-icons)
   (if (and (in-presentation?) (not (visible-icon-bar? 0)))
-    /
-    (link dynamic-icons)))
+      /
+      (link dynamic-icons)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Focus menus for entering title information
