@@ -1098,6 +1098,17 @@ latex_symbol_to_tree (string s) {
     }
 
     if ((N(s) > 6) && (s(0,6) == "begin-")) {
+      if (s == "begin-center") return tree (BEGIN, "padded-center");
+      if (s == "begin-flushleft") return tree (BEGIN, "padded-left-aligned");
+      if (s == "begin-flushright") return tree (BEGIN, "padded-right-aligned");
+    }
+    if ((N(s) > 4) && (s(0,4) == "end-")) {
+      if (s == "end-center") return tree (END, "padded-center");
+      if (s == "end-flushleft") return tree (END, "padded-left-aligned");
+      if (s == "end-flushright") return tree (END, "padded-right-aligned");
+    }
+
+    if ((N(s) > 6) && (s(0,6) == "begin-")) {
       if (s == "begin-th") return tree (BEGIN, "theorem");
       if (s == "begin-thm") return tree (BEGIN, "theorem");
       if (s == "begin-prop") return tree (BEGIN, "proposition");

@@ -2136,6 +2136,15 @@
 (define (tmtex-key* s l)
   (tmtex (tm->stree (tmdoc-key* (car l)))))
 
+(define (tmtex-padded-center s l)
+  (list (list '!begin "center") (tmtex (car l))))
+
+(define (tmtex-padded-left-aligned s l)
+  (list (list '!begin "flushleft") (tmtex (car l))))
+
+(define (tmtex-padded-right-aligned s l)
+  (list (list '!begin "flushright") (tmtex (car l))))
+
 (define (tmtex-indent s l)
   (list (list '!begin "tmindent") (tmtex (car l))))
 
@@ -2793,7 +2802,9 @@
    (,tmtex-enunciation 1))
   (new-theorem (,tmtex-new-theorem 2))
   (verbatim (,tmtex-verbatim 1))
-  (center (,tmtex-std-env 1))
+  (padded-center (,tmtex-padded-center 1))
+  (padded-left-aligned (,tmtex-padded-left-aligned 1))
+  (padded-right-aligned (,tmtex-padded-right-aligned 1))
   (indent (,tmtex-indent 1))
   (algorithm-indent (,tmtex-indent 1))
   ((:or footnote wide-footnote) (,tmtex-footnote 1))

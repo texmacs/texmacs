@@ -164,9 +164,9 @@
   ("Indent" (make 'indent))
   ("Jump in" (make 'jump-in))
   ---
-  ("Centered" (make 'center))
-  ("Left aligned" (make 'left-aligned))
-  ("Right aligned" (make 'right-aligned))
+  ("Centered" (make 'padded-center))
+  ("Left aligned" (make 'padded-left-aligned))
+  ("Right aligned" (make 'padded-right-aligned))
   (with s (get-env "par-par-sep")
     (assuming (and (not (string-ends? s "fns"))
                    (not (string-starts? s "0fn")))

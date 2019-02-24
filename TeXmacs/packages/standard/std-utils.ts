@@ -83,6 +83,12 @@
     </padded-normal-titled|<arg|title>>
   </macro>>
 
+  <assign|padded-center|<macro|body|<with|par-mode|center|<surround|<vspace*|<value|padding-above>><no-indent>|<vspace|<value|padding-below>>|<arg|body>>>>>
+
+  <assign|padded-left-aligned|<macro|body|<with|par-mode|left|<surround|<vspace*|<value|padding-above>><no-indent>|<vspace|<value|padding-below>>|<arg|body>>>>>
+
+  <assign|padded-right-aligned|<macro|body|<with|par-mode|right|<surround|<vspace*|<value|padding-above>><no-indent>|<vspace|<value|padding-below>>|<arg|body>>>>>
+
   <\active*>
     <\src-comment>
       Helper macros for underlined/overlined block environments (work also

@@ -18,14 +18,14 @@
 
 (define-group variant-tag
   (section-tag) (list-tag) (figure-tag)
-  (enunciation-tag) (prominent-tag) (compression-tag)
+  (enunciation-tag) (prominent-tag) (alignment-tag) (compression-tag)
   (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag) (ornament-tag) (balloon-tag)
   (reference-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)
-  (enunciation-tag) (prominent-tag) (compression-tag)
+  (enunciation-tag) (prominent-tag) (alignment-tag) (compression-tag)
   (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag) (equation-tag) (ornament-tag) (balloon-tag))
 
@@ -139,6 +139,9 @@
 
 (define-group compression-tag
   ultra-compact compact compressed amplified)
+
+(define-group alignment-tag
+  padded-center padded-left-aligned padded-right-aligned)
 
 (define-group frame-tag
   padded overlined underlined bothlined framed ornamented)
