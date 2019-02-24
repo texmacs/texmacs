@@ -704,6 +704,7 @@ latex_fallback_on_pictures (string s, tree t) {
 #define t2e parsed_text_to_tree
 #define m2e latex_modifier_to_tree
 #define var_m2e var_latex_modifier_to_tree
+#define mod_m2e mod_latex_modifier_to_tree
 #define v2e latex_verbarg_to_string
 tree l2e (tree);
 tree latex_command_to_tree (tree t);
@@ -1371,6 +1372,19 @@ var_m2e (tree t, string var, string val) {
 	       tree (RESET, copy (var)));
 }
 
+tree
+mod_m2e (tree t, string var, string val) {
+  if (command_type["!mode"] != "math")
+    return m2e (t, var, val);
+  else
+    return tree (CONCAT,
+                 tree (SET, "mode", "text"),
+                 tree (SET, copy (var), copy (val)),
+                 t2e (t[1], false),
+                 tree (RESET, copy (var)),
+                 tree (RESET, "mode"));
+}
+
 string
 url_arg_to_string (tree t) {
   return string_arg (t2e (t, false), true);
@@ -2034,15 +2048,15 @@ latex_command_to_tree (tree t) {
   if (is_tuple (t, "\\key", 1)) return compound ("key", latex_key_arg (t[1]));
   if (is_tuple (t, "\\textnormalfont", 1)) return m2e (m2e (m2e (t,
           FONT_FAMILY, "rm"), FONT_SERIES, "medium"), FONT_SHAPE, "right");
-  if (is_tuple (t, "\\textrm", 1)) return m2e (t, FONT_FAMILY, "rm");
-  if (is_tuple (t, "\\texttt", 1)) return m2e (t, FONT_FAMILY, "tt");
-  if (is_tuple (t, "\\textsf", 1)) return m2e (t, FONT_FAMILY, "ss");
-  if (is_tuple (t, "\\textmd", 1)) return m2e (t, FONT_SERIES, "medium");
-  if (is_tuple (t, "\\textbf", 1)) return m2e (t, FONT_SERIES, "bold");
-  if (is_tuple (t, "\\textup", 1)) return m2e (t, FONT_SHAPE, "right");
-  if (is_tuple (t, "\\textit", 1)) return m2e (t, FONT_SHAPE, "italic");
-  if (is_tuple (t, "\\textsl", 1)) return m2e (t, FONT_SHAPE, "slanted");
-  if (is_tuple (t, "\\textsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
+  if (is_tuple (t, "\\textrm", 1)) return mod_m2e (t, FONT_FAMILY, "rm");
+  if (is_tuple (t, "\\texttt", 1)) return mod_m2e (t, FONT_FAMILY, "tt");
+  if (is_tuple (t, "\\textsf", 1)) return mod_m2e (t, FONT_FAMILY, "ss");
+  if (is_tuple (t, "\\textmd", 1)) return mod_m2e (t, FONT_SERIES, "medium");
+  if (is_tuple (t, "\\textbf", 1)) return mod_m2e (t, FONT_SERIES, "bold");
+  if (is_tuple (t, "\\textup", 1)) return mod_m2e (t, FONT_SHAPE, "right");
+  if (is_tuple (t, "\\textit", 1)) return mod_m2e (t, FONT_SHAPE, "italic");
+  if (is_tuple (t, "\\textsl", 1)) return mod_m2e (t, FONT_SHAPE, "slanted");
+  if (is_tuple (t, "\\textsc", 1)) return mod_m2e (t, FONT_SHAPE,"small-caps");
   if (is_tuple (t, "\\bsc", 1)) return m2e (t, FONT_SHAPE, "small-caps");
   if (is_tuple (t, "\\tmrsub", 1)) return tree (RSUB, l2e (t[1]));
   if (is_tuple (t, "\\tmrsup", 1)) return tree (RSUP, l2e (t[1]));

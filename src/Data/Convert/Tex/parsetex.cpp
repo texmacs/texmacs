@@ -900,7 +900,7 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
   }
 
   bool mbox_flag=
-    ((cmd == "\\text") || (cmd == "\\mbox")) &&
+    (starts (cmd, "\\text") || cmd == "\\mbox") &&
     (command_type ["!mode"] == "math");
   if (mbox_flag) command_type ("!mode") = "text";
 
@@ -1015,6 +1015,12 @@ latex_parser::parse_command (string s, int& i, string cmd, int change) {
           tree st= parse_symbol (s, i);
           if (cmd == "\\def" && arity == 2 && is_tuple (st) && N(st) == 1)
             st= st[0];
+          else if (is_tuple (st) && N(st) == 1 && is_atomic (st[0]) &&
+                   latex_type  (st[0]->label) == "modifier" &&
+                   latex_arity (st[0]->label) != 0) {
+            string sub_cmd= st[0]->label;
+            st= parse_command (s, i, sub_cmd, change);
+          }
           t << st;
           u << st;
           arity--;
