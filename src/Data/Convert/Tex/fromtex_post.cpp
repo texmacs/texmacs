@@ -1277,84 +1277,6 @@ finalize_preamble (tree t, string& style) {
 * Improper matches
 ******************************************************************************/
 
-bool
-process_matches (array<tree>& env, tree t) {
-  if (is_func (t, SET)) {
-    env << t[0];
-    return false;
-  }
-  else if (is_func (t, RESET)) {
-    if (N(env) == 0 || env[N(env)-1] != t[0]) return true;
-    env= range (env, 0, N(env) - 1);
-    return false;
-  }
-  else if (is_func (t, CONCAT)) {
-    bool err= false;
-    for (int i=0; i<N(t); i++)
-      if (process_matches (env, t[i]))
-	err= true;
-    return err;
-  }
-  return false;
-}
-
-bool
-only_resets (tree t) {
-  if (is_func (t, RESET)) return true;
-  else if (is_func (t, CONCAT)) {
-    for (int i=0; i<N(t); i++)
-      if (!only_resets (t[i])) return false;
-    return true;
-  }
-  else return false;
-}
-
-tree
-close_improper_matches (tree t) {
-  if (is_atomic (t)) return t;
-  else {
-    int i, j, n= N(t);
-    tree r (t, n);
-    for (i=0; i<n; i++)
-      r[i]= close_improper_matches (t[i]);
-    if (is_func (r, DOCUMENT))
-      for (i=0; i<n; i++) {
-	array<tree> env;
-	process_matches (env, r[i]);
-	array<tree> pending= copy (env);
-	bool err= false;
-	int last= n;
-	if (n-i > 5 && only_resets (r[n-1])) last--;
-	if (N(env) != 0) {
-	  for (j=i+1; j<last; j++) {
-	    if (N(env) == 0) break;
-	    if (process_matches (env, r[j])) {
-	      err= true;
-	      break;
-	    }
-	  }
-	  if (N(env) != 0 || err) {
-	    tree cl= r[n-1];
-	    if (!only_resets (cl)) cl= tree (CONCAT);
-	    if (!is_concat (cl)) cl= tree (CONCAT, cl);
-	    if (!is_func (r[i], CONCAT)) r[i]= tree (CONCAT, r[i]);
-	    for (j=N(env)-1; j>=0; j--) {
-	      r[i] << tree (RESET, env[j]);
-	      if (N(cl)>0 && cl[0] == tree (RESET, env[j]))
-		cl= cl (1, N(cl));
-	    }
-	    if (only_resets (r[n-1])) {
-	      if (N(cl) == 0) cl= "";
-	      else if (N(cl) == 1) cl= cl[0];
-	      r[n-1]= cl;
-	    }
-	  }
-	}
-      }
-    return r;
-  }
-}
-
 void
 handle_improper_matches (tree& r, tree t, int& pos) {
   while (pos < N(t)) {
@@ -1591,7 +1513,6 @@ reopen_long_matches (tree t) {
 
 static tree
 handle_matches (tree t) {
-  //t= close_improper_matches (t);
   t= reopen_long_matches (t);
   t= handle_improper_matches (t);
   return t;
