@@ -290,7 +290,7 @@ gs_to_png (url image, url png, int w, int h) { //Achtung! w,h in pixels
   if (DEBUG_CONVERT) debug_convert << "gs_to_png using gs"<<LF;
   cmd= gs_prefix ();
   cmd << "-dQUIET -dNOPAUSE -dBATCH -dSAFER ";
-  cmd << "-sDEVICE=png16m -dGraphicsAlphaBits=4 -dTextAlphaBits=4 ";
+  cmd << "-sDEVICE=pngalpha -dGraphicsAlphaBits=4 -dTextAlphaBits=4 ";
   cmd << "-g" << as_string (w) << "x" << as_string (h) << " ";
   cmd << "-sOutputFile=" << sys_concretize (png) << " ";
   int bbw, bbh;
