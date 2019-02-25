@@ -4157,6 +4157,7 @@ upgrade_tex (tree t) {
   t= clean_header (t);
   t= upgrade_doc_language (t);
   t= upgrade_quotes (t);
+  t= upgrade_ancient (t);
   upgrade_tex_flag= false;
   return t;
 }
