@@ -1647,7 +1647,7 @@ is_negative_length(tree t) {
 
 string
 textm_normalize_length (string len) {
-  len= trim_spaces (len);
+  len= replace (len, " ", "");
   len= replace (len, "tex-text-width", "par");
   len= replace (len, "tex-line-width", "par");
   len= replace (len, "tex-column-width", "par");
