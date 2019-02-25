@@ -1599,7 +1599,8 @@ static tree
 upgrade_mod_symbols (tree t) {
   if (is_atomic (t)) return t;
   if (is_func (t, WITH) && N(t) > 3 &&
-      (t[0] == "mode" || is_atomic (t[0]) && starts (t[0]->label, "math")) &&
+      (t[0] == "mode" ||
+       (is_atomic (t[0]) && starts (t[0]->label, "math"))) &&
       is_atomic (t[2]) && starts (t[2]->label, "math")) {
     tree u (WITH, t[0], t[1], t (2, N(t)));
     tree r= upgrade_mod_symbols (u);
