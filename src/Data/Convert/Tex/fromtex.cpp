@@ -585,6 +585,7 @@ filter_preamble (tree t) {
         i++;
         tree var= latex_symbol_to_tree (u[0]->label);
         string val;
+	if (i<n && t[i] == "=") i++;
         while (i<n && is_atomic (t[i]) && N(t[i]->label) == 1 &&
                (is_alpha (t[i]->label[0]) ||
                 is_numeric (t[i]->label[0]) ||
@@ -593,8 +594,12 @@ filter_preamble (tree t) {
           val << t[i++]->label;
         if (ends (val, "mm") || ends (val, "cm") || ends (val, "in") ||
             ends (val, "dd") || ends (val, "dc") || ends (val, "pc") ||
-            ends (val, "pt") || ends (val, "em"))
-          preamble << tuple ("\\env-init", var, val) << "\n" << "\n";
+            ends (val, "pt") || ends (val, "em")) {
+	  if (N(val)>6 && val(N(val)-6, N(val)-2) == "true")
+	    val= val (0, N(val)-6) * val (N(val)-2, N(val));
+	  if (N(val)>2 && !is_alpha (val[N(val)-3]))
+	    preamble << tuple ("\\env-init", var, val) << "\n" << "\n";
+	}
       }
     }
     else if (is_custom_maketitle (u))
@@ -1646,8 +1651,10 @@ textm_normalize_length (string len) {
   len= replace (len, "tex-text-width", "par");
   len= replace (len, "tex-line-width", "par");
   len= replace (len, "tex-column-width", "par");
+  len= replace (len, "tex-text-height", "pag");
   if (len == "par") len= "1par";
-  return len;  
+  if (len == "pag") len= "1pag";
+  return len;
 }
 
 tree

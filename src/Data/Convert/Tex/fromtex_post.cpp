@@ -2118,6 +2118,13 @@ clean_vspace (tree t) {
     tree r (DOCUMENT);
     for (i=0; i<n; i++) {
       tree cur= clean_vspace (t[i]);
+      if (is_concat (cur) && N(cur) > 1 &&
+	  is_func (cur[0], VSPACE))
+	cur[0]= tree (VAR_VSPACE, A(cur[0]));
+      else if (is_concat (cur) && N(cur) > 2 &&
+	       is_func (cur[0], NO_INDENT) &&
+	       is_func (cur[1], VSPACE))
+	cur[1]= tree (VAR_VSPACE, A(cur[1]));
       bool eat= (i == n-1 || auto_vspace (t[i+1]));
       if (is_atomic (cur)) r << cur;
       else if (is_vspace (cur, true));
