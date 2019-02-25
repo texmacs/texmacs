@@ -17,7 +17,68 @@
         (text text-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Education menus
+;; Submenus for inserting educational content
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind question-menu
+  ("Question" (make 'question))
+  ("Exercise" (make 'exercise))
+  ("Problem" (make 'problem)))
+
+(menu-bind answer-menu
+  ("Answer" (make 'answer))
+  ("Solution" (make 'solution)))
+
+(menu-bind gap-menu
+  ("Inline" (make 'gap))
+  ("Wide" (make 'gap-wide))
+  ("Multiline" (make 'gap-long))
+  ---
+  ("Dots" (make 'gap-dots))
+  ("Underlines" (make 'gap-underlined))
+  ("Box" (make 'gap-box)))
+
+(menu-bind mc-menu
+  ("Default" (make-mc 'mc))
+  ---
+  ("Monospaced" (make-mc 'mc-monospaced))
+  ("Horizontal" (make-mc 'mc-horizontal))
+  ("Vertical" (make-mc 'mc-vertical)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main menus for inserting educational content
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind edu-insert-menu
+  (-> "Question" (link question-menu))
+  (-> "Answer" (link answer-menu))
+  (-> "Gap" (link gap-menu))
+  (-> "Multiple choice" (link mc-menu)))
+
+(menu-bind text-extra-menu
+  (:require (style-has? "std-edu-dtd"))
+  (former)
+  ---
+  (link edu-insert-menu))
+
+(menu-bind edu-insert-icons
+  (=> (balloon (icon "tm_question.xpm") "Insert a question")
+      (link question-menu))
+  (=> (balloon (icon "tm_answer.xpm") "Insert an answer")
+      (link answer-menu))
+  (=> (balloon (icon "tm_gap.xpm") "Insert a gap")
+      (link gap-menu))
+  (=> (balloon (icon "tm_mc.xpm") "Insert a multiple choice")
+      (link mc-menu)))
+
+(menu-bind text-extra-icons
+  (:require (style-has? "std-edu-dtd"))
+  (former)
+  /
+  (link edu-insert-icons))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Top level educational menus
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind edu-menu
@@ -71,64 +132,6 @@
 (tm-menu (focus-title-hidden-menu)
   (:require (style-has? "exam-style"))
   ("Running title" (make-doc-data-element 'doc-running-title)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Inserting multiple choice lists
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind mc-menu
-  ("Default" (make-tmlist 'mc))
-  ---
-  ("Monospaced" (make-mc 'mc-monospaced))
-  ("Horizontal" (make-mc 'mc-horizontal))
-  ("Vertical" (make-mc 'mc-vertical)))
-
-(menu-bind list-menu
-  (:require (style-has? "std-edu-dtd"))
-  (former)
-  ---
-  ("Multiple choice" (make-mc 'mc))
-  ---
-  ("Monospaced" (make-mc 'mc-monospaced))
-  ("Horizontal" (make-mc 'mc-horizontal))
-  ("Vertical" (make-mc 'mc-vertical)))
-
-(menu-bind lists-menu
-  (:require (style-has? "std-edu-dtd"))
-  (former)
-  (-> "Multiple choice" (link mc-menu)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Icon menus
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind question-menu
-  ("Question" (make 'question))
-  ("Exercise" (make 'exercise))
-  ("Problem" (make 'problem)))
-
-(menu-bind answer-menu
-  ("Answer" (make 'answer))
-  ("Solution" (make 'solution)))
-
-(menu-bind gap-menu
-  ("Dots" (make 'gap)))
-
-(menu-bind edu-icons
-  (=> (balloon (icon "tm_question.xpm") "Insert a question")
-      (link question-menu))
-  (=> (balloon (icon "tm_answer.xpm") "Insert an answer")
-      (link answer-menu))
-  (=> (balloon (icon "tm_gap.xpm") "Insert a gap")
-      (link gap-menu))
-  (=> (balloon (icon "tm_mc.xpm") "Insert a multiple choice")
-      (link mc-menu)))
-
-;;(menu-bind text-extra-icons
-;;  (:require (style-has? "std-edu-dtd"))
-;;  (former)
-;;  /
-;;  (link edu-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Customizing multiple choice lists

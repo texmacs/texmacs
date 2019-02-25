@@ -506,6 +506,8 @@
       ---
       (link lists-menu)))
 
+(menu-bind text-extra-menu)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text menus for inserting inline content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -525,6 +527,7 @@
 
 (menu-bind text-menu
   (link text-block-menu)
+  (link text-extra-menu)
   ---
   (link text-inline-menu)
   ---
