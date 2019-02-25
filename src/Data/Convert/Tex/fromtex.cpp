@@ -607,7 +607,7 @@ filter_preamble (tree t) {
     else if (is_metadata_env (u)) {
       string s= as_string (u[0]);
       s= "\\end-" * s(7,N(s));
-      while (i<n && !is_tuple (u, s)) i++;
+      while (i<n && !is_tuple (t[i], s)) i++;
     }
     else if (!is_metadata (u))
       doc << u;
