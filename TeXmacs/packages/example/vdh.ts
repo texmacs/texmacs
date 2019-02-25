@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -286,7 +286,7 @@
     <surround||<right-flush><action|<active*|<with|color|blue|<with|mode|math|<rigid|\<Leftarrow\>>>>>|mouse-fold|<arg|x>>|<arg|y>>
   </macro>>
 
-  <assign|solution|<\macro|body>
+  <assign|solution*|<\macro|body>
     <render-exercise|<localize|Solution>|<arg|body>>
   </macro>>
 

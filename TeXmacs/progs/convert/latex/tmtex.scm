@@ -2796,9 +2796,12 @@
   (appendix (,tmtex-appendix 1))
   (appendix* (,tmtex-appendix* 1))
   ((:or theorem proposition lemma corollary proof axiom definition
-	notation conjecture remark note example exercise problem warning
-	convention quote-env quotation verse solution question answer
-	acknowledgments)
+	notation conjecture remark note example convention warning
+        exercise problem question solution answer
+        quote-env quotation verse acknowledgments
+        theorem* proposition* lemma* corollary* axiom* definition*
+	notation* conjecture* remark* note* example* convention* warning*
+        exercise* problem* question* solution* answer*)
    (,tmtex-enunciation 1))
   (new-theorem (,tmtex-new-theorem 2))
   (verbatim (,tmtex-verbatim 1))

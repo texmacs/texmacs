@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -131,7 +131,7 @@
     </render-exercise>
   </macro>>
 
-  <assign|solution|<\macro|body>
+  <assign|solution-old|<\macro|body>
     <render-solution|<solution-text>|<arg|body>>
   </macro>>
 
@@ -143,7 +143,7 @@
 
   <assign|render-answer|<value|render-remark>>
 
-  <assign|answer|<\macro|body>
+  <assign|answer-old|<\macro|body>
     <render-answer|<answer-text>|<arg|body>>
   </macro>>
 

@@ -152,9 +152,9 @@
       ---)
   ("Exercise" (make 'exercise))
   ("Problem" (make 'problem))
-  ("Solution" (make 'solution))
   ("Question" (make 'question))
-  ("Answer" (make 'answer)))
+  ("Solution" (make 'solution*))
+  ("Answer" (make 'answer*)))
 
 (menu-bind prominent-menu
   ("Quote" (make 'quote-env))

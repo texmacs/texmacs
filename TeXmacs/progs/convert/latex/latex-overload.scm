@@ -67,20 +67,12 @@
      (,abbr (!append "\\theoremstyle{remark}\n"
                      (newtheorem ,abbr (!translate ,full)) "\n"))))
 
-(define-macro (ams-texmacs-indent-exercise abbr full)
+(define-macro (ams-texmacs-exercise abbr full)
   `(smart-table latex-texmacs-env-preamble
      (:require (latex-depends? "amsthm"))
      (,abbr (!append "\\newtheoremstyle{indent-exercise}{3pt}{3pt}"
                      "{\\small}{\\parindent}{\\bf\\small}{.}{.5em}{}{}\n"
                      "\\theoremstyle{indent-exercise}\n"
-                     (newtheorem ,abbr (!translate ,full)) "\n"))))
-
-(define-macro (ams-texmacs-noindent-exercise abbr full)
-  `(smart-table latex-texmacs-env-preamble
-     (:require (latex-depends? "amsthm"))
-     (,abbr (!append "\\newtheoremstyle{noindent-exercise}{3pt}{3pt}"
-                     "{\\small}{}{\\bf\\small}{.}{.5em}{}{}\n"
-                     "\\theoremstyle{noindent-exercise}\n"
                      (newtheorem ,abbr (!translate ,full)) "\n"))))
 
 (ams-texmacs-theorem "theorem" "Theorem")
@@ -99,9 +91,9 @@
 (ams-texmacs-remark "warning" "Warning")
 (ams-texmacs-remark "answer" "Answer")
 (ams-texmacs-remark "question" "Question")
-(ams-texmacs-indent-exercise "exercise" "Exercise")
-(ams-texmacs-indent-exercise "problem" "Problem")
-(ams-texmacs-noindent-exercise "solution" "Solution")
+(ams-texmacs-exercise "exercise" "Exercise")
+(ams-texmacs-exercise "problem" "Problem")
+(ams-texmacs-exercise "solution" "Solution")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Framed session package

@@ -647,9 +647,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-macro (latex-texmacs-thmenv prim name before after)
-  `(smart-table latex-texmacs-env-preamble
-     (,prim (!append ,@before (newtheorem ,prim (!translate ,name))
-		     ,@after "\n"))))
+  (let* ((prim* (string-append prim "*"))
+         (nonum (string-append "nn" prim))
+         (thenonum (string-append "\\the" nonum)))
+    `(smart-table latex-texmacs-env-preamble
+       (,prim  (!append ,@before
+                        (newtheorem ,prim (!translate ,name))
+                        ,@after "\n"))
+       (,prim* (!append (newcounter ,nonum) "\n"
+                        "\\def" ,thenonum "{\\unskip}\n"
+                        ,@before
+                        (newtheorem ,prim* (!option ,nonum) (!translate ,name))
+                        ,@after "\n")))))
 
 (define-macro (latex-texmacs-theorem prim name)
   `(latex-texmacs-thmenv ,prim ,name () ()))

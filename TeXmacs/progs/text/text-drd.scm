@@ -31,7 +31,7 @@
 
 (define-group numbered-tag
   (section-tag)
-  (theorem-tag) (definition-tag) (remark-tag) (exercise-tag)
+  (theorem-tag) (definition-tag) (remark-tag) (exercise-tag) (solution-tag)
   (figure-tag) (equation-tag))
 
 ;; Environments with titles

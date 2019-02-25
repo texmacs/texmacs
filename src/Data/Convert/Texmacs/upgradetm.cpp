@@ -4320,6 +4320,10 @@ upgrade (tree t, string version) {
       t= rename_style (t, "beamer", "old2-beamer");
     }
   }
+  if (version_inf_eq (version, "1.99.9")) {
+    t= rename_primitive (t, "solution", "solution*");
+    t= rename_primitive (t, "answer", "answer*");
+  }
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

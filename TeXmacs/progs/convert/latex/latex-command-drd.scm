@@ -210,6 +210,12 @@
   begin-convention begin-quote-begin-env begin-quotation begin-verse
   begin-solution begin-question begin-answer begin-acknowledgments
 
+  begin-theorem* begin-proposition* begin-lemma* begin-corollary*
+  begin-axiom* begin-definition* begin-notation* begin-conjecture*
+  begin-remark* begin-note* begin-example* begin-warning*
+  begin-convention* begin-exercise* begin-problem*
+  begin-solution* begin-question* begin-answer*
+
   ;; guessed
   begin-th begin-thm begin-prop begin-lem begin-cor begin-corr
   begin-dem begin-preuve begin-ax begin-def begin-dfn begin-defn

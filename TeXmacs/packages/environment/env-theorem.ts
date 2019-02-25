@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -64,7 +64,15 @@
 
   <new-exercise|problem|Problem>
 
-  <new-theorem|question|Question>
+  <new-exercise|solution|Solution>
+
+  <new-remark|question|Question>
+
+  <new-remark|answer|Answer>
+
+  <individual-counter|question>
+
+  <individual-counter|answer>
 </body>
 
 <\initial>

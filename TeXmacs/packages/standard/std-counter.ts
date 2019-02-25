@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.99.9>
 
-<style|<tuple|source|std>>
+<style|<tuple|source|std|english>>
 
 <\body>
   <active*|<\src-title>
@@ -82,11 +82,10 @@
 
   <assign|group-individual-counters|<macro|g|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|display-in-|<arg|g>>>|<macro|x|nr|<style-with|src-compact|none|<compound|<unquote|<merge|display-|<arg|g>>>|<style-with|src-compact|none|<compound|<merge|ind-display-|<arg|x>>|<arg|nr>>>>>>><assign|<unquote|<merge|counter-in-|<arg|g>>>|<macro|x|<style-with|src-compact|none|<compound|<merge|ind-counter-|<arg|x>>>>>><assign|<unquote|<merge|reset-|<arg|g>>>|<macro|<style-with|src-compact|none|<assign|<compound|<unquote|<merge|counter-|<arg|x>>>>|0><for-each|reset-counter|<value|<unquote|<merge|<arg|g>|-group>>>>>>>>>>>
 
+  <assign|individual-counter|<macro|x|<style-with|src-compact|none|<quasi|<assign|<unquote|<merge|display-|<arg|x>>>|<value|<unquote|<merge|ind-display-|<arg|x>>>>>><quasi|<assign|<unquote|<merge|counter-|<arg|x>>>|<value|<unquote|<merge|ind-counter-|<arg|x>>>>>>>>>
+
   \;
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
