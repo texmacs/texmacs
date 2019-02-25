@@ -25,6 +25,16 @@
 (tm-define (solution-context? t)
   (solution-tag? (tree-label t)))
 
+(tm-define (short-question-context? t)
+  (short-question-tag? (tree-label t)))
+
+(tm-define (short-answer-context? t)
+  (short-answer-tag? (tree-label t)))
+
+(tm-define (short-question-answer-context? t)
+  (or (short-question-context? t)
+      (short-answer-context? t)))
+
 (tm-define (mc-context? t)
   (mc-tag? (tree-label t)))
 
@@ -76,6 +86,16 @@
 
 (tm-define (edu-set-mode mode)
   (edu-operate (buffer-tree) mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Questions and answers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-enter t shift?)
+  (:require (and (short-question-answer-context? t) (not shift?)))
+  (with l (tree-label t)
+    (tree-go-to t :end)
+    (make l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multiple choice lists

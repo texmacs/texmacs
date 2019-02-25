@@ -23,11 +23,24 @@
 (menu-bind question-menu
   ("Question" (make 'question))
   ("Exercise" (make 'exercise))
-  ("Problem" (make 'problem)))
+  ("Problem" (make 'problem))
+  ---
+  ("1, 2, 3" (make 'question-arabic))
+  ("a, b, c" (make 'question-alpha))
+  ("A, B, C" (make 'question-Alpha))
+  ("i, ii, iii" (make 'question-roman))
+  ("I, II, III" (make 'question-Roman)))
 
 (menu-bind answer-menu
-  ("Answer" (make 'answer))
-  ("Solution" (make 'solution)))
+  ("Answer" (make 'answer*))
+  ("Solution" (make 'solution*))
+  ---
+  ("<blacktriangleright>" (make 'answer-item))
+  ("1, 2, 3" (make 'answer-arabic))
+  ("a, b, c" (make 'answer-alpha))
+  ("A, B, C" (make 'answer-Alpha))
+  ("i, ii, iii" (make 'answer-roman))
+  ("I, II, III" (make 'answer-Roman)))
 
 (menu-bind gap-menu
   ("Inline" (make 'gap))
@@ -35,7 +48,7 @@
   ("Multiline" (make 'gap-long))
   ---
   ("Dots" (make 'gap-dots))
-  ("Underlines" (make 'gap-underlined))
+  ("Underlined" (make 'gap-underlined))
   ("Box" (make 'gap-box)))
 
 (menu-bind mc-menu

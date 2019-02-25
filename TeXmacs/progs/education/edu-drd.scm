@@ -22,6 +22,19 @@
 ;;(define-group solution-tag
 ;;  solution answer)
 
+(define-group variant-tag
+  (short-question-tag) (short-answer-tag))
+
+(define-group similar-tag
+  (short-question-tag) (short-answer-tag))
+
+(define-group short-question-tag
+  question-arabic question-alpha question-Alpha
+  question-roman question-Roman question-item)
+
+(define-group short-answer-tag
+  answer-arabic answer-alpha answer-Alpha
+  answer-roman answer-Roman answer-item)
 
 ;; Buttons
 

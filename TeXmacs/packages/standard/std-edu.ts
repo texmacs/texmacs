@@ -38,6 +38,134 @@
 
   <\active*>
     <\src-comment>
+      Short question and answer environments
+    </src-comment>
+  </active*>
+
+  <assign|short-item|<macro|name|<style-with|src-compact|none|<with|par-first|<minus|<item-hsep>>|<yes-indent>><resize|<arg|name>|<minus|1r|<minus|<item-hsep>|0.5fn>>||<plus|1r|0.5fn>|>>>>
+
+  <assign|short-sep|<macro|)>>
+
+  <assign|short-nameless|<macro|\<blacktriangleright\><space|0.5spc>>>
+
+  <assign|short-arabic|<macro|nr|<arg|nr>>>
+
+  <assign|short-alpha|<macro|nr|<number|<arg|nr>|alpha>>>
+
+  <assign|short-Alpha|<macro|nr|<number|<arg|nr>|Alpha>>>
+
+  <assign|short-roman|<macro|nr|<number|<arg|nr>|roman>>>
+
+  <assign|short-Roman|<macro|nr|<number|<arg|nr>|Roman>>>
+
+  <assign|short-env|<\macro|pre|body>
+    <\padded*>
+      <\with|par-left|<plus|<value|par-left>|<item-hsep>>|enumerate-level|1>
+        <\surround|<short-item|<arg|pre>>|>
+          <arg|body>
+        </surround>
+      </with>
+    </padded*>
+  </macro>>
+
+  \;
+
+  <assign|short-question|<\macro|disp|body>
+    <\with|display-question|<arg|disp>>
+      <\surround|<next-question>|>
+        <\short-env|<the-question><short-sep>>
+          <arg|body>
+        </short-env>
+      </surround>
+    </with>
+  </macro>>
+
+  <assign|question-item|<\macro|body>
+    <\short-env|<short-nameless>>
+      <arg|body>
+    </short-env>
+  </macro>>
+
+  <assign|question-arabic|<\macro|body>
+    <\short-question|<value|short-arabic>>
+      <arg|body>
+    </short-question>
+  </macro>>
+
+  <assign|question-alpha|<\macro|body>
+    <\short-question|<value|short-alpha>>
+      <arg|body>
+    </short-question>
+  </macro>>
+
+  <assign|question-Alpha|<\macro|body>
+    <\short-question|<value|short-Alpha>>
+      <arg|body>
+    </short-question>
+  </macro>>
+
+  <assign|question-roman|<\macro|body>
+    <\short-question|<value|short-roman>>
+      <arg|body>
+    </short-question>
+  </macro>>
+
+  <assign|question-Roman|<\macro|body>
+    <\short-question|<value|short-Roman>>
+      <arg|body>
+    </short-question>
+  </macro>>
+
+  \;
+
+  <assign|short-answer|<\macro|disp|body>
+    <\with|display-answer|<arg|disp>>
+      <\surround|<next-answer>|>
+        <\short-env|<the-answer><short-sep>>
+          <arg|body>
+        </short-env>
+      </surround>
+    </with>
+  </macro>>
+
+  <assign|answer-item|<\macro|body>
+    <\short-env|<short-nameless>>
+      <arg|body>
+    </short-env>
+  </macro>>
+
+  <assign|answer-arabic|<\macro|body>
+    <\short-answer|<value|short-arabic>>
+      <arg|body>
+    </short-answer>
+  </macro>>
+
+  <assign|answer-alpha|<\macro|body>
+    <\short-answer|<value|short-alpha>>
+      <arg|body>
+    </short-answer>
+  </macro>>
+
+  <assign|answer-Alpha|<\macro|body>
+    <\short-answer|<value|short-Alpha>>
+      <arg|body>
+    </short-answer>
+  </macro>>
+
+  <assign|answer-roman|<\macro|body>
+    <\short-answer|<value|short-roman>>
+      <arg|body>
+    </short-answer>
+  </macro>>
+
+  <assign|answer-Roman|<\macro|body>
+    <\short-answer|<value|short-Roman>>
+      <arg|body>
+    </short-answer>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Folding
     </src-comment>
   </active*>
