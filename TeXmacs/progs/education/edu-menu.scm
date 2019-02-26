@@ -17,8 +17,12 @@
         (text text-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Submenus for inserting educational content
+;; Submenus for inserting and manipulating educational content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(menu-bind edu-view-mode-menu
+  ("Problem mode" (edu-set-mode :problem))
+  ("Solution mode" (edu-set-mode :solution)))
 
 (menu-bind question-menu
   ("Question" (make 'question))
@@ -59,7 +63,7 @@
   ("Vertical" (make-mc 'mc-vertical)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Main menus for inserting educational content
+;; Main menus for inserting and manipulating educational content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind edu-insert-menu
@@ -68,11 +72,21 @@
   (-> "Gap" (link gap-menu))
   (-> "Multiple choice" (link mc-menu)))
 
+;;(menu-bind view-menu
+;;  (:require (style-has? "std-edu-dtd"))
+;;  (former)
+;;  ---
+;;  (link edu-view-mode-menu))
+
 (menu-bind text-extra-menu
   (:require (style-has? "std-edu-dtd"))
   (former)
   ---
   (link edu-insert-menu))
+
+(menu-bind edu-view-icons
+  (=> (balloon (icon "tm_view.xpm") "Select view mode")
+      (link edu-view-mode-menu)))
 
 (menu-bind edu-insert-icons
   (=> (balloon (icon "tm_question.xpm") "Insert a question")
@@ -88,23 +102,8 @@
   (:require (style-has? "std-edu-dtd"))
   (former)
   /
+  ;;(link edu-view-icons)
   (link edu-insert-icons))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Top level educational menus
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(menu-bind edu-menu
-  ("Problem mode" (edu-set-mode :problem))
-  ("Solution mode" (edu-set-mode :solution))
-  ;;("Training mode" (edu-set-mode :training))
-  )
-
-(menu-bind course-menu
-  (link edu-menu))
-
-(menu-bind exam-menu
-  (link edu-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document style options

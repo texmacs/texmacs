@@ -285,7 +285,7 @@
 
 ;(display "Booting educational features\n")
 (lazy-keyboard (education edu-kbd) in-edu-text?)
-(lazy-menu (education edu-menu) course-menu exam-menu)
+(lazy-menu (education edu-menu) edu-insert-menu)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

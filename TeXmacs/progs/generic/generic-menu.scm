@@ -322,6 +322,8 @@
   (dynamic (focus-parameters-menu t))
   (dynamic (focus-tag-edit-menu (tree-label t))))
 
+(tm-menu (focus-theme-menu t))
+
 (tm-menu (focus-tag-menu t)
   (with l (focus-variants-of t)
     (assuming (<= (length l) 1)
@@ -336,6 +338,9 @@
   (assuming (focus-has-preferences? t)
     (-> "Preferences"
         (dynamic (focus-preferences-menu t))))
+  (assuming (focus-has-theme? t)
+    (-> "Rendering"
+        (dynamic (focus-theme-menu t))))
   ("Describe" (focus-help))
   (assuming (focus-can-search? t)
     ("Search in database" (focus-open-search-tool t)))
@@ -457,6 +462,9 @@
   (assuming (focus-has-preferences? t)
     (=> (balloon (icon "tm_focus_prefs.xpm") "Preferences for tag")
 	(dynamic (focus-preferences-menu t))))
+  (assuming (focus-has-theme? t)
+    (=> (balloon (icon "tm_theme.xpm") "Rendering options for tag")
+        (dynamic (focus-theme-menu t))))
   ((balloon (icon "tm_focus_help.xpm") "Describe tag")
    (focus-help))
   (assuming (focus-can-search? t)
