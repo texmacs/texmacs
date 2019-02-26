@@ -20,10 +20,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (problem-context? t)
-  (exercise-tag? (tree-label t)))
+  (in? (tree-label t) (numbered-unnumbered-append (exercise-tag-list))))
 
 (tm-define (solution-context? t)
-  (solution-tag? (tree-label t)))
+  (in? (tree-label t) (numbered-unnumbered-append (solution-tag-list))))
 
 (tm-define (short-question-context? t)
   (short-question-tag? (tree-label t)))
@@ -31,9 +31,35 @@
 (tm-define (short-answer-context? t)
   (short-answer-tag? (tree-label t)))
 
-(tm-define (short-question-answer-context? t)
+(tm-define (short-question-or-answer-context? t)
   (or (short-question-context? t)
       (short-answer-context? t)))
+
+(tm-define (question-context? t)
+  (or (problem-context? t)
+      (short-question-context? t)))
+
+(tm-define (answer-context? t)
+  (or (solution-context? t)
+      (short-answer-context? t)))      
+
+(tm-define (question-context*? t)
+  (or (question-context? t)
+      (and (tree-is? t 'document 1)
+           (question-context? (tree-ref t 0)))))
+
+(tm-define (answer-context*? t)
+  (or (answer-context? t)
+      (and (tree-is? t 'document 1)
+           (answer-context? (tree-ref t 0)))))
+
+(tm-define (question-answer-context? t)
+  (and (tree-in? t '(folded unfolded folded-reverse unfolded-reverse))
+       (question-context*? (tree-ref t 0))
+       (answer-context*? (tree-ref t 1))))
+
+(tm-define (mc-field-context? t)
+  (tree-is? t 'mc-field))
 
 (tm-define (mc-context? t)
   (mc-tag? (tree-label t)))
@@ -47,42 +73,97 @@
 (tm-define (with-button-context? t)
   (with-button-tag? (tree-label t)))
 
+(tm-define (gap-context? t)
+  (gap-tag? (tree-label t)))
+
+(tm-define (gap-long-context? t)
+  (gap-long-tag? (tree-label t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Operating on a tree
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (edu-operate-document l mode)
+(define (empty doc)
+  (if (tm-func? doc 'document)
+      `(document ,@(map (lambda (x) "") (tm-children doc)))
+      `(document "")))
+
+(define (edu-operate-document l mode)
   (cond ((null? l) (noop))
         ((and (nnull? (cdr l))
-              (problem-context? (car l))
-              (solution-context? (cadr l)))
+              (question-context? (car l))
+              (answer-context? (cadr l)))
          (edu-operate-document (cddr l) mode)
-         (let* ((prb (car l))
-                (sol (cadr l))
-                (tag (if (== mode :problem) 'folded 'unfolded)))
-           (tree-insert-node! prb 0 (list tag))
-           (tree-insert-node! sol 0 (list tag))
-           (tree-join (tree-up prb) (tree-index prb))))
+         (and-let* ((que (car l))
+                    (ans (cadr l))
+                    (tag (cond ((== mode :question) 'folded)
+                               ((== mode :answer) 'folded-reverse)
+                               ((== mode :mixed) 'unfolded)
+                               (else #f))))
+           (tree-insert-node! que 0 (list tag))
+           (tree-insert-node! ans 0 (list tag))
+           (tree-join (tree-up que) (tree-index que))))
         (else
          (edu-operate-document (cdr l) mode)
          (edu-operate (car l) mode))))
 
 (tm-define (edu-operate t mode)
-  (cond ((tree-atomic? t) (noop))
-        ((toggle-first-context? t)
-         (cond ((== mode :solution)
-                (dynamic-operate t :unfold))))
-        ((toggle-second-context? t)
-         (cond ((== mode :problem)
-                (dynamic-operate t :fold))))
-        ((tree-is? t 'document)
-         (edu-operate-document (tree-children t) mode))
-        (else
-          (for-each (cut edu-operate <> mode) (tree-children t)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Setting the main operation mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (when (tree-compound? t)
+    (if (tree-is? t 'document)
+        (edu-operate-document (tree-children t) mode)
+        (for-each (cut edu-operate <> mode) (tree-children t)))
+    (when (question-answer-context? t)
+      (cond ((== mode :mixed)
+             (alternate-unfold t))
+            ((and (== mode :question) (tree-is? t 'unfolded))
+             (alternate-fold t))
+            ((and (== mode :answer) (tree-is? t 'unfolded-reverse))
+             (alternate-fold t))
+            ((and (== mode :question)
+                  (tree-in? t '(folded-reverse unfolded-reverse)))
+             (variant-set t 'folded))
+            ((and (== mode :answer)
+                  (not (tree-in? t '(folded-reverse unfolded-reverse))))
+             (variant-set t 'folded-reverse))))
+    (when (mc-field-context? t)
+      (with c (tree-ref t 0)
+        (cond ((not (tree-in? c '(hide-simple show-simple)))
+               (if (== mode :question)
+                   (tree-set! c `(hide-simple "false" ,c))
+                   (tree-set! c `(show-simple "false" ,c))))
+              ((== mode :question)
+               (when (not (tree-is? c 'hide-simple))
+                 (variant-set c 'hide-simple))
+               (tree-set (tree-ref c 0) "false"))
+              ((!= mode :question)
+               (when (not (tree-is? c 'show-simple))
+                 (variant-set c 'show-simple))))))
+    (when (gap-long-context? t)
+      (with c (tree-ref t 0)
+        (cond ((not (tree-in? c '(hide-simple show-simple)))
+               (if (== mode :question)
+                   (tree-set! c `(hide-simple ,(empty c) ,c))
+                   (tree-set! c `(show-simple ,(empty c) ,c))))
+              ((== mode :question)
+               (when (not (tree-is? c 'hide-simple))
+                 (variant-set c 'hide-simple))
+               (tree-set (tree-ref c 0) (empty (tree-ref c 1))))
+              ((!= mode :question)
+               (when (not (tree-is? c 'show-simple))
+                 (variant-set c 'show-simple))))))
+    (when (and (gap-context? t) (not (gap-long-context? t)))
+      (with c (tree-ref t 0)
+        (cond ((not (tree-in? c '(hide-reply show-reply)))
+               (if (== mode :question)
+                   (tree-set! c `(hide-reply "" ,c))
+                   (tree-set! c `(show-reply "" ,c))))
+              ((== mode :question)
+               (when (not (tree-is? c 'hide-reply))
+                 (variant-set c 'hide-reply))
+               (tree-set (tree-ref c 0) ""))
+              ((!= mode :question)
+               (when (not (tree-is? c 'show-reply))
+                 (variant-set c 'show-reply))))))))
 
 (tm-define (edu-set-mode mode)
   (edu-operate (buffer-tree) mode))
@@ -92,7 +173,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (kbd-enter t shift?)
-  (:require (and (short-question-answer-context? t) (not shift?)))
+  (:require (and (short-question-or-answer-context? t) (not shift?)))
   (with l (tree-label t)
     (tree-go-to t :end)
     (make l)))
@@ -236,9 +317,13 @@
 ;; Toggling buttons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (perform-clear t)
+  (cond ((tree-is? t 'hide-simple) (perform-clear (tree-ref t 0)))
+        ((tree-is? t 'show-simple) (perform-clear (tree-ref t 1)))
+        (else (tree-set t (tree "false")))))
+
 (define (clear-buttons t)
-  (cond ((tree-func? t 'mc-field 2)
-	 (tree-set (tree-ref t 0) (tree "false")))
+  (cond ((tree-func? t 'mc-field 2) (perform-clear (tree-ref t 0)))
 	((tree-atomic? t) (noop))
 	(else (for-each clear-buttons (tree-children t)))))
 
@@ -252,10 +337,15 @@
 		  (x (append (sublist l 0 i) (sublist l (+ i 1) n))))
 	     (for-each clear-buttons x))))))
 
+(define (perform-toggle t)
+  (cond ((tree-is? t 'hide-simple) (perform-toggle (tree-ref t 0)))
+        ((tree-is? t 'show-simple) (perform-toggle (tree-ref t 1)))
+        ((tm-equal? t "true" ) (tree-set! t "false"))
+	((tm-equal? t "false") (tree-set! t "true" ))))
+
 (tm-define (mouse-toggle-button t)
   (:type (-> void))
   (:synopsis "Toggle a button using the mouse")
   (:secure #t)
   (if (tree->path t) (handle-exclusive (tree->path t) #f))
-  (cond ((tm-equal? t "true" ) (tree-set! t "false"))	
-	((tm-equal? t "false") (tree-set! t "true" ))))
+  (perform-toggle t))

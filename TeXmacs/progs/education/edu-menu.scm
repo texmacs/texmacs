@@ -21,8 +21,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind edu-view-mode-menu
-  ("Problem mode" (edu-set-mode :problem))
-  ("Solution mode" (edu-set-mode :solution)))
+  ("Questions only" (edu-set-mode :question))
+  ("Answers only" (edu-set-mode :answer))
+  ("Questions with answers" (edu-set-mode :mixed)))
 
 (menu-bind question-menu
   ("Question" (make 'question))
@@ -72,11 +73,11 @@
   (-> "Gap" (link gap-menu))
   (-> "Multiple choice" (link mc-menu)))
 
-;;(menu-bind view-menu
-;;  (:require (style-has? "std-edu-dtd"))
-;;  (former)
-;;  ---
-;;  (link edu-view-mode-menu))
+(menu-bind view-menu
+  (:require (style-has? "std-edu-dtd"))
+  (former)
+  ---
+  (link edu-view-mode-menu))
 
 (menu-bind text-extra-menu
   (:require (style-has? "std-edu-dtd"))
@@ -102,7 +103,7 @@
   (:require (style-has? "std-edu-dtd"))
   (former)
   /
-  ;;(link edu-view-icons)
+  (link edu-view-icons)
   (link edu-insert-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

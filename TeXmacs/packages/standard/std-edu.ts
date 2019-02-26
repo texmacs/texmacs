@@ -166,6 +166,36 @@
 
   <\active*>
     <\src-comment>
+      Numbered answers when questions are folded
+    </src-comment>
+  </active*>
+
+  <assign|solution-dup|<\macro|body>
+    <\render-exercise|<solution-text> <if|<equal|<value|exercise-nr>|0>|<the-problem>|<the-exercise>>>
+      <arg|body>
+    </render-exercise>
+  </macro>>
+
+  <assign|answer-dup|<\macro|body>
+    <\render-remark|<answer-text> <the-question>>
+      <arg|body>
+    </render-remark>
+  </macro>>
+
+  <assign|answer-item-dup|<\macro|body>
+    <\short-env|<the-question><short-sep>>
+      <arg|body>
+    </short-env>
+  </macro>>
+
+  <assign|with-folded-questions|<\macro|body>
+    <\with|solution*|<value|solution-dup>|answer*|<value|answer-dup>|answer-item|<value|answer-item-dup>>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Folding
     </src-comment>
   </active*>
@@ -188,7 +218,9 @@
     <hidden|<arg|x>>
 
     <\surround||<right-flush><action|<with|color|#336666|<specific|screen*|<strong|<math|<op|\<triangleleft\>>>>>>|mouse-unfold|<arg|y>>>
-      <arg|y>
+      <\with-folded-questions>
+        <arg|y>
+      </with-folded-questions>
     </surround>
   </macro>>
 
@@ -331,6 +363,16 @@
       Multiple choice environments
     </src-comment>
   </active*>
+
+  <assign|hide-simple|<macro|student|teacher|<arg|student>>>
+
+  <assign|show-simple|<macro|student|teacher|<arg|teacher>>>
+
+  <drd-props|hide-simple|arity|2|accessible|0>
+
+  <drd-props|show-simple|arity|2|accessible|1>
+
+  \;
 
   <assign|mc-field-sep| >
 
