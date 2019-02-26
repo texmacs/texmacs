@@ -53,7 +53,7 @@
   Alpha Beta Epsilon Eta Iota Kappa Mu Nu Omicron Chi Rho Tau Zeta
 
   ;; other extra symbols
-  exterior Exists bigintwl bigointwl
+  oempty exterior Exists bigintwl bigointwl
   of suchthat barsuchthat asterisk point cdummy comma copyright
   bignone nobracket nospace nocomma noplus nosymbol
   nin nni notni nequiv nleadsto

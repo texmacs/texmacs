@@ -135,6 +135,7 @@
   (in-poster% (style-has? "poster-style"))
   (in-edu% (style-has? "std-edu-dtd"))
   (in-edu-text% #t in-text% in-edu%)
+  (in-edu-math% #t in-math% in-edu%)
   (with-any-selection% (selection-active-any?))
   (with-active-selection% (selection-active-normal?))
   (in-cpp% (== (get-env "prog-language") "cpp"))

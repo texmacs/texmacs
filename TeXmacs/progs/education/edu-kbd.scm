@@ -25,3 +25,8 @@
   (". . . . ." (make 'gap-long))
   (". . . . . var" ".....")
   (". . . . . ." "......"))
+
+(kbd-map
+  (:mode in-edu-math?)
+  (". . ." (make 'gap))
+  (". . . ." (make 'gap-wide)))

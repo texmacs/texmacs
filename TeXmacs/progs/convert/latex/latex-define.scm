@@ -161,6 +161,7 @@
   (precdot "\\mathrel{\\prec\\!\\!\\cdot")
   
   ;; other extra symbols
+  (oempty "\\circ")
   (exterior "\\wedge")
   (Exists "\\exists")
   (bigintwl "\\int")

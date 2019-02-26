@@ -2643,7 +2643,8 @@
   (clipped tmtex-first)
   (repeat tmtex-noop)
   (float tmtex-float)
-  ((:or datoms dlines dpages dbox) tmtex-noop)
+  (datoms tmtex-second)
+  ((:or dlines dpages dbox) tmtex-noop)
   (line-note tmtex-line-note)
 
   (with-limits tmtex-noop)
@@ -3102,7 +3103,18 @@
         "question-arabic" "question-alpha" "question-Alpha"
         "question-roman" "question-Roman" "question-item"
         "answer-arabic" "answer-alpha" "answer-Alpha"
-        "answer-roman" "answer-Roman" "answer-item"))
+        "answer-roman" "answer-Roman" "answer-item"
+
+        "gap" "gap-dots" "gap-underlined" "gap-box"
+        "gap-wide" "gap-dots-wide" "gap-underlined-wide" "gap-box-wide"
+        "gap-long" "gap-dots-long" "gap-underlined-long" "gap-box-long"
+
+        "with-button-box" "with-button-box*"
+        "with-button-circle" "with-button-circle*"
+        "with-button-arabic" "with-button-alpha" "with-button-Alpha"
+        "with-button-roman" "with-button-Roman"
+        "mc-field" "mc-wide-field" "show-reply" "hide-reply"
+        "mc" "mc-monospaced" "mc-horizontal" "mc-vertical"))
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))

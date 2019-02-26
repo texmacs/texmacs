@@ -194,11 +194,11 @@
 
   \;
 
-  <assign|button-box-off|\<box\>>
+  <assign|button-box-off|<math|\<box\>>>
 
-  <assign|button-box-on|\<blacksquare\>>
+  <assign|button-box-on|<math|\<blacksquare\>>>
 
-  <assign|button-box-cross|\<boxtimes\>>
+  <assign|button-box-cross|<math|\<boxtimes\>>>
 
   <assign|button-box|<macro|state|<render-button|<arg|state>|<value|button-box-off>|<value|button-box-on>>>>
 
@@ -206,13 +206,13 @@
 
   \;
 
-  <assign|button-circle-off|\<#25CB\>>
+  <assign|button-circle-off|<math|\<#25CB\>>>
 
-  <assign|button-circle-on|\<#25CF\>>
+  <assign|button-circle-on|<math|\<#25CF\>>>
 
-  <assign|button-circle-off*|\<oempty\>>
+  <assign|button-circle-off*|<math|\<oempty\>>>
 
-  <assign|button-circle-cross|\<otimes\>>
+  <assign|button-circle-cross|<math|\<otimes\>>>
 
   <assign|button-circle|<macro|state|<render-button|<arg|state>|<value|button-circle-off>|<value|button-circle-on>>>>
 
@@ -453,7 +453,7 @@
 
   <assign|gap-dots-hpadding|0.5spc>
 
-  <assign|gap-dots-min-width|2em>
+  <assign|gap-dots-min-width|1em>
 
   <assign|gap-dots-short|<macro|body|<repeat-through|<with|color|<if|<equal|<value|gap-dots-color>|>|<value|color>|<value|gap-dots-color>>|<move|.||<minus|<value|gap-dots-vsep>>><hspace|<value|gap-dots-hsep>>>|<render-gap-text|<arg|body>>>>>
 
@@ -483,7 +483,7 @@
 
   <assign|gap-underlined-hpadding|0.5spc>
 
-  <assign|gap-underlined-min-width|2em>
+  <assign|gap-underlined-min-width|1em>
 
   <assign|gap-underlined-short|<macro|body|<quasi|<style-with|src-compact|none|<datoms|<macro|x|<with|color|<if|<equal|<value|gap-underlined-color>|>|<value|color>|<value|gap-underlined-color>>|<repeat*|<with|color|<unquote|<value|color>>|<arg|x>>|<move|<resize|--|<plus|0.6667l|0.3333r>||<plus|0.3333l|0.6667r>|>||<minus|-0.5ex|<value|gap-underlined-vsep>>>>>>|<render-gap-text|<arg|body>>>>>>>
 
@@ -523,9 +523,9 @@
 
   <assign|gap-box-vpadding|0.5spc>
 
-  <assign|gap-box-min-width|2em>
+  <assign|gap-box-min-width|1em>
 
-  <assign|gap-box|<macro|body|<quasi|<datoms|<macro|x|<with|ornament-color|<value|gap-box-color>|ornament-shadow-color|<value|gap-box-shadow-color>|ornament-sunny-color|<value|gap-box-sunny-color>|ornament-hpadding|<value|gap-box-hpadding>|ornament-vpadding|<value|gap-box-vpadding>|<ornament|<extend|<arg|x>|||<value|gap-box-min-width>|>>>>|<render-gap-text|<arg|body>>>>>>
+  <assign|gap-box|<macro|body|<quasi|<datoms|<macro|x|<with|ornament-color|<value|gap-box-color>|ornament-shadow-color|<value|gap-box-shadow-color>|ornament-sunny-color|<value|gap-box-sunny-color>|ornament-hpadding|<value|gap-box-hpadding>|ornament-vpadding|<value|gap-box-vpadding>|<resize|<ornament|<arg|x>>|<plus|1l|<value|gap-box-hpadding>>||<minus|1r|<value|gap-box-hpadding>>|>>>|<extend|<render-gap-text|<arg|body>>|||<value|gap-box-min-width>|>>>>>
 
   <assign|gap-box-wide|<macro|body|<gap-box|<arg|body><htab|5mm>>>>
 
