@@ -45,12 +45,12 @@
 
 (tm-define (question-context*? t)
   (or (question-context? t)
-      (and (tree-is? t 'document 1)
+      (and (tree-func? t 'document 1)
            (question-context? (tree-ref t 0)))))
 
 (tm-define (answer-context*? t)
   (or (answer-context? t)
-      (and (tree-is? t 'document 1)
+      (and (tree-func? t 'document 1)
            (answer-context? (tree-ref t 0)))))
 
 (tm-define (question-answer-context? t)
@@ -174,9 +174,39 @@
 
 (tm-define (kbd-enter t shift?)
   (:require (and (short-question-or-answer-context? t) (not shift?)))
-  (with l (tree-label t)
-    (tree-go-to t :end)
-    (make l)))
+  (cond ((question-answer-context? (tree-up t))
+         (let* ((f (tree-up t))
+                (q (tree-ref f 0)))
+           (if (tree-func? q 'document 1) (set! q (tree-ref q 0)))
+           (with l (tree-label q)
+             (tree-go-to f :end)
+             (make l))))
+        ((question-answer-context? (tree-up (tree-up t)))
+         (let* ((f (tree-up (tree-up t)))
+                (q (tree-ref f 0)))
+           (if (tree-func? q 'document 1) (set! q (tree-ref q 0)))
+           (with l (tree-label q)
+             (tree-go-to f :end)
+             (make l))))
+        (else
+          (with l (tree-label t)
+            (tree-go-to t :end)
+            (make l)))))
+
+(tm-define (alternate-toggle t)
+  (:require (and (question-context? t)
+                 (tree-is? t :up 'document)
+                 (not (toggle-context? (tree-up (tree-up t))))
+                 (in-edu-text?)))
+  (let* ((p (tree->path t))
+         (a (cond ((tree-in? t '(exercise exercise* problem problem*))
+                   'solution*)
+                  ((tree-in? t '(question question*))
+                   'answer*)
+                  ((short-question-context? t)
+                   'answer-item))))
+    (tree-set! t `(unfolded ,t (,a (document ""))))
+    (go-to (append p (list 1 0 0 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Multiple choice lists
