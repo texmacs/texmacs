@@ -22,10 +22,16 @@ bool in_presentation_mode ();
 struct specific_box_rep: public box_rep {
   box b;
   string filter;
-  specific_box_rep (path ip, box b2, string filter2, font fn):
+  specific_box_rep (path ip, box b2, string filter2, font fn, bool keep_size):
     box_rep (ip), b (b2), filter (filter2) {
-      x1=x2=y1=0;
-      y2=fn->yx;
+      if (keep_size) {
+        x1= b->x1; y1= b->y1;
+        x2= b->x2; y2= b->y2;
+      }
+      else {
+        x1=x2=y1=0;
+        y2=fn->yx;
+      }
       x3= b->x3; y3= b->y3;
       x4= b->x4; y4= b->y4;
     }
@@ -179,8 +185,8 @@ scrollbar_box_rep::action (tree type, SI x, SI y, SI delta) {
 ******************************************************************************/
 
 box
-specific_box (path ip, box b, string filter, font fn) {
-  return tm_new<specific_box_rep> (ip, b, filter, fn);
+specific_box (path ip, box b, string filter, font fn, bool keep_size) {
+  return tm_new<specific_box_rep> (ip, b, filter, fn, keep_size);
 }
 
 box

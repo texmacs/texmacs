@@ -618,7 +618,8 @@
     "<kreuz>" "<recorder>" "<phone>" "<checked>" "<bell>"
 
     "<backprime>" "<bigstar>" "<blacklozenge>"
-    "<blacksquare>" "<blacktriangle>" "<blacktriangledown>"
+    "<blacksquare>" "<blacktriangle>"
+    "<blacktriangleup>" "<blacktriangledown>"
     "<centerdot>" "<checkmark>"
     "<intercal>" "<llcorner>"
     "<lozenge>" "<lrcorner>" "<maltese>" "<measuredangle>"

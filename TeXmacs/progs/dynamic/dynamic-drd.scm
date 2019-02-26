@@ -36,6 +36,7 @@
 
 (define-toggle picture-mixed source-mixed)
 (define-toggle folded-subsession unfolded-subsession)
+(define-toggle folded-reverse unfolded-reverse)
 
 (define-fold folded unfolded)
 (define-fold folded-plain unfolded-plain)

@@ -421,7 +421,7 @@
             (numbered-numbered? (focus-tree)))
      (numbered-toggle (focus-tree))))
   (assuming (alternate-first? t)
-    ((check (balloon (icon "tm_alternate_first.xpm")
+    ((check (balloon (icon (eval (alternate-first-icon t)))
                      (eval (alternate-second-name t))) "v" #f)
      (alternate-toggle (focus-tree))))
   (assuming (alternate-second? t)

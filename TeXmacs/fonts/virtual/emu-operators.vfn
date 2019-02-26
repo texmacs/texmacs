@@ -80,6 +80,10 @@
   (triangle (bar-bottom wedge (scale* minus wedge 1 0)))
   (vartriangle (bar-bottom wedge (scale* minus wedge 1 0)))
   (triangledown (bar-top vee (scale* minus wedge 1 0)))
+  (triangleup (ver-flip triangledown))
+  (blacktriangle (flood-fill triangle 0.5 0.5))
+  (blacktriangledown (flood-fill triangledown 0.5 0.5))
+  (blacktriangleup (ver-flip blacktriangledown))
   (veebar (stack-equal vee (hor-scale minus vee)))
   (barwedge (stack-equal (hor-scale minus wedge) wedge))
   (oval1

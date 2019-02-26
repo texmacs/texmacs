@@ -134,7 +134,7 @@ box script_box (path ip, box b1, box b2, font fn);
 box left_script_box (path ip, box ref, box b1, box b2, font fn, int level);
 box right_script_box (path ip, box ref, box b1, box b2, font fn, int level);
 box side_box (path ip, box ref, box l1, box l2, box r1, box r2, font f, int l);
-box specific_box (path ip, box b, string filter, font fn);
+box specific_box (path ip, box b, string filter, font fn, bool keep_sz= false);
 box toc_box (path ip, string kind, string title, font fn);
 box flag_box (path ip, box b, SI h, pencil dark, brush light);
 box info_box (path ip, SI h, pencil dark, brush light);

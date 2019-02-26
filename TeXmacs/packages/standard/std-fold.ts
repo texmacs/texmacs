@@ -139,6 +139,24 @@
     </render-folded-std>
   </macro>>
 
+  <assign|folded-reverse|<\macro|x|y>
+    <hidden|<arg|x>>
+
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|<op|\<circ\>>>>|||<maximum|1r|1.5fn>|>|mouse-unfold|<arg|y>>>
+      <arg|y>
+    </render-folded-std>
+  </macro>>
+
+  <assign|unfolded-reverse|<\macro|x|y>
+    <\render-folded-std|<resize||||1.5fn|>>
+      <arg|x>
+    </render-folded-std>
+
+    <\render-folded-std|<action|<resize|<active*|<with|mode|math|\<bullet\>>>|||<maximum|1r|1.5fn>|>|mouse-fold|<arg|y>>>
+      <arg|y>
+    </render-folded-std>
+  </macro>>
+
   <assign|folded-env|<\macro|x|y>
     <\render-folded-env|<action|<resize|<specific|screen|<active*|<with|mode|math|<op|\<circ\>>>>>|||<maximum|1r|1.5fn>|>|mouse-unfold|<arg|x>>>
       <arg|x>
@@ -220,6 +238,8 @@
   <drd-props|folded-plain|arity|2|accessible|0|hidden|1>
 
   <drd-props|folded-std|arity|2|accessible|0|hidden|1>
+
+  <drd-props|folded-reverse|arity|2|hidden|0|accessible|1>
 
   <drd-props|folded-env|arity|2|accessible|0|hidden|1>
 

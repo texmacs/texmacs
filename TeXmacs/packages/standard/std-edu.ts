@@ -171,7 +171,7 @@
   </active*>
 
   <assign|folded|<\macro|x|y>
-    <\surround||<right-flush><action|<with|color|#336666|<strong|<math|<op|\<Downarrow\>>>>>|mouse-unfold|<arg|x>>>
+    <\surround||<right-flush><action|<with|color|#336666|<specific|screen*|<strong|<math|<op|\<triangleleft\>>>>>>|mouse-unfold|<arg|x>>>
       <arg|x>
     </surround>
 
@@ -179,9 +179,23 @@
   </macro>>
 
   <assign|unfolded|<\macro|x|y>
-    <surround||<right-flush><action|<with|color|#336666|<strong|<math|<op|\<Uparrow\>>>>>|mouse-fold|<arg|x>>|<arg|x>>
+    <surround||<right-flush><action|<with|color|#336666|<specific|screen*|<strong|<math|<op|\<blacktriangledown\>>>>>>|mouse-fold|<arg|x>>|<arg|x>>
 
-    <arg|y>
+    <surround||<right-flush>|<arg|y>>
+  </macro>>
+
+  <assign|folded-reverse|<\macro|x|y>
+    <hidden|<arg|x>>
+
+    <\surround||<right-flush><action|<with|color|#336666|<specific|screen*|<strong|<math|<op|\<triangleleft\>>>>>>|mouse-unfold|<arg|y>>>
+      <arg|y>
+    </surround>
+  </macro>>
+
+  <assign|unfolded-reverse|<\macro|x|y>
+    <arg|x>
+
+    <surround||<right-flush><action|<with|color|#336666|<specific|screen*|<strong|<math|<op|\<blacktriangleup\>>>>>>|mouse-fold|<arg|y>>|<arg|y>>
   </macro>>
 
   <\active*>

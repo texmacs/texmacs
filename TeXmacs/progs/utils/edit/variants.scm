@@ -155,6 +155,15 @@
      (ahash-set! alternate-table ',first ',second)
      (ahash-set! alternate-table ',second ',first)))
 
+(tm-define (alternate-reverse? t)
+  #f)
+
+(tm-define (alternate-first-name t)
+  (alternate-second-name t))
+
+(tm-define (alternate-first-icon t)
+  "tm_alternate_first.xpm")
+
 (tm-define (alternate-second-name t)
   "Expand")
 
