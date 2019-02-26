@@ -3096,7 +3096,13 @@
   (list "render-theorem" "render-remark" "render-exercise" "render-proof"
         "algorithm" "algorithm*" "named-algorithm"
         "specified-algorithm" "specified-algorithm*"
-        "named-specified-algorithm" "numbered"))
+        "named-specified-algorithm" "numbered"
+
+        "short-item" "short-question"
+        "question-arabic" "question-alpha" "question-Alpha"
+        "question-roman" "question-Roman" "question-item"
+        "answer-arabic" "answer-alpha" "answer-Alpha"
+        "answer-roman" "answer-Roman" "answer-item"))
 
 (tm-define (tmtex-env-patch t l0)
   (let* ((st (tree->stree t))

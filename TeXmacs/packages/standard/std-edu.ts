@@ -46,7 +46,7 @@
 
   <assign|short-sep|<macro|)>>
 
-  <assign|short-nameless|<macro|\<blacktriangleright\><space|0.5spc>>>
+  <assign|short-nameless|<macro|<math|\<blacktriangleright\>><space|0.5spc>>>
 
   <assign|short-arabic|<macro|nr|<arg|nr>>>
 
