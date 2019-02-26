@@ -26,17 +26,18 @@
   ("Questions with answers" (edu-set-mode :mixed)))
 
 (menu-bind question-menu
-  ("Question" (make 'question))
-  ("Exercise" (make 'exercise))
-  ("Problem" (make 'problem))
-  ---
-  ("1, 2, 3" (make 'question-arabic))
-  ("a, b, c" (make 'question-alpha))
-  ("A, B, C" (make 'question-Alpha))
-  ("i, ii, iii" (make 'question-roman))
-  ("I, II, III" (make 'question-Roman)))
+  (when (not (tree-innermost question-or-answer-context?))
+    ("Question" (make 'question))
+    ("Exercise" (make 'exercise))
+    ("Problem" (make 'problem))
+    ---
+    ("1, 2, 3" (make 'question-arabic))
+    ("a, b, c" (make 'question-alpha))
+    ("A, B, C" (make 'question-Alpha))
+    ("i, ii, iii" (make 'question-roman))
+    ("I, II, III" (make 'question-Roman))))
 
-(menu-bind answer-menu
+(menu-bind insert-answer-menu
   ("Answer" (make 'answer*))
   ("Solution" (make 'solution*))
   ---
@@ -46,6 +47,20 @@
   ("A, B, C" (make 'answer-Alpha))
   ("i, ii, iii" (make 'answer-roman))
   ("I, II, III" (make 'answer-Roman)))
+
+(menu-bind answer-menu
+  (with t (tree-innermost unanswered-question-context?)
+    (if (and t (short-question-context? t))
+        ("Answer to question" (alternate-toggle (focus-tree))))
+    (if (and t (tree-in? t '(exercise exercise*)))
+        ("Solution to exercise" (alternate-toggle (focus-tree))))
+    (if (and t (tree-in? t '(problem problem*)))
+        ("Solution to problem" (alternate-toggle (focus-tree))))
+    (if (and t (tree-in? t '(question question*)))
+        ("Answer to question" (alternate-toggle (focus-tree))))
+    (if (not t)
+        (when (not (tree-innermost question-or-answer-context?))
+          (link insert-answer-menu)))))
 
 (menu-bind gap-menu
   ("Inline" (make 'gap))

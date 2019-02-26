@@ -43,6 +43,10 @@
   (or (solution-context? t)
       (short-answer-context? t)))      
 
+(tm-define (question-or-answer-context? t)
+  (or (question-context? t)
+      (answer-context? t)))
+
 (tm-define (question-context*? t)
   (or (question-context? t)
       (and (tree-func? t 'document 1)
@@ -193,10 +197,13 @@
             (tree-go-to t :end)
             (make l)))))
 
+(tm-define (unanswered-question-context? t)
+  (and (question-context? t)
+       (tree-is? t :up 'document)
+       (not (toggle-context? (tree-up (tree-up t))))))
+
 (tm-define (alternate-toggle t)
-  (:require (and (question-context? t)
-                 (tree-is? t :up 'document)
-                 (not (toggle-context? (tree-up (tree-up t))))
+  (:require (and (unanswered-question-context? t)
                  (in-edu-text?)))
   (let* ((p (tree->path t))
          (a (cond ((tree-in? t '(exercise exercise* problem problem*))
