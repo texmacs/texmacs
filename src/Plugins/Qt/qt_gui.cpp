@@ -133,25 +133,27 @@ needing_update (false)
     if (mac_hidpi == 2) {
       if (DEBUG_STD) debug_boot << "Setting up HiDPI mode\n";
       retina_factor= 2;
+      retina_scale = 1.4;
       if (!retina_iman) {
         retina_iman  = true;
         retina_icons = 2;
         // retina_icons = 1;
         // retina_icons = 2;  // FIXME: why is this not better?
       }
-      retina_scale = 1.4;
     }
 #else
-    /*
     SI w, h;
     get_extents (w, h);
     if (DEBUG_STD)
       debug_boot << "Screen extents: " << w/PIXEL << " x " << h/PIXEL << "\n";
-    if (w >= 2304*PIXEL) {
+    if (min (w, h) >= 1440 * PIXEL) {
       retina_factor= 2;
       retina_scale = 1.4;
+      if (!retina_iman) {
+        retina_iman  = true;
+        retina_icons = 2;
+      }
     }
-    */
 #endif
   }
   if (has_user_preference ("retina-factor"))

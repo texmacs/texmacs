@@ -51,7 +51,10 @@
 		    (get-retina-boolean-preference "retina-factor")))
 	  (meti (hlist // (text "Use retina icons"))
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
-		    (get-retina-boolean-preference "retina-icons"))))))
+		    (get-retina-boolean-preference "retina-icons")))
+	  (meti (hlist // (text "Use unified toolbars"))
+            (toggle (set-boolean-preference "use unified toolbar" answer)
+                    (get-boolean-preference "use unified toolbar"))))))
     (assuming (not (os-macos?))
       (centered
 	(aligned
@@ -68,12 +71,22 @@
               '("1" "1.2" "1.4" "1.6" "1.8" "")
               (get-retina-preference "retina-scale")
               "5em")))
-    ===
+    === ===
     (bottom-buttons
       ("Cancel" (cmd "cancel")) >>
       ("Reset" (begin (reset-retina-preferences) (cmd "ok"))) //
       ("Ok" (cmd "ok")))))
-    
+
+
+(tm-widget (retina-settings-notify cmd)
+  (padded
+    (text "Restart TeXmacs in order to let changes take effect")
+    ===
+    (bottom-buttons
+      >>
+      ("Ok" (cmd "Ok"))
+      >>)))
+
 (tm-define (open-retina-settings)
   (:interactive #t)
   (dialogue-window retina-settings-widget
@@ -81,10 +94,7 @@
       (when (== answer "ok")
         (delayed
           (:idle 1)
-          (set-message "Reboot TeXmacs in order to let the changes take effect"
-                       (if (os-macos?)
-			   "Modified retina settings"
-			   "Modified high resolution screen settings")))))
+	  (dialogue-window retina-settings-notify noop "Notification"))))
     (if (os-macos?)
 	"Retina screen settings"
 	"High resolution screen settings")))
