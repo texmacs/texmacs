@@ -18,7 +18,7 @@
 
 (plugin-configure asymptote
   (:require (and (not (os-mingw?)) (url-exists-in-path? "asy")))
-  (:launch "tm_asy2")
+  (:launch "tm_asy")
   (:serializer ,asy-serialize)
   (:session "Asymptote")
   (:scripts "Asymptote"))

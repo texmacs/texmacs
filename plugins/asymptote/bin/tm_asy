@@ -1,15 +1,8 @@
-#!/bin/bash
+#!/usr/bin/perl
 #
-#==============================================================================
-# MODULE     : tm_asy
-# COPYRIGHT  : (C) Yann Dirson <ydirson at altern dot org>.
-#==============================================================================
-# tm_asy
-# ========== 
-# bash script for interfacing Asymptote from TeXmacs
-# needs option --texmacs for compatibility with TeXmacs interface convention and user information
-#
-# Derived from tm_gnuplot
+# Core of the plugin to interface Asymptote with TeXmacs.
+# Copyright (c) 2005 Yann Dirson <ydirson@altern.org>
+# Licenced under version 2 of the GNU GPL.
 #
 # usage within TeXmacs:
 # =====================
@@ -19,9 +12,13 @@
 # output is the graph made by asymptote.
 #
 # History:
-# v0.1 - initial release
+# v0.1 - initial release, heavily based on tm_gnuplot
 # v0.2 - remove temporary input file, slight adjustments in example
 # v0.3 - catch stderr so that new-style sessions display it (workaround)
+#      - rewrite to perl
+#      - start of proper temporary-file handling (cleanup not done for
+#        some reason when called from texmacs
+#      - updated sample file
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -29,73 +26,87 @@
 #
 #################################################################################################
 
-if [ "$1" != "--texmacs" ]
-then
-	echo tm_asy. This script should be started only from TeXmacs.
-	exit
-fi	
+use strict;
+use warnings;
+use IO::Handle;
+use File::Temp qw(tempdir);
 
-# control characters
-tmp=`echo DATA_BEGIN=X DATA_END=Y DATA_ESCAPE=Z | tr "XYZ" "\002\005\027" `
-eval $tmp
+my $VERSION = "0.3";
 
-ASY=asy
+use constant {
+  DATA_BEGIN  =>  "\x{2}",
+  DATA_END    =>  "\x{5}",
+  DATA_ESCAPE => "\x{1B}",
+};
+
+my $asy='asy';
+
+####
 
 # defining temporary postscript file directory
-TEMPDIR=.
-if [ -d $TEMPDIR ]
-then
-	:
-else	
-	mkdir $TEMPDIR
-fi
+my $tempdir=tempdir('texmacsXXXXX',
+		    TMPDIR  => 1,
+		    CLEANUP => 1
+		   ) or
+  die "cannot create temporary directory";
+
+# workaround SF bug#1325266
+chdir $tempdir;
+END { chdir '/'; }
 
 # defining temporary input and output file name
-TEMP_ASY_NAME=temp.asy
-TEMP_PS_NAME=temp.eps
-TEMP_ERR_NAME=temp.err
+my $infile = 'texmacs.asy';
+my $psfile = 'texmacs.eps';
+my $errfile = 'texmacs.err';
 
-# standard initialization of GNUplot
-#init='reset~set terminal postscript eps enhanced ~set output "'$TEMP_DIR$TEMP_PS_NAME'"~set size 1,1~set autoscale~'
+autoflush STDOUT 1;
+
+sub tm_string($$) {
+  my ($type,$str) = @_;
+  return DATA_BEGIN . $type . ':' . $str . DATA_END;
+}
 
 # startup banner
-echo -n $DATA_BEGIN
-echo verbatim:This is a TeXmacs interface for Asymptote.
+print tm_string('verbatim', "This is a TeXmacs interface for Asymptote.\n");
+print tm_string('verbatim', tm_string('channel', 'prompt') . 'Asymptote] ');
+
+# open the file just once and constantly rewrite it
+# this may not work on win32, but will be much faster when it works
+open INFILE, ">$tempdir/$infile" or
+  die "cannot create $tempdir/$infile";
 
 # prompt-input-asy-output loop
-while [ 1 ]; do
-	# prompt
-	echo -n $DATA_BEGIN
-	echo -n channel:prompt
-	echo -n $DATA_END
-	echo -n Asymptote'] '
-	echo -n $DATA_END 
-	 
-	#read a line from stdin
-	read input
-	
-	#concat init string and input string
-	#input=$init$input
-	
-	#for debugging purposes
-	#echo $input | tr  "~" "\n" | tee tm_asy.log | $ASY -o $TEMP_DIR$TEMP_PS_NAME
-	echo -E "$input" | tr  "~" "\n" > $TEMP_DIR$TEMP_ASY_NAME
-	$ASY -o $TEMP_DIR$TEMP_PS_NAME $TEMP_DIR$TEMP_ASY_NAME 2> $TEMP_DIR$TEMP_ERR_NAME
-	
-	echo -n $DATA_BEGIN
-	echo -n verbatim:
-	
-	if [ -r $TEMP_DIR$TEMP_PS_NAME ]; then
-	    echo -n $DATA_BEGIN
-	    echo -n ps:
-	    cat $TEMP_DIR$TEMP_PS_NAME
-	    rm $TEMP_DIR$TEMP_PS_NAME
-	    echo -n $DATA_END 
-	else
-	    echo "Plugin returned no output.  Standard error follows:"
-	    cat $TEMP_DIR$TEMP_ERR_NAME
-	fi
-	echo -ne "\n"
-	
-	rm $TEMP_DIR$TEMP_ASY_NAME $TEMP_DIR$TEMP_ERR_NAME $TEMP_DIR$TEMP_PS_NAME
-done
+while (<STDIN>) {
+  # tm_gnuplot-like support for ~ as newlines
+  tr/~/\n/;
+
+  seek (INFILE, 0, 0);
+  print INFILE $_;
+  truncate INFILE, tell INFILE;
+  INFILE->flush();
+
+  #print STDERR "Running: $asy -o $tempdir/$psfile $tempdir/$infile 2> $tempdir/$errfile\n";
+  if (system ("$asy -o $tempdir/$psfile $tempdir/$infile 2> $tempdir/$errfile") != 0) {
+    print tm_string('verbatim', #tm_string('channel', 'error') .
+		    "Error running $asy: $@");
+    next;
+  }
+
+  if (open EPSDATA, "<$tempdir/$psfile") {
+    local $/; my $data=<EPSDATA>; # slurp whole file
+    print tm_string('verbatim', tm_string('ps', $data));
+    close EPSDATA;
+    unlink "$tempdir/$psfile";	# be sure not to catch previous graph on error
+    unlink "$tempdir/$errfile";	# better safe than sorry
+  } elsif (open ERRMSG, "<$tempdir/$errfile") {
+    local $/; my $text=<ERRMSG>; # slurp whole file
+    print tm_string('verbatim', #tm_string('channel', 'error') .
+		    "$asy produced no graph - error was:\n$text");
+    close ERRMSG;
+    unlink "$tempdir/$errfile";
+    #rename "$tempdir/$errfile", "$tempdir/$errfile.old";
+  }
+
+  # new prompt
+  print tm_string('verbatim', tm_string('channel', 'prompt') . 'Asymptote] ');
+}
