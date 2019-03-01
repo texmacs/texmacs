@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ###############################################################################
 ##
-## MODULE      : tm_python.scm
+## MODULE      : tm_python
 ## DESCRIPTION : Initialize python plugin
 ## COPYRIGHT   : (C) 2004  Ero Carrera, ero@dkbza.org
 ##               (C) 2012  Adrian Soto
