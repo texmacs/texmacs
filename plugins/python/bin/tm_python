@@ -270,7 +270,7 @@ texmacs_out ("prompt#>>> ");
 
 
 # Main session loop.
-while 1:
+while True:
     line = _input()
     if not line:
         continue
