@@ -298,7 +298,7 @@ edit_table_rep::table_get_format (
       int row1, col1, row2, col2;
       with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
       if ((row1<=i1) && (col1<=j1) && (row2>=i2) && (col2>=j2))
-	val= st[k][5];
+        val= st[k][5];
     }
   return val;
 }
@@ -317,10 +317,10 @@ edit_table_rep::table_del_format (
   for (k=n-2; k>=0; k--)
     if (is_func (st[k], CWITH, 6))
       if ((var == "") || (var == st[k][4])) {
-	int row1, col1, row2, col2;
-	with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
-	if ((row1>=i1) && (col1>=j1) && (row2<=i2) && (col2<=j2))
-	  remove (fp * k, 1);
+        int row1, col1, row2, col2;
+        with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
+        if ((row1>=i1) && (col1>=j1) && (row2<=i2) && (col2<=j2))
+          remove (fp * k, 1);
       }
 }
 
@@ -341,8 +341,8 @@ edit_table_rep::table_get_format (
       int row1, col1, row2, col2;
       with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
       for (i=row1; i<=row2; i++)
-	for (j=col1; j<=col2; j++)
-	  val[i][j]= st[k][5];
+        for (j=col1; j<=col2; j++)
+          val[i][j]= st[k][5];
     }
 }
 
@@ -356,22 +356,22 @@ edit_table_rep::table_individualize (path fp, string var) {
   for (k=n-2; k>=0; k--)
     if (is_func (st[k], CWITH, 6))
       if ((var == "") || (var == st[k][4])) {
-	int i, j, row1, col1, row2, col2;
-	with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
-	if ((row1==row2) && (col1==col2)) continue;
-	row1= max (row1, 0); row2= min (row2, nr_rows-1);
-	col1= max (col1, 0); col2= min (col2, nr_cols-1);
-	tree ins_format (TFORMAT);
-	for (i=row1; i<=row2; i++)
-	  for (j=col1; j<=col2; j++) {
-	    tree with (CWITH);
-	    with << as_string (i+1) << as_string (i+1)
-		 << as_string (j+1) << as_string (j+1)
-		 << copy (st[k][4]) << copy (st[k][5]) << copy (st[k][6]);
-	    ins_format << with;
-	  }
-	remove (fp * k, 1);
-	insert (fp * k, ins_format);
+        int i, j, row1, col1, row2, col2;
+        with_read (st[k], nr_rows, nr_cols, row1, col1, row2, col2);
+        if ((row1==row2) && (col1==col2)) continue;
+        row1= max (row1, 0); row2= min (row2, nr_rows-1);
+        col1= max (col1, 0); col2= min (col2, nr_cols-1);
+        tree ins_format (TFORMAT);
+        for (i=row1; i<=row2; i++)
+          for (j=col1; j<=col2; j++) {
+            tree with (CWITH);
+            with << as_string (i+1) << as_string (i+1)
+                 << as_string (j+1) << as_string (j+1)
+                 << copy (st[k][4]) << copy (st[k][5]) << copy (st[k][6]);
+            ins_format << with;
+          }
+        remove (fp * k, 1);
+        insert (fp * k, ins_format);
       }
 }
 
@@ -456,8 +456,8 @@ edit_table_rep::table_remove (path fp, int row, int col, int delr, int delc) {
   if (delr>0)
     if (row+delr <= N(T)) {
       if (delr == N(T)) {
-	destroy_table ();
-	return;
+        destroy_table ();
+        return;
       }
       remove (p * row, delr);
     }
@@ -468,11 +468,11 @@ edit_table_rep::table_remove (path fp, int row, int col, int delr, int delc) {
       path q= search_row (p, row);
       tree R= subtree (et, q);
       if (col+delc <= N(R)) {
-	if (delc == N(R)) {
-	  destroy_table ();
-	  return;
-	}
-	remove (q * col, delc);
+        if (delc == N(R)) {
+          destroy_table ();
+          return;
+        }
+        remove (q * col, delc);
       }
     }
 
@@ -484,26 +484,26 @@ edit_table_rep::table_remove (path fp, int row, int col, int delr, int delc) {
       int I1, I2, J1, J2, i1, i2, j1, j2;
       with_read (st[k], nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
       if (delr>0) {
-	if ((row<=i1) && (i2<row+delr)) { remove (fp * k, 1); continue; }
-	if ((I1>0) && (i1>=row))
-	  assign (fp * path (k, 0), as_string (I1- min (delr, i1- row)));
-	if ((I1<0) && (i1<row+delr))
-	  assign (fp * path (k, 0), as_string (I1+ delr+ min (0, row- 1- i1)));
-	if ((I2>0) && (i2>=row))
-	  assign (fp * path (k, 1), as_string (I2- min (delr, i2- row)));
-	if ((I2<0) && (i2<row+delr))
-	  assign (fp * path (k, 1), as_string (I2+ delr+ min (0, row- 1- i2)));
+        if ((row<=i1) && (i2<row+delr)) { remove (fp * k, 1); continue; }
+        if ((I1>0) && (i1>=row))
+          assign (fp * path (k, 0), as_string (I1- min (delr, i1- row)));
+        if ((I1<0) && (i1<row+delr))
+          assign (fp * path (k, 0), as_string (I1+ delr+ min (0, row- 1- i1)));
+        if ((I2>0) && (i2>=row))
+          assign (fp * path (k, 1), as_string (I2- min (delr, i2- row)));
+        if ((I2<0) && (i2<row+delr))
+          assign (fp * path (k, 1), as_string (I2+ delr+ min (0, row- 1- i2)));
       }
       if (delc>0) {
-	if ((col<=j1) && (j2<col+delc)) { remove (fp * k, 1); continue; }
-	if ((J1>0) && (j1>=col))
-	  assign (fp * path (k, 2), as_string (J1- min (delc, j1- col)));
-	if ((J1<0) && (j1<col+delc))
-	  assign (fp * path (k, 2), as_string (J1+ delc+ min (0, col- 1- j1)));
-	if ((J2>0) && (j2>=col))
-	  assign (fp * path (k, 3), as_string (J2- min (delc, j2- col)));
-	if ((J2<0) && (j2<col+delc))
-	  assign (fp * path (k, 3), as_string (J2+ delc+ min (0, col- 1- j2)));
+        if ((col<=j1) && (j2<col+delc)) { remove (fp * k, 1); continue; }
+        if ((J1>0) && (j1>=col))
+          assign (fp * path (k, 2), as_string (J1- min (delc, j1- col)));
+        if ((J1<0) && (j1<col+delc))
+          assign (fp * path (k, 2), as_string (J1+ delc+ min (0, col- 1- j1)));
+        if ((J2>0) && (j2>=col))
+          assign (fp * path (k, 3), as_string (J2- min (delc, j2- col)));
+        if ((J2<0) && (j2<col+delc))
+          assign (fp * path (k, 3), as_string (J2+ delc+ min (0, col- 1- j2)));
       }
     }
 }
@@ -524,7 +524,7 @@ edit_table_rep::table_insert (path fp, int row, int col, int insr, int insc) {
       path q= search_row (p, row);
       tree R= subtree (et, q);
       if (col <= N(R))
-	insert (q * col, empty_row (insc));
+        insert (q * col, empty_row (insc));
     }
 
   tree st= subtree (et, fp);
@@ -535,26 +535,26 @@ edit_table_rep::table_insert (path fp, int row, int col, int insr, int insc) {
       int I1, I2, J1, J2, i1, i2, j1, j2;
       with_read (st[k], nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
       if (insr>0) {
-	bool flag= (I1<=0) || (I2>=0);
-	if ((I1>0) && ((i1>row) || (flag && (i1==row))))
-	  assign (fp* path (k,0), as_string (I1+insr));
-	if ((I1<0) && (i1<row))
-	  assign (fp* path (k,0), as_string (I1-insr));
-	if ((I2>0) && (i2>=row))
-	  assign (fp* path (k,1), as_string (I2+insr));
-	if ((I2<0) && ((i2<row-1) || (flag && (i2==row-1))))
-	  assign (fp* path (k,1), as_string (I2-insr));
+        bool flag= (I1<=0) || (I2>=0);
+        if ((I1>0) && ((i1>row) || (flag && (i1==row))))
+          assign (fp* path (k,0), as_string (I1+insr));
+        if ((I1<0) && (i1<row))
+          assign (fp* path (k,0), as_string (I1-insr));
+        if ((I2>0) && (i2>=row))
+          assign (fp* path (k,1), as_string (I2+insr));
+        if ((I2<0) && ((i2<row-1) || (flag && (i2==row-1))))
+          assign (fp* path (k,1), as_string (I2-insr));
       }
       if (insc>0) {
-	bool flag= (J1<=0) || (J2>=0);
-	if ((J1>0) && ((j1>col) || (flag && (j1==col))))
-	  assign (fp * path (k,2), as_string (J1+insc));
-	if ((J1<0) && (j1<col))
-	  assign (fp * path (k,2), as_string (J1-insc));
-	if ((J2>0) && (j2>=col))
-	  assign (fp * path (k,3), as_string (J2+insc));
-	if ((J2<0) && ((j2<col-1) || (flag && (j2==col-1))))
-	  assign (fp * path (k,3), as_string (J2-insc));
+        bool flag= (J1<=0) || (J2>=0);
+        if ((J1>0) && ((j1>col) || (flag && (j1==col))))
+          assign (fp * path (k,2), as_string (J1+insc));
+        if ((J1<0) && (j1<col))
+          assign (fp * path (k,2), as_string (J1-insc));
+        if ((J2>0) && (j2>=col))
+          assign (fp * path (k,3), as_string (J2+insc));
+        if ((J2<0) && ((j2<col-1) || (flag && (j2==col-1))))
+          assign (fp * path (k,3), as_string (J2-insc));
       }
     }
 }
@@ -586,17 +586,17 @@ edit_table_rep::table_bound (
       int m= min (as_int (rs[i][j]), nr_rows-i);
       int n= min (as_int (rs[i][j]), nr_cols-j);
       if ((m>1) || (n>1)) {
-	if ((row1 < i+m) && (col1 < j+n) && (row2 >= i) && (col2 >= j)) {
-	  row1= min (row1, i);
-	  col1= min (col1, j);
-	  row2= max (row2, i+m-1);
-	  col2= max (col2, j+n-1);
-	}
-	for (ii=0; ii<m; ii++)
-	  for (jj=0; jj<n; jj++) {
-	    rs[i+ii][j+jj]= "0";
-	    cs[i+ii][j+jj]= "0";
-	  }
+        if ((row1 < i+m) && (col1 < j+n) && (row2 >= i) && (col2 >= j)) {
+          row1= min (row1, i);
+          col1= min (col1, j);
+          row2= max (row2, i+m-1);
+          col2= max (col2, j+n-1);
+        }
+        for (ii=0; ii<m; ii++)
+          for (jj=0; jj<n; jj++) {
+            rs[i+ii][j+jj]= "0";
+            cs[i+ii][j+jj]= "0";
+          }
       }
     }
   
@@ -775,15 +775,15 @@ edit_table_rep::table_get_subtable (
       int I1, I2, J1, J2, i1, i2, j1, j2;
       with_read (st[k], nr_rows, nr_cols, I1, J1, I2, J2, i1, j1, i2, j2);
       if ((i1<=row2) && (i2>=row1) && (j1<=col2) && (j2>=col1)) {
-	I1= min (max (0, i1- row1), row2- row1) + 1;
-	I2= min (max (0, i2- row1), row2- row1) + 1;
-	J1= min (max (0, j1- col1), col2- col1) + 1;
-	J2= min (max (0, j2- col1), col2- col1) + 1;
-	tree with (CWITH);
-	with << as_string (I1) << as_string (I2)
-	     << as_string (J1) << as_string (J2)
-	     << copy (st[k][4]) << copy (st[k][5]);
-	sub_format << with;
+        I1= min (max (0, i1- row1), row2- row1) + 1;
+        I2= min (max (0, i2- row1), row2- row1) + 1;
+        J1= min (max (0, j1- col1), col2- col1) + 1;
+        J2= min (max (0, j2- col1), col2- col1) + 1;
+        tree with (CWITH);
+        with << as_string (I1) << as_string (I2)
+             << as_string (J1) << as_string (J2)
+             << copy (st[k][4]) << copy (st[k][5]);
+        sub_format << with;
       }
     }
   sub_format << subtable;
@@ -966,14 +966,14 @@ edit_table_rep::table_hor_decorate (path fp, int col, int cbef, int caft) {
       with_read (st[k], nr_rows, nr_cols, i1, j1, i2, j2);
       if (j1 != col) continue;
       for (j=0; j<caft; j++) {
-	tree inst= table_undecorate (t2, i1, j);
-	int sub_rows, sub_cols;
-	::table_get_extents (st[k][5], sub_rows, sub_cols);
-	table_hor_insert_subtable (fp * path (k, 5), sub_cols, inst);
+        tree inst= table_undecorate (t2, i1, j);
+        int sub_rows, sub_cols;
+        ::table_get_extents (st[k][5], sub_rows, sub_cols);
+        table_hor_insert_subtable (fp * path (k, 5), sub_cols, inst);
       }
       for (j=cbef-1; j>=0; j--) {
-	tree inst= table_undecorate (t1, i1, j);
-	table_hor_insert_subtable (fp * path (k, 5), 0, inst);
+        tree inst= table_undecorate (t1, i1, j);
+        table_hor_insert_subtable (fp * path (k, 5), 0, inst);
       }
     }
 }
@@ -1009,14 +1009,14 @@ edit_table_rep::table_ver_decorate (path fp, int row, int rbef, int raft) {
       with_read (st[k], nr_rows, nr_cols, i1, j1, i2, j2);
       if (i1 != row) continue;
       for (i=0; i<raft; i++) {
-	tree inst= table_undecorate (t2, i, j1);
-	int sub_rows, sub_cols;
-	::table_get_extents (st[k][5], sub_rows, sub_cols);
-	table_ver_insert_subtable (fp * path (k, 5), sub_rows, inst);
+        tree inst= table_undecorate (t2, i, j1);
+        int sub_rows, sub_cols;
+        ::table_get_extents (st[k][5], sub_rows, sub_cols);
+        table_ver_insert_subtable (fp * path (k, 5), sub_rows, inst);
       }
       for (i=rbef-1; i>=0; i--) {
-	tree inst= table_undecorate (t1, i, j1);
-	table_ver_insert_subtable (fp * path (k, 5), 0, inst);
+        tree inst= table_undecorate (t1, i, j1);
+        table_ver_insert_subtable (fp * path (k, 5), 0, inst);
       }
     }
 }
@@ -1056,12 +1056,12 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
       int n= N(st), l= last_item (q);
       insert_node (fp * 0, DOCUMENT);
       if (l != (n-1)) {
-	split (path_inc (q));
-	correct_concat (path_inc (path_up (q)));
+        split (path_inc (q));
+        correct_concat (path_inc (path_up (q)));
       }
       if (l != 0) {
-	split (q);
-	correct_concat (path_inc (path_up (q)));
+        split (q);
+        correct_concat (path_inc (path_up (q)));
       }
       correct_concat (path_up (q));
     }
@@ -1408,9 +1408,9 @@ edit_table_rep::table_correct_block_content () {
       bool f1= (t1 == "no" || (t1 == "auto" && t2 == "n"));
       bool f2= (t1 == "yes" || (t1 == "auto" && is_atomic (t2) && t2 != "n"));
       if (f1 && is_document (st) && N(st) == 1)
-	remove_node (cp * 0);
+        remove_node (cp * 0);
       else if (f2 && !is_document (st))
-	insert_node (cp * 0, DOCUMENT);
+        insert_node (cp * 0, DOCUMENT);
     }
 }
 
