@@ -584,7 +584,7 @@ edit_table_rep::table_bound (
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++) {
       int m= min (as_int (rs[i][j]), nr_rows-i);
-      int n= min (as_int (rs[i][j]), nr_cols-j);
+      int n= min (as_int (cs[i][j]), nr_cols-j);
       if ((m>1) || (n>1)) {
         if ((row1 < i+m) && (col1 < j+n) && (row2 >= i) && (col2 >= j)) {
           row1= min (row1, i);
