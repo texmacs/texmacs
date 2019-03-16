@@ -242,7 +242,7 @@ edit_select_rep::select_enlarge_text () {
 
     if (i1 < i2 && (i1 != j1 || i2 != j2)) {
       if (is_concat (subtree (et, q)) && i1 == 0 && i2 == N(s))
-	select (q * 0, q * 1);
+        select (q * 0, q * 1);
       else select (p * i1, p * i2);
       return;
     }
@@ -410,13 +410,13 @@ edit_select_rep::compute_selection (path p1, path p2) {
     rectangle r (0, 0, 0, 0);
     for (i=row1; i<=row2; i++)
       for (j=col1; j<=col2; j++) {
-	path cp= fp * ::table_search_cell (st, i, j);
-	selection sel= eb->find_check_selection (cp * 0, cp * 1);
-	if (sel->valid) {
-	  rectangles rs= sel->rs;
-	  if (r != rectangle (0, 0, 0, 0)) rs= rectangles (r, rs);
-	  r= least_upper_bound (rs);
-	}
+        path cp= fp * ::table_search_cell (st, i, j);
+        selection sel= eb->find_check_selection (cp * 0, cp * 1);
+        if (sel->valid) {
+          rectangles rs= sel->rs;
+          if (r != rectangle (0, 0, 0, 0)) rs= rectangles (r, rs);
+          r= least_upper_bound (rs);
+        }
       }
     return selection (rectangles (r), fp * 0, fp * 1);
   }
@@ -702,10 +702,10 @@ edit_select_rep::selection_paste (string key) {
           insert_tree (tree (WITH, copy (MODE), copy (t[2]), ""), path (2, 0));
       }
       if (is_func (t[1], TFORMAT) || is_func (t[1], TABLE)) {
-	int row, col;
-	path fp= search_format (row, col);
-	if (is_nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
-	else table_write_subtable (fp, row, col, t[1]);
+        int row, col;
+        path fp= search_format (row, col);
+        if (is_nil (fp)) insert_tree (compound (copy (TABULAR), t[1]));
+        else table_write_subtable (fp, row, col, t[1]);
       }
       else insert_tree (t[1]);
     }
