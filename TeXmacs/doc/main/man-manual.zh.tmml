@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>GNU <TeXmacs/> 用户手册</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      <traverse>
+        <tm-par>
+          <branch><tm-arg>开始使用</tm-arg><tm-arg>start/man-getting-started.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>撰写简单的文档</tm-arg><tm-arg>text/man-text.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>数学公式</tm-arg><tm-arg>math/man-math.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>表格处理</tm-arg><tm-arg>table/man-table.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>链接和内容自动生成</tm-arg><tm-arg>links/man-links.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>内置作图工具</tm-arg><tm-arg>graphics/man-graphics.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>进阶布局特性</tm-arg><tm-arg>layout/man-layout.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>编辑工具</tm-arg><tm-arg>editing/man-editing-tools.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>幻灯片</tm-arg><tm-arg>beamer/man-beamer.en.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg><TeXmacs/>的交互式界面</tm-arg><tm-arg>interface/man-itf.en.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>撰写样式</tm-arg><tm-arg>../devel/style/style.en.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>定制
+          <TeXmacs/></tm-arg><tm-arg>scheme/man-scheme.zh.tm</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg><TeXmacs/>的插件系统</tm-arg><tm-arg>../devel/plugin/plugins.en.tm</tm-arg></branch>
+        </tm-par>
+      </traverse>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>1998--2019</tm-arg><tm-arg>Joris van der
+      Hoeven</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+  
+  <initial>
+    <collection/>
+  </initial>
+</TeXmacs>

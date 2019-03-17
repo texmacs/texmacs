@@ -49,9 +49,12 @@
   (if (or (in? (url-suffix s) '("tex" "tm")) (url-exists? s))
       s
       (let* ((lan (string-take (language-to-locale (get-output-language)) 2)) 
+             (suf-tmml (string-append "." lan ".tmml"))
              (suf (string-append "." lan ".tm"))
              (dir help-file-path))
-        (cond ((url-exists? (url-unix dir (string-append s suf)))
+        (cond ((url-exists? (url-unix dir (string-append s suf-tmml)))
+               (url-resolve (url-unix dir (string-append s suf-tmml)) "r"))
+              ((url-exists? (url-unix dir (string-append s suf)))
                (url-resolve (url-unix dir (string-append s suf)) "r"))
               ((and (!= suf ".en.tm")
                     (url-exists? (url-unix dir (string-append s ".en.tm"))))
