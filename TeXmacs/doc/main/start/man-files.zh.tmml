@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>新建、打开和保存文档</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      不加任何命令行参数就启动<TeXmacs/>，编辑器会自动为你新建一个空白文档。你也可以用<menu><tm-arg>File</tm-arg><tm-arg>New</tm-arg></menu>自己新建一个文档。新建文档默认未命名。点击<menu><tm-arg>File</tm-arg><tm-arg>Save
+      as</tm-arg></menu>可以给文档命名。我们建议你新建文档后马上另存为该文档，这样可以避免你丢失该文档。
+    </tm-par>
+    
+    <tm-par>
+      必要时，建议你设定文档的全局设置，这些设置一般都在<menu>Document</menu>菜单中。首先，你可能需要在<menu><tm-arg>Document</tm-arg><tm-arg>Style</tm-arg></menu>中指定文档的样式比如article，book，seminar。如果你使用多种语言编辑文档，你可以在<menu><tm-arg>Document</tm-arg><tm-arg>Language</tm-arg></menu>中指定这个文档的默认语言。类似地，在<menu><tm-arg>Document</tm-arg><tm-arg>Page</tm-arg><tm-arg>Size</tm-arg></menu>中可指定页面的类型。
+    </tm-par>
+    
+    <tm-par>
+      对于新建的文档，样式和页面大小也可以通过<menu>Focus</menu>菜单或者焦点工具栏上的按钮改变。一般来说，焦点工具栏就是菜单下面的第三行工具栏。焦点菜单和焦点工具栏在编辑<hlink><tm-arg>结构化文档</tm-arg><tm-arg>../text/man-structure.en.tm</tm-arg></hlink>时尤为方便，其菜单项会跟随光标所在的上下文改变。
+    </tm-par>
+    
+    <tm-par>
+      更改文档之后，点击<menu><tm-arg>File</tm-arg><tm-arg>Save</tm-arg></menu>保存文档。文档可以通过<menu><tm-arg>File</tm-arg><tm-arg>Load</tm-arg></menu>打开。注意，在<TeXmacs/>中你可以在同一个窗口下编辑多个文档<strong><tm-arg></tm-arg></strong>，我们把这样的每一个打开的文档叫做缓冲区，使用菜单<menu>Go</menu>可以在不同的缓冲区间切换。
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013--2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+  
+  <initial>
+    <collection/>
+  </initial>
+</TeXmacs>

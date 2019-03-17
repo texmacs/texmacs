@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>本文档惯例</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      <paragraph_42_>菜单项</paragraph_42_>
+    </tm-par>
+    
+    <tm-par>
+      在<TeXmacs/>文档中，菜单项以加粗的字体和箭头表示：<menu>Document</menu>，<menu><tm-arg>File</tm-arg><tm-arg>Load</tm-arg></menu>或者<menu><tm-arg>Format</tm-arg><tm-arg>Font
+      shape</tm-arg><tm-arg>Italic</tm-arg></menu>。
+    </tm-par>
+    
+    <tm-par>
+      <paragraph_42_>组合键</paragraph_42_>
+    </tm-par>
+    
+    <tm-par>
+      <TeXmacs/>使用下列组合键：
+    </tm-par>
+    
+    <tm-par>
+      <description>
+        <tm-par>
+          <item_42_><prefix>S-</prefix></item_42_>Shift 组合键
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><prefix>C-</prefix></item_42_>Control 组合键
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><prefix>A-</prefix></item_42_>Alt 组合键
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><prefix>M-</prefix></item_42_>Meta 组合键
+        </tm-par>
+      </description>
+    </tm-par>
+    
+    <tm-par>
+      例如，<key_42_>M-S-x</key_42_> 表示同时按下三个键
+      <prefix>M-</prefix>， <prefix>S-</prefix> 和 <key>x</key> 。
+    </tm-par>
+    
+    <tm-par>
+      <paragraph_42_>快捷键</paragraph_42_>
+    </tm-par>
+    
+    <tm-par>
+      更加复杂一些的快捷键是通过连续按多个键或者组合键得到的。比如，快捷键<key>-</key><key><tm-sym>gtr</tm-sym></key>是先按下<key>-</key>，再按下<key><tm-sym>gtr</tm-sym></key>得到的。在数学模式中，这个快捷键会插入<math>→</math>。类似地，先按下<key>Ctrl+</key>和<key>x</key>的组合，再按下
+      <key>Ctrl+</key>和<key>f</key>的组合，你就能得到快捷键<key>Ctrl+X</key><key>Ctrl+F</key>。如果你使用的是Emacs快捷键风格，那么这个快捷键是用来打开文件的。
+    </tm-par>
+    
+    <tm-par>
+      为了避免<TeXmacs/>的快捷键和操作系统的快捷键产生冲突，我们使用通用的键前缀，详细内容见<hlink><tm-arg>通用键盘规则</tm-arg><tm-arg>../text/keyboard/man-general-rules.zh.tm</tm-arg></hlink>一节。简单的说，使用<key>Escape</key>键可以得到<hlink><tm-arg>组合键的等价键</tm-arg><tm-arg>../config/man-config-keyboard.zh.tm#kbd-escape-table</tm-arg></hlink>。例如，<key>Escape</key>等价于<key>Win+</key>，
+      <key_42_>escape escape</key_42_>等价于<key>escape escape</key>。
+    </tm-par>
+    
+    <tm-par>
+      值得注意的是，<TeXmacs/>的菜单和键盘的行为是上下文相关的，具体来说，是依赖于当前的模式（文本模式或者数学模式等等），当前文档的语言和当前光标的位置。比如说，在数学模式中，会有很多方便你输入数学公式的快捷键，但是在文本模式中，这些快<em><tm-arg></tm-arg></em>捷键就会失效。
+    </tm-par>
+    
+    <tm-par>
+      <paragraph_42_>特殊键</paragraph_42_>
+    </tm-par>
+    
+    <tm-par>
+      在某些平台上，一些特殊键诸如换行是用特殊字符来描述的。下面这个表格列出了所有这些特殊键及其含义。
+    </tm-par>
+    
+    <tm-par>
+      <big-table>
+        <tm-arg>
+          <descriptive-table>
+            <tformat>
+              <tm-arg><cwith><tm-arg>1</tm-arg><tm-arg>-1</tm-arg><tm-arg>3</tm-arg><tm-arg>3</tm-arg><tm-arg>cell-lborder</tm-arg><tm-arg>1ln</tm-arg></cwith></tm-arg>
+              <tm-arg><cwith><tm-arg>1</tm-arg><tm-arg>-1</tm-arg><tm-arg>1</tm-arg><tm-arg>-1</tm-arg><tm-arg>cell-halign</tm-arg><tm-arg>l</tm-arg></cwith></tm-arg>
+              <tm-arg><cwith><tm-arg>1</tm-arg><tm-arg>-1</tm-arg><tm-arg>1</tm-arg><tm-arg>-1</tm-arg><tm-arg>cell-row-span</tm-arg><tm-arg>1</tm-arg></cwith></tm-arg>
+              <tm-arg><cwith><tm-arg>1</tm-arg><tm-arg>-1</tm-arg><tm-arg>1</tm-arg><tm-arg>-1</tm-arg><tm-arg>cell-col-span</tm-arg><tm-arg>1</tm-arg></cwith></tm-arg>
+              <tm-arg><cwith><tm-arg>7</tm-arg><tm-arg>11</tm-arg><tm-arg>1</tm-arg><tm-arg>1</tm-arg><tm-arg>cell-lborder</tm-arg><tm-arg>1ln</tm-arg></cwith></tm-arg>
+              <tm-arg><cwith><tm-arg>7</tm-arg><tm-arg>11</tm-arg><tm-arg>1</tm-arg><tm-arg>2</tm-arg><tm-arg>cell-halign</tm-arg><tm-arg>l</tm-arg></cwith></tm-arg>
+              <tm-arg><cwith><tm-arg>7</tm-arg><tm-arg>11</tm-arg><tm-arg>1</tm-arg><tm-arg>2</tm-arg><tm-arg>cell-row-span</tm-arg><tm-arg>1</tm-arg></cwith></tm-arg>
+              <tm-arg><cwith><tm-arg>7</tm-arg><tm-arg>11</tm-arg><tm-arg>1</tm-arg><tm-arg>2</tm-arg><tm-arg>cell-col-span</tm-arg><tm-arg>1</tm-arg></cwith></tm-arg>
+              <tm-arg>
+                <table>
+                  <tm-arg><row><tm-arg><cell>键</cell></tm-arg><tm-arg><cell>含义</cell></tm-arg><tm-arg><cell>键</cell></tm-arg><tm-arg><cell>含义</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>S-</key_42_></cell></tm-arg><tm-arg><cell>Shift
+                  组合键</cell></tm-arg><tm-arg><cell><key_42_>left</key_42_></cell></tm-arg><tm-arg><cell>光标左移</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>capslock</key_42_></cell></tm-arg><tm-arg><cell>大写锁定</cell></tm-arg><tm-arg><cell><key_42_>right</key_42_></cell></tm-arg><tm-arg><cell>光标右移</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>C-</key_42_></cell></tm-arg><tm-arg><cell>Ctrl
+                  组合键</cell></tm-arg><tm-arg><cell><key_42_>up</key_42_></cell></tm-arg><tm-arg><cell>光标上移</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>A-</key_42_></cell></tm-arg><tm-arg><cell>Alt
+                  组合键</cell></tm-arg><tm-arg><cell><key_42_>down</key_42_></cell></tm-arg><tm-arg><cell>光标下移</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>M-</key_42_></cell></tm-arg><tm-arg><cell>Meta
+                  组合键</cell></tm-arg><tm-arg><cell><key_42_>home</key_42_></cell></tm-arg><tm-arg><cell>Home</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>return</key_42_></cell></tm-arg><tm-arg><cell>换行</cell></tm-arg><tm-arg><cell><key_42_>end</key_42_></cell></tm-arg><tm-arg><cell>End</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>delete</key_42_></cell></tm-arg><tm-arg><cell>删除</cell></tm-arg><tm-arg><cell><key_42_>pageup</key_42_></cell></tm-arg><tm-arg><cell>Page
+                  up</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>backspace</key_42_></cell></tm-arg><tm-arg><cell>退格</cell></tm-arg><tm-arg><cell><key_42_>pagedown</key_42_></cell></tm-arg><tm-arg><cell>Page
+                  down</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>escape</key_42_></cell></tm-arg><tm-arg><cell>Escape</cell></tm-arg><tm-arg><cell><key_42_>space</key_42_></cell></tm-arg><tm-arg><cell>空格</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell><key_42_>tab</key_42_></cell></tm-arg><tm-arg><cell>Tab</cell></tm-arg><tm-arg><cell><tm-arg></tm-arg></cell></tm-arg><tm-arg><cell><tm-arg></tm-arg></cell></tm-arg></row></tm-arg>
+                </table>
+              </tm-arg>
+            </tformat>
+          </descriptive-table>
+        </tm-arg>
+        <tm-arg>
+          <tm-par>
+            特殊键。
+          </tm-par>
+        </tm-arg>
+      </big-table>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013--2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+  
+  <initial>
+    <collection/>
+  </initial>
+</TeXmacs>

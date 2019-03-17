@@ -11,7 +11,7 @@
     <tm-par>
       <traverse>
         <tm-par>
-          <branch><tm-arg>开始使用</tm-arg><tm-arg>start/man-getting-started.zh.tm</tm-arg></branch>
+          <branch><tm-arg>开始使用</tm-arg><tm-arg>start/man-getting-started.zh.tmml</tm-arg></branch>
         </tm-par>
         
         <tm-par>
