@@ -262,7 +262,7 @@
 
   <assign|big-imbr|<macro|ind|str|<math-ordinary|<rigid|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>><rsub|<shift|<arg|ind>||-0.2em>>><space|0.6spc><arg|str>>>>
 
-  <assign|Big-imbr|<macro|ind|str|<math-ordinary|<below|<rigid|<with|magnification|<times|1.412|<value|magnification>>|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>>>>|<arg|ind>>
+  <assign|Big-imbr|<macro|ind|str|<math-ordinary|<below|<rigid|<with|magnification|<times|1.297|<value|magnification>>|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>>>>|<arg|ind>>
   <arg|str>>>>
 
   \;
