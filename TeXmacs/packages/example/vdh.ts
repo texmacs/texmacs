@@ -260,6 +260,13 @@
 
   \;
 
+  <assign|big-imbr|<macro|ind|str|<math-ordinary|<rigid|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>><rsub|<shift|<arg|ind>||-0.2em>>><space|0.6spc><arg|str>>>>
+
+  <assign|Big-imbr|<macro|ind|str|<math-ordinary|<below|<rigid|<with|magnification|<times|1.412|<value|magnification>>|-<space|-0.5spc><around*|<left|\<langle\>|1>||<right|.>>>>|<arg|ind>>
+  <arg|str>>>>
+
+  \;
+
   <assign|bi-index|<macro|key|secondary|<style-with|src-compact|none|<flag|<localize|index>|dark
   green|key><subindex|<arg|key>|<arg|secondary>><subindex|<arg|secondary>|<arg|key>>>>>
 
