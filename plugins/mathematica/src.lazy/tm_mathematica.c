@@ -147,7 +147,7 @@ static void command(char *s) {
 #ifdef LOG
       fprintf(log,"RETURNTEXTPKT: \"%s\"\n",result); fflush(log);
 #endif
-      MLDisownString(link,result);
+      MLReleaseString(link,result);
       more=0;
       break;
     case INPUTNAMEPKT:
@@ -155,14 +155,14 @@ static void command(char *s) {
 #ifdef LOG
       fprintf(log,"INPUTNAMEPKT: \"%s\"\n",result); fflush(log);
 #endif
-      MLDisownString(link,result);
+      MLReleaseString(link,result);
       break;
     case OUTPUTNAMEPKT:
       MLGetString(link,&result);
 #ifdef LOG
       fprintf(log,"OUTPUTNAMEPKT: \"%s\"\n",result); fflush(log);
 #endif
-      MLDisownString(link,result);
+      MLReleaseString(link,result);
       break;
     case TEXTPKT:
       MLGetString(link,&result);
@@ -179,7 +179,7 @@ static void command(char *s) {
 	texput(result);
 	fputs("$",stdout);
       }
-      MLDisownString(link,result);
+      MLReleaseString(link,result);
       break;
     case MESSAGEPKT:
       MLGetSymbol(link,&symbol);
@@ -187,8 +187,8 @@ static void command(char *s) {
 #ifdef LOG
       fprintf(log,"MESSAGEPKT: \"%s\"  \"%s\"\n",symbol,result); fflush(log);
 #endif
-      MLDisownSymbol(link,symbol);
-      MLDisownString(link,result);
+      MLReleaseSymbol(link,symbol);
+      MLReleaseString(link,result);
       msg=1;
       break;
     case DISPLAYPKT:
@@ -204,7 +204,7 @@ static void command(char *s) {
 	prelude(pre_name); non_ps=0;
       }
       psput(result);
-      MLDisownString(link,result);
+      MLReleaseString(link,result);
       break;
     case DISPLAYENDPKT:
       MLGetString(link,&result);
@@ -218,7 +218,7 @@ static void command(char *s) {
       fclose(psfile);
 #endif
       non_ps=1;
-      MLDisownString(link,result);
+      MLReleaseString(link,result);
       break;
     case INPUTPKT:
       MLGetString(link,&result);
@@ -227,7 +227,7 @@ static void command(char *s) {
 #endif
       printf("\2prompt#\\red %s{}\5\5",result);
       fflush(stdout);
-      MLDisownString(link,result);
+      MLReleaseString(link,result);
       if (getline(&input,&size,stdin)>=0) command(input);
       break;
     case CALLPKT:

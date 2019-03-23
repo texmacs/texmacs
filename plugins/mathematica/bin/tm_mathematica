@@ -20,8 +20,8 @@ then
         then error "realpath seems not to be installed"
         fi
     fi
-    MATH2=`echo "$MATH1" | sed -e 's=Executables/math$=AddOns/MathLink/DeveloperKit='`
-    PLATFORM=`(cd "$MATH2"; echo *)`
+    MATH2=`echo "$MATH1" | sed -e 's=Executables/math$=SystemFiles/Links/MathLink/DeveloperKit='`
+    PLATFORM=Linux-x86-64
     NUM_PLATFORMS=`echo "$PLATFORM" | wc -w`
     if [ "$NUM_PLATFORMS" -eq 1 ]
     then MATH3="$MATH2/$PLATFORM"

@@ -7,4 +7,4 @@
 ###############################################################################
 
 $(TEXMACS_HOME_PATH)/bin/tm_mathematica.bin: src.lazy/tm_mathematica.c
-	gcc -o $(TEXMACS_HOME_PATH)/bin/tm_mathematica.bin src.lazy/tm_mathematica.c -I $(MATHLINK_PATH) -L $(MATHLINK_PATH) -lML -lm -lpthread -lrt
+	gcc -m64 -o $(TEXMACS_HOME_PATH)/bin/tm_mathematica.bin src.lazy/tm_mathematica.c -I $(MATHLINK_PATH) -L $(MATHLINK_PATH) -lML64i4 -lm -lpthread -lrt -lstdc++ -ldl -luuid 
