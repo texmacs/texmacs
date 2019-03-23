@@ -52,7 +52,10 @@
           ($for (x the-result)
             ($describe-item
                 ($inline (quotient (* (cdr x) 100) highest-score) "%")
-              ($link (car x) (help-file-title (car x)))
+                (let* ((path (car x))
+                       (title (help-file-title path))
+                       (text (if (null? title) (car x) title)))
+                 ($link path text))
               '(htab "")
               ($ismall
                 ($verbatim
