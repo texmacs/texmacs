@@ -24,10 +24,12 @@
 (define parse-times (make-ahash-table))
 
 (define (parse-title u)
-  (with t (tree-import u "texmacs")
+  (with format (cond ((== (url-suffix u) "tmml") "tmml")
+                     (else "texmacs"))
+   (with t (tree-import u format)
     (with tt (select t '(:* (:or title doc-title tmdoc-title 
                                  tmdoc-title* tmweb-title) :%1))
-      (if (null? tt) '() (car tt)))))
+      (if (null? tt) '() (car tt))))))
 
 (tm-define (help-file-title u)
   (let ((mod-time (url-last-modified u))

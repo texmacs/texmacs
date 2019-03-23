@@ -141,7 +141,9 @@
           ((== type "texts")
            (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))
           ((== type "doc")
-           (docgrep what "$TEXMACS_DOC_PATH" (string-append "*." lan ".tm")))
+           (docgrep what "$TEXMACS_DOC_PATH"
+            (string-append "*." lan ".tm")
+            (string-append "*." lan ".tmml")))
           (else
            (docgrep what "$TEXMACS_DOC_PATH" "*.en.tm")))))
 
