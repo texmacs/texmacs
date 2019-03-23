@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>创建表格</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      你可以使用<menu><tm-arg>插入</tm-arg><tm-arg>表格</tm-arg></menu>或者以下快捷键来创建表格：
+    </tm-par>
+    
+    <tm-par>
+      <description>
+        <tm-par>
+          <item_42_><key>Meta+T</key><key>Shift+N</key><key>t</key></item_42_>创建普通无框表格。
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>Meta+T</key><key>N</key><key>T</key></item_42_>创建居中无框表格。
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>Meta+T</key><key>N</key><key>b</key></item_42_>创建普通有框表格（block）。
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>Meta+T</key><key>N</key><key>B</key></item_42_>创建居中有框表格。
+        </tm-par>
+      </description>
+    </tm-par>
+    
+    <tm-par>
+      在数学模式下，提供如下类表格结构：
+    </tm-par>
+    
+    <tm-par>
+      <description>
+        <tm-par>
+          <item_42_><key>Meta+T</key><key>N</key><key>m</key></item_42_>创建一个矩阵<glossary-explain><tm-arg>矩阵</tm-arg><tm-arg>matrix</tm-arg></glossary-explain>。
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>Meta+T</key><key>N</key><key>d</key></item_42_>创建一个行列式。
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>Meta+T</key><key>N</key></item_42_>创建一个选择<glossary-explain><tm-arg>选择</tm-arg><tm-arg>choice
+          list</tm-arg></glossary-explain>。
+        </tm-par>
+      </description>
+    </tm-par>
+    
+    <tm-par>
+      下面演示的是普通表格，居中有框表格和矩阵。下面的带标题的小表格是通过<menu><tm-arg>插入</tm-arg><tm-arg>表格</tm-arg><tm-arg>小表格标题</tm-arg></menu>得到的。小表格允许你将多个表格并列排在一行上，而大表格一行只能有一个。通过<menu><tm-arg>插入</tm-arg><tm-arg>表格</tm-arg><tm-arg>大表格标题</tm-arg></menu>可插入大表格。<vspace>0.5fn</vspace>
+    </tm-par>
+    
+    <tm-par>
+      <small-table>
+        <tm-arg>
+          <tabular>
+            <tformat>
+              <table>
+                <tm-arg><row><tm-arg><cell>boom</cell></tm-arg><tm-arg><cell>tree</cell></tm-arg></row></tm-arg>
+                <tm-arg><row><tm-arg><cell>hallo</cell></tm-arg><tm-arg><cell>hello</cell></tm-arg></row></tm-arg>
+                <tm-arg><row><tm-arg><cell>wiskunde</cell></tm-arg><tm-arg><cell>mathematics</cell></tm-arg></row></tm-arg>
+              </table>
+            </tformat>
+          </tabular>
+        </tm-arg>
+        <tm-arg>普通无框表格</tm-arg>
+      </small-table><small-table>
+        <tm-arg>
+          <block_42_>
+            <tformat>
+              <table>
+                <tm-arg><row><tm-arg><cell>boom</cell></tm-arg><tm-arg><cell>tree</cell></tm-arg></row></tm-arg>
+                <tm-arg><row><tm-arg><cell>hallo</cell></tm-arg><tm-arg><cell>hello</cell></tm-arg></row></tm-arg>
+                <tm-arg><row><tm-arg><cell>wiskunde</cell></tm-arg><tm-arg><cell>mathematics</cell></tm-arg></row></tm-arg>
+              </table>
+            </tformat>
+          </block_42_>
+        </tm-arg>
+        <tm-arg>居中有框表格</tm-arg>
+      </small-table><small-table>
+        <tm-arg>
+          <math>
+            <matrix>
+              <tformat>
+                <table>
+                  <tm-arg><row><tm-arg><cell>a</cell></tm-arg><tm-arg><cell>b</cell></tm-arg></row></tm-arg>
+                  <tm-arg><row><tm-arg><cell>c</cell></tm-arg><tm-arg><cell>d</cell></tm-arg></row></tm-arg>
+                </table>
+              </tformat>
+            </matrix>
+          </math>
+        </tm-arg>
+        <tm-arg>矩阵</tm-arg>
+      </small-table>
+    </tm-par>
+    
+    <tm-par>
+      <vspace>0.5fn</vspace>还有其他类似的类表格环境，除此之外新的环境也可以由用户自己创建。比如，通过<menu><tm-arg>插入</tm-arg><tm-arg>数学</tm-arg><tm-arg>多行公式</tm-arg></menu>或者
+      <key>Alt+&amp;</key>，你可以进入<markup>eqnarray<math><rsup>∗</rsup></math></markup>环境。在此环境下，关注数学排版的用户可以轻易地对齐一组等式。例如：
+    </tm-par>
+    
+    <tm-par>
+      <eqnarray_42_>
+        <tm-par>
+          <tformat>
+            <table>
+              <tm-arg><row><tm-arg><cell>sin
+              <around_42_><tm-arg>(</tm-arg><tm-arg>f<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_>g<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_></tm-arg><tm-arg>)</tm-arg></around_42_><rprime>'</rprime></cell></tm-arg><tm-arg><cell>=</cell></tm-arg><tm-arg><cell><around_42_><tm-arg>(</tm-arg><tm-arg>f<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_>g<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_></tm-arg><tm-arg>)</tm-arg></around_42_><rprime>'</rprime>cos
+              <around_42_><tm-arg>(</tm-arg><tm-arg>f<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_>g<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_></tm-arg><tm-arg>)</tm-arg></around_42_></cell></tm-arg></row></tm-arg>
+              <tm-arg><row><tm-arg><cell><tm-arg></tm-arg></cell></tm-arg><tm-arg><cell>=</cell></tm-arg><tm-arg><cell><around_42_><tm-arg>(</tm-arg><tm-arg>f<rprime>'</rprime><around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_>g<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_>+f<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_>g<rprime>'</rprime><around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_></tm-arg><tm-arg>)</tm-arg></around_42_>cos<around_42_><tm-arg>(</tm-arg><tm-arg>f<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_>g<around_42_><tm-arg>(</tm-arg><tm-arg>x</tm-arg><tm-arg>)</tm-arg></around_42_></tm-arg><tm-arg>)</tm-arg></around_42_></cell></tm-arg></row></tm-arg>
+            </table>
+          </tformat>
+        </tm-par>
+      </eqnarray_42_>
+    </tm-par>
+    
+    <tm-par>
+      新创建一个表格时，默认大小为最小（一般是1<math>×</math>1），且所有单元格都是空的。通过快捷键
+      <shortcut>(structured-insert-left)</shortcut>，<shortcut>(structured-insert-right)</shortcut>，<shortcut>(structured-insert-up)</shortcut>和<shortcut>(structured-insert-down)</shortcut>可以插入新列和新行。比如说，<shortcut>(structured-insert-right)</shortcut>在当前光标所在位置的右边插入新列，详情参见下图。你也可以用<key>Return</key>在当前光标所在位置的下面插入新行。
+    </tm-par>
+    
+    <tm-par>
+      <big-figure>
+        <tm-arg>
+          <tm-par>
+            <equation_42_>
+              <tm-par>
+                <matrix>
+                  <tformat>
+                    <table>
+                      <tm-arg><row><tm-arg><cell>a<cursor/></cell></tm-arg><tm-arg><cell>b</cell></tm-arg></row></tm-arg>
+                      <tm-arg><row><tm-arg><cell>c</cell></tm-arg><tm-arg><cell>d</cell></tm-arg></row></tm-arg>
+                    </table>
+                  </tformat>
+                </matrix><space>2em</space>⟶<space>2em</space><matrix>
+                  <tformat>
+                    <table>
+                      <tm-arg><row><tm-arg><cell>a</cell></tm-arg><tm-arg><cell><cursor/></cell></tm-arg><tm-arg><cell>b</cell></tm-arg></row></tm-arg>
+                      <tm-arg><row><tm-arg><cell>c</cell></tm-arg><tm-arg><cell><tm-arg></tm-arg></cell></tm-arg><tm-arg><cell>d</cell></tm-arg></row></tm-arg>
+                    </table>
+                  </tformat>
+                </matrix>
+              </tm-par>
+            </equation_42_>
+          </tm-par>
+        </tm-arg>
+        <tm-arg>
+          <tm-par>
+            一个在矩阵中插入新列的例子。如果光标在左边的矩阵所示位置处，此时按下<shortcut>(structured-insert-right)</shortcut>所得到的即右边的矩阵。
+          </tm-par>
+        </tm-arg>
+      </big-figure>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+</TeXmacs>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>格式化模式</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      在<TeXmacs/>中，可以为任意单元格设定格式。比如，你可以为某个单元格设定背景颜色，也可以使整列水平居中。默认地，格式化命令在当前所在单元格上生效，你可以在<menu><tm-arg>Cell</tm-arg><tm-arg>Operation
+      mode</tm-arg></menu>中更改操作模式。下列模式可供选择：
+    </tm-par>
+    
+    <tm-par>
+      <description>
+        <tm-par>
+          <item_42_><key>table m c</key></item_42_>只对所在单元格生效
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>table m h</key></item_42_>只对所在行生效
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>table m v</key></item_42_>只对所在列生效
+        </tm-par>
+        
+        <tm-par>
+          <item_42_><key>table m t</key></item_42_>对整个表格生效
+        </tm-par>
+      </description>
+    </tm-par>
+    
+    <tm-par>
+      也可以使用鼠标选中一个矩形区域，再在这个区域上执行操作。
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+</TeXmacs>

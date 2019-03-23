@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>边界、补白和背景色</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      您可以自由指定单元格上下左右四个方向上的边界宽度和补白大小（参见<menu><tm-arg>cell</tm-arg><tm-arg>border</tm-arg></menu>）。相应的快捷键分别是<key>table
+      b</key><render-key><math>x</math></render-key>和<key xml:space="preserve">table p </key><render-key><math>x</math></render-key>。
+    </tm-par>
+    
+    <tm-par>
+      单元格默认的边界宽度是1ln，即当前字体的标准宽度（比如分式中间那一行的宽度）。水平方向上默认的单元格补白大小为1spc，即当前字体下空格的宽度。垂直方向上默认的单元格补白大小为1sep，即当前两个闭合区域之间标准的最小距离。
+    </tm-par>
+    
+    <tm-par>
+      单元格的背景色可在菜单项<menu><tm-arg>cell</tm-arg><tm-arg>background
+      color</tm-arg></menu>中指定。
+    </tm-par>
+    
+    <tm-par>
+      整个表格的边界和补白可在<menu><tm-arg>table</tm-arg><tm-arg>border</tm-arg></menu>和<menu><tm-arg>table</tm-arg><tm-arg>padding</tm-arg></menu>中指定。其快捷键和相应的单元格的快捷键相同。特别注意的是，在这种情况下，补白是是在边界之外。
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+</TeXmacs>

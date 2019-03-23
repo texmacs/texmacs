@@ -23,7 +23,7 @@
         </tm-par>
         
         <tm-par>
-          <branch><tm-arg>表格处理</tm-arg><tm-arg>table/man-table.zh.tm</tm-arg></branch>
+          <branch><tm-arg>表格处理</tm-arg><tm-arg>table/man-table.zh.tmml</tm-arg></branch>
         </tm-par>
         
         <tm-par>
@@ -79,8 +79,4 @@
       section entitled "GNU Free Documentation License".</tmdoc-license>
     </tm-par>
   </body>
-  
-  <initial>
-    <collection/>
-  </initial>
 </TeXmacs>

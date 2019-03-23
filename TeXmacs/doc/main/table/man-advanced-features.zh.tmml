@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>表格的高级特性</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      在菜单中，您还会发现许多表格的特性。下面是这些特性的简介：
+    </tm-par>
+    
+    <tm-par>
+      <itemize>
+        <tm-par>
+          <item/>改变单元格的延伸属性，以使其边界侵侵占其右或者其下单元格，输入n+1则侵占其右或其下n个单元格
+        </tm-par>
+        
+        <tm-par>
+          <item/>在单元格中创建子表格
+        </tm-par>
+        
+        <tm-par>
+          <item/>文本高度修正，以使基准对齐
+        </tm-par>
+        
+        <tm-par>
+          <item/>单元格内容的水平字符连接以及整个表格的垂直字符连接
+        </tm-par>
+        
+        <tm-par>
+          <item/>将多行多列单元格合并，这样合并后大单元格的边界就会是剩下单元格的边界了
+        </tm-par>
+        
+        <tm-par>
+          <item/>反激活表格，以显示其“源码”
+        </tm-par>
+        
+        <tm-par>
+          <item/>指定表格的模板单元格。这样，此后新建的单元格格式属性与模板的相同
+        </tm-par>
+        
+        <tm-par>
+          <item/>指定表格的最小和最大尺寸，这对接下来的编辑非常有帮助。（在撰写表格宏时也非常实用）
+        </tm-par>
+      </itemize>
+    </tm-par>
+    
+    <tm-par>
+      目前，所有的表格其实大多是在<markup>tabular</markup>，
+      <markup>block</markup>，
+      <markup>matrix</markup>等环境下。在撰写您自己的表格宏时，可以使用<menu><tm-arg>table</tm-arg><tm-arg>special</tm-arg><tm-arg>Extract
+      format</tm-arg></menu>从选中的表格导出格式。
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+</TeXmacs>

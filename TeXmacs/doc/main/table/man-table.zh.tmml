@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>表格处理</tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      表格实际上为我们提供了一种复杂而通用的对齐标记的方法。它既可以用来呈现数据，也可以用于计算机程序和网页的排版。<with
+      font="roman"><TeXmacs/></with>提供了丰富的参数以精确控制表格及单元格的样式。
+    </tm-par>
+    
+    <tm-par>
+      <traverse>
+        <tm-par>
+          <branch><tm-arg>创建表格</tm-arg><tm-arg>man-create-table.zh.tmml</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>格式化模式</tm-arg><tm-arg>man-table-mode.zh.tmml</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>对齐</tm-arg><tm-arg>man-alignment.zh.tmml</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>大小</tm-arg><tm-arg>man-size.zh.tmml</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>边界和背景色</tm-arg><tm-arg>man-decorations.zh.tmml</tm-arg></branch>
+        </tm-par>
+        
+        <tm-par>
+          <branch><tm-arg>高级特性</tm-arg><tm-arg>man-advanced-features.zh.tmml</tm-arg></branch>
+        </tm-par>
+      </traverse>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+</TeXmacs>
