@@ -803,15 +803,52 @@ compute_score (string what, string in, array<int> pos, string suf) {
   return score;
 }
 
+string
+escape_cork_words (string s) {
+  register int i;
+  string r;
+  for (i=0; i<N(s); i++) {
+    if (s[i]=='<') {
+      register int j;
+      for (j=i+1; j<N(s); j++)
+        if (s[j]=='>') break;
+      if (j<N(s)) j++;
+      if (i+7==j && s[i+1]=='#' && s[j-1]=='>') {
+        r << "\\<";
+        r << s(i+1, j-1);
+        r << "\\>";
+        i=j-1;
+      }
+    } else {
+      r << s[i];
+    }
+  }
+  return r;
+}
+
 int
 search_score (url u, array<string> a) {
-  string in = grep_load (u);
+  int n= N(a);
+  string in= grep_load (u);
   if (N(in) == 0) return 0;
-  in= locase_all (in);
+
   string suf= suffix (u);
-  int i, score= 1, n= N(a);
-  for (i=0; i<n; i++) {
-    string what= locase_all (a[i]);
+  if (suf == "tmml") {
+    for (int i=0; i<n; i++)
+      a[i]= cork_to_utf8 (a[i]);
+  } else if (suf == "tm") {
+    in= locase_all (in);
+    for (int i=0; i<n; i++)
+      a[i]= locase_all (escape_cork_words (a[i]));
+  } else {
+    in= locase_all (in);
+    for (int i=0; i<n; i++)
+      a[i]= locase_all (a[i]);
+  }
+
+  int score= 1;
+  for (int i=0; i<n; i++) {
+    string what= a[i];
     array<int> pos= search (what, in);
     score *= compute_score (what, in, pos, suf);
     if (score == 0) return 0;

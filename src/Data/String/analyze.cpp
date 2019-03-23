@@ -576,10 +576,12 @@ tm_decode (string s) {
     if (s[i]=='<') {
       register int j;
       for (j=i+1; j<N(s); j++)
-	if (s[j]=='>') break;
+        if (s[j]=='>') break;
       if (j<N(s)) j++;
       if (s(i,j) == "<less>") r << "<";
       else if (s(i,j) == "<gtr>") r << ">";
+      else if (i+7==j && s[i+1]=='#' && s[j-1]=='>')
+        r << s(i, j);
       i=j-1;
       if (s[i]!='>') return r;
     }
@@ -595,8 +597,8 @@ tm_var_encode (string s) {
   for (i=0; i<n; i++) {
     if (s[i]=='<') {
       if (i+1 < n && s[i+1] == '#') {
-	while (i<n && s[i] != '>') r << s[i++];
-	if (i<n) r << s[i];
+        while (i<n && s[i] != '>') r << s[i++];
+        if (i<n) r << s[i];
       }
       else r << "<less>";
     }
@@ -615,10 +617,10 @@ tm_correct (string s) {
       register bool flag= true;
       register int j, k;
       for (j=i+1; j<N(s); j++)
-	if (s[j]=='>') break;
+        if (s[j]=='>') break;
       if (j==N(s)) return r;
       for (k=i+1; k<j; k++)
-	if (s[k]=='<') flag= false;
+        if (s[k]=='<') flag= false;
       if (flag) r << s(i,j+1);
       i=j;
     }
