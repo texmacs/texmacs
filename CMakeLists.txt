@@ -95,9 +95,9 @@ if (USE_GMP)
 endif (USE_GMP)
 
 if (APPLE)
-  set(MACOSX_EXTENSIONS 1)
-  set(OS_MACOS 1)
-  option(MACOS_QT_MENU "Disable MacOS native menu" OFF)
+  set (MACOSX_EXTENSIONS 1)
+  set (OS_MACOS 1)
+  option (MACOS_QT_MENU "Disable MacOS native menu" OFF)
 endif (APPLE)
 
 
@@ -117,54 +117,54 @@ include (FindX11)
 ### --------------------------------------------------------------------
 ### Check for standard functionalities
 ### --------------------------------------------------------------------
-CHECK_TYPE_SIZE(FILE HAVE_FILE)
-CHECK_TYPE_SIZE(intptr_t HAVE_INTPTR_T)
-CHECK_TYPE_SIZE(time_t HAVE_TIME_T)
-CHECK_INCLUDE_FILE(inttypes.h HAVE_INTTYPES_H)
-CHECK_INCLUDE_FILE(memory.h HAVE_MEMORY_H)
-CHECK_INCLUDE_FILE(stdlib.h HAVE_STDLIB_H)
-CHECK_INCLUDE_FILE(strings.h HAVE_STRINGS_H)
-CHECK_INCLUDE_FILE(string.h HAVE_STRING_H)
-CHECK_INCLUDE_FILE(sys/stat.h HAVE_SYS_STAT_H)
-CHECK_INCLUDE_FILE(unistd.h HAVE_UNISTD_H)
-CHECK_INCLUDE_FILE(X11/Xlib.h HAVE_X11_XLIB_H)
-CHECK_INCLUDE_FILE(X11/Xutil.h HAVE_X11_XUTIL_H)
-CHECK_INCLUDE_FILE(pty.h HAVE_PTY_H)
-CHECK_INCLUDE_FILE(util.h HAVE_UTIL_H)
-CHECK_FUNCTION_EXISTS(gettimeofday HAVE_GETTIMEOFDAY)
+check_type_size (FILE HAVE_FILE)
+check_type_size (intptr_t HAVE_INTPTR_T)
+check_type_size (time_t HAVE_TIME_T)
+check_include_file (inttypes.h HAVE_INTTYPES_H)
+check_include_file (memory.h HAVE_MEMORY_H)
+check_include_file (stdlib.h HAVE_STDLIB_H)
+check_include_file (strings.h HAVE_STRINGS_H)
+check_include_file (string.h HAVE_STRING_H)
+check_include_file (sys/stat.h HAVE_SYS_STAT_H)
+check_include_file (unistd.h HAVE_UNISTD_H)
+check_include_file (X11/Xlib.h HAVE_X11_XLIB_H)
+check_include_file (X11/Xutil.h HAVE_X11_XUTIL_H)
+check_include_file (pty.h HAVE_PTY_H)
+check_include_file (util.h HAVE_UTIL_H)
+check_function_exists (gettimeofday HAVE_GETTIMEOFDAY)
 
 
 ### --------------------------------------------------------------------
 ### Check for dl library
 ### --------------------------------------------------------------------
 
-CHECK_FUNCTION_EXISTS(dlopen HAVE_DLOPEN)
+check_function_exists (dlopen HAVE_DLOPEN)
 
-IF (NOT ${HAVE_DLOPEN})
-  CHECK_LIBRARY_EXISTS(dl dlopen "" HAVE_DLOPEN)
-  IF (${HAVE_DLOPEN})
-    SET(CONFIG_BDL "-ldl")
-  ENDIF (${HAVE_DLOPEN})
-ENDIF (NOT ${HAVE_DLOPEN})
+if (NOT ${HAVE_DLOPEN})
+  check_library_exists (dl dlopen "" HAVE_DLOPEN)
+  if (${HAVE_DLOPEN})
+    set (CONFIG_BDL "-ldl")
+  endif (${HAVE_DLOPEN})
+endif (NOT ${HAVE_DLOPEN})
 
-IF (NOT ${HAVE_DLOPEN})
-  CHECK_LIBRARY_EXISTS(dld dld_link "" HAVE_DLOPEN)
-  IF (${HAVE_DLOPEN})
-    SET(CONFIG_BDL "-ldl")
-  ENDIF (${HAVE_DLOPEN})
-ENDIF (NOT ${HAVE_DLOPEN})
+if (NOT ${HAVE_DLOPEN})
+  check_library_exists (dld dld_link "" HAVE_DLOPEN)
+  if (${HAVE_DLOPEN})
+    set (CONFIG_BDL "-ldl")
+  endif (${HAVE_DLOPEN})
+endif (NOT ${HAVE_DLOPEN})
 
-IF (NOT ${HAVE_DLOPEN})
-  CHECK_FUNCTION_EXISTS(shl_load HAVE_DLOPEN)
-  IF (${HAVE_DLOPEN})
-    SET(CONFIG_BDL "-ldl")
-  ENDIF (${HAVE_DLOPEN})
-ENDIF (NOT ${HAVE_DLOPEN})
+if (NOT ${HAVE_DLOPEN})
+  check_function_exists (shl_load HAVE_DLOPEN)
+  if (${HAVE_DLOPEN})
+    set (CONFIG_BDL "-ldl")
+  endif (${HAVE_DLOPEN})
+endif (NOT ${HAVE_DLOPEN})
 
 
-IF (${HAVE_DLOPEN})
+if (${HAVE_DLOPEN})
   #SET(TM_DYNAMIC_LINKING 1) # dynamic linking works
-ENDIF (${HAVE_DLOPEN})
+endif (${HAVE_DLOPEN})
 
 ### --------------------------------------------------------------------
 ### Handle different systems case by case
@@ -187,7 +187,7 @@ set (CONFIG_WORD_LENGTH_INC "3")
 set (CONFIG_WORD_MASK "0xfffffffc")
 set (CONFIG_MAX_FAST "260 // WORD_LENGTH more than power of 2")
 
-CHECK_TYPE_SIZE("void*" SIZE_OF_VOIDP)
+check_type_size ("void*" SIZE_OF_VOIDP)
 
 message (STATUS "Check if we are on a 64-bits computer")
 if (${SIZE_OF_VOIDP} EQUAL 8)
@@ -198,29 +198,29 @@ if (${SIZE_OF_VOIDP} EQUAL 8)
 endif (${SIZE_OF_VOIDP} EQUAL 8)
 
 
-IF(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  MESSAGE(STATUS "final adjustments for an Intel or AMD GNU/Linux host")
-  SET(CONFIG_CXXOPTIMIZE "-O3 -fexpensive-optimizations")
-ENDIF(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  message (STATUS "final adjustments for an Intel or AMD GNU/Linux host")
+  set (CONFIG_CXXOPTIMIZE "-O3 -fexpensive-optimizations")
+endif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
-IF(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-  MESSAGE(STATUS "final adjustments for an Intel or AMD GNU/BSD host")
-  SET(CONFIG_CXXOPTIMIZE "-O3 -fexpensive-optimizations")
-ENDIF(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+  message (STATUS "final adjustments for an Intel or AMD GNU/BSD host")
+  set (CONFIG_CXXOPTIMIZE "-O3 -fexpensive-optimizations")
+endif (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
 
-IF(${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
-  MESSAGE(STATUS "final adjustments for an Intel or AMS Solaris host")
-  SET(CONFIG_CXXOPTIMIZE "-O3 -fexpensive-optimizations")
-  SET(CONFIG_CXXOPTIMIZE "-O3")
-  SET(CONFIG_BPATH "-Wl,-R,")
+if (${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+  message (STATUS "final adjustments for an Intel or AMS Solaris host")
+  set (CONFIG_CXXOPTIMIZE "-O3 -fexpensive-optimizations")
+  set (CONFIG_CXXOPTIMIZE "-O3")
+  set (CONFIG_BPATH "-Wl,-R,")
 #  SET(X11_LDFLAGS "${X_LIBS} -lXext -lX11 -lsocket")
-ENDIF(${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
+endif (${CMAKE_SYSTEM_NAME} STREQUAL "SunOS")
 
-IF(${CMAKE_SYSTEM_NAME} STREQUAL "CYGWIN_NT-5.1")
-  MESSAGE(STATUS "final adjustments for cygwin host")
-  SET(CONFIG_OS "CYGWIN")
-  SET(CONFIG_BFLAGS "-Wl,-stack,8388608")
-ENDIF(${CMAKE_SYSTEM_NAME} STREQUAL "CYGWIN_NT-5.1")
+if (${CMAKE_SYSTEM_NAME} STREQUAL "CYGWIN_NT-5.1")
+  message (STATUS "final adjustments for cygwin host")
+  set (CONFIG_OS "CYGWIN")
+  set (CONFIG_BFLAGS "-Wl,-stack,8388608")
+endif (${CMAKE_SYSTEM_NAME} STREQUAL "CYGWIN_NT-5.1")
 
 ### --------------------------------------------------------------------
 ### Package Data
@@ -262,81 +262,84 @@ find_package (JPEG)
 ### --------------------------------------------------------------------
 ###  Some Guile related adjustements
 ### --------------------------------------------------------------------
-if(Guile_VERSION_STRING VERSION_LESS 1.6)
-  set(CONFIG_GUILE_SERIAL "A")
-  set(GUILE_A 1)
-elseif(Guile_VERSION_STRING VERSION_LESS 1.8)
-  set(CONFIG_GUILE_SERIAL "B")
-  set(GUILE_B 1)
-elseif(Guile_VERSION_STRING VERSION_LESS 2.0)
-  set(CONFIG_GUILE_SERIAL "C")
-  set(GUILE_C 1)
-elseif(Guile_VERSION_STRING VERSION_LESS 3.0)
-  set(CONFIG_GUILE_SERIAL "D")
-  set(GUILE_D 1)
-  set(SCM_SIZET size_t)
-else(Guile_VERSION_STRING VERSION_LESS 1.6)
-  message(ERROR "Not Guile serial A,B,C or D???")
-endif(Guile_VERSION_STRING VERSION_LESS 1.6)
+if (Guile_VERSION_STRING VERSION_LESS 1.6)
+  set (CONFIG_GUILE_SERIAL "A")
+  set (GUILE_A 1)
+elseif (Guile_VERSION_STRING VERSION_LESS 1.8)
+  set (CONFIG_GUILE_SERIAL "B")
+  set (GUILE_B 1)
+elseif (Guile_VERSION_STRING VERSION_LESS 2.0)
+  set (CONFIG_GUILE_SERIAL "C")
+  set (GUILE_C 1)
+elseif (Guile_VERSION_STRING VERSION_LESS 3.0)
+  set (CONFIG_GUILE_SERIAL "D")
+  set (GUILE_D 1)
+  set (SCM_SIZET size_t)
+else (Guile_VERSION_STRING VERSION_LESS 1.6)
+  message (ERROR "Not Guile serial A,B,C or D???")
+endif (Guile_VERSION_STRING VERSION_LESS 1.6)
 
 
-SET(CMAKE_REQUIRED_FLAGS "-Werror ${Guile_CFLAGS}")
-SET(CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
-SET(CMAKE_REQUIRED_LIBRARIES ${Guile_LIBRARIES})
+set (CMAKE_REQUIRED_FLAGS "-Werror ${Guile_CFLAGS}")
+set (CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
+set (CMAKE_REQUIRED_LIBRARIES ${Guile_LIBRARIES})
 
-MESSAGE(STATUS "Checking the size_t of guile strings")
+message (STATUS "Checking the size_t of guile strings")
 
-CHECK_C_SOURCE_COMPILES(  "#include <guile/gh.h>
-  #include <libguile.h>
-  void print_string (SCM s) {
-    int len_r;
-    char* r= gh_scm2newstr (s, &len_r); } int main() { return 0; }
+check_c_source_compiles ("
+#include <guile/gh.h>
+#include <libguile.h>
+void print_string (SCM s) {
+  int len_r;
+  char* r= gh_scm2newstr (s, &len_r);
+}
+int main() { return 0; }
 " _guile_str_size_test)
 
-IF(_guile_str_size_test)
-  SET(guile_str_size_t int)
-ELSE(_guile_str_size_test)
-  SET(guile_str_size_t size_t)
-ENDIF(_guile_str_size_test)
+if (_guile_str_size_test)
+  set (guile_str_size_t int)
+else (_guile_str_size_test)
+  set (guile_str_size_t size_t)
+endif (_guile_str_size_test)
 
-MESSAGE(STATUS "Checking whether ... arguments behave correctly")
+message (STATUS "Checking whether ... arguments behave correctly")
 
-CHECK_C_SOURCE_COMPILES(  
-" #include <guile/gh.h>
-  #include <libguile.h>
-  typedef SCM (*FN)(...);
-  static SCM identity (SCM x) { return x; }
-  void declare () { gh_new_procedure (\"identity\", (FN) identity, 1, 0, 0); }
-  int main() { return 0; }
+check_c_source_compiles ("
+#include <guile/gh.h>
+#include <libguile.h>
+typedef SCM (*FN)(...);
+static SCM identity (SCM x) { return x; }
+void declare () { gh_new_procedure (\"identity\", (FN) identity, 1, 0, 0); }
+int main() { return 0; }
 " _guile_dots_test)
 
-IF(_guile_dots_test)
-  SET(DOTS_OK 1)
-ELSE(_guile_dots_test)
-  SET(DOTS_OK)
-ENDIF(_guile_dots_test)
+if (_guile_dots_test)
+  set (DOTS_OK 1)
+else (_guile_dots_test)
+  set (DOTS_OK)
+endif (_guile_dots_test)
 
 ### --------------------------------------------------------------------
 ### Generate configure headers
 ### --------------------------------------------------------------------
-set(DEBUG_ASSERT 1)
-set(USE_GS 1)
-set(GS_EXE /usr/bin/gs)
-set(GS_FONTS ../share/ghostscript/fonts:/usr/share/fonts:)
-set(GS_LIB ../share/ghostscript/9.06/lib:)
-set(GUILE_NUM 1)
-set(PDF_RENDERER 1)
-set(SIZEOF_VOID_P 8)
-set(STDC_HEADERS 1)
-set(USE_STACK_TRACE 1)
+set (DEBUG_ASSERT 1)
+set (USE_GS 1)
+set (GS_EXE /usr/bin/gs)
+set (GS_FONTS ../share/ghostscript/fonts:/usr/share/fonts:)
+set (GS_LIB ../share/ghostscript/9.06/lib:)
+set (GUILE_NUM 1)
+set (PDF_RENDERER 1)
+set (SIZEOF_VOID_P 8)
+set (STDC_HEADERS 1)
+set (USE_STACK_TRACE 1)
 
-set(CONFIG_STD_SETENV "#define STD_SETENV")
-set(tm_orig ${TEXMACS_SOURCE_DIR})
-set(CONFIG_HOST_OS "linux-gnu") # TODO: should not be hard-coded
-set(CONFIG_HOST_VENDOR "pc") # TODO: should not be hard-coded
-set(CONFIG_HOST_CPU ${CMAKE_SYSTEM_PROCESSOR})
-set(CONFIG_USER $ENV{USER})
-string(TIMESTAMP CONFIG_DATE)
+set (CONFIG_STD_SETENV "#define STD_SETENV")
+set (tm_orig ${TEXMACS_SOURCE_DIR})
+set (CONFIG_HOST_OS "linux-gnu") # TODO: should not be hard-coded
+set (CONFIG_HOST_VENDOR "pc") # TODO: should not be hard-coded
+set (CONFIG_HOST_CPU ${CMAKE_SYSTEM_PROCESSOR})
+set (CONFIG_USER $ENV{USER})
+string (TIMESTAMP CONFIG_DATE)
 set (tm_devel TeXmacs-${DEVEL_VERSION})
 set (tm_stable TeXmacs-${STABLE_VERSION})
 set (tm_devel_release ${tm_devel}-${DEVEL_RELEASE})
@@ -644,10 +647,9 @@ if (APPLE)
 
   message (STATUS "Enabling experimental Cocoa port")
 else (APPLE)
-  message (ERROR "Aqua GUI is not supported on this system")
 endif (APPLE)
 
-include_directories(${TeXmacs_Include_Dirs})
+include_directories (${TeXmacs_Include_Dirs})
 
 ### --------------------------------------------------------------------
 ### Debugging options
