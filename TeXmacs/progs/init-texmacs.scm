@@ -410,6 +410,8 @@
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
+(lazy-menu (utils git git-menu) git-menu)
+
 ;(display "Booting versioning facilities\n")
 (lazy-menu (version version-menu) version-menu)
 (lazy-keyboard (version version-kbd) with-versioning-tool?)
