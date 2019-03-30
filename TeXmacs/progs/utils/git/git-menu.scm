@@ -38,8 +38,3 @@
             ("With the master"
               (git-compare-with-master (current-buffer))))))
 
-(menu-bind texmacs-extra-menu
-  (former)
-  (if (git-versioned? (current-buffer))
-      (=> "Git"
-          (link git-menu))))
