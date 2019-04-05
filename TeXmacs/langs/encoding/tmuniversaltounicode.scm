@@ -105,28 +105,28 @@
 ;("<wasyleadsto>"	"#219C")
 
 ;;; Negated symbols with no aggregated character
-("<nsqsubset>"		"#228F#0338")
-("<nsqsupset>"		"#2290#0338")
-("<nll>"		"#226A#0338")
-("<ngg>"		"#226B#0338")
-("<nlll>"		"#22D8#0338")
-("<nggg>"		"#22D9#0338")
-("<nleqslant>"		"#2A7D#0338")
-("<ngeqslant>"		"#2A7E#0338")
-("<npreceq>"		"#2AAF#0338")
-("<nsucceq>"		"#2AB0#0338")
-("<nleqq>"		"#2266#0338")
-("<ngeqq>"		"#2267#0338")
-("<nsubseteqq>"		"#2AC5#0338")
-("<nsupseteqq>"		"#2AC6#0338")
+;("<nsqsubset>"		"#228F#0338")
+;("<nsqsupset>"		"#2290#0338")
+;("<nll>"		"#226A#0338")
+;("<ngg>"		"#226B#0338")
+;("<nlll>"		"#22D8#0338")
+;("<nggg>"		"#22D9#0338")
+;("<nleqslant>"		"#2A7D#0338")
+;("<ngeqslant>"		"#2A7E#0338")
+;("<npreceq>"		"#2AAF#0338")
+;("<nsucceq>"		"#2AB0#0338")
+;("<nleqq>"		"#2266#0338")
+;("<ngeqq>"		"#2267#0338")
+;("<nsubseteqq>"		"#2AC5#0338")
+;("<nsupseteqq>"		"#2AC6#0338")
 
 ;;; Glyph variants supported by Unicode
-("<lvertneqq>"		"#2268#FE00") ; variant of <lneqq>
-("<gvertneqq>"		"#2269#FE00") ; variant of <gneqq>
-("<varsubsetneq>"	"#228A#FE00") ; variant of <subsetneq>
-("<varsupsetneq>"	"#228B#FE00") ; variant of <supsetneq>
-("<varsubsetneqq>"	"#2ACB#FE00") ; variant of <subsetneqq>
-("<varsupsetneqq>"	"#2ACC#FE00") ; variant of <supsetneqq>
+;("<lvertneqq>"		"#2268#FE00") ; variant of <lneqq>
+;("<gvertneqq>"		"#2269#FE00") ; variant of <gneqq>
+;("<varsubsetneq>"	"#228A#FE00") ; variant of <subsetneq>
+;("<varsupsetneq>"	"#228B#FE00") ; variant of <supsetneq>
+;("<varsubsetneqq>"	"#2ACB#FE00") ; variant of <subsetneqq>
+;("<varsupsetneqq>"	"#2ACC#FE00") ; variant of <supsetneqq>
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
