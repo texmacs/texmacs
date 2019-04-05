@@ -56,7 +56,8 @@
 
 (define (short-menu-name u)
   (if (not (url-rooted-tmfs? u))
-      (string-append (url->system (url-tail u)) " [" (url->system u) "]")
+      ;;(string-append (url->system (url-tail u)) " [" (url->system u) "]")
+      (url->system (url-tail u))
       (tmfs-title u `(document ""))))
 
 (define (long-menu-name u)
