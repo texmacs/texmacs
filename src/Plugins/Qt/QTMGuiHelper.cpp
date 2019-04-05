@@ -35,13 +35,13 @@ END_SLOT
 bool
 QTMGuiHelper::eventFilter (QObject *obj, QEvent *event) {
   if (event->type() == QEvent::FileOpen) {
-    static bool file= false;
+    static bool new_window_flag= false;
     QFileOpenEvent* openEvent = static_cast<QFileOpenEvent *>(event);
     const char* s = openEvent->file().toUtf8().constData();
       //qDebug ("File Open Event %s", s);
-    const char *win= file?":new-window":":current-window";
+    const char *win= new_window_flag? ":new-window": ":current-window";
     call ("load-buffer", object (url_system (s)), eval (win));
-    file= true;
+    new_window_flag= true;
     return true;
   } else {
       // standard event processing
