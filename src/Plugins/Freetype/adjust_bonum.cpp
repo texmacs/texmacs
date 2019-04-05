@@ -117,6 +117,10 @@ rsub_adjust_bonum (hashmap<string,double>& t) {
   adjust_pair (t, "X", 0.03);
   adjust_pair (t, "Y", -0.05);
   adjust_pair (t, "Z", 0.02);
+  adjust_pair (t, "<up-T>", -0.05);
+  adjust_pair (t, "<up-V>", -0.05);
+  adjust_pair (t, "<up-W>", -0.05);
+  adjust_pair (t, "<up-Y>", -0.05);
   adjust_pair (t, "d", 0.02);
   adjust_pair (t, "g", 0.05);
   adjust_pair (t, "h", 0.02);

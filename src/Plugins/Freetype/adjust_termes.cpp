@@ -76,6 +76,10 @@ rsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "V", -0.05);
   adjust_pair (t, "W", -0.05);
   adjust_pair (t, "Y", -0.05);
+  adjust_pair (t, "<up-T>", -0.05);
+  adjust_pair (t, "<up-V>", -0.05);
+  adjust_pair (t, "<up-W>", -0.02);
+  adjust_pair (t, "<up-Y>", -0.05);
   adjust_pair (t, "a", 0.03);
   adjust_pair (t, "d", 0.03);
   adjust_pair (t, "g", 0.05);

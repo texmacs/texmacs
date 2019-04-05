@@ -141,6 +141,10 @@ rsub_adjust_std (hashmap<string,double>& t) {
   adjust_pair (t, "V", -0.05);
   adjust_pair (t, "W", -0.05);
   adjust_pair (t, "Y", -0.07);
+  adjust_pair (t, "<up-T>", -0.05);
+  adjust_pair (t, "<up-V>", -0.05);
+  adjust_pair (t, "<up-W>", -0.05);
+  adjust_pair (t, "<up-Y>", -0.05);
   adjust_pair (t, "<Gamma>", -0.1);
   adjust_pair (t, "<Tau>", -0.05);
   adjust_pair (t, "<Upsilon>", -0.05);
@@ -154,6 +158,8 @@ rsup_adjust_std (hashmap<string,double>& t) {
   adjust_pair (t, "1", -0.05);
   adjust_pair (t, "A", -0.05);
   adjust_pair (t, "L", -0.05);
+  adjust_pair (t, "<up-A>", -0.05);
+  adjust_pair (t, "<up-L>", -0.05);
   adjust_pair (t, "<Alpha>", -0.1);
   adjust_pair (t, "<Delta>", -0.1);
   adjust_pair (t, "<Lambda>", -0.1);
