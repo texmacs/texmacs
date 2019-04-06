@@ -503,6 +503,8 @@ protected:
 public:
   inline invisible_corrector (tree t, int force2):
     force (force2), times_before (0), times_after (0), space_after (0) {
+      space_after ("o")= 1000000;
+      space_after ("O")= 1000000;
       count_invisible (t, "text"); }
   tree correct (tree t, string mode);
 };
