@@ -68,7 +68,8 @@ void
 QTMAction::set_text (string s) {
   if (N(s)) {
       // FIXME: this will only work if the system language is English!
-    if (s == "Help" || s == "Edit" || s == "Preferences...")
+    if (s == "Help" || s == "Edit" || s == "View" ||
+        s == "Preferences...")
       s = s * " ";
     str = s;
     setText (to_qstring (s));
