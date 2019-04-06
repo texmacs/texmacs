@@ -103,7 +103,9 @@
 
 (tm-define (init-font val . opts)
   (:check-mark "*" test-init-font?)
-  (cond ((or (== val "TeXmacs Computer Modern") (== val "roman"))
+  (cond ((== val "TeXmacs Computer Modern")
+         (init-font "roman" "roman"))
+        ((and (== val "roman") (!= opts (list "roman")))
          (init-font "roman" "roman"))
         ((string-starts? val "Stix")
          (init-font "stix" "math-stix"))
