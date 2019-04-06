@@ -13,7 +13,6 @@
 #include "analyze.hpp"
 #include "boot.hpp"
 #include "drd_mode.hpp"
-#include <locale>
 
 int  search_max_hits= 1000000;
 bool blank_match_flag= false;

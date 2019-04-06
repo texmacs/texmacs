@@ -297,7 +297,7 @@ input_widget_rep::handle_keypress (keypress_event ev) {
        key == "tab" ||
        key == "S-tab" ||
        key == "escape" ||
-       (starts (type, "spell") && key >= "1" && key <= "9") ||
+       (starts (type, "spell") && string ("1") <= key && key <= string ("9")) ||
        (starts (type, "spell") && key == "+")));
   else if (key == "return") commit ();
   else if ((key == "escape") || (key == "C-c") ||
