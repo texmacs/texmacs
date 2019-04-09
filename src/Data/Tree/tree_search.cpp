@@ -184,7 +184,7 @@ search_concat (tree t, tree what, int pos, int i,
 	bool c1= (i == 0 || sel[0] == (p * pos) * start (t[pos]));
 	bool c2= (j == N(what) || sel[N(sel)-1] == (p * pos) * end (t[pos]));
 	if (j<N(what) && is_func (what[j], WILDCARD, 1)) c2= true;
-	if (i == 0) p1= sel[0];
+	if (i == 0) p1= sel[N(sel)-2];
 	if (j == N(what)) p2= sel[1];
 	if (i == 0 && is_func (what[0], WILDCARD, 1))
 	  p1= (p * 0) * start (t[0]);
