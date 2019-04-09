@@ -83,6 +83,12 @@
          (dl (list-difference l3 (buffer-list))))
     (sublist dl 0 (min (length dl) nr))))
 
+(tm-define (recent-directory-list nr)
+  (let* ((l1 (recent-file-list nr))
+         (l2 (map url-head l1))
+         (l3 (list-remove-duplicates l2)))
+    (list-filter l3 (cut url-rooted-protocol? <> "default"))))
+
 (tm-define (recent-file-menu)
   (file-list-menu (recent-file-list 25) #t))
 

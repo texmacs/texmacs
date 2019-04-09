@@ -237,7 +237,8 @@
       ("Documentation" (interactive docgrep-in-doc))
       (if (detailed-menus?)
           ("Source code" (interactive docgrep-in-src)))
-      ("My documents" (interactive docgrep-in-texts)))
+      ;;("My documents" (interactive docgrep-in-texts))
+      ("Recent documents" (interactive docgrep-in-recent)))
   (if (detailed-menus?)
       (-> "Full manuals"
           (when (url-exists-in-help? "main/man-user-manual.en.tm")

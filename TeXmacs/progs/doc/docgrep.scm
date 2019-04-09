@@ -117,6 +117,12 @@
          (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
     (build-doc-link-page what l3)))
 
+(define (txtgrep what docs)
+  (let* ((l1 (list-filter docs (cut url-rooted-protocol? <> "default")))
+         (l2 (map url->system (list-filter l1 url-exists?)))
+         (l3 (append-map (cut string-tokenize-by-char <> path-separator) l2)))
+    (build-doc-link-page what l3)))
+
 ; TODO: include results from the code indexer when available
 (define (srcgrep what path . patterns)
   (let* ((l1 (map (lambda (pat) (url-collect path pat)) patterns))
@@ -143,6 +149,8 @@
                     "*.scm" "*.hpp" "*.cpp" "*.ts"))
           ((== type "texts")
            (docgrep what "$TEXMACS_FILE_PATH" "*.tm"))
+          ((== type "recent")
+           (txtgrep what (recent-file-list 50)))
           ((== type "doc")
            (docgrep what "$TEXMACS_DOC_PATH"
             (string-append "*." lan ".tm")
@@ -169,4 +177,9 @@
 (tm-define (docgrep-in-texts what)
   (:argument what "Search words in my documents")
   (with query (list->query (list (cons "type" "texts") (cons "what" what)))
+    (load-buffer (string-append "tmfs://grep/" query))))
+
+(tm-define (docgrep-in-recent what)
+  (:argument what "Search words in recent documents")
+  (with query (list->query (list (cons "type" "recent") (cons "what" what)))
     (load-buffer (string-append "tmfs://grep/" query))))
