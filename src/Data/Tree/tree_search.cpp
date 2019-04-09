@@ -226,7 +226,12 @@ search_concat (tree t, tree what, int pos, int i,
         if (search_concat (t, what, pos+1, i+1, p, cur, p1, p2)) return true;
       }
     }
-    if (i == 0) return search_concat (t, what, pos+1, i, p, cur, p1, p2);
+    if (i == 0) {
+      range_set test;
+      search (test, t[pos], what, p * pos);
+      if (N(test) != 0) return false;
+      return search_concat (t, what, pos+1, i, p, cur, p1, p2);
+    }
     return false;
   }
 }
@@ -286,6 +291,7 @@ search_concat (range_set& sel, tree t, tree what, path p) {
 	  ssel[i+1]= (p * (N(t)-1)) * end (t[N(t)-1]);
       merge (sel, ssel);
       pos++;
+      continue;
     }
     path p1, p2, cur= (p * 0) * start (t[0]);
     if (N(sel) != 0) cur= sel[N(sel)-1];
@@ -350,7 +356,9 @@ search (range_set& sel, tree t, tree what, path p) {
 
 void
 search (range_set& sel, tree t, tree what, path p, path pos) {
-  if (is_format (what) || is_atomic (t))
+  if (is_document (what) || is_atomic (t))
+    search (sel, t, what, p);
+  else if (is_concat (what) && is_concat (t))
     search (sel, t, what, p);
   else {
     if (is_nil (pos)) search (sel, t, what, p);
@@ -359,7 +367,7 @@ search (range_set& sel, tree t, tree what, path p, path pos) {
       array<range_set> sub (N(t));
       if (pos->item >= 0 && pos->item < N(t))
         if (is_accessible_for_search (t, pos->item)) {
-          search (sub[pos->item], t[pos->item], what, p * pos->item);
+          search (sub[pos->item], t[pos->item], what, p * pos->item, pos->next);
           hits += N(sub[pos->item]);
         }
       for (int d=1; d<N(t); d++)
