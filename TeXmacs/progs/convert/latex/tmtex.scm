@@ -990,6 +990,7 @@
   (cond ((nstring? s) "<nobracket>")
 	((== s ".") "<nobracket>")
 	((<= (string-length s) 1) s)
+        ((and (string-starts? s "<") (string-ends? s ">")) s)
 	(else (string-append "<" s ">"))))
 
 (define (make-small-bracket x)
@@ -2614,9 +2615,9 @@
   (map-in-order tmtex l))
 
 (tm-define (tmtex x)
-    (cond ((string? x) (tmtex-string x))
-          ((list>0? x) (tmtex-apply (car x) (cdr x)))
-          (else "")))
+  (cond ((string? x) (tmtex-string x))
+        ((list>0? x) (tmtex-apply (car x) (cdr x)))
+        (else "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatching
