@@ -344,7 +344,8 @@
 
 (define waiting-for-toolbar? #f)
 (define pending-key-strokes "")
-(define last-search "")
+(define current-search #f)
+(define current-replace #f)
 
 (define (wait-for-toolbar)
   (set! waiting-for-toolbar? #t)
@@ -360,9 +361,7 @@
 (tm-define (keyboard-press key time)
   (:require waiting-for-toolbar?)
   (when (== (tmstring-length key) 1)
-    (set! pending-key-strokes (string-append pending-key-strokes key)))
-  (when (in? key '("F3" "C-f" "A-f" "M-f" "C-g" "A-g" "M-g" "C-s" "A-s" "M-s"))
-    (set! pending-key-strokes last-search)))
+    (set! pending-key-strokes (string-append pending-key-strokes key))))
 
 (define (notify-bar-change)
   ;; FIXME: not clear what is the most appriate setting here
@@ -485,7 +484,6 @@
          (aux (search-buffer))
          (what-case (if (get-boolean-preference "case-insensitive-match")
                         (string-downcase what) what)))
-
     (set-search-reference (cursor-path))
     (set-search-filter)
     (buffer-set-body aux `(document ,what-case))
@@ -496,7 +494,7 @@
 (tm-define (search-toolbar-keypress what r?)
   (with key (and (pair? what) (cadr what))
     (if (pair? what) (set! what (car what)))
-    (set! last-search what)
+    (set! current-search what)
     (cond ((== key "home") (search-extreme-match #f))
           ((== key "end") (search-extreme-match #t))
           ((== key "up") (search-next-match #f))
@@ -525,7 +523,7 @@
     ;;                 `(style (tuple "generic"))
     ;;                 (search-buffer)))
     (input (search-toolbar-keypress answer #f) "search"
-           (list pending-key-strokes) "25em")
+           (list (or current-search pending-key-strokes)) "25em")
     //
     ((balloon (icon "tm_search_first.xpm") "First occurrence")
      (search-extreme-match #f))
@@ -559,7 +557,7 @@
   (delayed
     (:idle 250)
     (keyboard-focus-on "search")
-    (search-toolbar-search pending-key-strokes)
+    (search-toolbar-search (or current-search pending-key-strokes))
     (notify-bar-change)
     (stop-waiting-for-toolbar)))
 
@@ -572,6 +570,8 @@
   (show-bottom-tools 0 #f)
   (set! search-serial (+ search-serial 1))
   (set! pending-key-strokes "")
+  (set! current-search #f)
+  (set! current-replace #f)
   (when toolbar-db-active?
     (db-show-toolbar))
   (when (and (not (cursor-accessible?)) (not (in-source?)))
@@ -592,6 +592,7 @@
 (tm-define (replace-toolbar-keypress by)
   (with key (and (pair? by) (cadr by))
     (if (pair? by) (set! by (car by)))
+    (set! current-replace by)
     (cond ((not (string? by)) (cancel-alt-selection "alternate"))
           ((== key "home") (search-extreme-match #f))
           ((== key "end") (search-extreme-match #t))
@@ -611,11 +612,11 @@
   (hlist
     (text "Replace: ")
     (input (search-toolbar-keypress answer #t) "replace-what"
-           (list pending-key-strokes) "15em")
+           (list (or current-search pending-key-strokes)) "15em")
     //
     (text " by: ")
     (input (replace-toolbar-keypress answer) "replace-by"
-           (list "") "15em")
+           (list (or current-replace "")) "15em")
     //
     ;;(if (nnull? (get-alt-selection "alternate"))
     ((balloon (icon "tm_search_first.xpm") "First occurrence")
