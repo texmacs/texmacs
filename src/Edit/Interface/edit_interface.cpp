@@ -590,6 +590,29 @@ edit_interface_rep::apply_changes () {
   update_visible ();
   rectangle new_visible= rectangle (vx1, vy1, vx2, vy2);  
 
+  if (kbd_show_keys && N(kbd_last_times) > 0) {
+    if (got_focus) {
+      time_t last= kbd_last_times[N(kbd_last_times)-1];
+      if (last + kbd_hide_delay < texmacs_time ()) {
+        kbd_last_keys = array<string> ();
+        kbd_last_times= array<time_t> ();
+      }
+      bool change= (env_change != 0);
+      if (N(kbd_shown_keys) != N(kbd_last_keys)) {
+        kbd_shown_keys= kbd_last_keys;
+        change= true;
+      }
+      rectangles rs (rectangle (vx1, vy1, vx2, vy1 + 100 * pixel));
+      if (rs != keys_rects) { invalidate (keys_rects); change= true; }
+      keys_rects= rs;
+      if (change) invalidate (keys_rects);
+    }
+    else {
+      if (!is_nil (keys_rects)) invalidate (keys_rects);
+      keys_rects= rectangles ();
+    }
+  }
+  
   if (env_change == 0) {
     if (last_change-last_update > 0 &&
         idle_time (INTERRUPTED_EVENT) >= 1000/6)

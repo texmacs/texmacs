@@ -191,6 +191,54 @@ edit_interface_rep::draw_graphics (renderer ren) {
 }
 
 void
+edit_interface_rep::draw_keys (renderer ren) {
+  if (kbd_show_keys && got_focus && N(kbd_shown_keys) > 0 &&
+      !is_nil (keys_rects) &&
+      vy2 - vy1 > 3 * (keys_rects->item->y2 - keys_rects->item->y1)) {
+    string s;
+    for (int i=0; i<N(kbd_shown_keys); i++) {
+      if (i>0) s << " ";
+      s << kbd_shown_keys[i];
+    }
+    tree rew= get_server () -> kbd_system_rewrite (s);
+    if (!is_concat (rew)) rew= tree (CONCAT, rew);
+    string ns;
+    for (int i=0; i<N(rew); i++) {
+      tree t= rew[i];
+      while (is_compound (t, "render-key") || is_func (t, WITH))
+        t= t[N(t)-1];
+      if (is_atomic (t)) {
+        if (N(ns) != 0) ns << "  ";
+        ns << t->label;
+      }
+    }
+    ren->set_background (rgb_color (240, 224, 208));
+    rectangle r= keys_rects->item;
+    ren->clear (r->x1, r->y1, r->x2, r->y2);
+    font fn;
+    if (use_macos_fonts ()) {
+      tree t= tuple ("apple-lucida", "ss", "medium", "right");
+      t << tree ("14") << tree ("600");
+      fn= find_font (t);
+    }
+    else {
+      tree t= tuple ("pagella", "rm", "medium", "right");
+      t << tree ("14") << tree ("600");
+      fn= find_font (t);
+    }
+    metric ex;
+    fn->get_extents (ns, ex);
+    SI dx= (r->x2 - r->x1 + ex->x1 - ex->x2) >> 1;
+    SI dy= (r->y2 - r->y1) / 3;
+    SI dp= 25 * pixel;
+    if ((ex->x2 - ex->x1 + dp) > (r->x2 - r->x1))
+      dx= r->x2 - r->x1 + ex->x1 - ex->x2 - dp;
+    ren->set_pencil (pencil (rgb_color (0, 0, 64)));
+    fn->draw (ren, ns, r->x1 + dx, r->y1 + dy);
+  }
+}
+
+void
 edit_interface_rep::draw_pre (renderer win, renderer ren, rectangle r) {
   // draw surroundings
   draw_background (ren, r->x1, r->y1, r->x2, r->y2);
@@ -215,6 +263,7 @@ edit_interface_rep::draw_post (renderer win, renderer ren, rectangle r) {
   draw_selection (ren, r);
   draw_graphics (ren);
   draw_cursor (ren); // the text cursor must be drawn over the graphical object
+  draw_keys (ren);
   ren->reset_zoom_factor ();
   win->reset_zoom_factor ();
 }

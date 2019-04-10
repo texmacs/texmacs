@@ -71,6 +71,8 @@
   (bench-print bench_print (void string))
   (bench-print-all bench_print (void))
   (system-wait system_wait (void string string))
+  (get-show-kbd get_show_kbd (bool))
+  (set-show-kbd set_show_kbd (void bool))
   (set-latex-command set_latex_command (void string))
   (set-bibtex-command set_bibtex_command (void string))
   (number-latex-errors number_latex_errors (int url))

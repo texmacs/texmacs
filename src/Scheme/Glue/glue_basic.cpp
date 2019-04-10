@@ -583,6 +583,28 @@ tmg_system_wait (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_get_show_kbd () {
+  // TMSCM_DEFER_INTS;
+  bool out= get_show_kbd ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_set_show_kbd (tmscm arg1) {
+  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "set-show-kbd");
+
+  bool in1= tmscm_to_bool (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_show_kbd (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_set_latex_command (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "set-latex-command");
 
@@ -9829,6 +9851,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("bench-print",  tmg_bench_print, 1, 0, 0);
   tmscm_install_procedure ("bench-print-all",  tmg_bench_print_all, 0, 0, 0);
   tmscm_install_procedure ("system-wait",  tmg_system_wait, 2, 0, 0);
+  tmscm_install_procedure ("get-show-kbd",  tmg_get_show_kbd, 0, 0, 0);
+  tmscm_install_procedure ("set-show-kbd",  tmg_set_show_kbd, 1, 0, 0);
   tmscm_install_procedure ("set-latex-command",  tmg_set_latex_command, 1, 0, 0);
   tmscm_install_procedure ("set-bibtex-command",  tmg_set_bibtex_command, 1, 0, 0);
   tmscm_install_procedure ("number-latex-errors",  tmg_number_latex_errors, 1, 0, 0);

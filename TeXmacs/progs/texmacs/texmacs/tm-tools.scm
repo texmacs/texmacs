@@ -60,3 +60,8 @@
   (:check-mark "v" save-aux-enabled?)
   (let ((new (if (== (get-env "save-aux") "true") "false" "true")))
     (init-env "save-aux" new)))
+
+(tm-define (toggle-show-kbd)
+  (:synopsis "Toggle whether we show keyboard presses.")
+  (:check-mark "v" get-show-kbd)
+  (set-show-kbd (not (get-show-kbd))))

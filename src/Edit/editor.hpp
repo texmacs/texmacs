@@ -613,4 +613,15 @@ editor new_editor (server_rep* sv, tm_buffer buf);
   set_current_view (temp);            \
 }
 
+// global variables for showing keypresses
+extern bool          kbd_show_keys;
+extern array<string> kbd_shown_keys;
+extern array<string> kbd_last_keys;
+extern array<time_t> kbd_last_times;
+extern int           kbd_erase_delay;
+extern int           kbd_hide_delay;
+
+bool get_show_kbd ();
+void set_show_kbd (bool flag);
+
 #endif // defined EDITOR_H

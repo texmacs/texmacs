@@ -15,6 +15,20 @@
 #include "archiver.hpp"
 
 /******************************************************************************
+* Showing the keystrokes while typing
+******************************************************************************/
+
+bool          kbd_show_keys= false;
+array<string> kbd_shown_keys;
+array<string> kbd_last_keys;
+array<time_t> kbd_last_times;
+int           kbd_erase_delay= 1500;
+int           kbd_hide_delay = 3000;
+
+bool get_show_kbd () { return kbd_show_keys; }
+void set_show_kbd (bool flag) { kbd_show_keys= flag; }
+
+/******************************************************************************
 * Basic subroutines for keyboard handling
 ******************************************************************************/
 
@@ -230,6 +244,15 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
 #ifdef USE_EXCEPTIONS
   try {
 #endif
+    if (kbd_show_keys) {
+      if (N(kbd_last_times) > 0 &&
+          kbd_last_times[N(kbd_last_times)-1] + kbd_erase_delay < t) {
+        kbd_last_keys = array<string> ();
+        kbd_last_times= array<time_t> ();
+      }
+      kbd_last_keys  << key;
+      kbd_last_times << t;
+    }
     if (DEBUG_KEYBOARD) {
       //for (int i=0; i<N(key); i++)
       //  cout << ((int) (unsigned char) key[i]) << " ";

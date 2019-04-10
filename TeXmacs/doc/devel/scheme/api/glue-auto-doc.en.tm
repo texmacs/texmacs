@@ -443,6 +443,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-show-kbd)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_show_kbd> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(set-show-kbd <scm-arg|bool>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_show_kbd> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(set-latex-command <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
