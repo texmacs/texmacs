@@ -61,8 +61,8 @@ make_packrat_parser (string lan, tree in, path in_pos) {
     packrat_grammar gr= find_packrat_grammar (lan);
     last_lan   = lan;
     last_in    = copy (in);
-    last_in_pos= copy (last_in_pos);
-    last_par   = packrat_parser (gr, last_in, in_pos);
+    last_in_pos= copy (in_pos);
+    last_par   = packrat_parser (gr, last_in, last_in_pos);
   }
   return last_par;
 }
