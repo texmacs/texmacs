@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|std-pattern>>
 
@@ -22,17 +22,17 @@
 
   <assign|no-page-numbers|true>
 
-  <assign|normal-page-head-sep|<value|page-head-sep>>
+  <provide|normal-page-head-sep|<value|page-head-sep>>
 
-  <assign|normal-page-foot-sep|<value|page-foot-sep>>
+  <provide|normal-page-foot-sep|<value|page-foot-sep>>
 
-  <assign|normal-page-odd-header|<value|page-odd-header>>
+  <provide|normal-page-odd-header|<value|page-odd-header>>
 
-  <assign|normal-page-even-header|<value|page-even-header>>
+  <provide|normal-page-even-header|<value|page-even-header>>
 
-  <assign|normal-page-odd-footer|<value|page-odd-footer>>
+  <provide|normal-page-odd-footer|<value|page-odd-footer>>
 
-  <assign|normal-page-even-footer|<value|page-even-footer>>
+  <provide|normal-page-even-footer|<value|page-even-footer>>
 
   \;
 

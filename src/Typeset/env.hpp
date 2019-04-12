@@ -244,6 +244,7 @@ private:
   void exec_until_table (tree t, path p);
   bool exec_until_table (tree t, path p, string var, int level);
   tree exec_assign (tree t);
+  tree exec_provide (tree t);
   tree exec_with (tree t);
   void exec_until_with (tree t, path p);
   bool exec_until_with (tree t, path p, string var, int level);
@@ -254,6 +255,7 @@ private:
   tree exec_provides (tree t);
   tree exec_value (tree t);
   tree exec_quote_value (tree t);
+  tree exec_or_value (tree t);
   tree exec_arg (tree t);
   bool exec_until_arg (tree t, path p, string var, int level);
   tree exec_quote_arg (tree t);

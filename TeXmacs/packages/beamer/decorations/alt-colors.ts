@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -30,11 +30,11 @@
 
   <assign|math-colored|<macro|x|<with|color|<value|math-color>|font-family|rm|<arg|x>>>>
 
-  <assign|uncolored-math|<value|math>>
+  <provide|uncolored-math|<value|math>>
 
-  <assign|uncolored-equation*|<value|equation*>>
+  <provide|uncolored-equation*|<value|equation*>>
 
-  <assign|uncolored-equations-base|<value|equations-base>>
+  <provide|uncolored-equations-base|<value|equations-base>>
 
   <assign|math|<macro|x|<math-colored|<uncolored-math|<arg|x>>>>>
 
@@ -58,17 +58,17 @@
 
   <assign|strong-color|dark blue>
 
-  <assign|uncolored-enunciation-name|<value|enunciation-name>>
+  <provide|uncolored-enunciation-name|<value|enunciation-name>>
 
-  <assign|uncolored-render-list|<value|render-list>>
+  <provide|uncolored-render-list|<value|render-list>>
 
-  <assign|uncolored-strong|<value|strong>>
+  <provide|uncolored-strong|<value|strong>>
 
   <assign|enunciation-name|<macro|x|<with|color|<value|strong-color>|<uncolored-enunciation-name|<arg|x>>>>>
 
   <assign|render-list|<\macro|body>
     <\uncolored-render-list>
-      <\with|uncolored-current-item|<value|current-item>|current-item|<macro|name|<with|color|<value|strong-color>|<uncolored-current-item|<arg|name>>>>>
+      <\with|uncolored-current-item|<or-value|uncolored-current-item|current-item>|current-item|<macro|name|<with|color|<value|strong-color>|<uncolored-current-item|<arg|name>>>>>
         <arg|body>
       </with>
     </uncolored-render-list>

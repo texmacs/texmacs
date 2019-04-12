@@ -364,10 +364,13 @@ edit_typeset_rep::typeset_exec_until (path p) {
         //cout << "t= " << t << "\n";
         //cout << "i= " << i << "\n";
         //cout << "w= " << w << "\n";
+        tree ww (w, N(w));
         for (int j=0; j<N(w); j+=2) {
           //cout << w[j] << " := " << env->exec (w[j+1]) << "\n";
-          env->write (w[j]->label, env->exec (w[j+1]));
+          ww[j+1]= env->exec (w[j+1]);
         }
+        for (int j=0; j<N(w); j+=2)
+          env->write (w[j]->label, ww[j+1]);
         t= t[i];
         q= q->next;
       }

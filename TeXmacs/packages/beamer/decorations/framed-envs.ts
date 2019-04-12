@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.8>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -26,13 +26,13 @@
     </src-comment>
   </active*>
 
-  <assign|unframed-chapter-title|<value|chapter-title>>
+  <provide|unframed-chapter-title|<value|chapter-title>>
 
-  <assign|unframed-section-title|<value|section-title>>
+  <provide|unframed-section-title|<value|section-title>>
 
-  <assign|unframed-subsection-title|<value|subsection-title>>
+  <provide|unframed-subsection-title|<value|subsection-title>>
 
-  <assign|unframed-subsubsection-title|<value|subsubsection-title>>
+  <provide|unframed-subsubsection-title|<value|subsubsection-title>>
 
   <assign|chapter-title|<macro|title|<unframed-chapter-title|<wide-std-framed-colored|dark
   grey|pastel red|<arg|title>>>>>
@@ -52,7 +52,7 @@
     </src-comment>
   </active*>
 
-  <assign|unframed-render-enunciation|<value|render-enunciation>>
+  <provide|unframed-render-enunciation|<value|render-enunciation>>
 
   <assign|render-enunciation|<\macro|which|body>
     <\padded-normal|1fn|1fn>

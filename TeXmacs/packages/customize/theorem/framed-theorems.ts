@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -36,7 +36,7 @@
     </src-comment>
   </active*>
 
-  <assign|unframed-render-enunciation|<value|render-enunciation>>
+  <provide|unframed-render-enunciation|<value|render-enunciation>>
 
   <assign|framed-render-enunciation|<\macro|which|body>
     <surround|<no-indent>||<\ornament>

@@ -201,6 +201,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= tree (get_accent_type (as_string (st[1]))); break;
     case ASSIGN:
       r= concat ("assign ", as_string (st[0])); break;
+    case PROVIDE:
+      r= concat ("provide ", as_string (st[0])); break;
     case WITH:
       r= concat ("with ", get_with_text (st)); break;
     case PROVIDES:
@@ -209,6 +211,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= concat ("value ", as_string (st[0])); break;
     case QUOTE_VALUE:
       r= concat ("quoted value ", as_string (st[0])); break;
+    case OR_VALUE:
+      r= concat ("or-value ", as_string (st[0])); break;
     case ARG:
       r= concat ("argument ", as_string (st[0])); break;
     case QUOTE_ARG:

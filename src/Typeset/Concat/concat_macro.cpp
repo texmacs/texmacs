@@ -30,6 +30,20 @@ concater_rep::typeset_assign (tree t, path ip) {
 }
 
 void
+concater_rep::typeset_provide (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  tree r= env->exec (t[0]);
+  if (!is_atomic (r)) return;
+  string var= r->label;
+  if (!env->provides (var)) env->assign (var, copy (t[1]));
+  if (env->var_type [var] == Env_Paragraph)
+    control (tuple ("env_par", var, env->read (var)), ip);
+  else if (env->var_type [var] == Env_Page)
+    control (tuple ("env_page", var, env->read (var)), ip);
+  else control (t, ip);
+}
+
+void
 concater_rep::typeset_with (tree t, path ip) {
   int i, n= N(t), k= (n-1)>>1; // is k=0 allowed ?
   if ((n&1) != 1) { typeset_error (t, ip); return; }
@@ -188,6 +202,23 @@ concater_rep::typeset_value (tree t, path ip) {
     return;
   }
   typeset_dynamic (env->read (name), ip);
+}
+
+void
+concater_rep::typeset_or_value (tree t, path ip) {
+  // cout << "Value " << t << ", " << ip << "\n";
+  for (int i=0; i<N(t); i++) {
+    tree r= env->exec (t[i]);
+    if (is_compound (r)) {
+      typeset_error (t, ip);
+      return;
+    }
+    string name= r->label;
+    if (env->provides (name) && !is_func (env->read (r->label), UNINIT)) {
+      typeset_dynamic (env->read (name), ip);
+      return;
+    }
+  }
 }
 
 void

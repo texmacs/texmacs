@@ -432,17 +432,23 @@ concater_rep::typeset (tree t, path ip) {
   case ASSIGN:
     typeset_assign (t, ip);
     break;
+  case PROVIDE:
+    typeset_provide (t, ip);
+    break;
   case WITH:
     typeset_with (t, ip);
     break;
   case PROVIDES:
     typeset_executable (t, ip);
     break;
+  case VALUE:
+    typeset_value (t, ip);
+    break;
   case QUOTE_VALUE:
     typeset_inactive (t, ip);
     break;
-  case VALUE:
-    typeset_value (t, ip);
+  case OR_VALUE:
+    typeset_or_value (t, ip);
     break;
   case MACRO:
     typeset_inactive (t, ip);

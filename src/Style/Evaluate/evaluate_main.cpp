@@ -108,6 +108,8 @@ evaluate_impl (tree t) {
   /* Primitives for macro expansion */
   case ASSIGN:
     return evaluate_assign (t);
+  case PROVIDE:
+    return evaluate_assign (t); // FIXME: provisory
   case WITH:
     return evaluate_with (t);
   case PROVIDES:
@@ -116,6 +118,8 @@ evaluate_impl (tree t) {
     return evaluate_value (t);
   case QUOTE_VALUE:
     return evaluate_quote_value (t);
+  case OR_VALUE:
+    return evaluate_value (t); // FIXME: provisory
   case MACRO:
     return copy (t);
   case DRD_PROPS:

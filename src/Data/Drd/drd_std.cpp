@@ -281,6 +281,8 @@ init_std_drd () {
 
   init (ASSIGN, "assign",
 	fixed (1, 1, BIFORM) -> variable (0) -> regular (1));
+  init (PROVIDE, "provide",
+	fixed (1, 1, BIFORM) -> variable (0) -> regular (1));
   init (WITH, "with",
 	var_repeat (2, 1, BIFORM) -> with_like () ->
 	binding (0) -> accessible (1));
@@ -291,6 +293,7 @@ init_std_drd () {
   init (QUOTE_VALUE, "quote-value",
 	fixed (1) -> variable (0) -> name ("quoted value") ->
         locals (0, "mode", "src"));
+  init (OR_VALUE, "or-value", repeat (1, 1) -> variable (0));
   init (MACRO, "macro",
 	var_repeat (1, 1, BIFORM) -> argument (0) -> regular (1));
   init (DRD_PROPS, "drd-props",
