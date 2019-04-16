@@ -344,7 +344,7 @@
 ("dashes" "tirets")
 ("data conversion" "conversion des données")
 ("data format" "format des données")
-("database tool" "barre des données")
+("database tool" "outil pour les bases des données")
 ("database toolbar" "barre des données")
 ("date" "date")
 ("deactivate table" "desactiver tableau")
