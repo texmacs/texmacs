@@ -235,7 +235,7 @@
 ("change the TeXmacs preferences" "changer les préférences de TeXmacs")
 ("changes" "changements")
 ("chapter" "chapitre")
-("character encoding" "encodage de caractère")
+("character encoding" "encodage de caractères")
 ("check text for spelling errors" "vérifier le texte pour des fautes d'orthographe")
 ("check" "tchèche")
 ("chinese" "chinois")
