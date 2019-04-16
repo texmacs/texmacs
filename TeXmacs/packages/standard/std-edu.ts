@@ -616,6 +616,18 @@
   <drd-props|gap-wide|with-like|yes|arity|1|accessible|all>
 
   <drd-props|gap-long|with-like|yes|arity|1|accessible|all>
+
+  <\active*>
+    <\src-comment>
+      Extra macros for import from LaTeX exam style
+    </src-comment>
+  </active*>
+
+  <assign|questions|<macro|body|<arg|body>>>
+
+  <assign|answers|<macro|body|<arg|body>>>
+
+  \;
 </body>
 
 <\initial>
