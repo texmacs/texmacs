@@ -1807,7 +1807,7 @@
 ("wide bar" "")
 ("wide block" "")
 ("wide colored" "")
-("wide table" "")
+("wide tabular" "")
 ("width" "")
 ("width is exactly the specified width" "")
 ("width is maximum of specified width and box width" "")

@@ -1892,7 +1892,7 @@
 ("wide bar" "barre large")
 ("wide block" "Bloc en largeur")
 ("wide colored" "large colorié")
-("wide table" "Tableau en largeur")
+("wide tabular" "Tableau en largeur")
 ("width is exactly the specified width" "utiliser la largeur spécifiée")
 ("width is maximum of specified width and box width" "utiliser maximum de la largeur spécifiée et la largeur de la boîte")
 ("width is minimum of specified width and box width" "utiliser minimum de la largeur spécifiée et la largeur de la boîte")
