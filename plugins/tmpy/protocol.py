@@ -38,6 +38,5 @@ def texmacs_out(out_str):
   DATA_END control characters."""
   data_begin()
   os.sys.stdout.write(out_str)
-  os.sys.stdout.write("\n")
   data_end()
 
