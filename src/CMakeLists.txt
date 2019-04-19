@@ -15,7 +15,7 @@ if (APPLE)
   set_target_properties (${TeXmacs_binary_name}
     PROPERTIES
     MACOSX_BUNDLE TRUE
-    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
+    MACOSX_BUNDLE_INFO_PLIST ${TEXMACS_SOURCE_DIR}/packages/macos/Info.plist.in
     DEBUG_OUTPUT_NAME ${TeXmacs_binary_name}${EXE_DEBUG_EXTENSION}
     RELEASE_OUTPUT_NAME ${TeXmacs_binary_name}
     RUNTIME_OUTPUT_DIRECTORY ${TEXMACS_BINARY_DIR}
