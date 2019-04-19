@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.21>
+<TeXmacs|1.99.9>
 
-<style|letter>
+<style|<tuple|letter|old-spacing>>
 
 <\body>
   <chapter|TeXmacs overview>
@@ -15,13 +15,13 @@
     You should!
   </with>
 
-  Here comes a ``line break''<line-break>, which does not do anything unless
-  at the end of a line. The ``no <no-break>line <no-break>break'' symbol
+  Here comes a \Pline break\Q<line-break>, which does not do anything unless
+  at the end of a line. The \Pno <no-break>line <no-break>break\Q symbol
   prevents from line breaking.<new-line>The new line symbol really starts a
-  new paragraph, and the<next-line>``next line'' symbol just inserts a
+  new paragraph, and the<next-line>\Pnext line\Q symbol just inserts a
   carriage return.
 
-  The equantion array environment is based on the ``split'' construct:
+  The equantion array environment is based on the \Psplit\Q construct:
 
   <\eqnarray*>
     <tformat|<table|<row|<cell|a>|<cell|=>|<cell|b+c<space|0.6spc>;>>|<row|<cell|x>|<cell|=>|<cell|y<rsup|2>+z<rsup|2>.>>>>
@@ -35,7 +35,7 @@
   <surround||an object or to <block*|<tformat|<table|<row|<cell|<resize|resize|<minimum|1l|-1cm>|<minimum|1b|-1cm>|<maximum|1r|1cm>|<maximum|1t|1cm>>>>>>>
   it.|<with|par-mode|center|<move|move|0cm|1cm>>>
 
-  The ``rigid group symbol'' also prevents from line breaking. An empty group
+  The \Prigid group symbol\Q also prevents from line breaking. An empty group
   may be used to insert some invisible content, e.g.<rigid|> after a period
   in an abbreviation (so that less space is inserted).
 
@@ -59,7 +59,7 @@
     X=<around*|\<langle\>|<big|sum><rsub|i=1><rsup|\<infty\>><frac|a<rsub|i>|b<rsub|i>+c<rsub|i>><mid|\|><big|prod><rsub|i=1><rsup|\<infty\>><frac|1|1+\<alpha\>*z<rsup|2<rsup|i>>>|\<rangle\>>
   </equation*>
 
-  Some other handy operators are ``above'' and ``below''
+  Some other handy operators are \Pabove\Q and \Pbelow\Q
 
   <\equation*>
     <above|operator|script>+<below|operator|below>
@@ -77,7 +77,7 @@
     \<alpha\>\<oplus\>b\<amalg\>c\<precprec\>x\<boxtimes\>y+\<nabla\><around|(|\<wp\><around|(|x<rsub|1>|)>,\<ldots\>,\<wp\><around|(|x<rsub|n>|)>|)>+<neg|x>+<neg|y>\<precprec\>S<rsub|a\<rightarrow\>b\<rightsquigarrow\>c>
   </equation*>
 
-  We obtained <with|mode|math|<neg|x>> using the ``negation'' construct. We
+  We obtained <with|mode|math|<neg|x>> using the \Pnegation\Q construct. We
   conclude with a tree
 
   <\equation*>
@@ -106,7 +106,7 @@
     y><x>>>|<row|<cell|<inactive|<assign|f|<inactive|<macro|a|<arg|a><rsub|1>,\<ldots\>,<arg|a><rsub|n>>>>><inactive|<f|b>>>|<cell|\<longrightarrow\>>|<cell|<assign|f|<macro|a|<arg|a><rsub|1>,\<ldots\>,<arg|a><rsub|n>>><f|b><space|25spc>>>|<row|<cell|<inactive|<plus|1|1>>>|<cell|\<longrightarrow\>>|<cell|<plus|1|1>>>|<row|<cell|<inactive|<minus|7|4>>>|<cell|\<longrightarrow\>>|<cell|<minus|7|4>>>|<row|<cell|<inactive|<times|3|3>>>|<cell|\<longrightarrow\>>|<cell|<times|3|3>>>|<row|<cell|<inactive|<merge|Hi|There>>>|<cell|\<longrightarrow\>>|<cell|<merge|Hi|There>>>|<row|<cell|<inactive|<number|1993|Roman>>>|<cell|\<longrightarrow\>>|<cell|<number|1993|Roman>>>|<row|<cell|<inactive|<translate|File|english|french>>>|<cell|\<longrightarrow\>>|<cell|<translate|File|english|french>>>>>
   </eqnarray*>
 
-  Some examples of environments in the present ``letter'' style are:
+  Some examples of environments in the present \Pletter\Q style are:
 
   <\itemize>
     <item><with|color|red|First item> in red.
@@ -116,7 +116,7 @@
     <item><with|font-series|bold|And so on>...
   </itemize>
 
-  <surround||A numbered equation with label ``eq'':|<\theorem>
+  <surround||A numbered equation with label \Peq\Q:|<\theorem>
     The following conditions are equivalent:
 
     <\enumerate-alpha>
@@ -128,15 +128,17 @@
     \;
   </theorem>>
 
-  <equation|a<rsup|2>+b<rsup|2>=c<rsup|2><label|eq>>
+  <\equation>
+    a<rsup|2>+b<rsup|2>=c<rsup|2><label|eq>
+  </equation>
 
   A reference to the equation (<reference|eq>).
 
   Here comes an active hyperlink to <hlink|http://www.gnu.org|http://www.gnu.org>.
   Click <action|here|(lambda () (display "Hello\\n"))> to print hello to the
   standard output. <specific|texmacs|This text><specific|latex|some funny
-  stuff> is only visible inside TeXmacs and will be translated to ``some
-  funny stuff'' when converted to LaTeX. We conclude with a picture:
+  stuff> is only visible inside TeXmacs and will be translated to \Psome
+  funny stuff\Q when converted to LaTeX. We conclude with a picture:
 
   <\with|par-mode|center>
     <image|../../misc/pixmaps/TeXmacs-solid.xpm||||>
