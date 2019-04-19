@@ -689,6 +689,13 @@ add_subdirectory (TeXmacs)
 ### Installation
 ### --------------------------------------------------------------------
 
+if (APPLE)
+  install (FILES packages/macos/TeXmacs.icns DESTINATION ${CMAKE_INSTALL_PREFIX})
+  install (FILES packages/macos/TeXmacs-document.icns DESTINATION ${CMAKE_INSTALL_PREFIX})
+  install (DIRECTORY src/Plugins/Cocoa/English.lproj DESTINATION ${CMAKE_INSTALL_PREFIX})
+else (APPLE)
+endif (APPLE)
+
 install (FILES ${TEXMACS_BINARY_DIR}/misc/script/texmacs
               ${TEXMACS_BINARY_DIR}/misc/scripts/fig2ps
               misc/scripts/tm_gs 
