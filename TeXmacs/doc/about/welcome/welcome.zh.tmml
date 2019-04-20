@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<TeXmacs version="1.99.9">
+  <style><tuple><tm-arg>tmdoc</tm-arg><tm-arg>chinese</tm-arg><tm-arg>old-spacing</tm-arg></tuple></style>
+  
+  <body>
+    <tm-par>
+      <tmdoc-title>欢迎使用GNU <TeXmacs/></tmdoc-title>
+    </tm-par>
+    
+    <tm-par>
+      <section>如何入门</section>
+    </tm-par>
+    
+    <tm-par>
+      如果你是第一次使用<TeXmacs/>，那么建议你先了解一下如何阅读文档。首先点<hlink><tm-arg>这里</tm-arg><tm-arg>../../main/start/man-conventions.zh.tmml</tm-arg></hlink>了解文档中的惯例。接着按下<key>F1</key>，输入关键字后可以搜索整个文档寻求帮助。最后可以了解如何<hlink><tm-arg>配置</tm-arg><tm-arg>../../main/config/man-configuration.zh.tm</tm-arg></hlink><TeXmacs/>。
+    </tm-par>
+    
+    <tm-par>
+      <section>常见帮助</section>
+    </tm-par>
+    
+    <tm-par>
+      <itemize>
+        <tm-par>
+          <item/>在<hlink><tm-arg><menu><tm-arg>Help</tm-arg><tm-arg>Manual</tm-arg></menu></tm-arg><tm-arg>../../main/man-manual.zh.tmml</tm-arg></hlink>菜单中，有如何使用<TeXmacs/>的介绍。这些手册非常完整，但并不详细。
+        </tm-par>
+        
+        <tm-par>
+          <item/>在<hlink><tm-arg><menu><tm-arg>Help</tm-arg><tm-arg>Reference
+          guide</tm-arg></menu></tm-arg><tm-arg>../../main/man-reference.zh.tm</tm-arg></hlink>菜单中，有关于TeXmacs的格式、原语、环境变量和标准样式文件的详细文档。
+        </tm-par>
+        
+        <tm-par>
+          <item/>在<hlink><tm-arg><menu><tm-arg>Help</tm-arg><tm-arg>About</tm-arg></menu></tm-arg><tm-arg>../../about/about.zh.tm</tm-arg></hlink>菜单中，有关于<TeXmacs/>更多信息，比如<hlink><tm-arg>作者</tm-arg><tm-arg>../../about/authors/authors.zh.tm</tm-arg></hlink>，如何<hlink><tm-arg>联系我们</tm-arg><tm-arg>../../about/authors/contact.zh.tm</tm-arg></hlink>以及软件的<hlink><tm-arg>更新日志</tm-arg><tm-arg>../../about/changes/changes.zh.tm</tm-arg></hlink>。
+        </tm-par>
+        
+        <tm-par>
+          <item/><menu><tm-arg>Help</tm-arg><tm-arg>full
+          manuals</tm-arg><tm-arg>Compile
+          book</tm-arg></menu>可将所有文档编译为一本书，不过这需要蛮长时间的等待。
+        </tm-par>
+      </itemize>
+    </tm-par>
+    
+    <tm-par>
+      <section>为<TeXmacs/>做贡献</section>
+    </tm-par>
+    
+    <tm-par>
+      自由软件的一大优势便是你可以修改软件以适应自己的需求且分享给大家。实际上，为自由软件做贡献远比大多数人想象的要简单。你或许想了解如何为<TeXmacs/>项目做<hlink><tm-arg>贡献</tm-arg><tm-arg>../../about/contribute/contribute.en.tm</tm-arg></hlink>。当然，你也可以给我们<hlink><tm-arg>捐款</tm-arg><tm-arg>../../about/contribute/material/donations.en.tm</tm-arg></hlink>。
+    </tm-par>
+    
+    <tm-par>
+      如果你想给<TeXmacs/>做贡献或者你想修改这个程序的源代码，<hlink><tm-arg><menu><tm-arg>Help</tm-arg><tm-arg>Help
+      us</tm-arg></menu></tm-arg><tm-arg>../contribute/contribute.en.tm</tm-arg></hlink>和<hlink><tm-arg><menu><tm-arg>Help</tm-arg><tm-arg>Projects</tm-arg></menu></tm-arg><tm-arg>../projects/projects.en.tm</tm-arg></hlink>中有你需要的一些信息。<hlink><tm-arg><menu><tm-arg>Help</tm-arg><tm-arg>Interfacing</tm-arg></menu></tm-arg><tm-arg>../../devel/plugin/plugin.en.tm</tm-arg></hlink>的文档中解释了如何让<TeXmacs/>成为其他系统的界面。<hlink><tm-arg><menu><tm-arg>Help</tm-arg><tm-arg>Source
+      code</tm-arg></menu></tm-arg><tm-arg>../../devel/source/source.en.tm</tm-arg></hlink>是部分源代码的文档。
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-copyright><tm-arg>2013--2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+    </tm-par>
+    
+    <tm-par>
+      <tmdoc-license>Permission is granted to copy, distribute and/or modify
+      this document under the terms of the GNU Free Documentation License,
+      Version 1.1 or any later version published by the Free Software
+      Foundation; with no Invariant Sections, with no Front-Cover Texts, and
+      with no Back-Cover Texts. A copy of the license is included in the
+      section entitled "GNU Free Documentation License".</tmdoc-license>
+    </tm-par>
+  </body>
+  
+  <initial>
+    <collection/>
+  </initial>
+</TeXmacs>
