@@ -638,6 +638,7 @@
 ("here" "这里")
 ("hidden" "隐藏")
 ("highlight errors" "高亮错误")
+("history" "历史")
 ("home" "主页")
 ("homepage" "主页")
 ("horizontal" "水平")
