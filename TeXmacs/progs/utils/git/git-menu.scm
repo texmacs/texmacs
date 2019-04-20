@@ -12,11 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (utils git git-menu)
-  (:use (utils git git-utils)
+  (:use (version version-git)
         (utils git git-tmfs)))
 
 (menu-bind git-menu
-  ("Log" (git-show-log))
+  ;; ("Log" (git-show-log))
   ("Status" (git-show-status))
   ("Commit" (git-interactive-commit))
   ---

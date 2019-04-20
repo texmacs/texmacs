@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (utils git git-tmfs)
-  (:use (utils git git-utils)))
+  (:use (version version-git)))
 
 (tm-define (git-show-log)
   (cursor-history-add (cursor-path))
@@ -22,10 +22,15 @@
   (cursor-history-add (cursor-path))
   (revert-buffer "tmfs://git/status"))
 
+;; Show the history of the URL
+;; 1. add the cursor path to the history
+;; 2. revert the buffer to tmfs
+;; 3. set the master of tmfs to the URL
 (tm-define (git-history name)
   (cursor-history-add (cursor-path))
   (with s (url->tmfs-string name)
-        (revert-buffer (tmfs-url-git_history s))))
+        (revert-buffer (tmfs-url-git_history s))
+        (buffer-set-master (current-buffer) name)))
 
 (tm-define ($staged-file status file)
   (cond ((string-starts? status "A")
@@ -99,6 +104,8 @@
          (git-log-content))
         (else '())))
 
+
+;; Controller: tmfs://git_history/the/full/path/to/file
 (tm-define (tmfs-url-git_history . content)
   (string-append "tmfs://git_history/"
                  (string-concatenate content)))
@@ -126,9 +133,12 @@
                                               " on " date)
                                      (utf8->cork msg))))))))))
 
+
+;; Controller: tmfs://commit/hashCode|/the/path/to/file
 (tm-define (tmfs-url-commit . content)
   (string-append "tmfs://commit/"
                  (string-concatenate content)))
+
 (tmfs-format-handler (commit name)
   (if (string-contains name "|")
       (with u (tmfs-string->url (tmfs-cdr (string-replace name "|" "/")))

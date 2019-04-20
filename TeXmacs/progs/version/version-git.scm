@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : git-utils.scm
+;; MODULE      : version-git.scm
 ;; DESCRIPTION : subroutines for the Git tools
 ;; COPYRIGHT   : (C) 2019  Darcy Shen
 ;;
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils git git-utils))
+(texmacs-module (version version-git))
 
 (define NR_LOG_OPTION " -1000 ")
 
@@ -35,9 +35,19 @@
   (git-root (current-buffer)))
 
 (tm-define (current-git-command)
-  (string-append "git"
-                 " --work-tree=" (current-git-root)
-                 " --git-dir=" (current-git-root) "/.git"))
+  (with work-dir (current-git-root)
+    (string-append "git"
+                   " --work-tree=" (current-git-root)
+                   " --git-dir=" (current-git-root) "/.git")))
+
+(tm-define (resolve-git-root path)
+  (git-root (string->url path)))
+
+(tm-define (resolve-git-command path)
+  (with work-dir (git-root (string->url path))
+    (string-append "git"
+                   " --work-tree=" work-dir
+                   " --git-dir=" work-dir "/.git")))
 
 (tm-define (git-versioned? name)
   (and (not (buffer-tmfs? name))
@@ -95,22 +105,25 @@
     (set-message cmd "The file is unadded.")
     (display cmd)))
 
+;; 1. Eval `git log --pretty=%ai%n%an%n%s%n%H%n <name>`
+;; 2. Split the result by \n\n
+;; 3. Transform each string record to texmacs document
 (tm-define (buffer-log name)
   (let* ((current-root (git-root (url-head name)))
-         (name1 (string-replace (url->string name) "\\" "/"))
-         (sub (string-append current-root "/"))
-         (name-s (string-replace name1 sub ""))
+         (name-escaped (string-replace (url->string name) "\\" "/"))
          (cmd (string-append
                (current-git-command) " log --pretty=%ai%n%an%n%s%n%H%n"
                NR_LOG_OPTION
-               name1))
+               name-escaped))
          (ret1 (eval-system cmd))
          (ret2 (string-decompose ret1 "\n\n")))
+
     (define (string->commit-file str)
-      (string->commit str name-s))
+      (string->commit str name-escaped))
     (and (> (length ret2) 0)
          (string-null? (cAr ret2))
          (map string->commit-file (cDr ret2)))))
+
 
 (tm-define (git-log)
   (let* ((cmd (string-append
@@ -184,10 +197,16 @@
     ;; (display ret)
     (set-message (string-append (current-git-command) " commit") message))
   (git-show-status))
+
+;; git show hashCode:/root/path/to/file
 (tm-define (git-show object)
-  (let* ((cmd (string-append (current-git-command) " show " object))
+  (let* ((path (cAr (string-split object #\:)))
+         (root (resolve-git-root path))
+         (git (resolve-git-command path))
+         (relative-object (string-replace object (string-append root "/") ""))
+         (cmd (string-append git " show " relative-object))
          (ret (eval-system cmd)))
-    ;; (display* "\n" cmd "\n" ret "\n")
+    (display* "\n" cmd "\n" ret "\n")
     ret))
 
 (tm-define (git-commit-message hash)
