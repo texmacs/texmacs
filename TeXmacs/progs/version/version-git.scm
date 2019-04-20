@@ -22,8 +22,8 @@
 
 ;; if git-versioned, return the root directory of the git repo
 ;; otherwise, return the root directory ("/")
-(tm-define (git-root name)
-  (let* ((dir (if (url-directory? name) name (url-head name)))
+(tm-define (git-root url)
+  (let* ((dir (if (url-directory? url) url (url-head url)))
          (git-dir (url-append dir ".git"))
          (pdir (url-expand (url-append dir ".."))))
     (cond ((url-directory? git-dir)
@@ -49,16 +49,16 @@
                    " --work-tree=" work-dir
                    " --git-dir=" work-dir "/.git")))
 
-(tm-define (git-versioned? name)
-  (and (not (buffer-tmfs? name))
-       (!= (git-root name) "/")))
+(tm-define (git-versioned? url)
+  (and (not (buffer-tmfs? url))
+       (!= (git-root url) "/")))
 
 (tm-define (buffer-status name)
-  (let* ((name-s (url->string name))
-         (cmd (string-append (current-git-command) " status --porcelain " name-s))
+  (let* ((path (url->string name))
+         (cmd (string-append (resolve-git-command path) " status --porcelain " path))
          (ret (eval-system cmd)))
     (cond ((> (string-length ret) 3) (string-take ret 2))
-          ((file-exists? name-s) "  ")
+          ((file-exists? path) "  ")
           (else ""))))
 
 (tm-define (buffer-to-unadd? name)
@@ -165,6 +165,10 @@
                                          name-s))
          (master (string->url file-buffer-s)))
     (compare-with-older master)))
+
+(tm-define (tmfs-url-git_history . content)
+  (string-append "tmfs://git_history/"
+                 (string-concatenate content)))
 
 (tm-define (git-status)
   (let* ((cmd (string-append (current-git-command) " status --porcelain"))

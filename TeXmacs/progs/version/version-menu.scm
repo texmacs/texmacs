@@ -21,8 +21,9 @@
 
 (menu-bind version-menu
   (when (versioned? (current-buffer))
+    (when (or (buffer-histed? (current-buffer)) (!= (version-status (current-buffer)) "unknown"))
+      ("History" (version-show-history (current-buffer))))
     (when (!= (version-status (current-buffer)) "unknown")
-      ("History" (version-show-history (current-buffer)))
       ("Update" (version-interactive-update (current-buffer))))
     (assuming (== (version-status (current-buffer)) "unknown")
       ("Register" (register-buffer (current-buffer))))
