@@ -13,38 +13,39 @@
 
 (texmacs-module (utils git git-utils))
 
-(define callgit "git")
 (define NR_LOG_OPTION " -1000 ")
-
-(define gitroot "/")
 
 (define (delete-tail-newline a-str)
   (if (string-ends? a-str "\n")
       (delete-tail-newline (string-drop-right a-str 1))
       a-str))
 
-(tm-define (git-root dir)
-  (let* ((git-dir (url-append dir ".git"))
+;; if git-versioned, return the root directory of the git repo
+;; otherwise, return the root directory ("/")
+(tm-define (git-root name)
+  (let* ((dir (if (url-directory? name) name (url-head name)))
+         (git-dir (url-append dir ".git"))
          (pdir (url-expand (url-append dir ".."))))
     (cond ((url-directory? git-dir)
            (string-replace (url->string dir) "\\" "/"))
           ((== pdir dir) "/")
           (else (git-root pdir)))))
 
+(tm-define (current-git-root)
+  (git-root (current-buffer)))
+
+(tm-define (current-git-command)
+  (string-append "git"
+                 " --work-tree=" (current-git-root)
+                 " --git-dir=" (current-git-root) "/.git"))
+
 (tm-define (git-versioned? name)
-  (when (not (buffer-tmfs? name))
-    (set! gitroot
-          (git-root (if (url-directory? name)
-                        name
-                        (url-head name))))
-    (set! callgit
-          (string-append "git --work-tree=" gitroot
-                         " --git-dir=" gitroot "/.git")))
-  (!= gitroot "/"))
+  (and (not (buffer-tmfs? name))
+       (!= (git-root name) "/")))
 
 (tm-define (buffer-status name)
   (let* ((name-s (url->string name))
-         (cmd (string-append callgit " status --porcelain " name-s))
+         (cmd (string-append (current-git-command) " status --porcelain " name-s))
          (ret (eval-system cmd)))
     (cond ((> (string-length ret) 3) (string-take ret 2))
           ((file-exists? name-s) "  ")
@@ -82,24 +83,25 @@
                   "tmfs"))
 (tm-define (git-add name)
   (let* ((name-s (url->string name))
-         (cmd (string-append callgit " add " name-s))
+         (cmd (string-append (current-git-command) " add " name-s))
          (ret (eval-system cmd)))
     (set-message cmd "The file is added")))
 
 (tm-define (git-unadd name)
   (display name)
   (let* ((name-s (url->string name))
-         (cmd (string-append callgit " reset HEAD " name-s))
+         (cmd (string-append (current-git-command) " reset HEAD " name-s))
          (ret (eval-system cmd)))
     (set-message cmd "The file is unadded.")
     (display cmd)))
 
 (tm-define (buffer-log name)
-  (let* ((name1 (string-replace (url->string name) "\\" "/"))
-         (sub (string-append gitroot "/"))
+  (let* ((current-root (git-root (url-head name)))
+         (name1 (string-replace (url->string name) "\\" "/"))
+         (sub (string-append current-root "/"))
          (name-s (string-replace name1 sub ""))
          (cmd (string-append
-               callgit " log --pretty=%ai%n%an%n%s%n%H%n"
+               (current-git-command) " log --pretty=%ai%n%an%n%s%n%H%n"
                NR_LOG_OPTION
                name1))
          (ret1 (eval-system cmd))
@@ -112,7 +114,7 @@
 
 (tm-define (git-log)
   (let* ((cmd (string-append
-               callgit
+               (current-git-command)
                " log --pretty=%ai%n%an%n%s%n%H%n"
                NR_LOG_OPTION))
          (ret1 (eval-system cmd))
@@ -126,7 +128,7 @@
 (tm-define (git-compare-with-current name)
   (let* ((name-s (url->string name))
          (file-r (cAr (string-split name-s #\|)))
-         (file (string-append gitroot "/" file-r)))
+         (file (string-append (current-git-root) "/" file-r)))
     (switch-to-buffer (string->url file))
     (compare-with-older name)))
 
@@ -144,7 +146,7 @@
 
 (tm-define (git-compare-with-master name)
   (let* ((name-s (string-replace (url->string name)
-                                 (string-append gitroot "/")
+                                 (string-append (current-git-root) "/")
                                  "|"))
          (file-buffer-s (tmfs-url-commit (git-commit-master)
                                          name-s))
@@ -152,7 +154,7 @@
     (compare-with-older master)))
 
 (tm-define (git-status)
-  (let* ((cmd (string-append callgit " status --porcelain"))
+  (let* ((cmd (string-append (current-git-command) " status --porcelain"))
          (ret1 (eval-system cmd))
          (ret2 (string-split ret1 #\nl)))
     (define (convert name)
@@ -163,7 +165,7 @@
                        filename
                        ($link (tmfs-url-git_history (url->tmfs-string 
                                                      (string-append 
-                                                      gitroot "/" filename)))
+                                                      (current-git-root) "/" filename)))
                               (utf8->cork filename)))))
         (list status file)))
     (and (> (length ret2) 0)
@@ -177,25 +179,25 @@
 
 (tm-define (git-commit message)
   (let* ((cmd (string-append
-               callgit " commit -m \"" message "\""))
+               (current-git-command) " commit -m \"" message "\""))
          (ret (eval-system cmd)))
     ;; (display ret)
-    (set-message (string-append callgit " commit") message))
+    (set-message (string-append (current-git-command) " commit") message))
   (git-show-status))
 (tm-define (git-show object)
-  (let* ((cmd (string-append callgit " show " object))
+  (let* ((cmd (string-append (current-git-command) " show " object))
          (ret (eval-system cmd)))
     ;; (display* "\n" cmd "\n" ret "\n")
     ret))
 
 (tm-define (git-commit-message hash)
-  (let* ((cmd (string-append callgit " log -1 " hash))
+  (let* ((cmd (string-append (current-git-command) " log -1 " hash))
          (ret (eval-system cmd)))
     (string-split ret #\nl)))
 
 (tm-define (git-commit-parents hash)
   (let* ((cmd (string-append
-               callgit " show --no-patch --format=%P " hash))
+               (current-git-command) " show --no-patch --format=%P " hash))
          (ret1 (eval-system cmd))
          (ret2 (delete-tail-newline ret1))
          (ret3 (string-split ret2 #\nl))
@@ -208,8 +210,8 @@
 
 (tm-define (git-commit-file-parent file hash)
   (let* ((cmd (string-append
-               callgit " log --pretty=%H "
-               gitroot "/" file))
+               (current-git-command) " log --pretty=%H "
+               (current-git-root) "/" file))
          (ret (eval-system cmd))
          (ret2 (string-decompose
                 ret (string-append hash "\n"))))
@@ -219,17 +221,17 @@
         (string-take (second ret2) 40))))
 
 (tm-define (git-commit-master)
-  (let* ((cmd (string-append callgit " log -1 --pretty=%H"))
+  (let* ((cmd (string-append (current-git-command) " log -1 --pretty=%H"))
          (ret (eval-system cmd)))
     (delete-tail-newline ret)))
 
 (tm-define (git-commit-diff parent hash)
   (let* ((cmd (if (== parent hash)
                   (string-append
-                   callgit " show " hash
+                   (current-git-command) " show " hash
                    " --numstat --pretty=oneline")
                   (string-append
-                   callgit " diff --numstat "
+                   (current-git-command) " diff --numstat "
                    parent " " hash)))
          (ret (eval-system cmd))
          (ret2 (if (== parent hash)
