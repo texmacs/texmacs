@@ -321,10 +321,21 @@ if len(graphs) == 0:
 
 current = graphs[0]
 
-texmacs_out ("verbatim:Generate Graph with your favorite tools in GNU TeXmacs")
-texmacs_out ("verbatim:Created by Darcy Shen, Implemented in Python, " + current.name +  " by default")
-texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plugins")
+texmacs_out ("verbatim:Generate Graph with your favorite tools in GNU TeXmacs\n")
+texmacs_out ("verbatim:Created by Darcy Shen, Implemented in Python, " + current.name +  " by default\n")
+texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plugins\n")
 texmacs_out ("prompt#" + current.name + "] ")
+
+def unigraph(text):
+    magic_lines = text.split("\n")
+    magic_line = magic_lines[0]
+    code = '\n'.join(magic_lines[1:])
+    command = magic_line.split(" ")[0].strip("%")
+    if command in graph_names:
+        graph = graphs[graph_names.index(command)]
+        graph.evaluate(code)
+    else:
+        texmacs_out("verbatim:No such Graph generator: " + command)
 
 
 # Main session loop.
@@ -352,9 +363,12 @@ while 1:
             if line == '': 
                 continue
             lines.append(line)
+
         text='\n'.join(lines[:-1])
 
-        if text == "help":
+        if text.startswith("%"):
+            unigraph(text)
+        elif text == "help":
             texmacs_out("verbatim:[help, " + ", ".join(str(x) for x in graph_names) + "]")
             current.greet()
         elif text in graph_names:

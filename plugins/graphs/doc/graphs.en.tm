@@ -1,11 +1,13 @@
-<TeXmacs|1.0.7.11>
+<TeXmacs|1.99.9>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|old-spacing>>
 
 <\body>
-  <tmdoc-title|The <name|Graphviz> plug-in>
+  <tmdoc-title|The Unified Graph plug-in>
 
-  <tmdoc-copyright|2011|Joris van der Hoeven>
+  \;
+
+  <tmdoc-copyright|2019|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
