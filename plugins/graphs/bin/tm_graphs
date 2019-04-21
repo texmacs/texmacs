@@ -256,7 +256,8 @@ class Graphviz(Graph):
 
     def evaluate(self, code):
         png = self.get_png_path()
-        f = open(png, 'wb')
+        path = png.split("?")[0]
+        f = open(path, 'wb')
         p = Popen([self.name, "-Tpng", "-Gsize=1,1","-Gdpi=400"], stdout=f, stdin=PIPE, stderr=PIPE)
         out, err = p.communicate(input=code)
         if (p.returncode == 0):
@@ -279,7 +280,8 @@ class Asymptote(Graph):
 
     def evaluate(self, code):
         png = self.get_png_path()
-        p = Popen([self.name, "-fpng", "-o", png], stdin=PIPE, stderr=PIPE)
+        path = png.split("?")[0]
+        p = Popen([self.name, "-fpng", "-o", path], stdin=PIPE, stderr=PIPE)
         out, err = p.communicate(input=code)
         if (p.returncode == 0):
           texmacs_out ("file:" + png)
@@ -328,8 +330,8 @@ texmacs_out ("prompt#" + current.name + "] ")
 
 def unigraph(text):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--width', type=int, default=0)
-    parser.add_argument('--height', type=int, default=0)
+    parser.add_argument('-width', type=int, default=0)
+    parser.add_argument('-height', type=int, default=0)
 
     magic_lines = text.split("\n")
     magic_line = magic_lines[0]
