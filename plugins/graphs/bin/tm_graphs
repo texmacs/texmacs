@@ -16,7 +16,6 @@ import os
 import sys
 sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
-import os
 import traceback
 import keyword
 import re
@@ -29,6 +28,7 @@ from io        import StringIO
 from subprocess import Popen, PIPE, STDOUT
 from tmpy.protocol import *
 from tmpy.graph    import Graph
+import argparse
 
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
@@ -327,12 +327,19 @@ texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plug
 texmacs_out ("prompt#" + current.name + "] ")
 
 def unigraph(text):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--width', type=int, default=0)
+    parser.add_argument('--height', type=int, default=0)
+
     magic_lines = text.split("\n")
     magic_line = magic_lines[0]
     code = '\n'.join(magic_lines[1:])
     command = magic_line.split(" ")[0].strip("%")
+    args = parser.parse_args(magic_line.split(" ")[1:])
     if command in graph_names:
         graph = graphs[graph_names.index(command)]
+        graph.set_height(args.height)
+        graph.set_width(args.width)
         graph.evaluate(code)
     else:
         texmacs_out("verbatim:No such Graph generator: " + command)

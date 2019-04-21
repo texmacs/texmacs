@@ -333,7 +333,24 @@ texmacs_input_rep::xformat_flush (bool force) {
 void
 texmacs_input_rep::file_flush (bool force) {
   if (force) {
-    url file= url (buf);
+    array<string> path_toks= tokenize (buf, "?");
+    string path= path_toks[0];
+    array<string> param_toks= tokenize (path_toks[1], "&");
+    int i= 0;
+    int width= 0;
+    int height= 0;
+    while (i < N(param_toks)) {
+      string param = param_toks[i];
+      if (starts(param, "width=")) {
+        width= as_int(replace(param, "width=", ""));
+      }
+      if (starts(param, "height=")) {
+        height= as_int(replace(param, "height=", ""));
+      }
+      i++;
+    }
+
+    url file= url (path);
     if (! exists (file)) {
       string err_msg = "[" * as_string(file) * "] does not exist";
       write (verbatim_to_tree (err_msg, false, "auto"));
@@ -344,7 +361,17 @@ texmacs_input_rep::file_flush (bool force) {
         load_string (file, s, false);
         tree t (IMAGE);
         t << tuple (tree (RAW_DATA, s), type);
-        t << tree("") << tree("") << tree("") << tree("");
+        if (width != 0) {
+          t << tree(as_string(width) * "px");
+        } else {
+          t << tree("");
+        }
+        if (height != 0) {
+          t << tree(as_string(height) * "px");
+        } else {
+          t << tree("");
+        }
+        t << tree("") << tree("");
         write (t);
       } else {
         string err_msg = "Do not support file type with suffix: [" * type * "]";

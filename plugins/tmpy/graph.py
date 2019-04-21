@@ -15,6 +15,14 @@ from .protocol import *
 class Graph(object):
   name = ""
   message = ""
+  height = 0
+  width = 0
+
+  def set_height(self, h):
+    self.height = h
+
+  def set_width(self, w):
+    self.width = w
 
   def greet(self):
     for x in self.message.split("\n"):
@@ -31,7 +39,11 @@ class Graph(object):
     pass
 
   def get_png_path(self):
-    png = os.getenv("HOME") + "/.TeXmacs/system/tmp/" + self.name + ".png"
+    png = os.getenv("HOME") +\
+          "/.TeXmacs/system/tmp/" +\
+          self.name + ".png" +\
+          "?" + "width=" + str(self.width) +\
+          "&" + "height=" + str(self.height)
     if os.path.isfile(png):
       os.remove(png)
     return png
