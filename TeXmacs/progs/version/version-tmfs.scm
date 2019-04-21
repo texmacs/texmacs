@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (version version-tmfs))
+(texmacs-module (version version-tmfs)
+  (:use (version version-git)))
 
 (define version-tool-table (make-ahash-table))
 (define version-tool-loaded (make-ahash-table))
