@@ -97,7 +97,6 @@
   ("debugging tool" "off" notify-tool)
   ("developer tool" "off" notify-tool)
   ("linking tool" "off" notify-tool)
-  ("git tool" "off" notify-tool)
   ("presentation tool" "off" notify-tool)
   ("remote tool" "off" notify-tool)
   ("source tool" "off" notify-tool)

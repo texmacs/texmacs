@@ -77,8 +77,6 @@
            (== (get-init-tree "sectional-short-style") (tree 'macro "false")))
       (=> "Part" (link document-part-menu)))
   (if (project-attached?) (=> "Project" (link project-menu)))
-  (if (with-git-tool?)
-      (=> "Git" (link git-menu)))
   (if (with-versioning-tool?)
       (=> "Version" (link version-menu)))
   (=> "View" (link view-menu))

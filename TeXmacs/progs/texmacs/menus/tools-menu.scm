@@ -76,7 +76,6 @@
   ("Database tool" (toggle-preference "database tool"))
   ("Debugging tool" (toggle-preference "debugging tool"))
   ("Developer tool" (toggle-preference "developer tool"))
-  ("Git tool" (toggle-preference "git tool"))
   ("Linking tool" (toggle-preference "linking tool"))
   ("Presentation tool" (toggle-preference "presentation tool"))
   ("Remote tool" (toggle-preference "remote tool"))

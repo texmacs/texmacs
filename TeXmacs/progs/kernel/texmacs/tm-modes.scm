@@ -223,7 +223,6 @@
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))
   (with-developer-tool% (== (get-preference "developer tool") "on"))
   (with-linking-tool% (== (get-preference "linking tool") "on"))
-  (with-git-tool% (== (get-preference "git tool") "on"))
   (with-presentation-tool% (== (get-preference "presentation tool") "on"))
   (with-remote-tool% (== (get-preference "remote tool") "on"))
   (with-source-tool% (== (get-preference "source tool") "on"))

@@ -228,7 +228,6 @@
     (-> "Tools"
         (toggle ("Database tool" "database tool"))
         (toggle ("Debugging tool" "debugging tool"))
-        (toggle ("Git tool" "git tool"))
         (toggle ("Linking tool" "linking tool"))
         (toggle ("Remote tool" "remote tool"))
         (toggle ("Source macros tool" "source tool"))
