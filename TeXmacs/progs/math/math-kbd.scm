@@ -19,6 +19,50 @@
         (table table-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Bypassing the pre-edit mechanism
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (disable-pre-edit? key)
+  (:mode in-math?)
+  (in? key (list "^" "~" "`")))
+
+(tm-define (downgrade-pre-edit key)
+  (:mode in-math?)
+  (cond ((in? key (list "à" "á" "â" "ã" "ä")) "a")
+        ((in? key (list "ĉ")) "c")
+        ((in? key (list "è" "é" "ê" "ẽ" "ë")) "e")
+        ((in? key (list "ĝ")) "g")
+        ((in? key (list "ĥ")) "h")
+        ((in? key (list "ì" "í" "î" "ĩ" "ï")) "i")
+        ((in? key (list "ĵ")) "j")
+        ((in? key (list "m̂")) "m")
+        ((in? key (list "ǹ" "ń" "n̂" "ñ")) "n")
+        ((in? key (list "ò" "ó" "ô" "õ" "ö")) "o")
+        ((in? key (list "ŝ")) "s")
+        ((in? key (list "ù" "ú" "û" "ũ" "ü")) "u")
+        ((in? key (list "ṽ")) "v")
+        ((in? key (list "ẁ" "ŵ")) "w")
+        ((in? key (list "ỳ" "ý" "ŷ" "ỹ" "ÿ")) "y")
+        ((in? key (list "ẑ")) "z")
+        ((in? key (list "À" "Á" "Â" "Ã" "Ä")) "A")
+        ((in? key (list "Ĉ")) "C")
+        ((in? key (list "È" "É" "Ê" "Ẽ" "Ë")) "E")
+        ((in? key (list "Ĝ")) "G")
+        ((in? key (list "Ĥ")) "H")
+        ((in? key (list "Ì" "Í" "Î" "Ĩ" "Ï")) "I")
+        ((in? key (list "Ĵ")) "J")
+        ((in? key (list "M̂")) "M")
+        ((in? key (list "Ǹ" "Ń" "N̂" "Ñ")) "N")
+        ((in? key (list "Ò" "Ó" "Ô" "Õ" "Ö")) "O")
+        ((in? key (list "Ŝ")) "S")
+        ((in? key (list "Ù" "Ú" "Û" "Ũ" "Ü")) "U")
+        ((in? key (list "Ṽ")) "V")
+        ((in? key (list "Ẁ" "Ŵ")) "W")
+        ((in? key (list "Ỳ" "Ý" "Ŷ" "Ỹ" "Ÿ")) "Y")
+        ((in? key (list "Ẑ")) "Z")
+        (else "")))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
 ;; for its own personal use
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

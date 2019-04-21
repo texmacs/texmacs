@@ -153,10 +153,8 @@ edit_interface_rep::key_press (string gkey) {
     pre_edit_s= "";
     pre_edit_mark= 0;
   }
-  if (starts (key, "pre-edit:") ) {
-    interrupt_shortcut ();
+  if (starts (key, "pre-edit:")) {
     string s= key (9, N(key));
-    if (s == "") return;
     int i, n= N(s), pos= N(s);
     for (i=0; i<n; i++)
       if (s[i] == ':' && is_int (s (0, i))) {
@@ -167,12 +165,33 @@ edit_interface_rep::key_press (string gkey) {
           tm_char_forwards (s, pos);
         break;
       }
-    pre_edit_s= s;
-    pre_edit_mark= new_marker ();
-    mark_start (pre_edit_mark);
-    archive_state ();
-    insert_tree (compound ("pre-edit", s), path (0, pos));
-    return;
+    if (as_bool (call ("disable-pre-edit?", cork_to_utf8 (s)))) {
+      pre_edit_skip= false;
+      if (s == "") return;
+      pre_edit_skip= true;
+      key= s;
+      if (key == zero) key= "`";
+    }
+    else if (pre_edit_skip) {
+      if (s == "") pre_edit_skip= false;
+      return;
+    }
+    else {
+      if (s == "") return;
+      interrupt_shortcut ();
+      pre_edit_s= s;
+      pre_edit_mark= new_marker ();
+      mark_start (pre_edit_mark);
+      archive_state ();
+      insert_tree (compound ("pre-edit", s), path (0, pos));
+      return;
+    }
+  }
+  else if (pre_edit_skip) {
+    string u= cork_to_utf8 (key);
+    string r= as_string (call ("downgrade-pre-edit", u));
+    if (r == "") return;
+    else key= r;
   }
   
   string new_sh= N(sh_s)==0? key: sh_s * " " * key;
