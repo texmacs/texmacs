@@ -33,9 +33,20 @@
         ("Commit" (version-interactive-commit (current-buffer))))))
   ---
   (-> "Compare"
-      (assuming (version-revision? (current-buffer))
-        ("With current user version"
-         (compare-with-newer* (version-head (current-buffer)))))
+      (when (versioned? (current-buffer))
+        ;; (when (buffer-tmfs? (current-buffer))
+        ;;   ("With current version"
+        ;;     (git-compare-with-current (current-buffer))))
+        ;; (when (buffer-tmfs? (current-buffer))
+        ;;   ("With parent version"
+        ;;     (git-compare-with-parent (current-buffer))))
+        (when (and (not (buffer-tmfs? (current-buffer)))
+                   (buffer-has-diff? (current-buffer)))
+          ("With the HEAD"
+            (git-compare-with-master (current-buffer))))
+        (assuming (version-revision? (current-buffer))
+          ("With current user version"
+           (compare-with-newer* (version-head (current-buffer))))))
       ("With older version"
        (choose-file compare-with-older "Compare with older version" ""))
       ("With newer version"

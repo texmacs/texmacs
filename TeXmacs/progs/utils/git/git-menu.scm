@@ -23,16 +23,5 @@
   (when (buffer-to-add? (current-buffer))
             ("Add" (git-add (current-buffer))))
   (when (buffer-to-unadd? (current-buffer))
-            ("Undo Add" (git-unadd (current-buffer))))
-  (=> "Compare"
-      (when (buffer-tmfs? (current-buffer))
-                ("With current version"
-                  (git-compare-with-current (current-buffer))))
-      (when (buffer-tmfs? (current-buffer))
-                ("With parent version"
-                  (git-compare-with-parent (current-buffer))))
-      (when (and (not (buffer-tmfs? (current-buffer)))
-                 (buffer-has-diff? (current-buffer)))
-            ("With the master"
-              (git-compare-with-master (current-buffer))))))
+            ("Undo Add" (git-unadd (current-buffer)))))
 

@@ -49,6 +49,9 @@
                    " --work-tree=" work-dir
                    " --git-dir=" work-dir "/.git")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Predicates of Git and Buffer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (tm-define (git-versioned? url)
   (and (not (buffer-tmfs? url))
        (!= (git-root url) "/")))
@@ -91,6 +94,35 @@
 (tm-define (buffer-tmfs? name)
   (string-starts? (url->string name)
                   "tmfs"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Common immutable routines of Git
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Get the hashCode of the HEAD via `git log -1 --pretty=%H`
+(tm-define (git-commit-master)
+  (let* ((cmd (string-append (current-git-command) " log -1 --pretty=%H"))
+         (ret (eval-system cmd)))
+    (delete-tail-newline ret)))
+
+(tm-define (resolve-git-master path)
+  (let* ((cmd (string-append (resolve-git-command path) " log -1 --pretty=%H"))
+         (ret (eval-system cmd)))
+    (delete-tail-newline ret)))
+
+;; Get the specific file via `git show hashCode:/root/path/to/file`
+(tm-define (git-show object)
+  (let* ((path (cAr (string-split object #\:)))
+         (root (resolve-git-root path))
+         (git (resolve-git-command path))
+         (relative-object (string-replace object (string-append root "/") ""))
+         (cmd (string-append git " show " relative-object))
+         (ret (eval-system cmd)))
+    ;; (display* "\n" cmd "\n" ret "\n")
+    ret))
+
+
 (tm-define (git-add name)
   (let* ((name-s (url->string name))
          (cmd (string-append (current-git-command) " add " name-s))
@@ -158,12 +190,10 @@
         (compare-with-older parent))))
 
 (tm-define (git-compare-with-master name)
-  (let* ((name-s (string-replace (url->string name)
-                                 (string-append (current-git-root) "/")
-                                 "|"))
-         (file-buffer-s (tmfs-url-commit (git-commit-master)
-                                         name-s))
-         (master (string->url file-buffer-s)))
+  (let* ((path (url->string name))
+         (buffer (tmfs-url-commit (resolve-git-master path) "|" path))
+         (master (string->url buffer)))
+    ;; (display* "\n" name "\n" buffer "\n" master "\n")
     (compare-with-older master)))
 
 (tm-define (tmfs-url-git_history . content)
@@ -202,17 +232,6 @@
     (set-message (string-append (current-git-command) " commit") message))
   (git-show-status))
 
-;; git show hashCode:/root/path/to/file
-(tm-define (git-show object)
-  (let* ((path (cAr (string-split object #\:)))
-         (root (resolve-git-root path))
-         (git (resolve-git-command path))
-         (relative-object (string-replace object (string-append root "/") ""))
-         (cmd (string-append git " show " relative-object))
-         (ret (eval-system cmd)))
-    (display* "\n" cmd "\n" ret "\n")
-    ret))
-
 (tm-define (git-commit-message hash)
   (let* ((cmd (string-append (current-git-command) " log -1 " hash))
          (ret (eval-system cmd)))
@@ -242,11 +261,6 @@
     (if (== (length ret2) 1)
         hash
         (string-take (second ret2) 40))))
-
-(tm-define (git-commit-master)
-  (let* ((cmd (string-append (current-git-command) " log -1 --pretty=%H"))
-         (ret (eval-system cmd)))
-    (delete-tail-newline ret)))
 
 (tm-define (git-commit-diff parent hash)
   (let* ((cmd (if (== parent hash)
