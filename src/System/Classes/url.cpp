@@ -630,6 +630,7 @@ glue (url u, string s) {
   if (is_atomic (u)) return as_url (tree (u->t->label * s));
   if (is_concat (u)) return u[1] * glue (u[2], s);
   if (is_or (u)) return glue (u[1], s) | glue (u[2], s);
+  if (is_none (u)) return u;
   failed_error << "u= " << u << "\n";
   failed_error << "s= " << s << "\n";
   FAILED ("can't glue string to url");
@@ -642,6 +643,7 @@ unglue (url u, int nr) {
     return as_url (tree (u->t->label (0, max (N(u->t->label) - nr, 0))));
   if (is_concat (u)) return u[1] * unglue (u[2], nr);
   if (is_or (u)) return unglue (u[1], nr) | unglue (u[2], nr);
+  if (is_none (u)) return u;
   failed_error << "u = " << u << "\n";
   failed_error << "nr= " << nr << "\n";
   FAILED ("can't unglue from url");
