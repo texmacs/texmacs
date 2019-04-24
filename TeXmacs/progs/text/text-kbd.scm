@@ -585,3 +585,9 @@
   ("F7" (make 'verbatim))
   ("F8" (make 'samp))
   ("S-F6" (make 'name)))
+
+(when (os-macos?)
+  (kbd-map
+    (:mode in-std-text?)
+    ("\x0f" (make-equation*)) ;; Alt-$
+    ("ddagger" (make-eqnarray*)))) ;; Alt-&
