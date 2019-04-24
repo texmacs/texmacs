@@ -334,46 +334,41 @@ void
 texmacs_input_rep::file_flush (bool force) {
   if (force) {
     array<string> path_toks= tokenize (buf, "?");
-    string path= path_toks[0];
-    array<string> param_toks= tokenize (path_toks[1], "&");
+    string path_file = path_toks[0];
+    string path_extra= (N(path_toks) >= 2? path_toks[1]: string (""));
+    array<string> param_toks= tokenize (path_extra, "&");
     int i= 0;
     int width= 0;
     int height= 0;
     while (i < N(param_toks)) {
       string param = param_toks[i];
-      if (starts(param, "width=")) {
-        width= as_int(replace(param, "width=", ""));
-      }
-      if (starts(param, "height=")) {
-        height= as_int(replace(param, "height=", ""));
-      }
+      if (starts (param, "width="))
+        width= as_int (replace (param, "width=", ""));
+      if (starts (param, "height="))
+        height= as_int (replace (param, "height=", ""));
       i++;
     }
 
-    url file= url (path);
+    url file= url (path_file);
     if (! exists (file)) {
       string err_msg = "[" * as_string(file) * "] does not exist";
       write (verbatim_to_tree (err_msg, false, "auto"));
-    } else {
+    }
+    else {
       string type = suffix (file);
       if (type == "png") {
         string s;
         load_string (file, s, false);
         tree t (IMAGE);
         t << tuple (tree (RAW_DATA, s), type);
-        if (width != 0) {
-          t << tree(as_string(width) * "px");
-        } else {
-          t << tree("");
-        }
-        if (height != 0) {
-          t << tree(as_string(height) * "px");
-        } else {
-          t << tree("");
-        }
-        t << tree("") << tree("");
+        if (width != 0) t << tree (as_string (width) * "px");
+        else t << tree ("");
+        if (height != 0) t << tree (as_string (height) * "px");
+        else t << tree ("");
+        t << tree ("") << tree ("");
         write (t);
-      } else {
+      }
+      else {
         string err_msg = "Do not support file type with suffix: [" * type * "]";
         write (verbatim_to_tree (err_msg, false, "auto"));
       }
