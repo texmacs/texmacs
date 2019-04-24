@@ -71,6 +71,7 @@ QTMAction::set_text (string s) {
     if (s == "Help" || s == "Edit" || s == "View" ||
         s == "Preferences...")
       s = s * " ";
+    s= replace (s, "&", "&&");
     str = s;
     setText (to_qstring (s));
   }
