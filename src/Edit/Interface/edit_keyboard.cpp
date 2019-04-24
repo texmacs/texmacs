@@ -269,8 +269,10 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
         kbd_last_keys = array<string> ();
         kbd_last_times= array<time_t> ();
       }
-      kbd_last_keys  << key;
-      kbd_last_times << t;
+      if (!starts (key, "pre-edit:")) {
+        kbd_last_keys  << key;
+        kbd_last_times << t;
+      }
     }
     if (DEBUG_KEYBOARD) {
       //for (int i=0; i<N(key); i++)
