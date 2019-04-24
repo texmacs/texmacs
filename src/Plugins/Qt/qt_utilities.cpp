@@ -168,10 +168,7 @@ conv_sub (const string& ks) {
     while (tmp < n && (tmp = search_forwards ("+", tmp, a[i])) != -1)
       pos = tmp++;
     if (pos != -1 && n > pos+1) {
-      if (a[i][pos+1] == '&')
-         // FIXME: this isn't enough to see the ampersand in the menus... (?)
-        a[i] = a[i](0, pos+1) * "&&";
-      else if (is_locase (a[i][pos+1]))
+      if (is_locase (a[i][pos+1]))
         a[i] = a[i](0, pos) * upcase_all (a[i] (pos, n));
       else if (is_upcase (a[i][pos+1])) {
         // HACK: don't prepend Shift for function keys F1, F2...

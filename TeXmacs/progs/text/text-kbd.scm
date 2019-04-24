@@ -17,6 +17,17 @@
 	(text text-edit)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
+;; for its own personal use
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(when (os-macos?)
+  (kbd-map
+    (:mode in-std-text?)
+    ("\x0f" (make-equation*)) ;; Alt-$
+    ("ddagger" (make-eqnarray*)))) ;; Alt-&
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special symbols in text mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -585,9 +596,3 @@
   ("F7" (make 'verbatim))
   ("F8" (make 'samp))
   ("S-F6" (make 'name)))
-
-(when (os-macos?)
-  (kbd-map
-    (:mode in-std-text?)
-    ("\x0f" (make-equation*)) ;; Alt-$
-    ("ddagger" (make-eqnarray*)))) ;; Alt-&

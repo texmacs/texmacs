@@ -61,7 +61,7 @@
         ((in? key (list "Ỳ" "Ý" "Ŷ" "Ỹ" "Ÿ")) "Y")
         ((in? key (list "Ẑ")) "Z")
         (else "")))
-  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Hacks to work around the problem that MacOS reserves Alt-based shortcuts
 ;; for its own personal use
