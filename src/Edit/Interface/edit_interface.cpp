@@ -599,8 +599,8 @@ edit_interface_rep::apply_changes () {
         kbd_last_times= array<time_t> ();
       }
       bool change= (env_change != 0);
-      if (N(kbd_shown_keys) != N(kbd_last_keys)) {
-        kbd_shown_keys= kbd_last_keys;
+      if (kbd_shown_keys != kbd_last_keys) {
+        kbd_shown_keys= copy (kbd_last_keys);
         change= true;
       }
       rectangles rs (rectangle (vx1, vy1, vx2, vy1 + 100 * pixel));
