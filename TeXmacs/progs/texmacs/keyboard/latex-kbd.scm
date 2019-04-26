@@ -236,8 +236,8 @@
   ("dddot" "Make triple dot" (make-wide "<dddot>"))
   ("ddddot" "Make quadruple dot" (make-wide "<ddddot>"))
   ("widecheck" "Make check" (make-wide "<check>"))
-  ("widehat" "Make hat" (make-wide "^"))
-  ("widetilde" "Make tilde" (make-wide "~"))
+  ("widehat" "Make hat" (make-wide "^^"))
+  ("widetilde" "Make tilde" (make-wide "~~"))
 
   ("sum" "Insert big summation" (math-big-operator "sum"))
   ("prod" "Insert big product" (math-big-operator "prod"))

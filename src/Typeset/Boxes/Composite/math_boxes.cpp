@@ -389,7 +389,8 @@ compute_wide_accent (path ip, box b, string s,
       else very_wide= true;
     }
     else if (!unicode) {
-      if (s == "^" || s == "<hat>" || s == "~" || s == "<tilde>")
+      if (request_wide) very_wide = true;
+      else if (s == "^" || s == "<hat>" || s == "~" || s == "<tilde>")
         very_wide= (b->w() >= ((9*fn->wfn) >> 2));
       else very_wide= true;
     }
