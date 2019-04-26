@@ -814,8 +814,9 @@ edit_env_rep::exec_or_value (tree t) {
     tree r= exec (t[i]);
     if (is_compound (r)) return tree (ERROR, "bad value");
     string name= r->label;
-    if (provides (name) && !is_func (read (r->label), UNINIT))
-      return exec (read (r->label));
+    if (provides (name))
+      if (i == N(t)-1 || L(read (name)) != UNINIT)
+        return exec (read (r->label));
   }
   return "";
 }

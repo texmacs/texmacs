@@ -169,7 +169,8 @@ packrat_parser_rep::serialize (tree t, path p) {
       if (t[0] == "mode" && t[1] != "math");
       else serialize (t[N(t)-1], p * (N(t)-1));
       break;
-    case VALUE: {
+    case VALUE:
+    case OR_VALUE: {
       tree r= the_drd->get_syntax (t);
       //if (r != UNINIT) cout << "Rewrite " << t << " -> " << r << "\n";
       if (r != UNINIT) serialize (r, path (-1));

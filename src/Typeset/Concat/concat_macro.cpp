@@ -206,7 +206,7 @@ concater_rep::typeset_value (tree t, path ip) {
 
 void
 concater_rep::typeset_or_value (tree t, path ip) {
-  // cout << "Value " << t << ", " << ip << "\n";
+  // cout << "Or-Value " << t << ", " << ip << "\n";
   for (int i=0; i<N(t); i++) {
     tree r= env->exec (t[i]);
     if (is_compound (r)) {
@@ -214,10 +214,11 @@ concater_rep::typeset_or_value (tree t, path ip) {
       return;
     }
     string name= r->label;
-    if (env->provides (name) && !is_func (env->read (r->label), UNINIT)) {
-      typeset_dynamic (env->read (name), ip);
-      return;
-    }
+    if (env->provides (name))
+      if (i == N(t)-1 || L(env->read (name)) != UNINIT) {
+        typeset_dynamic (env->read (name), ip);
+        return;
+      }
   }
 }
 

@@ -403,6 +403,17 @@ drd_info_rep::get_syntax (tree t, path p) {
     if (!existing_tree_label (s)) return UNINIT;
     return get_syntax (as_tree_label (s));
   }
+  else if (is_func (t, OR_VALUE)) {
+    for (int i=0; i<N(t); i++)
+      if (is_atomic (t[i])) {
+        string s= t[i]->label;
+        if (existing_tree_label (s)) {
+          tree r= get_syntax (as_tree_label (s));
+          if (r != UNINIT) return t;
+        }
+      }
+    return UNINIT;
+  }
   else if (L(t) < START_EXTENSIONS || is_atomic (t))
     return UNINIT;
   else {
