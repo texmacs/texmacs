@@ -900,6 +900,9 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
   QWidget *win = mainwindow()->window();  
   if (win) {
     if (flag ) {
+      QPalette pal;
+      pal.setColor(QPalette::Mid, Qt::black);
+      mainwindow()->setPalette(pal);
 #ifdef UNIFIED_TOOLBAR
       if (use_unified_toolbar) {
         //HACK: we disable unified toolbar since otherwise
@@ -911,13 +914,16 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
 #endif
 //      mainwindow()->window()->setContentsMargins(0,0,0,0);
       //win->showFullScreen();
-       win->setWindowState(win->windowState() ^ Qt::WindowFullScreen);
-    } else {
+       win->setWindowState(win->windowState() | Qt::WindowFullScreen);
+    }
+    else {
+      QPalette pal;
+      mainwindow()->setPalette(pal);
       bool cache = visibility[0];
       visibility[0] = false;
       update_visibility();
 //      win->showNormal();
-      win->setWindowState(win->windowState() ^ Qt::WindowFullScreen);
+      win->setWindowState(win->windowState() & ~Qt::WindowFullScreen);
 
       visibility[0] = cache;
       update_visibility();
