@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|std-pattern>>
 
@@ -27,13 +27,13 @@
 
   <if|<unequal|<value|normal-page-foot-sep>|<uninit>>|<assign|page-foot-sep|<value|normal-page-foot-sep>>>
 
-  <if|<unequal|<value|normal-page-odd-header>|<uninit>>|<assign|page-odd-header|<value|normal-page-odd-header>>>
+  <if|<unequal|<value|normal-page-odd-header>|<uninit>>|<assign|page-odd-header|<quote-value|normal-page-odd-header>>>
 
-  <if|<unequal|<value|normal-page-even-header>|<uninit>>|<assign|page-even-header|<value|normal-page-even-header>>>
+  <if|<unequal|<value|normal-page-even-header>|<uninit>>|<assign|page-even-header|<quote-value|normal-page-even-header>>>
 
-  <if|<unequal|<value|normal-page-odd-footer>|<uninit>>|<assign|page-odd-footer|<value|normal-page-odd-footer>>>
+  <if|<unequal|<value|normal-page-odd-footer>|<uninit>>|<assign|page-odd-footer|<quote-value|normal-page-odd-footer>>>
 
-  <if|<unequal|<value|normal-page-even-footer>|<uninit>>|<assign|page-even-footer|<value|normal-page-even-footer>>>
+  <if|<unequal|<value|normal-page-even-footer>|<uninit>>|<assign|page-even-footer|<quote-value|normal-page-even-footer>>>
 </body>
 
 <\initial>

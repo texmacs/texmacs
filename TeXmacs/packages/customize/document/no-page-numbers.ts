@@ -26,13 +26,13 @@
 
   <provide|normal-page-foot-sep|<value|page-foot-sep>>
 
-  <provide|normal-page-odd-header|<value|page-odd-header>>
+  <provide|normal-page-odd-header|<quote-value|page-odd-header>>
 
-  <provide|normal-page-even-header|<value|page-even-header>>
+  <provide|normal-page-even-header|<quote-value|page-even-header>>
 
-  <provide|normal-page-odd-footer|<value|page-odd-footer>>
+  <provide|normal-page-odd-footer|<quote-value|page-odd-footer>>
 
-  <provide|normal-page-even-footer|<value|page-even-footer>>
+  <provide|normal-page-even-footer|<quote-value|page-even-footer>>
 
   \;
 
