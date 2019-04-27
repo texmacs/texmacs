@@ -368,9 +368,9 @@
 
   <assign|show-simple|<macro|student|teacher|<arg|teacher>>>
 
-  <drd-props|hide-simple|arity|2|accessible|0>
+  <drd-props|hide-simple|arity|2|accessible|0|border|no>
 
-  <drd-props|show-simple|arity|2|accessible|1>
+  <drd-props|show-simple|arity|2|accessible|1|border|no>
 
   \;
 

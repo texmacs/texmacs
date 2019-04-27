@@ -87,10 +87,15 @@
 ;; Operating on a tree
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (count doc)
+  (cond ((or (tm-func? doc 'document) (tm-func? doc 'table))
+         (apply + (map count (tm-children doc))))
+        ((tm-compound? doc)
+         (apply max (cons 1 (map count (tm-children doc)))))
+        (else 1)))
+
 (define (empty doc)
-  (if (tm-func? doc 'document)
-      `(document ,@(map (lambda (x) "") (tm-children doc)))
-      `(document "")))
+  `(document ,@(map (lambda (x) "") (.. 0 (count doc)))))
 
 (define (edu-operate-document l mode)
   (cond ((null? l) (noop))
