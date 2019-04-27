@@ -671,3 +671,19 @@
   (:interactive #t)
   (selector-initialize-font get-init)
   (dialogue-window (font-selector #t) init-multi "Document font selector"))
+
+(define ((prefixed-get-init prefix) var)
+  (if (init-has? (string-append prefix var))
+      (get-init (string-append prefix var))
+      (get-init var)))
+
+(define ((prefixed-init-multi prefix) l)
+  (when (and (nnull? l) (nnull? (cdr l)))
+    (init-env (string-append prefix (car l)) (cadr l))
+    ((prefixed-init-multi prefix) (cddr l))))
+
+(tm-define (open-document-other-font-selector prefix)
+  (let* ((getter (prefixed-get-init prefix))
+         (setter (prefixed-init-multi prefix)))
+    (selector-initialize-font getter)
+    (dialogue-window (font-selector #t) setter "Font selector")))

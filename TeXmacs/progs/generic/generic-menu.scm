@@ -236,18 +236,34 @@
 
 (tm-menu (focus-parameter-menu-item l)
   (:require (and (tree-label-parameter? (string->symbol l))
+                 ;;(== (tree-label-type (string->symbol l)) "font")
+                 (string-ends? l "-font")))
+  (-> (eval (focus-tag-name (string->symbol l)))
+      ((check "Default" "*" (test-default? l)) (init-default l))
+      ---
+      ((check "Roman" "*" (test-init? l "roman")) (init-env l "roman"))
+      ((check "Stix" "*" (test-init? l "stix")) (init-env l "stix"))
+      ((check "Bonum" "*" (test-init? l "bonum")) (init-env l "bonum"))
+      ((check "Pagella" "*" (test-init? l "pagella")) (init-env l "pagella"))
+      ((check "Schola" "*" (test-init? l "schola")) (init-env l "schola"))
+      ((check "Termes" "*" (test-init? l "termes")) (init-env l "termes"))
+      ---
+      (with prefix (string-drop-right l 4)
+        ("Other" (open-document-other-font-selector prefix)))))
+
+(tm-menu (focus-parameter-menu-item l)
+  (:require (and (tree-label-parameter? (string->symbol l))
                  (== (tree-label-type (string->symbol l)) "font-size")))
   (-> (eval (focus-tag-name (string->symbol l)))
-      (with setter (lambda (col) (init-env-tree l col))
-        ((check "Default" "*" (test-default? l)) (init-default l))
-        ---
-        ((check "Small" "*" (test-init? l "0.841")) (init-env l "0.841"))
-        ((check "Normal" "*" (test-init? l "1")) (init-env l "1"))
-        ((check "Large" "*" (test-init? l "1.189")) (init-env l "1.189"))
-        ((check "Very large" "*" (test-init? l "1.414")) (init-env l "1.414"))
-        ((check "Huge" "*" (test-init? l "1.682")) (init-env l "1.682"))
-        ---
-        ("Other" (init-interactive-env l)))))
+      ((check "Default" "*" (test-default? l)) (init-default l))
+      ---
+      ((check "Small" "*" (test-init? l "0.841")) (init-env l "0.841"))
+      ((check "Normal" "*" (test-init? l "1")) (init-env l "1"))
+      ((check "Large" "*" (test-init? l "1.189")) (init-env l "1.189"))
+      ((check "Very large" "*" (test-init? l "1.414")) (init-env l "1.414"))
+      ((check "Huge" "*" (test-init? l "1.682")) (init-env l "1.682"))
+      ---
+      ("Other" (init-interactive-env l))))
 
 (tm-menu (focus-parameter-menu-item l)
   (:require (parameter-choice-list l))

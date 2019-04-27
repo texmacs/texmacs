@@ -444,7 +444,8 @@
 (lazy-define (fonts font-old-menu)
 	     text-font-menu math-font-menu prog-font-menu)
 (lazy-define (fonts font-new-widgets)
-             open-font-selector open-document-font-selector)
+             open-font-selector open-document-font-selector
+             open-document-other-font-selector)
 (tm-property (open-font-selector) (:interactive #t))
 (tm-property (open-document-font-selector) (:interactive #t))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
