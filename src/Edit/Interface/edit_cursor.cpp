@@ -98,7 +98,7 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
     if ((dir > 0 && !path_less (pp, sp)) ||
         (dir < 0 && !path_less (sp, pp))) {
       if (inverse) {
-        p= closest_accessible_inside (st, sp, forwards? 1: -1); break; }
+        p= rp * closest_accessible_inside (st, sp, forwards? 1: -1); break; }
       else {
         p= start_p; inverse= true; }
     }
