@@ -30,6 +30,7 @@ attach_data (tree body, new_data data, bool no_aux) {
     init->reset (PAGE_SCREEN_WIDTH);
     init->reset (PAGE_SCREEN_HEIGHT);
     if (!init->contains ("no-zoom")) init->reset (ZOOM_FACTOR);
+    init->reset ("full-screen-mode");
     doc << compound ("initial", make_collection (init));
   }
   if (N (data->fin) != 0)

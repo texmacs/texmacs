@@ -272,7 +272,9 @@ pager_rep::make_pages () {
 #endif
             if (i < nx-1) r= 0;
           }
-          pg[p]= page_border_box (pages[p]->ip, pages[p], l, r, b, t, pixel);
+          color bg= tm_background;
+          if (env->get_string ("full-screen-mode") == "true") bg= black;
+          pg[p]= page_border_box (pages[p]->ip, pages[p], bg, l, r, b, t, pixel);
         }
       }
 

@@ -772,6 +772,7 @@ void
 edit_typeset_rep::init_env (string var, tree by) {
   if (init (var) == by) return;
   init (var)= by;
+  if (var == "full-screen-mode") return;
   if (var != PAGE_SCREEN_WIDTH &&
       var != PAGE_SCREEN_HEIGHT &&
       var != ZOOM_FACTOR)

@@ -274,17 +274,20 @@ page_box_rep::find_right_box_path () {
 ******************************************************************************/
 
 struct page_border_box_rep: change_box_rep {
+  color tmb;
   SI l, r, b, t, pixel;
-  page_border_box_rep (path ip, box pb, SI l, SI r, SI b, SI t, SI pixel);
+  page_border_box_rep (path ip, box pb, color tmb,
+                       SI l, SI r, SI b, SI t, SI pixel);
   operator tree ();
   void pre_display (renderer& ren);
   void display_background (renderer ren);
 };
 
-page_border_box_rep::page_border_box_rep (path ip2, box pb,
+page_border_box_rep::page_border_box_rep (path ip2, box pb, color tmb2,
                                           SI l2, SI r2, SI b2, SI t2,
                                           SI pixel2):
-  change_box_rep (ip2, false), l (l2), r (r2), b (b2), t (t2), pixel (pixel2)
+  change_box_rep (ip2, false), tmb (tmb2),
+  l (l2), r (r2), b (b2), t (t2), pixel (pixel2)
 {
   insert (pb, l, -t);
   position ();
@@ -305,16 +308,16 @@ page_border_box_rep::pre_display (renderer& ren) {
 }
 
 static void
-set_shadow (renderer ren, SI alpha) {
+set_shadow (renderer ren, color bg, SI alpha) {
   color c= rgb_color (0, 0, 0, alpha);
-  ren->set_background (blend_colors (c, tm_background));
+  ren->set_background (blend_colors (c, bg));
 }
 
 void
 page_border_box_rep::display_background (renderer ren) {
   if (!ren->is_screen) return;
   brush bgc= ren->get_background ();
-  ren->set_background (tm_background);
+  ren->set_background (tmb);
   SI X1= sx1(0), Y1= sy1(0), X2= sx2(0), Y2= sy2(0);
   if (X1 > x1) ren->clear_pattern (x1, y1, X1, y2);
   if (x2 > X2) ren->clear_pattern (X2, y1, x2, y2);
@@ -323,25 +326,25 @@ page_border_box_rep::display_background (renderer ren) {
 
   SI p= ren->pixel;
   if (X1 > x1 + 2 * p) {
-    set_shadow (ren, 128);
+    set_shadow (ren, tmb, 128);
     ren->clear_pattern (X1-p, Y1-p, X1, Y2-p);
-    set_shadow (ren, 16);
+    set_shadow (ren, tmb, 16);
     ren->clear_pattern (X1-2*p, Y1-p, X1-p, Y2-2*p);
   }
   if (x2 - 2 * p > X2) {
-    set_shadow (ren, 16);
+    set_shadow (ren, tmb, 16);
     ren->clear_pattern (X2+p, Y1, X2+2*p, Y2-2*p);
-    set_shadow (ren, 128);
+    set_shadow (ren, tmb, 128);
     ren->clear_pattern (X2, Y1, X2+p, Y2-p);
   }
   if (Y1 > y1 - 4 * p) {
-    set_shadow (ren, 160);
+    set_shadow (ren, tmb, 160);
     ren->clear_pattern (X1, Y1-p, X2, Y1);
-    set_shadow (ren, 128);
+    set_shadow (ren, tmb, 128);
     ren->clear_pattern (X1-p, Y1-2*p, X2+p, Y1-p);
-    set_shadow (ren, 64);
+    set_shadow (ren, tmb, 64);
     ren->clear_pattern (X1-p, Y1-3*p, X2+p, Y1-2*p);
-    set_shadow (ren, 16);
+    set_shadow (ren, tmb, 16);
     ren->clear_pattern (X1-p, Y1-4*p, X2+p, Y1-3*p);
   }
 
@@ -368,7 +371,7 @@ page_box (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
 }
 
 box
-page_border_box (path ip, box pb, SI l, SI r, SI b, SI t, SI pixel) {
-  box rb= tm_new<page_border_box_rep> (ip, pb, l, r, b, t, pixel);
+page_border_box (path ip, box pb, color tmb, SI l, SI r, SI b, SI t, SI pixel) {
+  box rb= tm_new<page_border_box_rep> (ip, pb, tmb, l, r, b, t, pixel);
   return rb;
 }

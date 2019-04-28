@@ -657,7 +657,8 @@ edit_interface_rep::apply_changes () {
     if (has_current_window ())
       concrete_window () -> set_scrollbars (sb);
   }
-  
+  init_env ("full-screen-mode", string (full_screen? "true": "false"));
+
   // window decorations (menu bar, icon bars, footer)
   int wb= 2;
   if (is_attached (this)) {
