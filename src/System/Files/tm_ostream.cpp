@@ -11,7 +11,13 @@
 
 #include "tm_ostream.hpp"
 #include "tree.hpp"
-
+#ifdef OS_MINGW
+#include "Windows/win-utf8-compat.hpp"
+#include "Windows/nowide/iostream.hpp"
+#include "Windows/nowide/convert.hpp"
+FILE* fstdout;
+FILE* fstderr; 
+#endif
 /******************************************************************************
 * Routines for abstract base class
 ******************************************************************************/
@@ -56,6 +62,10 @@ std_ostream_rep::std_ostream_rep (char* fn):
 {
   file= fopen (fn, "w");
   if (file) {
+#ifdef OS_MINGW
+    if (strcmp(fn, "stdout") == 0) fstdout = file; 
+    if (strcmp(fn, "stderr") == 0) fstderr = file;
+#endif
     is_w= true;
     is_mine= true;
   }
@@ -85,6 +95,17 @@ std_ostream_rep::is_writable () const {
 
 void
 std_ostream_rep::write (const char* s) {
+#ifdef OS_MINGW
+  if (file == fstdout) {
+      nowide::cout<<s ;
+      nowide::cout.flush();
+     }
+  else if (file == fstderr) {
+      nowide::cerr<<s ;
+      nowide::cerr.flush();
+     }
+  else
+#endif
   if (file && is_w) {
     if (0 <= fprintf (file, "%s", s)) {
       const char* c= s;
@@ -92,7 +113,7 @@ std_ostream_rep::write (const char* s) {
       if (*c == '\n') flush ();
     }
     else is_w= false;
-  }    
+  }
 }
 
 void

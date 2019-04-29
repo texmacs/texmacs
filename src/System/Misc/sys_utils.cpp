@@ -17,6 +17,7 @@
 #ifdef OS_MINGW
 #include "Qt/qt_sys_utils.hpp"
 #include "Windows/mingw_sys_utils.hpp"
+#include "Windows/win-utf8-compat.hpp"
 #else
 #include "Unix/unix_sys_utils.hpp"
 #endif
@@ -83,7 +84,7 @@ var_eval_system (string s) {
 string
 get_env (string var) {
   c_string _var (var);
-  char* _ret= getenv (_var);
+  const char* _ret= getenv (_var);
   if (_ret==NULL) {
     if (var == "PWD") return get_env ("HOME");
     return "";

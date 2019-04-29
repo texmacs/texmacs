@@ -482,15 +482,6 @@ cork_to_ascii (string input) {
   return apply (conv, input);
 }
 
-#ifndef QTTEXMACS
-string
-cork_to_os8bits (const string s){
-  // return convert(s , "Cork", get_locale_charset ());
-  // since this is X11 we can assume locale_charset==UTF8
-  return convert(s , "Cork", "UTF-8");  
-}
-#endif
-
 
 #ifdef USE_ICONV
 

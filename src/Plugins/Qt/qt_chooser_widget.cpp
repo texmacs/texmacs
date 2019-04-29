@@ -206,7 +206,7 @@ void
 qt_chooser_widget_rep::perform_dialog () {
   QString caption = to_qstring (win_title);
   c_string tmp (directory * "/" * file);
-  QString path = QString::fromLocal8Bit (tmp);
+  QString path = QString::fromUtf8 (tmp);
   
 #if (defined(Q_WS_MAC) )// || defined(Q_WS_WIN)) //at least windows Xp and 7 lack image preview, switch to custom dialog
   QFileDialog* dialog = new QFileDialog (NULL, caption, path);
@@ -262,14 +262,9 @@ qt_chooser_widget_rep::perform_dialog () {
   if (dialog->exec ()) {
     fileNames = dialog->selectedFiles();
     if (fileNames.count() > 0) {
-      if (type != "image") {
-      string localname = from_qstring_os8bits(fileNames.first());
-      file = "(system->url " * scm_quote (localname) * ")";}
-      else {
       string imname    = from_qstring_utf8 (fileNames.first());
-      string localname = utf8_to_cork (imname);
-      // here we need the filename encoded cork-universal because it is exposed in the document, in the <image> tag
-      file = "(system->url " * scm_quote (localname) * ")";
+      file = "(system->url " * scm_quote (imname) * ")";
+      if (type == "image") {
 #if !defined(Q_WS_MAC) // && !defined(Q_WS_WIN)   //at least windows Xp and 7 lack image preview, switch to custom dialog
         file = "(list " * file * imgdialog->getParamsAsString () * ")"; //set image size from preview
 #else //MacOs only now

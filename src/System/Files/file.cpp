@@ -24,12 +24,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <string.h>  // strerror
+#if defined (OS_MINGW)
+#include "Windows/win-utf8-compat.hpp"
+#else
+#include <dirent.h>
+#define struct_stat struct stat
+#endif
 
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_images.h"
@@ -252,7 +257,7 @@ append_string (url u, string s, bool fatal) {
 ******************************************************************************/
 
 static bool
-get_attributes (url name, struct stat* buf,
+get_attributes (url name, struct_stat* buf,
 		bool link_flag=false, bool cache_flag= true)
 {
   // cout << "Stat " << name << LF;
@@ -357,13 +362,19 @@ is_of_type (url name, string filter) {
 
   // Normal files
 #ifdef OS_MINGW
-  if ((filter == "x") && (suffix(name) != "exe") && (suffix(name) != "bat"))
-    name = glue (name, ".exe");
+  string suf;
+  if (filter == "x") {
+    suf= suffix(name);
+    if ((suf != "exe") && (suf != "bat") && (suf != "com")) {
+      name = glue (name, ".exe");
+      suf = "exe";
+    }
+  }
 #endif
   bool preserve_links= false;
   for (i=0; i<n; i++)
     preserve_links= preserve_links || (filter[i] == 'l');
-  struct stat buf;
+  struct_stat buf;
   bool err= get_attributes (name, &buf, preserve_links);
   for (i=0; i<n; i++)
     switch (filter[i]) {
@@ -375,38 +386,22 @@ is_of_type (url name, string filter) {
       if (err || !S_ISDIR (buf.st_mode)) return false;
       break;
     case 'l':
-#ifdef OS_MINGW
-      return false;
-#else
       if (err || !S_ISLNK (buf.st_mode)) return false;
-#endif
       break;
     case 'r':
       if (err) return false;
-#ifndef OS_MINGW
       if ((buf.st_mode & (S_IRUSR | S_IRGRP | S_IROTH)) == 0) return false;
-#else
-      if ((buf.st_mode & 292) == 0) return false;
-#endif
       break;
     case 'w':
       if (err) return false;
-#ifndef OS_MINGW
       if ((buf.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) return false;
-#else
-      if ((buf.st_mode & 146) == 0) return false;
-#endif
       break;
     case 'x':
       if (err) return false;
 #ifdef OS_MINGW
-      if (suffix(name) == "bat") break;
+      if (((suf == "exe") || (suf == "com") || (suf == "bat")) && (buf.st_mode & S_IRUSR)) return true;
 #endif
-#ifndef OS_MINGW
       if ((buf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) == 0) return false;
-#else
-      if ((buf.st_mode & 73) == 0) return false;
-#endif
       break;
     }
   return true;
@@ -420,7 +415,7 @@ int
 file_size (url u) {
   if (is_rooted_web (u)) return -1;
   if (is_rooted_tmfs (u)) return -1;
-  struct stat u_stat;
+  struct_stat u_stat;
   if (get_attributes (u, &u_stat, true)) return -1;
   return u_stat.st_size;
 }
@@ -431,7 +426,7 @@ last_modified (url u, bool cache_flag) {
     return - (int) (((unsigned int) (-1)) >> 1);
   if (is_rooted_tmfs (u))
     return - (int) (((unsigned int) (-1)) >> 1);
-  struct stat u_stat;
+  struct_stat u_stat;
   if (get_attributes (u, &u_stat, true, cache_flag))
     return - (int) (((unsigned int) (-1)) >> 1);
   return u_stat.st_mtime;
@@ -439,8 +434,8 @@ last_modified (url u, bool cache_flag) {
 
 bool
 is_newer (url which, url than) {
-  struct stat which_stat;
-  struct stat than_stat;
+  struct_stat which_stat;
+  struct_stat than_stat;
   // FIXME: why was this? 
   if (is_cached ("stat_cache.scm", concretize (which))) return false;
   if (is_cached ("stat_cache.scm", concretize (than))) return false;
@@ -535,11 +530,18 @@ read_directory (url u, bool& error_flag) {
   if (error_flag) return array<string> ();
 
   array<string> dir;
+  #ifdef OS_MINGW
+  while (true) {
+    const char* nextname =  nowide::readir_entry (dp);
+    if (nextname==NULL) break;
+    dir << string (nextname);
+  #else
   struct dirent* ep;
   while (true) {
     ep= readdir (dp);
     if (ep==NULL) break;
     dir << string (ep->d_name);
+  #endif
   }
   (void) closedir (dp);
   merge_sort (dir);
@@ -580,7 +582,11 @@ remove_sub (url u) {
   }
   else {
     c_string _u (concretize (u));
+#ifdef OS_MINGW
+    if (nowide::remove (_u) && DEBUG_AUTO) {
+#else
     if (::remove (_u) && DEBUG_AUTO) {
+#endif
       std_warning << "Remove failed: " << strerror (errno) << LF;
       std_warning << "File was: " << u << LF;
     }
@@ -610,11 +616,7 @@ mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   if (!exists (u)) {
     c_string _u (concretize (u));
-#ifdef OS_MINGW
-    (void) ::mkdir (_u);
-#else
     (void) ::mkdir (_u, S_IRWXU + S_IRGRP + S_IROTH);
-#endif
   }
 #else
 #ifdef OS_MINGW

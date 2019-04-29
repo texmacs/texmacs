@@ -36,6 +36,10 @@ void mac_fix_paths ();
 #include <QDir>
 #endif
 
+#ifdef OS_MINGW
+#include "Windows/win-utf8-compat.hpp"
+#endif
+
 #ifdef MACOSX_EXTENSIONS
 #include "MacOS/mac_utilities.h"
 #endif
@@ -519,9 +523,11 @@ void
 immediate_options (int argc, char** argv) {
   if (get_env ("TEXMACS_HOME_PATH") == "")
 #ifdef OS_MINGW
+    {
     if (get_env ("HOME") == "")
         set_env ("HOME", get_env("USERPROFILE"));
     set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "\\TeXmacs");
+	}
 #else
     set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
 #endif
@@ -595,6 +601,10 @@ main (int argc, char** argv) {
     } else limit.rlim_cur= STACK_SIZE;
     if(setrlimit(RLIMIT_STACK, &limit)) cerr << "Cannot set stack value\n";
   } else cerr << "Cannot get stack value\n";
+#endif
+
+#ifdef OS_MINGW
+	nowide::args a(argc,argv); // Fix arguments - make them UTF-8
 #endif
 
 

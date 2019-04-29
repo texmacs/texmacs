@@ -122,7 +122,7 @@ BEGIN_SLOT
   xps->setText ("");
   yps->setText ("");
 
-  string localname = from_qstring_os8bits(file);
+  string localname = from_qstring_utf8(file);
   url image_url= url_system (localname);
   if (DEBUG_CONVERT) debug_convert<<"image preview :["<<image_url<<"]"<<LF;
   if (!(as_string(image_url)=="") && !is_directory(image_url) && exists(image_url) ){
@@ -147,7 +147,7 @@ BEGIN_SLOT
 	  }
 	  //generate thumbnail :
 	  image_to_png (image_url, temp, w, h);
-	  img.load (os8bits_to_qstring (as_string (temp)));
+	  img.load (utf8_to_qstring (as_string (temp)));
 	  remove (temp);
     }
   }

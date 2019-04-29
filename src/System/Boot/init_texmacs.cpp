@@ -20,6 +20,7 @@
 #include <unistd.h>
 #ifdef OS_MINGW
 #include <time.h>
+#include <direct.h>
 #endif
 
 tree texmacs_settings = tuple ();

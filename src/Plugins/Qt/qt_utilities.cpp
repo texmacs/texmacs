@@ -315,31 +315,6 @@ from_qstring_utf8 (const QString &s) {
   return string ((char*) cstr);
 }
 
-// os8bits == UTF-8 on linux/Mac OS but ==locale codepage on windows
-// Qt offers no way to explicitly know what is the encoding used!
-// note that older Unix/linuxes did not use UTF-8
-QString
-os8bits_to_qstring (const string& s) {
-  c_string p (s);
-  QString nss= QString::fromLocal8Bit (p, N(s));
-  return nss;
-}
-
-string
-from_qstring_os8bits (const QString &s) {
-  QByteArray arr= s.toLocal8Bit ();
-  const char* cstr= arr.constData ();
-  return string ((char*) cstr);
-}
-
-string
-cork_to_os8bits (const string s){   
-  // Note: this function is declared in converter.hpp 
-  // (and implemented in converter.cpp for X11)
-  // In Qt version we stick to Qt routines for consistency
-  return from_qstring_os8bits(utf8_to_qstring (cork_to_utf8 (s)));
-}
-
 // This should provide better lookup times
 static QHash<QString, QColor> _NamedColors;
 
@@ -409,7 +384,7 @@ qt_supports (url u) {
 bool
 qt_image_size (url image, int& w, int& h) {// w, h in points
   if (DEBUG_CONVERT) debug_convert << "qt_image_size :" <<LF;
-  QImage im= QImage (os8bits_to_qstring (concretize (image)));
+  QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
       convert_error << "Cannot read image file '" << image << "'"
       << " in qt_image_size" << LF;
@@ -428,14 +403,14 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
 void
 qt_convert_image (url image, url dest, int w, int h) {// w, h in pixels
   if (DEBUG_CONVERT) debug_convert << "qt_convert_image " << image << " -> "<<dest<<LF;
-  QImage im (os8bits_to_qstring (concretize (image)));
+  QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ())
     convert_error << "Cannot read image file '" << image << "'"
     << " in qt_convert_image" << LF;
   else {
     if (w > 0 && h > 0)
       im= im.scaled (w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    im.scaled (w, h).save (os8bits_to_qstring (concretize (dest)));
+    im.scaled (w, h).save (utf8_to_qstring (concretize (dest)));
   }
 }
 
@@ -460,8 +435,8 @@ qt_image_to_pdf (url image, url outfile, int w_pt, int h_pt, int dpi) {
   printer.setFullPage(true);
   if (!dpi) dpi=96; 
   printer.setResolution(dpi);
-  printer.setOutputFileName(os8bits_to_qstring (concretize (outfile)));
-  QImage im (os8bits_to_qstring (concretize (image)));
+  printer.setOutputFileName(utf8_to_qstring (concretize (outfile)));
+  QImage im (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
     convert_error << "Cannot read image file '" << image << "'"
     << " in qt_image_to_pdf" << LF;
@@ -713,6 +688,9 @@ qt_translate (const string& s) {
 string
 qt_application_directory () {
   return string (QCoreApplication::applicationDirPath().toLatin1().constData());
+  // This is used to set $TEXMACS_PATH
+  // in Windows TeXmacs cannot run if this path contains unicode characters
+  // apparently because Guile uses standard narrow char api to load its modules => patch Guile?.  
   // return from_qstring (QCoreApplication::applicationDirPath ());
 }
 

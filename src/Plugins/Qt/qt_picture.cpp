@@ -157,11 +157,11 @@ QImage*
 get_image (url u, int w, int h) {
   QImage *pm = NULL;
   if (qt_supports (u))
-    pm= new QImage (os8bits_to_qstring (concretize (u)));
+    pm= new QImage (utf8_to_qstring (concretize (u)));
   else {
     url temp= url_temp (".png");
     image_to_png (u, temp, w, h);
-    pm= new QImage (os8bits_to_qstring (as_string (temp)));
+    pm= new QImage (utf8_to_qstring (as_string (temp)));
     remove (temp);
   }
   if (pm == NULL || pm->isNull ()) {
@@ -215,5 +215,5 @@ qt_apply_effect (tree eff, array<url> src, url dest, int w, int h) {
   picture t= e->apply (a, PIXEL);
   picture q= as_qt_picture (t);
   qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
-  pict->pict.save (os8bits_to_qstring (concretize (dest)));
+  pict->pict.save (utf8_to_qstring (concretize (dest)));
 }

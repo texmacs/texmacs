@@ -316,13 +316,7 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   if (version == "1.7") ePDFVersion= ePDFVersion17;
   LogConfiguration log= LogConfiguration::DefaultLogConfiguration();
   PDFCreationSettings settings (true, true); //, EncryptionOptions("user", 4, "owner"));
-#if (defined (__MINGW__) || defined (__MINGW32__))
-    // WIN is using 8bit encodings, but pdfwriter expects UTF8
-    // if path or file contains non-ascii characters we need an extra conversion step. 
-    status = pdfWriter.StartPDF(as_charp(western_to_utf8(concretize (pdf_file_name))), ePDFVersion, log, settings);
-#else
     status = pdfWriter.StartPDF(as_charp(concretize (pdf_file_name)), ePDFVersion, log, settings);
-#endif  
 	if (status != PDFHummus::eSuccess) {
 		convert_error << "failed to start PDF\n";
 		started=false;
@@ -1234,13 +1228,7 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
     PDFUsedFont* font;
     {
       //debug_convert << "GetFontForFile "  << u  << LF;
-#if (defined (__MINGW__) || defined (__MINGW32__))
-    // WIN is using 8bit encodings, but pdfwriter expects UTF8
-    // if path or file contains non-ascii characters we need an extra conversion step. 
-      c_string _u (western_to_utf8(concretize (u)));
-#else
       c_string _u (concretize (u));
-#endif  
       font = pdfWriter.GetFontForFile((char*)_u);
       //tm_delete_array(_rname);
     }
@@ -1599,11 +1587,7 @@ pdf_image_rep::flush (PDFWriter& pdfw)
   EStatusCode status = PDFHummus::eFailure;
   DocumentContext& dc = pdfw.GetDocumentContext();
 
-#if (defined (__MINGW__) || defined (__MINGW32__))  
-  char* _temp= as_charp(western_to_utf8(concretize(temp)));
-#else
   char* _temp= as_charp(concretize(temp));
-#endif
   PDFDocumentCopyingContext *copyingContext = pdfw.CreatePDFCopyingContext(_temp);
   if(copyingContext) {
     PDFPageInput pageInput(copyingContext->GetSourceDocumentParser(),
@@ -1633,11 +1617,7 @@ void
 hummus_pdf_image_size (url image, int& w, int& h) {
   InputFile pdfFile;
   PDFParser* parser= new PDFParser();
-#if (defined (__MINGW__) || defined (__MINGW32__))
-  pdfFile.OpenFile(as_charp(western_to_utf8(concretize(image))));
-#else
   pdfFile.OpenFile(as_charp(concretize(image)));
-#endif
   EStatusCode status = parser->StartPDFParsing(pdfFile.GetInputStream());
   if (status != PDFHummus::eFailure) {
     PDFPageInput pageInput(parser, parser->ParsePage(0));

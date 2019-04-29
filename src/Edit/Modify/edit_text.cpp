@@ -362,11 +362,12 @@ edit_text_rep::make_image (
   tree t (IMAGE);
   if (link) {
     if (is_rooted (image, "default")) image= reroot (image, "file");
-    t << as_string (image, URL_STANDARD);
+    // here we convert the filename to cork-universal because it is exposed in the document, in the <image> tag
+    t << utf8_to_cork (as_string (image, URL_STANDARD));
   }
   else {
     string s;
-    tree vim= verbatim (as_string (image));
+    tree vim= verbatim (utf8_to_cork (as_string (image)));
     load_string (relative (get_name (), image), s, false);
     if (s == "") {
       set_message (concat ("File '", vim, "' not found"), "make image");

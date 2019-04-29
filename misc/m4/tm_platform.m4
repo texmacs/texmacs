@@ -101,7 +101,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
-      CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
+      CPPFLAGS="$CPPFLAGS -I/usr/local/include -IPlugins/Windows -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
       LC_APPEND_FLAG([-Wl,--stack=16777216],[LDFLAGS])
     ;;

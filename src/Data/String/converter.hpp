@@ -88,7 +88,6 @@ string t2a_to_utf8 (string input);
 string cyrillic_subset_in_t2a_to_code_point (string input);
 string code_point_to_cyrillic_subset_in_t2a (string input);
 string cork_to_ascii (string input);
-string cork_to_os8bits (string s);
 bool check_using_iconv (string input, string encoding);
 string convert_using_iconv (string input, string from, string to); 
 

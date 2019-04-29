@@ -66,8 +66,6 @@ string       from_qstring (const QString & s);
 QString   utf8_to_qstring (const string& s);
 QString latin1_to_qstring (const string& s);
 string  from_qstring_utf8 (const QString & s);
-QString os8bits_to_qstring (const string& s);
-string from_qstring_os8bits (const QString &s);
 
 /*! Returns a QString with the translation of the argument to the current
  language.

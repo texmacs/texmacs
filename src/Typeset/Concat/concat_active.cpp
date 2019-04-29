@@ -328,7 +328,7 @@ concater_rep::typeset_image (tree t, path ip) {
   if (is_atomic (image_tree)) {
     if (N (image_tree->label) == 0)
       error_image (tree (WITH, "color", "red", "no image"));
-    url im= cork_to_os8bits (image_tree->label);
+    url im= cork_to_utf8( image_tree->label);
     image= resolve (relative (env->base_file_name, im));
     if (is_none (image) && suffix (im) == "")
       image= resolve (relative (env->base_file_name, ::glue (im, ".eps")));
