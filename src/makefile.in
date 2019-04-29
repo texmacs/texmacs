@@ -154,7 +154,7 @@ system_incl   := $(call incl_flags,System System/Boot System/Classes \
   Scheme \
   Graphics/Bitmap_fonts Graphics/Fonts Graphics/Gui Graphics/Mathematics \
   Graphics/Renderer Graphics/Handwriting Graphics/Types Graphics/Pictures \
-  Graphics/Spacial Graphics/Colors Plugins)
+  Graphics/Spacial Graphics/Colors Plugins Plugins/@CONFIG_OS_COMPAT@)
 kernel_incl   := $(system_incl)
 data_incl     := $(system_incl)
 graphics_incl := $(system_incl)
