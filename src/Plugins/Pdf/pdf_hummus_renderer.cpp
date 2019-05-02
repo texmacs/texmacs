@@ -1885,11 +1885,7 @@ pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
 
 bool
 pdf_image_rep::flush_jpg (PDFWriter& pdfw, url image) {
-#if (defined (__MINGW__) || defined (__MINGW32__))
-  c_string f (western_to_utf8 (concretize (image)));
-#else
   c_string f (concretize (image));
-#endif  
   DocumentContext& documentContext= pdfw.GetDocumentContext();
   PDFImageXObject* imageXObject= documentContext.CreateImageXObjectFromJPGFile ((char*) f);
   if ((void*) imageXObject == NULL) { 
