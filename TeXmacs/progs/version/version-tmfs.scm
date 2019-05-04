@@ -4,6 +4,7 @@
 ;; MODULE      : version-tmfs.scm
 ;; DESCRIPTION : support for external versioning tools
 ;; COPYRIGHT   : (C) 2012  Joris van der Hoeven
+;;               (C) 2019  Darcy Shen
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -11,8 +12,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (version version-tmfs)
-  (:use (version version-git)))
+(texmacs-module (version version-tmfs))
 
 (define version-tool-table (make-ahash-table))
 (define version-tool-loaded (make-ahash-table))
@@ -23,9 +23,16 @@
 
 (tm-define (svn-active? name)
   (let* ((dir (url-head name))
-	 (anc (url-append dir (url-ancestor)))
-	 (svn (url-append anc ".svn"))
-	 (l   (cDr (url->list (url-expand svn)))))
+         (anc (url-append dir (url-ancestor)))
+         (svn (url-append anc ".svn"))
+         (l   (cDr (url->list (url-expand svn)))))
+    (list-or (map url-directory? l))))
+
+(tm-define (git-active? name)
+  (let* ((dir (url-head name))
+         (anc (url-append dir (url-ancestor)))
+         (git (url-append anc ".git"))
+         (l   (cDr (url->list (url-expand git)))))
     (list-or (map url-directory? l))))
 
 (tm-define (version-tool name)
@@ -34,21 +41,23 @@
             (and (!= tool "") tool))
           (with tool
               (cond ((svn-active? name) "svn")
+                    ((git-active? name) "git")
                     (else ""))
             (ahash-set! version-tool-table name tool)
             (when (and tool (not (ahash-ref version-tool-loaded tool)))
               (ahash-set! version-tool-loaded tool #t)
               (cond ((== tool "svn")
-                     (module-provide '(version version-svn)))))
+                     (module-provide '(version version-svn)))
+                    ((== tool "git")
+                     (module-provide '(version version-git)))))
             (and (!= tool "") tool)))
       (and-with base (url-wrap name)
         (and (version-tool base) "wrap"))))
 
 (tm-define (versioned? url)
-  (or (git-versioned? url)
-    (or (nnot (version-tool url))
-      (and-with base (url-wrap url)
-        (versioned? base)))))
+  (or (nnot (version-tool url))
+    (and-with base (url-wrap url)
+      (versioned? base))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Getting the main status of a file
@@ -84,7 +93,7 @@
 
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
-    (if (git-versioned? u)
+    (if (git-active? u)
       (with h (buffer-log u)
               ($generic
                ($tmfs-title "History of "

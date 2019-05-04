@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (version version-git))
+(texmacs-module (version version-git)
+  (:use (version version-tmfs)))
 
 (define NR_LOG_OPTION " -1000 ")
 
@@ -50,12 +51,8 @@
                    " --git-dir=" work-dir "/.git")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Predicates of Git and Buffer
+;; File status
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(tm-define (git-versioned? url)
-  (and (not (buffer-tmfs? url))
-       (!= (git-root url) "/")))
-
 (tm-define (buffer-status name)
   (let* ((path (url->string name))
          (cmd (string-append (resolve-git-command path) " status --porcelain " path))
@@ -64,6 +61,15 @@
           ((file-exists? path) "  ")
           (else ""))))
 
+(tm-define (version-status name)
+  (:require (== (version-tool name) "git"))
+  (with ret (buffer-status name)
+    (cond ((== ret "??") "unknown")
+          (else "dummy"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Predicates of Git and Buffer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (tm-define (buffer-to-unadd? name)
   (with ret (buffer-status name)
         (or (== ret "A ")

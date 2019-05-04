@@ -20,17 +20,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind version-menu
+  ;; Menu entries for various version tools
   (when (versioned? (current-buffer))
-    (when (or (buffer-histed? (current-buffer)) (!= (version-status (current-buffer)) "unknown"))
-      ("History" (version-show-history (current-buffer))))
     (when (!= (version-status (current-buffer)) "unknown")
-      ("Update" (version-interactive-update (current-buffer))))
-    (assuming (== (version-status (current-buffer)) "unknown")
-      ("Register" (register-buffer (current-buffer))))
-    (assuming (!= (version-status (current-buffer)) "unknown")
-      (when (or (== (version-status (current-buffer)) "modified")
-                (buffer-modified? (current-buffer)))
-        ("Commit" (version-interactive-commit (current-buffer))))))
+      ("History" (version-show-history (current-buffer)))))
+  ---
+  ;; Menu entries for the specific version tool
+  (assuming (and (svn-active? (current-buffer))
+                 (!= (version-status (current-buffer)) "unknown"))
+    ("Update" (version-interactive-update (current-buffer))))
+  (assuming (and (svn-active? (current-buffer))
+                 (== (version-status (current-buffer)) "unknown"))
+    ("Register" (register-buffer (current-buffer))))
+  (assuming (and (svn-active? (current-buffer))
+                 (!= (version-status (current-buffer)) "unknown")
+                 (or (== (version-status (current-buffer)) "modified")
+                     (buffer-modified? (current-buffer))))
+    ("Commit" (version-interactive-commit (current-buffer))))
   ---
   (-> "Compare"
       (when (versioned? (current-buffer))
@@ -40,10 +46,10 @@
         ;; (when (buffer-tmfs? (current-buffer))
         ;;   ("With parent version"
         ;;     (git-compare-with-parent (current-buffer))))
-        (when (and (not (buffer-tmfs? (current-buffer)))
-                   (buffer-has-diff? (current-buffer)))
-          ("With the HEAD"
-            (git-compare-with-master (current-buffer))))
+        ;; (when (and (not (buffer-tmfs? (current-buffer)))
+        ;;            (buffer-has-diff? (current-buffer)))
+        ;;   ("With the HEAD"
+        ;;     (git-compare-with-master (current-buffer))))
         (assuming (version-revision? (current-buffer))
           ("With current user version"
            (compare-with-newer* (version-head (current-buffer))))))
