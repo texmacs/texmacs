@@ -12,38 +12,40 @@
 import os
 from .protocol import *
 
+
 class Graph(object):
-  name = ""
-  message = ""
-  height = 0
-  width = 0
+    name = ""
+    message = ""
+    height = 0
+    width = 0
 
-  def set_height(self, h):
-    self.height = h
+    def set_height(self, h):
+        self.height = h
 
-  def set_width(self, w):
-    self.width = w
+    def set_width(self, w):
+        self.width = w
 
-  def greet(self):
-    for x in self.message.split("\n"):
-      if len(x) == 0:
+    def greet(self):
+        for x in self.message.split("\n"):
+            if len(x) == 0:
+                pass
+            else:
+                texmacs_out("verbatim:" + x + DATA_BEGIN +
+                            "prompt#" + self.name + "] " + DATA_END)
+            os.sys.stdout.flush()
+
+    def available(self):
+        return len(self.message) > 0
+
+    def evaluate(self, code):
         pass
-      else:
-        texmacs_out("verbatim:" + x + DATA_BEGIN + "prompt#" + self.name + "] " + DATA_END)
-      os.sys.stdout.flush()
 
-  def available(self):
-    return len(self.message) > 0
-
-  def evaluate(self, code):
-    pass
-
-  def get_png_path(self):
-    png = os.getenv("HOME") +\
-          "/.TeXmacs/system/tmp/" +\
-          self.name + ".png" +\
-          "?" + "width=" + str(self.width) +\
-          "&" + "height=" + str(self.height)
-    if os.path.isfile(png):
-      os.remove(png)
-    return png
+    def get_png_path(self):
+        png = os.getenv("HOME") +\
+            "/.TeXmacs/system/tmp/" +\
+            self.name + ".png" +\
+            "?" + "width=" + str(self.width) +\
+            "&" + "height=" + str(self.height)
+        if os.path.isfile(png):
+            os.remove(png)
+        return png
