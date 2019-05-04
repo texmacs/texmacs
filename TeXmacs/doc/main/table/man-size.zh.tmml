@@ -43,7 +43,8 @@
     </tm-par>
     
     <tm-par>
-      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
+      <tmdoc-copyright><tm-arg>2013–2019</tm-arg><tm-arg>Joris van der
+      Hoeven</tm-arg><tm-arg>沈达</tm-arg></tmdoc-copyright>
     </tm-par>
     
     <tm-par>
@@ -55,4 +56,8 @@
       section entitled "GNU Free Documentation License".</tmdoc-license>
     </tm-par>
   </body>
+  
+  <initial>
+    <collection/>
+  </initial>
 </TeXmacs>
