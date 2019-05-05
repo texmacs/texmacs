@@ -203,8 +203,9 @@ collect_metadata_acm_old (tree t) {
 ******************************************************************************/
 
 tree
-get_acm_affiliation (tree t) {
+get_acm_affiliation (tree orig) {
   tree r (CONCAT);
+  tree t= orig;
   if (!is_document (t) && !is_concat (t)) t= tree (CONCAT, t);
   for (int i=0; i<N(t); i++)
     if (is_tuple (t[i], "\\institution", 1) ||
@@ -216,7 +217,7 @@ get_acm_affiliation (tree t) {
       if (N(r) != 0) r << "\\newline";
       r << t[i][1];
     }
-  if (N(r) == 0) r << "";
+  if (N(r) == 0) return orig;
   return r;
 }
 

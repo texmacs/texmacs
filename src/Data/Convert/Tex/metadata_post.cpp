@@ -294,19 +294,21 @@ clean_doc_data (tree t) {
 static void
 explode_affiliation (tree t, array<tree>& affs) {
   //cout << "Explode affiliation " << t << LF;
-  if (is_atomic (t)) { affs << t; return; }
-  int i= 0, n= N(t);
-  while (i<n) {
-    tree aff (CONCAT);
+  if (is_concat (t)) {
+    int i= 0, n= N(t);
     while (i<n) {
-      if ((L(t[i]) == NEXT_LINE || L(t[i]) == NEW_LINE) &&
-          i+1<n && is_reference (t[i+1], false))
-        break;
-      else aff << t[i++];
+      tree aff (CONCAT);
+      while (i<n) {
+        if ((L(t[i]) == NEXT_LINE || L(t[i]) == NEW_LINE) &&
+            i+1<n && is_reference (t[i+1], false))
+          break;
+        else aff << t[i++];
+      }
+      if (N(aff) > 0) affs << simplify_concat (aff);
+        if (i<n) i++;
     }
-    if (N(aff) > 0) affs << simplify_concat (aff);
-    if (i<n) i++;
   }
+  else affs << t;
 }
 
 static bool
@@ -576,13 +578,13 @@ merge_duplicates_sub (tree t) {
   for (int i=0; i<N(t); i++) {
     bool found= false;
     if (!is_author_without_name (t[i]) || !is_author_with_affiliation (t[i]))
-      for (int j=0; j<N(r) && !found; j++)
+      for (int j=i+1; j<N(t) && !found; j++)
         if (t[j] == t[i]) found= true;
     if (!found) r << t[i];
   }
   return r;
 }
-    
+
 static tree
 merge_duplicates (tree orig) {
   tree t= merge_duplicates_sub (remove_author_less (orig));
