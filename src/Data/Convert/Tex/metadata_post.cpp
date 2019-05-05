@@ -681,8 +681,11 @@ expand_emails (tree t) {
             repl << s (next, N(s));
             s= repl;
           }
+          while (ends (s, ",") || ends (s, ")") ||
+                 ends (s, ".") || ends (s, " "))
+            s= s (0, N(s)-1);
           array<string> b= tokenize (s, ",");
-          if (N(b) <= 1) v << u[j];
+          if (N(b) <= 1) v << compound ("author-email", s);
           else emails << b;
         }
         else v << u[j];
@@ -967,46 +970,55 @@ attach_pending (tree orig) {
 
 static tree
 clean_line_breaks_sub (tree t) {
-  if (!is_concat (t)) return t;
   tree r (DOCUMENT);
-  tree c (CONCAT);
-  for (int i=0; i<N(t); i++) {
-    if (is_func (t[i], NEXT_LINE, 0)) {
-      if (i>0 && is_atomic (t[i-1]) &&
-          (ends (t[i-1]->label, ",") || ends (t[i-1]->label, ";")))
-        c << " ";
-      else {
-        if (N(c) > 0) r << simplify_concat (c);
-        c= tree (CONCAT);
+  if (is_document (t)) r= copy (t);
+  else {
+    if (!is_concat (t)) t= tree (CONCAT, t);
+    tree c (CONCAT);
+    for (int i=0; i<N(t); i++) {
+      if (is_func (t[i], NEXT_LINE, 0)) {
+        if (i>0 && is_atomic (t[i-1]) &&
+            (ends (t[i-1]->label, ",") || ends (t[i-1]->label, ";")))
+          c << " ";
+        else {
+          if (N(c) > 0) r << simplify_concat (c);
+          c= tree (CONCAT);
+        }
+      }
+      else c << t[i];
+    }
+    if (N(c) > 0) r << simplify_concat (c);
+  }
+  for (int i=0; i<N(r); i++) {
+    if (!is_concat (r[i])) r[i]= tree (CONCAT, r[i]);
+    for (int j=0; j<N(r[i]); j++) {
+      if (j == 0 && is_atomic (r[i][j])) {
+        string s= r[i][j]->label;
+        while (starts (s, " ") || starts (s, ",") || starts (s, ";") ||
+               starts (s, ")") || starts (s, "]") || starts (s, "}"))
+          s= s (1, N(s));
+        r[i][j]= s;
+      }
+      if (j == N(r[i])-1 && is_atomic (r[i][j])) {
+        string s= r[i][j]->label;
+        while (ends (s, " ") || ends (s, ",") || ends (s, ";") ||
+               ends (s, "(") || ends (s, "{") || ends (s, "["))
+          s= s (0, N(s)-1);
+        r[i][j]= s;
+      }
+      if (is_atomic (r[i][j])) {
+        string s= r[i][j]->label;
+        s= replace (s, ",   ", ", ");
+        s= replace (s, ";   ", "; ");
+        s= replace (s, ",  ", ", ");
+        s= replace (s, ";  ", "; ");
+        s= replace (s, ",,", ",");
+        s= replace (s, "  ,", ",");
+        s= replace (s, " ,", ",");
+        r[i][j]= s;
       }
     }
-    else c << t[i];
-  }
-  if (N(c) > 0) r << simplify_concat (c);
-  for (int i=0; i<N(r); i++) {
-    if (i == 0 && is_atomic (r[i])) {
-      string s= r[i]->label;
-      while (starts (s, " ") || starts (s, ",") || starts (s, ";"))
-        s= s (1, N(s));
-      r[i]= s;
-    }
-    if (i == N(r)-1 && is_atomic (r[i])) {
-      string s= r[i]->label;
-      while (ends (s, " ") || ends (s, ",") || ends (s, ";"))
-        s= s (0, N(s)-1);
-      r[i]= s;
-    }
-    if (is_atomic (r[i])) {
-      string s= r[i]->label;
-      s= replace (s, ",   ", ", ");
-      s= replace (s, ";   ", "; ");
-      s= replace (s, ",  ", ", ");
-      s= replace (s, ";  ", "; ");
-      s= replace (s, ",,", ",");
-      s= replace (s, "  ,", ",");
-      s= replace (s, " ,", ",");
-      r[i]= s;
-    }
+    r[i]= simplify_concat (r[i]);
   }
   tree u (DOCUMENT);
   for (int i=0; i<N(r); i++)
