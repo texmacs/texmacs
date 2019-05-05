@@ -1154,6 +1154,7 @@ latex_symbol_to_tree (string s) {
       if (s == "begin-corr") return tree (BEGIN, "corollary");
       if (s == "begin-dem") return tree (BEGIN, "proof");
       if (s == "begin-preuve") return tree (BEGIN, "proof");
+      if (s == "begin-IEEEproof") return tree (BEGIN, "proof");
       if (s == "begin-ax") return tree (BEGIN, "axiom");
       if (s == "begin-def") return tree (BEGIN, "definition");
       if (s == "begin-dfn") return tree (BEGIN, "definition");
@@ -1182,6 +1183,7 @@ latex_symbol_to_tree (string s) {
       if (s == "end-corr") return tree (END, "corollary");
       if (s == "end-dem") return tree (END, "proof");
       if (s == "end-preuve") return tree (END, "proof");
+      if (s == "end-IEEEproof") return tree (END, "proof");
       if (s == "end-ax") return tree (END, "axiom");
       if (s == "end-def") return tree (END, "definition");
       if (s == "end-dfn") return tree (END, "definition");

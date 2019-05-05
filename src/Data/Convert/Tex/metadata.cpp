@@ -367,8 +367,9 @@ collect_metadata (tree t, tree latex_class) {
            is_tuple (latex_class, "\\documentstyle*", 2))
     s = latex_verbarg_to_string (latex_class[2]);
 
-  if (s == "acm_proc_article-sp" ||
-      s == "sig-alternate" || s == "sig-alt-full")
+  if (starts (s, "acm_proc_article-sp") ||
+      starts (s, "sig-alternate") ||
+      starts (s, "sig-alt-full"))
     r= collect_metadata_acm_old (t);
   else if (s == "acmart" || s == "acmsmall" || s == "acmlarge" ||
            s == "acmtog" || s == "sigconf" || s == "sigchi" || s == "sigplan")
