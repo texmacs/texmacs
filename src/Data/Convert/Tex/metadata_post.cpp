@@ -707,10 +707,21 @@ match_email (string name, string email) {
   int pos= search_forwards ("@", email);
   if (pos < 0) return false;
   string email_name= email (0, pos);
-  //cout << "Check " << uni_unaccent_all (uni_locase_all (name))
-  //     << ", " << uni_unaccent_all (uni_locase_all (email_name)) << LF;
-  return occurs (uni_unaccent_all (uni_locase_all (name)),
-                 uni_unaccent_all (uni_locase_all (email_name)));
+  string n1= uni_unaccent_all (uni_locase_all (name));
+  string n2= uni_unaccent_all (uni_locase_all (email_name));
+  //string n1= uni_locase_all (name);
+  //string n2= uni_locase_all (email_name);
+  //cout << "Check " << n1 << ", " << n2 << LF;
+  return occurs (n1, n2);
+}
+
+static bool
+match_author_email (tree aut, string email) {
+  array<string> names;
+  fetch_names (get_author_name (aut), names);
+  for (int i=0; i<N(names); i++)
+    if (match_email (names[i], email)) return true;
+  return false;
 }
 
 static void
@@ -732,16 +743,66 @@ suppress_email (tree& t, string email) {
 }
 
 static tree
-attach_emails (tree t) {
-  tree r= copy (t);
+clean_emails (tree t) {
+  tree r (L(t));
+  for (int i=0; i<N(t); i++)
+    if (t[i] != compound ("doc-author", compound ("author-data")))
+      r << t[i];
+  return r;
+}
 
-  // First find emails that "match" author names
+static tree
+attach_emails_in_order (tree t, bool strict) {
+  tree r= copy (t);
+  for (int i=0; i<N(t); )
+    if (is_author_with_name (t[i])) {
+      array<int> inds;
+      int j, k;
+      for (j= i; j < N(t); j++)
+        if (is_author_with_name (t[j])) {
+          if (is_author_without_email (t[j])) inds << j; }
+        else if (is_author_without_name (t[j])) break;
+      array<string> emails;
+      for (k= j; k < N(t); k++)
+        if (is_author_with_name (t[k])) break;
+        else if (is_author_without_name (t[k]))
+          fetch_emails (t[k][0], emails);
+      if (N(inds) == N(emails) && N(inds) > 0) {
+        bool ok= true;
+        if (strict) {
+          array<bool> done;
+          for (int l=0; l<N(inds); l++)
+            done << match_author_email (t[inds[l]], emails[l]);
+          for (int l=0; l<N(inds); l++)
+            for (int m=0; m<N(inds); m++)
+              if (!done[l] && !done[m] && m != l)
+                if (match_author_email (t[inds[l]], emails[m]))
+                  ok= false;
+        }
+        if (ok) {
+          if (N(inds) > N(emails))
+            inds= range (inds, N(inds)-N(emails), N(inds));
+          for (int l=0; l<N(emails); l++) {
+            int m= inds[min (N(inds)-1, l)];
+            r[m][0] << compound ("author-email", emails[l]);
+            for (int n= j; n < k; n++)
+              if (is_author_without_name (r[n]))
+                suppress_email (r[n][0], emails[l]);
+          }
+        }
+      }
+      i= k;
+    }
+    else i++;
+  return clean_emails (r);
+}
+
+static tree
+attach_emails_by_name (tree t) {
+  tree r= copy (t);
   for (int i=0; i<N(r); i++)
     if (is_author_with_name (r[i]) && is_author_without_email (r[i])) {
-      tree name;
-      for (int k=0; k<N(r[i][0]); k++)
-        if (is_compound (r[i][0][k], "author-name", 1))
-          name= r[i][0][k][0];
+      tree name= get_author_name (r[i]);
       array<string> names;
       fetch_names (name, names);
       for (int j=i+1; j<N(r); j++)
@@ -760,29 +821,15 @@ attach_emails (tree t) {
           if (found) break;
         }
     }
+  return clean_emails (r);
+}
 
-  // Next treat remaining pending emails
-  int last_author= -1;
-  for (int i=0; i<N(r); i++)
-    if (is_author_with_name (r[i])) {
-      if (is_author_without_email (r[i])) last_author= i;
-    }
-    else if (is_author_without_name (r[i])) {
-      array<string> emails;
-      fetch_emails (r[i][0], emails);
-      for (int k=0; k<N(emails); k++) {
-        suppress_email (r[i][0], emails[k]);
-        if (last_author != -1)
-          r[last_author][0] << compound ("author-email", emails[k]);
-      }
-    }
-
-  // Cleaning empty fields
-  tree ret (L(r));
-  for (int i=0; i<N(r); i++)
-    if (r[i] != compound ("doc-author", compound ("author-data")))
-      ret << r[i];
-  return ret;
+static tree
+attach_emails (tree t) {
+  tree r= attach_emails_in_order (t, true);
+  r= attach_emails_by_name (r);
+  r= attach_emails_in_order (r, false);
+  return r;
 }
 
 static tree
