@@ -681,11 +681,12 @@ expand_emails (tree t) {
             repl << s (next, N(s));
             s= repl;
           }
-          while (ends (s, ",") || ends (s, ")") ||
-                 ends (s, ".") || ends (s, " "))
-            s= s (0, N(s)-1);
           array<string> b= tokenize (s, ",");
-          if (N(b) <= 1) v << compound ("author-email", s);
+          for (int k=0; k<N(b); k++)
+            while (ends (b[k], ",") || ends (b[k], ")") ||
+                   ends (b[k], ".") || ends (b[k], " "))
+              b[k]= b[k] (0, N(b[k])-1);
+          if (N(b) == 1) v << compound ("author-email", b[0]);
           else emails << b;
         }
         else v << u[j];
