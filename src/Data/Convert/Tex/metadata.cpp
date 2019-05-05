@@ -182,7 +182,11 @@ get_latex_author_datas (tree t) {
     else u= concat();
     if (i==n || is_tuple (u, "\\and")) {
       if (N(author_name) > 1) {
-        author_data << tree (APPLY, "\\author-name", author_name);
+        tree a (APPLY, "\\author-data");
+        a << tree (APPLY, "\\author-name", author_name);
+        for (int j=1; j<N(author_data); j++)
+          a << author_data[j];
+        author_data= a;
         author_name= tree (CONCAT);
       }
       if (N(author_data) > 1) {
@@ -192,14 +196,17 @@ get_latex_author_datas (tree t) {
     }
     else if (is_tuple (u, "\\thanks", 1))
       author_data << tree (APPLY, "\\author-misc", u[1]);
-    else if (is_tuple (u, "\\tmaffiliation", 1) ||
+    else if (is_tuple (u, "\\address", 1) ||       // take address if we can
+             is_tuple (u, "\\affiliation", 1) ||   // take address if we can
+             is_tuple (u, "\\tmaffiliation", 1) ||
              is_tuple (u, "\\tmfnaffiliation", 1))
       author_data << tree (APPLY, "\\author-affiliation", cltm (u[1]));
     else if (is_tuple (u, "\\tmmisc", 1))
       author_data << tree (APPLY, "\\author-misc", cltm (u[1]));
     else if (is_tuple (u, "\\tmnote", 1))
       author_data << tree (APPLY, "\\author-note", cltm (u[1]));
-    else if (is_tuple (u, "\\tmemail", 1) ||
+    else if (is_tuple (u, "\\email", 1) ||         // take email if we can
+             is_tuple (u, "\\tmemail", 1) ||
              is_tuple (u, "\\tmfnemail", 1))
       author_data << tree (APPLY, "\\author-email", cltm (u[1]));
     else if (is_tuple (u, "\\tmhomepage", 1) ||
@@ -228,6 +235,14 @@ collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree)) {
     }
     else if (is_tuple (u, "\\author", 1)  || is_tuple (u, "\\author*", 2)) {
       array<tree> author_datas= (*get_author_datas) (u[1]);
+      for (int j=0; j<N(author_datas); j++)
+        doc_data << tree (APPLY, "\\doc-author", author_datas[j]);
+    }
+    else if (is_tuple (u, "\\address", 1) ||
+             is_tuple (u, "\\affiliation", 1) ||
+             is_tuple (u, "\\email", 1)) {
+      // Take addresses and emails whenever possible
+      array<tree> author_datas= (*get_author_datas) (tree (CONCAT, u));
       for (int j=0; j<N(author_datas); j++)
         doc_data << tree (APPLY, "\\doc-author", author_datas[j]);
     }
@@ -370,7 +385,7 @@ collect_metadata (tree t, tree latex_class) {
     r= collect_metadata_ieee (t);
   else
     r << collect_metadata_latex (t);
-  r=  unconcat_tmseps (r);
+  r= unconcat_tmseps (r);
   r= filter_spaces (r, spaced);
   return r;
 }
