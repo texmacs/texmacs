@@ -349,13 +349,17 @@ explode_author (tree t, array<tree>& auts, array<tree>& affs) {
       while (s != "") {
         int pos= search_forwards (",", s);
         if (pos < 0) pos= search_forwards (" and ", s);
+        if (pos < 0) pos= search_forwards (" & ", s);
         if (pos < 0 && test (s, 0, "and ")) pos= 0;
+        if (pos < 0 && test (s, 0, "& ")) pos= 0;
         if (pos >= 0) {
           if (pos > 0) aut << tree (s (0, pos));
           add_author (auts, aut);
           if (test (s, pos, ",")) pos++;
           if (test (s, pos, " and ")) pos += 5;
+          if (test (s, pos, " & ")) pos += 3;
           if (test (s, pos, "and ")) pos += 4;
+          if (test (s, pos, "& ")) pos += 2;
           while (test (s, pos, " ")) pos++;
           s= s (pos, N(s));
           continue;
