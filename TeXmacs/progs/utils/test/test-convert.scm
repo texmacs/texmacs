@@ -201,6 +201,11 @@
           (set! current-save-target tex-file)
           (export-buffer-main (current-buffer) tex-file "latex" opts))))))
 
+(define (has-documentclass? u)
+  (with s (string-load u)
+    (or (string-occurs? "\\documentclass" s)
+        (string-occurs? "\\documentstyle" s))))
+
 (define (test-latex-file x dir)
   ;;(display* "-- test-latex-file " x ", " dir "\n")
   (when (string-ends? x ".tex")
@@ -211,6 +216,11 @@
            (tm-file (url-append dir (string-append root ".tm")))
            (pdf-file (url-append dir (string-append root ".pdf")))
            (opts (list :overwrite)))
+      (when (> (length u2) 1)
+        (with fu2 (list-filter u2 has-documentclass?)
+          (when (and (== (length fu2) 1)
+                     (== (url->string (url-tail (car fu2))) x))
+            (set! u2 fu2))))
       (when (or (== (length u2) 1)
                 (in? x (list "main.tex" "paper.tex" "article.tex")))
         (when (should-update? tex-file tm-file)
