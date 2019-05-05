@@ -101,6 +101,9 @@ get_ieee_author_datas (tree t, string s) {
       }
       author_name= tree (CONCAT);
     }
+    else if (is_tuple (u, "\\tmaffiliation", 1)) {
+      author_data << tree (APPLY, "\\author-affiliation", u[1]);
+    }
     else if (is_tuple (u, "\\tmmisc", 1)) {
       author_data << tree (APPLY, "\\author-misc", u[1]);
     }
