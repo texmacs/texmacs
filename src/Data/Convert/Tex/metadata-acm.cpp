@@ -260,7 +260,7 @@ collect_metadata_acm (tree t) {
           author_datas << tree (APPLY, "\\author-note", t[i++][1]);
         else if (is_tuple (t[i], "\\email", 1))
           author_datas << tree (APPLY, "\\author-email", t[i++][1]);
-        else if (t[i] == "" || t[i] == " ")
+        else if (is_atomic (t[i]) && is_whitespace (t[i]->label))
           i++;
         else break;
       }

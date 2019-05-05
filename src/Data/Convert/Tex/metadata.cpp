@@ -206,6 +206,7 @@ get_latex_author_datas (tree t) {
     else if (is_tuple (u, "\\tmnote", 1))
       author_data << tree (APPLY, "\\author-note", cltm (u[1]));
     else if (is_tuple (u, "\\email", 1) ||         // take email if we can
+             is_tuple (u, "\\ead", 1) ||           // take email if we can
              is_tuple (u, "\\tmemail", 1) ||
              is_tuple (u, "\\tmfnemail", 1))
       author_data << tree (APPLY, "\\author-email", cltm (u[1]));
@@ -240,7 +241,8 @@ collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree)) {
     }
     else if (is_tuple (u, "\\address", 1) ||
              is_tuple (u, "\\affiliation", 1) ||
-             is_tuple (u, "\\email", 1)) {
+             is_tuple (u, "\\email", 1) ||
+             is_tuple (u, "\\ead", 1)) {
       // Take addresses and emails whenever possible
       array<tree> author_datas= (*get_author_datas) (tree (CONCAT, u));
       for (int j=0; j<N(author_datas); j++)

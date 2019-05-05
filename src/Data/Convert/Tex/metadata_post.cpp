@@ -105,13 +105,6 @@ is_author_without_email (tree t) {
   return true;
 }
 
-static bool
-is_whitespace (string s) {
-  for (int i=0; i<N(s); i++)
-    if (s[i] != ' ') return false;
-  return true;
-}
-
 /******************************************************************************
 * Preprocessing
 ******************************************************************************/

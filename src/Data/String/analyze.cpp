@@ -1076,6 +1076,13 @@ read_double (string s, int& i, double& result) {
   return true;
 }
 
+bool
+is_whitespace (string s) {
+  for (int i=0; i<N(s); i++)
+    if (s[i] != ' ' && s[i] != '\t' && s[i] != '\n') return false;
+  return true;
+}
+
 void
 skip_spaces (string s, int& i) {
   int n=N(s);
