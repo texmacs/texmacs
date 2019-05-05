@@ -79,17 +79,26 @@ add_llncs_author_datas (tree author, array<tree> author_affs) {
 
 static array<tree>
 merge_llncs_author_datas (array<tree> authors, array<tree> affs) {
-  array<tree> r, author_affs;
+  bool simple= true;
+  for (int i=0; i<N(authors); i++)
+    for (int j=1; j<N(authors[i]); j++)
+      if (is_apply (authors[i][j], "\\author-inst", 1))
+        simple= false;
+  array<tree> r;
   for (int i=0; i<N(authors); i++) {
-    author_affs= array<tree>();
-    for (int j=1; j<N(authors[i]); j++) {
-      if (is_apply (authors[i][j], "\\author-inst", 1)) {
-        int n= as_int (as_string (authors[i][j][1]));
-        if (n>0 && n<=N(affs))
-          author_affs << affs[n-1];
+    if (simple)
+      r << add_llncs_author_datas (authors[i], affs);
+    else {
+      array<tree> author_affs;
+      for (int j=1; j<N(authors[i]); j++) {
+        if (is_apply (authors[i][j], "\\author-inst", 1)) {
+          int n= as_int (as_string (authors[i][j][1]));
+          if (n>0 && n<=N(affs))
+            author_affs << affs[n-1];
+        }
       }
+      r << add_llncs_author_datas (authors[i], author_affs);
     }
-    r << add_llncs_author_datas (authors[i], author_affs);
   }
   return r;
 }
