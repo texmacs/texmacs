@@ -198,6 +198,7 @@ get_latex_author_datas (tree t) {
       author_data << tree (APPLY, "\\author-misc", u[1]);
     else if (is_tuple (u, "\\address", 1) ||       // take address if we can
              is_tuple (u, "\\affiliation", 1) ||   // take address if we can
+             is_tuple (u, "\\institute", 1) ||     // take address if we can
              is_tuple (u, "\\tmaffiliation", 1) ||
              is_tuple (u, "\\tmfnaffiliation", 1))
       author_data << tree (APPLY, "\\author-affiliation", cltm (u[1]));
@@ -241,6 +242,7 @@ collect_metadata_latex (tree t, array<tree>(*get_author_datas)(tree)) {
     }
     else if (is_tuple (u, "\\address", 1) ||
              is_tuple (u, "\\affiliation", 1) ||
+             is_tuple (u, "\\institute", 1) ||
              is_tuple (u, "\\email", 1) ||
              is_tuple (u, "\\ead", 1)) {
       // Take addresses and emails whenever possible
