@@ -2106,6 +2106,7 @@ is_vspace (tree t, bool eat) {
 
 static tree
 clean_space_right (tree c) {
+  if (N(c) == 0) return "";
   if (is_atomic (c[N(c)-1]))
     c[N(c)-1]= trim_spaces_right (c[N(c)-1]->label);
   if (c[N(c)-1] == "")
