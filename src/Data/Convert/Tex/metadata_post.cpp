@@ -116,6 +116,49 @@ is_whitespace (string s) {
 * Preprocessing
 ******************************************************************************/
 
+static string
+replace_email_prefix (string s) {
+  s= replace (s, "mail :", "mail:");
+  s= replace (s, "Email", "email");
+  s= replace (s, "e-mail", "email");
+  s= replace (s, "E-mail", "email");
+  s= replace (s, "address :", "address:");
+  s= replace (s, "email addresses", "email");
+  s= replace (s, "email address", "email");
+  return s;
+}
+
+static tree
+tag_email (string s) {
+  s= replace_email_prefix (s);
+  int pos= search_forwards ("email:", s);
+  if (pos >= 0) {
+    int start= pos + 6;
+    while (start<N(s) && s[start] == ' ') start++;
+    int end= start;
+    while (true) {
+      int prev= end;
+      while (end < N(s) && (s[end] == ' ' || s[end] == ',')) end++;
+      for (; end < N(s); end++)
+        if (s[end] == '{')
+          while (end < N(s) && s[end] != '}') end++;
+        else if (s[end] == ' ' || s[end] == ',') break;
+      if (!occurs ("@", s (prev, end))) {
+        end= prev;
+        break;
+      }
+    }
+    if (occurs ("@", s (start, end))) {
+      string ss= s (start, end);
+      while (ends (ss, ".")) ss= ss (0, N(ss)-1);
+      tree it (WITH, FONT_FAMILY, "tt", ss);
+      tree cc (CONCAT, s (0, start), it, s (end, N(s)));
+      return simplify_concat (cc);
+    }
+  }
+  return s;
+}
+
 static tree
 cleanup (tree t) {
   if (is_document (t)) {
@@ -130,47 +173,15 @@ cleanup (tree t) {
   for (int i=0; i<N(t); i++)
     if (is_atomic (t[i])) {
       string s= t[i]->label;
-      s= replace (s, "mail :", "mail:");
-      s= replace (s, "Email", "email");
-      s= replace (s, "e-mail", "email");
-      s= replace (s, "E-mail", "email");
-      s= replace (s, "address :", "address:");
-      s= replace (s, "email addresses", "email");
-      s= replace (s, "email address", "email");
-      int pos= search_forwards ("email:", s);
-      if (pos >= 0) {
-        int start= pos + 6;
-        while (start<N(s) && s[start] == ' ') start++;
-        int end= start;
-        while (true) {
-          int prev= end;
-          while (end < N(s) && (s[end] == ' ' || s[end] == ',')) end++;
-          for (; end < N(s); end++)
-            if (s[end] == '{')
-              while (end < N(s) && s[end] != '}') end++;
-            else if (s[end] == ' ' || s[end] == ',') break;
-          if (!occurs ("@", s (prev, end))) {
-            end= prev;
-            break;
-          }
-        }
-        if (occurs ("@", s (start, end))) {
-          string ss= s (start, end);
-          while (ends (ss, ".")) ss= ss (0, N(ss)-1);
-          tree it (WITH, FONT_FAMILY, "tt", ss);
-          tree cc (CONCAT, s (0, start), it, s (end, N(s)));
-          r << simplify_concat (cc);
-          continue;
-        }
-      }
-      r << tree (s);
+      if (N(r) == 0)
+        while (starts (s, " "))
+          s= s (1, N(s));
+      r << tag_email (s);
     }
     else if (is_func (t[i], VSPACE));
     else if (is_func (t[i], VAR_VSPACE));
     else if (is_compound (t[i], "no-indent", 0));
     else if (is_compound (t[i], "nbsp", 0)) r << tree (" ");
-    else if (is_func (t[i], WITH, 3) && t[i][0] == FONT_SIZE)
-      r << cleanup (t[i][2]);
     else if (is_func (t[i], WITH, 3) &&
              t[i][0] == FONT_FAMILY && t[i][1] == "tt") {
       tree c= copy (t[i]);
@@ -186,9 +197,17 @@ cleanup (tree t) {
       c[2]= b;
       r << c;
     }
+    else if (is_func (t[i], WITH, 3) && t[i][0] == FONT_SIZE)
+      r << cleanup (t[i][2]);
+    else if (is_func (t[i], WITH, 3) && t[i][0] == FONT_SERIES)
+      r << cleanup (t[i][2]);
     else if (is_func (t[i], WITH, 5) && t[i][0] == FONT_SIZE)
       r << cleanup (tree (WITH, t[i][2], t[i][3], t[i][4]));
     else if (is_func (t[i], WITH, 5) && t[i][2] == FONT_SIZE)
+      r << cleanup (tree (WITH, t[i][0], t[i][1], t[i][4]));
+    else if (is_func (t[i], WITH, 5) && t[i][0] == FONT_SERIES)
+      r << cleanup (tree (WITH, t[i][2], t[i][3], t[i][4]));
+    else if (is_func (t[i], WITH, 5) && t[i][2] == FONT_SERIES)
       r << cleanup (tree (WITH, t[i][0], t[i][1], t[i][4]));
     else if (is_func (t[i], WITH)) {
       tree c= copy (t[i]);
@@ -419,6 +438,7 @@ rewrite_footnote (tree note) {
   for (int i=0; i<N(note); i++)
     if (is_atomic (note[i])) {
       string s= note[i]->label;
+      s= replace_email_prefix (s);
       if (i+1<N(note) && is_tt (note[i+1])) {
         while (ends (s, " ")) s= s (0, N(s)-1);
         while (ends (s, ":")) s= s (0, N(s)-1);
@@ -432,7 +452,7 @@ rewrite_footnote (tree note) {
         while (starts (s, ",")) s= s (1, N(s));
         while (starts (s, " ")) s= s (1, N(s));
       }
-      rew << tree (s);
+      rew << tag_email (s);
     }
     else if (is_tt (note[i])) {
       tree v= get_tt (note[i]);
@@ -591,6 +611,7 @@ extract_emails (tree& t, array<tree>& emails) {
       if (is_atomic (u) && occurs ("@", u->label)) {
         emails << compound ("author-email", u);
         t[i]= "";
+        bool removed_space = false;
         bool removed_before= false;
         if (i>0) {
           if (is_atomic (t[i-1])) {
@@ -598,9 +619,9 @@ extract_emails (tree& t, array<tree>& emails) {
             while (ends (s, " ")) s= s (0, N(s)-1);
             if (ends (s, "email:")) s= s (0, N(s)-6);
             if (ends (s, "Email:")) s= s (0, N(s)-6);
-            while (ends (s, " ")) s= s (0, N(s)-1);
+            while (ends (s, " ")) { s= s (0, N(s)-1); removed_space= true; }
             while (ends (s, ",")) { s= s (0, N(s)-1); removed_before= true; }
-            while (ends (s, " ")) s= s (0, N(s)-1);
+            while (ends (s, " ")) { s= s (0, N(s)-1); removed_space= true; }
             t[i-1]= s;
           }
           else if (is_func (t[i-1], NEXT_LINE, 0)) {
@@ -611,13 +632,16 @@ extract_emails (tree& t, array<tree>& emails) {
         if (i+1<N(t) && !removed_before) {
           if (is_atomic (t[i+1])) {
             string s= t[i+1]->label;
-            while (starts (s, " ")) s= s (1, N(s));
+            if (!removed_space)
+              while (starts (s, " ")) s= s (1, N(s));
             while (starts (s, ",")) s= s (1, N(s));
-            while (starts (s, " ")) s= s (1, N(s));
+            if (!removed_space)
+              while (starts (s, " ")) s= s (1, N(s));
             t[i+1]= s;
           }
           else if (is_func (t[i+1], NEXT_LINE, 0)) t[i+1]= "";
         }
+        //cout << "Removed " << t[i-1] << ", " << t[i] << ", " << t[i+1] << LF;
       }
     }
   t= simplify_concat (t);
@@ -636,6 +660,7 @@ expand_emails (tree t) {
         if (is_compound (u[j], "author-email", 1) &&
             is_atomic (u[j][0])) {
           string s= u[j][0]->label;
+          s= replace (s, ";", ",");
           s= replace (s, ", ", ",");
           s= replace (s, " ,", ",");
           while (true) {
@@ -937,6 +962,80 @@ attach_pending (tree orig) {
 }
 
 /******************************************************************************
+* Final cleaning
+******************************************************************************/
+
+static tree
+clean_line_breaks_sub (tree t) {
+  if (!is_concat (t)) return t;
+  tree r (DOCUMENT);
+  tree c (CONCAT);
+  for (int i=0; i<N(t); i++) {
+    if (is_func (t[i], NEXT_LINE, 0)) {
+      if (i>0 && is_atomic (t[i-1]) &&
+          (ends (t[i-1]->label, ",") || ends (t[i-1]->label, ";")))
+        c << " ";
+      else {
+        if (N(c) > 0) r << simplify_concat (c);
+        c= tree (CONCAT);
+      }
+    }
+    else c << t[i];
+  }
+  if (N(c) > 0) r << simplify_concat (c);
+  for (int i=0; i<N(r); i++) {
+    if (i == 0 && is_atomic (r[i])) {
+      string s= r[i]->label;
+      while (starts (s, " ") || starts (s, ",") || starts (s, ";"))
+        s= s (1, N(s));
+      r[i]= s;
+    }
+    if (i == N(r)-1 && is_atomic (r[i])) {
+      string s= r[i]->label;
+      while (ends (s, " ") || ends (s, ",") || ends (s, ";"))
+        s= s (0, N(s)-1);
+      r[i]= s;
+    }
+    if (is_atomic (r[i])) {
+      string s= r[i]->label;
+      s= replace (s, ",   ", ", ");
+      s= replace (s, ";   ", "; ");
+      s= replace (s, ",  ", ", ");
+      s= replace (s, ";  ", "; ");
+      s= replace (s, ",,", ",");
+      s= replace (s, "  ,", ",");
+      s= replace (s, " ,", ",");
+      r[i]= s;
+    }
+  }
+  tree u (DOCUMENT);
+  for (int i=0; i<N(r); i++)
+    if (r[i] != "")
+      u << r[i];
+  r= u;
+  if (N(r) == 0) r= "";
+  else if (N(r) == 1) r= r[0];
+  return r;
+}
+
+static tree
+clean_line_breaks (tree t) {
+  if (is_atomic (t)) return t;
+  else if (is_compound (t, "author-affiliation", 1))
+    return compound ("author-affiliation", clean_line_breaks_sub (t[0]));
+  else if (is_compound (t, "author-note", 1))
+    return compound ("author-note", clean_line_breaks_sub (t[0]));
+  else if (is_compound (t, "author-misc", 1))
+    return compound ("author-misc", clean_line_breaks_sub (t[0]));
+  else {
+    tree r (L(t), N(t));
+    for (int i=0; i<N(t); i++)
+      r[i]= clean_line_breaks (t[i]);
+    return r;
+  }
+}
+
+/******************************************************************************
 * Main routines
 ******************************************************************************/
 
@@ -965,7 +1064,10 @@ postprocess_metadata (tree t) {
     //cout << HRULE;
     //cout << "Final cleaning " << t6 << LF;
     tree t7= clean_doc_data (t6);
-    return t7;
+    //cout << HRULE;
+    //cout << "Final cleaning bis " << t7 << LF;
+    tree t8= clean_line_breaks (t7);
+    return t8;
   }
   else {
     tree r (L(t), N(t));
