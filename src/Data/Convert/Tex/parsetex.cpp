@@ -1612,10 +1612,15 @@ accented_to_Cork (tree t) {
     else {
       char c1= v[0], c2= s[1];
       if (v == "\\i") c1= 'i';
-      if ((N(v)==1) || (v=="\\i"))
+      if ((N(v)==1) || (v=="\\i")) {
 	for (i=0; i<127; i++)
 	  if ((Cork_unaccented[i]==c1) && (Cork_accent[i]==c2))
 	    return tree (string ((char) (i+128)));
+        if (c1 == 'A' && c2 == 'c') return "<#104>";
+        if (c1 == 'a' && c2 == 'c') return "<#105>";
+        if (c1 == 'E' && c2 == 'c') return "<#118>";
+        if (c1 == 'e' && c2 == 'c') return "<#119>";
+      }
     }
   }
   return r;
