@@ -2338,11 +2338,13 @@ latex_to_tree (tree t0) {
   // cout << "\n\nt13= " << t13 << "\n\n";
   tree t14= guess_missing (t13);
   // cout << "\n\nt14= " << t14 << "\n\n";
-
+  tree t15= postprocess_metadata (t14);
+  // cout << "\n\nt15= " << t15 << "\n\n";
+  
   if (is_document) {
     tree the_version= compound ("TeXmacs", TEXMACS_VERSION);
     tree the_style  = compound ("style", tuple (style));
-    tree the_body   = compound ("body", t14);
+    tree the_body   = compound ("body", t15);
     if (textm_natbib)
       the_style= compound ("style", tuple (style, "cite-author-year"));
     if (style != "acmart" && style != "acmsmall" && style != "acmlarge" &&
@@ -2354,7 +2356,7 @@ latex_to_tree (tree t0) {
     // cout << "\n\nr= " << r << "\n\n";
     return r;
   }
-  else return t14;
+  else return t15;
 }
 
 tree

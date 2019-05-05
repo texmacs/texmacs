@@ -91,6 +91,7 @@ tree   try_latex_export (tree doc, object opts, url src, url dest);
 int    number_latex_errors (url log);
 tree   get_latex_errors (url log);
 int    number_latex_pages (url log);
+tree   postprocess_metadata (tree t);
 
 /*** Xml / Html / Mathml ***/
 string old_tm_to_xml_cdata (string s);
