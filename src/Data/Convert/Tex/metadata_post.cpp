@@ -591,18 +591,36 @@ extract_emails (tree& t, array<tree>& emails) {
       if (is_atomic (u) && occurs ("@", u->label)) {
         emails << compound ("author-email", u);
         t[i]= "";
-        if (i>0 && is_atomic (t[i-1])) {
-          string s= t[i-1]->label;
-          while (ends (s, " ")) s= s (0, N(s)-1);
-          if (ends (s, "email:")) s= s (0, N(s)-6);
-          if (ends (s, "Email:")) s= s (0, N(s)-6);
-          while (ends (s, " ")) s= s (0, N(s)-1);
-          while (ends (s, ",")) s= s (0, N(s)-1);
-          while (ends (s, " ")) s= s (0, N(s)-1);
-          t[i-1]= s;
+        bool removed_before= false;
+        if (i>0) {
+          if (is_atomic (t[i-1])) {
+            string s= t[i-1]->label;
+            while (ends (s, " ")) s= s (0, N(s)-1);
+            if (ends (s, "email:")) s= s (0, N(s)-6);
+            if (ends (s, "Email:")) s= s (0, N(s)-6);
+            while (ends (s, " ")) s= s (0, N(s)-1);
+            while (ends (s, ",")) { s= s (0, N(s)-1); removed_before= true; }
+            while (ends (s, " ")) s= s (0, N(s)-1);
+            t[i-1]= s;
+          }
+          else if (is_func (t[i-1], NEXT_LINE, 0)) {
+            t[i-1]= "";
+            removed_before= true;
+          }
+        }
+        if (i+1<N(t) && !removed_before) {
+          if (is_atomic (t[i+1])) {
+            string s= t[i+1]->label;
+            while (starts (s, " ")) s= s (1, N(s));
+            while (starts (s, ",")) s= s (1, N(s));
+            while (starts (s, " ")) s= s (1, N(s));
+            t[i+1]= s;
+          }
+          else if (is_func (t[i+1], NEXT_LINE, 0)) t[i+1]= "";
         }
       }
     }
+  t= simplify_concat (t);
 }
 
 static tree
