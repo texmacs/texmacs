@@ -90,11 +90,11 @@ get_ieee_author_datas (tree t, string s) {
     }
     else if (is_tuple (u, "\\IEEEauthorblockA", 1)) {
       tmp_a= get_ieee_author_datas (u[1], "\\author-affiliation");
-      if (N(tmp_n) == 1) {
-       for (int j=0; j<N(tmp_a); j++)
-         for (int k=0; k<N(tmp_a[j]); k++)
-         author_data << tmp_a[j][k];
-       tmp_n= array<tree>();
+      if (N(tmp_n) <= 1) {
+        for (int j=0; j<N(tmp_a); j++)
+          for (int k=0; k<N(tmp_a[j]); k++)
+            author_data << tmp_a[j][k];
+        tmp_n= array<tree>();
       }
       else {
         tmp_n= merge_author_datas (tmp_n, tmp_a);

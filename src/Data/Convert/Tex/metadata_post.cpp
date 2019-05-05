@@ -141,9 +141,19 @@ cleanup (tree t) {
       if (pos >= 0) {
         int start= pos + 6;
         while (start<N(s) && s[start] == ' ') start++;
-        int end;
-        for (end= start; end<N(s); end++)
-          if (s[end] == ' ' || s[end] == ',') break;
+        int end= start;
+        while (true) {
+          int prev= end;
+          while (end < N(s) && (s[end] == ' ' || s[end] == ',')) end++;
+          for (; end < N(s); end++)
+            if (s[end] == '{')
+              while (end < N(s) && s[end] != '}') end++;
+            else if (s[end] == ' ' || s[end] == ',') break;
+          if (!occurs ("@", s (prev, end))) {
+            end= prev;
+            break;
+          }
+        }
         if (occurs ("@", s (start, end))) {
           string ss= s (start, end);
           while (ends (ss, ".")) ss= ss (0, N(ss)-1);
