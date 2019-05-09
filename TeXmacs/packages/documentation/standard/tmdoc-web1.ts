@@ -21,6 +21,8 @@
     </src-license>
   </src-title>>
 
+  <assign|html-site-version|1>
+
   <\active*>
     <\src-comment>
       Bars with hyperlinks.

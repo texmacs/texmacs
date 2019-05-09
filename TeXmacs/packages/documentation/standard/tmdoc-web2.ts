@@ -20,6 +20,10 @@
     </src-license>
   </src-title>>
 
+  \;
+
+  <assign|html-site-version|2>
+
   <assign|html-css|../css/tmweb2.css>
 
   <\active*>

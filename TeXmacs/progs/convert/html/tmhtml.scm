@@ -34,6 +34,7 @@
 (define tmhtml-image-cache (make-ahash-table))
 (define tmhtml-image-root-url (unix->url "image"))
 (define tmhtml-image-root-string "image")
+(define tmhtml-site-version #f)
 
 (tm-define (tmhtml-initialize opts)
   (set! tmhtml-env (make-ahash-table))
@@ -184,6 +185,8 @@
 	 (css `(h:style (@ (type "text/css")) ,(tmhtml-css-header)))
 	 (xhead '())
 	 (body (tmhtml doc)))
+    (set! tmhtml-site-version
+          (with-extract doc "html-site-version"))
     (set! title
 	  (cond ((with-extract doc "html-title")
 		 (with-extract doc "html-title"))
@@ -1442,6 +1445,8 @@
 
 (define (tmhtml-implicit-compound l)
   (or (tmhtml-dispatch 'tmhtml-stdmarkup% l)
+      (and (!= tmhtml-site-version "2")
+           (tmhtml-dispatch 'tmhtml-tmdocmarkup% l))
       '()))
 
 (tm-define (tmhtml-root x)
@@ -1643,17 +1648,20 @@
   (html-javascript-src ,tmhtml-html-javascript-src)
   (html-video ,tmhtml-html-video)
   ;; tmdoc tags
+  (key ,tmhtml-key)
+  (hyper-link ,tmhtml-hyperlink))
+
+(logic-table tmhtml-tmdocmarkup%
+  ;; deprecated direct exports of tmdoc tags
   (tmdoc-title ,tmhtml-tmdoc-title)
   (tmdoc-title* ,tmhtml-tmdoc-title*)
   (tmdoc-title** ,tmhtml-tmdoc-title**)
   (tmdoc-flag ,tmhtml-tmdoc-flag)
   (tmdoc-copyright ,tmhtml-tmdoc-copyright)
-  (tmdoc-license ,tmhtml-tmdoc-license)
-  (key ,tmhtml-key)
-  (hyper-link ,tmhtml-hyperlink))
+  (tmdoc-license ,tmhtml-tmdoc-license))
 
-;;    (name (h:name)) ; not in HTML4
-;;    (person (h:person)))) ; not in HTML4
+;; (name (h:name)) ; not in HTML4
+;; (person (h:person)))) ; not in HTML4
 
 (logic-table tmhtml-with-cmd%
   ("mode" ,tmhtml-with-mode)
