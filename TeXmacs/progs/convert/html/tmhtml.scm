@@ -1300,14 +1300,6 @@
 ;; Tags for customized html generation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-html-div-style l)
-  (list `(h:div (@ (style ,(tmhtml-force-string (car l))))
-		,@(tmhtml (cadr l)))))
-
-(define (tmhtml-html-div-class l)
-  (list `(h:div (@ (class ,(tmhtml-force-string (car l))))
-		,@(tmhtml (cadr l)))))
-
 (define (tmhtml-append-attribute-sub l var val)
   (cond ((null? l) (list (list var val)))
 	((and (list-2? (car l)) (== (caar l) var) (string? (cadar l)))
@@ -1315,21 +1307,43 @@
 	(else (cons (car l) (tmhtml-append-attribute-sub (cdr l) var val)))))
 
 (define (tmhtml-append-attribute t var val)
-  (if (and (pair? t) (pair? (cdr t)) (list? t)
-	   (pair? (cadr t)) (== (caadr t) '@) (list? (cadr t)))
-      (with l (tmhtml-append-attribute-sub (cdadr t) var val)
-	`(,(car t) (@ ,@l) ,@(cddr t)))
-      `(font (@ (,var ,val)) ,t)))
+  (cond ((and (pair? t) (pair? (cdr t)) (list? t)
+              (pair? (cadr t)) (== (caadr t) '@) (list? (cadr t)))
+         (with l (tmhtml-append-attribute-sub (cdadr t) var val)
+           `(,(car t) (@ ,@l) ,@(cddr t))))
+        ((and (pair? t) (list? t))
+         `(,(car t) (@ (,var ,val)) ,@(cdr t)))
+        ((== var 'class) `(font (@ (,var ,val)) ,t))
+        (else `(class (@ (,var ,val)) ,t))))
+
+(define (tmhtml-html-tag l)
+  (let* ((s (tmhtml-force-string (car l)))
+         (r (tmhtml (cadr l))))
+    (list `(,(string->symbol s) ,@r))))
+
+(define (tmhtml-html-attr l)
+  (let* ((a (tmhtml-force-string (car l)))
+         (v (tmhtml-force-string (cadr l)))
+         (r (tmhtml (caddr l))))
+    (map (cut tmhtml-append-attribute <> a v) r)))
 
 (define (tmhtml-html-style l)
-  (let* ((r (tmhtml (cadr l)))
-	 (s (tmhtml-force-string (car l))))
+  (let* ((s (tmhtml-force-string (car l)))
+         (r (tmhtml (cadr l))))
     (map (cut tmhtml-append-attribute <> 'style s) r)))
 
 (define (tmhtml-html-class l)
-  (let* ((r (tmhtml (cadr l)))
-	 (s (tmhtml-force-string (car l))))
+  (let* ((s (tmhtml-force-string (car l)))
+         (r (tmhtml (cadr l))))
     (map (cut tmhtml-append-attribute <> 'class s) r)))
+
+(define (tmhtml-html-div-style l)
+  (list `(h:div (@ (style ,(tmhtml-force-string (car l))))
+		,@(tmhtml (cadr l)))))
+
+(define (tmhtml-html-div-class l)
+  (list `(h:div (@ (class ,(tmhtml-force-string (car l))))
+		,@(tmhtml (cadr l)))))
 
 (define (tmhtml-html-javascript l)
   (list `(h:script (@ (language "javascript"))
@@ -1640,6 +1654,8 @@
   (equations-base ,tmhtml-equation*)
   (wide-float tmhtml-float)
   ;; tags for customized html generation
+  (html-tag ,tmhtml-html-tag)
+  (html-attr ,tmhtml-html-attr)
   (html-div-style ,tmhtml-html-div-style)
   (html-div-class ,tmhtml-html-div-class)
   (html-style ,tmhtml-html-style)

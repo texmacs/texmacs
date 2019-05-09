@@ -28,77 +28,23 @@
 
   <\active*>
     <\src-comment>
-      Bars with hyperlinks.
+      Hyperlink menus
     </src-comment>
   </active*>
 
-  <assign|tmweb-current|<macro|main|sub|<assign|tmweb-main|<arg|main>><assign|tmweb-sub|<arg|sub>>>>
+  <assign|tmweb-link-item|<macro|body|<arg|body>>>
 
-  <assign|tmweb-suffix|<macro|<style-with|src-compact|none|<case|<equal|<language>|german>|.de.tm|<equal|<language>|french>|.fr.tm|<equal|<language>|italian>|.it.tm|<equal|<language>|portuguese>|.pt.tm|<equal|<language>|spanish>|.es.tm|.en.tm>>>>
+  <assign|tmweb-link-menu|<xmacro|args|<html-tag|nav|<map-args|tmweb-link-item|concat|args>>>>
 
-  <assign|tmweb-link|<macro|what|to|<style-with|src-compact|none|<hlink|<style-with|src-compact|none|<expand-as|<arg|what>|<style-with|src-compact|none|<with|color|<if|<or|<equal|<arg|what>|<tmweb-main>>|<equal|<arg|what>|<tmweb-sub>>>|dark
-  green|brown>|<translate|<arg|what>|english|<language>>>>>>|<style-with|src-compact|none|<if|<equal|<find-file|<merge|<arg|to>|<tmweb-suffix>>>|false>|<merge|<arg|to>|.en.tm>|<merge|<arg|to>|<tmweb-suffix>>>>>>>>
-
-  <assign|tmweb-list-extra|<macro|x| \| <arg|x>>>
-
-  <assign|tmweb-list|<xmacro|x| <arg|x|0><map-args|tmweb-list-extra|concat|x|1>
-  >>
-
-  <\active*>
-    <\src-comment>
-      Main navigation bar and the license for the <TeXmacs> web pages.
-    </src-comment>
-  </active*>
-
-  <assign|tmweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Home|../home/welcome>|<specific|texmacs|<tmweb-link|Download|../download/download>><specific|html|<merge|\<less\>script
-  language="javascript"\<gtr\>document.write (downloadButton
-  ("|<translate|Download|english|<language>>|",
-  "|<if|<or|<equal|Download|<tmweb-main>>|<equal|Download|<tmweb-sub>>>|#008000|brown>|"));\<less\>/script\<gtr\>>>|<tmweb-link|Help|../help/help>|<tmweb-link|Contribute|../contribute/contribute>|<tmweb-link|Plug-ins|../plugins/plugins>|<tmweb-link|About|../about/authors>|<tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<localize|Search>>|http://www.texmacs.org/search>>>>>
-
-  <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<tmweb-main-links>|<arg|title>|<arg|bar>>>>
-
-  <assign|tmweb-tmimage|<macro|<image|../images/TeXmacs.png|80px|80px||>>>
-
-  <assign|tmweb-title|<macro|title|bar|<html-div|tmweb-pad-below|<html-div|tmweb-header|<tabular|<tformat|<cwith|1|1|1|-1|cell-valign|c>|<table|<row|<cell|<tmweb-tmimage>>|<cell|<space|1em>>|<cell|<html-div|tmweb-title|<arg|title>>>|<cell|<space|1em>>|<cell|<arg|bar>>>>>>>>>>
-
-  <assign|tmweb-license|<\macro>
-    <\tmdoc-license>
-      <active*|<\with|color|dark grey|font-size|0.84>
-        This webpage is part of <hlink|GNU <TeXmacs>|http://www.texmacs.org>
-        and the larger <hlink|GNU project|http://www.gnu.org>. Verbatim
-        copying and distribution of it is permitted in any medium, provided
-        this notice is preserved. For more information or questions, please
-        contact <hlink|Joris van der Hoeven|http://www.texmacs.org/Web/Mail.html>.
-
-        <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
-        Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
-      </with>>
-    </tmdoc-license>
-  </macro>>
-
-  <assign|tmweb-license|<\macro>
-    <\html-div|tmweb-pad-above>
-      <\html-div|tmweb-footer>
-        <\small>
-          This webpage is part of <hlink|GNU
-          <TeXmacs>|http://www.texmacs.org> and the larger <hlink|GNU
-          project|http://www.gnu.org>. Verbatim copying and distribution of
-          it is permitted in any medium, provided this notice is preserved.
-          For more information or questions, please contact <hlink|Joris van
-          der Hoeven|http://www.texmacs.org/Web/Mail.html>.
-
-          <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
-          Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
-        </small>
-      </html-div>
-    </html-div>
-  </macro>>
+  <assign|tmweb-link-section|<xmacro|args|<html-tag|section|<html-tag|h1|<arg|args|0>><html-tag|nav|<map-args|tmweb-link-item|concat|args|1>>>>>
 
   <\active*>
     <\src-comment>
       Hard-coded hyperlinks. Argh, but well...
     </src-comment>
   </active*>
+
+  <assign|tmweb-top-links|<macro|<style-with|src-compact|none|<tmweb-link-menu|<hlink|About|../home/welcome.en.tm>|<hlink|Download|../download/download.en.tm>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute.en.tm>>>>>
 
   <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Videos|videos>|<tmweb-link|Screen
   shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing
@@ -126,6 +72,56 @@
   <assign|tmweb-manual-links|<macro|previous|next|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Manual|../help/manual>|<tmweb-link|Top|web-manual>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>>
 
   <assign|tmweb-tutorial-links|<macro|previous|next|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Tutorial|../help/tutorial>|<tmweb-link|Top|web-tutorial>|<tmweb-link|Previous|<arg|previous>>|<tmweb-link|Next|<arg|next>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Main navigation bar and the license for the <TeXmacs> web pages.
+    </src-comment>
+  </active*>
+
+  <assign|tmweb-main-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Home|../home/welcome>|<specific|texmacs|<tmweb-link|Download|../download/download>><specific|html|<merge|\<less\>script
+  language="javascript"\<gtr\>document.write (downloadButton
+  ("|<translate|Download|english|<language>>|",
+  "|<if|<or|<equal|Download|<tmweb-main>>|<equal|Download|<tmweb-sub>>>|#008000|brown>|"));\<less\>/script\<gtr\>>>|<tmweb-link|Help|../help/help>|<tmweb-link|Contribute|../contribute/contribute>|<tmweb-link|Plug-ins|../plugins/plugins>|<tmweb-link|About|../about/authors>|<tmweb-link|Contact|../contact/contact>|<hlink|<with|color|brown|<localize|Search>>|http://www.texmacs.org/search>>>>>
+
+  <assign|tmweb-title|<macro|title|bar|<tmdoc-title**|<tmweb-main-links>|<arg|title>|<arg|bar>>>>
+
+  <assign|tmweb-tmimage|<macro|<image|../images/TeXmacs.png|80px|80px||-0.25h>>>
+
+  <assign|tmweb-title|<macro|title|bar|<html-div-class|tmweb-pad-below|<html-div-class|tmweb-header|<html-class|tmweb-title-image|<tmweb-tmimage>><space|1em><html-class|tmweb-title|<arg|title>><space|1em><html-class|tmweb-top-menu|<tmweb-top-links>>>>>>
+
+  <assign|tmweb-license|<\macro>
+    <\tmdoc-license>
+      <active*|<\with|color|dark grey|font-size|0.84>
+        This webpage is part of <hlink|GNU <TeXmacs>|http://www.texmacs.org>
+        and the larger <hlink|GNU project|http://www.gnu.org>. Verbatim
+        copying and distribution of it is permitted in any medium, provided
+        this notice is preserved. For more information or questions, please
+        contact <hlink|Joris van der Hoeven|http://www.texmacs.org/Web/Mail.html>.
+
+        <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
+        Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
+      </with>>
+    </tmdoc-license>
+  </macro>>
+
+  <assign|tmweb-license|<\macro>
+    <\html-div-class|tmweb-pad-above>
+      <\html-div-class|tmweb-footer>
+        <\small>
+          This webpage is part of <hlink|GNU
+          <TeXmacs>|http://www.texmacs.org> and the larger <hlink|GNU
+          project|http://www.gnu.org>. Verbatim copying and distribution of
+          it is permitted in any medium, provided this notice is preserved.
+          For more information or questions, please contact <hlink|Joris van
+          der Hoeven|http://www.texmacs.org/Web/Mail.html>.
+
+          <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
+          Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
+        </small>
+      </html-div-class>
+    </html-div-class>
+  </macro>>
 
   <\active*>
     <\src-comment>

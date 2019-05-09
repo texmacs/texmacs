@@ -526,6 +526,10 @@
     </src-comment>
   </active*>
 
+  <assign|html-tag|<macro|name|body|<arg|body>>>
+
+  <assign|html-attr|<macro|attr|val|body|<arg|body>>>
+
   <assign|html-div-style|<macro|name|body|<arg|body>>>
 
   <assign|html-div-class|<macro|name|body|<arg|body>>>
