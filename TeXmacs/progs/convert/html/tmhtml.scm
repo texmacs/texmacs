@@ -148,16 +148,16 @@
 	  ".compact-block p { margin-top: 0px; margin-bottom: 0px } "
 	  ".left-tab { text-align: left } "
 	  ".center-tab { text-align: center } "
-          ".balloon-anchor { border-bottom: 1px dotted #000000; outline:none;"
-          "                  cursor: help; position: relative; }"
+          ".balloon-anchor { border-bottom: 1px dotted #000000; outline: none;"
+          " cursor: help; position: relative; } "
           ".balloon-anchor [hidden] { margin-left: -999em; position: absolute;"
-                                    " display: none; }"
-          ".balloon-anchor:hover [hidden] { position: absolute; left: 1em;"
-                                 " top: 2em; z-index: 99; margin-left: 0;"
-                                 " width: 500px; display: inline-block; }"
-          ".balloon-body { }"
-	  ".ornament  { border-width: 1px; border-style: solid; border-color: "
-                      " black; display: inline-block; padding: 0.2em; } "
+	  " display: none; } "
+          ".balloon-anchor: hover [hidden] { position: absolute; left: 1em;"
+	  " top: 2em; z-index: 99; margin-left: 0;"
+	  " width: 500px; display: inline-block; } "
+          ".balloon-body { } "
+	  ".ornament { border-width: 1px; border-style: solid;"
+	  " border-color: black; display: inline-block; padding: 0.2em; } "
 	  ".right-tab { float: right; position: relative; top: -1em } "))
 	(mathml "math { font-family: cmr, times, verdana } "))
     (if tmhtml-mathml? (string-append html mathml) html)))
@@ -1297,13 +1297,36 @@
 ;; Tags for customized html generation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tmhtml-html-div l)
+(define (tmhtml-html-div-style l)
+  (list `(h:div (@ (style ,(tmhtml-force-string (car l))))
+		,@(tmhtml (cadr l)))))
+
+(define (tmhtml-html-div-class l)
   (list `(h:div (@ (class ,(tmhtml-force-string (car l))))
 		,@(tmhtml (cadr l)))))
 
+(define (tmhtml-append-attribute-sub l var val)
+  (cond ((null? l) (list (list var val)))
+	((and (list-2? (car l)) (== (caar l) var) (string? (cadar l)))
+	 (cons (list var (string-append (cadar l) " " val)) (cdr l)))
+	(else (cons (car l) (tmhtml-append-attribute-sub (cdr l) var val)))))
+
+(define (tmhtml-append-attribute t var val)
+  (if (and (pair? t) (pair? (cdr t)) (list? t)
+	   (pair? (cadr t)) (== (caadr t) '@) (list? (cadr t)))
+      (with l (tmhtml-append-attribute-sub (cdadr t) var val)
+	`(,(car t) (@ ,@l) ,@(cddr t)))
+      `(font (@ (,var ,val)) ,t)))
+
 (define (tmhtml-html-style l)
-  (list `(h:div (@ (style ,(tmhtml-force-string (car l))))
-		,@(tmhtml (cadr l)))))
+  (let* ((r (tmhtml (cadr l)))
+	 (s (tmhtml-force-string (car l))))
+    (map (cut tmhtml-append-attribute <> 'style s) r)))
+
+(define (tmhtml-html-class l)
+  (let* ((r (tmhtml (cadr l)))
+	 (s (tmhtml-force-string (car l))))
+    (map (cut tmhtml-append-attribute <> 'class s) r)))
 
 (define (tmhtml-html-javascript l)
   (list `(h:script (@ (language "javascript"))
@@ -1612,8 +1635,10 @@
   (equations-base ,tmhtml-equation*)
   (wide-float tmhtml-float)
   ;; tags for customized html generation
-  (html-div ,tmhtml-html-div)
+  (html-div-style ,tmhtml-html-div-style)
+  (html-div-class ,tmhtml-html-div-class)
   (html-style ,tmhtml-html-style)
+  (html-class ,tmhtml-html-class)
   (html-javascript ,tmhtml-html-javascript)
   (html-javascript-src ,tmhtml-html-javascript-src)
   (html-video ,tmhtml-html-video)

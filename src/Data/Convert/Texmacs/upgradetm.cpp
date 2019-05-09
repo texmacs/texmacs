@@ -4323,6 +4323,8 @@ upgrade (tree t, string version) {
   if (version_inf_eq (version, "1.99.9")) {
     t= rename_primitive (t, "solution", "solution*");
     t= rename_primitive (t, "answer", "answer*");
+    t= rename_primitive (t, "html-div", "html-div-class");
+    t= rename_primitive (t, "html-style", "html-div-style");
   }
   
   if (is_non_style_document (t))

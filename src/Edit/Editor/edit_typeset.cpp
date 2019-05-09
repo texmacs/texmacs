@@ -565,6 +565,19 @@ expand_references (tree t, hashmap<string,tree> h) {
   return r;  
 }
 
+static void
+prefix_specific (hashmap<string,tree>& H, string prefix) {
+  hashmap<string,tree> R;
+  iterator<string> it = iterate (H);
+  while (it->busy()) {
+    string key= it->next ();
+    string var= prefix * key;
+    if (H->contains (var)) R(key)= H[var];
+    else R(key)= H[key];
+  }
+  H= R;
+}
+
 tree
 edit_typeset_rep::exec (tree t, hashmap<string,tree> H, bool expand_refs) {
   hashmap<string,tree> H2;
@@ -615,6 +628,7 @@ edit_typeset_rep::exec_html (tree t, path p) {
   tree patch= as_tree (eval ("(stree->tree (tmhtml-env-patch))"));
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
+  prefix_specific (H, "tmhtml-");
   tree w (WITH);
   if (H->contains ("html-title"))
     w << string ("html-title") << H["html-title"];
@@ -674,6 +688,7 @@ edit_typeset_rep::exec_latex (tree t, path p) {
   tree patch= as_tree (call ("stree->tree", call ("tmtex-env-patch", t, l)));
   hashmap<string,tree> P (UNINIT, patch);
   H->join (P);
+  prefix_specific (H, "tmlatex-");
 
   if (!expand_user_macro &&
       is_document (t) && is_compound (t[0], "hide-preamble")) {

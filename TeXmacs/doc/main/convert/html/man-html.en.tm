@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
@@ -57,12 +57,22 @@
   You may also use the following macros:
 
   <\indent>
-    <\explain|<explain-macro|html-div|class|body>>
-      Associate a CSS class to the content <src-arg|body>.
+    <\explain>
+      <explain-macro|html-class|class|body>
+
+      <explain-macro|html-div-class|class|body>
+    <|explain>
+      Associate a CSS class to the content <src-arg|body>, optionally inside
+      a separate <verbatim|div> tag.
     </explain>
 
-    <\explain|<explain-macro|html-style|style|body>>
-      Associate a CSS style to the content <src-arg|body>.
+    <\explain>
+      <explain-macro|html-style|style|body>
+
+      <explain-macro|html-div-style|class|body>
+    <|explain>
+      Associate a CSS style to the content <src-arg|body>, optionally inside
+      a separate <verbatim|div> tag.
     </explain>
 
     <\explain|<explain-macro|html-javascript-src|src>>
@@ -73,6 +83,18 @@
       Execute the <name|Javascript> script <compound|src-arg|code>.
     </explain>
   </indent>
+
+  In addition, given a macro <markup|my-tag>, you may customize the rendering
+  of the tag when exporting to <name|Html> by defining a macro
+  <markup|tmhtml-my-tag> with the same number of arguments. For instance, by
+  putting the declaration
+
+  <\tm-fragment>
+    <inactive*|<assign|tmhtml-strong|<macro|body|<with|color|red|font-series|bold|<arg|body>>>>>
+  </tm-fragment>
+
+  inside your style file, all strong text will be exported to <name|Html>
+  using a bold red font.
 
   <paragraph|Html importation>
 
@@ -93,7 +115,7 @@
 
   In the binary distributions, we have included <verbatim|wget>.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2019|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

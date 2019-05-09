@@ -526,9 +526,13 @@
     </src-comment>
   </active*>
 
-  <assign|html-div|<macro|name|body|<arg|body>>>
+  <assign|html-div-style|<macro|name|body|<arg|body>>>
+
+  <assign|html-div-class|<macro|name|body|<arg|body>>>
 
   <assign|html-style|<macro|style|body|<arg|body>>>
+
+  <assign|html-class|<macro|style|body|<arg|body>>>
 
   <assign|html-javascript|<macro|script|<small|<colored-frame|pastel
   yellow|<with|font-family|ss|Javascript:
