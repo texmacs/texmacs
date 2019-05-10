@@ -188,12 +188,36 @@
   </active*>
 
   <assign|tmweb-split|<\macro|first|second>
-    <arg|first>
+    <surround||<vspace|1em>|<arg|first>>
 
     <arg|second>
   </macro>>
 
   <assign|tmhtml-tmweb-split|<macro|first|second|<html-div-class|tmweb-split|<html-div-class|tmweb-split-car|<arg|first>><html-div-class|tmweb-split-cdr|<arg|second>>>>>
+
+  <\active*>
+    <\src-comment>
+      Captions for pictures
+    </src-comment>
+  </active*>
+
+  <assign|tmweb-caption-below|<macro|fig|cap|<tabular*|<tformat|<table|<row|<cell|<arg|fig>>>|<row|<cell|<arg|cap>>>>>>>>
+
+  <assign|tmhtml-tmweb-caption-below|<macro|fig|cap|<html-div-class|tmweb-caption-below|<html-div-class|tmweb-figure|<arg|fig>><html-div-class|tmweb-caption|<arg|cap>>>>>
+
+  <\active*>
+    <\src-comment>
+      Carousel
+    </src-comment>
+  </active*>
+
+  <assign|tmweb-slide|<macro|body|<anim-constant|<arg|body>|5sec>>>
+
+  <assign|tmweb-carousel|<xmacro|args|<anim-repeat|<map-args|tmweb-slide|anim-compose|args>>>>
+
+  <assign|tmhtml-tmweb-slide|<macro|body|<html-div-class|tmweb-slide|<arg|body>>>>
+
+  <assign|tmhtml-tmweb-carousel|<xmacro|args|<style-with|src-compact|none|<html-javascript-src|http://www.texmacs.org/javascript/texmacs_carousel.js><html-div-class|tmweb-carousel|<map-args|tmhtml-tmweb-slide|concat|args>>>>>
 </body>
 
 <\initial>
