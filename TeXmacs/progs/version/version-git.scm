@@ -102,6 +102,27 @@
   (string-starts? (url->string name)
                   "tmfs"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File history
+;; 1. Eval `git log --pretty=%ai%n%an%n%s%n%H%n <name>`
+;; 2. Split the result by \n\n
+;; 3. Transform each string record to texmacs document
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(tm-define (version-history name)
+  (:require (== (version-tool name) "git"))
+  (let* ((name-escaped (string-replace (url->string name) "\\" "/"))
+         (cmd (string-append
+               (current-git-command) " log --pretty=%ai%n%an%n%s%n%H%n"
+               NR_LOG_OPTION
+               name-escaped))
+         (ret1 (eval-system cmd))
+         (ret2 (string-decompose ret1 "\n\n")))
+
+    (define (string->commit-file str)
+      (string->commit str name-escaped))
+    (and (> (length ret2) 0)
+         (string-null? (cAr ret2))
+         (map string->commit-file (cDr ret2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common immutable routines of Git
@@ -144,24 +165,6 @@
     (set-message cmd "The file is unadded.")
     (display cmd)))
 
-;; 1. Eval `git log --pretty=%ai%n%an%n%s%n%H%n <name>`
-;; 2. Split the result by \n\n
-;; 3. Transform each string record to texmacs document
-(tm-define (buffer-log name)
-  (let* ((current-root (git-root (url-head name)))
-         (name-escaped (string-replace (url->string name) "\\" "/"))
-         (cmd (string-append
-               (current-git-command) " log --pretty=%ai%n%an%n%s%n%H%n"
-               NR_LOG_OPTION
-               name-escaped))
-         (ret1 (eval-system cmd))
-         (ret2 (string-decompose ret1 "\n\n")))
-
-    (define (string->commit-file str)
-      (string->commit str name-escaped))
-    (and (> (length ret2) 0)
-         (string-null? (cAr ret2))
-         (map string->commit-file (cDr ret2)))))
 
 
 (tm-define (git-log)
