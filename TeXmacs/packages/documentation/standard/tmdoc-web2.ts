@@ -180,6 +180,20 @@
   </macro>>
 
   <assign|tmweb-license|<macro|<tmweb-footer>>>
+
+  <\active*>
+    <\src-comment>
+      Split horizontally on wide screens and vertically otherwise
+    </src-comment>
+  </active*>
+
+  <assign|tmweb-split|<\macro|first|second>
+    <arg|first>
+
+    <arg|second>
+  </macro>>
+
+  <assign|tmhtml-tmweb-split|<macro|first|second|<html-div-class|tmweb-split|<html-div-class|tmweb-split-car|<arg|first>><html-div-class|tmweb-split-cdr|<arg|second>>>>>
 </body>
 
 <\initial>
