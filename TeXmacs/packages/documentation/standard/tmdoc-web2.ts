@@ -28,6 +28,23 @@
 
   <\active*>
     <\src-comment>
+      Miscellaneous helper macros.
+    </src-comment>
+  </active*>
+
+  <assign|obsolete|<macro|body|<html-class|tmweb-obsolete|<arg|body>>>>
+
+  <assign|tmweb-image|<macro|name|<image|<merge|http://www.texmacs.org/Samples/|<arg|name>>|0.666667w|||>>>
+
+  <assign|tmweb-email|<macro|name|domain|<active*|<with|font-family|tt|color|dark
+  magenta|\<less\>>><with|font-family|tt|color|dark
+  blue|<arg|name>><active*|<with|font-family|tt|color|dark
+  magenta|@>><with|font-family|tt|color|dark
+  blue|<arg|domain>><active*|<with|font-family|tt|color|dark
+  magenta|\<gtr\>>>>>
+
+  <\active*>
+    <\src-comment>
       Hyperlink menus
     </src-comment>
   </active*>
@@ -36,7 +53,7 @@
 
   <assign|tmweb-link-menu|<xmacro|args|<html-tag|nav|<map-args|tmweb-link-item|concat|args>>>>
 
-  <assign|tmweb-link-section|<xmacro|args|<html-tag|section|<html-tag|h1|<arg|args|0>><html-tag|nav|<map-args|tmweb-link-item|concat|args|1>>>>>
+  <assign|tmweb-link-section|<xmacro|args|<html-tag|section|<section*|<arg|args|0>><html-tag|nav|<map-args|tmweb-link-item|concat|args|1>>>>>
 
   <\active*>
     <\src-comment>
@@ -46,22 +63,19 @@
 
   <assign|tmweb-top-links|<macro|<style-with|src-compact|none|<tmweb-link-menu|<hlink|About|../home/welcome.en.tm>|<hlink|Download|../download/download.en.tm>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute.en.tm>>>>>
 
-  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Videos|videos>|<tmweb-link|Screen
-  shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing
-  lists|ml>|<tmweb-link|Jobs|jobs>>>>>
+  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-link-section|TeXmacs|<hlink|Welcome|../home/welcome.en.tm>|<obsolete|<hlink|Philosophy|../about/philosophy.en.tm>>|<hlink|Gallery|../home/screenshots.en.tm>|<obsolete|<hlink|Artwork|../about/artwork.en.tm>>|<hlink|News|../home/news.en.tm>|<obsolete|<hlink|Changes|../about/changes.en.tm>>|<obsolete|<hlink|Jobs|../home/jobs.en.tm>>|<hlink|Plans|../about/plans.en.tm>|<obsolete|<hlink|To
+  do|../about/todo.en.tm>>|<obsolete|<hlink|Roadmap|../about/roadmap.en.tm>>|<hlink|Thanks|../home/thanks.en.tm>|<obsolete|<hlink|Authors|../about/authors.en.tm>>|<obsolete|<hlink|Donators|../about/donators.en.tm>>>>>>
 
-  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Linux|unix>|<tmweb-link|MacOS|macosx>|<tmweb-link|Windows|windows>|<tmweb-link|Knoppix|knoppix>>>>>
+  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-link-section|Download|<hlink|Sources|../download/sources.en.tm>|<hlink|GNU
+  Linux|../download/unix.en.tm>|<hlink|MacOS|../download/macosx.en.tm>|<hlink|Windows|../download/windows.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
 
-  <assign|tmweb-help-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorials|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>|<tmweb-link|Videos|../home/videos>>>>>
+  <assign|tmweb-learn-links|<macro|<style-with|src-compact|none|<tmweb-link-section|Learn|<hlink|Videos|../home/videos.en.tm>|<hlink|Tutorials|../help/tutorial.en.tm>|<hlink|Books|../help/book.en.tm>|<hlink|FAQ|../help/faq.en.tm>|<hlink|Mailing
+  lists|../home/ml.en.tm>>>>>
 
-  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Contributing|contribute>|<tmweb-link|Team|team>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>>
+  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-link-section|Contribute|<obsolete|<hlink|Contribute|../contribute/contribute.en.tm>>|<obsolete|<hlink|Team|../contribute/team.en.tm>>|<hlink|Donate|../contribute/donations.en.tm>|<hlink|Develop|../contribute/develop.en.tm>|<hlink|Document|../contribute/documentation.en.tm>|<hlink|Translate|../contribute/translations.en.tm>|<hlink|Plug-ins|../contribute/plugins.en.tm>>>>>
 
-  <assign|tmweb-plugin-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Tools|tools>>>>>
-
-  <assign|tmweb-about-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Authors|authors>|<tmweb-link|Donators|donators>|<tmweb-link|Philosophy|philosophy>|<tmweb-link|Changes|changes>|<tmweb-link|To
-  do|todo>|<tmweb-link|Plans|plans>|<tmweb-link|Roadmap|roadmap>|<tmweb-link|Artwork|artwork>|<tmweb-link|License|license>>>>>
-
-  <assign|tmweb-contact-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Feedback|contact>|<tmweb-link|Bugs|bugs>|<tmweb-link|Suggestions|wishes>|<tmweb-link|Patches|patches>>>>>
+  <assign|tmweb-contact-links|<macro|<style-with|src-compact|none|<tmweb-link-section|Contact|<hlink|Feedback|../contact/contact.en.tm>|<hlink|Bugs|../contact/bugs.en.tm>|<hlink|Suggestions|../contact/wishes.en.tm>|<hlink|Patches|../contact/patches.en.tm>|<hlink|Mailing
+  lists|../home/ml.en.tm>>>>>
 
   <\active*>
     <\src-comment>
@@ -90,63 +104,27 @@
 
   <assign|tmweb-title|<macro|title|bar|<html-div-class|tmweb-pad-below|<html-div-class|tmweb-header|<html-class|tmweb-title-image|<tmweb-tmimage>><space|1em><html-class|tmweb-title|<arg|title>><space|1em><html-class|tmweb-top-menu|<tmweb-top-links>>>>>>
 
-  <assign|tmweb-license|<\macro>
-    <\tmdoc-license>
-      <active*|<\with|color|dark grey|font-size|0.84>
-        This webpage is part of <hlink|GNU <TeXmacs>|http://www.texmacs.org>
-        and the larger <hlink|GNU project|http://www.gnu.org>. Verbatim
-        copying and distribution of it is permitted in any medium, provided
-        this notice is preserved. For more information or questions, please
-        contact <hlink|Joris van der Hoeven|http://www.texmacs.org/Web/Mail.html>.
+  <assign|tmweb-license-text|<\macro>
+    <\active*>
+      <section*|About this website>
 
-        <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
-        Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
-      </with>>
-    </tmdoc-license>
+      This webpage is part of <hlink|GNU <TeXmacs>|http://www.texmacs.org>
+      and the larger <hlink|GNU project|http://www.gnu.org>. Verbatim copying
+      and distribution of it is permitted in any medium, provided this notice
+      is preserved.
+
+      <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>, Inc.,
+      51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
+    </active*>
   </macro>>
 
   <assign|tmweb-license|<\macro>
     <\html-div-class|tmweb-pad-above>
       <\html-div-class|tmweb-footer>
-        <\small>
-          This webpage is part of <hlink|GNU
-          <TeXmacs>|http://www.texmacs.org> and the larger <hlink|GNU
-          project|http://www.gnu.org>. Verbatim copying and distribution of
-          it is permitted in any medium, provided this notice is preserved.
-          For more information or questions, please contact <hlink|Joris van
-          der Hoeven|http://www.texmacs.org/Web/Mail.html>.
-
-          <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>,
-          Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
-        </small>
+        <html-div-class|tmweb-license|<tmweb-license-text>><tmweb-home-links><tmweb-download-links><tmweb-learn-links><tmweb-contribute-links><tmweb-contact-links>
       </html-div-class>
     </html-div-class>
   </macro>>
-
-  <\active*>
-    <\src-comment>
-      Miscellaneous macros.
-    </src-comment>
-  </active*>
-
-  <assign|tmweb-image|<macro|name|<image|<merge|http://www.texmacs.org/Samples/|<arg|name>>|0.666667w|||>>>
-
-  <assign|tmweb-email|<macro|name|domain|<active*|<with|font-family|tt|color|dark
-  magenta|\<less\>>><with|font-family|tt|color|dark
-  blue|<arg|name>><active*|<with|font-family|tt|color|dark
-  magenta|@>><with|font-family|tt|color|dark
-  blue|<arg|domain>><active*|<with|font-family|tt|color|dark
-  magenta|\<gtr\>>>>>
-
-  \;
-
-  <assign|texmacs-stable-targz|<macro|1.0.2>>
-
-  <assign|texmacs-stable-rpm|<macro|1.0.2-1>>
-
-  <assign|texmacs-version|<macro|1.0.2.1>>
-
-  \;
 </body>
 
 <\initial>
