@@ -65,7 +65,8 @@
   (:require (== (version-tool name) "git"))
   (with ret (buffer-status name)
     (cond ((== ret "??") "unknown")
-          (else "dummy"))))
+          ((== ret "  ") "unmodified")
+          (else "modified"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Predicates of Git and Buffer
