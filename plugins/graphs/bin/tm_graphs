@@ -29,6 +29,7 @@ from tmpy.protocol  import *
 from tmpy.graph     import Graph
 from tmpy.asymptote import Asymptote
 from tmpy.graphviz  import Graphviz
+from tmpy.mermaid   import Mermaid
 from tmpy.plantuml  import PlantUML
 import argparse
 
@@ -267,7 +268,7 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"])
-others = [Asymptote("asy"), PlantUML()]
+others = [Asymptote("asy"), PlantUML(), Mermaid()]
 graphs = filter(lambda x: x.available(), grapvizs + others)
 graph_names = map(lambda x: x.name, graphs)
 
