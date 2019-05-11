@@ -218,6 +218,20 @@
   <assign|tmhtml-tmweb-slide|<macro|body|<html-div-class|tmweb-slide|<arg|body>>>>
 
   <assign|tmhtml-tmweb-carousel|<xmacro|args|<style-with|src-compact|none|<html-javascript-src|http://www.texmacs.org/javascript/texmacs_carousel.js><html-div-class|tmweb-carousel|<map-args|tmhtml-tmweb-slide|concat|args>>>>>
+
+  <\active*>
+    <\src-comment>
+      Other customizations
+    </src-comment>
+  </active*>
+
+  <assign|tmhtml-render-code|<macro|body|<html-div-class|tmweb-code|<arg|body>>>>
+
+  <assign|tmhtml-pseudo-code|<macro|body|<html-div-class|tmweb-code|<arg|body>>>>
+
+  <assign|tmhtml-framed-code|<macro|body|<html-div-class|tmweb-code|<arg|body>>>>
+
+  \;
 </body>
 
 <\initial>
