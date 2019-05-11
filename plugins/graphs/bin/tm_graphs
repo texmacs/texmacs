@@ -25,9 +25,10 @@ from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
 from io        import open
 from io        import StringIO
-from subprocess import Popen, PIPE, STDOUT
-from tmpy.protocol import *
-from tmpy.graph    import Graph
+from tmpy.protocol  import *
+from tmpy.graph     import Graph
+from tmpy.graphviz  import Graphviz
+from tmpy.asymptote import Asymptote
 import argparse
 
 #import logging as log
@@ -240,54 +241,6 @@ def compile_help (text):
         out["file"] = 'Unable to access the code for "%s": %s' % (text, e)
 
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.iteritems()))
-
-class Graphviz(Graph):
-    def __init__(self, name):
-        super(Graphviz, self).__init__()
-        self.name = name
-        try:
-            p = Popen([self.name, "-V"], stderr=PIPE)
-            ret, err = p.communicate()
-            # WARN: The Version Info is in stderr
-            if (p.returncode == 0):
-                self.message = str(err)
-        except OSError:
-            pass
-
-    def evaluate(self, code):
-        png = self.get_png_path()
-        path = png.split("?")[0]
-        f = open(path, 'wb')
-        cmd_list = [self.name, "-Tpng", "-Gdpi=400"]
-        p = Popen(cmd_list, stdout=f, stdin=PIPE, stderr=PIPE)
-        out, err = p.communicate(input=code)
-        if (p.returncode == 0):
-          texmacs_out ("file:" + png)
-        else:
-          texmacs_out ("verbatim:" + err)
-
-class Asymptote(Graph):
-    def __init__(self, name):
-        super(Asymptote, self).__init__()
-        self.name = name
-        try:
-            p = Popen([self.name, "-version"], stderr=PIPE)
-            ret, err = p.communicate()
-            # WARN: The Version Info is in stderr
-            if (p.returncode == 0):
-                self.message = str(err)
-        except OSError:
-            pass
-
-    def evaluate(self, code):
-        png = self.get_png_path()
-        path = png.split("?")[0]
-        p = Popen([self.name, "-fpng", "-o", path], stdin=PIPE, stderr=PIPE)
-        out, err = p.communicate(input=code)
-        if (p.returncode == 0):
-          texmacs_out ("file:" + png)
-        else:
-          texmacs_out ("verbatim:" + err)
 
 ###############################################################################
 ## Session start
