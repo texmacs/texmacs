@@ -1,6 +1,6 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.9>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Versioning tools>
@@ -19,8 +19,8 @@
   <hlink|<name|Darcs>|http://darcs.net/>, <hlink|<name|GNU
   Arch>|http://www.gnu.org/software/gnu-arch/>, just to mention a few of
   them. <TeXmacs> currently provides a rudimentary support for
-  <name|Subversion>, but interfaces for the other systems could easily be
-  added.
+  <name|Subversion> and <name|Git>, but interfaces for the other systems
+  could easily be added.
 
   <paragraph*|Comparing two versions>
 
@@ -118,9 +118,9 @@
   control>
 
   If the file you are editing belongs to a directory that is under version
-  control (only <name|Subversion> is currently supported, although other
-  systems might follow), then the first part of the <menu|Version> menu will
-  contain some clickable entries.
+  control (only <name|Subversion> and <name|Git> is currently supported,
+  although other systems might follow), then the first part of the
+  <menu|Version> menu will contain some clickable entries.
 
   First of all, if the current buffer is under version control, then you may
   take a look at its history using <menu|Version|History>. The history
@@ -144,7 +144,7 @@
   <menu|Version|Update>. At the moment, no conflict resolution has been
   implemented yet, although this is planned for the future.
 
-  <tmdoc-copyright|2010|Joris van der Hoeven>
+  <tmdoc-copyright|2010\U2019|Joris van der Hoeven|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
