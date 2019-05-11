@@ -27,8 +27,9 @@ from io        import open
 from io        import StringIO
 from tmpy.protocol  import *
 from tmpy.graph     import Graph
-from tmpy.graphviz  import Graphviz
 from tmpy.asymptote import Asymptote
+from tmpy.graphviz  import Graphviz
+from tmpy.plantuml  import PlantUML
 import argparse
 
 #import logging as log
@@ -266,7 +267,7 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"])
-others = [Asymptote("asy")]
+others = [Asymptote("asy"), PlantUML()]
 graphs = filter(lambda x: x.available(), grapvizs + others)
 graph_names = map(lambda x: x.name, graphs)
 
