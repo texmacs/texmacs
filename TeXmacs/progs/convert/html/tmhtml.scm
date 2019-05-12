@@ -760,11 +760,14 @@
 (define (tmhtml-with-font-size val arg)
   (ahash-with tmhtml-env :mag val
     (let* ((x (* (string->number val) 100))
+           (c (string-append "font-size: " (number->string x) "%"))
 	   (s (cond ((< x 1) "-4") ((< x 55) "-4") ((< x 65) "-3")
 		    ((< x 75) "-2") ((< x 95) "-1") ((< x 115) "0")
 		    ((< x 135) "+1") ((< x 155) "+2") ((< x 185) "+3")
 		    ((< x 225) "+4") ((< x 500) "+5") (else "+5"))))
-      (if s `((h:font (@ (size ,s)) ,@(tmhtml arg))) (tmhtml arg)))))
+      (cond (tmhtml-css? `((h:font (@ (style ,c)) ,@(tmhtml arg))))
+            (s `((h:font (@ (size ,s)) ,@(tmhtml arg))))
+            (else (tmhtml arg))))))
 
 (define (tmhtml-with-block style arg)
   (with r (tmhtml (blockify arg))
@@ -1086,8 +1089,8 @@
 
 (define (tmhtml-png y)
   (let* ((mag (ahash-ref tmhtml-env :mag))
-	 (x (if (or (nstring? mag) (== mag "1")) y
-		`(with "magnification" ,mag ,y)))
+	 (x (if (or tmhtml-css? (nstring? mag) (== mag "1")) y
+                `(with "magnification" ,mag ,y)))
 	 (l1 (tmhtml-collect-labels y))
 	 (l2 (if (null? l1) l1 (list (car l1)))))
     (with cached (ahash-ref tmhtml-image-cache x)
@@ -1097,13 +1100,18 @@
 	    (let* ((extents (print-snippet name-url x #t))
                    (dpi (string->number (get-preference "printer dpi")))
                    (den (/ (* dpi 2200.0) 600.0))
-                   ;;(den (/ (* dpi 2000.0) 600.0))
-		   (pixels (inexact->exact (/ (second extents) den)))
-		   (valign (number->htmlstring pixels))
-		   (style (string-append "vertical-align: " valign "px")))
+		   (y1 (inexact->exact (/ (second extents) den)))
+		   (y2 (inexact->exact (/ (fourth extents) den)))
+		   (valign (number->htmlstring (/ y1 15)))
+		   (height (number->htmlstring (/ (- y2 y1) 15)))
+		   (style (string-append "vertical-align: " valign "em; "
+                                         "height: " height "em"))
+                   (attrs (if tmhtml-css?
+                              `((src ,name-string) (style ,style) ,@l2)
+                              `((src ,name-string) ,@l2)))
+                   (img `((h:img (@ ,@attrs)))))
 	      ;;(display* x " -> " extents "\n")
-	      (set! cached
-		    `((h:img (@ (src ,name-string) (style ,style) ,@l2))))
+	      (set! cached img)
 	      (ahash-set! tmhtml-image-cache x cached)))
 	  cached))))
 
