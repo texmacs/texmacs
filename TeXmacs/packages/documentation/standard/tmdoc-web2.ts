@@ -231,6 +231,8 @@
 
   <assign|tmhtml-framed-code|<macro|body|<html-div-class|tmweb-code|<arg|body>>>>
 
+  <assign|tmhtml-framed-fragment|<macro|body|<html-div-class|tmweb-code|<arg|body>>>>
+
   \;
 </body>
 

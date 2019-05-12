@@ -1054,10 +1054,9 @@
 
 (define (tmhtml-make-table t tablef colf rowf cellf)
   (let* ((attrs (map* tmhtml-make-table-attr tablef))
-	 (em (- (* (tmtable-rows t) 0.55)))
-	 (va (string-append "vertical-align: " (number->htmlstring em) "em")))
+         (va "vertical-align: middle"))
     (if (not (list-find attrs (cut == <> "width: 100%")))
-	(set! attrs (cons* "display: inline" va attrs)))
+	(set! attrs (cons* "display: inline-table" va attrs)))
     `(h:table ,@(html-css-attrs attrs)
 	      ,@(tmhtml-make-column-group colf)
 	      (h:tbody ,@(tmhtml-make-rows (cdr t) rowf cellf)))))
