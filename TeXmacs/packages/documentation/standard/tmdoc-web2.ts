@@ -233,6 +233,14 @@
 
   <assign|tmhtml-framed-fragment|<macro|body|<html-div-class|tmweb-code|<arg|body>>>>
 
+  <assign|tmhtml-render-key|<macro|key|<html-class|tmweb-key|<arg|key>>>>
+
+  <assign|tmhtml-menu-item|<macro|body|<html-class|tmweb-menu|<with|font-family|ss|<localize|<arg|body>>>>>>
+
+  <assign|tmhtml-menu-extra|<macro|body|\<rightarrow\><menu-item|<arg|body>>>>
+
+  \;
+
   \;
 </body>
 

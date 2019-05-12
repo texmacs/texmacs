@@ -1671,7 +1671,6 @@
   (html-javascript-src ,tmhtml-html-javascript-src)
   (html-video ,tmhtml-html-video)
   ;; tmdoc tags
-  (key ,tmhtml-key)
   (hyper-link ,tmhtml-hyperlink))
 
 (logic-table tmhtml-tmdocmarkup%
