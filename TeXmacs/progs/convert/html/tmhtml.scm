@@ -1269,11 +1269,19 @@
   ;; LaTeX it is used to escape special characters (and protect multiple inline
   ;; spaces, yuck!), but in TeXmacs there is no such problem.
   (with body (first args)
-    (if (stm-block-structure? body)
-	(verbatim-pre
-	 (ahash-with tmhtml-env :preformatted #t
-		     (tmhtml body)))
-	(verbatim-tt (tmhtml body)))))
+    (with pre? #f
+      (when (func? body 'with 1)
+      (set! body (cAr body)))
+      (when (and (func? body 'with 3) (== (cadr body) "locus-color"))
+        (set! body (cAr body)))
+      (when (func? body 'action)
+        (set! body (cadr body))
+        (set! pre? (string? body)))
+      (if (or (stm-block-structure? body) pre?)
+          (verbatim-pre
+           (ahash-with tmhtml-env :preformatted #t
+             (tmhtml body)))
+          (verbatim-tt (tmhtml body))))))
 
 (define (verbatim-tt content)
   `((h:tt (@ (class "verbatim")) ,@content)))
