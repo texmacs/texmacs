@@ -37,7 +37,7 @@ class PlantUML(Graph):
         p = Popen(cmd, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-            texmacs_out ("file:" + self.get_eps_path())
+            texmacs_out ("file:" + self.get_eps())
         else:
             texmacs_out ("verbatim:" + err)
         

@@ -9,6 +9,7 @@
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
+import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
 from .protocol import texmacs_out
@@ -27,12 +28,15 @@ class Asymptote(Graph):
             pass
 
     def evaluate(self, code):
-        png = self.get_png_path()
-        path = png.split("?")[0]
-        p = Popen([self.name, "-fpng", "-o", path], stdin=PIPE, stderr=PIPE)
-        out, err = p.communicate(input=code)
+        code_path = os.getenv("TEXMACS_HOME_PATH") +\
+            "/system/tmp/" + self.name + ".asy"
+        with open(code_path, 'w') as code_file:
+            code_file.write(code)
+
+        cmd = [self.name, "-quiet", "-feps", "-o", self.get_eps_path(), code_path]
+        p = Popen(cmd, stderr=PIPE)
+        out, err = p.communicate()
         if (p.returncode == 0):
-          texmacs_out ("file:" + png)
+          texmacs_out ("file:" + self.get_eps())
         else:
           texmacs_out ("verbatim:" + err)
-

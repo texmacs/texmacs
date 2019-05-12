@@ -52,6 +52,9 @@ class Graph(object):
         return png
 
     def get_eps_path(self):
-        return self.get_tmp_dir() + self.name + ".eps" +\
+        return self.get_tmp_dir() + self.name + ".eps"
+
+    def get_eps(self):
+        return self.get_eps_path() +\
             "?" + "width=" + str(self.width) +\
             "&" + "height=" + str(self.height)

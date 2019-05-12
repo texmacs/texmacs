@@ -27,13 +27,13 @@ class Mermaid(Graph):
             pass
 
     def evaluate(self, code):
-        code_path = os.getenv("HOME") +\
-            "/.TeXmacs/system/tmp/" + self.name + ".mmd" 
+        code_path = os.getenv("TEXMACS_HOME_PATH") +\
+            "/system/tmp/" + self.name + ".mmd"
         with open(code_path, 'w') as code_file:
             code_file.write(code)
 
-        puppeteer_config = os.getenv("HOME") +\
-            "/.TeXmacs/system/tmp/puppeteer-config.json"
+        puppeteer_config = os.getenv("TEXMACS_HOME_PATH") +\
+            "/system/tmp/puppeteer-config.json"
         with open(puppeteer_config, "w") as config_file:
             config_file.write('{"args": ["--no-sandbox"]}')
 

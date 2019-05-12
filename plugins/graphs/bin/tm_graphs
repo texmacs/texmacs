@@ -334,7 +334,7 @@ while True:
         if text.startswith("%"):
             unigraph(text)
         elif text == "help":
-            texmacs_out("verbatim:[help, " + ", ".join(str(x) for x in graph_names) + "]")
+            texmacs_out("verbatim:[help, " + ", ".join(str(x) for x in graph_names) + "]\n")
             current.greet()
         elif text in graph_names:
             current = graphs[graph_names.index(text)]
