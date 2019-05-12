@@ -28,21 +28,16 @@ class PlantUML(Graph):
 
     def evaluate(self, code):
         # Dump the code to $HOME/.TeXmacs/system/tmp/${name}.puml
-        code_path = os.getenv("HOME") +\
-            "/.TeXmacs/system/tmp/" + self.name + ".puml" 
+        code_path = self.get_tmp_dir() + self.name + ".puml" 
         with open(code_path, 'w') as code_file:
             code_file.write(code)
 
-        # 1. Execute `plantuml /path/to/plantuml.puml` to generate the png
-        # 2. Send the png file to GNU TeXmacs
-        png = self.get_png_path()
-        png_path = png.split("?")[0]
-        with open(png_path, 'wb') as png_file:
-            cmd = [self.name, code_path]
-            p = Popen(cmd, stdout=png_file, stderr=PIPE)
-            out, err = p.communicate()
-            if (p.returncode == 0):
-              texmacs_out ("file:" + png)
-            else:
-              texmacs_out ("verbatim:" + err)
+        # Execute `plantuml -teps /path/to/plantuml.puml`
+        cmd = [self.name, "-teps", code_path]
+        p = Popen(cmd, stderr=PIPE)
+        out, err = p.communicate()
+        if (p.returncode == 0):
+            texmacs_out ("file:" + self.get_eps_path())
+        else:
+            texmacs_out ("verbatim:" + err)
         

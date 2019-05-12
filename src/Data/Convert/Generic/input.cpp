@@ -331,6 +331,18 @@ texmacs_input_rep::xformat_flush (bool force) {
 }
 
 void
+texmacs_input_rep::image_flush(string content, string type, int width, int height) {
+  tree t (IMAGE);
+  t << tuple (tree (RAW_DATA, content), type);
+  if (width != 0) t << tree (as_string (width) * "px");
+  else t << tree ("");
+  if (height != 0) t << tree (as_string (height) * "px");
+  else t << tree ("");
+  t << tree ("") << tree ("");
+  write (t);
+}
+
+void
 texmacs_input_rep::file_flush (bool force) {
   if (force) {
     array<string> path_toks= tokenize (buf, "?");
@@ -356,18 +368,14 @@ texmacs_input_rep::file_flush (bool force) {
     }
     else {
       string type = suffix (file);
+      string content;
+      load_string (file, content, false);
       if (type == "png") {
-        string s;
-        load_string (file, s, false);
-        tree t (IMAGE);
-        t << tuple (tree (RAW_DATA, s), type);
-        if (width != 0) t << tree (as_string (width) * "px");
-        else t << tree ("");
-        if (height != 0) t << tree (as_string (height) * "px");
-        else t << tree ("");
-        t << tree ("") << tree ("");
-        write (t);
+        image_flush (content, "png", width, height);
       }
+      else if (type == "eps") {
+        image_flush (content, "ps", width, height);
+      } 
       else {
         string err_msg = "Do not support file type with suffix: [" * type * "]";
         write (verbatim_to_tree (err_msg, false, "auto"));

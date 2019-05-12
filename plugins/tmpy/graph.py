@@ -40,12 +40,18 @@ class Graph(object):
     def evaluate(self, code):
         pass
 
+    def get_tmp_dir(self):
+        return os.getenv("TEXMACS_HOME_PATH") + "/system/tmp/"
+
     def get_png_path(self):
-        png = os.getenv("HOME") +\
-            "/.TeXmacs/system/tmp/" +\
-            self.name + ".png" +\
+        png = self.get_tmp_dir() + self.name + ".png" +\
             "?" + "width=" + str(self.width) +\
             "&" + "height=" + str(self.height)
         if os.path.isfile(png):
             os.remove(png)
         return png
+
+    def get_eps_path(self):
+        return self.get_tmp_dir() + self.name + ".eps" +\
+            "?" + "width=" + str(self.width) +\
+            "&" + "height=" + str(self.height)
