@@ -240,8 +240,6 @@
   <assign|tmhtml-menu-extra|<macro|body|\<rightarrow\><menu-item|<arg|body>>>>
 
   \;
-
-  \;
 </body>
 
 <\initial>
