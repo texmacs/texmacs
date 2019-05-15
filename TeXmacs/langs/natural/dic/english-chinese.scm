@@ -387,7 +387,7 @@
 ("disable indentation before" "禁止前面缩进")
 ("deactivate" "")
 ("deactivate once" "")
-("developer" "开发者选项")
+("developer" "开发者")
 ("developer tool" "开发工具")
 ("disallow" "")
 ("disk" "圆盘")
