@@ -63,26 +63,26 @@ option (QTPIPES "use Qt pipes" ON)
 
 option (USE_SQLITE3 "Use SQLite3" ON)
 if (USE_SQLITE3)
-    find_package (SQLite3)
-    option (LINKED_SQLITE3 "Use Linked SQLite3" ON)
+  find_package (SQLite3)
+  option (LINKED_SQLITE3 "Use Linked SQLite3" ON)
 endif (USE_SQLITE3)
 
 option (USE_FREETYPE "use Freetype" ON)
 if (USE_FREETYPE)
-    find_package (Freetype)
-    option (LINKED_FREETYPE "linked Freetype" ON)
+  find_package (Freetype)
+  option (LINKED_FREETYPE "linked Freetype" ON)
 endif (USE_FREETYPE)
 
 option (USE_CAIRO "use Cairo" OFF)
 if (USE_CAIRO)
-    find_package(Cairo)
-    option (LINKED_CAIRO "linked Cairo" ON)
+  find_package(Cairo)
+  option (LINKED_CAIRO "linked Cairo" ON)
 endif (USE_CAIRO)
 
 option (USE_IMLIB2 "use Imlib2" OFF)
 if (USE_IMLIB2)
-    find_package(Imlib2)
-    option (LINKED_IMLIB2 "linked Imlib2" ON)
+  find_package(Imlib2)
+  option (LINKED_IMLIB2 "linked Imlib2" ON)
 endif (USE_IMLIB2)
 
 option (USE_SPARKLE "use Sparkle" OFF)
@@ -91,7 +91,7 @@ option (PDFHUMMUS_NO_TIFF "Disable TIFF in PDF Hummus" ON)
 
 option (USE_GMP "use GMP" ON)
 if (USE_GMP)
-    find_package(GMP)
+  find_package(GMP)
 endif (USE_GMP)
 
 if (APPLE)
@@ -507,11 +507,12 @@ set (TeXmacs_MacOS_SRCS
 ### --------------------------------------------------------------------
 
 set (TeXmacs_Libraries
-    ${Guile_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${PNG_LIBRARIES}
-    -lpthread)
+  ${Guile_LIBRARIES}
+  ${ZLIB_LIBRARIES}
+  ${JPEG_LIBRARIES}
+  ${PNG_LIBRARIES}
+  -lpthread
+)
 
 if (LINKED_CAIRO)
   set (TeXmacs_Libraries ${TeXmacs_Libraries} ${CAIRO_LIBRARIES})
@@ -585,8 +586,8 @@ elseif (TEXMACS_GUI STREQUAL "Aqua")
   set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Cocoa_SRCS})
   set (TeXmacs_Libraries ${TeXmacs_Libraries} ${COCOA_LIBRARY})
 
-  MARK_AS_ADVANCED(COCOA_LIBRARY)
-  MARK_AS_ADVANCED(COCOA_INCLUDE_DIR)
+  mark_as_advanced(COCOA_LIBRARY)
+  mark_as_advanced(COCOA_INCLUDE_DIR)
 else (TEXMACS_GUI STREQUAL "Qt")
   find_package (X11)
 
@@ -597,13 +598,13 @@ else (TEXMACS_GUI STREQUAL "Qt")
   set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_Widkit_SRCS} ${TeXmacs_X11_SRCS})
   set (TeXmacs_Libraries ${TeXmacs_Libraries} ${X11_LIBRARIES})
 
-  add_definitions("-DX11TEXMACS")
+  add_definitions ("-DX11TEXMACS")
   set (X11TEXMACS 1)
 
-  set(CONFIG_X11 "X11 Widkit Ghostscript")
-  set(CONFIG_GUI "X11")
+  set (CONFIG_X11 "X11 Widkit Ghostscript")
+  set (CONFIG_GUI "X11")
 
-  MESSAGE(STATUS "Enabling standard X11 interface")
+  message (STATUS "Enabling standard X11 interface")
 endif (TEXMACS_GUI MATCHES "Qt.*")
 
 if (APPLE AND TEXMACS_GUI STREQUAL "X11")
@@ -634,16 +635,17 @@ if (APPLE)
     "-framework CoreServices"
     "-framework CoreText"
     "-framework Foundation"
-    "-framework ImageIO")
+    "-framework ImageIO"
+  )
   set (TeXmacs_All_SRCS ${TeXmacs_All_SRCS} ${TeXmacs_MacOS_SRCS})
 
-  set(GUI_TYPE MACOSX_BUNDLE)
-  set(NO_FAST_ALLOC 1)
-  set(AQUATEXMACS 1)
-  set(COCOA_CFLAGS "")
-  set(COCOA_LDFLAGS "-framework COCOA")
-  set(CONFIG_GUI "COCOA")
-  set(CONFIG_COCOA "Cocoa")
+  set (GUI_TYPE MACOSX_BUNDLE)
+  set (NO_FAST_ALLOC 1)
+  set (AQUATEXMACS 1)
+  set (COCOA_CFLAGS "")
+  set (COCOA_LDFLAGS "-framework COCOA")
+  set (CONFIG_GUI "COCOA")
+  set (CONFIG_COCOA "Cocoa")
 
   message (STATUS "Enabling experimental Cocoa port")
 else (APPLE)
@@ -671,9 +673,9 @@ include_directories (${TeXmacs_Include_Dirs})
 ### --------------------------------------------------------------------
 
 if (APPLE)
-  set(TeXmacs_binary_name "TeXmacs")
+  set (TeXmacs_binary_name "TeXmacs")
 else (APPLE)
-  set(TeXmacs_binary_name "texmacs.bin")
+  set (TeXmacs_binary_name "texmacs.bin")
 endif (APPLE)
 
 ### --------------------------------------------------------------------
