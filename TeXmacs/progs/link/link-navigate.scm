@@ -468,7 +468,10 @@
   (load-browse-buffer u))
 
 (define (http-root-handler u)
-  (load-browse-buffer u))
+  (let ((os-open (cond ((os-macos?) "open")
+                       ((os-mingw?) "start")
+                       (else "xdg-open"))))
+    (system (string-append os-open " " (url->system (url-expand u))))))
 
 (define (url-handlers u)
   (with root (or (and (url-rooted? u) (url-root u)) "default")
