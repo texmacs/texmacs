@@ -48,7 +48,7 @@ public:
   QRect   extents () { return p_extents; }
   void setExtents (QRect newExtents);
 
-  QWidget* surface () { return p_surface; }
+  QWidget* surface () const { return p_surface; }
   
   void ensureVisible (int cx, int cy, int mx = 50, int my = 50);
   
