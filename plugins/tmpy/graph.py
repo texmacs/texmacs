@@ -30,7 +30,7 @@ class Graph(object):
             if len(x) == 0:
                 pass
             else:
-                flush_verbatim (x)
+                flush_verbatim (x + "\n")
                 flush_prompt (self.name + "] ")
 
     def available(self):
