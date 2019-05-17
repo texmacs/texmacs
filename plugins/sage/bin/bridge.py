@@ -15,7 +15,7 @@ import string
 import warnings
 warnings.simplefilter("ignore") # don't print warnings to stdout
 from sage.all import *
-from tmpy.protocol import texmacs_out, DATA_COMMAND
+from tmpy.protocol import *
 from tmpy.postscript import ps_out
 
 __version__='0.8.1'
@@ -156,14 +156,14 @@ def complete(cmd, my_globals):
   # if we don't match anything we return
   # no completion possibilities.
   if res is None:
-    return 'scheme:(tuple "" "")'
+    return '(tuple "" "")'
     
   cmpl_str = res.group(1)
   pos_str = int(res.group(2))
   
   cmpl_str = cmpl_str[:pos_str]
   if len(cmpl_str)  ==  0:
-    return 'scheme:(tuple "" "")'
+    return '(tuple "" "")'
   
   # We get the string after the last space character.
   # no completion is done for strings with spaces
@@ -175,7 +175,7 @@ def complete(cmd, my_globals):
   # no string after last space? return empty
   # completion
   if len(cmpl_str)  ==  0:
-    return 'scheme:(tuple "" "")'
+    return '(tuple "" "")'
     
   # Find completion candidates and form a suitable
   # answer to Texmacs
@@ -191,10 +191,10 @@ def complete(cmd, my_globals):
     if c[pos] == "_":
       continue
     res += '"%s" ' % c[pos:]
-  return 'scheme:(tuple "'+cmpl_str+'" '+res+')'
+  return '(tuple "'+cmpl_str+'" '+res+')'
 
 
-texmacs_out("verbatim:"+sage.misc.banner.version())
+flush_verbatim (sage.misc.banner.version())
 
 my_globals = {}
 # We insert into the session's namespace the 'ps_out' method.
@@ -233,11 +233,11 @@ eval(co, my_globals)
 while True:
   line = os.sys.stdin.readline()
   if not line:
-    texmacs_out('')
+    flush_any ('')
   else:
     if line[0]  ==  DATA_COMMAND:
       if line[1:].find('(complete ')  ==  0:
-        texmacs_out(complete(line[11:], my_globals))
+        flush_scheme (complete(line[11:], my_globals))
       continue
     capt = Capture()
     result = None
@@ -269,4 +269,4 @@ while True:
     del capt
     
     out = compose_output(result)
-    texmacs_out(out.strip())
+    flush_any (out.strip())

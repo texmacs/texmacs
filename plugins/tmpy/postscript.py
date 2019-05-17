@@ -77,5 +77,5 @@ def ps_out(out):
     elif 'read' in dir(out):
         data = out.read()
 
-    texmacs_out('ps:' + texmacs_escape(data).decode())
+    flush_ps(texmacs_escape(data).decode())
     return PSOutDummy()

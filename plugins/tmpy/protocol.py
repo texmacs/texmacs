@@ -36,7 +36,7 @@ def texmacs_escape(data):
                .replace(DATA_END.encode(), (DATA_ESCAPE + DATA_END).encode())
 
 
-def texmacs_out(out_str):
+def flush_any (out_str):
     """Feed data back to TeXmacs.
 
     Output results back to TeXmacs, with the DATA_BEGIN,
@@ -44,3 +44,21 @@ def texmacs_out(out_str):
     data_begin()
     os.sys.stdout.write(out_str)
     data_end()
+
+def flush_verbatim(content):
+    flush_any ("verbatim:" + content)
+
+def flush_prompt(prompt):
+    flush_any ("prompt#" + prompt)
+
+def flush_command(command):
+    flush_any ("command:" + command)
+
+def flush_scheme(scheme):
+    flush_any ("scheme:" + scheme)
+
+def flush_file(path):
+    flush_any ("file:" + path)
+
+def flush_ps(content):
+    flush_any ("ps:" + content)

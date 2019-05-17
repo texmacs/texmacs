@@ -11,7 +11,7 @@
 
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .protocol import texmacs_out
+from .protocol import *
 
 class Graphviz(Graph):
     def __init__(self, name):
@@ -34,7 +34,7 @@ class Graphviz(Graph):
         p = Popen(cmd_list, stdout=f, stdin=PIPE, stderr=PIPE)
         out, err = p.communicate(input=code)
         if (p.returncode == 0):
-          texmacs_out ("file:" + png)
+            flush_file (png)
         else:
-          texmacs_out ("verbatim:" + err)
+            flush_verbatim (err)
 

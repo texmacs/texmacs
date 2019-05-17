@@ -12,7 +12,7 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .protocol import texmacs_out
+from .protocol import *
 
 class Asymptote(Graph):
     def __init__(self, name):
@@ -37,6 +37,6 @@ class Asymptote(Graph):
         p = Popen(cmd, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-          texmacs_out ("file:" + self.get_eps())
+          flush_file (self.get_eps())
         else:
-          texmacs_out ("verbatim:" + err)
+          flush_verbatim (err)

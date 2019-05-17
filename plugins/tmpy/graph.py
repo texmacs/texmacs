@@ -30,9 +30,8 @@ class Graph(object):
             if len(x) == 0:
                 pass
             else:
-                texmacs_out("verbatim:" + x + DATA_BEGIN +
-                            "prompt#" + self.name + "] " + DATA_END)
-            os.sys.stdout.flush()
+                flush_verbatim (x)
+                flush_prompt (self.name + "] ")
 
     def available(self):
         return len(self.message) > 0

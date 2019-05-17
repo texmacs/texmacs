@@ -56,7 +56,7 @@ def compose_output(data):
         data = data2
     if data is None:
         data = ''
-    return 'verbatim:%s' % str(data).strip()
+    return str(data).strip()
 
     
 def do_module_hierarchy(mod, attr):
@@ -131,9 +131,9 @@ def complete(s, pos, my_globals):
     try:
         s = s[:pos]
         if not s:
-            return 'scheme:(tuple "" "")'
+            return '(tuple "" "")'
     except Exception as e:
-        return 'scheme:(tuple "" "")'
+        return '(tuple "" "")'
     # We get the string after the last space character.
     # No completion is done for strings containing spaces.
     i = len(s) - 1
@@ -146,7 +146,7 @@ def complete(s, pos, my_globals):
     pos = len(s)
     # no string after last space? return empty completion
     if not s:
-        return 'scheme:(tuple "" "")'
+        return '(tuple "" "")'
         
     # Find completion candidates and form a suitable answer to Texmacs
     offset, cand = find_completion_candidates (s, my_globals)
@@ -158,7 +158,7 @@ def complete(s, pos, my_globals):
         if offset is not None:
             pos = offset
         res += '"%s" ' % c[pos:]
-    return 'scheme:(tuple "' + s + '" ' + res + ')'
+    return '(tuple "' + s + '" ' + res + ')'
 
 
 def from_scm_string(s):
@@ -272,29 +272,29 @@ if py_ver == 3:
 else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
-texmacs_out("verbatim:Python " + sys.version +
-            "\nPython plugin for TeXmacs.\n" +
-            "Please see the documentation in Help -> Plugins -> Python")
-texmacs_out("prompt#>>> ")
+flush_verbatim ("Python " + sys.version + "\n" +
+               "Python plugin for TeXmacs.\n" +
+               "Please see the documentation in Help -> Plugins -> Python")
+flush_prompt (">>> ")
 
 
 # Main session loop.
 while True:
-    line = _input()
+    line = _input ()
     if not line:
         continue
     if line[0] == DATA_COMMAND:
         sf = parse_complete_command (line[1:])
         if sf[0] == 'complete':
-            texmacs_out(complete (sf[1], sf[2], my_globals))
+            flush_scheme (complete (sf[1], sf[2], my_globals))
         continue
     elif line.endswith('?') and not line.strip().startswith('#'):
         if len(line) > 1:
             out = compile_help (line[:-1])
-            texmacs_out('command:(tmpy-open-help %s %s %s)' %
-                         (out["help"], out["src"], out["file"]))
+            flush_command ('(tmpy-open-help %s %s %s)' %
+                           (out["help"], out["src"], out["file"]))
         else:
-            texmacs_out('verbatim:Type a name before the "?" to see the help')
+            flush_verbatim ('Type a name before the "?" to see the help')
         continue
     else:
         lines = [line]
@@ -308,5 +308,5 @@ while True:
             result = eval(text, my_globals)
         except:
             result = CaptureStdout.capture(text, my_globals)
-        texmacs_out(compose_output(result))
+        flush_verbatim (compose_output(result))
 

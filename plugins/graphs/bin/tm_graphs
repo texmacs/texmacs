@@ -139,7 +139,7 @@ def complete (s, pos, my_globals):
         if not s:
             return 'scheme:(tuple "" "")'
     except Exception as e:
-        return 'scheme:(tuple "" "")'
+        return '(tuple "" "")'
     # We get the string after the last space character.
     # No completion is done for strings containing spaces.
     i = len(s) - 1
@@ -152,7 +152,7 @@ def complete (s, pos, my_globals):
     pos = len(s)
     # no string after last space? return empty completion
     if not s:
-        return 'scheme:(tuple "" "")'
+        return '(tuple "" "")'
         
     # Find completion candidates and form a suitable answer to Texmacs
     offset, cand = find_completion_candidates (s, my_globals)
@@ -164,7 +164,7 @@ def complete (s, pos, my_globals):
         if offset is not None:
             pos = offset
         res += '"%s" ' % c[pos:]
-    return 'scheme:(tuple "' + s + '" ' + res + ')'
+    return '(tuple "' + s + '" ' + res + ')'
 
 def from_scm_string(s):
     if len(s) > 2 and s[0] == '"' and s[-1] == '"':
@@ -273,16 +273,16 @@ graphs = filter(lambda x: x.available(), grapvizs + others)
 graph_names = map(lambda x: x.name, graphs)
 
 if len(graphs) == 0:
-    texmacs_out ("verbatim:\nSorry, please check your installation of Graphviz/Asymptote")
-    texmacs_out ("prompt#dead] ")
+    flush_verbatim ("\nSorry, please check your installation of Graphviz/Asymptote")
+    flush_prompt ("dead] ")
     exit(0)
 
 current = graphs[0]
 
-texmacs_out ("verbatim:Generate Graph with your favorite tools in GNU TeXmacs\n")
-texmacs_out ("verbatim:Created by Darcy Shen, Implemented in Python, " + current.name +  " by default\n")
-texmacs_out ("verbatim:It is quit easy, join us: https://github.com/texmacs/plugins\n")
-texmacs_out ("prompt#" + current.name + "] ")
+flush_verbatim ("Generate Graph with your favorite tools in GNU TeXmacs\n")
+flush_verbatim ("Created by Darcy Shen, Implemented in Python, " + current.name +  " by default\n")
+flush_verbatim ("It is quit easy, join us: https://github.com/texmacs/plugins\n")
+flush_prompt (current.name + "] ")
 
 def unigraph(text):
     parser = argparse.ArgumentParser()
@@ -300,7 +300,7 @@ def unigraph(text):
         graph.set_width(args.width)
         graph.evaluate(code)
     else:
-        texmacs_out("verbatim:No such Graph generator: " + command)
+        flush_verbatim ("No such Graph generator: " + command)
 
 
 # Main session loop.
@@ -311,15 +311,15 @@ while True:
     if line[0] == DATA_COMMAND:
         sf = parse_complete_command (line[1:])
         if sf[0] == 'complete':
-            texmacs_out (complete (sf[1], sf[2], my_globals))
+            flush_scheme (complete (sf[1], sf[2], my_globals))
         continue
     elif line.endswith('?') and not line.strip().startswith('#'):
         if len (line) > 1:
             out = compile_help (line[:-1])
-            texmacs_out ('command:(tmpy-open-help %s %s %s)' %
+            flush_command ('(tmpy-open-help %s %s %s)' %
                          (out["help"], out["src"], out["file"]))
         else:
-            texmacs_out ('verbatim:Type a name before the "?" to see the help')
+            flush_verbatim ('Type a name before the "?" to see the help')
         continue
     else:
         lines = [line]
@@ -334,7 +334,7 @@ while True:
         if text.startswith("%"):
             unigraph(text)
         elif text == "help":
-            texmacs_out("verbatim:[help, " + ", ".join(str(x) for x in graph_names) + "]\n")
+            flush_verbatim ("[help, " + ", ".join(str(x) for x in graph_names) + "]\n")
             current.greet()
         elif text in graph_names:
             current = graphs[graph_names.index(text)]

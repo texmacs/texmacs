@@ -12,7 +12,7 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .protocol import texmacs_out
+from .protocol import *
 
 class Mermaid(Graph):
     def __init__(self, name = "mmdc"):
@@ -43,6 +43,6 @@ class Mermaid(Graph):
         p = Popen(cmd, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-          texmacs_out ("file:" + png)
+            flush_file (png)
         else:
-          texmacs_out ("verbatim:" + err)
+            flush_verbatim (err)
