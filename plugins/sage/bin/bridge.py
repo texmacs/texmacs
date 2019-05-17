@@ -9,7 +9,6 @@ sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
 import tempfile
 import traceback
-import keyword
 import re
 import string
 import warnings
@@ -17,6 +16,7 @@ warnings.simplefilter("ignore") # don't print warnings to stdout
 from sage.all import *
 from tmpy.protocol import *
 from tmpy.postscript import ps_out
+from tmpy.completion import parse_complete_command, complete
 
 __version__='0.8.1'
 __author__='Ero Carrera'
@@ -90,109 +90,6 @@ def compose_output(data):
 
   return 'verbatim: %s' % str(data)
 
-def do_module_hierarchy(mod, attr):
-  """Explore an object's hierarchy.
-  
-  Go through the objects hierarchy looking for
-  attributes/methods to provide as autocompletion
-  options.
-  """
-  dot = attr.find('.')
-  if dot>0:
-    if hasattr(mod, attr[:dot]):
-      next = getattr(mod, attr[:dot])
-      return do_module_hierarchy(next, attr[dot+1:])
-  if isinstance(mod, dict):
-    return dir(mod)
-  else:
-    return dir(mod)
-
-def find_completion_candidates(cmpl_str, my_globals):
-  """Harvest candidates to provide as autocompletion options."""
-  
-  haystack = my_globals.keys()+dir(my_globals['__builtins__'])+keyword.kwlist
-  dot = cmpl_str.rfind('.')
-  offset = None
-  if dot>0:
-    offset = len(cmpl_str[dot+1:])
-    first_dot = cmpl_str[:dot].find('.')
-    if first_dot<0:
-      mod_name = cmpl_str[:dot]
-      r_str = cmpl_str[dot+1:]
-    else:
-      mod_name = cmpl_str[:first_dot]
-      r_str = cmpl_str[first_dot+1:]
-    if mod_name in keyword.kwlist:
-      return None, []
-    if os.sys.modules.has_key(mod_name):
-      haystack = do_module_hierarchy(os.sys.modules[mod_name], r_str)
-    elif mod_name in my_globals.keys():
-      haystack = do_module_hierarchy(my_globals[mod_name], r_str)
-    else:
-      haystack = do_module_hierarchy(type(mod_name), r_str)
-      
-  return offset, filter(lambda x:x.find(cmpl_str[dot+1:])  ==  0, haystack)
-
-def name_char(c):
-  """Check whether a character is a valid symbol."""
-  if c in '+-*/%<>&|^~ = !,:()[]{}':
-    return ' '
-  else:
-    return c
-
-def complete(cmd, my_globals):
-  """Parse autocomplete command.
-   
-  Parse the command and return a suitable answer to
-  give back to TeXmacs.
-  """
-
-  # Parse Texmacs command and extract string to
-  # complete and offset to complete from.
-  cmd = cmd.strip()[:-1]
-  cmd_re = re.compile(r'"(.*)"\s+(\d+)')
-  res = cmd_re.match(cmd)
-  
-  # if we don't match anything we return
-  # no completion possibilities.
-  if res is None:
-    return '(tuple "" "")'
-    
-  cmpl_str = res.group(1)
-  pos_str = int(res.group(2))
-  
-  cmpl_str = cmpl_str[:pos_str]
-  if len(cmpl_str)  ==  0:
-    return '(tuple "" "")'
-  
-  # We get the string after the last space character.
-  # no completion is done for strings with spaces
-  # within
-  cmpl_str = str().join(map(name_char, cmpl_str))
-  cmpl_str = cmpl_str.split()[-1]
-  pos = len(cmpl_str)
-  
-  # no string after last space? return empty
-  # completion
-  if len(cmpl_str)  ==  0:
-    return '(tuple "" "")'
-    
-  # Find completion candidates and form a suitable
-  # answer to Texmacs
-  offset, cand = find_completion_candidates(cmpl_str, my_globals)
-  if len(cand) == 0:
-    res = '""'
-  else:
-    res = ''
-  for c in cand:
-    if offset is not None:
-      pos = offset
-    #Ignore things that start with underscore
-    if c[pos] == "_":
-      continue
-    res += '"%s" ' % c[pos:]
-  return '(tuple "'+cmpl_str+'" '+res+')'
-
 
 flush_verbatim (sage.misc.banner.version())
 
@@ -227,8 +124,6 @@ co = compile('from sage.calculus.predefined import x', 'tm_sage', 'exec')
 eval(co, my_globals)
 
 
-
-
 # Main session loop.
 while True:
   line = os.sys.stdin.readline()
@@ -236,8 +131,9 @@ while True:
     flush_any ('')
   else:
     if line[0]  ==  DATA_COMMAND:
-      if line[1:].find('(complete ')  ==  0:
-        flush_scheme (complete(line[11:], my_globals))
+      sf = parse_complete_command (line[1:])
+      if sf[0] == 'complete':
+          flush_scheme (complete (sf[1], sf[2], my_globals))
       continue
     capt = Capture()
     result = None
