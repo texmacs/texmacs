@@ -137,9 +137,11 @@ text_box_rep::expand_glyphs (int mode, double factor) {
 
 void
 text_box_rep::display (renderer ren) {
-  ren->set_pencil (pen);
-  if (is_nil (xk)) fn->draw (ren, str, 0, 0);
-  else fn->draw (ren, str, xk->left, 0, xk->padding);
+  if (N(str) > 0) {
+    ren->set_pencil (pen);
+    if (is_nil (xk)) fn->draw (ren, str, 0, 0);
+    else fn->draw (ren, str, xk->left, 0, xk->padding);
+  }
 }
 
 double text_box_rep::left_slope () {
