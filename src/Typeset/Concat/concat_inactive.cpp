@@ -46,8 +46,8 @@ concater_rep::typeset_src_open (tree t, path ip, string extra) {
     if ((L(t) != INLINE_TAG) && (env->src_close == CLOSE_MINIMAL)) {
       typeset_blue (t[0], descend (ip, 0));
       if (N(t) > 1) {
-	penalty_min (0);
-	print (env->fn->spc);
+        penalty_min (0);
+        print (env->fn->spc);
       }
       return;
     }

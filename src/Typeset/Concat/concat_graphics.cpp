@@ -223,8 +223,8 @@ BEGIN_MAGNIFY
       else if (halign == "right") x -= b->x2;
       if (valign == "bottom") y -= b->y1;
       else if (valign == "axis") {
-	axis= env->fn->yfrac - b->y1;
-	y -= env->fn->yfrac;
+        axis= env->fn->yfrac - b->y1;
+        y -= env->fn->yfrac;
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
@@ -256,8 +256,8 @@ BEGIN_MAGNIFY
       else if (halign == "right") x -= b->x2;
       if (valign == "bottom") y -= b->y1;
       else if (valign == "axis") {
-	axis= (env->fn->yx >> 1) - b->y1;
-	y -= (env->fn->yx >> 1);
+        axis= (env->fn->yx >> 1) - b->y1;
+        y -= (env->fn->yx >> 1);
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
@@ -288,8 +288,8 @@ BEGIN_MAGNIFY
       else if (halign == "right") x -= b->x2;
       if (valign == "bottom") y -= b->y1;
       else if (valign == "axis") {
-	axis= (env->fn->yx >> 1) - b->y1;
-	y -= (env->fn->yx >> 1);
+        axis= (env->fn->yx >> 1) - b->y1;
+        y -= (env->fn->yx >> 1);
       }
       else if (valign == "center") y -= ((b->y1 + b->y2) >> 1);
       else if (valign == "top") y -= b->y2;
@@ -537,10 +537,10 @@ typeset_gr_item (edit_env env, tree t, path ip, bool& ok) {
     for (i=0; i<k; i++) {
       tree var_t= env->exec (t[i<<1]);
       if (is_atomic (var_t)) {
-	string var= var_t->label;
-	vars[i]= var;
-	oldv[i]= env->read (var);
-	newv[i]= env->exec (t[(i<<1)+1]);
+        string var= var_t->label;
+        vars[i]= var;
+        oldv[i]= env->read (var);
+        newv[i]= env->exec (t[(i<<1)+1]);
         if (var == PROVISO && newv[i] == "false") {
           STACK_DELETE_ARRAY(vars);
           STACK_DELETE_ARRAY(oldv);
@@ -549,10 +549,10 @@ typeset_gr_item (edit_env env, tree t, path ip, bool& ok) {
         }
       }
       else {
-	STACK_DELETE_ARRAY(vars);
-	STACK_DELETE_ARRAY(oldv);
-	STACK_DELETE_ARRAY(newv);
-	return empty_box (ip);
+        STACK_DELETE_ARRAY(vars);
+        STACK_DELETE_ARRAY(oldv);
+        STACK_DELETE_ARRAY(newv);
+        return empty_box (ip);
       }
     }
 
@@ -571,13 +571,13 @@ typeset_gr_item (edit_env env, tree t, path ip, bool& ok) {
     ok= true;
     for (int i=0; i<N(t[0]); i++)
       if (is_func (t[0][i], TUPLE, 2) && is_func (t[0][i][1], WITH)) {
-	tree w= t[0][i][1];
-	for (int j=0; j+1<N(w); j++) {
-	  if (w[j] == PROVISO && env->exec (w[j+1]) == "false") {
-	    ok= false;
-	    break;
-	  }
-	}
+        tree w= t[0][i][1];
+        for (int j=0; j+1<N(w); j++) {
+          if (w[j] == PROVISO && env->exec (w[j+1]) == "false") {
+            ok= false;
+            break;
+          }
+        }
       }
     if (!ok) return empty_box (ip);
     return typeset_as_atomic (env, t, ip);
@@ -602,16 +602,16 @@ concater_rep::typeset_graphical (array<box>& bs, tree t, path ip) {
           set_graphical_value (u[0], get_graphical_value (u[1]));
         break;
       case IS_INTERSECTION:
-	cout << "Not yet implemented 'is-intersection'\n";
+        cout << "Not yet implemented 'is-intersection'\n";
         break;
       case ON_CURVE:
-	cout << "Not yet implemented 'on-curve'\n";
+        cout << "Not yet implemented 'on-curve'\n";
         break;
       case ON_TEXT_BORDER:
-	cout << "Not yet implemented 'on-text-border'\n";
+        cout << "Not yet implemented 'on-text-border'\n";
         break;
       case ON_GRID:
-	cout << "Not yet implemented 'on-grid'\n";
+        cout << "Not yet implemented 'on-grid'\n";
         break;
       default:
         break;

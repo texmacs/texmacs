@@ -48,25 +48,25 @@ concater_rep::pre_glue () {
     int t1= item1->type;
     int t2= item2->type;
     if (((t1 == RSUB_ITEM) && (t2 == RSUP_ITEM)) ||
-	((t1 == RSUP_ITEM) && (t2 == RSUB_ITEM)) ||
-	((t1 == LSUB_ITEM) && (t2 == LSUP_ITEM)) ||
-	((t1 == LSUP_ITEM) && (t2 == LSUB_ITEM)))
+        ((t1 == RSUP_ITEM) && (t2 == RSUB_ITEM)) ||
+        ((t1 == LSUB_ITEM) && (t2 == LSUP_ITEM)) ||
+        ((t1 == LSUP_ITEM) && (t2 == LSUB_ITEM)))
       {
-	bool  flag1 = (t1 == LSUB_ITEM) || (t1 == RSUB_ITEM);
-	bool  flag2 = (t1 == LSUB_ITEM) || (t1 == LSUP_ITEM);
-	int   type  = flag2? GLUE_LSUBS_ITEM: GLUE_RSUBS_ITEM;
-	box   b1    = flag1? item1->b[0]: item2->b[0];
-	box   b2    = flag1? item2->b[0]: item1->b[0];
-	box   b     = script_box (b1->ip, b1, b2, env->fn);
-	int   pen   = item2->penalty;
-	space spc   = max (item1->spc, item2->spc);
+        bool  flag1 = (t1 == LSUB_ITEM) || (t1 == RSUB_ITEM);
+        bool  flag2 = (t1 == LSUB_ITEM) || (t1 == LSUP_ITEM);
+        int   type  = flag2? GLUE_LSUBS_ITEM: GLUE_RSUBS_ITEM;
+        box   b1    = flag1? item1->b[0]: item2->b[0];
+        box   b2    = flag1? item2->b[0]: item1->b[0];
+        box   b     = script_box (b1->ip, b1, b2, env->fn);
+        int   pen   = item2->penalty;
+        space spc   = max (item1->spc, item2->spc);
 
-	a[i]= line_item (type, OP_SKIP, b, pen);
-	a[i]->spc = spc;
+        a[i]= line_item (type, OP_SKIP, b, pen);
+        a[i]->spc = spc;
         for (int k=i+1; k<j; k++)
           if (a[k]->type == MARKER_ITEM)
             a[k]= line_item (OBSOLETE_ITEM, OP_SKIP, a[k]->b, a[k]->penalty);
-	a[j]= line_item (OBSOLETE_ITEM, OP_SKIP, item2->b, pen);
+        a[j]= line_item (OBSOLETE_ITEM, OP_SKIP, item2->b, pen);
       }
     i++;
   }
@@ -134,7 +134,7 @@ concater_rep::glue (box b, int ref, int arg) {
   a[arg]  = line_item (OBSOLETE_ITEM, OP_SKIP, a[arg]->b, a[arg]->penalty);
   a[ref]  = line_item (arg<ref? GLUE_LEFT_ITEM: GLUE_RIGHT_ITEM,
                        a[ref]->op_type, b,
-		       min (a[ref]->penalty, a[arg]->penalty));
+                       min (a[ref]->penalty, a[arg]->penalty));
   a[ref]->spc = spc;
 }
 
@@ -162,12 +162,12 @@ concater_rep::handle_scripts (int start, int end) {
   int i;
   for (i=start; i<=end; ) {
     if ((a[i]->type == OBSOLETE_ITEM) ||
-	(a[i]->type == LSUB_ITEM) ||
-	(a[i]->type == LSUP_ITEM) ||
-	(a[i]->type == GLUE_LSUBS_ITEM) ||
-	(a[i]->type == RSUB_ITEM) ||
-	(a[i]->type == RSUP_ITEM) ||
-	(a[i]->type == GLUE_RSUBS_ITEM)) { i++; continue; }
+        (a[i]->type == LSUB_ITEM) ||
+        (a[i]->type == LSUP_ITEM) ||
+        (a[i]->type == GLUE_LSUBS_ITEM) ||
+        (a[i]->type == RSUB_ITEM) ||
+        (a[i]->type == RSUP_ITEM) ||
+        (a[i]->type == GLUE_RSUBS_ITEM)) { i++; continue; }
 
     path sip;
     int l= prec (i);
@@ -246,7 +246,7 @@ concater_rep::clean_and_correct () {
   for (i=0; i<N(a); i++)
     if (a[i]->type!=OBSOLETE_ITEM) {
       if (a[i]->b->w () != 0) {
-	if (prev != -1) {
+        if (prev != -1) {
           SI cor= ::italic_correction (a[prev]->b, a[i]->b);
           if (cor != 0) {
             if (a[prev]->b->right_correction () != 0)
@@ -254,7 +254,7 @@ concater_rep::clean_and_correct () {
             else a[i-1]->spc += space (cor);
           }
         }
-	prev= i;
+        prev= i;
       }
       new_a << a[i];
     }
@@ -295,15 +295,15 @@ concater_rep::handle_matching (int start, int end) {
   for (i=start; i<=end; i++) {
     int tp= a[i]->type;
     if (tp == LEFT_BRACKET_ITEM ||
-	tp == MIDDLE_BRACKET_ITEM ||
-	tp == RIGHT_BRACKET_ITEM)
+        tp == MIDDLE_BRACKET_ITEM ||
+        tp == RIGHT_BRACKET_ITEM)
       {
         string ls= a[i]->b->get_leaf_string ();
         pencil lp= a[i]->b->get_leaf_pencil ();
-	font   fn= a[i]->b->get_leaf_font ();
+        font   fn= a[i]->b->get_leaf_font ();
 
         // find the middle of the bracket, around where to center
-	SI mid= (a[i]->b->y1 + a[i]->b->y2) >> 1;
+        SI mid= (a[i]->b->y1 + a[i]->b->y2) >> 1;
         bool custom=
           N(ls) > 2 && ls[N(ls)-2] <= '9' && ls[N(ls)-2] >= '0' &&
           !ends (ls, "-0>");
@@ -316,13 +316,13 @@ concater_rep::handle_matching (int start, int end) {
           mid= (auxb->y1 + auxb->y2) >> 1;
         }
 
-	// make symmetric and prevent from too large delimiters if possible
-	SI Y1   = y1 + (fn->sep >> 1);
-	SI Y2   = y2 - (fn->sep >> 1);
-	SI tol  = fn->sep << 1;
-	SI drift= ((Y1 + Y2) >> 1) - mid; // fn->yfrac;
-	if (drift < 0) Y2 += min (-drift, tol) << 1;
-	else Y1 -= min (drift, tol) << 1;
+        // make symmetric and prevent from too large delimiters if possible
+        SI Y1   = y1 + (fn->sep >> 1);
+        SI Y2   = y2 - (fn->sep >> 1);
+        SI tol  = fn->sep << 1;
+        SI drift= ((Y1 + Y2) >> 1) - mid; // fn->yfrac;
+        if (drift < 0) Y2 += min (-drift, tol) << 1;
+        else Y1 -= min (drift, tol) << 1;
 
         // further adjustments when the enclosed expression is not very high
         // and for empty brackets
@@ -351,25 +351,25 @@ concater_rep::handle_matching (int start, int end) {
       }
     if (tp == LEFT_BRACKET_ITEM)
       for (int j= i-1; j>=0; j--) {
-	if (a[j]->type == MARKER_ITEM) {
-	  SI Y1= a[i]->b->y1;
-	  SI Y2= a[i]->b->y2;
-	  //a[j]->b = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
-	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[i]->b);
-	  a[j]->type= STD_ITEM;
-	}
-	else if (a[j]->type != CONTROL_ITEM) break;
+        if (a[j]->type == MARKER_ITEM) {
+          SI Y1= a[i]->b->y1;
+          SI Y2= a[i]->b->y2;
+          //a[j]->b = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
+          a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[i]->b);
+          a[j]->type= STD_ITEM;
+        }
+        else if (a[j]->type != CONTROL_ITEM) break;
       }
     if (tp == RIGHT_BRACKET_ITEM)
       for (int j= i+1; j<N(a); j++) {
-	if (a[j]->type == MARKER_ITEM) {
-	  SI Y1= a[i]->b->y1;
-	  SI Y2= a[i]->b->y2;
-	  //a[j]->b = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
-	  a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[i]->b);
-	  a[j]->type= STD_ITEM;
-	}
-	else if (a[j]->type != CONTROL_ITEM) break;
+        if (a[j]->type == MARKER_ITEM) {
+          SI Y1= a[i]->b->y1;
+          SI Y2= a[i]->b->y2;
+          //a[j]->b = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[j]->b);
+          a[j]->b   = marker_box (a[j]->b->find_lip (), 0, Y1, 0, Y2, a[i]->b);
+          a[j]->type= STD_ITEM;
+        }
+        else if (a[j]->type != CONTROL_ITEM) break;
       }
   }
 }
@@ -412,17 +412,17 @@ concater_rep::kill_spaces () {
   for (i=0; i<N(a); i++)
     if (a[i]->type==CONTROL_ITEM) {
       if (is_formatting (a[i]->t)) {
-	tree_label lab= L(a[i]->t);
-	if ((lab==NEXT_LINE) || (lab==LINE_BREAK) || (lab==NEW_LINE))
-	  {
-	    if (i>0) a[i-1]->spc= space (0);
-	    a[i]->spc= space (0);
-	  }
+        tree_label lab= L(a[i]->t);
+        if ((lab==NEXT_LINE) || (lab==LINE_BREAK) || (lab==NEW_LINE))
+          {
+            if (i>0) a[i-1]->spc= space (0);
+            a[i]->spc= space (0);
+          }
       }
 
       if (is_tuple (a[i]->t, "env_par") ||
-	  is_tuple (a[i]->t, "env_page"))
-	a[i]->spc= space (0);
+          is_tuple (a[i]->t, "env_page"))
+        a[i]->spc= space (0);
     }
 }
 

@@ -98,43 +98,43 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col, string &ref, 
     for (i=0; i<last; i++) {
       tree arg= env->exec (t[i]);
       if (is_compound (arg, "id", 1)) {
-	string id= as_string (arg[0]);
-	if (accessible) env->link_env->insert_locus (id, body);
-	else if (N (obtain_ip (body)) > 1) {
-	  extern tree get_subtree (path p);
-	  path p= path_up (reverse (descend_decode (obtain_ip (body), 1)));
-	  env->link_env->insert_locus ("&" * id, get_subtree (p));
-	}
-	ids= list<string> (id, ids);
-	visited= visited || has_been_visited ("id:" * id);
+        string id= as_string (arg[0]);
+        if (accessible) env->link_env->insert_locus (id, body);
+        else if (N (obtain_ip (body)) > 1) {
+          extern tree get_subtree (path p);
+          path p= path_up (reverse (descend_decode (obtain_ip (body), 1)));
+          env->link_env->insert_locus ("&" * id, get_subtree (p));
+        }
+        ids= list<string> (id, ids);
+        visited= visited || has_been_visited ("id:" * id);
       }
       else if (is_compound (arg, "link") && N(arg) >= 2) {
-	if (is_func (arg[1], ATTR)) arg= copy (arg);
-	else arg= arg (0, 1) * tree (LINK, tree (ATTR)) * arg (1, N(arg));
-	arg[1] << tree ("secure")
-	       << (env->secure? tree ("true"): tree ("false"));
-	env->link_env->insert_link (arg);
-	for (j=2; j<N(arg); j++) {
-	  if (is_compound (arg[j], "id", 1) && is_atomic (arg[j][0])) {
-	    visited= visited || has_been_visited ("id:" * arg[j][0]->label);
-	    anchor = arg[j][0]->label;
-	  }
-	  if (is_compound (arg[j], "url", 1) && is_atomic (arg[j][0])) {
-	    visited= visited || has_been_visited ("url:" * arg[j][0]->label);
-	    ref = arg[j][0]->label;
-	  }
-	}
+        if (is_func (arg[1], ATTR)) arg= copy (arg);
+        else arg= arg (0, 1) * tree (LINK, tree (ATTR)) * arg (1, N(arg));
+        arg[1] << tree ("secure")
+               << (env->secure? tree ("true"): tree ("false"));
+        env->link_env->insert_link (arg);
+        for (j=2; j<N(arg); j++) {
+          if (is_compound (arg[j], "id", 1) && is_atomic (arg[j][0])) {
+            visited= visited || has_been_visited ("id:" * arg[j][0]->label);
+            anchor = arg[j][0]->label;
+          }
+          if (is_compound (arg[j], "url", 1) && is_atomic (arg[j][0])) {
+            visited= visited || has_been_visited ("url:" * arg[j][0]->label);
+            ref = arg[j][0]->label;
+          }
+        }
       }
       else if (is_compound (arg, "observer", 2)) {
-	string id= as_string (arg[0]);
-	string cb= cork_to_utf8 (as_string (arg[1]));
-	if (accessible) {
+        string id= as_string (arg[0]);
+        string cb= cork_to_utf8 (as_string (arg[1]));
+        if (accessible) {
           if (env->secure ||
               as_bool (eval ("(secure? '(" * cb * " #f #f #f))")))
             env->link_env->insert_locus (id, body, cb);
         }
-	ids= list<string> (id, ids);
-	visited= visited || has_been_visited ("id:" * id);
+        ids= list<string> (id, ids);
+        visited= visited || has_been_visited ("id:" * id);
       }
     }
   }

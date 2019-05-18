@@ -89,8 +89,8 @@ concater_rep::typeset_compound (tree t, path ip) {
     if (is_atomic (f)) {
       string var= f->label;
       if (!env->provides (var)) {
-	typeset_error (t, ip);
-	return;
+        typeset_error (t, ip);
+        return;
       }
       f= env->read (var);
     }
@@ -113,17 +113,17 @@ concater_rep::typeset_compound (tree t, path ip) {
       hashmap<string,path> (path (DECORATION)), env->macro_src);
     if (L(f) == XMACRO) {
       if (is_atomic (f[0])) {
-	string var= f[0]->label;
-	env->macro_arg->item (var)= t;
-	env->macro_src->item (var)= ip;
+        string var= f[0]->label;
+        env->macro_arg->item (var)= t;
+        env->macro_src->item (var)= ip;
       }
     }
     else for (i=0; i<n; i++)
       if (is_atomic (f[i])) {
-	string var= f[i]->label;
-	env->macro_arg->item (var)=
-	  i<m? t[i+d]: attach_dip (tree (UNINIT), decorate_right(ip));
-	env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
+        string var= f[i]->label;
+        env->macro_arg->item (var)=
+          i<m? t[i+d]: attach_dip (tree (UNINIT), decorate_right(ip));
+        env->macro_src->item (var)= i<m? descend (ip,i+d): decorate_right(ip);
       }
     if (is_decoration (ip))
       typeset (attach_here (f[n], ip));
@@ -297,21 +297,21 @@ concater_rep::typeset_mark (tree t, path ip) {
       tree   value= env->macro_arg->item [name];
       path   valip= decorate_right (ip);
       if (!is_func (value, BACKUP)) {
-	path new_valip= env->macro_src->item [name];
-	if (is_accessible (new_valip)) valip= new_valip;
+        path new_valip= env->macro_src->item [name];
+        if (is_accessible (new_valip)) valip= new_valip;
       }
       // cout << "Src   " << name << "=\t " << valip << "\n";
 
       if (N(t[0]) > 1) {
-	int i, n= N(t[0]);
-	for (i=1; i<n; i++) {
-	  tree r= env->exec (t[0][i]);
-	  if (!is_int (r)) break;
-	  int nr= as_int (r);
-	  if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
-	  value= value[nr];
-	  valip= descend (valip, nr);
-	}
+        int i, n= N(t[0]);
+        for (i=1; i<n; i++) {
+          tree r= env->exec (t[0][i]);
+          if (!is_int (r)) break;
+          int nr= as_int (r);
+          if ((!is_compound (value)) || (nr<0) || (nr>=N(value))) break;
+          value= value[nr];
+          valip= descend (valip, nr);
+        }
       }
 
       marker (descend (valip, 0));

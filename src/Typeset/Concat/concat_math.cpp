@@ -160,7 +160,7 @@ concater_rep::typeset_lprime (tree t, path ip) {
     bool flag= (env->fn->type == FONT_TYPE_UNICODE);
     if (flag)
       for (int i=0; i<N(s); i++)
-	flag= flag && (s[i] == '\'' || s[i] == '`');
+        flag= flag && (s[i] == '\'' || s[i] == '`');
     if (env->fn->type == FONT_TYPE_TEX ||
         env->fn->math_type != MATH_TYPE_NORMAL)
       s= replace_primes (s);
