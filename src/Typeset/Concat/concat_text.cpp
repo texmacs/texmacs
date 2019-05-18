@@ -64,7 +64,7 @@ concater_rep::typeset_text_string (tree t, path ip, int pos, int end) {
       PRINT_SPACE (tp->spc_before);
       PRINT_SPACE (tp->spc_after);
       if ((pos==end) || (s[pos]==' '))
-	typeset_substring ("", ip, pos);
+        typeset_substring ("", ip, pos);
     }
     else { // strings
       penalty_max (tp->pen_before);
@@ -150,7 +150,7 @@ concater_rep::typeset_prog_string (tree t, path ip, int pos, int end) {
       PRINT_SPACE (tp->spc_before);
       PRINT_SPACE (tp->spc_after);
       if ((pos==end) || (s[pos]==' '))
-	typeset_substring ("", ip, pos);
+        typeset_substring ("", ip, pos);
     }
     else { // strings
       penalty_max (tp->pen_before);

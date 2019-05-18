@@ -143,7 +143,7 @@ lazy_paragraph_rep::line_print (line_item item) {
     else if (is_func (item->t, VAR_VSPACE) || is_func (item->t, VSPACE)) {
       space vspc= env->as_vspace (item->t[0]);
       if (is_func (item->t, VAR_VSPACE))
-	sss->vspace_before (vspc);
+        sss->vspace_before (vspc);
       else sss->vspace_after (vspc);
     }
     else if (L(item->t) == DATOMS)
@@ -400,21 +400,21 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
       tab& tab_i= tabs[i];
       tot_weight += tab_i->weight;
       if (tab_i->kind == tab_first && pos_first < 0) {
-	num_hflush++; pos_first= i; }
+        num_hflush++; pos_first= i; }
       else if (tab_i->kind == tab_last) {
-	if (pos_last < 0) num_hflush++;
-	pos_last= i; 
+        if (pos_last < 0) num_hflush++;
+        pos_last= i;
       }
       else if (tab_i->kind == tab_all && tab_i->weight == 0.0)
-	num_hflush++;
+        num_hflush++;
     }
     for (i=cur_start; i<N(items)-1; i++) items_sp << spcs[i]->def;
     for (i=0; i<N(tabs); i++) {
       double part;
       if (tot_weight==0.0) {
-	if (i==pos_first || i==pos_last || tabs[i]->kind==tab_all)
-	  part= 1.0 / num_hflush;
-	else part= 0.0;
+        if (i==pos_first || i==pos_last || tabs[i]->kind==tab_all)
+          part= 1.0 / num_hflush;
+        else part= 0.0;
       }
       else part= tabs[i]->weight / tot_weight;
       items_sp[tabs[i]->pos] += (SI) (part * (the_width- cur_w->def));
@@ -494,7 +494,7 @@ lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
     if (f > 1.0) f= 1.0;
     for (i=cur_start; i<N(items)-1; i++)
       items_sp <<
-	(spcs[i]->def- ((SI) (f*((double) spcs[i]->def- spcs[i]->min))));
+        (spcs[i]->def- ((SI) (f*((double) spcs[i]->def- spcs[i]->min))));
     return;
   }
 
@@ -733,14 +733,14 @@ lazy_paragraph_rep::format_paragraph () {
     if (no_first) style (PAR_FIRST)= "0cm";
     for (j=start; j<i; j++)
       if (a[j]->type == CONTROL_ITEM)
-	if (is_tuple (a[j]->t, "env_par")) {
-	  if (a[j]->t[1]->label == PAR_FIRST) {
-	    for (k=j-1; k>=start; k--)
-	      if (a[k]->b->w () != 0) break;
-	    if (k >= start) continue;
-	  }
-	  style (a[j]->t[1]->label)= a[j]->t[2];
-	}
+        if (is_tuple (a[j]->t, "env_par")) {
+          if (a[j]->t[1]->label == PAR_FIRST) {
+            for (k=j-1; k>=start; k--)
+              if (a[k]->b->w () != 0) break;
+            if (k >= start) continue;
+          }
+          style (a[j]->t[1]->label)= a[j]->t[2];
+        }
     no_first= (style [PAR_NO_FIRST] == "true");
     if (no_first) env->monitored_write_update (PAR_NO_FIRST, "true");
     if (mode == "center") first= 0;
@@ -849,15 +849,15 @@ lazy_paragraph_rep::query (lazy_type request, format fm) {
     if (no_first) style (PAR_FIRST)= "0cm";
     for (int j=0; j<N(a); j++)
       if (a[j]->type == CONTROL_ITEM)
-	if (is_tuple (a[j]->t, "env_par")) {
-	  if (a[j]->t[1]->label == PAR_FIRST) {
+        if (is_tuple (a[j]->t, "env_par")) {
+          if (a[j]->t[1]->label == PAR_FIRST) {
             int k;
-	    for (k=j-1; k>=0; k--)
-	      if (a[k]->b->w () != 0) break;
-	    if (k >= 0) continue;
+            for (k=j-1; k>=0; k--)
+              if (a[k]->b->w () != 0) break;
+            if (k >= 0) continue;
             else first= env->as_length (a[j]->t[2]);
-	  }
-	}
+          }
+        }
     if (mode == "center") first= 0;
 
     SI w= left + first;
@@ -888,10 +888,10 @@ lazy_paragraph_rep::produce (lazy_type request, format fm) {
     int i, n= N(sss->l);
     if (hidden)
       for (i=0; i<n; i++) {
-	box b= sss->l[i]->b;
-	sss->l[i]->type= PAGE_HIDDEN_ITEM;
-	sss->l[i]->b   = resize_box (ip, b, b->x1, 0, b->x2, 0);
-	sss->l[i]->spc = space (0, 0, 0);
+        box b= sss->l[i]->b;
+        sss->l[i]->type= PAGE_HIDDEN_ITEM;
+        sss->l[i]->b   = resize_box (ip, b, b->x1, 0, b->x2, 0);
+        sss->l[i]->spc = space (0, 0, 0);
       }
     /* End hiding code */
     return lazy_vstream (ip, "", sss->l, sss->sb);
