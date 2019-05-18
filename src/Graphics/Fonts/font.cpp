@@ -258,8 +258,8 @@ font_rep::get_xpositions (string s, SI* xpos) {
   while (i < N(s)) {
     if (s[i] == '<')
       while ((i < N(s)) && (s[i] != '>')) {
-	i++;
-	xpos[i]= x;
+        i++;
+        xpos[i]= x;
       }
     if (i < N(s)) i++;
     get_extents (s (0, i), ex);
@@ -285,8 +285,8 @@ font_rep::get_xpositions (string s, SI* xpos, SI xk) {
     SI dx= (2*count + 1) * xk;
     if (s[i] == '<')
       while ((i < N(s)) && (s[i] != '>')) {
-	i++;
-	xpos[i] += dx;
+        i++;
+        xpos[i] += dx;
       }
     if (i < N(s)) i++;
     count++;
@@ -307,17 +307,17 @@ font_rep::var_get_extents (string s, metric& ex) {
       metric ey;
       get_extents (s (start, end), ey);
       if (flag) {
-	ex->x3= ey->x3+ ex->x2; ex->y3= ey->y3+ ex->x2;
-	ex->x4= ey->x4; ex->y4= ey->y4;
-	ex->x2 += ey->x2;
-	flag= false;
+        ex->x3= ey->x3+ ex->x2; ex->y3= ey->y3+ ex->x2;
+        ex->x4= ey->x4; ex->y4= ey->y4;
+        ex->x2 += ey->x2;
+        flag= false;
       }
       else {
-	ex->x3= min (ex->x3, ex->x2+ ey->x3);
-	ex->x4= max (ex->x4, ex->x2+ ey->x4);
-	ex->y3= min (ex->y3, ey->y3);
-	ex->y4= max (ex->y4, ey->y4);
-	ex->x2 += ey->x2;
+        ex->x3= min (ex->x3, ex->x2+ ey->x3);
+        ex->x4= max (ex->x4, ex->x2+ ey->x4);
+        ex->y3= min (ex->y3, ey->y3);
+        ex->y4= max (ex->y4, ey->y4);
+        ex->x2 += ey->x2;
       }
     }
     for (; (end<N(s)) && (s[end]==' '); end++) ex->x2 += spc->def;
