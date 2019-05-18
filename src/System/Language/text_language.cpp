@@ -375,8 +375,14 @@ oriental_language_rep::advance (tree t, int& pos) {
     return &tp_space_rep;
   }
 
+  if (s[pos] == '<' && !test (s, pos, "<#")) {
+    while ((pos<N(s)) && (s[pos]!='>')) pos++;
+    if (pos<N(s)) pos++;
+    return &tp_normal_rep;
+  }
+
   if (pos < N(s) && !test (s, pos, "<#")) {
-    while (pos < N(s) && s[pos] != ' ' && !test (s, pos, "<#"))
+    while (pos < N(s) && s[pos] != ' ' && s[pos] != '<')
       tm_char_forwards (s, pos);
     return &tp_cjk_no_break_rep;
   }
