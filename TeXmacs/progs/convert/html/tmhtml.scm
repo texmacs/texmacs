@@ -1099,10 +1099,10 @@
 	    (let* ((extents (print-snippet name-url x #t))
                    (dpi (string->number (get-preference "printer dpi")))
                    (den (/ (* dpi 2200.0) 600.0))
-		   (y1 (inexact->exact (/ (second extents) den)))
-		   (y2 (inexact->exact (/ (fourth extents) den)))
-		   (valign (number->htmlstring (/ y1 15)))
-		   (height (number->htmlstring (/ (- y2 y1) 15)))
+		   (y1 (/ (second extents) den))
+		   (y2 (/ (fourth extents) den))
+		   (valign (number->htmlstring (/ y1 15.0)))
+		   (height (number->htmlstring (/ (- y2 y1) 15.0)))
 		   (style (string-append "vertical-align: " valign "em; "
                                          "height: " height "em"))
                    (attrs (if tmhtml-css?
