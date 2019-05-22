@@ -253,16 +253,19 @@
 
   ("symbol" "S-F5" #t)
   ("text:symbol" "S-F5" #t)
+  ("math:misc" "F5" #t)
 
-  ("math:greek" "F5" #t)
+  ("math:up" "F5" #t)
   ("math:bold" "F6" #t)
-  ("math:bold:up" "C-F6" #t)
-  ("math:bold:greek" "math:bold math:greek" #t)
-  ("math:bold:cal" "math:bold math:cal" #t)
   ("math:cal" "F7" #t)
   ("math:frak" "F8" #t)
-  ("math:bbb" "S-F6" #t)
   ("math:symbol" "S-F5" #t)
+  ("math:bbb" "S-F6" #t)
+  ("math:greek" "S-F7" #t)
+
+  ("math:bold:up" "math:bold math:up" #t)
+  ("math:bold:cal" "math:bold math:cal" #t)
+  ("math:bold:greek" "math:bold math:greek" #t)
   ("math:symbol:circled" "math:symbol @" #t)
   ("math:symbol:limits" "math:symbol L" #t)
 
@@ -339,6 +342,7 @@
 (kbd-map
   (:mode in-math?)
   ("math" "" "Insert mathematical markup")
+  ("math:up" "" "Insert an upright character")
   ("math:greek" "" "Insert a Greek character")
   ("math:bold" "" "Insert a bold character")
   ("math:bold:up" "" "Insert an upright bold character")

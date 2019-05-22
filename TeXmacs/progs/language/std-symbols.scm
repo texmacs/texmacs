@@ -497,6 +497,19 @@
     "<Upsilon>" "<Phi>" "<Psi>" "<Chi>" "<Omega>"
     "<Backepsilon>" "<Mho>"
 
+    "<b-0>" "<b-1>" "<b-2>" "<b-3>" "<b-4>"
+    "<b-5>" "<b-6>" "<b-7>" "<b-8>" "<b-9>"
+
+    "<b-a>" "<b-b>" "<b-c>" "<b-d>" "<b-e>" "<b-f>" "<b-g>"
+    "<b-h>" "<b-i>" "<b-j>" "<b-k>" "<b-l>" "<b-m>" "<b-n>"
+    "<b-o>" "<b-p>" "<b-q>" "<b-r>" "<b-s>" "<b-t>" "<b-u>"
+    "<b-v>" "<b-w>" "<b-x>" "<b-y>" "<b-z>"
+
+    "<b-A>" "<b-B>" "<b-C>" "<b-D>" "<b-E>" "<b-F>" "<b-G>"
+    "<b-H>" "<b-I>" "<b-J>" "<b-K>" "<b-L>" "<b-M>" "<b-N>"
+    "<b-O>" "<b-P>" "<b-Q>" "<b-R>" "<b-S>" "<b-T>" "<b-U>"
+    "<b-V>" "<b-W>" "<b-X>" "<b-Y>" "<b-Z>"
+
     "<b-alpha>" "<b-beta>" "<b-gamma>" "<b-delta>" "<b-epsilon>"
     "<b-varepsilon>" "<b-zeta>" "<b-eta>" "<b-theta>" "<b-vartheta>"
     "<b-iota>" "<b-kappa>" "<b-varkappa>" "<b-lambda>" "<b-mu>" "<b-nu>"
@@ -512,6 +525,17 @@
     "<b-Phi>" "<b-Psi>" "<b-Chi>" "<b-Omega>"
     "<b-Backepsilon>" "<b-Mho>"
 
+    "<up-a>" "<up-b>" "<up-c>" "<up-d>" "<up-e>" "<up-f>" "<up-g>"
+    "<up-h>" "<up-i>" "<up-j>" "<up-k>" "<up-l>" "<up-m>" "<up-n>"
+    "<up-o>" "<up-p>" "<up-q>" "<up-r>" "<up-s>" "<up-t>" "<up-u>"
+    "<up-v>" "<up-w>" "<up-x>" "<up-y>" "<up-z>"
+    "<up-imath>" "<up-jmath>" "<up-ell>"
+
+    "<up-A>" "<up-B>" "<up-C>" "<up-D>" "<up-E>" "<up-F>" "<up-G>"
+    "<up-H>" "<up-I>" "<up-J>" "<up-K>" "<up-L>" "<up-M>" "<up-N>"
+    "<up-O>" "<up-P>" "<up-Q>" "<up-R>" "<up-S>" "<up-T>" "<up-U>"
+    "<up-V>" "<up-W>" "<up-X>" "<up-Y>" "<up-Z>"
+
     "<up-alpha>" "<up-beta>" "<up-gamma>" "<up-delta>" "<up-epsilon>"
     "<up-varepsilon>" "<up-zeta>" "<up-eta>" "<up-theta>" "<up-vartheta>"
     "<up-iota>" "<up-kappa>" "<up-varkappa>" "<up-lambda>" "<up-mu>"
@@ -520,15 +544,12 @@
     "<up-phi>" "<up-varphi>" "<up-psi>" "<up-chi>" "<up-omega>"
     "<up-backepsilon>" "<up-mho>"
 
-    "<b-a>" "<b-b>" "<b-c>" "<b-d>" "<b-e>" "<b-f>" "<b-g>"
-    "<b-h>" "<b-i>" "<b-j>" "<b-k>" "<b-l>" "<b-m>" "<b-n>"
-    "<b-o>" "<b-p>" "<b-q>" "<b-r>" "<b-s>" "<b-t>" "<b-u>"
-    "<b-v>" "<b-w>" "<b-x>" "<b-y>" "<b-z>"
-
-    "<b-A>" "<b-B>" "<b-C>" "<b-D>" "<b-E>" "<b-F>" "<b-G>"
-    "<b-H>" "<b-I>" "<b-J>" "<b-K>" "<b-L>" "<b-M>" "<b-N>"
-    "<b-O>" "<b-P>" "<b-Q>" "<b-R>" "<b-S>" "<b-T>" "<b-U>"
-    "<b-V>" "<b-W>" "<b-X>" "<b-Y>" "<b-Z>"
+    "<up-Alpha>" "<up-Beta>" "<up-Gamma>" "<up-Delta>" "<up-Epsilon>"
+    "<up-Zeta>" "<up-Eta>" "<up-Theta>" "<up-Iota>" "<up-Kappa>"
+    "<up-Lambda>" "<up-Mu>" "<up-Nu>" "<up-Xi>" "<up-Omicron>"
+    "<up-Pi>" "<up-Rho>" "<up-Sigma>" "<up-Tau>" "<up-Upsilon>"
+    "<up-Phi>" "<up-Psi>" "<up-Chi>" "<up-Omega>"
+    "<up-Backepsilon>" "<up-Mho>"
 
     "<b-up-a>" "<b-up-b>" "<b-up-c>" "<b-up-d>" "<b-up-e>" "<b-up-f>"
     "<b-up-g>" "<b-up-h>" "<b-up-i>" "<b-up-j>" "<b-up-k>" "<b-up-l>"
@@ -542,8 +563,22 @@
     "<b-up-S>" "<b-up-T>" "<b-up-U>" "<b-up-V>" "<b-up-W>" "<b-up-X>"
     "<b-up-Y>" "<b-up-Z>"
 
-    "<b-0>" "<b-1>" "<b-2>" "<b-3>" "<b-4>"
-    "<b-5>" "<b-6>" "<b-7>" "<b-8>" "<b-9>"
+    "<b-up-alpha>" "<b-up-beta>" "<b-up-gamma>" "<b-up-delta>"
+    "<b-up-epsilon>" "<b-up-varepsilon>" "<b-up-zeta>" "<b-up-eta>"
+    "<b-up-theta>" "<b-up-vartheta>" "<b-up-iota>" "<b-up-kappa>"
+    "<b-up-varkappa>" "<b-up-lambda>" "<b-up-mu>" "<b-up-nu>"
+    "<b-up-xi>" "<b-up-omicron>" "<b-up-pi>" "<b-up-varpi>" "<b-up-rho>"
+    "<b-up-varrho>" "<b-up-sigma>" "<b-up-varsigma>" "<b-up-tau>"
+    "<b-up-upsilon>" "<b-up-phi>" "<b-up-varphi>" "<b-up-psi>"
+    "<b-up-chi>" "<b-up-omega>" "<b-up-backepsilon>" "<b-up-mho>"
+
+    "<b-up-Alpha>" "<b-up-Beta>" "<b-up-Gamma>" "<b-up-Delta>"
+    "<b-up-Epsilon>" "<b-up-Zeta>" "<b-up-Eta>" "<b-up-Theta>"
+    "<b-up-Iota>" "<b-up-Kappa>" "<b-up-Lambda>" "<b-up-Mu>"
+    "<b-up-Nu>" "<b-up-Xi>" "<b-up-Omicron>" "<b-up-Pi>"
+    "<b-up-Rho>" "<b-up-Sigma>" "<b-up-Tau>" "<b-up-Upsilon>"
+    "<b-up-Phi>" "<b-up-Psi>" "<b-up-Chi>" "<b-up-Omega>"
+    "<b-up-Backepsilon>" "<b-up-Mho>"
     
     "<cal-a>" "<cal-b>" "<cal-c>" "<cal-d>" "<cal-e>" "<cal-f>" "<cal-g>"
     "<cal-h>" "<cal-i>" "<cal-j>" "<cal-k>" "<cal-l>" "<cal-m>" "<cal-n>"

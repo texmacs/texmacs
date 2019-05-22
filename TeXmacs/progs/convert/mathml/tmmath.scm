@@ -43,6 +43,8 @@
 	(cond ((string-number? x) `(m:mn ,x))
 	      ((logic-ref tm->mathml-constant% x) => (lambda (y) `(m:mn ,y)))
 	      ((logic-ref tm->mathml-operator% x) => (lambda (y) `(m:mo ,y)))
+              ((and (string-starts? x "<up-") (== (string-length x) 6))
+               `(m:mo ,(substring x 4 5)))
 	      ((in? type '("unknown" "symbol")) `(m:mi ,(cork->utf8* x)))
 	      (else `(m:mo ,(cork->utf8* x)))))
       (tmmath x)))

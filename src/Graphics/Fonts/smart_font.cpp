@@ -29,16 +29,17 @@ RESOURCE(smart_map);
 #define SUBFONT_MAIN  0
 #define SUBFONT_ERROR 1
 
-#define REWRITE_NONE           0
-#define REWRITE_MATH           1
-#define REWRITE_CYRILLIC       2
-#define REWRITE_LETTERS        3
-#define REWRITE_SPECIAL        4
-#define REWRITE_EMULATE        5
-#define REWRITE_POOR_BBB       6
-#define REWRITE_ITALIC_GREEK   7
-#define REWRITE_UPRIGHT_GREEK  8
-#define REWRITE_IGNORE         9
+#define REWRITE_NONE            0
+#define REWRITE_MATH            1
+#define REWRITE_CYRILLIC        2
+#define REWRITE_LETTERS         3
+#define REWRITE_SPECIAL         4
+#define REWRITE_EMULATE         5
+#define REWRITE_POOR_BBB        6
+#define REWRITE_ITALIC_GREEK    7
+#define REWRITE_UPRIGHT_GREEK   8
+#define REWRITE_UPRIGHT         9
+#define REWRITE_IGNORE         10
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -420,6 +421,13 @@ substitute_upright_greek (string c) {
   else if (starts (c, "<up")) c= "<" * c (3, N(c));
   if (!is_greek (c)) return "";
   return c;
+}
+
+string
+substitute_upright (string c) {
+  if (!starts (c, "<up-") || !ends (c, ">")) return "";
+  if (N(c) == 6) return c (4, 5);
+  return "<" * c (4, N(c));
 }
 
 /******************************************************************************
@@ -813,6 +821,8 @@ rewrite (string s, int kind) {
     return substitute_italic_greek (s);
   case REWRITE_UPRIGHT_GREEK:
     return substitute_upright_greek (s);
+  case REWRITE_UPRIGHT:
+    return substitute_upright (s);
   case REWRITE_IGNORE:
     return "";
   default:
@@ -1091,6 +1101,13 @@ smart_font_rep::resolve (string c) {
   array<string> a= trimmed_tokenize (family, ",");
 
   if (math_kind != 0) {
+    string upc= substitute_upright (c);
+    if (upc != "" && fn[SUBFONT_MAIN]->supports (upc)) {
+      tree key= tuple ("up");
+      int nr= sm->add_font (key, REWRITE_UPRIGHT);
+      initialize_font (nr);
+      return sm->add_char (key, c);
+    }
     string ugc= substitute_upright_greek (c);
     if (ugc != "" && fn[SUBFONT_MAIN]->supports (ugc)) {
       tree key= tuple ("upright-greek");
@@ -1217,6 +1234,8 @@ smart_font_rep::initialize_font (int nr) {
   else if (a[0] == "italic-greek")
     fn[nr]= fn[SUBFONT_MAIN];
   else if (a[0] == "upright-greek")
+    fn[nr]= fn[SUBFONT_MAIN];
+  else if (a[0] == "up")
     fn[nr]= fn[SUBFONT_MAIN];
   else if (a[0] == "tt")
     fn[nr]= smart_font_bis (family, "tt", series, "right", sz, hdpi, dpi);

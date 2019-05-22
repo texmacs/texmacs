@@ -86,7 +86,7 @@ rsup_adjust_ecrm (hashmap<string,double>& t) {
 
 void
 lsub_adjust_cmr (hashmap<string,double>& t) {
-  (void) t;
+  lsub_adjust_ecrm (t);
 }
 
 void
@@ -94,7 +94,7 @@ lsup_adjust_cmr (hashmap<string,double>& t) {
   adjust_char (t, "\1", 0.1); // Delta
   adjust_char (t, "\3", 0.1); // Lambda
   adjust_char (t, "/", 0.05);
-  adjust_char (t, "A", 0.1);
+  lsup_adjust_ecrm (t);
 }
 
 void
@@ -108,15 +108,7 @@ rsub_adjust_cmr (hashmap<string,double>& t) {
   adjust_char (t, "!", 0.05);
   adjust_char (t, "/", -0.1);
   adjust_char (t, "7", -0.07);
-  adjust_char (t, "A", 0.02);
-  adjust_char (t, "B", -0.02);
-  adjust_char (t, "I", 0.04);
-  adjust_char (t, "K", 0.02);
-  adjust_char (t, "M", 0.02);
-  adjust_char (t, "N", -0.04);
-  adjust_char (t, "O", -0.02);
-  adjust_char (t, "P", -0.1);
-  adjust_char (t, "T", -0.07);
+  rsub_adjust_ecrm (t);
 }
   
 void
@@ -127,9 +119,7 @@ rsup_adjust_cmr (hashmap<string,double>& t) {
   adjust_char (t, "!", 0.05);
   adjust_char (t, "\\", -0.1);
   adjust_char (t, "1", -0.05);
-  adjust_char (t, "A", -0.08);
-  adjust_char (t, "I", 0.04);
-  adjust_char (t, "O", -0.02);
+  rsup_adjust_ecrm (t);
 }
 
 void

@@ -85,6 +85,8 @@
 	((string-starts? s "<frak-")
 	 `(h:u ,(tmhtml-sub-token s 6)))
 	((string-starts? s "<bbb-") `(h:u (h:b ,(tmhtml-sub-token s 5))))
+	((string-starts? s "<up-") (tmhtml-sub-token s 4))
+	((string-starts? s "<b-up-") `(h:b ,(tmhtml-sub-token s 6)))
 	((string-starts? s "<b-") `(h:b (h:var ,(tmhtml-sub-token s 3))))
 	((string-starts? s "<")
 	 (with encoded (cork->utf8 s)
@@ -1493,7 +1495,8 @@
   (cond ((and tmhtml-mathml? (ahash-ref tmhtml-env :math))
 	 `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
 		   ,(texmacs->mathml x tmhtml-env))))
-	((and tmhtml-images? (ahash-ref tmhtml-env :math))
+	((and tmhtml-images? (ahash-ref tmhtml-env :math)
+              (!= tmhtml-image-root-string "image"))
 	 (tmhtml-png `(with "mode" "math" ,x)))
 	((string? x)
 	 (if (string-null? x) '() (tmhtml-text x))) ; non-verbatim string nodes

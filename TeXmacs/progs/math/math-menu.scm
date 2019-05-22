@@ -137,10 +137,10 @@
 
 (menu-bind textual-operator-menu
   ("Normal" (make 'math-up))
-  ("Sans serif" (make 'math-ss))
-  ("Typewriter" (make 'math-tt))
-  ("Bold" (make 'math-bf))
   ("Italic" (make 'math-it))
+  ("Bold" (make 'math-bf))
+  ("Typewriter" (make 'math-tt))
+  ("Sans serif" (make 'math-ss))
   ("Slanted" (make 'math-sl)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
