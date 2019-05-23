@@ -79,9 +79,9 @@
 
   <assign|sectional-centered-bold|<macro|name|<style-with|src-compact|none|<sectional-centered|<strong|<arg|name>>>>>>
 
-  <assign|sectional-prefixed|<macro|prefix|name|<arg|prefix><arg|name>>>
-
   <assign|sectional-prefixed|<macro|prefix|name|<prefixed-line|<arg|prefix>|<arg|name>>>>
+
+  <assign|tmhtml-sectional-prefixed|<macro|prefix|name|<arg|prefix><arg|name>>>
 
   <\active*>
     <\src-comment>
