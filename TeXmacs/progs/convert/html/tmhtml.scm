@@ -851,9 +851,11 @@
 
 (define (tmhtml-include l)
   (if (or (npair? l) (nstring? (car l))) '()
-      (let* ((u (url-relative current-save-source (unix->url (car l))))
-	     (t (and (url-exists? u) (tree-inclusion u))))
-	(if t (tmhtml (tm->stree t)) '()))))
+      (with u (url-relative current-save-source (unix->url (car l)))
+	(if (not (url-exists? u)) '()
+	    (with-global current-save-source u
+	      (with t (tree-inclusion u)
+		(tmhtml (tm->stree t))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Source code
