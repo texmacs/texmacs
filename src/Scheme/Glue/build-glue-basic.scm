@@ -739,6 +739,7 @@
   (buffer-save buffer_save (bool url))
   (tree-import-loaded import_loaded_tree (tree string url string))
   (tree-import import_tree (tree url string))
+  (tree-inclusion load_inclusion (tree url))
   (tree-export export_tree (bool tree url string))
   (tree-load-style load_style_tree (tree string))
   (buffer-focus focus_on_buffer (bool url))

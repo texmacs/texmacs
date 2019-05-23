@@ -849,6 +849,12 @@
   ;; Explicit expansions are converted and handled as implicit expansions.
   (tmhtml (cadr l)))
 
+(define (tmhtml-include l)
+  (if (or (npair? l) (nstring? (car l))) '()
+      (let* ((u (url-relative current-save-source (unix->url (car l))))
+	     (t (and (url-exists? u) (tree-inclusion u))))
+	(if t (tmhtml (tm->stree t)) '()))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Source code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1586,7 +1592,9 @@
   ((:or xmacro get-label get-arity map-args eval-args) tmhtml-noop)
   (mark tmhtml-mark)
   (eval tmhtml-noop)
-  ((:or if if* case while for-each extern include use-package) tmhtml-noop)
+  ((:or if if* case while for-each extern) tmhtml-noop)
+  (include tmhtml-include)
+  (use-package tmhtml-noop)
 
   ((:or or xor and not plus minus times over div mod merge length range
 	number date translate is-tuple look-up equal unequal less lesseq

@@ -123,6 +123,7 @@
 ;; Saving buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define current-save-source (url-none))
 (tm-define current-save-target (url-none))
 
 (define (buffer-notify-recent name)
@@ -175,6 +176,7 @@
 
 (define (save-buffer-check-permissions name opts)
   ;;(display* "save-buffer-check-permissions " name "\n")
+  (set! current-save-source name)
   (set! current-save-target name)
   (with vname `(verbatim ,(url->system name))
     (cond ((url-scratch? name)
@@ -286,6 +288,7 @@
 (tm-define (export-buffer-main name to fm opts)
   ;;(display* "export-buffer-main " name ", " to ", " fm "\n")
   (if (string? to) (set! to (url-relative (buffer-get-master name) to)))
+  (if (url? name) (set! current-save-source name))
   (if (url? to) (set! current-save-target to))
   (export-buffer-check-permissions name to fm opts))
 

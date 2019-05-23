@@ -683,6 +683,7 @@
 "buffer-save"
 "tree-import-loaded"
 "tree-import"
+"tree-inclusion"
 "tree-export"
 "tree-load-style"
 "buffer-focus"

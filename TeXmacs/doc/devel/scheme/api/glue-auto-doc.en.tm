@@ -5267,6 +5267,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-inclusion <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|load_inclusion> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(tree-export <scm-arg|tree> <scm-arg|url> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
