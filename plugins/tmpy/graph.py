@@ -49,7 +49,15 @@ class Graph(object):
     def get_eps_path(self):
         return self.get_tmp_dir() + self.name + ".eps"
 
+    def get_svg_path(self):
+        return self.get_tmp_dir() + self.name + ".svg"
+
     def get_eps(self):
         return self.get_eps_path() +\
+            "?" + "width=" + str(self.width) +\
+            "&" + "height=" + str(self.height)
+
+    def get_svg(self):
+        return self.get_svg_path() +\
             "?" + "width=" + str(self.width) +\
             "&" + "height=" + str(self.height)

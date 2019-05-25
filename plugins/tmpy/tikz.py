@@ -49,6 +49,6 @@ class TikZ(Graph):
         p = Popen(cmd1, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-            flush_verbatim (self.get_eps())
+            flush_file (self.get_svg())
         else:
             flush_verbatim (err)
