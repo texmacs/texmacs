@@ -57,7 +57,8 @@ protected:
   virtual void mouseMoveEvent (QMouseEvent* event);
   virtual void resizeEvent (QResizeEvent *event);
   virtual void resizeEventBis (QResizeEvent *e);
-  
+
+  void wheelEvent(QWheelEvent *event) override;
   virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
 
 };

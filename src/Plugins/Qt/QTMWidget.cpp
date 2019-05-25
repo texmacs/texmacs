@@ -24,6 +24,7 @@
 #include <QMouseEvent>
 #include <QFocusEvent>
 #include <QPainter>
+#include <QApplication>
 
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
@@ -661,4 +662,17 @@ QTMWidget::sizeHint () const {
   SI w = 0, h = 0;
   if (!is_nil (tmwid)) tm_widget()->handle_get_size_hint (w, h);
   return to_qsize (w, h);
+}
+
+void
+QTMWidget::wheelEvent(QWheelEvent *event) {
+  if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
+    if (event->delta() > 0) {
+      the_gui->process_keypress (tm_widget(), string("C-+"), texmacs_time());
+    } else {
+      the_gui->process_keypress (tm_widget(), string("C--"), texmacs_time());
+    }
+  } else {
+    QAbstractScrollArea::wheelEvent(event);
+  }
 }
