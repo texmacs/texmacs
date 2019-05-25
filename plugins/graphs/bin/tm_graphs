@@ -30,6 +30,8 @@ from tmpy.asymptote import Asymptote
 from tmpy.graphviz  import Graphviz
 from tmpy.mermaid   import Mermaid
 from tmpy.plantuml  import PlantUML
+from tmpy.xypic     import XYpic
+from tmpy.tikz      import TikZ
 import argparse
 
 #import logging as log
@@ -156,7 +158,7 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"])
-others = [Asymptote("asy"), PlantUML(), Mermaid()]
+others = [Asymptote("asy"), PlantUML(), Mermaid(), XYpic(), TikZ()]
 graphs = filter(lambda x: x.available(), grapvizs + others)
 graph_names = map(lambda x: x.name, graphs)
 

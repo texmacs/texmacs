@@ -16,14 +16,10 @@ from .protocol import *
 class Graph(object):
     name = ""
     message = ""
+    pre_code = ""
+    post_code = ""
     height = 0
     width = 0
-
-    def set_height(self, h):
-        self.height = h
-
-    def set_width(self, w):
-        self.width = w
 
     def greet(self):
         for x in self.message.split("\n"):
