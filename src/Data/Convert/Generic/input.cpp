@@ -334,10 +334,15 @@ void
 texmacs_input_rep::image_flush(string content, string type, int width, int height) {
   tree t (IMAGE);
   t << tuple (tree (RAW_DATA, content), type);
-  if (width != 0) t << tree (as_string (width) * "px");
-  else t << tree ("");
-  if (height != 0) t << tree (as_string (height) * "px");
-  else t << tree ("");
+  if (width == 0 && height == 0) {
+    t << tree ("0.618par") << tree ("");
+  } else if (width != 0 && height == 0) {
+    t << tree (as_string (width) * "px") << tree ("");
+  } else if (width == 0 && height != 0) {
+    t << tree ("") << tree (as_string (height) * "px");
+  } else {
+    t << tree (as_string (width) * "px") << tree (as_string (height) * "px");
+  }
   t << tree ("") << tree ("");
   write (t);
 }
