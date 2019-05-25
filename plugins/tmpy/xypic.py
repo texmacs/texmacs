@@ -30,7 +30,6 @@ class XYpic(Graph):
 """
         self.post_code = "\end{document}"
         self.message = "TeXmacs interface to XYpic (high level 2-dimensional graphics)"
-        self.width = "640px"
 
     def evaluate(self, code):
         code_path = self.get_tmp_dir() + self.name + ".tex"
@@ -44,7 +43,9 @@ class XYpic(Graph):
 
         cmd0 = ["latex", "--interaction=nonstopmode", code_path]
         cmd1 = ["dvips", "-q", "-f", "-E", dvi_path, "-o", self.get_eps_path()]
+        os.chdir(self.get_tmp_dir())
         Popen(cmd0, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE).communicate()
+        os.chdir(self.get_tmp_dir())
         p = Popen(cmd1, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):

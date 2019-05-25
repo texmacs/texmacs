@@ -30,7 +30,6 @@ class TikZ(Graph):
 \\end{document}
 """
         self.message = "TeXmacs interface to TikZ"
-        self.width = "640px"
 
     def evaluate(self, code):
         code_path = self.get_tmp_dir() + self.name + ".tex"
