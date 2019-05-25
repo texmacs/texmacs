@@ -219,6 +219,8 @@
   (like-std% (has-look-and-feel? "std"))
   (simple-menus% (== (get-preference "detailed menus") "simple"))
   (detailed-menus% (== (get-preference "detailed menus") "detailed"))
+  (window-per-buffer% (== (get-preference "buffer management") "separate"))
+  (buffers-share-window% (== (get-preference "buffer management") "share"))
   (with-database-tool% (== (get-preference "database tool") "on"))
   (with-debugging-tool% (== (get-preference "debugging tool") "on"))
   (with-developer-tool% (== (get-preference "developer tool") "on"))

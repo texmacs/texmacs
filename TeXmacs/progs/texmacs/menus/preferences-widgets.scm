@@ -41,33 +41,43 @@
   ("simple ""Simplified menus")
   ("detailed" "Detailed menus"))
 
+(define-preference-names "buffer management"
+  ("separate" "Documents in separate windows")
+  ("shared" "Multiple documents share window"))
+
 (tm-widget (general-preferences-widget)
   (aligned
     (item (text "Look and feel:")
       (enum (set-pretty-preference "look and feel" answer)
             '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
             (get-pretty-preference "look and feel")
-            "18em"))
+            "21em"))
     (item (text "User interface language:")
       (enum (set-pretty-preference "language" answer)
             (map upcase-first supported-languages)
             (get-pretty-preference "language")
-            "18em"))
+            "21em"))
     (item (text "Complex actions:")
       (enum (set-pretty-preference "complex actions" answer)
             '("Through the menus" "Through popup windows")
             (get-pretty-preference "complex actions")
-            "18em"))
+            "21em"))
     (item (text "Interactive questions:")
       (enum (set-pretty-preference "interactive questions" answer)
             '("On the footer" "In popup windows")
             (get-pretty-preference "interactive questions")
-            "18em"))
+            "21em"))
     (item (text "Details in menus:")
       (enum (set-pretty-preference "detailed menus" answer)
             '("Simplified menus" "Detailed menus")
             (get-pretty-preference "detailed menus")
-            "18em"))))
+            "21em"))
+    (item (text "Buffer management:")
+      (enum (set-pretty-preference "buffer management" answer)
+            '("Documents in separate windows"
+              "Multiple documents share window")
+            (get-pretty-preference "buffer management")
+            "21em"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard preferences

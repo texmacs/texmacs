@@ -73,6 +73,9 @@
     (enum ("Details in menus" "detailed menus")
           ("Simplified menus" "simple")
           ("Detailed menus" "detailed"))
+    (enum ("Buffer management" "buffer management")
+          ("Documents in separate windows" "separate")
+          ("Multiple documents share window" "shared"))
     ---
     (enum ("Language" "language")
           ,@(map (lambda (lan) (list (upcase-first lan) lan))

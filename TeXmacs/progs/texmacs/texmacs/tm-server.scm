@@ -21,6 +21,13 @@
 (define (get-default-interactive-questions)
   (if (or (like-gnome?) (like-macos?) (like-windows?)) "popup" "footer"))
 
+(define (get-default-buffer-management)
+  (if (or (like-macos?) (like-windows?)) "separate" "shared"))
+
+(define (notify-buffer-management var val)
+  (when (== val (get-default-buffer-management))
+    (reset-preference "buffer management")))
+
 (define (get-default-show-table-cells)
   (if (qt-gui?) "on" "off"))
 
@@ -70,6 +77,7 @@
   ("profile" "beginner" (lambda args (noop)))
   ("look and feel" "default" notify-look-and-feel)
   ("detailed menus" "detailed" noop)
+  ("buffer management" (get-default-buffer-management) notify-buffer-management)
   ("complex actions" "popups" noop)
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
@@ -175,9 +183,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; System dependent conventions for buffer management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (window-per-buffer?)
-  (like-macos?))
 
 (tm-define (new-document)
   (if (window-per-buffer?) (open-window) (new-buffer)))
