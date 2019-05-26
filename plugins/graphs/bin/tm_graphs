@@ -186,8 +186,8 @@ def unigraph(text):
     args = parser.parse_args(magic_line.split(" ")[1:])
     if command in graph_names:
         graph = graphs[graph_names.index(command)]
-        graph.set_height(args.height)
-        graph.set_width(args.width)
+        graph.height = args.height
+        graph.width = args.width
         graph.evaluate(code)
     else:
         flush_verbatim ("No such Graph generator: " + command)

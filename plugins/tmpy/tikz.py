@@ -23,10 +23,8 @@ class TikZ(Graph):
         self.pre_code = """
 \\documentclass[tikz]{standalone}
 \\begin{document}
-\\begin{tikzpicture}
 """
         self.post_code = """
-\\end{tikzpicture}
 \\end{document}
 """
         self.message = "TeXmacs interface to TikZ"
@@ -34,6 +32,10 @@ class TikZ(Graph):
     def evaluate(self, code):
         code_path = self.get_tmp_dir() + self.name + ".tex"
         dvi_path = self.get_tmp_dir() + self.name + ".dvi"
+
+        if not (code.lstrip().startswith("\\begin{tikzpicture}")):
+            code = "\\begin{tikzpicture}\n" + code + "\n\\end{tikzpicture}"
+
         with open(code_path, 'w') as code_file:
             code_file.write(self.pre_code)
             code_file.write("\n")
