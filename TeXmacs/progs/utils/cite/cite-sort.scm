@@ -31,6 +31,14 @@
     (with ret (tree->stree (texmacs-exec key))
       (if (!= ret '(uninit)) ret ""))))
 
+(define (consecutive? seq)
+  (if (> (length (cdr seq)) 0)
+    (if (= (+ 1 (car seq)) (cadr seq))
+        (consecutive? (cdr seq))
+      #f)
+   #t)
+)
+
 (tm-define (cite-sort args)
   ;; get a (tuple (tuple key_1 value_1) ... (tuple key_n value_n))
   ;; and sort it according to values.
@@ -40,6 +48,10 @@
          (tup (map list keys args))
          (sorted-tup (list-sort tup compare-cite-keys))
          ;; we should merge contiguous number series here...
-         (sorted-args (map cadr sorted-tup))
-         (ret `(concat ,@(list-intersperse sorted-args '(cite-sep)))))
+         (merged (and (> (length sorted-tup) 2) 
+                      (consecutive? (map string->number (map car sorted-tup)))))
+         (sorted-args (map cadr (if merged (list (first sorted-tup) (last sorted-tup)) 
+                                           sorted-tup)))
+         (sep (if merged "--" '(cite-sep)))
+         (ret `(concat ,@(list-intersperse sorted-args sep))))
     ret))
