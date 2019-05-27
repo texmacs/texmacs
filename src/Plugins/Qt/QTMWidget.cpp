@@ -664,6 +664,7 @@ QTMWidget::sizeHint () const {
   return to_qsize (w, h);
 }
 
+/*
 void
 QTMWidget::wheelEvent(QWheelEvent *event) {
   if (QApplication::keyboardModifiers() == Qt::ControlModifier) {
@@ -676,3 +677,4 @@ QTMWidget::wheelEvent(QWheelEvent *event) {
     QAbstractScrollArea::wheelEvent(event);
   }
 }
+*/

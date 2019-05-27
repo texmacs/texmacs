@@ -58,7 +58,8 @@ protected:
   virtual void resizeEvent (QResizeEvent *event);
   virtual void resizeEventBis (QResizeEvent *e);
 
-  void wheelEvent(QWheelEvent *event) override;
+  // void wheelEvent(QWheelEvent *event) override;
+  // FIXME: Plugins/Qt/QTMWidget.hpp:61: error: expected ';' before 'override'
   virtual QVariant inputMethodQuery (Qt::InputMethodQuery query) const;
 
 };
