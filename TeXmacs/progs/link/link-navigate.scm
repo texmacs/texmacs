@@ -445,12 +445,13 @@
 (define (default-post-handler u)
   (with (base qry) (process-url u)
     (with fm (file-format base)
-      (cond ((== fm "texmacs-file") (texmacs-file-post qry))
+      (cond ((== qry "") (noop))
+            ((== fm "texmacs-file") (texmacs-file-post qry))
             ((== fm "generic-file") (generic-file-post qry))
             ((== fm "scheme-file") (source-file-post qry))
             ((== fm "cpp-file") (source-file-post qry))
             ((== fm "html-file") (html-file-post qry))
-            (else 
+            (else
               (display* "Unhandled format for default queries: " fm "\n"))))))
 
 (define (http-post-handler u)
@@ -468,10 +469,7 @@
   (load-browse-buffer u))
 
 (define (http-root-handler u)
-  (let ((os-open (cond ((os-macos?) "open")
-                       ((os-mingw?) "start")
-                       (else "xdg-open"))))
-    (system (string-append os-open " " (url->system (url-expand u))))))
+  (load-browse-buffer u))
 
 (define (url-handlers u)
   (with root (or (and (url-rooted? u) (url-root u)) "default")

@@ -507,6 +507,9 @@
 ;; Utilities for file conversions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (file-of-format? u fm)
+  (in? (url-suffix u) (format-get-suffixes fm)))
+
 (define-public (file-format u)
   (string-append (format-from-suffix (url-suffix u)) "-file"))
 

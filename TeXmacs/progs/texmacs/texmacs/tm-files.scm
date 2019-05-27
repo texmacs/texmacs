@@ -385,6 +385,29 @@
   ("autosave" "120" notify-autosave))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Opening files using external tools
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (buffer-external? u)
+  (or (and (url-rooted-web? u)
+           (or (file-of-format? u "html")
+               (== (url-suffix u) "")))
+      (file-of-format? u "image")
+      (file-of-format? u "pdf")
+      (file-of-format? u "postscript")
+      (file-of-format? u "generic")))
+
+(tm-define (default-open)
+  (cond ((os-macos?) "open")
+        ((or (os-mingw?) (os-win32?)) "start")
+        (else "xdg-open")))
+
+(tm-define (load-external u)
+  (if (url-rooted-web? u)
+      (system (string-append (default-open) " " (url->system u)))
+      (system-1 (default-open) u)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -477,7 +500,9 @@
 
 (tm-define (load-browse-buffer name)
   (:synopsis "Load a buffer or switch to it if already open")
-  (if (buffer-exists? name) (switch-to-buffer name) (load-buffer name)))
+  (cond ((buffer-exists? name) (switch-to-buffer name))
+        ((buffer-external? name) (load-external name))
+        (else (load-buffer name))))
 
 (tm-define (open-buffer)
   (:synopsis "Open a new file")
