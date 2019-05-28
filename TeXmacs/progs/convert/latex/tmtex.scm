@@ -904,6 +904,9 @@
 	  ((== s "-0.2spc") '(!concat (!)))
 	  (else (tex-apply 'hspace (tmtex-decode-length s))))))
 
+(define (tmtex-hspace* s l)
+  (tmtex-hspace l))
+
 (define (tmtex-vspace l)
   (let ((s (if (= (length l) 1) (car l) (cadr l))))
     (cond ((== s "0.5fn") (tex-apply 'smallskip))
@@ -1610,6 +1613,9 @@
            (dy `(!concat ,(number->string rat) (height))))
       `(raisebox ,dy (includegraphics ,name-string)))))
 
+(define (tmtex-make-eps s l)
+  (tmtex-eps (cons (string->symbol s) l)))
+
 (define (tmtex-graphics l)
   (tmtex-eps (cons 'graphics l)))
 
@@ -2072,6 +2078,10 @@
     (tmtex-env-reset "mode")
     (list '!unindent src)))
 
+(define (tmtex-listing s l)
+  (list (list '!begin "tmlisting") (tmtex (car l))))
+  ;;(list (list '!begin "linenumbers") (tmtex (car l))))
+
 (define (tmtex-minipage s l)
   (let*
     ((pos  (car l))
@@ -2199,6 +2209,9 @@
 
 (define (tmtex-Huge s l)
   (list 'Huge (tmtex (car l))))
+
+(define (tmtex-specific-language s l)
+  (tmtex `(with "language" ,s ,(car l))))
 
 (tm-define (tmtex-equation s l)
   (tmtex-env-set "mode" "math")
@@ -2854,6 +2867,11 @@
   (very-large (,tmtex-LARGE 1))
   (really-large (,tmtex-LARGE 1))
   (really-huge (,tmtex-Huge 1))
+  ((:or british bulgarian chinese croatian czech danish dutch english
+	esperanto finnish french german greek hungarian italian japanese
+	korean polish portuguese romanian russian slovene spanish
+	swedish taiwanese ukrainian)
+   (,tmtex-specific-language 1))
 
   (math (,tmtex-math 1))
   (text (,tmtex-text 1))
@@ -2886,9 +2904,10 @@
   (math-ignore (,tmtex-mathord 1))
   ((:or eqnarray eqnarray* leqnarray*
         gather multline gather* multline* align
-        flalign alignat align* flalign* alignat*) (,tmtex-eqnarray  1))
+        flalign alignat align* flalign* alignat*) (,tmtex-eqnarray 1))
 
   (eq-number (,tmtex-default -1))
+  (application-space (,tmtex-hspace* 1))
 
   ((:or code cpp-code mmx-code scm-code shell-code scilab-code verbatim-code)
    (,tmtex-code-block 1))
@@ -2907,6 +2926,9 @@
   (latex_preview (,tmtex-mixed 2))
   (picture-mixed (,tmtex-mixed 2))
   (source-mixed (,tmtex-mixed 2))
+  (listing (,tmtex-listing 1))
+  (draw-over (,tmtex-make-eps 3))
+  (draw-under (,tmtex-make-eps 3))
   (the-index (,tmtex-theindex -1))
   (glossary (,tmtex-glossary 1))
   (glossary-explain (,tmtex-glossary 2))

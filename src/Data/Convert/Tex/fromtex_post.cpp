@@ -607,6 +607,16 @@ finalize_layout (tree t) {
 	continue;
       }
 
+      if (is_func (v, BEGIN) && v[0] == "tmlisting") {
+	r << tree (BEGIN, "listing");
+	continue;
+      }
+
+      if (is_func (v, END) && v[0] == "tmlisting") {
+	r << tree (END, "listing");
+	continue;
+      }
+
       if (is_func (v, BEGIN, 2) && (v[0] == "otherlanguage" ||
                                     v[0] == "otherlanguage*")) {
         string lang= latex_to_texmacs_languages (string_arg (v[1]));

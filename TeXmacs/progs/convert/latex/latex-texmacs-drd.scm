@@ -154,6 +154,7 @@
   ("tmparmod" 3)
   ("tmparsep" 1)
   ("tmindent" 0)
+  ("tmlisting" 0)
   ("elsequation" 0)
   ("elsequation*" 0)
   ("theglossary" 1))
@@ -163,7 +164,7 @@
 
 (logic-group latex-texmacs-environment-0%
   begin-proof begin-leftaligned begin-rightaligned begin-quoteenv
-  begin-tmindent begin-elsequation begin-elsequation*)
+  begin-tmindent begin-tmlisting begin-elsequation begin-elsequation*)
 
 (logic-group latex-texmacs-environment-0*%
   begin-tmcode)

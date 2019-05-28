@@ -476,6 +476,8 @@
             (endgroup)))
   ("tmindent"
    ((!begin "tmparmod" "1.5em" "0pt" "0pt") ---))
+  ("tmlisting"
+   ((!begin "linenumbers") (!append (resetlinenumber) ---)))
   ("elsequation" ((!begin "eqnarray") (!append --- "&&")))
   ("elsequation*" ((!begin "eqnarray*") (!append --- "&&")))
   ("theglossary"

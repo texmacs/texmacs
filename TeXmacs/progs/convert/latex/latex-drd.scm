@@ -143,7 +143,10 @@
 
   (listpart "expdlist")
 
-  (ifthispageodd "scrextend"))
+  (ifthispageodd "scrextend")
+
+  (begin-linenumbers "lineno")
+  (resetlinenumber "lineno"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page size settings
