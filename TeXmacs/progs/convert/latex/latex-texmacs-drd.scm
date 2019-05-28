@@ -79,7 +79,7 @@
 (logic-group latex-texmacs-0%
   tmunsc emdash tmhrule tmat tmbsl tmdummy
   TeXmacs madebyTeXmacs withTeXmacstext
-  scheme tmsep tmSep pari qed hrule)
+  scheme tmsep tmSep pari qed textdots hrule)
 
 (logic-group latex-texmacs-1%
   key tmrsub tmrsup keepcase

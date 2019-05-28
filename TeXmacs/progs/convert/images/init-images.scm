@@ -79,11 +79,11 @@
   (let* ((dest (assoc-ref opts 'dest))
          (res (get-raster-resolution opts)))
     ;;(display (string-append "convert -density " res " " x " "  dest))
-    ;;(system-2 (string-append "convert -density " res) x dest)
+    (system-2 (string-append "convert -density " res) x dest)
     ;; NOTE: changing the resolution to 300 (the default) causes a problem
     ;; when converting TeXmacs documents to Html with formulas as images:
     ;; the formulas appear way too large...
-    (system-2 (string-append "convert ") x dest)
+    ;;(system-2 (string-append "convert ") x dest)
     (if (url-exists? dest) dest #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

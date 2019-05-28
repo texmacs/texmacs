@@ -1099,7 +1099,8 @@
 (define (tmhtml-png y)
   (let* ((mag (ahash-ref tmhtml-env :mag))
 	 (x (if (or tmhtml-css? (nstring? mag) (== mag "1")) y
-                `(with "magnification" ,mag ,y)))
+                (with nmag `(times (value "magnification") ,mag)
+                  `(with "magnification" ,nmag ,y))))
 	 (l1 (tmhtml-collect-labels y))
 	 (l2 (if (null? l1) l1 (list (car l1)))))
     (with cached (ahash-ref tmhtml-image-cache x)
@@ -1107,13 +1108,26 @@
 	  (receive (name-url name-string) (tmhtml-image-names "png")
 	    ;;(display* x " -> " name-url ", " name-string "\n")
 	    (let* ((extents (print-snippet name-url x #t))
-                   (dpi (string->number (get-preference "printer dpi")))
-                   (den (/ (* dpi 2200.0) 600.0))
-		   (y1 (/ (second extents) den))
-		   (y2 (/ (fourth extents) den))
-		   (valign (number->htmlstring (/ y1 15.0)))
-		   (height (number->htmlstring (/ (- y2 y1) 15.0)))
-		   (style (string-append "vertical-align: " valign "em; "
+                   (unit (/ 1.0 20625.0))
+		   (x3 (* (first extents) unit))
+		   (y3 (* (second extents) unit))
+		   (x4 (* (third extents) unit))
+		   (y4 (* (fourth extents) unit))
+		   (x1 (* (fifth extents) unit))
+		   (y1 (* (sixth extents) unit))
+		   (x2 (* (seventh extents) unit))
+		   (y2 (* (eighth extents) unit))
+                   (lmar (number->htmlstring (- x3 x1)))
+                   (bmar (number->htmlstring (- y3 y1)))
+                   (rmar (number->htmlstring (- x2 x4)))
+                   (tmar (number->htmlstring (- y2 y4)))
+		   (valign (number->htmlstring (- y3 (- y3 y1))))
+		   (height (number->htmlstring (- y4 y3)))
+		   (style (string-append "margin-left: " lmar "em; "
+                                         "margin-bottom: " bmar "em; "
+                                         "margin-right: " rmar "em; "
+                                         "margin-top: " tmar "em; "
+                                         "vertical-align: " valign "em; "
                                          "height: " height "em"))
                    (attrs (if tmhtml-css?
                               `((src ,name-string) (style ,style) ,@l2)
@@ -1126,6 +1140,12 @@
 
 (define (tmhtml-graphics l)
   (tmhtml-png (cons 'graphics l)))
+
+(define (tmhtml-draw-over l)
+  (tmhtml-png (cons 'draw-over l)))
+
+(define (tmhtml-draw-under l)
+  (tmhtml-png (cons 'draw-under l)))
 
 (define (tmhtml-image-name name)
   ;; FIXME: we should replace ~, environment variables, etc.
@@ -1505,7 +1525,7 @@
 		   ,(texmacs->mathml x tmhtml-env))))
 	((and tmhtml-images? (ahash-ref tmhtml-env :math)
               (!= tmhtml-image-root-string "image"))
-	 (tmhtml-png `(with "mode" "math" ,x)))
+         (tmhtml-png `(with "mode" "math" ,x)))
 	((string? x)
 	 (if (string-null? x) '() (tmhtml-text x))) ; non-verbatim string nodes
 	(else (or (tmhtml-dispatch 'tmhtml-primitives% x)
@@ -1680,7 +1700,9 @@
   (equation* ,tmhtml-equation*)
   (equation-lab ,tmhtml-equation-lab)
   (equations-base ,tmhtml-equation*)
-  (wide-float tmhtml-float)
+  (wide-float ,tmhtml-float)
+  (draw-over ,tmhtml-draw-over)
+  (draw-under ,tmhtml-draw-under)
   ;; tags for customized html generation
   (html-tag ,tmhtml-html-tag)
   (html-attr ,tmhtml-html-attr)

@@ -373,16 +373,10 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   if (use_pdf ()) ps= (ps || s == "pdf");
   typeset_prepare ();
   int dpi= as_int (printing_dpi);
-  //if (!ps) t= tree (WITH, MAGNIFICATION, "2", PAGE_WIDTH, "40cm", t);
-  //if (!ps) t= tree (WITH, MAGNIFICATION, "1.6", PAGE_WIDTH, "40cm", t);
-  double mag= ( 1.0 * dpi) / 600;
-  double wid= (25.0 * dpi) / 600;
-  if (!ps) {
-    mag *= 1.6;
-    wid *= 1.6;
+  if (dpi != 600) {
+    double mag= (1.0 * dpi) / 600;
+    t= tree (WITH, MAGNIFICATION, as_string (mag), t);
   }
-  t= tree (WITH, MAGNIFICATION, as_string (mag),
-           PAGE_WIDTH, as_string (wid) * "cm", t);
   box b= typeset_as_box (env, t, path ());
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
     if (ps) make_eps (name, b, dpi);
@@ -400,7 +394,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
     }
   }
   array<int> a;
-  a << b->x3 << b->y3 << b->x4 << b->y4;
+  a << b->x3 << b->y3 << b->x4 << b->y4 << b->x1 << b->y1 << b->x2 << b->y2;
   return a;
 }
 

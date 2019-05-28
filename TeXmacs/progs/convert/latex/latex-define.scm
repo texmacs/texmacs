@@ -252,6 +252,7 @@
   (tmSep  "; ")
   (pari "{\\sc Pari}")
   (qed (!math (Box)))
+  (textdots "...")
 
   ;; Unary macros
   (tmrsub (ensuremath (!append "_{" (textrm 1) "}")))
