@@ -688,8 +688,8 @@
         ((== (car l) 'hide-preamble) "")
         ((in? (car l) '(concat document))
          (with a (list-filter (cdr l) tmtex-non-preamble-statement?)
-           (if (null? l)
-               (if (== (car l) 'concat "" '(document "")))
+           (if (null? a)
+               (if (== (car l) 'concat) "" '(document ""))
                (cons (car l) (map tmtex-filter-body a)))))
         (else (cons (car l) (map tmtex-filter-body (cdr l))))))
 
