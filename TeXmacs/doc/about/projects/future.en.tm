@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.9>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Plans for the future>
@@ -9,8 +9,7 @@
   <hlink|<name|Savannah>|http://savannah.gnu.org/projects/texmacs/>, we
   maintain a<nbsp>wish list with <hlink|suggestions|http://www.texmacs.org/tmweb/contact/wishes.en.html>
   by users and other detailed wanted features. Here follows an incomplete
-  list of more general directions for future development, as on september 2,
-  2011.
+  list of more general directions for future development, as on may 31, 2019.
 
   <section|Typesetting>
 
@@ -35,15 +34,8 @@
   mention a few of these:
 
   <\itemize>
-    <item>Better search and replace tool for structured texts, formulas,
-    certain environments etc. and regular expressions.
-
     <item>Mathematical facilities: simplification of a selected region,
     substitutions of formulas in other formulas, etc.
-
-    <item>Version control.
-
-    <item>Data compression and protection.
 
     <item>Grammar checkers and automatic translation programs. Does someone
     know where to find detailed free dictionaries and stuff like that?
@@ -72,6 +64,10 @@
     by <name|Open Office>, <name|Word>, and the internal formats used by
     important publishers such as <name|Elsevier>.
 
+    <item>It would be nice to have converters for various markdown formats as
+    used by sites such as <name|Wikipedia>. Similarly, it would be nice to
+    have an interface for <name|Jupyter> notebooks.
+
     <item>We would appreciate help for writing a converter from <TeXmacs> to
     the <name|Texinfo> format, which is the standard documentation format for
     the GNU project.
@@ -87,6 +83,22 @@
   would for instance be possible to write a style file for drawing electronic
   circuits or chemical components with a nice icon bar for selecting circuits
   or components, just as you select lines and circles in usual pictures.
+
+  <section|Presentation mode>
+
+  We wish to further extend the laptop presentation mode into the following
+  directions:
+
+  <\itemize>
+    <item>A larger number of themes.
+
+    <item>Implementation of transitions between slides.
+
+    <item>Further improvements for the animation editor.
+  </itemize>
+
+  We would also very much appreciate help on artwork and the design of nice
+  themes.
 
   <section|Tools for usage on the web and in networks>
 
@@ -123,7 +135,14 @@
     debugging facilities and so on.
   </itemize>
 
-  <tmdoc-copyright|1998--2011|Joris van der Hoeven>
+  <section|<TeXmacs> on tablets and mobile phones>
+
+  After the release of <TeXmacs> 2.1, we wish to upgrade <TeXmacs> to
+  <name|Qt>5, which should allow the deployment on new platforms such as
+  <name|Android>. This also opens the road for a specific interface for
+  tablets and mobile phones.
+
+  <tmdoc-copyright|1998--2019|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -133,8 +152,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

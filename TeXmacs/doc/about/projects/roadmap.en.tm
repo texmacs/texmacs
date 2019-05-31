@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.12>
+<TeXmacs|1.99.9>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Roadmap for upcoming developments>
@@ -14,7 +14,7 @@
 
   <\enumerate>
     <item>A limited number of major objectives for the upcoming stable
-    versions (1.1 and 1.2).
+    versions (2.1 and 2.2).
 
     <item>A certain number of minor objectives, subject to continuous
     changes, and which progress as a function of available time.
@@ -28,8 +28,6 @@
     versions|roadmap-major.en.tm>
 
     <branch|Other things we are working on|roadmap-minor.en.tm>
-
-    <branch|Ongoing external developments|roadmap-external.en.tm>
   </traverse>
 
   <tmdoc-copyright|2007|Joris van der Hoeven>
@@ -42,8 +40,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
