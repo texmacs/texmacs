@@ -77,11 +77,11 @@
     </src-comment>
   </active*>
 
-  <assign|tmweb-top-links|<macro|<style-with|src-compact|none|<tmweb-link-menu|<hlink|About|../home/welcome.en.tm>|<specific|texmacs|<hlink|Download|../download/download.en.tm>><specific|html|\<less\>script
+  <assign|tmweb-top-links|<macro|<style-with|src-compact|none|<tmweb-link-menu|<hlink|About|../home/welcome-new.en.tm>|<specific|texmacs|<hlink|Download|../download/download.en.tm>><specific|html|\<less\>script
   language="javascript"\<gtr\>document.write (downloadRelativeLink
   ("Download"));\<less\>/script\<gtr\>>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute.en.tm>>>>>
 
-  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome.en.tm>|<hlink|Gallery|../home/screenshots.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Thanks|../home/thanks.en.tm>>>>>
+  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome-new.en.tm>|<hlink|Gallery|../home/gallery.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Thanks|../home/thanks.en.tm>>>>>
 
   <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Download>|<hlink|Sources|../download/sources.en.tm>|<hlink|GNU
   Linux|../download/unix.en.tm>|<hlink|MacOS|../download/macosx.en.tm>|<hlink|Windows|../download/windows.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
@@ -195,13 +195,21 @@
 
   <assign|tmhtml-tmweb-split|<macro|first|second|<html-div-class|tmweb-split|<html-div-class|tmweb-split-car|<arg|first>><html-div-class|tmweb-split-cdr|<arg|second>>>>>
 
+  <assign|tmweb-list-item|<macro|body|<space|1em><arg|body> >>
+
+  <assign|tmweb-list|<xmacro|args|<map-args|tmweb-list-item|concat|args>>>
+
   <\active*>
     <\src-comment>
-      Captions for pictures
+      Pictures and captions
     </src-comment>
   </active*>
 
-  <assign|tmweb-caption-below|<macro|fig|cap|<tabular*|<tformat|<table|<row|<cell|<arg|fig>>>|<row|<cell|<arg|cap>>>>>>>>
+  <assign|tmweb-gallery-picture|<macro|name|<image|<arg|name>|0.45par|||>>>
+
+  <assign|tmhtml-tmweb-gallery-picture|<macro|name|<html-div-class|tmweb-gallery|<image|<arg|name>||||>>>>
+
+  <assign|tmweb-caption-below|<macro|fig|cap|<tabular*|<tformat|<table|<row|<cell|<arg|fig>>>|<row|<cell|<small|<arg|cap>>>>>>>>>
 
   <assign|tmhtml-tmweb-caption-below|<macro|fig|cap|<html-div-class|tmweb-caption-below|<html-div-class|tmweb-figure|<arg|fig>><html-div-class|tmweb-caption|<arg|cap>>>>>
 
