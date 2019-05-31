@@ -197,7 +197,11 @@
 
   <assign|tmweb-list-item|<macro|body|<space|1em><arg|body> >>
 
+  <assign|tmhtml-tmweb-list-item|<macro|body|<arg|body> >>
+
   <assign|tmweb-list|<xmacro|args|<map-args|tmweb-list-item|concat|args>>>
+
+  <assign|tmhtml-tmweb-list|<xmacro|args|<html-div-class|tmweb-list|<map-args|tmweb-list-item|concat|args>>>>
 
   <\active*>
     <\src-comment>
@@ -245,7 +249,9 @@
     </with>
   </macro>>
 
-  <assign|item-pic|<macro|name|<smash|<image|<arg|name>|3em|||-1.5em>>>>
+  <assign|item-pic|<macro|name|<smash|<image|<arg|name>|3em|||-1.5em>><space|0.5em>>>
+
+  <assign|tmhtml-item-pic|<macro|name|<html-div-class|tmweb-item-pic|<image|<arg|name>|3em|||-1.5em>>>>
 
   <\active*>
     <\src-comment>
