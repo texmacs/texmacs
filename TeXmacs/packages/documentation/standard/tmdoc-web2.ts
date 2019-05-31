@@ -229,6 +229,26 @@
 
   <\active*>
     <\src-comment>
+      Description lists with picture items
+    </src-comment>
+  </active*>
+
+  <new-list|description-plain|<value|aligned-space-item>|<macro|name|<active*|<with|mode|math|<with|font-series|bold|math-font-series|bold|<rigid|\<ast\>>>>>>>
+
+  <assign|description-pics|<\macro|body>
+    <\with|old-item-hsep|<value|item-hsep>|item-hsep|3tab>
+      <\description-plain>
+        <\with|item-hsep|<value|old-item-hsep>>
+          <arg|body>
+        </with>
+      </description-plain>
+    </with>
+  </macro>>
+
+  <assign|item-pic|<macro|name|<smash|<image|<arg|name>|2em|||-1em>>>>
+
+  <\active*>
+    <\src-comment>
       Other customizations
     </src-comment>
   </active*>

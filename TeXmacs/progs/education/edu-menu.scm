@@ -31,6 +31,7 @@
     ("Exercise" (make 'exercise))
     ("Problem" (make 'problem))
     ---
+    ("<blacktriangleright>" (make 'question-item))
     ("1, 2, 3" (make 'question-arabic))
     ("a, b, c" (make 'question-alpha))
     ("A, B, C" (make 'question-Alpha))
