@@ -84,7 +84,7 @@
   <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome-new.en.tm>|<hlink|Gallery|../home/gallery.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Thanks|../home/thanks.en.tm>>>>>
 
   <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Download>|<hlink|Sources|../download/sources.en.tm>|<hlink|GNU
-  Linux|../download/unix.en.tm>|<hlink|MacOS|../download/mac.en.tm>|<hlink|Windows|../download/windows.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
+  Linux|../download/linux-new.en.tm>|<hlink|MacOS|../download/macosx-new.en.tm>|<hlink|Windows|../download/windows-new.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
 
   <assign|tmweb-learn-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Learn>|<hlink|Videos|../home/videos.en.tm>|<hlink|Tutorials|../help/tutorial.en.tm>|<hlink|Books|../help/book.en.tm>|<obsolete|<hlink|Manual|../help/manual.en.tm>>|<hlink|FAQ|../help/faq.en.tm>|<hlink|Mailing
   lists|../home/ml.en.tm>>>>>
@@ -245,7 +245,7 @@
     </with>
   </macro>>
 
-  <assign|item-pic|<macro|name|<smash|<image|<arg|name>|2em|||-1em>>>>
+  <assign|item-pic|<macro|name|<smash|<image|<arg|name>|3em|||-1.5em>>>>
 
   <\active*>
     <\src-comment>
