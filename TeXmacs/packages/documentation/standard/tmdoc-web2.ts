@@ -201,11 +201,11 @@
     </src-comment>
   </active*>
 
-  <assign|tmweb-hlist-item|<macro|body|<space|1em><arg|body> >>
+  <assign|tmweb-hlist-item|<macro|body|<arg|body><space|1em> >>
 
   <assign|tmhtml-tmweb-hlist-item|<macro|body|<arg|body> >>
 
-  <assign|tmweb-hlist|<xmacro|args|<map-args|tmweb-hlist-item|concat|args>>>
+  <assign|tmweb-hlist|<xmacro|args|<with|par-mode|left|<map-args|tmweb-hlist-item|concat|args>>>>
 
   <assign|tmhtml-tmweb-hlist|<xmacro|args|<html-div-class|tmweb-hlist|<map-args|tmweb-hlist-item|concat|args>>>>
 
