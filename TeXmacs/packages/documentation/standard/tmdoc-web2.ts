@@ -86,7 +86,7 @@
   <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Download>|<hlink|Sources|../download/sources.en.tm>|<hlink|GNU
   Linux|../download/linux-new.en.tm>|<hlink|MacOS|../download/macosx-new.en.tm>|<hlink|Windows|../download/windows-new.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
 
-  <assign|tmweb-learn-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Learn>|<hlink|Videos|../home/videos.en.tm>|<hlink|Tutorials|../help/tutorial.en.tm>|<hlink|Books|../help/book.en.tm>|<obsolete|<hlink|Manual|../help/manual.en.tm>>|<hlink|FAQ|../help/faq.en.tm>|<hlink|Mailing
+  <assign|tmweb-learn-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Learn>|<hlink|Videos|../home/videos-new.en.tm>|<hlink|Tutorials|../help/tutorial.en.tm>|<hlink|Books|../help/book.en.tm>|<obsolete|<hlink|Manual|../help/manual.en.tm>>|<hlink|FAQ|../help/faq.en.tm>|<hlink|Mailing
   lists|../home/ml.en.tm>>>>>
 
   <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Contribute>|<obsolete|<hlink|Contribute|../contribute/contribute.en.tm>>|<obsolete|<hlink|Team|../contribute/team.en.tm>>|<hlink|Donate|../contribute/donations.en.tm>|<hlink|Develop|../contribute/develop.en.tm>|<hlink|Document|../contribute/documentation.en.tm>|<hlink|Translate|../contribute/translations.en.tm>|<hlink|Plug-ins|../contribute/plugins.en.tm>>>>>
