@@ -1,6 +1,6 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.9>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|A short description of GNU <TeXmacs>>
@@ -23,13 +23,12 @@
 
   <TeXmacs> runs on all major <name|Unix> platforms and <name|Windows>.
   Documents can be saved in <TeXmacs>, <name|Xml> or <name|Scheme> format and
-  printed as <name|Postscript> or <name|Pdf> files. Converters exist for
-  <TeX>/<LaTeX> and <name|Html>/<name|Mathml>.
+  printed as <name|Postscript> or <name|Pdf> files. Although <TeXmacs> is
+  <em|not> based on <TeX>/<LaTeX>, high quality converters exist for <LaTeX>.
+  Documents can also be exported to <name|Html>/<name|Mathml> for publication
+  on the web.
 
-  GNU <TeXmacs> is hosted by <hlink|INRIA|http://www.inria.fr>, Bâtiment Alan
-  Turing, Palaiseau, France.
-
-  <tmdoc-copyright|1998--2013|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2019|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
