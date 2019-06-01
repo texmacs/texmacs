@@ -1,26 +1,51 @@
-<TeXmacs|1.0.7.15>
+<TeXmacs|1.99.9>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Contacting us>
 
   You can either contact us by email at
 
-  <verbatim| \ \ \ contact@texmacs.org>
+  <\quote-env>
+    <verbatim|contact@texmacs.org>
+  </quote-env>
 
   or by regular mail at
 
-  <verbatim| \ \ \ Joris van der Hoeven<next-line> \ \ \ LIX, École
-  polytechnique<next-line> \ \ \ 91128 Palaiseau Cedex<next-line>
-  \ \ \ France>
+  <\quote-env>
+    <\compact>
+      <\verbatim>
+        Joris van der Hoeven
+
+        Laboratoire d'informatique de l'École polytechnique
+
+        Campus de l'École polytechnique
+
+        1, rue Honoré d'Estienne d'Orves
+
+        Bâtiment Alan Turing, CS35003
+
+        91120 Palaiseau, France
+      </verbatim>
+    </compact>
+  </quote-env>
 
   There are also several <TeXmacs> mailing lists:
 
-  <verbatim| \ \ \ texmacs-users@texmacs.org<next-line>
-  \ \ \ texmacs-info@texmacs.org<next-line> \ \ \ texmacs-dev@gnu.org>
+  <\quote-env>
+    <\compact>
+      <\verbatim>
+        dtexmacs-users@texmacs.org
 
-  <tmdoc-copyright|1998--2012|Joris van der Hoeven>
+        texmacs-info@texmacs.org
+
+        texmacs-dev@gnu.org
+      </verbatim>
+    </compact>
+  </quote-env>
+
+  <tmdoc-copyright|1998--2019|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -30,8 +55,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
