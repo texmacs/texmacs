@@ -37,7 +37,7 @@
     <item>Philippe Joyez provided help concerning the support of various
     image formats and the compatability with <name|Inkscape>.
 
-    <item>Darcy Chen is the main translator for Chinese. He also helped with
+    <item>Darcy Shen is the main translator for Chinese. He also helped with
     the CJK support, contributed various patches, and provided a lot of
     community work.
 
