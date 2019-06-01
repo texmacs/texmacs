@@ -1,6 +1,6 @@
 <TeXmacs|1.99.9>
 
-<style|<tuple|tmdoc|english|old-spacing>>
+<style|<tuple|tmdoc|old-spacing|polish>>
 
 <\body>
   <tmdoc-title|Podr¦cznik u»ytkownika GNU <TeXmacs>>
