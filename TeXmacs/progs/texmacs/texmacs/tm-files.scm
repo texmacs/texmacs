@@ -403,6 +403,8 @@
         (else "xdg-open")))
 
 (tm-define (load-external u)
+  (if (not (url-rooted? u))
+      (set! u (url-relative (current-buffer) u)))
   (if (url-rooted-web? u)
       (system (string-append (default-open) " " (url->system u)))
       (system-1 (default-open) u)))
