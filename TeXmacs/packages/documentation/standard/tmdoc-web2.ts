@@ -195,13 +195,19 @@
 
   <assign|tmhtml-tmweb-split|<macro|first|second|<html-div-class|tmweb-split|<html-div-class|tmweb-split-car|<arg|first>><html-div-class|tmweb-split-cdr|<arg|second>>>>>
 
-  <assign|tmweb-list-item|<macro|body|<space|1em><arg|body> >>
+  <\active*>
+    <\src-comment>
+      Horizontal lists
+    </src-comment>
+  </active*>
 
-  <assign|tmhtml-tmweb-list-item|<macro|body|<arg|body> >>
+  <assign|tmweb-hlist-item|<macro|body|<space|1em><arg|body> >>
 
-  <assign|tmweb-list|<xmacro|args|<map-args|tmweb-list-item|concat|args>>>
+  <assign|tmhtml-tmweb-hlist-item|<macro|body|<arg|body> >>
 
-  <assign|tmhtml-tmweb-list|<xmacro|args|<html-div-class|tmweb-list|<map-args|tmweb-list-item|concat|args>>>>
+  <assign|tmweb-hlist|<xmacro|args|<map-args|tmweb-hlist-item|concat|args>>>
+
+  <assign|tmhtml-tmweb-hlist|<xmacro|args|<html-div-class|tmweb-hlist|<map-args|tmweb-hlist-item|concat|args>>>>
 
   <\active*>
     <\src-comment>
@@ -252,6 +258,20 @@
   <assign|item-pic|<macro|name|<smash|<image|<arg|name>|3em|||-1.5em>><space|0.5em>>>
 
   <assign|tmhtml-item-pic|<macro|name|<html-div-class|tmweb-item-pic|<image|<arg|name>|3em|||-1.5em>>>>
+
+  <\active*>
+    <\src-comment>
+      Videos from Youtube
+    </src-comment>
+  </active*>
+
+  <assign|youtube-thumbnail|<macro|youtube-id|width|height|<image|<merge|https://img.youtube.com/vi/|<arg|youtube-id>|/mqdefault.jpg>|<arg|width>|<arg|height>||>>>
+
+  <assign|youtube-thumbnail-legend|<macro|youtube-id|legend|width|height|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0em>|<cwith|1|-1|1|1|cell-rsep|0em>|<cwith|2|2|1|1|cell-width|<arg|width>>|<cwith|2|2|1|1|cell-hmode|exact>|<twith|table-valign|T>|<cwith|2|2|1|1|cell-hyphen|t>|<table|<row|<cell|<youtube-thumbnail|<arg|youtube-id>|<arg|width>|<arg|height>>>>|<row|<\cell>
+    <small|<arg|legend>>
+  </cell>>>>>>>
+
+  <assign|youtube-video|<macro|youtube-id|width|height|<image|<merge|https://img.youtube.com/vi/|<arg|youtube-id>|/mqdefault.jpg>|<arg|width>|<arg|height>||>>>
 
   <\active*>
     <\src-comment>
