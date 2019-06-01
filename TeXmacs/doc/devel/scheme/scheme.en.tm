@@ -1,9 +1,9 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.9>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
-  <tmdoc-title|Programming <scheme> extensions to <TeXmacs>>
+  <tmdoc-title|<TeXmacs> <name|Scheme> developer guide>
 
   <\traverse>
     <branch|Overview of the <scheme> extension
@@ -38,3 +38,6 @@
   Texts. A copy of the license is included in the section entitled "GNU Free
   Documentation License".>
 </body>
+
+<initial|<\collection>
+</collection>>
