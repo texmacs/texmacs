@@ -125,7 +125,31 @@
 
   <assign|texmacs-version|<macro|1.0.2.1>>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Forward compatibility
+    </src-comment>
+  </active*>
+
+  <assign|tmweb-split|<\macro|first|second>
+    <surround||<vspace|1em>|<arg|first>>
+
+    <arg|second>
+  </macro>>
+
+  <assign|tmweb-list-item|<macro|body|<space|1em><arg|body> >>
+
+  <assign|tmweb-list|<xmacro|args|<map-args|tmweb-list-item|concat|args>>>
+
+  <assign|tmweb-gallery-picture|<macro|name|<image|<arg|name>|0.45par|||>>>
+
+  <assign|tmweb-caption-below|<macro|fig|cap|<tabular*|<tformat|<table|<row|<cell|<arg|fig>>>|<row|<cell|<small|<arg|cap>>>>>>>>>
+
+  <assign|tmweb-slide|<macro|body|<anim-constant|<arg|body>|5sec>>>
+
+  <assign|tmweb-carousel|<xmacro|args|<anim-repeat|<map-args|tmweb-slide|anim-compose|args>>>>
+
+  <assign|item-pic|<macro|name|<smash|<image|<arg|name>|3em|||-1.5em>><space|0.5em>>>
 </body>
 
 <\initial>
