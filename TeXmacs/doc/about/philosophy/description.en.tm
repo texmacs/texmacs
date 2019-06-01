@@ -21,7 +21,7 @@
   added to the editor using the <name|Scheme> extension language. A native
   spreadsheet and tools for collaborative authoring are planned for later.
 
-  <TeXmacs> runs on all major <name|Unix> platforms and <name|Windows>.
+  <TeXmacs> runs on GNU/<name|Linux>, <name|MacOS>, and <name|Windows>.
   Documents can be saved in <TeXmacs>, <name|Xml> or <name|Scheme> format and
   printed as <name|Postscript> or <name|Pdf> files. Although <TeXmacs> is
   <em|not> based on <TeX>/<LaTeX>, high quality converters exist for <LaTeX>.
