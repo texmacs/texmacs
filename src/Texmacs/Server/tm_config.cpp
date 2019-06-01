@@ -234,6 +234,7 @@ system_kbd_initialize (hashmap<string,tree>& h) {
     h ("end")= "<#2198>";
     h ("pageup")= "<#21DE>";
     h ("pagedown")= "<#21DF>";
+    h ("space")= "<#2423>";
     h ("section")= "\237";
     h ("<less>")= "<#3C>";
     h ("<gtr>")= "<#3E>";
