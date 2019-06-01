@@ -1,6 +1,6 @@
-<TeXmacs|1.99.4>
+<TeXmacs|1.99.9>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Developers of <TeXmacs>>
@@ -37,6 +37,10 @@
     <item>Philippe Joyez provided help concerning the support of various
     image formats and the compatability with <name|Inkscape>.
 
+    <item>Darcy Chen is the main translator for Chinese. He also helped with
+    the CJK support, contributed various patches, and provided a lot of
+    community work.
+
     <item>Dan Martens made a first <name|Windows> port that is no longer
     maintained.
 
@@ -67,6 +71,9 @@
 
     <item>Josef Weidendorfer made several patches for improving the
     performance of <TeXmacs>.
+
+    <item>Basile Audoly contributed a series of detailed bug descriptions and
+    suggestions for improvements.
 
     <item>Sam Liddicott for several patches, including hyperlink support for
     <name|Pdf> files.
