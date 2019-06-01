@@ -81,7 +81,7 @@
   language="javascript"\<gtr\>document.write (downloadRelativeLink
   ("Download"));\<less\>/script\<gtr\>>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute.en.tm>>>>>
 
-  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome-new.en.tm>|<hlink|Gallery|../home/gallery.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Thanks|../home/thanks.en.tm>>>>>
+  <assign|tmweb-home-links|<macro|<style-with|||src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome-new.en.tm>|<hlink|Gallery|../home/gallery.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Changes|../about/changes.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Authors|../about/authors.en.tm>>>>>
 
   <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Download>|<hlink|Sources|../download/sources.en.tm>|<hlink|GNU
   Linux|../download/linux-new.en.tm>|<hlink|MacOS|../download/macosx-new.en.tm>|<hlink|Windows|../download/windows-new.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
@@ -94,8 +94,8 @@
   <assign|tmweb-contact-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Contact>|<hlink|Feedback|../contact/contact.en.tm>|<hlink|Bugs|../contact/bugs.en.tm>|<hlink|Suggestions|../contact/wishes.en.tm>|<hlink|Patches|../contact/patches.en.tm>|<hlink|Mailing
   lists|../home/ml.en.tm>>>>>
 
-  <assign|tmweb-further-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Further>|<obsolete|<hlink|Philosophy|../about/philosophy.en.tm>>|<obsolete|<hlink|Artwork|../about/artwork.en.tm>>|<obsolete|<hlink|Changes|../about/changes.en.tm>>|<obsolete|<hlink|Jobs|../home/jobs.en.tm>>|<obsolete|<hlink|To
-  do|../about/todo.en.tm>>|<obsolete|<hlink|Roadmap|../about/roadmap.en.tm>>|<obsolete|<hlink|Authors|../about/authors.en.tm>>|<obsolete|<hlink|Donators|../about/donators.en.tm>>>>>>
+  <assign|tmweb-further-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Further>|<obsolete|<hlink|Philosophy|../about/philosophy.en.tm>>|<obsolete|<hlink|Artwork|../about/artwork.en.tm>>|<obsolete|<hlink|Jobs|../home/jobs.en.tm>>|<obsolete|<hlink|To
+  do|../about/todo.en.tm>>|<obsolete|<hlink|Roadmap|../about/roadmap.en.tm>>|<obsolete|<hlink|Donators|../about/donators.en.tm>>>>>>
 
   <\active*>
     <\src-comment>
