@@ -267,11 +267,11 @@
 
   <assign|youtube-thumbnail|<macro|youtube-id|width|height|<image|<merge|https://img.youtube.com/vi/|<arg|youtube-id>|/mqdefault.jpg>|<arg|width>|<arg|height>||>>>
 
-  <assign|youtube-thumbnail-legend|<macro|youtube-id|legend|width|height|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0em>|<cwith|1|-1|1|1|cell-rsep|0em>|<cwith|2|2|1|1|cell-width|<arg|width>>|<cwith|2|2|1|1|cell-hmode|exact>|<twith|table-valign|T>|<cwith|2|2|1|1|cell-hyphen|t>|<table|<row|<cell|<youtube-thumbnail|<arg|youtube-id>|<arg|width>|<arg|height>>>>|<row|<\cell>
+  <assign|youtube-thumbnail-legend|<macro|youtube-id|legend|width|height|<tabular*|<tformat|<cwith|1|-1|1|1|cell-lsep|0em>|<cwith|1|-1|1|1|cell-rsep|0em>|<cwith|2|2|1|1|cell-width|<arg|width>>|<cwith|2|2|1|1|cell-hmode|exact>|<twith|table-valign|T>|<cwith|2|2|1|1|cell-hyphen|t>|<cwith|1|-1|1|1|cell-tsep|1em>|<cwith|2|2|1|1|cell-bsep|1em>|<table|<row|<cell|<youtube-thumbnail|<arg|youtube-id>|<arg|width>|<arg|height>>>>|<row|<\cell>
     <small|<arg|legend>>
   </cell>>>>>>>
 
-  <assign|youtube-video|<macro|youtube-id|width|height|<image|<merge|https://img.youtube.com/vi/|<arg|youtube-id>|/mqdefault.jpg>|<arg|width>|<arg|height>||>>>
+  <assign|youtube-video|<macro|youtube-id|width|height|<image|<merge|https://img.youtube.com/vi/|<arg|youtube-id>|/hqdefault.jpg>|<arg|width>|<arg|height>||>>>
 
   <\active*>
     <\src-comment>
