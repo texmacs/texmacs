@@ -59,10 +59,10 @@
   (define maxima-help #f)
   (let ((help-list (string->object (var-eval-system "maxima_detect help"))))
     (if help-list
-	(cond ((pair? help-list)
-	       (set! maxima-help (car help-list)))
-	      ((string? help-list)
-	       (set! maxima-help help-list)))))
+        (cond ((pair? help-list)
+               (set! maxima-help (car help-list)))
+              ((string? help-list)
+               (set! maxima-help help-list)))))
 
   (import-from (maxima-kbd))
   (import-from (maxima-menus))
