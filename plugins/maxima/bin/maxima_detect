@@ -11,7 +11,7 @@ then
     then
       maxima -d | grep -F 'maxima-htmldir=' | \
         sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|' | \
-	cygpath -f -
+        cygpath -f -
     else
       echo '("cygwin")'
     fi
@@ -21,11 +21,16 @@ then
       maxima -d | grep -F 'maxima-htmldir=' |\
         sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|'
     else
-      echo '('
-      maxima --list-avail |\
+      MAXIMA=$(maxima --list-avail 2>/dev/null |\
         grep '^version [A-Za-z0-9\.][A-Za-z0-9\.]*, lisp [A-Za-z0-9][A-Za-z0-9]*$' |\
-        sed -e 's/^version \([A-Za-z0-9\.][A-Za-z0-9\.]*\), lisp \([A-Za-z0-9][A-Za-z0-9]*\)$/"\1 \2"/'
-      echo ')'
+        sed -e 's/^version \([A-Za-z0-9\.][A-Za-z0-9\.]*\), lisp \([A-Za-z0-9][A-Za-z0-9]*\)$/"\1 \2"/')
+      if [ -z "$MAXIMA" ]
+      then
+        # maxima did not return the list of available versions
+        echo '#f'
+      else
+        echo '('$MAXIMA')'
+      fi
     fi
   fi
 else
