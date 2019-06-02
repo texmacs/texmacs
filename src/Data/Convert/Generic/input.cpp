@@ -366,7 +366,7 @@ texmacs_input_rep::file_flush (bool force) {
       i++;
     }
 
-    url file= url (path_file);
+    url file= url_system (path_file);
     if (! exists (file)) {
       string err_msg = "[" * as_string(file) * "] does not exist";
       write (verbatim_to_tree (err_msg, false, "auto"));
