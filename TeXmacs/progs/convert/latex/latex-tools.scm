@@ -465,6 +465,8 @@
   (:synopsis "Return the usepackage command for @doc")
   (set! latex-uses-table (make-ahash-table))
   (latex-use-which-package doc)
+  (for (p (ahash-table->list latex-packages-option))
+    (ahash-set! latex-uses-table (car p) #t))
   (let* ((l1 latex-all-packages)
 	 (s1 (latex-as-use-package (list-difference l1 '("amsthm"))))
 	 (l2 (map car (ahash-table->list latex-uses-table)))
@@ -515,7 +517,7 @@
   (apply string-append
          (map (lambda (x)
                 (string-append
-                  "\\definecolor{" x "}{HTML}{"
+                  "\\definecolor{" (string-replace x " " "") "}{HTML}{"
                   (html-color->latex-xcolor (get-hex-color x)) "}\n"))
               colors)))
 
@@ -526,15 +528,17 @@
 (define (latex-make-option l)
   (string-append "[" (apply string-append (list-intersperse l ",")) "]"))
 
-(define (set-packages-option pack opts)
-  (if (nnull? opts)
-    (ahash-set! latex-packages-option pack opts)))
+(define (set-packages-option pack opts colors)
+  (cond ((nnull? opts)
+         (ahash-set! latex-packages-option pack opts))
+        ((nnull? colors)
+         (ahash-set! latex-packages-option pack (list "")))))
 
 (tm-define (latex-preamble text style lan init colors colormaps)
   (:synopsis "Compute preamble for @text")
   (with-global tmtex-style (if (list? style) (cAr style) style)
     (set! latex-packages-option (make-ahash-table))
-    (set-packages-option "xcolor" colormaps)
+    (set-packages-option "xcolor" colormaps colors)
     (let* ((Page         (latex-preamble-page-type init))
            (Macro        (latex-macro-defs text))
            (Colors       (latex-colors-defs colors))

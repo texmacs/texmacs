@@ -78,7 +78,7 @@
 
 (logic-group latex-texmacs-0%
   tmunsc emdash tmhrule tmat tmbsl tmdummy
-  TeXmacs madebyTeXmacs withTeXmacstext
+  TeXmacs madebyTeXmacs withTeXmacstext tmmade
   scheme tmsep tmSep pari qed textdots hrule)
 
 (logic-group latex-texmacs-1%
@@ -220,7 +220,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (logic-group latex-texmacs-preamble-command%
-  newmdenv
+  newmdenv tikzframe
   tmkeywords tmacm tmarxiv tmpacs tmmsc
   fmtext tdatetext tmisctext tsubtitletext
   thankshomepage thanksemail thanksdate thanksamisc thanksmisc thankssubtitle

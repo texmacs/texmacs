@@ -112,6 +112,7 @@
   (euro "eurosym")
 
   (mdfsetup ("tikz" "mdframed"))
+  (tikz "tikz")
 
   (omicron "pslatex")
   (multicols "multicol")

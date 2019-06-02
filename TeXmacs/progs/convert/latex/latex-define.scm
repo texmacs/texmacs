@@ -100,8 +100,7 @@
 					      (!math (longhookrightarrow))))))
   (Backepsilon (!group (mbox (rotatebox (!option "origin=c") "180"
 					"E"))))
-  (Backsigma (!group (mbox (rotatebox (!option "origin=c") "180"
-                                      (!math "\\Sigma")))))
+  (Backsigma (!group (mbox (reflectbox (!math "\\Sigma")))))
   (Mho (!group (mbox (rotatebox (!option "origin=c") "180"
 				(!math "\\Omega")))))
   (btimes (!group (mbox (rotatebox (!option "origin=c") "90"
@@ -249,6 +248,7 @@
              (!group (!recurse (TeXmacs))) " " (!translate "text editor") " ("
              (!translate "see") " "
              (url "http://www.texmacs.org") ")"))
+  (tmmade (!recurse (tikzframe (Backsigma))))
   (scheme "{\\sc Scheme}")
   (tmsep  ", ")
   (tmSep  "; ")
@@ -534,6 +534,13 @@
 			       "hidealllines=true,\ninnerleftmargin=0pt,"
 			       "innerrightmargin=0pt,innertopmargin=0pt,"
 			       "innerbottommargin=0pt" )) "\n"))
+  (tikzframe
+   (!append
+    (!ignore (tikz))
+    "\\newcommand{\\tikzframe}[1]{%\n"
+    "  \\tikz[baseline=(X.base)]\n"
+    "  \\node[draw=black,semithick,rectangle,inner sep=2pt,rounded corners=2pt]\n"
+    "  (X) {#1};}\n"))
   (tmkeywords
    (!append (newcommand (tmkeywords)
 			(!append (textbf (!translate "Keywords:")) " "))
