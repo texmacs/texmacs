@@ -46,7 +46,7 @@ text_language_rep::text_language_rep (string lan_name, string hyph_name):
 text_property
 text_language_rep::advance (tree t, int& pos) {
   string s= t->label;
-  if (pos == N(s)) return &tp_normal_rep;
+  if (pos >= N(s)) return &tp_normal_rep;
 
   if (s[pos]==' ') {
     pos++;
@@ -134,7 +134,7 @@ is_french_punctuation (register char c) {
 text_property
 french_language_rep::advance (tree t, int& pos) {
   string s= t->label;
-  if (pos == N(s)) return &tp_normal_rep;
+  if (pos >= N(s)) return &tp_normal_rep;
 
   if (s[pos]==' ') {
     pos++;
@@ -230,7 +230,7 @@ ucs_text_language_rep::advance (tree t, int& pos) {
   //TODO: replace methods is_punctuation (), is_iso_alpha () and is_numeric (),
   //      by equivalents taking into account unicode entities.
   string s= t->label;
-  if (pos == N(s)) return &tp_normal_rep;
+  if (pos >= N(s)) return &tp_normal_rep;
 
   if (s[pos]==' ') {
     pos++;
@@ -368,7 +368,7 @@ oriental_language_rep::oriental_language_rep (string lan_name):
 text_property
 oriental_language_rep::advance (tree t, int& pos) {
   string s= t->label;
-  if (pos == N(s)) return &tp_normal_rep;
+  if (pos >= N(s)) return &tp_normal_rep;
 
   if (s[pos] == ' ') {
     pos++;
