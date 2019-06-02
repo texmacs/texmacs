@@ -100,6 +100,8 @@
 					      (!math (longhookrightarrow))))))
   (Backepsilon (!group (mbox (rotatebox (!option "origin=c") "180"
 					"E"))))
+  (Backsigma (!group (mbox (rotatebox (!option "origin=c") "180"
+                                      (!math "\\Sigma")))))
   (Mho (!group (mbox (rotatebox (!option "origin=c") "180"
 				(!math "\\Omega")))))
   (btimes (!group (mbox (rotatebox (!option "origin=c") "90"

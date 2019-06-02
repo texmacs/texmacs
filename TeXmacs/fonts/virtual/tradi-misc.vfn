@@ -2,10 +2,12 @@
 (virtual-font
   (mho (ver-flip (hor-flip omega)))
   (Backepsilon (ver-flip (hor-flip Epsilon)))
+  (Backsigma (hor-flip Sigma))
   (b-mho (ver-flip (hor-flip b-omega)))
   (b-Mho (ver-flip (hor-flip b-Omega)))
   (b-backepsilon (ver-flip (hor-flip b-epsilon)))
   (b-Backepsilon (ver-flip (hor-flip b-Epsilon)))
+  (b-Backsigma (hor-flip b-Sigma))
   (Exists (join (0 0 exists) (0.25 -0.01 urcorner) (0.25 0.02 lrcorner)))
   (mapmulti (hor-flip multimap))
   (invbreve (ver-flip breve))

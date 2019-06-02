@@ -135,6 +135,7 @@ rsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<Psi>", -0.05);
   adjust_pair (t, "<Omega>", 0.02);
   adjust_pair (t, "<Backepsilon>", 0.05);
+  adjust_pair (t, "<Backsigma>", 0.05);
   adjust_pair (t, "<Mho>", 0.02);
   adjust_char (t, "<#1D701>", 0.02);
   adjust_char (t, "<b-zeta>", 0.02);
@@ -220,6 +221,7 @@ rsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_pair (t, "<Chi>", 0.03);
   adjust_pair (t, "<Omega>", 0.03);
   adjust_pair (t, "<Backepsilon>", 0.03);
+  adjust_pair (t, "<Backsigma>", 0.03);
   adjust_pair (t, "<Mho>", 0.03);
   adjust_char (t, "<#1D6FC>", 0.03);
   adjust_char (t, "<b-alpha>", 0.03);

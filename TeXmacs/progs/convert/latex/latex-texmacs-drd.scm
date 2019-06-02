@@ -37,7 +37,7 @@
   mapsup mapsdown longmapsup longmapsdown
   upsquigarrow downsquigarrow updownsquigarrow
   hookuparrow hookdownarrow longhookuparrow longhookdownarrow
-  Backepsilon Mho btimes
+  Backepsilon Backsigma Mho btimes
 
   ;; asymptotic relations by Joris
   nasymp asympasymp nasympasymp simsim nsimsim

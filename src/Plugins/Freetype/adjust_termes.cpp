@@ -114,6 +114,7 @@ rsub_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<Upsilon>", -0.05);
   adjust_pair (t, "<Chi>", 0.02);
   adjust_pair (t, "<Backepsilon>", 0.05);
+  adjust_pair (t, "<Backsigma>", 0.05);
   adjust_char (t, "<#1D6FC>", -0.03);
   adjust_char (t, "<b-alpha>", -0.03);
   adjust_char (t, "<#1D6FD>", -0.03);
@@ -233,6 +234,7 @@ rsup_adjust_termes (hashmap<string,double>& t) {
   adjust_pair (t, "<Psi>", 0.01);
   adjust_pair (t, "<Tau>", 0.02);
   adjust_pair (t, "<Backepsilon>", 0.04);
+  adjust_pair (t, "<Backsigma>", 0.04);
   adjust_pair (t, "<Mho>", 0.02);
   adjust_char (t, "<#1D6FD>", 0.02);
   adjust_char (t, "<b-beta>", 0.02);

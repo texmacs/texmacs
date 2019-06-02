@@ -395,6 +395,6 @@
   ("overbrace" "Insert overbrace" (make-wide "<wide-overbrace>")))
 
 (kbd-symbols
-  "ddots" "mho" "Backepsilon" "homsim"
+  "ddots" "mho" "Backepsilon" "Backsigma" "homsim"
   "mathcatalan" "mathD" "mathd" "mathe" "mathi"
   "mathGamma" "mathLaplace" "matheuler" "mathlambda" "mathpi")

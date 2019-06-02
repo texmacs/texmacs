@@ -211,10 +211,12 @@
 
   (mho (ver-flip (hor-flip omega)))
   (Backepsilon (ver-flip (hor-flip Epsilon)))
+  (Backsigma (hor-flip Sigma))
   (b-mho (ver-flip (hor-flip b-omega)))
   (b-Mho (ver-flip (hor-flip b-Omega)))
   (b-backepsilon (ver-flip (hor-flip b-epsilon)))
   (b-Backepsilon (ver-flip (hor-flip b-Epsilon)))
+  (b-Backsigma (hor-flip b-Sigma))
 
   (ldots (join (align . + 0 * 0)
                (align . + 1 *)

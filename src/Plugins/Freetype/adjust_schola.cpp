@@ -149,6 +149,7 @@ rsub_adjust_schola (hashmap<string,double>& t) {
   adjust_pair (t, "<Psi>", -0.05);
   adjust_pair (t, "<Chi>", 0.02);
   adjust_pair (t, "<Backepsilon>", 0.02);
+  adjust_pair (t, "<Backsigma>", 0.02);
   adjust_char (t, "<#1D708>", 0.02);
   adjust_char (t, "<b-nu>", 0.02);
   adjust_char (t, "<#1D71B>", -0.02);

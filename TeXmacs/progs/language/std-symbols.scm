@@ -495,7 +495,7 @@
     "<Eta>" "<Theta>" "<Iota>" "<Kappa>" "<Lambda>" "<Mu>" "<Nu>"
     "<Xi>" "<Omicron>" "<Pi>" "<Rho>" "<Sigma>" "<Tau>"
     "<Upsilon>" "<Phi>" "<Psi>" "<Chi>" "<Omega>"
-    "<Backepsilon>" "<Mho>"
+    "<Backepsilon>" "<Backsigma>" "<Mho>"
 
     "<b-0>" "<b-1>" "<b-2>" "<b-3>" "<b-4>"
     "<b-5>" "<b-6>" "<b-7>" "<b-8>" "<b-9>"
@@ -523,7 +523,7 @@
     "<b-Lambda>" "<b-Mu>" "<b-Nu>" "<b-Xi>" "<b-Omicron>"
     "<b-Pi>" "<b-Rho>" "<b-Sigma>" "<b-Tau>" "<b-Upsilon>"
     "<b-Phi>" "<b-Psi>" "<b-Chi>" "<b-Omega>"
-    "<b-Backepsilon>" "<b-Mho>"
+    "<b-Backepsilon>" "<b-Backsigma>" "<b-Mho>"
 
     "<up-a>" "<up-b>" "<up-c>" "<up-d>" "<up-e>" "<up-f>" "<up-g>"
     "<up-h>" "<up-i>" "<up-j>" "<up-k>" "<up-l>" "<up-m>" "<up-n>"
