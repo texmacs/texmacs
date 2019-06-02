@@ -37,12 +37,13 @@ class Mermaid(Graph):
         with open(puppeteer_config, "w") as config_file:
             config_file.write('{"args": ["--no-sandbox"]}')
 
-        png = self.get_png_path()
-        png_path = png.split("?")[0]
+        png_path = self.get_png_path()
+        if os.path.isfile (png_path):
+            os.remove (png_path)
         cmd = [self.name, "-p", puppeteer_config, "-i", code_path, "-o", png_path]
         p = Popen(cmd, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-            flush_file (png)
+            flush_file (self.get_png())
         else:
             flush_verbatim (err.decode())
