@@ -23,7 +23,7 @@ class Asymptote(Graph):
             ret, err = p.communicate()
             # WARN: The Version Info is in stderr
             if (p.returncode == 0):
-                self.message = str(err)
+                self.message = err.decode()
         except OSError:
             pass
 
@@ -39,4 +39,4 @@ class Asymptote(Graph):
         if (p.returncode == 0):
           flush_file (self.get_eps())
         else:
-          flush_verbatim (err)
+          flush_verbatim (err.decode())

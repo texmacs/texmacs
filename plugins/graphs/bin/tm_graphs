@@ -157,10 +157,10 @@ if py_ver == 3:
 else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
-grapvizs = map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"])
+grapvizs = list(map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"]))
 others = [Asymptote("asy"), PlantUML(), Mermaid(), XYpic(), TikZ()]
-graphs = filter(lambda x: x.available(), grapvizs + others)
-graph_names = map(lambda x: x.name, graphs)
+graphs = list(filter(lambda x: x.available(), grapvizs + others))
+graph_names = list(map(lambda x: x.name, graphs))
 
 if len(graphs) == 0:
     flush_verbatim ("\nSorry, please check your installation of Graphviz/Asymptote")

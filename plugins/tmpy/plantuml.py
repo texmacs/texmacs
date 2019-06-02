@@ -22,7 +22,7 @@ class PlantUML(Graph):
             p = Popen([self.name, "-version"], stdout=PIPE)
             ret, err = p.communicate()
             if (p.returncode == 0):
-                self.message = str(ret)
+                self.message = ret.decode()
         except OSError:
             pass
 

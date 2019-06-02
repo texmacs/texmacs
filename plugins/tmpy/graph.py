@@ -10,6 +10,7 @@
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 import os
+import platform
 from .protocol import *
 
 
@@ -36,7 +37,10 @@ class Graph(object):
         pass
 
     def get_tmp_dir(self):
-        return os.getenv("TEXMACS_HOME_PATH") + "/system/tmp/"
+        if (platform.system() == "Windows"):
+            return os.getenv("TEXMACS_HOME_PATH") + "\\system\\tmp\\"
+        else:
+            return os.getenv("TEXMACS_HOME_PATH") + "/system/tmp/"
 
     def get_png_path(self):
         png = self.get_tmp_dir() + self.name + ".png" +\

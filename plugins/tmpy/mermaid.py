@@ -22,7 +22,7 @@ class Mermaid(Graph):
             p = Popen([self.name, "--version"], stdout=PIPE)
             ret, err = p.communicate()
             if (p.returncode == 0):
-                self.message = str(ret)
+                self.message = "Mermaid " + ret.decode()
         except OSError:
             pass
 
@@ -39,10 +39,10 @@ class Mermaid(Graph):
 
         png = self.get_png_path()
         png_path = png.split("?")[0]
-        cmd = [self.name, "-p", puppeteer_config, "-i",code_path, "-o", png_path]
+        cmd = [self.name, "-p", puppeteer_config, "-i", code_path, "-o", png_path]
         p = Popen(cmd, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
             flush_file (png)
         else:
-            flush_verbatim (err)
+            flush_verbatim (err.decode())
