@@ -137,9 +137,9 @@
     <arg|second>
   </macro>>
 
-  <assign|tmweb-list-item|<macro|body|<space|1em><arg|body> >>
+  <assign|tmweb-hlist-item|<macro|body|<space|1em><arg|body> >>
 
-  <assign|tmweb-list|<xmacro|args|<map-args|tmweb-list-item|concat|args>>>
+  <assign|tmweb-hlist|<xmacro|args|<map-args|tmweb-hlist-item|concat|args>>>
 
   <assign|tmweb-gallery-picture|<macro|name|<image|<arg|name>|0.45par|||>>>
 
