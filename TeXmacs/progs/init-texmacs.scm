@@ -322,7 +322,8 @@
              docgrep-in-texts docgrep-in-recent)
 (lazy-define (doc tmdoc-search) tmdoc-search-style tmdoc-search-tag
              tmdoc-search-parameter tmdoc-search-scheme)
-(lazy-define (doc tmweb) tmweb-convert-dir tmweb-update-dir
+(lazy-define (doc tmweb) youtube-select
+             tmweb-convert-dir tmweb-update-dir
              tmweb-convert-dir-keep-texmacs tmweb-update-dir-keep-texmacs
              tmweb-interactive-build tmweb-interactive-update)
 (lazy-define (doc apidoc) apidoc-all-modules apidoc-all-symbols)
@@ -330,7 +331,7 @@
 (lazy-tmfs-handler (doc docgrep) grep)
 (lazy-tmfs-handler (doc tmdoc) help)
 (lazy-tmfs-handler (doc apidoc) apidoc)
-(define-secure-symbols tmdoc-include)
+(define-secure-symbols tmdoc-include youtube-select)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

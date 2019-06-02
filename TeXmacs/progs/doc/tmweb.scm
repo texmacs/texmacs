@@ -15,6 +15,36 @@
   (:use (texmacs texmacs tm-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Selecting a video
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (collect-thumbnails t)
+  (cond ((tm-atomic? t) (list))
+        ((tm-is? t 'youtube-thumbnail-legend) (list t))
+        (else (append-map collect-thumbnails (tm-children t)))))
+
+(define (transform-thumbnail t id ref)
+  (with lab (if (tm-equal? (tm-ref t 0) id) 'shown 'hidden)
+    `(,lab (youtube-video-legend ,(tm-ref t 0) ,(tm-ref t 1)
+                                 ,(tm-ref ref 2) ,(tm-ref ref 3)))))
+
+(define (select-thumbnail t l id)
+  (cond ((tm-atomic? t) (noop))
+        ((and (tm-is? t 'tiny-switch)
+              (tm-in? (tm-ref t 0) '(shown hidden))
+              (tm-is? (tm-ref t 0 0) 'youtube-video-legend))
+         (with r (map (cut transform-thumbnail <> id (tm-ref t 0 0)) l)
+           (tree-set! t `(tiny-switch ,@r))))
+        (else (for-each (cut select-thumbnail <> l id) (tm-children t)))))
+
+(tm-define (youtube-select t)
+  (:type (-> void))
+  (:synopsis "Select a video")
+  (:secure #t)
+  (when (tree->path t)
+    (select-thumbnail (buffer-tree) (collect-thumbnails (buffer-tree)) t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Building a web site
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
