@@ -1367,7 +1367,7 @@
     (list `(,(string->symbol s) ,@r))))
 
 (define (tmhtml-html-attr l)
-  (let* ((a (tmhtml-force-string (car l)))
+  (let* ((a (string->symbol (tmhtml-force-string (car l))))
          (v (tmhtml-force-string (cadr l)))
          (r (tmhtml (caddr l))))
     (map (cut tmhtml-append-attribute <> a v) r)))
