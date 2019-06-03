@@ -107,6 +107,7 @@ void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
 {
+  if (N(style) == 0) style = "tm-plain";
   system_wait ("Generating bibliography, ", "please wait");
   if (DEBUG_AUTO)
     debug_automatic << "Generating bibliography"
