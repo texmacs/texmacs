@@ -29,7 +29,7 @@
   ;; FIXME: we should use the DRD here
   `(collection
     ,@(map tmhtml-env-macro
-	   '(TeXmacs TeX LaTeX hrule item
+	   '(TeXmacs TeX LaTeX shown hrule item
 	     chapter-title section-title subsection-title subsubsection-title
 	     paragraph-title subparagraph-title
 	     itemize itemize-minus itemize-dot itemize-arrow

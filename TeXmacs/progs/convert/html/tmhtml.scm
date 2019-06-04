@@ -549,6 +549,16 @@
 ;; Formatting text
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (tmhtml-hidden l)
+  ;; FIXME: distinguish inline and block?
+  (with r (tmhtml (car l))
+    `((div (@ (class "toggle") (style "display: none")) ,@r))))
+
+(define (tmhtml-shown l)
+  ;; FIXME: distinguish inline and block?
+  (with r (tmhtml (car l))
+    `((div (@ (class "toggle") (style "display: block")) ,@r))))
+
 (define (tmhtml-hspace l)
   (with len (tmlength->htmllength (if (list-1? l) (car l) (cadr l)) #t)
     (if (not len) '()
@@ -940,7 +950,9 @@
 	(else '())))
 
 (define (tmhtml-action l)
-  `((h:u ,@(tmhtml (car l)))))
+  (if tmhtml-css?
+      (tmhtml (car l))
+      `((h:u ,@(tmhtml (car l))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Tables
@@ -1541,6 +1553,7 @@
   (surround tmhtml-surround)
   (concat tmhtml-concat)
   (rigid tmhtml-id)
+  (hidden tmhtml-hidden)
   (format tmhtml-noop)
   (hspace tmhtml-hspace)
   (vspace* tmhtml-vspace)
@@ -1695,6 +1708,7 @@
   (TeX ,(lambda x '("TeX")))
   (LaTeX ,(lambda x '("LaTeX")))
   ;; additional tags
+  (shown ,tmhtml-shown)
   (hidden-title ,tmhtml-noop)
   (doc-title-block ,tmhtml-doc-title-block)
   (equation* ,tmhtml-equation*)

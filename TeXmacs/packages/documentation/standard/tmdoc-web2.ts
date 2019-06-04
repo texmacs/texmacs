@@ -271,13 +271,13 @@
 
   <assign|youtube-thumbnail|<macro|youtube-id|width|height|<action|<image|<merge|https://img.youtube.com/vi/|<arg|youtube-id>|/mqdefault.jpg>|<arg|width>|<arg|height>||>|youtube-select|<arg|youtube-id>>>>
 
-  <assign|youtube-thumbnail-legend|<macro|youtube-id|legend|width|height|<html-div-class|tmweb-thumbnail|<youtube-legend|<youtube-thumbnail|<arg|youtube-id>|<arg|width>|<arg|height>>|<html-div-class|tmweb-thumbnail-legend|<small|<arg|legend>>>|<arg|width>>>>>
+  <assign|youtube-thumbnail-legend|<macro|youtube-id|legend|width|height|<html-div-class|tmweb-thumbnail|<youtube-legend|<html-attr|onclick|<merge|selectVideo('|<arg|youtube-id>|')>|<html-attr|id|<arg|youtube-id>|<html-class|tmweb-thumbnail-image|<youtube-thumbnail|<arg|youtube-id>|<arg|width>|<arg|height>>>>>|<html-div-class|tmweb-thumbnail-legend|<small|<arg|legend>>>|<arg|width>>>>>
 
   <assign|youtube-video|<macro|youtube-id|width|height|<image|<merge|https://img.youtube.com/vi/|<arg|youtube-id>|/hqdefault.jpg>|<merge|<arg|width>|pt>|<merge|<arg|height>|pt>||>>>
 
   <assign|tmhtml-youtube-video|<macro|youtube-id|width|height|<html-attr|src|<merge|https://www.youtube.com/embed/|<arg|youtube-id>>|<html-attr|height|<arg|height>|<html-attr|width|<arg|width>|<html-tag|iframe|>>>>>>
 
-  <assign|youtube-video-legend|<macro|youtube-id|legend|width|height|<html-div-class|tmweb-youtube|<youtube-legend|<youtube-video|<arg|youtube-id>|<arg|width>|<arg|height>>|<html-div-class|tmweb-youtube-legend|<small|<arg|legend>>>|<arg|width>>>>>
+  <assign|youtube-video-legend|<macro|youtube-id|legend|width|height|<html-div-class|tmweb-youtube|<youtube-legend|<html-class|tmweb-youtube-video|<youtube-video|<arg|youtube-id>|<arg|width>|<arg|height>>>|<html-div-class|tmweb-youtube-legend|<small|<arg|legend>>>|<arg|width>>>>>
 
   <\active*>
     <\src-comment>
