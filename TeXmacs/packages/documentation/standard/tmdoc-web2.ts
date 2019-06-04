@@ -79,7 +79,7 @@
 
   <assign|tmweb-top-links|<macro|<style-with|src-compact|none|<tmweb-link-menu|<hlink|About|../home/welcome-new.en.tm>|<specific|texmacs|<hlink|Download|../download/download.en.tm>><specific|html|\<less\>script
   language="javascript"\<gtr\>document.write (downloadRelativeLink
-  ("Download"));\<less\>/script\<gtr\>>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute.en.tm>>>>>
+  ("Download"));\<less\>/script\<gtr\>>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute-new.en.tm>>>>>
 
   <assign|tmweb-home-links|<macro|<style-with|||src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome-new.en.tm>|<hlink|Gallery|../home/gallery.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Changes|../about/changes.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Authors|../about/authors.en.tm>>>>>
 
