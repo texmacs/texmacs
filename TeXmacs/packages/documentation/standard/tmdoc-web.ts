@@ -75,15 +75,15 @@
     </src-comment>
   </active*>
 
-  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome>|<tmweb-link|Videos|videos>|<tmweb-link|Screen
+  <assign|tmweb-home-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Welcome|welcome-old>|<tmweb-link|Videos|videos-old>|<tmweb-link|Screen
   shots|screenshots>|<tmweb-link|News|news>|<tmweb-link|Mailing
   lists|ml>|<tmweb-link|Jobs|jobs>>>>>
 
-  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Linux|unix>|<tmweb-link|MacOS|macosx>|<tmweb-link|Windows|windows>|<tmweb-link|Knoppix|knoppix>>>>>
+  <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|download>|<tmweb-link|Sources|sources>|<tmweb-link|Linux|unix>|<tmweb-link|MacOS|macosx-old>|<tmweb-link|Windows|windows-old>|<tmweb-link|Knoppix|knoppix>>>>>
 
   <assign|tmweb-help-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|General|help>|<tmweb-link|FAQ|faq>|<tmweb-link|Tutorials|tutorial>|<tmweb-link|Manual|manual>|<tmweb-link|Articles|articles>|<tmweb-link|Videos|../home/videos>>>>>
 
-  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Contributing|contribute>|<tmweb-link|Team|team>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>>
+  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|Contributing|contribute-old>|<tmweb-link|Team|team>|<tmweb-link|Documentation|documentation>|<tmweb-link|Translations|translations>|<tmweb-link|Extensions|plugins>|<tmweb-link|Donations|donations>>>>>
 
   <assign|tmweb-plugin-links|<macro|<style-with|src-compact|none|<tmweb-list|<tmweb-link|All|plugins>|<tmweb-link|Mathematics|cas>|<tmweb-link|Numerics|numerics>|<tmweb-link|Statistics|statistics>|<tmweb-link|Physics|physics>|<tmweb-link|Graphics|graphics>|<tmweb-link|Tools|tools>>>>>
 

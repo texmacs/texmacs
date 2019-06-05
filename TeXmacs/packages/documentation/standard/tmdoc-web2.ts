@@ -77,19 +77,19 @@
     </src-comment>
   </active*>
 
-  <assign|tmweb-top-links|<macro|<style-with|src-compact|none|<tmweb-link-menu|<hlink|About|../home/welcome-new.en.tm>|<specific|texmacs|<hlink|Download|../download/download.en.tm>><specific|html|\<less\>script
+  <assign|tmweb-top-links|<macro|<style-with|src-compact|none|<tmweb-link-menu|<hlink|About|../home/welcome.en.tm>|<specific|texmacs|<hlink|Download|../download/download.en.tm>><specific|html|\<less\>script
   language="javascript"\<gtr\>document.write (downloadRelativeLink
-  ("Download"));\<less\>/script\<gtr\>>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute-new.en.tm>>>>>
+  ("Download"));\<less\>/script\<gtr\>>|<hlink|Learn|../help/learn.en.tm>|<hlink|Contribute|../contribute/contribute.en.tm>>>>>
 
-  <assign|tmweb-home-links|<macro|<style-with|||src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome-new.en.tm>|<hlink|Gallery|../home/gallery.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Changes|../about/changes.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Authors|../about/authors.en.tm>>>>>
+  <assign|tmweb-home-links|<macro|<style-with|||src-compact|none|<tmweb-link-section|<section*|TeXmacs>|<hlink|Welcome|../home/welcome.en.tm>|<hlink|Gallery|../home/gallery.en.tm>|<hlink|News|../home/news.en.tm>|<hlink|Changes|../about/changes.en.tm>|<hlink|Plans|../about/plans.en.tm>|<hlink|Authors|../about/authors.en.tm>>>>>
 
   <assign|tmweb-download-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Download>|<hlink|Sources|../download/sources.en.tm>|<hlink|GNU
-  Linux|../download/linux-new.en.tm>|<hlink|MacOS|../download/macosx-new.en.tm>|<hlink|Windows|../download/windows-new.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
+  Linux|../download/linux.en.tm>|<hlink|MacOS|../download/macosx.en.tm>|<hlink|Windows|../download/windows.en.tm>|<hlink|Other|../download/other.en.tm>|<hlink|License|../about/license.en.tm>>>>>
 
-  <assign|tmweb-learn-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Learn>|<hlink|Videos|../home/videos-new.en.tm>|<hlink|Tutorials|../help/tutorial.en.tm>|<hlink|Manuals|../help/book.en.tm>|<hlink|FAQ|../help/faq.en.tm>|<hlink|Mailing
+  <assign|tmweb-learn-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Learn>|<hlink|Videos|../home/videos.en.tm>|<hlink|Tutorials|../help/tutorial.en.tm>|<hlink|Manuals|../help/book.en.tm>|<hlink|FAQ|../help/faq.en.tm>|<hlink|Mailing
   lists|../home/ml.en.tm>>>>>
 
-  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Contribute>|<obsolete|<hlink|Contribute|../contribute/contribute.en.tm>>|<obsolete|<hlink|Team|../contribute/team.en.tm>>|<hlink|Donate|../contribute/donations.en.tm>|<hlink|Develop|../contribute/develop.en.tm>|<hlink|Document|../contribute/documentation.en.tm>|<hlink|Translate|../contribute/translations.en.tm>|<hlink|Plug-ins|../contribute/plugins.en.tm>>>>>
+  <assign|tmweb-contribute-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Contribute>|<obsolete|<hlink|Contribute|../contribute/contribute-old.en.tm>>|<obsolete|<hlink|Team|../contribute/team.en.tm>>|<hlink|Donate|../contribute/donations.en.tm>|<hlink|Develop|../contribute/develop.en.tm>|<hlink|Document|../contribute/documentation.en.tm>|<hlink|Translate|../contribute/translations.en.tm>|<hlink|Plug-ins|../contribute/plugins.en.tm>>>>>
 
   <assign|tmweb-contact-links|<macro|<style-with|src-compact|none|<tmweb-link-section|<section*|Contact>|<hlink|Feedback|../contact/contact.en.tm>|<hlink|Bugs|../contact/bugs.en.tm>|<hlink|Suggestions|../contact/wishes.en.tm>|<hlink|Patches|../contact/patches.en.tm>|<hlink|Mailing
   lists|../home/ml.en.tm>>>>>
