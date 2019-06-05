@@ -5,13 +5,13 @@
 <\body>
   <\active*>
     <\src-title>
-      <src-style-file|tmweb|1.0>
+      <src-style-file|tmweb2|1.0>
 
       <\src-purpose>
-        Style for generating the <TeXmacs> web pages.
+        Style for generating the <TeXmacs>-2.* web pages.
       </src-purpose>
 
-      <\src-copyright|2003--2018>
+      <\src-copyright|2019>
         Joris van der Hoeven
       </src-copyright>
 
@@ -24,7 +24,7 @@
     </src-title>
   </active*>
 
-  <use-package|tmdoc|tmdoc-web>
+  <use-package|tmdoc|tmdoc-web2>
 
   \;
 </body>

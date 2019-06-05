@@ -7,7 +7,7 @@
     <src-package|tmdoc-web2|1.0>
 
     <\src-purpose>
-      New design for <TeXmacs> web site.
+      New design for <TeXmacs>-2.* web site.
     </src-purpose>
 
     <src-copyright|2019|Joris van der Hoeven>
