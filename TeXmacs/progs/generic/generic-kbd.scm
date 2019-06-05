@@ -379,9 +379,11 @@
   ("C-*" (alternate-toggle (focus-tree)))
   ("C-+" (zoom-in (sqrt (sqrt 2.0))))
   ("C--" (zoom-out (sqrt (sqrt 2.0))))
-  ("C-8" (fit-all-to-screen))
-  ("C-9" (fit-to-screen))
-  ("C-0" (fit-to-screen-width)))
+  ("C-0" (change-zoom-factor 1.0))
+  
+  ("C-7" (fit-all-to-screen))
+  ("C-8" (fit-to-screen))
+  ("C-9" (fit-to-screen-width)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Standard cross-platform keybindings
@@ -414,13 +416,17 @@
   ("std Z" (redo 0))
   ("std +" (zoom-in (sqrt (sqrt 2.0))))
   ("std -" (zoom-out (sqrt (sqrt 2.0))))
-  ("std 0" (fit-to-screen-width))
+  ("std 0" (change-zoom-factor 1.0))
 
   ;; not yet implemented
   ;;("std t" (add-tab))
   ;;("std tab" (next-tab))
   ;;("std S-tab" (previous-tab))
 
+  ;; extras
+  ("std 7" (fit-all-to-screen))
+  ("std 8" (fit-to-screen))
+  ("std 9" (fit-to-screen-width))  
   ("search std f" (search-next-match #t))   ;; added for convenience
   ("search std F" (search-next-match #f)))  ;; added for convenience
 
