@@ -14,6 +14,7 @@
 #include "qt_utilities.hpp"
 #include "qt_simple_widget.hpp"
 #include "converter.hpp"
+#include "boot.hpp"
 
 #include "config.h"
 
@@ -238,6 +239,21 @@ QTMWidget::paintEvent (QPaintEvent* event) {
 }
 
 void
+set_shift_preference (int key_code, char shifted) {
+  set_user_preference ("shift-" * as_string (key_code), string (shifted));
+}
+
+bool
+has_shift_preference (int key_code) {
+  return has_user_preference ("shift-" * as_string (key_code));
+}
+
+string
+get_shift_preference (char key_code) {
+  return get_user_preference ("shift-" * as_string (key_code));
+}
+
+void
 QTMWidget::keyPressEvent (QKeyEvent* event) {
   if (is_nil (tmwid)) return;
   initkeymap();
@@ -290,15 +306,43 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
     else {
         // We need to use text(): Alt-{5,6,7,8,9} are []|{} under MacOS, etc.
       QString nss = event->text();
+      unsigned int   kc  = event->nativeVirtualKey();
       unsigned short unic= nss.data()[0].unicode();
+      /*
+      debug_qt << "key  : " << key << LF;
+      debug_qt << "text : " << event->text().toLatin1().data() << LF;
+      debug_qt << "count: " << event->text().count() << LF;
+      if (mods & Qt::ShiftModifier) debug_qt << "shift\n";
+      if (mods & Qt::MetaModifier) debug_qt << "meta\n";
+      if (mods & Qt::ControlModifier) debug_qt << "control\n";
+      if (mods & Qt::KeypadModifier) debug_qt << "keypad\n";
+      if (mods & Qt::AltModifier) debug_qt << "alt\n";
+      cout << kc << ", " << ((mods & Qt::ShiftModifier) != 0)
+	   << " -> " << unic << LF;
+      */
+      if (unic > 32 && unic < 255 &&
+		   (mods & Qt::ShiftModifier) != 0 &&
+	  (mods & Qt::ControlModifier) == 0 &&
+	  (mods & Qt::AltModifier) == 0 &&
+	  (mods & Qt::MetaModifier) == 0)
+	set_shift_preference (kc, (char) unic);
       if (unic < 32 && key < 128 && key > 0) {
+	// NOTE: For some reason, the 'shift' modifier key is not applied
+	// to 'key' when 'control' is pressed as well.  We perform some
+	// dirty hacking to figure out the right shifted variant of a key
+	// by ourselves...
         if (((char) key) >= 'A' && ((char) key) <= 'Z') {
           if ((mods & Qt::ShiftModifier) == 0)
             key= (int) (key + ((int) 'a') - ((int) 'A'));
         }
+	else if (has_shift_preference (kc) &&
+		 (mods & Qt::ShiftModifier) != 0 &&
+		 (mods & Qt::ControlModifier) != 0)
+	  key= (int) (unsigned char) get_shift_preference (kc) [0];
         mods &=~ Qt::ShiftModifier;
         r= string ((char) key);
-      } else {
+      }
+      else {
         switch (unic) {
           case 96:   r= "`"; 
             // unicode to cork conversion not appropriate for this case...
