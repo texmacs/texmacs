@@ -66,7 +66,9 @@ project_get () {
   tm_buffer buf= concrete_buffer (name);
   if (is_implicit_project (buf)) return buf->buf->name;
   if (buf->data->project == "") return url_none ();
-  url prj_name = head (name) * as_string (buf->data->project);
-  buf->prj = concrete_buffer_insist (prj_name);
+  // FIXME: check whether we should force large projects to be loaded
+  // when opening a chapter.  This might cause unwanted slowness.
+  //url prj_name = head (name) * as_string (buf->data->project);
+  //buf->prj = concrete_buffer_insist (prj_name);
   return buf->prj->buf->name;
 }
