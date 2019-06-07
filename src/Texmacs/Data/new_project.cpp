@@ -62,8 +62,11 @@ project_attached () {
 
 url
 project_get () {
-  tm_buffer buf= concrete_buffer (get_current_buffer ());
+  url name = get_current_buffer ();
+  tm_buffer buf= concrete_buffer (name);
   if (is_implicit_project (buf)) return buf->buf->name;
   if (buf->data->project == "") return url_none ();
+  url prj_name = head (name) * as_string (buf->data->project);
+  buf->prj = concrete_buffer_insist (prj_name);
   return buf->prj->buf->name;
 }
