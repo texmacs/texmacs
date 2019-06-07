@@ -33,24 +33,22 @@ class TikZ(Graph):
         code_path = self.get_tmp_dir() + self.name + ".tex"
         dvi_path = self.get_tmp_dir() + self.name + ".dvi"
 
-        if not (code.lstrip().startswith("\\begin{tikzpicture}")):
-            code = "\\begin{tikzpicture}\n" + code + "\n\\end{tikzpicture}"
+        if not (code.lstrip().startswith("\\documentclass")):
+            if not (code.lstrip().startswith("\\begin{tikzpicture}")):
+                code = "\\begin{tikzpicture}\n" + code + "\n\\end{tikzpicture}"
+            code = self.pre_code + "\n" + code + "\n" + self.post_code
 
         with open(code_path, 'w') as code_file:
-            code_file.write(self.pre_code)
-            code_file.write("\n")
             code_file.write(code)
-            code_file.write("\n")
-            code_file.write(self.post_code)
 
-        cmd0 = ["latex", "--interaction=nonstopmode", "tikz.tex"]
-        cmd1 = ["dvisvgm", "tikz.dvi"]
+        cmd0 = ["latex", "--interaction=nonstopmode", code_path]
+        cmd1 = ["dvips", "-q", "-f", dvi_path, "-o", self.get_eps_path()]
         os.chdir(self.get_tmp_dir())
         Popen(cmd0, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE).communicate()
         os.chdir(self.get_tmp_dir())
         p = Popen(cmd1, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-            flush_file (self.get_svg())
+            flush_file (self.get_eps())
         else:
             flush_verbatim (err)
