@@ -61,7 +61,7 @@
   into longminus longequal
   longhookrightarrow longhookleftarrow
   triangleup tmprecdot preceqdot
-  llangle rrangle join um upl upm ump
+  llangle rrangle join um upl upm ump pplus
   assign plusassign minusassign timesassign overassign backassign
   lflux gflux colons transtype
   lebar gebar leangle geangle leqangle geqangle

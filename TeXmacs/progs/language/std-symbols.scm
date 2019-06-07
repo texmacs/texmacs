@@ -249,7 +249,7 @@
     (:penalty 30)
     (:spacing default default)
     "+" "<amalg>" "<oplus>" "<boxplus>"
-    "<dotplus>" "<dotamalg>" "<dotoplus>")
+    "<dotplus>" "<dotamalg>" "<dotoplus>" "<pplus>")
 
   (define Plus-invisible-symbol
     (:type infix)

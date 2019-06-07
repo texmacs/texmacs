@@ -11,6 +11,8 @@
   (rtimes (bar-right  times (scale* vminus times 0 1)))
   (btimes (bar-bottom times (scale* minus  times 1 0)))
   (ttimes (bar-top    times (scale* minus  times 1 0)))
+  (pplus (with sep (+ 0.0667 (frac-width))
+           (join (0 0 +) (sep 0 +))))
   (ast (align* #2A + 0.5 0.5))
   (div (join (align minus + 0.5 0.5)
              (align . + 0.5 0.8)

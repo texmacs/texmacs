@@ -212,6 +212,7 @@
   (timesassign "\times\\!\\!=")
   (overassign "/\\!\\!=")
   (backassign "=:")
+  (pplus (mathbin "+\\!\\!\\!\\!+"))
   (lflux "\\ll")
   (gflux "\\gg")
   (colons "\\,:\\,")

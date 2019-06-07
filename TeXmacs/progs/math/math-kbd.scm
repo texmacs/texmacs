@@ -1495,6 +1495,7 @@
   ("- +" "<mp>")
   ("+ - . ." "<pm><cdots><pm>")
   ("- + . ." "<mp><cdots><mp>")
+  ("+ + var" "<pplus>")
   ("@ =" "<circeq>")
   ("@ = var" "<triangleq>")
   ("= @" "<eqcirc>")
