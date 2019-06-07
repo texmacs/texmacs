@@ -41,14 +41,21 @@ class TikZ(Graph):
         with open(code_path, 'w') as code_file:
             code_file.write(code)
 
-        cmd0 = ["latex", "--interaction=nonstopmode", code_path]
+        cmd0 = ["latex", "--interaction=errorstopmode", "-halt-on-error", code_path]
         cmd1 = ["dvips", "-q", "-f", dvi_path, "-o", self.get_eps_path()]
+        ## for some reasons tikz does not work with the -E option to dvips...
+        ## anyway the bounding box seems to be taken into account corretly even without.
+
         os.chdir(self.get_tmp_dir())
-        Popen(cmd0, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE).communicate()
-        os.chdir(self.get_tmp_dir())
-        p = Popen(cmd1, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE)
+        p = Popen(cmd0, stdout=PIPE, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-            flush_file (self.get_eps())
-        else:
-            flush_verbatim (err)
+            os.chdir(self.get_tmp_dir())
+            p = Popen(cmd1, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE)
+            out, err = p.communicate()
+            if (p.returncode == 0):
+                flush_file (self.get_eps())
+            else:
+                flush_verbatim ("dvips error!\n" + err)
+        else: 
+            flush_verbatim ("LaTeX error!\n" + out)

@@ -27,15 +27,15 @@ class Graphviz(Graph):
             pass
 
     def evaluate(self, code):
-        path = self.get_png_path()
+        path = self.get_eps_path()
         if os.path.isfile(path):
             os.remove(path)
         f = open(path, 'wb')
-        cmd_list = [self.name, "-Tpng", "-Gdpi=400"]
+        cmd_list = [self.name, "-Teps"]
         p = Popen(cmd_list, stdout=f, stdin=PIPE, stderr=PIPE)
         out, err = p.communicate(input=code.encode())
         if (p.returncode == 0):
-            flush_file (self.get_png())
+            flush_file (self.get_eps())
         else:
             flush_verbatim (err.decode())
 
