@@ -1,7 +1,8 @@
-(define (python-serialize lan t)
-  (with u (pre-serialize lan t)
-    (with s (texmacs->code (stree->tree u))
-      (string-append  s  "\n<EOF>\n"))))
+
+(define (graphs-serialize lan t)
+    (with u (pre-serialize lan t)
+      (with s (texmacs->code (stree->tree u) "SourceCode")
+        (string-append  s  "\n<EOF>\n"))))
 
 (define (graph-launcher)
   (if (os-mingw?)
@@ -12,5 +13,5 @@
   (:require (url-exists-in-path? "python"))
   (:require (url-exists-in-path? "tm_graphs"))
   (:launch ,(graph-launcher))
-  (:serializer ,python-serialize)
+  (:serializer ,graphs-serialize)
   (:session "Graph"))
