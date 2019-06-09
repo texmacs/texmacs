@@ -3,7 +3,7 @@
 ##
 ## MODULE      : tikz.py
 ## DESCRIPTION : TikZ support
-## COPYRIGHT   : (C) 2019  Darcy Shen
+## COPYRIGHT   : (C) 2019  Darcy Shen, Massimiliano Gubinelli
 ##
 ## This software falls under the GNU general public license version 3 or later.
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -11,11 +11,11 @@
 
 import os
 from subprocess import Popen, PIPE, STDOUT
-from .graph import Graph
+from .latex import LaTeX
 from .protocol import *
 
 
-class TikZ(Graph):
+class TikZ(LaTeX):
     def __init__(self, name = "tikz"):
         super(TikZ, self).__init__()
         self.name = name
@@ -30,32 +30,9 @@ class TikZ(Graph):
         self.message = "TeXmacs interface to TikZ"
 
     def evaluate(self, code):
-        code_path = self.get_tmp_dir() + self.name + ".tex"
-        dvi_path = self.get_tmp_dir() + self.name + ".dvi"
-
         if not (code.lstrip().startswith("\\documentclass")):
             if not (code.lstrip().startswith("\\begin{tikzpicture}")):
                 code = "\\begin{tikzpicture}\n" + code + "\n\\end{tikzpicture}"
             code = self.pre_code + "\n" + code + "\n" + self.post_code
 
-        with open(code_path, 'w') as code_file:
-            code_file.write(code)
-
-        cmd0 = ["latex", "--interaction=errorstopmode", "-halt-on-error", code_path]
-        cmd1 = ["dvips", "-q", "-f", dvi_path, "-o", self.get_eps_path()]
-        ## for some reasons tikz does not work with the -E option to dvips...
-        ## anyway the bounding box seems to be taken into account corretly even without.
-
-        os.chdir(self.get_tmp_dir())
-        p = Popen(cmd0, stdout=PIPE, stderr=PIPE)
-        out, err = p.communicate()
-        if (p.returncode == 0):
-            os.chdir(self.get_tmp_dir())
-            p = Popen(cmd1, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE)
-            out, err = p.communicate()
-            if (p.returncode == 0):
-                flush_file (self.get_eps())
-            else:
-                flush_verbatim ("dvips error!\n" + err)
-        else: 
-            flush_verbatim ("LaTeX error!\n" + out)
+        super(TikZ, self).evaluate(code)

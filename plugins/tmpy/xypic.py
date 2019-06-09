@@ -13,11 +13,11 @@
 
 import os
 from subprocess import Popen, PIPE, STDOUT
-from .graph import Graph
+from .latex import LaTeX
 from .protocol import *
 
 
-class XYpic(Graph):
+class XYpic(LaTeX):
     def __init__(self, name = "xypic"):
         super(XYpic, self).__init__()
         self.name = name
@@ -31,28 +31,8 @@ class XYpic(Graph):
         self.message = "TeXmacs interface to XYpic (high level 2-dimensional graphics)"
 
     def evaluate(self, code):
-        code_path = self.get_tmp_dir() + self.name + ".tex"
-        dvi_path = self.get_tmp_dir() + self.name + ".dvi"
-        with open(code_path, 'w') as code_file:
-            code_file.write(self.pre_code)
-            code_file.write("\n")
-            code_file.write(code)
-            code_file.write("\n")
-            code_file.write(self.post_code)
+        if not (code.lstrip().startswith("\\documentclass")):
+            code = self.pre_code + "\n" + code + "\n" + self.post_code
 
-        cmd0 = ["latex", "--interaction=nonstopmode", "-halt-on-error", code_path]
-        cmd1 = ["dvips", "-q", "-f", "-E", dvi_path, "-o", self.get_eps_path()]
+        super(XYpic, self).evaluate(self, code)
 
-        os.chdir(self.get_tmp_dir())
-        p = Popen(cmd0, stdout=PIPE, stderr=PIPE)
-        out, err = p.communicate()
-        if (p.returncode == 0):
-            os.chdir(self.get_tmp_dir())
-            p = Popen(cmd1, stdout=os.open(os.devnull, os.O_RDWR), stderr=PIPE)
-            out, err = p.communicate()
-            if (p.returncode == 0):
-                flush_file (self.get_eps())
-            else:
-                flush_verbatim ("dvips error!\n" + err)
-        else: 
-            flush_verbatim ("LaTeX error!\n" + out)
