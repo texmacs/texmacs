@@ -28,7 +28,7 @@
          (git-dir (url-append dir ".git"))
          (pdir (url-expand (url-append dir ".."))))
     (cond ((url-directory? git-dir)
-           (string-replace (url->string dir) "\\" "/"))
+           (string-replace (url->system dir) "\\" "/"))
           ((== pdir dir) "/")
           (else (git-root pdir)))))
 
@@ -51,8 +51,8 @@
 ;; File status
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (tm-define (buffer-status name)
-  (let* ((path (url->string name))
-         (cmd (string-append (git-command path) " status --porcelain " path))
+  (let* ((path (url->system name))
+         (cmd (string-append (git-command name) " status --porcelain " path))
          (ret (eval-system cmd)))
     (cond ((> (string-length ret) 3) (string-take ret 2))
           ((file-exists? path) "  ")
