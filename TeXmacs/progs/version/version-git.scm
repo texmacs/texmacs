@@ -32,6 +32,12 @@
           ((== pdir dir) "/")
           (else (git-root pdir)))))
 
+(tm-define (git-command url)
+  (with work-dir (git-root url)
+    (string-append "git"
+                   " --work-tree=" work-dir
+                   " --git-dir=" work-dir "/.git")))
+
 (tm-define (current-git-root)
   (git-root (current-buffer)))
 
@@ -41,21 +47,12 @@
                    " --work-tree=" (current-git-root)
                    " --git-dir=" (current-git-root) "/.git")))
 
-(tm-define (resolve-git-root path)
-  (git-root (string->url path)))
-
-(tm-define (resolve-git-command path)
-  (with work-dir (git-root (string->url path))
-    (string-append "git"
-                   " --work-tree=" work-dir
-                   " --git-dir=" work-dir "/.git")))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File status
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (tm-define (buffer-status name)
   (let* ((path (url->string name))
-         (cmd (string-append (resolve-git-command path) " status --porcelain " path))
+         (cmd (string-append (git-command path) " status --porcelain " path))
          (ret (eval-system cmd)))
     (cond ((> (string-length ret) 3) (string-take ret 2))
           ((file-exists? path) "  ")
@@ -134,16 +131,16 @@
          (ret (eval-system cmd)))
     (delete-tail-newline ret)))
 
-(tm-define (resolve-git-master path)
-  (let* ((cmd (string-append (resolve-git-command path) " log -1 --pretty=%H"))
+(tm-define (git-master name)
+  (let* ((cmd (string-append (git-command name) " log -1 --pretty=%H"))
          (ret (eval-system cmd)))
     (delete-tail-newline ret)))
 
 ;; Get the specific file via `git show hashCode:/root/path/to/file`
 (tm-define (git-show object)
-  (let* ((path (cAr (string-split object #\:)))
-         (root (resolve-git-root path))
-         (git (resolve-git-command path))
+  (let* ((url (system->url (string-drop object 41)))
+         (root (git-root url))
+         (git (git-command url))
          (relative-object (string-replace object (string-append root "/") ""))
          (cmd (string-append git " show " relative-object))
          (ret (eval-system cmd)))
@@ -201,7 +198,7 @@
 
 (tm-define (git-compare-with-master name)
   (let* ((path (url->string name))
-         (buffer (tmfs-url-commit (resolve-git-master path) "|" path))
+         (buffer (tmfs-url-commit (git-master name) "|" path))
          (master (string->url buffer)))
     ;; (display* "\n" name "\n" buffer "\n" master "\n")
     (compare-with-older master)))

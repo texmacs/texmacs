@@ -99,7 +99,7 @@
     (with h (version-history u)
             ($generic
              ($tmfs-title "History of "
-                          ($link (url->unix u)
+                          ($link (url->system u)
                                  ($verbatim (utf8->cork (url->system (url-tail u))))))
              ($when (not h)
                     "This file is not under version control.")
