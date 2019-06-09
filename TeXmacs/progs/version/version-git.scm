@@ -105,21 +105,33 @@
 ;; 2. Split the result by \n\n
 ;; 3. Transform each string record to texmacs document
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (string->commit str name)
+  (if (string-null? str) '()
+      (with alist (string-split str #\nl)
+            (list (string-take (first alist) 20)
+                  (second alist)
+                  (third alist)
+                  ($link (tmfs-url-commit (fourth alist)
+                                          (if (string-null? name)
+                                              ""
+                                              (string-append "|" name)))
+                         (string-take (fourth alist) 7))))))
+
 (tm-define (version-history name)
   (:require (== (version-tool name) "git"))
-  (let* ((name-escaped (string-replace (url->string name) "\\" "/"))
-         (cmd (string-append
+  (let* ((cmd (string-append
                (current-git-command) " log --pretty=%ai%n%an%n%s%n%H%n"
                NR_LOG_OPTION
-               name-escaped))
+               (url->system name)))
          (ret1 (eval-system cmd))
          (ret2 (string-decompose ret1 "\n\n")))
 
     (define (string->commit-file str)
-      (string->commit str name-escaped))
+      (string->commit str (url->tmfs-string name)))
     (and (> (length ret2) 0)
          (string-null? (cAr ret2))
          (map string->commit-file (cDr ret2)))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common immutable routines of Git
@@ -136,10 +148,10 @@
          (ret (eval-system cmd)))
     (delete-tail-newline ret)))
 
-;; Get the specific file via `git show hashCode:/root/path/to/file`
+;; Get the specific file via `git show hashCode:file/path/to/file`
 (tm-define (git-show object)
-  (let* ((url (system->url (string-drop object 41)))
-         (root (git-root url))
+  (let* ((url (tmfs-string->url (string-drop object 41)))
+         (root (url->tmfs-string (system->url (git-root url))))
          (git (git-command url))
          (relative-object (string-replace object (string-append root "/") ""))
          (cmd (string-append git " show " relative-object))
