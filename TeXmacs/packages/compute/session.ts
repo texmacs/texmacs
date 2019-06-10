@@ -104,7 +104,7 @@
     </padded>
   </macro>>
 
-  <assign|errput|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-errput>>|<merge|<value|prog-language>|-textput>|generic-errput>>|<arg|body>>>>>
+  <assign|errput|<macro|body|<style-with|src-compact|none|<compound|<style-with|src-compact|none|<if|<provides|<merge|<value|prog-language>|-errput>>|<merge|<value|prog-language>|-errput>|generic-errput>>|<arg|body>>>>>
 
   <assign|generic-errput|<\macro|body>
     <\wide-normal>
