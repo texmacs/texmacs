@@ -39,5 +39,5 @@ class PlantUML(Graph):
         if (p.returncode == 0):
             flush_file (self.get_eps())
         else:
-            flush_verbatim (err)
+            flush_verbatim (err.decode())
         
