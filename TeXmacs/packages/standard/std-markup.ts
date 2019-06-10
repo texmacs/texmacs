@@ -528,6 +528,8 @@
     </src-comment>
   </active*>
 
+  <assign|web-title|<macro|title|>>
+
   <assign|html-tag|<macro|name|body|<arg|body>>>
 
   <assign|html-attr|<macro|attr|val|body|<arg|body>>>

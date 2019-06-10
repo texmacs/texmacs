@@ -123,6 +123,7 @@
 (define (tmhtml-find-title doc)
   (cond ((npair? doc) #f)
 	((func? doc 'doc-title 1) (cadr doc))
+	((func? doc 'web-title 1) (cadr doc))
 	((func? doc 'tmdoc-title 1) (cadr doc))
 	((func? doc 'tmdoc-title* 2) (cadr doc))
 	((func? doc 'tmdoc-title** 3) (caddr doc))
@@ -1730,6 +1731,7 @@
   (html-javascript-src ,tmhtml-html-javascript-src)
   (html-video ,tmhtml-html-video)
   ;; tmdoc tags
+  (web-title ,tmhtml-noop)
   (hyper-link ,tmhtml-hyperlink))
 
 (logic-table tmhtml-tmdocmarkup%

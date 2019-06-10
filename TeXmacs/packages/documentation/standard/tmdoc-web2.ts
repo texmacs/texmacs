@@ -125,7 +125,7 @@
 
   <assign|tmweb-header|<macro|title|<tmweb-underline|<tmweb-tmimage><space|1em><with|font-series|bold|font-size|1.3|<arg|title>><htab|5mm><with|font-size|0.8|<tmweb-top-links>>><vspace|1fn>>>
 
-  <assign|tmhtml-tmweb-header|<macro|title|<html-div-class|tmweb-pad-below|<html-div-class|tmweb-header|<html-class|tmweb-title-image|<tmweb-tmimage>><space|1em><html-class|tmweb-title|<arg|title>><space|1em><html-class|tmweb-top-menu|<tmweb-top-links>>>>>>
+  <assign|tmhtml-tmweb-header|<macro|title|<web-title|<arg|title>><html-div-class|tmweb-pad-below|<html-div-class|tmweb-header|<html-class|tmweb-title-image|<tmweb-tmimage>><space|1em><html-class|tmweb-title|<arg|title>><space|1em><html-class|tmweb-top-menu|<tmweb-top-links>>>>>>
 
   <assign|tmweb-title|<macro|title|bar|<tmweb-header|<arg|title>>>>
 
