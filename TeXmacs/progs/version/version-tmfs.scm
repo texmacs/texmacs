@@ -99,7 +99,7 @@
     (with h (version-history u)
             ($generic
              ($tmfs-title "History of "
-                          ($link (url->unix u)
+                          ($link (url->system u)
                                  ($verbatim (utf8->cork (url->system (url-tail u))))))
              ($when (not h)
                     "This file is not under version control.")
@@ -189,18 +189,6 @@
       (if (== (length (git-commit-parents name)) 1)
           (git-show-normal name)
           (git-show-merge name))))
-
-(tm-define (string->commit str name)
-  (if (string-null? str) '()
-      (with alist (string-split str #\nl)
-            (list (string-take (first alist) 20)
-                  (second alist)
-                  (third alist)
-                  ($link (tmfs-url-commit (fourth alist)
-                                          (if (string-null? name)
-                                              ""
-                                              (string-append "|" name)))
-                         (string-take (fourth alist) 7))))))
 
 (define (string-repeat str n)
   (do ((i 1 (1+ i))
