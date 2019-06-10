@@ -14,4 +14,4 @@
   (:require (url-exists-in-path? "tm_graphs"))
   (:launch ,(graph-launcher))
   (:serializer ,graphs-serialize)
-  (:session "Graph"))
+  (:session "Graphs"))
