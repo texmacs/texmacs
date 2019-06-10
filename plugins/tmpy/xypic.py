@@ -34,5 +34,5 @@ class XYpic(LaTeX):
         if not (code.lstrip().startswith("\\documentclass")):
             code = self.pre_code + "\n" + code + "\n" + self.post_code
 
-        super(XYpic, self).evaluate(self, code)
+        super(XYpic, self).evaluate(code)
 

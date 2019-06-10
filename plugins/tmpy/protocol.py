@@ -62,3 +62,9 @@ def flush_file(path):
 
 def flush_ps(content):
     flush_any ("ps:" + content)
+
+def flush_err(content):
+    os.sys.stderr.write(chr(2))
+    os.sys.stderr.write("verbatim:" + content)
+    os.sys.stderr.write(chr(5))
+    os.sys.stderr.flush() 

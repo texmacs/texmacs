@@ -32,6 +32,8 @@ from tmpy.mermaid   import Mermaid
 from tmpy.plantuml  import PlantUML
 from tmpy.xypic     import XYpic
 from tmpy.tikz      import TikZ
+from tmpy.latex     import LaTeX
+from tmpy.feynmf     import FeynMF
 import argparse
 
 #import logging as log
@@ -158,7 +160,7 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = list(map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"]))
-others = [Asymptote("asy"), PlantUML(), Mermaid(), XYpic(), TikZ()]
+others = [Asymptote("asy"), PlantUML(), Mermaid(), XYpic(), TikZ(), LaTeX(), FeynMF()]
 graphs = list(filter(lambda x: x.available(), grapvizs + others))
 graph_names = list(map(lambda x: x.name, graphs))
 
@@ -169,7 +171,7 @@ if len(graphs) == 0:
 
 current = graphs[0]
 
-flush_verbatim ("Generate Graph with your favorite tools in GNU TeXmacs\n")
+flush_verbatim ("Generate graphs with your favorite tools in GNU TeXmacs\n")
 flush_verbatim ("Created by Darcy Shen, Implemented in Python, " + current.name +  " by default\n")
 flush_verbatim ("It is quit easy, join us: https://github.com/texmacs/plugins\n")
 flush_prompt (current.name + "] ")
@@ -190,7 +192,7 @@ def unigraph(text):
         graph.width = args.width
         graph.evaluate(code)
     else:
-        flush_verbatim ("No such Graph generator: " + command)
+        flush_verbatim ("No such Graphs backend: " + command)
 
 
 # Main session loop.
