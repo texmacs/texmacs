@@ -46,17 +46,23 @@
   lleq llleq ggeq gggeq triplesim ntriplesim
 
   ;; replacements for symbols from mathabx
-  divides ndivides asterisk npreccurlyeq dottimes nequiv precdot
+  divides ndivides asterisk dottimes precdot
 
   ;; extra literal symbols
   mathcatalan mathd mathD mathe matheuler mathlambda mathi mathpi
   Alpha Beta Epsilon Eta Iota Kappa Mu Nu Omicron Chi Rho Tau Zeta
 
+  ;; negations
+  nin nni notni nequiv nleadsto
+  npreccurlyeq npreceqq nprecsim
+  nsimeq nsqsubset nsqsubseteq nsqsubseteqq
+  nsqsupset nsqsupseteq nsqsupseteqq
+  nsucccurlyeq nsucceqq nsuccsim  
+  
   ;; other extra symbols
   oempty exterior Exists bigintwl bigointwl
   of suchthat barsuchthat asterisk point cdummy comma copyright
   bignone nobracket nospace nocomma noplus nosymbol
-  nin nni notni nequiv nleadsto
   dotminus dotpm dotmp dotamalg dottimes dotoplus dototimes dotast
   into longminus longequal
   longhookrightarrow longhookleftarrow
