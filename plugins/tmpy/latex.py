@@ -12,6 +12,7 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
+from .compat import which
 from .protocol import *
 
 
@@ -20,6 +21,9 @@ class LaTeX(Graph):
         super(LaTeX, self).__init__()
         self.name = name
         self.message = "TeXmacs interface to a LaTeX picture generator"
+
+    def available(self):
+        return all(list(map(lambda x: which(x) is not None, ["latex", "dvips"])))
 
     def evaluate(self, code):
 

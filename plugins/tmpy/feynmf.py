@@ -14,6 +14,7 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
+from .compat import which
 from .protocol import *
 
 # we cannot derive from the LaTeX object since we need more complex processing 
@@ -24,6 +25,9 @@ class FeynMF(Graph):
         super(FeynMF, self).__init__()
         self.name = name
         self.message = "TeXmacs interface to the FeynMF picture generator"
+
+    def available(self):
+        return all(list(map(lambda x: which(x) is not None, ["latex", "dvips", "mpost", "gs"])))
 
     def evaluate(self, code):
 
