@@ -225,6 +225,12 @@ edit_env_rep::exec (tree t) {
     return exec_rewrite (t);
   case EVAL_ARGS:
     return exec_eval_args (t);
+  case NEW_THEME:
+    return exec_new_theme (t);
+  case COPY_THEME:
+    return exec_copy_theme (t);
+  case APPLY_THEME:
+    return exec_apply_theme (t);
   case MARK:
     if (N(t) < 2)
       return tree (ERROR, "invalid mark");
@@ -916,6 +922,102 @@ edit_env_rep::exec_eval_args (tree t) {
   macro_arg= old_var;
   macro_src= old_src;
   return r;
+}
+
+tree
+edit_env_rep::exec_new_theme (tree t) {
+  if (N(t)<1 || !is_atomic (t[0]))
+    return tree (ERROR, "bad new-theme");
+  string theme= t[0]->label;
+  array<string> attrs, inhs;
+  for (int i=1; i<N(t); i++) {
+    tree x= exec (t[i]);
+    if (!is_atomic (x)) return tree (ERROR, "bad variable in new-theme");
+    string var= x->label;
+    if (provides ("with-" * var)) inhs << var;
+    else attrs << var;
+  }
+  tree val (WITH), cc (CONCAT);
+  for (int i=0; i<N(attrs); i++) {
+    string oldv= attrs[i];
+    string newv= theme * "-" * attrs[i];
+    cc << tree (ASSIGN, newv, tree (VALUE, oldv));
+    val << tree (oldv) << tree (VALUE, newv);
+  }
+  val << tree (ARG, "body");
+  for (int i=N(inhs)-1; i>=0; i--) {
+    string winh= "with-" * inhs[i];
+    val= compound (winh, val);
+  }
+  val= tree (MACRO, "body", val);
+  cc << tree (ASSIGN, "with-" * theme, val);
+  return exec (cc);
+}
+
+tree
+edit_env_rep::exec_copy_theme (tree t) {
+  if (N(t)<1 || !is_atomic (t[0]))
+    return tree (ERROR, "bad copy-theme");
+  string new_theme= t[0]->label;
+  tree rew (NEW_THEME, new_theme);
+  array<tree> a;
+  for (int k=1; k<N(t); k++) {
+    string old_theme= t[k]->label;
+    if (!provides ("with-" * old_theme))
+      return tree (ERROR, "missing theme '" * old_theme * "'");
+    tree val= read ("with-" * old_theme);
+    if (is_func (val, MACRO, 2)) val= val[1];
+    while (is_compound (val, 1) && !is_func (val, WITH)) {
+      string lab= as_string (L(val));
+      if (starts (lab, "with-")) rew << tree (lab (5, N(lab)));
+      val= val[N(val)-1];
+    }
+  }
+  for (int k=1; k<N(t); k++) {
+    string old_theme= t[k]->label;
+    tree val= read ("with-" * old_theme);
+    if (is_func (val, MACRO, 2)) val= val[1];
+    while (is_compound (val, 1) && !is_func (val, WITH))
+      val= val[N(val)-1];
+    if (is_func (val, WITH))
+      for (int i=0; i+2<N(val); i+=2)
+        if (is_atomic (val[i])) {
+          rew << val[i];
+          string var= new_theme * "-" * val[i]->label;
+          a << tree (ASSIGN, var, val[i+1]);
+        }
+  }
+  rew= tree (CONCAT, rew);
+  rew << a;
+  return exec (rew);
+}
+
+tree
+edit_env_rep::exec_apply_theme_sub (string var) {
+  tree val= read (var);
+  if (!is_func (val, MACRO, 2)) return "";
+  val= val[1];
+  tree r (CONCAT);
+  while (is_compound (val, 1) && !is_func (val, WITH)) {
+    string lab= as_string (L(val));
+    r << exec_apply_theme_sub (lab);
+  }
+  if (is_func (val, WITH))
+    for (int i=0; i+2<N(val); i+=2)
+      r << exec (tree (ASSIGN, val[i], val[i+1]));
+  if (N(r) == 0) return "";
+  else if (N(r) == 1) return r[0];
+  else return r;
+}
+
+tree
+edit_env_rep::exec_apply_theme (tree t) {
+  if (N(t) != 1 || !is_atomic (t[0]))
+    return tree (ERROR, "bad apply-theme");
+  string theme= t[0]->label;
+  if (!provides ("with-" * theme))
+    return tree (ERROR, "missing theme '" * theme * "'");
+  return exec_apply_theme_sub ("with-" * theme);
 }
 
 tree
@@ -2260,6 +2362,11 @@ edit_env_rep::exec_until (tree t, path p, string var, int level) {
   case MAP_ARGS:
   case EVAL_ARGS:
     return exec_until_rewrite (t, p, var, level);
+  case NEW_THEME:
+  case COPY_THEME:
+  case APPLY_THEME:
+    (void) exec (t);
+    return false;
   case MARK:
     return exec_until_mark (t, p, var, level);
   case EVAL:

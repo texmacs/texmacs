@@ -22,6 +22,11 @@
 (tm-define (poster-themes)
   (list "boring-white" "pale-blue" "dark-vador"))
 
+;;(tm-define (poster-themes)
+;;  (list "new-bluish" "new-boring-white" "new-dark-vador" "new-granite"
+;;        "new-ice" "new-manilla-paper" "new-metal" "new-pale-blue"
+;;        "new-pine" "new-reddish" "new-ridged-paper" "new-rough-paper"))
+
 (tm-define (poster-title-styles)
   (list "plain-poster-title" "framed-poster-title" "topless-poster-title"))
 

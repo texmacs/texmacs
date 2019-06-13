@@ -469,8 +469,6 @@ concater_rep::typeset (tree t, path ip) {
     typeset_inactive (t, ip);
     break;
   case GET_LABEL:
-    typeset_executable (t, ip);
-    break;
   case GET_ARITY:
     typeset_executable (t, ip);
     break;
@@ -479,6 +477,11 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case EVAL_ARGS:
     typeset_eval_args (t, ip);
+    break;
+  case NEW_THEME:
+  case COPY_THEME:
+  case APPLY_THEME:
+    typeset_executable (t, ip);
     break;
   case MARK:
     typeset_mark (t, ip);

@@ -26,6 +26,11 @@
 (tm-define (beamer-themes)
   (list "bluish" "ice" "metal" "reddish" "ridged-paper"))
 
+;;(tm-define (beamer-themes)
+;;  (list "new-bluish" "new-boring-white" "new-dark-vador" "new-granite"
+;;        "new-ice" "new-manilla-paper" "new-metal" "new-pale-blue"
+;;        "new-pine" "new-reddish" "new-ridged-paper" "new-rough-paper"))
+
 (tm-define (current-beamer-theme)
   (with l (get-style-list)
     (or (list-find l (cut in? <> (beamer-themes)))

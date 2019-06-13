@@ -321,6 +321,9 @@ init_std_drd () {
 	name ("map arguments"));
   init (EVAL_ARGS, "eval-args",
 	fixed (1) -> argument (0) -> name ("evaluate arguments"));
+  init (NEW_THEME, "new-theme", repeat (1, 1) -> variable (0));
+  init (COPY_THEME, "copy-theme", repeat (1, 1) -> variable (0));
+  init (APPLY_THEME, "apply-theme", fixed (1) -> variable (0));
   init (MARK, "mark", fixed (2));
   init (EXPAND_AS, "expand-as", fixed (2));
   init (EVAL, "eval", fixed (1) -> name ("evaluate"));
