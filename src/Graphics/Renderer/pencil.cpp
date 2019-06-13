@@ -11,6 +11,7 @@
 
 #include "pencil.hpp"
 #include "gui.hpp"
+#include "url.hpp"
 
 /******************************************************************************
 * Invisible pencils
