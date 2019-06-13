@@ -20,11 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme>
+  <use-package|reddish-theme|paper-ridged-ornament>
 
   <copy-theme|ridged-paper|reddish>
 
-  <assign|ridged-paper|<macro|x|<with-ridged-paper|<with|ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcdc>|ornament-sunny-color|#f0e0e0|ornament-shadow-color|#d0a0a0|<ornament|<arg|x>>>>>>
+  <select-theme|ridged-paper|paper-ridged>
 
   <\active*>
     <\src-comment>
@@ -77,14 +77,6 @@
 
   <\active*>
     <\src-comment>
-      Colors of standard tags (strong, math, etc.)
-    </src-comment>
-  </active*>
-
-  <assign|ridged-paper-strong-color|#504000>
-
-  <\active*>
-    <\src-comment>
       Sessions
     </src-comment>
   </active*>
@@ -94,6 +86,16 @@
   <assign|ridged-paper-fold-bar-color|<pattern|wood-light.png|*3/5|*3/5|#e0b050>>
 
   <assign|ridged-paper-fold-title-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+
+  <\active*>
+    <\src-comment>
+      Posters
+    </src-comment>
+  </active*>
+
+  <copy-ornament|ridged-paper-title|paper-ridged>
+
+  <copy-ornament|ridged-paper-framed|paper-ridged>
 </body>
 
 <\initial>

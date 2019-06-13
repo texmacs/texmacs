@@ -481,6 +481,7 @@ concater_rep::typeset (tree t, path ip) {
   case NEW_THEME:
   case COPY_THEME:
   case APPLY_THEME:
+  case SELECT_THEME:
     typeset_executable (t, ip);
     break;
   case MARK:

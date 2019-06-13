@@ -20,11 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-theme>
+  <use-package|dark-theme|stone-granite-ornament>
 
   <copy-theme|granite|dark>
 
-  <assign|granite|<macro|x|<with-granite|<ornament|<arg|x>>>>>
+  <select-theme|granite|stone-granite>
 
   <\active*>
     <\src-comment>
@@ -38,20 +38,6 @@
 
   <\active*>
     <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
-
-  <assign|granite-ornament-color|<pattern|granite-dark.png|*3/5|*3/5|#101010>>
-
-  <assign|granite-ornament-extra-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
-
-  <assign|granite-ornament-sunny-color|light grey>
-
-  <assign|granite-ornament-shadow-color|dark grey>
-
-  <\active*>
-    <\src-comment>
       Titles
     </src-comment>
   </active*>
@@ -59,16 +45,6 @@
   <assign|granite-title-bar-color|<macro|<pattern|granite-medium.png|*3/5|*3/5|#202020>>>
 
   <assign|granite-title-color|<macro|white>>
-
-  <\active*>
-    <\src-comment>
-      Colors of standard tags (strong, math, etc.)
-    </src-comment>
-  </active*>
-
-  <assign|granite-strong-color|#f0ffb0>
-
-  <assign|granite-math-color|#ffd4c0>
 
   <\active*>
     <\src-comment>
@@ -81,6 +57,16 @@
   <assign|granite-fold-bar-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
 
   <assign|granite-fold-title-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+
+  <\active*>
+    <\src-comment>
+      Posters
+    </src-comment>
+  </active*>
+
+  <copy-ornament|granite-title|stone-granite>
+
+  <copy-ornament|granite-framed|stone-granite>
 </body>
 
 <\initial>

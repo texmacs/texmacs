@@ -20,11 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|greyish-theme>
+  <use-package|greyish-theme|metal-brushed-ornament>
 
   <copy-theme|metal|greyish>
 
-  <assign|metal|<macro|x|<with-metal|<with|ornament-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>|ornament-sunny-color|#e0e0e8|ornament-shadow-color|#9090ac|<ornament|<arg|x>>>>>>
+  <select-theme|metal|metal-brushed>
 
   <\active*>
     <\src-comment>
@@ -67,6 +67,16 @@
   <assign|metal-fold-bar-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#a0a0bc>>
 
   <assign|metal-fold-title-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#e0e0e8>>
+
+  <\active*>
+    <\src-comment>
+      Posters
+    </src-comment>
+  </active*>
+
+  <copy-ornament|metal-title|metal-brushed>
+
+  <copy-ornament|metal-framed|metal-brushed>
 </body>
 
 <\initial>

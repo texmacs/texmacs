@@ -20,11 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme>
+  <use-package|reddish-theme|paper-rough-ornament>
 
   <copy-theme|rough-paper|reddish>
 
-  <assign|rough-paper|<macro|x|<with-rough-paper|<ornament|<arg|x>>>>>
+  <select-theme|rough-paper|paper-rough>
 
   <\active*>
     <\src-comment>
@@ -44,7 +44,7 @@
 
   <assign|rough-paper-ornament-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
 
-  <assign|rough-paper-ornament-extra-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
+  <assign|rough-paper-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 
   <assign|rough-paper-ornament-sunny-color|#e0e0e0>
 
@@ -56,17 +56,7 @@
     </src-comment>
   </active*>
 
-  <assign|rough-paper-title-bar-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
-
-  <assign|rough-paper-title-color|<macro|dark brown>>
-
-  <\active*>
-    <\src-comment>
-      Colors of standard tags (strong, math, etc.)
-    </src-comment>
-  </active*>
-
-  <assign|rough-paper-strong-color|#504000>
+  <assign|rough-paper-title-bar-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 
   <\active*>
     <\src-comment>
@@ -79,6 +69,16 @@
   <assign|rough-paper-fold-bar-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
 
   <assign|rough-paper-fold-title-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
+
+  <\active*>
+    <\src-comment>
+      Posters
+    </src-comment>
+  </active*>
+
+  <copy-ornament|rough-paper-title|paper-rough>
+
+  <copy-ornament|rough-paper-framed|paper-rough>
 </body>
 
 <\initial>

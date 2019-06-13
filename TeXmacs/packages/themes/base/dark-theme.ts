@@ -24,33 +24,25 @@
 
   <copy-theme|dark|base>
 
+  <copy-theme|dark-ornament|rich-ornament>
+
   <\active*>
     <\src-comment>
       Major colors
     </src-comment>
   </active*>
 
-  <assign|dark-bg-color|black>
+  <assign|dark-ornament-bg-color|black>
 
-  <assign|dark-monochrome-bg-color|black>
+  <assign|dark-ornament-monochrome-bg-color|black>
 
-  <assign|dark-color|white>
+  <assign|dark-ornament-color|white>
 
-  <assign|dark-math-color|white>
+  <assign|dark-ornament-math-color|white>
 
-  <assign|dark-strong-color|white>
+  <assign|dark-ornament-strong-color|white>
 
-  <\active*>
-    <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
-
-  <assign|dark-ornament-border|2ln>
-
-  <assign|dark-ornament-hpadding|1spc>
-
-  <assign|dark-ornament-vpadding|1spc>
+  <select-theme|dark|dark-ornament>
 </body>
 
 <\initial>

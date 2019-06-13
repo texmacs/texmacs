@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|pine-theme|1.0|pine-theme|1.0>
+    <src-package-dtd|manila-paper-theme|1.0|manila-paper-theme|1.0>
 
     <\src-purpose>
-      Pine theme for presentations and posters.
+      Manilla paper theme for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,11 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme|wood-pine-ornament>
+  <use-package|reddish-theme|paper-manila-ornament>
 
-  <copy-theme|pine|reddish>
+  <copy-theme|manila-paper|reddish>
 
-  <select-theme|pine|wood-pine>
+  <select-theme|manila-paper|paper-manila>
 
   <\active*>
     <\src-comment>
@@ -32,9 +32,9 @@
     </src-comment>
   </active*>
 
-  <assign|pine-bg-color|<pattern|pine-bright.png|*3/5|*3/5|#f8ecd4>>
+  <assign|manila-paper-bg-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
 
-  <assign|pine-monochrome-bg-color|#f8ecd4>
+  <assign|manila-paper-monochrome-bg-color|#f4f4f0>
 
   <\active*>
     <\src-comment>
@@ -42,9 +42,9 @@
     </src-comment>
   </active*>
 
-  <assign|pine-title-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
+  <assign|manila-paper-title-bar-color|<macro|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>>
 
-  <assign|pine-title-color|<macro|#f8f8f4>>
+  <assign|manila-paper-title-color|<macro|dark brown>>
 
   <\active*>
     <\src-comment>
@@ -52,11 +52,11 @@
     </src-comment>
   </active*>
 
-  <assign|pine-input-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#f4eee8>>
+  <assign|manila-paper-input-color|<pattern|paper-manila-light.png|*3/5|*3/5|#e8e8e0>>
 
-  <assign|pine-fold-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200C>>
+  <assign|manila-paper-fold-bar-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
 
-  <assign|pine-fold-title-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+  <assign|manila-paper-fold-title-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
 
   <\active*>
     <\src-comment>
@@ -64,9 +64,9 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|pine-title|wood-pine>
+  <copy-ornament|manila-paper-title|paper-manila>
 
-  <copy-ornament|pine-framed|wood-pine>
+  <copy-ornament|manila-paper-framed|paper-manila>
 </body>
 
 <\initial>

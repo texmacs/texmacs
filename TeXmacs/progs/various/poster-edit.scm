@@ -24,7 +24,7 @@
 
 ;;(tm-define (poster-themes)
 ;;  (list "new-bluish" "new-boring-white" "new-dark-vador" "new-granite"
-;;        "new-ice" "new-manilla-paper" "new-metal" "new-pale-blue"
+;;        "new-ice" "new-manila-paper" "new-metal" "new-pale-blue"
 ;;        "new-pine" "new-reddish" "new-ridged-paper" "new-rough-paper"))
 
 (tm-define (poster-title-styles)

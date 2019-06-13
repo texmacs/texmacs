@@ -36,7 +36,17 @@
     </src-comment>
   </active*>
 
-  <new-theme|ornaments|ornament-color|ornament-extra-color|ornament-sunny-color|ornament-shadow-color|ornament-style|ornament-border|ornament-hpadding|ornament-vpadding>
+  <new-theme|ornaments|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-title-color>
+
+  <assign|ornaments-ornament-border|2ln>
+
+  <assign|ornaments-ornament-hpadding|1spc>
+
+  <assign|ornaments-ornament-vpadding|1spc>
+
+  <assign|ornaments-title-color|black>
+
+  <assign|copy-ornament|<macro|t|from|<with|f|<merge|<arg|from>|-ornament>|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|t>|-shape>>|<value|<unquote|<merge|<value|f>|-shape>>>><assign|<unquote|<merge|<arg|t>|-border>>|<value|<unquote|<merge|<value|f>|-border>>>><assign|<unquote|<merge|<arg|t>|-title-style>>|<value|<unquote|<merge|<value|f>|-title-style>>>><assign|<unquote|<merge|<arg|t>|-title-bg-color>>|<value|<unquote|<merge|<value|f>|-extra-color>>>><assign|<unquote|<merge|<arg|t>|-title-color>>|<value|<unquote|<merge|<value|f>|-title-color>>>><assign|<unquote|<merge|<arg|t>|-body-bg-color>>|<value|<unquote|<merge|<value|f>|-color>>>><assign|<unquote|<merge|<arg|t>|-body-color>>|<value|<unquote|<merge|<arg|from>|-color>>>><assign|<unquote|<merge|<arg|t>|-sunny-color>>|<value|<unquote|<merge|<value|f>|-sunny-color>>>><assign|<unquote|<merge|<arg|t>|-shadow-color>>|<value|<unquote|<merge|<value|f>|-shadow-color>>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -163,6 +173,8 @@
       Combine everything
     </src-comment>
   </active*>
+
+  <copy-theme|rich-ornament|colors|ornaments>
 
   <copy-theme|base|colors|no-patterns|ornaments|titles|sessions|poster-title|poster-plain|poster-framed|poster-alternate>
 </body>

@@ -24,17 +24,9 @@
 
   <copy-theme|light|base>
 
-  <\active*>
-    <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
+  <copy-theme|light-ornament|rich-ornament>
 
-  <assign|light-ornament-border|2ln>
-
-  <assign|light-ornament-hpadding|1spc>
-
-  <assign|light-ornament-vpadding|1spc>
+  \;
 </body>
 
 <\initial>
