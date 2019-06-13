@@ -1,6 +1,6 @@
 #!/bin/bash -O extglob -O nocasematch -O nocaseglob -O nullglob
 #
-# denis RAUX  CNRS/LIX 2015
+# denis RAUX  CNRS/LIX 2015-2019
 #
 # Copies frameworks and lib into the application bundle and rewrites the loading
 # information in the .dylib files.
@@ -60,29 +60,12 @@ function bundle_all_libs_sub
     bundle_all_libs_sub "$libdest/$blib" || return $?
     change="$change -change $lib  @executable_path/../Resources/lib/$blib"
     ;; 
-    *.framework/*)
-    local fwloc="${lib%%.framework/*}.framework"; 
-    if [[ ! "$fwloc" =~ ^/.* ]]; then 
-      if [[ -f /Library/Frameworks/$lib ]]
-      then fwloc="/Library/Frameworks/$fwloc"
-      else  
-        if [[ -f "$QT_FRAMEWORKS_PATH/$lib" ]]
-        then fwloc="$QT_FRAMEWORKS_PATH/$fwloc"
-        else return 32
-        fi
-      fi
-    fi
-
-    local fwname="${fwloc##*/}"
-    local blib=$(basename $lib)
-    local fwbase="Frameworks/$fwname"
-    [ -d "$fwbase" ] || mkdir "$fwbase" || return 12
-    for d in Resources Contents
-    do [ -d "$fwloc/$d" -a ! -d "$fwbase/$d" ] && { cp -RL "$fwloc/$d" "$fwbase" || return 13; }
-    done
-    [ -f "$fwbase/$blib" ] || cp "$fwloc/${lib#*.framework}" "$fwbase" || return 14
-    bundle_all_libs_sub "$fwbase/$blib" || return $?
-    change="$change -change $lib  @executable_path/../$fwbase/$blib"
+    @rpath/*.framework/*)
+    local fwtail=${lib#*/};local fwname=${fwtail%%/*}
+    local fwloc="$HOME/Library/Frameworks/$fwname"; 
+    rsync -az $fwloc Frameworks/
+    [[ -d $fwloc ]] || return 32
+    change="$change -change $lib @executable_path/../Frameworks/$fwtail"
     ;;
     esac
   done <<< "$cmdout"
