@@ -1858,6 +1858,19 @@ eat_space_around_control (tree t) {
 
 /************************ Remove superfluous newlines ************************/
 
+static tree
+downgrade_newlines (tree t) {
+  if (is_atomic (t)) return t;
+  tree r (L(t), N(t));
+  for (int i=0; i<N(t); i++) {
+    r[i]= downgrade_newlines (t[i]);
+    if (i>0 && is_compound (t[i-1], "!emptyline"))
+      if (is_func (t[i], NEW_LINE, 0))
+	r[i]= " ";
+  }
+  return r;
+}
+
 bool
 is_verbatim (tree t) {
   return is_compound (t, "cpp-code") || is_compound (t, "mmx-code")   ||
@@ -1876,7 +1889,7 @@ remove_superfluous_newlines (tree t) {
   for (int i=0; i<N(t); i++) {
     if (!is_document (t) || t[i] != "")
       r << remove_superfluous_newlines (t[i]);
-    }
+  }
   if (is_document (r) && N(r) == 0) r << "";
   return r;
 }
@@ -2184,6 +2197,7 @@ clean_vspace (tree t) {
 
 tree
 finalize_textm (tree t) {
+  t= downgrade_newlines (t);
   t= remove_geometry (t);
   t= modernize_newlines (t, false);
   t= merge_successive_withs (t);
