@@ -1,72 +1,69 @@
 AC_DEFUN([LC_SPARKLE],[
   AC_ARG_WITH(sparkle,
   AS_HELP_STRING([--with-sparkle@<:@=ARG@:>@],
-  [with (Win)Sparkle autoupdater [ARG=no]]))
+  [with Sparkle autoupdater [ARG=no or path for winSparkle or yes for mac
+  (framework should be in the standard user frameworks location)]]))
 
-  SAVE_OBJCFLAGS="$OBJCFLAGS"
-  SAVE_CFLAGS="$CFLAGS"
-  SAVE_LDFLAGS="$LDFLAGS"
-  SAVE_LIBS="$LIBS"
   if test "$with_sparkle" = "no" -o "$with_sparkle" = "" ; then
       AC_MSG_RESULT([disabling Sparkle usage])
   else
-    case "${host}" in
-    *mingw*)  
+    unset sparkle_ok
+    AX_SAVE_FLAGS
+    case "${CONFIG_OS}" in
+    (MINGW)  
       AC_MSG_CHECKING([whether we can use the WinSparkle library])
       AC_LANG_PUSH([C])
-      CFLAGS="-I $with_sparkle"
-      LDFLAGS="-L $with_sparkle"
-      LIBS="-lwinsparkle"
+      LC_SCATTER_FLAGS([-I $with_sparkle/include -L $with_sparkle/Release -lwinsparkle],[SPARKLE])
+      LC_SET_FLAGS([SPARKLE])
       AC_TRY_LINK(
   [
   #include <winsparkle.h>
   ],[
   win_sparkle_init();
-  ],[
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
-      SPARKLE_CXXFLAGS="$CFLAGS"
-      SPARKLE_LDFLAGS="$LDFLAGS $LIBS"
+  ],[ sparkle_ok=1
       WINSPARKLE_PATH="$with_sparkle"
       WINSPARKLE_DLL="WinSparkle*.dll"
-  ],[
-      AC_MSG_RESULT(no) ])
+      AC_SUBST(WINSPARKLE_DLL)
+      AC_SUBST(WINSPARKLE_PATH)
+  ])
       AC_LANG_POP([C])
       ;;
-    *apple*darwin*)
+    (MACOS)
+      with_sparkle=$HOME/Library/Frameworks
       AC_MSG_CHECKING([whether we can use the Sparkle framework])
       AC_LANG_PUSH([Objective C])
-      OBJCFLAGS="-F $with_sparkle"
-      LDFLAGS="-F $with_sparkle -framework Sparkle"
+      LC_SCATTER_FLAGS([-I $with_sparkle/Sparkle.framework/Headers -F $with_sparkle -framework Sparkle],[SPARKLE])
+      LC_SET_FLAGS([SPARKLE])
       AC_TRY_LINK(
   [
   #include <Cocoa/Cocoa.h>
-  #include <Sparkle/Sparkle.h>
+  #include "Sparkle.h"
   ],[
   SUUpdater* updater;
-  ],[
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_SPARKLE, 1, [Use Sparkle framework])
-      SPARKLE_CFLAGS="$OBJCFLAGS"
-      SPARKLE_LDFLAGS="$LDFLAGS"
-      SPARKLE_FRAMEWORK_PATH="$with_sparkle"
-      CONFIG_SPARKLE="Updater"
-  ],[
-      AC_MSG_RESULT(no)]
-      CONFIG_SPARKLE="")
+  ],[ sparkle_ok=1
+  ])
       AC_LANG_POP([Objective C])
       ;;
-    esac
+      esac
+    
+    if [[ $sparkle_ok ]]
+    then AC_MSG_RESULT(yes)
+      AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
+      CONFIG_SPARKLE="Updater"
+      AX_RESTORE_FLAGS
+      LC_SUBST(SPARKLE)
+      AC_SUBST([CONFIG_SPARKLE],[Updater])
+    else
+      AC_MSG_RESULT(no)
+      AX_RESTORE_FLAGS
+    fi
   fi
 
-  OBJFLAGS="$SAVE_OBJCFLAGS"
-  CFLAGS="$SAVE_CFLAGS"
-  LDFLAGS="$LDFLAGS $SAVE_LDFLAGS"
-  LIBS="$LIBS $SAVE_LIBS"
-
-  LC_SUBST(SPARKLE)
-  AC_SUBST(SPARKLE_FRAMEWORK_PATH)
-  AC_SUBST(CONFIG_SPARKLE)
-  AC_SUBST(WINSPARKLE_DLL)
-  AC_SUBST(WINSPARKLE_PATH)
+  AC_ARG_WITH(appcast,
+    AS_HELP_STRING([--with-appcast@<:@=ARG@:>@],
+    [path for the appcast updater file]),[
+      APPCAST=$withval
+      AC_SUBST(APPCAST)
   ])
+
+])
