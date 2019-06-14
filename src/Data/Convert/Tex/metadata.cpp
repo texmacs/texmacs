@@ -172,8 +172,9 @@ collect_abstract_data (tree u) {
 
 static array<tree>
 get_latex_author_datas (tree t) {
-  int i, n=N(t);
   array<tree> r;
+  if (is_atomic (t)) return r;
+  int i, n=N(t);
   tree u;
   tree author_data (APPLY, "\\author-data");
   tree author_name (CONCAT);
