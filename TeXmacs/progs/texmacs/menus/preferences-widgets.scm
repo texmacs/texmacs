@@ -582,7 +582,7 @@
 (define (updater-last-check-formatted)
   "Time since last update check formatted for use in the preferences dialog"
   (with c (updater-last-check)
-    (if (== c 0) 
+    (if (<= c 0) 
         "Never"
         (with h (ceiling (/ (- (current-time) c) 3600))
           (cond ((< h 24) (replace "Less than %1 hour(s) ago" h))
