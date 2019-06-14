@@ -85,19 +85,6 @@ tmg_updater_last_check () {
 }
 
 tmscm
-tmg_updater_set_appcast (tmscm arg1) {
-  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "updater-set-appcast");
-
-  url in1= tmscm_to_url (arg1);
-
-  // TMSCM_DEFER_INTS;
-  bool out= updater_set_appcast (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
 tmg_updater_set_interval (tmscm arg1) {
   TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "updater-set-interval");
 
@@ -105,19 +92,6 @@ tmg_updater_set_interval (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   bool out= updater_set_interval (in1);
-  // TMSCM_ALLOW_INTS;
-
-  return bool_to_tmscm (out);
-}
-
-tmscm
-tmg_updater_set_automatic (tmscm arg1) {
-  TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "updater-set-automatic");
-
-  bool in1= tmscm_to_bool (arg1);
-
-  // TMSCM_DEFER_INTS;
-  bool out= updater_set_automatic (in1);
   // TMSCM_ALLOW_INTS;
 
   return bool_to_tmscm (out);
@@ -9818,9 +9792,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("updater-check-background",  tmg_updater_check_background, 0, 0, 0);
   tmscm_install_procedure ("updater-check-foreground",  tmg_updater_check_foreground, 0, 0, 0);
   tmscm_install_procedure ("updater-last-check",  tmg_updater_last_check, 0, 0, 0);
-  tmscm_install_procedure ("updater-set-appcast",  tmg_updater_set_appcast, 1, 0, 0);
   tmscm_install_procedure ("updater-set-interval",  tmg_updater_set_interval, 1, 0, 0);
-  tmscm_install_procedure ("updater-set-automatic",  tmg_updater_set_automatic, 1, 0, 0);
   tmscm_install_procedure ("get-original-path",  tmg_get_original_path, 0, 0, 0);
   tmscm_install_procedure ("os-win32?",  tmg_os_win32P, 0, 0, 0);
   tmscm_install_procedure ("os-mingw?",  tmg_os_mingwP, 0, 0, 0);
