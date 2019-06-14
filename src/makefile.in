@@ -49,7 +49,7 @@ CXXPDF = @PDF_CFLAGS@
 
 LD = @CXX@
 LDFLAGS = @LDFLAGS@ @CONFIG_BFLAGS@ @QT_LDFLAGS@ $(CXXPROFILE)
-LIBS = @LIBS@
+LIBS = @SPARKLE_LIBS@ @LIBS@ 
 LDSTATIC = @CONFIG_BSTATIC@
 LDSHARED = @CONFIG_BSHARED@
 LDPATH = @CONFIG_BPATH@
@@ -420,7 +420,7 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  freetype windowsres)) $(texmacs_c_deps)
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
-   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) @SPARKLE_CPP@ @SPARKLE_LDFLAGS@
+   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) @SPARKLE_LDFLAGS@
 
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin

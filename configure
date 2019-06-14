@@ -637,6 +637,7 @@ tmorig
 CONFIG_EXPERIMENTAL
 DEBUG_RC
 CONFIG_CXXDIALECT
+PDF_LIBS
 PDF_LDFLAGS
 PDF_CFLAGS
 PDF_CPP
@@ -656,6 +657,7 @@ X_EXTRA_LIBS
 X_LIBS
 X_PRE_LIBS
 X_CFLAGS
+X11_LIBS
 X11_LDFLAGS
 X11_CFLAGS
 X11_CPP
@@ -679,12 +681,14 @@ XTRA_CMD
 MACOSX_TARGET
 APPCAST
 CONFIG_SPARKLE
+SPARKLE_LIBS
 SPARKLE_LDFLAGS
 SPARKLE_CFLAGS
 SPARKLE_CPP
 SPARKLE_CXX
 WINSPARKLE_PATH
 WINSPARKLE_DLL
+SQLITE3_LIBS
 SQLITE3_LDFLAGS
 SQLITE3_CFLAGS
 SQLITE3_CPP
@@ -693,27 +697,33 @@ GS_FONTS
 GS_LIB
 GS_EXE
 CONFIG_GS
+AXEL_LIBS
 AXEL_LDFLAGS
 AXEL_CFLAGS
 AXEL_CPP
 AXEL_CXX
+IMLIB2_LIBS
 IMLIB2_LDFLAGS
 IMLIB2_CFLAGS
 IMLIB2_CPP
 IMLIB2_CXX
+CAIRO_LIBS
 CAIRO_LDFLAGS
 CAIRO_CFLAGS
 CAIRO_CPP
 CAIRO_CXX
+FREETYPE_LIBS
 FREETYPE_LDFLAGS
 FREETYPE_CFLAGS
 FREETYPE_CPP
 FREETYPE_CXX
 FREETYPE_tmp1
+ICONV_LIBS
 ICONV_LDFLAGS
 ICONV_CFLAGS
 ICONV_CPP
 ICONV_CXX
+GUILE_LIBS
 GUILE_LDFLAGS
 GUILE_CFLAGS
 GUILE_CPP
@@ -5887,7 +5897,7 @@ $as_echo "#define OS_MINGW (defined (__MINGW__) || defined (__MINGW32__))" >>con
       CONFIG_CXXOPTIMIZE="-O3 -fexpensive-optimizations"
       CONFIG_QTPIPES="yes"
       CONFIG_OS_COMPAT="Windows"
-      CPPFLAGS="$CPPFLAGS -I/usr/local/include -I."
+      CPPFLAGS="$CPPFLAGS -I/usr/local/include -IPlugins/Windows -I."
       GUILE_LDFLAGS="-lmingwex $GUILE_LDFLAGS -lintl" #added mingwex to mask the internal guile readdir function
 
   if [[ "-Wl,--stack=16777216" =~ $(echo '^-Wl,') ]]
@@ -9868,6 +9878,7 @@ $as_echo "$as_me: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&6;}
   fi
 # adaptation layer remove when finished
   GUILE_CFLAGS="$GUILE_CXXFLAGS $GUILE_CPPFLAGS"
+
 
 
 
@@ -14191,6 +14202,7 @@ $as_echo "$as_me: ICONV_LDFLAGS:$ICONV_LDFLAGS" >&6;}
 
 
 
+
 # Check whether --with-freetype was given.
 if test "${with_freetype+set}" = set; then :
   withval=$with_freetype;
@@ -16838,6 +16850,7 @@ $as_echo "$as_me: FREETYPE_LDFLAGS:$FREETYPE_LDFLAGS" >&6;}
 
 
 
+
 # Check whether --with-cairo was given.
 if test "${with_cairo+set}" = set; then :
   withval=$with_cairo;
@@ -16926,6 +16939,7 @@ $as_echo "$as_me: CAIRO_LDFLAGS:$CAIRO_LDFLAGS" >&6;}
   fi
 # adaptation layer remove when finished
   CAIRO_CFLAGS="$CAIRO_CXXFLAGS $CAIRO_CPPFLAGS"
+
 
 
 
@@ -17028,6 +17042,7 @@ $as_echo "$as_me: IMLIB2_LDFLAGS:$IMLIB2_LDFLAGS" >&6;}
 
 
 
+
 # Check whether --with-axel was given.
 if test "${with_axel+set}" = set; then :
   withval=$with_axel;
@@ -17115,6 +17130,7 @@ $as_echo "$as_me: AXEL_LDFLAGS:$AXEL_LDFLAGS" >&6;}
   fi
 # adaptation layer remove when finished
   AXEL_CFLAGS="$AXEL_CXXFLAGS $AXEL_CPPFLAGS"
+
 
 
 
@@ -17307,6 +17323,7 @@ $as_echo "$as_me: SQLITE3_LDFLAGS:$SQLITE3_LDFLAGS" >&6;}
   fi
 # adaptation layer remove when finished
   SQLITE3_CFLAGS="$SQLITE3_CXXFLAGS $SQLITE3_CPPFLAGS"
+
 
 
 
@@ -18801,6 +18818,7 @@ $as_echo "$as_me: SPARKLE_LDFLAGS:$SPARKLE_LDFLAGS" >&6;}
   fi
 # adaptation layer remove when finished
   SPARKLE_CFLAGS="$SPARKLE_CXXFLAGS $SPARKLE_CPPFLAGS"
+
 
 
 
@@ -23572,6 +23590,7 @@ $as_echo "$as_me: X11_LDFLAGS:$X11_LDFLAGS" >&6;}
 
 
 
+
   LC_MERGE_FLAGS_list="$X11_LDFLAGS"
   if [[ "LDFLAGS" =~ $(echo "(^|_)LIBS") ]]
   then
@@ -25454,6 +25473,7 @@ $as_echo "$as_me: PDF_LDFLAGS:$PDF_LDFLAGS" >&6;}
   fi
 # adaptation layer remove when finished
   PDF_CFLAGS="$PDF_CXXFLAGS $PDF_CPPFLAGS"
+
 
 
 

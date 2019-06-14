@@ -43,6 +43,7 @@ AC_DEFUN([LC_SUBST],[
 # adaptation layer remove when finished
   AC_SUBST([$1_CFLAGS],["$$1_CXXFLAGS $$1_CPPFLAGS"])
   AC_SUBST([$1_LDFLAGS])
+  AC_SUBST([$1_LIBS])
 ])
 
 # remove unwanted space in well know flags
