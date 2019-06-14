@@ -21,10 +21,8 @@ class tm_winsparkle : public tm_updater
 public:
   bool checkInBackground ();
   bool checkInForeground ();
-  
   bool isRunning () const { return running; }
   time_t lastCheck () const;
-  bool setAutomaticChecks (bool enable);
   bool setCheckInterval (int hours);
   bool setAppcast (url _appcast_url);
 };
