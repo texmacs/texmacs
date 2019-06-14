@@ -14,7 +14,7 @@
 AC_DEFUN([TM_SUBVERSION],[
   AC_MSG_CHECKING(current Subversion revision number)
   SVNREV=`svnversion -n . 2>/dev/null`
-  SVNREV=${SVNREV/:/_}
+  SVNREV=${SVNREV#*:}
   if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then 
     SVNREV=`cat $srcdir/SVNREV`
     AC_MSG_RESULT($SVNREV, read from $srcdir/SVNREV)
@@ -23,6 +23,12 @@ AC_DEFUN([TM_SUBVERSION],[
     echo "$SVNREV" > $srcdir/TeXmacs/SVNREV
     AC_MSG_RESULT($SVNREV)
   fi
-
+	
   AC_SUBST(SVNREV)
+	SVNINT=${SVNREV#*:}
+	SVNINT=$(echo ${SVNINT%%@<:@^@<:@:digit:@:>@@:>@*})
+	AC_SUBST(SVNINT)
+	SVNPATCH=0
+	test SVNINT != SVNREV	&& SVNPATCH=VS_FF_PATCHED
+	AC_SUBST(SVNPATCH)
 ])
