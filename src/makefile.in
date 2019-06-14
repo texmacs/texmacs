@@ -44,7 +44,7 @@ CXXSQLITE3 = @SQLITE3_CXX@
 CXXFREETYPE = @FREETYPE_CFLAGS@
 CXXICONV = @ICONV_CXX@
 CXXGUILE = @GUILE_CFLAGS@
-CXXSPARKLE = @SPARKLE_CXX@
+CXXSPARKLE = @SPARKLE_CXX@ @SPARKLE_CPP@
 CXXPDF = @PDF_CFLAGS@
 
 LD = @CXX@
@@ -420,8 +420,8 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  freetype windowsres)) $(texmacs_c_deps)
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
-   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) \
-   $(LDSPARKLE)
+   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) @SPARKLE_CPP@ @SPARKLE_LDFLAGS@
+
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs-$(link).bin
 	$(CP) $^ $@
