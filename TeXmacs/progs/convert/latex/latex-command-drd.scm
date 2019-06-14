@@ -218,7 +218,7 @@
 
   ;; guessed
   begin-th begin-thm begin-prop begin-lem begin-cor begin-corr
-  begin-dem begin-preuve begin-IEEEproof
+  begin-pf begin-dem begin-preuve begin-IEEEproof
   begin-ax begin-def begin-dfn begin-defn
   begin-not begin-ex begin-exa begin-rem begin-war begin-conv
   begin-exe begin-exc begin-exo begin-prop begin-sol begin-ans
