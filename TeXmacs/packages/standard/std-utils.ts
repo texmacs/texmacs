@@ -328,11 +328,13 @@
   <assign|description-table|<macro|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<twith|table-block|yes>|<twith|table-min-cols|2>|<cwith|1|-1|2|-1|cell-hyphen|t>|<cwith|1|-1|1|-1|cell-hpart|0.001>|<cwith|1|-1|1|1|cell-lsep|0fn>|<cwith|1|-1|-1|-1|cell-rsep|0fn>|<cwith|1|-2|1|-1|cell-bsep|<value|par-par-sep>>|<cwith|2|-1|1|-1|cell-tsep|<value|par-sep>>|<arg|body>>>>
 
   <assign|prefixed-line|<\macro|prefix|body>
-    <\description-table>
-      <tformat|<twith|table-valign|T>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-lsep|0em>|<cwith|1|-1|1|-1|cell-rsep|0em>|<cwith|1|1|1|-1|cell-tsep|0em>|<cwith|-1|-1|1|-1|cell-bsep|0em>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<arg|prefix>>|<\cell>
-        <arg|body>
-      </cell>>>>
-    </description-table>
+    <\with|par-first|0fn>
+      <\description-table>
+        <tformat|<twith|table-valign|T>|<twith|table-hmode|min>|<cwith|1|-1|1|-1|cell-lsep|0em>|<cwith|1|-1|1|-1|cell-rsep|0em>|<cwith|1|1|1|-1|cell-tsep|0em>|<cwith|-1|-1|1|-1|cell-bsep|0em>|<cwith|1|-1|1|-1|cell-vcorrect|n>|<table|<row|<cell|<arg|prefix>>|<\cell>
+          <arg|body>
+        </cell>>>>
+      </description-table>
+    </with>
   </macro>>
 
   <\active*>

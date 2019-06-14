@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -82,9 +82,9 @@
     </src-comment>
   </active*>
 
-  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><with|font-shape|small-caps|<arg|name><paragraph-sep>>>>>>
+  <assign|paragraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><with|font-shape|small-caps|<arg|name>>>>>>
 
-  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><with|font-shape|small-caps|<arg|name><subparagraph-sep>>>>>>
+  <assign|subparagraph-title|<macro|name|<style-with|src-compact|none|<sectional-short|<vspace*|0.5fn><with|font-shape|small-caps|<arg|name>>>>>>
 
   <\active*>
     <\src-comment>

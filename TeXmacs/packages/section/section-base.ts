@@ -28,6 +28,8 @@
 
   <assign|sectional-sep|<macro|<space|2spc>>>
 
+  <assign|sectional-post-sep|<macro|<sectional-sep>>>
+
   <assign|sectional-short-style|<macro|true>>
 
   <drd-props|sectional-sep|macro-parameter|regular>
@@ -106,14 +108,20 @@
       \ \ <verbatim|x-title>: a macro for displaying the title of the
       section.
 
+      \ \ <verbatim|x-unnumbered-title>: a macro for displaying an unnumbered
+      title (including an optinal separator).
+
       \ \ <verbatim|x-numbered-title>: a macro for displaying a numbered
-      title.
+      title (including an optinal separator).
 
       \ \ <verbatim|x-display-numbers>: predicate for testing whether the
       section numbers should be displayed.
 
       \ \ <verbatim|x-sep>: the separator between the number of a title and
       the title itself.
+
+      \ \ <verbatim|x-post-sep>: an optional separator between the title and
+      the body of the section.
 
       \ \ <verbatim|x-clean>: a macro for additional cleaning up (used for
       resetting standard environments and <verbatim|appendix>).
@@ -132,7 +140,7 @@
     </src-comment>
   </active*>
 
-  <assign|new-section|<macro|x|<quasi|<style-with|src-compact|none|<new-counter|<unquote|<arg|x>>><assign|<unquote|<merge|<arg|x>|-text>>|<style-with|src-compact|none|<macro|<change-case|<localize|<unquote|<arg|x>>>|Upcase>>>><assign|<unquote|<arg|x>>|<macro|title|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-numbered>>|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-display-numbers>>>>><assign|<unquote|<merge|<arg|x>|-prefix>>|<style-with|src-compact|none|<macro|<compound|<unquote|<merge|the-|<arg|x>>>>.>>><compound|<unquote|<merge|next-|<arg|x>>>><compound|<unquote|<merge|<arg|x>|-clean>>><compound|<unquote|<merge|<arg|x>|-header>>|<arg|title>><compound|<unquote|<merge|<arg|x>|-toc>>|<arg|title>><style-with|src-compact|none|<if|<value|<unquote|<merge|<arg|x>|-numbered>>>|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-numbered-title>>|<arg|title>>>|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-title>>|<arg|title>>>>>>>><assign|<unquote|<merge|<arg|x>|*>>|<macro|title|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-numbered>>|false><assign|<unquote|<merge|<arg|x>|-prefix>>|<macro|>><compound|<unquote|<merge|<arg|x>|-clean>>><compound|<unquote|<merge|<arg|x>|-header>>|<arg|title>><compound|<unquote|<merge|<arg|x>|-toc>>|<arg|title>><style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-title>>|<arg|title>>>>>><assign|<unquote|<merge|<arg|x>|-numbered>>|false><assign|<unquote|<merge|<arg|x>|-prefix>>|<macro|>><assign|<unquote|<merge|<arg|x>|-display-numbers>>|true><drd-props|<unquote|<merge|<arg|x>|-display-numbers>>|macro-parameter|boolean><assign|<unquote|<merge|<arg|x>|-sep>>|<macro|<sectional-sep>>><drd-props|<unquote|<merge|<arg|x>|-sep>>|macro-parameter|regular><assign|<unquote|<merge|<arg|x>|-title>>|<macro|title|<style-with|src-compact|none|<strong|<arg|title>><compound|<unquote|<merge|<arg|x>|-sep>>>>>><assign|<unquote|<merge|<arg|x>|-numbered-title>>|<macro|title|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-title>>|<style-with|src-compact|none|<sectional-prefixed|<compound|<unquote|<merge|the-|<arg|x>>>><compound|<unquote|<merge|<arg|x>|-sep>>>|<arg|title>>>>>>><assign|<unquote|<merge|<arg|x>|-clean>>|<macro|>><assign|<unquote|<merge|<arg|x>|-header>>|<macro|title|>><assign|<unquote|<merge|<arg|x>|-toc>>|<macro|title|>>>>>>
+  <assign|new-section|<macro|x|<quasi|<style-with|src-compact|none|<new-counter|<unquote|<arg|x>>><assign|<unquote|<merge|<arg|x>|-text>>|<style-with|src-compact|none|<macro|<change-case|<localize|<unquote|<arg|x>>>|Upcase>>>><assign|<unquote|<arg|x>>|<macro|title|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-numbered>>|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-display-numbers>>>>><assign|<unquote|<merge|<arg|x>|-prefix>>|<style-with|src-compact|none|<macro|<compound|<unquote|<merge|the-|<arg|x>>>>.>>><compound|<unquote|<merge|next-|<arg|x>>>><compound|<unquote|<merge|<arg|x>|-clean>>><compound|<unquote|<merge|<arg|x>|-header>>|<arg|title>><compound|<unquote|<merge|<arg|x>|-toc>>|<arg|title>><style-with|src-compact|none|<if|<value|<unquote|<merge|<arg|x>|-numbered>>>|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-numbered-title>>|<arg|title>>>|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-unnumbered-title>>|<arg|title>>>>>>>><assign|<unquote|<merge|<arg|x>|*>>|<macro|title|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|x>|-numbered>>|false><assign|<unquote|<merge|<arg|x>|-prefix>>|<macro|>><compound|<unquote|<merge|<arg|x>|-clean>>><compound|<unquote|<merge|<arg|x>|-header>>|<arg|title>><compound|<unquote|<merge|<arg|x>|-toc>>|<arg|title>><style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-unnumbered-title>>|<arg|title>>>>>><assign|<unquote|<merge|<arg|x>|-numbered>>|false><assign|<unquote|<merge|<arg|x>|-prefix>>|<macro|>><assign|<unquote|<merge|<arg|x>|-display-numbers>>|true><drd-props|<unquote|<merge|<arg|x>|-display-numbers>>|macro-parameter|boolean><assign|<unquote|<merge|<arg|x>|-sep>>|<macro|<sectional-sep>>><drd-props|<unquote|<merge|<arg|x>|-sep>>|macro-parameter|regular><assign|<unquote|<merge|<arg|x>|-post-sep>>|<macro|<sectional-post-sep>>><drd-props|<unquote|<merge|<arg|x>|-post-sep>>|macro-parameter|regular><assign|<unquote|<merge|<arg|x>|-title>>|<macro|title|<strong|<arg|title>>>><assign|<unquote|<merge|<arg|x>|-unnumbered-title>>|<macro|title|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-title>>|<arg|title><compound|<unquote|<merge|<arg|x>|-post-sep>>>>>>><assign|<unquote|<merge|<arg|x>|-numbered-title>>|<macro|title|<style-with|src-compact|none|<compound|<unquote|<merge|<arg|x>|-title>>|<sectional-prefixed|<compound|<unquote|<merge|the-|<arg|x>>>><compound|<unquote|<merge|<arg|x>|-sep>>>|<arg|title><compound|<unquote|<merge|<arg|x>|-post-sep>>>>>>>><assign|<unquote|<merge|<arg|x>|-clean>>|<macro|>><assign|<unquote|<merge|<arg|x>|-header>>|<macro|title|>><assign|<unquote|<merge|<arg|x>|-toc>>|<macro|title|>>>>>>
 
   <\active*>
     <\src-comment>
