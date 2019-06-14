@@ -26,7 +26,5 @@ public:
   
   bool isRunning () const;
   time_t lastCheck () const;
-  bool setAutomaticChecks (bool enable);
   bool setCheckInterval (int hours);
-  bool setAppcast (url _appcast);
 };
