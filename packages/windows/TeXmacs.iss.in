@@ -5,19 +5,19 @@
 [Setup]
 AppName=@PACKAGE@
 AppVerName=Texmacs
-DefaultDirName={pf32}\TeXmacs
+DefaultDirName={commonpf32}\TeXmacs
 DefaultGroupName=TeXmacs
 ;denis begin
-;VersionInfoProductTextVersion=@DEVEL_VERSION@
-VersionInfoTextVersion=@DEVEL_VERSION@.@SVNREV@
+VersionInfoTextVersion=@DEVEL_VERSION@
 AppPublisher=MAGIX
 AppPublisherURL=http://www.texmacs.org/
-AppVersion=@DEVEL_VERSION@.@SVNREV@
+AppVersion=@DEVEL_VERSION@
+LicenseFile=..\..\..\distr\TeXmacs-Windows\LICENSE
 ;denis end
 
 UninstallDisplayIcon={app}\TeXmacs.ico
 OutputDir=..\..\..\distr\windows
-OutputBaseFilename=@tm_devel@.@SVNREV@-win-x86
+OutputBaseFilename=@tm_devel@-win-x86
 ; SourceDir=../..
 ChangesAssociations=yes
 
@@ -26,6 +26,8 @@ WizardImageStretch=no
 WizardSmallImageFile=TeXmacs-small.bmp
 
 ;PrivilegesRequired=none
+
+CloseApplications=yes
 
 [Registry]
 Root: HKCR; Subkey: ".tm"; ValueType: string; ValueName: ""; ValueData: "tmfile"; Flags: uninsdeletevalue
@@ -41,3 +43,37 @@ Source: TeXmacs.ico; DestDir: {app}
 Name: "{group}\TeXmacs"; Filename: "{app}\bin\texmacs.exe"; IconFilename: "{app}\TeXmacs.ico"
 Name: "{group}\Uninstall TeXmacs"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\TeXmacs"; Filename: "{app}\bin\texmacs.exe"; IconFilename: "{app}\TeXmacs.ico"
+
+[Code]
+
+procedure UninstallTeXmacs();
+var
+  FindRec: TFindRec;
+  Uninstaller: String;
+  FoundInstalled: Boolean;
+  ConfirmedUninstall: Boolean;
+  UninstallResultCode: integer;
+begin
+  Uninstaller := '';
+  ConfirmedUninstall := false;
+  FoundInstalled := FindFirst(ExpandConstant('{app}/unins*.exe'), FindRec);
+  if FoundInstalled then
+    if MsgBox('Before installing TeXmacs into the destination folder ('
+              + ExpandConstant('{app}') + '), it is recommened to uninstall software already present in this folder.'
+	      + #13#10 + 'Do you want to perform these uninstallations before installating?', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = idYes then
+    ConfirmedUninstall := true;
+  if ConfirmedUninstall then
+  repeat
+    Uninstaller := FindRec.Name;
+    Exec(ExpandConstant('{app}/') + Uninstaller, '', '', SW_SHOW,
+         ewWaitUntilTerminated, UninstallResultCode);
+  until
+    not FindNext(FindRec);
+  FindClose(FindRec);
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if (CurStep = ssInstall) then
+    UninstallTeXmacs();
+end;
