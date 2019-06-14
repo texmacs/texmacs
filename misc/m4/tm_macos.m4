@@ -3,7 +3,7 @@
 #
 # MODULE      : tm_macos.m4
 # DESCRIPTION : MacOS specific settings
-# COPYRIGHT   : (C) 2000, 2017  Joris van der Hoeven
+# COPYRIGHT   : (C) 2000, 2019 Joris van der Hoeven, Denis Raux
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -33,17 +33,25 @@ AC_DEFUN([TM_MACOS],[
 	    ;;
     esac
 
+   AC_ARG_WITH(sdk,
+       AS_HELP_STRING([--with-sdk@<:@=none@:>@],
+       [Apple SDK level (i.e 10.6)]),[
+         sdk=/Developer/SDKs/MacOSX$withval.sdk
+         [[ -d $sdk ]] || AC_MSG_ERROR([Apple SDK not found in $sdk])
+         LC_MERGE_FLAGS([-isysroot $sdk] ,[CFLAGS])
+         LC_MERGE_FLAGS([-isysroot $sdk],[CXXFLAGS])
+         LC_MERGE_FLAGS([-Wl,-syslibroot,$sdk],[LDFLAGS])
+       ],[]
+    )
     AC_ARG_WITH(osx,
        AS_HELP_STRING([--with-osx@<:@=none@:>@],
        [targeted configuration (i.e 10.6)]),[
          MACOSX_TARGET=-os$withval
-         sdk=/Developer/SDKs/MacOSX$withval.sdk
-         [[ -d $sdk ]] || AC_MSG_ERROR([Apple SDK not found in $sdk])
-         LC_MERGE_FLAGS([-isysroot $sdk -mmacosx-version-min=$withval],[CFLAGS])
-         LC_MERGE_FLAGS([-isysroot $sdk -mmacosx-version-min=$withval],[CXXFLAGS])
-         LC_MERGE_FLAGS([-Wl,-syslibroot,$sdk -Wl,-macosx_version_min,$withval],[LDFLAGS])
+         LC_MERGE_FLAGS([-mmacosx-version-min=$withval],[CFLAGS])
+         LC_MERGE_FLAGS([-mmacosx-version-min=$withval],[CXXFLAGS])
+         LC_MERGE_FLAGS([-Wl,-macosx_version_min,$withval],[LDFLAGS])
        ],[]
     )
-   AC_SUBST(MACOSX_TARGET)
+    AC_SUBST(MACOSX_TARGET)
 fi
 ])
