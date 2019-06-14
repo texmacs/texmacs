@@ -2,6 +2,7 @@
  * MODULE     : tm_updater.cpp
  * DESCRIPTION: Base class for auto-update frameworks like (Win)Sparkle
  * COPYRIGHT  : (C) 2013 Miguel de Benito Delgado
+ *              2019 modified by Gregoire Lecerf
  *******************************************************************************
  * This software falls under the GNU general public license version 3 or later.
  * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -23,13 +24,6 @@ tm_updater* tm_updater::instance ()
 {
   static tm_updater* _instance = NULL;
   
-  url appcast = get_preference ("updater:appcast");
-  if (appcast == "default") {
-    if (DEBUG_STD)
-      cout << "Updater] ERROR: no appcast URL was set in the preferences.\n";
-    return 0;
-  }
-
   if (! _instance) {
     #if defined (OS_MACOS) && defined (USE_SPARKLE)
       _instance = new tm_sparkle ();
@@ -76,22 +70,10 @@ bool updater_check_foreground ()
   return updater && updater->checkInForeground();
 }
 
-bool updater_set_appcast (url appcast)
-{
-  tm_updater* updater = tm_updater::instance ();
-  return updater && updater->setAppcast (appcast);
-}
-
 bool updater_set_interval (int hours)
 {
   tm_updater* updater = tm_updater::instance ();
   return updater && updater->setCheckInterval (hours);
-}
-
-bool updater_set_automatic (bool enable)
-{
-  tm_updater* updater = tm_updater::instance ();
-  return updater && updater->setAutomaticChecks (enable);
 }
 
 time_t updater_last_check ()
