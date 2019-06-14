@@ -112,24 +112,24 @@ AC_DEFUN([TM_DEBUG],[
 
   if test "$enable_profile" = "yes"; then
       if test "$GXX" = "yes"; then
-	  enable_profile="yes"
+         enable_profile="yes"
       else
-	  enable_profile="none"
+         enable_profile="none"
       fi
   fi
 
   case "$enable_profile" in
       yes)
-	  AC_MSG_RESULT([enabling gcc profiling compilation flag -pg])
-	  CONFIG_CXXPROFILE="-pg"
-	  ;;
+         AC_MSG_RESULT([enabling gcc profiling compilation flag -pg])
+         CONFIG_CXXPROFILE="-pg"
+         ;;
       none)
-	  AC_MSG_RESULT([disabling gcc profiling compilation flag])
-	  CONFIG_CXXPROFILE=""
-	  ;;
+         AC_MSG_RESULT([disabling gcc profiling compilation flag])
+         CONFIG_CXXPROFILE=""
+         ;;
       *)
-	  CONFIG_CXXPROFILE=""
-	  ;;
+         CONFIG_CXXPROFILE=""
+         ;;
   esac
 
   #--- Debugging
@@ -141,9 +141,9 @@ AC_DEFUN([TM_DEBUG],[
 
   if test "$enable_debug" = "yes"; then
       if test "$GXX" = "yes"; then
-	  enable_debug="-O0 -ggdb"
+         enable_debug="-O0 -ggdb"
       else
-	  enable_debug="-O0 -g3"
+         enable_debug="-O0 -g3"
       fi
   fi
 
@@ -152,14 +152,17 @@ AC_DEFUN([TM_DEBUG],[
       CONFIG_STRIP="strip"
       CONFIG_CXXDEBUG=""
       optimize_default="yes"
+      DEBUG_RC=0
   else
       AC_MSG_RESULT([enabling debugging, $enable_debug])
       CONFIG_STRIP="true"
       CONFIG_CXXDEBUG="$enable_debug"
       optimize_default="no"
       AC_DEFINE([DEBUG_ON], 1, [debugging built])
+      DEBUG_RC=VS_FF_DEBUG
   fi
 
+  AC_SUBST(DEBUG_RC)
   #--- Assert
 
   AC_ARG_ENABLE(assert,
@@ -190,13 +193,13 @@ AC_DEFUN([TM_DEBUG],[
       [], [enable_warnings="yes"])
   case "$enable_warnings" in
       yes)
-	  AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
+         AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
       no)
-	  CONFIG_CXXWARNING=""
-	  AC_MSG_RESULT([disabling warning flags]) ;;
+         CONFIG_CXXWARNING=""
+         AC_MSG_RESULT([disabling warning flags]) ;;
       *)
-	  CONFIG_CXXWARNING="$enable_warnings"
-	  AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
+         CONFIG_CXXWARNING="$enable_warnings"
+         AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
   esac
 
   #--- Experimental mode
@@ -206,17 +209,17 @@ AC_DEFUN([TM_DEBUG],[
       [], [enable_experimental="no"])
   case "$enable_experimental" in
       yes)
-	  AC_MSG_RESULT([enabling experimental style rewriting code])
-	  AC_DEFINE(EXPERIMENTAL, 1, [Enable experimental style rewriting code])
-	  CONFIG_EXPERIMENTAL="Memorizer Environment Evaluate"
-	  ;;
+         AC_MSG_RESULT([enabling experimental style rewriting code])
+         AC_DEFINE(EXPERIMENTAL, 1, [Enable experimental style rewriting code])
+         CONFIG_EXPERIMENTAL="Memorizer Environment Evaluate"
+         ;;
       no)
-	  AC_MSG_RESULT([disabling experimental style rewriting code])
-	  CONFIG_EXPERIMENTAL=""
-	  ;;
+         AC_MSG_RESULT([disabling experimental style rewriting code])
+         CONFIG_EXPERIMENTAL=""
+         ;;
       *)
-	  AC_MSG_ERROR([bad option --enable-experimental=$enable_experimental])
-	  ;;
+         AC_MSG_ERROR([bad option --enable-experimental=$enable_experimental])
+         ;;
   esac
   AC_SUBST(CONFIG_EXPERIMENTAL)
 ])
