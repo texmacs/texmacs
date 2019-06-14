@@ -36,13 +36,17 @@ Root: HKCR; Subkey: "tmfile\DefaultIcon"; ValueType: string; ValueName: ""; Valu
 Root: HKCR; Subkey: "tmfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\texmacs.exe"" ""%1""" 
 
 [Files]
-Source: ..\..\..\distr\TeXmacs-Windows\*; DestDir: {app}; Flags: recursesubdirs createallsubdirs
+Source: ..\..\..\distr\TeXmacs-Windows\*; DestDir: {app}; Flags: recursesubdirs createallsubdirs ignoreversion
 Source: TeXmacs.ico; DestDir: {app}
 
 [Icons]
 Name: "{group}\TeXmacs"; Filename: "{app}\bin\texmacs.exe"; IconFilename: "{app}\TeXmacs.ico"
 Name: "{group}\Uninstall TeXmacs"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\TeXmacs"; Filename: "{app}\bin\texmacs.exe"; IconFilename: "{app}\TeXmacs.ico"
+
+[UninstallDelete]
+Type: files; Name: "{app}\*"
+Type: dirifempty; Name: "{app}"
 
 [Code]
 
