@@ -307,7 +307,7 @@ BUNDLE: @CONFIG_BUNDLE@
 .PHONY: PACKAGE BUNDLE
 
 GENERIC_PACKAGE_DIR = ../distr/generic
-STATIC_QT = $(tm_devel)-@SVNREV@-$(tm_suffix)
+STATIC_QT = $(tm_devel)-$(tm_suffix)
 STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
 GENERIC_PACKAGE: TEXMACS STRIP
@@ -460,7 +460,7 @@ MACOS_PACKAGE_SRC = packages/macos
 MACOS_PACKAGE_DIR = ../distr/macos
 
 MACOS_PACKAGE_APP = ../distr/$(tm_devel).app
-MACOS_PACKAGE_DMG = ../distr/$(tm_devel)-r@SVNREV@@MACOSX_TARGET@.dmg
+MACOS_PACKAGE_DMG = ../distr/$(tm_devel)@MACOSX_TARGET@.dmg
 MACOS_PACKAGE_ZIP = ../distr/$(tm_devel).zip
 
 MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
@@ -496,6 +496,7 @@ MACOS_BUNDLE: TEXMACS
 	  $(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
+	[[ "@SIGNID@" ]] && codesign --deep -s @SIGNID@ $(MACOS_PACKAGE_APP)
 
 
 MACOS_PACKAGE: MACOS_BUNDLE
@@ -539,11 +540,11 @@ WINDOWS_BUNDLE: TEXMACS
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
 	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
 	if test -d "$(QT_PLUGINS_PATH)";then $(CP) -u $$(cygpath -u $(QT_PLUGINS_PATH)/*) $(WINDOWS_BUILD_BIN_DIR);fi
-$(WINDOWS_PACKAGE_DIR)/@tm_devel@.@SVNREV@-win-x86.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
+$(WINDOWS_PACKAGE_DIR)/@tm_devel@-win-x86.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
 	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
 
-WINDOWS_PACKAGE: WINDOWS_BUNDLE $(WINDOWS_PACKAGE_DIR)/@tm_devel@.@SVNREV@-win-x86.exe
+WINDOWS_PACKAGE: WINDOWS_BUNDLE $(WINDOWS_PACKAGE_DIR)/@tm_devel@-win-x86.exe
 #	$(MV) ../distr/*-installer* $(WINDOWS_PACKAGE_DIR)
 #	$(RM) -r $(WINDOWS_BUILD_DIR)
 
