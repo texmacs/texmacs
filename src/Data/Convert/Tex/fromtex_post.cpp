@@ -1265,27 +1265,47 @@ is_bibliography_command (tree t, tree& doc, string& bib_style) {
   return false;
 }
 
-tree
-finalize_preamble (tree t, string& style) {
-  int i, j;
-  tree u (DOCUMENT);
-  style= "generic";
-  string bib_style= "plain";
-  for (i=0; i<N(t); i++) {
-    if (is_concat (t[i])) {
-      tree v (CONCAT);
-      for (j=0; j<N(t[i]); j++)
-	if (is_preamble_command (t[i][j], v, style));
-	else if (is_bibliography_command (t[i][j], v, bib_style));
-	else v << t[i][j];
-      if (N(v)==1) u << v[0];
-      if (N(v)>=2) u << v;
+extern hashfunc<string,string> latex_std_type;
+
+bool
+is_ignored_redefinition (tree t) {
+  if (is_func (t, ASSIGN, 2) || is_compound (t, "new-theorem", 2))
+    if (is_atomic (t[0])) {
+      string s= t[0]->label;
+      if (latex_std_type ["\\begin-" * s] == "enunciation") return true;
+      /*
+      cout << s << " -> " << latex_type (s)
+	   << ", " << latex_type ("\\" * s)
+	   << ", " << latex_type ("\\begin-" * s)
+	   << ", " << latex_std_type ["\\begin-" * s] << LF;
+      */
     }
+  //cout << "Check " << t << LF;
+  return false;
+}
+
+static tree
+finalize_preamble (tree t, string& style, string& bib_style) {
+  int i;
+  tree u (L(t));
+  for (i=0; i<N(t); i++) {
+    if (is_concat (t[i]) || is_document (t[i]))
+      u << finalize_preamble (t[i], style, bib_style);
     else if (is_preamble_command (t[i], u, style));
     else if (is_bibliography_command (t[i], u, bib_style));
+    else if (is_ignored_redefinition (t[i]));
     else u << t[i];
   }
-  return u;
+  if (N(u) == 0) return "";
+  else if (N(u) == 1) return u[0];
+  else return u;
+}
+
+tree
+finalize_preamble (tree t, string& style) {
+  style= "generic";
+  string bib_style= "plain";
+  return finalize_preamble (t, style, bib_style);
 }
 
 /******************************************************************************
