@@ -9,6 +9,7 @@
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
+import sys
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
 from .protocol import *
@@ -33,7 +34,11 @@ class Graphviz(Graph):
         f = open(path, 'wb')
         cmd_list = [self.name, "-Teps"]
         p = Popen(cmd_list, stdout=f, stdin=PIPE, stderr=PIPE)
-        out, err = p.communicate(input=code.encode())
+        py_ver = sys.version_info[0]
+        if py_ver == 3:
+            out, err = p.communicate(input=code.encode())
+        else:
+            out, err = p.communicate(input=code)
         if (p.returncode == 0):
             flush_file (self.get_eps())
         else:
