@@ -11,7 +11,7 @@ AC_DEFUN([LC_SPARKLE],[
     AX_SAVE_FLAGS
     case "${CONFIG_OS}" in
     (MINGW)  
-      AC_MSG_CHECKING([whether we can use the WinSparkle library])
+      AC_MSG_CHECKING([whether we can use the Sparkle library])
       AC_LANG_PUSH([C])
       LC_SCATTER_FLAGS([-I $with_sparkle/include -L $with_sparkle/Release -lwinsparkle],[SPARKLE])
       LC_SET_FLAGS([SPARKLE])
@@ -48,7 +48,7 @@ AC_DEFUN([LC_SPARKLE],[
     
     if [[ $sparkle_ok ]]
     then AC_MSG_RESULT(yes)
-      AC_DEFINE(USE_SPARKLE, 1, [Use WinSparkle library])
+      AC_DEFINE(USE_SPARKLE, 1, [Use Sparkle framework])
       CONFIG_SPARKLE="Updater"
       AX_RESTORE_FLAGS
       LC_SUBST(SPARKLE)
