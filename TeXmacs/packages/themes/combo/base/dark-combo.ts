@@ -24,7 +24,7 @@
 
   <copy-theme|dark|base>
 
-  <copy-theme|dark-ornament|ornaments>
+  <copy-theme|dark-deco|deco>
 
   <\active*>
     <\src-comment>
@@ -48,19 +48,19 @@
     </src-comment>
   </active*>
 
-  <assign|dark-ornament-ornament-body-color|white>
+  <assign|dark-deco-ornament-body-color|white>
 
-  <assign|dark-ornament-ornament-body-math-color|white>
+  <assign|dark-deco-ornament-body-math-color|white>
 
-  <assign|dark-ornament-ornament-body-strong-color|white>
+  <assign|dark-deco-ornament-body-strong-color|white>
 
-  <assign|dark-ornament-ornament-title-color|white>
+  <assign|dark-deco-ornament-title-color|white>
 
-  <assign|dark-ornament-ornament-title-math-color|white>
+  <assign|dark-deco-ornament-title-math-color|white>
 
-  <assign|dark-ornament-ornament-title-strong-color|white>
+  <assign|dark-deco-ornament-title-strong-color|white>
 
-  <select-theme|dark|dark-ornament>
+  <select-theme|dark|dark-deco>
 </body>
 
 <\initial>

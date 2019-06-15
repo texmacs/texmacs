@@ -26,19 +26,19 @@
     </src-comment>
   </active*>
 
-  <new-theme|ornaments|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-body-color|ornament-body-math-color|ornament-body-strong-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-title-color|ornament-title-math-color|ornament-title-strong-color>
+  <new-theme|deco|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-body-color|ornament-body-math-color|ornament-body-strong-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-title-color|ornament-title-math-color|ornament-title-strong-color>
 
-  <assign|ornaments-title-color|<value|color>>
+  <assign|deco-ornament-title-color|<value|color>>
 
-  <assign|ornaments-title-math-color|<value|math-color>>
+  <assign|deco-ornament-title-math-color|<value|math-color>>
 
-  <assign|ornaments-title-strong-color|<value|strong-color>>
+  <assign|deco-ornament-title-strong-color|<value|strong-color>>
 
-  <assign|ornaments-body-color|<value|color>>
+  <assign|deco-ornament-body-color|<value|color>>
 
-  <assign|ornaments-body-math-color|<value|math-color>>
+  <assign|deco-ornament-body-math-color|<value|math-color>>
 
-  <assign|ornaments-body-strong-color|<value|strong-color>>
+  <assign|deco-ornament-body-strong-color|<value|strong-color>>
 
   <\active*>
     <\src-comment>

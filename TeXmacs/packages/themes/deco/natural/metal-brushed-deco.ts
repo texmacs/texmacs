@@ -22,7 +22,7 @@
 
   <use-package|light-combo>
 
-  <copy-theme|metal-brushed|light-ornament>
+  <copy-theme|metal-brushed|light-deco>
 
   <new-deco|metal-brushed>
 

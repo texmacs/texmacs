@@ -22,7 +22,7 @@
 
   <use-package|dark-combo>
 
-  <copy-theme|stone-granite|dark-ornament>
+  <copy-theme|stone-granite|dark-deco>
 
   <new-deco|stone-granite>
 

@@ -22,7 +22,7 @@
 
   <use-package|light-combo>
 
-  <copy-theme|paper-manila|light-ornament>
+  <copy-theme|paper-manila|light-deco>
 
   <new-deco|paper-manila>
 

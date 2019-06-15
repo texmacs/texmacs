@@ -22,7 +22,7 @@
 
   <use-package|light-combo>
 
-  <copy-theme|wood-pine|light-ornament>
+  <copy-theme|wood-pine|light-deco>
 
   <new-deco|wood-pine>
 

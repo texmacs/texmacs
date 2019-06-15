@@ -22,7 +22,7 @@
 
   <use-package|light-combo>
 
-  <copy-theme|paper-rough|light-ornament>
+  <copy-theme|paper-rough|light-deco>
 
   <new-deco|paper-rough>
 

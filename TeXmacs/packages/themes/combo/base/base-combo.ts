@@ -64,7 +64,7 @@
     </src-comment>
   </active*>
 
-  <copy-theme|base|colors|no-patterns|ornaments|titles|sessions|poster|poster-ornament-shape>
+  <copy-theme|base|colors|no-patterns|deco|titles|sessions|poster|poster-ornament-shape>
 </body>
 
 <\initial>

@@ -22,13 +22,13 @@
 
   <use-package|light-combo|dark-combo>
 
-  <copy-theme|plain-vador|dark-ornament>
+  <copy-theme|plain-vador|dark-deco>
 
-  <copy-theme|title-vador|dark-ornament>
+  <copy-theme|title-vador|dark-deco>
 
-  <copy-theme|framed-vador|light-ornament>
+  <copy-theme|framed-vador|light-deco>
 
-  <copy-theme|alternate-vador|light-ornament>
+  <copy-theme|alternate-vador|light-deco>
 
   <new-deco|plain-vador>
 

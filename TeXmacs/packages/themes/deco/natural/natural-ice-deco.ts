@@ -22,7 +22,7 @@
 
   <use-package|light-combo>
 
-  <copy-theme|natural-ice|light-ornament>
+  <copy-theme|natural-ice|light-deco>
 
   <new-deco|natural-ice>
 

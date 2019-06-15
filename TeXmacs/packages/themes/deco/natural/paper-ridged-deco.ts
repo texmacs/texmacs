@@ -22,7 +22,7 @@
 
   <use-package|light-combo>
 
-  <copy-theme|paper-ridged|light-ornament>
+  <copy-theme|paper-ridged|light-deco>
 
   <new-deco|paper-ridged>
 
