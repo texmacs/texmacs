@@ -40,8 +40,6 @@
 
   <assign|plain-vador-ornament-color|none>
 
-  \;
-
   <assign|plain-vador-ornament-title-color|#e0c0c0>
 
   <assign|plain-vador-color|#e0e0e0>
