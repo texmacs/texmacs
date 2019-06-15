@@ -20,21 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|bluish-combo>
+  <use-package|bluish-combo|natural-ice-deco>
 
   <copy-theme|ice|bluish>
 
-  <\active*>
-    <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
-
-  <assign|ice-ornament-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
-  blue>>
-
-  <assign|ice-ornament-extra-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
-  blue>>
+  <select-theme|ice|natural-ice>
 
   <\active*>
     <\src-comment>
@@ -59,6 +49,16 @@
 
   <assign|ice-fold-title-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
   blue>>
+
+  <\active*>
+    <\src-comment>
+      Posters
+    </src-comment>
+  </active*>
+
+  <copy-ornament|ice-title|natural-ice>
+
+  <copy-ornament|ice-framed|natural-ice>
 </body>
 
 <\initial>
