@@ -24,7 +24,7 @@
 
   <copy-theme|paper-rough|light-ornament>
 
-  <assign|rough-paper|<macro|x|<with-paper-rough|<ornament|<arg|x>>>>>
+  <new-deco|paper-rough>
 
   <\active*>
     <\src-comment>
@@ -37,6 +37,16 @@
   <assign|paper-rough-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 
   <assign|paper-rough-ornament-title-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
+
+  <assign|paper-rough-ornament-title-math-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
+
+  <assign|paper-rough-ornament-title-strong-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
+
+  <assign|paper-rough-ornament-body-color|black>
+
+  <assign|paper-rough-ornament-body-math-color|dark red>
+
+  <assign|paper-rough-ornament-body-strong-color|#504000>
 
   <assign|paper-rough-ornament-sunny-color|#e0e0e0>
 

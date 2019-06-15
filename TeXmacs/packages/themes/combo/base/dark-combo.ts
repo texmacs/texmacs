@@ -42,6 +42,18 @@
 
   <assign|dark-ornament-strong-color|white>
 
+  <assign|dark-ornament-ornament-body-color|white>
+
+  <assign|dark-ornament-ornament-body-math-color|white>
+
+  <assign|dark-ornament-ornament-body-strong-color|white>
+
+  <assign|dark-ornament-ornament-title-color|white>
+
+  <assign|dark-ornament-ornament-title-math-color|white>
+
+  <assign|dark-ornament-ornament-title-strong-color|white>
+
   <select-theme|dark|dark-ornament>
 </body>
 

@@ -82,13 +82,15 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|dark-vador-title|title-vador>
+  <assign|dark-vador-title-block|<value|title-vador-block>>
 
-  <copy-ornament|dark-vador-plain|plain-vador>
+  <assign|dark-vador-framed-block|<value|framed-vador-block>>
 
-  <copy-ornament|dark-vador-framed|framed-vador>
+  <assign|dark-vador-framed-block*|<value|framed-vador-titled-block>>
 
-  <copy-ornament|dark-vador-alternate|alternate-vador>
+  <assign|dark-vador-alternate-block|<value|alternate-vador-block>>
+
+  <assign|dark-vador-alternate-block*|<value|alternate-vador-titled-block>>
 </body>
 
 <\initial>

@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|stone-granite-ornament|1.0|stone-granite-ornament|1.0>
+    <src-package-dtd|stone-granite-deco|1.0|stone-granite-deco|1.0>
 
     <\src-purpose>
       Granite ornament for presentations and posters.
@@ -24,7 +24,7 @@
 
   <copy-theme|stone-granite|dark-ornament>
 
-  <assign|granite|<macro|x|<with-stone-granite|<ornament|<arg|x>>>>>
+  <new-deco|stone-granite>
 
   <\active*>
     <\src-comment>
@@ -37,6 +37,16 @@
   <assign|stone-granite-ornament-extra-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
 
   <assign|stone-granite-ornament-title-color|gold>
+
+  <assign|stone-granite-ornament-title-math-color|gold>
+
+  <assign|stone-granite-ornament-title-strong-color|gold>
+
+  <assign|stone-granite-ornament-body-color|white>
+
+  <assign|stone-granite-ornament-body-math-color|#ffd4c0>
+
+  <assign|stone-granite-ornament-body-strong-color|#f0ffb0>
 
   <assign|stone-granite-ornament-sunny-color|light grey>
 

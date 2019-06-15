@@ -24,7 +24,7 @@
 
   <copy-theme|paper-manila|light-ornament>
 
-  <assign|manila-paper|<macro|x|<with-paper-manila|<ornament|<arg|x>>>>>
+  <new-deco|paper-manila>
 
   <\active*>
     <\src-comment>
@@ -37,6 +37,16 @@
   <assign|paper-manila-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 
   <assign|paper-manila-ornament-title-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+
+  <assign|paper-manila-ornament-title-math-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+
+  <assign|paper-manila-ornament-title-strong-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+
+  <assign|paper-manila-ornament-body-color|black>
+
+  <assign|paper-manila-ornament-body-math-color|dark red>
+
+  <assign|paper-manila-ornament-body-strong-color|#504000>
 
   <assign|paper-manila-ornament-sunny-color|#e8e8e0>
 

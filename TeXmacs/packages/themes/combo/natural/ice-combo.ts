@@ -56,9 +56,11 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|ice-title|natural-ice>
+  <assign|ice-title-block|<value|natural-ice-block>>
 
-  <copy-ornament|ice-framed|natural-ice>
+  <assign|ice-framed-block|<value|natural-ice-block>>
+
+  <assign|ice-framed-block*|<value|natural-ice-titled-block>>
 </body>
 
 <\initial>

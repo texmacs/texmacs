@@ -633,6 +633,10 @@
   <assign|indent-par-first|1.5fn>
 
   <assign|padded-par-par-sep|0.6666fn>
+
+  <assign|math-color|<value|color>>
+
+  <assign|strong-color|<value|color>>
 </body>
 
 <\initial>

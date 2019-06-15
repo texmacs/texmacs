@@ -24,7 +24,7 @@
 
   <copy-theme|paper-ridged|light-ornament>
 
-  <assign|ridged-paper|<macro|x|<with-paper-ridged|<ornament|<arg|x>>>>>
+  <new-deco|paper-ridged>
 
   <\active*>
     <\src-comment>
@@ -37,6 +37,16 @@
   <assign|paper-ridged-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 
   <assign|paper-ridged-ornament-title-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
+
+  <assign|paper-ridged-ornament-title-math-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
+
+  <assign|paper-ridged-ornament-title-strong-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
+
+  <assign|paper-ridged-ornament-body-color|black>
+
+  <assign|paper-ridged-ornament-body-math-color|dark red>
+
+  <assign|paper-ridged-ornament-body-strong-color|#504000>
 
   <assign|paper-ridged-ornament-sunny-color|#f0e0e0>
 

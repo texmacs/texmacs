@@ -30,6 +30,14 @@
 
   <copy-theme|alternate-vador|light-ornament>
 
+  <new-deco|plain-vador>
+
+  <new-deco|title-vador>
+
+  <new-deco|framed-vador>
+
+  <new-deco|alternate-vador>
+
   <\active*>
     <\src-comment>
       Background dark vador
@@ -41,6 +49,16 @@
   <assign|plain-vador-ornament-color|none>
 
   <assign|plain-vador-ornament-title-color|#e0c0c0>
+
+  <assign|plain-vador-ornament-title-math-color|#e0c0c0>
+
+  <assign|plain-vador-ornament-title-strong-color|#e0c0c0>
+
+  <assign|plain-vador-ornament-body-color|#e0e0e0>
+
+  <assign|plain-vador-ornament-body-math-color|pastel red>
+
+  <assign|plain-vador-ornament-body-strong-color|pastel yellow>
 
   <assign|plain-vador-color|#e0e0e0>
 
@@ -64,7 +82,17 @@
 
   <assign|title-vador-ornament-title-color|#fff0c0>
 
+  <assign|title-vador-ornament-title-math-color|#fff0c0>
+
+  <assign|title-vador-ornament-title-strong-color|#fff0c0>
+
   <assign|title-vador-ornament-color|#603030>
+
+  <assign|title-vador-ornament-body-color|#fff0c0>
+
+  <assign|title-vador-ornament-body-math-color|pastel red>
+
+  <assign|title-vador-ornament-body-strong-color|pastel yellow>
 
   <assign|title-vador-ornament-sunny-color|#301818>
 
@@ -90,7 +118,17 @@
 
   <assign|framed-vador-ornament-title-color|#e0e0e0>
 
+  <assign|framed-vador-ornament-title-math-color|#e0e0e0>
+
+  <assign|framed-vador-ornament-title-strong-color|#e0e0e0>
+
   <assign|framed-vador-ornament-color|#e0e0e0>
+
+  <assign|framed-vador-ornament-body-color|#200000>
+
+  <assign|framed-vador-ornament-body-math-color|dark red>
+
+  <assign|framed-vador-ornament-body-strong-color|dark orange>
 
   <assign|framed-vador-ornament-sunny-color|#804040>
 
@@ -116,7 +154,17 @@
 
   <assign|alternate-vador-ornament-title-color|#e0d0c0>
 
+  <assign|alternate-vador-ornament-title-math-color|#e0d0c0>
+
+  <assign|alternate-vador-ornament-title-strong-color|#e0d0c0>
+
   <assign|alternate-vador-ornament-color|#e0e0c0>
+
+  <assign|alternate-vador-ornament-body-color|#400000>
+
+  <assign|alternate-vador-ornament-body-math-color|dark red>
+
+  <assign|alternate-vador-ornament-body-strong-color|dark orange>
 
   <assign|alternate-vador-ornament-sunny-color|#606030>
 

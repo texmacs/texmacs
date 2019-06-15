@@ -76,9 +76,11 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|rough-paper-title|paper-rough>
+  <assign|rough-paper-title-block|<value|paper-rough-block>>
 
-  <copy-ornament|rough-paper-framed|paper-rough>
+  <assign|rough-paper-framed-block|<value|paper-rough-block>>
+
+  <assign|rough-paper-framed-block*|<value|paper-rough-titled-block>>
 </body>
 
 <\initial>

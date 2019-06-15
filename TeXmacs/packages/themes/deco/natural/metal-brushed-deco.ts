@@ -24,7 +24,7 @@
 
   <copy-theme|metal-brushed|light-ornament>
 
-  <assign|metal|<macro|x|<with-metal-brushed|<ornament|<arg|x>>>>>
+  <new-deco|metal-brushed>
 
   <\active*>
     <\src-comment>
@@ -37,6 +37,16 @@
   <assign|metal-brushed-ornament-extra-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#8080a0>>
 
   <assign|metal-brushed-ornament-title-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+
+  <assign|metal-brushed-ornament-title-math-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+
+  <assign|metal-brushed-ornament-title-strong-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+
+  <assign|metal-brushed-ornament-body-color|black>
+
+  <assign|metal-brushed-ornament-body-math-color|dark red>
+
+  <assign|metal-brushed-ornament-body-strong-color|dark blue>
 
   <assign|metal-brushed-ornament-sunny-color|#e0e0e8>
 

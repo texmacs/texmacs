@@ -64,9 +64,11 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|pine-title|wood-pine>
+  <assign|pine-title-block|<value|wood-pine-block>>
 
-  <copy-ornament|pine-framed|wood-pine>
+  <assign|pine-framed-block|<value|wood-pine-block>>
+
+  <assign|pine-framed-block*|<value|wood-pine-titled-block>>
 </body>
 
 <\initial>

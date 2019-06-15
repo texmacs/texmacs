@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -22,7 +22,7 @@
 
   <assign|title-swell|0em>
 
-  <assign|title-border|1ln>
+  <assign|title-border|2ln>
 
   <assign|title-hpadding|2spc>
 
@@ -30,15 +30,15 @@
 
   \;
 
-  <assign|poster-title|<\macro|body|l|r>
-    <\with|par-columns|1|ornament-color|<value|title-body-bg-color>|color|<value|title-body-color>|ornament-shape|<value|title-shape>|par-left|<minus|<value|par-left>|<value|title-swell>>|par-right|<minus|<value|par-right>|<value|title-swell>>|ornament-border|<value|title-border>|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>>
-      <\ornament>
-        <\surround|<arg|l><htab|5mm>|<htab|5mm><arg|r>>
-          <\title-render-title>
+  <assign|poster-title|<\macro|body|ldeco|rdeco>
+    <\with|par-columns|1|par-left|<minus|<value|par-left>|<value|title-swell>>|par-right|<minus|<value|par-right>|<value|title-swell>>|deco-hook|<macro|body|<with|ornament-border|<value|title-border>|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|<arg|body>>>>
+      <\surround||<vspace|<value|title-vsep>>>
+        <\title-block>
+          <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
             <arg|body>
-          </title-render-title>
-        </surround>
-      </ornament>
+          </surround>
+        </title-block>
+      </surround>
     </with>
   </macro>>
 </body>

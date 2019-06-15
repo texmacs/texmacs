@@ -93,9 +93,11 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|ridged-paper-title|paper-ridged>
+  <assign|ridged-paper-title-block|<value|paper-ridged-block>>
 
-  <copy-ornament|ridged-paper-framed|paper-ridged>
+  <assign|ridged-paper-framed-block|<value|paper-ridged-block>>
+
+  <assign|ridged-paper-framed-block*|<value|paper-ridged-titled-block>>
 </body>
 
 <\initial>

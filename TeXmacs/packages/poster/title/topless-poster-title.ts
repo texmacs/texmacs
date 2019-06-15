@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -27,12 +27,14 @@
   \;
 
   <assign|poster-title|<\macro|body|ldeco|rdeco>
-    <\with|par-columns|1|ornament-color|<value|title-body-bg-color>|color|<value|title-body-color>|ornament-shape|<value|title-shape>|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>|ornament-border|0em|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|ornament-sunny-color|<value|title-sunny-color>|ornament-shadow-color|<value|title-shadow-color>>
-      <\ornament>
-        <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
-          <arg|body>
-        </surround>
-      </ornament>
+    <\with|par-columns|1|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>|deco-hook|<macro|body|<with|ornament-border|0em|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|<arg|body>>>>
+      <\surround||<vspace|<value|title-vsep>>>
+        <\title-block>
+          <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
+            <arg|body>
+          </surround>
+        </title-block>
+      </surround>
     </with>
   </macro>>
 </body>

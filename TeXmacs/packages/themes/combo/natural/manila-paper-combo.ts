@@ -64,9 +64,11 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|manila-paper-title|paper-manila>
+  <assign|manila-paper-title-block|<value|paper-manila-block>>
 
-  <copy-ornament|manila-paper-framed|paper-manila>
+  <assign|manila-paper-framed-block|<value|paper-manila-block>>
+
+  <assign|manila-paper-framed-block*|<value|paper-manila-titled-block>>
 </body>
 
 <\initial>

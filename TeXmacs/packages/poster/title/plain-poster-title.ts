@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -21,8 +21,8 @@
   </src-title>>
 
   <assign|poster-title|<\macro|body|ldeco|rdeco>
-    <\with|par-columns|1|color|<value|title-body-color>>
-      <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
+    <\with|par-columns|1>
+      <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||><vspace|<value|title-vsep>>>
         <arg|body>
       </surround>
     </with>

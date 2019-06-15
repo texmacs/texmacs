@@ -243,6 +243,56 @@
 
   <\active*>
     <\src-comment>
+      Decorations based on ornaments.
+    </src-comment>
+  </active*>
+
+  <assign|block-render-title|<macro|name|<with|font-series|bold|<large|<arg|name>>>>>
+
+  <assign|ornament-render-title|<macro|name|<block-render-title|<arg|name>>>>
+
+  <assign|ornament-title-color|<value|color>>
+
+  <assign|ornament-title-math-color|<value|color>>
+
+  <assign|ornament-title-strong-color|<value|color>>
+
+  <assign|ornament-body-color|<value|color>>
+
+  <assign|ornament-body-math-color|<value|color>>
+
+  <assign|ornament-body-strong-color|<value|color>>
+
+  \;
+
+  <assign|decorated-title|<macro|body|<with|color|<value|ornament-title-color>|math-color|<value|ornament-title-math-color>|strong-color|<value|ornament-title-strong-color>|<arg|body>>>>
+
+  <assign|decorated-body|<macro|body|<with|color|<value|ornament-body-color>|math-color|<value|ornament-body-math-color>|strong-color|<value|ornament-body-strong-color>|<arg|body>>>>
+
+  <assign|decorated|<macro|body|<ornament|<decorated-body|<arg|body>>>>>
+
+  <assign|decorated-block|<\macro|body>
+    <\ornament>
+      <\wide-normal>
+        <\decorated-body>
+          <arg|body>
+        </decorated-body>
+      </wide-normal>
+    </ornament>
+  </macro>>
+
+  <assign|decorated-titled|<macro|name|body|<ornament|<decorated-body|<arg|body>>|<decorated-title|<arg|name>>>>>
+
+  <assign|decorated-titled-block|<\macro|name|body>
+    <\ornament>
+      <\wide-normal>
+        <decorated-body|<arg|body>>
+      </wide-normal>
+    </ornament|<decorated-title|<arg|name>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Indentation.
     </src-comment>
   </active*>

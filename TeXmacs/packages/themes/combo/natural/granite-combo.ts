@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-combo|stone-granite-ornament>
+  <use-package|dark-combo|stone-granite-deco>
 
   <copy-theme|granite|dark>
 
@@ -64,9 +64,11 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|granite-title|stone-granite>
+  <assign|granite-title-block|<value|stone-granite-block>>
 
-  <copy-ornament|granite-framed|stone-granite>
+  <assign|granite-framed-block|<value|stone-granite-block>>
+
+  <assign|granite-framed-block*|<value|stone-granite-titled-block>>
 </body>
 
 <\initial>

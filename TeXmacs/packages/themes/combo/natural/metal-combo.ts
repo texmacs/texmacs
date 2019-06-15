@@ -74,9 +74,11 @@
     </src-comment>
   </active*>
 
-  <copy-ornament|metal-title|metal-brushed>
+  <assign|metal-title-block|<value|metal-brushed-block>>
 
-  <copy-ornament|metal-framed|metal-brushed>
+  <assign|metal-framed-block|<value|metal-brushed-block>>
+
+  <assign|metal-framed-block*|<value|metal-brushed-titled-block>>
 </body>
 
 <\initial>

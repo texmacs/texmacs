@@ -24,7 +24,7 @@
 
   <copy-theme|natural-ice|light-ornament>
 
-  <assign|ice|<macro|x|<with-natural-ice|<ornament|<arg|x>>>>>
+  <new-deco|natural-ice>
 
   <\active*>
     <\src-comment>
@@ -39,6 +39,16 @@
   blue>>
 
   <assign|natural-ice-ornament-title-color|white>
+
+  <assign|natural-ice-ornament-title-math-color|white>
+
+  <assign|natural-ice-ornament-title-strong-color|white>
+
+  <assign|natural-ice-ornament-body-color|black>
+
+  <assign|natural-ice-ornament-body-strong-color|#602060>
+
+  <assign|natural-ice-ornament-body-math-color|#503050>
 
   <assign|natural-ice-ornament-sunny-color|#f4f4ff>
 

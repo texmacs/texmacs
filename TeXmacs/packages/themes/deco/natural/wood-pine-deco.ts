@@ -24,7 +24,7 @@
 
   <copy-theme|wood-pine|light-ornament>
 
-  <assign|pine|<macro|x|<with-wood-pine|<ornament|<arg|x>>>>>
+  <new-deco|wood-pine>
 
   <\active*>
     <\src-comment>
@@ -37,6 +37,16 @@
   <assign|wood-pine-ornament-extra-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
 
   <assign|wood-pine-ornament-title-color|#f8f8f4>
+
+  <assign|wood-pine-ornament-title-math-color|#f8f8f4>
+
+  <assign|wood-pine-ornament-title-strong-color|#f8f8f4>
+
+  <assign|wood-pine-ornament-body-color|black>
+
+  <assign|wood-pine-ornament-body-strong-color|#0c3000>
+
+  <assign|wood-pine-ornament-body-math-color|#500000>
 
   <assign|wood-pine-ornament-sunny-color|#ffe8c0>
 
