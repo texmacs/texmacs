@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
@@ -104,7 +104,7 @@
 
   <assign|title-swell|0em>
 
-  <assign|title-border|1ln>
+  <assign|title-border|2ln>
 
   <assign|title-hpadding|2spc>
 
@@ -114,13 +114,37 @@
 
   \;
 
+  <assign|deco-hook|<macro|body|<arg|body>>>
+
+  <assign|title-colored|<\macro|body>
+    <\with|color|<value|title-body-color>|math-color|<value|title-body-color>|strong-color|<value|title-body-color>>
+      <arg|body>
+    </with>
+  </macro>>
+
+  <assign|title-block|<\macro|body>
+    <\with|ornament-color|<value|title-body-bg-color>|ornament-shape|<value|title-shape>|ornament-sunny-color|<value|title-sunny-color>|ornament-shadow-color|<value|title-shadow-color>>
+      <\deco-hook>
+        <\ornament>
+          <\title-colored>
+            <\wide-normal>
+              <arg|body>
+            </wide-normal>
+          </title-colored>
+        </ornament>
+      </deco-hook>
+    </with>
+  </macro>>
+
   <assign|poster-title|<\macro|body|ldeco|rdeco>
-    <\with|par-columns|1|ornament-color|<value|title-body-bg-color>|color|<value|title-body-color>|math-color|<value|title-body-color>|strong-color|<value|title-body-color>|ornament-shape|<value|title-shape>|par-left|<minus|<value|par-left>|<value|title-swell>>|par-right|<minus|<value|par-right>|<value|title-swell>>|ornament-border|<value|title-border>|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|ornament-sunny-color|<value|title-sunny-color>|ornament-shadow-color|<value|title-shadow-color>>
-      <surround||<vspace|<value|title-vsep>>|<\ornament>
-        <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
-          <arg|body>
-        </surround>
-      </ornament>>
+    <\with|par-columns|1|par-left|<minus|<value|par-left>|<value|title-swell>>|par-right|<minus|<value|par-right>|<value|title-swell>>|deco-hook|<macro|body|<with|ornament-border|<value|title-border>|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|<arg|body>>>>
+      <\surround||<vspace|<value|title-vsep>>>
+        <\title-block>
+          <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
+            <arg|body>
+          </surround>
+        </title-block>
+      </surround>
     </with>
   </macro>>
 
@@ -132,55 +156,26 @@
 
   <assign|plain-render-title|<macro|name|<block-render-title|<arg|name>>>>
 
-  <assign|plain-title-bg-color|none>
-
-  <assign|plain-title-color|black>
-
-  <assign|plain-body-bg-color|none>
-
-  <assign|plain-body-color|black>
-
-  <assign|plain-body-math-color|dark red>
-
-  <assign|plain-body-strong-color|dark blue>
-
-  <assign|plain-shape|classic>
-
   \;
-
-  <assign|plain-colored|<\macro|body>
-    <\with|color|<value|plain-body-color>|math-color|<value|plain-body-math-color>|strong-color|<value|plain-body-strong-color>>
-      <arg|body>
-    </with>
-  </macro>>
 
   <assign|plain-block|<\macro|body>
     <\with|par-line-sep|0fns>
-      <\plain-colored>
-        <\wide-normal>
-          <arg|body>
-        </wide-normal>
-      </plain-colored>
+      <\wide-normal>
+        <arg|body>
+      </wide-normal>
     </with>
   </macro>>
 
-  <assign|plain-non-framed-title|<macro|name|<with|color|<value|plain-title-color>|math-color|<value|plain-title-color>|strong-color|<value|plain-title-color>|<plain-render-title|<arg|name>>>>>
-
-  <assign|plain-framed-title|<macro|name|<with|ornament-color|<value|plain-title-bg-color>|color|<value|plain-title-color>|math-color|<value|plain-title-color>|strong-color|<value|plain-title-color>|ornament-shape|<value|plain-shape>|<ornament|<wide-normal|<space|0fn><plain-render-title|<arg|name>>
-  >>>>>
+  <assign|plain-titled-block-title|<macro|name|<wide-normal|<plain-render-title|<arg|name>>>>>
 
   <assign|plain-titled-block|<\macro|name|body>
     <\surround||<vspace|<value|par-line-sep>>>
       <\with|par-line-sep|0fns>
-        <surround||<no-break-here>|<compound|<if|<equal|<value|plain-title-bg-color>|none>|plain-non-framed-title|plain-framed-title>|<arg|name>>>
+        <surround||<no-break-here>|<plain-titled-block-title|<arg|name>>>
 
-        <\with|dummy|<value|plain-title-color>>
-          <\plain-colored>
-            <\wide-normal>
-              <arg|body>
-            </wide-normal>
-          </plain-colored>
-        </with>
+        <\wide-normal>
+          <arg|body>
+        </wide-normal>
       </with>
     </surround>
   </macro>>
@@ -233,7 +228,7 @@
     </with>
   </macro>>
 
-  <assign|framed-titled-block|<\macro|name|body>
+  <assign|framed-block*|<\macro|name|body>
     <\with|ornament-extra-color|<value|framed-title-bg-color>|ornament-title-color|<value|framed-title-color>|ornament-color|<value|framed-body-bg-color>|ornament-shape|<value|framed-shape>|ornament-title-style|<value|framed-title-style>|ornament-sunny-color|<value|framed-sunny-color>|ornament-shadow-color|<value|framed-shadow-color>>
       <\ornament>
         <\framed-colored>
@@ -241,8 +236,14 @@
             <arg|body>
           </wide-normal>
         </framed-colored>
-      </ornament|<with|color|<value|framed-title-color>|math-color|<value|framed-title-color>|strong-color|<value|framed-title-color>|<framed-render-title|<arg|name>>>>
+      </ornament|<with|color|<value|framed-title-color>|math-color|<value|framed-title-color>|strong-color|<value|framed-title-color>|<arg|name>>>
     </with>
+  </macro>>
+
+  <assign|framed-titled-block|<\macro|name|body>
+    <\framed-block*|<framed-render-title|<arg|name>>>
+      <arg|body>
+    </framed-block*>
   </macro>>
 
   <\active*>
@@ -293,7 +294,7 @@
     </with>
   </macro>>
 
-  <assign|alternate-titled-block|<\macro|name|body>
+  <assign|alternate-block*|<\macro|name|body>
     <\with|ornament-extra-color|<value|alternate-title-bg-color>|ornament-title-color|<value|alternate-title-color>|ornament-color|<value|alternate-body-bg-color>|ornament-shape|<value|alternate-shape>|ornament-title-style|<value|alternate-title-style>|ornament-sunny-color|<value|alternate-sunny-color>|ornament-shadow-color|<value|alternate-shadow-color>>
       <\ornament>
         <\alternate-colored>
@@ -301,8 +302,14 @@
             <arg|body>
           </wide-normal>
         </alternate-colored>
-      </ornament|<with|color|<value|alternate-title-color>|math-color|<value|alternate-title-color>|strong-color|<value|alternate-title-color>|<alternate-render-title|<arg|name>>>>
+      </ornament|<with|color|<value|alternate-title-color>|math-color|<value|alternate-title-color>|strong-color|<value|alternate-title-color>|<arg|name>>>
     </with>
+  </macro>>
+
+  <assign|alternate-titled-block|<\macro|name|body>
+    <\alternate-block*|<alternate-render-title|<arg|name>>>
+      <arg|body>
+    </alternate-block*>
   </macro>>
 </body>
 
