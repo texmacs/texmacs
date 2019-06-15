@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-boring-white|1.0|new-boring-white|1.0>
+    <src-package-dtd|boring-white|1.0|boring-white|1.0>
 
     <\src-purpose>
       Variant of the bluish theme for presentations and posters with pale

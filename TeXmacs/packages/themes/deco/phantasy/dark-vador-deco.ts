@@ -112,6 +112,10 @@
 
   <assign|framed-vador-ornament-shape|angular>
 
+  <assign|framed-vador-ornament-hpadding|1.5spc>
+
+  <assign|framed-vador-ornament-vpadding|1.5spc>
+
   <assign|framed-vador-ornament-extra-color|dark red>
 
   <assign|framed-vador-ornament-title-style|top center>
@@ -147,6 +151,10 @@
   </active*>
 
   <assign|alternate-vador-ornament-shape|angular>
+
+  <assign|alternate-vador-ornament-hpadding|1.5spc>
+
+  <assign|alternate-vador-ornament-vpadding|1.5spc>
 
   <assign|alternate-vador-ornament-extra-color|#602000>
 

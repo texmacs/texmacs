@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-pine|1.0|new-pine|1.0>
+    <src-package-dtd|pine|1.0|pine|1.0>
 
     <\src-purpose>
       Variant of the reddish theme for presentations and posters with pale

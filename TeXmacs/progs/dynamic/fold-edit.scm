@@ -24,12 +24,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (beamer-themes)
-  (list "bluish" "ice" "metal" "reddish" "ridged-paper"))
-
-;;(tm-define (beamer-themes)
-;;  (list "new-bluish" "new-boring-white" "new-dark-vador" "new-granite"
-;;        "new-ice" "new-manila-paper" "new-metal" "new-pale-blue"
-;;        "new-pine" "new-reddish" "new-ridged-paper" "new-rough-paper"))
+  (list "bluish" "boring-white" "dark-vador" "granite"
+        "ice" "manila-paper" "metal" "pale-blue"
+        "pine" "reddish" "ridged-paper" "rough-paper"))
 
 (tm-define (current-beamer-theme)
   (with l (get-style-list)

@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-manila-paper|1.0|new-manila-paper|1.0>
+    <src-package-dtd|dark-vador|1.0|dark-vador|1.0>
 
     <\src-purpose>
-      Variant of the reddish theme for presentations and posters with pale
+      Variant of the dark-vador theme for presentations and posters with pale
       blue background.
     </src-purpose>
 
@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|manila-paper-combo>
+  <use-package|dark-vador-combo>
 
-  <apply-theme|manila-paper>
+  <apply-theme|dark-vador>
 </body>
 
 <\initial>

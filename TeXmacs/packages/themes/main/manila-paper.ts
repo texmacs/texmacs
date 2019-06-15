@@ -1,16 +1,17 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|pale-blue|1.0|poster-theme|1.0>
+    <src-package-dtd|manila-paper|1.0|manila-paper|1.0>
 
     <\src-purpose>
-      Pale blue theme for posters.
+      Variant of the reddish theme for presentations and posters with pale
+      blue background.
     </src-purpose>
 
-    <src-copyright|2018|Joris van der Hoeven>
+    <src-copyright|2013--2019|Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -20,25 +21,13 @@
     </src-license>
   </src-title>>
 
-  <assign|bg-color|#f0f0ff>
+  <use-package|manila-paper-combo>
 
-  <assign|ornament-shape|rounded>
-
-  <assign|title-shape|rounded>
-
-  <assign|plain-shape|rounded>
-
-  <assign|framed-shape|rounded>
-
-  <assign|alternate-shape|rounded>
-
-  \;
-
-  \;
+  <apply-theme|manila-paper>
 </body>
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
+    <associate|sfactor|7>
   </collection>
 </initial>

@@ -4,11 +4,11 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-granite|1.0|new-granite|1.0>
+    <src-package-dtd|metal|1.0|metal|1.0>
 
     <\src-purpose>
-      Variant of the reddish theme for presentations and posters with pale
-      blue background.
+      Variant of the metal theme for presentations and posters with pale blue
+      background.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|granite-combo>
+  <use-package|metal-combo>
 
-  <apply-theme|granite>
+  <apply-theme|metal>
 </body>
 
 <\initial>

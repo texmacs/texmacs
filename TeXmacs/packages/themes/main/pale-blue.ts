@@ -4,11 +4,11 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-metal|1.0|new-metal|1.0>
+    <src-package-dtd|pale-blue|1.0|pale-blue|1.0>
 
     <\src-purpose>
-      Variant of the metal theme for presentations and posters with pale blue
-      background.
+      Variant of the bluish theme for presentations and posters with pale
+      blue background.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|metal-combo>
+  <use-package|pale-blue-combo>
 
-  <apply-theme|metal>
+  <apply-theme|pale-blue>
 </body>
 
 <\initial>

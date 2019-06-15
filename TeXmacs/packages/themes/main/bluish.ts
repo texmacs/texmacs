@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-pale-blue|1.0|new-pale-blue|1.0>
+    <src-package-dtd|bluish|1.0|bluish|1.0>
 
     <\src-purpose>
       Variant of the bluish theme for presentations and posters with pale
@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|pale-blue-combo>
+  <use-package|bluish-combo>
 
-  <apply-theme|pale-blue>
+  <apply-theme|bluish>
 </body>
 
 <\initial>

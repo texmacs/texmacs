@@ -1,16 +1,17 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.9>
 
 <style|source>
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|boring-white|1.0|poster-theme|1.0>
+    <src-package-dtd|rough-paper|1.0|rough-paper|1.0>
 
     <\src-purpose>
-      Boring white theme for posters.
+      Variant of the reddish theme for presentations and posters with pale
+      blue background.
     </src-purpose>
 
-    <src-copyright|2018|Joris van der Hoeven>
+    <src-copyright|2013--2019|Joris van der Hoeven>
 
     <\src-license>
       This software falls under the <hlink|GNU general public license,
@@ -20,11 +21,13 @@
     </src-license>
   </src-title>>
 
-  \;
+  <use-package|rough-paper-combo>
+
+  <apply-theme|rough-paper>
 </body>
 
 <\initial>
   <\collection>
-    <associate|preamble|true>
+    <associate|sfactor|7>
   </collection>
 </initial>

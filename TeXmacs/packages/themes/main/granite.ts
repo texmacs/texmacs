@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-dark-vador|1.0|new-dark-vador|1.0>
+    <src-package-dtd|granite|1.0|granite|1.0>
 
     <\src-purpose>
-      Variant of the dark-vador theme for presentations and posters with pale
+      Variant of the reddish theme for presentations and posters with pale
       blue background.
     </src-purpose>
 
@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-vador-combo>
+  <use-package|granite-combo>
 
-  <apply-theme|dark-vador>
+  <apply-theme|granite>
 </body>
 
 <\initial>

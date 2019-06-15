@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-ridged-paper|1.0|new-ridged-paper|1.0>
+    <src-package-dtd|reddish|1.0|reddish|1.0>
 
     <\src-purpose>
       Variant of the reddish theme for presentations and posters with pale
@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|ridged-paper-combo>
+  <use-package|reddish-combo>
 
-  <apply-theme|ridged-paper>
+  <apply-theme|reddish>
 </body>
 
 <\initial>

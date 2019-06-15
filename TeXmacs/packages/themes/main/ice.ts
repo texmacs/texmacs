@@ -4,11 +4,11 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|new-bluish|1.0|new-bluish|1.0>
+    <src-package-dtd|ice|1.0|ice|1.0>
 
     <\src-purpose>
-      Variant of the bluish theme for presentations and posters with pale
-      blue background.
+      Variant of the ice theme for presentations and posters with pale blue
+      background.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -21,9 +21,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|bluish-combo>
+  <use-package|ice-combo>
 
-  <apply-theme|bluish>
+  <apply-theme|ice>
 </body>
 
 <\initial>

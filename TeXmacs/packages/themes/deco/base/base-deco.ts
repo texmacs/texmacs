@@ -28,12 +28,6 @@
 
   <new-theme|ornaments|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-body-color|ornament-body-math-color|ornament-body-strong-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-title-color|ornament-title-math-color|ornament-title-strong-color>
 
-  <assign|ornaments-ornament-border|2ln>
-
-  <assign|ornaments-ornament-hpadding|1spc>
-
-  <assign|ornaments-ornament-vpadding|1spc>
-
   <assign|ornaments-title-color|<value|color>>
 
   <assign|ornaments-title-math-color|<value|math-color>>
