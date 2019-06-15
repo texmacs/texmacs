@@ -34,7 +34,7 @@
 
   <assign|dark-vador-math-color|pastel red>
 
-  <assign|dark-vador-strong-color|pastel yellow>
+  <assign|dark-vador-strong-color|#fff0c0>
 
   <\active*>
     <\src-comment>

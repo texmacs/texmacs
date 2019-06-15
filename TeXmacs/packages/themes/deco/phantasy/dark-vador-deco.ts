@@ -58,11 +58,11 @@
 
   <assign|plain-vador-ornament-body-math-color|pastel red>
 
-  <assign|plain-vador-ornament-body-strong-color|pastel yellow>
+  <assign|plain-vador-ornament-body-strong-color|#fff0c0>
 
   <assign|plain-vador-color|#e0e0e0>
 
-  <assign|plain-vador-strong-color|pastel yellow>
+  <assign|plain-vador-strong-color|#fff0c0>
 
   <assign|plain-vador-math-color|pastel red>
 
@@ -92,7 +92,7 @@
 
   <assign|title-vador-ornament-body-math-color|pastel red>
 
-  <assign|title-vador-ornament-body-strong-color|pastel yellow>
+  <assign|title-vador-ornament-body-strong-color|#fff0c0>
 
   <assign|title-vador-ornament-sunny-color|#301818>
 
@@ -100,7 +100,7 @@
 
   <assign|title-vador-color|#fff0c0>
 
-  <assign|title-vador-strong-color|pastel yellow>
+  <assign|title-vador-strong-color|#fff0c0>
 
   <assign|title-vador-math-color|pastel red>
 
