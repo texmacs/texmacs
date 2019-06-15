@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|metal-theme|1.0|metal-theme|1.0>
+    <src-package-dtd|metal-combo|1.0|metal-combo|1.0>
 
     <\src-purpose>
       Metallic theme for presentations and posters.
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|greyish-theme|metal-brushed-deco>
+  <use-package|greyish-combo|metal-brushed-deco>
 
   <copy-theme|metal|greyish>
 

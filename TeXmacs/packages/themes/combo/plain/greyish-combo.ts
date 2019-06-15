@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|greyish-theme|1.0|greyish-theme|1.0>
+    <src-package-dtd|greyish-combo|1.0|greyish-combo|1.0>
 
     <\src-purpose>
       Greyish theme for presentations and posters.
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-theme>
+  <use-package|light-combo>
 
   <copy-theme|greyish|light>
 

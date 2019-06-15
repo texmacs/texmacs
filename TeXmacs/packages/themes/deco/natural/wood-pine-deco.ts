@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-theme>
+  <use-package|light-combo>
 
   <copy-theme|wood-pine|light-ornament>
 

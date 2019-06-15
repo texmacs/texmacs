@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|rough-paper-theme|1.0|rough-paper-theme|1.0>
+    <src-package-dtd|rough-paper-combo|1.0|rough-paper-combo|1.0>
 
     <\src-purpose>
       Ridged paper theme for presentations and posters.
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme|paper-rough-deco>
+  <use-package|reddish-combo|paper-rough-deco>
 
   <copy-theme|rough-paper|reddish>
 

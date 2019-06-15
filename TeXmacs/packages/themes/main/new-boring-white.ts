@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|bluish-theme>
+  <use-package|bluish-combo>
 
   <apply-theme|bluish>
 </body>

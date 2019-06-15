@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme>
+  <use-package|reddish-combo>
 
   <apply-theme|reddish>
 </body>

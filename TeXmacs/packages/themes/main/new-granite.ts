@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|granite-theme>
+  <use-package|granite-combo>
 
   <apply-theme|granite>
 </body>

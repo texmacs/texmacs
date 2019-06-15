@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|rough-paper-theme>
+  <use-package|rough-paper-combo>
 
   <apply-theme|rough-paper>
 </body>

@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|light-theme|1.0|light-theme|1.0>
+    <src-package-dtd|light-combo|1.0|light-combo|1.0>
 
     <\src-purpose>
       Light theme.
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|base-theme>
+  <use-package|base-combo>
 
   <copy-theme|light|base>
 

@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|base-theme|1.0|base-theme|1.0>
+    <src-package-dtd|base-combo|1.0|base-combo|1.0>
 
     <\src-purpose>
       Common base for most themes.

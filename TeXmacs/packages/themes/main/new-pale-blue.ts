@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|pale-blue-theme>
+  <use-package|pale-blue-combo>
 
   <apply-theme|pale-blue>
 </body>

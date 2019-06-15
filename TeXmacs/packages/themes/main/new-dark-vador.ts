@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-vador-theme>
+  <use-package|dark-vador-combo>
 
   <apply-theme|dark-vador>
 </body>

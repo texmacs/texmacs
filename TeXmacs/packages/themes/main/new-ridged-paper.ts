@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|ridged-paper-theme>
+  <use-package|ridged-paper-combo>
 
   <apply-theme|ridged-paper>
 </body>

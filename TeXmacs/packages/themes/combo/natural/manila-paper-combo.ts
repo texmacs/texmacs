@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|manila-paper-theme|1.0|manila-paper-theme|1.0>
+    <src-package-dtd|manila-paper-combo|1.0|manila-paper-combo|1.0>
 
     <\src-purpose>
       Manilla paper theme for presentations and posters.
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme|paper-manila-deco>
+  <use-package|reddish-combo|paper-manila-deco>
 
   <copy-theme|manila-paper|reddish>
 

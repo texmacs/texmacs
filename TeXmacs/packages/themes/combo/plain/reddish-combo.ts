@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|bluish-theme|1.0|bluish-theme|1.0>
+    <src-package-dtd|reddish-combo|1.0|reddish-combo|1.0>
 
     <\src-purpose>
-      Bluish theme for presentations and posters.
+      Reddish theme for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,9 +20,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-theme>
+  <use-package|light-combo>
 
-  <copy-theme|bluish|light>
+  <copy-theme|reddish|light>
 
   <\active*>
     <\src-comment>
@@ -30,13 +30,13 @@
     </src-comment>
   </active*>
 
-  <assign|bluish-ornament-color|pastel blue>
+  <assign|reddish-ornament-color|#fff0e8>
 
-  <assign|bluish-ornament-extra-color|dark blue>
+  <assign|reddish-ornament-extra-color|#903000>
 
-  <assign|bluish-ornament-sunny-color|#f4f4ff>
+  <assign|reddish-ornament-sunny-color|#fff8f4>
 
-  <assign|bluish-ornament-shadow-color|#d8d8ff>
+  <assign|reddish-ornament-shadow-color|#ffe0d0>
 
   <\active*>
     <\src-comment>
@@ -44,9 +44,9 @@
     </src-comment>
   </active*>
 
-  <assign|bluish-title-bar-color|<macro|dark blue>>
+  <assign|reddish-title-bar-color|<macro|#903000>>
 
-  <assign|bluish-title-color|<macro|white>>
+  <assign|reddish-title-color|<macro|white>>
 
   <\active*>
     <\src-comment>
@@ -54,9 +54,9 @@
     </src-comment>
   </active*>
 
-  <assign|bluish-strong-color|#602060>
+  <assign|reddish-strong-color|#602060>
 
-  <assign|bluish-math-color|#503050>
+  <assign|reddish-math-color|#503050>
 
   <\active*>
     <\src-comment>
@@ -64,11 +64,11 @@
     </src-comment>
   </active*>
 
-  <assign|bluish-input-color|pastel blue>
+  <assign|reddish-input-color|#fff0e8>
 
-  <assign|bluish-fold-bar-color|#c0c0e0>
+  <assign|reddish-fold-bar-color|#dcccc4>
 
-  <assign|bluish-fold-title-color|#a0a0d0>
+  <assign|reddish-fold-title-color|#c8b0a4>
 </body>
 
 <\initial>

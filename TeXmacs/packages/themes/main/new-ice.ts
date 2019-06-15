@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|ice-theme>
+  <use-package|ice-combo>
 
   <apply-theme|ice>
 </body>

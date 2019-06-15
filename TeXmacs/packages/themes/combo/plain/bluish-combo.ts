@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|granite-theme|1.0|granite-theme|1.0>
+    <src-package-dtd|bluish-combo|1.0|bluish-combo|1.0>
 
     <\src-purpose>
-      Granite theme for presentations and posters.
+      Bluish theme for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,21 +20,23 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-theme|stone-granite-ornament>
+  <use-package|light-combo>
 
-  <copy-theme|granite|dark>
-
-  <select-theme|granite|stone-granite>
+  <copy-theme|bluish|light>
 
   <\active*>
     <\src-comment>
-      Background
+      Standard ornaments
     </src-comment>
   </active*>
 
-  <assign|granite-bg-color|<pattern|granite-xdark.png|*3/5|*3/5|#080808>>
+  <assign|bluish-ornament-color|pastel blue>
 
-  <assign|granite-monochrome-bg-color|#080808>
+  <assign|bluish-ornament-extra-color|dark blue>
+
+  <assign|bluish-ornament-sunny-color|#f4f4ff>
+
+  <assign|bluish-ornament-shadow-color|#d8d8ff>
 
   <\active*>
     <\src-comment>
@@ -42,9 +44,19 @@
     </src-comment>
   </active*>
 
-  <assign|granite-title-bar-color|<macro|<pattern|granite-medium.png|*3/5|*3/5|#202020>>>
+  <assign|bluish-title-bar-color|<macro|dark blue>>
 
-  <assign|granite-title-color|<macro|white>>
+  <assign|bluish-title-color|<macro|white>>
+
+  <\active*>
+    <\src-comment>
+      Colors of standard tags (strong, math, etc.)
+    </src-comment>
+  </active*>
+
+  <assign|bluish-strong-color|#602060>
+
+  <assign|bluish-math-color|#503050>
 
   <\active*>
     <\src-comment>
@@ -52,21 +64,11 @@
     </src-comment>
   </active*>
 
-  <assign|granite-input-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+  <assign|bluish-input-color|pastel blue>
 
-  <assign|granite-fold-bar-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+  <assign|bluish-fold-bar-color|#c0c0e0>
 
-  <assign|granite-fold-title-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
-
-  <\active*>
-    <\src-comment>
-      Posters
-    </src-comment>
-  </active*>
-
-  <copy-ornament|granite-title|stone-granite>
-
-  <copy-ornament|granite-framed|stone-granite>
+  <assign|bluish-fold-title-color|#a0a0d0>
 </body>
 
 <\initial>

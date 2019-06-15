@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|dark-vador-theme|1.0|dark-vador-theme|1.0>
+    <src-package-dtd|dark-vador-combo|1.0|dark-vador-combo|1.0>
 
     <\src-purpose>
       Dark vador theme for presentations and posters.
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-theme>
+  <use-package|dark-combo>
 
   <copy-theme|dark-vador|dark>
 

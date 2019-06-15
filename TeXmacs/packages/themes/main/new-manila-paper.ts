@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|manila-paper-theme>
+  <use-package|manila-paper-combo>
 
   <apply-theme|manila-paper>
 </body>

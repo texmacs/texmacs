@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|dark-theme|1.0|dark-theme|1.0>
+    <src-package-dtd|dark-combo|1.0|dark-combo|1.0>
 
     <\src-purpose>
       Dark theme.
@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|base-theme>
+  <use-package|base-combo>
 
   <copy-theme|dark|base>
 

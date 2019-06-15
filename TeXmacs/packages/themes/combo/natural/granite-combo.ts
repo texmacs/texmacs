@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|reddish-theme|1.0|reddish-theme|1.0>
+    <src-package-dtd|granite-combo|1.0|granite-combo|1.0>
 
     <\src-purpose>
-      Reddish theme for presentations and posters.
+      Granite theme for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,23 +20,21 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-theme>
+  <use-package|dark-combo|stone-granite-ornament>
 
-  <copy-theme|reddish|light>
+  <copy-theme|granite|dark>
+
+  <select-theme|granite|stone-granite>
 
   <\active*>
     <\src-comment>
-      Standard ornaments
+      Background
     </src-comment>
   </active*>
 
-  <assign|reddish-ornament-color|#fff0e8>
+  <assign|granite-bg-color|<pattern|granite-xdark.png|*3/5|*3/5|#080808>>
 
-  <assign|reddish-ornament-extra-color|#903000>
-
-  <assign|reddish-ornament-sunny-color|#fff8f4>
-
-  <assign|reddish-ornament-shadow-color|#ffe0d0>
+  <assign|granite-monochrome-bg-color|#080808>
 
   <\active*>
     <\src-comment>
@@ -44,19 +42,9 @@
     </src-comment>
   </active*>
 
-  <assign|reddish-title-bar-color|<macro|#903000>>
+  <assign|granite-title-bar-color|<macro|<pattern|granite-medium.png|*3/5|*3/5|#202020>>>
 
-  <assign|reddish-title-color|<macro|white>>
-
-  <\active*>
-    <\src-comment>
-      Colors of standard tags (strong, math, etc.)
-    </src-comment>
-  </active*>
-
-  <assign|reddish-strong-color|#602060>
-
-  <assign|reddish-math-color|#503050>
+  <assign|granite-title-color|<macro|white>>
 
   <\active*>
     <\src-comment>
@@ -64,11 +52,21 @@
     </src-comment>
   </active*>
 
-  <assign|reddish-input-color|#fff0e8>
+  <assign|granite-input-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
 
-  <assign|reddish-fold-bar-color|#dcccc4>
+  <assign|granite-fold-bar-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
 
-  <assign|reddish-fold-title-color|#c8b0a4>
+  <assign|granite-fold-title-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+
+  <\active*>
+    <\src-comment>
+      Posters
+    </src-comment>
+  </active*>
+
+  <copy-ornament|granite-title|stone-granite>
+
+  <copy-ornament|granite-framed|stone-granite>
 </body>
 
 <\initial>

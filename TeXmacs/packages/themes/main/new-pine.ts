@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|pine-theme>
+  <use-package|pine-combo>
 
   <apply-theme|pine>
 </body>

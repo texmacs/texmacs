@@ -21,7 +21,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|metal-theme>
+  <use-package|metal-combo>
 
   <apply-theme|metal>
 </body>

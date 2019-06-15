@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|pine-theme|1.0|pine-theme|1.0>
+    <src-package-dtd|ice-combo|1.0|ice-combo|1.0>
 
     <\src-purpose>
-      Pine theme for presentations and posters.
+      Ice theme for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,21 +20,21 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme|wood-pine-deco>
+  <use-package|bluish-combo>
 
-  <copy-theme|pine|reddish>
-
-  <select-theme|pine|wood-pine>
+  <copy-theme|ice|bluish>
 
   <\active*>
     <\src-comment>
-      Background
+      Standard ornaments
     </src-comment>
   </active*>
 
-  <assign|pine-bg-color|<pattern|pine-bright.png|*3/5|*3/5|#f8ecd4>>
+  <assign|ice-ornament-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
+  blue>>
 
-  <assign|pine-monochrome-bg-color|#f8ecd4>
+  <assign|ice-ornament-extra-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
+  blue>>
 
   <\active*>
     <\src-comment>
@@ -42,9 +42,10 @@
     </src-comment>
   </active*>
 
-  <assign|pine-title-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
+  <assign|ice-title-bar-color|<macro|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
+  blue>>>
 
-  <assign|pine-title-color|<macro|#f8f8f4>>
+  <assign|ice-title-color|<macro|<pattern|ice-light.png|*3/5|*3/5|#f0f0f0>>>
 
   <\active*>
     <\src-comment>
@@ -52,21 +53,12 @@
     </src-comment>
   </active*>
 
-  <assign|pine-input-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#f4eee8>>
+  <assign|ice-input-color|<pattern|ice-medium.png|*3/5|*3/5|pastel grey>>
 
-  <assign|pine-fold-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200C>>
+  <assign|ice-fold-bar-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark blue>>
 
-  <assign|pine-fold-title-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
-
-  <\active*>
-    <\src-comment>
-      Posters
-    </src-comment>
-  </active*>
-
-  <copy-ornament|pine-title|wood-pine>
-
-  <copy-ornament|pine-framed|wood-pine>
+  <assign|ice-fold-title-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
+  blue>>
 </body>
 
 <\initial>
