@@ -28,23 +28,17 @@
 
   <\active*>
     <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|granite-strong-color|#f0ffb0>
-
-  <assign|granite-math-color|#ffd4c0>
-
-  <\active*>
-    <\src-comment>
-      Background
+      Main colors
     </src-comment>
   </active*>
 
   <assign|granite-bg-color|<pattern|granite-xdark.png|*3/5|*3/5|#080808>>
 
   <assign|granite-monochrome-bg-color|#080808>
+
+  <assign|granite-strong-color|#f0ffb0>
+
+  <assign|granite-math-color|#ffd4c0>
 
   <\active*>
     <\src-comment>

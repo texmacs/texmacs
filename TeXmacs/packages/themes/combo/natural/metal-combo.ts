@@ -28,23 +28,13 @@
 
   <\active*>
     <\src-comment>
-      Background
+      Main colors
     </src-comment>
   </active*>
 
   <assign|metal-bg-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
 
   <assign|metal-monochrome-bg-color|#f0f0f0>
-
-  <\active*>
-    <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
-
-  <assign|metal-ornament-color|<pattern|ridged-brushed-medium.png|*3/5|*3/5|#d0d0d0>>
-
-  <assign|metal-ornament-extra-color|<pattern|ridged-brushed-dark.png|*3/5|*3/5|#a0a0a0>>
 
   <\active*>
     <\src-comment>
@@ -55,6 +45,16 @@
   <assign|metal-title-bar-color|<macro|<pattern|granite-light.png|*3/5|*3/5|#808080>>>
 
   <assign|metal-title-color|<macro|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>>
+
+  <\active*>
+    <\src-comment>
+      Standard ornaments
+    </src-comment>
+  </active*>
+
+  <assign|metal-ornament-color|<pattern|ridged-brushed-medium.png|*3/5|*3/5|#d0d0d0>>
+
+  <assign|metal-ornament-extra-color|<pattern|ridged-brushed-dark.png|*3/5|*3/5|#a0a0a0>>
 
   <\active*>
     <\src-comment>

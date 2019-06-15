@@ -28,21 +28,15 @@
 
   <\active*>
     <\src-comment>
-      Colors
-    </src-comment>
-  </active*>
-
-  <assign|manila-paper-strong-color|#504000>
-
-  <\active*>
-    <\src-comment>
-      Background
+      Main colors
     </src-comment>
   </active*>
 
   <assign|manila-paper-bg-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
 
   <assign|manila-paper-monochrome-bg-color|#f4f4f0>
+
+  <assign|manila-paper-strong-color|#504000>
 
   <\active*>
     <\src-comment>

@@ -28,13 +28,23 @@
 
   <\active*>
     <\src-comment>
-      Colors.
+      Main colors
     </src-comment>
   </active*>
 
   <assign|dark-vador-math-color|pastel red>
 
   <assign|dark-vador-strong-color|#fff0c0>
+
+  <\active*>
+    <\src-comment>
+      Title bars
+    </src-comment>
+  </active*>
+
+  <assign|dark-vador-title-bar-color|<macro|#603030>>
+
+  <assign|dark-vador-title-color|<macro|#fff0c0>>
 
   <\active*>
     <\src-comment>
@@ -53,16 +63,6 @@
   <assign|dark-vador-ornament-sunny-color|#804040>
 
   <assign|dark-vador-ornament-shadow-color|#402020>
-
-  <\active*>
-    <\src-comment>
-      Title bars
-    </src-comment>
-  </active*>
-
-  <assign|dark-vador-title-bar-color|<macro|#603030>>
-
-  <assign|dark-vador-title-color|<macro|#fff0c0>>
 
   <\active*>
     <\src-comment>

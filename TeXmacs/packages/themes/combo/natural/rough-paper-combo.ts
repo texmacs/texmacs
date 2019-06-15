@@ -28,15 +28,7 @@
 
   <\active*>
     <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|rough-paper-strong-color|#504000>
-
-  <\active*>
-    <\src-comment>
-      Background
+      Main colors
     </src-comment>
   </active*>
 
@@ -44,19 +36,7 @@
 
   <assign|rough-paper-monochrome-bg-color|#f8f8f8>
 
-  <\active*>
-    <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
-
-  <assign|rough-paper-ornament-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
-
-  <assign|rough-paper-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
-
-  <assign|rough-paper-ornament-sunny-color|#e0e0e0>
-
-  <assign|rough-paper-ornament-shadow-color|#a0a0a0>
+  <assign|rough-paper-strong-color|#504000>
 
   <\active*>
     <\src-comment>

@@ -28,7 +28,7 @@
 
   <\active*>
     <\src-comment>
-      Text colors
+      Main colors
     </src-comment>
   </active*>
 

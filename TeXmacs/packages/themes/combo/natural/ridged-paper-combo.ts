@@ -28,15 +28,7 @@
 
   <\active*>
     <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|ridged-paper-strong-color|#504000>
-
-  <\active*>
-    <\src-comment>
-      Background
+      Main colors
     </src-comment>
   </active*>
 
@@ -44,19 +36,7 @@
 
   <assign|ridged-paper-monochrome-bg-color|#f4eee8>
 
-  <\active*>
-    <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
-
-  <assign|ridged-paper-ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
-
-  <assign|ridged-paper-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
-
-  <assign|ridged-paper-ornament-sunny-color|#f0e0c0>
-
-  <assign|ridged-paper-ornament-shadow-color|#c07055>
+  <assign|ridged-paper-strong-color|#504000>
 
   <\active*>
     <\src-comment>
@@ -82,6 +62,20 @@
   <assign|title-left|<macro|body|<if|<equal|<value|title-theme>|title-bar>||<right-gnu>>>>
 
   <assign|title-right|<macro|body|<if|<equal|<value|title-theme>|title-bar>||<left-gnu>>>>
+
+  <\active*>
+    <\src-comment>
+      Standard ornaments
+    </src-comment>
+  </active*>
+
+  <assign|ridged-paper-ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+
+  <assign|ridged-paper-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+
+  <assign|ridged-paper-ornament-sunny-color|#f0e0c0>
+
+  <assign|ridged-paper-ornament-shadow-color|#c07055>
 
   <\active*>
     <\src-comment>
