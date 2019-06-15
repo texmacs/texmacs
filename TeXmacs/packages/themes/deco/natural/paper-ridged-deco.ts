@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|paper-ridged-ornament|1.0|paper-ridged-ornament|1.0>
+    <src-package-dtd|paper-ridged-deco|1.0|paper-ridged-deco|1.0>
 
     <\src-purpose>
       Ridged paper ornament for presentations and posters.

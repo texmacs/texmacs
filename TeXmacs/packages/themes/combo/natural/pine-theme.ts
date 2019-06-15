@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-theme|wood-pine-ornament>
+  <use-package|reddish-theme|wood-pine-deco>
 
   <copy-theme|pine|reddish>
 

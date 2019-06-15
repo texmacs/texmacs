@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|paper-manila-ornament|1.0|paper-manila-ornament|1.0>
+    <src-package-dtd|metal-brushed-deco|1.0|metal-brushed-deco|1.0>
 
     <\src-purpose>
-      Manilla paper ornamenrt for presentations and posters.
+      Metal ornament for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -22,9 +22,9 @@
 
   <use-package|light-theme>
 
-  <copy-theme|paper-manila|light-ornament>
+  <copy-theme|metal-brushed|light-ornament>
 
-  <assign|manila-paper|<macro|x|<with-paper-manila|<ornament|<arg|x>>>>>
+  <assign|metal|<macro|x|<with-metal-brushed|<ornament|<arg|x>>>>>
 
   <\active*>
     <\src-comment>
@@ -32,23 +32,15 @@
     </src-comment>
   </active*>
 
-  <assign|paper-manila-ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
+  <assign|metal-brushed-ornament-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>>
 
-  <assign|paper-manila-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+  <assign|metal-brushed-ornament-extra-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#8080a0>>
 
-  <assign|paper-manila-ornament-title-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+  <assign|metal-brushed-ornament-title-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
 
-  <assign|paper-manila-ornament-sunny-color|#e8e8e0>
+  <assign|metal-brushed-ornament-sunny-color|#e0e0e8>
 
-  <assign|paper-manila-ornament-shadow-color|#acac90>
-
-  <\active*>
-    <\src-comment>
-      Colors
-    </src-comment>
-  </active*>
-
-  <assign|paper-manila-strong-color|#504000>
+  <assign|metal-brushed-ornament-shadow-color|#9090ac>
 </body>
 
 <\initial>

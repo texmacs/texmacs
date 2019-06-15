@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|paper-rough-ornament|1.0|paper-rough-ornament|1.0>
+    <src-package-dtd|paper-manila-deco|1.0|paper-manila-deco|1.0>
 
     <\src-purpose>
-      Ridged paper ornament for presentations and posters.
+      Manilla paper ornamenrt for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -22,9 +22,9 @@
 
   <use-package|light-theme>
 
-  <copy-theme|paper-rough|light-ornament>
+  <copy-theme|paper-manila|light-ornament>
 
-  <assign|rough-paper|<macro|x|<with-paper-rough|<ornament|<arg|x>>>>>
+  <assign|manila-paper|<macro|x|<with-paper-manila|<ornament|<arg|x>>>>>
 
   <\active*>
     <\src-comment>
@@ -32,23 +32,23 @@
     </src-comment>
   </active*>
 
-  <assign|paper-rough-ornament-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
+  <assign|paper-manila-ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
 
-  <assign|paper-rough-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+  <assign|paper-manila-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 
-  <assign|paper-rough-ornament-title-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
+  <assign|paper-manila-ornament-title-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
 
-  <assign|paper-rough-ornament-sunny-color|#e0e0e0>
+  <assign|paper-manila-ornament-sunny-color|#e8e8e0>
 
-  <assign|paper-rough-ornament-shadow-color|#a0a0a0>
+  <assign|paper-manila-ornament-shadow-color|#acac90>
 
   <\active*>
     <\src-comment>
-      Text colors
+      Colors
     </src-comment>
   </active*>
 
-  <assign|paper-rough-strong-color|#504000>
+  <assign|paper-manila-strong-color|#504000>
 </body>
 
 <\initial>

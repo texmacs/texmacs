@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|greyish-theme|metal-brushed-ornament>
+  <use-package|greyish-theme|metal-brushed-deco>
 
   <copy-theme|metal|greyish>
 

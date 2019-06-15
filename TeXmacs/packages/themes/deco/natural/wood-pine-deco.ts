@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|wood-pine-ornament|1.0|wood-pine-ornament|1.0>
+    <src-package-dtd|wood-pine-deco|1.0|wood-pine-deco|1.0>
 
     <\src-purpose>
       Pine ornament for presentations and posters.

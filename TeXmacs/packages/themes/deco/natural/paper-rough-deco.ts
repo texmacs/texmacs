@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|metal-brushed-ornament|1.0|metal-brushed-ornament|1.0>
+    <src-package-dtd|paper-rough-deco|1.0|paper-rough-deco|1.0>
 
     <\src-purpose>
-      Metal ornament for presentations and posters.
+      Ridged paper ornament for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -22,9 +22,9 @@
 
   <use-package|light-theme>
 
-  <copy-theme|metal-brushed|light-ornament>
+  <copy-theme|paper-rough|light-ornament>
 
-  <assign|metal|<macro|x|<with-metal-brushed|<ornament|<arg|x>>>>>
+  <assign|rough-paper|<macro|x|<with-paper-rough|<ornament|<arg|x>>>>>
 
   <\active*>
     <\src-comment>
@@ -32,15 +32,23 @@
     </src-comment>
   </active*>
 
-  <assign|metal-brushed-ornament-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>>
+  <assign|paper-rough-ornament-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
 
-  <assign|metal-brushed-ornament-extra-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#8080a0>>
+  <assign|paper-rough-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 
-  <assign|metal-brushed-ornament-title-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+  <assign|paper-rough-ornament-title-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
 
-  <assign|metal-brushed-ornament-sunny-color|#e0e0e8>
+  <assign|paper-rough-ornament-sunny-color|#e0e0e0>
 
-  <assign|metal-brushed-ornament-shadow-color|#9090ac>
+  <assign|paper-rough-ornament-shadow-color|#a0a0a0>
+
+  <\active*>
+    <\src-comment>
+      Text colors
+    </src-comment>
+  </active*>
+
+  <assign|paper-rough-strong-color|#504000>
 </body>
 
 <\initial>
