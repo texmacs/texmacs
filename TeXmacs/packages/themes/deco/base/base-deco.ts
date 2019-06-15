@@ -87,14 +87,6 @@
   </macro>><assign|<unquote|<merge|<arg|deco>|-titled-block>>|<\macro|name|body>
     <compound|<unquote|<value|w>>|<deco-titled-block|<arg|name>|<arg|body>>>
   </macro>>>>>>>
-
-  <\active*>
-    <\src-comment>
-      Copy color parameters to theme
-    </src-comment>
-  </active*>
-
-  <assign|select-title-colors-from-deco|<macro|t|d|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|t>|-title-bar-color>>|<value|<unquote|<merge|<arg|f>|-ornament-extra-color>>>><assign|<unquote|<merge|<arg|t>|-title-color>>|<value|<unquote|<merge|<arg|f>|-ornament-title-color>>>>>>>>
 </body>
 
 <\initial>
