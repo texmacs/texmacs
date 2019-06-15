@@ -30,9 +30,11 @@
     </src-comment>
   </active*>
 
-  <assign|reddish-ornament-color|#fff0e8>
-
   <assign|reddish-ornament-extra-color|#903000>
+
+  <assign|reddish-ornament-title-color|white>
+
+  <assign|reddish-ornament-color|#fff0e8>
 
   <assign|reddish-ornament-sunny-color|#fff8f4>
 

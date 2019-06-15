@@ -30,9 +30,11 @@
     </src-comment>
   </active*>
 
-  <assign|greyish-ornament-color|pastel grey>
-
   <assign|greyish-ornament-extra-color|dark grey>
+
+  <assign|greyish-ornament-title-color|white>
+
+  <assign|greyish-ornament-color|pastel grey>
 
   <assign|greyish-ornament-sunny-color|#e0e0e0>
 

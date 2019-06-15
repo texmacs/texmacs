@@ -30,9 +30,11 @@
     </src-comment>
   </active*>
 
-  <assign|bluish-ornament-color|pastel blue>
-
   <assign|bluish-ornament-extra-color|dark blue>
+
+  <assign|bluish-ornament-title-color|white>
+
+  <assign|bluish-ornament-color|pastel blue>
 
   <assign|bluish-ornament-sunny-color|#f4f4ff>
 
