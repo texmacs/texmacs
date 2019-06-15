@@ -51,16 +51,6 @@
   <assign|wood-pine-ornament-sunny-color|#ffe8c0>
 
   <assign|wood-pine-ornament-shadow-color|brown>
-
-  <\active*>
-    <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|wood-pine-strong-color|#0c3000>
-
-  <assign|wood-pine-math-color|#500000>
 </body>
 
 <\initial>

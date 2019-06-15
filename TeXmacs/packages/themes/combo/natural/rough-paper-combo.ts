@@ -28,6 +28,14 @@
 
   <\active*>
     <\src-comment>
+      Text colors
+    </src-comment>
+  </active*>
+
+  <assign|rough-paper-strong-color|#504000>
+
+  <\active*>
+    <\src-comment>
       Background
     </src-comment>
   </active*>

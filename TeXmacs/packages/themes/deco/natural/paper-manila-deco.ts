@@ -51,14 +51,6 @@
   <assign|paper-manila-ornament-sunny-color|#e8e8e0>
 
   <assign|paper-manila-ornament-shadow-color|#acac90>
-
-  <\active*>
-    <\src-comment>
-      Colors
-    </src-comment>
-  </active*>
-
-  <assign|paper-manila-strong-color|#504000>
 </body>
 
 <\initial>

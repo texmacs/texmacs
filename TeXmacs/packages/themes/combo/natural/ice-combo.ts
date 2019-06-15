@@ -28,6 +28,16 @@
 
   <\active*>
     <\src-comment>
+      Text colors
+    </src-comment>
+  </active*>
+
+  <assign|ice-strong-color|#602060>
+
+  <assign|ice-math-color|#503050>
+
+  <\active*>
+    <\src-comment>
       Titles
     </src-comment>
   </active*>

@@ -28,6 +28,8 @@
     </src-comment>
   </active*>
 
+  <new-theme|colors|bg-color|color|math-color|strong-color>
+
   <new-theme|no-patterns|monochrome-bg-color>
 
   <\active*>
@@ -36,7 +38,7 @@
     </src-comment>
   </active*>
 
-  <new-theme|titles|title-shape|title-bar-color|title-color>
+  <new-theme|titles|title-bar-color|title-color>
 
   <\active*>
     <\src-comment>
@@ -54,13 +56,15 @@
 
   <new-theme|poster|title-block|framed-block|framed-block*|alternate-block|alternate-block*>
 
+  <new-theme|poster-ornament-shape|title-shape|framed-shape|alternate-shape>
+
   <\active*>
     <\src-comment>
       Combine everything
     </src-comment>
   </active*>
 
-  <copy-theme|base|colors|no-patterns|ornaments|titles|sessions|poster>
+  <copy-theme|base|colors|no-patterns|ornaments|titles|sessions|poster|poster-ornament-shape>
 </body>
 
 <\initial>

@@ -24,7 +24,7 @@
 
   <copy-theme|light|base>
 
-  <copy-theme|light-ornament|rich-ornament>
+  <copy-theme|light-ornament|ornaments>
 
   \;
 </body>

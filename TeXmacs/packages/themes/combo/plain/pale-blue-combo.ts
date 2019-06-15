@@ -43,8 +43,6 @@
 
   <assign|pale-blue-title-shape|rounded>
 
-  <assign|pale-blue-plain-shape|rounded>
-
   <assign|pale-blue-framed-shape|rounded>
 
   <assign|pale-blue-alternate-shape|rounded>

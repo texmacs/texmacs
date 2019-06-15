@@ -51,14 +51,6 @@
   <assign|paper-rough-ornament-sunny-color|#e0e0e0>
 
   <assign|paper-rough-ornament-shadow-color|#a0a0a0>
-
-  <\active*>
-    <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|paper-rough-strong-color|#504000>
 </body>
 
 <\initial>

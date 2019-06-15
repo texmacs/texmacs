@@ -28,6 +28,16 @@
 
   <\active*>
     <\src-comment>
+      Text colors
+    </src-comment>
+  </active*>
+
+  <assign|granite-strong-color|#f0ffb0>
+
+  <assign|granite-math-color|#ffd4c0>
+
+  <\active*>
+    <\src-comment>
       Background
     </src-comment>
   </active*>

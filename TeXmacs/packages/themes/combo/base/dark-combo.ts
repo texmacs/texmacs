@@ -24,7 +24,7 @@
 
   <copy-theme|dark|base>
 
-  <copy-theme|dark-ornament|rich-ornament>
+  <copy-theme|dark-ornament|ornaments>
 
   <\active*>
     <\src-comment>
@@ -32,15 +32,21 @@
     </src-comment>
   </active*>
 
-  <assign|dark-ornament-bg-color|black>
+  <assign|dark-bg-color|black>
 
-  <assign|dark-ornament-monochrome-bg-color|black>
+  <assign|dark-monochrome-bg-color|black>
 
-  <assign|dark-ornament-color|white>
+  <assign|dark-color|white>
 
-  <assign|dark-ornament-math-color|white>
+  <assign|dark-math-color|white>
 
-  <assign|dark-ornament-strong-color|white>
+  <assign|dark-strong-color|white>
+
+  <\active*>
+    <\src-comment>
+      Ornament colors
+    </src-comment>
+  </active*>
 
   <assign|dark-ornament-ornament-body-color|white>
 

@@ -53,16 +53,6 @@
   <assign|natural-ice-ornament-sunny-color|#f4f4ff>
 
   <assign|natural-ice-ornament-shadow-color|#d8d8ff>
-
-  <\active*>
-    <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|natural-ice-strong-color|#602060>
-
-  <assign|natural-ice-math-color|#503050>
 </body>
 
 <\initial>

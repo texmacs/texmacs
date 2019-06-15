@@ -51,14 +51,6 @@
   <assign|paper-ridged-ornament-sunny-color|#f0e0e0>
 
   <assign|paper-ridged-ornament-shadow-color|#d0a0a0>
-
-  <\active*>
-    <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|paper-ridged-strong-color|#504000>
 </body>
 
 <\initial>

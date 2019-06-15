@@ -51,16 +51,6 @@
   <assign|stone-granite-ornament-sunny-color|light grey>
 
   <assign|stone-granite-ornament-shadow-color|dark grey>
-
-  <\active*>
-    <\src-comment>
-      Text colors
-    </src-comment>
-  </active*>
-
-  <assign|stone-granite-strong-color|#f0ffb0>
-
-  <assign|stone-granite-math-color|#ffd4c0>
 </body>
 
 <\initial>

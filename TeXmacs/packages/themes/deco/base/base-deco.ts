@@ -22,14 +22,6 @@
 
   <\active*>
     <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <new-theme|colors|bg-color|color|math-color|strong-color>
-
-  <\active*>
-    <\src-comment>
       Ornaments
     </src-comment>
   </active*>
@@ -53,8 +45,6 @@
   <assign|ornaments-body-math-color|<value|math-color>>
 
   <assign|ornaments-body-strong-color|<value|strong-color>>
-
-  <assign|copy-ornament|<macro|t|from|<with|f|<merge|<arg|from>|-ornament>|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|t>|-shape>>|<value|<unquote|<merge|<value|f>|-shape>>>><assign|<unquote|<merge|<arg|t>|-border>>|<value|<unquote|<merge|<value|f>|-border>>>><assign|<unquote|<merge|<arg|t>|-title-style>>|<value|<unquote|<merge|<value|f>|-title-style>>>><assign|<unquote|<merge|<arg|t>|-title-bg-color>>|<value|<unquote|<merge|<value|f>|-extra-color>>>><assign|<unquote|<merge|<arg|t>|-title-color>>|<value|<unquote|<merge|<value|f>|-title-color>>>><assign|<unquote|<merge|<arg|t>|-body-bg-color>>|<value|<unquote|<merge|<value|f>|-color>>>><assign|<unquote|<merge|<arg|t>|-body-color>>|<value|<unquote|<merge|<arg|from>|-color>>>><assign|<unquote|<merge|<arg|t>|-body-math-color>>|<value|<unquote|<merge|<arg|from>|-math-color>>>><assign|<unquote|<merge|<arg|t>|-body-strong-color>>|<value|<unquote|<merge|<arg|from>|-strong-color>>>><assign|<unquote|<merge|<arg|t>|-sunny-color>>|<value|<unquote|<merge|<value|f>|-sunny-color>>>><assign|<unquote|<merge|<arg|t>|-shadow-color>>|<value|<unquote|<merge|<value|f>|-shadow-color>>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -103,14 +93,6 @@
   </macro>><assign|<unquote|<merge|<arg|deco>|-titled-block>>|<\macro|name|body>
     <compound|<unquote|<value|w>>|<deco-titled-block|<arg|name>|<arg|body>>>
   </macro>>>>>>>
-
-  <\active*>
-    <\src-comment>
-      Decorations
-    </src-comment>
-  </active*>
-
-  <copy-theme|rich-ornament|colors|ornaments>
 </body>
 
 <\initial>

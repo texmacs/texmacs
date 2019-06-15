@@ -28,6 +28,16 @@
 
   <\active*>
     <\src-comment>
+      Text colors
+    </src-comment>
+  </active*>
+
+  <assign|pine-strong-color|#0c3000>
+
+  <assign|pine-math-color|#500000>
+
+  <\active*>
+    <\src-comment>
       Background
     </src-comment>
   </active*>
