@@ -46,7 +46,7 @@
 
   <assign|ornaments-title-color|black>
 
-  <assign|copy-ornament|<macro|t|from|<with|f|<merge|<arg|from>|-ornament>|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|t>|-shape>>|<value|<unquote|<merge|<value|f>|-shape>>>><assign|<unquote|<merge|<arg|t>|-border>>|<value|<unquote|<merge|<value|f>|-border>>>><assign|<unquote|<merge|<arg|t>|-title-style>>|<value|<unquote|<merge|<value|f>|-title-style>>>><assign|<unquote|<merge|<arg|t>|-title-bg-color>>|<value|<unquote|<merge|<value|f>|-extra-color>>>><assign|<unquote|<merge|<arg|t>|-title-color>>|<value|<unquote|<merge|<value|f>|-title-color>>>><assign|<unquote|<merge|<arg|t>|-body-bg-color>>|<value|<unquote|<merge|<value|f>|-color>>>><assign|<unquote|<merge|<arg|t>|-body-color>>|<value|<unquote|<merge|<arg|from>|-color>>>><assign|<unquote|<merge|<arg|t>|-sunny-color>>|<value|<unquote|<merge|<value|f>|-sunny-color>>>><assign|<unquote|<merge|<arg|t>|-shadow-color>>|<value|<unquote|<merge|<value|f>|-shadow-color>>>>>>>>
+  <assign|copy-ornament|<macro|t|from|<with|f|<merge|<arg|from>|-ornament>|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|t>|-shape>>|<value|<unquote|<merge|<value|f>|-shape>>>><assign|<unquote|<merge|<arg|t>|-border>>|<value|<unquote|<merge|<value|f>|-border>>>><assign|<unquote|<merge|<arg|t>|-title-style>>|<value|<unquote|<merge|<value|f>|-title-style>>>><assign|<unquote|<merge|<arg|t>|-title-bg-color>>|<value|<unquote|<merge|<value|f>|-extra-color>>>><assign|<unquote|<merge|<arg|t>|-title-color>>|<value|<unquote|<merge|<value|f>|-title-color>>>><assign|<unquote|<merge|<arg|t>|-body-bg-color>>|<value|<unquote|<merge|<value|f>|-color>>>><assign|<unquote|<merge|<arg|t>|-body-color>>|<value|<unquote|<merge|<arg|from>|-color>>>><assign|<unquote|<merge|<arg|t>|-body-math-color>>|<value|<unquote|<merge|<arg|from>|-math-color>>>><assign|<unquote|<merge|<arg|t>|-body-strong-color>>|<value|<unquote|<merge|<arg|from>|-strong-color>>>><assign|<unquote|<merge|<arg|t>|-sunny-color>>|<value|<unquote|<merge|<value|f>|-sunny-color>>>><assign|<unquote|<merge|<arg|t>|-shadow-color>>|<value|<unquote|<merge|<value|f>|-shadow-color>>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -110,7 +110,7 @@
 
   <assign|plain-shadow-color|none>
 
-  <new-theme|poster-plain|plain-shape|plain-title-style|plain-title-bg-color|plain-title-color|plain-body-bg-color|plain-body-color|plain-math-color|plain-strong-color|plain-sunny-color|plain-shadow-color>
+  <new-theme|poster-plain|plain-shape|plain-title-style|plain-title-bg-color|plain-title-color|plain-body-bg-color|plain-body-color|plain-body-math-color|plain-body-strong-color|plain-sunny-color|plain-shadow-color>
 
   <\active*>
     <\src-comment>
@@ -138,7 +138,7 @@
 
   <assign|framed-shadow-color|#f0e0e0>
 
-  <new-theme|poster-framed|framed-shape|framed-title-style|framed-title-bg-color|framed-title-color|framed-body-bg-color|framed-body-color|framed-math-color|framed-strong-color|framed-sunny-color|framed-shadow-color>
+  <new-theme|poster-framed|framed-shape|framed-title-style|framed-title-bg-color|framed-title-color|framed-body-bg-color|framed-body-color|framed-body-math-color|framed-body-strong-color|framed-sunny-color|framed-shadow-color>
 
   <\active*>
     <\src-comment>
@@ -166,7 +166,7 @@
 
   <assign|alternate-shadow-color|#f0e0e0>
 
-  <new-theme|poster-alternate|alternate-shape|alternate-title-style|alternate-title-bg-color|alternate-title-color|alternate-body-bg-color|alternate-body-color|alternate-math-color|alternate-strong-color|alternate-sunny-color|alternate-shadow-color>
+  <new-theme|poster-alternate|alternate-shape|alternate-title-style|alternate-title-bg-color|alternate-title-color|alternate-body-bg-color|alternate-body-color|alternate-body-math-color|alternate-body-strong-color|alternate-sunny-color|alternate-shadow-color>
 
   <\active*>
     <\src-comment>

@@ -20,9 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-combo>
+  <use-package|dark-combo|dark-vador-deco>
 
   <copy-theme|dark-vador|dark>
+
+  <select-theme|dark-vador|plain-vador>
 
   <\active*>
     <\src-comment>
@@ -76,81 +78,17 @@
 
   <\active*>
     <\src-comment>
-      Title blocks.
+      Posters
     </src-comment>
   </active*>
 
-  <assign|dark-vador-title-body-bg-color|#603030>
+  <copy-ornament|dark-vador-title|title-vador>
 
-  <assign|dark-vador-title-body-color|#fff0c0>
+  <copy-ornament|dark-vador-plain|plain-vador>
 
-  <assign|dark-vador-title-shape|angular>
+  <copy-ornament|dark-vador-framed|framed-vador>
 
-  <assign|dark-vador-title-border|3ln>
-
-  <assign|dark-vador-title-sunny-color|#301818>
-
-  <assign|dark-vador-title-shadow-color|#201010>
-
-  <\active*>
-    <\src-comment>
-      Plain blocks.
-    </src-comment>
-  </active*>
-
-  <assign|dark-vador-plain-shape|angular>
-
-  <assign|dark-vador-plain-title-color|#e0c0c0>
-
-  <assign|dark-vador-plain-body-color|#e0e0e0>
-
-  <assign|dark-vador-plain-body-math-color|pastel red>
-
-  <assign|dark-vador-plain-body-strong-color|pastel yellow>
-
-  <\active*>
-    <\src-comment>
-      Framed blocks.
-    </src-comment>
-  </active*>
-
-  <assign|dark-vador-framed-shape|angular>
-
-  <assign|dark-vador-framed-title-style|top center>
-
-  <assign|dark-vador-framed-title-bg-color|dark red>
-
-  <assign|dark-vador-framed-title-color|#e0e0e0>
-
-  <assign|dark-vador-framed-body-bg-color|#e0e0e0>
-
-  <assign|dark-vador-framed-body-color|#200000>
-
-  <assign|dark-vador-framed-sunny-color|#804040>
-
-  <assign|dark-vador-framed-shadow-color|#402020>
-
-  <\active*>
-    <\src-comment>
-      Alternate framed blocks.
-    </src-comment>
-  </active*>
-
-  <assign|dark-vador-alternate-shape|angular>
-
-  <assign|dark-vador-alternate-title-style|top left>
-
-  <assign|dark-vador-alternate-title-bg-color|#602000>
-
-  <assign|dark-vador-alternate-title-color|#e0d0c0>
-
-  <assign|dark-vador-alternate-body-bg-color|#e0e0c0>
-
-  <assign|dark-vador-alternate-body-color|#400000>
-
-  <assign|dark-vador-alternate-sunny-color|#606030>
-
-  <assign|dark-vador-alternate-shadow-color|#303018>
+  <copy-ornament|dark-vador-alternate|alternate-vador>
 </body>
 
 <\initial>
