@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|metal-deco|1.0|metal-deco|1.0>
+    <src-package-dtd|metal-scene|1.0|metal-scene|1.0>
 
     <\src-purpose>
-      Metallic decorations for presentations and posters.
+      Coloring schemes on metallic backgrounds
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,25 +20,29 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-deco|metal-scene>
+  <use-package|light-scene|dark-scene>
 
   <\active*>
     <\src-comment>
-      Brushed metal
+      Light metal
     </src-comment>
   </active*>
 
-  <copy-theme|metal-brushed|light-deco>
+  <copy-theme|metal-brushed-light-scene|light-scene>
 
-  <new-deco|metal-brushed>
+  <assign|metal-brushed-light-scene-bg-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>>
 
-  <assign|metal-brushed-ornament-render-title|<value|with-metal-brushed-dark-scene>>
+  <\active*>
+    <\src-comment>
+      Dark metal
+    </src-comment>
+  </active*>
 
-  <assign|metal-brushed-ornament-render-body|<value|with-metal-brushed-light-scene>>
+  <copy-theme|metal-brushed-dark-scene|dark-scene>
 
-  <assign|metal-brushed-ornament-sunny-color|#e0e0e8>
+  <assign|metal-brushed-dark-scene-bg-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#8080a0>>
 
-  <assign|metal-brushed-ornament-shadow-color|#9090ac>
+  <assign-uniform|metal-brushed-dark-scene|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
 </body>
 
 <\initial>

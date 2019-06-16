@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|natural-ice-deco|1.0|natural-ice-deco|1.0>
+    <src-package-dtd|ice-scene|1.0|ice-scene|1.0>
 
     <\src-purpose>
-      Pine ornament for presentations and posters.
+      Coloring schemes on icy backgrounds
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,11 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo|dark-combo>
-
-  <copy-theme|natural-ice|light-deco>
-
-  <new-deco|natural-ice>
+  <use-package|light-scene|dark-scene>
 
   <\active*>
     <\src-comment>
@@ -36,8 +32,6 @@
 
   <assign|natural-ice-light-scene-bg-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
   blue>>
-
-  <assign|natural-ice-light-scene-color|black>
 
   <assign|natural-ice-light-scene-math-color|#503050>
 
@@ -54,25 +48,7 @@
   <assign|natural-ice-dark-scene-bg-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
   blue>>
 
-  <assign|natural-ice-dark-scene-color|white>
-
-  <assign|natural-ice-dark-scene-math-color|white>
-
-  <assign|natural-ice-dark-scene-strong-color|white>
-
-  <\active*>
-    <\src-comment>
-      The ornament
-    </src-comment>
-  </active*>
-
-  <assign|natural-ice-ornament-render-title|<value|with-natural-ice-dark-scene>>
-
-  <assign|natural-ice-ornament-render-body|<value|with-natural-ice-light-scene>>
-
-  <assign|natural-ice-ornament-sunny-color|#f4f4ff>
-
-  <assign|natural-ice-ornament-shadow-color|#d8d8ff>
+  <assign-uniform|natural-ice-dark-scene|white>
 </body>
 
 <\initial>

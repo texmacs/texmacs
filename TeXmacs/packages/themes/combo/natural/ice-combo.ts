@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|bluish-combo|natural-ice-deco>
+  <use-package|bluish-combo|ice-deco>
 
   <copy-theme|ice|bluish>
 
