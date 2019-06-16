@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|wood-pine-deco|1.0|wood-pine-deco|1.0>
+    <src-package-dtd|wood-scene|1.0|wood-scene|1.0>
 
     <\src-purpose>
-      Pine ornament for presentations and posters.
+      Coloring schemes on wooden backgrounds
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,11 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo|dark-combo>
-
-  <copy-theme|wood-pine|light-deco>
-
-  <new-deco|wood-pine>
+  <use-package|light-scene|dark-scene>
 
   <\active*>
     <\src-comment>
@@ -36,15 +32,13 @@
 
   <assign|wood-pine-light-scene-bg-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
 
-  <assign|wood-pine-light-scene-color|black>
-
   <assign|wood-pine-light-scene-math-color|#500000>
 
   <assign|wood-pine-light-scene-strong-color|#0c3000>
 
   <\active*>
     <\src-comment>
-      Dark wood
+      Dark "pine" wood
     </src-comment>
   </active*>
 
@@ -52,25 +46,7 @@
 
   <assign|wood-pine-dark-scene-bg-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
 
-  <assign|wood-pine-dark-scene-color|#f8f8f4>
-
-  <assign|wood-pine-dark-scene-math-color|#f8f8f4>
-
-  <assign|wood-pine-dark-scene-strong-color|#f8f8f4>
-
-  <\active*>
-    <\src-comment>
-      The ornament
-    </src-comment>
-  </active*>
-
-  <assign|wood-pine-ornament-render-title|<value|with-wood-pine-dark-scene>>
-
-  <assign|wood-pine-ornament-render-body|<value|with-wood-pine-light-scene>>
-
-  <assign|wood-pine-ornament-sunny-color|#ffe8c0>
-
-  <assign|wood-pine-ornament-shadow-color|brown>
+  <assign-uniform|wood-pine-dark-scene|#f8f8f4>
 </body>
 
 <\initial>
