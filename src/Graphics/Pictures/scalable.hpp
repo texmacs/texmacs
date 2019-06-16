@@ -47,6 +47,6 @@ public:
 
 ABSTRACT_NULL_CODE(scalable);
 
-scalable load_scalable_image (url file_name, SI w, SI h, SI pixel);
+scalable load_scalable_image (url file_name, SI w, SI h, tree eff, SI pixel);
 
 #endif // defined SCALABLE_H

@@ -34,7 +34,7 @@
     </src-comment>
   </active*>
 
-  <assign|xperiment-title-bar-color|<pattern|textile/tex2res4.png|*1/5|*1/5|#404040>>
+  <assign|xperiment-title-bar-color|<pattern|textile/tex2res4.png|*1/5|*1/5|<eff-monochrome|0|#000020|0>>>
 
   <assign|xperiment-title-color|<macro|#f0f0f0>>
 
@@ -44,11 +44,11 @@
     </src-comment>
   </active*>
 
-  <assign|xperiment-input-color|<pattern|textile/tex2res1.png|*1/5|*1/5|#404040>>
+  <assign|xperiment-input-color|<pattern|textile/tex2res1.png|*1/5|*1/5|<eff-monochrome|0|#00000c|0>>>
 
-  <assign|xperiment-fold-bar-color|<pattern|textile/tex2res4.png|*1/5|*1/5|#404040>>
+  <assign|xperiment-fold-bar-color|<pattern|textile/tex2res4.png|*1/5|*1/5|<eff-monochrome|0|#000020|0>>>
 
-  <assign|xperiment-fold-title-color|<pattern|textile/tex2res4.png|*1/5|*1/5|#404040>>
+  <assign|xperiment-fold-title-color|<pattern|textile/tex2res4.png|*1/5|*1/5|<eff-monochrome|0|#000020|0>>>
 
   <\active*>
     <\src-comment>

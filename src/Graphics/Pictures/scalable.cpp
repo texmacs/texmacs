@@ -26,13 +26,14 @@ url scalable_rep::get_name () { return url_none (); }
 class scalable_image_rep: public scalable_rep {
   url u;
   SI w, h;
+  tree eff;
   SI px;
 public:
-  scalable_image_rep (url u2, SI w2, SI h2, SI px2):
-    u (u2), w (w2), h (h2), px (px2) {
-      picture_cache_reserve (u, w/px, h/px); }
+  scalable_image_rep (url u2, SI w2, SI h2, tree e2, SI px2):
+    u (u2), w (w2), h (h2), eff (e2), px (px2) {
+      picture_cache_reserve (u, w/px, h/px, eff); }
   ~scalable_image_rep () {
-    picture_cache_release (u, w/px, h/px); }
+    picture_cache_release (u, w/px, h/px, eff); }
 
   scalable_kind get_type () { return scalable_image; }
   void* get_handle () { return (void*) this; }
@@ -44,15 +45,16 @@ public:
     return rectangle (0, 0, w, h); }
   void draw (renderer ren, SI x, SI y, int alpha) {
     if (px != ren->pixel) {
-      picture_cache_release (u, w/px, h/px);
+      picture_cache_release (u, w/px, h/px, eff);
       px= ren->pixel;
-      picture_cache_reserve (u, w/px, h/px);
+      picture_cache_reserve (u, w/px, h/px, eff);
     }
-    picture pict= cached_load_picture (u, w/ren->pixel, h/ren->pixel, false);
+    picture pict=
+      cached_load_picture (u, w/ren->pixel, h/ren->pixel, eff, false);
     ren->draw_picture (pict, x, y, alpha); }
 };
 
 scalable
-load_scalable_image (url file_name, SI w, SI h, SI pixel) {
-  return tm_new<scalable_image_rep> (file_name, w, h, pixel);
+load_scalable_image (url file_name, SI w, SI h, tree eff, SI pixel) {
+  return tm_new<scalable_image_rep> (file_name, w, h, eff, pixel);
 }

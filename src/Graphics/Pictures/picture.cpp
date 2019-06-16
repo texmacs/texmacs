@@ -17,6 +17,7 @@
 #include "colors.hpp"
 #include "iterator.hpp"
 #include "file.hpp"
+#include "effect.hpp"
 
 /******************************************************************************
 * Useful subroutines
@@ -128,15 +129,15 @@ static hashmap<tree,picture> picture_cache;
 static hashmap<tree,int> picture_stamp (- (int) (((unsigned int) (-1)) >> 1));
 
 void
-picture_cache_reserve (url file_name, int w, int h) {
-  tree key= tuple (file_name->t, as_string (w), as_string (h));
+picture_cache_reserve (url file_name, int w, int h, tree eff) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h), eff);
   picture_count (key) ++;
   //cout << key << " -> " << picture_count[key] << "\n";
 }
 
 void
-picture_cache_release (url file_name, int w, int h) {
-  tree key= tuple (file_name->t, as_string (w), as_string (h));
+picture_cache_release (url file_name, int w, int h, tree eff) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h), eff);
   picture_count (key) --;
   //cout << key << " -> " << picture_count[key] << "\n";
   if (picture_count [key] <= 0) picture_blacklist (key) ++;
@@ -162,8 +163,8 @@ picture_cache_clean () {
 }
 
 static bool
-picture_is_cached (url file_name, int w, int h) {
-  tree key= tuple (file_name->t, as_string (w), as_string (h));
+picture_is_cached (url file_name, int w, int h, tree eff) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h), eff);
   if (!picture_cache->contains (key)) return false;
   int loaded= last_modified (file_name, false);
   int cached= picture_stamp [key];
@@ -178,12 +179,17 @@ picture_is_cached (url file_name, int w, int h) {
 }
 
 picture
-cached_load_picture (url file_name, int w, int h, bool permanent) {
-  tree key= tuple (file_name->t, as_string (w), as_string (h));
-  if (picture_is_cached (file_name, w, h))
+cached_load_picture (url file_name, int w, int h, tree eff, bool permanent) {
+  tree key= tuple (file_name->t, as_string (w), as_string (h), eff);
+  if (picture_is_cached (file_name, w, h, eff))
     return picture_cache [key];
   //cout << "Loading " << key << "\n";
   picture pic= load_picture (file_name, w, h);
+  if (eff != "") {
+    effect e= build_effect (eff);
+    array<picture> a; a << pic;
+    pic= e->apply (a, PIXEL); // NOTE: maybe use px from 'scalable_image_rep'
+  }
   if (permanent || picture_count[key] > 0) {
     int pic_modif= last_modified (file_name, false);
     picture_cache (key)= pic;

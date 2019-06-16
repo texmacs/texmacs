@@ -30,9 +30,7 @@
 
   <copy-theme|xperiment-bright-scene|light-scene>
 
-  <assign|xperiment-bright-scene-bg-color|<pattern|textile/subtle_white_feathers.png|*1/5|*1/5|#f0f0f0>>
-
-  <assign|xperiment-bright-scene-monochrome-bg-color|#f0f0f0>
+  <assign|xperiment-bright-scene-bg-color|<pattern|textile/subtle_white_feathers.png|*1/5|*1/5>>
 
   <\active*>
     <\src-comment>
@@ -50,9 +48,7 @@
 
   <copy-theme|xperiment-dark-scene|dark-scene>
 
-  <assign|xperiment-dark-scene-bg-color|<pattern|textile/tex2res4.png|*1/5|*1/5|#404040>>
-
-  <assign|xperiment-dark-scene-monochrome-bg-color|#404040>
+  <assign|xperiment-dark-scene-bg-color|<pattern|textile/tex2res4.png|*1/5|*1/5|<eff-monochrome|0|#000020|0>>>
 </body>
 
 <\initial>

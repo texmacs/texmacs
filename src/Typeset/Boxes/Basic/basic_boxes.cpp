@@ -259,7 +259,7 @@ polygon_box (path ip, array<SI> x, array<SI> y, brush fill) {
 
 box
 image_box (path ip, url u, SI w, SI h, int alpha, int px) {
-  scalable im= load_scalable_image (u, w, h, px);
+  scalable im= load_scalable_image (u, w, h, "", px);
   return tm_new<image_box_rep> (ip, im, alpha);
 }
 

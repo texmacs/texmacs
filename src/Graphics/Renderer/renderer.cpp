@@ -388,7 +388,9 @@ renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
 
     SI sx= -mx1;
     SI sy= -my2;
-    scalable im= load_scalable_image (u, w, h, pixel);
+    tree eff= "";
+    if (N(pattern) == 4 && is_compound (pattern[3])) eff= pattern[3];
+    scalable im= load_scalable_image (u, w, h, eff, pixel);
     for (int i= ((x1+sx)/w) - 1; i <= ((x2+sx)/w) + 1; i++)
       for (int j= ((y1+sy)/h) - 1; j <= ((y2+sy)/h) + 1; j++) {
 	SI X1= i*w     - sx, Y1= j*h     - sy;
