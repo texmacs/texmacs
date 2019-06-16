@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-combo|stone-granite-deco>
+  <use-package|dark-combo|granite-deco>
 
   <copy-theme|granite|dark>
 
