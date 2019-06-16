@@ -24,23 +24,53 @@
 
   <\active*>
     <\src-comment>
+      Bright paper
+    </src-comment>
+  </active*>
+
+  <copy-theme|paper-manila-bright-scene|light-scene>
+
+  <assign|paper-manila-bright-scene-bg-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+
+  <assign|paper-manila-bright-scene-monochrome-bg-color|#f4f4f0>
+
+  <assign|paper-manila-bright-scene-strong-color|#504000>
+
+  <copy-theme|paper-ridged-bright-scene|paper-manila-bright-scene>
+
+  <assign|paper-ridged-bright-scene-bg-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#f4eee8>>
+
+  <assign|paper-ridged-bright-scene-monochrome-bg-color|#f4eee8>
+
+  <copy-theme|paper-rough-bright-scene|paper-manila-bright-scene>
+
+  <assign|paper-rough-bright-scene-bg-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f8f8f8>>
+
+  <assign|paper-rough-bright-scene-monochrome-bg-color|#f8f8f8>
+
+  <\active*>
+    <\src-comment>
       Light paper
     </src-comment>
   </active*>
 
-  <copy-theme|paper-manila-light-scene|light-scene>
+  <copy-theme|paper-manila-light-scene|paper-manila-bright-scene>
 
   <assign|paper-manila-light-scene-bg-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
 
-  <assign|paper-manila-light-scene-strong-color|#504000>
+  <assign|paper-manila-light-scene-monochrome-bg-color|#d0d0c0>
 
   <copy-theme|paper-ridged-light-scene|paper-manila-light-scene>
 
   <assign|paper-ridged-light-scene-bg-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcdc>>
 
+  <assign|paper-ridged-light-scene-monochrome-bg-color|#e8dcdc>
+
   <copy-theme|paper-rough-light-scene|paper-manila-light-scene>
 
   <assign|paper-rough-light-scene-bg-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
+
+  <assign|paper-rough-light-scene-monochrome-bg-color|#dcdcdc>
 
   <\active*>
     <\src-comment>

@@ -26,17 +26,7 @@
 
   <select-theme|rough-paper|paper-rough>
 
-  <\active*>
-    <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <assign|rough-paper-bg-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f8f8f8>>
-
-  <assign|rough-paper-monochrome-bg-color|#f8f8f8>
-
-  <assign|rough-paper-strong-color|#504000>
+  <select-theme|rough-paper|paper-rough-bright-scene>
 
   <\active*>
     <\src-comment>

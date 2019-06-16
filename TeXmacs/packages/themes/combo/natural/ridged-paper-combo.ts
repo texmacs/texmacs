@@ -26,17 +26,7 @@
 
   <select-theme|ridged-paper|paper-ridged>
 
-  <\active*>
-    <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <assign|ridged-paper-bg-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#f4eee8>>
-
-  <assign|ridged-paper-monochrome-bg-color|#f4eee8>
-
-  <assign|ridged-paper-strong-color|#504000>
+  <select-theme|ridged-paper|paper-ridged-bright-scene>
 
   <\active*>
     <\src-comment>
