@@ -24,14 +24,6 @@
 
   <\active*>
     <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <new-theme|colors|bg-color|monochrome-bg-color|color|math-color|strong-color>
-
-  <\active*>
-    <\src-comment>
       Title blocks
     </src-comment>
   </active*>

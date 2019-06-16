@@ -7,7 +7,7 @@
     <src-package-dtd|dark-combo|1.0|dark-combo|1.0>
 
     <\src-purpose>
-      Dark theme.
+      Base theme for dark backgrounds.
     </src-purpose>
 
     <src-copyright|2019|Joris van der Hoeven>
@@ -20,45 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|base-combo>
-
-  <\active*>
-    <\src-comment>
-      Major colors
-    </src-comment>
-  </active*>
-
-  <copy-theme|dark-scene|colors>
-
-  <assign|dark-scene-bg-color|black>
-
-  <assign|dark-scene-monochrome-bg-color|black>
-
-  <assign|dark-scene-color|white>
-
-  <assign|dark-scene-math-color|white>
-
-  <assign|dark-scene-strong-color|white>
-
-  <\active*>
-    <\src-comment>
-      Ornament colors
-    </src-comment>
-  </active*>
-
-  <copy-theme|dark-deco|deco>
-
-  <assign|dark-deco-ornament-body-color|white>
-
-  <assign|dark-deco-ornament-body-math-color|white>
-
-  <assign|dark-deco-ornament-body-strong-color|white>
-
-  <assign|dark-deco-ornament-title-color|white>
-
-  <assign|dark-deco-ornament-title-math-color|white>
-
-  <assign|dark-deco-ornament-title-strong-color|white>
+  <use-package|base-combo|dark-deco>
 
   <\active*>
     <\src-comment>

@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|light-combo|1.0|light-combo|1.0>
+    <src-package-dtd|light-scene|1.0|light-scene|1.0>
 
     <\src-purpose>
-      Base theme for light backgrounds.
+      Common base for coloring schemes.
     </src-purpose>
 
     <src-copyright|2019|Joris van der Hoeven>
@@ -20,19 +20,15 @@
     </src-license>
   </src-title>>
 
-  <use-package|base-combo|light-deco>
+  <use-package|base-colors>
 
   <\active*>
     <\src-comment>
-      Combined theme
+      Major colors
     </src-comment>
   </active*>
 
-  <copy-theme|light|base>
-
-  <select-theme|light|light-scene>
-
-  <select-theme|light|light-deco>
+  <copy-theme|light-scene|colors>
 </body>
 
 <\initial>

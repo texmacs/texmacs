@@ -20,6 +20,8 @@
     </src-license>
   </src-title>>
 
+  <use-package|base-colors>
+
   <\active*>
     <\src-comment>
       Ornaments as decorations
