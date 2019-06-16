@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-combo|paper-rough-deco>
+  <use-package|reddish-combo|paper-deco>
 
   <copy-theme|rough-paper|reddish>
 

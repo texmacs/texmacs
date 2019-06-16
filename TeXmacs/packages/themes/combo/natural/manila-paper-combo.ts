@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-combo|paper-manila-deco>
+  <use-package|reddish-combo|paper-deco>
 
   <copy-theme|manila-paper|reddish>
 

@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|paper-vintage-scene|1.0|paper-vintage-scene|1.0>
+    <src-package-dtd|paper-scene|1.0|paper-scene|1.0>
 
     <\src-purpose>
-      Old coloring schemes on paper backgrounds
+      Coloring schemes on paper backgrounds
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
