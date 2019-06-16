@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|dark-vador-deco|1.0|dark-vador-deco|1.0>
+    <src-package-dtd|vador-deco|1.0|vador-deco|1.0>
 
     <\src-purpose>
-      Dark vador decorations for presentations and posters.
+      Decorations for dark vador theme for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -20,103 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo|dark-combo>
-
-  <\active*>
-    <\src-comment>
-      Dark vador background
-    </src-comment>
-  </active*>
-
-  <copy-theme|vador-background|dark-scene>
-
-  <assign|vador-background-bg-color|none>
-
-  <assign|vador-background-color|#e0c0c0>
-
-  <assign|vador-background-math-color|pastel red>
-
-  <assign|vador-background-strong-color|#fff0c0>
-
-  <\active*>
-    <\src-comment>
-      Dark vador title
-    </src-comment>
-  </active*>
-
-  <copy-theme|vador-title|dark-scene>
-
-  <assign|vador-title-bg-color|#603030>
-
-  <assign|vador-title-color|#fff0c0>
-
-  <assign|vador-title-math-color|pastel red>
-
-  <assign|vador-title-strong-color|#fff0c0>
-
-  <\active*>
-    <\src-comment>
-      Headings for text on a bright background
-    </src-comment>
-  </active*>
-
-  <copy-theme|vador-heading|dark-scene>
-
-  <assign|vador-heading-bg-color|dark red>
-
-  <assign|vador-heading-color|#e0e0e0>
-
-  <assign|vador-heading-math-color|#e0e0e0>
-
-  <assign|vador-heading-strong-color|#e0e0e0>
-
-  <\active*>
-    <\src-comment>
-      Text on a bright background
-    </src-comment>
-  </active*>
-
-  <copy-theme|vador-bright|light-scene>
-
-  <assign|vador-bright-bg-color|#e0e0e0>
-
-  <assign|vador-bright-color|#200000>
-
-  <assign|vador-bright-math-color|dark red>
-
-  <assign|vador-bright-strong-color|dark orange>
-
-  <\active*>
-    <\src-comment>
-      Alternative headings for text on a bright background
-    </src-comment>
-  </active*>
-
-  <copy-theme|vador-alt-heading|dark-scene>
-
-  <assign|vador-alt-heading-bg-color|#602000>
-
-  <assign|vador-alt-heading-color|#e0d0c0>
-
-  <assign|vador-alt-heading-math-color|#e0d0c0>
-
-  <assign|vador-alt-heading-strong-color|#e0d0c0>
-
-  <\active*>
-    <\src-comment>
-      Alternative text on a bright background
-    </src-comment>
-  </active*>
-
-  <copy-theme|vador-alt-bright|light-scene>
-
-  <assign|vador-alt-bright-bg-color|#e0e0c0>
-
-  <assign|vador-alt-bright-color|#400000>
-
-  <assign|vador-alt-bright-math-color|dark red>
-
-  <assign|vador-alt-bright-strong-color|dark orange>
+  <use-package|light-deco|dark-deco|vador-scene>
 
   <\active*>
     <\src-comment>

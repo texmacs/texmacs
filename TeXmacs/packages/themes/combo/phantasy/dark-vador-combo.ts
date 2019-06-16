@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-combo|dark-vador-deco>
+  <use-package|dark-combo|vador-deco>
 
   <copy-theme|dark-vador|dark>
 
