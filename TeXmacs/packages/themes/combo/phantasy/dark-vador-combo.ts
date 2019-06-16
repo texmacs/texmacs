@@ -26,15 +26,7 @@
 
   <select-theme|dark-vador|plain-vador>
 
-  <\active*>
-    <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <assign|dark-vador-math-color|pastel red>
-
-  <assign|dark-vador-strong-color|#fff0c0>
+  <select-theme|dark-vador|vador-background>
 
   <\active*>
     <\src-comment>

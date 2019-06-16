@@ -30,9 +30,9 @@
 
   <copy-theme|vador-background|dark-scene>
 
-  <assign|vador-background-bg-color|none>
-
   <assign|vador-background-color|#e0c0c0>
+
+  <assign|vador-background-color|#e0e0e0>
 
   <assign|vador-background-math-color|pastel red>
 

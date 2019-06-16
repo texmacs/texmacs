@@ -32,48 +32,6 @@
 
   <\active*>
     <\src-comment>
-      Old style
-    </src-comment>
-  </active*>
-
-  <assign|framed-render-enunciation|<\macro|which|body>
-    <surround|<no-indent>||<\ornament>
-      <\unframed-render-enunciation|<arg|which>>
-        <arg|body>
-      </unframed-render-enunciation>
-    </ornament>>
-  </macro>>
-
-  <assign|enunciation-title-color|<macro|<if|<provides|ornament-title-color>|<value|ornament-title-color>|<if|<equal|<value|ornament-extra-color>|white>|<value|color>|<value|bg-color>>>>>
-
-  <assign|enunciation-title-name|<macro|which|<with|color|<enunciation-title-color>|strong-color|<enunciation-title-color>|<enunciation-name|<arg|which>>>>>
-
-  <assign|framed-render-enunciation*|<\macro|which|body>
-    <\with|enunciation-sep|>
-      <\surround|<no-indent>|>
-        <\ornament>
-          <\surround||<right-flush>>
-            <arg|body>
-          </surround>
-        </ornament|<enunciation-title-name|<arg|which>>>
-      </surround>
-    </with>
-  </macro>>
-
-  <assign|framed-render-enunciation*|<\macro|which|body>
-    <\with|enunciation-sep|>
-      <\surround|<no-indent>|>
-        <\decorated-titled|<enunciation-title-name|<arg|which>>>
-          <\surround||<right-flush>>
-            <arg|body>
-          </surround>
-        </decorated-titled>
-      </surround>
-    </with>
-  </macro>>
-
-  <\active*>
-    <\src-comment>
       Framed theorems
     </src-comment>
   </active*>
@@ -83,7 +41,7 @@
   <assign|framed-render-enunciation|<\macro|which|body>
     <\surround|<no-indent>|>
       <\decorated>
-        <\unframed-render-enunciation|<arg|which>>
+        <\unframed-render-enunciation|<with|strong-color|<value|color>|math-color|<value|color>|<arg|which>>>
           <arg|body>
         </unframed-render-enunciation>
       </decorated>
