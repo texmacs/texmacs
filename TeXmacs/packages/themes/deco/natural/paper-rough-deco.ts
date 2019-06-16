@@ -20,43 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo|dark-combo>
+  <use-package|light-deco|paper-vintage-scene>
 
   <copy-theme|paper-rough|light-deco>
 
   <new-deco|paper-rough>
-
-  <\active*>
-    <\src-comment>
-      Light ridged paper
-    </src-comment>
-  </active*>
-
-  <copy-theme|paper-rough-light-scene|light-scene>
-
-  <assign|paper-rough-light-scene-bg-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
-
-  <assign|paper-rough-light-scene-color|black>
-
-  <assign|paper-rough-light-scene-math-color|dark red>
-
-  <assign|paper-rough-light-scene-strong-color|#504000>
-
-  <\active*>
-    <\src-comment>
-      Dark rough paper through wood
-    </src-comment>
-  </active*>
-
-  <copy-theme|paper-rough-dark-scene|dark-scene>
-
-  <assign|paper-rough-dark-scene-bg-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
-
-  <assign|paper-rough-dark-scene-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
-
-  <assign|paper-rough-dark-scene-math-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
-
-  <assign|paper-rough-dark-scene-strong-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
 
   <\active*>
     <\src-comment>
