@@ -28,9 +28,7 @@
     </src-comment>
   </active*>
 
-  <new-theme|colors|bg-color|color|math-color|strong-color>
-
-  <new-theme|no-patterns|monochrome-bg-color>
+  <new-theme|colors|bg-color|monochrome-bg-color|color|math-color|strong-color>
 
   <\active*>
     <\src-comment>
@@ -64,7 +62,7 @@
     </src-comment>
   </active*>
 
-  <copy-theme|base|colors|no-patterns|deco|titles|sessions|poster|poster-ornament-shape>
+  <copy-theme|base|colors|deco|titles|sessions|poster|poster-ornament-shape>
 </body>
 
 <\initial>
