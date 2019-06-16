@@ -4,7 +4,7 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package-dtd|metal-brushed-deco|1.0|metal-brushed-deco|1.0>
+    <src-package-dtd|metal-deco|1.0|metal-deco|1.0>
 
     <\src-purpose>
       Metal ornament for presentations and posters.
