@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo>
+  <use-package|light-combo|dark-combo>
 
   <copy-theme|paper-manila|light-deco>
 
@@ -28,25 +28,45 @@
 
   <\active*>
     <\src-comment>
+      Light manila paper
+    </src-comment>
+  </active*>
+
+  <copy-theme|paper-manila-light-scene|light-scene>
+
+  <assign|paper-manila-light-scene-bg-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
+
+  <assign|paper-manila-light-scene-color|black>
+
+  <assign|paper-manila-light-scene-math-color|dark red>
+
+  <assign|paper-manila-light-scene-strong-color|#504000>
+
+  <\active*>
+    <\src-comment>
+      Dark manila paper through wood
+    </src-comment>
+  </active*>
+
+  <copy-theme|paper-manila-dark-scene|dark-scene>
+
+  <assign|paper-manila-dark-scene-bg-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+
+  <assign|paper-manila-dark-scene-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+
+  <assign|paper-manila-dark-scene-math-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+
+  <assign|paper-manila-dark-scene-strong-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+
+  <\active*>
+    <\src-comment>
       The ornament
     </src-comment>
   </active*>
 
-  <assign|paper-manila-ornament-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
+  <assign|paper-manila-ornament-render-title|<value|with-paper-manila-dark-scene>>
 
-  <assign|paper-manila-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
-
-  <assign|paper-manila-ornament-title-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
-
-  <assign|paper-manila-ornament-title-math-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
-
-  <assign|paper-manila-ornament-title-strong-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
-
-  <assign|paper-manila-ornament-body-color|black>
-
-  <assign|paper-manila-ornament-body-math-color|dark red>
-
-  <assign|paper-manila-ornament-body-strong-color|#504000>
+  <assign|paper-manila-ornament-render-body|<value|with-paper-manila-light-scene>>
 
   <assign|paper-manila-ornament-sunny-color|#e8e8e0>
 

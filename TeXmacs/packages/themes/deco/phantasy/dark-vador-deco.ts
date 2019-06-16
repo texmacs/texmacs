@@ -7,7 +7,7 @@
     <src-package-dtd|dark-vador-deco|1.0|dark-vador-deco|1.0>
 
     <\src-purpose>
-      Pine ornament for presentations and posters.
+      Dark vador decorations for presentations and posters.
     </src-purpose>
 
     <src-copyright|2013--2019|Joris van der Hoeven>
@@ -22,21 +22,101 @@
 
   <use-package|light-combo|dark-combo>
 
-  <copy-theme|plain-vador|dark-deco>
+  <\active*>
+    <\src-comment>
+      Dark vador background
+    </src-comment>
+  </active*>
 
-  <copy-theme|title-vador|dark-deco>
+  <copy-theme|vador-background|dark-scene>
 
-  <copy-theme|framed-vador|light-deco>
+  <assign|vador-background-bg-color|none>
 
-  <copy-theme|alternate-vador|light-deco>
+  <assign|vador-background-color|#e0c0c0>
 
-  <new-deco|plain-vador>
+  <assign|vador-background-math-color|pastel red>
 
-  <new-deco|title-vador>
+  <assign|vador-background-strong-color|#fff0c0>
 
-  <new-deco|framed-vador>
+  <\active*>
+    <\src-comment>
+      Dark vador title
+    </src-comment>
+  </active*>
 
-  <new-deco|alternate-vador>
+  <copy-theme|vador-title|dark-scene>
+
+  <assign|vador-title-bg-color|#603030>
+
+  <assign|vador-title-color|#fff0c0>
+
+  <assign|vador-title-math-color|pastel red>
+
+  <assign|vador-title-strong-color|#fff0c0>
+
+  <\active*>
+    <\src-comment>
+      Headings for text on a bright background
+    </src-comment>
+  </active*>
+
+  <copy-theme|vador-heading|dark-scene>
+
+  <assign|vador-heading-bg-color|dark red>
+
+  <assign|vador-heading-color|#e0e0e0>
+
+  <assign|vador-heading-math-color|#e0e0e0>
+
+  <assign|vador-heading-strong-color|#e0e0e0>
+
+  <\active*>
+    <\src-comment>
+      Text on a bright background
+    </src-comment>
+  </active*>
+
+  <copy-theme|vador-bright|light-scene>
+
+  <assign|vador-bright-bg-color|#e0e0e0>
+
+  <assign|vador-bright-color|#200000>
+
+  <assign|vador-bright-math-color|dark red>
+
+  <assign|vador-bright-strong-color|dark orange>
+
+  <\active*>
+    <\src-comment>
+      Alternative headings for text on a bright background
+    </src-comment>
+  </active*>
+
+  <copy-theme|vador-alt-heading|dark-scene>
+
+  <assign|vador-alt-heading-bg-color|#602000>
+
+  <assign|vador-alt-heading-color|#e0d0c0>
+
+  <assign|vador-alt-heading-math-color|#e0d0c0>
+
+  <assign|vador-alt-heading-strong-color|#e0d0c0>
+
+  <\active*>
+    <\src-comment>
+      Alternative text on a bright background
+    </src-comment>
+  </active*>
+
+  <copy-theme|vador-alt-bright|light-scene>
+
+  <assign|vador-alt-bright-bg-color|#e0e0c0>
+
+  <assign|vador-alt-bright-color|#400000>
+
+  <assign|vador-alt-bright-math-color|dark red>
+
+  <assign|vador-alt-bright-strong-color|dark orange>
 
   <\active*>
     <\src-comment>
@@ -44,27 +124,13 @@
     </src-comment>
   </active*>
 
-  <assign|plain-vador-ornament-extra-color|none>
+  <copy-theme|plain-vador|dark-deco>
 
-  <assign|plain-vador-ornament-color|none>
+  <new-deco|plain-vador>
 
-  <assign|plain-vador-ornament-title-color|#e0c0c0>
+  <assign|plain-vador-ornament-render-title|<value|with-vador-background>>
 
-  <assign|plain-vador-ornament-title-math-color|#e0c0c0>
-
-  <assign|plain-vador-ornament-title-strong-color|#e0c0c0>
-
-  <assign|plain-vador-ornament-body-color|#e0e0e0>
-
-  <assign|plain-vador-ornament-body-math-color|pastel red>
-
-  <assign|plain-vador-ornament-body-strong-color|#fff0c0>
-
-  <assign|plain-vador-color|#e0e0e0>
-
-  <assign|plain-vador-strong-color|#fff0c0>
-
-  <assign|plain-vador-math-color|pastel red>
+  <assign|plain-vador-ornament-render-body|<value|with-vador-background>>
 
   <\active*>
     <\src-comment>
@@ -72,37 +138,23 @@
     </src-comment>
   </active*>
 
+  <copy-theme|title-vador|dark-deco>
+
+  <new-deco|title-vador>
+
   <assign|title-vador-ornament-shape|angular>
 
   <assign|title-vador-ornament-border|3ln>
 
-  <assign|title-vador-ornament-extra-color|#603030>
-
   <assign|title-vador-ornament-title-style|top center>
 
-  <assign|title-vador-ornament-title-color|#fff0c0>
+  <assign|title-vador-ornament-render-title|<value|with-vador-title>>
 
-  <assign|title-vador-ornament-title-math-color|#fff0c0>
-
-  <assign|title-vador-ornament-title-strong-color|#fff0c0>
-
-  <assign|title-vador-ornament-color|#603030>
-
-  <assign|title-vador-ornament-body-color|#fff0c0>
-
-  <assign|title-vador-ornament-body-math-color|pastel red>
-
-  <assign|title-vador-ornament-body-strong-color|#fff0c0>
+  <assign|title-vador-ornament-render-body|<value|with-vador-title>>
 
   <assign|title-vador-ornament-sunny-color|#301818>
 
   <assign|title-vador-ornament-shadow-color|#201010>
-
-  <assign|title-vador-color|#fff0c0>
-
-  <assign|title-vador-strong-color|#fff0c0>
-
-  <assign|title-vador-math-color|pastel red>
 
   <\active*>
     <\src-comment>
@@ -110,35 +162,21 @@
     </src-comment>
   </active*>
 
-  <assign|framed-vador-ornament-shape|angular>
+  <copy-theme|framed-vador|light-deco>
 
-  <assign|framed-vador-ornament-extra-color|dark red>
+  <new-deco|framed-vador>
+
+  <assign|framed-vador-ornament-shape|angular>
 
   <assign|framed-vador-ornament-title-style|top center>
 
-  <assign|framed-vador-ornament-title-color|#e0e0e0>
+  <assign|framed-vador-ornament-render-title|<value|with-vador-heading>>
 
-  <assign|framed-vador-ornament-title-math-color|#e0e0e0>
-
-  <assign|framed-vador-ornament-title-strong-color|#e0e0e0>
-
-  <assign|framed-vador-ornament-color|#e0e0e0>
-
-  <assign|framed-vador-ornament-body-color|#200000>
-
-  <assign|framed-vador-ornament-body-math-color|dark red>
-
-  <assign|framed-vador-ornament-body-strong-color|dark orange>
+  <assign|framed-vador-ornament-render-body|<value|with-vador-bright>>
 
   <assign|framed-vador-ornament-sunny-color|#804040>
 
   <assign|framed-vador-ornament-shadow-color|#402020>
-
-  <assign|framed-vador-color|#200000>
-
-  <assign|framed-vador-strong-color|dark orange>
-
-  <assign|framed-vador-math-color|dark red>
 
   <\active*>
     <\src-comment>
@@ -146,35 +184,21 @@
     </src-comment>
   </active*>
 
-  <assign|alternate-vador-ornament-shape|angular>
+  <copy-theme|alternate-vador|light-deco>
 
-  <assign|alternate-vador-ornament-extra-color|#602000>
+  <new-deco|alternate-vador>
+
+  <assign|alternate-vador-ornament-shape|angular>
 
   <assign|alternate-vador-ornament-title-style|top left>
 
-  <assign|alternate-vador-ornament-title-color|#e0d0c0>
+  <assign|alternate-vador-ornament-render-title|<value|with-vador-alt-heading>>
 
-  <assign|alternate-vador-ornament-title-math-color|#e0d0c0>
-
-  <assign|alternate-vador-ornament-title-strong-color|#e0d0c0>
-
-  <assign|alternate-vador-ornament-color|#e0e0c0>
-
-  <assign|alternate-vador-ornament-body-color|#400000>
-
-  <assign|alternate-vador-ornament-body-math-color|dark red>
-
-  <assign|alternate-vador-ornament-body-strong-color|dark orange>
+  <assign|alternate-vador-ornament-render-body|<value|with-vador-alt-bright>>
 
   <assign|alternate-vador-ornament-sunny-color|#606030>
 
   <assign|alternate-vador-ornament-shadow-color|#303018>
-
-  <assign|alternate-vador-color|#400000>
-
-  <assign|alternate-vador-strong-color|dark orange>
-
-  <assign|alternate-vador-math-color|dark red>
 </body>
 
 <\initial>

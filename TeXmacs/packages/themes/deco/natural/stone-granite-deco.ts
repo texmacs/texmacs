@@ -28,25 +28,45 @@
 
   <\active*>
     <\src-comment>
+      Dark granite
+    </src-comment>
+  </active*>
+
+  <copy-theme|stone-granite-dark-scene|dark-scene>
+
+  <assign|stone-granite-dark-scene-bg-color|<pattern|granite-dark.png|*3/5|*3/5|#101010>>
+
+  <assign|stone-granite-dark-scene-color|white>
+
+  <assign|stone-granite-dark-scene-math-color|#ffd4c0>
+
+  <assign|stone-granite-dark-scene-strong-color|#f0ffb0>
+
+  <\active*>
+    <\src-comment>
+      Medium dark granite
+    </src-comment>
+  </active*>
+
+  <copy-theme|stone-granite-medium-scene|dark-scene>
+
+  <assign|stone-granite-medium-scene-bg-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+
+  <assign|stone-granite-medium-scene-color|gold>
+
+  <assign|stone-granite-medium-scene-math-color|gold>
+
+  <assign|stone-granite-medium-scene-strong-color|gold>
+
+  <\active*>
+    <\src-comment>
       The ornament
     </src-comment>
   </active*>
 
-  <assign|stone-granite-ornament-color|<pattern|granite-dark.png|*3/5|*3/5|#101010>>
+  <assign|stone-granite-ornament-render-title|<value|with-stone-granite-medium-scene>>
 
-  <assign|stone-granite-ornament-extra-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
-
-  <assign|stone-granite-ornament-title-color|gold>
-
-  <assign|stone-granite-ornament-title-math-color|gold>
-
-  <assign|stone-granite-ornament-title-strong-color|gold>
-
-  <assign|stone-granite-ornament-body-color|white>
-
-  <assign|stone-granite-ornament-body-math-color|#ffd4c0>
-
-  <assign|stone-granite-ornament-body-strong-color|#f0ffb0>
+  <assign|stone-granite-ornament-render-body|<value|with-stone-granite-dark-scene>>
 
   <assign|stone-granite-ornament-sunny-color|light grey>
 

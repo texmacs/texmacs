@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo>
+  <use-package|light-combo|dark-combo>
 
   <copy-theme|paper-ridged|light-deco>
 
@@ -28,25 +28,45 @@
 
   <\active*>
     <\src-comment>
+      Light ridged paper
+    </src-comment>
+  </active*>
+
+  <copy-theme|paper-ridged-light-scene|light-scene>
+
+  <assign|paper-ridged-light-scene-bg-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcdc>>
+
+  <assign|paper-ridged-light-scene-color|black>
+
+  <assign|paper-ridged-light-scene-math-color|dark red>
+
+  <assign|paper-ridged-light-scene-strong-color|#504000>
+
+  <\active*>
+    <\src-comment>
+      Dark ridged paper through wood
+    </src-comment>
+  </active*>
+
+  <copy-theme|paper-ridged-dark-scene|dark-scene>
+
+  <assign|paper-ridged-dark-scene-bg-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+
+  <assign|paper-ridged-dark-scene-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
+
+  <assign|paper-ridged-dark-scene-math-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
+
+  <assign|paper-ridged-dark-scene-strong-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
+
+  <\active*>
+    <\src-comment>
       The ornament
     </src-comment>
   </active*>
 
-  <assign|paper-ridged-ornament-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcdc>>
+  <assign|paper-ridged-ornament-render-title|<value|with-paper-ridged-dark-scene>>
 
-  <assign|paper-ridged-ornament-extra-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
-
-  <assign|paper-ridged-ornament-title-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
-
-  <assign|paper-ridged-ornament-title-math-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
-
-  <assign|paper-ridged-ornament-title-strong-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
-
-  <assign|paper-ridged-ornament-body-color|black>
-
-  <assign|paper-ridged-ornament-body-math-color|dark red>
-
-  <assign|paper-ridged-ornament-body-strong-color|#504000>
+  <assign|paper-ridged-ornament-render-body|<value|with-paper-ridged-light-scene>>
 
   <assign|paper-ridged-ornament-sunny-color|#f0e0e0>
 

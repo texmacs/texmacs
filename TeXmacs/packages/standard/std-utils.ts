@@ -247,9 +247,9 @@
     </src-comment>
   </active*>
 
-  <assign|block-render-title|<macro|name|<with|font-series|bold|<large|<arg|name>>>>>
+  <assign|ornament-render-title|<macro|body|<arg|body>>>
 
-  <assign|ornament-render-title|<macro|name|<block-render-title|<arg|name>>>>
+  <assign|ornament-render-body|<macro|body|<arg|body>>>
 
   <assign|ornament-title-color|<value|color>>
 
@@ -265,30 +265,32 @@
 
   \;
 
-  <assign|decorated-title|<macro|body|<with|color|<value|ornament-title-color>|math-color|<value|ornament-title-math-color>|strong-color|<value|ornament-title-strong-color>|<arg|body>>>>
+  <assign|decorated-hook|<macro|body|<with|bg-color|<value|ornament-extra-color>|<ornament-render-title|<with|ornament-extra-color|<value|bg-color>|<with|bg-color|<value|ornament-color>|<ornament-render-body|<with|ornament-color|<value|bg-color>|<arg|body>>>>>>>>>
 
-  <assign|decorated-body|<macro|body|<with|color|<value|ornament-body-color>|math-color|<value|ornament-body-math-color>|strong-color|<value|ornament-body-strong-color>|<arg|body>>>>
+  <assign|decorated-title|<macro|body|<with|color|<value|ornament-title-color>|math-color|<value|ornament-title-math-color>|strong-color|<value|ornament-title-strong-color>|<ornament-render-title|<arg|body>>>>>
 
-  <assign|decorated|<macro|body|<ornament|<decorated-body|<arg|body>>>>>
+  <assign|decorated-body|<macro|body|<with|color|<value|ornament-body-color>|math-color|<value|ornament-body-math-color>|strong-color|<value|ornament-body-strong-color>|<ornament-render-body|<arg|body>>>>>
+
+  <assign|decorated|<macro|body|<decorated-hook|<ornament|<decorated-body|<arg|body>>>>>>
 
   <assign|decorated-block|<\macro|body>
-    <\ornament>
+    <decorated-hook|<\ornament>
       <\wide-normal>
         <\decorated-body>
           <arg|body>
         </decorated-body>
       </wide-normal>
-    </ornament>
+    </ornament>>
   </macro>>
 
-  <assign|decorated-titled|<macro|name|body|<ornament|<decorated-body|<arg|body>>|<decorated-title|<arg|name>>>>>
+  <assign|decorated-titled|<macro|name|body|<decorated-hook|<ornament|<decorated-body|<arg|body>>|<decorated-title|<arg|name>>>>>>
 
   <assign|decorated-titled-block|<\macro|name|body>
-    <\ornament>
+    <decorated-hook|<\ornament>
       <\wide-normal>
         <decorated-body|<arg|body>>
       </wide-normal>
-    </ornament|<decorated-title|<arg|name>>>
+    </ornament|<decorated-title|<arg|name>>>>
   </macro>>
 
   <\active*>

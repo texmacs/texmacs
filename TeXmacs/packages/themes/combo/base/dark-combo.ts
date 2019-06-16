@@ -22,31 +22,31 @@
 
   <use-package|base-combo>
 
-  <copy-theme|dark|base>
-
-  <copy-theme|dark-deco|deco>
-
   <\active*>
     <\src-comment>
       Major colors
     </src-comment>
   </active*>
 
-  <assign|dark-bg-color|black>
+  <copy-theme|dark-scene|colors>
 
-  <assign|dark-monochrome-bg-color|black>
+  <assign|dark-scene-bg-color|black>
 
-  <assign|dark-color|white>
+  <assign|dark-scene-monochrome-bg-color|black>
 
-  <assign|dark-math-color|white>
+  <assign|dark-scene-color|white>
 
-  <assign|dark-strong-color|white>
+  <assign|dark-scene-math-color|white>
+
+  <assign|dark-scene-strong-color|white>
 
   <\active*>
     <\src-comment>
       Ornament colors
     </src-comment>
   </active*>
+
+  <copy-theme|dark-deco|deco>
 
   <assign|dark-deco-ornament-body-color|white>
 
@@ -59,6 +59,16 @@
   <assign|dark-deco-ornament-title-math-color|white>
 
   <assign|dark-deco-ornament-title-strong-color|white>
+
+  <\active*>
+    <\src-comment>
+      Combined theme
+    </src-comment>
+  </active*>
+
+  <copy-theme|dark|base>
+
+  <select-theme|dark|dark-scene>
 
   <select-theme|dark|dark-deco>
 </body>

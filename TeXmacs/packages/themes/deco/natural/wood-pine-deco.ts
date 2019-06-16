@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo>
+  <use-package|light-combo|dark-combo>
 
   <copy-theme|wood-pine|light-deco>
 
@@ -28,25 +28,45 @@
 
   <\active*>
     <\src-comment>
+      Light pine wood
+    </src-comment>
+  </active*>
+
+  <copy-theme|wood-pine-light-scene|light-scene>
+
+  <assign|wood-pine-light-scene-bg-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+
+  <assign|wood-pine-light-scene-color|black>
+
+  <assign|wood-pine-light-scene-math-color|#500000>
+
+  <assign|wood-pine-light-scene-strong-color|#0c3000>
+
+  <\active*>
+    <\src-comment>
+      Dark wood
+    </src-comment>
+  </active*>
+
+  <copy-theme|wood-pine-dark-scene|dark-scene>
+
+  <assign|wood-pine-dark-scene-bg-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
+
+  <assign|wood-pine-dark-scene-color|#f8f8f4>
+
+  <assign|wood-pine-dark-scene-math-color|#f8f8f4>
+
+  <assign|wood-pine-dark-scene-strong-color|#f8f8f4>
+
+  <\active*>
+    <\src-comment>
       The ornament
     </src-comment>
   </active*>
 
-  <assign|wood-pine-ornament-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+  <assign|wood-pine-ornament-render-title|<value|with-wood-pine-dark-scene>>
 
-  <assign|wood-pine-ornament-extra-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
-
-  <assign|wood-pine-ornament-title-color|#f8f8f4>
-
-  <assign|wood-pine-ornament-title-math-color|#f8f8f4>
-
-  <assign|wood-pine-ornament-title-strong-color|#f8f8f4>
-
-  <assign|wood-pine-ornament-body-color|black>
-
-  <assign|wood-pine-ornament-body-strong-color|#0c3000>
-
-  <assign|wood-pine-ornament-body-math-color|#500000>
+  <assign|wood-pine-ornament-render-body|<value|with-wood-pine-light-scene>>
 
   <assign|wood-pine-ornament-sunny-color|#ffe8c0>
 

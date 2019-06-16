@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo>
+  <use-package|light-combo|dark-combo>
 
   <copy-theme|metal-brushed|light-deco>
 
@@ -28,25 +28,39 @@
 
   <\active*>
     <\src-comment>
+      Light metal
+    </src-comment>
+  </active*>
+
+  <copy-theme|metal-brushed-light-scene|light-scene>
+
+  <assign|metal-brushed-light-scene-bg-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>>
+
+  <\active*>
+    <\src-comment>
+      Dark metal
+    </src-comment>
+  </active*>
+
+  <copy-theme|metal-brushed-dark-scene|dark-scene>
+
+  <assign|metal-brushed-dark-scene-bg-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#8080a0>>
+
+  <assign|metal-brushed-dark-scene-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+
+  <assign|metal-brushed-dark-scene-math-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+
+  <assign|metal-brushed-dark-scene-strong-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+
+  <\active*>
+    <\src-comment>
       The ornament
     </src-comment>
   </active*>
 
-  <assign|metal-brushed-ornament-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>>
+  <assign|metal-brushed-ornament-render-title|<value|with-metal-brushed-dark-scene>>
 
-  <assign|metal-brushed-ornament-extra-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#8080a0>>
-
-  <assign|metal-brushed-ornament-title-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
-
-  <assign|metal-brushed-ornament-title-math-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
-
-  <assign|metal-brushed-ornament-title-strong-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
-
-  <assign|metal-brushed-ornament-body-color|black>
-
-  <assign|metal-brushed-ornament-body-math-color|dark red>
-
-  <assign|metal-brushed-ornament-body-strong-color|dark blue>
+  <assign|metal-brushed-ornament-render-body|<value|with-metal-brushed-light-scene>>
 
   <assign|metal-brushed-ornament-sunny-color|#e0e0e8>
 

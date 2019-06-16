@@ -22,9 +22,11 @@
 
   <use-package|base-combo>
 
-  <copy-theme|light|base>
+  <copy-theme|light-scene|colors>
 
   <copy-theme|light-deco|deco>
+
+  <copy-theme|light|base>
 
   \;
 </body>

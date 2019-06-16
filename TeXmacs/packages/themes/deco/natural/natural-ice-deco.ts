@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-combo>
+  <use-package|light-combo|dark-combo>
 
   <copy-theme|natural-ice|light-deco>
 
@@ -28,27 +28,47 @@
 
   <\active*>
     <\src-comment>
+      Light ice
+    </src-comment>
+  </active*>
+
+  <copy-theme|natural-ice-light-scene|light-scene>
+
+  <assign|natural-ice-light-scene-bg-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
+  blue>>
+
+  <assign|natural-ice-light-scene-color|black>
+
+  <assign|natural-ice-light-scene-math-color|#503050>
+
+  <assign|natural-ice-light-scene-strong-color|#602060>
+
+  <\active*>
+    <\src-comment>
+      Dark ice
+    </src-comment>
+  </active*>
+
+  <copy-theme|natural-ice-dark-scene|dark-scene>
+
+  <assign|natural-ice-dark-scene-bg-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
+  blue>>
+
+  <assign|natural-ice-dark-scene-color|white>
+
+  <assign|natural-ice-dark-scene-math-color|white>
+
+  <assign|natural-ice-dark-scene-strong-color|white>
+
+  <\active*>
+    <\src-comment>
       The ornament
     </src-comment>
   </active*>
 
-  <assign|natural-ice-ornament-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
-  blue>>
+  <assign|natural-ice-ornament-render-title|<value|with-natural-ice-dark-scene>>
 
-  <assign|natural-ice-ornament-extra-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
-  blue>>
-
-  <assign|natural-ice-ornament-title-color|white>
-
-  <assign|natural-ice-ornament-title-math-color|white>
-
-  <assign|natural-ice-ornament-title-strong-color|white>
-
-  <assign|natural-ice-ornament-body-color|black>
-
-  <assign|natural-ice-ornament-body-strong-color|#602060>
-
-  <assign|natural-ice-ornament-body-math-color|#503050>
+  <assign|natural-ice-ornament-render-body|<value|with-natural-ice-light-scene>>
 
   <assign|natural-ice-ornament-sunny-color|#f4f4ff>
 

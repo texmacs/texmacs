@@ -22,11 +22,15 @@
 
   <\active*>
     <\src-comment>
-      Ornaments
+      Ornaments as decorations
     </src-comment>
   </active*>
 
-  <new-theme|deco|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-body-color|ornament-body-math-color|ornament-body-strong-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-title-color|ornament-title-math-color|ornament-title-strong-color>
+  <assign|ornament-render-title|<macro|body|<arg|body>>>
+
+  <assign|ornament-render-body|<macro|body|<arg|body>>>
+
+  <new-theme|deco|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-body-color|ornament-body-math-color|ornament-body-strong-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-title-color|ornament-title-math-color|ornament-title-strong-color|ornament-render-title|ornament-render-body>
 
   <assign|deco-ornament-title-color|<value|color>>
 
@@ -48,14 +52,16 @@
 
   <assign|deco-hook|<macro|body|<arg|body>>>
 
-  <assign|deco-title|<macro|body|<with|color|<value|ornament-title-color>|math-color|<value|ornament-title-math-color>|strong-color|<value|ornament-title-strong-color>|<arg|body>>>>
+  <assign|deco-hook*|<macro|body|<with|bg-color|<value|ornament-extra-color>|<ornament-render-title|<with|ornament-extra-color|<value|bg-color>|<with|bg-color|<value|ornament-color>|<ornament-render-body|<with|ornament-color|<value|bg-color>|<deco-hook|<arg|body>>>>>>>>>>
 
-  <assign|deco-body|<macro|body|<with|color|<value|ornament-body-color>|math-color|<value|ornament-body-math-color>|strong-color|<value|ornament-body-strong-color>|<arg|body>>>>
+  <assign|deco-title|<macro|body|<with|color|<value|ornament-title-color>|math-color|<value|ornament-title-math-color>|strong-color|<value|ornament-title-strong-color>|<ornament-render-title|<arg|body>>>>>
 
-  <assign|deco|<macro|body|<deco-hook|<ornament|<deco-body|<arg|body>>>>>>
+  <assign|deco-body|<macro|body|<with|color|<value|ornament-body-color>|math-color|<value|ornament-body-math-color>|strong-color|<value|ornament-body-strong-color>|<ornament-render-body|<arg|body>>>>>
+
+  <assign|deco|<macro|body|<deco-hook*|<ornament|<deco-body|<arg|body>>>>>>
 
   <assign|deco-block|<\macro|body>
-    <\deco-hook>
+    <\deco-hook*>
       <\ornament>
         <\wide-normal>
           <\deco-body>
@@ -63,13 +69,13 @@
           </deco-body>
         </wide-normal>
       </ornament>
-    </deco-hook>
+    </deco-hook*>
   </macro>>
 
-  <assign|deco-titled|<macro|name|body|<deco-hook|<ornament|<deco-body|<arg|body>>|<deco-title|<arg|name>>>>>>
+  <assign|deco-titled|<macro|name|body|<deco-hook*|<ornament|<deco-body|<arg|body>>|<deco-title|<arg|name>>>>>>
 
   <assign|deco-titled-block|<\macro|name|body>
-    <\deco-hook>
+    <\deco-hook*>
       <\ornament>
         <\wide-normal>
           <\deco-body>
@@ -77,7 +83,7 @@
           </deco-body>
         </wide-normal>
       </ornament|<deco-title|<arg|name>>>
-    </deco-hook>
+    </deco-hook*>
   </macro>>
 
   \;
