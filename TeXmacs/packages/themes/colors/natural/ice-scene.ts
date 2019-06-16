@@ -24,18 +24,26 @@
 
   <\active*>
     <\src-comment>
+      Bright (white) ice
+    </src-comment>
+  </active*>
+
+  <copy-theme|natural-ice-bright-scene|light-scene>
+
+  <assign|natural-ice-bright-scene-math-color|#503050>
+
+  <assign|natural-ice-bright-scene-strong-color|#602060>
+
+  <\active*>
+    <\src-comment>
       Light ice
     </src-comment>
   </active*>
 
-  <copy-theme|natural-ice-light-scene|light-scene>
+  <copy-theme|natural-ice-light-scene|natural-ice-bright-scene>
 
   <assign|natural-ice-light-scene-bg-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
   blue>>
-
-  <assign|natural-ice-light-scene-math-color|#503050>
-
-  <assign|natural-ice-light-scene-strong-color|#602060>
 
   <\active*>
     <\src-comment>

@@ -26,15 +26,7 @@
 
   <select-theme|ice|natural-ice>
 
-  <\active*>
-    <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <assign|ice-strong-color|#602060>
-
-  <assign|ice-math-color|#503050>
+  <select-theme|ice|natural-ice-bright-scene>
 
   <\active*>
     <\src-comment>
