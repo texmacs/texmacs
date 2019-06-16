@@ -24,13 +24,31 @@
 
   <\active*>
     <\src-comment>
+      Bright metal
+    </src-comment>
+  </active*>
+
+  <copy-theme|metal-brushed-bright-scene|light-scene>
+
+  <assign|metal-brushed-bright-scene-bg-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
+
+  <assign|metal-brushed-bright-scene-monochrome-bg-color|#f0f0f0>
+
+  <assign|metal-brushed-bright-scene-strong-color|#202048>
+
+  <assign|metal-brushed-bright-scene-math-color|#602020>
+
+  <\active*>
+    <\src-comment>
       Light metal
     </src-comment>
   </active*>
 
-  <copy-theme|metal-brushed-light-scene|light-scene>
+  <copy-theme|metal-brushed-light-scene|metal-brushed-bright-scene>
 
   <assign|metal-brushed-light-scene-bg-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#c0c0d0>>
+
+  <assign|metal-brushed-light-scene-monochrome-bg-color|#c0c0d0>
 
   <\active*>
     <\src-comment>

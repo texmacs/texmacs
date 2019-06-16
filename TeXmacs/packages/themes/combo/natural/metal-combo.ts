@@ -26,15 +26,7 @@
 
   <select-theme|metal|metal-brushed>
 
-  <\active*>
-    <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <assign|metal-bg-color|<pattern|metal-brushed-light.png|*3/5|*3/5|#f0f0f0>>
-
-  <assign|metal-monochrome-bg-color|#f0f0f0>
+  <select-theme|metal|metal-brushed-bright-scene>
 
   <\active*>
     <\src-comment>

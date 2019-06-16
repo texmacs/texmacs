@@ -52,16 +52,6 @@
 
   <\active*>
     <\src-comment>
-      Colors of standard tags (strong, math, etc.)
-    </src-comment>
-  </active*>
-
-  <assign|greyish-strong-color|#202048>
-
-  <assign|greyish-math-color|#602020>
-
-  <\active*>
-    <\src-comment>
       Sessions
     </src-comment>
   </active*>
