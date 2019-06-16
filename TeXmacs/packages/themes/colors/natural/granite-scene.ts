@@ -24,6 +24,22 @@
 
   <\active*>
     <\src-comment>
+      Extra dark granite
+    </src-comment>
+  </active*>
+
+  <copy-theme|stone-granite-xdark-scene|dark-scene>
+
+  <assign|stone-granite-xdark-scene-bg-color|<pattern|granite-xdark.png|*3/5|*3/5|#080808>>
+
+  <assign|stone-granite-xdark-scene-monochrome-bg-color|#080808>
+
+  <assign|stone-granite-xdark-scene-math-color|#ffd4c0>
+
+  <assign|stone-granite-xdark-scene-strong-color|#f0ffb0>
+
+  <\active*>
+    <\src-comment>
       Dark granite
     </src-comment>
   </active*>
@@ -31,6 +47,8 @@
   <copy-theme|stone-granite-dark-scene|dark-scene>
 
   <assign|stone-granite-dark-scene-bg-color|<pattern|granite-dark.png|*3/5|*3/5|#101010>>
+
+  <assign|stone-granite-xdark-scene-monochrome-bg-color|#101010>
 
   <assign|stone-granite-dark-scene-math-color|#ffd4c0>
 
@@ -45,6 +63,8 @@
   <copy-theme|stone-granite-medium-scene|dark-scene>
 
   <assign|stone-granite-medium-scene-bg-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+
+  <assign|stone-granite-medium-scene-monochrome-bg-color|#202020>
 
   <assign-uniform|stone-granite-medium-scene|gold>
 </body>

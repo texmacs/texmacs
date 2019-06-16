@@ -26,19 +26,7 @@
 
   <select-theme|granite|stone-granite>
 
-  <\active*>
-    <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <assign|granite-bg-color|<pattern|granite-xdark.png|*3/5|*3/5|#080808>>
-
-  <assign|granite-monochrome-bg-color|#080808>
-
-  <assign|granite-strong-color|#f0ffb0>
-
-  <assign|granite-math-color|#ffd4c0>
+  <select-theme|granite|stone-granite-xdark-scene>
 
   <\active*>
     <\src-comment>
