@@ -54,25 +54,19 @@
 
   <assign|paper-manila-dark-scene-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
 
-  <assign|paper-manila-dark-scene-math-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
-
-  <assign|paper-manila-dark-scene-strong-color|<pattern|paper-manila-bright.png|*3/5|*3/5|#f4f4f0>>
+  <make-uniform|paper-manila-dark-scene>
 
   <copy-theme|paper-ridged-dark-scene|paper-manila-dark-scene>
 
   <assign|paper-ridged-dark-scene-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
 
-  <assign|paper-ridged-dark-scene-math-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
-
-  <assign|paper-ridged-dark-scene-strong-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#c0a08c>>
+  <make-uniform|paper-ridged-dark-scene>
 
   <copy-theme|paper-rough-dark-scene|paper-manila-dark-scene>
 
   <assign|paper-rough-dark-scene-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
 
-  <assign|paper-rough-dark-scene-math-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
-
-  <assign|paper-rough-dark-scene-strong-color|<pattern|paper-rough-bright.png|*3/5|*3/5|#f7f7f7>>
+  <make-uniform|paper-rough-dark-scene>
 
   \;
 </body>

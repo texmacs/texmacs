@@ -20,9 +20,23 @@
     </src-license>
   </src-title>>
 
+  <\active*>
+    <\src-comment>
+      Standard colors
+    </src-comment>
+  </active*>
+
   <new-theme|colors|bg-color|monochrome-bg-color|color|math-color|strong-color>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Uniform coloring
+    </src-comment>
+  </active*>
+
+  <assign|make-uniform|<macro|theme|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|theme>|-math-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>><assign|<unquote|<merge|<arg|theme>|-strong-color>>|<value|<unquote|<merge|<arg|theme>|-color>>>>>>>>
+
+  <assign|assign-uniform|<macro|theme|val|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|theme>|-color>>|<unquote|<arg|val>>><make-uniform|<unquote|<arg|theme>>>>>>>
 </body>
 
 <\initial>
