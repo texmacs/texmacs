@@ -26,19 +26,7 @@
 
   <select-theme|pine|wood-pine>
 
-  <\active*>
-    <\src-comment>
-      Main colors
-    </src-comment>
-  </active*>
-
-  <assign|pine-bg-color|<pattern|pine-bright.png|*3/5|*3/5|#f8ecd4>>
-
-  <assign|pine-monochrome-bg-color|#f8ecd4>
-
-  <assign|pine-strong-color|#0c3000>
-
-  <assign|pine-math-color|#500000>
+  <select-theme|pine|wood-pine-bright-scene>
 
   <\active*>
     <\src-comment>
@@ -58,7 +46,7 @@
 
   <assign|pine-input-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#f4eee8>>
 
-  <assign|pine-fold-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200C>>
+  <assign|pine-fold-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
 
   <assign|pine-fold-title-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
 

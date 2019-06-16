@@ -24,17 +24,31 @@
 
   <\active*>
     <\src-comment>
+      Bright pine wood
+    </src-comment>
+  </active*>
+
+  <copy-theme|wood-pine-bright-scene|light-scene>
+
+  <assign|wood-pine-bright-scene-bg-color|<pattern|pine-bright.png|*3/5|*3/5|#f8ecd4>>
+
+  <assign|wood-pine-bright-scene-monochrome-bg-color|#f8ecd4>
+
+  <assign|wood-pine-bright-scene-math-color|#500000>
+
+  <assign|wood-pine-bright-scene-strong-color|#0c3000>
+
+  <\active*>
+    <\src-comment>
       Light pine wood
     </src-comment>
   </active*>
 
-  <copy-theme|wood-pine-light-scene|light-scene>
+  <copy-theme|wood-pine-light-scene|wood-pine-bright-scene>
 
   <assign|wood-pine-light-scene-bg-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
 
-  <assign|wood-pine-light-scene-math-color|#500000>
-
-  <assign|wood-pine-light-scene-strong-color|#0c3000>
+  <assign|wood-pine-light-scene-monochrome-bg-color|#e0b050>
 
   <\active*>
     <\src-comment>
