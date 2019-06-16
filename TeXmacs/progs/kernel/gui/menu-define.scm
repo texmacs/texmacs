@@ -553,6 +553,7 @@
    (list (list "Dot hatches" "$TEXMACS_PATH/misc/patterns/dots-hatches")
          (list "Line hatches" "$TEXMACS_PATH/misc/patterns/lines-default")
          (list "Artistic hatches" "$TEXMACS_PATH/misc/patterns/lines-artistic")
+         (list "Textile" "$TEXMACS_PATH/misc/patterns/textile")
          (list "Hatch" "/opt/local/share/openclipart/special/patterns")
          (list "Personal" "~/patterns")
          (list "Simple" "~/simple-tiles"))

@@ -26,7 +26,8 @@
 (tm-define (beamer-themes)
   (list "bluish" "boring-white" "dark-vador" "granite"
         "ice" "manila-paper" "metal" "pale-blue"
-        "pine" "reddish" "ridged-paper" "rough-paper"))
+        "pine" "reddish" "ridged-paper" "rough-paper"
+        "xperiment"))
 
 (tm-define (current-beamer-theme)
   (with l (get-style-list)
