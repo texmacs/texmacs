@@ -39,6 +39,7 @@
 	(string-load dest)
 	(with tmp (url-concretize* src)
 	  (cond ((not (url-none? tmp))
+                 (system-mkdir (url-head dest))
 		 (system-move tmp dest)
 		 (string-load dest))
 		((url-exists? thumbnail)

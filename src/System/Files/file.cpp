@@ -615,6 +615,7 @@ void
 mkdir (url u) {
 #if defined (HAVE_SYS_TYPES_H) && defined (HAVE_SYS_STAT_H)
   if (!exists (u)) {
+    if (!is_atomic (u) && !is_root (u)) mkdir (head (u));
     c_string _u (concretize (u));
     (void) ::mkdir (_u, S_IRWXU + S_IRGRP + S_IROTH);
   }
