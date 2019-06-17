@@ -229,6 +229,7 @@ qt_renderer_rep::set_pencil (pencil np) {
       p= QPen (b, pw);
     }
   }
+  p.setStyle (Qt::SolidLine);
   p.setCapStyle (pen->get_cap () == cap_round? Qt::RoundCap: Qt::SquareCap);
   p.setJoinStyle (Qt::RoundJoin);
   painter->setPen (p);
