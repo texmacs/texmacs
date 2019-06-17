@@ -28,7 +28,7 @@
     </src-comment>
   </active*>
 
-  <new-theme|titles|title-bar-color|title-color>
+  <new-theme|titles|title-bar-color|title-color|title-vpadding|title-font-size>
 
   <\active*>
     <\src-comment>

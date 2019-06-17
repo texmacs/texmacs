@@ -27,6 +27,22 @@
   <select-theme|blackboard|dark-deco>
 
   <select-theme|blackboard|blackboard-scene>
+
+  <\active*>
+    <\src-comment>
+      Titles
+    </src-comment>
+  </active*>
+
+  <assign|blackboard-title-bar-color|<macro|black>>
+
+  <assign|blackboard-title-color|<macro|#ffc080>>
+
+  <assign|blackboard-title-vpadding|0.5spc>
+
+  <assign|blackboard-title-font-size|1.2>
+
+  \;
 </body>
 
 <\initial>

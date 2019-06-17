@@ -32,9 +32,11 @@
 
   <assign|blackboard-scene-bg-color|<pattern|tmfs://artwork/plain/landscape/blackboard/blackboard-pxhere.jpg|100%|100%>>
 
-  <assign|blackboard-scene-math-color|#ffd4c0>
+  <assign|blackboard-scene-math-color|#ffffd0>
 
-  <assign|blackboard-scene-strong-color|#f0ffb0>
+  <assign|blackboard-scene-strong-color|#ffc080>
+
+  \;
 </body>
 
 <\initial>
