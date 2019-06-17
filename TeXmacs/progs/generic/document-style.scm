@@ -255,6 +255,7 @@
   ("framed-envs"        "Display various environments inside wide frames")
   ("ornaments"          "Tags for various fancy ornaments")
   ("presentation"       "Base package for laptop presentations")
+  ("blackboard"         "Blackboard beamer theme")
   ("bluish"             "Bluish beamer theme")
   ("ice"                "Ice beamer theme")
   ("metal"              "Metallic beamer theme")
