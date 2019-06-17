@@ -77,6 +77,7 @@ picture load_xpm (url file_name);
 void picture_cache_reserve (url u, int w, int h, tree e);
 void picture_cache_release (url u, int w, int h, tree e);
 void picture_cache_clean ();
+void picture_cache_reset ();
 picture cached_load_picture (url u, int w, int h, tree e, bool perma= true);
 string picture_as_eps (picture pic, int dpi);
 

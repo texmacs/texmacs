@@ -1018,19 +1018,28 @@ descendance (url u) {
 * Concretization of resolved urls
 ******************************************************************************/
 
-string
-concretize (url u) {
-  // This routine transforms a resolved url into a system file name.
+url
+concretize_url (url u) {
+  // This routine transforms a resolved url into a system url.
   // In the case of distant files from the web, a local copy is created.
   if (is_rooted (u, "default") ||
       is_rooted (u, "file") ||
       is_rooted (u, "blank"))
-        return as_string (reroot (u, "default"));
-  if (is_rooted_web (u)) return concretize (get_from_web (u));
-  if (is_rooted_tmfs (u)) return concretize (get_from_server (u));
-  if (is_ramdisc (u)) return concretize (get_from_ramdisc (u));
-  if (is_here (u)) return as_string (url_pwd ());
-  if (is_parent (u)) return as_string (url_pwd () * url_parent ());
+        return reroot (u, "default");
+  if (is_rooted_web (u)) return concretize_url (get_from_web (u));
+  if (is_rooted_tmfs (u)) return concretize_url (get_from_server (u));
+  if (is_ramdisc (u)) return concretize_url (get_from_ramdisc (u));
+  if (is_here (u)) return url_pwd ();
+  if (is_parent (u)) return url_pwd () * url_parent ();
+  return url_none ();
+}
+
+string
+concretize (url u) {
+  // This routine transforms a resolved url into a system file name.
+  // In the case of distant files from the web, a local copy is created.
+  url c= concretize_url (u);
+  if (!is_none (c)) return as_string (c);
   if (is_wildcard (u, 1)) return u->t[1]->label;
   std_warning << "Couldn't concretize " << u->t << LF;
   // failed_error << "u= " << u << LF;

@@ -162,6 +162,13 @@ picture_cache_clean () {
   picture_blacklist= hashmap<tree,int> ();
 }
 
+void
+picture_cache_reset () {
+  picture_blacklist= hashmap<tree,int> ();
+  picture_cache= hashmap<tree,picture> ();
+  picture_stamp= hashmap<tree,int> ();
+}
+
 static bool
 picture_is_cached (url file_name, int w, int h, tree eff) {
   tree key= tuple (file_name->t, as_string (w), as_string (h), eff);

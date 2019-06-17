@@ -128,6 +128,7 @@
 (use-modules (utils library smart-table))
 (use-modules (utils plugins plugin-convert))
 (use-modules (utils misc markup-funcs))
+(use-modules (utils misc artwork))
 (use-modules (utils handwriting handwriting))
 (define supports-email? (url-exists-in-path? "mmail"))
 (if supports-email? (use-modules (utils email email-tmfs)))

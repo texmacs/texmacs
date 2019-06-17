@@ -75,26 +75,10 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(updater-set-appcast <scm-arg|url>)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|updater_set_appcast> which returns
-    <scm|bool>.
-  </explain>
-
-  <\explain>
     <scm|(updater-set-interval <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|updater_set_interval> which returns
-    <scm|bool>.
-  </explain>
-
-  <\explain>
-    <scm|(updater-set-automatic <scm-arg|bool>)>
-<explain-synopsis|no synopsis>
-  <|explain>
-    Calls the <c++> function <cpp|updater_set_automatic> which returns
     <scm|bool>.
   </explain>
 
@@ -4107,6 +4091,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(url-concretize* <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|concretize_url> which returns
+    <scm|url>.
+  </explain>
+
+  <\explain>
     <scm|(url-concretize <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -4320,6 +4312,14 @@ source code.
   <|explain>
     Calls the <c++> function <cpp|search_file_upwards> which returns
     <scm|url>.
+  </explain>
+
+  <\explain>
+    <scm|(picture-cache-reset)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|picture_cache_reset> which returns
+    <scm|void>.
   </explain>
 
   <\explain>

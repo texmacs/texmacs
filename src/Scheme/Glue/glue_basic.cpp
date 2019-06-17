@@ -6885,6 +6885,19 @@ tmg_url_exists_in_texP (tmscm arg1) {
 }
 
 tmscm
+tmg_url_concretize_dot (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-concretize*");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= concretize_url (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_url_concretize (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-concretize");
 
@@ -7261,6 +7274,15 @@ tmg_url_search_upwards (tmscm arg1, tmscm arg2, tmscm arg3) {
   // TMSCM_ALLOW_INTS;
 
   return url_to_tmscm (out);
+}
+
+tmscm
+tmg_picture_cache_reset () {
+  // TMSCM_DEFER_INTS;
+  picture_cache_reset ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
 }
 
 tmscm
@@ -10294,6 +10316,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-exists?",  tmg_url_existsP, 1, 0, 0);
   tmscm_install_procedure ("url-exists-in-path?",  tmg_url_exists_in_pathP, 1, 0, 0);
   tmscm_install_procedure ("url-exists-in-tex?",  tmg_url_exists_in_texP, 1, 0, 0);
+  tmscm_install_procedure ("url-concretize*",  tmg_url_concretize_dot, 1, 0, 0);
   tmscm_install_procedure ("url-concretize",  tmg_url_concretize, 1, 0, 0);
   tmscm_install_procedure ("url-materialize",  tmg_url_materialize, 2, 0, 0);
   tmscm_install_procedure ("url-test?",  tmg_url_testP, 2, 0, 0);
@@ -10321,6 +10344,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-url->string",  tmg_system_url_2string, 1, 0, 0);
   tmscm_install_procedure ("url-grep",  tmg_url_grep, 2, 0, 0);
   tmscm_install_procedure ("url-search-upwards",  tmg_url_search_upwards, 3, 0, 0);
+  tmscm_install_procedure ("picture-cache-reset",  tmg_picture_cache_reset, 0, 0, 0);
   tmscm_install_procedure ("persistent-set",  tmg_persistent_set, 3, 0, 0);
   tmscm_install_procedure ("persistent-remove",  tmg_persistent_remove, 2, 0, 0);
   tmscm_install_procedure ("persistent-has?",  tmg_persistent_hasP, 2, 0, 0);

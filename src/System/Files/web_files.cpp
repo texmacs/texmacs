@@ -112,7 +112,7 @@ get_from_server (url u) {
   }
   string r= as_string (call ("tmfs-load", object (name)));
   if (r == "") return url_none ();
-  url tmp= url_temp ();
+  url tmp= url_temp (string (".") * suffix (name));
   (void) save_string (tmp, r, true);
 
   //return set_cache (u, tmp);

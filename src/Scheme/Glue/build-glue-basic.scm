@@ -574,6 +574,7 @@
   (url-exists? exists (bool url))
   (url-exists-in-path? exists_in_path (bool url))
   (url-exists-in-tex? exists_in_tex (bool url))
+  (url-concretize* concretize_url (url url))
   (url-concretize concretize (string url))
   (url-materialize materialize (string url string))
   (url-test? is_of_type (bool url string))
@@ -601,6 +602,7 @@
   (system-url->string sys_concretize (string url))
   (url-grep grep (url string url))
   (url-search-upwards search_file_upwards (url url string array_string))
+  (picture-cache-reset picture_cache_reset (void))
 
   ;; Persistent data
   (persistent-set persistent_set (void url string string))
