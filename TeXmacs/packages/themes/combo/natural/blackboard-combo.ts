@@ -20,11 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-combo|blackboard-scene>
+  <use-package|dark-combo|blackboard-deco>
 
   <copy-theme|blackboard|dark>
 
-  <select-theme|blackboard|dark-deco>
+  <select-theme|blackboard|transparent-blackboard-deco>
 
   <select-theme|blackboard|blackboard-scene>
 
@@ -42,7 +42,17 @@
 
   <assign|blackboard-title-font-size|1.2>
 
-  \;
+  <\active*>
+    <\src-comment>
+      Posters
+    </src-comment>
+  </active*>
+
+  <assign|blackboard-title-block|<value|transparent-blackboard-deco-block>>
+
+  <assign|blackboard-framed-block|<value|transparent-blackboard-deco-block>>
+
+  <assign|blackboard-framed-block*|<value|transparent-blackboard-deco-titled-block>>
 </body>
 
 <\initial>

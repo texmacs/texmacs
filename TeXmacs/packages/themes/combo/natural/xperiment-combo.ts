@@ -56,11 +56,11 @@
     </src-comment>
   </active*>
 
-  <assign|pine-title-block|<value|xperiment-deco-block>>
+  <assign|xperiment-title-block|<value|xperiment-deco-block>>
 
-  <assign|pine-framed-block|<value|xperiment-deco-block>>
+  <assign|xperiment-framed-block|<value|xperiment-deco-block>>
 
-  <assign|pine-framed-block*|<value|xperiment-deco-titled-block>>
+  <assign|xperiment-framed-block*|<value|xperiment-deco-titled-block>>
 </body>
 
 <\initial>

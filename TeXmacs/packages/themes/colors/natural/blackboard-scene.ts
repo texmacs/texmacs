@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|dark-scene>
+  <use-package|transparent-scene>
 
   <\active*>
     <\src-comment>
@@ -35,6 +35,26 @@
   <assign|blackboard-scene-math-color|#ffffd0>
 
   <assign|blackboard-scene-strong-color|#ffc080>
+
+  <\active*>
+    <\src-comment>
+      Transparent blackboard
+    </src-comment>
+  </active*>
+
+  <copy-theme|transparent-blackboard-scene|blackboard-scene>
+
+  <assign|transparent-blackboard-scene-bg-color|none>
+
+  <\active*>
+    <\src-comment>
+      Transparent blackboard title
+    </src-comment>
+  </active*>
+
+  <copy-theme|transparent-blackboard-title-scene|transparent-blackboard-scene>
+
+  <assign-uniform|transparent-blackboard-title-scene|#ffc080>
 
   \;
 </body>
