@@ -24,37 +24,31 @@
 
   <\active*>
     <\src-comment>
-      Title blocks
+      Main types of themes
     </src-comment>
   </active*>
 
   <new-theme|titles|title-bar-color|title-color|title-sunny-color|title-shadow-color|title-shape|title-border|title-vpadding|title-hor-padding|title-ver-padding|title-font-size>
 
-  <\active*>
-    <\src-comment>
-      Sessions
-    </src-comment>
-  </active*>
-
   <new-theme|sessions|input-color|fold-bar-color|fold-title-color>
-
-  <\active*>
-    <\src-comment>
-      Posters
-    </src-comment>
-  </active*>
 
   <new-theme|poster|title-block|framed-block|framed-block*|alternate-block|alternate-block*>
 
   <new-theme|poster-ornament-shape|title-shape|framed-shape|alternate-shape>
 
+  <copy-theme|base|colors|deco|titles|sessions|poster|poster-ornament-shape>
+
   <\active*>
     <\src-comment>
-      Combine everything
+      Determine title theme from decoration
     </src-comment>
   </active*>
 
-  <copy-theme|base|colors|deco|titles|sessions|poster|poster-ornament-shape>
+  <assign|select-title-deco|<macro|combo|deco|<quasi|<style-with|src-compact|none|<complete-deco|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-title-bar-color>>|<value|<unquote|<merge|<arg|deco>|-ornament-title-bg-color>>>><assign|<unquote|<merge|<arg|combo>|-title-color>>|<value|<unquote|<merge|<arg|deco>|-ornament-title-color>>>><assign|<unquote|<merge|<arg|combo>|-title-sunny-color>>|<value|<unquote|<merge|<arg|deco>|-ornament-sunny-color>>>><assign|<unquote|<merge|<arg|combo>|-title-shadow-color>>|<value|<unquote|<merge|<arg|deco>|-ornament-shadow-color>>>><assign|<unquote|<merge|<arg|combo>|-title-shape>>|<value|<unquote|<merge|<arg|deco>|-ornament-shape>>>>>>>>
+
+  <assign|select-title-deco*|<macro|combo|deco|<quasi|<style-with|src-compact|none|<select-title-deco|<unquote|<arg|combo>>|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-title-border>>|<value|<unquote|<merge|<arg|deco>|-ornament-border>>>>>>>>
+
+  <assign|select-title-deco**|<macro|combo|deco|<quasi|<style-with|src-compact|none|<select-title-deco*|<unquote|<arg|combo>>|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-title-vpadding>>|<value|<unquote|<merge|<arg|deco>|-ornament-vpadding>>>><assign|<unquote|<merge|<arg|combo>|-title-hor-padding>>|<value|<unquote|<merge|<arg|deco>|-ornament-hpadding>>>><assign|<unquote|<merge|<arg|combo>|-title-ver-padding>>|<value|<unquote|<merge|<arg|deco>|-ornament-vpadding>>>>>>>>
 </body>
 
 <\initial>

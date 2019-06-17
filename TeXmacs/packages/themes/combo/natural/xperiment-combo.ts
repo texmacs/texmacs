@@ -34,9 +34,7 @@
     </src-comment>
   </active*>
 
-  <assign|xperiment-title-bar-color|<pattern|textile/tex2res4.png|*1/5|*1/5|<eff-monochrome|0|#000020|0>>>
-
-  <assign|xperiment-title-color|<macro|#f0f0f0>>
+  <select-title-deco|xperiment|xperiment-deco>
 
   <\active*>
     <\src-comment>

@@ -34,10 +34,9 @@
     </src-comment>
   </active*>
 
-  <assign|ice-title-bar-color|<macro|<pattern|ice-dark-blue.png|*3/5|*3/5|dark
-  blue>>>
+  <select-title-deco|ice|natural-ice>
 
-  <assign|ice-title-color|<macro|<pattern|ice-light.png|*3/5|*3/5|#f0f0f0>>>
+  <assign-uniform|ice-title|<pattern|ice-light.png|*3/5|*3/5|#f0f0f0>>
 
   <\active*>
     <\src-comment>

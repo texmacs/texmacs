@@ -34,13 +34,9 @@
     </src-comment>
   </active*>
 
-  <assign|blackboard-title-bar-color|<macro|black>>
+  <select-title-deco*|blackboard|transparent-blackboard-deco>
 
-  <assign|blackboard-title-color|<macro|#ffc080>>
-
-  <assign|blackboard-title-vpadding|0.5spc>
-
-  <assign|blackboard-title-font-size|1.2>
+  <assign|blackboard-title-border|0.5ln>
 
   <\active*>
     <\src-comment>

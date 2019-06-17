@@ -34,9 +34,7 @@
     </src-comment>
   </active*>
 
-  <assign|dark-vador-title-bar-color|<macro|#603030>>
-
-  <assign|dark-vador-title-color|<macro|#fff0c0>>
+  <select-title-deco|dark-vador|title-vador>
 
   <\active*>
     <\src-comment>

@@ -48,6 +48,14 @@
 
   <\active*>
     <\src-comment>
+      Management of added variables
+    </src-comment>
+  </active*>
+
+  <assign|complete-deco|<macro|deco|<quasi|<style-with|src-compact|none|<with|ornament-body-color|<value|<unquote|<merge|<arg|deco>|-ornament-color>>>|bg-color|<value|ornament-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-body>>|<assign|<unquote|<merge|<arg|deco>|-ornament-body-bg-color>>|<value|bg-color>>>><with|ornament-body-color|<value|<unquote|<merge|<arg|deco>|-ornament-body-color>>>|color|<value|ornament-body-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-body>>|<assign|<unquote|<merge|<arg|deco>|-ornament-body-color>>|<value|color>>>><with|ornament-body-math-color|<value|<unquote|<merge|<arg|deco>|-ornament-body-math-color>>>|color|<value|ornament-body-math-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-body>>|<assign|<unquote|<merge|<arg|deco>|-ornament-body-math-color>>|<value|math-color>>>><with|ornament-body-strong-color|<value|<unquote|<merge|<arg|deco>|-ornament-body-strong-color>>>|color|<value|ornament-body-strong-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-body>>|<assign|<unquote|<merge|<arg|deco>|-ornament-body-strong-color>>|<value|strong-color>>>><with|ornament-title-bg-color|<value|<unquote|<merge|<arg|deco>|-ornament-extra-color>>>|bg-color|<value|ornament-extra-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-title>>|<assign|<unquote|<merge|<arg|deco>|-ornament-title-bg-color>>|<value|bg-color>>>><with|ornament-title-color|<value|<unquote|<merge|<arg|deco>|-ornament-title-color>>>|color|<value|ornament-title-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-title>>|<assign|<unquote|<merge|<arg|deco>|-ornament-title-color>>|<value|color>>>><with|ornament-title-math-color|<value|<unquote|<merge|<arg|deco>|-ornament-title-math-color>>>|color|<value|ornament-title-math-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-title>>|<assign|<unquote|<merge|<arg|deco>|-ornament-title-math-color>>|<value|math-color>>>><with|ornament-title-strong-color|<value|<unquote|<merge|<arg|deco>|-ornament-title-strong-color>>>|color|<value|ornament-title-strong-color>|<compound|<unquote|<merge|<arg|deco>|-ornament-render-title>>|<assign|<unquote|<merge|<arg|deco>|-ornament-title-strong-color>>|<value|strong-color>>>>>>>>
+
+  <\active*>
+    <\src-comment>
       Create new decorations from themes
     </src-comment>
   </active*>
@@ -90,7 +98,7 @@
 
   \;
 
-  <assign|new-deco|<macro|deco|<with|w|<merge|with-|<arg|deco>>|<quasi|<style-with|src-compact|none|<assign|<unquote|<merge|<arg|env>|-text>>|<macro|<localize|<unquote|<arg|name>>>>><assign|<unquote|<arg|deco>>|<macro|body|<compound|<unquote|<value|w>>|<deco|<arg|body>>>>><assign|<unquote|<merge|<arg|deco>|-titled>>|<macro|name|body|<compound|<unquote|<value|w>>|<deco-titled|<arg|name>|<arg|body>>>>><assign|<unquote|<merge|<arg|deco>|-block>>|<\macro|body>
+  <assign|new-deco|<macro|deco|<with|w|<merge|with-|<arg|deco>>|<quasi|<style-with|src-compact|none|<assign|<unquote|<arg|deco>>|<macro|body|<compound|<unquote|<value|w>>|<deco|<arg|body>>>>><assign|<unquote|<merge|<arg|deco>|-titled>>|<macro|name|body|<compound|<unquote|<value|w>>|<deco-titled|<arg|name>|<arg|body>>>>><assign|<unquote|<merge|<arg|deco>|-block>>|<\macro|body>
     <compound|<unquote|<value|w>>|<deco-block|<arg|body>>>
   </macro>><assign|<unquote|<merge|<arg|deco>|-titled-block>>|<\macro|name|body>
     <compound|<unquote|<value|w>>|<deco-titled-block|<arg|name>|<arg|body>>>

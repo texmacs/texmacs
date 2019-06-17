@@ -34,9 +34,9 @@
     </src-comment>
   </active*>
 
-  <assign|granite-title-bar-color|<macro|<pattern|granite-medium.png|*3/5|*3/5|#202020>>>
+  <select-title-deco|granite|stone-granite>
 
-  <assign|granite-title-color|<macro|white>>
+  <assign-uniform|granite-title|white>
 
   <\active*>
     <\src-comment>

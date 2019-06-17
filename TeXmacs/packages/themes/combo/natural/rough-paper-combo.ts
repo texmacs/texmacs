@@ -34,7 +34,7 @@
     </src-comment>
   </active*>
 
-  <assign|rough-paper-title-bar-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+  <select-title-deco|rough-paper|paper-rough>
 
   <\active*>
     <\src-comment>

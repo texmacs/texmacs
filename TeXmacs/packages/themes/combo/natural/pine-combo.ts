@@ -34,9 +34,7 @@
     </src-comment>
   </active*>
 
-  <assign|pine-title-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
-
-  <assign|pine-title-color|<macro|#f8f8f4>>
+  <select-title-deco|pine|wood-pine>
 
   <\active*>
     <\src-comment>

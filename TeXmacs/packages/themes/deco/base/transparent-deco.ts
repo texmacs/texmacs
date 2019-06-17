@@ -40,6 +40,8 @@
 
   <assign|transparent-light-deco-ornament-shadow-color|dark grey>
 
+  <complete-deco|transparent-light-deco>
+
   <\active*>
     <\src-comment>
       Dark transparent
@@ -57,6 +59,8 @@
   <assign|transparent-dark-deco-ornament-sunny-color|light grey>
 
   <assign|transparent-dark-deco-ornament-shadow-color|light grey>
+
+  <complete-deco|transparent-dark-deco>
 </body>
 
 <\initial>
