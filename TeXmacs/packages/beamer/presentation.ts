@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|std>>
 
@@ -102,6 +102,12 @@
 
   <assign|title-color|<macro|white>>
 
+  <assign|title-border|0ln>
+
+  <assign|title-sunny-color|#f4f4ff>
+
+  <assign|title-shadow-color|#d8d8ff>
+
   <assign|title-left|<macro|body|>>
 
   <assign|title-right|<macro|body|>>
@@ -120,13 +126,17 @@
 
   <drd-props|title-color|macro-parameter|color>
 
-  <assign|tit|<macro|body|<with|color|<title-color>|math-color|<title-color>|ornament-color|<title-bar-color>|<ornament|<title-left|<arg|body>><htab|5mm><with|font-series|bold|math-font-series|bold|<large|<space|0em|-0.6ex|1.6ex><arg|body>>><htab|5mm><title-right|<arg|body>>>>>>
+  <assign|with-tit-color|<macro|body|<\with|color|<title-color>|math-color|<title-color>|strong-color|<title-color>>
+    <arg|body>
+  </with>>>
+
+  <assign|tit|<macro|body|<with-tit-color|<with|ornament-color|<title-bar-color>|<ornament|<title-left|<arg|body>><htab|5mm><with|font-series|bold|math-font-series|bold|<large|<space|0em|-0.6ex|1.6ex><arg|body>>><htab|5mm><title-right|<arg|body>>>>>>>
 
   <assign|tit|<\macro|body>
     <\surround|<assign|page-this-top|0mm>|<assign|gpag-length|<macro|<minus|1pag|2.25fn>>><vspace|5mm>>
-      <\with|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>>
-        <with|color|<title-color>|math-color|<title-color>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<table|<row|<\cell>
-          <title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>
+      <\with|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>|color|<value|title-shadow-color>>
+        <with|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<twith|table-valign|T>|<cwith|1|1|1|1|cell-tborder|<value|title-border>>|<cwith|1|1|1|1|cell-bborder|<value|title-border>>|<cwith|1|1|1|1|cell-lborder|<value|title-border>>|<cwith|1|1|1|1|cell-rborder|<value|title-border>>|<table|<row|<\cell>
+          <with-tit-color|<title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>>
         </cell>>>>>||0em||>>
       </with>
     </surround>

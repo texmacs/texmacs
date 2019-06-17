@@ -28,7 +28,9 @@
 
   <assign|title-theme|framed-title>
 
-  <assign|tit|<macro|body|<with|color|<title-color>|font-size|<if|<value|title-old-style>|1.189|<value|title-font-size>>|math-color|<title-color>|strong-color|<title-color>|ornament-color|<title-bar-color>|ornament-vpadding|<plus|<value|ornament-vpadding>|<value|title-vpadding>>|<ornament|<title-left|<arg|body>><htab|5mm><with|font-series|bold|math-font-series|bold|<space|0em|-0.6ex|1.6ex><arg|body>><htab|5mm><title-right|<arg|body>><assign|gpag-length|<macro|<minus|1pag|3fn>>>>>>>
+  <assign|title-border|1ln>
+
+  <assign|tit|<macro|body|<with-tit-color|<with|font-size|<if|<value|title-old-style>|1.189|<value|title-font-size>>|ornament-color|<title-bar-color>|ornament-sunny-color|<value|title-sunny-color>|ornament-shadow-color|<value|title-shadow-color>|ornament-border|<value|title-border>|ornament-vpadding|<plus|<value|ornament-vpadding>|<value|title-vpadding>>|<ornament|<title-left|<arg|body>><htab|5mm><with|font-series|bold|math-font-series|bold|<space|0em|-0.6ex|1.6ex><arg|body>><htab|5mm><title-right|<arg|body>><assign|gpag-length|<macro|<minus|1pag|3fn>>>>>>>>
 </body>
 
 <\initial>

@@ -106,9 +106,9 @@
 
   <assign|title-border|2ln>
 
-  <assign|title-hpadding|2spc>
+  <assign|title-hor-padding|2spc>
 
-  <assign|title-vpadding|4spc>
+  <assign|title-ver-padding|4spc>
 
   <assign|title-vsep|1spc>
 
@@ -137,7 +137,7 @@
   </macro>>
 
   <assign|poster-title|<\macro|body|ldeco|rdeco>
-    <\with|par-columns|1|par-left|<minus|<value|par-left>|<value|title-swell>>|par-right|<minus|<value|par-right>|<value|title-swell>>|deco-hook|<macro|body|<with|ornament-border|<value|title-border>|ornament-hpadding|<value|title-hpadding>|ornament-vpadding|<value|title-vpadding>|<arg|body>>>>
+    <\with|par-columns|1|par-left|<minus|<value|par-left>|<value|title-swell>>|par-right|<minus|<value|par-right>|<value|title-swell>>|deco-hook|<macro|body|<with|ornament-border|<value|title-border>|ornament-hpadding|<value|title-hor-padding>|ornament-vpadding|<value|title-ver-padding>|<arg|body>>>>
       <\surround||<vspace|<value|title-vsep>>>
         <\title-block>
           <\surround|<resize|<arg|ldeco>|||1l|><htab|5mm>|<htab|5mm><resize|<arg|rdeco>|1r|||>>
