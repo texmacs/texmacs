@@ -496,7 +496,7 @@ MACOS_BUNDLE: TEXMACS
 	  $(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
-	[[ "@SIGNID@" ]] && codesign --deep -s @SIGNID@ $(MACOS_PACKAGE_APP)
+	test -n "@SIGNID@"  && codesign --deep -s @SIGNID@ $(MACOS_PACKAGE_APP)
 
 
 MACOS_PACKAGE: MACOS_BUNDLE
