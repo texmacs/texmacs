@@ -89,6 +89,42 @@
   <assign|light-parchment-deco-ornament-sunny-color|#fff4>
 
   <assign|light-parchment-deco-ornament-shadow-color|#8404>
+
+  <\active*>
+    <\src-comment>
+      Parchment with blue translucent title
+    </src-comment>
+  </active*>
+
+  <copy-theme|blue-parchment-deco|transparent-light-deco>
+
+  <new-deco|blue-parchment-deco>
+
+  <assign|blue-parchment-deco-ornament-render-title|<value|with-blue-parchment-scene>>
+
+  <assign|blue-parchment-deco-ornament-render-body|<value|with-xlight-parchment-scene>>
+
+  <assign|blue-parchment-deco-ornament-sunny-color|#fff4>
+
+  <assign|blue-parchment-deco-ornament-shadow-color|#8404>
+
+  <\active*>
+    <\src-comment>
+      Parchment with red translucent title
+    </src-comment>
+  </active*>
+
+  <copy-theme|red-parchment-deco|transparent-light-deco>
+
+  <new-deco|red-parchment-deco>
+
+  <assign|red-parchment-deco-ornament-render-title|<value|with-red-parchment-scene>>
+
+  <assign|red-parchment-deco-ornament-render-body|<value|with-xlight-parchment-scene>>
+
+  <assign|red-parchment-deco-ornament-sunny-color|#fff4>
+
+  <assign|red-parchment-deco-ornament-shadow-color|#8404>
 </body>
 
 <\initial>

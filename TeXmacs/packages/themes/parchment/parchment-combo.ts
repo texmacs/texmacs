@@ -56,11 +56,15 @@
     </src-comment>
   </active*>
 
-  <assign|parchment-title-block|<value|transparent-parchment-deco-block>>
+  <assign|parchment-title-block|<value|xdark-parchment-deco-block>>
 
-  <assign|parchment-framed-block|<value|transparent-parchment-deco-block>>
+  <assign|parchment-framed-block|<value|blue-parchment-deco-block>>
 
-  <assign|parchment-framed-block*|<value|transparent-parchment-deco-titled-block>>
+  <assign|parchment-framed-block*|<value|blue-parchment-deco-titled-block>>
+
+  <assign|parchment-alternate-block|<value|red-parchment-deco-block>>
+
+  <assign|parchment-alternate-block*|<value|red-parchment-deco-titled-block>>
 </body>
 
 <\initial>

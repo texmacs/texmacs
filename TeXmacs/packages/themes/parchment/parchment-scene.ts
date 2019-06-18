@@ -85,6 +85,40 @@
   <copy-theme|light-parchment-scene|parchment-scene>
 
   <assign|light-parchment-scene-bg-color|#fff2>
+
+  <\active*>
+    <\src-comment>
+      Translucent extra light parchment
+    </src-comment>
+  </active*>
+
+  <copy-theme|xlight-parchment-scene|parchment-scene>
+
+  <assign|xlight-parchment-scene-bg-color|#fff6>
+
+  <\active*>
+    <\src-comment>
+      Translucent blue parchment
+    </src-comment>
+  </active*>
+
+  <copy-theme|blue-parchment-scene|dark-scene>
+
+  <assign|blue-parchment-scene-bg-color|#0046>
+
+  <assign|blue-parchment-scene-color|#fffc>
+
+  <\active*>
+    <\src-comment>
+      Translucent red parchment
+    </src-comment>
+  </active*>
+
+  <copy-theme|red-parchment-scene|dark-scene>
+
+  <assign|red-parchment-scene-bg-color|#4006>
+
+  <assign|red-parchment-scene-color|#fffc>
 </body>
 
 <\initial>
