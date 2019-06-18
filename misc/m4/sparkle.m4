@@ -32,7 +32,7 @@ AC_DEFUN([LC_SPARKLE],[
       with_sparkle=$HOME/Library/Frameworks
       AC_MSG_CHECKING([whether we can use the Sparkle framework])
       AC_LANG_PUSH([Objective C])
-      LC_SCATTER_FLAGS([-I $with_sparkle/Sparkle.framework/Headers -F $with_sparkle -framework Sparkle],[SPARKLE])
+      LC_SCATTER_FLAGS([-I$with_sparkle/Sparkle.framework/Headers -F$with_sparkle -framework Sparkle],[SPARKLE])
       LC_SET_FLAGS([SPARKLE])
       AC_TRY_LINK(
   [
