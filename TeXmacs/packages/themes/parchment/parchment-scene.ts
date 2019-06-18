@@ -51,6 +51,40 @@
   <copy-theme|transparent-parchment-title-scene|transparent-parchment-scene>
 
   <assign-uniform|transparent-parchment-title-scene|dark brown>
+
+  <\active*>
+    <\src-comment>
+      Translucent dark parchment
+    </src-comment>
+  </active*>
+
+  <copy-theme|dark-parchment-scene|dark-scene>
+
+  <assign|dark-parchment-scene-bg-color|#0024>
+
+  <assign|dark-parchment-scene-color|#fffc>
+
+  <\active*>
+    <\src-comment>
+      Translucent extra dark parchment
+    </src-comment>
+  </active*>
+
+  <copy-theme|xdark-parchment-scene|dark-scene>
+
+  <assign|xdark-parchment-scene-bg-color|#00080060>
+
+  <assign|xdark-parchment-scene-color|#fffc>
+
+  <\active*>
+    <\src-comment>
+      Translucent light parchment
+    </src-comment>
+  </active*>
+
+  <copy-theme|light-parchment-scene|parchment-scene>
+
+  <assign|light-parchment-scene-bg-color|#fff2>
 </body>
 
 <\initial>

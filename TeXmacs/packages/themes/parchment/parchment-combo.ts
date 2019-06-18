@@ -24,7 +24,7 @@
 
   <copy-theme|parchment|light>
 
-  <select-theme|parchment|transparent-parchment-deco>
+  <select-theme|parchment|light-parchment-deco>
 
   <select-theme|parchment|parchment-scene>
 
@@ -34,7 +34,7 @@
     </src-comment>
   </active*>
 
-  <select-title-deco*|parchment|transparent-parchment-deco>
+  <select-title-deco*|parchment|xdark-parchment-deco>
 
   <assign|parchment-title-border|0.5ln>
 
@@ -44,11 +44,11 @@
     </src-comment>
   </active*>
 
-  <select-input-deco|parchment|transparent-parchment-deco>
+  <select-input-deco|parchment|light-parchment-deco>
 
-  <select-fold-title-deco|parchment|transparent-parchment-deco>
+  <select-fold-title-deco|parchment|dark-parchment-deco>
 
-  <select-fold-bar-deco|parchment|transparent-parchment-deco>
+  <select-fold-bar-deco|parchment|dark-parchment-deco>
 
   <\active*>
     <\src-comment>

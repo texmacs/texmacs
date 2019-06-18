@@ -35,6 +35,60 @@
   <assign|transparent-parchment-deco-ornament-render-title|<value|with-transparent-parchment-title-scene>>
 
   <assign|transparent-parchment-deco-ornament-render-body|<value|with-transparent-parchment-scene>>
+
+  <\active*>
+    <\src-comment>
+      Dark translucent parchment decoration
+    </src-comment>
+  </active*>
+
+  <copy-theme|dark-parchment-deco|transparent-dark-deco>
+
+  <new-deco|dark-parchment-deco>
+
+  <assign|dark-parchment-deco-ornament-render-title|<value|with-dark-parchment-scene>>
+
+  <assign|dark-parchment-deco-ornament-render-body|<value|with-dark-parchment-scene>>
+
+  <assign|dark-parchment-deco-ornament-sunny-color|#fff4>
+
+  <assign|dark-parchment-deco-ornament-shadow-color|#8404>
+
+  <\active*>
+    <\src-comment>
+      Extra dark translucent parchment decoration
+    </src-comment>
+  </active*>
+
+  <copy-theme|xdark-parchment-deco|transparent-dark-deco>
+
+  <new-deco|xdark-parchment-deco>
+
+  <assign|xdark-parchment-deco-ornament-render-title|<value|with-xdark-parchment-scene>>
+
+  <assign|xdark-parchment-deco-ornament-render-body|<value|with-xdark-parchment-scene>>
+
+  <assign|xdark-parchment-deco-ornament-sunny-color|#fff4>
+
+  <assign|xdark-parchment-deco-ornament-shadow-color|#8404>
+
+  <\active*>
+    <\src-comment>
+      Light translucent parchment decoration
+    </src-comment>
+  </active*>
+
+  <copy-theme|light-parchment-deco|transparent-light-deco>
+
+  <new-deco|light-parchment-deco>
+
+  <assign|light-parchment-deco-ornament-render-title|<value|with-dark-parchment-scene>>
+
+  <assign|light-parchment-deco-ornament-render-body|<value|with-light-parchment-scene>>
+
+  <assign|light-parchment-deco-ornament-sunny-color|#fff4>
+
+  <assign|light-parchment-deco-ornament-shadow-color|#8404>
 </body>
 
 <\initial>
