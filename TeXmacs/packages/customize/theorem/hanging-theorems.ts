@@ -38,14 +38,14 @@
 
   <assign|enunciation-sep|>
 
-  <assign|enunciation-name|<macro|which|<with|color|<if|<provides|ornament-title-color>|<value|ornament-title-color>|<value|bg-color>>|font-series|bold|<arg|which>>>>
+  <assign|enunciation-name|<macro|which|<with|font-series|bold|<arg|which>>>>
 
   <provide|unframed-render-enunciation|<value|render-enunciation>>
 
   <assign|render-enunciation|<\macro|which|body>
     <\surround|<no-indent>|>
       <\decorated>
-        <surround|<no-indent><resize|<with|ornament-color|<value|ornament-extra-color>|dummy|<value|hang-length>|<ornament|<resize|<arg|which>||<minus|0ex|0.5hang>||<plus|1t|1hang>>>>|<plus|1hang|<value|ornament-hpadding>|<value|ornament-border>>|<plus|1b|0.5hang>||<minus|<minus|1t|1hang>|<plus|<value|ornament-vpadding>|<value|ornament-border>>>>
+        <surround|<no-indent><resize|<with|ornament-color|<value|ornament-extra-color>|dummy|<value|hang-length>|<ornament|<ornament-render-title|<resize|<arg|which>||<minus|0ex|0.5hang>||<plus|1t|1hang>>>>>|<plus|1hang|<value|ornament-hpadding>|<value|ornament-border>>|<plus|1b|0.5hang>||<minus|<minus|1t|1hang>|<plus|<value|ornament-vpadding>|<value|ornament-border>>>>
         |<right-flush>|<arg|body>>
       </decorated>
     </surround>
