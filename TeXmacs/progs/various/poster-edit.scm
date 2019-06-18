@@ -21,7 +21,7 @@
 
 (tm-define (poster-themes)
   (list "blackboard" "bluish" "boring-white" "dark-vador" "granite"
-        "ice" "manila-paper" "metal" "pale-blue"
+        "ice" "manila-paper" "metal" "pale-blue" "parchment"
         "pine" "reddish" "ridged-paper" "rough-paper"
         "xperiment"))
 
