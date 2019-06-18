@@ -38,24 +38,6 @@
 
   <\active*>
     <\src-comment>
-      Standard ornaments
-    </src-comment>
-  </active*>
-
-  <assign|dark-vador-ornament-shape|angular>
-
-  <assign|dark-vador-ornament-extra-color|#603030>
-
-  <assign|dark-vador-ornament-title-color|white>
-
-  <assign|dark-vador-ornament-color|black>
-
-  <assign|dark-vador-ornament-sunny-color|#804040>
-
-  <assign|dark-vador-ornament-shadow-color|#402020>
-
-  <\active*>
-    <\src-comment>
       Sessions
     </src-comment>
   </active*>

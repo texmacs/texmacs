@@ -32,9 +32,15 @@
 
   <new-deco|plain-vador>
 
-  <assign|plain-vador-ornament-render-title|<value|with-vador-background>>
+  <assign|plain-vador-ornament-shape|angular>
+
+  <assign|plain-vador-ornament-render-title|<value|with-vador-title>>
 
   <assign|plain-vador-ornament-render-body|<value|with-vador-background>>
+
+  <assign|plain-vador-ornament-sunny-color|#804040>
+
+  <assign|plain-vador-ornament-shadow-color|#402020>
 
   <\active*>
     <\src-comment>

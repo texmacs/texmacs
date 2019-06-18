@@ -210,21 +210,23 @@
   </active*>
 
   <assign|ornamented|<\macro|body>
-    <padded|<\ornament>
-      <\surround||<right-flush>>
-        <arg|body>
-      </surround>
-    </ornament>>
+    <\padded>
+      <\decorated>
+        <\surround||<right-flush>>
+          <arg|body>
+        </surround>
+      </decorated>
+    </padded>
   </macro>>
 
   <assign|ornamented-titled|<\macro|body|title>
-    <padded|<\ornament>
-      <\surround||<right-flush>>
-        <arg|body>
-      </surround>
-    <|ornament>
-      <arg|title>
-    </ornament>>
+    <\padded>
+      <\decorated-titled|<arg|title>>
+        <\surround||<right-flush>>
+          <arg|body>
+        </surround>
+      </decorated-titled>
+    </padded>
   </macro>>
 
   <drd-props|ornamented-titled|arity|2|accessible|all>
