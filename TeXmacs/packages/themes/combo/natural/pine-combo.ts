@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-combo|wood-deco>
+  <use-package|reddish-combo|wood-deco|paper-deco>
 
   <copy-theme|pine|reddish>
 
@@ -42,11 +42,11 @@
     </src-comment>
   </active*>
 
-  <assign|pine-input-color|<pattern|paper-ridged-light.png|*3/5|*3/5|#f4eee8>>
+  <select-input-deco|pine|paper-ridged-light>
 
-  <assign|pine-fold-bar-color|<pattern|wood-dark.png|*3/5|*3/5|#40200c>>
+  <select-fold-title-deco|pine|wood-pine-dark>
 
-  <assign|pine-fold-title-color|<pattern|wood-medium.png|*3/5|*3/5|#804018>>
+  <select-fold-bar-deco|pine|wood-pine>
 
   <\active*>
     <\src-comment>

@@ -79,12 +79,6 @@
 
   <select-fold-bar-deco|ridged-paper|wood-pine>
 
-  <assign|xridged-paper-input-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>>
-
-  <assign|xridged-paper-fold-bar-color|<pattern|wood-light.png|*3/5|*3/5|#e0b050>>
-
-  <assign|xridged-paper-fold-title-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
-
   <\active*>
     <\src-comment>
       Posters

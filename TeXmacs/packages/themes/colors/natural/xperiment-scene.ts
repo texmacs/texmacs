@@ -40,6 +40,8 @@
 
   <copy-theme|xperiment-light-scene|xperiment-bright-scene>
 
+  <assign|xperiment-light-scene-bg-color|<pattern|textile/tex2res1.png|*1/5|*1/5|<eff-monochrome|0|#00000c|0>>>
+
   <\active*>
     <\src-comment>
       Dark experiment

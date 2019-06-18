@@ -103,6 +103,42 @@
   <assign|alternate-vador-ornament-sunny-color|#606030>
 
   <assign|alternate-vador-ornament-shadow-color|#303018>
+
+  <\active*>
+    <\src-comment>
+      Input fields
+    </src-comment>
+  </active*>
+
+  <copy-theme|input-vador|dark-deco>
+
+  <new-deco|input-vador>
+
+  <assign|input-vador-ornament-render-title|<value|with-vador-input>>
+
+  <assign|input-vador-ornament-render-body|<value|with-vador-input>>
+
+  <assign|input-vador-ornament-sunny-color|#301818>
+
+  <assign|input-vador-ornament-shadow-color|#201010>
+
+  <\active*>
+    <\src-comment>
+      Title bar and fold bar for folding/unfolding
+    </src-comment>
+  </active*>
+
+  <copy-theme|fold-vador|title-vador>
+
+  <new-deco|fold-vador>
+
+  <assign|fold-vador-ornament-shape|classic>
+
+  <assign|fold-vador-ornament-border|1ln>
+
+  <assign|fold-vador-ornament-title-style|top left>
+
+  \;
 </body>
 
 <\initial>

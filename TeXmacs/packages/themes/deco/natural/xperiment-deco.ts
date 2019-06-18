@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-deco|xperiment-scene>
+  <use-package|light-deco|dark-deco|xperiment-scene>
 
   <\active*>
     <\src-comment>
@@ -39,6 +39,24 @@
   <assign|xperiment-deco-ornament-sunny-color|pastel grey>
 
   <assign|xperiment-deco-ornament-shadow-color|grey>
+
+  <\active*>
+    <\src-comment>
+      Dark variant
+    </src-comment>
+  </active*>
+
+  <copy-theme|xperiment-dark-deco|dark-deco>
+
+  <new-deco|xperiment-dark-deco>
+
+  <assign|xperiment-dark-deco-ornament-render-title|<value|with-xperiment-dark-scene>>
+
+  <assign|xperiment-dark-deco-ornament-render-body|<value|with-xperiment-dark-scene>>
+
+  <assign|xperiment-dark-deco-ornament-sunny-color|#606080>
+
+  <assign|xperiment-dark-deco-ornament-shadow-color|dark blue>
 </body>
 
 <\initial>

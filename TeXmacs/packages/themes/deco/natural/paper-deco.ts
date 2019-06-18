@@ -70,6 +70,18 @@
 
   <assign|paper-ridged-ornament-shadow-color|#d0a0a0>
 
+  \;
+
+  <copy-theme|paper-ridged-light|paper-ridged>
+
+  <new-deco|paper-ridged-light>
+
+  <assign|paper-ridged-light-ornament-render-body|<value|with-paper-ridged-bright-scene>>
+
+  <assign|paper-ridged-light-ornament-sunny-color|#f8f0f0>
+
+  <assign|paper-ridged-light-ornament-shadow-color|#e8d0d0>
+
   <\active*>
     <\src-comment>
       Rough paper

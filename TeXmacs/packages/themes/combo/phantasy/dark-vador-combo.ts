@@ -60,11 +60,11 @@
     </src-comment>
   </active*>
 
-  <assign|dark-vador-input-color|#303030>
+  <select-input-deco|dark-vador|input-vador>
 
-  <assign|dark-vador-fold-bar-color|#603030>
+  <select-fold-title-deco|dark-vador|fold-vador>
 
-  <assign|dark-vador-fold-title-color|#603030>
+  <select-fold-bar-deco|dark-vador|fold-vador>
 
   <\active*>
     <\src-comment>

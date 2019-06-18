@@ -54,11 +54,11 @@
     </src-comment>
   </active*>
 
-  <assign|metal-input-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#e0e0e8>>
+  <select-input-deco|metal|metal-brushed>
 
-  <assign|metal-fold-bar-color|<pattern|metal-brushed-dark.png|*3/5|*3/5|#a0a0bc>>
+  <select-fold-title-deco|metal|metal-brushed-dark>
 
-  <assign|metal-fold-title-color|<pattern|metal-brushed-medium.png|*3/5|*3/5|#e0e0e8>>
+  <select-fold-bar-deco|metal|metal-brushed-dark>
 
   <\active*>
     <\src-comment>

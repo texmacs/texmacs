@@ -42,11 +42,11 @@
     </src-comment>
   </active*>
 
-  <assign|xperiment-input-color|<pattern|textile/tex2res1.png|*1/5|*1/5|<eff-monochrome|0|#00000c|0>>>
+  <select-input-deco|xperiment|xperiment-deco>
 
-  <assign|xperiment-fold-bar-color|<pattern|textile/tex2res4.png|*1/5|*1/5|<eff-monochrome|0|#000020|0>>>
+  <select-fold-title-deco|xperiment|xperiment-dark-deco>
 
-  <assign|xperiment-fold-title-color|<pattern|textile/tex2res4.png|*1/5|*1/5|<eff-monochrome|0|#000020|0>>>
+  <select-fold-bar-deco|xperiment|xperiment-dark-deco>
 
   <\active*>
     <\src-comment>

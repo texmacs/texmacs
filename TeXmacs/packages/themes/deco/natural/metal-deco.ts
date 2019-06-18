@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-deco|metal-scene>
+  <use-package|light-deco|dark-deco|metal-scene>
 
   <\active*>
     <\src-comment>
@@ -39,6 +39,24 @@
   <assign|metal-brushed-ornament-sunny-color|#e0e0e8>
 
   <assign|metal-brushed-ornament-shadow-color|#9090ac>
+
+  <\active*>
+    <\src-comment>
+      Dark brushed metal
+    </src-comment>
+  </active*>
+
+  <copy-theme|metal-brushed-dark|dark-deco>
+
+  <new-deco|metal-brushed-dark>
+
+  <assign|metal-brushed-dark-ornament-render-title|<value|with-metal-brushed-dark-scene>>
+
+  <assign|metal-brushed-dark-ornament-render-body|<value|with-metal-brushed-dark-scene>>
+
+  <assign|metal-brushed-dark-ornament-sunny-color|#c0c0d0>
+
+  <assign|metal-brushed-dark-ornament-shadow-color|#686876>
 </body>
 
 <\initial>
