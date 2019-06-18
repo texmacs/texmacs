@@ -50,7 +50,8 @@ AC_DEFUN([TM_MACOS],[
          LC_MERGE_FLAGS([-mmacosx-version-min=$withval],[CFLAGS])
          LC_MERGE_FLAGS([-mmacosx-version-min=$withval],[CXXFLAGS])
          LC_MERGE_FLAGS([-Wl,-macosx_version_min,$withval],[LDFLAGS])
-       ],[]
+         AC_SUBST(OSXVERMIN,[$withval])
+       ],[AC_SUBST(OSXVERMIN,[$(sw_vers -productVersion)])]
     )
     AC_SUBST(MACOSX_TARGET)
 fi

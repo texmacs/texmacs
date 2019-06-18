@@ -38,11 +38,11 @@
     <key>CFBundleShortVersionString</key>
     <string>@DEVEL_VERSION@</string>
     <key>CFBundleVersion</key>
-    <string>@SVNREV@</string>
-    <key>SUPublicDSAKeyFile</key>
-    <string>texmacs_updates_dsa_pub.pem</string>
+    <string>@DEVEL_VERSION@</string>
+    <key>SUFeedURL</key>
+    <string>@APPCAST@</string>
     <key>CFBundleSignature</key>
-    <string>MGUB</string>
+    <string>TXMC</string>
     <key>NSMainNibFile</key>
     <string>MainMenu</string>
     <key>NSPrincipalClass</key>
@@ -51,5 +51,9 @@
     <true/>
     <key>NSHighResolutionMagnifyAllowed</key>
     <false/>
+    <key>LSMinimumSystemVersion</key>
+    <string>@OSXVERMIN@</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 1998-1999 Joris van der Hoeven and others</string>
   </dict>
 </plist>
