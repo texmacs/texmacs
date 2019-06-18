@@ -10,8 +10,6 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
-#include "tm_configure.hpp"
-
   // HACK, should be fixed with autotools
 #if defined (OS_MACOS) && defined (USE_SPARKLE)
 
@@ -69,13 +67,6 @@ time_t tm_sparkle::lastCheck() const
   string s = [ns cStringUsingEncoding:NSUTF8StringEncoding];
   return s;
    */
-}
-
-bool tm_sparkle::setAutomaticChecks (bool enable)
-{
-  [updater->p setAutomaticallyChecksForUpdates: enable];
-  [updater->p resetUpdateCycle];
-  return true;
 }
 
 bool tm_sparkle::setCheckInterval (int hours)
