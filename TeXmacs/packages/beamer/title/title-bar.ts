@@ -33,7 +33,7 @@
       <\with|par-left|<minus|<value|page-odd>>|par-right|<minus|<value|page-right>>|par-par-sep|0fn>
         <with|color|<value|title-shadow-color>|font-size|<if|<value|title-old-style>|1|<value|title-font-size>>|<resize|<tabular*|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|-1|cell-tsep|<value|title-vpadding>>|<cwith|1|1|1|-1|cell-bsep|<value|title-vpadding>>|<cwith|1|1|1|-1|cell-background|<title-bar-color>>|<cwith|1|1|1|1|cell-halign|c>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|2|2|1|1|cell-vcorrect|n>|<cwith|2|2|1|1|cell-halign|l>|<twith|table-valign|T>|<cwith|1|1|1|1|cell-bborder|<value|title-border>>|<table|<row|<\cell>
           <with-tit-color|<title-left|<arg|body>><htab|5mm><arg|body><htab|5mm><title-right|<arg|body>>>
-        </cell>>|<row|<cell|<with|color|grey|locus-color|grey|opacity|100%|<tiny|<screens-bar|<quote-arg|body>>>>>>>>>||<plus|1b|0.2fn>||>>
+        </cell>>|<row|<cell|<with|color|#888|locus-color|#888|opacity|100%|<tiny|<screens-bar|<quote-arg|body>>>>>>>>>||<plus|1b|0.2fn>||>>
       </with>
     </surround>
   </macro>>
