@@ -32,7 +32,7 @@
 
   <assign|greyish-ornament-extra-color|dark grey>
 
-  <assign|greyish-ornament-title-color|white>
+  <assign|greyish|<value|ornament-render-title-white>>
 
   <assign|greyish-ornament-color|pastel grey>
 

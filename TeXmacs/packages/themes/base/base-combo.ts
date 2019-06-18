@@ -54,6 +54,16 @@
 
   <\active*>
     <\src-comment>
+      Alternative ornament title styles
+    </src-comment>
+  </active*>
+
+  <assign|ornament-render-title-white|<macro|body|<with|color|white|<arg|body>>>>
+
+  <assign|ornament-render-title-inverted|<macro|body|<with|color|<value|bg-color>|<arg|body>>>>
+
+  <\active*>
+    <\src-comment>
       Determine session themes from decoration
     </src-comment>
   </active*>

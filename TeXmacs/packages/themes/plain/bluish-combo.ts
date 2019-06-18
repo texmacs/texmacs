@@ -26,19 +26,13 @@
 
   <\active*>
     <\src-comment>
-      Standard ornaments
+      Main colors
     </src-comment>
   </active*>
 
-  <assign|bluish-ornament-extra-color|dark blue>
+  <assign|bluish-strong-color|#602060>
 
-  <assign|bluish-ornament-title-color|white>
-
-  <assign|bluish-ornament-color|pastel blue>
-
-  <assign|bluish-ornament-sunny-color|#f4f4ff>
-
-  <assign|bluish-ornament-shadow-color|#d8d8ff>
+  <assign|bluish-math-color|#503050>
 
   <\active*>
     <\src-comment>
@@ -52,13 +46,19 @@
 
   <\active*>
     <\src-comment>
-      Colors of standard tags (strong, math, etc.)
+      Standard ornaments
     </src-comment>
   </active*>
 
-  <assign|bluish-strong-color|#602060>
+  <assign|bluish-ornament-extra-color|dark blue>
 
-  <assign|bluish-math-color|#503050>
+  <assign|bluish-ornament-render-title|<value|ornament-render-title-white>>
+
+  <assign|bluish-ornament-color|pastel blue>
+
+  <assign|bluish-ornament-sunny-color|#f4f4ff>
+
+  <assign|bluish-ornament-shadow-color|#d8d8ff>
 
   <\active*>
     <\src-comment>

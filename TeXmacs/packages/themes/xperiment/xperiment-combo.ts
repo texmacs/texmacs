@@ -20,9 +20,9 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-combo|xperiment-deco>
+  <use-package|bluish-combo|xperiment-deco>
 
-  <copy-theme|xperiment|reddish>
+  <copy-theme|xperiment|bluish>
 
   <select-theme|xperiment|xperiment-deco>
 

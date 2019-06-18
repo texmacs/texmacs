@@ -253,25 +253,15 @@
 
   <assign|ornament-render-body|<macro|body|<arg|body>>>
 
-  <assign|ornament-title-color|<value|color>>
-
-  <assign|ornament-title-math-color|<value|color>>
-
-  <assign|ornament-title-strong-color|<value|color>>
-
-  <assign|ornament-body-color|<value|color>>
-
-  <assign|ornament-body-math-color|<value|color>>
-
-  <assign|ornament-body-strong-color|<value|color>>
-
   \;
 
-  <assign|decorated-hook|<macro|body|<with|bg-color|<value|ornament-extra-color>|<ornament-render-title|<with|ornament-extra-color|<value|bg-color>|<with|bg-color|<value|ornament-color>|<ornament-render-body|<with|ornament-color|<value|bg-color>|<arg|body>>>>>>>>>
+  <assign|decorated-hook|<macro|body|<with|bg-color|<value|ornament-extra-color>|old-color|<value|color>|old-math-color|<value|math-color>|old-strong-color|<value|strong-color>|<ornament-render-title|<with|ornament-extra-color|<value|bg-color>|color|<value|old-color>|math-color|<value|old-math-color>|strong-color|<value|old-strong-color>|<with|bg-color|<value|ornament-color>|<ornament-render-body|<with|ornament-color|<value|bg-color>|<arg|body>>>>>>>>>
 
-  <assign|decorated-title|<macro|body|<with|color|<value|ornament-title-color>|math-color|<value|ornament-title-math-color>|strong-color|<value|ornament-title-strong-color>|<ornament-render-title|<arg|body>>>>>
+  <assign|decorated-title|<macro|body|<ornament-render-title|<arg|body>>>>
 
-  <assign|decorated-body|<macro|body|<with|color|<value|ornament-body-color>|math-color|<value|ornament-body-math-color>|strong-color|<value|ornament-body-strong-color>|<ornament-render-body|<arg|body>>>>>
+  <assign|decorated-body|<macro|body|<ornament-render-body|<arg|body>>>>
+
+  \;
 
   <assign|decorated|<macro|body|<decorated-hook|<ornament|<decorated-body|<arg|body>>>>>>
 

@@ -32,23 +32,12 @@
 
   <assign|ornament-render-body|<macro|body|<arg|body>>>
 
-  <new-theme|deco|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-body-color|ornament-body-math-color|ornament-body-strong-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-title-color|ornament-title-math-color|ornament-title-strong-color|ornament-render-title|ornament-render-body>
-
-  <assign|deco-ornament-title-color|<value|color>>
-
-  <assign|deco-ornament-title-math-color|<value|math-color>>
-
-  <assign|deco-ornament-title-strong-color|<value|strong-color>>
-
-  <assign|deco-ornament-body-color|<value|color>>
-
-  <assign|deco-ornament-body-math-color|<value|math-color>>
-
-  <assign|deco-ornament-body-strong-color|<value|strong-color>>
+  <new-theme|deco|ornament-shape|ornament-border|ornament-hpadding|ornament-vpadding|ornament-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-render-title|ornament-render-body>
 
   <\active*>
     <\src-comment>
-      Management of added variables
+      Extract color information using ornament-render-title and
+      ornament-render-body macros
     </src-comment>
   </active*>
 
@@ -62,11 +51,13 @@
 
   <assign|deco-hook|<macro|body|<arg|body>>>
 
-  <assign|deco-hook*|<macro|body|<with|bg-color|<value|ornament-extra-color>|<ornament-render-title|<with|ornament-extra-color|<value|bg-color>|<with|bg-color|<value|ornament-color>|<ornament-render-body|<with|ornament-color|<value|bg-color>|<deco-hook|<arg|body>>>>>>>>>>
+  <assign|deco-hook*|<macro|body|<with|bg-color|<value|ornament-extra-color>|old-color|<value|color>|old-math-color|<value|math-color>|old-strong-color|<value|strong-color>|<ornament-render-title|<with|ornament-extra-color|<value|bg-color>|color|<value|old-color>|math-color|<value|old-math-color>|strong-color|<value|old-strong-color>|<with|bg-color|<value|ornament-color>|<ornament-render-body|<with|ornament-color|<value|bg-color>|<deco-hook|<arg|body>>>>>>>>>>
 
-  <assign|deco-title|<macro|body|<with|color|<value|ornament-title-color>|math-color|<value|ornament-title-math-color>|strong-color|<value|ornament-title-strong-color>|<ornament-render-title|<arg|body>>>>>
+  <assign|deco-title|<macro|body|<ornament-render-title|<arg|body>>>>
 
-  <assign|deco-body|<macro|body|<with|color|<value|ornament-body-color>|math-color|<value|ornament-body-math-color>|strong-color|<value|ornament-body-strong-color>|<ornament-render-body|<arg|body>>>>>
+  <assign|deco-body|<macro|body|<ornament-render-body|<arg|body>>>>
+
+  \;
 
   <assign|deco|<macro|body|<deco-hook*|<ornament|<deco-body|<arg|body>>>>>>
 
