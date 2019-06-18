@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|reddish-combo|paper-deco>
+  <use-package|reddish-combo|paper-deco|wood-deco>
 
   <copy-theme|ridged-paper|reddish>
 
@@ -73,11 +73,17 @@
     </src-comment>
   </active*>
 
-  <assign|ridged-paper-input-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>>
+  <select-input-deco|ridged-paper|paper-ridged>
 
-  <assign|ridged-paper-fold-bar-color|<pattern|wood-light.png|*3/5|*3/5|#e0b050>>
+  <select-fold-title-deco|ridged-paper|wood-pine-dark>
 
-  <assign|ridged-paper-fold-title-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
+  <select-fold-bar-deco|ridged-paper|wood-pine>
+
+  <assign|xridged-paper-input-color|<pattern|paper-ridged-medium.png|*3/5|*3/5|#e8dcd0>>
+
+  <assign|xridged-paper-fold-bar-color|<pattern|wood-light.png|*3/5|*3/5|#e0b050>>
+
+  <assign|xridged-paper-fold-title-color|<pattern|pine.png|*3/5|*3/5|#e0b050>>
 
   <\active*>
     <\src-comment>

@@ -42,11 +42,11 @@
     </src-comment>
   </active*>
 
-  <assign|rough-paper-input-color|<pattern|paper-rough-light.png|*3/5|*3/5|#eeeeee>>
+  <select-input-deco|rough-paper|paper-rough-light>
 
-  <assign|rough-paper-fold-bar-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
+  <select-fold-title-deco|rough-paper|paper-rough>
 
-  <assign|rough-paper-fold-title-color|<pattern|paper-rough-medium.png|*3/5|*3/5|#dcdcdc>>
+  <select-fold-bar-deco|rough-paper|paper-rough>
 
   <\active*>
     <\src-comment>

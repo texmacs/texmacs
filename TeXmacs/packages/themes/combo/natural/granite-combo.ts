@@ -44,11 +44,11 @@
     </src-comment>
   </active*>
 
-  <assign|granite-input-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+  <select-input-deco|granite|stone-granite>
 
-  <assign|granite-fold-bar-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+  <select-fold-title-deco|granite|stone-granite>
 
-  <assign|granite-fold-title-color|<pattern|granite-medium.png|*3/5|*3/5|#202020>>
+  <select-fold-bar-deco|granite|stone-granite>
 
   <\active*>
     <\src-comment>

@@ -74,6 +74,24 @@
 
   <\active*>
     <\src-comment>
+      Lighter paper
+    </src-comment>
+  </active*>
+
+  <copy-theme|paper-manila-lighter-scene|paper-manila-bright-scene>
+
+  <assign|paper-manila-lighter-scene-bg-color|<pattern|paper-manila-light.png|*3/5|*3/5|#e8e8e0>>
+
+  <assign|paper-manila-lighter-scene-monochrome-bg-color|#e8e8e0>
+
+  <copy-theme|paper-rough-lighter-scene|paper-manila-light-scene>
+
+  <assign|paper-rough-lighter-scene-bg-color|<pattern|paper-rough-light.png|*3/5|*3/5|#eeeeee>>
+
+  <assign|paper-rough-lighter-scene-monochrome-bg-color|#eeeeee>
+
+  <\active*>
+    <\src-comment>
       Dark paper through wood
     </src-comment>
   </active*>

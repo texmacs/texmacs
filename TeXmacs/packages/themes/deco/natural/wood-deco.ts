@@ -20,7 +20,7 @@
     </src-license>
   </src-title>>
 
-  <use-package|light-deco|wood-scene>
+  <use-package|light-deco|dark-deco|wood-scene>
 
   <\active*>
     <\src-comment>
@@ -39,6 +39,24 @@
   <assign|wood-pine-ornament-sunny-color|#ffe8c0>
 
   <assign|wood-pine-ornament-shadow-color|brown>
+
+  <\active*>
+    <\src-comment>
+      Dark "pine" wood
+    </src-comment>
+  </active*>
+
+  <copy-theme|wood-pine-dark|dark-deco>
+
+  <new-deco|wood-pine-dark>
+
+  <assign|wood-pine-dark-ornament-render-title|<value|with-wood-pine-dark-scene>>
+
+  <assign|wood-pine-dark-ornament-render-body|<value|with-wood-pine-dark-scene>>
+
+  <assign|wood-pine-dark-ornament-sunny-color|brown>
+
+  <assign|wood-pine-dark-ornament-shadow-color|dark brown>
 </body>
 
 <\initial>

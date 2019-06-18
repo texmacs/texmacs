@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|english>>
 
@@ -64,6 +64,8 @@
 
   <assign|error-border-color|<tuple|dark red>>
 
+  <assign|error-vpadding|0.6fn>
+
   <assign|generic-error-color|dark red>
 
   \;
@@ -71,6 +73,10 @@
   <assign|fold-title-color|#dcd0b8>
 
   <assign|fold-bar-color|#ede8dc>
+
+  <assign|fold-bar-border|1ln>
+
+  <assign|fold-bar-border-color|<tuple|pastel grey|grey>>
 
   <\active*>
     <\src-comment>
@@ -135,7 +141,7 @@
   <assign|generic-textput|<macro|body|<ornament-indent|<plus|<value|session-ring-width>|<value|session-left-indent>>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>
 
   <assign|generic-errput|<\macro|body>
-    <\with|ornament-shape|classic|ornament-color|<value|error-color>|ornament-border|<value|error-border>|ornament-sunny-color|<value|error-border-color>>
+    <\with|ornament-shape|classic|ornament-color|<value|error-color>|ornament-vpadding|<value|error-vpadding>|ornament-border|<value|error-border>|ornament-sunny-color|<value|error-border-color>>
       <\ornament>
         <\surround||<right-flush>>
           <\with|color|<value|generic-error-color>|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>

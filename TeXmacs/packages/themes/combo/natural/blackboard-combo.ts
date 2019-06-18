@@ -40,6 +40,18 @@
 
   <\active*>
     <\src-comment>
+      Sessions
+    </src-comment>
+  </active*>
+
+  <select-input-deco|blackboard|transparent-blackboard-deco>
+
+  <select-fold-title-deco|blackboard|transparent-blackboard-deco>
+
+  <select-fold-bar-deco|blackboard|transparent-blackboard-deco>
+
+  <\active*>
+    <\src-comment>
       Posters
     </src-comment>
   </active*>

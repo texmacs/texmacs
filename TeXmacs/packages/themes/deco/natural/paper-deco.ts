@@ -40,6 +40,18 @@
 
   <assign|paper-manila-ornament-shadow-color|#acac90>
 
+  \;
+
+  <copy-theme|paper-manila-light|paper-manila>
+
+  <new-deco|paper-manila-light>
+
+  <assign|paper-manila-light-ornament-render-body|<value|with-paper-manila-lighter-scene>>
+
+  <assign|paper-manila-light-ornament-sunny-color|#f4f4f0>
+
+  <assign|paper-manila-light-ornament-shadow-color|#dedec8>
+
   <\active*>
     <\src-comment>
       Ridged paper
@@ -75,6 +87,18 @@
   <assign|paper-rough-ornament-sunny-color|#e0e0e0>
 
   <assign|paper-rough-ornament-shadow-color|#a0a0a0>
+
+  \;
+
+  <copy-theme|paper-rough-light|paper-rough>
+
+  <new-deco|paper-rough-light>
+
+  <assign|paper-rough-light-ornament-render-body|<value|with-paper-rough-lighter-scene>>
+
+  <assign|paper-rough-light-ornament-sunny-color|#f8f8f0>
+
+  <assign|paper-rough-light-ornament-shadow-color|#e8d0d0>
 </body>
 
 <\initial>

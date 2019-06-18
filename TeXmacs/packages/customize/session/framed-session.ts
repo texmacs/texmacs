@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|english>>
 
@@ -60,6 +60,8 @@
 
   <assign|error-border-color|<tuple|dark red>>
 
+  <assign|error-vpadding|0.5fn>
+
   <assign|generic-error-color|dark red>
 
   \;
@@ -68,11 +70,17 @@
 
   <assign|fold-bar-color|#ede8dc>
 
+  <assign|fold-bar-border|1ln>
+
+  <assign|fold-bar-border-color|<tuple|pastel grey|grey>>
+
   <\active*>
     <\src-comment>
       New sessions
     </src-comment>
   </active*>
+
+  <assign|with-fold-bar-deco|<macro|body|<with|ornament-color|<value|fold-bar-color>|ornament-border|<value|fold-bar-border>|ornament-border-color|<value|fold-bar-border-color>|<arg|body>>>>
 
   <assign|generic-session|<\macro|name|body>
     <\padded>
@@ -83,14 +91,18 @@
   </macro>>
 
   <assign|subsession|<\macro|body>
-    <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|old-sunny-color|<value|ornament-sunny-color>|ornament-shape|band|ornament-color|<value|fold-bar-color>|ornament-hpadding|<over|<value|session-band-width>|2>|ornament-vpadding|0spc>
-      <\ornament>
-        <\surround||<right-flush>>
-          <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-sunny-color|<value|old-sunny-color>|ornament-vpadding|<value|old-vpadding>>
-            <arg|body>
-          </with>
-        </surround>
-      </ornament>
+    <\with|old-shape|<value|ornament-shape>|old-color|<value|ornament-color>|old-hpadding|<value|ornament-hpadding>|old-vpadding|<value|ornament-vpadding>|old-border|<value|ornament-border>|old-sunny-color|<value|ornament-sunny-color>>
+      <\with-fold-bar-deco>
+        <\with|ornament-shape|band|ornament-hpadding|<over|<value|session-band-width>|2>|ornament-vpadding|0spc>
+          <\ornament>
+            <\surround||<right-flush>>
+              <\with|ornament-shape|<value|old-shape>|ornament-color|<value|old-color>|ornament-border|<value|old-border>|ornament-hpadding|<value|old-hpadding>|ornament-sunny-color|<value|old-sunny-color>|ornament-vpadding|<value|old-vpadding>>
+                <arg|body>
+              </with>
+            </surround>
+          </ornament>
+        </with>
+      </with-fold-bar-deco>
     </with>
   </macro>>
 
@@ -100,16 +112,22 @@
     </src-comment>
   </active*>
 
+  <assign|with-input-deco|<macro|body|<with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>|<arg|body>>>>
+
   <assign|generic-input|<\macro|prompt|body>
-    <\with|ornament-shape|classic|ornament-color|<value|input-color>|ornament-hpadding|<tuple|<value|session-left-indent>|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
-      <\ornament>
-        <surround||<right-flush>|<tabbed*|<tformat|<table|<row|<cell|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>>|<\cell>
-          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
-            <arg|body>
-          </with>
-        </cell>>>>>>
-      </ornament>
-    </with>
+    <\with-input-deco>
+      <\with|ornament-hpadding|<tuple|<value|session-left-indent>|<value|session-right-indent>>>
+        <\ornament>
+          <\ornament-render-body>
+            <surround||<right-flush>|<tabbed*|<tformat|<table|<row|<cell|<id-function|<with|color|<value|generic-prompt-color>|<arg|prompt>>>>|<\cell>
+              <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+                <arg|body>
+              </with>
+            </cell>>>>>>
+          </ornament-render-body>
+        </ornament>
+      </with>
+    </with-input-deco>
   </macro>>
 
   <assign|generic-output*|<macro|body|<with|par-mode|justify|par-flexibility|2.0|par-hyphen|normal|math-display|true|math-frac-limit|<value|session-frac-limit>|math-table-limit|<value|session-table-limit>|<ornament-indent|<value|session-left-indent>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>>
@@ -119,7 +137,7 @@
   <assign|generic-textput|<macro|body|<ornament-indent|<value|session-left-indent>|<value|session-right-indent>|<value|output-vpadding>|<value|output-vpadding>|<with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>|<arg|body>>>>>
 
   <assign|generic-errput|<\macro|body>
-    <\with|ornament-shape|classic|ornament-color|<value|error-color>|ornament-border|<value|error-border>|ornament-sunny-color|<value|error-border-color>>
+    <\with|ornament-shape|classic|ornament-color|<value|error-color>|ornament-vpadding|<value|error-vpadding>|ornament-border|<value|error-border>|ornament-sunny-color|<value|error-border-color>>
       <\ornament>
         <\surround||<right-flush>>
           <\with|color|<value|generic-error-color>|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
@@ -136,32 +154,42 @@
     </src-comment>
   </active*>
 
+  <assign|with-fold-title-deco|<macro|body|<with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>|<arg|body>>>>
+
   <assign|folded-subsession|<\macro|x|y>
-    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
-      <\ornament>
-        <\surround|<action|<resize|<space|0.4spc><math|\<Downarrow\>>|||<value|session-band-width>|>|mouse-unfold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
-          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
-            <arg|x>
-          </with>
-        </surround>
-      </ornament>
-    </with>
+    <\with-fold-title-deco>
+      <\with|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>>
+        <\ornament>
+          <\ornament-render-body>
+            <\surround|<action|<resize|<space|0.4spc><math|\<Downarrow\>>|||<value|session-band-width>|>|mouse-unfold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
+              <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+                <arg|x>
+              </with>
+            </surround>
+          </ornament-render-body>
+        </ornament>
+      </with>
+    </with-fold-title-deco>
   </macro>>
 
   <assign|unfolded-subsession|<\macro|x|y>
-    <\with|ornament-shape|classic|ornament-color|<value|fold-title-color>|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>|ornament-vpadding|<value|input-vpadding>|ornament-border|<value|input-border>|ornament-sunny-color|<value|input-border-color>>
-      <\ornament>
-        <\surround|<action|<resize|<space|0.4spc><math|\<Uparrow\>>|||<value|session-band-width>|>|mouse-fold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
-          <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
-            <arg|x>
-          </with>
-        </surround>
-      </ornament>
+    <\with-fold-title-deco>
+      <\with|ornament-shape|classic|ornament-hpadding|<tuple|0fn|<value|session-right-indent>>>
+        <\ornament>
+          <\ornament-render-body>
+            <\surround|<action|<resize|<space|0.4spc><math|\<Uparrow\>>|||<value|session-band-width>|>|mouse-fold|<arg|x>><space|<value|session-left-indent>>|<right-flush>>
+              <\with|par-sep|<value|session-par-sep>|par-ver-sep|<value|session-par-ver-sep>>
+                <arg|x>
+              </with>
+            </surround>
+          </ornament-render-body>
+        </ornament>
 
-      <\subsession>
-        <arg|y>
-      </subsession>
-    </with>
+        <\subsession>
+          <arg|y>
+        </subsession>
+      </with>
+    </with-fold-title-deco>
   </macro>>
 </body>
 

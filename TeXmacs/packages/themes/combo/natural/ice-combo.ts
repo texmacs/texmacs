@@ -44,12 +44,11 @@
     </src-comment>
   </active*>
 
-  <assign|ice-input-color|<pattern|ice-medium.png|*3/5|*3/5|pastel grey>>
+  <select-input-deco|ice|natural-ice-light>
 
-  <assign|ice-fold-bar-color|<pattern|ice-dark-blue.png|*3/5|*3/5|dark blue>>
+  <select-fold-title-deco|ice|natural-ice-dark>
 
-  <assign|ice-fold-title-color|<pattern|ice-medium-blue.png|*3/5|*3/5|pastel
-  blue>>
+  <select-fold-bar-deco|ice|natural-ice-dark>
 
   <\active*>
     <\src-comment>

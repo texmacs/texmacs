@@ -30,13 +30,15 @@
 
   <new-theme|titles|title-bar-color|title-color|title-sunny-color|title-shadow-color|title-shape|title-border|title-vpadding|title-hor-padding|title-ver-padding|title-font-size>
 
-  <new-theme|sessions|input-color|fold-bar-color|fold-title-color>
+  <new-theme|session|input-color|input-vpadding|input-border|input-border-color|fold-title-color|fold-bar-color|fold-bar-border|fold-bar-border-color>
+
+  <new-theme|session-skin|with-input-deco|with-fold-title-deco|with-fold-bar-deco>
 
   <new-theme|poster|title-block|framed-block|framed-block*|alternate-block|alternate-block*>
 
   <new-theme|poster-ornament-shape|title-shape|framed-shape|alternate-shape>
 
-  <copy-theme|base|colors|deco|titles|sessions|poster|poster-ornament-shape>
+  <copy-theme|base|colors|deco|titles|session|session-skin|poster|poster-ornament-shape>
 
   <\active*>
     <\src-comment>
@@ -49,6 +51,18 @@
   <assign|select-title-deco*|<macro|combo|deco|<quasi|<style-with|src-compact|none|<select-title-deco|<unquote|<arg|combo>>|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-title-border>>|<value|<unquote|<merge|<arg|deco>|-ornament-border>>>>>>>>
 
   <assign|select-title-deco**|<macro|combo|deco|<quasi|<style-with|src-compact|none|<select-title-deco*|<unquote|<arg|combo>>|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-title-vpadding>>|<value|<unquote|<merge|<arg|deco>|-ornament-vpadding>>>><assign|<unquote|<merge|<arg|combo>|-title-hor-padding>>|<value|<unquote|<merge|<arg|deco>|-ornament-hpadding>>>><assign|<unquote|<merge|<arg|combo>|-title-ver-padding>>|<value|<unquote|<merge|<arg|deco>|-ornament-vpadding>>>>>>>>
+
+  <\active*>
+    <\src-comment>
+      Determine session themes from decoration
+    </src-comment>
+  </active*>
+
+  <assign|select-input-deco|<macro|combo|deco|<quasi|<style-with|src-compact|none|<complete-deco|<unquote|<arg|deco>>><copy-theme|<unquote|<merge|<arg|combo>|-input-deco>>|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-with-input-deco>>|<value|<unquote|<merge|with-|<arg|combo>|-input-deco>>>>>>>>
+
+  <assign|select-fold-title-deco|<macro|combo|deco|<quasi|<style-with|src-compact|none|<complete-deco|<unquote|<arg|deco>>><copy-theme|<unquote|<merge|<arg|combo>|-fold-title-deco>>|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-with-fold-title-deco>>|<value|<unquote|<merge|with-|<arg|combo>|-fold-title-deco>>>>>>>>
+
+  <assign|select-fold-bar-deco|<macro|combo|deco|<quasi|<style-with|src-compact|none|<complete-deco|<unquote|<arg|deco>>><copy-theme|<unquote|<merge|<arg|combo>|-fold-bar-deco>>|<unquote|<arg|deco>>><assign|<unquote|<merge|<arg|combo>|-with-fold-bar-deco>>|<value|<unquote|<merge|with-|<arg|combo>|-fold-bar-deco>>>>>>>>
 </body>
 
 <\initial>

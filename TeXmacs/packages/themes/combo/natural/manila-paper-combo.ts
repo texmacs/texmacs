@@ -44,11 +44,11 @@
     </src-comment>
   </active*>
 
-  <assign|manila-paper-input-color|<pattern|paper-manila-light.png|*3/5|*3/5|#e8e8e0>>
+  <select-input-deco|manila-paper|paper-manila-light>
 
-  <assign|manila-paper-fold-bar-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
+  <select-fold-title-deco|manila-paper|paper-manila>
 
-  <assign|manila-paper-fold-title-color|<pattern|paper-manila-medium.png|*3/5|*3/5|#d0d0c0>>
+  <select-fold-bar-deco|manila-paper|paper-manila>
 
   <\active*>
     <\src-comment>

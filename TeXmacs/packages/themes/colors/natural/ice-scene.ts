@@ -47,6 +47,17 @@
 
   <\active*>
     <\src-comment>
+      Lighter ice
+    </src-comment>
+  </active*>
+
+  <copy-theme|natural-ice-lighter-scene|natural-ice-bright-scene>
+
+  <assign|natural-ice-lighter-scene-bg-color|<pattern|ice-light.png|*3/5|*3/5|pastel
+  blue>>
+
+  <\active*>
+    <\src-comment>
       Dark ice
     </src-comment>
   </active*>
