@@ -171,19 +171,18 @@ get_image (url u, int w, int h, tree eff) {
   }
   if (pm->width () != w || pm->height () != h)
     (*pm)= pm->scaled (w, h);
-  (void) eff;
-  /*
   if (eff != "") {
     effect e= build_effect (eff);
+    picture src= qt_picture (*pm, 0, 0);
     array<picture> a;
-    a << qt_picture (*pm, 0, 0);
+    a << src;
     picture pic= e->apply (a, PIXEL);
-    qt_picture_rep* rep= (qt_picture_rep*) pic->get_handle ();
+    picture dest= as_qt_picture (pic);
+    qt_picture_rep* rep= (qt_picture_rep*) dest->get_handle ();
     QImage *trf= (QImage*) &(rep->pict);
     delete pm;
     pm= new QImage (trf->copy ());
   }
-  */
   return pm;
 }
 
