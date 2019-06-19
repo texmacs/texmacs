@@ -635,7 +635,7 @@ build_effect (tree t) {
     return motion_pen_effect (dx, dy);
   }
   else if (is_func (t, EFF_BLUR, 2)) {
-    effect eff  = build_effect (t[0]);
+    effect eff= build_effect (t[0]);
     effect pen= build_effect (t[1]);
     return blur (eff, pen);
   }

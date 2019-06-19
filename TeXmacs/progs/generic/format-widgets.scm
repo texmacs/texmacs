@@ -379,27 +379,41 @@
 (define (assign-effect eff kind args)
   (cons* kind eff args))
 
-(define (get-effect eff kind)
-  (cond ((or (npair? eff) (npair? (cdr eff))) #f)
-        ((== (car eff) kind) (cddr eff))
-        (else (get-effect (cadr eff) kind))))
-
-(define (set-effect tail apply? kind . args)
+(define (set-effect* tail apply? kind args)
   (if (null? tail) (set! tail (list "0")))
   (with res (reset-effect (car tail) kind)
     (with new (if apply? (assign-effect res kind args) res)
       (if (== new "0") (list) (list new)))))
 
-(define (set-recolor recol)
+(define (set-effect kind apply? . args)
   (with col (get-color)
     (set-color `(pattern ,(cadr col) ,(caddr col) ,(cadddr col)
-                         ,@(set-effect (cddddr col) (nnot recol)
-                                       'eff-recolor recol)))))
+                         ,@(set-effect* (cddddr col) apply? kind args)))))
 
-(define (get-recolor)
+(define (get-effect* eff kind)
+  (cond ((or (npair? eff) (npair? (cdr eff))) #f)
+        ((== (car eff) kind) (cddr eff))
+        (else (get-effect* (cadr eff) kind))))
+
+(define (get-effect kind)
   (with col (get-color)
     (with eff (and (nnull? (cddddr col)) (car (cddddr col)))
-      (get-effect eff 'eff-recolor))))
+      (get-effect* eff kind))))
+
+(define (set-recolor recol)
+  (set-effect 'eff-recolor (nnot recol) recol))
+
+(define (get-recolor)
+  (and-with opts (get-effect 'eff-recolor)
+    (car opts)))
+
+(define (set-blur r)
+  (set-effect 'eff-blur (nnot r) `(eff-gaussian ,r)))
+
+(define (get-blur)
+  (and-with opts (get-effect 'eff-blur)
+    (and (tm-func? (car opts) 'eff-gaussian)
+         (tm-ref (car opts) 0))))
 
 (define (normalize-color col)
   (if (tm-func? col 'pattern)
@@ -432,19 +446,30 @@
       >>)))
 
 (tm-widget (pattern-recolor-options)
-  (with opts (get-recolor)
+  (with recol (get-recolor)
     (hlist
-      (when opts
+      (when recol
         (enum (set-recolor answer)
-              (append (or opts (list ""))
-                      (list "black" "white" "red" "green" "blue" ""))
-              (if opts (car opts) "") "15em"))
+              (list (or recol "") "black" "white" "red" "green" "blue" "")
+              (or recol "") "15em"))
       // // //
       (toggle (set-recolor (and answer "black"))
               (nnot (get-recolor)))
       // // //
       ((icon "tm_color.xpm")
-       (interactive-color set-recolor (or opts (list))))
+       (interactive-color set-recolor (list (or recol ""))))
+      >>)))
+
+(tm-widget (pattern-blur-options)
+  (with blur (get-blur)
+    (hlist
+      (when blur
+        (enum (set-blur answer)
+              (list (or blur "") "0.2pt" "0.5pt" "1pt" "2pt" "5px" "")
+              (or blur "") "15em"))
+      // // //
+      (toggle (set-blur (and answer "1pt"))
+              (nnot (get-blur)))
       >>)))
 
 (tm-widget ((pattern-selector u) cmd)
@@ -482,7 +507,10 @@
                           (list (get-height) "100%" "100@" "1cm" "")
                           (get-height) "15em") >>))
                 (item (text "Recolor:")
-                  (link pattern-recolor-options))))
+                  (link pattern-recolor-options))
+                ;;(item (text "Blur:")
+                ;;  (link pattern-blur-options))
+                ))
             (assuming global-picture?
               (aligned
                 (item (text "Name:")

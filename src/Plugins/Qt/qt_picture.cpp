@@ -176,7 +176,7 @@ get_image (url u, int w, int h, tree eff) {
     picture src= qt_picture (*pm, 0, 0);
     array<picture> a;
     a << src;
-    picture pic= e->apply (a, PIXEL);
+    picture pic= e->apply (a, 5*PIXEL);
     picture dest= as_qt_picture (pic);
     qt_picture_rep* rep= (qt_picture_rep*) dest->get_handle ();
     QImage *trf= (QImage*) &(rep->pict);
