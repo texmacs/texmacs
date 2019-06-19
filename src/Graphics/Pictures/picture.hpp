@@ -141,9 +141,11 @@ picture degrade (picture pic, double wx, double wy, double th, double sh);
 picture distort (picture pic, double wx, double wy, double rx, double ry);
 picture gnaw (picture pic, double wx, double wy, double rx, double ry);
 
-picture normalize (picture eff);
-picture color_matrix (picture eff, array<double> m);
-picture make_transparent (picture eff, color bgc);
-picture make_opaque (picture eff, color bgc);
+picture normalize (picture pic);
+picture color_matrix (picture pic, array<double> m);
+picture make_transparent (picture pic, color bgc);
+picture make_opaque (picture pic, color bgc);
+color   average_color (picture pic);
+picture recolor (picture pic, color col);
 
 #endif // defined PICTURE_H

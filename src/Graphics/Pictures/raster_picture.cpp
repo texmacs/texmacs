@@ -229,6 +229,28 @@ make_opaque (picture pic, color bgc) {
   return raster_picture (map (make_opaque_function (tbgc), ras));
 }
 
+color
+average_color (picture pic) {
+  raster<true_color> tra= as_raster<true_color> (pic);
+  return average (tra);
+}
+
+picture
+copy_alpha (picture pic, picture alf) {
+  raster<true_color> rpic= as_raster<true_color> (pic);
+  raster<true_color> ralf= as_raster<true_color> (alf);
+  return raster_picture (copy_alpha<true_color> (rpic, ralf));
+}
+
+picture
+recolor (picture pic, color col) {
+  color bg= average_color (pic);
+  picture opa= make_opaque (pic, bg);
+  picture tra= make_transparent (opa, bg);
+  picture res= make_opaque (tra, col);
+  return copy_alpha (res, pic);
+}
+
 /******************************************************************************
 * Special effects
 ******************************************************************************/

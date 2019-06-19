@@ -857,11 +857,15 @@ init_std_drd () {
   init (EFF_MAKE_TRANSPARENT, "eff-make-transparent",
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
-	color_type (1) -> name (1, "bg") -> name (1, "background color"));
+	color_type (1) -> name (1, "bg") -> long_name (1, "background color"));
   init (EFF_MAKE_OPAQUE, "eff-make-opaque",
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
-	color_type (1) -> name (1, "bg") -> name (1, "background color"));
+	color_type (1) -> name (1, "bg") -> long_name (1, "background color"));
+  init (EFF_RECOLOR, "eff-recolor",
+        fixed (2, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+	color_type (1) -> name (1, "col") -> long_name (1, "new color"));
 
   init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
   init (ORNAMENT, "ornament", options (1, 1) -> accessible (0));

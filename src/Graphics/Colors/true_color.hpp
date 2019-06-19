@@ -205,6 +205,16 @@ apply_alpha (const true_color& c, double a) {
   return true_color (c.r, c.g, c.b, c.a * a);
 }
 
+inline true_color
+copy_alpha (const true_color& c, double a) {
+  return true_color (c.r, c.g, c.b, a);
+}
+
+inline true_color
+copy_alpha (const true_color& c, const true_color& a) {
+  return true_color (c.r, c.g, c.b, a.a);
+}
+
 /******************************************************************************
 * Other operators
 ******************************************************************************/

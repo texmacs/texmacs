@@ -834,6 +834,7 @@ concater_rep::typeset (tree t, path ip) {
   case EFF_COLOR_MATRIX:
   case EFF_MAKE_TRANSPARENT:
   case EFF_MAKE_OPAQUE:
+  case EFF_RECOLOR:
     typeset_inactive (t, ip);
     break;
 

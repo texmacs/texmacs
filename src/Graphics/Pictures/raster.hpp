@@ -225,6 +225,9 @@ template<typename C, typename S> inline raster<C>
 operator / (const raster<C>& r, const S& sc) {
   return map_scalar<div_op> (r, sc); }
 template<typename C, typename S> inline raster<C>
+copy_alpha (const raster<C>& r1, const raster<S>& r2) {
+  return map<copy_alpha_op> (r1, r2); }
+template<typename C, typename S> inline raster<C>
 apply_alpha (const raster<C>& r1, const raster<S>& r2) {
   return map<apply_alpha_op> (r1, r2); }
 
@@ -647,7 +650,7 @@ motion_pen (double dx, double dy) {
 }
 
 /******************************************************************************
-* Special convolution kernels
+* Sum and average
 ******************************************************************************/
 
 template<typename C> C
@@ -659,6 +662,26 @@ sum (raster<C> ras) {
     ret += ras->a[i];
   return ret;
 }
+
+template<typename C> C
+average (raster<C> ras) {
+  typedef typename C::scalar_type R;
+  C num;
+  R den;
+  clear (num);
+  clear (den);
+  int n= ras->w * ras->h;
+  for (int i=0; i<n; i++) {
+    num += get_alpha (ras->a[i]) * ras->a[i];
+    den += get_alpha (ras->a[i]);
+  }
+  if (den <= R(0)) return R(0) * num;
+  return num / den;
+}
+
+/******************************************************************************
+* Special convolution kernels
+******************************************************************************/
 
 struct gaussian_distribution {
   double xx, xy, yx, yy;
