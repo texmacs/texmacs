@@ -560,7 +560,7 @@
      (dynamic (standard-color-menu (lambda (answer) ,@(cddr x))))
      ---
      (dynamic (standard-pattern-menu (lambda (answer) ,@(cddr x))
-                                     "$TEXMACS_PATH/misc/patterns"
+                                     "$TEXMACS_PATH/misc/patterns/vintage"
                                      ,(cadr x)))
      (assuming (nnull? (clipart-list))
        ---
