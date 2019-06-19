@@ -85,7 +85,7 @@ public:
 };
 
 qt_renderer_rep* the_qt_renderer();
-QImage* get_image (url u, int w, int h);
+QImage* get_image (url u, int w, int h, tree eff);
 
 class qt_shadow_renderer_rep: public qt_renderer_rep {
 public:

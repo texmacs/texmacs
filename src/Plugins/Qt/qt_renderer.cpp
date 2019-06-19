@@ -194,8 +194,9 @@ static QImage*
 get_pattern_image (brush br, SI pixel) {
   url u;
   SI w, h;
-  get_pattern_data (u, w, h, br, pixel);
-  QImage* pm= get_image (u, w, h);
+  tree eff;
+  get_pattern_data (u, w, h, eff, br, pixel);
+  QImage* pm= get_image (u, w, h, eff);
   return pm;
 }
 

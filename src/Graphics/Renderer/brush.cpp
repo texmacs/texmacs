@@ -156,7 +156,7 @@ mix (brush b1, double a1, brush b2, double a2) {
 ******************************************************************************/
 
 void
-get_pattern_data (url& u, SI& w, SI& h, brush br, SI pixel) {
+get_pattern_data (url& u, SI& w, SI& h, tree& eff, brush br, SI pixel) {
   // FIXME << what's about ratio and percentages wrt paper lengths?
   tree pattern= br->get_pattern ();
   u= br->get_pattern_url ();
@@ -178,4 +178,5 @@ get_pattern_data (url& u, SI& w, SI& h, brush br, SI pixel) {
     h= (SI) (as_percentage (pattern[2]) * ((double) w));
   w= ((w + pixel - 1) / pixel);
   h= ((h + pixel - 1) / pixel);
+  eff= (N(pattern) >= 4 && is_compound (pattern[3])? pattern[3]: tree (""));
 }

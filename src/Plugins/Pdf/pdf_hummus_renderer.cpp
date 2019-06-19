@@ -672,8 +672,9 @@ pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
 
   url u;
   SI w, h;
-  get_pattern_data (u, w, h, br, pixel);
-  // cout << "get_pattern_data " << u << ", " << w << " x " << h << LF;
+  tree eff;
+  get_pattern_data (u, w, h, eff, br, pixel);
+  // cout << "get_pattern_data " << u << ", " << w << " x " << h << ", " << eff << LF;
   pdf_image image_pdf;
   tree u_tree= tuple (u->t);
   if (pattern_image_pool->contains(u_tree))

@@ -154,7 +154,7 @@ picture_renderer (picture p, double zoomf) {
 ******************************************************************************/
 
 QImage*
-get_image (url u, int w, int h) {
+get_image (url u, int w, int h, tree eff) {
   QImage *pm = NULL;
   if (qt_supports (u))
     pm= new QImage (utf8_to_qstring (concretize (u)));
@@ -171,12 +171,25 @@ get_image (url u, int w, int h) {
   }
   if (pm->width () != w || pm->height () != h)
     (*pm)= pm->scaled (w, h);
+  (void) eff;
+  /*
+  if (eff != "") {
+    effect e= build_effect (eff);
+    array<picture> a;
+    a << qt_picture (*pm, 0, 0);
+    picture pic= e->apply (a, PIXEL);
+    qt_picture_rep* rep= (qt_picture_rep*) pic->get_handle ();
+    QImage *trf= (QImage*) &(rep->pict);
+    delete pm;
+    pm= new QImage (trf->copy ());
+  }
+  */
   return pm;
 }
 
 picture
 load_picture (url u, int w, int h) {
-  QImage* im= get_image (u, w, h);
+  QImage* im= get_image (u, w, h, "");
   if (im == NULL) return error_picture (w, h);
   return qt_picture (*im, 0, 0);
 }

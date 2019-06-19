@@ -50,6 +50,6 @@ inline bool operator != (const brush& a, const brush& b) { return !(a == b); }
 
 brush mix (brush b1, double a1, brush b2, double a2);
 
-void  get_pattern_data (url& u, SI& w, SI& h, brush br, SI pixel);
+void  get_pattern_data (url& u, SI& w, SI& h, tree& eff, brush br, SI pixel);
 
 #endif // defined BRUSH_H
