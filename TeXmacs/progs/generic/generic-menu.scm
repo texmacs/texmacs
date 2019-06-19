@@ -151,6 +151,7 @@
             ---
             ("Palette" (interactive-color setter '()))
             ("Pattern" (open-pattern-selector setter "1cm"))
+            ("Picture" (open-picture-selector setter))
             ("Other" (interactive setter
                        (list (upcase-first name) "color" in*)))))))
 
@@ -232,6 +233,7 @@
              (set-init-env l "preserve")))
         ("Palette" (interactive-color setter '()))
         ("Pattern" (open-pattern-selector setter "1cm"))
+        ("Picture" (open-picture-selector setter))
         ("Other" (init-interactive-env l)))))
 
 (tm-menu (focus-parameter-menu-item l)
@@ -576,6 +578,7 @@
       ---
       ("Palette" (interactive-color setter '()))
       ("Pattern" (open-pattern-selector setter "1cm"))
+      ("Picture" (open-picture-selector setter))
       ("Other" (interactive setter (list name "string" (get-env var))))))
 
 (tm-menu (focus-extra-menu t)
@@ -606,6 +609,7 @@
       ---
       ("Palette" (interactive-color setter '()))
       ("Pattern" (open-pattern-selector setter "1cm"))
+      ("Picture" (open-picture-selector setter))
       ("Other" (interactive setter (list name "string" (get-env var))))))
 
 (tm-menu (focus-extra-icons t)

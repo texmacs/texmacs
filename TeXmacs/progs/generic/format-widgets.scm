@@ -268,7 +268,9 @@
           ((== what "color")
            (interactive-color setter (if old (list old) (list))))
           ((== what "pattern")
-           (open-pattern-selector setter "1cm")))))
+           (open-pattern-selector setter "1cm"))
+          ((== what "picture")
+           (open-picture-selector setter)))))
 
 (tm-widget ((page-formatter u style settings) quit)
   (padded
@@ -284,7 +286,7 @@
                 "unchanged" "10em"))
         (item (text "Page background:")
           (enum (page-set-background settings answer)
-                '("unchanged" "color" "pattern")
+                '("unchanged" "color" "pattern" "picture")
                 "unchanged" "10em"))))
     ======
     (bold (text "This page header"))
@@ -322,6 +324,7 @@
 ;; Pattern selector / accessors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define global-picture? #f)
 (define global-pattern-color `(pattern "neutral-pattern.png" "1cm" "100@"))
 
 (define (set-color col)
@@ -333,8 +336,15 @@
   global-pattern-color)
 
 (define (set-name name)
-  (with col (get-color)
-    (set-color `(pattern ,name ,@(cddr col)))))
+  (with p (url->unix "$TEXMACS_PATH/misc/patterns")
+    (when (string-starts? name p)
+      (set! name (url->unix (url-delta (url-append (unix->url p) "dummy")
+                                       (unix->url name)))))
+    (with col (get-color)
+      (set-color `(pattern ,name ,@(cddr col))))))
+
+(define (get-name)
+  (cadr (get-color)))
 
 (define (set-width w)
   (with col (get-color)
@@ -349,6 +359,17 @@
 
 (define (get-height)
   (cadddr (get-color)))
+
+(define (set-size s)
+  (cond ((== s "Fit") (set-width "100%") (set-height "100%"))
+        ((== s "Fit to width") (set-width "100%") (set-height "100@"))
+        ((== s "Fit to height") (set-width "100@") (set-height "100%"))))
+
+(define (get-size)
+  (cond ((and (== (get-width) "100%") (== (get-height) "100%")) "Fit")
+        ((== (get-width) "100%") "Fit to width")
+        ((== (get-height) "100%") "Fit to height")
+        (else "Fit")))
 
 (define (reset-effect eff kind)
   (cond ((or (npair? eff) (npair? (cdr eff))) eff)
@@ -389,30 +410,54 @@
 ;; Pattern selector
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-widget (pattern-name-selector)
+  (let* ((name (unix->url (get-name)))
+         (base "$TEXMACS_PATH/misc/patterns/neutral-pattern.png")
+         (curr (url-relative base name))
+         (setter (lambda (c)
+                   (when (and (pair? c) (url? (car c)))
+                     (set-name (url->unix (car c)))))))
+    (hlist
+      (enum (set-name (url->unix answer))
+            (list (url->system name) "")
+            (url->system name) "15em")
+      // // //
+      ((icon "tm_find.xpm")
+       (cond ((not global-picture?)
+              (choose-file setter "Background pattern" "image" "" curr))
+             ((url-rooted? (unix->url (get-name)))
+              (choose-file setter "Background picture" "image" "" curr))
+             (else
+              (choose-file setter "Background picture" "image"))))
+      >>)))
+
 (tm-widget (pattern-recolor-options)
   (with opts (get-recolor)
     (hlist
       (when opts
-        (input (set-recolor answer) "string"
-               (or opts (list)) "10em"))
+        (enum (set-recolor answer)
+              (append (or opts (list ""))
+                      (list "black" "white" "red" "green" "blue" ""))
+              (if opts (car opts) "") "15em"))
       // // //
       (toggle (set-recolor (and answer "black"))
               (nnot (get-recolor)))
       // // //
       ((icon "tm_color.xpm")
-       (interactive-color set-recolor (or opts (list)))))))
+       (interactive-color set-recolor (or opts (list))))
+      >>)))
 
 (tm-widget ((pattern-selector u) cmd)
   (padded
     (hlist
       (vlist
         (refreshable "pattern-sample"
-          (resize "400px" "300px"
+          (resize "600px" "450px"
             (texmacs-output `(document
                                (block
                                 (tformat
-                                 (cwith "1" "1" "1" "1" "cell-width" "390px")
-                                 (cwith "1" "1" "1" "1" "cell-height" "290px")
+                                 (cwith "1" "1" "1" "1" "cell-width" "590px")
+                                 (cwith "1" "1" "1" "1" "cell-height" "440px")
                                  (cwith "1" "1" "1" "1" "cell-vmode" "exact")
                                  (cwith "1" "1" "1" "1" "cell-background"
                                         ,(get-color))
@@ -421,34 +466,34 @@
       // // //
       (explicit-buttons
         (vlist
-          (hlist
-            ("Pattern" (choose-file
-                        (lambda (c)
-                          (when (and (pair? c) (url? (car c)))
-                            (set-name (url->unix (car c))))
-                          (refresh-now "pattern-sample"))
-                        "Background pattern" "image"
-                        "" "$TEXMACS_PATH/misc/patterns/pine.png")) >>)
-          (hlist
-            ("Picture" (choose-file
-                        (lambda (c)
-                          (when (and (pair? c) (url? (car c)))
-                            (set-name (url->unix (car c))))
-                          (refresh-now "pattern-sample"))
-                        "Background pattern" "image")) >>)
-          ======
           (refreshable "pattern-options"
-            (aligned
-              (item (text "Width:")
-                (enum (set-width answer)
-                      (list (get-width) "100%" "100@" "1cm" "")
-                      (get-width) "10em"))
-              (item (text "Height:")
-                (enum (set-height answer)
-                      (list (get-height) "100%" "100@" "1cm" "")
-                      (get-height) "10em"))
-              (item (text "Recolor:")
-                (link pattern-recolor-options))))
+            (assuming (not global-picture?)
+              (aligned
+                (item (text "Name:")
+                  (link pattern-name-selector))
+                (item (text "Width:")
+                  (hlist
+                    (enum (set-width answer)
+                          (list (get-width) "100%" "100@" "1cm" "")
+                          (get-width) "15em") >>))
+                (item (text "Height:")
+                  (hlist
+                    (enum (set-height answer)
+                          (list (get-height) "100%" "100@" "1cm" "")
+                          (get-height) "15em") >>))
+                (item (text "Recolor:")
+                  (link pattern-recolor-options))))
+            (assuming global-picture?
+              (aligned
+                (item (text "Name:")
+                  (link pattern-name-selector))
+                (item (text "Size:")
+                  (hlist
+                    (enum (set-size answer)
+                          (list "Fit" "Fit to width" "Fit to height")
+                          (get-size) "15em") >>))
+                (item (text "Recolor:")
+                  (link pattern-recolor-options)))))
           ======
           (glue #f #t 0 0))))
     ======
@@ -459,5 +504,16 @@
 
 (tm-define (open-pattern-selector cmd w)
   (:interactive #t)
+  (when (or global-picture? (== (get-name) "neutral-pattern.png"))
+    (set! global-picture? #f)
+    (set! global-pattern-color `(pattern "neutral-pattern.png" ,w "100@")))
   (with u (current-buffer)
     (dialogue-window (pattern-selector u) cmd "Pattern selector")))
+
+(tm-define (open-picture-selector cmd)
+  (:interactive #t)
+  (when (or (not global-picture?) (== (get-name) "neutral-pattern.png"))
+    (set! global-picture? #t)
+    (set! global-pattern-color `(pattern "neutral-pattern.png" "100%" "100%")))
+  (with u (current-buffer)
+    (dialogue-window (pattern-selector u) cmd "Background picture selector")))

@@ -741,6 +741,7 @@
   ---
   ("Palette" (interactive-background set-background '()))
   ("Pattern" (open-pattern-selector set-background "1cm"))
+  ("Picture" (open-picture-selector set-background))
   ("Other" (init-interactive-env "bg-color")))
 
 (menu-bind document-colors-menu

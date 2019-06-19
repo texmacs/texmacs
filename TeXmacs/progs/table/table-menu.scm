@@ -268,6 +268,7 @@
   ("Palette" (interactive-background
               (lambda (col) (cell-set-background col)) '()))
   ("Pattern" (open-pattern-selector cell-set-background "1cm"))
+  ("Picture" (open-picture-selector cell-set-background))
   ("Other" (interactive cell-set-background)))
 
 (menu-bind cell-wrapping-menu
