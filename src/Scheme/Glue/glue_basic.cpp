@@ -6846,6 +6846,19 @@ tmg_url_resolve_in_path (tmscm arg1) {
 }
 
 tmscm
+tmg_url_resolve_pattern (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-resolve-pattern");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  url out= resolve_pattern (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return url_to_tmscm (out);
+}
+
+tmscm
 tmg_url_existsP (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url-exists?");
 
@@ -10313,6 +10326,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("url-complete",  tmg_url_complete, 2, 0, 0);
   tmscm_install_procedure ("url-resolve",  tmg_url_resolve, 2, 0, 0);
   tmscm_install_procedure ("url-resolve-in-path",  tmg_url_resolve_in_path, 1, 0, 0);
+  tmscm_install_procedure ("url-resolve-pattern",  tmg_url_resolve_pattern, 1, 0, 0);
   tmscm_install_procedure ("url-exists?",  tmg_url_existsP, 1, 0, 0);
   tmscm_install_procedure ("url-exists-in-path?",  tmg_url_exists_in_pathP, 1, 0, 0);
   tmscm_install_procedure ("url-exists-in-tex?",  tmg_url_exists_in_texP, 1, 0, 0);

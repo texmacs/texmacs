@@ -147,9 +147,7 @@ tree
 evaluate_pattern (tree t) {
   url base_file_name (as_string (std_env ["base-file-name"]));
   url im= evaluate_string (t[0]);
-  url image= resolve (relative (base_file_name, im));
-  if (is_none (image))
-    image= resolve (url ("$TEXMACS_PATTERN_PATH") * im);
+  url image= resolve_pattern (relative (base_file_name, im));
   if (is_none (image)) return "white";
   int imw_pt, imh_pt;
   int dpi= as_int (as_string (std_env ["dpi"]));

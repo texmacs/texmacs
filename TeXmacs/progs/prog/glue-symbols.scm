@@ -533,6 +533,7 @@
 "url-complete"
 "url-resolve"
 "url-resolve-in-path"
+"url-resolve-pattern"
 "url-exists?"
 "url-exists-in-path?"
 "url-exists-in-tex?"

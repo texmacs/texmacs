@@ -4067,6 +4067,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(url-resolve-pattern <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|resolve_pattern> which returns
+    <scm|url>.
+  </explain>
+
+  <\explain>
     <scm|(url-exists? <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>

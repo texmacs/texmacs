@@ -1977,9 +1977,7 @@ edit_env_rep::exec_pattern (tree t) {
   if (N(t)<1) return tree (ERROR, "bad pattern");
   if (no_patterns && N(t) == 4 && is_atomic (t[3])) return exec (t[3]);
   url im= url_system (exec_string (t[0]));
-  url image= resolve (relative (base_file_name, im));
-  if (is_none (image))
-    image= resolve (url ("$TEXMACS_PATTERN_PATH") * im);
+  url image= resolve_pattern (relative (base_file_name, im));
   if (is_none (image)) return "white";
   int imw_pt, imh_pt;
   image_size (image, imw_pt, imh_pt);

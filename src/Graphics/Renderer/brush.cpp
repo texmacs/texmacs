@@ -89,11 +89,26 @@ public:
 };
 
 url
+resolve_pattern (url im) {
+  url pats= expand (url ("$TEXMACS_PATTERN_PATH"));
+  url image= resolve (im);
+  if (is_none (image)) {
+    if (!is_rooted (im)) image= resolve (pats * im);
+    pats= subdirectories (pats);
+    if (!is_rooted (im) && is_none (image))
+      image= resolve (pats * im);
+    if (is_none (image))
+      image= resolve (pats * tail (im));
+  }
+  return image;
+}
+
+url
 brush_rep::get_pattern_url () {
   tree t= get_pattern ();
   if (is_atomic (t) || N(t) == 0 || !is_atomic (t[0])) return url ();
   url u= url_system (as_string (t[0]));
-  url r= resolve (url ("$TEXMACS_PATTERN_PATH") * u);
+  url r= resolve_pattern (u);
   if (!is_none (r)) return r;
   url base= get_current_buffer_safe ();
   r= resolve (relative (base, u));
