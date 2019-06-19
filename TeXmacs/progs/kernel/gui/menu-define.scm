@@ -478,30 +478,21 @@
     "dark green" "dark yellow" "dark orange" "dark brown"
     "red" "magenta" "blue" "cyan"
     "green" "yellow" "orange" "brown"
+    "#faa" "#faf" "#aaf" "#aff"
+    "#afa" "#ffa" "#fa6" "#a66"
     "pastel red" "pastel magenta" "pastel blue" "pastel cyan"
     "pastel green" "pastel yellow" "pastel orange" "pastel brown"))
 
 (define (standard-grey-list)
-  '("black" "darker grey" "dark grey" "light grey"
-    "pastel grey" "white"))
+  '("black" "darker grey" "dark grey" "#a0a0a0"
+    "light grey" "pastel grey" "#f0f0f0" "white"))
 
 (tm-menu (standard-color-menu cmd)
   (tile 8
-    (for (col (standard-color-list))
+    (for (col (append (standard-color-list) (standard-grey-list)))
       (explicit-buttons
         ((color col #f #f 32 24)
-         (cmd col)))))
-  (glue #f #f 0 5)
-  (tile 8
-    (for (col (standard-grey-list))
-      (explicit-buttons
-        ((color col #f #f 32 24)
-         (cmd col))))
-    (for (i (.. 0 2))
-      (when #f
-        (explicit-buttons
-          ((color "#fff0" #f #f 32 24)
-           (noop)))))))
+         (cmd col))))))
 
 (define (gui-make-pick-color x)
   `(menu-dynamic
@@ -514,14 +505,14 @@
 ;; Basic pattern picker
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (tm-pattern name w h)
+(define-public (tm-pattern name . args)
   (cond ((url-exists? (url-append "$TEXMACS_PATTERN_PATH" (url-tail name)))
-         `(pattern ,(url->unix (url-tail name)) ,w ,h))
+         `(pattern ,(url->unix (url-tail name)) ,@args))
         ((string-starts? (url->unix (url->delta-unix name)) "../")
          (when (url? name) (set! name (url->system name)))
-         `(pattern ,name ,w ,h))         
+         `(pattern ,name ,@args))
         (else
-         `(pattern ,(url->unix (url->delta-unix name)) ,w ,h))))
+         `(pattern ,(url->unix (url->delta-unix name)) ,@args))))
 
 (define (standard-pattern-list dir scale)
   (let* ((l1 (url-read-directory dir "*.png"))
@@ -567,7 +558,7 @@
 (define (gui-make-pick-background x)
   `(menu-dynamic
      (dynamic (standard-color-menu (lambda (answer) ,@(cddr x))))
-     (glue #f #f 0 5)
+     ---
      (dynamic (standard-pattern-menu (lambda (answer) ,@(cddr x))
                                      "$TEXMACS_PATH/misc/patterns"
                                      ,(cadr x)))
