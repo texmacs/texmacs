@@ -1029,6 +1029,7 @@
 
 (tm-define (interactive-color cmd proposals)
   (:interactive #t)
+  (set! proposals (map tm->tree proposals))
   (if (not (qt-gui?))
       (interactive-rgb-picker cmd proposals)
       (with p (lambda (com) (widget-color-picker com #f proposals))
@@ -1037,6 +1038,7 @@
 
 (tm-define (interactive-background cmd proposals)
   (:interactive #t)
+  (set! proposals (map tm->tree proposals))
   (if (not (qt-gui?))
       (interactive-rgb-picker cmd proposals)
       ;;(with p (lambda (com) (widget-color-picker com #t proposals))
