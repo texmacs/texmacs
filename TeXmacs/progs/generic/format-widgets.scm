@@ -528,7 +528,11 @@
     (explicit-buttons
       (hlist
         >>>
-        ("Ok" (cmd (normalize-color (get-color))))))))
+        ("Ok" (with col (normalize-color (get-color))
+                (if global-picture?
+                    (insert-preferred-list "my pictures" col 16)
+                    (insert-preferred-list "my patterns" col 16))
+                (cmd col)))))))
 
 (tm-define (open-pattern-selector cmd w)
   (:interactive #t)

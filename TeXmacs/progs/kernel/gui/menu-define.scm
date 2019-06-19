@@ -505,6 +505,25 @@
 ;; Basic pattern picker
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-public (get-preferred-list type nr)
+  (with l (get-preference type)
+    (when (string? l) (set! l (string->object l)))
+    (cond ((nlist? l) (list))
+          ((> (length l) nr) (sublist l 0 nr))
+          (else l))))
+
+(define-public (insert-preferred-list type what nr)
+  (let* ((l (get-preferred-list type nr))
+         (i (list-find-index l (cut == <> what)))
+         (r l))
+    (if i (set! r (append (sublist r 0 i)
+                          (sublist r (+ i 1) (length r)))))
+    (set! r (cons what r))
+    (when (> (length r) nr)
+      (set! r (sublist 0 nr)))
+    (when (!= r l)
+      (set-preference type r))))
+
 (define-public (tm-pattern name . args)
   (cond ((url-exists? (url-append "$TEXMACS_PATTERN_PATH" (url-tail name)))
          `(pattern ,(url->unix (url-tail name)) ,@args))
@@ -513,6 +532,15 @@
          `(pattern ,name ,@args))
         (else
          `(pattern ,(url->unix (url->delta-unix name)) ,@args))))
+
+(tm-menu (my-pattern-menu cmd)
+  (tile 8
+    (for (col (get-preferred-list "my patterns" 16))
+      (with args (cons* (cadr col) "100%" "100@" (cddddr col))
+        (with col2 (apply tm-pattern args)
+          (explicit-buttons
+            ((color col2 #f #f 32 32)
+             (cmd col))))))))
 
 (define (standard-pattern-list dir scale)
   (let* ((l1 (url-read-directory dir "*.png"))
@@ -562,10 +590,14 @@
      (dynamic (standard-pattern-menu (lambda (answer) ,@(cddr x))
                                      "$TEXMACS_PATH/misc/patterns/vintage"
                                      ,(cadr x)))
-     (assuming (nnull? (clipart-list))
+     (when (nnull? (get-preferred-list "my patterns" 16))
        ---
-       (dynamic (clipart-pattern-menu (lambda (answer) ,@(cddr x))
-                                      ,(cadr x))))))
+       (dynamic (my-pattern-menu (lambda (answer) ,@(cddr x)))))
+     ;;(assuming (nnull? (clipart-list))
+     ;;  ---
+     ;;  (dynamic (clipart-pattern-menu (lambda (answer) ,@(cddr x))
+     ;;                                 ,(cadr x))))
+     ))
 
 (extend-table gui-make-table
   (pick-background ,gui-make-pick-background))
