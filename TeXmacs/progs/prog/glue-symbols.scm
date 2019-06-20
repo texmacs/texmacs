@@ -111,6 +111,8 @@
 "color"
 "get-hex-color"
 "named-color->xcolormap"
+"rgba->named-color"
+"named-color->rgba"
 "new-author"
 "set-author"
 "get-author"

@@ -56,6 +56,8 @@ void   get_cmyk_color (color col, int& r, int& g, int& b, int& a);
 
 bool   is_color_name (string s);
 color  named_color (string s, int a= 255);
+string named_rgb_color (array<int> rgba);
+array<int> get_named_rgb_color (string col);
   // get a color by its name
 
 string get_hex_color (string s);

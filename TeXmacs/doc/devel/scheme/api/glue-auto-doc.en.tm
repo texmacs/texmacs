@@ -691,6 +691,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(rgba-\<gtr\>named-color <scm-arg|array_int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|named_rgb_color> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(named-color-\<gtr\>rgba <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_named_rgb_color> which returns
+    <scm|array_int>.
+  </explain>
+
+  <\explain>
     <scm|(new-author)>
 <explain-synopsis|no synopsis>
   <|explain>

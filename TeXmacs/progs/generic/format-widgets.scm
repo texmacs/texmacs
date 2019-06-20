@@ -407,6 +407,13 @@
   (and-with opts (get-effect 'eff-recolor)
     (car opts)))
 
+(define (set-skin skin)
+  (set-effect 'eff-skin (nnot skin) skin))
+
+(define (get-skin)
+  (and-with opts (get-effect 'eff-skin)
+    (car opts)))
+
 (define (set-blur r)
   (set-effect 'eff-blur (nnot r) `(eff-gaussian ,r)))
 
@@ -460,6 +467,21 @@
        (interactive-color set-recolor (list (or recol ""))))
       >>)))
 
+(tm-widget (pattern-skin-options)
+  (with skin (get-skin)
+    (hlist
+      (when skin
+        (enum (set-skin answer)
+              (list (or skin "") "#0001" "#fff1" "#f001" "#0f01" "#00f1" "")
+              (or skin "") "15em"))
+      // // //
+      (toggle (set-skin (and answer "#0001"))
+              (nnot (get-skin)))
+      // // //
+      ((icon "tm_color.xpm")
+       (interactive-color set-skin (list (or skin ""))))
+      >>)))
+
 (tm-widget (pattern-blur-options)
   (with blur (get-blur)
     (hlist
@@ -508,6 +530,8 @@
                           (get-height) "15em") >>))
                 (item (text "Recolor:")
                   (link pattern-recolor-options))
+                ;;(item (text "Skin:")
+                ;;  (link pattern-skin-options))
                 ;;(item (text "Blur:")
                 ;;  (link pattern-blur-options))
                 ))
@@ -521,7 +545,10 @@
                           (list "Fit" "Fit to width" "Fit to height")
                           (get-size) "15em") >>))
                 (item (text "Recolor:")
-                  (link pattern-recolor-options)))))
+                  (link pattern-recolor-options))
+                ;;(item (text "Skin:")
+                ;;  (link pattern-skin-options))
+                )))
           ======
           (glue #f #t 0 0))))
     ======

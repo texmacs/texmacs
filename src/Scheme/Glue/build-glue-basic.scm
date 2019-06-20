@@ -102,6 +102,8 @@
   (color named_color (int string))
   (get-hex-color get_hex_color (string string))
   (named-color->xcolormap named_color_to_xcolormap (string string))
+  (rgba->named-color named_rgb_color (string array_int))
+  (named-color->rgba get_named_rgb_color (array_int string))
   (new-author new_author (double))
   (set-author set_author (void double))
   (get-author get_author (double))
