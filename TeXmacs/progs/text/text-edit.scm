@@ -683,7 +683,7 @@
         (list "framed-color" "Color")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'ornamented))
+  (:require (tree-in? t '(ornamented decorated)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
         (list "ornament-vpadding" "Inner")
@@ -692,7 +692,7 @@
         (list "ornament-shape" "Shape")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t 'ornamented-titled))
+  (:require (tree-is? t '(ornamented-titled decorated-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
         (list "ornament-vpadding" "Inner")

@@ -520,7 +520,7 @@
                           (sublist r (+ i 1) (length r)))))
     (set! r (cons what r))
     (when (> (length r) nr)
-      (set! r (sublist 0 nr)))
+      (set! r (sublist r 0 nr)))
     (when (!= r l)
       (set-preference type r))))
 
