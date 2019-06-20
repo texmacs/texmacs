@@ -154,7 +154,7 @@ picture_renderer (picture p, double zoomf) {
 ******************************************************************************/
 
 QImage*
-get_image (url u, int w, int h, tree eff, SI pixel) {
+get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
   if (qt_supports (u))
     pm= new QImage (utf8_to_qstring (concretize (u)));
@@ -184,6 +184,18 @@ get_image (url u, int w, int h, tree eff, SI pixel) {
     pm= new QImage (trf->copy ());
   }
   return pm;
+}
+
+static hashmap<tree,QImage*> qt_pic_cache;
+
+QImage*
+get_image (url u, int w, int h, tree eff, SI pixel) {
+  // TODO: we may wish to flush the cache from time to time...
+  tree key= tuple (as_tree (u), as_tree (w), as_tree (h));
+  if (eff != "") key << eff << as_tree (pixel);
+  if (!qt_pic_cache->contains (key))
+    qt_pic_cache (key)= get_image_for_real (u, w, h, eff, pixel);
+  return qt_pic_cache[key];
 }
 
 picture
