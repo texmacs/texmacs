@@ -154,7 +154,7 @@ picture_renderer (picture p, double zoomf) {
 ******************************************************************************/
 
 QImage*
-get_image (url u, int w, int h, tree eff) {
+get_image (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
   if (qt_supports (u))
     pm= new QImage (utf8_to_qstring (concretize (u)));
@@ -176,7 +176,7 @@ get_image (url u, int w, int h, tree eff) {
     picture src= qt_picture (*pm, 0, 0);
     array<picture> a;
     a << src;
-    picture pic= e->apply (a, 5*PIXEL);
+    picture pic= e->apply (a, pixel);
     picture dest= as_qt_picture (pic);
     qt_picture_rep* rep= (qt_picture_rep*) dest->get_handle ();
     QImage *trf= (QImage*) &(rep->pict);
@@ -188,7 +188,7 @@ get_image (url u, int w, int h, tree eff) {
 
 picture
 load_picture (url u, int w, int h) {
-  QImage* im= get_image (u, w, h, "");
+  QImage* im= get_image (u, w, h, "", PIXEL);
   if (im == NULL) return error_picture (w, h);
   return qt_picture (*im, 0, 0);
 }

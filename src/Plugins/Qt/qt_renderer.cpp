@@ -196,7 +196,7 @@ get_pattern_image (brush br, SI pixel) {
   SI w, h;
   tree eff;
   get_pattern_data (u, w, h, eff, br, pixel);
-  QImage* pm= get_image (u, w, h, eff);
+  QImage* pm= get_image (u, w, h, eff, pixel);
   return pm;
 }
 

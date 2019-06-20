@@ -200,6 +200,12 @@ edit_env_rep::as_length (tree t, string perc) {
   }
 }
 
+SI
+edit_env_rep::as_eff_length (tree t) {
+  if (is_int (t)) return as_int (t);
+  else return as_length (t);
+}
+
 space
 edit_env_rep::as_hspace (tree t) {
   tree r= as_tmlen (t);

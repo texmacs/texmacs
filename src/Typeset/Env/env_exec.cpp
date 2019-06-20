@@ -2034,8 +2034,8 @@ tree
 edit_env_rep::exec_eff_move (tree t) {
   if (N(t) < 3) return tree (ERROR, "bad eff-move");
   tree body= exec (t[0]);
-  tree dx  = as_tree (as_length (exec (t[1])));
-  tree dy  = as_tree (as_length (exec (t[2])));
+  tree dx  = as_tree (as_eff_length (exec (t[1])));
+  tree dy  = as_tree (as_eff_length (exec (t[2])));
   return tree (EFF_MOVE, body, dx, dy);
 }
 
@@ -2043,7 +2043,7 @@ tree
 edit_env_rep::exec_eff_bubble (tree t) {
   if (N(t) < 3) return tree (ERROR, "bad eff-bubble");
   tree body= exec (t[0]);
-  tree r   = as_tree (as_length (exec (t[1])));
+  tree r   = as_tree (as_eff_length (exec (t[1])));
   tree a   = exec (t[2]);
   return tree (EFF_BUBBLE, body, r, a);
 }
@@ -2053,8 +2053,8 @@ edit_env_rep::exec_eff_turbulence (tree t) {
   if (N(t) != 5) return tree (ERROR, "bad eff-turbulence");
   tree body= exec (t[0]);
   tree s   = exec (t[1]);
-  tree w   = as_tree (as_length (exec (t[2])));
-  tree h   = as_tree (as_length (exec (t[3])));
+  tree w   = as_tree (as_eff_length (exec (t[2])));
+  tree h   = as_tree (as_eff_length (exec (t[3])));
   tree o   = exec (t[4]);
   return tree (EFF_TURBULENCE, body, s, w, h, o);
 }
@@ -2064,8 +2064,8 @@ edit_env_rep::exec_eff_fractal_noise (tree t) {
   if (N(t) != 5) return tree (ERROR, "bad eff-fractal-noise");
   tree body= exec (t[0]);
   tree s   = exec (t[1]);
-  tree w   = as_tree (as_length (exec (t[2])));
-  tree h   = as_tree (as_length (exec (t[3])));
+  tree w   = as_tree (as_eff_length (exec (t[2])));
+  tree h   = as_tree (as_eff_length (exec (t[3])));
   tree o   = exec (t[4]);
   return tree (EFF_FRACTAL_NOISE, body, s, w, h, o);
 }
@@ -2073,38 +2073,38 @@ edit_env_rep::exec_eff_fractal_noise (tree t) {
 tree
 edit_env_rep::exec_eff_gaussian (tree t) {
   if (N(t) < 1) return tree (ERROR, "bad eff-gaussian");
-  tree rx= as_tree (as_length (exec (t[0])));
+  tree rx= as_tree (as_eff_length (exec (t[0])));
   if (N(t) == 1) return tree (EFF_GAUSSIAN, as_tree (rx));
   if (N(t) < 3) return tree (ERROR, "bad eff-gaussian");
-  tree ry= as_tree (as_length (exec (t[1])));
+  tree ry= as_tree (as_eff_length (exec (t[1])));
   return tree (EFF_GAUSSIAN, rx, ry, exec (t[2]));
 }
 
 tree
 edit_env_rep::exec_eff_oval (tree t) {
   if (N(t) < 1) return tree (ERROR, "bad eff-oval");
-  tree rx= as_tree (as_length (exec (t[0])));
+  tree rx= as_tree (as_eff_length (exec (t[0])));
   if (N(t) == 1) return tree (EFF_OVAL, as_tree (rx));
   if (N(t) < 3) return tree (ERROR, "bad eff-oval");
-  tree ry= as_tree (as_length (exec (t[1])));
+  tree ry= as_tree (as_eff_length (exec (t[1])));
   return tree (EFF_OVAL, rx, ry, exec (t[2]));
 }
 
 tree
 edit_env_rep::exec_eff_rectangular (tree t) {
   if (N(t) < 1) return tree (ERROR, "bad eff-rectangular");
-  tree rx= as_tree (as_length (exec (t[0])));
+  tree rx= as_tree (as_eff_length (exec (t[0])));
   if (N(t) == 1) return tree (EFF_RECTANGULAR, as_tree (rx));
   if (N(t) < 3) return tree (ERROR, "bad eff-rectangular");
-  tree ry= as_tree (as_length (exec (t[1])));
+  tree ry= as_tree (as_eff_length (exec (t[1])));
   return tree (EFF_RECTANGULAR, rx, ry, exec (t[2]));
 }
 
 tree
 edit_env_rep::exec_eff_motion (tree t) {
   if (N(t) < 2) return tree (ERROR, "bad eff-motion");
-  tree dx= as_tree (as_length (exec (t[0])));
-  tree dy= as_tree (as_length (exec (t[1])));
+  tree dx= as_tree (as_eff_length (exec (t[0])));
+  tree dy= as_tree (as_eff_length (exec (t[1])));
   return tree (EFF_MOTION, dx, dy);
 }
 
@@ -2112,8 +2112,8 @@ tree
 edit_env_rep::exec_eff_degrade (tree t) {
   if (N(t) < 4) return tree (ERROR, "bad eff-degrade");
   tree b = exec (t[0]);
-  tree wx= as_tree (as_length (exec (t[1])));
-  tree wy= as_tree (as_length (exec (t[2])));
+  tree wx= as_tree (as_eff_length (exec (t[1])));
+  tree wy= as_tree (as_eff_length (exec (t[2])));
   tree th= as_tree (as_double (exec (t[3])));
   tree sh= as_tree (as_double (exec (t[4])));
   return tree (EFF_DEGRADE, b, wx, wy, th, sh);
@@ -2123,10 +2123,10 @@ tree
 edit_env_rep::exec_eff_distort (tree t) {
   if (N(t) < 5) return tree (ERROR, "bad eff-distort");
   tree b = exec (t[0]);
-  tree wx= as_tree (as_length (exec (t[1])));
-  tree wy= as_tree (as_length (exec (t[2])));
-  tree rx= as_tree (as_length (exec (t[3])));
-  tree ry= as_tree (as_length (exec (t[4])));
+  tree wx= as_tree (as_eff_length (exec (t[1])));
+  tree wy= as_tree (as_eff_length (exec (t[2])));
+  tree rx= as_tree (as_eff_length (exec (t[3])));
+  tree ry= as_tree (as_eff_length (exec (t[4])));
   return tree (EFF_DISTORT, b, wx, wy, rx, ry);
 }
 
@@ -2134,10 +2134,10 @@ tree
 edit_env_rep::exec_eff_gnaw (tree t) {
   if (N(t) < 5) return tree (ERROR, "bad eff-gnaw");
   tree b = exec (t[0]);
-  tree wx= as_tree (as_length (exec (t[1])));
-  tree wy= as_tree (as_length (exec (t[2])));
-  tree rx= as_tree (as_length (exec (t[3])));
-  tree ry= as_tree (as_length (exec (t[4])));
+  tree wx= as_tree (as_eff_length (exec (t[1])));
+  tree wy= as_tree (as_eff_length (exec (t[2])));
+  tree rx= as_tree (as_eff_length (exec (t[3])));
+  tree ry= as_tree (as_eff_length (exec (t[4])));
   return tree (EFF_GNAW, b, wx, wy, rx, ry);
 }
 
