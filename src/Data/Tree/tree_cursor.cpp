@@ -123,6 +123,7 @@ is_accessible_cursor (tree t, path p) {
   }
   else if (0 > p->item || p->item >= N(t)) return false;
   else if (the_drd->is_parent_enforcing (t) &&
+           get_access_mode () != DRD_ACCESS_SOURCE &&
            !graphics_in_path (t, p) &&
 	   ((p->item == lowest_accessible_child (t) &&
              p->next == start (t[p->item])) ||
@@ -142,7 +143,9 @@ is_accessible_cursor (tree t, path p) {
     case VAR_INACTIVE:
       return is_modified_accessible (t, p, false, true);
     default:
-      if (!the_drd->is_accessible_child (t, p->item)) return false;
+      if (!the_drd->is_accessible_child (t, p->item) &&
+          get_access_mode () != DRD_ACCESS_SOURCE)
+        return false;
       else if (the_drd->get_env_child (t, p->item, MODE, "") == "src") {
 	int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
 	bool r= is_accessible_cursor (t[p->item], p->next);
@@ -152,7 +155,7 @@ is_accessible_cursor (tree t, path p) {
       else {
 	int old_mode= get_writable_mode ();
 	if (old_mode != DRD_WRITABLE_ANY) {
-	  int w  = the_drd->get_writability_child (t, p->item);
+	  int w= the_drd->get_writability_child (t, p->item);
 	  if (w == WRITABILITY_DISABLE)
 	    set_writable_mode (DRD_WRITABLE_INPUT);
 	  else if (w == WRITABILITY_ENABLE)

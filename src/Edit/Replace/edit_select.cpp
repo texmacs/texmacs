@@ -381,8 +381,7 @@ void
 edit_select_rep::selection_correct (path i1, path i2, path& o1, path& o2) {
   ASSERT (rp <= i1 && rp <= i2, "paths not inside document");
   int old_mode= get_access_mode ();
-  if (get_init_string (MODE) == "src")
-    set_access_mode (DRD_ACCESS_SOURCE);
+  if (in_source ()) set_access_mode (DRD_ACCESS_SOURCE);
   ::selection_correct (subtree (et, rp), i1 / rp, i2 / rp, o1, o2);
   set_access_mode (old_mode);
   o1= rp * o1; o2= rp * o2;

@@ -334,7 +334,7 @@ is_table_selection (tree et, path p1, path p2, bool strict) {
   return
     is_func (t, TFORMAT) || is_func (t, TABLE) ||
     is_func (t, ROW) || is_func (t, CELL) ||
-    (!strict && N(t) == 1 && is_func (t[0], TFORMAT));
+    (!strict && is_compound (t) && N(t) == 1 && is_func (t[0], TFORMAT));
 }
 
 path
