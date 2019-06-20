@@ -148,7 +148,7 @@
          (style-url (url-append "$TEXMACS_STYLE_PATH" style-name))
          (file-name (url-resolve style-url "r")))
     (cursor-history-add (cursor-path))
-    (load-buffer file-name)
+    (load-document file-name)
     (cursor-history-add (cursor-path))))
 
 (tm-define (edit-style-source)

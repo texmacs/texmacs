@@ -80,7 +80,7 @@
          (master (if (null? opt-master) (buffer-master) (car opt-master))))
     (aux-set-document aux body)
     (aux-set-master aux master)
-    (switch-to-buffer name)))
+    (switch-document name)))
 
 (define-public-macro (with-aux u . prg)
   `(let* ((u ,u)
@@ -498,7 +498,9 @@
 (tm-define (load-buffer-in-new-window name . opts)
   (:argument name smart-file "File name")
   (:default  name (propose-name-buffer))
-  (apply load-buffer-main (cons name (cons :new-window opts))))
+  (if (buffer->window name)
+      (noop) ;;(window-focus (buffer->window name))
+      (apply load-buffer-main (cons name (cons :new-window opts)))))
 
 (tm-define (load-browse-buffer name)
   (:synopsis "Load a buffer or switch to it if already open")
@@ -581,6 +583,13 @@
 
 (tm-define (load-document* u)
   (if (window-per-buffer?) (load-buffer u) (load-buffer-in-new-window u)))
+
+(tm-define (switch-document u)
+  (if (window-per-buffer?)
+      (if (buffer->window u)
+	  (noop) ;;(window-focus (buffer->window u))
+	  (open-buffer-in-window u (buffer-get u) ""))
+      (load-buffer u)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing buffers

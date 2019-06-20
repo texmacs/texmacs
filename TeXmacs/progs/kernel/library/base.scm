@@ -353,6 +353,10 @@
   (with u (window-to-buffer win)
     (and (not (url-none? u)) u)))
 
+(define-public (buffer->window buf)
+  (with l (buffer->windows buf)
+    (and (nnull? l) (car l))))
+
 (define-public (current-view)
   (with u (current-view-url)
     (and (not (url-none? u)) u)))
