@@ -56,17 +56,14 @@
 
 (tm-define (versioned? url)
   (or (nnot (version-tool url))
-    (and-with base (url-wrap url)
-      (versioned? base))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Getting the main status of a file:
-;; + unknown
-;; + modified
-;; + unmodified
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      (and-with base (url-wrap url)
+        (versioned? base))))
 
 (tm-define (version-status name)
+  ;; Getting the main status of a file:
+  ;; + unknown
+  ;; + modified
+  ;; + unmodified
   (if (version-tool name)
       (version-status name)
       "unknown"))
@@ -77,11 +74,11 @@
 
 (tm-define (version-history name) #f)
 
-;; Show the history of the URL:
-;;   1. add the cursor path to the history
-;;   2. revert the buffer to tmfs
-;;   3. set the master of tmfs to the URL
 (tm-define (version-show-history url)
+  ;; Show the history of the URL:
+  ;;   1. add the cursor path to the history
+  ;;   2. revert the buffer to tmfs
+  ;;   3. set the master of tmfs to the URL
   (cursor-history-add (cursor-path))
   (with s (url->tmfs-string url)
     (revert-buffer (string-append "tmfs://history/" s))
@@ -97,28 +94,28 @@
 (tmfs-load-handler (history name)
   (with u (tmfs-string->url name)
     (with h (version-history u)
-            ($generic
-             ($tmfs-title "History of "
-                          ($link (url->system u)
-                                 ($verbatim (utf8->cork (url->system (url-tail u))))))
-             ($when (not h)
-                    "This file is not under version control.")
-             ($when h
-                    ($description-long
-                     ($for (x h)
-                           (cond ((git-active? u)
-                                  ($with (date by msg commit) x
-                                         ($describe-item
-                                           ($inline "Commit " commit
-                                                    " by " (utf8->cork by)" on " date)
-                                           (utf8->cork msg))))
-                                 ((svn-active? u)
-                                  ($with (rev by date msg) x
-                                         ($with dest (version-revision-url u rev)
-                                                ($describe-item
-                                                 ($inline "Version " ($link dest rev)
-                                                          " by " (utf8->cork by) " on " date)
-                                                 (utf8->cork msg)))))))))))))
+      ($generic
+       ($tmfs-title "History of "
+                    ($link (url->system u)
+                      ($verbatim (utf8->cork (url->system (url-tail u))))))
+       ($when (not h)
+         "This file is not under version control.")
+       ($when h
+         ($description-long
+           ($for (x h)
+             (cond ((git-active? u)
+                    ($with (date by msg commit) x
+                      ($describe-item
+                          ($inline "Commit " commit
+                                   " by " (utf8->cork by)" on " date)
+                        (utf8->cork msg))))
+                   ((svn-active? u)
+                    ($with (rev by date msg) x
+                      ($with dest (version-revision-url u rev)
+                        ($describe-item
+                            ($inline "Version " ($link dest rev)
+                                     " by " (utf8->cork by) " on " date)
+                          (utf8->cork msg)))))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Showing a particular commit
@@ -206,11 +203,11 @@
   `(row (cell ,(third x))
         (cell ,(number->string (+ (first x) (second x))))
         (cell (concat (with color green
-                            ,(string-repeat "+"
-                                            (get-length (first x))))
+                        ,(string-repeat "+"
+                                        (get-length (first x))))
                       (with color red
-                            ,(string-repeat "-"
-                                            (get-length (second x))))))))
+                        ,(string-repeat "-"
+                                        (get-length (second x))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Showing a particular revision
