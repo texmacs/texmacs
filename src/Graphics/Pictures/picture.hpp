@@ -148,5 +148,6 @@ picture make_transparent (picture pic, color bgc);
 picture make_opaque (picture pic, color bgc);
 color   average_color (picture pic);
 picture recolor (picture pic, color col);
+picture apply_skin (picture pic, color col);
 
 #endif // defined PICTURE_H

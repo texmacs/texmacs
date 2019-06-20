@@ -408,7 +408,23 @@
     (car opts)))
 
 (define (set-skin skin)
+  (when (string? skin)
+    (with (r g b a) (named-color->rgba skin)
+      (when (== a 255) (set! a 64))
+      (set! skin (rgba->named-color (list r g b a)))))
   (set-effect 'eff-skin (nnot skin) skin))
+
+(define (inc-skin)
+  (and-with skin (get-skin)
+    (with (r g b a) (named-color->rgba skin)
+      (set! a (min 215 (inexact->exact (round (* (sqrt (sqrt 2)) a)))))
+      (set-skin (rgba->named-color (list r g b a))))))
+
+(define (dec-skin)
+  (and-with skin (get-skin)
+    (with (r g b a) (named-color->rgba skin)
+      (set! a (max 4 (inexact->exact (round (* (sqrt (sqrt 0.5)) a)))))
+      (set-skin (rgba->named-color (list r g b a))))))
 
 (define (get-skin)
   (and-with opts (get-effect 'eff-skin)
@@ -457,7 +473,9 @@
     (hlist
       (when recol
         (enum (set-recolor answer)
-              (list (or recol "") "black" "white" "red" "green" "blue" "")
+              (list (or recol "")
+		    "black" "white" "grey" "red" "green" "blue"
+		    "yellow" "cyan" "magenta" "orange" "brown" "")
               (or recol "") "15em"))
       // // //
       (toggle (set-recolor (and answer "black"))
@@ -472,14 +490,20 @@
     (hlist
       (when skin
         (enum (set-skin answer)
-              (list (or skin "") "#0001" "#fff1" "#f001" "#0f01" "#00f1" "")
+              (list (or skin "")
+		    "black" "white" "grey" "red" "green" "blue"
+		    "yellow" "cyan" "magenta" "orange" "brown" "")
               (or skin "") "15em"))
       // // //
-      (toggle (set-skin (and answer "#0001"))
+      (toggle (set-skin (and answer "black"))
               (nnot (get-skin)))
       // // //
       ((icon "tm_color.xpm")
        (interactive-color set-skin (list (or skin ""))))
+      // //
+      (when skin
+	((icon "tm_remove.xpm") (dec-skin))
+	((icon "tm_add.xpm") (inc-skin)))
       >>)))
 
 (tm-widget (pattern-blur-options)
@@ -530,8 +554,8 @@
                           (get-height) "15em") >>))
                 (item (text "Recolor:")
                   (link pattern-recolor-options))
-                ;;(item (text "Skin:")
-                ;;  (link pattern-skin-options))
+                (item (text "Skin:")
+                  (link pattern-skin-options))
                 ;;(item (text "Blur:")
                 ;;  (link pattern-blur-options))
                 ))
@@ -546,8 +570,8 @@
                           (get-size) "15em") >>))
                 (item (text "Recolor:")
                   (link pattern-recolor-options))
-                ;;(item (text "Skin:")
-                ;;  (link pattern-skin-options))
+                (item (text "Skin:")
+                  (link pattern-skin-options))
                 )))
           ======
           (glue #f #t 0 0))))

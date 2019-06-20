@@ -476,6 +476,18 @@ public:
     return recolor (eff->apply (pics, pixel), col); }
 };
 
+class skin_effect_rep: public effect_rep {
+  effect eff;
+  color col;
+public:
+  skin_effect_rep (effect eff2, color col2):
+    eff (eff2), col (col2) {}
+  rectangle get_extents (array<rectangle> rs) {
+    return eff->get_extents (rs); }
+  picture apply (array<picture> pics, SI pixel) {
+    return apply_skin (eff->apply (pics, pixel), col); }
+};
+
 effect normalize (effect eff) {
   return tm_new<normalize_effect_rep> (eff); }
 effect color_matrix (effect eff, array<double> m) {
@@ -486,6 +498,8 @@ effect make_opaque (effect eff, color bgc) {
   return tm_new<make_opaque_effect_rep> (eff, bgc); }
 effect recolor (effect eff, color col) {
   return tm_new<recolor_effect_rep> (eff, col); }
+effect apply_skin (effect eff, color col) {
+  return tm_new<skin_effect_rep> (eff, col); }
 
 /******************************************************************************
 * Hatching
@@ -749,6 +763,11 @@ build_effect (tree t) {
     effect eff= build_effect (t[0]);
     color  col= named_color (as_string (t[1]));
     return recolor (eff, col);
+  }
+  else if (is_func (t, EFF_SKIN)) {
+    effect eff= build_effect (t[0]);
+    color  col= named_color (as_string (t[1]));
+    return apply_skin (eff, col);
   }
   else {
     return argument_effect (0);

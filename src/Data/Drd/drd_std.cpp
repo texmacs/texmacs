@@ -866,6 +866,10 @@ init_std_drd () {
         fixed (2, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
 	color_type (1) -> name (1, "col") -> long_name (1, "new color"));
+  init (EFF_SKIN, "eff-skin",
+        fixed (2, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+	color_type (1) -> name (1, "col") -> long_name (1, "new color"));
 
   init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
   init (ORNAMENT, "ornament", options (1, 1) -> accessible (0));

@@ -251,6 +251,11 @@ recolor (picture pic, color col) {
   return copy_alpha (res, pic);
 }
 
+picture
+apply_skin (picture pic, color col) {
+  return compose (pic, col, compose_towards_source);
+}
+
 /******************************************************************************
 * Special effects
 ******************************************************************************/
