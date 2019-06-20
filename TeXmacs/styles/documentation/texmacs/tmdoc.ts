@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|source|english>>
 
@@ -39,6 +39,8 @@
   <assign|indent-par-first|1.5fn>
 
   <assign|save-aux|false>
+
+  <assign|sectional-sep|<macro|<space|2spc>>>
 
   <assign|html-css|http://www.texmacs.org/css/tmdoc.css>
 
