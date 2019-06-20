@@ -15,9 +15,11 @@
 #include "qt_simple_widget.hpp"
 #include "converter.hpp"
 #include "boot.hpp"
+#include "scheme.hpp"
 
 #include "config.h"
 
+#include <QDebug>
 #include <QEvent>
 #include <QResizeEvent>
 #include <QKeyEvent>
@@ -26,6 +28,15 @@
 #include <QFocusEvent>
 #include <QPainter>
 #include <QApplication>
+
+#include <QBuffer>
+#include <QMimeData>
+#include <QByteArray>
+#include <QImage>
+#include <QUrl>
+#include <QFileInfo>
+
+
 
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
@@ -164,7 +175,8 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
-  surface()->setMouseTracking (true);
+  surface ()->setMouseTracking (true);
+  surface ()->setAcceptDrops (true);
   
   if (DEBUG_QT)
     debug_qt << "Creating " << from_qstring(objectName()) << " of widget "
@@ -706,6 +718,85 @@ QTMWidget::sizeHint () const {
   SI w = 0, h = 0;
   if (!is_nil (tmwid)) tm_widget()->handle_get_size_hint (w, h);
   return to_qsize (w, h);
+}
+
+void 
+QTMWidget::dragEnterEvent (QDragEnterEvent *event)
+{
+  const QMimeData *md = event->mimeData();
+
+  if (md->hasText() ||
+      md->hasUrls() ||
+      md->hasImage() ||
+      md->hasFormat("application/pdf") ||
+      md->hasFormat("application/postscript"))
+      event->acceptProposedAction();
+
+  event->accept();
+}
+
+void
+QTMWidget::dropEvent (QDropEvent *event)
+{
+  //qDebug() << event;
+  tree doc (DOCUMENT);
+  const QMimeData *md = event->mimeData ();
+  QByteArray buf;
+
+  if (md->hasUrls ()) {
+    QList<QUrl> l= md->urls ();
+//    qDebug() << l;
+    for (int i=0; i<l.size (); i++) {
+      string url;
+#ifdef OS_MACOS
+      url= from_qstring (fromNSUrl (l[i]));
+#else
+      url= from_qstring (l[i].toLocalFile ());
+#endif
+      string extension = suffix (url) ;
+      if ((extension == "eps") || (extension == "ps") ||
+          (extension == "pdf") || (extension == "png") ||
+          (extension == "jpg") || (extension == "jpeg")) {
+        tree im (IMAGE, url, ".5par", "", "", "");
+        doc << im;
+      } else {
+        doc << url;
+      }
+    }
+  } else if (md->hasImage ()) {
+    QBuffer qbuf (&buf);
+    QImage image= qvariant_cast<QImage> (md->imageData());
+    QSize size= image.size ();
+    qbuf.open (QIODevice::WriteOnly);
+    image.save (&qbuf, "PNG");
+    string w= as_string (size.width ()) * "px";
+    string h= as_string (size.height ()) * "px";
+    tree t (IMAGE, tree (RAW_DATA, string (buf.constData (), buf.size()), "png"),
+            w, h, "", "");
+    doc << t;
+  } else if (md->hasFormat("application/postscript")) {
+    buf= md->data("application/postscript");
+    tree t (IMAGE, tree (RAW_DATA, string (buf.constData (), buf.size ()), "ps"),
+                   "", "", "", "");
+    doc << t;
+  } else if (md->hasFormat("application/pdf")) {
+    buf= md->data("application/pdf");
+    tree t (IMAGE, tree (RAW_DATA, string (buf.constData (), buf.size ()), "pdf"),
+                   "", "", "", "");
+    doc << t;
+  }  else if (md->hasText ()) {
+    buf = md->text ().toUtf8 ();
+    doc << string (buf.constData (), buf.size ());
+  }
+
+  if (N(doc)>0) {
+    the_gui->process_command (as_command (
+                      scheme_cmd (list_object (symbol_object ("insert"), doc))));
+    event->acceptProposedAction();
+    event->accept();
+  } else {
+    event->ignore();
+  }
 }
 
 /*

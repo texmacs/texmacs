@@ -363,6 +363,9 @@ to_color (const QColor& c) {
   return rgb_color (r, g, b, a);
 }
 
+
+
+
 /******************************************************************************
  * Image conversion
  ******************************************************************************/
@@ -797,3 +800,57 @@ qt_print (bool& to_file, bool& landscape, string& pname, url& filename,
 }
 
 #endif //(not defined) _MBD_EXPERIMENTAL_PRINTER_WIDGET
+
+
+#ifdef OS_MACOS
+
+// Additional utilities for MACOS
+// this part has to be at the end because it imports CoreFoundation definitions
+// which interfere with TeXmacs and QT types...
+
+#define extend CFextend // avoid name clashes...
+#include <CoreFoundation/CoreFoundation.h>
+#undef extend
+
+
+// HACK: this function is needed on MacOS when dropping URLS
+// which could not correspond to standard Unix paths
+
+QString fromNSUrl(const QUrl &url) {
+  QString localFileQString = url.toLocalFile();
+  // [pzion 20150805] Work around
+  // https://bugreports.qt.io/browse/QTBUG-40449
+  if ( localFileQString.startsWith("/.file/id=") )
+  {
+    CFStringRef relCFStringRef =
+      CFStringCreateWithCString(kCFAllocatorDefault,
+                                localFileQString.toUtf8().constData(),
+                                kCFStringEncodingUTF8);
+    CFURLRef relCFURL =
+      CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
+                                    relCFStringRef,
+                                    kCFURLPOSIXPathStyle,
+                                    false); // isDirectory
+    CFErrorRef error = 0;
+    CFURLRef absCFURL =
+      CFURLCreateFilePathURL(kCFAllocatorDefault, relCFURL, &error);
+    if ( !error )
+    {
+      static const CFIndex maxAbsPathCStrBufLen = 4096;
+      char absPathCStr[maxAbsPathCStrBufLen];
+      if ( CFURLGetFileSystemRepresentation(absCFURL,
+                                            true, // resolveAgainstBase
+                                            reinterpret_cast<UInt8 *>( &absPathCStr[0] ),
+                                            maxAbsPathCStrBufLen))
+      {
+        localFileQString = QString( absPathCStr );
+      }
+    }
+    CFRelease( absCFURL );
+    CFRelease( relCFURL );
+    CFRelease( relCFStringRef );
+  }
+  return localFileQString;
+}
+#endif // OS_MACOS
+

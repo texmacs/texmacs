@@ -19,6 +19,8 @@
 #include <QString>
 #include <QColor>
 #include <QFont>
+#include <QUrl>
+
 
 class QStringList;
 class QKeySequence;
@@ -79,6 +81,10 @@ string  from_qstring_utf8 (const QString & s);
  */
 QString qt_translate (const string& s);
 
+
+#ifdef OS_MACOS
+QString fromNSUrl(const QUrl &url);
+#endif
 
 /******************************************************************************
  * File formats and their conversion. Other stuff.
