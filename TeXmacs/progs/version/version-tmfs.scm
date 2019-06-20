@@ -72,6 +72,8 @@
 ;; File history
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (version-supports-history? name) (versioned? name))
+
 (tm-define (version-history name) #f)
 
 (tm-define (version-show-history url)
@@ -243,6 +245,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Updating, registering and committing a file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-supports-update? name) (versioned? name))
+(tm-define (version-supports-register? name) (versioned? name))
+(tm-define (version-supports-commit? name) (versioned? name))
 
 (tm-define (version-update name) "file is not under version control")
 (tm-define (version-register name) "file is not under version control")

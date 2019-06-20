@@ -132,6 +132,21 @@
          (string-null? (cAr ret2))
          (map string->commit-file (cDr ret2)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Disable traditional version control facilities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-supports-update? name)
+  (:require (== (version-tool name) "git"))
+  #f)
+  
+(tm-define (version-supports-register? name)
+  (:require (== (version-tool name) "git"))
+  #f)
+
+(tm-define (version-supports-commit? name)
+  (:require (== (version-tool name) "git"))
+  #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common immutable routines of Git

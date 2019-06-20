@@ -20,54 +20,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind version-menu
-  ;; Menu entries for various version tools
-  (when (versioned? (current-buffer))
-    (when (!= (version-status (current-buffer)) "unknown")
-      ("History" (version-show-history (current-buffer)))))
-  ---
-  ;; Menu entries for the specific version tool
-  (assuming (and (svn-active? (current-buffer))
-                 (!= (version-status (current-buffer)) "unknown"))
-    ("Update" (version-interactive-update (current-buffer))))
-  (assuming (and (svn-active? (current-buffer))
-                 (== (version-status (current-buffer)) "unknown"))
-    ("Register" (register-buffer (current-buffer))))
-  (assuming (and (svn-active? (current-buffer))
-                 (!= (version-status (current-buffer)) "unknown")
+  (assuming (versioned? (current-buffer))
+    (assuming (version-supports-history? (current-buffer))
+      (when (!= (version-status (current-buffer)) "unknown")
+        ("History" (version-show-history (current-buffer)))))
+    (assuming (version-supports-update? (current-buffer))
+      (when (!= (version-status (current-buffer)) "unknown")
+        ("Update" (version-interactive-update (current-buffer)))))
+    (assuming (version-supports-register? (current-buffer))
+      (when (== (version-status (current-buffer)) "unknown")
+        ("Register" (register-buffer (current-buffer)))))
+    (assuming (version-supports-commit? (current-buffer))
+      (when (and (!= (version-status (current-buffer)) "unknown")
                  (or (== (version-status (current-buffer)) "modified")
                      (buffer-modified? (current-buffer))))
-    ("Commit" (version-interactive-commit (current-buffer))))
-  ---
+        ("Commit" (version-interactive-commit (current-buffer)))))
+    ---)
   (-> "Compare"
-      (when (versioned? (current-buffer))
-        ;; (when (buffer-tmfs? (current-buffer))
-        ;;   ("With current version"
-        ;;     (git-compare-with-current (current-buffer))))
-        ;; (when (buffer-tmfs? (current-buffer))
-        ;;   ("With parent version"
-        ;;     (git-compare-with-parent (current-buffer))))
-        ;; (when (and (not (buffer-tmfs? (current-buffer)))
-        ;;            (buffer-has-diff? (current-buffer)))
-        ;;   ("With the HEAD"
-        ;;     (git-compare-with-master (current-buffer))))
-        (assuming (version-revision? (current-buffer))
-          ("With current user version"
-           (compare-with-newer* (version-head (current-buffer))))))
+      ;;(when (versioned? (current-buffer))
+      ;;  (when (buffer-tmfs? (current-buffer))
+      ;;    ("With current version"
+      ;;      (git-compare-with-current (current-buffer))))
+      ;;  (when (buffer-tmfs? (current-buffer))
+      ;;    ("With parent version"
+      ;;      (git-compare-with-parent (current-buffer))))
+      ;;  (when (and (not (buffer-tmfs? (current-buffer)))
+      ;;             (buffer-has-diff? (current-buffer)))
+      ;;    ("With the HEAD"
+      ;;      (git-compare-with-master (current-buffer)))))
+      (assuming (version-revision? (current-buffer))
+        ("With current user version"
+         (compare-with-newer* (version-head (current-buffer)))))
       ("With older version"
        (choose-file compare-with-older "Compare with older version" ""))
       ("With newer version"
        (choose-file compare-with-newer "Compare with newer version" "")))
-  ;;(-> "File"
-  ;;    ("Show both versions" (version-show-all 'version-both))
-  ;;    ("Show old version" (version-show-all 'version-old))
-  ;;    ("Show new version" (version-show-all 'version-new))
-  ;;    ---
-  ;;    ("Retain current version" (version-retain-all 'current))
-  ;;    ("Retain old version" (version-retain-all 0))
-  ;;    ("Retain new version" (version-retain-all 1)))
-  ;;(-> "Merge" ...)
-  ;;(when (or (inside-version?) (selection-active-any?))
-  ;;  ("Reactualize" (reactualize-differences)))
   (-> "Move"
       ("First difference" (version-first-difference))
       ("Previous difference" (version-previous-difference))
