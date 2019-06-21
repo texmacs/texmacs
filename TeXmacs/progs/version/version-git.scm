@@ -14,6 +14,14 @@
 (texmacs-module (version version-git)
   (:use (version version-tmfs)))
 
+(tm-define (version-supports-svn-style? name)
+  (:require (== (version-tool name) "git"))  
+  #f)
+
+(tm-define (version-supports-git-style? name)
+  (:require (== (version-tool name) "git"))
+  (versioned? name))
+
 (define NR_LOG_OPTION " -1000 ")
 
 (define (delete-tail-newline a-str)
@@ -131,22 +139,6 @@
     (and (> (length ret2) 0)
          (string-null? (cAr ret2))
          (map string->commit-file (cDr ret2)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Disable traditional version control facilities
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (version-supports-update? name)
-  (:require (== (version-tool name) "git"))
-  #f)
-  
-(tm-define (version-supports-register? name)
-  (:require (== (version-tool name) "git"))
-  #f)
-
-(tm-define (version-supports-commit? name)
-  (:require (== (version-tool name) "git"))
-  #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common immutable routines of Git

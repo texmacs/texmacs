@@ -54,6 +54,11 @@
       (and-with base (url-wrap name)
         (and (version-tool base) "wrap"))))
 
+(tm-define (version-tool* name)
+  (if (version-revision? name)
+      (version-tool* (version-head name))
+      (version-tool name)))
+
 (tm-define (versioned? url)
   (or (nnot (version-tool url))
       (and-with base (url-wrap url)
@@ -75,6 +80,19 @@
 (tm-define (version-supports-history? name) (versioned? name))
 
 (tm-define (version-history name) #f)
+
+(tm-define (version-history* name)
+  (if (version-revision? name)
+      (version-history* (version-head name))
+      (version-history name)))
+
+(tm-define (version-newer? name1 name2)
+  (let* ((rev1 (version-get-revision* name1))
+         (rev2 (version-get-revision* name2))
+         (l (cons "" (map car (version-history* name2))))
+         (i1 (list-find-index l (cut == <> rev1)))
+         (i2 (list-find-index l (cut == <> rev2))))
+    (and i1 i2 (< i1 i2))))
 
 (tm-define (version-show-history url)
   ;; Show the history of the URL:
@@ -220,6 +238,16 @@
        (with (class name) (tmfs-decompose-name u)
          (== class "revision"))))
 
+(tm-define (version-get-revision u)
+  (and (url-rooted-tmfs? u)
+       (with (class name) (tmfs-decompose-name u)
+         (tmfs-car name))))
+
+(tm-define (version-get-revision* u)
+  (if (version-revision? u)
+      (version-get-revision u)
+      ""))
+
 (tm-define (version-head u)
   (and (url-rooted-tmfs? u)
        (with (class name) (tmfs-decompose-name u)
@@ -246,9 +274,8 @@
 ;; Updating, registering and committing a file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (version-supports-update? name) (versioned? name))
-(tm-define (version-supports-register? name) (versioned? name))
-(tm-define (version-supports-commit? name) (versioned? name))
+(tm-define (version-supports-svn-style? name) (versioned? name))
+(tm-define (version-supports-git-style? name) #f)
 
 (tm-define (version-update name) "file is not under version control")
 (tm-define (version-register name) "file is not under version control")
