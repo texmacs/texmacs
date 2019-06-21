@@ -74,7 +74,7 @@
   (:require (== (version-tool name) "svn"))
   ;;(display* "Loading revision " rev " of " name "\n")
   (let* ((name-s (url->string name))
-         (cmd (string-append "svn cat -r " nr " " name-s))
+         (cmd (string-append "svn cat -r " rev " " name-s))
          (ret (eval-system cmd)))
     ;;(display* "Got " ret "\n")
     ret))
