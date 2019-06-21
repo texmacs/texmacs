@@ -381,6 +381,9 @@ texmacs_input_rep::file_flush (bool force) {
       else if (type == "eps") {
         image_flush (content, "ps", width, height);
       } 
+      else if (type == "pdf") {
+        image_flush (content, "pdf", width, height);
+      }
       else if (type == "svg") {
         image_flush (content, "svg", width, height);
       }
