@@ -6,7 +6,10 @@
   <tmdoc-title|Possible improvements>
 
   <\itemize-dot>
-    <item>Cleanup of temporary files in <verbatim|~/.TeXmacs/system/tmp/>
+    <item>Re-implement the FeynMF/Xy-pic/Asymptote/DraTeX plugins using
+    Python and share the common part of the code. Remember to check the
+    usability on Windows. Currently, these plugins are implemented using
+    Shell scripting and not available for Windows.
 
     <item>Pasting existing code from a terminal into TeXmacs requires the
     annoying ``paste verbatim''. Can this be avoided?
