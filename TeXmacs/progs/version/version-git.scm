@@ -306,24 +306,18 @@
 (tm-define (tmfs-url-git root which)
   (string-append "tmfs://git/" which "/" (url->tmfs-string root)))
 
-(tm-define (tmfs-url-git_history . content)
-  (string-append "tmfs://git_history/" (string-concatenate content)))
-
 (tm-define (git-status root)
   (let* ((cmd (string-append (current-git-command) " status --porcelain"))
          (ret1 (eval-system cmd))
          (ret2 (string-split ret1 #\nl)))
     (define (convert name)
       (let* ((status (string-take name 2))
-             (filename (string-drop name 3))
+             (fname (string-drop name 3))
+             (full (url->string (url-append root fname)))
              (file (if (or (string-starts? status "A")
                            (string-starts? status "?"))
-                       filename
-                       ($link (tmfs-url-git_history
-                               (url->tmfs-string 
-                                (string-append
-                                 (current-git-root) "/" filename)))
-                         (utf8->cork filename)))))
+                       fname
+                       ($link full (utf8->cork fname)))))
         (list status file)))
     (and (> (length ret2) 0)
          (string-null? (cAr ret2))

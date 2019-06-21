@@ -73,7 +73,7 @@
       ---))
   (assuming (versioned? (current-buffer))
     (assuming (version-supports-git-style? (current-buffer))
-      ("Status" (git-show-status)))
+      ("Global status" (git-show-status)))
     (assuming (version-supports-git-style? (current-buffer))
       ("Global log" (git-show-log)))
     ---)
