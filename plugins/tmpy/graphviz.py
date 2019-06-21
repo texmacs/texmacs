@@ -28,11 +28,25 @@ class Graphviz(Graph):
             pass
 
     def evaluate(self, code):
-        path = self.get_eps_path()
+        # NOTE: the eps output format does not always work
+        # for example, when we use Chinese in a label
+        # by default, we use eps, however, we may switch to png via
+        # the -output option on the magic line
+        if self.output == "eps":
+            path = self.get_eps_path()
+            picture = self.get_eps()
+            cmd_list = [self.name, "-Teps"]
+        elif self.output == "png":
+            path = self.get_png_path()
+            picture = self.get_png()
+            cmd_list = [self.name, "-Tpng"]
+        else:
+            flush_verbatim("Unsupported output type: " + self.output)
+            return
+
         if os.path.isfile(path):
             os.remove(path)
         f = open(path, 'wb')
-        cmd_list = [self.name, "-Teps"]
         p = Popen(cmd_list, stdout=f, stdin=PIPE, stderr=PIPE)
         py_ver = sys.version_info[0]
         if py_ver == 3:
@@ -40,7 +54,6 @@ class Graphviz(Graph):
         else:
             out, err = p.communicate(input=code)
         if (p.returncode == 0):
-            flush_file (self.get_eps())
+            flush_file (picture)
         else:
             flush_verbatim (err.decode())
-

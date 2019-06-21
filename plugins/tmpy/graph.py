@@ -21,6 +21,7 @@ class Graph(object):
     post_code = ""
     height = 0
     width = 0
+    output = "eps"
 
     def greet(self):
         for x in self.message.split("\n"):
