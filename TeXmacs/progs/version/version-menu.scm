@@ -25,20 +25,26 @@
      (compare-with-newer* (version-head (current-buffer))))
     ---)
   (with history (version-history* (current-buffer))
-    (for (line (if (< (length history) 25) history (sublist history 0 25)))
-      (with (rev by date msg) line
-        (let* ((cur (current-buffer))
-               (head (if (version-revision? cur) (version-head cur) cur))
-               (msg* (if (<= (string-length msg) 50) msg
-                         (string-append (substring msg 0 50) "...")))
-               (name (string-append "Version " rev " by " by
-                                    " on " date ": " msg*))
-               (dest (version-revision-url head rev)))
-          (when (!= (url->url dest) (url->url cur))
-            ((eval name)
-             (if (version-newer? dest cur)
-                 (compare-with-newer dest)
-                 (compare-with-older dest)))))))))
+    (assuming (list? history)
+      (for (line (if (< (length history) 25) history (sublist history 0 25)))
+        (with (rev by date msg) line
+          (let* ((cur (current-buffer))
+                 (head (if (version-revision? cur) (version-head cur) cur))
+                 (msg* (if (<= (string-length msg) 50) msg
+                           (string-append (substring msg 0 50) "...")))
+                 (name (string-append "Version " rev " by " by
+                                      " on " date ": " msg*))
+                 (dest (version-revision-url head rev)))
+            (when (!= (url->url dest) (url->url cur))
+              ((eval name)
+               (if (version-newer? dest cur)
+                   (compare-with-newer dest)
+                   (compare-with-older dest)))))))
+      ---))
+  ("Older version"
+   (choose-file compare-with-older "Compare with older version" ""))
+  ("Newer version"
+   (choose-file compare-with-newer "Compare with newer version" "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main version menu
@@ -79,12 +85,7 @@
         ;;             (buffer-has-diff? (current-buffer)))
         ;;    ("With the HEAD"
         ;;      (git-compare-with-master (current-buffer)))))
-        (link version-compare-menu)
-        ---
-        ("Older version"
-         (choose-file compare-with-older "Compare with older version" ""))
-        ("Newer version"
-         (choose-file compare-with-newer "Compare with newer version" ""))))
+        (link version-compare-menu)))
   (assuming (not (or (versioned? (current-buffer))
                      (version-revision? (current-buffer))))
     (-> "Compare"

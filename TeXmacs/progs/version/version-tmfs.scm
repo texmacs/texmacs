@@ -112,30 +112,26 @@
   (string-append "tmfs://revision/" rev "/" (url->tmfs-string u)))
 
 (tmfs-load-handler (history name)
-  (with u (tmfs-string->url name)
-    (with h (version-history u)
-      ($generic
-       ($tmfs-title "History of "
-                    ($link (url->system u)
-                      ($verbatim (utf8->cork (url->system (url-tail u))))))
-       ($when (not h)
-         "This file is not under version control.")
-       ($when h
-         ($description-long
-           ($for (x h)
-             (cond ((git-active? u)
-                    ($with (date by msg commit) x
-                      ($describe-item
-                          ($inline "Commit " commit
-                                   " by " (utf8->cork by)" on " date)
-                        (utf8->cork msg))))
-                   ((svn-active? u)
-                    ($with (rev by date msg) x
-                      ($with dest (version-revision-url u rev)
-                        ($describe-item
-                            ($inline "Version " ($link dest rev)
-                                     " by " (utf8->cork by) " on " date)
-                          (utf8->cork msg)))))))))))))
+  (let* ((u (tmfs-string->url name))
+         (h (version-history u))
+         (Version (if (git-active? u) "Commit" "Version")))
+    ($generic
+     ($tmfs-title "History of "
+                  ($link (url->system u)
+                    ($verbatim (utf8->cork (url->system (url-tail u))))))
+     ($when (not h)
+       "This file is not under version control.")
+     ($when h
+       ($description-long
+         ($for (x h)
+           ($with (rev by date msg) x
+             ($with rev* (if (<= (string-length rev) 8) rev
+                             (string-append (string-take rev 8) "..."))
+               ($with dest (version-revision-url u rev)
+                 ($describe-item
+                     ($inline Version " " ($link dest rev*)
+                              " by " (utf8->cork by) " on " date)
+                   (utf8->cork msg)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Showing a particular commit

@@ -125,20 +125,43 @@
                                               (string-append "|" name)))
                          (string-take (fourth alist) 7))))))
 
+(define (joris-string->commit str name)
+  (if (string-null? str) '()
+      (with alist (string-split str #\nl)
+        (with (date by msg commit . opts) alist
+          (set! date (string-take date (min 19 (string-length date))))
+          (list commit by date msg)))))
+
 (tm-define (version-history name)
   (:require (== (version-tool name) "git"))
   (let* ((cmd (string-append
-               (current-git-command) " log --pretty=%ai%n%an%n%s%n%H%n"
+               (git-command name) " log --pretty=%ai%n%an%n%s%n%H%n"
                NR_LOG_OPTION
                (url->system name)))
          (ret1 (eval-system cmd))
          (ret2 (string-decompose ret1 "\n\n")))
 
     (define (string->commit-file str)
-      (string->commit str (url->tmfs-string name)))
+      (joris-string->commit str (url->tmfs-string name)))
     (and (> (length ret2) 0)
          (string-null? (cAr ret2))
          (map string->commit-file (cDr ret2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File revisions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (version-revision name rev)
+  (:require (== (version-tool name) "git"))
+  ;;(display* "Loading commit " rev " for " name "\n")
+  (let* ((git (git-command name))
+         (root (git-root name))
+         (rel (url-delta (url-append root "dummy") name))
+         (name-s (url->string name))
+         (cmd (string-append git " show " rev ":" (url->string rel)))
+         (ret (eval-system cmd)))
+    ;;(display* "Got " ret "\n")
+    ret))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common immutable routines of Git
