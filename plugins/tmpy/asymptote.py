@@ -15,7 +15,7 @@ from .graph import Graph
 from .protocol import *
 
 class Asymptote(Graph):
-    def __init__(self, name):
+    def __init__(self, name = "asy"):
         super(Asymptote, self).__init__()
         self.name = name
         try:

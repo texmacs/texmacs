@@ -11,6 +11,8 @@
 
 import os
 import platform
+import shutil
+import time
 from .protocol import *
 
 
@@ -34,14 +36,27 @@ class Graph(object):
     def available(self):
         return len(self.message) > 0
 
+    def before_evaluate(self):
+        os.mkdir(self.get_tmp_dir())
+
     def evaluate(self, code):
         pass
 
+    def after_evaluate(self):
+        shutil.rmtree(self.get_tmp_dir())
+
+    def eval(self, code):
+        self.before_evaluate()
+        self.evaluate(code)
+        time.sleep(1)
+        self.after_evaluate()
+
     def get_tmp_dir(self):
+        dir = "graph_" + self.name + "_" + str(os.getpid())
         if (platform.system() == "Windows"):
-            return os.getenv("TEXMACS_HOME_PATH") + "\\system\\tmp\\"
+            return os.getenv("TEXMACS_HOME_PATH") + "\\system\\tmp\\" + dir + "\\"
         else:
-            return os.getenv("TEXMACS_HOME_PATH") + "/system/tmp/"
+            return os.getenv("TEXMACS_HOME_PATH") + "/system/tmp/" + dir + "/"
 
     def get_png_path(self):
         return self.get_tmp_dir() + self.name + ".png"

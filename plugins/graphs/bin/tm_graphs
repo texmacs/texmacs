@@ -19,6 +19,7 @@ sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 import traceback
 import re
 import string
+import time
 import csv   # Used to parse scheme forms
 from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
@@ -192,7 +193,7 @@ def unigraph(text):
         graph.height = args.height
         graph.width = args.width
         graph.output = args.output
-        graph.evaluate(code)
+        graph.eval(code)
     else:
         flush_verbatim ("No such Graphs backend: " + command)
 
@@ -232,4 +233,4 @@ while True:
             current = graphs[graph_names.index(text)]
             current.greet()
         else:
-            current.evaluate(text)
+            current.eval(text)
