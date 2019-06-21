@@ -526,6 +526,22 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
 * Event handlers
 ******************************************************************************/
 
+
+static void
+call_drop_event (string kind, SI x, SI y, SI ticket, time_t t) {
+  extern hashmap<int, tree> payloads;
+  tree doc = payloads [ticket];
+  payloads->reset (ticket);
+  
+  eval (list_object (symbol_object ("insert"), doc));
+
+  //array<object> args;
+  //args << object (kind) << object (x) << object (y)
+  //<< object (doc) << object ((double) t);
+  //call ("mouse-event", args);
+}
+
+
 static void
 call_mouse_event (string kind, SI x, SI y, SI m, time_t t) {
   array<object> args;
@@ -559,20 +575,24 @@ edit_interface_rep::handle_mouse (string kind, SI x, SI y, int m, time_t t) {
     //cout << kind << " (" << x << ", " << y << "; " << m << ")"
     //     << " at " << t << "\n";
 
-    string rew= kind;
-    SI dist= (SI) (5 * PIXEL / magf);
-    rew= detect_left_drag ((void*) this, rew, x, y, t, m, dist);
-    if (rew == "start-drag-left") {
-      call_mouse_event (rew, left_x, left_y, m, t);
-      delayed_call_mouse_event ("dragging-left", x, y, m, t);
-    }
+    if (kind == "drop")
+      call_drop_event (kind, x, y, m, t);
     else {
-      rew= detect_right_drag ((void*) this, rew, x, y, t, m, dist);
-      if (rew == "start-drag-right") {
-        call_mouse_event (rew, right_x, right_y, m, t);
-        delayed_call_mouse_event ("dragging-right", x, y, m, t);
+      string rew= kind;
+      SI dist= (SI) (5 * PIXEL / magf);
+      rew= detect_left_drag ((void*) this, rew, x, y, t, m, dist);
+      if (rew == "start-drag-left") {
+        call_mouse_event (rew, left_x, left_y, m, t);
+        delayed_call_mouse_event ("dragging-left", x, y, m, t);
       }
-      else call_mouse_event (rew, x, y, m, t);
+      else {
+        rew= detect_right_drag ((void*) this, rew, x, y, t, m, dist);
+        if (rew == "start-drag-right") {
+          call_mouse_event (rew, right_x, right_y, m, t);
+          delayed_call_mouse_event ("dragging-right", x, y, m, t);
+        }
+        else call_mouse_event (rew, x, y, m, t);
+      }
     }
     end_editing ();
 #ifdef USE_EXCEPTIONS

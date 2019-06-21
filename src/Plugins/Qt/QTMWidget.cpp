@@ -723,6 +723,7 @@ QTMWidget::sizeHint () const {
 void 
 QTMWidget::dragEnterEvent (QDragEnterEvent *event)
 {
+  if (is_nil (tmwid)) return;
   const QMimeData *md = event->mimeData();
 
   if (md->hasText() ||
@@ -731,16 +732,26 @@ QTMWidget::dragEnterEvent (QDragEnterEvent *event)
       md->hasFormat("application/pdf") ||
       md->hasFormat("application/postscript"))
       event->acceptProposedAction();
-
-  event->accept();
 }
+
+
+// cache to transfer drop data to the editor
+// via standard mouse events, see dropEvent below
+
+int drop_payload_serial  =0;
+hashmap<int, tree> payloads;
 
 void
 QTMWidget::dropEvent (QDropEvent *event)
 {
+  if (is_nil (tmwid)) return;
+  
+  QPoint point = event->pos () + origin ();
+  coord2 pt= from_qpoint (point);
+
   //qDebug() << event;
   tree doc (DOCUMENT);
-  const QMimeData *md = event->mimeData ();
+  const QMimeData *md= event->mimeData ();
   QByteArray buf;
 
   if (md->hasUrls ()) {
@@ -753,9 +764,9 @@ QTMWidget::dropEvent (QDropEvent *event)
 #else
       url= from_qstring (l[i].toLocalFile ());
 #endif
-      string extension = suffix (url) ;
-      if ((extension == "eps") || (extension == "ps") ||
-          (extension == "pdf") || (extension == "png") ||
+      string extension = suffix (url);
+      if ((extension == "eps") || (extension == "ps")   ||
+          (extension == "pdf") || (extension == "png")  ||
           (extension == "jpg") || (extension == "jpeg")) {
         tree im (IMAGE, url, ".5par", "", "", "");
         doc << im;
@@ -785,17 +796,16 @@ QTMWidget::dropEvent (QDropEvent *event)
                    "", "", "", "");
     doc << t;
   }  else if (md->hasText ()) {
-    buf = md->text ().toUtf8 ();
+    buf= md->text ().toUtf8 ();
     doc << string (buf.constData (), buf.size ());
   }
 
   if (N(doc)>0) {
-    the_gui->process_command (as_command (
-                      scheme_cmd (list_object (symbol_object ("insert"), doc))));
+    int ticket= drop_payload_serial++;
+    payloads (ticket)= doc;
+    the_gui->process_mouse (tm_widget(), "drop", pt.x1, pt.x2,
+                            ticket, texmacs_time ());
     event->acceptProposedAction();
-    event->accept();
-  } else {
-    event->ignore();
   }
 }
 
