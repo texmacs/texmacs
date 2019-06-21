@@ -100,6 +100,14 @@
          (l (remove-empty-strings (string-decompose ret "\n"))))
     (if (null? l) "" (cAr l))))
 
+(tm-define (version-unregister name)
+  (:require (== (version-tool name) "svn"))
+  (let* ((name-s (url->string name))
+         (cmd (string-append "svn remove --force " name-s))
+         (ret (eval-system cmd))
+         (l (remove-empty-strings (string-decompose ret "\n"))))
+    (if (null? l) "" (cAr l))))
+
 (tm-define (version-commit name msg)
   (:require (== (version-tool name) "svn"))
   (let* ((name-s (url->string name))

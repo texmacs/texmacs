@@ -137,71 +137,11 @@
 ;; Showing a particular commit
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (tmfs-url-commit . content)
-  (string-append "tmfs://commit/"
-                 (string-concatenate content)))
+(tm-define (tmfs-url-commit root rev)
+  (string-append "tmfs://commit/" rev "/" (url->tmfs-string root)))
 
 (tmfs-format-handler (commit name)
-  (if (string-contains name "|")
-      (with u (tmfs-string->url (tmfs-cdr (string-replace name "|" "/")))
-            (url-format u))
-      (url-format (tmfs-string->url name))))
-
-(tm-define (git-show-normal name)
-  (define (sum2 x)
-    (+ (first x) (second x)))
-  (define (length-of-2col x)
-    (+ (string-length (number->string (sum2 x)))
-       (fourth x)))
-  
-  (let* ((m (git-commit-message name))
-         (p (git-commit-parent name))
-         (d (git-commit-diff p name))
-         (nr (length d))
-         (ins (list-fold + 0 (map first d)))
-         (del (list-fold + 0 (map second d)))
-         (maxv (list-fold max 0 (map sum2 d)))
-         (maxs (- 81 (list-fold max 0 (map length-of-2col d)))))
-    ($generic
-         ($tmfs-title "Commit Message of " (string-take name 7))
-         (if (== name p)
-             "parent 0"
-             `(concat "parent "
-                      ,($link (tmfs-url-commit p) p)))
-         (list 'new-line)
-         ($for (x m) `(concat ,(utf8->cork x) ,(list 'new-line)))
-         "-----"
-         (list 'new-line)
-         `(verbatim
-           (tabular
-            (tformat
-             (cwith "1" "-1" "1" "-1"
-                    cell-lsep "0pt")
-             ,(cons 'table
-                    (map (lambda (x) (get-row-from-x x maxs maxv)) d)))))
-         (list 'new-line)
-         `(concat ,nr " files changed, "
-                  ,ins
-                  " insertions(" (verbatim (with color green "+")) "), "
-                  ,del
-                  " deletions(" (verbatim (with color red "-")) ")"))))
-
-(tm-define (git-show-merge name)
-  (let* ((parents (git-commit-parents name))
-         (left (car parents))
-         (right (car (cdr parents))))
-    ($generic ($tmfs-title "Merge")
-            `(concat "parents "
-                     ,($link (tmfs-url-commit left) left)
-                     ,(list 'new-line)
-                     ,($link (tmfs-url-commit right) right)))))
-
-(tmfs-load-handler (commit name)
-  (if (string-contains name "|")
-      (git-show (string-replace name "|" ":"))
-      (if (== (length (git-commit-parents name)) 1)
-          (git-show-normal name)
-          (git-show-merge name))))
+  (url-format (tmfs-string->url (tmfs-cdr name))))
 
 (define (string-repeat str n)
   (do ((i 1 (1+ i))
@@ -224,6 +164,63 @@
                       (with color red
                         ,(string-repeat "-"
                                         (get-length (second x))))))))
+
+(tm-define (git-show-normal root rev)
+  (define (sum2 x)
+    (+ (first x) (second x)))
+  (define (length-of-2col x)
+    (+ (string-length (number->string (sum2 x)))
+       (fourth x)))
+  
+  (let* ((m (git-commit-message root rev))
+         (p (git-commit-parent root rev))
+         (d (git-commit-diff root p rev))
+         (nr (length d))
+         (ins (list-fold + 0 (map first d)))
+         (del (list-fold + 0 (map second d)))
+         (maxv (list-fold max 0 (map sum2 d)))
+         (maxs (- 81 (list-fold max 0 (map length-of-2col d)))))
+    ($generic
+         ($tmfs-title "Commit Message of " rev)
+         (if (== rev p)
+             "parent 0"
+             `(concat "parent "
+                      ,($link (tmfs-url-commit root p) p)))
+         (list 'new-line)
+         ($for (x m) `(concat ,(utf8->cork x) ,(list 'new-line)))
+         "-----"
+         (list 'new-line)
+         `(verbatim
+           (tabular
+            (tformat
+             (cwith "1" "-1" "1" "-1"
+                    cell-lsep "0pt")
+             ,(cons 'table
+                    (map (lambda (x) (get-row-from-x x maxs maxv)) d)))))
+         (list 'new-line)
+         `(concat ,nr " files changed, "
+                  ,ins
+                  " insertions(" (verbatim (with color green "+")) "), "
+                  ,del
+                  " deletions(" (verbatim (with color red "-")) ")"))))
+
+(tm-define (git-show-merge root rev)
+  (let* ((parents (git-commit-parents root rev))
+         (left (car parents))
+         (right (car (cdr parents))))
+    ($generic ($tmfs-title "Merge")
+            `(concat "parents "
+                     ,($link (tmfs-url-commit root left) left)
+                     ,(list 'new-line)
+                     ,($link (tmfs-url-commit root right) right)))))
+
+(tmfs-load-handler (commit name)
+  (let* ((root (tmfs-string->url (tmfs-cdr name)))
+         (tool (version-tool root)) ;; NOTE: forces lazy loading
+         (rev (tmfs-car name)))
+    (if (== (length (git-commit-parents root rev)) 1)
+        (git-show-normal root rev)
+        (git-show-merge root rev))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Showing a particular revision
@@ -275,6 +272,7 @@
 
 (tm-define (version-update name) "file is not under version control")
 (tm-define (version-register name) "file is not under version control")
+(tm-define (version-unregister name) "file is not under version control")
 (tm-define (version-commit name comment) "file is not under version control")
 
 (tm-define (update-buffer name)
@@ -333,6 +331,10 @@
 (tm-define (version-register name)
   (:require (== (version-tool name) "wrap"))
   (version-register (url-wrap name)))
+
+(tm-define (version-unregister name)
+  (:require (== (version-tool name) "wrap"))
+  (version-unregister (url-wrap name)))
 
 (tm-define (version-commit name msg)
   (:require (== (version-tool name) "wrap"))

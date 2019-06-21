@@ -71,6 +71,12 @@
                      (buffer-modified? (current-buffer))))
         ("Commit" (version-interactive-commit (current-buffer))))
       ---))
+  (assuming (versioned? (current-buffer))
+    (assuming (version-supports-git-style? (current-buffer))
+      ("Status" (git-show-status)))
+    (assuming (version-supports-git-style? (current-buffer))
+      ("Global log" (git-show-log)))
+    ---)
   (assuming (or (versioned? (current-buffer))
                 (version-revision? (current-buffer)))
     (-> "Compare with"
