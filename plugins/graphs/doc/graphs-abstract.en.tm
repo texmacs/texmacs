@@ -6,12 +6,14 @@
   <tmdoc-title|Short description of <name|Graphs>>
 
   This plugin collect the interface to some useful image generation programs.
-  Whenever possible a vector image in the <name|PostScript> format is
-  generated. Currently it supports the <hlink|<name|Graphviz>|https://www.graphviz.org>
-  suite and some <LaTeX> image generation packages like
-  <hlink|<name|XyPic>|http://xy-pic.sourceforge.net>,
+  Whenever possible a vector image in the <name|PostScript> or <name|Pdf>
+  format is generated. Currently it supports the
+  <hlink|<name|Graphviz>|https://www.graphviz.org> suite and some <LaTeX>
+  image generation packages like <hlink|<name|XyPic>|http://xy-pic.sourceforge.net>,
   <hlink|<name|FeynMF>|http://osksn2.hep.sci.osaka-u.ac.jp/~taku/osx/feynmp.html>,
-  <hlink|<name|PGF/TikZ>|https://pgf-tikz.github.io>.
+  <hlink|<name|PGF/TikZ>|https://pgf-tikz.github.io> and a direct interface
+  to <LaTeX>/<name|PDF><LaTeX> for more complex layout or to use other
+  packages.
 
   <tmdoc-copyright|2019|Darcy Shen and Massimiliano Gubinelli>
 

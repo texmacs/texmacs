@@ -33,8 +33,9 @@ from tmpy.mermaid   import Mermaid
 from tmpy.plantuml  import PlantUML
 from tmpy.xypic     import XYpic
 from tmpy.tikz      import TikZ
+from tmpy.feynmf    import FeynMF
 from tmpy.latex     import LaTeX
-from tmpy.feynmf     import FeynMF
+from tmpy.pdflatex  import PDFLaTeX
 import argparse
 
 #import logging as log
@@ -161,7 +162,7 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = list(map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"]))
-others = [Asymptote("asy"), PlantUML(), Mermaid(), XYpic(), TikZ(), LaTeX(), FeynMF()]
+others = [Asymptote("asy"), PlantUML(), Mermaid(), XYpic(), TikZ(), FeynMF(), LaTeX(), PDFLaTeX()]
 graphs = list(filter(lambda x: x.available(), grapvizs + others))
 graph_names = list(map(lambda x: x.name, graphs))
 

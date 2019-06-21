@@ -17,7 +17,7 @@
     feynmf-expert for more complicated stuff. Or a startup option via
     texmacs? E.g. typing ``expert'' switches to expert mode.
 
-    <item>how to make the plugin produce output in a switch?
+    <item>How to make the plugin produce output in a switch?
   </itemize-dot>
 
   <tmdoc-copyright|2019|Maarten Wegewijs|Joris van der Hoeven and
