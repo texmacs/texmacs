@@ -220,24 +220,27 @@
 
 (menu-bind document-style-extra-menu
   (:require (style-has? "beamer-style"))
-  (=> "Beamer theme"
+  (-> "Beamer theme"
       (for (theme (beamer-themes))
         ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
          (add-style-package theme)))))
 
 (tm-menu (focus-style-extra-menu t)
   (:require (style-has? "beamer-style"))
-  (=> "Beamer theme"
+  (-> "Beamer theme"
       (for (theme (beamer-themes))
         ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
-         (add-style-package theme)))))
+         (add-style-package theme))))
+  (-> "Background color"
+      (link document-background-color-menu)))
 
 (tm-menu (focus-style-extra-icons t)
   (:require (style-has? "beamer-style"))
   (=> (balloon (eval (upcase-first (current-beamer-theme))) "Beamer theme")
       (for (theme (beamer-themes))
         ((check (eval (upcase-first theme)) "v" (has-style-package? theme))
-         (add-style-package theme)))))
+         (add-style-package theme))))
+  (link focus-background-color-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Propose insertion of 'screens' tag in beamer style

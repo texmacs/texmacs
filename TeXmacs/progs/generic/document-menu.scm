@@ -981,6 +981,11 @@
       ((balloon (icon "tm_focus_help.xpm") "Describe tag")
        (focus-help)))))
 
+(tm-menu (focus-background-color-icons)
+  (with setter (lambda (col) (init-env-tree "bg-color" col))
+    (dynamic (focus-customizable-icons-item
+              setter "bg-color" "Background color"))))
+
 (tm-define (current-page-icon)
   (cond ((test-init? "page-orientation" "landscape")
          (cond ((test-init? "par-columns" "1") "tm_landscape_1col.xpm")

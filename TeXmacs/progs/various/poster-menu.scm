@@ -41,20 +41,22 @@
 
 (menu-bind document-style-extra-menu
   (:require (in-poster?))
-  (=> "Poster theme" (link poster-theme-menu))
-  (=> "Title style"  (link poster-title-style-menu)))
+  (-> "Poster theme" (link poster-theme-menu))
+  (-> "Title style"  (link poster-title-style-menu)))
 
 (tm-menu (focus-style-extra-menu t)
   (:require (in-poster?))
-  (=> "Poster theme" (link poster-theme-menu))
-  (=> "Title style"  (link poster-title-style-menu)))
+  (-> "Poster theme" (link poster-theme-menu))
+  (-> "Title style"  (link poster-title-style-menu))
+  (-> "Background color" (link document-background-color-menu)))
 
 (tm-menu (focus-style-extra-icons t)
   (:require (in-poster?))
   (=> (balloon (eval (theme-name (current-poster-theme))) "Poster theme")
       (link poster-theme-menu))
   (=> (balloon (eval (theme-name (current-poster-title-style))) "Title style")
-      (link poster-title-style-menu)))
+      (link poster-title-style-menu))
+  (link focus-background-color-icons))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Page sizes
