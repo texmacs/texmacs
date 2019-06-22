@@ -189,7 +189,8 @@
              search-next-match)
 (lazy-define (generic spell-widgets) spell-toolbar
              open-spell toolbar-spell-start interactive-spell)
-(lazy-define (generic format-widgets) open-paragraph-format open-page-format
+(lazy-define (generic format-widgets) open-paragraph-format open-page-format)
+(lazy-define (generic pattern-selector)
              open-pattern-selector open-background-picture-selector)
 (lazy-define (generic document-widgets) open-source-tree-preferences
              open-document-paragraph-format open-document-page-format
