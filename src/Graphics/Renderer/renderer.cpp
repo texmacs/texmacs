@@ -396,7 +396,8 @@ renderer_rep::clear_pattern (SI mx1, SI my1, SI mx2, SI my2,
 	SI X1= i*w     - sx, Y1= j*h     - sy;
 	SI X2= (i+1)*w - sx, Y2= (j+1)*h - sy;
 	if (X1 < x2 && X2 > x1 && Y1 < y2 && Y2 > y1)
-          draw_scalable (im, X1, Y1, pattern_alpha);
+          if (X1 < cx2 && X2 > cx1 && Y1 < cy2 && Y2 > cy1)
+            draw_scalable (im, X1, Y1, pattern_alpha);
       }
     set_clipping (cx1, cy1, cx2, cy2, true);
   }
