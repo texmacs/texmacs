@@ -579,17 +579,20 @@
   (if (window-per-buffer?) (open-buffer) (open-in-window)))
 
 (tm-define (load-document u)
-  (if (window-per-buffer?) (load-buffer-in-new-window u) (load-buffer u)))
+  (when (not (url-none? u))
+    (if (window-per-buffer?) (load-buffer-in-new-window u) (load-buffer u))))
 
 (tm-define (load-document* u)
-  (if (window-per-buffer?) (load-buffer u) (load-buffer-in-new-window u)))
+  (when (not (url-none? u))
+    (if (window-per-buffer?) (load-buffer u) (load-buffer-in-new-window u))))
 
 (tm-define (switch-document u)
-  (if (window-per-buffer?)
-      (if (buffer->window u)
-	  (noop) ;;(window-focus (buffer->window u))
-	  (open-buffer-in-window u (buffer-get u) ""))
-      (load-buffer u)))
+  (when (not (url-none? u))
+    (if (window-per-buffer?)
+        (if (buffer->window u)
+            (noop) ;;(window-focus (buffer->window u))
+            (open-buffer-in-window u (buffer-get u) ""))
+        (load-buffer u))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing buffers

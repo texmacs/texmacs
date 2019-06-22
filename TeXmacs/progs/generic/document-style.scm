@@ -143,10 +143,13 @@
       (remove-style-package pack)
       (add-style-package pack)))
 
-(tm-define (edit-package-source name)
+(define (url-resolve-package name)
   (let* ((style-name (string-append name ".ts"))
-         (style-url (url-append "$TEXMACS_STYLE_PATH" style-name))
-         (file-name (url-resolve style-url "r")))
+         (style-url (url-append "$TEXMACS_STYLE_PATH" style-name)))
+    (url-resolve style-url "r")))
+
+(tm-define (edit-package-source name)
+  (with file-name (url-resolve-package name)
     (cursor-history-add (cursor-path))
     (load-document file-name)
     (cursor-history-add (cursor-path))))
