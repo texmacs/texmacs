@@ -30,7 +30,7 @@
 
   <copy-theme|blackboard-scene|dark-scene>
 
-  <assign|blackboard-scene-bg-color|<pattern|tmfs://artwork/plain/landscape/blackboard/blackboard-pxhere.jpg|100%|100%>>
+  <assign|blackboard-scene-bg-color|<pattern|tmfs://artwork/pictures/blackboard/blackboard-pxhere.jpg|100%|100%>>
 
   <assign|blackboard-scene-math-color|#ffffd0>
 

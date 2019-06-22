@@ -30,7 +30,7 @@
 
   <copy-theme|parchment-scene|light-scene>
 
-  <assign|parchment-scene-bg-color|<pattern|tmfs://artwork/plain/landscape/paper/paper-antique-latte.jpg|100%|100%>>
+  <assign|parchment-scene-bg-color|<pattern|tmfs://artwork/pictures/paper/paper-antique-latte.jpg|100%|100%>>
 
   <\active*>
     <\src-comment>
