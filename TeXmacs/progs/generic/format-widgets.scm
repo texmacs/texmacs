@@ -556,6 +556,8 @@
                   (link pattern-recolor-options))
                 (item (text "Skin:")
                   (link pattern-skin-options))
+                ;; TODO: the blur effect changes the image size;
+                ;; one needs a blur that wraps around torically
                 ;;(item (text "Blur:")
                 ;;  (link pattern-blur-options))
                 ))
