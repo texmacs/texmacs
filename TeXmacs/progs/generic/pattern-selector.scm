@@ -17,6 +17,25 @@
   (:use (generic format-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Name conversions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (encode-pattern-name u)
+  (let* ((name (if (string? u) u (url->unix u)))
+         (p (url->unix "$TEXMACS_PATH/misc/patterns")))
+    (cond ((string-starts? name p)
+           (url->unix (url-delta (url-append (unix->url p) "dummy")
+                                 (unix->url name))))
+          (else u))))
+
+(define (decode-pattern-name s)
+  (let* ((name (unix->url s))
+         (base "$TEXMACS_PATH/misc/patterns/neutral-pattern.png"))
+    (cond ((not (url-rooted? name))
+           (url-relative base name))
+          (else name))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pattern selector / accessors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -32,12 +51,9 @@
   global-pattern-color)
 
 (define (set-name name)
-  (with p (url->unix "$TEXMACS_PATH/misc/patterns")
-    (when (string-starts? name p)
-      (set! name (url->unix (url-delta (url-append (unix->url p) "dummy")
-                                       (unix->url name)))))
+  (with enc (encode-pattern-name name)
     (with col (get-color)
-      (set-color `(pattern ,name ,@(cddr col))))))
+      (set-color `(pattern ,enc ,@(cddr col))))))
 
 (define (get-name)
   (cadr (get-color)))
@@ -145,8 +161,7 @@
 
 (tm-widget (pattern-name-selector)
   (let* ((name (unix->url (get-name)))
-         (base "$TEXMACS_PATH/misc/patterns/neutral-pattern.png")
-         (curr (url-relative base name))
+         (curr (decode-pattern-name (get-name)))
          (setter (lambda (c)
                    (when (and (pair? c) (url? (car c)))
                      (set-name (url->unix (car c)))))))
