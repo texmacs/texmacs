@@ -529,8 +529,8 @@ picture_renderer (picture p, double zoomf) {
 }
 
 picture
-load_picture (url u, int w, int h) {
-  (void) u; (void) w; (void) h;
+load_picture (url u, int w, int h, tree eff, int pixel) {
+  (void) u; (void) w; (void) h; (void) eff; (void) pixel;
   FAILED ("not yet implemented");
   return picture ();
 }

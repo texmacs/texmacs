@@ -199,8 +199,8 @@ get_image (url u, int w, int h, tree eff, SI pixel) {
 }
 
 picture
-load_picture (url u, int w, int h) {
-  QImage* im= get_image (u, w, h, "", PIXEL);
+load_picture (url u, int w, int h, tree eff, int pixel) {
+  QImage* im= get_image (u, w, h, eff, pixel);
   if (im == NULL) return error_picture (w, h);
   return qt_picture (*im, 0, 0);
 }
@@ -234,7 +234,7 @@ void
 qt_apply_effect (tree eff, array<url> src, url dest, int w, int h) {
   array<picture> a;
   for (int i=0; i<N(src); i++)
-    a << load_picture (src[i], w, h);
+    a << load_picture (src[i], w, h, "", PIXEL);
   effect  e= build_effect (eff);
   picture t= e->apply (a, PIXEL);
   picture q= as_qt_picture (t);

@@ -16,6 +16,7 @@
 #include "image_files.hpp"
 #include "iterator.hpp"
 #include "Ghostscript/ghostscript.hpp"
+#include "effect.hpp"
 
 #define IMLIB2_X11TEXMACS // for imlib2_display
 #include "Imlib2/imlib2.hpp"
@@ -281,4 +282,15 @@ load_picture (url u, int w, int h) {
   Pixmap pm= load_Pixmap (u, w, h);
   if (pm == 0) return error_picture (w, h);
   return x_picture (pm, w, h, 0, 0);
+}
+
+picture
+load_picture (url u, int w, int h, tree eff, int pixel) {
+  picture pic= load_picture (u, w, h);
+  if (eff != "") {
+    effect e= build_effect (eff);
+    array<picture> a; a << pic;
+    pic= e->apply (a, pixel);
+  }
+  return pic;
 }

@@ -195,12 +195,7 @@ cached_load_picture (url file_name, int w, int h, tree eff,
   if (picture_is_cached (file_name, w, h, eff, pixel))
     return picture_cache [key];
   //cout << "Loading " << key << "\n";
-  picture pic= load_picture (file_name, w, h);
-  if (eff != "") {
-    effect e= build_effect (eff);
-    array<picture> a; a << pic;
-    pic= e->apply (a, pixel);
-  }
+  picture pic= load_picture (file_name, w, h, eff, pixel);
   if (permanent || picture_count[key] > 0) {
     int pic_modif= last_modified (file_name, false);
     picture_cache (key)= pic;
