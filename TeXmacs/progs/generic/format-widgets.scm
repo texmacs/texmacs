@@ -270,7 +270,7 @@
           ((== what "pattern")
            (open-pattern-selector setter "1cm"))
           ((== what "picture")
-           (open-picture-selector setter)))))
+           (open-background-picture-selector setter)))))
 
 (tm-widget ((page-formatter u style settings) quit)
   (padded
@@ -593,10 +593,12 @@
   (with u (current-buffer)
     (dialogue-window (pattern-selector u) cmd "Pattern selector")))
 
-(tm-define (open-picture-selector cmd)
+(tm-define (open-background-picture-selector cmd . opt-old)
   (:interactive #t)
   (when (or (not global-picture?) (== (get-name) "neutral-pattern.png"))
     (set! global-picture? #t)
     (set! global-pattern-color `(pattern "neutral-pattern.png" "100%" "100%")))
+  (when (nnull? opt-old)
+    (set! global-pattern-color (car opt-old)))
   (with u (current-buffer)
     (dialogue-window (pattern-selector u) cmd "Background picture selector")))

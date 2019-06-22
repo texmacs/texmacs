@@ -389,7 +389,7 @@
           (vlist
             ("Color" (interactive-color setter (list)))
             ("Pattern" (open-pattern-selector setter "1cm"))
-            ("Picture" (open-picture-selector setter))
+            ("Picture" (open-background-picture-selector setter))
             (glue #f #t 0 0))))
       ======
       (explicit-buttons

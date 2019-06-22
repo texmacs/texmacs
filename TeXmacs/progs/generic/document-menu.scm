@@ -741,7 +741,7 @@
   ---
   ("Palette" (interactive-background set-background '()))
   ("Pattern" (open-pattern-selector set-background "1cm"))
-  ("Picture" (open-picture-selector set-background))
+  ("Picture" (open-background-picture-selector set-background))
   ("Other" (init-interactive-env "bg-color")))
 
 (menu-bind document-colors-menu
@@ -981,10 +981,22 @@
       ((balloon (icon "tm_focus_help.xpm") "Describe tag")
        (focus-help)))))
 
+(define (is-background-picture? bg*)
+  (with bg (tm->stree bg*)
+    (and (tm-is? bg 'pattern)
+         (>= (tm-arity bg) 3)
+         (in? (tm-ref bg 1) '("100%" "100@"))
+         (in? (tm-ref bg 2) '("100%" "100@")))))
+
 (tm-menu (focus-background-color-icons)
   (with setter (lambda (col) (init-env-tree "bg-color" col))
-    (dynamic (focus-customizable-icons-item
-              setter "bg-color" "Background color"))))
+    (assuming (not (is-background-picture? (get-init-tree "bg-color")))
+      (dynamic (focus-customizable-icons-item
+                setter "bg-color" "Background color")))
+    (assuming (is-background-picture? (get-init-tree "bg-color"))
+      ((balloon (icon "tm_camera.xpm") "Select background picture")
+       (with bg (tree->stree (get-init-tree "bg-color"))
+         (open-background-picture-selector setter bg))))))
 
 (tm-define (current-page-icon)
   (cond ((test-init? "page-orientation" "landscape")
