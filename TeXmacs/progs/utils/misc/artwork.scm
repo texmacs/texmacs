@@ -28,7 +28,7 @@
 
 (tmfs-load-handler (artwork name)
   (let* ((s (string-append "thumbnail-" (url->string (url-tail name))))
-	 (t (url-append (url-head u) s))
+	 (t (url-append (url-head name) s))
 	 (thumbnail (url-append "$TEXMACS_PATH/misc" t))
 	 (src (url-append "http://www.texmacs.org/artwork" name))
 	 (dest (url-append "$TEXMACS_HOME_PATH/misc" name)))
