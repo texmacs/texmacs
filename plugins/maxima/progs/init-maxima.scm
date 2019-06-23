@@ -25,9 +25,13 @@
 
 (define (maxima-launchers) ;; returns list of launchers for each version
   (if (os-mingw?)
-      `((:launch
-         ,(string-append "maxima.bat -p \"" (getenv "TEXMACS_PATH")
-                         "\\plugins\\maxima\\lisp\\texmacs-maxima.lisp\"")))
+      (if (url-exists? "$TEXMACS_HOME_PATH\\plugins\\maxima")
+          `((:launch
+            ,(string-append "maxima.bat -p \"" (getenv "TEXMACS_HOME_PATH")
+                            "\\plugins\\maxima\\lisp\\texmacs-maxima.lisp\"")))
+          `((:launch
+            ,(string-append "maxima.bat -p \"" (getenv "TEXMACS_PATH")
+                            "\\plugins\\maxima\\lisp\\texmacs-maxima.lisp\""))))
       (with version-list
           (if reconfigure-flag? (maxima-versions) (plugin-versions "maxima"))
         (if (and version-list (list? version-list) (nnull? version-list))

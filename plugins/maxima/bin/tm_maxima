@@ -1,6 +1,10 @@
 #!/bin/sh
 
-TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
+if [ -e $TEXMACS_HOME_PATH/plugins/maxima ]; then
+  TEXMACS_MAXIMA_PATH="$TEXMACS_HOME_PATH/plugins/maxima/lisp"
+else
+  TEXMACS_MAXIMA_PATH="$TEXMACS_PATH/plugins/maxima/lisp"
+fi
 export TEXMACS_MAXIMA_PATH
 
 case $1 in

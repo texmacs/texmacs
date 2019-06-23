@@ -42,6 +42,15 @@
 
 (defprop mtimes ("\\*") texsym)
 
+(defprop $matrix tex-matrix tex)
+
+(defun tex-matrix (x l r) ;;matrix looks like ((mmatrix)((mlist) a b) ...)
+  (append l `("\\pmatrix{")
+          (mapcan #'(lambda(y)
+                      (tex-list (cdr y) nil (list "\\cr ") "&"))
+                  (cdr x))
+          '("}") r))
+
 (defun texmacs (x)
   (let ((ccol 1))
     ;;(mapc #'(lambda (y) (myprinc y t))
