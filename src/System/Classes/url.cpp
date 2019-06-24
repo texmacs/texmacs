@@ -909,7 +909,9 @@ complete (url base, url u, string filter, bool flag) {
   if (is_wildcard (u)) {
     // FIXME: ret= ret | ... is unefficient (quadratic) in main loop
     if (!(is_rooted (base, "default") || is_rooted (base, "file"))) {
-      failed_error << "base= " << base << LF;
+      failed_error << "base  = " << base << LF;
+      failed_error << "u     = " << u << LF;
+      failed_error << "filter= " << filter << LF;
       FAILED ("wildcards only implemented for files");
     }
     url ret= url_none ();
