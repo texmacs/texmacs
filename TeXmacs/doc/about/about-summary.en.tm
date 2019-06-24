@@ -1,15 +1,16 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.9>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Summary>
 
   <big-table|<descriptive-table|<tformat|<cwith|1|1|1|1|cell-row-span|1>|<cwith|1|1|1|1|cell-col-span|2>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|GNU
   <TeXmacs>>|<cell|>>|<row|<cell|Installed
-  version>|<cell|<TeXmacs-version>>>|<row|<cell|Supported systems>|<cell|Most
-  GNU/<name|Linux> systems>>|<row|<cell|Copyright>|<cell|<copyright>
-  1998\U2017 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
+  version>|<cell|<TeXmacs-version>>>|<row|<cell|SVN
+  revision>|<cell|<TeXmacs-version-release|revision>>>|<row|<cell|Supported
+  systems>|<cell|Most GNU/<name|Linux> systems>>|<row|<cell|Copyright>|<cell|<copyright>
+  1998\U2019 by Joris van der Hoeven >>|<row|<cell|License>|<cell|<hlink|GNU
   General Public License|$TEXMACS_PATH/LICENSE>>>|<row|<cell|Web
   sites>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|http://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|Contact>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|Regular
   mail>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<abbr|Prof.>

@@ -70,6 +70,7 @@ texmacs_version (string which) {
   if (which == "stable") return TM_STABLE;
   if (which == "devel-release") return TM_DEVEL_RELEASE;
   if (which == "stable-release") return TM_STABLE_RELEASE;
+  if (which == "revision") return TEXMACS_REVISION;
   return TEXMACS_VERSION;
 }
 
