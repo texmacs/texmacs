@@ -19,36 +19,8 @@ AC_CANONICAL_HOST
 # Export version and package name 
 #--------------------------------------------------------------------
 
+TM_VERSION
 TM_SUBVERSION
-
-PACKAGE="TeXmacs"
-DEBIAN_NAME="texmacs"
-DEVEL_VERSION="1.99.9"
-DEVEL_RELEASE="1"         # I think we should use SVNREV here
-STABLE_VERSION="1.99.9"
-STABLE_RELEASE="1"
-
-VERSION_MAJOR="1"
-VERSION_MINOR="99"
-VERSION_BUILD="9"
-# the svn revision of this version 
-DEVEL_RELEASE="11416"
-
-if test -n $VERSION_BUILD
-then DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
-else DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR"
-fi
-STABLE_VERSION=$DEVEL_VERSION
-STABLE_RELEASE=$DEVEL_RELEASE
-
-AC_SUBST(PACKAGE)
-AC_SUBST(DEVEL_VERSION)
-AC_SUBST(DEVEL_RELEASE)
-AC_SUBST(STABLE_VERSION)
-AC_SUBST(STABLE_RELEASE)
-AC_SUBST(VERSION_MAJOR)
-AC_SUBST(VERSION_MINOR)
-AC_SUBST(VERSION_BUILD)
 
 #--------------------------------------------------------------------
 # Checks for C++ compiler

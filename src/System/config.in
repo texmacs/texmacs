@@ -192,6 +192,9 @@
 /* Enable experimental Qt port */
 #undef QTTEXMACS
 
+/* Svn build revision */
+#undef REVISION
+
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 

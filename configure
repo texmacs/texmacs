@@ -621,12 +621,11 @@ ac_includes_default="\
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SIGNID
+tm_windows_release
 tm_underscore_stable
 tm_stable_release
 tm_stable
 tm_debian_name_devel
-tm_underscore_devel
-tm_windows_release
 tm_devel_release
 tm_devel
 tmdata
@@ -784,19 +783,18 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+SVNPATCH
+REVISION
+SVNREV
 VERSION_BUILD
 VERSION_MINOR
 VERSION_MAJOR
 STABLE_RELEASE
 STABLE_VERSION
+DEVEL_REVISION
 DEVEL_RELEASE
 DEVEL_VERSION
 PACKAGE
-SVNPATCH
-SVNINT
-SVNPATCH
-SVNINT
-SVNREV
 host_os
 host_vendor
 host_cpu
@@ -2941,11 +2939,46 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 #--------------------------------------------------------------------
 
 
+  PACKAGE="TeXmacs"
+  DEBIAN_NAME="texmacs"
+
+  VERSION_MAJOR="1"
+  VERSION_MINOR="99"
+  VERSION_BUILD="12"
+
+  # the svn revision of this version
+  DEVEL_REVISION="$Revision$"
+  DEVEL_REVISION=${DEVEL_REVISION#* }
+  DEVEL_REVISION=${DEVEL_REVISION% $}
+
+  DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
+  DEVEL_RELEASE="1"         # I think we should use SVNREV here
+  STABLE_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
+  STABLE_RELEASE="1"
+
+  if test -n $VERSION_BUILD
+  then DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
+  else DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR"
+  fi
+  STABLE_VERSION=$DEVEL_VERSION
+  STABLE_RELEASE=$DEVEL_RELEASE
+
+
+
+
+
+
+
+
+
+
+
+
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking current Subversion revision number" >&5
 $as_echo_n "checking current Subversion revision number... " >&6; }
   SVNREV=`svnversion -n . 2>/dev/null`
   SVNREV=${SVNREV#*:}
-  if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then
+ if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then
     SVNREV=`cat $srcdir/SVNREV`
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SVNREV" >&5
 $as_echo "$SVNREV" >&6; }
@@ -2957,41 +2990,37 @@ $as_echo "$SVNREV" >&6; }
   fi
 
 
-	SVNINT=${SVNREV#*:}
-	SVNINT=$(echo ${SVNINT%%[^[:digit:]]*})
+  SVNINT=${SVNREV#*:}
+  SVNINT=$(echo ${SVNINT%%[^[:digit:]]*})
 
-	SVNPATCH=0
-	test SVNINT != SVNREV	&& SVNPATCH=VS_FF_PATCHED
-
-
-
-PACKAGE="TeXmacs"
-DEBIAN_NAME="texmacs"
-DEVEL_VERSION="1.99.9"
-DEVEL_RELEASE="1"         # I think we should use SVNREV here
-STABLE_VERSION="1.99.9"
-STABLE_RELEASE="1"
-
-VERSION_MAJOR="1"
-VERSION_MINOR="99"
-VERSION_BUILD="9"
-# the svn revision of this version
-DEVEL_RELEASE="11416"
-
-if test -n $VERSION_BUILD
-then DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
-else DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR"
-fi
-STABLE_VERSION=$DEVEL_VERSION
-STABLE_RELEASE=$DEVEL_RELEASE
+#Naming package stratégie
+#   if test "$SVNREV" != $DEVEL_REVISION
+#   then AC_SUBST(REVISION,[-${SVNINT}])
+#   else AC_SUBST(REVISION,[""])
+#   fi
+#Not Implemeted yet
+  REVISION=""
 
 
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \":$DEVEL_REVISION:\"" >&5
+$as_echo "$as_me: WARNING: \":$DEVEL_REVISION:\"" >&2;}
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \":$SVNREV:\"" >&5
+$as_echo "$as_me: WARNING: \":$SVNREV:\"" >&2;}
+  if test "$SVNREV" != "$DEVEL_REVISION"
+  then
+cat >>confdefs.h <<_ACEOF
+#define REVISION "Custom $SVNREV"
+_ACEOF
 
+  else
+cat >>confdefs.h <<_ACEOF
+#define REVISION $DEVEL_REVISION
+_ACEOF
 
+  fi
 
-
-
-
+  SVNPATCH=0
+  test SVNINT != SVNREV && SVNPATCH=VS_FF_PATCHED
 
 
 
@@ -26402,28 +26431,20 @@ $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
 
 
 
-	if test -z "$VERSION_BUILD"
-	then tm_devel_release="${PACKAGE}-${DEVEL_VERSION}.0"
-	else tm_devel_release="${PACKAGE}-${DEVEL_VERSION}"
-	fi
+  if test "$DEVEL_RELEASE" = "1"; then
+    tm_devel=${PACKAGE}-${DEVEL_VERSION}
+  else
+    tm_devel=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
+  fi
+  tm_devel_release=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
+  tm_underscore_devel=${PACKAGE}_${DEVEL_VERSION}
 
-	if test $SVNREV != $DEVEL_RELEASE
-	then 	tm_devel=$tm_devel_release
-				DEVEL_RELEASE=$SVNINT
-				tm_devel="$tm_devel_release.$DEVEL_RELEASE"
-	else 	tm_devel="${PACKAGE}-${DEVEL_VERSION}"
-	fi
+  if test -z "$VERSION_BUILD"
+  then tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,0,0"
+  else tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,$VERSION_BUILD,0"
+  fi
 
-	if test -z "$VERSION_BUILD"
-	then tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,0,0"
-	else tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,$VERSION_BUILD,0"
-	fi
-
-  tm_devel_release="$tm_devel_release.$DEVEL_RELEASE"
-  tm_underscore_devel=${tm_devel/-/_/}
   tm_debian_name_devel=${DEBIAN_NAME}_${DEVEL_VERSION}
-
-
 
 
 
@@ -26436,6 +26457,7 @@ $as_echo "customizing optimizations, $enable_optimize" >&6; } ;;
   fi
   tm_stable_release=${PACKAGE}-${STABLE_VERSION}-${STABLE_RELEASE}
   tm_underscore_stable=${PACKAGE}_${STABLE_VERSION}
+
 
 
 

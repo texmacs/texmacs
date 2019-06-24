@@ -23,7 +23,6 @@ verinfo = ${tmdir}/verinfo.txt
 tm_devel_version = @DEVEL_VERSION@
 tm_devel = @tm_devel@
 tm_devel_release = @tm_devel_release@
-tm_underscore_devel = @tm_underscore_devel@
 tm_debian_name_devel = @tm_debian_name_devel@
 tm_stable = @tm_stable@
 tm_stable_release = @tm_stable_release@
@@ -459,8 +458,8 @@ SPARKLE_FRAMEWORK_PATH = @SPARKLE_FRAMEWORK_PATH@
 MACOS_PACKAGE_SRC = packages/macos
 MACOS_PACKAGE_DIR = ../distr/macos
 
-MACOS_PACKAGE_APP = ../distr/$(tm_devel).app
-MACOS_PACKAGE_DMG = ../distr/$(tm_devel)@MACOSX_TARGET@.dmg
+MACOS_PACKAGE_APP = ../distr/$(tm_devel)@REVISION@.app
+MACOS_PACKAGE_DMG = ../distr/$(tm_devel)@REVISION@@MACOSX_TARGET@.dmg
 MACOS_PACKAGE_ZIP = ../distr/$(tm_devel).zip
 
 MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
@@ -540,11 +539,13 @@ WINDOWS_BUNDLE: TEXMACS
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
 	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
 	if test -d "$(QT_PLUGINS_PATH)";then $(CP) -u $$(cygpath -u $(QT_PLUGINS_PATH)/*) $(WINDOWS_BUILD_BIN_DIR);fi
-$(WINDOWS_PACKAGE_DIR)/@tm_devel@-win-x86.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
+
+#$(WINDOWS_PACKAGE_DIR)/@tm_devel@@REVISION@-installer.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
+WINDOWS_PACKAGE: $(wilcard $(WINDOWS_BUILD_DIR)/*)
 	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
 
-WINDOWS_PACKAGE: WINDOWS_BUNDLE $(WINDOWS_PACKAGE_DIR)/@tm_devel@-win-x86.exe
+#WINDOWS_PACKAGE: WINDOWS_BUNDLE $(WINDOWS_PACKAGE_DIR)/@tm_devel@@REVISION@-installer.exe
 #	$(MV) ../distr/*-installer* $(WINDOWS_PACKAGE_DIR)
 #	$(RM) -r $(WINDOWS_BUILD_DIR)
 

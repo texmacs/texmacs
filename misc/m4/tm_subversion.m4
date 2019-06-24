@@ -15,7 +15,7 @@ AC_DEFUN([TM_SUBVERSION],[
   AC_MSG_CHECKING(current Subversion revision number)
   SVNREV=`svnversion -n . 2>/dev/null`
   SVNREV=${SVNREV#*:}
-  if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then 
+ if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then 
     SVNREV=`cat $srcdir/SVNREV`
     AC_MSG_RESULT($SVNREV, read from $srcdir/SVNREV)
   else 
@@ -23,12 +23,27 @@ AC_DEFUN([TM_SUBVERSION],[
     echo "$SVNREV" > $srcdir/TeXmacs/SVNREV
     AC_MSG_RESULT($SVNREV)
   fi
-	
+  
   AC_SUBST(SVNREV)
-	SVNINT=${SVNREV#*:}
-	SVNINT=$(echo ${SVNINT%%@<:@^@<:@:digit:@:>@@:>@*})
-	AC_SUBST(SVNINT)
-	SVNPATCH=0
-	test SVNINT != SVNREV	&& SVNPATCH=VS_FF_PATCHED
-	AC_SUBST(SVNPATCH)
+  SVNINT=${SVNREV#*:}
+  SVNINT=$(echo ${SVNINT%%@<:@^@<:@:digit:@:>@@:>@*})
+
+#Naming package stratégie
+#   if test "$SVNREV" != $DEVEL_REVISION
+#   then AC_SUBST(REVISION,[-${SVNINT}])
+#   else AC_SUBST(REVISION,[""])
+#   fi
+#Not Implemeted yet
+  AC_SUBST(REVISION,[""])
+  
+	AC_MSG_WARN( ":$DEVEL_REVISION:")
+	AC_MSG_WARN( ":$SVNREV:")
+  if test "$SVNREV" != "$DEVEL_REVISION"
+  then AC_DEFINE_UNQUOTED(REVISION, ["Custom $SVNREV"],[Svn build revision])
+  else AC_DEFINE_UNQUOTED(REVISION,[$DEVEL_REVISION],[Svn build revision])
+  fi
+
+  SVNPATCH=0
+  test SVNINT != SVNREV && SVNPATCH=VS_FF_PATCHED
+  AC_SUBST(SVNPATCH)
 ])

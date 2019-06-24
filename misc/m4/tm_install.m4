@@ -103,31 +103,23 @@ AC_DEFUN([TM_INSTALL],[
   AC_SUBST(tmbin)
   AC_SUBST(tmdata)
 
-	if test -z "$VERSION_BUILD"
-	then tm_devel_release="${PACKAGE}-${DEVEL_VERSION}.0"
-	else tm_devel_release="${PACKAGE}-${DEVEL_VERSION}"
-	fi
+  if test "$DEVEL_RELEASE" = "1"; then
+    tm_devel=${PACKAGE}-${DEVEL_VERSION}
+  else
+    tm_devel=${PACKAGE}-${DEVEL_VERSION}-R${DEVEL_RELEASE}
+  fi
+  tm_devel_release=${PACKAGE}-${DEVEL_VERSION}-${DEVEL_RELEASE}
+  tm_underscore_devel=${PACKAGE}_${DEVEL_VERSION}
 
-	if test $SVNREV != $DEVEL_RELEASE
-	then 	tm_devel=$tm_devel_release
-				DEVEL_RELEASE=$SVNINT
-				tm_devel="$tm_devel_release.$DEVEL_RELEASE"
-	else 	tm_devel="${PACKAGE}-${DEVEL_VERSION}"
-	fi
-
-	if test -z "$VERSION_BUILD"
-	then tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,0,0"
-	else tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,$VERSION_BUILD,0"
-	fi
-	
-  tm_devel_release="$tm_devel_release.$DEVEL_RELEASE"
-  tm_underscore_devel=${tm_devel/-/_/}
+  if test -z "$VERSION_BUILD"
+  then tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,0,0"
+  else tm_windows_release="$VERSION_MAJOR,$VERSION_MINOR,$VERSION_BUILD,0"
+  fi
+  
   tm_debian_name_devel=${DEBIAN_NAME}_${DEVEL_VERSION}
 
   AC_SUBST(tm_devel)
   AC_SUBST(tm_devel_release)
-  AC_SUBST(tm_windows_release)
-  AC_SUBST(tm_underscore_devel)
   AC_SUBST(tm_debian_name_devel)
 
   if test "$STABLE_RELEASE" = "1"; then
@@ -141,4 +133,5 @@ AC_DEFUN([TM_INSTALL],[
   AC_SUBST(tm_stable)
   AC_SUBST(tm_stable_release)
   AC_SUBST(tm_underscore_stable)
+  AC_SUBST(tm_windows_release)
 ])
