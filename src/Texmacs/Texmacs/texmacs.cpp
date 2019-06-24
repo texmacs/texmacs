@@ -254,6 +254,7 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-v") || (s == "-version")) {
         cout << "\n";
         cout << "TeXmacs version " << TEXMACS_VERSION << "\n";
+	cout << "SVN version " << TEXMACS_REVISION << "\n";
         cout << TEXMACS_COPYRIGHT << "\n";
         cout << "\n";
         exit (0);

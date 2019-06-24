@@ -28,7 +28,7 @@ AC_DEFUN([TM_SUBVERSION],[
   SVNINT=${SVNREV#*:}
   SVNINT=$(echo ${SVNINT%%@<:@^@<:@:digit:@:>@@:>@*})
 
-#Naming package stratégie
+#Naming package strategy
 #   if test "$SVNREV" != $DEVEL_REVISION
 #   then AC_SUBST(REVISION,[-${SVNINT}])
 #   else AC_SUBST(REVISION,[""])
@@ -36,11 +36,9 @@ AC_DEFUN([TM_SUBVERSION],[
 #Not Implemeted yet
   AC_SUBST(REVISION,[""])
   
-	AC_MSG_WARN( ":$DEVEL_REVISION:")
-	AC_MSG_WARN( ":$SVNREV:")
   if test "$SVNREV" != "$DEVEL_REVISION"
-  then AC_DEFINE_UNQUOTED(REVISION, ["Custom $SVNREV"],[Svn build revision])
-  else AC_DEFINE_UNQUOTED(REVISION,[$DEVEL_REVISION],[Svn build revision])
+  then AC_DEFINE_UNQUOTED(TEXMACS_REVISION, ["Custom $SVNREV"],[Svn build revision])
+  else AC_DEFINE_UNQUOTED(TEXMACS_REVISION,[$DEVEL_REVISION],[Svn build revision])
   fi
 
   SVNPATCH=0

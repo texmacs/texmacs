@@ -192,9 +192,6 @@
 /* Enable experimental Qt port */
 #undef QTTEXMACS
 
-/* Svn build revision */
-#undef REVISION
-
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
@@ -203,6 +200,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Svn build revision */
+#undef TEXMACS_REVISION
 
 /* Dynamic linking function name */
 #undef TM_DYNAMIC_LINKING
