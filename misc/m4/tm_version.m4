@@ -23,7 +23,7 @@ AC_DEFUN([TM_VERSION],[
   VERSION_BUILD="9"
   
   # the svn revision of this version 
-  DEVEL_REVISION="$Revision: 454 $"
+  DEVEL_REVISION="$Revision$"
   DEVEL_REVISION=${DEVEL_REVISION#* }
   DEVEL_REVISION=${DEVEL_REVISION% $}
 
