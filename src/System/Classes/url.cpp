@@ -845,8 +845,10 @@ complete (url base, url u, string filter, bool flag) {
      if (is_none (base)) return base;
      if (is_none (u)) return u;
      if ((!is_root (base)) && (!is_rooted_name (base))) {
-        failed_error << "base= " << base << LF;
-        FAILED ("invalid base url");
+       failed_error << "base  = " << base << LF;
+       failed_error << "u     = " << u << LF;
+       failed_error << "filter= " << filter << LF;
+       FAILED ("invalid base url");
      }
   }
   if (is_name (u) || (is_concat (u) && is_root (u[1]) && is_name (u[2]))) {
@@ -859,8 +861,9 @@ complete (url base, url u, string filter, bool flag) {
       if (is_of_type (comp, filter)) return u;
       return url_none ();
     }
-    failed_error << "base= " << base << LF;
-    failed_error << "u= " << u << LF;
+    failed_error << "base  = " << base << LF;
+    failed_error << "u     = " << u << LF;
+    failed_error << "filter= " << filter << LF;
     ASSERT (is_rooted (comp), "unrooted url");
     FAILED ("bad protocol in url");
   }
@@ -871,7 +874,9 @@ complete (url base, url u, string filter, bool flag) {
   if (is_concat (u) && is_wildcard (u[1], 0) && is_wildcard (u[2], 1)) {
     // FIXME: ret= ret | ... is unefficient (quadratic) in main loop
     if (!(is_rooted (base, "default") || is_rooted (base, "file"))) {
-      failed_error << "base= " << base << LF;
+      failed_error << "base  = " << base << LF;
+      failed_error << "u     = " << u << LF;
+      failed_error << "filter= " << filter << LF;
       FAILED ("wildcards only implemented for files");
     }
     url ret= url_none ();
