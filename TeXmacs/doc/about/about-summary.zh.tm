@@ -6,7 +6,7 @@
   <tmdoc-title|\<#6982\>\<#8981\>>
 
   <big-table|<descriptive-table|<tformat|<cwith|1|1|1|1|cell-row-span|1>|<cwith|1|1|1|1|cell-col-span|2>|<cwith|1|1|1|1|cell-halign|c>|<table|<row|<cell|GNU
-  <TeXmacs>>|<cell|>>|<row|<cell|\<#5F53\>\<#524D\>\<#7248\>\<#672C\>\<#53F7\>>|<cell|<TeXmacs-version>>>|<row|<cell|\<#652F\>\<#6301\>\<#7684\>\<#7CFB\>\<#7EDF\>>|<cell|\<#5927\>\<#90E8\>\<#5206\>GNU/<name|Linux>\<#7CFB\>\<#7EDF\>>>|<row|<cell|\<#7248\>\<#6743\>>|<cell|<copyright>
+  <TeXmacs>>|<cell|>>|<row|<cell|\<#5F53\>\<#524D\>\<#7248\>\<#672C\>>|<cell|<TeXmacs-version>>>|<row|<cell|SVN\<#7248\>\<#672C\>\<#53F7\>>|<cell|<TeXmacs-version-release|revision>>>|<row|<cell|\<#652F\>\<#6301\>\<#7684\>\<#7CFB\>\<#7EDF\>>|<cell|\<#5927\>\<#90E8\>\<#5206\>GNU/<name|Linux>\<#7CFB\>\<#7EDF\>>>|<row|<cell|\<#7248\>\<#6743\>>|<cell|<copyright>
   1998\U2019 by Joris van der Hoeven >>|<row|<cell|\<#8BB8\>\<#53EF\>\<#8BC1\>>|<cell|<hlink|GNU
   General Public License|$TEXMACS_PATH/LICENSE>>>|<row|<cell|\<#9879\>\<#76EE\>\<#4E3B\>\<#9875\>>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<verbatim|http://www.texmacs.org>>>|<row|<cell|<verbatim|http://www.gnu.org/software/texmacs>>>>>>>>|<row|<cell|\<#8054\>\<#7CFB\>\<#6211\>\<#4EEC\>>|<cell|<verbatim|contact@texmacs.org>>>|<row|<cell|\<#8054\>\<#7CFB\>\<#5730\>\<#5740\>>|<cell|<tabular|<tformat|<twith|table-valign|T>|<cwith|1|-1|1|-1|cell-lsep|0spc>|<cwith|1|-1|1|-1|cell-rsep|0spc>|<table|<row|<cell|<abbr|Prof.>
   <abbr|dr.> Joris van der Hoeven>>|<row|<cell|Laboratoire d'informatique de
