@@ -12,10 +12,19 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (sage-launchers)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/sage")
+      `((:launch ,(string-append "sage -python "
+                                 (getenv "TEXMACS_HOME_PATH")
+                                 "/plugins/sage/python/bridge.py")))
+      `((:launch ,(string-append "sage -python "
+                                 (getenv "TEXMACS_PATH")
+                                 "/plugins/sage/python/bridge.py")))))
+
 (plugin-configure sage
   (:macpath "Sage*" "Contents/Resources/sage")
   (:require (url-exists-in-path? "sage"))
-  (:launch "tm_sage")
+  ,@(sage-launchers)
   (:tab-completion #t)
   (:session "Sage")
   (:scripts "Sage"))
