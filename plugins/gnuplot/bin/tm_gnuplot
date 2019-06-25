@@ -32,12 +32,15 @@ while True:
         # TODO: Handle completions
         continue
     else:
-        lines = [line]
+        lines = []
+        for x in line.split('~'):
+            lines.append(x)
         while line != "<EOF>":
             line = _input()
             if line == '': 
                 continue
-            lines.append(line)
+            for x in line.split('~'):
+                lines.append(x)
 
         text='\n'.join(lines[:-1])
 
