@@ -16,7 +16,6 @@ import os
 import sys
 sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
-import traceback
 import re
 import string
 import time
@@ -25,7 +24,8 @@ from inspect   import ismodule, getsource, getsourcefile
 from types     import CodeType
 from io        import open
 from io        import StringIO
-from tmpy.protocol  import *
+from tmpy.protocol        import *
+from tmpy.capture         import CaptureStdout
 from tmpy.graph.asymptote import Asymptote
 from tmpy.graph.graphviz  import Graphviz
 from tmpy.graph.mermaid   import Mermaid
@@ -74,45 +74,6 @@ def compose_output(data):
         data = ''
     return 'verbatim:%s' % str(data).strip()
 
-class CaptureStdout:
-    """Capture output to os.sys.stdout.
-
-    Class in charge of recording the output of the
-    statements/expressions entered in the TeXmacs
-    session and executed in Python.
-
-    Must be used in a with statement, as in CaptureStdout.capture()
-    """
-
-    def __enter__(self):
-        """ """
-        class Capture:
-            def __init__(self):
-                self.text = ''
-            def write(self, str):
-                self.text += str
-            def flush(self):
-                os.sys.stdout.flush() # Needed?
-                self.text = ''
-            def getOutput(self):
-                return self.text
-
-        self.capt = Capture()
-        self.stdout_saved, os.sys.stdout = os.sys.stdout, self.capt        
-        return self.capt
-    
-    def __exit__(self, type, value, traceback):
-        os.sys.stdout = self.stdout_saved
-
-    @staticmethod
-    def capture (code, env):
-        with CaptureStdout() as capt:
-            try:
-                eval (compile (code, 'tm_python', 'exec'), env)
-            except Exception as e:
-                traceback.print_exc (file = os.sys.stdout, limit = 0)
-            return capt.getOutput()
-
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
 
@@ -148,7 +109,7 @@ if py_ver == 3:
     text = 'import builtins as __builtins__'
 else:
     text = 'import __builtin__ as __builtins__'
-CaptureStdout.capture (text, my_globals)
+CaptureStdout.capture (text, my_globals, "tm_graph")
 
 # Reopen stdout unbufferd (flush after each stdout.write() and print)
 if py_ver == 3:
@@ -203,14 +164,6 @@ while True:
         continue
     if line[0] == DATA_COMMAND:
         # TODO: Handle completions
-        continue
-    elif line.endswith('?') and not line.strip().startswith('#'):
-        if len (line) > 1:
-            out = compile_help (line[:-1])
-            flush_command ('(tmpy-open-help %s %s %s)' %
-                         (out["help"], out["src"], out["file"]))
-        else:
-            flush_verbatim ('Type a name before the "?" to see the help')
         continue
     else:
         lines = [line]

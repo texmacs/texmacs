@@ -1,86 +1,44 @@
-#!/bin/sh
-#
-# tm_gnuplot 
-# ========== 
-# bash script for interfacing gnuplot from TeXmacs
-# needs option --texmacs for compatibility with TeXmacs interface convention and user information
-#
-# usage within TeXmacs:
-# =====================
-# write gnuplot-commands within the input line, 
-# use as many commands as necessary, 
-# divide them by the ~ chararacter, because the ENTER key terminates the input and sends it to gnuplot.
-# output is the graph made by gnuplot.
+#!/usr/bin/env python
 
-#ECHO=echo
-ECHO=/bin/echo
+import os
+import sys
+sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
-if [ "$1" != "--texmacs" ]
-then
-	$ECHO tm_gnuplot. This script should be started only from TeXmacs.
-	exit
-fi	
+from tmpy.protocol        import *
+from tmpy.graph.gnuplot   import Gnuplot
+from tmpy.capture         import CaptureStdout
 
-# control characters
-tmp=`$ECHO DATA_BEGIN=X DATA_END=Y DATA_ESCAPE=Z | tr "XYZ" "\002\005\027" `
-eval $tmp
+my_globals   = {}
 
-# defining pipe-gnuplot binary path and name 
-# for unix/linux environments
-GNUPLOT_PATH=
-PIPE_GNUPLOT=gnuplot
-# for windows/cygwin environment
-# GNUPLOT_PATH=/cygdrive/w/tex_cd/programme/gnuplot/
-# PIPE_GNUPLOT=pgnuplot.exe
+py_ver       = sys.version_info[0];
+if py_ver == 3: _input = input
+else:           _input = raw_input
 
-# defining temporary postscript file directory
-TEMP_DIR=/tmp
-if [ -d $TEMP_DIR ]
-then
-	:
-else	
-	mkdir $TEMP_DIR
-fi
+if py_ver == 3:
+    text = 'import builtins as __builtins__'
+else:
+    text = 'import __builtin__ as __builtins__'
+CaptureStdout.capture (text, my_globals, "tm_gnuplot")
 
-# defining temporary postscript file name
-TEMP_PS_NAME=temp.eps
+current = Gnuplot()
+current.greet()
 
-# standard initialization of GNUplot
-init='reset~set terminal postscript eps enhanced ~set output "'$TEMP_DIR/$TEMP_PS_NAME'"~set size 1,1~set autoscale~'
-	
-# startup banner
-$ECHO -n $DATA_BEGIN
-$ECHO verbatim:This is a TeXmacs interface for GNUplot.
+# Main session loop.
+while True:
+    line = _input()
+    if not line:
+        continue
+    if line[0] == DATA_COMMAND:
+        # TODO: Handle completions
+        continue
+    else:
+        lines = [line]
+        while line != "<EOF>":
+            line = _input()
+            if line == '': 
+                continue
+            lines.append(line)
 
-# prompt-input-gnuplot-output loop
-while [ 1 ]; do
-	# prompt
-	$ECHO -n $DATA_BEGIN
-	$ECHO -n channel:prompt
-	$ECHO -n $DATA_END
-	$ECHO -n GNUplot'] '
-	$ECHO -n $DATA_END
-	 
-	#read a line from stdin
-	read input
-	
-	#concat init string and input string
-	input=$init$input
-	
-	#for debugging purposes
-	#$ECHO $input | tr  "~" "\n" | tee tm_gnuplot.log | $GNUPLOT_PATH$PIPE_GNUPLOT 
-	#$ECHO -E "$input" | tr  "~" "\n" | $GNUPLOT_PATH$PIPE_GNUPLOT
-	$ECHO "$input" | tr  "~" "\n" | $GNUPLOT_PATH$PIPE_GNUPLOT
-	
-	$ECHO -n $DATA_BEGIN
-	$ECHO -n verbatim:
-	
-	$ECHO -n $DATA_BEGIN
-	$ECHO -n ps:
-	cat $TEMP_DIR/$TEMP_PS_NAME
-	$ECHO -n $DATA_END
-	#$ECHO -ne "\n"	
-	$ECHO ""
-	
-	rm $TEMP_DIR/$TEMP_PS_NAME
-done
+        text='\n'.join(lines[:-1])
+
+        current.eval(text)
