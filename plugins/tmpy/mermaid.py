@@ -13,27 +13,30 @@ import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
 from .protocol import *
+from .compat import which
 
 class Mermaid(Graph):
     def __init__(self, name = "mmdc"):
         super(Mermaid, self).__init__()
         self.name = name
-        try:
-            p = Popen([self.name, "--version"], stdout=PIPE)
-            ret, err = p.communicate()
-            if (p.returncode == 0):
-                self.message = "Mermaid " + ret.decode()
-        except OSError:
-            pass
+
+    def greet(self):
+        if len(self.message) == 0:
+            try:
+                p = Popen([self.name, "--version"], stdout=PIPE)
+                ret, err = p.communicate()
+                if (p.returncode == 0):
+                    self.message = "Mermaid " + ret.decode()
+            except OSError:
+                pass
+        super(Mermaid, self).greet()
 
     def evaluate(self, code):
-        code_path = os.getenv("TEXMACS_HOME_PATH") +\
-            "/system/tmp/" + self.name + ".mmd"
+        code_path = self.get_tmp_dir() + self.name + ".mmd"
         with open(code_path, 'w') as code_file:
             code_file.write(code)
 
-        puppeteer_config = os.getenv("TEXMACS_HOME_PATH") +\
-            "/system/tmp/puppeteer-config.json"
+        puppeteer_config = self.get_tmp_dir() + "puppeteer-config.json"
         with open(puppeteer_config, "w") as config_file:
             config_file.write('{"args": ["--no-sandbox"]}')
 

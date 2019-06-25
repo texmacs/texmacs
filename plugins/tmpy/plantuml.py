@@ -18,16 +18,19 @@ class PlantUML(Graph):
     def __init__(self, name = "plantuml"):
         super(PlantUML, self).__init__()
         self.name = name
-        try:
-            p = Popen([self.name, "-version"], stdout=PIPE)
-            ret, err = p.communicate()
-            if (p.returncode == 0):
-                self.message = ret.decode()
-        except OSError:
-            pass
+
+    def greet(self):
+        if len(self.message) == 0:
+            try:
+                p = Popen([self.name, "-version"], stdout=PIPE)
+                ret, err = p.communicate()
+                if (p.returncode == 0):
+                    self.message = ret.decode()
+            except OSError:
+                pass
+        super(PlantUML, self).greet()
 
     def evaluate(self, code):
-        # Dump the code to $HOME/.TeXmacs/system/tmp/${name}.puml
         code_path = self.get_tmp_dir() + self.name + ".puml" 
         with open(code_path, 'w') as code_file:
             code_file.write(code)

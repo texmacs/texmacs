@@ -14,6 +14,7 @@ import platform
 import shutil
 import time
 from .protocol import *
+from .compat import which
 
 
 class Graph(object):
@@ -34,10 +35,11 @@ class Graph(object):
                 flush_prompt (self.name + "] ")
 
     def available(self):
-        return len(self.message) > 0
+        return which(self.name) is not None
 
     def before_evaluate(self):
-        os.mkdir(self.get_tmp_dir())
+        if not os.path.exists(self.get_tmp_dir()):
+            os.mkdir(self.get_tmp_dir())
 
     def evaluate(self, code):
         pass

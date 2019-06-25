@@ -13,23 +13,27 @@ import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
 from .protocol import *
+from .compat import which
 
 class Asymptote(Graph):
     def __init__(self, name = "asy"):
         super(Asymptote, self).__init__()
         self.name = name
-        try:
-            p = Popen([self.name, "-version"], stderr=PIPE)
-            ret, err = p.communicate()
-            # WARN: The Version Info is in stderr
-            if (p.returncode == 0):
-                self.message = err.decode()
-        except OSError:
-            pass
+
+    def greet(self):
+        if len(self.message) == 0:
+            try:
+                p = Popen([self.name, "-version"], stderr=PIPE)
+                ret, err = p.communicate()
+                # WARN: The Version Info is in stderr
+                if (p.returncode == 0):
+                    self.message = err.decode()
+            except OSError:
+                pass
+        super(Asymptote, self).greet()
 
     def evaluate(self, code):
-        code_path = os.getenv("TEXMACS_HOME_PATH") +\
-            "/system/tmp/" + self.name + ".asy"
+        code_path = self.get_tmp_dir() + self.name + ".asy"
         with open(code_path, 'w') as code_file:
             code_file.write(code)
 

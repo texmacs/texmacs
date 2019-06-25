@@ -41,6 +41,8 @@ import argparse
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
 
+init_time = time.time()
+
 py_ver       = sys.version_info[0];
 __version__  = '1.0'
 __author__   = 'Darcy Shen'
@@ -142,13 +144,6 @@ def compile_help (text):
 ## Session start
 ###############################################################################
 
-# As well as some documentation.
-my_globals['__doc__'] = """A Python plugin for TeXmacs.
-Provides autocompletion and embedding of PostScript data into the document,
-e.g from files or from matplotlib.pyplot.
-A rudimentary help window is also implemented: type the name of an object
-with a question mark at the end to use it."""
-
 if py_ver == 3:
     text = 'import builtins as __builtins__'
 else:
@@ -162,7 +157,7 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = list(map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"]))
-others = [Asymptote("asy"), PlantUML(), Mermaid(), XYpic(), TikZ(), FeynMF(), LaTeX(), PDFLaTeX()]
+others = [Asymptote(), PlantUML(), Mermaid(), XYpic(), TikZ(), FeynMF(), LaTeX(), PDFLaTeX()]
 graphs = list(filter(lambda x: x.available(), grapvizs + others))
 graph_names = list(map(lambda x: x.name, graphs))
 
@@ -172,10 +167,12 @@ if len(graphs) == 0:
     exit(0)
 
 current = graphs[0]
+warmup_time_ms = int((time.time() - init_time) * 1000)
+
 
 flush_verbatim ("Generate graphs with your favorite tools in GNU TeXmacs\n")
-flush_verbatim ("Created by Darcy Shen, Implemented in Python, " + current.name +  " by default\n")
-flush_verbatim ("It is quit easy, join us: https://github.com/texmacs/plugins\n")
+flush_verbatim ("Created by Darcy Shen, Implemented in Python, " + current.name + "[" + str(warmup_time_ms) + "ms] by default\n")
+flush_verbatim ("Welcome to star and fork it at https://github.com/texmacs/plugins\n")
 flush_prompt (current.name + "] ")
 
 def unigraph(text):

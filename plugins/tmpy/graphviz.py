@@ -13,19 +13,24 @@ import sys
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
 from .protocol import *
+from .compat import which
 
 class Graphviz(Graph):
     def __init__(self, name):
         super(Graphviz, self).__init__()
         self.name = name
-        try:
-            p = Popen([self.name, "-V"], stderr=PIPE)
-            ret, err = p.communicate()
-            # WARN: The Version Info is in stderr
-            if (p.returncode == 0):
-                self.message = err.decode()
-        except OSError:
-            pass
+    
+    def greet(self):
+        if len(self.message) == 0:
+            try:
+                p = Popen([self.name, "-V"], stderr=PIPE)
+                ret, err = p.communicate()
+                # WARN: The Version Info is in stderr
+                if (p.returncode == 0):
+                    self.message = err.decode()
+            except OSError:
+                pass
+        super(Graphviz, self).greet()
 
     def evaluate(self, code):
         # NOTE: the eps output format does not always work
