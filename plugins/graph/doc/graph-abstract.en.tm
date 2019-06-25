@@ -3,7 +3,7 @@
 <style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
-  <tmdoc-title|Short description of <name|Graphs>>
+  <tmdoc-title|Short description of <name|Graph>>
 
   This plugin collect the interface to some useful image generation programs.
   Whenever possible a vector image in the <name|PostScript> or <name|Pdf>

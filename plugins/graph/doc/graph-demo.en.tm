@@ -3,9 +3,9 @@
 <style|<tuple|tmdoc|old-spacing|framed-session>>
 
 <\body>
-  <tmdoc-title|Example of <name|Graphs> sessions>
+  <tmdoc-title|Example of <name|Graph> sessions>
 
-  You may insert a <name|Graphs> session using <menu|Insert|Session|Graphs>.
+  You may insert a <name|Graphs> session using <menu|Insert|Session|Graph>.
   When you finished typing your input, press <shortcut|(kbd-shift-return)> in
   order to compute the output. Multiline input is entered using
   <shortcut|(kbd-return)>.

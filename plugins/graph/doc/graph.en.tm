@@ -3,14 +3,14 @@
 <style|<tuple|tmdoc|old-spacing>>
 
 <\body>
-  <tmdoc-title|The <name|Graphs> plug-in>
+  <tmdoc-title|The <name|Graph> plug-in>
 
   <\traverse>
-    <branch|Short description|graphs-abstract.en.tm>
+    <branch|Short description|graph-abstract.en.tm>
 
-    <branch|Example sessions|graphs-demo.en.tm>
+    <branch|Example sessions|graph-demo.en.tm>
 
-    <branch|Possible improvements|graphs-todo.en.tm>
+    <branch|Possible improvements|graph-todo.en.tm>
   </traverse>
 
   <tmdoc-copyright|2019|Darcy Shen and Massimiliano Gubinelli>
