@@ -15,7 +15,7 @@
   to <LaTeX>/<name|PDF><LaTeX> for more complex layout or to use other
   packages.
 
-  <tmdoc-copyright|2019|Darcy Shen and Massimiliano Gubinelli>
+  <tmdoc-copyright|2019|Darcy Shen|Massimiliano Gubinelli>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

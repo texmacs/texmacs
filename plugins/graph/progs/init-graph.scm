@@ -20,7 +20,7 @@
       "tm_graph.bat"
       "tm_graph"))
 
-(plugin-configure graphs
+(plugin-configure graph
   (:require (url-exists-in-path? "python"))
   (:require (url-exists-in-path? "tm_graph"))
   (:launch ,(graph-launcher))
