@@ -26,16 +26,16 @@ from types     import CodeType
 from io        import open
 from io        import StringIO
 from tmpy.protocol  import *
-from tmpy.graph     import Graph
-from tmpy.asymptote import Asymptote
-from tmpy.graphviz  import Graphviz
-from tmpy.mermaid   import Mermaid
-from tmpy.plantuml  import PlantUML
-from tmpy.xypic     import XYpic
-from tmpy.tikz      import TikZ
-from tmpy.feynmf    import FeynMF
-from tmpy.latex     import LaTeX
-from tmpy.pdflatex  import PDFLaTeX
+from tmpy.graph.asymptote import Asymptote
+from tmpy.graph.graphviz  import Graphviz
+from tmpy.graph.mermaid   import Mermaid
+from tmpy.graph.plantuml  import PlantUML
+from tmpy.graph.xypic     import XYpic
+from tmpy.graph.tikz      import TikZ
+from tmpy.graph.feynmf    import FeynMF
+from tmpy.graph.latex     import LaTeX
+from tmpy.graph.pdflatex  import PDFLaTeX
+from tmpy.graph.gnuplot   import Gnuplot
 import argparse
 
 #import logging as log
@@ -157,7 +157,7 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = list(map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"]))
-others = [Asymptote(), PlantUML(), Mermaid(), XYpic(), TikZ(), FeynMF(), LaTeX(), PDFLaTeX()]
+others = [Asymptote(), PlantUML(), Mermaid(), XYpic(), TikZ(), FeynMF(), LaTeX(), PDFLaTeX(), Gnuplot()]
 graphs = list(filter(lambda x: x.available(), grapvizs + others))
 graph_names = list(map(lambda x: x.name, graphs))
 
