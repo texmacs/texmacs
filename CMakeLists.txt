@@ -46,6 +46,7 @@ set (DEVEL_VERSION "1.99.9")
 set (DEVEL_RELEASE "1")
 set (STABLE_VERSION "1.99.9")
 set (STABLE_RELEASE "1")
+set (TEXMACS_REVISION "1.99.9")
 
 
 ### --------------------------------------------------------------------

@@ -137,6 +137,8 @@
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
 
+#cmakedefine TEXMACS_REVISION "@TEXMACS_REVISION@"
+
 #cmakedefine TM_DYNAMIC_LINKING 1
 
 /* Use axel library */
