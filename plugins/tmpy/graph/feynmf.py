@@ -14,8 +14,8 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .compat import which
-from .protocol import *
+from ..compat import which
+from ..protocol import *
 
 # we cannot derive from the LaTeX object since we need more complex processing 
 # than latex->dvips

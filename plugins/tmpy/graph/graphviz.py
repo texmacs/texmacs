@@ -12,8 +12,7 @@
 import sys
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .protocol import *
-from .compat import which
+from ..protocol import *
 
 class Graphviz(Graph):
     def __init__(self, name):

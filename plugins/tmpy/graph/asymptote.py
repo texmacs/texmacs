@@ -12,8 +12,8 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .protocol import *
-from .compat import which
+from ..protocol import *
+from ..compat import which
 
 class Asymptote(Graph):
     def __init__(self, name = "asy"):

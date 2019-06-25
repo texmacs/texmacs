@@ -12,8 +12,8 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .compat import which
-from .protocol import *
+from ..compat import which
+from ..protocol import *
 
 
 class PDFLaTeX(Graph):

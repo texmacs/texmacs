@@ -12,7 +12,7 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
-from .protocol import *
+from ..protocol import *
 
 class PlantUML(Graph):
     def __init__(self, name = "plantuml"):

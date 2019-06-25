@@ -13,8 +13,8 @@ import os
 import platform
 import shutil
 import time
-from .protocol import *
-from .compat import which
+from ..protocol import *
+from ..compat import which
 
 
 class Graph(object):

@@ -12,7 +12,7 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 from .latex import LaTeX
-from .protocol import *
+from ..protocol import *
 
 
 class TikZ(LaTeX):
