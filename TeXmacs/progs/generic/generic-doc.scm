@@ -166,7 +166,8 @@
   ($let* ((lab (tree-label t))
           (opts (search-tag-options t))
           (pars (list-filter (search-tag-parameters t)
-                             parameter-show-in-menu?)))
+                             parameter-show-in-menu?))
+          (ths (search-tag-themes t)))
     ($block
       ($para
         "The rendering of the " ($markup lab)
@@ -178,7 +179,7 @@
         "You may also directly edit the macro in the style file or package "
         "where it was defined, using " ($menu "Edit source") ".")
     
-      ($when (nnull? (append opts pars))
+      ($when (nnull? (append opts pars ths))
         ($para
           "Still using the " ($menu "Focus" "Preferences") " menu, "
           "you may also specify "
@@ -188,11 +189,18 @@
             "style parameters")
           ($when (and (nnull? opts) (nnull? pars))
             "style options and parameters")
-          " which apply to the " ($markup lab) " tag. "
+          " that apply to the " ($markup lab) " tag. "
           "These settings are global, so they will apply to all other "
           ($markup lab) " tags in your document, and generally also to "
           "other similar tags."))
 
+      ($when (nnull? ths)
+        ($para
+          "The " ($markup lab) " tag uses themes for its rendering. "
+          "These themes come with their own style parameters that "
+          "can be customized via "
+          ($menu "Focus" "Preferences" "Theme parameters") "."))
+      
       ($when (nnull? opts)
         ($folded ($strong "Style options")
           ($for (opt opts)
@@ -201,7 +209,12 @@
       ($when (nnull? pars)
         ($folded ($strong "Style parameters")
           ($for (par pars)
-            (focus-doc-parameter par)))))))
+            (focus-doc-parameter par))))
+      
+      ($for (th ths)
+        ($folded ($strong "Parameters for the " th " theme")
+          ($for (mem (theme->members th))
+            (focus-doc-parameter mem)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Document structured editing operations

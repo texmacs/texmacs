@@ -133,3 +133,63 @@
 
 (tm-define (search-tag-parameters t)
   (search-parameters (tree-label t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Theme analysis
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (theme-guess var)
+  (with def (get-init-tree var)
+    (and (tree-is? def 'macro)
+         (== (tree-arity def) 2)
+         (tree-is? (tree-ref def 1) 'with)
+         (with l (cDr (tm-children (tree->stree (tm-ref def 1))))
+           (and (>= (length l) 2)
+                (let* ((var (car l))
+                       (val (cadr l)))
+                  (and (string? var)
+                       (tm-is? val 'value)
+                       (== (tm-arity val) 1)
+                       (string? (tm-ref val 0))
+                       (string-ends? (tm-ref val 0) (string-append "-" var))
+                       (string-drop-right (tm-ref val 0)
+                                          (+ (string-length var) 1)))))))))
+
+(define (theme-read-members th l)
+  (if (or (null? l) (null? (cdr l))) l
+      (and-with r (theme-read-members th (cddr l))
+        (let* ((var (car l))
+               (val (cadr l)))
+          (and (string? var)
+               (tm-is? val 'value)
+               (== (tm-arity val) 1)
+               (== (tm-ref val 0) (string-append th "-" var))
+               (cons var r))))))
+
+(tm-define (theme->members th)
+  ;; FIXME: does not handle subthemes yet
+  (with def (get-init-tree (string-append "with-" th))
+    (and (tree-is? def 'macro)
+         (== (tree-arity def) 2)
+         (tree-is? (tree-ref def 1) 'with)
+         (with l (cDr (tm-children (tree->stree (tm-ref def 1))))
+           (theme-read-members th l)))))
+
+(define (member->theme-at var at)
+  (with pos (string-search-backwards "-" at var)
+    (and (>= pos 0)
+         (or (and-with mems (theme->members (substring var 0 pos))
+               (and (in? (substring var (+ pos 1) (string-length var)) mems)
+                    (substring var 0 pos)))
+             (member->theme-at var (- pos 1))))))
+
+(tm-define (member->theme var)
+  (member->theme-at var (- (string-length var) 1)))
+
+(tm-define (search-themes l)
+  (let* ((l1 (search-parameters l))
+         (l2 (list-filter (map member->theme l1) identity)))
+    (list-remove-duplicates l2)))
+
+(tm-define (search-tag-themes l)
+  (search-themes (tree-label l)))

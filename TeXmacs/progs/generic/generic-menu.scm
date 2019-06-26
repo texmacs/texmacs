@@ -28,10 +28,15 @@
   (variants-of (tree-label t)))
 
 (tm-define (focus-tag-name l)
-  (if (symbol-unnumbered? l)
-      (focus-tag-name (symbol-drop-right l 1))
-      (with r (upcase-first (tree-name (tree l)))
-        (string-replace r "-" " "))))
+  (let* ((s (symbol->string l))
+         (th (member->theme s)))
+    (if th
+        (with ns (string-drop s (+ (string-length th) 1))
+          (focus-tag-name (string->symbol ns)))
+        (if (symbol-unnumbered? l)
+            (focus-tag-name (symbol-drop-right l 1))
+            (with r (upcase-first (tree-name (tree l)))
+              (string-replace r "-" " "))))))
 
 (tm-menu (focus-variant-menu t)
   (for (v (focus-variants-of t))
@@ -273,7 +278,8 @@
     (-> (eval (focus-tag-name (string->symbol l)))
         (dynamic (init-env-menu l cs)))))
 
-(tm-define (parameter-show-in-menu? l) #t)
+(tm-define (parameter-show-in-menu? l)
+  (not (member->theme l)))
 
 (tm-menu (focus-parameters-menu t)
   (with ps (list-filter (search-tag-parameters t) parameter-show-in-menu?)
@@ -283,6 +289,21 @@
           (dynamic (focus-parameter-menu-item p)))
         (if (tree-label-extension? (tree-label t))
             ---))))
+
+(tm-menu (focus-theme-parameters-submenu th)
+  (with mems (theme->members th)
+    (for (mem mems)
+      (with var (string-append th "-" mem)
+        (dynamic (focus-parameter-menu-item var))))))
+
+(tm-menu (focus-theme-parameters-menu t)
+  (with ths (search-tag-themes t)
+    (if (nnull? ths)
+        (group "Theme parameters")
+        (for (th ths)
+          (-> (eval th)
+              (dynamic (focus-theme-parameters-submenu th))))
+        ---)))
 
 (tm-define (parameter-show-in-menu? l)
   (:require (in? l (list "the-label" "auto-nr" "current-part" "language"
@@ -338,6 +359,7 @@
 (tm-menu (focus-preferences-menu t)
   (dynamic (focus-style-options-menu t))
   (dynamic (focus-parameters-menu t))
+  (dynamic (focus-theme-parameters-menu t))
   (dynamic (focus-tag-edit-menu (tree-label t))))
 
 (tm-menu (focus-theme-menu t))
