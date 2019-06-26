@@ -288,8 +288,9 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   if (input_format == "picture") {
     tree t (IMAGE);
     QSize size= qvariant_cast<QImage>(md->imageData()).size ();
-    string w= as_string (size.width ()) * "px";
-    string h= as_string (size.height ()) * "px";
+    int ww= size.width (), hh= size.height ();
+    string w, h;
+    qt_pretty_image_size (ww, hh, w, h);
     t << tuple (tree (RAW_DATA, s), "png") << w << h << "" << "";
     s= as_string (call ("convert", t, "texmacs-tree", "texmacs-snippet"));
   }

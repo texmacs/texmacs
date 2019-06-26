@@ -403,6 +403,10 @@
 
   <drd-props|semicolon-separated|arity|<tuple|repeat|1|1>|accessible|all>
 
+  <assign|prepend-space|<macro|x| <arg|x>>>
+
+  <assign|space-separated|<xmacro|items|<arg|items|0><map-args|prepend-space|concat|items|1>>>
+
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
 
   <assign|hidden-title|<macro|title|>>

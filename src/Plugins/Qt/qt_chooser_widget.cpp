@@ -268,6 +268,7 @@ qt_chooser_widget_rep::perform_dialog () {
 #if !defined(Q_WS_MAC) // && !defined(Q_WS_WIN)   //at least windows Xp and 7 lack image preview, switch to custom dialog
         file = "(list " * file * imgdialog->getParamsAsString () * ")"; //set image size from preview
 #else //MacOs only now
+        /*
         QPixmap pic (fileNames.first()); // Qt can't eps & pdf in windows.
         string params;
         // HACK: which value should we choose here?
@@ -294,7 +295,17 @@ qt_chooser_widget_rep::perform_dialog () {
                  << "\"" << "" << "\" "  // xps ??
                  << "\"" << "" << "\"";   // yps ??
         }
-        file = "(list " * file * params * ")"; 
+        file = "(list " * file * params * ")";
+        */
+        url u= url_system (imname);
+        string w, h;
+        qt_pretty_image_size (u, w, h);
+        string params;
+        params << "\"" << w << "\" "
+               << "\"" << h << "\" "
+               << "\"" << "" << "\" "  // xps ??
+               << "\"" << "" << "\"";   // yps ??
+        file = "(list " * file * " " * params * ")";
 #endif
       }
     }

@@ -37,6 +37,8 @@
 #include "wencoding.hpp"
 
 #include "qt_gui.hpp"    // gui_maximal_extents()
+#include "editor.hpp"
+#include "new_view.hpp"  // get_current_editor()
 
 #ifdef USE_GS
 #include "Ghostscript/gs_utilities.hpp"
@@ -392,7 +394,7 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
       convert_error << "Cannot read image file '" << image << "'"
       << " in qt_image_size" << LF;
       w= 35; h= 35;
-	  return false;
+      return false;
   }
   else {
     w= (int) rint ((((double) im.width ())*2834)/im.dotsPerMeterX());
@@ -401,6 +403,35 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
         <<w<<" x "<<h<<LF;
     return true;      
   }
+}
+
+void
+qt_pretty_image_size (int ww, int hh, string& w, string& h) {
+  SI pt = get_current_editor()->as_length ("1pt");
+  SI par= get_current_editor()->as_length ("1par");
+  if (ww <= 0 || hh <= 0 || ww * pt > par) {
+    w= "1par";
+    h= "";
+  }
+  else {
+    w= as_string (ww) * "pt";
+    h= as_string (hh) * "pt";
+  }
+}
+
+bool
+qt_pretty_image_size (url image, string& w, string& h) {
+  if (suffix (image) == "pdf" ||
+      suffix (image) == "ps" ||
+      suffix (image) == "eps") {
+    w= "";
+    h= "";
+    return false;
+  }
+  int ww, hh;
+  bool r= qt_image_size (image, ww, hh);
+  qt_pretty_image_size (ww, hh, w, h);
+  return r;
 }
 
 void

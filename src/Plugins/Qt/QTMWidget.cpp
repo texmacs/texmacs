@@ -37,7 +37,6 @@
 #include <QFileInfo>
 
 
-
 hashmap<int,string> qtkeymap (0);
 hashmap<int,string> qtdeadmap (0);
 
@@ -750,7 +749,7 @@ QTMWidget::dropEvent (QDropEvent *event)
   coord2 pt= from_qpoint (point);
 
   //qDebug() << event;
-  tree doc (DOCUMENT);
+  tree doc (CONCAT);
   const QMimeData *md= event->mimeData ();
   QByteArray buf;
 
@@ -758,20 +757,22 @@ QTMWidget::dropEvent (QDropEvent *event)
     QList<QUrl> l= md->urls ();
 //    qDebug() << l;
     for (int i=0; i<l.size (); i++) {
-      string url;
+      string name;
 #ifdef OS_MACOS
-      url= from_qstring (fromNSUrl (l[i]));
+      name= from_qstring (fromNSUrl (l[i]));
 #else
-      url= from_qstring (l[i].toLocalFile ());
+      name= from_qstring (l[i].toLocalFile ());
 #endif
-      string extension = suffix (url);
+      string extension = suffix (name);
       if ((extension == "eps") || (extension == "ps")   ||
           (extension == "pdf") || (extension == "png")  ||
           (extension == "jpg") || (extension == "jpeg")) {
-        tree im (IMAGE, url, ".5par", "", "", "");
+        string w, h;
+        qt_pretty_image_size (url_system (name), w, h);
+        tree im (IMAGE, name, w, h, "", "");
         doc << im;
       } else {
-        doc << url;
+        doc << name;
       }
     }
   } else if (md->hasImage ()) {
@@ -780,8 +781,9 @@ QTMWidget::dropEvent (QDropEvent *event)
     QSize size= image.size ();
     qbuf.open (QIODevice::WriteOnly);
     image.save (&qbuf, "PNG");
-    string w= as_string (size.width ()) * "px";
-    string h= as_string (size.height ()) * "px";
+    int ww= size.width (), hh= size.height ();
+    string w, h;
+    qt_pretty_image_size (ww, hh, w, h);
     tree t (IMAGE, tree (RAW_DATA, string (buf.constData (), buf.size()), "png"),
             w, h, "", "");
     doc << t;
@@ -801,6 +803,14 @@ QTMWidget::dropEvent (QDropEvent *event)
   }
 
   if (N(doc)>0) {
+    if (N(doc) == 1)
+      doc= doc[0];
+    else {
+      tree sec (CONCAT, doc[0]);
+      for (int i=1; i<N(doc); i++)
+        sec << " " << doc[i];
+      doc= sec;
+    }
     int ticket= drop_payload_serial++;
     payloads (ticket)= doc;
     the_gui->process_mouse (tm_widget(), "drop", pt.x1, pt.x2,

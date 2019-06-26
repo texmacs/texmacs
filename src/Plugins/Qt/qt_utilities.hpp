@@ -92,6 +92,8 @@ QString fromNSUrl(const QUrl &url);
 
 bool qt_supports (url u);
 bool qt_image_size (url image, int& w, int& h);
+void qt_pretty_image_size (int ww, int hh, string& w, string& h);
+bool qt_pretty_image_size (url image, string& w, string& h);
 void qt_convert_image (url image, url dest, int w =0, int h =0);
 void qt_image_to_eps (url image, url eps, int w_pt =0, int h_pt =0, int dpi= 0);
 string qt_image_to_eps (url image, int w_pt =0, int h_pt =0, int dpi= 0);
