@@ -145,6 +145,7 @@ array<string> get_supported_languages ();
 language text_language (string s);
 language math_language (string s);
 language prog_language (string s);
+language hyphenless_language (language base);
 language ad_hoc_language (language base, tree hyphs);
 
 string locale_to_language (string s);

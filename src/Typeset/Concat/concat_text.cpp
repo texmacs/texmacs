@@ -207,7 +207,10 @@ concater_rep::typeset_hgroup (tree t, path ip) {
   if (N(t) != 1 && N(t) != 2) { typeset_error (t, ip); return; }
   marker (descend (ip, 0));
   int start= N(a);
+  language old_lan= env->lan;
+  env->lan= hyphenless_language (env->lan);
   typeset (t[0], descend (ip, 0));
+  env->lan= old_lan;
   int end= N(a);
   marker (descend (ip, 1));
   for (int i=start; i+1<end; i++)

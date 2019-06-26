@@ -298,6 +298,49 @@ decode_color (string lan_name, int c) {
 }
 
 /******************************************************************************
+* Disable hyphenation
+******************************************************************************/
+
+struct hyphenless_language_rep: language_rep {
+  language base;
+  hyphenless_language_rep (string lan_name, language lan);
+  text_property advance (tree t, int& pos);
+  array<int> get_hyphens (string s);
+  void hyphenate (string s, int after, string& left, string& right);
+};
+
+hyphenless_language_rep::hyphenless_language_rep (string nm, language lan):
+  language_rep (nm), base (lan) {}
+
+text_property
+hyphenless_language_rep::advance (tree t, int& pos) {
+  return base->advance (t, pos);
+}
+
+array<int>
+hyphenless_language_rep::get_hyphens (string s) {
+  ASSERT (N(s) != 0, "hyphenation of empty string");
+  int i, n= N(s)-1;
+  array<int> penalty (n);
+  for (i=0; i<n; i++) penalty[i]= HYPH_INVALID;
+  return penalty;
+}
+
+void
+hyphenless_language_rep::hyphenate (
+  string s, int after, string& left, string& right)
+{
+  base->hyphenate (s, after, left, right);
+}
+
+language
+hyphenless_language (language base) {
+  string name= base->res_name * "-hyphenless";
+  if (language::instances -> contains (name)) return language (name);
+  return tm_new<hyphenless_language_rep> (name, base);
+}
+
+/******************************************************************************
 * Ad hoc hyphenation patterns
 ******************************************************************************/
 
