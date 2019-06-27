@@ -9,8 +9,8 @@
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
 # in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 #
-# Change to this file will modify the DEVEL_REVISION field
-# Do not change it manually
+# Change to this file will modify the DEVEL_REVISION field.
+# Do not change it manually.
 #
 #--------------------------------------------------------------------
 

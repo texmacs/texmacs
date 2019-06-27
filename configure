@@ -2987,7 +2987,7 @@ _ACEOF
 
   else
 cat >>confdefs.h <<_ACEOF
-#define TEXMACS_REVISION $DEVEL_REVISION
+#define TEXMACS_REVISION "$DEVEL_REVISION"
 _ACEOF
 
   fi

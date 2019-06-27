@@ -38,7 +38,7 @@ AC_DEFUN([TM_SUBVERSION],[
   
   if test "$SVNREV" != "$DEVEL_REVISION"
   then AC_DEFINE_UNQUOTED(TEXMACS_REVISION, ["Custom $SVNREV"],[Svn build revision])
-  else AC_DEFINE_UNQUOTED(TEXMACS_REVISION,[$DEVEL_REVISION],[Svn build revision])
+  else AC_DEFINE_UNQUOTED(TEXMACS_REVISION,["$DEVEL_REVISION"],[Svn build revision])
   fi
 
   SVNPATCH=0
