@@ -1,13 +1,44 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.9>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.9>
+  <section|Changes from version 1.99.1 to 1.99.10>
 
   <\itemize>
+    <item>Many bug fixes (1.99.10).
+
+    <item>Redesigned web site (1.99.10).
+
+    <item>Extended <name|Css> stylability when exporting to <name|Html>
+    (1.99.10).
+
+    <item>New <TeXmacs> videos on web site (1.99.10).
+
+    <item>Drag and drop for images (1.99.10).
+
+    <item>Unification of beamer and poster styles, work in progress
+    (1.99.10).
+
+    <item>Automatic retrieval of artwork from <verbatim|texmacs.org>
+    (1.99.10).
+
+    <item>New background patterns and pictures (1.99.10).
+
+    <item>Experimental pattern effects (1.99.10).
+
+    <item>Experimental <name|Sparkle> support under <name|MacOS> (1.99.10).
+
+    <item>Experimental and partial support for <name|Git> as a versioning
+    tool (1.99.10).
+
+    <item>Experimantal <name|Graph> plug-in for graphs drawn by various
+    external tools (1.99.10).
+
+    <item>User interface for new features in educational styles (1.99.10).
+
     <item>Many bug fixes (1.99.9).
 
     <item>Similar spell checking widgets as for search and replace (1.99.9).
