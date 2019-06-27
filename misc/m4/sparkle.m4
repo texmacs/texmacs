@@ -25,7 +25,7 @@ AC_DEFUN([LC_SPARKLE],[
       WINSPARKLE_DLL="WinSparkle*.dll"
       AC_SUBST(WINSPARKLE_DLL)
       AC_SUBST(WINSPARKLE_PATH)
-  ])
+  ],[AC_MSG_ERROR([Can't use WinSparkle])])
       AC_LANG_POP([C])
       ;;
     (MACOS)
@@ -41,7 +41,7 @@ AC_DEFUN([LC_SPARKLE],[
   ],[
   SUUpdater* updater;
   ],[ sparkle_ok=1
-  ])
+  ],[AC_MSG_ERROR([Can't use WinSparkle])])
       AC_LANG_POP([Objective C])
       ;;
       esac
