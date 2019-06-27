@@ -265,43 +265,68 @@
       (explicit-buttons
         (vlist
           (refreshable "pattern-options"
-            (assuming (not global-picture?)
-              (aligned
-                (item (text "Name:")
-                  (link pattern-name-selector))
-                (item (text "Width:")
-                  (hlist
-                    (enum (set-width answer)
-                          (list (get-width) "100%" "100@" "1cm" "")
-                          (get-width) "15em") >>))
-                (item (text "Height:")
-                  (hlist
-                    (enum (set-height answer)
-                          (list (get-height) "100%" "100@" "1cm" "")
-                          (get-height) "15em") >>))
-                (item (text "Recolor:")
-                  (link pattern-recolor-options))
-                (item (text "Skin:")
-                  (link pattern-skin-options))
-                ;; TODO: the blur effect changes the image size;
-                ;; one needs a blur that wraps around torically
-                ;;(item (text "Blur:")
-                ;;  (link pattern-blur-options))
-                ))
-            (assuming global-picture?
-              (aligned
-                (item (text "Name:")
-                  (link pattern-name-selector))
-                (item (text "Size:")
-                  (hlist
-                    (enum (set-size answer)
-                          (list "Fit" "Fit to width" "Fit to height")
-                          (get-size) "15em") >>))
-                (item (text "Recolor:")
-                  (link pattern-recolor-options))
-                (item (text "Skin:")
-                  (link pattern-skin-options))
-                )))
+	    (assuming (get-boolean-preference "pattern effects")
+	      (assuming (not global-picture?)
+		(aligned
+		  (item (text "Name:")
+		    (link pattern-name-selector))
+		  (item (text "Width:")
+		    (hlist
+		      (enum (set-width answer)
+			    (list (get-width) "100%" "100@" "1cm" "")
+			    (get-width) "15em") >>))
+		  (item (text "Height:")
+		    (hlist
+		      (enum (set-height answer)
+			    (list (get-height) "100%" "100@" "1cm" "")
+			    (get-height) "15em") >>))
+		  (item (text "Recolor:")
+		    (link pattern-recolor-options))
+		  (item (text "Skin:")
+		    (link pattern-skin-options))
+		  ;; TODO: the blur effect changes the image size;
+		  ;; one needs a blur that wraps around torically
+		  ;;(item (text "Blur:")
+		  ;;  (link pattern-blur-options))
+		  ))
+	      (assuming global-picture?
+		(aligned
+		  (item (text "Name:")
+		    (link pattern-name-selector))
+		  (item (text "Size:")
+		    (hlist
+		      (enum (set-size answer)
+			    (list "Fit" "Fit to width" "Fit to height")
+			    (get-size) "15em") >>))
+		  (item (text "Recolor:")
+		    (link pattern-recolor-options))
+		  (item (text "Skin:")
+		    (link pattern-skin-options))
+		  )))
+	    (assuming (not (get-boolean-preference "pattern effects"))
+	      (assuming (not global-picture?)
+		(aligned
+		  (item (text "Name:")
+		    (link pattern-name-selector))
+		  (item (text "Width:")
+		    (hlist
+		      (enum (set-width answer)
+			    (list (get-width) "100%" "100@" "1cm" "")
+			    (get-width) "15em") >>))
+		  (item (text "Height:")
+		    (hlist
+		      (enum (set-height answer)
+			    (list (get-height) "100%" "100@" "1cm" "")
+			    (get-height) "15em") >>))))
+	      (assuming global-picture?
+		(aligned
+		  (item (text "Name:")
+		    (link pattern-name-selector))
+		  (item (text "Size:")
+		    (hlist
+		      (enum (set-size answer)
+			    (list "Fit" "Fit to width" "Fit to height")
+			    (get-size) "15em") >>))))))
           ======
           (glue #f #t 0 0))))
     ======
