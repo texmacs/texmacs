@@ -40,7 +40,9 @@
 
   <assign|save-aux|false>
 
-  <assign|sectional-sep|<macro|<space|2spc>>>
+  <assign|sectional-sep|<macro|.<space|2spc>>>
+
+  <assign|sectional-post-sep|<macro|<space|2spc>>>
 
   <assign|html-css|http://www.texmacs.org/css/tmdoc.css>
 
