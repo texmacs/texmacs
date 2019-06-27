@@ -1,19 +1,15 @@
 <TeXmacs|1.99.9>
 
-<style|<tuple|tmdoc|old-spacing>>
+<style|<tuple|tmdoc|chinese>>
 
 <\body>
-  <tmdoc-title|The <name|Dra<TeX>> plug-in>
+  <tmdoc-title|Short description of DraTex>
 
-  <\traverse>
-    <branch|Short description|dratex-abstract.en.tm>
+  DraTex is a low level (DraTex.sty) and a high-level (AlDraTex.sty) drawing
+  package written entirely in <TeX>. This plugin is a simple interface
+  between DraTex and <TeXmacs>.
 
-    <\branch>
-      Example sessions
-    </branch|dratex-demo.en.tm>
-  </traverse>
-
-  <tmdoc-copyright|2011\U2019|Joris van der Hoeven|Darcy Shen>
+  <tmdoc-copyright|2019|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -23,9 +19,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|par-hyphen|normal>
-    <associate|preamble|false>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
