@@ -542,14 +542,9 @@ WINDOWS_BUNDLE: TEXMACS
 	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
 	if test -d "$(QT_PLUGINS_PATH)";then $(CP) -u $$(cygpath -u $(QT_PLUGINS_PATH)/*) $(WINDOWS_BUILD_BIN_DIR);fi
 
-#$(WINDOWS_PACKAGE_DIR)/@tm_devel@@REVISION@-installer.exe: $(wilcard $(WINDOWS_BUILD_DIR)/*)
-WINDOWS_PACKAGE: $(wilcard $(WINDOWS_BUILD_DIR)/*)
+WINDOWS_PACKAGE: WINDOWS_BUNDLE
 	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
-
-#WINDOWS_PACKAGE: WINDOWS_BUNDLE $(WINDOWS_PACKAGE_DIR)/@tm_devel@@REVISION@-installer.exe
-#	$(MV) ../distr/*-installer* $(WINDOWS_PACKAGE_DIR)
-#	$(RM) -r $(WINDOWS_BUILD_DIR)
 
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
 
