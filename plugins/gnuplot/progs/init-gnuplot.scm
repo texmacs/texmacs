@@ -17,10 +17,15 @@
       (with s (texmacs->code (stree->tree u) "SourceCode")
         (string-append s "\n<EOF>\n"))))
 
+(define (gnuplot-launcher)
+    (if (os-mingw?)
+	"tm_gnuplot.bat"
+	"tm_gnuplot"))
+
 (plugin-configure gnuplot
   (:require (url-exists-in-path? "gnuplot"))
   (:require (url-exists-in-path? "python"))
-  (:launch "tm_gnuplot")
+  (:launch ,(gnuplot-launcher))
   (:serializer ,gnuplot-serialize)
   (:session "Gnuplot")
   (:scripts "Gnuplot"))
