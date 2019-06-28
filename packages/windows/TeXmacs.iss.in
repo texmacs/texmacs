@@ -17,7 +17,7 @@ LicenseFile=..\..\..\distr\TeXmacs-Windows\LICENSE
 
 UninstallDisplayIcon={app}\TeXmacs.ico
 OutputDir=..\..\..\distr\windows
-OutputBaseFilename=@tm_devel@-win-x86
+OutputBaseFilename=@tm_devel@-installer
 ; SourceDir=../..
 ChangesAssociations=yes
 
