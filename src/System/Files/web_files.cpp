@@ -70,23 +70,52 @@ web_encode (string s) {
   return tm_decode (s);
 }
 
+static string
+fetch_tool () {
+  static bool done= false;
+  static string tool= "";
+  if (done) return tool;
+  if (tool == "") {
+    string test= var_eval_system ("which wget");
+    if (ends (test, "wget")) tool= "wget";
+  }
+  if (tool == "") {
+    string test= var_eval_system ("which curl");
+    if (ends (test, "curl")) tool= "curl";
+  }
+  done= true;
+  return tool;
+}
+
 url
 get_from_web (url name) {
   if (!is_rooted_web (name)) return url_none ();
   url res= get_cache (name);
   if (!is_none (res)) return res;
 
-  string test= var_eval_system ("which wget");
-  if (!ends (test, "wget")) return url_none ();
+  string tool= fetch_tool ();
+  if (tool == "") return url_none ();
+  
   url tmp= url_temp ();
   string tmp_s= escape_sh (concretize (tmp));
-  string cmd= "wget --header='User-Agent: TeXmacs-" TEXMACS_VERSION "' -q";
-  cmd << " --no-check-certificate --tries=1";
-  cmd << " -O " << tmp_s << " " << escape_sh (web_encode (as_string (name)));
-  // cout << cmd << "\n";
-  system (cmd);
-  // cout << "got " << name << " as " << tmp << "\n";
+  string cmd= "";
+  
+  if (tool == "wget") {
+    cmd= "wget --header='User-Agent: TeXmacs-" TEXMACS_VERSION "' -q";
+    cmd << " --no-check-certificate --tries=1";
+    cmd << " -O " << tmp_s << " " << escape_sh (web_encode (as_string (name)));
+  }
+  
+  if (tool == "curl") {
+    cmd= "curl --user-agent TeXmacs-" TEXMACS_VERSION;
+    cmd << " " << escape_sh (web_encode (as_string (name)));
+    cmd << " --output " << tmp_s;
+  }
 
+  //cout << cmd << LF;
+  system (cmd);
+  //cout << "got " << name << " as " << tmp << LF;
+  
   if (var_eval_system ("cat " * tmp_s * " 2> /dev/null") == "") {
     remove (tmp);
     return url_none ();
