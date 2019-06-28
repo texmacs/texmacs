@@ -15,7 +15,8 @@
   (:use (kernel gui kbd-define)
         (utils edit selections)
         (prog scheme-tools) 
-        (prog scheme-edit) (prog cpp-edit) (prog python-edit)))
+        (prog scheme-edit) (prog cpp-edit) (prog python-edit)
+        (prog fortran-edit)))
 
 (kbd-map
   (:mode in-prog?)
@@ -101,3 +102,12 @@
   ("]" (python-bracket-close "[" "]" ))
   ("\"" (python-bracket-open "\"" "\"" ))
   ("'" (python-bracket-open "'" "'" )))
+
+(kbd-map
+  (:mode in-prog-fortran?)
+  ("(" (fortran-bracket-open "(" ")" ))
+  (")" (fortran-bracket-close "(" ")" ))
+  ("[" (fortran-bracket-open "[" "]" ))
+  ("]" (fortran-bracket-close "[" "]" ))
+  ("\"" (fortran-bracket-open "\"" "\"" ))
+  ("'" (fortran-bracket-open "'" "'" )))
