@@ -243,6 +243,8 @@ edit_main_rep::print_doc (url name, bool conform, int first, int last) {
   env->write (PAGE_SHOW_HF, "true");
   env->write (PAGE_SCREEN_MARGIN, "false");
   env->write (PAGE_BORDER, "none");
+  if (is_func (env->read (BG_COLOR), PATTERN))
+    env->write (BG_COLOR, env->exec (env->read (BG_COLOR)));
   if (!conform) {
     env->write (PAGE_MEDIUM, "paper");
     env->write (PAGE_PRINTED, "true");
