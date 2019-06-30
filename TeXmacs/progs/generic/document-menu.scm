@@ -603,7 +603,7 @@
 (menu-bind page-rendering-menu
   ("Paper" (init-page-rendering "paper"))
   ("Papyrus" (init-page-rendering "papyrus"))
-  ("Automatic" (init-page-rendering "automatic"))
+  ("Screen" (init-page-rendering "automatic"))
   ("Beamer" (init-page-rendering "beamer"))
   ("Book" (init-page-rendering "book"))
   ("Panorama" (init-page-rendering "panorama")))
