@@ -41,6 +41,8 @@
     <string>@DEVEL_VERSION@</string>
     <key>SUFeedURL</key>
     <string>@APPCAST@</string>
+    <key>SUEnableAutomaticChecks</key>
+    <false/>
     <key>CFBundleSignature</key>
     <string>TXMC</string>
     <key>NSMainNibFile</key>
@@ -54,6 +56,6 @@
     <key>LSMinimumSystemVersion</key>
     <string>@OSXVERMIN@</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 1998-1999 Joris van der Hoeven and others</string>
+    <string>Copyright © 1998-2019 Joris van der Hoeven and others</string>
   </dict>
 </plist>
