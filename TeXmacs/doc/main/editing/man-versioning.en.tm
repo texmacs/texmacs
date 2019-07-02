@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.10>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
@@ -8,10 +8,9 @@
   When writing documents in collaboration with other authors, it frequently
   arises that one wants to go through changes made by the other authors, and
   either accept, discard or further correct them. After enabling the
-  versioning tool through <menu|Edit|Preferences|Utilities|Versioning tool>,
-  a<nbsp>special menu <menu|Version> appears in the main menu bar, which
-  makes this process automatic. Below, we will describe in more detail how
-  this tool works.
+  versioning tool through <menu|Tools|Versioning tool>, a special menu
+  <menu|Version> appears in the main menu bar, which makes this process
+  automatic. Below, we will describe in more detail how this tool works.
 
   In addition, there exist many stand-alone programs for maintaining several
   versions of a same file, such as <hlink|<name|Subversion>|http://subversion.tigris.org/>,

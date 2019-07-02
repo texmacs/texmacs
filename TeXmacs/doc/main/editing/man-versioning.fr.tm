@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.10>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|french|old-spacing>>
 
 <\body>
   <tmdoc-title|Outil gestionnaire de version>
@@ -8,10 +8,9 @@
   Lors de l'écriture coopérative de documents, il arrive fréquemment qu'un
   auteur veuille explorer les changements faits par les autres, pour les
   accepter, les refuser ou même les corriger. Après avoir activer la gestion
-  des versions à l'aide de : <menu|Edit|Preferences|Utilities|Versioning
-  tool>, un menu spécial <menu|Version> apparaît dans la barre de menu
-  principal, ce qui rend cette action automatique . Regardons plus en détail
-  comment cet outil fonctionne.
+  des versions à l'aide de : <menu|Tools|Versioning tool>, un menu spécial
+  <menu|Version> apparaît dans la barre de menu principal, ce qui rend cette
+  action automatique . Regardons plus en détail comment cet outil fonctionne.
 
   Pour le moment, des controles automatiques de version tels que
   <name|Subversion> ne sont pas encore supportés. Dans le futur, nous avons
@@ -123,8 +122,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|french>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
