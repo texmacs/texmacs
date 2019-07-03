@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.10>
 
 <style|<tuple|source|std|english>>
 
@@ -192,7 +192,7 @@
     </src-comment>
   </active*>
 
-  <assign|item-paragraph|<macro|name|<paragraph-title|<arg|name>>>>
+  <assign|item-paragraph|<macro|name|<paragraph-unnumbered-title|<arg|name>>>>
 
   <assign|description-paragraphs|<\macro|body>
     <\with|item*|<value|item-paragraph>>
