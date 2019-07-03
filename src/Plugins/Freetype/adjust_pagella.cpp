@@ -42,6 +42,9 @@ lsub_adjust_pagella (hashmap<string,double>& t) {
     adjust_pair (t, "<frak-" * string (c) * ">", 0.02);
   adjust_pair (t, "<wedge>", 0.02);
   adjust_pair (t, "<curlywedge>", 0.05);
+  adjust_pair (t, "<backprime>", 0.03);
+  adjust_pair (t, "<dag>", 0.03);
+  adjust_pair (t, "<maltese>", 0.03);
   adjust_integral (t, "1", -0.07);
   adjust_integral (t, "2", -0.1);
   adjust_contour_integral (t, "1", -0.1);

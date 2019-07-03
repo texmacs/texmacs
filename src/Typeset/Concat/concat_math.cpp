@@ -170,9 +170,11 @@ concater_rep::typeset_lprime (tree t, path ip) {
     box b1, b2;
     b2= typeset_as_concat (env, s /*t[0]*/, sip);
     b2= symbol_box (sip, b2, N(t[0]->label));
-    b2= move_box (sip, b2,
-		  flag? 0: env->as_length (string ("-0.05fn")),
-		  flag? env->as_length ("-0.75ex"): 0);
+    if (flag || env->fn->math_type != MATH_TYPE_TEX_GYRE)
+      b2= move_box (sip, b2,
+                    flag? 0: env->as_length (string ("-0.05fn")),
+                    flag? env->as_length ("-0.75ex"): 0,
+                    false, true);
     if (!flag) env->local_end_script (old_il);
     print (LSUP_ITEM, OP_SKIP, script_box (ip, b1, b2, env->fn));
     penalty_max (HYPH_INVALID);
@@ -200,9 +202,11 @@ concater_rep::typeset_rprime (tree t, path ip) {
       // NOTE: hack for detection of poor italic font
       b2= shift_box (sip, b2, (SI) (-1.0 * b2->y1 * b2->right_slope ()), 0);
     b2= symbol_box (sip, b2, N(t[0]->label));
-    b2= move_box (sip, b2,
-		  flag? 0: env->as_length (string ("0.05fn")),
-		  flag? env->as_length ("-0.75ex"): 0);
+    if (flag || env->fn->math_type != MATH_TYPE_TEX_GYRE)
+      b2= move_box (sip, b2,
+                    flag? 0: env->as_length (string ("0.05fn")),
+                    flag? env->as_length ("-0.75ex"): 0,
+                    false, true);
     if (!flag) env->local_end_script (old_il);
     penalty_max (HYPH_INVALID);
     if (N(a)>0) a[N(a)-1]->limits= false;
