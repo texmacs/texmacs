@@ -17,6 +17,8 @@
 
 void
 lsub_adjust_pagella (hashmap<string,double>& t) {
+  adjust_pair (t, "+", 0.05);
+  adjust_pair (t, "-", 0.05);
   adjust_pair (t, "T", 0.03);
   adjust_pair (t, "U", 0.03);
   adjust_pair (t, "V", 0.05);
@@ -53,6 +55,8 @@ lsub_adjust_pagella (hashmap<string,double>& t) {
 
 void
 lsup_adjust_pagella (hashmap<string,double>& t) {
+  adjust_pair (t, "+", 0.05);
+  adjust_pair (t, "-", 0.05);
   adjust_pair (t, "b", 0.02);
   adjust_pair (t, "A", 0.02);
   adjust_pair (t, "B", 0.02);
@@ -177,6 +181,7 @@ rsub_adjust_pagella (hashmap<string,double>& t) {
   adjust_integral (t, "2", -0.17);
   adjust_contour_integral (t, "1", -0.03);
   adjust_contour_integral (t, "2", -0.13);
+  right_adjust_arrow (t, -0.05);
 }
 
 void
@@ -329,6 +334,7 @@ rsup_adjust_pagella (hashmap<string,double>& t) {
   adjust_integral (t, "2", -0.02);
   adjust_contour_integral (t, "1", -0.03);
   adjust_contour_integral (t, "2", -0.03);
+  right_adjust_arrow (t, -0.05);
 }
 
 void

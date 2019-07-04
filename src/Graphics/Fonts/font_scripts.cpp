@@ -168,6 +168,30 @@ rsup_adjust_std (hashmap<string,double>& t) {
 }
 
 /******************************************************************************
+* Adjusting arrow subscripts and superscripts
+******************************************************************************/
+
+void
+adjust_arrow (hashmap<string,double>& t, string c, double delta) {
+  adjust_char (t, c, delta);
+  if (N(c) <= 3 || !starts (c, "<") || !ends (c, ">")) return;
+  if (is_locase (c[1])) c= "<long" * c(1,N(c));
+  else c= "<Long" * locase_all (c(1,2)) * c(2,N(c));
+  adjust_char (t, c, delta);
+}
+
+void
+right_adjust_arrow (hashmap<string,double>& t, double delta) {
+  adjust_arrow (t, "<rightarrow>", delta);
+  adjust_arrow (t, "<leftrightarrow>", delta);
+  adjust_arrow (t, "<mapsto>", delta);
+  adjust_arrow (t, "<twoheadrightarrow>", delta);
+  adjust_arrow (t, "<rightarrowtail>", delta);
+  adjust_arrow (t, "<Rightarrow>", delta);
+  adjust_arrow (t, "<Leftrightarrow>", delta);
+}
+
+/******************************************************************************
 * Guessing further adjustments
 ******************************************************************************/
 

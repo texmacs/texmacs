@@ -218,6 +218,7 @@ void lsub_adjust_std (hashmap<string,double>& t);
 void lsup_adjust_std (hashmap<string,double>& t);
 void rsub_adjust_std (hashmap<string,double>& t);
 void rsup_adjust_std (hashmap<string,double>& t);
+void right_adjust_arrow (hashmap<string,double>& t, double delta);
 void above_adjust_std (hashmap<string,double>& t);
 void below_adjust_std (hashmap<string,double>& t);
 void above_adjust_frak (hashmap<string,double>& t, double force);
