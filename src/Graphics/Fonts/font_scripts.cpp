@@ -187,6 +187,10 @@ right_adjust_arrow (hashmap<string,double>& t, double delta) {
   adjust_arrow (t, "<mapsto>", delta);
   adjust_arrow (t, "<twoheadrightarrow>", delta);
   adjust_arrow (t, "<rightarrowtail>", delta);
+  adjust_arrow (t, "<hookrightarrow>", delta);
+  adjust_arrow (t, "<looparrowright>", delta);
+  adjust_arrow (t, "<rightharpoondown>", delta);
+  adjust_arrow (t, "<rightharpoonup>", delta);
   adjust_arrow (t, "<Rightarrow>", delta);
   adjust_arrow (t, "<Leftrightarrow>", delta);
 }
