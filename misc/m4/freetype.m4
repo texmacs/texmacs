@@ -12,12 +12,12 @@
 #--------------------------------------------------------------------
 
 AC_DEFUN([LC_WITH_FREETYPE],[
-  AC_PATH_PROG(FREETYPE_tmp1, freetype-config, [no], [${$1:-$PATH}])
-  if [[ $FREETYPE_tmp1 != no ]]
+  AC_PATH_PROG(FREETYPE_tmp1, freetype-config, [], [${$1:-$PATH}])
+  if test -n "$FREETYPE_tmp1"
   then
     LC_SCATTER_FLAGS([$($FREETYPE_tmp1 --libs) $($FREETYPE_tmp1 --cflags)],[FREETYPE])
   else
-    AC_MSG_WARN([freetype-config not found])
+    LC_SCATTER_FLAGS([$(pkg-config --libs --cflags freetype2)],[FREETYPE])
   fi
   unset FREETYPE_tmp1
 ])
