@@ -649,10 +649,7 @@
                 (get-boolean-preference "advanced font customization")))
       (meti (hlist // (text "New style page breaking"))
         (toggle (set-boolean-preference "new style page breaking" answer)
-                (get-boolean-preference "new style page breaking")))
-      (meti (hlist // (text "Enable pattern effects"))
-        (toggle (set-boolean-preference "pattern effects" answer)
-                (get-boolean-preference "pattern effects"))))
+                (get-boolean-preference "new style page breaking"))))
     /// ///
     (vlist
       (aligned

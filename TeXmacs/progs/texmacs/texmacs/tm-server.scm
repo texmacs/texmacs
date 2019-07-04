@@ -112,8 +112,7 @@
   ("experimental alpha" "on" notify-tool)
   ("new style fonts" "on" notify-new-fonts)
   ("bitmap effects" "on" notify-tool)
-  ("new style page breaking" "off" notify-new-page-breaking)
-  ("pattern effects" "off" (lambda args (noop))))
+  ("new style page breaking" "off" notify-new-page-breaking))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
