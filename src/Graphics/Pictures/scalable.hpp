@@ -39,6 +39,7 @@ public:
   virtual scalable_kind get_type () = 0;
   virtual void* get_handle () = 0;
   virtual url get_name ();
+  virtual tree get_effect ();
 
   virtual rectangle get_logical_extents () = 0;
   virtual rectangle get_physical_extents () = 0;

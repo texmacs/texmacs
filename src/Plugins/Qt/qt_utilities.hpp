@@ -97,7 +97,6 @@ bool qt_pretty_image_size (url image, string& w, string& h);
 void qt_convert_image (url image, url dest, int w =0, int h =0);
 void qt_image_to_eps (url image, url eps, int w_pt =0, int h_pt =0, int dpi= 0);
 string qt_image_to_eps (url image, int w_pt =0, int h_pt =0, int dpi= 0);
-void qt_image_data (url image, int& w, int&h, string& data, string& palette, string& mask);
 void qt_image_to_pdf (url image, url pdf, int w_pt =0, int h_pt =0, int dpi =0);
 
 string qt_application_directory ();

@@ -27,7 +27,10 @@ class picture {
 ABSTRACT_NULL(picture);
 };
 
+unsigned long long int unique_picture_id ();
+
 class picture_rep: public abstract_struct {
+  unsigned long long int unique_id;
 protected:
   virtual color internal_smooth_pixel (double x, double y);
   virtual color internal_get_pixel (int x, int y) = 0;
@@ -38,9 +41,10 @@ protected:
                                    int x1, int y1, int x2, int y2);
 
 public:
-  inline picture_rep () {}
+  inline picture_rep () : unique_id (unique_picture_id ()) {}
   inline virtual ~picture_rep () {}
 
+  inline unsigned long long int get_unique_id () { return unique_id; }
   virtual picture_kind get_type () = 0;
   virtual void* get_handle () = 0;
   virtual url get_name ();

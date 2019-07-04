@@ -29,6 +29,8 @@
 
 #ifdef QTTEXMACS
 #include "Qt/qt_utilities.hpp"
+#include "Qt/qt_picture.hpp"
+#include <QImage>
 #endif
 
 #include "PDFWriter/PDFWriter.h"
@@ -79,9 +81,6 @@ class pdf_hummus_renderer_rep : public renderer_rep {
 
   int       page_num;
   bool      inText;
-  int       alpha;
-  rgb       stroke_rgb;
-  rgb       fill_rgb;
   color     fg, bg;
   SI        lw;
   double    current_width;
@@ -103,6 +102,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   hashmap<tree,pdf_image> image_pool;
   hashmap<tree,pdf_image> pattern_image_pool;
   hashmap<tree,pdf_pattern> pattern_pool;
+  hashmap<unsigned long long int,url> picture_cache;
   array<url> temp_images;
   
   hashmap<int,ObjectIDType> alpha_id;
@@ -180,9 +180,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   PDFImageXObject *create_pdf_image_raw (string raw_data, SI width, SI height, ObjectIDType imageXObjectID);
   void make_pdf_font (string fontname);
   void draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y);
-  void  image (url u, SI w, SI h, SI x, SI y,
-               int alpha);
-  
+  void  image (url u, double w, double h, SI x, SI y, int alpha);
   
   void bezier_arc (SI x1, SI y1, SI x2, SI y2, int alpha, int delta, bool filled);
 
@@ -294,8 +292,6 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),
     page_num(0),
     inText (false),
-    stroke_rgb(-1,-1,-1),
-    fill_rgb(-1,-1,-1),
     fg (-1), bg (-1),
     lw (-1), cfn (""), cfid (NULL),
     pdf_fonts (0),
@@ -405,7 +401,7 @@ pdf_hummus_renderer_rep::~pdf_hummus_renderer_rep () {
 
   // remove temporary pictures
   for (int i=0; i<N(temp_images); i++)
-    if (!is_none (temp_images[i]))
+    if (!is_none (temp_images[i]) && exists(temp_images[i]))
       remove (temp_images[i]);
 }
 
@@ -437,7 +433,6 @@ pdf_hummus_renderer_rep::begin_page() {
     //status = PDFHummus::eFailure;
     convert_error << "Failed to create content context for page\n";
   } else {
-    alpha = 255;
     fg  = -1;
     bg  = -1;
     lw  = -1;
@@ -674,17 +669,31 @@ pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
   SI w, h;
   tree eff;
   get_pattern_data (u, w, h, eff, br, pixel);
-  // cout << "get_pattern_data " << u << ", " << w << " x " << h << ", " << eff << LF;
+  tree key= tuple (u->t, as_string (w), as_string (h), eff);
+  
   pdf_image image_pdf;
-  tree u_tree= tuple (u->t);
-  if (pattern_image_pool->contains(u_tree))
-    image_pdf= pattern_image_pool[u_tree];
+  if (pattern_image_pool->contains(key))
+    image_pdf= pattern_image_pool[key];
   else {
-    // debug_convert << "  insert pattern image\n";
+    // debug_convert << "Insert pattern image\n";
+    QImage* pim = get_image (u, w, h, eff, pixel);
+    if (pim == NULL) {
+      convert_error << "Cannot read image file '" << u << "'"
+		    << " with get_image" << LF;
+      return;
+    }
+    if (w != pim->width () || h != pim->height ()) {
+      convert_error << "Invalid image size '" << u << "'"
+		    << " after get_image" << LF;
+      return;
+    }
+    url temp= url_temp (".png");
+    pim->save (utf8_to_qstring (concretize (temp)), "PNG");
+    temp_images << temp;
     ObjectIDType image_id= pdfWriter.GetObjectsContext()
       .GetInDirectObjectsRegistry().AllocateNewObjectID();
-    image_pdf= pdf_image (u, image_id);
-    pattern_image_pool(u_tree) = image_pdf;
+    image_pdf= pdf_image (temp, image_id);
+    pattern_image_pool(key) = image_pdf;
   }
   // debug_convert << "  insert pattern\n";
   ObjectIDType id= pdfWriter.GetObjectsContext()
@@ -708,15 +717,12 @@ pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
 void
 pdf_hummus_renderer_rep::select_alpha (int a) {
   draw_glyphs ();
-  if (alpha != a) {
-    alpha = a;
-    if (!alpha_id->contains(a)) {
-      ObjectIDType temp = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
-      alpha_id(a) = temp;
-    }
-    std::string name = page->GetResourcesDictionary().AddExtGStateMapping(alpha_id(a));
-    contentContext->gs(name);
+  if (!alpha_id->contains(a)) {
+    ObjectIDType temp = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
+    alpha_id(a) = temp;
   }
+  std::string name = page->GetResourcesDictionary().AddExtGStateMapping(alpha_id(a));
+  contentContext->gs(name);
 }
 
 void
@@ -727,14 +733,10 @@ pdf_hummus_renderer_rep::select_stroke_color (color c) {;
   g= ((g*1000)/255);
   b= ((b*1000)/255);
   a= ((a*1000)/255);
-  rgb c1 = rgb(r,g,b);
-  if (stroke_rgb != c1) {
-    double dr= ((double) r) / 1000.0;
-    double dg= ((double) g) / 1000.0;
-    double db= ((double) b) / 1000.0;
-    contentContext->RG(dr, dg, db); // stroke color;
-    stroke_rgb = c1;
-  }
+  double dr= ((double) r) / 1000.0;
+  double dg= ((double) g) / 1000.0;
+  double db= ((double) b) / 1000.0;
+  contentContext->RG(dr, dg, db); // stroke color;
   select_alpha(a);
 }
 
@@ -746,14 +748,10 @@ pdf_hummus_renderer_rep::select_fill_color (color c) {;
   g= ((g*1000)/255);
   b= ((b*1000)/255);
   a= ((a*1000)/255);
-  rgb c1 = rgb(r,g,b);
-  //if (fill_rgb != c1) {
-    double dr= ((double) r) / 1000.0;
-    double dg= ((double) g) / 1000.0;
-    double db= ((double) b) / 1000.0;
-    contentContext->rg(dr, dg, db); // non-stroking color
-    fill_rgb = c1;
-  //}
+  double dr= ((double) r) / 1000.0;
+  double dg= ((double) g) / 1000.0;
+  double db= ((double) b) / 1000.0;
+  contentContext->rg(dr, dg, db); // non-stroking color
   select_alpha(a);
 }
 
@@ -856,7 +854,13 @@ pdf_hummus_renderer_rep::set_brush (brush br) {
     select_stroke_color (pen->get_color ());
   }
   if (br->get_type () == brush_pattern) {
-    register_pattern_image (br, brushpx==-1? pixel: brushpx);
+    tree p_tree= br->get_pattern ();
+    register_pattern_image (br, brushpx == -1 ? pixel : brushpx);
+    if (!pattern_pool->contains (p_tree)) {
+      convert_error << "select_stroke_pattern: "
+		    << "cannot find registered pattern\n";
+      return;
+    }
     select_fill_pattern (br);
     select_stroke_pattern (br);
   }
@@ -1702,121 +1706,39 @@ pdf_image_info (url image, int& w, int& h, PDFRectangle& cropBox, double (&tMat)
     << "dx,dy={"<<tMat[4]<< ", "<<tMat[5] <<"}"<< LF;
 }
 
-/* not used any longer
-bool
-pdf_image_rep::flush_raster (PDFWriter& pdfw, url image) {
-  string data, mask, palette;
-  int iw = 0, ih =0;
-  
 #ifdef QTTEXMACS
-  qt_image_data (image, iw, ih, data, palette, mask);
-#endif
-  
-  if ((iw==0)||(ih==0)) return false;
-  
-  if ((iw==0)||(ih==0)) {
-    // we do not have image data, something went wrong.
-    // put a placeholder in the XForm
-    
-    PDFFormXObject* xobjectForm = pdfw.StartFormXObject(PDFRectangle(0, 0, w, h), id);
-    
-    XObjectContentContext* xobjectContentContext = xobjectForm->GetContentContext();
-    
-    xobjectContentContext->q();
-    xobjectContentContext->cm(w, 0, 0, h, 0, 0);
-    xobjectContentContext->re(0,0,1,1);
-    xobjectContentContext->S();
-    xobjectContentContext->m(0,0);
-    xobjectContentContext->l(1,1);
-    xobjectContentContext->S();
-    xobjectContentContext->m(0,1);
-    xobjectContentContext->l(1,0);
-    xobjectContentContext->S();
-    xobjectContentContext->Q();
-    
-    EStatusCode status = pdfw.EndFormXObjectAndRelease(xobjectForm);
-    (void) status;
-    
-  } else {
-    
-    // ok, we have enough data to put a real image into the pdf
-    // encode the image into an Image XObject
-    // and put a Form XObject to do proper scaling
-    
-    ObjectsContext& objectsContext = pdfw.GetObjectsContext();
-    ObjectIDType imageId = objectsContext.StartNewIndirectObject();
-    do {
-      {
-        // write stream dictionary
-        DictionaryContext* imageContext = objectsContext.StartDictionary();
-        // type
-        imageContext->WriteKey(scType);
-        imageContext->WriteNameValue(scXObject);
-        // subtype
-        imageContext->WriteKey(scSubType);
-        imageContext->WriteNameValue(scImage);
-        // Width
-        imageContext->WriteKey(scWidth);
-        imageContext->WriteIntegerValue(iw);
-        // Height
-        imageContext->WriteKey(scHeight);
-        imageContext->WriteIntegerValue(ih);
-        // Bits Per Component
-        imageContext->WriteKey(scBitsPerComponent);
-        imageContext->WriteIntegerValue(8);
-        // Color Space and Decode Array if necessary
-        imageContext->WriteKey(scColorSpace);
-        imageContext->WriteNameValue(scDeviceRGB);
-        // Data stream
-        {
-          PDFStream* imageStream = objectsContext.StartPDFStream(imageContext, true);
-          
-          OutputStreamTraits outputTraits(imageStream->GetWriteStream());
-          c_string buf (data);
-          
-          InputByteArrayStream reader((IOBasicTypes::Byte*)(char *)buf, N(data));
-          EStatusCode status = outputTraits.CopyToOutputStream(&reader);
-          if(status != PDFHummus::eSuccess)
-          {
-            delete imageStream;
-            break;
-          }
-          objectsContext.EndPDFStream(imageStream);
-          delete imageStream;
-        }
-      }
-      objectsContext.EndIndirectObject();
-      
-      PDFImageXObject *imageXObject = new PDFImageXObject(imageId, KProcsetImageC);
-      
-      PDFFormXObject* xobjectForm = pdfw.StartFormXObject(PDFRectangle(0, 0, w, h), id);
-      
-      XObjectContentContext* xobjectContentContext = xobjectForm->GetContentContext();
-      
-      xobjectContentContext->q();
-      xobjectContentContext->cm(w, 0, 0, h, 0, 0);
-      std::string pdfImageName = xobjectForm->GetResourcesDictionary().AddImageXObjectMapping(imageXObject);
-      xobjectContentContext->Do(pdfImageName);
-      xobjectContentContext->Q();
-      
-      delete imageXObject; imageXObject = NULL;
-      
-      EStatusCode status = pdfw.EndFormXObjectAndRelease(xobjectForm);
-      (void) status;
-      
-    } while (false);
+void
+qt_image_data (url image, int& w, int&h, string& data, string& mask) {
+  // debug_convert << "in qt_image_data"<<LF; 
+  QImage im (utf8_to_qstring (concretize (image)));
+  if (im.isNull ()) {
+    convert_error << "Cannot read image file '" << image << "'"
+    << " in qt_image_data" << LF;
+    return;
   }
-  
-  return true;
+  w=  im.width ();
+  h=  im.height ();    
+  data = string ((w*h)*3);
+  mask = string (w*h); 
+  int i= 0, j= 0, k= 0, l= 0;
+  for (j= 0; j < im.height (); j++) {
+    for (i=0; i < im.width (); i++) {
+      QRgb p= im.pixel (i, j);
+      data[l++] = qRed (p);
+      data[l++] = qGreen (p);
+      data[l++] = qBlue (p);
+      mask[k++] = qAlpha (p);
+    }
+  }
 }
-*/
+#endif
 
 bool
 pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
-  string data, smask, palette;
+  string data, smask;
   int iw = 0, ih =0;
 #ifdef QTTEXMACS
-  qt_image_data (u, iw, ih, data, palette, smask);
+  qt_image_data (u, iw, ih, data, smask);
 #else
   convert_error << "pdf_image_rep::flush_for_pattern: cannot export pattern "
 		<< u << "  to PDF" << LF;
@@ -1935,9 +1857,10 @@ pdf_hummus_renderer_rep::flush_patterns ()
 
 void
 pdf_hummus_renderer_rep::image (
-  url u, SI w, SI h, SI x, SI y, int alpha)
+  url u, double w, double h, SI x, SI y, int alpha)
 {
-  // debug_convert << "image " << u << LF;
+  // debug_convert << "pdf renderer, image " << u << ", " << w << " x " << h
+  //		<< " + (" << x << ", " << y << ")" << LF;
   tree lookup= tuple (u->t);
   pdf_image im = ( image_pool->contains(lookup) ? image_pool[lookup] : pdf_image() );
   
@@ -1954,11 +1877,12 @@ pdf_hummus_renderer_rep::image (
   std::string initial_GState_name = page->GetResourcesDictionary()
     .AddExtGStateMapping(initial_GState_id);
   contentContext->gs(initial_GState_name);
-  double ratio= ((double)h)/(pixel*(double)im->h);
-  contentContext->cm(((double)w)/(pixel*(double)im->w), 0, 0,
-		     ((double)h)/(pixel*(double)im->h),
-		     to_x(x - ((SI) (ratio*PIXEL))),
-		     to_y(y - ((SI) (ratio*PIXEL))));
+  double ratiox= ((double)w) / ((double)im->w);
+  double ratioy= ((double)h) / ((double)im->h);
+  contentContext->cm (((double)w) / ((double)im->w), 0,
+		      0, ((double)h) / ((double)im->h),
+		      to_x (x - ((SI) (ratiox * PIXEL))),
+		      to_y (y - ((SI) (ratioy * PIXEL))));
   std::string pdfFormName = page->GetResourcesDictionary().AddFormXObjectMapping(im->id);
   select_alpha((1000 * alpha) / 255);
   contentContext->Do(pdfFormName);
@@ -1967,33 +1891,66 @@ pdf_hummus_renderer_rep::image (
   contentContext->Q();
 }
 
+/******************************************************************************
+* Applying effects to existing pictures
+******************************************************************************/
+
+#ifdef QTTEXMACS
+static picture
+pdf_raster_picture (picture pic) {
+  picture ret= qt_picture (QImage (pic->get_width (), pic->get_height (),
+                                   QImage::Format_ARGB32),
+                           pic->get_origin_x (), pic->get_origin_y ());
+  ret->copy_from (pic);
+  return ret;
+}
+#endif
+
 void
 pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
+  // debug_convert << "pdf renderer, draw_picture " << x << ", " << y
+  //		<< " (" << alpha << ")" << LF;
+  url temp;
+  unsigned long long int key= p->get_unique_id ();
+  if (picture_cache->contains (key)) temp= picture_cache[key];
+  else {
+    // As an improvement one could handle native pictures without conversions
+#ifdef QTTEXMACS
+    picture q= pdf_raster_picture (p);
+    qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
+    temp= url_temp (".png");
+    pict->pict.save (utf8_to_qstring (concretize (temp)), "PNG");
+    temp_images << temp;	
+#else
+    convert_error << "pdf renderer, draw_picture: "
+      << "cannot export picture " << p->get_name() << LF;
+#endif
+    picture_cache (key)= temp;
+  }
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  string name= "picture";
-  string eps= picture_as_eps (p, 600);
-  x -= (int) (5 * ox * pixel);
-  y -= (int) (5 * oy * pixel);
-
-  url temp= url_temp (".eps");
-  save_string (temp, eps);
-  image (temp, 5 * w * pixel, 5 * h * pixel, x, y, alpha);
-  temp_images << temp;
+  x -= (int) ox;
+  y -= (int) oy;
+  image (temp, w, h, x, y, alpha);
 }
 
 void
 pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
-  if (im->get_type () != scalable_image)
+  // debug_convert << "pdf renderer, draw_scalable "
+  //   << im->get_name () << " at " << x << ", " << y
+  //   << " (" << alpha << ")" << LF;
+  if (im->get_type () != scalable_image ||
+      (im->get_type () == scalable_image && im->get_effect () != tree ("")))
     renderer_rep::draw_scalable (im, x, y, alpha);
   else {
     url u= im->get_name ();
     rectangle r= im->get_logical_extents ();
     SI w= r->x2 - r->x1, h= r->y2 - r->y1;
-    int _ox= r->x1, _oy= r->y1;
-    x -= (int) 2.06 * _ox * pixel; // FIXME: where does the magic 2.06 come from?
-    y -= (int) 2.06 * _oy * pixel;
-    image (u, w, h, x, y, alpha);
+    int ox= r->x1, oy= r->y1;
+    double xx = x - ((double) ox) / pixel;
+    double yy = y - ((double) oy) / pixel;
+    image (u, ((double) w) / pixel, ((double) h) / pixel,
+	   x, y, alpha);
   }
 }
 
@@ -2360,7 +2317,3 @@ pdf_hummus_renderer (url pdf_file_name, int dpi, int nr_pages,
   return tm_new<pdf_hummus_renderer_rep> (pdf_file_name, dpi, nr_pages,
 			  page_type, landscape, paper_w, paper_h);
 }
-
-
-
-

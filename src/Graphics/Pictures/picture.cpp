@@ -20,6 +20,21 @@
 #include "effect.hpp"
 
 /******************************************************************************
+* Unique id for pictures
+******************************************************************************/
+
+unsigned long long int
+unique_picture_id () {
+  static unsigned long long int n= -1;
+  n++;
+  if (n == (-((unsigned long long int) 1))) {
+    failed_error << "Unique id overflow for pictures" << LF;
+    FAILED ("Unique id overflow for pictures");
+  }
+  return n;
+}
+
+/******************************************************************************
 * Useful subroutines
 ******************************************************************************/
 

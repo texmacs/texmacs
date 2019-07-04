@@ -18,6 +18,7 @@
 ******************************************************************************/
 
 url scalable_rep::get_name () { return url_none (); }
+tree scalable_rep::get_effect () { return tree (""); }
 
 /******************************************************************************
 * The abstract scalable class
@@ -38,6 +39,7 @@ public:
   scalable_kind get_type () { return scalable_image; }
   void* get_handle () { return (void*) this; }
   url get_name () { return u; }
+  tree get_effect () { return eff; }
 
   rectangle get_logical_extents () {
     return rectangle (0, 0, w, h); }

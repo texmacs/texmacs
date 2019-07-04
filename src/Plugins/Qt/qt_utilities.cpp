@@ -615,32 +615,6 @@ qt_image_to_eps (url image, int w_pt, int h_pt, int dpi) {
 }
 */
 
-void
-qt_image_data (url image, int& w, int&h, string& data, string& palette, string& mask) {
-  // debug_convert << "in qt_image_data"<<LF; 
-  (void) palette;
-  QImage im (utf8_to_qstring (concretize (image)));
-  if (im.isNull ()) {
-    convert_error << "Cannot read image file '" << image << "'"
-    << " in qt_image_data" << LF;
-    return;
-  }
-  w=  im.width ();
-  h=  im.height ();    
-  data = string ((w*h)*3);
-  mask = string (w*h); 
-  int i= 0, j= 0, k= 0, l= 0;
-  for (j= 0; j < im.height (); j++) {
-    for (i=0; i < im.width (); i++) {
-      QRgb p= im.pixel (i, j);
-      data[l++] = qRed (p);
-      data[l++] = qGreen (p);
-      data[l++] = qBlue (p);
-      mask[k++] = qAlpha (p);
-    }
-  }
-}
-
 QPixmap
 as_pixmap (const QImage& im) {
   QPixmap pm (im.size ());
