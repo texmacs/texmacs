@@ -18,14 +18,19 @@
         (string-append s "\n<EOF>\n"))))
 
 (define (gnuplot-launcher)
-    (if (os-mingw?)
-	"tm_gnuplot.bat"
-	"tm_gnuplot"))
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
+      `((:launch ,(string-append "python "
+                                 (getenv "TEXMACS_HOME_PATH")
+                                 "/plugins/tmpy/session/tm_gnuplot.py")))
+      `((:launch ,(string-append "python "
+                                 (getenv "TEXMACS_PATH")
+                                 "/plugins/tmpy/session/tm_gnuplot.py")))))
+
 
 (plugin-configure gnuplot
   (:require (url-exists-in-path? "gnuplot"))
   (:require (url-exists-in-path? "python"))
-  (:launch ,(gnuplot-launcher))
+  ,@(gnuplot-launcher)
   (:serializer ,gnuplot-serialize)
   (:session "Gnuplot")
   (:scripts "Gnuplot"))

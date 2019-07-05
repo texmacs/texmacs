@@ -16,13 +16,16 @@
         (string-append  s  "\n<EOF>\n"))))
 
 (define (graph-launcher)
-  (if (os-mingw?)
-      "tm_graph.bat"
-      "tm_graph"))
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
+      (string-append "python "
+                     (getenv "TEXMACS_HOME_PATH")
+                     "/plugins/tmpy/session/tm_graph.py")
+      (string-append "python "
+                     (getenv "TEXMACS_PATH")
+                     "/plugins/tmpy/session/tm_graph.py")))
 
 (plugin-configure graph
   (:require (url-exists-in-path? "python"))
-  (:require (url-exists-in-path? "tm_graph"))
   (:launch ,(graph-launcher))
   (:serializer ,graph-serialize)
   (:session "Graph"))
