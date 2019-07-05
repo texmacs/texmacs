@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.7>
+<TeXmacs|1.99.10>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Various useful keyboard shortcuts>
@@ -21,11 +21,11 @@
   "1em")>>|<cell|Insert a quad space.>>|<row|<cell|<shortcut|(make-space
   "0.2spc")>>|<cell|Insert a small space.>>|<row|<cell|<shortcut|(make-space
   "-0.2spc")>>|<cell|Insert a small negative
-  space.>>|<row|<cell|<shortcut|(make-htab "5mm")>>|<cell|Insert a
-  ``tab''>>|<row|<cell|<shortcut|(go-start)>>|<cell|Go to the start of the
+  space.>>|<row|<cell|<shortcut|(kbd-alternate-tab)>>|<cell|Insert a
+  \Ptab\Q>>|<row|<cell|<shortcut|(go-start)>>|<cell|Go to the start of the
   document.>>|<row|<cell|<shortcut|(go-end)>>|<cell|Go to the end of the
   document.>>|<row|<cell|<shortcut|(make 'line-break)>>|<cell|Insert a line
-  break.>>|<row|<cell|<shortcut|(make-rigid)>>|<cell|Insert a ``rigid'' piece
+  break.>>|<row|<cell|<shortcut|(make-rigid)>>|<cell|Insert a \Prigid\Q piece
   of text, which cannot be line-broken.>>>>>>
     <label|various-useful-shortcuts>Various useful keyboard shortcuts
   </big-table>
@@ -40,8 +40,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
