@@ -281,7 +281,7 @@ tex_font_rep::special_get_xpositions (string s, SI* xpos, bool ligf) {
       if (s[i]=='<') break;
     if (l<i) {
       get_xpositions (s (l, i), xpos + l, ligf);
-      for (j=l+1; j<=i; j++) xpos[j] += offset;
+      for (j=l; j<=i; j++) xpos[j] += offset;
       if (i==n) break;
       offset= xpos[i];
     }
