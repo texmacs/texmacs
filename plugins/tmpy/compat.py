@@ -8,6 +8,14 @@
 import os
 import sys
 
+py_ver = sys.version_info[0]
+
+def tm_input():
+    if py_ver == 3:
+        return input()
+    else:
+        return raw_input()
+
 # Check that a given file can be accessed with the correct mode.
 # Additionally check that `file` is not a directory, as on Windows
 # directories pass the os.access check.

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 ###############################################################################
 ##
-## MODULE      : tm_graphs
-## DESCRIPTION : Adapted from tm_python for Graph
-## COPYRIGHT   : (C) 2004  Ero Carrera, ero@dkbza.org
-##               (C) 2012  Adrian Soto
-##               (C) 2014  Miguel de Benito Delgado, mdbenito@texmacs.org
-##               (C) 2018  Darcy Shen
+## MODULE      : tm_graph.py
+## DESCRIPTION : Launcher for the Graph plugin
+## COPYRIGHT   : (C) 2004       Ero Carrera, ero@dkbza.org
+##               (C) 2012       Adrian Soto
+##               (C) 2014       Miguel de Benito Delgado, mdbenito@texmacs.org
+##               (C) 2018-2019  Darcy Shen
 ##
 ## This software falls under the GNU general public license version 3 or later.
 ## It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -36,6 +36,7 @@ from tmpy.graph.feynmf    import FeynMF
 from tmpy.graph.latex     import LaTeX
 from tmpy.graph.pdflatex  import PDFLaTeX
 from tmpy.graph.gnuplot   import Gnuplot
+from tmpy.compat          import *
 import argparse
 
 #import logging as log
@@ -43,15 +44,10 @@ import argparse
 
 init_time = time.time()
 
-py_ver       = sys.version_info[0];
 __version__  = '1.0'
 __author__   = 'Darcy Shen'
 
 my_globals   = {}
-
-if py_ver == 3: _input = input
-else:           _input = raw_input
-
 
 def compose_output(data):
     """Do some parsing on the output according to its type.
@@ -76,30 +72,6 @@ def compose_output(data):
 
 def as_scm_string (text):
     return '"%s"' % text.replace('\\', '\\\\').replace('"', '\\"')
-
-def compile_help (text):
-    cmd = 'help(%s)' % text
-    out = {"help" : "", "src": "", "file": ""}
-
-    try:
-        out["help"] = CaptureStdout.capture (cmd, my_globals);
-    except Exception as e:
-        out ["help"] = 'No help for "%s": %s' % (text, e)
-
-    try:
-        out["src"] = eval ('getsource(%s)' % text,
-                           my_globals, {'getsource' : getsource})
-    except Exception as e:
-        out["src"] = 'No code available for "%s": %s' % (text, e)
-
-    try:
-        # Todo: strip docstring from code
-        out["file"] = eval ('getsourcefile(%s)' % text,
-                            my_globals, {'getsourcefile' : getsourcefile})
-    except Exception as e:
-        out["file"] = 'Unable to access the code for "%s": %s' % (text, e)
-
-    return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.iteritems()))
 
 ###############################################################################
 ## Session start
@@ -159,7 +131,7 @@ def unigraph(text):
 
 # Main session loop.
 while True:
-    line = _input()
+    line = tm_input()
     if not line:
         continue
     if line[0] == DATA_COMMAND:
@@ -168,7 +140,7 @@ while True:
     else:
         lines = [line]
         while line != "<EOF>":
-            line = _input()
+            line = tm_input()
             if line == '': 
                 continue
             lines.append(line)

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 ###############################################################################
 #
-# MODULE      : tm_python
+# MODULE      : tm_python.py
 # DESCRIPTION : Initialize python plugin
-# COPYRIGHT   : (C) 2004  Ero Carrera, ero@dkbza.org
-#               (C) 2012  Adrian Soto
-#               (C) 2014  Miguel de Benito Delgado, mdbenito@texmacs.org
+# COPYRIGHT   : (C) 2004       Ero Carrera, ero@dkbza.org
+#               (C) 2012       Adrian Soto
+#               (C) 2014       Miguel de Benito Delgado, mdbenito@texmacs.org
+#               (C) 2018-2019  Darcy Shen
 #
 # This software falls under the GNU general public license version 3 or later.
 # It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -22,20 +23,15 @@ from tmpy.protocol import *
 from tmpy.capture import CaptureStdout
 from tmpy.postscript import ps_out
 from tmpy.completion import parse_complete_command, complete
+from tmpy.compat     import *
 
 # import logging as log
 # log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
 
-py_ver = sys.version_info[0]
 __version__ = '1.14'
 __author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
 
 my_globals   = {}
-
-if py_ver == 3:
-    _input = input
-else:
-    _input = raw_input
 
 
 def compose_output(data):
@@ -121,7 +117,7 @@ flush_prompt (">>> ")
 
 # Main session loop.
 while True:
-    line = _input ()
+    line = tm_input()
     if not line:
         continue
     if line[0] == DATA_COMMAND:
@@ -140,7 +136,7 @@ while True:
     else:
         lines = [line]
         while line != "<EOF>":
-            line = _input()
+            line = tm_input()
             if line == '': 
                 continue
             lines.append(line)

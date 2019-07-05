@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ###############################################################################
 #
-# MODULE      : bridge.py
+# MODULE      : tm_sage.py
 # DESCRIPTION : Initialize python plugin
 # COPYRIGHT   : (C) 2004  Ero Carrera, ero@dkbza.org
 #               (C) 2019  Darcy Shen
