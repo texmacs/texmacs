@@ -7,6 +7,7 @@
 ;; in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 
-("#18"	"0")            ; perthousand zero
-("#1A"  "j")		; dotless j
-("#DF"	"SS")           ; latin capital letter sharp s
+("#18"  	"0")            ; perthousand zero
+("#1A"          "j")		; dotless j
+("#DF"          "SS")           ; latin capital letter sharp s
+("<comma>"      ",")            ; decimal comma
