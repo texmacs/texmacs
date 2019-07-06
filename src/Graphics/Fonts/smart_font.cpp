@@ -224,6 +224,7 @@ is_special (string s) {
     special_table ("`")= "<backprime>";
     special_table ("<hat>")= "<#2C6>";
     special_table ("<tilde>")= "<#2DC>";
+    special_table ("<comma>")= ",";
   }
   if (starts (s, "<big-."))
     special_table (s)= "";
