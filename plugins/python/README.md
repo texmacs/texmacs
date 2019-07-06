@@ -21,21 +21,5 @@ git clone git@github.com:texmacs/python.git %APPDATA%\TeXmacs\plugins\python
 To switch to a specific version, use `git checkout` or modify it manually.
 
 ## Change the Python Interpreter
-By default, the Python plugin use the default python interpreter according to the first
-line of `$TEXMACS_HOME_PATH/plugins/tm_python`:
-
-``` python
-#!/usr/bin/env python
-```
-
-The python plugin is implemented for both python 2 and 3, just change the first line.
-
-Switch to Python 3:
-``` python
-#!/usr/bin/env python3
-```
-
-Switch to the Python interpreter provided by miniconda:
-``` python
-#!/path/to/miniconda/envs/envname/bin/python
-```
+Install the Python plugin to `$TEXMACS_HOME_PATH/plugins` and then change
+the python launcher in `$TEXMACS_HOME_PATH/plugins/python/progs/init-python.scm`.
