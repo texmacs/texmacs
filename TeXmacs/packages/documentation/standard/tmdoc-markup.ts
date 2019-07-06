@@ -121,9 +121,9 @@
 
   <assign|example-plugin-link|<macro|plugin|<style-with|src-compact|none|<hlink|<with|font-family|tt|<arg|plugin>>|<merge|$TEXMACS_PATH/examples/plugins/|<arg|plugin>>>>>>
 
-  <assign|tmdoc-length-unit|<macro|unit|<src-length|<arg|unit>>>>
+  <assign|tmdoc-length-unit|<macro|unit|<with|font-family|tt|<src-length|<arg|unit>>>>>
 
-  <assign|tmdoc-length|<macro|val|unit|<src-length|<arg|val><space|0.2spc><arg|unit>>>>
+  <assign|tmdoc-length|<macro|val|unit|<with|font-family|tt|<src-length|<arg|val><space|0.2spc><arg|unit>>>>>
 
   <\active*>
     <\src-comment>
