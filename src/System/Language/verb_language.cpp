@@ -97,5 +97,7 @@ prog_language (string s) {
     return make (language, s, tm_new<scala_language_rep> (s));
   if (s == "r")
     return make (language, s, tm_new<r_language_rep> (s));
+  if (s == "fortran")
+    return make (language, s, tm_new<fortran_language_rep> (s));
   return make (language, s, tm_new<verb_language_rep> (s));
 }

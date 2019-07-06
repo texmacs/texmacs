@@ -200,6 +200,7 @@
   ---
   (-> "Inline code"
       ("C++" (make 'cpp))
+      ("Fortran" (make 'fortran))
       ("Mathemagix" (make 'mmx))
       ("Python" (make 'python))
       ("R" (make 'r))
@@ -210,6 +211,7 @@
       ("Verbatim" (make 'verbatim)))
   (-> "Block of code"
       ("C++" (make 'cpp-code))
+      ("Fortran" (make 'fortran-code))
       ("Mathemagix" (make 'mmx-code))
       ("Python" (make 'python-code))
       ("R" (make 'r-code))
