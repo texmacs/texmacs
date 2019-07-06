@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.10>
 
 <style|<tuple|source|english>>
 
@@ -120,6 +120,10 @@
   <assign|re-index|<macro|body|<arg|body><index|<arg|body>>>>
 
   <assign|example-plugin-link|<macro|plugin|<style-with|src-compact|none|<hlink|<with|font-family|tt|<arg|plugin>>|<merge|$TEXMACS_PATH/examples/plugins/|<arg|plugin>>>>>>
+
+  <assign|tmdoc-length-unit|<macro|unit|<src-length|<arg|unit>>>>
+
+  <assign|tmdoc-length|<macro|val|unit|<src-length|<arg|val><space|0.2spc><arg|unit>>>>
 
   <\active*>
     <\src-comment>
