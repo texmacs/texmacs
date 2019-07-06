@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 ###############################################################################
 ##
-## MODULE      : tm_gnuplot.py
-## DESCRIPTION : Launcher for the Gnuplot plugin
+## MODULE      : tm_xypic.py
+## DESCRIPTION : Launcher for the Xy-pic plugin
 ## COPYRIGHT   : (C) 2019  Darcy Shen
 ##
 ## This software falls under the GNU general public license version 3 or later.
@@ -14,7 +14,7 @@ import sys
 sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
 from tmpy.protocol        import *
-from tmpy.graph.gnuplot   import Gnuplot
+from tmpy.graph.xypic     import XYpic
 from tmpy.capture         import CaptureStdout
 from tmpy.compat          import *
 
@@ -24,8 +24,8 @@ if py_ver == 3:
     text = 'import builtins as __builtins__'
 else:
     text = 'import __builtin__ as __builtins__'
-CaptureStdout.capture (text, my_globals, "tm_gnuplot")
+CaptureStdout.capture (text, my_globals, "tm_xypic")
 
-current = Gnuplot()
+current = XYpic()
 current.greet()
 current.main_loop()

@@ -12,13 +12,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (asy-serialize lan t)
-  (with u (pre-serialize lan t)
-    (with s (texmacs->code u)
-      (string-append (escape-verbatim (string-replace s "\n" "~")) "\n"))))
+    (with u (pre-serialize lan t)
+      (with s (texmacs->code (stree->tree u) "SourceCode")
+        (string-append s "\n<EOF>\n"))))
+
+(define (asy-launcher)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
+      (string-append "python "
+                     (getenv "TEXMACS_HOME_PATH")
+                     "/plugins/tmpy/session/tm_asy.py")
+      (string-append "python "
+                     (getenv "TEXMACS_PATH")
+                     "/plugins/tmpy/session/tm_asy.py")))
 
 (plugin-configure asymptote
-  (:require (and (not (os-mingw?)) (url-exists-in-path? "asy")))
-  (:launch "tm_asy")
+  (:require (url-exists-in-path? "asy"))
+  (:launch ,(asy-launcher))
   (:serializer ,asy-serialize)
   (:session "Asymptote")
   (:scripts "Asymptote"))

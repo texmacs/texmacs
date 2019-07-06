@@ -14,7 +14,7 @@ import platform
 import shutil
 import time
 from ..protocol import *
-from ..compat import which
+from ..compat import *
 
 
 class Graph(object):
@@ -52,6 +52,24 @@ class Graph(object):
         self.evaluate(code)
         time.sleep(1)
         self.after_evaluate()
+
+    def main_loop(self):
+        # Main session loop.
+        while True:
+            line = tm_input()
+            if not line:
+                continue
+            if line[0] == DATA_COMMAND:
+                # TODO: Handle completions
+                continue
+            else:
+                lines = [line]
+                while line != "<EOF>":
+                    line = tm_input()
+                    lines.append(line)
+                text='\n'.join(lines[:-1])
+                self.eval(text)
+
 
     def get_tmp_dir(self):
         dir = "graph_" + self.name + "_" + str(os.getpid())

@@ -14,7 +14,7 @@ import sys
 sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
 from tmpy.protocol        import *
-from tmpy.graph.gnuplot   import Gnuplot
+from tmpy.graph.asymptote import Asymptote
 from tmpy.capture         import CaptureStdout
 from tmpy.compat          import *
 
@@ -24,8 +24,8 @@ if py_ver == 3:
     text = 'import builtins as __builtins__'
 else:
     text = 'import __builtin__ as __builtins__'
-CaptureStdout.capture (text, my_globals, "tm_gnuplot")
+CaptureStdout.capture (text, my_globals, "tm_asy")
 
-current = Gnuplot()
+current = Asymptote()
 current.greet()
 current.main_loop()

@@ -13,7 +13,7 @@ import os
 from subprocess import Popen, PIPE, STDOUT
 from .graph import Graph
 from ..protocol import *
-from ..compat import which
+from ..compat import *
 
 class Asymptote(Graph):
     def __init__(self, name = "asy"):
@@ -44,3 +44,24 @@ class Asymptote(Graph):
           flush_file (self.get_eps())
         else:
           flush_verbatim (err.decode())
+
+    def main_loop(self):
+        # Main session loop.
+        while True:
+            line = tm_input()
+            if not line:
+                continue
+            if line[0] == DATA_COMMAND:
+                # TODO: Handle completions
+                continue
+            else:
+                lines = []
+                for x in line.split('~'):
+                    lines.append(x)
+                while line != "<EOF>":
+                    line = tm_input()
+                    for x in line.split('~'):
+                        lines.append(x)
+                text='\n'.join(lines[:-1])
+                self.eval(text)
+

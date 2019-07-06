@@ -11,6 +11,20 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (xypic-serialize lan t)
+    (with u (pre-serialize lan t)
+      (with s (texmacs->code (stree->tree u) "SourceCode")
+        (string-append s "\n<EOF>\n"))))
+
+(define (xypic-launcher)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
+      (string-append "python "
+                     (getenv "TEXMACS_HOME_PATH")
+                     "/plugins/tmpy/session/tm_xypic.py")
+      (string-append "python "
+                     (getenv "TEXMACS_PATH")
+                     "/plugins/tmpy/session/tm_xypic.py")))
+
 (define (xypic-present?)
   (and (url-exists-in-path? "latex")
        (cond ((url-exists-in-path? "kpsewhich")
@@ -19,5 +33,6 @@
 
 (plugin-configure xypic
   (:require (xypic-present?))
-  (:launch "tm_xypic --texmacs")
+  (:launch ,(xypic-launcher))
+  (:serializer ,xypic-serialize)
   (:session "XYpic"))
