@@ -61,6 +61,6 @@ set autoscale
                     line = tm_input()
                     for x in line.split('~'):
                         lines.append(x)
-                text='\n'.join(lines[:-1])
+                text = '\n'.join(lines[:-1])
                 self.eval(text)
 

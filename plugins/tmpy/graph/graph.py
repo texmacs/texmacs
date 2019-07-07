@@ -72,6 +72,11 @@ class Graph(object):
 
     def eval(self, code):
         self.before_evaluate()
+        if (code.startswith("%")):
+            magic_lines = code.split("\n")
+            magic_line = magic_lines[0]
+            self.apply_magic(magic_line)
+            code = '\n'.join(magic_lines[1:])
         self.evaluate(code)
         time.sleep(1)
         self.after_evaluate()
