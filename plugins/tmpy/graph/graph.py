@@ -37,6 +37,27 @@ class Graph(object):
     def available(self):
         return which(self.name) is not None
 
+    def apply_magic(self, magic_line):
+        args = list(filter(lambda x: len(x)!=0, magic_line.split(" ")[1:]))
+        while (len(args) > 1):
+            option = args[0]
+            value = args[1]
+            if (option == '-width'):
+                try:
+                    self.width = int(value)
+                except ValueError:
+                    pass
+            elif (option == '-height'):
+                try:
+                    self.height = int(value)
+                except ValueError:
+                    pass
+            elif (option == '-output'):
+                self.output = value
+            else:
+                pass
+            args = args[2:]
+
     def before_evaluate(self):
         if not os.path.exists(self.get_tmp_dir()):
             os.mkdir(self.get_tmp_dir())
@@ -46,6 +67,8 @@ class Graph(object):
 
     def after_evaluate(self):
         shutil.rmtree(self.get_tmp_dir())
+        self.height = 0
+        self.width = 0
 
     def eval(self, code):
         self.before_evaluate()

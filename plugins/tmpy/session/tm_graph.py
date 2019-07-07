@@ -37,7 +37,6 @@ from tmpy.graph.latex     import LaTeX
 from tmpy.graph.pdflatex  import PDFLaTeX
 from tmpy.graph.gnuplot   import Gnuplot
 from tmpy.compat          import *
-import argparse
 
 #import logging as log
 #log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
@@ -109,21 +108,14 @@ flush_verbatim ("Welcome to star and fork it at https://github.com/texmacs/plugi
 flush_prompt (current.name + "] ")
 
 def unigraph(text):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-width', type=int, default=0)
-    parser.add_argument('-height', type=int, default=0)
-    parser.add_argument('-output', type=str, default="eps")
-
     magic_lines = text.split("\n")
     magic_line = magic_lines[0]
     code = '\n'.join(magic_lines[1:])
     command = magic_line.split(" ")[0].strip("%")
-    args = parser.parse_args(magic_line.split(" ")[1:])
+
     if command in graph_names:
         graph = graphs[graph_names.index(command)]
-        graph.height = args.height
-        graph.width = args.width
-        graph.output = args.output
+        graph.apply_magic(magic_line)
         graph.eval(code)
     else:
         flush_verbatim ("No such Graphs backend: " + command)
