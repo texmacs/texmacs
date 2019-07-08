@@ -13,10 +13,10 @@
 
 (texmacs-module (generic generic-menu)
   (:use (utils edit variants)
-	(utils edit selections)
-	(generic generic-edit)
-	(generic format-edit)
-	(generic format-geometry-edit)
+        (utils edit selections)
+        (generic generic-edit)
+        (generic format-edit)
+        (generic format-geometry-edit)
         (generic document-edit)
         (source source-edit)))
 
@@ -132,7 +132,7 @@
          (fm (type->format type))
          (w (type->width type))
          (setter (lambda (x)
-		   (when x
+                   (when x
                      (tree-set (focus-tree) i (inputter-encode x type))
                      (focus-tree-modified (focus-tree))))))
     (assuming (== name "")
@@ -308,7 +308,7 @@
 (tm-define (parameter-show-in-menu? l)
   (:require (in? l (list "the-label" "auto-nr" "current-part" "language"
                          "page-nr" "page-the-page" "prog-language"
-			 "caption-summarized" "figure-width")))
+                         "caption-summarized" "figure-width")))
   #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
