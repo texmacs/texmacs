@@ -125,8 +125,9 @@
        ($description-long
          ($for (x h)
            ($with (rev by date msg) x
-             ($with rev* (if (<= (string-length rev) 8) rev
-                             (string-append (string-take rev 8) "..."))
+             ($with rev* (if (git-active? u)
+                             (string-take rev 7)
+                             rev)
                ($with dest (version-revision-url u rev)
                  ($describe-item
                      ($inline Version " " ($link dest rev*)
