@@ -15,7 +15,10 @@
   (:use (kernel gui kbd-define)
         (utils edit selections)
         (prog scheme-tools) 
-        (prog scheme-edit) (prog cpp-edit) (prog python-edit)
+        (prog scheme-edit)
+        (prog scala-edit)
+        (prog cpp-edit)
+        (prog python-edit)
         (prog fortran-edit)))
 
 (kbd-map
