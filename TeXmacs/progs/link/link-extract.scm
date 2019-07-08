@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : link-navigate.scm
-;; DESCRIPTION : navigation routines for links
+;; MODULE      : link-extract.scm
+;; DESCRIPTION : extract routines for links
 ;; COPYRIGHT   : (C) 2006  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.

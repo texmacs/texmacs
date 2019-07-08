@@ -549,9 +549,9 @@
 
 (define (go-to-vertex v attrs)
   (cond ((func? v 'id 1)
-	 (go-to-id (cadr v) (cursor-path)))
+         (go-to-id (cadr v) (cursor-path)))
         ((func? v 'url 1)
-	 (go-to-url (escape-link-args (cadr v)) (cursor-path)))
+         (go-to-url (escape-link-args (cadr v)) (cursor-path)))
         ((func? v 'script)
          (with ok? (== (assoc-ref attrs "secure") "true")
            (apply execute-script (cons* (cadr v) ok? (cddr v)))))
