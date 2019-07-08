@@ -5,7 +5,7 @@
             "cppStandard": "c++11",
             "includePath": [
                 @VSCODE_INCLUDE_DIRS@
-                "${workspaceRoot}/3rdparty/googletest/googletest/include"
+                "${workspaceRoot}/3rdparty/benchmark/googletest/googletest/include"
             ]
         }
     ],
