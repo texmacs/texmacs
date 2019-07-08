@@ -132,7 +132,7 @@
         ((== type "latex") (unpack-latex-file x src-dir dest-dir))
 	((== type "arxiv") (unpack-arxiv-file x src-dir dest-dir))))
 
-(define (unpack-dir src-dir dest-dir type)
+(tm-define (unpack-dir src-dir dest-dir type)
   ;;(display* "-- unpack-dir " src-dir ", " dest-dir ", " type "\n")
   (let* ((last (url->string (url-tail src-dir)))
          (accept (list "texmacs" "latex" "arxiv"))
