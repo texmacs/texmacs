@@ -498,7 +498,8 @@ above_pagella_table () {
 
 void
 lsub_adjust_pagella_italic (hashmap<string,double>& t) {
-  adjust_pair (t, "f", 0.03);
+  adjust_pair (t, "f", -0.02);
+  adjust_pair (t, "g", -0.02);
   adjust_pair (t, "T", 0.03);
   adjust_pair (t, "U", 0.03);
   adjust_pair (t, "V", 0.05);
