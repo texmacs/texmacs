@@ -370,6 +370,9 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
           case 0x302: r= "hat"; break;
           case 0x308: r= "umlaut"; break;
           case 0x33e: r= "tilde"; break;
+            // Fix double chinese quotation mark
+          case 0x201C: r= "<#201C>"; break;
+          case 0x201D: r= "<#201D>"; break;
           default:
             QByteArray buf= nss.toUtf8();
             string rr (buf.constData(), buf.count());
