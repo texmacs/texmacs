@@ -301,11 +301,11 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 * Hence, when "native modifiers" are (ControlLeft | AltRight) 
 * we clear Qt's Ctrl+Alt modifiers
 */
-    if ((event->nativeModifiers() & (ControlLeft | AltRight)) == (ControlLeft | AltRight)){
-		if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "assuming it's an AltGr key code"<<LF;
-		mods &= ~Qt::AltModifier;
-		mods &= ~Qt::ControlModifier;
-	}
+    if ((event->nativeModifiers() & (ControlLeft | AltRight)) == (ControlLeft | AltRight)) {
+      if (DEBUG_QT && DEBUG_KEYBOARD) debug_qt << "assuming it's an AltGr key code"<<LF;
+      mods &= ~Qt::AltModifier;
+      mods &= ~Qt::ControlModifier;
+    }
 #endif
     if (qtkeymap->contains (key)) {
       r = qtkeymap[key];
@@ -329,7 +329,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
       if (mods & Qt::KeypadModifier) debug_qt << "keypad\n";
       if (mods & Qt::AltModifier) debug_qt << "alt\n";
       cout << kc << ", " << ((mods & Qt::ShiftModifier) != 0)
-	   << " -> " << unic << LF;
+           << " -> " << unic << LF;
       */
       if (unic > 32 && unic < 255 &&
           (mods & Qt::ShiftModifier) != 0 &&
@@ -372,7 +372,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
           case 0x33e: r= "tilde"; break;
           default:
             QByteArray buf= nss.toUtf8();
-            string rr (buf.constData(), buf.count());
+            string rr (buf.constData(), buf.size());
             string tstr= utf8_to_cork (rr);
             // HACK! The encodings defined in langs/encoding and which
             // utf8_to_cork uses (via the converters loaded in
@@ -385,7 +385,7 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
             else
               r= tstr;
             if (r == "less") r= "<";
-            else if (r == "gtr")r= ">";
+            else if (r == "gtr") r= ">";
         }
 #ifdef Q_WS_MAC
           // Alt produces many symbols in Mac keyboards: []|{} etc.

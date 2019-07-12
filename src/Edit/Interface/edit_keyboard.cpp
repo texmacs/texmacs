@@ -122,7 +122,7 @@ edit_interface_rep::try_shortcut (string comb) {
     tree rhs= (shorth == rew_s? tree (""): sv->kbd_system_rewrite (shorth));
     //cout << "Shortcut: " << sh_s << " -> " << rew << "\n";
     if ((search_forwards (" ", comb) >= 0 && comb != " ") ||
-	(search_forwards ("-", comb) >= 0 && comb != "-")) {
+        (search_forwards ("-", comb) >= 0 && comb != "-")) {
       tree t= rhs;
       if (is_compound (t, "render-key", 1)) t= t[0];
       if (is_func (t, WITH)) t= t[N(t)-1];
@@ -281,7 +281,7 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
       debug_keyboard << "Pressed " << key << " at " << t << "\n";
       debug_keyboard << "  Codes";
       for (int i=0; i<N(key); i++)
-	debug_keyboard << " " << (unsigned int) (unsigned char) key[i];
+        debug_keyboard << " " << (unsigned int) (unsigned char) key[i];
       debug_keyboard << "\n";      
     }
     //time_t t1= texmacs_time ();
