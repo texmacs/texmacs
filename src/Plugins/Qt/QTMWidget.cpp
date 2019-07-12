@@ -332,24 +332,24 @@ QTMWidget::keyPressEvent (QKeyEvent* event) {
 	   << " -> " << unic << LF;
       */
       if (unic > 32 && unic < 255 &&
-		   (mods & Qt::ShiftModifier) != 0 &&
-	  (mods & Qt::ControlModifier) == 0 &&
-	  (mods & Qt::AltModifier) == 0 &&
-	  (mods & Qt::MetaModifier) == 0)
-	set_shift_preference (kc, (char) unic);
+          (mods & Qt::ShiftModifier) != 0 &&
+          (mods & Qt::ControlModifier) == 0 &&
+          (mods & Qt::AltModifier) == 0 &&
+          (mods & Qt::MetaModifier) == 0)
+        set_shift_preference (kc, (char) unic);
       if (unic < 32 && key < 128 && key > 0) {
-	// NOTE: For some reason, the 'shift' modifier key is not applied
-	// to 'key' when 'control' is pressed as well.  We perform some
-	// dirty hacking to figure out the right shifted variant of a key
-	// by ourselves...
-        if (((char) key) >= 'A' && ((char) key) <= 'Z') {
+        // NOTE: For some reason, the 'shift' modifier key is not applied
+        // to 'key' when 'control' is pressed as well.  We perform some
+        // dirty hacking to figure out the right shifted variant of a key
+        // by ourselves...
+        if (is_upcase ((char) key)) {
           if ((mods & Qt::ShiftModifier) == 0)
-            key= (int) (key + ((int) 'a') - ((int) 'A'));
+            key= (int) locase ((char) key);
         }
-	else if (has_shift_preference (kc) &&
-		 (mods & Qt::ShiftModifier) != 0 &&
-		 (mods & Qt::ControlModifier) != 0)
-	  key= (int) (unsigned char) get_shift_preference (kc) [0];
+        else if (has_shift_preference (kc) &&
+                 (mods & Qt::ShiftModifier) != 0 &&
+                 (mods & Qt::ControlModifier) != 0)
+          key= (int) (unsigned char) get_shift_preference (kc) [0];
         mods &=~ Qt::ShiftModifier;
         r= string ((char) key);
       }
