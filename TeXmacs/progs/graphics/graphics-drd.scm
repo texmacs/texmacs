@@ -20,6 +20,9 @@
 ;; Properties of the graphical tags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-group variant-tag
+  (graphical-over-under-tag))
+
 (define-group graphical-atomic-tag
   point)
 
