@@ -349,7 +349,7 @@ curve_box_rep::curve_box_rep (path ip2, curve c2, pencil pen2,
     style (style2), motif (motif2), style_unit (style_unit2),
     fill_br (fill_br2)
 {
-  a= c->rectify (PIXEL);
+  a= c->rectify (PIXEL / 4);
   apply_motif (arrows2);
   int i, n= N(a);
   x1= y1= x3= y3= MAX_SI;
