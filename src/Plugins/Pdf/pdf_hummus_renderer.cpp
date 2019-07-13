@@ -1927,10 +1927,11 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
 #endif
     picture_cache (key)= temp;
   }
+  int pixel= (int) (PIXEL / PICTURE_ZOOM);
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  x -= (int) ox;
-  y -= (int) oy;
+  x -= (int) (ox * pixel);
+  y -= (int) (oy * pixel);
   image (temp, w, h, x, y, alpha);
 }
 
@@ -2297,7 +2298,7 @@ pdf_hummus_renderer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 renderer
 pdf_hummus_renderer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
   double old_zoomf= this->zoomf;
-  set_zoom_factor (1.0);
+  set_zoom_factor (5.0 * PICTURE_ZOOM);
   renderer ren= renderer_rep::shadow (pic, x1, y1, x2, y2);
   set_zoom_factor (old_zoomf);
   return ren;

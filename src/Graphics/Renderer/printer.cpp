@@ -900,8 +900,9 @@ printer_rep::apply_shadow (SI x1, SI y1, SI x2, SI y2) {
 
 renderer
 printer_rep::shadow (picture& pic, SI x1, SI y1, SI x2, SI y2) {
+  // NOTE: picture shadows are rasterized at PICTURE_ZOOM times the dpi
   double old_zoomf= this->zoomf;
-  set_zoom_factor (1.0);
+  set_zoom_factor (5.0 * PICTURE_ZOOM);
   renderer ren= renderer_rep::shadow (pic, x1, y1, x2, y2);
   set_zoom_factor (old_zoomf);
   return ren;
@@ -912,15 +913,15 @@ printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   (void) alpha; // FIXME
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  int pixel= 5*PIXEL;
+  int pixel= (int) (PIXEL / PICTURE_ZOOM);
   string name= "picture";
   string eps= picture_as_eps (p, 600);
   int x1= 0;
   int y1= 0;
   int x2= w;
   int y2= h;
-  x -= (int) (1.2 * (ox * pixel)); // FIXME: why the magic 1.2?
-  y -= (int) (1.2 * (oy * pixel));
+  x -= (int) (ox * pixel);
+  y -= (int) (oy * pixel);
   image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
   save_string ("~/Temp/hummus_aux.eps", eps);
 }

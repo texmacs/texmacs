@@ -22,6 +22,7 @@
 #define PIXEL          256
 #define PLUS_INFINITY  ((SI) 0x3fffffff)
 #define MINUS_INFINITY ((SI) 0xc0000000)
+#define PICTURE_ZOOM   1.0
 
 /******************************************************************************
 * The abstract renderer class
@@ -128,7 +129,7 @@ public:
   virtual void draw_scalable (scalable im , SI x, SI y, int alpha= 255);
 
   /* special routines for printers */
-  virtual bool is_printer (); // FIXME: redundant wrt is_screen?
+  virtual bool is_printer ();
   virtual void get_extents (int& w, int& h);
   virtual void set_page_nr (int nr);
   virtual void next_page ();

@@ -35,7 +35,7 @@ void   set_retina_scale (double s) { retina_scale= s; }
 
 renderer_rep::renderer_rep (bool screen_flag):
   ox (0), oy (0), cx1 (0), cy1 (0), cx2 (0), cy2 (0),
-  is_screen (screen_flag),
+  is_screen (screen_flag), is_pdf (false),
   zoomf (std_shrinkf), shrinkf (1),
   pixel (PIXEL), retina_pixel (PIXEL),
   brushpx (-1), thicken (0),

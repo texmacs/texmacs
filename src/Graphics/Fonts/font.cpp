@@ -125,7 +125,7 @@ font_rep::copy_math_pars (font fn) {
 
 void
 font_rep::draw (renderer ren, string s, SI x, SI y, SI xk, bool ext) {
-  if (ren->zoomf == 1.0 || !ren->is_screen) {
+  if (ren->zoomf == 1.0 || ren->is_printer ()) {
     if (ext) draw_fixed (ren, s, x, y, xk);
     else draw_fixed (ren, s, x, y);
   }
