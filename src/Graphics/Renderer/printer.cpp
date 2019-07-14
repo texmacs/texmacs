@@ -923,7 +923,7 @@ printer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
   x -= (int) (ox * pixel);
   y -= (int) (oy * pixel);
   image (name, eps, x1, y1, x2, y2, w * pixel, h * pixel, x, y, 255);
-  save_string ("~/Temp/hummus_aux.eps", eps);
+  //save_string ("~/Temp/hummus_aux.eps", eps);
 }
 
 void

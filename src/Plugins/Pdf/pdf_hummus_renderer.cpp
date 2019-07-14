@@ -1927,12 +1927,10 @@ pdf_hummus_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
 #endif
     picture_cache (key)= temp;
   }
-  int pixel= (int) (PIXEL / PICTURE_ZOOM);
+  int _pixel= (int) (PIXEL / PICTURE_ZOOM);
   int w= p->get_width (), h= p->get_height ();
   int ox= p->get_origin_x (), oy= p->get_origin_y ();
-  x -= (int) (ox * pixel);
-  y -= (int) (oy * pixel);
-  image (temp, w, h, x, y, alpha);
+  image (temp, w, h, x - ox * _pixel, y - oy * _pixel, alpha);
 }
 
 void
@@ -1948,10 +1946,8 @@ pdf_hummus_renderer_rep::draw_scalable (scalable im, SI x, SI y, int alpha) {
     rectangle r= im->get_logical_extents ();
     SI w= r->x2 - r->x1, h= r->y2 - r->y1;
     int ox= r->x1, oy= r->y1;
-    double xx = x - ((double) ox) / pixel;
-    double yy = y - ((double) oy) / pixel;
     image (u, ((double) w) / pixel, ((double) h) / pixel,
-	   x, y, alpha);
+	   x - ox, y - oy, alpha);
   }
 }
 
