@@ -26,6 +26,12 @@ AC_DEFUN([TM_SIGN],[
             AC_SUBST(SIGNID,[$enable_sign])
       else AC_MSG_RESULT([signing disabled])
       fi;;
+		(MINGW)
+      if type signtool.exe >/dev/null
+      then  AC_MSG_RESULT([signing enabled])
+            AC_SUBST(SIGNID,["signtool.exe sign -a -d "Texmacs" -t http://timestamp.digicert.com]")
+      else AC_MSG_RESULT([signing disabled])
+      fi;;
     (*) AC_MSG_RESULT([no code signing available yet]);;
     esac
   fi

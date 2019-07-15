@@ -26985,6 +26985,15 @@ $as_echo "signing enabled" >&6; }
       else { $as_echo "$as_me:${as_lineno-$LINENO}: result: signing disabled" >&5
 $as_echo "signing disabled" >&6; }
       fi;;
+		(MINGW)
+      if type signtool.exe >/dev/null
+      then  { $as_echo "$as_me:${as_lineno-$LINENO}: result: signing enabled" >&5
+$as_echo "signing enabled" >&6; }
+            SIGNID="signtool.exe sign -a -d "Texmacs" -t http://timestamp.digicert.com"
+
+      else { $as_echo "$as_me:${as_lineno-$LINENO}: result: signing disabled" >&5
+$as_echo "signing disabled" >&6; }
+      fi;;
     (*) { $as_echo "$as_me:${as_lineno-$LINENO}: result: no code signing available yet" >&5
 $as_echo "no code signing available yet" >&6; };;
     esac

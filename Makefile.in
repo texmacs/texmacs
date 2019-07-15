@@ -535,6 +535,7 @@ WINDOWS_BUNDLE: TEXMACS
 	$(CP) -u TeXmacs/* $(WINDOWS_BUILD_DIR)/.
 	$(RM) $(WINDOWS_BUILD_BIN_DIR)/texmacs
 	$(MV) $(WINDOWS_BUILD_BIN_DIR)/texmacs.bin $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe
+	if test -n "@SIGNID@"; then @SIGNID@ $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe; fi
 	if test -n "@XTRA_CMD@"; then $(CP) -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
 	if test -x "@GS_EXE@"; then $(CP) @GS_EXE@ $(WINDOWS_BUILD_BIN_DIR)/;fi
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
@@ -545,6 +546,7 @@ WINDOWS_BUNDLE: TEXMACS
 WINDOWS_PACKAGE: WINDOWS_BUNDLE
 	$(MKDIR) $(WINDOWS_PACKAGE_DIR)
 	iscc $(WINDOWS_PACKAGE_SRC)/TeXmacs.iss
+	if test -n "@SIGNID@"; then @SIGNID@ $(WINDOWS_PACKAGE_DIR)/*-installer.exe; fi
 
 .PHONY: WINDOWS_BUNDLE WINDOWS_PACKAGE
 
