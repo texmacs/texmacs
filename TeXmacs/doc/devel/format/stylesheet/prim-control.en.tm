@@ -3,7 +3,7 @@
 <style|<tuple|tmdoc|old-spacing>>
 
 <\body>
-  <tmdoc-title|Flow control primitives>
+  <tmdoc-title|Control flow primitives>
 
   <\explain>
     <explain-macro|if|condition|if-body>

@@ -10,7 +10,7 @@
 
     <branch|Macros|prim-macro.en.tm>
 
-    <branch|Flow control|prim-control.en.tm>
+    <branch|Control flow|prim-control.en.tm>
 
     <branch|Evaluation control|prim-evaluation.en.tm>
 

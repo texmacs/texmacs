@@ -3,14 +3,14 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Flow control>
+  <tmdoc-title|Control flow>
 
   Besides sequences of instructions, which can be achieved using the
   <markup|concat> primitive, and the mechanism of macro expansion, the
   <TeXmacs> style-sheet language provides a few other primitive for affecting
   the control flow: <markup|if>, <markup|case>, <markup|while> and
   <markup|for-each>. These primitives are available from the
-  <menu|Source|Flow control> menu. However, we have to warn the user that the
+  <menu|Source|Control flow> menu. However, we have to warn the user that the
   conditional constructs are quite fragile: they only apply to inline content
   and the accessibility of macro arguments should not to much depend on the
   conditions.

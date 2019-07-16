@@ -32,7 +32,7 @@
 
     <branch|Evaluation control|style-eval.en.tm>
 
-    <branch|Flow control|style-flow.en.tm>
+    <branch|Control flow|style-flow.en.tm>
 
     <branch|Computational markup|style-compute.en.tm>
   </traverse>
