@@ -61,7 +61,7 @@
   (-> "Definition" (link source-define-menu))
   (-> "Macro" (link source-macro-menu))
   (-> "Evaluation" (link source-quote-menu))
-  (-> "Flow control" (link source-flow-menu)))
+  (-> "Control flow" (link source-flow-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Executable markup for the macro language

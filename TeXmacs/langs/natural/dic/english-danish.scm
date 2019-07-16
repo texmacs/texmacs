@@ -1418,7 +1418,7 @@
 ("unevaluated value" "ikke-udregnet værdi")
 ("unevaluated argument" "ikke-udregnet argument")
 ("evaluation" "udregning")
-("flow control" "flow-kontrol")
+("control flow" "flow-kontrol")
 ("for each" "for hver")
 ("find file" "find arkiv")
 ("display style" "vis typografi")

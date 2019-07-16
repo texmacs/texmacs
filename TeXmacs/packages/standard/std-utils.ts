@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.10>
 
 <style|<tuple|source|std>>
 
@@ -406,6 +406,8 @@
   <assign|prepend-space|<macro|x| <arg|x>>>
 
   <assign|space-separated|<xmacro|items|<arg|items|0><map-args|prepend-space|concat|items|1>>>
+
+  <assign|document-bis|<xmacro|items|<map-args|identity|document|items>>>
 
   <assign|font-magnify|<macro|factor|body|<with|font-size|<times|<value|font-size>|<arg|factor>>|<arg|body>>>>
 

@@ -421,9 +421,9 @@ edit_env_rep::rewrite_inactive (tree t, tree var, bool block, bool flush) {
   if (is_atomic (t)) {
     if (src_style == STYLE_SCHEME)
       return tree (CONCAT,
-		   tree (WITH, COLOR, src_tag_color, "``"),
+		   tree (WITH, COLOR, src_tag_color, "\20"),
 		   var,
-		   tree (WITH, COLOR, src_tag_color, "''"));
+		   tree (WITH, COLOR, src_tag_color, "\21"));
     return var;
   }
   switch (L(t)) {

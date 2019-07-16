@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.10>
 
 <style|source>
 
@@ -69,6 +69,8 @@
   </active*>
 
   <assign|sectional-sep|<macro|.<space|2spc>>>
+
+  <assign|sectional-post-sep|<macro|<space|2spc>>>
 
   <assign|chapter-title|<macro|name|<style-with|src-compact|none|<sectional-centered-bold|<vspace*|3fn><with|font-shape|small-caps|<really-large|<arg|name>>><vspace|2fn>>>>>
 
