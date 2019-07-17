@@ -851,6 +851,10 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
           (pos+1 == N(s) || !is_letter (s[pos+1])))
         next= italic_nr;
       else if (chv[c] == -1) next= resolve (s (pos, pos+1));
+      if (count == 1 && nr != -1 && next == nr) {
+        // NOTE: rewrite strings like --- character by character if necessary
+        if (sm->fn_rewr[nr] == REWRITE_SPECIAL) break;
+      }
       if (next == nr) pos++;
       else if (nr == -1) { pos++; nr= next; }
       else break;
