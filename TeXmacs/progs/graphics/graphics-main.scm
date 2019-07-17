@@ -242,6 +242,17 @@
       (graphics-decorations-reset)
       (graphics-set-extents w h))))
 
+(tm-define (graphics-change-extents dw dh)
+  (:require (tree-innermost 'draw-over #t))
+  (and-with t (tree-innermost 'draw-over #t)
+    (and-with l (tree-ref t 2)
+      (let* ((d (if (!= (length-decode dw) 0) dw dh))
+             (old-pad (tree->stree l))
+             (new-pad (length-add old-pad d)))
+        (when (<= (length-decode new-pad) 0)
+          (set! new-pad "0cm"))
+        (tree-set l new-pad)))))
+
 (tm-define (graphics-change-geo-valign down?)
   (let* ((geo (graphics-geometry))
          (a (car (cddddr geo))))
