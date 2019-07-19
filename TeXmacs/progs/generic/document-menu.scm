@@ -626,6 +626,13 @@
       ---
       ("Portrait" (init-page-orientation "portrait"))
       ("Landscape" (init-page-orientation "landscape")))
+  (-> "Crop marks"
+      ("Default" (init-default "page-crop-marks"))
+      ---
+      ("None" (init-env "page-crop-marks" ""))
+      ("A3" (init-env "page-crop-marks" "a3"))
+      ("A4" (init-env "page-crop-marks" "a4"))
+      ("Letter" (init-env "page-crop-marks" "letter")))
   (-> "Margins"
       ("Default" (init-default "page-width-margin" "page-height-margin"
                                "page-odd" "page-even" "page-right"
