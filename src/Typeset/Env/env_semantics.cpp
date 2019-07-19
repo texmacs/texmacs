@@ -97,6 +97,7 @@ initialize_default_var_type () {
   var_type (PAGE_FIRST)         = Env_Fixed;
   var_type (PAGE_WIDTH)         = Env_Page_Extents;
   var_type (PAGE_HEIGHT)        = Env_Page_Extents;
+  var_type (PAGE_CROP_MARKS)    = Env_Page_Extents;
   var_type (PAGE_WIDTH_MARGIN)  = Env_Page;
   var_type (PAGE_SCREEN_MARGIN) = Env_Page;
   var_type (PAGE_NR)            = Env_Page;
@@ -251,6 +252,18 @@ edit_env_rep::update_page_pars () {
     }
   }
 
+  string crop_marks= get_string (PAGE_CROP_MARKS);
+  page_real_type  = page_type;
+  page_real_width = page_width;
+  page_real_height= page_height;
+  if (crop_marks != "" && get_string (PAGE_MEDIUM) == "paper") {
+    page_real_type= crop_marks;
+    page_real_width=
+      as_length (page_get_feature (crop_marks, PAGE_WIDTH, page_landscape));
+    page_real_height=
+      as_length (page_get_feature (crop_marks, PAGE_HEIGHT, page_landscape));
+  }
+  
   page_single= get_bool (PAGE_SINGLE);
   page_packet= get_int (PAGE_PACKET);
   page_offset= get_int (PAGE_OFFSET);

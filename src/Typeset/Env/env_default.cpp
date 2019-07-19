@@ -135,6 +135,7 @@ initialize_default_env () {
   env (PAGE_PRINTED)     = "false";     // printed version?
   env (PAGE_TYPE)        = "a4";        // paper type (-> width & height)
   env (PAGE_ORIENTATION) = "portrait";  // paper orientation
+  env (PAGE_CROP_MARKS)  = "";          // paper size on which we print
   env (PAGE_WIDTH_MARGIN)  = "false";   // compute margins from par-width?
   env (PAGE_HEIGHT_MARGIN) = "false";   // compute margins from par-width?
   env (PAGE_SCREEN_MARGIN) = "true";    // special margins for screen editing?

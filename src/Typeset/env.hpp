@@ -218,6 +218,7 @@ public:
   string       doc_at_valign;
 
   string       page_type;
+  string       page_real_type;
   bool         page_landscape;
   bool         page_automatic;
   bool         page_single;
@@ -228,6 +229,8 @@ public:
   int          page_margin_mode;
   SI           page_width;
   SI           page_height;
+  SI           page_real_width;
+  SI           page_real_height;
   SI           page_user_width;
   SI           page_user_height;
   SI           page_odd_margin;

@@ -114,6 +114,7 @@ extern string PAGE_MEDIUM;
 extern string PAGE_PRINTED;
 extern string PAGE_TYPE;
 extern string PAGE_ORIENTATION;
+extern string PAGE_CROP_MARKS;
 extern string PAGE_WIDTH_MARGIN;
 extern string PAGE_HEIGHT_MARGIN;
 extern string PAGE_SCREEN_MARGIN;

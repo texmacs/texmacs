@@ -352,6 +352,68 @@ page_border_box_rep::display_background (renderer ren) {
 }
 
 /******************************************************************************
+* Crop marks boxes
+******************************************************************************/
+
+struct crop_marks_box_rep: change_box_rep {
+  SI w, h, lw, ll;
+  crop_marks_box_rep (path ip, box pb, SI w, SI h, SI lw, SI ll);
+  operator tree ();
+  void pre_display (renderer& ren);
+  void display_background (renderer ren);
+};
+
+crop_marks_box_rep::crop_marks_box_rep (path ip2, box pb,
+                                        SI w2, SI h2, SI lw2, SI ll2):
+  change_box_rep (ip2, false), w (w2), h (h2), lw (lw2), ll (ll2)
+{
+  SI dw= w - pb->w();
+  SI dh= h - pb->h();
+  insert (pb, dw/2 - pb->x1, -dh/2);
+  position ();
+  x1 = 0; y1 = -h;
+  x2 = w; y2 = 0;
+  x3 = min (0, x3); y3 = min (-h, y3);
+  x4 = max (0, x4); y4 = max (0, y4);
+  finalize ();
+}
+
+crop_marks_box_rep::operator tree () {
+  return tree (TUPLE, "crop-marks", (tree) bs[0]);
+}
+
+void
+crop_marks_box_rep::pre_display (renderer& ren) {
+  display_background (ren);
+}
+
+void
+crop_marks_box_rep::display_background (renderer ren) {
+  SI X1= sx1(0), Y1= sy1(0), X2= sx2(0), Y2= sy2(0);
+  
+  brush old_bgc= ren->get_background ();
+  ren->set_background (white);
+  if (X1 > x1) ren->clear_pattern (x1, y1, X1, y2);
+  if (x2 > X2) ren->clear_pattern (X2, y1, x2, y2);
+  if (Y1 > y1) ren->clear_pattern (x1, y1, x2, Y1);
+  if (y2 > Y2) ren->clear_pattern (x1, Y2, x2, y2);
+  ren->set_background (old_bgc);
+
+  pencil old_pen= ren->get_pencil ();
+  pencil pen= pencil (black, lw);
+  ren->set_pencil (pen);
+  ren->line (X1-ll, Y1   , X1-lw, Y1   );
+  ren->line (X1-ll, Y2   , X1-lw, Y2   );
+  ren->line (X2+lw, Y1   , X2+ll, Y1   );
+  ren->line (X2+lw, Y2   , X2+ll, Y2   );
+  ren->line (X1   , Y1-ll, X1   , Y1-lw);
+  ren->line (X2   , Y1-ll, X2   , Y1-lw);
+  ren->line (X1   , Y2+lw, X1   , Y2+ll);
+  ren->line (X2   , Y2+lw, X2   , Y2+ll);
+  ren->set_pencil (old_pen);
+}
+
+/******************************************************************************
 * box construction routines
 ******************************************************************************/
 
@@ -373,5 +435,11 @@ page_box (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
 box
 page_border_box (path ip, box pb, color tmb, SI l, SI r, SI b, SI t, SI pixel) {
   box rb= tm_new<page_border_box_rep> (ip, pb, tmb, l, r, b, t, pixel);
+  return rb;
+}
+
+box
+crop_marks_box (path ip, box pb, SI w, SI h, SI lw, SI ll) {
+  box rb= tm_new<crop_marks_box_rep> (ip, pb, w, h, lw, ll);
   return rb;
 }

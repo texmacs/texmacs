@@ -54,6 +54,7 @@ printer_rep::printer_rep (
     landscape (landscape2), paper_w (paper_w2), paper_h (paper_h2),
     use_alpha (get_preference ("experimental alpha") == "on"),
     linelen (0), fg ((color) (-1)), bg ((color) (-1)), opacity (255),
+    pen (black), bgb (white),
     ncols (0), lw (-1), nwidths (0), cfn (""), nfonts (0),
     xpos (0), ypos (0), tex_flag (false), toc (TUPLE),
     defs ("?"), tex_chars ("?"), tex_width ("?"),

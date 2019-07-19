@@ -124,6 +124,7 @@ string PAGE_MEDIUM ("page-medium");
 string PAGE_PRINTED ("page-printed");
 string PAGE_TYPE ("page-type");
 string PAGE_ORIENTATION ("page-orientation");
+string PAGE_CROP_MARKS ("page-crop-marks");
 string PAGE_WIDTH_MARGIN ("page-width-margin");
 string PAGE_HEIGHT_MARGIN ("page-height-margin");
 string PAGE_SCREEN_MARGIN ("page-screen-margin");

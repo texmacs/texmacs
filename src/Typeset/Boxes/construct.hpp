@@ -158,6 +158,7 @@ box page_box (path ip, tree page, int page_nr, brush bgc, SI w, SI h,
 	      array<box> bs  , array<SI> bs_x  , array<SI> bs_y,
 	      array<box> decs, array<SI> decs_x, array<SI> decs_y);
 box page_border_box (path ip, box pb, color tmb, SI l, SI r, SI b, SI t, SI pix);
+box crop_marks_box (path ip, box pb, SI w, SI h, SI lw, SI ll);
 box locus_box (path ip, box b, list<string> ids, SI pixel);
 box locus_box (path ip, box b, list<string> ids, SI pixel, string ref, string anchor);
 box macro_box (path ip, box b, font big_fn= font (), int btype= STD_BOX);
