@@ -70,10 +70,10 @@ printer_rep::printer_rep (
   if (suffix (ps_file_name) == "eps")
     prologue << " EPSF-2.0";
   prologue   << "\n"
-	     << "%%Creator: TeXmacs-" TEXMACS_VERSION "\n"
-	     << "%%Title: " << as_string (tail (ps_file_name)) << "\n"
-	     << "%%Pages: " << as_string (nr_pages) << "\n"
-	     << "%%PageOrder: Ascend\n";
+             << "%%Creator: TeXmacs-" TEXMACS_VERSION "\n"
+             << "%%Title: " << as_string (tail (ps_file_name)) << "\n"
+             << "%%Pages: " << as_string (nr_pages) << "\n"
+             << "%%PageOrder: Ascend\n";
   if (page_type != "user")
     prologue << "%%DocumentPaperSizes: " << page_type << "\n";
   if (landscape) {
@@ -90,14 +90,14 @@ printer_rep::printer_rep (
   if (landscape)
     prologue << "%%Orientation: Landscape\n";
   prologue   << "%%EndComments\n\n"
-	     << tex_pro << "\n"
-	     << special_pro << "\n"
-	     << texps_pro << "\n"
-	     << "TeXDict begin\n"
-	     << as_string ((int) (1864680.0*paper_w+ 0.5)) << " "
-	     << as_string ((int) (1864680.0*paper_h+ 0.5)) << " 1000 "
-	     << as_string (dpi) << " " << as_string (dpi)
-	     << " (TeXmacs) @start\n";
+             << tex_pro << "\n"
+             << special_pro << "\n"
+             << texps_pro << "\n"
+             << "TeXDict begin\n"
+             << as_string ((int) (1864680.0*paper_w+ 0.5)) << " "
+             << as_string ((int) (1864680.0*paper_h+ 0.5)) << " 1000 "
+             << as_string (dpi) << " " << as_string (dpi)
+             << " (TeXmacs) @start\n";
 
   define (PS_CLIP, string ("/pt4 X /pt3 X /pt2 X /pt1 X\n") *
 	  string ("newpath pt1 pt2 moveto pt3 pt2 lineto ") *
@@ -135,13 +135,11 @@ printer_rep::~printer_rep () {
 
   generate_tex_fonts ();
   prologue << "end\n"
-
            << "systemdict /pdfmark known{userdict /?pdfmark systemdict /exec get put}{userdict /?pdfmark systemdict /pop get put userdict /pdfmark systemdict /cleartomark get put}ifelse\n"
-
            << "%%EndProlog\n\n"
-	   << "%%BeginSetup\n"
-	   << "%%Feature: *Resolution " << as_string (dpi) << "dpi\n"
-	   << "TeXDict begin\n";
+           << "%%BeginSetup\n"
+           << "%%Feature: *Resolution " << as_string (dpi) << "dpi\n"
+           << "TeXDict begin\n";
   prologue << "%%BeginPaperSize: " << page_type << "\n";
   if (page_type != "user")
     prologue << page_type << "\n";
@@ -177,7 +175,7 @@ printer_rep::next_page () {
        << as_string (cur_page-1) << " bop\n";
 
   set_clipping (0, (int) (-(dpi*PIXEL*paper_h)/2.54),
-		(int) ((dpi*PIXEL*paper_w)/2.54), 0);
+                (int) ((dpi*PIXEL*paper_w)/2.54), 0);
 
   fg  = (color) (-1);
   bg  = (color) (-1);
@@ -375,15 +373,15 @@ printer_rep::make_tex_char (string name, unsigned char c, glyph gl) {
   int d5= gl->lwidth;
   if ((d1<256) && (d2<256) && (d3<256) && (d4<256) && (d5<256)) {
     hex_code << as_hexadecimal (d1, 2) << as_hexadecimal (d2, 2)
-	     << as_hexadecimal (d3, 2) << as_hexadecimal (d4, 2)
-	     << as_hexadecimal (d5, 2);
+             << as_hexadecimal (d3, 2) << as_hexadecimal (d4, 2)
+             << as_hexadecimal (d5, 2);
     hex_code= "<" * hex_code * ">";
   }
   else {
     hex_code= "[<" * hex_code * ">";
     hex_code << as_string (d1) << " " << as_string (d2) << " "
-	     << as_string (d3) << " " << as_string (d4) << " "
-	     << as_string (d5) << " ";
+             << as_string (d3) << " " << as_string (d4) << " "
+             << as_string (d5) << " ";
   }
 
   tex_chars (char_name)= hex_code;
@@ -502,10 +500,10 @@ printer_rep::generate_tex_fonts () {
     if (ttf != "") {
       string ttf_name= find_ps_font_name (root, ttf);
       if (!done->contains (root)) {
-	prologue << "%%BeginFont: " << root << "\n";
-	prologue << ttf;
-	prologue << "\n%%EndFont\n";
-	done->insert (root);
+        prologue << "%%BeginFont: " << root << "\n";
+        prologue << ttf;
+        prologue << "\n%%EndFont\n";
+        done->insert (root);
       }
 
       array<string> cum;
@@ -535,8 +533,8 @@ printer_rep::generate_tex_fonts () {
     }
     else {
       prologue << "/" << tex_fonts [fn_name]
-	       << " " << as_string (N(a))
-	       << " " << as_string (a[N(a)-1]+1) << " df\n";
+               << " " << as_string (N(a))
+               << " " << as_string (a[N(a)-1]+1) << " df\n";
       for (i=0; i<N(a); i++) {
         int end;
         string hex_code= tex_chars [fn_name * "-" * as_string (a[i])];
