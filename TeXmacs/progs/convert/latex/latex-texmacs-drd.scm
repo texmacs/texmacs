@@ -208,14 +208,15 @@
   ("descriptioncompact" 0)
   ("descriptionaligned" 0)
   ("descriptiondash" 0)
-  ("descriptionlong" 0))
+  ("descriptionlong" 0)
+  ("descriptionparagraphs" 0))
 
 (logic-group latex-texmacs-list%
   begin-itemizeminus begin-itemizedot begin-itemizearrow
   begin-enumeratenumeric begin-enumerateroman begin-enumerateromancap
   begin-enumeratealpha begin-enumeratealphacap
   begin-descriptioncompact begin-descriptionaligned
-  begin-descriptiondash begin-descriptionlong)
+  begin-descriptiondash begin-descriptionlong begin-descriptionparagraphs)
 
 (logic-rules
   ((latex-texmacs-arity% 'x 0) (latex-texmacs-list% 'x))

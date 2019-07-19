@@ -2843,7 +2843,7 @@
   (footnotemark (,tmtex-default 0))
   (footnotemark* (,tmtex-footnotemark 1))
   ((:or description description-compact description-aligned
-	description-dash description-long
+	description-dash description-long description-paragraphs
 	itemize itemize-minus itemize-dot itemize-arrow
 	enumerate enumerate-numeric enumerate-roman enumerate-Roman
 	enumerate-alpha enumerate-Alpha)

@@ -540,6 +540,7 @@
 (latex-texmacs-description "descriptionaligned")
 (latex-texmacs-description "descriptiondash")
 (latex-texmacs-description "descriptionlong")
+(latex-texmacs-description "descriptionparagraphs")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra preamble definitions which are needed to export certain macros

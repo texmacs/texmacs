@@ -1686,7 +1686,7 @@
 	enumerate-alpha enumerate-Alpha)
    ,tmhtml-enumerate)
   ((:or description description-compact description-dash
-	description-align description-long)
+	description-align description-long description-paragraphs)
    ,tmhtml-description)
   (item* (h:dt))
   (!item ,tmhtml-post-item)
