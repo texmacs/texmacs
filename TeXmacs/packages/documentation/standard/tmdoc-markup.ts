@@ -140,6 +140,8 @@
     </src-comment>
   </active*>
 
+  <assign|name*|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
+
   <new-theorem|question|Question>
 
   <assign|answer|<macro|body|<quotation|<surround|<theorem-name|<localize|Answer><theorem-sep>>||<arg|body>>>>>
