@@ -144,6 +144,10 @@
 
   <assign|name*|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 
+  <assign|scheme|<macro|<name*|Scheme>>>
+
+  <assign|emacs|<macro|<name*|Emacs>>>
+
   <new-theorem|question|Question>
 
   <assign|answer|<macro|body|<quotation|<surround|<theorem-name|<localize|Answer><theorem-sep>>||<arg|body>>>>>
