@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.10>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing>>
 
 <\body>
   <tmdoc-title|\<#5B9A\>\<#5236\>\<#5FEB\>\<#6377\>\<#952E\>>
@@ -18,7 +18,7 @@
   </scm-code>
 
   \<#6307\>\<#5B9A\>\<#4E86\>\<#53EA\>\<#5728\>\<#6570\>\<#5B66\>\<#6A21\>\<#5F0F\>\<#4E0B\>\<#751F\>\<#6548\>\<#7684\>\<#952E\>\<#76D8\>\<#5E03\>\<#5C40\>\<#3002\><scm-arg|keymaps>
-  \<#8FD9\>\<#4E2A\>\<#5217\>\<#8868\>\<#7684\>\<#5143\>\<#7D20\>\<#6709\>\<#4E0B\>\<#9762\>\<#4E09\>\<#79CD\>\<#5F62\>\<#5F0F\>\<#FF1A\>
+  \<#8FD9\>\<#4E2A\>\<#5217\>\<#8868\>\<#4E2D\>\<#7684\>\<#5143\>\<#7D20\>\<#6709\>\<#4E0B\>\<#9762\>\<#4E09\>\<#79CD\>\<#5F62\>\<#5F0F\>\<#FF1A\>
 
   <\scm-code>
     (<em|key-combination> <scm-arg|action_1> ... <scm-arg|action_n>)
@@ -32,7 +32,7 @@
   <scm-arg|result>\<#662F\><scm-arg|key-combination>\<#7ED3\>\<#675F\>\<#4E4B\>\<#540E\>\<#63D2\>\<#5165\>\<#7684\>\<#5B57\>\<#7B26\>\<#4E32\>\<#3002\>\<#7B2C\>\<#4E09\>\<#884C\>\<#4E2D\>\<#FF0C\><scm-arg|key-combination>
   \<#7ED3\>\<#675F\>\<#4E4B\>\<#540E\>\<#FF0C\>\<#5C06\>\<#4F1A\>\<#663E\>\<#793A\><scm-arg|help-message>\<#3002\>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|2013--2019|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

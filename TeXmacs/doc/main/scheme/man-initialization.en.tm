@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.10>
 
-<style|<tuple|tmdoc|english>>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|Writing your own initialization files>
@@ -18,8 +18,10 @@
   </verbatim>
 
   if it exists. By default, the path <verbatim|$TEXMACS_HOME_PATH> equals
-  <verbatim|.TeXmacs>. Similarly, each time you create a new buffer (either
-  by creating a new file or opening an already existing one), the file
+  <verbatim|%appdata%\\TeXmacs> on <name|Windows> or
+  <verbatim|$HOME/.TeXmacs> on <name|GNU>/<name|Linux> and <name|macOS>.
+  Similarly, each time you create a new buffer (either by creating a new file
+  or opening an already existing one), the file
 
   <\verbatim>
     \ \ \ \ $TEXMACS_PATH/progs/init-buffer.scm
@@ -55,7 +57,7 @@
     closing an empty buffer.
   </example>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998--2019|Joris van der Hoeven|Darcy Shen>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

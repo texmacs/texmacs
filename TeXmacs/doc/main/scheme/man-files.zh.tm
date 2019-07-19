@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.10>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing>>
 
 <\body>
   <tmdoc-title|\<#5176\>\<#5B83\>\<#503C\>\<#5F97\>\<#4E00\>\<#770B\>\<#7684\>\<#6587\>\<#4EF6\>>
@@ -19,7 +19,7 @@
     <item><verbatim|$TEXMACS_PATH/progs/fonts>\<#5305\>\<#542B\>\<#4E86\>\<#8BBE\>\<#7F6E\>\<#5B57\>\<#4F53\>\<#7684\><name|<with|font|roman|Scheme>>\<#7A0B\>\<#5E8F\>
   </itemize>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|2013--2019|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

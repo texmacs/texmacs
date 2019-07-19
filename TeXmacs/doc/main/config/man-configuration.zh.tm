@@ -1,4 +1,4 @@
-<TeXmacs|1.99.7>
+<TeXmacs|1.99.10>
 
 <style|<tuple|tmdoc|chinese>>
 
@@ -19,7 +19,7 @@
     <branch|\<#9AD8\>\<#7EA7\>\<#7528\>\<#6237\>\<#9996\>\<#9009\>\<#9879\>|man-advanced-preferences.en.tm>
   </traverse>
 
-  <tmdoc-copyright|2016|Darcy Shen>
+  <tmdoc-copyright|2016--2019|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1

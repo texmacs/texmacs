@@ -1,6 +1,6 @@
-<TeXmacs|1.99.2>
+<TeXmacs|1.99.10>
 
-<style|<tuple|tmdoc|chinese>>
+<style|<tuple|tmdoc|chinese|old-spacing>>
 
 <\body>
   <tmdoc-title|\<#5B9A\>\<#5236\>\<#52A8\>\<#6001\>\<#83DC\>\<#5355\>>
@@ -52,9 +52,9 @@
   <scm|link> \<#95F4\>\<#63A5\>\<#5F15\>\<#7528\>\<#8BE5\>\<#83DC\>\<#5355\>\<#3002\>\<#8FD9\>\<#79CD\>\<#95F4\>\<#63A5\>\<#58F0\>\<#660E\>\<#5B50\>\<#83DC\>\<#5355\>\<#7684\>\<#65B9\>\<#5F0F\>\<#6709\>\<#4E24\>\<#4E2A\>\<#4F18\>\<#52BF\>\<#FF1A\>
 
   <\itemize>
-    <item>``\<#95F4\>\<#63A5\>''\<#5B50\>\<#83DC\>\<#5355\>\<#53EF\>\<#4EE5\>\<#94FE\>\<#63A5\>\<#5230\>\<#6211\>\<#4EEC\>\<#6240\>\<#9700\>\<#7684\>\<#83DC\>\<#5355\>\<#FF0C\>\<#65E0\>\<#8BBA\>\<#591A\>\<#5C11\>
+    <item>\P\<#95F4\>\<#63A5\>\Q\<#5B50\>\<#83DC\>\<#5355\>\<#53EF\>\<#4EE5\>\<#94FE\>\<#63A5\>\<#5230\>\<#6211\>\<#4EEC\>\<#6240\>\<#9700\>\<#7684\>\<#83DC\>\<#5355\>\<#FF0C\>\<#65E0\>\<#8BBA\>\<#591A\>\<#5C11\>
 
-    <item>\<#4F7F\>\<#7528\><scm|menu-append>\<#53EF\>\<#4EE5\>\<#540E\>\<#7EED\>\<#6DFB\>\<#52A0\>\<#65B0\>\<#6761\>\<#76EE\>\<#5230\>''\<#95F4\>\<#63A5\>''\<#5B50\>\<#83DC\>\<#5355\>\<#4E2D\>
+    <item>\<#4F7F\>\<#7528\><scm|menu-append>\<#53EF\>\<#4EE5\>\<#540E\>\<#7EED\>\<#6DFB\>\<#52A0\>\<#65B0\>\<#6761\>\<#76EE\>\<#5230\>\Q\<#95F4\>\<#63A5\>\Q\<#5B50\>\<#83DC\>\<#5355\>\<#4E2D\>
   </itemize>
 
   \<#4E3B\>\<#8981\>\<#7684\><TeXmacs>\<#83DC\>\<#5355\>\<#662F\><scm|texmacs-menu>\<#FF0C\><scm|texmacs-popup-menu>\<#FF0C\><scm|texmacs-main-icons>\<#FF0C\>
@@ -63,7 +63,7 @@
   <scm|text-menu>\<#FF0C\> <scm|paragraph-menu>\<#FF0C\>
   <scm|document-menu>\<#FF0C\> <scm|options-menu>\<#548C\><scm|help-menu>\<#3002\>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|2013--2019|Joris van der Hoeven|\<#6C88\>\<#8FBE\>>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
