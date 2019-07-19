@@ -349,6 +349,10 @@ pre_correct (tree t, path p) {
       }
       FAILED ("nullary tree with no border");
     }
+    if (is_atomic (t) && (p->item < 0 || p->item > N(t->label))) {
+      std_warning << "Precorrecting " << p << " in " << t << "\n";
+      FAILED ("bad path");
+    }
     return p;
   }
   if (is_mod_active_once (t) && is_compound (t[0]) && is_atom (p->next)) {
@@ -406,6 +410,11 @@ left_correct (tree t, path p) {
     failed_error << "Left correcting " << p << " in " << t << "\n";
     FAILED ("bad path");
   }
+  if (is_atom (p) && is_atomic (t) &&
+      (p->item < 0 || p->item > N(t->label))) {
+    failed_error << "Left correcting " << p << " in " << t << "\n";
+    FAILED ("bad path");
+  }
 
   int i=p->item;
   if (is_atom (p)) return p;
@@ -433,6 +442,11 @@ static path
 right_correct (tree t, path p) {
   if (is_nil (p)) FAILED ("invalid nil path");
   if ((!is_atom (p)) && ((p->item < 0) || (p->item >= arity (t)))) {
+    failed_error << "Right correcting " << p << " in " << t << "\n";
+    FAILED ("bad path");
+  }
+  if (is_atom (p) && is_atomic (t) &&
+      (p->item < 0 || p->item > N(t->label))) {
     failed_error << "Right correcting " << p << " in " << t << "\n";
     FAILED ("bad path");
   }

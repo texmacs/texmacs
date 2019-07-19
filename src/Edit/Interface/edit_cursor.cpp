@@ -76,7 +76,7 @@ edit_cursor_rep::make_cursor_accessible (path p, bool forwards) {
   while (!is_accessible_cursor (et, p) && !in_source ()) {
     ASSERT (rp <= p, "path outside document");
     tree st = subtree (et, rp);
-    path sp = p / rp;    
+    path sp = p / rp;
     path pp = sp;
     int  dir= (forwards ^ inverse)? 1: -1;
     path cp = closest_accessible_inside (st, sp, dir);
