@@ -140,6 +140,8 @@
     </src-comment>
   </active*>
 
+  <assign|via|<macro|<em|via>>>
+
   <assign|name*|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
 
   <new-theorem|question|Question>
