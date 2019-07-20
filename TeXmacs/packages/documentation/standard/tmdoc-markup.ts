@@ -142,11 +142,9 @@
 
   <assign|via|<macro|<em|via>>>
 
-  <assign|name*|<macro|body|<with|font-shape|small-caps|<arg|body>>>>
+  <assign|emacs|<macro|<name|Emacs>>>
 
-  <assign|scheme|<macro|<name*|Scheme>>>
-
-  <assign|emacs|<macro|<name*|Emacs>>>
+  <assign|name*|<macro|body|<with|font-shape|small-caps|<arg|body>><index|<with|font-shape|small-caps|<arg|body>>>>>
 
   <new-theorem|question|Question>
 
