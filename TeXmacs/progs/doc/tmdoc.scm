@@ -150,6 +150,9 @@
 ;; User interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define-preferences
+  ("manual style" "tmmanual" (lambda args (noop))))
+
 (tmfs-permission-handler (help name type)
   (and (== type "read")
        (let* ((file (or (tmfs-cdr name) ""))
@@ -186,7 +189,7 @@
              (tm->stree
               `(document
                  (TeXmacs ,(texmacs-version))
-                 (style (tuple "tmmanual" ,lan))
+                 (style (tuple ,(get-preference "manual style") ,lan))
                  (body ,(tmdoc-add-aux body))
                  (initial (collection (associate "page-medium" "paper")))))))
           (else
