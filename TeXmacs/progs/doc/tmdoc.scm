@@ -135,15 +135,22 @@
   (with t (tree-import file-name "texmacs")
     (tmfile-language t)))
 
+(define (has-bib? doc)
+  (cond ((tm-atomic? doc) #f)
+        ((tm-is? doc 'cite) #t)
+        (else (list-or (map has-bib? (tm-children doc))))))
+
 (define (tmdoc-add-aux doc)
   (let* ((l0 (cdr doc))
          (i  (list-find-index l0 (lambda (x) (func? x 'title))))
          (l1 (if i (sublist l0 0 (+ i 1)) '()))
-         (l2 (if i (sublist l0 (+ i 1) (length l0)) l0)))
+         (l2 (if i (sublist l0 (+ i 1) (length l0)) l0))
+         (bib? (has-bib? `(document ,@l2))))
     `(document
        ,@l1
        (table-of-contents "toc" (document ""))
        ,@l2
+       ,@(if bib? `((bibliography "bib" "tm-plain" "" (document ""))) '())
        (the-index "idx" (document "")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

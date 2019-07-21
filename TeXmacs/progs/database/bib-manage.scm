@@ -277,6 +277,7 @@
         ((== bib-file :local) :local)
         ((== bib-file :attached) :attached)
         ((== (url-suffix bib-file) "tmdb") (url->url bib-file))
+        ((== (url->string bib-file) "tmfs://.bib") :local)
         (else (bib-cache-database bib-file names))))
 
 (tm-define (bib-retrieve-entries names . bib-files)
