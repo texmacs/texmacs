@@ -212,12 +212,12 @@ unicode_provides (string s) {
 static bool
 is_special (string s) {
   if (N (special_table) == 0) {
-    special_table ("*")= "";
     special_table ("<noplus>")= "";
     special_table ("<nocomma>")= "";
     special_table ("<nospace>")= "";
     special_table ("<nobracket>")= "";
     special_table ("<nosymbol>")= "";
+    special_table ("*")= "";
     special_table ("-")= "<minus>";
     special_table ("|")= "<mid>";
     special_table ("'")= "<#2B9>";
@@ -1135,7 +1135,7 @@ smart_font_rep::resolve (string c) {
       //cout << "Found " << c << " in italic prime\n";
       return sm->add_char (tuple ("italic-math"), c);      
     }
-    if (is_special (c) && (c != "*" || !ends (variant, "-tt")) &&
+    if (is_special (c) && (N(c) != 1 || !ends (variant, "-tt")) &&
         (!starts (c, "<big") ||
          !starts (mfam, "TeX Gyre") || !ends (mfam, " Math"))) {
       //cout << "Found " << c << " in special\n";
