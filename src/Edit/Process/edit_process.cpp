@@ -247,7 +247,15 @@ index_name (tree t) {
     else t= t[0];
   }
   if (!is_tuple (t)) t= tuple (t);
-  return locase_all (index_name_sub (t, false));
+  string r= index_name_sub (t, false);
+  string l= locase_all (r);
+  for (int i=0; i<N(r); i++)
+    if (is_upcase (r[i])) {
+      while (i<N(l) && l[i]!='\t') i++;
+      l= l(0,i) * "*" * l(i,N(l));
+      break;
+    }
+  return l;
 }
 
 static tree
