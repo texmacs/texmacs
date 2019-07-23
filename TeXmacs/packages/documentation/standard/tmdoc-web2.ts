@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.10>
 
 <style|<tuple|source|std|english>>
 
@@ -155,7 +155,10 @@
       is preserved.
 
       <hlink|Free Software Foundation|http://www.fsf.org/fsf/fsf.html>, Inc.,
-      51 Franklin Street, Fifth Floor, Boston, MA 02111, USA
+      51 Franklin Street, Fifth Floor, Boston, MA 02111, USA.
+
+      With the support of <hlink|CNRS|http://www.cnrs.fr/>; hosted by
+      <hlink|INRIA|https://www.inria.fr/en/>.
     </active*>
   </macro>>
 
