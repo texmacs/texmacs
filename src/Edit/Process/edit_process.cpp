@@ -107,6 +107,7 @@ void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
 {
+  if (N(style) == 0) style= "tm-plain";
   system_wait ("Generating bibliography, ", "please wait");
   if (DEBUG_AUTO)
     debug_automatic << "Generating bibliography"
@@ -125,7 +126,7 @@ edit_process_rep::generate_bibliography (
         call (string ("bib-attach"), bib, bib_t);
       }
       else {
-	std_error << "Could not load BibTeX file " << fname;
+        std_error << "Could not load BibTeX file " << fname;
         set_message ("Could not find bibliography file",
                      "compile bibliography");
         return;
@@ -153,7 +154,7 @@ edit_process_rep::generate_bibliography (
     else if (starts (style, "tm-")) {
       string sbib;
       if (load_string (bib_file, sbib, false))
-	std_error << "Could not load BibTeX file " << fname;
+        std_error << "Could not load BibTeX file " << fname;
       tree te= bib_entries (parse_bib (sbib), bib_t);
       object ot= tree_to_stree (te);
       eval ("(use-modules (bibtex " * style (3, N(style)) * "))");
