@@ -755,3 +755,79 @@
 	(tree-insert (tree-ref v (+ j 1)) 0 `(,lan ,ses))
 	(tree-insert v (+ j 1) '((document "")))
 	(tree-go-to v (+ j 1) :end)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Copy and paste
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (session-selection-one? t)
+  (and (tree-in? t (cons* 'output 'textput
+                          'folded-subsession 'unfolded-subsession
+                          field-tags))
+       (tree-up t)
+       (session-document-context? (tree-up t))))
+
+(define (session-selection?)
+  (with l (selection-trees)
+    (and (nnull? l) (forall? session-selection-one? l))))
+
+(define (session-selection sel*)
+  (let* ((sel (selection-as-document sel*))
+         (doc (tree-up (tree-ref sel 0)))
+         (ses (tree-up doc)))
+    `(session ,(cDr (tm-children ses)) ,sel)))
+
+(tm-define (clipboard-cut which)
+  (:require (session-selection?))
+  (let* ((l (selection-trees))
+         (doc (tree-up (car l)))
+         (ses (tree-up doc))
+         (i (tree-index (car l)))
+         (j (tree-index (cAr l)))
+         (k (- (+ j 1) i))
+         (n (tree-arity doc)))
+    (clipboard-copy which)
+    (if (= k n)
+        (tree-cut ses)
+        (begin
+          (tree-remove doc i k)
+          (with next (tree-ref doc (min i (- n (+ k 1))))
+            (cond ((field-context? next)
+                   (tree-go-to next 1 :start))
+                  ((tree-in? next '(output textput))
+                   (tree-go-to next 0 :start))
+                  ((tree-in? next '(folded-subsession unfolded-subsession))
+                   (tree-go-to next 0 :start))
+                  (else (tree-go-to next :start))))))))
+
+(tm-define (clipboard-copy which)
+  (:require (session-selection?))
+  (let* ((l (selection-trees))
+         (doc (tree-up (car l)))
+         (ses (tree-up doc))
+         (sel `(session ,@(cDr (tm-children ses)) (document ,@l))))
+    (clipboard-set which sel)))
+
+(tm-define (inside-subsession-context? t)
+  (and (tree-in? t '(folded-subsession unfolded-subsession))
+       (== (tree-arity t) 2)
+       (cursor-inside? (tree-ref t 1))))
+
+(tm-define (clipboard-paste which)
+  (:require (and (inside? 'session)
+                 (tm-ref (clipboard-get which) 1)
+                 (tree-is? (tm-ref (clipboard-get which) 1) 'session)))
+  (let* ((ses (tree-innermost 'session))
+         (sub (tree-innermost inside-subsession-context?))
+         (ins (tree-ref (clipboard-get which) 1)))
+    (when (and (== (tree-arity ses) 3)
+               (== (tree-arity ins) 3)
+               (tm-equal? (tm-ref ses 0) (tm-ref ins 0)))
+      (let* ((doc (if sub (tree-ref sub 1) (tree-ref ses 2)))
+             (ext (tree-ref ins 2))
+             (i (tree-down-index doc)))
+        (if (== (cursor-path) (tree->path doc i :end))
+            (begin
+              (tree-insert doc (+ i 1) (tree-children ext))
+              (tree-go-to doc (+ i (tree-arity ext)) :end))
+            (tree-insert doc i (tree-children ext)))))))

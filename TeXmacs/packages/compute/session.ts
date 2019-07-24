@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.10>
 
 <style|source>
 
@@ -137,9 +137,11 @@
 
   <assign|unfolded-io|<\macro|prompt|in|out>
     <\surround||<right-flush>>
-      <\input|<with|locus-color|preserve|<action|<arg|prompt>|mouse-fold|<arg|in>>>>
-        <arg|in>
-      </input>
+      <\surround||<no-break-here>>
+        <\input|<with|locus-color|preserve|<action|<arg|prompt>|mouse-fold|<arg|in>>>>
+          <arg|in>
+        </input>
+      </surround>
 
       <\output>
         <arg|out>
