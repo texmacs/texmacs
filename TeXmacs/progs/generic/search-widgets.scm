@@ -132,7 +132,7 @@
   (when (and (not (cursor-accessible?)) (not (in-source?)))
     (cursor-show-hidden)
     (delayed
-      (:pause 25)
+      (:pause 50)
       (set! search-serial (+ search-serial 1))
       (perform-search-sub 100 #f))))
 
