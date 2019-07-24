@@ -114,9 +114,7 @@
   ("none" "None")
   ("translit" "Translit")
   ("jcuken" "Jcuken")
-  ("yawerty" "Yawerty")
-  ("koi8-r" "Koi8-r")
-  ("cp1251" "Cp1251"))
+  ("yawerty" "Yawerty"))
 
 (tm-widget (keyboard-preferences-widget)
   (aligned
@@ -144,7 +142,7 @@
             "15em"))
     (item (text "Cyrillic input method:")
       (enum (set-pretty-preference "cyrillic input method" answer)
-            '("None" "Translit" "Jcuken" "Yawerty" "Koi8-r" "Cp1251")
+            '("None" "Translit" "Jcuken" "Yawerty")
             (get-pretty-preference "cyrillic input method")
             "15em")))
   ======

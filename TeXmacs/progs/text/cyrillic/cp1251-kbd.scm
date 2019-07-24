@@ -16,7 +16,7 @@
 
 (kbd-map
   (:mode in-cyrillic-cp1251?)
-  ("¸" "¼")
-  ("accent:umlaut å" "¼")
-  ("¨" "œ")
-  ("accent:umlaut Å" "œ"))
+  ("¸" "<#451>")
+  ("accent:umlaut <#435>" "<#451>")
+  ("¨" "<#401>")
+  ("accent:umlaut <#415>" "<#401>"))

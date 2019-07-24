@@ -93,9 +93,7 @@
         (enum ("Cyrillic input method" "cyrillic input method")
               ("Translit" "translit")
               ("Jcuken" "jcuken")
-              ("Yawerty" "yawerty")
-              ("Koi8-r" "koi8-r")
-              ("Cp1251" "cp1251"))
+              ("Yawerty" "yawerty"))
         (enum ("Spacebar in text mode" "text spacebar")
               ("Default" "default")
               ---
