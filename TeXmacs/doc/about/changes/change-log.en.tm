@@ -1,13 +1,17 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.10>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.10>
+  <section|Changes from version 1.99.1 to 1.99.11>
 
   <\itemize>
+    <item>Several bug fixes (1.99.11).
+
+    <item>Repositories for <name|Debian> and <name|Ubuntu> (1.99.11).
+
     <item>Many bug fixes (1.99.10).
 
     <item>Redesigned web site (1.99.10).
