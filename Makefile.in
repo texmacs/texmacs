@@ -55,6 +55,9 @@ SIGN = misc/admin/sign_update
 ###############################################################################
 
 TEXMACS: EMPTY_DIRS 
+	if test "$(TEXMACS_DEPS)" != "no"; then \
+	  cd src; $(MAKE) -f makefile deps; \
+	fi
 	cd src; $(MAKE) -r -f makefile link=shared
 	$(MAKE) -f Makefile PLUGINS
 	$(MAKE) -f Makefile EX_PLUGINS
@@ -69,6 +72,9 @@ TEXMACS: EMPTY_DIRS
 	@echo dynamic TeXmacs has been successfully compiled
 
 STATIC_TEXMACS: EMPTY_DIRS 
+	if test "$(TEXMACS_DEPS)" != "no"; then \
+	  cd src; $(MAKE) -f makefile deps; \
+	fi
 	cd src; $(MAKE) -r -f makefile link=static CFLAGS=-D__TMSTATIC__
 	$(MAKE) -f Makefile PLUGINS
 	$(MAKE) -f Makefile EX_PLUGINS
