@@ -179,6 +179,9 @@ init_std_drd () {
   init (PAGE_NOTE, "page-note",
         fixed (1, 2, BIFORM) -> length (1) ->
 	name ("page note"));
+  init (IF_PAGE_BREAK, "if-page-break",
+        fixed (1, 1, BIFORM) -> name (0, "type") -> name (1, "extra") ->
+        string_type (0) -> regular (1));
 
   init (WITH_LIMITS, "with-limits", fixed (0) -> name ("with limits"));
   init (LINE_BREAK, "line-break", fixed (0) -> name ("line break"));
@@ -208,7 +211,7 @@ init_std_drd () {
   init (VAR_NEW_DPAGE, "new-dpage*",
 	fixed (0) -> name ("new double page before"));
   init (NEW_DPAGE, "new-dpage", fixed (0) -> name ("new double page"));
-
+  
   init (AROUND, "around", fixed (3, 0, DETAILED) ->
         name (0, "left bracket") ->
         accessible (1) ->

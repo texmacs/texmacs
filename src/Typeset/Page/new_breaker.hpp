@@ -38,6 +38,7 @@ struct new_breaker_rep {
   array<space> float_tot;   // the cumulated float height until here
   array<space> wide_ht;     // height of wide floats/footnotes for page_item,
   array<space> wide_tot;    // the cumulated wide float/footnote height
+  array<space> break_ht;    // extra height in case of page break
   array<int>   col_number;  // number of columns
   array<int>   col_same;    // last line with same number of columns
   array<bool>  must_new;    // compulsory new pages

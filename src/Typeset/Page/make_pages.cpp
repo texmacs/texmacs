@@ -18,6 +18,7 @@ box format_stack (path ip, array<box> bx, array<space> ht, SI height,
 #include "Boxes/construct.hpp"
 array<page_item> sub (array<page_item> l, path p, path q);
 page_item access (array<page_item> l, path p);
+space as_space (tree t);
 skeleton break_pages (array<page_item> l, space ph, int qual,
 		      space fn_sep, space fnote_sep, space float_sep,
                       font fn, int first_page);
@@ -145,6 +146,11 @@ pager_rep::pages_format (pagelet pg) {
 	if (is_tuple (next->type, "float")) {
 	  // cout << "sep " << stretch_space (float_sep, ins->stretch) << LF;
 	  y -= stretch_space (float_sep, ins->stretch);
+	}
+	if (is_tuple (ins->type, "if-page-break")) {
+          // cout << "sep "
+          // << stretch_space (as_space (ins->type[2]), ins->stretch) << LF;
+          y -= stretch_space (as_space (ins->type[2]), ins->stretch);
 	}
       }
     }

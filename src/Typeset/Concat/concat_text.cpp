@@ -443,3 +443,22 @@ concater_rep::typeset_page_note (tree t, path ip) {
   flag ("page note", ip, brown);
   marker (descend (ip, 1));
 }
+
+/******************************************************************************
+* Special additional content in case of page breaks
+******************************************************************************/
+
+void
+concater_rep::typeset_if_page_break (tree t, path ip) {
+  if (N(t) != 2) { typeset_error (t, ip); return; }
+  tree pos= env->exec (t[0]);
+  space spc= env->get_vspace (PAR_PAR_SEP);
+  tree sep= tree (TMLEN, as_string (spc->min),
+                         as_string (spc->def), as_string (spc->max));
+  tree ch= tuple ("if-page-break", pos, sep);
+  lazy lz= make_lazy_vstream (env, t[1], descend (ip, 1), ch);
+  marker (descend (ip, 0));
+  flag ("if-page-break", ip, brown);
+  print (FLOAT_ITEM, OP_SKIP, control_box (decorate_middle (ip), lz, env->fn));
+  marker (descend (ip, 1));
+}

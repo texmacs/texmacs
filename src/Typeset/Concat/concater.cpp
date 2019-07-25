@@ -287,6 +287,9 @@ concater_rep::typeset (tree t, path ip) {
   case PAGE_NOTE:
     typeset_page_note (t, ip);
     break;
+  case IF_PAGE_BREAK:
+    typeset_if_page_break (t, ip);
+    break;
 
   case WITH_LIMITS:
     with_limits (LIMITS_DISPLAY);

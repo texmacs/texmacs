@@ -26,7 +26,7 @@ enum tree_label {
   HSPACE, VAR_VSPACE, VSPACE, SPACE, HTAB,
   MOVE, SHIFT, RESIZE, CLIPPED,
   REPEAT, VAR_REPEAT, _FLOAT, DATOMS, DLINES, DPAGES, DBOX,
-  LINE_NOTE, PAGE_NOTE,
+  LINE_NOTE, PAGE_NOTE, IF_PAGE_BREAK,
 
   // zero-ary formatting directives
   // modify is_formatting predicate when inserting new tags

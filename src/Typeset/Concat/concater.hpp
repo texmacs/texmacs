@@ -66,6 +66,7 @@ class concater_rep {
   void typeset_decorated_box (tree t, path ip);
   void typeset_line_note (tree t, path ip);
   void typeset_page_note (tree t, path ip);
+  void typeset_if_page_break (tree t, path ip);
 
   // mathematical markup
   void typeset_around (tree t, path ip, bool colored);

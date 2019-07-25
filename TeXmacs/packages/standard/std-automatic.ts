@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.11>
 
 <style|<tuple|source|std>>
 
@@ -193,9 +193,9 @@
   <assign|index-dots|<macro| <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
   >>
 
-  <assign|index-1|<macro|left|right|<arg|left><index-dots><arg|right>>>
+  <assign|index-1|<macro|left|right|<with|par-left|0tab|<arg|left><index-dots><arg|right>>>>
 
-  <assign|index-1*|<macro|left|<arg|left><no-page-break>>>
+  <assign|index-1*|<macro|left|<with|par-left|0tab|<arg|left><no-page-break>>>>
 
   <assign|index-2|<macro|left|right|<with|par-left|1tab|<arg|left><index-dots><arg|right>>>>
 
@@ -212,6 +212,68 @@
   <assign|index-5|<macro|left|right|<with|par-left|4tab|<arg|left><index-dots><arg|right>>>>
 
   <assign|index-5*|<macro|left|<with|par-left|4tab|<arg|left><no-page-break>>>>
+
+  \;
+
+  <assign|index+1|<macro|l1|right|<index-1|<arg|l1>|<arg|right>>>>
+
+  <assign|index+1*|<macro|l1|<index-1*|<arg|l1>>>>
+
+  <assign|index+2|<macro|l1|l2|right|<index-2|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+  </if-page-break><arg|l2>|<arg|right>>>>
+
+  <assign|index+2*|<macro|l1|l2|<index-2*|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+  </if-page-break><arg|l2>>>>
+
+  <assign|index+3|<macro|l1|l2|l3|right|<index-3|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+
+    <index-2*|<arg|l2>>
+  </if-page-break><arg|l3>|<arg|right>>>>
+
+  <assign|index+3*|<macro|l1|l2|l3|<index-3*|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+
+    <index-2*|<arg|l2>>
+  </if-page-break><arg|l3>>>>
+
+  <assign|index+4|<macro|l1|l2|l3|l4|right|<index-4|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+
+    <index-2*|<arg|l2>>
+
+    <index-3*|<arg|l3>>
+  </if-page-break><arg|l4>|<arg|right>>>>
+
+  <assign|index+4*|<macro|l1|l2|l3|l4|<index-4*|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+
+    <index-2*|<arg|l2>>
+
+    <index-3*|<arg|l3>>
+  </if-page-break><arg|l4>>>>
+
+  <assign|index+5|<macro|l1|l2|l3|l4|l5|right|<index-5|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+
+    <index-2*|<arg|l2>>
+
+    <index-3*|<arg|l3>>
+
+    <index-4*|<arg|l4>>
+  </if-page-break><arg|l5>|<arg|right>>>>
+
+  <assign|index+5*|<macro|l1|l2|l3|l4|l5|<index-5*|<\if-page-break|t>
+    <index-1*|<arg|l1>>
+
+    <index-2*|<arg|l2>>
+
+    <index-3*|<arg|l3>>
+
+    <index-4*|<arg|l4>>
+  </if-page-break><arg|l5>>>>
 
   <\active*>
     <\src-comment>
