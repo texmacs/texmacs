@@ -140,8 +140,14 @@
         ((tm-is? doc 'cite) #t)
         (else (list-or (map has-bib? (tm-children doc))))))
 
+(define (replace-special doc)
+  (cond ((tm-atomic? doc) doc)
+        ((tm-equal? doc '(chapter "Preface")) `(chapter* "Preface"))
+        (else (cons (tm-label doc) (map replace-special (tm-children doc))))))
+
 (define (tmdoc-add-aux doc)
-  (let* ((l0 (cdr doc))
+  (let* ((doc* (replace-special doc))
+         (l0 (cdr doc*))
          (i  (list-find-index l0 (lambda (x) (func? x 'title))))
          (l1 (if i (sublist l0 0 (+ i 1)) '()))
          (l2 (if i (sublist l0 (+ i 1) (length l0)) l0))
