@@ -634,6 +634,7 @@ tmsrc
 tmdir
 tmorig
 CONFIG_EXPERIMENTAL
+CONFIG_CHECKS
 DEBUG_RC
 CONFIG_CXXDIALECT
 PDF_LIBS
@@ -873,6 +874,7 @@ enable_profile
 enable_debug
 enable_assert
 enable_warnings
+enable_checks
 enable_experimental
 enable_optimize
 enable_sign
@@ -1532,6 +1534,7 @@ if test -n "$ac_init_help"; then
   --enable-debug[=ARG]    install a debugging enable executable [-ggdb]
   --enable-assert         exit on failed assertions in code
   --enable-warnings       print warning messages during compilation
+  --enable-checks         more extensive sanity checking
   --enable-experimental   support new style rewriting code
   --enable-optimize[=ARG] compile with optimizations [guessed]
   --enable-sign[=ARG]     Code signing ID
@@ -26760,6 +26763,33 @@ $as_echo "disabling warning flags" >&6; } ;;
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling warning flags $CONFIG_CXXWARNING" >&5
 $as_echo "enabling warning flags $CONFIG_CXXWARNING" >&6; } ;;
   esac
+
+  #--- Checks
+
+  # Check whether --enable-checks was given.
+if test "${enable_checks+set}" = set; then :
+  enableval=$enable_checks;
+else
+  enable_checks="no"
+fi
+
+  case "$enable_checks" in
+      yes)
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: enabling sanity checks" >&5
+$as_echo "enabling sanity checks" >&6; }
+
+$as_echo "#define SANITY_CHECKS 1" >>confdefs.h
+
+         ;;
+      no)
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: disabling sanity checks" >&5
+$as_echo "disabling sanity checks" >&6; }
+         ;;
+      *)
+         as_fn_error $? "bad option --enable-checks=$enable_checks" "$LINENO" 5
+         ;;
+  esac
+
 
   #--- Experimental mode
 

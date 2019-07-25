@@ -223,10 +223,13 @@ endif
 
 deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
   System/Link System/Misc System/Language Kernel/Abstractions \
-  Kernel/Containers\ Kernel/Types Data/Convert Data/Drd Data/History \
+  Kernel/Containers Kernel/Types Data/Convert \
+  Data/Document Data/Drd Data/History \
   Data/Observers Data/Document Data/String Data/Tmfs Data/Tree Graphics \
-  Plugins Style/Environment Style/Evaluate Style/Memorizer \
-  Typeset Edit Texmacs Scheme Graphics/Bitmap_fonts Graphics/Fonts \
+  Plugins Plugins/Pdf/LibAesgm Plugins/Qt \
+  Style/Environment Style/Evaluate Style/Memorizer \
+  Typeset Edit Texmacs Texmacs/Data Scheme Graphics/Bitmap_fonts \
+  Graphics/Colors Graphics/Fonts \
   Graphics/Gui Graphics/Mathematics Graphics/Renderer Graphics/Pictures \
   Graphics/Handwriting Graphics/Types Graphics/Spacial)
 

@@ -202,6 +202,25 @@ AC_DEFUN([TM_DEBUG],[
          AC_MSG_RESULT([enabling warning flags $CONFIG_CXXWARNING]) ;;
   esac
 
+  #--- Checks
+
+  AC_ARG_ENABLE(checks,
+  [  --enable-checks         more extensive sanity checking],
+      [], [enable_checks="no"])
+  case "$enable_checks" in
+      yes)
+         AC_MSG_RESULT([enabling sanity checks])
+         AC_DEFINE(SANITY_CHECKS, 1, [Enable checks style rewriting code])
+         ;;
+      no)
+         AC_MSG_RESULT([disabling sanity checks])
+         ;;
+      *)
+         AC_MSG_ERROR([bad option --enable-checks=$enable_checks])
+         ;;
+  esac
+  AC_SUBST(CONFIG_CHECKS)
+
   #--- Experimental mode
 
   AC_ARG_ENABLE(experimental,

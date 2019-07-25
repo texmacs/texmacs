@@ -511,7 +511,11 @@ super_correct (tree t, path p, bool forwards) {
   path q= path_up (p);
   path r= up_correct (t, q);
   if (q != r) {
+#ifdef SANITY_CHECKS
     ASSERT (!is_nil (r), "unexpected situation");
+#else
+    if (is_nil (r)) return path (0);
+#endif
     int last= (forwards? 1: 0);
     if (is_atomic (subtree (t, r))) p= path_up (r) * last;
     else p= r * last;

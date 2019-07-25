@@ -177,7 +177,11 @@ move_any (tree t, path p, bool forward) {
   }
   if (is_atomic (st)) {
     string s= st->label;
+#ifdef SANITY_CHECKS
     ASSERT (l >= 0 && l <= N(s), "out of range");
+#else
+    l= max (min (l, N(s)), 0);
+#endif
     if (forward) {
       if (l<N(s)) {
 	tm_char_forwards (s, l);
@@ -235,8 +239,19 @@ path previous_any (tree t, path p) {
 ******************************************************************************/
 
 static path
+closest_up (path p) {
+  if (is_nil (p) || is_atom (p)) return path (0);
+  if (last_item (p) == 0) return path_up (path_up (p)) * 0;
+  else path_up (path_up (p)) * 1;
+}
+
+static path
 move_valid_sub (tree t, path p, bool forward) {
+#ifdef SANITY_CHECKS
   ASSERT (is_inside (t, p), "invalid cursor [move_valid]");
+#else
+  while (!is_inside (t, p)) p= closest_up (p);
+#endif
   path q= p;
   while (true) {
     path r= move_any (t, q, forward);
@@ -263,7 +278,11 @@ path previous_valid (tree t, path p) {
 
 static path
 move_accessible (tree t, path p, bool forward) {
+#ifdef SANITY_CHECKS
   ASSERT (is_inside (t, p), "invalid cursor [move_accessible]");
+#else
+  while (!is_inside (t, p)) p= closest_up (p);
+#endif
   path q= p;
   while (true) {
     path r= move_any (t, q, forward);
