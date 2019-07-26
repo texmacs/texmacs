@@ -357,15 +357,15 @@ make_entry (tree& D, tree t, hashmap<string,tree> refs) {
       tree l= t[i][0];
       if (h->contains (l)) {
 	int k= N(l);
+	/*
         tree e= compound ("index+" * as_string (k));
         if (h[l] == "") e= compound ("index+" * as_string (k) * "*");
         for (int ch=0; ch<k; ch++) e << copy (l[ch]);
         if (h[l] != "") e << h[l];
-        /*
+	*/
 	tree e= compound ("index-" * as_string (k), copy (l[k-1]), h[l]);
 	if (h[l] == "")
 	  e= compound ("index-" * as_string (k) * "*", copy (l[k-1]));
-        */
 	D << e;
 	h->reset (l);
       }
