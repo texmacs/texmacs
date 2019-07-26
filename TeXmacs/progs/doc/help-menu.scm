@@ -103,7 +103,7 @@
 	    ("Summary"
 	     (load-help-article "about/about-summary"))
 	    ("License"
-	     (load-help-buffer "$TEXMACS_PATH/LICENSE"))
+	     (load-buffer "$TEXMACS_PATH/LICENSE"))
 	    ("Philosophy"
 	     (load-help-article "about/philosophy/philosophy"))
 	    ("The TeXmacs authors"
