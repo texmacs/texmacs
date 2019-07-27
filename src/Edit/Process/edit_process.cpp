@@ -289,7 +289,7 @@ insert_recursively (array<string>& a, string s, hashmap<string,tree>& h) {
 }
 
 static void
-make_entry (tree& D, tree t, hashmap<string,tree> refs) {
+make_entry (tree& D, tree t, hashmap<string,tree> refs, bool rec) {
   // cout << "Make entry " << t << "\n";
   int i, j, n= N(t);
   for (i=0; i<n; i++)
@@ -357,15 +357,18 @@ make_entry (tree& D, tree t, hashmap<string,tree> refs) {
       tree l= t[i][0];
       if (h->contains (l)) {
 	int k= N(l);
-	/*
-        tree e= compound ("index+" * as_string (k));
-        if (h[l] == "") e= compound ("index+" * as_string (k) * "*");
-        for (int ch=0; ch<k; ch++) e << copy (l[ch]);
-        if (h[l] != "") e << h[l];
-	*/
-	tree e= compound ("index-" * as_string (k), copy (l[k-1]), h[l]);
-	if (h[l] == "")
-	  e= compound ("index-" * as_string (k) * "*", copy (l[k-1]));
+        tree e;
+        if (rec) {
+          e= compound ("index+" * as_string (k));
+          if (h[l] == "") e= compound ("index+" * as_string (k) * "*");
+          for (int ch=0; ch<k; ch++) e << copy (l[ch]);
+          if (h[l] != "") e << h[l];
+        }
+	else {
+          e= compound ("index-" * as_string (k), copy (l[k-1]), h[l]);
+          if (h[l] == "")
+            e= compound ("index-" * as_string (k) * "*", copy (l[k-1]));
+        }
 	D << e;
 	h->reset (l);
       }
@@ -407,9 +410,11 @@ edit_process_rep::generate_index (string idx) {
     entry= new_entry;
     n= N(entry);
 
+    string brst= get_init_string ("index-break-style");
+    bool   rec = (brst == "recall");
     tree D (DOCUMENT);
     for (i=0; i<n; i++)
-      make_entry (D, h (entry[i]), R);
+      make_entry (D, h (entry[i]), R, rec);
     insert_tree (remove_labels (D));
   }
 }
