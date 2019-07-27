@@ -792,7 +792,6 @@ VERSION_MINOR
 VERSION_MAJOR
 STABLE_RELEASE
 STABLE_VERSION
-DEVEL_REVISION
 DEVEL_RELEASE
 DEVEL_VERSION
 PACKAGE
@@ -2950,9 +2949,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
   VERSION_BUILD="11"
 
   # the svn revision of this version
-  DEVEL_REVISION="$Revision$"
-  DEVEL_REVISION=${DEVEL_REVISION#* }
-  DEVEL_REVISION=${DEVEL_REVISION% $}
+  DEVEL_REVISION="$Rev$:"
 
   DEVEL_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_BUILD"
   DEVEL_RELEASE="1"         # I think we should use SVNREV here
@@ -2976,11 +2973,9 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
-
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking current Subversion revision number" >&5
 $as_echo_n "checking current Subversion revision number... " >&6; }
   SVNREV=`svnversion -n . 2>/dev/null`
-  SVNREV=${SVNREV#*:}
  if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then
     SVNREV=`cat $srcdir/SVNREV`
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SVNREV" >&5
@@ -3004,6 +2999,15 @@ $as_echo "$SVNREV" >&6; }
 #Not Implemeted yet
   REVISION=""
 
+
+  while read line
+    do [[ $line =~ $(echo 'DEVEL_REVISION=[^[:digit:]]*([[:digit:]]+)') ]] &&
+      DEVEL_REVISION=${BASH_REMATCH[1]}
+  done <misc/m4/tm_version.m4
+  { $as_echo "$as_me:${as_lineno-$LINENO}: $SVNREV" >&5
+$as_echo "$as_me: $SVNREV" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: $DEVEL_REVISION" >&5
+$as_echo "$as_me: $DEVEL_REVISION" >&6;}
 
   if test "$SVNREV" != "$DEVEL_REVISION"
   then

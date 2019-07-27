@@ -14,7 +14,6 @@
 AC_DEFUN([TM_SUBVERSION],[
   AC_MSG_CHECKING(current Subversion revision number)
   SVNREV=`svnversion -n . 2>/dev/null`
-  SVNREV=${SVNREV#*:}
  if { test "$SVNREV" = "" || test "$SVNREV" = "exported" ; } ; then 
     SVNREV=`cat $srcdir/SVNREV`
     AC_MSG_RESULT($SVNREV, read from $srcdir/SVNREV)
@@ -35,6 +34,13 @@ AC_DEFUN([TM_SUBVERSION],[
 #   fi
 #Not Implemeted yet
   AC_SUBST(REVISION,[""])
+  
+  while read line
+    do @<:@@<:@ $line =~ $(echo 'DEVEL_REVISION=[[^[:digit:]]]*([[[:digit:]]]+)') @:>@@:>@ &&
+      DEVEL_REVISION=${BASH_REMATCH[[1]]}
+  done <misc/m4/tm_version.m4
+  AC_MSG_NOTICE($SVNREV)
+  AC_MSG_NOTICE($DEVEL_REVISION)
   
   if test "$SVNREV" != "$DEVEL_REVISION"
   then AC_DEFINE_UNQUOTED(TEXMACS_REVISION, ["Custom $SVNREV"],[Svn build revision])
