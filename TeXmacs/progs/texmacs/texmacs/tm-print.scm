@@ -86,21 +86,30 @@
   ("printer dpi" "600" notify-printer-dpi))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Printing wrapper for slides
+;; Printing wrapper
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (sort-merge-citations?)
+  (get-boolean-preference "sort-merge-citations"))
+
 (tm-define (wrapped-print-to-file fname)
-  (if (screens-buffer?)
-      (let* ((cur (current-buffer))
-             (buf (buffer-new)))
-        (buffer-copy cur buf)
-        (buffer-set-master buf cur)
-        (switch-to-buffer buf)
-        (dynamic-make-slides)
-        (print-to-file fname)
-        (switch-to-buffer cur)
-        (buffer-close buf))
-      (print-to-file fname)))
+		   (cond ((screens-buffer?)
+	                  (let* ((cur (current-buffer))
+			              (buf (buffer-new)))
+                            (buffer-copy cur buf)
+                            (buffer-set-master buf cur)
+                            (switch-to-buffer buf)
+                            (dynamic-make-slides)
+                            (print-to-file fname)
+                            (switch-to-buffer cur)
+                            (buffer-close buf)))
+			 ((sort-merge-citations?)
+			  (begin
+			   (add-style-package "cite-sort")
+			   (print-to-file fname)
+			   (remove-style-package "cite-sort")
+                           (save-buffer)))
+			 (#t (print-to-file fname))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Printing commands

@@ -32,14 +32,17 @@
       (if (!= ret '(uninit)) ret ""))))
 
 (tm-define (cite-sort args)
-  ;; get a (tuple (tuple key_1 value_1) ... (tuple key_n value_n))
-  ;; and sort it according to values.
-  (:secure #t)
-  (let* ((args (map tree->stree (tree-children args)))
-         (keys (map expand-references (map caddr args)))
-         (tup (map list keys args))
-         (sorted-tup (list-sort tup compare-cite-keys))
-         ;; we should merge contiguous number series here...
-         (sorted-args (map cadr sorted-tup))
-         (ret `(concat ,@(list-intersperse sorted-args '(cite-sep)))))
-    ret))
+           ;; get a (tuple (tuple key_1 value_1) ... (tuple key_n value_n))
+	   ;; and sort it according to values.
+	   (:secure #t)
+	   (let* ((args (map tree->stree (tree-children args)))
+	          (keys (map expand-references (map caddr args)))
+		  (tup (map list keys args))
+		  (sorted-tup (list-sort tup compare-cite-keys))
+		  ;; we should merge contiguous number series here...
+		  (merge? (> (length sorted-tup) 2))
+		  (sorted-args (map cadr (if merge? (list (first sorted-tup) (last sorted-tup))
+                                           sorted-tup)))
+		  (sep (if merge? "--" '(cite-sep)))
+		  (ret `(concat ,@(list-intersperse sorted-args sep))))
+             ret))
