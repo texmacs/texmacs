@@ -1507,7 +1507,7 @@ break_pages (array<page_item> l, space ph, int qual,
 	     space fn_sep, space fnote_sep, space float_sep,
              font fn, int first_page)
 {
-  if (get_user_preference ("new style page breaking") == "on")
+  if (get_user_preference ("new style page breaking") != "off")
     return new_break_pages (l, ph, qual, fn_sep, fnote_sep, float_sep,
                             fn, first_page);
   else {

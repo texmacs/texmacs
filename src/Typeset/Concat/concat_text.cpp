@@ -12,6 +12,7 @@
 #include "concater.hpp"
 #include "formatter.hpp"
 #include "analyze.hpp"
+#include "boot.hpp"
 
 lazy make_lazy_vstream (edit_env env, tree t, path ip, tree channel);
 
@@ -459,6 +460,8 @@ concater_rep::typeset_if_page_break (tree t, path ip) {
   lazy lz= make_lazy_vstream (env, t[1], descend (ip, 1), ch);
   marker (descend (ip, 0));
   flag ("if-page-break", ip, brown);
-  print (FLOAT_ITEM, OP_SKIP, control_box (decorate_middle (ip), lz, env->fn));
+  if (get_user_preference ("new style page breaking") != "off")
+    print (FLOAT_ITEM, OP_SKIP,
+           control_box (decorate_middle (ip), lz, env->fn));
   marker (descend (ip, 1));
 }

@@ -215,6 +215,8 @@
 
   \;
 
+  <assign|index-break-style|recall>
+
   <assign|index+1|<macro|l1|right|<index-1|<arg|l1>|<arg|right>>>>
 
   <assign|index+1*|<macro|l1|<index-1*|<arg|l1>>>>

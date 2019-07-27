@@ -112,7 +112,7 @@
   ("experimental alpha" "on" notify-tool)
   ("new style fonts" "on" notify-new-fonts)
   ("bitmap effects" "on" notify-tool)
-  ("new style page breaking" "off" notify-new-page-breaking))
+  ("new style page breaking" "on" notify-new-page-breaking))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
