@@ -120,8 +120,10 @@ text_box_rep::adjust_kerning (int mode, double factor) {
     nxk->right= xk->right;
   }
   if ((mode & PROTRUSION_MASK) != 0) {
-    nxk->left = -fn->get_left_protrusion  (str, mode);
-    nxk->right= -fn->get_right_protrusion (str, mode);
+    if ((mode & START_OF_LINE) != 0)
+      nxk->left = -fn->get_left_protrusion  (str, mode);
+    if ((mode & END_OF_LINE) != 0)
+      nxk->right= -fn->get_right_protrusion (str, mode);
   }
   if ((mode & START_OF_LINE) != 0) nxk->left  -= pad;
   if ((mode & END_OF_LINE  ) != 0) nxk->right -= pad;
