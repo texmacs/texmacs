@@ -544,6 +544,13 @@ co_pull (patch p1, patch p2) {
 ******************************************************************************/
 
 bool
+is_set_cursor (patch p) {
+  return
+    is_modification (p) && 
+    get_modification (p)->k == MOD_SET_CURSOR;
+}
+
+bool
 join (patch& p1, patch p2, tree t) {
   //cout << "Join " << p1 << LF << "with " << p2 << LF;
   if (get_type (p1) == PATCH_AUTHOR &&
@@ -571,27 +578,38 @@ join (patch& p1, patch p2, tree t) {
     }
   if (get_type (p1) == PATCH_COMPOUND &&
       nr_children (p1) > 0 &&
-      nr_children (remove_set_cursor (p1)) == 1 &&
-      nr_children (p1[0]) == 1)
+      nr_children (remove_set_cursor (p1)) == 1)
     {
-      patch q= p1[0];
-      bool rf= join (q, p2, t);
-      if (rf) p1= q;
-      return rf;
+      int nr= nr_children (p1);
+      patch p1b= remove_set_cursor (p1);
+      if (nr_children (p1b) == 1) {
+        bool rf= join (p1b, p2, t);
+        if (rf) {
+          if (nr >= 2 && is_set_cursor (child (p1, 0))) {
+            array<patch> a= range (children (p1), 0, 1);
+            array<patch> b= children (p1b);
+            p1= patch (append (a, b));
+          }
+          else p1= p1b;
+        }
+        return rf;
+      }
     }
   if (get_type (p2) == PATCH_COMPOUND &&
       nr_children (p2) > 0 &&
-      nr_children (remove_set_cursor (p2)) == 1 &&
-      nr_children (p2[0]) == 1)
+      nr_children (remove_set_cursor (p2)) == 1)
     {
-      patch q= p2[0];
-      bool rf= join (p1, q, t);
-      if (rf) {
-        array<patch> a= children (p1);
-        array<patch> b= children (p2);
-        p1= patch (append (a, range (b, 1, N(b))));
+      int nr= nr_children (p2);
+      patch p2b= remove_set_cursor (p2);
+      if (nr_children (p2b) == 1) {
+        bool rf= join (p1, p2b, t);
+        if (rf && nr >= 2 && is_set_cursor (child (p2, nr-1))) {
+          array<patch> a= children (p1);
+          array<patch> b= range (children (p2), nr-1, nr);
+          p1= patch (append (a, b));
+        }
+        return rf;
       }
-      return rf;
     }
   return false;
 }
