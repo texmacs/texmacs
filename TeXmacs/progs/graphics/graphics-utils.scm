@@ -235,7 +235,7 @@
 	 (if (> n 2)
 	     (with res nothing
 		(foreach-number (i 0 < (- (/ n 2) 1))
-		   (if (== (tree->stree (tree-ref t (* 2 i))) var)
+		   (if (== (tm->stree (tree-ref t (* 2 i))) var)
 		       (set! res (tree-ref t (+ (* 2 i) 1))))
 		)
 		res
@@ -250,7 +250,7 @@
   (with val ((if (tree? l) tm-find-prop list-find-prop) l var)
      (if (== val nothing)
 	 default
-	 (if (tree? val) (tree->stree val) val))))
+	 (if (tree? val) (tm->stree val) val))))
 ;; TODO : Put this in utils/library/tree.scm
 
 (tm-define (get-upwards-tree-property p var)
@@ -281,7 +281,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (stree-at p)
-  (tree->stree (path->tree p)))
+  (tm->stree (path->tree p)))
 ;; TODO: Put this in kernel/library/tree.scm
 
 (tm-define (graphics-graphics-path)
@@ -341,7 +341,7 @@
 
 (tm-define (graphics-get-property var)
   (with val (graphics-get-raw-property var)
-     (tree->stree val)))
+    (tm->stree val)))
 
 (tm-define ((graphics-get-property-at p) var)
   (with r (if (and (pair? p) (in? var (list "gr-gid" "gr-anim-id")))
@@ -352,7 +352,7 @@
 
 (tm-define (graphics-set-property var val)
   (with p (graphics-graphics-path)
-    (cond ((tree? val) (graphics-set-property var (tree->stree val)))
+    (cond ((tree? val) (graphics-set-property var (tm->stree val)))
           ((== val "default") (graphics-remove-property var))
           ((== val (graphics-attribute-default var))
            (graphics-remove-property var))
@@ -474,17 +474,17 @@
 
 (tm-define (graphics-object path)
   (with p (graphics-path path)
-    (if p (tree->stree (path->tree p)) #f)))
+    (if p (tm->stree (path->tree p)) #f)))
 
 (tm-define (graphics-active-object)
   (with p (graphics-active-path)
-    (if p (tree->stree (path->tree p)) #f)))
+    (if p (tm->stree (path->tree p)) #f)))
 
 (tm-define (get-default-tree-val var)
   (get-init-tree var))
 
 (tm-define (get-default-val var)
-  (tree->stree (get-init-tree var)))
+  (tm->stree (get-init-tree var)))
 
 (tm-define (graphics-path-property-bis p var default-val)
   (with c (get-upwards-property p var)
@@ -535,13 +535,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (box-info t cmd)
-  (tree->stree (texmacs-exec* `(box-info ,t ,cmd))))
+  (tm->stree (texmacs-exec* `(box-info ,t ,cmd))))
 
 (tm-define (frame-direct p)
-  (tree->stree (texmacs-exec* `(frame-direct ,p))))
+  (tm->stree (texmacs-exec* `(frame-direct ,p))))
 
 (tm-define (frame-inverse p)
-  (tree->stree (texmacs-exec* `(frame-inverse ,p))))
+  (tm->stree (texmacs-exec* `(frame-inverse ,p))))
 
 (tm-define (interval-intersects i1 i2)
   (let* ((i1a (car i1))
@@ -640,7 +640,7 @@
 
 (tm-define (with-get-attributes t)
   (let* ((a1 (cDr (tree-children t)))
-         (a2 (map tree->stree a1))
+         (a2 (map tm->stree a1))
          (a3 (group-pairs a2)))
     (list->ahash-table a3)))
 
@@ -669,7 +669,7 @@
 
 (tm-define (graphical-set-attributes t tab)
   (cond ((not (tree? t))
-         (tree->stree (graphical-set-attributes (tm->tree t) tab)))
+         (tm->stree (graphical-set-attributes (tm->tree t) tab)))
         ((not (tree-is? t 'with))
          (if (tree-is? t :up 'with)
              (graphical-set-attributes (tree-ref t :up) tab)
