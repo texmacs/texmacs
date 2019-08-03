@@ -393,8 +393,8 @@
 
 (tm-define (buffer-external? u)
   (or (and (url-rooted-web? u)
-           (or (file-of-format? u "html")
-               (== (url-suffix u) "")))
+           ;; FIXME: Use HTTP HEADERS to determine the real file format
+           (!= (file-format u) "texmacs-file"))
       (file-of-format? u "image")
       (file-of-format? u "pdf")
       (file-of-format? u "postscript")
