@@ -13,6 +13,8 @@
 #include "drd_std.hpp"
 #include "analyze.hpp"
 
+path closest_up (tree t, path p);
+
 /******************************************************************************
 * Useful subroutines
 ******************************************************************************/
@@ -45,8 +47,7 @@ correct_right_most_inside (path p, tree t) {
 ******************************************************************************/
 
 static void
-selection_adjust_border (tree t, path i1, path i2, path& o1, path& o2)
-{
+selection_adjust_border (tree t, path i1, path i2, path& o1, path& o2) {
   o1= i1; o2= i2;
   if (is_compound (t) && !is_atom (i1) && !is_atom (i2) &&
       i1->item == i2->item) {
@@ -217,6 +218,13 @@ selection_make_accessible (tree t, path i1, path i2, path& o1, path& o2) {
 void
 selection_correct (tree t, path i1, path i2, path& o1, path& o2) {
   o1= i1; o2= i2;
+#ifdef SANITY_CHECKS
+  ASSERT (is_inside (t, o1), "invalid selection [selection_correct]");
+  ASSERT (is_inside (t, o2), "invalid selection [selection_correct]");
+#else
+  if (!is_inside (t, o1)) o1= closest_up (t, o1);
+  if (!is_inside (t, o2)) o2= closest_up (t, o2);
+#endif
   while (true) {
     path p1= o1, p2= o2;
     i1= o1; i2= o2;

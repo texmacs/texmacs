@@ -238,7 +238,7 @@ path previous_any (tree t, path p) {
 * Traversal of a valid cursor positions inside a tree
 ******************************************************************************/
 
-static path
+path
 closest_up (tree t, path p) {
   if (is_atomic (t)) {
     if (is_nil (p)) return path (0);
