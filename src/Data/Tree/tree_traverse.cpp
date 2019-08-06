@@ -239,10 +239,26 @@ path previous_any (tree t, path p) {
 ******************************************************************************/
 
 static path
-closest_up (path p) {
-  if (is_nil (p) || is_atom (p)) return path (0);
-  if (last_item (p) == 0) return path_up (path_up (p)) * 0;
-  else path_up (path_up (p)) * 1;
+closest_up (tree t, path p) {
+  if (is_atomic (t)) {
+    if (is_nil (p)) return path (0);
+    else return path (max (0, min (p->item, N(t->label))));
+  }
+  else if (is_concat (t) || is_document (t)) {
+    if (N(t) == 0) return path (0);
+    else if (is_nil (p) || is_atom (p) || p->item < 0)
+      return path (0, closest_up (t[0], path ()));
+    else if (p->item >= N(t))
+      return path (N(t)-1, closest_up (t[N(t)-1], path ()));
+    else return path (p->item, closest_up (t[p->item], p->next));
+  }
+  else {
+    if (is_nil (p)) return path (0);
+    else if (is_atom (p)) return path (max (0, min (p->item, 1)));
+    else if (p->item < 0) return path (0);
+    else if (p->item >= N(t)) return path (1);
+    else return path (p->item, closest_up (t[p->item], p->next));
+  }
 }
 
 static path
@@ -250,7 +266,7 @@ move_valid_sub (tree t, path p, bool forward) {
 #ifdef SANITY_CHECKS
   ASSERT (is_inside (t, p), "invalid cursor [move_valid]");
 #else
-  while (!is_inside (t, p)) p= closest_up (p);
+  if (!is_inside (t, p)) p= closest_up (t, p);
 #endif
   path q= p;
   while (true) {
@@ -281,7 +297,7 @@ move_accessible (tree t, path p, bool forward) {
 #ifdef SANITY_CHECKS
   ASSERT (is_inside (t, p), "invalid cursor [move_accessible]");
 #else
-  while (!is_inside (t, p)) p= closest_up (p);
+  if (!is_inside (t, p)) p= closest_up (t, p);
 #endif
   path q= p;
   while (true) {
