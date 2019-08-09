@@ -242,7 +242,7 @@
           ---
           ("Disable" "0"))
     (enum ("Bibtex command" "bibtex command")
-          "bibtex" "rubibtex" *)))
+          "bibtex" "biber" "biblatex" "rubibtex" *)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Computation of the preference menu
