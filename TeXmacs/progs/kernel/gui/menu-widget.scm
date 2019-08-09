@@ -249,8 +249,13 @@
 (define (make-enum p style)
   "Make @(enum :%3 :string?) item."
   (with (tag cmd vals val width) p
-    (widget-enum (object->command (menu-protect cmd))
-                 (vals) (val) style width)))
+    (let* ((xval (val))
+           (xvals (vals))
+           (nvals (if (and (nnull? xvals) (== (cAr xvals) ""))
+                      `(,@(cDr xvals) ,xval "") `(,@xvals ,xval)))
+           (xvals* (list-remove-duplicates nvals)))
+      (widget-enum (object->command (menu-protect cmd))
+                   xvals* xval style width))))
 
 (define (make-choice p style)
   "Make @(choice :%3) item."

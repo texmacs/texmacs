@@ -399,7 +399,7 @@
   (aligned
     (item (text "BibTeX command:")
       (enum (set-pretty-preference "bibtex command" answer)
-            '("bibtex" "rubibtex" "")
+            '("bibtex" "biber" "biblatex" "rubibtex" "")
             (get-pretty-preference "bibtex command")
             "15em")))
   ===
