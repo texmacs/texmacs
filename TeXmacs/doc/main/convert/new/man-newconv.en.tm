@@ -1,10 +1,9 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.11>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
-  <with|font-shape|italic|><tmdoc-title|Adding new data formats and
-  converters>
+  <tmdoc-title|Adding new data formats and converters>
 
   Using the <name|Guile>/<name|Scheme> extension language, it is possible to
   add new data formats and converters to <TeXmacs> in a modular way. Usually,
