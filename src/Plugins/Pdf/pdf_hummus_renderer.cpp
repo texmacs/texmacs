@@ -49,6 +49,7 @@
 #include "PDFWriter/PDFPageInput.h"
 #include "PDFWriter/PDFTiledPattern.h"
 #include "PDFWriter/TiledPatternContentContext.h"
+#include "PDFWriter/PDFUsedFont.h"
  
 /******************************************************************************
  * pdf_hummus_renderer
@@ -97,7 +98,9 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   double width, height;
   
   
-  hashmap<string,PDFUsedFont*> pdf_fonts;
+  hashmap<string,PDFUsedFont*> native_fonts;
+  hashset<string> not_native_fonts;
+  hashset<string> EuropeanComputerModern_fonts;
   hashmap<string,pdf_raw_image> pdf_glyphs;
   hashmap<tree,pdf_image> image_pool;
   hashmap<tree,pdf_image> pattern_image_pool;
@@ -107,6 +110,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   
   hashmap<int,ObjectIDType> alpha_id;
   hashmap<int,ObjectIDType> page_id;
+  int t3font_registry_id;
   hashmap<string,t3font> t3font_list;
   
   // link annotation support
@@ -161,16 +165,7 @@ class pdf_hummus_renderer_rep : public renderer_rep {
   
   int get_label_id(string label);
 
-    
-  // glyph positioning
-  
-  typedef quartet<int,int,int,glyph> drawn_glyph;
-  list <drawn_glyph> drawn_glyphs;
-  void draw_glyphs();
-
-  
   // various internal routines
-  
   void flush_images();
   void flush_patterns();
   void flush_glyphs();
@@ -296,8 +291,9 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
     lw (-1),
     pen (black), bgb (white), fgb (black),
     cfn (""), cfid (NULL),
-    pdf_fonts (0),
+    native_fonts (NULL),
     destId(0),
+    t3font_registry_id(-1),
     label_count(0),
     outlineId(0)
 {
@@ -312,8 +308,10 @@ pdf_hummus_renderer_rep::pdf_hummus_renderer_rep (
   if (version == "1.5") ePDFVersion= ePDFVersion15;
   if (version == "1.6") ePDFVersion= ePDFVersion16;
   if (version == "1.7") ePDFVersion= ePDFVersion17;
+  // LogConfiguration log (true, true, "PDFWriterLog.txt");
   LogConfiguration log= LogConfiguration::DefaultLogConfiguration();
-  PDFCreationSettings settings (true, true); //, EncryptionOptions("user", 4, "owner"));
+  bool compress= true;
+  PDFCreationSettings settings (compress, true); //, EncryptionOptions("user", 4, "owner"));
     status = pdfWriter.StartPDF(as_charp(concretize (pdf_file_name)), ePDFVersion, log, settings);
 	if (status != PDFHummus::eSuccess) {
 		convert_error << "failed to start PDF\n";
@@ -500,7 +498,6 @@ pdf_hummus_renderer_rep::begin_text () {
 void
 pdf_hummus_renderer_rep::end_text () {
   if (inText) {
-    draw_glyphs();
     contentContext->ET();
     inText = false;
   }
@@ -718,7 +715,6 @@ pdf_hummus_renderer_rep::register_pattern_image (brush br, SI pixel) {
 
 void
 pdf_hummus_renderer_rep::select_alpha (int a) {
-  draw_glyphs ();
   if (!alpha_id->contains(a)) {
     ObjectIDType temp = pdfWriter.GetObjectsContext().GetInDirectObjectsRegistry().AllocateNewObjectID();
     alpha_id(a) = temp;
@@ -817,7 +813,6 @@ pdf_hummus_renderer_rep::get_background () {
 void
 pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
   // debug_convert << "set_pencil\n";
-  draw_glyphs ();
   pen= pen2;
   lw= pen->get_width ();
   select_line_width (lw);
@@ -842,7 +837,6 @@ pdf_hummus_renderer_rep::set_pencil (pencil pen2) {
 void
 pdf_hummus_renderer_rep::set_brush (brush br) {
   // debug_convert << "set_brush\n";
-  draw_glyphs();
   fgb= br;
   pen= pencil (br);
   set_pencil (pen);  // FIXME ???
@@ -1025,9 +1019,41 @@ pdf_hummus_renderer_rep::draw_bitmap_glyph (int ch, font_glyphs fn, SI x, SI y)
  * Type 3 fonts
  ******************************************************************************/
 
+static int
+t3font_font_chunk (int global_glyph) {
+  if (global_glyph <= 255) return 0;
+  return global_glyph / 255;
+}
+
+static int
+t3font_get_local_glyph (int global_glyph, int font_chunk, string font_name) {
+  int chunk = t3font_font_chunk (global_glyph);
+  if (chunk != font_chunk)
+    convert_error << "pdf_hummus_renderer, in t3font support, glyph "
+		  << as_string (global_glyph) << " out of chunk "
+		  << as_string (font_chunk)
+		  << " of font " << font_name << LF;
+  if (global_glyph <= 255)
+    return global_glyph;
+  return (global_glyph % 255) + 1;
+}
+
+static int
+t3font_get_global_glyph (int local_glyph, int font_chunk, string font_name) {
+  if (local_glyph > 255)
+    convert_error << "pdf_hummus_renderer, in t3font support, local glyph "
+		  << as_string (local_glyph)
+		  << " is out of the range 0,...,255 "
+		  << "in font " << font_name << LF;
+  if (font_chunk == 0)
+    return local_glyph;
+  return 255 * font_chunk + local_glyph - 1;
+}
+
 class t3font_rep : public concrete_struct {
 public:
   font_glyphs fn;
+  int font_chunk;
   ObjectIDType fontId;
   ObjectsContext &objectsContext;
   hashmap<int, int> used_chars;
@@ -1036,29 +1062,29 @@ public:
   int b0,b1,b2,b3; // glyph bounding box
   bool first_glyph;
   
-  t3font_rep (font_glyphs _fn, ObjectsContext &_objectsContext)
-  : fn (_fn), objectsContext(_objectsContext), first_glyph(true)
-  {
-    fontId = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
-  }
-  
-  void update_bbox(int llx, int lly, int urx, int ury);
+  t3font_rep (font_glyphs _fn, int _font_chunk,
+	      ObjectsContext &_objectsContext)
+    : fn (_fn), font_chunk (_font_chunk),
+      objectsContext (_objectsContext), first_glyph (true) {
+    fontId = objectsContext.GetInDirectObjectsRegistry()
+               .AllocateNewObjectID(); }  
+  void update_bbox (int llx, int lly, int urx, int ury);
   void add_glyph (int ch) {  used_chars (ch) = 1; }
   void write_char (glyph gl, ObjectIDType inCharID);
-  void write_definition ();
+  void write_definition (int& registry_id);
 };
 
 class t3font {
   CONCRETE_NULL(t3font);
-  t3font (font_glyphs _fn, ObjectsContext &_objectsContext)
-  : rep (tm_new<t3font_rep> (_fn,_objectsContext)) {};
+  t3font (font_glyphs _fn, int _font_chunk,
+	  ObjectsContext &_objectsContext)
+    : rep (tm_new<t3font_rep> (_fn, _font_chunk,_objectsContext)) {};
 };
 
 CONCRETE_NULL_CODE(t3font);
 
 void
-t3font_rep::update_bbox(int llx, int lly, int urx, int ury)
-{
+t3font_rep::update_bbox (int llx, int lly, int urx, int ury) {
   if (first_glyph) {
     b0 = llx; b1 = lly; b2 = urx; b3 = ury;
     first_glyph = false;
@@ -1071,8 +1097,7 @@ t3font_rep::update_bbox(int llx, int lly, int urx, int ury)
 }
 
 void
-t3font_rep::write_char (glyph gl, ObjectIDType inCharID)
-{
+t3font_rep::write_char (glyph gl, ObjectIDType inCharID) {
   int llx, lly, urx, ury, cwidth, cheight, lwidth;
   llx = -gl->xoff;
   lly = gl->yoff-gl->height+1;
@@ -1085,118 +1110,178 @@ t3font_rep::write_char (glyph gl, ObjectIDType inCharID)
   objectsContext.StartNewIndirectObject(inCharID);
   // write char stream
   PDFStream *charStream = objectsContext.StartPDFStream(NULL, true);
-  {
-    string data;
-    if (is_nil (gl)) {
-      // write d0 command
-      data  << "0 0 d0\r\n";
-    } else {
-      update_bbox(llx,lly,urx,ury);
-      data  << as_string(lwidth) << " 0 ";
-      data << as_string(llx) << " " << as_string(lly) << " "
-           << as_string(urx) << " " << as_string(ury);
-      data << " d1\r\n";
-      data << " q\r\n";
-      data  << as_string((double)(cwidth)) << " 0 0 "
-      << as_string((double)(cheight)) << " " << as_string((double)(llx)) << " " << as_string(lly) << " cm\r\n";
-      data << "BI\r\n/W " << as_string(cwidth) << "\r\n/H " << as_string(cheight) << "\r\n";
-      data << "/CS /G /BPC 1 /F /AHx /D [0.0 1.0] /IM true\r\nID\r\n";
-      {
-        static const char* hex_string= "0123456789ABCDEF";
-        string hex_code;
-        int i, j, count=0, cur= 0;
-        for (j=0; j < cheight; j++)
-          for (i=0; i < ((cwidth+7) & (-8)); i++) {
-            cur= cur << 1;
-            if ((i<cwidth) && (gl->get_x(i,j)==0)) cur++;
-            count++;
-            if (count==4) {
-              hex_code << hex_string[cur];
-              cur  = 0;
-              count= 0;
-            }
-          }
-        data << hex_code;
+  string data;
+  if (is_nil (gl)) {
+    // write d0 command
+    data  << "0 0 d0\r\n";
+  } else {
+    update_bbox (llx, lly, urx, ury);
+    data << as_string (lwidth) << " 0 ";
+    data << as_string (llx) << " " << as_string (lly) << " "
+	 << as_string (urx) << " " << as_string (ury) << " d1\r\n";
+    data << "q\r\n";
+    data  << as_string ((double)(cwidth)) << " 0 0 "
+	  << as_string ((double)(cheight)) << " "
+	  << as_string ((double)(llx)) << " "
+	  << as_string (lly) << " cm\r\n";
+    data << "BI\r\n/W " << as_string (cwidth)
+	 << "\r\n/H " << as_string (cheight) << "\r\n";
+    data << "/CS /G /BPC 1 /F /AHx /D [0.0 1.0] /IM true\r\nID\r\n";
+    static const char* hex_string= "0123456789ABCDEF";
+    string hex_code;
+    int i, j, count= 0, cur= 0;
+    for (j= 0; j < cheight; j++)
+      for ( i= 0; i < ((cwidth+7) & (-8)); i++) {
+	cur= cur << 1;
+	if ((i < cwidth) && (gl->get_x(i,j) == 0)) cur++;
+	count++;
+	if (count == 4) {
+	  hex_code << hex_string[cur];
+	  cur  = 0;
+	  count= 0;
+	}
       }
-      data << ">\r\nEI\r\nQ\r\n"; // ">" is the EOD char for ASCIIHex
-    }
-    {
-      c_string buf(data);
-      charStream->GetWriteStream()->Write((unsigned char *)(char*)buf,N(data));
-    }
+    data << hex_code;
+    data << ">\r\nEI\r\nQ\r\n"; // ">" is the EOD char for ASCIIHex
   }
-  objectsContext.EndPDFStream(charStream);
+  c_string buf (data);
+  charStream->GetWriteStream()->Write((unsigned char *)(char*)buf, N(data));
+  objectsContext.EndPDFStream(charStream); // It does the EndIndirectObject()
   delete charStream;
-  objectsContext.EndIndirectObject();
-  //return PDFHummus::eSuccess;
 }
 
 void
-t3font_rep::write_definition ()
-{
+t3font_rep::write_definition (int& registry_id) {
   array <int> glyph_list;
   array<ObjectIDType> charIds;
   // order used glyphs
-  {
-    firstchar = 255;
-    lastchar = 0;
-    iterator<int> it = iterate(used_chars);
-    while (it->busy()) glyph_list << it->next();
-    merge_sort(glyph_list);
+  iterator<int> it = iterate (used_chars);
+  while (it->busy())
+    glyph_list << t3font_get_local_glyph (it->next(), font_chunk, fn->res_name);
+  merge_sort(glyph_list);
+  if (N(glyph_list) > 0) {
     firstchar = glyph_list [0];
     lastchar = glyph_list [N(glyph_list)-1];
   }
+  else {
+    convert_warning << "pdf_hummus_renderer, unexpected empty t3 font "
+      << fn->res_name << LF;
+    firstchar = 255;
+    lastchar = 0;
+  }
   // write glyphs definitions
-  for(int i = 0; i < N(glyph_list); ++i)
-  {
-    int ch = glyph_list[i];
-    glyph gl = fn->get(ch);
-    ObjectIDType temp  = objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
+  for (int i = 0; i < N(glyph_list); ++i) {
+    int ch = t3font_get_global_glyph (glyph_list[i],
+				      font_chunk, fn->res_name);
+    glyph gl = fn->get (ch);
+    ObjectIDType temp=
+      objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
     charIds << temp;
     write_char (gl, temp);
   }
+  ObjectIDType tounicodeId;
   // create font dictionary
-  {
-    string dict;
-    dict << "<<\r\n";
-    dict << "\t/Type /Font\r\n";
-    dict << "\t/Subtype /Type3\r\n\t/FontBBox [ "
-         << as_string(b0) << " " << as_string(b1) << " "
-    << as_string(b2) << " " << as_string(b3) << "]\r\n";
-    dict << "\t/FontMatrix [" << as_string(1/100.0) << " 0 0 " << as_string(1/100.0) << " 0 0 ]\r\n";
-    dict << "\t/FirstChar " << as_string(firstchar) << "\r\n\t/LastChar " << as_string(lastchar) << "\r\n";
-    dict << "\t/Widths [ ";
-    for(int i = firstchar; i <= lastchar ; ++i)
-      if (used_chars->contains (i)) {
-        dict << as_string((double)(fn->get(i)->lwidth)) << " ";
-      } else {
-        dict << "0 ";
-      }
-    // Write CharProcs
-    dict << "]\r\n\t/CharProcs <<\r\n";
-    for(int i = 0; i < N(glyph_list); ++i)
-    {
-      int ch = glyph_list[i];
-      ObjectIDType temp = charIds[i];
-      dict << "\t\t/ch" << as_string(ch) << " " << as_string(temp) << " 0 R\r\n";
+  string dict;
+  dict << "<<\r\n";
+  dict << "\t/Type /Font\r\n";
+  dict << "\t/Resources << /ProcSet [/PDF /ImageB] >>\r\n";
+  dict << "\t/Subtype /Type3\r\n\t/FontBBox [ "
+       << as_string (b0) << " " << as_string (b1) << " "
+       << as_string (b2) << " " << as_string (b3) << "]\r\n";
+  dict << "\t/FontMatrix [" << as_string (1/100.0) << " 0 0 "
+       << as_string (1/100.0) << " 0 0 ]\r\n";
+  dict << "\t/FirstChar " << as_string (firstchar)
+       << "\r\n\t/LastChar " << as_string (lastchar) << "\r\n";
+  dict << "\t/Widths [ ";
+  if (N(glyph_list) > 0)
+    for (int i = firstchar; i <= lastchar ; ++i) {
+      int ch = t3font_get_global_glyph (i, font_chunk, fn->res_name);
+      if (used_chars->contains (ch))
+	dict << as_string ((double)(fn->get (ch)->lwidth))
+	     << " ";
+      else dict << "0 ";
     }
-    dict << "\t\t/.notdef " << as_string(charIds[0]) << " 0 R\r\n";
-    dict << "\t>>\r\n";
-    dict << "\t/Encoding <<\r\n";
-    dict << "\t\t/Type /Encoding\r\n";
-    dict << "\t\t/Differences [";
-    for(int i = firstchar, previousEncoding = firstchar; i <= lastchar; ++i)
-      if (used_chars->contains (i)) {
+  // Write CharProcs
+  dict << "]\r\n\t/CharProcs <<\r\n";
+  for (int i = 0; i < N(glyph_list); ++i) {
+    int ch = glyph_list[i];
+    ObjectIDType temp = charIds[i];
+    dict << "\t\t/ch" << as_string (ch) << " "
+	 << as_string (temp) << " 0 R\r\n";
+  }
+  if (N(glyph_list) > 0)
+    dict << "\t\t/.notdef " << as_string (charIds[0]) << " 0 R\r\n";
+  dict << "\t>>\r\n";
+  // Encodings
+  if (N(glyph_list) > 0) {
+    tounicodeId =
+      objectsContext.GetInDirectObjectsRegistry().AllocateNewObjectID();
+    dict << "\t/ToUnicode " << as_string(tounicodeId) << " 0 R\r\n";
+  }
+  dict << "\t/Encoding <<\r\n";
+  dict << "\t\t/Type /Encoding\r\n";
+  dict << "\t\t/Differences [";
+  if (N(glyph_list) > 0)
+    for (int i = firstchar, previousEncoding = firstchar; i <= lastchar; ++i) {
+      int ch = t3font_get_global_glyph (i, font_chunk, fn->res_name);
+      if (used_chars->contains (ch)) {
         if (previousEncoding + 1 != i) {
           dict << "\r\n\t\t\t" << as_string(i) << " ";
         }
         dict << "/ch" << as_string(i) << " ";
         previousEncoding = i;
       }
-    dict << "\t\t]\r\n\t>>\r\n>>\r\n";
-    
-    write_indirect_obj(objectsContext, fontId, dict);
+    }
+  dict << " ]\r\n\t>>\r\n>>\r\n";
+  write_indirect_obj (objectsContext, fontId, dict);
+  if (N(glyph_list) == 0)
+    return;
+  // Cmap
+  registry_id++;
+  string registry = "TeXmacs-type3-ToUnicode-CMap-" * as_string (registry_id);
+  string cmap;
+  cmap << "/CIDInit /ProcSet findresource begin 12 dict\r\n"
+    << "begin begincmap /CIDSystemInfo <<\r\n"
+    << "  /Registry (" << registry
+    << ") /Ordering (Custom) /Supplement 0 >>\r\n"
+    << "def /CMapName /" << registry << " def /CMapType 2 def\r\n";
+  cmap << "1 begincodespacerange <" << as_hexadecimal (firstchar, 2)
+       << "> <" << as_hexadecimal (lastchar, 2)
+       << "> endcodespacerange\r\n";
+#if 1
+  cmap << "1 beginbfrange\r\n";
+  int ch= t3font_get_global_glyph (firstchar, font_chunk, fn->res_name);
+  cmap << "\t<" << as_hexadecimal (firstchar, 2) << "> "
+       << "<" << as_hexadecimal (lastchar, 2) << "> "
+       << "<" << as_hexadecimal (ch, 4) << ">\r\n";
+  cmap << "endbfrange\r\n";
+#else
+  // Left for testing purpose
+  cmap << as_string (N(glyph_list))
+       << " beginbfchar\r\n";
+  for (int i= 0; i < N(glyph_list); i++) {
+    int lch= glyph_list[i];
+    int ch= t3font_get_global_glyph (lch, font_chunk, fn->res_name);
+    cmap << "\t<" << as_hexadecimal (lch, 2)
+	 << "> <" << as_hexadecimal (ch, 4) << ">\r\n";
   }
+  cmap << "endbfchar\r\n";
+#endif
+  cmap << "endcmap CMapName currentdict /CMap defineresource\r\n"
+       << "pop end end\r\n";
+  objectsContext.StartNewIndirectObject(tounicodeId);
+  PDFStream* cmapStream = objectsContext.StartPDFStream (NULL,true);
+  OutputStreamTraits outputTraits(cmapStream->GetWriteStream ());
+  c_string buf (cmap);
+  InputByteArrayStream reader ((IOBasicTypes::Byte*)(char*)buf, N(cmap));
+  EStatusCode status = outputTraits.CopyToOutputStream (&reader);
+  if (status != PDFHummus::eSuccess) {
+    delete cmapStream;
+    convert_error << "pdf_hummus_renderer, internal error at line "
+		  << as_string (__LINE__) << LF;
+  }
+  objectsContext.EndPDFStream (cmapStream); // It does EndIndirectObject();
+  delete cmapStream;
 }
 
 void
@@ -1207,7 +1292,7 @@ pdf_hummus_renderer_rep::flush_fonts()
   while (it->busy()) {
     string name = it->next();
     t3font f = t3font_list[name];
-    f->write_definition();
+    f->write_definition(t3font_registry_id);
   }
 }
 
@@ -1237,74 +1322,24 @@ pdf_hummus_renderer_rep::make_pdf_font (string fontname)
       //debug_convert << "GetFontForFile "  << u  << LF;
       c_string _u (concretize (u));
       font = pdfWriter.GetFontForFile((char*)_u);
-      //tm_delete_array(_rname);
     }
     
-    if (font != 0) {
-      pdf_fonts (fontname)= font;
+    if (font != NULL) {
+      native_fonts (fontname)= font;
+      std::string _ps_name= font->GetFreeTypeFont()->GetPostscriptName();
+      string ps_name (_ps_name.c_str ());
+      if (starts (ps_name, "EuropeanComputerModern"))
+	EuropeanComputerModern_fonts->insert (fontname);
+      //cout << EuropeanComputerModern_fonts << LF;
+      return;
     }
     else {
-      convert_error << "pdf_hummus_renderer, problems with font: " << fname << " file " << u << LF;
+      convert_warning << "pdf_hummus_renderer, font: " << fname
+		      << " in file " << u << " cannot be loaded. "
+		      << "It is converted to bitmap type 3 font." << LF;
     }
   }
-}
-
-void
-pdf_hummus_renderer_rep::draw_glyphs()
-{
-  SI x,y,w; // current pos
-
-  if (N(drawn_glyphs) == 0) return;
-  
-  begin_text ();
-  GlyphUnicodeMappingListOrDoubleList gbuf;
-  GlyphUnicodeMappingList gbuf1;
-  
-  while (!is_nil(drawn_glyphs)) {
-    SI xx,yy,ww;
-    SI bx, by;
-    x = drawn_glyphs->item.x1;
-    y = drawn_glyphs->item.x2;
-    w = drawn_glyphs->item.x4->lwidth*pixel;// - drawn_glyphs->item.x4->xoff;
-    bx = x; by = y;
-    while (1) {
-      drawn_glyph dg = drawn_glyphs->item;
-      //debug_convert << "pushing " << dg.x4->index << " " << dg.x3 << LF;
-      gbuf1.push_back(GlyphUnicodeMapping(dg.x4->index,dg.x3));
-      drawn_glyphs = drawn_glyphs->next;
-      if (is_nil(drawn_glyphs)) break;
-      
-      dg = drawn_glyphs->item;
-      
-      xx = dg.x1;
-      yy = dg.x2;
-      ww = dg.x4->lwidth*pixel;// - dg.x4->xoff;
-      
-      if (yy != y) break;
-      
-      SI dx = xx-x-w;
-      if ((dx >= 4*pixel)||(dx <=-4*pixel)) {
-        if (gbuf1.size()>0) {
-          gbuf.push_back(gbuf1);
-          gbuf1.clear();
-        }
-        gbuf.push_back((double)(-dx*(1000.0/pixel)/fsize));
-      } else dx = 0;
-      x = x+w+dx;
-      w = ww;
-    }
-    if (gbuf1.size()>0) {
-      gbuf.push_back(gbuf1);
-      gbuf1.clear();
-    }
-    
-    contentContext->Td(bx/pixel-prev_text_x, by/pixel-prev_text_y);
-    prev_text_x = bx/pixel;
-    prev_text_y = by/pixel;
-    //contentContext->Tm(1,0,0,1, p*bx/PIXEL, p*by/PIXEL);
-    contentContext->TJ(gbuf);
-    gbuf.clear();
-  }
+  not_native_fonts->insert (fontname);
 }
 
 static double
@@ -1321,78 +1356,177 @@ font_size (string name) {
   return mag;
 }
 
+static bool
+match_font_base_name (string fontname, string basename) {
+  if (!starts (fontname, basename))
+    return false;
+  int i= N(basename);
+  while (i < N(fontname)) {
+    if (fontname[i] < '0' || fontname[i] > '9')
+      return false;
+    i++;
+  }
+  return true;
+}
+
+static bool
+requires_hack_notdef_for_tex_font (string fontname) {
+  // This fix is necessary for avoiding bugs in certain Pdf viewers,
+  // such as old versions of Preview under MacOS (<= 10.6.*).
+  // It is expected to be removed in near future.
+  static hashmap<string,bool> remember;
+  if (remember->contains(fontname))
+    return remember[fontname];
+  bool r=
+    match_font_base_name (fontname, "cmbsy") ||
+    match_font_base_name (fontname, "cmmib") ||
+    match_font_base_name (fontname, "cmb") ||
+    match_font_base_name (fontname, "cmbx") ||
+    match_font_base_name (fontname, "cmbxsl") ||
+    match_font_base_name (fontname, "cmbxti") ||
+    match_font_base_name (fontname, "cmbcsc") ||
+    match_font_base_name (fontname, "cmdunh") ||
+    match_font_base_name (fontname, "cmex") ||
+    match_font_base_name (fontname, "cmexb") ||	       
+    match_font_base_name (fontname, "cmff") ||
+    match_font_base_name (fontname, "cmfi") ||
+    match_font_base_name (fontname, "cmfib") ||
+    match_font_base_name (fontname, "cminch") ||
+    match_font_base_name (fontname, "cmitt") ||
+    match_font_base_name (fontname, "cmmi") ||
+    match_font_base_name (fontname, "cmmib") ||
+    match_font_base_name (fontname, "cmr") ||
+    match_font_base_name (fontname, "cmsl") ||
+    match_font_base_name (fontname, "cmsltt") ||
+    match_font_base_name (fontname, "cmss") ||
+    match_font_base_name (fontname, "cmssbx") ||
+    match_font_base_name (fontname, "cmssdc") ||
+    match_font_base_name (fontname, "cmssi") ||
+    match_font_base_name (fontname, "cmssq") ||
+    match_font_base_name (fontname, "cmssqi") ||
+    match_font_base_name (fontname, "cmsy") ||
+    match_font_base_name (fontname, "cmtcsc") ||
+    match_font_base_name (fontname, "cmtex") ||
+    match_font_base_name (fontname, "cmti") ||
+    match_font_base_name (fontname, "cmtt") ||
+    match_font_base_name (fontname, "cmu") ||
+    match_font_base_name (fontname, "cmvtt") ||
+    match_font_base_name (fontname, "euex") ||
+    match_font_base_name (fontname, "eufb") ||
+    match_font_base_name (fontname, "eufm") ||
+    match_font_base_name (fontname, "eurb") ||
+    match_font_base_name (fontname, "eurm") ||
+    match_font_base_name (fontname, "eusb") ||
+    match_font_base_name (fontname, "eusm") ||
+    match_font_base_name (fontname, "msam") ||
+    match_font_base_name (fontname, "msbm");
+  remember(fontname)= r;
+  return r;
+}
+     
 void
 pdf_hummus_renderer_rep::draw (int ch, font_glyphs fn, SI x, SI y) {
-  //debug_convert << "draw \"" << (char)ch << "\" " << ch << " " << fn->res_name << "\n";
+  //debug_convert << "draw \"" << (char)ch << "\" " << ch << " "
+  //		<< fn->res_name << "\n";
   glyph gl= fn->get(ch);
   if (is_nil (gl)) return;
   string fontname = fn->res_name;
-  if (ch == 0) {
-    // This fix is necessary for avoiding bugs in certain Pdf viewers,
-    // such as old versions of Preview under MacOS (<= 10.6.*).
-    if (starts (fontname, "cm") ||
-        starts (fontname, "euex") ||
-        starts (fontname, "euf") ||
-        starts (fontname, "eur") ||
-        starts (fontname, "eus") ||
-        starts (fontname, "msam") ||
-        starts (fontname, "msbm")) {
-      draw (161, fn, x, y);
-      return;
-    }
+  int fontchunk= t3font_font_chunk (ch);
+  string fontchunkname= fontname * string ("-chunk") * as_string (fontchunk);
+
+  if (ch == 0 && requires_hack_notdef_for_tex_font (fontname)) {
+    draw (161, fn, x, y);
+    return;
   }
-  string char_name (fontname * "-" * as_string ((int) ch));
+  string char_name (fontname * "-" * as_string (ch));
   pdf_raw_image glyph;
-  if (cfn != fontname) {
-    if (!pdf_fonts [fontname]) {
-      if (!t3font_list->contains(fontname)) {
-        make_pdf_font (fontname);
-        if (!pdf_fonts [fontname]) {
-          t3font f(fn,  pdfWriter.GetObjectsContext());
-          t3font_list(fontname) = f;
-        }
+  
+  if (cfn != fontname && cfn != fontchunkname) {
+    if (!native_fonts->contains (fontname) &&
+	!not_native_fonts->contains (fontname))
+      make_pdf_font (fontname);
+    if (not_native_fonts->contains (fontname)) {
+      fontname= fontchunkname;
+      if (!t3font_list->contains (fontname)) {
+	//cout << "create t3font for chunk " << fontchunk
+	//     << " of " << fn->res_name << LF;
+	t3font f (fn, fontchunk, pdfWriter.GetObjectsContext());
+	t3font_list (fontchunkname) = f;
       }
     }
     //debug_convert << "CHANGE FONT" << LF;
     begin_text ();
-    draw_glyphs();
-    cfn = fontname;
     fsize = font_size (fontname);
-    if (pdf_fonts->contains(fontname)) {
-      cfid = pdf_fonts (cfn);
-      contentContext->Tf(cfid, fsize);
+    if (native_fonts->contains (fontname)) {
+      cfid = native_fonts (fontname);
+      contentContext->Tf (cfid, fsize);
     } else {
       cfid = NULL;
-      std::string name = page->GetResourcesDictionary().AddFontMapping(t3font_list(cfn)->fontId);
-      // pk fonts are encoded in t3 fonts as bitmaps. they cannot be scaled and
-      // are encoded in such a way that they should be rendered at size 100 (conventional value)
-      // to give the correct result (see the Font Matrix defined in t3font_rep::write_definition).
-      contentContext->TfLow(name, 100);
+      std::string name = page->GetResourcesDictionary()
+	.AddFontMapping (t3font_list (fontname)->fontId);
+      // pk fonts are encoded in t3 fonts as bitmaps.
+      // they cannot be scaled and are encoded in such a way that
+      // they should be rendered at size 100 (conventional value)
+      // to give the correct result (see the Font Matrix defined
+      // in t3font_rep::write_definition).
+      contentContext->TfLow (name, 100);
     }
+    cfn = fontname;
   }
-  if (cfid != NULL) {
-    begin_text ();
-#if 1
-    contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
-    prev_text_x = to_x(x);
-    prev_text_y = to_y(y);
-    //debug_convert << "char " << ch << "index " << gl->index <<" " << x << " " << y << " font " << cfn  << LF;
-    GlyphUnicodeMappingList glyphs;
-    glyphs.push_back(GlyphUnicodeMapping(gl->index, ch));
-    contentContext->Tj(glyphs);
-#else
-    drawn_glyphs << drawn_glyph(ox+x,oy+y,ch,gl);
-#endif
-  } else {
-    begin_text ();
-    contentContext->Td(to_x(x)-prev_text_x, to_y(y)-prev_text_y);
-    prev_text_x = to_x(x);
-    prev_text_y = to_y(y);
-    t3font_list(fontname)->add_glyph(ch);
-    std::string buf;
-    buf.push_back(ch);
-    contentContext->TjLow(buf);
+  else
+    cfid= native_fonts (fontname);
+  begin_text ();
+  contentContext->Td (to_x(x) - prev_text_x, to_y(y) - prev_text_y);
+  prev_text_x = to_x(x);
+  prev_text_y = to_y(y);
+  //debug_convert << "char " << ch << "index " << gl->index
+  //              << " " << x << " " << y << " font " << cfn  << LF;
+  if (cfid == NULL)
+    t3font_list(cfn)->add_glyph (ch);
+  GlyphUnicodeMappingList glyphs;
+  if (cfid != NULL &&
+      EuropeanComputerModern_fonts->contains (cfn) &&
+      gl->index >= 27 && gl->index <= 31) {
+    ch += 0xfb00 - 27;
   }
+  int gl_index;
+  if (cfid != NULL)
+    gl_index= gl->index;
+  else
+    gl_index= t3font_get_local_glyph
+      (ch, t3font_list(cfn)->font_chunk,
+       t3font_list(cfn)->fn->res_name);
+  static const std::string ligature_ff= "/Span << /ActualText (ff) >> BDC ";
+  static const std::string ligature_fi= "/Span << /ActualText (fi) >> BDC ";
+  static const std::string ligature_fl= "/Span << /ActualText (fl) >> BDC ";
+  static const std::string ligature_ffi= "/Span << /ActualText (ffi) >> BDC ";
+  static const std::string ligature_ffl= "/Span << /ActualText (ffl) >> BDC ";
+  if (ch >= 0xfb00 && ch <= 0xfb04 && ePDFVersion >= ePDFVersion15) {
+    if (ch == 0xfb00) contentContext->WriteFreeCode (ligature_ff);
+    if (ch == 0xfb01) contentContext->WriteFreeCode (ligature_fi);
+    if (ch == 0xfb02) contentContext->WriteFreeCode (ligature_fl);
+    if (ch == 0xfb03) contentContext->WriteFreeCode (ligature_ffi);
+    if (ch == 0xfb04) contentContext->WriteFreeCode (ligature_ffl);
+    if (cfid != NULL) {
+      glyphs.push_back(GlyphUnicodeMapping(gl_index, ch));
+      contentContext->Tj (glyphs);
+    }
+    else {
+      std::string buf; buf.push_back (gl_index);
+      contentContext->TjLow (buf);
+    }
+    contentContext->WriteFreeCode (" EMC\r\n");
+  }
+  else {
+    if (cfid != NULL) {
+      glyphs.push_back (GlyphUnicodeMapping (gl_index, ch));
+      contentContext->Tj(glyphs);
+    }
+    else {
+      std::string buf; buf.push_back (gl_index);
+      contentContext->TjLow (buf);
+    }
+  }    
 }
 
 /******************************************************************************
@@ -1775,9 +1909,8 @@ pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
     delete imageStream;
     return false;
   }
-  objectsContext.EndPDFStream(imageStream);
+  objectsContext.EndPDFStream(imageStream); // It does EndIndirectObject();
   delete imageStream;
-  objectsContext.EndIndirectObject();
 
   objectsContext.StartNewIndirectObject(smaskId);
   DictionaryContext* smaskContext = objectsContext.StartDictionary();
@@ -1802,9 +1935,8 @@ pdf_image_rep::flush_for_pattern (PDFWriter& pdfw) {
     delete smaskStream;
     return false;
   }
-  objectsContext.EndPDFStream(smaskStream);
+  objectsContext.EndPDFStream(smaskStream); // It does EndIndirectObject();
   delete smaskStream;
-  objectsContext.EndIndirectObject();
   return true;
 }
 

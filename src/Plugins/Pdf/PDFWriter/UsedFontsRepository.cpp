@@ -18,6 +18,12 @@
 
    
 */
+
+// UsedFontsRepository::GetFontForFile has been patched by GL in order
+// to avoid blocking the pdf output when encountering a corrupted font file.
+// This patch is dedicated to TeXmacs, that generates type 3 fonts
+// in substitution.
+
 #include "UsedFontsRepository.h"
 #include "FreeTypeWrapper.h"
 #include "PDFUsedFont.h"
@@ -70,7 +76,7 @@ PDFUsedFont* UsedFontsRepository::GetFontForFile(const std::string& inFontFilePa
 		TRACE_LOG("UsedFontsRepository::GetFontForFile, exception, not objects context available");
 		return NULL;
 	}
-
+	PDFUsedFont* ret= (PDFUsedFont*) NULL;
 	StringAndLongToPDFUsedFontMap::iterator it = mUsedFonts.find(StringAndLong(inFontFilePath,inFontIndex));
 	if(it == mUsedFonts.end())
 	{
@@ -89,8 +95,8 @@ PDFUsedFont* UsedFontsRepository::GetFontForFile(const std::string& inFontFilePa
 		if(!face)
 		{
 			TRACE_LOG1("UsedFontsRepository::GetFontForFile, Failed to load font from %s",inFontFilePath.c_str());
-			PDFUsedFont* aNull = NULL;
-			it = mUsedFonts.insert(StringAndLongToPDFUsedFontMap::value_type(StringAndLong(inFontFilePath,inFontIndex),aNull)).first;
+			//PDFUsedFont* aNull = NULL;
+			//it = mUsedFonts.insert(StringAndLongToPDFUsedFontMap::value_type(StringAndLong(inFontFilePath,inFontIndex),aNull)).first;
 		}
 		else
 		{
@@ -102,9 +108,14 @@ PDFUsedFont* UsedFontsRepository::GetFontForFile(const std::string& inFontFilePa
 				delete usedFont;
 				usedFont = NULL;
 			}
-			it = mUsedFonts.insert(StringAndLongToPDFUsedFontMap::value_type(StringAndLong(inFontFilePath,inFontIndex),usedFont)).first;
+			else
+		        {
+				it = mUsedFonts.insert(StringAndLongToPDFUsedFontMap::value_type(StringAndLong(inFontFilePath,inFontIndex),usedFont)).first;
+				ret= usedFont;
+			}
 
 		}
+		return ret;
 	}
 	return it->second;
 }
