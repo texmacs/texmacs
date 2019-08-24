@@ -2,4 +2,4 @@ TeXmacsGhci is a binary ( that has to be placed at Haskell/bin )
 We get it after compilation by GHC or stack build of the file TeXmacsGhci.hs
 
 
-Please see [GitHub Pages](https://github.com/bertbratschi/TeXmacsGhci)].  
+Please see [GitHub Pages](https://github.com/bertbratschi/TeXmacsGhci).  
