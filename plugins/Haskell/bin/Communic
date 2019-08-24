@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd
+
+temp=`echo $1 | sed -e 's/~ //g' | sed -e 's/~/;/g' | sed -e "s/''/\"/g"`
+
+echo "$temp"  > /Applications/TeXmacs-1.99.11.app/Contents/Resources/share/TeXmacs/plugins/haskell/temps/input.txt
+
+sleep 0.7s
+
+cat /Applications/TeXmacs-1.99.11.app/Contents/Resources/share/TeXmacs/plugins/haskell/temps/output.txt
+
+# echo "[]" > /Applications/TeXmacs-1.99.11.app/Contents/Resources/share/TeXmacs/plugins/haskell/temps/input.txt
+
+echo -e " \n "
