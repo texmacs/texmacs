@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.11>
 
 <style|<tuple|tmdoc|old-spacing>>
 
@@ -46,7 +46,7 @@
     is rendered as
 
     <\equation*>
-      f<around*|(|x<mid|\||8mm>y|)>
+      f<left|(|-8mm|4mm>x<mid|\||8mm>y<right|)|-4mm|8mm>
     </equation*>
 
     The <src-arg|size> may also be a number <math|n>, in which case the
@@ -59,7 +59,7 @@
     is rendered as
 
     <\equation*>
-      g<around*|(|<around*|(|<around*|(|<around*|(|z|)>|)>|)>|)>
+      g<left|(|0><left|(|1><left|(|2><left|(|3>z<right|)|3><right|)|2><right|)|1><right|)|0>
     </equation*>
   </explain>
 

@@ -1,6 +1,6 @@
-<TeXmacs|1.0.4.5>
+<TeXmacs|1.99.11>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|german|old-spacing>>
 
 <\body>
   <tmdoc-title|Mathematik-Konstrukte>
@@ -12,15 +12,15 @@
 
     <explain-macro|left|large-delimiter|bottom|top>
 
-    <explain-macro|mid|large-delimiter|<with|mode|math|\<cdots\>>>
+    <explain-macro|mid|large-delimiter|<math|\<cdots\>>>
 
-    <explain-macro|right|large-delimiter|<with|mode|math|\<cdots\>>><explain-synopsis|Groÿe
+    <explain-macro|right|large-delimiter|<math|\<cdots\>>><explain-synopsis|Groÿe
     Klammern>
   <|explain>
     Diese Konstrukte erzeugen groÿe Klammern, wie z.B.:
 
     <\equation*>
-      <left|langle><frac|1|a<rsub|1>><mid|\|><frac|1|a<rsub|2>><mid|\|>\<cdots\><mid|\|><frac|1|a<rsub|n>><right|rangle>.
+      <around*|\<langle\>|<frac|1|a<rsub|1>><mid|\|><frac|1|a<rsub|2>><mid|\|>\<cdots\><mid|\|><frac|1|a<rsub|n>>|\<rangle\>>.
     </equation*>
 
     Zu einander passende rechte und linke Klammern werden in ihrer Gröÿe
@@ -31,7 +31,7 @@
     Formeln wie
 
     <\equation*>
-      f<left|(><frac|1|x+<frac|1|y+<frac|1|z>>><right|)>
+      f<around*|(|<frac|1|x+<frac|1|y+<frac|1|z>>>|)>
     </equation*>
 
     korrekt gesetzt werden. Der Nutzer kann die automatisch bestimmte Gröÿe
@@ -46,9 +46,8 @@
       f<left|(|-8mm|4mm>x<mid|\||8mm>y<right|)|-4mm|8mm>
     </equation*>
 
-    <src-arg|size> kann auch eine ganze Zahl <with|mode|math|n> sein. In
-    diesem Fall wird die <with|mode|math|n>-te Gröÿe der vorhandenen
-    Klammergröÿen verwendet. Z.B.
+    <src-arg|size> kann auch eine ganze Zahl <math|n> sein. In diesem Fall
+    wird die <math|n>-te Gröÿe der vorhandenen Klammergröÿen verwendet. Z.B.
 
     <\tm-fragment>
       <inactive*|g<left|(|0><left|(|1><left|(|2><left|(|3>z<right|)|3><right|)|2><right|)|1><right|)|0>>
@@ -69,14 +68,14 @@
     Dieses Konstrukt erzeugt groÿe mathematische Symbole wie z.B. in
 
     <\equation>
-      <label|big-example><big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i><big|.>
+      <label|big-example><big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i>
     </equation>
 
     Die Gröÿe des Operators hängt davon ab, ob es sich um eine eigenständige
     Formel oder eine Formel in Flieÿtext handelt. Formeln wie
     \ (<reference|big-example>) heiÿen eigenständig im Gegensatz zu Formeln
-    wie <with|mode|math|<big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i><big|.>>.
-    Im Menü <menu|Format|Display style> können die Voreinstellungen angepasst
+    wie <math|<big|sum><rsub|i=0><rsup|\<infty\>>a<rsub|i>*z<rsup|i>>. Im
+    Menü <menu|Format|Display style> können die Voreinstellungen angepasst
     werden.
 
     Beachten Sie, dass die Formel(<reference|big-example>) intern als\ 
@@ -94,13 +93,12 @@
   <\explain>
     <explain-macro|frac|num|den><explain-synopsis|Brüche>
   <|explain>
-    Das <markup|frac>-Konstrukt erzeugt Brüche wie
-    <with|mode|math|<frac|x|y>>. In eigenständigen Formeln wird der Zähler
-    <src-arg|num> und der Nenner <src-arg|den> in normaler Gröÿe dargestellt.
-    Während des Schriftsetzens innerhalb des Zählers bzw. innerhalb des
-    Nenners wird der für eigenständige Formeln benutzte Stil ausgeschaltet.
-    Daher werden Argumente innerhalb eigenständiger Formeln in Indexgröÿe
-    dargestellt, wie z.B. in\ 
+    Das <markup|frac>-Konstrukt erzeugt Brüche wie <math|<frac|x|y>>. In
+    eigenständigen Formeln wird der Zähler <src-arg|num> und der Nenner
+    <src-arg|den> in normaler Gröÿe dargestellt. Während des Schriftsetzens
+    innerhalb des Zählers bzw. innerhalb des Nenners wird der für
+    eigenständige Formeln benutzte Stil ausgeschaltet. Daher werden Argumente
+    innerhalb eigenständiger Formeln in Indexgröÿe dargestellt, wie z.B. in\ 
 
     <\tm-fragment>
       <inactive*|<frac|1|a<rsub|0>+<frac|1|a<rsub|1>+<frac|1|a<rsub|2>+\<ddots\>>>>>
@@ -118,13 +116,12 @@
 
     <explain-macro|sqrt|content|n><explain-synopsis|Wurzeln>
   <|explain>
-    <markup|sqrt> erzeugt Quadratwurzeln wie <with|mode|math|<sqrt|x>> oder
-    <src-arg|n>-te Wurzeln wie \ <with|mode|math|<sqrt|x|3>>. Das
-    Wurzelzeichen wird automatisch der Gröÿe des Inhalts, <src-arg|content>,
-    angepasst:
+    <markup|sqrt> erzeugt Quadratwurzeln wie <math|<sqrt|x>> oder
+    <src-arg|n>-te Wurzeln wie \ <math|<sqrt|x|3>>. Das Wurzelzeichen wird
+    automatisch der Gröÿe des Inhalts, <src-arg|content>, angepasst:
 
     <\equation*>
-      <sqrt|<frac|f(x)|y<rsup|2>+z<rsup|2>>|i+j>
+      <sqrt|<frac|f<around|(|x|)>|y<rsup|2>+z<rsup|2>>|i+j>
     </equation*>
   </explain>
 
@@ -158,7 +155,7 @@
     automatisch als Grenze interpretiert und entsprechend gesetzt:
 
     <\equation*>
-      lim<rsub|n\<rightarrow\>\<infty\>>a<rsub|n><big|.>
+      lim<rsub|n\<rightarrow\>\<infty\>>a<rsub|n>
     </equation*>
 
     Indices werden im Flieÿtext in einer kleineren Schriftgröÿe dargestellt,
@@ -172,16 +169,16 @@
     <explain-macro|rprime|prime-symbols><explain-synopsis|hochgestellte
     Symbole>
   <|explain>
-    Linke und rechte hochgestellte Symbole wie<with|mode|math|f<rprime|'>>
-    ähneln linken oder rechten oberen Indices. Sie benehmen sich aber anders,
-    wenn sie editiert werden. Wenn ihr Cursor hinter dem hochgestellten
-    Symbol in <with|mode|math|f<rprime|'>> steht und sie die <key|Rücktaste>
-    drücken, dann wird das hochgestellte Symbol entfernt. Wenn sie hinter dem
-    oberen Index in <with|mode|math|f<rsup|n>> stehen und die <key|Rücktaste>
-    mehrmals drücken, dann bewegen sie sich zuerst in den Index, dann wird
-    <with|mode|math|n> entfernt und schlieÿlich der obere Index. Beachten Sie
-    bitte, dass <src-arg|prime-symbols> eine Verkettung von Symbolen ist. So
-    ist <with|mode|math|f<rprime|'\<dag\>>> die Darstellung von
+    Linke und rechte hochgestellte Symbole wie<math|f<rprime|'>> ähneln
+    linken oder rechten oberen Indices. Sie benehmen sich aber anders, wenn
+    sie editiert werden. Wenn ihr Cursor hinter dem hochgestellten Symbol in
+    <math|f<rprime|'>> steht und sie die <key|Rücktaste> drücken, dann wird
+    das hochgestellte Symbol entfernt. Wenn sie hinter dem oberen Index in
+    <math|f<rsup|n>> stehen und die <key|Rücktaste> mehrmals drücken, dann
+    bewegen sie sich zuerst in den Index, dann wird <math|n> entfernt und
+    schlieÿlich der obere Index. Beachten Sie bitte, dass
+    <src-arg|prime-symbols> eine Verkettung von Symbolen ist. So ist
+    <math|f<rprime|'\<dag\>>> die Darstellung von
     <inactive*|f<rprime|'\<dag\>>>.
   </explain>
 
@@ -216,19 +213,18 @@
   <|explain>
     Diese Konstrukte erzeugen breite Zeichen über oder unter einem
     mathematischen Inhalt <src-arg|content>. Beispielsweise entspricht
-    <with|mode|math|<wide|x+y|\<bar\>>> \ <inactive*|<wide|x+y|\<bar\>>>.
+    <math|<wide|x+y|\<bar\>>> \ <inactive*|<wide|x+y|\<bar\>>>.
   </explain>
 
   <\explain>
     <explain-macro|neg|content><explain-synopsis|Negationen>
   <|explain>
     Dieses Konstrukt erzeugt \ verneinten Inhalt wie
-    <with|mode|math|<neg|\<rightarrowtail\>>>, <with|mode|math|<neg|a>> und
-    <neg|abc>.
+    <math|<neg|\<rightarrowtail\>>>, <math|<neg|a>> und <neg|abc>.
   </explain>
 
   <\explain>
-    <explain-macro|tree|root|child-1|<with|mode|math|\<cdots\>>|child-n><explain-synopsis|Bäume>
+    <explain-macro|tree|root|child-1|<math|\<cdots\>>|child-n><explain-synopsis|Bäume>
   <|explain>
     Dieses Konstrukt erzeugt einen Baum mit der Wurzel, <src-arg|root>, und
     Kinder <src-arg|child-1> bis <src-arg|child-n>. Er sollte rekursiv zur
@@ -260,7 +256,6 @@
 
 <\initial>
   <\collection>
-    <associate|language|german>
     <associate|preamble|false>
   </collection>
 </initial>
