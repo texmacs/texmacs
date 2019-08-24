@@ -1,0 +1,143 @@
+#!/bin/bash
+space=' '
+quot='"'
+spaceq='" "'
+star='*'
+endfile="</body>"
+endsession="  </session>"
+ECHO=/bin/echo
+d="on"
+# control characters
+tmp=`$ECHO DATA_BEGIN=X DATA_END=Y DATA_ESCAPE=Z | tr "XYZ" "\002\005\027" `
+eval $tmp
+
+
+# startup banner
+$ECHO -n $DATA_BEGIN
+$ECHO verbatim:    This is an experimental interface for Haskell.  
+$ECHO   Before leaving this session use \":q\" to kill the process TeXmacsGhci. 
+$ECHO ----------------------------------––––––––––––––––––––
+$ECHO -n $DATA_END
+
+#starting process
+
+TeXmacsGhci 2>&1 &
+
+
+$ECHO -n $DATA_BEGIN
+$ECHO verbatim:
+
+# prompt-input-output main loop
+cpt=0
+while ((cpt<2000)); do
+# prompt
+$ECHO -n $DATA_BEGIN
+$ECHO -n channel:prompt
+$ECHO -n $DATA_END
+$ECHO -n "In [$cpt"'] '
+$ECHO -n $DATA_END
+
+
+#read a line from stdin
+read command
+
+#testing if command concerns debugmod
+
+if [ "$command" = "Debug-On" ]
+then
+    d="on"
+elif [ "$command" = "Debug-Off" ]
+then
+    d="of"
+
+elif [ "$command" = "launch" ]
+then open /Applications/TeXmacs-1.99.11.app/Contents/Resources/share/TeXmacs/plugins/haskell/bin/TeXmacsGhci
+
+elif [ "$command" = "kill" ]
+then
+    { if pgrep -x "ghc" > /dev/null
+      then {
+            idghc=$(pgrep ghc)
+            kill -9 `echo $idghc`
+            $ECHO -n $DATA_BEGIN
+            $ECHO verbatim:"$idghc just killed."
+            $ECHO -n $DATA_END
+           }
+      else {
+            $ECHO -n $DATA_BEGIN
+            $ECHO verbatim:ghc is already off !
+            $ECHO -n $DATA_END
+            }
+      fi
+     }
+
+else
+    #giving correct form to $command for Hs-input
+
+input=$quot$command$quot
+
+
+     #sending Hs-input
+
+output=$(eval Communic "$input")
+
+          if [ "$d" = "on" ]
+           then
+              {
+
+             if [ "${command:0:7}" = "texmacs" ]
+               then
+                 {
+                  $ECHO -n $DATA_BEGIN
+                  $ECHO texmacs:`echo $output| sed 's/.\(.*\)/\1/' | sed 's/\(.*\)./\1/'`
+              
+                   $ECHO -n $DATA_END
+
+                  }
+              else
+                 echo $output
+              fi
+               }
+                
+             else
+              {
+              
+
+             if [[ $output != *=* ]]
+
+               then
+                {
+
+                 if [ "${command:0:7}" = "texmacs" ]
+                  then
+                    {
+                     $ECHO -n $DATA_BEGIN
+                     $ECHO texmacs:`echo $output| sed 's/.\(.*\)/\1/' | sed 's/\(.*\)./\1/'`
+              
+                      $ECHO -n $DATA_END
+
+                     }
+                 else
+                  echo $output
+                 fi  
+
+                 } 
+                fi
+
+               }
+             fi
+
+
+
+     sleep 1
+echo "waiting" > /Applications/TeXmacs-1.99.11.app/Contents/Resources/share/TeXmacs/plugins/haskell/temps/input.txt
+
+fi
+#$ECHO -ne "\n"
+$ECHO ""
+
+((cpt+=1))
+
+done
+exit 0
+
