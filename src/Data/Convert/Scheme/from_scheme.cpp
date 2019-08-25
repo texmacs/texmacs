@@ -138,13 +138,13 @@ scheme_tree_to_tree (scheme_tree t, hashmap<string,int> codes, bool flag) {
       tree u (EXPAND, n);
       u[0]= copy (t[0]);
       for (i=1; i<n; i++)
-	u[i]= scheme_tree_to_tree (t[i], codes, flag);
+        u[i]= scheme_tree_to_tree (t[i], codes, flag);
       return u;
     }
     else {
       tree u (code, n-1);
       for (i=1; i<n; i++)
-	u[i-1]= scheme_tree_to_tree (t[i], codes, flag);
+        u[i-1]= scheme_tree_to_tree (t[i], codes, flag);
       return u;
     }
   }

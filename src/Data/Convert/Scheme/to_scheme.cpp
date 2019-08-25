@@ -34,8 +34,8 @@ slash (string s) {
       break;
     case '\042':
       if (((i==0) && (s[n-1]=='\042')) ||
-	  ((i==(n-1)) && (s[0]=='\042')))
-	r << s[i];
+          ((i==(n-1)) && (s[0]=='\042')))
+        r << s[i];
       else r << "\\" << s[i];
       break;
     case ((char) 0):
@@ -73,8 +73,8 @@ scheme_tree_to_string (string& out, scheme_tree p) {
       int i, n= N(p);
       out << "(";
       for (i=0; i<n; i++) {
-	if (i>0) out << " ";
-	scheme_tree_to_string (out, p[i]);
+        if (i>0) out << " ";
+        scheme_tree_to_string (out, p[i]);
       }
       out << ")";
     }
