@@ -929,7 +929,11 @@ unescape_guile (string s) {
   string r;
   for (i=0; i<n; i++) {
     if (s[i] == '\\') {
-      if (i+3 < n && s[i+1] == 'x'
+      if (i+1 < n && s[i+1] == '\\') {
+        r << "\\\\\\\\";
+        i+=1;
+      }
+      else if (i+3 < n && s[i+1] == 'x'
           && is_hex_digit (s[i+2]) && is_hex_digit (s[i+3])) {
         string e= s(i+2, i+4);
         r << (unsigned char) from_hexadecimal (e);

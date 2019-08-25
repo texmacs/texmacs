@@ -49,6 +49,10 @@ TEST (string, string_union) {
   ASSERT_TRUE (string_union ("Hello World", "eo") == string ("Hll Wrldeo"));
 }
 
+TEST (string, unescape_guile) {
+  ASSERT_STREQ (as_charp (unescape_guile ("\\\\")), "\\\\\\\\");
+}
+
 TEST (string, starts) {
   ASSERT_TRUE (starts ("abc_def", "abc"));
   ASSERT_FALSE (starts ("abc_def", "def"));
