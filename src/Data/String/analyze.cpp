@@ -816,7 +816,7 @@ scm_quote (string s) {
 
 string
 scm_unquote (string s) {
-  if ((N(s)>=2) && (s[0]=='\"') && (s[N(s)-1]=='\"')) {
+  if (is_quoted (s)) {
     int i, n= N(s);
     string r;
     for (i=1; i<n-1; i++)
@@ -837,7 +837,7 @@ raw_quote (string s) {
 string
 raw_unquote (string s) {
   // Get the string value of a STRING tree label representing a string.
-  if ((N(s)>=2) && (s[0]=='\"') && (s[N(s)-1]=='\"'))
+  if (is_quoted (s))
     return s (1, N(s)-1);
   else return s;
 }

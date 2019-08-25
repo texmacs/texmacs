@@ -390,7 +390,8 @@ is_charp (string s) { (void) s;
 
 bool
 is_quoted (string s) {
-  return (N(s)>=2) && (s[0]=='\042') && (s[N(s)-1]=='\042');
+  int n=N(s);
+  return (n>=2) && (s[0]=='\"') && (s[n-1]=='\"');
 }
 
 bool

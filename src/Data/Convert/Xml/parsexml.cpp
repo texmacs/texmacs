@@ -708,11 +708,6 @@ xml_html_parser::finalize_space (tree t) {
   }
 }
 
-static string
-simple_quote (string s) {
-  return "\"" * s * "\"";
-}
-
 tree
 xml_html_parser::finalize_sxml (tree t) {
   if (!is_tuple (t, "tag")) return ""; // sanity
@@ -725,20 +720,20 @@ xml_html_parser::finalize_sxml (tree t) {
     if (is_tuple (t[i], "attr")) {
       tree attr;
       if (N(t[i]) == 2) attr= tuple (t[i][1]);
-      else attr= tuple (t[i][1]->label, simple_quote (t[i][2]->label));
+      else attr= tuple (t[i][1]->label, raw_quote (t[i][2]->label));
       attrs << attr;
     }
     else if (is_tuple (t[i], "tag"))
       content << finalize_sxml (t[i]);
     else if (is_atomic (t[i]))
-      content << simple_quote (t[i]->label);
+      content << raw_quote (t[i]->label);
     else if (is_tuple (t[i], "pi"))
-      content << tuple ("*PI*", t[i][1]->label, simple_quote (t[i][2]->label));
+      content << tuple ("*PI*", t[i][1]->label, raw_quote (t[i][2]->label));
     else if (is_tuple (t[i], "doctype"))
       // TODO: convert DTD declarations
-      content << tuple ("*DOCTYPE*", simple_quote (t[i][1]->label));
+      content << tuple ("*DOCTYPE*", raw_quote (t[i][1]->label));
     else if (is_tuple (t[i], "cdata"))
-      content << simple_quote (t[i][1]->label);
+      content << raw_quote (t[i][1]->label);
   if (N(attrs) > 1) tag << attrs;
   tag << A(content);
   return tag;
