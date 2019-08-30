@@ -126,7 +126,7 @@ AC_DEFUN([TM_PLATFORM],[
       CONFIG_BPATH=""
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
-      LC_APPEND_FLAG([-Wl,-stack_size,0x1000000],[LDFLAGS])
+      LC_APPEND_FLAG([-Wl,-stack_size,0x1000000,-headerpad_max_install_names],[LDFLAGS])
       test -d /sw && LC_SCATTER_FLAGS([-I/sw/include -L/sw/lib])
       test -d /opt && LC_SCATTER_FLAGS([-I/opt/local/include -L/opt/local/lib])
   ;;
