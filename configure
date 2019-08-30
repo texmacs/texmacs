@@ -6001,12 +6001,12 @@ $as_echo "#define OS_MACOS 1" >>confdefs.h
       CONFIG_SO="dylib"
       CONFIG_LIB_PATH="DYLD_LIBRARY_PATH"
 
-  if [[ "-Wl,-stack_size,0x1000000" =~ $(echo '^-Wl,') ]]
-  then LDFLAGS+=" -Wl,-stack_size,0x1000000"
-  elif [[ "-Wl,-stack_size,0x1000000" =~ $(echo '^-l') ]]
+  if [[ "-Wl,-stack_size,0x1000000,-headerpad_max_install_names" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -Wl,-stack_size,0x1000000,-headerpad_max_install_names"
+  elif [[ "-Wl,-stack_size,0x1000000,-headerpad_max_install_names" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-Wl,-stack_size,0x1000000"
+  for STRIP_ALL_ARGS_arg in "-Wl,-stack_size,0x1000000,-headerpad_max_install_names"
   do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$LDFLAGS
 
@@ -6027,12 +6027,12 @@ $as_echo "#define OS_MACOS 1" >>confdefs.h
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       LDFLAGS+=" -Wl,-stack_size,0x1000000"
+       LDFLAGS+=" -Wl,-stack_size,0x1000000,-headerpad_max_install_names"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-stack_size,0x1000000($|[[:space:]])") ]]
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-stack_size,0x1000000,-headerpad_max_install_names($|[[:space:]])") ]]
     then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
 $as_echo "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
-    else LDFLAGS+=" -Wl,-stack_size,0x1000000"
+    else LDFLAGS+=" -Wl,-stack_size,0x1000000,-headerpad_max_install_names"
     fi
   fi
 
