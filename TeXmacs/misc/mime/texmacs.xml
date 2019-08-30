@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-	<mime-type type="text/x-texmacs">
+	<mime-type type="text/x-texmacs.sty">
 		<comment>TeXmacs stylesheet</comment>
 		<comment xml:lang="ar">نمط TeXmacs</comment>
 		<comment xml:lang="be@latin">Arkuš stylaŭ TeXmacs</comment>
@@ -48,8 +48,10 @@
 			<match type="string" value="TeXmacs" offset="1:7"/>
 		</magic>
 		<glob pattern="*.ts"/>
+  	<icon name="text-x-texmacs"/>
+  	<generic-icon name="text-x-texmacs"/>
 	</mime-type>
-	<mime-type type="text/x-texmacs">
+	<mime-type type="text/x-texmacs.doc">
 		<comment>TeXmacs document</comment>
 		<comment xml:lang="ar">مستند TeXmacs</comment>
 		<comment xml:lang="be@latin">Dakument TeXmacs</comment>
@@ -92,5 +94,7 @@
 			<match type="string" value="TeXmacs" offset="1:7"/>
 		</magic> 
 		<glob pattern="*.tm"/>
+	  <icon name="text-x-texmacs"/>
+  	<generic-icon name="text-x-texmacs"/>
 	</mime-type>
 </mime-info>

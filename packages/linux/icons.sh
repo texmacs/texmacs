@@ -24,6 +24,7 @@ function cpicon {
 }
 
 function rmicon {
+set -x
 	if test -n "$1" -a -n "$2"
 	then	rm $svgdst/$2/$1.svg
 				for i in $1-*.png
@@ -40,10 +41,16 @@ else 	export svgdst=$HOME/.local/share/icons/hicolor/scalable
 			export XDG_UTILS_INSTALL_MODE=user
 fi
 export XDG_UTILS_DEBUG_LEVEL=0
-if test $mode == "i"
-then	cpicon $iapp apps
- 			cpicon $idoc mimetypes
-else	rmicon $iapp apps
- 			rmicon $idoc mimetypes
-fi
+
+case $mode in
+install)
+	cpicon $iapp apps
+ 	cpicon $idoc mimetypes
+ 	;;
+uninstall)
+	rmicon $iapp apps
+	rmicon $idoc mimetypes
+	;;
+*) exit 1;;
+esac
 xdg-icon-resource forceupdate --theme hicolor
