@@ -76,6 +76,10 @@ TEST (string, raw_unquote) {
   ASSERT_STREQ (as_charp (raw_unquote ("a")), "a");
 }
 
+TEST (string, unescape_guile) {
+  ASSERT_STREQ (as_charp (unescape_guile ("\\\\")), "\\\\\\\\");
+}
+
 TEST (string, starts) {
   ASSERT_TRUE (starts ("abc_def", "abc"));
   ASSERT_FALSE (starts ("abc_def", "def"));
