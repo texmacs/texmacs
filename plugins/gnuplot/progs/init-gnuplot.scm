@@ -19,12 +19,12 @@
 
 (define (gnuplot-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      `((:launch ,(string-append "python "
+      `((:launch ,(string-append "python \""
                                  (getenv "TEXMACS_HOME_PATH")
-                                 "/plugins/tmpy/session/tm_gnuplot.py")))
-      `((:launch ,(string-append "python "
+                                 "/plugins/tmpy/session/tm_gnuplot.py\"")))
+      `((:launch ,(string-append "python \""
                                  (getenv "TEXMACS_PATH")
-                                 "/plugins/tmpy/session/tm_gnuplot.py")))))
+                                 "/plugins/tmpy/session/tm_gnuplot.py\"")))))
 
 
 (plugin-configure gnuplot

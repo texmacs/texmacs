@@ -17,12 +17,12 @@
 
 (define (graph-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python "
+      (string-append "python \""
                      (getenv "TEXMACS_HOME_PATH")
-                     "/plugins/tmpy/session/tm_graph.py")
-      (string-append "python "
+                     "/plugins/tmpy/session/tm_graph.py\"")
+      (string-append "python \""
                      (getenv "TEXMACS_PATH")
-                     "/plugins/tmpy/session/tm_graph.py")))
+                     "/plugins/tmpy/session/tm_graph.py\"")))
 
 (plugin-configure graph
   (:require (url-exists-in-path? "python"))

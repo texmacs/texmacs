@@ -18,12 +18,12 @@
 
 (define (asy-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python "
+      (string-append "python \""
                      (getenv "TEXMACS_HOME_PATH")
-                     "/plugins/tmpy/session/tm_asy.py")
-      (string-append "python "
+                     "/plugins/tmpy/session/tm_asy.py\"")
+      (string-append "python \""
                      (getenv "TEXMACS_PATH")
-                     "/plugins/tmpy/session/tm_asy.py")))
+                     "/plugins/tmpy/session/tm_asy.py\"")))
 
 (plugin-configure asymptote
   (:require (url-exists-in-path? "asy"))

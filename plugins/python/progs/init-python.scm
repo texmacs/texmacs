@@ -31,12 +31,12 @@
 
 (define (python-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python "
+      (string-append "python \""
                      (getenv "TEXMACS_HOME_PATH")
-                     "/plugins/tmpy/session/tm_python.py")
-      (string-append "python "
+                     "/plugins/tmpy/session/tm_python.py\"")
+      (string-append "python \""
                      (getenv "TEXMACS_PATH")
-                     "/plugins/tmpy/session/tm_python.py")))
+                     "/plugins/tmpy/session/tm_python.py\"")))
 
 (plugin-configure python
   (:winpath "Python2*" ".")

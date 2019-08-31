@@ -18,12 +18,12 @@
 
 (define (xypic-launcher)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/tmpy")
-      (string-append "python "
+      (string-append "python \""
                      (getenv "TEXMACS_HOME_PATH")
-                     "/plugins/tmpy/session/tm_xypic.py")
-      (string-append "python "
+                     "/plugins/tmpy/session/tm_xypic.py\"")
+      (string-append "python \""
                      (getenv "TEXMACS_PATH")
-                     "/plugins/tmpy/session/tm_xypic.py")))
+                     "/plugins/tmpy/session/tm_xypic.py\"")))
 
 (define (xypic-present?)
   (and (url-exists-in-path? "latex")
