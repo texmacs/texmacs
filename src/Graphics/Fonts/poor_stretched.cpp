@@ -105,8 +105,15 @@ poor_stretched_font_rep::draw_fixed (renderer ren, string s,
     int c= index_glyph (ss, fnm, fng);
     //cout << "Drawing " << ss << ", " << c
     //     << " at " << (xpos[start]/PIXEL) << "\n";
-    //cout << fng->get (c) << "\n\n";
-    if (c >= 0) ren->draw (c, fng, start==0? x: x + xpos[start], y);
+    if (c >= 0) {
+      //cout << fng->get (c) << "\n\n";
+      ren->draw (c, fng, start==0? x: x + xpos[start], y);
+    }
+    else {
+      ren->set_transformation (scaling (point (1.0,factor), point (0.0,0.0)));
+      base->draw_fixed (ren, ss, start==0? x: x + xpos[start], y, ligf);
+      ren->reset_transformation ();
+    }
   }
 }
 
