@@ -725,9 +725,67 @@ convolute (raster<C> s1, raster<S> s2) {
   return div_alpha (d);
 }
 
+template<typename C> bool
+can_be_factored (raster<C> s) {
+  raster<C> xs (s->w, 1, s->ox, 0);
+  raster<C> ys (1, s->h, 0, s->oy);
+  clear (xs);
+  clear (ys);
+  for (int x=0; x<s->w; x++)
+    for (int y=0; y<s->h; y++) {
+      int o= y * s->w;
+      xs->a[x] += s->a[o+x];
+      ys->a[y] += s->a[o+x];
+    }
+  for (int x=0; x<s->w; x++)
+    for (int y=0; y<s->h; y++) {
+      int o= y * s->w;
+      if (fabs (s->a[o+x] - xs->a[x] * ys->a[y]) > 0.005) return false;
+    }
+  return true;
+}
+
+template<typename C, typename S> raster<C>
+factored_convolute (raster<C> s1, raster<S> s2) {
+  if (s1->w * s1->h == 0) return s1;
+  ASSERT (s2->w * s2->h != 0, "empty convolution argument");
+  int s1w= s1->w, s1h= s1->h, s2w= s2->w, s2h= s2->h;
+  raster<S> xs (s2w, 1, s2->ox, 0);
+  raster<S> ys (1, s2h, 0, s2->oy);
+  clear (xs);
+  clear (ys);
+  for (int x2=0; x2<s2w; x2++)
+    for (int y2=0; y2<s2h; y2++) {
+      int o2= y2 * s2w;
+      xs->a[x2] += s2->a[o2+x2];
+      ys->a[y2] += s2->a[o2+x2];
+    }
+  int dw= s1w + s2w - 1, dh= s1h + s2h - 1;
+  raster<C> temp= mul_alpha (s1);
+  raster<C> aux (dw, s1h, s1->ox + s2->ox, s1->oy);
+  clear (aux);
+  for (int y1=0; y1<s1h; y1++) {
+    int o1= y1 * s1w, o= y1 * dw;
+    for (int x1=0; x1<s1w; x1++)
+      for (int x2=0; x2<s2w; x2++)
+        aux->a[o+x1+x2] += temp->a[o1+x1] * xs->a[x2];
+  }
+  raster<C> d (dw, dh, s1->ox + s2->ox, s1->oy + s2->oy);
+  clear (d);
+  for (int y1=0; y1<s1h; y1++)
+    for (int y2=0; y2<s2h; y2++) {
+      int o1= y1 * dw, o= (y1 + y2) * dw;
+      for (int x1=0; x1<dw; x1++)
+        d->a[o+x1] += aux->a[o1+x1] * ys->a[y2];
+    }
+  return div_alpha (d);
+}
+
 template<typename C> raster<C>
 blur (raster<C> ras, raster<double> pen) {
-  return convolute (ras, pen / sum (pen));
+  raster<double> npen= pen / sum (pen);
+  if (can_be_factored (npen)) return factored_convolute (ras, npen);
+  else return convolute (ras, npen);
 }
 
 template<typename C> raster<C>
