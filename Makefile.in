@@ -180,30 +180,10 @@ INSTALL:
 	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/bin
 	$(RM) -r $(DESTDIR)$(tmdata)/plugins/*/lib
 	@echo installed TeXmacs plugins data in $(DESTDIR)$(tmdata)/plugins
-	#$(MKDIR) $(DESTDIR)$(datadir)/applications
-	#$(CP) $(tmdir)/misc/mime/texmacs.desktop \
-	#$(DESTDIR)$(datadir)/applications
-	#@update-desktop-database 2>/dev/null || :
-	
-		
-	packages/linux/mime.sh install $(tmdir)/misc/mime
-	
-
-	#$(MKDIR) $(DESTDIR)$(datadir)/application-registry
-	#$(CP) $(tmdir)/misc/mime/texmacs.applications \
-	#$(DESTDIR)$(datadir)/application-registry
-	#$(MKDIR) $(DESTDIR)$(datadir)/mime-info
-	#$(CP) $(tmdir)/misc/mime/texmacs.keys $(DESTDIR)$(datadir)/mime-info
-	#$(CP) $(tmdir)/misc/mime/texmacs.mime $(DESTDIR)$(datadir)/mime-info
-	#$(MKDIR) $(DESTDIR)$(datadir)/mime
-	#$(MKDIR) $(DESTDIR)$(datadir)/mime/packages
-	#$(CP) $(tmdir)/misc/mime/texmacs.xml $(DESTDIR)$(datadir)/mime/packages
-	#@update-mime-database $(DESTDIR)$(datadir)/mime/ 2>/dev/null || :
 	$(MKDIR) $(DESTDIR)$(datadir)/pixmaps
 	$(CP) $(tmdir)/misc/pixmaps/TeXmacs.xpm $(DESTDIR)$(datadir)/pixmaps
-	
 	packages/linux/icons.sh install $(tmdir)/misc/images texmacs text-x-texmacs
-	
+	packages/linux/mime.sh install $(tmdir)/misc/mime
 	$(MKDIR) $(DESTDIR)$(bindir)
 	$(CHMOD) 755 $(tmdir)/bin/*
 	$(CP) $(tmdir)/bin/fig2ps $(DESTDIR)$(bindir)

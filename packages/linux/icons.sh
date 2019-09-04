@@ -13,7 +13,7 @@ iapp=$2
 idoc=$3
 
 function cpicon {
-	if test -n "$1" -a "$2"
+	if test -n "$1" -a -n "$2"
 	then	mkdir -p $svgdst/$2 && cp $1.svg $svgdst/$2
 				for i in $1-*.png
 				do	sz=${i##*-};sz=${sz%.png}
@@ -24,7 +24,6 @@ function cpicon {
 }
 
 function rmicon {
-set -x
 	if test -n "$1" -a -n "$2"
 	then	rm $svgdst/$2/$1.svg
 				for i in $1-*.png
@@ -34,8 +33,9 @@ set -x
 	fi
 }
 
-if test -w /usr/share
-then  export svgdst=/usr/share/icons/hicolor/scalable
+if test -w /usr/share -o "$XDG_UTILS_INSTALL_MODE" == "system"
+then  export XDG_DATA_DIRS="$DESTDIR/usr/share/"
+			export svgdst=$DESTDIR/usr/local/share/icons/hicolor/scalable
 			export XDG_UTILS_INSTALL_MODE=system
 else 	export svgdst=$HOME/.local/share/icons/hicolor/scalable
 			export XDG_UTILS_INSTALL_MODE=user
