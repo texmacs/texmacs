@@ -30,6 +30,8 @@
   ("cmd A-tab" (program-indent-all #f))
 
   ;; override some text mode shortcuts
+  ("emacs y" (clipboard-paste-import "verbatim" "primary"))
+  ("paste" (clipboard-paste-import "verbatim" "primary"))
   ("space var" (insert-tabstop))
   ("space var var" (begin (insert-tabstop) (insert-tabstop)))
   ("$" (insert "$"))
