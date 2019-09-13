@@ -210,16 +210,9 @@ UNINSTALL:
 	@echo removed TeXmacs executables from $(tmbin)
 	$(RM) -r $(tmdata)
 	@echo removed TeXmacs data from $(tmdata)
-	$(RM) $(datadir)/applications/texmacs.desktop
-	@update-desktop-database 2>/dev/null || :
-	$(RM) $(datadir)/application-registry/texmacs.applications
-	$(RM) $(datadir)/mime-info/texmacs.keys
-	$(RM) $(datadir)/mime-info/texmacs.mime
-	$(RM) $(datadir)/mime/packages/texmacs.xml
-	@update-mime-database $(DESTDIR)$(datadir)/mime/ 2>/dev/null || :
 	$(RM) $(datadir)/pixmaps/TeXmacs.xpm
 	
-	-packages/linux/mime.sh uninstall
+	-packages/linux/mime.sh uninstall  $(tmdir)/misc/mime
 	-packages/linux/icons.sh uninstall $(tmdir)/misc/images texmacs text-x-texmacs
 
 	$(RM) $(includedir)/TeXmacs.h

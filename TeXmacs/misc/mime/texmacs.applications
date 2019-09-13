@@ -1,7 +1,0 @@
-texmacs
-	command=texmacs
-	name=GNU TeXmacs
-	can_open_multiple_files=true
-	expects_uris=false
-	requires_terminal=false
-	mime_types=text/texmacs;text/english;text/plain;text/x-tex

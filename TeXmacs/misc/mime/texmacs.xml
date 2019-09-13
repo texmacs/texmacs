@@ -44,7 +44,7 @@
 		<comment xml:lang="vi">Tờ kiểu dáng TeXmacs</comment>
 		<comment xml:lang="zh_CN">TeXmacs 样式表</comment>
 		<comment xml:lang="zh_TW">TeXmacs 樣式表</comment>
-		<magic priority="50">
+		<magic priority="100">
 			<match type="string" value="TeXmacs" offset="1:7"/>
 		</magic>
 		<glob pattern="*.ts"/>
@@ -90,7 +90,7 @@
 		<comment xml:lang="vi">Tài liệu TeXmacs</comment>
 		<comment xml:lang="zh_CN">TeXmacs 文档</comment>
 		<comment xml:lang="zh_TW">TeXmacs 文件</comment>
-		<magic priority="50">
+		<magic priority="100">
 			<match type="string" value="TeXmacs" offset="1:7"/>
 		</magic> 
 		<glob pattern="*.tm"/>
