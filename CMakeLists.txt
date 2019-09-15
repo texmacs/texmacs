@@ -711,7 +711,6 @@ install (FILES  DESTINATION share/TeXmacs/bin
 install (DIRECTORY TeXmacs/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 ### share/
 install (DIRECTORY plugins DESTINATION share/TeXmacs PATTERN "bin" EXCLUDE)
-install (FILES TeXmacs/misc/mime/texmacs.applications DESTINATION share/application_registry)
 install (FILES TeXmacs/misc/mime/texmacs.desktop DESTINATION share/applications)
 install (FILES TeXmacs/misc/images/texmacs.svg DESTINATION share/icons/gnome/scalable/apps)
 install (FILES TeXmacs/misc/images/text-x-texmacs.svg DESTINATION share/icons/gnome/scalable/mimetypes)
