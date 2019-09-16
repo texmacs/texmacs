@@ -2977,6 +2977,31 @@ upgrade_presentation (tree t) {
 * Upgrade mathematical formulas
 ******************************************************************************/
 
+static hashset<string> existing_styles;
+
+static void
+declare_style (url u) {
+  if (is_or (u)) {
+    declare_style (u[1]);
+    declare_style (u[2]);
+  }
+  else if (is_concat (u)) {
+    string dir= upcase_first (as_string (u[1]));
+    if (dir == "CVS" || dir == ".svn");
+    else declare_style (u[2]);
+  }
+  else if (is_atomic (u)) {
+    string s= as_string (u);
+    if (ends (s, ".ts") && !starts (s, "source")) {
+      existing_styles->insert (s(0,N(s)-3));
+      if (starts (s, "old-"))
+        existing_styles->insert (s(4,N(s)-3));
+      if (starts (s, "old2-"))
+        existing_styles->insert (s(5,N(s)-3));
+    }
+  }
+}
+
 bool
 is_non_style_document (tree doc) {
   tree style= extract (doc, "style");
@@ -2985,27 +3010,12 @@ is_non_style_document (tree doc) {
   for (int i=0; i<N(style); i++)
     if (style[i] == "source") return false;
   string ms= style[0]->label;
-  return
-    (starts (ms, "tm")) ||
-    (starts (ms, "lycee")) ||
-    (ms == "article") ||
-    (ms == "beamer") ||
-    (ms == "book") ||
-    (ms == "exam") ||
-    (ms == "generic") ||
-    (ms == "letter") ||
-    (ms == "seminar") ||
-    (ms == "bibliography") ||
-    (ms == "browser") ||
-    (ms == "help") ||
-    (ms == "manual") ||
-    (ms == "mmxdoc") ||
-    (ms == "elsart") ||
-    (ms == "ifac") ||
-    (ms == "jsc") ||
-    (ms == "acmconf") ||
-    (ms == "svjour") ||
-    (ms == "svmono");
+  if (N(existing_styles) == 0) {
+    url sty_u= descendance ("$TEXMACS_STYLE_ROOT");
+    declare_style (sty_u);
+    //cout << "Styles: " << existing_styles << LF;
+  }
+  return existing_styles->contains (ms);
 }
 
 tree
