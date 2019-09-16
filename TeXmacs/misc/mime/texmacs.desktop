@@ -1,11 +1,12 @@
 [Desktop Entry]
 Version=1.0
+Type=Application
 Name=GNU TeXmacs
+GenericName=Text Editor
 Comment=A structured wysiwyg scientific text editor
 MimeType=text/x-texmacs.doc;text/x-texmacs.sty;text/plain;text/x-tex;
 Exec=texmacs %f
 Icon=texmacs
-Type=Application
 Terminal=false
 Categories=Education;Science;Math;
 X-KDE-Priority=TopLevel
