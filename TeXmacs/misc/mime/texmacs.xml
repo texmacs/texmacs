@@ -44,10 +44,10 @@
 		<comment xml:lang="vi">Tờ kiểu dáng TeXmacs</comment>
 		<comment xml:lang="zh_CN">TeXmacs 样式表</comment>
 		<comment xml:lang="zh_TW">TeXmacs 樣式表</comment>
-		<magic priority="100">
+		<magic priority="90">
 			<match type="string" value="TeXmacs" offset="1:7"/>
 		</magic>
-		<glob pattern="*.ts"/>
+		<glob weight="90" pattern="*.ts"/>
   	<icon name="text-x-texmacs"/>
   	<generic-icon name="text-x-texmacs"/>
 	</mime-type>
@@ -90,10 +90,10 @@
 		<comment xml:lang="vi">Tài liệu TeXmacs</comment>
 		<comment xml:lang="zh_CN">TeXmacs 文档</comment>
 		<comment xml:lang="zh_TW">TeXmacs 文件</comment>
-		<magic priority="100">
+		<magic priority="90">
 			<match type="string" value="TeXmacs" offset="1:7"/>
 		</magic> 
-		<glob pattern="*.tm"/>
+		<glob weight="90" pattern="*.tm"/>
 	  <icon name="text-x-texmacs"/>
   	<generic-icon name="text-x-texmacs"/>
 	</mime-type>
