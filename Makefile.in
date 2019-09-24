@@ -244,7 +244,7 @@ COPY_SOURCES:
 	cd $(BUILD_DIR); make ACCESS_FLAGS
 	cd $(BUILD_DIR); make DISTR_CLEAN
 
-COPY_SOURCES_TGZ: COPY_SOURCES
+COPY_SOURCES_TGZ: COPY_SOURCES COPY_GUILE
 	cd ../distr/build; tar -czf $(tm_devel).tar.gz $(tm_devel) 
 
 COPY_GUILE:
