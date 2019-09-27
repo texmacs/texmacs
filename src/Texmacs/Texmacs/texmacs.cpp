@@ -633,7 +633,7 @@ main (int argc, char** argv) {
 #endif
   TeXmacs_init_paths (argc, argv);
 #ifdef QTTEXMACS
-  const string icon= get_env ("TEXMACS_PATH") * "/misc/images/texmacs.svg";
+  const string icon= get_env ("TEXMACS_PATH") * "/misc/images/texmacs-512.png";
   if (exists (icon)) {
     const c_string _icon (icon);
     qtmapp->setWindowIcon (QIcon ((const char*) _icon));
