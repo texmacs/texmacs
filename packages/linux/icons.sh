@@ -22,30 +22,30 @@ idoc=$3
 function cpicon {
 	if test -n "$1" -a -n "$2"
 	then	mkdir -p $svgdst/$2 && cp $1.svg $svgdst/$2
-				for i in $1-*.png
-				do	sz=${i##*-};sz=${sz%.png}
-				xdg-icon-resource install --noupdate --novendor --theme hicolor --context $2 --size $sz $i $1
-				done
-				echo Icon $1 installed in $2
+		for i in $1-*.png
+		do	sz=${i##*-};sz=${sz%.png}
+		xdg-icon-resource install --noupdate --novendor --theme hicolor --context $2 --size $sz $i $1
+		done
+		echo Icon $1 installed in $2
 	fi
 }
 
 function rmicon {
 	if test -n "$1" -a -n "$2"
 	then	rm $svgdst/$2/$1.svg
-				for i in $1-*.png
-				do	sz=${i##*-};sz=${sz%.png}
-				xdg-icon-resource uninstall --noupdate --theme hicolor --context $2 --size $sz $1
-				done
+		for i in $1-*.png
+		do	sz=${i##*-};sz=${sz%.png}
+		xdg-icon-resource uninstall --noupdate --theme hicolor --context $2 --size $sz $1
+		done
 	fi
 }
 
 if test -w /usr/share -o "$XDG_UTILS_INSTALL_MODE" == "system"
-then  export XDG_DATA_DIRS="$DESTDIR/usr/share/"
-			export svgdst=$DESTDIR/usr/share/icons/hicolor/scalable
-			export XDG_UTILS_INSTALL_MODE=system
+then    export XDG_DATA_DIRS="$DESTDIR/usr/share/"
+	export svgdst=$DESTDIR/usr/share/icons/hicolor/scalable
+	export XDG_UTILS_INSTALL_MODE=system
 else 	export svgdst=$HOME/.local/share/icons/hicolor/scalable
-			export XDG_UTILS_INSTALL_MODE=user
+	export XDG_UTILS_INSTALL_MODE=user
 fi
 export XDG_UTILS_DEBUG_LEVEL=0
 
