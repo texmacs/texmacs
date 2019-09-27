@@ -45,9 +45,10 @@ class QTMApplication: public QApplication {
   
 public:
   QTMApplication (int& argc, char** argv) :
-    QApplication (argc, argv)
-  {
-    const string icon= get_env ("TEXMACS_PATH") * "/misc/images/texmacs-512.png";
+    QApplication (argc, argv) { }
+
+  void set_window_icon (string icon_path) {
+    const string icon= get_env ("TEXMACS_PATH") * icon_path;
     if (exists (icon)) {
       const c_string _icon (icon);
       setWindowIcon (QIcon ((const char*) _icon));

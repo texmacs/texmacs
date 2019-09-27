@@ -254,7 +254,7 @@ TeXmacs_main (int argc, char** argv) {
       else if ((s == "-v") || (s == "-version")) {
         cout << "\n";
         cout << "TeXmacs version " << TEXMACS_VERSION << "\n";
-	cout << "SVN version " << TEXMACS_REVISION << "\n";
+        cout << "SVN version " << TEXMACS_REVISION << "\n";
         cout << TEXMACS_COPYRIGHT << "\n";
         cout << "\n";
         exit (0);
@@ -631,6 +631,9 @@ main (int argc, char** argv) {
   QTMApplication* qtmapp= new QTMApplication (argc, argv);  
 #endif
   TeXmacs_init_paths (argc, argv);
+#ifdef QTTEXMACS
+  qtmapp->set_window_icon("/misc/images/texmacs-512.png");
+#endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
