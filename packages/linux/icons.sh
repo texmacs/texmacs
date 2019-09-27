@@ -1,7 +1,14 @@
 #! /bin/bash
-# Install icons file in the relevant directory according user's permissions
-# Denis RAUX LIX 2019
-#
+###############################################################################
+# MODULE     : Install icons file in the relevant directory 
+#              according to user's permissions
+# COPYRIGHT  : (C) 2019  Denis RAUX
+###############################################################################
+# This software falls under the GNU general public license version 3 or later.
+# It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+# in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+###############################################################################
+
 shopt -s nullglob
 test -z "$1" && exit 10
 mode=$1;shift
