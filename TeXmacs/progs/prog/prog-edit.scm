@@ -307,3 +307,23 @@
   (:mode in-prog?)
   (insert-raw-return)
   (program-indent #f))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Copy and paste
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (kbd-paste)
+  (:mode in-prog?)
+  (clipboard-paste-import "verbatim" "primary"))
+
+(tm-define (kbd-copy)
+  (:mode in-prog-scheme?)
+  (clipboard-copy-export "scheme" "primary"))
+
+(tm-define (kbd-cut)
+  (:mode in-prog-scheme?)
+  (clipboard-cut-export "scheme" "primary"))
+
+(tm-define (kbd-paste)
+  (:mode in-prog-scheme?)
+  (clipboard-paste-import "scheme" "primary"))

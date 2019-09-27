@@ -30,8 +30,6 @@
   ("cmd A-tab" (program-indent-all #f))
 
   ;; override some text mode shortcuts
-  ("emacs y" (clipboard-paste-import "verbatim" "primary"))
-  ("std v" (clipboard-paste-import "verbatim" "primary"))
   ("space var" (insert-tabstop))
   ("space var var" (begin (insert-tabstop) (insert-tabstop)))
   ("$" (insert "$"))
@@ -59,9 +57,6 @@
 
 (kbd-map
   (:mode in-prog-scheme?)
-  ("std c" (clipboard-copy-export "scheme" "primary"))
-  ("std v" (clipboard-paste-import "scheme" "primary"))
-  ("std x" (clipboard-cut-export "scheme" "primary"))
   ("(" (scheme-bracket-open "(" ")" ))
   (")" (scheme-bracket-close "(" ")" ))
   ("[" (scheme-bracket-open "[" "]" ))
