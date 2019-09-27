@@ -34,7 +34,6 @@ void mac_fix_paths ();
 #include "Qt/QTMApplication.hpp"
 #include "Qt/qt_utilities.hpp"
 #include <QDir>
-#include <QIcon>
 #endif
 
 #ifdef OS_MINGW
@@ -632,15 +631,6 @@ main (int argc, char** argv) {
   QTMApplication* qtmapp= new QTMApplication (argc, argv);  
 #endif
   TeXmacs_init_paths (argc, argv);
-#ifdef QTTEXMACS
-  const string icon= get_env ("TEXMACS_PATH") * "/misc/images/texmacs-512.png";
-  if (exists (icon)) {
-    const c_string _icon (icon);
-    qtmapp->setWindowIcon (QIcon ((const char*) _icon));
-  }
-  else
-    std_warning << "Could not find TeXmacs icon file: " << icon << LF;
-#endif
   //cout << "Bench  ] Started TeXmacs\n";
   the_et     = tuple ();
   the_et->obs= ip_observer (path ());
@@ -655,5 +645,8 @@ main (int argc, char** argv) {
 //  test_environments ();
 //#endif
   start_scheme (argc, argv, TeXmacs_main);
+#ifdef QTTEXMACS
+  delete qtmapp;
+#endif
   return 0;
 }

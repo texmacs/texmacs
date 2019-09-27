@@ -13,7 +13,9 @@
 #define QTMAPPLICATION_HPP
 
 #include <QApplication>
+#include <QIcon>
 #include "string.hpp"
+#include "sys_utils.hpp"
 
 /*
  FIXME: We would like to do the following
@@ -43,7 +45,16 @@ class QTMApplication: public QApplication {
   
 public:
   QTMApplication (int& argc, char** argv) :
-    QApplication (argc, argv) { }
+    QApplication (argc, argv)
+  {
+    const string icon= get_env ("TEXMACS_PATH") * "/misc/images/texmacs-512.png";
+    if (exists (icon)) {
+      const c_string _icon (icon);
+      setWindowIcon (QIcon ((const char*) _icon));
+    }
+    else
+      std_warning << "Could not find TeXmacs icon file: " << icon << LF;
+  }
 
   virtual bool notify (QObject* receiver, QEvent* event)
   {
