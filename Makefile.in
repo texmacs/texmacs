@@ -211,10 +211,8 @@ UNINSTALL:
 	$(RM) -r $(tmdata)
 	@echo removed TeXmacs data from $(tmdata)
 	$(RM) $(datadir)/pixmaps/TeXmacs.xpm
-	
-	-packages/linux/mime.sh uninstall  $(tmdir)/misc/mime
-	-packages/linux/icons.sh uninstall $(tmdir)/misc/images texmacs text-x-texmacs
-
+	packages/linux/mime.sh uninstall $(tmdir)/misc/mime
+	packages/linux/icons.sh uninstall $(tmdir)/misc/images texmacs text-x-texmacs
 	$(RM) $(includedir)/TeXmacs.h
 	@echo removed TeXmacs include files from $(includedir)
 	$(RM) $(bindir)/fig2ps
