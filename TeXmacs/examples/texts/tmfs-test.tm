@@ -4,7 +4,7 @@
 
 <\body>
   <\session|scheme|default>
-    <\unfolded-io|Scheme] >
+    <\folded-io|Scheme] >
       (tmfs-load-handler (test what)
 
       \ \ `(document
@@ -14,9 +14,9 @@
       \ \ \ \ \ (style (tuple "generic"))
 
       \ \ \ \ \ (body (document "\\\\"))))
-    <|unfolded-io>
-      #\<less\>procedure #f (what)\<gtr\>
-    </unfolded-io>
+    <|folded-io>
+      \;
+    </folded-io>
 
     <\folded-io|Scheme] >
       (load-document "tmfs://test/1")
@@ -35,8 +35,8 @@
     </input>
   </session>
 
-  The <scm|load-document> action should open a new <TeXmacs> buffer with two
-  backward slashes.
+  The <scm|load-document> action should open a new <TeXmacs> buffer with
+  exactly one backward slash.
 </body>
 
 <initial|<\collection>
