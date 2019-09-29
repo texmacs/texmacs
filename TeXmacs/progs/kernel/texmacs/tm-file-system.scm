@@ -35,7 +35,7 @@
 
 (define-public tmfs-handler-table (make-ahash-table))
 
-(define (object->tmstring s) (unescape-guile (object->string s)))
+(define-public (object->tmstring s) (unescape-guile (object->string s)))
 (define (tmstring->object s) (string->object s))
 
 (define-public (tmfs-handler class action handle)

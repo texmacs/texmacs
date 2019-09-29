@@ -30,7 +30,7 @@
   (generic-document '(document "")))
 
 (define (buffer-set-stm u doc)
-  (let* ((s (unescape-guile (object->string doc)))
+  (let* ((s (object->tmstring doc))
          (t (tree-import-loaded s u "stm")))
     (buffer-set u t)))
 
