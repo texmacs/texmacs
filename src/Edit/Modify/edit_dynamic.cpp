@@ -56,7 +56,7 @@ edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
     return true;
   if (is_func (t, MACRO) || is_func (t, WITH) ||
       is_func (t, LOCUS) ||
-      is_func (t, CANVAS) || is_func (t, ORNAMENT))
+      is_func (t, CANVAS) || is_func (t, ORNAMENT) || is_func (t, ART_BOX))
     return is_multi_paragraph_macro (t [n-1]);
   if (is_extension (t) &&
       !is_compound (t, "footnote") &&

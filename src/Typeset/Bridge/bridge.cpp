@@ -27,6 +27,7 @@ bridge bridge_eval (typesetter, tree, path);
 bridge bridge_auto (typesetter, tree, path, tree, bool);
 bridge bridge_locus (typesetter, tree, path);
 bridge bridge_ornament (typesetter, tree, path);
+bridge bridge_art_box (typesetter, tree, path);
 bridge bridge_canvas (typesetter, tree, path);
 
 bridge nil_bridge;
@@ -125,6 +126,8 @@ make_bridge (typesetter ttt, tree st, path ip) {
     return bridge_canvas (ttt, st, ip);
   case ORNAMENT:
     return bridge_ornament (ttt, st, ip);
+  case ART_BOX:
+    return bridge_art_box (ttt, st, ip);
   default:
     if (L(st) < START_EXTENSIONS) return bridge_default (ttt, st, ip);
     else return bridge_compound (ttt, st, ip);

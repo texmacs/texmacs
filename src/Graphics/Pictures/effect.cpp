@@ -106,6 +106,10 @@ class move_effect_rep: public effect_rep {
 public:
   move_effect_rep (effect eff2, double dx2, double dy2):
     eff (eff2), dx (dx2), dy (dy2) {}
+  rectangle get_logical_extents (array<rectangle> rs) {
+    rectangle r= eff->get_logical_extents (rs);
+    return rectangle ((SI) round (r->x1 + dx), (SI) round (r->y1 + dy),
+                      (SI) round (r->x2 + dx), (SI) round (r->y2 + dy)); }
   rectangle get_extents (array<rectangle> rs) {
     rectangle r= eff->get_extents (rs);
     return rectangle ((SI) floor (r->x1 + dx), (SI) floor (r->y1 + dy),
@@ -120,6 +124,10 @@ class magnify_effect_rep: public effect_rep {
 public:
   magnify_effect_rep (effect eff2, double sx2, double sy2):
     eff (eff2), sx (sx2), sy (sy2) {}
+  rectangle get_logical_extents (array<rectangle> rs) {
+    rectangle r= eff->get_logical_extents (rs);
+    return rectangle ((SI) round (sx * r->x1), (SI) round (sy * r->y1),
+                      (SI) round (sx * r->x2), (SI) round (sy * r->y2)); }
   rectangle get_extents (array<rectangle> rs) {
     rectangle r= eff->get_extents (rs);
     return rectangle ((SI) floor (sx * r->x1), (SI) floor (sy * r->y1),
@@ -145,12 +153,40 @@ public:
     return bubble (eff->apply (pics, pixel), r / pixel, a); }
 };
 
+class crop_effect_rep: public effect_rep {
+  effect eff;
+  double cx1, cy1, cx2, cy2;
+public:
+  crop_effect_rep (effect eff2, double x1, double y1, double x2, double y2):
+    eff (eff2), cx1 (x1), cy1 (y1), cx2 (x2), cy2 (y2) {}
+  rectangle get_logical_extents (array<rectangle> rs) {
+    rectangle r= eff->get_logical_extents (rs);
+    SI x1= (SI) round (r->x1 + cx1 * (r->x2 - r->x1));
+    SI y1= (SI) round (r->y1 + cy1 * (r->y2 - r->y1));
+    SI x2= (SI) round (r->x1 + cx2 * (r->x2 - r->x1));
+    SI y2= (SI) round (r->y1 + cy2 * (r->y2 - r->y1));
+    return rectangle (0, 0, x2 - x1, y2 - y1); }
+  rectangle get_extents (array<rectangle> rs) {
+    rectangle r= eff->get_extents (rs);
+    SI x1= (SI) floor (r->x1 + cx1 * (r->x2 - r->x1));
+    SI y1= (SI) floor (r->y1 + cy1 * (r->y2 - r->y1));
+    SI x2= (SI) ceil  (r->x1 + cx2 * (r->x2 - r->x1));
+    SI y2= (SI) ceil  (r->y1 + cy2 * (r->y2 - r->y1));
+    return rectangle (0, 0, x2 - x1, y2 - y1); }
+  picture apply (array<picture> pics, SI pixel) {
+    return crop (eff->apply (pics, pixel), cx1, cy1, cx2, cy2); }
+};
+
 effect move (effect eff, double dx, double dy) {
   return tm_new<move_effect_rep> (eff, dx, dy); }
 effect magnify (effect eff, double sx, double sy) {
   return tm_new<move_effect_rep> (eff, sx, sy); }
 effect bubble (effect eff, double r, double a) {
   return tm_new<bubble_effect_rep> (eff, r, a); }
+effect crop (effect eff, double cx1, double cy1, double cx2, double cy2) {
+  cx1= max (cx1, 0.0); cy1= max (cy1, 0.0);
+  cx2= min (cx2, 1.0); cy2= min (cy2, 1.0);
+  return tm_new<crop_effect_rep> (eff, cx1, cy1, cx2, cy2); }
 
 /******************************************************************************
 * Pens
@@ -558,9 +594,10 @@ build_effects (array<tree> a) {
 
 effect
 build_effect (tree t) {
-  if (is_int (t)) {
+  if (t == "")
+    return argument_effect (0);
+  else if (is_int (t))
     return argument_effect (as_int (t));
-  }
   else if (is_func (t, EFF_MOVE, 3)) {
     effect eff= build_effect (t[0]);
     double dx = as_double (t[1]);
@@ -599,7 +636,7 @@ build_effect (tree t) {
     int    o= as_int (t[4]);
     return fractal_noise (e, s, w, h, o);
   }
-  else if (is_compound (t, "eff-hatch", 5)) {
+  else if (is_compound (t, EFF_HATCH, 5)) {
     effect e = build_effect (t[0]);
     int    sx= as_int (t[1]);
     int    sy= as_int (t[2]);
@@ -607,7 +644,7 @@ build_effect (tree t) {
     double de= as_double (t[4]);
     return hatch (e, sx, sy, fp, de);
   }
-  else if (is_compound (t, "eff-dots", 7)) {
+  else if (is_compound (t, EFF_DOTS, 7)) {
     effect e = build_effect (t[0]);
     int    a = as_int (t[1]);
     int    b = as_int (t[2]);
@@ -769,7 +806,14 @@ build_effect (tree t) {
     color  col= named_color (as_string (t[1]));
     return apply_skin (eff, col);
   }
-  else {
-    return argument_effect (0);
+  else if (is_compound (t, "eff-crop", 5)) {
+    effect eff= build_effect (t[0]);
+    double cx1= as_double (t[1]);
+    double cy1= as_double (t[2]);
+    double cx2= as_double (t[3]);
+    double cy2= as_double (t[4]);
+    return crop (eff, cx1, cy1, cx2, cy2);
   }
+  else
+    return argument_effect (0);
 }

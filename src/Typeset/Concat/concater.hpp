@@ -171,6 +171,7 @@ class concater_rep {
   // markup for graphical user interface
   void typeset_canvas (tree t, path ip);
   void typeset_ornament (tree t, path ip);
+  void typeset_art_box (tree t, path ip);
 
   // postprocessing of brackets and scripts
   int  prec (int i);

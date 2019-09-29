@@ -209,3 +209,71 @@ make_lazy_ornament (edit_env env, tree t, path ip) {
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
   return lazy_ornament (env, par, xb, ip, ps);
 }
+
+/******************************************************************************
+* Art boxes
+******************************************************************************/
+
+struct lazy_art_box_rep: public lazy_rep {
+  edit_env env;             // "current" environment
+  lazy par;                 // the ornamented body
+  art_box_parameters ps;    // parameters for the art_box
+  lazy_art_box_rep (edit_env env2, lazy par2, path ip, art_box_parameters ps2):
+    lazy_rep (LAZY_ART_BOX, ip), env (env2), par (par2), ps (ps2) {}  
+  inline operator tree () { return "Art_Box"; }
+  lazy produce (lazy_type request, format fm);
+  format query (lazy_type request, format fm);
+};
+
+struct lazy_art_box {
+EXTEND_NULL(lazy,lazy_art_box);
+  lazy_art_box (edit_env env, lazy par, path ip, art_box_parameters ps):
+    rep (tm_new<lazy_art_box_rep> (env, par, ip, ps)) {
+    rep->ref_count= 1; }
+};
+EXTEND_NULL_CODE(lazy,lazy_art_box);
+
+format
+lazy_art_box_rep::query (lazy_type request, format fm) {
+  if ((request == LAZY_BOX) && (fm->type == QUERY_VSTREAM_WIDTH)) {
+    format body_fm= par->query (request, fm);
+    format_width fmw= (format_width) body_fm;
+    SI dw= ps->lpad + ps->rpad;
+    return make_format_width (fmw->width + dw);
+  }
+  return lazy_rep::query (request, fm);
+}
+
+lazy
+lazy_art_box_rep::produce (lazy_type request, format fm) {
+  if (request == type) return this;
+  if (request == LAZY_VSTREAM || request == LAZY_BOX) {
+    format bfm= fm;
+    if (request == LAZY_VSTREAM) {
+      format_vstream fvs= (format_vstream) fm;
+      SI dw= ps->lpad + ps->rpad;
+      bfm= make_format_width (fvs->width - dw);
+    }
+    box b = (box) par->produce (LAZY_BOX, bfm);
+    box hb= art_box (ip, b, ps);
+    hb= move_box (decorate (ip), hb, 0, b->y1 - ps->bpad);    
+    // FIXME: this dirty hack ensures that shoving is correct
+    hb= move_box (decorate (ip), hb, 1, 0);
+    hb= move_box (decorate (ip), hb, -1, 0);
+    // End dirty hack
+    if (request == LAZY_BOX) return make_lazy_box (hb);
+    else {
+      array<page_item> l;
+      l << page_item (hb);
+      return lazy_vstream (ip, "", l, stack_border ());
+    }
+  }
+  return lazy_rep::produce (request, fm);
+}
+
+lazy
+make_lazy_art_box (edit_env env, tree t, path ip) {
+  art_box_parameters ps= env->get_art_box_parameters (t);
+  lazy par= make_lazy (env, t[0], descend (ip, 0));
+  return lazy_art_box (env, par, ip, ps);
+}

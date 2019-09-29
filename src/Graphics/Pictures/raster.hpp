@@ -96,6 +96,19 @@ subraster (raster<C> r, int x1, int y1, int x2, int y2) {
 }
 
 template<typename C> raster<C>
+crop (raster<C> r, double cx1, double cy1, double cx2, double cy2) {
+  cx1= max (cx1, 0.0); cy1= max (cy1, 0.0);
+  cx2= min (cx2, 1.0); cy2= min (cy2, 1.0);
+  int x1= (int) round (-r->ox + cx1 * r->w);
+  int y1= (int) round (-r->oy + cy1 * r->h);
+  int x2= (int) round (-r->ox + cx2 * r->w);
+  int y2= (int) round (-r->oy + cy2 * r->h);
+  raster<C> ret= subraster (r, x1, y1, x2, y2);
+  ret->ox= ret->oy= 0;
+  return ret;
+}
+
+template<typename C> raster<C>
 change_extents (raster<C> r, int w, int h, int ox, int oy) {
   raster<C> ret (w, h, ox, oy);
   for (int y=0; y<h; y++)

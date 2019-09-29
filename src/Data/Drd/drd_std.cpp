@@ -20,6 +20,7 @@ hashmap<string,int> STD_CODE (UNKNOWN);
 #define DETAILED CHILD_DETAILED
 
 #define regular(i) type (i, TYPE_REGULAR)
+#define adhoc(i) type (i, TYPE_ADHOC)
 #define raw(i) type (i, TYPE_RAW)
 #define macro(i) type (i, TYPE_MACRO)
 #define argument(i) type (i, TYPE_ARGUMENT)
@@ -757,6 +758,13 @@ init_std_drd () {
         effect (0) -> name (0, "body") ->
         length (1) -> name (1, "radius") ->
         numeric (2) -> name (2, "amplitude"));
+  init (EFF_CROP, "eff-crop",
+        fixed (5, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        numeric (1) -> name (1, "left") ->
+        numeric (2) -> name (2, "bottom") ->
+        numeric (3) -> name (3, "right") ->
+        numeric (4) -> name (4, "top"));
   init (EFF_TURBULENCE, "eff-turbulence",
         fixed (5, 0, DETAILED) -> returns_effect () ->
         effect (0) -> name (0, "body") ->
@@ -771,6 +779,22 @@ init_std_drd () {
         length (2) -> name (2, "wave width") ->
         length (3) -> name (3, "wave height") ->
         integer (4) -> name (4, "octaves"));
+  init (EFF_HATCH, "eff-hatch",
+        fixed (5, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        integer (1) -> name (1, "slopex") ->
+        integer (2) -> name (2, "slopey") ->
+        numeric (3) -> name (3, "fill") ->
+        numeric (4) -> name (4, "deform"));
+  init (EFF_DOTS, "eff-dots",
+        fixed (7, 0, DETAILED) -> returns_effect () ->
+        effect (0) -> name (0, "body") ->
+        integer (1) -> name (1, "a") ->
+        integer (2) -> name (2, "b") ->
+        integer (3) -> name (3, "c") ->
+        integer (4) -> name (4, "d") ->
+        numeric (5) -> name (5, "fill") ->
+        numeric (6) -> name (6, "deform"));
   init (EFF_GAUSSIAN, "eff-gaussian",
         options (1, 2, DETAILED) -> returns_effect () ->
         length (0) -> name (0, "rx") -> long_name (0, "blur x-radius") ->
@@ -876,6 +900,8 @@ init_std_drd () {
 
   init (CANVAS, "canvas", fixed (6, 1, BIFORM) -> accessible (1));
   init (ORNAMENT, "ornament", options (1, 1) -> accessible (0));
+  init (ART_BOX, "art-box",
+        repeat (1, 1, BIFORM) -> accessible (0) -> adhoc (1));
 
   init (FORMAT, "format",
 	repeat (1, 1));

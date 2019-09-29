@@ -283,3 +283,13 @@ concater_rep::typeset_ornament (tree t, path ip) {
   if (N(t) == 2) xb= typeset_as_concat (env, t[1], descend (ip, 1));
   print (highlight_box (ip, b, xb, ps));
 }
+
+void
+concater_rep::typeset_art_box (tree t, path ip) {
+  if (N(t) < 1) { typeset_error (t, ip); return; }
+  art_box_parameters ps= env->get_art_box_parameters (t);
+  box b = typeset_as_concat (env, t[0], descend (ip, 0));
+  box ab= art_box (ip, b, ps);
+  box mb= move_box (decorate (ip), ab, 0, b->y1 - ps->bpad);
+  print (mb);
+}

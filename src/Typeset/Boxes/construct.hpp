@@ -71,6 +71,30 @@ copy (ornament_parameters ps) {
 			      ps->bg, ps->xc, ps->border);
 }
 
+class art_box_parameters_rep: concrete_struct {
+public:
+  tree data;
+  SI lpad, bpad, rpad, tpad;
+
+  inline
+  art_box_parameters_rep (tree data2, SI lpad2, SI bpad2, SI rpad2, SI tpad2):
+    data (data2), lpad (lpad2), bpad (bpad2), rpad (rpad2), tpad (tpad2) {}
+  friend class art_box_parameters;
+};
+
+class art_box_parameters {
+  CONCRETE(art_box_parameters);
+  inline
+  art_box_parameters (tree data2, SI lpad2, SI bpad2, SI rpad2, SI tpad2):
+    rep (tm_new<art_box_parameters_rep> (data2, lpad2, bpad2, rpad2, tpad2)) {}
+};
+CONCRETE_CODE(art_box_parameters);
+
+inline art_box_parameters
+copy (art_box_parameters ps) {
+  return art_box_parameters (ps->data, ps->lpad, ps->bpad, ps->rpad, ps->tpad);
+}
+
 /******************************************************************************
 * Construction routines for boxes
 ******************************************************************************/
@@ -122,6 +146,7 @@ box cell_box (path ip, box b, SI x0, SI y0, SI x1, SI y1, SI x2, SI y2,
 box remember_box (path ip, box b);
 box highlight_box (path ip, box b, box xb, ornament_parameters ps);
 box highlight_box (path ip, box b, SI w, brush col, brush sunc, brush shad);
+box art_box (path ip, box b, art_box_parameters ps);
 
 box frac_box (path ip, box b1, box b2, font fn, font sfn, pencil pen);
 box sqrt_box (path ip, box b1, box b2, box sqrtb, font fn, pencil pen);

@@ -24,6 +24,7 @@ lazy make_lazy_paragraph (edit_env env, tree t, path ip);
 lazy make_lazy_table (edit_env env, tree t, path ip);
 lazy make_lazy_canvas (edit_env env, tree t, path ip);
 lazy make_lazy_ornament (edit_env env, tree t, path ip);
+lazy make_lazy_art_box (edit_env env, tree t, path ip);
 
 /******************************************************************************
 * Documents
@@ -558,6 +559,8 @@ make_lazy (edit_env env, tree t, path ip) {
     return make_lazy_canvas (env, t, ip);
   case ORNAMENT:
     return make_lazy_ornament (env, t, ip);
+  case ART_BOX:
+    return make_lazy_art_box (env, t, ip);
   default:
     if (L(t) < START_EXTENSIONS) return make_lazy_paragraph (env, t, ip);
     else return make_lazy_compound (env, t, ip);

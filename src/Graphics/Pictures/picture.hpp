@@ -124,6 +124,7 @@ picture mix (picture pic1, double a1, picture pic2, double a2);
 picture shift (picture pic, double dx, double dy);
 picture magnify (picture pic, double sx, double sy);
 picture bubble (picture pic, double r, double a);
+picture crop (picture pic, double cx1, double cy1, double cx2, double cy2);
 picture turbulence (picture pic, long seed, double w, double h, int oct);
 picture fractal_noise (picture pic, long seed, double w, double h, int oct);
 picture hatch (picture pic, int sx, int sy, double fill_prop, double deform);

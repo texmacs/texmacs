@@ -12,6 +12,7 @@
 #include "scalable.hpp"
 #include "renderer.hpp"
 #include "picture.hpp"
+#include "effect.hpp"
 
 /******************************************************************************
 * Default implementations of virtual methods
@@ -29,6 +30,7 @@ class scalable_image_rep: public scalable_rep {
   SI w, h;
   tree eff;
   SI px;
+  array<rectangle> rs;
 public:
   scalable_image_rep (url u2, SI w2, SI h2, tree e2, SI px2):
     u (u2), w (w2), h (h2), eff (e2), px (px2) {
@@ -41,10 +43,18 @@ public:
   url get_name () { return u; }
   tree get_effect () { return eff; }
 
+  void init_extents () {
+    array<rectangle> input_rs;
+    input_rs << rectangle (0, 0, w, h);
+    effect e= build_effect (eff);
+    rs << e->get_logical_extents (input_rs);
+    rs << e->get_extents (input_rs); }
   rectangle get_logical_extents () {
-    return rectangle (0, 0, w, h); }
+    if (N(rs) == 0) init_extents ();
+    return rs[0]; }
   rectangle get_physical_extents () {
-    return rectangle (0, 0, w, h); }
+    if (N(rs) == 0) init_extents ();
+    return rs[1]; }
   void draw (renderer ren, SI x, SI y, int alpha) {
     if (px != ren->pixel) {
       picture_cache_release (u, w/px, h/px, eff, px);

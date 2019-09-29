@@ -812,8 +812,11 @@ concater_rep::typeset (tree t, path ip) {
   case EFF_MOVE:
   case EFF_MAGNIFY:
   case EFF_BUBBLE:
+  case EFF_CROP:
   case EFF_TURBULENCE:
   case EFF_FRACTAL_NOISE:
+  case EFF_HATCH:
+  case EFF_DOTS:
   case EFF_GAUSSIAN:
   case EFF_OVAL:
   case EFF_RECTANGULAR:
@@ -847,6 +850,9 @@ concater_rep::typeset (tree t, path ip) {
     break;
   case ORNAMENT:
     typeset_ornament (t, ip);
+    break;
+  case ART_BOX:
+    typeset_art_box (t, ip);
     break;
 
   default:

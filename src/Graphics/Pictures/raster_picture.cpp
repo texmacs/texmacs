@@ -91,6 +91,14 @@ bubble (picture pic, double r, double a) {
 }
 
 picture
+crop (picture pic, double cx1, double cy1, double cx2, double cy2) {
+  cx1= max (cx1, 0.0); cy1= max (cy1, 0.0);
+  cx2= min (cx2, 1.0); cy2= min (cy2, 1.0);
+  raster<true_color> ras= as_raster<true_color> (pic);
+  return raster_picture (crop (ras, cx1, cy1, cx2, cy2));
+}
+
+picture
 turbulence (picture pic, long seed, double w, double h, int oct) {
   raster<true_color> ras= as_raster<true_color> (pic);
   return raster_picture (turbulence (ras, seed, w, h, oct, false));  

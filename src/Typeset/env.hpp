@@ -124,6 +124,7 @@
 
 class edit_env;
 class ornament_parameters;
+class art_box_parameters;
 class edit_env_rep: public concrete_struct {
 public:
   drd_info&                    drd;
@@ -377,9 +378,13 @@ private:
   tree exec_point (tree t);
 
   tree exec_eff_move (tree t);
+  tree exec_eff_magnify (tree t);
   tree exec_eff_bubble (tree t);
+  tree exec_eff_crop (tree t);
   tree exec_eff_turbulence (tree t);
   tree exec_eff_fractal_noise (tree t);
+  tree exec_eff_hatch (tree t);
+  tree exec_eff_dots (tree t);
   tree exec_eff_gaussian (tree t);
   tree exec_eff_oval (tree t);
   tree exec_eff_rectangular (tree t);
@@ -468,6 +473,7 @@ public:
 
   /* updating environment variables */
   ornament_parameters get_ornament_parameters ();
+  art_box_parameters get_art_box_parameters (tree t);
   void   update_page_pars ();
   void   get_page_pars (SI& w, SI& h, SI& ww, SI& hh,
 			SI& odd, SI& even, SI& top, SI& bottom);

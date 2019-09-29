@@ -420,6 +420,32 @@ edit_env_rep::get_ornament_parameters () {
                               brush (bg, a), brush (xc, a), border);
 }
 
+art_box_parameters
+edit_env_rep::get_art_box_parameters (tree t) {
+  tree data (TUPLE);
+  SI lpad= 0, rpad= 0, bpad= 0, tpad= 0;
+  for (int i=1; i<N(t); i++)
+    if (is_func (t[i], TUPLE) && N(t[i]) >= 2) {
+      tree u= t[i], r (TUPLE);
+      bool main_text= (u[0] == "text");
+      for (int j=0; j+1<N(u); j+=2) {
+        tree var= exec (u[j]);
+        tree val= exec (u[j+1]);
+        if (is_atomic (val) && is_length (val->label))
+          val= as_tmlen (val);
+        r << var << val;
+        if (main_text) {
+          if      (var == "lpadding") lpad= as_length (val);
+          else if (var == "rpadding") rpad= as_length (val);
+          else if (var == "bpadding") bpad= as_length (val);
+          else if (var == "tpadding") tpad= as_length (val);
+        }
+      }
+      data << r;
+    }
+  return art_box_parameters (data, lpad, bpad, rpad, tpad);
+}
+
 /******************************************************************************
 * Various font sizes for scripts
 ******************************************************************************/

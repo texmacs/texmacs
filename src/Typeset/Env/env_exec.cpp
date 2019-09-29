@@ -484,12 +484,20 @@ edit_env_rep::exec (tree t) {
 
   case EFF_MOVE:
     return exec_eff_move (t);
+  case EFF_MAGNIFY:
+    return exec_eff_magnify (t);
   case EFF_BUBBLE:
     return exec_eff_bubble (t);
+  case EFF_CROP:
+    return exec_eff_crop (t);
   case EFF_TURBULENCE:
     return exec_eff_turbulence (t);
   case EFF_FRACTAL_NOISE:
     return exec_eff_fractal_noise (t);
+  case EFF_HATCH:
+    return exec_eff_hatch (t);
+  case EFF_DOTS:
+    return exec_eff_dots (t);
   case EFF_GAUSSIAN:
     return exec_eff_gaussian (t);
   case EFF_OVAL:
@@ -2040,12 +2048,32 @@ edit_env_rep::exec_eff_move (tree t) {
 }
 
 tree
+edit_env_rep::exec_eff_magnify (tree t) {
+  if (N(t) < 3) return tree (ERROR, "bad eff-magnify");
+  tree body= exec (t[0]);
+  tree sx  = as_tree (as_double (exec (t[1])));
+  tree sy  = as_tree (as_double (exec (t[2])));
+  return tree (EFF_MAGNIFY, body, sx, sy);
+}
+
+tree
 edit_env_rep::exec_eff_bubble (tree t) {
   if (N(t) < 3) return tree (ERROR, "bad eff-bubble");
   tree body= exec (t[0]);
   tree r   = as_tree (as_eff_length (exec (t[1])));
   tree a   = exec (t[2]);
   return tree (EFF_BUBBLE, body, r, a);
+}
+
+tree
+edit_env_rep::exec_eff_crop (tree t) {
+  if (N(t) < 5) return tree (ERROR, "bad eff-crop");
+  tree body= exec (t[0]);
+  tree cx1 = as_tree (as_double (exec (t[1])));
+  tree cy1 = as_tree (as_double (exec (t[2])));
+  tree cx2 = as_tree (as_double (exec (t[3])));
+  tree cy2 = as_tree (as_double (exec (t[4])));
+  return tree (EFF_CROP, body, cx1, cy1, cx2, cy2);
 }
 
 tree
@@ -2068,6 +2096,30 @@ edit_env_rep::exec_eff_fractal_noise (tree t) {
   tree h   = as_tree (as_eff_length (exec (t[3])));
   tree o   = exec (t[4]);
   return tree (EFF_FRACTAL_NOISE, body, s, w, h, o);
+}
+
+tree
+edit_env_rep::exec_eff_hatch (tree t) {
+  if (N(t) < 5) return tree (ERROR, "bad eff-hatch");
+  tree body= exec (t[0]);
+  tree sx = as_tree (as_int (exec (t[1])));
+  tree sy = as_tree (as_int (exec (t[2])));
+  tree fp = as_tree (as_double (exec (t[3])));
+  tree de = as_tree (as_double (exec (t[4])));
+  return tree (EFF_HATCH, body, sx, sy, fp, de);
+}
+
+tree
+edit_env_rep::exec_eff_dots (tree t) {
+  if (N(t) < 7) return tree (ERROR, "bad eff-dots");
+  tree body= exec (t[0]);
+  tree a  = as_tree (as_int (exec (t[1])));
+  tree b  = as_tree (as_int (exec (t[2])));
+  tree c  = as_tree (as_int (exec (t[3])));
+  tree d  = as_tree (as_int (exec (t[4])));
+  tree fp = as_tree (as_double (exec (t[5])));
+  tree de = as_tree (as_double (exec (t[6])));
+  return tree (EFF_DOTS, body, a, b, c, d, fp, de);
 }
 
 tree

@@ -273,3 +273,32 @@ bridge_ornament_rep::my_typeset (int desired_status) {
   box  mb= move_box (decorate (ip), hb, -l, 0);
   insert_ornament (remember_box (decorate (ip), mb));
 }
+
+/******************************************************************************
+* Artistic boxes
+******************************************************************************/
+
+class bridge_art_box_rep: public bridge_ornamented_rep {
+public:
+  bridge_art_box_rep (typesetter ttt, tree st, path ip):
+    bridge_ornamented_rep (ttt, st, ip) {}
+  void my_typeset (int desired_status);
+};
+
+bridge
+bridge_art_box (typesetter ttt, tree st, path ip) {
+  return tm_new<bridge_art_box_rep> (ttt, st, ip);
+}
+
+void
+bridge_art_box_rep::my_typeset (int desired_status) {
+  art_box_parameters ps= env->get_art_box_parameters (st);
+  SI   l = env->get_length (PAR_LEFT ) + ps->lpad;
+  SI   r = env->get_length (PAR_RIGHT) + ps->rpad;
+  with   = tuple (PAR_LEFT , tree (TMLEN, as_string (l))) *
+           tuple (PAR_RIGHT, tree (TMLEN, as_string (r)));
+  box  b = typeset_ornament (desired_status);
+  box  ab= art_box (ip, b, ps);
+  box  mb= move_box (decorate (ip), ab, 0, b->y1 - ps->bpad);
+  insert_ornament (remember_box (decorate (ip), mb));
+}
