@@ -94,22 +94,12 @@ char *prompt_string_default[] = {
 
 char *prompt_string_buffer; int allocated_prompt_string_buffer ; int cur_prompt_string_buffer ;
 
-
-
-
-
-
 jmp_buf error_return_env ;
+
 #define ERROR_ALLOC (1)
-
-
 #define MAX_PROMPT_LEN (1024)
 
-
 int N_data_begins = 0 ;
-
-
-
 
 char *DEFAULT_TEXMACS_SEND = "source(paste(Sys.getenv(\"TEXMACS_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n";
 
@@ -391,9 +381,9 @@ void signal_int(int x)
   char st[4096];
   DEBUG_LOG("got signal\n") ;
   write(subprocess,"",1) ;
-  //write(subprocess,"\t\t",2) ;
-  //  kill(childpid,SIGINT) ;
-//  N_data_begins = 0 ;
+  // write(subprocess,"\t\t",2) ;
+  // kill(childpid,SIGINT) ;
+  // N_data_begins = 0 ;
 
   signal (SIGINT, signal_int);
   signal (SIGCHLD, child_died);
@@ -401,7 +391,7 @@ void signal_int(int x)
   signal (SIGABRT, something_wrong ) ;
   signal (SIGILL, something_wrong ) ;
   signal (SIGSEGV, something_wrong ) ;
-  //  add_prompt( last_prompt_candidate ) ;
+  // add_prompt( last_prompt_candidate ) ;
 }
 
 void child_died(int x)
@@ -467,7 +457,7 @@ int check_prompt_strings_B( struct my_buffer *B )
   int got_prompt = FALSE ;
   for( p_i=0; p_i < n_prompt_string; p_i++)
     if( compare_end_B( B, prompt_string[p_i] ) ) {
-	DEBUG_LOG( "found prompt_string:%s\n",prompt_string[p_i])
+      DEBUG_LOG( "found prompt_string:%s\n", prompt_string[p_i])
       got_prompt= TRUE ;
       break ;
     }
@@ -548,8 +538,8 @@ void rem_nl_B( struct my_buffer *b)
   for( i= b->get, j= b->get;  i < (b->put - 1); i++ ) {
     if( b->buf[i] == CARRIAGE_RETURN ) {
       if( b->buf[i+1] != NEW_LINE ) {
-	b->buf[j] = NEW_LINE ; 
-	j++ ;
+        b->buf[j] = NEW_LINE ; 
+        j++ ;
       }
     } else {
       b->buf[j] = b->buf[i] ;
@@ -617,7 +607,7 @@ int write_B( int fd, struct my_buffer *b )
   int nwrite =0;
   
   if( b->put > b->get ) {
-//	DEBUG_LOG("changed Termflag: %x",termi)
+    //	DEBUG_LOG("changed Termflag: %x",termi)
 	
     nwrite = write( fd, b->buf+b->get, b->put - b->get ) ;
     b->get += nwrite ;
@@ -653,9 +643,9 @@ int write_B2( int fd, struct my_buffer *b )
     termi.c_lflag |= ECHO  ; /* echo */
     termi.c_lflag &= ~ECHOE  ; /* echo */
 //	DEBUG_LOG("termflag: %x",termi)
- //   tcsetattr( fd,TCSADRAIN, &termi ) ;
-	tcgetattr( fd, &termi ) ;
-//<	write( fd, "\x13", 1 ) ;
+//  tcsetattr( fd,TCSADRAIN, &termi ) ;
+    tcgetattr( fd, &termi ) ;
+//	write( fd, "\x13", 1 ) ;
   }
   return nwrite ;
 }
@@ -759,37 +749,35 @@ void prepare_tabcomplete_request( struct my_buffer *TO_R_B, int from )
   int i ;
   int in_quote, escaped ;
   DEBUG_LOG("prepareing tab request\n") ;
-    i = strlen( COMMAND_TABCOMPLETE )+1 ;
-    strncpy( TO_R_B->buf + TO_R_B->put- from, "t.tab.comp(", i ); // This hack assumes that the command is '@(complete'
-    // And thus contains the same number of characters as "t.tab.comp"
-					
-    in_quote = FALSE ; escaped = FALSE ;
-    for( ; i < from-1; i++) { // find the first ' ' not in quotes, and replace it with ",".
-      DEBUG_LOG("i=%d [%c]\n",i,TO_R_B->buf[ TO_R_B->put+(i)- from]) ;
-      if( in_quote ) DEBUG_LOG("quote\n") ;
-      if( ! in_quote ) {
-	if( TO_R_B->buf[ TO_R_B->put+(i)- from]==' ') {  
-	  DEBUG_LOG("found space\n"); 
-	  TO_R_B->buf[ TO_R_B->put+(i)- from] = ',' ;	
-	  break ;
-	} 
-	if ( B_strcmp_put( TO_R_B, from-i, "\"\"" ) ) {
-	  printf("\2scheme:(tuple \"\" \"\")\5"); ///// TODO: this shouldn't be here! We shouldn't just print to TeXmacs.
-	  fflush(stdout);
-	  break;
-	}
-      } 
-					  
-      if( ( ! escaped ) && (TO_R_B->buf[ TO_R_B->put+(i)-from]=='"') ) 
-	in_quote = ! in_quote ;
-      if( ( ! escaped ) && (TO_R_B->buf[ TO_R_B->put+(i)-from]=='\\') ) {
-	escaped = TRUE ;
-      } else {
-	escaped = FALSE ;
-      }
+  i = strlen( COMMAND_TABCOMPLETE )+1 ;
+  strncpy( TO_R_B->buf + TO_R_B->put- from, "t.tab.comp(", i ); // This hack assumes that the command is '@(complete'
+  // And thus contains the same number of characters as "t.tab.comp"
 
+  in_quote = FALSE ; escaped = FALSE ;
+  for( ; i < from-1; i++) { // find the first ' ' not in quotes, and replace it with ",".
+    DEBUG_LOG("i=%d [%c]\n",i,TO_R_B->buf[ TO_R_B->put+(i)- from]) ;
+    if( in_quote ) DEBUG_LOG("quote\n") ;
+    if( ! in_quote ) {
+      if( TO_R_B->buf[ TO_R_B->put+(i)- from]==' ') {  
+        DEBUG_LOG("found space\n"); 
+        TO_R_B->buf[ TO_R_B->put+(i)- from] = ',' ;	
+        break ;
+      } 
+      if ( B_strcmp_put( TO_R_B, from-i, "\"\"" ) ) {
+        printf("\2scheme:(tuple \"\" \"\")\5"); ///// TODO: this shouldn't be here! We shouldn't just print to TeXmacs.
+        fflush(stdout);
+        break;
+      }
+    } 
+				  
+    if( ( ! escaped ) && (TO_R_B->buf[ TO_R_B->put+(i)-from]=='"') ) 
+      in_quote = ! in_quote ;
+    if( ( ! escaped ) && (TO_R_B->buf[ TO_R_B->put+(i)-from]=='\\') ) {
+      escaped = TRUE ;
+    } else {
+      escaped = FALSE ;
     }
-					
+  }
 }
 
 
@@ -868,7 +856,7 @@ int main(int argc, char *argv[])
   if (stat(TEXMACS_LIB,&stat_buf))
     system("r_install"); 
 
-setenv( "TERM", "dumb", 1) ;
+  setenv( "TERM", "dumb", 1) ;
   
   
   // Build the command tp execute
@@ -885,7 +873,7 @@ setenv( "TERM", "dumb", 1) ;
   // Send commands to the process we just started. This is usually to load the TeXmacs library.
   TEXMACS_SEND_E = getenv("TEXMACS_SEND") ;
   if( TEXMACS_SEND_E == NULL ) TEXMACS_SEND_E = DEFAULT_TEXMACS_SEND ;
-DEBUG_LOG( "TEXMACS_SEND=%s",TEXMACS_SEND_E) ;
+  DEBUG_LOG( "TEXMACS_SEND=%s",TEXMACS_SEND_E) ;
 
   
 
@@ -896,20 +884,20 @@ DEBUG_LOG( "TEXMACS_SEND=%s",TEXMACS_SEND_E) ;
     m = strlen( TEXMACS_R ) ;
     for( i=0,n=0; i<m; i++)
       if( TEXMACS_R[i] == ' ' ) 
-	n++ ;
+        n++ ;
 	
-unsetenv( "DYLD_LIBRARY_PATH") ;
+    unsetenv( "DYLD_LIBRARY_PATH") ;
 	
     exec_argv = (char **) malloc( (n+2)*sizeof( char * ) ) ;
-	
+
     /* split TEXMACS_R into arguments into exec_argv, 
        at each " " that doesn't have a \ to escape it  */
     exec_argv[0] = TEXMACS_R ;
     for( i=0,n=0; i<m; i++)
       if( (TEXMACS_R[i] == ' ') && (i>0) && (TEXMACS_R[i-1]!='\\') ) {
-	n++ ;
-	exec_argv[n] = TEXMACS_R+i+1 ;
-	TEXMACS_R[i] = 0 ;
+        n++ ;
+        exec_argv[n] = TEXMACS_R+i+1 ;
+        TEXMACS_R[i] = 0 ;
       }
     exec_argv[n+1] = NULL ;
     execvp(TEXMACS_R,exec_argv) ;
@@ -927,7 +915,7 @@ unsetenv( "DYLD_LIBRARY_PATH") ;
     // Add default prompt strings to search array
     if( (error=setjmp( error_return_env ))== 0 ) {
       for( i=0; prompt_string_default[i] != 0; i++ )
-	add_prompt( prompt_string_default[i]  ) ;
+        add_prompt( prompt_string_default[i]  ) ;
     } else {
       IN_VERBATIM( TXB ) ;
       copy_to_B( TXB, temp_buf, snprintf( temp_buf, TEMP_BUF_SIZE, "error: out of memory error in tm_r\n" ) );
@@ -937,7 +925,7 @@ unsetenv( "DYLD_LIBRARY_PATH") ;
     // Add default term flags for prompt to array
     if( (error=setjmp( error_return_env ))== 0 ) {
       for( i=0; prompt_flags_default[i][0] != -1; i++ )
-	add_prompt_flag( &(prompt_flags_default[i])  ) ;
+        add_prompt_flag( &(prompt_flags_default[i])  ) ;
     } else {
       IN_VERBATIM( TXB ) ;
       copy_to_B( TXB, temp_buf, snprintf( temp_buf,  TEMP_BUF_SIZE, "error: out of memory error in tm_r\n" ) );
@@ -956,8 +944,7 @@ unsetenv( "DYLD_LIBRARY_PATH") ;
     sigaddset (&sigmask, SIGABRT);
     sigaddset (&sigmask, SIGILL);
     sigaddset (&sigmask, SIGSEGV);
-    sigprocmask (SIG_BLOCK, &sigmask,
-		 &orig_sigmask);
+    sigprocmask (SIG_BLOCK, &sigmask, &orig_sigmask);
 	
     signal (SIGINT, signal_int);
     signal (SIGCHLD, child_died);
@@ -993,217 +980,202 @@ unsetenv( "DYLD_LIBRARY_PATH") ;
       FD_SET (STDIN_FILENO, &rd ) ; /* wait for data from TeXmacs */
 	  
       if( data_available_B( TXB ) ) /* if we have data to send to TeXmacs */
-	FD_SET (STDOUT_FILENO, &wr ) ; /* then also wait to send to TeXmacs */
+        FD_SET (STDOUT_FILENO, &wr ) ; /* then also wait to send to TeXmacs */
 
       if( data_available_B( TO_R_B ) )  /* if we have data available to send to R,  */
-	FD_SET (subprocess, &wr);	    /*  then also wait to send to R. */
+        FD_SET (subprocess, &wr);	    /*  then also wait to send to R. */
 	  
 	  
 
       // We will wait till something happens using pselect.
 
       if( (pselect( subprocess+1, &rd, &wr, &er, NULL, &orig_sigmask )) > 0 ) {
-	if( FD_ISSET( STDIN_FILENO, &er) ) exit(0) ;
-	if( FD_ISSET( STDOUT_FILENO, &er) ) exit(0) ;
-	if( FD_ISSET( subprocess, &er) ) exit(0) ;
+        if( FD_ISSET( STDIN_FILENO, &er) ) exit(0) ;
+        if( FD_ISSET( STDOUT_FILENO, &er) ) exit(0) ;
+        if( FD_ISSET( subprocess, &er) ) exit(0) ;
       
-	////////////////////////////////////////////
-	// input ready from TeXmacs
-	if( FD_ISSET( STDIN_FILENO, &rd ) ) {
-	  /* =============== read input from TeXmacs */
-	  nread = read_B( STDIN_FILENO, TO_R_B, 1000 ) ;
-	  DEBUG_LOG("got from TeXmacs:||" ) ;
-	  debug_B( TO_R_B ) ;
-	  DEBUG_LOG("||\n" ) ;
+        ////////////////////////////////////////////
+        // input ready from TeXmacs
+        if( FD_ISSET( STDIN_FILENO, &rd ) ) {
+          /* =============== read input from TeXmacs */
+          nread = read_B( STDIN_FILENO, TO_R_B, 1000 ) ;
+          DEBUG_LOG("got from TeXmacs:||" ) ;
+          debug_B( TO_R_B ) ;
+          DEBUG_LOG("||\n" ) ;
 
-	  /* TeXmacs sent EOF, nread=0 */
-	  if( nread == 0 ) exit(0) ;
+          /* TeXmacs sent EOF, nread=0 */
+          if( nread == 0 ) exit(0) ;
 
-	  if( B_strcmp_put( TO_R_B, nread, "@@@" ) ) {
-	    DEBUG_LOG("got @@@\n" ) ;
-	    handle_command( TO_R_B, nread-3 ) ;
-	    TO_R_B->put -= nread ;
-	    //	    copy_to_B( TO_R_B, temp_buf, snprintf( temp_buf, TEMP_BUF_SIZE, "prin\t\t" ) );
-	  } else {
-	    n_ignore_prompts += 0 ;
-	    B_replace_inplace( TO_R_B, nread, ";;", "\n" ) ;
-	    B_replace_inplace( TO_R_B, nread, "@@EOF", "Hi\n\04\n") ;
-	    DEBUG_LOG("replaced ';;':||" ) ;
-	    debug_B( TO_R_B ) ;
-	    DEBUG_LOG("||\n" ) ;
+          if( B_strcmp_put( TO_R_B, nread, "@@@" ) ) {
+            DEBUG_LOG("got @@@\n" ) ;
+            handle_command( TO_R_B, nread-3 ) ;
+            TO_R_B->put -= nread ;
+            //	    copy_to_B( TO_R_B, temp_buf, snprintf( temp_buf, TEMP_BUF_SIZE, "prin\t\t" ) );
+          } else {
+            n_ignore_prompts += 0 ;
+            B_replace_inplace( TO_R_B, nread, ";;", "\n" ) ;
+            B_replace_inplace( TO_R_B, nread, "@@EOF", "Hi\n\04\n") ;
+            DEBUG_LOG("replaced ';;':||" ) ;
+            debug_B( TO_R_B ) ;
+            DEBUG_LOG("||\n" ) ;
 
-	    if( (command_place = B_find( TO_R_B, nread, COMMAND_TABCOMPLETE )) > -1 ) {
-	      DEBUG_LOG("got tab complete\n" ) ;
-	      if( !tab_comp_ptr ) {
-		prepare_tabcomplete_request( TO_R_B, nread - command_place ) ;
-		tab_comp_ptr = TRUE ;
-	      } else
-		clear_B( TO_R_B ) ;
-	    }
-	  }
-	    DEBUG_LOG("end of TeXmacs:||" ) ;
-	    debug_B( TO_R_B ) ;
-	    DEBUG_LOG("||\n" ) ;
+            if( (command_place = B_find( TO_R_B, nread, COMMAND_TABCOMPLETE )) > -1 ) {
+              DEBUG_LOG("got tab complete\n" ) ;
+              if( !tab_comp_ptr ) {
+                prepare_tabcomplete_request( TO_R_B, nread - command_place ) ;
+                tab_comp_ptr = TRUE ;
+              } else
+                clear_B( TO_R_B ) ;
+            }
+          }
+          DEBUG_LOG("end of TeXmacs:||" ) ;
+          debug_B( TO_R_B ) ;
+          DEBUG_LOG("||\n" ) ;
+        }
+        // end handle input from TeXmacs
+        /////////////////////////////////////////
 
-	}
-	// end handle input from TeXmacs
-	/////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////
+        // start of read from R
+        if( FD_ISSET( subprocess, &rd ) ) {
+          /* =================== read input from sub process (R) */
+          DEBUG_LOG("BBefore reading from R %d %d:||",FROM_R_B->put, FROM_R_B->get ) ;
+          debug_B( FROM_R_B ) ;
+          DEBUG_LOG("||\n" ) ;
 
-	//////////////////////////////////////////////////////////////////////
-	// start of read from R
-      
-	if( FD_ISSET( subprocess, &rd ) ) {
-	  /* =================== read input from sub process (R) */
-	  DEBUG_LOG("BBefore reading from R %d %d:||",FROM_R_B->put, FROM_R_B->get ) ;
-	  debug_B( FROM_R_B ) ;
-	  DEBUG_LOG("||\n" ) ;
+          while( read_B( subprocess, FROM_R_B, 4096) > 0 ) // read as much as we can.
+            usleep(100000) ;
 
-	  while( read_B( subprocess, FROM_R_B, 4096) > 0 ) // read as much as we can.
-	    usleep(100000) ;
-
-	  DEBUG_LOG("got from R:||" ) ;
-	  debug_B( FROM_R_B ) ;
-	  DEBUG_LOG("||\n" ) ;
-	  if( compare_end_B( FROM_R_B, "--More--" ) ) 
-	    copy_to_B( TO_R_B, " ", 1 ) ;
-	  
-	  // Nefore we do anything, check for prompt. Don't want to spoil it.
-	  got_prompt = check_terminal( subprocess ) || check_prompt_strings_B( FROM_R_B ) ;
-		  
-	  if( got_prompt ) DEBUG_LOG( "This is a prompt\n") ;
-	  
-	  ///////
-	  // handle return from tabcomplete
-	  if (tab_comp_ptr) { // check if we got from R the complete completion.
-
-	    for(  i=FROM_R_B->get, j=FROM_R_B->get;  i<FROM_R_B->put;  i++ ) {
-	      if ( (FROM_R_B->buf[i]== DATA_BEGIN) && ( j==FROM_R_B->get ) ) { // we got first data begin
-		j=i ;
-	      } else if ( FROM_R_B->buf[i]== DATA_END ) {  // we got data end
-		fwrite( FROM_R_B->buf+j, 1, i - j + 1, stdout) ; // TODO: here, we're also directly printing to TeXmacs...
-		FROM_R_B->get=i+1;
-		fflush(stdout);
-		break;
-	      }
-	    }
-
-	    tab_comp_ptr = FALSE ;
-
-	  }  // end handle tabcomplete
-	
-	  //////////////////
-	  // If it isn't tabcomplete, give the data to TeXmacs.
-	  //
-	  if(  !got_prompt ) { // didn't got_prompt
-	    /* terminal is not waiting for user - just print data. */
-	    IN_VERBATIM( TXB ) ; // Make sure we're in verbatim mode.
-	    while( last_nl > 0 ) {
-	      copy_to_B( TXB, "\n", 1 ) ; // copy the right number of new-lines (according to last_nl)
-	      last_nl-- ;
-	    }
-	    copy_B_to_B( TXB, FROM_R_B ) ;
-	    //	    last_nl = del_last_nl_B( TXB ) ;
-	    // no need for END_VERBATIM it will be closed when we get  a prompt and print it.
-	  } else { // Did get a prompt
-	    if( n_ignore_prompts > 0 ) {
-	      DEBUG_LOG("ignoring prompt\n") ;
-	      n_ignore_prompts-- ;
-	    }
-	    else { // We have a prompt, and we're not ignoring it
-
-	      /* The prompt is assumed to be the last line of the output.
-		So, we send every thin but the last line, and then nicely format the last line as a prompt.
-	      */
-
-	      // First, find previous end of line
-	      for( i= FROM_R_B->put - FROM_R_B->get; i > 0; i--) 
-		if( (FROM_R_B->buf[i-1]==CARRIAGE_RETURN) || (FROM_R_B->buf[i-1]==NEW_LINE) ) 
-		  break ;
-
-	      if( i > 0 ) { // Found end-of-line
-		/* print everything before the previous end-of-line */
-		IN_VERBATIM( TXB ) ; // make sure we're in verbatim mode.
-		while( last_nl > 0 ) {  // put in buffer TXB last_nl NEW_LINEs
-		  copy_to_B( TXB, "\n", 1 ) ;
-		  last_nl-- ;
-		} 
-		ncopy_B_to_B( TXB, FROM_R_B, i ) ;		
-		//		del_last_nl_B( TXB ) ;
-	      }
-
-	      del_first_nl_B( FROM_R_B ) ;
-	      /* Now print the prompt a bit nicely */
-	      IN_VERBATIM( TXB ) ;   // make sure we're in verbatim mode.
-	      if( data_available_B( FROM_R_B) ) {
-		DEBUG_LOG("N_data_begins=%d\n",N_data_begins) ;
-		last_nl = 0 ;
-		B_DATA_BEGIN( TXB) ; {
-		  printf_B( TXB, "prompt#" ) ;
-		  B_DATA_BEGIN( TXB ) ; {
-		    printf_B( TXB, "latex:\\red " ) ;
-		    if( name != NULL ) printf_B(TXB, "[%s]",name) ;
-		    sanitize_B( FROM_R_B ) ;
-		    copy_B_to_B( TXB, FROM_R_B ) ;
-		    printf_B( TXB, "\\black" ) ;
-		  } 
-		} 
-	      } 
-	      END_VERBATIM( TXB ) ; // close all parenthesis
-
-
-	    } 
-	  } 
-	}
-	// end of read from R
-	//////////////////////////////////////////////////////////////////////
-
-	///////////////////////////////////////
-	// TeXmacs is ready to receive input
-	if( FD_ISSET( STDOUT_FILENO, &wr ) ) {
-	  /* ================= TeXmacs is ready to receive data */
-	  rem_nl_B( TXB ) ;
-
-	  DEBUG_LOG("sending to TeX:||" ) ;
-	  debug_B( TXB ) ;
-	  DEBUG_LOG("||\n" ) ;
-	  write_B( STDOUT_FILENO, TXB ) ;
-	}
-
-	//////////////////////////////////////
-	// R is ready to receive data
-	if( FD_ISSET( subprocess, &wr ) ) {
-	  /* ================= R is ready to receive data */
-	  if( TO_R_B->put > TO_R_B->get ) {
-//	    tcgetattr(subprocess, &termi ) ;
-//	    termi.c_lflag |= ECHO  ; /* no echo */
-//	    termi.c_lflag ^= ECHO  ; /* no echo */
-	    /* set tserminal settings */
-//	    tcsetattr(subprocess,TCSANOW, &termi ) ;
-    /* get terminal settings */
-    tcgetattr(subprocess, &termi ) ;
-
-    termi.c_lflag &= ~ECHO  ; /* no echo */
-    tcsetattr(subprocess,TCSADRAIN, &termi ) ;
-	
-	    DEBUG_LOG("sending to R:||" ) ;
-	    debug_B( TO_R_B ) ;
-	    DEBUG_LOG("||\n" ) ;
-	    DEBUG_LOG("before: %d %d\n",TO_R_B->put, TO_R_B->get) ;
-	    write_B2( subprocess, TO_R_B ) ;
-	    DEBUG_LOG("after: %d %d\n",TO_R_B->put, TO_R_B->get) ;
+          DEBUG_LOG("got from R:||" ) ;
+          debug_B( FROM_R_B ) ;
+          DEBUG_LOG("||\n" ) ;
+          if( compare_end_B( FROM_R_B, "--More--" ) ) 
+            copy_to_B( TO_R_B, " ", 1 ) ;
           
-	  }
-	}
-		
-		
+          // Nefore we do anything, check for prompt. Don't want to spoil it.
+          got_prompt = check_terminal( subprocess ) || check_prompt_strings_B( FROM_R_B ) ;
+        	  
+          if( got_prompt ) DEBUG_LOG( "This is a prompt\n") ;
+          
+          ///////
+          // handle return from tabcomplete
+          if (tab_comp_ptr) { // check if we got from R the complete completion.
+
+            for(  i=FROM_R_B->get, j=FROM_R_B->get;  i<FROM_R_B->put;  i++ ) {
+              if ( (FROM_R_B->buf[i]== DATA_BEGIN) && ( j==FROM_R_B->get ) ) { // we got first data begin
+                j=i ;
+              } else if ( FROM_R_B->buf[i]== DATA_END ) {  // we got data end
+                fwrite( FROM_R_B->buf+j, 1, i - j + 1, stdout) ; // TODO: here, we're also directly printing to TeXmacs...
+                FROM_R_B->get=i+1;
+                fflush(stdout);
+                break;
+              }
+            }
+            tab_comp_ptr = FALSE ;
+          }  // end handle tabcomplete
+	
+          //////////////////
+          // If it isn't tabcomplete, give the data to TeXmacs.
+          //
+          if(  !got_prompt ) { // didn't got_prompt
+            /* terminal is not waiting for user - just print data. */
+            IN_VERBATIM( TXB ) ; // Make sure we're in verbatim mode.
+            while( last_nl > 0 ) {
+              copy_to_B( TXB, "\n", 1 ) ; // copy the right number of new-lines (according to last_nl)
+              last_nl-- ;
+            }
+            copy_B_to_B( TXB, FROM_R_B ) ;
+            //	    last_nl = del_last_nl_B( TXB ) ;
+            // no need for END_VERBATIM it will be closed when we get  a prompt and print it.
+          } else { // Did get a prompt
+            if( n_ignore_prompts > 0 ) {
+              DEBUG_LOG("ignoring prompt\n") ;
+              n_ignore_prompts-- ;
+            }
+            else { // We have a prompt, and we're not ignoring it
+
+              /* The prompt is assumed to be the last line of the output.
+                 So, we send every thin but the last line, and then nicely format the last line as a prompt.
+              */
+
+              // First, find previous end of line
+              for( i= FROM_R_B->put - FROM_R_B->get; i > 0; i--) 
+                if( (FROM_R_B->buf[i-1]==CARRIAGE_RETURN) || (FROM_R_B->buf[i-1]==NEW_LINE) ) 
+                  break ;
+
+              if( i > 0 ) { // Found end-of-line
+                /* print everything before the previous end-of-line */
+                IN_VERBATIM( TXB ) ; // make sure we're in verbatim mode.
+                while( last_nl > 0 ) {  // put in buffer TXB last_nl NEW_LINEs
+                  copy_to_B( TXB, "\n", 1 ) ;
+                  last_nl-- ;
+                } 
+                ncopy_B_to_B( TXB, FROM_R_B, i ) ;		
+                //		del_last_nl_B( TXB ) ;
+              }
+
+              del_first_nl_B( FROM_R_B ) ;
+              /* Now print the prompt a bit nicely */
+              IN_VERBATIM( TXB ) ;   // make sure we're in verbatim mode.
+              if( data_available_B( FROM_R_B) ) {
+                DEBUG_LOG("N_data_begins=%d\n",N_data_begins) ;
+                last_nl = 0 ;
+                B_DATA_BEGIN( TXB) ; {
+                  printf_B( TXB, "prompt#" ) ;
+                  B_DATA_BEGIN( TXB ) ; {
+                    printf_B( TXB, "latex:\\red " ) ;
+                    if( name != NULL ) printf_B(TXB, "[%s]",name) ;
+                    sanitize_B( FROM_R_B ) ;
+                    copy_B_to_B( TXB, FROM_R_B ) ;
+                    printf_B( TXB, "\\black" ) ;
+                  } 
+                } 
+              } 
+              END_VERBATIM( TXB ) ; // close all parenthesis
+	          } 
+	        } 
+	      }
+        // end of read from R
+        //////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////
+        // TeXmacs is ready to receive input
+        if( FD_ISSET( STDOUT_FILENO, &wr ) ) {
+          /* ================= TeXmacs is ready to receive data */
+          rem_nl_B( TXB ) ;
+        
+          DEBUG_LOG("sending to TeX:||" ) ;
+          debug_B( TXB ) ;
+          DEBUG_LOG("||\n" ) ;
+          write_B( STDOUT_FILENO, TXB ) ;
+        }
+        
+        //////////////////////////////////////
+        // R is ready to receive data
+        if( FD_ISSET( subprocess, &wr ) ) {
+          /* ================= R is ready to receive data */
+          if( TO_R_B->put > TO_R_B->get ) {
+            // tcgetattr(subprocess, &termi ) ;
+            // termi.c_lflag |= ECHO  ; /* no echo */
+            // termi.c_lflag ^= ECHO  ; /* no echo */
+        	  /* set tserminal settings */
+            // tcsetattr(subprocess,TCSANOW, &termi ) ;
+            /* get terminal settings */
+            tcgetattr(subprocess, &termi ) ;
+        
+            termi.c_lflag &= ~ECHO  ; /* no echo */
+            tcsetattr(subprocess,TCSADRAIN, &termi ) ;
+        
+            DEBUG_LOG("sending to R:||" ) ;
+            debug_B( TO_R_B ) ;
+            DEBUG_LOG("||\n" ) ;
+            DEBUG_LOG("before: %d %d\n",TO_R_B->put, TO_R_B->get) ;
+            write_B2( subprocess, TO_R_B ) ;
+            DEBUG_LOG("after: %d %d\n",TO_R_B->put, TO_R_B->get) ;
+          }
+        }
       }
     }
-	
   } // I'm the parent
   exit(0) ;
 }
-
-
-
-
-
