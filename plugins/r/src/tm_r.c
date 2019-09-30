@@ -111,17 +111,8 @@ int N_data_begins = 0 ;
 
 
 
-char *DEFAULT_TEXMACS_SEND =  "\
-if( is.element(\"TeXmacs\", installed.packages()[,1]) ) \
-{library( TeXmacs); }\n \
-if( !is.element(\"TeXmacs\", installed.packages()[,1]) || \n\
-!exists(\"TeXmacsR.version\",where = as.environment(\"package:TeXmacs\")) || \n\
- as.numeric( get(\"TeXmacsR.version\",envir=as.environment(\"package:TeXmacs\")))\n <"TEXMACS_R_VERSION" ) { \n\
-	cur.dir=getwd(); setwd( tempdir() ); \n\
-	system(paste(\"R CMD build \",Sys.getenv(\"TEXMACS_PATH\"),\"/plugins/r/r/TeXmacs\",sep=\"\") );\n\
-	pack=list.files(pattern=\"TeXmacs.*gz\"); \n\
-    install.packages(pack,repos=NULL,type=\"source\");	\n\
-	library(TeXmacs) }\n" ;
+char *DEFAULT_TEXMACS_SEND = "source(paste(Sys.getenv(\"TEXMACS_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n";
+
 
 // Add one more DATA_BEGIN, i.e. open bracket.
 #define B_DATA_BEGIN( TXB )					\

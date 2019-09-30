@@ -26,14 +26,11 @@
 	assign("?",t.display.html.help, ,envir=as.environment("package:TeXmacs"))
 
 	assign("TeXmacsR.version","0.16",envir=as.environment("package:TeXmacs") )
-	motd=paste("TeXmacs to R interface version ",TeXmacsR.version,"\n\
-	Run start.view() to use graphics without x11()\
-	Use t.help.start() to view R documentation pages separately. Otherwise they are displayed in the buffer.\
-	\
-	Notice: if you want density graphs produced with image() to render much faster, use the option useRaster=T",sep="")
-	packageStartupMessage( paste(strsplit(motd," ")[[1]]," ")) 
+	motd="Run start.view() to use graphics without x11().\
+	Notice: if you want density plots produced with image() to render much faster, use the option useRaster=T"
 
-    packageStartupMessage("TeXmacs to R interface version ",TeXmacsR.version,"\n") 
+        packageStartupMessage("TeXmacs to R interface version ",TeXmacsR.version,"\n") 
+	packageStartupMessage( paste(strsplit(motd," ")[[1]]," "))
 
 	if( as.numeric( version$minor )*0.0001 + as.numeric(
 version$major ) >= 2.0011 ) {
