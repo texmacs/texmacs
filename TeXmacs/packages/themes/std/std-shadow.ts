@@ -78,6 +78,8 @@
 
   <assign|south-east-in-shadow-align|south east>
 
+  <assign|south-east-in-shadow-center|false>
+
   <assign|south-east-in-shadow-lcrop|0.05>
 
   <assign|south-east-in-shadow-rcrop|0.95>
