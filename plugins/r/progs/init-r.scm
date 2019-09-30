@@ -17,10 +17,16 @@
       (string-append (escape-verbatim 
 		      (string-replace s "\n" ";;")) "\n"))))
 
+(define (r-launcher)
+  (if (url-exists? "$TEXMACS_HOME_PATH/plugins/r")
+      (setenv "TEXMACS_SEND"
+              "source(paste(Sys.getenv(\"TEXMACS_HOME_PATH\"),\"/plugins/r/texmacs.r\",sep=\"\"))\n"))
+  "tm_r")
+
 (plugin-configure r
   (:require (url-exists-in-path? "R"))
   (:serializer ,r-serialize)
-  (:launch "tm_r")
+  (:launch ,(r-launcher))
   (:tab-completion #t)
   (:session "R")
   (:scripts "R"))

@@ -9,7 +9,6 @@
  ******************************************************************************/
 
 #define TEXMACS_R_VERSION "0.15"
-#include "config.h"
 #include <stdio.h>
 #include <sys/select.h>
 #ifdef __FreeBSD__

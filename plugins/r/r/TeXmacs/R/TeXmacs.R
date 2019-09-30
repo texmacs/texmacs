@@ -9,52 +9,48 @@
 .onAttach<-function(dir,package)
   {
     options(pager="cat")
-	options(width=78)
+    options(width=78)
 
-	options(texmacs.table.grid = NULL)
-	options( texmacs.rownames.color="#eeeeee")
-	options( texmacs.colnames.color="#eeeeee")
-	options( texmacs.table.borders=0.1 )
-	options( max.print=1000)
+    options(texmacs.table.grid = NULL)
+    options(texmacs.rownames.color="#eeeeee")
+    options(texmacs.colnames.color="#eeeeee")
+    options(texmacs.table.borders=0.1 )
+    options(max.print=1000)
 	
-	assign("[.texmacs.matrix", tm( get ("[") ), envir=as.environment("package:TeXmacs") )
-	assign("[.texmacs.data.frame", tm( get( "[")), envir=as.environment("package:TeXmacs"))
+    assign("[.texmacs.matrix", tm( get ("[") ), envir=as.environment("package:TeXmacs") )
+    assign("[.texmacs.data.frame", tm( get( "[")), envir=as.environment("package:TeXmacs"))
 
     ps.options(pointsize=10)
 	
-	assign( "t.help.quest.old", get("?"),envir=as.environment("package:TeXmacs"))
-	assign("?",t.display.html.help, ,envir=as.environment("package:TeXmacs"))
+    assign( "t.help.quest.old", get("?"),envir=as.environment("package:TeXmacs"))
+    assign("?",t.display.html.help, ,envir=as.environment("package:TeXmacs"))
 
-	assign("TeXmacsR.version","0.16",envir=as.environment("package:TeXmacs") )
-	motd="Run start.view() to use graphics without x11().\
-	Notice: if you want density plots produced with image() to render much faster, use the option useRaster=T"
+    assign("TeXmacsR.version","0.16",envir=as.environment("package:TeXmacs") )
+    motd="Run start.view() to use graphics without x11().\
+    Notice: if you want density plots produced with image() to render much faster, use the option useRaster=T"
 
-        packageStartupMessage("TeXmacs to R interface version ",TeXmacsR.version,"\n") 
-	packageStartupMessage( paste(strsplit(motd," ")[[1]]," "))
+    packageStartupMessage("TeXmacs to R interface version ",TeXmacsR.version,"\n") 
+    packageStartupMessage( paste(strsplit(motd," ")[[1]]," "))
 
-	if( as.numeric( version$minor )*0.0001 + as.numeric(
-version$major ) >= 2.0011 ) {
-	  assign( "t.gethelpfile", utils:::.getHelpFile, envir=as.environment("package:TeXmacs"))
-	} else if( as.numeric( version$minor )*0.0001 + as.numeric(
-version$major ) >= 2.0010 ) {
-	  assign( "t.gethelpfile" , 
-	    function (file) {
-	      path <- dirname(file)
-	      dirpath <- dirname(path)
-	      if (!file.exists(dirpath)) 
-	        stop(gettextf("invalid '%s' argument", "file"), domain = NA)
-	      pkgname <- basename(dirpath)
-	      RdDB <- file.path(path, pkgname)
-	      if (!file.exists(paste(RdDB, "rdx", sep = "."))) 
-	        stop(gettextf("package %s exists but was not installed under R >= 2.10.0 so help cannot be accessed", 
-	                      sQuote(pkgname)), domain = NA)
-	      tools:::fetchRdDB(RdDB, basename(file))
-	    }, envir=as.environment("package:TeXmacs") )
-	}
-	t.help.quest.old = get("?")
-	assign("?",t.display.html.help, envir=as.environment("package:TeXmacs"))
-	
-
+    if( as.numeric( version$minor )*0.0001 + as.numeric(version$major ) >= 2.0011 ) {
+      assign( "t.gethelpfile", utils:::.getHelpFile, envir=as.environment("package:TeXmacs"))
+    } else if( as.numeric( version$minor )*0.0001 + as.numeric(version$major ) >= 2.0010 ) {
+      assign( "t.gethelpfile" , 
+        function (file) {
+          path <- dirname(file)
+          dirpath <- dirname(path)
+          if (!file.exists(dirpath)) 
+            stop(gettextf("invalid '%s' argument", "file"), domain = NA)
+          pkgname <- basename(dirpath)
+          RdDB <- file.path(path, pkgname)
+          if (!file.exists(paste(RdDB, "rdx", sep = "."))) 
+            stop(gettextf("package %s exists but was not installed under R >= 2.10.0 so help cannot be accessed", 
+                          sQuote(pkgname)), domain = NA)
+          tools:::fetchRdDB(RdDB, basename(file))
+        }, envir=as.environment("package:TeXmacs") )
+    }
+    t.help.quest.old = get("?")
+    assign("?",t.display.html.help, envir=as.environment("package:TeXmacs"))
   }
 
 .First.lib=.onAttach
@@ -113,7 +109,6 @@ structure( function()
       op$file <-tempfile("postscript")
     } else {
       op$file <-  file
-      
     }
     cat(op$file)
   }
@@ -134,8 +129,8 @@ structure( function()
 t.cat.in2out<-function (
 	### 
 	filename, 
-	before=paste(DATA_BEGIN,"ps: ", sep=""),
-	after =  paste("\n",DATA_END,"\n"),
+	before= paste(DATA_BEGIN,"ps: ", sep=""),
+	after = paste("\n",DATA_END,"\n"),
 	fix.html.bugs=F)
 {
     con <- file(filename, "r")
@@ -146,17 +141,17 @@ t.cat.in2out<-function (
         a = readLines(con, 1000)
 
         if( fix.html.bugs ) {
-        # The following is a hack because TeXmacs fails on the backtick.
-        a=gsub("`","[backtick]",a)
-        a=gsub("&#96;","[backtick]",a)
-        a=gsub("</p>","",a)
-      }
+            # The following is a hack because TeXmacs fails on the backtick.
+            a=gsub("`","[backtick]",a)
+            a=gsub("&#96;","[backtick]",a)
+            a=gsub("</p>","",a)
+        }
         if (start) {
             on.exit(cat(after), add = T)
             cat( before)
             start = F
         }
-            cat(a, sep = "\n");cat("\n")
+        cat(a, sep = "\n");cat("\n")
     }
 }
 
