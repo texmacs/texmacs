@@ -194,7 +194,7 @@ propose_title (string old_title, url u, tree doc) {
     string no_name= translate ("No name");
     for (int i=0; i<N(no_name); i++)
       if (((unsigned char) (no_name[i])) >= (unsigned char) 128)
-	{ no_name= "No name"; break; }
+        { no_name= "No name"; break; }
     name= no_name * " [" * name (8, N(name) - 3) * "]";
   }
   if ((name == "") || (name == "."))

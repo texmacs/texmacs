@@ -524,7 +524,7 @@ void
 immediate_options (int argc, char** argv) {
   if (get_env ("TEXMACS_HOME_PATH") == "")
 #ifdef OS_MINGW
-    {
+  {
     if (get_env ("HOME") == "")
         set_env ("HOME", get_env("USERPROFILE"));
     set_env ("TEXMACS_HOME_PATH", get_env ("APPDATA") * "\\TeXmacs");
@@ -595,8 +595,8 @@ main (int argc, char** argv) {
 #ifdef STACK_SIZE
   struct rlimit limit;
 
-  if(getrlimit(RLIMIT_STACK, &limit) == 0) {
-    if (limit.rlim_max <  STACK_SIZE) {
+  if (getrlimit(RLIMIT_STACK, &limit) == 0) {
+    if (limit.rlim_max < STACK_SIZE) {
       cerr << "Max stack allowed value : " << limit.rlim_max << "\n";
       limit.rlim_cur= limit.rlim_max;
     } else limit.rlim_cur= STACK_SIZE;

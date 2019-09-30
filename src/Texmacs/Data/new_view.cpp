@@ -311,8 +311,8 @@ delete_view (url u) {
     if (buf->vws[i] == vw) {
       array<tm_view> a (n-1);
       for (j=0; j<n-1; j++)
-	if (j<i) a[j]= buf->vws[j];
-	else a[j]= buf->vws[j+1];
+        if (j<i) a[j]= buf->vws[j];
+        else a[j]= buf->vws[j+1];
       buf->vws= a;
     }
   notify_delete_view (u);
@@ -413,8 +413,8 @@ focus_on_editor (editor ed) {
     array<url> vs= buffer_to_views (bufs[i]);
     for (int j=0; j<N(vs); j++)
       if (concrete_view (vs[j]) != NULL && view_to_editor (vs[j]) == ed) {
-	set_current_view (vs[j]);
-	return;
+        set_current_view (vs[j]);
+        return;
       }
   }
 

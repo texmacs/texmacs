@@ -137,11 +137,11 @@ tm_frame_rep::choose_file (object fun, string title, string type,
       string old_suf= suffix (u);
       string new_suf= format_to_suffix (type);
       if ((suffix_to_format (suffix (u)) != type) &&
-	  (old_suf != "") && (new_suf != ""))
-	{
-	  u= unglue (u, N(old_suf) + 1);
-	  u= glue (u, "." * new_suf);
-	}
+          (old_suf != "") && (new_suf != ""))
+        {
+          u= unglue (u, N(old_suf) + 1);
+          u= glue (u, "." * new_suf);
+        }
       set_file (wid, as_string (u));
     }
   }
@@ -182,7 +182,7 @@ get_proposals (scheme_tree p, int i) {
     int j, n= N(p[i]);
     for (j=2; j<n; j++)
       if (is_atomic (p[i][j]) && is_quoted (p[i][j]->label))
-	a << scm_unquote (p[i][j]->label);
+        a << scm_unquote (p[i][j]->label);
   }
   return a;
 }
@@ -213,9 +213,9 @@ interactive_command_rep::apply () {
     for (i=N(p)-1; i>=0; i--) {
       params[i]= string_to_object (s[i]);
       if (get_type (p, i) == "password")
-	learn= cons (cons (object (as_string (i)), object ("")), learn);
+        learn= cons (cons (object (as_string (i)), object ("")), learn);
       else
-	learn= cons (cons (object (as_string (i)), params[i]), learn);
+        learn= cons (cons (object (as_string (i)), params[i]), learn);
     }
     call ("learn-interactive", fun, learn);
     string ret= object_to_string (call (fun, params));
@@ -266,7 +266,7 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     if (concrete_window () -> get_interactive_mode ()) beep ();
     else {
       command interactive_cmd=
-	tm_new<interactive_command_rep> (this, concrete_window (), fun, p);
+        tm_new<interactive_command_rep> (this, concrete_window (), fun, p);
       interactive_cmd ();
     }
   }

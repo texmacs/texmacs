@@ -113,7 +113,7 @@ tm_config_rep::variant_simplification (string& which) {
     // cout << which << " => " << obj << LF;
     if (obj == object (false))
       while (ends (which, var_suffix))
-	which= which (0, N(which) - N(var_suffix));
+        which= which (0, N(which) - N(var_suffix));
   }
   if (ends (which, unvar_suffix)) {
     if (ends (which, var_suffix * unvar_suffix))
@@ -121,9 +121,9 @@ tm_config_rep::variant_simplification (string& which) {
     else {
       which= which (0, N(which) - N(unvar_suffix));
       while (true) {
-	if (rewrite_find_key_binding (which * var_suffix) == object (false))
-	  break;
-	which= which * var_suffix;
+        if (rewrite_find_key_binding (which * var_suffix) == object (false))
+          break;
+        which= which * var_suffix;
       }
     }
   }
@@ -321,7 +321,7 @@ tm_config_rep::kbd_system_rewrite (string s) {
       string ss= s (start, i);
       string rr= kbd_system_prevails (ss);
       if (rr != ss)
-	return kbd_system_rewrite (s (0, start) * rr * s (i, N(s)));
+        return kbd_system_rewrite (s (0, start) * rr * s (i, N(s)));
       start= i+1;
     }
 
@@ -334,16 +334,16 @@ tm_config_rep::kbd_system_rewrite (string s) {
       string ss= s (start, i);
       if (system_kbd_decode->contains (ss)) r << system_kbd_decode[ss];
       else if (N(ss) == 1 && (use_macos_fonts () || gui_is_qt ())) {
-	if (is_locase (ss[0])) r << upcase_all (ss);
-	else if (is_upcase (ss[0])) r << system_kbd_decode ("S-") << ss;
-	else r << ss;
+        if (is_locase (ss[0])) r << upcase_all (ss);
+        else if (is_upcase (ss[0])) r << system_kbd_decode ("S-") << ss;
+        else r << ss;
       }
       else r << ss;
       if (i == N(s) || s[i] == ' ') {
-	k << kbd_render (simplify_concat (r));
-	r= tree (CONCAT);
-	if (i == N(s)) break;
-	i++;
+        k << kbd_render (simplify_concat (r));
+        r= tree (CONCAT);
+        if (i == N(s)) break;
+        i++;
       }
       start= i;
     }
