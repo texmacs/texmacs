@@ -141,12 +141,14 @@ art_box_rep::perform_rewritings () {
       tree eff = "0";
       tree cx1= "0", cy1= "0", cx2= "1", cy2= "1";
       tree lw= "", rw= "", bh= "", th= "";
-      tree al= "inner";
+      string al= "inner";
+      string cen= "false";
       for (int j=2; j+1<N(data[i]); j+=2) {
         tree var= data[i][j];
         tree val= data[i][j+1];
         if      (var == "effect") eff= val;
-        else if (var == "align") al= val;
+        else if (var == "align") al= as_string (val);
+        else if (var == "center") cen= as_string (val);
         else if (var == "lcrop") cx1= val;
         else if (var == "bcrop") cy1= val;
         else if (var == "rcrop") cx2= val;
@@ -158,7 +160,7 @@ art_box_rep::perform_rewritings () {
       }
       for (int row= 0; row <= 2; row++)
         for (int col= 0; col <= 2; col++)
-          if (row != 1 || col != 1) {
+          if (row != 1 || col != 1 || cen == "true") {
             tree crx1, cry1, crx2, cry2, ha, va;
             if (col == 0) { crx1= "0"; crx2= cx1; ha= "left"; }
             if (col == 1) { crx1= cx1; crx2= cx2; ha= "stretch"; }
@@ -166,22 +168,24 @@ art_box_rep::perform_rewritings () {
             if (row == 0) { cry1= "0"; cry2= cy1; va= "bottom"; }
             if (row == 1) { cry1= cy1; cry2= cy2; va= "stretch"; }
             if (row == 2) { cry1= cy2; cry2= "1"; va= "top"; }
-            if (al == "outer") {
-              if (ha == "left")   ha= "outer left";
-              if (ha == "right")  ha= "outer right";
-              if (va == "bottom") va= "outer bottom";
-              if (va == "top")    va= "outer top";
-            }
+            bool outl= al == "outer" || occurs ("west", al);
+            bool outr= al == "outer" || occurs ("east", al);
+            bool outb= al == "outer" || occurs ("south", al);
+            bool outt= al == "outer" || occurs ("north", al);
+            if (outl && ha == "left"  ) ha= "outer left";
+            if (outr && ha == "right" ) ha= "outer right";
+            if (outb && va == "bottom") va= "outer bottom";
+            if (outt && va == "top"   ) va= "outer top";
             tree sub_eff= tree (EFF_CROP, eff, crx1, cry1, crx2, cry2);
             tree t= tree (TUPLE, "image", name, "effect", sub_eff);
             t << tree ("halign") << ha << tree ("valign") << va;
             if (col == 0) t << tree ("width") << lw;
-            if (col == 1 && al != "outer")
-              t << tree ("left") << lw << tree ("right") << minus (rw);
+            if (col == 1 && !outl) t << tree ("left") << lw;
+            if (col == 1 && !outr) t << tree ("right") << minus (rw);
             if (col == 2) t << tree ("width") << rw;
             if (row == 0) t << tree ("height") << bh;
-            if (row == 1 && al != "outer")
-              t << tree ("bottom") << bh << tree ("top") << minus (th);
+            if (row == 1 && !outb) t << tree ("bottom") << bh;
+            if (row == 1 && !outt) t << tree ("top") << minus (th);
             if (row == 2) t << tree ("height") << th;
             new_data << t;
           }
