@@ -84,7 +84,7 @@
 
   <assign|south-east-in-shadow-align|south east>
 
-  <assign|south-east-in-shadow-center|false>
+  <assign|south-east-in-shadow-format|..x ..x xxx>
 
   <assign|south-east-in-shadow-lcrop|0.05>
 

@@ -32,7 +32,7 @@
 
   <assign|shadow-align|outer>
 
-  <assign|shadow-center|true>
+  <assign|shadow-format|xxx xxx xxx>
 
   <assign|shadow-lcrop|0.03>
 
@@ -56,7 +56,7 @@
     </src-comment>
   </active*>
 
-  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|shadow-effect>|align|<value|shadow-align>|center|<value|shadow-center>|lcrop|<value|shadow-lcrop>|rcrop|<value|shadow-rcrop>|bcrop|<value|shadow-bcrop>|tcrop|<value|shadow-tcrop>|lwidth|<value|shadow-lborder>|rwidth|<value|shadow-rborder>|bheight|<value|shadow-bborder>|theight|<value|shadow-tborder>>|<tuple|text|normal>>>>
+  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|shadow-effect>|align|<value|shadow-align>|format|<value|shadow-format>|lcrop|<value|shadow-lcrop>|rcrop|<value|shadow-rcrop>|bcrop|<value|shadow-bcrop>|tcrop|<value|shadow-tcrop>|lwidth|<value|shadow-lborder>|rwidth|<value|shadow-rborder>|bheight|<value|shadow-bborder>|theight|<value|shadow-tborder>>|<tuple|text|normal>>>>
 
   <\active*>
     <\src-comment>
@@ -64,7 +64,7 @@
     </src-comment>
   </active*>
 
-  <new-theme|shadow|shadow-picture|shadow-effect|shadow-align|shadow-center|shadow-lcrop|shadow-rcrop|shadow-bcrop|shadow-tcrop|shadow-lborder|shadow-rborder|shadow-bborder|shadow-tborder>
+  <new-theme|shadow|shadow-picture|shadow-effect|shadow-align|shadow-format|shadow-lcrop|shadow-rcrop|shadow-bcrop|shadow-tcrop|shadow-lborder|shadow-rborder|shadow-bborder|shadow-tborder>
 
   \;
 </body>

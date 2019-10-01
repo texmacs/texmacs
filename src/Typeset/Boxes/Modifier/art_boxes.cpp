@@ -135,13 +135,13 @@ art_box_rep::perform_rewritings () {
       tree cx1= "0", cy1= "0", cx2= "1", cy2= "1";
       tree lw= "", rw= "", bh= "", th= "";
       string al= "inner";
-      string cen= "false";
+      string format= "xxx x.x xxx";
       for (int j=2; j+1<N(data[i]); j+=2) {
         tree var= data[i][j];
         tree val= data[i][j+1];
         if      (var == "effect") eff= val;
         else if (var == "align") al= as_string (val);
-        else if (var == "center") cen= as_string (val);
+        else if (var == "format") format= as_string (val);
         else if (var == "lcrop") cx1= val;
         else if (var == "bcrop") cy1= val;
         else if (var == "rcrop") cx2= val;
@@ -153,7 +153,7 @@ art_box_rep::perform_rewritings () {
       }
       for (int row= 0; row <= 2; row++)
         for (int col= 0; col <= 2; col++)
-          if (row != 1 || col != 1 || cen == "true") {
+          if (format[(2-row)*4+col] == 'x') {
             tree crx1, cry1, crx2, cry2, ha, va;
             if (col == 0) { crx1= "0"; crx2= cx1; ha= "left"; }
             if (col == 1) { crx1= cx1; crx2= cx2; ha= "stretch"; }
