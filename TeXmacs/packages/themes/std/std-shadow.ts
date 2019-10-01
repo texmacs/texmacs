@@ -32,6 +32,8 @@
 
   <assign|south-east-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-drop-shadow.png>
 
+  <assign|south-east-shadow-picture|tmfs://artwork/pictures/shadows/drop-shadow.png>
+
   <assign|south-east-shadow-align|south east>
 
   <assign|south-east-shadow|<macro|body|<with-south-east|<art-shadow|<arg|body>>>>>
@@ -45,6 +47,8 @@
   <copy-theme|south-east-round|shadow>
 
   <assign|south-east-round-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-round-shadow.png>
+
+  <assign|south-east-round-shadow-picture|tmfs://artwork/pictures/shadows/round-shadow.png>
 
   <assign|south-east-round-shadow-align|south east>
 
@@ -76,6 +80,8 @@
 
   <assign|south-east-in-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-bend-in-shadow.png>
 
+  <assign|south-east-in-shadow-picture|tmfs://artwork/pictures/shadows/bend-in-shadow.png>
+
   <assign|south-east-in-shadow-align|south east>
 
   <assign|south-east-in-shadow-center|false>
@@ -99,6 +105,8 @@
   <copy-theme|diag-in|shadow>
 
   <assign|diag-in-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-bend-diag-in-shadow.png>
+
+  <assign|diag-in-shadow-picture|tmfs://artwork/pictures/shadows/bend-diag-in-shadow.png>
 
   <assign|diag-in-shadow-lcrop|0.04>
 

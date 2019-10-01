@@ -26,9 +26,7 @@
     </src-comment>
   </active*>
 
-  <assign|shadow-picture|tmfs://artwork/pictures/frames/carved-wood-frame.jpg>
-
-  <assign|shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-drop-shadow.png>
+  <assign|shadow-picture|tmfs://artwork/pictures/shadows/drop-shadow.png>
 
   <assign|shadow-effect|0>
 

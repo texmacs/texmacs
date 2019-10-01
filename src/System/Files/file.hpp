@@ -70,7 +70,9 @@ url grep (string what, url u);
 url search_file_in (url u, string name);
 url search_file_upwards (url u, string name, array<string> stops);
 
-#define CMD_APPLY_EFFECT 1
+#define CMD_GET_FROM_WEB    1
+#define CMD_GET_FROM_SERVER 2
+#define CMD_APPLY_EFFECT    3
 url make_file (int cmd, tree data, array<url> args);
 
 #endif // defined FILE_H

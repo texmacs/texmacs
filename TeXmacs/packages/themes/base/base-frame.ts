@@ -28,8 +28,6 @@
 
   <assign|frame-picture|tmfs://artwork/pictures/frames/carved-wood-frame.jpg>
 
-  <assign|frame-picture|$TEXMACS_PATH/misc/pictures/frames/thumbnail-carved-wood-frame.jpg>
-
   <assign|frame-effect|<eff-make-transparent|0|white>>
 
   <assign|frame-lcrop|0.1056751>
