@@ -13,7 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (check check-master)
-  (:use (convert html htmltm-test)))
+  (:use (convert html htmltm-test)
+        (convert tools xmltm-test)
+        (convert tmml tmmltm-test)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test LaTeX export
@@ -73,4 +75,7 @@
   (check-latex-export "$TEXMACS_CHECKS/latex-export"))
 
 (tm-define (run-all-tests)
-  (regtest-htmltm))
+  (regtest-htmltm)
+  (regtest-xmltm)
+  ;(regtest-tmmltm)
+)
