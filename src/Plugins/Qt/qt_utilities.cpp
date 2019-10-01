@@ -405,6 +405,18 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
   }
 }
 
+bool
+qt_native_image_size (url image, int& w, int& h) {
+  if (DEBUG_CONVERT) debug_convert << "qt_image_size :" <<LF;
+  QImage im= QImage (utf8_to_qstring (concretize (image)));
+  if (im.isNull ()) return false;
+  else {
+    w= im.width ();
+    h= im.height();
+    return true;
+  }
+}
+
 void
 qt_pretty_image_size (int ww, int hh, string& w, string& h) {
   SI pt = get_current_editor()->as_length ("1pt");

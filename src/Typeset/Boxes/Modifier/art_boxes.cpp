@@ -15,6 +15,7 @@
 #include "gui.hpp"
 #include "effect.hpp"
 #include "analyze.hpp"
+#include "file.hpp"
 
 /******************************************************************************
 * Art boxes
@@ -64,34 +65,26 @@ art_box_rep::art_box_rep (path ip, box b, art_box_parameters ps2):
   finalize ();
 }
 
-static void
-back_transform (tree eff, SI& w, SI& h) {
-  // FIXME: this really should go into effect.cpp at a certain point
-  if (is_func (eff, EFF_CROP, 5)) {
-    back_transform (eff[0], w, h);
-    double sx= as_double (eff[3]) - as_double (eff[1]);
-    double sy= as_double (eff[4]) - as_double (eff[2]);
-    if (sx > 0 && sy > 0) {
-      w= (SI) round (w / sx);
-      h= (SI) round (h / sy);
-    }
-  }
-}
-
 void
 art_box_rep::sub_display (renderer &ren, tree prg) {
   if (prg[0] == "image" && is_atomic (prg[1])) {
     SI xl= 0, xr= x2, yb= 0, yt= y2;
     get_image_extents (prg, xl, xr, yb, yt);
-    SI rx1= xl, rx2= xr, ry1= yb, ry2= yt;
-    ren->outer_round (rx1, ry1, rx2, ry2);
-    SI xw= rx2 - rx1, yh= ry2 - ry1;
+    //if (ren->is_screen) {
+    ren->round (xl, yb);
+    ren->round (xr, yt);
+    //}
+    SI xw= xr - xl, yh= yt - yb;
+    url u= cork_to_utf8 (prg[1]->label);
     tree eff= "";
     for (int i=2; i<N(prg); i+=2)
       if (prg[i] == "effect") eff= prg[i+1];
-    back_transform (eff, xw, yh);
-    url u= cork_to_utf8 (prg[1]->label);
-    scalable im= load_scalable_image (u, xw, yh, eff, ren->pixel);
+    if (eff != "") {
+      array<url> args;
+      args << u;
+      u= make_file (CMD_APPLY_EFFECT, eff, args);
+    }
+    scalable im= load_scalable_image (u, xw, yh, "", ren->pixel);
     ren->draw_scalable (im, xl, yb);
   }
 }

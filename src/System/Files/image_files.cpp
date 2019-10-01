@@ -596,8 +596,21 @@ imagemagick_image_size(url image, int& w, int& h, bool pt_units) {
 ******************************************************************************/
 
 #ifdef QTTEXMACS
+bool qt_native_image_size (url image, int& w, int& h);
 void qt_apply_effect (tree eff, array<url> src, url dest, int w, int h);
 #endif
+
+void
+native_image_size (url image, int& w, int& h) {
+#ifdef QTTEXMACS
+  if (qt_native_image_size (image, w, h)) return;
+#endif
+  // Scale to 300 dpi
+  image_size (image, w, h);
+  double scale= 30000.0 / (2834 * 2.54);
+  w= (int) round (scale * w);
+  h= (int) round (scale * h);
+}
 
 void
 apply_effect (tree eff, array<url> src, url dest, int w, int h) {
