@@ -4,6 +4,7 @@
 ;; MODULE      : check-master.scm
 ;; DESCRIPTION : regression tests
 ;; COPYRIGHT   : (C) 2014  Joris van der Hoeven
+;;                   2019  Darcy Shen
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -11,7 +12,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (check check-master))
+(texmacs-module (check check-master)
+  (:use (convert html htmltm-test)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test LaTeX export
@@ -69,3 +71,6 @@
 
 (tm-define (run-checks)
   (check-latex-export "$TEXMACS_CHECKS/latex-export"))
+
+(tm-define (run-all-tests)
+  (regtest-htmltm))

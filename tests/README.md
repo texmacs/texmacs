@@ -1,4 +1,12 @@
-# Guide to Run Unit Tests with ctest
+# Unit Tests
+
+## Guide to Run Unit Tests for scheme
+```
+TeXmacs -x "(run-all-tests)" -q
+```
+or launch a Scheme session and then run `(run-all-tests)`.
+
+## Guide to Run Unit Tests for cpp
 
 First, compile the whole project.
 ```
@@ -14,7 +22,7 @@ ctest // run all
 ctest -R analyze // run unit tests with name containing `analyze`
 ```
 
-## Advanced Topic
+### Advanced Topic
 You may also run the unit tests via the binaries under `${cmake_build_dir}/tests/`
 ``` bash
 tests/converter_test
