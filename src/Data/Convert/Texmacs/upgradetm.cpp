@@ -396,38 +396,38 @@ upgrade_textual (tree t, path& mode_stack) {
     tree r (CONCAT);
     for (i=0; i<n; ) {
       if (t->label[i] == '<') {
-	int start= i;
-	for (i++; i<n; i++)
-	  if (t->label[i-1] == '>') break;
-	string ss= t->label (start, i);
-	if (t->label[i-1] != '>') ss << '>';
-	if (starts (ss, "<left-")) {
-	  if (s != "") { r << s; s= ""; }
-	  r << tree (LEFT, ss (6, N(ss)-1));
-	}
-	else if (starts (ss, "<mid-")) {
-	  if (s != "") { r << s; s= ""; }
-	  r << tree (MID, ss (5, N(ss)-1));
-	}
-	else if (starts (ss, "<right-")) {
-	  if (s != "") { r << s; s= ""; }
-	  r << tree (RIGHT, ss (7, N(ss)-1));
-	}
-	else if (starts (ss, "<big-")) {
-	  if (s != "") { r << s; s= ""; }
-	  r << tree (BIG, ss (5, N(ss)-1));
-	}
-	else s << ss;
+        int start= i;
+        for (i++; i<n; i++)
+          if (t->label[i-1] == '>') break;
+        string ss= t->label (start, i);
+        if (t->label[i-1] != '>') ss << '>';
+        if (starts (ss, "<left-")) {
+          if (s != "") { r << s; s= ""; }
+          r << tree (LEFT, ss (6, N(ss)-1));
+        }
+        else if (starts (ss, "<mid-")) {
+          if (s != "") { r << s; s= ""; }
+          r << tree (MID, ss (5, N(ss)-1));
+        }
+        else if (starts (ss, "<right-")) {
+          if (s != "") { r << s; s= ""; }
+          r << tree (RIGHT, ss (7, N(ss)-1));
+        }
+        else if (starts (ss, "<big-")) {
+          if (s != "") { r << s; s= ""; }
+          r << tree (BIG, ss (5, N(ss)-1));
+        }
+        else s << ss;
       }
       else if (((t->label[i] == '\'') || (t->label[i] == '`')) &&
-	       (!is_nil (mode_stack)) && (mode_stack->item == 1))
-	{
-	  int start= i++;
-	  while ((i<n) && (t->label[i] == t->label[i-1])) i++;
-	  if (s != "") { r << s; s= ""; }
-	  tree_label op= t->label[start] == '`'? LPRIME: RPRIME;
-	  r << tree (op, t->label (start, i));
-	}
+               (!is_nil (mode_stack)) && (mode_stack->item == 1))
+        {
+          int start= i++;
+          while ((i<n) && (t->label[i] == t->label[i-1])) i++;
+          if (s != "") { r << s; s= ""; }
+          tree_label op= t->label[start] == '`'? LPRIME: RPRIME;
+          r << tree (op, t->label (start, i));
+        }
       else s << t->label[i++];
     }
     if (s != "") r << s;
@@ -440,29 +440,29 @@ upgrade_textual (tree t, path& mode_stack) {
     for (i=0; i<n; i++) {
       tree u= upgrade_textual (t[i], mode_stack);
       if (is_func (u, SET)) {
-	if (u == tree (SET, "mode", "text")) mode_stack= path (0, mode_stack);
-	if (u == tree (SET, "mode", "math")) mode_stack= path (1, mode_stack);
-	if (u == tree (SET, "mode", "prog")) mode_stack= path (2, mode_stack);
+        if (u == tree (SET, "mode", "text")) mode_stack= path (0, mode_stack);
+        if (u == tree (SET, "mode", "math")) mode_stack= path (1, mode_stack);
+        if (u == tree (SET, "mode", "prog")) mode_stack= path (2, mode_stack);
       }
       else if (is_func (u, RESET)) {
-	if (u == tree (RESET, "mode"))
-	  if (!is_nil (mode_stack))
-	    mode_stack= mode_stack->next;
+        if (u == tree (RESET, "mode"))
+          if (!is_nil (mode_stack))
+            mode_stack= mode_stack->next;
       }
       else if (is_func (u, BEGIN, 1)) {
-	if ((u[0] == "equation") ||
-	    (u[0] == "equation*") ||
-	    (u[0] == "eqnarray*") ||
-	    (u[0] == "leqnarray*"))
-	  mode_stack= path (1, mode_stack);
+        if ((u[0] == "equation") ||
+            (u[0] == "equation*") ||
+            (u[0] == "eqnarray*") ||
+            (u[0] == "leqnarray*"))
+          mode_stack= path (1, mode_stack);
       }
       else if (is_func (u, END, 1)) {
-	if ((u[0] == "equation") ||
-	    (u[0] == "equation*") ||
-	    (u[0] == "eqnarray*") ||
-	    (u[0] == "leqnarray*"))
-	  if (!is_nil (mode_stack))
-	    mode_stack= mode_stack->next;
+        if ((u[0] == "equation") ||
+            (u[0] == "equation*") ||
+            (u[0] == "eqnarray*") ||
+            (u[0] == "leqnarray*"))
+          if (!is_nil (mode_stack))
+            mode_stack= mode_stack->next;
       }
       if (is_concat (t) && is_concat (u)) r << A(u);
       else r << u;
@@ -483,8 +483,8 @@ upgrade_apply_expand_value (tree t, hashset<string> H) {
     tree r (t, n);
     if (is_func (t, APPLY))
       if ((n >= 1) && is_atomic (t[0]) && H->contains (t[0]->label)) {
-	if (n == 1) r= tree (VALUE, n);
-	else r= tree (EXPAND, n);
+        if (n == 1) r= tree (VALUE, n);
+        else r= tree (EXPAND, n);
       }
     for (i=0; i<n; i++)
       r[i]= upgrade_apply_expand_value (t[i], H);
@@ -656,7 +656,7 @@ document_inc (tree& doc, tree& con, tree doc_t, int& doc_i, int& con_i) {
 
 static void
 document_merge (tree& doc, tree& con, tree doc_t,
-		int doc_1, int con_1, int doc_2, int con_2)
+                int doc_1, int con_1, int doc_2, int con_2)
 {
   int doc_i= doc_1, con_i= con_1;
   while ((doc_i<doc_2) || ((doc_i==doc_2) && (con_i<con_2))) {
@@ -681,8 +681,8 @@ document_replace (tree doc_t, int doc_1, int con_1, int doc_2, int con_2) {
   if ((!flag) && (N(doc_b)==1)) doc_b= doc_b[0];
   if (is_func (doc_t[doc_1][con_1], SET))
     return with_replace (doc_t[doc_1][con_1][0],
-			 doc_t[doc_1][con_1][1],
-			 doc_b);
+                         doc_t[doc_1][con_1][1],
+                         doc_b);
   else
     return expand_replace (doc_t[doc_1][con_1],
                            doc_t[doc_2][con_2],
@@ -795,31 +795,31 @@ upgrade_set_begin_document_once (tree doc_t) {
     int doc_2= doc_i, con_2= con_i;
     // cout << "  2: " << doc_2 << ", " << con_2 << "\n";
     if ((doc_2 < N(doc_t)) &&
-	matching (doc_t[doc_1][con_1], doc_t[doc_2][con_2]))
+        matching (doc_t[doc_1][con_1], doc_t[doc_2][con_2]))
       {
-	tree ins= document_replace (doc_t, doc_1, con_1, doc_2, con_2);
+        tree ins= document_replace (doc_t, doc_1, con_1, doc_2, con_2);
         // cout << "ins: " << ins << "\n";
-	if (is_func (ins, EXPAND, 2)) {
+        if (is_func (ins, EXPAND, 2)) {
           if ((ins[0] == "verbatim") || (ins[0] == "code") ||
               (upgrade_tex_flag && is_verbatim (compound (as_string(ins[0])))))
-	    upgrade_verbatim_expand (doc, con, ins);
-	  else if (ins[0] == "abstract")
-	    upgrade_abstract_expand (doc, con, ins);
-	  else con << ins;
-	}
+            upgrade_verbatim_expand (doc, con, ins);
+          else if (ins[0] == "abstract")
+            upgrade_abstract_expand (doc, con, ins);
+          else con << ins;
+        }
         else if (is_func (ins, WITH) &&
                  is_func (ins[N(ins)-1], DOCUMENT, 1)) {
           ins[N(ins)-1]= ins[N(ins)-1][0];
           con << ins;
         }
-	else con << ins;
-	document_inc (doc, con, doc_t, doc_i, con_i);
+        else con << ins;
+        document_inc (doc, con, doc_t, doc_i, con_i);
       }
     else {
       doc_i= doc_1; con_i= con_1;
       if ((doc_i == doc_0) && (con_i == con_0)) {
-	con << doc_t[doc_i][con_i];
-	document_inc (doc, con, doc_t, doc_i, con_i);	  
+        con << doc_t[doc_i][con_i];
+        document_inc (doc, con, doc_t, doc_i, con_i);     
       }
     }
   }
@@ -882,7 +882,7 @@ upgrade_env_args (tree t, tree env) {
     int i, k= N(env);
     for (i=0; i<k-2; i++)
       if (t[0] == env[i])
-	return tree (ARG, t[0]);
+        return tree (ARG, t[0]);
     return t;
   }
   else {
@@ -1003,7 +1003,7 @@ needs_surrounding (tree t) {
     int i, n= N(t)-1;
     for (i=0; i<n; i+=2)
       if (is_atomic (t[i]) && with_needs_surrounding (t[i]->label))
-	return true;
+        return true;
   }
   return false;
 }
@@ -1026,27 +1026,27 @@ upgrade_surround (tree t) {
     if (is_document (t) && is_concat (u) && (N(u)>1)) {
       int j, k= N(u);
       for (j=0; j<k; j++)
-	if (needs_surrounding (u[j])) {
-	  tree before= u (0  , j);
-	  tree after = u (j+1, k);
-	  tree body  = upgrade_surround (u[j]);
-	  if (N(before)==0) before= "";
-	  if (N(before)==1) before= before[0];
-	  if (N(after )==0) after = "";
-	  if (N(after )==1) after = after [0];
-	  before= upgrade_surround (before);
-	  after = upgrade_surround (after );
-	  r[i]= tree (SURROUND, before, after, body);
-	  break;
-	}
-	else if (needs_transfer (u[j])) {
-	  tree temp= upgrade_surround (u[j][1]);
-	  if (!is_concat (temp)) temp= tree (CONCAT, temp);
-	  tree body= u (0, j);
-	  body << A (temp) << A (u (j+1, k));
-	  r[i]= tree (EXPAND, u[j][0], body);
-	  break;
-	}
+        if (needs_surrounding (u[j])) {
+          tree before= u (0  , j);
+          tree after = u (j+1, k);
+          tree body  = upgrade_surround (u[j]);
+          if (N(before)==0) before= "";
+          if (N(before)==1) before= before[0];
+          if (N(after )==0) after = "";
+          if (N(after )==1) after = after [0];
+          before= upgrade_surround (before);
+          after = upgrade_surround (after );
+          r[i]= tree (SURROUND, before, after, body);
+          break;
+        }
+        else if (needs_transfer (u[j])) {
+          tree temp= upgrade_surround (u[j][1]);
+          if (!is_concat (temp)) temp= tree (CONCAT, temp);
+          tree body= u (0, j);
+          body << A (temp) << A (u (j+1, k));
+          r[i]= tree (EXPAND, u[j][0], body);
+          break;
+        }
       if (j<k) continue;
     }
     r[i]= upgrade_surround (u);
@@ -1217,19 +1217,19 @@ static tree
 upgrade_table (tree t) {
   if (is_atomic (t)) return t;
   else if (is_func (t, OLD_MATRIX) ||
-	   is_func (t, OLD_TABLE) ||
-	   is_func (t, OLD_MOSAIC) ||
-	   (is_func (t, TFORMAT) && is_func (t[N(t)-1], OLD_MATRIX)))
+           is_func (t, OLD_TABLE) ||
+           is_func (t, OLD_MOSAIC) ||
+           (is_func (t, TFORMAT) && is_func (t[N(t)-1], OLD_MATRIX)))
     {
       tree ft (TFORMAT);
       if (is_func (t, TFORMAT)) {
-	ft= t (0, N(t)-1);
-	t = t [N(t)-1];
+        ft= t (0, N(t)-1);
+        t = t [N(t)-1];
       }
       if (is_func (t, OLD_MOSAIC)) {
-	tree with (CWITH);
-	with << "1" << "-1" << "1" << "-1" << "cell mode" << "c";
-	ft << with;
+        tree with (CWITH);
+        with << "1" << "-1" << "1" << "-1" << "cell mode" << "c";
+        ft << with;
       }
 
       int i, j;
@@ -1237,16 +1237,16 @@ upgrade_table (tree t) {
       int nr_cols= as_int (t[N(t)-2]);
       tree tt (TABLE, nr_rows);
       for (i=0; i<nr_rows; i++) {
-	tree rt (ROW, nr_cols);
-	for (j=0; j<nr_cols; j++) {
-	  tree c= upgrade_table (t[i*nr_cols+j]);
-	  if (is_func (c, OLD_MOSAIC_ITEM)) {
-	    handle_mosaic_format (ft, c, i, j);
-	    c= c[0];
-	  }
-	  rt[j]= tree (CELL, c);
-	}
-	tt[i]= rt;
+        tree rt (ROW, nr_cols);
+        for (j=0; j<nr_cols; j++) {
+          tree c= upgrade_table (t[i*nr_cols+j]);
+          if (is_func (c, OLD_MOSAIC_ITEM)) {
+            handle_mosaic_format (ft, c, i, j);
+            c= c[0];
+          }
+          rt[j]= tree (CELL, c);
+        }
+        tt[i]= rt;
       }
 
       ft << tt;
@@ -1290,7 +1290,7 @@ upgrade_split (tree t, bool eq= false) {
       else u= tree (CONCAT, split) * u;
     }
     r= tree (SURROUND, upgrade_split (r),
-	     upgrade_split (t[1]), upgrade_split (u));
+             upgrade_split (t[1]), upgrade_split (u));
     return r;
   }
   else if (is_concat (t)) {
@@ -1300,14 +1300,14 @@ upgrade_split (tree t, bool eq= false) {
     for (i=0; i<n; i++)
       if (is_func (t[i], SPLIT)) split= t[i];
       else {
-	tree u= upgrade_split (t[i]);
-	if (u == tree (FORMAT, "line separator")) sep++;
-	if (u == tree (FORMAT, "next line")) {
-	  nr_cols= max (sep, nr_cols);
-	  sep= 1;
-	  nr_rows++;
-	}
-	r << u;
+        tree u= upgrade_split (t[i]);
+        if (u == tree (FORMAT, "line separator")) sep++;
+        if (u == tree (FORMAT, "next line")) {
+          nr_cols= max (sep, nr_cols);
+          sep= 1;
+          nr_rows++;
+        }
+        r << u;
       }
     nr_cols= max (sep, nr_cols);
     if (split == "" && nr_cols == 1 && !eq) return r;
@@ -1315,28 +1315,28 @@ upgrade_split (tree t, bool eq= false) {
       int col=0, row=0;
       tree T (TABLE, nr_rows);
       for (row=0; row<nr_rows; row++) {
-	tree R (ROW, nr_cols);
-	for (col=0; col<nr_cols; col++) R[col]= tree (CELL, "");
-	T[row]= R;
+        tree R (ROW, nr_cols);
+        for (col=0; col<nr_cols; col++) R[col]= tree (CELL, "");
+        T[row]= R;
       }
 
       tree u (CONCAT);
       row= col= 0;
       for (i=0; i<N(r); i++)
-	if ((r[i] == tree (FORMAT, "line separator")) ||
-	    (r[i] == tree (FORMAT, "next line")))
-	  {
-	    if (N(u) == 0) u= "";
-	    else if (N(u) == 1) u= u[0];
-	    T[row][col][0]= u;
-	    u= tree (CONCAT);
-	    if (r[i] == tree (FORMAT, "line separator")) col++;
-	    else {
-	      row++;
-	      col= 0;
-	    }
-	  }
-	else u << r[i];
+        if ((r[i] == tree (FORMAT, "line separator")) ||
+            (r[i] == tree (FORMAT, "next line")))
+          {
+            if (N(u) == 0) u= "";
+            else if (N(u) == 1) u= u[0];
+            T[row][col][0]= u;
+            u= tree (CONCAT);
+            if (r[i] == tree (FORMAT, "line separator")) col++;
+            else {
+              row++;
+              col= 0;
+            }
+          }
+        else u << r[i];
       if (N(u) == 0) u= "";
       else if (N(u) == 1) u= u[0];
       T[row][col][0]= u;
@@ -1346,27 +1346,27 @@ upgrade_split (tree t, bool eq= false) {
     tree tf (TFORMAT);
     if (split != "") {
       tf << tree (TWITH, "table hyphen", "y")
-	 << tree (TWITH, "table width", "1par")
-	 << tree (TWITH, "table min cols", as_string (N (split)))
-	 << tree (TWITH, "table max cols", as_string (N (split)))
-	 << tree (CWITH, "1", "-1", "1", "1", "cell lsep", "0spc")
-	 << tree (CWITH, "1", "-1", "-1", "-1", "cell rsep", "0spc")
-	 << tree (CWITH, "1", "-1", "1", "-1", "cell bsep", "0sep")
-	 << tree (CWITH, "1", "-1", "1", "-1", "cell tsep", "0sep")
-	 << tree (CWITH, "1", "-1", "1", "1", "cell hyphen", "b")
-	 << tree (CWITH, "1", "-1", "-1", "-1", "cell hyphen", "t");
+         << tree (TWITH, "table width", "1par")
+         << tree (TWITH, "table min cols", as_string (N (split)))
+         << tree (TWITH, "table max cols", as_string (N (split)))
+         << tree (CWITH, "1", "-1", "1", "1", "cell lsep", "0spc")
+         << tree (CWITH, "1", "-1", "-1", "-1", "cell rsep", "0spc")
+         << tree (CWITH, "1", "-1", "1", "-1", "cell bsep", "0sep")
+         << tree (CWITH, "1", "-1", "1", "-1", "cell tsep", "0sep")
+         << tree (CWITH, "1", "-1", "1", "1", "cell hyphen", "b")
+         << tree (CWITH, "1", "-1", "-1", "-1", "cell hyphen", "t");
       if (split[0] == "right")
-	tf << tree (CWITH, "1", "-1", "1", "1", "cell hpart", "1");
+        tf << tree (CWITH, "1", "-1", "1", "1", "cell hpart", "1");
       if ((split[N(split)-1] == "left") || (split[N(split)-1] == "justify"))
-	tf << tree (CWITH, "1", "-1", "-1", "-1", "cell hpart", "1");
+        tf << tree (CWITH, "1", "-1", "-1", "-1", "cell hpart", "1");
       for (i=0; i<N(split); i++) {
-	tree with (CWITH);
-	int j= (i==N(split)-1)? -1: i+1;
-	with << "1" << "-1" << as_string (j) << as_string (j) << "cell halign";
-	if (split[i] == "right") with << "r";
-	else if (split[i] == "center") with << "c";
-	else with << "l";
-	tf << with;
+        tree with (CWITH);
+        int j= (i==N(split)-1)? -1: i+1;
+        with << "1" << "-1" << as_string (j) << as_string (j) << "cell halign";
+        if (split[i] == "right") with << "r";
+        else if (split[i] == "center") with << "c";
+        else with << "l";
+        tf << with;
       }
     }
     if (r == tree (CONCAT)) r= "";
@@ -1463,7 +1463,7 @@ upgrade_title (tree t, tree& tit, tree& auth, tree& meta) {
       meta << tree (EXPAND, "title-ams-class", t[2]); return ""; }
   }
   else if ((t == tree (APPLY, "maketitle")) ||
-	   (t == tree (EXPAND, "maketitle")))
+           (t == tree (EXPAND, "maketitle")))
     {
       tree doc (DOCUMENT);
       doc << A (tit);
@@ -1517,10 +1517,10 @@ set_document_attribute (tree doc, string attr, tree val) {
   int i, n= arity (doc);
   for (i=0; i<n; i++)
     if ((is_func (doc[i], EXPAND, 2) || is_func (doc[i], APPLY, 2)) &&
-	(doc[i][0] == attr))
+        (doc[i][0] == attr))
       {
-	doc[i][1]= val;
-	return;
+        doc[i][1]= val;
+        return;
       }
   doc << tree (EXPAND, attr, val);
 }
@@ -1618,10 +1618,10 @@ upgrade_mod_symbols (tree t) {
   else if (is_var_with (t, "math font", "Bbb*") && is_alpha (t[2]))
     return upgrade_mod_symbol ("bbb-", t[2]->label);
   else if (is_var_with (t, "math font series", "bold") &&
-	   is_var_with (t[2], "math font", "cal") && is_upper (t[2][2]))
+           is_var_with (t[2], "math font", "cal") && is_upper (t[2][2]))
     return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
   else if (is_var_with (t, "math font", "cal") &&
-	   is_var_with (t[2], "math font series", "bold") && is_upper (t[2][2]))
+           is_var_with (t[2], "math font series", "bold") && is_upper (t[2][2]))
     return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
   //else if ((is_func (t, VALUE, 1) || is_func (t, EXPAND, 1) ||
   //         is_func (t, APPLY, 1)) && (is_atomic (t[0]))) {
@@ -1698,7 +1698,7 @@ static tree
 upgrade_traverse_branch (tree t) {
   if (is_atomic (t)) return t;
   else if (is_expand (t, "branch", 3) ||
-	   (is_func (t, APPLY, 4) && (t[0] == "branch")))
+           (is_func (t, APPLY, 4) && (t[0] == "branch")))
     return tree (APPLY, t[0], t[1], t[3]);
   else {
     int i, n= N(t);
@@ -1781,8 +1781,8 @@ upgrade_expand (tree t, tree_label WHICH_EXPAND) {
     return r;
   }
   else if (is_func (t, ASSIGN, 2) &&
-	   (t[0] == "quote") &&
-	   is_func (t[1], MACRO)) {
+           (t[0] == "quote") &&
+           is_func (t[1], MACRO)) {
     tree arg= upgrade_expand (t[1], WHICH_EXPAND);
     return tree (ASSIGN, t[0]->label * "-env", arg);
   }
@@ -1860,9 +1860,9 @@ upgrade_function (tree t) {
     int i, n= N(t[1])-1;
     for (i=0; i<n; i++)
       if (ends (as_string (t[1][i]), "*"))
-	cout << "TeXmacs] Deprecated argument list '" << t[1][i]
-	     << "' in function '" << t[0] << "'\n"
-	     << "TeXmacs] You should use the 'xmacro' primitive now\n";
+        cout << "TeXmacs] Deprecated argument list '" << t[1][i]
+             << "' in function '" << t[0] << "'\n"
+             << "TeXmacs] You should use the 'xmacro' primitive now\n";
   }
   /*
   if (is_func (t, ASSIGN, 2) && is_func (t[1], FUNC) && (N(t[1])>1)) {
@@ -2071,27 +2071,27 @@ rename_vars (tree t, hashmap<string,string> H, bool flag) {
     for (i=0; i<n; i++) {
       tree u= rename_vars (t[i], H, flag);
       if (is_atomic (u) && H->contains (u->label))
-	if (((L(t) == WITH) && ((i%2) == 0) && (i < n-1)) ||
-	    ((L(t) == ASSIGN) && (i == 0)) ||
-	    ((L(t) == VALUE) && (i == 0)) ||
-	    ((L(t) == CWITH) && (i == 4)) ||
-	    ((L(t) == TWITH) && (i == 0)) ||
-	    ((L(t) == ASSOCIATE) && (i == 0)) ||
-	    ((L(t) == MARKUP) && (i == 0)))
-	  u= copy (H[u->label]);
+        if (((L(t) == WITH) && ((i%2) == 0) && (i < n-1)) ||
+            ((L(t) == ASSIGN) && (i == 0)) ||
+            ((L(t) == VALUE) && (i == 0)) ||
+            ((L(t) == CWITH) && (i == 4)) ||
+            ((L(t) == TWITH) && (i == 0)) ||
+            ((L(t) == ASSOCIATE) && (i == 0)) ||
+            ((L(t) == MARKUP) && (i == 0)))
+          u= copy (H[u->label]);
       r[i]= u;
     }
     if (flag) {
       if (H->contains (as_string (L(t)))) {
-	tree_label l= make_tree_label (H[as_string (L(t))]);
-	r= tree (l, A(r));
+        tree_label l= make_tree_label (H[as_string (L(t))]);
+        r= tree (l, A(r));
       }
     }
     else {
       if ((n == 0) && H->contains (as_string (L(t)))) {
-	string v= H[as_string (L(t))];
-	r= tree (VALUE, copy (v));
-	if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
+        string v= H[as_string (L(t))];
+        r= tree (VALUE, copy (v));
+        if (v == "page-the-page") r= tree (make_tree_label ("page-the-page"));
       }
     }
     return r;
@@ -2123,17 +2123,17 @@ upgrade_use_package (tree t) {
     tree r (L(t));
     for (i=0; i<n; i++)
       if (is_compound (t[i], "style")) {
-	r << compound ("style", "source");
-	no_style= false;
+        r << compound ("style", "source");
+        no_style= false;
       }
       else if (is_compound (t[i], "body", 1) && is_document (t[i][0])) {
-	tree v (USE_PACKAGE);
-	v << A (style);
-	tree u (DOCUMENT);
-	if (N(v) > 0) u << v;
-	u << A (t[i][0]);
-	if (no_style) r << compound ("style", "source");
-	r << compound ("body", u);
+        tree v (USE_PACKAGE);
+        v << A (style);
+        tree u (DOCUMENT);
+        if (N(v) > 0) u << v;
+        u << A (t[i][0]);
+        if (no_style) r << compound ("style", "source");
+        r << compound ("body", u);
       }
       else r << t[i];
     return r;
@@ -2301,16 +2301,16 @@ upgrade_item_punct (tree t) {
     if (is_compound (r, "item*", 1)) {
       tree& item= r[0];
       if (is_atomic (item)) {
-	string s= item->label;
-	if (ends (s, ".") || ends (s, ":") || ends (s, " "))
-	  item= s (0, N(s)-1);
+        string s= item->label;
+        if (ends (s, ".") || ends (s, ":") || ends (s, " "))
+          item= s (0, N(s)-1);
       }
       else if (is_concat (item) && is_atomic (item[N(item)-1])) {
-	string s= item [N(item)-1] -> label;
-	if ((s == ".") || (s == ":") || (s == " ")) {
-	  if (N(item) == 2) item= item[0];
-	  else item= item (0, N(item) - 1);
-	}
+        string s= item [N(item)-1] -> label;
+        if ((s == ".") || (s == ":") || (s == " ")) {
+          if (N(item) == 2) item= item[0];
+          else item= item (0, N(item) - 1);
+        }
       }
     }
     return r;
@@ -2387,11 +2387,11 @@ abstract_add (tree& data, tree what) {
     int i, start, n= N(s);
     for (i=start=0; i<n; )
       if (s[i] == ',') {
-	int next= i+1;
-	while ((i>start) && (s[i-1]==' ')) i--;
-	data << s (start, i);
-	i= next; if (s[i] == ' ') i++;
-	start= i;
+        int next= i+1;
+        while ((i>start) && (s[i-1]==' ')) i--;
+        data << s (start, i);
+        i= next; if (s[i] == ' ') i++;
+        start= i;
       }
       else i++;
     while ((i>start) && (s[i-1]==' ')) i--;
@@ -2408,9 +2408,9 @@ upgrade_abstract (tree t) {
     tree r (DOCUMENT);
     for (i=0; i<n; i++)
       if (is_compound (t[0][i], "keywords", 1))
-	abstract_add (doc_keywords, t[0][i][0]);
+        abstract_add (doc_keywords, t[0][i][0]);
       else if (is_compound (t[0][i], "AMS-class"))
-	abstract_add (doc_ams_class, t[0][i][0]);
+        abstract_add (doc_ams_class, t[0][i][0]);
       else r << t[0][i];
     if (N(r) == 0) r << "";
     return compound ("abstract", r);
@@ -2565,8 +2565,8 @@ upgrade_switch (tree t) {
       int i, n= N(r[1]);
       tree u (make_tree_label ("switch"), n);
       for (i=0; i<n; i++)
-	if (is_compound (r[1][i], "tmarker", 0)) u[i]= r[0];
-	else u[i]= compound ("hidden", r[1][i]);
+        if (is_compound (r[1][i], "tmarker", 0)) u[i]= r[0];
+        else u[i]= compound ("hidden", r[1][i]);
       return u;
     }
     if (is_compound (r, "fold", 2))
@@ -2574,14 +2574,14 @@ upgrade_switch (tree t) {
     if (is_compound (r, "unfold", 2))
       return compound ("unfolded", r[0], r[1]);
     if (is_compound (r, "fold-bpr", 2) ||
-	is_compound (r, "fold-text", 2) ||
-	is_compound (r, "fold-proof", 2) ||
-	is_compound (r, "fold-exercise", 2))
+        is_compound (r, "fold-text", 2) ||
+        is_compound (r, "fold-proof", 2) ||
+        is_compound (r, "fold-exercise", 2))
       return compound ("summarized", r[0], r[1]);
     if (is_compound (r, "unfold-bpr", 2) ||
-	is_compound (r, "unfold-text", 2) ||
-	is_compound (r, "unfold-proof", 2) ||
-	is_compound (r, "unfold-exercise", 2))
+        is_compound (r, "unfold-text", 2) ||
+        is_compound (r, "unfold-proof", 2) ||
+        is_compound (r, "unfold-exercise", 2))
       return compound ("detailed", r[0], r[1]);
     if (is_compound (r, "fold-algorithm", 2))
       return compound ("summarized-algorithm", r[0], r[1]);
@@ -2744,12 +2744,12 @@ upgrade_graphics (tree t) {
   if (is_compound (t, "with") &&
       (find_attr (t, "gr-frame") || find_attr (t, "gr-clip"))) {
     tree fr= get_attr (t, "gr-frame",
-			  tuple ("scale", "1cm",
-				 tree (TUPLE, "0.5par", "0cm")));
+                          tuple ("scale", "1cm",
+                                 tree (TUPLE, "0.5par", "0cm")));
     tree clip= get_attr (t, "gr-clip",
-			    tuple ("clip",
-				   tuple ("0par", "-0.3par"),
-				   tuple ("1par", "0.3par")));
+                            tuple ("clip",
+                                   tuple ("0par", "-0.3par"),
+                                   tuple ("1par", "0.3par")));
     t= remove_attr (t, "gr-clip");
 
     string ox= as_string (fr[2][0]), oy= as_string (fr[2][1]);
@@ -2803,9 +2803,9 @@ upgrade_cell_alignment (tree t) {
   if (is_func (t, CWITH) && (N(t) >= 2))
     if (t[N(t)-2] == CELL_HALIGN)
       if (t[N(t)-1] == "." || t[N(t)-1] == ",") {
-	tree r= copy (t);
-	r[N(t)-1]= "L" * t[N(t)-1]->label;
-	return r;
+        tree r= copy (t);
+        r[N(t)-1]= "L" * t[N(t)-1]->label;
+        return r;
       }
   int n= N(t);
   tree r (t, n);
@@ -2859,15 +2859,15 @@ upgrade_scheme_doc (tree t) {
   int i;
   if (is_atomic (t)) return t;
   else if (is_compound (t, "scm-fun", 1) ||
-	   is_compound (t, "scm-macro", 1))
+           is_compound (t, "scm-macro", 1))
     return compound ("scm", t[0]);
   else if (is_compound (t, "explain-scm-fun") ||
-	   is_compound (t, "explain-scm-macro"))
+           is_compound (t, "explain-scm-macro"))
     {
       tree r (CONCAT);
       r << "(" << t[0];
       for (int i=1; i<N(t); i++)
-	r << " " << t[i];
+        r << " " << t[i];
       r << ")";
       return compound ("scm", simplify_concat (r));
     }
@@ -2920,27 +2920,27 @@ upgrade_session (tree t, tree lan, tree ses) {
   if (is_atomic (t)) return t;
   else if (is_compound (t, "session", 1))
     return compound ("session", copy (lan), copy (ses),
-		     upgrade_session (t[0], lan, ses));
+                     upgrade_session (t[0], lan, ses));
   else if (is_func (t, WITH, 5) &&
-	   t[0] == PROG_LANGUAGE &&
-	   t[2] == PROG_SESSION)
+           t[0] == PROG_LANGUAGE &&
+           t[2] == PROG_SESSION)
     return upgrade_session (t[4], t[1], t[3]);
   else {
     int i, n= N(t);
     tree r (L(t));
     for (i=0; i<n; i++) {
       if (is_document (t) && is_compound (t[i], "input", 2)) {
-	bool m = is_compound (t[i][1], "math", 1);
-	tree in= (m? t[i][1][0]: t[i][1]);
-	if ((i+1)<n && is_compound (t[i+1], "output", 1)) {
-	  const char* op= (m? "unfolded-io-math": "unfolded-io");
-	  r << compound (op, t[i][0], in, t[i+1][0]);
-	  i++;
-	}
-	else {
-	  const char* op= (m? "input-math": "input");
-	  r << compound (op, t[i][0], in);
-	}
+        bool m = is_compound (t[i][1], "math", 1);
+        tree in= (m? t[i][1][0]: t[i][1]);
+        if ((i+1)<n && is_compound (t[i+1], "output", 1)) {
+          const char* op= (m? "unfolded-io-math": "unfolded-io");
+          r << compound (op, t[i][0], in, t[i+1][0]);
+          i++;
+        }
+        else {
+          const char* op= (m? "input-math": "input");
+          r << compound (op, t[i][0], in);
+        }
       }
       else r << upgrade_session (t[i], lan, ses);
     }
@@ -3050,10 +3050,10 @@ upgrade_resize_arg (tree t) {
       return upgrade_resize_arg (t[0]->label * t[1]->label);
     tree u= upgrade_resize_arg (t[0]);
     if (is_func (u, PLUS, 2) || is_func (u, MINUS, 2) ||
-	is_func (u, MINIMUM, 2) || is_func (u, MAXIMUM, 2))
+        is_func (u, MINIMUM, 2) || is_func (u, MAXIMUM, 2))
       if (u[1] == "") {
-	u[1]= upgrade_resize_arg (t[1]);
-	return u;
+        u[1]= upgrade_resize_arg (t[1]);
+        return u;
       }
     cout << "TeXmacs] warning, resize argument " << t << " not upgraded\n";
     return t;
@@ -3128,9 +3128,9 @@ upgrade_image (tree t) {
   if (is_atomic (t)) return t;
   else if (is_func (t, IMAGE, 7))
     return tree (IMAGE, t[0],
-		 upgrade_image_length (t[1], "w"),
-		 upgrade_image_length (t[2], "h"),
-		 "", "");
+                 upgrade_image_length (t[1], "w"),
+                 upgrade_image_length (t[2], "h"),
+                 "", "");
   else {
     int i, n= N(t);
     tree r (t, n);

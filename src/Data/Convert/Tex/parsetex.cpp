@@ -193,15 +193,15 @@ latex_parser::parse (string s, int& i, string stop, int change) {
 
   while ((i<n) && is_space (s[i])) i++;
   while ((i<n) && no_error &&
-	 (s[i] != '\0' || N (stop) != 0) &&
-	 (N(stop) != 1 || s[i] != stop[0]) &&
-	 (s[i] != '$' || stop != "$$" || i+1>=n || s[i+1] != '$') &&
-	 (stop != "denom" ||
-	  (s[i] != '$' && s[i] != '}' &&
-	   (i+2>n || s(i,i+2) != "\\]") &&
-	   (i+2>n || s(i,i+2) != "\\)") &&
-	   (i+4>n || s(i,i+4) != "\\end"))) &&
-	 (stop != "\\egroup" || i+7>n || s(i,i+7) != "\\egroup")) {
+         (s[i] != '\0' || N (stop) != 0) &&
+         (N(stop) != 1 || s[i] != stop[0]) &&
+         (s[i] != '$' || stop != "$$" || i+1>=n || s[i+1] != '$') &&
+         (stop != "denom" ||
+          (s[i] != '$' && s[i] != '}' &&
+           (i+2>n || s(i,i+2) != "\\]") &&
+           (i+2>n || s(i,i+2) != "\\)") &&
+           (i+4>n || s(i,i+4) != "\\end"))) &&
+         (stop != "\\egroup" || i+7>n || s(i,i+7) != "\\egroup")) {
     if (N(stop) != 0 && stop[0] == '$' && test (s, i, "\\begin{")) {
       // Emergency break from math mode on certain text environments
       int j= i+7, start= j;
@@ -229,11 +229,11 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       if (i<n) i++;
       int ln=0;
       while ((i<n) && is_space (s[i]))
-	if (s[i++]=='\n') ln++;
+        if (s[i++]=='\n') ln++;
       if (ln > 0) {
-	if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
-	  t[N(t)-1]= "\n";
-	else t << "\n";
+        if ((N(t)>0) && ((t[N(t)-1]==" ") || (t[N(t)-1]=="\n")))
+          t[N(t)-1]= "\n";
+        else t << "\n";
       }
       break;
     }
@@ -241,8 +241,8 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       i++;
       if (i==n) return t;
       if (is_numeric (s[i])) {
-	t << s (i-1, i+1);
-	i++;
+        t << s (i-1, i+1);
+        i++;
       }
       else t << s (i-1, i);
       break;
@@ -265,55 +265,55 @@ latex_parser::parse (string s, int& i, string stop, int change) {
         t << parse_char_code (s, i);
       // end of move
       else if (((i+7)<n && !is_tex_alpha (s (i+5, i+7)) &&
-	  (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop")) ||
-	  ((i+9)<n && !is_tex_alpha (s (i+7, i+9)) && s (i, i+7) == "\\choose"))
-	{
+          (s (i, i+5) == "\\over" || s (i, i+5) == "\\atop")) ||
+          ((i+9)<n && !is_tex_alpha (s (i+7, i+9)) && s (i, i+7) == "\\choose"))
+        {
           int start = i;
-	  i++;
+          i++;
           while (i<n && is_alpha (s[i])) i++;
-	  string fr_cmd= s(start, i);
-	  if (fr_cmd == "\\over") fr_cmd= "\\frac";
-	  if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
-	  int j;
-	  for (j=N(t); j>0 && is_regular (t[j-1]); j--) {}
-	  tree num= t (j, N(t));
-	  if (N(num) == 0) num= "";
-	  t= t (0, j);
-	  while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
-	  tree den= parse (s, i, "denom");
-	  t << tree (TUPLE, fr_cmd, num, den);
-	}
+          string fr_cmd= s(start, i);
+          if (fr_cmd == "\\over") fr_cmd= "\\frac";
+          if (fr_cmd == "\\atop") fr_cmd= "\\ontop";
+          int j;
+          for (j=N(t); j>0 && is_regular (t[j-1]); j--) {}
+          tree num= t (j, N(t));
+          if (N(num) == 0) num= "";
+          t= t (0, j);
+          while (i<n && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t')) i++;
+          tree den= parse (s, i, "denom");
+          t << tree (TUPLE, fr_cmd, num, den);
+        }
       else if ((i+5) < n && s(i,i+3) == "\\sp" && !is_tex_alpha (s[i+3])) {
-	i+=3;
-	t << parse_command (s, i, "\\<sup>");
+        i+=3;
+        t << parse_command (s, i, "\\<sup>");
       }
       else if ((i+5) < n && s(i,i+3) == "\\sb" && !is_tex_alpha (s[i+3])) {
-	i+=3;
-	t << parse_command (s, i, "\\<sub>");
+        i+=3;
+        t << parse_command (s, i, "\\<sub>");
       }
       else if ((i+10) < n && s(i,i+8) == "\\pmatrix") {
-	i+=8;
-	tree arg= parse_command (s, i, "\\pmatrix");
-	if (is_tuple (arg, "\\pmatrix", 1)) arg= arg[1];
-	t << tree (TUPLE, "\\begin-pmatrix");
-	if (is_concat (arg)) t << A (arg);
-	else t << arg;
-	t << tree (TUPLE, "\\end-pmatrix");
+        i+=8;
+        tree arg= parse_command (s, i, "\\pmatrix");
+        if (is_tuple (arg, "\\pmatrix", 1)) arg= arg[1];
+        t << tree (TUPLE, "\\begin-pmatrix");
+        if (is_concat (arg)) t << A (arg);
+        else t << arg;
+        t << tree (TUPLE, "\\end-pmatrix");
       }
       else if (can_parse_length (s, i))
-	t << parse_length (s, i);
+        t << parse_length (s, i);
       else {
-	tree u= parse_backslash (s, i, change);
-	if (u != "") t << u;
+        tree u= parse_backslash (s, i, change);
+        if (u != "") t << u;
         if (u == tuple ("\\\n")) t << "\n";
       }
       break;
     case '\'':
       i++;
       if (command_type ["!mode"] == "math") {
-	int start= i-1;
-	while ((i < N(s)) && (s[i] == '\'')) i++;
-	t << tuple ("\\prime", s (start, i));
+        int start= i-1;
+        while ((i < N(s)) && (s[i] == '\'')) i++;
+        t << tuple ("\\prime", s (start, i));
       }
       else {
         t << s (i-1, i);
@@ -329,7 +329,7 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       t << parse_command (s, i, "\\<sub>");
       /*
       if (command_type ["!mode"] == "math")
-	t << parse_command (s, i, "\\<sub>");
+        t << parse_command (s, i, "\\<sub>");
       else t << s (i-1, i);
       */
       break;
@@ -338,7 +338,7 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       t << parse_command (s, i, "\\<sup>");
       /*
       if (command_type ["!mode"] == "math")
-	t << parse_command (s, i, "\\<sup>");
+        t << parse_command (s, i, "\\<sup>");
       else t << s (i-1, i);
       */
       break;
@@ -364,7 +364,7 @@ latex_parser::parse (string s, int& i, string stop, int change) {
       int ln=0;
       if ((i<n) && (!is_space (s[i]))) break;
       while ((i<n) && is_space (s[i]))
-	if (s[i++]=='\n') ln++;
+        if (s[i++]=='\n') ln++;
       if (ln >= 2) t << "\n";
       else if (i<n) t << " ";
       break;
@@ -372,22 +372,22 @@ latex_parser::parse (string s, int& i, string stop, int change) {
     case '$': {
       i++;
       if ((i<n) & (s[i]=='$')) {
-	i++;
-	t << tree (TUPLE, "\\begin-displaymath");
-	command_type ("!mode")= "math";
-	t << parse (s, i, "$$");
-	command_type ("!mode")= "text";
-	if ((i<n) && (s[i]=='$')) i++;
-	if ((i<n) && (s[i]=='$')) i++;
-	t << tree (TUPLE, "\\end-displaymath");
+        i++;
+        t << tree (TUPLE, "\\begin-displaymath");
+        command_type ("!mode")= "math";
+        t << parse (s, i, "$$");
+        command_type ("!mode")= "text";
+        if ((i<n) && (s[i]=='$')) i++;
+        if ((i<n) && (s[i]=='$')) i++;
+        t << tree (TUPLE, "\\end-displaymath");
       }
       else {
-	t << tree (TUPLE, "\\begin-math");
-	command_type ("!mode")= "math";
-	t << parse (s, i, "$");
-	command_type ("!mode")= "text";
-	if ((i<n) && (s[i]=='$')) i++;
-	t << tree (TUPLE, "\\end-math");
+        t << tree (TUPLE, "\\begin-math");
+        command_type ("!mode")= "math";
+        t << parse (s, i, "$");
+        command_type ("!mode")= "text";
+        if ((i<n) && (s[i]=='$')) i++;
+        t << tree (TUPLE, "\\end-math");
       }
       break;
     }
@@ -397,47 +397,47 @@ latex_parser::parse (string s, int& i, string stop, int change) {
         t << tree (TUPLE, "\\emdash");
       }
       else if ((s[i] == '-' || (s[i] >= '0' && s[i] <= '9')) &&
-	  can_parse_length (s, i))
-	t << parse_length (s, i);
+          can_parse_length (s, i))
+        t << parse_length (s, i);
       else if (unicode && ((unsigned char) s[i]) >= 128) {
-	unsigned int code= decode_from_utf8 (s, i);
+        unsigned int code= decode_from_utf8 (s, i);
         string c = utf8_to_cork(encode_as_utf8(code));
         if (c(0,1) == "<#")
-	  t << tree (TUPLE, "\\" * c(1, N(c)-1));
+          t << tree (TUPLE, "\\" * c(1, N(c)-1));
         else
           t << c;
       }
       else if (!unicode && is_iso_alpha (s[i])) {
-	// If we encounter too much text in math mode, then return
-	int start= i;
-	while ((i<n) && is_iso_alpha (s[i])) i++;
-	int end= i;
-	if ((i >= start+3) && (command_type ["!mode"] == "math")) {
-	  while ((i<n) && (is_iso_alpha (s[i]) ||
-			   is_punctuation (s[i]) ||
-			   is_space (s[i])))
-	    i++;
-	  if (i >= start+20) {
-	    int last= i, words= 0, letters= 0;
-	    for (i=start; i<last; i++) {
-	      if (is_iso_alpha (s[i])) {
-		letters++;
-		if ((i==start) || (!is_iso_alpha (s[i-1]))) words++;
-	      }
-	    }
-	    if ((words > 3) && (letters/words >= 3) && (letters >= 15)) {
-	      i= start;
-	      no_error= false;
-	    }
-	  }
-	}
-	if (no_error)
-	  for (i=start; i<end; i++)
-	    t << s(i, i+1);
+        // If we encounter too much text in math mode, then return
+        int start= i;
+        while ((i<n) && is_iso_alpha (s[i])) i++;
+        int end= i;
+        if ((i >= start+3) && (command_type ["!mode"] == "math")) {
+          while ((i<n) && (is_iso_alpha (s[i]) ||
+                           is_punctuation (s[i]) ||
+                           is_space (s[i])))
+            i++;
+          if (i >= start+20) {
+            int last= i, words= 0, letters= 0;
+            for (i=start; i<last; i++) {
+              if (is_iso_alpha (s[i])) {
+                letters++;
+                if ((i==start) || (!is_iso_alpha (s[i-1]))) words++;
+              }
+            }
+            if ((words > 3) && (letters/words >= 3) && (letters >= 15)) {
+              i= start;
+              no_error= false;
+            }
+          }
+        }
+        if (no_error)
+          for (i=start; i<end; i++)
+            t << s(i, i+1);
       }
       else {
-	t << s (i, i+1);
-	i++;
+        t << s (i, i+1);
+        i++;
       }
       break;
     }
@@ -645,11 +645,11 @@ is_math_environment (tree t) {
   for (i=N(b)-1; i>=0; i--)
     if (is_tuple (b[i]) && N(b[i])>0 && is_atomic (b[i][0]))
       if (latex_type (b[i][0]->label) == "math-environment")
-	break;
+        break;
   for (j=0; j<N(e); j++)
     if (is_tuple (e[j]) && N(e[j])>0 && is_atomic (e[j][0]))
       if (latex_type (e[j][0]->label) == "math-environment")
-	break;
+        break;
   if (i >= 0 && j < N(e)) {
     string bs= b[i][0]->label;
     string es= e[j][0]->label;
@@ -1320,7 +1320,7 @@ latex_parser::can_parse_length (string s, int i) {
     if (is_numeric (s[i]) || s[i] == '.' || s[i] == '-') { stage= 1; i++; }
     else if (is_space (s[i]) && stage > 0) i++;
     else if (read (s, i, "plus") || read (s, i, "\\@plus") ||
-	     read (s, i, "minus") || read (s, i, "\\@minus"))
+             read (s, i, "minus") || read (s, i, "\\@minus"))
       return stage >= 2;
     else if (is_tex_alpha (s[i])) {
       if      (read (s, i, "cm")) stage= 2;
@@ -1365,24 +1365,24 @@ latex_parser::parse_length (string s, int& i, int e) {
     else if (read (s, i, "plus") || read (s, i, "\\@plus")) {
       tree next= parse_length (s, i);
       if (is_tuple (next, "\\tex-len", 3)) {
-	//ASSERT (next[2] == "0pt", "invalid multiple plus");
-	return tuple ("\\tex-len", r, next[1], next[3]);
+        //ASSERT (next[2] == "0pt", "invalid multiple plus");
+        return tuple ("\\tex-len", r, next[1], next[3]);
       }
       else return tuple ("\\tex-len", r, next, "0pt");
     }
     else if (read (s, i, "minus") || read (s, i, "\\@minus")) {
       tree next= parse_length (s, i);
       if (is_tuple (next, "\\tex-len", 3)) {
-	//ASSERT (next[3] == "0pt", "invalid multiple minus");
-	return tuple ("\\tex-len", r, next[2], next[1]);
+        //ASSERT (next[3] == "0pt", "invalid multiple minus");
+        return tuple ("\\tex-len", r, next[2], next[1]);
       }
       else return tuple ("\\tex-len", r, "0pt", next);
     }
     else if (is_tex_alpha (s[i]) && N(r) > 0 && is_atomic (r[N(r)-1]) &&
-	     (is_numeric (r[N(r)-1]->label) ||
-	      r[N(r)-1] == "." || r[N(r)-1] == "-")) {
+             (is_numeric (r[N(r)-1]->label) ||
+              r[N(r)-1] == "." || r[N(r)-1] == "-")) {
       for (;i<n && is_tex_alpha (s[i]); i++) {
-	r << s (i, i+1);
+        r << s (i, i+1);
         e += 1;
       }
       continue;
@@ -1592,9 +1592,9 @@ accented_to_Cork (tree t) {
     string v= r[1]->label;
     if (N(v)==0) {
       if (s[1] == '`' ) {
-	string ret_s (1);
-	ret_s[0]= '\000';
-	return ret_s;
+        string ret_s (1);
+        ret_s[0]= '\000';
+        return ret_s;
       }
       if (s[1] == '\'') return "\001";
       if (s[1] == '\"') return "\004";
@@ -1613,9 +1613,9 @@ accented_to_Cork (tree t) {
       char c1= v[0], c2= s[1];
       if (v == "\\i") c1= 'i';
       if ((N(v)==1) || (v=="\\i")) {
-	for (i=0; i<127; i++)
-	  if ((Cork_unaccented[i]==c1) && (Cork_accent[i]==c2))
-	    return tree (string ((char) (i+128)));
+        for (i=0; i<127; i++)
+          if ((Cork_unaccented[i]==c1) && (Cork_accent[i]==c2))
+            return tree (string ((char) (i+128)));
         if (c1 == 'A' && c2 == 'c') return "<#104>";
         if (c1 == 'a' && c2 == 'c') return "<#105>";
         if (c1 == 'E' && c2 == 'c') return "<#118>";
@@ -1644,11 +1644,11 @@ latex_parser::parse (string s, int change) {
     if (s[i]=='\n' || (s[i] == '\\' && test (s, i, "\\nextbib"))) {
       while ((i<n) && is_space (s[i])) i++;
       if (test (s, i, "%%%%%%%%%% Start TeXmacs macros\n")) {
-	a << s (start, i);
-	while ((i<n) && (!test (s, i, "%%%%%%%%%% End TeXmacs macros\n")))
-	  i++;
-	i += 30;
-	start= i;
+        a << s (start, i);
+        while ((i<n) && (!test (s, i, "%%%%%%%%%% End TeXmacs macros\n")))
+          i++;
+        i += 30;
+        start= i;
       }
       else if (test_macro (s, i, "\\nextbib") || (count == 0 &&
                 (test_env   (s, i, "document")        ||

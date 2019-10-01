@@ -211,7 +211,7 @@ filter_itemize (tree doc) {
           else if (s == "iii") n = 3;
           else if (s == "iv")  n = 4;
           else return r;
-	  r << new_list ("itemize", n, item);
+          r << new_list ("itemize", n, item);
           maxlevel = max (maxlevel, n);
         }
     }
@@ -245,7 +245,7 @@ filter_enumerate (tree doc) {
           else return r;
           item = substitute (item, compound ("theenum"*s), tree (ARG, "name"));
           item = substitute (item, "enum"*s, tree (ARG, "name"));
-	  r << new_list ("enumerate", n, item);
+          r << new_list ("enumerate", n, item);
           maxlevel = max (maxlevel, n);
         }
     }

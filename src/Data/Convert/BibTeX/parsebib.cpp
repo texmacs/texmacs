@@ -347,7 +347,7 @@ bib_list (string s, int& pos, tree& t) {
             return;
           }
         }
-	else {
+        else {
           string stype= locase_all (type);
           if (stype == "string") {
             tree ts;
@@ -359,7 +359,7 @@ bib_list (string s, int& pos, tree& t) {
               else tstring << compound ("bib-comment", ts);
             }
           }
-	  else if (stype == "preamble") {
+          else if (stype == "preamble") {
             tree tp;
             if (comment) tp= tree (DOCUMENT);
             else tp= tpreamble;
@@ -369,7 +369,7 @@ bib_list (string s, int& pos, tree& t) {
               else tpreamble << compound ("bib-comment", tp);
             }
           }
-	  else {
+          else {
             tree te;
             if (stype == "comment") comment= true;
             if (comment) te= tree (DOCUMENT);

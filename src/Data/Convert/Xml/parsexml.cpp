@@ -212,26 +212,26 @@ xml_html_parser::transcode (string s2) {
       // presence of an XML prolog is not enough to clear the flag.
       /* html= false; */
       while (s && !test (s, "?>")) {
-	string attname= parse_name ();
-	skip_space ();
-	if (!test (s, "=")) break;
-	s += 1;
-	skip_space ();
-	string val;
-	if (test (s, "\"")) {
-	  s += 1;
-	  val= parse_until ("\"");
-	  skip_space ();	  
-	}
-	else if (test (s, "'")) {
-	  s += 1;
-	  val= parse_until ("'");
-	  skip_space ();
-	}
-	if (attname == "encoding") {
-	  encoding= upcase_all (val);
-	  break;
-	}
+        string attname= parse_name ();
+        skip_space ();
+        if (!test (s, "=")) break;
+        s += 1;
+        skip_space ();
+        string val;
+        if (test (s, "\"")) {
+          s += 1;
+          val= parse_until ("\"");
+          skip_space ();	  
+        }
+        else if (test (s, "'")) {
+          s += 1;
+          val= parse_until ("'");
+          skip_space ();
+        }
+        if (attname == "encoding") {
+          encoding= upcase_all (val);
+          break;
+        }
       }
     }
   }
@@ -290,9 +290,9 @@ xml_html_parser::expand_entity (string s) {
     else if (html) {
       string ss= s (1, s [N(s)-1] == ';' ? N(s)-1 : N(s));
       if (html_entity->contains (ss))
-	// HTML entity references expand to character references
-	// so they need to be finalized a second time.
-	return expand_entity (html_entity [ss]);
+        // HTML entity references expand to character references
+        // so they need to be finalized a second time.
+        return expand_entity (html_entity [ss]);
     }
   }
   return s;
@@ -306,12 +306,12 @@ xml_html_parser::expand_entities (string s) {
     if (s[i] == '&' || s[i] == '%') {
       int start= i++;
       if (i<n && s[i] == '#') {
-	i++;
-	if (i<n && (s[i] == 'x' || s[i] == 'X')) {
-	  i++;
-	  while (i<n && is_hex_digit (s[i])) i++;
-	}
-	else while (i<n && is_digit (s[i])) i++;
+        i++;
+        if (i<n && (s[i] == 'x' || s[i] == 'X')) {
+          i++;
+          while (i<n && is_hex_digit (s[i])) i++;
+        }
+        else while (i<n && is_digit (s[i])) i++;
       }
       else while (i<n && is_name_char (s[i])) i++;
       if (i<n && s[i] == ';') i++;
@@ -688,18 +688,18 @@ xml_html_parser::finalize_space (tree t) {
     int first= -1, last= -1;
     for (i=2; i<n; i++)
       if (!is_tuple (t[i], "attr")) {
-	first= i; break;
+        first= i; break;
       }
     if (!is_tuple (t[n-1], "attr"))
       last= n-1;
     (void) first; (void) last;
     for (i=2; i<n; i++) {
       if (is_atomic (t[i])) {
-	if (finalize_preserve_space (t[1]->label)) r << t[i];
-	else {
-	  string s= finalize_space (t[i]->label, i==2, i==(n-1));
-	  if (s != "") r << s;
-	}
+        if (finalize_preserve_space (t[1]->label)) r << t[i];
+        else {
+          string s= finalize_space (t[i]->label, i==2, i==(n-1));
+          if (s != "") r << s;
+        }
       }
       else if (is_tuple (t[i], "tag")) r << finalize_space (t[i]);
       else r << t[i];
@@ -734,6 +734,7 @@ xml_html_parser::finalize_sxml (tree t) {
       content << tuple ("*DOCTYPE*", raw_quote (t[i][1]->label));
     else if (is_tuple (t[i], "cdata"))
       content << raw_quote (t[i][1]->label);
+
   if (N(attrs) > 1) tag << attrs;
   tag << A(content);
   return tag;

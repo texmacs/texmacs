@@ -118,8 +118,8 @@ tm_reader::read_next () {
       if (c == "#") return "<#";
       if ((c == "\\") || (c == "|") || (c == "/")) return "<" * c;
       if (is_iso_alpha (c[0]) || (c == ">")) {
-	pos= old_pos;
-	return "<";
+        pos= old_pos;
+        return "<";
       }
       pos= old_pos;
       return "<";
@@ -143,8 +143,8 @@ tm_reader::read_next () {
     if (c == "") return r;
     else if (c == "\\") {
       if ((pos < N(buf)) && (buf[pos] == '\\') && backslash_ok) {
-	r << c << "\\";
-	pos++;
+        r << c << "\\";
+        pos++;
       }
       else r << c << read_char ();
     }
@@ -176,8 +176,8 @@ tm_reader::read_function_name () {
 static void
 get_collection (tree& u, tree t) {
   if (is_func (t, COLLECTION) ||
-	   is_func (t, DOCUMENT) ||
-	   is_func (t, CONCAT)) {
+           is_func (t, DOCUMENT) ||
+           is_func (t, CONCAT)) {
     int i;
     for (i=0; i<N(t); i++)
       get_collection (u, t[i]);
@@ -252,58 +252,58 @@ tm_reader::read (bool skip_flag) {
     
     if (last[0] == '<') {
       if (last[N(last)-1] == '\\') {
-	flush (D, C, S, spc_flag, ret_flag);
-	string name= read_function_name ();
-	if (last == ">") last= "\\>";
-	else last= "\\|";
-	C << read_apply (name, true);
+        flush (D, C, S, spc_flag, ret_flag);
+        string name= read_function_name ();
+        if (last == ">") last= "\\>";
+        else last= "\\|";
+        C << read_apply (name, true);
       }
       else if (last[N(last)-1] == '|') {
-	(void) read_function_name ();
-	if (last == ">") last= "|>";
-	else last= "||";
-	break;
+        (void) read_function_name ();
+        if (last == ">") last= "|>";
+        else last= "||";
+        break;
       }
       else if (last[N(last)-1] == '/') {
-	(void) read_function_name ();
-	if (last == ">") last= "/>";
-	else last= "/|";
-	break;
+        (void) read_function_name ();
+        if (last == ">") last= "/>";
+        else last= "/|";
+        break;
       }
       else if (last[N(last)-1] == '#') {
-	string r;
-	while ((buf[pos] != '>') && (pos+2<N(buf))) {
-	  r << ((char) from_hexadecimal (buf (pos, pos+2)));
-	  pos += 2;
-	}
-	if (buf[pos] == '>') pos++;
-	flush (D, C, S, spc_flag, ret_flag);
-	C << tree (RAW_DATA, r);
-	last= read_next ();
-	break;
+        string r;
+        while ((buf[pos] != '>') && (pos+2<N(buf))) {
+          r << ((char) from_hexadecimal (buf (pos, pos+2)));
+          pos += 2;
+        }
+        if (buf[pos] == '>') pos++;
+        flush (D, C, S, spc_flag, ret_flag);
+        C << tree (RAW_DATA, r);
+        last= read_next ();
+        break;
       }
       else {
-	flush (D, C, S, spc_flag, ret_flag);
-	string name= decode (read_next ());
-	string sep = ">";
-	if (name == ">") name= "";
-	else sep = read_next ();
-	// cout << "==> " << name << "\n";
-	// cout << "~~> " << sep << "\n";
-	if (sep == '|') {
-	  last= "|";
-	  C << read_apply (name, false);
-	}
-	else {
-	  tree t (make_tree_label (name));
-	  if (!with_extensions)
-	    t= tree (EXPAND_APPLY, name);
-	  if (codes->contains (name)) {
-	    // cout << name << " -> " << as_string ((tree_label) codes [name]) << "\n";
-	    t= tree ((tree_label) codes [name]);
-	  }
-	  C << t;
-	}
+        flush (D, C, S, spc_flag, ret_flag);
+        string name= decode (read_next ());
+        string sep = ">";
+        if (name == ">") name= "";
+        else sep = read_next ();
+        // cout << "==> " << name << "\n";
+        // cout << "~~> " << sep << "\n";
+        if (sep == '|') {
+          last= "|";
+          C << read_apply (name, false);
+        }
+        else {
+          tree t (make_tree_label (name));
+          if (!with_extensions)
+            t= tree (EXPAND_APPLY, name);
+          if (codes->contains (name)) {
+            // cout << name << " -> " << as_string ((tree_label) codes [name]) << "\n";
+            t= tree ((tree_label) codes [name]);
+          }
+          C << t;
+        }
       }
     }
     else if (last == " ") spc_flag= true;
@@ -372,21 +372,21 @@ texmacs_document_to_tree (string s) {
     if (n<3) return error;
     else if (n<4)
       doc << compound ("body", t[2])
-	  << compound ("style", t[0])
-	  << compound ("initial", t[1]);
+          << compound ("style", t[0])
+          << compound ("initial", t[1]);
     else if (n<7)
       doc << compound ("body", t[0])
-	  << compound ("style", t[1])
-	  << compound ("initial", t[2])
-	  << compound ("references", t[3]);
+          << compound ("style", t[1])
+          << compound ("initial", t[2])
+          << compound ("references", t[3]);
     else
       doc << compound ("body", t[0])
-	  << compound ("project", t[1])
-	  << compound ("style", t[2])
-	  << compound ("initial", t[3])
-	  << compound ("final", t[4])
-	  << compound ("references", t[5])
-	  << compound ("auxiliary", t[6]);
+          << compound ("project", t[1])
+          << compound ("style", t[2])
+          << compound ("initial", t[3])
+          << compound ("final", t[4])
+          << compound ("references", t[5])
+          << compound ("auxiliary", t[6]);
     return upgrade (doc, version);
   }
 
@@ -397,8 +397,8 @@ texmacs_document_to_tree (string s) {
     string version= s (9, i);
     tree doc= texmacs_to_tree (s, version);
     if (is_compound (doc, "TeXmacs", 1) ||
-	is_expand (doc, "TeXmacs", 1) ||
-	is_apply (doc, "TeXmacs", 1))
+        is_expand (doc, "TeXmacs", 1) ||
+        is_apply (doc, "TeXmacs", 1))
       doc= tree (DOCUMENT, doc);
     if (!is_document (doc)) return error;
     if (N(doc) == 0 || !is_compound (doc[0], "TeXmacs", 1)) {
@@ -421,19 +421,19 @@ extract (tree doc, string attr) {
   int i, n= arity (doc);
   for (i=0; i<n; i++)
     if (is_compound (doc[i], attr, 1) ||
-	is_expand (doc[i], attr, 1) ||
-	is_apply (doc[i], attr, 1))
+        is_expand (doc[i], attr, 1) ||
+        is_apply (doc[i], attr, 1))
       {
-	tree r= doc[i][N(doc[i])-1];
-	if ((attr == "body") && (!is_document (r))) return tree (DOCUMENT, r);
-	if (attr == "style") {
-	  if (r == "none") return tree (TUPLE);
-	  if (r == "") return tree (TUPLE);
-	  if (r == "style") return tree (TUPLE);
-	  if (is_atomic (r)) return tree (TUPLE, r);
-	  if (!is_func (r, TUPLE)) return tree (TUPLE);
-	}
-	return r;
+        tree r= doc[i][N(doc[i])-1];
+        if ((attr == "body") && (!is_document (r))) return tree (DOCUMENT, r);
+        if (attr == "style") {
+          if (r == "none") return tree (TUPLE);
+          if (r == "") return tree (TUPLE);
+          if (r == "style") return tree (TUPLE);
+          if (is_atomic (r)) return tree (TUPLE, r);
+          if (!is_func (r, TUPLE)) return tree (TUPLE);
+        }
+        return r;
       }
 
   if (attr == "TeXmacs") return "";
@@ -459,37 +459,37 @@ extract_document (tree doc) {
     int i, n= N(init);
     for (i=0; i<n; i++)
       if (is_func (init[i], ASSOCIATE, 2)) {
-	tree l= init[i][0];
-	tree r= init[i][1];
-	if ((l == PAGE_MEDIUM) ||
-	    (l == PAGE_PRINTED) ||
-	    (l == PAGE_TYPE) ||
-	    (l == PAGE_ORIENTATION) ||
-	    (l == PAGE_WIDTH_MARGIN) ||
-	    (l == PAGE_SCREEN_MARGIN) ||
-	    (l == PAGE_NR) ||
-	    (l == PAGE_WIDTH) ||
-	    (l == PAGE_HEIGHT) ||
-	    (l == PAGE_ODD) ||
-	    (l == PAGE_EVEN) ||
-	    (l == PAGE_RIGHT) ||
-	    (l == PAGE_ODD_SHIFT) ||
-	    (l == PAGE_EVEN_SHIFT) ||
-	    (l == PAGE_TOP) ||
-	    (l == PAGE_BOT) ||
-	    (l == PAGE_SCREEN_WIDTH) ||
-	    (l == PAGE_SCREEN_HEIGHT) ||
-	    (l == PAGE_SCREEN_LEFT) ||
-	    (l == PAGE_SCREEN_RIGHT) ||
-	    (l == PAGE_SCREEN_TOP) ||
-	    (l == PAGE_SCREEN_BOT) ||
-	    (l == PAGE_SHOW_HF) ||
+        tree l= init[i][0];
+        tree r= init[i][1];
+        if ((l == PAGE_MEDIUM) ||
+            (l == PAGE_PRINTED) ||
+            (l == PAGE_TYPE) ||
+            (l == PAGE_ORIENTATION) ||
+            (l == PAGE_WIDTH_MARGIN) ||
+            (l == PAGE_SCREEN_MARGIN) ||
+            (l == PAGE_NR) ||
+            (l == PAGE_WIDTH) ||
+            (l == PAGE_HEIGHT) ||
+            (l == PAGE_ODD) ||
+            (l == PAGE_EVEN) ||
+            (l == PAGE_RIGHT) ||
+            (l == PAGE_ODD_SHIFT) ||
+            (l == PAGE_EVEN_SHIFT) ||
+            (l == PAGE_TOP) ||
+            (l == PAGE_BOT) ||
+            (l == PAGE_SCREEN_WIDTH) ||
+            (l == PAGE_SCREEN_HEIGHT) ||
+            (l == PAGE_SCREEN_LEFT) ||
+            (l == PAGE_SCREEN_RIGHT) ||
+            (l == PAGE_SCREEN_TOP) ||
+            (l == PAGE_SCREEN_BOT) ||
+            (l == PAGE_SHOW_HF) ||
             (l == PAGE_FIRST && prj) ||
             (l == "chapter-nr" && prj) ||
             (l == "section-nr" && prj) ||
             (l == "subsection-nr" && prj) ||
             (l == "subsubsection-nr" && prj)) continue;
-	w << l << r;
+        w << l << r;
       }
     if (N(w)>0) {
       w << body;

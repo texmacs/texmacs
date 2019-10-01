@@ -121,7 +121,7 @@ latex_get_packages (string s) {
       if (i<n && s[i] == '{') {
         int start= i+1;
         if (skip_curly (s, i)) {
-	  int ee= i;
+          int ee= i;
           int j= start;
           skip_spaces (s, j);
           while (true) {
@@ -209,10 +209,10 @@ parse_declaration_sub (string s, int& i, string cmd,
       bb--;
       rewind_start_line (s, bb);
       if (test (s, bb, "\\theoremstyle")) {
-	int bbb= bb-1;
-	rewind_start_line (s, bb);
-	if (test (s, bbb, "\\newtheoremstyle")) bb= bbb;
-	b= bb;
+        int bbb= bb-1;
+        rewind_start_line (s, bb);
+        if (test (s, bbb, "\\newtheoremstyle")) bb= bbb;
+        b= bb;
       }
     }
   }

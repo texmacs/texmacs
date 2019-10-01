@@ -82,11 +82,11 @@ tm_to_xml_cdata (string s) {
       string qq= utf8_to_cork (rr);
       if (rr != ss && qq == ss && ss != "<less>" && ss != "<gtr>") r << rr;
       else {
-	if (r != "") a << object (r);
-	a << cons (symbol_object ("tm-sym"),
-		   cons (ss (1, N(ss)-1),
-			 null_object ()));
-	r= "";
+        if (r != "") a << object (r);
+        a << cons (symbol_object ("tm-sym"),
+                   cons (ss (1, N(ss)-1),
+                         null_object ()));
+        r= "";
       }
     }
   if (r != "") a << object (r);

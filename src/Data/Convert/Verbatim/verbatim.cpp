@@ -69,7 +69,7 @@ print_verbatim_table (string& buf, tree t, bool wrap) {
       int spc= w[j] - get_width(tab[i][j]->label) + 1;
       buf << tab[i][j]->label;
       if (j != N(tab[i]) - 1)
-	for (int k=0; k<spc; k++) buf << " ";
+        for (int k=0; k<spc; k++) buf << " ";
     }
     buf << "\n";
   }
@@ -184,19 +184,19 @@ as_verbatim (tree t, bool wrap) {
       //cout << "a= " << a << "\n";
       //cout << "l= " << N(a) << "\n";
       while (N(a)-start > 78) {
-	//cout << "  start= " << start << "\n";
-	int mid= start+78;
-	while (mid>start && a[mid] != " ") mid--;
-	if (mid <= start) break;
-	if (mid<N(a)) {
-	  //cout << "  mid= " << mid << "\n";
-	  pos += N(tm_recompose (range (a, start, mid)));
-	  ASSERT (buf[pos] == ' ', "error in space synchronization");
-	  buf[pos]= '\n';
-	  start= mid+1;
-	  pos++;
-	}
-	else break;
+        //cout << "  start= " << start << "\n";
+        int mid= start+78;
+        while (mid>start && a[mid] != " ") mid--;
+        if (mid <= start) break;
+        if (mid<N(a)) {
+          //cout << "  mid= " << mid << "\n";
+          pos += N(tm_recompose (range (a, start, mid)));
+          ASSERT (buf[pos] == ' ', "error in space synchronization");
+          buf[pos]= '\n';
+          start= mid+1;
+          pos++;
+        }
+        else break;
       }
       if (i<n) i++;
     }
@@ -265,7 +265,7 @@ un_special (string s) {
   for (i=0, j=0; i<N(s); i++, j++)
     if (s[i] == '\t') {
       do {
-	r << " "; j++;
+        r << " "; j++;
       } while ((j&7) != 0);
       j--;
     }
@@ -292,10 +292,10 @@ verbatim_to_tree (string s, string enc) {
     if (s[i]=='\n') {
       tree t (DOCUMENT);
       for (i=0, j=0; i<N(s); i++)
-	if (s[i]=='\n') {
-	  t << un_special (s (j, i));
-	  j= i+1;
-	}
+        if (s[i]=='\n') {
+          t << un_special (s (j, i));
+          j= i+1;
+        }
       t << un_special (s (j, i));
       return t;
     }
@@ -331,13 +331,13 @@ verbatim_to_tree (string s, bool wrap, string enc) {
     int i, n= N(s);
     for (i=0; i<n; ) {
       if (s[i] == '\n' || s[i] == ' ' || s[i] == '\t') {
-	int lf= 0;
-	while (i<n && (s[i] == '\n' || s[i] == ' ' || s[i] == '\t')) {
-	  if (s[i] == '\n') lf++;
-	  i++;
-	}
-	if (lf <= 1) r << " ";
-	else r << "\n";
+        int lf= 0;
+        while (i<n && (s[i] == '\n' || s[i] == ' ' || s[i] == '\t')) {
+          if (s[i] == '\n') lf++;
+          i++;
+        }
+        if (lf <= 1) r << " ";
+        else r << "\n";
       }
       else r << s[i++];
     }
@@ -351,8 +351,8 @@ verbatim_document_to_tree (string s, bool wrap, string enc) {
   if (enc == "default") enc= "auto";
   tree t    = verbatim_to_tree (s, wrap, enc);
   tree init = tree (COLLECTION,
-		    tree (ASSOCIATE, LANGUAGE, "verbatim"),
-		    tree (ASSOCIATE, FONT_FAMILY, "tt"),
-		    tree (ASSOCIATE, PAR_FIRST, "0cm"));
+                    tree (ASSOCIATE, LANGUAGE, "verbatim"),
+                    tree (ASSOCIATE, FONT_FAMILY, "tt"),
+                    tree (ASSOCIATE, PAR_FIRST, "0cm"));
   return tree (DOCUMENT, compound ("body", t), compound ("initial", init));
 }

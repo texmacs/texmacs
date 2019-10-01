@@ -52,14 +52,14 @@ finalize_returns (tree t) {
       if (is_func (u[i], CONCAT)) r << A(u[i]);
       else if (is_compound (u[i])) r << u[i];
       else {
-	int j= 0;
-	string s= u[i]->label;
-	while (j<N(s)) {
-	  int start= j;
-	    while ((j<N(s)) && (s[j]!='\n')) j++;
-	    if (j>start) r << s(start,j);
-	    if (j<N(s)) { r << tree (FORMAT, "new line"); j++; }
-	}
+        int j= 0;
+        string s= u[i]->label;
+        while (j<N(s)) {
+          int start= j;
+            while ((j<N(s)) && (s[j]!='\n')) j++;
+            if (j>start) r << s(start,j);
+            if (j<N(s)) { r << tree (FORMAT, "new line"); j++; }
+        }
       }
     }
     if (N(r)==0) return "";
@@ -82,27 +82,27 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
     case 'c':
     case 'r':
       {
-	string col_s = as_string (col);
-	string halign= copy (CELL_HALIGN);
-	string how   = s (i, i+1);
-	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
+        string col_s = as_string (col);
+        string halign= copy (CELL_HALIGN);
+        string how   = s (i, i+1);
+        tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
         if (col_flag && col == 1)
           tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
-	col_flag= true;
-	col++;
-	break;
+        col_flag= true;
+        col++;
+        break;
       }
     case 'p':
     case 'm':
     case 'b':
     case 'X':
       {
-	string col_s = as_string (col);
-	string halign= copy (CELL_HYPHEN);
-	char how_c   = s[i];
+        string col_s = as_string (col);
+        string halign= copy (CELL_HYPHEN);
+        char how_c   = s[i];
         string how = (how_c == 'm')? 'c' :
           ((how_c == 'b')? 'b' : 't');
-	tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
+        tformat << tree (CWITH, tr, br, col_s, col_s, halign, how);
         if (how_c != 'X') {
           int start= ++i;
           while (i<n && (s[i] != ' ') && (s[i] != '|')
@@ -116,25 +116,25 @@ parse_matrix_params (tree t, string tr, string br, string hoff) {
         }
         if (col_flag && col == 1)
           tformat << tree (CWITH, tr, br, col_s, col_s, CELL_LBORDER, "0ln");
-	col_flag= true;
-	col++;
-	break;
+        col_flag= true;
+        col++;
+        break;
       }
     case '*':
       {
-	col_flag= true;
-	break;
+        col_flag= true;
+        break;
       }
     case '|':
       {
-	col_flag= false;
-	string col_s= col==1? as_string (col): as_string (col-1);
-	string hbor = col==1? copy (CELL_LBORDER): copy (CELL_RBORDER);
+        col_flag= false;
+        string col_s= col==1? as_string (col): as_string (col-1);
+        string hbor = col==1? copy (CELL_LBORDER): copy (CELL_RBORDER);
         int howmany=1;
         while (i+1 < n && s[i+1] == '|') { howmany++; i++; }
-	string how  = as_string (howmany) * "ln";
-	tformat << tree (CWITH, tr, br, col_s, col_s, hbor, how);
-	break;
+        string how  = as_string (howmany) * "ln";
+        tformat << tree (CWITH, tr, br, col_s, col_s, hbor, how);
+        break;
       }
     case ';':
       {
@@ -406,26 +406,26 @@ finalize_pmatrix (tree t) {
     tree r (CONCAT);
     for (i=0; i<n; i++)
       if (is_func (u[i], BEGIN)) {
-	if (u[i][0] == "array" || u[i][0] == "array*")
-	  parse_pmatrix (r, u, i, "", "", "tabular*");
-	else if (u[i][0] == "tabular"  || u[i][0] == "tabular*" ||
-	         u[i][0] == "tabularx" || u[i][0] == "tabularx*")
-	  parse_pmatrix (r, u, i, "", "", "tabular*");
-	else if (u[i][0] == "cases")
-	  parse_pmatrix (r, u, i, "", "", "choice");
-	else if (u[i][0] == "stack")
-	  parse_pmatrix (r, u, i, "", "", "stack");
-	else if (u[i][0] == "matrix")
-	  parse_pmatrix (r, u, i, "", "", "tabular*");
-	else if (u[i][0] == "pmatrix")
-	  parse_pmatrix (r, u, i, "", "", "matrix");
-	else if (u[i][0] == "bmatrix")
-	  parse_pmatrix (r, u, i, "[", "]", "tabular*");
-	else if (u[i][0] == "vmatrix")
-	  parse_pmatrix (r, u, i, "", "", "det");
-	else if (u[i][0] == "smallmatrix")
-	  parse_pmatrix (r, u, i, "", "", "matrix*");
-	else r << u[i];
+        if (u[i][0] == "array" || u[i][0] == "array*")
+          parse_pmatrix (r, u, i, "", "", "tabular*");
+        else if (u[i][0] == "tabular"  || u[i][0] == "tabular*" ||
+                 u[i][0] == "tabularx" || u[i][0] == "tabularx*")
+          parse_pmatrix (r, u, i, "", "", "tabular*");
+        else if (u[i][0] == "cases")
+          parse_pmatrix (r, u, i, "", "", "choice");
+        else if (u[i][0] == "stack")
+          parse_pmatrix (r, u, i, "", "", "stack");
+        else if (u[i][0] == "matrix")
+          parse_pmatrix (r, u, i, "", "", "tabular*");
+        else if (u[i][0] == "pmatrix")
+          parse_pmatrix (r, u, i, "", "", "matrix");
+        else if (u[i][0] == "bmatrix")
+          parse_pmatrix (r, u, i, "[", "]", "tabular*");
+        else if (u[i][0] == "vmatrix")
+          parse_pmatrix (r, u, i, "", "", "det");
+        else if (u[i][0] == "smallmatrix")
+          parse_pmatrix (r, u, i, "", "", "matrix*");
+        else r << u[i];
       }
       else r << u[i];
     return r;
@@ -524,11 +524,11 @@ finalize_layout (tree t) {
       tree v= u[i];
 
       if (space_eater (v)) {
-	remove_space (r);
-	r << v;
-	spc_flag = true;
-	item_flag= false;
-	continue;
+        remove_space (r);
+        r << v;
+        spc_flag = true;
+        item_flag= false;
+        continue;
       }
 
       if (is_func (v, BEGIN, 2) && is_enunciation (v)) {
@@ -561,254 +561,254 @@ finalize_layout (tree t) {
 
       if (is_func (v, BEGIN) &&
           (v[0] == "algorithmic" || v[0] == "algorithmic*")) {
-	//r << tree (BEGIN, "algorithm");
-	continue;
+        //r << tree (BEGIN, "algorithm");
+        continue;
       }
 
       if (is_func (v, END) &&
           (v[0] == "algorithmic" || v[0] == "algorithmic*")) {
-	//r << tree (END, "algorithm");
-	continue;
+        //r << tree (END, "algorithm");
+        continue;
       }
 
       if (is_func (v, BEGIN) &&
           (v[0] == "algorithm"   || v[0] == "algorithm*" ||
            v[0] == "algorithm2e" || v[0] == "algorithm2e*" )) {
-	r << tree (NEW_LINE) << tree (BEGIN, "algorithm");
-	continue;
+        r << tree (NEW_LINE) << tree (BEGIN, "algorithm");
+        continue;
       }
 
       if (is_func (v, END) &&
           (v[0] == "algorithm"   || v[0] == "algorithm*" ||
            v[0] == "algorithm2e" || v[0] == "algorithm2e*" )) {
-	r << tree (END, "algorithm") << tree (NEW_LINE);
-	continue;
+        r << tree (END, "algorithm") << tree (NEW_LINE);
+        continue;
       }
 
       if (is_func (v, BEGIN) && (v[0] == "tmcode" || v[0] == "tmcode*")) {
         if (is_func (v, BEGIN, 2)) lang= string_arg (v[1]) * "-code";
         else lang= "code";
-	r << tree (BEGIN, lang);
-	continue;
+        r << tree (BEGIN, lang);
+        continue;
       }
 
       if (is_func (v, END) && v[0] == "tmcode") {
-	r << tree (END, lang);
-	continue;
+        r << tree (END, lang);
+        continue;
       }
 
       if (is_func (v, BEGIN) && v[0] == "tmindent") {
-	r << tree (BEGIN, "indent");
-	continue;
+        r << tree (BEGIN, "indent");
+        continue;
       }
 
       if (is_func (v, END) && v[0] == "tmindent") {
-	r << tree (END, "indent");
-	continue;
+        r << tree (END, "indent");
+        continue;
       }
 
       if (is_func (v, BEGIN) && v[0] == "tmlisting") {
-	r << tree (BEGIN, "listing");
-	continue;
+        r << tree (BEGIN, "listing");
+        continue;
       }
 
       if (is_func (v, END) && v[0] == "tmlisting") {
-	r << tree (END, "listing");
-	continue;
+        r << tree (END, "listing");
+        continue;
       }
 
       if (is_func (v, BEGIN, 2) && (v[0] == "otherlanguage" ||
                                     v[0] == "otherlanguage*")) {
         string lang= latex_to_texmacs_languages (string_arg (v[1]));
-	r << tree (SET, "language", lang);
-	continue;
+        r << tree (SET, "language", lang);
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "otherlanguage" ||
                                   v[0] == "otherlanguage*")) {
-	r << tree (RESET, "language");
-	continue;
+        r << tree (RESET, "language");
+        continue;
       }
 
       if (is_func (v, BEGIN, 1) && (v[0] == "picture")) {
-	for (; i<n; i++)
-	  if (is_func (u[i], IMAGE)) r << u[i];
-	  else if (is_func (u[i], END, 1) && (u[i][0] == "picture"))
-	    break;
-	continue;
+        for (; i<n; i++)
+          if (is_func (u[i], IMAGE)) r << u[i];
+          else if (is_func (u[i], END, 1) && (u[i][0] == "picture"))
+            break;
+        continue;
       }
 
       if (is_func (v, BEGIN) && ((v[0] == "tmparsep"))) {
-	r << tree (SET, "par-par-sep", v[1]);
-	continue;
+        r << tree (SET, "par-par-sep", v[1]);
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "tmparsep")) {
-	r << tree (RESET, "par-par-sep");
-	continue;
+        r << tree (RESET, "par-par-sep");
+        continue;
       }
 
       if (is_func (v, BEGIN, 3) && v[0] == "tmparmod") {
         // TODO: deal with par-left and par-right as well
         r << tree (SET, "par-first", v[3]);
-	continue;
+        continue;
       }
 
       if (is_func (v, END) && (v[0] == "tmparmod")) {
-	r << tree (RESET, "par-first");
-	continue;
+        r << tree (RESET, "par-first");
+        continue;
       }
 
       if (is_func (v, BEGIN, 2) && ((v[0] == "minipage"))) {
-	r << tree (BEGIN, "minipage", "f", v[1]);
-	continue;
+        r << tree (BEGIN, "minipage", "f", v[1]);
+        continue;
       }
       if (is_func (v, BEGIN, 3) && ((v[0] == "minipage*"))) {
-	r << tree (BEGIN, "minipage", v[1], v[2]);
-	continue;
+        r << tree (BEGIN, "minipage", v[1], v[2]);
+        continue;
       }
 
       if (is_func (v, BEGIN) && ((v[0] == "multicols"))) {
-	r << tree (SET, "par-columns", v[1]);
-	continue;
+        r << tree (SET, "par-columns", v[1]);
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "multicols")) {
-	r << tree (RESET, "par-columns");
-	continue;
+        r << tree (RESET, "par-columns");
+        continue;
       }
 
       if ((is_func (v, BEGIN, 1) && (v[0] == "figure" ))  ||
           (is_func (v, BEGIN, 2) && (v[0] == "figure*"))) {
-	r << tree (NEW_LINE) << tree (BEGIN, "bigfigure");
-	continue;
+        r << tree (NEW_LINE) << tree (BEGIN, "bigfigure");
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "figure")) {
-	r << tree (END, "bigfigure") << tree (NEW_LINE);
-	continue;
+        r << tree (END, "bigfigure") << tree (NEW_LINE);
+        continue;
       }
 
       if ((is_func (v, BEGIN, 1) && (v[0] == "figure*" ))  ||
           (is_func (v, BEGIN, 2) && (v[0] == "figure**"))) {
-	r << tree (NEW_LINE) << tree (BEGIN, "bigfigure*");
-	continue;
+        r << tree (NEW_LINE) << tree (BEGIN, "bigfigure*");
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "figure*")) {
-	r << tree (END, "bigfigure*") << tree (NEW_LINE);
-	continue;
+        r << tree (END, "bigfigure*") << tree (NEW_LINE);
+        continue;
       }
 
       if ((is_func (v, BEGIN, 1) && (v[0] == "teaserfigure" ))  ||
           (is_func (v, BEGIN, 2) && (v[0] == "teaserfigure*"))) {
-	r << tree (NEW_LINE) << tree (BEGIN, "bigfigure*");
-	continue;
+        r << tree (NEW_LINE) << tree (BEGIN, "bigfigure*");
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "teaserfigure")) {
-	r << tree (END, "bigfigure*") << tree (NEW_LINE);
-	continue;
+        r << tree (END, "bigfigure*") << tree (NEW_LINE);
+        continue;
       }
 
       if ((is_func (v, BEGIN, 1) && (v[0] == "table*" ))  ||
           (is_func (v, BEGIN, 2) && (v[0] == "table**"))) {
-	r << tree (NEW_LINE) << tree (BEGIN, "bigtable*");
-	continue;
+        r << tree (NEW_LINE) << tree (BEGIN, "bigtable*");
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "table*")) {
-	r << tree (END, "bigtable*") << tree (NEW_LINE);
-	continue;
+        r << tree (END, "bigtable*") << tree (NEW_LINE);
+        continue;
       }
 
       if ((is_func (v, BEGIN, 1) && (v[0] == "table" ))  ||
           (is_func (v, BEGIN, 2) && (v[0] == "table*"))) {
-	r << tree (NEW_LINE) << tree (BEGIN, "bigtable");
-	continue;
+        r << tree (NEW_LINE) << tree (BEGIN, "bigtable");
+        continue;
       }
 
       if (is_func (v, END, 1) && (v[0] == "table")) {
-	r << tree (END, "bigtable") << tree (NEW_LINE);
-	continue;
+        r << tree (END, "bigtable") << tree (NEW_LINE);
+        continue;
       }
 
       if (is_func (v, BEGIN) && (v[0] == "thebibliography")) {
-	r << tree (NEW_LINE) << v;
-	continue;
+        r << tree (NEW_LINE) << v;
+        continue;
       }
 
       /*
       if (is_func (v, BEGIN) && (v[0] == "hide-preamble")) {
-	r << tree (BEGIN, "hide-preamble");
-	continue;
+        r << tree (BEGIN, "hide-preamble");
+        continue;
       }
 
       if (is_func (v, END) && (v[0] == "hide-preamble")) {
-	r << tree (END, "hide-preamble");
-	continue;
+        r << tree (END, "hide-preamble");
+        continue;
       }
       */
 
       if ((is_func (v, BEGIN, 1) || is_func (v, BEGIN, 2))
           && admissible_env (v) && v[0] != "thebibliography") {
-	if (v == tree (BEGIN, "verbatim")) {
-	  r << v; i++;
-	  if ((i<n) && (t[i] == tree (FORMAT, "new line"))) {
-	    remove_space (r);
-	    r << t[i]; i++;
-	  }
-	  while ((i<n) && (t[i] != tree (END, "verbatim"))) {
-	    if ((t[i] == tree (FORMAT, "new line")) &&
-		(((i+1) == n) || (t[i+1] != tree (END, "verbatim"))))
-	      r << tree (FORMAT, "new line");
-	    else r << t[i];
-	    i++;
-	  }
-	  if (i<n) r << t[i];
-	  spc_flag = i>0 && t[i-1] == tree (FORMAT, "new line");
-	  item_flag= false;
-	  continue;
-	}
+        if (v == tree (BEGIN, "verbatim")) {
+          r << v; i++;
+          if ((i<n) && (t[i] == tree (FORMAT, "new line"))) {
+            remove_space (r);
+            r << t[i]; i++;
+          }
+          while ((i<n) && (t[i] != tree (END, "verbatim"))) {
+            if ((t[i] == tree (FORMAT, "new line")) &&
+                (((i+1) == n) || (t[i+1] != tree (END, "verbatim"))))
+              r << tree (FORMAT, "new line");
+            else r << t[i];
+            i++;
+          }
+          if (i<n) r << t[i];
+          spc_flag = i>0 && t[i-1] == tree (FORMAT, "new line");
+          item_flag= false;
+          continue;
+        }
 
-	if (v == tree (BEGIN, "displaymath"))
-	  v= tree (BEGIN, "equation*");
-	if (v == tree (BEGIN, "math")) {
-	  r << tree (SET, MODE, "math");
-	  spc_flag = item_flag= false;
-	  continue;
-	}
+        if (v == tree (BEGIN, "displaymath"))
+          v= tree (BEGIN, "equation*");
+        if (v == tree (BEGIN, "math")) {
+          r << tree (SET, MODE, "math");
+          spc_flag = item_flag= false;
+          continue;
+        }
 
-	insert_return (r);
+        insert_return (r);
         v[0]= translate_list (v[0]->label);
-	r << v;
-	spc_flag = true;
-	item_flag= (latex_type ("\\begin-" * v[0]->label) == "list");
-	continue;
+        r << v;
+        spc_flag = true;
+        item_flag= (latex_type ("\\begin-" * v[0]->label) == "list");
+        continue;
       }
 
       if (is_func (v, END, 1) && admissible_env (v)) {
-	if (v == tree (END, "displaymath"))
-	  v= tree (END, "equation*");
-	if (v == tree (END, "math")) {
-	  r << tree (RESET, MODE);
-	  spc_flag = item_flag= false;
-	  continue;
-	}
+        if (v == tree (END, "displaymath"))
+          v= tree (END, "equation*");
+        if (v == tree (END, "math")) {
+          r << tree (RESET, MODE);
+          spc_flag = item_flag= false;
+          continue;
+        }
 
-	remove_space (r);
-	r << tree (END, translate_list (v[0]->label));
-	if (i+1 == N(t) || t[i+1] != tree (FORMAT, "new line"))
-	  insert_return (r);
-	spc_flag = true;
-	item_flag= false;
-	continue;
+        remove_space (r);
+        r << tree (END, translate_list (v[0]->label));
+        if (i+1 == N(t) || t[i+1] != tree (FORMAT, "new line"))
+          insert_return (r);
+        spc_flag = true;
+        item_flag= false;
+        continue;
       }
 
       // Needed for matching beginning/ending for unknown or user envs.
       // It will be restored in finalize_misc.
       if (is_func (v, BEGIN)) {
-	string var= as_string (v[0]);
+        string var= as_string (v[0]);
   if (var[N(var)-1] == '*') {
     var= var(0,N(var)-1);
     tree w (BEGIN, var);
@@ -831,24 +831,24 @@ finalize_layout (tree t) {
           x << copy (w[0]);
           r << x;
         }
-	continue;
+        continue;
       }
 
       if ((v == tree (APPLY, "item")) ||
-	  (is_func (v, APPLY, 2) && (v[0]->label == "item*"))) {
-	if (!item_flag) insert_return (r);
-	r << v;
-	spc_flag = true;
-	item_flag= false;
-	continue;
+          (is_func (v, APPLY, 2) && (v[0]->label == "item*"))) {
+        if (!item_flag) insert_return (r);
+        r << v;
+        spc_flag = true;
+        item_flag= false;
+        continue;
       }
 
       if ((is_atomic (v)) && spc_flag &&
-	  (N(v->label)>0) && (v->label[0]==' '))
-	{
-	  if (N(v->label)==1) continue;
-	  r << v->label (1, N(v->label));
-	}
+          (N(v->label)>0) && (v->label[0]==' '))
+        {
+          if (N(v->label)==1) continue;
+          r << v->label (1, N(v->label));
+        }
       else r << v;
       spc_flag = false;
       item_flag= false;
@@ -864,42 +864,42 @@ finalize_sections (tree t) {
   for (int i=0; i<N(t); i++) {
     tree u= t[i];
     if (is_concat (u) && N(u) >= 2 &&
-	(is_var_compound (u[0], "part", 1)             ||
-	 is_var_compound (u[0], "part*", 1)            ||
-	 is_var_compound (u[0], "part*", 2)            ||
-	 is_var_compound (u[0], "chapter", 1)          ||
-	 is_var_compound (u[0], "chapter*", 1)         ||
-	 is_var_compound (u[0], "chapter*", 2)         ||
-	 is_var_compound (u[0], "section", 1)          ||
-	 is_var_compound (u[0], "section*", 1)         ||
-	 is_var_compound (u[0], "section*", 2)         ||
-	 is_var_compound (u[0], "subsection", 1)       ||
-	 is_var_compound (u[0], "subsection*", 1)      ||
-	 is_var_compound (u[0], "subsection*", 2)      ||
-	 is_var_compound (u[0], "subsubsection", 1)    ||
-	 is_var_compound (u[0], "subsubsection*", 1)   ||
-	 is_var_compound (u[0], "subsubsection*", 2)))
+        (is_var_compound (u[0], "part", 1)             ||
+         is_var_compound (u[0], "part*", 1)            ||
+         is_var_compound (u[0], "part*", 2)            ||
+         is_var_compound (u[0], "chapter", 1)          ||
+         is_var_compound (u[0], "chapter*", 1)         ||
+         is_var_compound (u[0], "chapter*", 2)         ||
+         is_var_compound (u[0], "section", 1)          ||
+         is_var_compound (u[0], "section*", 1)         ||
+         is_var_compound (u[0], "section*", 2)         ||
+         is_var_compound (u[0], "subsection", 1)       ||
+         is_var_compound (u[0], "subsection*", 1)      ||
+         is_var_compound (u[0], "subsection*", 2)      ||
+         is_var_compound (u[0], "subsubsection", 1)    ||
+         is_var_compound (u[0], "subsubsection*", 1)   ||
+         is_var_compound (u[0], "subsubsection*", 2)))
       {
-	if (N(u) > 2 && u[1] == " ")
-	  u= u (0, 1) * u (2, N(u));
-	if (!is_func (u[1], LABEL) || (N(u) >= 3 && !is_func (u[2], LABEL))) {
-	  if (!is_func (u[1], LABEL)) {
-	    r << u[0];
-	    if (N(u) == 2) u= u[1];
-	    else u= u (1, N(u));
-	  }
-	  else {
-	    r << u (0, 2);
-	    if (N(u) == 3) u= u[2];
-	    else u= u (2, N(u));
-	  }
-	  if (is_atomic (u) && starts (u->label, " "))
-	    u= u->label (1, N(u->label));
-	  if (is_concat (u) && is_atomic (u[0]) && starts (u[0]->label, " "))
-	    u= tree (CONCAT, u[0]->label (1, N(u[0]->label))) * u (1, N(u));
-	  r << u;
-	}
-	else r << u;
+        if (N(u) > 2 && u[1] == " ")
+          u= u (0, 1) * u (2, N(u));
+        if (!is_func (u[1], LABEL) || (N(u) >= 3 && !is_func (u[2], LABEL))) {
+          if (!is_func (u[1], LABEL)) {
+            r << u[0];
+            if (N(u) == 2) u= u[1];
+            else u= u (1, N(u));
+          }
+          else {
+            r << u (0, 2);
+            if (N(u) == 3) u= u[2];
+            else u= u (2, N(u));
+          }
+          if (is_atomic (u) && starts (u->label, " "))
+            u= u->label (1, N(u->label));
+          if (is_concat (u) && is_atomic (u[0]) && starts (u[0]->label, " "))
+            u= tree (CONCAT, u[0]->label (1, N(u[0]->label))) * u (1, N(u));
+          r << u;
+        }
+        else r << u;
       }
     else r << u;
   }
@@ -1054,8 +1054,8 @@ complete_algorithm_if_else_if (tree t, bool in) {
       while (i<N(t) && !textm_algorithm_end_algo (t[i])
           && !(textm_algorithm_end_if (t[i]) && c==0)) {
         arg= concat();
-	      if (i>0 && is_apply (t[i-1], "algo-else") && N(t[i-1])>1)
-	        arg << t[i-1][1] << "\n";
+              if (i>0 && is_apply (t[i-1], "algo-else") && N(t[i-1])>1)
+                arg << t[i-1][1] << "\n";
         while (i<N(t) && !textm_algorithm_end_algo (t[i])
             && !(textm_algorithm_end_if_arg (t[i]) && c==0)) {
           if (is_func (t[i], BEGIN) && t[i][0] == "algo-if-else-if") c++;
@@ -1222,7 +1222,7 @@ is_preamble_command (tree t, tree& doc, string& style) {
   if (is_func (t, APPLY, 2)) {
     if (t[0] == "usepackage") return true;
     if ((t[0] == "documentstyle") ||
-	(t[0] == "documentclass")) {
+        (t[0] == "documentclass")) {
       style= get_latex_style (t);
       return true;
     }
@@ -1230,7 +1230,7 @@ is_preamble_command (tree t, tree& doc, string& style) {
   if (is_func (t, APPLY, 3)) {
     if (t[0] == "usepackage*") return true;
     if ((t[0] == "documentstyle*") ||
-	(t[0] == "documentclass*")) {
+        (t[0] == "documentclass*")) {
       style= get_latex_style (t);
       return true;
     }
@@ -1275,9 +1275,9 @@ is_ignored_redefinition (tree t) {
       if (latex_std_type ["\\begin-" * s] == "enunciation") return true;
       /*
       cout << s << " -> " << latex_type (s)
-	   << ", " << latex_type ("\\" * s)
-	   << ", " << latex_type ("\\begin-" * s)
-	   << ", " << latex_std_type ["\\begin-" * s] << LF;
+           << ", " << latex_type ("\\" * s)
+           << ", " << latex_type ("\\begin-" * s)
+           << ", " << latex_std_type ["\\begin-" * s] << LF;
       */
     }
   //cout << "Check " << t << LF;
@@ -1320,8 +1320,8 @@ handle_improper_matches (tree& r, tree t, int& pos) {
       handle_improper_matches (r, t, pos);
       if ((pos < N(t)) && (t[pos][0] == b[0])) r << t[pos++];
       else {
-	r << tree (RESET, copy (b[0]));
-	return;
+        r << tree (RESET, copy (b[0]));
+        return;
       }
     }
     else if (is_func (t[pos], RESET)) return;
@@ -1411,7 +1411,7 @@ handle_improper_matches (tree t) {
       int pos;
       tree u (r, 0);
       for (pos=0; pos<N(r); pos++)
-	handle_improper_matches (u, r, pos);
+        handle_improper_matches (u, r, pos);
       if (N(u)==0) return "";
       if (N(u)==1) return u[0];
       return u;
@@ -1866,7 +1866,7 @@ downgrade_newlines (tree t) {
     r[i]= downgrade_newlines (t[i]);
     if (i>0 && is_compound (t[i-1], "!emptyline"))
       if (is_func (t[i], NEW_LINE, 0))
-	r[i]= " ";
+        r[i]= " ";
   }
   return r;
 }
@@ -2168,12 +2168,12 @@ clean_vspace (tree t) {
     for (i=0; i<n; i++) {
       tree cur= clean_vspace (t[i]);
       if (is_concat (cur) && N(cur) > 1 &&
-	  is_func (cur[0], VSPACE))
-	cur[0]= tree (VAR_VSPACE, A(cur[0]));
+          is_func (cur[0], VSPACE))
+        cur[0]= tree (VAR_VSPACE, A(cur[0]));
       else if (is_concat (cur) && N(cur) > 2 &&
-	       is_func (cur[0], NO_INDENT) &&
-	       is_func (cur[1], VSPACE))
-	cur[1]= tree (VAR_VSPACE, A(cur[1]));
+               is_func (cur[0], NO_INDENT) &&
+               is_func (cur[1], VSPACE))
+        cur[1]= tree (VAR_VSPACE, A(cur[1]));
       bool eat= (i == n-1 || auto_vspace (t[i+1]));
       if (is_atomic (cur)) r << cur;
       else if (is_vspace (cur, true));

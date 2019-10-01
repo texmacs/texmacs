@@ -70,8 +70,8 @@ tm_writer::flush () {
     if (spc == " ") {
       if (xpos > 40) cr ();
       else {
-	buf << " ";
-	xpos++;
+        buf << " ";
+        xpos++;
       }
     }
     if ((xpos+n) < 78) {
@@ -80,26 +80,26 @@ tm_writer::flush () {
     }
     else for (i=0; i<n; ) {
       if (((i+1) < n) && (tmp[i] == '\\') && (tmp[i+1] == ' ')) {
-	/* not nice when searching text in a .tm file
-	if (xpos >= 76) {
-	  buf << "\\";
-	  cr ();
-	}
-	*/
-	buf << "\\ ";
-	xpos += 2;
-	i += 2;
+        /* not nice when searching text in a .tm file
+        if (xpos >= 76) {
+          buf << "\\";
+          cr ();
+        }
+        */
+        buf << "\\ ";
+        xpos += 2;
+        i += 2;
       }
       else {
-	/* not nice when searching text in a .tm file
-	if (xpos >= 77) {
-	  buf << "\\";
-	  cr ();
-	}
-	*/
-	buf << tmp[i];
-	xpos++;
-	i++;
+        /* not nice when searching text in a .tm file
+        if (xpos >= 77) {
+          buf << "\\";
+          cr ();
+        }
+        */
+        buf << tmp[i];
+        xpos++;
+        i++;
       }
     }
   }
@@ -145,19 +145,19 @@ tm_writer::write (string s, bool flag, bool encode_space) {
       char c= s[i];
       if ((c == ' ') && (!encode_space)) write_space ();
       else {
-	if (c == ' ') tmp << "\\ ";
-	else if (c == '\n') tmp << "\\n";
-	else if (c == '\t') tmp << "\\t";
-	else if (c == '\0') tmp << "\\0";
-	else if (c == '\\') tmp << "\\\\";
-	else if (c == '<') tmp << "\\<";
-	else if (c == '|') tmp << "\\|";
-	else if (c == '>') tmp << "\\>";
-	else if (c == '\34') tmp << c;
-	else if (((unsigned char) c) < ' ') tmp << '\\' << (c+'@');
-	else tmp << c;
-	spc_flag= false;
-	ret_flag= false;
+        if (c == ' ') tmp << "\\ ";
+        else if (c == '\n') tmp << "\\n";
+        else if (c == '\t') tmp << "\\t";
+        else if (c == '\0') tmp << "\\0";
+        else if (c == '\\') tmp << "\\\\";
+        else if (c == '<') tmp << "\\<";
+        else if (c == '|') tmp << "\\|";
+        else if (c == '>') tmp << "\\>";
+        else if (c == '\34') tmp << c;
+        else if (((unsigned char) c) < ' ') tmp << '\\' << (c+'@');
+        else tmp << c;
+        spc_flag= false;
+        ret_flag= false;
       }
     }
   }
@@ -207,9 +207,9 @@ tm_writer::apply (string func, array<tree> args) {
     for (i=0; i<n; i++) {
       if (is_empty (args[i])) br ();
       else {
-	br (2);
-	write (args[i]);
-	br (-2);
+        br (2);
+        write (args[i]);
+        br (-2);
       }
       if (i<(n-1)) tag ("<|", func, ">");
     }
@@ -218,25 +218,25 @@ tm_writer::apply (string func, array<tree> args) {
     
     for (i=0; i<=n; i++) {
       bool flag=
-	(i<n) && (is_document (args[i]) || is_func (args[i], COLLECTION));
+        (i<n) && (is_document (args[i]) || is_func (args[i], COLLECTION));
       if (i==0) { write ("<\\", false); write (func, true, true); }
       else if (i==last+1) {write ("</", false); write (func, true, true); }
       else if (is_document (args[i-1]) || is_func (args[i-1], COLLECTION)) {
-	write ("<|", false); write (func, true, true); }
+        write ("<|", false); write (func, true, true); }
       if (i==n) {
-	write (">", false);
-	break;
+        write (">", false);
+        break;
       }
 
       if (flag) {
-	write (">", false);
-	br (2);
-	write (args[i]);
-	br (-2);	
+        write (">", false);
+        br (2);
+        write (args[i]);
+        br (-2);        
       }
       else {
-	write ("|", false);
-	write (args[i]);
+        write ("|", false);
+        write (args[i]);
       }
     }
   }
@@ -265,7 +265,7 @@ tm_writer::write (tree t) {
       write ("<#", false);
       string s= as_string (t[0]);
       for (i=0; i<N(s); i++)
-	write (as_hexadecimal ((unsigned char) s[i], 2), false);
+        write (as_hexadecimal ((unsigned char) s[i], 2), false);
       write (">", false);
       break;
     }
@@ -287,8 +287,8 @@ tm_writer::write (tree t) {
       if (std_contains (s));
       else if ((N(s)>0) && (!is_iso_alpha (s)));
       else {
-	apply (s, A(t(1,n)));
-	break;
+        apply (s, A(t(1,n)));
+        break;
       }
     }
     apply (as_string (EXPAND), A(t));
@@ -299,8 +299,8 @@ tm_writer::write (tree t) {
     else {
       br (2);
       for (i=0; i<n; i++) {
-	write (t[i]);
-	if (i<(n-1)) br ();
+        write (t[i]);
+        if (i<(n-1)) br ();
       }
       br (-2);
     }
@@ -323,10 +323,10 @@ tree_to_texmacs (tree t) {
     tree r (t, n);
     for (i=0; i<n; i++)
       if (is_compound (t[i], "style", 1)) {
-	tree style= t[i][0];
-	if (is_func (style, TUPLE, 1)) style= style[0];
-	r[i]= copy (t[i]);
-	r[i][0]= style;
+        tree style= t[i][0];
+        if (is_func (style, TUPLE, 1)) style= style[0];
+        r[i]= copy (t[i]);
+        r[i][0]= style;
       }
       else r[i]= t[i];
     t= r;
