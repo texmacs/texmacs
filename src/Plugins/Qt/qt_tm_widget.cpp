@@ -163,10 +163,15 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   //    trying to figure this out :)
   
   bar->setMinimumWidth (2);
+#ifdef Q_WS_X11
+  int min_h= (int) floor (28 * retina_scale);
+  bar->setMinimumHeight (min_h);
+#else
   if (retina_scale > 1.0) {
     int min_h= (int) floor (20 * retina_scale);
     bar->setMinimumHeight (min_h);
   }
+#endif
   mw->setStatusBar (bar);
  
   // toolbars
@@ -341,6 +346,19 @@ qt_tm_widget_rep::~qt_tm_widget_rep () {
 
 void
 qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
+#ifdef Q_WS_X11
+  if (sz.height () >= 24) {
+    sz.setWidth (sz.width () + 4);
+    sz.setHeight (sz.height () + 8);
+  }
+  else if (sz.height () >= 20) {
+    sz.setWidth (sz.width () + 2);
+    sz.setHeight (sz.height () + 4);
+  }
+  else if (sz.height () >= 16) {
+    sz.setHeight (sz.height () + 4);
+  }
+#else
   if (sz.height () >= 24) {
     sz.setWidth (sz.width () + 2);
     sz.setHeight (sz.height () + 6);
@@ -351,6 +369,7 @@ qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
   else if (sz.height () >= 16) {
     sz.setHeight (sz.height () + 2);
   }
+#endif
   //sz.setHeight ((int) floor (sz.height () * retina_scale + 0.5));
 }
 
