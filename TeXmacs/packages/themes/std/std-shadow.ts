@@ -50,7 +50,7 @@
 
   <assign|south-east-round-shadow-picture|tmfs://artwork/pictures/shadows/round-shadow.png>
 
-  <assign|south-east-round-shadow-align|south east>
+  <assign|south-east-round-shadow-align|inner>
 
   <assign|south-east-round-shadow-lcrop|0.05>
 
@@ -60,13 +60,21 @@
 
   <assign|south-east-round-shadow-tcrop|0.95>
 
-  <assign|south-east-round-shadow-lborder|0.75em>
+  <assign|south-east-round-shadow-lborder|1em>
 
-  <assign|south-east-round-shadow-rborder|0.75em>
+  <assign|south-east-round-shadow-rborder|1em>
 
-  <assign|south-east-round-shadow-bborder|0.75em>
+  <assign|south-east-round-shadow-bborder|1em>
 
-  <assign|south-east-round-shadow-tborder|0.75em>
+  <assign|south-east-round-shadow-tborder|1em>
+
+  <assign|south-east-round-shadow-loffset|0em>
+
+  <assign|south-east-round-shadow-roffset|0.55em>
+
+  <assign|south-east-round-shadow-boffset|-0.55em>
+
+  <assign|south-east-round-shadow-toffset|0em>
 
   <assign|south-east-round-shadow|<macro|body|<with-south-east-round|<art-shadow|<arg|body>>>>>
 

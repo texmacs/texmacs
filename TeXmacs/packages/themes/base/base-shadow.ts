@@ -50,13 +50,21 @@
 
   <assign|shadow-tborder|0.5em>
 
+  <assign|shadow-loffset|0em>
+
+  <assign|shadow-roffset|0em>
+
+  <assign|shadow-boffset|0em>
+
+  <assign|shadow-toffset|0em>
+
   <\active*>
     <\src-comment>
       Defaults
     </src-comment>
   </active*>
 
-  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|shadow-effect>|align|<value|shadow-align>|format|<value|shadow-format>|lcrop|<value|shadow-lcrop>|rcrop|<value|shadow-rcrop>|bcrop|<value|shadow-bcrop>|tcrop|<value|shadow-tcrop>|lwidth|<value|shadow-lborder>|rwidth|<value|shadow-rborder>|bheight|<value|shadow-bborder>|theight|<value|shadow-tborder>>|<tuple|text|normal>>>>
+  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|shadow-effect>|align|<value|shadow-align>|format|<value|shadow-format>|lcrop|<value|shadow-lcrop>|rcrop|<value|shadow-rcrop>|bcrop|<value|shadow-bcrop>|tcrop|<value|shadow-tcrop>|lwidth|<value|shadow-lborder>|rwidth|<value|shadow-rborder>|bheight|<value|shadow-bborder>|theight|<value|shadow-tborder>|loffset|<value|shadow-loffset>|roffset|<value|shadow-roffset>|boffset|<value|shadow-boffset>|toffset|<value|shadow-toffset>>|<tuple|text|normal>>>>
 
   <\active*>
     <\src-comment>
@@ -64,7 +72,7 @@
     </src-comment>
   </active*>
 
-  <new-theme|shadow|shadow-picture|shadow-effect|shadow-align|shadow-format|shadow-lcrop|shadow-rcrop|shadow-bcrop|shadow-tcrop|shadow-lborder|shadow-rborder|shadow-bborder|shadow-tborder>
+  <new-theme|shadow|shadow-picture|shadow-effect|shadow-align|shadow-format|shadow-lcrop|shadow-rcrop|shadow-bcrop|shadow-tcrop|shadow-lborder|shadow-rborder|shadow-bborder|shadow-tborder|shadow-loffset|shadow-roffset|shadow-boffset|shadow-toffset>
 
   \;
 </body>

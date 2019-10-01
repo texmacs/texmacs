@@ -136,6 +136,7 @@ art_box_rep::perform_rewritings () {
       tree lw= "", rw= "", bh= "", th= "";
       string al= "inner";
       string format= "xxx x.x xxx";
+      tree dxl= "", dxr= "", dyb= "", dyt= "";
       for (int j=2; j+1<N(data[i]); j+=2) {
         tree var= data[i][j];
         tree val= data[i][j+1];
@@ -150,6 +151,10 @@ art_box_rep::perform_rewritings () {
         else if (var == "bheight") bh= val;
         else if (var == "rwidth" ) rw= val;
         else if (var == "theight") th= val;
+        else if (var == "loffset") dxl= val;
+        else if (var == "roffset") dxr= val;
+        else if (var == "boffset") dyb= val;
+        else if (var == "toffset") dyt= val;
       }
       for (int row= 0; row <= 2; row++)
         for (int col= 0; col <= 2; col++)
@@ -180,6 +185,14 @@ art_box_rep::perform_rewritings () {
             if (row == 1 && !outb) t << tree ("bottom") << bh;
             if (row == 1 && !outt) t << tree ("top") << minus (th);
             if (row == 2) t << tree ("height") << th;
+            if (col == 0 && dxl != "") t << tree ("hoffset") << dxl;
+            if (col == 1 && dxl != "") t << tree ("loffset") << dxl;
+            if (col == 1 && dxr != "") t << tree ("roffset") << dxr;
+            if (col == 2 && dxr != "") t << tree ("hoffset") << dxr;
+            if (row == 0 && dyb != "") t << tree ("voffset") << dyb;
+            if (row == 1 && dyb != "") t << tree ("boffset") << dyb;
+            if (row == 1 && dyt != "") t << tree ("toffset") << dyt;
+            if (row == 2 && dyt != "") t << tree ("voffset") << dyt;
             new_data << t;
           }
     }
@@ -206,7 +219,7 @@ get_length (tree t, SI l) {
 
 void
 art_box_rep::get_image_extents (tree prg, SI& xl, SI& xr, SI& yb, SI& yt) {
-  SI xw= x2, yh= y2;
+  SI xw= x2, yh= y2, dxl= 0, dxr= 0, dyb= 0, dyt= 0;
   xl= 0; xr= x2; yb= 0; yt= y2;
   SI xl_ref= 0, xr_ref= x2, yb_ref= 0, yt_ref= y2;
   bool xl_done= false, xr_done= false, xw_done= false;
@@ -260,11 +273,25 @@ art_box_rep::get_image_extents (tree prg, SI& xl, SI& xr, SI& yb, SI& yt) {
       yt= get_length (prg[i+1], y2) + yt_ref;
       yt_done= true;
     }
+    else if (prg[i] == "hoffset")
+      dxl= dxr= get_length (prg[i+1], x2);
+    else if (prg[i] == "voffset")
+      dyb= dyt= get_length (prg[i+1], y2);
+    else if (prg[i] == "loffset")
+      dxl= get_length (prg[i+1], x2);
+    else if (prg[i] == "roffset")
+      dxr= get_length (prg[i+1], x2);
+    else if (prg[i] == "boffset")
+      dyb= get_length (prg[i+1], y2);
+    else if (prg[i] == "toffset")
+      dyt= get_length (prg[i+1], y2);
   }
   if (xw_done && xl_done && !xr_done) { xr= xl + xw; xr_done= true; }
   if (xw_done && xr_done && !xl_done) { xl= xr - xw; xl_done= true; }
   if (yh_done && yb_done && !yt_done) { yt= yb + yh; yt_done= true; }
   if (yh_done && yt_done && !yb_done) { yb= yt - yh; yb_done= true; }
+  xl += dxl; xr += dxr;
+  yb += dyb; yt += dyt;  
 }
 
 /******************************************************************************
