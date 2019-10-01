@@ -67,7 +67,7 @@
   (set! db-extra-fields (list))
   (set! db-limit #f))
 
-(tm-define (db-get-time)
+(define (db-get-time*)
   (cond ((== db-time :now) (current-time))
         ((== db-time :always) 0)
         ((number? db-time) db-time)
@@ -75,6 +75,9 @@
         (else
           (display* "db-time= " db-time "\n")
           (texmacs-error "db-get-time" "invalid time"))))
+
+(tm-define (db-get-time)
+  (exact->inexact (db-get-time*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic public interface
