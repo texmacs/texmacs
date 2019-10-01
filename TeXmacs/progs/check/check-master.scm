@@ -14,7 +14,11 @@
 
 (texmacs-module (check check-master)
   (:use (convert html htmltm-test)
+        (convert html tmhtml-test)
         (convert tools xmltm-test)
+        (convert tools tmlength-test)
+        (convert tools environment-test)
+        (convert mathml mathtm-test)
         (convert tmml tmmltm-test)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -77,5 +81,9 @@
 (tm-define (run-all-tests)
   (regtest-htmltm)
   (regtest-xmltm)
+  (regtest-tmlength)
+  (regtest-environment)
+  (regtest-mathtm)
+  (regtest-tmhtml)
   ;(regtest-tmmltm)
 )

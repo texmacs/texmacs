@@ -47,7 +47,7 @@
 	  (lambda ()
 	    (let ((env (environment)))
 	      (environment-ref env foo))))
-	 'texmacs-error)
+	 "")
    (test "unbound"
 	 (error-or-value
 	  (lambda ()
@@ -56,7 +56,7 @@
 	       env ((foo "bar"))
 	       (noop))
 	      (environment-ref env foo))))
-	 'texmacs-error)))
+	 "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test suite
