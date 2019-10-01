@@ -520,10 +520,10 @@ iconv_converter::~iconv_converter () {
 template<typename T>
 inline size_t
 iconv_adaptor(size_t(*iconv_func)(iconv_t, T, size_t *, char**, size_t*),
-	      iconv_t cd, char **inbuf, size_t *inbytesleft,
-	      char **outbuf, size_t *outbytesleft) {
+              iconv_t cd, char **inbuf, size_t *inbytesleft,
+              char **outbuf, size_t *outbytesleft) {
   return iconv_func (cd, (T) ((void*) inbuf), inbytesleft,
-		     outbuf, outbytesleft);
+                     outbuf, outbytesleft);
 }
 
 string apply (iconv_converter &conv, string input) {
@@ -543,10 +543,10 @@ string apply (iconv_converter &conv, string input) {
     c_string out_cp (out_left);
     char* out_cursor= out_cp;
     size_t r = iconv_adaptor(iconv, conv.cd,
-			     &in_cursor, &in_left, &out_cursor, &out_left);
+                             &in_cursor, &in_left, &out_cursor, &out_left);
     if(r == (size_t)-1 && errno != E2BIG) {
       if (conv.show_errors) {
-	convert_error << "Iconv conversion from " << conv.from
+        convert_error << "Iconv conversion from " << conv.from
                       << " to " << conv.to << " failed\n";
       }
       conv.successful= false;
@@ -654,14 +654,14 @@ hashtree_from_dictionary (
           key_string = convert_escapes (key_string, false);
         else if (key_escape == UTF8)
           key_string = convert_escapes (key_string, true);
-	else if (key_escape == CHAR_ENTITY)
-	  key_string = convert_char_entities (key_string);
+        else if (key_escape == CHAR_ENTITY)
+          key_string = convert_char_entities (key_string);
         if (val_escape == BIT2BIT)
           val_string = convert_escapes (val_string, false);
         else if (val_escape == UTF8)
           val_string = convert_escapes (val_string, true);
-	else if (val_escape == ENTITY_NAME)
-	  val_string = "&" * val_string * ";";
+        else if (val_escape == ENTITY_NAME)
+          val_string = "&" * val_string * ";";
         //cout << "key: " << key_string << " val: " << val_string << "\n";
         put_prefix_code(key_string,val_string,dic);        
       }

@@ -109,11 +109,11 @@ void load_html_entities (hashmap<string, string> table, string fname) {
   int i, n= N(t);
   for (i=0; i<n; i++)
     if (is_func (t[i], TUPLE, 2) &&
-	is_atomic (t[i][0]) && is_atomic (t[i][1]))
+        is_atomic (t[i][0]) && is_atomic (t[i][1]))
       {
-	string l= t[i][0]->label; if (is_quoted (l)) l= scm_unquote (l);
-	string r= t[i][1]->label; if (is_quoted (r)) r= scm_unquote (r);
-	table (l)= r;
+        string l= t[i][0]->label; if (is_quoted (l)) l= scm_unquote (l);
+        string r= t[i][1]->label; if (is_quoted (r)) r= scm_unquote (r);
+        table (l)= r;
       }
 }
 
@@ -221,7 +221,7 @@ xml_html_parser::transcode (string s2) {
         if (test (s, "\"")) {
           s += 1;
           val= parse_until ("\"");
-          skip_space ();	  
+          skip_space ();
         }
         else if (test (s, "'")) {
           s += 1;
@@ -633,12 +633,12 @@ xml_html_parser::build (tree& r) {
       tree sub= copy (a[i]); sub[0]= "tag";
       i++;
       if (html && html_empty_tag_table->contains (name))
-	r << sub;
+        r << sub;
       else {
-	stack= tuple (name, stack);
-	build (sub);
-	r << sub;
-	stack= stack[1];
+        stack= tuple (name, stack);
+        build (sub);
+        r << sub;
+        stack= stack[1];
       }
     }
     else if (is_tuple (a[i], "end")) {

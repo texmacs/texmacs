@@ -196,8 +196,8 @@ uni_locase_char (string s) {
   if (N(s) == 1) {
     unsigned char c= s[0];
     if ((c >= 'A' && c <= 'Z') ||
-	(c >= ((unsigned char) 0x80) && (c <= ((unsigned char) 0x9F))) ||
-	(c >= ((unsigned char) 0xC0) && (c <= ((unsigned char) 0xDF))))
+        (c >= ((unsigned char) 0x80) && (c <= ((unsigned char) 0x9F))) ||
+        (c >= ((unsigned char) 0xC0) && (c <= ((unsigned char) 0xDF))))
       return string ((char) (c + 0x20));
     return s;
   }
@@ -229,8 +229,8 @@ uni_upcase_char (string s) {
   if (N(s) == 1) {
     unsigned char c= s[0];
     if ((c >= 'a' && c <= 'z') ||
-	(c >= ((unsigned char) 0xA0) && (c <= ((unsigned char) 0xBF))) ||
-	(c >= ((unsigned char) 0xE0)))
+        (c >= ((unsigned char) 0xA0) && (c <= ((unsigned char) 0xBF))) ||
+        (c >= ((unsigned char) 0xE0)))
       return string ((char) (c - 0x20));
     return s;
   }

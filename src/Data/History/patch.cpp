@@ -229,7 +229,7 @@ operator << (tm_ostream& out, patch p) {
     else {
       out << "Composite" << INDENT;
       for (int i=0; i<N(p); i++)
-	out << LF << p[i];
+        out << LF << p[i];
       out << UNINDENT;
     }
     break;
@@ -298,7 +298,7 @@ is_applicable (patch p, tree t) {
   case PATCH_AUTHOR:
     for (int i=0; i<N(p); i++)
       if (!is_applicable (p[i], t))
-	return false;
+        return false;
     return true;
   case PATCH_BIRTH:
     return true;
@@ -364,8 +364,8 @@ invert (patch p, tree t) {
       int i, n=N(p);
       array<patch> r(n);
       for (i=0; i<n; i++) {
-	r[n-1-i]= invert (p[i], t);
-	t= clean_apply (p[i], t);
+        r[n-1-i]= invert (p[i], t);
+        t= clean_apply (p[i], t);
       }
       return patch (get_type (p) == PATCH_BRANCH, r);
     }
@@ -626,10 +626,10 @@ insert (array<patch>& a, patch p) {
       insert (a, p[i]);
   }
   else if (get_type (p) == PATCH_MODIFICATION &&
-	   N(a) > 0 &&
-	   get_type (a[N(a)-1]) == PATCH_MODIFICATION &&
-	   (get_inverse (a[N(a)-1]) == get_modification (p) &&
-	    get_modification (a[N(a)-1]) == get_inverse (p)))
+           N(a) > 0 &&
+           get_type (a[N(a)-1]) == PATCH_MODIFICATION &&
+           (get_inverse (a[N(a)-1]) == get_modification (p) &&
+            get_modification (a[N(a)-1]) == get_inverse (p)))
     {
       // cout << "Cancel " << a[N(a)-1] << " against " << p << "\n";
       a->resize (N(a) - 1);
@@ -644,20 +644,20 @@ compactify (patch p) {
     {
       double a= 0;
       for (int i=0; i<N(p); i++)
-	if (get_type (p[i]) != PATCH_AUTHOR) a= -1;
-	else if (a == 0) a= get_author (p[i]);
-	else if (a != get_author (p[i])) a= -1;
+        if (get_type (p[i]) != PATCH_AUTHOR) a= -1;
+        else if (a == 0) a= get_author (p[i]);
+        else if (a != get_author (p[i])) a= -1;
       if (a <= 0) {
-	array<patch> r;
-	insert (r, p);
-	if (N(r) == 1) return r[0];
-	return patch (r);
+        array<patch> r;
+        insert (r, p);
+        if (N(r) == 1) return r[0];
+        return patch (r);
       }
       else {
-	array<patch> r;
-	for (int i=0; i<N(p); i++) insert (r, p[i][0]);
-	if (N(r) == 1) return patch (a, r[0]);
-	return patch (a, patch (r));
+        array<patch> r;
+        for (int i=0; i<N(p); i++) insert (r, p[i][0]);
+        if (N(r) == 1) return patch (a, r[0]);
+        return patch (a, patch (r));
       }
     }
   case PATCH_BRANCH:

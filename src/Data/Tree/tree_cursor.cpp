@@ -34,7 +34,7 @@ is_inside (tree t, path p) {
   else if (is_func (t, RAW_DATA, 1))
     return p == path (0, 0);
   else return p->item >= 0 && p->item < N(t) &&
-	      is_inside (t[p->item], p->next);
+              is_inside (t[p->item], p->next);
 }
 
 path
@@ -115,7 +115,7 @@ bool
 is_accessible_cursor (tree t, path p) {
   if (is_atomic (t) || is_atom (p)) {
     if (get_writable_mode () == DRD_WRITABLE_INPUT &&
-	get_access_mode () != DRD_ACCESS_SOURCE)
+        get_access_mode () != DRD_ACCESS_SOURCE)
       return false;
     else if (is_atomic (t))
       return is_atom (p) && p->item >= 0 && p->item <= N(t->label);
@@ -125,9 +125,9 @@ is_accessible_cursor (tree t, path p) {
   else if (the_drd->is_parent_enforcing (t) &&
            get_access_mode () != DRD_ACCESS_SOURCE &&
            !graphics_in_path (t, p) &&
-	   ((p->item == lowest_accessible_child (t) &&
+           ((p->item == lowest_accessible_child (t) &&
              p->next == start (t[p->item])) ||
-	    (p->item == highest_accessible_child (t) &&
+            (p->item == highest_accessible_child (t) &&
              p->next == end (t[p->item]))))
     return false;
   else switch (L(t)) {
@@ -147,23 +147,23 @@ is_accessible_cursor (tree t, path p) {
           get_access_mode () != DRD_ACCESS_SOURCE)
         return false;
       else if (the_drd->get_env_child (t, p->item, MODE, "") == "src") {
-	int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
-	bool r= is_accessible_cursor (t[p->item], p->next);
-	set_access_mode (old_mode);
-	return r;
+        int old_mode= set_access_mode (DRD_ACCESS_SOURCE);
+        bool r= is_accessible_cursor (t[p->item], p->next);
+        set_access_mode (old_mode);
+        return r;
       }
       else {
-	int old_mode= get_writable_mode ();
-	if (old_mode != DRD_WRITABLE_ANY) {
-	  int w= the_drd->get_writability_child (t, p->item);
-	  if (w == WRITABILITY_DISABLE)
-	    set_writable_mode (DRD_WRITABLE_INPUT);
-	  else if (w == WRITABILITY_ENABLE)
-	    set_writable_mode (DRD_WRITABLE_NORMAL);
-	}
-	bool r= is_accessible_cursor (t[p->item], p->next);
-	set_writable_mode (old_mode);
-	return r;
+        int old_mode= get_writable_mode ();
+        if (old_mode != DRD_WRITABLE_ANY) {
+          int w= the_drd->get_writability_child (t, p->item);
+          if (w == WRITABILITY_DISABLE)
+            set_writable_mode (DRD_WRITABLE_INPUT);
+          else if (w == WRITABILITY_ENABLE)
+            set_writable_mode (DRD_WRITABLE_NORMAL);
+        }
+        bool r= is_accessible_cursor (t[p->item], p->next);
+        set_writable_mode (old_mode);
+        return r;
       }
     }
 }
@@ -199,29 +199,29 @@ closest_accessible (tree t, path p, int dir) {
         }
       }
       if (the_drd->is_accessible_child (t, j)) {
-	// FIXME: certain tags modify source accessability props
-	// FIXME: cells with non-trivial span may lead to unaccessability
-	// FIXME: very dynamic markup should be treated after typesetting
-	if (is_atom (p) && is_atomic (t[j]))
-	  return path (j, p->item * (j < k? N (t[j]->label): 0));
+        // FIXME: certain tags modify source accessability props
+        // FIXME: cells with non-trivial span may lead to unaccessability
+        // FIXME: very dynamic markup should be treated after typesetting
+        if (is_atom (p) && is_atomic (t[j]))
+          return path (j, p->item * (j < k? N (t[j]->label): 0));
         int  ind = right_index (t[j]);
-	path sp  = (j == k? p->next: (j < k? path (ind): path (0)));
+        path sp  = (j == k? p->next: (j < k? path (ind): path (0)));
         int  sdir= (j == k? dir: (j < k? -1: 1));
         path prop= (p == path (0)? p: path (ind));
         path sp2 = (is_nil (sp)? prop: sp);
-	path r   = closest_accessible (t[j], sp2, sdir);
-	if (!is_nil (r)) {
-	  r= path (j, r);
-	  if (!is_concat (t) || !next_without_border (t, r)) {
-	    if (the_drd->is_parent_enforcing (t) &&
+        path r   = closest_accessible (t[j], sp2, sdir);
+        if (!is_nil (r)) {
+          r= path (j, r);
+          if (!is_concat (t) || !next_without_border (t, r)) {
+            if (the_drd->is_parent_enforcing (t) &&
                 !graphics_in_path (t, p) &&
                 !is_accessible_cursor (t, p)) {
-	      if (r->item == lowest_accessible_child (t)) return path (0);
-	      if (r->item == highest_accessible_child (t)) return path (1);
-	    }
-	    return r;
-	  }
-	}
+              if (r->item == lowest_accessible_child (t)) return path (0);
+              if (r->item == highest_accessible_child (t)) return path (1);
+            }
+            return r;
+          }
+        }
       }
     }
     return path ();
@@ -270,7 +270,7 @@ shift (tree t, path p, int dir) {
   else if (is_concat (t) && p->next == extreme (t[p->item], dir)) {
     for (int i= p->item + dir; i >= 0 && i < N(t); i += dir)
       if (the_drd -> is_accessible_child (t, i))
-	return path (i, extreme (t[i], -dir));
+        return path (i, extreme (t[i], -dir));
     return p;
   }
   else return path (p->item, shift (t[p->item], p->next, dir));
@@ -383,7 +383,7 @@ pre_correct (tree t, path p) {
       return path (0);
     if (r->item == highest_accessible_child (t) &&
         !valid_cursor (t, p, false))
-      return path (1);	    
+      return path (1);      
   }
   return r;
 }
@@ -503,7 +503,7 @@ up_correct (tree t, path p, bool active= true) {
   if ((p->item<0) || (p->item>=N(t))) return path ();
   if (active && (!the_drd->is_accessible_child (t, p->item))) return path ();
   return path (p->item,
-	       up_correct (t[p->item], p->next, !is_mod_active_once (t)));
+               up_correct (t[p->item], p->next, !is_mod_active_once (t)));
 }
 
 path

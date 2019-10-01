@@ -257,6 +257,6 @@ link_announce (observer obs, modification mod) {
   for (list<string> ids= pointer_resolve [obs];
        !is_nil (ids); ids= ids->next)
     for (list<tree> lns= get_links (compound ("id", ids->item));
-	 !is_nil (lns); lns= lns->next)
+         !is_nil (lns); lns= lns->next)
       link_announce (lns->item, ids->item, mod);
 }

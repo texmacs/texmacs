@@ -68,20 +68,20 @@ upgrade_probable (array<int> tp_in) {
     if (tp[i] >= SYMBOL_PROBABLE_OPEN) {
       int j= i-1;
       while (j >= 0 && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
-	j--;
+        j--;
       if (j < 0 ||
-	  tp[j] == SYMBOL_PREFIX ||
-	  tp[j] == SYMBOL_INFIX ||
-	  tp[j] == SYMBOL_SEPARATOR)
-	tp[i]= SYMBOL_PROBABLE_OPEN;
+          tp[j] == SYMBOL_PREFIX ||
+          tp[j] == SYMBOL_INFIX ||
+          tp[j] == SYMBOL_SEPARATOR)
+        tp[i]= SYMBOL_PROBABLE_OPEN;
       j= i+1;
       while (j < N(tp) && (tp[j] == SYMBOL_SKIP || tp[j] == SYMBOL_SCRIPT))
-	j++;
+        j++;
       if (j >= N(tp) ||
-	  tp[j] == SYMBOL_POSTFIX ||
-	  tp[j] == SYMBOL_INFIX ||
-	  tp[j] == SYMBOL_SEPARATOR)
-	tp[i]= SYMBOL_PROBABLE_CLOSE;
+          tp[j] == SYMBOL_POSTFIX ||
+          tp[j] == SYMBOL_INFIX ||
+          tp[j] == SYMBOL_SEPARATOR)
+        tp[i]= SYMBOL_PROBABLE_CLOSE;
     }
   return tp;
 }
@@ -135,15 +135,15 @@ detect_french_interval (array<tree> a, array<int> tp_in) {
     }
     else if (tp[i] >= SYMBOL_OPEN) {
       if (tp[i] == SYMBOL_OPEN || tp[i] == SYMBOL_PROBABLE_OPEN) {
-	last_open= i;
-	last_comma= -1;
+        last_open= i;
+        last_comma= -1;
       }
       else if (tp[i] == SYMBOL_CLOSE || tp[i] == SYMBOL_PROBABLE_CLOSE) {
-	if (last_open != -1 && last_comma != -1 && last_comma != i-1) {
-	  tp[last_open]= SYMBOL_OPEN;
-	  tp[i]= SYMBOL_CLOSE;
-	}
-	else last_open= last_comma= -1;
+        if (last_open != -1 && last_comma != -1 && last_comma != i-1) {
+          tp[last_open]= SYMBOL_OPEN;
+          tp[i]= SYMBOL_CLOSE;
+        }
+        else last_open= last_comma= -1;
       }
       else if (tp[i] == SYMBOL_MIDDLE || tp[i] == SYMBOL_PROBABLE_MIDDLE);
       else last_open= last_comma= -1;
@@ -162,12 +162,12 @@ detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
     if (tp[i] == SYMBOL_SEPARATOR) last_open= -1;
     else if (tp[i] >= SYMBOL_OPEN) {
       if (tp[i] == SYMBOL_PROBABLE_OPEN ||
-	  (last_open == -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
-	last_open= i;
+          (last_open == -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
+        last_open= i;
       else if (tp[i] == SYMBOL_PROBABLE_CLOSE ||
-	       (last_open != -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
-	{
-	  if (last_open != -1 &&
+               (last_open != -1 && tp[i] == SYMBOL_PROBABLE_MIDDLE))
+        {
+          if (last_open != -1 &&
               a[i] == a[last_open] &&
               ((tp[last_open] == SYMBOL_PROBABLE_OPEN) ||
                (tp[i] == SYMBOL_PROBABLE_CLOSE) ||
@@ -176,14 +176,14 @@ detect_absolute (array<tree> a, array<int> tp_in, bool insist) {
                (insist &&
                 !is_dubious_open_middle (tp, last_open) &&
                 !is_dubious_close_middle (tp, i))))
-	    {
-	      tp[last_open]= SYMBOL_OPEN;
-	      tp[i]= SYMBOL_CLOSE;
+            {
+              tp[last_open]= SYMBOL_OPEN;
+              tp[i]= SYMBOL_CLOSE;
               last_open= -1;
-	    }
-	  else if (tp[i] == SYMBOL_PROBABLE_MIDDLE) last_open= i;
-	  else last_open= -1;
-	}
+            }
+          else if (tp[i] == SYMBOL_PROBABLE_MIDDLE) last_open= i;
+          else last_open= -1;
+        }
       else last_open= -1;
     }
   return tp;
@@ -197,13 +197,13 @@ detect_probable (array<tree> a, array<int> tp_in) {
   for (int i=0; i<N(tp); i++)
     if (tp[i] >= SYMBOL_OPEN) {
       if (tp[i] == SYMBOL_OPEN || tp[i] == SYMBOL_PROBABLE_OPEN)
-	last_open= i;
+        last_open= i;
       else if (tp[i] == SYMBOL_CLOSE || tp[i] == SYMBOL_PROBABLE_CLOSE) {
-	if (last_open != -1) {
-	  tp[last_open]= SYMBOL_OPEN;
-	  tp[i]= SYMBOL_CLOSE;
-	}
-	else last_open= -1;
+        if (last_open != -1) {
+          tp[last_open]= SYMBOL_OPEN;
+          tp[i]= SYMBOL_CLOSE;
+        }
+        else last_open= -1;
       }
       else if (tp[i] == SYMBOL_MIDDLE || tp[i] == SYMBOL_PROBABLE_MIDDLE);
       else last_open= -1;
@@ -320,14 +320,14 @@ infix_split (array<tree> a, array<int> tp_in, array<int> pri, int level) {
     if (tp[i] == SYMBOL_OPEN_BIG)
       weakest= min (weakest, pri[i]);
     else if (tp[i] == SYMBOL_INFIX ||
-	     tp[i] == SYMBOL_SEPARATOR ||
-	     tp[i] == SYMBOL_MIDDLE ||
-	     tp[i] == SYMBOL_PROBABLE_MIDDLE)
+             tp[i] == SYMBOL_SEPARATOR ||
+             tp[i] == SYMBOL_MIDDLE ||
+             tp[i] == SYMBOL_PROBABLE_MIDDLE)
       if (pri[i] <= weakest) {
-	array<tree> r= upgrade_brackets (range (a, 0, i), level);
-	r << range (a, i, i+1);
-	r << upgrade_brackets (range (a, i+1, N(a)), level);
-	return r;
+        array<tree> r= upgrade_brackets (range (a, 0, i), level);
+        r << range (a, i, i+1);
+        r << upgrade_brackets (range (a, i+1, N(a)), level);
+        return r;
       }
   return a;
 }
@@ -337,15 +337,15 @@ postfix_split (array<tree> a, array<int> tp_in, int level) {
   array<int> tp= upgrade_probable (tp_in);
   int i= N(a);
   while (i>0 &&
-	 (tp[i-1] == SYMBOL_PREFIX ||
-	  tp[i-1] == SYMBOL_INFIX ||
-	  tp[i-1] == SYMBOL_SEPARATOR ||
-	  tp[i-1] == SYMBOL_OPEN ||
-	  tp[i-1] == SYMBOL_MIDDLE ||
-	  tp[i-1] == SYMBOL_PROBABLE_OPEN ||
-	  tp[i-1] == SYMBOL_PROBABLE_MIDDLE ||
-	  tp[i-1] == SYMBOL_SKIP ||
-	  a[i-1] == "."))
+         (tp[i-1] == SYMBOL_PREFIX ||
+          tp[i-1] == SYMBOL_INFIX ||
+          tp[i-1] == SYMBOL_SEPARATOR ||
+          tp[i-1] == SYMBOL_OPEN ||
+          tp[i-1] == SYMBOL_MIDDLE ||
+          tp[i-1] == SYMBOL_PROBABLE_OPEN ||
+          tp[i-1] == SYMBOL_PROBABLE_MIDDLE ||
+          tp[i-1] == SYMBOL_SKIP ||
+          a[i-1] == "."))
     i--;
   if (i != N(a)) {
     array<tree> r= upgrade_brackets (range (a, 0, i), level);
@@ -387,15 +387,15 @@ upgrade_above_below (tree t) {
       r[i]= upgrade_above_below (t[i]);
     if (is_func (r, ABOVE, 2)) {
       if (is_func (r[0], BIG))
-	r= tree (CONCAT, r[0], tree (RSUP, r[1]));
+        r= tree (CONCAT, r[0], tree (RSUP, r[1]));
       else if (is_concat_big (r[0]))
-	r= tree (r[0] * tree (CONCAT, tree (RSUP, r[1])));
+        r= tree (r[0] * tree (CONCAT, tree (RSUP, r[1])));
     }
     if (is_func (r, BELOW, 2)) {
       if (is_func (r[0], BIG))
-	r= tree (CONCAT, r[0], tree (RSUB, r[1]));
+        r= tree (CONCAT, r[0], tree (RSUB, r[1]));
       else if (is_concat_big (r[0]))
-	r= tree (r[0] * tree (CONCAT, tree (RSUB, r[1])));
+        r= tree (r[0] * tree (CONCAT, tree (RSUB, r[1])));
     }
     return r;
   }
@@ -472,7 +472,7 @@ upgrade_brackets_bis (tree t, string mode) {
       tree tmode= the_drd->get_env_child (t, i, MODE, mode);
       string smode= (is_atomic (tmode)? tmode->label: string ("text"));
       if (is_correctable_child (t, i, true))
-	r[i]= upgrade_brackets_bis (t[i], smode);
+        r[i]= upgrade_brackets_bis (t[i], smode);
       else r[i]= t[i];
     }
   }
@@ -527,7 +527,7 @@ downgrade_bracket (tree t, bool large) {
   if (!is_atomic (t)) {
     if (large && N(t) > 0)
       if (is_func (t, LEFT) || is_func (t, MID) || is_func (t, RIGHT))
-	return t[0];
+        return t[0];
     return t;
   }
   string s= t->label;

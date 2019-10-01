@@ -214,11 +214,11 @@ drd_info_rep::insert_point (tree_label l, int i, int n) {
   case ARITY_REPEAT:
     return (i >= 0) &&
            ((i < ((int) pi.arity_base)) ||
-	    ((i - pi.arity_base) % pi.arity_extra) == 0);
+            ((i - pi.arity_base) % pi.arity_extra) == 0);
   case ARITY_VAR_REPEAT:
     return (i >= 0) &&
            ((i > (n - ((int) pi.arity_base))) ||
-	    (i % pi.arity_extra == 0));
+            (i % pi.arity_extra == 0));
   }
   return false; // NOT REACHED
 }
@@ -671,7 +671,7 @@ drd_env_write (tree env, string var, tree val) {
       return env * tree (ATTR, var, val);
     else if (var <= env[i]->label) {
       if (var == env[i]->label)
-	return env (0, i) * tree (ATTR, var, val) * env (i+2, N(env));
+        return env (0, i) * tree (ATTR, var, val) * env (i+2, N(env));
       return env (0, i) * tree (ATTR, var, val) * env (i, N(env));
     }
   return env;
@@ -731,16 +731,16 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
   else {
     /* makes cursor movement (is_accessible_cursor) slow for large preambles
     if (L(t) == DOCUMENT && N(t) > 0 &&
-	(is_compound (t[0], "hide-preamble", 1) ||
-	 is_compound (t[0], "show-preamble", 1)))
+        (is_compound (t[0], "hide-preamble", 1) ||
+         is_compound (t[0], "show-preamble", 1)))
       {
-	tree u= t[0][0];
-	if (!is_func (u, DOCUMENT)) u= tree (DOCUMENT, u);
-	tree cenv (ATTR);
-	for (int i=0; i<N(u); i++)
-	  if (is_func (u[i], ASSIGN, 2))
-	    cenv << copy (u[i][0]) << copy (u[i][1]);
-	env= drd_env_merge (env, cenv);
+        tree u= t[0][0];
+        if (!is_func (u, DOCUMENT)) u= tree (DOCUMENT, u);
+        tree cenv (ATTR);
+        for (int i=0; i<N(u); i++)
+          if (is_func (u[i], ASSIGN, 2))
+            cenv << copy (u[i][0]) << copy (u[i][1]);
+        env= drd_env_merge (env, cenv);
       }
     */
 
@@ -750,9 +750,9 @@ drd_info_rep::get_env_child (tree t, int i, tree env) {
     tree cenv= drd_decode (ti->ci[index].env);
     for (int i=1; i<N(cenv); i+=2)
       if (is_func (cenv[i], ARG, 1) && is_int (cenv[i][0])) {
-	cenv= copy (cenv);
-	int j= as_int (cenv[i][0]);
-	if (j>=0 && j<N(t)) cenv[i]= copy (t[j]);
+        cenv= copy (cenv);
+        int j= as_int (cenv[i][0]);
+        if (j>=0 && j<N(t)) cenv[i]= copy (t[j]);
       }
     return drd_env_merge (env, cenv);
   }
@@ -811,8 +811,8 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type, bool& found) {
     if (get_nr_indices (inner) > 0)
       type= get_type_child (tree (inner, arg), 0);
     if ((get_nr_indices (inner) > 0) &&
-	(get_accessible (inner, 0) == ACCESSIBLE_ALWAYS) &&
-	all_accessible (outer))
+        (get_accessible (inner, 0) == ACCESSIBLE_ALWAYS) &&
+        all_accessible (outer))
       return env;
     return "";
   }
@@ -832,7 +832,7 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type, bool& found) {
   }
   else if (is_func (t, COMPOUND) && N(t) >= 1 && is_atomic (t[0]))
     return arg_access (compound (t[0]->label, A (t (1, N(t)))),
-		       arg, env, type, found);
+                       arg, env, type, found);
   else if ((is_func (t, IF) || is_func (t, VAR_IF)) && N(t) >= 2)
     return arg_access (t[1], arg, env, type, found);
   else {
@@ -843,8 +843,8 @@ drd_info_rep::arg_access (tree t, tree arg, tree env, int& type, bool& found) {
       tree cenv  = get_env_child (t, i, env);
       tree aenv  = arg_access (t[i], arg, cenv, ctype, cfound);
       if (aenv != "") {
-	if (ctype != TYPE_INVALID) { type= ctype; found= cfound; }
-	if (is_accessible_child (t, i)) return aenv;
+        if (ctype != TYPE_INVALID) { type= ctype; found= cfound; }
+        if (is_accessible_child (t, i)) return aenv;
       }
       else if (cfound /*type == TYPE_UNKNOWN*/ &&
                ctype != TYPE_INVALID &&
@@ -864,8 +864,8 @@ rewrite_symbolic_arguments (tree macro, tree& env) {
   for (int i=1; i<N(env); i+=2)
     if (is_func (env[i], ARG, 1)) {
       for (int j=0; j+1<N(macro); j++)
-	if (macro[j] == env[i][0])
-	  env[i]= tree (ARG, as_tree (j));
+        if (macro[j] == env[i][0])
+          env[i]= tree (ARG, as_tree (j));
     }
 }
 
@@ -1023,9 +1023,9 @@ drd_info_rep::heuristic_init (hashmap<string,tree> env2) {
       if (is_atomic (val))
         flag= heuristic_init_parameter (var, val->label) | flag;
       else if (is_func (val, MACRO))
-	flag= heuristic_init_macro (var, val) | flag;
+        flag= heuristic_init_macro (var, val) | flag;
       else if (is_func (val, XMACRO))
-	flag= heuristic_init_xmacro (var, val) | flag;
+        flag= heuristic_init_xmacro (var, val) | flag;
       else
         flag= heuristic_init_parameter (var, val) | flag;
     }

@@ -397,16 +397,16 @@ archiver_rep::simplify () {
       bool r= join (p1, p2, the_et);
       //cout << "pr= " << p1 << "\n";
       if (r) {
-	//cout << "\n\nSimplify\n";
-	//show_all ();
-	patch un= patch (p1, cdr (get_undo (cdr (get_undo (archive)))));
-	patch re= get_redo (archive);
-	archive= make_history (un, re);
-	//show_all ();
-	//cout << "\n";
-	if (depth == last_autosave + 1) last_autosave= -1;
-	depth--;
-	simplify ();
+        //cout << "\n\nSimplify\n";
+        //show_all ();
+        patch un= patch (p1, cdr (get_undo (cdr (get_undo (archive)))));
+        patch re= get_redo (archive);
+        archive= make_history (un, re);
+        //show_all ();
+        //cout << "\n";
+        if (depth == last_autosave + 1) last_autosave= -1;
+        depth--;
+        simplify ();
       }
     }
 }
@@ -462,7 +462,7 @@ archiver_rep::redo_one (int i) {
     //cout << "q= " << q << "\n";
     apply (p);
     patch other= make_branches (append (branches (re, 0, i),
-					branches (re, i+1, n)));
+                                        branches (re, i+1, n)));
     //cout << "other= " << other << "\n";
     patch nx= make_history (un, other);
     archive= make_history (patch (q, nx), cdr (branch (re, i)));

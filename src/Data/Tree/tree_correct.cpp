@@ -24,7 +24,7 @@ drd_correct (drd_info drd, tree t) {
   else {
     int i, n= N(t);
     if (drd->contains (as_string (L(t))) &&
-	!drd->correct_arity (L(t), n))
+        !drd->correct_arity (L(t), n))
       return "";
     tree r (t, n);
     for (i=0; i<n; i++)
@@ -189,29 +189,29 @@ with_correct (tree t) {
     array<tree> r;
     for (i=0; i<n; i++) {
       if (is_with_like (a[i])) {
-	array<tree> b= with_decompose (a[i], with_body (a[i]));
-	int p= N(b), k1, k2;
-	for (k1=0; k1<p ; k1++)
-	  if (is_with_like (b[k1]) && with_similar_type (a[i], b[k1]));
-	  else break;
-	for (k2=p; k2>k1; k2--)
-	  if (is_with_like (b[k2-1]) && with_similar_type (a[i], b[k2-1]));
-	  else break;
-	array<tree> x;
-	if (0  < k1) x << range (b, 0, k1);
-	if (k1 < k2) x << with_recompose (a[i], range (b, k1, k2));
-	if (k2 < p ) x << range (b, k2, p);
-	if (N(x) == 0) continue;
-	if (N(r) != 0 &&
-	    is_with_like (r[N(r)-1]) &&
-	    with_same_type (r[N(r)-1], x[0]))
-	  {
-	    array<tree> c= concat_decompose (with_body (r[N(r)-1]));
-	    c << concat_decompose (with_body (x[0]));
-	    r[N(r)-1]= with_recompose (x[0], c);
-	    r << range (x, 1, N(x));
-	  }
-	else r << x;
+        array<tree> b= with_decompose (a[i], with_body (a[i]));
+        int p= N(b), k1, k2;
+        for (k1=0; k1<p ; k1++)
+          if (is_with_like (b[k1]) && with_similar_type (a[i], b[k1]));
+          else break;
+        for (k2=p; k2>k1; k2--)
+          if (is_with_like (b[k2-1]) && with_similar_type (a[i], b[k2-1]));
+          else break;
+        array<tree> x;
+        if (0  < k1) x << range (b, 0, k1);
+        if (k1 < k2) x << with_recompose (a[i], range (b, k1, k2));
+        if (k2 < p ) x << range (b, k2, p);
+        if (N(x) == 0) continue;
+        if (N(r) != 0 &&
+            is_with_like (r[N(r)-1]) &&
+            with_same_type (r[N(r)-1], x[0]))
+          {
+            array<tree> c= concat_decompose (with_body (r[N(r)-1]));
+            c << concat_decompose (with_body (x[0]));
+            r[N(r)-1]= with_recompose (x[0], c);
+            r << range (x, 1, N(x));
+          }
+        else r << x;
       }
       else r << a[i];
     }
@@ -233,7 +233,7 @@ superfluous_with_correct (tree t, tree env) {
     tree r (t, N(t));
     for (int i=0; i<N(t); i++)
       r[i]= superfluous_with_correct
-	      (t[i], the_drd->get_env_child (t, i, env));
+              (t[i], the_drd->get_env_child (t, i, env));
     if (is_compound (r, "math", 1) && r[0] == "") return "";
     else if (is_compound (r, "text", 1) && r[0] == "") return "";
     else if (is_compound (r, "math", 1) && drd_env_read (env, MODE) == "math")
@@ -242,8 +242,8 @@ superfluous_with_correct (tree t, tree env) {
       return r[0];
     else if (is_func (r, WITH)) {
       for (int i=0; i+1<N(r); i+=2)
-	if (!is_atomic (r[i])) return r;
-	else if (drd_env_read (env, r[i]->label) != r[i+1]) return r;
+        if (!is_atomic (r[i])) return r;
+        else if (drd_env_read (env, r[i]->label) != r[i+1]) return r;
       return r[N(r)-1];
     }
     else if (is_func (r, CONCAT)) {
@@ -274,17 +274,17 @@ homoglyph_correct (array<tree> a) {
     else if (a[i] == "\\" || a[i] == "<backslash>") {
       int j1, j2;
       for (j1= i-1; j1>=0; j1--)
-	if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
+        if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
       for (j2= i+1; j2<N(a); j2++)
-	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT) break;
+        if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT) break;
       if (j1 < 0 || j2 >= N(a));
       else if ((a[i] == "\\" ||
-		a[i] == "<backslash>") &&
-	       ((tp[j1] == SYMBOL_BASIC) ||
-		(tp[j1] == SYMBOL_POSTFIX)) &&
-	       ((tp[j2] == SYMBOL_BASIC) ||
-		(tp[j2] == SYMBOL_PREFIX)))
-	r << tree ("<setminus>");
+                a[i] == "<backslash>") &&
+               ((tp[j1] == SYMBOL_BASIC) ||
+                (tp[j1] == SYMBOL_POSTFIX)) &&
+               ((tp[j2] == SYMBOL_BASIC) ||
+                (tp[j2] == SYMBOL_PREFIX)))
+        r << tree ("<setminus>");
       else r << a[i];
     }
     else if (is_func (a[i], NEG, 1) && is_atomic (a[i][0])) {
@@ -354,7 +354,7 @@ homoglyph_correct (tree t, string mode) {
     for (i=0; i<n; i++) {
       string smode= get_submode (t, i, mode);
       if (is_correctable_child (t, i))
-	r[i]= homoglyph_correct (t[i], smode);
+        r[i]= homoglyph_correct (t[i], smode);
       else r[i]= t[i];
     }
   }
@@ -389,22 +389,22 @@ superfluous_invisible_correct (array<tree> a) {
     if (a[i] == " " || a[i] == "*") {
       int j1, j2;
       for (j1= i-1; j1>=0; j1--)
-	if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
-	else if (a[j1] == " ") break;
+        if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
+        else if (a[j1] == " ") break;
       for (j2= i+1; j2<N(a); j2++)
-	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT)
-	  if (a[j2] != " " && a[j2] != "*") break;
+        if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT)
+          if (a[j2] != " " && a[j2] != "*") break;
       //cout << "  " << i << ": " << j1 << ", " << j2
       //<< "; " << tp[j1] << ", " << tp[j2] << "\n";
       if (j1 < 0 || j2 >= N(a));
       else if (a[j1] == " " || a[j1] == "*");
       else if (tp[j1] == SYMBOL_PREFIX ||
-	       tp[j1] == SYMBOL_INFIX ||
-	       tp[j1] == SYMBOL_SEPARATOR ||
+               tp[j1] == SYMBOL_INFIX ||
+               tp[j1] == SYMBOL_SEPARATOR ||
                tp[j1] == SYMBOL_PROBABLE_MIDDLE);
       else if (tp[j2] == SYMBOL_POSTFIX ||
-	       tp[j2] == SYMBOL_INFIX ||
-	       tp[j2] == SYMBOL_SEPARATOR ||
+               tp[j2] == SYMBOL_INFIX ||
+               tp[j2] == SYMBOL_SEPARATOR ||
                tp[j2] == SYMBOL_PROBABLE_MIDDLE);
       else r << a[i];
     }
@@ -428,9 +428,9 @@ superfluous_invisible_correct (tree t, string mode) {
       //cout << "  " << i << ": " << is_correctable_child (t, i)
       //<< ", " << smode << "\n";
       if (is_func (t, WITH) && i != N(t)-1)
-	r[i]= t[i];
+        r[i]= t[i];
       else if (is_correctable_child (t, i))
-	r[i]= superfluous_invisible_correct (t[i], smode);
+        r[i]= superfluous_invisible_correct (t[i], smode);
       else r[i]= t[i];
     }
   }
@@ -440,16 +440,16 @@ superfluous_invisible_correct (tree t, string mode) {
     int i, found= -1;
     for (i=0; i<N(r); i++)
       if (is_compound (r[i], "hide-preamble") ||
-	  is_compound (r[i], "show-preamble"))
-	{
-	  ok= (found == -1);
-	  found= i;
-	}
+          is_compound (r[i], "show-preamble"))
+        {
+          ok= (found == -1);
+          found= i;
+        }
       else if (!is_atomic (r[i])) ok= false;
       else {
-	string s= r[i]->label;
-	for (int j=0; j<N(s); j++)
-	  if (s[j] != ' ') ok= false;
+        string s= r[i]->label;
+        for (int j=0; j<N(s); j++)
+          if (s[j] != ' ') ok= false;
       }
     if (ok) r= r[found];
   }
@@ -541,28 +541,28 @@ invisible_corrector::count_invisible (array<tree> a) {
     if (is_atomic (a[i]) && is_letter_like (a[i]->label)) {
       int j1, j2;
       for (j1= i-1; j1>=0; j1--)
-	if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
-	else if (a[j1] == " ") break;
+        if (tp[j1] != SYMBOL_SKIP && tp[j1] != SYMBOL_SCRIPT) break;
+        else if (a[j1] == " ") break;
       for (j2= i+1; j2<N(a); j2++)
-	if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT) break;
-	else if (a[j2] == " ") break;
+        if (tp[j2] != SYMBOL_SKIP && tp[j2] != SYMBOL_SCRIPT) break;
+        else if (a[j2] == " ") break;
       string s= a[i]->label;
       if (j1 >= 0) {
-	if (a[j1] == "*")
-	  times_before (s)= times_before[s] + 1;
-	if (a[j1] == " ")
-	  space_before (s)= space_before[s] + 1;
+        if (a[j1] == "*")
+          times_before (s)= times_before[s] + 1;
+        if (a[j1] == " ")
+          space_before (s)= space_before[s] + 1;
       }
       if (j2 < N(a)) {
-	if (a[j2] == "*")
-	  times_after (s)= times_after[s] + 1;
-	if (a[j2] == " ")
-	  space_after (s)= space_after[s] + 1;
+        if (a[j2] == "*")
+          times_after (s)= times_after[s] + 1;
+        if (a[j2] == " ")
+          space_after (s)= space_after[s] + 1;
         // NOTE: this heuristic might not be a good idea,
         // because it inhibits the correction of QR -> Q*R,
         // if Q is a polynomial which is applied somewhere Q(1).
         // We might introduce a table 'apply_after'.
-	//if (is_around (a[j2]) && a[j2][0] == "(" &&
+        //if (is_around (a[j2]) && a[j2][0] == "(" &&
         //!contains_infix (a[j2][1]))
         //space_after (s)= space_after[s] + 1;
       }
@@ -577,7 +577,7 @@ invisible_corrector::count_invisible (tree t, string mode) {
       string smode= get_submode (t, i, mode);
       if (is_func (t, WITH) && i != N(t)-1);
       else if (is_correctable_child (t, i))
-	count_invisible (t[i], smode);
+        count_invisible (t[i], smode);
     }
   }
   if (mode == "math")
@@ -600,28 +600,28 @@ invisible_corrector::get_status (tree t, bool left, bool script_flag) {
       return (left? SURE_SPACE: BOTH_WAYS);
     else if (is_letter_like (s)) {
       if (left) {
-	if (times_after[s] > 0 && space_after[s] == 0)
-	  return SURE_TIMES;
-	else if (space_after[s] > 0 && times_after[s] == 0)
-	  return SURE_SPACE;
-	else if (times_after[s] > space_after[s])
-	  return PROBABLE_TIMES;
-	else if (space_after[s] > times_after[s])
-	  return PROBABLE_SPACE;
-	else if (N(s)>1 && is_iso_alpha (s))
-	  return PROBABLE_SPACE;
+        if (times_after[s] > 0 && space_after[s] == 0)
+          return SURE_TIMES;
+        else if (space_after[s] > 0 && times_after[s] == 0)
+          return SURE_SPACE;
+        else if (times_after[s] > space_after[s])
+          return PROBABLE_TIMES;
+        else if (space_after[s] > times_after[s])
+          return PROBABLE_SPACE;
+        else if (N(s)>1 && is_iso_alpha (s))
+          return PROBABLE_SPACE;
         else if (script_flag)
           return PROBABLE_TIMES;
-	else return BOTH_WAYS;
+        else return BOTH_WAYS;
       }
       else {
-	if (times_before[s] > space_before[s])
-	  return PROBABLE_TIMES;
-	else if (times_after[s] > 0 && space_after[s] == 0)
-	  return PROBABLE_TIMES;
+        if (times_before[s] > space_before[s])
+          return PROBABLE_TIMES;
+        else if (times_after[s] > 0 && space_after[s] == 0)
+          return PROBABLE_TIMES;
         else if (script_flag && (N(s) == 1 || !is_iso_alpha (s)))
           return PROBABLE_TIMES;
-	else return BOTH_WAYS;
+        else return BOTH_WAYS;
       }
     }
     else if (s == "<cdots>" || s == "<ldots>")
@@ -631,15 +631,15 @@ invisible_corrector::get_status (tree t, bool left, bool script_flag) {
   else {
     if (is_around (t)) {
       if (left && contains_plus_like (t[1]))
-	return ((force > 0)? SURE_TIMES: PROBABLE_TIMES);
+        return ((force > 0)? SURE_TIMES: PROBABLE_TIMES);
       else if (contains_plus_like (t[1]))
-	return ((force > 0)? PROBABLE_TIMES: BOTH_WAYS);
+        return ((force > 0)? PROBABLE_TIMES: BOTH_WAYS);
       else if (!contains_infix (t[1]))
-	return (left? BOTH_WAYS: SURE_SPACE);
+        return (left? BOTH_WAYS: SURE_SPACE);
       else return BOTH_WAYS;
     }
     else if (is_func (t, FRAC) ||
-	     is_func (t, SQRT))
+             is_func (t, SQRT))
       return (left? SURE_TIMES: BOTH_WAYS);
     else if (!left && is_func (t, BIG_AROUND, 2) &&
              (t[0] == "<sum>" || t[0] == "<amalg>" ||
@@ -682,10 +682,10 @@ invisible_corrector::correct (array<tree> a) {
     if (a[i] != " " && tp[i] == SYMBOL_BASIC) {
       int j;
       for (j= i+1; j<N(a); j++)
-	if (tp[j] != SYMBOL_SKIP && tp[j] != SYMBOL_SCRIPT) break;
-	else if (a[j] == " ") break;
+        if (tp[j] != SYMBOL_SKIP && tp[j] != SYMBOL_SCRIPT) break;
+        else if (a[j] == " ") break;
       if (j >= N(a) || a[j] == " " || tp[j] != SYMBOL_BASIC)
-	continue;
+        continue;
       
       string ins= "";
       int sti= get_status (a[i], true, admits_script (tp, i));
@@ -693,37 +693,37 @@ invisible_corrector::correct (array<tree> a) {
       //cout << "Pair (" << a[i] << ", " << a[j] << ")"
       //<< " -> (" << sti << ", " << stj << ")" << LF;
       if (sti == SURE_NOTHING || stj == SURE_NOTHING)
-	ins= "";
+        ins= "";
       else if (sti == SURE_TIMES && stj != SURE_SPACE)
-	ins= "*";
+        ins= "*";
       else if (sti == SURE_SPACE && stj != SURE_TIMES)
-	ins= " ";
+        ins= " ";
       else if (sti == PROBABLE_TIMES && stj == PROBABLE_TIMES)
-	ins= "*";
+        ins= "*";
       else if (sti == PROBABLE_SPACE && stj == PROBABLE_SPACE)
-	ins= " ";
+        ins= " ";
       else if (sti == PROBABLE_TIMES && stj == BOTH_WAYS)
-	ins= "*";
+        ins= "*";
       else if (sti == PROBABLE_SPACE && stj == BOTH_WAYS)
-	ins= " ";
+        ins= " ";
       else if (sti == BOTH_WAYS && stj == PROBABLE_TIMES)
-	ins= "*";
+        ins= "*";
       else if (sti == BOTH_WAYS && stj == PROBABLE_SPACE)
-	ins= " ";
+        ins= " ";
       else if (sti == BOTH_WAYS && stj == BOTH_WAYS && force == 1 &&
-	       (is_atomic (a[i]) || is_around (a[i])) &&
-	       (is_atomic (a[j]) || is_around (a[j])))
-	ins= "*";
+               (is_atomic (a[i]) || is_around (a[i])) &&
+               (is_atomic (a[j]) || is_around (a[j])))
+        ins= "*";
 
       if (is_around (a[j]))
-	if (ins == " " || (ins == "*" && force == -1))
-	  ins= "";
+        if (ins == " " || (ins == "*" && force == -1))
+          ins= "";
       if (a[j] == ".") ins= "";
       while (i+1 < N(a) && (is_func (a[i+1], RSUB, 1) ||
-			    is_func (a[i+1], RSUP, 1) ||
-			    is_func (a[i+1], RPRIME, 1))) {
-	i++;
-	r << a[i];
+                            is_func (a[i+1], RSUP, 1) ||
+                            is_func (a[i+1], RPRIME, 1))) {
+        i++;
+        r << a[i];
       }
       if (ins != "") r << tree (ins);
     }
@@ -741,9 +741,9 @@ invisible_corrector::correct (tree t, string mode) {
     for (i=0; i<n; i++) {
       string smode= get_submode (t, i, mode);
       if (is_func (t, WITH) && i != N(t)-1)
-	r[i]= t[i];
+        r[i]= t[i];
       else if (is_correctable_child (t, i))
-	r[i]= correct (t[i], smode);
+        r[i]= correct (t[i], smode);
       else r[i]= t[i];
     }
   }

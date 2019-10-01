@@ -91,20 +91,20 @@ swap1 (modification& m1, modification& m2, int i, int d) {
     switch (m2->k) {
     case MOD_INSERT:
       {
-	int b2= m2->p->item;
-	int e2= b2 + insert_length (m2->t);
-	if (b2 <= i) r2->p->item += (e2-b2);
-	break;
+        int b2= m2->p->item;
+        int e2= b2 + insert_length (m2->t);
+        if (b2 <= i) r2->p->item += (e2-b2);
+        break;
       }
     case MOD_REMOVE:
       {
-	int b2= m2->p->item;
-	int e2= b2 + m2->p->next->item;
-	if (b2 <= i && i < e2)
-	  if (b2 != i || m1->k != MOD_REMOVE)
-	    return false;
-	if (b2 < i) r2->p->item -= (e2-b2);
-	break;
+        int b2= m2->p->item;
+        int e2= b2 + m2->p->next->item;
+        if (b2 <= i && i < e2)
+          if (b2 != i || m1->k != MOD_REMOVE)
+            return false;
+        if (b2 < i) r2->p->item -= (e2-b2);
+        break;
       }
     case MOD_SPLIT:
       if (m2->p->item < i) r2->p->item++;
@@ -115,10 +115,10 @@ swap1 (modification& m1, modification& m2, int i, int d) {
       break;
     case MOD_INSERT_NODE:
       {
-	modification aux= m2;
-	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
-	m1= aux;
-	return true;
+        modification aux= m2;
+        m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
+        m1= aux;
+        return true;
       }
     case MOD_REMOVE_NODE:
       return false;
@@ -160,76 +160,76 @@ swap (modification& m1, modification& m2) {
     switch (m1->k) {
     case MOD_ASSIGN:
       {
-	if (m1 == m2) return true;
-	if (!is_nil (rp2) || m2->k != MOD_INSERT_NODE) return false;
-	modification aux= m2;
-	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
-	m1= aux;
-	return true;
+        if (m1 == m2) return true;
+        if (!is_nil (rp2) || m2->k != MOD_INSERT_NODE) return false;
+        modification aux= m2;
+        m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
+        m1= aux;
+        return true;
       }
     case MOD_INSERT:
       {
-	if (is_nil (m2->p)) return false;
-	int b= m1->p->item;
-	int e= b + insert_length (m1->t);
-	if (m2->p->item >= b && m2->p->item < e)
-	  if (!is_nil (root (m2)) || m2->p->item != b || m2->k != MOD_INSERT)
-	    if (!is_nil (root (m2)) || m2->k != MOD_INSERT_NODE)
-	      return false;
-	return swap1 (m1, m2, b, e-b);
+        if (is_nil (m2->p)) return false;
+        int b= m1->p->item;
+        int e= b + insert_length (m1->t);
+        if (m2->p->item >= b && m2->p->item < e)
+          if (!is_nil (root (m2)) || m2->p->item != b || m2->k != MOD_INSERT)
+            if (!is_nil (root (m2)) || m2->k != MOD_INSERT_NODE)
+              return false;
+        return swap1 (m1, m2, b, e-b);
       }
     case MOD_REMOVE:
       {
-	if (is_nil (m2->p)) return false;
-	int i= m1->p->item;
-	int d= m1->p->next->item;
-	return swap1 (m1, m2, i, -d);
+        if (is_nil (m2->p)) return false;
+        int i= m1->p->item;
+        int d= m1->p->next->item;
+        return swap1 (m1, m2, i, -d);
       }
     case MOD_SPLIT:
       {
-	if (is_nil (m2->p)) return false;
-	int i= m1->p->item;
-	if (m2->p->item == i || m2->p->item == i+1)
-	  if (!is_nil (root (m2)) || m2->p->item != i || m2->k != MOD_INSERT)
-	    if (!is_nil (root (m2)) || m2->k != MOD_INSERT_NODE)
-	      return false;
-	return swap1 (m1, m2, i, 1);
+        if (is_nil (m2->p)) return false;
+        int i= m1->p->item;
+        if (m2->p->item == i || m2->p->item == i+1)
+          if (!is_nil (root (m2)) || m2->p->item != i || m2->k != MOD_INSERT)
+            if (!is_nil (root (m2)) || m2->k != MOD_INSERT_NODE)
+              return false;
+        return swap1 (m1, m2, i, 1);
       }
     case MOD_JOIN:
       {
-	if (is_nil (m2->p)) return false;
-	int i= m1->p->item;
-	if (m2->p->item == i)
-	  if (!is_nil (root (m2)) || m2->k != MOD_INSERT)
-	    return false;
-	return swap1 (m1, m2, i, -1);
+        if (is_nil (m2->p)) return false;
+        int i= m1->p->item;
+        if (m2->p->item == i)
+          if (!is_nil (root (m2)) || m2->k != MOD_INSERT)
+            return false;
+        return swap1 (m1, m2, i, -1);
       }
     case MOD_ASSIGN_NODE:
       {
-	if (!is_nil (root (m2))) return swap_basic (m1, m2);
-	if (m1 == m2) return true;
-	if (!is_nil (rp2) || m2->k != MOD_INSERT_NODE) return false;
-	modification aux= m2;
-	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
-	m1= aux;
-	return true;
+        if (!is_nil (root (m2))) return swap_basic (m1, m2);
+        if (m1 == m2) return true;
+        if (!is_nil (rp2) || m2->k != MOD_INSERT_NODE) return false;
+        modification aux= m2;
+        m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
+        m1= aux;
+        return true;
       }
     case MOD_INSERT_NODE:
       {
-	if (is_nil (root (m2))) return false;
-	if (m2->p->item != m1->p->item) return false;
-	modification aux= m1;
-	m1= modification (m2->k, m2->p->next, m2->t);
-	if (m2->k != MOD_INSERT_NODE || !is_nil (root (m1))) m2= aux;
-	else m2= modification (aux->k, path (m1->p->item, aux->p), aux->t);
-	return true;
+        if (is_nil (root (m2))) return false;
+        if (m2->p->item != m1->p->item) return false;
+        modification aux= m1;
+        m1= modification (m2->k, m2->p->next, m2->t);
+        if (m2->k != MOD_INSERT_NODE || !is_nil (root (m1))) m2= aux;
+        else m2= modification (aux->k, path (m1->p->item, aux->p), aux->t);
+        return true;
       }
     case MOD_REMOVE_NODE:
       {
-	modification aux= m1;
-	m1= modification (m2->k, path (m1->p->item, m2->p), m2->t);
-	m2= aux;
-	return true;
+        modification aux= m1;
+        m1= modification (m2->k, path (m1->p->item, m2->p), m2->t);
+        m2= aux;
+        return true;
       }
     case MOD_SET_CURSOR:
       {
@@ -247,45 +247,45 @@ swap (modification& m1, modification& m2) {
       return false;
     case MOD_INSERT:
       {
-	int b= m2->p->item;
-	int e= b + insert_length (m2->t);
-	return swap2 (m1, m2, b, e-b);
+        int b= m2->p->item;
+        int e= b + insert_length (m2->t);
+        return swap2 (m1, m2, b, e-b);
       }
     case MOD_REMOVE:
       {
-	int b= m2->p->item;
-	int e= b + m2->p->next->item;
-	if (m1->p->item >= b && m1->p->item < e) return false;
-	return swap2 (m1, m2, b, b-e);
+        int b= m2->p->item;
+        int e= b + m2->p->next->item;
+        if (m1->p->item >= b && m1->p->item < e) return false;
+        return swap2 (m1, m2, b, b-e);
       }
     case MOD_SPLIT:
       {
-	int i= m2->p->item;
-	if (m1->p->item == i) return false;
-	return swap2 (m1, m2, i, 1);
+        int i= m2->p->item;
+        if (m1->p->item == i) return false;
+        return swap2 (m1, m2, i, 1);
       }
     case MOD_JOIN:
       {
-	int i= m2->p->item;
-	if (m1->p->item == i || m1->p->item == i+1) return false;
-	return swap2 (m1, m2, i, -1);
+        int i= m2->p->item;
+        if (m1->p->item == i || m1->p->item == i+1) return false;
+        return swap2 (m1, m2, i, -1);
       }
     case MOD_ASSIGN_NODE:
       return swap_basic (m1, m2);
     case MOD_INSERT_NODE:
       {
-	modification aux= m2;
-	m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
-	m1= aux;
-	return true;
+        modification aux= m2;
+        m2= modification (m1->k, path (m2->p->item, m1->p), m1->t);
+        m1= aux;
+        return true;
       }
     case MOD_REMOVE_NODE:
       {
-	if (m1->p->item != m2->p->item) return false;
-	modification aux= m2;
-	m2= modification (m1->k, m1->p->next, m1->t);
-	m1= aux;
-	return true;
+        if (m1->p->item != m2->p->item) return false;
+        modification aux= m2;
+        m2= modification (m1->k, m1->p->next, m1->t);
+        m1= aux;
+        return true;
       }
     case MOD_SET_CURSOR:
       {
@@ -361,7 +361,7 @@ join (modification& m1, modification m2, tree t) {
     {
       string s= m1->t->label * m2->t->label;
       if (index (m2) == index (m1))
-	s= m2->t->label * m1->t->label;
+        s= m2->t->label * m1->t->label;
       m1= mod_insert (root (m1), index (m1), tree (s));
       return true;
     }
@@ -373,7 +373,7 @@ join (modification& m1, modification m2, tree t) {
        index (m1) == index (m2) + argument (m2)))
     {
       m1= mod_remove (root (m2), index (m2),
-		      argument (m1) + argument (m2));
+                      argument (m1) + argument (m2));
       return true;
     }
   return false;
@@ -449,34 +449,34 @@ test_commute () {
       modification u2= m2;
       if (!r) debug_std << "  Modifications do not commute\n\n";
       else {
-	debug_std << "m1' = " << m1 << "\n";
-	debug_std << "m2' = " << m2 << "\n";
-	if (clean_apply (clean_apply (tt, t1), t2) !=
-	    clean_apply (clean_apply (tt, m1), m2)) {
-	  failed_error << "t1  = "
+        debug_std << "m1' = " << m1 << "\n";
+        debug_std << "m2' = " << m2 << "\n";
+        if (clean_apply (clean_apply (tt, t1), t2) !=
+            clean_apply (clean_apply (tt, m1), m2)) {
+          failed_error << "t1  = "
                        << clean_apply (clean_apply (tt, t1), t2) << "\n";
-	  failed_error << "t2  = "
+          failed_error << "t2  = "
                        << clean_apply (clean_apply (tt, m1), m2) << "\n";
-	  FAILED ("inconsistency");
-	}
-	r= swap (m1, m2);
-	if (!r) debug_std << "r   = " << r << "\n";
-	else if (m1 != t1 || m2 != t2) {
-	  debug_std << "m1''= " << m1 << "\n";
-	  debug_std << "m2''= " << m2 << "\n";
-	  r= swap (m1, m2);
-	  if (!r) debug_std << "r   = " << r << "\n";
-	  else if (m1 != u1 || m2 != u2) {
-	    debug_std << "m1* = " << m1 << "\n";
-	    debug_std << "m2* = " << m2 << "\n";
-	    r= false;
-	  }
-	}
-	if (r) debug_std << "  Consistency check succeeded\n\n";
-	else {
-	  failed_error << "  Consistency check failed\n\n";
-	  FAILED ("inconsistency");
-	}
+          FAILED ("inconsistency");
+        }
+        r= swap (m1, m2);
+        if (!r) debug_std << "r   = " << r << "\n";
+        else if (m1 != t1 || m2 != t2) {
+          debug_std << "m1''= " << m1 << "\n";
+          debug_std << "m2''= " << m2 << "\n";
+          r= swap (m1, m2);
+          if (!r) debug_std << "r   = " << r << "\n";
+          else if (m1 != u1 || m2 != u2) {
+            debug_std << "m1* = " << m1 << "\n";
+            debug_std << "m2* = " << m2 << "\n";
+            r= false;
+          }
+        }
+        if (r) debug_std << "  Consistency check succeeded\n\n";
+        else {
+          failed_error << "  Consistency check failed\n\n";
+          FAILED ("inconsistency");
+        }
       }
     }
 }

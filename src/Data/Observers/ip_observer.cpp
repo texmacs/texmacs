@@ -212,7 +212,7 @@ attach_ip (tree& ref, path ip) {
     for (i=0; i<n; i++) {
       path old_ip= obtain_ip (ref[i]);
       if ((old_ip->item != i) || (!strong_equal (old_ip->next, ip))) {
-	attach_ip (ref[i], path (i, ip));
+        attach_ip (ref[i], path (i, ip));
       }
     }
   }
