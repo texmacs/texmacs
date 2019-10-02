@@ -78,13 +78,37 @@
 
   <assign|black-floral1-frame-effect|<eff-make-transparent|0|white>>
 
-  <assign|black-floral1-frame-lcrop|0.3333333>
+  <assign|black-floral1-frame-lcrop|0.3236673>
 
-  <assign|black-floral1-frame-rcrop|0.6666666>
+  <assign|black-floral1-frame-rcrop|0.6761347>
 
-  <assign|black-floral1-frame-bcrop|0.3333333>
+  <assign|black-floral1-frame-bcrop|0.3236673>
 
-  <assign|black-floral1-frame-tcrop|0.6666666>
+  <assign|black-floral1-frame-tcrop|0.6761347>
+
+  <assign|black-floral1-frame-lrepeat|0.3236673>
+
+  <assign|black-floral1-frame-rrepeat|0.6761347>
+
+  <assign|black-floral1-frame-brepeat|0.3236673>
+
+  <assign|black-floral1-frame-trepeat|0.6761347>
+
+  <assign|black-floral1-frame-lborder|1tab>
+
+  <assign|black-floral1-frame-rborder|1tab>
+
+  <assign|black-floral1-frame-bborder|1tab>
+
+  <assign|black-floral1-frame-tborder|1tab>
+
+  <assign|black-floral1-frame-lpadding|0em>
+
+  <assign|black-floral1-frame-rpadding|0em>
+
+  <assign|black-floral1-frame-bpadding|0em>
+
+  <assign|black-floral1-frame-tpadding|0em>
 
   <assign|black-floral1-frame|<macro|body|<with-black-floral1|<art-frame|<arg|body>>>>>
 
@@ -100,13 +124,37 @@
 
   <assign|black-floral2-frame-effect|<eff-make-transparent|0|white>>
 
-  <assign|black-floral2-frame-lcrop|0.3333333>
+  <assign|black-floral2-frame-lcrop|0.1698887>
 
-  <assign|black-floral2-frame-rcrop|0.6666666>
+  <assign|black-floral2-frame-rcrop|0.8301113>
 
-  <assign|black-floral2-frame-bcrop|0.3333333>
+  <assign|black-floral2-frame-bcrop|0.1698887>
 
-  <assign|black-floral2-frame-tcrop|0.6666666>
+  <assign|black-floral2-frame-tcrop|0.8301113>
+
+  <assign|black-floral2-frame-lrepeat|0.3901582>
+
+  <assign|black-floral2-frame-rrepeat|0.6098418>
+
+  <assign|black-floral2-frame-brepeat|0.3901582>
+
+  <assign|black-floral2-frame-trepeat|0.6098418>
+
+  <assign|black-floral2-frame-lborder|1tab>
+
+  <assign|black-floral2-frame-rborder|1tab>
+
+  <assign|black-floral2-frame-bborder|1tab>
+
+  <assign|black-floral2-frame-tborder|1tab>
+
+  <assign|black-floral2-frame-lpadding|0em>
+
+  <assign|black-floral2-frame-rpadding|0em>
+
+  <assign|black-floral2-frame-bpadding|0em>
+
+  <assign|black-floral2-frame-tpadding|0em>
 
   <assign|black-floral2-frame|<macro|body|<with-black-floral2|<art-frame|<arg|body>>>>>
 </body>

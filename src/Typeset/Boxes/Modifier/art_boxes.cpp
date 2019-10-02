@@ -16,6 +16,7 @@
 #include "effect.hpp"
 #include "analyze.hpp"
 #include "file.hpp"
+#include "image_files.hpp"
 
 /******************************************************************************
 * Art boxes
@@ -30,9 +31,10 @@ struct art_box_rep: public composite_box_rep {
   operator tree () { return tree (TUPLE, "art box", ps->data); }
   void perform_rewritings ();
   void get_image_extents (tree prg, SI& xl, SI& xr, SI& yb, SI& yt);
+  void display_image (renderer r, url u, tree e, SI xl, SI yb, SI xr, SI yt);
+  void display_one (renderer ren, tree prg);
   void pre_display (renderer &ren);
   void post_display (renderer &ren);
-  void sub_display (renderer &ren, tree prg);
 };
 
 /******************************************************************************
@@ -54,7 +56,7 @@ art_box_rep::art_box_rep (path ip, box b, art_box_parameters ps2):
   y4= max (y4, y2);
   perform_rewritings ();
   for (int i=0; i<N(data); i++)
-    if (data[i][0] == "image") {
+    if (data[i][0] == "image" || data[i][0] == "rubber") {
       SI xl= 0, xr= x2, yb= 0, yt= y2;
       get_image_extents (data[i], xl, xr, yb, yt);
       x3= min (x3, xl - 5*PIXEL);
@@ -66,26 +68,105 @@ art_box_rep::art_box_rep (path ip, box b, art_box_parameters ps2):
 }
 
 void
-art_box_rep::sub_display (renderer &ren, tree prg) {
+art_box_rep::display_image (renderer ren, url u, tree eff,
+                            SI xl, SI yb, SI xr, SI yt) {
+  //if (ren->is_screen) {
+  ren->round (xl, yb);
+  ren->round (xr, yt);
+  //}
+  SI xw= xr - xl, yh= yt - yb;
+  if (eff != "") {
+    array<url> args;
+    args << u;
+    u= make_file (CMD_APPLY_EFFECT, eff, args);
+  }
+  scalable im= load_scalable_image (u, xw, yh, "", ren->pixel);
+  ren->draw_scalable (im, xl, yb);
+}
+
+void
+art_box_rep::display_one (renderer ren, tree prg) {
   if (prg[0] == "image" && is_atomic (prg[1])) {
     SI xl= 0, xr= x2, yb= 0, yt= y2;
     get_image_extents (prg, xl, xr, yb, yt);
-    //if (ren->is_screen) {
-    ren->round (xl, yb);
-    ren->round (xr, yt);
-    //}
-    SI xw= xr - xl, yh= yt - yb;
     url u= cork_to_utf8 (prg[1]->label);
     tree eff= "";
     for (int i=2; i<N(prg); i+=2)
       if (prg[i] == "effect") eff= prg[i+1];
-    if (eff != "") {
-      array<url> args;
-      args << u;
-      u= make_file (CMD_APPLY_EFFECT, eff, args);
+    display_image (ren, u, eff, xl, yb, xr, yt);
+  }
+  else if (prg[0] == "rubber" && is_atomic (prg[1])) {
+    SI xl= 0, xr= x2, yb= 0, yt= y2;
+    get_image_extents (prg, xl, xr, yb, yt);
+    if (xl >= xr || yb >= yt) return;
+    url u= cork_to_utf8 (prg[1]->label);
+    int uw, uh;
+    image_size (u, uw, uh);
+    tree grid= "";
+    for (int i=2; i<N(prg); i+=2)
+      if (prg[i] == "grid") grid= prg[i+1];
+    if (!is_func (grid, TUPLE, 3) ||
+        !is_func (grid[1], TUPLE) ||
+        !is_func (grid[2], TUPLE)) return;
+    tree eff= grid[0];
+    array<double> hor, ver;
+    for (int i=0; i<N(grid[1]); i++)
+      hor << as_double (grid[1][i]);
+    for (int i=0; i<N(grid[2]); i++)
+      ver << as_double (grid[2][i]);
+    if (hor[N(hor)-1] <= hor[0]) return;
+    if (ver[N(ver)-1] <= ver[0]) return;
+    int nx= 1, ny= 1;
+    double scx= (xr - xl) / ((hor[N(hor)-1] - hor[0]) * uw);
+    double scy= (yt - yb) / ((ver[N(ver)-1] - ver[0]) * uh);
+    if (N(hor) == 4 && N(ver) == 2) {
+      double w1= (hor[1] - hor[0]) * uw;
+      double w2= (hor[2] - hor[1]) * uw;
+      double w3= (hor[3] - hor[2]) * uw;
+      double h1= (ver[1] - ver[0]) * uh;
+      double ww= ((xr - xl) * h1) / (yt - yb);
+      if (ww < 0.5 * (w1 + w3)) return;
+      if (w1 < 0.0 || w2 <= 0.0 || w3 < 0.0) return;
+      int nr= (int) round ((ww - w1 - w3) / w2);
+      if (nr < 0) nr= 0;
+      scx= (xr - xl) / (w1 + nr * w2 + w3);
+      nx= nr + 2;
     }
-    scalable im= load_scalable_image (u, xw, yh, "", ren->pixel);
-    ren->draw_scalable (im, xl, yb);
+    if (N(ver) == 4 && N(hor) == 2) {
+      double w1= (hor[1] - hor[0]) * uw;
+      double h1= (ver[1] - ver[0]) * uh;
+      double h2= (ver[2] - ver[1]) * uh;
+      double h3= (ver[3] - ver[2]) * uh;
+      double hh= ((yt - yb) * w1) / (xr - xl);
+      if (hh < 0.5 * (h1 + h3)) return;
+      if (h1 < 0.0 || h2 <= 0.0 || h3 < 0.0) return;
+      int nr= (int) round ((hh - h1 - h3) / h2);
+      if (nr < 0) nr= 0;
+      scy= (yt - yb) / (h1 + nr * h2 + h3);
+      ny= nr + 2;
+    }
+    double curx= xl;
+    for (int i=0; i<nx; i++) {
+      int ii= min (i, 1);
+      if (nx >= 2 && i == nx-1) ii= 2;
+      double nextx= curx + (hor[ii+1] - hor[ii]) * uw * scx;
+      double cury= yb;
+      for (int j=0; j<ny; j++) {
+        int jj= min (j, 1);
+        if (ny >= 2 && j == ny-1) jj= 2;
+        double nexty= cury + (ver[jj+1] - ver[jj]) * uh * scy;
+        if (nextx > curx && nexty > cury) {
+          SI xx1= (SI) round (curx) , yy1= (SI) round (cury);
+          SI xx2= (SI) round (nextx), yy2= (SI) round (nexty);
+          tree creff (EFF_CROP, eff,
+                      grid[1][ii], grid[2][jj],
+                      grid[1][ii+1], grid[2][jj+1]);
+          display_image (ren, u, creff, xx1, yy1, xx2, yy2);
+        }
+        cury= nexty;
+      }
+      curx= nextx;
+    }
   }
 }
 
@@ -95,7 +176,7 @@ art_box_rep::pre_display (renderer& ren) {
   old_pen= ren->get_pencil ();
   for (int i=0; i<N(data); i++)
     if (data[0] == "text") break;
-    else sub_display (ren, data[i]);
+    else display_one (ren, data[i]);
 }
 
 void
@@ -104,7 +185,7 @@ art_box_rep::post_display (renderer &ren) {
   for (i=0; i<N(data); i++)
     if (data[0] == "text") break;
   for (i++; i<N(data); i++)
-    sub_display (ren, data[i]);
+    display_one (ren, data[i]);
   ren->set_background (old_bg);
   ren->set_pencil (old_pen);
 }
@@ -137,6 +218,7 @@ art_box_rep::perform_rewritings () {
       string al= "inner";
       string format= "xxx x.x xxx";
       tree dxl= "", dxr= "", dyb= "", dyt= "";
+      tree lrep= "", rrep= "", brep= "", trep= "";
       for (int j=2; j+1<N(data[i]); j+=2) {
         tree var= data[i][j];
         tree val= data[i][j+1];
@@ -155,6 +237,10 @@ art_box_rep::perform_rewritings () {
         else if (var == "roffset") dxr= val;
         else if (var == "boffset") dyb= val;
         else if (var == "toffset") dyt= val;
+        else if (var == "lrepeat") lrep= val;
+        else if (var == "rrepeat") rrep= val;
+        else if (var == "brepeat") brep= val;
+        else if (var == "trepeat") trep= val;
       }
       for (int row= 0; row <= 2; row++)
         for (int col= 0; col <= 2; col++)
@@ -176,6 +262,20 @@ art_box_rep::perform_rewritings () {
             if (outt && va == "top"   ) va= "outer top";
             tree sub_eff= tree (EFF_CROP, eff, crx1, cry1, crx2, cry2);
             tree t= tree (TUPLE, "image", name, "effect", sub_eff);
+            if (col != 1 || row != 1)
+              if ((col == 1 && (lrep != "" && rrep != "")) ||
+                  (row == 1 && (brep != "" && trep != ""))) {
+                tree hor (TUPLE, crx1);
+                if (col == 1 && (lrep != "" && rrep != ""))
+                  hor << lrep << rrep;
+                hor << crx2;
+                tree ver (TUPLE, cry1);
+                if (row == 1 && (brep != "" && trep != ""))
+                  ver << brep << trep;
+                ver << cry2;
+                tree grid (TUPLE, eff, hor, ver);
+                t= tree (TUPLE, "rubber", name, "grid", grid);
+              }
             t << tree ("halign") << ha << tree ("valign") << va;
             if (col == 0) t << tree ("width") << lw;
             if (col == 1 && !outl) t << tree ("left") << lw;
