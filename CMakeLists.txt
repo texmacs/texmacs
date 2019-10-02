@@ -16,7 +16,6 @@ cmake_minimum_required (VERSION 3.5)
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
-set (CMAKE_CXX_FLAGS "-Wno-deprecated-register")
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE Debug CACHE STRING
