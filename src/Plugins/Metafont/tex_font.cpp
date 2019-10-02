@@ -241,7 +241,7 @@ special_initialize () {
 
 void
 tex_font_rep::special_get_extents (string s, metric& ex) {
-  register int i, j;
+  int i, j;
   for (i=0; i<N(s); i++)
     if (s[i]=='<') break;
   get_extents (s (0, i), ex);
@@ -275,7 +275,7 @@ tex_font_rep::special_get_extents (string s, metric& ex) {
 void
 tex_font_rep::special_get_xpositions (string s, SI* xpos, bool ligf) {
   SI offset= 0;
-  register int l=0, i, j, n=N(s);
+  int l=0, i, j, n=N(s);
   while (l<n) {
     for (i=l; i<n; i++)
       if (s[i]=='<') break;
@@ -307,7 +307,7 @@ tex_font_rep::special_get_xpositions (string s, SI* xpos, bool ligf) {
 
 void
 tex_font_rep::special_draw (renderer ren, string s, SI x, SI y) {
-  register int i, j;
+  int i, j;
   metric ex;
   for (i=0; i<N(s); i++)
     if (s[i]=='<') break;
@@ -475,7 +475,7 @@ tex_font_rep::accented_get_extents (string s, metric& ex) {
   int old_status= status;
   status= TEX_ANY;
 
-  register int i;
+  int i;
   string acc= get_accents (s);
   s= get_unaccented (s);
   get_extents (s, ex);
@@ -522,7 +522,7 @@ tex_font_rep::accented_draw (renderer ren, string s, SI x, SI y) {
   int old_status= status;
   status= TEX_ANY;
 
-  register int i;
+  int i;
   string acc= get_accents (s);
   s= get_unaccented (s);
   draw_fixed (ren, s, x, y);
@@ -599,7 +599,7 @@ tex_font_rep::supports (string s) {
 
 void
 tex_font_rep::get_extents (string s, metric& ex) {
-  register int i;
+  int i;
   switch (status) {
     case TEX_ANY:
       break;
@@ -692,7 +692,7 @@ tex_font_rep::get_extents (string s, metric& ex) {
 
 void
 tex_font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
-  register int i, n= N(s);
+  int i, n= N(s);
   xpos[0]= 0;
   if (n == 0) return;
   
@@ -737,7 +737,7 @@ tex_font_rep::get_xpositions (string s, SI* xpos) {
 
 void
 tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
-  register int i;
+  int i;
   switch (status) {
     case TEX_ANY:
       break;
@@ -786,7 +786,7 @@ tex_font_rep::draw_fixed (renderer ren, string s, SI ox, SI y) {
   }
 
   for (i=0; i<m; i++) {
-    register int c= buf[i];
+    int c= buf[i];
     glyph gl= pk->get (c);
     if (is_nil (gl)) continue;
     ren->draw (c, pk, x, y);
@@ -947,7 +947,7 @@ tex_font_rep::advance_glyph (string s, int& pos, bool ligf) {
 
 glyph
 tex_font_rep::get_glyph (string s) {
-  register int i;
+  int i;
   switch (status) {
   case TEX_ANY:
     break;
@@ -978,7 +978,7 @@ tex_font_rep::get_glyph (string s) {
 
 int
 tex_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
-  register int i;
+  int i;
   switch (status) {
   case TEX_ANY:
     break;

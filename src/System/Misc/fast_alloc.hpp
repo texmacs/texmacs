@@ -42,12 +42,12 @@ extern int    large_uses;
 * General purpose fast allocation routines
 ******************************************************************************/
 
-extern void* safe_malloc (register size_t s);
-extern void* enlarge_malloc (register size_t s);
-extern void* fast_alloc (register size_t s);
-extern void  fast_free (register void* ptr, register size_t s);
-extern void* fast_new (register size_t s);
-extern void  fast_delete (register void* ptr);
+extern void* safe_malloc (size_t s);
+extern void* enlarge_malloc (size_t s);
+extern void* fast_alloc (size_t s);
+extern void  fast_free (void* ptr, size_t s);
+extern void* fast_new (size_t s);
+extern void  fast_delete (void* ptr);
 
 extern int   mem_used ();
 extern void  mem_info ();
@@ -60,8 +60,8 @@ void* alloc_check(const char *msg,void *ptr,size_t* sp);
 #if (!defined(NO_FAST_ALLOC)) && (!defined(X11TEXMACS))
 
 #ifdef OLD_GNU_COMPILER
-inline void* operator new   (register size_t s, void* loc) { return loc; }
-inline void* operator new[] (register size_t s, void* loc) { return loc; }
+inline void* operator new   (size_t s, void* loc) { return loc; }
+inline void* operator new[] (size_t s, void* loc) { return loc; }
 #else
 #include <new>
 #endif
@@ -435,15 +435,15 @@ tm_delete_array (C* Ptr) {
 
 #ifndef NO_FAST_ALLOC
 #ifdef OS_IRIX
-void* operator new (register size_t s) throw(std::bad_alloc);
-void  operator delete (register void* ptr) throw();
-void* operator new[] (register size_t s) throw(std::bad_alloc);
-void  operator delete[] (register void* ptr) throw();
+void* operator new (size_t s) throw(std::bad_alloc);
+void  operator delete (void* ptr) throw();
+void* operator new[] (size_t s) throw(std::bad_alloc);
+void  operator delete[] (void* ptr) throw();
 #else
-void* operator new (register size_t s);
-void  operator delete (register void* ptr);
-void* operator new[] (register size_t s);
-void  operator delete[] (register void* ptr);
+void* operator new (size_t s);
+void  operator delete (void* ptr);
+void* operator new[] (size_t s);
+void  operator delete[] (void* ptr);
 #endif
 #endif // not defined NO_FAST_ALLOC
 

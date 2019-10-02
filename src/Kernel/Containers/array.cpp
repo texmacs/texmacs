@@ -21,7 +21,7 @@ inline int
 round_length (int n, size_t s) {
   (void) s;
   if (n<6) return n;
-  register int i=8;
+  int i=8;
   while (n>i) i<<=1;
   return i;
 }
@@ -31,12 +31,12 @@ array_rep<T>::array_rep (int n2):
   n(n2), a((n==0)?((T*) NULL):(tm_new_array<T> (round_length(n, sizeof (T))))) {}
 
 template<class T> void
-array_rep<T>::resize (register int m) {
-  register int nn= round_length (n, sizeof (T));
-  register int mm= round_length (m, sizeof (T));
+array_rep<T>::resize (int m) {
+  int nn= round_length (n, sizeof (T));
+  int mm= round_length (m, sizeof (T));
   if (mm != nn) {
     if (mm != 0) {
-      register int i, k= (m<n? m: n);
+      int i, k= (m<n? m: n);
       T* b= tm_new_array<T> (mm);
       for (i=0; i<k; i++) b[i]= a[i];
       if (nn != 0) tm_delete_array (a);
@@ -52,7 +52,7 @@ array_rep<T>::resize (register int m) {
 
 template<class T>
 array<T>::array (T* a, int n) {
-  register int i;
+  int i;
   rep= tm_new<array_rep<T> > (n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
@@ -98,7 +98,7 @@ array<T>::array (T x1, T x2, T x3, T x4, T x5) {
 
 template<class T> bool
 operator == (array<T> a, array<T> b) {
-  register int i;
+  int i;
   if (N(a)!=N(b)) return false;
   for (i=0; i<N(a); i++)
     if (a[i]!=b[i]) return false;
@@ -107,7 +107,7 @@ operator == (array<T> a, array<T> b) {
 
 template<class T> bool
 operator != (array<T> a, array<T> b) {
-  register int i;
+  int i;
   if (N(a)!=N(b)) return true;
   for (i=0; i<N(a); i++)
     if (a[i]!=b[i]) return true;
@@ -136,7 +136,7 @@ operator << (array<T>& a, T x) {
 
 template<class T> array<T>&
 operator << (array<T>& a, array<T> b) {
-  register int i, k= N(a);
+  int i, k= N(a);
   a->resize (N(a)+ N(b));
   for (i=0; i<N(b); i++) a[i+k]= b[i];
   return a;
@@ -144,7 +144,7 @@ operator << (array<T>& a, array<T> b) {
 
 template<class t> bool
 contains (t a, array<t> b) {
-  register int i, l= N(b);
+  int i, l= N(b);
   for (i=0; i<l; i++)
     if (a == b[i])
       return true;
@@ -153,7 +153,7 @@ contains (t a, array<t> b) {
 
 template<class t> array<t>
 append (t a, array<t> b) {
-  register int i, l= N(b);
+  int i, l= N(b);
   array<t> c (l+1);
   c[0]= a;
   for (i=0; i<l; i++) c[i+1]= b[i];
@@ -162,7 +162,7 @@ append (t a, array<t> b) {
 
 template<class T> array<T>
 append (array<T> a, array<T> b) {
-  register int i, k= N(a), l= N(b);
+  int i, k= N(a), l= N(b);
   array<T> c (k+l);
   for (i=0; i<k; i++) c[i]= a[i];
   for (i=0; i<l; i++) c[i+k]= b[i];
@@ -171,7 +171,7 @@ append (array<T> a, array<T> b) {
 
 template<class T> array<T>
 range (array<T> a, int i, int j) {
-  register int k;
+  int k;
   ASSERT (i>=0 && j<=N(a), "out of range");
   array<T> r (j-i);
   for (k=i; k<j; k++) r[k-i]= a[k];
@@ -180,7 +180,7 @@ range (array<T> a, int i, int j) {
 
 template<class T> array<T>
 reverse (array<T> a) {
-  register int i, n= N(a);
+  int i, n= N(a);
   array<T> r (n);
   for (i=0; i<n; i++) r[i]= a[n-1-i];
   return r;
@@ -196,7 +196,7 @@ hash (array<T> a) {
 
 template<class T> array<T>
 operator * (array<T> a, T c) {
-  register int i, n= N(a);
+  int i, n= N(a);
   array<T> r (n);
   for (i=0; i<n; i++) r[i]= a[i] * c;
   return r;
@@ -204,7 +204,7 @@ operator * (array<T> a, T c) {
 
 template<class T> array<T>
 operator / (array<T> a, T c) {
-  register int i, n= N(a);
+  int i, n= N(a);
   array<T> r (n);
   for (i=0; i<n; i++) r[i]= a[i] / c;
   return r;

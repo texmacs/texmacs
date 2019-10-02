@@ -209,7 +209,7 @@ print_tree (tree t, int tab) {
 
 int
 hash (array<tree> a) {
-  register int i, h=0, n=N(a);
+  int i, h=0, n=N(a);
   for (i=0; i<n; i++) {
     h=(h<<7) + (h>>25);
     h=h + hash(a[i]);

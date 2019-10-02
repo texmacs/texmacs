@@ -17,7 +17,7 @@
 
 TMPL void
 hashmap_rep<T,U>::write_back (T x, hashmap<T,U> base) {
-  register int hv= hash (x);
+  int hv= hash (x);
   list<hashentry<T,U> > l (a [hv & (n-1)]);
   while (!is_nil (l)) {
     if (l->item.code == hv && l->item.key == x)

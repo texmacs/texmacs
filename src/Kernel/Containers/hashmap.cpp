@@ -65,7 +65,7 @@ hashmap_rep<T,U>::resize (int n2) {
 
 TMPL bool
 hashmap_rep<T,U>::contains (T x) {
-  register int hv= hash (x);
+  int hv= hash (x);
   list<hashentry<T,U> >  l (a [hv & (n-1)]);
   while (!is_nil (l)) {
     if (l->item.code == hv && l->item.key == x)
@@ -82,7 +82,7 @@ hashmap_rep<T,U>::empty () {
 
 TMPL U&
 hashmap_rep<T,U>::bracket_rw (T x) {
-  register int hv= hash (x);
+  int hv= hash (x);
   list<hashentry<T,U> >  l (a [hv & (n-1)]);
   while (!is_nil (l)) {
     if (l->item.code == hv && l->item.key == x)
@@ -98,7 +98,7 @@ hashmap_rep<T,U>::bracket_rw (T x) {
 
 TMPL U
 hashmap_rep<T,U>::bracket_ro (T x) {
-  register int hv= hash (x);
+  int hv= hash (x);
   list<hashentry<T,U> >  l (a [hv & (n-1)]);
   while (!is_nil (l)) {
     if (l->item.code == hv && l->item.key == x)
@@ -110,7 +110,7 @@ hashmap_rep<T,U>::bracket_ro (T x) {
 
 TMPL void
 hashmap_rep<T,U>::reset (T x) {
-  register int hv= hash (x);
+  int hv= hash (x);
   list<hashentry<T,U> > *l= &(a [hv & (n-1)]);
   while (!is_nil (*l)) {
     if ((*l)->item.code == hv && (*l)->item.key == x) {

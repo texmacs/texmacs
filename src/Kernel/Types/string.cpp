@@ -23,7 +23,7 @@ static inline int
 round_length (int n) {
   n=(n+3)&(0xfffffffc);
   if (n<24) return n;
-  register int i=32;
+  int i=32;
   while (n>i) i<<=1;
   return i;
 }
@@ -32,12 +32,12 @@ string_rep::string_rep (int n2):
   n(n2), a ((n==0)?((char*) NULL):tm_new_array<char> (round_length(n))) {}
 
 void
-string_rep::resize (register int m) {
-  register int nn= round_length (n);
-  register int mm= round_length (m);
+string_rep::resize (int m) {
+  int nn= round_length (n);
+  int mm= round_length (m);
   if (mm != nn) {
     if (mm != 0) {
-      register int i, k= (m<n? m: n);
+      int i, k= (m<n? m: n);
       char* b= tm_new_array<char> (mm);
       for (i=0; i<k; i++) b[i]= a[i];
       if (nn != 0) tm_delete_array (a);
@@ -67,7 +67,7 @@ string::string (const char* a) {
 }
 
 string::string (const char* a, int n) {
-  register int i;
+  int i;
   rep= tm_new<string_rep> (n);
   for (i=0; i<n; i++)
     rep->a[i]=a[i];
@@ -79,8 +79,8 @@ string::string (const char* a, int n) {
 
 bool
 string::operator == (const char* s) {
-  register int i, n= rep->n;
-  register char* S= rep->a;
+  int i, n= rep->n;
+  char* S= rep->a;
   for (i=0; i<n; i++) {
     if (s[i]!=S[i]) return false;
     if (s[i]=='\0') return false;
@@ -90,8 +90,8 @@ string::operator == (const char* s) {
 
 bool
 string::operator != (const char* s) {
-  register int i, n= rep->n;
-  register char* S= rep->a;
+  int i, n= rep->n;
+  char* S= rep->a;
   for (i=0; i<n; i++) {
     if (s[i]!=S[i]) return true;
     if (s[i]=='\0') return true;
@@ -101,7 +101,7 @@ string::operator != (const char* s) {
 
 bool
 string::operator == (string a) {
-  register int i;
+  int i;
   if (rep->n!=a->n) return false;
   for (i=0; i<rep->n; i++)
     if (rep->a[i]!=a->a[i]) return false;
@@ -110,7 +110,7 @@ string::operator == (string a) {
 
 bool
 string::operator != (string a) {
-  register int i;
+  int i;
   if (rep->n!=a->n) return true;
   for (i=0; i<rep->n; i++)
     if (rep->a[i]!=a->a[i]) return true;
@@ -121,7 +121,7 @@ string
 string::operator () (int begin, int end) {
   if (end <= begin) return string();
 
-  register int i;
+  int i;
   begin = max(min(rep->n, begin), 0);
   end = max(min(rep->n, end), 0);
   string r (end-begin);
@@ -131,7 +131,7 @@ string::operator () (int begin, int end) {
 
 string
 copy (string s) {
-  register int i, n=N(s);
+  int i, n=N(s);
   string r (n);
   for (i=0; i<n; i++) r[i]=s[i];
   return r;
@@ -146,7 +146,7 @@ operator << (string& a, char x) {
 
 string&
 operator << (string& a, string b) {
-  register int i, k1= N(a), k2=N(b);
+  int i, k1= N(a), k2=N(b);
   a->resize (k1+k2);
   for (i=0; i<k2; i++) a[i+k1]= b[i];
   return a;
@@ -154,7 +154,7 @@ operator << (string& a, string b) {
 
 string
 operator * (string a, string b) {
-  register int i, n1=N(a), n2=N(b);
+  int i, n1=N(a), n2=N(b);
   string c(n1+n2);
   for (i=0; i<n1; i++) c[i]=a[i];
   for (i=0; i<n2; i++) c[i+n1]=b[i];
@@ -173,7 +173,7 @@ operator * (string a, const char* b) {
 
 bool
 operator < (string s1, string s2) {
-  register int i;
+  int i;
   for (i=0; i<N(s1); i++) {
     if (i>=N(s2)) return false;
     if (s1[i]<s2[i]) return true;
@@ -184,7 +184,7 @@ operator < (string s1, string s2) {
 
 bool
 operator <= (string s1, string s2) {
-  register int i;
+  int i;
   for (i=0; i<N(s1); i++) {
     if (i>=N(s2)) return false;
     if (s1[i]<s2[i]) return true;
@@ -203,7 +203,7 @@ operator << (tm_ostream& out, string a) {
 
 int
 hash (string s) {
-  register int i, h=0, n=N(s);
+  int i, h=0, n=N(s);
   for (i=0; i<n; i++) {
     h=(h<<9)+(h>>23);
     h=h+((int) s[i]);

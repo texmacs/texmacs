@@ -127,7 +127,7 @@ french_language_rep::french_language_rep (string lan_name, string hyph_name):
     load_hyphen_tables (hyph_name, patterns, hyphenations, true); }
 
 inline bool
-is_french_punctuation (register char c) {
+is_french_punctuation (char c) {
   return is_punctuation (c) || (c=='\23') || (c=='\24');
 }
 

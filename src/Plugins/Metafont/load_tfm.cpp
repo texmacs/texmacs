@@ -138,12 +138,12 @@ tex_font_metric_rep::execute (int* s, int n, int* buf, int* ker, int& m) {
     /***************** the ligature-kerning program ******************/
     if ((cur_char<bc) || (cur_char>ec)) sp--;
     else if ((tag (cur_char)==1) && (sp>0)) {
-      register int next_char= stack [sp-1]& 255;
-      register int pc= rem (cur_char);
+      int next_char= stack [sp-1]& 255;
+      int pc= rem (cur_char);
       if (byte0 (lig_kern [pc]) > 128) pc= word1 (lig_kern [pc]);
 
       while (true) {
-        register int instr= lig_kern [pc];
+        int instr= lig_kern [pc];
 
         //if (byte0 (instr) >= 128) { // halt
         //  // cout << "  Halt\n";
@@ -255,12 +255,12 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit,
     /***************** the ligature-kerning program ******************/
     if ((cur_char<bc) || (cur_char>ec)) { SKIP; }
     else if ((tag (cur_char)==1) && (sp>0)) {
-      register int next_char= stack [sp-1]& 255;
-      register int pc= rem (cur_char);
+      int next_char= stack [sp-1]& 255;
+      int pc= rem (cur_char);
       if (byte0 (lig_kern [pc]) > 128) pc= word1 (lig_kern [pc]);
 
       while (true) {
-	register int instr= lig_kern [pc];
+	int instr= lig_kern [pc];
 	if (byte0 (instr) >= 128) { ADVANCE (0); break; }
 	if (byte1 (instr) != next_char) { pc += byte0 (instr)+1; continue; }
 	if (byte2 (instr) < 128) {

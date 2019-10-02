@@ -604,7 +604,7 @@ unicode_font_rep::get_xpositions (string s, SI* xpos, bool ligf) {
   int i= 0, n= N(s);
   if (n == 0) { xpos[0]= 0; return; }
 
-  register SI x= 0;
+  SI x= 0;
   unsigned int uc= 0xffffffff;
   while (i<n) {
     int start= i;

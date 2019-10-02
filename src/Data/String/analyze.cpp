@@ -19,12 +19,12 @@
 ******************************************************************************/
 
 bool
-is_alpha (register char c) {
+is_alpha (char c) {
   return ((c>='a') && (c<='z')) || ((c>='A') && (c<='Z'));
 }
 
 bool
-is_iso_alpha (register char c) {
+is_iso_alpha (char c) {
   int i= ((int) ((unsigned char) c));
   return
     ((c>='a') && (c<='z')) ||
@@ -33,7 +33,7 @@ is_iso_alpha (register char c) {
 }
 
 bool
-is_locase (register char c) {
+is_locase (char c) {
   int code= (int) ((unsigned char) c);
   return
     ((c>='a') && (c<='z')) ||
@@ -42,7 +42,7 @@ is_locase (register char c) {
 }
 
 bool
-is_upcase (register char c) {
+is_upcase (char c) {
   int code= (int) ((unsigned char) c);
   return
     ((c>='A') && (c<='Z')) ||
@@ -51,24 +51,24 @@ is_upcase (register char c) {
 }
 
 bool
-is_digit (register char c) {
+is_digit (char c) {
   return (c>='0') && (c<='9');
 }
 
 bool
-is_numeric (register char c) {
+is_numeric (char c) {
   return ((c>='0') && (c<='9')) || (c=='.');
 }
 
 bool
-is_punctuation (register char c) {
+is_punctuation (char c) {
   return
     (c=='.') || (c==',') || (c==':') || (c=='\'') || (c=='`') ||
     (c==';') || (c=='!') || (c=='?');
 }
 
 bool
-is_space (register char c) {
+is_space (char c) {
   return (c == ' ') || (c == '\11') || (c == '\12') || (c == '\15');
 }
 
@@ -557,7 +557,7 @@ from_hexadecimal (string s) {
 string
 tm_encode (string s) {
   // verbatim to TeXmacs encoding
-  register int i;
+  int i;
   string r;
   for (i=0; i<N(s); i++) {
     if (s[i]=='<') r << "<less>";
@@ -570,11 +570,11 @@ tm_encode (string s) {
 string
 tm_decode (string s) {
   // TeXmacs encoding to verbatim
-  register int i;
+  int i;
   string r;
   for (i=0; i<N(s); i++) {
     if (s[i]=='<') {
-      register int j;
+      int j;
       for (j=i+1; j<N(s); j++)
         if (s[j]=='>') break;
       if (j<N(s)) j++;
@@ -592,7 +592,7 @@ tm_decode (string s) {
 
 string
 tm_var_encode (string s) {
-  register int i, n= N(s);
+  int i, n= N(s);
   string r;
   for (i=0; i<n; i++) {
     if (s[i]=='<') {
@@ -610,12 +610,12 @@ tm_var_encode (string s) {
 
 string
 tm_correct (string s) {
-  register int i;
+  int i;
   string r;
   for (i=0; i<N(s); i++) {
     if (s[i]=='<') {
-      register bool flag= true;
-      register int j, k;
+      bool flag= true;
+      int j, k;
       for (j=i+1; j<N(s); j++)
         if (s[j]=='>') break;
       if (j==N(s)) return r;

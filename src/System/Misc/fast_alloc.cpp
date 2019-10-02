@@ -34,7 +34,7 @@ int    mem_used ();
 /*****************************************************************************/
 
 void*
-safe_malloc (register size_t sz) {
+safe_malloc (size_t sz) {
   void* ptr= malloc (sz);
   if (ptr==NULL) {
     cerr << "Fatal error: out of memory\n";
@@ -44,7 +44,7 @@ safe_malloc (register size_t sz) {
 }
 
 void*
-enlarge_malloc (register size_t sz) {
+enlarge_malloc (size_t sz) {
   if (alloc_remains<sz) {
     alloc_mem    = (char *) safe_malloc (BLOCK_SIZE);
     #ifdef DEBUG_ON
@@ -54,17 +54,17 @@ enlarge_malloc (register size_t sz) {
     alloc_remains= BLOCK_SIZE;
     fast_chunks++;
   }
-  register void* ptr= alloc_mem;
+  void* ptr= alloc_mem;
   alloc_mem    += sz;
   alloc_remains-= sz;
   return ptr;
 }
 
 void*
-fast_alloc (register size_t sz) {
+fast_alloc (size_t sz) {
   sz= (sz+WORD_LENGTH_INC)&WORD_MASK;
   if (sz<MAX_FAST) {
-    register void *ptr= alloc_ptr (sz);
+    void *ptr= alloc_ptr (sz);
     if (ptr==NULL) return enlarge_malloc (sz);
     alloc_ptr (sz)= ind (ptr);
     #ifdef DEBUG_ON
@@ -81,7 +81,7 @@ fast_alloc (register size_t sz) {
 }
 
 void
-fast_free (register void* ptr, register size_t sz) {
+fast_free (void* ptr, size_t sz) {
   sz=(sz+WORD_LENGTH_INC)&WORD_MASK;
   if (sz<MAX_FAST) {
     #ifdef DEBUG_ON
@@ -100,8 +100,8 @@ fast_free (register void* ptr, register size_t sz) {
 }
 
 void*
-fast_new (register size_t s) {
-  register void* ptr;
+fast_new (size_t s) {
+  void* ptr;
   #ifdef DEBUG_ON
   s= (s+ (4 * WORD_LENGTH) + WORD_LENGTH_INC)&WORD_MASK;
   #else
@@ -142,11 +142,11 @@ fast_new (register size_t s) {
 void* alloc_check(const char *msg,void *ptr,size_t* sp) {
 	void *mem=ptr;
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
-  register size_t comp= *((size_t *) ptr);
+  size_t comp= *((size_t *) ptr);
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
-  register size_t s1= *((size_t *) ptr);
+  size_t s1= *((size_t *) ptr);
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
-  register size_t s= *((size_t *) ptr);
+  size_t s= *((size_t *) ptr);
   if((s1 + comp) != -1 || (s + comp) != -1) {
     printf("%s %p size mismatch at %p %lu:%lu :%lu:%lu\n",msg,mem, ptr,s,s+comp,s1,s1+comp);
     if(break_stub (ptr)) s=s1<s?s1:s;
@@ -160,13 +160,13 @@ void* alloc_check(const char *msg,void *ptr,size_t* sp) {
 #endif
 
 void
-fast_delete (register void* ptr) {
+fast_delete (void* ptr) {
   #ifdef DEBUG_ON
   size_t s;
   ptr=alloc_check("fast_delete",ptr,&s);
   #else
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
-  register size_t s= *((size_t *) ptr);
+  size_t s= *((size_t *) ptr);
   #endif
   if (s<MAX_FAST) {
     #ifdef DEBUG_ON
@@ -190,10 +190,10 @@ fast_delete (register void* ptr) {
 ******************************************************************************/
 
 void*
-fast_alloc_mw (register size_t s)
+fast_alloc_mw (size_t s)
 {
   if (s<MAX_FAST) {
-    register void *ptr= alloc_ptr(s);
+    void *ptr= alloc_ptr(s);
     if (ptr==NULL) return enlarge_malloc (s);
     alloc_ptr(s)= ind(ptr);
     return ptr;
@@ -202,7 +202,7 @@ fast_alloc_mw (register size_t s)
 }
 
 void
-fast_free_mw (register void* ptr, register size_t s)
+fast_free_mw (void* ptr, size_t s)
 {
   if (s<MAX_FAST) {
     ind(ptr)    = alloc_ptr(s);
@@ -271,8 +271,8 @@ bool break_stub(void *ptr) {
 #if defined(X11TEXMACS) && (!defined(NO_FAST_ALLOC))
 
 void*
-operator new (register size_t s) {
-  register void* ptr;
+operator new (size_t s) {
+  void* ptr;
   s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
   if (s<MAX_FAST) {
     ptr= alloc_ptr(s);
@@ -288,9 +288,9 @@ operator new (register size_t s) {
 }
 
 void
-operator delete (register void* ptr) {
+operator delete (void* ptr) {
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
-  register size_t s= *((size_t *) ptr);
+  size_t s= *((size_t *) ptr);
   if (s<MAX_FAST) {
     ind(ptr)    = alloc_ptr(s);
     alloc_ptr(s)= ptr;
@@ -302,8 +302,8 @@ operator delete (register void* ptr) {
 }
 
 void*
-operator new[] (register size_t s) {
-  register void* ptr;
+operator new[] (size_t s) {
+  void* ptr;
   s= (s+ WORD_LENGTH+ WORD_LENGTH_INC)&WORD_MASK;
   if (s<MAX_FAST) {
     ptr= alloc_ptr(s);
@@ -319,9 +319,9 @@ operator new[] (register size_t s) {
 }
 
 void
-operator delete[] (register void* ptr) {
+operator delete[] (void* ptr) {
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
-  register size_t s= *((size_t *) ptr);
+  size_t s= *((size_t *) ptr);
   if (s<MAX_FAST) {
     ind(ptr)    = alloc_ptr(s);
     alloc_ptr(s)= ptr;

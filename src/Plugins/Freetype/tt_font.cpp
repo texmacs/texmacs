@@ -166,10 +166,10 @@ tt_font_rep::get_extents (string s, metric& ex) {
 
 void
 tt_font_rep::get_xpositions (string s, SI* xpos) {
-  register int i, n= N(s);
+  int i, n= N(s);
   if (n == 0) return;
   
-  register SI x= 0;
+  SI x= 0;
   for (i=0; i<N(s); i++) {
     if (i>0) x += ROUND (fnm->kerning ((QN) s[i-1], (QN) s[i]));
     metric_struct* next= fnm->get ((QN) s[i]);

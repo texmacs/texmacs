@@ -808,11 +808,11 @@ compute_score (string what, string in, array<int> pos, string suf) {
 
 string
 escape_cork_words (string s) {
-  register int i;
+  int i;
   string r;
   for (i=0; i<N(s); i++) {
     if (s[i]=='<') {
-      register int j;
+      int j;
       for (j=i+1; j<N(s); j++)
         if (s[j]=='>') break;
       if (j<N(s)) j++;

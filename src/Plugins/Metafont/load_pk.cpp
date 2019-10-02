@@ -48,7 +48,7 @@ pk_loader::pkbyte () {
 
 SI
 pk_loader::pkduo () {
-  register SI i;
+  SI i;
 
   i = pkbyte ();
   if (i > 127) i -= 256;
@@ -58,7 +58,7 @@ pk_loader::pkduo () {
 
 SI
 pk_loader::pktrio () {
-  register SI i;
+  SI i;
 
   i = pkbyte ();
   i = i * 256 + pkbyte ();
@@ -68,7 +68,7 @@ pk_loader::pktrio () {
 
 SI
 pk_loader::pkquad () {
-  register SI i;
+  SI i;
 
   i = pkbyte ();
   if (i > 127) i -= 256;
@@ -109,7 +109,7 @@ pk_loader::getbit ()
 
 HN
 pk_loader::pkpackednum () {
-  register HN i, j; 
+  HN i, j; 
   i = getnyb (); 
   if (i == 0) {
     do { j = getnyb (); i++; } while (! (j != 0)); 
@@ -153,7 +153,7 @@ pk_loader::rest () {
 
 HN
 pk_loader::handlehuge (HN i , HN k) {
-  register long j = k;
+  long j = k;
   
   while (i) {
     j = (j << 4L) + getnyb();
@@ -211,8 +211,8 @@ struct char_bitstream {
 
 void
 pk_loader::unpack (glyph& gl) { 
-  register SI i, j;
-  register HN wordweight;
+  SI i, j;
+  HN wordweight;
   HI rowsleft; 
   bool turnon;
   HI hbit;
@@ -274,15 +274,15 @@ pk_loader::unpack (glyph& gl) {
 
 glyph*
 pk_loader::load_pk () {
-  register HI i;
-  register SI k;
-  register SI length = 0, startpos = 0;
+  HI i;
+  SI k;
+  SI length = 0, startpos = 0;
 
-  register HI charcode= 0;
-  register SI cwidth;
-  register SI cheight;
-  register SI xoff;
-  register SI yoff;
+  HI charcode= 0;
+  SI cwidth;
+  SI cheight;
+  SI xoff;
+  SI yoff;
   
   bench_start ("decode pk");
   glyph* fng= tm_new_array<glyph> (ec+1-bc);
@@ -417,7 +417,7 @@ pk_loader::load_pk () {
     }
   }
 
-  register int c;
+  int c;
   for (c=0; c<=ec-bc; c++)
     if (!is_nil (fng[c])) {
       SI design_size = tfm->design_size () >> 12;
