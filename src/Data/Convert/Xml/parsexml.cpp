@@ -98,8 +98,9 @@ static hashset<string> html_empty_tag_table;
 static hashset<string> html_auto_close_table;
 static hashset<string> html_block_table;
 static hashmap<string,string> html_entity ("");
+static hashmap<string,string> xml_entity ("");
 
-void load_html_entities (hashmap<string, string> table, string fname) {
+void load_entities (hashmap<string, string> table, string fname) {
   string s;
   if (DEBUG_CONVERT) debug_convert << "Loading " << fname << "\n";
   if (load_string (url ("$TEXMACS_PATH/langs/encoding", fname), s, false)) return;
@@ -178,9 +179,13 @@ xml_html_parser::xml_html_parser (): entities ("") {
   }
 
   if (N (html_entity) == 0) {
-    load_html_entities (html_entity, "HTMLlat1.scm");
-    load_html_entities (html_entity, "HTMLspecial.scm");
-    load_html_entities (html_entity, "HTMLsymbol.scm");
+    load_entities (html_entity, "HTMLlat1.scm");
+    load_entities (html_entity, "HTMLspecial.scm");
+    load_entities (html_entity, "HTMLsymbol.scm");
+  }
+
+  if (xml_entity->empty()) {
+    load_entities (xml_entity, "XML.scm");
   }
 }
 
@@ -287,12 +292,15 @@ xml_html_parser::expand_entity (string s) {
       if (okay) return r;
       return s;
     }
-    else if (html) {
+    else {
       string ss= s (1, s [N(s)-1] == ';' ? N(s)-1 : N(s));
-      if (html_entity->contains (ss))
-        // HTML entity references expand to character references
-        // so they need to be finalized a second time.
+      // XML/HTML entity references expand to character references
+      // so they need to be finalized a second time.
+      if (html && html_entity->contains (ss)) {
         return expand_entity (html_entity [ss]);
+      } else if (xml_entity->contains (ss)) {
+        return expand_entity (xml_entity [ss]);
+      }
     }
   }
   return s;

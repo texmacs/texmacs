@@ -85,5 +85,5 @@
   (regtest-environment)
   (regtest-mathtm)
   (regtest-tmhtml)
-  ;(regtest-tmmltm)
+  (regtest-tmmltm)
 )

@@ -14,11 +14,15 @@
 (texmacs-module (convert tmml tmmltm-test)
   (:use (convert tmml tmmltm)))
 
-(define (code x)
+(define (top x)
   `(*TOP* ,x))
 
 (tm-define (regtest-tmmltm)
   (regression-test-group
    "tmmltm" "tmmltm"
-   parse-tmml code
-   (test "parse ampersand" "&amp" "&")))
+   parse-tmml top
+   (test "parse ampersand" "&amp;" "&")
+   (test "parse less than" "&lt;" "<")
+   (test "parse greater than" "&gt;" ">")
+   (test "parse single quote" "&apos;" "'")
+   (test "parse double quote" "&quot;" "\"")))
