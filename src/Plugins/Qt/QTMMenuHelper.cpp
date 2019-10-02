@@ -945,7 +945,8 @@ QTMComboBox::QTMComboBox (QWidget* parent) : QComboBox (parent) {
   opt.activeSubControls = QStyle::SC_ComboBoxArrow;
   QRect r = style()->subControlRect (QStyle::CC_ComboBox, &opt,
                                      QStyle::SC_ComboBoxArrow, &cb);
-  minSize.setWidth (r.width());
+  int max_w= (int) floor (40 * retina_scale);
+  minSize.setWidth (min (r.width(), max_w));
 }
 
 /*! Add items and fix the ComboBox size using texmacs length units.
