@@ -14,6 +14,11 @@
 (texmacs-module (convert tools xmltm-test)
   (:use (convert tools xmltm)))
 
+(define (top x)
+  (if (null? x)
+      `(*TOP*)
+      `(*TOP* ,@x)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Parser
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -65,42 +70,42 @@
 
   (regression-test-group
    "internal html/xml parser" "parser"
-   parse-html :none
-   (test "null string" "" '(*TOP*))
-   (test "text" "hello" '(*TOP* "hello"))
-   (test "element" "<hello>" '(*TOP* (hello)))
+   parse-html top
+   (test "null string" "" '())
+   (test "text" "hello" '("hello"))
+   (test "element" "<hello>" '((hello)))
    (test "attributes"
          "<elem a=\"val\" b='vbl' c=cbl d>"
-         '(*TOP* (elem (@ (a "val") (b "vbl") (c "cbl") (d)))))
-   (test "element, text" "<a>b</a>" '(*TOP* (a "b")))
-   (test "element, padded text" "<a> b </a>" '(*TOP* (a " b ")))
+         '((elem (@ (a "val") (b "vbl") (c "cbl") (d)))))
+   (test "element, text" "<a>b</a>" '((a "b")))
+   (test "element, padded text" "<a> b </a>" '((a " b ")))
    (test "element, element and text" "<a> b<br>d </a>"
-         '(*TOP* (a " b" (br) "d ")))
+         '((a " b" (br) "d ")))
    (test "processing instruction"
-         "<?xml version='1.0'?>" '(*TOP* (*PI* xml "version='1.0'")))
-   (test "empty PI" "<?empty?>" '(*TOP* (*PI* empty "")))
-   (test "null PI" "<??>" `(*TOP* (*PI* ,(string->symbol "") "")))
-   (test "doctype" "<!DOCTYPE mytype>" '(*TOP* (*DOCTYPE* "mytype")))
-   (test "implicit /p" "<p>hello<p>b" '(*TOP* (p "hello") (p "b")))
-   (test "implicit /li" "<ul><li>a<li>b</ul>" '(*TOP* (ul (li "a")  (li "b"))))
+         "<?xml version='1.0'?>" '((*PI* xml "version='1.0'")))
+   (test "empty PI" "<?empty?>" '((*PI* empty "")))
+   (test "null PI" "<??>" `((*PI* ,(string->symbol "") "")))
+   (test "doctype" "<!DOCTYPE mytype>" '((*DOCTYPE* "mytype")))
+   (test "implicit /p" "<p>hello<p>b" '((p "hello") (p "b")))
+   (test "implicit /li" "<ul><li>a<li>b</ul>" '((ul (li "a")  (li "b"))))
    (test "implici /dt /dd"
          "<dl><dt>a<dt>b<dd>c<dd>d</dl>"
-         '(*TOP* (dl (dt "a") (dt "b") (dd "c") (dd "d"))))
+         '((dl (dt "a") (dt "b") (dd "c") (dd "d"))))
    (test "implicit table tags"
          "<table><thead><td>a<tbody><tr><th>b<td>c<tfoot><th>d<td>e</table>"
-         '(*TOP* (table (thead (td "a")) (tbody (tr (th "b") (td "c")))
-                        (tfoot (th "d") (td "e")))))
+         '((table (thead (td "a")) (tbody (tr (th "b") (td "c")))
+                         (tfoot (th "d") (td "e")))))
    (test "XML, UTF-8"
          (string-append
           "<?xml version='1.0' encoding='utf-8'?>" (nl) (latin1-chart))
-         `(*TOP* (*PI* xml "version='1.0' encoding='utf-8'")
+         `((*PI* xml "version='1.0' encoding='utf-8'")
                  ,(string-append (nl) (latin1-chart))))
    ;; (test "XML, latin1"
    ;;       (string-append
    ;;        "<?xml version='1.0' encoding='iso-8859-1'?>" (nl) (highbit-chart))
    ;;       `(*TOP* (*PI* xml "version='1.0' encoding='iso-8859-1'")
    ;;               ,(string-append (nl) (latin1-chart))))
-   (test "HTML, UTF-8" (latin1-chart) `(*TOP* ,(latin1-chart)))))
+   (test "HTML, UTF-8" (latin1-chart) `(,(latin1-chart)))))
    ;;(test "HTML, latin1" (highbit-chart) `(*TOP* ,(latin1-chart)))))
 
 ;; Namespace-aware parser wrapper
@@ -111,31 +116,31 @@
   (define concat string-append)
   (regression-test-group
    "namespace-aware parser wrapper" "xmlns"
-   (cut xmltm-parse "" parse-html <>) :none
-   (test "null string" "" '(*TOP*))
-   (test "text" "hello" '(*TOP* "hello"))
-   (test "element" "<hello>" '(*TOP* (hello)))
-   (test "nested element" "<a><b/></a>" '(*TOP* (a (b))))
-   (test "xmlns:foo" (concat "<foo:a xmlns:foo=" xhtml ">") '(*TOP* (h:a)))
+   (cut xmltm-parse "" parse-html <>) top
+   (test "null string" "" '())
+   (test "text" "hello" '("hello"))
+   (test "element" "<hello>" '((hello)))
+   (test "nested element" "<a><b/></a>" '((a (b))))
+   (test "xmlns:foo" (concat "<foo:a xmlns:foo=" xhtml ">") '((h:a)))
    (test "xmlns 2"
          (concat "<a xmlns=" mathml "><b xmlns=" xhtml "/></a>")
-         '(*TOP* (m:a (h:b))))
+         '((m:a (h:b))))
    (test "xmlns=''"
          (concat "<a xmlns=" xhtml "><b xmlns=''/></a>")
-         '(*TOP* (h:a (b))))
+         '((h:a (b))))
    (test "xmlns:foo, xmlns:bar"
          (concat "<foo:a xmlns:foo=" xhtml " xmlns:bar=" mathml "><bar:b>"
                  "</foo:a>")
-         '(*TOP* (h:a (m:b))))
+         '((h:a (m:b))))
    (test "attr, ns-less"
          "<a x='hello'><b y='world'/></a>"
-         '(*TOP* (a (@ (x "hello")) (b (@ (y "world"))))))
+         '((a (@ (x "hello")) (b (@ (y "world"))))))
    (test "attr, ns, prefixless"
          (concat "<a xmlns=" xhtml " x='hello'><b y='world'/></a>")
-         '(*TOP* (h:a (@ (x "hello")) (h:b (@ (y "world"))))))
+         '((h:a (@ (x "hello")) (h:b (@ (y "world"))))))
    (test "attr, ns, prefixed"
          (concat "<a xmlns:xh=" xhtml " xh:x='hello'><b xh:y='world'/></a>")
-         '(*TOP* (a (@ (h:x "hello")) (b (@ (h:y "world"))))))))
+         '((a (@ (h:x "hello")) (b (@ (h:y "world"))))))))
 
 ;; Integration of the namespace layer with the HTML parser
 
@@ -146,9 +151,9 @@
 (define (regtest-parse-htmlns)
   (regression-test-group
    "integration of namespace layer with html parser" "htmlns"
-   htmltm-parse :none
+   htmltm-parse top
    (test "enum attribute"
-         "<frame noresize>" '(*TOP* (h:frame (@ (noresize)))))))
+         "<frame noresize>" '((h:frame (@ (noresize)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fast serial constructor
