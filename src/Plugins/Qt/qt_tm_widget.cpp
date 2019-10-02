@@ -348,11 +348,11 @@ void
 qt_tm_widget_rep::tweak_iconbar_size (QSize& sz) {
 #ifdef Q_WS_X11
   if (sz.height () >= 24) {
-    sz.setWidth (sz.width () + 4);
+    sz.setWidth (sz.width () + 2);
     sz.setHeight (sz.height () + 8);
   }
   else if (sz.height () >= 20) {
-    sz.setWidth (sz.width () + 2);
+    sz.setWidth (sz.width () + 1);
     sz.setHeight (sz.height () + 4);
   }
   else if (sz.height () >= 16) {
