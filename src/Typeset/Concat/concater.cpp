@@ -613,6 +613,16 @@ concater_rep::typeset (tree t, path ip) {
   case GU_LENGTH:
   case TMPT_LENGTH:
   case PX_LENGTH:
+  case LCORNER_LENGTH:
+  case BCORNER_LENGTH:
+  case RCORNER_LENGTH:
+  case TCORNER_LENGTH:
+  case MS_LENGTH:
+  case S_LENGTH:
+  case MSEC_LENGTH:
+  case SEC_LENGTH:
+  case MIN_LENGTH:
+  case HR_LENGTH:
     typeset_executable (t, ip);
     break;
 

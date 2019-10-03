@@ -1,4 +1,4 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.11>
 
 <style|<tuple|source|std>>
 
@@ -253,6 +253,8 @@
 
   <assign|ornament-render-body|<macro|body|<arg|body>>>
 
+  <assign|ornament-render-extra|<macro|body|<arg|body>>>
+
   \;
 
   <assign|decorated-hook|<macro|body|<with|bg-color|<value|ornament-extra-color>|old-color|<value|color>|old-math-color|<value|math-color>|old-strong-color|<value|strong-color>|<ornament-render-title|<with|ornament-extra-color|<value|bg-color>|color|<value|old-color>|math-color|<value|old-math-color>|strong-color|<value|old-strong-color>|<with|bg-color|<value|ornament-color>|<ornament-render-body|<with|ornament-color|<value|bg-color>|<arg|body>>>>>>>>>
@@ -261,28 +263,30 @@
 
   <assign|decorated-body|<macro|body|<ornament-render-body|<arg|body>>>>
 
+  <assign|decorated-extra|<macro|body|<ornament-render-extra|<arg|body>>>>
+
   \;
 
-  <assign|decorated|<macro|body|<decorated-hook|<ornament|<decorated-body|<arg|body>>>>>>
+  <assign|decorated|<macro|body|<decorated-hook|<decorated-extra|<ornament|<decorated-body|<arg|body>>>>>>>
 
   <assign|decorated-block|<\macro|body>
-    <decorated-hook|<\ornament>
+    <decorated-hook|<decorate-extra|<\ornament>
       <\wide-normal>
         <\decorated-body>
           <arg|body>
         </decorated-body>
       </wide-normal>
-    </ornament>>
+    </ornament>>>
   </macro>>
 
-  <assign|decorated-titled|<macro|name|body|<decorated-hook|<ornament|<decorated-body|<arg|body>>|<decorated-title|<arg|name>>>>>>
+  <assign|decorated-titled|<macro|name|body|<decorated-hook|<decorated-extra|<ornament|<decorated-body|<arg|body>>|<decorated-title|<arg|name>>>>>>>
 
   <assign|decorated-titled-block|<\macro|name|body>
-    <decorated-hook|<\ornament>
+    <decorated-hook|<decorated-extra|<\ornament>
       <\wide-normal>
         <decorated-body|<arg|body>>
       </wide-normal>
-    </ornament|<decorated-title|<arg|name>>>>
+    </ornament|<decorated-title|<arg|name>>>>>
   </macro>>
 
   <\active*>

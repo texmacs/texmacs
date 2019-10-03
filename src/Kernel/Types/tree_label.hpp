@@ -80,6 +80,8 @@ enum tree_label {
   PAR_LENGTH, PAG_LENGTH,                         // other
   GW_LENGTH, GH_LENGTH, GU_LENGTH,                // extents & unit of graphics
   TMPT_LENGTH, PX_LENGTH,                         // miscellaneous
+  LCORNER_LENGTH, BCORNER_LENGTH,
+  RCORNER_LENGTH, TCORNER_LENGTH,
   MS_LENGTH, S_LENGTH, MSEC_LENGTH, SEC_LENGTH,   // durations
   MIN_LENGTH, HR_LENGTH,
 

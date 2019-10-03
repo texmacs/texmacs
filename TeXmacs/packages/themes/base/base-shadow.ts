@@ -22,7 +22,15 @@
 
   <\active*>
     <\src-comment>
-      Defaults
+      Global parameters for all themes
+    </src-comment>
+  </active*>
+
+  <assign|shadow-elevation|1>
+
+  <\active*>
+    <\src-comment>
+      Default values for shadow theme parameters
     </src-comment>
   </active*>
 
@@ -60,7 +68,7 @@
 
   <\active*>
     <\src-comment>
-      Defaults
+      Standard shadows
     </src-comment>
   </active*>
 
@@ -68,11 +76,22 @@
 
   <\active*>
     <\src-comment>
-      Frame theme parameters
+      Shadow theme parameters
     </src-comment>
   </active*>
 
   <new-theme|shadow|shadow-picture|shadow-effect|shadow-align|shadow-format|shadow-lcrop|shadow-rcrop|shadow-bcrop|shadow-tcrop|shadow-lborder|shadow-rborder|shadow-bborder|shadow-tborder|shadow-loffset|shadow-roffset|shadow-boffset|shadow-toffset>
+
+  <\active*>
+    <\src-comment>
+      Standard shadows
+    </src-comment>
+  </active*>
+
+  <assign|deco-shadow-effect|0>
+
+  <assign|deco-shadow|<macro|body|<with|inc-el|<plus|<value|shadow-elevation>|1>|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|deco-shadow-effect>|align|inner|format|xxx
+  xxx xxx|lcrop|0.07|rcrop|0.93|bcrop|0.07|tcrop|0.93|lwidth|2lcorner|rwidth|2rcorner|bheight|2bcorner|theight|2tcorner|loffset|<times|<value|shadow-elevation>|0.25em>|roffset|<plus|0.5rcorner|<times|<value|shadow-elevation>|0.25em>>|boffset|<minus|<plus|0.5bcorner|<times|<value|shadow-elevation>|0.25em>>>|toffset|<minus|<times|<value|shadow-elevation>|0.25em>>>|<tuple|text|normal>>>>>
 
   \;
 </body>

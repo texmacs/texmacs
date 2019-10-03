@@ -673,7 +673,8 @@
 
 (tm-define (standard-parameters l)
   (:require (== l "ornament"))
-  (list "ornament-shape" "ornament-title-style" "ornament-border"
+  (list "ornament-shape" "ornament-title-style"
+        "ornament-border" "ornament-corner"
 	"ornament-hpadding" "ornament-vpadding"
 	"ornament-color" "ornament-extra-color"
 	"ornament-sunny-color" "ornament-shadow-color"))

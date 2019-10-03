@@ -13,6 +13,7 @@
 #include "convert.hpp"
 #include "page_type.hpp"
 #include "typesetter.hpp"
+#include "Boxes/construct.hpp"
 
 /******************************************************************************
 * Length arithmetic
@@ -436,6 +437,19 @@ tree edit_env_rep::exec_tmpt_length () {
   return tree (TMLEN, "1"); }
 tree edit_env_rep::exec_px_length () {
   return tree (TMLEN, as_string (pixel)); }
+
+tree edit_env_rep::exec_lcorner_length () {
+  ornament_parameters ps= get_ornament_parameters ();
+  return tree (TMLEN, as_string (ps->lcor)); }
+tree edit_env_rep::exec_bcorner_length () {
+  ornament_parameters ps= get_ornament_parameters ();
+  return tree (TMLEN, as_string (ps->bcor)); }
+tree edit_env_rep::exec_rcorner_length () {
+  ornament_parameters ps= get_ornament_parameters ();
+  return tree (TMLEN, as_string (ps->rcor)); }
+tree edit_env_rep::exec_tcorner_length () {
+  ornament_parameters ps= get_ornament_parameters ();
+  return tree (TMLEN, as_string (ps->tcor)); }
 
 tree edit_env_rep::exec_gw_length () {
   return tree (TMLEN, as_string (gw)); }

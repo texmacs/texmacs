@@ -29,6 +29,7 @@ struct highlight_box_rep: public change_box_rep {
   SI lw, bw, rw, tw;
   SI lx, bx, rx, tx;
   SI lpad, bpad, rpad, tpad;
+  SI lcor, bcor, rcor, tcor;
   brush bg, xc;
   array<brush> bc;
   brush old_bg;
@@ -50,6 +51,7 @@ highlight_box_rep::highlight_box_rep (path ip, box b, box xb,
   lx ((SI) (ps->lext * lw)), bx ((SI) (ps->bext * bw)),
   rx ((SI) (ps->rext * rw)), tx ((SI) (ps->text * tw)),
   lpad (ps->lpad), bpad (ps->bpad), rpad (ps->rpad), tpad (ps->tpad),
+  lcor (ps->lcor), bcor (ps->bcor), rcor (ps->rcor), tcor (ps->tcor),
   bg (ps->bg), xc (ps->xc), bc (ps->border)
 {
   ASSERT (N(bc) == 4 || N(bc) == 8, "invalid number of border colors");
@@ -310,7 +312,16 @@ render_mixed (renderer ren, brush b1, brush b2,
 
 void
 highlight_box_rep::display_rounded (renderer& ren, int style) {
-  SI W   = max (max (lw, rw), max (bw, tw));
+  SI W = max (max (lw, rw), max (bw, tw));
+  SI l1= x1 + (W>>1) - lx;
+  SI l2= x1 + lcor;
+  SI r1= x2 - (W>>1) + rx;
+  SI r2= x2 - rcor;
+  SI b1= y1 + (W>>1) - bx;
+  SI b2= y1 + bcor;
+  SI t1= y2 - (W>>1) + tx;
+  SI t2= y2 - tcor;
+  /*
   SI xpad= min (lpad, rpad);
   SI ypad= min (bpad, tpad);
   SI Rx= (SI) (2 * xpad);
@@ -323,10 +334,12 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
     Rx= (SI) xpad;
     Ry= (SI) ypad;
   }
+  */
   //if (!ren->is_printer ()) {
   //  SI pixel= ren->pixel;
   //  W= ((W + (2*pixel) - 1) / (2*pixel)) * (2*pixel);
   //}
+  /*
   SI l1= x1 + (W>>1) - lx;
   SI l2= x1 + Rx;
   SI r1= x2 - (W>>1) + rx;
@@ -335,6 +348,7 @@ highlight_box_rep::display_rounded (renderer& ren, int style) {
   SI b2= y1 + Ry;
   SI t1= y2 - (W>>1) + tx;
   SI t2= y2 - Ry;
+  */
   array<SI> xs, ys;
   rounded (xs, ys, l2, b2, l1, b2, l2, b1, true, true, style);
   rounded (xs, ys, r2, b2, r2, b1, r1, b2, true, true, style);
@@ -454,6 +468,7 @@ highlight_box (path ip, box b, SI w, brush c, brush sunc, brush shad) {
                           w, w, w, w,
 			  0.0, 0.0, 0.0, 0.0,
 			  0, 0, 0, 0,
+                          0, 0, 0, 0,
                           c, c, border);
   return highlight_box (ip, b, box (), ps);
 }

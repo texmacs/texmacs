@@ -29,6 +29,7 @@ public:
   SI lw, bw, rw, tw;
   double lext, bext, rext, text;
   SI lpad, bpad, rpad, tpad;
+  SI lcor, bcor, rcor, tcor;
   brush bg, xc;
   array<brush> border;
 
@@ -37,11 +38,13 @@ public:
                            SI lw2, SI bw2, SI rw2, SI tw2,
 			   double lx, double bx, double rx, double tx,
                            SI lpad2, SI bpad2, SI rpad2, SI tpad2,
+                           SI lcor2, SI bcor2, SI rcor2, SI tcor2,
 			   brush bg2, brush xc2, array<brush> border2):
     shape (shape2), tst (tst2),
     lw (lw2), bw (bw2), rw (rw2), tw (tw2),
     lext (lx), bext (bx), rext (rx), text (tx),
     lpad (lpad2), bpad (bpad2), rpad (rpad2), tpad (tpad2),
+    lcor (lcor2), bcor (bcor2), rcor (rcor2), tcor (tcor2),
     bg (bg2), xc (xc2), border (border2) {}
   friend class ornament_parameters;
 };
@@ -53,11 +56,13 @@ class ornament_parameters {
                        SI lw2, SI bw2, SI rw2, SI tw2, 
 		       double lx, double bx, double rx, double tx,
 		       SI lpad2, SI bpad2, SI rpad2, SI tpad2,
+                       SI lcor2, SI bcor2, SI rcor2, SI tcor2,
 		       brush bg2, brush xc2, array<brush> border2):
     rep (tm_new<ornament_parameters_rep> (shape2, tst2,
                                           lw2, bw2, rw2, tw2,
 					  lx, bx, rx, tx,
                                           lpad2, bpad2, rpad2, tpad2,
+                                          lcor2, bcor2, rcor2, tcor2,
 					  bg2, xc2, border2)) {}
 };
 CONCRETE_CODE(ornament_parameters);
@@ -68,6 +73,7 @@ copy (ornament_parameters ps) {
                               ps->lw, ps->bw, ps->rw, ps->tw,
 			      ps->lext, ps->bext, ps->rext, ps->text,
                               ps->lpad, ps->bpad, ps->rpad, ps->tpad,
+                              ps->lcor, ps->bcor, ps->rcor, ps->tcor,
 			      ps->bg, ps->xc, ps->border);
 }
 

@@ -456,6 +456,10 @@ init_std_drd () {
   init (GU_LENGTH, "gu-length", fixed (0) -> returns_length ());
   init (TMPT_LENGTH, "tmpt-length", fixed (0) -> returns_length ());
   init (PX_LENGTH, "px-length", fixed (0) -> returns_length ());
+  init (LCORNER_LENGTH, "lcorner-length", fixed (0) -> returns_length ());
+  init (BCORNER_LENGTH, "bcorner-length", fixed (0) -> returns_length ());
+  init (RCORNER_LENGTH, "rcorner-length", fixed (0) -> returns_length ());
+  init (TCORNER_LENGTH, "tcorner-length", fixed (0) -> returns_length ());
   init (MS_LENGTH, "ms-length", fixed (0) -> returns_length ());
   init (S_LENGTH, "s-length", fixed (0) -> returns_length ());
   init (MSEC_LENGTH, "msec-length", fixed (0) -> returns_length ());
@@ -1242,6 +1246,7 @@ init_std_drd () {
   init_var (ORNAMENT_TITLE_STYLE, TYPE_STRING);
   init_var (ORNAMENT_BORDER, TYPE_LENGTH);
   init_var (ORNAMENT_SWELL, TYPE_NUMERIC);
+  init_var (ORNAMENT_CORNER, TYPE_LENGTH);
   init_var (ORNAMENT_HPADDING, TYPE_LENGTH);
   init_var (ORNAMENT_VPADDING, TYPE_LENGTH);
   init_var (ORNAMENT_COLOR, TYPE_COLOR);

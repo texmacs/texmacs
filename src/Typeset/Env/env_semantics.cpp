@@ -358,6 +358,7 @@ edit_env_rep::get_ornament_parameters () {
   int   a     = alpha;
   tree  w     = read (ORNAMENT_BORDER);
   tree  ext   = read (ORNAMENT_SWELL);
+  tree  cor   = read (ORNAMENT_CORNER);
   tree  xpad  = read (ORNAMENT_HPADDING);
   tree  ypad  = read (ORNAMENT_VPADDING);
 
@@ -413,10 +414,49 @@ edit_env_rep::get_ornament_parameters () {
   }
   else bpad= tpad= as_length (ypad);
 
+
+  double corf= 1.0;
+  if (shape != "classic") {
+    if (shape == "rounded") corf= 2.0;
+    if (shape == "angular") corf= 1.5;
+  }
+  
+  SI lcor, bcor, rcor, tcor;
+  if (is_percentage (cor)) {
+    double a= as_percentage (cor) * corf;
+    lcor= rcor= (SI) round (a * min (lpad, rpad));
+    bcor= tcor= (SI) round (a * min (bpad, tpad));
+  }
+  else if (is_atomic (cor) && !occurs (",", cor->label))
+    lcor= bcor= rcor= tcor= as_length (cor);
+  else {
+    if (is_atomic (cor))
+      cor= tuplify (cor);
+    if (is_func (cor, TUPLE, 2))
+      cor= tuple (cor[0], cor[1], cor[0], cor[1]);
+    if (!is_func (cor, TUPLE, 4))
+      lcor= bcor= rcor= tcor= 0;
+    else {
+      if (is_percentage (cor[0]))
+        lcor= (SI) round (as_percentage (cor[0]) * corf * lpad);
+      else lcor= as_length (cor[0]);
+      if (is_percentage (cor[1])) 
+        bcor= (SI) round (as_percentage (cor[1]) * corf * bpad);
+      else bcor= as_length (cor[1]);
+      if (is_percentage (cor[2])) 
+        rcor= (SI) round (as_percentage (cor[2]) * corf * rpad);
+      else rcor= as_length (cor[2]);
+      if (is_percentage (cor[3])) 
+        tcor= (SI) round (as_percentage (cor[3]) * corf * tpad);
+      else tcor= as_length (cor[3]);
+    }
+  }
+  
   return ornament_parameters (shape, tst,
                               lw, bw, rw, tw,
 			      lx, bx, rx, tx,
 			      lpad, bpad, rpad, tpad,
+                              lcor, bcor, rcor, tcor,
                               brush (bg, a), brush (xc, a), border);
 }
 

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -39,6 +39,8 @@
   <assign|stone-granite-ornament-sunny-color|light grey>
 
   <assign|stone-granite-ornament-shadow-color|dark grey>
+
+  <assign|stone-granite-deco-shadow-effect|<eff-recolor|0|grey>>
 </body>
 
 <\initial>

@@ -421,6 +421,14 @@ edit_env_rep::exec (tree t) {
     return exec_tmpt_length ();
   case PX_LENGTH:
     return exec_px_length ();
+  case LCORNER_LENGTH:
+    return exec_lcorner_length ();
+  case BCORNER_LENGTH:
+    return exec_bcorner_length ();
+  case RCORNER_LENGTH:
+    return exec_rcorner_length ();
+  case TCORNER_LENGTH:
+    return exec_tcorner_length ();
   case MS_LENGTH:
     return exec_ms_length ();
   case S_LENGTH:

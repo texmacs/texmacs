@@ -348,11 +348,15 @@ private:
   tree exec_xspc_length ();
   tree exec_par_length ();
   tree exec_pag_length ();
-  tree exec_tmpt_length ();
-  tree exec_px_length ();
   tree exec_gw_length ();
   tree exec_gh_length ();
   tree exec_gu_length ();
+  tree exec_tmpt_length ();
+  tree exec_px_length ();
+  tree exec_lcorner_length ();
+  tree exec_bcorner_length ();
+  tree exec_rcorner_length ();
+  tree exec_tcorner_length ();
   tree exec_ms_length ();
   tree exec_s_length ();
   tree exec_msec_length ();

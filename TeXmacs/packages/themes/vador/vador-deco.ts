@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -41,6 +41,8 @@
   <assign|plain-vador-ornament-sunny-color|#804040>
 
   <assign|plain-vador-ornament-shadow-color|#402020>
+
+  <assign|plain-vador-deco-shadow-effect|<eff-recolor|0|red>>
 
   <\active*>
     <\src-comment>
@@ -88,6 +90,8 @@
 
   <assign|framed-vador-ornament-shadow-color|#402020>
 
+  <assign|framed-vador-deco-shadow-effect|<eff-recolor|0|red>>
+
   <\active*>
     <\src-comment>
       Alternate dark vador
@@ -109,6 +113,8 @@
   <assign|alternate-vador-ornament-sunny-color|#606030>
 
   <assign|alternate-vador-ornament-shadow-color|#303018>
+
+  <assign|alternate-vador-deco-shadow-effect|<eff-recolor|0|red>>
 
   <\active*>
     <\src-comment>

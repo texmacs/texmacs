@@ -24,111 +24,119 @@
 
   <\active*>
     <\src-comment>
-      South east drop shadows
+      Standard drop shadows
     </src-comment>
   </active*>
 
-  <copy-theme|south-east|shadow>
+  <copy-theme|drop-shadow|shadow>
 
-  <assign|south-east-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-drop-shadow.png>
+  <assign|drop-shadow-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-drop-shadow.png>
 
-  <assign|south-east-shadow-picture|tmfs://artwork/pictures/shadows/drop-shadow.png>
+  <assign|drop-shadow-shadow-picture|tmfs://artwork/pictures/shadows/drop-shadow.png>
 
-  <assign|south-east-shadow-align|south east>
+  <assign|drop-shadow-shadow-align|south east>
 
-  <assign|south-east-shadow|<macro|body|<with-south-east|<art-shadow|<arg|body>>>>>
+  <assign|drop-shadow|<macro|body|<with-drop-shadow|<art-shadow|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
-      South east rounded shadows
+      Bend-in shadows
     </src-comment>
   </active*>
 
-  <copy-theme|south-east-round|shadow>
+  <copy-theme|bend-in-shadow|shadow>
 
-  <assign|south-east-round-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-round-shadow.png>
+  <assign|bend-in-shadow-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-bend-in-shadow.png>
 
-  <assign|south-east-round-shadow-picture|tmfs://artwork/pictures/shadows/round-shadow.png>
+  <assign|bend-in-shadow-shadow-picture|tmfs://artwork/pictures/shadows/bend-in-shadow.png>
 
-  <assign|south-east-round-shadow-align|inner>
+  <assign|bend-in-shadow-shadow-align|south east>
 
-  <assign|south-east-round-shadow-lcrop|0.05>
+  <assign|bend-in-shadow-shadow-format|..x ..x xxx>
 
-  <assign|south-east-round-shadow-rcrop|0.95>
+  <assign|bend-in-shadow-shadow-lcrop|0.05>
 
-  <assign|south-east-round-shadow-bcrop|0.05>
+  <assign|bend-in-shadow-shadow-rcrop|0.95>
 
-  <assign|south-east-round-shadow-tcrop|0.95>
+  <assign|bend-in-shadow-shadow-bcrop|0.05>
 
-  <assign|south-east-round-shadow-lborder|1em>
+  <assign|bend-in-shadow-shadow-tcrop|0.95>
 
-  <assign|south-east-round-shadow-rborder|1em>
-
-  <assign|south-east-round-shadow-bborder|1em>
-
-  <assign|south-east-round-shadow-tborder|1em>
-
-  <assign|south-east-round-shadow-loffset|0em>
-
-  <assign|south-east-round-shadow-roffset|0.55em>
-
-  <assign|south-east-round-shadow-boffset|-0.55em>
-
-  <assign|south-east-round-shadow-toffset|0em>
-
-  <assign|south-east-round-shadow|<macro|body|<with-south-east-round|<art-shadow|<arg|body>>>>>
+  <assign|bend-in-shadow|<macro|body|<with-bend-in-shadow|<art-shadow|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
-      South east bend shadows
+      Diagonal bend-in shadows
     </src-comment>
   </active*>
 
-  <copy-theme|south-east-in|shadow>
+  <copy-theme|diagonal-bend-in-shadow|shadow>
 
-  <assign|south-east-in-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-bend-in-shadow.png>
+  <assign|diagonal-bend-in-shadow-shadow-picture|tmfs://artwork/pictures/shadows/bend-diag-in-shadow.png>
 
-  <assign|south-east-in-shadow-picture|tmfs://artwork/pictures/shadows/bend-in-shadow.png>
+  <assign|diagonal-bend-in-shadow-shadow-lcrop|0.04>
 
-  <assign|south-east-in-shadow-align|south east>
+  <assign|diagonal-bend-in-shadow-shadow-rcrop|0.96>
 
-  <assign|south-east-in-shadow-format|..x ..x xxx>
+  <assign|diagonal-bend-in-shadow-shadow-bcrop|0.04>
 
-  <assign|south-east-in-shadow-lcrop|0.05>
+  <assign|diagonal-bend-in-shadow-shadow-tcrop|0.96>
 
-  <assign|south-east-in-shadow-rcrop|0.95>
+  <assign|diagonal-bend-in-shadow-shadow-lborder|0.4em>
 
-  <assign|south-east-in-shadow-bcrop|0.05>
+  <assign|diagonal-bend-in-shadow-shadow-tborder|0.4em>
 
-  <assign|south-east-in-shadow-tcrop|0.95>
-
-  <assign|south-east-in-shadow|<macro|body|<with-south-east-in|<art-shadow|<arg|body>>>>>
+  <assign|diagonal-bend-in-shadow|<macro|body|<with-diagonal-bend-in-shadow|<art-shadow|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
-      Diagonal bend in shadows
+      Classic shadows
     </src-comment>
   </active*>
 
-  <copy-theme|diag-in|shadow>
+  <copy-theme|classic-shadow|shadow>
 
-  <assign|diag-in-shadow-picture|$TEXMACS_PATH/misc/pictures/shadows/thumbnail-bend-diag-in-shadow.png>
+  <assign|classic-shadow-shadow-picture|tmfs://artwork/pictures/shadows/drop-shadow.png>
 
-  <assign|diag-in-shadow-picture|tmfs://artwork/pictures/shadows/bend-diag-in-shadow.png>
+  <assign|classic-shadow|<macro|body|<with-classic-shadow|<deco-shadow|<arg|body>>>>>
 
-  <assign|diag-in-shadow-lcrop|0.04>
+  <\active*>
+    <\src-comment>
+      Rounded shadows
+    </src-comment>
+  </active*>
 
-  <assign|diag-in-shadow-rcrop|0.96>
+  <copy-theme|rounded-shadow|shadow>
 
-  <assign|diag-in-shadow-bcrop|0.04>
+  <assign|rounded-shadow-shadow-picture|tmfs://artwork/pictures/shadows/round-shadow.png>
 
-  <assign|diag-in-shadow-tcrop|0.96>
+  <assign|rounded-shadow|<macro|body|<with-rounded-shadow|<deco-shadow|<arg|body>>>>>
 
-  <assign|diag-in-shadow-lborder|0.4em>
+  <\active*>
+    <\src-comment>
+      Angular shadows
+    </src-comment>
+  </active*>
 
-  <assign|diag-in-shadow-tborder|0.4em>
+  <copy-theme|angular-shadow|shadow>
 
-  <assign|diag-in-shadow|<macro|body|<with-diag-in|<art-shadow|<arg|body>>>>>
+  <assign|angular-shadow-shadow-picture|tmfs://artwork/pictures/shadows/angular-shadow.png>
+
+  <assign|angular-shadow|<macro|body|<with-angular-shadow|<deco-shadow|<arg|body>>>>>
+
+  <\active*>
+    <\src-comment>
+      Angular shadows
+    </src-comment>
+  </active*>
+
+  <copy-theme|cartoon-shadow|shadow>
+
+  <assign|cartoon-shadow-shadow-picture|tmfs://artwork/pictures/shadows/cartoon-shadow.png>
+
+  <assign|cartoon-shadow|<macro|body|<with-cartoon-shadow|<deco-shadow|<arg|body>>>>>
+
+  \;
 </body>
 
 <\initial>

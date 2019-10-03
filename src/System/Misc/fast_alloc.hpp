@@ -357,6 +357,26 @@ tm_new (const A1& a1, const A2& a2, const A3& a3,
   return (C*) ptr;
 }
 
+template<typename C, typename A1, typename A2, typename A3,
+	 typename A4, typename A5, typename A6,
+	 typename A7, typename A8, typename A9,
+	 typename A10, typename A11, typename A12,
+	 typename A13, typename A14, typename A15,
+	 typename A16, typename A17, typename A18,
+         typename A19, typename A20, typename A21> inline C*
+tm_new (const A1& a1, const A2& a2, const A3& a3,
+	const A4& a4, const A5& a5, const A6& a6,
+	const A7& a7, const A8& a8, const A9& a9,
+	const A10& a10, const A11& a11, const A12& a12,
+	const A13& a13, const A14& a14, const A15& a15,
+	const A16& a16, const A17& a17, const A18& a18,
+        const A19& a19, const A20& a20, const A21& a21) {
+  void* ptr= fast_new (sizeof (C));
+  (void) new (ptr) C (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                      a13, a14, a15, a16, a17, a18, a19, a20, a21);
+  return (C*) ptr;
+}
+
 template<typename C> inline void
 tm_delete (C* ptr) {
   ptr -> ~C ();
@@ -661,15 +681,17 @@ template<typename C, typename A1, typename A2, typename A3,
 	 typename A7, typename A8, typename A9,
 	 typename A10, typename A11, typename A12,
 	 typename A13, typename A14, typename A15,
-         typename A16, typename A17> inline C*
+         typename A16, typename A17, typename A18,
+         typename A19, typename A20, typename A21> inline C*
 tm_new (const A1& a1, const A2& a2, const A3& a3,
 	const A4& a4, const A5& a5, const A6& a6,
 	const A7& a7, const A8& a8, const A9& a9,
 	const A10& a10, const A11& a11, const A12& a12,
 	const A13& a13, const A14& a14, const A15& a15,
-        const A16& a16, const A17& a17) {
-  return new C (a1, a2, a3, a4, a5, a6, a7, a8, a9,
-                a10, a11, a12, a13, a14, a15, a16, a17);
+        const A16& a16, const A17& a17, const A18& a18,
+        const A19& a19, const A20& a20, const A21& a21) {
+  return new C (a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
+                a13, a14, a15, a16, a17, a18, a19, a20, a21);
 }
 
 template<typename C> inline void

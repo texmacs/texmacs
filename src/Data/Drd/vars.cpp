@@ -337,6 +337,7 @@ string ORNAMENT_SHAPE ("ornament-shape");
 string ORNAMENT_TITLE_STYLE ("ornament-title-style");
 string ORNAMENT_BORDER ("ornament-border");
 string ORNAMENT_SWELL ("ornament-swell");
+string ORNAMENT_CORNER ("ornament-corner");
 string ORNAMENT_HPADDING ("ornament-hpadding");
 string ORNAMENT_VPADDING ("ornament-vpadding");
 string ORNAMENT_COLOR ("ornament-color");
