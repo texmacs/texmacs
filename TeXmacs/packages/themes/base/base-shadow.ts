@@ -28,6 +28,8 @@
 
   <assign|shadow-elevation|1>
 
+  <assign|shadow-plain|false>
+
   <\active*>
     <\src-comment>
       Default values for shadow theme parameters
@@ -40,7 +42,7 @@
 
   <assign|shadow-align|outer>
 
-  <assign|shadow-format|xxx xxx xxx>
+  <assign|shadow-format|xxx x.x xxx>
 
   <assign|shadow-lcrop|0.03>
 
@@ -72,7 +74,8 @@
     </src-comment>
   </active*>
 
-  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|shadow-effect>|align|<value|shadow-align>|format|<value|shadow-format>|lcrop|<value|shadow-lcrop>|rcrop|<value|shadow-rcrop>|bcrop|<value|shadow-bcrop>|tcrop|<value|shadow-tcrop>|lwidth|<value|shadow-lborder>|rwidth|<value|shadow-rborder>|bheight|<value|shadow-bborder>|theight|<value|shadow-tborder>|loffset|<value|shadow-loffset>|roffset|<value|shadow-roffset>|boffset|<value|shadow-boffset>|toffset|<value|shadow-toffset>>|<tuple|text|normal>>>>
+  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|shadow-effect>|align|<value|shadow-align>|format|<if|<value|shadow-plain>|xxx
+  xxx xxx|<value|shadow-format>>|lcrop|<value|shadow-lcrop>|rcrop|<value|shadow-rcrop>|bcrop|<value|shadow-bcrop>|tcrop|<value|shadow-tcrop>|lwidth|<times|<value|shadow-elevation>|<value|shadow-lborder>>|rwidth|<times|<value|shadow-elevation>|<value|shadow-rborder>>|bheight|<times|<value|shadow-elevation>|<value|shadow-bborder>>|theight|<times|<value|shadow-elevation>|<value|shadow-tborder>>|loffset|<times|<value|shadow-elevation>|<value|shadow-loffset>>|roffset|<times|<value|shadow-elevation>|<value|shadow-roffset>>|boffset|<times|<value|shadow-elevation>|<value|shadow-boffset>>|toffset|<times|<value|shadow-elevation>|<value|shadow-toffset>>>|<tuple|text|normal>>>>
 
   <\active*>
     <\src-comment>
