@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.11>
 
 <style|<tuple|source|std>>
 
@@ -115,6 +115,8 @@
   <assign|title-left|<macro|body|<phantom|<screens-summary|<quote-arg|body>>>>>
 
   <assign|title-right|<macro|body|<screens-summary|<quote-arg|body>>>>
+
+  <assign|title-|>
 
   <drd-props|title-vpadding|macro-parameter|length>
 

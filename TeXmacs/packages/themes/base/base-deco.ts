@@ -34,7 +34,7 @@
 
   <assign|ornament-render-shadow|<macro|body|<compound|<merge|<value|ornament-shape>|-shadow>|<arg|body>>>>
 
-  <new-theme|deco|ornament-shape|ornament-border|ornament-corner|ornament-hpadding|ornament-vpadding|ornament-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-render-title|ornament-render-body|ornament-render-shadow|deco-shadow-effect>
+  <new-theme|deco|ornament-shape|ornament-border|ornament-corner|ornament-hpadding|ornament-vpadding|ornament-color|ornament-sunny-color|ornament-shadow-color|ornament-title-style|ornament-extra-color|ornament-render-title|ornament-render-body|ornament-render-shadow|deco-shadow-effect|deco-title-shadow-effect>
 
   <\active*>
     <\src-comment>

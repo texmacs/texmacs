@@ -42,7 +42,9 @@
 
   <assign|plain-vador-ornament-shadow-color|#402020>
 
-  <assign|plain-vador-deco-shadow-effect|<eff-recolor|0|red>>
+  <assign|plain-vador-deco-shadow-effect|<eff-recolor|0|#c04000>>
+
+  <assign|plain-vador-deco-title-shadow-effect|<eff-recolor|0|#c04000>>
 
   <\active*>
     <\src-comment>
@@ -90,7 +92,7 @@
 
   <assign|framed-vador-ornament-shadow-color|#402020>
 
-  <assign|framed-vador-deco-shadow-effect|<eff-recolor|0|red>>
+  <assign|framed-vador-deco-shadow-effect|<eff-recolor|0|#c04000>>
 
   <\active*>
     <\src-comment>
@@ -114,7 +116,7 @@
 
   <assign|alternate-vador-ornament-shadow-color|#303018>
 
-  <assign|alternate-vador-deco-shadow-effect|<eff-recolor|0|red>>
+  <assign|alternate-vador-deco-shadow-effect|<eff-recolor|0|#c04000>>
 
   <\active*>
     <\src-comment>
