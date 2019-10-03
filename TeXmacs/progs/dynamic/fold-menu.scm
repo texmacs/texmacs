@@ -301,7 +301,10 @@
 
 (tm-define (standard-options l)
   (:require (== l 'tit))
-  (list "framed-title" "title-bar"))
+  (append (list "framed-title" "title-bar")
+          (if (style-has? "framed-title-package")
+              (list "shadowed-frames")
+              (list "shadowed-titles"))))
 
 (tm-define (parameter-show-in-menu? l)
   (:require (== l "title-theme"))

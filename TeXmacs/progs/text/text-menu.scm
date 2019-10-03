@@ -883,9 +883,13 @@
   (:require (or (in? l (enunciation-tag-list))
                 (in? l (render-enunciation-tag-list))
                 (in? l '(proof render-proof))))
-  (list "number-europe" ;; "number-us"
-        "number-long-article"
-        "framed-theorems" "hanging-theorems"))
+  (append (list "number-europe" ;; "number-us"
+                "number-long-article"
+                "framed-theorems"
+                "hanging-theorems")
+          (if (style-has? "base-deco-dtd")
+              (list "shadowed-frames")
+              (list))))
 
 (tm-menu (focus-extra-menu t)
   (:require (dueto-supporting-context? t))

@@ -78,6 +78,7 @@ art_box_rep::display_image (renderer ren, url u, tree eff,
   if (eff != "") {
     array<url> args;
     args << u;
+    //cout << "Make " << eff << ", " << args << LF;
     u= make_file (CMD_APPLY_EFFECT, eff, args);
   }
   scalable im= load_scalable_image (u, xw, yh, "", ren->pixel);
@@ -252,6 +253,8 @@ art_box_rep::perform_rewritings () {
             if (row == 0) { cry1= "0"; cry2= cy1; va= "bottom"; }
             if (row == 1) { cry1= cy1; cry2= cy2; va= "stretch"; }
             if (row == 2) { cry1= cy2; cry2= "1"; va= "top"; }
+            if (as_double (crx1) >= as_double (crx2) ||
+                as_double (cry1) >= as_double (cry2)) continue;
             bool outl= al == "outer" || occurs ("west", al);
             bool outr= al == "outer" || occurs ("east", al);
             bool outb= al == "outer" || occurs ("south", al);
