@@ -20,14 +20,17 @@
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (alignment-tag) (compression-tag)
   (frame-tag) (frame-titled-tag)
-  (textual-tag) (code-tag) (ornament-tag) (balloon-tag)
-  (reference-tag))
+  (textual-tag) (code-tag)
+  (ornament-tag) (shadow-tag)
+  (balloon-tag) (reference-tag))
 
 (define-group similar-tag
   (section-tag) (list-tag) (figure-tag)
   (enunciation-tag) (prominent-tag) (alignment-tag) (compression-tag)
   (frame-tag) (frame-titled-tag)
-  (textual-tag) (code-tag) (equation-tag) (ornament-tag) (balloon-tag))
+  (textual-tag) (code-tag) (equation-tag)
+  (ornament-tag) (shadow-tag)
+  (balloon-tag))
 
 (define-group numbered-tag
   (section-tag)
@@ -217,6 +220,12 @@
 
 (define-group ornament-tag
   manila-paper rough-paper ridged-paper pine granite metal)
+
+(define-group shadow-tag
+  drop-contour bend-in-contour bend-out-contour diagonal-bend-in-contour
+  drop-shadow bend-in-shadow bend-out-shadow
+  half-bend-in-shadow quarter-bend-in-shadow
+  drop-down half-bend-in-down)
 
 ;; balloons
 

@@ -209,21 +209,21 @@
     </src-comment>
   </active*>
 
-  <copy-theme|drop-down-shadow|drop-shadow>
+  <copy-theme|drop-down|drop-shadow>
 
-  <assign|drop-down-shadow-shadow-align|south west east>
+  <assign|drop-down-shadow-align|south west east>
 
-  <assign|drop-down-shadow-shadow-format|x.x x.x xxx>
+  <assign|drop-down-shadow-format|x.x x.x xxx>
 
-  <assign|drop-down-shadow-shadow-lcrop|0.03>
+  <assign|drop-down-shadow-lcrop|0.03>
 
-  <assign|drop-down-shadow-shadow-rcrop|0.97>
+  <assign|drop-down-shadow-rcrop|0.97>
 
-  <assign|drop-down-shadow-shadow-lborder|0.3em>
+  <assign|drop-down-shadow-lborder|0.3em>
 
-  <assign|drop-down-shadow-shadow-rborder|0.3em>
+  <assign|drop-down-shadow-rborder|0.3em>
 
-  <assign|drop-down-shadow|<macro|body|<with-drop-down-shadow|<art-shadow|<arg|body>>>>>
+  <assign|drop-down|<macro|body|<with-drop-down|<art-shadow|<arg|body>>>>>
 
   <\active*>
     <\src-comment>
@@ -231,17 +231,17 @@
     </src-comment>
   </active*>
 
-  <copy-theme|bend-down-shadow|drop-down-shadow>
+  <copy-theme|half-bend-in-down|drop-down>
 
-  <assign|bend-down-shadow-shadow-picture|tmfs://artwork/pictures/shadows/bend-in-shadow.png>
+  <assign|half-bend-in-down-shadow-picture|tmfs://artwork/pictures/shadows/bend-in-shadow.png>
 
-  <assign|bend-down-shadow-shadow-bcrop|0.05>
+  <assign|half-bend-in-down-shadow-bcrop|0.05>
 
-  <assign|bend-down-shadow-shadow-tcrop|0.5>
+  <assign|half-bend-in-down-shadow-tcrop|0.5>
 
-  <assign|bend-down-shadow-shadow-tborder|0em>
+  <assign|half-bend-in-down-shadow-tborder|0em>
 
-  <assign|bend-down-shadow|<macro|body|<with-bend-down-shadow|<art-shadow|<arg|body>>>>>
+  <assign|half-bend-in-down|<macro|body|<with-half-bend-in-down|<art-shadow|<arg|body>>>>>
 
   \;
 

@@ -686,15 +686,17 @@
   (:require (tree-in? t '(ornamented decorated)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
+        (list "ornament-border" "Border")
         (list "ornament-vpadding" "Inner")
         (list "ornament-hpadding" "Indentation")
         (list "ornament-color" "Color")
         (list "ornament-shape" "Shape")))
 
 (tm-define (customizable-parameters t)
-  (:require (tree-is? t '(ornamented-titled decorated-titled)))
+  (:require (tree-in? t '(ornamented-titled decorated-titled)))
   (list (list "padding-above" "Above")
         (list "padding-below" "Below")
+        (list "ornament-border" "Border")
         (list "ornament-vpadding" "Inner")
         (list "ornament-hpadding" "Indentation")
         (list "ornament-color" "Color")
@@ -719,6 +721,11 @@
         (list "ornament-border" "Border width")
         (list "ornament-hpadding" "Horizontal padding")
         (list "ornament-vpadding" "Vertical padding")))
+
+(tm-define (customizable-parameters t)
+  (:require (tree-in? t (shadow-tag-list)))
+  (list (list "shadow-elevation" "Elevation")
+        (list "shadow-plain" "Plain")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Floating objects and environments

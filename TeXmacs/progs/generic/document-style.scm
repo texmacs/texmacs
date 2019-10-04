@@ -159,6 +159,16 @@
     (when (and (nnull? l) (string? (car l)))
       (edit-package-source (car l)))))
 
+(tm-define (make* l name)
+  (if (or (has-style-package? name)
+	  (style-has? (string-append name "-package")))
+      (make l)
+      (begin
+	(add-style-package name)
+	(delayed
+	  (:idle 1)
+	  (make l)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Table with menu names for style packages which are used as style options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

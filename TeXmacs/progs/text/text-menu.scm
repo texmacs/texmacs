@@ -14,7 +14,8 @@
 (texmacs-module (text text-menu)
   (:use (text text-edit)
         (text text-structure)
-        (generic document-menu)))
+        (generic document-menu)
+	(generic document-style)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Format menu in text mode
@@ -181,14 +182,31 @@
   ("Lines around" (make 'bothlined))
   ("Framed" (make 'framed))
   ("Ornamented" (make 'ornamented))
-  (if (style-has? "ornaments-dtd")
+  ---
+  (-> "Shadow"
+      (group "Contour")
+      ("Drop" (make* 'drop-contour "std-shadow"))
+      ("Bend in" (make* 'bend-in-contour "std-shadow"))
+      ("Bend out" (make* 'bend-out-contour "std-shadow"))
+      ("Bend diagonal" (make* 'diagonal-bend-in-contour "std-shadow"))
       ---
-      ("Manila paper" (make 'manila-paper))
-      ("Rough paper" (make 'rough-paper))
-      ("Ridged paper" (make 'ridged-paper))
-      ("Pine" (make 'pine))
-      ("Granite" (make 'granite))
-      ("Metal" (make 'metal))))
+      (group "South east")
+      ("Drop" (make* 'drop-shadow "std-shadow"))
+      ("Bend in" (make* 'bend-in-shadow "std-shadow"))
+      ("Bend out" (make* 'bend-out-shadow "std-shadow"))
+      ("Bend bottom" (make* 'half-bend-in-shadow "std-shadow"))
+      ("Bend corner" (make* 'quarter-bend-in-shadow "std-shadow"))
+      ---
+      (group "South")
+      ("Drop" (make* 'drop-down "std-shadow"))
+      ("Bend bottom" (make* 'half-bend-in-down "std-shadow")))
+  (-> "Materials"
+      ("Manila paper" (make* 'manila-paper "ornaments"))
+      ("Rough paper" (make* 'rough-paper "ornaments"))
+      ("Ridged paper" (make* 'ridged-paper "ornaments"))
+      ("Pine" (make* 'pine "ornaments"))
+      ("Granite" (make* 'granite "ornaments"))
+      ("Metal" (make* 'metal "ornaments"))))
 
 (menu-bind code-menu
   ("Algorithm" (make 'algorithm))
