@@ -21,7 +21,7 @@ public:
   bool in_source ();
   path find_dynamic (path p);
 
-  bool is_multi_paragraph_macro (tree t);
+  bool is_multi_paragraph_macro (tree t, bool pure);
   void make_compound (tree_label l, int n);
   void activate ();
 

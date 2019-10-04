@@ -183,6 +183,18 @@
   ("Framed" (make 'framed))
   ("Ornamented" (make 'ornamented))
   ---
+  (-> "Material"
+      ("Manila paper" (make* 'manila-paper "ornaments"))
+      ("Rough paper" (make* 'rough-paper "ornaments"))
+      ("Ridged paper" (make* 'ridged-paper "ornaments"))
+      ("Pine" (make* 'pine "ornaments"))
+      ("Granite" (make* 'granite "ornaments"))
+      ("Metal" (make* 'metal "ornaments")))
+  (-> "Art frame"
+      ("Carved wood" (make* 'carved-wood-frame "std-frame"))
+      ("Decorated wood" (make* 'decorated-wood-frame "std-frame"))
+      ("Black floral I" (make* 'black-floral1-frame "std-frame"))
+      ("Black floral II" (make* 'black-floral2-frame "std-frame")))
   (-> "Shadow"
       (group "Contour")
       ("Drop" (make* 'drop-contour "std-shadow"))
@@ -199,14 +211,7 @@
       ---
       (group "South")
       ("Drop" (make* 'drop-down "std-shadow"))
-      ("Bend bottom" (make* 'half-bend-in-down "std-shadow")))
-  (-> "Materials"
-      ("Manila paper" (make* 'manila-paper "ornaments"))
-      ("Rough paper" (make* 'rough-paper "ornaments"))
-      ("Ridged paper" (make* 'ridged-paper "ornaments"))
-      ("Pine" (make* 'pine "ornaments"))
-      ("Granite" (make* 'granite "ornaments"))
-      ("Metal" (make* 'metal "ornaments"))))
+      ("Bend bottom" (make* 'half-bend-in-down "std-shadow"))))
 
 (menu-bind code-menu
   ("Algorithm" (make 'algorithm))

@@ -21,7 +21,7 @@
   (enunciation-tag) (prominent-tag) (alignment-tag) (compression-tag)
   (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag)
-  (ornament-tag) (shadow-tag)
+  (ornament-tag) (art-frame-tag) (shadow-tag)
   (balloon-tag) (reference-tag))
 
 (define-group similar-tag
@@ -29,7 +29,7 @@
   (enunciation-tag) (prominent-tag) (alignment-tag) (compression-tag)
   (frame-tag) (frame-titled-tag)
   (textual-tag) (code-tag) (equation-tag)
-  (ornament-tag) (shadow-tag)
+  (ornament-tag) (art-frame-tag) (shadow-tag)
   (balloon-tag))
 
 (define-group numbered-tag
@@ -220,6 +220,10 @@
 
 (define-group ornament-tag
   manila-paper rough-paper ridged-paper pine granite metal)
+
+(define-group art-frame-tag
+  carved-wood-frame decorated-wood-frame
+  black-floral1-frame black-floral2-frame)
 
 (define-group shadow-tag
   drop-contour bend-in-contour bend-out-contour diagonal-bend-in-contour

@@ -50,24 +50,27 @@ edit_dynamic_rep::find_dynamic (path p) {
 ******************************************************************************/
 
 bool
-edit_dynamic_rep::is_multi_paragraph_macro (tree t) {
+edit_dynamic_rep::is_multi_paragraph_macro (tree t, bool pure) {
   int n= arity (t);
   if (is_document (t) || is_func (t, PARA) || is_func (t, SURROUND))
     return true;
   if (is_func (t, MACRO) || is_func (t, WITH) ||
       is_func (t, LOCUS) ||
       is_func (t, CANVAS) || is_func (t, ORNAMENT) || is_func (t, ART_BOX))
-    return is_multi_paragraph_macro (t [n-1]);
+    return is_multi_paragraph_macro (t [n-1], pure);
   if (is_extension (t) &&
       !is_compound (t, "footnote") &&
       !is_compound (t, "footnote-anchor")) {
     int i;
     for (i=1; i<n; i++)
-      if (is_multi_paragraph_macro (t[i]))
+      if (is_multi_paragraph_macro (t[i], pure))
 	return true;
     tree f= get_env_value (as_string (L(t)));
-    return is_multi_paragraph_macro (f);
+    return is_multi_paragraph_macro (f, pure);
   }
+  if (!pure)
+    if (is_func (t, ARG))
+      return true;
   return false;
 }
 
@@ -108,14 +111,15 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
   else {
     string s= as_string (l);
     tree f= get_env_value (s);
-    bool block_macro= (N(f) == 2) && is_multi_paragraph_macro (f);
+    bool block_macro= (N(f) == 2) && is_multi_paragraph_macro (f, true);
+    bool large_macro= (N(f) == 2) && is_multi_paragraph_macro (f, false);
     bool table_macro= (N(f) == 2) && contains_table_format (f[1], f[0]);
     // FIXME: why do we take the precaution N(f) == 2 ?
     if (s == "explain") block_macro= true;
 
     tree sel= "";
     if (selection_active_small () ||
-	(block_macro && selection_active_normal ()))
+	(large_macro && selection_active_normal ()))
       sel= selection_get_cut ();
     else if (is_with_like (t) && selection_active_normal ()) {
       sel= selection_get_cut ();
