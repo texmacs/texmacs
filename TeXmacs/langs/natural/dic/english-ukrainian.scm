@@ -1138,7 +1138,7 @@
 ("the mycas example" "приклад \"mycas\"")
 ("theorem" "теорема")
 ("the primitive TeXmacs constructs" "примiтивнi конструкцiЁ TeXmacs-а")
-("there are unsaved files" "№ незбереженi файли")
+("there are unsaved documents" "№ незбереженi файли")
 ("the standard TeXmacs styles" "стандартнi стилi TeXmacs-а")
 ("the TeXmacs authors" "автори TeXmacs")
 ("this document has been produced using" "цей документ був створений з використанням")

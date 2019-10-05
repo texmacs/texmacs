@@ -1287,7 +1287,7 @@
 ("the primitive TeXmacs constructs" "der grundlegende TeXmacs-Aufbau")
 ("the standard TeXmacs styles" "die Standardstile von TeXmacs")
 ("theorem" "Satz")
-("there are unsaved files" "nicht alle Dateien sind gesichert")
+("there are unsaved documents" "nicht alle Dateien sind gesichert")
 ("this document has been produced using" "Dieses Dokument wurde erzeugt mit")
 ("this line" "diese Zeile")
 ("this page" "diese Seite")

@@ -604,7 +604,7 @@
 ("th root" "th rot")
 ("thai" "thailändskt")
 ("theorem" "teorem")
-("there are unsaved files" "det finns icke-sparade filer")
+("there are unsaved documents" "det finns icke-sparade filer")
 ("this line" "denna rad")
 ("tilda" "tilda")
 ("tilde" "tilde")

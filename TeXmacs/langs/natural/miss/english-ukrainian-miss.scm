@@ -74,7 +74,7 @@
 ("teXmacs plugins" "")
 ("teXmacs style files" "")
 ("the mycas example" "")
-("this buffer has not been saved" "")
+("this document has not been saved" "")
 ("underbrace" "")
 ("underline" "")
 ("users of Cyrillic languages" "")

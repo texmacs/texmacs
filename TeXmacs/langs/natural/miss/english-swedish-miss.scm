@@ -601,7 +601,7 @@
 ("the mycas example" "")
 ("the primitive TeXmacs constructs" "")
 ("the standard TeXmacs styles" "")
-("this buffer has not been saved" "")
+("this document has not been saved" "")
 ("this document has been produced using" "")
 ("this page" "")
 ("times" "")

@@ -1133,7 +1133,7 @@
 ("the primitive TeXmacs constructs" "TeXmacsin alkeiskonstruktiot")
 ("the standard TeXmacs styles" "TeXmacsin standardityylit")
 ("theorem" "lause")
-("there are unsaved files" "kaikkia tiedostoja ei ole talletettu")
+("there are unsaved documents" "kaikkia tiedostoja ei ole talletettu")
 ("this document has been produced using" "tämä asiakirja on tehty käyttäen")
 ("this line" "tämä rivi")
 ("this page" "tämä sivu")

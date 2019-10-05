@@ -73,7 +73,7 @@
 ("summary of the principal TeXmacs tags" "")
 ("teXmacs plugins" "")
 ("teXmacs style files" "")
-("this buffer has not been saved" "")
+("this document has not been saved" "")
 ("underbrace" "")
 ("underline" "")
 ("users of Cyrillic languages" "")

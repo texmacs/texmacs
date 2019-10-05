@@ -152,7 +152,7 @@
   (cond ((buffer-embedded? (current-buffer))
          (alt-windows-delete (alt-window-search (current-buffer))))
         ((buffer-modified? (current-buffer))
-         (user-confirm "The buffer has not been saved. Really close it?" #f  
+         (user-confirm "The document has not been saved. Really close it?" #f  
            (lambda (answ)
              (when answ (buffer-close (current-buffer))))))
         (else (buffer-close (current-buffer)))))
@@ -160,7 +160,9 @@
 (define (do-kill-window)
   (with buf (current-buffer)
     (kill-window (current-window))
-    (delayed (:idle 100) (buffer-close buf))))
+    (delayed
+      (:idle 100)
+      (buffer-close buf))))
 
 (tm-define (safely-kill-window . opt-name)
   (cond ((and (buffer-embedded? (current-buffer)) (null? opt-name))
@@ -168,17 +170,27 @@
         ((<= (windows-number) 1)
          (safely-quit-TeXmacs))
         ((nnull? opt-name)
-         (kill-window (car opt-name)))
+         (with buf (window->buffer (car opt-name))
+           (kill-window (car opt-name))
+           (delayed
+             (:idle 100)
+             (buffer-close buf))))
         ((buffer-modified? (current-buffer))
-         (user-confirm "The buffer has not been saved. Really close it?" #f  
+         (user-confirm "The document has not been saved. Really close it?" #f
            (lambda (answ)
              (when answ (do-kill-window)))))
         (else (do-kill-window))))
 
 (tm-define (safely-quit-TeXmacs)
-  (if (not (buffers-modified?)) (quit-TeXmacs)
-      (user-confirm "There are unsaved files. Really quit?" #f  
-        (lambda (answ) (when answ (quit-TeXmacs))))))
+  (with l (filter buffer-modified? (buffer-list))
+    (if (null? l)
+        (quit-TeXmacs)
+        (begin
+          (when (not (buffer-modified? (current-buffer)))
+            ;; FIXME: focus on window with buffer, if any
+            (switch-to-buffer (car l)))
+          (user-confirm "There are unsaved documents. Really quit?" #f  
+            (lambda (answ) (when answ (quit-TeXmacs))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; System dependent conventions for buffer management
