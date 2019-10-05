@@ -42,6 +42,14 @@
 
   <assign|carved-wood-frame-tcrop|0.8650794>
 
+  <assign|carved-wood-frame-lpadding|-0.03tab>
+
+  <assign|carved-wood-frame-rpadding|-0.01tab>
+
+  <assign|carved-wood-frame-bpadding|-0.03tab>
+
+  <assign|carved-wood-frame-tpadding|-0.01tab>
+
   <assign|carved-wood-frame|<macro|body|<with-carved-wood|<art-frame|<arg|body>>>>>
 
   <\active*>
@@ -63,6 +71,14 @@
   <assign|decorated-wood-frame-bcrop|0.1866029>
 
   <assign|decorated-wood-frame-tcrop|0.8149081>
+
+  <assign|decorated-wood-frame-lpadding|-0.03tab>
+
+  <assign|decorated-wood-frame-rpadding|-0.01tab>
+
+  <assign|decorated-wood-frame-bpadding|-0.03tab>
+
+  <assign|decorated-wood-frame-tpadding|-0.01tab>
 
   <assign|decorated-wood-frame|<macro|body|<with-decorated-wood|<art-frame|<arg|body>>>>>
 
@@ -102,13 +118,13 @@
 
   <assign|black-floral1-frame-tborder|1tab>
 
-  <assign|black-floral1-frame-lpadding|0em>
+  <assign|black-floral1-frame-lpadding|-0.666666tab>
 
-  <assign|black-floral1-frame-rpadding|0em>
+  <assign|black-floral1-frame-rpadding|-0.666666tab>
 
-  <assign|black-floral1-frame-bpadding|0em>
+  <assign|black-floral1-frame-bpadding|-0.666666tab>
 
-  <assign|black-floral1-frame-tpadding|0em>
+  <assign|black-floral1-frame-tpadding|-0.666666tab>
 
   <assign|black-floral1-frame|<macro|body|<with-black-floral1|<art-frame|<arg|body>>>>>
 
@@ -148,13 +164,13 @@
 
   <assign|black-floral2-frame-tborder|1tab>
 
-  <assign|black-floral2-frame-lpadding|0em>
+  <assign|black-floral2-frame-lpadding|-0.5tab>
 
-  <assign|black-floral2-frame-rpadding|0em>
+  <assign|black-floral2-frame-rpadding|-0.5tab>
 
-  <assign|black-floral2-frame-bpadding|0em>
+  <assign|black-floral2-frame-bpadding|-0.5tab>
 
-  <assign|black-floral2-frame-tpadding|0em>
+  <assign|black-floral2-frame-tpadding|-0.5tab>
 
   <assign|black-floral2-frame|<macro|body|<with-black-floral2|<art-frame|<arg|body>>>>>
 </body>

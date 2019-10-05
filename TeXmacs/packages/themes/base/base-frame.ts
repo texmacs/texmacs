@@ -22,6 +22,20 @@
 
   <\active*>
     <\src-comment>
+      Global parameters for all themes
+    </src-comment>
+  </active*>
+
+  <assign|frame-thickness|1>
+
+  <assign|frame-recolor|>
+
+  <assign|frame-hpadding|0.5tab>
+
+  <assign|frame-vpadding|0.5tab>
+
+  <\active*>
+    <\src-comment>
       Defaults
     </src-comment>
   </active*>
@@ -54,13 +68,13 @@
 
   <assign|frame-tborder|1.5tab>
 
-  <assign|frame-lpadding|0.5tab>
+  <assign|frame-lpadding|0tab>
 
-  <assign|frame-rpadding|0.5tab>
+  <assign|frame-rpadding|0tab>
 
-  <assign|frame-bpadding|0.5tab>
+  <assign|frame-bpadding|0tab>
 
-  <assign|frame-tpadding|0.5tab>
+  <assign|frame-tpadding|0tab>
 
   <\active*>
     <\src-comment>
@@ -68,7 +82,7 @@
     </src-comment>
   </active*>
 
-  <assign|art-frame|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|frame-picture>|effect|<value|frame-effect>|lcrop|<value|frame-lcrop>|rcrop|<value|frame-rcrop>|bcrop|<value|frame-bcrop>|tcrop|<value|frame-tcrop>|lrepeat|<value|frame-lrepeat>|rrepeat|<value|frame-rrepeat>|brepeat|<value|frame-brepeat>|trepeat|<value|frame-trepeat>|lwidth|<value|frame-lborder>|rwidth|<value|frame-rborder>|bheight|<value|frame-bborder>|theight|<value|frame-tborder>>|<tuple|text|normal|lpadding|<plus|<value|frame-lborder>|<value|frame-lpadding>>|rpadding|<plus|<value|frame-rborder>|<value|frame-rpadding>>|bpadding|<plus|<value|frame-bborder>|<value|frame-bpadding>>|tpadding|<plus|<value|frame-tborder>|<value|frame-tpadding>>>>>>
+  <assign|art-frame|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|frame-picture>|effect|<if|<equal|<value|frame-recolor>|>|<value|frame-effect>|<eff-recolor|<value|frame-effect>|<value|frame-recolor>>>|lcrop|<value|frame-lcrop>|rcrop|<value|frame-rcrop>|bcrop|<value|frame-bcrop>|tcrop|<value|frame-tcrop>|lrepeat|<value|frame-lrepeat>|rrepeat|<value|frame-rrepeat>|brepeat|<value|frame-brepeat>|trepeat|<value|frame-trepeat>|lwidth|<times|<value|frame-thickness>|<value|frame-lborder>>|rwidth|<times|<value|frame-thickness>|<value|frame-rborder>>|bheight|<times|<value|frame-thickness>|<value|frame-bborder>>|theight|<times|<value|frame-thickness>|<value|frame-tborder>>>|<tuple|text|normal|lpadding|<plus|<times|<value|frame-thickness>|<plus|<value|frame-lborder>|<value|frame-lpadding>>>|<value|frame-hpadding>>|rpadding|<plus|<times|<value|frame-thickness>|<plus|<value|frame-rborder>|<value|frame-rpadding>>>|<value|frame-hpadding>>|bpadding|<plus|<times|<value|frame-thickness>|<plus|<value|frame-bborder>|<value|frame-bpadding>>>|<value|frame-vpadding>>|tpadding|<plus|<times|<value|frame-thickness>|<plus|<value|frame-tborder>|<value|frame-tpadding>>>|<value|frame-vpadding>>>>>>
 
   <\active*>
     <\src-comment>

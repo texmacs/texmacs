@@ -984,6 +984,7 @@ drd_info_rep::heuristic_init_parameter (string var, string val) {
   set_arity (l, 0, 0, ARITY_NORMAL, CHILD_UNIFORM);
   set_var_type (l, VAR_PARAMETER);
   if (ends (var, "-color")) set_type (l, TYPE_COLOR);
+  else if (ends (var, "-recolor")) set_type (l, TYPE_COLOR);
   else if (ends (var, "-length")) set_type (l, TYPE_LENGTH);
   else if (ends (var, "-width")) set_type (l, TYPE_LENGTH);
   else if (val == "true" || val == "false") set_type (l, TYPE_BOOLEAN);

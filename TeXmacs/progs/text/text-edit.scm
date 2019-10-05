@@ -723,8 +723,16 @@
         (list "ornament-vpadding" "Vertical padding")))
 
 (tm-define (customizable-parameters t)
+  (:require (tree-in? t (art-frame-tag-list)))
+  (list (list "frame-thickness" "Thickness")
+        (list "frame-recolor" "Recolor")
+        (list "frame-hpadding" "Horizontal padding")
+        (list "frame-vpadding" "Vertical padding")))
+
+(tm-define (customizable-parameters t)
   (:require (tree-in? t (shadow-tag-list)))
   (list (list "shadow-elevation" "Elevation")
+        (list "shadow-recolor" "Recolor")
         (list "shadow-plain" "Plain")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

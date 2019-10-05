@@ -30,6 +30,8 @@
 
   <assign|shadow-plain|false>
 
+  <assign|shadow-recolor|>
+
   <\active*>
     <\src-comment>
       Default values for shadow theme parameters
@@ -74,7 +76,7 @@
     </src-comment>
   </active*>
 
-  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<value|shadow-effect>|align|<value|shadow-align>|format|<if|<value|shadow-plain>|xxx
+  <assign|art-shadow|<macro|body|<art-box|<arg|body>|<tuple|frame|<value|shadow-picture>|effect|<if|<equal|<value|shadow-recolor>|>|<value|shadow-effect>|<eff-recolor|<value|shadow-effect>|<value|shadow-recolor>>>|align|<value|shadow-align>|format|<if|<value|shadow-plain>|xxx
   xxx xxx|<value|shadow-format>>|lcrop|<value|shadow-lcrop>|rcrop|<value|shadow-rcrop>|bcrop|<value|shadow-bcrop>|tcrop|<value|shadow-tcrop>|lwidth|<times|<value|shadow-elevation>|<value|shadow-lborder>>|rwidth|<times|<value|shadow-elevation>|<value|shadow-rborder>>|bheight|<times|<value|shadow-elevation>|<value|shadow-bborder>>|theight|<times|<value|shadow-elevation>|<value|shadow-tborder>>|loffset|<times|<value|shadow-elevation>|<value|shadow-loffset>>|roffset|<times|<value|shadow-elevation>|<value|shadow-roffset>>|boffset|<times|<value|shadow-elevation>|<value|shadow-boffset>>|toffset|<times|<value|shadow-elevation>|<value|shadow-toffset>>>|<tuple|text|normal>>>>
 
   <\active*>
