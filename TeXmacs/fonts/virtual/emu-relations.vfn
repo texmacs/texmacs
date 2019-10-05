@@ -8,6 +8,8 @@
                  (align (join (0 ym sim) sim (0 yp sim)) = * 0.5))))
   (smile smile*)
   (frown frown*)
+  (thicksim (join (0 -0.015 sim) sim (0 0.015 sim)))
+  (thickapprox (join (0 -0.015 approx) approx (0 0.015 approx)))
   (asymp (with d (- (sep-equal) (* 0.5 (frac-width)))
            (align (stack (hor-scale smile* =) (hor-scale frown* =) d)
                   = * 0.5)))

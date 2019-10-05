@@ -86,8 +86,6 @@
 ("<shortparallel>"	"#2225") ; variant of <parallel>
 ("<nshortparallel>"	"#2226") ; variant of <nparallel>
 ("<wasytherefore>"	"#2234") ; variant of <therefore>
-("<thicksim>"		"#223C") ; variant of <sim>
-("<thickapprox>"       	"#2248") ; variant of <approx>
 ("<oplus>"		"#2295") ; variant of <varoplus>
 ("<ominus>"		"#2296") ; variant of <varominus>
 ("<otimes>"		"#2297") ; variant of <varotimes>
