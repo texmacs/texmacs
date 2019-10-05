@@ -7,8 +7,8 @@ TEST (url, exist) {
   // TODO: Windows compatibility
   url root_tmp = url ("/tmp");
   url root_no_such_tmp = url ("/no_such_tmp");
-  EXPECT_EQ (exists (root_tmp), true);
-  EXPECT_EQ (exists (root_no_such_tmp), false);
+  ASSERT_TRUE (exists (root_tmp));
+  ASSERT_FALSE (exists (root_no_such_tmp));
 }
 
 TEST (url, suffix) {

@@ -71,6 +71,7 @@ string   as_string (long long int i);
 string   as_string (unsigned long int i);
 string   as_string (double x);
 string   as_string (const char* s);
+bool     is_empty  (string s);
 bool     is_bool   (string s);
 bool     is_int    (string s);
 bool     is_double (string s);

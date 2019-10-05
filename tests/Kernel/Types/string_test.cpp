@@ -94,6 +94,12 @@ TEST (string, as_string_bool) {
 /******************************************************************************
 * Predicates
 ******************************************************************************/
+TEST (string, is_empty) {
+  ASSERT_TRUE (is_empty (""));
+  ASSERT_FALSE (is_empty (" "));
+  ASSERT_FALSE (is_empty ("nonempty"));
+}
+
 TEST (string, is_bool) {
   ASSERT_TRUE (is_bool ("true"));
   ASSERT_TRUE (is_bool ("false"));

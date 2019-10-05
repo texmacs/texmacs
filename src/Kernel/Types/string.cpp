@@ -341,6 +341,11 @@ as_string (const char* s) {
 }
 
 bool
+is_empty (string s) {
+  return N(s) == 0;
+}
+
+bool
 is_bool (string s) {
   return (s == "true") || (s == "false");
 }

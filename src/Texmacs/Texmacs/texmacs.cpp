@@ -105,6 +105,8 @@ TeXmacs_init_paths (int& argc, char** argv) {
   }
 #endif
 
+  string current_texmacs_path = get_env ("TEXMACS_PATH");
+
 #if (defined(QTTEXMACS) && defined(Q_WS_MAC)) 
   // the following line can inibith external plugin loading
   // QCoreApplication::setLibraryPaths(QStringList());
@@ -135,7 +137,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // Mac bundle environment initialization
   // We set some environment variables when the executable
   // is in a .app bundle on MacOSX
-  if (get_env ("TEXMACS_PATH") == "")
+  if (is_empty (current_texmacs_path))
     set_env ("TEXMACS_PATH", as_string(exedir * "../Resources/share/TeXmacs"));
   //cout << get_env("PATH") * ":" * as_string(url("$PWD") * argv[0]
   // * "../../Resources/share/TeXmacs/bin") << LF;
@@ -157,7 +159,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // PWD is set to HOME
   // if PWD is lacking, then the path resolution machinery may not work
   
-  if (get_env ("TEXMACS_PATH") == "")
+  if (is_empty (current_texmacs_path))
     set_env ("TEXMACS_PATH", as_string (exedir * ".."));
   // if (get_env ("HOME") == "") //now set in immediate_options otherwise --setup option fails
   //   set_env ("HOME", get_env("USERPROFILE"));
@@ -170,6 +172,15 @@ TeXmacs_init_paths (int& argc, char** argv) {
   }
   // system("set");
 #endif
+
+  // check on the latest $TEXMACS_PATH
+  current_texmacs_path = get_env ("TEXMACS_PATH");
+  if (is_empty (current_texmacs_path) || !exists (url (current_texmacs_path))) {
+    cout << "The required TEXMACS_PATH("
+         << current_texmacs_path
+         << ") does not exists" << LF;
+    exit(1);
+  }
 }
 
 /******************************************************************************
