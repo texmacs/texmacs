@@ -141,8 +141,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind texmacs-main-icons
-  (=> (balloon (icon "tm_new.xpm") "Create a new document")
-      (link new-file-menu))
+  (if (window-per-buffer?)
+      ((balloon (icon "tm_new.xpm") "Create a new document")
+       (new-document)))
+  (if (not (window-per-buffer?))
+      (=> (balloon (icon "tm_new.xpm") "Create a new document")
+          (link new-file-menu)))
   (=> (balloon (icon "tm_open.xpm") "Load a file") (link load-menu))
   (=> (balloon (icon "tm_save.xpm") "Save this buffer") (link save-menu))
   ((balloon (icon "tm_build.xpm") "Update this buffer")

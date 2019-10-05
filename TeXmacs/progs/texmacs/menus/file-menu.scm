@@ -47,8 +47,10 @@
     (sublist l2 0 (min (length l2) nr))))
 
 (tm-define (buffer-go-menu)
-  (with l (list-difference (buffer-menu-list 15) (linked-file-list))
-    (buffer-list-menu l)))
+  (let* ((l1 (list-difference (buffer-menu-list 15) (linked-file-list)))
+         (l2 (map window->buffer (window-list)))
+         (l3 (list-difference l2 (list (current-buffer)))))
+    (buffer-list-menu (list-difference l1 l3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dynamic menu for recent files
@@ -134,8 +136,7 @@
 
 (menu-bind new-file-menu
   (if (window-per-buffer?)
-      ("New window" (new-document))
-      ("New document" (new-document*)))
+      ("New window" (new-document)))
   (if (not (window-per-buffer?))
       ("New document" (new-document))
       ("New window" (new-document*)))
@@ -145,8 +146,6 @@
 (menu-bind load-menu
   ("Load" (open-document))
   ("Revert" (revert-buffer))
-  (if (window-per-buffer?)
-      ("Load in same window" (open-document*)))
   (if (not (window-per-buffer?))
       ("Load in new window" (open-document*)))
   ---
@@ -209,8 +208,7 @@
 
 (menu-bind close-menu
   (if (window-per-buffer?)
-      ("Close window" (close-document))
-      ("Close document" (close-document*)))
+      ("Close window" (close-document)))
   (if (not (window-per-buffer?))
       ("Close document" (close-document))
       ("Close window" (close-document*)))
@@ -270,9 +268,19 @@
   (if (nnull? (linked-file-list))
       ---
       (link linked-file-menu))
-  (if (nnull? (recent-unloaded-file-list 1))
-      ---
-      (link recent-unloaded-file-menu))
+  (if (not (window-per-buffer?))
+      (if (nnull? (recent-unloaded-file-list 1))
+          ---
+          (link recent-unloaded-file-menu)))
   (if (nnull? (bookmarks-menu))
       ---
-      (link bookmarks-menu)))
+      (link bookmarks-menu))
+  (if (window-per-buffer?)
+      ---
+      ("New" (new-document*))
+      ("Load" (open-document*))
+      (-> "Recent"
+          (if (nnull? (recent-unloaded-file-list 1))
+              ---
+              (link recent-unloaded-file-menu)))
+      ("Close" (close-document*))))
