@@ -1,7 +1,7 @@
 
 /******************************************************************************
 * MODULE     : scala_language.cpp
-* DESCRIPTION: the scala language
+* DESCRIPTION: the Scala language
 * COPYRIGHT  : (C) 2014  François Poulain
 *              (C) 2016  Darcy Shen
 *******************************************************************************
@@ -50,10 +50,9 @@ static void parse_escaped_char (string s, int& pos);
 static void parse_number (string s, int& pos);
 static void parse_various_number (string s, int& pos);
 static void parse_alpha (string s, int& pos);
-static inline bool belongs_to_identifier (char c);
 
 scala_language_rep::scala_language_rep (string name):
-  language_rep (name), colored ("") {}
+  abstract_language_rep (name), colored ("") {}
 
 text_property
 scala_language_rep::advance (tree t, int& pos) {
@@ -309,36 +308,8 @@ scala_color_setup_operator_field (hashmap<string, string> & t) {
 }
 
 static inline bool
-belongs_to_identifier (char c) {
-  return ((c<='9' && c>='0') ||
-          (c<='Z' && c>='A') ||
-	  (c<='z' && c>='a') ||
-          (c=='_'));
-}
-
-static inline bool
 is_hex_number (char c) {
-  return (c>='0' && c<='9') || (c>='A' && c<='F') || (c>='a' && c<='f');
-}
-
-static inline bool
-is_number (char c) {
-  return (c>='0' && c<='9');
-}
-
-static void
-parse_identifier (hashmap<string, string>& t, string s, int& pos) {
-  int i=pos;
-  if (pos >= N(s)) return;
-  if (is_number (s[i])) return;
-  while (i<N(s) && belongs_to_identifier (s[i])) i++;
-  if (!(t->contains (s (pos, i)))) pos= i;
-}
-
-static void
-parse_alpha (string s, int& pos) {
-  static hashmap<string,string> empty;
-  parse_identifier (empty, s, pos);
+  return is_digit (c) || (c>='A' && c<='F') || (c>='a' && c<='f');
 }
 
 static void
@@ -479,11 +450,11 @@ in_comment (int pos, tree t) {
   return false;
 }
 
-static string
-parse_keywords (hashmap<string,string>& t, string s, int& pos) {
+string
+scala_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return "";
-  if (is_number (s[i])) return "";
+  if (is_digit (s[i])) return "";
   while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r)) {
@@ -501,8 +472,8 @@ parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   return "";
 }
 
-static string
-parse_operators (hashmap<string,string>& t, string s, int& pos) {
+string
+scala_language_rep::parse_operators (hashmap<string,string>& t, string s, int& pos) {
   int i;
   for (i=12; i>=1; i--) {
     string r=s(pos,pos+i);
@@ -538,15 +509,15 @@ parse_various_number (string s, int& pos) {
 static void
 parse_number (string s, int& pos) {
   int i= pos;
-  if (pos>=N(s) || !is_number(s[i])) return;
+  if (pos>=N(s) || !is_digit (s[i])) return;
   i++;
-  while (i<N(s) && (is_number (s[i]) || s[i] == '.'))
+  while (i<N(s) && (is_digit (s[i]) || s[i] == '.'))
     i++;
   if (i == pos) return;
   if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_number (s[i]) || s[i] == '.')) i++;
+    while (i<N(s) && (is_digit (s[i]) || s[i] == '.')) i++;
   }
   else if (i<N(s) && (s[i] == 'l' || s[i] == 'L')) i++;
   else if (i<N(s) && (s[i] == 'f' || s[i] == 'F')) i++;

@@ -3,6 +3,7 @@
  * MODULE     : cpp_language.cpp
  * DESCRIPTION: the "cpp" language
  * COPYRIGHT  : (C) 2008  Francis Jamet
+ *              (C) 2019  Darcy Shen
  *******************************************************************************
  * This software falls under the GNU general public license and comes WITHOUT
  * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -61,10 +62,7 @@ static void parse_string (string s, int& pos);
 static void parse_alpha (string s, int& pos);
 
 cpp_language_rep::cpp_language_rep (string name):
-language_rep (name), colored ("")
-{
-  
-}
+  abstract_language_rep (name), colored ("") {}
 
 text_property
 cpp_language_rep::advance (tree t, int& pos) {
@@ -75,7 +73,7 @@ cpp_language_rep::advance (tree t, int& pos) {
     pos++;
     return &tp_space_rep;
   }
-  if (c >= '0' && c <= '9') {
+  if (is_digit (c)) {
     parse_number (s, pos);
     return &tp_normal_rep;
   }
@@ -262,33 +260,6 @@ cpp_color_setup_otherlexeme (hashmap<string, string>& t) {
   
 }
 
-static inline bool
-belongs_to_identifier (char c) {
-  return ((c<='9' && c>='0') ||
-          (c<='Z' && c>='A') ||
-          (c<='z' && c>='a') ||
-          c=='_');
-}
-
-static inline bool
-is_number (char c) {
-  return (c>='0' && c<='9');
-}
-
-static void
-parse_identifier (hashmap<string, string>& t, string s, int& pos) {
-  int i= pos;
-  if (pos >= N(s) || is_number (s[i])) return;
-  while (i < N(s) && belongs_to_identifier (s[i])) i++;
-  if (!t->contains (s (pos, i))) pos= i;
-}
-
-static void
-parse_alpha (string s, int& pos) {
-  static hashmap<string,string> empty;
-  parse_identifier (empty, s, pos);
-}
-
 static void
 parse_blanks (string s, int& pos) {
   while (pos<N(s) && (s[pos]==' ' || s[pos]=='\t')) pos++;
@@ -319,33 +290,6 @@ parse_string (string s, int& pos) {
 }
 
 static void
-parse_keyword (hashmap<string,string>& t, string s, int& pos) {
-  int i= pos;
-  if (pos >= N(s) || is_number (s[i])) return;
-  while (i < N(s) && belongs_to_identifier (s[i])) i++;
-  if (t->contains (s (pos, i)))
-    pos= i;
-}
-
-static void
-parse_type (hashmap<string,string>& t, string s, int& pos) {
-  int i= pos;
-  if (pos >= N(s) || is_number (s[i])) return;
-  while (i < N(s) && belongs_to_identifier (s[i])) i++;
-  if (t->contains (s (pos, i)))
-    pos= i;
-}
-
-static void
-parse_constant (hashmap<string,string>& t, string s, int& pos) {
-  int i= pos;
-  if (pos >= N(s) || is_number (s[i])) return;
-  while (i < N(s) && belongs_to_identifier (s[i])) i++;
-  if (t->contains (s (pos, i)))
-    pos= i;
-}
-
-static void
 parse_other_lexeme (hashmap<string,string>& t, string s, int& pos) {
   int i;
   for (i=12; i>=1; i--)
@@ -358,15 +302,15 @@ parse_number (string s, int& pos) {
   int i= pos;
   if (pos >= N(s) || s[i] == '.') return;
   while (i < N(s) &&
-         (is_number (s[i]) ||
+         (is_digit (s[i]) ||
           (s[i] == '.' && (i + 1 < N(s)) &&
-           (is_number (s[i+1]) ||
+           (is_digit (s[i+1]) ||
             s[i+1] == 'e' || s[i+1] == 'E')))) i++;
   if (i == pos) return;
   if (i < N(s) && (s[i] == 'e' || s[i] == 'E')) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_number (s[i]))) i++;
+    while (i<N(s) && (is_digit (s[i]))) i++;
   }
   pos= i;
 }
@@ -394,10 +338,10 @@ parse_diese (string s, int& pos) {
   if (s[pos] == '#') pos++;
 }
 
-static void
-parse_preprocessing (string s, int & pos) {
+void
+cpp_language_rep::parse_preprocessing (string s, int & pos) {
   int i= pos;
-  if (pos >= N(s) || is_number (s[i])) return;
+  if (pos >= N(s) || is_digit (s[i])) return;
   while (i < N(s) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (r == "include" ||
