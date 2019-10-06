@@ -1,9 +1,9 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.11>
 
 <style|<tuple|tmdoc|old-spacing>>
 
 <\body>
-  <tmdoc-title|The <name|Dra<TeX>> plug-in>
+  <tmdoc-title|The <name|DraTex> plug-in>
 
   <\traverse>
     <branch|Short description|dratex-abstract.en.tm>

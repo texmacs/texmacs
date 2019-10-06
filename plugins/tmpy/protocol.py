@@ -13,6 +13,7 @@
 ## in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 import os
+from os.path import exists
 
 DATA_BEGIN = chr(2)
 DATA_END = chr(5)
@@ -68,3 +69,11 @@ def flush_err(content):
     os.sys.stderr.write("verbatim:" + content)
     os.sys.stderr.write(chr(5))
     os.sys.stderr.flush() 
+
+def get_plugin_path(name):
+    the_home_path = os.getenv("TEXMACS_HOME_PATH") + "/plugins/" + name
+    the_sys_path = os.getenv("TEXMACS_PATH") + "/plugins/" + name
+    if (exists(the_home_path)):
+        return the_home_path
+    else:
+        return the_sys_path
