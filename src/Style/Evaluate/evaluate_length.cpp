@@ -22,7 +22,7 @@
 bool
 is_length (string s) {
   int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++) {}
+  for (i=0; i<N(s) && !is_locase (s[i]); i++) {}
   return is_double (s (0, i)) && is_locase_alpha (s (i, N(s)));
 }
 
@@ -88,7 +88,7 @@ as_tmlen (tree t) {
     string s= t->label;
     int start= 0, i, n=N(s);
     while ((start+1<n) && (s[start]=='-') && (s[start+1]=='-')) start += 2;
-    for (i=start; (i<n) && ((s[i]<'a') || (s[i]>'z')); i++) {}
+    for (i=start; i<n && !is_locase (s[i]); i++) {}
     string s1= s (start, i);
     string s2= s (i, n);
     if (!(is_double (s1) && is_locase_alpha (s2))) return tree (TMLEN, "0");

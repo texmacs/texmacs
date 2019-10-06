@@ -872,7 +872,7 @@ rewrite_symbolic_arguments (tree macro, tree& env) {
 static bool
 is_length (string s) {
   int i;
-  for (i=0; (i<N(s)) && ((s[i]<'a') || (s[i]>'z')); i++) {}
+  for (i=0; (i<N(s)) && (!is_locase (s[i])); i++) {}
   return is_double (s (0, i)) && is_locase_alpha (s (i, N(s)));
 }
 

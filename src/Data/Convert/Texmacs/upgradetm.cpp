@@ -1566,7 +1566,7 @@ static bool
 is_upper (tree t) {
   if (is_compound (t)) return false;
   string s= t->label;
-  return (N(s) == 1) && (s[0] >= 'A') && (s[0] <= 'Z');
+  return (N(s) == 1) && is_upcase (s[0]);
 }
 
 static bool

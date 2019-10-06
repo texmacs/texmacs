@@ -11,6 +11,7 @@
 
 #include "font.hpp"
 #include "language.hpp"
+#include "analyze.hpp"
 
 /******************************************************************************
 * Manage global profile tables
@@ -186,7 +187,7 @@ font_rep::get_spacing_val (int mode, tree t) {
     string s= t->label;
     int i;
     for (i=0; i<N(s); i++)
-      if ((s[i]>='a') && (s[i]<='z')) break;
+      if (is_locase (s[i])) break;
     double val = as_double (s (0, i));
     string unit= s (i, N(s));
     if (unit == "spc") return val * spc;

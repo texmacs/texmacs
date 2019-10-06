@@ -105,8 +105,7 @@ unicode_math_font_rep::search_font_sub (string s) {
   else if (s == "'") { rewriter (s)= "<#2B9>"; return 2; }
   else if (s == "`") { rewriter (s)= "<backprime>"; return 2; }
   else if (N(s) == 1) {
-    if (s[0] >= 'a' && s[0] <= 'z') return 3;
-    if (s[0] >= 'A' && s[0] <= 'Z') return 3;
+    if (is_alpha (s[0])) return 3;
     return 1;
   }
   else if (s[0] == '<' && s[N(s)-1] == '>') {

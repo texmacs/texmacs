@@ -267,7 +267,7 @@ get_unit (tree t) {
   int i;
   string s= as_string (t);
   for (i=0; i<N(s); i++)
-    if ((s[i]>='a') && (s[i]<='z')) break;
+    if (is_locase (s[i])) break;
   return s (i, N(s));
 }
 
@@ -276,7 +276,7 @@ get_quantity (tree t) {
   int i;
   string s= as_string (t);
   for (i=0; i<N(s); i++)
-    if ((s[i]>='a') && (s[i]<='z')) break;
+    if (is_locase (s[i])) break;
   return s (0, i);
 }
 

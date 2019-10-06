@@ -195,7 +195,7 @@ string
 uni_locase_char (string s) {
   if (N(s) == 1) {
     unsigned char c= s[0];
-    if ((c >= 'A' && c <= 'Z') ||
+    if ((is_upcase (c)) ||
         (c >= ((unsigned char) 0x80) && (c <= ((unsigned char) 0x9F))) ||
         (c >= ((unsigned char) 0xC0) && (c <= ((unsigned char) 0xDF))))
       return string ((char) (c + 0x20));
@@ -228,7 +228,7 @@ string
 uni_upcase_char (string s) {
   if (N(s) == 1) {
     unsigned char c= s[0];
-    if ((c >= 'a' && c <= 'z') ||
+    if ((is_locase (c)) ||
         (c >= ((unsigned char) 0xA0) && (c <= ((unsigned char) 0xBF))) ||
         (c >= ((unsigned char) 0xE0)))
       return string ((char) (c - 0x20));
@@ -420,8 +420,7 @@ uni_is_letter (string s) {
   if (N(s) == 1) {
     unsigned char c= s[0];
     return
-      (c >= 'A' && c <= 'Z') ||
-      (c >= 'a' && c <= 'z') ||
+      is_alpha (c) ||
       (((unsigned int) c) >= 128 && (((unsigned int) c) & 97) != 31);
   }
   else if (starts (s, "<#") && ends (s, ">")) {

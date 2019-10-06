@@ -221,10 +221,8 @@ scilab_color_setup_operator_field (hashmap<string, string> & t) {
 
 static inline bool
 belongs_to_identifier (char c) {
-  return (is_digit (c) ||
-          (c<='Z' && c>='A') ||
-          (c<='z' && c>='a') ||
-          (c=='_' || c=='%' || c=='#' || c=='$' || c=='?' || c=='!'));
+  return is_digit (c) || is_alpha(c) ||
+         (c=='_' || c=='%' || c=='#' || c=='$' || c=='?' || c=='!');
 }
 
 static void

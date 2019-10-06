@@ -77,7 +77,7 @@ cpp_language_rep::advance (tree t, int& pos) {
     parse_number (s, pos);
     return &tp_normal_rep;
   }
-  if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_') {
+  if (is_alpha (c) || c == '_') {
     parse_alpha (s, pos);
     return &tp_normal_rep;
   }

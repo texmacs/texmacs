@@ -516,7 +516,7 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
     string s  = from_qstring (text());
     if (last_key >= 32 && last_key <= 126) {
       key= string ((char) last_key);
-      if (key[0] >= 'A' && key[0] <= 'Z')
+      if (is_upcase (key[0]))
         if ((ev->modifiers() & Qt::ShiftModifier) == 0)
           key[0]= (int) (key[0] + ((int) 'a') - ((int) 'A'));
     }

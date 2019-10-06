@@ -144,9 +144,9 @@ parse_identifier (string s, int &i) {
 static string
 parse_command_name (string s, int &i) {
   int n= N(s), start= i;
-  if (i<n && s[i] >= 'A' && s[i] <= 'Z') {
+  if (i<n && is_upcase(s[i])) {
     i++;
-    while (i<n && s[i] >= 'a' && s[i] <= 'z') i++;
+    while (i<n && is_locase (s[i])) i++;
   }
   return s (start, i);
 }

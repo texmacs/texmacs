@@ -54,7 +54,7 @@ r_language_rep::advance (tree t, int& pos) {
       return &tp_normal_rep; 
   } 
 
-  if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || is_in_str( c, "_." )
+  if (is_alpha (c) || is_in_str (c, "_.")
       //|| (c == '$') // For some reason, when this is uncommented, TeXmacs gets stuck on entering $.
       ) {
     parse_alpha (s, pos); 

@@ -160,9 +160,9 @@ style_features (string s) {
   s= replace (s, "-", " ");
   string r;
   for (int i=0; i<N(s); i++)
-    if ((s[i] >= 'A' && s[i] <= 'Z') &&
+    if (is_upcase (s[i]) &&
         (i+1 < N(s)) &&
-        (s[i+1] >= 'a' && s[i+1] <= 'z'))
+        is_locase (s[i+1]))
       r << ' ' << s[i];
     else r << s[i];
   array<string> v= tokenize (r, " ");

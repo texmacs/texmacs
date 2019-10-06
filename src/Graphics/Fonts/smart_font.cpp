@@ -171,11 +171,6 @@ is_math_family (string f) {
     f == "ENR";
 }
 
-inline bool
-is_letter (char c) {
-  return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-}
-
 static bool
 is_greek (string c) {
   static hashmap<string,bool> t (false);
@@ -846,9 +841,9 @@ smart_font_rep::advance (string s, int& pos, string& r, int& nr) {
     if (s[pos] != '<') {
       int c= (int) (unsigned char) s[pos];
       int next= chv[c];
-      if (math_kind != 0 && math_kind != 2 && is_letter (c) &&
-          (pos == 0 || !is_letter (s[pos-1])) &&
-          (pos+1 == N(s) || !is_letter (s[pos+1])))
+      if (math_kind != 0 && math_kind != 2 && is_alpha (c) &&
+          (pos == 0 || !is_alpha (s[pos-1])) &&
+          (pos+1 == N(s) || !is_alpha (s[pos+1])))
         next= italic_nr;
       else if (chv[c] == -1) next= resolve (s (pos, pos+1));
       if (count == 1 && nr != -1 && next == nr) {

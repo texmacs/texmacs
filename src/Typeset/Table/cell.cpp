@@ -255,11 +255,11 @@ void
 cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
   //cout << "  large= " << large << "\n";
   char align_c= '\0'; if (N (halign) != 0) align_c= halign[0];
-  bool lr_flag= (align_c >= 'A' && align_c <= 'Z');
+  bool lr_flag= is_upcase (align_c);
   if (!is_nil (T)) {
     if (N (T->halign) > 0) align_c= T->halign[0];
     else align_c= '\0';
-    lr_flag= (align_c >= 'A' && align_c <= 'Z');
+    lr_flag= is_upcase (align_c);
     T->compute_width (mw, lw, rw);
     if (lr_flag) {
       lw += lborder;
@@ -313,7 +313,7 @@ cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
   char align_c= '\0'; if (N (valign) != 0) align_c= valign[0];
   if (is_nil (T)) {
     bh= th= mh= 0;
-    if (align_c >= 'A' && align_c <= 'Z') {
+    if (is_upcase (align_c)) {
       bh= -b->y1+ bsep + bborder;
       th=  b->y2+ tsep + tborder;
       mh=  bh + th;
@@ -323,7 +323,7 @@ cell_rep::compute_height (SI& mh, SI& bh, SI& th) {
   else {
     if (N (T->valign) != 0) align_c= T->valign[0];
     T->compute_height (mh, bh, th);
-    if (align_c >= 'A' && align_c <= 'Z') {
+    if (is_upcase (align_c)) {
       bh += bborder;
       th += tborder;
     }
