@@ -144,7 +144,7 @@ x_gui_rep::default_font_sub (bool tt, bool mini, bool bold) {
   string series= (bold? string ("bold"): string ("medium"));
   if (s == "") s= "ecrm11@300";
   int i, j, n= N(s);
-  for (j=0; j<n; j++) if ((s[j] >= '0') && (s[j] <= '9')) break;
+  for (j=0; j<n; j++) if (is_digit (s[j])) break;
   string fam= s (0, j);
   if (mini && fam == "ecrm") fam= "ecss";
   if (bold && fam == "ecrm") fam= "ecbx";

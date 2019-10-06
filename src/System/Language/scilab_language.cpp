@@ -70,7 +70,7 @@ scilab_language_rep::advance (tree t, int& pos) {
   char c= s[pos];
   if (c == ' ') {
     pos++; return &tp_space_rep; }
-  if (c >= '0' && c <= '9') {
+  if (is_digit (c)) {
     parse_number (s, pos); return &tp_normal_rep; }
   if (belongs_to_identifier (c)) {
     parse_alpha (s, pos); return &tp_normal_rep; }

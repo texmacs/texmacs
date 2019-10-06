@@ -188,7 +188,7 @@ math_language_rep::next_word (string s, int& pos) {
 
   if (pos>=N(s)) return string ("");
 
-  if ((s[pos]>='0') && (s[pos]<='9')) {
+  if (is_digit (s[pos])) {
     while ((pos<N(s)) && is_numeric (s[pos])) pos++;
     while (s[pos-1]=='.') pos--;
     return s (start, pos);

@@ -73,8 +73,8 @@ scala_language_rep::advance (tree t, int& pos) {
     parse_various_number (s, pos);
     return &tp_normal_rep;
   }
-  if ((c >= '0' && c <= '9') ||
-      (c == '.' && pos+1 < N(s) && s[pos+1] >= '0' && s[pos+1] <= '9')) {
+  if (is_digit (c) ||
+      (c == '.' && pos+1 < N(s) && is_digit (s[pos+1]))) {
     parse_number (s, pos);
     return &tp_normal_rep;
   }

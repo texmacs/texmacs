@@ -550,7 +550,7 @@ from_hexadecimal (string s) {
     return -from_hexadecimal (s (1, n));
   for (i=0; i<n; i++) {
     res= res << 4;
-    if ((s[i] >= '0') && (s[i] <= '9')) res += (int) (s[i] - '0');
+    if (is_digit (s[i])) res += (int) (s[i] - '0');
     if ((s[i] >= 'A') && (s[i] <= 'F')) res += (int) (s[i] + 10 - 'A');
     if ((s[i] >= 'a') && (s[i] <= 'f')) res += (int) (s[i] + 10 - 'a');
   }

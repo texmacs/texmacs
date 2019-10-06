@@ -392,7 +392,7 @@ get_delimiter (string s, font fn, SI height) {
   int ns= N(s);
   ASSERT (ns >= 2 && s[0] == '<' && s[ns-1] == '>',
 	  "invalid rubber character");
-  if (s[ns-2] >= '0' && s[ns-2] <= '9') {
+  if (is_digit (s[ns-2])) {
     int pos;
     int plus= get_number (s, pos);
     if (pos > 0) {

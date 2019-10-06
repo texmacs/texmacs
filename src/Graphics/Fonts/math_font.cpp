@@ -144,9 +144,8 @@ math_font_rep::search_font (string& s, font& fn) {
   else {
     int i, n= N(s);
     for (i=0; i<n; i++)
-      if (((s[i]<'0') || (s[i]>'9')) &&
-          ((s[i]<'a') || (s[i]>'z')) &&
-          ((s[i]<'A') || (s[i]>'Z')) &&
+      if ((!is_digit (s[i])) &&
+          (!is_alpha (s[i])) &&
           (s[i] != '.') && (s[i] != '\\') && (s[i] != '_'))
       {
         fn= error_fn;

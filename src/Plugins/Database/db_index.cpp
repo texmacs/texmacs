@@ -13,6 +13,7 @@
 #include "hashset.hpp"
 #include "convert.hpp"
 #include "universal.hpp"
+#include "analyze.hpp"
 
 #define MAX_PREFIX_LENGTH 6
 
@@ -22,7 +23,7 @@
 
 inline bool
 is_keyword_char (char c) {
-  return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || c == '_';
+  return is_digit (c) || is_locase (c) || c == '_';
 }
 
 void

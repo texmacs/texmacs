@@ -44,8 +44,8 @@ python_language_rep::advance (tree t, int& pos) {
     parse_various_number (s, pos);
     return &tp_normal_rep;
   }
-  if ((c >= '0' && c <= '9') ||
-      (c == '.' && pos+1 < N(s) && s[pos+1] >= '0' && s[pos+1] <= '9')) {
+  if (is_digit (c) ||
+      (c == '.' && pos+1 < N(s) && is_digit (s[pos+1]))) {
     parse_number (s, pos);
     return &tp_normal_rep;
   }
@@ -355,10 +355,7 @@ python_color_setup_operator_field (hashmap<string, string> & t) {
 
 static inline bool
 belongs_to_identifier (char c) {
-  return ((c<='9' && c>='0') ||
-          (c<='Z' && c>='A') ||
-	  (c<='z' && c>='a') ||
-          (c=='_'));
+  return is_digit (c) || is_alpha (c) || (c=='_');
 }
 
 static void

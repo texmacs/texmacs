@@ -35,7 +35,7 @@ unpattern (string s) {
   int i, n= N(s);
   string r;
   for (i=0; i<n; ) {
-    while ((i<n) && (s[i]>='0') && (s[i]<='9')) i++;
+    while (i<n && is_digit (s[i])) i++;
     if (i<n) r << s[i++];
   }
   return r;
@@ -167,8 +167,8 @@ get_hyphens (string s,
         if (!(r == "?")) {
           // cout << "  " << s (i, i+len) << " => " << r << "\n";
           for (j=0, k=0; j<=len; j++, k++) {
-            if ((k<N(r)) && (r[k]>='0') && (r[k]<='9')) {
-              m=((int) r[k])-((int) '0');
+            if (k<N(r) && is_digit (r[k])) {
+              m= ((int) r[k])-((int) '0');
               k++;
             }
             else m=0;

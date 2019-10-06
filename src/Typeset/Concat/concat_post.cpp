@@ -305,8 +305,7 @@ concater_rep::handle_matching (int start, int end) {
         // find the middle of the bracket, around where to center
         SI mid= (a[i]->b->y1 + a[i]->b->y2) >> 1;
         bool custom=
-          N(ls) > 2 && ls[N(ls)-2] <= '9' && ls[N(ls)-2] >= '0' &&
-          !ends (ls, "-0>");
+          N(ls) > 2 && is_digit (ls[N(ls)-2]) && !ends (ls, "-0>");
         if (custom) {
           int pos= N(ls)-1;
           while (pos > 0 && ls[pos] != '-') pos--;

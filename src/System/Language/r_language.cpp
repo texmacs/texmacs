@@ -167,13 +167,6 @@ belongs_to_identifier (char c) {
 	   is_in_str( c, "_." ) ) ;
 }
 
-/* is already defined in analyse.cpp
-static inline bool
-is_digit (char c) {
-  return (c>='0' && c<='9');
-}
-*/
-
 static inline bool 
 is_number_start( char c ) {
   return( is_digit(c) || is_in_str( c, "." ) ) ;
