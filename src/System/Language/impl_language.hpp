@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* MODULE     : language_internals.h
+* MODULE     : impl_language.hpp
 * COPYRIGHT  : (C) 1999  Joris van der Hoeven
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
@@ -33,7 +33,7 @@ extern text_property_rep tp_apply_rep;
 
 struct abstract_language_rep: language_rep {
   abstract_language_rep (string s): language_rep(s) {};
-  bool belongs_to_identifier (char c);
+  virtual bool belongs_to_identifier (char c);
   void parse_identifier (hashmap<string, string>& t, string s, int& pos);
   void parse_alpha (string s, int& pos);
   void parse_type (hashmap<string,string>& t, string s, int& pos);
@@ -88,22 +88,29 @@ struct cpp_language_rep: abstract_language_rep {
   void parse_preprocessing (string s, int & pos);
 };
 
-struct scilab_language_rep: language_rep {
+struct scilab_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
   scilab_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   string get_color (tree t, int start, int end);
+
+  bool belongs_to_identifier (char c);
+  string parse_keywords (hashmap<string,string>& t, string s, int& pos);
+  string parse_operators (hashmap<string,string>& t, string s, int& pos);
 };
 
-struct python_language_rep: language_rep {
+struct python_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
   python_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   string get_color (tree t, int start, int end);
+
+  string parse_keywords (hashmap<string,string>& t, string s, int& pos);
+  string parse_operators (hashmap<string,string>& t, string s, int& pos);
 };
 
 struct scala_language_rep: abstract_language_rep {

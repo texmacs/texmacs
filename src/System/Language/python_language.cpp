@@ -17,11 +17,9 @@
 static void parse_escaped_char (string s, int& pos);
 static void parse_number (string s, int& pos);
 static void parse_various_number (string s, int& pos);
-static void parse_alpha (string s, int& pos);
-static inline bool belongs_to_identifier (char c);
 
 python_language_rep::python_language_rep (string name):
-  language_rep (name), colored ("") {}
+  abstract_language_rep (name), colored ("") {}
 
 text_property
 python_language_rep::advance (tree t, int& pos) {
@@ -353,26 +351,6 @@ python_color_setup_operator_field (hashmap<string, string> & t) {
   t (".")= "operator_field";
 }
 
-static inline bool
-belongs_to_identifier (char c) {
-  return is_digit (c) || is_alpha (c) || (c=='_');
-}
-
-static void
-parse_identifier (hashmap<string, string>& t, string s, int& pos) {
-  int i=pos;
-  if (pos >= N(s)) return;
-  if (is_digit (s[i])) return;
-  while (i<N(s) && belongs_to_identifier (s[i])) i++;
-  if (!(t->contains (s (pos, i)))) pos= i;
-}
-
-static void
-parse_alpha (string s, int& pos) {
-  static hashmap<string,string> empty;
-  parse_identifier (empty, s, pos);
-}
-
 static void
 parse_blanks (string s, int& pos) {
   while (pos<N(s) && (s[pos] == ' ' || s[pos] == '\t')) pos++;
@@ -428,8 +406,8 @@ parse_string (string s, int& pos, bool force) {
   return false;
 }
  
-static string
-parse_keywords (hashmap<string,string>& t, string s, int& pos) {
+string
+python_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return "";
   if (is_digit (s[i])) return "";
@@ -450,8 +428,8 @@ parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   return "";
 }
 
-static string
-parse_operators (hashmap<string,string>& t, string s, int& pos) {
+string
+python_language_rep::parse_operators (hashmap<string,string>& t, string s, int& pos) {
   int i;
   for (i=12; i>=1; i--) {
     string r=s(pos,pos+i);

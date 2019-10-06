@@ -80,8 +80,8 @@ scheme_language_rep::get_color (tree t, int start, int end) {
         break;
       i++;
       while (i <= start && s[i] != '\042')
-	if (s[i] == '\\' && i < start) i += 2;
-	else i++;
+        if (s[i] == '\\' && i < start) i += 2;
+        else i++;
       if (i >= start)
         return decode_color ("scheme", encode_color ("constant_string"));
       break;
