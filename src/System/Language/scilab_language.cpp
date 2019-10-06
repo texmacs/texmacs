@@ -221,22 +221,17 @@ scilab_color_setup_operator_field (hashmap<string, string> & t) {
 
 static inline bool
 belongs_to_identifier (char c) {
-  return ((c<='9' && c>='0') ||
+  return (is_digit (c) ||
           (c<='Z' && c>='A') ||
-	  (c<='z' && c>='a') ||
+          (c<='z' && c>='a') ||
           (c=='_' || c=='%' || c=='#' || c=='$' || c=='?' || c=='!'));
-}
-
-static inline bool
-is_number (char c) {
-  return (c>='0' && c<='9');
 }
 
 static void
 parse_identifier (hashmap<string, string>& t, string s, int& pos) {
   int i=pos;
   if (pos >= N(s)) return;
-  if (is_number (s[i])) return;
+  if (is_digit (s[i])) return;
   while (i<N(s) && belongs_to_identifier (s[i])) i++;
   if (!(t->contains (s (pos, i)))) pos= i;
 }
@@ -294,7 +289,7 @@ static string
 parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return "";
-  if (is_number (s[i])) return "";
+  if (is_digit (s[i])) return "";
   while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r)) {
@@ -355,16 +350,16 @@ parse_number (string s, int& pos) {
   if (pos>=N(s)) return;
   if (s[i] == '.') return;
   while (i<N(s) && 
-	 (is_number (s[i]) ||
+	 (is_digit (s[i]) ||
 	  (s[i] == '.' && (i+1<N(s)) &&
-	   (is_number (s[i+1]) ||
+	   (is_digit (s[i+1]) ||
 	    s[i+1] == 'e' || s[i+1] == 'E' ||
             s[i+1] == 'd' || s[i+1] == 'D')))) i++;
   if (i == pos) return;
   if (i<N(s) && (s[i] == 'e' || s[i] == 'E' || s[i] == 'd' || s[i] == 'D' )) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_number (s[i]))) i++;
+    while (i<N(s) && (is_digit (s[i]))) i++;
   }
   pos= i;
 }
@@ -427,13 +422,13 @@ scilab_language_rep::get_color (tree t, int start, int end) {
       }
       parse_comment_single_line (s, pos);
       if (opos < pos) {
-	type= "comment";
-	break;
+        type= "comment";
+        break;
       }
       cut_str= parse_string (s, pos);
       if (opos < pos) {
-	type= "constant_string";
-	break;
+        type= "constant_string";
+        break;
       }
 
       if (!cut_str) {

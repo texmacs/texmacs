@@ -1723,8 +1723,8 @@ decode_sharp (string c, string& nr) {
   nr= "";
   if (N(c) < 4 || c[N(c)-1] != '>') return c;
   int i= N(c)-2;
-  if (c[i] < '0' || c[i] > '9') return c;
-  while (i >= 0 && c[i] >= '0' && c[i] <= '9') i--;
+  if (!is_digit (c[i])) return c;
+  while (i >= 0 && is_digit (c[i])) i--;
   if (i < 0 || c[i] != '-') return c;
   nr= c (i+1, N(c)-1);
   return c (0, i) * "-#>";
@@ -1774,7 +1774,7 @@ virtual_font_rep::get_char (string s, font_metric& cfnm, font_glyphs& cfng) {
   }
   else if (s[0] == '<' && s[n-1] == '>') {
     if (!virt->dict->contains (s)) {
-      if (s[n-2] < '0' || s[n-2] > '9') return -1;
+      if (!is_digit (s[n-2])) return -1;
       string nr;
       s= decode_sharp (s, nr);
       if (!virt->dict->contains (s)) return -1;
@@ -1809,7 +1809,7 @@ virtual_font_rep::get_tree (string s) {
   int c= ((QN) s[0]), n= N(s);
   if (s[0] == '<' && s[n-1] == '>') {
     if (!virt->dict->contains (s)) {
-      if (s[n-2] < '0' || s[n-2] > '9') return "";
+      if (!is_digit (s[n-2])) return "";
       string nr;
       s= decode_sharp (s, nr);
       if (!virt->dict->contains (s)) return "";

@@ -674,13 +674,6 @@ hashtree_from_dictionary (
 * and HTML/XML character entities to and from UTF-8 byte sequences.
 ***************************************************************************/
 
-bool is_hex_digit (char c) {
-  return
-    (48 <= c && c <= 57) ||
-    (65 <= c && c <= 70) ||
-    (97 <= c && c <= 102);
-}
-
 int hex_digit_to_int(unsigned char c) {
   if (48 <= c && c <= 57)
     return c - 0x30;

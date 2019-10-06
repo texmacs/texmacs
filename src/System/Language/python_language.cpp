@@ -361,21 +361,11 @@ belongs_to_identifier (char c) {
           (c=='_'));
 }
 
-static inline bool
-is_hex_number (char c) {
-  return (c>='0' && c<='9') || (c>='A' && c<='F') || (c>='a' && c<='f');
-}
-
-static inline bool
-is_number (char c) {
-  return (c>='0' && c<='9');
-}
-
 static void
 parse_identifier (hashmap<string, string>& t, string s, int& pos) {
   int i=pos;
   if (pos >= N(s)) return;
-  if (is_number (s[i])) return;
+  if (is_digit (s[i])) return;
   while (i<N(s) && belongs_to_identifier (s[i])) i++;
   if (!(t->contains (s (pos, i)))) pos= i;
 }
@@ -445,7 +435,7 @@ static string
 parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return "";
-  if (is_number (s[i])) return "";
+  if (is_digit (s[i])) return "";
   while ((i<N(s)) && belongs_to_identifier (s[i])) i++;
   string r= s (pos, i);
   if (t->contains (r)) {
@@ -495,7 +485,7 @@ parse_various_number (string s, int& pos) {
         s[pos+1] == 'b' || s[pos+1] == 'B')))
     return;
   pos+= 2;
-  while (pos<N(s) && is_hex_number (s[pos])) pos++;
+  while (pos<N(s) && is_hex_digit (s[pos])) pos++;
   if (pos<N(s) && (s[pos] == 'l' || s[pos] == 'L')) pos++;
 }
 
@@ -503,17 +493,17 @@ static void
 parse_number (string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
-  if (!is_number(s[i]) &&
-      !(s[i] == '.' && pos+1 < N(s) && is_number(s[pos+1])))
+  if (!is_digit (s[i]) &&
+      !(s[i] == '.' && pos+1 < N(s) && is_digit (s[pos+1])))
     return;
   i++;
-  while (i<N(s) && (is_number (s[i]) || s[i] == '.'))
+  while (i<N(s) && (is_digit (s[i]) || s[i] == '.'))
     i++;
   if (i == pos) return;
   if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
     i++;
     if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_number (s[i]) || s[i] == '.')) i++;
+    while (i<N(s) && (is_digit (s[i]) || s[i] == '.')) i++;
     if (i<N(s) && (s[i] == 'j')) i++;
   }
   else if (i<N(s) && (s[i] == 'l' || s[i] == 'L')) i++;

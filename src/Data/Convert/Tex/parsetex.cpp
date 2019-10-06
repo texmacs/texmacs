@@ -396,7 +396,7 @@ latex_parser::parse (string s, int& i, string stop, int change) {
         i+=3;
         t << tree (TUPLE, "\\emdash");
       }
-      else if ((s[i] == '-' || (s[i] >= '0' && s[i] <= '9')) &&
+      else if ((s[i] == '-' || is_digit (s[i])) &&
           can_parse_length (s, i))
         t << parse_length (s, i);
       else if (unicode && ((unsigned char) s[i]) >= 128) {

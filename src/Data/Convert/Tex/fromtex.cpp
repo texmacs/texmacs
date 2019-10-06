@@ -1212,7 +1212,7 @@ latex_symbol_to_tree (string s) {
     }
     return tree (APPLY, s);
   }
-  if ((N(s) == 2) && (s[0] == '#') && (s[1] >= '0') && (s[1] <= '9'))
+  if ((N(s) == 2) && (s[0] == '#') && is_digit(s[1]))
     return tree (APPLY, s(1,2));
   if (s == "&") return tree (FORMAT, "line separator");
   return copy (s);

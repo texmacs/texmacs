@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "convert.hpp"
+#include "analyze.hpp"
 #include "drd_std.hpp"
 
 /******************************************************************************
@@ -116,7 +117,7 @@ tree_to_scheme_tree (tree t) {
     int i, n= N(t);
     tree u (TUPLE, n+1);
     string s= as_string (L(t));
-    if (N(s) > 0 && s[0] >= '0' && s[0] <= '9')
+    if (N(s) > 0 && is_digit (s[0]))
       if (is_int (s)) s= "'" * s;
     u[0]= copy (s);
     for (i=0; i<n; i++)

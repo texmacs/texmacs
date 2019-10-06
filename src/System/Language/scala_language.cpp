@@ -307,11 +307,6 @@ scala_color_setup_operator_field (hashmap<string, string> & t) {
   t (".")= "operator_field";
 }
 
-static inline bool
-is_hex_number (char c) {
-  return is_digit (c) || (c>='A' && c<='F') || (c>='a' && c<='f');
-}
-
 static void
 parse_blanks (string s, int& pos) {
   while (pos<N(s) && (s[pos] == ' ' || s[pos] == '\t')) pos++;
@@ -502,7 +497,7 @@ parse_various_number (string s, int& pos) {
        (s[pos+1] == 'x' || s[pos+1] == 'X')))
     return;
   pos+= 2;
-  while (pos<N(s) && is_hex_number (s[pos])) pos++;
+  while (pos<N(s) && is_hex_digit (s[pos])) pos++;
   if (pos<N(s) && (s[pos] == 'l' || s[pos] == 'L')) pos++;
 }
 
