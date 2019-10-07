@@ -484,10 +484,9 @@ static bool
 is_doc_data (tree t) {
   if (is_func (t, APPLY) && N(t) > 0 && t[0] == "\\doc-data") return true;
   if (!is_concat (t)) return false;
-  for (int i=0; i<N(t); i++) {
+  for (int i=0; i<N(t); i++)
     if (is_doc_data (t[i])) return true;
-    return false;
-  }
+  return false;
 }
 
 tree
