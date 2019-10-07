@@ -19,7 +19,7 @@ static void parse_string (string s, int& pos);
 static void parse_alpha (string s, int& pos);
 
 mathemagix_language_rep::mathemagix_language_rep (string name):
-  language_rep (name), colored ("")
+  abstract_language_rep (name), colored ("")
 { 
   eval ("(use-modules (utils misc tm-keywords))");
   list<string> l= as_list_string (eval ("(map symbol->string highlight-any)"));
@@ -239,26 +239,15 @@ mathemagix_color_setup_otherlexeme (hashmap<string, string>& t) {
   t ("|")= c;
 }
 
-static inline bool
-belongs_to_identifier (char c) {
+bool
+mathemagix_language_rep::belongs_to_identifier (char c) {
   return (is_digit (c) || is_alpha (c) ||
          c=='_' || c=='$' || c=='%' || c=='?');
 }
 
-static void
-parse_identifier (hashmap<string, string>& t,
-		  string s, int& pos, bool postfix) {
-  int i=pos;
-  if (pos>=N(s)) return;
-  if (is_digit (s[i])) return;
-  if (postfix && s[i]=='.') i++;
-  while (i<N(s) && belongs_to_identifier (s[i])) i++;
-  if (!(t->contains (s (pos, i)))) pos= i;
-}
-
-static void
-parse_identifier_or_markup (hashmap<string, string>& t,
-		  string s, int& pos, bool postfix, bool& is_markup) {
+void
+mathemagix_language_rep::parse_identifier_or_markup (hashmap<string, string>& t,
+    string s, int& pos, bool postfix, bool& is_markup) {
   int i=pos;
   is_markup= false;
   if (pos>=N(s)) return;
@@ -269,12 +258,6 @@ parse_identifier_or_markup (hashmap<string, string>& t,
     i++;
   }
   if (!(t->contains (s (pos, i)))) pos= i;
-}
-
-static void
-parse_alpha (string s, int& pos) {
-  static hashmap<string,string> empty;
-  parse_identifier (empty, s, pos, false);
 }
 
 static void
@@ -306,8 +289,8 @@ parse_string (string s, int& pos) {
   }
 }
   
-static void
-parse_keyword (hashmap<string,string>& t, string s, int& pos) {
+void
+mathemagix_language_rep::parse_keyword (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
   if (is_digit (s[i])) return;
@@ -316,8 +299,8 @@ parse_keyword (hashmap<string,string>& t, string s, int& pos) {
   if (t->contains (r) && t(r)=="#8020c0") { pos=i; return; }
 }
 
-static void
-parse_modifier (hashmap<string,string>& t, string s, int& pos) {
+void
+mathemagix_language_rep::parse_modifier (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
   if (is_digit (s[i])) return;
@@ -326,8 +309,8 @@ parse_modifier (hashmap<string,string>& t, string s, int& pos) {
   if (t->contains (r) && t(r)=="modifier") { pos=i; return; }
 }
 
-static void
-parse_class (hashmap<string,string>& t, string s, int& pos) {
+void
+mathemagix_language_rep::parse_class (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
   if (is_digit (s[i])) return;
@@ -337,8 +320,8 @@ parse_class (hashmap<string,string>& t, string s, int& pos) {
 }
 
 
-static void
-parse_postfix (hashmap<string,string>& t, string s, int& pos) {
+void
+mathemagix_language_rep::parse_postfix (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return;
   if (is_digit (s[i])) return;
@@ -347,8 +330,8 @@ parse_postfix (hashmap<string,string>& t, string s, int& pos) {
   if (t->contains (r) && t(r)=="postfix") { pos=i; return; }
 }
 
-static void
-parse_constant (hashmap<string,string>& t, string s, int& pos) {
+void
+mathemagix_language_rep::parse_constant (hashmap<string,string>& t, string s, int& pos) {
   int i=pos;
   if (pos>=N(s)) return;
   if (is_digit (s[i])) return;
@@ -688,19 +671,19 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
     possible_function= false;
     do {
       do {
-	opos=pos;
-	parse_blanks (s, pos);
-	if (opos<pos) break;
-	parse_identifier (colored, s, pos,false);
-	if (opos<pos) { possible_function= true; break; }
-	parse_number (s, pos);
-	if (opos<pos) { possible_function= true; break; }
-	parse_constant (colored, s, pos);
-	if (opos<pos) { possible_function= true; break; }
-	parse_comment (s, pos);
-	if (opos<pos) break;
-	parse_parenthesized (s, pos);
-	if (opos<pos) { possible_function= true; break; }
+        opos=pos;
+        parse_blanks (s, pos);
+        if (opos<pos) break;
+        parse_identifier (colored, s, pos);
+        if (opos<pos) { possible_function= true; break; }
+        parse_number (s, pos);
+        if (opos<pos) { possible_function= true; break; }
+        parse_constant (colored, s, pos);
+        if (opos<pos) { possible_function= true; break; }
+        parse_comment (s, pos);
+        if (opos<pos) break;
+        parse_parenthesized (s, pos);
+        if (opos<pos) { possible_function= true; break; }
       }
       while (false);
     }
@@ -713,7 +696,7 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
         opos=pos;
         parse_blanks (s, pos);
         if (opos<pos) break;
-        parse_identifier (colored, s, pos,false);
+        parse_identifier (colored, s, pos);
         if (opos<pos) break;
         parse_number(s,pos);
         if (opos<pos) break;
@@ -736,30 +719,31 @@ mathemagix_language_rep::get_color (tree t, int start, int end) {
     while (pos<N(s));
   }
   if ( (type=="identifier" || type=="identifier_markup") && possible_class) {
-  do {
     do {
-      opos=pos;
-      parse_blanks (s, pos);
-      if (opos<pos) break;
-      parse_identifier (colored, s, pos,false);
-      if (opos<pos) break;
-      parse_number(s,pos);
-      if (opos<pos) break;
-      parse_constant (colored, s, pos);
-      if (opos<pos) break;
-      parse_comment(s,pos);
-      if (opos<pos) break;
-      parse_parenthesized (s, pos);
-      if (opos<pos) break;
-      parse_declare_type (s, pos);
-      if (opos<pos) break;
-      parse_declare_function (s, pos);
-      if (opos<pos) return "#0000e0";
-      if (type=="identifier") {return none;} else return COLOR_MARKUP;
+      do {
+        opos=pos;
+        parse_blanks (s, pos);
+        if (opos<pos) break;
+        parse_identifier (colored, s, pos);
+        if (opos<pos) break;
+        parse_number(s,pos);
+        if (opos<pos) break;
+        parse_constant (colored, s, pos);
+        if (opos<pos) break;
+        parse_comment(s,pos);
+        if (opos<pos) break;
+        parse_parenthesized (s, pos);
+        if (opos<pos) break;
+        parse_declare_type (s, pos);
+        if (opos<pos) break;
+        parse_declare_function (s, pos);
+        if (opos<pos) return "#0000e0";
+        if (type=="identifier") {return none;} else return COLOR_MARKUP;
+      }
+      while (false);
     }
-    while (false);
+    while (pos<N(s));
   }
-  while (pos<N(s));
-  }
-  if (type=="identifier_markup") {return COLOR_MARKUP;} else return none;
+  if (type=="identifier_markup") {return COLOR_MARKUP;}
+  else return none;
 }

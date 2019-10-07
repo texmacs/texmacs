@@ -58,13 +58,22 @@ struct scheme_language_rep: language_rep {
   string get_color (tree t, int start, int end);
 };
 
-struct mathemagix_language_rep: language_rep {
+struct mathemagix_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
   mathemagix_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
   void hyphenate (string s, int after, string& left, string& right);
   string get_color (tree t, int start, int end);
+
+  bool belongs_to_identifier (char c);
+  void parse_identifier_or_markup (hashmap<string, string>& t,
+    string s, int& pos, bool postfix, bool& is_markup);
+  void parse_keyword (hashmap<string,string>& t, string s, int& pos);
+  void parse_modifier (hashmap<string,string>& t, string s, int& pos);
+  void parse_class (hashmap<string,string>& t, string s, int& pos);
+  void parse_postfix (hashmap<string,string>& t, string s, int& pos);
+  void parse_constant (hashmap<string,string>& t, string s, int& pos);
 };
 
 struct r_language_rep: abstract_language_rep {
