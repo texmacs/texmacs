@@ -107,8 +107,8 @@ close_all_pipes () {
     pipe_link_rep* con= (pipe_link_rep*) it->next();
     if (con->alive) {
       if (-1 != killpg(con->pid,SIGTERM)) {
-	sleep(2);
-	killpg(con->pid,SIGKILL);
+sleep(2);
+        killpg(con->pid,SIGKILL);
       }
       con->alive= false;
     }
@@ -190,13 +190,13 @@ pipe_link_rep::start () {
       if (r == 1 && outbuf[0] == TERMCHAR) return "ok";
       alive= false;
       if (-1 != killpg(pid,SIGTERM)) {
-	sleep(2);
-	killpg(pid,SIGKILL);
+        sleep(2);
+        killpg(pid,SIGKILL);
       }
       wait (NULL);
       if (r == -1) return "Error: the application does not reply";
       else
-	return "Error: the application did not send its usual startup banner";
+        return "Error: the application did not send its usual startup banner";
     }
   }
 #else

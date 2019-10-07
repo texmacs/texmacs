@@ -92,8 +92,8 @@ load_string (url u, string& s, bool fatal) {
     if (!err) {
       if (fseek (fin, 0L, SEEK_END) < 0) err= true;
       else {
-	size= ftell (fin);
-	if (size<0) err= true;
+        size= ftell (fin);
+        if (size<0) err= true;
       }
       if (err) {
         std_warning << "Seek failed for " << as_string (u) << "\n";
@@ -120,7 +120,7 @@ load_string (url u, string& s, bool fatal) {
     // Cache file contents
     if (!err && (N(s) <= 10000 || currently_cached))
       if (file_flag || doc_flag)
-	cache_set (cache_type, name, s);
+        cache_set (cache_type, name, s);
     // End caching
   }
   if (err && fatal) {
@@ -187,7 +187,7 @@ save_string (url u, string s, bool fatal) {
     string cache_type= doc_flag? string ("doc_cache"): string ("file_cache");
     if (!err && N(s) <= 10000)
       if (file_flag || doc_flag)
-	cache_set (cache_type, name, s);
+        cache_set (cache_type, name, s);
     declare_out_of_date (url_parent (r));
     // End caching
   }
@@ -258,7 +258,7 @@ append_string (url u, string s, bool fatal) {
 
 static bool
 get_attributes (url name, struct_stat* buf,
-		bool link_flag=false, bool cache_flag= true)
+                bool link_flag=false, bool cache_flag= true)
 {
   // cout << "Stat " << name << LF;
   string name_s= concretize (name);
@@ -300,14 +300,14 @@ get_attributes (url name, struct_stat* buf,
   if (cache_flag) {
     if (flag) {
       if (do_cache_stat_fail (name_s))
-	cache_set ("stat_cache.scm", name_s, "#f");
+        cache_set ("stat_cache.scm", name_s, "#f");
     }
     else {
       if (do_cache_stat (name_s)) {
         string s1= as_string ((int) buf->st_mode);
         string s2= as_string ((int) buf->st_mtime);
         string s3= as_string ((int) buf->st_size);
-	cache_set ("stat_cache.scm", name_s, tree (TUPLE, s1, s2, s3));
+        cache_set ("stat_cache.scm", name_s, tree (TUPLE, s1, s2, s3));
       }
     }
   }
@@ -344,13 +344,13 @@ is_of_type (url name, string filter) {
       case 'd': return false;
       case 'l': return false;
       case 'r':
-	if (!as_bool (call ("tmfs-permission?", name, "read")))
-	  return false;
-	break;
+        if (!as_bool (call ("tmfs-permission?", name, "read")))
+          return false;
+        break;
       case 'w':
-	if (!as_bool (call ("tmfs-permission?", name, "write")))
-	  return false;
-	break;
+        if (!as_bool (call ("tmfs-permission?", name, "write")))
+          return false;
+        break;
       case 'x': return false;
       }
     return true;

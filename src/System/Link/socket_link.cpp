@@ -164,15 +164,14 @@ socket_link_rep::start () {
   // getaddrinfo may return several addresses
   // trying them until we can connect
   for (rp = result; rp != NULL; rp = rp->ai_next) {
-               io = socket(rp->ai_family, rp->ai_socktype,
-                            rp->ai_protocol);
-               if (io == -1)
-                   continue;
+    io = socket (rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+    if (io == -1)
+      continue;
 
-               if (connect(io, rp->ai_addr, rp->ai_addrlen) != -1)
-                   break;                  /* Success */
+    if (connect (io, rp->ai_addr, rp->ai_addrlen) != -1)
+      break;                  /* Success */
 
-               close(io);
+    close(io);
   }
 
   if (rp == NULL) {               /* No address succeeded */

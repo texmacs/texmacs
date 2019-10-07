@@ -96,7 +96,7 @@ left_recursive (string s, tree t) {
   else if (is_compound (t, "or")) {
     for (int i=0; i<N(t); i++)
       if (left_recursive (s, t[i]))
-	return true;
+        return true;
     return false;
   }
   else if (is_compound (t, "concat"))
@@ -257,11 +257,11 @@ packrat_grammar_rep::define (tree t) {
   else if (is_compound (t, "symbol", 1))
     def << encode_symbol (t);
   else if (is_compound (t, "range", 2) &&
-	   is_atomic (t[0]) && is_atomic (t[1]) &&
-	   N(t[0]->label) == 1 && N(t[1]->label) == 1)
+           is_atomic (t[0]) && is_atomic (t[1]) &&
+           N(t[0]->label) == 1 && N(t[1]->label) == 1)
     def << PACKRAT_RANGE
-	<< encode_token (t[0]->label)
-	<< encode_token (t[1]->label);
+        << encode_token (t[0]->label)
+        << encode_token (t[1]->label);
   else if (is_compound (t, "or", 1))
     def << define (t[0]);
   else {
@@ -339,10 +339,10 @@ packrat_grammar_rep::decode_as_string (C sym) {
       r << decode_as_string (def[0]);
     else if (N(def) >= 1 && def[0] == PACKRAT_CONCAT)
       for (int i=1; i<N(def); i++)
-	r << decode_as_string (def[i]);
+        r << decode_as_string (def[i]);
     else {
       cout << "Warning: could not transform " << packrat_decode[sym]
-	   << " into a string\n";
+           << " into a string\n";
     }
   }
   return r;

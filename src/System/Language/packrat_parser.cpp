@@ -155,7 +155,7 @@ packrat_parser_rep::decode_path (tree t, path p, int pos) {
   else {
     for (int i=0; i<N(t); i++)
       if (pos >= current_start[p*i] && pos <= current_end[p*i])
-	return decode_path (t[i], p * i, pos);
+        return decode_path (t[i], p * i, pos);
     if (pos <= current_start[p]) return p * 0;
     if (pos >= current_end[p]) return p * 1;
     return p * 0;
@@ -197,39 +197,39 @@ packrat_parser_rep::parse (C sym, C pos) {
     case PACKRAT_OR:
       im= PACKRAT_FAILED;
       for (int i=1; i<N(inst); i++) {
-	im= parse (inst[i], pos);
-	if (im != PACKRAT_FAILED) break;
+        im= parse (inst[i], pos);
+        if (im != PACKRAT_FAILED) break;
       }
       break;
     case PACKRAT_CONCAT:
       im= pos;
       for (int i=1; i<N(inst); i++) {
-	im= parse (inst[i], im);
-	if (im == PACKRAT_FAILED) break;
+        im= parse (inst[i], im);
+        if (im == PACKRAT_FAILED) break;
       }
       break;
     case PACKRAT_WHILE:
       im= pos;
       while (true) {
-	C next= parse (inst[1], im);
-	if (next == PACKRAT_FAILED || (next >= 0 && next <= im)) break;
-	im= next;
+        C next= parse (inst[1], im);
+        if (next == PACKRAT_FAILED || (next >= 0 && next <= im)) break;
+        im= next;
       }
       break;
     case PACKRAT_REPEAT:
       im= parse (inst[1], pos);
       if (im != PACKRAT_FAILED)
-	while (true) {
-	  C next= parse (inst[1], im);
-	  if (next == PACKRAT_FAILED || (next >= 0 && next <= im)) break;
-	  im= next;
-	}
+        while (true) {
+          C next= parse (inst[1], im);
+          if (next == PACKRAT_FAILED || (next >= 0 && next <= im)) break;
+          im= next;
+        }
       break;
     case PACKRAT_RANGE:
       if (pos < N (current_input) &&
-	  current_input [pos] >= inst[1] &&
-	  current_input [pos] <= inst[2])
-	im= pos + 1;
+          current_input [pos] >= inst[1] &&
+          current_input [pos] <= inst[2])
+        im= pos + 1;
       else im= PACKRAT_FAILED;
       break;
     case PACKRAT_NOT:
@@ -239,50 +239,50 @@ packrat_parser_rep::parse (C sym, C pos) {
     case PACKRAT_EXCEPT:
       im= parse (inst[1], pos);
       if (im != PACKRAT_FAILED)
-	if (parse (inst[2], pos) != PACKRAT_FAILED)
-	  im= PACKRAT_FAILED;
+        if (parse (inst[2], pos) != PACKRAT_FAILED)
+          im= PACKRAT_FAILED;
       break;
     case PACKRAT_TM_OPEN:
       if (pos < N (current_input) &&
-	  starts (packrat_decode[current_input[pos]], "<\\"))
-	im= pos + 1;
+          starts (packrat_decode[current_input[pos]], "<\\"))
+        im= pos + 1;
       else im= PACKRAT_FAILED;
       break;
     case PACKRAT_TM_ANY:
       im= pos;
       while (true) {
-	C old= im;
-	im= parse (PACKRAT_TM_OPEN, old);
-	if (im == PACKRAT_FAILED)
-	  im= parse (PACKRAT_TM_LEAF, old);
-	else {
-	  im= parse (PACKRAT_TM_ARGS, im);
-	  if (im != PACKRAT_FAILED)
-	    im= parse (encode_token ("</>"), im);
-	}
-	if (old == im) break;
+        C old= im;
+        im= parse (PACKRAT_TM_OPEN, old);
+        if (im == PACKRAT_FAILED)
+          im= parse (PACKRAT_TM_LEAF, old);
+        else {
+          im= parse (PACKRAT_TM_ARGS, im);
+          if (im != PACKRAT_FAILED)
+            im= parse (encode_token ("</>"), im);
+        }
+        if (old == im) break;
       }
       break;
     case PACKRAT_TM_ARGS:
       im= parse (PACKRAT_TM_ANY, pos);
       while (im < N (current_input))
-	if (current_input[im] != encode_token ("<|>")) break;
-	else im= parse (PACKRAT_TM_ANY, im + 1);
+        if (current_input[im] != encode_token ("<|>")) break;
+        else im= parse (PACKRAT_TM_ANY, im + 1);
       break;
     case PACKRAT_TM_LEAF:
       im= pos;
       while (im < N (current_input)) {
-	tree t= packrat_decode[current_input[im]];
-	if (starts (t, "<\\") || t == "<|>" || t == "</>") break;
-	else im++;
+        tree t= packrat_decode[current_input[im]];
+        if (starts (t, "<\\") || t == "<|>" || t == "</>") break;
+        else im++;
       }
       break;
     case PACKRAT_TM_CHAR:
       if (pos >= N (current_input)) im= PACKRAT_FAILED;
       else {
-	tree t= packrat_decode[current_input[pos]];
-	if (starts (t, "<\\") || t == "<|>" || t == "</>") im= PACKRAT_FAILED;
-	else im= pos + 1;
+        tree t= packrat_decode[current_input[pos]];
+        if (starts (t, "<\\") || t == "<|>" || t == "</>") im= PACKRAT_FAILED;
+        else im= pos + 1;
       }
       break;
     case PACKRAT_TM_CURSOR:
@@ -324,18 +324,18 @@ packrat_parser_rep::inspect (C sym, C pos, array<C>& syms, array<C>& poss) {
     switch (inst[0]) {
     case PACKRAT_OR:
       for (int i=1; i<N(inst); i++)
-	if (parse (inst[i], pos) != PACKRAT_FAILED) {
-	  inspect (inst[i], pos, syms, poss);
-	  break;
-	}
+        if (parse (inst[i], pos) != PACKRAT_FAILED) {
+          inspect (inst[i], pos, syms, poss);
+          break;
+        }
       break;
     case PACKRAT_CONCAT:
       for (int i=1; i<N(inst); i++) {
-	next= parse (inst[i], pos);
-	if (next == PACKRAT_FAILED) break;
+        next= parse (inst[i], pos);
+        if (next == PACKRAT_FAILED) break;
         syms << inst[i];
         poss << pos;
-	pos= next;
+        pos= next;
       }
       break;
     case PACKRAT_WHILE:
@@ -511,30 +511,30 @@ packrat_parser_rep::context
     switch (inst[0]) {
     case PACKRAT_OR:
       for (int i=1; i<N(inst); i++)
-	if (parse (inst[i], pos) != PACKRAT_FAILED) {
-	  context (inst[i], pos, w1, w2, mode, kind, begin, end);
-	  break;
-	}
+        if (parse (inst[i], pos) != PACKRAT_FAILED) {
+          context (inst[i], pos, w1, w2, mode, kind, begin, end);
+          break;
+        }
       break;
     case PACKRAT_CONCAT:
       for (int i=1; i<N(inst); i++) {
-	next= parse (inst[i], pos);
-	if (next == PACKRAT_FAILED) break;
-	if (pos <= w1 && w2 <= next)
-	  context (inst[i], pos, w1, w2, mode, kind, begin, end);
-	if (next > w2) break;
-	pos= next;
+        next= parse (inst[i], pos);
+        if (next == PACKRAT_FAILED) break;
+        if (pos <= w1 && w2 <= next)
+          context (inst[i], pos, w1, w2, mode, kind, begin, end);
+        if (next > w2) break;
+        pos= next;
       }
       break;
     case PACKRAT_WHILE:
     case PACKRAT_REPEAT:
       while (true) {
-	C next= parse (inst[1], pos);
-	if (next == PACKRAT_FAILED) break;
-	if (pos <= w1 && w2 <= next)
-	  context (inst[1], pos, w1, w2, mode, kind, begin, end);
-	if (next > w2) break;
-	pos= next;
+        C next= parse (inst[1], pos);
+        if (next == PACKRAT_FAILED) break;
+        if (pos <= w1 && w2 <= next)
+          context (inst[1], pos, w1, w2, mode, kind, begin, end);
+        if (next > w2) break;
+        pos= next;
       }
       break;
     case PACKRAT_RANGE:
@@ -567,11 +567,11 @@ packrat_parser_rep::compress
     int n= N(new_kind);
     if (is_selectable (kind[i]))
       if (N(new_kind) == 0 ||
-	  new_kind [n-1] != kind[i] ||
-	  (new_begin[n-1] != begin[i] && new_end[n-1] != end[i])) {
-	new_kind  << kind[i];
-	new_begin << begin[i];
-	new_end   << end[i];
+          new_kind [n-1] != kind[i] ||
+          (new_begin[n-1] != begin[i] && new_end[n-1] != end[i])) {
+        new_kind  << kind[i];
+        new_begin << begin[i];
+        new_end   << end[i];
       }
   }
   kind = new_kind;
@@ -590,13 +590,13 @@ packrat_parser_rep::highlight (tree t, path tp, path p1, path p2, int col) {
     string s= t->label;
     ASSERT (is_atom (p1) && is_atom (p2), "invalid selection");
     ASSERT (0 <= p1->item && p1->item <= p2->item && p2->item <= N(s),
-	    "invalid selection");
+            "invalid selection");
     attach_highlight (t, current_hl_lan, col, p1->item, p2->item);
   }
   else if (N(t) == 0);
   else {
     ASSERT (!is_nil (p1) && !is_nil (p2) && p1->item <= p2->item,
-	    "invalid selection");
+            "invalid selection");
     if (p1 == path (0)) p1= path (0, 0);
     if (p2 == path (1)) p2= path (N(t) - 1, right_index (t[N(t) -1]));
     for (int i= max (0, p1->item); i <= min (p2->item, N(t)-1); i++) {
@@ -631,26 +631,26 @@ packrat_parser_rep::highlight (C sym, C pos) {
     switch (inst[0]) {
     case PACKRAT_OR:
       for (int i=1; i<N(inst); i++)
-	if (parse (inst[i], pos) != PACKRAT_FAILED) {
-	  highlight (inst[i], pos);
-	  break;
-	}
+        if (parse (inst[i], pos) != PACKRAT_FAILED) {
+          highlight (inst[i], pos);
+          break;
+        }
       break;
     case PACKRAT_CONCAT:
       for (int i=1; i<N(inst); i++) {
-	next= parse (inst[i], pos);
-	highlight (inst[i], pos);
-	pos= next;
+        next= parse (inst[i], pos);
+        highlight (inst[i], pos);
+        pos= next;
       }
       break;
     case PACKRAT_WHILE:
     case PACKRAT_REPEAT:
       while (true) {
-	C next= parse (inst[1], pos);
-	if (next == PACKRAT_FAILED) break;
-	highlight (inst[1], pos);
-	if (next == pos) break;
-	pos= next;
+        C next= parse (inst[1], pos);
+        if (next == PACKRAT_FAILED) break;
+        highlight (inst[1], pos);
+        if (next == pos) break;
+        pos= next;
       }
       break;
     case PACKRAT_RANGE:
@@ -694,15 +694,15 @@ consistent_portion (tree t, int begin, int end) {
     if (is_atomic (t[i])) {
       string s= t[i]->label;
       for (int j=0; j<N(s); j++)
-	switch (s[j]) {
-	case '(': level++; break;
-	case ')': if (level <= 0) return false; level--; break;
-	case '[': level++; break;
-	case ']': if (level <= 0) return false; level--; break;
-	case '{': level++; break;
-	case '}': if (level <= 0) return false; level--; break;
-	default : break;
-	}
+        switch (s[j]) {
+        case '(': level++; break;
+        case ')': if (level <= 0) return false; level--; break;
+        case '[': level++; break;
+        case ']': if (level <= 0) return false; level--; break;
+        case '{': level++; break;
+        case '}': if (level <= 0) return false; level--; break;
+        default : break;
+        }
     }
   return level == 0;
 }
@@ -769,7 +769,7 @@ packrat_context (string lan, string s, tree in, path in_pos) {
 
 bool
 packrat_select (string lan, string s, tree in, path in_pos,
-		path& p1, path& p2, int mode)
+                path& p1, path& p2, int mode)
 {
   // mode= 0: genuine semantic selection
   // mode= 1: strictly larger selection for select_enlarge
@@ -832,10 +832,10 @@ packrat_highlight (string lan, string s, tree in) {
     int i, begin, end;
     for (begin=0; begin<N(in); begin++)
       if (!has_highlight (in[begin], hl_lan))
-	break;
+        break;
     for (end=N(in)-1; end>begin; end--)
       if (!has_highlight (in[end-1], hl_lan))
-	break;
+        break;
     consistent_enlargement (in, begin, end);    
     for (i=begin; i<end; i++)
       detach_highlight (in[i], hl_lan);
@@ -845,7 +845,7 @@ packrat_highlight (string lan, string s, tree in) {
   else {
     if (is_compound (in))
       for (int i=0; i<N(in); i++)
-	detach_highlight (in[i], hl_lan);
+        detach_highlight (in[i], hl_lan);
     attach_highlight (in, hl_lan);
     packrat_highlight_subtree (lan, s, in);
   }

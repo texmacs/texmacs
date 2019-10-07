@@ -518,7 +518,7 @@ as_string (url u, int type) {
     if (((is_root (u[1], "default") && type == URL_SYSTEM) ||
          is_root (u[1], "file"))) { // have to return the windows format
       string root, remain;
-      if (is_concat (u[2])) {		
+      if (is_concat (u[2])) {           
         root = as_string (u[2][1], type);
         // root might be unit letter or hostname. It depends on the length
         remain = as_string (u[2][2], type);
@@ -528,7 +528,7 @@ as_string (url u, int type) {
         remain = "";
       }
       if (is_root (u[1], "default")) {
-        if (N(root) == 1) return root * ":\\" * remain;	// drive letter
+        if (N(root) == 1) return root * ":\\" * remain; // drive letter
         else return "\\\\" * root * "\\" * remain;
       }
       else {
@@ -555,7 +555,7 @@ as_string (url u, int type) {
   if (is_root (u, "default")) {
     int stype= type;
     if (is_root (u[1]) && (!is_root (u[1], "default"))) stype= URL_STANDARD;
-	if (stype == URL_SYSTEM) return ""; else return "/";
+        if (stype == URL_SYSTEM) return ""; else return "/";
   }
 #else
   if (is_root (u, "default")) return "/";
@@ -669,8 +669,8 @@ delta_sub (url base, url u) {
     return u;
   if (is_concat (base) && is_concat (u) && (base[1] == u[1])) {
     if (is_special_root (base[1]) &&
-	is_concat (base[2]) && is_concat (u[2]) &&
-	base[2][1] != u[2][1])
+        is_concat (base[2]) && is_concat (u[2]) &&
+        base[2][1] != u[2][1])
       return url_none ();
     return delta_sub (base[2], u[2]);
   }
@@ -892,7 +892,7 @@ complete (url base, url u, string filter, bool flag) {
         if (is_directory (base * dir[i])) continue;
       ret= ret | (dir[i] * complete (base * dir[i], u, filter, flag));
       if (match_wildcard (dir[i], u[2][1]->t->label))
-	ret= ret | complete (base, dir[i], filter, flag);
+        ret= ret | complete (base, dir[i], filter, flag);
     }
     return ret;
   }
@@ -927,9 +927,9 @@ complete (url base, url u, string filter, bool flag) {
           starts (dir[i], "ftp://"))
         if (is_directory (base * dir[i])) continue;
       if (is_wildcard (u, 0))
-	ret= ret | (dir[i] * complete (base * dir[i], u, filter, flag));
+        ret= ret | (dir[i] * complete (base * dir[i], u, filter, flag));
       else if (match_wildcard (dir[i], u[1]->t->label))
-	ret= ret | complete (base, dir[i], filter, flag);
+        ret= ret | complete (base, dir[i], filter, flag);
     }
     return ret;
   }
@@ -975,8 +975,8 @@ resolve_in_path (url u) {
     if (ends (which, name))
       return which;
     else if ((which != "") &&
-	     (!starts (which, "which: ")) &&
-	     (!starts (which, "no ")))
+             (!starts (which, "which: ")) &&
+             (!starts (which, "no ")))
       cout << "TeXmacs] " << which << "\n";
   }
 #ifdef OS_MINGW
@@ -995,8 +995,8 @@ bool
 exists_in_path (url u) {
 #ifdef OS_MINGW
   return !is_none (resolve_in_path (url (as_string (u) * ".bat"))) ||\
-  	 !is_none (resolve_in_path (url (as_string (u) * ".exe"))) ||\
-	 !is_none (resolve_in_path (url (as_string (u) * ".com")));
+         !is_none (resolve_in_path (url (as_string (u) * ".exe"))) ||\
+         !is_none (resolve_in_path (url (as_string (u) * ".com")));
 #else
   return !is_none (resolve_in_path (u));
 #endif

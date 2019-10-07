@@ -111,8 +111,8 @@ connection_rep::read (int channel) {
     int i, n= N(s);
     for (i=0; i<n; i++)
       if (tm_in->put (s[i])) {
-	status= WAITING_FOR_INPUT;
-	if (DEBUG_IO) debug_io << LF << HRULE;
+        status= WAITING_FOR_INPUT;
+        if (DEBUG_IO) debug_io << LF << HRULE;
       }
   }
   else if (channel == LINK_ERR) {
@@ -156,10 +156,10 @@ void
 connection_notify (connection con, string ch, tree t) {
   if (t == "") return;
   call ("connection-notify",
-	object (con->name),
-	object (con->session),
-	object (ch),
-	object (t));
+        object (con->name),
+        object (con->session),
+        object (ch),
+        object (t));
 }
 
 void
@@ -168,9 +168,9 @@ connection_notify_status (connection con) {
     (con->status == CONNECTION_DYING? WAITING_FOR_OUTPUT: con->status);
   if (status == con->prev_status) return;
   call ("connection-notify-status",
-	object (con->name),
-	object (con->session),
-	object (status));
+        object (con->name),
+        object (con->session),
+        object (status));
   con->prev_status= status;
 }
 
@@ -246,7 +246,7 @@ connection_start (string name, string session, bool again) {
 #endif
     else if (is_tuple (t, "dynlink", 3)) {
       tm_link ln=
-	make_dynamic_link (t[1]->label, t[2]->label, t[3]->label, session);
+        make_dynamic_link (t[1]->label, t[2]->label, t[3]->label, session);
       con= tm_new<connection_rep> (name, session, ln);
     }
   }

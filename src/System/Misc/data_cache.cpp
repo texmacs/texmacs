@@ -162,22 +162,22 @@ cache_save (string buffer) {
     iterator<tree> it= iterate (cache_data);
     if (buffer == "file_cache" || buffer == "doc_cache") {
       while (it->busy ()) {
-	tree ckey= it->next ();
-	if (ckey[0] == buffer) {
-	  cached << ckey[1]->label << "\n";
-	  cached << cache_data [ckey]->label << "\n";
-	  cached << "%-%-tm-cache-%-%\n";
-	}
+        tree ckey= it->next ();
+        if (ckey[0] == buffer) {
+          cached << ckey[1]->label << "\n";
+          cached << cache_data [ckey]->label << "\n";
+          cached << "%-%-tm-cache-%-%\n";
+        }
       }
     }
     else {
       cached << "(tuple\n";
       while (it->busy ()) {
-	tree ckey= it->next ();
-	if (ckey[0] == buffer) {
-	  cached << tree_to_scheme (ckey[1]) << " ";
-	  cached << tree_to_scheme (cache_data [ckey]) << "\n";
-	}
+        tree ckey= it->next ();
+        if (ckey[0] == buffer) {
+          cached << tree_to_scheme (ckey[1]) << " ";
+          cached << tree_to_scheme (cache_data [ckey]) << "\n";
+        }
       }
       cached << ")";
     }
@@ -194,27 +194,27 @@ cache_load (string buffer) {
     string cached;
     if (!load_string (cache_file, cached, false)) {
       if (buffer == "file_cache" || buffer == "doc_cache") {
-	int i=0, n= N(cached);
-	while (i<n) {
-	  int start= i;
-	  while (i<n && cached[i] != '\n') i++;
-	  string key= cached (start, i);
-	  i++; start= i;
-	  while (i<n && (cached[i] != '\n' ||
-			 !test (cached, i+1, "%-%-tm-cache-%-%"))) i++;
-	  string im= cached (start, i);
-	  i++;
-	  while (i<n && cached[i] != '\n') i++;
-	  i++;
-	  //cout << "key= " << key << "\n----------------------\n";
-	  //cout << "im= " << im << "\n----------------------\n";
-	  cache_data (tuple (buffer, key))= im;
-	}
+        int i=0, n= N(cached);
+        while (i<n) {
+          int start= i;
+          while (i<n && cached[i] != '\n') i++;
+          string key= cached (start, i);
+          i++; start= i;
+          while (i<n && (cached[i] != '\n' ||
+                         !test (cached, i+1, "%-%-tm-cache-%-%"))) i++;
+          string im= cached (start, i);
+          i++;
+          while (i<n && cached[i] != '\n') i++;
+          i++;
+          //cout << "key= " << key << "\n----------------------\n";
+          //cout << "im= " << im << "\n----------------------\n";
+          cache_data (tuple (buffer, key))= im;
+        }
       }
       else {
-	tree t= scheme_to_tree (cached);
-	for (int i=0; i<N(t)-1; i+=2)
-	  cache_data (tuple (buffer, t[i]))= t[i+1];
+        tree t= scheme_to_tree (cached);
+        for (int i=0; i<N(t)-1; i+=2)
+          cache_data (tuple (buffer, t[i]))= t[i+1];
       }
     }
     cache_loaded->insert (buffer);

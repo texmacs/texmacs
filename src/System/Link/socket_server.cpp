@@ -159,7 +159,7 @@ socket_server_rep::start_client () {
     array<tm_link> update;
     for (int i=0; i<N(incoming); i++)
       if (incoming[i]->alive)
-	update << incoming[i];
+        update << incoming[i];
     incoming= update;
     tm_link new_ln= make_socket_link (addr, -1, SOCKET_SERVER, client);
     incoming << new_ln;

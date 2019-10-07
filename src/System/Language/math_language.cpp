@@ -153,8 +153,8 @@ math_language_rep::math_language_rep (string name):
     C prop= ((C) (key >> 32));
     C sym = ((C) (key & 0xffffffff)) ^ prop;
     ASSERT (is_compound (packrat_decode[sym], "symbol", 1) &&
-	    is_compound (packrat_decode[prop], "property", 1),
-	    "invalid symbol or property");
+            is_compound (packrat_decode[prop], "property", 1),
+            "invalid symbol or property");
     string cl = packrat_decode[sym ][0]->label;
     string var= packrat_decode[prop][0]->label;
     string val= props[key];

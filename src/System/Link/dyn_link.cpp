@@ -38,8 +38,8 @@ symbol_install (string lib, string symb, pointer& f) {
       c_string _lib (lib);
       dyn_linked (lib)= TM_DYNAMIC_LINKING (_lib, RTLD_LAZY);
       if (dyn_linked [lib] == NULL) {
-	const char *err = dlerror();
-	if (err != NULL) out= string ((char *) err);
+        const char *err = dlerror();
+        if (err != NULL) out= string ((char *) err);
       }
     }
   }

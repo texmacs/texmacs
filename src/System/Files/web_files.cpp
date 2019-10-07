@@ -32,11 +32,11 @@ get_cache (url name) {
     tree tmp= web_cache_resolve [name->t];
     for (i=0; i<MAX_CACHED; i++)
       if (web_cache[i] == name->t) {
-	// cout << name << " in cache as " << tmp << " at " << i << "\n";
-	for (j=i; ((j+1) % MAX_CACHED) != web_nr; j= (j+1) % MAX_CACHED)
-	  web_cache[j]= web_cache[(j+1) % MAX_CACHED];
-	web_cache[j]= name->t;
-	break;
+        // cout << name << " in cache as " << tmp << " at " << i << "\n";
+        for (j=i; ((j+1) % MAX_CACHED) != web_nr; j= (j+1) % MAX_CACHED)
+          web_cache[j]= web_cache[(j+1) % MAX_CACHED];
+        web_cache[j]= name->t;
+        break;
       }
     return as_url (tmp); // url_system (tmp);
   }
