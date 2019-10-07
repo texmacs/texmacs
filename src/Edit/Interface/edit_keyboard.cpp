@@ -131,8 +131,8 @@ edit_interface_rep::try_shortcut (string comb) {
         if (cork_to_utf8 (r) != r)
           rhs= tree (CONCAT, rhs, " (" * r(1, N(r)-1) * ")");
       call ("set-temporary-message",
-	    tree (CONCAT, "keyboard shortcut: ", rew), rhs,
-	    shorth == ""? 1: 3000);
+            tree (CONCAT, "keyboard shortcut: ", rew), rhs,
+            shorth == ""? 1: 3000);
     }
     if ((status & 1) == 1) cmd ();
     else if (N(shorth) > 0) call ("kbd-insert", shorth);
@@ -235,7 +235,7 @@ edit_interface_rep::emulate_keyboard (string keys, string action) {
   }
   if (N (action) != 0)
     set_message (concat ("You can also obtain ", action, " by typing ", keys),
-		 action);
+                 action);
 }
 
 /******************************************************************************

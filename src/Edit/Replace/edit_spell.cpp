@@ -74,8 +74,8 @@ edit_replace_rep::spell_end () {
     set_message ("one spelling error has been corrected", "correct text");
   else if (nr_replaced > 1)
     set_message (concat (as_string (nr_replaced),
-			 " spelling errors have been corrected"),
-		 "correct text");
+                         " spelling errors have been corrected"),
+                 "correct text");
   else set_message ("spell checking complete", "correct text");
   beep ();
   set_input_normal ();
@@ -124,21 +124,21 @@ edit_replace_rep::spell_next () {
     if (search_end != search_at) {
       spell_t= ispell_check (search_lan, spell_s);
       if (is_atomic (spell_t) && starts (spell_t->label, "Error: ")) {
-	spell_end ();
-	set_message (spell_t->label, "spelling text");
-	return;
+        spell_end ();
+        set_message (spell_t->label, "spelling text");
+        return;
       }
       if (spell_t != "ok") {
-	string mode= as_string (get_env_value (MODE, search_at));
-	string lan =
-	  as_string (get_env_value (MODE_LANGUAGE (mode), search_at));
-	if ((search_mode == mode) && (search_lan == lan)) {
-	  set_selection (search_at, search_end);
-	  notify_change (THE_SELECTION);
-	  go_to (copy (search_end));
-	  set_message (message_ispell (spell_t), "spelling error");
-	  return;
-	}
+        string mode= as_string (get_env_value (MODE, search_at));
+        string lan =
+          as_string (get_env_value (MODE_LANGUAGE (mode), search_at));
+        if ((search_mode == mode) && (search_lan == lan)) {
+          set_selection (search_at, search_end);
+          notify_change (THE_SELECTION);
+          go_to (copy (search_end));
+          set_message (message_ispell (spell_t), "spelling error");
+          return;
+        }
       }
     }
     step_horizontal (forward);

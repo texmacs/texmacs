@@ -143,11 +143,11 @@ edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
   if (ref_p == tree_path (sp, x0, y0, d0+ dx*DELTA)) {
     for (i=1; i<DELTA; i=i<<1)
       if (ref_p != tree_path (sp, x0+ dx*i, y0+ dy*i, d0+ dx*DELTA))
-	break;
+        break;
     if (i>=DELTA) return false;
     for (d=i>>2; d>=1; d=d>>1)
       if (ref_p != tree_path (sp, x0+ dx*(i-d), y0+ dy*(i-d), d0+ dx*DELTA))
-	i-=d;
+        i-=d;
 
     x0 += dx*i;
     y0 += dy*i;
@@ -157,29 +157,29 @@ edit_cursor_rep::cursor_move_sub (SI& x0, SI& y0, SI& d0, SI dx, SI dy) {
   if (dx!=0) {
     if (ref_p == tree_path (sp, x0, y0, d0)) {
       for (i=1; i<DELTA; i=i<<1)
-	if (ref_p != tree_path (sp, x0, y0, d0+ dx*i)) break;
+        if (ref_p != tree_path (sp, x0, y0, d0+ dx*i)) break;
       if (i>=DELTA)
-	FAILED ("inconsistent cursor handling");
+        FAILED ("inconsistent cursor handling");
       for (d=i>>2; d>=1; d=d>>1)
-	if (ref_p != tree_path (sp, x0, y0, d0+ dx*(i-d))) i-=d;
+        if (ref_p != tree_path (sp, x0, y0, d0+ dx*(i-d))) i-=d;
       d0 += dx*i;
     }
     else {
       for (i=1; i<DELTA; i=i<<1)
-	if (ref_p == tree_path (sp, x0, y0, d0- dx*i)) break;
+        if (ref_p == tree_path (sp, x0, y0, d0- dx*i)) break;
       if (i<DELTA) {
-	for (d=i>>2; d>=1; d=d>>1)
-	  if (ref_p == tree_path (sp, x0, y0, d0- dx*(i-d))) i-=d;
-	i--;
-	d0 -= dx*i;
+        for (d=i>>2; d>=1; d=d>>1)
+          if (ref_p == tree_path (sp, x0, y0, d0- dx*(i-d))) i-=d;
+        i--;
+        d0 -= dx*i;
       }
       else {  // exceptional case
-	ref_p= tree_path (sp, x0, y0, d0- dx*DELTA);
-	for (i=1; i<DELTA; i=i<<1)
-	  if (ref_p == tree_path (sp, x0, y0, d0- dx*i)) break;
-	for (d=i>>2; d>=1; d=d>>1)
-	  if (ref_p == tree_path (sp, x0, y0, d0- dx*(i-d))) i-=d;
-	d0 -= dx*i;
+        ref_p= tree_path (sp, x0, y0, d0- dx*DELTA);
+        for (i=1; i<DELTA; i=i<<1)
+          if (ref_p == tree_path (sp, x0, y0, d0- dx*i)) break;
+        for (d=i>>2; d>=1; d=d>>1)
+          if (ref_p == tree_path (sp, x0, y0, d0- dx*(i-d))) i-=d;
+        d0 -= dx*i;
       }
     }
   }
@@ -394,11 +394,11 @@ edit_cursor_rep::adjust_cursor () {
       if (p == tp) eps= (mv->ox < cu->ox? 1: -1);
       if (p == tp && mv->ox == cu->ox) eps= (mv->delta < cu->delta? 1: -1);
       if (dx > 0) {
-	if (p != tp ||
-	    tree_path (sp, mv->ox + eps * dx, mv->oy, mv->delta) == tp)
-	  mv->ox += eps * dx;
-	dx >>= 1;
-	if (dx == 0) ddelta= DELTA;
+        if (p != tp ||
+            tree_path (sp, mv->ox + eps * dx, mv->oy, mv->delta) == tp)
+          mv->ox += eps * dx;
+        dx >>= 1;
+        if (dx == 0) ddelta= DELTA;
       }
       else if (ddelta > 0) {
         if (p != tp ||
@@ -595,10 +595,10 @@ edit_cursor_rep::go_to_label (string s) {
     else {
       url u= relative (buf->buf->name, url (extra));
       if (u != buf->buf->name) {
-	string new_buf = scm_quote (as_string (u));
-	string load_buf= "(load-buffer (system->url " * new_buf * "))";
-	string jump_to = "(go-to-label " * scm_quote (s) * ")";
-	exec_delayed (scheme_cmd ("(begin " * load_buf * " " * jump_to * ")"));
+        string new_buf = scm_quote (as_string (u));
+        string load_buf= "(load-buffer (system->url " * new_buf * "))";
+        string jump_to = "(go-to-label " * scm_quote (s) * ")";
+        exec_delayed (scheme_cmd ("(begin " * load_buf * " " * jump_to * ")"));
       }
     }
   }

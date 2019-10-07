@@ -116,32 +116,32 @@ snap_to_guide (point p, gr_selections sels, double eps) {
   for (int i=0; i<N(sels); i++)
     if (can_snap (sels[i])) {
       if (sels[i]->type == "grid-point")
-	best= sels[i];
+        best= sels[i];
       else if (is_nil (sels[i]->c))
-	return sels[i];
+        return sels[i];
     }
 
   for (int i=0; i<N(sels); i++)
     for (int j=i+1; j<N(sels); j++) {
       if (!is_nil (sels[i]->c) &&
-	  !is_nil (sels[j]->c) &&
-	  (sels[i]->type != "grid-curve-point" ||
-	   sels[j]->type != "grid-curve-point") &&
+          !is_nil (sels[j]->c) &&
+          (sels[i]->type != "grid-curve-point" ||
+           sels[j]->type != "grid-curve-point") &&
           !ends (sels[i]->type, "handle") &&
           !ends (sels[j]->type, "handle"))
-	{
-	  array<point> ins= intersection (sels[i]->c, sels[j]->c, p, eps);
-	  for (int k=0; k<N(ins); k++)
-	    if (best->type == "none" || norm (ins[k] - p) < best->dist) {
-	      gr_selection sel;
-	      sel->type= sels[i]->type * "&" * sels[j]->type;
-	      sel->p   = ins[k];
-	      sel->dist= (SI) norm (ins[k] - p);
-	      sel->cp  = append (sels[i]->cp, sels[j]->cp);
-	      sel->pts = append (sels[i]->pts, sels[j]->pts);
-	      if (can_snap (sel)) best= sel;
-	    }
-	}
+        {
+          array<point> ins= intersection (sels[i]->c, sels[j]->c, p, eps);
+          for (int k=0; k<N(ins); k++)
+            if (best->type == "none" || norm (ins[k] - p) < best->dist) {
+              gr_selection sel;
+              sel->type= sels[i]->type * "&" * sels[j]->type;
+              sel->p   = ins[k];
+              sel->dist= (SI) norm (ins[k] - p);
+              sel->cp  = append (sels[i]->cp, sels[j]->cp);
+              sel->pts = append (sels[i]->pts, sels[j]->pts);
+              if (can_snap (sel)) best= sel;
+            }
+        }
     }
 
   if (best->type != "none") return best;
@@ -398,12 +398,12 @@ edit_graphics_rep::set_graphical_object (tree t) {
       array<box> bx(n);
       n=0;
       for (i=0; i<N(go_box); i++) if (go_box[i]!="") {
-	array<box> bx2(1);
-	array<SI> spc2(1);
-	bx2[0]= go_box[i];
-	spc2[0]=0;
-	bx[n]= concat_box (path (0), bx2, spc2);
-	n++;
+        array<box> bx2(1);
+        array<SI> spc2(1);
+        bx2[0]= go_box[i];
+        spc2[0]=0;
+        bx[n]= concat_box (path (0), bx2, spc2);
+        n++;
       }
       go_box= composite_box (path (0), bx);
     }
@@ -484,7 +484,7 @@ edit_graphics_rep::mouse_graphics (string type, SI x, SI y, int m, time_t t) {
       return false;
     if (type == "move" || type == "dragging-left")
       if (check_event (MOTION_EVENT))
-	return true;
+        return true;
     point p = f [point (x, y)];
     graphical_select (p[0], p[1]); // init the caching for adjust().
     p= adjust (p);

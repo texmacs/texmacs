@@ -28,12 +28,12 @@ edit_text_rep::get_deletion_point (
   if (forward) {
     //cout << HRULE;
     if ((rp < p) && (N (p / rp) >= 2) &&
-	is_concat (subtree (et, path_up (p, 2))) &&
-	(last_item (p) == right_index (subtree (et, path_up (p)))) &&
-	(last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
+        is_concat (subtree (et, path_up (p, 2))) &&
+        (last_item (p) == right_index (subtree (et, path_up (p)))) &&
+        (last_item (path_up (p)) < (N (subtree (et, path_up (p, 2))) - 1)))
       {
-	p= path_up (p);
-	p= path_inc (p) * start (subtree (et, path_inc (p)), path ());
+        p= path_up (p);
+        p= path_inc (p) * start (subtree (et, path_inc (p)), path ());
       }
     //cout << "p= " << p << "\n";
   }
@@ -47,7 +47,7 @@ edit_text_rep::get_deletion_point (
   //cout << "  last= " << last << "\n";
   //cout << "  rix = " << rix << "\n";
   while (((forward && (last >= rix)) || ((!forward) && (last == 0))) &&
-	 (rp < p) && is_format (subtree (et, path_up (p))))
+         (rp < p) && is_format (subtree (et, path_up (p))))
     {
       last= last_item (p);
       p   = path_up (p);
@@ -83,44 +83,44 @@ edit_text_rep::remove_text_sub (bool forward) {
   if (is_document (t)) {
     if ((forward && (last >= rix)) || ((!forward) && (last == 0))) {
       if (rp < p) {
-	tree u= subtree (et, path_up (p));
-	if (is_func (u, _FLOAT) || is_func (u, WITH) ||
-	    is_func (u, STYLE_WITH) || is_func (u, VAR_STYLE_WITH) ||
-	    is_func (u, LOCUS) || is_func (u, INCLUDE) ||
-	    is_extension (u))
-	  {
-	    if (is_extension (u) && (N(u) > 1)) {
-	      int i, n= N(u);
-	      bool empty= true;
-	      for (i=0; i<n; i++)
-		empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
-	      if (!empty) {
-		if (forward) go_to (next_valid (et, tp));
-		else go_to (previous_valid (et, tp));
-		return;
-	      }
-	    }
-	    if (t == tree (DOCUMENT, "")) {
-	      if (is_func (u, _FLOAT) ||
+        tree u= subtree (et, path_up (p));
+        if (is_func (u, _FLOAT) || is_func (u, WITH) ||
+            is_func (u, STYLE_WITH) || is_func (u, VAR_STYLE_WITH) ||
+            is_func (u, LOCUS) || is_func (u, INCLUDE) ||
+            is_extension (u))
+          {
+            if (is_extension (u) && (N(u) > 1)) {
+              int i, n= N(u);
+              bool empty= true;
+              for (i=0; i<n; i++)
+                empty= empty && ((u[i]=="") || (u[i]==tree (DOCUMENT, "")));
+              if (!empty) {
+                if (forward) go_to (next_valid (et, tp));
+                else go_to (previous_valid (et, tp));
+                return;
+              }
+            }
+            if (t == tree (DOCUMENT, "")) {
+              if (is_func (u, _FLOAT) ||
                   is_compound (u, "footnote", 1) ||
                   is_compound (u, "footnote-anchor", 2)) {
-		assign (path_up (p), "");
-		correct (path_up (p, 2));
-	      }
-	      else if (is_document (subtree (et, path_up (p, 2))))
-		assign (path_up (p), "");
-	      else assign (path_up (p), tree (DOCUMENT, ""));
+                assign (path_up (p), "");
+                correct (path_up (p, 2));
+              }
+              else if (is_document (subtree (et, path_up (p, 2))))
+                assign (path_up (p), "");
+              else assign (path_up (p), tree (DOCUMENT, ""));
               if (is_func (subtree (et, path_up (p, 2)), INACTIVE))
                 remove_structure (forward);
-	    }
-	    else go_to_border (path_up (p), !forward);
-	  }
-	else if (is_func (u, TABLE) || is_func (u, SUBTABLE) ||
-		 is_func (u, CELL) || is_func (u, ROW) ||
-		 is_func (u, TFORMAT)) {
-	  if (t == tree (DOCUMENT, ""))
-	    back_in_table (u, p, forward);
-	}
+            }
+            else go_to_border (path_up (p), !forward);
+          }
+        else if (is_func (u, TABLE) || is_func (u, SUBTABLE) ||
+                 is_func (u, CELL) || is_func (u, ROW) ||
+                 is_func (u, TFORMAT)) {
+          if (t == tree (DOCUMENT, ""))
+            back_in_table (u, p, forward);
+        }
         else if (is_func (u, DOCUMENT_AT))
           back_in_text_at (u, p, forward);
       }
@@ -130,15 +130,15 @@ edit_text_rep::remove_text_sub (bool forward) {
       int l1= forward? last: last-1;
       int l2= forward? last+1: last;
       if (is_multi_paragraph_or_sectional (subtree (et, p * l1)) ||
-	  is_multi_paragraph_or_sectional (subtree (et, p * l2)))
-	{
-	  if (subtree (et, p * l1) == "") remove (p * l1, 1);
-	  else {
-	    if (subtree (et, p * l2) == "") remove (p * l2, 1);
-	    if (!forward) go_to_end (p * l1);
-	    else if (last < N (subtree (et, p)) - 1) go_to_start (p * l2);
-	  }
-	}
+          is_multi_paragraph_or_sectional (subtree (et, p * l2)))
+        {
+          if (subtree (et, p * l1) == "") remove (p * l1, 1);
+          else {
+            if (subtree (et, p * l2) == "") remove (p * l2, 1);
+            if (!forward) go_to_end (p * l1);
+            else if (last < N (subtree (et, p)) - 1) go_to_start (p * l2);
+          }
+        }
       else remove_return (p * l1);
     }
     return;
@@ -318,14 +318,14 @@ edit_text_rep::remove_structure (bool forward) {
     string s= t->label;
     while (true) {
       if (forward) {
-	pos= start;
-	(void) lan->advance (t, pos);
-	if (pos <= last) break;
+        pos= start;
+        (void) lan->advance (t, pos);
+        if (pos <= last) break;
       }
       else {
-	int pos= max (start-1, 0);
-	(void) lan->advance (t, pos);
-	if (pos < last) break;
+        int pos= max (start-1, 0);
+        (void) lan->advance (t, pos);
+        if (pos < last) break;
       }
       end= pos;
       if (start == 0) break;

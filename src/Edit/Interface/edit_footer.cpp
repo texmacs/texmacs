@@ -145,16 +145,16 @@ get_with_text (tree t) {
       if (i>0) s << " ";
       string var= t[2*i]->label;
       if ((var!=MODE) && (var!=COLOR) && (var!=PAR_MODE) &&
-	  (var!=LANGUAGE) && (var!=FONT) &&
-	  (var!=FONT_FAMILY) && (var!=FONT_SHAPE) && (var!=FONT_SERIES) &&
-	  (var!=MATH_LANGUAGE) && (var!=MATH_FONT) &&
-	  (var!=MATH_FONT_FAMILY) && (var!=MATH_FONT_SHAPE) &&
-	  (var!=MATH_FONT_SERIES) &&
-	  (var!=PROG_LANGUAGE) && (var!=PROG_FONT) &&
-	  (var!=PROG_FONT_FAMILY) && (var!=PROG_FONT_SHAPE) &&
-	  (var!=PROG_FONT_SERIES) &&
-	  (var!=PROG_SESSION))
-	s << (var * "=" * t[2*i+1]->label);
+          (var!=LANGUAGE) && (var!=FONT) &&
+          (var!=FONT_FAMILY) && (var!=FONT_SHAPE) && (var!=FONT_SERIES) &&
+          (var!=MATH_LANGUAGE) && (var!=MATH_FONT) &&
+          (var!=MATH_FONT_FAMILY) && (var!=MATH_FONT_SHAPE) &&
+          (var!=MATH_FONT_SERIES) &&
+          (var!=PROG_LANGUAGE) && (var!=PROG_FONT) &&
+          (var!=PROG_FONT_FAMILY) && (var!=PROG_FONT_SHAPE) &&
+          (var!=PROG_FONT_SERIES) &&
+          (var!=PROG_SESSION))
+        s << (var * "=" * t[2*i+1]->label);
       else s << t[2*i+1]->label;
     }
   return s;
@@ -400,14 +400,14 @@ bool
 edit_interface_rep::set_latex_footer (tree st) {
   if (is_atomic (st)) 
     if (is_func (subtree (et, path_up (tp, 2)), LATEX, 1) ||
-	is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
+        is_func (subtree (et, path_up (tp, 2)), HYBRID, 1)) {
       string s= st->label;
       string help;
       command cmd;
       if (sv->kbd_get_command (s, help, cmd)) {
-	set_left_footer (concat (kbd ("return"), ": " * help));
-	set_right_footer ("latex command");
-	return true;
+        set_left_footer (concat (kbd ("return"), ": " * help));
+        set_right_footer ("latex command");
+        return true;
       }
     }
   return false;
@@ -423,26 +423,26 @@ edit_interface_rep::set_hybrid_footer (tree st) {
       string name= st->label;
       path mp= search_upwards (MACRO);
       if (!is_nil (mp)) {
-	tree mt= subtree (et, mp);
-	int i, n= N(mt)-1;
-	for (i=0; i<n; i++)
-	  if (mt[i] == name) {
-	    set_message (concat (kbd ("return"), ": insert argument ", name),
-			 "hybrid command");
-	    return true;
-	  }
+        tree mt= subtree (et, mp);
+        int i, n= N(mt)-1;
+        for (i=0; i<n; i++)
+          if (mt[i] == name) {
+            set_message (concat (kbd ("return"), ": insert argument ", name),
+                         "hybrid command");
+            return true;
+          }
       }
       // macro application
       tree f= get_env_value (name);
       if (drd->contains (name) && (f == UNINIT))
-	set_message (concat (kbd ("return"), ": insert primitive ", name),
-		     "hybrid command");
+        set_message (concat (kbd ("return"), ": insert primitive ", name),
+                     "hybrid command");
       else if (is_func (f, MACRO) || is_func (f, XMACRO))
-	set_message (concat (kbd ("return"), ": insert macro ", name),
-		     "hybrid command");
+        set_message (concat (kbd ("return"), ": insert macro ", name),
+                     "hybrid command");
       else if (f != UNINIT)
-	set_message (concat (kbd ("return"), ": insert value ", name),
-		     "hybrid command");
+        set_message (concat (kbd ("return"), ": insert value ", name),
+                     "hybrid command");
       else return false;
       return true;
     }

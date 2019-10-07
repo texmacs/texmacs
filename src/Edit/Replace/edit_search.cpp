@@ -108,13 +108,13 @@ edit_replace_rep::search_upwards_in_set (tree t) {
     tree st= subtree (et, p);
     for (i=0; i<n; i++) {
       if (is_atomic (t[i])) {
-	string s= t[i]->label;
-	if (is_quoted (s)) s= raw_unquote (s);
-	if (std_contains (s)) {
-	  tree_label l= as_tree_label (s);
-	  if (is_func (st, l)) return p;
-	}
-	else if (is_compound (st, s)) return p;
+        string s= t[i]->label;
+        if (is_quoted (s)) s= raw_unquote (s);
+        if (std_contains (s)) {
+          tree_label l= as_tree_label (s);
+          if (is_func (st, l)) return p;
+        }
+        else if (is_compound (st, s)) return p;
       }
       else if (is_func (st, L(t))) return p;
     }
@@ -130,13 +130,13 @@ edit_replace_rep::search_previous_compound (path init, string which) {
     else {
       p= path_dec (p);
       while (true) {
-	tree st= subtree (et, p);
-	if (arity (st) == 0) break;
-	p= p * (N(st)-1);
+        tree st= subtree (et, p);
+        if (arity (st) == 0) break;
+        p= p * (N(st)-1);
       }
     }
     if (drd->is_accessible_path (et, p) &&
-	is_compound (subtree (et, p), which))
+        is_compound (subtree (et, p), which))
       return p;
   }
 }
@@ -150,13 +150,13 @@ edit_replace_rep::search_next_compound (path init, string which) {
     else {
       p= path_inc (p);
       while (true) {
-	tree st= subtree (et, p);
-	if (arity (st) == 0) break;
-	p= p * 0;
+        tree st= subtree (et, p);
+        if (arity (st) == 0) break;
+        p= p * 0;
       }
     }
     if (drd->is_accessible_path (et, p) &&
-	is_compound (subtree (et, p), which))
+        is_compound (subtree (et, p), which))
       return p;
   }
 }
@@ -176,7 +176,7 @@ test_match (tree t, tree pat) {
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (!test_match (t[i], pat[i]))
-	return false;
+        return false;
     return true;
   }
 }
@@ -195,7 +195,7 @@ edit_replace_rep::test_sub (path p, tree t) {
     if (test_sub (p, t[0]) != end (et, path_up (p))) return p;
     for (i=1; i<n-1; i++)
       if (!test_match (st[l+i], t[i]))
-	return p;
+        return p;
     path r= path_up (p, 2) * path (l+n-1, start (st[l+n-1], path ()));
     path q= test_sub (r, t[n-1]);
     if (q == r) return p;
@@ -290,49 +290,49 @@ edit_replace_rep::step_horizontal (bool forward) {
     if (forward) {
       if (l == right_index (st)) step_ascend (forward);
       else {
-	if (is_atomic (st)) {
-	  if (st->label[l]=='<') {
-	    string s= st->label;
-	    while ((l<N(s)) && (s[l]!='>')) l++;
-	    if (l<N(s)) l++;
-	    search_at= path_up (search_at) * l;
-	  }
-	  else search_at= path_inc (search_at);
-	}
-	else {
-	  int i;
-	  for (i=l; i<N(st); i++)
-	    if (drd->is_accessible_child (st, i)) {
-	      search_at= path_up (search_at) * i;
-	      step_descend (forward);
-	      return;
-	    }
-	  step_ascend (forward);
-	}
+        if (is_atomic (st)) {
+          if (st->label[l]=='<') {
+            string s= st->label;
+            while ((l<N(s)) && (s[l]!='>')) l++;
+            if (l<N(s)) l++;
+            search_at= path_up (search_at) * l;
+          }
+          else search_at= path_inc (search_at);
+        }
+        else {
+          int i;
+          for (i=l; i<N(st); i++)
+            if (drd->is_accessible_child (st, i)) {
+              search_at= path_up (search_at) * i;
+              step_descend (forward);
+              return;
+            }
+          step_ascend (forward);
+        }
       }
     }
     else {
       if (l == 0) step_ascend (forward);
       else {
-	if (is_atomic (st)) {
-	  if (st->label[l-1]=='>') {
-	    string s= st->label;
-	    l--;
-	    while ((l>0) && (s[l]!='<')) l--;
-	    search_at= path_up (search_at) * l;
-	  }
-	  else search_at= path_dec (search_at);
-	}
-	else {
-	  int i;
-	  for (i=l; i>=0; i--)
-	    if (drd->is_accessible_child (st, i)) {
-	      search_at= path_up (search_at) * i;
-	      step_descend (forward);
-	      return;
-	    }
-	  step_ascend (forward);
-	}
+        if (is_atomic (st)) {
+          if (st->label[l-1]=='>') {
+            string s= st->label;
+            l--;
+            while ((l>0) && (s[l]!='<')) l--;
+            search_at= path_up (search_at) * l;
+          }
+          else search_at= path_dec (search_at);
+        }
+        else {
+          int i;
+          for (i=l; i>=0; i--)
+            if (drd->is_accessible_child (st, i)) {
+              search_at= path_up (search_at) * i;
+              step_descend (forward);
+              return;
+            }
+          step_ascend (forward);
+        }
       }
     }
   }

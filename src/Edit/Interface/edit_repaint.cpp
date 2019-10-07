@@ -89,31 +89,31 @@ edit_interface_rep::draw_cursor (renderer ren) {
       else if (mode == "math") cuc= rgb_color (192, 0, 255);
       ren->set_pencil (pencil (cuc, pixel));
       if ((mode == "text") || (mode == "src")) {
-	family= get_env_string (FONT_FAMILY);
-	series= get_env_string (FONT_SERIES);
+        family= get_env_string (FONT_FAMILY);
+        series= get_env_string (FONT_SERIES);
       }
       else if (mode == "math") {
-	family= get_env_string (MATH_FONT_FAMILY);
-	series= get_env_string (MATH_FONT_SERIES);
+        family= get_env_string (MATH_FONT_FAMILY);
+        series= get_env_string (MATH_FONT_SERIES);
       }
       else if (mode == "prog") {
-	family= get_env_string (PROG_FONT_FAMILY);
-	series= get_env_string (PROG_FONT_SERIES);
+        family= get_env_string (PROG_FONT_FAMILY);
+        series= get_env_string (PROG_FONT_SERIES);
       }
       SI lserif= (series=="bold"? 2*pixel: pixel), rserif= pixel;
       if (family == "ss") lserif= rserif= 0;
       ren->line (x1-lserif, y1, x1+rserif, y1);
       if (y1<=y2-pixel) {
-	ren->line (x1, y1, x2, y2-pixel);
-	if (series == "bold") ren->line (x1-pixel, y1, x2-pixel, y2-pixel);
-	ren->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
+        ren->line (x1, y1, x2, y2-pixel);
+        if (series == "bold") ren->line (x1-pixel, y1, x2-pixel, y2-pixel);
+        ren->line (x2-lserif, y2-pixel, x2+rserif, y2-pixel);
       }
     }
   }
 }
 
 void
-edit_interface_rep::draw_surround (renderer ren, rectangle r) { 	 
+edit_interface_rep::draw_surround (renderer ren, rectangle r) {          
   ren->set_background (tm_background);
   string medium= get_init_string (PAGE_MEDIUM);
   if (medium == "automatic") return;
@@ -165,24 +165,24 @@ edit_interface_rep::draw_graphics (renderer ren) {
       draw_graphical_object (ren);
       string tm_curs= as_string (eval ("graphics-texmacs-pointer"));
       if (tm_curs != "none") {
-	if (tm_curs == "graphics-cross") {
-	  ren->set_pencil (pencil (red, pixel));
-	  ren->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
-	  ren->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
+        if (tm_curs == "graphics-cross") {
+          ren->set_pencil (pencil (red, pixel));
+          ren->line (cu->ox, cu->oy-5*pixel, cu->ox, cu->oy+5*pixel);
+          ren->line (cu->ox-5*pixel, cu->oy, cu->ox+5*pixel, cu->oy);
         }
-	else if (tm_curs == "graphics-cross-arrows") {
-	  static int s= 6*pixel, a= 2*pixel;
-	  ren->set_pencil (pencil (red, pixel));
-	  ren->line (cu->ox, cu->oy-s, cu->ox, cu->oy+s);
-	  ren->line (cu->ox-s, cu->oy, cu->ox+s, cu->oy);
-	  ren->line (cu->ox, cu->oy-s,cu->ox-a, cu->oy-s+a);
-	  ren->line (cu->ox, cu->oy-s, cu->ox+a, cu->oy-s+a);
-	  ren->line (cu->ox, cu->oy+s, cu->ox-a, cu->oy+s-a);
-	  ren->line (cu->ox, cu->oy+s, cu->ox+a, cu->oy+s-a);
-	  ren->line (cu->ox-s, cu->oy, cu->ox-s+a, cu->oy+a);
-	  ren->line (cu->ox-s, cu->oy, cu->ox-s+a, cu->oy-a);
-	  ren->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy+a);
-	  ren->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy-a);
+        else if (tm_curs == "graphics-cross-arrows") {
+          static int s= 6*pixel, a= 2*pixel;
+          ren->set_pencil (pencil (red, pixel));
+          ren->line (cu->ox, cu->oy-s, cu->ox, cu->oy+s);
+          ren->line (cu->ox-s, cu->oy, cu->ox+s, cu->oy);
+          ren->line (cu->ox, cu->oy-s,cu->ox-a, cu->oy-s+a);
+          ren->line (cu->ox, cu->oy-s, cu->ox+a, cu->oy-s+a);
+          ren->line (cu->ox, cu->oy+s, cu->ox-a, cu->oy+s-a);
+          ren->line (cu->ox, cu->oy+s, cu->ox+a, cu->oy+s-a);
+          ren->line (cu->ox-s, cu->oy, cu->ox-s+a, cu->oy+a);
+          ren->line (cu->ox-s, cu->oy, cu->ox-s+a, cu->oy-a);
+          ren->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy+a);
+          ren->line (cu->ox+s, cu->oy, cu->ox+s-a, cu->oy-a);
         }
       }
     }
@@ -317,7 +317,7 @@ edit_interface_rep::draw_with_stored (renderer win, rectangle r) {
     win    -> get_extents (w1, h1);
     stored -> get_extents (w2, h2);
     if (stored->ox != win->ox || stored->oy != win->oy ||
-	w1 != w2 || h1 != h2) {
+        w1 != w2 || h1 != h2) {
       // cout << "x"; cout.flush ();
       stored_rects= rectangles ();
     }
@@ -338,12 +338,12 @@ edit_interface_rep::draw_with_stored (renderer win, rectangle r) {
     draw_with_shadow (win, r);
     if (!gui_interrupted ()) {
       if (inside_active_graphics ()) {
-	shadow->new_shadow (stored);
-	shadow->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
-	//stored_rects= /*stored_rects |*/ rectangles (r);
-	stored_rects= simplify (rectangles (r, stored_rects));
-	//cout << "Stored: " << stored_rects << "\n";
-	//cout << "M"; cout.flush ();
+        shadow->new_shadow (stored);
+        shadow->get_shadow (stored, sr->x1, sr->y1, sr->x2, sr->y2);
+        //stored_rects= /*stored_rects |*/ rectangles (r);
+        stored_rects= simplify (rectangles (r, stored_rects));
+        //cout << "Stored: " << stored_rects << "\n";
+        //cout << "M"; cout.flush ();
       }
       draw_post (win, shadow, r);
       win->put_shadow (shadow, sr->x1, sr->y1, sr->x2, sr->y2);

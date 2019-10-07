@@ -95,8 +95,8 @@ edit_math_rep::make_script (bool sup, bool right) {
     }
     insert_tree (tree (s, ""), path (0, 0));
     set_message ("move to the right when finished",
-		 (char*) (sup? (right? "superscript": "left superscript"):
-			       (right? "subscript": "left subscript")));
+                 (char*) (sup? (right? "superscript": "left superscript"):
+                               (right? "subscript": "left subscript")));
   }
 }
 
@@ -133,8 +133,8 @@ edit_math_rep::make_var_sqrt () {
   else {
     insert_tree (tree (SQRT, "", ""), path (0, 0));
     set_message (concat (kbd ("left"), ": set n",
-			 kbd ("right"), ": when finished"),
-		 "n-th root");
+                         kbd ("right"), ": when finished"),
+                 "n-th root");
   }
 }
 
@@ -267,8 +267,8 @@ edit_math_rep::back_prime (tree t, path p, bool forward) {
       int i= 0, n= N(s);
       tm_char_forwards (s, i);
       if (i >= n) {
-	assign (p, "");
-	correct (path_up (p));
+        assign (p, "");
+        correct (path_up (p));
       }
       else remove (p * path (0, 0), i);
     }
@@ -276,8 +276,8 @@ edit_math_rep::back_prime (tree t, path p, bool forward) {
       int n= N(s), i= n;
       tm_char_backwards (s, i);
       if (i <= 0) {
-	assign (p, "");
-	correct (path_up (p));
+        assign (p, "");
+        correct (path_up (p));
       }
       else remove (p * path (0, i), n-i);
     }
@@ -303,17 +303,17 @@ edit_math_rep::pre_remove_around (path p) {
     while (li<N(st[1])) {
       tree sst= st[1][li];
       if (!is_func (sst, RSUB) &&
-	  !is_func (sst, RSUP) &&
-	  !is_func (sst, RPRIME))
-	break;
+          !is_func (sst, RSUP) &&
+          !is_func (sst, RPRIME))
+        break;
       li++;
     }
     while (ri >= 0) {
       tree sst= st[1][ri];
       if (!is_func (sst, LSUB) &&
-	  !is_func (sst, LSUP) &&
-	  !is_func (sst, LPRIME))
-	break;
+          !is_func (sst, LSUP) &&
+          !is_func (sst, LPRIME))
+        break;
       ri--;
     }
     if (ri != N(st[1])-1) remove (p * path (1, ri+1), N(st[1])-1-ri);
@@ -333,8 +333,8 @@ edit_math_rep::make_tree () {
   else {
     insert_tree (tree (TREE, "", ""), path (0, 0));
     set_message (concat (kbd_shortcut ("(structured-insert-right)"),
-			 ": insert a new branch"),
-		 "tree");
+                         ": insert a new branch"),
+                 "tree");
   }
 }
 
@@ -345,15 +345,15 @@ edit_math_rep::back_in_tree (tree t, path p, bool forward) {
     if ((i>0) && (t[i] == "")) {
       path q= path_up (p);
       if (N (t) == 2) {
-	assign (q, t[0]);
-	correct (path_up (q));
+        assign (q, t[0]);
+        correct (path_up (q));
       }
       else {
-	remove (q * i, 1);
-	if (forward) {
-	  if (i == N (subtree (et, q))) go_to_end (q);
-	  else go_to_start (q * i);
-	}
+        remove (q * i, 1);
+        if (forward) {
+          if (i == N (subtree (et, q))) go_to_end (q);
+          else go_to_start (q * i);
+        }
       }
     }
     else if (!forward) go_to_end (path_up (p) * (i-1));

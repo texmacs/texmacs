@@ -158,7 +158,7 @@ void
 edit_interface_rep::invalidate (rectangles rs) {
   while (!is_nil (rs)) {
     invalidate (rs->item->x1-pixel, rs->item->y1-pixel,
-		rs->item->x2+pixel, rs->item->y2+pixel);
+                rs->item->x2+pixel, rs->item->y2+pixel);
     rs= rs->next;
   }
 }
@@ -319,46 +319,46 @@ edit_interface_rep::cursor_visible () {
     rectangle outer, inner;
     find_canvas_info (eb, sp, x, y, sx, sy, outer, inner);
     if ((cu->ox+ ((SI) (cu->y1 * cu->slope)) < x + outer->x1) ||
-	(cu->ox+ ((SI) (cu->y2 * cu->slope)) > x + outer->x2))
+        (cu->ox+ ((SI) (cu->y2 * cu->slope)) > x + outer->x2))
       {
-	SI tx= inner->x2 - inner->x1;
-	SI cx= outer->x2 - outer->x1;
-	if (tx > cx) {
-	  SI outer_cx= cu->ox - x;
-	  SI inner_cx= outer_cx - sx;
-	  SI dx= inner_cx - inner->x1;
-	  double p= 100.0 * ((double) (dx - (cx>>1))) / ((double) (tx-cx));
-	  p= max (min (p, 100.0), 0.0);
-	  tree old_xt= eb[path_up (sp)]->get_info ("scroll-x");
-	  tree new_xt= as_string (p) * "%";
-	  if (new_xt != old_xt && is_accessible (obtain_ip (old_xt))) {
-	    object fun= symbol_object ("tree-set");
-	    object cmd= list_object (fun, old_xt, new_xt);
-	    exec_delayed (scheme_cmd (cmd));
-	    temp_invalid_cursor= true;
-	  }
-	}
+        SI tx= inner->x2 - inner->x1;
+        SI cx= outer->x2 - outer->x1;
+        if (tx > cx) {
+          SI outer_cx= cu->ox - x;
+          SI inner_cx= outer_cx - sx;
+          SI dx= inner_cx - inner->x1;
+          double p= 100.0 * ((double) (dx - (cx>>1))) / ((double) (tx-cx));
+          p= max (min (p, 100.0), 0.0);
+          tree old_xt= eb[path_up (sp)]->get_info ("scroll-x");
+          tree new_xt= as_string (p) * "%";
+          if (new_xt != old_xt && is_accessible (obtain_ip (old_xt))) {
+            object fun= symbol_object ("tree-set");
+            object cmd= list_object (fun, old_xt, new_xt);
+            exec_delayed (scheme_cmd (cmd));
+            temp_invalid_cursor= true;
+          }
+        }
       }
     if ((cu->oy+ cu->y1 < y + outer->y1) ||
-	(cu->oy+ cu->y2 > y + outer->y2))
+        (cu->oy+ cu->y2 > y + outer->y2))
       {
-	SI ty= inner->y2 - inner->y1;
-	SI cy= outer->y2 - outer->y1;
-	if (ty > cy) {
-	  SI outer_cy= cu->oy + ((cu->y1 + cu->y2) >> 1) - y;
-	  SI inner_cy= outer_cy - sy;
-	  SI dy= inner_cy - inner->y1;
-	  double p= 100.0 * ((double) (dy - (cy>>1))) / ((double) (ty-cy));
-	  p= max (min (p, 100.0), 0.0);
-	  tree old_yt= eb[path_up (sp)]->get_info ("scroll-y");
-	  tree new_yt= as_string (p) * "%";
-	  if (new_yt != old_yt && is_accessible (obtain_ip (old_yt))) {
-	    object fun= symbol_object ("tree-set");
-	    object cmd= list_object (fun, old_yt, new_yt);
-	    exec_delayed (scheme_cmd (cmd));
-	    temp_invalid_cursor= true;
-	  }
-	}
+        SI ty= inner->y2 - inner->y1;
+        SI cy= outer->y2 - outer->y1;
+        if (ty > cy) {
+          SI outer_cy= cu->oy + ((cu->y1 + cu->y2) >> 1) - y;
+          SI inner_cy= outer_cy - sy;
+          SI dy= inner_cy - inner->y1;
+          double p= 100.0 * ((double) (dy - (cy>>1))) / ((double) (ty-cy));
+          p= max (min (p, 100.0), 0.0);
+          tree old_yt= eb[path_up (sp)]->get_info ("scroll-y");
+          tree new_yt= as_string (p) * "%";
+          if (new_yt != old_yt && is_accessible (obtain_ip (old_yt))) {
+            object fun= symbol_object ("tree-set");
+            object cmd= list_object (fun, old_yt, new_yt);
+            exec_delayed (scheme_cmd (cmd));
+            temp_invalid_cursor= true;
+          }
+        }
       }
   }
 }
@@ -645,10 +645,10 @@ edit_interface_rep::apply_changes () {
       if (get_server () -> in_full_screen_mode ()) sb= 0;
       if (sb) wx -= scrollbar_width();
       if (wx != cur_wx || wy != cur_wy) {
-	cur_wx= wx; cur_wy= wy;
-	init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx/magf)) * "tmpt");
-	init_env (PAGE_SCREEN_HEIGHT, as_string ((SI) (wy/magf)) * "tmpt");
-	notify_change (THE_ENVIRONMENT);
+        cur_wx= wx; cur_wy= wy;
+        init_env (PAGE_SCREEN_WIDTH, as_string ((SI) (wx/magf)) * "tmpt");
+        init_env (PAGE_SCREEN_HEIGHT, as_string ((SI) (wy/magf)) * "tmpt");
+        notify_change (THE_ENVIRONMENT);
       }
     }
   if (get_init_string (PAGE_MEDIUM) == "beamer" && full_screen) sb= 0;

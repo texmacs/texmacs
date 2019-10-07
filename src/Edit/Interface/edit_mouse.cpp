@@ -218,10 +218,10 @@ edit_interface_rep::mouse_scroll (SI x, SI y, bool up) {
       new_p= max (min (new_p, 100.0), 0.0);
       tree new_yt= as_string (new_p) * "%";
       if (new_yt != old_yt && is_accessible (obtain_ip (old_yt))) {
-	object fun= symbol_object ("tree-set");
-	object cmd= list_object (fun, old_yt, new_yt);
-	exec_delayed (scheme_cmd (cmd));
-	temp_invalid_cursor= true;
+        object fun= symbol_object ("tree-set");
+        object cmd= list_object (fun, old_yt, new_yt);
+        exec_delayed (scheme_cmd (cmd));
+        temp_invalid_cursor= true;
       }
     }
   }

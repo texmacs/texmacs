@@ -692,7 +692,7 @@ edit_select_rep::selection_paste (string key) {
     }
     else {
       if ((t[2] != mode) && (t[2] != "src") && (mode != "src") &&
-	  ((t[2] == "math") || (mode == "math"))) {
+  ((t[2] == "math") || (mode == "math"))) {
         if (t[2] == "math")
           insert_tree (compound ("math", ""), path (0, 0));
         else if (t[2] == "text")

@@ -61,19 +61,19 @@ edit_text_rep::correct_concat (path p, int done) {
       return;
     }
     else if (is_multi_paragraph (t[i]) &&
-	     is_document (subtree (et, path_up (p))))
+             is_document (subtree (et, path_up (p))))
       {
-	if ((i+1)<n) {
-	  split (p * (i+1));
-	  correct_concat (path_inc (p));
-	}
-	if (i==0) remove_node (p * 0);
-	else {
-	  split (p * i);
-	  remove_node (path_inc (p) * 0);
-	  correct_concat (p);
-	}
-	return;
+        if ((i+1)<n) {
+          split (p * (i+1));
+          correct_concat (path_inc (p));
+        }
+        if (i==0) remove_node (p * 0);
+        else {
+          split (p * i);
+          remove_node (path_inc (p) * 0);
+          correct_concat (p);
+        }
+        return;
       }
   }
 }
@@ -174,12 +174,12 @@ edit_text_rep::prepare_for_insert () {
       insert_node (p * 0, DOCUMENT);
     else {
       if (l == 0) {
-	insert (p, tree (DOCUMENT, ""));
-	go_to (p * 0);
+        insert (p, tree (DOCUMENT, ""));
+        go_to (p * 0);
       }
       else {
-	insert (path_inc (p), tree (DOCUMENT, ""));
-	go_to (path_inc (p) * 0);
+        insert (path_inc (p), tree (DOCUMENT, ""));
+        go_to (path_inc (p) * 0);
       }
     }
     return prepare_for_insert ();

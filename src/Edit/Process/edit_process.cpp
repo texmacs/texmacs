@@ -208,7 +208,7 @@ index_name_sub (tree t, bool all) {
     int i, n= N(s);
     for (i=0; i<n; i++)
       if (is_iso_alpha (s[i]) || is_digit (s[i]) || (s[i] == ' ') ||
-	  (all && (s[i] >= ' '))) r << s[i];
+          (all && (s[i] >= ' '))) r << s[i];
     return r;
   }
   else if (is_concat (t)) {
@@ -227,7 +227,7 @@ index_name_sub (tree t, bool all) {
       if (s == "") s= index_name_sub (t[i], true);
       tree u= copy (followup [s]);
       for (j=0; j<N(u); j++)
-	if (u[j] == t[i]) break;
+        if (u[j] == t[i]) break;
       if (j == N(u)) { u << t[i]; followup (s)= u; }
       r << s;
       if (j != 0) r << "\n" << as_string (j);
@@ -296,8 +296,8 @@ make_entry (tree& D, tree t, hashmap<string,tree> refs, bool rec) {
     if (is_func (t[i], TUPLE, 1)) {
       bool flag= true;
       for (j=0; j<n; j++)
-	if (is_func (t[j], TUPLE, 2) && (t[i][0] == t[j][0]))
-	  flag= false;
+        if (is_func (t[j], TUPLE, 2) && (t[i][0] == t[j][0]))
+          flag= false;
       if (flag) D << t[i][0];
     }
 
@@ -305,13 +305,13 @@ make_entry (tree& D, tree t, hashmap<string,tree> refs, bool rec) {
     if (is_func (t[i], TUPLE, 2) && is_tuple (t[i][1], "range", 2)) {
       bool flag= true;
       for (j=i+1; j<n; j++)
-	if (is_func (t[j], TUPLE, 2) && is_tuple (t[j][1], "range", 2))
-	  if ((t[i][0] == t[j][0]) && (t[i][1][1] == t[j][1][1])) {
-	    t[i][1]= tree (CONCAT, t[i][1][2], "\25", t[j][1][2]);
-	    t[j]= "";
-	    flag= false;
-	    break;
-	  }
+        if (is_func (t[j], TUPLE, 2) && is_tuple (t[j][1], "range", 2))
+          if ((t[i][0] == t[j][0]) && (t[i][1][1] == t[j][1][1])) {
+            t[i][1]= tree (CONCAT, t[i][1][2], "\25", t[j][1][2]);
+            t[j]= "";
+            flag= false;
+            break;
+          }
       if (flag) t[i][1]= tree (CONCAT, t[i][1][2], "\25?");
     }
 
@@ -332,23 +332,23 @@ make_entry (tree& D, tree t, hashmap<string,tree> refs, bool rec) {
       }
       if (!h->contains (l)) h (l)= r;
       else {
-	tree rr= h[l];
-	if (rr == "") rr= r;
+        tree rr= h[l];
+        if (rr == "") rr= r;
         else if (prev != "" && next == prev);
         else if (is_int (prev) && is_int (next) &&
                  as_int (next) == as_int (prev) + 1) {
-	  if (!is_concat (rr))
+          if (!is_concat (rr))
             rr= tree (CONCAT, rr, "\25", r);
           else if (is_concat (rr) && N(rr) >= 2 && rr[N(rr)-2] == "\25")
             rr[N(rr)-1]= r;
           else
             rr << "\25" << r;
         }
-	else if (r != "") {
-	  if (!is_concat (rr)) rr= tree (CONCAT, rr);
-	  rr << ", " << r;
-	}
-	h (l)= rr;
+        else if (r != "") {
+          if (!is_concat (rr)) rr= tree (CONCAT, rr);
+          rr << ", " << r;
+        }
+        h (l)= rr;
       }
     }
 
@@ -356,7 +356,7 @@ make_entry (tree& D, tree t, hashmap<string,tree> refs, bool rec) {
     if (is_func (t[i], TUPLE, 2)) {
       tree l= t[i][0];
       if (h->contains (l)) {
-	int k= N(l);
+        int k= N(l);
         tree e;
         if (rec) {
           e= compound ("index+" * as_string (k));
@@ -364,13 +364,13 @@ make_entry (tree& D, tree t, hashmap<string,tree> refs, bool rec) {
           for (int ch=0; ch<k; ch++) e << copy (l[ch]);
           if (h[l] != "") e << h[l];
         }
-	else {
+        else {
           e= compound ("index-" * as_string (k), copy (l[k-1]), h[l]);
           if (h[l] == "")
             e= compound ("index-" * as_string (k) * "*", copy (l[k-1]));
         }
-	D << e;
-	h->reset (l);
+        D << e;
+        h->reset (l);
       }
     }
 }
@@ -438,28 +438,28 @@ edit_process_rep::generate_glossary (string gly) {
       else if (is_func (G[i], TUPLE, 3) && (G[i][0] == "normal")) {
         tree content= G[i][1];
         if (is_document (content) && N(content) == 1) content= content[0];;
-	tree L= compound ("glossary-1", content, G[i][2]);
-	D << L;
+        tree L= compound ("glossary-1", content, G[i][2]);
+        D << L;
       }
       else if (is_func (G[i], TUPLE, 4) && (G[i][0] == "normal")) {
         tree content= G[i][1];
         if (is_document (content) && N(content) == 1) content= content[0];;
-	tree L= compound ("glossary-2", content, G[i][2], G[i][3]);
-	D << L;
+        tree L= compound ("glossary-2", content, G[i][2], G[i][3]);
+        D << L;
       }
       else if (is_func (G[i], TUPLE, 3) && (G[i][0] == "dup")) {
-	int j;
-	for (j=0; j<N(D); j++)
-	  if ((is_compound (D[j], "glossary-1") ||
-	       is_compound (D[j], "glossary-2")) &&
-	      (D[j][0] == G[i][1]))
-	    {
-	      tree C= D[j][N(D[j])-1];
-	      if (!is_concat (C)) C= tree (CONCAT, C);
-	      C << ", ";
-	      C << G[i][2];
-	      D[j][N(D[j])-1]= C;
-	    }
+        int j;
+        for (j=0; j<N(D); j++)
+          if ((is_compound (D[j], "glossary-1") ||
+               is_compound (D[j], "glossary-2")) &&
+              (D[j][0] == G[i][1]))
+            {
+              tree C= D[j][N(D[j])-1];
+              if (!is_concat (C)) C= tree (CONCAT, C);
+              C << ", ";
+              C << G[i][2];
+              D[j][N(D[j])-1]= C;
+            }
       }
     insert_tree (remove_labels (D));
   }
@@ -490,7 +490,7 @@ edit_process_rep::generate_aux_recursively (string which, tree st, path p) {
   for (i=0; i<n; i++)
     if (!is_aux (st[i])) {
       if (is_compound (st[i]))
-	generate_aux_recursively (which, st[i], p * i);
+        generate_aux_recursively (which, st[i], p * i);
     }
     else {
       tree t= st[i];
@@ -499,39 +499,39 @@ edit_process_rep::generate_aux_recursively (string which, tree st, path p) {
       go_to (doc_p * path (0, 0));
 
       /*
-	cout << "et= " << et << "\n";
-	cout << "tp= " << tp << "\n";
-	cout << "------------------------------------------------------\n";
+        cout << "et= " << et << "\n";
+        cout << "tp= " << tp << "\n";
+        cout << "------------------------------------------------------\n";
       */
       if (arity (t) >= 1) {
-	if ((arity(t) >= 3) &&
-	    (is_compound (t, "bibliography") ||
-	     is_compound (t, "bibliography*")) &&
-	    ((which == "") || (which == "bibliography")))
-	  generate_bibliography (as_string (t[0]), as_string (t[1]),
-				 as_string (t[2]));
-	if ((is_compound (t, "table-of-contents") ||
-	     is_compound (t, "table-of-contents*")) &&
-	    ((which == "") || (which == "table-of-contents")))
-	  generate_table_of_contents (as_string (t[0]));
-	if ((is_compound (t, "the-index") || is_compound (t, "the-index*")) &&
-	    ((which == "") || (which == "the-index")))
-	  generate_index (as_string (t[0]));
-	if ((is_compound (t, "the-glossary") ||
-	     is_compound (t, "the-glossary*")) &&
-	    ((which == "") || (which == "the-glossary")))
-	  generate_glossary (as_string (t[0]));
-	if (is_compound (t, "list-of-figures") &&
-	    ((which == "") || (which == "list-of-figures")))
-	  generate_glossary (as_string (t[0]));
-	if (is_compound (t, "list-of-tables") &&
-	    ((which == "") || (which == "list-of-tables")))
-	  generate_glossary (as_string (t[0]));
+        if ((arity(t) >= 3) &&
+            (is_compound (t, "bibliography") ||
+             is_compound (t, "bibliography*")) &&
+            ((which == "") || (which == "bibliography")))
+          generate_bibliography (as_string (t[0]), as_string (t[1]),
+                                 as_string (t[2]));
+        if ((is_compound (t, "table-of-contents") ||
+             is_compound (t, "table-of-contents*")) &&
+            ((which == "") || (which == "table-of-contents")))
+          generate_table_of_contents (as_string (t[0]));
+        if ((is_compound (t, "the-index") || is_compound (t, "the-index*")) &&
+            ((which == "") || (which == "the-index")))
+          generate_index (as_string (t[0]));
+        if ((is_compound (t, "the-glossary") ||
+             is_compound (t, "the-glossary*")) &&
+            ((which == "") || (which == "the-glossary")))
+          generate_glossary (as_string (t[0]));
+        if (is_compound (t, "list-of-figures") &&
+            ((which == "") || (which == "list-of-figures")))
+          generate_glossary (as_string (t[0]));
+        if (is_compound (t, "list-of-tables") &&
+            ((which == "") || (which == "list-of-tables")))
+          generate_glossary (as_string (t[0]));
       }
       /*
-	cout << "et= " << et << "\n";
-	cout << "tp= " << tp << "\n";
-	cout << "------------------------------------------------------\n\n\n";
+        cout << "et= " << et << "\n";
+        cout << "tp= " << tp << "\n";
+        cout << "------------------------------------------------------\n\n\n";
       */
     }
 }

@@ -64,7 +64,7 @@ edit_dynamic_rep::is_multi_paragraph_macro (tree t, bool pure) {
     int i;
     for (i=1; i<n; i++)
       if (is_multi_paragraph_macro (t[i], pure))
-	return true;
+        return true;
     tree f= get_env_value (as_string (L(t)));
     return is_multi_paragraph_macro (f, pure);
   }
@@ -82,7 +82,7 @@ contains_table_format (tree t, tree var) {
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (contains_table_format (t[i], var))
-	return true;
+        return true;
     return is_func (t, TFORMAT) && (t[N(t)-1] == tree (ARG, var));
   }
 }
@@ -94,7 +94,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
   if (n == -1) {
     for (n=0; true; n++) {
       if (drd->correct_arity (l, n) &&
-	  ((n>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
+          ((n>0) || (drd->get_arity_mode (l) == ARITY_NORMAL))) break;
       if (n == 100) return;
     }
   }
@@ -119,7 +119,7 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
 
     tree sel= "";
     if (selection_active_small () ||
-	(large_macro && selection_active_normal ()))
+        (large_macro && selection_active_normal ()))
       sel= selection_get_cut ();
     else if (is_with_like (t) && selection_active_normal ()) {
       sel= selection_get_cut ();
@@ -128,11 +128,11 @@ edit_dynamic_rep::make_compound (tree_label l, int n= -1) {
       return;
     }
     if ((block_macro && (!table_macro)) ||
-	(l == make_tree_label ("footnote")) ||
+        (l == make_tree_label ("footnote")) ||
         (l == make_tree_label ("footnote-anchor")))
       {
-	t[0]= tree (DOCUMENT, "");
-	p   = path (0, 0, 0);
+        t[0]= tree (DOCUMENT, "");
+        p   = path (0, 0, 0);
       }
     if (!drd->all_accessible (l))
       if (get_init_string (MODE) != "src" && !inside ("show-preamble")) {
@@ -191,11 +191,11 @@ edit_dynamic_rep::go_to_argument (path p, bool start_flag) {
   else if (i >= n) go_to_end (path_up (p, inactive? 2: 1));
   else {
     if ((!drd->is_accessible_child (t, i)) &&
-	(!inactive) && (!in_source ()))
+        (!inactive) && (!in_source ()))
       {
-	insert_node (path_up (p) * 0, INACTIVE);
+        insert_node (path_up (p) * 0, INACTIVE);
         call ("notify-disactivated", object (subtree (et, path_up (p) * 0)));
-	p= path_up (p) * path (0, i);
+        p= path_up (p) * path (0, i);
       }
     if (start_flag) go_to_start (p);
     else go_to_end (p);
@@ -240,26 +240,26 @@ edit_dynamic_rep::remove_empty_argument (path p, bool forward) {
 
   for (d=1; d<=n-i; d++)
     if ((src_flag && (d==1)) ||
-	((!src_flag) &&
-	 drd->correct_arity (L(t), n-d) &&
-	 drd->insert_point (L(t), i, n-d)))
+        ((!src_flag) &&
+         drd->correct_arity (L(t), n-d) &&
+         drd->insert_point (L(t), i, n-d)))
       {
-	bool flag= true;
-	for (j=0; j<d; j++)
-	  flag= flag && is_empty (t[i+j]);
-	if (flag) {
-	  bool old_locked= env_locked; env_locked= true;
-	  remove (p, d);
-	  if ((d == n) && is_mod_active_once (subtree (et, path_up (p, 2)))) {
-	    remove_node (path_up (p, 2) * 0);
-	    go_to_border (path_up (p, 2), forward);
-	  }
-	  else if (forward) go_to_argument (path_up (p) * i, true);
-	  else go_to_argument (path_up (p) * (i-1), false);
-	  env_locked= old_locked;
-	  return;
-	}
-	else break;
+        bool flag= true;
+        for (j=0; j<d; j++)
+          flag= flag && is_empty (t[i+j]);
+        if (flag) {
+          bool old_locked= env_locked; env_locked= true;
+          remove (p, d);
+          if ((d == n) && is_mod_active_once (subtree (et, path_up (p, 2)))) {
+            remove_node (path_up (p, 2) * 0);
+            go_to_border (path_up (p, 2), forward);
+          }
+          else if (forward) go_to_argument (path_up (p) * i, true);
+          else go_to_argument (path_up (p) * (i-1), false);
+          env_locked= old_locked;
+          return;
+        }
+        else break;
       }
 
   bool flag= true;
@@ -269,24 +269,24 @@ edit_dynamic_rep::remove_empty_argument (path p, bool forward) {
     assign (path_up (p), "");
     tree st= subtree (et, path_up (p, 2));
     if ((is_mod_active_once (st) || is_compound (st, "doc-inactive")) &&
-	(st[0] == "")) {
+        (st[0] == "")) {
       assign (path_up (p, 2), "");
       correct (path_up (p, 3));
     }
     // FIXME: temporary hack for doc-data and doc-author-data
     else if (is_compound (st, "doc-data")      ||
-	     is_compound (st, "abstract-data") ||
-	     is_compound (st, "doc-author")    ||
+             is_compound (st, "abstract-data") ||
+             is_compound (st, "doc-author")    ||
              is_compound (st, "author-data")) {
       if (N(st)==1) {
-	assign (path_up (p, 2), "");
-	correct (path_up (p, 3));
+        assign (path_up (p, 2), "");
+        correct (path_up (p, 3));
       }
       else {
-	int i= last_item (path_up (p)) + (forward? 0: -1);
-	remove (path_up (p), 1);
-	if (i<0) go_to_start (path_up (p, 2));
-	else go_to_border (path_up (p, 2) * i, forward);
+        int i= last_item (path_up (p)) + (forward? 0: -1);
+        remove (path_up (p), 1);
+        if (i<0) go_to_start (path_up (p, 2));
+        else go_to_border (path_up (p, 2) * i, forward);
       }
     }
     else correct (path_up (p, 2));
@@ -349,7 +349,7 @@ edit_dynamic_rep::back_general (path p, bool forward) {
   }
   else if (n==0) back_monolithic (p);
   else if ((n==1) && is_func (st[0], DOCUMENT, 1) &&
-	   (is_func (st[0][0], TFORMAT) || is_func (st[0][0], TABLE)))
+           (is_func (st[0][0], TFORMAT) || is_func (st[0][0], TABLE)))
     back_table (p * path (0, 0), forward);
   else if ((n==1) && (is_func (st[0], TFORMAT) || is_func (st[0], TABLE)))
     back_table (p * 0, forward);
@@ -418,8 +418,8 @@ edit_dynamic_rep::insert_with (path p, string var, tree val) {
     int i, n= N(st)-1;
     for (i=0; i<n; i+=2)
       if (st[i] == var) {
-	assign (p * (i+1), copy (val));
-	return;
+        assign (p * (i+1), copy (val));
+        return;
       }
     insert (p * n, copy (tree (WITH, var, val)));    
   }
@@ -435,9 +435,9 @@ edit_dynamic_rep::remove_with (path p, string var) {
     int i, n= N(st)-1;
     for (i=0; i<n; i+=2)
       if (st[i] == var) {
-	remove (p * i, 2);
-	if (n == 2) remove_node (p * 0);
-	return;
+        remove (p * i, 2);
+        if (n == 2) remove_node (p * 0);
+        return;
       }
   }
   else if ((rp < p) && is_func (subtree (et, path_up (p)), WITH))
@@ -484,8 +484,8 @@ edit_dynamic_rep::insert_style_with (path p, string var, string val) {
     int i, n= N(st);
     for (i=n-1; i>=0; i-=2)
       if (st[i] == var) {
-	assign (path_up (p) * (i+1), copy (val));
-	return;
+        assign (path_up (p) * (i+1), copy (val));
+        return;
       }
     insert (path_up (p) * (n-1), tree (STYLE_WITH, copy (var), copy (val)));
   }
@@ -522,7 +522,7 @@ edit_dynamic_rep::make_hybrid () {
   if (in_source ()) insert_tree (t, p);
   else insert_tree (tree (INACTIVE, t), path (0, p));
   set_message (concat (kbd ("return"), ": activate symbol or macro"),
-	       "hybrid");
+               "hybrid");
 }
 
 bool
@@ -543,7 +543,7 @@ edit_dynamic_rep::activate_latex () {
       return true;
     }
     set_message ("Error: not a command name",
-		 "activate latex command");
+                 "activate latex command");
   }
   return false;
 }
@@ -569,10 +569,10 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
     int i, n= N(mt)-1;
     for (i=0; i<n; i++)
       if (mt[i] == name) {
-	assign (p, tree (ARG, copy (name)));
-	go_to (end (et, p));
-	correct (path_up (p));
-	return;
+        assign (p, tree (ARG, copy (name)));
+        go_to (end (et, p));
+        correct (path_up (p));
+        return;
       }
   }
 
@@ -598,7 +598,7 @@ edit_dynamic_rep::activate_hybrid (bool with_args_hint) {
     if (N(st) == 2) insert_tree (st[1]);
   }
   else set_message ("Error: unknown command",
-		    "activate hybrid command");
+                    "activate hybrid command");
   env_locked= old_locked;
 }
 
@@ -620,7 +620,7 @@ edit_dynamic_rep::activate_symbol () {
     int i, n= N(s);
     for (i=0; i<n; i++)
       if ((s[i]=='<') || (s[i]=='>'))
-	{ s= ""; break; }
+        { s= ""; break; }
     assign (p, "<" * s * ">");
   }
   go_to (end (et, p));

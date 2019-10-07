@@ -193,7 +193,7 @@ edit_table_rep::with_raw_read (tree with, int& i1, int& j1, int& i2, int& j2) {
 
 void
 edit_table_rep::with_decode (int nr_rows, int nr_cols,
-			     int& i1, int& j1, int& i2, int& j2)
+                             int& i1, int& j1, int& i2, int& j2)
 {
   i1= (i1>=0? i1-1: nr_rows+i1);
   i2= (i2> 0? i2-1: nr_rows+i2);
@@ -203,8 +203,8 @@ edit_table_rep::with_decode (int nr_rows, int nr_cols,
 
 void
 edit_table_rep::with_decode (int nr_rows, int nr_cols,
-			     int& I1, int& J1, int& I2, int& J2,
-			     int& i1, int& j1, int& i2, int& j2)
+                             int& I1, int& J1, int& I2, int& J2,
+                             int& i1, int& j1, int& i2, int& j2)
 {
   i1= I1; j1= J1; i2= I2; j2=J2;
   with_decode (nr_rows, nr_cols, i1, j1, i2, j2);
@@ -212,7 +212,7 @@ edit_table_rep::with_decode (int nr_rows, int nr_cols,
 
 void
 edit_table_rep::with_read (tree with, int nr_rows, int nr_cols,
-			   int& i1, int& j1, int& i2, int& j2)
+                           int& i1, int& j1, int& i2, int& j2)
 {
   with_raw_read (with, i1, j1, i2, j2);
   with_decode (nr_rows, nr_cols, i1, j1, i2, j2);
@@ -220,8 +220,8 @@ edit_table_rep::with_read (tree with, int nr_rows, int nr_cols,
 
 void
 edit_table_rep::with_read (tree with, int nr_rows, int nr_cols,
-			   int& I1, int& J1, int& I2, int& J2,
-			   int& i1, int& j1, int& i2, int& j2)
+                           int& I1, int& J1, int& I2, int& J2,
+                           int& i1, int& j1, int& i2, int& j2)
 {
   with_raw_read (with, I1, J1, I2, J2);
   i1= I1; j1= J1; i2= I2; j2=J2;
@@ -265,7 +265,7 @@ edit_table_rep::table_del_format (path fp, string var) {
   for (k=n-2; k>=0; k--)
     if (is_func (st[k], TWITH, 2))
       if ((var == "") || (var == st[k][0]))
-	remove (fp * k, 1);
+        remove (fp * k, 1);
 }
 
 void
@@ -906,14 +906,14 @@ table_format_undecorate (tree st, int row, int col, int dec_row, int dec_col) {
   int k, n= N(st);
   for (k=0; k<n-1; k++)
     if ((as_int (st[k][0]) <= (row+1)) && (as_int (st[k][1]) >= (row+1)) &&
-	(as_int (st[k][2]) <= (col+1)) && (as_int (st[k][3]) >= (col+1)))
+        (as_int (st[k][2]) <= (col+1)) && (as_int (st[k][3]) >= (col+1)))
       if (is_func (st[k], CWITH, 6) && (st[k][4] != CELL_DECORATION)) {
-	tree with= copy (st[k]);
-	with[0]= as_string (dec_row+1);
-	with[1]= as_string (dec_row+1);
-	with[2]= as_string (dec_col+1);
-	with[3]= as_string (dec_col+1);
-	fm << with;
+        tree with= copy (st[k]);
+        with[0]= as_string (dec_row+1);
+        with[1]= as_string (dec_row+1);
+        with[2]= as_string (dec_col+1);
+        with[3]= as_string (dec_col+1);
+        fm << with;
       }
   return fm;
 }
@@ -924,12 +924,12 @@ table_undecorate (tree st, int row, int col) {
   for (k=0; k<n-1; k++)
     if ((as_int (st[k][0]) == (row+1)) && (as_int (st[k][2]) == (col+1)))
       if (is_func (st[k], CWITH, 6) && (st[k][4] == CELL_DECORATION)) {
-	int dec_row= 0, dec_col= 0;
-	tree T= copy (st[k][5]);
-	search_decoration (T, dec_row, dec_col);
-	table_set (T, dec_row, dec_col, table_get (st[n-1], row, col));
-	tree F= table_format_undecorate (st, row, col, dec_row, dec_col);
-	return F * T;
+        int dec_row= 0, dec_col= 0;
+        tree T= copy (st[k][5]);
+        search_decoration (T, dec_row, dec_col);
+        table_set (T, dec_row, dec_col, table_get (st[n-1], row, col));
+        tree F= table_format_undecorate (st, row, col, dec_row, dec_col);
+        return F * T;
       }
   FAILED ("decoration not found");
   return "";
@@ -1069,10 +1069,10 @@ edit_table_rep::make_table (int nr_rows, int nr_cols) {
 
   table_correct_block_content ();
   set_message (concat (kbd_shortcut ("(structured-insert-down)"),
-		       ": new row",
-		       kbd_shortcut ("(structured-insert-right)"),
-		       ": new column"),
-	       "table");
+                       ": new row",
+                       kbd_shortcut ("(structured-insert-right)"),
+                       ": new column"),
+               "table");
 }
 
 void
@@ -1089,10 +1089,10 @@ edit_table_rep::make_subtable (int nr_rows, int nr_cols) {
   go_to (cp * path (0, p));
   table_correct_block_content ();
   set_message (concat (kbd_shortcut ("(structured-insert-down)"),
-		       ": new row",
-		       kbd_shortcut ("(structured-insert-right)"),
-		       ": new column"),
-	       "table");
+                       ": new row",
+                       kbd_shortcut ("(structured-insert-right)"),
+                       ": new column"),
+               "table");
 }
 
 void

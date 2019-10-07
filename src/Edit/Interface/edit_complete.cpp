@@ -28,11 +28,11 @@ find_completions (
     int i= 0, n= N(s);
     while (i<n) {
       if (is_iso_alpha (s[i])) {
-	int start= i;
-	while ((i<n) && (is_iso_alpha (s[i]))) i++;
-	string r= s (start, i);
-	if (starts (r, prefix) && (r != prefix))
-	  h->insert (r (N(prefix), N(r)));
+        int start= i;
+        while ((i<n) && (is_iso_alpha (s[i]))) i++;
+        string r= s (start, i);
+        if (starts (r, prefix) && (r != prefix))
+          h->insert (r (N(prefix), N(r)));
       }
       else skip_symbol (s, i);
     }
@@ -41,7 +41,7 @@ find_completions (
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (drd->is_accessible_child (t, i))
-	find_completions (drd, t[i], h, prefix);
+        find_completions (drd, t[i], h, prefix);
   }
 }
 
@@ -71,11 +71,11 @@ edit_interface_rep::complete_try () {
     int i, n= N(t);
     for (i=0; i<n; i++)
       if (is_atomic (t[i]) && starts (t[i]->label, s))
-	a << string (t[i]->label (N(s), N(t[i]->label)));
+        a << string (t[i]->label (N(s), N(t[i]->label)));
   }
   else {
     if ((end==0) || (!is_iso_alpha (s[end-1])) ||
-	((end!=N(s)) && is_iso_alpha (s[end]))) return false;
+        ((end!=N(s)) && is_iso_alpha (s[end]))) return false;
     int start= end-1;
     while ((start>0) && is_iso_alpha (s[start-1])) start--;
     ss= s (start, end);
@@ -173,8 +173,8 @@ put_cursor (tree t, path p) {
       int i, n= N(t);
       tree u (t, n);
       for (i=0; i<n; i++)
-	if (i == p->item) u[i]= put_cursor (t[i], p->next);
-	else u[i]= t[i];
+        if (i == p->item) u[i]= put_cursor (t[i], p->next);
+        else u[i]= t[i];
       return u;
     }
   }
