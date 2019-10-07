@@ -669,7 +669,8 @@ edit_select_rep::selection_paste (string key) {
           s= "$" * s * "$";
       }
     string fm;
-    if (selection_import == "default") fm= "texmacs-snippet";
+    if (selection_import == "verbatim" && mode == "prog") fm= "code-snippet";
+    else if (selection_import == "default") fm= "texmacs-snippet";
     else fm= selection_import * "-snippet";
     tree doc= generic_to_tree (s, fm);
     if (is_func (doc, DOCUMENT, 1)) doc= doc[0]; // temporary fix

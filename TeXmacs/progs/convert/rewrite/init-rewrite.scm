@@ -71,6 +71,29 @@
 (converter stm-snippet texmacs-tree
   (:function stm-snippet->texmacs))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Generic source files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-format code
+  (:name "Source Code"))
+
+(tm-define (texmacs->code t . enc)
+  (if (null? enc) (set! enc (list (get-locale-charset))))
+  (if (tree? t)
+      (cpp-texmacs->verbatim t #f (car enc))
+      (texmacs->code (tm->tree t) (car enc))))
+
+(tm-define (code->texmacs x . opts)
+  (verbatim-->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(tm-define (code-snippet->texmacs x . opts)
+  (verbatim-snippet->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(converter code-snippet texmacs-tree
+  (:function code-snippet->texmacs))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scheme source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -134,12 +157,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Verbatim
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (texmacs->code t . enc)
-  (if (null? enc) (set! enc (list (get-locale-charset))))
-  (if (tree? t)
-      (cpp-texmacs->verbatim t #f (car enc))
-      (texmacs->code (tm->tree t) (car enc))))
 
 (tm-define (texmacs->verbatim x . opts)
   (if (list-1? opts) (set! opts (car opts)))
