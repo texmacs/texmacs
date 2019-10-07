@@ -2011,12 +2011,9 @@ pdf_hummus_renderer_rep::image (
   std::string initial_GState_name = page->GetResourcesDictionary()
     .AddExtGStateMapping(initial_GState_id);
   contentContext->gs(initial_GState_name);
-  double ratiox= ((double)w) / ((double)im->w);
-  double ratioy= ((double)h) / ((double)im->h);
   contentContext->cm (((double)w) / ((double)im->w), 0,
 		      0, ((double)h) / ((double)im->h),
-		      to_x (x - ((SI) (ratiox * PIXEL))),
-		      to_y (y - ((SI) (ratioy * PIXEL))));
+		      to_x (x), to_y (y));
   std::string pdfFormName = page->GetResourcesDictionary().AddFormXObjectMapping(im->id);
   select_alpha((1000 * alpha) / 255);
   contentContext->Do(pdfFormName);
