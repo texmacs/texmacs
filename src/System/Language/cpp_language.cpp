@@ -59,7 +59,6 @@ line_inc (tree t, int i) {
 
 static void parse_number (string s, int& pos);
 static void parse_string (string s, int& pos);
-static void parse_alpha (string s, int& pos);
 
 cpp_language_rep::cpp_language_rep (string name):
   abstract_language_rep (name), colored ("") {}
@@ -258,11 +257,6 @@ cpp_color_setup_otherlexeme (hashmap<string, string>& t) {
   t ("||")= c;
   t ("!=")= c;
   
-}
-
-static void
-parse_blanks (string s, int& pos) {
-  while (pos<N(s) && (s[pos]==' ' || s[pos]=='\t')) pos++;
 }
 
 static void

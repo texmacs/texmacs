@@ -214,11 +214,6 @@ r_language_rep::parse_identifier_or_markup (hashmap<string, string>& t,
 }
 
 static void
-parse_blanks (string s, int& pos) {
-  while (pos<N(s) && (s[pos]==' ' || s[pos]=='\t')) pos++;
-}
-
-static void
 advance_till_unescaped( string s, int & pos, char c) {
   bool escaped = false ;
   if (pos>=N(s)) return;

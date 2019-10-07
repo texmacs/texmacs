@@ -15,7 +15,6 @@
 #include "scheme.hpp"
 
 static void parse_number (string s, int& pos);
-static void parse_alpha (string s, int& pos);
 
 fortran_language_rep::fortran_language_rep (string name):
   abstract_language_rep (name), colored ("")
@@ -361,11 +360,6 @@ fortran_color_setup_operator_openclose (hashmap<string, string> & t) {
 static void
 fortran_color_setup_operator_field (hashmap<string, string> & t) {
   t ("%")= "operator_field";
-}
-
-static void
-parse_blanks (string s, int& pos) {
-  while (pos<N(s) && (s[pos] == ' ' || s[pos] == '\t')) pos++;
 }
 
 static bool

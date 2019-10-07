@@ -16,7 +16,6 @@
 
 static void parse_number (string s, int& pos);
 static void parse_string (string s, int& pos);
-static void parse_alpha (string s, int& pos);
 
 mathemagix_language_rep::mathemagix_language_rep (string name):
   abstract_language_rep (name), colored ("")
@@ -258,11 +257,6 @@ mathemagix_language_rep::parse_identifier_or_markup (hashmap<string, string>& t,
     i++;
   }
   if (!(t->contains (s (pos, i)))) pos= i;
-}
-
-static void
-parse_blanks (string s, int& pos) {
-  while (pos<N(s) && (s[pos]==' ' || s[pos]=='\t')) pos++;
 }
 
 static void

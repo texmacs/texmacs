@@ -222,11 +222,6 @@ scilab_language_rep::belongs_to_identifier (char c) {
          (c=='_' || c=='%' || c=='#' || c=='$' || c=='?' || c=='!');
 }
 
-static void
-parse_blanks (string s, int& pos) {
-  while (pos<N(s) && (s[pos] == ' ' || s[pos] == '\t')) pos++;
-}
-
 static bool
 string_end (string s, int pos) {
   while (pos<N(s) && (s[pos] == ' ' || s[pos] == '\t' || s[pos] == '.')) pos++;

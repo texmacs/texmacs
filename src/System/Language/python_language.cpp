@@ -352,11 +352,6 @@ python_color_setup_operator_field (hashmap<string, string> & t) {
 }
 
 static void
-parse_blanks (string s, int& pos) {
-  while (pos<N(s) && (s[pos] == ' ' || s[pos] == '\t')) pos++;
-}
-
-static void
 parse_escaped_char (string s, int& pos) {
   int n= N(s), i= pos++;
   if (i+2 >= n) return;
