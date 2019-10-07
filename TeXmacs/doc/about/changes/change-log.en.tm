@@ -1,13 +1,18 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.11>
 
 <style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 1.99.1 to 1.99.11>
+  <section|Changes from version 1.99.1 to 2.1>
 
   <\itemize>
+    <item><scm|(run-all-tests)> aggregates and runs all the tests in <scheme>
+    (2.1).
+
+    <item>Support for <name|Java> language (2.1).
+
     <item>Several bug fixes (1.99.11).
 
     <item>Repositories for <name|Debian> and <name|Ubuntu> (1.99.11).
