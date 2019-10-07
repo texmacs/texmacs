@@ -140,6 +140,8 @@
   (with-active-selection% (selection-active-normal?))
   (in-cpp% (== (get-env "prog-language") "cpp"))
   (in-prog-cpp% #t in-prog% in-cpp%)
+  (in-java% (== (get-env "prog-language") "java"))
+  (in-prog-java% #t in-prog% in-java%)
   (in-fortran% (== (get-env "prog-language") "fortran"))
   (in-prog-fortran% #t in-prog% in-fortran%)
   (in-scala% (== (get-env "prog-language") "scala"))

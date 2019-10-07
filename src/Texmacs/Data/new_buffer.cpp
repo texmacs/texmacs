@@ -421,6 +421,7 @@ attach_subformat (tree t, url u, string fm) {
   if (fm != "verbatim" && fm != "scheme" && fm != "cpp") return t;
   string s= suffix (u);
   if (s == "scm") fm= "scheme";
+  if (s == "java") fm= "java";
   if (s == "scala") fm= "scala";
   if (s == "py")  fm= "python";
   if (s == "cpp" || s == "hpp" || s == "cc" || s == "hh") fm= "cpp";

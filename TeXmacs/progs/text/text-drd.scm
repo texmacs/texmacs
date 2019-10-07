@@ -210,11 +210,11 @@
 
 (define-group inline-code-tag
   verbatim scm cpp mmx r fortran
-  python scala scilab shell)
+  python java scala scilab shell)
 
 (define-group block-code-tag
   verbatim-code scm-code cpp-code mmx-code r-code fortran-code
-  python-code scala-code scilab-code shell-code)
+  python-code java-code scala-code scilab-code shell-code)
 
 ;; ornaments
 

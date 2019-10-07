@@ -1,9 +1,7 @@
-
 /******************************************************************************
-* MODULE     : scala_language.cpp
-* DESCRIPTION: the Scala language
-* COPYRIGHT  : (C) 2014  François Poulain
-*              (C) 2016  Darcy Shen
+* MODULE     : java_language.cpp
+* DESCRIPTION: the Java language
+* COPYRIGHT  : (C) 2019  Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license and comes WITHOUT
 * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
@@ -51,11 +49,11 @@ static void parse_number (string s, int& pos);
 static void parse_various_number (string s, int& pos);
 static void parse_alpha (string s, int& pos);
 
-scala_language_rep::scala_language_rep (string name):
+java_language_rep::java_language_rep (string name):
   abstract_language_rep (name), colored ("") {}
 
 text_property
-scala_language_rep::advance (tree t, int& pos) {
+java_language_rep::advance (tree t, int& pos) {
   string s= t->label;
   if (pos==N(s))
     return &tp_normal_rep;
@@ -87,7 +85,7 @@ scala_language_rep::advance (tree t, int& pos) {
 }
 
 array<int>
-scala_language_rep::get_hyphens (string s) {
+java_language_rep::get_hyphens (string s) {
   int i;
   array<int> penalty (N(s)+1);
   penalty[0]= HYPH_INVALID;
@@ -100,7 +98,7 @@ scala_language_rep::get_hyphens (string s) {
 }
 
 void
-scala_language_rep::hyphenate (
+java_language_rep::hyphenate (
   string s, int after, string& left, string& right)
 {
   left = s (0, after);
@@ -108,7 +106,7 @@ scala_language_rep::hyphenate (
 }
 
 static void
-scala_color_setup_operator_openclose (hashmap<string, string> & t) {
+java_color_setup_operator_openclose (hashmap<string, string> & t) {
   string c= "operator_openclose";
   t ("{")= c;
   t ("[")= c;
@@ -119,57 +117,29 @@ scala_color_setup_operator_openclose (hashmap<string, string> & t) {
 }
 
 static void
-scala_color_setup_constants (hashmap<string, string> & t) {
+java_color_setup_constants (hashmap<string, string> & t) {
   string c= "constant";
   t ("false")= c;
   t ("true")= c;
   t ("null")= c;
   
   // type
-  t ("Byte")= c;
-  t ("Short")= c;
-  t ("Int")= c;
-  t ("Long")= c;
-  t ("Char")= c;
-  t ("String")= c;
-  t ("Float")= c;
-  t ("Double")= c;
-  t ("Boolean")= c;
-  
-  // collection
-  t ("Array")= c;
-  t ("List")= c;
-  t ("Map")= c;
-  t ("Set")= c;
-  t ("Function")= c;
-  t ("Class")= c;
-  
-  // functional operator
-  t ("aggregate")= c;
-  t ("collect")= c;
-  t ("map")= c;
-  t ("filter")= c;
-  t ("filterNot")= c;
-  t ("foreach")= c;
-  t ("forall")= c;
-  t ("fold")= c;
-  t ("foldLeft")= c;
-  t ("foldRight")= c;
-  t ("reduce")= c;
-  t ("reduceLeft")= c;
-  t ("reduceRight")= c;
-  t ("scan")= c;
-  t ("scanLeft")= c;
-  t ("scanRight")= c;
-  t ("zip")= c;
-  t ("unzip")= c;
-  t ("flatMap")= c;
-  t ("grouped")= c;
-  t ("groupBy")= c;
+  t ("boolean")= c;
+  t ("byte")= c;
+  t ("char")= c;
+  t ("const")= c;
+  t ("double")= c;
+  t ("final")= c;
+  t ("float")= c;
+  t ("int")= c;
+  t ("long")= c;
+  t ("short")= c;
+  t ("static")= c;
+  t ("void")= c;
 }
 
 static void
-scala_color_setup_constant_exceptions (hashmap<string, string> & t) {
+java_color_setup_constant_exceptions (hashmap<string, string> & t) {
   string c= "constant";
   t ("IllegalArgumentException")= c;
   t ("NullPointerException")= c;
@@ -178,69 +148,73 @@ scala_color_setup_constant_exceptions (hashmap<string, string> & t) {
 }
 
 static void
-scala_color_setup_declare_class (hashmap<string, string> & t) {
+java_color_setup_declare_class (hashmap<string, string> & t) {
   string c= "declare_type";
   t ("class")= c;
-  t ("object")= c;
-  t ("trait")= c;
+  t ("interface")= c;
 }
 
 static void
-scala_color_setup_declare_function (hashmap<string, string> & t) {
+java_color_setup_declare_function (hashmap<string, string> & t) {
   string c= "declare_function";
   t ("def")= c;
 }
 
 static void
-scala_color_setup_keywords (hashmap<string, string> & t) {
+java_color_setup_keywords (hashmap<string, string> & t) {
   string c= "keyword";
   t ("abstract")= c;
   t ("case")= c;
+  t ("default")= c;
+  t ("enum")= c;
   t ("extends")= c;
-  t ("implicit")= c;
   t ("import")= c;
-  t ("lazy")= c;
-  t ("match")= c;
+  t ("implements")= c;
+  t ("instanceof")= c;
+  t ("native")= c;
   t ("new")= c;
   t ("override")= c;
   t ("package")= c;
   t ("private")= c;
   t ("protected")= c;
-  t ("requires")= c;
-  t ("sealed")= c;
+  t ("public")= c;
   t ("super")= c;
+  t ("synchronized")= c;
   t ("this")= c;
-  t ("throw")= c;
-  t ("type")= c;
-  t ("val") = c;
-  t ("var") = c;
+  t ("transient")= c;
   t ("with")= c;
+  t ("volatile")= c;
 }
 
 static void
-scala_color_setup_keywords_conditional (hashmap<string, string> & t) {
+java_color_setup_keywords_conditional (hashmap<string, string> & t) {
   string c= "keyword_conditional";
-  t ("break")= c;
   t ("do")= c;
   t ("else")= c;
   t ("for")= c;
+  t ("goto")= c;
   t ("if")= c;
+  t ("switch")= c;
   t ("while")= c;
 }
 
 static void
-scala_color_setup_keywords_control (hashmap<string, string> & t) {
+java_color_setup_keywords_control (hashmap<string, string> & t) {
   string c= "keyword_control";
+  t ("break")= c;
+  t ("continue")= c;
   t ("catch")= c;
   t ("final")= c;
   t ("finally")= c;
   t ("return")= c;
+  t ("throw")= c;
+  t ("throws")= c;
   t ("try")= c;
   t ("yield")= c;
 }
 
 static void
-scala_color_setup_operator (hashmap<string, string>& t) {
+java_color_setup_operator (hashmap<string, string>& t) {
   string c= "operator";
   t ("&&")= c;
   t ("||")= c;
@@ -255,7 +229,6 @@ scala_color_setup_operator (hashmap<string, string>& t) {
   t ("|")= c;
   t ("&")= c;
   t ("^")= c;
-  t ("<gtr><gtr><gtr>")= c;
   
   t ("<less><less>")= c;
   t ("<gtr><gtr>")= c;
@@ -276,35 +249,26 @@ scala_color_setup_operator (hashmap<string, string>& t) {
   t ("|=")= c;
   t ("&=")= c;
   t ("^=")= c;
-  t ("<gtr><gtr>=")= c;
-  t ("<less><less>=")= c;
-}
-
-static void
-scala_color_setup_operator_special (hashmap<string, string> & t) {
-  string c= "operator_special";
   t (":")= c;
-  t ("=<gtr>")= c;
-  t ("::")= c;
-  t (":::")= c;
-  t ("++")= c;
-  t ("+:")= c;
-  t (":+")= c;
-  t ("++:")= c;
-  t ("/:")= c;
-  t (":\\")= c;
-  t ("<less>-")= c;
 }
 
 static void
-scala_color_setup_operator_decoration (hashmap<string, string> & t) {
+java_color_setup_operator_special (hashmap<string, string> & t) {
+  string c= "operator_special";
+  t ("-<gtr>")= c;
+}
+
+static void
+java_color_setup_operator_decoration (hashmap<string, string> & t) {
   string c= "operator_decoration";
   t ("@")= c;
 }
 
 static void
-scala_color_setup_operator_field (hashmap<string, string> & t) {
-  t (".")= "operator_field";
+java_color_setup_operator_field (hashmap<string, string> & t) {
+  string c= "operator_field";
+  t (".")= c;
+  t ("::")= c;
 }
 
 static void
@@ -441,7 +405,7 @@ in_comment (int pos, tree t) {
 }
 
 string
-scala_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& pos) {
+java_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos>=N(s)) return "";
   if (is_digit (s[i])) return "";
@@ -463,7 +427,7 @@ scala_language_rep::parse_keywords (hashmap<string,string>& t, string s, int& po
 }
 
 string
-scala_language_rep::parse_operators (hashmap<string,string>& t, string s, int& pos) {
+java_language_rep::parse_operators (hashmap<string,string>& t, string s, int& pos) {
   int i;
   for (i=12; i>=1; i--) {
     string r=s(pos,pos+i);
@@ -523,28 +487,28 @@ parse_comment_single_line (string s, int& pos) {
 }
 
 string
-scala_language_rep::get_color (tree t, int start, int end) {
+java_language_rep::get_color (tree t, int start, int end) {
   static bool setup_done= false;
   if (!setup_done) {
-    scala_color_setup_constants (colored);
-    scala_color_setup_constant_exceptions (colored);
-    scala_color_setup_declare_class (colored);
-    scala_color_setup_declare_function (colored);
-    scala_color_setup_keywords (colored);
-    scala_color_setup_keywords_conditional (colored);
-    scala_color_setup_keywords_control (colored);
-    scala_color_setup_operator (colored);
-    scala_color_setup_operator_special (colored);
-    scala_color_setup_operator_decoration (colored);
-    scala_color_setup_operator_openclose (colored);
-    scala_color_setup_operator_field (colored);
+    java_color_setup_constants (colored);
+    java_color_setup_constant_exceptions (colored);
+    java_color_setup_declare_class (colored);
+    java_color_setup_declare_function (colored);
+    java_color_setup_keywords (colored);
+    java_color_setup_keywords_conditional (colored);
+    java_color_setup_keywords_control (colored);
+    java_color_setup_operator (colored);
+    java_color_setup_operator_special (colored);
+    java_color_setup_operator_decoration (colored);
+    java_color_setup_operator_openclose (colored);
+    java_color_setup_operator_field (colored);
     setup_done= true;
   }
 
   static string none= "";
   if (start >= end) return none;
   if (in_comment (start, t))
-    return decode_color ("scala", encode_color ("comment"));
+    return decode_color ("java", encode_color ("comment"));
   string s= t->label;
   int pos= 0;
   int opos=0;
@@ -618,5 +582,5 @@ scala_language_rep::get_color (tree t, int start, int end) {
   }
   while (pos <= start);
   if (type == none) return none;
-  return decode_color ("scala", encode_color (type));
+  return decode_color ("java", encode_color (type));
 }

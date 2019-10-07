@@ -224,6 +224,7 @@
   (-> "Inline code"
       ("C++" (make 'cpp))
       ("Fortran" (make 'fortran))
+      ("Java" (make 'java))
       ("Mathemagix" (make 'mmx))
       ("Python" (make 'python))
       ("R" (make 'r))
@@ -235,6 +236,7 @@
   (-> "Block of code"
       ("C++" (make 'cpp-code))
       ("Fortran" (make 'fortran-code))
+      ("Java" (make 'java-code))
       ("Mathemagix" (make 'mmx-code))
       ("Python" (make 'python-code))
       ("R" (make 'r-code))

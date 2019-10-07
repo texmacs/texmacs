@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -101,6 +101,14 @@
     <generic-chunk|<arg|name>|<arg|prev>|<arg|next>|<\cpp>
       <arg|body>
     </cpp>>
+  </macro>>
+
+  <assign|java-chunk|<\macro|name|prev|next|body>
+    <\generic-chunk|<arg|name>|<arg|prev>|<arg|next>>
+      <\java>
+        <arg|body>
+      </java>
+    </generic-chunk>
   </macro>>
 
   <assign|mmx-chunk|<\macro|name|prev|next|body>

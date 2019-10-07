@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.11>
 
 <style|<tuple|source|std>>
 
@@ -162,6 +162,8 @@
 
   <assign|c++|<macro|<name|C++>>>
 
+  <assign|java|<macro|<name|Java>>>
+
   <assign|mathemagix|<macro|<name|Mathemagix>>>
 
   <assign|scilab|<macro|<name|Scilab>>>
@@ -179,6 +181,8 @@
   <assign|scm|<macro|body|<with|mode|prog|prog-language|scheme|font-family|rm|<arg|body>>>>
 
   <assign|cpp|<macro|body|<with|mode|prog|prog-language|cpp|font-family|rm|<arg|body>>>>
+
+  <assign|java|<macro|body|<with|mode|prog|prog-language|java|font-family|rm|<arg|body>>>>
 
   <assign|python|<macro|body|<with|mode|prog|prog-language|python|font-family|rm|<arg|body>>>>
 
@@ -225,6 +229,12 @@
   <assign|cpp-code|<\macro|body>
     <\pseudo-code>
       <cpp|<arg|body>>
+    </pseudo-code>
+  </macro>>
+
+  <assign|java-code|<\macro|body>
+    <\pseudo-code>
+      <java|<arg|body>>
     </pseudo-code>
   </macro>>
 

@@ -25,6 +25,7 @@
       ("Scheme" (insert-new-chunk 'scm-chunk))
       ("Scala" (insert-new-chunk 'scala-chunk))
       ("C++" (insert-new-chunk 'cpp-chunk))
+      ("Java" (insert-new-chunk 'java-chunk))
       ("Mathemagix" (insert-new-chunk 'mmx-chunk))
       ("Python" (insert-new-chunk 'python-chunk))
       ("Scilab" (insert-new-chunk 'scilab-chunk))
