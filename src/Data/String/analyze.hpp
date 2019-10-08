@@ -17,15 +17,29 @@
 
 class object;
 
-bool is_alpha (char c);
+inline bool is_alpha (char c) {
+  return ((c>='a') && (c<='z')) || ((c>='A') && (c<='Z')); }
+inline bool is_locase (char c) {
+  return (c>='a') && (c<='z'); }
+inline bool is_upcase (char c) {
+  return (c>='A') && (c<='Z'); }
+inline bool is_digit (char c) {
+  return (c>='0') && (c<='9'); }
+inline bool is_hex_digit (char c) {
+  return (c >= '0' && c <= '9') ||
+    (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); }
+inline bool is_numeric (char c) {
+  return ((c>='0') && (c<='9')) || (c=='.'); }
+inline bool is_punctuation (char c) {
+  return (c=='.') || (c==',') || (c==':') || (c=='\'') || (c=='`') ||
+    (c==';') || (c=='!') || (c=='?'); }
+inline bool is_space (char c) {
+  return (c == ' ') || (c == '\11') || (c == '\12') || (c == '\15'); }
+
 bool is_iso_alpha (char c);
-bool is_locase (char c);
-bool is_upcase (char c);
-bool is_digit (char c);
-bool is_hex_digit (char c);
-bool is_numeric (char c);
-bool is_punctuation (char c);
-bool is_space (char s);
+bool is_iso_locase (char c);
+bool is_iso_upcase (char c);
+
 bool is_alpha (string s);
 bool is_locase_alpha (string s);
 bool is_iso_alpha (string s);

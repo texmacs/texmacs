@@ -484,7 +484,7 @@ first_is_locase (string s) {
   while (pos < N(s)) {
     string ch= bib_parse_char (s, pos, depth, special, math);
     if (bib_is_normal (ch))
-      return (special || depth == 0) && is_locase (ch[0]);
+      return (special || depth == 0) && is_iso_locase (ch[0]);
   }
   return false;
 }

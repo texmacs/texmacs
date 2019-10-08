@@ -826,7 +826,7 @@ void
 decompose_length (string s, double& x, string& un) {
   int i;
   for (i=0; i<N(s); i++)
-    if (is_locase(s[i])) break;
+    if (is_locase (s[i])) break;
   x = as_double (s (0, i));
   un= s (i, N(s));
 }

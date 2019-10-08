@@ -19,11 +19,6 @@
 ******************************************************************************/
 
 bool
-is_alpha (char c) {
-  return ((c>='a') && (c<='z')) || ((c>='A') && (c<='Z'));
-}
-
-bool
 is_iso_alpha (char c) {
   int i= ((int) ((unsigned char) c));
   return
@@ -33,7 +28,7 @@ is_iso_alpha (char c) {
 }
 
 bool
-is_locase (char c) {
+is_iso_locase (char c) {
   int code= (int) ((unsigned char) c);
   return
     ((c>='a') && (c<='z')) ||
@@ -42,41 +37,12 @@ is_locase (char c) {
 }
 
 bool
-is_upcase (char c) {
+is_iso_upcase (char c) {
   int code= (int) ((unsigned char) c);
   return
     ((c>='A') && (c<='Z')) ||
     ((code >= 128) && (code < 159)) ||
     ((code >= 192) && (code < 224));
-}
-
-bool
-is_digit (char c) {
-  return (c>='0') && (c<='9');
-}
-
-bool
-is_hex_digit (char c) {
-  return (c >= '0' && c <= '9') ||
-         (c >= 'A' && c <= 'F') ||
-         (c >= 'a' && c <= 'f');
-}
-
-bool
-is_numeric (char c) {
-  return ((c>='0') && (c<='9')) || (c=='.');
-}
-
-bool
-is_punctuation (char c) {
-  return
-    (c=='.') || (c==',') || (c==':') || (c=='\'') || (c=='`') ||
-    (c==';') || (c=='!') || (c=='?');
-}
-
-bool
-is_space (char c) {
-  return (c == ' ') || (c == '\11') || (c == '\12') || (c == '\15');
 }
 
 /******************************************************************************
@@ -125,14 +91,14 @@ is_numeric (string s) {
 
 char
 upcase (char c) {
-  if (is_locase (c))
+  if (is_iso_locase (c))
     return (char) (((int) ((unsigned char) c)) - 32);
   else return c;
 }
 
 char
 locase (char c) {
-  if (is_upcase (c))
+  if (is_iso_upcase (c))
     return (char) (((int) ((unsigned char) c)) + 32);
   else return c;
 }
@@ -147,13 +113,13 @@ closing_delimiter (char c) {
 
 string
 upcase_first (string s) {
-  if ((N(s)==0) || (!is_locase (s[0]))) return s;
+  if ((N(s)==0) || (!is_iso_locase (s[0]))) return s;
   return string ((char) (((int) ((unsigned char) s[0]))-32)) * s (1, N(s));
 }
 
 string
 locase_first (string s) {
-  if ((N(s)==0) || (!is_upcase (s[0]))) return s;
+  if ((N(s)==0) || (!is_iso_upcase (s[0]))) return s;
   return string ((char) (((int) ((unsigned char) s[0]))+32)) * s (1, N(s));
 }
 
@@ -162,7 +128,7 @@ upcase_all (string s) {
   int i;
   string r (N(s));
   for (i=0; i<N(s); i++)
-    if (!is_locase (s[i])) r[i]= s[i];
+    if (!is_iso_locase (s[i])) r[i]= s[i];
     else r[i]= (char) (((int) ((unsigned char) s[i]))-32);
   return r;
 }
@@ -172,7 +138,7 @@ locase_all (string s) {
   int i;
   string r (N(s));
   for (i=0; i<N(s); i++)
-    if (!is_upcase (s[i])) r[i]= s[i];
+    if (!is_iso_upcase (s[i])) r[i]= s[i];
     else r[i]= (char) (((int) ((unsigned char) s[i]))+32);
   return r;
 }

@@ -251,7 +251,7 @@ index_name (tree t) {
   string r= index_name_sub (t, false);
   string l= locase_all (r);
   for (int i=0; i<N(r); i++)
-    if (is_upcase (r[i])) {
+    if (is_iso_upcase (r[i])) {
       while (i<N(l) && l[i]!='\t') i++;
       l= l(0,i) * "*" * l(i,N(l));
       break;

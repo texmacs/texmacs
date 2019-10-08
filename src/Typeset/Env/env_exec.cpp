@@ -1625,8 +1625,8 @@ edit_env_rep::exec_change_case (tree t, tree nc, bool exec_flag, bool first) {
 
     for (i=0; i<n; tm_char_forwards (s, i))
       if (is_iso_alpha (s[i]) && (all || (first && (i==0)))) {
-	if (up && is_locase (s[i])) r->label[i]= upcase (s[i]);
-	if (lo && is_upcase (s[i])) r->label[i]= locase (s[i]);
+	if (up && is_iso_locase (s[i])) r->label[i]= upcase (s[i]);
+	if (lo && is_iso_upcase (s[i])) r->label[i]= locase (s[i]);
       }
     r->obs= list_observer (ip_observer (obtain_ip (t)), r->obs);
     return r;
