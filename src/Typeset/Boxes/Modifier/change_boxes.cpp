@@ -488,6 +488,10 @@ repeat_box_rep::repeat_box_rep (path ip, box b, box r2, SI xoff2, bool u2):
     for (i=i1; i<i2; i++) {
       box bb= move_box (decorate_right (ip), repeat, 0, 0);
       insert (bb, i*width-xoff, 0);
+      x3= min (x3, i*width-xoff + repeat->x3);
+      x4= max (x4, i*width-xoff + repeat->x4);
+      y3= min (y3, repeat->y3);
+      y4= max (y4, repeat->y4);
     }
   }
 
