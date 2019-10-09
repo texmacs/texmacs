@@ -46,18 +46,18 @@ table_rep::display (bool flag) {
     cout << "[ ";
     for (j=0; j<nr_cols; j++)
       if (!is_nil (T[i][j])) {
-	cell C= T[i][j];
-	if (j != 0) cout << ", ";
-	if (!is_nil (C->b)) cout << C->b;
-	else if (!is_nil (C->T)) {
-	  cout << "subtable ";
-	  C->T->display (false);
-	}
-	else cout << "nil";
-	if (!is_nil (C->D)) {
-	  cout << " & decoration ";
-	  C->D->display (false);
-	}
+        cell C= T[i][j];
+        if (j != 0) cout << ", ";
+        if (!is_nil (C->b)) cout << C->b;
+        else if (!is_nil (C->T)) {
+          cout << "subtable ";
+          C->T->display (false);
+        }
+        else cout << "nil";
+        if (!is_nil (C->D)) {
+          cout << " & decoration ";
+          C->D->display (false);
+        }
       }
     cout << " ]";
     if (flag) cout << "\n";
@@ -224,16 +224,16 @@ table_rep::handle_decorations () {
       cell C= T[i][j];
       if ((!is_nil (C)) && (!is_nil (C->T))) C->T->handle_decorations ();
       if ((!is_nil (C)) && (!is_nil (C->D))) {
-	C->D->handle_decorations ();
-	if (C->D->status == 1) {
-	  ii= i+ C->row_span- 1;
-	  jj= j+ C->col_span- 1;
-	  ex_i1[i ]= max (ex_i1[i ], C->D->i0);
-	  ex_j1[j ]= max (ex_j1[j ], C->D->j0);
-	  ex_i2[ii]= max (ex_i2[ii], C->D->nr_rows- 1- C->D->i0);
-	  ex_j2[jj]= max (ex_j2[jj], C->D->nr_cols- 1- C->D->j0);
-	  flag= false;
-	}
+        C->D->handle_decorations ();
+        if (C->D->status == 1) {
+          ii= i+ C->row_span- 1;
+          jj= j+ C->col_span- 1;
+          ex_i1[i ]= max (ex_i1[i ], C->D->i0);
+          ex_j1[j ]= max (ex_j1[j ], C->D->j0);
+          ex_i2[ii]= max (ex_i2[ii], C->D->nr_rows- 1- C->D->i0);
+          ex_j2[jj]= max (ex_j2[jj], C->D->nr_cols- 1- C->D->j0);
+          flag= false;
+        }
       }
     }
   if (flag) return;
@@ -255,22 +255,22 @@ table_rep::handle_decorations () {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if (!is_nil (C)) {
-	if ((!is_nil (C->D)) && (C->D->status==1)) {
-	  for (di=0; di<C->D->nr_rows; di++)
-	    for (dj=0; dj<C->D->nr_cols; dj++) {
-	      ii= di+ off_i[i]+ ex_i1[i]- C->D->i0;
-	      jj= dj+ off_j[j]+ ex_j1[j]- C->D->j0;
-	      U[ii][jj]= C->D->T[di][dj];
-	    }
-	  C->D= table ();
-	}
-	ii= off_i[i]+ ex_i1[i];
-	jj= off_j[j]+ ex_j1[j];
-	U[ii][jj]= C;
-	ii= i+ C->row_span- 1;
-	jj= j+ C->col_span- 1;
-	C->row_span= off_i[ii]+ ex_i1[ii]+ 1- off_i[i]- ex_i1[i];
-	C->col_span= off_j[jj]+ ex_j1[jj]+ 1- off_j[j]- ex_j1[j];
+        if ((!is_nil (C->D)) && (C->D->status==1)) {
+          for (di=0; di<C->D->nr_rows; di++)
+            for (dj=0; dj<C->D->nr_cols; dj++) {
+              ii= di+ off_i[i]+ ex_i1[i]- C->D->i0;
+              jj= dj+ off_j[j]+ ex_j1[j]- C->D->j0;
+              U[ii][jj]= C->D->T[di][dj];
+            }
+          C->D= table ();
+        }
+        ii= off_i[i]+ ex_i1[i];
+        jj= off_j[j]+ ex_j1[j];
+        U[ii][jj]= C;
+        ii= i+ C->row_span- 1;
+        jj= j+ C->col_span- 1;
+        C->row_span= off_i[ii]+ ex_i1[ii]+ 1- off_i[i]- ex_i1[i];
+        C->col_span= off_j[jj]+ ex_j1[jj]+ 1- off_j[j]- ex_j1[j];
       }
     }
 
@@ -291,11 +291,11 @@ table_rep::handle_span () {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if (!is_nil (C)) {
-	for (ii=0; ii<C->row_span; ii++)
-	  for (jj=0; jj<C->col_span; jj++)
-	    if ((ii != 0) || (jj != 0))
-	      T[i+ii][j+jj]= cell ();
-	if (!is_nil (C->T)) C->T->handle_span ();
+        for (ii=0; ii<C->row_span; ii++)
+          for (jj=0; jj<C->col_span; jj++)
+            if ((ii != 0) || (jj != 0))
+              T[i+ii][j+jj]= cell ();
+        if (!is_nil (C->T)) C->T->handle_span ();
       }
     }
 }
@@ -373,7 +373,7 @@ sum (double* a, int n) {
 
 static void
 blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
-	 SI room, double* part, int n)
+         SI room, double* part, int n)
 {
   int i;
   double total= sum (part, n);
@@ -386,7 +386,7 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
   if (nr_ext != 0)
     for (i=0; i<n; i++)
       if (w[i] == W[i])
-	part[i]= 0;
+        part[i]= 0;
   total= sum (part, n);
 
   STACK_NEW_ARRAY (Part, double, n);
@@ -396,14 +396,14 @@ blow_up (SI* w, SI* l, SI* r, SI* W, SI* L, SI* R,
   while (true) {
     for (i=0; i<n; i++)
       if (part[i] > 0) {
-	SI extra= (SI) ((part[i]/total) * old_room);
-	if (w[i]+extra >= W[i]) {
-	  room    -= (W[i]-w[i]);
-	  w[i]     = W[i];
-	  l[i]     = L[i];
-	  r[i]     = R[i];
-	  part[i]  = 0;
-	}
+        SI extra= (SI) ((part[i]/total) * old_room);
+        if (w[i]+extra >= W[i]) {
+          room    -= (W[i]-w[i]);
+          w[i]     = W[i];
+          l[i]     = L[i];
+          r[i]     = R[i];
+          part[i]  = 0;
+        }
       }
     total= sum (part, n);
     if (room <= 0) {
@@ -450,14 +450,14 @@ table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (C->col_span == 1)) {
-	SI cmw, clw, crw;
-	C->compute_width (cmw, clw, crw, large);
-	//cout << i << ", " << j << ": "
-	//<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << "\n";
-	Mw[j]= max (Mw[j], cmw);
-	Lw[j]= max (Lw[j], clw);
-	Rw[j]= max (Rw[j], crw);
-	Mw[j]= max (Mw[j], Lw[j] + Rw[j]);
+        SI cmw, clw, crw;
+        C->compute_width (cmw, clw, crw, large);
+        //cout << i << ", " << j << ": "
+        //<< (cmw>>8) << "; " << (clw>>8) << ", " << (crw>>8) << "\n";
+        Mw[j]= max (Mw[j], cmw);
+        Lw[j]= max (Lw[j], clw);
+        Rw[j]= max (Rw[j], crw);
+        Mw[j]= max (Mw[j], Lw[j] + Rw[j]);
       }
     }
 
@@ -465,10 +465,10 @@ table_rep::compute_widths (SI* Mw, SI* Lw, SI* Rw, bool large) {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (C->col_span != 1)) {
-	SI cmw, clw, crw;
-	C->compute_width (cmw, clw, crw, large);
-	SI tot= sum (Mw+j, C->col_span);
-	if (cmw > tot) Mw[j] += cmw - tot;
+        SI cmw, clw, crw;
+        C->compute_width (cmw, clw, crw, large);
+        SI tot= sum (Mw+j, C->col_span);
+        if (cmw > tot) Mw[j] += cmw - tot;
       }
     }
 }
@@ -481,7 +481,7 @@ table_rep::compute_horizontal_parts (double* part) {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if (!is_nil (C))
-	part[j]= max (part[j], C->hpart);
+        part[j]= max (part[j], C->hpart);
     }
 }
 
@@ -528,13 +528,13 @@ table_rep::position_columns () {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if (!is_nil (C)) {
-	if (!is_nil (C->T)) {
-	  C->T->width= mw[j]- C->lborder- C->rborder;
-	  C->T->hmode= "exact";
-	  C->T->position_columns ();
-	}
-	else if (C->hyphen != "n")
-	  C->width= mw[j];
+        if (!is_nil (C->T)) {
+          C->T->width= mw[j]- C->lborder- C->rborder;
+          C->T->hmode= "exact";
+          C->T->position_columns ();
+        }
+        else if (C->hyphen != "n")
+          C->width= mw[j];
       }
     }
 
@@ -545,7 +545,7 @@ table_rep::position_columns () {
   else if (halign == "L") xoff= -lw[0];
   else if (halign == "C")
     xoff= -(sum (mw, nr_cols>>1) + sum (mw, (nr_cols-1)>>1)+
-	    lw[nr_cols>>1] + lw[(nr_cols-1)>>1]) >> 1;
+            lw[nr_cols>>1] + lw[(nr_cols-1)>>1]) >> 1;
   else if (halign == "R") xoff= -sum (mw, nr_cols - 1) - lw[nr_cols - 1];
   else if (halign == "O") {
     int orig= col_origin;
@@ -583,12 +583,12 @@ table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (C->row_span==1)) {
-	SI cmh, cbh, cth;
-	C->compute_height (cmh, cbh, cth);
-	mh[i]= max (mh[i], cmh);
-	bh[i]= max (bh[i], cbh);
-	th[i]= max (th[i], cth);
-	mh[i]= max (mh[i], bh[i] + th[i]);
+        SI cmh, cbh, cth;
+        C->compute_height (cmh, cbh, cth);
+        mh[i]= max (mh[i], cmh);
+        bh[i]= max (bh[i], cbh);
+        th[i]= max (th[i], cth);
+        mh[i]= max (mh[i], bh[i] + th[i]);
       }
     }
 
@@ -596,10 +596,10 @@ table_rep::compute_heights (SI* mh, SI* bh, SI* th) {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (C->row_span!=1)) {
-	SI cmh, cbh, cth;
-	C->compute_height (cmh, cbh, cth);
-	SI tot= sum (mh+i, C->row_span);
-	if (cmh > tot) mh[i] += cmh - tot;
+        SI cmh, cbh, cth;
+        C->compute_height (cmh, cbh, cth);
+        SI tot= sum (mh+i, C->row_span);
+        if (cmh > tot) mh[i] += cmh - tot;
       }
     }
 }
@@ -612,7 +612,7 @@ table_rep::compute_vertical_parts (double* part) {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if (!is_nil (C))
-	part[i]= max (part[i], C->vpart);
+        part[i]= max (part[i], C->vpart);
     }
 }
 
@@ -634,9 +634,9 @@ table_rep::position_rows () {
       STACK_NEW_ARRAY (Th, SI, nr_rows);
       compute_vertical_parts (part);
       for (i=0; i<nr_rows; i++) {
-	Mh[i]= mh[i];
-	Bh[i]= bh[i];
-	Th[i]= th[i];	
+        Mh[i]= mh[i];
+        Bh[i]= bh[i];
+        Th[i]= th[i];
       }
       SI computed_height= height;
       if (vmode == "min") computed_height= min (height, min_height);
@@ -655,9 +655,9 @@ table_rep::position_rows () {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if ((!is_nil (C)) && (!is_nil (C->T))) {
-	C->T->height= mh[j]- C->bborder- C->tborder;
-	C->T->vmode = "exact";
-	C->T->position_rows ();
+        C->T->height= mh[j]- C->bborder- C->tborder;
+        C->T->vmode = "exact";
+        C->T->position_rows ();
       }
     }
   }
@@ -670,7 +670,7 @@ table_rep::position_rows () {
   else if (valign == "T") yoff= th[0];
   else if (valign == "C")
     yoff= (sum (mh, nr_rows>>1) + sum (mh, (nr_rows-1)>>1) +
-	   th[nr_rows>>1] + th[(nr_rows-1)>>1]) >> 1;
+           th[nr_rows>>1] + th[(nr_rows-1)>>1]) >> 1;
   else if (valign == "B") yoff= sum (mh, nr_rows - 1) + th[nr_rows - 1];
   else if (valign == "O") {
     int orig= row_origin;
@@ -686,9 +686,9 @@ table_rep::position_rows () {
     for (j=0; j<nr_cols; j++) {
       cell C= T[i][j];
       if (!is_nil (C)) {
-	SI tot= sum (mh+i, C->row_span);
-	C->position_vertically (yoff, tot, tot+ bh[i]- mh[i], th[i]);
-	C->shift= -yoff+ tot- bh[i];
+        SI tot= sum (mh+i, C->row_span);
+        C->position_vertically (yoff, tot, tot+ bh[i]- mh[i], th[i]);
+        C->shift= -yoff+ tot- bh[i];
       }
     }
     yoff -= mh[i];
@@ -720,12 +720,12 @@ table_rep::finish_horizontal () {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if (!is_nil (C)) {
-	if (!is_nil (C->T))
-	  C->T->finish_horizontal ();
-	else if (C->hyphen != "n")
-	  C->finish_horizontal ();
-	SI tot= sum (mw+j, C->col_span);
-	C->position_horizontally (xoff, tot, lw[j], rw[j+C->col_span-1]);
+        if (!is_nil (C->T))
+          C->T->finish_horizontal ();
+        else if (C->hyphen != "n")
+          C->finish_horizontal ();
+        SI tot= sum (mw+j, C->col_span);
+        C->position_horizontally (xoff, tot, lw[j], rw[j+C->col_span-1]);
       }
     }
     xoff += mw[j];
@@ -743,11 +743,11 @@ table_rep::finish () {
   for (i=0; i<nr_rows; i++)
     for (j=0; j<nr_cols; j++)
       if (!is_nil (T[i][j])) {
-	cell C = T[i][j];
-	C->finish ();
-	bs << C->b;
-	x  << C->x1;
-	y  << C->y1;
+        cell C = T[i][j];
+        C->finish ();
+        bs << C->b;
+        x  << C->x1;
+        y  << C->y1;
         ha << C->halign;
         if (N(ha) == 0) ext_flag= false;
         else if (ha[0] != 'l' && ha[0] != 'c' && ha[0] != 'r') ext_flag= false;
@@ -765,12 +765,12 @@ table_rep::finish () {
   brush fg= env->pen->get_brush ();
   brush bg= brush (false);
   b= cell_box (tb->ip, tb, 0, 0, x1, y1, x2, y2,
-	       lborder, rborder, bborder, tborder, fg, bg);
+               lborder, rborder, bborder, tborder, fg, bg);
   SI Lsep= lsep+lborder, Rsep= rsep+rborder;
   SI Bsep= bsep+bborder, Tsep= tsep+tborder;
   if ((Lsep != 0) || (Rsep != 0) || (Bsep != 0) || (Tsep != 0))
     b= cell_box (b->ip, b, Lsep, 0, x1, y1-Bsep, x2+Lsep+Rsep, y2+Tsep,
-		 0, 0, 0, 0, fg, bg);
+                 0, 0, 0, 0, fg, bg);
 }
 
 array<box>
@@ -790,11 +790,11 @@ table_rep::var_finish () {
     array<SI>  y;
     for (j=0; j<nr_cols; j++)
       if (!is_nil (T[i][j])) {
-	cell C = T[i][j];
-	C->finish ();
-	bs << C->b;
-	x  << C->x1;
-	y  << (C->y1 + C->shift);
+        cell C = T[i][j];
+        C->finish ();
+        bs << C->b;
+        x  << C->x1;
+        y  << (C->y1 + C->shift);
       }
     if (N(bs)==0) continue;
 
@@ -810,12 +810,12 @@ table_rep::var_finish () {
     brush fg= env->pen->get_brush ();
     brush bg= brush (false);
     b= cell_box (tb->ip, tb, 0, 0, x1, y1, x2, y2,
-		 lborder, rborder, BB, TB, fg, bg);
+                 lborder, rborder, BB, TB, fg, bg);
     SI Lsep= lsep+lborder, Rsep= rsep+rborder;
     SI Bsep= BS+BB, Tsep= TS+TB;
     if ((Lsep != 0) || (Rsep != 0) || (Bsep != 0) || (Tsep != 0))
       b= cell_box (b->ip, b, Lsep, 0, x1, y1-Bsep, x2+Lsep+Rsep, y2+Tsep,
-		   0, 0, 0, 0, fg, bg);
+                   0, 0, 0, 0, fg, bg);
     stack << b;
   }
   return stack;
@@ -864,7 +864,7 @@ lazy_table_rep::produce (lazy_type request, format fm) {
       format_vstream fs= (format_vstream) fm;
       string s= as_string (T->var[TABLE_WIDTH]);
       if (ends (s, "par"))
-	T->width= max ((SI) (as_double (s (0, N(s)-3)) * fs->width), 1);
+        T->width= max ((SI) (as_double (s (0, N(s)-3)) * fs->width), 1);
     }
     T->position_columns ();
     T->finish_horizontal ();

@@ -39,11 +39,11 @@ cell_rep::typeset (tree fm, tree t, path iq) {
     if (hyphen == "n") {
       b= typeset_as_concat (env, t, iq);
       if (vcorrect != "n") {
-	SI y1= b->y1;
-	SI y2= b->y2;
-	if ((vcorrect == "a") || (vcorrect == "b")) y1= min (y1, env->fn->y1);
-	if ((vcorrect == "a") || (vcorrect == "t")) y2= max (y2, env->fn->y2);
-	b= vresize_box (iq, b, y1, y2);
+        SI y1= b->y1;
+        SI y2= b->y2;
+        if ((vcorrect == "a") || (vcorrect == "b")) y1= min (y1, env->fn->y1);
+        if ((vcorrect == "a") || (vcorrect == "t")) y2= max (y2, env->fn->y2);
+        b= vresize_box (iq, b, y1, y2);
       }
       if (swell > 0) swell_padding ();
     }
@@ -80,12 +80,12 @@ cell_rep::typeset (tree fm, tree t, path iq) {
       tree dr= dt[i];
       while (is_func (dr, TFORMAT)) dr= dr [N(dr)-1];
       for (j=0; j<N(dr); j++) {
-	tree dc= dr[j];
-	while (is_func (dc, TFORMAT)) dc= dc [N(dc)-1];
-	if (dc == tree (TMARKER)) {
-	  or_row= i;
-	  or_col= j;
-	}
+        tree dc= dr[j];
+        while (is_func (dc, TFORMAT)) dc= dc [N(dc)-1];
+        if (dc == tree (TMARKER)) {
+          or_row= i;
+          or_col= j;
+        }
       }
     }
 
@@ -138,20 +138,20 @@ extract_format (tree fm, tree* r, int n) {
   for (i=0; i<N(fm); i++)
     if (is_func (fm[i], CWITH))
       if ((N(fm[i]) >= 2) &&
-	  (is_int (fm[i][0])) &&
-	  (is_int (fm[i][1])))
-	{
-	  int k;
-	  int k1= as_int (fm[i][0]);
-	  int k2= as_int (fm[i][1]);
-	  tree u= fm[i] (2, N (fm[i]));
-	  if (k1>=0) k1--; else k1+=n;
-	  if (k2> 0) k2--; else k2+=n;
-	  if ((k1 >= n) || (k2 < 0)) continue;
-	  k1= max (k1, 0);
-	  k2= min (k2, n-1);
-	  for (k=k1; k<=k2; k++) r[k] << u;
-	}
+          (is_int (fm[i][0])) &&
+          (is_int (fm[i][1])))
+        {
+          int k;
+          int k1= as_int (fm[i][0]);
+          int k2= as_int (fm[i][1]);
+          tree u= fm[i] (2, N (fm[i]));
+          if (k1>=0) k1--; else k1+=n;
+          if (k2> 0) k2--; else k2+=n;
+          if ((k1 >= n) || (k2 < 0)) continue;
+          k1= max (k1, 0);
+          k2= min (k2, n-1);
+          for (k=k1; k<=k2; k++) r[k] << u;
+        }
 }
 
 void
@@ -283,15 +283,15 @@ cell_rep::compute_width (SI& mw, SI& lw, SI& rw, bool large) {
     lw= rw= mw= 0;
     if (lr_flag) {
       if (N (halign) == 1) {
-	lw= -b->x1+ lsep + lborder;
-	rw=  b->x2+ rsep + rborder;
-	mw=  lw + rw;
+        lw= -b->x1+ lsep + lborder;
+        rw=  b->x2+ rsep + rborder;
+        mw=  lw + rw;
       }
       else {
-	SI offset= b->get_leaf_offset (halign (1, N (halign)));
-	lw= offset+ lsep+ lborder;
-	rw= b->w()- offset+ rsep+ rborder;
-	mw= lw + rw;
+        SI offset= b->get_leaf_offset (halign (1, N (halign)));
+        lw= offset+ lsep+ lborder;
+        rw= b->w()- offset+ rsep+ rborder;
+        mw= lw + rw;
       }
     }
     else mw= b->w() + lsep + rsep + lborder + rborder;
@@ -421,6 +421,6 @@ cell_rep::finish () {
   }
 
   b= cell_box (ip, b, xoff, yoff, 0, 0, x2-x1, y2-y1,
-	       lborder, rborder, bborder, tborder,
+               lborder, rborder, bborder, tborder,
                env->pen->get_brush (), brush (bg, env->alpha));
 }
