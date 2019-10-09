@@ -216,3 +216,11 @@
          (at (tr-search (string->url "$TEXMACS_PATH/progs")))
          (xt (ahash-table-difference at mt)))
     (tr-save (tr-extra) xt)))
+
+(tm-define (update-translatable)
+  (generate-extra-translatable)
+  (let* ((nt (tr-load (tr-new)))
+         (xt (tr-load (tr-extra)))
+         (dt (ahash-table-difference xt nt))
+         (at (ahash-table-append nt dt)))
+    (tr-save (tr-new) at)))
