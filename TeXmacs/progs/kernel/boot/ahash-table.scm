@@ -100,6 +100,13 @@
   (with ls (map ahash-table->list tl)
     (list->ahash-table (apply append ls))))
 
+(define-public (ahash-table-difference t1 t2)
+  (let ((r (make-ahash-table)))
+    (for (x (map car (ahash-table->list t1)))
+      (when (not (ahash-ref t2 x))
+        (ahash-set! r x (ahash-ref t1 x))))
+    r))
+
 (define-public (ahash-table-map fun t)
   (let* ((l (ahash-table->list t))
 	 (r (map (lambda (x) (cons (car x) (fun (cdr x)))) l)))
