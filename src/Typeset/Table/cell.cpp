@@ -131,30 +131,6 @@ cell_rep::cell_local_end (tree fm) {
 ******************************************************************************/
 
 void
-extract_format (tree fm, tree* r, int n) {
-  int i;
-  for (i=0; i<n; i++) r[i]= tree (TFORMAT);
-  if (!is_func (fm, TFORMAT)) return;
-  for (i=0; i<N(fm); i++)
-    if (is_func (fm[i], CWITH))
-      if ((N(fm[i]) >= 2) &&
-          (is_int (fm[i][0])) &&
-          (is_int (fm[i][1])))
-        {
-          int k;
-          int k1= as_int (fm[i][0]);
-          int k2= as_int (fm[i][1]);
-          tree u= fm[i] (2, N (fm[i]));
-          if (k1>=0) k1--; else k1+=n;
-          if (k2> 0) k2--; else k2+=n;
-          if ((k1 >= n) || (k2 < 0)) continue;
-          k1= max (k1, 0);
-          k2= min (k2, n-1);
-          for (k=k1; k<=k2; k++) r[k] << u;
-        }
-}
-
-void
 cell_rep::format_cell (tree fm) {
   int i, l= N(fm);
   for (i=0; i<l; i++)

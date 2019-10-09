@@ -21,6 +21,10 @@ class cell;
 class table;
 
 class table_rep: public concrete_struct {
+private:
+  hashmap<pair<tree, int>, tree*> cache;
+  tree* extract_format (tree fm, int n);
+
 protected:
   hashmap<string,tree> var;   // formatting variables
 
