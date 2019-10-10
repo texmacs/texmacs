@@ -200,6 +200,12 @@
     (search-translatable-file u t)
     t))
 
+(define (ahash-table-filter t pred?)
+  (let* ((l (ahash-table->list t))
+         (f (list-filter l pred?))
+         (u (list->ahash-table f)))
+    u))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -224,3 +230,29 @@
          (dt (ahash-table-difference xt nt))
          (at (ahash-table-append nt dt)))
     (tr-save (tr-new) at)))
+
+(tm-define (update-missing-for language)
+  (let* ((lt (tr-load (tr-file language)))
+         (nt (tr-load (tr-new)))
+         (dt (ahash-table-difference nt lt)))
+    (tr-save (tr-miss language) dt)))
+
+(tm-define (update-missing)
+  (for-each update-missing-for supported-languages))
+
+(tm-define (merge-missing-for language)
+  (let* ((lt (tr-load (tr-file language)))
+         (mt (tr-load (tr-miss language)))
+         (nt (ahash-table-filter mt (lambda (x)  (!= (cdr x) ""))))
+         (at (ahash-table-append lt nt))
+         (dt (ahash-table-difference mt nt)))
+    (when (!= (ahash-size nt) 0)
+      (tr-save (tr-file language) at))))
+
+(tm-define (merge-missing)
+  (for-each merge-missing-for supported-languages))
+
+(tm-define (save-translations)
+  (let* ((opt (cons "texmacs->verbatim:encoding" "cork"))
+         (con (convert (buffer-tree) "texmacs-tree" "verbatim-snippet" opt)))
+    (string-save con (current-buffer))))
