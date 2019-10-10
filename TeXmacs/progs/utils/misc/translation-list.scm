@@ -184,11 +184,16 @@
 (define (tr-extra) (tr-file "extra"))
 (define (tr-ignore) (tr-file "ignore"))
 
+;;(define (string-->object s) (string->object (utf8->cork s)))
+;;(define (object-->string x) (cork->utf8 (object->string x)))
+(define (string-->object s) (string->object s))
+(define (object-->string x) (object->string x))
+
 (define (tr-load u)
   (with t (make-ahash-table)
     (when (url-exists? u)
       (with s (string-append "(\n" (string-load u) "\n)\n")
-        (for (x (string->object s))
+        (for (x (string-->object s))
           (when (list-2? x)
             (ahash-set! t (car x) (cadr x))))))
     t))
@@ -197,7 +202,7 @@
   (let* ((vs (map car (ahash-table->list t)))
          (ws (sort vs string<=?))
          (ps (map (lambda (v) (list v (ahash-ref t v))) ws))
-         (ss (map (lambda (p) (string-append (object->string p) "\n")) ps))
+         (ss (map (lambda (p) (string-append (object-->string p) "\n")) ps))
          (s  (apply string-append ss)))
     (string-save s u)))
 
@@ -228,7 +233,7 @@
          (ml (sort (map car (ahash-table->list mt)) string<=?))
          (nl (map (lambda (i) (list (+ i 1) (list-ref ml i)))
                   (.. 0 (length ml))))
-         (ss (map (lambda (p) (string-append (object->string p) "\n")) nl))
+         (ss (map (lambda (p) (string-append (object-->string p) "\n")) nl))
          (s  (apply string-append ss)))
     (string-save s (tr-auto "english"))))
 
@@ -258,7 +263,7 @@
             (catch
              #t
              (lambda ()
-               (with x (string->object line)
+               (with x (string-->object line)
                  (when (not (and (list-2? x)
                                  (string? (car x)) (string? (cadr x))))
                    (display* "Error: " line "\n"))))
