@@ -1,3 +1,4 @@
+("\"encryption\" features from the preference panel" "")
 ("(Re)Build autocompletion index" "")
 ("a modifier" "")
 ("a series" "")
@@ -654,7 +655,6 @@
 ("encryption" "")
 ("encryption facilities are not currently available" "")
 ("encryption facilities have not been enabled for TeXmacs" "")
-("\"encryption\" features from the preference panel" "")
 ("end" "")
 ("enforce brackets to match" "")
 ("english" "")
