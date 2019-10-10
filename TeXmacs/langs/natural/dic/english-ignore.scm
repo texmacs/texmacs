@@ -169,6 +169,7 @@
 ("simLi" "")
 ("simSun" "")
 ("simYou" "")
+("small (2)" "")
 ("spc" "")
 ("std" "")
 ("stix" "")

@@ -2292,7 +2292,6 @@
 ("slow decrease" "")
 ("slow increase" "")
 ("small" "")
-("small (2)" "")
 ("small capitals" "")
 ("small caps" "")
 ("small environment box" "")
