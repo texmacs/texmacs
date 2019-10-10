@@ -696,7 +696,7 @@
 ("enumerate|Roman" "Romain")
 ("enumerate|alpha" "lettres")
 ("enumerate|roman" "romain")
-("enunciation" "énonciation")
+("enunciation" "énoncé")
 ("env" "environnement")
 ("environment" "environnement")
 ("environment variable" "variable d'environnement")
