@@ -248,6 +248,23 @@
 ;; Master routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (sanity-check-for language)
+  (with u (tr-file language)
+    (when (url-exists? u)
+      (let* ((s (string-load u))
+             (ss (string-decompose s "\n")))
+        (for (line ss)
+          (when (!= line "")
+            (catch
+             #t
+             (lambda ()
+               (with x (string->object line)
+                 (when (not (and (list-2? x)
+                                 (string? (car x)) (string? (cadr x))))
+                   (display* "Error: " line "\n"))))
+             (lambda err
+               (display* "Error: " line "\n")))))))))
+
 (tm-define (search-translatable u)
   (with t (make-ahash-table)
     (search-translatable-file u t)
@@ -270,6 +287,7 @@
     (tr-save (tr-new) at)))
 
 (tm-define (update-missing-for language)
+  (display* "Update missing entry list for " language "\n")
   (let* ((lt (tr-load (tr-file language)))
          (nt (tr-load (tr-new)))
          (dt (ahash-table-difference nt lt)))
