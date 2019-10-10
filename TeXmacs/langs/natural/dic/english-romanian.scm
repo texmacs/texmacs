@@ -616,7 +616,7 @@
 ("last page" "ultima pagin ")
 ("latex command" "comand  latex")
 ("latin" "latin")
-("layout" "a³ezare în pagin )
+("layout" "a³ezare în pagin ")
 ("left" "la stânga")
 ("left border" "bordura din stânga")
 ("left margin" "marginea din stânga")
