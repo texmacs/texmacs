@@ -54,9 +54,11 @@
                    " --work-tree=" work-dir
                    " --git-dir=" work-dir "/.git")))
 
+;; Warning: use it carefully since the current buffer changes during tmfs reverting
 (tm-define (current-git-root)
   (git-root (current-buffer)))
 
+;; Warning: do not use it
 (tm-define (current-git-command)
   (with work-dir (current-git-root)
     (string-append "git"
@@ -307,7 +309,7 @@
   (string-append "tmfs://git/" which "/" (url->tmfs-string root)))
 
 (tm-define (git-status root)
-  (let* ((cmd (string-append (current-git-command) " status --porcelain"))
+  (let* ((cmd (string-append (git-command root) " status --porcelain"))
          (ret1 (eval-system cmd))
          (ret2 (string-split ret1 #\nl)))
     (define (convert name)
@@ -382,7 +384,7 @@
 
 (tm-define (git-log root)
   (let* ((cmd (string-append
-               (current-git-command)
+               (git-command root)
                " log --pretty=%ai%n%an%n%s%n%H%n"
                NR_LOG_OPTION))
          (ret1 (eval-system cmd))
