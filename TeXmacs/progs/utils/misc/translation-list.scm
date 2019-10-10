@@ -174,6 +174,12 @@
                   language
                   "-miss.scm")))
 
+(define (tr-auto language)
+  (url-concretize
+   (string-append "$TEXMACS_PATH/langs/natural/miss/list-"
+                  language
+                  ".scm")))
+
 (define (tr-new) (tr-file "new"))
 (define (tr-extra) (tr-file "extra"))
 (define (tr-ignore) (tr-file "ignore"))
@@ -205,6 +211,38 @@
          (f (list-filter l pred?))
          (u (list->ahash-table f)))
     u))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Further routines for speeding up translations using on-line tools
+;;   1) First call 'translate-begin' for your language.
+;;      This creates a file $TEXMACS_PATH/langs/natural/miss/list-english.scm
+;;   2) Next translate this file using an online tool.
+;;      Put the result in $TEXMACS_PATH/langs/natural/miss/list-[language].scm
+;;   3) Call 'translate-end' for your language.
+;;      The english and translated lists will be combined and
+;;      the file with missing translations will be updated accordingly.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (translate-begin language)
+  (let* ((mt (tr-load (tr-miss language)))
+         (ml (sort (map car (ahash-table->list mt)) string<=?))
+         (nl (map (lambda (i) (list (+ i 1) (list-ref ml i)))
+                  (.. 0 (length ml))))
+         (ss (map (lambda (p) (string-append (object->string p) "\n")) nl))
+         (s  (apply string-append ss)))
+    (string-save s (tr-auto "english"))))
+
+(tm-define (translate-end language)
+  (let* ((mt (tr-load (tr-miss language)))
+         (in (tr-load (tr-auto "english")))
+         (out (tr-load (tr-auto language)))
+         (vs (map car (ahash-table->list out))))
+    (for (v vs)
+      (and-let* ((eng (ahash-ref in v))
+                 (lan (ahash-ref out v)))
+        (when (== (ahash-ref mt eng) "")
+          (ahash-set! mt eng lan))))
+    (tr-save (tr-miss language) mt)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Master routines
