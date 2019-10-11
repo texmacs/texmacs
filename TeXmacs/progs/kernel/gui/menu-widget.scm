@@ -253,9 +253,13 @@
            (xvals (vals))
            (nvals (if (and (nnull? xvals) (== (cAr xvals) ""))
                       `(,@(cDr xvals) ,xval "") `(,@xvals ,xval)))
-           (xvals* (list-remove-duplicates nvals)))
-      (widget-enum (object->command (menu-protect cmd))
-                   xvals* xval style width))))
+           (xvals* (list-remove-duplicates nvals))
+           (tval (translate xval))
+           (tvals (map translate xvals*))
+           (dec (map (lambda (v) (cons (translate v) v)) xvals*))
+           (cmd* (lambda (r) (cmd (or (assoc-ref dec r) r)))))
+      (widget-enum (object->command (menu-protect cmd*))
+                   tvals tval style width))))
 
 (define (make-choice p style)
   "Make @(choice :%3) item."
@@ -993,7 +997,7 @@
            (men (menu-promise))
            (scm (list 'vertical men))
            (wid (make-menu-widget scm 0)))
-      (alt-window-create-quit win wid name qui)
+      (alt-window-create-quit win wid (translate name) qui)
       (alt-window-show win))))
 
 (tm-define (dialogue-window menu-promise cmd name . opts)
@@ -1006,7 +1010,7 @@
            (men (menu-promise lbd))
            (scm (list 'vertical men))
            (wid (make-menu-widget scm 0)))
-      (alt-window-create-quit win wid name qui)
+      (alt-window-create-quit win wid (translate name) qui)
       (alt-window-show win))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1019,7 +1023,7 @@
          (lbd (lambda x (apply cmd x) (alt-window-delete win)))
          (com (object->command (menu-protect lbd)))
          (wid (wid-promise com)))
-    (alt-window-create win wid name #t)
+    (alt-window-create win wid (translate name) #t)
     (alt-window-show win)))
 
 (tm-define (interactive-print done u)
