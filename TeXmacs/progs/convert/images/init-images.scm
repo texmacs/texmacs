@@ -24,6 +24,15 @@
 (tm-define (has-pdftocairo?)
   (url-exists-in-path? "pdftocairo"))
 
+(tm-define (gs-binary)
+  (let* ((n1 "$TEXMACS_PATH\\bin\\gs.exe;c:\\Program F*\\gs\\gs*\\gswin*c.exe")
+         (n2 "$TEXMACS_PATH/bin/gs:gs")
+         (name (if (os-mingw?) n1 n2)))
+    (url->system (url-resolve-in-path name))))
+
+(tm-define (has-gs?)
+  (url-exists? (gs-binary)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for conversions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -38,20 +47,6 @@
 (define (get-shell-command cmd)
   (if (not (os-mingw?)) cmd
       (escape-shell (url-concretize (url-resolve-in-path cmd)))))
-
-(tm-define (gs-convert x opts)
-  ;; many options for pdf->ps/eps see http://tex.stackexchange.com/a/20884
-  ;; this one does a better rendering than pdf2ps (also based on gs):
-  (let* ((dest (assoc-ref opts 'dest))
-         (n1 "$TEXMACS_PATH\\bin\\gs.exe;c:\\Program F*\\gs\\gs*\\gswin*c.exe")
-	 (n2 "$TEXMACS_PATH/bin/gs:gs")
-	 (name (if (os-mingw?) n1 n2))
-	 (gs (url->system (url-resolve-in-path name))))
-    (system-2 (string-append gs " -q -dNOCACHE -dUseCropBox -dNOPAUSE -dBATCH -dSAFER -sDEVICE=eps2write -sOutputFile=") dest x))
-  ;; problem: 
-  ;; eps2write available starting with gs  9.14 (2014-03-26)
-  ;; epswrite removed in gs 9.16 (2015-03-30)
-  )
 
 (tm-define (rsvg-convert x opts)
   (let* ((dest (assoc-ref opts 'dest))
@@ -84,6 +79,29 @@
     ;; when converting TeXmacs documents to Html with formulas as images:
     ;; the formulas appear way too large...
     ;;(system-2 (string-append "convert ") x dest)
+    (if (url-exists? dest) dest #f)))
+
+(tm-define (gs-convert x opts)
+  ;; many options for pdf->ps/eps see http://tex.stackexchange.com/a/20884
+  ;; this one does a better rendering than pdf2ps (also based on gs):
+  (let* ((dest (assoc-ref opts 'dest))
+	 (gs (gs-binary)))
+    (system-2 (string-append gs " -q -dNOCACHE -dUseCropBox -dNOPAUSE -dBATCH -dSAFER -sDEVICE=eps2write -sOutputFile=") dest x))
+  ;; problem: 
+  ;; eps2write available starting with gs  9.14 (2014-03-26)
+  ;; epswrite removed in gs 9.16 (2015-03-30)
+  )
+
+(tm-define (pdf-file->gs-raster x opts)
+  (let* ((dest (assoc-ref opts 'dest))
+         (res (get-raster-resolution opts))
+	 (gs (gs-binary)))
+    (evaluate-system (list gs "-dBATCH" "-dNOPAUSE" "-dQUIET" "-dSAFER"
+                           "-dNOPROMPT" "-sDEVICE=pngalpha"
+                           (string-append "-r" res)
+                           (string-append "-sOutputFile="
+                                          (url-concretize dest))
+                           (url-concretize x)) '() '() '(1 2))
     (if (url-exists? dest) dest #f)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -156,19 +174,6 @@
   (:require (url-exists-in-path? "geogebra"))
   (:shell "geogebra" "--export=" to "--dpi=600" from))
 
-(converter pdf-file png-file
-  (:require (and (has-pdftocairo?) (not (has-convert?))))
-  (:function-with-options pdf-file->pdftocairo-raster)
-  ;;(:option "texmacs->image:raster-resolution" "450")
-  ;;if this is set it overrides the preference widget settings
-  )
-
-(converter pdf-file jpeg-file
-  (:require (and (has-pdftocairo?) (not (has-convert?))))
-  (:function-with-options pdf-file->pdftocairo-raster)
-  ;;(:option "texmacs->image:raster-resolution" "300")
-  )
-
 ;;(converter pdf-file postscript-document
 ;;  (:require (has-pdftocairo?))
 ;;  (:shell "pdftocairo" "-eps" from to))
@@ -180,6 +185,14 @@
 (converter pdf-file svg-file
   (:require (has-pdftocairo?))
   (:shell "pdftocairo" "-origpagesizes -nocrop -nocenter -svg" from to))
+  
+(converter pdf-file svg-file
+  (:require (url-exists-in-path? "pdf2svg"))
+  (:shell "pdf2svg" from to))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; From vector graphics to bitmaps
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (converter pdf-file png-file
   (:require (has-convert?))
@@ -198,10 +211,31 @@
   (:function-with-options pdf-file->imagemagick-raster)
   ;;(:option "texmacs->image:raster-resolution" "300")
   )
+
+(converter pdf-file png-file
+  (:require (has-pdftocairo?))
+  (:function-with-options pdf-file->pdftocairo-raster)
+  ;;(:option "texmacs->image:raster-resolution" "450")
+  ;;if this is set it overrides the preference widget settings
+  )
+
+(converter pdf-file jpeg-file
+  (:require (has-pdftocairo?))
+  (:function-with-options pdf-file->pdftocairo-raster)
+  ;;(:option "texmacs->image:raster-resolution" "300")
+  )
+
+(converter pdf-file png-file
+  (:require (has-gs?))
+  (:function-with-options pdf-file->gs-raster))
   
-(converter pdf-file svg-file
-  (:require (url-exists-in-path? "pdf2svg"))
-  (:shell "pdf2svg" from to))
+(converter pdf-file jpeg-file
+  (:require (has-gs?))
+  (:function-with-options pdf-file->gs-raster))
+ 
+(converter pdf-file tif-file
+  (:require (has-gs?))
+  (:function-with-options pdf-file->gs-raster))
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Bitmap image formats
