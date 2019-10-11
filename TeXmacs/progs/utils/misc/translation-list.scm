@@ -226,6 +226,9 @@
          (u (list->ahash-table f)))
     u))
 
+(define (filter-missing t pred?)
+  (ahash-table-filter t (lambda (x) (pred? (cdr x) ""))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Further routines for speeding up translations using on-line tools
 ;;   1) First call 'translate-begin' for your language.
@@ -239,7 +242,8 @@
 
 (tm-define (translate-begin language)
   (let* ((mt (tr-load (tr-miss language)))
-         (ml (sort (map car (ahash-table->list mt)) string<=?))
+         (ft (filter-missing mt ==))
+         (ml (sort (map car (ahash-table->list ft)) string<=?))
          (nl (map (lambda (i) (list (+ i 1) (list-ref ml i)))
                   (.. 0 (length ml))))
          (ss (map (lambda (p) (string-append (object-->string p) "\n")) nl))
@@ -307,8 +311,12 @@
   (display* "Update missing entry list for " language "\n")
   (let* ((lt (tr-load (tr-file language)))
          (nt (tr-load (tr-new)))
-         (dt (ahash-table-difference nt lt)))
-    (tr-save (tr-miss language) dt)))
+         (mt (tr-load (tr-miss language)))
+         (ft (filter-missing mt !=))
+         (at (ahash-table-append lt ft))
+         (dt (ahash-table-difference nt at))
+         (nm (ahash-table-append dt ft)))
+    (tr-save (tr-miss language) nm)))
 
 (tm-define (update-missing)
   (for-each update-missing-for supported-languages))
@@ -316,7 +324,7 @@
 (tm-define (merge-missing-for language)
   (let* ((lt (tr-load (tr-file language)))
          (mt (tr-load (tr-miss language)))
-         (nt (ahash-table-filter mt (lambda (x)  (!= (cdr x) ""))))
+         (nt (filter-missing mt !=))
          (at (ahash-table-append lt nt))
          (dt (ahash-table-difference mt nt)))
     (when (!= (ahash-size nt) 0)
