@@ -374,6 +374,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   bool ps= (s == "ps" || s == "eps");
   if (use_pdf ()) ps= (ps || s == "pdf");
   typeset_prepare ();
+  int bsz= env->get_int (FONT_BASE_SIZE);
   int dpi= as_int (printing_dpi);
   if (dpi != 600) {
     double mag= (1.0 * dpi) / 600;
@@ -397,6 +398,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   }
   array<int> a;
   a << b->x3 << b->y3 << b->x4 << b->y4 << b->x1 << b->y1 << b->x2 << b->y2;
+  a << ((dpi * bsz) / 10);
   return a;
 }
 

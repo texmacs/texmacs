@@ -1123,7 +1123,7 @@
 	  (receive (name-url name-string) (tmhtml-image-names "png")
 	    ;;(display* x " -> " name-url ", " name-string "\n")
 	    (let* ((extents (print-snippet name-url x #t))
-                   (unit (/ 1.0 20625.0))
+                   (unit (* (/ 600.0 (ninth extents)) (/ 1.0 20625.0)))
 		   (x3 (* (first extents) unit))
 		   (y3 (* (second extents) unit))
 		   (x4 (* (third extents) unit))
@@ -1527,9 +1527,9 @@
   (ahash-with tmhtml-env :mag "1"
     (ahash-with tmhtml-env :math #f
       (ahash-with tmhtml-env :preformatted #f
-	(ahash-with tmhtml-env :left-margin 0
-	  (ahash-with tmhtml-env :right-margin 0
-	    (tmhtml x)))))))
+        (ahash-with tmhtml-env :left-margin 0
+          (ahash-with tmhtml-env :right-margin 0
+            (tmhtml x)))))))
 
 (define (tmhtml x)
   ;; Main conversion function.
