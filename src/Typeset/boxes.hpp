@@ -265,6 +265,7 @@ public:
   friend class  remember_box_rep;
   friend struct effect_box_rep;
   friend void make_eps (url dest, box b, int dpi);
+  friend void make_raster_image (url dest, box b, double zoom);
 };
 ABSTRACT_NULL_CODE(box);
 
@@ -294,6 +295,7 @@ tm_ostream& operator << (tm_ostream& out, box b);
 SI   get_delta (SI x, SI x1, SI x2);
 bool outside (SI x, SI delta, SI x1, SI x2);
 void make_eps (url dest, box b, int dpi= 600);
+void make_raster_image (url dest, box b, double zoom);
 path find_innermost_scroll (box b, path p);
 path find_scrolled_tree_path (box b, path sp, SI x, SI y, SI delta);
 void find_canvas_info (box b, path sp, SI& x, SI& y, SI& sx, SI& sy,

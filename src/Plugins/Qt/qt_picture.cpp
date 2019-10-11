@@ -113,10 +113,16 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
 
   ox = pox * pixel;
   oy = poy * pixel;
+  /*
   cx1= 0;
   cy1= 0;
   cx2= pw * pixel;
   cy2= ph * pixel;
+  */
+  cx1= 0;
+  cy1= -ph * pixel;
+  cx2= pw * pixel;
+  cy2= 0;
 
   qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
   QImage& im (handle->pict);
@@ -239,5 +245,13 @@ qt_apply_effect (tree eff, array<url> src, url dest, int w, int h) {
   picture t= e->apply (a, PIXEL);
   picture q= as_qt_picture (t);
   qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
+  pict->pict.save (utf8_to_qstring (concretize (dest)));
+}
+
+void
+save_picture (url dest, picture p) {
+  picture q= as_qt_picture (p);
+  qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
+  if (exists (dest)) remove (dest);
   pict->pict.save (utf8_to_qstring (concretize (dest)));
 }

@@ -541,5 +541,11 @@ as_native_picture (picture pict) {
   return pict;
 }
 
+void
+save_picture (url dest, picture p) {
+  (void) dest; (void) p;
+  FAILED ("not yet implemented");
+}
+
 #endif
 #endif

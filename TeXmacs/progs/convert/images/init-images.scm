@@ -189,6 +189,77 @@
 (converter pdf-file svg-file
   (:require (url-exists-in-path? "pdf2svg"))
   (:shell "pdf2svg" from to))
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Bitmap image formats
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-format xpm
+  (:name "Xpm")
+  (:suffix "xpm"))
+
+(converter xpm-file ppm-file
+  (:require (has-convert?))
+  (:shell "convert" from to))
+
+(define-format jpeg
+  (:name "Jpeg")
+  (:suffix "jpg" "jpeg"))
+
+(converter jpeg-file postscript-document
+  (:function image->psdoc))
+
+(converter jpeg-file pnm-file
+  (:require (has-convert?))
+  (:shell "convert" from to))
+
+(define-format tif
+  (:name "Tif")
+  (:suffix "tif" "tiff"))
+
+(converter tif-file postscript-document
+  (:function image->psdoc))
+
+(define-format ppm
+  (:name "Ppm")
+  (:suffix "ppm"))
+
+(converter ppm-file gif-file
+  (:require (has-convert?))
+  (:shell "convert" from to))
+
+(define-format gif
+  (:name "Gif")
+  (:suffix "gif"))
+
+(converter gif-file postscript-document
+  (:function image->psdoc))
+
+(converter gif-file pnm-file
+  (:require (has-convert?))
+  (:shell "convert" from to))
+
+(define-format png
+  (:name "Png")
+  (:suffix "png"))
+
+(converter png-file postscript-document
+  (:function image->psdoc))
+
+(converter png-file pnm-file
+  (:require (has-convert?))
+  (:shell "convert" from to))
+
+(converter geogebra-file png-file
+  (:require (url-exists-in-path? "geogebra"))
+  (:shell "geogebra" "--export=" to "--dpi=600" from))
+
+(define-format pnm
+  (:name "Pnm")
+  (:suffix "pnm"))
+
+(converter pnm-file postscript-document
+  (:function image->psdoc))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; From vector graphics to bitmaps
@@ -236,75 +307,3 @@
 (converter pdf-file tif-file
   (:require (has-gs?))
   (:function-with-options pdf-file->gs-raster))
- 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Bitmap image formats
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-format xpm
-  (:name "Xpm")
-  (:suffix "xpm"))
-
-(converter xpm-file ppm-file
-  (:require (has-convert?))
-  (:shell "convert" from to))
-
-(define-format jpeg
-  (:name "Jpeg")
-  (:suffix "jpg" "jpeg"))
-
-(converter jpeg-file postscript-document
-  (:function image->psdoc))
-
-(converter jpeg-file pnm-file
-  (:require (has-convert?))
-  (:shell "convert" from to))
-
-(define-format tif
-  (:name "Tif")
-  (:suffix "tif"))
-
-(converter tif-file postscript-document
-  (:function image->psdoc))
-
-(define-format ppm
-  (:name "Ppm")
-  (:suffix "ppm"))
-
-(converter ppm-file gif-file
-  (:require (has-convert?))
-  (:shell "convert" from to))
-
-(define-format gif
-  (:name "Gif")
-  (:suffix "gif"))
-
-(converter gif-file postscript-document
-  (:function image->psdoc))
-
-(converter gif-file pnm-file
-  (:require (has-convert?))
-  (:shell "convert" from to))
-
-(define-format png
-  (:name "Png")
-  (:suffix "png"))
-
-(converter png-file postscript-document
-  (:function image->psdoc))
-
-(converter png-file pnm-file
-  (:require (has-convert?))
-  (:shell "convert" from to))
-
-(converter geogebra-file png-file
-  (:require (url-exists-in-path? "geogebra"))
-  (:shell "geogebra" "--export=" to "--dpi=600" from))
-
-(define-format pnm
-  (:name "Pnm")
-  (:suffix "pnm"))
-
-(converter pnm-file postscript-document
-  (:function image->psdoc))
-

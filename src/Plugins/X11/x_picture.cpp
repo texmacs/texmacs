@@ -294,3 +294,9 @@ load_picture (url u, int w, int h, tree eff, int pixel) {
   }
   return pic;
 }
+
+void
+save_picture (url dest, picture p) {
+  (void) dest; (void) p;
+  FAILED ("saving bitmap pictures has not been implemented under X11");
+}
