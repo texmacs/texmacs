@@ -577,6 +577,9 @@
   ("2" "Twice")
   ("3" "Three times"))
 
+(define-preference-names "scripting language"
+  ("none" "None"))
+
 (define (updater-last-check-formatted)
   "Time since last update check formatted for use in the preferences dialog"
   (with c (updater-last-check)
@@ -600,7 +603,6 @@
 (tm-define (scripts-preferences-list)
   (lazy-plugin-force)
   (with l (scripts-list)
-    (set-preference-name "scripting language" "none" "None")
     (for (x l) (set-preference-name "scripting language" x (scripts-name x)))
     (cons "None" (map scripts-name l))))
 
