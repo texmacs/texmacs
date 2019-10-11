@@ -52,7 +52,7 @@
 (define (menu-item-cmd-1? x)
   (and (pair? x) (pair? (cdr x))
        (in? (car x) '(-> => style tile refreshable
-                     if when mini let let*))))
+                     if when assuming mini let let*))))
 
 (define (menu-item-cmd-2? x)
   (and (pair? x) (pair? (cdr x))
@@ -62,11 +62,6 @@
   (and (list-2? x)
        (in? (car x) '(group text))
        (string? (cadr x))))
-
-(define (menu-item-list-2? x)
-  (and (func? x 'enum 4)
-       (list? (caddr x))
-       (forall? string? (caddr x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Find translatable items in a menu
@@ -85,9 +80,10 @@
            (ahash-set! t (locase-first s) "")))))
 
 (define (search-translatable-label x t)
+  ;;(display* "   " x "\n")
   (cond ((string? x)
          (add-string x t))
-        ((and (pair? x) (in? x '(extend check shortcut)))
+        ((and (pair? x) (in? (car x) '(extend check shortcut)))
          (search-translatable-label (cadr x) t))
         ((func? x 'style)
          (search-translatable-label (caddr x) t))
@@ -112,9 +108,13 @@
          (search-translatable-menu (cdddr x) t))
         ((menu-item-text-1? x)
          (add-string (cadr x) t))
-        ((menu-item-list-2? x)
-         (for (s (caddr x))
-           (add-string s t)))))
+        ((func? x 'enum 4)
+         (with l (caddr x)
+           (when (func? l 'quote 1) (set! l (cadr l)))
+           (when (list? l)
+             (for (s l)
+               (when (string? s)
+                 (add-string s t))))))))
 
 (define (search-translatable-menu l t)
   (when (list? l)
@@ -140,6 +140,15 @@
            (add-string (cadr x) t))
          (when (string? (caddr x))
            (add-string (caddr x) t)))
+        ((and (func? x 'dialogue-window) (>= (length x) 4))
+         (when (string? (fourth x))
+           (add-string (fourth x) t)))
+        ((and (func? x 'interactive-window) (>= (length x) 4))
+         (when (string? (fourth x))
+           (add-string (fourth x) t)))
+        ((and (func? x 'top-window) (>= (length x) 3))
+         (when (string? (third x))
+           (add-string (third x) t)))
         (else (for-each (cut search-translatable-file-bis <> t) x))))
 
 (define (search-translatable-file x t)
