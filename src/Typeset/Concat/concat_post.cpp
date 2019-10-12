@@ -33,6 +33,19 @@ concater_rep::succ (int i) {
   return i;
 }
 
+inline font
+get_reference_font (box b, font fn) {
+  // FIXME: the active font should really be part of 'line_item_rep'.
+  // Currently, the font that is used for spacing parameters of scripts
+  // can be completely unrelated to the fonts of the reference box and
+  // the fonts of the scripts.  This occurs for instance when typesetting
+  // (with "magnification" "10" [some box with limits]).  In such cases,
+  // the env->fn at the time that we actually attach the limits is
+  // typically ten times smaller than the font for the actual box.
+  if (b->get_type () != TEXT_BOX) return fn;
+  else return b->get_leaf_font ();
+}
+
 /******************************************************************************
 * Gluing scripts
 ******************************************************************************/
@@ -122,12 +135,14 @@ concater_rep::glue_right_markers (box b, int ref, int arg, bool flag) {
 
 void
 concater_rep::glue (box b, int ref, int arg) {
-  if (a[ref]->op_type == OP_BIG && arg >= ref && !a[ref]->limits)
-    if (env->fn->math_type != MATH_TYPE_NORMAL)
+  if (a[ref]->op_type == OP_BIG && arg >= ref && !a[ref]->limits) {
+    font ref_fn= get_reference_font (a[ref]->b, env->fn);
+    if (ref_fn->math_type != MATH_TYPE_NORMAL)
       if (a[ref]->spc->def > 0) {
-        space spc= env->fn->spc;
+        space spc= ref_fn->spc;
         a[ref]->spc += space (spc->min/3, spc->def/3, spc->def/3);
       }
+  }
   
   space spc = max (a[ref]->spc, a[arg]->spc);
 
@@ -140,12 +155,14 @@ concater_rep::glue (box b, int ref, int arg) {
 
 void
 concater_rep::glue (box b, int ref, int arg1, int arg2) {
-  if (a[ref]->op_type == OP_BIG && !a[ref]->limits)
-    if (env->fn->math_type != MATH_TYPE_NORMAL)
+  if (a[ref]->op_type == OP_BIG && !a[ref]->limits) {
+    font ref_fn= get_reference_font (a[ref]->b, env->fn);
+    if (ref_fn->math_type != MATH_TYPE_NORMAL)
       if (a[ref]->spc->def > 0) {
-        space spc= env->fn->spc;
+        space spc= ref_fn->spc;
         a[ref]->spc += space (spc->min/3, spc->def/3, spc->def/3);
       }
+  }
 
   space spc = max (a[ref]->spc, max (a[arg1]->spc, a[arg2]->spc));
   int   pen = min (a[ref]->penalty, min (a[arg1]->penalty, a[arg2]->penalty));
@@ -216,23 +233,25 @@ concater_rep::handle_scripts (int start, int end) {
     if (l==-1) {
       if (r==N(a)) { i++; continue; }
       else {
+        font ref_fn= get_reference_font (a[i]->b, env->fn);
         box mb= glue_right_markers (a[i]->b, i, r, false);
         if (a[i]->limits)
-          b= limit_box (sip, mb, rb1, rb2, env->fn, true);
+          b= limit_box (sip, mb, rb1, rb2, ref_fn, true);
         else
-          b= right_script_box (sip, mb, rb1, rb2, env->fn, env->vert_pos);
+          b= right_script_box (sip, mb, rb1, rb2, ref_fn, env->vert_pos);
         glue (b, i, r);
       }
     }
     else {
+      font ref_fn= get_reference_font (a[i]->b, env->fn);
       box mb= glue_left_markers (a[i]->b, i, l);
       if (r==N(a)) {
-        b= left_script_box (sip, mb, lb1, lb2, env->fn, env->vert_pos);
+        b= left_script_box (sip, mb, lb1, lb2, ref_fn, env->vert_pos);
         glue (b, i, l);
       }
       else {
         mb= glue_right_markers (mb, i, r, true);
-        b = side_box (sip, mb, lb1, lb2, rb1, rb2, env->fn, env->vert_pos);
+        b = side_box (sip, mb, lb1, lb2, rb1, rb2, ref_fn, env->vert_pos);
         glue (b, i, l, r);
       }
     }
