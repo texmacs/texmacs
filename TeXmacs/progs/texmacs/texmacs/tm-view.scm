@@ -73,7 +73,7 @@
   (:synopsis "Toggle the visibility of the window's header.")
   (:check-mark "v" visible-header?)
   (with val (not (visible-header?))
-    (if (== (windows-number) 1)
+    (if (and (== (windows-number) 1) (os-macos?))
         (set-boolean-preference "header" val)
         (show-header val))))
 
