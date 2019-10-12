@@ -534,7 +534,7 @@
 (TeX\ Pandora\ Sans pandora SansSerif)
 (TeX\ Phoenician phoenician Ancient)
 (TeX\ Punk punk Pen Handwritten)
-(TeX\ Ralph\ Smith cal* Calligraphic)
+(TeX\ Ralph\ Smith cal* Italic Calligraphic)
 (TeX\ Runic\ Fut runic Ancient)
 (TeX\ Runic\ Futhol runic* Ancient)
 (TeX\ Runic\ Futhor runic** Ancient)

@@ -48,6 +48,9 @@ hashmap<string,double> rsub_bbm_table ();
 hashmap<string,double> rsup_bbm_table ();
 hashmap<string,double> above_bbm_table ();
 hashmap<string,double> above_eufm_table ();
+hashmap<string,double> rsub_rsfs_table ();
+hashmap<string,double> rsup_rsfs_table ();
+hashmap<string,double> above_rsfs_table ();
 
 /******************************************************************************
 * TeX text fonts
@@ -197,6 +200,21 @@ tex_font_rep::tex_font_rep (string name, int status2,
     rsub_correct= hashmap<string,double> (0.0);
     rsup_correct= hashmap<string,double> (0.0);
     above_correct= above_eufm_table ();
+  }
+  else if (family == "rsfs") {
+    yx= (SI) round (0.53 * display_size);
+    yfrac        = yx >> 1;
+    ysub_lo_base = -yx/3;
+    ysub_hi_lim  = (5*yx)/6;
+    ysup_lo_lim  = yx/2;
+    ysup_lo_base = (5*yx)/6;
+    ysup_hi_lim  = yx;
+    yshift       = yx/6;
+    lsub_correct= hashmap<string,double> (0.0);
+    lsup_correct= hashmap<string,double> (0.0);
+    rsub_correct= rsub_rsfs_table ();
+    rsup_correct= rsup_rsfs_table ();
+    above_correct= above_rsfs_table ();
   }
   else {
     lsub_correct= hashmap<string,double> (0.0);

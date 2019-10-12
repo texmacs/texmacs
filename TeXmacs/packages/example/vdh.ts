@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -71,59 +71,59 @@
 
     \;
 
-    <assign|rsA|<with|math-font|cal*|A>>
+    <assign|rsA|<with|font|cal*|math-font|cal*|A>>
 
-    <assign|rsB|<with|math-font|cal*|B>>
+    <assign|rsB|<with|font|cal*|math-font|cal*|B>>
 
-    <assign|rsC|<with|math-font|cal*|C>>
+    <assign|rsC|<with|font|cal*|math-font|cal*|C>>
 
-    <assign|rsD|<with|math-font|cal*|D>>
+    <assign|rsD|<with|font|cal*|math-font|cal*|D>>
 
-    <assign|rsE|<with|math-font|cal*|E>>
+    <assign|rsE|<with|font|cal*|math-font|cal*|E>>
 
-    <assign|rsF|<with|math-font|cal*|F>>
+    <assign|rsF|<with|font|cal*|math-font|cal*|F>>
 
-    <assign|rsG|<with|math-font|cal*|G>>
+    <assign|rsG|<with|font|cal*|math-font|cal*|G>>
 
-    <assign|rsH|<with|math-font|cal*|H>>
+    <assign|rsH|<with|font|cal*|math-font|cal*|H>>
 
-    <assign|rsI|<with|math-font|cal*|I>>
+    <assign|rsI|<with|font|cal*|math-font|cal*|I>>
 
-    <assign|rsJ|<with|math-font|cal*|J>>
+    <assign|rsJ|<with|font|cal*|math-font|cal*|J>>
 
-    <assign|rsK|<with|math-font|cal*|K>>
+    <assign|rsK|<with|font|cal*|math-font|cal*|K>>
 
-    <assign|rsL|<with|math-font|cal*|L>>
+    <assign|rsL|<with|font|cal*|math-font|cal*|L>>
 
-    <assign|rsM|<with|math-font|cal*|M>>
+    <assign|rsM|<with|font|cal*|math-font|cal*|M>>
 
-    <assign|rsN|<with|math-font|cal*|N>>
+    <assign|rsN|<with|font|cal*|math-font|cal*|N>>
 
-    <assign|rsO|<with|math-font|cal*|O>>
+    <assign|rsO|<with|font|cal*|math-font|cal*|O>>
 
-    <assign|rsP|<with|math-font|cal*|P>>
+    <assign|rsP|<with|font|cal*|math-font|cal*|P>>
 
-    <assign|rsQ|<with|math-font|cal*|Q>>
+    <assign|rsQ|<with|font|cal*|math-font|cal*|Q>>
 
-    <assign|rsR|<with|math-font|cal*|R>>
+    <assign|rsR|<with|font|cal*|math-font|cal*|R>>
 
-    <assign|rsS|<with|math-font|cal*|S>>
+    <assign|rsS|<with|font|cal*|math-font|cal*|S>>
 
-    <assign|rsT|<with|math-font|cal*|T>>
+    <assign|rsT|<with|font|cal*|math-font|cal*|T>>
 
-    <assign|rsU|<with|math-font|cal*|U>>
+    <assign|rsU|<with|font|cal*|math-font|cal*|U>>
 
-    <assign|rsV|<with|math-font|cal*|V>>
+    <assign|rsV|<with|font|cal*|math-font|cal*|V>>
 
-    <assign|rsW|<with|math-font|cal*|W>>
+    <assign|rsW|<with|font|cal*|math-font|cal*|W>>
 
-    <assign|rsX|<with|math-font|cal*|X>>
+    <assign|rsX|<with|font|cal*|math-font|cal*|X>>
 
-    <assign|rsY|<with|math-font|cal*|Y>>
+    <assign|rsY|<with|font|cal*|math-font|cal*|Y>>
 
-    <assign|rsZ|<with|math-font|cal*|Z>>
+    <assign|rsZ|<with|font|cal*|math-font|cal*|Z>>
 
-    <assign|rso|<very-small|<with|math-font|cal*|O>>>
+    <assign|rso|<very-small|<with|font|cal*|math-font|cal*|O>>>
 
     \;
 

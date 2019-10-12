@@ -1250,7 +1250,7 @@
 ((TeX\ Pandora\ Sans Bold) (Ascii mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=86 em=217 lvw=27 lhw=13 uvw=29 uhw=15 fillp=48 vcnt=52 lasprat=96 pasprat=90 loasc=148 lodes=141 dides=106))
 ((TeX\ Pandora\ Sans Italic) (Ascii mono=no sans=no slant=18 italic=no case=mixed regular=yes ex=84 em=209 lvw=19 lhw=10 uvw=21 uhw=14 fillp=34 vcnt=38 lasprat=102 pasprat=93 loasc=152 lodes=142 dides=107))
 ((TeX\ Pandora\ Sans Regular) (Ascii mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=84 em=208 lvw=20 lhw=10 uvw=20 uhw=13 fillp=38 vcnt=41 lasprat=102 pasprat=84 loasc=152 lodes=141 dides=109))
-((TeX\ Ralph\ Smith Regular) (sans=no))
+((TeX\ Ralph\ Smith Regular) (sans=no slant=50 italic=yes))
 ((TeX\ Swab Regular) (mono=no sans=no slant=0 italic=yes case=mixed regular=no ex=80 em=211 lvw=17 lhw=23 uvw=21 uhw=22 fillp=38 vcnt=44 lasprat=84 pasprat=80 loasc=147 lodes=141 dides=102))
 ((TeXmacs\ Avant\ Garde Bold) (Ascii mono=no sans=yes slant=0 italic=no case=mixed regular=yes ex=92 em=163 lvw=23 lhw=22 uvw=25 uhw=23 fillp=56 vcnt=62 lasprat=99 pasprat=85 loasc=133 lodes=140 dides=102))
 ((TeXmacs\ Avant\ Garde Bold\ Italic) (Ascii mono=no sans=yes slant=18 italic=no case=mixed regular=yes ex=92 em=163 lvw=25 lhw=23 uvw=25 uhw=23 fillp=48 vcnt=56 lasprat=99 pasprat=97 loasc=133 lodes=140 dides=102))

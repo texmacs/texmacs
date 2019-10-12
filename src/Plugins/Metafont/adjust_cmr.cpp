@@ -344,6 +344,48 @@ above_adjust_eufm (hashmap<string,double>& t) {
   adjust_char (t, "T", 0.02);
 }
 
+void
+rsup_adjust_rsfs (hashmap<string,double>& t) {
+  adjust_char (t, "A", 0.01);
+  adjust_char (t, "B", 0.02);
+  adjust_char (t, "C", 0.05);
+  adjust_char (t, "J", -0.05);
+  adjust_char (t, "L", 0.05);
+  adjust_char (t, "O", 0.05);
+  adjust_char (t, "Q", 0.02);
+  adjust_char (t, "R", 0.02);
+  adjust_char (t, "S", 0.02);
+  adjust_char (t, "X", -0.02);
+  adjust_char (t, "Z", 0.02);
+}
+
+void
+rsub_adjust_rsfs (hashmap<string,double>& t) {
+  adjust_char (t, "F", -0.03);
+  adjust_char (t, "I", -0.03);
+  adjust_char (t, "J", -0.07);
+  adjust_char (t, "P", -0.04);
+  adjust_char (t, "S", -0.04);
+  adjust_char (t, "V", -0.02);
+  adjust_char (t, "W", -0.03);
+}
+
+void
+above_adjust_rsfs (hashmap<string,double>& t) {
+  adjust_char (t, "G", -0.02);
+  adjust_char (t, "H", -0.02);
+  adjust_char (t, "J", 0.07);
+  adjust_char (t, "K", -0.04);
+  adjust_char (t, "M", 0.05);
+  adjust_char (t, "O", -0.02);
+  adjust_char (t, "T", -0.02);
+  adjust_char (t, "U", -0.02);
+  adjust_char (t, "V", -0.07);
+  adjust_char (t, "W", -0.07);
+  adjust_char (t, "X", -0.03);
+  adjust_char (t, "Y", -0.04);
+}
+
 /******************************************************************************
 * Interface
 ******************************************************************************/
@@ -507,4 +549,25 @@ above_eufm_table () {
   static hashmap<string,double> above_eufm (0.0);
   if (N (above_eufm) == 0) above_adjust_eufm (above_eufm);
   return above_eufm;
+}
+
+hashmap<string,double>
+rsub_rsfs_table () {
+  static hashmap<string,double> rsub_rsfs (0.0);
+  if (N (rsub_rsfs) == 0) rsub_adjust_rsfs (rsub_rsfs);
+  return rsub_rsfs;
+}
+
+hashmap<string,double>
+rsup_rsfs_table () {
+  static hashmap<string,double> rsup_rsfs (0.0);
+  if (N (rsup_rsfs) == 0) rsup_adjust_rsfs (rsup_rsfs);
+  return rsup_rsfs;
+}
+
+hashmap<string,double>
+above_rsfs_table () {
+  static hashmap<string,double> above_rsfs (0.0);
+  if (N (above_rsfs) == 0) above_adjust_rsfs (above_rsfs);
+  return above_rsfs;
 }
