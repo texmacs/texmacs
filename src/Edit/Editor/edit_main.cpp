@@ -384,7 +384,8 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   if (bitmap) dpi *= 5;
   if (dpi != 600) {
     double mag= (1.0 * dpi) / 600;
-    t= tree (WITH, MAGNIFICATION, as_string (mag), t);
+    t= tree (WITH, MAGNIFICATION, as_string (mag),
+             tree (RIGID, t));
   }
   box b= typeset_as_box (env, t, path ());
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
