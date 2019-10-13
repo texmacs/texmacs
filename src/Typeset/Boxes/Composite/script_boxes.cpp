@@ -649,10 +649,8 @@ side_box_rep::find_selection (path lbp, path rbp) {
 void
 side_box_rep::get_bracket_extents (SI& lo, SI& hi) {
   int i;
-  SI ex= fn->yx;
-  SI dd= ex / 4;
-  lo= sy1 (0);
-  hi= sy2 (0);
+  SI dd= fn->yx / 4;
+  bs[0]->get_bracket_extents (lo, hi);
   for (i=1; i<N(bs); i++) {
     lo= min (lo, sy1 (i) + dd);
     hi= max (hi, sy2 (i) - dd);
