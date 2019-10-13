@@ -88,6 +88,8 @@ struct marker_box_rep: public box_rep {
   SI sup_lo_base (int level) { return ref->sup_lo_base (level); }
   SI sup_hi_lim (int level) { return ref->sup_hi_lim (level); }
   //SI sup_hi_lim (int level) { return max (y2, ref->sup_hi_lim (level)); }
+  void get_bracket_extents (SI& lo, SI& hi) {
+    ref->get_bracket_extents (lo, hi); }
 };
 
 /*****************************************************************************/

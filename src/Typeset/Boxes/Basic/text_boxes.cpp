@@ -525,7 +525,8 @@ delimiter_box (path ip, string s, font fn, pencil pen, SI bot, SI top) {
   //     << " -> " << r << "; " << x/PIXEL << ", " << y/PIXEL << "\n";
   //cout << "  extents: " << b->x1/PIXEL << ", " << b->y1/PIXEL
   //     << "; " << b->x2/PIXEL << ", " << b->y2/PIXEL << "\n";
-  box mvb= move_box (ip, b, x, y, false, true);
+  SI var_bot= max (bot, b->y1 + y), var_top= min (top, b->y2 + y);
+  box mvb= move_delimiter_box (ip, b, x, y, var_bot, var_top);
   if (ends (r, "-0>")) return mvb;
   return macro_box (ip, mvb, fn);
 }
@@ -534,7 +535,6 @@ box
 delimiter_box (path ip, string s, font fn, pencil pen,
                SI bot, SI top, SI mid, SI real_bot, SI real_top)
 {
-  (void) real_bot; (void) real_top;
   SI h= top - bot;
   string r= get_delimiter (s, fn, h);
   box b= text_box (ip, 0, r, fn, pen);
@@ -549,7 +549,7 @@ delimiter_box (path ip, string s, font fn, pencil pen,
   //     << " -> " << r << "; " << x/PIXEL << ", " << y/PIXEL << "\n";
   //cout << "  extents: " << b->x1/PIXEL << ", " << b->y1/PIXEL
   //     << "; " << b->x2/PIXEL << ", " << b->y2/PIXEL << "\n";
-  box mvb= move_box (ip, b, x, y, false, true);
+  box mvb= move_delimiter_box (ip, b, x, y, real_bot, real_top);
   if (ends (r, "-0>")) return mvb;
   return macro_box (ip, mvb, fn);
 }
