@@ -528,7 +528,7 @@ delimiter_box (path ip, string s, font fn, pencil pen, SI bot, SI top) {
   SI var_bot= max (bot, b->y1 + y), var_top= min (top, b->y2 + y);
   box mvb= move_delimiter_box (ip, b, x, y, var_bot, var_top);
   if (ends (r, "-0>")) return mvb;
-  return macro_box (ip, mvb, fn);
+  return macro_delimiter_box (ip, mvb, fn, y);
 }
 
 box
@@ -551,7 +551,7 @@ delimiter_box (path ip, string s, font fn, pencil pen,
   //     << "; " << b->x2/PIXEL << ", " << b->y2/PIXEL << "\n";
   box mvb= move_delimiter_box (ip, b, x, y, real_bot, real_top);
   if (ends (r, "-0>")) return mvb;
-  return macro_box (ip, mvb, fn);
+  return macro_delimiter_box (ip, mvb, fn, y);
 }
 
 box

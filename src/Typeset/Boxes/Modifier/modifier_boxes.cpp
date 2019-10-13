@@ -432,6 +432,26 @@ pencil macro_box_rep::get_leaf_pencil () {
 SI macro_box_rep::get_leaf_offset (string search) {
   return bs[0]->get_leaf_offset (search); }
 
+struct macro_delimiter_box_rep: public macro_box_rep {
+  SI dy;
+  macro_delimiter_box_rep (path ip, box b, font fn, SI dy2):
+    macro_box_rep (ip, b, fn, STD_BOX), dy (dy2) {}
+  operator tree () {
+    return tree (TUPLE, "macro_delimiter", (tree) bs[0]); }
+  SI sub_lo_base (int l) {
+    SI fb= l<=0? big_fn->ysub_lo_base: big_fn->ysub_lo_base + big_fn->yshift;
+    fb += min (0, dy);
+    return min (y1, max (y1 - (l>0? 0: big_fn->yshift), fb)); }
+  
+  SI sub_hi_lim (int l) {
+    return big_fn->ysub_hi_lim + min (0, dy); }
+  SI sup_lo_base (int l) {
+    SI fb= l>=0? big_fn->ysup_lo_base: big_fn->ysup_lo_base - big_fn->yshift;
+    fb += max (0, dy);
+    SI syx= big_fn->yx * script (big_fn->size, 1) / big_fn->size;
+    return max (y2 - syx, fb); }
+};
+
 /******************************************************************************
 * box construction routines
 ******************************************************************************/
@@ -454,4 +474,9 @@ frozen_box (path ip, box b) {
 box
 macro_box (path ip, box b, font big_fn, int btype) {
   return tm_new<macro_box_rep> (ip, b, big_fn, btype);
+}
+
+box
+macro_delimiter_box (path ip, box b, font fn, SI dy) {
+  return tm_new<macro_delimiter_box_rep> (ip, b, fn, dy);
 }
