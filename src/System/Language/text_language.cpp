@@ -12,6 +12,7 @@
 #include "tm_configure.hpp"
 #ifndef OS_MINGW
 #include <langinfo.h>
+#include <locale>
 #else
 #include <winnls.h>
 #endif
@@ -580,6 +581,7 @@ get_locale_charset () {
   return ("UTF-8"); // do not change this!
   // otherwise there is a weird problem with page width shrinking on screen
 #else
+  std::locale::global(std::locale(""));
   return nl_langinfo (CODESET);
 #endif
 }
