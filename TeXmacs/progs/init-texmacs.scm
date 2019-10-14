@@ -339,7 +339,8 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting converters\n")
-(lazy-format (convert rewrite init-rewrite) texmacs scheme cpp verbatim)
+(lazy-format (convert rewrite init-rewrite) texmacs verbatim)
+(lazy-format (prog prog-format) cpp scheme)
 (lazy-format (convert tmml init-tmml) tmml)
 (lazy-format (convert latex init-latex) latex)
 (lazy-format (convert html init-html) html)
