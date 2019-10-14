@@ -442,14 +442,20 @@ struct macro_delimiter_box_rep: public macro_box_rep {
     SI fb= l<=0? big_fn->ysub_lo_base: big_fn->ysub_lo_base + big_fn->yshift;
     fb += min (0, dy);
     return min (y1, max (y1 - (l>0? 0: big_fn->yshift), fb)); }
-  
   SI sub_hi_lim (int l) {
     return big_fn->ysub_hi_lim + min (0, dy); }
   SI sup_lo_base (int l) {
     SI fb= l>=0? big_fn->ysup_lo_base: big_fn->ysup_lo_base - big_fn->yshift;
     fb += max (0, dy);
-    SI syx= big_fn->yx * script (big_fn->size, 1) / big_fn->size;
-    return max (y2 - syx, fb); }
+    SI ex= big_fn->yx;
+    return max (y2 - ex, fb); }
+  SI sup_hi_lim (int l) {
+    SI fb= big_fn->ysup_hi_lim;
+    fb += max (0, dy);
+    SI ex= big_fn->yx;
+    if (fb + ex <= y2) return y2;
+    if (fb + (ex>>1) <= y2) return (y2+fb)>>1;
+    return fb; }
 };
 
 /******************************************************************************

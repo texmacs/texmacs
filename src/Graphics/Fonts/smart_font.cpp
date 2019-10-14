@@ -689,6 +689,7 @@ smart_font_rep::smart_font_rep (
 {
   fn[SUBFONT_MAIN ]= adjust_subfont (base_fn);
   fn[SUBFONT_ERROR]= adjust_subfont (err_fn);
+  this->copy_math_pars (base_fn);
   if (shape == "mathitalic" || shape == "mathupright" || shape == "mathshape") {
     if (is_math_family (mfam)) {
       rshape= "right";
@@ -701,7 +702,7 @@ smart_font_rep::smart_font_rep (
         this->copy_math_pars (fn[nr]);
         fn[SUBFONT_MAIN]= fn[nr];
       }
-    } 
+    }
     else {
       math_kind= 1;
       if (shape == "mathupright") math_kind= 2;
