@@ -148,19 +148,6 @@ language prog_language (string s);
 language hyphenless_language (language base);
 language ad_hoc_language (language base, tree hyphs);
 
-string locale_to_language (string s);
-string language_to_locale (string s);
-string language_to_local_ISO_charset (string s);
-string get_locale_language ();
-string get_locale_charset ();
-#ifdef OS_MINGW
-namespace win32 {
-  string get_date (string lan, string fm);
-}
-#endif
-string get_date (string lan, string fm);
-string pretty_time (int t);
-
 string math_symbol_group (string s, string lan= "std-math");
 array<string> math_group_members (string s, string lan= "std-math");
 string math_symbol_type (string s, string lan= "std-math");

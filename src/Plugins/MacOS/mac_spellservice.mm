@@ -13,6 +13,7 @@
 #include "MacOS/mac_spellservice.h"
 #include "converter.hpp"
 #include "language.hpp"
+#include "locale.hpp"
 
 #include "Cocoa/mac_cocoa.h"
 

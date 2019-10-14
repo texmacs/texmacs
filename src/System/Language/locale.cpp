@@ -9,6 +9,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "locale.hpp"
+
 #ifndef OS_MINGW
 #include <langinfo.h>
 #include <locale>
@@ -26,7 +28,6 @@
 #undef extend
 #undef outline
 
-#include "language.hpp"
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 

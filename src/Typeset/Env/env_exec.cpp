@@ -12,6 +12,7 @@
 #include "env.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "locale.hpp"
 #include "image_files.hpp"
 #include "scheme.hpp"
 #include "page_type.hpp"

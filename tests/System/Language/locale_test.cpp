@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "language.hpp"
+#include "locale.hpp"
 
 TEST (get_locale_language, work) {
   cout << get_locale_language () << LF;

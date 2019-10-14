@@ -23,6 +23,7 @@
 #include "universal.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "locale.hpp"
 #include "iterator.hpp"
 #include "Freetype/tt_tools.hpp"
 #include "Database/database.hpp"

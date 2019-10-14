@@ -11,7 +11,7 @@
 
 #include "convert.hpp"
 #include "converter.hpp"
-#include "language.hpp"
+#include "locale.hpp"
 #include "wencoding.hpp"
 #include "vars.hpp"
 #include "drd_std.hpp"

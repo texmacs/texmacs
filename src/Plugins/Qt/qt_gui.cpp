@@ -16,7 +16,7 @@
 #include "dictionary.hpp"
 #include "file.hpp" // added for copy_as_graphics
 #include "analyze.hpp"
-#include "language.hpp"
+#include "locale.hpp"
 #include "message.hpp"
 #include "scheme.hpp"
 #include "tm_window.hpp"

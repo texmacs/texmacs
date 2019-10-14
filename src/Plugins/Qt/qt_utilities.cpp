@@ -32,7 +32,7 @@
 
 #include "dictionary.hpp"
 #include "converter.hpp"
-#include "language.hpp"
+#include "locale.hpp"
 #include "scheme.hpp"
 #include "wencoding.hpp"
 
