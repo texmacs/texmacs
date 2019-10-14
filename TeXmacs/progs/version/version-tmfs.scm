@@ -29,7 +29,7 @@
     (list-or (map url-directory? l))))
 
 (tm-define (git-active? name)
-  (let* ((dir (url-head name))
+  (let* ((dir (if (url-directory? name) name (url-head name)))
          (anc (url-append dir (url-ancestor)))
          (git (url-append anc ".git"))
          (l   (cDr (url->list (url-expand git)))))
@@ -125,9 +125,7 @@
        ($description-long
          ($for (x h)
            ($with (rev by date msg) x
-             ($with rev* (if (git-active? u)
-                             (string-take rev 7)
-                             rev)
+             ($with rev* (beautify-revision u rev)
                ($with dest (version-revision-url u rev)
                  ($describe-item
                      ($inline Version " " ($link dest rev*)
@@ -182,7 +180,7 @@
          (maxv (list-fold max 0 (map sum2 d)))
          (maxs (- 81 (list-fold max 0 (map length-of-2col d)))))
     ($generic
-         ($tmfs-title "Commit Message of " rev)
+         ($tmfs-title "Commit Message of " (beautify-revision root rev))
          (if (== rev p)
              "parent 0"
              `(concat "parent "
@@ -324,6 +322,10 @@
 (tm-define (version-revision name rev)
   (:require (== (version-tool name) "wrap"))
   (version-revision (url-wrap name) rev))
+
+(tm-define (beautify-revision name rev)
+  (:require (== (version-tool name) "wrap"))
+  rev)
 
 (tm-define (version-update name)
   (:require (== (version-tool name) "wrap"))

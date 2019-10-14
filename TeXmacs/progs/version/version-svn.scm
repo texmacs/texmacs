@@ -79,6 +79,10 @@
     ;;(display* "Got " ret "\n")
     ret))
 
+(tm-define (beautify-revision name rev)
+  (:require (== (version-tool name) "svn"))
+  rev)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Updating, registering committing a file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

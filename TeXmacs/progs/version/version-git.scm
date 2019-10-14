@@ -164,6 +164,13 @@
     ;;(display* "Got " ret "\n")
     ret))
 
+(define (beautify-git-revision rev)
+  (string-take rev 7))
+
+(tm-define (beautify-revision name rev)
+  (:require (== (version-tool name) "git"))
+  (beautify-git-revision rev))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Masters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -380,7 +387,7 @@
               (second alist)
               (third alist)
               ($link (tmfs-url-commit root (fourth alist))
-                (string-take (fourth alist) 7))))))
+                (beautify-git-revision (fourth alist)))))))
 
 (tm-define (git-log root)
   (let* ((cmd (string-append

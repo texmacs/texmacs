@@ -32,8 +32,10 @@
                  (head (if (version-revision? cur) (version-head cur) cur))
                  (msg* (if (<= (string-length msg) 50) msg
                            (string-append (substring msg 0 50) "...")))
-                 (name (string-append "Version " rev " by " by
-                                      " on " date ": " msg*))
+                 (name (string-append "Version " (beautify-revision cur rev)
+                                      " by " by
+                                      " on " date
+                                      ": " msg*))
                  (dest (version-revision-url head rev)))
             (when (!= (url->url dest) (url->url cur))
               ((eval name)
