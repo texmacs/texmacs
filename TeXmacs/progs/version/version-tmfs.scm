@@ -125,7 +125,7 @@
        ($description-long
          ($for (x h)
            ($with (rev by date msg) x
-             ($with rev* (beautify-revision u rev)
+             ($with rev* (version-beautify-revision u rev)
                ($with dest (version-revision-url u rev)
                  ($describe-item
                      ($inline Version " " ($link dest rev*)
@@ -180,7 +180,7 @@
          (maxv (list-fold max 0 (map sum2 d)))
          (maxs (- 81 (list-fold max 0 (map length-of-2col d)))))
     ($generic
-         ($tmfs-title "Commit Message of " (beautify-revision root rev))
+         ($tmfs-title "Commit Message of " (version-beautify-revision root rev))
          (if (== rev p)
              "parent 0"
              `(concat "parent "
@@ -255,7 +255,7 @@
     (string-append (url->system (url-tail u)) " - Revision " rev)))
 
 (tm-define (version-revision name rev) "")
-(tm-define (beautify-revision name rev) rev)
+(tm-define (version-beautify-revision name rev) rev)
 
 (tmfs-load-handler (revision name)
   (let* ((u (tmfs-string->url (tmfs-cdr name)))
@@ -324,9 +324,9 @@
   (:require (== (version-tool name) "wrap"))
   (version-revision (url-wrap name) rev))
 
-(tm-define (beautify-revision name rev)
+(tm-define (version-beautify-revision name rev)
   (:require (== (version-tool name) "wrap"))
-  (beautify-revision (url-wrap name) rev))
+  (version-beautify-revision (url-wrap name) rev))
 
 (tm-define (version-update name)
   (:require (== (version-tool name) "wrap"))

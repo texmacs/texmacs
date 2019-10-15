@@ -167,7 +167,7 @@
 (define (beautify-git-revision rev)
   (string-take rev 7))
 
-(tm-define (beautify-revision name rev)
+(tm-define (version-beautify-revision name rev)
   (:require (== (version-tool name) "git"))
   (beautify-git-revision rev))
 
