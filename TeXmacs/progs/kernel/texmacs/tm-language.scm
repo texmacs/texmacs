@@ -101,6 +101,11 @@
 	  ;;(display* "Packrat= " (scheme->packrat `(or ,@l)) "\n")
 	  (packrat-define lan sym (scheme->packrat `(or ,@l))))))
 
+(define (attach-macros lan l)
+  (for (x l)
+    (when (and (list-2? x) (string? (car x)) (symbol? (cadr x)))
+      (packrat-property lan (car x) "macro" (symbol->string (cadr x))))))
+
 (define (define-rule-impl lan x)
   (cond ((func? x :synopsis)
 	 (noop))
@@ -108,6 +113,8 @@
 	 (define-rule-one lan (symbol->string (cadr x)) (cddr x)))
 	((func? x 'inherit 1)
 	 (packrat-inherit lan (symbol->string (cadr x))))
+        ((func? x 'attach-macro)
+         (attach-macros lan (cdr x)))
 	(else (error "invalid packrat rule"))))
 
 (tm-define (define-language-impl lan gr)

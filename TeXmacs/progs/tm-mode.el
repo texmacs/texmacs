@@ -20,7 +20,7 @@
 
 (setq nullary-keywords
   '(begin cond else
-    values define-preferences menu-dynamic conserve-focus
+    values define-preferences menu-dynamic conserve-focus attach-macro
     case-lambda kbd-map kbd-wildcards kbd-commands kbd-symbols
     define-grammar define-regexp-grammar
     drd-rule logic-rules assume texmacs-modes

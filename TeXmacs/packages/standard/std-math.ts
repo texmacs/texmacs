@@ -1,4 +1,4 @@
-<TeXmacs|1.99.7>
+<TeXmacs|1.99.11>
 
 <style|<tuple|source|std>>
 
@@ -182,19 +182,41 @@
     </src-comment>
   </active*>
 
-  <assign|math-dots-sep|0.5spc>
+  <assign|math-dots-min-sep|0em>
 
-  <assign|math-dots-spc|<macro|<hspace|<value|math-dots-sep>>>>
+  <assign|math-dots-sep|0.15em>
 
-  <assign|bottom-dots|<macro|<math-dots-spc><math-ignore|.><math-dots-spc><math-ignore|.><math-dots-spc><math-ignore|.><math-dots-spc><syntax||x>>>
+  <assign|math-dots-max-sep|0.2em>
 
-  <assign|center-dots|<macro|<math-dots-spc><math-ignore|\<cdot\>><math-dots-spc><math-ignore|\<cdot\>><math-dots-spc><math-ignore|\<cdot\>><math-dots-spc><syntax||x>>>
+  <assign|math-dots-min-padding|0em>
 
-  <assign|comma-dots|<macro|<rigid|,><bottom-dots>,>>
+  <assign|math-dots-padding|0.05em>
 
-  <assign|colon-dots|<macro|<rigid|:><bottom-dots>:>>
+  <assign|math-dots-max-padding|0.1em>
 
-  <assign|semicolon-dots|<macro|<rigid|;><bottom-dots>;>>
+  <assign|math-dots-vsep|0.05em>
+
+  <assign|math-dots-vpadding|0.05em>
+
+  <assign|math-dots-spc|<macro|<hspace|<value|math-dots-min-sep>|<value|math-dots-sep>|<value|math-dots-max-sep>>>>
+
+  <assign|math-dots-pad|<macro|<hspace|<value|math-dots-min-padding>|<value|math-dots-padding>|<value|math-dots-max-padding>>>>
+
+  <assign|math-dots-hook|<macro|<if|<equal|<value|font>|pagella>|<space|-0.03em|0em|0em>|<space|0em|0em|0em>>>>
+
+  <assign|low-dots|<macro|<math-dots-pad>.<math-dots-spc>.<math-dots-spc>.<math-dots-pad>>>
+
+  <assign|low-dots*|<macro|<math-dots-spc>.<math-dots-spc>.<math-dots-spc>.<math-dots-spc><math-dots-hook>>>
+
+  <assign|center-dots|<macro|<math-dots-pad><rigid|\<cdot\>><math-dots-spc><rigid|\<cdot\>><math-dots-spc><rigid|\<cdot\>><math-dots-pad>>>
+
+  <assign|high-dots|<macro|<math-dots-pad><rigid|\<hdot\>><math-dots-spc><rigid|\<hdot\>><math-dots-spc><rigid|\<hdot\>><math-dots-pad>>>
+
+  <assign|vertical-dots|<macro|<with|d|<plus|<times|<look-up|<box-info|\<cdot\>|w>|0>|1tmpt>|<value|math-dots-vsep>>|<resize|<superpose|\<cdot\>|<move|\<cdot\>|0em|<value|d>>|<move|\<cdot\>|0em|<minus|<value|d>>>>||<minus|1b|<value|math-dots-vpadding>>||<plus|1t|<value|math-dots-vpadding>>>>>>
+
+  <assign|diagonal-dots|<macro|<with|d|<times|<look-up|<box-info|\<cdot\>|w>|0>|1tmpt>|<with|hd|<plus|<value|d>|<value|math-dots-sep>>|vd|<plus|<value|d>|<value|math-dots-vsep>>|<math-dots-pad><resize|<superpose|\<cdot\>|<move|\<cdot\>|<minus|<value|hd>>|<value|vd>>|<move|\<cdot\>|<value|hd>|<minus|<value|vd>>>>||<minus|1b|<value|math-dots-vpadding>>||<plus|1t|<value|math-dots-vpadding>>><math-dots-pad>>>>>
+
+  <assign|upward-dots|<macro|<with|d|<times|<look-up|<box-info|\<cdot\>|w>|0>|1tmpt>|<with|hd|<plus|<value|d>|<value|math-dots-sep>>|vd|<plus|<value|d>|<value|math-dots-vsep>>|<math-dots-pad><resize|<superpose|\<cdot\>|<move|\<cdot\>|<value|hd>|<value|vd>>|<move|\<cdot\>|<minus|<value|hd>>|<minus|<value|vd>>>>||<minus|1b|<value|math-dots-vpadding>>||<plus|1t|<value|math-dots-vpadding>>><math-dots-pad>>>>>
 
   <\active*>
     <\src-comment>

@@ -63,11 +63,12 @@ text_property_rep tp_apply_rep
 text_property_rep::text_property_rep (
   int type2, int spc_before2, int spc_after2,
   int pen_before2, int pen_after2,
-  int op_type2, int priority2, int limits2):
+  int op_type2, int priority2, int limits2, tree_label macro2):
     type (type2),
     spc_before (spc_before2), spc_after (spc_after2),
     pen_before (pen_before2), pen_after (pen_after2),
-    op_type (op_type2), priority (priority2), limits (limits2) {}
+    op_type (op_type2), priority (priority2), limits (limits2),
+    macro (macro2) {}
 
 bool
 operator == (text_property_rep tpr1, text_property_rep tpr2) {
@@ -79,12 +80,22 @@ operator == (text_property_rep tpr1, text_property_rep tpr2) {
     (tpr1.pen_after == tpr2.pen_after) &&
     (tpr1.op_type == tpr2.op_type) &&
     (tpr1.priority == tpr2.priority) &&
-    (tpr1.limits == tpr2.limits);
+    (tpr1.limits == tpr2.limits) &&
+    (tpr1.macro == tpr2.macro);
 }
 
 bool
 operator != (text_property_rep tpr1, text_property_rep tpr2) {
   return !(tpr1 == tpr2);
+}
+
+text_property_rep
+copy (text_property_rep tpr) {
+  return text_property_rep (tpr.type,
+                            tpr.spc_before, tpr.spc_after,
+                            tpr.pen_before, tpr.pen_after,
+                            tpr.op_type, tpr.priority, tpr.limits,
+                            tpr.macro);
 }
 
 /******************************************************************************

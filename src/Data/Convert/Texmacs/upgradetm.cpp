@@ -4103,6 +4103,16 @@ preserve_spacing (tree t) {
   return change_doc_attr (t, "style", style);
 }
 
+tree
+preserve_dots (tree t) {
+  if (!is_non_style_document (t)) return t;
+  tree style= copy (extract (t, "style"));
+  if (is_atomic (style)) style= tuple (style);
+  if (style == tree (TUPLE)) style= tuple ("generic");
+  style << "old-dots";
+  return change_doc_attr (t, "style", style);
+}
+
 /******************************************************************************
 * Rename styles
 ******************************************************************************/
@@ -4336,6 +4346,9 @@ upgrade (tree t, string version) {
     t= rename_primitive (t, "html-div", "html-div-class");
     t= rename_primitive (t, "html-style", "html-div-style");
   }
+  if (version_inf_eq (version, "1.99.11"))
+    if (is_non_style_document (t))
+      t= preserve_dots (t);
   
   if (is_non_style_document (t))
     t= automatic_correct (t, version);

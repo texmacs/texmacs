@@ -756,4 +756,12 @@
     :<frac :<sqrt :<wide :<table :<row
     :<around :<around* :<big-around :<left :<mid :<right :<big
     :<lsub :<lsup :<rsub :<rsup :<lprime :<rprime
-    :<Prefix :<Postfix))
+    :<Prefix :<Postfix)
+
+  (attach-macro
+    ("<ldots>" low-dots)
+    ("<cdots>" center-dots)
+    ("<hdots>" high-dots)
+    ("<vdots>" vertical-dots)
+    ("<ddots>" diagonal-dots)
+    ("<udots>" upward-dots)))

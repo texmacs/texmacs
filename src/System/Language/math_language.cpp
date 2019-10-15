@@ -32,6 +32,7 @@ struct math_language_rep: language_rep {
   void set_left_spacing (string cl, string s);
   void set_right_spacing (string cl, string s);
   void set_limits (string cl, string s);
+  void set_macro (string sym, string s);
 
   void skip_spaces (string s, int& pos, space fn_spc, space& spc);
   string next_word (string s, int& pos);
@@ -134,6 +135,12 @@ math_language_rep::set_limits (string cl, string s) {
   }
 }
 
+void
+math_language_rep::set_macro (string sym, string s) {
+  tpr_member(sym)= copy (tpr_member(sym));
+  tpr_member(sym).macro= make_tree_label (s);
+}
+
 //math_language_rep::math_language_rep (string name, string s):
 math_language_rep::math_language_rep (string name):
   language_rep (name),
@@ -175,6 +182,17 @@ math_language_rep::math_language_rep (string name):
       group (a[i])= cl;
       tpr_member (a[i])= tpr_class [cl];
     }
+  }
+
+  it= iterate (props);
+  while (it->busy ()) {
+    D key = it->next ();
+    C prop= ((C) (key >> 32));
+    C sym = ((C) (key & 0xffffffff)) ^ prop;
+    string smb= packrat_decode[sym ][0]->label;
+    string var= packrat_decode[prop][0]->label;
+    string val= props[key];
+    if (var == "macro") set_macro (smb, val);
   }
 }
 

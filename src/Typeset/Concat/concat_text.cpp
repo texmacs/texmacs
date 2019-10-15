@@ -33,6 +33,29 @@ concater_rep::typeset_math_substring (string s, path ip, int pos, int otype) {
 }
 
 void
+concater_rep::typeset_math_macro
+  (string s, tree_label m, path ip, int p1, int p2, int otype)
+{
+  // NOTE: start dirty hack to get spacing of ,..., right
+  static tree_label LOW_DOTS= make_tree_label ("low-dots");
+  static tree_label VAR_LOW_DOTS= make_tree_label ("low-dots*");
+  if (m == LOW_DOTS) {
+    char c1= (p1>0? s[p1-1]: ' ');
+    char c2= (p2<N(s)? s[p2]: ' ');
+    if (c1 == ',' || c1 == ':' || c1 == ';' ||
+        c2 == ',' || c2 == ':' || c2 == ';') {
+      m= VAR_LOW_DOTS;
+      a[N(a)-1]->spc= 0;
+    }
+  }
+  // NOTE: end dirty hack to get spacing of ,..., right
+
+  marker (descend (ip, p1));
+  typeset_compound (tree (m), decorate_middle (ip));
+  marker (descend (ip, p2));
+}
+
+void
 concater_rep::typeset_colored_substring
   (string s, path ip, int pos, string col)
 {
@@ -127,7 +150,10 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
         box   rb= resize_box (decorate (ip), mb, 0, tb->y1, 0, tb->y2);
         a << line_item (STD_ITEM, OP_SKIP, rb, HYPH_INVALID);
       }
-      typeset_math_substring (s (start, pos), ip, start, tp->op_type);
+      if (tp->macro == 0 || env->read (as_string (tp->macro)) == UNINIT)
+        typeset_math_substring (s (start, pos), ip, start, tp->op_type);
+      else
+        typeset_math_macro (s, tp->macro, ip, start, pos, tp->op_type);
       penalty_min (tp->pen_after);
       if (tp->limits != LIMITS_NONE) with_limits (tp->limits);
       if (spc_ok) { PRINT_SPACE (tp->spc_after); }

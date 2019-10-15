@@ -279,6 +279,14 @@ concater_rep::typeset_above (tree t, path ip) {
   env->local_end_script (old_il);
   env->local_end (MATH_CONDENSED, old_mc);
   env->local_end (MATH_DISPLAY, old_ds);
+  // NOTE: start dirty hack to get scripts above ... right
+  if ((t[0] == "<ldots>" && env->read ("low-dots") != UNINIT) ||
+      (t[0] == "<cdots>" && env->read ("center-dots") != UNINIT)) {
+    string s= (t[0] == "<ldots>"? ",": "<cdot>");
+    box tb= typeset_as_concat (env, s, decorate_middle (descend (ip, 0)));
+    b1= resize_box (descend (ip, 0), b1, b1->x1, b1->y1, b1->x2, tb->y2);
+  }
+  // NOTE: end dirty hack to get scripts above ... right
   print (limit_box (ip, b1, box (), b2, env->fn, false));
 }
 
