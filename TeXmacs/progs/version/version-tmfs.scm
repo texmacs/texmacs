@@ -255,6 +255,7 @@
     (string-append (url->system (url-tail u)) " - Revision " rev)))
 
 (tm-define (version-revision name rev) "")
+(tm-define (beautify-revision name rev) rev)
 
 (tmfs-load-handler (revision name)
   (let* ((u (tmfs-string->url (tmfs-cdr name)))
@@ -325,7 +326,7 @@
 
 (tm-define (beautify-revision name rev)
   (:require (== (version-tool name) "wrap"))
-  rev)
+  (beautify-revision (url-wrap name) rev))
 
 (tm-define (version-update name)
   (:require (== (version-tool name) "wrap"))
