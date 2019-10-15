@@ -21,10 +21,6 @@ class cell;
 class table;
 
 class table_rep: public concrete_struct {
-private:
-  hashmap<pair<tree, int>, tree*> cache;
-  tree* extract_format (tree fm, int n);
-
 protected:
   hashmap<string,tree> var;   // formatting variables
 
@@ -165,5 +161,7 @@ class cell {
   inline cell (edit_env env): rep (tm_new<cell_rep> (env)) {}
 };
 CONCRETE_NULL_CODE(cell);
+
+void extract_format (tree fm, tree* r, int n);
 
 #endif // defined TABLE_H

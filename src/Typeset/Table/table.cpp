@@ -13,7 +13,6 @@
 #include "Boxes/construct.hpp"
 #include "Format/format.hpp"
 #include "analyze.hpp"
-#include "iterator.hpp"
 
 lazy make_lazy_paragraph (edit_env env, array<box> bs, path ip);
 
@@ -24,10 +23,7 @@ lazy make_lazy_paragraph (edit_env env, array<box> bs, path ip);
 table_rep::table_rep (edit_env env2, int status2, int i0b, int j0b):
   var (""), env (env2), status (status2), i0 (i0b), j0 (j0b),
   T (NULL), nr_rows (0), mw (NULL), lw (NULL), rw (NULL),
-  width (0), height (0) {
-
- cache= hashmap<pair<tree, int>, tree*>();
-}
+  width (0), height (0) {}
 
 table_rep::~table_rep () {
   if (T != NULL) {
@@ -39,11 +35,6 @@ table_rep::~table_rep () {
   if (mw != NULL) tm_delete_array (mw);
   if (lw != NULL) tm_delete_array (lw);
   if (rw != NULL) tm_delete_array (rw);
-
-  iterator<pair<tree,int>> iter= iterate(cache);
-  while (iter->busy ()) {
-    STACK_DELETE_ARRAY (cache[iter->next ()]);
-  }
 }
 
 void
@@ -76,39 +67,6 @@ table_rep::display (bool flag) {
   else cout << " }";
 }
 
-tree*
-table_rep::extract_format (tree fm, int n) {
-  pair<tree, int> key = pair<tree, int> (tree(), n);
-  if (is_func (fm, TFORMAT))
-    key = pair<tree, int> (fm, n);
-  if (cache->contains (key)) return cache[key];
-
-  int i;
-  STACK_NEW_ARRAY (r, tree, n);
-  for (i=0; i<n; i++) r[i]= tree (TFORMAT);
-
-  if (!is_func (fm, TFORMAT)) {
-    cache (key)= r;
-    return r;
-  }
-
-  for (i=0; i<N(fm); i++)
-    if (is_func (fm[i], CWITH) && (N(fm[i]) >= 2) &&
-        is_int (fm[i][0]) && is_int (fm[i][1])) {
-      int k1= as_int (fm[i][0]);
-      int k2= as_int (fm[i][1]);
-      tree u= fm[i] (2, N (fm[i]));
-      if (k1>=0) k1--; else k1+=n;
-      if (k2> 0) k2--; else k2+=n;
-      if ((k1 >= n) || (k2 < 0)) continue;
-      k1= max (k1, 0);
-      k2= min (k2, n-1);
-      for (int k=k1; k<=k2; k++) r[k] << u;
-    }
-  cache (key)= r;
-  return r;
-}
-
 void
 table_rep::typeset (tree t, path iq) {
   ip= iq;
@@ -127,24 +85,22 @@ table_rep::typeset (tree t, path iq) {
 
 void
 table_rep::typeset_table (tree fm, tree t, path ip) {
-  // std_bench << INDENT;
-  // std_bench << "typeset_table start:" << texmacs_time () << LF;
   int i;
   nr_rows= N(t);
   nr_cols= 0;
   T= tm_new_array<cell*> (nr_rows);
   for (i=0; i<nr_rows; i++) T[i]= NULL;
-  tree* subformat= extract_format (fm, nr_rows);
+  STACK_NEW_ARRAY (subformat, tree, nr_rows);
+  extract_format (fm, subformat, nr_rows);
   for (i=0; i<nr_rows; i++) {
     tree old= env->local_begin (CELL_ROW_NR, as_string (i));
     typeset_row (i, subformat[i], t[i], descend (ip, i));
     env->local_end (CELL_ROW_NR, old);
   }
+  STACK_DELETE_ARRAY (subformat);
   mw= tm_new_array<SI> (nr_cols);
   lw= tm_new_array<SI> (nr_cols);
   rw= tm_new_array<SI> (nr_cols);
-  // std_bench << "typeset_table end:" << texmacs_time () << LF;
-  // std_bench << UNINDENT;
 }
 
 void
@@ -153,7 +109,8 @@ table_rep::typeset_row (int i, tree fm, tree t, path ip) {
   int j;
   nr_cols= (i==0? N(t): min (nr_cols, N(t)));
   T[i]= tm_new_array<cell> (nr_cols);
-  tree* subformat= extract_format (fm, nr_cols);
+  STACK_NEW_ARRAY (subformat, tree, nr_cols);
+  extract_format (fm, subformat, nr_cols);
   for (j=0; j<nr_cols; j++) {
     cell& C= T[i][j];
     C= cell (env);
@@ -166,6 +123,7 @@ table_rep::typeset_row (int i, tree fm, tree t, path ip) {
     C->col_span= min (C->col_span, nr_cols- j);
     if (hyphen == "y") C->row_span= 1;
   }
+  STACK_DELETE_ARRAY (subformat);
 }
 
 /******************************************************************************
