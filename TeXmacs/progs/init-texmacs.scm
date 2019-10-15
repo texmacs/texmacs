@@ -232,6 +232,7 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting programming modes\n")
+(lazy-format (prog prog-format) cpp scheme)
 (lazy-keyboard (prog prog-kbd) in-prog?)
 (lazy-menu (prog prog-menu) prog-format-menu prog-format-icons
 	   prog-menu prog-icons)
@@ -340,7 +341,6 @@
 
 ;(display "Booting converters\n")
 (lazy-format (convert rewrite init-rewrite) texmacs verbatim)
-(lazy-format (prog prog-format) cpp scheme)
 (lazy-format (convert tmml init-tmml) tmml)
 (lazy-format (convert latex init-latex) latex)
 (lazy-format (convert html init-html) html)
