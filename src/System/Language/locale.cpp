@@ -1,8 +1,8 @@
 
 /******************************************************************************
 * MODULE     : locale.cpp
-* COPYRIGHT  : (C) 1999  Joris van der Hoeven
-*                  2019  Darcy Shen
+* DESCRIPTION: Locale related routines
+* COPYRIGHT  : (C) 1999-2019  Joris van der Hoeven, Darcy Shen
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
