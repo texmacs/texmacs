@@ -1021,7 +1021,8 @@
     (=> (balloon (eval (upcase-first (get-init "page-type")))
                  "Paper size")
         (link document-page-size-menu))
-    (=> (balloon (eval (upcase-first (font-family-main (get-init "font"))))
+    (=> (balloon (eval `(verbatim ,(upcase-first
+                                    (font-family-main (get-init "font")))))
                  "Main document font")
         (link document-short-font-menu))
     (=> (balloon (eval (string-append (get-init "font-base-size") "pt"))

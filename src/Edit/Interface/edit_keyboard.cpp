@@ -131,7 +131,8 @@ edit_interface_rep::try_shortcut (string comb) {
         if (cork_to_utf8 (r) != r)
           rhs= tree (CONCAT, rhs, " (" * r(1, N(r)-1) * ")");
       call ("set-temporary-message",
-            tree (CONCAT, "keyboard shortcut: ", rew), rhs,
+            tree (CONCAT, "keyboard shortcut: ", rew),
+            verbatim (rhs),
             shorth == ""? 1: 3000);
     }
     if ((status & 1) == 1) cmd ();

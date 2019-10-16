@@ -47,15 +47,15 @@ edit_interface_rep::set_left_footer () {
   else if (as_string (get_init_value (MODE_LANGUAGE (mode))) != lan)
     s << " " << lan;
   else s << " " << mode;
-  if ((mode == "text") || (mode == "src")) {
-    s << " " << main_family (get_env_string (FONT));
+  if ((mode == "text") || (mode == "src") || new_fonts) {
+    s << " " << verbatim (main_family (get_env_string (FONT)));
     append_left_footer (s, FONT_FAMILY);
     s << " " << as_string ((int) ((base_sz+0.5)*sz));
     append_left_footer (s, FONT_SERIES);
     append_left_footer (s, FONT_SHAPE);
   }
   else if (mode == "math") {
-    s << " " << get_env_string (MATH_FONT);
+    s << " " << verbatim (get_env_string (MATH_FONT));
     append_left_footer (s, MATH_FONT_FAMILY);
     s << " " << as_string ((int) ((base_sz+0.5)*sz));
     append_left_footer (s, MATH_FONT_SERIES);
@@ -64,7 +64,7 @@ edit_interface_rep::set_left_footer () {
   else if (mode == "prog") {
     string session_name= get_env_string (PROG_SESSION);
     if (session_name != "default") s << "-" << session_name;
-    s << " " << get_env_string (PROG_FONT);
+    s << " " << verbatim (get_env_string (PROG_FONT));
     append_left_footer (s, PROG_FONT_FAMILY);
     s << " " << as_string ((int) ((base_sz+0.5)*sz));
     append_left_footer (s, PROG_FONT_SERIES);
@@ -116,6 +116,7 @@ edit_interface_rep::compute_text_footer (tree st) {
   if (starts (r, "<") && !starts (r, "<#"))
     if (cork_to_utf8 (r) != r)
       r= r * " (" * r(1, N(r)-1) * ")";
+  if (starts (r, "<")) return verbatim (r);
   return r;
 }
 
@@ -144,18 +145,21 @@ get_with_text (tree t) {
     if (is_atomic (t[2*i]) && (t[2*i]!="") && is_atomic (t[2*i+1])) {
       if (i>0) s << " ";
       string var= t[2*i]->label;
-      if ((var!=MODE) && (var!=COLOR) && (var!=PAR_MODE) &&
-          (var!=LANGUAGE) && (var!=FONT) &&
-          (var!=FONT_FAMILY) && (var!=FONT_SHAPE) && (var!=FONT_SERIES) &&
-          (var!=MATH_LANGUAGE) && (var!=MATH_FONT) &&
-          (var!=MATH_FONT_FAMILY) && (var!=MATH_FONT_SHAPE) &&
-          (var!=MATH_FONT_SERIES) &&
-          (var!=PROG_LANGUAGE) && (var!=PROG_FONT) &&
-          (var!=PROG_FONT_FAMILY) && (var!=PROG_FONT_SHAPE) &&
-          (var!=PROG_FONT_SERIES) &&
-          (var!=PROG_SESSION))
+      if ((var==MODE) || (var==COLOR) || (var==PAR_MODE) ||
+          (var==LANGUAGE) ||
+          (var==FONT_FAMILY) || (var==FONT_SHAPE) || (var==FONT_SERIES) ||
+          (var==MATH_LANGUAGE) ||
+          (var==MATH_FONT_FAMILY) || (var==MATH_FONT_SHAPE) ||
+          (var==MATH_FONT_SERIES) ||
+          (var==PROG_LANGUAGE) ||
+          (var==PROG_FONT_FAMILY) || (var==PROG_FONT_SHAPE) ||
+          (var==PROG_FONT_SERIES) ||
+          (var==PROG_SESSION))
+        s << t[2*i+1]->label;
+      else if ((var==FONT) || (var==MATH_FONT) || (var==PROG_FONT))
+        s << verbatim (t[2*i+1]->label);
+      else
         s << (var * "=" * t[2*i+1]->label);
-      else s << t[2*i+1]->label;
     }
   return s;
 }
@@ -223,27 +227,27 @@ edit_interface_rep::compute_operation_footer (tree st) {
       break;
     case VAR_INCLUDE:
     case INCLUDE:
-      r= concat ("include ", as_string (st[0])); break;
+      r= concat ("include ", verbatim (as_string (st[0]))); break;
     case INACTIVE:
       r= concat ("inactive ", drd->get_name (L(st[0]))); break;
     case VAR_INACTIVE:
       r= concat ("inactive ", drd->get_name (L(st[0]))); break;
     case LABEL:
-      r= concat ("label: ", as_string (st[0])); break;
+      r= concat ("label: ", verbatim (as_string (st[0]))); break;
     case REFERENCE:
-      r= concat ("reference: ", as_string (st[0])); break;
+      r= concat ("reference: ", verbatim (as_string (st[0]))); break;
     case PAGEREF:
-      r= concat ("page reference: ", as_string (st[0])); break;
+      r= concat ("page reference: ", verbatim (as_string (st[0]))); break;
     case GET_ATTACHMENT:
-      r= concat ("get attachment: ", as_string (st[0])); break;
+      r= concat ("get attachment: ", verbatim (as_string (st[0]))); break;
     case WRITE:
-      r= concat ("write to ", as_string (st[0])); break;
+      r= concat ("write to ", verbatim (as_string (st[0]))); break;
     case TOC_NOTIFY:
-      r= concat ("toc notify: ", as_string (st[1])); break;
+      r= concat ("toc notify: ", verbatim (as_string (st[1]))); break;
     case SPECIFIC:
       r= concat ("specific ", as_string (st[0])); break;
     case HYPHENATE_AS:
-      r= concat ("hyphenate as ", as_string (st[0])); break;
+      r= concat ("hyphenate as ", verbatim (as_string (st[0]))); break;
     case IMAGE:
       r= concat ("image"); break;
     default: ;
