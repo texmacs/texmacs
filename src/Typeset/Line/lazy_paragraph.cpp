@@ -382,17 +382,31 @@ lazy_paragraph_rep::contract_glyphs (SI dw, SI the_width) {
 * Typesetting a line
 ******************************************************************************/
 
+bool
+lazy_paragraph_rep::non_trailing_tabs () {
+  for (int i=0; i<N(tabs); i++) {
+    int pos= tabs[i]->pos;
+    bool b1= false, b2= false;
+    for (int k=cur_start; k<pos; k++)
+      if (items[k]->w () > 0) { b1= true; break; }
+    for (int k=pos+1; k<N(items); k++)
+      if (items[k]->w () > 0) { b2= true; break; }
+    if (b1 && b2) return true;
+  }
+  return false;
+}
+
 void
 lazy_paragraph_rep::make_unit (string mode, SI the_width, bool break_flag) {
   int i;
-
   // format tabs
   //cout << "      " << N(tabs) << "] " << (cur_w->def/PIXEL)
   //     << " < " << (the_width/PIXEL) << "? (" << break_flag << ")\n";
   //cout << mode << ", " << break_flag << ", " << N(tabs)
   //     << ", " << cur_w->def << " -- " << cur_w->max
   //     << ", " << the_width << "\n";
-  if (break_flag && (N(tabs)>0) && (cur_w->def<the_width)) {
+  if (break_flag && (N(tabs)>0) && (cur_w->def<the_width) &&
+      (mode != "center" || non_trailing_tabs ())) {
     double tot_weight= 0.0;
     int pos_first= -1, pos_last=-1;
     int num_hflush= 0;

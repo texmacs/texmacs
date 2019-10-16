@@ -83,6 +83,7 @@ protected:
   void handle_decorations ();
 
   void line_start ();
+  bool non_trailing_tabs ();
   void make_unit (string mode, SI the_width, bool break_flag);
   void line_unit (path start, path end, bool break_flag,
 		  string mode, SI the_left, SI the_right);
