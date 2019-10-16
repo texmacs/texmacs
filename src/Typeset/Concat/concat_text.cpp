@@ -157,6 +157,7 @@ concater_rep::typeset_math_string (tree t, path ip, int pos, int end) {
       penalty_min (tp->pen_after);
       if (tp->limits != LIMITS_NONE) with_limits (tp->limits);
       if (spc_ok) { PRINT_SPACE (tp->spc_after); }
+      else if (tp->op_type == OP_INFIX) penalty_max (HYPH_INVALID);
     }
   } while (pos<end);
 }
