@@ -101,6 +101,11 @@
 (tm-define (test-init-font? val . opts)
   (== (get-init "font") val))
 
+(tm-define (remove-font-packages)
+  (with l (get-style-list)
+    (with f (list-filter l (lambda (p) (not (string-ends? p "-font"))))
+      (set-style-list f))))
+
 (tm-define (init-font val . opts)
   (:check-mark "*" test-init-font?)
   (cond ((== val "TeXmacs Computer Modern")
@@ -121,7 +126,12 @@
           (init-env "font" val)
           (when (nnull? opts)
             (init-env "math-font" (car opts)))
-          (init-env "font-family" "rm"))))
+          (init-env "font-family" "rm")
+          (remove-font-packages)
+          (with pack (string-append val "-font")
+            (with dir "$TEXMACS_PATH/packages/customize/fonts"
+              (when (url-exists? (url-append dir (string-append pack ".ts")))
+                (add-style-package pack)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initial environment management in specific buffers

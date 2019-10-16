@@ -202,11 +202,13 @@
 
   <assign|math-dots-pad|<macro|<hspace|<value|math-dots-min-padding>|<value|math-dots-padding>|<value|math-dots-max-padding>>>>
 
-  <assign|math-dots-hook|<macro|<if|<equal|<value|font>|pagella>|<space|-0.03em|0em|0em>|<space|0em|0em|0em>>>>
+  <assign|math-dots-pre|<macro|<space|0em|0em|0em>>>
+
+  <assign|math-dots-post|<macro|<space|0em|0em|0em>>>
 
   <assign|low-dots|<macro|<math-dots-pad>.<math-dots-spc>.<math-dots-spc>.<math-dots-pad>>>
 
-  <assign|low-dots*|<macro|<math-dots-spc>.<math-dots-spc>.<math-dots-spc>.<math-dots-spc><math-dots-hook>>>
+  <assign|low-dots*|<macro|<math-dots-pre><math-dots-spc>.<math-dots-spc>.<math-dots-spc>.<math-dots-spc><math-dots-post>>>
 
   <assign|center-dots|<macro|<math-dots-pad><rigid|\<cdot\>><math-dots-spc><rigid|\<cdot\>><math-dots-spc><rigid|\<cdot\>><math-dots-pad>>>
 

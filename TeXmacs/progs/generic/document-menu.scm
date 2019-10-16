@@ -304,7 +304,8 @@
   (:check-mark "*" test-default-font?)
   (init-default "font")
   (init-default "math-font")
-  (init-default "font-family"))
+  (init-default "font-family")
+  (remove-font-packages))
 
 (menu-bind document-short-chinese-font-menu
   (if (font-exists-in-tt? "AppleGothic")

@@ -78,7 +78,9 @@
                                       (list (car l)))))))
 
 (tm-define (set-style-list l)
-  (set-style-tree (tm->tree `(tuple ,@(normalize-style-list l)))))
+  (set! l (normalize-style-list l))
+  (when (!= l (get-style-list))
+    (set-style-tree (tm->tree `(tuple ,@l)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level routines for style and style package management
