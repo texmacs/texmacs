@@ -280,6 +280,12 @@ restricted_exec (edit_env env, tree t, int end) {
   else if (is_compound (t, "hide-preamble", 1) ||
            is_compound (t, "show-preamble", 1))
     env->exec (t[0]);
+  else if (is_compound (t, "script-input", 4) && end == 2) {
+    if (env->read (MODE) == "text") {
+      env->write (MODE, "prog");
+      env->write (PROG_LANGUAGE, t[0]);
+    }
+  }
 }
 
 static tree
