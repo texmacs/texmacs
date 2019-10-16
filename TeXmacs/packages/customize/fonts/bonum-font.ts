@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package|pagella-font|1.0>
+    <src-package|bonum-font|1.0>
 
     <\src-purpose>
-      Tweak various style parameters for the TeX Gyre Pagella font
+      Tweak various style parameters for the TeX Gyre Bonum font
     </src-purpose>
 
     <src-copyright|2019|Joris van der Hoeven>
@@ -22,9 +22,11 @@
 
   <use-package|texgyre-font>
 
-  <assign|font|pagella>
+  <assign|font|bonum>
 
-  <assign|math-dots-post|<macro|<space|-0.03em|0em|0em>>>
+  \;
+
+  \;
 </body>
 
 <\initial>

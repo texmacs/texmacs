@@ -4,10 +4,10 @@
 
 <\body>
   <active*|<\src-title>
-    <src-package|pagella-font|1.0>
+    <src-package|texgyre-font|1.0>
 
     <\src-purpose>
-      Tweak various style parameters for the TeX Gyre Pagella font
+      Common style parameters for TeX Gyre fonts
     </src-purpose>
 
     <src-copyright|2019|Joris van der Hoeven>
@@ -20,11 +20,11 @@
     </src-license>
   </src-title>>
 
-  <use-package|texgyre-font>
+  <assign|par-sep|0.3fn>
 
-  <assign|font|pagella>
+  <assign|par-hor-sep|0.2fn>
 
-  <assign|math-dots-post|<macro|<space|-0.03em|0em|0em>>>
+  <assign|par-ver-sep|0.1fn>
 </body>
 
 <\initial>
