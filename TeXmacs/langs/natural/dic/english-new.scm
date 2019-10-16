@@ -285,6 +285,7 @@
 ("browse web" "")
 ("browser" "")
 ("buffer" "")
+("buffer in this window" "")
 ("buffer management" "")
 ("buffer must be on disk" "")
 ("buffer must have a name" "")

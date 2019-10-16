@@ -291,6 +291,7 @@
 ("browse web" "naviguer sur le réseau")
 ("browser" "navigateur")
 ("buffer" "tampon")
+("buffer in this window" "tampon dans cette fenêtre")
 ("buffer management" "gestion des tampons")
 ("buffer must be on disk" "le tampon doit être sur le disque")
 ("buffer must have a name" "le tampon doit avoir un nom")

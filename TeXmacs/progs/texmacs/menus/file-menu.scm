@@ -277,6 +277,7 @@
       (link bookmarks-menu))
   (if (window-per-buffer?)
       ---
+      (group "Buffer in this window")
       ("New" (new-document*))
       ("Load" (open-document*))
       (-> "Recent"
