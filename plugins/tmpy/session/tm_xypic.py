@@ -11,7 +11,11 @@
 
 import os
 import sys
-sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
+from os.path import exists
+if (exists (os.environ.get("TEXMACS_HOME_PATH"))):
+    sys.path.append(os.environ.get("TEXMACS_HOME_PATH") + "/plugins/")
+else:
+    sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
 from tmpy.graph.xypic     import XYpic
 from tmpy.capture         import CaptureStdout

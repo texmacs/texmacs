@@ -12,7 +12,11 @@
 
 import os
 import sys
-sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
+from os.path import exists
+if (exists (os.environ.get("TEXMACS_HOME_PATH"))):
+    sys.path.append(os.environ.get("TEXMACS_HOME_PATH") + "/plugins/")
+else:
+    sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
 import tempfile
 import traceback
