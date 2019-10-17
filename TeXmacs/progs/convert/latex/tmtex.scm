@@ -1600,7 +1600,8 @@
 
 (define (tmtex-eps-names)
   (set! tmtex-serial (+ tmtex-serial 1))
-  (let* ((postfix (string-append "-" (number->string tmtex-serial) ".eps"))
+  (let* ((suffix (if (get-boolean-preference "native pdf") ".pdf" ".eps"))
+         (postfix (string-append "-" (number->string tmtex-serial) suffix))
 	 (name-url (url-glue tmtex-image-root-url postfix))
 	 (name-string (string-append tmtex-image-root-string postfix)))
     (values name-url name-string)))
