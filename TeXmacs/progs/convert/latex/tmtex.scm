@@ -929,15 +929,16 @@
   t)
 
 (define (tmtex-float-make wide? size type position x capt)
-  (let* ((type* (if wide? (string-append type "*") type))
+  (let* ((pos (string-replace position "f" ""))
+         (type* (if wide? (string-append type "*") type))
          (body (tmtex x))
 	 (caption (tmtex (into-single-paragraph capt)))
 	 (body* `(!paragraph ,body (caption ,caption))))
     (cond ((and (== size "big") (== type "figure"))
-	   `((!begin ,type* (!option ,position)) ,body*))
+	   `((!begin ,type* (!option ,pos)) ,body*))
 	  ((and (== size "big") (== type "table"))
-	   `((!begin ,type* (!option ,position)) ,body*))
-	  (else (list 'tmfloat position size type* body caption)))))
+	   `((!begin ,type* (!option ,pos)) ,body*))
+	  (else (list 'tmfloat pos size type* body caption)))))
 
 (define (tmtex-float-table? x)
   (or (func? x 'small-table 2) (func? x 'big-table 2)))
@@ -951,17 +952,18 @@
       "big"))
 
 (define (tmtex-float-sub wide? position l)
-  (cond ((func? l 'document 1)
-         (tmtex-float-sub wide? position (cadr l)))
-	((tmtex-float-figure? l)
-	 (tmtex-float-make wide? (tmtex-float-size l) "figure"
-                           position (cadr l) (caddr l)))
-	((tmtex-float-table? l)
-	 (tmtex-float-make wide? (tmtex-float-size l) "table"
-                           position (cadr l) (caddr l)))
-	(else
-         (tmtex-float-make wide? "big" "figure"
-                           position l ""))))
+  (with pos (string-replace position "f" "")
+    (cond ((func? l 'document 1)
+           (tmtex-float-sub wide? pos (cadr l)))
+          ((tmtex-float-figure? l)
+           (tmtex-float-make wide? (tmtex-float-size l) "figure"
+                             pos (cadr l) (caddr l)))
+          ((tmtex-float-table? l)
+           (tmtex-float-make wide? (tmtex-float-size l) "table"
+                             pos (cadr l) (caddr l)))
+          (else
+            (tmtex-float-make wide? "big" "figure"
+                              pos l "")))))
 
 (define (tmtex-float l)
   (tmtex-float-sub #f (force-string (cadr l)) (caddr l)))
