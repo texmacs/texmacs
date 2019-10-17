@@ -126,6 +126,7 @@ qt_decode_length (string width, string height,
     // Absolute pixel units 
   else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
     double x = as_double (width (0, N(width) - 2));
+    if (retina_zoom == 2) x *= 1.5;
     size.setWidth(x);
   }
 
@@ -145,6 +146,7 @@ qt_decode_length (string width, string height,
   }
   else if (ends (height, "px") && is_double (height (0, N(height) - 2))) {
     double y = as_double (height (0, N(height) - 2));
+    if (retina_zoom == 2) y *= 1.5;
     size.setHeight(y);
   }
   return size;
