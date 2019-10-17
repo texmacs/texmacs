@@ -406,7 +406,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   }
   array<int> a;
   a << b->x3 << b->y3 << b->x4 << b->y4 << b->x1 << b->y1 << b->x2 << b->y2;
-  a << ((dpi * bsz) / 10);
+  a << ((dpi * bsz) / 10) << dpi;
   return a;
 }
 
