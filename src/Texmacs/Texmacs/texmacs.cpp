@@ -176,7 +176,7 @@ TeXmacs_init_paths (int& argc, char** argv) {
   // check on the latest $TEXMACS_PATH
   current_texmacs_path = get_env ("TEXMACS_PATH");
   if (is_empty (current_texmacs_path) ||
-      !exists (url (current_texmacs_path))) {
+      !exists (url_system (current_texmacs_path))) {
     cout << "The required TEXMACS_PATH("
          << current_texmacs_path
          << ") does not exists" << LF;
