@@ -22,8 +22,8 @@ class DraTeX(LaTeX):
         the_plugin_path = get_plugin_path(name)
         self.pre_code = """
 \\documentclass{standalone}
-\\input %s/latex/DraTex.sty
-\\input %s/latex/AlDraTex.sty
+\\input "%s/latex/DraTex.sty"
+\\input "%s/latex/AlDraTex.sty"
 \\pagestyle{empty}
 \\begin{document}
 """ % (the_plugin_path, the_plugin_path)
