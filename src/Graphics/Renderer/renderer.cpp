@@ -19,13 +19,16 @@ int    std_shrinkf  = 5;
 bool   retina_manual= false;
 bool   retina_iman  = false;
 int    retina_factor= 1;
+int    retina_zoom  = 1;
 int    retina_icons = 1;
 double retina_scale = 1.0;
 
 int    get_retina_factor () { return retina_factor; }
+int    get_retina_zoom () { return retina_zoom; }
 int    get_retina_icons () { return retina_icons; }
 double get_retina_scale () { return retina_scale; }
 void   set_retina_factor (int f) { retina_factor= f; }
+void   set_retina_zoom (int z) { retina_zoom= z; }
 void   set_retina_icons (int i) { retina_icons= i; }
 void   set_retina_scale (double s) { retina_scale= s; }
 

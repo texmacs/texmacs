@@ -286,12 +286,19 @@ TeXmacs_main (int argc, char** argv) {
       else if (s == "-no-retina") {
         retina_manual= true;
         retina_factor= 1;
+        retina_zoom  = 1;
         retina_icons = 1;
         retina_scale = 1.0;
       }
       else if ((s == "-R") || (s == "-retina")) {
         retina_manual= true;
+#ifdef MACOSX_EXTENSIONS
         retina_factor= 2;
+        retina_zoom  = 1;
+#else
+        retina_factor= 1;
+        retina_zoom  = 2;
+#endif
         retina_icons = 2;
         retina_scale = 1.4;
       }

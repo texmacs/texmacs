@@ -179,6 +179,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(get-retina-zoom)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|get_retina_zoom> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(get-retina-icons)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -199,6 +207,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|set_retina_factor> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(set-retina-zoom <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|set_retina_zoom> which returns
     <scm|void>.
   </explain>
 

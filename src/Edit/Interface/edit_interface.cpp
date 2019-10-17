@@ -47,7 +47,7 @@ static double
 get_zoom (editor_rep* ed, tm_buffer buf) {
   if (!is_nil (buf) && buf->data->init->contains ("no-zoom"))
     return as_double (buf->data->init [ZOOM_FACTOR]);
-  else return ed->sv->get_default_zoom_factor ();
+  else return retina_zoom * ed->sv->get_default_zoom_factor ();
 }
 
 edit_interface_rep::edit_interface_rep ():

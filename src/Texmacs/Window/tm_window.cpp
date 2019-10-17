@@ -142,7 +142,7 @@ tm_window_rep::tm_window_rep (widget wid2, tree geom):
   menu_current (object ()), menu_cache (widget ()),
   text_ptr (NULL)
 {
-  zoomf= get_server () -> get_default_zoom_factor ();
+  zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
 }
 
 tm_window_rep::tm_window_rep (tree doc, command quit):
@@ -153,7 +153,7 @@ tm_window_rep::tm_window_rep (tree doc, command quit):
   text_ptr (NULL)
 {
   (void) doc;
-  zoomf= get_server () -> get_default_zoom_factor ();
+  zoomf= retina_zoom * get_server () -> get_default_zoom_factor ();
 }
 
 tm_window_rep::~tm_window_rep () {
@@ -176,6 +176,10 @@ texmacs_window_widget (widget wid, tree geom) {
   if (custom) {
     w= as_int (geom[0]);
     h= as_int (geom[1]);
+  }
+  if (w == 800 && h == 600) {
+    w *= retina_zoom;
+    h *= retina_zoom;
   }
   gui_root_extents (W, H); W /= PIXEL; H /= PIXEL;
   if (x < 0) x= W + x + 1 - w;
@@ -284,7 +288,7 @@ enrich_embedded_document (tree body, tree style) {
       if (is_atomic (orig[i]))
         initial (orig[i]->label)= orig[i+1];
   initial (DPI)= "720";
-  initial (ZOOM_FACTOR)= "1.2";
+  initial (ZOOM_FACTOR)= (retina_zoom==1? "1.2": "1.8");
   initial ("no-zoom")= "true";
   tree doc (DOCUMENT);
   doc << compound ("TeXmacs", TEXMACS_VERSION);
@@ -471,13 +475,13 @@ tm_window_rep::get_bottom_tools_flag (int which) {
 
 void
 tm_window_rep::set_window_zoom_factor (double zoom) {
-  zoomf= zoom;
-  ::set_zoom_factor (wid, zoom);
+  zoomf= retina_zoom * zoom;
+  ::set_zoom_factor (wid, zoomf);
 }
 
 double
 tm_window_rep::get_window_zoom_factor () {
-  return zoomf;
+  return zoomf / retina_zoom;
 }
 
 void

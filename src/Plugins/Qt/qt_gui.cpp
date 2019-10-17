@@ -147,8 +147,8 @@ needing_update (false)
     if (DEBUG_STD)
       debug_boot << "Screen extents: " << w/PIXEL << " x " << h/PIXEL << "\n";
     if (min (w, h) >= 1440 * PIXEL) {
-      retina_factor= 2;
-      retina_scale = 1.4;
+      retina_zoom = 2;
+      retina_scale= 1.4;
       if (!retina_iman) {
         retina_iman  = true;
         retina_icons = 2;
@@ -158,6 +158,8 @@ needing_update (false)
   }
   if (has_user_preference ("retina-factor"))
     retina_factor= get_user_preference ("retina-factor") == "on"? 2: 1;
+  if (has_user_preference ("retina-zoom"))
+    retina_zoom= get_user_preference ("retina-zoom") == "on"? 2: 1;
   if (has_user_preference ("retina-icons"))
     retina_icons= get_user_preference ("retina-icons") == "on"? 2: 1;
   if (has_user_preference ("retina-scale"))
@@ -1153,5 +1155,3 @@ int
 event_queue::size() const {
   return n;
 }
-
-

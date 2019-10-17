@@ -206,6 +206,15 @@ tmg_get_retina_factor () {
 }
 
 tmscm
+tmg_get_retina_zoom () {
+  // TMSCM_DEFER_INTS;
+  int out= get_retina_zoom ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_get_retina_icons () {
   // TMSCM_DEFER_INTS;
   int out= get_retina_icons ();
@@ -231,6 +240,19 @@ tmg_set_retina_factor (tmscm arg1) {
 
   // TMSCM_DEFER_INTS;
   set_retina_factor (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_set_retina_zoom (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "set-retina-zoom");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  set_retina_zoom (in1);
   // TMSCM_ALLOW_INTS;
 
   return TMSCM_UNSPECIFIED;
@@ -9866,9 +9888,11 @@ initialize_glue_basic () {
   tmscm_install_procedure ("default-japanese-font",  tmg_default_japanese_font, 0, 0, 0);
   tmscm_install_procedure ("default-korean-font",  tmg_default_korean_font, 0, 0, 0);
   tmscm_install_procedure ("get-retina-factor",  tmg_get_retina_factor, 0, 0, 0);
+  tmscm_install_procedure ("get-retina-zoom",  tmg_get_retina_zoom, 0, 0, 0);
   tmscm_install_procedure ("get-retina-icons",  tmg_get_retina_icons, 0, 0, 0);
   tmscm_install_procedure ("get-retina-scale",  tmg_get_retina_scale, 0, 0, 0);
   tmscm_install_procedure ("set-retina-factor",  tmg_set_retina_factor, 1, 0, 0);
+  tmscm_install_procedure ("set-retina-zoom",  tmg_set_retina_zoom, 1, 0, 0);
   tmscm_install_procedure ("set-retina-icons",  tmg_set_retina_icons, 1, 0, 0);
   tmscm_install_procedure ("set-retina-scale",  tmg_set_retina_scale, 1, 0, 0);
   tmscm_install_procedure ("tm-output",  tmg_tm_output, 1, 0, 0);

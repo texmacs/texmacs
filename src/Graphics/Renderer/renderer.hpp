@@ -156,12 +156,15 @@ void reverse (int& r, int& g, int& b);
 extern bool   retina_manual;
 extern bool   retina_iman;
 extern int    retina_factor;
+extern int    retina_zoom;
 extern int    retina_icons;
 extern double retina_scale;
-int    get_retina_factor ();
+int    get_retina_factor ();   // MacOS style
+int    get_retina_zoom ();     // GNU/Linux and Windows style
 int    get_retina_icons ();
 double get_retina_scale ();
 void   set_retina_factor (int f);
+void   set_retina_zoom (int z);
 void   set_retina_icons (int i);
 void   set_retina_scale (double s);
 

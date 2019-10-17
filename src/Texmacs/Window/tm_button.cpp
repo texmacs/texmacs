@@ -67,6 +67,10 @@ initialize_environment (edit_env& env, tree doc, drd_info& drd) {
   // env->write (DPI, "720");
   // env->write (ZOOM_FACTOR, "1.2");
   // env->write (PAGE_TYPE, "a5");
+  if (retina_zoom == 2) {
+    double mag= 1.5 * env->get_int (MAGNIFICATION);
+    env->write (MAGNIFICATION, as_string (mag));
+  }
   env->update ();
 }
 
