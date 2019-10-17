@@ -182,6 +182,16 @@ edit_env_rep::exec (tree t) {
   // cout << "Execute: " << t << "\n";
   if (is_atomic (t)) return t;
   switch (L(t)) {
+  case MOVE:
+  case SHIFT:
+  case RESIZE:
+  case CLIPPED: {
+    int i, n= N(t);
+    tree r (t, n);
+    r[0]= copy (t[0]);
+    for (i=1; i<n; i++) r[i]= t[i];
+    return r;
+  }
   case DATOMS:
     return exec_formatting (t, ATOM_DECORATIONS);
   case DLINES:
