@@ -66,7 +66,8 @@ class Graph(object):
         pass
 
     def after_evaluate(self):
-        shutil.rmtree(self.get_tmp_dir())
+        self.clean_tmp_dir()
+        self.remove_tmp_dir()
         self.height = 0
         self.width = 0
 
@@ -105,6 +106,22 @@ class Graph(object):
             return os.getenv("TEXMACS_HOME_PATH") + "\\system\\tmp\\" + dir + "\\"
         else:
             return os.getenv("TEXMACS_HOME_PATH") + "/system/tmp/" + dir + "/"
+
+    def remove_tmp_dir(self):
+        if (platform.system() != "Windows"):
+            os.rmdir(self.get_tmp_dir())
+
+    def clean_tmp_dir(self):
+        folder = self.get_tmp_dir()
+        for the_file in os.listdir(folder):
+            file_path = os.path.join(folder, the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print(e)
 
     def get_png_path(self):
         return self.get_tmp_dir() + self.name + ".png"
