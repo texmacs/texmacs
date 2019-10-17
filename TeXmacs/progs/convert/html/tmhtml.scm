@@ -1123,7 +1123,8 @@
 	  (receive (name-url name-string) (tmhtml-image-names "png")
 	    ;;(display* x " -> " name-url ", " name-string "\n")
 	    (let* ((extents (print-snippet name-url x #t))
-                   (unit (* (/ 600.0 (ninth extents)) (/ 1.0 20625.0)))
+                   (unit (/ 6000.0
+                            (* (ninth extents) (tenth extents) 20625.0)))
 		   (x3 (* (first extents) unit))
 		   (y3 (* (second extents) unit))
 		   (x4 (* (third extents) unit))

@@ -938,21 +938,15 @@ make_raster_image (url name, box b, double zoomf) {
   SI pixel= 5*PIXEL;
   SI w= b->x4 - b->x3;
   SI h= b->y4 - b->y3;
-  int pxw= (w+pixel-1)/pixel;
-  int pxh= (h+pixel-1)/pixel;
-  //b->x0= (3*pixel)/2 - b->x3;
-  //b->y0= pixel - b->y4;
-  //picture pic= native_picture (pxw+1, pxh+1, 0, 0);
+  SI ww= (SI) round (zoomf * w);
+  SI hh= (SI) round (zoomf * h);
+  int pxw= (ww+pixel-1)/pixel;
+  int pxh= (hh+pixel-1)/pixel;  
   b->x0= -b->x3;
   b->y0= -b->y4;
   picture pic= native_picture (pxw, pxh, 0, 0);
   renderer ren= picture_renderer (pic, zoomf);
   rectangles rs;
-  //cout << "(" << ren->ox/PIXEL << ", " << ren->oy/PIXEL << "), "
-  //     << "[" << ren->cx1/PIXEL << ", " << ren->cy1/PIXEL
-  //     << "; " << ren->cx2/PIXEL << ", " << ren->cy2/PIXEL << "], "
-  //     << "[" << (b->x0+b->x3)/PIXEL << ", " << (b->y0+b->y3)/PIXEL
-  //     << "; " << (b->x0+b->x4)/PIXEL << ", " << (b->y0+b->y4)/PIXEL << "]\n";
   b->redraw (ren, path (0), rs);
   save_picture (name, pic);
   tm_delete (ren);

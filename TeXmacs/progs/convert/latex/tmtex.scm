@@ -1610,8 +1610,7 @@
   (if (tmtex-math-mode?) (set! x `(with "mode" "math" ,x)))
   (receive (name-url name-string) (tmtex-eps-names)
     (let* ((extents (print-snippet name-url x #t))
-           (dpi (string->number (get-preference "printer dpi")))
-           (unit (* (/ 1.0 60984.0) (/ 600.0 dpi)))
+           (unit (* (/ 1.0 60984.0) (/ 600.0 (tenth extents))))
            (x3 (* unit (first extents)))
            (y3 (* unit (second extents)))
            (x4 (* unit (third extents)))
@@ -1622,10 +1621,15 @@
            (y2 (* unit (eighth extents)))
            (lm (string-append (number->string (- x3 x1)) "cm"))
            (rm (string-append (number->string (- x2 x4)) "cm"))
+           (ww (string-append (number->string (- x4 x3)) "cm"))
+           (hh (string-append (number->string (- y4 y3)) "cm"))
+           (opt `(!option ,(string-append "width=" ww ",height=" hh)))
            (rat (/ y3 (- y4 y3)))
            (dy `(!concat ,(number->string rat) (height)))
-           (rb `(raisebox ,dy (includegraphics ,name-string))))
+           (rb `(raisebox ,dy (includegraphics ,opt ,name-string))))
       ;; TODO: top and bottom margins
+      ;;(display* name-url ": " x1 ", " y1 "; " x2 ", " y2 "\n")
+      ;;(display* name-url ": " x3 ", " y3 "; " x4 ", " y4 "\n")
       (if (and (< (abs (- x3 x1)) 0.01) (< (abs (- x2 x4)) 0.01)) rb
           `(!concat (hspace ,lm) ,rb (hspace ,rm))))))
 

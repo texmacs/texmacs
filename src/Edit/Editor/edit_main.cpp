@@ -378,18 +378,20 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
 #endif
   bool ps= (s == "ps" || s == "eps");
   if (use_pdf ()) ps= (ps || s == "pdf");
+
   typeset_prepare ();
-  int bsz= env->get_int (FONT_BASE_SIZE);
   int dpi= as_int (printing_dpi);
-  if (bitmap) dpi *= 5;
-  if (dpi != 600) {
-    double mag= (1.0 * dpi) / 600;
-    t= tree (WITH, MAGNIFICATION, as_string (mag),
-             tree (RIGID, t));
-  }
+  tree old_dpi= env->read (DPI);
+  env->write (DPI, printing_dpi);
+  env->style_init_env ();
+  env->update ();
   box b= typeset_as_box (env, t, path ());
+  env->write (DPI, old_dpi);
+  env->style_init_env ();
+  env->update ();
+  
   if (b->x4 - b->x3 >= 5*PIXEL && b->y4 - b->y3 >= 5*PIXEL) {
-    if (bitmap) make_raster_image (name, b, 1.0);
+    if (bitmap) make_raster_image (name, b, 5.0);
     else if (ps) make_eps (name, b, dpi);
     else {
       url temp= url_temp (use_pdf ()? ".pdf": ".eps");
@@ -406,7 +408,7 @@ edit_main_rep::print_snippet (url name, tree t, bool conserve_preamble) {
   }
   array<int> a;
   a << b->x3 << b->y3 << b->x4 << b->y4 << b->x1 << b->y1 << b->x2 << b->y2;
-  a << ((dpi * bsz) / 10) << dpi;
+  a << env->get_int (FONT_BASE_SIZE) << dpi;
   return a;
 }
 
