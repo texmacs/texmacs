@@ -21,4 +21,5 @@
   (when (!= (get-preference "scripting language") "none")
     (lazy-plugin-force)
     (init-env "prog-scripts" (get-preference "scripting language")))
-  (buffer-pretend-saved (current-buffer)))
+  (buffer-pretend-saved (current-buffer))
+  (buffer-initialized (current-buffer)))
