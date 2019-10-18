@@ -927,6 +927,7 @@
 ("footer" "")
 ("footnote" "")
 ("for" "")
+("for all" "")
 ("for each" "")
 ("force reloading of translations" "")
 ("foreground" "")

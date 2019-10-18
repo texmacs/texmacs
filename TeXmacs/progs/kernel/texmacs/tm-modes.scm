@@ -204,7 +204,15 @@
   (in-spanish% (== (get-env "language") "spanish") in-text%)
   (in-swedish% (== (get-env "language") "swedish") in-text%)
   (in-taiwanese% (== (get-env "language") "taiwanese") in-oriental%)
-  (in-ukrainian% (== (get-env "language") "ukrainian") in-cyrillic%))
+  (in-ukrainian% (== (get-env "language") "ukrainian") in-cyrillic%)
+
+  (in-math-dutch% (== (get-env "language") "dutch") in-math%)
+  (in-math-english% (== (get-env "language") "english") in-math%)
+  (in-math-french% (== (get-env "language") "french") in-math%)
+  (in-math-german% (== (get-env "language") "german") in-math%)
+  (in-math-italian% (== (get-env "language") "italian") in-math%)
+  (in-math-portuguese% (== (get-env "language") "portuguese") in-math%)
+  (in-math-spanish% (== (get-env "language") "spanish") in-math%))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard related

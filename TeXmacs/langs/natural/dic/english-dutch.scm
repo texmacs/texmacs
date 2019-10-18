@@ -457,6 +457,7 @@
 ("footer" "voet")
 ("footnote" "voetnoot")
 ("for" "voor")
+("for all" "voor alle")
 ("foreground" "voorgrond")
 ("foreign" "buitenlands")
 ("format" "opmaak")

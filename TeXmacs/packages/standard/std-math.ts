@@ -110,6 +110,19 @@
 
   <\active*>
     <\src-comment>
+      Textual operators.
+    </src-comment>
+  </active*>
+
+  <assign|textual-for-all|<macro|<math-quantifier|<text|<localize|for all>
+  >>>>
+
+  <assign|textual-and|<macro|<math-and|<text| <localize|and> >>>>
+
+  <assign|textual-or|<macro|<math-or|<text| <localize|or> >>>>
+
+  <\active*>
+    <\src-comment>
       Additional mathematical macros.
     </src-comment>
   </active*>

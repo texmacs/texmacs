@@ -413,6 +413,7 @@
 ("footer" "Fußzeile")
 ("footnote" "Fußnote")
 ("for" "für")
+("for all" "für alle")
 ("for each" "für jedes")
 ("foreground" "Vordergrund")
 ("foreign" "andere Alphabete")

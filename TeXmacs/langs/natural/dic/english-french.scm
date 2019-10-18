@@ -954,6 +954,7 @@
 ("footer" "pied de page")
 ("footnote" "note en bas de page")
 ("for" "pour")
+("for all" "pour tout")
 ("for each" "pour chaque")
 ("force reloading of translations" "rechargement forcé des traductions")
 ("foreground" "premier-plan")
