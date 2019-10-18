@@ -4109,6 +4109,8 @@ preserve_dots (tree t) {
   tree style= copy (extract (t, "style"));
   if (is_atomic (style)) style= tuple (style);
   if (style == tree (TUPLE)) style= tuple ("generic");
+  for (int i=0; i<N(style); i++)
+    if (style[i] == "old-dots") return t;
   style << "old-dots";
   return change_doc_attr (t, "style", style);
 }
