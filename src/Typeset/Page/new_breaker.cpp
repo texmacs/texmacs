@@ -89,6 +89,7 @@ new_breaker_rep::new_breaker_rep (
     SI   bot_cor= max (0, l[i]->b->y1- fn->y1);
     SI   bod_cor= l[i]->b->h ();
     SI   top_cor= max (0, fn->y2- l[i]->b->y2);
+    if (l[i]->type != PAGE_LINE_ITEM) bot_cor= bod_cor= top_cor= 0;
     body_ht  << (space (l[i]->b->h()) + l[i]->spc);
     body_cor << space (bot_cor, bod_cor, top_cor);
     body_tot << (i==0? space(0): body_tot[i-1]) + body_ht[i];
@@ -185,6 +186,7 @@ new_breaker_rep::make_insertion (lazy_vstream lvs, path p) {
     SI   bot_cor= max (0, l[i]->b->y1- fn->y1);
     SI   bod_cor= l[i]->b->h ();
     SI   top_cor= max (0, fn->y2- l[i]->b->y2);
+    if (l[i]->type != PAGE_LINE_ITEM) bot_cor= bod_cor= top_cor= 0;
     ins_ht  << (space (l[i]->b->h()) + l[i]->spc);
     ins_cor << space (bot_cor, bod_cor, top_cor);
     ins_tot << (i==0? space(0): ins_tot[i-1]) + ins_ht[i];
