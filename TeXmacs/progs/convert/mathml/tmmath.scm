@@ -147,6 +147,23 @@
   (with acc (or (logic-ref tm->mathml-wide% (cadr l)) "")
     `(m:munder ,(tmmath (car l)) (m:mo ,acc))))
 
+(define (tmmath-long-arrow l)
+  (let* ((a (car l))
+         (above (if (>= (length l) 2) (cadr l) ""))
+         (below (if (>= (length l) 3) (caddr l) "")))
+    (when (and (string? a) (string-starts? a "<rubber-"))
+      (set! a (string-append "<" (substring a 8 (string-length a)))))
+    (let* ((mo (tmmath a))
+           (mo* (if (func? mo 'm:mo)
+                    `(m:mo (@ (stretchy "true")) ,@(cdr mo))
+                    mo)))
+      (cond ((and (!= above "") (== below ""))
+             `(m:mover ,mo* ,(tmmath above)))
+            ((and (== above "") (!= below ""))
+             `(m:munder ,mo* ,(tmmath below)))
+            (else
+              `(m:munderover ,mo* ,(tmmath below) ,(tmmath above)))))))
+
 (define (tmmath-above l)
   `(m:mover ,(tmmath (car l)) ,(tmmath (cadr l))))
 
@@ -300,6 +317,7 @@
   (mid tmmath-mid)
   (right tmmath-right)
   (big tmmath-big)
+  (long-arrow tmmath-long-arrow)
   (lprime tmmath-lsup)
   (rprime tmmath-rsup)
   (below tmmath-below)

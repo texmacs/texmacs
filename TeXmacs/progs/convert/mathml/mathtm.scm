@@ -247,18 +247,35 @@
 	 (lambda (x) `((wide ,base ,x))))
 	(else `((above ,base ,sup)))))
 
+(define (stretchy? src dest)
+  (and (string? dest)
+       (string-starts? dest "<")
+       (string-ends? dest ">")
+       (or (func? src 'm:mo) (func? src 'mo))
+       (>= (length src) 3)
+       (func? (cadr src) '@)
+       (>= (length (cadr src)) 2)
+       (func? (cadr (cadr src)) 'stretchy 1)))
+
+(define (rubberify arrow)
+  (string-append "<rubber-" (substring arrow 1 (string-length arrow))))
+
 (define (mathtm-munder env a c)
   (if (== (length c) 2)
       (let ((base (mathtm-as-serial env (first c)))
 	    (sub (mathtm-as-serial env (second c))))
-	(mathtm-below base sub))
+        (if (stretchy? (first c) base)
+            `((long-arrow ,(ruzbberify base) "" ,sub))
+            (mathtm-below base sub)))
       (mathtm-error "bad munder")))
 
 (define (mathtm-mover env a c)
   (if (== (length c) 2)
       (let ((base (mathtm-as-serial env (first c)))
 	    (sup (mathtm-as-serial env (second c))))
-	(mathtm-above base sup))
+        (if (stretchy? (first c) base)
+            `((long-arrow ,(rubberify base) ,sup))
+            (mathtm-above base sup)))
       (mathtm-error "bad mover")))
 
 (define (mathtm-munderover env a c)
@@ -266,7 +283,9 @@
       (let ((base (mathtm-as-serial env (first c)))
 	    (sub (mathtm-as-serial env (second c)))
 	    (sup (mathtm-as-serial env (third c))))
-	(mathtm-above (car (mathtm-below base sub)) sup))
+        (if (stretchy? (first c) base)
+            `((long-arrow ,(rubberify base) ,sub ,sup))
+            (mathtm-above (car (mathtm-below base sub)) sup)))
       (mathtm-error "bad munderover")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
