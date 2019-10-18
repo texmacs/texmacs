@@ -114,14 +114,14 @@
     </src-comment>
   </active*>
 
-  <assign|textual-for-all|<macro|<math-quantifier|<text|<localize|for all>
+  <assign|prefix-for-all|<macro|<math-quantifier|<text|<localize|for all>
   >>>>
 
-  <assign|textual-and|<macro|<math-and|<text| <localize|and> >>>>
+  <assign|infix-and|<macro|<math-and|<text| <localize|and> >>>>
 
-  <assign|textual-or|<macro|<math-or|<text| <localize|or> >>>>
+  <assign|infix-or|<macro|<math-or|<text| <localize|or> >>>>
 
-  <assign|textual-iff|<macro|<math-imply|<text| <localize|iff> >>>>
+  <assign|infix-iff|<macro|<math-imply|<text| <localize|iff> >>>>
 
   <\active*>
     <\src-comment>
