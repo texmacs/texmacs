@@ -1121,6 +1121,7 @@
 ("icon" "icône")
 ("if" "si")
 ("if hyphenated" "en mode césure")
+("iff" "ssi")
 ("ignore" "ignorer")
 ("image" "image")
 ("image links" "images liées")

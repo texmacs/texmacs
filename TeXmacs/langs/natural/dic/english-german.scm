@@ -497,6 +497,7 @@
 ("hyphenation" "Trennung")
 ("icelandic" "isländisch")
 ("if" "wenn")
+("iff" "gdw")
 ("image" "Bild")
 ("image links" "Bildverknüpfungen")
 ("implementation" "Implementation")

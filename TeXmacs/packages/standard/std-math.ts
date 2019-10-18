@@ -121,6 +121,8 @@
 
   <assign|textual-or|<macro|<math-or|<text| <localize|or> >>>>
 
+  <assign|textual-iff|<macro|<math-imply|<text| <localize|iff> >>>>
+
   <\active*>
     <\src-comment>
       Additional mathematical macros.

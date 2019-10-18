@@ -1089,6 +1089,7 @@
 ("icon" "")
 ("if" "")
 ("if hyphenated" "")
+("iff" "")
 ("ignore" "")
 ("image" "")
 ("image links" "")

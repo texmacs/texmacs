@@ -541,6 +541,7 @@
 ("icelandic" "ijslands")
 ("if" "als")
 ("if hyphenated" "als afgebroken")
+("iff" "desda")
 ("image" "plaatje")
 ("image links" "verbonden plaatjes")
 ("implementation" "implementatie")
