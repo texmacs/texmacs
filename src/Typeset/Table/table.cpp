@@ -720,6 +720,8 @@ table_rep::finish_horizontal () {
     for (i=0; i<nr_rows; i++) {
       cell C= T[i][j];
       if (!is_nil (C)) {
+        if (C->col_span > 1)
+          C->width += sum (mw+j+1, C->col_span-1);
         if (!is_nil (C->T))
           C->T->finish_horizontal ();
         else if (C->hyphen != "n")
