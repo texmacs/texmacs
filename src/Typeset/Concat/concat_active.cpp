@@ -157,31 +157,29 @@ bool
 build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   string ref;
   string anchor;
-  return build_locus(env, t, ids, col, ref, anchor);
+  return build_locus (env, t, ids, col, ref, anchor);
 }
 
 void
 concater_rep::typeset_locus (tree t, path ip) {
-  string ref;
-  string anchor;
-
   if (N(t) == 0) { typeset_error (t, ip); return; }
   int last= N(t)-1;
   list<string> ids;
-  string col;
-  if (build_locus (env, t, ids, col, ref, anchor)) {
-    marker (descend (ip, 0));
-    tree old= env->local_begin (COLOR, col);
-    typeset (t[last], descend (ip, last));
-    env->local_end (COLOR, old);
-    marker (descend (ip, 1));
-  }
-  else {
-    tree old= env->local_begin (COLOR, col);
-    box b= typeset_as_concat (env, t[last], descend (ip, last));
-    env->local_end (COLOR, old);
-    print (locus_box (ip, b, ids, env->pixel, ref, anchor));
-  }
+  string col, ref, anchor;
+  bool ok= build_locus (env, t, ids, col, ref, anchor);
+  marker (descend (ip, 0));
+  tree old= env->local_begin (COLOR, col);
+  int pos= N(a);
+  typeset (t[last], descend (ip, last));
+  if (!ok)
+    for (int i=pos; i<N(a); i++)
+      if (a[i]->type == STD_ITEM || a[i]->type == STRING_ITEM) {
+        a[i]->type= STD_ITEM;
+        a[i]->b= locus_box (a[i]->b->ip, a[i]->b,
+                            ids, env->pixel, ref, anchor);
+      }    
+  env->local_end (COLOR, old);
+  marker (descend (ip, 1));
 }
 
 void
