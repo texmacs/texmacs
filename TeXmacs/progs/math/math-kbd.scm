@@ -147,10 +147,14 @@
   ("math:under accent:check" (make-wide-under "<check>"))
   ;; end
 
+  ("S-F5 S-F5" (make 'math-sl))
+  ("S-F6 S-F6" (make 'math-up))
   ("F5 F5" (make 'math-it))
   ("F6 F6" (make 'math-bf))
   ("F7 F7" (make 'math-tt))
   ("F8 F8" (make 'math-ss))
+  ("altcmd S-F5" (make 'math-sl))
+  ("altcmd S-F6" (make 'math-up))
   ("altcmd F5" (make 'math-it))
   ("altcmd F6" (make 'math-bf))
   ("altcmd F7" (make 'math-tt))
