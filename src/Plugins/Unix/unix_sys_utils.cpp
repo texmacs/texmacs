@@ -60,7 +60,7 @@ unix_system (string cmd, string& result, string& error) {
 * Evaluation via specified file descriptors
 ******************************************************************************/
 
-#ifndef OS_MINGW
+#if !defined(OS_MINGW) && !defined(X11TEXMACS)
 
 extern char **environ;
 
