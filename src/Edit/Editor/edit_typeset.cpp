@@ -881,8 +881,12 @@ void
 edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   int missing_nr= INT_MAX;
   int redefined_nr= INT_MAX;
+  x1= MAX_SI; y1= MAX_SI; x2= MIN_SI; y2= MIN_SI;
   while (true) {
-    typeset_sub (x1, y1, x2, y2);
+    SI sx1, sy1, sx2, sy2;
+    typeset_sub (sx1, sy1, sx2, sy2);
+    x1= min (x1, sx1); y1= min (y1, sy1);
+    x2= max (x2, sx2); y2= max (y2, sy2);
     if (!env->complete) break;
     env->complete= false;
     clean_unused (env->local_ref, env->touched);
