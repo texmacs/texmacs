@@ -1,3 +1,4 @@
+
 /******************************************************************************
 * MODULE     : xml.cpp
 * DESCRIPTION: routines on xml used in scheme
@@ -17,10 +18,10 @@
 ******************************************************************************/
 
 static bool
-is_xml_name (char c) {
+is_xml_name (char c, int i) {
   return
-    is_alpha (c) || is_numeric (c) ||
-    (c == '.') || (c == '-') || (c == ':');
+    is_alpha (c) || is_digit (c) ||
+    (c == '.' && i != 0) || (c == '-') || (c == ':');
 }
 
 string
@@ -28,7 +29,7 @@ tm_to_xml_name (string s) {
   string r;
   int i, n= N(s);
   for (i=0; i<n; i++)
-    if (is_xml_name (s[i])) r << s[i];
+    if (is_xml_name (s[i], i)) r << s[i];
     else r << "_" << as_string ((int) ((unsigned char) s[i])) << "_";
   return r;
 }
