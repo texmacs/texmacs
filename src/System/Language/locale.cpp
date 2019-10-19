@@ -13,7 +13,9 @@
 
 #ifndef OS_MINGW
 #include <langinfo.h>
+#ifndef X11TEXMACS
 #include <locale>
+#endif
 #else
 #include <winnls.h>
 #endif
@@ -206,6 +208,8 @@ get_locale_charset () {
   return "UTF-8"; // do not change this!
   // otherwise there is a weird problem with page width shrinking on screen
 #elif OS_MACOS
+  return "UTF-8";
+#elif X11TEXMACS
   return "UTF-8";
 #else
   std::locale previous= std::locale::global (std::locale(""));
