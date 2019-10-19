@@ -23,6 +23,7 @@
 #include "dictionary.hpp"
 #include "converter.hpp"
 #include "language.hpp"
+#include "locale.hpp"
 
 #ifdef OS_WIN32
 #include <X11/Xlib.h>
