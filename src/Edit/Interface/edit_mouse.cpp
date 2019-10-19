@@ -529,16 +529,18 @@ edit_interface_rep::mouse_any (string type, SI x, SI y, int mods, time_t t) {
 
 static void
 call_drop_event (string kind, SI x, SI y, SI ticket, time_t t) {
+#ifdef QTTEXMACS
   extern hashmap<int, tree> payloads;
   tree doc = payloads [ticket];
   payloads->reset (ticket);
-  
   eval (list_object (symbol_object ("insert"), doc));
-
   //array<object> args;
   //args << object (kind) << object (x) << object (y)
   //<< object (doc) << object ((double) t);
   //call ("mouse-event", args);
+#else
+  (void) kind; (void) x; (void) y; (void) ticket; (void) t;
+#endif
 }
 
 
