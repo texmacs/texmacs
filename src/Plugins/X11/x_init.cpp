@@ -18,6 +18,7 @@
 #include "message.hpp"
 #include "sys_utils.hpp"
 #include "colors.hpp"
+#include "locale.hpp"
 #include <locale.h>
 
 x_gui_rep* the_gui= NULL;
