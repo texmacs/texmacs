@@ -347,7 +347,8 @@
       (with lab (inside-which (list-tag-list))
 	(cond ((in? lab (itemize-tag-list)) (make 'item))
 	      ((in? lab (enumerate-tag-list)) (make 'item))
-	      ((in? lab (description-tag-list)) (make 'item*))))))
+	      ((in? lab (description-tag-list)) (make 'item*))
+              (else (make 'item))))))
 
 (tm-define (kbd-enter t shift?)
   (:require (list-context? t))
