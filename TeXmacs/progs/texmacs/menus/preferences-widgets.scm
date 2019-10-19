@@ -269,20 +269,33 @@
 
 ;; Html ----------
 
+(define (export-formulas-as-mathml on?)
+  (set-boolean-preference "texmacs->html:mathml" on?)
+  (when on?
+    (set-boolean-preference "texmacs->html:images" #f)
+    (refresh-now "texmacs to html")))
+
+(define (export-formulas-as-images on?)
+  (set-boolean-preference "texmacs->html:images" on?)
+  (when on?
+    (set-boolean-preference "texmacs->html:mathml" #f)
+    (refresh-now "texmacs to html")))
+
 (tm-widget (html-preferences-widget)
   ===
   (bold (text "TeXmacs -> Html"))
   ===
-  (aligned
-    (meti (hlist // (text "Use CSS for more advanced formatting"))
-      (toggle (set-boolean-preference "texmacs->html:css" answer)
-              (get-boolean-preference "texmacs->html:css")))
-    (meti (hlist // (text "Export mathematical formulas as MathML"))
-      (toggle (set-boolean-preference "texmacs->html:mathml" answer)
-              (get-boolean-preference "texmacs->html:mathml")))
-    (meti (hlist // (text "Export mathematical formulas as images"))
-      (toggle (set-boolean-preference "texmacs->html:images" answer)
-              (get-boolean-preference "texmacs->html:images")))))
+  (refreshable "texmacs to html"
+    (aligned
+      (meti (hlist // (text "Use CSS for more advanced formatting"))
+        (toggle (set-boolean-preference "texmacs->html:css" answer)
+                (get-boolean-preference "texmacs->html:css")))
+      (meti (hlist // (text "Export mathematical formulas as MathML"))
+        (toggle (export-formulas-as-mathml answer)
+                (get-boolean-preference "texmacs->html:mathml")))
+      (meti (hlist // (text "Export mathematical formulas as images"))
+        (toggle (export-formulas-as-images answer)
+                (get-boolean-preference "texmacs->html:images"))))))
 
 ;; LaTeX ----------
 
