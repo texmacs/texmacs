@@ -12,7 +12,8 @@
 import os
 import sys
 from os.path import exists
-if (exists (os.environ.get("TEXMACS_HOME_PATH"))):
+tmpy_home_path = os.environ.get("TEXMACS_HOME_PATH") + "/plugins/tmpy"
+if (exists (tmpy_home_path)):
     sys.path.append(os.environ.get("TEXMACS_HOME_PATH") + "/plugins/")
 else:
     sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
