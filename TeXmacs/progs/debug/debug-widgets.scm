@@ -130,6 +130,12 @@
               '("Last 25" "Last 100" "Last 250" "Last 1000" "All")
               (decode-size (get-preference "console size")) "80px")
         >>>
+        (=> "Preferences"
+            ("Automatically open this console on errors"
+             (toggle-preference "open console on errors"))
+            ("Automatically open this console on warnings"
+             (toggle-preference "open console on warnings")))
+        // //
         ("Clear" (clear-debug-messages) (refresh-console))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -138,6 +144,7 @@
 
 (tm-define console-updating? #f)
 (tm-define console-errors? #f)
+(tm-define console-warnings? #f)
 
 (tm-define (update-consoles)
   (for (kind (ahash-set->list console-active?))
@@ -149,18 +156,23 @@
                   (list-union (ahash-ref console-selected kind) delta))))
   (when (nnull? (ahash-set->list console-active?))
     (refresh-console))
-  (when (and console-errors?
+  (when (and (or (and console-errors?
+                      (get-boolean-preference "open console on errors"))
+                 (and console-warnings?
+                      (get-boolean-preference "open console on warnings")))
              (not (ahash-ref console-active? "Error messages")))
     (delayed
       (:idle 1)
       (open-error-messages)))
   (set! console-updating? #f)
-  (set! console-errors? #f))
+  (set! console-errors? #f)
+  (set! console-warnings? #f))
 
 (tm-define (notify-debug-message channel)
-  (when (or (string-ends? channel "-error")
-            (string-ends? channel "-warning"))
+  (when (string-ends? channel "-error")
     (set! console-errors? #t))
+  (when (string-ends? channel "-warning")
+    (set! console-warnings? #t))
   (when (not console-updating?)
     (set! console-updating? #t)
     (delayed

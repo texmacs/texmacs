@@ -112,7 +112,9 @@
   ("experimental alpha" "on" notify-tool)
   ("new style fonts" "on" notify-new-fonts)
   ("bitmap effects" "on" notify-tool)
-  ("new style page breaking" "on" notify-new-page-breaking))
+  ("new style page breaking" "on" notify-new-page-breaking)
+  ("open console on errors" "on" noop)
+  ("open console on warnings" "on" noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
