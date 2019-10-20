@@ -40,12 +40,17 @@ is_xml_name (char c, int i) {
   }
 }
 
+/*
+ * Convert tm_name to xml_name using '_' as escape
+ * If x is not the escape and valid xml name, just keep it
+ * Else, escape x use "_${as_int(x)}_"
+ */
 string
 tm_to_xml_name (string s) {
   string r;
   int i, n= N(s);
   for (i=0; i<n; i++)
-    if (is_xml_name (s[i], i)) r << s[i];
+    if (s[i] != '_' && is_xml_name (s[i], i)) r << s[i];
     else r << "_" << as_string ((int) ((unsigned char) s[i])) << "_";
   return r;
 }

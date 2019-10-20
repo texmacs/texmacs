@@ -14,16 +14,6 @@
 #include "convert.hpp"
 #include "Xml/xml.cpp"
 
-void
-assert_xml_name_and_tm (string xml_name, string tm_name) {
-  ASSERT_STREQ (as_charp (xml_name_to_tm (xml_name)), as_charp (tm_name));
-  ASSERT_STREQ (as_charp (tm_to_xml_name (tm_name)), as_charp (xml_name));
-}
-
-TEST (xml, xml_name_and_tm) {
-  assert_xml_name_and_tm ("hello", "hello");
-}
-
 TEST (xml, is_xml_name) {
   ASSERT_TRUE (is_xml_name (':', 0));
   ASSERT_TRUE (is_xml_name ('_', 0));
@@ -42,4 +32,27 @@ TEST (xml, is_xml_name) {
       ASSERT_FALSE (is_xml_name (c, 0));
     }
   }
+}
+
+
+void
+assert_tm_and_xml_name (string tm_name, string xml_name) {
+  ASSERT_STREQ (as_charp (xml_name_to_tm (xml_name)), as_charp (tm_name));
+  ASSERT_STREQ (as_charp (tm_to_xml_name (tm_name)), as_charp (xml_name));
+}
+
+TEST (xml, tm_and_xml_name) {
+  // Normal characters
+  assert_tm_and_xml_name ("hello", "hello");
+  // The '_' escape itself
+  assert_tm_and_xml_name ("_f", "_95_f");
+  assert_tm_and_xml_name ("_38_f", "_95_38_95_f");
+  // Valid start char for XML
+  assert_tm_and_xml_name (":f", ":f");
+  // Invalid start char for XML
+  assert_tm_and_xml_name ("&f", "_38_f");
+  assert_tm_and_xml_name (".f", "_46_f");
+  assert_tm_and_xml_name ("-f", "_45_f");
+  // Invalid char for XML
+  assert_tm_and_xml_name ("f!", "f_33_");
 }
