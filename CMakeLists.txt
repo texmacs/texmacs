@@ -723,20 +723,18 @@ install (FILES TeXmacs/misc/pixmaps/TeXmacs.xpm DESTINATION share/pixmaps)
 ### Testing
 ### --------------------------------------------------------------------
 include (CTest)
-set (GTEST_ROOT "${TEXMACS_SOURCE_DIR}/misc/benchmark/googletest/googletest")
+set (GTEST_ROOT "${TEXMACS_SOURCE_DIR}/tests/gtest")
 set (GTEST_INCLUDE_DIR ${GTEST_ROOT}/include)
 set (GTEST_LIBRARIES gtest gtest_main)
 set (GTEST_MAIN_LIBRARY gtest_main)
 set (GTEST_LIBRARY gtest)
 
-add_subdirectory (misc/benchmark EXCLUDE_FROM_ALL)
-add_subdirectory (${GTEST_ROOT} EXCLUDE_FROM_ALL)
 find_package (GTest REQUIRED)
 
 enable_testing ()
 
 add_subdirectory (tests)
-add_subdirectory (benchmark)
+add_subdirectory (misc/benchmark)
 ### ---------------------------------------------------------------------
 ### VSCode Support
 ### ---------------------------------------------------------------------

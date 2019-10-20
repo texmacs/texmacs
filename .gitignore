@@ -13,3 +13,5 @@ cmake-build-debug
 *.pyc
 SVNREV
 *.log
+misc/benchmark/gbench
+tests/gtest
