@@ -17,11 +17,27 @@
 * Convert between TeXmacs and XML strings
 ******************************************************************************/
 
+/*
+ * According to: https://www.w3.org/TR/2008/REC-xml-20081126/#sec-common-syn
+ * NameStartChar ::= ":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6]
+ *   | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D]
+ *   | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF]
+ *   | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
+ * NameChar ::= NameStartChar | "-" | "." | [0-9] | #xB7
+ *   | [#x0300-#x036F] | [#x203F-#x2040]
+ * Name ::= NameStartChar (NameChar)*
+ *
+ * Currently, we only handle the visible ascii characters
+ */
 static bool
 is_xml_name (char c, int i) {
-  return
-    is_alpha (c) || is_digit (c) ||
-    (c == '.' && i != 0) || (c == '-') || (c == ':');
+  if ((c == ':') || (c == '_') || is_alpha (c)) {
+    return true;
+  } else if (i == 0) {
+    return false;
+  } else {
+    return (c == '-') || (c == '.') || is_digit (c);
+  }
 }
 
 string
