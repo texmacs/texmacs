@@ -1,6 +1,6 @@
 file(GLOB_RECURSE BENCH_SRC_FILES "*.cpp")
 
-include_directories(../3rdparty/benchmark/include)
+include_directories(../misc/benchmark/include)
 
 # from list of files we'll create tests test_name.cpp -> test_name
 foreach (_bench_file ${BENCH_SRC_FILES})
