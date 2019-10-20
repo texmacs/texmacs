@@ -653,6 +653,7 @@
 ("dot" "")
 ("dots" "")
 ("double stroke" "")
+("double the zoom factor for TeXmacs documents" "")
 ("down" "")
 ("download" "")
 ("download file or directory" "")

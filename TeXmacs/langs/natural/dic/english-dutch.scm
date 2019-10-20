@@ -336,6 +336,7 @@
 ("dot" "rondje")
 ("dots" "rondjes")
 ("double stroke" "dubbele lijn")
+("double the zoom factor for TeXmacs documents" "verdubbel de zoom faktor voor TeXmacs dokumenten")
 ("down" "omlaag")
 ("download" "haal van web")
 ("dpi" "punten per duim")

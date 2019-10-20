@@ -56,23 +56,23 @@
 		    (get-retina-boolean-preference "retina-icons")))
 	  (meti (hlist // (text "Use unified toolbars"))
             (toggle (set-boolean-preference "use unified toolbar" answer)
-                    (get-boolean-preference "use unified toolbar"))))))
+                    (get-boolean-preference "use unified toolbar")))))
+      ===
+      (aligned
+        (item (text "Graphical interface font scale:")
+          (enum (set-retina-preference "retina-scale" answer)
+                '("1" "1.2" "1.4" "1.6" "1.8" "2" "")
+                (get-retina-preference "retina-scale")
+                "5em"))))
     (assuming (not (os-macos?))
       (centered
 	(aligned
-	  (meti (hlist // (text "Use high resolution fonts"))
+	  (meti (hlist // (text "Double the zoom factor for TeXmacs documents"))
 	    (toggle (set-retina-boolean-preference "retina-zoom" answer)
 		    (get-retina-boolean-preference "retina-zoom")))
 	  (meti (hlist // (text "Use high resolution icons"))
 	    (toggle (set-retina-boolean-preference "retina-icons" answer)
 		    (get-retina-boolean-preference "retina-icons"))))))
-    ===
-    (aligned
-      (item (text "Graphical interface font scale:")
-        (enum (set-retina-preference "retina-scale" answer)
-              '("1" "1.2" "1.4" "1.6" "1.8" "2" "")
-              (get-retina-preference "retina-scale")
-              "5em")))
     === ===
     (bottom-buttons
       ("Cancel" (cmd "cancel")) >>

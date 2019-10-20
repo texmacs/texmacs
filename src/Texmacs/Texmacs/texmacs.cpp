@@ -295,12 +295,13 @@ TeXmacs_main (int argc, char** argv) {
 #ifdef MACOSX_EXTENSIONS
         retina_factor= 2;
         retina_zoom  = 1;
+        retina_scale = 1.4;
 #else
         retina_factor= 1;
         retina_zoom  = 2;
+        retina_scale = 1.0;
 #endif
         retina_icons = 2;
-        retina_scale = 1.4;
       }
       else if (s == "-no-retina-icons") {
         retina_iman  = true;
@@ -385,9 +386,16 @@ TeXmacs_main (int argc, char** argv) {
   }
   if (get_env ("TEXMACS_RETINA") == "on") {
     retina_manual= true;
+#ifdef MACOSX_EXTENSIONS
     retina_factor= 2;
-    retina_icons = 2;
+    retina_zoom  = 1;
     retina_scale = 1.4;
+#else
+    retina_factor= 1;
+    retina_zoom  = 2;
+    retina_scale = 1.0;
+#endif
+    retina_icons = 2;
   }
   if (get_env ("TEXMACS_RETINA_ICONS") == "off") {
     retina_iman  = true;

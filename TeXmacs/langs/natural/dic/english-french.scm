@@ -665,6 +665,7 @@
 ("dots" "ronds")
 ("dotted line" "pointillés")
 ("double stroke" "lignes doubles")
+("double the zoom factor for TeXmacs documents" "doubler le facteur de zoom pour des documents TeXmacs")
 ("down" "en bas")
 ("download" "télécharger")
 ("download file or directory" "télécharger un fichier ou un répertoire")
