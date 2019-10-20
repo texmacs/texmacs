@@ -41,6 +41,7 @@ if len(graphs) == 0:
     exit(0)
 
 current = graphs[0]
+current.greet()
 flush_prompt (current.name + "] ")
 
 def unigraph(text):
