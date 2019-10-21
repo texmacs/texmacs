@@ -68,8 +68,8 @@
          (type (cond ((== kind "bib") "bibliographic database")
                      (else (string-append kind " database")))))
     (if (== file "global")
-        (string-append "My " type)
-        (string-append (upcase-first type) " - " file))))
+        (translate (string-append "My " type))
+        (string-append (translate (upcase-first type)) " - " file))))
 
 (define (entry-present e p)
   (cond ((not (tm-func? e 'db-entry)) e)

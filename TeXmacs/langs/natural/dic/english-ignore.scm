@@ -128,7 +128,6 @@
 ("lecture note" "")
 ("ledger" "")
 ("liHei" "")
-("limit" "")
 ("linear Beta" "")
 ("linewidth" "")
 ("linux Biolinum" "")
