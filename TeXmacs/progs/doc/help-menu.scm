@@ -103,7 +103,7 @@
 	    ("Summary"
 	     (load-help-article "about/about-summary"))
 	    ("License"
-	     (load-buffer "$TEXMACS_PATH/LICENSE"))
+	     (load-document "$TEXMACS_PATH/LICENSE"))
 	    ("Philosophy"
 	     (load-help-article "about/philosophy/philosophy"))
 	    ("The TeXmacs authors"
@@ -233,8 +233,8 @@
 	    ("Writing TeXmacs bibliography styles"
 	     (load-help-article "devel/scheme/bibliography/bibliography"))
             ---
-            ("Browse modules documentation" (apidoc-all-modules)))))
-            ;("List all symbols" (apidoc-all-symbols)))))
+            ("Browse modules documentation" (apidoc-all-modules))
+            ("Browse symbols documentation" (apidoc-all-symbols)))))
   ---
   (-> "Search"
       ("Documentation" (interactive docgrep-in-doc))

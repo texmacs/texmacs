@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (goto-include buf incl)
-  (load-buffer (part-url buf (url-relative buf incl))))
+  (load-document (part-url buf (url-relative buf incl))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The dynamic document part menu
@@ -40,7 +40,7 @@
          (t (tree-import m "texmacs"))
 	 (b (tmfile-get t 'body))
 	 (l (tm-get-includes b)))
-    ((eval (url->string (url-tail m))) (load-buffer m))
+    ((eval (url->string (url-tail m))) (load-document m))
     ---
     (for (incl l)
       ((eval incl) (goto-include m incl)))))

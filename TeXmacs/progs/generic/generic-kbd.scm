@@ -271,7 +271,7 @@
   ("emacs:prefix k" (close-document))
   ("emacs:prefix K" (close-document*))
   ("emacs:prefix C-c" (safely-quit-TeXmacs))
-  ("emacs:prefix C-f" (interactive load-buffer))
+  ("emacs:prefix C-f" (interactive load-document))
   ("emacs:prefix C-s" (save-buffer))
   ("emacs:prefix C-w" (interactive save-buffer-as))
 

@@ -19,7 +19,7 @@
              (language natural))
 
 (define (scm-load-buffer u)
-   (load-buffer u) 
+   (load-document u) 
    (if (not (url-exists? u)) 
 ;; save empty file & reload so that it is recognized as scheme code, not plain tm doc  
       (begin (buffer-save u) (revert-buffer))))

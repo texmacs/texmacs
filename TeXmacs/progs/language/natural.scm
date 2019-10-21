@@ -164,7 +164,7 @@
 
 (menu-bind translations-menu
   (when (!= "english" (get-output-language))
-    ("Edit translations file" (load-buffer (tr-file (get-output-language))))
+    ("Edit translations file" (load-document (tr-file (get-output-language))))
     (if (buffer-exists? (tr-file (get-output-language)))
         (group "Close translations to rebuild"))
     (if (not (buffer-exists? (tr-file (get-output-language))))

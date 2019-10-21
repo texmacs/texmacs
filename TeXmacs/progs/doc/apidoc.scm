@@ -142,9 +142,9 @@
 (tm-define (apidoc-all-symbols)
   (:synopsis "Opens a help buffer with a list of all tm-defined symbols")
   (cursor-history-add (cursor-path))
-  (load-buffer "tmfs://apidoc/type=symbol&what="))
+  (load-document "tmfs://apidoc/type=symbol&what="))
 
 (tm-define (apidoc-all-modules)
   (:synopsis "Opens a help buffer with a list of all TeXmacs modules")
   (cursor-history-add (cursor-path))
-  (load-buffer "tmfs://apidoc/type=module&what="))
+  (load-document "tmfs://apidoc/type=module&what="))

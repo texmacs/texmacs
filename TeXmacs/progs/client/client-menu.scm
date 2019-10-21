@@ -29,7 +29,7 @@
     ("New account" (open-remote-account-creator))))
 
 (tm-menu (remote-submenu server)
-  ("Home" (load-buffer (remote-home-directory server)))
+  ("Home" (load-document (remote-home-directory server)))
   ---
   (when (remote-file-name (current-buffer))
     ("New remote file" (remote-create-file-interactive server))

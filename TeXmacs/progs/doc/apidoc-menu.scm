@@ -26,8 +26,7 @@
 (menu-bind apidoc-menu
   ("Delete documentation cache" (doc-delete-cache))
   ("Browse modules documentation" (apidoc-all-modules))
-  ; This one isn't exactly useful: (and should be removed)
-  ;("List all symbols" (apidoc-all-symbols))
+  ("Browse symbols documentation" (apidoc-all-symbols))
   ("Open module browser" (open-module-browser))
   ("Open symbol browser" (open-symbol-browser))
   (if (in-tmdoc?)

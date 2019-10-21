@@ -116,7 +116,7 @@
               (db-toolbar-current-present) "6em"))))
 
 (tm-define (load-db-buffer u)
-  (load-buffer u)
+  (load-document u)
   (db-show-toolbar))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -117,8 +117,8 @@
 
 (tm-define (scheme-inbuffer-help word)
   (:synopsis "Opens a help buffer for the scheme symbol @word")
-  (load-buffer (string-append "tmfs://apidoc/type=symbol&what="
-                              (string-replace word ":" "%3A")))); HACK
+  (load-document (string-append "tmfs://apidoc/type=symbol&what="
+                                (string-replace word ":" "%3A")))); HACK
 
 (define (url-for-symbol s props)
   (with (file line column) props

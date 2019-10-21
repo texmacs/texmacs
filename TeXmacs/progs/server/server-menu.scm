@@ -23,5 +23,5 @@
 (menu-bind server-menu
   ("Stop server" (server-stop))
   ("Open licence agreement"
-   (load-buffer "$TEXMACS_HOME_PATH/server/licence.tm"))
+   (load-document "$TEXMACS_HOME_PATH/server/licence.tm"))
   ("Set user information" (interactive server-set-user-information)))

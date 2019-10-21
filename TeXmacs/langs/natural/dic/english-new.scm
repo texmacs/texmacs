@@ -282,6 +282,7 @@
 ("browse back" "")
 ("browse forward" "")
 ("browse modules documentation" "")
+("browse symbols documentation" "")
 ("browse web" "")
 ("browser" "")
 ("buffer" "")

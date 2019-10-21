@@ -173,7 +173,7 @@
        (with-wallet
          (wallet-set (list "remote" server-name pseudo) passwd))
        (with server (client-find-server server-name)
-         (load-buffer (remote-home-directory server))))
+         (load-document (remote-home-directory server))))
      (when (== ret "invalid password")
        (with server (client-find-server server-name)
          (client-logout server))
