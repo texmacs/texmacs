@@ -222,16 +222,63 @@ double font_rep::get_right_slope (string s) { (void) s; return slope; }
 SI     font_rep::get_left_correction  (string s) { (void) s; return 0; }
 SI     font_rep::get_right_correction (string s) { (void) s; return 0; }
 
-SI font_rep::get_lsub_correction (string s) {
-  return -get_left_correction (s); }
-SI font_rep::get_lsup_correction (string s) {
-  return get_right_correction (s); }
-SI font_rep::get_rsub_correction (string s) {
-  return 0; }
-SI font_rep::get_rsup_correction (string s) {
-  return get_right_correction (s); }
-SI font_rep::get_wide_correction (string s, int mode) {
-  (void) mode; return 0; }
+SI
+font_rep::get_lsub_correction (string s) {
+  //cout << "lsub " << this->res_name << ", " << s << LF;
+  SI r= -get_left_correction (s) + global_lsub_correct;
+  if (lsub_correct->contains (s))
+    r += (SI) (lsub_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[0]) &&
+           lsub_correct->contains (s (0, 1)))
+    r += (SI) (lsub_correct[s (0, 1)] * wfn);
+  return r;
+}
+
+SI
+font_rep::get_lsup_correction (string s) {
+  //cout << "lsup " << this->res_name << ", " << s << LF;
+  //SI r= get_right_correction (s) + global_lsup_correct;
+  SI r= global_lsup_correct;
+  if (lsup_correct->contains (s))
+    r += (SI) (lsup_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[0]) &&
+           lsup_correct->contains (s (0, 1)))
+    r += (SI) (lsup_correct[s (0, 1)] * wfn);
+  return r;
+}
+
+SI
+font_rep::get_rsub_correction (string s) {
+  //cout << "rsub " << this->res_name << ", " << s << LF;
+  SI r= global_rsub_correct;
+  if (rsub_correct->contains (s))
+    r += (SI) (rsub_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[N(s)-1]) &&
+           rsub_correct->contains (s (N(s)-1, N(s))))
+    r += (SI) (rsub_correct[s (N(s)-1, N(s))] * wfn);
+  return r;
+}
+
+SI
+font_rep::get_rsup_correction (string s) {
+  //cout << "rsup " << this->res_name << ", " << s << LF;
+  SI r= get_right_correction (s) + global_rsup_correct;
+  if (rsup_correct->contains (s))
+    r += (SI) (rsup_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[N(s)-1]) &&
+           rsup_correct->contains (s (N(s)-1, N(s))))
+    r += (SI) (rsup_correct[s (N(s)-1, N(s))] * wfn);
+  return r;
+}
+
+SI
+font_rep::get_wide_correction (string s, int mode) {
+  if (mode > 0 && above_correct->contains (s))
+    return (SI) (above_correct[s] * wfn);
+  else if (mode < 0 && below_correct->contains (s))
+    return (SI) (below_correct[s] * wfn);
+  else return 0;
+}
 
 void
 font_rep::get_extents (string s, metric& ex, bool ligf) {
