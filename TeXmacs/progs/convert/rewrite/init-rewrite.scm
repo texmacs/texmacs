@@ -71,7 +71,6 @@
 (converter stm-snippet texmacs-tree
   (:function stm-snippet->texmacs))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generic source files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -108,10 +107,12 @@
   (if (list-1? opts) (set! opts (car opts)))
   (let* ((wrap? (== (assoc-ref opts "texmacs->verbatim:wrap") "on"))
          (enc (or (assoc-ref opts "texmacs->verbatim:encoding") "auto")))
-    ;; FIXME: dirty hack for "copy to verbatim" of code snippets
     (if (or (== (get-env "mode") "prog") (== (get-env "font-family") "tt"))
-        (set! wrap? #f))
-    (cpp-texmacs->verbatim x wrap? enc)))
+        ;; FIXME: dirty hacks for "copy to verbatim" of code snippets
+        (let ((conv (cpp-texmacs->verbatim x #f enc))
+              (tick (cpp-texmacs->verbatim (tm->tree "`") #f enc)))
+          (string-replace conv tick "`"))
+        (cpp-texmacs->verbatim x wrap? enc))))
 
 (tm-define (verbatim->texmacs x . opts)
   (if (list-1? opts) (set! opts (car opts)))
