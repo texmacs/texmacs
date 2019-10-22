@@ -41,6 +41,7 @@ struct poor_italic_font_rep: font_rep {
   double get_right_slope (string s);
   SI     get_left_correction  (string s);
   SI     get_right_correction  (string s);
+  SI     get_rsub_correction  (string s);
 };
 
 /******************************************************************************
@@ -203,7 +204,7 @@ poor_italic_font_rep::get_left_correction (string s) {
   tm_char_forwards (s, pos);
   string r= s (0, pos);
   metric ex;
-  base->get_extents (s, ex);
+  base->get_extents (r, ex);
   SI dx= 0;
   if (ex->y1 < 0) {
     if (xslant >= 0.0) dx= (SI) (xslant * (-ex->y1));
@@ -271,7 +272,7 @@ poor_italic_font_rep::get_right_correction (string s) {
   tm_char_backwards (s, pos);
   string r= s (pos, N(s));
   metric ex;
-  base->get_extents (s, ex);
+  base->get_extents (r, ex);
   SI dx= 0;
   if (xslant >= 0.0) {
     if (ex->y2 > 0) dx= (SI) (xslant * ex->y2);
@@ -283,6 +284,26 @@ poor_italic_font_rep::get_right_correction (string s) {
   // FIXME: we should apply a better correction if there is no ink
   // in the upper right corner (e.g. 'b' as compared to 'd')
   return base->get_right_correction (s) + dx;
+}
+
+SI
+poor_italic_font_rep::get_rsub_correction (string s) {
+  if (N(s) == 0) return 0;
+  int pos= N(s);
+  tm_char_backwards (s, pos);
+  string ss= s (pos, N(s));
+  metric ex;
+  base->get_extents (ss, ex);
+  double factor= (0.4 * yx) / max (yx, ex->y2);
+  SI extra= (SI) (round (factor * get_right_correction (s)));
+
+  SI r= extra + global_rsub_correct;
+  if (rsub_correct->contains (s))
+    r += (SI) (rsub_correct[s] * wfn);
+  else if (N(s) > 1 && is_alpha (s[N(s)-1]) &&
+           rsub_correct->contains (s (N(s)-1, N(s))))
+    r += (SI) (rsub_correct[s (N(s)-1, N(s))] * wfn);
+  return r;
 }
 
 /******************************************************************************
