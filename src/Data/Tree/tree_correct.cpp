@@ -479,12 +479,13 @@ superfluous_invisible_correct (tree t) {
 * Insert missing multiplications or function applications
 ******************************************************************************/
 
-#define SURE_NOTHING     0
-#define SURE_TIMES       1
-#define SURE_SPACE       2
-#define PROBABLE_TIMES   3
-#define PROBABLE_SPACE   4
-#define BOTH_WAYS        5
+#define SURE_NOTHING      0
+#define SURE_TIMES        1
+#define SURE_SPACE        2
+#define PROBABLE_NOTHING  3
+#define PROBABLE_TIMES    4
+#define PROBABLE_SPACE    5
+#define BOTH_WAYS         6
 
 struct invisible_corrector {
   int force;
@@ -497,6 +498,7 @@ protected:
   bool is_letter_like (string s);
   bool contains_infix (tree t);
   bool contains_plus_like (tree t);
+  bool contains_separator (tree t);
   void count_invisible (array<tree> a);
   void count_invisible (tree t, string mode);
   int  get_status (tree t, bool left, bool script_flag);
@@ -532,6 +534,15 @@ invisible_corrector::contains_plus_like (tree t) {
   array<tree> a= concat_tokenize (t);
   for (int i=1; i<N(a)-1; i++)
     if (a[i] == "+" || a[i] == "-")
+      return true;
+  return false;
+}
+
+bool
+invisible_corrector::contains_separator (tree t) {
+  array<tree> a= concat_tokenize (t);
+  for (int i=1; i<N(a)-1; i++)
+    if (a[i] == "," || a[i] == ";" || a[i] == ":")
       return true;
   return false;
 }
@@ -632,7 +643,9 @@ invisible_corrector::get_status (tree t, bool left, bool script_flag) {
   }
   else {
     if (is_around (t)) {
-      if (left && contains_plus_like (t[1]))
+      if (!left && contains_separator (t[1]))
+        return PROBABLE_NOTHING;
+      else if (left && contains_plus_like (t[1]))
         return ((force > 0)? SURE_TIMES: PROBABLE_TIMES);
       else if (contains_plus_like (t[1]))
         return ((force > 0)? PROBABLE_TIMES: BOTH_WAYS);
@@ -700,6 +713,8 @@ invisible_corrector::correct (array<tree> a) {
         ins= "*";
       else if (sti == SURE_SPACE && stj != SURE_TIMES)
         ins= " ";
+      else if (sti == PROBABLE_NOTHING || stj == PROBABLE_NOTHING)
+        ins= "";
       else if (sti == PROBABLE_TIMES && stj == PROBABLE_TIMES)
         ins= "*";
       else if (sti == PROBABLE_SPACE && stj == PROBABLE_SPACE)
