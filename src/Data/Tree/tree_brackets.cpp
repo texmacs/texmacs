@@ -28,6 +28,7 @@ is_dubious_open_middle (array<int> tp, int j) {
     j < 0 ||
     tp[j] == SYMBOL_PREFIX ||
     tp[j] == SYMBOL_INFIX ||
+    tp[j] == SYMBOL_PREFIX_INFIX ||
     tp[j] == SYMBOL_SEPARATOR;
 }
 
@@ -40,6 +41,7 @@ is_dubious_close_middle (array<int> tp, int j) {
     j >= N(tp) ||
     tp[j] == SYMBOL_POSTFIX ||
     tp[j] == SYMBOL_INFIX ||
+    tp[j] == SYMBOL_PREFIX_INFIX ||
     tp[j] == SYMBOL_SEPARATOR;
 }
 
@@ -72,6 +74,7 @@ upgrade_probable (array<int> tp_in) {
       if (j < 0 ||
           tp[j] == SYMBOL_PREFIX ||
           tp[j] == SYMBOL_INFIX ||
+          tp[j] == SYMBOL_PREFIX_INFIX ||
           tp[j] == SYMBOL_SEPARATOR)
         tp[i]= SYMBOL_PROBABLE_OPEN;
       j= i+1;
@@ -320,6 +323,7 @@ infix_split (array<tree> a, array<int> tp_in, array<int> pri, int level) {
     if (tp[i] == SYMBOL_OPEN_BIG)
       weakest= min (weakest, pri[i]);
     else if (tp[i] == SYMBOL_INFIX ||
+             tp[i] == SYMBOL_PREFIX_INFIX ||
              tp[i] == SYMBOL_SEPARATOR ||
              tp[i] == SYMBOL_MIDDLE ||
              tp[i] == SYMBOL_PROBABLE_MIDDLE)
@@ -339,6 +343,7 @@ postfix_split (array<tree> a, array<int> tp_in, int level) {
   while (i>0 &&
          (tp[i-1] == SYMBOL_PREFIX ||
           tp[i-1] == SYMBOL_INFIX ||
+          tp[i-1] == SYMBOL_PREFIX_INFIX ||
           tp[i-1] == SYMBOL_SEPARATOR ||
           tp[i-1] == SYMBOL_OPEN ||
           tp[i-1] == SYMBOL_MIDDLE ||

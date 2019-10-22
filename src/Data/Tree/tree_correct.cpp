@@ -400,10 +400,12 @@ superfluous_invisible_correct (array<tree> a) {
       else if (a[j1] == " " || a[j1] == "*");
       else if (tp[j1] == SYMBOL_PREFIX ||
                tp[j1] == SYMBOL_INFIX ||
+               tp[j1] == SYMBOL_PREFIX_INFIX ||
                tp[j1] == SYMBOL_SEPARATOR ||
                tp[j1] == SYMBOL_PROBABLE_MIDDLE);
       else if (tp[j2] == SYMBOL_POSTFIX ||
                tp[j2] == SYMBOL_INFIX ||
+               tp[j2] == SYMBOL_PREFIX_INFIX ||
                tp[j2] == SYMBOL_SEPARATOR ||
                tp[j2] == SYMBOL_PROBABLE_MIDDLE);
       else r << a[i];
@@ -520,7 +522,7 @@ bool
 invisible_corrector::contains_infix (tree t) {
   array<int> tp= symbol_types (concat_tokenize (t));
   for (int i=0; i<N(tp); i++)
-    if (tp[i] == SYMBOL_INFIX)
+    if (tp[i] == SYMBOL_INFIX || tp[i] == SYMBOL_PREFIX_INFIX)
       return true;
   return false;
 }

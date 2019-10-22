@@ -40,20 +40,21 @@ tree with_recompose (tree w, array<tree> a);
 #define SYMBOL_PREFIX             1
 #define SYMBOL_POSTFIX            2
 #define SYMBOL_INFIX              3
-#define SYMBOL_SEPARATOR          4
-#define SYMBOL_SKIP               5
-#define SYMBOL_SCRIPT             6
-#define SYMBOL_OPEN_BIG           7
-#define SYMBOL_CLOSE_BIG          8
-#define SYMBOL_OPEN               9
-#define SYMBOL_MIDDLE            10
-#define SYMBOL_CLOSE             11
-#define SYMBOL_PROBABLE_OPEN     12
-#define SYMBOL_PROBABLE_MIDDLE   13
-#define SYMBOL_PROBABLE_CLOSE    14
-#define SYMBOL_DUBIOUS_OPEN      15
-#define SYMBOL_DUBIOUS_MIDDLE    16
-#define SYMBOL_DUBIOUS_CLOSE     17
+#define SYMBOL_PREFIX_INFIX       4
+#define SYMBOL_SEPARATOR          5
+#define SYMBOL_SKIP               6
+#define SYMBOL_SCRIPT             7
+#define SYMBOL_OPEN_BIG           8
+#define SYMBOL_CLOSE_BIG          9
+#define SYMBOL_OPEN              10
+#define SYMBOL_MIDDLE            11
+#define SYMBOL_CLOSE             12
+#define SYMBOL_PROBABLE_OPEN     13
+#define SYMBOL_PROBABLE_MIDDLE   14
+#define SYMBOL_PROBABLE_CLOSE    15
+#define SYMBOL_DUBIOUS_OPEN      16
+#define SYMBOL_DUBIOUS_MIDDLE    17
+#define SYMBOL_DUBIOUS_CLOSE     18
 
 int symbol_type (tree t);
 array<int> symbol_types (array<tree> a);

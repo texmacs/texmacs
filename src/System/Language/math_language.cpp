@@ -57,6 +57,7 @@ math_language_rep::set_type (string cl, string s) {
   else if (s == "prefix") ot= OP_PREFIX;
   else if (s == "postfix") ot= OP_POSTFIX;
   else if (s == "infix") ot= OP_INFIX;
+  else if (s == "prefix-infix") ot= OP_PREFIX_INFIX;
   else if (s == "separator") ot= OP_SEPARATOR;
   else if (s == "opening-bracket") ot= OP_OPENING_BRACKET;
   else if (s == "middle-bracket") ot= OP_MIDDLE_BRACKET;
@@ -338,6 +339,8 @@ math_symbol_type (string sym, string lang) {
     return "postfix";
   case OP_INFIX:
     return "infix";
+  case OP_PREFIX_INFIX:
+    return "prefix-infix";
   case OP_SEPARATOR:
     return "separator";
   case OP_OPENING_BRACKET:

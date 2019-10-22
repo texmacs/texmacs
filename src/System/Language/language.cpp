@@ -128,6 +128,7 @@ static inline void init_expect_after (int op) {
   set_status (op, OP_BINARY, REMOVE_SPACE_BEFORE);
   set_status (op, OP_POSTFIX, REMOVE_CURRENT_SPACE);
   set_status (op, OP_INFIX, REMOVE_CURRENT_SPACE);
+  set_status (op, OP_PREFIX_INFIX, REMOVE_CURRENT_SPACE);
   set_status (op, OP_APPLY, REMOVE_SPACE_BEFORE);
   set_status (op, OP_SEPARATOR, REMOVE_SPACE_BEFORE);
   set_status (op, OP_MIDDLE_BRACKET, REMOVE_SPACE_BEFORE);
@@ -143,6 +144,7 @@ static inline void init_expect_space (int op) {
   set_status (op, OP_PREFIX, REMOVE_SPACE_BEFORE);
   set_status (op, OP_POSTFIX, REMOVE_SPACE_BEFORE);
   set_status (op, OP_INFIX, REMOVE_SPACE_BEFORE);
+  set_status (op, OP_PREFIX_INFIX, REMOVE_SPACE_BEFORE);
   set_status (op, OP_SEPARATOR, REMOVE_SPACE_BEFORE);
   set_status (op, OP_MIDDLE_BRACKET, REMOVE_SPACE_BEFORE);
   set_status (op, OP_CLOSING_BRACKET, REMOVE_SPACE_BEFORE);
@@ -167,6 +169,7 @@ init_succession_status_table () {
   init_expect_after (OP_PREFIX);
   init_could_end    (OP_POSTFIX);
   init_expect_after (OP_INFIX);
+  init_expect_after (OP_PREFIX_INFIX);
   init_expect_after (OP_APPLY);
   init_expect_after (OP_SEPARATOR);
   init_expect_after (OP_OPENING_BRACKET);

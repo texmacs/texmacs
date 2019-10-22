@@ -66,7 +66,8 @@
     (:operator)
     (Models-infix Post)
     (Pre Models-infix)
-    Models-symbol)
+    Models-symbol
+    Modeled-symbol)
 
   (define Models-prefix
     (:operator)

@@ -29,18 +29,23 @@
     "<lflux>" "<gflux>")
 
   (define Models-symbol
-    (:type infix)
+    (:type prefix-infix)
     (:spacing default wide)
     "<models>"
-    "<vdash>" "<dashv>" "<vDash>" "<Dashv>"
-    "<Vdash>" "<dashV>" "<VDash>" "<DashV>"
-    "<Vvdash>" "<dashVv>" "<VvDash>" "<DashVv>"
-    "<longvdash>" "<longdashv>" "<longvDash>" "<longDashv>"
-    "<longVdash>" "<longdashV>" "<longVDash>" "<longDashV>"
-    "<longVvdash>" "<longdashVv>" "<longVvDash>" "<longDashVv>"
-    "<nvdash>" "<ndashv>" "<nvDash>" "<nDashv>"
-    "<nVdash>" "<ndashV>" "<nVDash>" "<nDashV>"
-    "<nVvdash>" "<ndashVv>" "<nVvDash>" "<nDashVv>")
+    "<vdash>" "<vDash>" "<Vdash>" "<VDash>" "<Vvdash>" "<VvDash>"
+    "<longvdash>" "<longvDash>"
+    "<longVdash>" "<longVDash>"
+    "<longVvdash>" "<longVvDash>"
+    "<nvdash>" "<nvDash>" "<nVdash>" "<nVDash>" "<nVvdash>" "<nVvDash>")
+
+  (define Modeled-symbol
+    (:type infix)
+    (:spacing default wide)
+    "<dashv>" "<Dashv>" "<dashV>" "<DashV>" "<dashVv>" "<DashVv>"
+    "<longdashv>" "<longDashv>"
+    "<longdashV>" "<longDashV>"
+    "<longdashVv>" "<longDashVv>"
+    "<ndashv>" "<nDashv>" "<ndashV>" "<nDashV>" "<ndashVv>" "<nDashVv>")
 
   (define Quantifier-symbol
     (:type prefix)
@@ -245,14 +250,14 @@
     "<setminus>" "<smallsetminus>" "<bslash>")
 
   (define Plus-visible-symbol
-    (:type infix)
+    (:type prefix-infix)
     (:penalty 30)
     (:spacing default default)
     "+" "<amalg>" "<oplus>" "<boxplus>"
     "<dotplus>" "<dotamalg>" "<dotoplus>" "<pplus>")
 
   (define Plus-invisible-symbol
-    (:type infix)
+    (:type prefix-infix)
     (:penalty invalid)
     (:spacing none default)
     "<noplus>")
@@ -267,7 +272,7 @@
     "<upl>")
 
   (define Minus-symbol
-    (:type infix)
+    (:type prefix-infix)
     (:penalty 30)
     (:spacing default default)
     "-" "<pm>" "<mp>" "<minus>" "<longminus>"
@@ -738,6 +743,7 @@
   (define Infix-symbol
     Assign-symbol
     Models-symbol
+    Modeled-symbol
     Imply-symbol
     Or-symbol
     And-symbol

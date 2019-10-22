@@ -154,6 +154,8 @@ symbol_type (tree t) {
       return SYMBOL_POSTFIX;
     case OP_INFIX:
       return SYMBOL_INFIX;
+    case OP_PREFIX_INFIX:
+      return SYMBOL_PREFIX_INFIX;
     case OP_SEPARATOR:
       return SYMBOL_SEPARATOR;
     case OP_OPENING_BRACKET:
@@ -240,7 +242,7 @@ symbol_priority (tree t) {
     if (starts (g, "Ponctuation")) return PRIORITY_SEPARATOR;
     if (starts (g, "Assign")) return PRIORITY_ASSIGN;
     if (starts (g, "Flux")) return PRIORITY_FLUX;
-    if (starts (g, "Models")) return PRIORITY_MODELS;
+    if (starts (g, "Model")) return PRIORITY_MODELS;
     if (starts (g, "Imply")) return PRIORITY_IMPLY;
     if (starts (g, "Or")) return PRIORITY_OR;
     if (starts (g, "And")) return PRIORITY_AND;

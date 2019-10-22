@@ -74,13 +74,14 @@ RESOURCE(language);
 #define OP_PREFIX             7
 #define OP_POSTFIX            8
 #define OP_INFIX              9
-#define OP_APPLY             10
-#define OP_SEPARATOR         11
-#define OP_OPENING_BRACKET   12
-#define OP_MIDDLE_BRACKET    13
-#define OP_CLOSING_BRACKET   14
-#define OP_BIG               15
-#define OP_TOTAL             16
+#define OP_PREFIX_INFIX      10
+#define OP_APPLY             11
+#define OP_SEPARATOR         12
+#define OP_OPENING_BRACKET   13
+#define OP_MIDDLE_BRACKET    14
+#define OP_CLOSING_BRACKET   15
+#define OP_BIG               16
+#define OP_TOTAL             17
 
 #define LIMITS_NONE           0
 #define LIMITS_DISPLAY        1
