@@ -160,6 +160,24 @@ build_locus (edit_env env, tree t, list<string>& ids, string& col) {
   return build_locus (env, t, ids, col, ref, anchor);
 }
 
+static box
+produce_concat (path ip, array<line_item> a) {
+  if (N(a) == 1) return a[0]->b;
+  int i, n=N(a);
+  if (n == 0) return empty_box (ip); // FIXME: n=0 should never happen
+  array<box> items (n);
+  array<SI>  spc (n);
+  if (n>0) {
+    spc[0]=0;
+    for (i=0; i<n-1; i++) {
+      items[i]  = a[i]->b;
+      spc  [i+1]= a[i]->spc->def;
+    }
+    items[i]= a[i]->b;
+  }
+  return concat_box (ip, items, spc);
+}
+
 void
 concater_rep::typeset_locus (tree t, path ip) {
   if (N(t) == 0) { typeset_error (t, ip); return; }
@@ -171,13 +189,34 @@ concater_rep::typeset_locus (tree t, path ip) {
   tree old= env->local_begin (COLOR, col);
   int pos= N(a);
   typeset (t[last], descend (ip, last));
-  if (!ok)
-    for (int i=pos; i<N(a); i++)
-      if (a[i]->type == STD_ITEM || a[i]->type == STRING_ITEM) {
-        a[i]->type= STD_ITEM;
-        a[i]->b= locus_box (a[i]->b->ip, a[i]->b,
-                            ids, env->pixel, ref, anchor);
-      }    
+  if (!ok) {
+    path dip= decorate_middle (descend (ip, N(t) - 1));
+    array<line_item> new_a;
+    array<line_item> tmp_a;
+    for (int i=pos; i<N(a); i++) {
+      if ((a[i]->type == STD_ITEM || a[i]->type == STRING_ITEM) &&
+          !a[i]->limits) {
+        tmp_a << a[i];
+        if (i+1 == N(a) ||
+            (a[i+1]->type != STD_ITEM && a[i+1]->type != STRING_ITEM) ||
+            a[i+1]->limits ||
+            a[i]->spc != space (0) ||
+            a[i]->penalty < HYPH_PANIC ||
+            a[i]->op_type != a[i+1]->op_type) {
+          path sip= (N(tmp_a)==1? a[i]->b->ip: dip);
+          box cc= produce_concat (dip, tmp_a);
+          box lb= locus_box (sip, cc, ids, env->pixel, ref, anchor);
+          line_item item (STD_ITEM, a[i]->op_type, lb, a[i]->penalty);
+          item->spc= a[i]->spc;
+          new_a << item;
+          tmp_a= array<line_item> ();
+        }
+      }
+      else new_a << a[i];
+    }
+    a->resize (pos);
+    a << new_a;
+  }
   env->local_end (COLOR, old);
   marker (descend (ip, 1));
 }
