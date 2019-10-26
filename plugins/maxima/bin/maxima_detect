@@ -9,17 +9,30 @@ then
   then
     if [ "$1" ]
     then
-      maxima -d | grep -F 'maxima-htmldir=' | \
+      MAXIMA_TOC=$(maxima -d | grep -F 'maxima-htmldir=' | \
         sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|' | \
-        cygpath -f -
+        cygpath -f -)
+      if [ -e $MAXIMA_TOC ];then
+        $MAXIMA_TOC
+      else
+        maxima -d | grep -F 'maxima-htmldir=' |\
+          sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_0.html"|' | \
+          cygpath -f -
+      fi
     else
       echo '("cygwin")'
     fi
   else
     if [ "$1" ]
     then
-      maxima -d | grep -F 'maxima-htmldir=' |\
-        sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|'
+      MAXIMA_TOC=$(maxima -d | grep -F 'maxima-htmldir=' |\
+        sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_toc.html"|')
+      if [ -e $MAXIMA_TOC ];then
+        $MAXIMA_TOC
+      else
+        maxima -d | grep -F 'maxima-htmldir=' |\
+          sed -e 's/maxima-htmldir=/"/' -e 's|$|/maxima_0.html"|'
+      fi
     else
       MAXIMA=$(maxima --list-avail 2>/dev/null |\
         grep '^version [A-Za-z0-9\.][A-Za-z0-9\.]*, lisp [A-Za-z0-9][A-Za-z0-9]*$' |\
