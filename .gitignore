@@ -15,3 +15,4 @@ SVNREV
 *.log
 misc/benchmark/gbench
 tests/gtest
+bin/
