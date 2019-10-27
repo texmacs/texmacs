@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|1.99.11>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing>>
 
 <\body>
   <tmdoc-title|The <TeXmacs> plug-in system>
@@ -21,6 +21,8 @@
 
     <branch|Example of a plug-in with <name|C++> code|plugin-binary.en.tm>
 
+    <branch|Example of a plug-in with Python code|plugin-python.en.tm>
+
     <branch|Summary of the configuration options for
     plug-ins|plugin-config.en.tm>
   </traverse>
@@ -35,8 +37,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

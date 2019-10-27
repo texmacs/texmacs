@@ -8,6 +8,8 @@
   <section|Changes from version 1.99.1 to 2.1>
 
   <\itemize>
+    <item>Documentation on how to write plugins using Python (2.1).
+
     <item><scm|(run-all-tests)> aggregates and runs all the tests in <scheme>
     (2.1).
 
