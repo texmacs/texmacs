@@ -23,3 +23,5 @@ clean:
 	$(RM) *~
 	$(RM) */*~
 	$(RM) bin/*
+
+$(shell [ -d bin ] || mkdir -p bin)
