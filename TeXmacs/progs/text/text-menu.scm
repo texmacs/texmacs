@@ -255,7 +255,7 @@
     ("Footnote" (make-wrapped 'footnote))
     (when (not (selection-active-non-small?))
       ("Marginal note" (make-marginal-note)))
-    ;;("Balloon" (make-balloon))
+    ("Balloon" (make-balloon))
     ---
     ("Floating object" (make-insertion "float"))
     (when (not (selection-active-non-small?))
