@@ -117,11 +117,11 @@ new_breaker_rep::break_columns_ansatz (path b1, path b2,
     bm= path (ba->item, ba->next->next->next);
   else if (!is_nil (bb->next))
     bm= path (bb->item, bb->next->next->next);
-  else {
+  else
     bm= path ((ba->item + bb->item) >> 1);
-    bm= postpone_floats (bm, bb);
-  }
   if (bm == ba || bm == bb) {
+    ba= postpone_floats (ba, b2);
+    bb= postpone_floats (bb, b2);
     space spca1= compute_space (b1, ba);
     space spca2= compute_space (ba, b2);
     space spcb1= compute_space (b1, bb);
