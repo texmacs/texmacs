@@ -560,7 +560,7 @@
   ---
   (if (!= (graphics-get-grid-type #t) 'empty)
       ("Grid points" (graphics-toggle-snap "grid point"))
-      ("Grid curves" (graphics-toggle-snap "grid curve point"))
+      ("Grid lines" (graphics-toggle-snap "grid curve point"))
       ("Grid-curve intersections"
        (graphics-toggle-snap "curve-grid intersection")))
   ("Curve points" (graphics-toggle-snap "curve point"))

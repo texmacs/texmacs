@@ -1031,6 +1031,7 @@
 ("greyed" "")
 ("grid" "")
 ("grid curves" "")
+("grid lines" "")
 ("grid points" "")
 ("grid-curve intersections" "")
 ("group" "")

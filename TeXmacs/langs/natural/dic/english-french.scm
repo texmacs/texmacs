@@ -1059,6 +1059,7 @@
 ("greyed" "grisé")
 ("grid" "grille")
 ("grid curves" "courbes de la grille")
+("grid lines" "lignes de la grille")
 ("grid points" "points de la grille")
 ("grid-curve intersections" "intersections courbe-grille")
 ("group" "groupe")
