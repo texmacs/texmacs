@@ -352,8 +352,6 @@ void parse_url (string buf, string& path_file, string& w_unit,
                 string& h_unit, int& width, int& height) {
   width= 0;
   height= 0;
-  w_unit= "px";
-  h_unit= "px";
 
   array<string> path_toks= tokenize (buf, "?");
   path_file= path_toks[0];
@@ -375,6 +373,8 @@ void parse_url (string buf, string& path_file, string& w_unit,
     }
     i++;
   }
+  if (is_empty (w_unit)) w_unit= "px";
+  if (is_empty (h_unit)) h_unit= "px";
 }
 
 bool validate_h_unit (string unit) {
