@@ -153,34 +153,89 @@
 
   <section|Number>
 
+  <subsection|Integer Literals>
+
+  <\shell-code>
+    integer \ \ \ \ \ ::= \ decinteger \| bininteger \| octinteger \|
+    hexinteger
+
+    decinteger \ \ ::= \ nonzerodigit (["_"] digit)* \| "0"+ (["_"] "0")*
+
+    bininteger \ \ ::= \ "0" ("b" \| "B") (["_"] bindigit)+
+
+    octinteger \ \ ::= \ "0" ("o" \| "O") (["_"] octdigit)+
+
+    hexinteger \ \ ::= \ "0" ("x" \| "X") (["_"] hexdigit)+
+
+    nonzerodigit ::= \ "1"..."9"
+
+    digit \ \ \ \ \ \ \ ::= \ "0"..."9"
+
+    bindigit \ \ \ \ ::= \ "0" \| "1"
+
+    octdigit \ \ \ \ ::= \ "0"..."7"
+
+    hexdigit \ \ \ \ ::= \ digit \| "a"..."f" \| "A"..."F"
+  </shell-code>
+
   <\python-code>
     # decimal-literal suffix(optional)
 
-    10, 10l, 10L, 10j, 10J
+    10, 10j, 10J
 
     # octal-literal suffix(optional)
 
-    0o10, 0o10l, 0o10L, 0o10j, 0o10J
-
-    0O10, 0O10l, 0O10L, 0O10j, 0O10J
+    0o10, 0O10
 
     # hex-literal suffix(optional)
 
-    0x10, 0x10l, 0x10L, 0x10j, 0x10J
-
-    0X10, 0X10l, 0X10L, 0X10j, 0X10J
+    0x10, 0X10
 
     # binary-literal suffix(optional)
 
-    0b10, 0b10l, 0b10L, 0b10j, 0b10J
+    0b10, 0B10
+  </python-code>
 
-    0B10, 0B10l, 0b10L, 0b10j, 0b10J
+  <subsection|Floating Point Literals>
+
+  <\python-code>
+    floatnumber \ \ ::= \ pointfloat \| exponentfloat
+
+    pointfloat \ \ \ ::= \ [digitpart] fraction \| digitpart "."
+
+    exponentfloat ::= \ (digitpart \| pointfloat) exponent
+
+    digitpart \ \ \ \ ::= \ digit (["_"] digit)*
+
+    fraction \ \ \ \ \ ::= \ "." digitpart
+
+    exponent \ \ \ \ \ ::= \ ("e" \| "E") ["+" \| "-"] digitpart
+  </python-code>
+
+  <\python-code>
+    3.14, 10., .001, 1e100, 3.14e-10, 0e0, 3.14_15_93
+  </python-code>
+
+  <subsection|Imaginary Literals>
+
+  <\shell-code>
+    imagnumber ::= \ (floatnumber \| digitpart) ("j" \| "J")
+  </shell-code>
+
+  <\python-code>
+    3.14j, 10.j, 10j, .001j, 1e100j, 3.14e-10j, 3.14_15_93j
+
+    \;
+
+    # bad cases
+
+    0x10j, 0o10j, 0b10j
   </python-code>
 
   <section|References>
 
   <\itemize>
-    <item><hlink|The Python Language Reference(3.6)|https://docs.python.org/3.6/reference/index.html>
+    <item><hlink|The Python Language Reference(3.7)|https://docs.python.org/3.7/reference/index.html>
   </itemize>
 </body>
 
@@ -190,7 +245,11 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|1|?>>
-    <associate|auto-2|<tuple|2|?>>
+    <associate|auto-2|<tuple|1.1|?>>
+    <associate|auto-3|<tuple|1.2|?>>
+    <associate|auto-4|<tuple|1.3|?>>
+    <associate|auto-5|<tuple|2|?>>
+    <associate|auto-6|<tuple|2|?>>
   </collection>
 </references>
 

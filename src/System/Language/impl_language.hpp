@@ -11,6 +11,7 @@
 #ifndef IMPL_LANGUAGE_H
 #define IMPL_LANGUAGE_H
 #include "language.hpp"
+#include "parser.hpp"
 
 extern text_property_rep tp_normal_rep;
 extern text_property_rep tp_hyph_rep;
@@ -61,6 +62,7 @@ struct scheme_language_rep: language_rep {
 
 struct mathemagix_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   mathemagix_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -79,6 +81,7 @@ struct mathemagix_language_rep: abstract_language_rep {
 
 struct r_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   r_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -99,6 +102,7 @@ struct r_language_rep: abstract_language_rep {
 
 struct cpp_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   cpp_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -110,6 +114,7 @@ struct cpp_language_rep: abstract_language_rep {
 
 struct scilab_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   scilab_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -123,6 +128,7 @@ struct scilab_language_rep: abstract_language_rep {
 
 struct python_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   python_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -135,6 +141,7 @@ struct python_language_rep: abstract_language_rep {
 
 struct java_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   java_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -147,6 +154,7 @@ struct java_language_rep: abstract_language_rep {
 
 struct scala_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   scala_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);
@@ -159,6 +167,7 @@ struct scala_language_rep: abstract_language_rep {
 
 struct fortran_language_rep: abstract_language_rep {
   hashmap<string,string> colored;
+  number_parser_rep number_parser;
   fortran_language_rep (string name);
   text_property advance (tree t, int& pos);
   array<int> get_hyphens (string s);

@@ -15,11 +15,11 @@
 #include "scheme.hpp"
 
 static void parse_escaped_char (string s, int& pos);
-static void parse_number (string s, int& pos);
-static void parse_various_number (string s, int& pos);
 
 python_language_rep::python_language_rep (string name):
-  abstract_language_rep (name), colored ("") {}
+  abstract_language_rep (name), colored ("") {
+    number_parser.use_python_style ();
+}
 
 text_property
 python_language_rep::advance (tree t, int& pos) {
@@ -39,12 +39,12 @@ python_language_rep::advance (tree t, int& pos) {
        (s[pos+1] == 'x' || s[pos+1] == 'X' ||
         s[pos+1] == 'o' || s[pos+1] == 'O' ||
         s[pos+1] == 'b' || s[pos+1] == 'B')) {
-    parse_various_number (s, pos);
+    number_parser.parse (s, pos);
     return &tp_normal_rep;
   }
   if (is_digit (c) ||
       (c == '.' && pos+1 < N(s) && is_digit (s[pos+1]))) {
-    parse_number (s, pos);
+    number_parser.parse (s, pos);
     return &tp_normal_rep;
   }
   if (belongs_to_identifier (c)) {
@@ -448,40 +448,6 @@ python_language_rep::parse_operators (hashmap<string,string>& t, string s, int& 
 }
 
 static void
-parse_various_number (string s, int& pos) {
-  if (!(pos+2 < N(s) && s[pos] == '0' &&
-       (s[pos+1] == 'x' || s[pos+1] == 'X' ||
-        s[pos+1] == 'o' || s[pos+1] == 'O' ||
-        s[pos+1] == 'b' || s[pos+1] == 'B')))
-    return;
-  pos+= 2;
-  while (pos<N(s) && is_hex_digit (s[pos])) pos++;
-  if (pos<N(s) && (s[pos] == 'l' || s[pos] == 'L')) pos++;
-}
-
-static void
-parse_number (string s, int& pos) {
-  int i= pos;
-  if (pos>=N(s)) return;
-  if (!is_digit (s[i]) &&
-      !(s[i] == '.' && pos+1 < N(s) && is_digit (s[pos+1])))
-    return;
-  i++;
-  while (i<N(s) && (is_digit (s[i]) || s[i] == '.'))
-    i++;
-  if (i == pos) return;
-  if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
-    i++;
-    if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_digit (s[i]) || s[i] == '.')) i++;
-    if (i<N(s) && (s[i] == 'j')) i++;
-  }
-  else if (i<N(s) && (s[i] == 'l' || s[i] == 'L')) i++;
-  else if (i<N(s) && (s[i] == 'j')) i++;
-  pos= i;
-}
-
-static void
 parse_comment_single_line (string s, int& pos) {
   if (pos>=N(s)) return;
   if (s[pos]!='#') return;
@@ -562,18 +528,13 @@ python_language_rep::get_color (tree t, int start, int end) {
           type= "constant_string";
           break;
         }
+        number_parser.parse (s, pos);
+        if (opos < pos) {
+          type= "constant_number";
+          break;
+        }
         type= parse_keywords (colored, s, pos);
         if (opos < pos) {
-          break;
-        }
-        parse_various_number (s, pos);
-        if (opos < pos) {
-          type= "constant_number";
-          break;
-        }
-        parse_number (s, pos);
-        if (opos < pos) {
-          type= "constant_number";
           break;
         }
         type= parse_operators (colored, s, pos);
