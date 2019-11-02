@@ -14,11 +14,11 @@
 #include "impl_language.hpp"
 #include "scheme.hpp"
 
-static void parse_number (string s, int& pos);
-
 fortran_language_rep::fortran_language_rep (string name):
   abstract_language_rep (name), colored ("")
-{}
+{
+  number_parser.use_fortran_style ();
+}
 
 text_property
 fortran_language_rep::advance (tree t, int& pos) {
@@ -28,7 +28,7 @@ fortran_language_rep::advance (tree t, int& pos) {
   if (c == ' ') {
     pos++; return &tp_space_rep; }
   if (is_digit (c)) {
-    parse_number (s, pos); return &tp_normal_rep; }
+    number_parser.parse (s, pos); return &tp_normal_rep; }
   if (belongs_to_identifier (c)) {
     parse_alpha (s, pos); return &tp_normal_rep; }
   tm_char_forwards (s, pos);
@@ -458,26 +458,6 @@ fortran_language_rep::parse_operators (hashmap<string,string>& t, string s, int&
 }
 
 static void
-parse_number (string s, int& pos) {
-  int i= pos;
-  if (pos>=N(s)) return;
-  if (s[i] == '.') return;
-  while (i<N(s) &&
-	 (is_digit (s[i]) ||
-	  (s[i] == '.' && (i+1<N(s)) &&
-	   (is_digit (s[i+1]) ||
-	    s[i+1] == 'e' || s[i+1] == 'E' ||
-            s[i+1] == 'd' || s[i+1] == 'D')))) i++;
-  if (i == pos) return;
-  if (i<N(s) && (s[i] == 'e' || s[i] == 'E' || s[i] == 'd' || s[i] == 'D' )) {
-    i++;
-    if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_digit (s[i]))) i++;
-  }
-  pos= i;
-}
-
-static void
 parse_comment_single_line (string s, int& pos) {
   if (pos>=N(s)) return;
   if (pos+1<N(s) && s[pos]=='!') {pos=N(s);return;}
@@ -557,7 +537,7 @@ fortran_language_rep::get_color (tree t, int start, int end) {
         if (opos < pos) {
           break;
         }
-        parse_number (s, pos);
+        number_parser.parse (s, pos);
         if (opos < pos) {
           type= "constant_number";
           break;
