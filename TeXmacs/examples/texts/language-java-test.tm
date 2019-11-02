@@ -1,6 +1,6 @@
 <TeXmacs|1.99.11>
 
-<style|<tuple|generic|british>>
+<style|<tuple|generic|british|old-dots>>
 
 <\body>
   <doc-data|<doc-title|The Java Language>>
@@ -17,6 +17,24 @@
     0x1a;
 
     0X1a;
+
+    1.2;
+
+    1.2d;
+
+    1.2D;
+
+    1.2f;
+
+    1.2F;
+
+    12l;
+
+    12L;
+
+    1.2e10;
+
+    1.2E11;
   </java-code>
 
   <section|References>
