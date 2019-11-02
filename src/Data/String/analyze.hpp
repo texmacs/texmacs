@@ -25,6 +25,10 @@ inline bool is_upcase (char c) {
   return (c>='A') && (c<='Z'); }
 inline bool is_digit (char c) {
   return (c>='0') && (c<='9'); }
+inline bool is_binary_digit (char c) {
+  return c == '0' || c == '1'; }
+inline bool is_octal_digit (char c) {
+  return c >= '0' && c <= '7'; }
 inline bool is_hex_digit (char c) {
   return (c >= '0' && c <= '9') ||
     (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); }

@@ -18,6 +18,7 @@ private:
   bool double_suffix= false;
   bool float_suffix= false;
   bool j_suffix= false;
+  bool ull_suffix= false;
   bool locase_i_suffix= false;
   bool scientific_notation= false;
   bool prefix_0b= false;
@@ -29,11 +30,16 @@ private:
 public:
   number_parser_rep () {};
   void parse (string s, int& pos);
+  void parse_binary (string s, int& pos);
+  void parse_hex (string s, int& pos);
+  void parse_octal (string s, int &pos);
+  void parse_suffix (string s, int&pos);
 
   inline void support_double_suffix(bool param) { double_suffix= param; }
   inline void support_float_suffix(bool param) { float_suffix= param; }
   inline void support_j_suffix(bool param) { j_suffix= param; }
   inline void support_long_suffix(bool param) { long_suffix= param; }
+  inline void support_ull_suffix(bool param) { ull_suffix= param; }
   inline void support_locase_i_suffix(bool param) { locase_i_suffix= param; }
   inline void support_scientific_notation (bool param) { scientific_notation= param; }
   inline void support_prefix_0x (bool param) { prefix_0x= param; }

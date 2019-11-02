@@ -57,11 +57,13 @@ line_inc (tree t, int i) {
   return pt[p->item + i];
 }
 
-static void parse_number (string s, int& pos);
 static void parse_string (string s, int& pos);
 
 cpp_language_rep::cpp_language_rep (string name):
-  abstract_language_rep (name), colored ("") {}
+  abstract_language_rep (name), colored ("")
+{
+  number_parser.use_cpp_style ();
+}
 
 text_property
 cpp_language_rep::advance (tree t, int& pos) {
@@ -73,7 +75,7 @@ cpp_language_rep::advance (tree t, int& pos) {
     return &tp_space_rep;
   }
   if (is_digit (c)) {
-    parse_number (s, pos);
+    number_parser.parse (s, pos);
     return &tp_normal_rep;
   }
   if (is_alpha (c) || c == '_') {
@@ -289,24 +291,6 @@ parse_other_lexeme (hashmap<string,string>& t, string s, int& pos) {
   for (i=12; i>=1; i--)
     if (t->contains (s (pos, pos+i)))
       pos+= i;
-}
-
-static void
-parse_number (string s, int& pos) {
-  int i= pos;
-  if (pos >= N(s) || s[i] == '.') return;
-  while (i < N(s) &&
-         (is_digit (s[i]) ||
-          (s[i] == '.' && (i + 1 < N(s)) &&
-           (is_digit (s[i+1]) ||
-            s[i+1] == 'e' || s[i+1] == 'E')))) i++;
-  if (i == pos) return;
-  if (i < N(s) && (s[i] == 'e' || s[i] == 'E')) {
-    i++;
-    if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_digit (s[i]))) i++;
-  }
-  pos= i;
 }
 
 static void
@@ -540,7 +524,7 @@ cpp_language_rep::get_color (tree t, int start, int end) {
         type= "constant";
         break;
       }
-      parse_number (s, pos);
+      number_parser.parse (s, pos);
       if (opos < pos) {
         type= "constant_number";
         break;
