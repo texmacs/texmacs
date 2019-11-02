@@ -22,7 +22,7 @@
   textual-table numeric-dot-table numeric-comma-table)
 
 (define-group calc-labeled-tag
-  calc-inert calc-input calc-output
+  calc-inert calc-input calc-output cell-input cell-output
   calc-generate calc-generate-command
   calc-answer calc-answer-command
   calc-check calc-check-predicate calc-check-command calc-suggest)

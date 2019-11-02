@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -58,6 +58,14 @@
 
   <assign|calc-ref|<macro|ref|<with|color|<value|calc-ref-color>|<arg|ref>>>>
 
+  <drd-props|calc-table|arity|2|identifier|0|regular|1|accessible|1>
+
+  <drd-props|calc-inert|arity|2|identifier|0|regular|1|accessible|1>
+
+  <drd-props|calc-input|arity|3|identifier|0|regular|1|regular|2|accessible|1>
+
+  <drd-props|calc-output|arity|3|identifier|0|regular|1|regular|2|accessible|2>
+
   \;
 
   <assign|cell-inert|<macro|ref|body|<with|calc-inert|<macro|ref|in|<arg|in>>|<calc-inert|<arg|ref>|<arg|body>>>>>
@@ -72,11 +80,11 @@
 
   <assign|cell-sum|<macro|start|end|<arg|start><cell-plusses><arg|end>>>
 
-  <drd-props|cell-inert|arity|2|border|no|accessible|1>
+  <drd-props|cell-inert|arity|2|identifier|0|regular|1|border|no|accessible|1>
 
-  <drd-props|cell-input|arity|3|border|no|accessible|1>
+  <drd-props|cell-input|arity|3|identifier|0|regular|1|regular|2|border|no|accessible|1>
 
-  <drd-props|cell-output|arity|3|border|no|accessible|2>
+  <drd-props|cell-output|arity|3|identifier|0|regular|1|regular|2|border|no|accessible|2>
 
   \;
 
