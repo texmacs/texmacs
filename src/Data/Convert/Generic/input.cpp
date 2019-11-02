@@ -331,61 +331,95 @@ texmacs_input_rep::xformat_flush (bool force) {
 }
 
 void
-texmacs_input_rep::image_flush(string content, string type, int width, int height) {
+texmacs_input_rep::image_flush (string content, string type, string w_unit,
+                                string h_unit, int width, int height) {
   tree t (IMAGE);
   t << tuple (tree (RAW_DATA, content), type);
   if (width == 0 && height == 0) {
     t << tree ("0.618par") << tree ("");
   } else if (width != 0 && height == 0) {
-    t << tree (as_string (width) * "px") << tree ("");
+    t << tree (as_string (width) * w_unit) << tree ("");
   } else if (width == 0 && height != 0) {
-    t << tree ("") << tree (as_string (height) * "px");
+    t << tree ("") << tree (as_string (height) * h_unit);
   } else {
-    t << tree (as_string (width) * "px") << tree (as_string (height) * "px");
+    t << tree (as_string (width) * w_unit) << tree (as_string (height) * h_unit);
   }
   t << tree ("") << tree ("");
   write (t);
 }
 
+void parse_url (string buf, string& path_file, string& w_unit,
+                string& h_unit, int& width, int& height) {
+  width= 0;
+  height= 0;
+  w_unit= "px";
+  h_unit= "px";
+
+  array<string> path_toks= tokenize (buf, "?");
+  path_file= path_toks[0];
+  string path_extra= (N(path_toks) >= 2? path_toks[1]: string (""));
+  array<string> param_toks= tokenize (path_extra, "&");
+  int i= 0;
+  while (i < N(param_toks)) {
+    string param= param_toks[i];
+    int pos = 0;
+    if (starts (param, "width=")) {
+      param= replace (param, "width=", "");
+      read_int (param, pos, width);
+      w_unit= param(pos, N(param));
+    }
+    if (starts (param, "height=")) {
+      param= replace (param, "height=", "");
+      read_int (param, pos, height);
+      h_unit= param(pos, N(param));
+    }
+    i++;
+  }
+}
+
+bool validate_h_unit (string unit) {
+  return unit == "pt" || unit == "px" || unit == "pag";
+}
+
+bool validate_w_unit (string unit) {
+  return unit == "pt" || unit == "px" || unit == "par";
+}
+
 void
 texmacs_input_rep::file_flush (bool force) {
   if (force) {
-    array<string> path_toks= tokenize (buf, "?");
-    string path_file = path_toks[0];
-    string path_extra= (N(path_toks) >= 2? path_toks[1]: string (""));
-    array<string> param_toks= tokenize (path_extra, "&");
-    int i= 0;
-    int width= 0;
-    int height= 0;
-    while (i < N(param_toks)) {
-      string param = param_toks[i];
-      if (starts (param, "width="))
-        width= as_int (replace (param, "width=", ""));
-      if (starts (param, "height="))
-        height= as_int (replace (param, "height=", ""));
-      i++;
-    }
-
+    string path_file, w_unit, h_unit;
+    int width, height;
+    parse_url (buf, path_file, w_unit, h_unit, width, height);
     url file= url_system (path_file);
-    if (! exists (file)) {
-      string err_msg = "[" * as_string(file) * "] does not exist";
+
+    if (! validate_h_unit (h_unit)) {
+      string err_msg= h_unit * " is not allowed, please pt, px or pag!";
+      write (verbatim_to_tree (err_msg, false, "auto"));
+    }
+    else if (! validate_w_unit (w_unit)) {
+      string err_msg= w_unit * " is not allowed, please pt, px or par!";
+      write (verbatim_to_tree (err_msg, false, "auto"));
+    }
+    else if (! exists (file)) {
+      string err_msg= "[" * as_string(file) * "] does not exist";
       write (verbatim_to_tree (err_msg, false, "auto"));
     }
     else {
-      string type = suffix (file);
+      string type= suffix (file);
       string content;
       load_string (file, content, false);
       if (type == "png") {
-        image_flush (content, "png", width, height);
+        image_flush (content, "png", w_unit, h_unit, width, height);
       }
       else if (type == "eps") {
-        image_flush (content, "ps", width, height);
+        image_flush (content, "ps", w_unit, h_unit, width, height);
       } 
       else if (type == "pdf") {
-        image_flush (content, "pdf", width, height);
+        image_flush (content, "pdf", w_unit, h_unit, width, height);
       }
       else if (type == "svg") {
-        image_flush (content, "svg", width, height);
+        image_flush (content, "svg", w_unit, h_unit, width, height);
       }
       else {
         string err_msg = "Do not support file type with suffix: [" * type * "]";

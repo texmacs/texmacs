@@ -39,8 +39,8 @@ class Graph(object):
 
     def apply_magic(self, magic_line):
         # First reset to default values
-        self.height = 0
-        self.width = 0
+        self.height = "0px"
+        self.width = "0px"
         self.output = "eps"
 
         args = list(filter(lambda x: len(x)!=0, magic_line.split(" ")[1:]))
@@ -48,15 +48,9 @@ class Graph(object):
             option = args[0]
             value = args[1]
             if (option == '-width'):
-                try:
-                    self.width = int(value)
-                except ValueError:
-                    pass
+                self.width = value
             elif (option == '-height'):
-                try:
-                    self.height = int(value)
-                except ValueError:
-                    pass
+                self.height = value
             elif (option == '-output'):
                 self.output = value
             else:
