@@ -82,6 +82,28 @@
   (:name "Scala source")
   (:suffix "scala"))
 
+(define (texmacs->scala x . opts)
+  (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
+
+(define (scala->texmacs x . opts)
+  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(define (scala-snippet->texmacs x . opts)
+  (verbatim-snippet->texmacs x 
+    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(converter texmacs-tree scala-document
+  (:function texmacs->scala))
+
+(converter scala-document texmacs-tree
+  (:function scala->texmacs))
+  
+(converter texmacs-tree scala-snippet
+  (:function texmacs->scala))
+
+(converter scala-snippet texmacs-tree
+  (:function scala-snippet->texmacs))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Java source files
@@ -90,6 +112,28 @@
   (:name "Java source")
   (:suffix "java"))
 
+(define (texmacs->java x . opts)
+  (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
+
+(define (java->texmacs x . opts)
+  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(define (java-snippet->texmacs x . opts)
+  (verbatim-snippet->texmacs x 
+    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(converter texmacs-tree java-document
+  (:function texmacs->java))
+
+(converter java-document texmacs-tree
+  (:function java->texmacs))
+  
+(converter texmacs-tree java-snippet
+  (:function texmacs->java))
+
+(converter java-snippet texmacs-tree
+  (:function java-snippet->texmacs))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Python source files
@@ -97,3 +141,25 @@
 (define-format python
   (:name "Python source")
   (:suffix "py"))
+
+(define (texmacs->python x . opts)
+  (texmacs->verbatim x (acons "texmacs->verbatim:encoding" "SourceCode" '())))
+
+(define (python->texmacs x . opts)
+  (verbatim->texmacs x (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(define (python-snippet->texmacs x . opts)
+  (verbatim-snippet->texmacs x 
+    (acons "verbatim->texmacs:encoding" "SourceCode" '())))
+
+(converter texmacs-tree python-document
+  (:function texmacs->python))
+
+(converter python-document texmacs-tree
+  (:function python->texmacs))
+  
+(converter texmacs-tree python-snippet
+  (:function texmacs->python))
+
+(converter python-snippet texmacs-tree
+  (:function python-snippet->texmacs))
