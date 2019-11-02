@@ -16,6 +16,7 @@
 #include "merge_sort.hpp"
 #include "iterator.hpp"
 #include "boot.hpp"
+#include "drd_std.hpp"
 
 int geometry_w= 800, geometry_h= 600;
 int geometry_x= 0  , geometry_y= 0;
@@ -362,7 +363,13 @@ bool menu_caching= true;
 
 bool
 tm_window_rep::get_menu_widget (int which, string menu, widget& w) {
+  drd_info old_drd= the_drd;
+  if (!is_none (window_to_view (id))) {
+    tm_view vw= concrete_view (window_to_view (id));
+    if (vw != NULL) the_drd= vw->ed->drd;
+  }
   object xmenu= call ("menu-expand", eval ("'" * menu));
+  the_drd= old_drd;
   //cout << "xmenu= " << xmenu << "\n";
   if (menu_cache->contains (xmenu)) {
     //if (menu_current[which] == xmenu) cout << "Same " << menu << "\n";
