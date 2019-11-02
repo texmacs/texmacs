@@ -38,6 +38,11 @@ class Graph(object):
         return which(self.name) is not None
 
     def apply_magic(self, magic_line):
+        # First reset to default values
+        self.height = 0
+        self.width = 0
+        self.output = "eps"
+
         args = list(filter(lambda x: len(x)!=0, magic_line.split(" ")[1:]))
         while (len(args) > 1):
             option = args[0]
