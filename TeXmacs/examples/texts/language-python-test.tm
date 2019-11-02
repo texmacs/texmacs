@@ -47,108 +47,6 @@
     <|unfolded-io>
       hello world
     </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      1.2
-    <|unfolded-io>
-      1.2
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      1.2e10
-    <|unfolded-io>
-      12000000000.0
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      1.2000
-    <|unfolded-io>
-      1.2
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      1.2E10
-    <|unfolded-io>
-      12000000000.0
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      1.3e-100
-    <|unfolded-io>
-      1.3e-100
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      0xEE
-    <|unfolded-io>
-      238
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      0xEE
-    <|unfolded-io>
-      238
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      314159L
-    <|unfolded-io>
-      314159
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      314159l
-    <|unfolded-io>
-      314159
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      0b1101
-    <|unfolded-io>
-      13
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      0B1101
-    <|unfolded-io>
-      13
-    </unfolded-io>
-
-    <\unfolded-io>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|unfolded-io>
-      .001
-    <|unfolded-io>
-      0.001
-    </unfolded-io>
-
-    <\input>
-      \<gtr\>\<gtr\>\<gtr\>\ 
-    <|input>
-      \;
-    </input>
   </session>
 
   <section|Number>
@@ -249,7 +147,6 @@
     <associate|auto-3|<tuple|1.2|?>>
     <associate|auto-4|<tuple|1.3|?>>
     <associate|auto-5|<tuple|2|?>>
-    <associate|auto-6|<tuple|2|?>>
   </collection>
 </references>
 
@@ -260,9 +157,21 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-1><vspace|0.5fn>
 
+      <with|par-left|<quote|1tab>|1.1<space|2spc>Integer Literals
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-2>>
+
+      <with|par-left|<quote|1tab>|1.2<space|2spc>Floating Point Literals
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-3>>
+
+      <with|par-left|<quote|1tab>|1.3<space|2spc>Imaginary Literals
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-4>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>References>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-2><vspace|0.5fn>
+      <no-break><pageref|auto-5><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

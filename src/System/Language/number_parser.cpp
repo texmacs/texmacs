@@ -30,6 +30,13 @@ number_parser_rep::parse_hex (string s, int& pos) {
 }
 
 void
+number_parser_rep::parse_decimal (string s, int& pos) {
+  while (pos<N(s) &&
+         (is_digit (s[pos]) || is_separator (s[pos]) || s[pos] == '.'))
+    pos++;
+}
+
+void
 number_parser_rep::parse_suffix (string s, int& pos) {
   if (ull_suffix && pos<N(s)) {
     if (test (s, pos, "ull") || test (s, pos, "ULL")) { pos+= 3; return; }
@@ -74,30 +81,26 @@ number_parser_rep::parse (string s, int& pos) {
     if (prefix_0x && (s[pos+1] == 'x' || s[pos+1] == 'X')) {
       pos+= 2;
       parse_hex (s, pos);
-      return;
+      if (no_suffix_with_box) return;
     }
     if (prefix_0o && (s[pos+1] == 'o' || s[pos+1] == 'O')) {
       pos+= 2;
       parse_octal (s, pos);
-      return;
+      if (no_suffix_with_box) return;
     }
     if (prefix_0b && (s[pos+1] == 'b' || s[pos+1] == 'B')) {
       pos+= 2;
       parse_binary (s, pos);
-      return;
+      if (no_suffix_with_box) return;
     }
   }
 
-  int i= pos;
-  while (i<N(s) && (is_digit (s[i]) || is_separator (s[i]) || s[i] == '.'))
-    i++;
-  if (i == pos) return;
-  if (scientific_notation && i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
-    i++;
-    if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_digit (s[i]) || is_separator (s[i]) || s[i] == '.')) i++;
+  parse_decimal (s, pos);
+  if (scientific_notation && pos<N(s) && (s[pos] == 'e' || s[pos] == 'E')) {
+    pos++;
+    if (pos<N(s) && s[pos] == '-') pos++;
+    parse_decimal (s, pos);
   }
-  pos= i;
   parse_suffix (s, pos);
 }
 
@@ -117,7 +120,9 @@ number_parser_rep::use_fortran_style () {
 void
 number_parser_rep::use_java_style () {
   support_prefix_0x (true);
+  support_prefix_0b (true);
   support_scientific_notation (true);
+  support_separator ('_');
   support_long_suffix (true);
   support_double_suffix (true);
   support_float_suffix (true);
@@ -125,11 +130,7 @@ number_parser_rep::use_java_style () {
 
 void
 number_parser_rep::use_scala_style () {
-  support_prefix_0x (true);
-  support_scientific_notation (true);
-  support_double_suffix (true);
-  support_float_suffix (true);
-  support_long_suffix (true);
+  use_java_style ();
 }
 
 void
@@ -139,6 +140,7 @@ number_parser_rep::use_python_style () {
   support_prefix_0b (true);
   support_prefix_0o (true);
   support_prefix_0x (true);
+  support_no_suffix_with_box (true);
   support_separator ('_');
 }
 

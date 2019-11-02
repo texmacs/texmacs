@@ -5,36 +5,26 @@
 <\body>
   <doc-data|<doc-title|The Java Language>>
 
-  <section|Syntax Highlight>
+  <section|Number>
 
-  <paragraph|number>
+  <subsection|Integer Literals>
 
   <\java-code>
-    0;
+    // decimal-literal suffix(optional)
 
-    1;
+    10, 10l, 10L
 
-    0x1a;
+    // octal-literal
 
-    0X1a;
+    010
 
-    1.2;
+    // hex-literal
 
-    1.2d;
+    0x10, 0X10
 
-    1.2D;
+    // binary-literal
 
-    1.2f;
-
-    1.2F;
-
-    12l;
-
-    12L;
-
-    1.2e10;
-
-    1.2E11;
+    0b10, 0B10
   </java-code>
 
   <section|References>
@@ -51,8 +41,9 @@
 <\references>
   <\collection>
     <associate|auto-1|<tuple|1|?>>
-    <associate|auto-2|<tuple|1|?>>
+    <associate|auto-2|<tuple|1.1|?>>
     <associate|auto-3|<tuple|2|?>>
+    <associate|auto-4|<tuple|2|?>>
   </collection>
 </references>
 

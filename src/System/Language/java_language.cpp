@@ -45,12 +45,12 @@ line_inc (tree t, int i) {
 }
 
 static void parse_escaped_char (string s, int& pos);
-static void parse_number (string s, int& pos);
-static void parse_various_number (string s, int& pos);
-static void parse_alpha (string s, int& pos);
 
 java_language_rep::java_language_rep (string name):
-  abstract_language_rep (name), colored ("") {}
+  abstract_language_rep (name), colored ("")
+{
+  number_parser.use_java_style ();
+}
 
 text_property
 java_language_rep::advance (tree t, int& pos) {
@@ -68,12 +68,12 @@ java_language_rep::advance (tree t, int& pos) {
   }
   if (pos+2 < N(s) && s[pos] == '0' &&
        (s[pos+1] == 'x' || s[pos+1] == 'X' )) {
-    parse_various_number (s, pos);
+    number_parser.parse (s, pos);
     return &tp_normal_rep;
   }
   if (is_digit (c) ||
       (c == '.' && pos+1 < N(s) && is_digit (s[pos+1]))) {
-    parse_number (s, pos);
+    number_parser.parse (s, pos);
     return &tp_normal_rep;
   }
   if (belongs_to_identifier (c)) {
@@ -451,35 +451,6 @@ java_language_rep::parse_operators (hashmap<string,string>& t, string s, int& po
 }
 
 static void
-parse_various_number (string s, int& pos) {
-  if (!(pos+2 < N(s) && s[pos] == '0' &&
-       (s[pos+1] == 'x' || s[pos+1] == 'X')))
-    return;
-  pos+= 2;
-  while (pos<N(s) && is_hex_digit (s[pos])) pos++;
-  if (pos<N(s) && (s[pos] == 'l' || s[pos] == 'L')) pos++;
-}
-
-static void
-parse_number (string s, int& pos) {
-  int i= pos;
-  if (pos>=N(s) || !is_digit (s[i])) return;
-  i++;
-  while (i<N(s) && (is_digit (s[i]) || s[i] == '.'))
-    i++;
-  if (i == pos) return;
-  if (i<N(s) && (s[i] == 'e' || s[i] == 'E')) {
-    i++;
-    if (i<N(s) && s[i] == '-') i++;
-    while (i<N(s) && (is_digit (s[i]) || s[i] == '.')) i++;
-  }
-  else if (i<N(s) && (s[i] == 'l' || s[i] == 'L')) i++;
-  else if (i<N(s) && (s[i] == 'f' || s[i] == 'F')) i++;
-  else if (i<N(s) && (s[i] == 'd' || s[i] == 'D')) i++;
-  pos= i;
-}
-
-static void
 parse_comment_single_line (string s, int& pos) {
   if (pos+1>=N(s)) return;
   if (s[pos]!='/' || s[pos+1]!='/') return;
@@ -555,12 +526,7 @@ java_language_rep::get_color (tree t, int start, int end) {
         if (opos < pos) {
           break;
         }
-        parse_various_number (s, pos);
-        if (opos < pos) {
-          type= "constant_number";
-          break;
-        }
-        parse_number (s, pos);
+        number_parser.parse (s, pos);
         if (opos < pos) {
           type= "constant_number";
           break;

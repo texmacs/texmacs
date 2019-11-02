@@ -28,16 +28,21 @@ TEST (integer_literal, work) {
   );
 
   // Hex Literals
-  assert_numbers (number_parser, list<string>()
-    * string("0x10") * string("0X10")
-    * string("0x10_10") * string("0X10_10")
-  );
+  assert_numbers (number_parser, hex_literals * hex_literals_with_sep);
 
   // Binary Literals
-  assert_numbers (number_parser, list<string>()
-    * string("0b10") * string("0B10")
-    * string("0b10_10") * string("0B10_10")
-  );
+  assert_numbers (number_parser, binary_literals * binary_literals_with_sep);
+
+  // No Suffix with B O X
+  int pos= 0;
+  number_parser.parse ("0x10j", pos);
+  EXPECT_EQ (pos, 4);
+  pos= 0;
+  number_parser.parse ("0o10j", pos);
+  EXPECT_EQ (pos, 4);
+  pos= 0;
+  number_parser.parse ("0b10j", pos);
+  EXPECT_EQ (pos, 4);
 }
 
 TEST (floating_point_literal, work) {
@@ -60,8 +65,4 @@ TEST (imag_literal , work) {
     * string(".001j") * string("1e100j") * string("3.14e-10j")
     * string("3.14_15_93j")
   );
-
-  int pos= 0;
-  number_parser.parse ("0x10j", pos);
-  EXPECT_EQ (pos, 4);
 }

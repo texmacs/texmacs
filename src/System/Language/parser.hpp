@@ -24,6 +24,7 @@ private:
   bool prefix_0b= false;
   bool prefix_0x= false;
   bool prefix_0o= false;
+  bool no_suffix_with_box= false;
   bool separator= false;
   char sep = '_';
 
@@ -32,8 +33,9 @@ public:
   void parse (string s, int& pos);
   void parse_binary (string s, int& pos);
   void parse_hex (string s, int& pos);
-  void parse_octal (string s, int &pos);
-  void parse_suffix (string s, int&pos);
+  void parse_octal (string s, int& pos);
+  void parse_suffix (string s, int& pos);
+  void parse_decimal (string s, int& pos);
 
   inline void support_double_suffix(bool param) { double_suffix= param; }
   inline void support_float_suffix(bool param) { float_suffix= param; }
@@ -45,6 +47,7 @@ public:
   inline void support_prefix_0x (bool param) { prefix_0x= param; }
   inline void support_prefix_0b (bool param) { prefix_0b= param; }
   inline void support_prefix_0o (bool param) { prefix_0o= param; }
+  inline void support_no_suffix_with_box(bool param) { no_suffix_with_box= param; }
   inline void support_separator (char param) { sep= param; separator= true; }
   inline bool is_separator (char param) { return separator && sep == param; }
 
