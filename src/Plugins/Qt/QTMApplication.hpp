@@ -16,6 +16,7 @@
 #include <QIcon>
 #include "string.hpp"
 #include "sys_utils.hpp"
+#include "url.hpp"
 
 /*
  FIXME: We would like to do the following
@@ -48,13 +49,13 @@ public:
     QApplication (argc, argv) { }
 
   void set_window_icon (string icon_path) {
-    const string icon= get_env ("TEXMACS_PATH") * icon_path;
-    if (exists (icon)) {
-      const c_string _icon (icon);
+    url icon_url= url_system (get_env ("TEXMACS_PATH") * icon_path);
+    if (exists (icon_url)) {
+      const c_string _icon (as_string (icon_url));
       setWindowIcon (QIcon ((const char*) _icon));
     }
     else
-      std_warning << "Could not find TeXmacs icon file: " << icon << LF;
+      std_warning << "Could not find TeXmacs icon file: " << as_string (icon_url) << LF;
   }
 
   virtual bool notify (QObject* receiver, QEvent* event)
