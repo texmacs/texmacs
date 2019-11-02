@@ -669,6 +669,7 @@ unicode_font_rep::advance_glyph (string s, int& pos, bool ligf) {
 glyph
 unicode_font_rep::get_glyph (string s) {
   int i= 0, n= N(s);
+  if (n == 0) return font_rep::get_glyph (s);
   unsigned int uc= read_unicode_char (s, i);
   if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
     uc= ligature_replace (uc, s, i);
@@ -681,6 +682,7 @@ unicode_font_rep::get_glyph (string s) {
 int
 unicode_font_rep::index_glyph (string s, font_metric& rm, font_glyphs& rg) {
   int i= 0, n= N(s);
+  if (n == 0) return font_rep::index_glyph (s, rm, rg);
   unsigned int uc= read_unicode_char (s, i);
   if (ligs > 0 && (((char) uc) == 'f' || ((char) uc) == 's'))
     uc= ligature_replace (uc, s, i);
