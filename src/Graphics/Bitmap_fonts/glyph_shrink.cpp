@@ -228,6 +228,7 @@ shrink (glyph gl, int xfactor, int yfactor, SI& xo, SI& yo) {
   int dx=0, dy=0;
   if ((gl->status==0) && (xfactor>1)) dx= get_hor_shift (gl, xfactor, tx);
   // if ((gl->status==0) && (yfactor>1)) dy= get_ver_shift (gl, yfactor, ty);
+  if (gl->artistic != 0) tx= ty= 0;
 
   glyph ret= shrink (gl, xfactor, yfactor, dx, dy, tx, ty, xo, yo);
 #ifndef QTTEXMACS

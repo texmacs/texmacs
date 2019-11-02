@@ -176,6 +176,7 @@ font poor_bold_font (font base);
 font poor_bbb_font (font base, double penw, double penh, double fatw);
 font poor_bbb_font (font base);
 font poor_distorted_font (font base, tree kind);
+font poor_effected_font (font base, tree kind);
 font x_font (string family, int size, int dpi);
 font qt_font (string family, int size, int dpi);
 font tex_font (string fam, int size, int dpi, int dsize=10);

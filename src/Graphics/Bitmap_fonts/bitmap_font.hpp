@@ -40,6 +40,7 @@ struct glyph_rep: concrete_struct {
   short xoff, yoff;          // offset of origin
   short lwidth;              // logical width of character
   short status;              // status for extensible characters
+  short artistic;            // result of applying an artistic effect
   QN*   raster;              // character definition
 
   glyph_rep (int w, int h, int xoff, int yoff, int depth, int status=0);
@@ -170,5 +171,7 @@ font_metric bolden (font_metric fnm, SI dtot, SI dver);
 font_glyphs bolden (font_glyphs fng, SI dpen, SI dtot, SI dver);
 font_glyphs make_bbb (font_glyphs fng, SI penw, SI penh, SI fatw);
 font_glyphs distorted (font_glyphs fng, tree kind, SI em);
+font_metric effected (font_metric fnm, tree eff, SI em);
+font_glyphs effected (font_glyphs fng, tree eff, SI em);
 
 #endif // defined BITMAP_FONT_H

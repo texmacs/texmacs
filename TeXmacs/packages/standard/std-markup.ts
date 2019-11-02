@@ -1,4 +1,4 @@
-<TeXmacs|1.99.9>
+<TeXmacs|1.99.11>
 
 <style|<tuple|source|std>>
 
@@ -590,6 +590,8 @@
 
   <assign|gnawed-frequency|1.0>
 
+  <assign|blurred-radius|0.6pt>
+
   \;
 
   <assign|embold|<macro|body|<add-font-effect|bold|<value|embold-strength>|<arg|body>>>>
@@ -611,6 +613,8 @@
   <assign|distorted|<macro|body|<add-font-effect|distorted|<merge|<value|distorted-strength>|;|<value|distorted-frequency>>|<arg|body>>>>
 
   <assign|gnawed|<macro|body|<add-font-effect|gnawed|<merge|<value|gnawed-strength>|;|<value|gnawed-frequency>>|<arg|body>>>>
+
+  <assign|blurred|<macro|body|<add-font-effect|blurred|<value|blurred-radius>|<arg|body>>>>
 
   <\active*>
     <\src-comment>

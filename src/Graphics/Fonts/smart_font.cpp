@@ -1510,7 +1510,7 @@ smart_font_rep::index_glyph (string s, font_metric& fnm, font_glyphs& fng) {
   if (n == 0) return -1;
   string r= s;
   advance (s, i, r, nr);
-  if (nr < 0) return -1;
+  if (nr < 0 || N(r) == 0) return -1;
   return fn[nr]->index_glyph (r, fnm, fng);
 }
 
@@ -1695,10 +1695,23 @@ smart_font (string family, string variant, string series, string shape,
 }
 
 static double
-get_parameter (string val, int i, double def) {
+get_double_parameter (string val, int i, double def) {
   array<string> a= trimmed_tokenize (val, ";");
   if (i < N(a) && is_double (a[i])) return as_double (a[i]);
   return def;
+}
+
+static void
+get_length_parameter (string val, int i, double& quan, string& unit) {
+  array<string> a= trimmed_tokenize (val, ";");
+  if (i < N(a)) {
+    string s= a[i];
+    int k= N(s);
+    while (k>0 && is_alpha (s[k-1])) k--;
+    unit= s (k, N(s));
+    quan= 0.0;
+    if (is_double (s (0, k))) quan= as_double (s (0, k));
+  }
 }
 
 font
@@ -1757,8 +1770,8 @@ apply_effects (font fn, string effects) {
       }
       */
       else if (b[0] == "degraded") {
-        double threshold= get_parameter (b[1], 0, 0.666);
-        double freq     = get_parameter (b[1], 1, 1.0);
+        double threshold= get_double_parameter (b[1], 0, 0.666);
+        double freq     = get_double_parameter (b[1], 1, 1.0);
         if (threshold < 0.01) threshold= 0.01;
         if (threshold > 0.99) threshold= 0.99;
         if (freq < 0.10) freq= 0.10;
@@ -1767,8 +1780,8 @@ apply_effects (font fn, string effects) {
         fn= poor_distorted_font (fn, kind);
       }
       else if (b[0] == "distorted") {
-        double strength= get_parameter (b[1], 0, 1.0);
-        double freq    = get_parameter (b[1], 1, 1.0);
+        double strength= get_double_parameter (b[1], 0, 1.0);
+        double freq    = get_double_parameter (b[1], 1, 1.0);
         if (strength < 0.1) strength= 0.1;
         if (strength > 9.9) strength= 9.9;
         if (freq < 0.10) freq= 0.10;
@@ -1777,14 +1790,24 @@ apply_effects (font fn, string effects) {
         fn= poor_distorted_font (fn, kind);
       }
       else if (b[0] == "gnawed") {
-        double strength= get_parameter (b[1], 0, 1.0);
-        double freq    = get_parameter (b[1], 1, 1.0);
+        double strength= get_double_parameter (b[1], 0, 1.0);
+        double freq    = get_double_parameter (b[1], 1, 1.0);
         if (strength < 0.1) strength= 0.1;
         if (strength > 9.9) strength= 9.9;
         if (freq < 0.10) freq= 0.10;
         if (freq > 10.0) freq= 10.0;
         tree kind= tuple ("gnawed", as_string (strength), as_string (freq));
         fn= poor_distorted_font (fn, kind);
+      }
+      else if (b[0] == "blurred") {
+        double rad_val = 1.0;
+        string rad_unit= "pt";
+        get_length_parameter (b[1], 0, rad_val, rad_unit);
+        if (rad_unit == "pt") rad_val= rad_val / fn->size;
+        if (rad_val < 0.01) rad_val= 0.01;
+        if (rad_val > 1.00) rad_val= 1.00;
+        tree kind= tuple ("blurred", as_string (rad_val));
+        fn= poor_effected_font (fn, kind);
       }
     }
   }

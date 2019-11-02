@@ -18,14 +18,15 @@
 glyph_rep::glyph_rep (int w2, int h2, int xoff2, int yoff2,
 		      int depth2, int status2)
 {
-  index   = 0;
-  depth   = depth2;
-  width   = w2;
-  height  = h2;
-  xoff    = xoff2;
-  yoff    = yoff2;
-  lwidth  = w2;
-  status  = status2;
+  index    = 0;
+  depth    = depth2;
+  width    = w2;
+  height   = h2;
+  xoff     = xoff2;
+  yoff     = yoff2;
+  lwidth   = w2;
+  status   = status2;
+  artistic = 0;
 
   int i, n= (depth==1? (width*height+7)/8: width*height);
   raster= tm_new_array<QN> (n);
