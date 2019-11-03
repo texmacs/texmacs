@@ -614,7 +614,7 @@
   </macro>>
 
   <assign|hide-preamble|<\macro|body>
-    <hidden|<arg|body>>
+    <hidden|<filter-style|<quote-arg|body>>>
   </macro>>
 
   <assign|show-part|<\macro|id|active|inactive>

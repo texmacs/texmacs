@@ -626,6 +626,9 @@ concater_rep::typeset (tree t, path ip) {
     typeset_executable (t, ip);
     break;
 
+  case FILTER_STYLE:
+    typeset_executable (t, ip);
+    break;
   case STYLE_ONLY:
   case VAR_STYLE_ONLY:
   case ACTIVE:

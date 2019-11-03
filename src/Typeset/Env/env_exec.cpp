@@ -22,6 +22,7 @@
 
 extern int script_status;
 extern tree with_package_definitions (string package, tree body);
+static tree filter_style (tree t);
 
 /******************************************************************************
 * Subroutines
@@ -453,6 +454,8 @@ edit_env_rep::exec (tree t) {
   case HR_LENGTH:
     return exec_hr_length ();
 
+  case FILTER_STYLE:
+    return exec (filter_style (exec (t[0])));
   case STYLE_WITH:
   case VAR_STYLE_WITH:
     if (N(t) < 1)

@@ -467,6 +467,7 @@ init_std_drd () {
   init (MIN_LENGTH, "min-length", fixed (0) -> returns_length ());
   init (HR_LENGTH, "hr-length", fixed (0) -> returns_length ());
 
+  init (FILTER_STYLE, "filter-style", fixed (1));
   init (STYLE_WITH, "style-with",
         var_repeat (2, 1, BIFORM) -> binding (0) -> accessible (1));
   init (VAR_STYLE_WITH, "style-with*",
