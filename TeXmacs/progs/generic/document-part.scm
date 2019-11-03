@@ -158,6 +158,16 @@
 		 (buffer-go-to-part first)))
 	   (update-current-buffer)))))
 
+(tm-define (in-preamble-mode?)
+  (tree-is? (tree-ref (buffer-tree) 0) 'show-preamble))
+
+(tm-define (toggle-preamble-mode)
+  (:synopsis "Toggle the preamble mode for the document")
+  (:check-mark "v" in-preamble-mode?)
+  (if (in-preamble-mode?)
+      (buffer-set-part-mode :all)
+      (buffer-set-part-mode :preamble)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Listing the document parts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -307,16 +317,16 @@
 
 (menu-bind preamble-menu
   (if (buffer-has-preamble?)
-      ("Show preamble" (buffer-set-part-mode :preamble)))
+      ("Show preamble" (toggle-preamble-mode)))
   (if (not (buffer-has-preamble?))
-      ("Create preamble" (buffer-set-part-mode :preamble)))
+      ("Create preamble" (toggle-preamble-mode)))
   ("Show main document" (buffer-set-part-mode :all)))
 
 (menu-bind document-part-menu
   (if (buffer-has-preamble?)
-      ("Show preamble" (buffer-set-part-mode :preamble)))
+      ("Show preamble" (toggle-preamble-mode)))
   (if (not (buffer-has-preamble?))
-      ("Create preamble" (buffer-set-part-mode :preamble)))
+      ("Create preamble" (toggle-preamble-mode)))
   ("Show one part" (buffer-set-part-mode :one))
   ("Show several parts" (buffer-set-part-mode :several))
   ("Show all parts" (buffer-set-part-mode :all))

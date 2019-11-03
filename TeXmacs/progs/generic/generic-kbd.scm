@@ -167,8 +167,7 @@
   ("altcmd P" (make 'pageref))
 
   ("extra s" (toggle-source-mode))
-  ("extra p" (buffer-set-part-mode :preamble))
-  ("extra a" (buffer-set-part-mode :all))
+  ("extra p" (toggle-preamble-mode))
 
   ("accent:hat" "^")
   ("accent:deadhat" "^")
