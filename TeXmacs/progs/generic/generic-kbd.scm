@@ -166,6 +166,10 @@
   ("altcmd ? var var" (make 'pageref))
   ("altcmd P" (make 'pageref))
 
+  ("extra s" (toggle-source-mode))
+  ("extra p" (buffer-set-part-mode :preamble))
+  ("extra a" (buffer-set-part-mode :all))
+
   ("accent:hat" "^")
   ("accent:deadhat" "^")
   ("accent:tilde" "~")
@@ -634,7 +638,6 @@
   ("macos F" (toggle-full-screen-mode))
   ("macos C-f" (toggle-full-screen-edit-mode))
 
-  ("macos A-u" (toggle-preamble))
   ("altcmd x" (interactive footer-eval))
   ("altcmd X" (interactive exec-interactive-command))
 

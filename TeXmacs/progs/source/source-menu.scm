@@ -146,7 +146,7 @@
   (when (can-create-table-macro?)
     ("Create table macro" (create-table-macro "")))
   ("Edit macros" (open-macros-editor))
-  ("Edit preamble" (toggle-preamble))
+  ("Edit preamble" (toggle-source-mode))
   ("Extract style file" (extract-style-file #t))
   ("Extract style package" (extract-style-file #f)))
 

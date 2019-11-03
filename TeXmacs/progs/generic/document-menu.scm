@@ -827,7 +827,7 @@
            (!= (get-init-tree "sectional-short-style") (tree 'macro "false")))
       (-> "Part" (link document-part-menu)))
   (-> "Source"
-      ("Edit source tree" (toggle-preamble))
+      ("Edit source tree" (toggle-source-mode))
       ---
       (group "Preferences")
       (link document-source-preferences-menu))
@@ -860,7 +860,7 @@
            (!= (get-init-tree "sectional-short-style") (tree 'macro "false")))
       (-> "Part" (link document-part-menu)))
   (-> "Source"
-      ("Edit source tree" (toggle-preamble))
+      ("Edit source tree" (toggle-source-mode))
       ("Preferences" (open-source-tree-preferences)))
   (-> "Update" (link document-update-menu))
   ---

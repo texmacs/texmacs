@@ -35,6 +35,7 @@
   ("cmd" "A-")
   ("altcmd" "M-")
   ("special" "M-C-")
+  ("extra" "M-A-")
   ("accent" "M-" #t)
   ("copyto" "M-W")
   ("cutto" "emacs W")

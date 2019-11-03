@@ -29,12 +29,12 @@
 ;; Preamble mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (in-preamble?)
+(define (in-source-mode?)
   (== (get-env "preamble") "true"))
 
-(tm-define (toggle-preamble)
-  (:synopsis "Toggle preamble mode.")
-  (:check-mark "v" in-preamble?)
+(tm-define (toggle-source-mode)
+  (:synopsis "Toggle source code editing mode.")
+  (:check-mark "v" in-source-mode?)
   (let ((new (if (string=? (get-env "preamble") "true") "false" "true")))
     (init-env "preamble" new)))
 
