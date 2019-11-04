@@ -26,10 +26,10 @@ TM_SUBVERSION
 # Checks for C++ compiler
 #--------------------------------------------------------------------
 
-# define CFLAGS else it would assigned at -g -O2 later by autoconf
+# set FLAGS without -O2 if it is undefined, otherwise it would assigned at -g -O2 later by autoconf
 # but keep previous value if any
-CFLAGS=${CFLAGS:=""}
-CXXFLAGS=${CXXFLAGS:=""}
+CFLAGS=${CFLAGS:="-g"}
+CXXFLAGS=${CXXFLAGS:="-g"}
 
 AC_PROG_CC([clang gcc])
 AC_PROG_CXX([clang++ g++])
