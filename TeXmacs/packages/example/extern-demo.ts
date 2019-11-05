@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -38,7 +38,7 @@
 
   <assign|circulant|<xmacro|l|<extern|ext-circulant|<quote-arg|l>>>>
 
-  <drd-props|circulant|arity|<tuple|repeat|1|1>|accessible|all>
+  <drd-props|circulant|arity|<tuple|repeat|1|1>|accessible|all|regular|all>
 </body>
 
 <\initial>
