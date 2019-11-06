@@ -197,7 +197,7 @@
 ("colors" "Farben")
 ("column to the left" "Spalte links")
 ("column to the right" "Spalte rechts")
-("columns separation" "Säulentrennung")
+("column separation" "Säulentrennung")
 ("commit file" "Commit-Datei")
 ("common" "common")
 ("common formats" "gängige Formate")

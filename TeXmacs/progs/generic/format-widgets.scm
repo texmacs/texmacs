@@ -98,7 +98,7 @@
             '("1" "2" "3" "4" "5" "6")
             (ahash-ref new "par-columns") "10em"))
     (item (when (!= (ahash-ref new "par-columns") "1")
-            (text "Columns separation:"))
+            (text "Column separation:"))
       (refreshable "paragraph-formatter-columns-sep"
         (when (!= (ahash-ref new "par-columns") "1")
           (enum (ahash-set! new "par-columns-sep" answer)

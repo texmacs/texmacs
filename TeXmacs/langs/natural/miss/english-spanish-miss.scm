@@ -220,7 +220,7 @@
 ("column to the left" "columna a la izquierda")
 ("column to the right" "columna a la derecha")
 ("columns" "columnas")
-("columns separation" "separación de columnas")
+("column separation" "separación de columnas")
 ("commit" "cometer")
 ("commit file" "archivo de confirmación")
 ("common" "común")

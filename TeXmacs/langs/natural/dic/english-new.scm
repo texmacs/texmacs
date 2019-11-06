@@ -417,7 +417,7 @@
 ("column to the left" "")
 ("column to the right" "")
 ("columns" "")
-("columns separation" "")
+("column separation" "")
 ("commit" "")
 ("commit file" "")
 ("common" "")

@@ -213,7 +213,7 @@
 ("column to the left" "стовпець зліва")
 ("column to the right" "стовпець праворуч")
 ("columns" "стовпців")
-("columns separation" "розділення стовпців")
+("column separation" "розділення стовпців")
 ("commit file" "файл фіксації")
 ("common" "звичайних")
 ("common formats" "загальних форматів")

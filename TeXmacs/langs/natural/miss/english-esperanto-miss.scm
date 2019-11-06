@@ -397,7 +397,7 @@
 ("column to the left" "kolumno maldekstre")
 ("column to the right" "kolumno dekstre")
 ("columns" "kolumnoj")
-("columns separation" "kolumnaj disigoj")
+("column separation" "kolumnaj disigoj")
 ("commit file" "kompromisi dosieron")
 ("common" "komuna")
 ("common formats" "komunaj formatoj")

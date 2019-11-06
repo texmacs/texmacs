@@ -424,7 +424,7 @@
 ("column to the left" "colonne vers la gauche")
 ("column to the right" "colonne vers la droite")
 ("columns" "colonnes")
-("columns separation" "séparation entre les colonnes")
+("column separation" "séparation entre les colonnes")
 ("commit" "faire le commit")
 ("commit file" "faire le commit du fichier")
 ("common" "commun")

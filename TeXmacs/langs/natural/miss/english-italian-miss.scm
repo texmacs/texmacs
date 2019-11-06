@@ -229,7 +229,7 @@
 ("column to the left" "colonna a sinistra")
 ("column to the right" "colonna a destra")
 ("columns" "colonne")
-("columns separation" "separazione delle colonne")
+("column separation" "separazione delle colonne")
 ("commit" "commit")
 ("commit file" "file di commit")
 ("common" "comune")

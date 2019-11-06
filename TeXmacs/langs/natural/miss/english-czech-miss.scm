@@ -210,7 +210,7 @@
 ("column to the left" "sloupec vlevo")
 ("column to the right" "sloupec vpravo")
 ("columns" "sloupc·")
-("columns separation" "odd¥lení sloupc·")
+("column separation" "odd¥lení sloupc·")
 ("commit file" "soubor odevzdání")
 ("common" "spole£ných")
 ("common formats" "b¥ºné formáty")

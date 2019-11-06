@@ -200,7 +200,7 @@
 ("column to the left" "столбец слева")
 ("column to the right" "столбец справа")
 ("columns" "колонны")
-("columns separation" "Разделение колонн")
+("column separation" "Разделение колонн")
 ("commit file" "файл фиксации")
 ("common" "общих")
 ("common formats" "распространенных форматов")

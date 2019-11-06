@@ -183,7 +183,7 @@
 ("column to the left" "왼쪽 열")
 ("column to the right" "오른쪽 열")
 ("columns" "열")
-("columns separation" "열 분리")
+("column separation" "열 분리")
 ("commit file" "커밋 파일")
 ("common" "공통")
 ("commutative diagram" "정류도")

@@ -154,7 +154,7 @@
 ("color of the axes" "χρώμα των αξόνων")
 ("color of the subunits" "χρώμα των υπομονάδων")
 ("color of the units" "χρώμα των μονάδων")
-("columns separation" "Διαχωρισμός στήλης")
+("column separation" "Διαχωρισμός στήλης")
 ("commit file" "αρχείο δέσμευσης")
 ("common" "κοινό")
 ("commutative diagram" "διατακτικό διάγραμμα")

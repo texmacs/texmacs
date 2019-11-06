@@ -159,7 +159,7 @@
 ("color of the subunits" "az alegységek színe")
 ("color of the units" "az egységek színe")
 ("colors" "szín")
-("columns separation" "oszlopok elválasztása")
+("column separation" "oszlopok elválasztása")
 ("commit file" "átadási fájl")
 ("common" "közös")
 ("commutative diagram" "kommutációs diagram")

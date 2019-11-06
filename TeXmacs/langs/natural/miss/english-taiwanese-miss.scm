@@ -133,7 +133,7 @@
 ("cluster by affiliation" "從屬關係集群")
 ("collect garbage" "收集垃圾")
 ("collected keys" "個 已收集的密鑰")
-("columns separation" "列分離")
+("column separation" "列分離")
 ("commit file" "個 提交文件")
 ("common" "常見")
 ("commutative diagram" "交換圖")

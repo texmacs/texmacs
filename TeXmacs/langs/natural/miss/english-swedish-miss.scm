@@ -327,7 +327,7 @@
 ("column to the left" "kolumn till vänster")
 ("column to the right" "kolumn till höger")
 ("columns" "kolumner")
-("columns separation" "kolonnseparation")
+("column separation" "kolonnseparation")
 ("commit" "begå")
 ("commit file" "begå fil")
 ("common" "vanligt")

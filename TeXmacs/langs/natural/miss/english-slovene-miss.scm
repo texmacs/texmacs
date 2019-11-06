@@ -201,7 +201,7 @@
 ("column to the left" "stolpec na levi")
 ("column to the right" "stolpec na desni")
 ("columns" "stolpcev")
-("columns separation" "lo£itev stolpcev")
+("column separation" "lo£itev stolpcev")
 ("commit file" "datoteke za zagon")
 ("common" "navadnih")
 ("common formats" "obi£ajnih formatov")

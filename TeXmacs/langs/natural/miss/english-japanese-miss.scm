@@ -185,7 +185,7 @@
 ("column to the left" "左側の列")
 ("column to the right" "右側の列")
 ("columns" "列")
-("columns separation" "カラム分離")
+("column separation" "カラム分離")
 ("commit file" "コミットファイル")
 ("common" "共通")
 ("commutative diagram" "可換図")

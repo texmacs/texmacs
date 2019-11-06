@@ -207,7 +207,7 @@
 ("column to the left" "kolonne til venstre")
 ("column to the right" "kolonne til højre")
 ("columns" "kolonner")
-("columns separation" "kolonneseparation")
+("column separation" "kolonneseparation")
 ("commit" "begå")
 ("commit file" "begå fil")
 ("common" "almindelig")

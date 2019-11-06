@@ -211,7 +211,7 @@
 ("column to the left" "колона вляво")
 ("column to the right" "колона вдясно")
 ("columns" "колони")
-("columns separation" "разделяне на колони")
+("column separation" "разделяне на колони")
 ("commit file" "файл за ангажиране")
 ("common" "общи")
 ("common formats" "общи формати")

@@ -231,7 +231,7 @@
 ("column to the left" "sarake vasemmalla")
 ("column to the right" "sarake oikealla")
 ("columns" "saraketta")
-("columns separation" "kolonnien erottelu")
+("column separation" "kolonnien erottelu")
 ("commit" "sitoudu")
 ("commit file" "lähettä tiedosto")
 ("common" "yhteinen")

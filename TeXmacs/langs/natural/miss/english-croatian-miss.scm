@@ -143,7 +143,7 @@
 ("color of the axes" "boja sjekira")
 ("color of the subunits" "boja podjedinica")
 ("color of the units" "boja jedinica")
-("columns separation" "odvajanje stupaca")
+("column separation" "odvajanje stupaca")
 ("commit file" "datoteke za unos")
 ("common" "uobi£ajenih")
 ("commutative diagram" "komutacijski dijagram")

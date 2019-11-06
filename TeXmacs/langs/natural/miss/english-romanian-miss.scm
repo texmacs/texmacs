@@ -211,7 +211,7 @@
 ("column to the left" "coloana la stânga")
 ("column to the right" "coloana din dreapta")
 ("columns" "coloane")
-("columns separation" "separare coloane")
+("column separation" "separare coloane")
 ("commit file" "fi³ier de angajare")
 ("common" "comun")
 ("common formats" "formate comune")

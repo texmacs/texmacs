@@ -187,7 +187,7 @@
 ("color of the subunits" "kleur van de subeenheden")
 ("color of the units" "kleur van de eenheden")
 ("colors" "kleuren")
-("columns separation" "kolommen scheiding")
+("column separation" "kolomscheiding")
 ("commit" "vastleggen")
 ("commit file" "bestand vastleggen")
 ("common" "gemeenschappelijk")

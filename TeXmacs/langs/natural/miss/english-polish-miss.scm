@@ -205,7 +205,7 @@
 ("column to the left" "kolumna po lewej")
 ("column to the right" "kolumna po prawej")
 ("columns" "kolumn")
-("columns separation" "separacja kolumn")
+("column separation" "separacja kolumn")
 ("commit file" "plik zatwierdzenia")
 ("common" "wspólne")
 ("common formats" "popularnych formatów")
