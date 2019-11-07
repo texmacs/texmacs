@@ -343,7 +343,8 @@ edit_cursor_rep::go_start_line () {
     cursor old_cu= copy (cu);
     cursor old_mv= copy (mv);
     path   old_tp= copy (tp);
-    go_left_physical ();
+    adjust_ghost_cursor (VERTICAL);
+    cursor_move (-1, 0);
     if (tp == old_tp || !inside_same_or_more (et, tp, orig_tp, DOCUMENT)) {
       notify_cursor_moved (HORIZONTAL);
       cu= old_cu;
@@ -363,7 +364,8 @@ edit_cursor_rep::go_end_line () {
     cursor old_cu= copy (cu);
     cursor old_mv= copy (mv);
     path   old_tp= copy (tp);
-    go_right_physical ();
+    adjust_ghost_cursor (VERTICAL);
+    cursor_move (1, 0);
     if (tp == old_tp || !inside_same_or_more (et, tp, orig_tp, DOCUMENT)) {
       notify_cursor_moved (HORIZONTAL);
       cu= old_cu;
