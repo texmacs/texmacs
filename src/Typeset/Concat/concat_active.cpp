@@ -194,7 +194,9 @@ concater_rep::typeset_locus (tree t, path ip) {
     array<line_item> new_a;
     array<line_item> tmp_a;
     for (int i=pos; i<N(a); i++) {
-      if ((a[i]->type == STD_ITEM || a[i]->type == STRING_ITEM) &&
+      if ((a[i]->type == STD_ITEM ||
+           a[i]->type == STRING_ITEM ||
+           a[i]->type == CONTROL_ITEM) &&
           !a[i]->limits) {
         tmp_a << a[i];
         if (i+1 == N(a) ||
