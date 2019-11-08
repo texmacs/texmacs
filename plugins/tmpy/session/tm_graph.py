@@ -42,6 +42,7 @@ from tmpy.graph.feynmf    import FeynMF
 from tmpy.graph.latex     import LaTeX
 from tmpy.graph.pdflatex  import PDFLaTeX
 from tmpy.graph.gnuplot   import Gnuplot
+from tmpy.graph.diagrams  import Diagrams
 from tmpy.compat          import *
 
 #import logging as log
@@ -95,20 +96,25 @@ else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
 grapvizs = list(map(lambda x: Graphviz(x), ["dot", "neato", "twopi", "circo", "fdp", "sfdp", "patchwork", "osage"]))
+diagrams = list(map(lambda x: Diagrams(x), ["flowchart", "sequence", "railroad"]))
 others = [Asymptote(), PlantUML(), Mermaid(), XYpic(), TikZ(),
           FeynMF(), LaTeX(), PDFLaTeX(), Gnuplot(), DraTeX()]
-graphs = list(filter(lambda x: x.available(), grapvizs + others))
+graphs = list(filter(lambda x: x.available(), grapvizs + diagrams + others))
 graph_names = list(map(lambda x: x.name, graphs))
 
 if len(graphs) == 0:
-    flush_verbatim ("\nSorry, please check your installation of Graphviz/Asymptote")
+    flush_newline ()
+    flush_verbatim ("Sorry, please check your installation of any of:")
+    flush_verbatim ("Graphviz/Diagrams/LaTeX/Gnuplot/Asymptote/PlantUML/Mermaid")
     flush_prompt ("dead] ")
     exit(0)
 
 current = graphs[0]
 warmup_time_ms = int((time.time() - init_time) * 1000)
 
-
+if (exists (tmpy_home_path)):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
+    flush_newline (2)
 flush_verbatim ("Generate graphs with your favorite tools in GNU TeXmacs\n")
 flush_verbatim ("Created by Darcy Shen, Implemented in Python, " + current.name + "[" + str(warmup_time_ms) + "ms] by default\n")
 flush_verbatim ("Welcome to star and fork it at https://github.com/texmacs/plugins\n")

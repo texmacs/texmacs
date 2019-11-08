@@ -92,6 +92,10 @@ def compile_help (text):
 # Session start
 ###############################################################################
 
+if (exists (tmpy_home_path)):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
+    flush_newline (2)
+
 # We insert into the session's namespace the 'ps_out' method.
 my_globals['ps_out'] = ps_out
 

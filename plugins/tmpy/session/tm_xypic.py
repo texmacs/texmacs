@@ -21,6 +21,11 @@ else:
 from tmpy.graph.xypic     import XYpic
 from tmpy.capture         import CaptureStdout
 from tmpy.compat          import py_ver
+from tmpy.protocol        import *
+
+if (exists (tmpy_home_path)):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
+    flush_newline (2)
 
 my_globals   = {}
 

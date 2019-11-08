@@ -24,6 +24,10 @@ from tmpy.compat          import py_ver
 from tmpy.protocol        import *
 from tmpy.compat          import *
 
+if (exists (tmpy_home_path)):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
+    flush_newline (2)
+
 my_globals   = {}
 
 if py_ver == 3:

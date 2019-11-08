@@ -49,6 +49,11 @@ def flush_any (out_str):
 def flush_verbatim(content):
     flush_any ("verbatim:" + content)
 
+def flush_newline (n = 1):
+    if (n >= 1):
+        for i in range(n):
+            flush_verbatim("\n")
+
 def flush_prompt(prompt):
     flush_any ("prompt#" + prompt)
 

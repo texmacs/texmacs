@@ -97,6 +97,9 @@ def compose_output(data):
 
     return 'verbatim: %s' % str(data)
 
+if (exists (tmpy_home_path)):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
+    flush_newline (2)
 
 flush_verbatim (sage.misc.banner.version())
 
