@@ -246,7 +246,60 @@
   (rightmap (!group (!append (shortmid) "\\!\\!\\!-")))
   (leftmap (!group (!append "-\\!\\!\\!" (shortmid))))
   (leftrightmap (!group (!append (shortmid) "\\!\\!\\!-\\!\\!\\!"
-                                 (shortmid)))))
+                                 (shortmid))))
+  (LRleftrightarrow (!group (!append (Lleftarrow) "\\!\\!\\!" (Rrightarrow))))
+  (Llongleftarrow (!group (!append (Lleftarrow) "\\!" (equiv))))
+  (Llongrightarrow (!group (!append (equiv) "\\!" (Rrightarrow))))
+  (Llongleftrightarrow (!group (!append (Lleftarrow) "\\!" (equiv)
+                                        "\\!" (Rrightarrow))))
+  (threeleftarrows
+   (mathrel (substack (!append (leftarrow) "\\\\[-0.6ex]"
+                               (leftarrow) "\\\\[-0.6ex]"
+                               (leftarrow)))))
+  (fourleftarrows
+   (mathrel (substack (!append (leftarrow) "\\\\[-0.6ex]"
+                               (leftarrow) "\\\\[-0.6ex]"
+                               (leftarrow) "\\\\[-0.6ex]"
+                               (leftarrow)))))
+  (threerightarrows
+   (mathrel (substack (!append (rightarrow) "\\\\[-0.6ex]"
+                               (rightarrow) "\\\\[-0.6ex]"
+                               (rightarrow)))))
+  (fourrightarrows
+   (mathrel (substack (!append (rightarrow) "\\\\[-0.6ex]"
+                               (rightarrow) "\\\\[-0.6ex]"
+                               (rightarrow) "\\\\[-0.6ex]"
+                               (rightarrow)))))
+  (longleftrightarrows
+   (mathrel (substack (!append (longleftarrow) "\\\\[-0.6ex]"
+                               (longrightarrow)))))
+  (longleftleftarrows
+   (mathrel (substack (!append (longleftarrow) "\\\\[-0.6ex]"
+                               (longleftarrow)))))
+  (longthreeleftarrows
+   (mathrel (substack (!append (longleftarrow) "\\\\[-0.6ex]"
+                               (longleftarrow) "\\\\[-0.6ex]"
+                               (longleftarrow)))))
+  (longfourleftarrows
+   (mathrel (substack (!append (longleftarrow) "\\\\[-0.6ex]"
+                               (longleftarrow) "\\\\[-0.6ex]"
+                               (longleftarrow) "\\\\[-0.6ex]"
+                               (longleftarrow)))))
+  (longrightleftarrows
+   (mathrel (substack (!append (longrightarrow) "\\\\[-0.6ex]"
+                               (longleftarrow)))))
+  (longrightrightarrows
+   (mathrel (substack (!append (longrightarrow) "\\\\[-0.6ex]"
+                               (longrightarrow)))))
+  (longthreerightarrows
+   (mathrel (substack (!append (longrightarrow) "\\\\[-0.6ex]"
+                               (longrightarrow) "\\\\[-0.6ex]"
+                               (longrightarrow)))))
+  (longfourrightarrows
+   (mathrel (substack (!append (longrightarrow) "\\\\[-0.6ex]"
+                               (longrightarrow) "\\\\[-0.6ex]"
+                               (longrightarrow) "\\\\[-0.6ex]"
+                               (longrightarrow))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Extra TeXmacs macros

@@ -29,6 +29,15 @@
   Leftrightarrowlim Longleftarrowlim Longrightarrowlim Longleftrightarrowlim
   cdotslim
 
+  ;; further arrows
+  threeleftarrows threerightarrows
+  fourleftarrows fourrightarrows
+  longleftrightarrows longleftleftarrows
+  longthreeleftarrows longthreerightarrows
+  longrightleftarrows longrightrightarrows
+  longfourleftarrows longfourrightarrows
+  LRleftrightarrow Llongleftarrow Llongrightarrow Llongleftrightarrow
+
   ;; rotated arrows and other symbols
   mapsfrom longmapsfrom mapmulti leftsquigarrow
   upequal downequal longupequal longdownequal longupminus longdownminus

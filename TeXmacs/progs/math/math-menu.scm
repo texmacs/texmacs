@@ -467,7 +467,17 @@
   (symbol "<rightleftarrows>")
   (symbol "<mapsto>")
   (symbol "<rightsquigarrow>")
-  (symbol "<leftrightsquigarrow>"))
+  (symbol "<leftrightsquigarrow>")
+
+  (symbol "<leftleftarrows>")
+  (symbol "<threeleftarrows>")
+  (symbol "<fourleftarrows>")
+  (symbol "<rightrightarrows>")
+  (symbol "<threerightarrows>")
+  (symbol "<fourrightarrows>")
+  (symbol "<Lleftarrow>")
+  (symbol "<Rrightarrow>")
+  (symbol "<LRleftrightarrow>"))
 
 (menu-bind vertical-arrow-menu
   (symbol "<uparrow>")

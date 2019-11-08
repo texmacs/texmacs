@@ -1099,20 +1099,36 @@
   (list (string->symbol (tmtex-big-decode (car l)))))
 
 (define (tmtex-decode-long-arrow s)
-  (cond ((nstring? s) 'xrightarrow)
+  (cond ((nstring? s) #f)
         ((and (string-starts? s "<rubber-") (string-ends? s ">"))
          (tmtex-decode-long-arrow (substring s 8 (- (string-length s) 1))))
         ((in? s '("minus" "leftarrow" "rightarrow" "leftrightarrow"
                   "equal" "Leftarrow" "Rightarrow" "Leftrightarrow"
                   "mapsto" "mapsfrom"))
          (string->symbol (string-append "x" s)))
-        (else 'xrightarrow)))
+        ((in? s '("leftrightarrows" "leftleftarrows"
+                  "threeleftarrows" "fourleftarrows"
+                  "rightleftarrows" "rightrightarrows"
+                  "threerightarrows" "fourrightarrows"))
+         (string-append "<long" s ">"))
+        ((== s "Lleftarrow") "<Llongleftarrow>")
+        ((== s "Rrightarrow") "<Llongrightarrow>")
+        ((== s "LRleftrightarrow") "<Llongleftrightarrow>")
+        (else (string-append "<" s ">"))))
 
 (define (tmtex-long-arrow l)
   (with cmd (tmtex-decode-long-arrow (car l))
-    (if (== (length l) 2)
-        (list cmd (tmtex (cadr l)))
-        (list cmd (list '!option (tmtex (caddr l))) (tmtex (cadr l))))))
+    (cond ((and (symbol? cmd) (== (length l) 2))
+           (list cmd (tmtex (cadr l))))
+          ((symbol? cmd)
+           (list cmd (list '!option (tmtex (caddr l))) (tmtex (cadr l))))
+          ((== (length l) 2)
+           (list 'overset (tmtex (cadr l)) (tmtex cmd)))
+          ((== (cadr l) "")
+           (list 'underset (tmtex (caddr l)) (tmtex cmd)))
+          (else
+           (list 'underset (tmtex (caddr l))
+                 (list 'overset (tmtex (cadr l)) (tmtex cmd)))))))
 
 (define (tmtex-below l)
   (list 'underset (tmtex (cadr l)) (tmtex (car l))))

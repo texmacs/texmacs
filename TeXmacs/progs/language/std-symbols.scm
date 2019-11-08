@@ -57,7 +57,8 @@
     (:spacing wide wide)
     "<implies>" "<equivalent>" "<Leftarrow>" "<Rightarrow>" "<Leftrightarrow>"
     "<Longleftarrow>" "<Longrightarrow>" "<Longleftrightarrow>"
-    "<Lleftarrow>" "<Rrightarrow>"
+    "<Llongleftarrow>" "<Llongrightarrow>" "<Llongleftrightarrow>"
+    "<Lleftarrow>" "<Rrightarrow>" "<LRleftrightarrow>"
     "<nLeftarrow>" "<nRightarrow>" "<nLeftrightarrow>")
 
   (define Imply-lim-symbol
@@ -93,7 +94,8 @@
     (:penalty 20)
     (:spacing wide wide)
 
-    "=" "<ne>" "<neq>" "<longequal>" "<less>" "<gtr>" "<le>" "<leq>"
+    "=" "<ne>" "<neq>" "<longequal>" "<longequiv>"
+    "<less>" "<gtr>" "<le>" "<leq>"
     "<prec>" "<preceq>" "<preceqq>" "<ll>" "<lleq>" "<subset>" "<subseteq>"
     "<sqsubset>" "<sqsubseteq>" "<sqsubseteqq>" "<in>" "<ni>" "<of>"
     "<ge>" "<geq>" "<succ>" "<succeq>" "<succeqq>"
@@ -176,7 +178,7 @@
     (:penalty 20)
     (:spacing wide wide)
     (:limits always)
-    "<equallim>" "<longequallim>")
+    "<equallim>" "<longequallim>" "<longequivlim>")
 
   (define Relation-symbol
     Relation-nolim-symbol Relation-lim-symbol)
@@ -205,6 +207,8 @@
     "<longdownharpoonleft>" "<longdownharpoonright>"
     "<leftarrowtail>" "<leftleftarrows>" "<leftrightarrows>"
     "<longleftleftarrows>" "<longleftrightarrows>"
+    "<longthreeleftarrows>" "<longthreerightarrows>"
+    "<longfourleftarrows>" "<longfourrightarrows>"
     "<leftrightharpoons>" "<rightleftharpoons>"
     "<longleftrightharpoons>" "<longrightleftharpoons>"
     "<looparrowleft>" "<looparrowright>" "<Lsh>"
@@ -216,7 +220,9 @@
     "<Rsh>" "<twoheadleftarrow>" "<twoheadrightarrow>"
     "<upharpoonleft>" "<upharpoonright>"
     "<longupharpoonleft>" "<longupharpoonright>"
-    "<upuparrows>" "<leftrightmap>" "<pointer>")
+    "<upuparrows>" "<leftrightmap>" "<pointer>"
+    "<threeleftarrows>" "<threerightarrows>"
+    "<fourleftarrows>" "<fourrightarrows>")
   
   (define Arrow-lim-symbol
     (:type infix)
@@ -226,7 +232,9 @@
     "<leftarrowlim>" "<rightarrowlim>" "<leftrightarrowlim>"
     "<longleftarrowlim>" "<longrightarrowlim>" "<longleftrightarrowlim>"
     "<mapstolim>" "<longmapstolim>"
-    "<leftsquigarrowlim>" "<rightsquigarrowlim>" "<leftrightsquigarrowlim>")
+    "<leftsquigarrowlim>" "<rightsquigarrowlim>" "<leftrightsquigarrowlim>"
+    "<longleftleftarrowslim>" "<longleftrightarrowslim>"
+    "<longrightleftarrowslim>" "<longrightrightarrowslim>")
 
   (define Arrow-symbol
     Arrow-nolim-symbol Arrow-lim-symbol)
