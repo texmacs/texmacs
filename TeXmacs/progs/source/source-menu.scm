@@ -84,7 +84,7 @@
     ("Number" (make 'number))
     ("Today" (make 'date 0))
     ("Formatted date" (make 'date))
-    ("Translate" (make 'translate))
+    ("Translate::language" (make 'translate))
     ("Find file" (make 'find-file))))
 
 (menu-bind source-tuple-menu
