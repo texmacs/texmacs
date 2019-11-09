@@ -187,6 +187,7 @@ parent() {
 
 int
 main () {
+  chdir (getenv ("HOME"));
   cout << DATA_BEGIN << "verbatim:" << "Shell session inside TeXmacs" << flush;
   pid = forkpty(&master,NULL,NULL,NULL);
   if (pid==0) child();
