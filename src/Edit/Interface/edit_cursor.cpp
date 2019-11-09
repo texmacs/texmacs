@@ -338,6 +338,7 @@ edit_cursor_rep::go_right () {
 void
 edit_cursor_rep::go_start_line () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  bool first_pass= true;
   path orig_tp= copy (tp);
   while (true) {
     cursor old_cu= copy (cu);
@@ -345,6 +346,7 @@ edit_cursor_rep::go_start_line () {
     path   old_tp= copy (tp);
     adjust_ghost_cursor (VERTICAL);
     cursor_move (-1, 0);
+    if (first_pass) notify_cursor_moved (HORIZONTAL);
     if (tp == old_tp || !inside_same_or_more (et, tp, orig_tp, DOCUMENT)) {
       notify_cursor_moved (HORIZONTAL);
       cu= old_cu;
@@ -353,12 +355,14 @@ edit_cursor_rep::go_start_line () {
       select_from_cursor_if_active ();
       return;
     }
+    first_pass= false;
   }
 }
 
 void
 edit_cursor_rep::go_end_line () {
   if (has_changed (THE_TREE+THE_ENVIRONMENT)) return;
+  bool first_pass= true;
   path orig_tp= copy (tp);
   while (true) {
     cursor old_cu= copy (cu);
@@ -366,6 +370,7 @@ edit_cursor_rep::go_end_line () {
     path   old_tp= copy (tp);
     adjust_ghost_cursor (VERTICAL);
     cursor_move (1, 0);
+    if (first_pass) notify_cursor_moved (HORIZONTAL);
     if (tp == old_tp || !inside_same_or_more (et, tp, orig_tp, DOCUMENT)) {
       notify_cursor_moved (HORIZONTAL);
       cu= old_cu;
@@ -374,6 +379,7 @@ edit_cursor_rep::go_end_line () {
       select_from_cursor_if_active ();
       return;
     }
+    first_pass= false;
   }
 }
 
