@@ -125,7 +125,7 @@
   ("Subsection" (make-section 'subsection))
   ("Subsubsection" (make-section 'subsubsection))
   ---
-  ("Paragraph" (make-section 'paragraph))
+  ("Paragraph::section" (make-section 'paragraph))
   ("Subparagraph" (make-section 'subparagraph)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

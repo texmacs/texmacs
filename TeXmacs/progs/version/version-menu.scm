@@ -100,7 +100,7 @@
          (choose-file compare-with-older "Compare with older version" ""))
         ("With newer version"
          (choose-file compare-with-newer "Compare with newer version" ""))))
-  (-> "Move"
+  (-> "Move::difference"
       ("First difference" (version-first-difference))
       ("Previous difference" (version-previous-difference))
       ("Next difference" (version-next-difference))

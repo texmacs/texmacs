@@ -80,7 +80,13 @@ load_dictionary (string from, string to) {
 
 string
 dictionary_rep::translate (string s, bool guess) {
-  if (s == "" || from == to) return s;
+  if (s == "") return s;
+  if (from == to) {
+    int pos= search_forwards ("::", s);
+    if (pos >= 0) return s (0, pos);
+    return s;
+  }
+  
   //cout << "Translate <" << s << ">\n";
   // Is s in dictionary?
   if (table->contains (s) && table[s] != "")
@@ -90,6 +96,10 @@ dictionary_rep::translate (string s, bool guess) {
   string ls= locase_first (s);
   if (table->contains (ls) && table[ls] != "")
     return uni_upcase_first (table[ls]);
+
+  // Search for :: disambiguation patterns
+  int pos= search_forwards ("::", s);
+  if (pos >= 0) return translate (s (0, pos), guess);
   
   // Attempt to split the string and translate its parts?
   if (!guess) return s;
