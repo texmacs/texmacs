@@ -27,6 +27,8 @@
 ******************************************************************************/
 
 #include "file.hpp"
+#include "xml.hpp"
+#include "convert.hpp"
 #include "image_files.hpp"
 #include "web_files.hpp"
 #include "sys_utils.hpp"
@@ -299,7 +301,11 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
   if (suf=="pdf") {
     pdf_image_size (image, w, h);
     return;
-    }
+  }
+  if (suf=="svg") {
+    svg_image_size (image, w, h);
+    return;
+  }
   if (suf=="eps" || suf=="ps") {
     int x1, y1, x2, y2;
     if (ps_bounding_box (image, x1, y1, x2, y2, false)) {
@@ -361,6 +367,22 @@ pdf_image_size (url image, int& w, int& h) {
 #endif
 // if above methods are absent :-(, fallback to 
   imagemagick_image_size(image, w, h, true);
+}
+
+void
+svg_image_size (url image, int& w, int& h) {
+  string content;
+  bool err= load_string (image, content, false);
+  if (!err) {
+    tree t= parse_xml (content);
+    tree result= find_first_element_by_name (t, "svg");
+    string width= get_attr_from_element (result, "width", "");
+    string height= get_attr_from_element (result, "height", "");
+    int try_width= parse_xml_length (width);
+    int try_height= parse_xml_length (height);
+    if (try_width > 0) w= try_width;
+    if (try_height > 0) h= try_height;
+  }
 }
  
 /******************************************************************************
