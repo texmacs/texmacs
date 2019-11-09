@@ -602,7 +602,7 @@
 ("determinant" "determinant")
 ("determine margins from text width" "marges bepalen uit tekstbreedte")
 ("devangari" "devangarisch")
-("developer" "ontwikkel")
+("developer" "ontwikkelen")
 ("developer tool" "gereedschap voor ontwikkelaars")
 ("developers guide" "gids voor ontwikkelaars")
 ("device" "apparaat")
