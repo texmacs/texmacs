@@ -20,14 +20,7 @@ class Gnuplot(Graph):
         super(Gnuplot, self).__init__()
         self.name = name
         self.width = 600
-        self.pre_code = """
-reset
-set terminal postscript eps enhanced
-set output 
-set output '%s'
-set size 1,1
-set autoscale
-""" % (self.get_eps_path())
+        self.default_output = "eps"
 
     def greet(self):
         if len(self.message) == 0:
@@ -42,6 +35,39 @@ set autoscale
         super(Gnuplot, self).greet()
 
     def evaluate(self, code):
+        if self.output == "eps":
+            image = self.get_eps()
+            self.pre_code = """
+reset
+set terminal postscript eps enhanced
+set output 
+set output '%s'
+set size 1,1
+set autoscale
+""" % (self.get_eps_path())
+        elif self.output == "png":
+            image = self.get_png()
+            self.pre_code = """
+reset
+set terminal pngcairo enhanced
+set output 
+set output '%s'
+set size 1,1
+""" % (self.get_png_path())
+        elif self.output == "svg":
+            image = self.get_svg()
+            self.pre_code = """
+reset
+set terminal svg enhanced
+set output 
+set output '%s'
+set size 1,1
+set autoscale
+""" % (self.get_svg_path())
+        else:
+            flush_verbatim("Unsupported output type: " + self.output)
+            return
+
         code_path = self.get_tmp_dir() + self.name + ".txt"
         with open(code_path, 'w') as code_file:
             code_file.write(self.pre_code)
@@ -51,7 +77,7 @@ set autoscale
         p = Popen(cmd, stderr=PIPE)
         out, err = p.communicate()
         if (p.returncode == 0):
-          flush_file (self.get_eps())
+          flush_file (image)
         else:
           flush_verbatim (err.decode())
 
@@ -74,4 +100,3 @@ set autoscale
                         lines.append(x)
                 text = '\n'.join(lines[:-1])
                 self.eval(text)
-

@@ -18,6 +18,7 @@ class Graphviz(Graph):
     def __init__(self, name):
         super(Graphviz, self).__init__()
         self.name = name
+        self.default_output = "eps"
     
     def greet(self):
         if len(self.message) == 0:
@@ -38,12 +39,16 @@ class Graphviz(Graph):
         # the -output option on the magic line
         if self.output == "eps":
             path = self.get_eps_path()
-            picture = self.get_eps()
+            image = self.get_eps()
             cmd_list = [self.name, "-Teps"]
         elif self.output == "png":
             path = self.get_png_path()
-            picture = self.get_png()
+            image = self.get_png()
             cmd_list = [self.name, "-Tpng"]
+        elif self.output == "svg":
+            path = self.get_svg_path()
+            image = self.get_svg()
+            cmd_list = [self.name, "-Tsvg"]
         else:
             flush_verbatim("Unsupported output type: " + self.output)
             return
@@ -58,6 +63,6 @@ class Graphviz(Graph):
         else:
             out, err = p.communicate(input=code)
         if (p.returncode == 0):
-            flush_file (picture)
+            flush_file (image)
         else:
             flush_verbatim (err.decode())

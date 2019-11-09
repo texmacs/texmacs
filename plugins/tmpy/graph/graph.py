@@ -24,7 +24,8 @@ class Graph(object):
     post_code = ""
     height = 0
     width = 0
-    output = "eps"
+    default_output = "eps"
+    output = ""
 
     def greet(self):
         for x in self.message.split("\n"):
@@ -37,12 +38,12 @@ class Graph(object):
     def available(self):
         return which(self.name) is not None
 
-    def apply_magic(self, magic_line):
-        # First reset to default values
+    def reset_options(self):
         self.height = "0px"
         self.width = "0px"
-        self.output = "eps"
+        self.output = self.default_output
 
+    def apply_magic(self, magic_line):
         args = list(filter(lambda x: len(x)!=0, magic_line.split(" ")[1:]))
         while (len(args) > 1):
             option = args[0]
@@ -58,6 +59,7 @@ class Graph(object):
             args = args[2:]
 
     def before_evaluate(self):
+        self.reset_options()
         if not os.path.exists(self.get_tmp_dir()):
             os.mkdir(self.get_tmp_dir())
 
@@ -67,8 +69,6 @@ class Graph(object):
     def after_evaluate(self):
         self.clean_tmp_dir()
         self.remove_tmp_dir()
-        self.height = 0
-        self.width = 0
 
     def eval(self, code):
         self.before_evaluate()
