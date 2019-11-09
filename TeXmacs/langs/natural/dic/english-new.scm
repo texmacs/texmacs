@@ -1685,6 +1685,7 @@
 ("mouse over object" "")
 ("move" "")
 ("move::difference" "")
+("move::similar" "")
 ("move down" "")
 ("move object" "")
 ("move objects" "")

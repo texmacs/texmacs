@@ -356,7 +356,7 @@
 (tm-menu (standard-focus-menu t)
   (:require (table-markup-context? t))
   (dynamic (focus-tag-menu t))
-  (-> "Move" (dynamic (focus-move-menu t)))
+  (-> "Move::similar" (dynamic (focus-move-menu t)))
   (-> "Resize" (dynamic (focus-insert-menu t)))
   ---
   (group "Table")
