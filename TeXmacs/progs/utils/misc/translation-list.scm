@@ -321,6 +321,12 @@
 (tm-define (update-missing)
   (for-each update-missing-for supported-languages))
 
+(tm-define (remove-done-from-missing-for language)
+  (let* ((lt (tr-load (tr-file language)))
+         (mt (tr-load (tr-miss language)))
+         (dt (ahash-table-difference mt lt)))
+    (tr-save (tr-miss language) dt)))
+
 (tm-define (merge-missing-for language)
   (let* ((lt (tr-load (tr-file language)))
          (mt (tr-load (tr-miss language)))
