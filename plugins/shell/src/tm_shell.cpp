@@ -112,37 +112,37 @@ shell_output (bool hide= false) {
       char outbuf[1024];
       r = read (master, outbuf, 1024);
       if (r == ERROR) {
-	cerr << "TeXmacs shell] read failed\n" << flush;
-	killpg(pid, SIGTERM);
-	sleep(1);
-	killpg(pid, SIGKILL);
-	wait (NULL);
-	exit (1);
+        cerr << "TeXmacs shell] read failed\n" << flush;
+        killpg(pid, SIGTERM);
+        sleep(1);
+        killpg(pid, SIGKILL);
+        wait (NULL);
+        exit (1);
       }
       else if (r == 0) {
-	wait (NULL);
-	cout << DATA_END << flush;
-	exit (0);
+        wait (NULL);
+        cout << DATA_END << flush;
+        exit (0);
       }
       else for (i=0; i<r; i++) {
-	append (output, outbuf[i], output_pos, output_max);
-	if (outbuf[i]=='\n') {
-	  append (output, '\0', output_pos, output_max);
-	  if (hide) hide= false; 
-	  else cout << output << flush;
-	  output_pos= 0;
-	}
+        append (output, outbuf[i], output_pos, output_max);
+        if (outbuf[i]=='\n') {
+          append (output, '\0', output_pos, output_max);
+          if (hide) hide= false;
+          else cout << output << flush;
+          output_pos= 0;
+        }
       }
     }
 
     if (output_pos >= promptlen &&
-	strncmp(output + output_pos - promptlen, prompt, promptlen) == 0)
+        strncmp(output + output_pos - promptlen, prompt, promptlen) == 0)
       {
-	output[output_pos-promptlen]=0;
-	if (hide) hide= false; 
-	else cout << output << flush;
-	output_pos= 0;
-	break;
+        output[output_pos-promptlen]=0;
+        if (hide) hide= false;
+        else cout << output << flush;
+        output_pos= 0;
+        break;
       }
   }
 
