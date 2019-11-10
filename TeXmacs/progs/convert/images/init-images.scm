@@ -157,7 +157,7 @@
 
 (converter svg-file png-file
   (:require (url-exists-in-path? "inkscape"))
-  (:shell "inkscape" "z" "-d" "600" from "--export-png" to))
+  (:shell "inkscape" "-z" "-d" "600" from "--export-png" to))
 
 (converter svg-file png-file
   (:require (and (url-exists-in-path? "rsvg-convert")
