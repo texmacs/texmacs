@@ -622,11 +622,12 @@ new_breaker_rep::assemble (path start, path end) {
     }
   }
   int pos= start->item;
-  for (int j=0; j<N(ins_list[pos]); j++)
-    if (is_tuple (ins_list[pos][j]->type, "if-page-break")) {
-      pg << ins_list[pos][j];
-      pg << as_space (ins_list[pos][j]->type[2]);
-    }
+  if (pos < N(ins_list))
+    for (int j=0; j<N(ins_list[pos]); j++)
+      if (is_tuple (ins_list[pos][j]->type, "if-page-break")) {
+        pg << ins_list[pos][j];
+        pg << as_space (ins_list[pos][j]->type[2]);
+      }
   bool several= false;
   space done= space (0);
   while (!is_nil (here)) {
