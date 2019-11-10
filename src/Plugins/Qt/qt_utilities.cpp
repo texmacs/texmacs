@@ -376,14 +376,14 @@ to_color (const QColor& c) {
 
 bool
 qt_supports (url u) {
-  static QList<QByteArray> formats = QImageReader::supportedImageFormats();
+  static QList<QByteArray> formats= QImageReader::supportedImageFormats();
 /*  if (DEBUG_CONVERT) {
 	  debug_convert <<"QT valid formats:";
 	  foreach (QString _format, formats) debug_convert <<", "<< from_qstring(_format);
 	  debug_convert <<LF;
   }	*/  
   string suf=suffix (u);
-  bool ans = (bool) formats.contains((QByteArray) as_charp(suf));
+  bool ans= (bool) formats.contains((QByteArray) as_charp(suf));
   //if (DEBUG_CONVERT) {debug_convert <<"QT valid format:"<<((ans)?"yes":"no")<<LF;}
   return ans;
 }

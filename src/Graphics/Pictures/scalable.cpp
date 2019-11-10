@@ -49,12 +49,15 @@ public:
     effect e= build_effect (eff);
     rs << e->get_logical_extents (input_rs);
     rs << e->get_extents (input_rs); }
+
   rectangle get_logical_extents () {
     if (N(rs) == 0) init_extents ();
     return rs[0]; }
+
   rectangle get_physical_extents () {
     if (N(rs) == 0) init_extents ();
     return rs[1]; }
+
   void draw (renderer ren, SI x, SI y, int alpha) {
     if (px != ren->pixel) {
       picture_cache_release (u, w/px, h/px, eff, px);

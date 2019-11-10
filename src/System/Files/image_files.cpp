@@ -481,7 +481,7 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   }
 #endif
 #ifdef QTTEXMACS
-  if (qt_supports (image)) {
+  if (qt_supports (image) && (suffix(image) != "svg")) {
     if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_convert_image (image, png, w, h);
     return;
@@ -498,11 +498,12 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   if (! exists(png)) {
     convert_error << image << " could not be converted to png" <<LF;
     copy("$TEXMACS_PATH/misc/pixmaps/unknown.png",png);
-    } 
+  }
 }
 
 bool
 call_scm_converter(url image, url dest) {
+  if (DEBUG_CONVERT) debug_convert << " using scm" <<LF;
   if (as_bool (call ("file-converter-exists?",
                      "x." * suffix (image),
                      "x." * suffix (dest)))) {
