@@ -10,9 +10,13 @@
 
 #include "gtest/gtest.h"
 
+#ifdef MACOSX_EXTENSIONS 
+
 #include "MacOS/mac_images.h"
 
 TEST (mac_supports, work) {
   ASSERT_FALSE (mac_supports (url ("$TEXMACS_PATH/misc/images/fancy-c.svg")));
   ASSERT_TRUE (mac_supports (url ("$TEXMACS_PATH/misc/images/fancy-c.png")));
 }
+
+#endif
