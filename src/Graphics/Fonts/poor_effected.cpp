@@ -62,6 +62,11 @@ poor_effected_font_rep::poor_effected_font_rep (string name, font b, tree k):
   if (is_tuple (kind, "blurred") && N(kind) >= 2 && is_double (kind[1])) {
     double r= as_double (kind[1]) * wfn;
     eff= tree (EFF_BLUR, "0", tree (EFF_GAUSSIAN, as_string (r)));
+    if (N(kind) >= 4 && is_double (kind[2]) && is_double (kind[3])) {
+      double dx= as_double (kind[2]) * wfn;
+      double dy= as_double (kind[3]) * wfn;
+      eff= tree (EFF_MOVE, eff, as_string (dx), as_string (dy));
+    }
   }
 }
 

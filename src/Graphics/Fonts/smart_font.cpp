@@ -1694,6 +1694,13 @@ smart_font (string family, string variant, string series, string shape,
   return smart_font (tfam, tvar, tser, tsh, sz, dpi);
 }
 
+static string
+get_string_parameter (string val, int i, string def) {
+  array<string> a= trimmed_tokenize (val, ";");
+  if (i < N(a)) return a[i];
+  return def;
+}
+  
 static double
 get_double_parameter (string val, int i, double def) {
   array<string> a= trimmed_tokenize (val, ";");
@@ -1808,6 +1815,27 @@ apply_effects (font fn, string effects) {
         if (rad_val > 1.00) rad_val= 1.00;
         tree kind= tuple ("blurred", as_string (rad_val));
         fn= poor_effected_font (fn, kind);
+      }
+      else if (b[0] == "enhanced") {
+        double rad_val = 1.0;
+        string rad_unit= "pt";
+        get_length_parameter (b[1], 0, rad_val, rad_unit);
+        string shadow  = get_string_parameter (b[1], 1, "black");
+        string sunny   = get_string_parameter (b[1], 2, "white");
+        if (rad_unit == "pt") rad_val= rad_val / fn->size;
+        if (rad_val < 0.01) rad_val= 0.01;
+        if (rad_val > 1.00) rad_val= 1.00;
+        double m= sqrt (0.5);
+        tree kind1= tuple ("blurred", as_string (rad_val),
+                           as_string (m*rad_val), as_string (-m*rad_val));
+        font blurred1= poor_effected_font (fn, kind1);
+        font fn1= recolored_font (blurred1, shadow);
+        tree kind2= tuple ("blurred", as_string (rad_val),
+                           as_string (-m*rad_val), as_string (m*rad_val));
+        font blurred2= poor_effected_font (fn, kind2);
+        font fn2= recolored_font (blurred2, sunny);
+        array<font> a; a << fn1 << fn2 << fn;
+        fn= superposed_font (a, 2);
       }
     }
   }

@@ -590,8 +590,6 @@
 
   <assign|gnawed-frequency|1.0>
 
-  <assign|blurred-radius|0.6pt>
-
   \;
 
   <assign|embold|<macro|body|<add-font-effect|bold|<value|embold-strength>|<arg|body>>>>
@@ -614,7 +612,23 @@
 
   <assign|gnawed|<macro|body|<add-font-effect|gnawed|<merge|<value|gnawed-strength>|;|<value|gnawed-frequency>>|<arg|body>>>>
 
+  <\active*>
+    <\src-comment>
+      Artistic font effects.
+    </src-comment>
+  </active*>
+
+  <assign|blurred-radius|0.6pt>
+
+  <assign|shadow-font-color|#222>
+
+  <assign|sunny-font-color|#ddd>
+
+  \;
+
   <assign|blurred|<macro|body|<add-font-effect|blurred|<value|blurred-radius>|<arg|body>>>>
+
+  <assign|enhanced|<macro|body|<add-font-effect|enhanced|<merge|<value|blurred-radius>|;|<value|shadow-font-color>|;|<value|sunny-font-color>>|<arg|body>>>>
 
   <\active*>
     <\src-comment>
