@@ -39,6 +39,10 @@
 (define-public connection-session (make-ahash-table))
 (define-public connection-scripts (make-ahash-table))
 
+(ahash-set! connection-defined "scheme" "Scheme")
+(ahash-set! connection-session "scheme" "Scheme")
+(ahash-set! connection-scripts "scheme" "Scheme")
+
 (define (connection-setup name val . opt)
   (ahash-set! connection-defined name #t)
   (if (null? opt) (set! opt (list "default")))
@@ -114,10 +118,6 @@
 (define-public (session-name name)
   (or (session-ref name) (upcase-first name)))
 
-(define-public (session-assoc-list)
-  (list-union (ahash-table->list connection-session)
-              (remote-session-assoc-list)))
-
 (define (scripts-setup name menu-name)
   (if (symbol? name) (set! name (symbol->string name)))
   (ahash-set! connection-scripts name menu-name))
@@ -136,10 +136,6 @@
 
 (define-public (scripts-name name)
   (or (scripts-ref name) (upcase-first name)))
-
-(define-public (scripts-assoc-list)
-  (list-union (ahash-table->list connection-scripts)
-              (remote-scripts-assoc-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote plugins

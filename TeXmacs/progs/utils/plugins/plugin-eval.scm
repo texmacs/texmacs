@@ -227,7 +227,7 @@
 (define (silent-do lan ses)
   (with l (pending-ref lan ses)
     (with (in out err return opts) (silent-decode (car l))
-     ;;(display* "Silent do " lan ", " ses ", " in "\n")
+      ;;(display* "Silent do " lan ", " ses ", " in "\n")
       (if (tree-empty? in)
 	  (plugin-next lan ses)
 	  (plugin-write lan ses in)))))
