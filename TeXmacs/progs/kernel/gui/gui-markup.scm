@@ -614,6 +614,83 @@
   ($quote `(src-arg ($unquote ($textual ,s)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Graphics
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro ($geometry w h unit . l)
+  `(list 'with
+         "gr-geometry" (list 'tuple "geometry" ,w ,h "center")
+         "gr-frame" (list 'tuple "scale" ,unit
+                          (list 'tuple "0.5gw" "0.5gh"))
+         ($inline ,@l)))
+
+(tm-define-macro ($grid unit . l)
+  `(list 'with
+         "gr-grid" (list 'tuple "cartesian" (list 'point "0" "0")
+                         ,(markup-build-coordinate unit))
+         ($inline ,@l)))
+
+(define (build-with w x)
+  (if (tm-func? x 'with)
+      `(with ,@w ,@(cdr x))
+      `(with ,@w ,x)))
+
+(tm-define (markup-build-graphics-items l)
+  (cond ((null? l) (list))
+        ((tm-func? (car l) 'concat)
+         (append (markup-build-graphics-items (cdar l))
+                 (markup-build-graphics-items (cdr l))))
+        ((tm-func? (car l) 'with)
+         (let* ((head (cDr (cdar l)))
+                (tail (cAr (car l)))
+                (sl (if (tm-func? tail 'concat) (cdr tail) (list tail)))
+                (sr (map markup-build-graphics-items sl))
+                (sr* (map (lambda (x) (build-with head x)) sr))
+                (r (markup-build-graphics-items (cdr l))))
+           (append sr* r)))
+        (else (cons (car l) (markup-build-graphics-items (cdr l))))))
+
+(tm-define (markup-build-graphics l)
+  (with x (append-map markup-expand-document l)
+    (cons 'graphics (markup-build-graphics-items x))))
+
+(tm-define-macro ($graphics . l)
+  `(markup-build-graphics ($list ,@l)))
+
+(tm-define (markup-build-coordinate x)
+  (cond ((string? x) x)
+        ((number? x)
+         (if (exact? x)
+             (number->string (exact->inexact x))
+             (number->string x)))
+        (else "0")))
+
+(tm-define (markup-build-point l)
+  (with x (append-map markup-expand-document l)
+    (cons 'point (map markup-build-coordinate x))))
+
+(tm-define-macro ($point . l)
+  `(markup-build-point ($list ,@l)))
+
+(tm-define-macro ($color col . l)
+  ($quote `(with "color" ,col ($unquote ($inline ,@l)))))
+ 
+(tm-define-macro ($line . l)
+  `(cons 'line ($list ,@l)))
+
+(tm-define-macro ($cline . l)
+  `(cons 'cline ($list ,@l)))
+
+(tm-define-macro ($graph2d x1 x2 steps fun)
+  `($let* ((f ,fun)
+           (dx (/ (- ,x2 ,x1) ,steps)))
+     ($line
+       ($for (k (.. 0 (+ ,steps 1)))
+         ($let* ((x (+ ,x1 (* k dx)))
+                 (y (f x)))
+           ($point x y))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for dynamic content generation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
