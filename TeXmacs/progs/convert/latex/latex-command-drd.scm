@@ -385,7 +385,8 @@
 (logic-group latex-ignore-0%
   allowbreak notag xspace break sloppy makeatother makeatletter relax
   qedhere
-  ignorespacesafterend ignorespaces balancecolumns)
+  ignorespacesafterend ignorespaces balancecolumns
+  tightlist)
 
 (logic-group latex-ignore-0*%
   displaybreak allowdisplaybreaks)
