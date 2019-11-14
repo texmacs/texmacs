@@ -199,6 +199,18 @@ concater_rep::typeset_locus (tree t, path ip) {
            a[i]->type == CONTROL_ITEM) &&
           !a[i]->limits) {
         tmp_a << a[i];
+        int j= i;
+        while (true) {
+          j++;
+          while (j<N(a) &&
+                 a[j]->type == CONTROL_ITEM &&
+                 a[j]->spc == space(0)) j++;
+          if (j<N(a) &&
+              (a[j]->type == RSUB_ITEM || a[j]->type == RSUP_ITEM)) {
+            while (i<j) { i++; tmp_a << a[i]; }
+          }
+          else break;
+        }
         if (i+1 == N(a) ||
             (a[i+1]->type != STD_ITEM && a[i+1]->type != STRING_ITEM) ||
             a[i+1]->limits ||
