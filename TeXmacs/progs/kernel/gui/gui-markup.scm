@@ -624,6 +624,11 @@
                           (list 'tuple "0.5gw" "0.5gh"))
          ($inline ,@l)))
 
+(tm-define-macro ($auto-crop . l)
+  `(list 'with
+         "gr-auto-crop" "true"
+         ($inline ,@l)))
+
 (tm-define-macro ($grid unit . l)
   `(list 'with
          "gr-grid" (list 'tuple "cartesian" (list 'point "0" "0")
@@ -671,9 +676,6 @@
 
 (tm-define-macro ($point . l)
   `(markup-build-point ($list ,@l)))
-
-(tm-define-macro ($color col . l)
-  ($quote `(with "color" ,col ($unquote ($inline ,@l)))))
  
 (tm-define-macro ($line . l)
   `(cons 'line ($list ,@l)))
@@ -681,14 +683,54 @@
 (tm-define-macro ($cline . l)
   `(cons 'cline ($list ,@l)))
 
+(tm-define-macro ($spline . l)
+  `(cons 'line ($list ,@l)))
+
+(tm-define-macro ($cspline . l)
+  `(cons 'cline ($list ,@l)))
+
+(tm-define-macro ($arc . l)
+  `(cons 'line ($list ,@l)))
+
+(tm-define-macro ($carc . l)
+  `(cons 'cline ($list ,@l)))
+
+(tm-define-macro ($text-at p . l)
+  ($quote `(text-at ($unquote ($inline ,@l)) ($unquote ($inline ,p)))))
+
+(tm-define-macro ($math-at p . l)
+  ($quote `(math-at ($unquote ($inline ,@l)) ($unquote ($inline ,p)))))
+
+(tm-define-macro ($line-width w . l)
+  ($quote `(with "line-width" ,w ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($color col . l)
+  ($quote `(with "color" ,col ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($fill-color col . l)
+  ($quote `(with "fill-color" ,col ($unquote ($inline ,@l)))))
+
+(tm-define-macro ($text-align h v . l)
+  ($quote `(with "text-at-halign" ,h
+                 "text-at-valign" ,v
+                 ($unquote ($inline ,@l)))))
+
 (tm-define-macro ($graph2d x1 x2 steps fun)
-  `($let* ((f ,fun)
-           (dx (/ (- ,x2 ,x1) ,steps)))
-     ($line
-       ($for (k (.. 0 (+ ,steps 1)))
-         ($let* ((x (+ ,x1 (* k dx)))
-                 (y (f x)))
-           ($point x y))))))
+  `($line
+     ($for (k (.. 0 (+ ,steps 1)))
+       ($let* ((f ,fun)
+               (dx (/ (- ,x2 ,x1) ,steps))
+               (x (+ ,x1 (* k dx)))
+               (y (f x)))
+         ($point x y)))))
+
+(tm-define (markup-build-animation duration l)
+  (with x (append-map markup-expand-document l)
+    (cons 'anim-compose
+          (map (lambda (f) `(anim-constant ,f ,duration)) x))))
+
+(tm-define-macro ($animation duration . l)
+  `(markup-build-animation ,duration ($list ,@l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User interface for dynamic content generation
