@@ -155,7 +155,7 @@
     ;;(display* "Reevaluate output " t "\n")
     ;;(display* "src= " (calc-substitute in lan) "\n")
     (let* ((src (tm->tree (calc-substitute in lan)))
-           (dest (tm->tree (scheme-eval src))))
+           (dest (tm->tree (scheme-eval src :calc))))
       ;;(display* "var= " var "\n")
       ;;(display* "src= " src "\n")
       ;;(display* "dest= " dest "\n")

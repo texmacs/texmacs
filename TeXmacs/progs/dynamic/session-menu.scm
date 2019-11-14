@@ -128,6 +128,7 @@
 (menu-bind session-output-menu
   (if (in-scheme?)
       ("Pretty tree output" (toggle-session-scheme-trees))
+      ("Pretty scheme tree output" (toggle-session-scheme-strees))
       ("Mathematical output" (toggle-session-scheme-math))
       ---)
   ("Show timings" (toggle-session-output-timings)))

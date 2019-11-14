@@ -133,6 +133,16 @@
   (:check-mark "v" program-scheme-trees?)
   (set! program-scheme-trees (not program-scheme-trees)))
 
+(define program-scheme-strees #t)
+
+(tm-define (program-scheme-strees?)
+  program-scheme-strees)
+
+(tm-define (toggle-program-scheme-strees)
+  (:synopsis "Toggle pretty scheme tree output in scheme programs.")
+  (:check-mark "v" program-scheme-strees?)
+  (set! program-scheme-strees (not program-scheme-strees)))
+
 (define program-scheme-math #f)
 
 (tm-define (program-scheme-math?)
@@ -169,13 +179,17 @@
 (define (error-tree? t)
   (and (tree? t) (tree-is? t 'errput)))
 
-(tm-define (scheme-eval t)
+(tm-define (program-scheme-eval t mode)
+  ;; FIXME: unify with scheme-eval
   (let* ((s (texmacs->code t "iso-8859-1"))
 	 (r (eval-string-with-catch s)))
     (cond ((and (tree? r) (error-tree? r) (program-scheme-trees?))
            (tree-copy r))
           ((and (tree? r) (program-scheme-trees?))
            (tree 'text (tree-copy r)))
+          ((and (tm? r) (or (and (== mode :silent) (program-scheme-trees?))
+                            (program-scheme-strees?)))
+           (tree 'text (tree-copy (tm->tree r))))
           ((program-scheme-math?)
            (with m (cas->stree r)
                  (if (tm? m) (tree 'math (tm->tree m)) (var-object->string r))))
@@ -214,7 +228,7 @@
 	      (not (program-coherent? out next)))
 	  (plugin-next lan ses)
 	  (begin
-	    (plugin-write lan ses in)
+	    (plugin-write lan ses in :program)
 	    (tree-set out :up 0 (plugin-prompt lan ses)))))))
 
 (define (program-next lan ses)

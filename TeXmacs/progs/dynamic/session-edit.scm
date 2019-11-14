@@ -91,6 +91,16 @@
   (:check-mark "v" session-scheme-trees?)
   (set! session-scheme-trees (not session-scheme-trees)))
 
+(define session-scheme-strees #f)
+
+(tm-define (session-scheme-strees?)
+  session-scheme-strees)
+
+(tm-define (toggle-session-scheme-strees)
+  (:synopsis "Toggle pretty scheme tree output in scheme sessions.")
+  (:check-mark "v" session-scheme-strees?)
+  (set! session-scheme-strees (not session-scheme-strees)))
+
 (define session-scheme-math #f)
 
 (tm-define (session-scheme-math?)
@@ -127,13 +137,16 @@
 (define (error-tree? t)
   (and (tree? t) (tree-is? t 'errput)))
 
-(tm-define (scheme-eval t)
+(tm-define (scheme-eval t mode)
   (let* ((s (texmacs->code t "iso-8859-1"))
 	 (r (eval-string-with-catch s)))
     (cond ((and (tree? r) (error-tree? r) (session-scheme-trees?))
            (tree-copy r))
           ((and (tree? r) (session-scheme-trees?))
            (tree 'text (tree-copy r)))
+          ((and (tm? r) (or (and (== mode :silent) (session-scheme-trees?))
+                            (session-scheme-strees?)))
+           (tree 'text (tree-copy (tm->tree r))))
           ((session-scheme-math?)
            (with m (cas->stree r)
                  (if (tm? m) (tree 'math (tm->tree m)) (var-object->string r))))
@@ -172,7 +185,7 @@
 	      (not (session-coherent? out next)))
 	  (plugin-next lan ses)
 	  (begin
-	    (plugin-write lan ses in)
+	    (plugin-write lan ses in :session)
 	    (tree-set out :up 0 (plugin-prompt lan ses)))))))
 
 (define (session-next lan ses)

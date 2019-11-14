@@ -94,7 +94,7 @@
     (plugin-set-author lan ses)
     (connection-start lan ses)))
 
-(tm-define (plugin-write lan ses t)
+(tm-define (plugin-write lan ses t mode)
   (ahash-set! plugin-started (list lan ses) (texmacs-time))
   (if (!= lan "scheme")
       (if (tm-func? t 'command 1)
@@ -104,7 +104,7 @@
 	    (connection-write lan ses t)))
       (delayed
 	(connection-notify-status lan ses 3)
-	(with r (scheme-eval t)
+	(with r (scheme-eval t mode)
 	  (if (not (func? r 'document))
 	      (set! r (tree 'document r)))
 	  (connection-notify lan ses "output" r))
@@ -230,7 +230,7 @@
       ;;(display* "Silent do " lan ", " ses ", " in "\n")
       (if (tree-empty? in)
 	  (plugin-next lan ses)
-	  (plugin-write lan ses in)))))
+	  (plugin-write lan ses in :silent)))))
 
 (define (silent-next lan ses)
   ;;(display* "Silent next " lan ", " ses "\n")

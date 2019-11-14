@@ -50,6 +50,7 @@
 (menu-bind program-output-menu
   (if (in-scheme?)
       ("Pretty tree output" (toggle-program-scheme-trees))
+      ("Pretty scheme tree output" (toggle-program-scheme-strees))
       ("Mathematical output" (toggle-program-scheme-math))
       ---)
   ("Show timings" (toggle-program-output-timings)))
