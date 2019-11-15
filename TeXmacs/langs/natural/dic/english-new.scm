@@ -2437,6 +2437,7 @@
 ("show all parts" "")
 ("show current focus" "")
 ("show full context" "")
+("show grid" "")
 ("show header and footer" "")
 ("show hidden" "")
 ("show key presses" "")

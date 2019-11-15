@@ -104,6 +104,8 @@
   ("7" (graphics-set-zoom 7.0))
   ("8" (graphics-set-zoom 8.0))
   ("9" (graphics-set-zoom 9.0))
+  ("#" (graphics-toggle-grid))
+  ("!" (open-plots-editor "scheme" "default" ""))
   ("left" (graphics-move-origin-left))
   ("right" (graphics-move-origin-right))
   ("down" (graphics-move-origin-down))
@@ -128,8 +130,17 @@
   ("A-S-up" (graphics-decrease-vsize-fast))
   ("backspace" (graphics-kbd-remove #f))
   ("delete" (graphics-kbd-remove #t))
-  ("C-g" (graphics-toggle-grid #f))
-  ("C-G" (graphics-toggle-grid #t))
+  ("C-g" (graphics-toggle-logical-grid))
+  ("C-G" (graphics-toggle-visual-grid))
+  ("C-2" (graphics-set-grid-aspect 'detailed 2 #t))
+  ("C-3" (graphics-set-grid-aspect 'detailed 3 #t))
+  ("C-4" (graphics-set-grid-aspect 'detailed 4 #t))
+  ("C-5" (graphics-set-grid-aspect 'detailed 5 #t))
+  ("C-6" (graphics-set-grid-aspect 'detailed 6 #t))
+  ("C-7" (graphics-set-grid-aspect 'detailed 7 #t))
+  ("C-8" (graphics-set-grid-aspect 'detailed 8 #t))
+  ("C-9" (graphics-set-grid-aspect 'detailed 9 #t))
+  ("C-0" (graphics-set-grid-aspect 'detailed 10 #t))
   ("C-left" (graphics-rotate-xz -0.1))
   ("C-right" (graphics-rotate-xz 0.1))
   ("C-up" (graphics-rotate-yz 0.1))
@@ -145,7 +156,7 @@
   ("pagedown" (screens-switch-to :next)))
 
 (define graphics-keys
-  '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"
+  '("+" "-" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" "#" "!"
     "left" "right" "down" "up" "home" "end" "pageup" "pagedown"
     "return" "backspace" "delete" "tab"
     "F1" "F2" "F3" "F4" "F9" "F10" "F11" "F12"))
