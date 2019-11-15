@@ -730,11 +730,22 @@
 
 (tm-define-macro ($graph2d x1 x2 steps fun)
   `($line
-     ($for (k (.. 0 (+ ,steps 1)))
+     ($for (_k_ (.. 0 (+ ,steps 1)))
        ($let* ((f ,fun)
                (dx (/ (- ,x2 ,x1) ,steps))
-               (x (+ ,x1 (* k dx)))
+               (x (+ ,x1 (* _k_ dx)))
                (y (f x)))
+         ($point x y)))))
+
+(tm-define-macro ($curve2d t1 t2 steps xt yt)
+  `($line
+     ($for (_k_ (.. 0 (+ ,steps 1)))
+       ($let* ((fx ,xt)
+               (fy ,yt)
+               (dt (/ (- ,t2 ,t1) ,steps))
+               (t (+ ,t1 (* _k_ dt)))
+               (x (fx t))
+               (y (fy t)))
          ($point x y)))))
 
 (tm-define (markup-build-animation duration l)
