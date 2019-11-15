@@ -90,8 +90,10 @@
 
 (tm-define-macro ($with var val . l)
   (:synopsis "With primitive for content generation")
-  `(with ,var ,val
-     (cons* 'list ($list ,@l))))
+  (if (string? var)
+      ($quote `(with ,var ,val ($unquote ($inline ,@l))))
+      `(with ,var ,val
+         (cons* 'list ($list ,@l)))))
 
 (tm-define-macro ($execute cmd . l)
   (:synopsis "Execute one command")
@@ -540,6 +542,9 @@
 (tm-define-macro ($link dest . l)
   ($quote `(hlink ($unquote ($inline ,@l)) ($unquote ($textual ,dest)))))
 
+(tm-define-macro ($color col . l)
+  ($quote `(with "color" ,col ($unquote ($inline ,@l)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specific markup for TeXmacs documentation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -701,14 +706,22 @@
 (tm-define-macro ($math-at p . l)
   ($quote `(math-at ($unquote ($inline ,@l)) ($unquote ($inline ,p)))))
 
-(tm-define-macro ($line-width w . l)
-  ($quote `(with "line-width" ,w ($unquote ($inline ,@l)))))
+(tm-define (markup-build-graphical l)
+  (with x (append-map markup-expand-document l)
+    (if (== (length x) 1) (car x)
+        (cons 'gr-group x))))
 
-(tm-define-macro ($color col . l)
-  ($quote `(with "color" ,col ($unquote ($inline ,@l)))))
+(tm-define-macro ($graphical . l)
+  `(markup-build-graphical ($list ,@l)))
+
+(tm-define-macro ($line-width w . l)
+  ($quote `(with "line-width" ,w ($unquote ($graphical ,@l)))))
+
+(tm-define-macro ($pen-color col . l)
+  ($quote `(with "color" ,col ($unquote ($graphical ,@l)))))
 
 (tm-define-macro ($fill-color col . l)
-  ($quote `(with "fill-color" ,col ($unquote ($inline ,@l)))))
+  ($quote `(with "fill-color" ,col ($unquote ($graphical ,@l)))))
 
 (tm-define-macro ($text-align h v . l)
   ($quote `(with "text-at-halign" ,h
