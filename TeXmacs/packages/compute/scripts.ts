@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.20>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -128,7 +128,7 @@
   |||1.5fn|><plot-input-field|0.666par|<math|<arg|body>>>>>>
 
   <assign|plot-range|<macro|x|start|end|<style-with|src-compact|none|<resize|<math|<arg|x>>:
-  |||1.5fn|><plot-input-field|0.25par|<math|<arg|start>>> --
+  |||1.5fn|><plot-input-field|0.25par|<math|<arg|start>>> \U
   <plot-input-field|0.25par|<math|<arg|end>>>>>>
 
   <assign|plot-curve|<macro|fun-f|start-x|end-x|<\plot|<localize|Plot curve>>
@@ -185,6 +185,24 @@
   </plot>>>
 
   <assign|plot-output|<macro|in|out|<arg|out>>>
+
+  <\active*>
+    <\src-comment>
+      New plots.
+    </src-comment>
+  </active*>
+
+  <assign|plot-script-output|<macro|language|session|name|in|out|<arg|out>>>
+
+  <assign|plot-script-input|<\macro|language|session|name|in|out>
+    <\with|par-par-sep|0fn>
+      <\script-aux-2|<arg|language>>
+        <arg|in>
+      </script-aux-2>
+    </with>
+  </macro>>
+
+  <drd-props|plot-script-input|arity|5|unaccessible|0|unaccessible|1|unaccessible|2|accessible|3|unaccessible|4|border|no>
 
   <\active*>
     <\src-comment>
