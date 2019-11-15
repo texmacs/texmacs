@@ -336,7 +336,7 @@
 ("cell properties" "propriétés de la cellule")
 ("cell width" "largeur de la cellule")
 ("cells" "cellules")
-("center" "centré")
+("center" "centre")
 ("center baseline" "ligne de base du centre")
 ("center text" "centrer le texte")
 ("centered" "centré")
