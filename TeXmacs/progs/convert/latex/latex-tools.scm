@@ -230,9 +230,11 @@
 			 (latex-texmacs-environment-body (cadr head))))
 	     (envar (and env (latex-texmacs-arity head))))
 	(cond ((and body (== (length tail) arity))
-	       (latex-substitute body t))
+	       ;;(latex-substitute body t)
+	       (latex-substitute body (cons head tail)))
 	      ((and env (== (length tail) 1) (== (length (cddr head)) envar))
-	       (latex-substitute env (append (cdr t) (cddr head))))
+	       ;;(latex-substitute env (append (cdr t) (cddr head)))
+	       (latex-substitute env (append tail (cddr head))))
 	      (else (cons head tail))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -556,3 +558,48 @@
         (string-append pre-uses)
         (string-append pre-page)
         (string-append pre-catcode pre-macro pre-colors)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Clean-up the produced LaTeX for use with MathJax
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (latex-mathjax-text l x)
+  (cond ((or (npair? x) (nlist? x)) `(,l ,x))
+        ((func? x 'tmtextsf 1) (latex-mathjax-text 'textsf (cadr x)))
+        ((func? x 'tmtexttt 1) (latex-mathjax-text 'texttt (cadr x)))
+        ((func? x 'tmtextit 1) (latex-mathjax-text 'textit (cadr x)))
+        ((func? x 'tmtextbf 1) (latex-mathjax-text 'textbf (cadr x)))
+        ((func? x 'tmtextrm 1) (latex-mathjax-text l (cadr x)))
+        ((func? x 'tmtextup 1) (latex-mathjax-text l (cadr x)))
+        (else `(,l ,x))))
+
+(tm-define (latex-mathjax-pre x)
+  (:synopsis "Produce cleaner LaTeX for @x for use with MathJax, pass 1")
+  (cond ((or (npair? x) (nlist? x)) x)
+        ((func? x 'text 1)
+         (latex-mathjax-text 'text (cadr x)))
+        ((func? x 'dotminus 0) `(dot "-"))
+        ((func? x 'dotpm 0) `(dot (pm)))
+        ((func? x 'dotmp 0) `(dot (mp)))
+        ((func? x 'dotamalg 0) `(dot (amalg)))
+        ((func? x 'dotplus 0) `(dot "+"))
+        ((func? x 'dottimes 0) `(dot (times)))
+        ((func? x 'dotast 0) `(dot (ast)))
+        ((and (func? x 'color 2) (func? (cadr x) '!option 1))
+         ;; NOTE : MathJax has broken color support, so ignore certain colors
+         ;; FIXME: this hack may have to be suppressed when MathJax improves
+         "")
+        (else (cons (car x) (map latex-mathjax-pre (cdr x))))))
+
+(tm-define (latex-mathjax x)
+  (:synopsis "Produce cleaner LaTeX for @x for use with MathJax, pass 2")
+  (cond ((or (npair? x) (nlist? x)) x)
+        ((func? x 'ensuremath 1) (latex-mathjax (cadr x)))
+        ((func? x 'hspace* 1) `(hspace ,(latex-mathjax (cadr x))))
+        ((func? x 'mathbbm 1) `(mathbb ,(latex-mathjax (cadr x))))
+        ((func? x 'fill 0) "3cm")
+        ((func? x 'newcommand) "")
+        ((func? x 'custombinding) "")
+        ((func? x 'nobreak) "")
+        ((func? x 'label) "")
+        (else (cons (car x) (map latex-mathjax (cdr x))))))

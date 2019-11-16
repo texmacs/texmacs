@@ -46,6 +46,7 @@
 (define tmtex-image-root-string "image")
 (define tmtex-appendices? #f)
 (define tmtex-indirect-bib? #f)
+(define tmtex-mathjax? #f)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style
@@ -134,6 +135,7 @@
   (set! tmtex-serial 0)
   (set! tmtex-auto-produce 0)
   (set! tmtex-auto-consume 0)
+  (set! tmtex-mathjax? #f)
   (if (== (url-suffix current-save-target) "tex")
       (begin
 	(set! tmtex-image-root-url (url-unglue current-save-target 4))
@@ -149,6 +151,9 @@
     (== (assoc-ref opts "texmacs->latex:indirect-bib") "on"))
   (set! tmtex-use-macros?
     (== (assoc-ref opts "texmacs->latex:use-macros") "on"))
+  (when (== (assoc-ref opts "texmacs->latex:mathjax") "on")
+    (tmtex-env-set "mode" "math")
+    (set! tmtex-mathjax? #t))
   (with charset (assoc-ref opts "texmacs->latex:encoding")
     (if tmtex-cjk-document? (set! charset "utf-8"))
     (cond ((== charset "utf-8")
@@ -3238,6 +3243,10 @@
              (x3 (tmtm-match-brackets x2)))
         (tmtex-initialize opts)
         (with r (tmtex (tmpre-produce x3))
+          (if tmtex-mathjax?
+              (set! r (latex-mathjax-pre r)))
           (if (not tmtex-use-macros?)
               (set! r (latex-expand-macros r)))
+          (if tmtex-mathjax?
+              (set! r (latex-mathjax r)))
           r))))

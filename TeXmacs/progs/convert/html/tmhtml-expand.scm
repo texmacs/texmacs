@@ -47,4 +47,10 @@
              html-javascript html-javascript-src html-video
 	     web-title tmdoc-title tmdoc-flag tmdoc-license
 	     tmdoc-title* tmdoc-title** tmdoc-copyright
-	     hlink action hyper-link mouse-over-balloon mouse-over-balloon*))))
+	     hlink action hyper-link mouse-over-balloon mouse-over-balloon*))
+    ,@(if (!= (get-preference "texmacs->html:mathjax") "on")
+          (list)
+          (map tmhtml-env-macro
+               '(binom tbinom dbinom choose ontop
+                 tfrac dfrac cfrac
+                 bmod pmod pod)))))

@@ -128,6 +128,7 @@
     (-> "Converters"
         (-> "TeXmacs -> Html"
 ;           (toggle ("Use CSS" "texmacs->html:css"))
+            (toggle ("Use MathJax" "texmacs->html:mathjax"))
             (toggle ("Use MathML" "texmacs->html:mathml"))
             (toggle ("Export formulas as images" "texmacs->html:images")))
         (-> "LaTeX -> TeXmacs"

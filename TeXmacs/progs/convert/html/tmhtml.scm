@@ -28,6 +28,7 @@
 
 (define tmhtml-env (make-ahash-table))
 (define tmhtml-css? #t)
+(define tmhtml-mathjax? #f)
 (define tmhtml-mathml? #f)
 (define tmhtml-images? #f)
 (define tmhtml-image-serial 0)
@@ -40,6 +41,8 @@
   (set! tmhtml-env (make-ahash-table))
   (set! tmhtml-css?
 	(== (assoc-ref opts "texmacs->html:css") "on"))
+  (set! tmhtml-mathjax?
+	(== (assoc-ref opts "texmacs->html:mathjax") "on"))
   (set! tmhtml-mathml?
 	(== (assoc-ref opts "texmacs->html:mathml") "on"))
   (set! tmhtml-images?
@@ -212,6 +215,12 @@
     (if (with-extract doc "html-head-javascript")
 	(let* ((code (with-extract doc "html-head-javascript"))
 	       (script `(h:script (@ (language "javascript")) ,code)))
+	  (set! xhead (append xhead (list script)))))
+    (if tmhtml-mathjax?
+	(let* ((site "http://cdn.mathjax.org/")
+               (loc "mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
+               (src (string-append site loc))
+	       (script `(h:script (@ (language "javascript") (src ,src)))))
 	  (set! xhead (append xhead (list script)))))
     (if (or (in? "tmdoc" styles)
             (in? "tmweb" styles) (in? "tmweb2" styles)
@@ -768,6 +777,10 @@
 (define (tmhtml-with-mode val arg)
   (ahash-with tmhtml-env :math (== val "math")
     (tmhtml (if (== val "prog") `(verbatim ,arg) arg))))
+
+(define (tmhtml-with-math-display val arg)
+  (ahash-with tmhtml-env :math-display (== val "true")
+    (tmhtml arg)))
 
 (define (tmhtml-with-color val arg)
   `((h:font (@ (color ,(tmcolor->htmlcolor val))) ,@(tmhtml arg))))
@@ -1346,16 +1359,40 @@
 (define (tmhtml-equation* l)
   (with first (simplify-document (car l))
     (with x `(with "mode" "math" (with "math-display" "true" ,first))
-      `((h:center ,@(tmhtml x))))))
+      (ahash-with tmhtml-env :math-display #t
+        `((h:center ,@(tmhtml x)))))))
 
 (define (tmhtml-equation-lab l)
   (with first (simplify-document (car l))
     (with x `(with "mode" "math" (with "math-display" "true" ,first))
-      `((h:table (@ (width "100%"))
-		 (h:tr (h:td (@ (align "center") (width "100%"))
-			     ,@(tmhtml x))
-		       (h:td (@ (align "right"))
-			     "(" ,@(tmhtml (cadr l)) ")")))))))
+      (ahash-with tmhtml-env :math-display #t
+        `((h:table (@ (width "100%"))
+                   (h:tr (h:td (@ (align "center") (width "100%"))
+                               ,@(tmhtml x))
+                         (h:td (@ (align "right"))
+                               "(" ,@(tmhtml (cadr l)) ")"))))))))
+
+(define (tmhtml-mathjax-formula* x)
+  ;;(display* "x= " x "\n")
+  (let* ((opts (list (cons "texmacs->latex:mathjax" "on")))
+         (s (serialize-latex (texmacs->latex x opts)))
+         (display? (ahash-ref tmhtml-env :math-display))
+         (style (if display? "\\displaystyle " ""))
+         (mj (string-append "\\(" style s "\\)")))
+    (set! mj (string-replace mj
+               "\\(\\displaystyle \\begin{array}{rcl}"
+               "\\(\\begin{array}{rcl} \\displaystyle "))
+    (list mj)))
+
+(define (tmhtml-mathjax-formula x)
+  (cond ((tm-func? x 'with 1)
+         (tmhtml-mathjax-formula (cadr x)))
+        ((and (tm-func? x 'with 3)
+              (== (cadr x) "math-display")
+              (== (caddr x) "true"))
+         (ahash-with tmhtml-env :math-display #t
+           (tmhtml-mathjax-formula (cadddr x))))
+        (else (tmhtml-mathjax-formula* x))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tags for customized html generation
@@ -1527,16 +1564,19 @@
 (tm-define (tmhtml-root x)
   (ahash-with tmhtml-env :mag "1"
     (ahash-with tmhtml-env :math #f
-      (ahash-with tmhtml-env :preformatted #f
-        (ahash-with tmhtml-env :left-margin 0
-          (ahash-with tmhtml-env :right-margin 0
-            (tmhtml x)))))))
+      (ahash-with tmhtml-env :math-display #f
+        (ahash-with tmhtml-env :preformatted #f
+          (ahash-with tmhtml-env :left-margin 0
+            (ahash-with tmhtml-env :right-margin 0
+              (tmhtml x))))))))
 
 (define (tmhtml x)
   ;; Main conversion function.
   ;; Takes a TeXmacs tree in Scheme notation and produce a SXML node-set.
   ;; All handler functions have a similar prototype.
-  (cond ((and tmhtml-mathml? (ahash-ref tmhtml-env :math))
+  (cond ((and tmhtml-mathjax? (ahash-ref tmhtml-env :math))
+         (tmhtml-mathjax-formula x))
+        ((and tmhtml-mathml? (ahash-ref tmhtml-env :math))
 	 `((m:math (@ (xmlns "http://www.w3.org/1998/Math/MathML"))
 		   ,(texmacs->mathml x tmhtml-env))))
 	((and tmhtml-images? (ahash-ref tmhtml-env :math)
@@ -1749,6 +1789,7 @@
 
 (logic-table tmhtml-with-cmd%
   ("mode" ,tmhtml-with-mode)
+  ("math-display" ,tmhtml-with-math-display)
   ("color" ,tmhtml-with-color)
   ("font-size" ,tmhtml-with-font-size)
   ("par-left" ,tmhtml-with-par-left)

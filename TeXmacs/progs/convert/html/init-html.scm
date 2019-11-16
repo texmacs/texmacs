@@ -62,5 +62,6 @@
 (converter texmacs-stree html-stree
   (:function-with-options texmacs->html)
   (:option "texmacs->html:css" "on")
+  (:option "texmacs->html:mathjax" "off")
   (:option "texmacs->html:mathml" "off")
   (:option "texmacs->html:images" "off"))
