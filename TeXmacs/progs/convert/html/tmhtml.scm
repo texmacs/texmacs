@@ -411,6 +411,10 @@
 	 (serialize-concat (cadr x))
 	 (serialize-concat (cadddr x))
 	 (serialize-concat (caddr x)))
+        ((func? x 'with 1) (serialize-concat (cadr x)))
+        ((and (func? x 'with)
+              (in? cadr (list "locus-color" "visited-color")))
+         (serialize-concat `(with ,@(cdddr x))))
 	((func? x 'with)
 	 (let* ((r (simplify-document (cAr x)))
 		(w (lambda (y) `(with ,@(cDdr x) ,y))))
@@ -422,6 +426,7 @@
 		 (serialize-paragraph (w head))
 		 (set! document-done (cons (w body) document-done))
 		 (serialize-concat (w tail))))))
+        ((func? x 'locus) (serialize-concat (cAr x)))
 	(else (serialize-print x))))
 
 (define (simplify-document x)
