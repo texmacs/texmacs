@@ -202,22 +202,14 @@ decode_length (string width, wk_widget wid, int style) {
   SI ex, ey;
   if (wid->win == NULL) gui_maximal_extents (ex, ey);
   else wid->win->get_size (ex, ey);
-  if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
-    double x= as_double (width (0, N(width) - 1));
-    return (SI) (x * ex);
-  }
-  else if (ends (width, "h") && is_double (width (0, N(width) - 1))) {
-    double y= as_double (width (0, N(width) - 1));
-    return (SI) (y * ey);
-  }
-  else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
+
+  pair<double, string> w_unit= parse_length (width);
+  if (w_unit.x2 == "w") return (SI) (w_unit.x1 * ex);
+  else if (w_unit.x2 == "h") return (SI) (w_unit.x1 * ey);
+  else if (w_unit.x2 == "px") return (SI) (x * PIXEL);
+  else if (w_unit.x2 == "em") {
     font fn= get_default_styled_font (style);
-    double x= as_double (width (0, N(width) - 2));
     return (SI) ((x * fn->wquad) / SHRINK);
-  }
-  else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
-    double x= as_double (width (0, N(width) - 2));
-    return (SI) (x * PIXEL);
   }
   else return ex;
 }

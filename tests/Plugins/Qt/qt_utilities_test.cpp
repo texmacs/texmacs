@@ -8,6 +8,8 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#ifdef QTTEXMACS
+
 #include "gtest/gtest.h"
 
 #include "Qt/qt_utilities.hpp"
@@ -16,3 +18,5 @@ TEST (qt_supports, work) {
   ASSERT_TRUE (qt_supports (url ("x.svg")));
   ASSERT_TRUE (qt_supports (url ("x.png")));
 }
+
+#endif

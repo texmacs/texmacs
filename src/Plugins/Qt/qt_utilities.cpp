@@ -95,7 +95,7 @@ to_qfont (int style, QFont font) {
   return font;
 }
 
-/*! Try to convert a TeXmacs lenght (em, px, w, h) into a QSize.
+/*! Try to convert a TeXmacs length (em, px, w, h) into a QSize.
  
  This uses the widget's current size to compute relative sizes as specified
  with "FFw", where FF is the string representation of a double.
@@ -106,48 +106,31 @@ to_qfont (int style, QFont font) {
 QSize
 qt_decode_length (string width, string height,
                   const QSize& ref, const QFontMetrics& fm) {
-  QSize size = ref;
+  QSize size= ref;
+
+  pair<double, string> w_unit= parse_length (width);
+  pair<double, string> h_unit= parse_length (height);
 
     // Width as a function of the default width
-  if (ends (width, "w") && is_double (width (0, N(width) - 1))) {
-    double x = as_double (width (0, N(width) - 1));
-    size.rwidth() *= x;
-  }
+  if (w_unit.x2 == "w") size.rwidth() *= w_unit.x1;
     // Width as a function of the default height
-  else if (ends (width, "h") && is_double (width (0, N(width) - 1))) {
-    double y = as_double (width (0, N(width) - 1));
-    size.rwidth() = y * size.height();
-  }
+  else if (w_unit.x2 == "h") size.rwidth() = w_unit.x1 * size.height();
     // Absolute EM units
-  else if (ends (width, "em") && is_double (width (0, N(width) - 2))) {
-    double x = as_double (width (0, N(width) - 2));
-    size.setWidth(x * fm.width("M")); 
-  }
-    // Absolute pixel units 
-  else if (ends (width, "px") && is_double (width (0, N(width) - 2))) {
-    double x = as_double (width (0, N(width) - 2));
-    if (retina_zoom == 2) x *= 1.5;
-    size.setWidth(x);
+  else if (w_unit.x2 == "em") size.setWidth (w_unit.x1 * fm.width("M"));
+    // Absolute pixel units
+  else if (w_unit.x2 == "px") {
+    if (retina_zoom == 2) w_unit.x1 *= 1.5;
+    size.setWidth (w_unit.x1);
   }
 
     // Height as a function of the default width
-  if (ends (height, "w") && is_double (height (0, N(height) - 1))) {
-    double x = as_double (height (0, N(height) - 1));
-    size.rheight() = x * size.width();
-  }
+  if (h_unit.x2 == "w") size.rheight() = h_unit.x1 * size.width();
     // Height as a function of the default height
-  else if (ends (height, "h") && is_double (width (0, N(width) - 1))) {
-    double y = as_double (height (0, N(height) - 1));
-    size.rheight() *= y;
-  }
-  else if (ends (height, "em") && is_double (height (0, N(height) - 2))) {
-    double y = as_double (height (0, N(height) - 2));
-    size.setHeight(y * fm.width("M")); 
-  }
-  else if (ends (height, "px") && is_double (height (0, N(height) - 2))) {
-    double y = as_double (height (0, N(height) - 2));
-    if (retina_zoom == 2) y *= 1.5;
-    size.setHeight(y);
+  else if (h_unit.x2 == "h") size.rheight() *= h_unit.x1;
+  else if (h_unit.x2 == "em") size.setHeight (h_unit.x1 * fm.width("M"));
+  else if (h_unit.x2 == "px") {
+    if (retina_zoom == 2) h_unit.x1 *= 1.5;
+    size.setHeight (h_unit.x1);
   }
   return size;
 }

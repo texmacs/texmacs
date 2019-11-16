@@ -122,7 +122,7 @@ BEGIN_SLOT
   xps->setText ("");
   yps->setText ("");
 
-  string localname = from_qstring_utf8(file);
+  string localname= from_qstring_utf8 (file);
   url image_url= url_system (localname);
   if (DEBUG_CONVERT) debug_convert<<"image preview :["<<image_url<<"]"<<LF;
   if (!(as_string(image_url)=="") && !is_directory(image_url) && exists(image_url) ){
@@ -135,20 +135,15 @@ BEGIN_SLOT
       hei->setText (QString::number (h_pt) + "pt");
       if (w_pt > h_pt) {
         w= 98;
-        h= h_pt*98/w_pt;
-        if ((int)h < h) h= (int)h+1;
-        else h= (int)h;
-      } 
-	  else {
-        w= w_pt*98/h_pt;
-        if ((int)w < w) w= (int)w+1;
-        else w= (int)w;
+        h= ceil (h_pt*98/w_pt);
+      } else {
+        w= ceil (w_pt*98/h_pt);
         h= 98;
-	  }
-	  //generate thumbnail :
-	  image_to_png (image_url, temp, w, h);
-	  img.load (utf8_to_qstring (as_string (temp)));
-	  remove (temp);
+      }
+      // generate thumbnail:
+      image_to_png (image_url, temp, w, h);
+      img.load (utf8_to_qstring (as_string (temp)));
+      remove (temp);
     }
   }
 
