@@ -1,4 +1,4 @@
-<TeXmacs|1.99.8>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -152,7 +152,7 @@
 
   <\active*>
     <\src-comment>
-      Second kind of customized footnotes.
+      Detached footnotes.
     </src-comment>
   </active*>
 
@@ -162,13 +162,21 @@
     </style-with>
   </macro>>
 
-  <assign|footnote-text|<macro|body|var|<flag|Footnote|brown><next-footnote><assign|<merge|fnote-|<arg|var>>|<the-footnote><render-footnote|<the-footnote>|<arg|body>>>>>
+  <assign|footnote-text|<macro|body|id|<flag|Footnote|brown><next-footnote><assign|<merge|fnote-|<arg|id>>|<the-footnote>><render-footnote|<the-footnote>|<arg|body>>>>
 
-  <assign|footnote-new|<macro|var|<flag|Footnote|brown><next-footnote><assign|<merge|fnote-|<arg|var>>|<the-footnote>><assign|<merge|fnlab-|<arg|var>>|<value|the-label>>>>
+  <assign|footnote-new|<macro|id|<flag|Footnote|brown><next-footnote><assign|<merge|fnote-|<arg|id>>|<the-footnote>><assign|<merge|fnlab-|<arg|id>>|<value|the-label>>>>
 
-  <assign|footnote-show|<macro|body|var|<render-footnote**|<value|<merge|fnote-|<arg|var>>>|<value|<merge|fnlab-|<arg|var>>>|<arg|body>>>>
+  <assign|footnote-show|<macro|body|id|<render-footnote**|<value|<merge|fnote-|<arg|id>>>|<value|<merge|fnlab-|<arg|id>>>|<arg|body>>>>
 
-  <assign|footnote-reference|<macro|var|<space|0spc><label|<merge|footnr-|<value|<merge|fnote-|<arg|var>>>>><rsup|<with|font-shape|right|<reference|<merge|footnote-|<value|<merge|fnote-|<arg|var>>>>>>>>>
+  <assign|footnote-reference|<macro|id|<space|0spc><label|<merge|footnr-|<value|<merge|fnote-|<arg|id>>>>><rsup|<with|font-shape|right|<reference|<merge|footnote-|<value|<merge|fnote-|<arg|id>>>>>>>>>
+
+  <drd-props|footnote-text|arity|2|accessible|0|unaccessible|1|identifier|1>
+
+  <drd-props|footnote-new|arity|1|unaccessible|0|identifier|0>
+
+  <drd-props|footnote-show|arity|2|accessible|0|unaccessible|1|identifier|1>
+
+  <drd-props|footnote-reference|arity|1|unaccessible|0|identifier|0>
 
   <\active*>
     <\src-comment>
