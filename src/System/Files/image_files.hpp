@@ -36,5 +36,6 @@ bool          has_image_magick();
 string        imagemagick_cmd();
 void          native_image_size (url image, int& w, int& h);
 void          apply_effect (tree eff, array<url> src, url dest, int w, int h);
+bool          prefer_inkscape (string suffix);
 
 #endif // defined IMAGE_FILES_H

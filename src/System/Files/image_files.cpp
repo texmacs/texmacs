@@ -465,8 +465,15 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   call_imagemagick_convert(image, pdf, w_pt, h_pt, dpi);
 }
 
+bool prefer_inkscape (string suffix) {
+  return suffix == "svg" &&
+    exists_in_path ("inkscape") &&
+    get_preference ("image->texmacs:svg-prefer-inkscape", "off") == "on";
+}
+
 void
 image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
+  string source_suffix= suffix (image);
   if (DEBUG_CONVERT) debug_convert << "image_to_png ... ";
   /* if (suffix (png) != "png") {
      std_warning << concretize (png) << " has no .png suffix\n";
@@ -474,21 +481,21 @@ image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   */
 #ifdef MACOSX_EXTENSIONS
   //cout << "mac convert " << image << ", " << png << "\n";
-  if (mac_supports (image)) {
+  if (mac_supports (image) && !prefer_inkscape (source_suffix)) {
     if (DEBUG_CONVERT) debug_convert << " using mac_os "<<LF;
     mac_image_to_png (image, png, w, h);
     return;
   }
 #endif
 #ifdef QTTEXMACS
-  if (qt_supports (image) && (suffix(image) != "svg")) {
+  if (qt_supports (image) && !prefer_inkscape (source_suffix)) {
     if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
     qt_convert_image (image, png, w, h);
     return;
   }
 #endif
 #ifdef USE_GS
-  if (gs_supports (image)) {
+  if (gs_supports (image) && !prefer_inkscape (source_suffix)) {
     if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
     if (gs_to_png (image, png, w, h)) return;
   }

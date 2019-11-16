@@ -121,13 +121,13 @@
     (item (text "Space bar in text mode:")
       (enum (set-pretty-preference "text spacebar" answer)
             '("Default" "No multiple spaces"
-	      "Glue multiple spaces" "Allow multiple spaces")
+              "Glue multiple spaces" "Allow multiple spaces")
             (get-pretty-preference "text spacebar")
             "15em"))
     (item (text "Space bar in math mode:")
       (enum (set-pretty-preference "math spacebar" answer)
             '("Default" "No spurious spaces"
-	      "Avoid spurious spaces" "Allow spurious spaces")
+              "Avoid spurious spaces" "Allow spurious spaces")
             (get-pretty-preference "math spacebar")
             "15em"))
     (item (text "Automatic quotes:")
@@ -499,26 +499,26 @@
   (aligned
     (assuming (supports-native-pdf?)
       (meti (hlist // (text "Produce Pdf using native export filter"))
-	(toggle (set-boolean-preference "native pdf" answer)
-		(get-boolean-preference "native pdf"))))
+        (toggle (set-boolean-preference "native pdf" answer)
+                (get-boolean-preference "native pdf"))))
     (assuming (supports-ghostscript?)
       (meti (hlist // (text "Produce Postscript using native export filter"))
-	(toggle (set-boolean-preference "native postscript" answer)
-		(get-boolean-preference "native postscript"))))
+        (toggle (set-boolean-preference "native postscript" answer)
+                (get-boolean-preference "native postscript"))))
    (meti (hlist // (text "Expand beamer slides"))
       (toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
-	      (get-boolean-preference "texmacs->pdf:expand slides"))))
+              (get-boolean-preference "texmacs->pdf:expand slides"))))
     (assuming (supports-native-pdf?)
       (aligned (meti (hlist // (text "Distill encapsulated Pdf files"))
-	(toggle (set-boolean-preference "texmacs->pdf:distill inclusion" answer)
-		(get-boolean-preference "texmacs->pdf:distill inclusion"))))
+        (toggle (set-boolean-preference "texmacs->pdf:distill inclusion" answer)
+                (get-boolean-preference "texmacs->pdf:distill inclusion"))))
       (aligned (meti (hlist // (text "Check exported Pdf files for correctness"))
-	(toggle (set-boolean-preference "texmacs->pdf:check" answer)
-		(get-boolean-preference "texmacs->pdf:check"))))
+        (toggle (set-boolean-preference "texmacs->pdf:check" answer)
+                (get-boolean-preference "texmacs->pdf:check"))))
       (aligned (item (text "Pdf version number:")
         (enum (set-preference "texmacs->pdf:version" answer)
-	      '("default" "1.4" "1.5" "1.6" "1.7")
-	      (get-preference "texmacs->pdf:version") "8em")))))
+              '("default" "1.4" "1.5" "1.6" "1.7")
+              (get-preference "texmacs->pdf:version") "8em")))))
 
 ;; Images ----------
 
@@ -531,21 +531,33 @@
    (eval `(define-preference-names "texmacs->image:format" ,@valid-image-format-list))
    (cadr (apply map list valid-image-format-list))))
 
+(define (supports-inkscape?) (url-exists-in-path? "inkscape"))
+
 (tm-widget (image-preferences-widget)
   ===
   (bold (text "TeXmacs -> Image"))
   ===
   (aligned
-      (item (text "Bitmap resolution (dpi):")
-        (enum (set-preference "texmacs->image:raster-resolution" answer)
-	      '("1200" "600" "300" "150" "")
-	      (get-preference "texmacs->image:raster-resolution")
-	      "5em"))
-      (item (text "Clipboard image format:")
-        (enum (set-pretty-preference "texmacs->image:format" answer)
-	      (pretty-format-list)
-	      (get-pretty-preference "texmacs->image:format")
-	      "5em"))))
+    (item (text "Bitmap resolution (dpi):")
+      (enum (set-preference "texmacs->image:raster-resolution" answer)
+            '("1200" "600" "300" "150" "")
+            (get-preference "texmacs->image:raster-resolution")
+            "5em"))
+    (item (text "Clipboard image format:")
+      (enum (set-pretty-preference "texmacs->image:format" answer)
+            (pretty-format-list)
+            (get-pretty-preference "texmacs->image:format")
+            "5em")))
+  ===
+  (bold (text "Image -> TeXmacs"))
+  ===
+  (aligned
+    (meti
+      (when (supports-inkscape?)
+        (hlist // (text "Prefer Inkscape for conversion from SVG")))
+      (when (supports-inkscape?)
+        (toggle (set-boolean-preference "image->texmacs:svg-prefer-inkscape" answer)
+                (get-boolean-preference "image->texmacs:svg-prefer-inkscape"))))))
 
 ;; All converters ----------
 
@@ -723,10 +735,10 @@
               (get-pretty-preference "scripting language")
               "15em"))
       (item (text "Document updates run:")
-	(enum (set-pretty-preference "document update times" answer)
-	      '("Once" "Twice" "Three times")
-	      (get-pretty-preference "document update times") 
-	      "15em"))
+        (enum (set-pretty-preference "document update times" answer)
+              '("Once" "Twice" "Three times")
+              (get-pretty-preference "document update times") 
+              "15em"))
       (assuming (updater-supported?)
         (item (text "Check for automatic updates:")
           (enum (set-pretty-preference "updater:interval" answer)

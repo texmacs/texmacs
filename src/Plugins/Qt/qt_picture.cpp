@@ -162,7 +162,7 @@ picture_renderer (picture p, double zoomf) {
 QImage*
 get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
-  if (qt_supports (u))
+  if (qt_supports (u) && !prefer_inkscape (suffix (u)))
     pm= new QImage (utf8_to_qstring (concretize (u)));
   else {
     url temp= url_temp (".png");
