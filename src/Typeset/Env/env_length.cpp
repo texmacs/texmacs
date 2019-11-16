@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "analyze.hpp"
 #include "env.hpp"
 #include "convert.hpp"
 #include "page_type.hpp"
@@ -169,12 +170,13 @@ edit_env_rep::as_tmlen (tree t) {
     string s= t->label;
     int start= 0, i, n=N(s);
     while ((start+1<n) && (s[start]=='-') && (s[start+1]=='-')) start += 2;
-    for (i=start; i<n && !is_locase (s[i]); i++) {}
-    string s1= s (start, i);
-    string s2= s (i, n);
-    if (!(is_double (s1) && is_locase_alpha (s2))) return tree (TMLEN, "0");
-    return tmlen_times (as_double (s1),
-			as_tmlen (exec (compound (s2 * "-length"))));
+    pair<double, string> len_unit= parse_length (s (start, n));
+    if (len_unit.x2 == "error" || is_empty (len_unit.x2)) {
+      return tree (TMLEN, "0");
+    } else {
+      return tmlen_times (len_unit.x1,
+                          as_tmlen (exec (compound (len_unit.x2 * "-length"))));
+    }
   }
   else if (is_func (t, MACRO, 1))
     return as_tmlen (exec (t[0]));

@@ -332,7 +332,7 @@ texmacs_input_rep::xformat_flush (bool force) {
 
 void
 texmacs_input_rep::image_flush (string content, string type, string w_unit,
-                                string h_unit, int width, int height) {
+                                string h_unit, double width, double height) {
   tree t (IMAGE);
   t << tuple (tree (RAW_DATA, content), type);
   if (width == 0 && height == 0) {
@@ -349,7 +349,7 @@ texmacs_input_rep::image_flush (string content, string type, string w_unit,
 }
 
 void parse_url (string buf, string& path_file, string& w_unit,
-                string& h_unit, int& width, int& height) {
+                string& h_unit, double& width, double& height) {
   width= 0;
   height= 0;
 
@@ -363,13 +363,15 @@ void parse_url (string buf, string& path_file, string& w_unit,
     int pos = 0;
     if (starts (param, "width=")) {
       param= replace (param, "width=", "");
-      read_int (param, pos, width);
-      w_unit= param(pos, N(param));
+      pair<double, string> len_unit= parse_length(param);
+      width= len_unit.x1;
+      w_unit= len_unit.x2;
     }
     if (starts (param, "height=")) {
       param= replace (param, "height=", "");
-      read_int (param, pos, height);
-      h_unit= param(pos, N(param));
+      pair<double, string> len_unit= parse_length(param);
+      height= len_unit.x1;
+      h_unit= len_unit.x2;
     }
     i++;
   }
@@ -389,7 +391,7 @@ void
 texmacs_input_rep::file_flush (bool force) {
   if (force) {
     string path_file, w_unit, h_unit;
-    int width, height;
+    double width, height;
     parse_url (buf, path_file, w_unit, h_unit, width, height);
     url file= url_system (path_file);
 

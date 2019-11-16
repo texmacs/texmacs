@@ -13,6 +13,7 @@
 #include "merge_sort.hpp"
 #include "converter.hpp"
 #include "scheme.hpp"
+#include "ntuple.hpp"
 
 /******************************************************************************
 * Tests for characters
@@ -1616,4 +1617,22 @@ distance (string s1, string s2) {
   for (int k=0; k<N(r); k+=4)
     d += max (r[k+1] - r[k], r[k+3] - r[k+2]);
   return d;
+}
+
+/******************************************************************************
+* Parse length
+******************************************************************************/
+
+pair<double, string>
+parse_length (string s) {
+  int start= 0;
+  int i, n= N(s);
+  for (i=start; i<n && !is_locase (s[i]); i++) {}
+  string s1= s (start, i);
+  string s2= s (i, n);
+  if (is_double (s1) && (is_locase_alpha (s2) || is_empty (s2))) {
+    return pair<double, string> (as_double (s1), s2);
+  } else {
+    return pair<double, string> (0, "error");
+  }
 }

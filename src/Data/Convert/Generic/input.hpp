@@ -49,7 +49,7 @@ struct texmacs_input_rep: concrete_struct {
   void xformat_flush (bool force= false);
   void image_flush(string content, string type,
                    string w_unit, string h_unit,
-                   int width, int height);
+                   double width, double height);
   void file_flush (bool force= false);
 };
 

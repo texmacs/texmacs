@@ -14,6 +14,7 @@
 #include "string.hpp"
 #include "array.hpp"
 #include "hashset.hpp"
+#include "ntuple.hpp"
 
 class object;
 
@@ -173,5 +174,7 @@ array<string> strip_completions (array<string> a, string prefix);
 
 array<int> differences (string s1, string s2);
 int distance (string s1, string s2);
+
+pair<double, string> parse_length (string s);
 
 #endif // defined ANALYZE_H

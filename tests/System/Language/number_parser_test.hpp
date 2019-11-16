@@ -28,13 +28,13 @@ inline void assert_numbers (number_parser_rep number_parser, list<string> number
   }
 }
 
-list<string> hex_literals = list<string>() 
+auto hex_literals= list<string>()
   * string("0x10") * string("0X10");
-list<string> hex_literals_with_sep = list<string>()
+auto hex_literals_with_sep= list<string>()
   * string("0x10_10") * string("0X10_10");
-list<string> binary_literals = list<string>()
+auto binary_literals= list<string>()
   * string("0b10") * string("0B10");
-list<string> binary_literals_with_sep = list<string>()
+auto binary_literals_with_sep= list<string>()
   * string("0b10_10") * string("0B10_10");
 
 #endif

@@ -39,19 +39,20 @@ string get_attr_from_element (tree t, string name, string default_value) {
 
 static int px2pt (double px) {
   // TODO: assume dpi is 600
-  return tm_round (72 * px / 96.0);
+  return (int) tm_round (72 * px / 96.0);
 }
 
 int parse_xml_length (string length) {
-  if (ends (length, "px") && is_double (length (0, N(length) - 2))) {
-    return px2pt (as_double (length (0, N(length)-2)));
+  pair<double, string> len_unit= parse_length (length);
+  double len= len_unit.x1;
+  string unit= len_unit.x2;
+
+  // default unit is px
+  if (unit == "px" || is_empty (unit)) {
+    return px2pt (len);
+  } else if (unit == "pt") {
+    return (int) tm_round (len_unit.x1);
+  } else {
+    return 0;
   }
-  if (ends (length, "pt") && is_double (length (0, N(length) - 2))) {
-    return tm_round (as_double (length (0, N(length)-2)));
-  }
-  // No length unit is specified, default to "px"
-  if (is_double (length)) {
-    return px2pt (as_double (length));
-  }
-  return 0;
 }
