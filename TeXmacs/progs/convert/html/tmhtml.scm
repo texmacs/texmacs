@@ -1387,9 +1387,11 @@
          (display? (ahash-ref tmhtml-env :math-display))
          (style (if display? "\\displaystyle " ""))
          (mj (string-append "\\(" style s "\\)")))
-    (set! mj (string-replace mj
-               "\\(\\displaystyle \\begin{array}{rcl}"
-               "\\(\\begin{array}{rcl} \\displaystyle "))
+    (when (and (string-starts? mj "\\(\\displaystyle \\begin{array}{rcl}")
+               (string-ends?   mj "\\end{array}\\)"))
+      (set! mj (string-append "\\begin{eqnarray*}"
+                              (substring mj 34 (- (string-length mj) 13))
+                              "\\end{eqnarray*}")))
     (list mj)))
 
 (define (tmhtml-mathjax-formula x)
