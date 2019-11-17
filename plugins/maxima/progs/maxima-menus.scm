@@ -136,11 +136,30 @@
 ;; Additional icons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (car-or-false l)
+  (if (null? l) #f
+      (car l)))
+
+(define (maxima-htmldir)
+  (map (lambda (x) (string-drop x (string-length "maxima-htmldir=")))
+   (filter (lambda (x) (string-starts? x "maxima-htmldir="))
+           (string-split (var-eval-system "maxima -d") #\nl))))
+
+(define (maxima-help) 
+  (with htmldir (car-or-false (maxima-htmldir))
+   (define (concat-html-path html)
+     (string-append (string-append htmldir "/")
+                    html))
+   (car-or-false (filter url-exists?
+                  (map concat-html-path
+                   (list "maxima_toc.html" "maxima_0.html"))))))
+
 (menu-bind maxima-help-icons
-  (if (and (in-maxima?) maxima-help)
+  (with help (maxima-help)
+   (if (and (in-maxima?) help)
       /
       ((balloon (icon "tm_help.xpm") "Maxima manual")
-       (load-help-buffer maxima-help))))
+       (load-help-buffer help)))))
 
 (menu-bind session-help-icons
   (:require (and (in-maxima?) (in-session?)))
