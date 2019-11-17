@@ -644,6 +644,13 @@ edit_typeset_rep::exec_html (tree t, path p) {
     w << string ("html-head-javascript") << H["html-head-javascript"];
   if (H->contains ("html-head-javascript-src"))
     w << string ("html-head-javascript-src") << H["html-head-javascript-src"];
+  if (H->contains ("html-extra-css"))
+    w << string ("html-extra-css") << H["html-extra-css"];
+  if (H->contains ("html-extra-javascript-src"))
+    w << string ("html-extra-javascript-src")
+      << H["html-extra-javascript-src"];
+  if (H->contains ("html-extra-javascript"))
+    w << string ("html-extra-javascript") << H["html-extra-javascript"];
   if (H->contains ("html-site-version"))
     w << string ("html-site-version") << H["html-site-version"];
   if (N(w) == 0) return exec (t, H);

@@ -76,8 +76,11 @@
   (htmlout-indent s 2))
 
 (define (htmlout-tag x)
-  (output-text " " (symbol->string (car x)) "=")
-  (output-verbatim "\"" (cadr x) "\""))
+  (if (== (cadr x) "<implicit>")
+      (output-text " " (symbol->string (car x)))
+      (begin
+        (output-text " " (symbol->string (car x)) "=")
+        (output-verbatim "\"" (cadr x) "\""))))
 
 (define (htmlout-open-tags s l)
   (with ll (ahash-table->list (list->ahash-table l))

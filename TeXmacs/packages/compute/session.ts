@@ -1,4 +1,4 @@
-<TeXmacs|1.99.10>
+<TeXmacs|1.99.11>
 
 <style|source>
 
@@ -135,10 +135,14 @@
     </src-comment>
   </active*>
 
+  <assign|unfold-button*|<macro|body|x|<action|<arg|body>|mouse-unfold|<arg|x>>>>
+
+  <assign|fold-button*|<macro|body|x|<action|<arg|body>|mouse-fold|<arg|x>>>>
+
   <assign|unfolded-io|<\macro|prompt|in|out>
     <\surround||<right-flush>>
       <\surround||<no-break-here>>
-        <\input|<with|locus-color|preserve|<action|<arg|prompt>|mouse-fold|<arg|in>>>>
+        <\input|<with|locus-color|preserve|<fold-button*|<arg|prompt>|<arg|in>>>>
           <arg|in>
         </input>
       </surround>
@@ -150,7 +154,7 @@
   </macro>>
 
   <assign|folded-io|<\macro|prompt|in|out>
-    <\input|<with|locus-color|preserve|<action|<arg|prompt>|mouse-unfold|<arg|in>>>>
+    <\input|<with|locus-color|preserve|<unfold-button*|<arg|prompt>|<arg|in>>>>
       <arg|in>
     </input>
   </macro>>
