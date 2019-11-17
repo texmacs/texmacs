@@ -21,24 +21,18 @@ if (exists (tmpy_home_path)):
 else:
     sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
+
 import traceback
 import string
 from inspect   import ismodule, getsource, getsourcefile
-from tmpy.protocol import *
 from tmpy.capture import CaptureStdout
 from tmpy.postscript import ps_out
 from tmpy.completion import parse_complete_command, complete
 from tmpy.compat     import *
+from tmpy.protocol   import *
 
 # import logging as log
 # log.basicConfig(filename='/tmp/tm_python.log',level=log.DEBUG)
-
-__version__ = '1.14'
-__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
-
-my_globals   = {}
-
-
 def compose_output(data):
     """Do some parsing on the output according to its type.
     
@@ -88,13 +82,9 @@ def compile_help (text):
 
     return dict (map (lambda k_v: (k_v[0], as_scm_string (k_v[1])), out.iteritems()))
 
-###############################################################################
-# Session start
-###############################################################################
-
-if (exists (tmpy_home_path)):
-    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
-    flush_newline (2)
+__version__ = '1.14'
+__author__ = 'Ero Carrera, Adrian Soto, Miguel de Benito Delgado'
+my_globals   = {}
 
 # We insert into the session's namespace the 'ps_out' method.
 my_globals['ps_out'] = ps_out
@@ -112,19 +102,22 @@ else:
     text = 'import __builtin__ as __builtins__'
 CaptureStdout.capture (text, my_globals, "tm_python")
 
-# Reopen stdout unbufferd (flush after each stdout.write() and print)
 if py_ver == 3:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w')
 else:
     sys.stdout = os.fdopen (sys.stdout.fileno(), 'w', 0)
 
+
+###############################################################################
+# Session start
+###############################################################################
+if (exists (tmpy_home_path)):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
+    flush_newline (2)
 flush_verbatim ("Python " + sys.version + "\n" +
                "Python plugin for TeXmacs.\n" +
                "Please see the documentation in Help -> Plugins -> Python")
 flush_prompt (">>> ")
-
-
-# Main session loop.
 while True:
     line = tm_input()
     if not line:

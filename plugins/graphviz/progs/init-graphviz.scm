@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : init-graphviz.scm
 ;; DESCRIPTION : Initialize Graphviz plugin
-;; COPYRIGHT   : (C) 2019 Darcy Shen
+;; COPYRIGHT   : (C) 2019  Darcy Shen
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

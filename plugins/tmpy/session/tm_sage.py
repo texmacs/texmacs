@@ -19,16 +19,17 @@ if (exists (tmpy_home_path)):
 else:
     sys.path.append(os.environ.get("TEXMACS_PATH") + "/plugins/")
 
+
 import tempfile
 import traceback
 import re
 import string
 import warnings
 warnings.simplefilter("ignore") # don't print warnings to stdout
-from sage.all import *
-from tmpy.protocol import *
+from tmpy.protocol   import *
 from tmpy.postscript import ps_out
 from tmpy.completion import parse_complete_command, complete
+from sage.all        import *
 
 __version__ = '0.8.1'
 __author__ = 'Ero Carrera'
@@ -97,12 +98,6 @@ def compose_output(data):
 
     return 'verbatim: %s' % str(data)
 
-if (exists (tmpy_home_path)):
-    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
-    flush_newline (2)
-
-flush_verbatim (sage.misc.banner.version())
-
 my_globals = {}
 # We insert into the session's namespace the 'ps_out' method.
 my_globals['ps_out'] = ps_out
@@ -134,44 +129,51 @@ co = compile('from sage.calculus.predefined import x', 'tm_sage', 'exec')
 eval(co, my_globals)
 
 
-# Main session loop.
+###############################################################################
+# Session start
+###############################################################################
+if (os.path.exists (tmpy_home_path)):
+    flush_verbatim ("WARNING: You are under develop mode using " + tmpy_home_path)
+    flush_newline (2)
+flush_verbatim (sage.misc.banner.version())
+flush_prompt (">>> ")
 while True:
     line = os.sys.stdin.readline()
     if not line:
-        flush_any ('')
-    else:
-        if line[0]  ==  DATA_COMMAND:
-            sf = parse_complete_command (line[1:])
-            if sf[0] == 'complete':
-                flush_scheme (complete (sf[1], sf[2], my_globals))
-            continue
-        capt = Capture()
-        result = None
-        # We guess where the lines will break.
-        line = re.sub(r' {2}(\s*)', r'\n \1', line)
+        continue
+    if line[0]  ==  DATA_COMMAND:
+        sf = parse_complete_command (line[1:])
+        if sf[0] == 'complete':
+            flush_scheme (complete (sf[1], sf[2], my_globals))
+        continue
 
+    capt = Capture()
+    result = None
+    # We guess where the lines will break.
+    line = re.sub(r' {2}(\s*)', r'\n \1', line)
+
+    try:
+        # Handle the case where the string ends in ??
+        if line[-3:] == "??\n":
+            result = eval('sage.misc.sageinspect.sage_getsource('+line[:-3]+')', my_globals)
+        # Handle the case where the command ends in ?
+        elif line[-2:] == "?\n":
+            result = eval('sage.misc.sageinspect.sage_getdoc('+line[:-2]+')', my_globals)
+        else:
+            out = eval(preparse(line), my_globals)
+            result = out
+    except:
         try:
-            # Handle the case where the string ends in ??
-            if line[-3:] == "??\n":
-                result = eval('sage.misc.sageinspect.sage_getsource('+line[:-3]+')', my_globals)
-            # Handle the case where the command ends in ?
-            elif line[-2:] == "?\n":
-                result = eval('sage.misc.sageinspect.sage_getdoc('+line[:-2]+')', my_globals)
-            else:
-                out = eval(preparse(line), my_globals)
-                result = out
-        except:
-            try:
-                stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
-                co = compile(preparse(line), 'tm_sage', 'exec')
-                eval(co, my_globals)
-                os.sys.stdout = stdout_saved
-                result = capt.getOutput()
-            except Exception:
-                traceback.print_exc(file = os.sys.stdout, limit = 0)
-                os.sys.stdout = stdout_saved
-                result = capt.getOutput()
-        del capt
-      
-        out = compose_output(result)
-        flush_any (out.strip())
+            stdout_saved, os.sys.stdout  =  os.sys.stdout, capt
+            co = compile(preparse(line), 'tm_sage', 'exec')
+            eval(co, my_globals)
+            os.sys.stdout = stdout_saved
+            result = capt.getOutput()
+        except Exception:
+            traceback.print_exc(file = os.sys.stdout, limit = 0)
+            os.sys.stdout = stdout_saved
+            result = capt.getOutput()
+    del capt
+    
+    out = compose_output(result)
+    flush_any (out.strip())
