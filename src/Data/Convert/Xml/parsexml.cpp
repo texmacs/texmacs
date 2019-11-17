@@ -804,7 +804,7 @@ parse_xml (string s) {
 }
 
 tree
-parse_html (string s) {
+parse_plain_html (string s) {
   xml_html_parser parser;
   parser.html= true;
   tree t= parser.parse (s);

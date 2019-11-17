@@ -3667,6 +3667,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(retrieve-mathjax <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|retrieve_mathjax> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(vernac-\<gtr\>texmacs <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

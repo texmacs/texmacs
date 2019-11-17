@@ -354,6 +354,20 @@
       '((next-line))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; MathJax extension
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (htmltm-mathjax env a c)
+  (if (and (list-1? c) (string? (car c)) (string->number (car c)))
+      (let* ((id (string->number (car c)))
+             (t (retrieve-mathjax id))
+             (s (tree->string t))
+             (l (parse-latex s))
+             (r (latex->texmacs l)))
+        (list r))
+      (htmltm-drop env a c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special rules for improving Wikipedia rendering
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -369,9 +383,9 @@
       (htmltm-image env a c)))
 
 (define (htmltm-wikipedia-span env a c)
-  (if (== (shtml-attr-non-null a 'class) "texhtml")
-      (list `(math ,(htmltm-args-serial env c)))
-      (htmltm-pass env a c)))
+  (cond ((== (shtml-attr-non-null a 'class) "texhtml")
+         (list `(math ,(htmltm-args-serial env c))))
+        (else (htmltm-pass env a c))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Special rules for improving Scilab documentation rendering
@@ -544,6 +558,9 @@
   (script htmltm-drop)
   (noscript (handler :mixed :block htmltm-pass))
 
+  ;;; Extensions
+  (mathjax (handler :collapse :inline htmltm-mathjax))
+  
   ;; Tags present in the previous converter
   ;; Unknown: FIG FN NOTE AU LANG PERSON
   ;; ABBREV instead of ABBR

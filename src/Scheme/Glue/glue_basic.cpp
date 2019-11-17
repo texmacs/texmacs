@@ -6178,6 +6178,19 @@ tmg_upgrade_mathml (tmscm arg1) {
 }
 
 tmscm
+tmg_retrieve_mathjax (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "retrieve-mathjax");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= retrieve_mathjax (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_vernac_2texmacs (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "vernac->texmacs");
 
@@ -10324,6 +10337,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("conservative-bib-export",  tmg_conservative_bib_export, 3, 0, 0);
   tmscm_install_procedure ("upgrade-tmml",  tmg_upgrade_tmml, 1, 0, 0);
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);
+  tmscm_install_procedure ("retrieve-mathjax",  tmg_retrieve_mathjax, 1, 0, 0);
   tmscm_install_procedure ("vernac->texmacs",  tmg_vernac_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("vernac-document->texmacs",  tmg_vernac_document_2texmacs, 1, 0, 0);
   tmscm_install_procedure ("compute-keys-string",  tmg_compute_keys_string, 2, 0, 0);

@@ -483,6 +483,7 @@
 "conservative-bib-export"
 "upgrade-tmml"
 "upgrade-mathml"
+"retrieve-mathjax"
 "vernac->texmacs"
 "vernac-document->texmacs"
 "compute-keys-string"
