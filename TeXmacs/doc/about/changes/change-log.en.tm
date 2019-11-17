@@ -8,6 +8,13 @@
   <section|Changes from version 1.99.1 to 2.1>
 
   <\itemize>
+    <item>An option for better svg2pn conversion using Inkscape (2.1).
+
+    <item>Interface for SymPy (2.1).
+
+    <item>Re-implement Asymptote, DraTex, Gnuplot, Graphviz, Xypic using
+    Python for full platform support (2.1).
+
     <item>Documentation on how to write plugins using Python (2.1).
 
     <item><scm|(run-all-tests)> aggregates and runs all the tests in <scheme>
