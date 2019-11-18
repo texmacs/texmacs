@@ -31,7 +31,6 @@ is_space_eating (tree t) {
 static tree
 clean_line (tree t) {
   int n= N(t);
-  if (is_whitespace (t)) return "";
   if (is_concat (t) && n >= 2) {
     if (is_whitespace (t[0]) && is_space_eating (t[1]))
       return clean_line (t (1, n));
@@ -56,6 +55,13 @@ clean_line (tree t) {
     else if (is_func (t[n-1], LABEL))
       return clean_line (t (0, n-1)) * t (n-1, n);
   }
+  return t;
+}
+
+static tree
+clean_line_master (tree t) {
+  if (is_whitespace (t)) return "";
+  t= clean_line (t);
   if (is_concat (t) && N(t) == 0) return "";
   if (is_concat (t) && N(t) == 1) return t[0];
   return t;
@@ -71,7 +77,7 @@ clean_spaces (tree t) {
     for (i=0; i<n; i++) {
       r[i]= clean_spaces (t[i]);
       if (is_func (t, DOCUMENT) || is_section (t))
-        r[i]= clean_line (r[i]);
+        r[i]= clean_line_master (r[i]);
       if (is_section (t))
         r[i]= trim_spaces (r[i]);
     }
@@ -137,6 +143,23 @@ compress_lines (tree t) {
 }
 
 /******************************************************************************
+* Clean MathML
+******************************************************************************/
+
+static tree
+clean_mathml (tree t) {
+  if (is_atomic (t)) return t;
+  int i, n= N(t);
+  tree r (t, n);
+  for (i=0; i<n; i++)
+    r[i]= clean_mathml (t[i]);
+  if (is_func (r, ABOVE) && n == 2) {
+    if (r[1] == "\11") return tree (WIDE, r[0], "<bar>");
+  }
+  return r;
+}
+
+/******************************************************************************
 * Interface
 ******************************************************************************/
 
@@ -144,5 +167,6 @@ tree
 clean_html (tree t) {
   t= clean_spaces (t);
   t= compress_lines (t);
+  t= clean_mathml (t);
   return t;
 }
