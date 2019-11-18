@@ -3651,6 +3651,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(clean-html <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|clean_html> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(upgrade-tmml <scm-arg|scheme_tree>)>
 <explain-synopsis|no synopsis>
   <|explain>

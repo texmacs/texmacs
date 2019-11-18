@@ -6152,6 +6152,19 @@ tmg_conservative_bib_export (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_clean_html (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "clean-html");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= clean_html (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
 tmg_upgrade_tmml (tmscm arg1) {
   TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "upgrade-tmml");
 
@@ -10335,6 +10348,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("parse-bib",  tmg_parse_bib, 1, 0, 0);
   tmscm_install_procedure ("conservative-bib-import",  tmg_conservative_bib_import, 3, 0, 0);
   tmscm_install_procedure ("conservative-bib-export",  tmg_conservative_bib_export, 3, 0, 0);
+  tmscm_install_procedure ("clean-html",  tmg_clean_html, 1, 0, 0);
   tmscm_install_procedure ("upgrade-tmml",  tmg_upgrade_tmml, 1, 0, 0);
   tmscm_install_procedure ("upgrade-mathml",  tmg_upgrade_mathml, 1, 0, 0);
   tmscm_install_procedure ("retrieve-mathjax",  tmg_retrieve_mathjax, 1, 0, 0);

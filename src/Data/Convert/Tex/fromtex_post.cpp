@@ -1930,7 +1930,7 @@ concat_document_correct (tree t) {
 
 /****************************** Finalize textm *******************************/
 
-static bool
+bool
 is_section (tree t) {
   return is_compound (t, "part")     || is_compound (t, "part*")          ||
     is_compound (t, "chapter")       || is_compound (t, "chapter*")       ||

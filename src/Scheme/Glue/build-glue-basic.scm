@@ -516,6 +516,7 @@
                            (tree string content string))
   (conservative-bib-export conservative_bib_export
                            (string content string content))
+  (clean-html clean_html (tree content))
   (upgrade-tmml tmml_upgrade (tree scheme_tree))
   (upgrade-mathml upgrade_mathml (tree content))
   (retrieve-mathjax retrieve_mathjax (tree int))

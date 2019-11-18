@@ -104,6 +104,7 @@ string xml_unspace (string s, bool first, bool last);
 tree   parse_xml (string s);
 tree   parse_plain_html (string s);
 tree   parse_html (string s);
+tree   clean_html (tree t);
 tree   tmml_upgrade (scheme_tree t);
 tree   upgrade_mathml (tree t);
 tree   retrieve_mathjax (int id);

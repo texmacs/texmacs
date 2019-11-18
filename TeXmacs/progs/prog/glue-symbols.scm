@@ -481,6 +481,7 @@
 "parse-bib"
 "conservative-bib-import"
 "conservative-bib-export"
+"clean-html"
 "upgrade-tmml"
 "upgrade-mathml"
 "retrieve-mathjax"

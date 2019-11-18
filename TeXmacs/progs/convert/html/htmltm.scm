@@ -629,9 +629,7 @@
 (tm-define (parse-html-document s)
   `(!file ,(htmltm-parse s)))
 
-(tm-define (html->texmacs html)
-  (:type (-> stree stree))
-  (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree.")
+(define (convert-html-texmacs html)
   (let* ((snippet? (not (func? html '!file 1)))
 	 (body (if snippet? html (cadr html)))
 	 (tm (html-postproc (htmltm-as-serial (sxhtml-correct-table body)))))
@@ -641,3 +639,8 @@
 	       (body `(body ,doc))
 	       (style `(style "browser")))
 	  `(document ,body ,style)))))
+
+(tm-define (html->texmacs html)
+  (:type (-> stree stree))
+  (:synopsis "Convert a parsed HTML stree @t into a TeXmacs stree.")
+  (tree->stree (clean-html (convert-html-texmacs html))))
