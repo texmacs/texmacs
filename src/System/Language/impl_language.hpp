@@ -25,7 +25,6 @@ extern text_property_rep tp_period_rep;
 extern text_property_rep tp_cjk_normal_rep;
 extern text_property_rep tp_cjk_no_break_rep;
 extern text_property_rep tp_cjk_period_rep;
-extern text_property_rep tp_cjk_wide_period_rep;
 extern text_property_rep tp_cjk_no_break_period_rep;
 extern text_property_rep tp_half_rep;
 extern text_property_rep tp_operator_rep;
