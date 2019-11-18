@@ -513,6 +513,7 @@
 (tm-define (load-browse-buffer name)
   (:synopsis "Load a buffer or switch to it if already open")
   (cond ((buffer-exists? name) (switch-to-buffer name))
+        ((url-rooted-web? (current-buffer)) (load-buffer name))
         ((buffer-external? name) (load-external name))
         (else (load-buffer name))))
 
