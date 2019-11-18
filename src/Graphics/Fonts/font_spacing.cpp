@@ -86,10 +86,6 @@ font_rep::get_spacing_entry (int mode, tree t, int i) {
     if (t == "default" || t == "old" || t == "wide")
       return space (-(spc->min>>2), 0, spc->max>>1);
     return get_spacing_entry (mode, t, i, "cjk-period");
-  case SPC_CJK_WIDE_PERIOD:
-    if (t == "default" || t == "old" || t == "wide")
-      return spc + extra;
-    return get_spacing_entry (mode, t, i, "cjk-wide-period");
   case SPC_HALF:
     if (t == "default" || t == "wide") {
       if (mode >= 0) return space (spc->min>>2, spc->def>>2, spc->max>>2);
