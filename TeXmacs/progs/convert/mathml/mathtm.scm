@@ -390,6 +390,25 @@
     `((tabular ,t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Further features used by wikipedia
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (mathtm-semantics env a c)
+  (cond ((and (list-2? c)
+              (func? (second c) 'm:annotation 2)
+              (func? (second (second c)) '@)
+              (== (shtml-attr-non-null (cdr (second (second c))) 'encoding)
+                  "application/x-tex")
+              (string? (third (second c))))
+         (if (== (get-preference "mathml->texmacs:latex-annotations") "on")
+             (let* ((s (third (second c)))
+                    (l (parse-latex (string-append "$" s "$")))
+                    (r (latex->texmacs l)))
+               (list r))
+             (mathtm env (first c))))
+        (else (mathtm-pass env a c))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main translation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -458,7 +477,9 @@
   (mlabeledtr (mathtm-handler :element mathtm-mlabeledtr))
   (mtd (mathtm-handler :element mathtm-mtd))
   ;; Actions
-  (maction (mathtm-handler :element mathtm-pass)))
+  (maction (mathtm-handler :element mathtm-pass))
+  ;; Further features used by wikipedia
+  (semantics (mathtm-handler :element mathtm-semantics)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface

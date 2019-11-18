@@ -383,7 +383,11 @@
       (htmltm-image env a c)))
 
 (define (htmltm-wikipedia-span env a c)
-  (cond ((== (shtml-attr-non-null a 'class) "texhtml")
+  (cond ((== (shtml-attr-non-null a 'class) "mwe-math-element")
+         (if (and (pair? c) (func? (car c) 'h:span))
+             (htmltm env (car c))
+             (htmltm-pass env a c)))
+        ((== (shtml-attr-non-null a 'class) "texhtml")
          (list `(math ,(htmltm-args-serial env c))))
         (else (htmltm-pass env a c))))
 
