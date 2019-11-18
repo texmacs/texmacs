@@ -146,15 +146,86 @@ compress_lines (tree t) {
 * Clean MathML
 ******************************************************************************/
 
+static bool
+accepts_limits (tree t) {
+  if (is_func (t, BIG)) return true;
+  if (!is_atomic (t)) return false;
+  string s= t->label;
+  if (starts (s, "<big-") && ends (s, ">") && !is_digit (s[N(s)-2]))
+    return true;
+  return s == "lim" || s == "inf" || s == "sup" || s == "max" || s == "min";
+}
+
+static tree
+clean_op (tree t) {
+  if (!is_atomic (t)) return t;
+  string s= t->label;
+  if (starts (s, "<big-") && ends (s, ">") && !is_digit (s[N(s)-2]))
+    return tree (BIG, s (5, N(s)-1));
+  return t;
+}
+
 static tree
 clean_mathml (tree t) {
-  if (is_atomic (t)) return t;
-  int i, n= N(t);
+  if (is_atomic (t)) {
+    string s= t->label;
+    if (!ends (s, ">")) return t;
+    int pos= N(s);
+    tm_char_backwards (s, pos);
+    if (pos >= 0 && pos<N(s) &&
+        starts (s (pos, N(s)), "<big-") &&
+        !is_digit (s[N(s)-2])) {
+      if (pos == 0) return tree (BIG, s (5, N(s)-1));
+      else return tree (CONCAT, s (0, pos), tree (BIG, s (pos+5, N(s)-1)));
+    }
+    return t;
+  }
+  
+  if (is_func (t, ABOVE, 2)) {
+    if (is_func (t[0], BELOW, 2) && accepts_limits (t[0][0]))
+      return tree (CONCAT,
+                   clean_op (clean_mathml (t[0][0])),
+                   tree (RSUB, clean_mathml (t[0][1])),
+                   tree (RSUP, clean_mathml (t[1])));
+    else if (accepts_limits (t[0]))
+      return tree (CONCAT,
+                   clean_op (clean_mathml (t[0])),
+                   tree (RSUP, clean_mathml (t[1])));
+  }
+  if (is_func (t, BELOW, 2)) {
+    if (is_func (t[0], ABOVE, 2) && accepts_limits (t[0][0]))
+      return tree (CONCAT,
+                   clean_op (clean_mathml (t[0][0])),
+                   tree (RSUB, clean_mathml (t[1])),
+                   tree (RSUP, clean_mathml (t[0][1])));
+    else if (accepts_limits (t[0]))
+      return tree (CONCAT,
+                   clean_op (clean_mathml (t[0])),
+                   tree (RSUB, clean_mathml (t[1])));
+  }
+  
+  int n= N(t);
   tree r (t, n);
-  for (i=0; i<n; i++)
+  for (int i=0; i<n; i++)
     r[i]= clean_mathml (t[i]);
-  if (is_func (r, ABOVE) && n == 2) {
+  if (is_func (r, ABOVE, 2)) {
+    if (r[1] == "\2") return tree (WIDE, r[0], "^");
+    if (r[1] == "\3") return tree (WIDE, r[0], "~");
+    if (r[1] == "\4") return tree (WIDE, r[0], "<ddot>");
+    if (r[1] == "\7") return tree (WIDE, r[0], "<check>");
+    if (r[1] == "\10") return tree (WIDE, r[0], "<breve>");
     if (r[1] == "\11") return tree (WIDE, r[0], "<bar>");
+    if (r[1] == "\12") return tree (WIDE, r[0], "<dot>");
+    if (r[1] == "^") return tree (WIDE, r[0], "^");
+    if (r[1] == "~") return tree (WIDE, r[0], "~");
+  }
+  if (is_func (r, CONCAT)) {
+    t= r;
+    r= tree (CONCAT);
+    for (int i=0; i<N(t); i++)
+      if (is_func (t[i], CONCAT)) r << A(t[i]);
+      else r << t[i];
+    return r;
   }
   return r;
 }
