@@ -52,7 +52,7 @@
   ;; versions of Guile.  These erroneous versions incorrectly recognize
   ;; characters such as A0 (hexadecimal), which breaks certain routines
   ;; involving unicode or cork.
-  (in? c '(#\space #\ht #\newline)))
+  (in? c '(#\space #\ht #\newline #\return)))
 
 (define-public (string-tail s n)
   "Return all but the first @n chars of @s."
@@ -166,9 +166,10 @@
     (if (or (= n 0) (not d))
 	(list s)
 	(cons (substring s 0 d)
-	      (string-tokenize-by-char-n (substring s (+ 1 d) (string-length s))
-				 sep
-				 (- n 1))))))
+	      (string-tokenize-by-char-n
+               (substring s (+ 1 d) (string-length s))
+               sep
+               (- n 1))))))
 
 (define-public (string-decompose s sep)
   (with d (string-search-forwards sep 0 s)
