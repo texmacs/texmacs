@@ -36,7 +36,7 @@ RESOURCE(language);
 #define TP_CJK_NORMAL         9
 #define TP_CJK_NO_BREAK      10
 #define TP_CJK_PERIOD        11
-#define TP_CJK_WIDE_PERIOD   12
+// #define TP_CJK_WIDE_PERIOD   12 (DEPRECATED)
 #define TP_OPERATOR          13
 #define TP_SHORTOP           14
 #define TP_OTHER             15
@@ -49,7 +49,7 @@ RESOURCE(language);
 #define SPC_TINY              5
 #define SPC_CJK_NORMAL        6
 #define SPC_CJK_PERIOD        7
-#define SPC_CJK_WIDE_PERIOD   8
+// #define SPC_CJK_WIDE_PERIOD   8 (DEPRECATED)
 #define SPC_HALF              9
 #define SPC_OPERATOR         10
 #define SPC_WIDEOP           11
