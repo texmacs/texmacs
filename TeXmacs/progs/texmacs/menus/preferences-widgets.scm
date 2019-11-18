@@ -307,7 +307,17 @@
                 (get-boolean-preference "texmacs->html:mathml")))
       (meti (hlist // (text "Export mathematical formulas as images"))
         (toggle (export-formulas-as-images answer)
-                (get-boolean-preference "texmacs->html:images"))))))
+                (get-boolean-preference "texmacs->html:images")))))
+  ======
+  (bold (text "Html -> TeXmacs"))
+  ===
+  (refreshable "html -> texmacs"
+    (aligned
+      (meti (hlist // (text "Try to import formulas using LaTeX annotations"))
+        (toggle (set-boolean-preference
+                 "mathml->texmacs:latex-annotations" answer)
+                (get-boolean-preference
+                 "mathml->texmacs:latex-annotations"))))))
 
 ;; LaTeX ----------
 
