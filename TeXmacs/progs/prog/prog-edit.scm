@@ -229,15 +229,15 @@
 (define-preferences
   ("editor:verbatim:tabstop" 4 (lambda (pref val) (noop))))
 
-(define (char-whitespace? c)
+(define (char-space? c)
   (== c #\space))
 
-(define (char-non-whitespace? c)
+(define (char-non-space? c)
   (!= c #\space))
 
-(tm-define (string-whitespace? s)
-  (:synopsis "does @s only contain whitespace?")
-  (list-and (map char-whitespace? (string->list s))))
+(tm-define (string-space? s)
+  (:synopsis "does @s only contain spaces?")
+  (list-and (map char-space? (string->list s))))
       
 (tm-define (get-tabstop)
   (with tabstop* (get-preference "editor:verbatim:tabstop")
@@ -259,7 +259,7 @@
 
 (tm-define (string-get-indent s)
   (:synopsis "get the indentation of @s")
-  (with pos (list-find-index (string->list s) char-non-whitespace?)
+  (with pos (list-find-index (string->list s) char-non-space?)
     (or pos (string-length s))))
 
 (tm-define (string-set-indent s i)

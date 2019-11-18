@@ -31,7 +31,7 @@
   (if (<= row 0) (get-tabstop)
       (let* ((r (program-row (- row 1)))
              (i (string-get-indent r))
-             (tr (string-trim r)))
+             (tr (tm-string-trim r)))
 
          (if (or (string-prefix? "function" tr)
                  (string-prefix? "program" tr)

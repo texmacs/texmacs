@@ -419,7 +419,7 @@
 
 (define-public (format-skip-spaces s pos)
   (cond ((>= pos (string-length s)) pos)
-	((char-whitespace? (string-ref s pos))
+	((tm-char-whitespace? (string-ref s pos))
 	 (format-skip-spaces s (+ pos 1)))
 	(else pos)))
 

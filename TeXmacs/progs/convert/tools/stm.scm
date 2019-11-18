@@ -337,14 +337,14 @@
 (tm-define (stm-line-trim-both l)
   (cond ((null? l) '())
 	((pair? (cdr l)) (stm-line-trim-right (stm-line-trim l)))
-	((string? (first l)) (list (string-trim-both (first l))))
+	((string? (first l)) (list (tm-string-trim-both (first l))))
 	(else l)))
 
 (tm-define (stm-line-trim l)
-  (line-trim/sub l string-trim))
+  (line-trim/sub l tm-string-trim))
 
 (tm-define (stm-line-trim-right l)
-  (reverse! (line-trim/sub (reverse l) string-trim-right)))
+  (reverse! (line-trim/sub (reverse l) tm-string-trim-right)))
 
 (define (line-trim/sub l trim)
   (let rec ((l l))

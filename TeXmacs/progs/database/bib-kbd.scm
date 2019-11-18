@@ -39,7 +39,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (transform-one-name s*)
-  (let* ((s (string-trim-both s*))
+  (let* ((s (tm-string-trim-both s*))
          (l (cpp-string-tokenize s " ")))
     (cond ((== (length l) 0) "")
           ((== (length l) 1) s)

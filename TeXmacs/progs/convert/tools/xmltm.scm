@@ -245,9 +245,9 @@
   (list->string (string-fold-right htmltm-collapse-spaces/kons '() s)))
 
 (define (htmltm-collapse-spaces/kons kar kdr)
-  (cond ((not (char-whitespace? kar)) (cons kar kdr))
+  (cond ((not (tm-char-whitespace? kar)) (cons kar kdr))
 	((null? kdr) (list #\space))
-	((char-whitespace? (first kdr)) kdr)
+	((tm-char-whitespace? (first kdr)) kdr)
 	(else (cons #\space kdr))))
 
 (tm-define (htmltm-space-collapse env l)
@@ -267,7 +267,7 @@
 	((htmltm-preserve-space? env) (htmltm-space-preserve l))
 	(else (let ((l2 (list-fold-right htmltm-space-mixed/kons #f l)))
 		(if (string? (first l2))
-		    (cons (htmltm-collapse-spaces (string-trim (car l2)))
+		    (cons (htmltm-collapse-spaces (tm-string-trim (car l2)))
 			  (cdr l2))
 		    l2)))))
 
@@ -286,7 +286,7 @@
 (define (htmltm-space-mixed/kons kar kdr)
   (cond ((not kdr)			; kar is last node
 	 (if (string? kar)
-	     (list (string-trim-right kar))
+	     (list (tm-string-trim-right kar))
 	     (list kar)))
 	((string? kar)
 	 (if (string? (first kdr))
@@ -562,12 +562,9 @@
 ;; Producing coqml handlers for dispatch table
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (char-whitespace? c)
-  (in? c '(#\space #\ht #\newline)))
-
 (tm-define (blank? s)
   (:synopsis "does @s contain only whitespace?")
-  (list-and (map char-whitespace? (string->list s))))
+  (list-and (map tm-char-whitespace? (string->list s))))
 
 (define (trim-newlines s)
   (letrec ((nl? (lambda (c) (== c #\newline)))
