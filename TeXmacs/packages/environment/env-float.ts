@@ -156,17 +156,25 @@
     </src-comment>
   </active*>
 
-  <assign|render-footnote**|<\macro|nr|lab|body>
+  <assign|render-footnote-inline|<macro|nr|lab|body|<smaller|<surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|nr>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<arg|lab>|body>|<style-with|src-compact|none|<arg|body>>>>>>
+
+  <assign|render-footnote-wide|<\macro|nr|lab|body>
     <\style-with|src-compact|none>
       <smaller|<with|par-mode|justify|par-left|0cm|par-right|0cm|font-shape|right|dummy|<value|page-fnote-sep>|dummy|<value|page-fnote-barlen>|<style-with|src-compact|none|<surround|<locus|<id|<hard-id|<arg|body>>>|<link|hyperlink|<id|<hard-id|<arg|body>>>|<url|<merge|#footnr-|<arg|nr>>>>|<arg|nr>><footnote-sep>|<set-binding|<merge|footnote-|<arg|nr>>|<arg|lab>|body><right-flush>|<style-with|src-compact|none|<arg|body>>>>>>
     </style-with>
   </macro>>
 
+  <assign|footnote-container|<macro|decls|body|<surround|<arg|decls>||<arg|body>>>>
+
   <assign|footnote-text|<macro|body|id|<flag|Footnote|brown><next-footnote><assign|<merge|fnote-|<arg|id>>|<the-footnote>><render-footnote|<the-footnote>|<arg|body>>>>
 
   <assign|footnote-new|<macro|id|<flag|Footnote|brown><next-footnote><assign|<merge|fnote-|<arg|id>>|<the-footnote>><assign|<merge|fnlab-|<arg|id>>|<value|the-label>>>>
 
-  <assign|footnote-show|<macro|body|id|<render-footnote**|<value|<merge|fnote-|<arg|id>>>|<value|<merge|fnlab-|<arg|id>>>|<arg|body>>>>
+  <assign|footnote-custom|<macro|id|sym|<flag|Footnote|brown><assign|<merge|fnote-|<arg|id>>|<arg|sym>><assign|<merge|fnlab-|<arg|id>>|<arg|sym>>>>
+
+  <assign|footnote-show|<macro|body|id|<render-footnote-wide|<value|<merge|fnote-|<arg|id>>>|<value|<merge|fnlab-|<arg|id>>>|<arg|body>>>>
+
+  <assign|footnote-inline|<macro|body|id|<render-footnote-inline|<value|<merge|fnote-|<arg|id>>>|<value|<merge|fnlab-|<arg|id>>>|<arg|body>>>>
 
   <assign|footnote-reference|<macro|id|<space|0spc><label|<merge|footnr-|<value|<merge|fnote-|<arg|id>>>>><rsup|<with|font-shape|right|<reference|<merge|footnote-|<value|<merge|fnote-|<arg|id>>>>>>>>>
 
@@ -174,7 +182,11 @@
 
   <drd-props|footnote-new|arity|1|unaccessible|0|identifier|0>
 
+  <drd-props|footnote-custom|arity|2|unaccessible|all|identifier|0>
+
   <drd-props|footnote-show|arity|2|accessible|0|unaccessible|1|identifier|1>
+
+  <drd-props|footnote-inline|arity|2|accessible|0|unaccessible|1|identifier|1>
 
   <drd-props|footnote-reference|arity|1|unaccessible|0|identifier|0>
 
