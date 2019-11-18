@@ -585,6 +585,27 @@
 	  (tree-go-to t (- (tree-arity t) 2) :start)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Possible to use a custom note symbol
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (detached-note-context? t)
+  (tree-in? t (detached-note-tag-list)))
+
+(tm-define (auto-note-context? t)
+  (tree-in? t (auto-note-tag-list)))
+
+(tm-define (custom-note-context? t)
+  (tree-in? t (custom-note-tag-list)))
+
+(tm-define (note-toggle-custom t)
+  (let* ((l (symbol-toggle-number (tree-label t)))
+         (c (tree-children t)))
+    (if (auto-note-context? t)
+        (tree-insert! t (tree-arity t) (list "<dag>"))
+        (tree-remove! t (- (tree-arity t) 1) 1))
+    (tree-assign-node! t l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Possible to change the title of titled environments
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

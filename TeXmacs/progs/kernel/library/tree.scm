@@ -71,6 +71,12 @@
     (tm->tree `(,(tree-label t)
                 ,@(map rew (.. 0 (tree-arity t)))))))
 
+(define-public (tree-search t pred?)
+  (with me (if (pred? t) (list t) '())
+    (if (tree-atomic? t) me
+	(append me (append-map (cut tree-search <> pred?)
+			       (tree-children t))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Navigation inside trees
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -235,3 +235,14 @@
 
 (define-group balloon-tag
   mouse-over-balloon mouse-over-balloon* focus-balloon help-balloon)
+
+;; detached notes
+
+(define-group detached-note-tag
+  (auto-note-tag) (custom-note-tag))
+
+(define-group auto-note-tag
+  note-ref note-inline note-wide note-footnote)
+
+(define-group custom-note-tag
+  note-ref* note-inline* note-wide* note-footnote*)

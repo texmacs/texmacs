@@ -968,6 +968,8 @@ edit_select_rep::focus_get (bool skip_flag) {
     if (is_compound (st, "footnote")) skip_flag= false;
     if (is_compound (st, "footnote-anchor")) skip_flag= false;
     if (is_compound (st, "wide-footnote")) skip_flag= false;
+    if (is_compound (st, "note-footnote")) skip_flag= false;
+    if (is_compound (st, "note-footnote*")) skip_flag= false;
     return focus_search (path_up (tp), skip_flag, true);
   }
 }

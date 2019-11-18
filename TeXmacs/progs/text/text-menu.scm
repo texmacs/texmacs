@@ -38,8 +38,9 @@
   (group "Paragraph")
   (link paragraph-menu)
   ---
-  (group "Page")
-  (link page-menu))
+  (when (in-main-flow?)
+    (group "Page")
+    (link page-menu)))
 
 (menu-bind compressed-text-format-menu
   (if (new-fonts?)
@@ -47,7 +48,8 @@
   (if (not (new-fonts?))
       (-> "Font" (link text-font-menu)))
   ("Paragraph" (open-paragraph-format))
-  ("Page" (open-page-format))
+  (when (in-main-flow?)
+    ("Page" (open-page-format)))
   (when (inside? 'table)
     ("Cell" (open-cell-properties))
     ("Table" (open-table-properties)))
@@ -252,28 +254,30 @@
 
 (menu-bind note-menu
   (when (not (or (inside? 'float) (inside? 'footnote)))
-    ("Footnote" (make-wrapped 'footnote))
+    (when (in-main-flow?)
+      ("Footnote" (make-wrapped 'footnote)))
     (when (not (selection-active-non-small?))
       ("Marginal note" (make-marginal-note)))
     ("Balloon" (make-balloon))
     ---
-    ("Floating object" (make-insertion "float"))
-    (when (not (selection-active-non-small?))
-      ("Floating phantom" (insert '(phantom-float "float" "hf"))))
-    (when (not (selection-active-non-small?))
-      ("Floating figure"
-       (wrap-selection-small
+    (when (in-main-flow?)
+      ("Floating object" (make-insertion "float"))
+      (when (not (selection-active-non-small?))
+        ("Floating phantom" (insert '(phantom-float "float" "hf"))))
+      (when (not (selection-active-non-small?))
+        ("Floating figure"
+         (wrap-selection-small
+           (make-insertion "float")
+           (insert-go-to '(big-figure "" (document "")) '(0 0))))
+        ("Floating table"
+         (wrap-selection-small
+           (make-insertion "float")
+           (insert-go-to '(big-table "" (document "")) '(0 0))
+           (make 'tabular))))
+      ("Floating algorithm"
+       (wrap-selection-any
          (make-insertion "float")
-         (insert-go-to '(big-figure "" (document "")) '(0 0))))
-      ("Floating table"
-       (wrap-selection-small
-         (make-insertion "float")
-         (insert-go-to '(big-table "" (document "")) '(0 0))
-         (make 'tabular))))
-    ("Floating algorithm"
-     (wrap-selection-any
-       (make-insertion "float")
-       (make 'algorithm)))))
+         (make 'algorithm))))))
 
 (menu-bind position-marginal-note-menu
   (group "Horizontal position")
@@ -1024,6 +1028,23 @@
   (:require (in? l (numbered-unnumbered-append
                      (append (small-figure-tag-list) (big-figure-tag-list)))))
   (list "captions-above"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Detached notes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (focus-toggle-menu t)
+  (:require (detached-note-context? t))
+  ((check "Named" "v" (custom-note-context? (focus-tree)))
+   (note-toggle-custom t))
+  (dynamic (former t)))
+
+(tm-menu (focus-toggle-icons t)
+  (:require (detached-note-context? t))
+  ((check (balloon (icon "tm_small_textual.xpm") "Use custom note symbol") "v"
+          (custom-note-context? (focus-tree)))
+   (note-toggle-custom t))
+  (dynamic (former t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Possibility to rename titled environments

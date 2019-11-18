@@ -36,8 +36,9 @@
   (group "Paragraph")
   (link paragraph-menu)
   ---
-  (group "Page")
-  (link page-menu))
+  (when (in-main-flow?)
+    (group "Page")
+    (link page-menu)))
 
 (menu-bind compressed-prog-format-menu
   (if (new-fonts?)
@@ -45,7 +46,8 @@
   (if (not (new-fonts?))
       (-> "Font" (link prog-font-menu)))
   ("Paragraph" (open-paragraph-format))
-  ("Page" (open-page-format))
+  (when (in-main-flow?)
+    ("Page" (open-page-format)))
   (when (inside? 'table)
     ("Cell" (open-cell-properties))
     ("Table" (open-table-properties)))

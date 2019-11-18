@@ -484,6 +484,8 @@ edit_env_rep::exec (tree t) {
     return exec_set_binding (t);
   case GET_BINDING:
     return exec_get_binding (t);
+  case HAS_BINDING:
+    return exec_has_binding (t);
   case GET_ATTACHMENT:
     return exec_get_attachment (t);
 
@@ -1992,6 +1994,19 @@ edit_env_rep::exec_get_binding (tree t) {
     }
   //cout << t << ": " << key << " -> " << value << "\n";
   return value;
+}
+
+tree
+edit_env_rep::exec_has_binding (tree t) {
+  if (N(t) != 1 && N(t) != 2) return tree (ERROR, "bad get binding");
+  string key= exec_string (t[0]);
+  tree value= local_ref->contains (key)? local_ref [key]: global_ref [key];
+  int type= (N(t) == 1? 0: as_int (exec_string (t[1])));
+  if (type != 0 && type != 1) type= 0;
+  if (is_func (value, TUPLE) && (N(value) >= 2)) value= value[type];
+  else if (type == 1) value= tree (UNINIT);
+  if (value == tree (UNINIT)) return "false";
+  else return "true";
 }
 
 tree

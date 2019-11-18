@@ -676,6 +676,7 @@ concater_rep::typeset (tree t, path ip) {
     typeset_set_binding (t, ip);
     break;
   case GET_BINDING:
+  case HAS_BINDING:
     typeset_executable (t, ip);
     break;
   case HIDDEN_BINDING:

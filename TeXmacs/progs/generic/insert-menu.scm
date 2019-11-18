@@ -87,7 +87,14 @@
           ("List of figures"
            (make-alternate "Name of list of figures" "figure" 'with-figure-list))
           ("List of tables"
-           (make-alternate "Name of list of tables" "table" 'with-table-list))))
+           (make-alternate "Name of list of tables" "table" 'with-table-list)))
+      ---
+      ("Reference to note" (make-note-ref))
+      (-> "Text for note"
+          ("Inline" (make-note-inline))
+          ("Wide" (make-note-wide))
+          (when (in-main-flow?)
+            ("Footnote" (make-note-footnote)))))
   (if (and (style-has? "calc-dtd")
            (not (style-has? "icourse-dtd"))
            (calc-ready?))

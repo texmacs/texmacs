@@ -548,7 +548,11 @@ init_std_drd () {
   init (GET_BINDING, "get-binding",
         options (1, 1, BIFORM) ->
         identifier (0) -> name (0, "key") ->
-        integer (1) -> name (0, "kind"));
+        integer (1) -> name (1, "kind"));
+  init (HAS_BINDING, "has-binding",
+        options (1, 1, BIFORM) ->
+        identifier (0) -> name (0, "key") ->
+        integer (1) -> name (1, "kind"));
   init (HIDDEN_BINDING, "hidden-binding",
         fixed (2));
   init (LABEL, "label",

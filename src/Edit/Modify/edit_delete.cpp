@@ -103,7 +103,9 @@ edit_text_rep::remove_text_sub (bool forward) {
             if (t == tree (DOCUMENT, "")) {
               if (is_func (u, _FLOAT) ||
                   is_compound (u, "footnote", 1) ||
-                  is_compound (u, "footnote-anchor", 2)) {
+                  is_compound (u, "footnote-anchor", 2) ||
+                  is_compound (u, "note-footnote") ||
+                  is_compound (u, "note-footnote*")) {
                 assign (path_up (p), "");
                 correct (path_up (p, 2));
               }

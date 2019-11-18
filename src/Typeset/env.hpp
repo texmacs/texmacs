@@ -369,6 +369,7 @@ private:
   tree exec_find_accessible (tree t);
   tree exec_set_binding (tree t);
   tree exec_get_binding (tree t);
+  tree exec_has_binding (tree t);
   tree exec_get_attachment (tree t);
 
   tree exec_pattern (tree t);

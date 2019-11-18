@@ -319,7 +319,7 @@
     ("Page number text" (make 'set-page-number-macro))))
 
 (menu-bind page-break-menu
-  (when (not (selection-active?))
+  (when (and (not (selection-active?)) (in-main-flow?))
     (group "Page break before")
     ("New page" (make 'new-page*))
     ("New double page" (make 'new-dpage*))

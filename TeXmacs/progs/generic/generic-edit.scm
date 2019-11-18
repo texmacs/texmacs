@@ -757,6 +757,41 @@
         (insert-go-to `(,l "" ,duration) (list 0 0)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Detached notes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (propose-note-id ref?)
+  (let* ((buf (buffer-tree))
+         (is-ref? (cut tree-in? <> '(note-ref note-ref*)))
+         (is-text? (cut tree-in? <> '(note-inline note-inline*
+                                      note-wide note-wide*
+                                      note-footnote note-footnote*)))
+         (ref-l (tree-search buf is-ref?))
+         (text-l (tree-search buf is-text?))
+         (ref-id (lambda (t) (tree->stree (tm-ref t 0))))
+         (text-id (lambda (t) (tree->stree (tm-ref t 1))))
+         (refs (map ref-id ref-l))
+         (texts (map text-id text-l))
+         (diff (if ref?
+                   (list-difference texts refs)
+                   (list-difference refs texts))))
+    (if (null? diff)
+        (create-unique-id)
+        (cAr diff))))
+
+(tm-define (make-note-ref)
+  (insert `(note-ref ,(propose-note-id #t))))
+
+(tm-define (make-note-inline)
+  (insert-go-to `(note-inline "" ,(propose-note-id #f)) '(0 0)))
+
+(tm-define (make-note-wide)
+  (insert-go-to `(note-wide (document "") ,(propose-note-id #f)) '(0 0 0)))
+
+(tm-define (make-note-footnote)
+  (insert-go-to `(note-footnote (document "") ,(propose-note-id #f)) '(0 0 0)))
+                                      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Thumbnails facility
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -799,6 +834,11 @@
 ;; Routines for floats
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-define (in-main-flow?)
+  (:synopsis "Are we inside the main document flow?")
+  ;; FIXME: this routine can be improved quite a lot
+  (not (or (inside? 'table) (inside? 'graphics))))
+
 (tm-define (make-marginal-note)
   (:synopsis "Insert a marginal note.")
   (wrap-selection-small
@@ -824,6 +864,7 @@
 
 (tm-define (make-insertion s)
   (:synopsis "Make an insertion of type @s.")
+  (:applicable (in-main-flow?))
   (with pos (if (== s "float") "tbh" "")
     (insert-go-to (list 'float s pos (list 'document ""))
                   (list 2 0 0))))

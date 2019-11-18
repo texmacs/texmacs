@@ -18,12 +18,6 @@
 ;; Subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (tree-search t pred?)
-  (with me (if (pred? t) (list t) '())
-    (if (tree-atomic? t) me
-	(append me (append-map (cut tree-search <> pred?)
-			       (tree-children t))))))
-
 (define (locified? x)
   (cond ((list? x) (list-and (map locified? x)))
 	((tree? x) (or (tm-func? x 'locus) (tm-func? (tree-up x) 'locus)))
