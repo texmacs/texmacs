@@ -30,8 +30,6 @@
 
   <assign|par-hyphen|professional>
 
-  <assign|font|modern>
-
   <assign|font-family|ss>
 
   <assign|par-sep|0fn>
